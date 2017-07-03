@@ -1,0 +1,99 @@
+QLabel:focus{
+	border-style: dotted;
+	border-width: 1px;
+}
+
+QWidget#applicationPage{
+	background-color: white;
+}
+
+QLabel#logoLabel{
+	background-color: #619CC8;
+}
+
+QWidget#headerWidget{
+	background-color: #619CC8;
+}
+
+QWidget#centralWidget{
+	background-color: white;
+}
+
+governikus--SelfInformationWidget{
+	background-color: white;
+}
+
+governikus--SettingsWidget{
+	background-color: white;
+}
+
+QLabel#eac1PinInformationLabel{
+	qproperty-alignment: AlignCenter;
+	font-weight:bold;
+	color: red;
+}
+
+QLabel#changePinComfortInProgressLabel{
+	qproperty-alignment: AlignCenter;
+	font-weight:bold;
+	color: red;
+}
+
+QLabel#eac1PinInformationLabel, QLabel#changePinInformationLabel{
+	qproperty-alignment: AlignCenter;
+	font-weight:bold;
+	color: red;
+}
+
+QLabel#changePinDoneLabel{
+	qproperty-alignment: AlignCenter;
+	font-weight:bold;
+	color: green;
+}
+
+QLabel#detailText{
+	background-color: #FFFFFF;
+	padding: 10px;
+	border:1px solid gray;
+}
+
+QWidget#mainTabList{
+	background-color:white;
+	border: none;
+}
+
+QToolButton#canRandomButton{
+	margin-right: 30px;
+}
+
+#mainTabList governikus--TabButton{
+	background-image: url(:/images/MenuUnselected.png);
+	background-repeat: no-repeat;
+	background-position: right;
+	padding: 16px;
+	margin: 1px 0px 1px 0px;
+	border: none;
+	font-size: 16pt;
+	text-align: left;
+	color: white;
+}
+
+#mainTabList governikus--TabButton:checked{
+	background-image: url(:/images/MenuSelected.png);
+	background-repeat: no-repeat;
+	background-position: right;
+	color: #619CC8;
+}
+
+#mainTabList governikus--TabButton:disabled{
+	background-image: url(:/images/MenuUnselectedDisabled.png);
+	background-repeat: no-repeat;
+	background-position: right;
+	color: grey;
+}
+
+#mainTabList governikus--TabButton:focus{
+	border-style: dotted;
+	border-width: 1px;
+}
+

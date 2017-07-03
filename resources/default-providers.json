@@ -1,0 +1,565 @@
+{
+	"issueDate": "2016-11-07T12:30:00+1:00",
+	"provider": [
+		{
+			"shortName": {"" : ":::(bit)kasten"},
+			"address": "https://www.bitkasten.de/",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrl": "https://www.bitkasten.de/portal/api/login/npa/createRequest?returnUrl=https%3A%2F%2Fwww.bitkasten.de%2Fportal%2Fapi%2Flogin%2Fnpa%2Flogin.html"
+		},
+		{
+			"shortName": {"" : "Allianz Kundenportal - Meine Allianz"},
+			"address": "https://meine.allianz.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "insurance",
+			"tcTokenUrl": "https://npa.allianz.de/azsecurity-npa-service/NpaEIDService/nparef/XIbOcJDGV0nWcgSIEaN8KA-",
+			"tcTokenUrlInfo" : "TcToken URL contains dynamic request id but is accepted anyway."
+		},
+		{
+			"shortName": {"" : "Allianz Maklerportal"},
+			"address": "https://makler.allianz.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "insurance",
+			"tcTokenUrl": "https://npa.allianz.de/azsecurity-npa-service/NpaEIDService/nparef/-wnfwSFGamtJotxe6_BKiLj",
+			"tcTokenUrlInfo" : "TcToken URL contains dynamic request id but is accepted anyway."
+		},
+		{
+			"shortName": {"" : "Ausweis Auskunft des Bundes"},
+			"address": "https://www.buergerserviceportal.de/bund/ausweisapp/bspx_selbstauskunft",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrl" : "https://www.buergerserviceportal.de:443/bund/ausweisapp/bspx_selbstauskunft/SamlAuthnRequestProvider"
+		},
+		{
+			"shortName": {"" : "BAföG Online"},
+			"address": "https://www.bafoegonline.bva.bund.de/",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrl" : "",
+			"clientUrl" : "https://www.bafoegonline.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeldenMitNpaPreFlow"
+		},
+		{
+			"shortName": {"" : "BAföG Online Bayern (AKDB)"},
+			"address": "https://afoegfofa.osrz-akdb.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+            "category": "citizen"
+		},
+		{
+			"shortName": {"" : "BAföG Online Bayern (Studentenwerk)"},
+			"address": "https://www.bafoeg-bayern.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen"
+		},
+		{
+			"shortName": {"" : "BAföG Online Berlin (Studentenwerk)"},
+			"address": "https://www.berlin-bafoeg.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen"
+		},
+		{
+			"shortName": {"" : "BAföG Online Brandenburg"},
+			"address": "https://www.bafoeg-brandenburg.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen"
+		},
+		{
+			"shortName": {"" : "BAföG Online Hamburg"},
+			"address": "https://bafoeg-online.hamburg.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen"
+		},
+		{
+			"shortName": {"" : "BAföG Online Hessen"},
+			"address": "https://www.bafoeg-hessen.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen"
+		},
+		{
+			"shortName": {"" : "BAföG Online Mecklenburg-Vorpommern"},
+			"address": "http://www.bm.regierung-mv.de/bafoeg",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen"
+		},
+		{
+			"shortName": {"" : "BAföG Online Nordrhein-Westfalen"},
+			"address": "https://www.bafoeg-online.nrw.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen"
+		},
+		{
+			"shortName": {"" : "BAföG Online Schleswig-Holstein"},
+			"address": "https://bafoeg.schleswig-holstein.de/BAfoeGOnline/ABAfoeG/",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen"
+		},
+		{
+			"shortName": {"" : "BAföG Online Sachsen"},
+			"address": "https://fs.egov.sachsen.de/formserv/findform?shortname=bafoeg&amp;formtecid=11&amp;areashortname=SMWK_bafoeg",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen"
+		},
+		{
+			"shortName": {"" : "Beantragung Schwerbehindertenausweis Bayern"},
+			"address": "https://www.schwerbehindertenantrag.bayern.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen"
+		},
+		{
+			"shortName": {"" : "Beantragung Schwerbehindertenausweis Saarland"},
+			"address": "https://gatewaylas.saarland.de/FV/Onlineantrag",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "Bundesagentur für Arbeit"},
+			"address": "https://www.arbeitsagentur.de/npa",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrl" : "",
+			"clientUrl" : "https://formular.arbeitsagentur.de/eantrag/fallinfo-npa.page"
+		},
+		{
+			"shortName": {"" : "Bundestag ePetition"},
+			"address": "https://epetitionen.bundestag.de/epet/anmelden.html",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "Bürgerantrag Bremen"},
+			"address": "https://www.buergerantrag.bremen.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "Bürgerdienste der Stadt Münster"},
+			"address": "http://www.muenster.de/stadt/neuer-personalausweis.html",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "Bürgerportal Baden-Württemberg"},
+			"address": "http://service-bw.de/zfinder-bw-web/welcome.do?showMsbwDetails=1",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "Unable to locate URL"
+		},
+		{
+			"shortName": {"" : "Bürgerportal Rheinland Pfalz"},
+			"address": "http://www.rlpdirekt.de/rheinland-pfalz",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "PLZ required"
+		},
+		{
+			"shortName": {"" : "Bürgerservice-Portal Kreis Herford"},
+			"address": "https://www.buergerserviceportal.nrw/krz/lkrherford",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "Bürgerservice-Portal Kreis Minden-Lübbecke"},
+			"address": "https://www.buergerserviceportal.nrw/krz/mindenluebbecke",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "Bürgerservice-Portal Stadt Lage"},
+			"address": "https://www.buergerserviceportal.nrw/krz/lage",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "Bürgerservice-Portal Stadt Norderstedt"},
+			"address": "https://norderstedt.de/digital",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "Bürgerservice-Portal Wiesbaden"},
+			"address": "https://www.buergerserviceportal.de/hessen/wiesbaden",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "Bürgerservice-Portale der bayerischen Kommunen"},
+			"address": "https://www.buergerserviceportal.de/bayern/classic/",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "CosmosDirekt Kundenportal meinCosmosDirekt"},
+			"address": "https://www.cosmosdirekt.de/services/mcd-info",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "insurance",
+			"tcTokenUrl" : "https://www.cosmosdirekt.de/nPa/IdentifizierenNPA?back_url=https://www.cosmosdirekt.de/meincosmosdirekt-registrierung/*ident=1"
+		},
+		{
+			"shortName": {"" : "d.velop – foxdox.de: Dokumente sicher ablegen"},
+			"address": "https://mein.foxdox.de/",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrl" : "https://mein.foxdox.de/npa_login?action=gettctoken&amp;next=/documents"
+		},
+		{
+			"shortName": {"" : "Datev - Arbeitnehmer online / Lohn- und Gehaltsabrechnung"},
+			"address": "https://www.datev.de/portal/ShowPage.do?pid=ano&amp;nid=159749",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrlInfo" : "Address is faulty"
+		},
+		{
+			"shortName": {"" : "Deutsche Rentenversicherung"},
+			"address": "https://www.eservice-drv.de/OnlineDiensteWeb/init.do?npa=true",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "DKB-Cash - Onlineantrag Konto und Kreditkarte"},
+			"address": "http://www.dkb.de/privatkunden/dkb_cash",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "finance",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "eAntrag der Investitionsbank Berlin (IBB)"},
+			"address": "http://www.ibb.de/e_antrag.aspx",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "finance",
+			"tcTokenUrlInfo" : "Registration required."
+		},
+		{
+			"shortName": {"" : "easy Login - Der Zugang für Finanz- &amp; Versicherungsvermittler"},
+			"address": "http://www.easy-login.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "insurance",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "ElsterOnline-Portal"},
+			"address": "https://www.elsteronline.de",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "Registration required."
+		},
+		{
+			"shortName": {"" : "Einheitlicher Ansprechpartner Köln"},
+			"address": "http://www.einheitlicher-ansprechpartner-koeln.de/eaportal/",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrl" : "https://ea.stadt-koeln.de/Gastzugang/EIDServiceProvider/Request.ashx?appID=6"
+		},
+		{
+			"shortName": {"" : "ERGO Direkt Lebensversicherung AG"},
+			"address": "https://ergodirekt.de/de/persoenlicherbereich.html#login",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "insurance"
+		},
+		{
+			"shortName": {"" : "Feinstaubplakette beantragen"},
+			"address": "http://www.berlin.de/labo/fahrzeuge/kfz-zulassung/feinstaubplakette/shop.85047.php",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrlInfo" : "Car lizence number required"
+		},
+		{
+			"shortName": {"" : "Führungszeugnis und Auskunft aus dem Gewerbezentralregister"},
+			"address": "https://www.fuehrungszeugnis.bund.de/",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "Halterauskunft zu einem KFZ beantragen"},
+			"address": "https://www.berlin.de/labo/mobilitaet/kfz-zulassung/halterauskunft/shop.86598.php",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrlInfo" : "Car lizence number required."
+		},
+		{
+			"shortName": {"" : "Hamburg Service Online-Bürgerdienste"},
+			"address": "https://gateway.hamburg.de/HamburgGateway/FVP/Application/Index.aspx",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "HUK 24 AG - Registrierung für Servicebereich \"Meine HUK24\""},
+			"address": "https://www.huk24.de/",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "insurance",
+			"tcTokenUrlInfo" : "Registration required"
+		},
+		{
+			"shortName": {"" : "ID-Safe des Landkreis Kitzingen"},
+			"address": "https://www.buergerservice.org/ID-Safe-Kitzingen",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "Registration required"
+		},
+		{
+			"shortName": {"" : "ID-Safe des Landkreis Ostallgäu"},
+			"address": "https://www.sixform.com/ID-safe",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "Registration required"
+		},
+		{
+			"shortName": {"" : "ID-Safe des Landkreis Würzburg"},
+			"address": "https://www.buergerservice.org/ID-Safe-Wuerzburg",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "Registration required"
+		},
+		{
+			"shortName": {"" : "Identitätsprüfungen nach dem Signaturgesetz und dem Geldwäschegesetz"},
+			"address": "https://www.identity.tm",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrlInfo" : "Registration required"
+		},
+		{
+			"shortName": {"" : "Kraftfahrt-Bundesamt - Auskunft aus dem Verkehrszentralregister"},
+			"address": "https://www.kba-online.de/faeronline/faeranfrage.do",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrl" : "https://www.kba-online.de:443/faeronline/eidstart.do;jsessionid=vG0b7cExL-p+rDGAQx+aG152.as-idmz-prod1:P_faeronline?ref=vG0b7cExL-p+rDGAQx+aG152.as-idmz-prod1:P_faeronline",
+			"tcTokenUrlInfo" : "TcToken URL contains dynamic request id but is accepted anyway."
+		},
+		{
+			"shortName": {"" : "Login Meine VBL"},
+			"address": "https://vbl.de/de/meine_vbl",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrlInfo" : "Registration required"
+		},
+		{
+			"shortName": {"" : "LVM Versicherung - Kundenportal Meine LVM"},
+			"address": "http://www.lvm.de/personalausweis",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "insurance",
+			"tcTokenUrlInfo" : "Registration required"
+		},
+		{
+			"shortName": {"" : "Mentana-Claimsoft AG - Registrierung beim De-Mail Dienst"},
+			"address": "https://www.fp-demail.de/",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "OpenPGP-eID"},
+			"address": "https://pgp.governikus-eid.de/pgp/",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrl" : "https://pgp.governikus-eid.de/pgp/EIDRequest"
+		},
+		{
+			"shortName": {"" : "Registrierung/Login auf www.tk.de"},
+			"address": "https://www.tk.de/tk/online-filiale/meine-tk/meine-tk/118032",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrlInfo" : "Registration required"
+		},
+		{
+			"shortName": {"" : "Schufa – Auskunftsportal „Meine SCHUFA“"},
+			"address": "https://www.meineschufa.de/index.php?site=30_2_1_pa#tabNPA",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrl" : "https://www.meineschufa.de/eID-Service-Connector-V2/createSamlRequest/Reg"
+		},
+		{
+			"shortName": {"" : "Service-Portal \"Auto\" Kreis Lippe"},
+			"address": "https://www.buergerserviceportal.nrw/krz/lkrlippe",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "sign-me (Bundesdruckerei)"},
+			"address": "https://live.esign-service.de/esign/start",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrlInfo" : "Website enforces Java plugin :)"
+		},
+		{
+			"shortName": {"" : "SkIDentity Service"},
+			"address": "https://skidentity.de/service",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "Stadt Nürnberg: Online-Bürgerdienste Service"},
+			"address": "http://www.nuernberg.de/internet/onlinedienste",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "Registration required"
+		},
+		{
+			"shortName": {"" : "Standesamt Online Mecklenburg-Vorpommern"},
+			"address": "https://portal.ego-mv.de/",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+		},
+		{
+			"shortName": {"" : "Telekom DeMail für Privat- und Geschäftskunden"},
+			"address": "https://www.telekom.de/de-mail",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrlInfo" : "Registration required"
+		},
+		{
+			"shortName": {"" : "T-Systems DeMail für Großkunden"},
+			"address": "https://www.t-systems.de/de-mail",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "other",
+			"tcTokenUrlInfo" : "Registration required"
+		},
+		{
+			"shortName": {"" : "Urkundenservice Köln"},
+			"address": "http://www.stadt-koeln.de/service/produkt/urkundenservice-des-standesamtes",
+			"phone": "",
+			"email": "",
+			"postalAddress": "",
+			"category": "citizen",
+			"tcTokenUrl" : "https://ea.stadt-koeln.de/Gastzugang/EIDServiceProvider/Request.ashx?appID=7"
+		}
+	]
+}

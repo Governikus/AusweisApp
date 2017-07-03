@@ -1,0 +1,14 @@
+		<item>
+			<title>AusweisApp2 APPCAST_VERSION / APPCAST_OS</title>
+			<pubDate>APPCAST_DATE</pubDate>
+			<guid isPermaLink="true">APPCAST_URL/ReleaseNotes.html#APPCAST_VERSION</guid>
+			<link>APPCAST_URL/ReleaseNotes.html#APPCAST_VERSION</link>
+			<sparkle:releaseNotesLink>APPCAST_URL/ReleaseNotes.html#APPCAST_VERSION</sparkle:releaseNotesLink>
+
+			<enclosure
+				url="APPCAST_DOWNLOAD_URL"
+				fervor:version="APPCAST_VERSION"
+				fervor:platform="APPCAST_OS"
+				length="APPCAST_PACKAGE_SIZE"
+				type="application/octet-stream" />
+		</item>

@@ -1,0 +1,65 @@
+/*!
+ * SymmetricCipher.h
+ *
+ * \brief Symmetric decryption method used for PACE.
+ *
+ * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ */
+
+#pragma once
+
+#include <QByteArray>
+#include <openssl/evp.h>
+
+namespace governikus
+{
+
+class SymmetricCipher
+{
+	private:
+		EVP_CIPHER_CTX* mCtx;
+		const EVP_CIPHER* mCipher;
+		QByteArray mIv, mKeyBytes;
+
+		Q_DISABLE_COPY(SymmetricCipher)
+
+	public:
+		/*!
+		 * \brief Creates a new instance with cipher algorithm determined by parameter and specified cipher key.
+		 * \param pPaceAlgorithm algorithm of PACE protocol. This will determine the cipher algorithm to use. E.g. a
+		 *        PACE protocol of id_PACE::DH::GM_AES_CBC_CMAC_128 will result in AES to be used.
+		 * \param pKeyBytes the bytes of the key
+		 */
+		SymmetricCipher(const QByteArray& pPaceAlgorithm, const QByteArray& pKeyBytes);
+		~SymmetricCipher();
+
+		/*!
+		 * Returns true, if initialization succeeded, i.e. the algorithm is known, supported and the key bytes have correct size.
+		 */
+		bool isInitialized();
+
+		/*!
+		 * \brief Encrypts the message.
+		 * \param pPlainData the message to encrypt.
+		 * \return the encrypted message
+		 */
+		QByteArray encrypt(const QByteArray& pPlainData);
+
+		/*!
+		 * \brief Decrypts the message.
+		 * \param pEncryptedData the message to decrypt.
+		 * \return the decrypted message
+		 */
+		QByteArray decrypt(const QByteArray& pEncryptedData);
+
+		/*!
+		 * \brief Sets the initialization vector
+		 * \param pIv the initialization vector
+		 * \return if initialization vector has wrong size, false is returned. Otherwise true.
+		 */
+		bool setIv(const QByteArray& pIv);
+
+		int getBlockSize() const;
+};
+
+} /* namespace governikus */

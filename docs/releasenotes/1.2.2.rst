@@ -1,0 +1,10 @@
+AusweisApp2 1.2.2
+^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 6. August 2015
+
+
+
+Anwender
+""""""""
+  - Umgehung für den von Microsoft ab Windows 8 eingeführten PC/SC Card Reset (5 Sekunden Timeout).

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <scm class="hudson.plugins.mercurial.MercurialSCM" plugin="mercurial@1.54">
+	<source>http://mercurial/AusweisApp2</source>
+	<modules>resources/jenkins/dsl/</modules>
+	<revisionType>BRANCH</revisionType>
+	<revision>default</revision>
+	<clean>false</clean>
+	<credentialsId></credentialsId>
+	<disableChangeLog>false</disableChangeLog>
+  </scm>
+  <assignedNode>Seeder</assignedNode>
+  <canRoam>false</canRoam>
+  <builders>
+	<javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.36">
+	  <targets>resources/jenkins/dsl/*.groovy
+	  resources/jenkins/dsl/Releases/*.groovy</targets>
+	  <usingScriptText>false</usingScriptText>
+	  <ignoreExisting>false</ignoreExisting>
+	  <removedJobAction>DISABLE</removedJobAction>
+	  <removedViewAction>DELETE</removedViewAction>
+	  <lookupStrategy>JENKINS_ROOT</lookupStrategy>
+	  <additionalClasspath>resources/jenkins/dsl</additionalClasspath>
+	</javaposse.jobdsl.plugin.ExecuteDslScripts>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>

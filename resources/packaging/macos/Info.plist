@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>de_DE</string>
+	<key>CFBundleDisplayName</key>
+	<string>@CPACK_BUNDLE_NAME@</string>
+	<key>CFBundleExecutable</key>
+	<string>@CPACK_BUNDLE_NAME@</string>
+	<key>CFBundleIconFile</key>
+	<string>@CPACK_BUNDLE_NAME@.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.governikus.@CPACK_BUNDLE_NAME@</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>@CPACK_BUNDLE_NAME@</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleVersion</key>
+	<string>@VERSION@</string>
+	<key>CFBundleShortVersionString</key>
+	<string>@VERSION@</string>
+	<key>CFBundleSignature</key>
+	<string>aaii</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>© 2014 Governikus GmbH &amp; Co. KG</string>
+	<key>LSBackgroundOnly</key>
+	<string>0</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.9.0</string>
+	<key>LSUIElement</key>
+	<string>1</string>
+</dict>
+</plist>

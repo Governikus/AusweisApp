@@ -1,0 +1,123 @@
+{
+	"IssueDate": "2015-11-24T12:00:00+1:00",
+	"SupportedDevices":
+	[
+		{
+			"ReaderType": "REINER_cyberJack_RFID_komfort",
+			"VendorId": "0x0C4B",
+			"ProductId": "0x0501",
+			"Name": "REINER SCT cyberJack RFID komfort",
+			"Drivers":
+			[
+				{
+					"Platforms": ["WV_WINDOWS7", "WV_WINDOWS8", "WV_WINDOWS8_1", "WV_WINDOWS10"],
+					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/bc_7_2_3.exe"
+				},
+				{
+					"Platforms": ["MV_10_9", "MV_10_10"],
+					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/pcsc-cyberjack_3.99.5final.SP07-universal-signed.pkg"
+				},
+				{
+					"Platforms": ["MV_10_11"],
+					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/01_pcsc-cyberjack_3.99.5final.SP08-universal-osx10.11-signed.pkg"
+				},
+				{
+					"Platforms": ["LINUX"],
+					"URL": "https://www.reiner-sct.com/support/download/treiber-und-software/cyberjack/rfid-komfort-linux.html"
+				}
+			]
+		},
+
+		{
+			"ReaderType": "REINER_cyberJack_RFID_standard",
+			"VendorId": "0x0C4B",
+			"ProductId": "0x0500",
+			"Name": "REINER SCT cyberJack RFID standard",
+			"Drivers":
+			[
+				{
+					"Platforms": ["WV_WINDOWS7", "WV_WINDOWS8", "WV_WINDOWS8_1", "WV_WINDOWS10"],
+					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/bc_7_2_3.exe"
+				},
+				{
+					"Platforms": ["MV_10_9", "MV_10_10"],
+					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/pcsc-cyberjack_3.99.5final.SP07-universal-signed.pkg"
+				},
+				{
+					"Platforms": ["MV_10_11"],
+					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/01_pcsc-cyberjack_3.99.5final.SP08-universal-osx10.11-signed.pkg"
+				},
+				{
+					"Platforms": ["LINUX"],
+					"URL": "https://www.reiner-sct.com/support/download/treiber-und-software/cyberjack/rfid-standard-linux.html"
+				}
+			]
+		},
+
+		{
+			"ReaderType": "REINER_cyberJack_RFID_basis",
+			"VendorId": "0x0C4B",
+			"ProductId": "0x9102",
+			"Name": "REINER SCT cyberJack RFID basis",
+			"Drivers":
+			[
+				{
+					"Platforms": ["WV_WINDOWS7", "WV_WINDOWS8", "WV_WINDOWS8_1", "WV_WINDOWS10"],
+					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/01_cJRFIDbasisIFD.exe"
+				},
+				{
+					"Platforms": ["MV_10_9", "MV_10_10", "MV_10_11"],
+					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/ifd-ccid-1.4.8-universal-signed.pkg"
+				},
+				{
+					"Platforms": ["LINUX"],
+					"URL": "https://www.reiner-sct.com/support/download/treiber-und-software/cyberjack/rfid-basis-linux.html"
+				}
+			]
+		},
+
+		{
+			"ReaderType": "SCM_SDI011",
+			"VendorId": "0x04E6",
+			"ProductId": "0x512B",
+			"Name": "SDI011 Contactless Reader",
+			"Drivers":
+			[
+				{
+					"Platforms": ["WV_WINDOWS7", "WV_WINDOWS8", "WV_WINDOWS8_1", "WV_WINDOWS10"],
+					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/SDI011_win_installer_V1.01.zip"
+				},
+				{
+					"Platforms": ["MV_10_9", "MV_10_10", "MV_10_11"],
+					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/SDI011_mac_V5.0.18.zip"
+				},
+				{
+					"Platforms": ["LINUX"],
+					"URL": "http://support.identive-group.com/npa_downloads.php"
+				}
+			]
+		},
+
+		{
+			"ReaderType": "SCM_SCL011_Contactless_Reader",
+			"VendorId": "0x04E6",
+			"ProductId": "0x5292",
+			"Name": "SCL01x Contactless Reader",
+			"Drivers":
+			[
+				{
+					"Platforms": ["WV_WINDOWS7", "WV_WINDOWS8", "WV_WINDOWS8_1", "WV_WINDOWS10"],
+					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/SCL011_win_installer_V1.01.zip"
+				},
+				{
+					"Platforms": ["MV_10_9", "MV_10_10", "MV_10_11"],
+					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/SCL011_V2.09_mac.zip"
+				},
+				{
+					"Platforms": ["LINUX"],
+					"URL": "http://support.identive-group.com/npa_downloads.php"
+				}
+			]
+		}
+	]
+}

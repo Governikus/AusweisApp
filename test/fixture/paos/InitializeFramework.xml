@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header>
+      <sb:Correlation xmlns:sb="http://urn:liberty:sb:2003-08" messageID="Id510" refToMessageID="ef70467d-502c-4729-90fd-1f6661960ea3"/>
+   </soap:Header>
+   <soap:Body>
+   <InitializeFramework xmlns="http://www.bsi.bund.de/ecard/api/1.1"/>
+</soap:Body>
+</soap:Envelope>

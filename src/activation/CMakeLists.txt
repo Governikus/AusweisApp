@@ -1,0 +1,6 @@
+ADD_SUBDIRECTORY(base)
+
+ADD_SUBDIRECTORY(customscheme)
+ADD_SUBDIRECTORY(intent)
+ADD_SUBDIRECTORY(webservice)
+ADD_SUBDIRECTORY(internal)

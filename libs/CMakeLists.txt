@@ -1,0 +1,440 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0)
+
+IF(POLICY CMP0010)
+	CMAKE_POLICY(SET CMP0010 NEW)
+ENDIF()
+
+IF(POLICY CMP0020)
+	CMAKE_POLICY(SET CMP0020 NEW)
+ENDIF()
+
+IF(NOT ANDROID AND NOT IOS)
+	SET(COMPILER_SEARCH C CXX)
+ENDIF()
+
+PROJECT(AusweisApp2_Libs ${COMPILER_SEARCH})
+
+SET(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../cmake")
+INCLUDE(ExternalProject)
+INCLUDE(Helper)
+INCLUDE(DVCS)
+
+ADD_FLAG(-fstack-protector-strong -fstack-protector NOQUOTES VAR COMPILER_FLAGS)
+
+
+IF(MSVC)
+	FIND_PROGRAM(MAKE nmake CMAKE_FIND_ROOT_PATH_BOTH)
+ELSE()
+	FIND_PROGRAM(MAKE make CMAKE_FIND_ROOT_PATH_BOTH)
+ENDIF()
+
+IF(MINGW AND NOT MAKE)
+	FIND_PROGRAM(MAKE mingw32-make CMAKE_FIND_ROOT_PATH_BOTH)
+ENDIF()
+
+IF(MAKE)
+	MESSAGE(STATUS "Using 'make' command... ${MAKE}")
+ELSE()
+	MESSAGE(FATAL_ERROR "Cannot find 'make' command")
+ENDIF()
+
+IF(NOT DEFINED PROCESSOR_COUNT)
+	INCLUDE(ProcessorCount)
+	ProcessorCount(PROCESSOR_COUNT)
+ENDIF()
+
+IF(NOT PROCESSOR_COUNT EQUAL 0 AND NOT "${MAKE}" MATCHES "nmake")
+	SET(MAKE_JOBS -j${PROCESSOR_COUNT})
+	MESSAGE(STATUS "PROCESSOR_COUNT: ${PROCESSOR_COUNT}")
+ENDIF()
+
+IF(CMAKE_BUILD_TYPE)
+	STRING(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
+ELSE()
+	SET(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "build type configuration" FORCE)
+ENDIF()
+
+IF(NOT ${CMAKE_BUILD_TYPE} STREQUAL "DEBUG" AND NOT ${CMAKE_BUILD_TYPE} STREQUAL "RELEASE")
+	MESSAGE(FATAL_ERROR "CMAKE_BUILD_TYPE is invalid! Available options: RELEASE, DEBUG")
+ENDIF()
+
+FIND_HOST_PACKAGE(Perl REQUIRED)
+
+FIND_HOST_PACKAGE(PythonInterp 2.7 REQUIRED)
+IF(NOT "${PYTHON_VERSION_MAJOR}" STREQUAL "2")
+	MESSAGE(FATAL_ERROR "Cannot find 'python v2' command")
+ENDIF()
+
+FIND_PROGRAM(PATCH_CMD patch CMAKE_FIND_ROOT_PATH_BOTH)
+IF(PATCH_CMD)
+	SET(PATCH_OPTIONS -i)
+	MESSAGE(STATUS "Using 'patch' command... ${PATCH_CMD}")
+ELSE()
+	SET(PATCH_CMD ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/patch.py --debug -v)
+	MESSAGE(STATUS "Cannot find 'patch' command... using patch.py")
+ENDIF()
+
+IF(NOT DESTINATION_DIR)
+	SET(DESTINATION_DIR ${PROJECT_BINARY_DIR}/dist)
+ENDIF()
+IF(MSYS)
+	STRING(REPLACE "C:/msys/1.0" "" DESTINATION_DIR ${DESTINATION_DIR})
+ENDIF()
+
+SET(PATCHES_DIR ${PROJECT_SOURCE_DIR}/../patches)
+
+IF(NOT PACKAGES_DIR)
+	SET(PACKAGES_DIR $ENV{PACKAGES_DIR})
+	IF(NOT PACKAGES_DIR)
+		MESSAGE(STATUS "Define PACKAGES_DIR for local packages")
+		SET(PACKAGES_DIR ${PROJECT_BINARY_DIR}/download)
+	ENDIF()
+ENDIF()
+
+STRING(REPLACE "\\" "/" PACKAGES_DIR ${PACKAGES_DIR})
+SET_DIRECTORY_PROPERTIES(PROPERTIES EP_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/b)
+INCLUDE(Messages)
+
+
+################################## Versionen
+SET(QT 5.7.0)
+SET(OPENSSL 1.0.2j)
+
+SET(QT_HASH a6a2632de7e44bbb790bc3b563f143702c610464a7f537d02036749041fd1800)
+SET(OPENSSL_HASH e7aff292be21c259c6af26469c7a9b3ba26e9abaaffd325e3dccc9785256c431)
+
+################################## Files
+SET(QT_FILE qt-everywhere-opensource-src-${QT}.tar.xz)
+SET(OPENSSL_FILE openssl-${OPENSSL}.tar.gz)
+
+################################## Downloads
+IF("${QT}" MATCHES "alpha|beta|rc")
+	SET(QT_DEST_DIR development_releases)
+ELSE()
+	SET(QT_DEST_DIR official_releases)
+ENDIF()
+STRING(SUBSTRING ${QT} 0 3 QT_SUBVERSION)
+
+SET(QT_URL http://download.qt.io/${QT_DEST_DIR}/qt/${QT_SUBVERSION}/${QT}/single)
+SET(OPENSSL_URL https://www.openssl.org/source)
+
+IF(ANDROID OR APPLE)
+	FIND_PROGRAM(SH_CMD sh CMAKE_FIND_ROOT_PATH_BOTH)
+	IF(SH_CMD)
+		MESSAGE(STATUS "Using 'sh' command... ${SH_CMD}")
+	ELSE()
+		MESSAGE(FATAL_ERROR "Cannot find 'sh' command")
+	ENDIF()
+ENDIF()
+
+################################## Android NDK /SDK
+#########################################################################
+
+IF(ANDROID)
+	SET(HOST --host=${ANDROID_TOOLCHAIN_MACHINE_NAME})
+
+	FIND_PROGRAM(SED_CMD sed CMAKE_FIND_ROOT_PATH_BOTH)
+	IF(SED_CMD)
+		MESSAGE(STATUS "Using 'sed' command... ${SED_CMD}")
+	ELSE()
+		MESSAGE(FATAL_ERROR "Cannot find 'sed' command")
+	ENDIF()
+
+	SET(ANDROID_STANDALONE "${PROJECT_BINARY_DIR}/standalone")
+	IF(ANDROID_NDK AND NOT EXISTS ${ANDROID_STANDALONE})
+		MESSAGE(STATUS "Creating standalone toolchain...")
+
+		EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} ${ANDROID_NDK}/build/tools/make_standalone_toolchain.py
+			--arch ${ANDROID_ARCH_NAME} --api ${ANDROID_NATIVE_API_LEVEL} --install-dir ${ANDROID_STANDALONE}
+			RESULT_VARIABLE CREATE_STANDALONE_TOOLCHAIN)
+
+		if(${CREATE_STANDALONE_TOOLCHAIN} EQUAL 0)
+			MESSAGE(STATUS "You need to call 'export PATH=${ANDROID_STANDALONE}/bin:\$PATH'")
+		ELSE()
+			MESSAGE(FATAL_ERROR "Cannot create standalone toolchain")
+		ENDIF()
+	ENDIF()
+ENDIF()
+
+IF(IOS)
+	SET(HOST --host=arm-apple-darwin7)
+	SET(HOST64 --host=aarch64-apple-darwin)
+	SET(IOS_ARCH armv7)
+	SET(IOS_ARCH64 arm64)
+ENDIF()
+
+SET(ENABLED_TARGETS)
+
+
+################################## OpenSSL
+#########################################################################
+LIST(APPEND ENABLED_TARGETS openssl)
+SET(OPENSSL_CONFIGURE_FLAGS no-ssl2 no-ssl3 no-ssl3-method no-dtls no-srp no-idea no-mdc2 no-rc5 no-hw -DOPENSSL_NO_HEARTBEATS shared)
+
+IF(NOT WIN32)
+	SET(OPENSSL_CONFIGURE_FLAGS no-engine ${OPENSSL_CONFIGURE_FLAGS})
+ENDIF()
+
+IF(IOS)
+	SET(OPENSSL_PATCH_COMMAND ${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl_iOS.patch && )
+	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} iphoneos-cross)
+	SET(OPENSSL_PATCH_AFTER_CONFIGURE ${SH_CMD} ${PATCHES_DIR}/openssl_iOS_perl.sh ${CMAKE_IOS_SDK_ROOT} &&)
+ELSEIF(APPLE)
+	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} darwin64-x86_64-cc)
+	#SET(OPENSSL_PATCH_AFTER_CONFIGURE ${SH_CMD} ${PATCHES_DIR}/openssl_MacOS_perl.sh &&)
+ELSEIF(MINGW)
+	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} mingw)
+ELSEIF(MSVC)
+	SET(OPENSSL_PREBUILD ms\\do_ms.bat)
+	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-asm VC-WIN32)
+	SET(OPENSSL_ADDITIONAL_MAKE -f ms/ntdll.mak)
+	SET(OPENSSL_INSTALL_TARGET install)
+ELSEIF(ANDROID)
+	IF("${ANDROID_TOOLCHAIN_MACHINE_NAME}" STREQUAL "arm-linux-androideabi")
+		SET(OPENSSL_ARCH android-armv7)
+		SET(OPENSSL_COMPILER_FLAGS "-mfloat-abi=softfp")
+	ELSEIF("${ANDROID_TOOLCHAIN_MACHINE_NAME}" STREQUAL "i686-linux-android")
+		SET(OPENSSL_ARCH android-x86)
+	ELSEIF("${ANDROID_TOOLCHAIN_MACHINE_NAME}" STREQUAL "aarch64-linux-android")
+		SET(OPENSSL_ARCH android)
+	ELSE()
+		MESSAGE(FATAL_ERROR "ANDROID_TOOLCHAIN_MACHINE_NAME not supported by openssl")
+	ENDIF()
+
+	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} --cross-compile-prefix=${ANDROID_TOOLCHAIN_MACHINE_NAME}- ${OPENSSL_ARCH})
+	SET(OPENSSL_PATCH_COMMAND ${PATCH_CMD} -p0 ${PATCH_OPTIONS} ${PATCHES_DIR}/soname/openssl_makefile.shared.patch && ${SH_CMD} ${PATCHES_DIR}/soname/openssl_sed.sh && )
+
+ELSEIF(BSD)
+	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} BSD-x86_64)
+ELSEIF(LINUX)
+	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} linux-x86_64)
+ELSE()
+	MESSAGE(FATAL_ERROR "Unsupported system")
+ENDIF()
+
+IF(NOT OPENSSL_PREBUILD)
+	SET(OPENSSL_PREBUILD ${OPENSSL_PATCH_AFTER_CONFIGURE} ${MAKE} depend)
+ENDIF()
+
+IF(NOT OPENSSL_INSTALL_TARGET)
+	SET(OPENSSL_INSTALL_TARGET install_sw)
+ENDIF()
+
+# OpenSSL does not support multiple make jobs!
+IF(IOS)
+	ExternalProject_Add(openssl64
+		URL ${OPENSSL_URL}/${OPENSSL_FILE}
+		URL_HASH SHA256=${OPENSSL_HASH}
+		DOWNLOAD_DIR ${PACKAGES_DIR}
+
+		PATCH_COMMAND
+			${OPENSSL_PATCH_COMMAND}
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl_rsa_psk.patch
+
+		CONFIGURE_COMMAND ${PERL_EXECUTABLE} Configure --prefix=${PROJECT_BINARY_DIR}/openssl64-prefix/tmp ${OPENSSL_CONFIGURE_FLAGS} "-arch ${IOS_ARCH64}" "${COMPILER_FLAGS}"
+		BUILD_COMMAND ${OPENSSL_PATCH_AFTER_CONFIGURE} ${MAKE} depend && ${MAKE}
+		BUILD_IN_SOURCE 1
+		INSTALL_COMMAND ${MAKE} install_sw
+	)
+
+	ExternalProject_Add(openssl
+		DEPENDS openssl64
+		URL ${OPENSSL_URL}/${OPENSSL_FILE}
+		URL_HASH SHA256=${OPENSSL_HASH}
+		DOWNLOAD_DIR ${PACKAGES_DIR}
+
+		PATCH_COMMAND
+			${OPENSSL_PATCH_COMMAND}
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl_rsa_psk.patch
+
+		CONFIGURE_COMMAND ${PERL_EXECUTABLE} Configure --prefix=${PROJECT_BINARY_DIR}/openssl-prefix/tmp ${OPENSSL_CONFIGURE_FLAGS} "-arch ${IOS_ARCH}" "${COMPILER_FLAGS}"
+		BUILD_COMMAND ${OPENSSL_PATCH_AFTER_CONFIGURE} ${MAKE} depend && ${MAKE}
+		BUILD_IN_SOURCE 1
+		INSTALL_COMMAND ${MAKE} install_sw
+	)
+
+	ADD_CUSTOM_COMMAND(TARGET openssl POST_BUILD COMMAND ${SH_CMD} ${PATCHES_DIR}/create_multi_architecture_build.sh ${PROJECT_BINARY_DIR}/openssl-prefix/tmp ${PROJECT_BINARY_DIR}/openssl64-prefix/tmp ${DESTINATION_DIR})
+ELSE()
+ExternalProject_Add(openssl
+	URL ${OPENSSL_URL}/${OPENSSL_FILE}
+	URL_HASH SHA256=${OPENSSL_HASH}
+	DOWNLOAD_DIR ${PACKAGES_DIR}
+
+	PATCH_COMMAND
+		${OPENSSL_PATCH_COMMAND}
+		${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl_rsa_psk.patch
+
+	CONFIGURE_COMMAND ${PERL_EXECUTABLE} Configure --prefix=${DESTINATION_DIR} ${OPENSSL_CONFIGURE_FLAGS} "${COMPILER_FLAGS}" "${OPENSSL_COMPILER_FLAGS}"
+	BUILD_COMMAND ${MAKE} ${OPENSSL_ADDITIONAL_MAKE}
+	BUILD_IN_SOURCE 1
+	INSTALL_COMMAND ${MAKE} ${OPENSSL_ADDITIONAL_MAKE} ${OPENSSL_INSTALL_TARGET}
+)
+
+ExternalProject_Add_Step(openssl prebuild
+	COMMAND ${OPENSSL_PREBUILD}
+	DEPENDEES configure
+	DEPENDERS build
+	WORKING_DIRECTORY <BINARY_DIR>)
+ENDIF()
+
+IF(UNIX)
+	ADD_CUSTOM_COMMAND(TARGET openssl POST_BUILD COMMAND chmod 755 ${DESTINATION_DIR}/lib/libssl*${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libcrypto*${CMAKE_SHARED_LIBRARY_SUFFIX})
+ENDIF()
+
+IF(ANDROID)
+	IF(ANDROID_COMPILER_IS_CLANG)
+		SET(COMPILER clang)
+	ELSE()
+		SET(COMPILER gcc)
+	ENDIF()
+
+	ADD_CUSTOM_COMMAND(TARGET openssl POST_BUILD
+		COMMAND ${ANDROID_TOOLCHAIN_MACHINE_NAME}-${COMPILER} -o ${DESTINATION_DIR}/lib/libgovcrypto${CMAKE_SHARED_LIBRARY_SUFFIX} -shared -Wl,-soname=libgovcrypto${CMAKE_SHARED_LIBRARY_SUFFIX} -Wl,--whole-archive ${DESTINATION_DIR}/lib/libcrypto${CMAKE_STATIC_LIBRARY_SUFFIX} -Wl,--no-whole-archive
+		COMMAND ${ANDROID_TOOLCHAIN_MACHINE_NAME}-${COMPILER} -o ${DESTINATION_DIR}/lib/libgovssl${CMAKE_SHARED_LIBRARY_SUFFIX} -shared -Wl,-soname=libgovssl${CMAKE_SHARED_LIBRARY_SUFFIX} -Wl,--whole-archive ${DESTINATION_DIR}/lib/libssl${CMAKE_STATIC_LIBRARY_SUFFIX} -Wl,--no-whole-archive ${DESTINATION_DIR}/lib/libgovcrypto${CMAKE_SHARED_LIBRARY_SUFFIX})
+ELSEIF(MAC)
+	SET(OPENSSL_FILE_VERSION 1.0.0)
+	ADD_CUSTOM_COMMAND(TARGET openssl POST_BUILD
+		COMMAND install_name_tool -id libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
+		COMMAND install_name_tool -id libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
+		COMMAND install_name_tool -change ${DESTINATION_DIR}/lib/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
+ENDIF()
+
+################################## QT
+#########################################################################
+LIST(APPEND ENABLED_TARGETS qt)
+
+IF(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
+	SET(QT_CONFIGURE_FLAGS -debug -qml-debug)
+	SET(QT_PATCH_COMMAND ${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Enable-debug-output-for-OpenSSL.patch &&)
+ELSE()
+	SET(QT_CONFIGURE_FLAGS -release -no-qml-debug)
+ENDIF()
+
+SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -opensource -confirm-license -shared -qt-zlib -no-mtdev -qt-libpng -qt-libjpeg -qt-freetype -no-harfbuzz -qt-pcre -system-proxies -no-compile-examples -nomake examples -nomake tests -no-sql-sqlite -openssl-linked -I ${DESTINATION_DIR}/include -L ${DESTINATION_DIR}/lib)
+SET(QT_CONFIGURE_FLAGS_OTHER --prefix=${DESTINATION_DIR} -no-journald -no-dbus -no-directfb -no-linuxfb)
+SET(QT_CONFIGURE_FLAGS_SKIP_MODULES -skip qtwebchannel -skip qtwebengine -skip qtscript -skip qtactiveqt -skip qtlocation -skip qtserialbus -skip qtserialport -skip qtgamepad -skip qtvirtualkeyboard -skip qtcanvas3d -skip qtcharts -skip qtdatavis3d -skip qt3d -skip qtpurchasing)
+
+SET(QT_CONFIGURE ./configure)
+IF(IOS)
+	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -framework -sdk iphoneos -xplatform macx-ios-clang)
+ELSEIF(APPLE)
+	FIND_PROGRAM(XCODE_SELECT xcode-select)
+	IF(NOT XCODE_SELECT)
+		MESSAGE(FATAL_ERROR "Cannot find xcode-select")
+	ENDIF()
+
+	EXECUTE_PROCESS(COMMAND ${XCODE_SELECT} -p OUTPUT_VARIABLE osx_dev_dir OUTPUT_STRIP_TRAILING_WHITESPACE)
+	FILE(GLOB osx_sdk "${osx_dev_dir}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.*")
+	GET_FILENAME_COMPONENT(osx_sdk ${osx_sdk} NAME)
+	STRING(REPLACE ".sdk" "" osx_sdk "${osx_sdk}")
+	STRING(TOLOWER "${osx_sdk}" osx_sdk)
+	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -framework -sdk ${osx_sdk})
+ELSEIF(WIN32)
+	IF(MSVC)
+		SET(QT_PLATFORM win32-msvc2015)
+		SET(QT_OPENSSL OPENSSL_LIBS=-llibeay32\ -lssleay32)
+	ELSE()
+		SET(QT_PLATFORM win32-g++)
+		SET(QT_OPENSSL OPENSSL_LIBS=-lcrypto\ -lssl)
+	ENDIF()
+
+	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_OPENSSL} -prefix ${DESTINATION_DIR} -opengl desktop -no-icu -no-sql-odbc -platform ${QT_PLATFORM})
+	SET(QT_CONFIGURE configure.bat)
+ELSEIF(ANDROID)
+	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER}
+		-android-sdk ${ANDROID_SDK} -android-ndk ${ANDROID_NDK} -android-ndk-platform android-${ANDROID_NATIVE_API_LEVEL} -android-ndk-host ${ANDROID_NDK_HOST_SYSTEM_NAME}
+		-android-arch ${ANDROID_ABI} -android-toolchain-version ${ANDROID_COMPILER_VERSION}
+		-xplatform android-g++)
+	SET(QT_ENV export OPENSSL_LIBS=-lgovcrypto\ -lgovssl &&)
+ELSE()
+	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -no-libproxy)
+ENDIF()
+
+ExternalProject_Add(qt
+	DEPENDS openssl
+	URL ${QT_URL}/${QT_FILE}
+	URL_HASH SHA256=${QT_HASH}
+	DOWNLOAD_DIR ${PACKAGES_DIR}
+
+	PATCH_COMMAND ${QT_PATCH_COMMAND}
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-disable-qtplugininfo.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Re-apply-the-cast-part-of-commit-392c7b99348e2a96ef1.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Enable-use-of-the-same-NetworkAccessAuthenticationManager.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Make-sure-SSL-configuration-is-correct-in-QNetworkRe.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Make-QCryptographicHash-a-Q_GADGET.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Make-server-side-signature-algorithms-configurable.patch &&
+			${CMAKE_COMMAND} -E touch qtbase/.gitignore
+	CONFIGURE_COMMAND ${QT_ENV} ${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SKIP_MODULES}
+	BUILD_COMMAND ${MAKE} ${MAKE_JOBS}
+	BUILD_IN_SOURCE 1
+)
+
+ADD_CUSTOM_COMMAND(TARGET qt POST_BUILD COMMAND cmake -E touch ${DESTINATION_DIR}/mkspecs/qt_vendor_governikus)
+
+#########################################################################
+
+FOREACH(var ${ENABLED_TARGETS})
+	EXTERNALPROJECT_GET_PROPERTY(${var} INSTALL_DIR)
+	LIST(APPEND CLEAN_TARGETS ${INSTALL_DIR})
+ENDFOREACH()
+SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${DESTINATION_DIR};${CLEAN_TARGETS}")
+
+OPTION(COMPRESS_DEPENDS "Disable DEPENDS for compress target" ON)
+IF(COMPRESS_DEPENDS)
+	SET(COMPRESS_TARGETS ${ENABLED_TARGETS})
+ENDIF()
+
+STRING(TIMESTAMP stamp "%Y-%m-%d")
+FIND_DVCS(${PROJECT_SOURCE_DIR}/..)
+IF(DVCS_FOUND)
+	GET_DVCS_INFO()
+
+	IF(DEFINED dvcs_phase)
+		SET(stamp ${stamp}_${dvcs_phase})
+	ENDIF()
+
+	IF(DEFINED dvcs_revision)
+		SET(stamp ${stamp}_${dvcs_revision})
+	ENDIF()
+ENDIF()
+
+IF(IOS)
+	SET(SYSTEM_NAME iOS)
+	# Remove this work-around! Do not build any .dylib or be able to use .dylib
+	# Globbing is not supported by cmake command mode! This will work if executed with unix shell only.
+	SET(CLEANUP_FILES ${CMAKE_COMMAND} -E remove ${DESTINATION_DIR}/lib/*.dylib)
+ELSEIF(ANDROID)
+	SET(SYSTEM_NAME ${CMAKE_SYSTEM_NAME}_${CMAKE_CXX_COMPILER_ID}_${ANDROID_ABI})
+ELSE()
+	SET(SYSTEM_NAME ${CMAKE_SYSTEM_NAME}_${CMAKE_CXX_COMPILER_ID})
+ENDIF()
+
+IF(WIN32)
+	IF(SIGNTOOL_CMD)
+		CONFIGURE_FILE(${CMAKE_MODULE_PATH}/SignFiles.cmake.in ${CMAKE_BINARY_DIR}/SignFiles.cmake @ONLY)
+		SET(SIGN_COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_BINARY_DIR}/SignFiles.cmake")
+	ENDIF()
+ENDIF()
+
+IF(CMAKE_VERSION VERSION_LESS 3.2)
+	SET(COMPRESSION cfj)
+	SET(COMPRESSION_FILENDING tar.bz2)
+ELSE()
+	SET(COMPRESSION cfJ)
+	SET(COMPRESSION_FILENDING tar.xz)
+ENDIF()
+
+ADD_CUSTOM_TARGET(compress.pre ${compressed_filename}
+		COMMAND ${CLEANUP_FILES}
+		COMMAND ${CMAKE_COMMAND} -E remove_directory "${DESTINATION_DIR}/doc"
+		COMMAND ${CMAKE_COMMAND} -E remove_directory "${DESTINATION_DIR}/lib/engines"
+		COMMAND ${CMAKE_COMMAND} -E remove_directory "${DESTINATION_DIR}/share"
+		COMMAND ${SIGN_COMMAND}
+		DEPENDS ${COMPRESS_TARGETS}
+		WORKING_DIRECTORY "${DESTINATION_DIR}")
+
+SET(compressed_filename Toolchain_${SYSTEM_NAME}_${stamp}.${COMPRESSION_FILENDING})
+ADD_CUSTOM_COMMAND(OUTPUT ${compressed_filename}
+		COMMAND ${CMAKE_COMMAND} -E tar "${COMPRESSION}" "${compressed_filename}" "${DESTINATION_DIR}"
+		DEPENDS compress.pre)
+ADD_CUSTOM_TARGET(compress DEPENDS ${compressed_filename})

@@ -1,0 +1,4 @@
+ADD_PLATFORM_LIBRARY(AusweisAppCardNfc)
+
+TARGET_LINK_LIBRARIES(AusweisAppCardNfc Qt5::Core AusweisAppGlobal AusweisAppCard)
+TARGET_COMPILE_DEFINITIONS(AusweisAppCardNfc PRIVATE QT_STATICPLUGIN)

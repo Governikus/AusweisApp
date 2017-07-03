@@ -1,0 +1,45 @@
+From 0d2e326699d2646e38d60036659a7ff3e0b7b8d0 Mon Sep 17 00:00:00 2001
+From: Simon Hausmann <simon.hausmann@theqtcompany.com>
+Date: Fri, 13 May 2016 14:24:59 +0200
+Subject: [PATCH] Re-apply the cast part of commit
+ 392c7b99348e2a96ef11adb5712095fbd13fb780
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+We reverted this in 6f59c91c51edd7207635c3fa2f0b2b1179e7aa6e to avoid further
+breakage in a patch release. Now let's do the right thing in the next minor
+release and replace the qobject_cast on the instance with the IID check that
+won't require instantiating the plugin in the qml loader thread.
+
+[ChangeLog][QtQml][Important Behavior Changes] When the engine looks for QML
+modules / extension plugins in statically linked applications, the plugins are
+not instantiated in the qml loader thread anymore. For this to work however
+it is necessary for plugins to use Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
+in their class declaration instead of hardcoding the interface id as a string
+literal.
+
+Task-number: QTBUG-52012
+Change-Id: I45fe8b9fec23b3d0408b7ee79ce297c7d47ce36d
+Reviewed-by: Sebastian Lösch <Sebastian.Loesch@governikus.com>
+Reviewed-by: J-P Nurmi <jpnurmi@qt.io>
+---
+ src/qml/qml/qqmlimport.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtdeclarative/src/qml/qml/qqmlimport.cpp y/qtdeclarative/src/qml/qml/qqmlimport.cpp
+index b51c78b..32faf76 100644
+--- x/qtdeclarative/src/qml/qml/qqmlimport.cpp
++++ y/qtdeclarative/src/qml/qml/qqmlimport.cpp
+@@ -913,7 +913,7 @@ bool QQmlImportsPrivate::populatePluginPairVector(QVector<StaticPluginPair> &res
+         // To avoid traversing all static plugins for all imports, we cut down
+         // the list the first time called to only contain QML plugins:
+         foreach (const QStaticPlugin &plugin, QPluginLoader::staticPlugins()) {
+-            if (qobject_cast<QQmlExtensionPlugin *>(plugin.instance()))
++            if (plugin.metaData().value(QStringLiteral("IID")).toString() == QLatin1String(QQmlExtensionInterface_iid))
+                 plugins.append(plugin);
+         }
+     }
+-- 
+2.8.3
+

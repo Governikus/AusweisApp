@@ -1,0 +1,9 @@
+AusweisApp2 1.0.0
+^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 28. Oktober 2014
+
+
+
+Initiale Bereitstellung der AusweisApp2 in der Erprobungsphase für
+stationäre Betriebssysteme.

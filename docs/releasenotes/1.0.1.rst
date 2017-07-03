@@ -1,0 +1,10 @@
+AusweisApp2 1.0.1
+^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 20. November 2014
+
+
+
+Anwender
+""""""""
+  - Korrekturen bei der Verwendung von Basislesern.

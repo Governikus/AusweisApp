@@ -1,0 +1,26 @@
+AusweisApp2 1.2.0
+^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 20. Januar 2015
+
+
+
+Anwender
+""""""""
+  - Die Bildschirmtastatur wurde überarbeitet.
+
+  - Die Proxy-Einstellungen wurden überarbeitet.
+
+      - Der verwendete Proxy wird nun immer aus den System-Einstellungen übernommen.
+
+      - Die manuelle Konfigurationsoption wurde aus den Einstellungen entfernt.
+
+  - Es fand eine Überarbeitung in Hinblick auf Barrierefreiheit statt.
+
+  - Kleinere optische Verbesserungen vorgenommen.
+
+  - Es wird nun ein Einrichtungsassistenten angeboten, der den Benutzer bei der
+    Deinstallation der AusweisApp (1) unterstützt und Verweise auf die
+    Herstellerseiten der Kartenleser zum Treiberdownload enthält.
+
+  - Die Anbieterliste wird nun automatisch aktualisiert.

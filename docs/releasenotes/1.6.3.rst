@@ -1,0 +1,10 @@
+AusweisApp2 1.6.3
+^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 22. Januar 2016
+
+
+
+Anwender
+""""""""
+  - Fehlermeldung bei der Installation auf Windows behoben.

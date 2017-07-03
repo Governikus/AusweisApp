@@ -1,0 +1,10 @@
+AusweisApp2 1.6.2
+^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 5. Januar 2016
+
+
+
+Anwender
+""""""""
+  - Verbindungsprobleme mit einzelnen Diensten wurden behoben

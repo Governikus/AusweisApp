@@ -1,0 +1,37 @@
+import common.Review
+import static common.Constants.strip
+
+def j = new Review
+	(
+		name: 'Win32_GNU',
+		libraries: 'Win32_GNU',
+		label: "Windows7_${MERCURIAL_REVISION_BRANCH}",
+		artifacts: 'tmp/AusweisApp2.*.log',
+		allowEmptyArtifacts: true,
+		xunit: true
+	).generate(this)
+
+
+j.with
+{
+	steps
+	{
+		batchFile('cd source & python resources/jenkins/import.py')
+
+		batchFile(strip("""\
+			cd build &
+			cmake ../source -G\"MinGW Makefiles\"
+			-DCMAKE_PREFIX_PATH=%WORKSPACE%\\libs\\build\\dist
+			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+			"""))
+
+		batchFile('cd build & mingw32-make %MAKE_FLAGS%')
+
+		batchFile('''\
+			set PATH=%WORKSPACE%/libs/build/dist/bin;%PATH%
+			set PATH=%WORKSPACE%/install;%PATH%
+			set QT_PLUGIN_PATH=%WORKSPACE%/libs/build/dist/plugins
+			cd build & ctest %MAKE_FLAGS%
+			'''.stripIndent().trim())
+	}
+}

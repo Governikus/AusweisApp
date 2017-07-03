@@ -1,0 +1,6 @@
+qt5_add_resources(QRC_FIXTURE "fixture/fixture.qrc")
+ADD_OBJECT_LIBRARY(QRC_FIXTURE_OBJ ${QRC_FIXTURE} Qt5::Core)
+
+
+ADD_SUBDIRECTORY(helper)
+ADD_SUBDIRECTORY(qt)

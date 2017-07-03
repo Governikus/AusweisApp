@@ -1,0 +1,4 @@
+{
+	"name" : "UIPlugInAidl",
+	"dependencies" : ["UIPlugInJsonApi"]
+}

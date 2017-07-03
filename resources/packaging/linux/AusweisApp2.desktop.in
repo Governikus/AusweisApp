@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Exec=@CMAKE_INSTALL_PREFIX@/bin/AusweisApp2
+Icon=AusweisApp2
+StartupNotify=true
+Terminal=false
+Categories=Network;Utility
+Keywords=nPA,eID,eAT,Personalausweis,Aufenthaltstitel,Identity,Card
+Name=AusweisApp2

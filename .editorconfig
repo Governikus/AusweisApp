@@ -1,0 +1,23 @@
+# See EditorConfig: http://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Formatting of Sources: see uncrustify and "make format"
+[*.{cpp,h,groovy,py,sh,json,qml,js,cmake,txt}]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = tab
+indent_size = 4
+trim_trailing_whitespace = true
+
+# Formatting of reST: see doc8 and "make doc8"
+[*.{rst}]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true
+

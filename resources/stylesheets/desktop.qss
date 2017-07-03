@@ -1,0 +1,9 @@
+@import ":/stylesheets/common.qss";
+
+governikus--SelfInformationWidget #descriptionLogoInfo{
+	font-weight: bold;
+}
+
+governikus--SelfInformationWidget #titleLabel{
+	font-weight: bold;
+}

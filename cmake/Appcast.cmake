@@ -1,0 +1,61 @@
+IF(MAC OR LINUX OR WIN32)
+	IF(JENKINS_APPCAST)
+		SET(APPCAST_URL ${REMOTE_CONFIG_URL}/build CACHE STRING "Appcast download URL" FORCE)
+	ELSE()
+		SET(APPCAST_URL ${REMOTE_CONFIG_URL} CACHE STRING "Appcast download URL" FORCE)
+	ENDIF()
+
+	MACRO(ADD_APPCAST_FILE _files _system)
+		FOREACH(filePath ${_files})
+			FILE_SIZE(fileSize ${filePath})
+			IF(NOT DEFINED fileSize)
+				MESSAGE(FATAL_ERROR "Cannot get file size of: ${file}")
+			ENDIF()
+
+			GET_FILENAME_COMPONENT(file ${filePath} NAME)
+			MESSAGE(STATUS "Processing: ${file}")
+			IF(NOT "${_system}" STREQUAL "SOURCES")
+				FILE(READ ${PACKAGING_DIR}/updater/Appcast.item.xml.in item)
+
+				STRING(REPLACE "AusweisApp2-" "" APPCAST_FILE_VERSION ${file})
+				STRING(REPLACE ".dmg" "" APPCAST_FILE_VERSION ${APPCAST_FILE_VERSION})
+				STRING(REPLACE ".msi" "" APPCAST_FILE_VERSION ${APPCAST_FILE_VERSION})
+
+				STRING(TIMESTAMP currentDate "%Y-%m-%dT%H:%M:%S")
+				STRING(REPLACE "APPCAST_DATE" ${currentDate} item ${item})
+				STRING(REPLACE "APPCAST_DOWNLOAD_URL" "${APPCAST_URL}/${file}" item ${item})
+				STRING(REPLACE "APPCAST_VERSION" "${APPCAST_FILE_VERSION}" item ${item})
+				STRING(REPLACE "APPCAST_OS" ${_system} item ${item})
+				STRING(REPLACE "APPCAST_PACKAGE_SIZE" "${fileSize}" item ${item})
+				STRING(REPLACE "APPCAST_URL" "${APPCAST_URL}" item ${item})
+				SET(APPCAST_ITEMS "${APPCAST_ITEMS}\n${item}")
+			ENDIF()
+
+			FILE(SHA256 ${filePath} fileHash)
+			FILE(WRITE ${filePath}.sha256 "${fileHash}  ${file}\n")
+		ENDFOREACH()
+	ENDMACRO()
+
+	IF(LINUX OR MAC)
+		FILE(GLOB DMG_FILES ${PROJECT_BINARY_DIR}/*.dmg)
+		FILE(GLOB MSI_FILES ${PROJECT_BINARY_DIR}/*.msi)
+		FILE(GLOB TAR_GZ_FILES ${PROJECT_BINARY_DIR}/*.tar.gz)
+
+		IF(DMG_FILES)
+			ADD_APPCAST_FILE("${DMG_FILES}" "Q_OS_MAC")
+		ENDIF()
+
+		IF(MSI_FILES)
+			ADD_APPCAST_FILE("${MSI_FILES}" "Q_OS_WIN32")
+		ENDIF()
+
+		IF(TAR_GZ_FILES)
+			ADD_APPCAST_FILE("${TAR_GZ_FILES}" "SOURCES")
+		ENDIF()
+
+		IF(APPCAST_ITEMS)
+			CONFIGURE_FILE(${PACKAGING_DIR}/updater/Appcast.xml.in ${PROJECT_BINARY_DIR}/Appcast.xml @ONLY)
+		ENDIF()
+	ENDIF()
+
+ENDIF()

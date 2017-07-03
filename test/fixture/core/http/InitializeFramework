@@ -1,0 +1,18 @@
+HTTP/1.1 200 OK
+Server: Apache-Coyote/1.1
+Content-Type: application/vnd.paos+xml;charset=ISO-8859-1
+Transfer-Encoding: chunked
+Date: Fri, 25 Apr 2014 11:19:40 GMT
+
+192
+<?xml version="1.0" encoding="UTF-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header>
+      <sb:Correlation xmlns:sb="http://urn:liberty:sb:2003-08" messageID="Id5917" refToMessageID="32804e3940f7fe5f9b2dcf4d17decf21728aa745"/>
+   </soap:Header>
+   <soap:Body>
+   <InitializeFramework xmlns="http://www.bsi.bund.de/ecard/api/1.1"/>
+</soap:Body>
+</soap:Envelope>
+
+0
+

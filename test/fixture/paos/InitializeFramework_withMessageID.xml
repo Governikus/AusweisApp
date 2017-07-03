@@ -1,0 +1,28 @@
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:wsa="http://www.w3.org/2005/03/addressing" xmlns:paos="urn:liberty:paos:2006-08"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<S:Header>
+		<paos:PAOS S:actor="http://schemas.xmlsoap.org/soap/actor/next"
+			S:mustUnderstand="1">
+			<paos:Version>urn:liberty:2006-08</paos:Version>
+			<paos:EndpointReference>
+				<paos:Address>http://www.projectliberty.org/2006/01/role/paos
+				</paos:Address>
+			</paos:EndpointReference>
+		</paos:PAOS>
+		<wsa:MessageID>urn:uuid:c0f05ac0-1a67-4a0b-acbd-78309fcdb002
+		</wsa:MessageID>
+		<wsa:Action>http://www.bsi.bund.de/ecard/api/1.0/PAOS/GetNextCommand
+		</wsa:Action>
+	</S:Header>
+	<S:Body>
+		<ns7:InitializeFramework xmlns="urn:oasis:names:tc:dss:1.0:core:schema"
+			xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="urn:iso:std:iso-iec:24727:tech:schema"
+			xmlns:ns4="http://uri.etsi.org/01903/v1.3.2#" xmlns:ns5="urn:oasis:names:tc:SAML:2.0:assertion"
+			xmlns:ns6="http://www.w3.org/2001/04/xmlenc#" xmlns:ns7="http://www.bsi.bund.de/ecard/api/1.1"
+			xmlns:ns8="http://www.setcce.org/schemas/ers" xmlns:ns9="http://uri.etsi.org/02231/v2#"
+			xmlns:ns10="http://www.w3.org/2001/04/xmldsig-more#"
+			xmlns:ns11="urn:oasis:names:tc:dss-x:1.0:profiles:verificationreport:schema#"
+			xmlns:ns12="urn:oasis:names:tc:SAML:1.0:assertion" xmlns:ns13="urn:oasis:names:tc:SAML:1.0:protocol" />
+	</S:Body>
+</S:Envelope>

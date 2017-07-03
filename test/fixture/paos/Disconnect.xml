@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header>
+      <sb:Correlation xmlns:sb="http://urn:liberty:sb:2003-08" messageID="Id523" refToMessageID="86ad52c0-7c06-4b8d-be72-7a559e62aee7"/>
+   </soap:Header>
+   <soap:Body>
+   <Disconnect xmlns="urn:iso:std:iso-iec:24727:tech:schema">
+<SlotHandle>34366364653038392D623031322D346664372D386233362D343664346232393537636236</SlotHandle>
+</Disconnect>
+</soap:Body>
+</soap:Envelope>

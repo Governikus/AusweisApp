@@ -1,0 +1,33 @@
+/*!
+ * BluetoothMessageParameterConnectionStatus.cpp
+ *
+ * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ */
+
+#include "BluetoothMessageParameterConnectionStatus.h"
+
+using namespace governikus;
+
+BluetoothMessageParameterConnectionStatus::BluetoothMessageParameterConnectionStatus(const QByteArray& pValue)
+	: BluetoothMessageParameter(BluetoothParamId::ConnectionStatus, pValue)
+	, mConnectionStatus()
+{
+	mValid = parseByteParameter(pValue, mConnectionStatus);
+}
+
+
+BluetoothMessageParameterConnectionStatus::~BluetoothMessageParameterConnectionStatus()
+{
+}
+
+
+BluetoothConnectionStatus BluetoothMessageParameterConnectionStatus::getResultCode() const
+{
+	return mConnectionStatus;
+}
+
+
+QString BluetoothMessageParameterConnectionStatus::toStringValue() const
+{
+	return getEnumName(mConnectionStatus);
+}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="de-de" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+	<String Id="FatalErrorTitle" Overridable="yes">{\WixUI_Font_Bigger}Der Setup-Assistent der [ProductName] wurde vorzeitig beendet.</String>
+	<String Id="FatalErrorDescription1" Overridable="yes">Der Setup-Assistent der [ProductName] wurde aufgrund eines Fehlers vorzeitig beendet. Das System wurde nicht verändert. Sie müssen den Setup-Assistenten erneut ausführen, um dieses Programm zu einem späteren Zeitpunkt zu installieren.</String>
+	<String Id="ProgressDlgTextInstalling" Overridable="yes">Warten Sie, während die [ProductName] vom Setup-Assistenten installiert wird.</String>
+	<String Id="ProgressDlgTitleInstalling" Overridable="yes">{\WixUI_Font_Title}Die [ProductName] wird installiert</String>
+	<String Id="ProgressDlgTextChanging" Overridable="yes">Warten Sie, während die [ProductName] vom Setup-Assistenten geändert wird.</String>
+	<String Id="ProgressDlgTitleChanging" Overridable="yes">{\WixUI_Font_Title}Die [ProductName] wird geändert</String>
+	<String Id="ProgressDlgTextRepairing" Overridable="yes">Warten Sie, während die [ProductName] vom Setup-Assistenten repariert wird.</String>
+	<String Id="ProgressDlgTitleRepairing" Overridable="yes">{\WixUI_Font_Title}Die [ProductName] wird repariert</String>
+	<String Id="ProgressDlgTextRemoving" Overridable="yes">Warten Sie, während die [ProductName] vom Setup-Assistenten entfernt wird.</String>
+	<String Id="ProgressDlgTitleRemoving" Overridable="yes">{\WixUI_Font_Title}Die [ProductName] wird entfernt</String>
+	<String Id="ProgressDlgTextUpdating" Overridable="yes">Der Setup-Assistent aktualisiert die [ProductName]. Bitte warten Sie.</String>
+	<String Id="ProgressDlgTitleUpdating" Overridable="yes">{\WixUI_Font_Title}Die [ProductName] wird aktualisiert</String>
+	<String Id="ResumeDlgDescription" Overridable="yes">Die Installation der [ProductName] wird vom Setup-Assistenten auf dem Computer abgeschlossen. Klicken Sie auf "Installieren", um den Vorgang fortzusetzen, bzw. auf "Abbrechen", um den Setup-Assistenten zu beenden.</String>
+	<String Id="ResumeDlgTitle" Overridable="yes">{\WixUI_Font_Bigger}Der Setup-Assistent der [ProductName] wird fortgesetzt</String>
+	<String Id="UserExitTitle" Overridable="yes">{\WixUI_Font_Bigger}Die Installation der [ProductName] wurde abgebrochen.</String>
+	<String Id="VerifyReadyDlgInstallTitle" Overridable="yes">{\WixUI_Font_Title}Bereit zur Installation der [ProductName]</String>
+	<String Id="VerifyReadyDlgChangeTitle" Overridable="yes">{\WixUI_Font_Title}Bereit zur Änderung der [ProductName]</String>
+	<String Id="VerifyReadyDlgRepairText" Overridable="yes">Klicken Sie auf "Reparieren", um die Installation der [ProductName] zu reparieren. Klicken Sie auf "Zurück", um die Installationseinstellungen zu prüfen oder zu ändern. Klicken Sie auf "Abbrechen", um den Assistenten zu beenden.</String>
+	<String Id="VerifyReadyDlgRepairTitle" Overridable="yes">{\WixUI_Font_Title}Bereit zur Reparatur der [ProductName]</String>
+	<String Id="VerifyReadyDlgRemoveText" Overridable="yes">Klicken Sie auf "Entfernen", um die [ProductName] vom Computer zu entfernen. Klicken Sie auf "Zurück", um die Installationseinstellungen zu prüfen oder zu ändern. Klicken Sie auf "Abbrechen", um den Assistenten zu beenden.</String>
+	<String Id="VerifyReadyDlgRemoveTitle" Overridable="yes">{\WixUI_Font_Title}Bereit zum Entfernen der [ProductName]</String>
+	<String Id="VerifyReadyDlgUpdateText" Overridable="yes">Klicken Sie auf "Aktualisieren", um die [ProductName] auf Ihrem Computer zu aktualisieren. Klicken Sie auf "Zurück", um die Installationseinstellungen zu prüfen oder zu ändern. Klicken Sie auf "Abbrechen", um den Assistenten zu beenden.</String>
+	<String Id="VerifyReadyDlgUpdateTitle" Overridable="yes">{\WixUI_Font_Title}Bereit zum Aktualisieren der [ProductName]</String>
+	<String Id="MaintenanceWelcomeDlgTitle" Overridable="yes">{\WixUI_Font_Bigger}Willkommen beim Setup-Assistenten der [ProductName]</String>
+	<String Id="MaintenanceTypeDlgChangeDisabledText" Overridable="yes">Die [ProductName] verfügt nicht über unabhängig voneinander auswählbare Funktionen.</String>
+	<String Id="MaintenanceTypeDlgRemoveText" Overridable="yes">Entfernt die [ProductName] vom Computer.</String>
+	<String Id="MaintenanceTypeDlgRemoveDisabledText" Overridable="yes">Die [ProductName] kann nicht entfernt werden.</String>
+	<String Id="MaintenanceTypeDlgRepairDisabledText" Overridable="yes">Die [ProductName] kann nicht repariert werden.</String>
+	<String Id="ExitDialogTitle" Overridable="yes">{\WixUI_Font_Bigger}Die Installation der [ProductName] ist abgeschlossen.</String>
+	<String Id="WelcomeDlgDescription" Overridable="yes">Die [ProductName] wird auf dem Computer installiert. Klicken Sie auf "Weiter", um den Vorgang fortzusetzen, oder auf "Abbrechen", um den Setup-Assistenten zu beenden.</String>
+	<String Id="WelcomeUpdateDlgDescriptionUpdate" Overridable="yes">Die [ProductName] wird auf dem Computer aktualisiert. Klicken Sie auf "Weiter", um den Vorgang fortzusetzen, oder auf "Abbrechen", um den Setup-Assistenten zu beenden.</String>
+	<String Id="WelcomeDlgTitle" Overridable="yes">{\WixUI_Font_Bigger}Willkommen beim Setup-Assistenten der [ProductName]</String>
+	<String Id="CancelDlgText" Overridable="yes">Möchten Sie die Installation der [ProductName] wirklich abbrechen?</String>
+
+	<String Id="LANG" Overridable="yes">1031</String><!-- see http://wix.tramontana.co.hu/tutorial/user-interface/do-you-speak-english -->
+	<String Id="DowngradeErrorMessage" Overridable="yes">Eine aktuellere Version der [ProductName] ist bereits installiert. Die Installation wird nun beendet.</String>
+	<String Id="WindowsServerNotSupported" Overridable="yes">Die [ProductName] unterstützt keine Windows Server.</String>
+	<String Id="Windows7SP1Required" Overridable="yes">[ProductName] unterstützt nur Windows 7 SP1 und höher.</String>
+	<String Id="ProgramDescription" Overridable="yes">AusweisApp2, der eID-Client der Governikus KG</String>
+	<String Id="CustomInstallDirDlg_Title" Overridable="yes">Installationsoptionen</String>
+	<String Id="CustomInstallDirDlg_Description" Overridable="yes"></String>
+	<String Id="CustomInstallDirDlg_DesktopShortcutCheckBox" Overridable="yes">Verknüpfung auf dem Desktop anlegen</String>
+	<String Id="CustomInstallDirDlg_SystemSettingsCheckBox" Overridable="yes">Die [ProductName] im System registrieren (Firewall- und Browser-Einstellungen vornehmen)</String>
+	<String Id="CustomExitDialog_LaunchCheckBox" Overridable="yes">Starten der AusweisApp2</String>
+</WixLocalization>

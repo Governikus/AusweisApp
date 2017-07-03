@@ -1,0 +1,28 @@
+#!/bin/bash
+root=$(hg root)
+revs=$(hg log -r "$HG_NODE:tip" --template '{rev} ') #Intentional space after {rev}
+builddir=$root/build
+rc=0
+
+for rev in $revs
+do
+	hg update -C -r $rev > /dev/null
+	rm -rf $builddir
+	mkdir $builddir
+	cd $builddir
+	cmake -DENABLE_DVCS=false -Dtools.only=true $root > /dev/null
+	make format > /dev/null
+	cd $root
+	STATUS=$(hg status | wc -c)
+	if [ "$STATUS" != "0" ]; then
+		desc=$(hg log -r $rev --template '{firstline(desc)}')
+		echo "Changeset $rev is not formatted correctly: $desc"
+		rc=-1
+		break
+	fi
+done
+
+rm -rf $builddir
+hg update -C null > /dev/null
+exit $rc
+

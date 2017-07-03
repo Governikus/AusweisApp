@@ -1,0 +1,53 @@
+{
+	"issueDate": "2015-10-29T06:25:00+1:00",
+	"provider": [
+		{
+			"name": "Beantragung Schwerbehindertenausweis Saarland",
+			"address": "https://gatewaylas.saarland.de/FV/Onlineantrag",
+			"phone": "",
+			"email": "",
+			"postaladdress": "",
+			"category": "citizen"
+		},
+		{
+			"name": "Bürgerportal Rheinland Pfalz",
+			"address": "http://www.rlpdirekt.de/rheinland-pfalz",
+			"phone": "",
+			"email": "",
+			"postaladdress": "",
+			"category": "citizen"
+		},
+		{
+			"name": ":::(bit)kasten",
+			"address": "https://www.bitkasten.de/",
+			"phone": "",
+			"email": "",
+			"postaladdress": "",
+			"category": "other"
+		},
+		{
+			"name": "Bürgerkonto Test (Testausweis erforderlich)",
+			"address": "https://bk.test.bos-asp.de/BuergerKontoTestSPTest/",
+			"phone": "",
+			"email": "",
+			"postaladdress": "",
+			"category": "other"
+		},
+		{
+			"name": "OpenPGP-eID",
+			"address": "https://pgp.governikus-eid.de/pgp",
+			"phone": "",
+			"email": "",
+			"postaladdress": "",
+			"category": "other"
+		},
+		{
+			"name": "SkIDentity Service",
+			"address": "https://skidentity.de/service",
+			"phone": "",
+			"email": "",
+			"postaladdress": "",
+			"category": "other"
+		}
+	]
+}

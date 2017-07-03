@@ -1,0 +1,21 @@
+AusweisApp2 1.6.0
+^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 30. Oktober 2015
+
+
+
+Anwender
+""""""""
+  - Optimierungen im Bereich der Barrierefreiheit und Usability vorgenommen.
+
+  - Fehlerkorrekturen und Verbesserungen bei den angezeigten Meldungen, dem Fehlerhandling,
+    den Eingabe- und Suchfeldern und im Bereich der angezeigten Texte.
+
+  - Der Einrichtungsassistent wurde überarbeitet und erweitert.
+
+
+
+Entwickler
+""""""""""
+  - Aktualisierung der Drittanbieterbibliotheken.

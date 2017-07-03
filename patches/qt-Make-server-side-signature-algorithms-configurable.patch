@@ -1,0 +1,334 @@
+From 992a338b639e4df6da16659dc238dbaae0ae802f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Sebastian=20L=C3=B6sch?= <Sebastian.Loesch@governikus.de>
+Date: Thu, 21 Apr 2016 09:19:19 +0200
+Subject: [PATCH] Make server side signature algorithms configurable
+
+Signature algorithms are used during the TLS handshake phase to protect
+transferred security parameters, e.g the message ServerKeyExchange.
+This patch enables the configuration of allowed algorithms used by the
+server side.
+
+Change-Id: Ia178efd4778b91863fcc919bf50219115b300d77
+---
+ src/network/ssl/qsslconfiguration.cpp              | 42 +++++++++++++
+ src/network/ssl/qsslconfiguration.h                |  6 ++
+ src/network/ssl/qsslconfiguration_p.h              |  5 ++
+ src/network/ssl/qsslcontext_openssl.cpp            | 45 ++++++++++++++
+ src/network/ssl/qsslsocket.cpp                     |  2 +
+ src/network/ssl/qsslsocket_openssl_symbols_p.h     |  5 ++
+ .../auto/network/ssl/qsslsocket/tst_qsslsocket.cpp | 71 ++++++++++++++++++++++
+ 7 files changed, 176 insertions(+)
+
+diff --git x/qtbase/src/network/ssl/qsslconfiguration.cpp y/qtbase/src/network/ssl/qsslconfiguration.cpp
+index c8040de..6bfca86 100644
+--- x/qtbase/src/network/ssl/qsslconfiguration.cpp
++++ y/qtbase/src/network/ssl/qsslconfiguration.cpp
+@@ -217,6 +217,7 @@ bool QSslConfiguration::operator==(const QSslConfiguration &other) const
+         d->peerVerifyMode == other.d->peerVerifyMode &&
+         d->peerVerifyDepth == other.d->peerVerifyDepth &&
+         d->allowRootCertOnDemandLoading == other.d->allowRootCertOnDemandLoading &&
++        d->signatureAndHashAlgorithms == other.d->signatureAndHashAlgorithms &&
+         d->sslOptions == other.d->sslOptions &&
+         d->sslSession == other.d->sslSession &&
+         d->sslSessionTicketLifeTimeHint == other.d->sslSessionTicketLifeTimeHint &&
+@@ -258,6 +259,7 @@ bool QSslConfiguration::isNull() const
+             d->privateKey.isNull() &&
+             d->peerCertificate.isNull() &&
+             d->peerCertificateChain.count() == 0 &&
++            d->signatureAndHashAlgorithms.isEmpty() &&
+             d->sslOptions == QSslConfigurationPrivate::defaultSslOptions &&
+             d->sslSession.isNull() &&
+             d->sslSessionTicketLifeTimeHint == -1 &&
+@@ -811,6 +813,46 @@ QVector<QSslEllipticCurve> QSslConfiguration::supportedEllipticCurves()
+ }
+ 
+ /*!
++    \since 5.9
++
++    Returns the connection's current list of supported signature
++    algorithms if enabled. Enable it by calling
++    setSignatureAndHashAlgorithms().
++
++    \sa setSignatureAndHashAlgorithms()
++ */
++QVector<QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm> > QSslConfiguration::signatureAndHashAlgorithms() const
++{
++    return d->signatureAndHashAlgorithms;
++}
++
++/*!
++    \since 5.9
++
++    Sets the list of signature algorithms to be used for the current
++    connection. The algorithms are expected to be ordered by descending
++    preference (i.e., the first algorithm is the most preferred one).
++    Notice that this restricts the list of supported ciphers (e.g.
++    configuring the signature algorithm RSA+SHA1 will restrict the ciphers
++    to RSA ciphers).
++
++    When configuring the client side this are the algorithms set in the
++    Signature Algorithms TLS extension, see RFC 5246 for details. Although
++    this extension will be ignored for TLS protocol versions prior 1.2
++    this still restricts the supported ciphers as mentioned above.
++
++    By default, the handshake phase can choose any of the algorithms
++    supported by this system's SSL libraries, which may vary from
++    system to system.
++
++    \sa signatureAndHashAlgorithms()
++ */
++void QSslConfiguration::setSignatureAndHashAlgorithms(const QVector<QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm> > &algorithms)
++{
++    d->signatureAndHashAlgorithms = algorithms;
++}
++
++/*!
+   \since 5.3
+ 
+   This function returns the protocol negotiated with the server
+diff --git x/qtbase/src/network/ssl/qsslconfiguration.h y/qtbase/src/network/ssl/qsslconfiguration.h
+index f0754d7..cfa1e81 100644
+--- x/qtbase/src/network/ssl/qsslconfiguration.h
++++ y/qtbase/src/network/ssl/qsslconfiguration.h
+@@ -56,7 +56,10 @@
+ #ifndef QSSLCONFIGURATION_H
+ #define QSSLCONFIGURATION_H
+ 
++#include <QtCore/qcryptographichash.h>
++#include <QtCore/qpair.h>
+ #include <QtCore/qshareddata.h>
++#include <QtCore/qvector.h>
+ #include <QtNetwork/qsslsocket.h>
+ #include <QtNetwork/qssl.h>
+ 
+@@ -141,6 +144,9 @@ public:
+     void setEllipticCurves(const QVector<QSslEllipticCurve> &curves);
+     static QVector<QSslEllipticCurve> supportedEllipticCurves();
+ 
++    QVector<QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm> > signatureAndHashAlgorithms() const;
++    void setSignatureAndHashAlgorithms(const QVector<QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm> > &algorithms);
++
+     static QSslConfiguration defaultConfiguration();
+     static void setDefaultConfiguration(const QSslConfiguration &configuration);
+ 
+diff --git x/qtbase/src/network/ssl/qsslconfiguration_p.h y/qtbase/src/network/ssl/qsslconfiguration_p.h
+index 364bba9..9553088 100644
+--- x/qtbase/src/network/ssl/qsslconfiguration_p.h
++++ y/qtbase/src/network/ssl/qsslconfiguration_p.h
+@@ -73,6 +73,9 @@
+ #include "qsslcipher.h"
+ #include "qsslkey.h"
+ #include "qsslellipticcurve.h"
++#include <QtCore/qcryptographichash.h>
++#include <QtCore/qpair.h>
++#include <QtCore/qvector.h>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+@@ -117,6 +120,8 @@ public:
+ 
+     QVector<QSslEllipticCurve> ellipticCurves;
+ 
++    QVector<QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm> > signatureAndHashAlgorithms;
++
+     QByteArray sslSession;
+     int sslSessionTicketLifeTimeHint;
+ 
+diff --git x/qtbase/src/network/ssl/qsslcontext_openssl.cpp y/qtbase/src/network/ssl/qsslcontext_openssl.cpp
+index f132d02..83f2435 100644
+--- x/qtbase/src/network/ssl/qsslcontext_openssl.cpp
++++ y/qtbase/src/network/ssl/qsslcontext_openssl.cpp
+@@ -41,6 +41,7 @@
+ 
+ 
+ #include <QtNetwork/qsslsocket.h>
++#include <QtCore/qmetaobject.h>
+ #include <QtCore/qmutex.h>
+ 
+ #include "private/qssl_p.h"
+@@ -92,6 +93,11 @@ QSslContext::~QSslContext()
+         q_SSL_SESSION_free(session);
+ }
+ 
++static inline QString msgErrorSettingSignatureAlgorithms(const QString &why)
++{
++    return QSslSocket::tr("Error when setting the signature algorithms (%1)").arg(why);
++}
++
+ static inline QString msgErrorSettingEllipticCurves(const QString &why)
+ {
+     return QSslSocket::tr("Error when setting the elliptic curves (%1)").arg(why);
+@@ -367,6 +373,45 @@ init_context:
+             sslContext->errorCode = QSslError::UnspecifiedError;
+         }
+     }
++
++    const auto& sigAndHashAlgorithms = sslContext->sslConfiguration.signatureAndHashAlgorithms();
++    if (!sigAndHashAlgorithms.isEmpty()) {
++#if OPENSSL_VERSION_NUMBER >= 0x10002000L
++        if (q_SSLeay() >= 0x10002000L) {
++            QMetaEnum hashMetaEnum = QMetaEnum::fromType<QCryptographicHash::Algorithm>();
++            QByteArrayList algorithmList;
++            for (int i=0; i < sigAndHashAlgorithms.size(); ++i) {
++                QByteArray sig;
++                switch (sigAndHashAlgorithms[i].first) {
++                    case QSsl::KeyAlgorithm::Rsa:
++                        sig = QByteArrayLiteral("RSA");
++                        break;
++                    case QSsl::KeyAlgorithm::Dsa:
++                        sig = QByteArrayLiteral("DSA");
++                        break;
++                    case QSsl::KeyAlgorithm::Ec:
++                        sig = QByteArrayLiteral("ECDSA");
++                        break;
++                    case QSsl::KeyAlgorithm::Opaque:
++                        qCWarning(lcSsl, "Invalid value KeyAlgorithm::Opaque will be ignored");
++                        continue;
++                }
++                QByteArray hash = QByteArray(hashMetaEnum.valueToKey(sigAndHashAlgorithms[i].second)).toUpper();
++                algorithmList += sig + QByteArrayLiteral("+") + hash;
++            }
++            QByteArray algorithms = algorithmList.join(':');
++            if (!q_SSL_CTX_set1_sigalgs_list(sslContext->ctx, algorithms.data())) {
++                sslContext->errorStr = msgErrorSettingSignatureAlgorithms(QSslSocketBackendPrivate::getErrorsFromOpenSsl());
++                sslContext->errorCode = QSslError::UnspecifiedError;
++            }
++        } else
++#endif // OPENSSL_VERSION_NUMBER >= 0x10002000L
++        {
++            // specific algorithms requested, but not possible to set -> error
++            sslContext->errorStr = msgErrorSettingSignatureAlgorithms(QSslSocket::tr("OpenSSL version too old, need at least v1.0.2"));
++            sslContext->errorCode = QSslError::UnspecifiedError;
++        }
++    }
+ }
+ 
+ QSslContext* QSslContext::fromConfiguration(QSslSocket::SslMode mode, const QSslConfiguration &configuration, bool allowRootCertOnDemandLoading)
+diff --git x/qtbase/src/network/ssl/qsslsocket.cpp y/qtbase/src/network/ssl/qsslsocket.cpp
+index a5ee9bf..c92645f 100644
+--- x/qtbase/src/network/ssl/qsslsocket.cpp
++++ y/qtbase/src/network/ssl/qsslsocket.cpp
+@@ -927,6 +927,7 @@ void QSslSocket::setSslConfiguration(const QSslConfiguration &configuration)
+     d->configuration.peerVerifyDepth = configuration.peerVerifyDepth();
+     d->configuration.peerVerifyMode = configuration.peerVerifyMode();
+     d->configuration.protocol = configuration.protocol();
++    d->configuration.signatureAndHashAlgorithms = configuration.signatureAndHashAlgorithms();
+     d->configuration.sslOptions = configuration.d->sslOptions;
+     d->configuration.sslSession = configuration.sessionTicket();
+     d->configuration.sslSessionTicketLifeTimeHint = configuration.sessionTicketLifeTimeHint();
+@@ -2235,6 +2236,7 @@ void QSslConfigurationPrivate::deepCopyDefaultConfiguration(QSslConfigurationPri
+     ptr->peerVerifyDepth = global->peerVerifyDepth;
+     ptr->sslOptions = global->sslOptions;
+     ptr->ellipticCurves = global->ellipticCurves;
++    ptr->signatureAndHashAlgorithms = global->signatureAndHashAlgorithms;
+ }
+ 
+ /*!
+diff --git x/qtbase/src/network/ssl/qsslsocket_openssl_symbols_p.h y/qtbase/src/network/ssl/qsslsocket_openssl_symbols_p.h
+index 36e041b..7bdd719 100644
+--- x/qtbase/src/network/ssl/qsslsocket_openssl_symbols_p.h
++++ y/qtbase/src/network/ssl/qsslsocket_openssl_symbols_p.h
+@@ -493,6 +493,11 @@ int q_EC_curve_nist2nid(const char *name);
+ #define q_SSL_get_server_tmp_key(ssl, key) q_SSL_ctrl((ssl), SSL_CTRL_GET_SERVER_TMP_KEY, 0, (char *)key)
+ #endif // OPENSSL_VERSION_NUMBER >= 0x10002000L
+ 
++// Signature algorithm extension
++#if OPENSSL_VERSION_NUMBER >= 0x10002000L
++#define q_SSL_CTX_set1_sigalgs_list(ctx, s) q_SSL_CTX_ctrl((ctx), SSL_CTRL_SET_SIGALGS_LIST, 0, (char *)s)
++#endif // OPENSSL_VERSION_NUMBER >= 0x10002000L
++
+ // PKCS#12 support
+ int q_PKCS12_parse(PKCS12 *p12, const char *pass, EVP_PKEY **pkey, X509 **cert, STACK_OF(X509) **ca);
+ PKCS12 *q_d2i_PKCS12_bio(BIO *bio, PKCS12 **pkcs12);
+diff --git x/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp y/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
+index f8c5b8b..a94e385 100644
+--- x/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
++++ y/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
+@@ -229,6 +229,8 @@ private slots:
+     void simplePskConnect();
+     void ephemeralServerKey_data();
+     void ephemeralServerKey();
++    void signatureAlgorithm_data();
++    void signatureAlgorithm();
+ #endif
+ 
+     static void exitLoop()
+@@ -3375,6 +3377,75 @@ void tst_QSslSocket::ephemeralServerKey()
+     QCOMPARE(client->sslConfiguration().ephemeralServerKey().isNull(), emptyKey);
+ }
+ 
++using SigAlgPair = QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm>;
++Q_DECLARE_METATYPE(QCryptographicHash::Algorithm);
++Q_DECLARE_METATYPE(QSsl::KeyAlgorithm);
++Q_DECLARE_METATYPE(SigAlgPair);
++
++void tst_QSslSocket::signatureAlgorithm_data()
++{
++    QTest::addColumn<SigAlgPair>("serverSigAlgPair");
++    QTest::addColumn<QSsl::SslProtocol>("serverProtocol");
++    QTest::addColumn<SigAlgPair>("clientSigAlgPair");
++    QTest::addColumn<QSsl::SslProtocol>("clientProtocol");
++    QTest::addColumn<QAbstractSocket::SocketState>("state");
++
++    auto rsaSha256 = SigAlgPair(QSsl::Rsa, QCryptographicHash::Sha256);
++    auto rsaSha512 = SigAlgPair(QSsl::Rsa, QCryptographicHash::Sha512);
++    auto ecdsaSha512= SigAlgPair(QSsl::Ec, QCryptographicHash::Sha512);
++
++    QTest::newRow("match_TlsV1_2") << rsaSha256 << QSsl::TlsV1_2 << rsaSha256 << QSsl::AnyProtocol << QAbstractSocket::ConnectedState;
++    QTest::newRow("no_hashalg_match_TlsV1_2") << rsaSha256 << QSsl::TlsV1_2 << rsaSha512 << QSsl::AnyProtocol << QAbstractSocket::UnconnectedState;
++    QTest::newRow("no_sigalg_match_TlsV1_2") << ecdsaSha512 << QSsl::TlsV1_2 << rsaSha512 << QSsl::AnyProtocol << QAbstractSocket::UnconnectedState;
++    QTest::newRow("no_cipher_match_AnyProtocol") << rsaSha512 << QSsl::TlsV1_2 << ecdsaSha512 << QSsl::AnyProtocol << QAbstractSocket::UnconnectedState;
++
++    // signature algorithms do not match, but are ignored because the tls version is not v1.2
++    QTest::newRow("client_ignore_TlsV1_1") << rsaSha256 << QSsl::TlsV1_1 << rsaSha512 << QSsl::AnyProtocol << QAbstractSocket::ConnectedState;
++    QTest::newRow("server_ignore_TlsV1_1") << rsaSha256 << QSsl::AnyProtocol << rsaSha512 << QSsl::TlsV1_1 << QAbstractSocket::ConnectedState;
++    QTest::newRow("client_ignore_TlsV1_0") << rsaSha256 << QSsl::TlsV1_0 << rsaSha512 << QSsl::AnyProtocol << QAbstractSocket::ConnectedState;
++    QTest::newRow("server_ignore_TlsV1_0") << rsaSha256 << QSsl::AnyProtocol << rsaSha512 << QSsl::TlsV1_0 << QAbstractSocket::ConnectedState;
++}
++
++
++void tst_QSslSocket::signatureAlgorithm()
++{
++    QFETCH_GLOBAL(bool, setProxy);
++    if (!QSslSocket::supportsSsl() || setProxy)
++       return;
++
++    QFETCH(SigAlgPair, serverSigAlgPair);
++    QFETCH(QSsl::SslProtocol, serverProtocol);
++    QFETCH(SigAlgPair, clientSigAlgPair);
++    QFETCH(QSsl::SslProtocol, clientProtocol);
++    QFETCH(QAbstractSocket::SocketState, state);
++
++
++    SslServer server;
++    server.protocol = serverProtocol;
++    server.config.setCiphers({QSslCipher("ECDHE-RSA-AES256-SHA")});
++    server.config.setSignatureAndHashAlgorithms({serverSigAlgPair});
++    QVERIFY(server.listen());
++
++    QSslConfiguration clientConfig = QSslConfiguration::defaultConfiguration();
++    clientConfig.setSignatureAndHashAlgorithms({clientSigAlgPair});
++    clientConfig.setProtocol(clientProtocol);
++    QSslSocket client;
++    client.setSslConfiguration(clientConfig);
++    socket = &client;
++
++    QEventLoop loop;
++    QTimer::singleShot(5000, &loop, SLOT(quit()));
++    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), &loop, SLOT(quit()));
++    connect(socket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(ignoreErrorSlot()));
++    connect(socket, SIGNAL(encrypted()), &loop, SLOT(quit()));
++
++
++    client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
++    loop.exec();
++    QCOMPARE(client.state(), state);
++}
++
++
+ #endif // QT_NO_OPENSSL
+ 
+ #endif // QT_NO_SSL
+-- 
+2.10.0
+

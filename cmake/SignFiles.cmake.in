@@ -1,0 +1,63 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0)
+
+FUNCTION(IS_SIGNED _result _file)
+	EXECUTE_PROCESS(COMMAND "@SIGNTOOL_CMD@" verify /pa ${file}
+					OUTPUT_VARIABLE _output
+					ERROR_QUIET
+					WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+	IF("${_output}" MATCHES "Successfully verified: ")
+		SET(${_result} TRUE PARENT_SCOPE)
+	ELSE()
+		SET(${_result} FALSE PARENT_SCOPE)
+	ENDIF()
+ENDFUNCTION()
+
+
+FUNCTION(CREATE_PARAMETER _output_param _output_remain _input)
+	SET(param)
+	SET(remain)
+
+	FOREACH(file ${_input})
+		UNSET(signed)
+		IS_SIGNED(signed "${file}")
+		IF(signed)
+			MESSAGE(STATUS "File is already signed: ${file}")
+			CONTINUE()
+		ENDIF()
+
+		# Avoid max parameter length
+		# Windows has a limit of 8191
+		STRING(LENGTH "${param} ${file}" len)
+		IF(len LESS 7500)
+			LIST(APPEND param ${file})
+		ELSE()
+			LIST(APPEND remain ${file})
+		ENDIF()
+	ENDFOREACH()
+
+	SET(${_output_param} ${param} PARENT_SCOPE)
+	SET(${_output_remain} ${remain} PARENT_SCOPE)
+ENDFUNCTION()
+
+
+SET(FILE_EXTENSIONS *.dll ${SIGN_EXT})
+MESSAGE(STATUS "Sign files in directory: ${CMAKE_BINARY_DIR}")
+MESSAGE(STATUS "Sign file extensions: ${FILE_EXTENSIONS}")
+FILE(GLOB_RECURSE FILES RELATIVE "${CMAKE_BINARY_DIR}" ${FILE_EXTENSIONS})
+MESSAGE(STATUS "Sign files: ${FILES}")
+
+
+WHILE(FILES)
+	CREATE_PARAMETER(param remain "${FILES}")
+
+	IF(param)
+		MESSAGE(STATUS "Call signtool with files: ${param}")
+		EXECUTE_PROCESS(COMMAND "@SIGNTOOL_CMD@" @SIGNTOOL_PARAMS@ ${param} WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+	ELSE()
+		MESSAGE(WARNING "Every file is already signed")
+		BREAK()
+	ENDIF()
+
+	SET(FILES ${remain})
+ENDWHILE()

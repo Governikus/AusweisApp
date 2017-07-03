@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon; charset=binary">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon; charset=binary">
+	<title>${TITLE}</title>
+
+    <style>
+	    body {
+		    margin: 0;
+			padding: 0;
+			border: 0;
+			height: 100%
+		}
+		em {
+		    font-style: normal;
+			font-weight: bold;
+		}
+		.header_section {
+		    border-top: 10px solid #619cc8;
+			padding: 2%;
+		}
+		.header_section div {
+		    width: 60%;
+			margin: 0% auto;
+		}
+		.message_section {
+		    background-image: url("/images/html_message_section.jpg");
+			background-repeat: no-repeat;
+			background-size: cover;
+			background-position: center center;
+			padding: 2%;
+		}
+		.message {
+		    background: rgba(0, 0, 0, 0.6);
+			width: 45%;
+			margin: auto;
+			color: #fff;
+			padding: 2% 8%;
+			background-image: url("/images/icon_attention.svg");
+			background-repeat: no-repeat;
+			background-size: 6%;
+			background-position: 3% center;
+		}
+		.message a {
+			text-decoration: underline;
+			color: white;
+		}
+		.content_section {
+		    width: 55%;
+			margin: auto;
+			padding: 2% 0%;
+		}
+		.button {
+		    background: #5288c4;
+			display: inline-block;
+			padding: 0 25px;
+			line-height: 27px;
+			border-radius: 3px;
+		}
+		.button a {
+		    text-decoration: none;
+			color: white;
+		}
+		.button a:hover, .button a:active {
+		    text-decoration: underline;
+		}
+		.footer_section {
+		    position: fixed;
+			bottom: 0;
+			width: 100%;
+			border-bottom: 50px solid #619cc8;
+			padding: 2%;
+		}
+	</style>
+</head>
+
+
+<body >
+    <div class="header_section" >
+	    <div>
+		    <a title="AusweisApp2" href="https://www.ausweisapp.bund.de/">
+			    <img src="/images/AppLogo_AutentApp2_2014.png" alt="AusweisApp2 Logo" width="256" height="48" />
+			</a>
+		</div>
+	</div>
+
+    <div class="message_section" >
+	    <div class="message">
+		    <h1>${MESSAGE_HEADER}</h1>
+			<p>${MESSAGE_HEADER_EXPLANATION}</p>
+			<p><em>${ERROR_MESSAGE_LABEL}:</em> ${ERROR_MESSAGE}</p>
+		</div>
+	</div>
+
+    <div class="content_section">
+	    <h2>${REPORT_HEADER}</h2>
+		<div class="button">
+		    <a href="${REPORT_LINK}">${REPORT_BUTTON}</a>
+		</div>
+	</div>
+
+    <div class="footer_section"></div>
+</body>
+</html>

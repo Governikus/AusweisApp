@@ -1,0 +1,734 @@
+Nutzungsbedingungen
+
+Allgemeines zur Installation
+
+Bitte lesen Sie zunächst die Allgemeinen Geschäftsbedingungen so wie die Lizenzbedingungen für die Überlassung und Nutzung der AusweisApp2 durch. Nachdem Sie zugestimmt haben, können Sie die Installation fortsetzen.
+
+
+                                     Allgemeine Geschäftsbedingungen
+
+§ 1 Nutzungsbedingungen und Datenschutzhinweis
+(1) Diese Allgemeine Geschäftsbedingungen (AGB) des Bundes, vertreten durch das Bundesministerium des Innern (nachfolgend "Bund") und dem Nutzer gelten für die Überlassung und Nutzung der Software AusweisApp2 (nachfolgend AusweisApp2) und deren neue Versionen, die auf der Grundlage dieser Bedingungen überlassen werden.
+(2) "Nutzer" im Sinne dieses Vertrages sind natürliche Personen.
+
+§ 2 Vertragsgegenstand und Unentgeltlichkeit
+(1) Die AusweisApp2 wird regelmäßig hinsichtlich ihrer Konformität zu den Technischen Richtlinien des Bundesamtes für Sicherheit in der Informationstechnik [TR-03124-2] zertifiziert sowie hinsichtlich ihrer Nutzerfreundlichkeit [EN ISO 9241 Teil 110 Ergonomie Mensch-System-Integration zur Prüfung der Benutzbarkeit und Funktionalität und Trusted Design Guidelines zur Prüfung der Vertrauenswürdigkeit] und auf Barrierefreiheit [BITV 2.0] überprüft.
+(2) Die AusweisApp2 wird in maschinenlesbarer Form unentgeltlich überlassen. Der Quellcode der AusweisApp2 wird ebenfalls unentgeltlich veröffentlicht. Eine Auflistung der verwendeten Open Source-Bestandteile der AusweisApp2 findet sich im Anhang.
+(3) Die AusweisApp2 wird von der Governikus GmbH & Co. KG (Governikus) als Erfüllungsgehilfe des Bundes überlassen.
+
+§ 3 Verwendungszweck
+Die AusweisApp2 und alle ihre Bestandteile dienen ausschließlich dazu, im Zusammenhang mit der Nutzung der Online-Ausweisfunktion des Personalausweises bzw. des elektronischen Aufenthaltstitels und der Übermittlung der damit verbundenen Daten gemäß den gesetzlichen Vorgaben verwendet zu werden.
+
+§ 4 Pflichten und Obliegenheiten des Nutzers
+(1) Der Nutzer verpflichtet sich, die AusweisApp2 entsprechend des in § 3 genannten Verwendungszweckes zu nutzen. Es liegt in seinem Interesse, dass in Verbindung mit der AusweisApp2 genutzte Hard- und Software des Nutzers immer auf dem neuesten Stand der Sicherheitstechnik (System- und Firmware Update, Virenscanner,  Firewall usw.) sind.
+(2) Es liegt im eigenen Interesse des Nutzers aber auch des Bundes, dass stets nur die neueste Version der AusweisApp2 (siehe § 5) verwendet wird.
+
+§ 5 Pflege und Support
+(1) Der Bund bietet nach eigenem Ermessen und ohne hierzu verpflichtet zu sein für Teile der AusweisApp2 zusätzliche kostenfreie Supportleistungen in Form von Dokumentationen und online Hilfen auf dem AusweisApp2-Portal im Internet unter der Adresse www.ausweisapp.bund.de an, sowie über die Hotline des Herstellers Governikus  unter der E-Mail-Adresse: support@ausweisapp.de und der Tel.-Nr.: +49 1805 348 743. Auch stellt er verfügbare neue Versionen der AusweisApp2 zur Verfügung. Hieraus erwächst jedoch kein zusätzlicher Anspruch auf Mängelbeseitigung, auf Zertifizierung, auf Beibehaltung der Supportleistungen oder der Hotline und auf Überlassung neuer Versionen.
+(2) Verfügbare neue Versionen der AusweisApp2 können im Internet kostenfrei auf dem AusweisApp2-Portal unter der Adresse www.ausweisapp.bund.de sowie über allgemein zugängliche AppStore heruntergeladen werden.
+(3) Eventuelle Mängel der AusweisApp2 werden grundsätzlich dadurch behoben, dass der Bund jeweils eine neue Version der AusweisApp2 zum Herunterladen zur Verfügung stellt (siehe § 5 Absatz 1). Eine Pflicht zur Bereitstellung von neuen Versionen ergibt sich daraus grundsätzlich nicht.
+
+§ 6 Hinweis auf gewerbliche und urheberrechtliche Schutzrechte
+Die Zeichen AusweisApp2 und die entsprechenden Grafiken sowie das Signet zur Online-Ausweisfunktion sind für den Bund als Marken geschützt.
+
+§ 7 Datenschutzhinweis
+(1) Mit dieser Software werden personenbezogene Daten im Sinne des § 3 Absatz 1 des Bundesdatenschutzgesetzes (BDSG) zum Zwecke der Verarbeitung grundsätzlich nicht erhoben.
+(2) Personenbezogene Daten aus dem Ausweischip werden ausschließlich zum Zweck des elektronischen Identitätsnachweises im Umfang der erteilten Berechtigung nach Einwilligung des Nutzers mit seiner Ausweis-PIN-Eingabe und auf dem Transportweg zwischen dem Ausweischip und dem Diensteanbieter sicher verschlüsselt und auch für Governikus nicht lesbar übertragen.
+(3) Neben den reinen Daten, die zur Identifizierung/ Authentisierung benötigt werden, erhebt die Software nur mit Einverständnis des Nutzers Daten über die Art und Version der Anwendungsumgebung (Betriebssystem, Lesegeräte usw.) des Nutzers. Diese Daten kann der Nutzer bei Bedarf  an Governikus übermitteln, um die ordnungsgemäße Verarbeitung prüfen zu lassen und Fehlern im Verarbeitungsprozess vorzubeugen. Die Nutzung der Daten erfolgt dann im Rahmen des § 14 BDSG durch Governikus im Auftrag des Bundes und nur für den genannten Zweck.
+(4) Die in der AusweisApp2 enthaltene Selbstauskunft über die im Chip gespeicherten Daten, ist ein Dienst der durch Governikus über das Internet erbracht wird. Die Ausweisdaten werden dabei nur zur Anzeige des Nutzers gebracht und nicht dauerhaft bei Governikus gespeichert oder für andere Zwecke verwendet.
+
+§ 8 Deutsches Recht
+Auf diese Nutzungsbedingungen ist ausschließlich deutsches Recht unter Ausschluss des Übereinkommens der Vereinten Nationen über Verträge über den internationalen Warenkauf (CISG) anwendbar.
+
+
+Anhang
+
+Eingearbeitete Open Source-Komponenten
+Qt, OpenSSL, http_parser, Qhttpserver und Fervor.
+
+
+
+                                     Lizenzbedingungen
+
+Die AusweisApp2 und ihr Quellcode werden unter der EUPL v1.2 bereitgestellt, mit Ausnahme der Open-Source-Bibliothek OpenSSL, die unter der OpenSSL License / SSLeay License lizensiert ist.
+
+
+
+
+
+
+      OPEN-SOURCE-LIZENZ FÜR DIE EUROPÄISCHE UNION v. 1.2
+                 EUPL © Europäische Union 2007, 2016
+
+
+Diese Open-Source-Lizenz für die Europäische Union („EUPL“) gilt für Werke (im Sinne der nachfolgenden Begriffsbestimmung),
+die unter EUPL-Bedingungen zur Verfügung gestellt werden. Das Werk darf nur in der durch diese Lizenz
+gestatteten Form genutzt werden (insoweit eine solche Nutzung dem Urheber vorbehalten ist).
+
+Das Werk wird unter den Bedingungen dieser Lizenz zur Verfügung gestellt, wenn der Lizenzgeber (im Sinne der
+nachfolgenden Begriffsbestimmung) den folgenden Hinweis unmittelbar hinter dem Urheberrechtshinweis dieses Werks
+anbringt:
+
+Lizenziert unter der EUPL
+
+oder in einer anderen Form zum Ausdruck bringt, dass er es unter der EUPL lizenzieren möchte.
+
+
+                                 1. Begriffsbestimmungen
+
+Für diese Lizenz gelten folgende Begriffsbestimmungen:
+
+- „Lizenz“: diese Lizenz.
+
+- „Originalwerk“: das Werk oder die Software, die vom Lizenzgeber unter dieser Lizenz verbreitet oder zugänglich
+  gemacht wird, und zwar als Quellcode und gegebenenfalls auch als ausführbarer Code.
+
+- „Bearbeitungen“: die Werke oder Software, die der Lizenznehmer auf der Grundlage des Originalwerks oder seiner
+  Bearbeitungen schaffen kann. In dieser Lizenz wird nicht festgelegt, wie umfangreich die Änderung oder wie stark die
+  Abhängigkeit vom Originalwerk für eine Einstufung als Bearbeitung sein muss; dies bestimmt sich nach dem
+  Urheberrecht, das in dem unter Artikel 15 aufgeführten Land anwendbar ist.
+
+- „Werk“: das Originalwerk oder seine Bearbeitungen.
+
+- „Quellcode“: diejenige Form des Werkes, die zur Auffassung durch den Menschen bestimmt ist und die am besten
+  geeignet ist, um vom Menschen verstanden und verändert zu werden.
+
+- „Ausführbarer Code“: die — üblicherweise — kompilierte Form des Werks, die von einem Computer als Programm
+  ausgeführt werden soll.
+
+- „Lizenzgeber“: die natürliche oder juristische Person, die das Werk unter der Lizenz verbreitet oder zugänglich
+  macht.
+
+- „Bearbeiter“: jede natürliche oder juristische Person, die das Werk unter der Lizenz verändert oder auf andere Weise
+  zur Schaffung einer Bearbeitung beiträgt.
+
+- „Lizenznehmer“ („Sie“): jede natürliche oder juristische Person, die das Werk unter den Lizenzbedingungen nutzt.
+
+- „Verbreitung“ oder „Zugänglichmachung“: alle Formen von Verkauf, Überlassung, Verleih, Vermietung, Verbreitung,
+  Weitergabe, Übermittlung oder anderweitiger Online- oder Offline-Bereitstellung von Vervielfältigungen des Werks
+  oder Zugänglichmachung seiner wesentlichen Funktionen für dritte natürliche oder juristische Personen.
+
+
+                                 2. Umfang der Lizenzrechte
+
+Der Lizenzgeber erteilt Ihnen hiermit für die Gültigkeitsdauer der am Originalwerk bestehenden Urheberrechte eine
+weltweite, unentgeltliche, nicht ausschließliche, unterlizenzierbare Lizenz, die Sie berechtigt:
+
+- das Werk uneingeschränkt zu nutzen,
+
+- das Werk zu vervielfältigen,
+
+- das Werk zu verändern und Bearbeitungen auf der Grundlage des Werks zu schaffen,
+
+- das Werk öffentlich zugänglich zu machen, was das Recht einschließt, das Werk oder Vervielfältigungsstücke davon
+  öffentlich bereitzustellen oder wahrnehmbar zu machen oder das Werk, soweit möglich, öffentlich aufzuführen,
+
+- das Werk oder Vervielfältigungen davon zu verbreiten,
+
+- das Werk oder Vervielfältigungen davon zu vermieten oder zu verleihen,
+
+- das Werk oder Vervielfältigungen davon weiter zu lizenzieren.
+
+Für die Wahrnehmung dieser Rechte können beliebige, derzeit bekannte oder künftige Medien, Träger und Formate
+verwendet werden, soweit das geltende Recht dem nicht entgegensteht.
+
+Für die Länder, in denen Urheberpersönlichkeitsrechte an dem Werk bestehen, verzichtet der Lizenzgeber im gesetzlich
+zulässigen Umfang auf seine Urheberpersönlichkeitsrechte, um die Lizenzierung der oben aufgeführten
+Verwertungsrechte wirksam durchführen zu können.
+
+Der Lizenzgeber erteilt dem Lizenznehmer ein nicht ausschließliches, unentgeltliches Nutzungsrecht an seinen Patenten,
+sofern dies zur Ausübung der durch die Lizenz erteilten Nutzungsrechte am Werk notwendig ist.
+
+
+                                 3. Zugänglichmachung des Quellcodes
+
+
+Der Lizenzgeber kann das Werk entweder als Quellcode oder als ausführbaren Code zur Verfügung stellen. Stellt er es als
+ausführbaren Code zur Verfügung, so stellt er darüber hinaus eine maschinenlesbare Kopie des Quellcodes für jedes von
+ihm verbreitete Vervielfältigungsstück des Werks zur Verfügung, oder er verweist in einem Vermerk im Anschluss an den
+dem Werk beigefügten Urheberrechtshinweis auf einen Speicherort, an dem problemlos und unentgeltlich auf den
+Quellcode zugegriffen werden kann, solange der Lizenzgeber das Werk verbreitet oder zugänglich macht.
+
+
+                                 4. Einschränkungen des Urheberrechts
+
+
+Es ist nicht Zweck dieser Lizenz, Ausnahmen oder Schranken der ausschließlichen Rechte des Urhebers am Werk, die
+dem Lizenznehmer zugutekommen, einzuschränken. Auch die Erschöpfung dieser Rechte bleibt von dieser Lizenz
+unberührt.
+
+
+                                 5. Pflichten des Lizenznehmers
+
+
+Die Einräumung der oben genannten Rechte ist an mehrere Beschränkungen und Pflichten für den Lizenznehmer
+gebunden:
+
+Urheberrechtshinweis, Lizenztext, Nennung des Bearbeiters: Der Lizenznehmer muss alle Urheberrechts-, Patent-
+oder Markenrechtshinweise und alle Hinweise auf die Lizenz und den Haftungsausschluss unverändert lassen. Jedem von
+ihm verbreiteten oder zugänglich gemachten Vervielfältigungsstück des Werks muss der Lizenznehmer diese Hinweise
+sowie diese Lizenz beifügen. Der Lizenznehmer muss auf jedem abgeleiteten Werk deutlich darauf hinweisen, dass das
+Werk geändert wurde, und das Datum der Bearbeitung angeben.
+
+„Copyleft“-Klausel: Der Lizenznehmer darf Vervielfältigungen des Originalwerks oder Bearbeitungen nur unter den
+Bedingungen dieser EUPL oder einer neueren Version dieser Lizenz verbreiten oder zugänglich machen, außer wenn das
+Originalwerk ausdrücklich nur unter dieser Lizenzversion — z. B. mit der Angabe „Nur EUPL V. 1.2“ — verbreitet
+werden darf. Der Lizenznehmer (der zum Lizenzgeber wird) darf für das Werk oder die Bearbeitung keine zusätzlichen
+Bedingungen anbieten oder vorschreiben, die die Bedingungen dieser Lizenz verändern oder einschränken.
+
+Kompatibilitäts-Klausel: Wenn der Lizenznehmer Bearbeitungen, die auf dem Werk und einem anderen Werk, das
+unter einer kompatiblen Lizenz lizenziert wurde, basieren, oder die Kopien dieser Bearbeitungen verbreitet oder
+zugänglich macht, kann dies unter den Bedingungen dieser kompatiblen Lizenz erfolgen. Unter „kompatibler Lizenz“ ist
+eine im Anhang dieser Lizenz angeführte Lizenz zu verstehen. Sollten die Verpflichtungen des Lizenznehmers aus der
+kompatiblen Lizenz mit denjenigen aus der vorliegenden Lizenz (EUPL) in Konflikt stehen, werden die Verpflichtungen
+aus der kompatiblen Lizenz Vorrang haben.
+
+Bereitstellung des Quellcodes: Wenn der Lizenznehmer Vervielfältigungsstücke des Werks verbreitet oder zugänglich
+macht, muss er eine maschinenlesbare Fassung des Quellcodes mitliefern oder einen Speicherort angeben, über den
+problemlos und unentgeltlich so lange auf diesen Quellcode zugegriffen werden kann, wie der Lizenznehmer das Werk
+verbreitet oder zugänglich macht.
+
+Rechtsschutz: Diese Lizenz erlaubt nicht die Benutzung von Kennzeichen, Marken oder geschützten Namensrechten des
+Lizenzgebers, soweit dies nicht für die angemessene und übliche Beschreibung der Herkunft des Werks und der
+inhaltlichen Wiedergabe des Urheberrechtshinweises erforderlich ist.
+
+
+                                 6. Urheber und Bearbeiter
+
+Der ursprüngliche Lizenzgeber gewährleistet, dass er das Urheberrecht am Originalwerk innehat oder dieses an ihn
+lizenziert wurde und dass er befugt ist, diese Lizenz zu erteilen.
+
+Jeder Bearbeiter gewährleistet, dass er das Urheberrecht an den von ihm vorgenommenen Änderungen des Werks besitzt
+und befugt ist, diese Lizenz zu erteilen.
+
+Jedes Mal, wenn Sie die Lizenz annehmen, erteilen Ihnen der ursprüngliche Lizenzgeber und alle folgenden Bearbeiter
+eine Befugnis zur Nutzung ihrer Beiträge zum Werk unter den Bedingungen dieser Lizenz.
+
+
+                                 7. Gewährleistungsausschluss
+
+Die Arbeit an diesem Werk wird laufend fortgeführt; es wird durch unzählige Bearbeiter ständig verbessert. Das Werk ist
+nicht vollendet und kann daher Fehler („bugs“) enthalten, die dieser Art der Entwicklung inhärent sind.
+
+Aus den genannten Gründen wird das Werk unter dieser Lizenz „so, wie es ist“ ohne jegliche Gewährleistung zur
+Verfügung gestellt. Dies gilt unter anderem — aber nicht ausschließlich — für Marktreife, Verwendbarkeit für einen
+bestimmten Zweck, Mängelfreiheit, Richtigkeit sowie Nichtverletzung von anderen Immaterialgüterrechten als dem
+Urheberrecht (vgl. dazu Artikel 6 dieser Lizenz).
+
+Dieser Gewährleistungsausschluss ist wesentlicher Bestandteil der Lizenz und Bedingung für die Einräumung von
+Rechten an dem Werk.
+
+
+                                 8. Haftungsausschluss/Haftungsbeschränkung
+
+Außer in Fällen von Vorsatz oder der Verursachung von Personenschäden haftet der Lizenzgeber nicht für direkte oder
+indirekte, materielle oder immaterielle Schäden irgendwelcher Art, die aus der Lizenz oder der Benutzung des Werks
+folgen; dies gilt unter anderem, aber nicht ausschließlich, für Firmenwertverluste, Produktionsausfall, Computerausfall
+oder Computerfehler, Datenverlust oder wirtschaftliche Schäden, und zwar auch dann, wenn der Lizenzgeber auf die
+Möglichkeit solcher Schäden hingewiesen wurde. Unabhängig davon haftet der Lizenzgeber im Rahmen der gesetzlichen
+Produkthaftung, soweit die entsprechenden Regelungen auf das Werk anwendbar sind.
+
+
+                                 9. Zusatzvereinbarungen
+
+Wenn Sie das Werk verbreiten, können Sie Zusatzvereinbarungen schließen, in denen Verpflichtungen oder
+Dienstleistungen festgelegt werden, die mit dieser Lizenz vereinbar sind. Sie dürfen Verpflichtungen indessen nur in
+Ihrem eigenen Namen und auf Ihre eigene Verantwortung eingehen, nicht jedoch im Namen des ursprünglichen
+Lizenzgebers oder eines anderen Bearbeiters, und nur, wenn Sie sich gegenüber allen Bearbeitern verpflichten, sie zu
+entschädigen, zu verteidigen und von der Haftung freizustellen, falls aufgrund der von Ihnen eingegangenen
+Gewährleistungsverpflichtung oder Haftungsübernahme Forderungen gegen sie geltend gemacht werden oder eine
+Haftungsverpflichtung entsteht.
+
+
+                                 10. Annahme der Lizenz
+
+Sie können den Bestimmungen dieser Lizenz zustimmen, indem Sie das Symbol „Lizenz annehmen“ unter dem Fenster
+mit dem Lizenztext anklicken oder indem Sie Ihre Zustimmung auf vergleichbare Weise in einer nach anwendbarem
+Recht zulässigen Form geben. Das Anklicken des Symbols gilt als Anzeichen Ihrer eindeutigen und unwiderruflichen
+Annahme der Lizenz und der darin enthaltenen Klauseln und Bedingungen.
+
+In gleicher Weise gilt als Zeichen der eindeutigen und unwiderruflichen Zustimmung die Ausübung eines Rechtes, das in
+Artikel 2 dieser Lizenz angeführt ist, wie das Erstellen einer Bearbeitung oder die Verbreitung oder Zugänglichmachung
+des Werks oder dessen Vervielfältigungen.
+
+
+                                 11. Informationspflichten
+
+Wenn Sie das Werk verbreiten oder zugänglich machen (beispielsweise, indem Sie es zum Herunterladen von einer
+Website anbieten), müssen Sie über den Vertriebskanal oder das benutzte Verbreitungsmedium der Öffentlichkeit
+zumindest jene Informationen bereitstellen, die nach dem anwendbaren Recht bezüglich der Lizenzgeber, der Lizenz und
+ihrer Zugänglichkeit, des Abschlusses des Lizenzvertrags sowie darüber, wie die Lizenz durch den Lizenznehmer
+gespeichert und vervielfältigt werden kann, erforderlich sind.
+
+
+                                 12. Beendigung der Lizenz
+
+Die Lizenz und die damit eingeräumten Rechte erlöschen automatisch, wenn der Lizenznehmer gegen die Lizenzbedingungen
+verstößt.
+
+Ein solches Erlöschen der Lizenz führt nicht zum Erlöschen der Lizenzen von Personen, denen das Werk vom
+Lizenznehmer unter dieser Lizenz zur Verfügung gestellt worden ist, solange diese Personen die Lizenzbedingungen
+erfüllen.
+
+                                 13. Sonstiges
+
+Unbeschadet des Artikels 9 stellt die Lizenz die vollständige Vereinbarung der Parteien über das Werk dar.
+
+Sind einzelne Bestimmungen der Lizenz nach geltendem Recht nichtig oder unwirksam, so berührt dies nicht die
+Wirksamkeit oder Durchsetzbarkeit der Lizenz an sich. Solche Bestimmungen werden vielmehr so ausgelegt oder
+modifiziert, dass sie wirksam und durchsetzbar sind.
+
+Die Europäische Kommission kann weitere Sprachfassungen oder neue Versionen dieser Lizenz oder aktualisierte
+Fassungen des Anhangs veröffentlichen, soweit dies notwendig und angemessen ist, ohne den Umfang der Lizenzrechte
+zu verringern. Neue Versionen werden mit einer eindeutigen Versionsnummer veröffentlicht.
+
+Alle von der Europäischen Kommission anerkannten Sprachfassungen dieser Lizenz sind gleichwertig. Die Parteien
+können sich auf die Sprachfassung ihrer Wahl berufen.
+
+
+                                 14. Gerichtsstand
+
+Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
+
+- Für alle Streitigkeiten über die Auslegung dieser Lizenz zwischen den Organen, Einrichtungen und sonstigen Stellen
+  der Europäischen Union als Lizenzgeber und einem Lizenznehmer ist der Gerichtshof der Europäischen Union
+  gemäß Artikel 272 des Vertrags über die Arbeitsweise der Europäischen Union zuständig;
+
+- Gerichtsstand für Streitigkeiten zwischen anderen Parteien über die Auslegung dieser Lizenz ist allein der Ort, an
+  dem der Lizenzgeber seinen Wohnsitz oder den wirtschaftlichen Mittelpunkt seiner Tätigkeit hat.
+
+
+                                 15. Anwendbares Recht
+
+Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
+
+- Diese Lizenz unterliegt dem Recht des Mitgliedstaats der Europäischen Union, in dem der Lizenzgeber seinen Sitz,
+  Wohnsitz oder eingetragenen Sitz hat;
+
+- diese Lizenz unterliegt dem belgischen Recht, wenn der Lizenzgeber keinen Sitz, Wohnsitz oder eingetragenen Sitz in
+  einem Mitgliedstaat der Europäischen Union hat.
+
+
+                                 Anlage
+
+„Kompatible Lizenzen“ nach Artikel 5 der EUPL sind:
+
+      - GNU General Public License (GPL) v. 2, v. 3
+
+      - GNU Affero General Public License (AGPL) v. 3
+
+      - Open Software License (OSL) v. 2.1, v. 3.0
+
+      - Eclipse Public License (EPL) v. 1.0
+
+      - CeCILL v. 2.0, v. 2.1
+
+      - Mozilla Public Licence (MPL) v. 2
+
+      - GNU Lesser General Public Licence (LGPL) v. 2.1, v. 3
+
+      - Creative Commons Attribution-ShareAlike v. 3.0 Unported (CC BY-SA 3.0) für andere Werke als Software
+
+      - European Union Public Licence (EUPL) v. 1.1, v. 1.2
+
+      - Québec Free and Open-Source Licence — Reciprocity (LiLiQ-R) oder Strong Reciprocity (LiLiQ-R+)
+
+- Die Europäische Kommission kann diesen Anhang aktualisieren, um neuere Fassungen der obigen Lizenzen
+  aufzunehmen, ohne hierfür eine neue Fassung der EUPL auszuarbeiten, solange diese Lizenzen die in Artikel 2
+  gewährten Rechte gewährleisten und den erfassten Quellcode vor ausschließlicher Aneignung schützen.
+
+- Alle sonstigen Änderungen oder Ergänzungen dieses Anhangs bedürfen der Ausarbeitung einer neuen Version der
+  EUPL.
+
+
+
+
+
+
+Copyright (c) 1998-2017 The OpenSSL Project.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+
+3. All advertising materials mentioning features or use of this
+   software must display the following acknowledgment:
+   "This product includes software developed by the OpenSSL Project
+   for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
+
+4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
+   endorse or promote products derived from this software without
+   prior written permission. For written permission, please contact
+   openssl-core@openssl.org.
+
+5. Products derived from this software may not be called "OpenSSL"
+   nor may "OpenSSL" appear in their names without prior written
+   permission of the OpenSSL Project.
+
+6. Redistributions of any form whatsoever must retain the following
+   acknowledgment:
+   "This product includes software developed by the OpenSSL Project
+   for use in the OpenSSL Toolkit (http://www.openssl.org/)"
+
+THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
+EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+This product includes cryptographic software written by Eric Young
+(eay@cryptsoft.com).  This product includes software written by Tim
+Hudson (tjh@cryptsoft.com).
+
+
+Original SSLeay License
+
+Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
+All rights reserved.
+
+This package is an SSL implementation written
+by Eric Young (eay@cryptsoft.com).
+The implementation was written so as to conform with Netscapes SSL.
+
+This library is free for commercial and non-commercial use as long as
+the following conditions are aheared to.  The following conditions
+apply to all code found in this distribution, be it the RC4, RSA,
+lhash, DES, etc., code; not just the SSL code.  The SSL documentation
+included with this distribution is covered by the same copyright terms
+except that the holder is Tim Hudson (tjh@cryptsoft.com).
+
+Copyright remains Eric Young's, and as such any Copyright notices in
+the code are not to be removed.
+If this package is used in a product, Eric Young should be given attribution
+as the author of the parts of the library used.
+This can be in the form of a textual message at program startup or
+in documentation (online or textual) provided with the package.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+3. All advertising materials mentioning features or use of this software
+   must display the following acknowledgement:
+   "This product includes cryptographic software written by
+   Eric Young (eay@cryptsoft.com)"
+   The word 'cryptographic' can be left out if the rouines from the library
+   being used are not cryptographic related :-).
+4. If you include any Windows specific code (or a derivative thereof) from
+   the apps directory (application code) you must include an acknowledgement:
+   "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
+
+THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+
+The licence and distribution terms for any publically available version or
+derivative of this code cannot be changed.  i.e. this code cannot simply be
+copied and put under another distribution licence
+[including the GNU Public Licence.]
+
+
+
+
+
+
+                     Ergänzende Linzenzhinweise
+
+Die verwendeten OpenSource-Bibliotheken unterliegen den folgenden Nutzungsbedingungen:
+
+Qt
+  Lizenz: LGPL v3
+  Version: 5.7.0
+  Adresse: https://www.qt.io/
+
+http_parser
+  Lizenz: MIT
+  Version: 2.7.1
+  Adresse: https://github.com/nodejs/http-parser/
+
+qhttpserver
+  Lizenz: MIT
+  Version: 0.1.0
+  Adresse: https://github.com/nikhilm/qhttpserver/
+
+fervor
+  Lizenz: MIT
+  Version: 9980f27
+  Adresse: https://github.com/pypt/fervor/
+
+
+Die Lizenztexte lauten in ihrer originalen Fassung wie folgt:
+
+
+
+
+
+            GNU LESSER GENERAL PUBLIC LICENSE
+
+The Qt Toolkit is Copyright (C) 2016 The Qt Company Ltd.
+Contact: http://www.qt.io/licensing/
+
+You may use, distribute and copy the Qt Toolkit under the terms of
+GNU Lesser General Public License version 3, which is displayed below.
+This license makes reference to the version 3 of the GNU General
+Public License, which you can find in the LICENSE.GPLv3 file.
+
+-------------------------------------------------------------------------
+
+            GNU LESSER GENERAL PUBLIC LICENSE
+                Version 3, 29 June 2007
+
+Copyright © 2007 Free Software Foundation, Inc. <http://fsf.org/>
+Everyone is permitted to copy and distribute verbatim copies of this
+licensedocument, but changing it is not allowed.
+
+This version of the GNU Lesser General Public License incorporates
+the terms and conditions of version 3 of the GNU General Public
+License, supplemented by the additional permissions listed below.
+
+0. Additional Definitions.
+
+As used herein, “this License” refers to version 3 of the GNU Lesser
+General Public License, and the “GNU GPL” refers to version 3 of the
+GNU General Public License.
+
+“The Library” refers to a covered work governed by this License,
+other than an Application or a Combined Work as defined below.
+
+An “Application” is any work that makes use of an interface provided
+by the Library, but which is not otherwise based on the Library.
+Defining a subclass of a class defined by the Library is deemed a mode
+of using an interface provided by the Library.
+
+A “Combined Work” is a work produced by combining or linking an
+Application with the Library. The particular version of the Library
+with which the Combined Work was made is also called the “Linked
+Version”.
+
+The “Minimal Corresponding Source” for a Combined Work means the
+Corresponding Source for the Combined Work, excluding any source code
+for portions of the Combined Work that, considered in isolation, are
+based on the Application, and not on the Linked Version.
+
+The “Corresponding Application Code” for a Combined Work means the
+object code and/or source code for the Application, including any data
+and utility programs needed for reproducing the Combined Work from the
+Application, but excluding the System Libraries of the Combined Work.
+
+1. Exception to Section 3 of the GNU GPL.
+
+You may convey a covered work under sections 3 and 4 of this License
+without being bound by section 3 of the GNU GPL.
+
+2. Conveying Modified Versions.
+
+If you modify a copy of the Library, and, in your modifications, a
+facility refers to a function or data to be supplied by an Application
+that uses the facility (other than as an argument passed when the
+facility is invoked), then you may convey a copy of the modified
+version:
+
+    a) under this License, provided that you make a good faith effort
+    to ensure that, in the event an Application does not supply the
+    function or data, the facility still operates, and performs
+    whatever part of its purpose remains meaningful, or
+
+    b) under the GNU GPL, with none of the additional permissions of
+    this License applicable to that copy.
+
+3. Object Code Incorporating Material from Library Header Files.
+
+The object code form of an Application may incorporate material from
+a header file that is part of the Library. You may convey such object
+code under terms of your choice, provided that, if the incorporated
+material is not limited to numerical parameters, data structure
+layouts and accessors, or small macros, inline functions and templates
+(ten or fewer lines in length), you do both of the following:
+
+    a) Give prominent notice with each copy of the object code that
+    the Library is used in it and that the Library and its use are
+    covered by this License.
+
+    b) Accompany the object code with a copy of the GNU GPL and this
+    license document.
+
+4. Combined Works.
+
+You may convey a Combined Work under terms of your choice that, taken
+together, effectively do not restrict modification of the portions of
+the Library contained in the Combined Work and reverse engineering for
+debugging such modifications, if you also do each of the following:
+
+    a) Give prominent notice with each copy of the Combined Work that
+    the Library is used in it and that the Library and its use are
+    covered by this License.
+
+    b) Accompany the Combined Work with a copy of the GNU GPL and this
+    license document.
+
+    c) For a Combined Work that displays copyright notices during
+    execution, include the copyright notice for the Library among
+    these notices, as well as a reference directing the user to the
+    copies of the GNU GPL and this license document.
+
+    d) Do one of the following:
+
+        0) Convey the Minimal Corresponding Source under the terms of
+        this License, and the Corresponding Application Code in a form
+        suitable for, and under terms that permit, the user to
+        recombine or relink the Application with a modified version of
+        the Linked Version to produce a modified Combined Work, in the
+        manner specified by section 6 of the GNU GPL for conveying
+        Corresponding Source.
+
+        1) Use a suitable shared library mechanism for linking with
+        the Library. A suitable mechanism is one that (a) uses at run
+        time a copy of the Library already present on the user's
+        computer system, and (b) will operate properly with a modified
+        version of the Library that is interface-compatible with the
+        Linked Version.
+
+    e) Provide Installation Information, but only if you would
+    otherwise be required to provide such information under section 6
+    of the GNU GPL, and only to the extent that such information is
+    necessary to install and execute a modified version of the
+    Combined Work produced by recombining or relinking the Application
+    with a modified version of the Linked Version. (If you use option
+    4d0, the Installation Information must accompany the Minimal
+    Corresponding Source and Corresponding Application Code. If you
+    use option 4d1, you must provide the Installation Information in
+    the manner specified by section 6 of the GNU GPL for conveying
+    Corresponding Source.)
+
+5. Combined Libraries.
+
+You may place library facilities that are a work based on the Library
+side by side in a single library together with other library
+facilities that are not Applications and are not covered by this
+License, and convey such a combined library under terms of your
+choice, if you do both of the following:
+
+    a) Accompany the combined library with a copy of the same work
+    based on the Library, uncombined with any other library
+    facilities, conveyed under the terms of this License.
+
+    b) Give prominent notice with the combined library that part of
+    it is a work based on the Library, and explaining where to find
+    the accompanying uncombined form of the same work.
+
+6. Revised Versions of the GNU Lesser General Public License.
+
+The Free Software Foundation may publish revised and/or new versions
+of the GNU Lesser General Public License from time to time. Such new
+versions will be similar in spirit to the present version, but may
+differ in detail to address new problems or concerns.
+
+Each version is given a distinguishing version number. If the Library
+as you received it specifies that a certain numbered version of the
+GNU Lesser General Public License “or any later version” applies to
+it, you have the option of following the terms and conditions either
+of that published version or of any later version published by the
+Free Software Foundation. If the Library as you received it does not
+specify a version number of the GNU Lesser General Public License,
+you may choose any version of the GNU Lesser General Public License
+ever published by the Free Software Foundation.
+
+If the Library as you received it specifies that a proxy can decide
+whether future versions of the GNU Lesser General Public License shall
+apply, that proxy's public statement of acceptance of any version is
+permanent authorization for you to choose that version for the Library.
+
+
+
+
+
+
+http_parser.c is based on src/http/ngx_http_parse.c from NGINX copyright
+Igor Sysoev.
+
+Additional changes are licensed under the same terms as NGINX and
+copyright Joyent, Inc. and other Node contributors. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE.
+
+
+
+
+
+
+Copyright (c) 2012 Linas Valiukas and others.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
+
+
+
+Copyright (C) 2011-2014 Nikhil Marathe <nsm.nikhil@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE. 

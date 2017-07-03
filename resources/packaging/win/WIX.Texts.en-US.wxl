@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+	<String Id="LANG" Overridable="yes">1033</String><!-- see http://wix.tramontana.co.hu/tutorial/user-interface/do-you-speak-english -->
+	<String Id="DowngradeErrorMessage" Overridable="yes">A later version of [ProductName] is already installed. Setup will now exit.</String>
+	<String Id="WindowsServerNotSupported" Overridable="yes">[ProductName] does not support Windows Server.</String>
+	<String Id="Windows7SP1Required" Overridable="yes">[ProductName] requires Windows 7 with SP1 or higher.</String>
+	<String Id="ProgramDescription" Overridable="yes">AusweisApp2, the eID-Client of Governikus KG</String>
+	<String Id="CustomInstallDirDlg_Title" Overridable="yes">Installation options</String>
+	<String Id="CustomInstallDirDlg_Description" Overridable="yes"></String>
+	<String Id="CustomInstallDirDlg_DesktopShortcutCheckBox" Overridable="yes">Create link on desktop</String>
+	<String Id="CustomInstallDirDlg_SystemSettingsCheckBox" Overridable="yes">Register the [ProductName] in the system (Firewall and Browser settings)</String>
+	<String Id="CustomExitDialog_LaunchCheckBox" Overridable="yes">Start AusweisApp</String>
+</WixLocalization>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?include "cpack_variables.wxi"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+	RequiredVersion="3.6.3303.0">
+
+	<Product Id="$(var.CPACK_WIX_PRODUCT_GUID)"
+		Name="$(var.CPACK_PACKAGE_NAME)"
+		Language="1031"
+		Version="$(var.CPACK_PACKAGE_VERSION)"
+		Manufacturer="$(var.CPACK_PACKAGE_VENDOR)"
+		UpgradeCode="$(var.CPACK_WIX_UPGRADE_GUID)">
+
+		<Package InstallerVersion="301" Compressed="yes"/>
+
+		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes"/>
+
+		<MajorUpgrade
+			Schedule="afterInstallInitialize"
+			AllowSameVersionUpgrades="yes"
+			DowngradeErrorMessage="!(loc.DowngradeErrorMessage)"/>
+
+		<Condition Message="!(loc.WindowsServerNotSupported)">
+			<![CDATA[Installed OR MsiNTProductType = 1]]>
+		</Condition>
+
+		<Condition Message="!(loc.Windows7SP1Required)">
+			<![CDATA[Installed OR (VersionNT >= 602) OR (VersionNT = 601 AND ServicePackLevel >= 1)]]>
+		</Condition>
+
+
+		<WixVariable Id="WixUILicenseRtf" Value="$(var.CPACK_WIX_LICENSE_RTF)"/>
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALL_ROOT"/>
+
+		<?ifdef CPACK_WIX_PRODUCT_ICON?>
+			<Property Id="ARPPRODUCTICON">ProductIcon.ico</Property>
+			<Icon Id="ProductIcon.ico" SourceFile="$(var.CPACK_WIX_PRODUCT_ICON)"/>
+		<?endif?>
+
+		<?ifdef CPACK_WIX_UI_BANNER?>
+			<WixVariable Id="WixUIBannerBmp" Value="$(var.CPACK_WIX_UI_BANNER)"/>
+		<?endif?>
+
+		<?ifdef CPACK_WIX_UI_DIALOG?>
+			<WixVariable Id="WixUIDialogBmp" Value="$(var.CPACK_WIX_UI_DIALOG)"/>
+		<?endif?>
+
+		<!-- ############################################################## -->
+		<!-- Rewrite autostart registry entry if defined                    -->
+		<!-- ############################################################## -->
+		<Property Id="AUTOSTART">
+			<RegistrySearch Id="AUTOSTART" Root="HKCU"
+				Key="Software\Microsoft\Windows\CurrentVersion\Run"
+				Name="AusweisApp2"
+				Type="raw" />
+		</Property>
+		<DirectoryRef Id="TARGETDIR">
+			<Component Id="RegistryEntryAutoStart" Guid="*">
+				<Condition>AUTOSTART</Condition>
+				<RegistryKey Root="HKCU" Key="Software\Microsoft\Windows\CurrentVersion\Run">
+					<RegistryValue Type="string" Name="AusweisApp2" Value="&quot;[INSTALL_ROOT][ProductName].exe&quot;" KeyPath="no"/>
+				</RegistryKey>
+			</Component>
+		</DirectoryRef>
+
+
+		<!-- ############################################################## -->
+		<!-- Create registry entry and add 127.0.0.1 to trusted sites       -->
+		<!-- ############################################################## -->
+		<Property Id="SYSTEMSETTINGS" Value="1"/><!-- default: true -->
+		<DirectoryRef Id="TARGETDIR">
+			<Component Id="RegistryEntryIE" Guid="*">
+				<Condition>SYSTEMSETTINGS</Condition>
+				<RegistryKey Root="HKCU"
+						Key="Software\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\Domains\127.0.0.1"
+						Action="createAndRemoveOnUninstall">
+					<RegistryValue Type="integer" Name="http" Value="2" KeyPath="no"/>
+				</RegistryKey>
+				<RegistryKey Root="HKLM"
+					Key="SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules"
+					Action="create">
+					<RegistryValue Type="string" Name="AusweisApp2-Firewall-Rule"
+						Value="v2.20|Action=Allow|Active=TRUE|Dir=Out|App=[INSTALL_ROOT][ProductName].exe|Name=AusweisApp2|Desc=AusweisApp2 firewall rule|"
+						KeyPath="no"/>
+				</RegistryKey>
+			</Component>
+		</DirectoryRef>
+
+
+		<!-- ################################################################### -->
+		<!-- Add AusweisApp2 Listening Port Allow Rule to Windows Firewall       -->
+		<!-- ################################################################### -->
+		<CustomAction Id="AddListeningPortWindowsFirewall"
+				Directory="TARGETDIR"
+				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall add rule name=AusweisApp2 dir=in action=allow service=any description=&quot;AusweisApp2 listening port allow rule&quot; enable=yes localip=127.0.0.1 remoteip=any localport=24727 remoteport=any protocol=tcp"
+				Execute="commit"
+				Return="asyncWait" />
+		<InstallExecuteSequence>
+			<Custom Action="AddListeningPortWindowsFirewall" Before="InstallFinalize">SYSTEMSETTINGS and NOT Installed</Custom>
+		</InstallExecuteSequence>
+
+
+		<!-- ############################################################################## -->
+		<!-- UNINSTALL Delete AusweisApp2 Listening Port Allow Rule to Windows Firewall     -->
+		<!-- ############################################################################## -->
+		<CustomAction Id="DeleteListeningPortWindowsFirewall"
+				Directory="TARGETDIR"
+				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall delete rule name=AusweisApp2"
+				Execute="commit"
+				Return="asyncWait" />
+		<InstallExecuteSequence>
+			<Custom Action="DeleteListeningPortWindowsFirewall" Before="InstallFinalize">Installed and NOT REINSTALL</Custom>
+		</InstallExecuteSequence>
+
+
+		<!-- ############################# -->
+		<!-- Create desktop shortcut       -->
+		<!-- ############################# -->
+		<Property Id="INSTALLDESKTOPSHORTCUT" Value="1"/><!-- default: true -->
+		<DirectoryRef Id="TARGETDIR">
+			<Directory Id="DesktopFolder" Name="Desktop" >
+				<Component Id="ProgrammDesktopShortcut" Guid="*">
+					<Condition>INSTALLDESKTOPSHORTCUT</Condition>
+					<Shortcut Id="ProgrammStartDesktopShortcut"
+						Name="$(var.CPACK_PACKAGE_NAME)"
+						Description="!(loc.ProgramDescription)"
+						Icon="ProductIcon.ico"
+						Target="[INSTALL_ROOT][ProductName].exe"
+						WorkingDirectory="INSTALL_ROOT"
+						Advertise="no" />
+					<RegistryKey Root="HKCU"
+							Key="Software\Governikus GmbH &amp; Co. KG\AusweisApp2">
+						<RegistryValue Name="DesktopSC" Type="integer" Value="1" KeyPath="yes" />
+					</RegistryKey>
+				</Component>
+			</Directory>
+		</DirectoryRef>
+
+
+		<!-- ############################ -->
+		<!-- ProductFeature components    -->
+		<!-- ############################ -->
+		<FeatureRef Id="ProductFeature">
+			<ComponentRef Id="ProgrammDesktopShortcut" />
+			<ComponentRef Id="RegistryEntryIE" />
+			<ComponentRef Id="RegistryEntryAutoStart" />
+		</FeatureRef>
+
+
+		<!-- ############################# -->
+		<!-- Launch application on exit    -->
+		<!-- ############################# -->
+		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1"/><!-- default: true -->
+		<UI>
+			<UIRef Id="CustomWixUI_InstallDir" />
+
+			<Publish Dialog="CustomExitDialog"
+				Control="Finish"
+				Order="1"
+				Event="DoAction"
+				Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+		</UI>
+		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="!(loc.CustomExitDialog_LaunchCheckBox)"/>
+		<Property Id="WixShellExecTarget" Value="[#CM_FP_AusweisApp2.exe]" />
+		<CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+	</Product>
+
+
+
+	<!-- Customized WixUI_InstallDir Dialog: use CustomInstallDirDlg and CustomExitDialog-->
+	<Fragment>
+		<UI Id="CustomWixUI_InstallDir">
+			<TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+			<TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+			<TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+
+			<Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+			<Property Id="WixUI_Mode" Value="InstallDir" />
+
+			<DialogRef Id="BrowseDlg" />
+			<DialogRef Id="DiskCostDlg" />
+			<DialogRef Id="ErrorDlg" />
+			<DialogRef Id="FatalError" />
+			<DialogRef Id="FilesInUse" />
+			<DialogRef Id="MsiRMFilesInUse" />
+			<DialogRef Id="PrepareDlg" />
+			<DialogRef Id="ProgressDlg" />
+			<DialogRef Id="ResumeDlg" />
+			<DialogRef Id="UserExit" />
+
+			<Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
+			<Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
+
+			<Publish Dialog="CustomExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+
+			<Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg">NOT Installed</Publish>
+			<Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
+
+			<Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+			<Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="CustomInstallDirDlg">LicenseAccepted = "1"</Publish>
+
+			<Publish Dialog="CustomInstallDirDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
+			<Publish Dialog="CustomInstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+			<Publish Dialog="CustomInstallDirDlg" Control="Next" Event="DoAction" Value="WixUIValidatePath" Order="2">NOT WIXUI_DONTVALIDATEPATH</Publish>
+			<Publish Dialog="CustomInstallDirDlg" Control="Next" Event="SpawnDialog" Value="InvalidDirDlg" Order="3"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
+			<Publish Dialog="CustomInstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
+			<Publish Dialog="CustomInstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+			<Publish Dialog="CustomInstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
+
+			<Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="CustomInstallDirDlg" Order="1">NOT Installed</Publish>
+			<Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
+			<Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>
+
+			<Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
+
+			<Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+			<Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+			<Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+
+			<Property Id="ARPNOMODIFY" Value="1" />
+		</UI>
+		<UIRef Id="WixUI_Common" />
+	</Fragment>
+
+
+	<!-- Custom InstallDirDlg Dialog -->
+	<Fragment>
+		<UI>
+			<Dialog Id="CustomInstallDirDlg" Width="370" Height="270" Title="!(loc.InstallDirDlg_Title)">
+				<Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+				<Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+				<Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+					<Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+				</Control>
+
+				<Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}!(loc.CustomInstallDirDlg_Title)" />
+				<Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.CustomInstallDirDlg_Description)" />
+				<Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)" />
+				<Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+				<Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+
+				<Control Id="SystemSettingsCheckBox" Type="CheckBox" X="20" Y="70" Width="290" Height="17" Property="SYSTEMSETTINGS" CheckBoxValue="1" Text="!(loc.CustomInstallDirDlg_SystemSettingsCheckBox)" />
+				<Control Id="DesktopShortcutCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="INSTALLDESKTOPSHORTCUT" CheckBoxValue="1" Text="!(loc.CustomInstallDirDlg_DesktopShortcutCheckBox)" />
+
+				<Control Id="FolderLabel" Type="Text" X="22" Y="175" Width="290" Height="30" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)" Transparent="yes" />
+				<Control Id="Folder" Type="PathEdit" X="20" Y="195" Width="272" Height="18" Property="WIXUI_INSTALLDIR" Indirect="yes" />
+				<Control Id="ChangeFolder" Type="PushButton" X="304" Y="195" Width="56" Height="17" Text="!(loc.InstallDirDlgChange)" />
+			</Dialog>
+		</UI>
+	</Fragment>
+
+	<Fragment>
+		<UI>
+			<Dialog Id="CustomExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
+				<Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.WixUIFinish)" />
+				<Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUICancel)" />
+				<Control Id="Bitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="234" TabSkip="no" Text="!(loc.ExitDialogBitmap)" />
+				<Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUIBack)" />
+				<Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+				<Control Id="Description" Type="Text" X="135" Y="70" Width="220" Height="40" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)" />
+				<Control Id="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)" />
+				<Control Id="OptionalText" Type="Text" X="135" Y="110" Width="220" Height="80" Transparent="yes" NoPrefix="yes" Hidden="yes" Text="[WIXUI_EXITDIALOGOPTIONALTEXT]">
+					<Condition Action="show">WIXUI_EXITDIALOGOPTIONALTEXT AND NOT Installed</Condition>
+				</Control>
+				<Control Id="OptionalCheckBox" Type="CheckBox" X="10" Y="243" Width="150" Height="17" Hidden="yes" Property="WIXUI_EXITDIALOGOPTIONALCHECKBOX" CheckBoxValue="1" Text="[WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT]">
+					<Condition Action="show">WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT AND NOT Installed</Condition>
+				</Control>
+			</Dialog>
+
+			<InstallUISequence>
+				<Show Dialog="CustomExitDialog" OnExit="success" Overridable="yes" />
+			</InstallUISequence>
+
+			<AdminUISequence>
+				<Show Dialog="CustomExitDialog" OnExit="success" Overridable="yes" />
+			</AdminUISequence>
+		</UI>
+	</Fragment>
+</Wix>

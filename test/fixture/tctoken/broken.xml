@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<TCTokenType>
+  <ServerAddress>https://eid-server.example.de/entrypoint</ServerAddress>
+  <SessionIdentifier>1meters>
+    <PSK> 4BC1A0B5 </PSK>
+  </PathSecurity-Parameters>
+</TCTokenType>

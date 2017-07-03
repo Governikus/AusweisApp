@@ -1,0 +1,83 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/mobile/appStartPageBackground.jpg</file>
+        <file>images/iOS/arrowLeft.svg</file>
+        <file>images/iOS/arrowRight.svg</file>
+        <file>images/iOS/check.svg</file>
+        <file>images/iOS/list_item_arrow.svg</file>
+        <file>images/iOS/radio_button_check_ios.svg</file>
+        <file>images/iOS/toggle_on.png</file>
+        <file>images/iOS/toggle_off.png</file>
+        <file>images/iOS/toggle_disabled.png</file>
+
+        <file>images/android/navigation/ausweisen.png</file>
+        <file>images/android/navigation/anbieter.png</file>
+        <file>images/android/navigation/verlauf.png</file>
+        <file>images/android/navigation/pin.png</file>
+        <file>images/android/navigation/versionsinformation.png</file>
+        <file>images/android/navigation/faq.png</file>
+        <file>images/android/navigation/support.png</file>
+        <file>images/android/navigation/bewerten.png</file>
+        <file>images/android/navigation/teilen.png</file>
+
+        <file>images/android/mdpi/haken.png</file>
+        <file>images/android/hdpi/haken.png</file>
+        <file>images/android/xhdpi/haken.png</file>
+        <file>images/android/xxhdpi/haken.png</file>
+        <file>images/android/xxxhdpi/haken.png</file>
+
+        <file>images/android/checkbox_0.svg</file>
+        <file>images/android/checkbox_1.svg</file>
+        <file>images/android/tabDivider.svg</file>
+        <file>images/android/arrowRight.svg</file>
+        <file>images/android/arrowLeft.svg</file>
+        <file>images/android/arrowRightWhite.svg</file>
+        <file>images/android/arrowLeftWhite.svg</file>
+        <file>images/android/android_toggle_on.png</file>
+        <file>images/android/android_toggle_off.png</file>
+        <file>images/android/android_toggle_on_disabled.png</file>
+        <file>images/android/android_toggle_off_disabled.png</file>
+        <file>images/android/android_arrow_back.svg</file>
+        <file>images/android/android_arrow_back_white.svg</file>
+        <file>images/android/android_search_icon.svg</file>
+        <file>images/more/icon_mehr_favorit.svg</file>
+        <file>images/more/icon_mehr_fragen.svg</file>
+        <file>images/more/icon_mehr_upload.svg</file>
+        <file>images/more/icon_mehr_info.svg</file>
+        <file>images/provider/categoryIcons/+android/CitizenServices.png</file>
+        <file>images/provider/categoryIcons/+android/Financials.png</file>
+        <file>images/provider/categoryIcons/+android/Insurances.png</file>
+        <file>images/provider/categoryIcons/+android/OtherServices.png</file>
+        <file>images/provider/categoryIcons/+android/CitizenServices_bg.png</file>
+        <file>images/provider/categoryIcons/+android/Financials_bg.png</file>
+        <file>images/provider/categoryIcons/+android/Insurances_bg.png</file>
+        <file>images/provider/categoryIcons/+android/OtherServices_bg.png</file>
+        <file>images/provider/categoryIcons/+android/CitizenServices_button.png</file>
+        <file>images/provider/categoryIcons/+android/Financials_button.png</file>
+        <file>images/provider/categoryIcons/+android/Insurances_button.png</file>
+        <file>images/provider/categoryIcons/+android/OtherServices_button.png</file>
+        <file>images/provider/categoryIcons/+android/General_bg.png</file>
+        <file>images/provider/categoryIcons/CitizenServices.png</file>
+        <file>images/provider/categoryIcons/Financials.png</file>
+        <file>images/provider/categoryIcons/Insurances.png</file>
+        <file>images/provider/categoryIcons/OtherServices.png</file>
+        <file>images/provider/+tablet/adresse.png</file>
+        <file>images/provider/+tablet/mail.png</file>
+        <file>images/provider/+tablet/telefon.png</file>
+        <file>images/provider/+tablet/url.png</file>
+        <file alias="images/provider/categoryIcons/CitizenServices_bg.png">images/provider/categoryIcons/+android/CitizenServices_bg.png</file>
+        <file alias="images/provider/categoryIcons/Financials_bg.png">images/provider/categoryIcons/+android/Financials_bg.png</file>
+        <file alias="images/provider/categoryIcons/Insurances_bg.png">images/provider/categoryIcons/+android/Insurances_bg.png</file>
+        <file alias="images/provider/categoryIcons/OtherServices_bg.png">images/provider/categoryIcons/+android/OtherServices_bg.png</file>
+        <file alias="images/provider/categoryIcons/CitizenServices_button.png">images/provider/categoryIcons/+android/CitizenServices_button.png</file>
+        <file alias="images/provider/categoryIcons/Financials_button.png">images/provider/categoryIcons/+android/Financials_button.png</file>
+        <file alias="images/provider/categoryIcons/Insurances_button.png">images/provider/categoryIcons/+android/Insurances_button.png</file>
+        <file alias="images/provider/categoryIcons/OtherServices_button.png">images/provider/categoryIcons/+android/OtherServices_button.png</file>
+        <file alias="images/provider/categoryIcons/General_bg.png">images/provider/categoryIcons/+android/General_bg.png</file>
+        <file>images/provider/categoryIcons/+android/CitizenServices_section.png</file>
+        <file>images/provider/categoryIcons/+android/Financials_section.png</file>
+        <file>images/provider/categoryIcons/+android/Insurances_section.png</file>
+        <file>images/provider/categoryIcons/+android/OtherServices_section.png</file>
+        <file>images/zahnraeder.svg</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,47 @@
+<RCC>
+    <qresource prefix="/">
+        <file>html_templates/alreadyactive.html</file>
+        <file>html_templates/error.html</file>
+        <file>images/html_message_section.jpg</file>
+        <file>images/randompin/btn_normal_0.png</file>
+        <file>images/randompin/btn_normal_1.png</file>
+        <file>images/randompin/btn_normal_2.png</file>
+        <file>images/randompin/btn_normal_3.png</file>
+        <file>images/randompin/btn_normal_4.png</file>
+        <file>images/randompin/btn_normal_5.png</file>
+        <file>images/randompin/btn_normal_6.png</file>
+        <file>images/randompin/btn_normal_7.png</file>
+        <file>images/randompin/btn_normal_8.png</file>
+        <file>images/randompin/btn_normal_9.png</file>
+        <file>images/randompin/screen_keyboard.png</file>
+        <file>images/randompin/btn_ok.png</file>
+        <file>images/randompin/btn_cancel.png</file>
+        <file>images/randompin/btn_clear.png</file>
+        
+        <file>images/reader/img_Reiner_SCT_cyberjack_RFID_komfort.png</file>
+        <file>images/reader/img_Reiner_SCT_cyberjack_RFID_komfort_mit_ausweis.png</file>
+        <file>images/reader/img_Reiner_SCT_cyberjack_RFID_standard.png</file>
+        <file>images/reader/img_Reiner_SCT_cyberjack_RFID_standard_mit_ausweis.png</file>
+        <file>images/reader/img_Reiner_SCT_cyberjack_RFID_basis.png</file>
+        <file>images/reader/img_Reiner_SCT_cyberjack_RFID_basis_mit_ausweis.png</file>
+        <file>images/reader/img_Identive_SCL011.png</file>
+        
+        <file>images/reader/img_Identive_SCL011_mit_ausweis.png</file> 
+        <file>images/reader/img_Identive_SDI011.png</file>
+        <file>images/reader/img_Identive_SDI011_mit_ausweis.png</file>
+        <file>images/reader/img_KOBIL_ID_Token.png</file>
+        <file>images/reader/img_KOBIL_ID_Token_mit_ausweis.png</file>
+        <file>images/reader/img_ACS_ACR1281U.png</file>
+        <file>images/reader/img_ACS_ACR1281U_mit_ausweis.png</file> 
+        <file>images/reader/img_HID_Global_OMNIKEY_5321_V2.png</file>
+        <file>images/reader/img_HID_Global_OMNIKEY_5321_V2_mit_ausweis.png</file>
+        <file>images/reader/img_HID_Omnikey_Mobile_Reader_4121_CL.png</file>
+        <file>images/reader/img_HID_Omnikey_Mobile_Reader_4121_CL_mit_ausweis.png</file>
+        <file>images/reader/img_FEIG_myAXXES_basic.png</file>
+        <file>images/reader/img_FEIG_myAXXES_basic_mit_ausweis.png</file>
+        <file>images/reader/img_Gemalto_Prox_SU.png</file>
+        <file>images/reader/img_Gemalto_Prox_SU_mit_ausweis.png</file>
+        <file>images/reader/img_Gemalto_Prox_DU.png</file>
+        <file>images/reader/img_Gemalto_Prox_DU_mit_ausweis.png</file>
+    </qresource>
+</RCC>

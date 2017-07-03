@@ -1,0 +1,29 @@
+AusweisApp2 1.2.1
+^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 6. Juli 2015
+
+
+
+Anwender
+""""""""
+  - Die URL und das Zertifikat für den Updateserver wurde angepasst.
+
+  - Ein Fehler beim Autostart der AusweisApp2 ist nun behoben.
+
+  - Die PIN-Eingabe bei Verwendung von Basislesern erlaubt nun nur
+    noch Ziffern.
+
+  - Ein Fehler bei der Bildschirmtastatur, der keine führende Ziffer 0 erlaubte,
+    wurde korrigiert.
+
+  - Die Anordnung der Ziffern bei der Bildschirmtastatur ist unter Windows nun
+    auch zufällig.
+
+  - Im Hilfemenü verweist der Eintrag "Fragen" nun auf die neue FAQ-Seite.
+
+
+
+Entwickler
+""""""""""
+  - Die Vertrauensbasis für die PreVerification (CVCA) der AusweisApp2 wurde aktualisiert.

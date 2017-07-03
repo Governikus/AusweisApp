@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="statusbar_default">#49749C</color>
+    <color name="statusbar_citizen">#673751</color>
+    <color name="statusbar_insurance">#44445F</color>
+    <color name="statusbar_finance">#CEA62C</color>
+    <color name="statusbar_other">#053B3D</color>
+</resources>

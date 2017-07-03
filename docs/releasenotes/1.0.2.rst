@@ -1,0 +1,10 @@
+AusweisApp2 1.0.2
+^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 11. Dezember 2014
+
+
+
+Anwender
+""""""""
+  - Update der Anbieterliste.

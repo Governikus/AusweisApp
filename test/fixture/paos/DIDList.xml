@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header>
+      <sb:Correlation xmlns:sb="http://urn:liberty:sb:2003-08" messageID="Id511" refToMessageID="ef70467d-502c-4729-90fd-1f6661960ea3"/>
+   </soap:Header>
+   <soap:Body>
+   <DIDList xmlns="urn:iso:std:iso-iec:24727:tech:schema">
+<ConnectionHandle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ConnectionHandle">
+<ContextHandle>4549445F4946445F434F4E544558545F42415345</ContextHandle>
+<IFDName>REINER SCT cyberJack RFID komfort USB 52</IFDName>
+<SlotIndex>0</SlotIndex>
+<CardApplication>4549445F49534F5F32343732375F42415345</CardApplication>
+<SlotHandle>37343139303333612D616163352D343331352D386464392D656166393664636661653361</SlotHandle>
+<RecognitionInfo/>
+</ConnectionHandle>
+</DIDList>
+</soap:Body>
+</soap:Envelope>

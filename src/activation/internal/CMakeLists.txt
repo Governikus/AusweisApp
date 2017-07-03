@@ -1,0 +1,4 @@
+ADD_PLATFORM_LIBRARY(AusweisAppActivationInternal)
+
+TARGET_LINK_LIBRARIES(AusweisAppActivationInternal Qt5::Core AusweisAppGlobal AusweisAppActivation)
+TARGET_COMPILE_DEFINITIONS(AusweisAppActivationInternal PRIVATE QT_STATICPLUGIN)

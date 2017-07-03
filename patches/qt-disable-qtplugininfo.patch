@@ -1,0 +1,26 @@
+From 792487510efc7a1fb34366804c431aee6e1219c5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
+Date: Tue, 22 Dec 2015 18:43:02 +0100
+Subject: [PATCH] Disable qtpluginfo as it breaks install step on Android
+
+---
+ src/src.pro | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git x/qttools/src/src.pro y/qttools/src/src.pro
+index 387d54f..3151495 100644
+--- x/qttools/src/src.pro
++++ y/qttools/src/src.pro
+@@ -14,8 +14,7 @@ qtHaveModule(widgets) {
+ }
+ 
+ SUBDIRS += linguist \
+-    qdoc \
+-    qtplugininfo
++    qdoc
+ if(!android|android_app):!ios: SUBDIRS += qtpaths
+ 
+ mac {
+-- 
+2.6.4
+

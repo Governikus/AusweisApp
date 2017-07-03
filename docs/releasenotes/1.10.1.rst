@@ -1,0 +1,11 @@
+AusweisApp2 1.10.1
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 05. Dezember 2016
+
+
+
+Anwender
+""""""""
+  - Unter Windows wurde u.U. fälschlicherweise das
+    Beta-Symbol angezeigt.

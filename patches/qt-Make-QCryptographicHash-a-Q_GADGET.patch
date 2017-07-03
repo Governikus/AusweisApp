@@ -1,0 +1,44 @@
+From a899b4f42ba33cf1e40f6177da00c5bc901264aa Mon Sep 17 00:00:00 2001
+From: "Richard J. Moore" <rich@kde.org>
+Date: Thu, 30 Jul 2015 21:42:45 +0100
+Subject: [PATCH] Make QCryptographicHash a Q_GADGET.
+
+This makes the hash algorithm play nicely with qDebug.
+
+Change-Id: I6db651cd5c73e8be65442dd68d6b865dcb975f4c
+Reviewed-by: Olivier Goffart (Woboq GmbH) <ogoffart@woboq.com>
+---
+ src/corelib/tools/qcryptographichash.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git x/qtbase/src/corelib/tools/qcryptographichash.h y/qtbase/src/corelib/tools/qcryptographichash.h
+index a19c734..0f17baa 100644
+--- x/qtbase/src/corelib/tools/qcryptographichash.h
++++ y/qtbase/src/corelib/tools/qcryptographichash.h
+@@ -42,6 +42,7 @@
+ #define QCRYPTOGRAPHICHASH_H
+ 
+ #include <QtCore/qbytearray.h>
++#include <QtCore/qobjectdefs.h>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+@@ -51,6 +52,7 @@ class QIODevice;
+ 
+ class Q_CORE_EXPORT QCryptographicHash
+ {
++    Q_GADGET
+ public:
+     enum Algorithm {
+ #ifndef QT_CRYPTOGRAPHICHASH_ONLY_SHA1
+@@ -69,6 +71,7 @@ public:
+         Sha3_512
+ #endif
+     };
++    Q_ENUM(Algorithm)
+ 
+     explicit QCryptographicHash(Algorithm method);
+     ~QCryptographicHash();
+-- 
+2.10.0
+

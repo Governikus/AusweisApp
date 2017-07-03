@@ -1,0 +1,14 @@
+AusweisApp2 1.6.1
+^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 14. Dezember 2015
+
+
+
+Anwender
+""""""""
+  - Offizielle Unterstützung von Windows 10 und OS X 10.11.
+
+  - Das DMG für OS X ist nun in deutscher und englischer Sprache verfügbar.
+
+  - Kleinere Fehlerkorrekturen.
