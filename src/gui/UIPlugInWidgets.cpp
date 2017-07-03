@@ -4,6 +4,7 @@
 
 #include "UIPlugInWidgets.h"
 
+#include "ApplicationModel.h"
 #include "workflow/WorkflowAuthenticateQtGui.h"
 #include "workflow/WorkflowChangePinQtGui.h"
 #include "workflow/WorkflowSelfInfoQtGui.h"
@@ -37,9 +38,10 @@ void UIPlugInWidgets::doShutdown()
 void UIPlugInWidgets::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 {
 	pContext->setReaderType(ReaderManagerPlugInType::PCSC);
+	ApplicationModel::getWidgetInstance().resetContext(pContext);
 
 	QSharedPointer<WorkflowGui> currentWorkflowGui;
-	if (auto changePinContext = pContext.dynamicCast<ChangePinContext>())
+	if (auto changePinContext = pContext.objectCast<ChangePinContext>())
 	{
 		currentWorkflowGui = mGui.createWorkflowChangePinUi(changePinContext);
 		mGui.activateWorkflowUi(currentWorkflowGui);
@@ -47,7 +49,7 @@ void UIPlugInWidgets::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext
 	}
 
 	bool allowHideAfterWorklow = true;
-	if (auto selfAuthContext = pContext.dynamicCast<SelfAuthenticationContext>())
+	if (auto selfAuthContext = pContext.objectCast<SelfAuthenticationContext>())
 	{
 		if (mGui.askChangeTransportPinNow())
 		{
@@ -56,7 +58,7 @@ void UIPlugInWidgets::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext
 		}
 		currentWorkflowGui = mGui.createWorkflowSelfInfoUi(selfAuthContext);
 	}
-	else if (auto authContext = pContext.dynamicCast<AuthContext>())
+	else if (auto authContext = pContext.objectCast<AuthContext>())
 	{
 		if (mGui.askChangeTransportPinNow())
 		{
@@ -75,6 +77,7 @@ void UIPlugInWidgets::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext
 void UIPlugInWidgets::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 {
 	Q_UNUSED(pContext)
+	ApplicationModel::getWidgetInstance().resetContext();
 	mGui.deactivateCurrentWorkflowUi();
 }
 
@@ -91,7 +94,11 @@ void UIPlugInWidgets::onShowUi(UiModule pModule)
 }
 
 
+#ifndef QT_NO_NETWORKPROXY
 void UIPlugInWidgets::onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator)
 {
 	mGui.onProxyAuthenticationRequired(pProxy, pAuthenticator);
 }
+
+
+#endif

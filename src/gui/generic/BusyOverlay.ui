@@ -36,7 +36,7 @@
       <enum>Qt::StrongFocus</enum>
      </property>
      <property name="text">
-      <string>The process is started …</string>
+      <string>The process is started...</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

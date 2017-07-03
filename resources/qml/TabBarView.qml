@@ -21,6 +21,8 @@ Item {
 		id: loader
 		asynchronous: true
 		onLoaded: {
+			appWindow.hideSplashScreen()
+
 			baseItem.pushed = true
 			push(item)
 
@@ -30,7 +32,7 @@ Item {
 			}
 
 			baseItem.pendingItems = []
-			authModel.continueWorkflow()
+			numberModel.continueWorkflow()
 		}
 
 		source: parent.visible ? parent.source : loader.source

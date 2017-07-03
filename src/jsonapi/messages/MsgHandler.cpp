@@ -7,6 +7,7 @@
 #include "states/StateEditAccessRights.h"
 #include "states/StateEstablishPaceCan.h"
 #include "states/StateEstablishPacePin.h"
+#include "states/StateEstablishPacePuk.h"
 #include "states/StateSelectNfcReader.h"
 #include "states/StateSelectPcscReader.h"
 
@@ -16,7 +17,7 @@ using namespace governikus;
 
 const MsgLevel MsgHandler::DEFAULT_MSG_LEVEL = MsgLevel::v1;
 
-const MsgHandler MsgHandler::MsgVoid = MsgHandler();
+const MsgHandler MsgHandler::Void = MsgHandler();
 
 
 MsgType MsgHandler::getStateMsgType(const QString& pState)
@@ -28,6 +29,10 @@ MsgType MsgHandler::getStateMsgType(const QString& pState)
 	else if (AbstractState::isState<StateEstablishPaceCan>(pState))
 	{
 		return MsgType::ENTER_CAN;
+	}
+	else if (AbstractState::isState<StateEstablishPacePuk>(pState))
+	{
+		return MsgType::ENTER_PUK;
 	}
 	else if (AbstractState::isState<StateEditAccessRights>(pState))
 	{

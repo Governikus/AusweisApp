@@ -7,6 +7,7 @@
 #pragma once
 
 #include "CardConnectionWorker.h"
+#include "DeviceError.h"
 #include "ReaderInfo.h"
 #include "ReaderManagerPlugIn.h"
 #include "ReaderManagerPlugInInfo.h"
@@ -44,17 +45,20 @@ class ReaderManagerWorker
 		Q_INVOKABLE void connectReader(const QString& pReaderName);
 		Q_INVOKABLE void disconnectReader(const QString& pReaderName);
 		Q_INVOKABLE void disconnectAllReaders();
+		static void registerMetaTypes();
 
 	Q_SIGNALS:
 		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
 		void fireReaderAdded(const QString& pReaderName);
 		void fireReaderConnected(const QString& pReaderName);
+		void fireReaderDeviceError(DeviceError pDeviceError);
 		void fireReaderRemoved(const QString& pReaderName);
-		void fireReaderPropertiesUpdated();
+		void fireReaderPropertiesUpdated(const QString& pReaderName);
 		void fireCardInserted(const QString& pReaderName);
 		void fireCardRemoved(const QString& pReaderName);
 		void fireCardRetryCounterChanged(const QString& pReaderName);
 		void fireCardConnectionWorkerCreated(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
+		void fireInitialized();
 
 	public Q_SLOTS:
 		void onThreadStarted();

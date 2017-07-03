@@ -44,7 +44,7 @@ DiagnosisDialog::~DiagnosisDialog()
 void DiagnosisDialog::onSaveButtonClicked()
 {
 
-	QString fileName = QFileDialog::getSaveFileName(this, QCoreApplication::applicationName() + " - " + tr("Save diagnosis result"), QDir::homePath().append(tr("/AusweisApp2-diagnosis.txt")),
+	QString fileName = QFileDialog::getSaveFileName(this, QCoreApplication::applicationName() + " - " + tr("Save diagnosis result"), QDir::homePath() + tr("/AusweisApp2-diagnosis.txt"),
 			tr("Text files (*.txt)"));
 
 
@@ -54,7 +54,7 @@ void DiagnosisDialog::onSaveButtonClicked()
 	}
 	if (!fileName.endsWith(QStringLiteral(".txt"), Qt::CaseSensitivity::CaseInsensitive))
 	{
-		fileName.append(".txt");
+		fileName += QStringLiteral(".txt");
 	}
 
 	QString text = mDiagnosisWidget->getInfoTextEdit();
@@ -70,7 +70,7 @@ void DiagnosisDialog::onSaveButtonClicked()
 }
 
 
-bool DiagnosisDialog::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
+bool DiagnosisDialog::eventFilter(QObject* pObject, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
@@ -81,5 +81,5 @@ bool DiagnosisDialog::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
 			return true;
 		}
 	}
-	return false;
+	return QDialog::eventFilter(pObject, pEvent);
 }

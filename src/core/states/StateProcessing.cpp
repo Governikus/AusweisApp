@@ -24,7 +24,7 @@ void StateProcessing::run()
 	else
 	{
 		qCritical() << "Cannot send \"Processing\" to caller: " << activationContext->getSendError();
-		setResult(Result::createCommunicationError(activationContext->getSendError()));
+		setStatus(GlobalStatus(GlobalStatus::Code::Workflow_Processing_Error, activationContext->getSendError()));
 		Q_EMIT fireError();
 	}
 }

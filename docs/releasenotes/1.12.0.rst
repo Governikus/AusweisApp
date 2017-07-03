@@ -1,0 +1,22 @@
+AusweisApp2 1.12.0
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 27. März 2017
+
+
+
+Anwender
+""""""""
+  - Veröffentlichung betrifft nur die Plattform "Android".
+
+  - Unterstützung von Android 4.3 und höher.
+
+  - Zertifiziert vom Bundesamt für Sicherheit in der Informationstechnik (BSI).
+
+
+
+Entwickler
+""""""""""
+  - Aktualisierung von OpenSSL auf die Version 1.0.2k.
+
+  - Aktualisierung von Qt auf die Version 5.8.0.

@@ -30,11 +30,17 @@
     </message>
 </context>
 <context>
-    <name>AdditionalResultsCard</name>
+    <name>AdditionalResultsItem</name>
     <message>
-        <location filename="../qml/provider/+android/+tablet/AdditionalResultsCard.qml" line="91"/>
-        <source>Additional results: </source>
+        <location filename="../qml/provider/+android/+tablet/AdditionalResultsItem.qml" line="49"/>
+        <location filename="../qml/provider/AdditionalResultsItem.qml" line="39"/>
+        <source>Additional results:</source>
         <translation>Weitere Ergebnisse:</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/Provider/AdditionalResultsItem.qml" line="35"/>
+        <source>Additional results in other categories: %1</source>
+        <translation>Weitere Ergebnisse in anderen Kategorien: %1</translation>
     </message>
 </context>
 <context>
@@ -68,11 +74,6 @@
         <location filename="../../src/gui/AppQtMainWidget.ui"/>
         <source> Settings</source>
         <translation> Einstellungen</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/AppQtMainWidget.ui"/>
-        <source>&amp;Help</source>
-        <translation>&amp;Hilfe</translation>
     </message>
     <message>
         <location filename="../../src/gui/AppQtMainWidget.ui"/>
@@ -176,6 +177,11 @@
     </message>
     <message>
         <location filename="../../src/gui/AppQtMainWidget.ui"/>
+        <source>&amp;Help</source>
+        <translation>&amp;Hilfe</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/AppQtMainWidget.ui"/>
         <source>&amp;Diagnosis</source>
         <translation>&amp;Diagnose</translation>
     </message>
@@ -183,106 +189,156 @@
 <context>
     <name>BluetoothWorkflow</name>
     <message>
-        <location filename="../qml/BluetoothWorkflow.qml" line="21"/>
-        <source>Enter PUK...</source>
-        <translation>Bitte geben Sie nun Ihre PUK am Gerät ein...</translation>
+        <location filename="../qml/BluetoothWorkflow.qml" line="55"/>
+        <source>Enable Bluetooth</source>
+        <translation>Bluetooth aktivieren</translation>
     </message>
     <message>
-        <location filename="../qml/BluetoothWorkflow.qml" line="24"/>
-        <source>Enter CAN...</source>
-        <translation>Bitte geben Sie nun Ihre CAN am Gerät ein...</translation>
+        <location filename="../qml/BluetoothWorkflow.qml" line="55"/>
+        <source>Continue</source>
+        <translation>Fortsetzen</translation>
     </message>
     <message>
-        <location filename="../qml/BluetoothWorkflow.qml" line="27"/>
-        <source>Enter PIN...</source>
-        <translation>Bitte geben Sie nun Ihre PIN am Gerät ein...</translation>
+        <location filename="../qml/BluetoothWorkflow.qml" line="64"/>
+        <source>Bluetooth is not supported by your device.&lt;br/&gt;Please try NFC.</source>
+        <translation>Ihr Gerät unterstützt kein Bluetooth.&lt;br/&gt;Bitte versuchen Sie NFC.</translation>
     </message>
     <message>
-        <location filename="../qml/BluetoothWorkflow.qml" line="30"/>
-        <source>Enter new PIN...</source>
-        <translation>Bitte geben Sie nun Ihre neue PIN am Gerät ein...</translation>
+        <location filename="../qml/BluetoothWorkflow.qml" line="65"/>
+        <source>Bluetooth is switched off.&lt;br/&gt;Please enable Bluetooth.</source>
+        <translation>Bluetooth ist deaktiviert.&lt;br/&gt;Bitte aktivieren Sie Bluetooth.</translation>
     </message>
     <message>
-        <location filename="../qml/BluetoothWorkflow.qml" line="98"/>
+        <location filename="../qml/BluetoothWorkflow.qml" line="66"/>
+        <source>No paired and activated Bluetooth device was detected. The AusweisApp2 needs access to your location in order to discover available devices. You can grant this permission after clicking the continue button.</source>
+        <translation>Es konnte kein verbundener, eingeschalteter Bluetooth-Kartenleser erkannt werden. Zur Erkennung benötigt die AusweisApp2 Zugriff auf Ihren Standort. Nach Klicken auf den Weiter-Knopf können Sie die benötigte Freigabe erteilen.</translation>
+    </message>
+    <message>
+        <location filename="../qml/BluetoothWorkflow.qml" line="68"/>
         <source>Establish connection</source>
-        <translation>Verbindung herstellen</translation>
+        <translation>Verbindung wird hergestellt</translation>
     </message>
     <message>
-        <location filename="../qml/BluetoothWorkflow.qml" line="101"/>
+        <location filename="../qml/BluetoothWorkflow.qml" line="69"/>
         <source>Determine card</source>
-        <translation>Karte auswählen</translation>
+        <translation>Ermittle Ausweis</translation>
     </message>
     <message>
-        <location filename="../qml/BluetoothWorkflow.qml" line="107"/>
+        <location filename="../qml/BluetoothWorkflow.qml" line="71"/>
         <source>Change PIN</source>
         <translation>PIN ändern</translation>
     </message>
     <message>
-        <location filename="../qml/BluetoothWorkflow.qml" line="111"/>
+        <location filename="../qml/BluetoothWorkflow.qml" line="72"/>
         <source>Authenticate</source>
         <translation>Jetzt ausweisen</translation>
     </message>
     <message>
-        <location filename="../qml/BluetoothWorkflow.qml" line="157"/>
-        <source>Establish connection...</source>
-        <translation>Verbindung wird hergestellt...</translation>
+        <location filename="../qml/BluetoothWorkflow.qml" line="76"/>
+        <source>The online identification function of your ID card is deactivated. Please contact your competent authority to activate the online identification function.</source>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an Ihre zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
-        <location filename="../qml/BluetoothWorkflow.qml" line="161"/>
-        <source>Insert card...</source>
-        <translation>Ausweis ins Gerät legen...</translation>
+        <location filename="../qml/BluetoothWorkflow.qml" line="77"/>
+        <source>Connecting...</source>
+        <translation>Verbinde...</translation>
+    </message>
+    <message>
+        <location filename="../qml/BluetoothWorkflow.qml" line="78"/>
+        <source>Please insert your ID card.</source>
+        <translation>Bitte legen Sie Ihren Ausweis ein.</translation>
+    </message>
+    <message>
+        <location filename="../qml/BluetoothWorkflow.qml" line="79"/>
+        <source>Please enter your old PIN or your initial transport PIN first.</source>
+        <translation>Geben Sie bitte zunächst Ihre alte PIN bzw. die Transport-PIN ein.</translation>
+    </message>
+    <message>
+        <location filename="../qml/BluetoothWorkflow.qml" line="80"/>
+        <source>Please enter your personal PIN.</source>
+        <translation>Geben Sie bitte Ihre persönliche PIN ein.</translation>
+    </message>
+    <message>
+        <location filename="../qml/BluetoothWorkflow.qml" line="81"/>
+        <source>You have entered the wrong PIN twice. For a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.</source>
+        <translation>Sie haben Ihre PIN zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher Ihre 6-stellige Zugangsnummer eingeben. Sie finden Ihre Zugangsnummer auf der Vorderseite Ihres Ausweises.</translation>
+    </message>
+    <message>
+        <location filename="../qml/BluetoothWorkflow.qml" line="82"/>
+        <source>You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.</source>
+        <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Ihre PIN ist jetzt gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
+    </message>
+    <message>
+        <location filename="../qml/BluetoothWorkflow.qml" line="83"/>
+        <source>Please enter a new arbitrary 6-digit PIN.</source>
+        <translation>Geben Sie hier bitte eine von Ihnen frei wählbare, 6-stellige PIN ein.</translation>
+    </message>
+    <message>
+        <location filename="../qml/BluetoothWorkflow.qml" line="94"/>
+        <source>Use NFC instead of&lt;br/&gt;Bluetooth card reader</source>
+        <translation>NFC anstatt Bluetooth&lt;br/&gt;Kartenleser benutzen</translation>
     </message>
 </context>
 <context>
     <name>BusyOverlay</name>
     <message>
         <location filename="../../src/gui/generic/BusyOverlay.ui"/>
-        <source>The process is started …</source>
-        <translation>Der Vorgang wird gestartet…</translation>
+        <source>The process is started...</source>
+        <translation>Der Vorgang wird gestartet...</translation>
     </message>
 </context>
 <context>
     <name>Category</name>
     <message>
-        <location filename="../qml/global/Category.js" line="9"/>
+        <location filename="../qml/global/Category.js" line="7"/>
+        <location filename="../qml_stationary/AusweisApp2/Global/Category.js" line="9"/>
         <source>Provider</source>
         <translation>Anbieter</translation>
     </message>
     <message>
-        <location filename="../qml/global/Category.js" line="12"/>
+        <location filename="../qml/global/Category.js" line="8"/>
+        <source>All</source>
+        <translation>Alle</translation>
+    </message>
+    <message>
+        <location filename="../qml/global/Category.js" line="9"/>
+        <location filename="../qml_stationary/AusweisApp2/Global/Category.js" line="12"/>
         <source>Citizen services</source>
         <translation>Bürgerdienste</translation>
     </message>
     <message>
-        <location filename="../qml/global/Category.js" line="15"/>
+        <location filename="../qml/global/Category.js" line="10"/>
+        <location filename="../qml_stationary/AusweisApp2/Global/Category.js" line="15"/>
         <source>Insurances</source>
         <translation>Versicherungen</translation>
     </message>
     <message>
-        <location filename="../qml/global/Category.js" line="18"/>
+        <location filename="../qml/global/Category.js" line="11"/>
+        <location filename="../qml_stationary/AusweisApp2/Global/Category.js" line="18"/>
         <source>Financials</source>
         <translation>Finanzen</translation>
     </message>
     <message>
-        <location filename="../qml/global/Category.js" line="20"/>
+        <location filename="../qml/global/Category.js" line="12"/>
+        <location filename="../qml_stationary/AusweisApp2/Global/Category.js" line="20"/>
         <source>Other services</source>
         <translation>Weitere Services</translation>
     </message>
 </context>
 <context>
-    <name>CertificateDescription</name>
+    <name>CertificateDescriptionPage</name>
     <message>
-        <location filename="../../src/card/base/asn1/CertificateDescription.cpp" line="262"/>
-        <source>see details under more...</source>
-        <translation>siehe Details unter mehr...</translation>
+        <location filename="../qml/identify/CertificateDescriptionPage.qml" line="33"/>
+        <source>Provider Information</source>
+        <translation>Anbieterinformationen</translation>
     </message>
 </context>
 <context>
-    <name>CertificateDescriptionPage</name>
+    <name>ChangePinController</name>
     <message>
-        <location filename="../qml/identify/CertificateDescriptionPage.qml" line="25"/>
-        <source>Provider Information</source>
-        <translation>Anbieterinformationen</translation>
+        <location filename="../qml/pin/ChangePinController.qml" line="67"/>
+        <source>You may now remove your ID card from the device.</source>
+        <translation>Sie können nun Ihr Ausweisdokument vom Gerät entfernen.</translation>
     </message>
 </context>
 <context>
@@ -321,24 +377,32 @@
 <context>
     <name>CustomSwipeBar</name>
     <message>
-        <location filename="../qml/history/+android/CustomSwipeBar.qml" line="20"/>
         <location filename="../qml/history/CustomSwipeBar.qml" line="35"/>
         <source>Contact</source>
         <translation>Kontakt</translation>
     </message>
     <message>
-        <location filename="../qml/history/+android/CustomSwipeBar.qml" line="35"/>
         <location filename="../qml/history/CustomSwipeBar.qml" line="51"/>
         <source>History</source>
         <translation>Verlauf</translation>
+    </message>
+    <message>
+        <location filename="../qml/history/+android/CustomSwipeBar.qml" line="21"/>
+        <source>CONTACT</source>
+        <translation>KONTAKT</translation>
+    </message>
+    <message>
+        <location filename="../qml/history/+android/CustomSwipeBar.qml" line="42"/>
+        <source>HISTORY</source>
+        <translation>VERLAUF</translation>
     </message>
 </context>
 <context>
     <name>DataGroup</name>
     <message>
-        <location filename="../qml/identify/+android/DataGroup.qml" line="45"/>
-        <source>No data available</source>
-        <translation>Keine Daten verfügbar</translation>
+        <location filename="../qml/identify/+android/DataGroup.qml" line="44"/>
+        <source>No data requested</source>
+        <translation>Keine Daten erforderlich</translation>
     </message>
 </context>
 <context>
@@ -384,8 +448,8 @@
     </message>
     <message>
         <location filename="../../src/gui/DiagnosisDialog.ui"/>
-        <source>Save…</source>
-        <translation>Speichern…</translation>
+        <source>Save as...</source>
+        <translation>Speichern...</translation>
     </message>
     <message>
         <location filename="../../src/gui/DiagnosisDialog.ui"/>
@@ -396,137 +460,107 @@
 <context>
     <name>EnterPinView</name>
     <message>
-        <location filename="../qml/identify/EnterPinView.qml" line="11"/>
-        <source>Identify</source>
-        <translation>Ausweisen</translation>
+        <location filename="../qml/EnterPinView.qml" line="55"/>
+        <source>The entered PIN does not match the new PIN. Please correct your input.</source>
+        <translation>Die eingegebene PIN stimmt nicht mit Ihrer neuen PIN überein. Bitte korrigieren Sie Ihre PIN-Eingabe.</translation>
     </message>
     <message>
-        <location filename="../qml/pin/EnterPinView.qml" line="10"/>
-        <source>Change PIN</source>
-        <translation>PIN ändern</translation>
-    </message>
-</context>
-<context>
-    <name>FvUpdateWindow</name>
-    <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>Software Update</source>
-        <translation>Software-Aktualisierung</translation>
+        <location filename="../qml/EnterPinView.qml" line="59"/>
+        <source>You have entered the wrong PIN twice. For a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.</source>
+        <translation>Sie haben Ihre PIN zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher Ihre 6-stellige Zugangsnummer eingeben. Sie finden Ihre Zugangsnummer auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>A new version of %1 is available!</source>
-        <translation>Es ist eine neue Version der %1 verfügbar!</translation>
+        <location filename="../qml/EnterPinView.qml" line="60"/>
+        <source>You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.</source>
+        <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Ihre PIN ist jetzt gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>%1 %2 is now available - you have %3. Would you like to download it now?</source>
-        <translation>%1 %2 ist jetzt verfügbar, Ihre Version ist %3. Wollen Sie die neue Version jetzt herunterladen?</translation>
+        <location filename="../qml/EnterPinView.qml" line="61"/>
+        <source>Please enter a new arbitrary 6-digit PIN.</source>
+        <translation>Geben Sie hier bitte eine von Ihnen frei wählbare, 6-stellige PIN ein.</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>Release Notes:</source>
-        <translation>Aktualisierungshinweise:</translation>
+        <location filename="../qml/EnterPinView.qml" line="62"/>
+        <source>Please confirm your new PIN by re-entering your personal PIN.</source>
+        <translation>Bestätigen Sie bitte die PIN-Änderung durch die erneute Eingabe Ihrer persönlichen PIN.</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>The update file is located at:</source>
-        <translation>Die Aktualisierungsdatei finden Sie hier:</translation>
+        <location filename="../qml/EnterPinView.qml" line="63"/>
+        <source>Please enter your personal PIN.</source>
+        <translation>Geben Sie bitte Ihre persönliche PIN ein.</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;</source>
-        <translation>&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;</translation>
-    </message>
-    <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>Download this update and close &quot;%1&quot;. Install the update and start &quot;%1&quot; again.</source>
-        <translation>Laden Sie die aktuelle Version der Software herunter und schließen Sie die &quot;%1&quot;. Installieren Sie die neue Software-Version und starten Sie anschließend die &quot;%1&quot; erneut.</translation>
-    </message>
-    <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>When you click &quot;Download update&quot;, this link will be opened in your browser.</source>
-        <translation>Wenn Sie &quot;Aktualisierung herunterladen&quot; klicken, wird dieser Link in Ihrem Browser geöffnet.</translation>
-    </message>
-    <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>Skip update</source>
-        <translation>Aktualisierung auslassen</translation>
-    </message>
-    <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>Remind me later</source>
-        <translation>Später erinnern</translation>
-    </message>
-    <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>Download update</source>
-        <translation>Aktualisierung herunterladen</translation>
-    </message>
-    <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>skip update of current version</source>
-        <translation>Aktualisierung der aktuellen Version auslassen</translation>
-    </message>
-    <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>remind me later for this available version</source>
-        <translation>Später an diese verfügbare Version erinnern</translation>
-    </message>
-    <message>
-        <location filename="../../src/external/fervor/fvupdatewindow.ui"/>
-        <source>download available version</source>
-        <translation>Verfügbare Version herunterladen</translation>
+        <location filename="../qml/EnterPinView.qml" line="64"/>
+        <source>Please enter your old PIN or your initial transport PIN first.</source>
+        <translation>Geben Sie bitte zunächst Ihre alte PIN bzw. die Transport-PIN ein.</translation>
     </message>
 </context>
 <context>
-    <name>FvUpdater</name>
+    <name>Feedback</name>
     <message>
-        <location filename="../../src/external/fervor/fvupdater.cpp" line="141"/>
-        <source>Unable to open this link in a browser. Please copy and paste the link into the address bar of your browser.</source>
-        <translation>Der Link konnte im Browser nicht geöffnet werden. Bitte kopieren Sie den Link aus dieser Meldung und fögen ihn manuell in die Adressleiste Ihres Browsers ein.</translation>
+        <location filename="../qml/more/Feedback.qml" line="11"/>
+        <source>Dialog &amp; Feedback</source>
+        <translation>Dialog &amp; Rückmeldung</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdater.cpp" line="312"/>
-        <source>An error occurred. Please contact our support at &lt;a href=&quot;https://www.ausweisapp.bund.de/en/service/support/&quot;&gt;AusweisApp2 Support&lt;/a&gt;.</source>
-        <translation>Ein Fehler ist aufgetreten. Bitte kontaktieren Sie unseren Support unter &lt;a href=&quot;https://www.ausweisapp.bund.de/service/support/&quot;&gt;AusweisApp2 Support&lt;/a&gt;.</translation>
+        <location filename="../qml/more/Feedback.qml" line="65"/>
+        <source>Your opinion matters</source>
+        <translation>Ihre Meinung zählt</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdater.cpp" line="451"/>
-        <source>Feed parsing failed: %1 %2.</source>
-        <translation>Analyse der Eingabe fehlgeschlagen: %1 %2.</translation>
+        <location filename="../qml/more/Feedback.qml" line="74"/>
+        <source>We are happy about every feedback on our software.</source>
+        <translation>Wir freuen uns über Ihre Rückmeldung zu unserem Programm.</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdater.cpp" line="459"/>
-        <location filename="../../src/external/fervor/fvupdater.cpp" line="509"/>
-        <location filename="../../src/external/fervor/fvupdater.cpp" line="557"/>
-        <source>Your software is up to date.</source>
-        <translation>Ihre Software ist auf aktuellem Stand.</translation>
+        <location filename="../qml/more/Feedback.qml" line="81"/>
+        <source>Rate AusweisApp2</source>
+        <translation>Bewerten Sie die AusweisApp2</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdater.cpp" line="488"/>
-        <source>Feed error: &quot;release notes&quot; link is empty</source>
-        <translation>Eingabefehler: Der Link &quot;Release-Notes&quot; ist leer</translation>
+        <location filename="../qml/more/Feedback.qml" line="82"/>
+        <source>Please rate us on the Google Play Store.</source>
+        <translation>Bitte bewerten Sie uns im Google Play Store.</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdater.cpp" line="497"/>
-        <source>Feed error: invalid &quot;release notes&quot; link</source>
-        <translation>Eingabefehler: Ungültiger Link zu den Release-Notes</translation>
+        <location filename="../qml/more/Feedback.qml" line="89"/>
+        <source>Share</source>
+        <translation>Teilen</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdater.cpp" line="501"/>
-        <source>Feed error: invalid &quot;enclosure&quot; with the download link</source>
-        <translation>Eingabefehler: Ungültige Einschließung im Download-Link</translation>
+        <location filename="../qml/more/Feedback.qml" line="90"/>
+        <source>Tell your friends about AusweisApp2.</source>
+        <translation>Erzählen Sie Ihren Freunden und Bekannten von der AusweisApp2.</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdater.cpp" line="563"/>
-        <source>Error</source>
-        <translation>Fehler</translation>
+        <location filename="../qml/more/Feedback.qml" line="91"/>
+        <source>Share with</source>
+        <translation>Teilen mit</translation>
     </message>
     <message>
-        <location filename="../../src/external/fervor/fvupdater.cpp" line="581"/>
-        <source>Information</source>
-        <translation>Information</translation>
+        <location filename="../qml/more/Feedback.qml" line="92"/>
+        <source>I&apos;m using AusweisApp2, download it here for Android: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2</source>
+        <translation>Ich verwende die AusweisApp2, laden Sie die AusweisApp2 für Android: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Feedback.qml" line="100"/>
+        <source>Report error</source>
+        <translation>Melden Sie einen Fehler</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Feedback.qml" line="101"/>
+        <source>You found a bug? Please tell us, so we can fix it.</source>
+        <translation>Sie haben einen Fehler gefunden? Teilen Sie ihn uns mit, damit wir ihn beheben können.</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Feedback.qml" line="103"/>
+        <source>Android log file</source>
+        <translation>Android Protokolle</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Feedback.qml" line="104"/>
+        <source>&lt;Please describe the error&gt;</source>
+        <translation>&lt;Bitte beschreiben Sie den Fehler&gt;</translation>
     </message>
 </context>
 <context>
@@ -615,12 +649,12 @@
 <context>
     <name>HistoryDetails</name>
     <message>
-        <location filename="../qml/history/+android/HistoryDetails.qml" line="44"/>
+        <location filename="../qml/history/+android/HistoryDetails.qml" line="56"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../qml/history/+android/HistoryDetails.qml" line="53"/>
+        <location filename="../qml/history/+android/HistoryDetails.qml" line="77"/>
         <source>Go to online application</source>
         <translation>Gehe zu Online-Anwendung</translation>
     </message>
@@ -628,7 +662,7 @@
 <context>
     <name>HistoryListView</name>
     <message>
-        <location filename="../qml/history/HistoryListView.qml" line="89"/>
+        <location filename="../qml/history/HistoryListView.qml" line="92"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
@@ -636,24 +670,29 @@
 <context>
     <name>HistoryListViewDelegateContent</name>
     <message>
-        <location filename="../qml/history/HistoryListViewDelegateContent.qml" line="57"/>
+        <location filename="../qml/history/HistoryListViewDelegateContent.qml" line="54"/>
         <source>today</source>
         <translation>heute</translation>
     </message>
     <message>
-        <location filename="../qml/history/HistoryListViewDelegateContent.qml" line="60"/>
+        <location filename="../qml/history/HistoryListViewDelegateContent.qml" line="57"/>
         <source>yesterday</source>
         <translation>gestern</translation>
     </message>
     <message>
-        <location filename="../qml/history/HistoryListViewDelegateContent.qml" line="63"/>
+        <location filename="../qml/history/HistoryListViewDelegateContent.qml" line="60"/>
         <source>dddd</source>
         <translation>dddd</translation>
     </message>
     <message>
-        <location filename="../qml/history/HistoryListViewDelegateContent.qml" line="65"/>
+        <location filename="../qml/history/HistoryListViewDelegateContent.qml" line="62"/>
         <source>MM/dd/yyyy</source>
         <translation>dd.MM.yyyy</translation>
+    </message>
+    <message>
+        <location filename="../qml/history/HistoryListViewDelegateContent.qml" line="84"/>
+        <source>Touch for more details</source>
+        <translation>Berühren Sie hier für mehr Details</translation>
     </message>
 </context>
 <context>
@@ -665,8 +704,8 @@
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="../qml/history/+android/+tablet/HistoryView.qml" line="23"/>
-        <location filename="../qml/history/+android/HistoryView.qml" line="22"/>
+        <location filename="../qml/history/+android/+tablet/HistoryView.qml" line="19"/>
+        <location filename="../qml/history/+android/HistoryView.qml" line="18"/>
         <location filename="../qml/history/HistoryView.qml" line="63"/>
         <source>Currently there are no history entries.</source>
         <translation>Derzeit gibt es keine Einträge im Verlauf.</translation>
@@ -681,41 +720,96 @@
         <source>Delete all</source>
         <translation>Alle löschen</translation>
     </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="21"/>
+        <source>This page displays the history of your successful authentications. Double-click on a service provider for more information. You can delete parts or the entire history. You can also save the history as a PDF file.</source>
+        <translation>Auf dieser Seite sehen Sie den Verlauf Ihrer erfolgreichen Authentisierungen. Mit einem Doppelklick erhalten Sie weitere Informationen zum ausgewählten Diensteanbieter. Den Verlauf können Sie in Teilen oder auch komplett löschen. Es ist darüber hinaus auch möglich, den Verlauf zu speichern.</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="34"/>
+        <source>Search:</source>
+        <translation>Suche:</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="56"/>
+        <source>No history entry available</source>
+        <translation>Kein Eintrag vorhanden</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="121"/>
+        <source>History:</source>
+        <translation>Verlauf:</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="138"/>
+        <source>save</source>
+        <translation>speichern</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="147"/>
+        <source>Delete History</source>
+        <translation>Verlauf löschen</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="153"/>
+        <source>Save as PDF</source>
+        <translation>Speichern als PDF</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="166"/>
+        <source>Delete history</source>
+        <translation>Verlauf löschen</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="167"/>
+        <source>Do you really want to delete the history?</source>
+        <translation>Möchten Sie den Verlauf wirklich löschen?</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="174"/>
+        <source>Save history</source>
+        <translation>Verlauf speichern</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="176"/>
+        <source>PDF Documents (*.pdf)</source>
+        <translation>PDF Dokumente (*.pdf)</translation>
+    </message>
 </context>
 <context>
     <name>HistoryViewDetails</name>
     <message>
-        <location filename="../qml/history/HistoryViewDetails.qml" line="23"/>
+        <location filename="../qml/history/HistoryViewDetails.qml" line="26"/>
         <source>Provider Information</source>
         <translation>Anbieterinformationen</translation>
     </message>
     <message>
-        <location filename="../qml/history/HistoryViewDetails.qml" line="26"/>
+        <location filename="../qml/history/HistoryViewDetails.qml" line="29"/>
         <source>Provider name</source>
         <translation>Anbieter</translation>
     </message>
     <message>
-        <location filename="../qml/history/HistoryViewDetails.qml" line="32"/>
+        <location filename="../qml/history/HistoryViewDetails.qml" line="35"/>
         <source>Purpose</source>
         <translation>Zweck</translation>
     </message>
     <message>
-        <location filename="../qml/history/HistoryViewDetails.qml" line="38"/>
+        <location filename="../qml/history/HistoryViewDetails.qml" line="41"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../qml/history/HistoryViewDetails.qml" line="43"/>
+        <location filename="../qml/history/HistoryViewDetails.qml" line="46"/>
         <source>MM/dd/yyyy</source>
         <translation>dd.MM.yyyy</translation>
     </message>
     <message>
-        <location filename="../qml/history/HistoryViewDetails.qml" line="50"/>
+        <location filename="../qml/history/HistoryViewDetails.qml" line="53"/>
         <source>Requested data</source>
         <translation>Angeforderte Daten</translation>
     </message>
     <message>
-        <location filename="../qml/history/HistoryViewDetails.qml" line="56"/>
+        <location filename="../qml/history/HistoryViewDetails.qml" line="59"/>
         <source>Terms of usage</source>
         <translation>Nutzungsbedingungen</translation>
     </message>
@@ -725,7 +819,7 @@
     <message>
         <location filename="../../src/gui/HistoryWidget.ui"/>
         <source>This page displays the history of your successful authentications. Double-click on a service provider for more information. You can delete parts or the entire history. You can also save the history as a PDF file.</source>
-        <translation>Auf dieser Seite sehen Sie den Verlauf Ihrer erfolgreichen Authentisierungen. Mit einem Doppelklick erhalten Sie weitere Informationen zum ausgewählten Diensteanbieter. Den Verlauf können Sie in Teilen oder auch komplett löschen. Es ist darüber hinaus auch möglich, den Verlauf zu speichern.</translation>
+        <translation>Auf dieser Seite sehen Sie den Verlauf Ihrer erfolgreichen Authentisierungen. Mit einem Doppelklick erhalten Sie weitere Informationen zum ausgewählten Diensteanbieter. Es ist darüber hinaus auch möglich, den Verlauf zu speichern.</translation>
     </message>
     <message>
         <location filename="../../src/gui/HistoryWidget.ui"/>
@@ -734,13 +828,13 @@
     </message>
     <message>
         <location filename="../../src/gui/HistoryWidget.ui"/>
-        <source>Delete history…</source>
-        <translation>Verlauf löschen…</translation>
+        <source>Delete history...</source>
+        <translation>Verlauf löschen...</translation>
     </message>
     <message>
         <location filename="../../src/gui/HistoryWidget.ui"/>
-        <source>Save as PDF…</source>
-        <translation>Als PDF speichern…</translation>
+        <source>Save as PDF...</source>
+        <translation>Als PDF speichern...</translation>
     </message>
     <message>
         <location filename="../../src/gui/HistoryWidget.ui"/>
@@ -779,21 +873,41 @@
     </message>
 </context>
 <context>
+    <name>IdentifyController</name>
+    <message>
+        <location filename="../qml/identify/IdentifyController.qml" line="92"/>
+        <source>You may now remove your ID card from the device.</source>
+        <translation>Sie können nun Ihr Ausweisdokument vom Gerät entfernen.</translation>
+    </message>
+</context>
+<context>
     <name>IdentifyView</name>
     <message>
         <location filename="../qml/identify/IdentifyView.qml" line="16"/>
-        <location filename="../qml/identify/IdentifyView.qml" line="46"/>
-        <location filename="../qml/identify/IdentifyView.qml" line="54"/>
+        <location filename="../qml/identify/IdentifyView.qml" line="43"/>
+        <location filename="../qml/identify/IdentifyView.qml" line="55"/>
+        <location filename="../qml/identify/IdentifyView.qml" line="64"/>
+        <location filename="../qml/identify/IdentifyView.qml" line="73"/>
         <source>Identify</source>
         <translation>Ausweisen</translation>
     </message>
     <message>
-        <location filename="../qml/identify/IdentifyView.qml" line="49"/>
+        <location filename="../qml/identify/IdentifyView.qml" line="58"/>
         <source>Please wait a moment...</source>
         <translation>Bitte warten Sie einen Moment...</translation>
     </message>
     <message>
-        <location filename="../qml/identify/IdentifyView.qml" line="48"/>
+        <location filename="../qml/identify/IdentifyView.qml" line="66"/>
+        <source>No network connectivity</source>
+        <translation>Keine Netzwerkverbindung</translation>
+    </message>
+    <message>
+        <location filename="../qml/identify/IdentifyView.qml" line="67"/>
+        <source>Please enable the network interface or cancel the workflow.</source>
+        <translation>Bitte stellen Sie eine Internetverbindung her oder beenden Sie den Vorgang.</translation>
+    </message>
+    <message>
+        <location filename="../qml/identify/IdentifyView.qml" line="57"/>
         <source>Processing</source>
         <translation>In Arbeit</translation>
     </message>
@@ -801,41 +915,43 @@
 <context>
     <name>IdentifyViewContent</name>
     <message>
-        <location filename="../qml/identify/+android/IdentifyViewContent.qml" line="26"/>
-        <location filename="../qml/identify/IdentifyViewContent.qml" line="12"/>
+        <location filename="../qml/identify/+android/+tablet/IdentifyViewContent.qml" line="40"/>
+        <location filename="../qml/identify/+android/IdentifyViewContent.qml" line="34"/>
+        <location filename="../qml/identify/IdentifyViewContent.qml" line="14"/>
         <source>Service provider</source>
         <translation>Diensteanbieter</translation>
     </message>
     <message>
-        <location filename="../qml/identify/+android/+tablet/IdentifyViewContent.qml" line="44"/>
-        <location filename="../qml/identify/+android/IdentifyViewContent.qml" line="31"/>
-        <location filename="../qml/identify/IdentifyViewContent.qml" line="18"/>
+        <location filename="../qml/identify/+android/+tablet/IdentifyViewContent.qml" line="45"/>
+        <location filename="../qml/identify/+android/IdentifyViewContent.qml" line="39"/>
+        <location filename="../qml/identify/IdentifyViewContent.qml" line="20"/>
         <source>Purpose for reading out requested data</source>
         <translation>Zweck des Auslesevorgangs</translation>
     </message>
     <message>
-        <location filename="../qml/identify/+android/+tablet/IdentifyViewContent.qml" line="52"/>
-        <location filename="../qml/identify/+android/IdentifyViewContent.qml" line="39"/>
-        <location filename="../qml/identify/IdentifyViewContent.qml" line="26"/>
+        <location filename="../qml/identify/+android/+tablet/IdentifyViewContent.qml" line="72"/>
+        <location filename="../qml/identify/+android/IdentifyViewContent.qml" line="69"/>
+        <location filename="../qml/identify/IdentifyViewContent.qml" line="28"/>
         <source>Identify now</source>
         <translation>Jetzt ausweisen</translation>
     </message>
     <message>
-        <location filename="../qml/identify/+android/+tablet/IdentifyViewContent.qml" line="88"/>
-        <source>Provider Information</source>
-        <translation>Anbieterinformationen</translation>
+        <location filename="../qml/identify/+android/+tablet/IdentifyViewContent.qml" line="102"/>
+        <location filename="../qml/identify/+android/IdentifyViewContent.qml" line="93"/>
+        <source>Transactional information</source>
+        <translation>Transaktionsinformationen</translation>
     </message>
     <message>
-        <location filename="../qml/identify/+android/+tablet/IdentifyViewContent.qml" line="20"/>
-        <location filename="../qml/identify/+android/IdentifyViewContent.qml" line="55"/>
-        <location filename="../qml/identify/IdentifyViewContent.qml" line="39"/>
+        <location filename="../qml/identify/+android/+tablet/IdentifyViewContent.qml" line="126"/>
+        <location filename="../qml/identify/+android/IdentifyViewContent.qml" line="110"/>
+        <location filename="../qml/identify/IdentifyViewContent.qml" line="41"/>
         <source>Required Data</source>
         <translation>Erforderliche Daten</translation>
     </message>
     <message>
-        <location filename="../qml/identify/+android/+tablet/IdentifyViewContent.qml" line="68"/>
-        <location filename="../qml/identify/+android/IdentifyViewContent.qml" line="64"/>
-        <location filename="../qml/identify/IdentifyViewContent.qml" line="43"/>
+        <location filename="../qml/identify/+android/+tablet/IdentifyViewContent.qml" line="135"/>
+        <location filename="../qml/identify/+android/IdentifyViewContent.qml" line="115"/>
+        <location filename="../qml/identify/IdentifyViewContent.qml" line="45"/>
         <source>Optional Data</source>
         <translation>Optionale Daten</translation>
     </message>
@@ -843,14 +959,14 @@
 <context>
     <name>IdentifyViewHeader</name>
     <message>
-        <location filename="../qml/identify/+android/IdentifyViewHeader.qml" line="65"/>
+        <location filename="../qml/identify/+android/IdentifyViewHeader.qml" line="61"/>
         <source>Hello, here you have the opportunity to view the stored data on your identity card.</source>
-        <translation>Hallo, hier haben Sie die Möglichkeit die auf Ihrem Personalausweis hinterlegten Daten einzusehen.</translation>
+        <translation>Hallo, hier haben Sie die Möglichkeit, die auf Ihrem Personalausweis hinterlegten Daten einzusehen.</translation>
     </message>
     <message>
-        <location filename="../qml/identify/+android/IdentifyViewHeader.qml" line="66"/>
-        <source>Hello, &quot;%1&quot;, wants to read your data</source>
-        <translation>Hallo, &quot;%1&quot;, möchte auf Ihre Daten zugreifen</translation>
+        <location filename="../qml/identify/+android/IdentifyViewHeader.qml" line="62"/>
+        <source>Hello, &quot;%1&quot; wants to read your data.</source>
+        <translation>Hallo, &quot;%1&quot; möchte Ihre Daten auslesen.</translation>
     </message>
     <message>
         <location filename="../qml/identify/IdentifyViewHeader.qml" line="54"/>
@@ -865,12 +981,12 @@
     <message>
         <location filename="../qml/identify/IdentifyViewHeader.qml" line="70"/>
         <source>opportunity to view the stored data on your identity card.</source>
-        <translation>Möglichkeit die auf Ihrem Personalausweis hinterlegten Daten einzusehen.</translation>
+        <translation>Möglichkeit, die auf Ihrem Personalausweis hinterlegten Daten einzusehen.</translation>
     </message>
     <message>
         <location filename="../qml/identify/IdentifyViewHeader.qml" line="71"/>
-        <source>&quot;%1&quot;,&lt;br&gt;wants to read your data</source>
-        <translation>&quot;%1&quot;,&lt;br&gt;möchte auf Ihre Daten zugreifen</translation>
+        <source>&quot;%1&quot;&lt;br&gt;wants to read your data</source>
+        <translation>&quot;%1&quot;&lt;br&gt;möchte Ihre Daten auslesen</translation>
     </message>
 </context>
 <context>
@@ -879,6 +995,102 @@
         <location filename="../qml/identify/IdentifyWorkflow.qml" line="11"/>
         <source>Identify</source>
         <translation>Ausweisen</translation>
+    </message>
+</context>
+<context>
+    <name>Information</name>
+    <message>
+        <location filename="../qml/more/Information.qml" line="11"/>
+        <source>Information &amp; Help</source>
+        <translation>Information &amp; Hilfe</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="69"/>
+        <source>You need help?</source>
+        <translation>Benötigen Sie Hilfe?</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="78"/>
+        <source>Here you are in the right place.</source>
+        <translation>Dann sind Sie hier richtig.</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="85"/>
+        <source>FAQ</source>
+        <translation>Häufig gestellte Fragen</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="86"/>
+        <source>Do you have questions how to use AusweisApp2?</source>
+        <translation>Haben Sie Fragen zur Nutzung der AusweisApp2?</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="87"/>
+        <source>https://www.ausweisapp.bund.de/en/service/haeufig-gestellte-fragen/</source>
+        <translation>https://www.ausweisapp.bund.de/service/haeufig-gestellte-fragen/</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="93"/>
+        <source>Support</source>
+        <translation>Unterstützung</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="94"/>
+        <source>You need further help?</source>
+        <translation>Benötigen Sie weitere Hilfe?</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="95"/>
+        <source>https://www.ausweisapp.bund.de/en/service/support/</source>
+        <translation>https://www.ausweisapp.bund.de/service/support/</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="101"/>
+        <source>Version information</source>
+        <translation>Versionsinformationen</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="102"/>
+        <source>Here you can see detailed information about AusweisApp2.</source>
+        <translation>Hier finden Sie detaillierte Informationen zur AusweisApp2.</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="109"/>
+        <source>Software license</source>
+        <translation>Softwarelizenz</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="110"/>
+        <source>Read the software license text on the application homepage.</source>
+        <translation>Lesen Sie die Softwarelizenz auf der Internetseite der Anwedung.</translation>
+    </message>
+    <message>
+        <location filename="../qml/more/Information.qml" line="111"/>
+        <source>https://www.ausweisapp.bund.de/en/download/</source>
+        <translation>https://www.ausweisapp.bund.de/download/</translation>
+    </message>
+</context>
+<context>
+    <name>ListViewDelegateContent</name>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/ListViewDelegateContent.qml" line="29"/>
+        <source>today</source>
+        <translation>heute</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/ListViewDelegateContent.qml" line="32"/>
+        <source>yesterday</source>
+        <translation>gestern</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/ListViewDelegateContent.qml" line="35"/>
+        <source>dddd</source>
+        <translation>dddd</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/History/ListViewDelegateContent.qml" line="37"/>
+        <source>MM/dd/yyyy</source>
+        <translation>dd.MM.yyyy</translation>
     </message>
 </context>
 <context>
@@ -895,12 +1107,12 @@
     </message>
     <message>
         <location filename="../../src/gui/LogFilesDialog.ui"/>
-        <source>Save…</source>
-        <translation>Speichern…</translation>
+        <source>Save...</source>
+        <translation>Speichern...</translation>
     </message>
     <message>
         <location filename="../../src/gui/LogFilesDialog.ui"/>
-        <source>Delete old files…</source>
+        <source>Delete old files...</source>
         <translation>Alte Dateien löschen...</translation>
     </message>
     <message>
@@ -980,56 +1192,21 @@
     <message>
         <location filename="../qml/+android/NavigationView.qml" line="38"/>
         <location filename="../qml/NavigationView.qml" line="39"/>
-        <source>Pin</source>
-        <translation>Pin</translation>
+        <source>PIN Management</source>
+        <translation>PIN-Verwaltung</translation>
     </message>
     <message>
         <location filename="../qml/+android/NavigationView.qml" line="44"/>
-        <source>Versioninformation</source>
-        <translation>Versionsinformationen</translation>
+        <source>Dialog &amp; Feedback</source>
+        <translation>Dialog &amp; Rückmeldung</translation>
     </message>
     <message>
         <location filename="../qml/+android/NavigationView.qml" line="50"/>
-        <source>FAQ</source>
-        <translation>FAQ</translation>
+        <source>Info &amp; Help</source>
+        <translation>Information &amp; Hilfe</translation>
     </message>
     <message>
-        <location filename="../qml/+android/NavigationView.qml" line="52"/>
-        <source>https://www.ausweisapp.bund.de/en/service/haeufig-gestellte-fragen/</source>
-        <translation>https://www.ausweisapp.bund.de/service/haeufig-gestellte-fragen/</translation>
-    </message>
-    <message>
-        <location filename="../qml/+android/NavigationView.qml" line="57"/>
-        <source>Support</source>
-        <translation>Support</translation>
-    </message>
-    <message>
-        <location filename="../qml/+android/NavigationView.qml" line="59"/>
-        <source>https://www.ausweisapp.bund.de/en/service/support/</source>
-        <translation>https://www.ausweisapp.bund.de/service/support/</translation>
-    </message>
-    <message>
-        <location filename="../qml/+android/NavigationView.qml" line="64"/>
-        <source>Rate app</source>
-        <translation>Bewerten</translation>
-    </message>
-    <message>
-        <location filename="../qml/+android/NavigationView.qml" line="71"/>
-        <source>Share...</source>
-        <translation>Teilen...</translation>
-    </message>
-    <message>
-        <location filename="../qml/+android/NavigationView.qml" line="73"/>
-        <source>I&apos;m using AusweisApp2, download it here for Android: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2 or here for iOS: https://itunes.apple.com/de/app/wikipedia-mobile/id324715238?mt=8</source>
-        <translation>Ich benutze die AusweisApp2, du kannst sie hier für Android herunterladen: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2 oder hier für iOS: https://itunes.apple.com/de/app/wikipedia-mobile/id324715238?mt=8</translation>
-    </message>
-    <message>
-        <location filename="../qml/+android/NavigationView.qml" line="74"/>
-        <source>Share with</source>
-        <translation>Teilen mit</translation>
-    </message>
-    <message>
-        <location filename="../qml/+android/NavigationView.qml" line="79"/>
+        <location filename="../qml/+android/NavigationView.qml" line="56"/>
         <source>Developer options</source>
         <translation>Entwickleroptionen</translation>
     </message>
@@ -1040,74 +1217,46 @@
     </message>
 </context>
 <context>
-    <name>NfcConnectionIndication</name>
+    <name>NfcWorkflow</name>
     <message>
-        <location filename="../qml/NfcConnectionIndication.qml" line="96"/>
+        <location filename="../qml/NfcWorkflow.qml" line="32"/>
+        <source>Enable NFC</source>
+        <translation>NFC aktivieren</translation>
+    </message>
+    <message>
+        <location filename="../qml/NfcWorkflow.qml" line="35"/>
+        <source>NFC is not supported by your device.&lt;br/&gt;Please try Bluetooth.</source>
+        <translation>Ihr Gerät unterstützt kein NFC.&lt;br/&gt;Bitte versuchen Sie Bluetooth.</translation>
+    </message>
+    <message>
+        <location filename="../qml/NfcWorkflow.qml" line="36"/>
+        <source>NFC is switched off.&lt;br/&gt;Please enable NFC.</source>
+        <translation>NFC ist nicht aktiv.&lt;br/&gt;Bitte aktivieren Sie NFC.</translation>
+    </message>
+    <message>
+        <location filename="../qml/NfcWorkflow.qml" line="38"/>
         <source>Establish connection</source>
-        <translation>Verbindung herstellen</translation>
+        <translation>Verbindung wird hergestellt</translation>
     </message>
     <message>
-        <location filename="../qml/NfcConnectionIndication.qml" line="106"/>
-        <source>Your phone does not support the</source>
-        <translation>Ihr Telefon unterstützt nicht</translation>
+        <location filename="../qml/NfcWorkflow.qml" line="41"/>
+        <source>Your device does not meet the technical requirements (Extended Length not supported). You require an additional Bluetooth card reader to use the online identification function with this device.</source>
+        <translation>Ihr Gerät erfüllt leider nicht die technischen Voraussetzungen (Extended Length). Sie können die Online-Ausweisfunktion daher mit diesem Gerät nur über einen separaten Bluetooth-Leser nutzen.</translation>
     </message>
     <message>
-        <location filename="../qml/NfcConnectionIndication.qml" line="106"/>
-        <source>required extended length ADPUs.</source>
-        <translation>die erforderliche extended length der ADPU.</translation>
+        <location filename="../qml/NfcWorkflow.qml" line="42"/>
+        <source>The online identification function of your ID card is deactivated. Please contact your competent authority to activate the online identification function.</source>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an Ihre zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
-        <location filename="../qml/NfcConnectionIndication.qml" line="109"/>
-        <source>Please place your smartphone</source>
-        <translation>Bitte platzieren Sie ihr Telefon</translation>
+        <location filename="../qml/NfcWorkflow.qml" line="43"/>
+        <source>Please place your device&lt;br/&gt;on your ID card.</source>
+        <translation>Bitte platzieren Sie Ihr Gerät&lt;br/&gt;über Ihrem Personalausweis.</translation>
     </message>
     <message>
-        <location filename="../qml/NfcConnectionIndication.qml" line="103"/>
-        <source>NFC not supported</source>
-        <translation>NFC wird nicht unterstützt</translation>
-    </message>
-    <message>
-        <location filename="../qml/NfcConnectionIndication.qml" line="109"/>
-        <source>on your id card</source>
-        <translation>über Ihrem Personalausweis</translation>
-    </message>
-    <message>
-        <location filename="../qml/NfcConnectionIndication.qml" line="103"/>
-        <source>or switched off</source>
-        <translation>oder ist abgeschaltet</translation>
-    </message>
-</context>
-<context>
-    <name>PinPad</name>
-    <message>
-        <location filename="../qml/PinPad.qml" line="76"/>
-        <source>Enter your CAN</source>
-        <translation>Geben Sie Ihre CAN ein</translation>
-    </message>
-    <message>
-        <location filename="../qml/PinPad.qml" line="77"/>
-        <source>Enter your PUK</source>
-        <translation>Geben Sie Ihre PUK ein</translation>
-    </message>
-    <message>
-        <location filename="../qml/PinPad.qml" line="78"/>
-        <source>Enter your new PIN</source>
-        <translation>Geben Sie Ihre neue PIN ein</translation>
-    </message>
-    <message>
-        <location filename="../qml/PinPad.qml" line="79"/>
-        <source>Enter your new PIN again</source>
-        <translation>Geben Sie Ihre neue PIN erneut ein</translation>
-    </message>
-    <message>
-        <location filename="../qml/PinPad.qml" line="79"/>
-        <source>Enter your PIN</source>
-        <translation>Geben Sie Ihre PIN ein</translation>
-    </message>
-    <message>
-        <location filename="../qml/PinPad.qml" line="74"/>
-        <source>The PIN does not match.</source>
-        <translation>Die PIN stimmt nicht überein.</translation>
+        <location filename="../qml/NfcWorkflow.qml" line="54"/>
+        <source>Use Bluetooth card reader&lt;br/&gt;instead of NFC</source>
+        <translation>Bluetooth Kartenleser&lt;br/&gt;anstatt NFC benutzen</translation>
     </message>
 </context>
 <context>
@@ -1174,18 +1323,18 @@ Anderenfalls können Sie nun Ihr Ausweisdokument vom Kartenlesegerät entfernen.
         <location filename="../../src/gui/PinSettingsWidget.ui"/>
         <source>&lt;html&gt;
 &lt;h4&gt;eID feature deactivated&lt;/h4&gt;
-&lt;p&gt;The eID function of your ID card is deactivated. Please contact your citizen centre to activate the eID function.&lt;/p&gt;
+&lt;p&gt;The eID function of your ID card is deactivated. Please contact your competent authority to activate the eID function.&lt;/p&gt;
 &lt;/html&gt;</source>
         <translation>&lt;html&gt;
 &lt;h4&gt;Online-Ausweisfunktion deaktiviert&lt;/h4&gt;
-&lt;p&gt;Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an die für Sie zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.&lt;/p&gt;
+&lt;p&gt;Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an Ihre zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.&lt;/p&gt;
 &lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/PinSettingsWidget.ui"/>
         <source>Select a secure PIN that consists of six digits. Do not select a number that can be guessed easily, such as &quot;123456&quot;, your date of birth or any other number that is printed on your ID card.
 
-When you change your PIN for the first time, please enter your five-digit transport PIN in the field &quot;Current PIN / Transport PIN&quot;. You received your transport PIN with the letter sent to you by Bundesdruckerei GmbH onhebalf of your citizen centre.
+When you change your PIN for the first time, please enter your five-digit transport PIN in the field &quot;Current PIN / Transport PIN&quot;. You received your transport PIN with the letter sent to you by your competent authority.
 
 Please note that the PIN may only consist of digits (0-9).</source>
         <translation>Wählen Sie für Ihre 6-stellige PIN eine Zahlenkombination, die nicht leicht zu erraten ist, also weder &quot;123456&quot;, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweisdokument aufgedruckt sind.
@@ -1245,15 +1394,6 @@ Bei der erstmaligen PIN-Änderung geben Sie bitte in das Feld &quot;Aktuelle PIN
     </message>
     <message>
         <location filename="../../src/gui/PinSettingsWidget.ui"/>
-        <source>You have entered the wrong PIN three times. The online identification function is now blocked. Please use your personal unblocking key (PUK) to unblock your ID card. You received the PUK with the letter sent to you by Bundesdruckerei GmbH on behalf of your citizen centre. 
-
-Please note that you can only use the PUK to unblock the eID function. If you have forgotten your PIN, you can have a new PIN set at the citizen centre.</source>
-        <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Die Online-Ausweisfunktion ist jetzt blockiert. Die Blockierung können Sie mit Ihrer Entsperrnummer (PUK) aufheben. Sie finden Ihre PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweisdokuments von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde erhalten haben. 
-
-Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis entsperren. Sollten Sie Ihre PIN vergessen haben, können Sie von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde eine neue PIN setzen lassen.</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/PinSettingsWidget.ui"/>
         <source>Click on &quot;Change PIN&quot; to enter your card access number and then set a new PIN. You can find your card access number on the front side of your ID card next to the date of expiry. On the electronic residence permit the card access number is printed above your signature.</source>
         <translation>&quot;Klicken Sie auf &quot;PIN ändern&quot;, um zunächst Ihre Zugangsnummer einzugeben und anschließend eine neue PIN zu setzen. Die Zugangsnummer finden Sie beim Personalausweis auf der Vorderseite rechts neben dem letzten Tag der Gültigkeitsdauer. Beim elektronischen Aufenthaltstitel finden Sie die Zugangsnummer über Ihrer Unterschrift.</translation>
     </message>
@@ -1284,25 +1424,40 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
     <message>
         <location filename="../../src/gui/PinSettingsWidget.ui"/>
-        <source>successful pin change icon</source>
-        <translation>pin änderung erfolgreich icon</translation>
+        <source>successful PIN change icon</source>
+        <translation>PIN änderung erfolgreich icon</translation>
     </message>
     <message>
         <location filename="../../src/gui/PinSettingsWidget.ui"/>
         <source>no id card icon</source>
         <translation>Kein Ausweisdokument icon</translation>
     </message>
+    <message>
+        <location filename="../../src/gui/PinSettingsWidget.ui"/>
+        <source>You have entered the wrong PIN three times. The online identification function is now blocked. Please use your personal unblocking key (PUK) to unblock your ID card. You received the PUK with the letter sent to you by your competent authority.
+
+Please note that you can only use the PUK to unblock the eID function. If you have forgotten your PIN, you can have a new PIN set at your competent authority.</source>
+        <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Die Online-Ausweisfunktion wurde blockiert. Benutzen Sie bitte Ihre Entsperrnummer (PUK) um die Blockierung aufzuheben. Sie finden Ihre PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweisdokuments von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde erhalten haben.
+
+Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entsperren können. Sollten Sie Ihre PIN vergessen haben, können Sie von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde eine neue PIN setzen lassen.</translation>
+    </message>
 </context>
 <context>
     <name>PinView</name>
     <message>
-        <location filename="../qml/pin/PinView.qml" line="31"/>
-        <location filename="../qml/pin/PinView.qml" line="50"/>
-        <source>Pin</source>
-        <translation>Pin</translation>
+        <location filename="../qml/pin/PinView.qml" line="15"/>
+        <location filename="../qml/pin/PinView.qml" line="33"/>
+        <location filename="../qml/pin/PinView.qml" line="59"/>
+        <source>PIN Management</source>
+        <translation>PIN-Verwaltung</translation>
     </message>
     <message>
-        <location filename="../qml/pin/PinView.qml" line="52"/>
+        <location filename="../qml/pin/PinView.qml" line="47"/>
+        <source>Change PIN</source>
+        <translation>PIN ändern</translation>
+    </message>
+    <message>
+        <location filename="../qml/pin/PinView.qml" line="61"/>
         <source>Processing...</source>
         <translation>In Arbeit...</translation>
     </message>
@@ -1310,48 +1465,43 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>PinViewContent</name>
     <message>
-        <location filename="../qml/pin/+android/PinViewContent.qml" line="24"/>
-        <source>PIN</source>
-        <translation>PIN</translation>
+        <location filename="../qml/pin/+android/PinViewContent.qml" line="28"/>
+        <location filename="../qml/pin/PinViewContent.qml" line="12"/>
+        <source>PIN Management</source>
+        <translation>PIN-Verwaltung</translation>
     </message>
     <message>
-        <location filename="../qml/pin/+android/PinViewContent.qml" line="40"/>
-        <location filename="../qml/pin/PinViewContent.qml" line="25"/>
-        <source>Here you can change your PIN.&lt;br&gt;We should add some more useful information here! This is just an example to fill a text field.</source>
-        <translation>Hier können Sie Ihre PIN ändern.&lt;br&gt;Hier sollten mal mehr Informationen stehen. Viele Grüße von der CeBIT! Danke.</translation>
+        <location filename="../qml/pin/+android/PinViewContent.qml" line="46"/>
+        <location filename="../qml/pin/PinViewContent.qml" line="27"/>
+        <source>You have the opportunity to change your transport PIN into a personal PIN. You can also change the PIN at any time or unblock the PIN using the personal unblocking key (PUK). The transport PIN and the PUK can be found in the letter sent to you by your competent authority.</source>
+        <translation>Hier haben Sie die Möglichkeit, Ihre Transport-PIN in eine persönliche PIN zu ändern. Zudem können Sie jederzeit Ihre persönliche PIN ändern oder eine Blockierung mit Hilfe der Entsperrnummer (PUK) aufheben. Sie finden Ihre initiale PIN und die PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweisdokuments von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde erhalten haben.</translation>
     </message>
     <message>
-        <location filename="../qml/pin/+android/PinViewContent.qml" line="55"/>
+        <location filename="../qml/pin/+android/PinViewContent.qml" line="60"/>
         <location filename="../qml/pin/PinViewContent.qml" line="59"/>
-        <source>Change Pin now</source>
-        <translation>Jetzt Pin ändern</translation>
-    </message>
-    <message>
-        <location filename="../qml/pin/PinViewContent.qml" line="10"/>
-        <source>Change Pin</source>
-        <translation>PIN ändern</translation>
+        <source>Change PIN now</source>
+        <translation>Jetzt PIN ändern</translation>
     </message>
 </context>
 <context>
     <name>PinWorkflow</name>
     <message>
         <location filename="../qml/pin/PinWorkflow.qml" line="10"/>
-        <source>Pin</source>
-        <translation>Pin</translation>
+        <source>PIN Management</source>
+        <translation>PIN-Verwaltung</translation>
     </message>
 </context>
 <context>
     <name>ProviderContactInfo</name>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderContactInfo.qml" line="26"/>
+        <location filename="../qml/provider/+android/+tablet/ProviderContactInfo.qml" line="30"/>
+        <location filename="../qml_stationary/AusweisApp2/Views/ProviderDetails/ProviderContactInfo.qml" line="27"/>
         <source>Contact</source>
         <translation>Kontakt</translation>
     </message>
-</context>
-<context>
-    <name>ProviderContactInfoItem</name>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderContactInfoItem.qml" line="52"/>
+        <location filename="../qml/provider/+android/+tablet/ProviderContactInfo.qml" line="49"/>
+        <location filename="../qml_stationary/AusweisApp2/Views/ProviderDetails/ProviderContactInfo.qml" line="46"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
@@ -1359,38 +1509,29 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>ProviderContactTab</name>
     <message>
-        <location filename="../qml/ProviderContactTab.qml" line="30"/>
-        <source>Homepage</source>
-        <translation>Homepage</translation>
-    </message>
-    <message>
-        <location filename="../qml/ProviderContactTab.qml" line="34"/>
-        <source>Phone</source>
-        <translation>Telefon</translation>
-    </message>
-    <message>
-        <location filename="../qml/ProviderContactTab.qml" line="38"/>
-        <source>E-Mail</source>
-        <translation>E-Mail</translation>
-    </message>
-    <message>
-        <location filename="../qml/ProviderContactTab.qml" line="42"/>
-        <source>Contact</source>
-        <translation>Kontakt</translation>
+        <location filename="../qml/+android/ProviderContactTab.qml" line="36"/>
+        <source>Unknown</source>
+        <translation>Unbekannt</translation>
     </message>
 </context>
 <context>
     <name>ProviderDetailButtonBar</name>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderDetailButtonBar.qml" line="46"/>
-        <source>ONLINE-APPLICATION</source>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailButtonBar.qml" line="31"/>
+        <source>ONLINE APPLICATION</source>
         <translation>Online-Anwendung</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/ProviderDetails/ProviderDetailButtonBar.qml" line="33"/>
+        <source>ONLINE-APPLICATION</source>
+        <translation>ONLINE-ANWENDUNG</translation>
     </message>
 </context>
 <context>
     <name>ProviderDetailDescription</name>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderDetailDescription.qml" line="39"/>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailDescription.qml" line="15"/>
+        <location filename="../qml_stationary/AusweisApp2/Views/ProviderDetails/ProviderDetailDescription.qml" line="20"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
@@ -1398,12 +1539,12 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>ProviderDetailHistory</name>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistory.qml" line="49"/>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistory.qml" line="21"/>
         <source>History</source>
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistory.qml" line="88"/>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistory.qml" line="36"/>
         <source>Purpose for reading out requested data</source>
         <translation>Zweck des Auslesevorgangs</translation>
     </message>
@@ -1411,105 +1552,189 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>ProviderDetailHistoryInfo</name>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryInfo.qml" line="85"/>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryInfo.qml" line="60"/>
         <source>Purpose for reading out requested data</source>
         <translation>Zweck des Auslesevorgangs</translation>
     </message>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryInfo.qml" line="112"/>
-        <source>Provider information</source>
-        <translation>Anbieterinformationen</translation>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryInfo.qml" line="54"/>
+        <source>Service provider</source>
+        <translation>Diensteanbieter</translation>
     </message>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryInfo.qml" line="128"/>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryInfo.qml" line="69"/>
         <source>Read data</source>
         <translation>Daten auslesen</translation>
     </message>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryInfo.qml" line="221"/>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryInfo.qml" line="116"/>
         <source>Terms of usage</source>
         <translation>Nutzungsbedingungen</translation>
     </message>
 </context>
 <context>
+    <name>ProviderDetailHistoryItem</name>
+    <message>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryItem.qml" line="58"/>
+        <source>today</source>
+        <translation>heute</translation>
+    </message>
+    <message>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryItem.qml" line="61"/>
+        <source>yesterday</source>
+        <translation>gestern</translation>
+    </message>
+    <message>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryItem.qml" line="64"/>
+        <source>dddd</source>
+        <translation>dddd</translation>
+    </message>
+    <message>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryItem.qml" line="66"/>
+        <source>MM/dd/yyyy</source>
+        <translation>dd.MM.yyyy</translation>
+    </message>
+    <message>
+        <location filename="../qml/provider/+android/+tablet/ProviderDetailHistoryItem.qml" line="72"/>
+        <source>Touch for more details</source>
+        <translation>Berühren Sie hier für mehr Details</translation>
+    </message>
+</context>
+<context>
     <name>ProviderDetailView</name>
     <message>
-        <location filename="../qml/provider/+android/ProviderDetailView.qml" line="65"/>
+        <location filename="../qml/provider/+android/ProviderDetailView.qml" line="46"/>
         <source>DESCRIPTION</source>
         <translation>BESCHREIBUNG</translation>
     </message>
     <message>
-        <location filename="../qml/provider/+android/ProviderDetailView.qml" line="78"/>
+        <location filename="../qml/provider/+android/ProviderDetailView.qml" line="65"/>
         <source>CONTACT</source>
         <translation>KONTAKT</translation>
     </message>
     <message>
-        <location filename="../qml/provider/ProviderDetailView.qml" line="73"/>
+        <location filename="../qml/provider/ProviderDetailView.qml" line="57"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="../qml/provider/ProviderDetailView.qml" line="90"/>
+        <location filename="../qml/provider/ProviderDetailView.qml" line="74"/>
         <source>Contact</source>
         <translation>Kontakt</translation>
     </message>
     <message>
-        <location filename="../qml/provider/+android/ProviderDetailView.qml" line="110"/>
+        <location filename="../qml/provider/+android/ProviderDetailView.qml" line="101"/>
         <source>Description not available</source>
         <translation>Beschreibung nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="../qml/provider/ProviderDetailView.qml" line="123"/>
+        <location filename="../qml/provider/ProviderDetailView.qml" line="107"/>
         <source>Description not avaible</source>
         <translation>Beschreibung nicht verfügbar</translation>
     </message>
 </context>
 <context>
+    <name>ProviderDetailsDialog</name>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/ProviderDetails/ProviderDetailsDialog.qml" line="10"/>
+        <source>Provider details</source>
+        <translation>Anbieterdetails</translation>
+    </message>
+</context>
+<context>
     <name>ProviderHeader</name>
     <message>
-        <location filename="../qml/+android/ProviderHeader.qml" line="69"/>
+        <location filename="../qml/+android/ProviderHeader.qml" line="165"/>
         <location filename="../qml/ProviderHeader.qml" line="55"/>
-        <source>Online-Application</source>
+        <source>Online Application</source>
         <translation>Online-Anwendung</translation>
+    </message>
+</context>
+<context>
+    <name>ProviderInfoSection</name>
+    <message>
+        <location filename="../qml/+android/ProviderInfoSection.qml" line="41"/>
+        <location filename="../qml/ProviderInfoSection.qml" line="39"/>
+        <source>Touch for more details</source>
+        <translation>Berühren Sie hier für mehr Details</translation>
+    </message>
+</context>
+<context>
+    <name>ProviderModelItem</name>
+    <message>
+        <location filename="../qml/ProviderModelItem.qml" line="68"/>
+        <location filename="../qml_stationary/AusweisApp2/Global/ProviderModelItem.qml" line="66"/>
+        <source>Homepage</source>
+        <translation>Homepage</translation>
+    </message>
+    <message>
+        <location filename="../qml/ProviderModelItem.qml" line="75"/>
+        <location filename="../qml_stationary/AusweisApp2/Global/ProviderModelItem.qml" line="73"/>
+        <source>E-Mail</source>
+        <translation>E-Mail</translation>
+    </message>
+    <message>
+        <location filename="../qml/ProviderModelItem.qml" line="82"/>
+        <location filename="../qml_stationary/AusweisApp2/Global/ProviderModelItem.qml" line="80"/>
+        <source>Phone</source>
+        <translation>Telefon</translation>
+    </message>
+    <message>
+        <location filename="../qml/ProviderModelItem.qml" line="89"/>
+        <location filename="../qml_stationary/AusweisApp2/Global/ProviderModelItem.qml" line="87"/>
+        <source>Contact</source>
+        <translation>Kontakt</translation>
     </message>
 </context>
 <context>
     <name>ProviderView</name>
     <message>
         <location filename="../qml/provider/+android/+tablet/ProviderView.qml" line="12"/>
-        <location filename="../qml/provider/ProviderView.qml" line="13"/>
+        <location filename="../qml/provider/ProviderView.qml" line="31"/>
         <source>Provider</source>
         <translation>Anbieter</translation>
     </message>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderView.qml" line="63"/>
+        <location filename="../qml/provider/+android/+tablet/ProviderView.qml" line="66"/>
+        <location filename="../qml_stationary/AusweisApp2/Views/Provider/ProviderView.qml" line="64"/>
         <source>Citizen services</source>
         <translation>Bürgerdienste</translation>
     </message>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderView.qml" line="71"/>
+        <location filename="../qml/provider/+android/+tablet/ProviderView.qml" line="74"/>
+        <location filename="../qml_stationary/AusweisApp2/Views/Provider/ProviderView.qml" line="71"/>
         <source>Insurances</source>
         <translation>Versicherungen</translation>
     </message>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderView.qml" line="79"/>
+        <location filename="../qml/provider/+android/+tablet/ProviderView.qml" line="82"/>
+        <location filename="../qml_stationary/AusweisApp2/Views/Provider/ProviderView.qml" line="78"/>
         <source>Financials</source>
         <translation>Finanzen</translation>
     </message>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderView.qml" line="87"/>
+        <location filename="../qml/provider/+android/+tablet/ProviderView.qml" line="90"/>
+        <location filename="../qml_stationary/AusweisApp2/Views/Provider/ProviderView.qml" line="85"/>
         <source>Other services</source>
         <translation>Weitere Services</translation>
     </message>
     <message>
-        <location filename="../qml/provider/+android/+tablet/ProviderView.qml" line="111"/>
-        <source>No results found</source>
-        <translation>Keine Ergebnisse gefunden</translation>
+        <location filename="../qml/provider/+android/+tablet/ProviderView.qml" line="114"/>
+        <location filename="../qml/provider/+android/ProviderView.qml" line="64"/>
+        <location filename="../qml/provider/ProviderView.qml" line="57"/>
+        <location filename="../qml_stationary/AusweisApp2/Views/Provider/ProviderView.qml" line="98"/>
+        <source>No match found</source>
+        <translation>Kein Ergebnis gefunden</translation>
     </message>
     <message>
-        <location filename="../qml/provider/ProviderView.qml" line="89"/>
-        <source>All</source>
-        <translation>Alle</translation>
+        <location filename="../qml_stationary/AusweisApp2/Views/Provider/ProviderView.qml" line="26"/>
+        <source>&lt;html&gt;&lt;head&gt;&lt;body&gt;&lt;p&gt;This section lists offers of service providers that support online identification. Click on an entry to go to the provider&amp;apos;s web site. This section will be continuously updated with further applications for the online identification function.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;body&gt;&lt;p&gt;Dieser Bereich enthält eine Liste von Anbietern, die eine Online-Authentisierung anbieten. Diese Liste wird ständig aktualisiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../qml_stationary/AusweisApp2/Views/Provider/ProviderView.qml" line="39"/>
+        <source>Search:</source>
+        <translation>Suche:</translation>
     </message>
 </context>
 <context>
@@ -1549,39 +1774,6 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
 </context>
 <context>
-    <name>ProxySettingsWidget</name>
-    <message>
-        <location filename="../../src/gui/ProxySettingsWidget.ui"/>
-        <source>no proxy</source>
-        <translation>kein Proxy</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/ProxySettingsWidget.ui"/>
-        <source>use system settings</source>
-        <translation>Systemeinstellungen verwenden</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/ProxySettingsWidget.ui"/>
-        <source>&lt;h4&gt;Is your network connected by proxy to the Internet?&lt;/h4&gt;
-&lt;p&gt;In most cases no proxy is used. If you cannot answer the question or if you are insecure please ask your system administrator.&lt;/p&gt;</source>
-        <translation>&lt;h4&gt;Ist Ihr Netzwerk über einen Proxy-Server mit dem Internet verbunden?&lt;/h4&gt;
-&lt;p&gt;In den meisten Fällen wird kein Proxy-Server verwendet. Wenn Sie die Frage nicht beantworten können oder sich unsicher sind, wenden Sie sich bitte an Ihren Systemadministrator.&lt;/p&gt;</translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <location filename="../../src/core/CertificateChecker.h" line="64"/>
-        <source>Error while connecting to the server. The SSL certificate uses an unsupported key algorithm or length.</source>
-        <translation>Fehler bei der Verbindung zum Server. Der Verschlüsselungsalgorithmus oder die Länge des Schlüssels im SSL-Zertifikat des Servers wird nicht unterstützt.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/CertificateChecker.h" line="86"/>
-        <source>hash of certificate not in certificate description</source>
-        <translation>Hashwert des Zertifikats nicht in Zertifikatsbeschreibung</translation>
-    </message>
-</context>
-<context>
     <name>RandomPinDialog</name>
     <message>
         <location filename="../../src/gui/RandomPinDialog.ui"/>
@@ -1605,7 +1797,7 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
     <message>
         <location filename="../../src/gui/RandomPinDialog.ui"/>
-        <source>pin field</source>
+        <source>PIN field</source>
         <translation>PIN-Eingabefeld</translation>
     </message>
     <message>
@@ -1643,8 +1835,8 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>ResultView</name>
     <message>
-        <location filename="../qml/+android/ResultView.qml" line="67"/>
-        <location filename="../qml/ResultView.qml" line="42"/>
+        <location filename="../qml/+android/ResultView.qml" line="68"/>
+        <location filename="../qml/ResultView.qml" line="43"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
@@ -1670,12 +1862,12 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
         <translation>Ausweisen</translation>
     </message>
     <message>
-        <location filename="../qml/identify/SelfAuthenticationData.qml" line="41"/>
+        <location filename="../qml/identify/SelfAuthenticationData.qml" line="48"/>
         <source>Successfull reading data</source>
         <translation>Daten erfolgreich gelesen</translation>
     </message>
     <message>
-        <location filename="../qml/identify/SelfAuthenticationData.qml" line="94"/>
+        <location filename="../qml/identify/SelfAuthenticationData.qml" line="84"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
@@ -1702,13 +1894,13 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
     <message>
         <location filename="../../src/gui/SelfInformationWidget.ui"/>
-        <source>See my personal data now…</source>
-        <translation>Meine Daten jetzt einsehen…</translation>
+        <source>See my personal data now...</source>
+        <translation>Meine Daten jetzt einsehen...</translation>
     </message>
     <message>
         <location filename="../../src/gui/SelfInformationWidget.ui"/>
-        <source>Use the button &apos;See my personal data now…&apos; to display the data stored on your ID card. An Internet connection is required to display the data. Your personal data is neither saved nor processed in any way.</source>
-        <translation>Über die Schaltfläche &quot;Meine Daten jetzt einsehen…&quot; können Sie sich die im Chip Ihres Ausweisdokuments gespeicherten Daten anzeigen lassen. Um die Daten anzeigen zu können, benötigt diese Anwendung eine Internetverbindung. Es erfolgt keine Speicherung oder Weiterverarbeitung Ihrer persönlichen Daten.</translation>
+        <source>Use the button &apos;See my personal data now...&apos; to display the data stored on your ID card. An Internet connection is required to display the data. Your personal data is neither saved nor processed in any way.</source>
+        <translation>Über die Schaltfläche &quot;Meine Daten jetzt einsehen...&quot; können Sie sich die im Chip Ihres Ausweisdokuments gespeicherten Daten anzeigen lassen. Um die Daten anzeigen zu können, benötigt diese Anwendung eine Internetverbindung. Es erfolgt keine Speicherung oder Weiterverarbeitung Ihrer persönlichen Daten.</translation>
     </message>
     <message>
         <location filename="../../src/gui/SelfInformationWidget.ui"/>
@@ -1730,8 +1922,8 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
     <message>
         <location filename="../../src/gui/SettingsWidget.ui"/>
-        <source>Diagnosis…</source>
-        <translation>Diagnose…</translation>
+        <source>Diagnosis...</source>
+        <translation>Diagnose...</translation>
     </message>
     <message>
         <location filename="../../src/gui/SettingsWidget.ui"/>
@@ -1758,8 +1950,8 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
     <message>
         <location filename="../../src/gui/step/StepAuthenticationEac1Widget.ui"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Information on the service provider who wants to read out data from your ID card is given here. For further information press the button &amp;quot;more…&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Hier erhalten Sie Informationen über den Diensteanbieter, der die Daten aus Ihrem Personalausweis auslesen möchte. Für weitere Informationen drücken Sie bitte die Schaltfläche &amp;quot;mehr…&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Information on the service provider who wants to read out data from your ID card is given here. For further information press the button &amp;quot;more...&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Hier erhalten Sie Informationen über den Diensteanbieter, der die Daten aus Ihrem Personalausweis auslesen möchte. Für weitere Informationen drücken Sie bitte die Schaltfläche &amp;quot;mehr...&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/step/StepAuthenticationEac1Widget.ui"/>
@@ -1779,7 +1971,7 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     <message>
         <location filename="../../src/gui/step/StepAuthenticationEac1Widget.ui"/>
         <source>more...</source>
-        <translation>mehr…</translation>
+        <translation>mehr...</translation>
     </message>
     <message>
         <location filename="../../src/gui/step/StepAuthenticationEac1Widget.ui"/>
@@ -1805,14 +1997,6 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
         <location filename="../../src/gui/step/StepAuthenticationEac1Widget.ui"/>
         <source>details</source>
         <translation>Details</translation>
-    </message>
-</context>
-<context>
-    <name>StepChooseDeviceWidget</name>
-    <message>
-        <location filename="../../src/gui/step/StepChooseDeviceWidget.ui"/>
-        <source>Scan</source>
-        <translation>Suchen</translation>
     </message>
 </context>
 <context>
@@ -1850,31 +2034,7 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     <message>
         <location filename="../qml/more/SupportView.qml" line="26"/>
         <source>Support is available from 9.00 to 17.00 on Monday-Friday, except on national holidays.</source>
-        <translation>Unser Support ist erreichbarvon Montag bis Freitag 09:00-17:00, außer an Feiertagen.</translation>
-    </message>
-</context>
-<context>
-    <name>SwitchToBluetooth</name>
-    <message>
-        <location filename="../qml/SwitchToBluetooth.qml" line="29"/>
-        <location filename="../qml/SwitchToBluetooth.qml" line="37"/>
-        <source>Bluetooth not supported</source>
-        <translation>Bluetooth wird nicht unterstützt</translation>
-    </message>
-    <message>
-        <location filename="../qml/SwitchToBluetooth.qml" line="37"/>
-        <source>or via</source>
-        <translation>oder über</translation>
-    </message>
-    <message>
-        <location filename="../qml/SwitchToBluetooth.qml" line="47"/>
-        <source>Bluetooth reader</source>
-        <translation>Bluetoothkartenleser</translation>
-    </message>
-    <message>
-        <location filename="../qml/SwitchToBluetooth.qml" line="47"/>
-        <source>or switched off</source>
-        <translation>oder ist abgeschaltet</translation>
+        <translation>Unser Support ist erreichbar von Montag bis Freitag 09:00-17:00, außer an Feiertagen.</translation>
     </message>
 </context>
 <context>
@@ -1888,19 +2048,77 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>TitleBarAction</name>
     <message>
-        <location filename="../qml/TitleBarAction.qml" line="42"/>
+        <location filename="../qml/TitleBarAction.qml" line="38"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../qml/TitleBarAction.qml" line="43"/>
+        <location filename="../qml/TitleBarAction.qml" line="39"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../qml/TitleBarAction.qml" line="44"/>
+        <location filename="../qml/TitleBarAction.qml" line="40"/>
         <source>&lt; back</source>
         <translation>&lt; Zurück</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateWindow</name>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.ui"/>
+        <source>Software Update</source>
+        <translation>Software-Aktualisierung</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.ui"/>
+        <source>A new version of AusweisApp2 is available!</source>
+        <translation>Eine aktuellere Version der AusweisApp2 ist verfügbar!</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.ui"/>
+        <source>AusweisApp2 %1 is now available - you have %2. Would you like to download it now?</source>
+        <translation>AusweisApp2 %1 ist jetzt verfügbar - Sie haben %2. Wollen Sie die neue Version jetzt herunterladen?</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.ui"/>
+        <source>The update file is located at:</source>
+        <translation>Die Aktualisierungsdatei finden Sie hier:</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.ui"/>
+        <source>&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;</source>
+        <translation>&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.ui"/>
+        <source>Release Notes:</source>
+        <translation>Aktualisierungshinweise:</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.ui"/>
+        <source>Download this update and close current &quot;AusweisApp2&quot;. Install the update and start &quot;AusweisApp2&quot; again.</source>
+        <translation>Laden Sie die Aktualisierung herunter und beenden Sie die laufende &quot;AusweisApp2&quot;. Installieren Sie das Update und starten &quot;AusweisApp2&quot; erneut.</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.ui"/>
+        <source>When you click &quot;Download update&quot;, this link will be opened in your browser.</source>
+        <translation>Wenn Sie &quot;Aktualisierung herunterladen&quot; klicken, wird dieser Link in Ihrem Browser geöffnet.</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.ui"/>
+        <source>Skip update</source>
+        <translation>Aktualisierung auslassen</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.ui"/>
+        <source>Remind me later</source>
+        <translation>Später erinnern</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.ui"/>
+        <source>Download update</source>
+        <translation>Aktualisierung herunterladen</translation>
     </message>
 </context>
 <context>
@@ -1937,14 +2155,6 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
         <location filename="../../src/gui/AboutDialog.cpp" line="31"/>
         <source>The developer mode is aimed at integrators / developers for new service applications. For this reason, the developer mode works only in the test PKI. By activating the developer mode, some safety tests are deactivated. This means that the authentication process continues although the AusweisApp2 would usually abort the process with an error message when used in normal operation mode. Information on the disregarded error in the developer mode is displayed in the attached window below the AusweisApp2.</source>
         <translation>Der Entwicklermodus richtet sich an Integratoren / Entwickler für neue Dienste. Aus diesem Grund funktioniert der Entwicklermodus lediglich in der Test-PKI. Durch Aktivierung des Entwicklermodus werden einige Sicherheitsprüfungen abgestellt. Die Authentisierung wird auch dann weitergeführt, wenn die AusweisApp2 im Normalbetrieb die Authentisierung mit einer Fehlermeldung abbrechen würde. Der übergangene Fehler im Entwicklermodus wird im angehängten Fenster unterhalb der AusweisApp2 angezeigt.</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::AbstractState</name>
-    <message>
-        <location filename="../../src/core/states/AbstractState.cpp" line="120"/>
-        <source>The ID card has been removed. The process is aborted.</source>
-        <translation>Das Ausweisdokument wurde entfernt. Der Vorgang wird abgebrochen.</translation>
     </message>
 </context>
 <context>
@@ -2116,52 +2326,52 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>governikus::AppQtGui</name>
     <message>
-        <location filename="../../src/gui/AppQtGui.cpp" line="107"/>
+        <location filename="../../src/gui/AppQtGui.cpp" line="109"/>
         <source>AusweisApp2 was started.</source>
         <translation>AusweisApp2 wurde gestartet.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/AppQtGui.cpp" line="514"/>
+        <location filename="../../src/gui/AppQtGui.cpp" line="519"/>
         <source>Don&apos;t show this dialog again.</source>
         <translation>Diesen Hinweis nicht mehr anzeigen.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/AppQtGui.cpp" line="424"/>
+        <location filename="../../src/gui/AppQtGui.cpp" line="429"/>
         <source>Open</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/AppQtGui.cpp" line="218"/>
+        <location filename="../../src/gui/AppQtGui.cpp" line="222"/>
         <source>The developer mode is enabled.</source>
         <translation>Der Entwicklermodus ist aktiviert.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/AppQtGui.cpp" line="219"/>
+        <location filename="../../src/gui/AppQtGui.cpp" line="223"/>
         <source>Do you want to disable the developer mode?</source>
         <translation>Möchten Sie den Entwicklermodus deaktivieren?</translation>
     </message>
     <message>
-        <location filename="../../src/gui/AppQtGui.cpp" line="267"/>
+        <location filename="../../src/gui/AppQtGui.cpp" line="272"/>
         <source>Did you change the initial transport PIN already?&lt;br&gt;&lt;br&gt;Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. Online identification with transport PIN is not possible.</source>
         <translation>Haben Sie Ihre Transport-PIN schon geändert? &lt;br&gt;&lt;br&gt;Bevor Sie das erste mal die Online-Ausweisfunktion nutzen können, müssen Sie Ihre Transport-PIN durch eine persönliche, 6-stellige PIN ersetzen. Die Online-Ausweisfunktion ist mit der Transport-PIN nicht möglich.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/AppQtGui.cpp" line="269"/>
+        <location filename="../../src/gui/AppQtGui.cpp" line="274"/>
         <source>No, change transport PIN now</source>
         <translation>Nein, PIN jetzt ändern</translation>
     </message>
     <message>
-        <location filename="../../src/gui/AppQtGui.cpp" line="430"/>
+        <location filename="../../src/gui/AppQtGui.cpp" line="435"/>
         <source>Exit AusweisApp2</source>
         <translation>AusweisApp2 beenden</translation>
     </message>
     <message>
-        <location filename="../../src/gui/AppQtGui.cpp" line="512"/>
+        <location filename="../../src/gui/AppQtGui.cpp" line="517"/>
         <source>The user interface of the %1 is closed.</source>
         <translation>Die Benutzeroberfläche der %1 wird geschlossen.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/AppQtGui.cpp" line="513"/>
+        <location filename="../../src/gui/AppQtGui.cpp" line="518"/>
         <source>The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.</source>
         <translation>Das Programm steht weiterhin im Infobereich zur Verfügung. Klicken Sie auf das Symbol der %1, um die Anwendung wieder zu öffnen.</translation>
     </message>
@@ -2210,37 +2420,37 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>governikus::CertificateDescriptionModel</name>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="43"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="53"/>
         <source>Service provider</source>
         <translation>Diensteanbieter</translation>
     </message>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="44"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="54"/>
         <source>Certificate issuer</source>
-        <translation>Inhaber</translation>
+        <translation>Aussteller des Berechtigungszertifikats</translation>
     </message>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="47"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="57"/>
         <source>Name, address and mail address of the service provider</source>
         <translation>Name, Adresse und E-Mail vom Diensteanbieter</translation>
     </message>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="48"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="58"/>
         <source>Purpose</source>
         <translation>Zweck</translation>
     </message>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="49"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="59"/>
         <source>Indication of the bodies responsible for the service provider, that verify the compliance with data security regulations</source>
         <translation>Angabe der für den Dienstanbieter zuständigen Datenschutzaufsicht</translation>
     </message>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="54"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="64"/>
         <source>Service provider information</source>
         <translation>Dienstanbieterinformationen</translation>
     </message>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="58"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="68"/>
         <source>Validity</source>
         <translation>Gültigkeit</translation>
     </message>
@@ -2371,7 +2581,7 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
         <location filename="../../src/gui/DiagnosisWidget.cpp" line="147"/>
         <location filename="../../src/gui/DiagnosisWidget.cpp" line="153"/>
         <source>Diagnosis is running...</source>
-        <translation>Diagnose läuft…</translation>
+        <translation>Diagnose läuft...</translation>
     </message>
     <message>
         <location filename="../../src/gui/DiagnosisWidget.cpp" line="85"/>
@@ -2501,39 +2711,6 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
 </context>
 <context>
-    <name>governikus::ErrorMessage</name>
-    <message>
-        <location filename="../../src/global/ErrorMessage.cpp" line="10"/>
-        <source>An error occurred. Please contact our support at &lt;a href=&quot;https://www.ausweisapp.bund.de/en/service/support/&quot;&gt;AusweisApp2 Support&lt;/a&gt;.</source>
-        <translation>Ein Fehler ist aufgetreten. Bitte kontaktieren Sie unseren Support unter &lt;a href=&quot;https://www.ausweisapp.bund.de/service/support/&quot;&gt;AusweisApp2 Support&lt;/a&gt;.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ErrorMessage.cpp" line="15"/>
-        <source>Application was invoked with wrong parameters.</source>
-        <translation>Die Anwendung wurde mit falschen Parametern aufgerufen.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ErrorMessage.cpp" line="19"/>
-        <source>It wasn&apos;t possible to connect to the server: a secure connection could not be established.</source>
-        <translation>Verbindung zum Server nicht möglich: Es konnte keine sichere Verbindung aufgebaut werden.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ErrorMessage.cpp" line="23"/>
-        <source>It wasn&apos;t possible to connect to the server: the server sent a non-standard response.</source>
-        <translation>Verbindung zum Server nicht möglich: Ungültige Antwort vom Server erhalten.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ErrorMessage.cpp" line="27"/>
-        <source>Establishing a connection is taking too long.</source>
-        <translation>Das Herstellen einer Verbindung dauert zu lang.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ErrorMessage.cpp" line="31"/>
-        <source>Establishing a connection via the proxy did not succeed.</source>
-        <translation>Die Verbindung zum Proxyserver konnte nicht hergestellt werden.</translation>
-    </message>
-</context>
-<context>
     <name>governikus::GeneralSettingsWidget</name>
     <message>
         <location filename="../../src/gui/GeneralSettingsWidget.cpp" line="14"/>
@@ -2542,64 +2719,337 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
 </context>
 <context>
+    <name>governikus::GlobalStatus</name>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="58"/>
+        <source>No error occurred.</source>
+        <translation>Es ist kein Fehler aufgetreten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="61"/>
+        <source>An unexpected error has occurred during processing.</source>
+        <translation>Während der Verarbeitung ist ein unerwarteter Fehler aufgetreten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="64"/>
+        <source>The ID card has been removed. The process is aborted.</source>
+        <translation>Das Ausweisdokument wurde entfernt. Der Vorgang wird abgebrochen.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="67"/>
+        <source>The authenticity of your ID card could not be confirmed.</source>
+        <translation>Die Echtheit Ihres Ausweisdokuments konnte nicht bestätigt werden.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="70"/>
+        <source>The program received an unknown message from the server.</source>
+        <translation>Die Anwendung hat eine unbekannte Nachricht vom Server erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="73"/>
+        <source>The program received an unexpected message from the server.</source>
+        <translation>Die Anwendung hat eine nicht erwartete Nachricht vom Server erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="76"/>
+        <source>After three wrong entries your PIN is blocked. Using the online identification function is no longer possible.</source>
+        <translation>Nach dreimaliger Falscheingabe ist Ihre PIN gesperrt. Die Nutzung der Online-Ausweisfunktion ist nun nicht mehr möglich.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="82"/>
+        <source>Pre-verification failed.</source>
+        <translation>Eine oder mehrere Zertifikatsprüfungen schlugen fehl.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="85"/>
+        <source>No unique AT CVC</source>
+        <translation>Kein eindeutiges AT CVC</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="88"/>
+        <source>No unique DV CVC</source>
+        <translation>Kein eindeutiges DV CVC</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="91"/>
+        <source>Authentication failed.</source>
+        <translation>Die Authentisierung ist fehlgeschlagen.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="94"/>
+        <source>No certificate description available.</source>
+        <translation>Keine Zertifikatsbeschreibung vorhanden.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="97"/>
+        <source>No subject url available in certificate description.</source>
+        <translation>Es konnte keine URL in der Zertifikatsbeschreibung gefunden werden.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="100"/>
+        <source>The certificate description does not match the certificate.</source>
+        <translation>Die Zertifikatsbeschreibung passt nicht zum Zertifikat.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="103"/>
+        <source>The subject URL in the certificate description and the TCToken URL don&apos;t satisfy the same origin policy.</source>
+        <translation>Die URL in der Zertifikatsbeschreibung und die TCToken-URL erfüllen die Same-Origin-Policy nicht.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="111"/>
+        <source>Failed to establish secure connection</source>
+        <translation>Die sichere Verbindung konnte nicht aufgebaut werden</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="114"/>
+        <source>The program received an error from the server.</source>
+        <translation>Die Anwendung hat einen Fehler vom Server erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="118"/>
+        <source>Hash of certificate not in certificate description</source>
+        <translation>Hashwert des Zertifikats nicht in Zertifikatsbeschreibung</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="121"/>
+        <source>Received no data.</source>
+        <translation>Keine Daten erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="22"/>
+        <source>An error occurred. Please contact our support at &lt;a href=&quot;https://www.ausweisapp.bund.de/en/service/support/&quot;&gt;AusweisApp2 Support&lt;/a&gt;.</source>
+        <translation>Ein Fehler ist aufgetreten. Bitte kontaktieren Sie unseren Support unter &lt;a href=&quot;https://www.ausweisapp.bund.de/service/support/&quot;&gt;AusweisApp2 Support&lt;/a&gt;.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="79"/>
+        <source>Using the developer mode is only allowed in a test environment.</source>
+        <translation>Der Entwicklermodus darf nur in einer Testumgebung verwendet werden.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="125"/>
+        <source>Establishing a connection is taking too long.</source>
+        <translation>Der Verbindungsaufbau dauert zu lange.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="129"/>
+        <source>Establishing a connection via the proxy did not succeed.</source>
+        <translation>Der Verbindungsaufbau über den Proxy war nicht erfolgreich.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="132"/>
+        <source>It wasn&apos;t possible to connect to the server: the server sent a non-standard response.</source>
+        <translation>Die Verbindung zum Server ist fehlgeschlagen: Der Server hat eine nicht-standard Antwort gesendet.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="136"/>
+        <source>It wasn&apos;t possible to connect to the server: a secure connection could not be established.</source>
+        <translation>Die Verbindung zum Server ist fehlgeschlagen: Es konnte keine sichere Verbindung aufgebaut werden.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="139"/>
+        <source>Application was invoked with wrong parameters.</source>
+        <translation>Die Anwendung wurde mit den falschen Parametern aufgerufen.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="143"/>
+        <source>An unknown network error occurred.</source>
+        <translation>Ein unbekannter Netzwerkfehler ist aufgetreten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="146"/>
+        <source>The selected card reader cannot be accessed anymore.</source>
+        <translation>Das ausgewählte Kartenlesegerät kann nicht mehr angesprochen werden.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="149"/>
+        <source>An error occurred while communicating with the card reader.</source>
+        <translation>Bei der Kommunikation mit dem Kartenlesegerät ist ein Fehler aufgetreten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="152"/>
+        <source>The server provided no or incomplete information. Your personal data could not be read out.</source>
+        <translation>Der Server lieferte keine oder nur unvollständige Informationen. Ihre persönlichen Daten konnten nicht ausgelesen werden.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="155"/>
+        <source>Error while connecting to the service provider. The SSL connection uses an unsupported key algorithm or length.</source>
+        <translation>Fehler bei der Verbindung mit dem Diensteanbieter. Der Verschlüsselungsalgorithmus oder die Länge des Schlüssels der SSL-Verbindung wird nicht unterstützt.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="159"/>
+        <source>Error while connecting to the server. The SSL certificate uses an unsupported key algorithm or length.</source>
+        <translation>Fehler bei der Verbindung zum Server. Der Verschlüsselungsalgorithmus oder die Länge des Schlüssels im SSL-Zertifikat des Servers wird nicht unterstützt.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="162"/>
+        <source>Empty redirect URL</source>
+        <translation>Leere Redirect-URL</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="165"/>
+        <source>Expected redirect, got %1</source>
+        <translation>Erwartete HTTP-redirect, tatsächlich erhalten: %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="168"/>
+        <source>Invalid scheme: %1</source>
+        <translation>Ungültiges URL-Schema: %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="171"/>
+        <source>Malformed redirect URL: %1</source>
+        <translation>Nicht wohlgeformte Redirect-URL: %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="175"/>
+        <source>The process was cancelled by the user.</source>
+        <translation>Der Benutzer hat den Vorgang abgebrochen.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="209"/>
+        <source>The maximum time was exceeded during input process.</source>
+        <translation>Bei der Eingabe wurde die maximale Zeit überschritten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="212"/>
+        <source>Card does not exist</source>
+        <translation>Karte nicht vorhanden</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="215"/>
+        <source>An error occurred while communicating with the ID card.</source>
+        <translation>Bei der Kommunikation mit dem Kartenlesegerät ist ein Fehler aufgetreten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="218"/>
+        <source>A protocol error has occurred.</source>
+        <translation>Ein Protokollfehler ist aufgetreten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="221"/>
+        <source>The given PIN is invalid.</source>
+        <translation>Die eingegebene PIN ist ungültig.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="224"/>
+        <source>The given card access number (CAN) is invalid.</source>
+        <translation>Die eingegebene Zugangsnummer (CAN) ist ungültig.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="227"/>
+        <source>The given PUK is invalid.</source>
+        <translation>Die eingegebene PUK ist ungültig.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="230"/>
+        <source>The PIN was blocked after too many unsuccessful attempts.</source>
+        <translation>Die PIN ist nach zu vielen Fehlversuchen gesperrt.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="233"/>
+        <source>The PIN is not blocked.</source>
+        <translation>Die PIN ist nicht gesperrt.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="236"/>
+        <source>The PUK was used ten times and is set inoperative. Please contact the competent authority that issued your ID document to unlock the PIN.</source>
+        <translation>Die eingegebene PUK wurde zehn Mal verwendet und ist außer Betrieb. Bitte kontaktieren Sie die für die Ausgabe Ihres Ausweisdokuments zuständige Behörde um Ihre PIN zu entsperren.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="239"/>
+        <source>The new PIN and the confirmation do not match.</source>
+        <translation>Die neue PIN und ihre Wiederholung stimmen nicht überein.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="242"/>
+        <source>The length of the new PIN is not valid.</source>
+        <translation>Die neue PIN hat eine ungültige Länge.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="245"/>
+        <source>An error occurred while connecting to a reader device.</source>
+        <translation>Es ist ein Fehler während des Verbindungsaufbaus zu einem Kartenleser aufgetreten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="248"/>
+        <source>An error occurred while scanning for reader devices.</source>
+        <translation>Es ist ein Fehler während der Suche nach einem Kartenleser aufgetreten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="251"/>
+        <source>The remote reader connection was closed properly.</source>
+        <translation>Die Verbindung zum Remote-Lesegerät wurde ordnungsgemäß geschlossen.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="254"/>
+        <source>The remote card reader connection was not closed properly.</source>
+        <translation>Die Verbindung zum Remote-Lesegerät wurde abgebrochen.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="257"/>
+        <source>Undefined error code occured when the remote card reader connection was closed.</source>
+        <translation>Unbekannter Fehler beim Beenden der Verbindung zum Remote-Lesegerät.</translation>
+    </message>
+</context>
+<context>
     <name>governikus::GuiUtils</name>
     <message>
-        <location filename="../../src/gui/generic/GuiUtils.cpp" line="42"/>
+        <location filename="../../src/gui/generic/GuiUtils.cpp" line="43"/>
         <source>Wrong card access number (CAN)</source>
         <translation>Falsche Zugangsnummer (CAN)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/generic/GuiUtils.cpp" line="43"/>
+        <location filename="../../src/gui/generic/GuiUtils.cpp" line="44"/>
         <source>The given card access number (CAN) is not correct. You have one more try to enter the correct PIN. Please mind that you have to acknowledge this last try with your card access number (CAN).</source>
         <translation>Die eingegebene Zugangsnummer (CAN) ist nicht korrekt. Sie haben noch eine weitere Möglichkeit die korrekte PIN einzugeben. Beachten Sie, dass Sie diesen letzten Versuch mit der Zugangsnummer (CAN) bestätigen müssen.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/generic/GuiUtils.cpp" line="49"/>
+        <location filename="../../src/gui/generic/GuiUtils.cpp" line="50"/>
         <source>Wrong PUK</source>
         <translation>Falsche PUK</translation>
     </message>
     <message>
-        <location filename="../../src/gui/generic/GuiUtils.cpp" line="54"/>
+        <location filename="../../src/gui/generic/GuiUtils.cpp" line="55"/>
         <source>PUK is inoperative</source>
         <translation>PUK ist außer Betrieb</translation>
     </message>
     <message>
-        <location filename="../../src/gui/generic/GuiUtils.cpp" line="50"/>
+        <location filename="../../src/gui/generic/GuiUtils.cpp" line="51"/>
         <source>Please enter your PUK again.</source>
         <translation>Bitte geben Sie Ihre PUK erneut ein.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/generic/GuiUtils.cpp" line="55"/>
-        <source>You have correctly entered the PUK ten times and have thus reached the maximum count. The PUK is now inoperative and can no longer be used for unblocking the PIN. Please address the citizen centre that has issued your ID card for unblocking your PIN.</source>
+        <location filename="../../src/gui/generic/GuiUtils.cpp" line="56"/>
+        <source>You have correctly entered the PUK ten times and have thus reached the maximum count. The PUK is now inoperative and can no longer be used for unblocking the PIN. Please address your competent authority that has issued your ID card for unblocking your PIN.</source>
         <translation>Sie haben die PUK zehn Mal korrekt eingegeben und damit die maximale Anzahl erreicht. Die PUK ist daher außer Betrieb und kann nicht mehr zum Entsperren der PIN verwendet werden. Bitte wenden Sie sich zum Entsperren der PIN an die zuständige Behörde, die Ihr Ausweisdokument ausgegeben hat.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/generic/GuiUtils.cpp" line="62"/>
+        <location filename="../../src/gui/generic/GuiUtils.cpp" line="63"/>
         <source>Wrong PIN</source>
         <translation>Falsche PIN</translation>
     </message>
     <message>
-        <location filename="../../src/gui/generic/GuiUtils.cpp" line="71"/>
+        <location filename="../../src/gui/generic/GuiUtils.cpp" line="72"/>
         <source>After three wrong entries your PIN is blocked. Using the online identification function is no longer possible. &lt;/p&gt;&lt;p&gt;You can unblock your PIN in the following dialog. The program supports you with the steps now required.</source>
         <translation>Ihre PIN ist nach dreimaliger Fehleingabe gesperrt. Die Nutzung der Online-Ausweisfunktion ist in diesem Zustand nicht mehr möglich.&lt;/p&gt;&lt;p&gt;Sie können die PIN im folgenden Dialog entsperren. Die Anwendung unterstützt Sie in den nun notwendigen Schritten.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/generic/GuiUtils.cpp" line="77"/>
+        <location filename="../../src/gui/generic/GuiUtils.cpp" line="78"/>
         <source>The given PIN is not correct. You have one more try to enter the correct PIN. Please mind that you have to acknowledge this last try with your card access number (CAN).</source>
         <translation>Die eingegebene PIN ist nicht korrekt. Sie haben noch eine weitere Möglichkeit die korrekte PIN einzugeben. Beachten Sie, dass Sie diesen letzten Versuch mit der Zugangsnummer (CAN) bestätigen müssen.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/generic/GuiUtils.cpp" line="83"/>
+        <location filename="../../src/gui/generic/GuiUtils.cpp" line="84"/>
         <source>The given PIN is not correct. You have %1 tries to enter the correct PIN.</source>
         <translation>Die eingegebene PIN ist nicht korrekt. Sie haben noch %1 weitere Möglichkeiten die korrekte PIN einzugeben.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/generic/GuiUtils.cpp" line="102"/>
+        <location filename="../../src/gui/generic/GuiUtils.cpp" line="103"/>
         <source>PIN blocked</source>
         <translation>PIN gesperrt</translation>
     </message>
     <message>
-        <location filename="../../src/gui/generic/GuiUtils.cpp" line="103"/>
+        <location filename="../../src/gui/generic/GuiUtils.cpp" line="104"/>
         <source>After three wrong entries your PIN is blocked. Using the online identification function is no longer possible. &lt;br/&gt;You can unblock the PIN as follows:&lt;ol&gt;&lt;li&gt; Select the &quot;Settings&quot; function.&lt;/li&gt;&lt;li&gt;Select the &quot;PIN Management&quot; tab. &lt;/li&gt;&lt;li&gt;Follow the instructions on the screen.&lt;/li&gt;&lt;/ol&gt;Note: You will find the PUK in the letter you received during the application for the ID card in the &quot;Unblocking key PUK&quot; section. Further information is available on the site &lt;a href=&quot;http://www.personalausweisportal.de&quot;&gt;http://www.personalausweisportal.de&lt;/a&gt;.&lt;br&gt;Do you want to unblock the PIN now?</source>
         <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Die Online-Ausweisfunktion ist jetzt blockiert. Die Blockierung können Sie mit Ihrer Entsperrnummer (PUK) aufheben. Sie finden Ihre PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweisdokuments von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde erhalten haben. Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis entsperren. Sollten Sie Ihre PIN vergessen haben, können Sie von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde eine neue PIN setzen lassen.&lt;br&gt;Wollen Sie die Blockierung nun aufheben?</translation>
     </message>
@@ -2613,91 +3063,66 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
 </context>
 <context>
+    <name>governikus::HistoryModelSearchFilter</name>
+    <message>
+        <location filename="../../src/qml/HistoryModelSearchFilter.cpp" line="28"/>
+        <source>MM/dd/yyyy</source>
+        <translation>dd.MM.yyyy</translation>
+    </message>
+</context>
+<context>
     <name>governikus::HistoryWidget</name>
     <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="24"/>
+        <location filename="../../src/gui/HistoryWidget.cpp" line="26"/>
         <source>History</source>
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="48"/>
+        <location filename="../../src/gui/HistoryWidget.cpp" line="50"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="49"/>
+        <location filename="../../src/gui/HistoryWidget.cpp" line="51"/>
         <source>Details</source>
         <translation>Details</translation>
     </message>
     <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="115"/>
+        <location filename="../../src/gui/HistoryWidget.cpp" line="110"/>
+        <location filename="../../src/gui/HistoryWidget.cpp" line="114"/>
+        <location filename="../../src/gui/HistoryWidget.cpp" line="117"/>
+        <source>MM/dd/yyyy hh:mm AP</source>
+        <translation>dd.MM.yyyy HH:mm</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/HistoryWidget.cpp" line="117"/>
         <source>Date:</source>
         <translation>Datum:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="126"/>
+        <location filename="../../src/gui/HistoryWidget.cpp" line="128"/>
         <source>&lt;b&gt;Provider:&lt;/b&gt;</source>
         <translation>&lt;b&gt;Diensteanbieter:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="136"/>
+        <location filename="../../src/gui/HistoryWidget.cpp" line="138"/>
         <source>&lt;b&gt;Purpose:&lt;/b&gt;</source>
         <translation>&lt;b&gt;Zweck:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="146"/>
+        <location filename="../../src/gui/HistoryWidget.cpp" line="148"/>
         <source>&lt;b&gt;Data:&lt;/b&gt;</source>
         <translation>&lt;b&gt;Daten:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="244"/>
-        <source>PDF Documents (*.pdf)</source>
-        <translation>PDF-Dokumente (*.pdf)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="259"/>
-        <source>&lt;/h1&gt;&lt;h3&gt;AusweisApp2 is a product of Governikus GmbH &amp; Co. KG - on behalf of the Bundesministerium des Innern (Federal Ministry of the Interior).&lt;/h3&gt;&lt;/td&gt;</source>
-        <translation>&lt;/h1&gt;&lt;h3&gt;Die AusweisApp2 ist ein Produkt der Governikus GmbH &amp; Co. KG - im Auftrag des Bundesministeriums des Innern.&lt;/h3&gt;&lt;/td&gt;</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="242"/>
+        <location filename="../../src/gui/HistoryWidget.cpp" line="233"/>
         <source>Save history</source>
         <translation>Verlauf speichern</translation>
     </message>
     <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="259"/>
-        <source>&lt;td valign=&apos;middle&apos;&gt;&lt;h1&gt;History - </source>
-        <translation>&lt;td valign=&apos;middle&apos;&gt;&lt;h1&gt;Verlauf - </translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="264"/>
-        <source>&lt;td valign=&apos;middle&apos;&gt;&lt;br&gt;&lt;h3&gt;At %1 %2 the following data were saved:</source>
-        <translation>&lt;td valign=&apos;middle&apos;&gt;&lt;br&gt;&lt;h3&gt;Am %1 um %2 wurden folgende Daten gespeichert:</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="268"/>
-        <source>&lt;h3&gt;For further information, please see &lt;a href=&apos;https://www.ausweisapp.bund.de/&apos;&gt;https://www.ausweisapp.bund.de/&lt;/a&gt;&lt;/h3&gt;</source>
-        <translation>&lt;h3&gt;Weitere Informationen finden Sie unter &lt;a href=&apos;https://www.ausweisapp.bund.de/&apos;&gt;https://www.ausweisapp.bund.de/&lt;/a&gt;&lt;/h3&gt;</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="288"/>
-        <source>&lt;tr&gt;&lt;td&gt;&lt;b&gt;Date&lt;/b&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;Details&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;</source>
-        <translation>&lt;tr&gt;&lt;td&gt;&lt;b&gt;Datum&lt;/b&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;Details&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="308"/>
-        <source>&lt;td&gt;Provider:&lt;/td&gt;</source>
-        <translation>&lt;td&gt;Diensteanbieter:&lt;/td&gt;</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="311"/>
-        <source>&lt;td&gt;Purpose:&lt;/td&gt;</source>
-        <translation>&lt;td&gt;Zweck:&lt;/td&gt;</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/HistoryWidget.cpp" line="314"/>
-        <source>&lt;td&gt;Data:&lt;/td&gt;</source>
-        <translation>&lt;td&gt;Daten:&lt;/td&gt;</translation>
+        <location filename="../../src/gui/HistoryWidget.cpp" line="235"/>
+        <source>PDF Documents (*.pdf)</source>
+        <translation>PDF Dokumente (*.pdf)</translation>
     </message>
 </context>
 <context>
@@ -2766,7 +3191,7 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>governikus::LogHandler</name>
     <message>
-        <location filename="../../src/global/LogHandler.cpp" line="104"/>
+        <location filename="../../src/global/LogHandler.cpp" line="94"/>
         <source>An error occurred in log handling: %1</source>
         <translation>Es ist ein Fehler bei der Protokollverwaltung aufgetreten: %1</translation>
     </message>
@@ -2797,29 +3222,95 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>governikus::NumberModel</name>
     <message>
-        <location filename="../../src/qml/NumberModel.cpp" line="133"/>
+        <location filename="../../src/qml/NumberModel.cpp" line="149"/>
         <source>You have entered a wrong PIN, please try again.</source>
         <translation>Sie haben eine falsche PIN eingegeben. Bitte versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <location filename="../../src/qml/NumberModel.cpp" line="137"/>
-        <source>You have entered a wrong PIN two times. You have one try left before the PIN is blocked. You have to enter your CAN first.</source>
-        <translation>Sie haben Ihre PIN zweimal falsch eingegeben und haben  noch einen Versuch bevor die PIN geblockt wird. Bitte geben Sie zuerst ihre CAN ein.</translation>
+        <location filename="../../src/qml/NumberModel.cpp" line="153"/>
+        <source>You have entered the wrong PIN twice. For a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.</source>
+        <translation>Sie haben Ihre PIN zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher Ihre 6-stellige Zugangsnummer eingeben. Sie finden Ihre Zugangsnummer auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
-        <location filename="../../src/qml/NumberModel.cpp" line="143"/>
-        <source>You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter your PUK now for unblocking.</source>
-        <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Ihre PIN ist gesperrt. Sie müssen erst Ihre PUK zum entsperren eingeben.</translation>
+        <location filename="../../src/qml/NumberModel.cpp" line="159"/>
+        <source>You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.</source>
+        <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Ihre PIN ist jetzt gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
     </message>
     <message>
-        <location filename="../../src/qml/NumberModel.cpp" line="150"/>
+        <location filename="../../src/qml/NumberModel.cpp" line="166"/>
         <source>You have entered a wrong CAN, please try again.</source>
-        <translation>Sie haben eine falsche CAN eingegeben. Bitte versuche Sie es erneut.</translation>
+        <translation>Sie haben eine falsche CAN eingegeben. Bitte versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <location filename="../../src/qml/NumberModel.cpp" line="154"/>
+        <location filename="../../src/qml/NumberModel.cpp" line="170"/>
         <source>You have entered a wrong PUK. Please try again.</source>
         <translation>Sie haben eine falsche PUK eingegeben. Bitte versuchen Sie es erneut.</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::PdfCreator</name>
+    <message>
+        <location filename="../../src/export/PdfCreator.cpp" line="162"/>
+        <source>History</source>
+        <translation>Verlauf</translation>
+    </message>
+    <message>
+        <location filename="../../src/export/PdfCreator.cpp" line="164"/>
+        <source>AusweisApp2 is a product of Governikus GmbH &amp; Co. KG - on behalf of the Bundesministerium des Innern (Federal Ministry of the Interior).</source>
+        <translation>Die AusweisApp2 ist ein Produkt der Governikus GmbH &amp; Co. KG - im Auftrag des Bundesministeriums des Innern.</translation>
+    </message>
+    <message>
+        <location filename="../../src/export/PdfCreator.cpp" line="169"/>
+        <source>For further information, please see &lt;a href=&apos;https://www.ausweisapp.bund.de/&apos;&gt;https://www.ausweisapp.bund.de/&lt;/a&gt;</source>
+        <translation>Mehr Information finden Sie auf &lt;a href=&apos;https://www.ausweisapp.bund.de/&apos;&gt;https://www.ausweisapp.bund.de/&lt;/a&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::PdfExport</name>
+    <message>
+        <location filename="../../src/export/PdfCreator.cpp" line="33"/>
+        <source>MM/dd/yyyy</source>
+        <translation>dd.MM.yyyy</translation>
+    </message>
+    <message>
+        <location filename="../../src/export/PdfCreator.cpp" line="34"/>
+        <source>hh:mm AP</source>
+        <translation>HH:mm</translation>
+    </message>
+    <message>
+        <location filename="../../src/export/PdfCreator.cpp" line="35"/>
+        <source>At %1 %2 the following data were saved:</source>
+        <translation>Die folgenden Daten wurden hier %1 %2 gespeichert:</translation>
+    </message>
+    <message>
+        <location filename="../../src/export/PdfCreator.cpp" line="37"/>
+        <source>Date</source>
+        <translation>Datum</translation>
+    </message>
+    <message>
+        <location filename="../../src/export/PdfCreator.cpp" line="37"/>
+        <source>Details</source>
+        <translation>Details</translation>
+    </message>
+    <message>
+        <location filename="../../src/export/PdfCreator.cpp" line="41"/>
+        <source>MM/dd/yyyy hh:mm AP</source>
+        <translation>dd.MM.yyyy HH:mm</translation>
+    </message>
+    <message>
+        <location filename="../../src/export/PdfCreator.cpp" line="41"/>
+        <source>Provider:</source>
+        <translation>Diensteanbieter:</translation>
+    </message>
+    <message>
+        <location filename="../../src/export/PdfCreator.cpp" line="42"/>
+        <source>Purpose:</source>
+        <translation>Zweck:</translation>
+    </message>
+    <message>
+        <location filename="../../src/export/PdfCreator.cpp" line="43"/>
+        <source>Data:</source>
+        <translation>Daten:</translation>
     </message>
 </context>
 <context>
@@ -2835,7 +3326,7 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     <message>
         <location filename="../../src/gui/PinSettingsWidget.cpp" line="24"/>
         <source>PIN Management</source>
-        <translation>ng</translation>
+        <translation>PIN-Verwaltung</translation>
     </message>
     <message>
         <location filename="../../src/gui/PinSettingsWidget.cpp" line="39"/>
@@ -2878,6 +3369,49 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
 </context>
 <context>
+    <name>governikus::ProviderModel</name>
+    <message>
+        <location filename="../../src/qml/ProviderModel.cpp" line="174"/>
+        <source>%1 seconds free, afterwards </source>
+        <translation>%1 Sekunde frei, danach </translation>
+    </message>
+    <message>
+        <location filename="../../src/qml/ProviderModel.cpp" line="176"/>
+        <source>landline costs %1; </source>
+        <translation>Festnetzpreis %1; </translation>
+    </message>
+    <message>
+        <location filename="../../src/qml/ProviderModel.cpp" line="178"/>
+        <source>mobile costs may vary.</source>
+        <translation>Mobilfunkpreise abweichen.</translation>
+    </message>
+    <message>
+        <location filename="../../src/qml/ProviderModel.cpp" line="178"/>
+        <source>mobile costs %1</source>
+        <translation>Mobilfunkpreise max. %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/qml/ProviderModel.cpp" line="14"/>
+        <source>%1/min</source>
+        <translation>%1/min</translation>
+    </message>
+    <message>
+        <location filename="../../src/qml/ProviderModel.cpp" line="18"/>
+        <source>%1/call</source>
+        <translation>%1/Anruf</translation>
+    </message>
+    <message>
+        <location filename="../../src/qml/ProviderModel.cpp" line="26"/>
+        <source>%1 EUR</source>
+        <translation>%1 EUR</translation>
+    </message>
+    <message>
+        <location filename="../../src/qml/ProviderModel.cpp" line="26"/>
+        <source>%1 ct</source>
+        <translation>%1 ct</translation>
+    </message>
+</context>
+<context>
     <name>governikus::ProviderWidget</name>
     <message>
         <location filename="../../src/gui/ProviderWidget.cpp" line="30"/>
@@ -2896,11 +3430,11 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
 </context>
 <context>
-    <name>governikus::ProxySettingsWidget</name>
+    <name>governikus::QmlExtension</name>
     <message>
-        <location filename="../../src/gui/ProxySettingsWidget.cpp" line="17"/>
-        <source>Extended</source>
-        <translation>Erweitert</translation>
+        <location filename="../../src/qml/QmlExtension_android.cpp" line="153"/>
+        <source>Send application log per email...</source>
+        <translation>Anwendungsprotokoll per E-Mail senden...</translation>
     </message>
 </context>
 <context>
@@ -2985,272 +3519,120 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
 </context>
 <context>
-    <name>governikus::ReleaseNotesDownloader</name>
-    <message>
-        <location filename="../../src/external/fervor/ReleaseNotesDownloader.cpp" line="15"/>
-        <source>&lt;h4&gt;Download of release notes failed&lt;/h4&gt;</source>
-        <translation>&lt;h4&gt;Herunterladen der Release Notes schlug fehl&lt;/h4&gt;</translation>
-    </message>
-</context>
-<context>
     <name>governikus::Result</name>
     <message>
-        <location filename="../../src/global/Result.cpp" line="58"/>
+        <location filename="../../src/global/Result.cpp" line="288"/>
         <source>An unexpected error has occurred during processing.</source>
         <translation>Während der Verarbeitung ist ein unerwarteter Fehler aufgetreten.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="59"/>
+        <location filename="../../src/global/Result.cpp" line="291"/>
         <source>Use of the function by the client application is not permitted.</source>
         <translation>Für die Operation fehlen die benötigten Rechte.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="60"/>
+        <location filename="../../src/global/Result.cpp" line="294"/>
         <source>An internal error has occurred during processing.</source>
         <translation>Während der Verarbeitung ist ein interner Fehler aufgetreten.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="61"/>
+        <location filename="../../src/global/Result.cpp" line="297"/>
         <source>There was some problem with a provided or omitted parameter.</source>
         <translation>Ein fehlerhafter Parameter wurde übermittelt.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="62"/>
+        <location filename="../../src/global/Result.cpp" line="300"/>
         <source>The API function is unknown.</source>
         <translation>Die Schnittstellenfunktion ist unbekannt.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="63"/>
+        <location filename="../../src/global/Result.cpp" line="303"/>
         <source>The framework or layer has not been initialized.</source>
         <translation>Die Schnittstelle ist nicht initialisiert.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="64"/>
-        <location filename="../../src/global/Result.cpp" line="65"/>
+        <location filename="../../src/global/Result.cpp" line="306"/>
+        <location filename="../../src/global/Result.cpp" line="309"/>
         <source>The active session has been terminated.</source>
         <translation>Die aktuelle Sitzung wurde beendet.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="66"/>
-        <location filename="../../src/global/Result.cpp" line="69"/>
-        <location filename="../../src/global/Result.cpp" line="74"/>
+        <location filename="../../src/global/Result.cpp" line="312"/>
+        <location filename="../../src/global/Result.cpp" line="321"/>
+        <location filename="../../src/global/Result.cpp" line="336"/>
         <source>A Communication error occurred during processing.</source>
         <translation>Während der Verarbeitung ist ein Verbindungsfehler aufgetreten.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="67"/>
-        <location filename="../../src/global/Result.cpp" line="76"/>
+        <location filename="../../src/global/Result.cpp" line="315"/>
+        <location filename="../../src/global/Result.cpp" line="339"/>
         <source>The operation was terminated as the set time was exceeded.</source>
         <translation>Der Vorgang wurde wegen einer Zeitüberschreitung abgebrochen.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="68"/>
+        <location filename="../../src/global/Result.cpp" line="318"/>
         <source>The operation was aborted as an invalid channel handle was used.</source>
         <translation>Der Vorgang wurde wegen einer ungültigen Verbindung abgebrochen.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="70"/>
+        <location filename="../../src/global/Result.cpp" line="324"/>
         <source>A trusted channel could not be opened.</source>
         <translation>Es konnte keine sichere Verbindung hergestellt werden.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="71"/>
+        <location filename="../../src/global/Result.cpp" line="327"/>
         <source>The operation was aborted as an unknown protocol was used.</source>
         <translation>Der Vorgang wurde wegen der Verwendung eines unbekannten Protokolls abgebrochen.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="72"/>
+        <location filename="../../src/global/Result.cpp" line="330"/>
         <source>The operation was aborted as an unknown cipher suite was used.</source>
         <translation>Der Vorgang wurde wegen der Verwendung eines unbekannten Verschlüsselungsalgorithmus abgebrochen.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="73"/>
+        <location filename="../../src/global/Result.cpp" line="333"/>
         <source>The operation was aborted as an unknown web service binding was used.</source>
         <translation>Der Vorgang wurde wegen der Verwendung eines unbekannten Webservice-Bindings abgebrochen.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="75"/>
-        <source>The operation was aborted due to cancellation by user.</source>
-        <translation>Der Benutzer hat den Vorgang abgebrochen.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/Result.cpp" line="77"/>
+        <location filename="../../src/global/Result.cpp" line="342"/>
         <source>Signature certificate key generation is not possible.</source>
         <translation>Die Erzeugung eines Schlüssels für das Signaturzertifikat war nicht möglich.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="78"/>
+        <location filename="../../src/global/Result.cpp" line="345"/>
+        <source>The operation was aborted due to cancellation by user.</source>
+        <translation>Der Benutzer hat den Vorgang abgebrochen.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/Result.cpp" line="348"/>
         <source>One or more certificate checks failed. The operation will be aborted due to security reasons.</source>
         <translation>Eine oder mehrere Zertifikatsprüfungen schlugen fehl. Der Vorgang wird aus Sicherheitsgründen abgebrochen.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="79"/>
-        <source>This action cannot be performed. The online identification function of your ID card is deactivated. Please contact your citizen centre to activate the online identification function.</source>
-        <translation>Diese Aktion kann leider nicht durchgeführt werden. Die Online-Ausweisfunktion Ihres Ausweisdokuments ist nicht aktiviert. Bitte wenden Sie sich an die für Sie zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <location filename="../../src/global/Result.cpp" line="351"/>
+        <source>This action cannot be performed. The online identification function of your ID card is deactivated. Please contact your competent authority to activate the online identification function.</source>
+        <translation>Diese Aktion kann leider nicht durchgeführt werden. Die Online-Ausweisfunktion Ihres Ausweisdokuments ist nicht aktiviert. Bitte wenden Sie sich an Ihre zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="80"/>
+        <location filename="../../src/global/Result.cpp" line="354"/>
         <source>The authenticity of your ID card could not be verified. Please make sure that you are using a genuine ID card. Please note that test applications require the use of a test ID card.</source>
         <translation>Die Echtheit Ihres Ausweisdokuments konnte nicht überprüft werden. Bitte stellen Sie sicher, dass Sie ein echtes Ausweisdokument verwenden. Bitte beachten Sie, dass Sie bei Testanwendungen einen Testausweis verwenden müssen.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="81"/>
+        <location filename="../../src/global/Result.cpp" line="357"/>
         <source>The age verification failed.</source>
         <translation>Die Altersverifikation war nicht erfolgreich.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="82"/>
+        <location filename="../../src/global/Result.cpp" line="360"/>
         <source>The community verification failed.</source>
         <translation>Die Wohnortverifikation war nicht erfolgreich.</translation>
     </message>
     <message>
-        <location filename="../../src/global/Result.cpp" line="83"/>
+        <location filename="../../src/global/Result.cpp" line="363"/>
         <source>The ID card is invalid or disabled.</source>
         <translation>Das Ausweisdokument ist ungültig oder gesperrt.</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::ReturnCodeUtil</name>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="19"/>
-        <source>No error occurred.</source>
-        <translation>Es ist kein Fehler aufgetreten.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="20"/>
-        <source>no error</source>
-        <translation>kein Fehler</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="27"/>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="28"/>
-        <source>Card does not exist</source>
-        <translation>Karte nicht vorhanden</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="35"/>
-        <source>The maximum time was exceeded during input process.</source>
-        <translation>Bei der Eingabe wurde die maximale Zeit überschritten.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="36"/>
-        <source>A timeout occurred during input process</source>
-        <translation>Zeitüberschreitung bei der Eingabe</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="43"/>
-        <source>The input is invalid.</source>
-        <translation>Die Eingabe ist ungültig.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="44"/>
-        <source>invalid input</source>
-        <translation>ungültige Eingabe</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="51"/>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="52"/>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="59"/>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="60"/>
-        <source>An error occurred while communicating with the card reader.</source>
-        <translation>Bei der Kommunikation mit dem Kartenlesegerät ist ein Fehler aufgetreten.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="67"/>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="68"/>
-        <source>The process was cancelled by the user.</source>
-        <translation>Der Benutzer hat den Vorgang abgebrochen.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="75"/>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="76"/>
-        <source>The new PIN and the confirmation do not match.</source>
-        <translation>Die neue PIN und ihre Wiederholung stimmen nicht überein.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="91"/>
-        <source>The PIN was blocked after too many unsuccessful attempts.</source>
-        <translation>Die PIN ist nach zu vielen Fehlversuchen gesperrt.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="92"/>
-        <source>PIN is blocked</source>
-        <translation>PIN gesperrt</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="83"/>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="84"/>
-        <source>The length of the new PIN is not valid.</source>
-        <translation>Die neue PIN hat eine ungültige Länge.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="99"/>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="100"/>
-        <source>A protocol error has occurred.</source>
-        <translation>Ein Protokollfehler ist aufgetreten.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="107"/>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="108"/>
-        <source>The PIN is not blocked.</source>
-        <translation>Die PIN ist nicht gesperrt.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="115"/>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="116"/>
-        <source>Unexpected transmit status</source>
-        <translation>Status des Transmits ist unerwartet</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="123"/>
-        <source>The given card access number (CAN) is invalid.</source>
-        <translation>Die eingegebene Zugangsnummer (CAN) ist ungültig.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="124"/>
-        <source>given card access number (CAN) is invalid</source>
-        <translation>eingegebene Zugangsnummer (CAN) ungültig</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="131"/>
-        <source>The given PIN is invalid.</source>
-        <translation>Die eingegebene PIN ist ungültig.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="132"/>
-        <source>given PIN is invalid</source>
-        <translation>eingegebene PIN ungültig</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="139"/>
-        <source>The given PUK is invalid.</source>
-        <translation>Die eingegebene PUK ist ungültig.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="147"/>
-        <source>The PUK was used ten times and is set inoperative.</source>
-        <translation>Die eingegebene PUK wurde zehn Mal verwendet und ist außer Betrieb.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="148"/>
-        <source>PUK is inoperative</source>
-        <translation>PUK ist außer Betrieb</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="140"/>
-        <source>given PUK is invalid</source>
-        <translation>eingegebene PUK ungültig</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="159"/>
-        <source>Unknown error</source>
-        <translation>Unbekannter Fehler</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="170"/>
-        <location filename="../../src/global/ReturnCodeUtil.cpp" line="194"/>
-        <source>An unknown error occurred: </source>
-        <translation>Es ist ein unbekannter Fehler aufgetreten: </translation>
     </message>
 </context>
 <context>
@@ -3285,7 +3667,7 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
     </message>
     <message>
         <location filename="../../src/qml/SelfAuthenticationModel.cpp" line="40"/>
-        <source>dd.MM.yyyy</source>
+        <source>MM/dd/yyyy</source>
         <translation>dd.MM.yyyy</translation>
     </message>
     <message>
@@ -3332,111 +3714,116 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>governikus::SelfInfoWidget</name>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="50"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="48"/>
         <source>dd.MM.yyyy</source>
         <translation>dd.MM.yyyy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="113"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="111"/>
         <source>Document type:</source>
         <translation>Dokumentenart:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="125"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="123"/>
         <source>Issuing country:</source>
         <translation>Ausstellender Staat:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="80"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="78"/>
         <source>Doctoral degree:</source>
         <translation>Doktorgrad:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="76"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="74"/>
         <source>Given name(s):</source>
         <translation>Vorname(n):</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="68"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="66"/>
         <source>Family name:</source>
         <translation>Familienname:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="121"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="119"/>
         <source>Religious / artistic name:</source>
         <translation>Ordens- / Künstlername:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="93"/>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="97"/>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="101"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="91"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="95"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="99"/>
         <source>Address:</source>
         <translation>Anschrift:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="72"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="70"/>
         <source>Birth name:</source>
         <translation>Geburtsname:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="84"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="82"/>
         <source>Date of birth:</source>
         <translation>Geburtsdatum:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="88"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="86"/>
         <source>Place of birth:</source>
         <translation>Geburtsort:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="117"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="115"/>
         <source>Nationality:</source>
         <translation>Staatsangehörigkeit:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="137"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="135"/>
         <source>Residence permit I:</source>
         <translation>Nebenbestimmungen I:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="140"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="138"/>
         <source>Save as PDF...</source>
-        <translation>Als PDF speichern…</translation>
+        <translation>Als PDF speichern...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="214"/>
-        <source>&lt;/h1&gt;&lt;h3&gt;AusweisApp2 is a product of Governikus GmbH &amp; Co. KG - on behalf of the Bundesministerium des Innern (Federal Ministry of the Interior).&lt;/h3&gt;&lt;/td&gt;</source>
-        <translation>&lt;/h1&gt;&lt;h3&gt;Die AusweisApp2 ist ein Produkt der Governikus GmbH &amp; Co. KG - im Auftrag des Bundesministeriums des Innern.&lt;/h3&gt;&lt;/td&gt;</translation>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="203"/>
+        <source>MM/dd/yyyy</source>
+        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="141"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="204"/>
+        <source>hh:mm AP</source>
+        <translation>HH:mm</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="205"/>
+        <source>At %1 %2 the following data has been read out of your ID card:</source>
+        <translation>Die folgenden Daten wurden hier %1 %2 aus Ihrem Ausweisdokument ausgelesen:</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="207"/>
+        <source>Entry</source>
+        <translation>Eintrag</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="207"/>
+        <source>Content</source>
+        <translation>Inhalt</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="139"/>
         <source>save id card data as pdf</source>
         <translation>Daten des Ausweisdokuments als PDF speichern</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="200"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="194"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="202"/>
+        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="196"/>
         <source>PDF Documents</source>
         <translation>PDF-Dokumente</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="214"/>
-        <source>&lt;td valign=&apos;middle&apos;&gt;&lt;h1&gt;ID card info - </source>
-        <translation>&lt;td valign=&apos;middle&apos;&gt;&lt;h1&gt;Ausweis Auskunft - </translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="219"/>
-        <source>&lt;td valign=&apos;middle&apos;&gt;&lt;br&gt;&lt;h3&gt;At %1 %2 the following data has been read out of your ID card:</source>
-        <translation>&lt;td valign=&apos;middle&apos;&gt;&lt;br&gt;&lt;h3&gt;Am %1 um %2 wurden folgende Daten aus Ihrem Ausweisdokument ausgelesen:</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/step/SelfInfoWidget.cpp" line="223"/>
-        <source>&lt;h3&gt;For further information, please see &lt;a href=&apos;https://www.ausweisapp.bund.de/&apos;&gt;https://www.ausweisapp.bund.de/&lt;/a&gt;&lt;/h3&gt;</source>
-        <translation>&lt;h3&gt;Weitere Informationen finden Sie unter &lt;a href=&apos;https://www.ausweisapp.bund.de/&apos;&gt;https://www.ausweisapp.bund.de/&lt;/a&gt;&lt;/h3&gt;</translation>
     </message>
 </context>
 <context>
@@ -3478,326 +3865,147 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
         <translation> - Einrichtungsassistent</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="104"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="105"/>
         <source>&lt;div align=&quot;right&quot;&gt;Step %1 of %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Introduction&lt;/div&gt;</source>
         <translation>&lt;div align=&quot;right&quot;&gt;Schritt %1 von %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Einleitung&lt;/div&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="106"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="107"/>
         <source>Welcome to the AusweisApp2 setup assistant. This assistant will guide you through the setup process in %1 steps. The setup assistant can be cancelled at any time and can be started again later from the Help menu.</source>
         <translation>Willkommen zum Einrichtungsassistenten der AusweisApp2. Sie werden in %1 Schritten durch die Einrichtung geführt. Sie können diesen Einrichtungsassistenten jederzeit abbrechen und später über das Hilfe-Menü erneut starten.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="109"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="110"/>
         <source>Introduction Step %1 of %2. Welcome to the AusweisApp2 setup assistant. This assistant will guide you through the setup process in %2 steps. The setup assistant can be cancelled at any time and can be started again later from the Help menu.</source>
         <translation>Einleitung Schritt %1 von %2. Willkommen zum Einrichtungsassistenten der AusweisApp2. Sie werden in %2 Schritten durch die Einrichtung geführt. Sie können diesen Einrichtungsassistenten jederzeit abbrechen und später über das Hilfe-Menü erneut starten.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="117"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="118"/>
         <source>&lt;br&gt;&lt;b&gt;History&lt;/b&gt;&lt;br&gt;&lt;br&gt;AusweisApp2 offers saving the course of your authentications in a history. Subsequently you can activate this option.</source>
         <translation>&lt;br&gt;&lt;b&gt;Verlauf&lt;/b&gt;&lt;br&gt;&lt;br&gt;Die AusweisApp2 bietet Ihnen die Möglichkeit, durchgeführte Authentisierungen in einem Verlauf zu speichern. Nachfolgend haben Sie die Möglichkeit, diese Option zu aktivieren.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="120"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="121"/>
         <source>History. AusweisApp2 offers saving the course of your authentications in a history. Subsequently you can activate this option.</source>
         <translation>Verlauf. Die AusweisApp2 bietet Ihnen die Möglichkeit, durchgeführte Authentisierungen in einem Verlauf zu speichern. Nachfolgend haben Sie die Möglichkeit, diese Option zu aktivieren.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="167"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="168"/>
         <source>&lt;div align=&quot;right&quot;&gt;Step %1 of %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Card Reader&lt;/div&gt;</source>
         <translation>&lt;div align=&quot;right&quot;&gt;Schritt %1 von %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Kartenleser&lt;/div&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="173"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="174"/>
         <source>Card Reader Step %1 of %2. In order to be able to use the online identification function with AusweisApp2, you need a card reader. Please make sure that you have connected a suitable card reader and that the drivers required for your card reader are installed on your system. The following list shows all suitable card readers. For each card reader you will find a link to the manufacturer&apos;s website, where you can download the most recent drivers.</source>
         <translation>Kartenleser Schritt %1 von %2. Um die Online-Ausweisfunktion mit der AusweisApp2 nutzen zu können benötigen Sie ein Kartenlesegerät. Stellen Sie sicher, dass Sie ein geeignetes Kartenlesegerät angeschlossen haben und dass die für Ihr Kartenlesegerät benötigten Treiber auf Ihrem System installiert sind. Die folgende Übersicht zeigt alle geeigneten Kartenlesegeräte. Zu jedem Kartenlesegerät ist ein Link zur Herstellerseite angegeben, dort können die aktuellen Treiber heruntergeladen werden.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="353"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="354"/>
         <source>&lt;div align=&quot;right&quot;&gt;Step %1 of %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Firefox extension NoScript&lt;/div&gt;</source>
         <translation>&lt;div align=&quot;right&quot;&gt;Schritt %1 of %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Firefox-Erweiterung NoScript&lt;/div&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="355"/>
-        <source>The Firefox browser extension NoScript was found on your computer. The configuration of this extension may block authentication requests from being passed to %1. Refer to the online help for further details.</source>
-        <translation>Die Firefox-Erweiterung NoScript wurde auf Ihrem System gefunden. Die Konfiguration dieser Erweiterung kann Authentisierungs-Aufrufe für die %1 blockieren. Weitere Informationen erhalten Sie in der Online-Hilfe.</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="361"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="362"/>
         <source>Firefox extension NoScript Step %1 of %2.</source>
         <translation>Firefox-Erweiterung NoScript Schritt %1 von %2.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="380"/>
-        <source>&lt;b&gt;Personal 6-digit PIN&lt;/b&gt;&lt;br&gt;&lt;br&gt;Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. The AusweisApp&apos;s PIN management offers this function. For replacing the transport PIN you need the letter sent to you by Bundesdruckerei GmbH on behalf of your citizen centre.</source>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="381"/>
+        <source>&lt;b&gt;Personal 6-digit PIN&lt;/b&gt;&lt;br&gt;&lt;br&gt;Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. The AusweisApp&apos;s PIN management offers this function. For replacing the transport PIN you need the letter sent to you by your competent authority.</source>
         <translation>&lt;b&gt;Persönliche 6-stellige PIN&lt;/b&gt;&lt;br&gt;&lt;br&gt;Vor der ersten Nutzung der Online-Ausweisfunktion müssen Sie die Transport-PIN durch eine persönliche 6-stellige PIN ersetzen. Die PIN-Verwaltung der AusweisApp2 bietet Ihnen dazu die Möglichkeit. Für das Ersetzen der Transport-PIN benötigen Sie den PIN-Brief, welcher Ihnen von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde zugesandt wurde.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="385"/>
-        <source>Personal 6-digit PIN. Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. The AusweisApp&apos;s PIN management offers this function. For replacing the transport PIN you need the letter sent to you by Bundesdruckerei GmbH on behalf of your citizen centre.</source>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="386"/>
+        <source>Personal 6-digit PIN. Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. The AusweisApp&apos;s PIN management offers this function. For replacing the transport PIN you need the letter sent to you by your competent authority.</source>
         <translation>Personal 6-digit PIN. Vor der ersten Nutzung der Online-Ausweisfunktion müssen Sie die Transport-PIN durch eine persönliche 6-stellige PIN ersetzen. Die PIN-Verwaltung der AusweisApp2 bietet Ihnen dazu die Möglichkeit. Für das Ersetzen der Transport-PIN benötigen Sie den PIN-Brief, welcher Ihnen von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde zugesandt wurde.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="392"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="393"/>
         <source>Change PIN</source>
         <translation>PIN ändern</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="404"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="405"/>
         <source>&lt;br&gt;AusweisApp2 is now ready for use. You can further configure AusweisApp2 via the &quot;Settings&quot; dialog from the navigation section. AusweisApp2 uses the proxy settings configured in your system. This setup assistant can be started at any time from the &quot;Help&quot; menu. The &quot;Finish&quot; button closes the setup assistant.</source>
         <translation>&lt;br&gt;Sie können die AusweisApp2 nun verwenden. Weitere Einstellungen können Sie über die Funktion &quot;Einstellungen&quot; im Navigationsbereich vornehmen. Die AusweisApp2 verwendet die in Ihrem System konfigurierten Proxy-Einstellungen. Sie können diesen Einrichtungsassistenten jederzeit über das Menü &quot;Hilfe&quot; erneut starten. Die Schaltfläche &quot;Abschließen&quot; schließt den Einrichtungsassistenten und öffnet die Dialogseite &quot;Einstellungen&quot;.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="407"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="408"/>
         <source>Almost done! Step %1 of %2. AusweisApp2 is now ready for use. You can further configure AusweisApp2 via the Settings dialog from the navigation section. AusweisApp2 uses the proxy settings configured in your system. This setup assistant can be started at any time from the Help menu. The Finish button closes the setup assistant.</source>
         <translation>Fast fertig! Schritt %1 von %2. Sie können die AusweisApp2 nun verwenden. Weitere Einstellungen können Sie über die Funktion Einstellungen im Navigationsbereich vornehmen. Die AusweisApp2 verwendet die in Ihrem System konfigurierten Proxy-Einstellungen. Sie können diesen Einrichtungsassistenten jederzeit über das Menü Hilfe erneut starten. Die Schaltfläche Abschließen; schließt den Einrichtungsassistenten und öffnet die Dialogseite der Funktion Einstellungen.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="170"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="171"/>
         <source>In order to be able to use the online identification function with AusweisApp2, you need a card reader. Please make sure that you have connected a suitable card reader and that the drivers required for your card reader are installed on your system. The following list shows all suitable card readers. For each card reader you will find a link to the manufacturer&apos;s website, where you can download the most recent drivers.</source>
         <translation>Um die Online-Ausweisfunktion mit der AusweisApp2 nutzen zu können benötigen Sie ein Kartenlesegerät. Stellen Sie sicher, dass Sie ein geeignetes Kartenlesegerät angeschlossen haben und dass die für Ihr Kartenlesegerät benötigten Treiber auf Ihrem System installiert sind. Die folgende Übersicht zeigt alle geeigneten Kartenlesegeräte. Zu jedem Kartenlesegerät ist ein Link zur Herstellerseite angegeben, dort können die aktuellen Treiber heruntergeladen werden.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="201"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="202"/>
         <source>Reader</source>
         <translation>Kartenleser</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="205"/>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="331"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="206"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="332"/>
         <source>Name / Manufacturer</source>
         <translation>Name / Hersteller</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="209"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="210"/>
         <source>Web page</source>
         <translation>Webseite</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="323"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="324"/>
         <source>reader icon</source>
         <translation>Kartenleser Icon</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="376"/>
-        <source>&lt;div align=&quot;right&quot;&gt;Step %1 of %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Almost done!&lt;/div&gt;</source>
-        <translation>&lt;div align=&quot;right&quot;&gt;Schritt %1 von %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Fast fertig!&lt;/div&gt;</translation>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="356"/>
+        <source>The Firefox browser extension NoScript was found on your computer. The configuration of this extension may block authentication requests from being passed to %1. Refer to the online help for further details.</source>
+        <translation>Die Firefox-Erweiterung NoScript wurde auf Ihrem System gefunden. Die Konfiguration dieser Erweiterung kann Authentisierungs-Aufrufe für die %1 blockieren. Weitere Informationen erhalten Sie in der Online-Hilfe.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="141"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="377"/>
+        <source>&lt;div align=&quot;right&quot;&gt;Step %1 of %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Almost done!&lt;/div&gt;</source>
+        <translation>&lt;div align=&quot;right&quot;&gt;Step %1 of %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Fast fertig!&lt;/div&gt;</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="142"/>
         <source>History:</source>
         <translation>Verlauf:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="145"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="146"/>
         <source>save</source>
         <translation>speichern</translation>
     </message>
     <message>
-        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="146"/>
+        <location filename="../../src/gui/SetupAssistantWizard.cpp" line="147"/>
         <source>save history</source>
         <translation>Verlauf speichern</translation>
     </message>
 </context>
 <context>
-    <name>governikus::StateCertificateDescriptionCheck</name>
-    <message>
-        <location filename="../../src/core/states/StateCertificateDescriptionCheck.cpp" line="34"/>
-        <source>No certificate description available.</source>
-        <translation>Keine Zertifikatsbeschreibung vorhanden.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateCertificateDescriptionCheck.cpp" line="42"/>
-        <source>No subject url available in certificate description.</source>
-        <translation>Es konnte keine URL in der Zertifikatsbeschreibung gefunden werden.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateCertificateDescriptionCheck.cpp" line="61"/>
-        <source>The certificate description does not match the certificate.</source>
-        <translation>Die Zertifikatsbeschreibung passt nicht zum Zertifikat.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateCertificateDescriptionCheck.cpp" line="79"/>
-        <source>The subject URL in the certificate description and the TCToken URL don&apos;t satisfy the same origin policy.</source>
-        <translation>Die URL in der Zertifikatsbeschreibung und die TCToken-URL erfüllen die Same-Origin-Policy nicht.</translation>
-    </message>
-</context>
-<context>
     <name>governikus::StateChangePin</name>
     <message>
-        <location filename="../../src/core/states/StateChangePin.cpp" line="37"/>
-        <source>Pin successfully changed</source>
-        <translation>Pin erfolgreich geändert</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateCheckCertificates</name>
-    <message>
-        <location filename="../../src/core/states/StateCheckCertificates.cpp" line="42"/>
-        <source>Hash of certificate not in certificate description</source>
-        <translation>Hashwert des Zertifikats nicht in Zertifikatsbeschreibung</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateCheckRefreshAddress</name>
-    <message>
-        <location filename="../../src/core/states/StateCheckRefreshAddress.cpp" line="135"/>
-        <location filename="../../src/core/states/StateCheckRefreshAddress.cpp" line="316"/>
-        <location filename="../../src/core/states/StateCheckRefreshAddress.cpp" line="333"/>
-        <source>Failed to establish secure connection</source>
-        <translation>Die sichere Verbindung konnte nicht aufgebaut werden</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateCheckRefreshAddress.cpp" line="178"/>
-        <source>Error while connecting to the service provider. The SSL connection uses an unsupported key algorithm or length.</source>
-        <translation>Fehler bei der Verbindung mit dem Diensteanbieter. Der Verschlüsselungsalgorithmus oder die Länge des Schlüssels der SSL-Verbindung wird nicht unterstützt.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateCheckRefreshAddress.cpp" line="202"/>
-        <source>Expected redirect, got %1</source>
-        <translation>Erwartete HTTP-redirect, tatsächlich erhalten: %1</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateCheckRefreshAddress.cpp" line="208"/>
-        <source>Empty redirect URL</source>
-        <translation>Leere Redirect-URL</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateCheckRefreshAddress.cpp" line="214"/>
-        <source>Malformed redirect URL: %1</source>
-        <translation>Nicht wohlgeformte Redirect-URL: %1</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateCheckRefreshAddress.cpp" line="228"/>
-        <source>Invalid scheme: %1</source>
-        <translation>Ungültiges URL-Schema: %1</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateConnectCard</name>
-    <message>
-        <location filename="../../src/core/states/StateConnectCard.cpp" line="44"/>
-        <source>An error occurred while communicating with the card reader.</source>
-        <translation>Bei der Kommunikation mit dem Kartenlesegerät ist ein Fehler aufgetreten.</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateDidAuthenticateEac2</name>
-    <message>
-        <location filename="../../src/core/states/StateDidAuthenticateEac2.cpp" line="40"/>
-        <location filename="../../src/core/states/StateDidAuthenticateEac2.cpp" line="54"/>
-        <source>Authentication failed.</source>
-        <translation>Die Authentisierung ist fehlgeschlagen.</translation>
+        <location filename="../../src/core/states/StateChangePin.cpp" line="36"/>
+        <source>You have successfully changed your PIN.</source>
+        <translation>Sie haben Ihre PIN erfolgreich geändert.</translation>
     </message>
 </context>
 <context>
     <name>governikus::StateEstablishPacePuk</name>
     <message>
-        <location filename="../../src/core/states/StateEstablishPacePuk.cpp" line="46"/>
-        <source>Pin successfully unblocked</source>
-        <translation>Pin erfolgreich entsperrt</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateExtractCvcsFromEac1IntputType</name>
-    <message>
-        <location filename="../../src/core/states/StateExtractCvcsFromEac1IntputType.cpp" line="29"/>
-        <location filename="../../src/core/states/StateExtractCvcsFromEac1IntputType.cpp" line="53"/>
-        <source>No unique AT CVC</source>
-        <translation>Kein eindeutiges AT CVC</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateExtractCvcsFromEac1IntputType.cpp" line="41"/>
-        <location filename="../../src/core/states/StateExtractCvcsFromEac1IntputType.cpp" line="60"/>
-        <source>No unique DV CVC</source>
-        <translation>Kein eindeutiges DV CVC</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateGenericSendReceive</name>
-    <message>
-        <location filename="../../src/core/states/StateGenericSendReceive.cpp" line="107"/>
-        <source>Failed to establish secure connection</source>
-        <translation>Die sichere Verbindung konnte nicht aufgebaut werden</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateGenericSendReceive.cpp" line="213"/>
-        <source>The program received an error from the server.</source>
-        <translation>Die Anwendung hat einen Fehler vom Server erhalten.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateGenericSendReceive.cpp" line="235"/>
-        <source>The program received an unknown message from the server.</source>
-        <translation>Die Anwendung hat eine unbekannte Nachricht vom Server erhalten.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateGenericSendReceive.cpp" line="241"/>
-        <source>The program received an unexpected message from the server.</source>
-        <translation>Die Anwendung hat eine nicht erwartete Nachricht vom Server erhalten.</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateGetSelfAuthenticationData</name>
-    <message>
-        <location filename="../../src/core/states/StateGetSelfAuthenticationData.cpp" line="72"/>
-        <source>Error while connecting to the service provider. The SSL connection uses an unsupported key algorithm or length.</source>
-        <translation>Fehler bei der Verbindung mit dem Diensteanbieter. Der Verschlüsselungsalgorithmus oder die Länge des Schlüssels der SSL-Verbindung wird nicht unterstützt.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateGetSelfAuthenticationData.cpp" line="82"/>
-        <source>Failed to establish secure connection</source>
-        <translation>Die sichere Verbindung konnte nicht aufgebaut werden</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StateGetSelfAuthenticationData.cpp" line="108"/>
-        <location filename="../../src/core/states/StateGetSelfAuthenticationData.cpp" line="115"/>
-        <source>The server provided no or incomplete information. Your personal data could not be read out.</source>
-        <translation>Der Server lieferte keine oder nur unvollständige Informationen. Ihre persönlichen Daten konnten nicht ausgelesen werden.</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateGetTcToken</name>
-    <message>
-        <location filename="../../src/core/states/StateGetTcToken.cpp" line="177"/>
-        <source>Received no data.</source>
-        <translation>Keine Daten erhalten.</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StatePreVerification</name>
-    <message>
-        <location filename="../../src/core/states/StatePreVerification.cpp" line="52"/>
-        <source>Using the developer mode is only allowed in a test environment.</source>
-        <translation>Der Entwicklermodus darf nur in einer Testumgebung verwendet werden.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/states/StatePreVerification.cpp" line="68"/>
-        <location filename="../../src/core/states/StatePreVerification.cpp" line="75"/>
-        <location filename="../../src/core/states/StatePreVerification.cpp" line="82"/>
-        <source>Pre-verification failed.</source>
-        <translation>Eine oder mehrere Zertifikatsprüfungen schlugen fehl.</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateProcessCertificatesFromEac2</name>
-    <message>
-        <location filename="../../src/core/states/StateProcessCertificatesFromEac2.cpp" line="47"/>
-        <source>The authenticity of your ID card could not be confirmed.</source>
-        <translation>Die Echtheit Ihres Ausweisdokuments konnte nicht bestätigt werden.</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::StateSelectBluetoothReader</name>
-    <message>
-        <location filename="../../src/core/states/StateSelectBluetoothReader.cpp" line="60"/>
-        <source>The selected card reader cannot be accessed anymore.</source>
-        <translation>Das ausgewählte Kartenlesegerät kann nicht mehr angesprochen werden.</translation>
+        <location filename="../../src/core/states/StateEstablishPacePuk.cpp" line="48"/>
+        <source>PIN successfully unblocked</source>
+        <translation>PIN erfolgreich entsperrt</translation>
     </message>
 </context>
 <context>
     <name>governikus::StateWriteHistory</name>
     <message>
-        <location filename="../../src/core/states/StateWriteHistory.cpp" line="48"/>
+        <location filename="../../src/core/states/StateWriteHistory.cpp" line="46"/>
         <source>Validity:
 %1 - %2</source>
         <translation>Gültigkeit:
@@ -3807,7 +4015,7 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>governikus::StepAdviseUserToRemoveCardGui</name>
     <message>
-        <location filename="../../src/gui/step/StepAdviseUserToRemoveCardGui.cpp" line="65"/>
+        <location filename="../../src/gui/step/StepAdviseUserToRemoveCardGui.cpp" line="66"/>
         <source>You may now remove your ID card from the card reader.</source>
         <translation>Sie können nun Ihr Ausweisdokument vom Kartenlesegerät entfernen.</translation>
     </message>
@@ -3828,119 +4036,121 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>governikus::StepAuthenticationEac1Widget</name>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="309"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="234"/>
         <source>Validity:
 %1 - %2</source>
         <translation>Gültigkeit:
 %1 - %2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="384"/>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="413"/>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="496"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="346"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="375"/>
         <source>Only digits (0-9) are permitted.</source>
         <translation>Es sind nur Ziffern (0-9) erlaubt.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="128"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="100"/>
         <source>Card is being verified</source>
         <translation>Karte wird geprüft</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="123"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="96"/>
         <source>Service provider is verified</source>
         <translation>Diensteanbieter wird geprüft</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="133"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="104"/>
         <source>Reading data</source>
         <translation>Daten werden gelesen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="138"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="108"/>
         <source>Service provider is being verified</source>
         <translation>Diensteanbieter wird geprüft</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="94"/>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="98"/>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="199"/>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="248"/>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="258"/>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="540"/>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="544"/>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="550"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="122"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="185"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="277"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="586"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="590"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="596"/>
         <source>Identify now</source>
         <translation>Jetzt ausweisen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="143"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="251"/>
+        <source>See details under more...</source>
+        <translation>Weitere Details unter &quot;mehr...&quot;</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="114"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="165"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="428"/>
         <source>Identify</source>
         <translation>Ausweisen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="183"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="446"/>
         <source>Identification successful</source>
         <translation>Ausweisen erfolgreich</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="183"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="446"/>
         <source>The process was cancelled by the user</source>
         <translation>Der Benutzer hat den Vorgang abgebrochen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="189"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="452"/>
         <source>Result</source>
         <translation>Ergebnis</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="219"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="177"/>
         <source>Please pay attention to the display of your card reader.</source>
         <translation>Bitte beachten Sie die Anzeige auf Ihrem Kartenlesegerät.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="239"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="161"/>
         <source>Please enter your six-digit card access number (CAN) and your PIN for identification.</source>
         <translation>Bitte geben Sie Ihre 6-stellige Zugangsnummer (CAN)  und Ihre PIN ein, um sich auszuweisen.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="243"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="165"/>
         <source>Please enter your six digit PIN for identification</source>
         <translation>Bitte geben Sie Ihre 6-stellige PIN ein, um sich auszuweisen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="296"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="221"/>
         <source>Service provider:</source>
         <translation>Diensteanbieter:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="301"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="226"/>
         <source>Certificate issuer:</source>
         <translation>Aussteller des Berechtigungszertifikats:</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="387"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="349"/>
         <source>Card access number (CAN):</source>
         <translation>Zugangsnummer (CAN):</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="396"/>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="430"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="358"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="392"/>
         <source>open on screen password dialog</source>
         <translation>Öffnen Sie den Bildschirmtastatur-Passwortdialog</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="409"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="371"/>
         <source>More information with TAB</source>
         <translation>Weitere Informationen mit dem Tabulator</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="421"/>
+        <location filename="../../src/gui/step/StepAuthenticationEac1Widget.cpp" line="383"/>
         <source>PIN:</source>
         <translation>PIN:</translation>
     </message>
@@ -3958,69 +4168,55 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
         <translation>Diagnose</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="156"/>
+        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="151"/>
         <source>No card reader detected. Please make sure that a card reader is connected.</source>
         <translation>Es wurde kein Kartenlesegerät erkannt. Bitte stellen Sie sicher, dass ein Kartenlesegerät angeschlossen ist.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="157"/>
+        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="152"/>
         <source>If you need help or have problems with your card reader click on the &quot;Diagnosis&quot; button for further information.</source>
         <translation>Wenn Sie Hilfe benötigen oder Probleme mit Ihrem Kartenlesegerät haben, klicken Sie auf die Schaltfläche &quot;Diagnose&quot; für weitere Informationen.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="165"/>
+        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="160"/>
         <source>Please place an ID card on the card reader.</source>
         <translation>Bitte legen Sie ein Ausweisdokument auf.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="166"/>
+        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="161"/>
         <source>If you have already placed an ID card on your card reader, click on &quot;Diagnosis&quot; for further information.</source>
         <translation>Sollten Sie bereits Ihr Ausweisdokument aufgelegt haben, klicken Sie auf die Schaltfläche &quot;Diagnose&quot; für weitere Informationen.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="172"/>
+        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="167"/>
         <source>Please place only one ID card on the card reader.</source>
         <translation>Bitte legen Sie nur ein Ausweisdokument auf.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="173"/>
+        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="168"/>
         <source>Please make sure that only one card reader with an ID card on it is connected to your computer. If you have already placed an ID card on your card reader, click on &quot;Diagnosis&quot; for further information.</source>
         <translation>Bitte stellen Sie sicher, dass an Ihrem Computer nur ein Kartenlesegerät mit aufliegendem Ausweisdokument angeschlossen ist. Sollten Sie bereits ein Ausweisdokument aufgelegt haben, klicken Sie auf die Schaltfläche &quot;Diagnose&quot; für weitere Informationen.</translation>
     </message>
-</context>
-<context>
-    <name>governikus::StepChooseDeviceWidget</name>
     <message>
-        <location filename="../../src/gui/step/StepChooseDeviceWidget.cpp" line="38"/>
-        <source>Please connect your tablet/smartphone with the Reiner SCT cyberJack wave now. You can find a detailled description in the online help.</source>
-        <translation>Bitte verbinden Sie nun Ihr Tablet / Smartphone mit dem Reiner SCT cyberJack wave. Eine detaillierte Beschreibung hierzu finden Sie in der Online-Hilfe.</translation>
+        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="177"/>
+        <source>Online identification function is disabled.</source>
+        <translation>Die Online-Ausweisfunktion ist deaktiviert.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepChooseDeviceWidget.cpp" line="158"/>
-        <location filename="../../src/gui/step/StepChooseDeviceWidget.cpp" line="203"/>
-        <source>Not connected</source>
-        <translation>Nicht verbunden</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/step/StepChooseDeviceWidget.cpp" line="198"/>
-        <source>No ID card found</source>
-        <translation>Kein Ausweisdokument gefunden</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/step/StepChooseDeviceWidget.cpp" line="186"/>
-        <source>ID card found</source>
-        <translation>Ausweisdokument gefunden</translation>
+        <location filename="../../src/gui/step/StepChooseCardGui.cpp" line="178"/>
+        <source>This action cannot be performed. The online identification function of your ID card is deactivated. Please contact your competent authority to activate the online identification function.</source>
+        <translation>Diese Aktion kann leider nicht durchgeführt werden. Die Online-Ausweisfunktion Ihres Ausweisdokuments ist nicht aktiviert. Bitte wenden Sie sich an Ihre zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
 </context>
 <context>
     <name>governikus::StepErrorGui</name>
     <message>
-        <location filename="../../src/gui/step/StepErrorGui.cpp" line="66"/>
+        <location filename="../../src/gui/step/StepErrorGui.cpp" line="58"/>
         <source>Sorry, that should not have happened! Please contact the support team.</source>
         <translation>Entschuldigung, das hätte nicht passieren dürfen! Bitte kontaktieren Sie das Support Team.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/step/StepErrorGui.cpp" line="71"/>
+        <location filename="../../src/gui/step/StepErrorGui.cpp" line="62"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
@@ -4031,6 +4227,29 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
         <location filename="../../src/gui/step/StepShowSelfAuthenticationDataGui.cpp" line="32"/>
         <source>Close</source>
         <translation>Schließen</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::UpdateWindow</name>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.cpp" line="48"/>
+        <source>Your software is up to date.</source>
+        <translation>Ihre Software ist auf aktuellem Stand.</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.cpp" line="61"/>
+        <source>Unable to open this link in a browser. Please copy and paste the link into the address bar of your browser.</source>
+        <translation>Der Link konnte im Browser nicht geöffnet werden. Bitte kopieren Sie den Link aus dieser Meldung und fügen Sie ihn manuell in die Adressleiste Ihres Browsers ein.</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.cpp" line="78"/>
+        <source>Updates</source>
+        <translation>Aktualisierungen</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/UpdateWindow.cpp" line="100"/>
+        <source>&lt;h4&gt;Download of release notes failed&lt;/h4&gt;</source>
+        <translation>&lt;h4&gt;Herunterladen der Versionshinweise schlug fehl&lt;/h4&gt;</translation>
     </message>
 </context>
 <context>
@@ -4061,37 +4280,42 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
         <translation>Build-Datum</translation>
     </message>
     <message>
-        <location filename="../../src/qml/VersionInformationModel.cpp" line="31"/>
+        <location filename="../../src/qml/VersionInformationModel.cpp" line="32"/>
+        <source>VersionCode</source>
+        <translation>Versions-Code</translation>
+    </message>
+    <message>
+        <location filename="../../src/qml/VersionInformationModel.cpp" line="34"/>
         <source>System version</source>
         <translation>Systemversion</translation>
     </message>
     <message>
-        <location filename="../../src/qml/VersionInformationModel.cpp" line="32"/>
+        <location filename="../../src/qml/VersionInformationModel.cpp" line="35"/>
         <source>Kernel</source>
         <translation>Kernel</translation>
     </message>
     <message>
-        <location filename="../../src/qml/VersionInformationModel.cpp" line="33"/>
+        <location filename="../../src/qml/VersionInformationModel.cpp" line="36"/>
         <source>Architecture</source>
         <translation>Architektur</translation>
     </message>
     <message>
-        <location filename="../../src/qml/VersionInformationModel.cpp" line="35"/>
+        <location filename="../../src/qml/VersionInformationModel.cpp" line="38"/>
         <source>Compiled architecture</source>
         <translation>Kompilierte Architektur</translation>
     </message>
     <message>
-        <location filename="../../src/qml/VersionInformationModel.cpp" line="36"/>
+        <location filename="../../src/qml/VersionInformationModel.cpp" line="39"/>
         <source>Device</source>
         <translation>Gerät</translation>
     </message>
     <message>
-        <location filename="../../src/qml/VersionInformationModel.cpp" line="38"/>
+        <location filename="../../src/qml/VersionInformationModel.cpp" line="41"/>
         <source>Qt Version</source>
         <translation>Qt-Version</translation>
     </message>
     <message>
-        <location filename="../../src/qml/VersionInformationModel.cpp" line="39"/>
+        <location filename="../../src/qml/VersionInformationModel.cpp" line="42"/>
         <source>OpenSSL Version</source>
         <translation>OpenSSL-Version</translation>
     </message>
@@ -4099,75 +4323,75 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>governikus::WebserviceActivationContext</name>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="55"/>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="72"/>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="98"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="51"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="64"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="89"/>
         <source>The browser connection was lost.</source>
         <translation>Die Verbindung zum Browser ging verloren.</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="77"/>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="78"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="69"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="70"/>
         <source>Cannot start authentication</source>
         <translation>Authentisierungsvorgang kann nicht gestartet werden</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="79"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="71"/>
         <source>An operation is already in progress.</source>
         <translation>Ein Vorgang ist bereits in Arbeit.</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="80"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="72"/>
         <source>Would you like to try again?</source>
         <translation>Möchten Sie es erneut versuchen?</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="82"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="74"/>
         <source>Try again</source>
         <translation>Erneut versuchen</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="107"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="98"/>
         <source>400 Bad Request</source>
         <translation>400 Ungültige Anfrage</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="111"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="102"/>
         <source>404 Not found</source>
         <translation>404 Nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="116"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="107"/>
         <source>Invalid request</source>
         <translation>Ungültige Anfrage</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="117"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="108"/>
         <source>Your browser sent a request that couldn&apos;t be interpreted.</source>
         <translation>Ihr Browser hat eine Anfrage gesendet, die nicht interpretiert werden konnte.</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="118"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="109"/>
         <source>Error message</source>
         <translation>Fehlermeldung</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="120"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="111"/>
         <source>Would you like to report this error?</source>
         <translation>Möchten Sie diesen Fehler melden?</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="121"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="112"/>
         <source>https://www.ausweisapp.bund.de/en/feedback/melden-sie-einen-fehler/</source>
         <translation>https://www.ausweisapp.bund.de/feedback/melden-sie-einen-fehler/</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="122"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="113"/>
         <source>Report now</source>
         <translation>Jetzt melden</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="141"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="132"/>
         <source>The connection to the bowser was lost. No forwarding was executed. Please try to call the URL again manually: &lt;a href=&apos;%1&apos;&gt;%2&lt;/a&gt;</source>
         <translation>Die Verbindung zum Browser ging verloren. Es konnte keine Weiterleitung durchgeführt werden. Bitte versuchen Sie die URL manuell aufzurufen: &lt;a href=&apos;%1&apos;&gt;%2&lt;/a&gt;</translation>
     </message>
@@ -4175,63 +4399,63 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>governikus::WebserviceActivationHandler</name>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="75"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="70"/>
         <source>An unknown program uses the required port (%1). Please exit the other program and try again!</source>
         <translation>Eine unbekannte Anwendung verwendet den benötigten Port (%1) bereits. Bitte beenden Sie zuerst die andere Anwendung und versuchen Sie es anschließend erneut!</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="76"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="71"/>
         <source>Another program (%1) uses the required port (%2). Please exit this other program and try again!</source>
         <translation>Eine andere Anwendung (%1) verwendet den benötigten Port (%2) bereits. Bitte beenden Sie zuerst die andere Anwendung und versuchen Sie es anschließend erneut!</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="130"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="122"/>
         <source>404 Not found</source>
         <translation>404 Nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="131"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="123"/>
         <source>Invalid request</source>
         <translation>Ungültige Anfrage</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="132"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="124"/>
         <source>Your browser sent a request that couldn&apos;t be interpreted.</source>
         <translatorcomment>Fehlermeldung</translatorcomment>
         <translation>Ihr Browser hat eine Anfrage gesendet, die nicht interpretiert werden konnte.</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="133"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="125"/>
         <source>Error message</source>
         <translation>Fehlermeldung</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="134"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="126"/>
         <source>Unknown request: %1</source>
         <translation>Unbekannte Anfrage: %1</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="135"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="127"/>
         <source>Would you like to report this error?</source>
         <translation>Möchten Sie diesen Fehler melden?</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="136"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="128"/>
         <source>https://www.ausweisapp.bund.de/en/feedback/melden-sie-einen-fehler/</source>
         <translation>https://www.ausweisapp.bund.de/feedback/melden-sie-einen-fehler/</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="137"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="129"/>
         <source>Report now</source>
         <translation>Jetzt melden</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="165"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="152"/>
         <source>You tried to start a newer version (%1) of currently running application. Please stop the current version (%2) and start again!</source>
         <translation>Sie versuchen eine neuere Version (%1) der aktuell laufenden Anwendung zu starten. Bitte beenden Sie zuerst die andere Version (%2) und versuchen Sie es anschließend erneut!</translation>
     </message>
     <message>
-        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="171"/>
+        <location filename="../../src/activation/webservice/WebserviceActivationHandler.cpp" line="158"/>
         <source>You tried to start an older version (%1) of currently running application. Please open the currently running version (%2)!</source>
         <translation>Sie versuchen eine ältere Version (%1) der aktuell laufenden Anwendung zu starten. Bitte öffnen Sie die aktuell laufende Version (%2)!</translation>
     </message>
@@ -4239,22 +4463,22 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>governikus::WorkflowAuthenticateQtGui</name>
     <message>
-        <location filename="../../src/gui/workflow/WorkflowAuthenticateQtGui.cpp" line="50"/>
+        <location filename="../../src/gui/workflow/WorkflowAuthenticateQtGui.cpp" line="61"/>
         <source>Identify</source>
         <translation>Ausweisen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/workflow/WorkflowAuthenticateQtGui.cpp" line="64"/>
+        <location filename="../../src/gui/workflow/WorkflowAuthenticateQtGui.cpp" line="75"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../../src/gui/workflow/WorkflowAuthenticateQtGui.cpp" line="66"/>
+        <location filename="../../src/gui/workflow/WorkflowAuthenticateQtGui.cpp" line="77"/>
         <source>&lt;b&gt;Do you really want to cancel?&lt;/b&gt;</source>
         <translation>&lt;b&gt;Wollen Sie wirklich abbrechen?&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/workflow/WorkflowAuthenticateQtGui.cpp" line="67"/>
+        <location filename="../../src/gui/workflow/WorkflowAuthenticateQtGui.cpp" line="78"/>
         <source>You can as well identity later by calling the service provider&apos;s Internet page again.</source>
         <translation>Sie können sich auch später ausweisen, indem Sie erneut auf die Internetseite des Diensteanbieters gehen.</translation>
     </message>
@@ -4275,9 +4499,17 @@ Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis ent
 <context>
     <name>governikus::WorkflowSelfInfoQtGui</name>
     <message>
-        <location filename="../../src/gui/workflow/WorkflowSelfInfoQtGui.cpp" line="50"/>
+        <location filename="../../src/gui/workflow/WorkflowSelfInfoQtGui.cpp" line="60"/>
         <source>Identify</source>
         <translation>Ausweisen</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <location filename="../qml/main.qml" line="91"/>
+        <source>Press the back button twice to close the app.</source>
+        <translation>Drücken Sie zweimal die Zurück-Taste, um die Anwendung zu schließen.</translation>
     </message>
 </context>
 </TS>

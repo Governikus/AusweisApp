@@ -24,5 +24,5 @@ DestroyPaceChannelCommand::~DestroyPaceChannelCommand()
 
 void DestroyPaceChannelCommand::internalExecute()
 {
-	mCardConnectionWorker->destroyPaceChannel();
+	mReturnCode = mCardConnectionWorker->destroyPaceChannel();
 }

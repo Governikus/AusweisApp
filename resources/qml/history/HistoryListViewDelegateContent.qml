@@ -5,34 +5,31 @@ import QtQuick.Controls.Styles 1.4
 import "../global"
 
 Item {
-	property bool showDetail: false
-
-	property var listModel
-
 	id: baseItem
 
-	width: parent.width
-
-	HistoryItemImage {
-		id: categoryImage
-		imageUrl: modelItem ? modelItem.provider_icon : ""
-		visible: !showDetail
-	}
+	property bool showDetail: false
+	property var listModel
 
 	Rectangle {
 		id: background
 		color: "white"
-		anchors.left: showDetail ? parent.left : categoryImage.right
-		anchors.leftMargin: showDetail ? Utils.dp(5) : 0
+		anchors.left: parent.left
+		anchors.leftMargin: Utils.dp(5)
 		anchors.right: parent.right
 		anchors.rightMargin: Utils.dp(5)
 		anchors.top: parent.top
 		anchors.bottom: parent.bottom
 
+		HistoryItemImage {
+			id: categoryImage
+			imageUrl: historyModelItem ? historyModelItem.providerIcon : ""
+			visible: !showDetail
+		}
+
 		Rectangle {
 			anchors.verticalCenter: parent.verticalCenter
-			anchors.left: parent.left
-			anchors.leftMargin: Utils.dp(3)
+			anchors.left: showDetail ? parent.left : categoryImage.right
+			anchors.leftMargin: showDetail ? Utils.dp(5) : 0
 			anchors.right: detailsLink.left
 
 			Column {
@@ -46,60 +43,97 @@ Item {
 					id: dateTimeText
 
 					verticalAlignment: Text.AlignVCenter
-					font.pixelSize: Utils.sp(14)
+					font.pixelSize: Constants.label_font_size
 					font.capitalization: Font.AllUppercase
 					color: Constants.blue
 					text: {
-						if (!modelItem) {
-							return "";
+						if (!historyModelItem) {
+							return ""
 						}
-						else if (Utils.isToday(modelItem.dateTime)) {
+						else if (Utils.isToday(historyModelItem.dateTime)) {
 							return qsTr("today")
 						}
-						else if (Utils.isYesterday(modelItem.dateTime)) {
+						else if (Utils.isYesterday(historyModelItem.dateTime)) {
 							return qsTr("yesterday")
 						}
-						else if (Utils.isThisWeek(modelItem.dateTime)) {
-							return modelItem.dateTime.toLocaleString(Qt.locale(), qsTr("dddd"))
+						else if (Utils.isThisWeek(historyModelItem.dateTime)) {
+							return historyModelItem.dateTime.toLocaleString(Qt.locale(), qsTr("dddd"))
 						}
-						return modelItem.dateTime.toLocaleString(Qt.locale(), qsTr("MM/dd/yyyy"))
+						return historyModelItem.dateTime.toLocaleString(Qt.locale(), qsTr("MM/dd/yyyy"))
 					}
 				}
 				Text {
 					id: subjectText
 
+					anchors.left: parent.left
+					anchors.right: parent.right
 					verticalAlignment: Text.AlignVCenter
-					font.pixelSize: Utils.sp(14)
-					elide: Text.ElideRight
-					text: modelItem ? modelItem.subject : ""
+					font.pixelSize: Constants.label_font_size
+					wrapMode: Text.WordWrap
+					text: historyModelItem ? historyModelItem.subject : ""
 				}
 				Text {
-					id: addressText
+					id: purposeText
 
+					anchors.left: parent.left
+					anchors.right: parent.right
 					verticalAlignment: Text.AlignVCenter
-					font.pixelSize: Utils.sp(11)
+					font.pixelSize: Constants.small_font_size
 					color: Constants.history_delegate_address_color
-					elide: Text.ElideRight
-					text: modelItem ? modelItem.provider_address_domain : ""
+					wrapMode: Text.WordWrap
+					text: !!historyModelItem.purpose ? historyModelItem.purpose : qsTr("Touch for more details")
 				}
 			}
 		}
 
 		MouseArea {
 			anchors.fill: parent
-			onClicked: {
-				if(showDetail) {
-					push(detailsHistoryView, {modelItem: modelItem})
-				} else {
-					push(providerHistoryView, { modelItem: modelItem})
+			onClicked: if (showDetail) {
+							push(detailsHistoryView, { historyModelItem: historyModelItem })
+						}
+						else {
+							historyModel.nameFilter.setProviderAddress(historyModelItem.providerAddress)
+							push(providerHistoryView, { historyModelItem: historyModelItem })
+						}
+		}
+
+		Item {
+			id: detailsInfoLink
+
+			anchors.right: parent.right
+			anchors.verticalCenter:	parent.verticalCenter
+
+			height: Utils.dp(16)
+			width: height
+
+			visible: showDetail
+
+			Rectangle {
+				anchors.left: parent.left
+				anchors.right: parent.right
+				anchors.verticalCenter: parent.verticalCenter
+
+				height: Utils.dp(16)
+
+				border.color: PlatformConstants.grey_light
+				border.width: 1
+				radius: height
+
+				color: PlatformConstants.grey_light
+				Text {
+					anchors.centerIn: parent
+
+					text: "i"
+					font.bold: true
+					color: Constants.primary_text
 				}
 			}
 		}
 
 		HistoryDetails {
 			id: detailsLink
-			providerAddress: modelItem ? modelItem.provider_address : ""
-			listItemIndex: modelItem ? modelItem.index : -1
+			providerAddress: historyModelItem ? historyModelItem.providerAddress : ""
+			listItemIndex: historyModelItem ? historyModelItem.index : -1
 			listModel: baseItem.listModel
 			visible: !showDetail
 		}

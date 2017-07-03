@@ -26,7 +26,7 @@ class MockActivationContext
 		virtual ~MockActivationContext();
 
 
-		virtual QUrl getActivationURL() override
+		virtual QUrl getActivationURL() const override
 		{
 			return QUrl();
 		}
@@ -48,20 +48,20 @@ class MockActivationContext
 		}
 
 
-		virtual bool sendErrorPage(HttpStatusCode pStatusCode, const Result& pResult) override
+		virtual bool sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus) override
 		{
 			Q_UNUSED(pStatusCode);
-			Q_UNUSED(pResult);
+			Q_UNUSED(pStatus);
 			mSendErroPageCalled = true;
 			mSendError = mErrorMessageOnSend;
 			return mErroPageValue;
 		}
 
 
-		virtual bool sendRedirect(const QUrl& pRedirectAddress, const Result& pResult) override
+		virtual bool sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pStatus) override
 		{
 			Q_UNUSED(pRedirectAddress);
-			Q_UNUSED(pResult);
+			Q_UNUSED(pStatus);
 			mSendRedirectCalled = true;
 			mSendError = mErrorMessageOnSend;
 			return mRedirectValue;

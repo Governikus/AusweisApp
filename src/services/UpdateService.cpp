@@ -7,9 +7,11 @@
  * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
  */
 
-
-#include "NetworkManager.h"
 #include "UpdateService.h"
+
+#include "HttpStatusCode.h"
+#include "NetworkManager.h"
+#include "TlsConfiguration.h"
 
 #include <QLoggingCategory>
 
@@ -21,24 +23,21 @@ Q_DECLARE_LOGGING_CATEGORY(update)
 
 void UpdateService::onSslErrors(const QList<QSslError>& pErrors)
 {
-	for (const auto& error : pErrors)
-	{
-		qCWarning(update) << "(ignored)" << error.errorString();
-	}
-	mReply->ignoreSslErrors();
+	TlsConfiguration::containsFatalError(mReply, pErrors);
 }
 
 
 void UpdateService::onSslHandshakeDone()
 {
-	QSslConfiguration sslConfiguration = mReply->sslConfiguration();
-	qCDebug(update) << "Used session cipher:" << sslConfiguration.sessionCipher();
-	qCDebug(update) << "Used session protocol:" << sslConfiguration.sessionProtocol();
+	const auto& cfg = mReply->sslConfiguration();
+	const auto& cert = cfg.peerCertificate();
+	qDebug(update) << "Used session cipher:" << cfg.sessionCipher();
+	qDebug(update) << "Used session protocol:" << cfg.sessionProtocol();
+	qDebug(update) << "Used server certificate:" << cert;
 
-	QSslCertificate sslCert = sslConfiguration.peerCertificate();
-	if (!mTrustedUpdateCertificates.contains(sslCert))
+	if (!mTrustedUpdateCertificates.contains(cert))
 	{
-		qCCritical(update).nospace() << "Untrusted certificate found [" << mNameForLog << "]: " << sslCert;
+		qCritical(update).nospace() << "Untrusted certificate found [" << mNameForLog << "]: " << cert;
 		mReply->abort();
 	}
 }
@@ -52,7 +51,7 @@ void UpdateService::onMetadataChanged()
 	if (!status.isNull())
 	{
 		qCDebug(update) << "Found header status" << status.toString();
-		if (status.toInt() != 200)
+		if (status.toInt() != HttpStatusCode::OK)
 		{
 			qCCritical(update) << "Abort request, status " << status.toInt();
 			mReply->abort();
@@ -68,6 +67,7 @@ void UpdateService::onMetadataChanged()
 		if (localIssueDate.isValid() && lastModified.toDateTime() <= localIssueDate)
 		{
 			qCDebug(update) << "Abort request, Last-Modified is older than issue date of current data";
+			mCancel = true;
 			mReply->abort();
 
 			return;
@@ -79,32 +79,32 @@ void UpdateService::onMetadataChanged()
 void UpdateService::onNetworkReplyFinished()
 {
 	mReply->deleteLater();
+
+	if (mCancel)
+	{
+		Q_EMIT fireUpdateFinished();
+		return;
+	}
+
+	const auto& cert = mReply->sslConfiguration().peerCertificate();
+	if (cert.isNull() || !mTrustedUpdateCertificates.contains(cert))
+	{
+		qCCritical(update).nospace() << "Connection not secure [" << mNameForLog << "]";
+		mUpdateBackend->processError(GlobalStatus::Code::Network_Ssl_Establishment_Error);
+		Q_EMIT fireUpdateFinished();
+		return;
+	}
+
 	if (mReply->error() != QNetworkReply::NoError)
 	{
 		qCCritical(update).nospace() << mReply->errorString() << " [" << mNameForLog << "]";
-		mUpdateBackend->processError();
+		mUpdateBackend->processError(NetworkManager::toStatus(mReply));
 		Q_EMIT fireUpdateFinished();
-
-		return;
-	}
-	else if (mReply->sslConfiguration().peerCertificate().isNull())
-	{
-		qCCritical(update).nospace() << "Connection not encrypted [" << mNameForLog << "]";
-		mUpdateBackend->processError();
-		Q_EMIT fireUpdateFinished();
-
 		return;
 	}
 
 	mUpdateBackend->processSuccess(mReply->readAll());
-
 	Q_EMIT fireUpdateFinished();
-}
-
-
-QSharedPointer<UpdateBackend> UpdateService::getUpdateBackend()
-{
-	return mUpdateBackend;
 }
 
 
@@ -115,6 +115,7 @@ UpdateService::UpdateService(const QSharedPointer<UpdateBackend>& pUpdateBackend
 	, mUpdateUrl()
 	, mTrustedUpdateCertificates()
 	, mReply()
+	, mCancel(false)
 {
 	Q_ASSERT_X(pUpdateBackend, "UpdateService", "invalid update backend");
 }
@@ -147,9 +148,10 @@ void UpdateService::setUpdateUrl(const QUrl& pUpdateUrl)
 
 void UpdateService::runUpdate()
 {
-	qCDebug(update) << QStringLiteral("Get %1 from update site %2").arg(mNameForLog, mUpdateUrl.toString());
+	qDebug(update) << QStringLiteral("Get %1 from update site:").arg(mNameForLog) << mUpdateUrl;
 	QNetworkRequest request(mUpdateUrl);
 
+	mCancel = false;
 	mReply = NetworkManager::getGlobalInstance().get(request);
 
 	connect(mReply.data(), &QNetworkReply::sslErrors, this, &UpdateService::onSslErrors);

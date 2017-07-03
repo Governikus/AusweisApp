@@ -75,7 +75,8 @@ void NotificationEnabler::onDescriptorWritten(const QLowEnergyDescriptor& pDescr
 	{
 		return;
 	}
-	if (mValueWritten == mValueConfirmed.append(pNewValue))
+	mValueConfirmed += pNewValue;
+	if (mValueWritten == mValueConfirmed)
 	{
 		mEventLoop.quit();
 	}

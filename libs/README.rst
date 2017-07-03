@@ -36,7 +36,7 @@ Notwendige Bibliotheken:
 
 Notwendige Tools:
 
-- CMake >= 3.1.0
+- CMake >= 3.1.0 (>= 3.7.0 für Android)
 
   - http://www.cmake.org
 
@@ -95,7 +95,7 @@ Beispiel: Innerhalb von /Users/governikus/AusweisApp2 befindet sich der Quellcod
    $ cd /Users/governikus
    $ mkdir build
    $ cd build
-   $ cmake -DPACKAGES_DIR=/Users/governikus/packages ../AusweisApp2/libs
+   $ cmake -DCMAKE_BUILD_TYPE=release -DPACKAGES_DIR=/Users/governikus/packages ../AusweisApp2/libs
    $ make
 
 
@@ -164,7 +164,7 @@ Dabei wird Qt über Windows-CLI und OpenSSL unter MSYS gebaut.
 
 #. cd c:\msys\1.0\home\user\qt
 
-#. cmake -DPACKAGES_DIR=C:/packages C:/AusweisApp2/libs -G "MinGW Makefiles"
+#. cmake -DCMAKE_BUILD_TYPE=release -DPACKAGES_DIR=C:/packages C:/AusweisApp2/libs -G "MinGW Makefiles"
 
 #. MSYS Shell starten
 
@@ -198,7 +198,7 @@ Beispiel: Innerhalb von /Users/governikus/AusweisApp2 befindet sich der Quellcod
    $ cd /Users/governikus
    $ mkdir build
    $ cd build
-   $ cmake -DPACKAGES_DIR=/Users/governikus/packages -DCMAKE_TOOLCHAIN_FILE=../AusweisApp2/cmake/iOS.toolchain.cmake ../AusweisApp2/libs
+   $ cmake -DCMAKE_BUILD_TYPE=release -DPACKAGES_DIR=/Users/governikus/packages -DCMAKE_TOOLCHAIN_FILE=../AusweisApp2/cmake/iOS.toolchain.cmake ../AusweisApp2/libs
    $ make
 
 
@@ -211,20 +211,20 @@ Komponenten vorhanden sein:
 
   - https://developer.android.com/tools/sdk/ndk/index.html
 
-  - Getestet: r12b (x86_64)
+  - Getestet: r13b (x86_64)
 
 - Android SDK mit gesetztem ANDROID_HOME
 
   - https://developer.android.com/sdk/index.html#Other
 
-  - Getestet: 25.1.7
+  - Getestet: 25.2.2
 
   - Unter bestimmten Umständen kann es vorkommen, dass die Build-Tools-Version nicht erkannt
     wird. Dies kann mittels der Umgebungsvariable ANDROID_BUILD_TOOLS_REVISION behoben werden.
     Die genaue Version ist im Android Manager vom Android SDK (./tools/android) hinterlegt.
 
 - Um Qt erfolgreich zu bauen, sind verschiedene API Level von Android notwendig.
-  Diese sollten mindestens Level 10, 11, 16 und 18 sein. Nähere Informationen dazu
+  Diese sollten mindestens Level 18 und 21 sein. Nähere Informationen dazu
   sind im Wiki von Qt enthalten: http://wiki.qt.io/Android
   Die Plattformen können mittels Android Manager nachinstalliert werden.
 
@@ -240,14 +240,9 @@ Beispiel: Innerhalb von /home/governikus/AusweisApp2 befindet sich der Quellcode
    $ cd /home/governikus
    $ mkdir build
    $ cd build
-   $ cmake -DPACKAGES_DIR=/home/governikus/packages -DCMAKE_TOOLCHAIN_FILE=../AusweisApp2/cmake/android.toolchain.cmake ../AusweisApp2/libs
-   $ export PATH=/home/governikus/build/standalone/bin:$PATH
+   $ cmake -DCMAKE_BUILD_TYPE=release -DPACKAGES_DIR=/home/governikus/packages -DCMAKE_TOOLCHAIN_FILE=../AusweisApp2/cmake/android.toolchain.cmake ../AusweisApp2/libs
    $ make
 
 Standardmäßig wird die Architektur "armeabi-v7a" gewählt. Um zum Beispiel die Toolchain für x86-Architektur
-zu bauen , ist beim Aufruf von CMake der Parameter "-DANDROID_ABI=x86" mitzugeben.
-
-Der "export" der PATH-Variable wird auch beim Konfigurieren angezeigt. Siehe dazu "You need to call ..."!
-Sofern die PATH-Variable nicht um den standalone-Ordner erweitert wird, wird es beim Build zu dem Fehler kommen,
-dass der Cross-Compiler für die jeweilige Architektur nicht gefunden werden konnte.
+zu bauen , ist beim Aufruf von CMake der Parameter "-DCMAKE_ANDROID_ARCH_ABI=x86" mitzugeben.
 

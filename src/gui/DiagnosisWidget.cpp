@@ -157,10 +157,10 @@ DiagnosisWidget::DiagnosisWidget(DiagnosisContext* pContext, QWidget* pParent)
 	mTimestampItem->setText(0, tr("Time of diagnosis"));
 
 	const QStringList appVersion({
-		QStringLiteral("%1 (%2)").arg(QCoreApplication::applicationVersion(), QString::fromLatin1(BuildHelper::getDateTime())),
-		QStringLiteral("Qt ") + QString::fromLatin1(qVersion()),
-		QString::fromLatin1(SSLeay_version(0))
-	});
+				QStringLiteral("%1 (%2)").arg(QCoreApplication::applicationVersion(), QString::fromLatin1(BuildHelper::getDateTime())),
+				QStringLiteral("Qt ") + QString::fromLatin1(qVersion()),
+				QString::fromLatin1(SSLeay_version(0))
+			});
 	for (const auto& str : appVersion)
 	{
 		(new QTreeWidgetItem(mAppVersionTreeItem))->setText(0, str);
@@ -180,7 +180,7 @@ DiagnosisWidget::~DiagnosisWidget()
 }
 
 
-bool DiagnosisWidget::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
+bool DiagnosisWidget::eventFilter(QObject* pObject, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
@@ -191,7 +191,7 @@ bool DiagnosisWidget::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
 			return true;
 		}
 	}
-	return false;
+	return QWidget::eventFilter(pObject, pEvent);
 }
 
 

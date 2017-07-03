@@ -41,7 +41,7 @@ class AbstractState
 
 
 		bool isCancellationByUser();
-		void setResult(const Result& pResult);
+		void setStatus(const GlobalStatus& pStatus);
 
 	public:
 		static QString getClassName(const char* pName);

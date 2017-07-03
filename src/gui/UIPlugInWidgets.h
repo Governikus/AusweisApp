@@ -34,7 +34,9 @@ class UIPlugInWidgets
 		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
 		virtual void onApplicationStarted() override;
 		virtual void onShowUi(UiModule pModule) override;
+#ifndef QT_NO_NETWORKPROXY
 		virtual void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator) override;
+#endif
 };
 
 } /* namespace governikus */

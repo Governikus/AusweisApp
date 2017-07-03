@@ -29,7 +29,7 @@ class StateGenericSendReceive
 		void setMessageId(QSharedPointer<PaosMessage> pPaosMessage);
 		void setRemoteMessageId(QSharedPointer<PaosMessage> pPaosMessage);
 		void setReceivedMessage(QSharedPointer<PaosMessage> pMessage);
-		void reportChannelEstablishmentError(const QString& pMessage);
+		void reportChannelEstablishmentError(const GlobalStatus::Code pStatusCode);
 		bool checkAndSaveCertificate(const QSslCertificate& pCertificate);
 		void onSslErrors(const QList<QSslError>& pErrors);
 		void onSslHandshakeDone();

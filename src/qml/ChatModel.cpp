@@ -21,7 +21,6 @@ ChatModel::ChatModel(QObject* pParent)
 	, mSelectedRights()
 	, mFilterOptionalModel()
 	, mFilterRequiredModel()
-	, mRequiredAge()
 {
 	resetContext(QSharedPointer<AuthContext>());
 
@@ -33,16 +32,16 @@ ChatModel::ChatModel(QObject* pParent)
 void ChatModel::initFilterModel(QSortFilterProxyModel& pModel, const QString& pFilter)
 {
 	pModel.setSourceModel(this);
-	pModel.setFilterRole(ChatRoles::OPTIONAL);
+	pModel.setFilterRole(ChatRoles::OPTIONAL_ROLE);
 	pModel.setFilterRegExp(pFilter);
 }
 
 
-void ChatModel::resetContext(QSharedPointer<AuthContext> pContext)
+void ChatModel::resetContext(const QSharedPointer<AuthContext>& pContext)
 {
 	mAuthContext = pContext;
 
-	if (pContext.dynamicCast<SelfAuthenticationContext>())
+	if (pContext.objectCast<SelfAuthenticationContext>())
 	{
 		/* nothing to do, access rights are static */
 	}
@@ -53,13 +52,10 @@ void ChatModel::resetContext(QSharedPointer<AuthContext> pContext)
 		mAllRights.clear();
 		mOptionalRights.clear();
 		mSelectedRights.clear();
-		mRequiredAge.clear();
 
 		endResetModel();
 
-		connect(mAuthContext.data(), &AuthContext::fireOptionalChatChanged, this, &ChatModel::onOptionalChatChanged);
-		connect(mAuthContext.data(), &AuthContext::fireRequiredChatChanged, this, &ChatModel::onRequiredChatChanged);
-		connect(mAuthContext.data(), &AuthContext::fireRequiredAgeChanged, this, &ChatModel::onRequiredAgeChanged);
+		connect(mAuthContext.data(), &AuthContext::fireAuthenticationDataChanged, this, &ChatModel::onAuthenticationDataChanged);
 	}
 	else
 	{
@@ -84,42 +80,33 @@ void ChatModel::resetContext(QSharedPointer<AuthContext> pContext)
 
 		mOptionalRights.clear();
 		mSelectedRights = mAllRights.toSet();
-		mRequiredAge.clear();
 
 		endResetModel();
 	}
 }
 
 
-void ChatModel::onOptionalChatChanged()
+void ChatModel::onAuthenticationDataChanged()
 {
 	beginResetModel();
 
-	Q_ASSERT(mAuthContext->getOptionalChat());
-	mOptionalRights += mAuthContext->getOptionalChat()->getAccessRights();
-	setOrderedAllRights(mAuthContext->getOptionalChat()->getAccessRights());
-	mSelectedRights += mAuthContext->getOptionalChat()->getAccessRights();
+	mAllRights.clear();
+	mOptionalRights.clear();
+	mSelectedRights.clear();
 
-	endResetModel();
-}
+	if (!mAuthContext->getRequiredAccessRights().isEmpty())
+	{
+		setOrderedAllRights(mAuthContext->getRequiredAccessRights());
+		mSelectedRights += mAuthContext->getRequiredAccessRights();
+	}
 
+	if (!mAuthContext->getOptionalAccessRights().isEmpty())
+	{
+		mOptionalRights += mAuthContext->getOptionalAccessRights();
+		setOrderedAllRights(mAuthContext->getOptionalAccessRights());
+		mSelectedRights += mAuthContext->getOptionalAccessRights();
+	}
 
-void ChatModel::onRequiredChatChanged()
-{
-	beginResetModel();
-
-	Q_ASSERT(mAuthContext->getRequiredChat());
-	setOrderedAllRights(mAuthContext->getRequiredChat()->getAccessRights());
-	mSelectedRights += mAuthContext->getRequiredChat()->getAccessRights();
-
-	endResetModel();
-}
-
-
-void ChatModel::onRequiredAgeChanged()
-{
-	beginResetModel();
-	mRequiredAge = mAuthContext->getRequiredAge();
 	endResetModel();
 }
 
@@ -147,20 +134,20 @@ QVariant ChatModel::data(const QModelIndex& pIndex, int pRole) const
 	if (pIndex.isValid() && pIndex.row() < rowCount())
 	{
 		auto right = mAllRights.at(pIndex.row());
-		if (pRole == Qt::DisplayRole || pRole == NAME)
+		if (pRole == Qt::DisplayRole || pRole == NAME_ROLE)
 		{
 			QString displayText = AccessRoleAndRightsUtil::toDisplayText(right);
-			if (right == AccessRight::AGE_VERIFICATION && !mRequiredAge.isEmpty())
+			if (right == AccessRight::AGE_VERIFICATION)
 			{
-				displayText = displayText.append(" (%1)").arg(mRequiredAge);
+				displayText += QStringLiteral(" (%1)").arg(mAuthContext->getRequiredAge());
 			}
 			return displayText;
 		}
-		if (pRole == OPTIONAL)
+		if (pRole == OPTIONAL_ROLE)
 		{
 			return mOptionalRights.contains(right);
 		}
-		if (pRole == SELECTED)
+		if (pRole == SELECTED_ROLE)
 		{
 			return mSelectedRights.contains(right);
 		}
@@ -172,16 +159,16 @@ QVariant ChatModel::data(const QModelIndex& pIndex, int pRole) const
 QHash<int, QByteArray> ChatModel::roleNames() const
 {
 	QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
-	roles.insert(NAME, "name");
-	roles.insert(OPTIONAL, "optional");
-	roles.insert(SELECTED, "selected");
+	roles.insert(NAME_ROLE, "name");
+	roles.insert(OPTIONAL_ROLE, "optional");
+	roles.insert(SELECTED_ROLE, "selected");
 	return roles;
 }
 
 
 bool ChatModel::setData(const QModelIndex& pIndex, const QVariant& pValue, int pRole)
 {
-	if (pRole == SELECTED)
+	if (pRole == SELECTED_ROLE)
 	{
 		auto right = mAllRights.at(pIndex.row());
 
@@ -201,7 +188,7 @@ bool ChatModel::setData(const QModelIndex& pIndex, const QVariant& pValue, int p
 			return false;
 		}
 
-		dataChanged(pIndex, pIndex, QVector<int>({SELECTED}));
+		Q_EMIT dataChanged(pIndex, pIndex, QVector<int>({SELECTED_ROLE}));
 		return true;
 	}
 

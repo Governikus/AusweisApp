@@ -31,13 +31,12 @@ class ChatModel
 	QSet<AccessRight> mOptionalRights, mSelectedRights;
 	QSortFilterProxyModel mFilterOptionalModel;
 	QSortFilterProxyModel mFilterRequiredModel;
-	QString mRequiredAge;
 
 	enum ChatRoles
 	{
-		NAME = Qt::UserRole + 1,
-		OPTIONAL,
-		SELECTED
+		NAME_ROLE = Qt::UserRole + 1,
+		OPTIONAL_ROLE,
+		SELECTED_ROLE
 	};
 
 	private:
@@ -45,14 +44,12 @@ class ChatModel
 		void setOrderedAllRights(const QSet<AccessRight>& pAllRights);
 
 	private Q_SLOTS:
-		void onOptionalChatChanged();
-		void onRequiredChatChanged();
-		void onRequiredAgeChanged();
+		void onAuthenticationDataChanged();
 
 	public:
 		ChatModel(QObject* pParent = nullptr);
 
-		void resetContext(QSharedPointer<AuthContext> pContext = QSharedPointer<AuthContext>());
+		void resetContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());
 
 		int rowCount(const QModelIndex& = QModelIndex()) const override;
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;

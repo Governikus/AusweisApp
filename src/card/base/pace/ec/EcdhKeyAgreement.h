@@ -29,21 +29,21 @@ class EcdhKeyAgreement
 		QSharedPointer<EC_POINT> mCardPublicKey;
 
 		QSharedPointer<EC_GROUP> determineEphemeralDomainParameters(const QByteArray& pNonce);
-		QSharedPointer<EC_POINT> performKeyExchange(QSharedPointer<EC_GROUP> pCurve);
+		QSharedPointer<EC_POINT> performKeyExchange(const QSharedPointer<const EC_GROUP>& pCurve);
 
-		static QByteArray encodeUncompressedPublicKey(QSharedPointer<PACEInfo> pPaceInfo, QSharedPointer<EC_GROUP> pCurve, QSharedPointer<EC_POINT> pPoint);
-		static QByteArray encodeCompressedPublicKey(QSharedPointer<EC_GROUP> pCurve, QSharedPointer<EC_POINT> pPoint);
+		static QByteArray encodeUncompressedPublicKey(const QSharedPointer<const PACEInfo>& pPaceInfo, const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint);
+		static QByteArray encodeCompressedPublicKey(const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint);
 
 		QByteArray determineSharedSecret(const QByteArray& pNonce) override;
 		QByteArray getUncompressedTerminalPublicKey() override;
 		QByteArray getUncompressedCardPublicKey() override;
 		QByteArray getCompressedCardPublicKey() override;
 
-		EcdhKeyAgreement(QSharedPointer<PACEInfo> pPaceInfo, QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
+		EcdhKeyAgreement(const QSharedPointer<const PACEInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 	public:
-		static QSharedPointer<KeyAgreement> create(QSharedPointer<PACEInfo> pPaceInfo,
-				QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
+		static QSharedPointer<KeyAgreement> create(const QSharedPointer<const PACEInfo>& pPaceInfo,
+				const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 		virtual ~EcdhKeyAgreement();
 };

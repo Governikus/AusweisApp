@@ -10,7 +10,7 @@
 #include "MessageDispatcher.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
-#include "TestFileHelper.h"
+#include "TestAuthContext.h"
 #include <QtTest>
 
 using namespace governikus;
@@ -20,20 +20,11 @@ class test_MsgHandlerCertificate
 {
 	Q_OBJECT
 
-	QSharedPointer<CHAT> getChat(const std::initializer_list<AccessRight>& pList)
-	{
-		auto chat = newObject<CHAT>();
-		chat->setAccessRights(QSet<AccessRight>(pList));
-		return chat;
-	}
-
-
 	QSharedPointer<AuthContext> getContext()
 	{
-		QSharedPointer<AuthContext> context(new AuthContext(new InternalActivationContext(QUrl("http://dummy"))));
-		context->setRequiredChat(getChat({AccessRight::READ_DG01}));
-		context->setOptionalChat(getChat({AccessRight::AGE_VERIFICATION}));
-		context->setEffectiveChat(getChat({AccessRight::READ_DG01, AccessRight::AGE_VERIFICATION}));
+		QSharedPointer<TestAuthContext> context(new TestAuthContext(new InternalActivationContext(QUrl("http://dummy")), ":/paos/DIDAuthenticateEAC1.xml"));
+		context->setRequiredAccessRights({AccessRight::READ_DG01});
+		context->setOptionalAccessRights({AccessRight::AGE_VERIFICATION});
 		return context;
 	}
 
@@ -54,8 +45,6 @@ class test_MsgHandlerCertificate
 		void getCertificate()
 		{
 			auto context = getContext();
-			QSharedPointer<DIDAuthenticateEAC1> eac1(dynamic_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"))));
-			context->setDidAuthenticateEac1(eac1);
 
 			MessageDispatcher dispatcher;
 			dispatcher.init(context);

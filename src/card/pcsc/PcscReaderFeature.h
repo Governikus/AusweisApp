@@ -36,13 +36,13 @@ defineEnumType(FeatureID,
 class PcscReaderFeature
 {
 	private:
-		QMap<FeatureID, int> mFeatures;
+		QMap<FeatureID, PCSC_INT> mFeatures;
 
 	public:
 		PcscReaderFeature(const char* pFeaturesTLV, PCSC_INT pLength = 0);
 
 		QString toString() const;
-		const QMap<FeatureID, int>& getFeatures() const;
+		const QMap<governikus::FeatureID, PCSC_INT>& getFeatures() const;
 };
 
 defineEnumType(PaceCapabilityId, ESIGN = 0x10, EID = 0x20, GENERIC = 0x40, DESTROY_CHANNEL = 0x80)

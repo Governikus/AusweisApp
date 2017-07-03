@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "ChipAuthenticationInfo.h"
+#include "PACEInfo.h"
 #include "SecurityInfo.h"
 
 #include <QByteArray>
@@ -30,33 +32,24 @@ DECLARE_ASN1_OBJECT(securityinfos_st)
 class SecurityInfos
 {
 	const QByteArray mContentBytes;
-	const QVector<QSharedPointer<SecurityInfo> > mSecurityInfos;
+	const QVector<QSharedPointer<const SecurityInfo> > mSecurityInfos;
+	const QVector<QSharedPointer<const PACEInfo> > mPACEInfos;
+	const QVector<QSharedPointer<const ChipAuthenticationInfo> > mChipAuthenticationInfos;
 
-	SecurityInfos(const QByteArray& pBytes, const QVector<QSharedPointer<SecurityInfo> >& pSecurityInfos);
+	SecurityInfos(const QByteArray& pBytes,
+			const QVector<QSharedPointer<const SecurityInfo> >& pSecurityInfos,
+			const QVector<QSharedPointer<const PACEInfo> >& pPACEInfos,
+			const QVector<QSharedPointer<const ChipAuthenticationInfo> >& pChipAuthenticationInfos);
 	Q_DISABLE_COPY(SecurityInfos)
 
 	public:
 		static QSharedPointer<SecurityInfos> fromHex(const QByteArray& pHexString);
 		static QSharedPointer<SecurityInfos> decode(const QByteArray& pBytes);
 
-		template<typename T> QVector<QSharedPointer<T> > getSecurityInfos() const
-		{
-			QVector<QSharedPointer<T> > list;
-			for (const auto& elem : mSecurityInfos)
-			{
-				const auto castedElem = elem.dynamicCast<T>();
-				if (castedElem.isNull())
-				{
-					// cast failed, e.g. it's not of type T, so skip this element
-					continue;
-				}
-				list += castedElem;
-			}
-			return list;
-		}
-
-
 		const QByteArray& getContentBytes() const;
+		const QVector<QSharedPointer<const SecurityInfo> >& getSecurityInfos() const;
+		const QVector<QSharedPointer<const PACEInfo> >& getPACEInfos() const;
+		const QVector<QSharedPointer<const ChipAuthenticationInfo> >& getChipAuthenticationInfos() const;
 };
 
 

@@ -24,7 +24,7 @@ Item {
 		verticalAlignment: Text.AlignVCenter
 		text: title
 		color: Constants.grey
-		font.pixelSize: Utils.sp(12)
+		font.pixelSize: Constants.header_font_size
 		font.capitalization: Font.AllUppercase
 		elide: Text.ElideRight
 	}
@@ -48,8 +48,11 @@ Item {
 					anchors.left: parent.left
 					anchors.leftMargin: Utils.dp(20)
 					anchors.verticalCenter: parent.verticalCenter
+					anchors.rightMargin: anchors.leftMargin
+					anchors.right: checkBox.left
 					width: parent.width
-					font.pixelSize: Utils.sp(14)
+					font.pixelSize: Constants.normal_font_size
+					wrapMode: Text.WordWrap
 					text: name
 				}
 				Rectangle {
@@ -60,7 +63,8 @@ Item {
 					anchors.right: dataGroup.right
 					color: Constants.grey
 				}
-				CheckBox {
+				GCheckBox {
+					id: checkBox
 					anchors.right: parent.right
 					anchors.rightMargin: Utils.dp(20)
 					anchors.verticalCenter: parent.verticalCenter

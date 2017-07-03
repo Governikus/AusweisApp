@@ -22,6 +22,6 @@ BluetoothMessagePowerSimOnResponse::~BluetoothMessagePowerSimOnResponse()
 
 BluetoothResultCode BluetoothMessagePowerSimOnResponse::getResultCode() const
 {
-	QSharedPointer<const BluetoothMessageParameterResultCode> param = getParameter<BluetoothMessageParameterResultCode>();
-	return param->getResultCode();
+	const auto& param = getParameter(BluetoothParamId::ResultCode);
+	return param.staticCast<const BluetoothMessageParameterResultCode>()->getResultCode();
 }

@@ -18,11 +18,17 @@
 #include <QRegularExpression>
 #endif
 
+#ifdef Q_OS_ANDROID
+#include <QtAndroid>
+#endif
+
 #ifndef QT_NO_DEBUG
 static bool Test_AutoStart = GENERAL_SETTINGS_DEFAULT_AUTOSTART;
 #endif
 
 using namespace governikus;
+
+const QLatin1String SETTINGS_SKIP_VERSION("skipVersion");
 
 const QLatin1String SETTINGS_NAME_AUTO_CLOSE_WINDOW("autoCloseWindow");
 const QLatin1String SETTINGS_NAME_SHOW_SETUP_ASSISTANT("showSetupAssistant");
@@ -51,8 +57,8 @@ GeneralSettings::GeneralSettings()
 {
 	// QFuture.result() crashes under linux and win if uninitalized
 	mAutoStart = QtConcurrent::run([] {
-		return GENERAL_SETTINGS_DEFAULT_AUTOSTART;
-	});
+				return GENERAL_SETTINGS_DEFAULT_AUTOSTART;
+			});
 }
 
 
@@ -319,8 +325,8 @@ void GeneralSettings::setAutoStart(bool pAutoStart)
 	{
 		mAutoStart.waitForFinished();
 		mAutoStart = QtConcurrent::run([pAutoStart] {
-			return pAutoStart;
-		});
+					return pAutoStart;
+				});
 
 		Q_EMIT fireSettingsChanged();
 	}
@@ -399,6 +405,16 @@ void GeneralSettings::setTransportPinReminder(bool pTransportPinReminder)
 
 bool GeneralSettings::isDeveloperMode() const
 {
+	// TODO Replace the following hack with a clean solution.
+	// Also remove "AndroidExtras" from module linkage.
+#ifdef Q_OS_ANDROID
+	if (QtAndroid::androidService().isValid())
+	{
+		qDebug() << "Running as android service. Developer mode is disallowed.";
+		return false;
+	}
+#endif
+
 	return mDeveloperMode;
 }
 
@@ -426,4 +442,18 @@ void GeneralSettings::setUseSelfauthenticationTestUri(bool pUse)
 		mSelfauthenticationTestUri = pUse;
 		Q_EMIT fireSettingsChanged();
 	}
+}
+
+
+void GeneralSettings::skipVersion(const QString& pVersion)
+{
+	auto store = getStore();
+	store->setValue(SETTINGS_SKIP_VERSION, pVersion);
+	store->sync();
+}
+
+
+QString GeneralSettings::getSkipVersion()
+{
+	return getStore()->value(SETTINGS_SKIP_VERSION).toString();
 }

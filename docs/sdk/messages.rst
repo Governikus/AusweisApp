@@ -280,11 +280,11 @@ and the CAN was incorrect the AusweisApp2 will send :ref:`enter_can`
 again but without an error parameter.
 
 
-- **error**: Optional error message if your command :ref:`set_can`
-  was invalid.
+  - **error**: Optional error message if your command :ref:`set_can`
+    was invalid.
 
-- **reader**: Information about the used card and card reader.
-  Please see message :ref:`READER` for details.
+  - **reader**: Information about the used card and card reader.
+    Please see message :ref:`reader` for details.
 
 .. code-block:: json
 
@@ -297,7 +297,6 @@ again but without an error parameter.
               "attached": true,
               "card":
                      {
-                      "inserted": true,
                       "deactivated": false,
                       "retryCounter": 1
                      }
@@ -338,7 +337,7 @@ AusweisApp2 will send an :ref:`enter_pin` again with a retryCounter of **1**.
     was invalid.
 
   - **reader**: Information about the used card and card reader.
-    Please see message :ref:`READER` for details.
+    Please see message :ref:`reader` for details.
 
 .. code-block:: json
 
@@ -351,9 +350,43 @@ AusweisApp2 will send an :ref:`enter_pin` again with a retryCounter of **1**.
               "attached": true,
               "card":
                      {
-                      "inserted": true,
                       "deactivated": false,
                       "retryCounter": 3
+                     }
+             }
+  }
+
+
+
+
+.. _enter_puk:
+
+ENTER_PUK
+^^^^^^^^^
+Indicates that a PUK is required to continue the workflow.
+
+If AusweisApp2 sends this message, you will have to
+show a message to the user that the card is blocked
+and needs to be unblocked by AusweisApp2.
+
+You need to send a :ref:`cancel` to abort the workflow.
+
+
+  - **reader**: Information about the used card and card reader.
+    Please see message :ref:`reader` for details.
+
+.. code-block:: json
+
+  {
+    "msg": "ENTER_PUK",
+    "reader":
+             {
+              "name": "NFC",
+              "attached": true,
+              "card":
+                     {
+                      "deactivated": false,
+                      "retryCounter": 0
                      }
              }
   }
@@ -422,8 +455,9 @@ If your application receives this message it should
 show a hint to the user.
 
 After the user inserted a card the workflow will automatically
-continue. If the user already inserted a card this message
-won't be send at all.
+continue, unless the eID functionality is disabled.
+In this case, the workflow will be paused until another card is inserted.
+If the user already inserted a card this message will not be sent at all.
 
 This message will also be send if there is no connected card reader.
 
@@ -492,14 +526,16 @@ card reader or removed from a card reader.
 
 Your application can explicitly check for card reader with :ref:`get_reader`.
 
+If a workflow is in progress and a card with disabled eID functionality was
+inserted, this message will still be sent, but the workflow will be paused
+until a card with enabled eID functionality is inserted.
+
 
   - **name**: Identifier of card reader.
 
   - **attached**: Indicates if a card reader is connected or disconnected.
 
-  - **card**: Provides information about inserted card.
-
-    - **inserted**: True if card inserted, otherwise false.
+  - **card**: Provides information about inserted card, otherwise null.
 
     - **deactivated**: True if eID functionality is deactivated, otherwise false.
 
@@ -514,7 +550,6 @@ Your application can explicitly check for card reader with :ref:`get_reader`.
     "attached": true,
     "card":
            {
-            "inserted": true,
             "deactivated": false,
             "retryCounter": 3
            }
@@ -531,7 +566,7 @@ Provides information about all connected card readers.
 
 
   - **reader**: A list of all connected card readers. Please
-    see message :ref:`READER` for details.
+    see message :ref:`reader` for details.
 
 .. code-block:: json
 
@@ -542,10 +577,7 @@ Provides information about all connected card readers.
                {
                 "name": "Example reader 1 [SmartCard] (1234567) 01 00",
                 "attached": true,
-                "card":
-                       {
-                        "inserted": false
-                       }
+                "card": null
                },
 
                {
@@ -553,7 +585,6 @@ Provides information about all connected card readers.
                 "attached": true,
                 "card":
                        {
-                        "inserted": true,
                         "deactivated": false,
                         "retryCounter": 3
                        }

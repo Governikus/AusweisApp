@@ -100,7 +100,7 @@ QString RandomPinDialog::getPin()
 
 void RandomPinDialog::onPosButtonClicked()
 {
-	QToolButton* posButton = dynamic_cast<QToolButton*>(sender());
+	QToolButton* posButton = qobject_cast<QToolButton*>(sender());
 	if (posButton)
 	{
 		mUi->pin->setText(mUi->pin->text() + "" + posButton->property(PIN).toString());
@@ -126,7 +126,7 @@ void RandomPinDialog::onCardInserted()
 }
 
 
-bool RandomPinDialog::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
+bool RandomPinDialog::eventFilter(QObject* pObject, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
@@ -137,5 +137,5 @@ bool RandomPinDialog::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
 			return true;
 		}
 	}
-	return false;
+	return QDialog::eventFilter(pObject, pEvent);
 }

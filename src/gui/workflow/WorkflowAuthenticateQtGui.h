@@ -30,20 +30,18 @@ class WorkflowAuthenticateQtGui
 	Q_OBJECT
 
 	private:
-		bool mRetryCounterUpdated;
+		bool mCanEntered;
 		AuthenticateStepsWidget* mAuthenticateStepsWidget;
 		QSharedPointer<StepAdviseUserToRemoveCardGui> mAdviseUserToRemoveCardGui;
-		QSharedPointer<StepAuthenticationDoneGui> mAuthenticationDoneGui;
 		QSharedPointer<StepAuthenticationEac1Gui> mDidAuthenticateGui;
 		QSharedPointer<StepChooseCardGui> mChooseCardGui;
 		QSharedPointer<StepErrorGui> mErrorGui;
 		QSharedPointer<StepProcessingGui> mProcessingGui;
-
-		void handleBlockedPin();
+		QSharedPointer<StepAuthenticationDoneGui> mAuthenticationDoneGui;
 
 	private Q_SLOTS:
-		void nextStep();
-		void onStateChanged(const QString& pNewState);
+		void onForwardStep();
+		void onCurrentStateChanged(const QString& pNewState);
 
 	public:
 		WorkflowAuthenticateQtGui(const QSharedPointer<AuthContext>& pContext, AppQtMainWidget* const pParentWidget);

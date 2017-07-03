@@ -8,11 +8,9 @@
 
 using namespace governikus;
 
-ReaderManagerPlugIn::ReaderManagerPlugIn(ReaderManagerPlugInType pPlugInType, bool pPlugInEnabled) : mInfo(pPlugInType, pPlugInEnabled)
-{
-}
-
-
-ReaderManagerPlugIn::~ReaderManagerPlugIn()
+ReaderManagerPlugIn::ReaderManagerPlugIn(ReaderManagerPlugInType pPlugInType,
+		bool pAvailable,
+		bool pPlugInEnabled)
+	: mInfo(pPlugInType, pPlugInEnabled, pAvailable)
 {
 }

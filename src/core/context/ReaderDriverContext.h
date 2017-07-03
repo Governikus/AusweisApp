@@ -9,14 +9,16 @@
 
 #include "DriverSettings.h"
 
-#include "ReaderDetector.h"
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
+	#include "DeviceDescriptor.h"
+	#include "ReaderDetector.h"
+#endif
 
 #include <QObject>
 
 
 namespace governikus
 {
-class DeviceDescriptor;
 
 class ReaderDriverContext
 	: public QObject
@@ -25,12 +27,16 @@ class ReaderDriverContext
 
 	public:
 		ReaderDriverContext();
-		~ReaderDriverContext();
+		virtual ~ReaderDriverContext();
 
+	#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 		QVector<QSharedPointer<DeviceDescriptor> > attachedDevices();
+	#endif
 
 	private:
+	#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 		const QSharedPointer<ReaderDetector> mReaderDetector;
+	#endif
 
 		QSharedPointer<DriverSettings> getDriverSettings() const;
 

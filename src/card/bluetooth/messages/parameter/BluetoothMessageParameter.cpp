@@ -7,7 +7,11 @@
 #include "BluetoothMessageParameter.h"
 #include "messages/BluetoothUtils.h"
 
+#include <QLoggingCategory>
+
 using namespace governikus;
+
+Q_DECLARE_LOGGING_CATEGORY(bluetooth)
 
 QDebug operator<<(QDebug pDbg, const BluetoothMessageParameter& pMsg)
 {
@@ -62,12 +66,18 @@ bool BluetoothMessageParameter::isValid() const
 QByteArray BluetoothMessageParameter::toData() const
 {
 	QByteArray data;
-	data.append(static_cast<char>(mParamId));
-	data.append(static_cast<char>(0x00));
-	data.append((mValue.size() & 0xFF00) >> 8);
-	data.append(mValue.size() & 0x00FF);
+	data += Enum<BluetoothParamId>::getValue(mParamId);
+	data += char(0x00);
+	if (mValue.size() > 0xFFFF)
+	{
+		qCCritical(bluetooth) << "Value of BluetoothMessageParameter of size > 0xFFFF not supported";
+		Q_ASSERT(mValue.size() <= 0xFFFF);
+		return QByteArray();
+	}
+	data += static_cast<char>((mValue.size() >> 8) & 0xFF);
+	data += static_cast<char>(mValue.size() & 0xFF);
 
-	data.append(mValue);
+	data += mValue;
 	BluetoothUtils::addPadding(data, mValue);
 	return data;
 }

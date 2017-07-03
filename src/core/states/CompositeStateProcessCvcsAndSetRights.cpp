@@ -13,7 +13,6 @@
 #include "states/StateEditAccessRights.h"
 #include "states/StateExtractCvcsFromEac1IntputType.h"
 #include "states/StatePreVerification.h"
-#include "states/StatePrepareChat.h"
 
 
 using namespace governikus;
@@ -27,14 +26,12 @@ CompositeStateProcessCvcsAndSetRights::CompositeStateProcessCvcsAndSetRights(con
 	auto sPreVerification = StateBuilder::createState<StatePreVerification>(mContext);
 	auto sCertificateDescriptionCheck = StateBuilder::createState<StateCertificateDescriptionCheck>(mContext);
 	auto sCheckCertificates = StateBuilder::createState<StateCheckCertificates>(mContext);
-	auto sPrepareChat = StateBuilder::createState<StatePrepareChat>(mContext);
 	auto sEditAccessRights = StateBuilder::createState<StateEditAccessRights>(mContext);
 
 	sExtractCvcsFromEac1InputType->setParent(this);
 	sPreVerification->setParent(this);
 	sCertificateDescriptionCheck->setParent(this);
 	sCheckCertificates->setParent(this);
-	sPrepareChat->setParent(this);
 	sEditAccessRights->setParent(this);
 
 	setInitialState(sExtractCvcsFromEac1InputType);
@@ -51,13 +48,9 @@ CompositeStateProcessCvcsAndSetRights::CompositeStateProcessCvcsAndSetRights(con
 	connect(sCertificateDescriptionCheck, &AbstractState::fireError, this, &CompositeStateProcessCvcsAndSetRights::fireError);
 	connect(sCertificateDescriptionCheck, &AbstractState::fireCancel, this, &CompositeStateProcessCvcsAndSetRights::fireCancel);
 
-	sCheckCertificates->addTransition(sCheckCertificates, &AbstractState::fireSuccess, sPrepareChat);
+	sCheckCertificates->addTransition(sCheckCertificates, &AbstractState::fireSuccess, sEditAccessRights);
 	connect(sCheckCertificates, &AbstractState::fireError, this, &CompositeStateProcessCvcsAndSetRights::fireError);
 	connect(sCheckCertificates, &AbstractState::fireCancel, this, &CompositeStateProcessCvcsAndSetRights::fireCancel);
-
-	sPrepareChat->addTransition(sPrepareChat, &AbstractState::fireSuccess, sEditAccessRights);
-	connect(sPrepareChat, &AbstractState::fireError, this, &CompositeStateProcessCvcsAndSetRights::fireError);
-	connect(sPrepareChat, &AbstractState::fireCancel, this, &CompositeStateProcessCvcsAndSetRights::fireCancel);
 
 	connect(sEditAccessRights, &AbstractState::fireSuccess, this, &CompositeStateProcessCvcsAndSetRights::fireSuccess);
 	connect(sEditAccessRights, &AbstractState::fireError, this, &CompositeStateProcessCvcsAndSetRights::fireError);

@@ -17,7 +17,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 
-QSharedPointer<EC_GROUP> EllipticCurveFactory::create(QSharedPointer<PACEInfo> pPaceInfo)
+QSharedPointer<EC_GROUP> EllipticCurveFactory::create(const QSharedPointer<const PACEInfo>& pPaceInfo)
 {
 	if (pPaceInfo->isStandardizedDomainParameters())
 	{

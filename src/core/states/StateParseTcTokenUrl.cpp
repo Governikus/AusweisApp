@@ -6,9 +6,10 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "ErrorMessage.h"
-#include "Result.h"
 #include "StateParseTcTokenUrl.h"
+
+#include "Result.h"
+
 
 #include <QUrlQuery>
 
@@ -40,7 +41,7 @@ void StateParseTcTokenUrl::run()
 			qCritical() << "No parameter tcTokenURL";
 		}
 
-		setResult(Result::createCommunicationError(ErrorMessage::toString(ErrorMessageId::WRONG_PARAMETER_INVOCATION)));
+		setStatus(GlobalStatus::Code::Workflow_Wrong_Parameter_Invocation);
 		Q_EMIT fireError();
 	}
 }

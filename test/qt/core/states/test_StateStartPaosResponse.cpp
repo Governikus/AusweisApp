@@ -41,20 +41,38 @@ class test_StateStartPaosResponse
 		}
 
 
-		void takeResultFromStartPAOSResponse()
+		void doNotTakeResultFromStartPAOSResponse()
 		{
 			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse3.xml")));
 			mAuthContext->setStartPaosResponse(startPAOSResponse);
-			mAuthContext->setResult(Result::createCancelByUserError());
+			mAuthContext->setStatus(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
 
 			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireError);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QVERIFY(mState->getContext()->getResult().getMajor() == Result::Major::Error);
-			QVERIFY(mState->getContext()->getResult().getMinor() == Result::Minor::DP_Timeout_Error);
-			QVERIFY(mState->getContext()->getResult().getMessage() == QString("Detail message"));
+			const Result& result = mState->getContext()->getStatus();
+			QCOMPARE(result.getMajor(), Result::Major::Error);
+			QCOMPARE(result.getMinor(), GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User);
+		}
+
+
+		void takeResultFromStartPAOSResponse()
+		{
+			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse3.xml")));
+			mAuthContext->setStartPaosResponse(startPAOSResponse);
+			mAuthContext->setStatus(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::OK));
+
+			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireError);
+
+			Q_EMIT fireStateStart(nullptr);
+			mAuthContext->setStateApproved();
+
+			const Result& result = mState->getContext()->getStatus();
+			QCOMPARE(result.getMajor(), Result::Major::Error);
+			QCOMPARE(result.getMinor(), GlobalStatus::Code::Paos_Error_DP_Timeout_Error);
+			QCOMPARE(result.getMessage(), QString("The operation was terminated as the set time was exceeded."));
 		}
 
 

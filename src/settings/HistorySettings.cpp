@@ -8,6 +8,11 @@
 
 #include <QSettings>
 
+#ifdef Q_OS_ANDROID
+#include <QDebug>
+#include <QtAndroid>
+#endif
+
 
 // names for settings groups/keys
 const QLatin1String SETTINGS_GROUP_NAME_CHRONIC("history");
@@ -113,7 +118,7 @@ void HistorySettings::load()
 		QDateTime dateTime = QDateTime::fromString(settings->value(SETTINGS_NAME_CHRONIC_DATETIME, "").toString(), Qt::ISODate);
 		QString termsOfUsage = settings->value(SETTINGS_NAME_CHRONIC_TOU, "").toString();
 		QString requestData = settings->value(SETTINGS_NAME_CHRONIC_REQUESTED_DATA, "").toString();
-		items.append(HistoryEntry(subjectName, subjectUrl, usage, dateTime, termsOfUsage, requestData));
+		items += HistoryEntry(subjectName, subjectUrl, usage, dateTime, termsOfUsage, requestData);
 	}
 	settings->endArray();
 	setHistoryEntries(items);
@@ -165,7 +170,7 @@ void HistorySettings::deleteSettings(const QDateTime& pLatestToKeep)
 	{
 		if (!pLatestToKeep.isNull() && item.getDateTime() <= pLatestToKeep)
 		{
-			remainingItems.append(item);
+			remainingItems += item;
 		}
 	}
 	setHistoryEntries(remainingItems);
@@ -206,6 +211,16 @@ void HistorySettings::setHistoryEntries(const QVector<HistoryEntry>& pHistoryEnt
 
 void HistorySettings::addHistoryEntry(const HistoryEntry& pHistoryEntry)
 {
+	// TODO Replace the following hack with a clean solution.
+	// Also remove "AndroidExtras" from module linkage.
+#ifdef Q_OS_ANDROID
+	if (QtAndroid::androidService().isValid())
+	{
+		qDebug() << "Running as android service. Ignoring save request for history.";
+		return;
+	}
+#endif
+
 	mHistoryEntries.prepend(pHistoryEntry);
 	Q_EMIT fireHistoryEntriesChanged();
 }

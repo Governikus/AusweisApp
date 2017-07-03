@@ -21,20 +21,19 @@ BluetoothMessageTransferApduResponse::~BluetoothMessageTransferApduResponse()
 
 BluetoothResultCode BluetoothMessageTransferApduResponse::getResultCode() const
 {
-	QSharedPointer<const BluetoothMessageParameterResultCode> param = getParameter<BluetoothMessageParameterResultCode>();
-	return param->getResultCode();
+	const auto& param = getParameter(BluetoothParamId::ResultCode);
+	return param.staticCast<const BluetoothMessageParameterResultCode>()->getResultCode();
 }
 
 
 bool BluetoothMessageTransferApduResponse::hasResponseAPDU() const
 {
-	QSharedPointer<const BluetoothMessageParameterApduResponse> param = getParameter<BluetoothMessageParameterApduResponse>();
-	return param;
+	return getParameter(BluetoothParamId::ResponseAPDU);
 }
 
 
 const QByteArray& BluetoothMessageTransferApduResponse::getResponseAPDU() const
 {
-	QSharedPointer<const BluetoothMessageParameterApduResponse> param = getParameter<BluetoothMessageParameterApduResponse>();
-	return param->getResponseApdu();
+	const auto& param = getParameter(BluetoothParamId::ResponseAPDU);
+	return param.staticCast<const BluetoothMessageParameterApduResponse>()->getResponseApdu();
 }

@@ -58,6 +58,7 @@ void ReaderManager::init()
 
 		connect(&mThread, &QThread::started, mWorker.data(), &ReaderManagerWorker::onThreadStarted);
 		connect(&mThread, &QThread::finished, mWorker.data(), &QObject::deleteLater);
+		connect(mWorker.data(), &ReaderManagerWorker::fireInitialized, this, &ReaderManager::fireInitialized);
 
 		connect(mWorker.data(), &ReaderManagerWorker::fireStatusChanged, this, &ReaderManager::fireStatusChanged);
 		connect(mWorker.data(), &ReaderManagerWorker::fireCardInserted, this, &ReaderManager::fireCardInserted);
@@ -65,6 +66,7 @@ void ReaderManager::init()
 		connect(mWorker.data(), &ReaderManagerWorker::fireCardRetryCounterChanged, this, &ReaderManager::fireCardRetryCounterChanged);
 		connect(mWorker.data(), &ReaderManagerWorker::fireReaderPropertiesUpdated, this, &ReaderManager::fireReaderPropertiesUpdated);
 		connect(mWorker.data(), &ReaderManagerWorker::fireReaderAdded, this, &ReaderManager::fireReaderAdded);
+		connect(mWorker.data(), &ReaderManagerWorker::fireReaderDeviceError, this, &ReaderManager::fireReaderDeviceError);
 		connect(mWorker.data(), &ReaderManagerWorker::fireReaderConnected, this, &ReaderManager::fireReaderConnected);
 		connect(mWorker.data(), &ReaderManagerWorker::fireReaderRemoved, this, &ReaderManager::fireReaderRemoved);
 

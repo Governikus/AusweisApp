@@ -16,6 +16,11 @@ QtControls.TabBar {
 	QtControls.TabButton {
 		id: firstButton
 		padding: Utils.dp(10)
+		// TODO: Workaround, use contentItem when switching to Qt 5.7.1
+		//       See https://bugreports.qt.io/browse/QTBUG-50992
+		text: qsTr("CONTACT")
+
+/*
 		contentItem: Text {
 			text: qsTr("Contact")
 			font.pixelSize: Constants.normal_font_size
@@ -26,11 +31,17 @@ QtControls.TabBar {
 			horizontalAlignment: Text.AlignHCenter
 			verticalAlignment: Text.AlignVCenter
 		}
+*/
 	}
 
 
 	QtControls.TabButton {
 		padding: Utils.dp(10)
+		// TODO: Workaround, use contentItem when switching to Qt 5.7.1
+		//       See https://bugreports.qt.io/browse/QTBUG-50992
+		text: qsTr("HISTORY")
+
+/*
 		contentItem: Text {
 			text: qsTr("History")
 			font.capitalization: Font.AllUppercase
@@ -41,5 +52,6 @@ QtControls.TabBar {
 			horizontalAlignment: Text.AlignHCenter
 			verticalAlignment: Text.AlignVCenter
 		}
+*/
 	}
 }

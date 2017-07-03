@@ -27,7 +27,7 @@ class AbstractGenericState
 		AbstractGenericState(const QSharedPointer<WorkflowContext>& pContext, bool pConnectOnCardRemoved = true)
 			: AbstractState(pContext, pConnectOnCardRemoved)
 		{
-			Q_ASSERT(mContext.dynamicCast<ModelClass>());
+			Q_ASSERT(mContext.objectCast<ModelClass>());
 		}
 
 

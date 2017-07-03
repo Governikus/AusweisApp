@@ -78,8 +78,12 @@ DECLARE_ASN1_OBJECT(CVCertificate)
 
 
 bool operator==(const QSharedPointer<governikus::CVCertificate>& pCvc1, const QSharedPointer<governikus::CVCertificate>& pCvc2);
+bool operator==(const QSharedPointer<governikus::CVCertificate>& pCvc1, const QSharedPointer<const governikus::CVCertificate>& pCvc2);
+bool operator==(const QSharedPointer<const governikus::CVCertificate>& pCvc1, const QSharedPointer<governikus::CVCertificate>& pCvc2);
+bool operator==(const QSharedPointer<const governikus::CVCertificate>& pCvc1, const QSharedPointer<const governikus::CVCertificate>& pCvc2);
 
 
 QDebug operator<<(QDebug pDbg, const governikus::CVCertificate& pCvc);
+QDebug operator<<(QDebug pDbg, const QSharedPointer<const governikus::CVCertificate>& pCvc);
 QDebug operator<<(QDebug pDbg, QSharedPointer<governikus::CVCertificate>& pCvc);
 QDebug operator<<(QDebug pDbg, const QVector<QSharedPointer<governikus::CVCertificate> >& pCvcs);

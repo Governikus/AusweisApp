@@ -1,0 +1,59 @@
+From e1ba5a3265be01d7d353bf82e4d8af331edbb434 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Tue, 13 Sep 2016 14:24:25 +0200
+Subject: Introduce QNetworkAccessManager::useAuthenticationManagerFrom
+
+Sometimes it is desirable to use a new connection but keep already
+entered user credentials for usability reasons. This is now possible by
+using the AuthenticationManager from a different NetworkAccessManager.
+
+[ChangeLog][QtCore][QNetworkAccessManager] Introduce useAuthenticationManagerFrom()
+
+Change-Id: If61f0d03fc8b2f159bad869d0a2b650170e1e174
+---
+ src/network/access/qnetworkaccessmanager.cpp | 15 +++++++++++++++
+ src/network/access/qnetworkaccessmanager.h   |  2 ++
+ 2 files changed, 17 insertions(+)
+
+diff --git x/qtbase/src/network/access/qnetworkaccessmanager.cpp y/qtbase/src/network/access/qnetworkaccessmanager.cpp
+index b763547a15..83cb33ce72 100644
+--- x/qtbase/src/network/access/qnetworkaccessmanager.cpp
++++ y/qtbase/src/network/access/qnetworkaccessmanager.cpp
+@@ -1079,6 +1079,21 @@ void QNetworkAccessManager::connectToHost(const QString &hostName, quint16 port)
+ }
+ 
+ /*!
++    \since 5.9
++
++    Sets the manager's authentication manager to be the one from
++    \a accessManager. This is useful when you need to use a new connection,
++    but keep already-entered user-credentials for usability reasons.
++*/
++void QNetworkAccessManager::useAuthenticationManagerFrom(const QNetworkAccessManager& accessManager)
++{
++    const QNetworkAccessManagerPrivate * const e = accessManager.d_func();
++
++    Q_D(QNetworkAccessManager);
++    d->authenticationManager = e->authenticationManager;
++}
++
++/*!
+     \since 4.7
+ 
+     Sends a custom request to the server identified by the URL of \a request.
+diff --git x/qtbase/src/network/access/qnetworkaccessmanager.h y/qtbase/src/network/access/qnetworkaccessmanager.h
+index 649013cced..24f3c7147c 100644
+--- x/qtbase/src/network/access/qnetworkaccessmanager.h
++++ y/qtbase/src/network/access/qnetworkaccessmanager.h
+@@ -149,6 +149,8 @@ public:
+ #endif
+     void connectToHost(const QString &hostName, quint16 port = 80);
+ 
++    void useAuthenticationManagerFrom(const QNetworkAccessManager& accessManager);
++
+ Q_SIGNALS:
+ #ifndef QT_NO_NETWORKPROXY
+     void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *authenticator);
+-- 
+2.11.0
+

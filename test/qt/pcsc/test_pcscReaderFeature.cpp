@@ -26,19 +26,19 @@ class test_pcscReaderFeature
 		void featuresCyberjackBasis()
 		{
 			QByteArray featuresTLV = QByteArray::fromHex("120442330012");
-			PcscReaderFeature readerFeature(featuresTLV.constData(), featuresTLV.length());
+			PcscReaderFeature readerFeature(featuresTLV.constData(), static_cast<PCSC_INT>(featuresTLV.length()));
 			QCOMPARE(readerFeature.toString(), QString("[TLV_PROPERTIES]"));
 			QCOMPARE(readerFeature.getFeatures().size(), 1);
 
 			QVERIFY(readerFeature.getFeatures().contains(FeatureID::TLV_PROPERTIES));
-			QCOMPARE(readerFeature.getFeatures().value(FeatureID::TLV_PROPERTIES), 1110638610);
+			QCOMPARE(readerFeature.getFeatures().value(FeatureID::TLV_PROPERTIES), PCSC_INT(1110638610));
 		}
 
 
 		void featuresCyberjackStandard()
 		{
 			QByteArray featuresTLV = QByteArray::fromHex("060442000db2070442000db3080442000db4090442000db5200442000dcc");
-			PcscReaderFeature readerFeature(featuresTLV.constData(), featuresTLV.length());
+			PcscReaderFeature readerFeature(featuresTLV.constData(), static_cast<PCSC_INT>(featuresTLV.length()));
 			QCOMPARE(readerFeature.toString(), QString("[VERIFY_PIN_DIRECT MODIFY_PIN_DIRECT MCT_READERDIRECT MCT_UNIVERSAL EXECUTE_PACE]"));
 			QCOMPARE(readerFeature.getFeatures().size(), 5);
 
@@ -48,11 +48,11 @@ class test_pcscReaderFeature
 			QVERIFY(readerFeature.getFeatures().contains(FeatureID::MCT_UNIVERSAL));
 			QVERIFY(readerFeature.getFeatures().contains(FeatureID::EXECUTE_PACE));
 
-			QCOMPARE(readerFeature.getFeatures().value(FeatureID::VERIFY_PIN_DIRECT), 1107299762);
-			QCOMPARE(readerFeature.getFeatures().value(FeatureID::MODIFY_PIN_DIRECT), 1107299763);
-			QCOMPARE(readerFeature.getFeatures().value(FeatureID::MCT_READERDIRECT), 1107299764);
-			QCOMPARE(readerFeature.getFeatures().value(FeatureID::MCT_UNIVERSAL), 1107299765);
-			QCOMPARE(readerFeature.getFeatures().value(FeatureID::EXECUTE_PACE), 1107299788);
+			QCOMPARE(readerFeature.getFeatures().value(FeatureID::VERIFY_PIN_DIRECT), PCSC_INT(1107299762));
+			QCOMPARE(readerFeature.getFeatures().value(FeatureID::MODIFY_PIN_DIRECT), PCSC_INT(1107299763));
+			QCOMPARE(readerFeature.getFeatures().value(FeatureID::MCT_READERDIRECT), PCSC_INT(1107299764));
+			QCOMPARE(readerFeature.getFeatures().value(FeatureID::MCT_UNIVERSAL), PCSC_INT(1107299765));
+			QCOMPARE(readerFeature.getFeatures().value(FeatureID::EXECUTE_PACE), PCSC_INT(1107299788));
 		}
 
 
@@ -67,7 +67,7 @@ class test_pcscReaderFeature
 		void capabilitiesCyberjackStandard()
 		{
 			QByteArray capabilitiesTLV = QByteArray::fromHex("00000000010060");
-			PcscReaderPaceCapability paceCapa(capabilitiesTLV.constData(), capabilitiesTLV.length());
+			PcscReaderPaceCapability paceCapa(capabilitiesTLV.constData(), static_cast<PCSC_INT>(capabilitiesTLV.length()));
 			QCOMPARE(paceCapa.toString(), QString("[EID GENERIC]"));
 			QCOMPARE(paceCapa.getPaceCapabilities().size(), 2);
 			QVERIFY(paceCapa.getPaceCapabilities().contains(PaceCapabilityId::EID));
@@ -78,7 +78,7 @@ class test_pcscReaderFeature
 		void capabilitiesCyberjackKomfort()
 		{
 			QByteArray capabilitiesTLV = QByteArray::fromHex("00000000010070");
-			PcscReaderPaceCapability paceCapa(capabilitiesTLV.constData(), capabilitiesTLV.length());
+			PcscReaderPaceCapability paceCapa(capabilitiesTLV.constData(), static_cast<PCSC_INT>(capabilitiesTLV.length()));
 			QCOMPARE(paceCapa.toString(), QString("[ESIGN EID GENERIC]"));
 			QCOMPARE(paceCapa.getPaceCapabilities().size(), 3);
 			QVERIFY(paceCapa.getPaceCapabilities().contains(PaceCapabilityId::EID));

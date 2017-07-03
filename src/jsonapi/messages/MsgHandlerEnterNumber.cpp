@@ -39,20 +39,21 @@ void MsgHandlerEnterNumber::setReader(const QSharedPointer<const WorkflowContext
 }
 
 
-void MsgHandlerEnterNumber::parseValue(const QJsonValue& pValue, const std::function<void(const QString& pNumber)>& pFunc, ushort pCount)
+void MsgHandlerEnterNumber::parseValue(const QJsonObject& pObj, const std::function<void(const QString& pNumber)>& pFunc, ushort pCount)
 {
-	if (pValue.isUndefined())
+	const auto& value = pObj[QLatin1String("value")];
+	if (value.isUndefined())
 	{
 		setError(QStringLiteral("Value cannot be undefined"));
 	}
-	else if (!pValue.isString())
+	else if (!value.isString())
 	{
 		setError(QStringLiteral("Invalid value"));
 	}
 	else
 	{
 		const auto& regex = QStringLiteral("^[0-9]{%1}$").arg(pCount);
-		const auto& number = pValue.toString();
+		const auto& number = value.toString();
 		if (QRegularExpression(regex).match(number).hasMatch())
 		{
 			pFunc(number);

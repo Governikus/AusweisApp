@@ -4,8 +4,8 @@
 
 #pragma once
 
+#include "GlobalStatus.h"
 #include "HttpStatusCode.h"
-#include "Result.h"
 
 #include <QObject>
 #include <QString>
@@ -27,7 +27,7 @@ class ActivationContext
 		ActivationContext();
 		virtual ~ActivationContext();
 
-		virtual QUrl getActivationURL() = 0;
+		virtual QUrl getActivationURL() const = 0;
 
 		/*!
 		 * Sends a processing status response to the caller.
@@ -48,14 +48,14 @@ class ActivationContext
 		 *
 		 * \return true, if sending succeeded, false otherwise. On failure an error message can be retrieved via getSendError.
 		 */
-		virtual bool sendErrorPage(HttpStatusCode pStatusCode, const Result& pResult) = 0;
+		virtual bool sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus) = 0;
 
 		/*!
 		 * Sends a redirect to the caller.
 		 *
 		 * \return true, if sending succeeded, false otherwise. On failure an error message can be retrieved via getSendError.
 		 */
-		virtual bool sendRedirect(const QUrl& pRedirectAddress, const Result& pResult) = 0;
+		virtual bool sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pStatus) = 0;
 
 		/*!
 		 * Returns the last error that occurred during a send operation.

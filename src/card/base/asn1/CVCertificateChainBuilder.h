@@ -22,7 +22,7 @@ class CVCertificateChainBuilder
 	private:
 		bool mProductive;
 
-		static bool isChild(const QSharedPointer<CVCertificate>& pChild, const QSharedPointer<CVCertificate>& pParent);
+		static bool isChild(const QSharedPointer<const CVCertificate>& pChild, const QSharedPointer<const CVCertificate>& pParent);
 
 		void removeInvalidChains();
 
@@ -46,7 +46,7 @@ class CVCertificateChainBuilder
 		 * occurred ( e.g. the last element in the list is no terminal CVC), an invalid chain
 		 * is returned (see CVCertificateChain::isValid()).
 		 */
-		CVCertificateChain getChainStartingWith(const QSharedPointer<CVCertificate>& pChainRoot) const;
+		CVCertificateChain getChainStartingWith(const QSharedPointer<const CVCertificate>& pChainRoot) const;
 
 
 		/*!

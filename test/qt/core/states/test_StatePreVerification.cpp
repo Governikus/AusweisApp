@@ -9,10 +9,11 @@
 #include "AppSettings.h"
 #include "TestFileHelper.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
+#include "TestAuthContext.h"
 #include <QtCore>
 #include <QtTest>
+
 
 using namespace governikus;
 
@@ -32,10 +33,7 @@ class test_StatePreVerification
 		{
 			AbstractSettings::mTestDir.clear();
 			AppSettings::getInstance().load();
-			mAuthContext.reset(new AuthContext(nullptr));
-			QByteArray eac1Content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml");
-			QSharedPointer<DIDAuthenticateEAC1> didAuthEac1(dynamic_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(eac1Content)));
-			mAuthContext->setDidAuthenticateEac1(didAuthEac1);
+			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
 
 			mAuthContext->initCvcChainBuilder();
 

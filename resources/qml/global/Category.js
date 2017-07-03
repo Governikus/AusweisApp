@@ -1,59 +1,60 @@
+function getTableValue(table, key, defaultValue) {
+	return key in table ? table[key] : defaultValue
+}
+
+
+var CATEGORY_TO_DISPLAY_STRING = {
+	"": qsTr("Provider"),
+	"all": qsTr("All"),
+	"citizen": qsTr("Citizen services"),
+	"insurance": qsTr("Insurances"),
+	"finance": qsTr("Financials"),
+	"other":  qsTr("Other services")
+}
+
+function displayString(cat) {
+	return getTableValue(CATEGORY_TO_DISPLAY_STRING, cat, "")
+}
+
+
+var CATEGORY_COLOR_NONE = "#659bcd"
 var CATEGORY_COLOR_ALL = "#659bcd"
 var CATEGORY_COLOR_CITIZEN = "#aa4079"
 var CATEGORY_COLOR_INSURANCE = "#52539f"
 var CATEGORY_COLOR_FINANCE = "#ecc758"
 var CATEGORY_COLOR_OTHER = "#00868e"
 
-function displayString(cat) {
-	if (cat === "all") {
-		return qsTr("Provider")
-	}
-	if (cat === "citizen") {
-		return qsTr("Citizen services")
-	}
-	if (cat === "insurance") {
-		return qsTr("Insurances")
-	}
-	if (cat === "finance") {
-		return qsTr("Financials")
-	}
-	return qsTr("Other services")
+var CATEGORY_TO_COLOR = {
+	"": CATEGORY_COLOR_ALL,
+	"all": CATEGORY_COLOR_ALL,
+	"citizen": CATEGORY_COLOR_CITIZEN,
+	"insurance": CATEGORY_COLOR_INSURANCE,
+	"finance": CATEGORY_COLOR_FINANCE,
+	"other": CATEGORY_COLOR_OTHER
 }
 
 function displayColor(cat) {
-	if (cat === "all") {
-		return CATEGORY_COLOR_ALL
-	}
-	if (cat === "citizen") {
-		return CATEGORY_COLOR_CITIZEN
-	}
-	if (cat === "insurance") {
-		return CATEGORY_COLOR_INSURANCE
-	}
-	if (cat === "finance") {
-		return CATEGORY_COLOR_FINANCE
-	}
-	return CATEGORY_COLOR_OTHER
+	return getTableValue(CATEGORY_TO_COLOR, cat, CATEGORY_COLOR_NONE)
 }
 
 
 var CATEGORY_TO_IMAGE_NAME = {
-	"all": "General",
 	"citizen": "CitizenServices",
 	"insurance": "Insurances",
-	"finance": "Financials"
+	"finance": "Financials",
+	"other": "OtherServices",
+	"all": "General",
+	"": "General"
 }
 
-
 function imageName(cat) {
-	return cat in CATEGORY_TO_IMAGE_NAME ? CATEGORY_TO_IMAGE_NAME[cat] : "OtherServices"
+	return getTableValue(CATEGORY_TO_IMAGE_NAME, cat, "General")
 }
 
 
 function getPlatform() {
 	return plugin.platformStyle.indexOf("android") !== -1 ? "+android/" : ""
 }
-
 
 
 function gradientImageSource(cat) {
@@ -67,20 +68,20 @@ function gradientImageSource(cat) {
 
 
 function backgroundImageSource(cat) {
-	return "qrc:///images/provider/categoryIcons/" + getPlatform() + imageName(cat) + "_bg.png"
+	return "qrc:///images/provider/categoryIcons/" + getPlatform() + imageName(cat) + "_bg.svg"
 }
 
 
 function buttonImageSource(cat) {
-	return "qrc:///images/provider/categoryIcons/" + getPlatform() + imageName(cat) + "_button.png"
+	return "qrc:///images/provider/categoryIcons/" + getPlatform() + imageName(cat) + "_button.svg"
 }
 
 
 function imageSource(cat) {
-	return "qrc:///images/provider/categoryIcons/" + getPlatform() + imageName(cat) + ".png"
+	return "qrc:///images/provider/categoryIcons/" + getPlatform() + imageName(cat) + ".svg"
 }
 
 
 function sectionImageSource(cat) {
-	return "qrc:///images/provider/categoryIcons/" + getPlatform() + imageName(cat) + "_section.png"
+	return "qrc:///images/provider/categoryIcons/" + getPlatform() + imageName(cat) + "_section.svg"
 }

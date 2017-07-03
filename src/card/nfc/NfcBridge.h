@@ -35,8 +35,8 @@ class NfcBridge
 #ifdef Q_OS_ANDROID
 		QAndroidJniObject mJavaConnector;
 
-		static QAndroidJniObject getJavaParent();
 		static QAndroidJniObject getApplicationContext();
+		static QAndroidJniObject getNfcAdapter();
 		static QByteArray convert(const jbyteArray& pData);
 		static jbyteArray convert(const QByteArray& pData);
 #endif
@@ -50,10 +50,14 @@ class NfcBridge
 	public:
 		static NfcBridge& getInstance();
 
-		bool isValid();
-		bool isNfcEnabled();
-		NfcCardCode getCardStatus();
-		ExtendedLengthApduSupportCode getExtendedLengthApduSupportStatus();
+		bool isValid() const;
+		bool isNfcEnabled() const;
+		bool isNfcAvailable() const;
+		NfcCardCode getCardStatus() const;
+		bool connectCard() const;
+		bool disconnectCard() const;
+		bool isCardConnected() const;
+		ExtendedLengthApduSupportCode getExtendedLengthApduSupportStatus() const;
 		bool start();
 		bool stop();
 		QByteArray sendData(const QByteArray& pData);

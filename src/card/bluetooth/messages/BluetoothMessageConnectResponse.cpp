@@ -23,13 +23,13 @@ BluetoothMessageConnectResponse::~BluetoothMessageConnectResponse()
 
 BluetoothConnectionStatus BluetoothMessageConnectResponse::getConnectionStatus() const
 {
-	QSharedPointer<const BluetoothMessageParameterConnectionStatus> param = getParameter<BluetoothMessageParameterConnectionStatus>();
-	return param->getResultCode();
+	const auto& param = getParameter(BluetoothParamId::ConnectionStatus);
+	return param.staticCast<const BluetoothMessageParameterConnectionStatus>()->getResultCode();
 }
 
 
 unsigned int BluetoothMessageConnectResponse::getMaxMsgSize() const
 {
-	QSharedPointer<const BluetoothMessageParameterMaxMsgSize> param = getParameter<BluetoothMessageParameterMaxMsgSize>();
-	return param->getMaxMsgSize();
+	const auto& param = getParameter(BluetoothParamId::MaxMsgSize);
+	return param.staticCast<const BluetoothMessageParameterMaxMsgSize>()->getMaxMsgSize();
 }

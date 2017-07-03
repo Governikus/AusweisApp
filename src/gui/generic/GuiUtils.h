@@ -10,7 +10,7 @@
 
 #include <QWidget>
 
-#include "ReturnCode.h"
+#include "CardReturnCode.h"
 
 class QFrame;
 
@@ -28,7 +28,7 @@ class GuiUtils
 
 		static QFrame* createLine(bool pHorizontal);
 
-		static void showPinCanPukErrorDialog(ReturnCode pReturnCode, int pRetryCounter, QWidget* pParent);
+		static void showPinCanPukErrorDialog(CardReturnCode pReturnCode, int pRetryCounter, QWidget* pParent);
 		static bool showWrongPinBlockedDialog(QWidget* pParent);
 		static void updateFontSize(QWidget* pWidget);
 };

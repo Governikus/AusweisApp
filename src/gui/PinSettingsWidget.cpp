@@ -153,7 +153,7 @@ QVector<ReaderInfo> PinSettingsWidget::getReaderWithNPA(const QVector<ReaderInfo
 	{
 		if (readerInfo.getCardType() == CardType::EID_CARD)
 		{
-			readersWithNPA.append(readerInfo);
+			readersWithNPA += readerInfo;
 		}
 	}
 
@@ -170,8 +170,8 @@ void PinSettingsWidget::updateReadersWithoutNPA(const QVector<ReaderInfo>& pRead
 	{
 		if (!knownReaderTypes.contains(readerInfo.getReaderType()))
 		{
-			knownReaderInfos.append(readerInfo);
-			knownReaderTypes.append(readerInfo.getReaderType());
+			knownReaderInfos += readerInfo;
+			knownReaderTypes += readerInfo.getReaderType();
 		}
 	}
 
@@ -333,7 +333,7 @@ void PinSettingsWidget::hideEvent(QHideEvent* pEvent)
 	if (mRandomPinDialog && mRandomPinDialog->isVisible())
 	{
 		// close the PinPad in case the tab is hidden,
-		// e.g. an authentication was started, so the pin change is aborted.
+		// e.g. an authentication was started, so the PIN change is aborted.
 		mRandomPinDialog->reject();
 	}
 }
@@ -665,7 +665,7 @@ void PinSettingsWidget::onRandomPinButtonClicked()
 	mRandomPinDialog = new RandomPinDialog(6, selectedReaderName, this);
 	if (mRandomPinDialog->exec() == QDialog::Accepted && !mRandomPinDialog->getPin().isEmpty())
 	{
-		QToolButton* pinButton = dynamic_cast<QToolButton*>(sender());
+		QToolButton* pinButton = qobject_cast<QToolButton*>(sender());
 		if (pinButton == nullptr)
 		{
 			qCCritical(gui) << "sender == nullptr";

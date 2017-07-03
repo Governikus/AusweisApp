@@ -17,11 +17,11 @@ MsgHandlerEnterPin::MsgHandlerEnterPin(const MsgContext& pContext)
 MsgHandlerEnterPin::MsgHandlerEnterPin(const QJsonObject& pObj, MsgContext& pContext)
 	: MsgHandlerEnterPin(pContext)
 {
-	parseValue(pObj["pin"], [&](const QString& pNumber)
-	{
-		auto ctx = pContext.getWorkflowContext();
-		ctx->setPin(pNumber);
-		ctx->setStateApproved();
-		setVoid();
-	});
+	parseValue(pObj, [&](const QString& pNumber)
+			{
+				auto ctx = pContext.getWorkflowContext();
+				ctx->setPin(pNumber);
+				ctx->setStateApproved();
+				setVoid();
+			});
 }

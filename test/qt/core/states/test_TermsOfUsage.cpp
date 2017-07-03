@@ -48,7 +48,7 @@ class test_TermsOfUsage
 						 << QStringLiteral("- Login B\u00FCrgerkonto \"Mein Hagen\" -")
 						 << QStringLiteral("- Verifikation von Personendaten zur Alters- und Identit\u00E4tsfeststellung -")
 						 << QStringLiteral("- Registrierung f\u00FCr die Virtuelle Poststelle bei der Deutschen Emissionshandelsstelle -")
-						 << "see details under more...";
+						 << QString();
 
 			mCVCList << ":/core/step/2014_07_03_cvcDescription0.bin" << ":/core/step/2014_07_03_cvcDescription1.bin"
 					 << ":/core/step/2014_07_03_cvcDescription2.bin" << ":/core/step/2014_07_03_cvcDescription3.bin"
@@ -100,7 +100,7 @@ class test_TermsOfUsage
 			{
 				QFAIL(certDescr->getPurpose().toUtf8().constData());
 			}
-			QCOMPARE(certDescr->getPurpose(), QStringLiteral("see details under more..."));
+			QCOMPARE(certDescr->getPurpose(), QString());
 		}
 
 

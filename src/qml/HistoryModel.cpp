@@ -5,10 +5,40 @@
  */
 
 #include "HistoryModel.h"
+#include "ProviderModel.h"
 
+#include <QDebug>
 #include <QUrl>
 
 using namespace governikus;
+
+
+namespace
+{
+bool matchProviderWithSubjectUrl(const Provider& pProvider, const QString& pSubjectUrl)
+{
+	const QString subjectUrlHost = QUrl(pSubjectUrl).host();
+
+	// Check provider address host.
+	if (QUrl(pProvider.getAddress()).host() == subjectUrlHost)
+	{
+		return true;
+	}
+
+	// Check subject urls.
+	for (const auto& subjectUrl : pProvider.getSubjectUrls())
+	{
+		if (QUrl(subjectUrl).host() == subjectUrlHost)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+}
 
 
 HistoryProxyModel::HistoryProxyModel()
@@ -29,7 +59,7 @@ bool HistoryProxyModel::removeRows(int pRow, int pCount, const QModelIndex& pPar
 
 bool ProviderNameFilterModel::filterAcceptsRow(int pSourceRow, const QModelIndex& /* pSourceParent */) const
 {
-	HistoryModel* const dataSourceModel = dynamic_cast<HistoryModel*>(sourceModel());
+	HistoryModel* const dataSourceModel = qobject_cast<HistoryModel*>(sourceModel());
 	if (dataSourceModel == nullptr)
 	{
 		return false;
@@ -37,12 +67,13 @@ bool ProviderNameFilterModel::filterAcceptsRow(int pSourceRow, const QModelIndex
 
 	auto entry = mHistorySettings->getHistoryEntries()[pSourceRow];
 
-	return mProviderAddressHost == QUrl(entry.getSubjectUrl()).host();
+	return matchProviderWithSubjectUrl(mProvider, entry.getSubjectUrl());
 }
 
 
-ProviderNameFilterModel::ProviderNameFilterModel(HistorySettings* pHistorySettings)
+ProviderNameFilterModel::ProviderNameFilterModel(HistorySettings* pHistorySettings, ProviderSettings* pProviderSettings)
 	: mHistorySettings(pHistorySettings)
+	, mProviderSettings(pProviderSettings)
 {
 }
 
@@ -54,12 +85,22 @@ ProviderNameFilterModel::~ProviderNameFilterModel()
 
 void ProviderNameFilterModel::setProviderAddress(const QString& pProviderAddress)
 {
-	const QString providerAddressHost = QUrl(pProviderAddress).host();
-	if (providerAddressHost != mProviderAddressHost)
+	if (mProvider.getAddress() != pProviderAddress)
 	{
-		mProviderAddressHost = providerAddressHost;
+		for (const auto& provider : mProviderSettings->getProviders())
+		{
+			if (provider.getAddress() == pProviderAddress)
+			{
+				mProvider = provider;
 
-		invalidateFilter();
+				invalidateFilter();
+
+				return;
+			}
+		}
+
+		// If we get here, no provider for pProviderAddress was found in the settings.
+		qWarning() << "Cannot select provider with address" << pProviderAddress;
 	}
 }
 
@@ -69,12 +110,14 @@ HistoryModel::HistoryModel(HistorySettings* pHistorySettings, ProviderSettings* 
 	, mHistorySettings(pHistorySettings)
 	, mProviderSettings(pProviderSettings)
 	, mFilterModel()
-	, mNameFilterModel(pHistorySettings)
+	, mNameFilterModel(pHistorySettings, pProviderSettings)
 {
 	mFilterModel.setSourceModel(this);
 	mFilterModel.setFilterCaseSensitivity(Qt::CaseInsensitive);
 	mNameFilterModel.setSourceModel(this);
+	mHistoryModelSearchFilter.setSourceModel(this);
 	connect(mHistorySettings, &HistorySettings::fireHistoryEntriesChanged, this, &HistoryModel::onHistoryEntriesChanged);
+	connect(mHistorySettings, &HistorySettings::fireEnabledChanged, this, &HistoryModel::fireEnabledChanged);
 	connect(mProviderSettings, &ProviderSettings::fireProvidersChanged, this, &HistoryModel::onProvidersChanged);
 }
 
@@ -103,11 +146,12 @@ void HistoryModel::onProvidersChanged()
 											  PROVIDER_HOMEPAGE,
 											  PROVIDER_HOMEPAGE_BASE,
 											  PROVIDER_PHONE,
+											  PROVIDER_PHONE_COST,
 											  PROVIDER_EMAIL,
 											  PROVIDER_POSTALADDRESS,
 											  PROVIDER_ICON,
 											  PROVIDER_IMAGE});
-	dataChanged(index(0), index(rowCount() - 1), PROVIDER_ROLES);
+	Q_EMIT dataChanged(index(0), index(rowCount() - 1), PROVIDER_ROLES);
 }
 
 
@@ -150,22 +194,22 @@ QVariant HistoryModel::data(const QModelIndex& pIndex, int pRole) const
 		if (pRole == PROVIDER_SHORTNAME)
 		{
 			auto provider = determineProviderFor(entry);
-			return QVariant(provider.getShortName());
+			return provider.getShortName().toString();
 		}
 		if (pRole == PROVIDER_LONGNAME)
 		{
 			auto provider = determineProviderFor(entry);
-			return QVariant(provider.getLongName());
+			return provider.getLongName().toString();
 		}
 		if (pRole == PROVIDER_SHORTDESCRIPTION)
 		{
 			auto provider = determineProviderFor(entry);
-			return QVariant(provider.getShortDescription());
+			return provider.getShortDescription().toString();
 		}
 		if (pRole == PROVIDER_LONGDESCRIPTION)
 		{
 			auto provider = determineProviderFor(entry);
-			return QVariant(provider.getLongDescription());
+			return provider.getLongDescription().toString();
 		}
 		if (pRole == PROVIDER_ADDRESS)
 		{
@@ -191,6 +235,12 @@ QVariant HistoryModel::data(const QModelIndex& pIndex, int pRole) const
 		{
 			auto provider = determineProviderFor(entry);
 			return provider.getPhone();
+		}
+		if (pRole == PROVIDER_PHONE_COST)
+		{
+			const auto& provider = determineProviderFor(entry);
+			const auto& cost = mProviderSettings->getCallCost(provider);
+			return ProviderModel::createCostString(cost);
 		}
 		if (pRole == PROVIDER_EMAIL)
 		{
@@ -222,9 +272,9 @@ Provider HistoryModel::determineProviderFor(const HistoryEntry& pHistoryEntry) c
 	QVector<Provider> matchingProviders;
 	for (const auto& provider : mProviderSettings->getProviders())
 	{
-		if (QUrl(provider.getAddress()).host() == QUrl(pHistoryEntry.getSubjectUrl()).host())
+		if (matchProviderWithSubjectUrl(provider, pHistoryEntry.getSubjectUrl()))
 		{
-			matchingProviders.append(provider);
+			matchingProviders += provider;
 		}
 	}
 	if (matchingProviders.size() == 1)
@@ -232,6 +282,22 @@ Provider HistoryModel::determineProviderFor(const HistoryEntry& pHistoryEntry) c
 		return matchingProviders.at(0);
 	}
 	return Provider();
+}
+
+
+bool HistoryModel::isEnabled() const
+{
+	return mHistorySettings->isEnabled();
+}
+
+
+void HistoryModel::setEnabled(bool pEnabled)
+{
+	if (pEnabled != isEnabled())
+	{
+		mHistorySettings->setEnabled(pEnabled);
+		mHistorySettings->save();
+	}
 }
 
 
@@ -243,20 +309,21 @@ QHash<int, QByteArray> HistoryModel::roleNames() const
 	roles.insert(DATETIME, "dateTime");
 	roles.insert(TERMSOFUSAGE, "termsOfUsage");
 	roles.insert(REQUESTEDDATA, "requestedData");
-	roles.insert(PROVIDER_CATEGORY, "provider_category");
-	roles.insert(PROVIDER_SHORTNAME, "provider_shortname");
-	roles.insert(PROVIDER_LONGNAME, "provider_longname");
-	roles.insert(PROVIDER_SHORTDESCRIPTION, "provider_shortdescription");
-	roles.insert(PROVIDER_LONGDESCRIPTION, "provider_longdescription");
-	roles.insert(PROVIDER_ADDRESS, "provider_address");
-	roles.insert(PROVIDER_ADDRESS_DOMAIN, "provider_address_domain");
-	roles.insert(PROVIDER_HOMEPAGE, "provider_homepage");
-	roles.insert(PROVIDER_HOMEPAGE_BASE, "provider_homepage_base");
-	roles.insert(PROVIDER_PHONE, "provider_phone");
-	roles.insert(PROVIDER_EMAIL, "provider_email");
-	roles.insert(PROVIDER_POSTALADDRESS, "provider_postaladdress");
-	roles.insert(PROVIDER_ICON, "provider_icon");
-	roles.insert(PROVIDER_IMAGE, "provider_image");
+	roles.insert(PROVIDER_CATEGORY, "providerCategory");
+	roles.insert(PROVIDER_SHORTNAME, "providerShortName");
+	roles.insert(PROVIDER_LONGNAME, "providerLongName");
+	roles.insert(PROVIDER_SHORTDESCRIPTION, "providerShortDescription");
+	roles.insert(PROVIDER_LONGDESCRIPTION, "providerLongDescription");
+	roles.insert(PROVIDER_ADDRESS, "providerAddress");
+	roles.insert(PROVIDER_ADDRESS_DOMAIN, "providerAddressDomain");
+	roles.insert(PROVIDER_HOMEPAGE, "providerHomepage");
+	roles.insert(PROVIDER_HOMEPAGE_BASE, "providerHomepageBase");
+	roles.insert(PROVIDER_PHONE, "providerPhone");
+	roles.insert(PROVIDER_PHONE_COST, "providerPhoneCost");
+	roles.insert(PROVIDER_EMAIL, "providerEmail");
+	roles.insert(PROVIDER_POSTALADDRESS, "providerPostalAddress");
+	roles.insert(PROVIDER_ICON, "providerIcon");
+	roles.insert(PROVIDER_IMAGE, "providerImage");
 	return roles;
 }
 
@@ -289,4 +356,10 @@ HistoryProxyModel* HistoryModel::getFilterModel()
 ProviderNameFilterModel* HistoryModel::getNameFilterModel()
 {
 	return &mNameFilterModel;
+}
+
+
+HistoryModelSearchFilter* HistoryModel::getHistoryModelSearchFilter()
+{
+	return &mHistoryModelSearchFilter;
 }

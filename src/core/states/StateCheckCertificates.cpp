@@ -39,7 +39,7 @@ void StateCheckCertificates::run()
 			else
 			{
 				qCritical() << certificateDescError;
-				setResult(Result::createTrustedChannelEstablishmentError(tr("Hash of certificate not in certificate description")));
+				setStatus(GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description);
 				Q_EMIT fireError();
 				return;
 			}

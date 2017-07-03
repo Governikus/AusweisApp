@@ -33,10 +33,10 @@ void DidAuthenticateEAC1Command::internalExecute()
 {
 	GetChallengeResponse response;
 	mReturnCode = mCardConnectionWorker->transmit(GetChallengeBuilder().build(), response);
-	if (mReturnCode != ReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
+	if (mReturnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "GetChallenge failed";
-		mReturnCode = ReturnCode::GET_CHALLENGE_FAILED;
+		mReturnCode = CardReturnCode::GET_CHALLENGE_FAILED;
 		return;
 	}
 	mChallenge = response.getChallenge();

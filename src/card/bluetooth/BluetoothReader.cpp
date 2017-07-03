@@ -7,6 +7,7 @@
 #include "BluetoothCard.h"
 #include "BluetoothDebug.h"
 #include "BluetoothReader.h"
+#include "DeviceError.h"
 #include "SynchronousBtCall.h"
 #include "messages/BluetoothMessageCreator.h"
 #include "messages/BluetoothMessageParser.h"
@@ -17,14 +18,14 @@
 #include <QLoggingCategory>
 #include <QSignalBlocker>
 
-Q_DECLARE_LOGGING_CATEGORY(card)
+Q_DECLARE_LOGGING_CATEGORY(bluetooth)
 
 
 using namespace governikus;
 
 
 BluetoothReader::BluetoothReader(const QSharedPointer<CyberJackWaveDevice>& pDevice)
-	: Reader(ReaderManagerPlugInType::BLUETOOTH, pDevice->getName(), ReaderType::REINER_cyberJack_wave)
+	: ConnectableReader(ReaderManagerPlugInType::BLUETOOTH, pDevice->getName(), ReaderType::REINER_cyberJack_wave)
 	, mDevice(pDevice)
 	, mLastCardEvent(CardEvent::NONE)
 	, mCard()
@@ -33,6 +34,7 @@ BluetoothReader::BluetoothReader(const QSharedPointer<CyberJackWaveDevice>& pDev
 	mReaderInfo.setConnected(false);
 	connect(mDevice.data(), &CyberJackWaveDevice::fireInitialized, this, &BluetoothReader::onInitialized);
 	connect(mDevice.data(), &CyberJackWaveDevice::fireDisconnected, this, &BluetoothReader::onDisconnected);
+	connect(mDevice.data(), &CyberJackWaveDevice::fireError, this, &BluetoothReader::onError);
 	connect(mDevice.data(), &CyberJackWaveDevice::fireStatusCharacteristicChanged, this, &BluetoothReader::onStatusCharacteristicChanged);
 }
 
@@ -51,15 +53,22 @@ void BluetoothReader::connectReader()
 
 void BluetoothReader::onInitialized(const QBluetoothDeviceInfo&)
 {
-	qCDebug(card) << "Connected reader" << getName() << "is valid:" << mDevice->isValid();
+	qCDebug(bluetooth) << "Connected reader" << getName() << "is valid:" << mDevice->isValid();
 
 	/*
 	 * Attention: This also triggers the pairing!
 	 * (Pairing is initiated by the device on the first write request with WriteMode::WriteWithResponse.)
 	 */
-	auto protocolRequest = BluetoothMessageCreator::createSetTransportProtocolRequest(BluetoothTransportProtocol::T1);
-	auto protocolResponse = SynchronousBtCall(mDevice).send<BluetoothMessageSetTransportProtocolResponse>(protocolRequest);
-	if (protocolResponse == nullptr || protocolResponse->getResultCode() != BluetoothResultCode::Ok)
+	auto request = BluetoothMessageCreator::createSetTransportProtocolRequest(BluetoothTransportProtocol::T1);
+	auto response = SynchronousBtCall(mDevice).send(request, BluetoothMsgId::SetTransportProtocolResponse);
+	if (response.isNull())
+	{
+		qCCritical(bluetooth) << "Response is empty";
+		return;
+	}
+
+	auto protocolResponse = response.staticCast<const BluetoothMessageSetTransportProtocolResponse>();
+	if (protocolResponse->getResultCode() != BluetoothResultCode::Ok)
 	{
 		qCCritical(bluetooth) << "Error setting transport protocol";
 		return;
@@ -96,6 +105,15 @@ void BluetoothReader::onDisconnected(const QBluetoothDeviceInfo&)
 }
 
 
+void BluetoothReader::onError(QLowEnergyController::Error pError)
+{
+	if (pError == QLowEnergyController::ConnectionError)
+	{
+		Q_EMIT fireReaderDeviceError(DeviceError::DEVICE_CONNECTION_ERROR);
+	}
+}
+
+
 Reader::CardEvent BluetoothReader::updateCard()
 {
 	CardEvent tmpEvent = mLastCardEvent;
@@ -113,7 +131,7 @@ void BluetoothReader::onStatusCharacteristicChanged(const QByteArray& pValue)
 		return;
 	}
 
-	auto statusChange = messages.at(0)->get<BluetoothMessageStatusInd>()->getStatusChange();
+	auto statusChange = messages.at(0).staticCast<const BluetoothMessageStatusInd>()->getStatusChange();
 	if (mCard.isNull() && (statusChange == BluetoothStatusChange::CardInserted || statusChange == BluetoothStatusChange::CardReset))
 	{
 		qCDebug(card) << "Card inserted" << getName();

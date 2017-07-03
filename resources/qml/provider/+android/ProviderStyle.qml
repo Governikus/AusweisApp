@@ -35,6 +35,4 @@ Item {
 	readonly property color providerListDetailsLinkColor: Constants.primary_text
 	readonly property color providerListDetailsLinkBackground: PlatformConstants.grey_light
 	readonly property string providerListDetailsLinkPosition: "top"
-
-	readonly property int providerHeaderHeight: Utils.dp(180)
 }

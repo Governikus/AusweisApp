@@ -52,9 +52,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader());
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -64,9 +64,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -76,9 +76,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -88,9 +88,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -100,9 +100,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -112,9 +112,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -124,9 +124,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -136,9 +136,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -148,9 +148,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -160,9 +160,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -172,9 +172,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -184,9 +184,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -196,9 +196,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -208,9 +208,9 @@ class test_PaceHandler
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 
@@ -218,14 +218,14 @@ class test_PaceHandler
 		void failureOnMseSetAt()
 		{
 			QVector<TransmitConfig> transmitConfigs;
-			transmitConfigs.append(TransmitConfig(ReturnCode::OK, QByteArray::fromHex("9000"))); // Select file
-			transmitConfigs.append(TransmitConfig(ReturnCode::OK, QByteArray::fromHex("6A80"))); // MSE:Set AT
+			transmitConfigs.append(TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("9000"))); // Select file
+			transmitConfigs.append(TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("6A80"))); // MSE:Set AT
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(transmitConfigs, mEfCardAccessBytes));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
-			ReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
+			CardReturnCode status = paceHandler->establishPaceChannel(PACE_PIN_ID::PACE_PIN, "123456");
 
-			QCOMPARE(status, ReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
 		}
 
 

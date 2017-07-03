@@ -23,7 +23,7 @@ class CustomSchemeActivationHandler
 	Q_PLUGIN_METADATA(IID "governikus.ActivationHandler" FILE "metadata.json")
 	Q_INTERFACES(governikus::ActivationHandler)
 
-	protected:
+	private:
 		void onCustomUrl(const QUrl& pUrl);
 
 	public:

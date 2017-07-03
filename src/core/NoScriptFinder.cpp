@@ -32,12 +32,12 @@ class NoScriptFinderPrivate
 	{
 		QStringList profileIniFiles;
 #if defined(Q_OS_LINUX)
-		profileIniFiles.append(QDir::homePath().append(QStringLiteral("/.mozilla/firefox/profiles.ini")));
+		profileIniFiles += QDir::homePath() + QStringLiteral("/.mozilla/firefox/profiles.ini");
 #elif defined(Q_OS_WIN32)
-		profileIniFiles.append(QDir::homePath().append(QStringLiteral("/AppData/Roaming/Mozilla/Firefox/profiles.ini")));
+		profileIniFiles += QDir::homePath() + QStringLiteral("/AppData/Roaming/Mozilla/Firefox/profiles.ini");
 #elif defined(Q_OS_MAC)
-		profileIniFiles.append(QDir::homePath().append(QStringLiteral("/Library/Application Support/Firefox/profiles.ini")));
-		profileIniFiles.append(QDir::homePath().append(QStringLiteral("/Library/Mozilla/Firefox/profiles.ini")));
+		profileIniFiles += QDir::homePath() + QStringLiteral("/Library/Application Support/Firefox/profiles.ini");
+		profileIniFiles += QDir::homePath() + QStringLiteral("/Library/Mozilla/Firefox/profiles.ini");
 #endif
 		init(profileIniFiles);
 	}

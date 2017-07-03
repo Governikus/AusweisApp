@@ -18,15 +18,15 @@ namespace governikus
 {
 
 
-typedef QPair<ReturnCode, QByteArray> TransmitConfig;
+typedef QPair<CardReturnCode, QByteArray> TransmitConfig;
 
 
 class MockCardConfig
 {
 	public:
 		QVector<TransmitConfig> mTransmits;
-		ReturnCode mConnect = ReturnCode::OK;
-		ReturnCode mDisconnect = ReturnCode::OK;
+		CardReturnCode mConnect = CardReturnCode::OK;
+		CardReturnCode mDisconnect = CardReturnCode::OK;
 
 		MockCardConfig(const QVector<TransmitConfig>& pTransmits = QVector<TransmitConfig>())
 			: mTransmits(pTransmits)
@@ -49,8 +49,8 @@ class MockCard
 		MockCard(const MockCardConfig& pCardConfig);
 		virtual ~MockCard();
 
-		ReturnCode connect() override;
-		ReturnCode disconnect() override;
+		CardReturnCode connect() override;
+		CardReturnCode disconnect() override;
 
 		bool isConnected() override
 		{
@@ -58,33 +58,7 @@ class MockCard
 		}
 
 
-		ReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
-
-
-		/*!
-		 * Not supported, returns ReturnCode::COMMAND_FAILED
-		 */
-		ReturnCode establishPaceChannel(PACE_PIN_ID pPinId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, int pTimeoutSeconds) override
-		{
-			Q_UNUSED(pPinId);
-			Q_UNUSED(pChat);
-			Q_UNUSED(pCertificateDescription);
-			Q_UNUSED(pChannelOutput);
-			Q_UNUSED(pTimeoutSeconds);
-			return ReturnCode::COMMAND_FAILED;
-		}
-
-
-		/*!
-		 * Not supported, returns ReturnCode::COMMAND_FAILED
-		 */
-		ReturnCode setEidPin(unsigned int pTimeoutSeconds) override
-		{
-			Q_UNUSED(pTimeoutSeconds);
-			return ReturnCode::COMMAND_FAILED;
-		}
-
-
+		CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
 };
 
 

@@ -44,7 +44,7 @@ Auf diese Nutzungsbedingungen ist ausschließlich deutsches Recht unter Ausschlu
 Anhang
 
 Eingearbeitete Open Source-Komponenten
-Qt, OpenSSL, http_parser, Qhttpserver und Fervor.
+Qt, OpenSSL und http_parser.
 
 
 
@@ -466,23 +466,13 @@ Die verwendeten OpenSource-Bibliotheken unterliegen den folgenden Nutzungsbeding
 
 Qt
   Lizenz: LGPL v3
-  Version: 5.7.0
+  Version: 5.8.0
   Adresse: https://www.qt.io/
 
 http_parser
   Lizenz: MIT
   Version: 2.7.1
   Adresse: https://github.com/nodejs/http-parser/
-
-qhttpserver
-  Lizenz: MIT
-  Version: 0.1.0
-  Adresse: https://github.com/nikhilm/qhttpserver/
-
-fervor
-  Lizenz: MIT
-  Version: 9980f27
-  Adresse: https://github.com/pypt/fervor/
 
 
 Die Lizenztexte lauten in ihrer originalen Fassung wie folgt:
@@ -694,41 +684,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
-
-
-
-
-
-
-Copyright (c) 2012 Linas Valiukas and others.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
-
-
-
-Copyright (C) 2011-2014 Nikhil Marathe <nsm.nikhil@gmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-IN THE SOFTWARE. 

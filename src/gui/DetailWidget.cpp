@@ -46,7 +46,11 @@ void DetailWidget::paintEvent(QPaintEvent*)
 	static const int SCROLLAREA_PREFERRED_WIDTH = 504;
 	// See comment to accepted answer at
 	// http://stackoverflow.com/questions/16515646/how-to-get-scroll-bar-real-width-in-qt
+#ifdef Q_OS_WIN
+	static const int SCROLLBAR_EXTRA_SPACE = 40;
+#else
 	static const int SCROLLBAR_EXTRA_SPACE = 3;
+#endif
 
 	const int scrollbarWidth = qApp->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + SCROLLBAR_EXTRA_SPACE;
 	const int contentMaxWidth = SCROLLAREA_PREFERRED_WIDTH - scrollbarWidth;

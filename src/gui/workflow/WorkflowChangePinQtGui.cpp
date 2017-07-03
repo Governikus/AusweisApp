@@ -9,6 +9,13 @@
 #include "AppQtMainWidget.h"
 #include "PinSettingsWidget.h"
 #include "generic/GuiUtils.h"
+#include "states/StateChangePin.h"
+#include "states/StateCleanUpReaderManager.h"
+#include "states/StateEstablishPaceCan.h"
+#include "states/StateEstablishPacePin.h"
+#include "states/StateEstablishPacePuk.h"
+#include "states/StateSelectReaderType.h"
+#include "states/StateUpdateRetryCounter.h"
 #include "step/StepChooseCardGui.h"
 #include "step/StepErrorGui.h"
 
@@ -53,9 +60,9 @@ bool WorkflowChangePinQtGui::verifyAbortWorkflow()
 
 void WorkflowChangePinQtGui::onStateChanged(const QString& pNextState)
 {
-	if (!mContext->getResult().isOk() && !mContext->isErrorReportedToUser())
+	if (mContext->getStatus().isError() && !mContext->isErrorReportedToUser())
 	{
-		if (mContext->getResult().getMinor() != Result::Minor::SAL_Cancellation_by_User)
+		if (!mContext->getStatus().isCancellationByUser())
 		{
 			activateStepUi(mErrorGui);
 			mErrorGui->reportError();
@@ -66,7 +73,7 @@ void WorkflowChangePinQtGui::onStateChanged(const QString& pNextState)
 	if (mRetryCounterUpdated)
 	{
 		mRetryCounterUpdated = false;
-		if (mContext->getLastPaceResult() != ReturnCode::OK)
+		if (mContext->getLastPaceResult() != CardReturnCode::OK)
 		{
 			auto newRetryCounter = mContext->getCardConnection()->getReaderInfo().getRetryCounter();
 			GuiUtils::showPinCanPukErrorDialog(mContext->getLastPaceResult(), newRetryCounter, mPinSettingsWidget);
@@ -80,31 +87,31 @@ void WorkflowChangePinQtGui::onStateChanged(const QString& pNextState)
 		}
 	}
 
-	if (pNextState == QLatin1String("StateSelectReaderType"))
+	if (AbstractState::isState<StateSelectReaderType>(pNextState))
 	{
 		mContext->setReaderType(ReaderManagerPlugInType::PCSC);
 	}
-	else if (pNextState == QLatin1String("StateUpdateRetryCounter"))
+	else if (AbstractState::isState<StateUpdateRetryCounter>(pNextState))
 	{
 		mRetryCounterUpdated = true;
 	}
-	else if (pNextState == QLatin1String("StateEstablishPacePin"))
+	else if (AbstractState::isState<StateEstablishPacePin>(pNextState))
 	{
 		mContext->setPin(mPinSettingsWidget->getPin());
 	}
-	else if (pNextState == QLatin1String("StateEstablishPaceCan"))
+	else if (AbstractState::isState<StateEstablishPaceCan>(pNextState))
 	{
 		mContext->setCan(mPinSettingsWidget->getCan());
 	}
-	else if (pNextState == QLatin1String("StateEstablishPacePuk"))
+	else if (AbstractState::isState<StateEstablishPacePuk>(pNextState))
 	{
 		mContext->setPuk(mPinSettingsWidget->getPuk());
 	}
-	else if (pNextState == QLatin1String("StateChangePin"))
+	else if (AbstractState::isState<StateChangePin>(pNextState))
 	{
 		mContext->setNewPin(mPinSettingsWidget->getNewPin());
 	}
-	else if (pNextState == QLatin1String("StateCleanUpReaderManager") && mContext->getResult().isOk())
+	else if (AbstractState::isState<StateCleanUpReaderManager>(pNextState) && mContext->getStatus().isNoError())
 	{
 		bool pinBlocked = (mContext->getCardConnection()->getReaderInfo().getRetryCounter() == 0);
 		mPinSettingsWidget->setMode(pinBlocked ? PinSettingsWidget::Mode::AfterPinUnblock : PinSettingsWidget::Mode::AfterPinChange);

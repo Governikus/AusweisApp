@@ -48,7 +48,7 @@ MsgHandlerAuth::MsgHandlerAuth(const QSharedPointer<AuthContext>& pContext)
 {
 	Q_ASSERT(pContext);
 
-	mJsonObject["result"] = pContext->getResult().toJson();
+	mJsonObject["result"] = Result(pContext->getStatus()).toJson();
 
 	QString url;
 	if (pContext->getRefreshUrl().isEmpty())
@@ -71,7 +71,7 @@ MsgHandlerAuth::MsgHandlerAuth(const QSharedPointer<AuthContext>& pContext)
 QUrl MsgHandlerAuth::createUrl(const QString& pUrl)
 {
 	const QUrl parsedUrl(pUrl);
-	if (parsedUrl.isValid() && parsedUrl.scheme() == QLatin1String("https") && !parsedUrl.host().isEmpty())
+	if (parsedUrl.isValid() && !parsedUrl.host().isEmpty())
 	{
 		QUrlQuery query;
 		query.addQueryItem(QStringLiteral("tcTokenURL"), QString::fromLatin1(QUrl::toPercentEncoding(pUrl)));

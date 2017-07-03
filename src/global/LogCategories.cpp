@@ -34,6 +34,11 @@ Q_LOGGING_CATEGORY(card_pcsc, "card_pcsc")
 Q_LOGGING_CATEGORY(card_nfc, "card_nfc")
 
 /*!
+ * Logging category for all remote card relevant stuff
+ */
+Q_LOGGING_CATEGORY(card_remote, "card_remote")
+
+/*!
  * Logging category for card drivers
  */
 Q_LOGGING_CATEGORY(card_drivers, "card_drivers")

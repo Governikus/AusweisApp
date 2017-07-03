@@ -19,18 +19,12 @@ BluetoothMessageStatusInd::~BluetoothMessageStatusInd()
 }
 
 
-BluetoothMessageParameterStatusChange::Ptr BluetoothMessageStatusInd::getParamStatusChange() const
-{
-	return getParameter<BluetoothMessageParameterStatusChange>();
-}
-
-
 BluetoothStatusChange BluetoothMessageStatusInd::getStatusChange() const
 {
-	auto ptr = getParamStatusChange();
-	if (ptr)
+	const auto& param = getParameter(BluetoothParamId::StatusChange);
+	if (param)
 	{
-		return ptr->getStatusChange();
+		return param.staticCast<const BluetoothMessageParameterStatusChange>()->getStatusChange();
 	}
 
 	Q_ASSERT(false); // check for isValid before you call this

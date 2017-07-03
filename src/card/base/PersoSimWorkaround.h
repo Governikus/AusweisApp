@@ -46,7 +46,7 @@ class PersoSimWorkaround
 		 *
 		 * As soon as PersoSim is fixed in that point, we will remove the workaround.
 		 */
-		static ReturnCode parsingEstablishPACEChannelOutput(const QByteArray& pControlOutput, PACE_PIN_ID pPinId)
+		static CardReturnCode parsingEstablishPACEChannelOutput(const QByteArray& pControlOutput, PACE_PIN_ID pPinId)
 		{
 			quint32 paceReturnCode;
 			QDataStream(pControlOutput.mid(0, 4)) >> paceReturnCode;

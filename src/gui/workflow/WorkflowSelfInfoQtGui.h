@@ -14,18 +14,13 @@
 namespace governikus
 {
 
-class AppQtMainWidget;
 class AuthenticateStepsWidget;
-class StepGui;
-class WorkflowQtWidget;
 class StepAdviseUserToRemoveCardGui;
-class StepChooseCardGui;
-class StepChooseDeviceGui;
+class StepShowSelfAuthenticationDataGui;
 class StepAuthenticationEac1Gui;
+class StepChooseCardGui;
 class StepErrorGui;
 class StepProcessingGui;
-class StepShowSelfAuthenticationDataGui;
-class StepTransportPinReminderGui;
 
 class WorkflowSelfInfoQtGui
 	: public GenericWorkflowGui<SelfAuthenticationContext>
@@ -33,19 +28,18 @@ class WorkflowSelfInfoQtGui
 	Q_OBJECT
 
 	private:
-		bool mRetryCounterUpdated;
+		bool mCanEntered;
 		AuthenticateStepsWidget* mAuthenticateStepsWidget;
-		QSharedPointer<StepAdviseUserToRemoveCardGui> mStepAdviseUserToRemoveCardGui;
-		QSharedPointer<StepChooseCardGui> mStepChooseCardGui;
-		QSharedPointer<StepAuthenticationEac1Gui> mStepAuthenticationEac1Gui;
-		QSharedPointer<StepErrorGui> mStepErrorGui;
-		QSharedPointer<StepProcessingGui> mStepProcessingGui;
-		QSharedPointer<StepShowSelfAuthenticationDataGui> mStepShowSelfAuthenticationDataGui;
-
-		bool showPinBlockageDialog();
+		QSharedPointer<StepAdviseUserToRemoveCardGui> mAdviseUserToRemoveCardGui;
+		QSharedPointer<StepAuthenticationEac1Gui> mDidAuthenticateGui;
+		QSharedPointer<StepChooseCardGui> mChooseCardGui;
+		QSharedPointer<StepErrorGui> mErrorGui;
+		QSharedPointer<StepProcessingGui> mProcessingGui;
+		QSharedPointer<StepShowSelfAuthenticationDataGui> mShowSelfAuthenticationDataGui;
 
 	private Q_SLOTS:
 		void onForwardStep();
+		void onCurrentStateChanged(const QString& pNewState);
 
 	public:
 		WorkflowSelfInfoQtGui(const QSharedPointer<SelfAuthenticationContext>& pContext, AppQtMainWidget* const pParentWidget);
@@ -53,13 +47,7 @@ class WorkflowSelfInfoQtGui
 
 		virtual void activate() override;
 		virtual void deactivate() override;
-
 		virtual bool verifyAbortWorkflow() override;
-
-		const QSharedPointer<SelfAuthenticationContext>& getContext();
-
-	public Q_SLOTS:
-		void onCurrentStateChanged(const QString& pNewState);
 };
 
 } /* namespace governikus */

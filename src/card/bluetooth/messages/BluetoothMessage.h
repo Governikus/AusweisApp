@@ -9,8 +9,11 @@
 #pragma once
 
 #include "parameter/BluetoothMessageParameter.h"
+
 #include <QSharedPointer>
 #include <QVector>
+
+class test_BluetoothMessageParser;
 
 namespace governikus
 {
@@ -21,25 +24,12 @@ class BluetoothMessage
 		typedef QSharedPointer<const BluetoothMessage> Ptr;
 
 	private:
-		typedef QVector<BluetoothMessageParameter::Ptr> ParameterList;
-
+		friend class::test_BluetoothMessageParser;
 		BluetoothMsgId mMsgId;
-		ParameterList mMessageParameter;
+		QMap<BluetoothParamId, BluetoothMessageParameter::Ptr> mMessageParameter;
 
 	protected:
-		template<typename T> QSharedPointer<const T> getParameter() const
-		{
-			for (const auto& param : getParameterList())
-			{
-				const auto t = param.dynamicCast<const T>();
-				if (t)
-				{
-					return t;
-				}
-			}
-			return QSharedPointer<const T>();
-		}
-
+		BluetoothMessageParameter::Ptr getParameter(BluetoothParamId pId) const;
 
 	public:
 		BluetoothMessage(BluetoothMsgId pMsgId);
@@ -52,17 +42,11 @@ class BluetoothMessage
 		}
 
 
-		const ParameterList& getParameterList() const;
 		BluetoothMsgId getBluetoothMsgId() const;
 		QByteArray toData() const;
 		QString toString() const;
 
-		template<typename T> const T* get() const
-		{
-			return static_cast<const T*>(this);
-		}
-
-
+		static void registerMetaTypes();
 };
 
 } /* namespace governikus */

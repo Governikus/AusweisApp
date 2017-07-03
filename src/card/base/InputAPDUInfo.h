@@ -42,7 +42,7 @@ class InputAPDUInfo
 
 		void addAcceptableStatusCode(const QByteArray& pStatusCode)
 		{
-			mAcceptableStatusCodes.append(pStatusCode);
+			mAcceptableStatusCodes += pStatusCode;
 		}
 
 

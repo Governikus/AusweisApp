@@ -28,8 +28,12 @@ void UIPlugIn::onShowUi(UiModule pModule)
 }
 
 
+#ifndef QT_NO_NETWORKPROXY
 void UIPlugIn::onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator)
 {
 	Q_UNUSED(pProxy)
 	Q_UNUSED(pAuthenticator)
 }
+
+
+#endif

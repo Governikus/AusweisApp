@@ -1,6 +1,8 @@
 import QtQuick 2.5
 
+import ".."
 import "../global"
+
 
 Column{
 	spacing: Utils.dp(30)
@@ -8,13 +10,13 @@ Column{
 	Column {
 		width: parent.width
 		ProviderInfoSection {
-			imageSource: "qrc:///images/iOS/ProviderInformation.png"
+			imageSource: "qrc:///images/provider/information.svg"
 			title: qsTr("Service provider")
 			name: certificateDescriptionModel.subjectName
 			SeparatorLine {}
 		}
 		ProviderInfoSection {
-			imageSource: "qrc:///images/iOS/ProviderPurpose.png"
+			imageSource: "qrc:///images/provider/purpose.svg"
 			title: qsTr("Purpose for reading out requested data")
 			name: certificateDescriptionModel.purpose
 			showForwardAction: false
@@ -30,7 +32,7 @@ Column{
 			}
 			else if (applicationModel.currentWorkflow === "authentication") {
 				chatModel.transferAccessRights()
-				authModel.continueWorkflow()
+				numberModel.continueWorkflow()
 			}
 		}
 	}

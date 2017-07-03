@@ -1,20 +1,18 @@
 /*!
- * DriverService.cpp
- *
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
-
 #include "DriverService.h"
 
+#include "AppSettings.h"
 #include "DriverParser.h"
+#include "DriverSettings.h"
+#include "SingletonHelper.h"
 #include "UpdateSettingsBackend.h"
 
-#include "AppSettings.h"
-
-#include <QMutexLocker>
-
 using namespace governikus;
+
+defineSingleton(DriverService)
 
 namespace
 {
@@ -41,11 +39,8 @@ class UpdateDriverSettingsBackend
 }
 
 
-DriverService* DriverService::mSharedInstance = nullptr;
-
-
-DriverService::DriverService(DriverSettings& pSettings)
-	: UpdateService(QSharedPointer<UpdateBackend>(new UpdateDriverSettingsBackend(pSettings)),
+DriverService::DriverService()
+	: UpdateService(QSharedPointer<UpdateBackend>(new UpdateDriverSettingsBackend(AppSettings::getInstance().getDriverSettings())),
 			QStringLiteral("driver configuration"))
 {
 }
@@ -56,17 +51,7 @@ DriverService::~DriverService()
 }
 
 
-DriverService* DriverService::getSharedInstance()
+DriverService& DriverService::getInstance()
 {
-	static QMutex mutex;
-	if (!mSharedInstance)
-	{
-		QMutexLocker locker(&mutex);
-		if (!mSharedInstance)
-		{
-			mSharedInstance = new DriverService(AppSettings::getInstance().getDriverSettings());
-		}
-	}
-
-	return mSharedInstance;
+	return *Instance;
 }

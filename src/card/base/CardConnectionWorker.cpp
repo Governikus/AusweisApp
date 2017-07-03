@@ -65,21 +65,21 @@ void CardConnectionWorker::onReaderInfoChanged(const QString& pReaderName)
 }
 
 
-ReturnCode CardConnectionWorker::transmit(const CommandApdu& pCommandApdu, ResponseApdu& pResponseApdu)
+CardReturnCode CardConnectionWorker::transmit(const CommandApdu& pCommandApdu, ResponseApdu& pResponseApdu)
 {
 	if (!hasCard())
 	{
-		return ReturnCode::NO_CARD;
+		return CardReturnCode::CARD_NOT_FOUND;
 	}
 
 	if (mSecureMessaging)
 	{
 		CommandApdu securedCommandApdu = mSecureMessaging->encrypt(pCommandApdu);
 		ResponseApdu securedResponseApdu;
-		ReturnCode returnCode = mReader->getCard()->transmit(securedCommandApdu, securedResponseApdu);
+		CardReturnCode returnCode = mReader->getCard()->transmit(securedCommandApdu, securedResponseApdu);
 		if (!mSecureMessaging->decrypt(securedResponseApdu, pResponseApdu))
 		{
-			return ReturnCode::COMMAND_FAILED;
+			return CardReturnCode::COMMAND_FAILED;
 		}
 		return returnCode;
 	}
@@ -87,35 +87,35 @@ ReturnCode CardConnectionWorker::transmit(const CommandApdu& pCommandApdu, Respo
 }
 
 
-ReturnCode CardConnectionWorker::readFile(const FileRef& pFileRef, QByteArray& pFileContent)
+CardReturnCode CardConnectionWorker::readFile(const FileRef& pFileRef, QByteArray& pFileContent)
 {
 	if (!hasCard())
 	{
-		return ReturnCode::NO_CARD;
+		return CardReturnCode::CARD_NOT_FOUND;
 	}
 
 	ResponseApdu selectRes;
 	CommandApdu select = SelectBuilder(pFileRef).build();
-	ReturnCode returnCode = transmit(select, selectRes);
-	if (returnCode != ReturnCode::OK || selectRes.getReturnCode() != StatusCode::SUCCESS)
+	CardReturnCode returnCode = transmit(select, selectRes);
+	if (returnCode != CardReturnCode::OK || selectRes.getReturnCode() != StatusCode::SUCCESS)
 	{
-		return ReturnCode::COMMAND_FAILED;
+		return CardReturnCode::COMMAND_FAILED;
 	}
 
 	while (true)
 	{
 		ResponseApdu res;
-		ReadBinaryBuilder rb(pFileContent.count(), 0xff);
+		ReadBinaryBuilder rb(static_cast<uint>(pFileContent.count()), 0xff);
 		returnCode = transmit(rb.build(), res);
-		if (returnCode != ReturnCode::OK)
+		if (returnCode != CardReturnCode::OK)
 		{
 			break;
 		}
 
-		pFileContent.append(res.getData());
+		pFileContent += res.getData();
 		if (res.getData().size() != 0xff && res.getReturnCode() == StatusCode::END_OF_FILE)
 		{
-			return ReturnCode::OK;
+			return CardReturnCode::OK;
 		}
 		if (res.getReturnCode() != StatusCode::SUCCESS)
 		{
@@ -123,7 +123,7 @@ ReturnCode CardConnectionWorker::readFile(const FileRef& pFileRef, QByteArray& p
 		}
 	}
 
-	return ReturnCode::COMMAND_FAILED;
+	return CardReturnCode::COMMAND_FAILED;
 }
 
 
@@ -139,7 +139,7 @@ bool CardConnectionWorker::stopSecureMessaging()
 }
 
 
-ReturnCode CardConnectionWorker::establishPaceChannel(PACE_PIN_ID pPinId,
+CardReturnCode CardConnectionWorker::establishPaceChannel(PACE_PIN_ID pPinId,
 		const QString& pPinValue,
 		EstablishPACEChannelOutput& pChannelOutput)
 {
@@ -147,7 +147,7 @@ ReturnCode CardConnectionWorker::establishPaceChannel(PACE_PIN_ID pPinId,
 }
 
 
-ReturnCode CardConnectionWorker::establishPaceChannel(PACE_PIN_ID pPinId,
+CardReturnCode CardConnectionWorker::establishPaceChannel(PACE_PIN_ID pPinId,
 		const QString& pPinValue,
 		const QByteArray& pChat,
 		const QByteArray& pCertificateDescription,
@@ -155,9 +155,9 @@ ReturnCode CardConnectionWorker::establishPaceChannel(PACE_PIN_ID pPinId,
 {
 	if (!hasCard())
 	{
-		return ReturnCode::NO_CARD;
+		return CardReturnCode::CARD_NOT_FOUND;
 	}
-	ReturnCode returnCode;
+	CardReturnCode returnCode;
 
 	qCInfo(support) << "Starting PACE for" << pPinId;
 	if (mReader->getReaderInfo().isBasicReader())
@@ -167,13 +167,13 @@ ReturnCode CardConnectionWorker::establishPaceChannel(PACE_PIN_ID pPinId,
 		paceHandler.setChat(pChat);
 		returnCode = paceHandler.establishPaceChannel(pPinId, pPinValue);
 
-		if (returnCode == ReturnCode::OK)
+		if (returnCode == CardReturnCode::OK)
 		{
 			pChannelOutput.setCarCurr(paceHandler.getCarCurr());
 			pChannelOutput.setCarPrev(paceHandler.getCarPrev());
 			pChannelOutput.setIdIcc(paceHandler.getIdIcc());
 			pChannelOutput.setEfCardAccess(getEfCardAccess()->getContentBytes());
-			pChannelOutput.setPaceReturnCode(ReturnCode::OK);
+			pChannelOutput.setPaceReturnCode(CardReturnCode::OK);
 			mSecureMessaging.reset(new SecureMessaging(paceHandler.getPaceProtocol(), paceHandler.getEncryptionKey(), paceHandler.getMacKey()));
 		}
 	}
@@ -189,11 +189,11 @@ ReturnCode CardConnectionWorker::establishPaceChannel(PACE_PIN_ID pPinId,
 }
 
 
-ReturnCode CardConnectionWorker::destroyPaceChannel()
+CardReturnCode CardConnectionWorker::destroyPaceChannel()
 {
 	if (!hasCard())
 	{
-		return ReturnCode::NO_CARD;
+		return CardReturnCode::CARD_NOT_FOUND;
 	}
 
 	qCInfo(support) << "Destroying PACE channel";
@@ -211,11 +211,11 @@ ReturnCode CardConnectionWorker::destroyPaceChannel()
 }
 
 
-ReturnCode CardConnectionWorker::setEidPin(const QString& pNewPin, unsigned int pTimeoutSeconds)
+CardReturnCode CardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds)
 {
 	if (!hasCard())
 	{
-		return ReturnCode::NO_CARD;
+		return CardReturnCode::CARD_NOT_FOUND;
 	}
 
 	if (mReader->getReaderInfo().isBasicReader())
@@ -223,12 +223,12 @@ ReturnCode CardConnectionWorker::setEidPin(const QString& pNewPin, unsigned int 
 		Q_ASSERT(!pNewPin.isEmpty());
 		ResetRetryCounterBuilder commandBuilder(pNewPin.toUtf8());
 		ResponseApdu response;
-		if (transmit(commandBuilder.build(), response) != ReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
+		if (transmit(commandBuilder.build(), response) != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 		{
 			qCWarning(card) << "Modify PIN failed";
-			return ReturnCode::COMMAND_FAILED;
+			return CardReturnCode::COMMAND_FAILED;
 		}
-		return ReturnCode::OK;
+		return CardReturnCode::OK;
 	}
 	else
 	{
@@ -238,11 +238,11 @@ ReturnCode CardConnectionWorker::setEidPin(const QString& pNewPin, unsigned int 
 }
 
 
-ReturnCode CardConnectionWorker::updateRetryCounter()
+CardReturnCode CardConnectionWorker::updateRetryCounter()
 {
 	if (!hasCard())
 	{
-		return ReturnCode::NO_CARD;
+		return CardReturnCode::CARD_NOT_FOUND;
 	}
 	return mReader->updateRetryCounter(sharedFromThis());
 }

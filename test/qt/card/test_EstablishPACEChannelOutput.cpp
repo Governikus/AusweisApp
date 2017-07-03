@@ -52,7 +52,7 @@ class test_EstablishPACEChannelOutput
 
 			EstablishPACEChannelOutput channelOutput;
 			channelOutput.parseFromCcid(bytes, PACE_PIN_ID::PACE_PIN);
-			QCOMPARE(ReturnCode::OK, channelOutput.getPaceReturnCode());
+			QCOMPARE(CardReturnCode::OK, channelOutput.getPaceReturnCode());
 			QCOMPARE(channelOutput.getCARcurr(), QByteArray("DECVCAeID00103"));
 			QCOMPARE(channelOutput.getCARprev(), QByteArray("DECVCAeID00102"));
 			QVERIFY(!channelOutput.getEfCardAccess().isEmpty());
@@ -66,7 +66,7 @@ class test_EstablishPACEChannelOutput
 
 			EstablishPACEChannelOutput channelOutput;
 			channelOutput.parseFromCcid(bytes, PACE_PIN_ID::PACE_PIN);
-			QCOMPARE(ReturnCode::OK, channelOutput.getPaceReturnCode());
+			QCOMPARE(CardReturnCode::OK, channelOutput.getPaceReturnCode());
 			QVERIFY(channelOutput.getCARcurr().isEmpty());
 			QVERIFY(channelOutput.getCARprev().isEmpty());
 			QVERIFY(!channelOutput.getEfCardAccess().isEmpty());
@@ -88,7 +88,7 @@ class test_EstablishPACEChannelOutput
 
 			EstablishPACEChannelOutput channelOutput;
 			channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes), PACE_PIN_ID::PACE_PIN);
-			QCOMPARE(ReturnCode::UNKNOWN, channelOutput.getPaceReturnCode());
+			QCOMPARE(CardReturnCode::UNKNOWN, channelOutput.getPaceReturnCode());
 			QCOMPARE(channelOutput.getCARcurr(), QByteArray());
 			QCOMPARE(channelOutput.getCARprev(), QByteArray());
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray());
@@ -110,7 +110,7 @@ class test_EstablishPACEChannelOutput
 
 			EstablishPACEChannelOutput channelOutput;
 			channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes), PACE_PIN_ID::PACE_PIN);
-			QCOMPARE(ReturnCode::CANCELLATION_BY_USER, channelOutput.getPaceReturnCode());
+			QCOMPARE(CardReturnCode::CANCELLATION_BY_USER, channelOutput.getPaceReturnCode());
 			QCOMPARE(channelOutput.getCARcurr(), QByteArray());
 			QCOMPARE(channelOutput.getCARprev(), QByteArray());
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex("3100"));
@@ -132,7 +132,7 @@ class test_EstablishPACEChannelOutput
 
 			EstablishPACEChannelOutput channelOutput;
 			channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes), PACE_PIN_ID::PACE_PIN);
-			QCOMPARE(ReturnCode::CANCELLATION_BY_USER, channelOutput.getPaceReturnCode());
+			QCOMPARE(CardReturnCode::CANCELLATION_BY_USER, channelOutput.getPaceReturnCode());
 			QCOMPARE(channelOutput.getCARcurr(), QByteArray("DECVCAeID00103"));
 			QCOMPARE(channelOutput.getCARprev(), QByteArray("DECVCAeID00102"));
 			QCOMPARE(channelOutput.getEfCardAccess(), QByteArray::fromHex("3100"));
@@ -158,7 +158,7 @@ class test_EstablishPACEChannelOutput
 					);
 			EstablishPACEChannelOutput channelOutput;
 			channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes), PACE_PIN_ID::PACE_PIN);
-			QCOMPARE(ReturnCode::PIN_INVALID, channelOutput.getPaceReturnCode());
+			QCOMPARE(CardReturnCode::INVALID_PIN, channelOutput.getPaceReturnCode());
 		}
 
 

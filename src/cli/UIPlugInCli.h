@@ -28,6 +28,8 @@ class UIPlugInCli
 	typedef void (UIPlugInCli::* MemberFunc)();
 
 	private:
+		QString mOldPin;
+		QString mNewPin;
 		ConsoleReader mReader;
 		QMap<QString, std::function<void()> > mAvailableCommands;
 		QSharedPointer<WorkflowContext> mContext;
@@ -39,6 +41,7 @@ class UIPlugInCli
 		}
 
 
+		void handleCancelWorkflow();
 		void handleChangePin();
 		void handleEnterPin();
 		void handleHelp();
@@ -60,6 +63,10 @@ class UIPlugInCli
 		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
 		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
 		void onCurrentStateChanged(const QString& pState);
+
+		void handleOldPinEntered(const QString& pLine);
+		void handleNewPinEntered(const QString& pLine);
+		void handleNewPinEnteredAgain(const QString& pLine);
 };
 
 } /* namespace governikus */

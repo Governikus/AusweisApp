@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Card.h"
+#include "DeviceError.h"
 #include "ReaderInfo.h"
 
 #include <QObject>
@@ -44,7 +45,7 @@ class Reader
 
 		void updateRetryCounterIfNecessary();
 
-		ReturnCode getRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, int& pRetryCounter, bool& pPinDeactivated);
+		CardReturnCode getRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, int& pRetryCounter, bool& pPinDeactivated);
 
 		void fireUpdateSignal(CardEvent pCardEvent);
 
@@ -79,13 +80,14 @@ class Reader
 		 */
 		QSharedPointer<CardConnectionWorker> createCardConnectionWorker();
 
-		ReturnCode updateRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
+		CardReturnCode updateRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
 	Q_SIGNALS:
 		void fireCardInserted(const QString& pReaderName);
 		void fireCardRemoved(const QString& pReaderName);
 		void fireCardRetryCounterChanged(const QString& pReaderName);
-		void fireReaderPropertiesUpdated();
+		void fireReaderPropertiesUpdated(const QString& pReaderName);
+		void fireReaderDeviceError(DeviceError pDeviceError);
 
 	public Q_SLOTS:
 		void onRetryCounterPotentiallyChanged();
@@ -95,9 +97,12 @@ class Reader
 
 
 class ConnectableReader
+	: public Reader
 {
+	Q_OBJECT
+
 	public:
-		ConnectableReader();
+		using Reader::Reader;
 		virtual ~ConnectableReader();
 
 		virtual void connectReader() = 0;

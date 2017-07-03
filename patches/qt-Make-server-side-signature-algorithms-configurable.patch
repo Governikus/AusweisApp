@@ -11,19 +11,20 @@ server side.
 Change-Id: Ia178efd4778b91863fcc919bf50219115b300d77
 ---
  src/network/ssl/qsslconfiguration.cpp              | 42 +++++++++++++
- src/network/ssl/qsslconfiguration.h                |  6 ++
+ src/network/ssl/qsslconfiguration.h                |  8 ++-
  src/network/ssl/qsslconfiguration_p.h              |  5 ++
  src/network/ssl/qsslcontext_openssl.cpp            | 45 ++++++++++++++
+ src/network/ssl/qsslcontext_openssl_p.h            |  1 +
  src/network/ssl/qsslsocket.cpp                     |  2 +
  src/network/ssl/qsslsocket_openssl_symbols_p.h     |  5 ++
- .../auto/network/ssl/qsslsocket/tst_qsslsocket.cpp | 71 ++++++++++++++++++++++
- 7 files changed, 176 insertions(+)
+ .../auto/network/ssl/qsslsocket/tst_qsslsocket.cpp | 70 ++++++++++++++++++++++
+ 8 files changed, 177 insertions(+), 1 deletion(-)
 
 diff --git x/qtbase/src/network/ssl/qsslconfiguration.cpp y/qtbase/src/network/ssl/qsslconfiguration.cpp
-index c8040de..6bfca86 100644
+index 75a880f..37f99fe 100644
 --- x/qtbase/src/network/ssl/qsslconfiguration.cpp
 +++ y/qtbase/src/network/ssl/qsslconfiguration.cpp
-@@ -217,6 +217,7 @@ bool QSslConfiguration::operator==(const QSslConfiguration &other) const
+@@ -221,6 +221,7 @@ bool QSslConfiguration::operator==(const QSslConfiguration &other) const
          d->peerVerifyMode == other.d->peerVerifyMode &&
          d->peerVerifyDepth == other.d->peerVerifyDepth &&
          d->allowRootCertOnDemandLoading == other.d->allowRootCertOnDemandLoading &&
@@ -31,7 +32,7 @@ index c8040de..6bfca86 100644
          d->sslOptions == other.d->sslOptions &&
          d->sslSession == other.d->sslSession &&
          d->sslSessionTicketLifeTimeHint == other.d->sslSessionTicketLifeTimeHint &&
-@@ -258,6 +259,7 @@ bool QSslConfiguration::isNull() const
+@@ -263,6 +264,7 @@ bool QSslConfiguration::isNull() const
              d->privateKey.isNull() &&
              d->peerCertificate.isNull() &&
              d->peerCertificateChain.count() == 0 &&
@@ -39,7 +40,7 @@ index c8040de..6bfca86 100644
              d->sslOptions == QSslConfigurationPrivate::defaultSslOptions &&
              d->sslSession.isNull() &&
              d->sslSessionTicketLifeTimeHint == -1 &&
-@@ -811,6 +813,46 @@ QVector<QSslEllipticCurve> QSslConfiguration::supportedEllipticCurves()
+@@ -870,6 +872,46 @@ void QSslConfiguration::setDiffieHellmanParameters(const QSslDiffieHellmanParame
  }
  
  /*!
@@ -87,23 +88,27 @@ index c8040de..6bfca86 100644
  
    This function returns the protocol negotiated with the server
 diff --git x/qtbase/src/network/ssl/qsslconfiguration.h y/qtbase/src/network/ssl/qsslconfiguration.h
-index f0754d7..cfa1e81 100644
+index 1c57beb..4d3e512 100644
 --- x/qtbase/src/network/ssl/qsslconfiguration.h
 +++ y/qtbase/src/network/ssl/qsslconfiguration.h
-@@ -56,7 +56,10 @@
+@@ -56,10 +56,13 @@
  #ifndef QSSLCONFIGURATION_H
  #define QSSLCONFIGURATION_H
  
+-#include <QtNetwork/qtnetworkglobal.h>
 +#include <QtCore/qcryptographichash.h>
 +#include <QtCore/qpair.h>
  #include <QtCore/qshareddata.h>
 +#include <QtCore/qvector.h>
  #include <QtNetwork/qsslsocket.h>
  #include <QtNetwork/qssl.h>
++#include <QtNetwork/qtnetworkglobal.h>
  
-@@ -141,6 +144,9 @@ public:
-     void setEllipticCurves(const QVector<QSslEllipticCurve> &curves);
-     static QVector<QSslEllipticCurve> supportedEllipticCurves();
+ #ifndef QT_NO_SSL
+ 
+@@ -149,6 +152,9 @@ public:
+     QSslDiffieHellmanParameters diffieHellmanParameters() const;
+     void setDiffieHellmanParameters(const QSslDiffieHellmanParameters &dhparams);
  
 +    QVector<QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm> > signatureAndHashAlgorithms() const;
 +    void setSignatureAndHashAlgorithms(const QVector<QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm> > &algorithms);
@@ -112,22 +117,22 @@ index f0754d7..cfa1e81 100644
      static void setDefaultConfiguration(const QSslConfiguration &configuration);
  
 diff --git x/qtbase/src/network/ssl/qsslconfiguration_p.h y/qtbase/src/network/ssl/qsslconfiguration_p.h
-index 364bba9..9553088 100644
+index 6adf2c9..7be2539 100644
 --- x/qtbase/src/network/ssl/qsslconfiguration_p.h
 +++ y/qtbase/src/network/ssl/qsslconfiguration_p.h
-@@ -73,6 +73,9 @@
- #include "qsslcipher.h"
+@@ -75,6 +75,9 @@
  #include "qsslkey.h"
  #include "qsslellipticcurve.h"
+ #include "qssldiffiehellmanparameters.h"
 +#include <QtCore/qcryptographichash.h>
 +#include <QtCore/qpair.h>
 +#include <QtCore/qvector.h>
  
  QT_BEGIN_NAMESPACE
  
-@@ -117,6 +120,8 @@ public:
+@@ -123,6 +126,8 @@ public:
  
-     QVector<QSslEllipticCurve> ellipticCurves;
+     QSslDiffieHellmanParameters dhParams;
  
 +    QVector<QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm> > signatureAndHashAlgorithms;
 +
@@ -135,18 +140,18 @@ index 364bba9..9553088 100644
      int sslSessionTicketLifeTimeHint;
  
 diff --git x/qtbase/src/network/ssl/qsslcontext_openssl.cpp y/qtbase/src/network/ssl/qsslcontext_openssl.cpp
-index f132d02..83f2435 100644
+index c92d8fc..29df53a 100644
 --- x/qtbase/src/network/ssl/qsslcontext_openssl.cpp
 +++ y/qtbase/src/network/ssl/qsslcontext_openssl.cpp
-@@ -41,6 +41,7 @@
- 
+@@ -42,6 +42,7 @@
  
  #include <QtNetwork/qsslsocket.h>
+ #include <QtNetwork/qssldiffiehellmanparameters.h>
 +#include <QtCore/qmetaobject.h>
  #include <QtCore/qmutex.h>
  
  #include "private/qssl_p.h"
-@@ -92,6 +93,11 @@ QSslContext::~QSslContext()
+@@ -78,6 +79,11 @@ QSslContext::~QSslContext()
          q_SSL_SESSION_free(session);
  }
  
@@ -158,7 +163,7 @@ index f132d02..83f2435 100644
  static inline QString msgErrorSettingEllipticCurves(const QString &why)
  {
      return QSslSocket::tr("Error when setting the elliptic curves (%1)").arg(why);
-@@ -367,6 +373,45 @@ init_context:
+@@ -371,6 +377,45 @@ init_context:
              sslContext->errorCode = QSslError::UnspecifiedError;
          }
      }
@@ -204,11 +209,23 @@ index f132d02..83f2435 100644
  }
  
  QSslContext* QSslContext::fromConfiguration(QSslSocket::SslMode mode, const QSslConfiguration &configuration, bool allowRootCertOnDemandLoading)
+diff --git x/qtbase/src/network/ssl/qsslcontext_openssl_p.h y/qtbase/src/network/ssl/qsslcontext_openssl_p.h
+index 06a31af..c8c8e194 100644
+--- x/qtbase/src/network/ssl/qsslcontext_openssl_p.h
++++ y/qtbase/src/network/ssl/qsslcontext_openssl_p.h
+@@ -54,6 +54,7 @@
+ //
+ 
+ #include <QtNetwork/private/qtnetworkglobal_p.h>
++#include <QtCore/qobjectdefs.h>
+ #include <QtCore/qvariant.h>
+ #include <QtNetwork/qsslcertificate.h>
+ #include <QtNetwork/qsslconfiguration.h>
 diff --git x/qtbase/src/network/ssl/qsslsocket.cpp y/qtbase/src/network/ssl/qsslsocket.cpp
-index a5ee9bf..c92645f 100644
+index 29e1f32..8257112 100644
 --- x/qtbase/src/network/ssl/qsslsocket.cpp
 +++ y/qtbase/src/network/ssl/qsslsocket.cpp
-@@ -927,6 +927,7 @@ void QSslSocket::setSslConfiguration(const QSslConfiguration &configuration)
+@@ -922,6 +922,7 @@ void QSslSocket::setSslConfiguration(const QSslConfiguration &configuration)
      d->configuration.peerVerifyDepth = configuration.peerVerifyDepth();
      d->configuration.peerVerifyMode = configuration.peerVerifyMode();
      d->configuration.protocol = configuration.protocol();
@@ -216,7 +233,7 @@ index a5ee9bf..c92645f 100644
      d->configuration.sslOptions = configuration.d->sslOptions;
      d->configuration.sslSession = configuration.sessionTicket();
      d->configuration.sslSessionTicketLifeTimeHint = configuration.sessionTicketLifeTimeHint();
-@@ -2235,6 +2236,7 @@ void QSslConfigurationPrivate::deepCopyDefaultConfiguration(QSslConfigurationPri
+@@ -2230,6 +2231,7 @@ void QSslConfigurationPrivate::deepCopyDefaultConfiguration(QSslConfigurationPri
      ptr->peerVerifyDepth = global->peerVerifyDepth;
      ptr->sslOptions = global->sslOptions;
      ptr->ellipticCurves = global->ellipticCurves;
@@ -225,10 +242,10 @@ index a5ee9bf..c92645f 100644
  
  /*!
 diff --git x/qtbase/src/network/ssl/qsslsocket_openssl_symbols_p.h y/qtbase/src/network/ssl/qsslsocket_openssl_symbols_p.h
-index 36e041b..7bdd719 100644
+index b35a895..d4cd493 100644
 --- x/qtbase/src/network/ssl/qsslsocket_openssl_symbols_p.h
 +++ y/qtbase/src/network/ssl/qsslsocket_openssl_symbols_p.h
-@@ -493,6 +493,11 @@ int q_EC_curve_nist2nid(const char *name);
+@@ -517,6 +517,11 @@ int q_EC_curve_nist2nid(const char *name);
  #define q_SSL_get_server_tmp_key(ssl, key) q_SSL_ctrl((ssl), SSL_CTRL_GET_SERVER_TMP_KEY, 0, (char *)key)
  #endif // OPENSSL_VERSION_NUMBER >= 0x10002000L
  
@@ -241,22 +258,22 @@ index 36e041b..7bdd719 100644
  int q_PKCS12_parse(PKCS12 *p12, const char *pass, EVP_PKEY **pkey, X509 **cert, STACK_OF(X509) **ca);
  PKCS12 *q_d2i_PKCS12_bio(BIO *bio, PKCS12 **pkcs12);
 diff --git x/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp y/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
-index f8c5b8b..a94e385 100644
+index 4eb26d1..79a55cc 100644
 --- x/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
 +++ y/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
-@@ -229,6 +229,8 @@ private slots:
-     void simplePskConnect();
-     void ephemeralServerKey_data();
+@@ -236,6 +236,8 @@ private slots:
      void ephemeralServerKey();
+     void allowedProtocolNegotiation();
+     void pskServer();
 +    void signatureAlgorithm_data();
 +    void signatureAlgorithm();
  #endif
  
-     static void exitLoop()
-@@ -3375,6 +3377,75 @@ void tst_QSslSocket::ephemeralServerKey()
-     QCOMPARE(client->sslConfiguration().ephemeralServerKey().isNull(), emptyKey);
+     void setEmptyDefaultConfiguration(); // this test should be last
+@@ -3744,6 +3746,74 @@ void tst_QSslSocket::pskServer()
+     QCOMPARE(socket.state(), QAbstractSocket::UnconnectedState);
+     QCOMPARE(disconnectedSpy.count(), 1);
  }
- 
 +using SigAlgPair = QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm>;
 +Q_DECLARE_METATYPE(QCryptographicHash::Algorithm);
 +Q_DECLARE_METATYPE(QSsl::KeyAlgorithm);
@@ -325,10 +342,9 @@ index f8c5b8b..a94e385 100644
 +    QCOMPARE(client.state(), state);
 +}
 +
-+
+ 
  #endif // QT_NO_OPENSSL
  
- #endif // QT_NO_SSL
 -- 
-2.10.0
+2.10.2
 

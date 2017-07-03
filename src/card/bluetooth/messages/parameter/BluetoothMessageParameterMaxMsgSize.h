@@ -17,11 +17,11 @@ class BluetoothMessageParameterMaxMsgSize
 	: public BluetoothMessageParameter
 {
 	private:
-		unsigned int mMaxMsgSize;
+		uint mMaxMsgSize;
 
 	public:
 		BluetoothMessageParameterMaxMsgSize(const QByteArray& pValue);
-		BluetoothMessageParameterMaxMsgSize(int pMaxMsgSize);
+		BluetoothMessageParameterMaxMsgSize(uint pMaxMsgSize);
 		virtual ~BluetoothMessageParameterMaxMsgSize();
 
 		unsigned int getMaxMsgSize() const;

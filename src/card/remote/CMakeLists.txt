@@ -1,0 +1,5 @@
+ADD_PLATFORM_LIBRARY(AusweisAppCardRemote)
+
+TARGET_INCLUDE_DIRECTORIES(AusweisAppCardRemote SYSTEM PUBLIC)
+TARGET_LINK_LIBRARIES(AusweisAppCardRemote Qt5::Core Qt5::WebSockets AusweisAppGlobal AusweisAppCard)
+TARGET_COMPILE_DEFINITIONS(AusweisAppCardRemote PRIVATE QT_STATICPLUGIN)

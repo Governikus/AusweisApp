@@ -156,7 +156,7 @@ void EcdsaPublicKey::initEcKey()
 	}
 
 	QSharedPointer<EC_POINT> generator = EcUtil::create(EC_POINT_new(group.data()));
-	if (!EC_POINT_oct2point(group.data(), generator.data(), mBasePoint->data, mBasePoint->length, nullptr))
+	if (!EC_POINT_oct2point(group.data(), generator.data(), mBasePoint->data, static_cast<size_t>(mBasePoint->length), nullptr))
 	{
 		qCCritical(card) << "Cannot convert generator";
 		return;
@@ -195,7 +195,7 @@ void EcdsaPublicKey::initEcKey()
 	}
 
 	QSharedPointer<EC_POINT> publicPoint = EcUtil::create(EC_POINT_new(group.data()));
-	if (!EC_POINT_oct2point(group.data(), publicPoint.data(), mPublicPoint->data, mPublicPoint->length, nullptr))
+	if (!EC_POINT_oct2point(group.data(), publicPoint.data(), mPublicPoint->data, static_cast<size_t>(mPublicPoint->length), nullptr))
 	{
 		qCCritical(card) << "Cannot convert public point";
 		return;

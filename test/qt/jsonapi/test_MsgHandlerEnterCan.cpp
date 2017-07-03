@@ -66,7 +66,7 @@ class test_MsgHandlerEnterCan
 			MessageDispatcher dispatcher;
 			setValidCanState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_CAN\", \"can\": 123456}");
+			QByteArray msg("{\"cmd\": \"SET_CAN\", \"value\": 123456}");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Invalid value\",\"msg\":\"ENTER_CAN\"}"));
 		}
 
@@ -76,23 +76,23 @@ class test_MsgHandlerEnterCan
 			MessageDispatcher dispatcher;
 			setValidCanState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_CAN\", \"can\": \"12345\"}");
+			QByteArray msg("{\"cmd\": \"SET_CAN\", \"value\": \"12345\"}");
 			QByteArray expected("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_CAN\"}");
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_CAN\", \"can\": \"1234567\"}";
+			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"1234567\"}";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_CAN\", \"can\": \"abcdef\"}";
+			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"abcdef\"}";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_CAN\", \"can\": \"\"}";
+			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"\"}";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_CAN\", \"can\": \"123456a\"}";
+			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"123456a\"}";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_CAN\", \"can\": \"12x456\"}";
+			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"12x456\"}";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 		}
 
@@ -102,10 +102,10 @@ class test_MsgHandlerEnterCan
 			MessageDispatcher dispatcher;
 			setValidCanState(dispatcher, QStringLiteral("invalid"));
 
-			QByteArray msg("{\"cmd\": \"SET_CAN\", \"can\": \"12345\"}");
+			QByteArray msg("{\"cmd\": \"SET_CAN\", \"value\": \"12345\"}");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"SET_CAN\",\"msg\":\"BAD_STATE\"}"));
 
-			msg = "{\"cmd\": \"SET_CAN\", \"can\": \"123456\"}";
+			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"123456\"}";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"SET_CAN\",\"msg\":\"BAD_STATE\"}"));
 		}
 
@@ -115,7 +115,7 @@ class test_MsgHandlerEnterCan
 			MessageDispatcher dispatcher;
 			setValidCanState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_CAN\", \"can\": \"123456\"}");
+			QByteArray msg("{\"cmd\": \"SET_CAN\", \"value\": \"123456\"}");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
 		}
 
@@ -131,14 +131,14 @@ class test_MsgHandlerEnterCan
 
 			context->setReaderName("MockReader");
 			QCOMPARE(dispatcher.processStateChange("StateEstablishPaceCan"), QByteArray("{\"msg\":\"ENTER_CAN\"}"));
-			QByteArray msg = "{\"cmd\": \"SET_CAN\", \"can\": \"54321\"}";
+			QByteArray msg = "{\"cmd\": \"SET_CAN\", \"value\": \"54321\"}";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_CAN\"}"));
 
 
 			context->setReaderName("MockReader CARD");
-			QCOMPARE(dispatcher.processStateChange("StateEstablishPaceCan"), QByteArray("{\"msg\":\"ENTER_CAN\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"inserted\":true,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
-			msg = "{\"cmd\": \"SET_CAN\", \"can\": \"54321\"}";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_CAN\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"inserted\":true,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
+			QCOMPARE(dispatcher.processStateChange("StateEstablishPaceCan"), QByteArray("{\"msg\":\"ENTER_CAN\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
+			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"54321\"}";
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_CAN\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
 		}
 
 

@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <QtGlobal>
+
 namespace governikus
 {
 
@@ -21,6 +23,13 @@ class BuildHelper
 		{
 			return mDateTime;
 		}
+
+
+#ifdef Q_OS_ANDROID
+		static int getVersionCode();
+		static int getVersionCode(const QString& pPackageName);
+
+#endif
 
 
 };

@@ -7,7 +7,7 @@
 #pragma once
 
 #include "CardConnectionWorker.h"
-#include "ReturnCode.h"
+#include "CardReturnCode.h"
 
 #include <QSharedPointer>
 
@@ -30,21 +30,23 @@ class BaseCardCommand
 
 	protected:
 		QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
-		ReturnCode mReturnCode;
+		CardReturnCode mReturnCode;
 
 		BaseCardCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
-		ReturnCode checkRetryCounterAndPrepareForPace(const QString& pCan);
+		CardReturnCode checkRetryCounterAndPrepareForPace(const QString& pCan);
 
 		virtual void internalExecute() = 0;
 		virtual ~BaseCardCommand();
 
 	public:
-		ReturnCode getReturnCode() const
+		CardReturnCode getReturnCode() const
 		{
 			return mReturnCode;
 		}
 
+
+		static void registerMetaTypes();
 
 	Q_SIGNALS:
 		void commandDone(QSharedPointer<BaseCardCommand> pCommand);

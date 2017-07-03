@@ -24,7 +24,6 @@ using namespace governikus;
 CardInfo::CardInfo(CardType pCardType, QSharedPointer<const EFCardAccess> pEfCardAccess, int pRetryCounter, bool pPinDeactivated)
 	: mCardType(pCardType)
 	, mEfCardAccess(pEfCardAccess)
-	, mSlotHandle(QString::fromLatin1(QByteArray::number(qrand()).toHex()))
 	, mRetryCounter(pRetryCounter)
 	, mPinDeactivated(pPinDeactivated)
 {
@@ -40,12 +39,6 @@ CardType CardInfo::getCardType() const
 QSharedPointer<const EFCardAccess> CardInfo::getEfCardAccess() const
 {
 	return mEfCardAccess;
-}
-
-
-const QString& CardInfo::getSlotHandle() const
-{
-	return mSlotHandle;
 }
 
 
@@ -103,12 +96,12 @@ bool CardInfoFactory::isGermanEidCard(const QSharedPointer<CardConnectionWorker>
 	// 0. Select the master file
 	CommandApdu command = SelectBuilder(FileRef::masterFile()).build();
 	ResponseApdu response;
-	ReturnCode returnCode = pCardConnectionWorker->transmit(command, response);
-	if (returnCode != ReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
+	CardReturnCode returnCode = pCardConnectionWorker->transmit(command, response);
+	if (returnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "Cannot select MF";
 
-		if (returnCode != ReturnCode::OK)
+		if (returnCode != CardReturnCode::OK)
 		{
 			qCDebug(card) << "CardConnectionWorker return code" << returnCode;
 		}
@@ -124,7 +117,7 @@ bool CardInfoFactory::isGermanEidCard(const QSharedPointer<CardConnectionWorker>
 	// 1. CL=00, INS=A4=SELECT, P1= 02, P2=0C, Lc=02, Data=2F00 (FI of EF.DIR), Le=absent
 	command = SelectBuilder(FileRef::efDir()).build();
 	returnCode = pCardConnectionWorker->transmit(command, response);
-	if (returnCode != ReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
+	if (returnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "Cannot select EF.DIR";
 		return false;
@@ -133,7 +126,7 @@ bool CardInfoFactory::isGermanEidCard(const QSharedPointer<CardConnectionWorker>
 	// 2. CL=00, INS=B0=Read Binary, P1=00, P2=00 (no offset), Lc=00, Le=5A
 	command = CommandApdu(QByteArray::fromHex("00B000005A"));
 	returnCode = pCardConnectionWorker->transmit(command, response);
-	if (returnCode != ReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
+	if (returnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "Cannot read EF.DIR";
 		return false;
@@ -156,7 +149,7 @@ bool CardInfoFactory::isGermanEidCard(const QSharedPointer<CardConnectionWorker>
 QSharedPointer<EFCardAccess> CardInfoFactory::readEfCardAccess(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 {
 	QByteArray efCardAccessBytes;
-	if (pCardConnectionWorker->readFile(FileRef::efCardAccess(), efCardAccessBytes) != ReturnCode::OK)
+	if (pCardConnectionWorker->readFile(FileRef::efCardAccess(), efCardAccessBytes) != CardReturnCode::OK)
 	{
 		qCCritical(card) << "Error while reading EF.CardAccess: Cannot read EF.CardAccess";
 		return QSharedPointer<EFCardAccess>();
@@ -177,7 +170,7 @@ bool CardInfoFactory::checkEfCardAccess(const QSharedPointer<EFCardAccess>& pEfC
 	 * At least one PACEInfo must have standardized domain parameters
 	 */
 	bool containsStandardizedDomainParameters = false;
-	const auto& infos = pEfCardAccess->getSecurityInfos<PACEInfo>();
+	const auto& infos = pEfCardAccess->getPACEInfos();
 	for (const auto& paceInfo : infos)
 	{
 		if (paceInfo->isStandardizedDomainParameters())

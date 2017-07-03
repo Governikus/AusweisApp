@@ -1,7 +1,6 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.4
+import QtQuick 2.6
 import QtQuick.Layouts 1.2
-import QtQuick.Controls 2.0 as QtControls
+import QtQuick.Controls 2.0
 
 import "../"
 import "../global"
@@ -10,57 +9,43 @@ SectionPage {
 	id: baseItem
 
 	leftTitleBarAction: TitleBarMenuAction { state: "back"; onClicked: pop() }
+	headerTitleBarAction: TitleBarAction { text: provider.shortName }
+	titleBarColor: Category.displayColor(provider.category)
 
-	headerTitleBarAction: TitleBarAction { text: shortName }
+	property alias providerModelItem: provider.modelItem
+	ProviderModelItem {
+		id: provider
+	}
 
-	titleBarColor: Category.displayColor(selectedCategory)
-
-	property var selectedProviderModel: ({})
-
-	property string selectedCategory
-
-	readonly property real headerHeight: Utils.dp(200)
-
-	// Details
-	property string shortName
-	property string longName
-	property string shortDescription
-	property string longDescription
-	property string address
-	property string homepage
-	property string phone
-	property string email
-	property string postalAddress
-	property string providerIcon
-	property string providerImage
 
 	header: ProviderHeader {
+		id: ownHeader
 		width: baseItem.width
-		height: headerHeight
-
-		address: baseItem.address
-		providerIcon: baseItem.providerIcon !== "" ? baseItem.providerIcon : Category.buttonImageSource(baseItem.selectedCategory)
-		providerImage: baseItem.providerImage !== "" ? baseItem.providerImage : Category.backgroundImageSource(baseItem.selectedCategory)
-		transparentColor: Category.displayColor(selectedCategory)
+		selectedProvider: provider
 	}
 
 	content: Item {
+		height: swipeBar.height + swipeViewBackground.height + Constants.component_spacing
 		width: baseItem.width
-		height: baseItem.height
 
-		QtControls.TabBar {
+		TabBar {
 			id: swipeBar
-			height: firstButton.height
+			height: firstButton.implicitHeight
 			anchors.top: parent.top
-			anchors.topMargin: Utils.dp(20)
+			anchors.topMargin: Constants.component_spacing
 			anchors.left: parent.left
 			anchors.right: parent.right
 
 			currentIndex: swipeView.currentIndex
 
-			QtControls.TabButton {
+			TabButton {
 				id: firstButton
 				padding: Utils.dp(10)
+				// TODO: Workaround, use contentItem when switching to Qt 5.7.1
+				//       See https://bugreports.qt.io/browse/QTBUG-50992
+				text: qsTr("DESCRIPTION")
+
+/*
 				contentItem: Text {
 					text: qsTr("DESCRIPTION")
 					font.pixelSize: Constants.normal_font_size
@@ -70,10 +55,16 @@ SectionPage {
 					horizontalAlignment: Text.AlignHCenter
 					verticalAlignment: Text.AlignVCenter
 				}
+*/
 			}
 
-			QtControls.TabButton {
+			TabButton {
 				padding: Utils.dp(10)
+				// TODO: Workaround, use contentItem when switching to Qt 5.7.1
+				//       See https://bugreports.qt.io/browse/QTBUG-50992
+				text: qsTr("CONTACT")
+
+/*
 				contentItem: Text {
 					text: qsTr("CONTACT")
 					font.pixelSize: Constants.normal_font_size
@@ -83,41 +74,39 @@ SectionPage {
 					horizontalAlignment: Text.AlignHCenter
 					verticalAlignment: Text.AlignVCenter
 				}
+*/
 			}
 		}
 
 		Rectangle {
-			anchors.fill: flickable
-		}
-
-		Flickable {
-			id: flickable
+			id: swipeViewBackground
 			anchors.top: swipeBar.bottom
-			anchors.left: parent.left
-			anchors.right: parent.right
-			anchors.bottom: parent.bottom
-			flickableDirection: Flickable.VerticalFlick
-			clip: true
+			anchors.horizontalCenter: swipeBar.horizontalCenter
+			height: swipeView.height + 2 * Constants.component_spacing
+			width: parent.width
 
-			QtControls.SwipeView {
+			SwipeView {
 				id: swipeView
-				anchors.fill: parent
-				anchors.margins: Utils.dp(20)
+				height: Math.max(providerText.contentHeight, providerInfo.contentHeight)
+				anchors.margins: Constants.component_spacing
+				anchors.left: parent.left
+				anchors.top: parent.top
+				anchors.right: parent.right
+
 				currentIndex: swipeBar.currentIndex
 				clip: true
 
 				Text {
-					text: longDescription ? longDescription : qsTr("Description not available")
-
+					id: providerText
+					text: !!provider.longDescription ? provider.longDescription : qsTr("Description not available")
+					horizontalAlignment: Text.AlignJustify
 					wrapMode: Text.WordWrap
-					font.pixelSize: Utils.dp(16)
+					font.pixelSize: Constants.normal_font_size
 				}
 
 				ProviderContactTab {
-					homepage: baseItem.homepage ? baseItem.homepage : ""
-					phone: baseItem.phone ? baseItem.phone : ""
-					email: baseItem.email ? baseItem.email : ""
-					postalAddress: baseItem.postalAddress ? baseItem.postalAddress : ""
+					id: providerInfo
+					contactModel: provider.contactModel
 				}
 			}
 		}

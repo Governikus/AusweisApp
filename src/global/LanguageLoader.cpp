@@ -26,9 +26,9 @@ LanguageLoader::LanguageLoader()
 	: mPath(FileDestination::getPath("translations"))
 	, mTranslatorList()
 	, mComponentList(
-{
-	QStringLiteral("ausweisapp2"), QStringLiteral("qt_help"), QStringLiteral("qt"), QStringLiteral("qtbase")
-})
+		{
+			QStringLiteral("ausweisapp2"), QStringLiteral("qtbase")
+		})
 	, mUsedLocale(mFallbackLanguage)
 {
 }
@@ -202,7 +202,7 @@ bool LanguageLoader::loadTranslationFiles(const QLocale& pLocale)
 
 		if (!translator.isNull())
 		{
-			mTranslatorList.append(translator);
+			mTranslatorList += translator;
 			QCoreApplication::installTranslator(translator.data());
 			mUsedLocale = pLocale;
 			loaded = true;

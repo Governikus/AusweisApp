@@ -1,13 +1,10 @@
-//
-//  BluetoothMessagePowerSimOffResponse.cpp
-//  AusweisApp2
-//
-//  Created by gov on 27.10.14.
-//
-//
+/*!
+ * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ */
+
+#include "messages/BluetoothMessagePowerSimOffResponse.h"
 
 #include "BluetoothIDs.h"
-#include "messages/BluetoothMessagePowerSimOffResponse.h"
 #include "messages/parameter/BluetoothMessageParameterResultCode.h"
 
 using namespace governikus;
@@ -26,6 +23,6 @@ BluetoothMessagePowerSimOffResponse::~BluetoothMessagePowerSimOffResponse()
 
 BluetoothResultCode BluetoothMessagePowerSimOffResponse::getResultCode() const
 {
-	QSharedPointer<const BluetoothMessageParameterResultCode> param = getParameter<BluetoothMessageParameterResultCode>();
-	return param->getResultCode();
+	const auto& param = getParameter(BluetoothParamId::ResultCode);
+	return param.staticCast<const BluetoothMessageParameterResultCode>()->getResultCode();
 }

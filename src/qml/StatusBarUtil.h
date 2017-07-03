@@ -17,6 +17,9 @@ class StatusBarUtil
 {
 	Q_OBJECT
 
+	private:
+		bool catchJavaExceptions() const;
+
 	public:
 		Q_INVOKABLE void setStatusBarColor(const QString& pColor);
 };

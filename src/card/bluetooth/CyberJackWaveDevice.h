@@ -96,6 +96,7 @@ class CyberJackWaveDevice
 	Q_SIGNALS:
 		void fireInitialized(const QBluetoothDeviceInfo& pInfo);
 		void fireDisconnected(const QBluetoothDeviceInfo& pInfo);
+		void fireError(QLowEnergyController::Error pError);
 		void fireReadCharacteristicChanged(const QByteArray& pValue);
 		void fireStatusCharacteristicChanged(const QByteArray& pValue);
 };

@@ -1,16 +1,18 @@
 import QtQuick 2.5
-import QtQuick.Controls 1.4 as Controls
+import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
 import "../global"
 
 Item {
 	id: baseItem
+
 	property alias listViewModel: listView.model
 	property bool selectable: false
 	property var selectedIndices: []
 	property Component delegate
 
+	readonly property int contentHeight: listView.contentHeight
 
 	function requestDeletion(index) {
 		selectedIndices.push(index)
@@ -55,6 +57,7 @@ Item {
 		focus: true
 		clip: true
 		spacing: Utils.dp(5)
+		interactive: false
 
 		delegate: Item {
 			id: delegateItem
@@ -104,7 +107,7 @@ Item {
 					width: delegateItem.width
 					height: delegateItem.height
 
-					Controls.CheckBox {
+					CheckBox {
 						id: checkBox
 						width: Utils.dp(40)
 						height: parent.height
@@ -118,7 +121,7 @@ Item {
 						anchors.right: parent.right
 						height: Constants.history_section_height
 						sourceComponent: baseItem.delegate
-						property var modelItem: model
+						property var historyModelItem: model
 					}
 
 					states: [

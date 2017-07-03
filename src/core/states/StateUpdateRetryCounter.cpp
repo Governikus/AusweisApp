@@ -8,8 +8,6 @@
 #include "Result.h"
 #include "StateUpdateRetryCounter.h"
 
-#include "ReturnCodeUtil.h"
-
 using namespace governikus;
 
 
@@ -33,29 +31,29 @@ void StateUpdateRetryCounter::onUpdateRetryCounterDone(QSharedPointer<BaseCardCo
 {
 	qDebug() << "StateUpdateRetryCounter::onUpdateRetryCounterDone()";
 
-	if (pCommand->getReturnCode() != ReturnCode::OK)
+	if (pCommand->getReturnCode() != CardReturnCode::OK)
 	{
 		qCritical() << "An error occurred while communicating with the card reader, cannot determine retry counter, abort state";
-		setResult(Result::createInternalError(ReturnCodeUtil::toMessage(pCommand->getReturnCode())));
+		setStatus(CardReturnCodeUtil::toGlobalStatus(pCommand->getReturnCode()));
 		Q_EMIT fireError();
 		return;
 	}
 
 	auto cardConnection = getContext()->getCardConnection();
-	const int retryCounter = cardConnection->getReaderInfo().getRetryCounter();
-	if (retryCounter == 0)
+	switch (cardConnection->getReaderInfo().getRetryCounter())
 	{
-		qDebug() << "Puk required";
-		Q_EMIT fireRetryCounterIsZero();
-	}
-	else if (retryCounter == 1)
-	{
-		qDebug() << "Can required";
-		Q_EMIT fireRetryCounterIsOne();
-	}
-	else
-	{
-		qDebug() << "Pin allowed";
-		Q_EMIT fireRetryCounterIsGTOne();
+		case 0:
+			qDebug() << "PUK required";
+			Q_EMIT fireRetryCounterIsZero();
+			break;
+
+		case 1:
+			qDebug() << "CAN required";
+			Q_EMIT fireRetryCounterIsOne();
+			break;
+
+		default:
+			qDebug() << "PIN allowed";
+			Q_EMIT fireRetryCounterIsGTOne();
 	}
 }

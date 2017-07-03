@@ -31,7 +31,7 @@ void StateCertificateDescriptionCheck::run()
 	if (getContext()->getDidAuthenticateEac1()->getCertificateDescriptionAsBinary().isNull())
 	{
 		qCritical() << "No certificate description available";
-		setResult(Result::createParameterError(tr("No certificate description available.")));
+		setStatus(GlobalStatus::Code::Workflow_Certificate_No_Description);
 		Q_EMIT fireError();
 		return;
 	}
@@ -39,7 +39,7 @@ void StateCertificateDescriptionCheck::run()
 	if (getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getSubjectUrl().isNull())
 	{
 		qCritical() << "No subject url available in certificate description";
-		setResult(Result::createParameterError(tr("No subject url available in certificate description.")));
+		setStatus(GlobalStatus::Code::Workflow_Certificate_No_Url_In_Description);
 		Q_EMIT fireError();
 		return;
 	}
@@ -58,7 +58,7 @@ void StateCertificateDescriptionCheck::run()
 		else
 		{
 			qCritical() << certificateHashError;
-			setResult(Result::createParameterError(tr("The certificate description does not match the certificate.")));
+			setStatus(GlobalStatus::Code::Workflow_Certificate_Hash_Error);
 			Q_EMIT fireError();
 			return;
 		}
@@ -76,7 +76,7 @@ void StateCertificateDescriptionCheck::run()
 		else
 		{
 			qCritical() << sameOriginPolicyError;
-			setResult(Result::createParameterError(tr("The subject URL in the certificate description and the TCToken URL don't satisfy the same origin policy.")));
+			setStatus(GlobalStatus::Code::Workflow_Certificate_Sop_Error);
 			Q_EMIT fireError();
 			return;
 		}

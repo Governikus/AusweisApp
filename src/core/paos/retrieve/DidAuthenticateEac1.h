@@ -26,12 +26,14 @@ class test_StateCertificateDescriptionCheck;
 
 namespace governikus
 {
+class TestAuthContext;
 
 class DIDAuthenticateEAC1
 	: public PaosMessage
 {
 	friend class DidAuthenticateEac1Parser;
 	friend class::test_StatePrepareChat;
+	friend class TestAuthContext;
 	friend class::test_StatePreVerification;
 	friend class::test_StateExtractCvcsFromEac1InputType;
 	friend class::test_StateProcessCertificatesFromEac2;

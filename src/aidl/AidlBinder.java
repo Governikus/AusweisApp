@@ -115,15 +115,14 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 	}
 
 
-	// FIXME This function is meant to return void istead of java.lang.Object but JNI does not like void
-	public synchronized Object aidlReceive(String pMessageToClient)
+	public synchronized void aidlReceive(String pMessageToClient)
 	{
 		Log.d(LOG_TAG, "Android service: Passing JSON to client");
 
 		if (mCallback == null)
 		{
 			Log.d(LOG_TAG, "Android service: Callback not connected.");
-			return null;
+			return;
 		}
 
 		try
@@ -139,8 +138,6 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 		{
 			handleRemoteException(e);
 		}
-
-		return null;
 	}
 
 

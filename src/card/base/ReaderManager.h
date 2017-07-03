@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "DeviceError.h"
 #include "Reader.h"
 #include "ReaderManagerWorker.h"
 #include "command/CreateCardConnectionCommand.h"
@@ -43,14 +44,14 @@ class ReaderManager
 
 		/*!
 		 * Stops started scan for devices.
-		 * Be aware that some plugins doesn't finished the whole scan if you
+		 * Be aware that some plugins don't finish the whole scan if you
 		 * abort it with stopScan!
 		 */
 		void stopScan();
 
 		QVector<ReaderManagerPlugInInfo> getPlugInInfos() const;
 		QVector<ReaderInfo> getReaderInfos(ReaderManagerPlugInType pType) const;
-		QVector<ReaderInfo> getReaderInfos(const QVector<ReaderManagerPlugInType>& pTypes = EnumReaderManagerPlugInType::getList()) const;
+		QVector<ReaderInfo> getReaderInfos(const QVector<ReaderManagerPlugInType>& pTypes = Enum<ReaderManagerPlugInType>::getList()) const;
 		ReaderInfo getReaderInfo(const QString& pReaderName) const;
 
 		/*!
@@ -85,13 +86,15 @@ class ReaderManager
 	Q_SIGNALS:
 		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
 		void fireReaderAdded(const QString& pReaderName);
+		void fireReaderDeviceError(DeviceError pDeviceError);
 		void fireReaderConnected(const QString& pReaderName);
 		void fireReaderRemoved(const QString& pReaderName);
-		void fireReaderPropertiesUpdated();
+		void fireReaderPropertiesUpdated(const QString& pReaderName);
 		void fireCardInserted(const QString& pReaderName);
 		void fireCardRemoved(const QString& pReaderName);
 		void fireCardRetryCounterChanged(const QString& pReaderName);
 		void fireReaderEvent();
+		void fireInitialized();
 
 	public Q_SLOTS:
 		/*!

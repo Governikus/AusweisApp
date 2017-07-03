@@ -29,7 +29,6 @@ StepChooseCardGui::StepChooseCardGui(const QSharedPointer<WorkflowContext>& pCon
 	, mCancelButton(nullptr)
 	, mReaderDriverButton(nullptr)
 	, mDiagnosisButton(nullptr)
-	, mStepsWidget(pStepsWidget)
 	, mContext(pContext)
 {
 	mInformationMessageBox->setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - Information"));
@@ -51,10 +50,7 @@ StepChooseCardGui::~StepChooseCardGui()
 
 void StepChooseCardGui::activate()
 {
-	Q_EMIT setCancelButtonState(ButtonState::ENABLED);
-
-	mStepsWidget->setCurrentWidget(mStepsWidget->getProcessingPage());
-	mStepsWidget->getProcessingPage()->startAnimation();
+	setCancelButtonState(ButtonState::ENABLED);
 
 	connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderEvent, this, &StepChooseCardGui::onReaderManagerSignal);
 	onReaderManagerSignal();
@@ -64,8 +60,6 @@ void StepChooseCardGui::activate()
 void StepChooseCardGui::deactivate()
 {
 	disconnect(&ReaderManager::getInstance(), &ReaderManager::fireReaderEvent, this, &StepChooseCardGui::onReaderManagerSignal);
-
-	mStepsWidget->getProcessingPage()->stopAnimation();
 }
 
 
@@ -76,7 +70,7 @@ QString StepChooseCardGui::getCurrentReaderImage(const QVector<ReaderInfo>& pRea
 	{
 		if (!knownReaderTypes.contains(readerInfo.getReaderType()))
 		{
-			knownReaderTypes.append(readerInfo.getReaderType());
+			knownReaderTypes += readerInfo.getReaderType();
 		}
 	}
 
@@ -95,7 +89,7 @@ QString StepChooseCardGui::getCurrentReaderImage(const QVector<ReaderInfo>& pRea
 
 void StepChooseCardGui::updateErrorMessage(const QString& pTitle, const QString& pMessage, bool closeErrorMessage)
 {
-	if (closeErrorMessage)
+	if (closeErrorMessage || mContext->getStatus().isError())
 	{
 		mDiagnosisGui->deactivate();
 		mReaderDriverGui->deactivate();
@@ -125,7 +119,7 @@ void StepChooseCardGui::updateErrorMessage(const QString& pTitle, const QString&
 	{
 		if (mInformationMessageBox->clickedButton() == mCancelButton)
 		{
-			fireCancelled();
+			Q_EMIT fireCancelled();
 		}
 		else if (mInformationMessageBox->clickedButton() == mDiagnosisButton)
 		{
@@ -178,6 +172,16 @@ void StepChooseCardGui::onReaderManagerSignal()
 	}
 	else
 	{
-		updateErrorMessage(QString(), QString(), true);
+		if (readersWithNpa[0].isPinDeactivated())
+		{
+			updateErrorMessage(tr("Online identification function is disabled."),
+					tr("This action cannot be performed. The online identification function of your ID card is deactivated."
+					   " Please contact your competent authority to activate the online identification function."),
+					false);
+		}
+		else
+		{
+			updateErrorMessage(QString(), QString(), true);
+		}
 	}
 }

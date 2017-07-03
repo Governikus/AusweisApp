@@ -414,7 +414,7 @@ class KeylessPasswordEdit::DigitField
 					break;
 
 				case State::ACTIVE:
-					textToDraw = QString(QLatin1Char('0' + char(mValue)));
+					textToDraw = QString(QLatin1Char(static_cast<char>('0' + char(mValue))));
 					break;
 			}
 
@@ -595,7 +595,7 @@ void KeylessPasswordEdit::setMaxLength(int pLength)
 	{
 		DigitField* field = new DigitField(mRenderingHelper.data(), this);
 		mLayout->addWidget(field, 0, mDigitFields.size());
-		mDigitFields.append(field);
+		mDigitFields += field;
 
 		connect(field, &DigitField::activationRequested, this, &KeylessPasswordEdit::onFieldActivationRequested);
 		connect(field, &DigitField::deactivationRequested, this, &KeylessPasswordEdit::onFieldDeactivationRequested);
@@ -743,7 +743,7 @@ void KeylessPasswordEdit::keyPressEvent(QKeyEvent* pEvent)
 
 void KeylessPasswordEdit::onFieldActivationRequested()
 {
-	DigitField* field = dynamic_cast<DigitField*>(sender());
+	DigitField* field = qobject_cast<DigitField*>(sender());
 	int fieldIndex = field != nullptr ? mDigitFields.indexOf(field) : -1;
 	if (fieldIndex >= 0)
 	{
@@ -755,7 +755,7 @@ void KeylessPasswordEdit::onFieldActivationRequested()
 
 void KeylessPasswordEdit::onFieldDeactivationRequested()
 {
-	DigitField* field = dynamic_cast<DigitField*>(sender());
+	DigitField* field = qobject_cast<DigitField*>(sender());
 	int fieldIndex = field != nullptr ? mDigitFields.indexOf(field) : -1;
 	if (fieldIndex >= 0 && fieldIndex == mActiveFieldIndex)
 	{

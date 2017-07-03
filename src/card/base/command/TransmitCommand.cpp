@@ -5,9 +5,8 @@
  */
 
 #include "CardConnection.h"
+#include "CardReturnCode.h"
 #include "InputAPDUInfo.h"
-#include "ReturnCode.h"
-#include "ReturnCodeUtil.h"
 #include "TransmitCommand.h"
 
 #include <QLoggingCategory>
@@ -43,13 +42,14 @@ void TransmitCommand::internalExecute()
 		CommandApdu request(QByteArray::fromHex(inputApduInfo.getInputApdu()));
 
 		mReturnCode = mCardConnectionWorker->transmit(request, response);
-		if (mReturnCode != ReturnCode::OK)
+		if (mReturnCode != CardReturnCode::OK)
 		{
-			qCWarning(card) << "Transmit unsuccessful. Return code " << ReturnCodeUtil::toString(mReturnCode);
+			qCWarning(card) << "Transmit unsuccessful. Return code:" << CardReturnCodeUtil::toGlobalStatus(mReturnCode);
+
 			return;
 		}
 
-		mOutputApduAsHex.append(response.getBuffer().toHex());
+		mOutputApduAsHex += response.getBuffer().toHex();
 		if (!inputApduInfo.getAcceptableStatusCodes().isEmpty())
 		{
 			bool isAcceptable = false;
@@ -72,11 +72,11 @@ void TransmitCommand::internalExecute()
 			if (!isAcceptable)
 			{
 				qCWarning(card) << "Transmit unsuccessful. StatusCode does not start with acceptable status code" << inputApduInfo.getAcceptableStatusCodes();
-				mReturnCode = ReturnCode::UNEXPECTED_TRANSMIT_STATUS;
+				mReturnCode = CardReturnCode::UNEXPECTED_TRANSMIT_STATUS;
 				return;
 			}
 		}
 	}
 	qCDebug(card) << "transmit end";
-	mReturnCode = ReturnCode::OK;
+	mReturnCode = CardReturnCode::OK;
 }

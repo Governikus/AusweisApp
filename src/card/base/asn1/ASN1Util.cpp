@@ -1,5 +1,7 @@
 #include "asn1/ASN1Util.h"
 
+#include "SecureMessagingResponse.h"
+
 #include <QDate>
 #include <QDebug>
 #include <openssl/x509v3.h>
@@ -126,7 +128,7 @@ QByteArray Asn1BCDDateUtil::convertFromQDateToUnpackedBCD(QDate pDate)
 	// convert to unpacked BCD digits
 	for (int i = 0; i <= 5; i++)
 	{
-		aBCD[i] = aBCD[i] - 0x30;
+		aBCD[i] = static_cast<char>(aBCD[i] - 0x30);
 	}
 
 	return aBCD;
@@ -153,4 +155,17 @@ QDate Asn1BCDDateUtil::convertFromUnpackedBCDToQDate(ASN1_OCTET_STRING* pDateBCD
 
 	return QDate(year, month, day);
 
+}
+
+
+QByteArray Asn1Util::encode(char pTagByte, const QByteArray& pData)
+{
+	// 1. encode as ASN1_OCTET_STRING using our template utils
+	// (in fact SM_CHECKSUM ::= [8E] IMPLICIT OCTET STRING)
+	auto octetString = newObject<SM_CHECKSUM>();
+	Asn1OctetStringUtil::setValue(pData, octetString.data());
+	auto encodedOctetString = encodeObject(octetString.data());
+
+	// 2. replace the tag byte
+	return encodedOctetString.replace(0, 1, QByteArray(1, pTagByte));
 }

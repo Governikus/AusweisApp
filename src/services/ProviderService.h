@@ -1,18 +1,12 @@
 /*!
- * ProviderService.h
- *
  * \brief Service providing an update mechanism for the provider settings
  *
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-
 #pragma once
 
-
-#include "ProviderSettings.h"
 #include "UpdateService.h"
-
 
 namespace governikus
 {
@@ -21,20 +15,12 @@ class ProviderService
 {
 	Q_OBJECT
 
-	private:
-		static ProviderService* mSharedInstance;
-
-	public:
-		ProviderService(ProviderSettings& pSettings);
-
+	protected:
+		ProviderService();
 		virtual ~ProviderService();
 
-		/*!
-		 * Get the singleton
-		 */
-		static ProviderService* getSharedInstance();
-
-
+	public:
+		static ProviderService& getInstance();
 };
 
 } /* namespace governikus */

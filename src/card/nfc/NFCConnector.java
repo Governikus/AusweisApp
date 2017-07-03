@@ -15,6 +15,7 @@ import android.nfc.TagLostException;
 import android.nfc.tech.IsoDep;
 import android.util.Log;
 
+
 public class NFCConnector
 {
 
@@ -107,51 +108,59 @@ public class NFCConnector
 
 	private static final String LOG_TAG = "AusweisApp2";
 
+	private static NFCConnector mSingleInstance = null;
+
+	private Context mContext = null;
+
+	private NfcAdapter mNfcAdapter = null;
+
+	private boolean mNewTag = false;
+
+	private IsoDep mTag = null;
+
+	private ExtendedLengthApduSupportCode mExtendedLengthApduSupportStatus = ExtendedLengthApduSupportCode.UNKNOWN;
+
+
+	public static synchronized NFCConnector getInstance(Context context)
+	{
+		if (mSingleInstance == null)
+		{
+			Log.d(LOG_TAG, "NfcConnector singleton intialized.");
+			mSingleInstance = new NFCConnector(context);
+		}
+
+		return mSingleInstance;
+	}
+
+
+	private NFCConnector(Context context)
+	{
+		super();
+		mContext = context;
+		mNfcAdapter = NfcAdapter.getDefaultAdapter(mContext);
+		start();
+	}
+
 
 	public synchronized void updateNfcTag(Tag inputTag)
 	{
 		if (inputTag != null&& Arrays.asList(inputTag.getTechList()).contains(IsoDep.class.getName()))
 		{
 			mTag = IsoDep.get(inputTag);
-			newTag = true;
+			mNewTag = true;
+			if (mExtendedLengthApduSupportStatus == ExtendedLengthApduSupportCode.UNKNOWN)
+			{
+				Log.i(LOG_TAG, "IsoDep.isExtendedLengthApduSupported " + mTag.isExtendedLengthApduSupported());
+				Log.i(LOG_TAG, "IsoDep.getMaxTransceiveLength " + mTag.getMaxTransceiveLength());
+				mExtendedLengthApduSupportStatus = mTag.getMaxTransceiveLength() > 499 ? ExtendedLengthApduSupportCode.SUPPORTED : ExtendedLengthApduSupportCode.NOT_SUPPORTED;
+			}
 		}
-	}
-
-
-	private Context context = null;
-
-	private NfcAdapter nfcAdapter = null;
-
-	private boolean newTag = false;
-
-	private IsoDep mTag = null;
-
-	private static NFCConnector singleInstance = null;
-
-	private NFCConnector(Context context)
-	{
-		super();
-		this.context = context;
-		this.nfcAdapter = NfcAdapter.getDefaultAdapter(this.context);
-		start();
-	}
-
-
-	public static synchronized NFCConnector getInstance(Context context)
-	{
-		if (singleInstance == null)
-		{
-			Log.d(LOG_TAG, "NfcConnector singleton intialized.");
-			singleInstance = new NFCConnector(context);
-		}
-
-		return singleInstance;
 	}
 
 
 	public synchronized byte start()
 	{
-		if (this.nfcAdapter == null)
+		if (mNfcAdapter == null)
 		{
 			return NfcConnectorCode.ERROR_NO_NFC.toByte();
 		}
@@ -162,61 +171,109 @@ public class NFCConnector
 
 	public synchronized byte stop()
 	{
-		if (this.mTag != null)
+		if (mTag != null)
 		{
-			if (this.mTag.isConnected())
+			if (mTag.isConnected())
 			{
 				try
 				{
-					this.mTag.close();
+					mTag.close();
 				}
 				catch (IOException e)
 				{
 					// nothing
 				}
 			}
-			this.mTag = null;
+			mTag = null;
 		}
 
 		return NfcConnectorCode.SUCCESS.toByte();
 	}
 
 
+	public synchronized boolean connectCard()
+	{
+		if (mTag == null)
+		{
+			Log.e(LOG_TAG, "Tag is null");
+			return false;
+		}
+		if (mTag.isConnected())
+		{
+			Log.e(LOG_TAG, "Card is already connected");
+			return false;
+		}
+		try
+		{
+			mTag.connect();
+			return true;
+		}
+		catch (IOException e)
+		{
+			Log.e(LOG_TAG, "Cannot connect card", e);
+		}
+		return false;
+	}
+
+
+	public synchronized boolean disconnectCard()
+	{
+		if (mTag == null)
+		{
+			Log.e(LOG_TAG, "Tag is null");
+			return false;
+		}
+		if (!mTag.isConnected())
+		{
+			Log.e(LOG_TAG, "Card is not connected");
+			return false;
+		}
+		try
+		{
+			mTag.close();
+			return true;
+		}
+		catch (IOException e)
+		{
+			Log.e(LOG_TAG, "Cannot disconnect card", e);
+		}
+		return false;
+	}
+
+
+	public synchronized boolean isCardConnected()
+	{
+		return mTag != null&& mTag.isConnected();
+	}
+
+
 	public synchronized byte[] sendData(byte[] data)
 	{
-		if (this.nfcAdapter == null)
+		if (mNfcAdapter == null)
 		{
 			return ERROR_NO_NFC_BYTE;
 		}
 
-		if (this.mTag == null)
+		if (mTag == null)
 		{
 			return ERROR_NO_TAG_BYTE;
+		}
+		if (!mTag.isConnected())
+		{
+			Log.e(LOG_TAG, "Card is not connected");
+			return ERROR_CONNECT_BYTE;
 		}
 
 		try
 		{
-			if (!this.mTag.isConnected())
-			{
-				try
-				{
-					this.mTag.connect();
-				}
-				catch (IOException e)
-				{
-					this.mTag = null;
-					return ERROR_CONNECT_BYTE;
-				}
-			}
-
 			byte[] cardAnswer;
 			try
 			{
-				cardAnswer = this.mTag.transceive(data);
+				cardAnswer = mTag.transceive(data);
 			}
 			catch (TagLostException e)
 			{
-				this.mTag = null;
+				mTag = null;
 				return ERROR_TAG_LOST_BYTE;
 			}
 			catch (IOException e)
@@ -237,42 +294,55 @@ public class NFCConnector
 	}
 
 
-	private static boolean isExtendedLengthApduSupported(IsoDep pTag)
-	{
-		return pTag.isExtendedLengthApduSupported() && pTag.getMaxTransceiveLength() > 499;
-	}
-
-
 	public synchronized byte getExtendedLengthApduSupportStatus()
 	{
-		if (mTag == null)
-		{
-			return ExtendedLengthApduSupportCode.UNKNOWN.toByte();
-		}
-		return isExtendedLengthApduSupported(mTag) ? ExtendedLengthApduSupportCode.SUPPORTED.toByte() : ExtendedLengthApduSupportCode.NOT_SUPPORTED.toByte();
+		return mExtendedLengthApduSupportStatus.toByte();
 	}
 
 
 	public synchronized byte isCardPresent()
 	{
-		if (this.nfcAdapter == null)
+		if (mNfcAdapter == null)
 		{
 			return NfcConnectorCode.ERROR_NO_NFC.toByte();
 		}
 
-		if (this.mTag == null || !isExtendedLengthApduSupported(mTag))
+		if (mTag == null)
 		{
 			return NfcCardCode.NO_CARD.toByte();
 		}
 
-		if (this.newTag)
+		if (!mTag.isConnected())
 		{
-			this.newTag = false;
-
-			return NfcCardCode.NEW_CARD.toByte();
+			try
+			{
+				mTag.connect();
+				if (!mTag.isConnected())
+				{
+					return NfcCardCode.NO_CARD.toByte();
+				}
+				mTag.close();
+			}
+			catch (IOException e)
+			{
+				return NfcCardCode.NO_CARD.toByte();
+			}
 		}
 
-		return NfcCardCode.SAME_CARD.toByte();
+		if (!mNewTag)
+		{
+			return NfcCardCode.SAME_CARD.toByte();
+		}
+		mNewTag = false;
+
+		if (!mTag.isExtendedLengthApduSupported())
+		{
+			Log.i(LOG_TAG, "New NFC tag found with insufficient characteristics " + mTag.getTag().toString());
+			return NfcCardCode.NO_CARD.toByte();
+		}
+
+		Log.i(LOG_TAG, "New NFC tag found with sufficient characteristics " + mTag.getTag().toString());
+		return NfcCardCode.NEW_CARD.toByte();
 	}
 
 

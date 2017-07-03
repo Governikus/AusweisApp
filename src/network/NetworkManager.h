@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "GlobalStatus.h"
+
 #include <QAtomicInt>
 #include <QAuthenticator>
 #include <QDebug>
@@ -31,7 +33,6 @@ class NetworkManager
 		QScopedPointer<QNetworkAccessManager, QScopedPointerDeleteLater> mNetAccessManager;
 		QScopedPointer<QNetworkAccessManager, QScopedPointerDeleteLater> mNetAccessManagerPsk;
 
-		static QString getLocalizedErrorString(const QString& pErrorString, const QString& pRequestUrl);
 		void configureProxy(QTcpSocket* pSocket, const QUrl& pUrl);
 		QString getUserAgentHeader() const;
 
@@ -39,7 +40,16 @@ class NetworkManager
 		void onShutdown();
 
 	public:
-		static void setProxy(QNetworkProxy::ProxyType pProxyType);
+		enum class NetworkError
+		{
+			TimeOut,
+			ProxyError,
+			SslError,
+			OtherError,
+		};
+		Q_ENUM(NetworkError)
+
+		static void setApplicationProxyFactory();
 		static void lockProxy(bool pLocked)
 		{
 			mLockProxy = pLocked;
@@ -47,8 +57,9 @@ class NetworkManager
 
 
 		static NetworkManager& getGlobalInstance();
-		static QString getLocalizedErrorString(QTcpSocket* pTcpSocket, const QString& pPeerAddress);
-		static QString getLocalizedErrorString(QNetworkReply* pNetworkReply);
+		static NetworkError toNetworkError(const QNetworkReply* const pNetworkReply);
+		static GlobalStatus toTrustedChannelStatus(const QNetworkReply* const pNetworkReply);
+		static GlobalStatus toStatus(const QNetworkReply* const pNetworkReply);
 		static QString getTlsVersionString(QSsl::SslProtocol pProtocol);
 
 		NetworkManager();
@@ -72,4 +83,3 @@ class NetworkManager
 } /* namespace governikus */
 
 QDebug operator <<(QDebug pDbg, QSsl::SslProtocol pProtocol);
-QDebug operator <<(QDebug pDbg, const QNetworkProxyQuery& pQuery);

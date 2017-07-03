@@ -17,6 +17,7 @@
 using namespace governikus;
 
 
+#ifndef Q_OS_WINRT
 static QString getWindowsDirectoryPath()
 {
 	UINT length = GetSystemWindowsDirectory(nullptr, 0);
@@ -121,7 +122,7 @@ static void addWindowsComponentInfo(QVector<DiagnosisContext::ComponentInfo>& pC
 		return;
 	}
 
-	pComponents.append(DiagnosisContext::ComponentInfo(pFileName, description, version, company));
+	pComponents += DiagnosisContext::ComponentInfo(pFileName, description, version, company);
 }
 
 
@@ -211,9 +212,13 @@ static QString getWindowsServiceDriverFileName(const QString& pServiceName)
 }
 
 
+#endif
+
+
 void DiagnosisController::getPcscInfo(QVector<DiagnosisContext::ComponentInfo>& pComponents,
 		QVector<DiagnosisContext::ComponentInfo>& pDrivers)
 {
+#ifndef Q_OS_WINRT
 	addWindowsComponentInfo(pComponents, toAbsoluteWindowsDirectoryPath(QStringLiteral("System32\\WinSCard.dll")));
 	addWindowsComponentInfo(pComponents, toAbsoluteWindowsDirectoryPath(QStringLiteral("System32\\SCardDlg.dll")));
 	addWindowsComponentInfo(pComponents, toAbsoluteWindowsDirectoryPath(QStringLiteral("System32\\SCardSvr.dll")));
@@ -225,4 +230,5 @@ void DiagnosisController::getPcscInfo(QVector<DiagnosisContext::ComponentInfo>& 
 		const QString path = getWindowsServiceDriverFileName(moduleName);
 		addWindowsComponentInfo(pDrivers, path);
 	}
+#endif
 }

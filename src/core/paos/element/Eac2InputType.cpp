@@ -54,11 +54,11 @@ void Eac2InputType::setSignature(const QString& signature)
 
 void Eac2InputType::appendCvcert(QSharedPointer<CVCertificate> cvcert)
 {
-	mCvCertificates.append(cvcert);
+	mCvCertificates += cvcert;
 }
 
 
 void Eac2InputType::appendCvcertAsBinary(const QByteArray& cvcertAsBinary)
 {
-	mCvCertificatesAsBinary.append(cvcertAsBinary);
+	mCvCertificatesAsBinary += cvcertAsBinary;
 }

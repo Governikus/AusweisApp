@@ -86,7 +86,13 @@ QSharedPointer<EFCardSecurity> EFCardSecurity::decode(const QByteArray& pBytes)
 }
 
 
-EFCardSecurity::EFCardSecurity(QSharedPointer<SecurityInfos> pSecurityInfos)
+const QSharedPointer<const SecurityInfos>& EFCardSecurity::getSecurityInfos() const
+{
+	return mSecurityInfos;
+}
+
+
+EFCardSecurity::EFCardSecurity(const QSharedPointer<const SecurityInfos>& pSecurityInfos)
 	: mSecurityInfos(pSecurityInfos)
 {
 }

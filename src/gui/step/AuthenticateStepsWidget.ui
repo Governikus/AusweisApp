@@ -12,7 +12,6 @@
   </property>
   <widget class="governikus::StepAuthenticationEac1Widget" name="authenticationEac1Page"/>
   <widget class="governikus::SelfInfoWidget" name="selfInfoPage"/>
-  <widget class="governikus::StepChooseDeviceWidget" name="chooseDevicePage"/>
  </widget>
  <customwidgets>
   <customwidget>
@@ -25,12 +24,6 @@
    <class>governikus::SelfInfoWidget</class>
    <extends>QWidget</extends>
    <header>step/SelfInfoWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>governikus::StepChooseDeviceWidget</class>
-   <extends>QWidget</extends>
-   <header>step/StepChooseDeviceWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

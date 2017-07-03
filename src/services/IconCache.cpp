@@ -70,7 +70,7 @@ void IconCache::processNextIcon()
 	}
 	else
 	{
-		const QString icon = mPendingIcons.first();
+		const QString& icon = mPendingIcons.constFirst();
 
 		mIconService.reset(new IconService(mIconCacheFolderPath, icon));
 
@@ -160,7 +160,7 @@ void IconCache::setIconUpdateUrlBase(const QString& pIconUpdateUrlBase)
 
 QString IconCache::getLocalIconUrl(const QString& pIcon) const
 {
-	return pIcon.startsWith(QRC_PREFIX) ? pIcon : QStringLiteral("file://") + getIconPathInCache(pIcon);
+	return pIcon.startsWith(QRC_PREFIX) ? pIcon : QUrl::fromLocalFile(getIconPathInCache(pIcon)).toString();
 }
 
 

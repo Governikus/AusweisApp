@@ -21,11 +21,11 @@ class InternalActivationContext
 		InternalActivationContext(const QUrl& pUrl);
 		virtual ~InternalActivationContext();
 
-		QUrl getActivationURL() override;
+		QUrl getActivationURL() const override;
 		bool sendProcessing() override;
 		bool sendOperationAlreadyActive() override;
-		bool sendErrorPage(HttpStatusCode pStatusCode, const Result& pResult) override;
-		bool sendRedirect(const QUrl& pRedirectAddress, const Result& pResult) override;
+		bool sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus) override;
+		bool sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pStatus) override;
 };
 
 } /* namespace governikus */

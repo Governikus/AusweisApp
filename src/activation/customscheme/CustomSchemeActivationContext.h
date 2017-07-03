@@ -22,18 +22,14 @@ class CustomSchemeActivationContext
 
 	public:
 		CustomSchemeActivationContext(const QUrl& pActivationUrl);
-
 		virtual ~CustomSchemeActivationContext();
 
-		QUrl getActivationURL() override;
+		QUrl getActivationURL() const override;
 
 		bool sendProcessing() override;
-
 		bool sendOperationAlreadyActive() override;
-
-		bool sendErrorPage(HttpStatusCode pStatusCode, const Result& pResult) override;
-
-		bool sendRedirect(const QUrl& pRedirectAddress, const Result& pResult) override;
+		bool sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus) override;
+		bool sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pResult) override;
 };
 
 } /* namespace governikus */

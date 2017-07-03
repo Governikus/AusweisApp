@@ -37,14 +37,14 @@ void StateProcessCertificatesFromEac2::run()
 			qWarning() << "Ignoring AT CVC from EAC2InputType" << *cvc;
 			continue;
 		}
-		cvcs.append(cvc);
+		cvcs += cvc;
 	}
 	getContext()->initCvcChainBuilder(cvcs);
 
 	if (!getContext()->hasChainForCertificationAuthority(*getContext()->getPaceOutputData()))
 	{
 		qCritical() << "No cvc chain determined, abort authentication";
-		setResult(Result::createInternalError(tr("The authenticity of your ID card could not be confirmed.")));
+		setStatus(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity);
 		Q_EMIT fireError();
 	}
 	else

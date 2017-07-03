@@ -39,7 +39,7 @@ void DetailDialog::setDetails(const QString& pDetails)
 }
 
 
-bool DetailDialog::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
+bool DetailDialog::eventFilter(QObject* pObject, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
@@ -50,5 +50,5 @@ bool DetailDialog::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
 			return true;
 		}
 	}
-	return false;
+	return QDialog::eventFilter(pObject, pEvent);
 }

@@ -21,35 +21,54 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 Q_DECLARE_LOGGING_CATEGORY(secure)
 
 
-QByteArray EcdhKeyAgreement::encodeUncompressedPublicKey(QSharedPointer<PACEInfo> pPaceInfo, QSharedPointer<EC_GROUP> pCurve, QSharedPointer<EC_POINT> pPoint)
+QByteArray EcdhKeyAgreement::encodeUncompressedPublicKey(const QSharedPointer<const PACEInfo>& pPaceInfo, const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint)
 {
 	QByteArray pointBytes = EcUtil::point2oct(pCurve, pPoint.data());
 
 	QByteArray publicKeyData;
-	publicKeyData.append(0x06);
-	publicKeyData.append(pPaceInfo->getProtocolValueBytes().size());
-	publicKeyData.append(pPaceInfo->getProtocolValueBytes());
-	publicKeyData.append(char(0x86));
-	publicKeyData.append(pointBytes.size());
-	publicKeyData.append(pointBytes);
+	publicKeyData += char(0x06);
+	const auto& protocolBytes = pPaceInfo->getProtocolValueBytes();
+	if (protocolBytes.size() > 0xFF)
+	{
+		qCCritical(card) << "Protocol value bytes size > 0xFF not supported";
+		Q_ASSERT(protocolBytes.size() <= 0xFF);
+		return QByteArray();
+	}
+	publicKeyData += static_cast<char>(protocolBytes.size());
+	publicKeyData += protocolBytes;
+	publicKeyData += char(0x86);
+	if (pointBytes.size() > 0xFF)
+	{
+		qCCritical(card) << "Point bytes size > 0xFF not supported";
+		Q_ASSERT(pointBytes.size() <= 0xFF);
+		return QByteArray();
+	}
+	publicKeyData += static_cast<char>(pointBytes.size());
+	publicKeyData += pointBytes;
 
 	QByteArray publicKey;
-	publicKey.append("\x7f\x49");
-	publicKey.append(publicKeyData.size());
-	publicKey.append(publicKeyData);
+	publicKey += QByteArray::fromHex("7F49");
+	if (publicKeyData.size() > 0xFF)
+	{
+		qCCritical(card) << "Public key bytes size > 0xFF not supported";
+		Q_ASSERT(publicKeyData.size() <= 0xFF);
+		return QByteArray();
+	}
+	publicKey += static_cast<char>(publicKeyData.size());
+	publicKey += publicKeyData;
 
 	return publicKey;
 }
 
 
-QByteArray EcdhKeyAgreement::encodeCompressedPublicKey(QSharedPointer<EC_GROUP> pCurve, QSharedPointer<EC_POINT> pPoint)
+QByteArray EcdhKeyAgreement::encodeCompressedPublicKey(const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint)
 {
 	QByteArray uncompressedPointBytes = EcUtil::point2oct(pCurve, pPoint.data());
 	return uncompressedPointBytes.mid(1, (uncompressedPointBytes.size() - 1) / 2);
 }
 
 
-EcdhKeyAgreement::EcdhKeyAgreement(QSharedPointer<PACEInfo> pPaceInfo, QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
+EcdhKeyAgreement::EcdhKeyAgreement(const QSharedPointer<const PACEInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 	: KeyAgreement(pPaceInfo, pCardConnectionWorker)
 	, mMapping()
 	, mEphemeralCurve()
@@ -59,8 +78,8 @@ EcdhKeyAgreement::EcdhKeyAgreement(QSharedPointer<PACEInfo> pPaceInfo, QSharedPo
 }
 
 
-QSharedPointer<KeyAgreement> EcdhKeyAgreement::create(QSharedPointer<PACEInfo> pPaceInfo,
-		QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
+QSharedPointer<KeyAgreement> EcdhKeyAgreement::create(const QSharedPointer<const PACEInfo>& pPaceInfo,
+		const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 {
 	QSharedPointer<EcdhKeyAgreement> keyAgreement(new EcdhKeyAgreement(pPaceInfo, pCardConnectionWorker));
 
@@ -120,7 +139,7 @@ QSharedPointer<EC_GROUP> EcdhKeyAgreement::determineEphemeralDomainParameters(co
 }
 
 
-QSharedPointer<EC_POINT> EcdhKeyAgreement::performKeyExchange(QSharedPointer<EC_GROUP> pCurve)
+QSharedPointer<EC_POINT> EcdhKeyAgreement::performKeyExchange(const QSharedPointer<const EC_GROUP>& pCurve)
 {
 	QSharedPointer<EC_KEY> terminalEphemeralKey = EcUtil::create(EC_KEY_new());
 	if (!EC_KEY_set_group(terminalEphemeralKey.data(), pCurve.data()))

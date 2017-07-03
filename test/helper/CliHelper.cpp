@@ -6,6 +6,8 @@
 
 #include <QCoreApplication>
 
+#include <cstdint>
+
 using namespace governikus;
 
 CliHelper::CliHelper(QObject* pParent)
@@ -140,10 +142,10 @@ quint16 CliHelper::getServerPort()
 		if (matcher.hasMatch() && !matcher.captured(1).isNull())
 		{
 			bool converted = false;
-			quint16 port = matcher.captured(1).toUInt(&converted);
-			if (converted)
+			auto port = matcher.captured(1).toUInt(&converted);
+			if (converted && port <= USHRT_MAX)
 			{
-				mServerPort = port;
+				mServerPort = static_cast<ushort>(port);
 			}
 		}
 	}

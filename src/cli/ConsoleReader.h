@@ -52,7 +52,6 @@ class ConsoleReader
 		QScopedPointer<QSocketNotifier> mNotifier;
 
 		bool mInputOpen;
-		QString readText();
 
 	private Q_SLOTS:
 		void onData();
@@ -64,7 +63,7 @@ class ConsoleReader
 		void shutdown();
 		bool isInputOpen() const;
 
-		QString requestText(const QString& pMsg);
+		QString readText();
 
 	Q_SIGNALS:
 		void fireShutdown();

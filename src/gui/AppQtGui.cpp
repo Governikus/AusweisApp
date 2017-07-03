@@ -12,6 +12,7 @@
 #include "NetworkManager.h"
 #include "ReaderDriverGui.h"
 #include "SetupAssistantGui.h"
+#include "UpdateWindow.h"
 #include "Updater.h"
 #include "generic/HelpAction.h"
 #include "generic/Page.h"
@@ -48,6 +49,7 @@ Q_DECLARE_LOGGING_CATEGORY(gui)
 AppQtGui::AppQtGui()
 	: QObject()
 	, mMainWidget(nullptr)
+	, mIcon(QStringLiteral(":/images/npa.svg"))
 	, mTrayIcon(nullptr)
 	, mActiveWorkflowUi()
 	, mSetupAssistantGui(nullptr)
@@ -58,7 +60,7 @@ AppQtGui::AppQtGui()
 	initGuiProfile();
 
 	mMainWidget = new AppQtMainWidget();
-	mMainWidget->setWindowIcon(QIcon(QStringLiteral(":/images/autentapp2.iconset/icon_512x512.png")));
+	mMainWidget->setWindowIcon(mIcon);
 }
 
 
@@ -161,9 +163,11 @@ void AppQtGui::activateWorkflowUi(QSharedPointer<WorkflowGui> pWorkflowUi, bool 
 	mMainWidget->activateMenuBarItems(false);
 	closeDialogs();
 
-	mAggressiveToForeground = mActiveWorkflowUi.dynamicCast<WorkflowAuthenticateQtGui>();
+#ifdef Q_OS_WIN
+	mAggressiveToForeground = mActiveWorkflowUi.objectCast<WorkflowAuthenticateQtGui>();
+#endif
 	bool hideAfterWorkflow = pAllowHideAfterWorkflow
-			&& mActiveWorkflowUi.dynamicCast<WorkflowAuthenticateQtGui>()
+			&& mActiveWorkflowUi.objectCast<WorkflowAuthenticateQtGui>()
 			&& AppSettings::getInstance().getGeneralSettings().isAutoCloseWindowAfterAuthentication();
 	mMainWidget->setHideWindowAfterWorkflow(hideAfterWorkflow);
 	show();
@@ -264,6 +268,7 @@ bool AppQtGui::askChangeTransportPinNow()
 	QMessageBox messageBox(mMainWidget);
 	messageBox.setWindowTitle(QCoreApplication::applicationName() + " - Information");
 	messageBox.setWindowModality(Qt::WindowModal);
+	messageBox.setWindowFlags(messageBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 	messageBox.setText(tr("Did you change the initial transport PIN already?<br><br>Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. Online identification with transport PIN is not possible."));
 	messageBox.setStandardButtons(QMessageBox::Yes);
 	auto changePinButton = messageBox.addButton(tr("No, change transport PIN now"), QMessageBox::NoRole);
@@ -386,17 +391,17 @@ QString AppQtGui::readStyleSheet(const QString& pFileName)
 		QRegularExpressionMatch match = it.next();
 		if (lastOffset < match.capturedStart())
 		{
-			result.append(styleSheet.midRef(lastOffset, match.capturedStart() - lastOffset));
+			result += styleSheet.midRef(lastOffset, match.capturedStart() - lastOffset);
 		}
 
-		result.append(readStyleSheet(match.captured(1)));
+		result += readStyleSheet(match.captured(1));
 
 		lastOffset = match.capturedEnd();
 	}
 
 	if (lastOffset < styleSheet.length())
 	{
-		result.append(styleSheet.midRef(lastOffset));
+		result += styleSheet.midRef(lastOffset);
 	}
 
 	return result;
@@ -436,7 +441,7 @@ void AppQtGui::createTrayIcon()
 #endif
 	trayIconMenu->addAction(quitAction);
 
-	mTrayIcon = new QSystemTrayIcon(QIcon(QStringLiteral(":images/autentapp2.iconset/icon_16x16.png")), mMainWidget);
+	mTrayIcon = new QSystemTrayIcon(mIcon, mMainWidget);
 	connect(mTrayIcon, &QSystemTrayIcon::activated, this, &AppQtGui::onActivated);
 	connect(mTrayIcon, &QSystemTrayIcon::messageClicked, this, [this] {show(UiModule::CURRENT);
 			});
@@ -508,7 +513,7 @@ void AppQtGui::onCloseWindowRequested(bool* pDoClose)
 		messageBox.setWindowTitle(QApplication::applicationName() + " - Information");
 		messageBox.setWindowModality(Qt::WindowModal);
 		messageBox.setIcon(QMessageBox::Information);
-
+		messageBox.setWindowFlags(messageBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 		messageBox.setText(tr("The user interface of the %1 is closed.").arg(QApplication::applicationName()));
 		messageBox.setInformativeText(tr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(QApplication::applicationName()));
 		messageBox.setCheckBox(new QCheckBox(tr("Don't show this dialog again.")));
@@ -535,7 +540,7 @@ void AppQtGui::onCloseWindowRequested(bool* pDoClose)
 
 void AppQtGui::onDebugStyleSheetChanged(const QString& pPath)
 {
-	if (QFileSystemWatcher* watcher = dynamic_cast<QFileSystemWatcher*>(sender()))
+	if (QFileSystemWatcher* watcher = qobject_cast<QFileSystemWatcher*>(sender()))
 	{
 		// work-around for QFileSystemWatcher no longer knowing the file after receiving the first notification
 		watcher->removePath(pPath);
@@ -546,6 +551,7 @@ void AppQtGui::onDebugStyleSheetChanged(const QString& pPath)
 }
 
 
+#ifndef QT_NO_NETWORKPROXY
 void AppQtGui::onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator)
 {
 	CredentialDialog dialog(mMainWidget);
@@ -557,6 +563,9 @@ void AppQtGui::onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthe
 		pAuthenticator->setPassword(dialog.getPassword());
 	}
 }
+
+
+#endif
 
 
 void AppQtGui::show(UiModule pModule)
@@ -600,18 +609,19 @@ void AppQtGui::show(UiModule pModule)
 		mMainWidget->resize(size);
 	}
 
+#ifdef Q_OS_WIN
 	if (mAggressiveToForeground)
 	{
 		// Changing the window flags seems to be the only way to
 		// bring the window to the foreground if it is not minimized.
-		Qt::WindowFlags flags = mMainWidget->windowFlags();
-		flags |= Qt::WindowStaysOnTopHint;
-		mMainWidget->setWindowFlags(flags);
+		const Qt::WindowFlags flags = mMainWidget->windowFlags();
+		mMainWidget->setWindowFlags(flags | Qt::WindowStaysOnTopHint);
 		mMainWidget->show();
-		flags &= ~Qt::WindowStaysOnTopHint;
 		mMainWidget->setWindowFlags(flags);
+
 		mAggressiveToForeground = false;
 	}
+#endif
 
 	mMainWidget->show();
 	mMainWidget->activateWindow();
@@ -630,7 +640,7 @@ void AppQtGui::show(UiModule pModule)
 		Updater::getInstance().update();
 		if (AppSettings::getInstance().getGeneralSettings().isAutoUpdateCheck())
 		{
-			Updater::getInstance().checkAppUpdate(true);
+			new UpdateWindow(true, mMainWidget);
 		}
 	}
 }

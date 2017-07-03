@@ -1,63 +1,66 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.4
+import QtQuick 2.7
+import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.2
-
 
 import "../"
 import "../global"
 
 SectionPage {
 	id: root
-	property var modelItem
+	property var historyModelItem
 
 	leftTitleBarAction: TitleBarMenuAction { state: "back"; onClicked: pop() }
-	headerTitleBarAction: TitleBarAction { text: modelItem ? modelItem.subject : ""; font.bold: true }
-	titleBarColor: Category.displayColor(modelItem ? modelItem.provider_category : "")
+	headerTitleBarAction: TitleBarAction { text: historyModelItem ? historyModelItem.subject : ""; font.bold: true }
+	titleBarColor: Category.displayColor(historyModelItem ? historyModelItem.providerCategory : "")
 
-	content: Column {
+	content: Item {
+		height: pane.height + 2 * Constants.component_spacing
 		width: root.width
 
-		Item { width: parent.width; height: Utils.dp(10)}
-		Pane {
-			id: pane
-			title: qsTr("Provider Information")
+		Column {
+			anchors.fill: parent
+			anchors.margins: Constants.component_spacing
 
-			LabeledText {
-				label: qsTr("Provider name")
-				text: modelItem ? modelItem.subject : ""
-				width: parent.width
-			}
+			Pane {
+				id: pane
+				title: qsTr("Provider Information")
 
-			LabeledText {
-				label: qsTr("Purpose")
-				text: modelItem ? modelItem.purpose : ""
-				width: parent.width
-			}
-
-			LabeledText {
-				label: qsTr("Date")
-				text:{
-					if (!modelItem) {
-						return "";
-					}
-					return modelItem.dateTime.toLocaleString(Qt.locale(), qsTr("MM/dd/yyyy"))
+				LabeledText {
+					label: qsTr("Provider name")
+					text: historyModelItem ? historyModelItem.subject : ""
+					width: parent.width
 				}
-				width: parent.width
-				fontUppercase: Font.AllUppercase
-			}
 
-			LabeledText {
-				label: qsTr("Requested data")
-				text: modelItem ? modelItem.requestedData : ""
-				width: parent.width
-			}
+				LabeledText {
+					label: qsTr("Purpose")
+					text: historyModelItem ? historyModelItem.purpose : ""
+					width: parent.width
+				}
 
-			LabeledText {
-				label: qsTr("Terms of usage")
-				text: modelItem ? modelItem.termsOfUsage : ""
-				width: parent.width
+				LabeledText {
+					label: qsTr("Date")
+					text:{
+						if (!historyModelItem) {
+							return "";
+						}
+						return historyModelItem.dateTime.toLocaleString(Qt.locale(), qsTr("MM/dd/yyyy"))
+					}
+					width: parent.width
+					fontUppercase: Font.AllUppercase
+				}
+
+				LabeledText {
+					label: qsTr("Requested data")
+					text: historyModelItem ? historyModelItem.requestedData : ""
+					width: parent.width
+				}
+
+				LabeledText {
+					label: qsTr("Terms of usage")
+					text: historyModelItem ? historyModelItem.termsOfUsage : ""
+					width: parent.width
+				}
 			}
 		}
 	}
-
 }

@@ -29,7 +29,7 @@ j.with
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 			-DCOVERAGE=true
 			-DBUILD_SHARED_LIBS=on
-			-DSANITIZER=address
+			-DSANITIZER=on
 			'''))
 
 		shell('''\
@@ -38,8 +38,9 @@ j.with
 			'''.stripIndent().trim())
 
 		shell('''\
+			export QML2_IMPORT_PATH=$WORKSPACE/libs/build/dist/qml
 			export LD_LIBRARY_PATH=$WORKSPACE/libs/build/dist/lib:$LD_LIBRARY_PATH
-			export ASAN_OPTIONS=detect_leaks=0
+			export ASAN_OPTIONS=detect_leaks=0,new_delete_type_mismatch=0
 			cd build; ctest ${MAKE_FLAGS}
 			'''.stripIndent().trim())
 

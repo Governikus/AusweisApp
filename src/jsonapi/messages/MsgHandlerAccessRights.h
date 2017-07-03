@@ -20,7 +20,7 @@ class MsgHandlerAccessRights
 		void setError(const QLatin1String& pError);
 
 		void handleSetRawData(const QJsonArray& pRaw, const QSharedPointer<AuthContext>& pContext);
-		QJsonArray getAccessRights(const QSharedPointer<const CHAT>& pChat) const;
+		QJsonArray getAccessRights(const QSet<AccessRight>& pRights) const;
 		void fillAccessRights(const QSharedPointer<const AuthContext>& pContext);
 
 	public:

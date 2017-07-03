@@ -24,24 +24,20 @@ LogHandler::LogHandler()
 	, mEnvPattern(!qEnvironmentVariableIsEmpty("QT_MESSAGE_PATTERN"))
 	, mFunctionFilenameSize(74)
 	, mBacklogPosition(0)
-	, mDefaultMessagePattern(QStringLiteral("%{category} %{time yyyy.MM.dd hh:mm:ss.zzz} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif} %{function}(%{file}:%{line}) %{message}"))
+	, mMessagePattern(QStringLiteral("%{category} %{time yyyy.MM.dd hh:mm:ss.zzz} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif} %{function}(%{file}:%{line}) %{message}"))
+	, mDefaultMessagePattern(QStringLiteral("%{if-category}%{category}: %{endif}%{message}")) // as defined in qlogging.cpp
 	, mLogFile(QDir::tempPath() + QStringLiteral("/AusweisApp2.XXXXXX.log")) // if you change value you need to adjust getOtherLogfiles()
 	, mHandler(nullptr)
 	, mFilePrefix("/src/")
 	, mMutex()
 {
-
 	mLogFile.open();
-
-#ifdef ENABLE_MESSAGE_PATTERN
-	qSetMessagePattern(mDefaultMessagePattern);
-#endif
 }
 
 
 LogHandler::~LogHandler()
 {
-	QMutexLocker mutexLocker(&mMutex);
+	const QMutexLocker mutexLocker(&mMutex);
 	if (mHandler)
 	{
 		qInstallMessageHandler(nullptr);
@@ -58,15 +54,9 @@ LogHandler& LogHandler::getInstance()
 
 void LogHandler::init()
 {
-	QMutexLocker mutexLocker(&mMutex);
+	const QMutexLocker mutexLocker(&mMutex);
 	if (!mHandler)
 	{
-		static const char* envLoggingConf = "QT_LOGGING_CONF";
-		if (!qEnvironmentVariableIsSet(envLoggingConf))
-		{
-			qputenv(envLoggingConf, "./qtlogging.ini");
-		}
-
 		mHandler = qInstallMessageHandler(&LogHandler::messageHandler);
 	}
 }
@@ -90,7 +80,7 @@ void LogHandler::logToFile(const QString& pOutput)
 
 QByteArray LogHandler::getBacklog()
 {
-	QMutexLocker mutexLocker(&mMutex);
+	const QMutexLocker mutexLocker(&mMutex);
 
 	if (mLogFile.isOpen() && mLogFile.isReadable())
 	{
@@ -107,7 +97,7 @@ QByteArray LogHandler::getBacklog()
 
 void LogHandler::resetBacklog()
 {
-	QMutexLocker mutexLocker(&mMutex);
+	const QMutexLocker mutexLocker(&mMutex);
 	mBacklogPosition = mLogFile.pos();
 }
 
@@ -178,12 +168,12 @@ QByteArray LogHandler::formatFunction(const char* pFunction, const QByteArray& p
 QByteArray LogHandler::formatCategory(const char* pCategory)
 {
 	static const char* PADDING = "          ";
-	static const int MAX_LENGTH = qstrlen(PADDING);
+	static const int MAX_LENGTH = static_cast<int>(qstrlen(PADDING));
 
 	QByteArray category(pCategory);
 	if (category.length() > MAX_LENGTH)
 	{
-		category = category.left(MAX_LENGTH - 3).append("...");
+		category = category.left(MAX_LENGTH - 3) + QByteArrayLiteral("...");
 	}
 	return category.append(PADDING, MAX_LENGTH - category.size());
 }
@@ -193,20 +183,20 @@ QString LogHandler::getPaddedLogMsg(const QMessageLogContext& pContext, const QS
 {
 	const int paddingSize = (pContext.function == nullptr && pContext.file == nullptr && pContext.line == 0) ?
 			mFunctionFilenameSize - 18 : // padding for nullptr == "unknown(unknown:0)"
-			mFunctionFilenameSize - 3 - qstrlen(pContext.function) - qstrlen(pContext.file) - QString::number(pContext.line).size();
+			mFunctionFilenameSize - 3 - static_cast<int>(qstrlen(pContext.function)) - static_cast<int>(qstrlen(pContext.file)) - QString::number(pContext.line).size();
 
 	QString padding;
 	padding.reserve(paddingSize + pMsg.size() + 3);
 	padding.fill(QLatin1Char(' '), paddingSize);
-	padding.append(QStringLiteral(": "));
-	padding.append(pMsg);
+	padding += QStringLiteral(": ");
+	padding += pMsg;
 	return padding;
 }
 
 
 void LogHandler::handleMessage(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg)
 {
-	QMutexLocker mutexLocker(&mMutex);
+	const QMutexLocker mutexLocker(&mMutex);
 
 	QByteArray filename = formatFilename(pContext.file);
 	QByteArray function = formatFunction(pContext.function, filename, pContext.line);
@@ -215,16 +205,18 @@ void LogHandler::handleMessage(QtMsgType pType, const QMessageLogContext& pConte
 	QMessageLogContext ctx;
 	copyMessageLogContext(pContext, ctx, filename, function, category);
 
-#ifdef ENABLE_MESSAGE_PATTERN
-	const QString msg = mEnvPattern ? pMsg : getPaddedLogMsg(ctx, pMsg);
-#else
-	const QString& msg = pMsg;
-#endif
+	const QString& message = mEnvPattern ? pMsg : getPaddedLogMsg(ctx, pMsg);
 
-	QString logMsg = qFormatLogMessage(pType, ctx, msg);
-	logMsg += QLatin1Char('\n');
+	qSetMessagePattern(mMessagePattern);
+	QString logMsg = qFormatLogMessage(pType, ctx, message) + QLatin1Char('\n');
 	logToFile(logMsg);
-	mHandler(pType, ctx, msg);
+
+#ifdef ENABLE_MESSAGE_PATTERN
+	mHandler(pType, ctx, message);
+#else
+	qSetMessagePattern(mDefaultMessagePattern);
+	mHandler(pType, ctx, pMsg);
+#endif
 
 	Q_EMIT fireRawLog(pMsg, QString::fromLatin1(pContext.category));
 	Q_EMIT fireLog(logMsg);
@@ -238,7 +230,7 @@ bool LogHandler::copy(const QString& pDest)
 		return false;
 	}
 
-	QMutexLocker mutexLocker(&mMutex);
+	const QMutexLocker mutexLocker(&mMutex);
 	return QFile::copy(mLogFile.fileName(), pDest);
 }
 

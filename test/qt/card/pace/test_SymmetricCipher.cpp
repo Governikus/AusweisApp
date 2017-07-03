@@ -2,15 +2,12 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include <QApplication>
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
-#include <openssl/evp.h>
-
 #include "asn1/KnownOIDs.h"
 #include "pace/KeyDerivationFunction.h"
 #include "pace/SymmetricCipher.h"
 
+#include <QtTest>
+#include <openssl/evp.h>
 
 using namespace governikus;
 

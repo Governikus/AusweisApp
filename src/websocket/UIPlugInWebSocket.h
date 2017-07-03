@@ -9,12 +9,15 @@
 #include "UIPlugInJsonApi.h"
 #include "view/UIPlugIn.h"
 
+#include <QDir>
 #include <QScopedPointer>
 #include <QWebSocket>
 #include <QWebSocketServer>
 
 namespace governikus
 {
+
+#define WEBSOCKET_PORT_FILENAME(PID) (QDir::tempPath() + QDir::separator() + QStringLiteral("web_socket_port-") + QString::number(PID))
 
 class UIPlugInWebSocket
 	: public UIPlugIn
@@ -27,8 +30,9 @@ class UIPlugInWebSocket
 		QWebSocketServer mServer;
 		QScopedPointer<QWebSocket> mConnection;
 		UIPlugInJsonApi* mJsonApi;
+		QSharedPointer<WorkflowContext> mContext;
 
-		static int WEBSOCKET_PORT;
+		static quint16 cWebSocketPort;
 
 	private Q_SLOTS:
 		virtual void doShutdown() override;
@@ -44,10 +48,10 @@ class UIPlugInWebSocket
 		UIPlugInWebSocket();
 		virtual ~UIPlugInWebSocket();
 
-		static void setPort(int pPort);
-		static int getPort();
+		static void setPort(quint16 pPort);
+		static quint16 getPort();
 
-		static const int WEBSOCKET_DEFAULT_PORT = 14727;
+		static const quint16 WEBSOCKET_DEFAULT_PORT = 14727;
 };
 
 } /* namespace governikus */

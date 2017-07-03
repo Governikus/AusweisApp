@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "MockSocket.h"
+
 #include <QNetworkReply>
 
 namespace governikus
@@ -17,8 +19,7 @@ class MockNetworkReply
 	Q_OBJECT
 
 	private:
-		const QByteArray mData;
-		int mDataPosition;
+		MockSocket mSocket;
 
 	public:
 		MockNetworkReply(const QByteArray& pData = QByteArray(), QObject* pParent = nullptr);
@@ -26,6 +27,12 @@ class MockNetworkReply
 		virtual void abort() override
 		{
 
+		}
+
+
+		void setRequest(const QNetworkRequest& pRequest)
+		{
+			QNetworkReply::setRequest(pRequest);
 		}
 
 

@@ -53,14 +53,15 @@ class AppController
 		void fireWorkflowStarted(QSharedPointer<WorkflowContext> pContext);
 		void fireWorkflowFinished(QSharedPointer<WorkflowContext> pContext);
 		void fireShowUi(UiModule pModule);
-		void fireProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
 		void fireShowUserInformation(const QString& pInformationMessage);
+#ifndef QT_NO_NETWORKPROXY
+		void fireProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
+#endif
 
 	private Q_SLOTS:
 		void doShutdown();
 		void onUiPlugin(UIPlugIn* pPlugin);
 		void onActiveControllerDone();
-		void onAppSettingsChanged();
 		void onCloseReminderFinished(bool pDontRemindAgain);
 		void onChangePinRequested();
 		void onSelfAuthenticationRequested();

@@ -1,0 +1,69 @@
+From a3a86b6b4acb210392d0aa0aad555f7afb455e0b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Sebastian=20L=C3=B6sch?= <Sebastian.Loesch@governikus.de>
+Date: Tue, 1 Nov 2016 11:16:32 +0100
+Subject: Make variant selection possible if base is missing
+
+[ChangeLog][QtCore][QFileSelector] Removed the requirement for an unused
+default base file in case you want to load only a variant.
+
+When the base file (e.g. /image.jpg) was missing, no selectors were
+considered and it was not possible to load variants of this file (e.g.
+/+android/image.jpg, /+android/+tablet/image.jpg) without specifying the
+directory as well.
+
+As a work around, one previously had to place a default file in
+the base location, which is undesirable in some cases because:
+1. The extra file consumes unnecessary space.
+2. It is impossible to encapsulate platform-specific implementation
+   details by hiding files in a subdirectory.
+
+Task-number: QTBUG-51230
+Change-Id: I4c7f9ec952bff6e5b7738d8cabe3c762c208a38e
+---
+ src/corelib/io/qfileselector.cpp                          | 9 +++------
+ tests/auto/corelib/io/qfileselector/tst_qfileselector.cpp | 2 +-
+ 2 files changed, 4 insertions(+), 7 deletions(-)
+
+diff --git x/qtbase/src/corelib/io/qfileselector.cpp y/qtbase/src/corelib/io/qfileselector.cpp
+index 920281cef7..b48b3e1162 100644
+--- x/qtbase/src/corelib/io/qfileselector.cpp
++++ y/qtbase/src/corelib/io/qfileselector.cpp
+@@ -133,9 +133,9 @@ QFileSelectorPrivate::QFileSelectorPrivate()
+     With those files available, you would select a different file on the android platform,
+     but only if the locale was en_GB.
+ 
+-    QFileSelector will not attempt to select if the base file does not exist. For error handling in
+-    the case no valid selectors are present, it is recommended to have a default or error-handling
+-    file in the base file location even if you expect selectors to be present for all deployments.
++    For error handling in the case no valid selectors are present, it is recommended to have a default or
++    error-handling file in the base file location even if you expect selectors to be present for all
++    deployments.
+ 
+     In a future version, some may be marked as deploy-time static and be moved during the
+     deployment step as an optimization. As selectors come with a performance cost, it is
+@@ -298,9 +298,6 @@ QString QFileSelectorPrivate::select(const QString &filePath) const
+ {
+     Q_Q(const QFileSelector);
+     QFileInfo fi(filePath);
+-    // If file doesn't exist, don't select
+-    if (!fi.exists())
+-        return filePath;
+ 
+     QString ret = selectionHelper(fi.path().isEmpty() ? QString() : fi.path() + QLatin1Char('/'),
+             fi.fileName(), q->allSelectors());
+diff --git x/qtbase/tests/auto/corelib/io/qfileselector/tst_qfileselector.cpp y/qtbase/tests/auto/corelib/io/qfileselector/tst_qfileselector.cpp
+index e5ede1ad06..8c2886f337 100644
+--- x/qtbase/tests/auto/corelib/io/qfileselector/tst_qfileselector.cpp
++++ y/qtbase/tests/auto/corelib/io/qfileselector/tst_qfileselector.cpp
+@@ -138,7 +138,7 @@ void tst_QFileSelector::basicTest_data()
+         << QString(":/extras/test2");
+ 
+     QTest::newRow("custom1-withselector-nobasefile") << QString(":/extras/test3") << (QStringList() << custom1)
+-        << QString(":/extras/test3");
++        << QString(":/extras/+custom1/test3");
+ 
+     QString custom2("custom2");
+     QString custom3("custom3");
+-- 
+2.11.0
+

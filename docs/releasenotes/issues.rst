@@ -9,9 +9,6 @@ Die nachfolgende Liste bezieht sich auf die aktuelle Version der AusweisApp2.
 
   - Bei Erhöhung der Schriftgröße über 175% kommt es zu Darstellungsfehlern.
 
-  - Unter OS X 10.9 wird teilweise das Auflegen eines Ausweisdokumentes erst
-    nach einem Neustart der AusweisApp2 erkannt.
-
   - Wenn unter OS X ein Kartenleser mit aufliegendem Ausweisdokument
     angeschlossen wird und eine Selbstauskunft angestartet wurde, kann unter
     Umständen die AusweisApp2 einfrieren.

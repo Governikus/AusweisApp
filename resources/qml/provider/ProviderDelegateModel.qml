@@ -25,7 +25,7 @@ DelegateModel {
 		var validFilterString = filterString ? filterString : ""
 
 		return entry.model.display.toLowerCase().search(validFilterString.toLowerCase()) !== -1 ||
-			entry.model.address.toLowerCase().search(validFilterString.toLowerCase()) !== -1
+			entry.model.providerAddress.toLowerCase().search(validFilterString.toLowerCase()) !== -1
 	}
 
 	function filterBy(filterString) {

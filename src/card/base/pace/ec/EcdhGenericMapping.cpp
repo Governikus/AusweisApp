@@ -16,7 +16,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 
-EcdhGenericMapping::EcdhGenericMapping(QSharedPointer<EC_GROUP> pCurve)
+EcdhGenericMapping::EcdhGenericMapping(const QSharedPointer<EC_GROUP>& pCurve)
 	: DomainParameterMapping()
 	, mCurve(pCurve)
 	, mTerminalKey()
@@ -73,7 +73,7 @@ QSharedPointer<EC_GROUP> EcdhGenericMapping::generateEphemeralDomainParameters(c
 }
 
 
-QSharedPointer<EC_POINT> EcdhGenericMapping::createNewGenerator(QSharedPointer<EC_POINT> pCardPubKey, QSharedPointer<BIGNUM> pS)
+QSharedPointer<EC_POINT> EcdhGenericMapping::createNewGenerator(const QSharedPointer<const EC_POINT>& pCardPubKey, const QSharedPointer<const BIGNUM>& pS)
 {
 	QSharedPointer<EC_POINT> H = EcUtil::create(EC_POINT_new(mCurve.data()));
 	if (!EC_POINT_mul(mCurve.data(), H.data(), nullptr, pCardPubKey.data(), EC_KEY_get0_private_key(mTerminalKey.data()), nullptr))
@@ -92,7 +92,7 @@ QSharedPointer<EC_POINT> EcdhGenericMapping::createNewGenerator(QSharedPointer<E
 }
 
 
-void EcdhGenericMapping::setGenerator(QSharedPointer<EC_POINT> newGenerator)
+void EcdhGenericMapping::setGenerator(const QSharedPointer<const EC_POINT>& pNewGenerator)
 {
 	QSharedPointer<BIGNUM> curveOrder = EcUtil::create(BN_new());
 	if (!EC_GROUP_get_order(mCurve.data(), curveOrder.data(), nullptr))
@@ -107,7 +107,7 @@ void EcdhGenericMapping::setGenerator(QSharedPointer<EC_POINT> newGenerator)
 		return;
 	}
 	// Da Die Kurve Primordnung hat, entspricht die Ordnung des neuen Erzeugers der, des alten Erzeugers
-	if (!EC_GROUP_set_generator(mCurve.data(), newGenerator.data(), curveOrder.data(), curveCofactor.data()))
+	if (!EC_GROUP_set_generator(mCurve.data(), pNewGenerator.data(), curveOrder.data(), curveCofactor.data()))
 	{
 		qCCritical(card) << "Error EC_GROUP_set_generator";
 		return;

@@ -17,4 +17,4 @@ export QT_QPA_PLATFORM_PLUGIN_PATH=$AA2_PLUGINS
 # For debugging what libraries are loaded.
 #export DYLD_PRINT_LIBRARIES=1
 
-exec "$AA2_RESOURCES/@EXECUTABLE_NAME@"
+exec "$AA2_RESOURCES/@EXECUTABLE_NAME@" $@

@@ -22,8 +22,8 @@ StepProcessingGui::~StepProcessingGui()
 
 void StepProcessingGui::activate()
 {
-	Q_EMIT setCancelButtonState(ButtonState::ENABLED);
-	Q_EMIT setForwardButtonState(ButtonState::HIDDEN);
+	setCancelButtonState(ButtonState::ENABLED);
+	setForwardButtonState(ButtonState::HIDDEN);
 
 	mStepsWidget->setCurrentWidget(mStepsWidget->getProcessingPage());
 	mStepsWidget->getProcessingPage()->startAnimation();

@@ -17,6 +17,7 @@
 #include "states/StateEACAdditionalInputType.h"
 #include "states/StateEstablishPaceCan.h"
 #include "states/StateEstablishPacePin.h"
+#include "states/StateEstablishPacePuk.h"
 #include "states/StateGenericSendReceive.h"
 #include "states/StateGetTcToken.h"
 #include "states/StateInitializeFramework.h"
@@ -57,6 +58,7 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 	auto sUpdateRetryCounter = addAndConnectState<StateUpdateRetryCounter>();
 	auto sEstablishPaceCan = addAndConnectState<StateEstablishPaceCan>();
 	auto sEstablishPacePin = addAndConnectState<StateEstablishPacePin>();
+	auto sEstablishPacePuk = addAndConnectState<StateEstablishPacePuk>();
 	auto sDidAuthenticateEac1 = addAndConnectState<StateDidAuthenticateEac1>();
 	auto sSendDidAuthenticateResponseEac1 = addAndConnectState<StateSendDIDAuthenticateResponseEAC1>();
 	auto sEacAdditionalInputType = addAndConnectState<StateEACAdditionalInputType>();
@@ -127,9 +129,14 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &StateUpdateRetryCounter::fireRetryCounterIsGTOne, sEstablishPacePin);
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &StateUpdateRetryCounter::fireRetryCounterIsOne, sEstablishPaceCan);
-	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &StateUpdateRetryCounter::fireRetryCounterIsZero, sSendDidAuthenticateResponseEac1);
+	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &StateUpdateRetryCounter::fireRetryCounterIsZero, sEstablishPacePuk);
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireError, sSendDidAuthenticateResponseEac1);
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireCancel, sSendDidAuthenticateResponseEac1);
+
+	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireSuccess, sEstablishPacePin);
+	sEstablishPacePuk->addTransition(sEstablishPacePuk, &StateEstablishPacePuk::fireInvalidPuk, sUpdateRetryCounter);
+	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireError, sSendDidAuthenticateResponseEac1);
+	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireCancel, sSendDidAuthenticateResponseEac1);
 
 	sEstablishPaceCan->addTransition(sEstablishPaceCan, &AbstractState::fireSuccess, sEstablishPacePin);
 	sEstablishPaceCan->addTransition(sEstablishPaceCan, &StateEstablishPaceCan::fireInvalidCan, sUpdateRetryCounter);
@@ -140,6 +147,7 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 	sEstablishPacePin->addTransition(sEstablishPacePin, &StateEstablishPacePin::fireInvalidPin, sUpdateRetryCounter);
 	sEstablishPacePin->addTransition(sEstablishPacePin, &AbstractState::fireError, sSendDidAuthenticateResponseEac1);
 	sEstablishPacePin->addTransition(sEstablishPacePin, &AbstractState::fireCancel, sSendDidAuthenticateResponseEac1);
+
 
 	sDidAuthenticateEac1->addTransition(sDidAuthenticateEac1, &AbstractState::fireSuccess, sSendDidAuthenticateResponseEac1);
 	sDidAuthenticateEac1->addTransition(sDidAuthenticateEac1, &AbstractState::fireError, sSendDidAuthenticateResponseEac1);

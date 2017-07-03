@@ -11,8 +11,6 @@ Item {
 
 	id: baseItem
 
-	width: parent.width
-
 	HistoryListViewDelegateContent {
 		showDetail: baseItem.showDetail
 		listModel: baseItem.listModel

@@ -178,7 +178,7 @@
        <item>
         <widget class="QPushButton" name="historyDeleteButton">
          <property name="text">
-          <string>Delete history…</string>
+          <string>Delete history...</string>
          </property>
         </widget>
        </item>
@@ -188,7 +188,7 @@
           <string>save history as PDF</string>
          </property>
          <property name="text">
-          <string>Save as PDF…</string>
+          <string>Save as PDF...</string>
          </property>
         </widget>
        </item>

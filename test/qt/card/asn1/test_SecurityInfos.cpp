@@ -33,7 +33,7 @@ class test_SecurityInfos
 			auto securityInfos = SecurityInfos::fromHex(hexString);
 
 			QVERIFY(securityInfos != nullptr);
-			QCOMPARE(securityInfos->getSecurityInfos<SecurityInfo>().size(), 0);
+			QCOMPARE(securityInfos->getSecurityInfos().size(), 0);
 		}
 
 
@@ -59,9 +59,9 @@ class test_SecurityInfos
 			auto securityInfos = SecurityInfos::fromHex(hexString);
 
 			QVERIFY(securityInfos != nullptr);
-			QCOMPARE(securityInfos->getSecurityInfos<SecurityInfo>().size(), 1);
-			QCOMPARE(securityInfos->getSecurityInfos<PACEInfo>().size(), 1);
-			QCOMPARE(securityInfos->getSecurityInfos<ChipAuthenticationInfo>().size(), 0);
+			QCOMPARE(securityInfos->getSecurityInfos().size(), 1);
+			QCOMPARE(securityInfos->getPACEInfos().size(), 1);
+			QCOMPARE(securityInfos->getChipAuthenticationInfos().size(), 0);
 		}
 
 
@@ -76,9 +76,9 @@ class test_SecurityInfos
 			auto securityInfos = SecurityInfos::fromHex(hexString);
 
 			QVERIFY(securityInfos != nullptr);
-			QCOMPARE(securityInfos->getSecurityInfos<SecurityInfo>().size(), 1);
-			QCOMPARE(securityInfos->getSecurityInfos<PACEInfo>().size(), 0);
-			QCOMPARE(securityInfos->getSecurityInfos<ChipAuthenticationInfo>().size(), 1);
+			QCOMPARE(securityInfos->getSecurityInfos().size(), 1);
+			QCOMPARE(securityInfos->getPACEInfos().size(), 0);
+			QCOMPARE(securityInfos->getChipAuthenticationInfos().size(), 1);
 		}
 
 
@@ -101,9 +101,9 @@ class test_SecurityInfos
 			auto securityInfos = SecurityInfos::fromHex(hexString);
 
 			QVERIFY(securityInfos != nullptr);
-			QCOMPARE(securityInfos->getSecurityInfos<SecurityInfo>().size(), 3);
-			QCOMPARE(securityInfos->getSecurityInfos<PACEInfo>().size(), 1);
-			QCOMPARE(securityInfos->getSecurityInfos<ChipAuthenticationInfo>().size(), 1);
+			QCOMPARE(securityInfos->getSecurityInfos().size(), 3);
+			QCOMPARE(securityInfos->getPACEInfos().size(), 1);
+			QCOMPARE(securityInfos->getChipAuthenticationInfos().size(), 1);
 		}
 
 

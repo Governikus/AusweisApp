@@ -6,7 +6,6 @@
 
 #include "CardConnection.h"
 #include "Result.h"
-#include "ReturnCodeUtil.h"
 #include "StateDidAuthenticateEac1.h"
 #include "asn1/CVCertificateChainBuilder.h"
 
@@ -27,7 +26,7 @@ void StateDidAuthenticateEac1::run()
 	Q_ASSERT(!getContext()->getDidAuthenticateEac1().isNull());
 	Q_ASSERT(getContext()->getPaceOutputData() != nullptr);
 	Q_ASSERT(getContext()->getCardConnection());
-	Q_ASSERT(getContext()->getEffectiveChat());
+	Q_ASSERT(!getContext()->encodeEffectiveChat().isEmpty());
 	auto cardConnection = getContext()->getCardConnection();
 	Q_ASSERT(cardConnection);
 
@@ -37,14 +36,14 @@ void StateDidAuthenticateEac1::run()
 
 void StateDidAuthenticateEac1::onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 {
-	ReturnCode result = pCommand->getReturnCode();
-	if (result == ReturnCode::OK)
+	CardReturnCode result = pCommand->getReturnCode();
+	if (result == CardReturnCode::OK)
 	{
 		auto eac1Command = pCommand.staticCast<DidAuthenticateEAC1Command>();
 		const QByteArray& challenge = eac1Command->getChallenge();
 
 		QSharedPointer<DIDAuthenticateResponseEAC1> eac1Response = getContext()->getDidAuthenticateResponseEac1();
-		eac1Response->setCertificateHolderAuthorizationTemplate(getContext()->getEffectiveChat()->encode().toHex());
+		eac1Response->setCertificateHolderAuthorizationTemplate(getContext()->encodeEffectiveChat().toHex());
 		eac1Response->setChallenge(challenge.toHex());
 
 		auto paceOutput = getContext()->getPaceOutputData();
@@ -59,7 +58,7 @@ void StateDidAuthenticateEac1::onCardCommandDone(QSharedPointer<BaseCardCommand>
 	}
 	else
 	{
-		setResult(Result::createError(result));
+		setStatus(CardReturnCodeUtil::toGlobalStatus(result));
 		Q_EMIT fireError();
 	}
 }

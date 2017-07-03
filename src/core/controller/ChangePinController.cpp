@@ -47,7 +47,7 @@ ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pConte
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireCancel, sCleanUpReaderManager);
 
 	sEstablishPacePuk->addTransition(sEstablishPacePuk, &StateEstablishPacePuk::fireInvalidPuk, sUpdateRetryCounter);
-	sEstablishPacePuk->addTransition(sEstablishPacePuk, &StateEstablishPacePuk::fireInoperativePuk, sUpdateRetryCounter);
+	sEstablishPacePuk->addTransition(sEstablishPacePuk, &StateEstablishPacePuk::fireInoperativePuk, sCleanUpReaderManager);
 	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireSuccess, sCleanUpReaderManager);
 	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireError, sCleanUpReaderManager);
 	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireCancel, sCleanUpReaderManager);

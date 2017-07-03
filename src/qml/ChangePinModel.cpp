@@ -3,8 +3,8 @@
  */
 
 #include "ChangePinModel.h"
+
 #include "ReaderManager.h"
-#include "ReturnCodeUtil.h"
 #include "context/ChangePinContext.h"
 
 #include <QDebug>
@@ -23,16 +23,11 @@ ChangePinModel::~ChangePinModel()
 }
 
 
-void ChangePinModel::resetContext(QSharedPointer<ChangePinContext> pContext)
+void ChangePinModel::resetContext(const QSharedPointer<ChangePinContext>& pContext)
 {
 	mContext = pContext;
 	if (mContext)
 	{
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-		mContext->setReaderType(ReaderManagerPlugInType::NFC);
-#else
-		mContext->setReaderType(ReaderManagerPlugInType::PCSC);
-#endif
 		connect(mContext.data(), &ChangePinContext::fireCurrentStateChanged, this, &ChangePinModel::fireCurrentStateChanged);
 		connect(mContext.data(), &ChangePinContext::fireResultChanged, this, &ChangePinModel::fireResultChanged);
 		connect(mContext.data(), &ChangePinContext::fireSuccessMessageChanged, this, &ChangePinModel::fireResultChanged);
@@ -55,35 +50,24 @@ QString ChangePinModel::getCurrentState() const
 
 QString ChangePinModel::getResultString() const
 {
-	if (mContext)
-	{
-		return mContext->getResult().isOk() ? mContext->getSuccessMessage() : mContext->getResult().getMessage();
-	}
-	else
+	if (!mContext)
 	{
 		return QString();
 	}
+
+	return mContext->getStatus().isNoError() ? mContext->getSuccessMessage() : mContext->getStatus().toErrorDescription(true);
 }
 
 
 bool ChangePinModel::isResultOk() const
 {
-	return mContext && mContext->getResult().isOk();
+	return mContext && mContext->getStatus().isNoError();
 }
 
 
 void ChangePinModel::startWorkflow()
 {
 	Q_EMIT fireStartWorkflow();
-}
-
-
-void ChangePinModel::continueWorkflow()
-{
-	if (mContext)
-	{
-		mContext->setStateApproved();
-	}
 }
 
 
@@ -101,7 +85,7 @@ void ChangePinModel::setReaderType(const QString& pReaderType)
 {
 	if (mContext)
 	{
-		mContext->setReaderType(EnumReaderManagerPlugInType::fromString(pReaderType, ReaderManagerPlugInType::UNKNOWN));
+		mContext->setReaderType(Enum<ReaderManagerPlugInType>::fromString(pReaderType, ReaderManagerPlugInType::UNKNOWN));
 	}
 }
 

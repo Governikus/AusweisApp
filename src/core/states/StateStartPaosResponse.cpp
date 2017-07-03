@@ -14,17 +14,18 @@ StateStartPaosResponse::StateStartPaosResponse(const QSharedPointer<WorkflowCont
 
 void StateStartPaosResponse::run()
 {
-	Q_ASSERT(getContext()->getStartPaosResponse());
-	if (getContext()->getStartPaosResponse()->getResult().isOk())
+	const QSharedPointer<StartPaosResponse>& startPaosResponse = getContext()->getStartPaosResponse();
+	Q_ASSERT(startPaosResponse);
+
+	const Result& result = startPaosResponse->getResult();
+	if (result.isOk())
 	{
 		Q_EMIT fireSuccess();
+		return;
 	}
-	else
-	{
-		// we override our result with the one sent from server
-		Result result = getContext()->getStartPaosResponse()->getResult();
-		qDebug() << "Set server result to model:" << result.getMajorString() << result.getMinorString() << result.getMessage();
-		getContext()->setResult(result);
-		Q_EMIT fireError();
-	}
+
+	qDebug() << "Processing server result:" << result.getMajorString() << result.getMinorString() << result.getMessage();
+	setStatus(result.toStatus());
+	Q_EMIT fireError();
+
 }

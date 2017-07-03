@@ -13,6 +13,17 @@ using namespace governikus;
 /*
  * Test data generated with ocard
  */
+class ByteArrayUtil
+{
+	public:
+		template<typename T> static QByteArray fromValue(T pValue)
+		{
+			return QByteArray::fromHex(QByteArray::number(pValue, 16));
+		}
+
+
+};
+
 class test_SecureMessaging
 	: public QObject
 {
@@ -22,6 +33,7 @@ class test_SecureMessaging
 		QScopedPointer<SecureMessaging> mSecureMessaging;
 		QScopedPointer<CipherMac> mCipherMac;
 		QScopedPointer<SymmetricCipher> mCipher;
+
 
 		QByteArray concat(std::initializer_list<QByteArray> pList) const
 		{
@@ -39,7 +51,7 @@ class test_SecureMessaging
 			QVector<QByteArray> result(4);
 
 			++pSsc;
-			QByteArray ssc = QByteArray(mCipher->getBlockSize() - QByteArray::number(pSsc).size(), 0x00).append(pSsc);
+			QByteArray ssc = QByteArray(mCipher->getBlockSize() - QByteArray::number(pSsc, 16).size(), 0x00).append(ByteArrayUtil::fromValue(pSsc));
 
 			if (pBuffer.length() > 2)
 			{
@@ -51,16 +63,16 @@ class test_SecureMessaging
 				int padLen = mCipher->getBlockSize() - (pData.size() % mCipher->getBlockSize());
 				pData = concat({pData, QByteArray::fromHex("80"), QByteArray(padLen - 1, 0x00)});
 				QByteArray encryptedData = mCipher->encrypt(pData).prepend(0x01);
-				result[0] = QByteArray().append(char(0x87)).append(encryptedData.size()).append(encryptedData);
+				result[0] = QByteArray().append(char(0x87)).append(ByteArrayUtil::fromValue(encryptedData.size())).append(encryptedData);
 			}
 			QByteArray pSw = pBuffer.right(2);
-			result[1] = QByteArray().append(char(0x99)).append(pSw.size()).append(pSw);
+			result[1] = QByteArray().append(char(0x99)).append(ByteArrayUtil::fromValue(pSw.size())).append(pSw);
 			{
 				QByteArray dataToMac = concat({ssc, result[0], result[1]});
 				int padLen = mCipher->getBlockSize() - (dataToMac.size() % mCipher->getBlockSize());
 				dataToMac.append(char(0x80)).append(QByteArray(padLen - 1, 0x00));
 				QByteArray mac = mCipherMac->generate(dataToMac);
-				result[2] = QByteArray().append(char(0x8E)).append(mac.size()).append(mac);
+				result[2] = QByteArray().append(char(0x8E)).append(ByteArrayUtil::fromValue(mac.size())).append(mac);
 			}
 			result[3] = pSw;
 

@@ -32,15 +32,15 @@ enum class KeyAgreementStatus
 class KeyAgreement
 {
 	private:
-		QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
+		const QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
 		QByteArray mEncryptionKey;
 		QByteArray mMacKey;
 		QByteArray mCarCurr, mCarPrev;
 
 		/*!
-		 * \brief Determine the card's nonce. The encrypted nonce will be decrypted using the supplied pin.
+		 * \brief Determine the card's nonce. The encrypted nonce will be decrypted using the supplied PIN.
 		 * This represents the first step "General Authenticate" of TR-03110 Part 3, page 47.
-		 * \param pPin pin for decryption of the nonce
+		 * \param pPin PIN for decryption of the nonce
 		 * \return the decrypted nonce
 		 */
 		QByteArray determineNonce(const QString& pPin);
@@ -74,10 +74,10 @@ class KeyAgreement
 		KeyAgreementStatus performMutualAuthenticate();
 
 	protected:
-		QSharedPointer<PACEInfo> mPaceInfo;
+		const QSharedPointer<const PACEInfo> mPaceInfo;
 		KeyDerivationFunction mKeyDerivationFunction;
 
-		KeyAgreement(QSharedPointer<PACEInfo> pPaceInfo, QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
+		KeyAgreement(const QSharedPointer<const PACEInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 		/*!
 		 * \brief Transmit the General Authenticate (Mapping Data) command to the card.
@@ -121,7 +121,7 @@ class KeyAgreement
 		 * \param pReader the reader to transmit card commands
 		 * \return new instance
 		 */
-		static QSharedPointer<KeyAgreement> create(QSharedPointer<PACEInfo> pPaceInfo,
+		static QSharedPointer<KeyAgreement> create(const QSharedPointer<const PACEInfo>& pPaceInfo,
 				QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 		virtual ~KeyAgreement();
 

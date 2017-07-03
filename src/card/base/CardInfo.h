@@ -29,7 +29,6 @@ class CardInfo
 {
 	CardType mCardType;
 	QSharedPointer<const EFCardAccess> mEfCardAccess;
-	QString mSlotHandle;
 	int mRetryCounter;
 	bool mPinDeactivated;
 
@@ -40,12 +39,13 @@ class CardInfo
 
 		QSharedPointer<const EFCardAccess> getEfCardAccess() const;
 
-		const QString& getSlotHandle() const;
-
 		QString getEidApplicationPath() const;
 
 		int getRetryCounter() const;
 
+		/*!
+		 * The online identification function has not been activated by the competent authority.
+		 */
 		bool isPinDeactivated() const;
 
 		friend class Reader;

@@ -32,35 +32,41 @@ void CertificateDescriptionModel::onDidAuthenticateEac1Changed()
 {
 	beginResetModel();
 	mData.clear();
-
-	auto certDescr = getCertificateDescription();
-	const QString serviceProviderAddress = certDescr->getServiceProviderAddress();
-	const QString purpose = getPurpose();
-	const QString dataSecurityOfficer = certDescr->getDataSecurityOfficer();
-	const QString termsOfUsage = certDescr->getTermsOfUsage();
-	const bool showDetailedProviderInfo = !(serviceProviderAddress.isEmpty() || purpose.isEmpty() || dataSecurityOfficer.isEmpty());
-
-	mData.append(QPair<QString, QString>(tr("Service provider"), getSubjectName() + '\n' + getSubjectUrl()));
-	mData.append(QPair<QString, QString>(tr("Certificate issuer"), certDescr->getIssuerName() + '\n' + certDescr->getIssuerUrl()));
-	if (showDetailedProviderInfo)
+	if (const auto& certDescr = getCertificateDescription())
 	{
-		mData.append(QPair<QString, QString>(tr("Name, address and mail address of the service provider"), serviceProviderAddress));
-		mData.append(QPair<QString, QString>(tr("Purpose"), purpose));
-		mData.append(QPair<QString, QString>(tr("Indication of the bodies responsible for the service provider, "
-												"that verify the compliance with data security regulations"), dataSecurityOfficer));
+		initModelData(certDescr);
 	}
-	else if (!termsOfUsage.isEmpty())
-	{
-		mData.append(QPair<QString, QString>(tr("Service provider information"), termsOfUsage));
-	}
-	if (!getValidity().isEmpty())
-	{
-		mData.append(QPair<QString, QString>(tr("Validity"), getValidity()));
-	}
-
 	endResetModel();
 
 	Q_EMIT fireChanged();
+}
+
+
+void CertificateDescriptionModel::initModelData(const QSharedPointer<CertificateDescription>& pCertDescription)
+{
+	const QString& serviceProviderAddress = pCertDescription->getServiceProviderAddress();
+	const QString& purpose = getPurpose();
+	const QString& dataSecurityOfficer = pCertDescription->getDataSecurityOfficer();
+	const QString& termsOfUsage = pCertDescription->getTermsOfUsage();
+	const bool showDetailedProviderInfo = !(serviceProviderAddress.isEmpty() || purpose.isEmpty() || dataSecurityOfficer.isEmpty());
+
+	mData += QPair<QString, QString>(tr("Service provider"), getSubjectName() + '\n' + getSubjectUrl());
+	mData += QPair<QString, QString>(tr("Certificate issuer"), pCertDescription->getIssuerName() + '\n' + pCertDescription->getIssuerUrl());
+	if (showDetailedProviderInfo)
+	{
+		mData += QPair<QString, QString>(tr("Name, address and mail address of the service provider"), serviceProviderAddress);
+		mData += QPair<QString, QString>(tr("Purpose"), purpose);
+		mData += QPair<QString, QString>(tr("Indication of the bodies responsible for the service provider, "
+											"that verify the compliance with data security regulations"), dataSecurityOfficer);
+	}
+	else if (!termsOfUsage.isEmpty())
+	{
+		mData += QPair<QString, QString>(tr("Service provider information"), termsOfUsage);
+	}
+	if (!getValidity().isEmpty())
+	{
+		mData += QPair<QString, QString>(tr("Validity"), getValidity());
+	}
 }
 
 
@@ -74,7 +80,7 @@ CertificateDescriptionModel::CertificateDescriptionModel(QObject* pParent)
 }
 
 
-void CertificateDescriptionModel::resetContext(QSharedPointer<AuthContext> pContext)
+void CertificateDescriptionModel::resetContext(const QSharedPointer<AuthContext>& pContext)
 {
 	mContext = pContext;
 	if (mContext)
@@ -88,19 +94,22 @@ void CertificateDescriptionModel::resetContext(QSharedPointer<AuthContext> pCont
 
 QString CertificateDescriptionModel::getSubjectName() const
 {
-	return getCertificateDescription()->getSubjectName();
+	const auto& certificateDescription = getCertificateDescription();
+	return certificateDescription ? getCertificateDescription()->getSubjectName() : QString();
 }
 
 
 QString CertificateDescriptionModel::getSubjectUrl() const
 {
-	return getCertificateDescription()->getSubjectUrl();
+	const auto& certificateDescription = getCertificateDescription();
+	return certificateDescription ? getCertificateDescription()->getSubjectUrl() : QString();
 }
 
 
 QString CertificateDescriptionModel::getPurpose() const
 {
-	return getCertificateDescription()->getPurpose();
+	const auto& certificateDescription = getCertificateDescription();
+	return certificateDescription ? getCertificateDescription()->getPurpose() : QString();
 }
 
 

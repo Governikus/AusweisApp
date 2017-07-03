@@ -47,7 +47,7 @@ class Transmit
 
 		void appendInputApduInfo(const InputAPDUInfo& pInfo)
 		{
-			mInputApduInfos.append(pInfo);
+			mInputApduInfos += pInfo;
 		}
 
 

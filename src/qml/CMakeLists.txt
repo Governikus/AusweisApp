@@ -1,6 +1,14 @@
 ADD_PLATFORM_LIBRARY(AusweisAppQml)
 
 TARGET_LINK_LIBRARIES(AusweisAppQml Qt5::Svg Qt5::Qml Qt5::Quick Qt5::QuickControls2 AusweisAppCore AusweisAppGlobal)
+IF(DESKTOP)
+	TARGET_LINK_LIBRARIES(AusweisAppQml AusweisAppExport)
+ENDIF()
+
+IF(TARGET Qt5::Bluetooth)
+    TARGET_LINK_LIBRARIES(AusweisAppQml Qt5::Bluetooth)
+ENDIF()
+
 TARGET_COMPILE_DEFINITIONS(AusweisAppQml PRIVATE QT_STATICPLUGIN)
 
 IF(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")

@@ -21,7 +21,7 @@ SectionPage {
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.bottom: parent.verticalCenter
 		fillMode: Image.PreserveAspectFit
-		source: isError ? "qrc:///images/iOS/rotes_X.svg" : "qrc:///images/iOS/gruener_Haken.svg"
+		source: isError ? "qrc:///images/rotes_X.svg" : "qrc:///images/gruener_Haken.svg"
 		width: Utils.dp(160)
 	}
 	Text {
@@ -33,6 +33,7 @@ SectionPage {
 		horizontalAlignment: Text.AlignHCenter
 		wrapMode: Text.WordWrap
 		color: Constants.blue
+		onLinkActivated: Qt.openUrlExternally(link)
 	}
 
 	Button {

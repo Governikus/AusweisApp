@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "AppUpdateData.h"
 #include "IconCache.h"
 
 namespace governikus
@@ -23,12 +24,17 @@ class Updater
 		static Updater& getInstance();
 
 		void update();
-		void checkAppUpdate(bool pSilent = false);
+		void checkAppUpdate();
 		const IconCache& getIconCache() const;
+		const AppUpdateData& getUpdateData() const;
+		void skipVersion(const QString& pVersion);
 
 	private Q_SLOTS:
 		void onUpdateProviderSettingsFinished();
 		void doUpdateRemoteSettings();
+
+	Q_SIGNALS:
+		void fireAppUpdateCheckFinished(bool pUpdateAvailable, const GlobalStatus& pError);
 };
 
 } /* namespace governikus */

@@ -61,7 +61,7 @@ bool ChipAuthenticationInfo::acceptsProtocol(const ASN1_OBJECT* pObjectIdentifie
 }
 
 
-ChipAuthenticationInfo::ChipAuthenticationInfo(QSharedPointer<chipauthenticationinfo_st> pDelegate)
+ChipAuthenticationInfo::ChipAuthenticationInfo(const QSharedPointer<const chipauthenticationinfo_st>& pDelegate)
 	: SecurityInfo()
 	, mDelegate(pDelegate)
 {

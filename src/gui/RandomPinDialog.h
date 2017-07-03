@@ -1,7 +1,7 @@
 /*!
  * RandomPinDialog.h
  *
- * \brief Dialog for display the random pin.
+ * \brief Dialog for display the random PIN.
  *
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */

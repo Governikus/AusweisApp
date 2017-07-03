@@ -15,9 +15,6 @@ class NfcCard
 {
 	Q_OBJECT
 
-	private:
-		bool mConnected;
-
 	Q_SIGNALS:
 		void fireCardRemoved();
 
@@ -25,15 +22,11 @@ class NfcCard
 		NfcCard();
 		virtual ~NfcCard();
 
-		virtual ReturnCode connect() override;
-		virtual ReturnCode disconnect() override;
+		virtual CardReturnCode connect() override;
+		virtual CardReturnCode disconnect() override;
 		virtual bool isConnected() override;
 
-		virtual ReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
-
-		virtual ReturnCode establishPaceChannel(PACE_PIN_ID pPinId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, int pTimeoutSeconds) override;
-
-		virtual ReturnCode setEidPin(unsigned int pTimeoutSeconds) override;
+		virtual CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
 };
 
 } /* namespace governikus */

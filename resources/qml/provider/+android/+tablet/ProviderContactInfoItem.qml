@@ -3,61 +3,43 @@ import QtQuick 2.6
 import "../global"
 
 
-Item {
+Rectangle {
 	id: baseItem
+	property alias imageSource: image.source
+	property alias itemText: text.text
+	property url link
+	height: Math.max(Utils.dp(60), text.height + Utils.dp(10))
 
-	property color backgroundColor: PlatformConstants.blue
-	property string imageSource: ""
-	property string itemText: ""
-
-	width: parent.width
-
-	Rectangle {
-		anchors.fill: itemRow
-		color: baseItem.backgroundColor
-	}
-
-	Row {
-		id: itemRow
-
+	Item {
+		id: iconItem
 		height: parent.height
-		width: parent.width
-		padding: Utils.dp(10)
-		spacing: Utils.dp(10)
+		width: Math.min(height, Utils.dp(60))
+		anchors.left: parent.left
 
-		Rectangle {
-			height: parent.height
-			width: height
-			color: baseItem.backgroundColor
-			anchors.verticalCenter: parent.verticalCenter
-
-			Image {
-				source: baseItem.imageSource
-
-				height: width
-				width: parent.width * 0.5
-				anchors.centerIn: parent
-				fillMode: Image.PreserveAspectFit
-
-			}
+		Image {
+			id: image
+			width: parent.width * 0.5
+			height: width
+			anchors.centerIn: parent
+			fillMode: Image.PreserveAspectFit
 		}
+	}
+	Text {
+		id: text
+		anchors.left: iconItem.right
+		anchors.leftMargin: Utils.dp(10)
+		anchors.right: parent.right
+		anchors.verticalCenter: parent.verticalCenter
+		font.pixelSize: Constants.normal_font_size
+		color: "white"
+		linkColor: color
+		elide: Text.ElideRight
+		wrapMode: Text.WordWrap
+    }
 
-		Rectangle {
-			height: parent.height
-			width: parent.width - parent.height
-			color: baseItem.backgroundColor
-			anchors.verticalCenter: parent.verticalCenter
-
-			Text {
-				text: baseItem.itemText !== "" ? baseItem.itemText : qsTr("Unknown")
-
-				rightPadding: Utils.dp(10)
-				width: parent.width - rightPadding
-				font.pixelSize: Constants.normal_font_size
-				color: "white"
-				elide: Text.ElideRight
-				anchors.verticalCenter: parent.verticalCenter
-			}
-		}
+	MouseArea {
+		anchors.fill: parent
+		enabled: !!baseItem.link
+		onClicked: Qt.openUrlExternally(baseItem.link)
 	}
 }

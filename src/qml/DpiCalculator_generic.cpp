@@ -13,12 +13,8 @@ Q_DECLARE_LOGGING_CATEGORY(qml)
 qreal DpiCalculator::getDpi()
 {
 	qreal dpi = 0.0;
-#ifdef Q_OS_WIN
-	auto app = static_cast<QGuiApplication*>(QCoreApplication::instance());
-	auto screen = app->primaryScreen();
-	dpi = screen->logicalDotsPerInch() * app->devicePixelRatio();
 
-#elif defined(Q_OS_ANDROID)
+#if defined(Q_OS_ANDROID)
 	auto qtDpi = qgetenv("QT_ANDROID_THEME_DISPLAY_DPI");
 	bool ok;
 	dpi = qtDpi.toFloat(&ok);
@@ -35,7 +31,7 @@ qreal DpiCalculator::getDpi()
 #else
 	auto app = static_cast<QGuiApplication*>(QCoreApplication::instance());
 	auto screen = app->primaryScreen();
-	dpi = screen->physicalDotsPerInch() * app->devicePixelRatio();
+	dpi = screen->logicalDotsPerInch();
 
 #endif
 	qCInfo(qml) << "Determined dpi" << dpi;

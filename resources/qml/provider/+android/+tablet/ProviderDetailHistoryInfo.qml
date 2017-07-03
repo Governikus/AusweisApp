@@ -14,11 +14,6 @@ Rectangle {
 	property string termsOfUsageText: ""
 	property string internalState: "off"
 
-	readonly property int infoMargin: Utils.dp(16)
-	readonly property int infoPadding: infoMargin / 2
-	readonly property int infoSpacing: Utils.dp(16)
-	readonly property int leftInfoRowHeight: Utils.dp(60)
-
 	color: "transparent"
 
 	Rectangle {
@@ -28,216 +23,100 @@ Rectangle {
 		opacity: 0.4
 	}
 
-	Row {
-		id: infoRow
+	Flickable {
+		anchors.fill: baseItem
+		anchors.margins: Constants.component_spacing
+		contentHeight: infoRow.height
 
-		height: baseItem.height - 2 * baseItem.infoMargin
-		width: baseItem.width - 2 * baseItem.infoMargin - baseItem.infoSpacing
-		anchors.top: baseItem.top
-		anchors.topMargin: baseItem.infoMargin
-		anchors.left: baseItem.left
-		anchors.leftMargin: baseItem.infoMargin
+		onContentYChanged: {
+			if (contentY < 0) { contentY = 0 /* prevent flicking over the top */}
+		}
 
-		spacing: baseItem.infoSpacing
+		Row {
+			id: infoRow
+			height: childrenRect.height
+			spacing: Constants.component_spacing
 
-		Rectangle {
-			id: leftInfo
-
-			height: infoRow.height
-			width: infoRow.width * 2 / 5
-			radius: Utils.dp(5)
-
-			anchors.top: parent.top
-
-			color: "white"
+			property int maxContentHeight: Math.max(leftPane.contentHeight, rightPane.contentHeight)
 
 			Column {
-				id: leftInfoColumn
+				width: baseItem.width / 3
 
-				height: parent.height
-				width: parent.width - 2 * baseItem.infoMargin
+				Pane {
+					id: leftPane
+					height: childrenRect.height + verticalSpace
 
-				padding: baseItem.infoPadding
-				spacing: baseItem.infoSpacing
-				anchors.top: parent.top
-				anchors.left: parent.left
-				anchors.leftMargin: baseItem.infoMargin
+					readonly property int contentHeight: childrenRect.height
+					property int verticalSpace: infoRow.maxContentHeight - contentHeight
 
-				Row {
-					height: baseItem.leftInfoRowHeight
-					width: parent.width
-					anchors.left: parent.left
-
-					Image {
-						id: purposeIcon
-
-						anchors.verticalCenter: parent.verticalCenter
-						height: parent.height
-						width: height
-
-						source: "qrc:///images/iOS/ProviderPurpose.png"
-						fillMode: Image.PreserveAspectFit
+					ProviderInfoSection {
+						imageSource: "qrc:///images/provider/information.svg"
+						title: qsTr("Service provider")
+						name: baseItem.providerName
 					}
 
-					LabeledText {
-						id: purposeItem
-
-						label: qsTr("Purpose for reading out requested data")
-						text: baseItem.purposeText
-
-						anchors.verticalCenter: parent.verticalCenter
-						width: parent.width - purposeIcon.width
-					}
-				}
-
-				Row {
-					height: baseItem.leftInfoRowHeight
-					width: parent.width
-					anchors.left: parent.left
-
-					Image {
-						id: informationIcon
-
-						anchors.verticalCenter: parent.verticalCenter
-						height: parent.height
-						width: height
-
-						source: "qrc:///images/iOS/ProviderInformation.png"
-						fillMode: Image.PreserveAspectFit
+					ProviderInfoSection {
+						imageSource: "qrc:///images/provider/purpose.svg"
+						title: qsTr("Purpose for reading out requested data")
+						name: baseItem.purposeText
 					}
 
-					LabeledText {
-						id: informationItem
-
-						label: qsTr("Provider information")
-						text: baseItem.providerName
-
-						anchors.verticalCenter: parent.verticalCenter
-						width: parent.width - informationIcon.width
+					Text {
+						id: readDataTitle
+						width: parent.width
+						font.pixelSize: Constants.header_font_size
+						color: PlatformConstants.blue_primary
+						text: qsTr("Read data")
 					}
-				}
 
-				Text {
-					id: readDataTitle
+					Column {
+						id: infoTable
 
-					width: parent.width
-					anchors.left: parent.left
-					font.pixelSize: Constants.header_font_size
-					color: PlatformConstants.blue_primary
+						width: parent.width
+						spacing: 1
 
-					text: qsTr("Read data")
-				}
+						Repeater {
+							model: baseItem.requestedDataText.split(",")
 
-				Flickable {
-					id: readData
+							Item {
+								id: textItem
 
-					height: leftInfoColumn.height -
-							(readDataTitle.height + 2 * leftInfoColumn.padding +
-													3 * leftInfoColumn.spacing +
-													2 * baseItem.leftInfoRowHeight)
-					width: leftInfoColumn.width
+								height: Utils.dp(32)
+								width: infoTable.width
 
-					anchors.left: parent.left
+								Rectangle {
+									anchors.fill: textItem
+									color: "white"
+								}
 
-					contentHeight: readDataContent.height
-					contentWidth: width
-					clip: true
-					flickableDirection: Flickable.VerticalFlick
-					boundsBehavior: Flickable.StopAtBounds
+								Text {
+									text: modelData.trim()
 
-					Item {
-						id: readDataContent
-
-						height: infoTable.height
-						width: readData.width
-
-						Rectangle {
-							anchors.fill: infoTable
-
-							color: "black"
-						}
-
-						Column {
-							id: infoTable
-
-							width: parent.width
-							anchors.left: parent.left
-							spacing: 1
-
-							Repeater {
-								model: baseItem.requestedDataText.split(",")
-
-								Item {
-									id: textItem
-
-									height: Utils.dp(32)
-									width: infoTable.width
-
-									Rectangle {
-										anchors.fill: textItem
-										color: "white"
-									}
-
-									Text {
-										text: modelData.trim()
-
-										anchors.verticalCenter: parent.verticalCenter
-										font.pixelSize: Constants.normal_font_size
-									}
+									anchors.verticalCenter: parent.verticalCenter
+									font.pixelSize: Constants.normal_font_size
 								}
 							}
 						}
 					}
 				}
 			}
-		}
-
-		Rectangle {
-			id: rightInfo
-
-			height: infoRow.height
-			width: infoRow.width * 3 / 5
-			radius: Utils.dp(5)
-
-			anchors.top: parent.top
-
-			color: "white"
 
 			Column {
-				id: termsOfUsage
+				width: baseItem.width / 3 * 2 - 3 * Constants.component_spacing
 
-				height: parent.height
-				width: parent.width - 2 * baseItem.infoMargin
+				Pane {
+					id: rightPane
+					height: childrenRect.height + verticalSpace
 
-				padding: baseItem.infoPadding
-				spacing: baseItem.infoSpacing
-				anchors.top: parent.top
-				anchors.left: parent.left
-				anchors.leftMargin: baseItem.infoMargin
+					readonly property int contentHeight: childrenRect.height
+					property int verticalSpace: infoRow.maxContentHeight - contentHeight
 
-				Text {
-					id: termsOfUsageTitle
-
-					text: qsTr("Terms of usage")
-					font.pixelSize: Constants.header_font_size
-					color: PlatformConstants.blue_primary
-				}
-
-
-				Flickable {
-					id: termsOfUsageData
-
-					height: termsOfUsage.height -
-					(termsOfUsageTitle.height + 2 * termsOfUsage.padding + leftInfoColumn.spacing)
-					width: termsOfUsage.width
-
-					anchors.left: parent.left
-
-					contentHeight: termsOfUsageTextItem.height
-					contentWidth: width
-					clip: true
-					flickableDirection: Flickable.VerticalFlick
-					boundsBehavior: Flickable.StopAtBounds
+					Text {
+						id: termsOfUsageTitle
+						text: qsTr("Terms of usage")
+						font.pixelSize: Constants.header_font_size
+						color: PlatformConstants.blue_primary
+					}
 
 					Text {
 						id: termsOfUsageTextItem

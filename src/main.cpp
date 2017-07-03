@@ -1,4 +1,5 @@
 #include "CommandLineParser.h"
+#include "MetaTypeRegister.h"
 #include "SignalHandler.h"
 #include "controller/AppController.h"
 #include "core/DeviceInfo.h"
@@ -11,7 +12,7 @@
 #include <QThread>
 #include <QtPlugin>
 
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || defined(Q_OS_WINRT)
 #include <QGuiApplication>
 #define QAPP QGuiApplication
 #else
@@ -23,7 +24,7 @@
 // Includes for version API
 #include <openssl/crypto.h>
 
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 Q_IMPORT_PLUGIN(PcscReaderManagerPlugIn)
 Q_IMPORT_PLUGIN(WebserviceActivationHandler)
 #endif
@@ -44,7 +45,7 @@ Q_IMPORT_PLUGIN(BluetoothReaderManagerPlugIn)
 #endif
 
 
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 Q_IMPORT_PLUGIN(UIPlugInCli)
 Q_IMPORT_PLUGIN(UIPlugInWidgets)
 #endif
@@ -80,6 +81,7 @@ static inline void printInfo()
 	qCInfo(init) << "### Architecture:" << QSysInfo::currentCpuArchitecture();
 #ifdef Q_OS_ANDROID
 	qCInfo(init) << "### Device:" << DeviceInfo::getPrettyInfo();
+	qCInfo(init) << "### VersionCode:" << BuildHelper::getVersionCode();
 #endif
 	qCInfo(init) << "### Qt Version:" << qVersion();
 	qCInfo(init) << "### OpenSSL Version:" << QSslSocket::sslLibraryVersionString();
@@ -98,7 +100,7 @@ static inline void printInfo()
 }
 
 
-int main(int argc, char** argv)
+Q_DECL_EXPORT int main(int argc, char** argv)
 {
 	QCoreApplication::setOrganizationName(QStringLiteral(VENDOR));
 #ifdef VENDOR_DOMAIN
@@ -115,6 +117,8 @@ int main(int argc, char** argv)
 	SignalHandler::getInstance().init();
 	CommandLineParser::getInstance().parse();
 	printInfo();
+
+	MetaTypes::registerMetaTypes();
 
 	AppController controller;
 	if (!controller.start())

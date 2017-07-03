@@ -5,6 +5,7 @@ import "."
 Item {
 	property alias label: labelText.text
 	property alias text: bodyText.text
+	property alias textFormat: bodyText.textFormat
 	property int margin
 	property int fontUppercase
 
@@ -32,7 +33,7 @@ Item {
 		anchors.leftMargin: margin
 		anchors.right: parent.right
 		anchors.rightMargin: margin
-		font.pixelSize: Utils.sp(14)
+		font.pixelSize: Constants.label_font_size
 		color: Constants.blue
 		wrapMode: Text.WordWrap
 	}

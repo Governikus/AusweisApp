@@ -1,0 +1,44 @@
+From 1e9d5b22fbd18cfcf56f5c6ced19c0d9ba55a4f1 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Wed, 11 Jan 2017 17:29:40 +0100
+Subject: [PATCH] Do not request an unnessessary dangerous right
+
+Bluetooth LE discovery needs ACCESS_COARSE_LOCATION permission
+since android 6.0. In the manifest file it is possible use it by
+"<uses-permission-sdk-23 android:name="ACCESS_COARSE_LOCATION" />"
+in general. But the bluetooth LE discovery requests it for every
+android version. This change enables the request for android > 6.0
+only (API-Level >=23).
+
+Task-number: QTBUG-58085
+Change-Id: I78ad2fe83eb16eaf45813137335f85c7b3930992
+---
+ src/bluetooth/qbluetoothdevicediscoveryagent_android.cpp | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git x/qtconnectivity/src/bluetooth/qbluetoothdevicediscoveryagent_android.cpp y/qtconnectivity/src/bluetooth/qbluetoothdevicediscoveryagent_android.cpp
+index 2d6e64be..e76ddff7 100644
+--- x/qtconnectivity/src/bluetooth/qbluetoothdevicediscoveryagent_android.cpp
++++ y/qtconnectivity/src/bluetooth/qbluetoothdevicediscoveryagent_android.cpp
+@@ -45,6 +45,7 @@
+ #include <QtCore/private/qjnihelpers_p.h>
+ #include "android/devicediscoverybroadcastreceiver_p.h"
+ #include <QtAndroidExtras/QAndroidJniEnvironment>
++#include <QtAndroid>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+@@ -147,7 +148,9 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start(QBluetoothDeviceDiscoveryAgent
+ 
+     // check Android v23+ permissions
+     // -> BTLE search requires android.permission.ACCESS_COARSE_LOCATION
+-    if (requestedMethods && QBluetoothDeviceDiscoveryAgent::LowEnergyMethod) {
++    if (requestedMethods & QBluetoothDeviceDiscoveryAgent::LowEnergyMethod
++        && QtAndroid::androidSdkVersion() >= 23)
++    {
+         QString permission(QLatin1String("android.permission.ACCESS_COARSE_LOCATION"));
+ 
+         // do we have required permission already, if so nothing to do
+-- 
+2.11.0
+

@@ -24,11 +24,13 @@ class test_StateProcessCertificatesFromEac2;
 
 namespace governikus
 {
+class TestAuthContext;
 
 class Eac1InputType
 {
 	friend class DidAuthenticateEac1Parser;
 	friend class::test_StatePrepareChat;
+	friend class TestAuthContext;
 	friend class::test_StateExtractCvcsFromEac1InputType;
 	friend class::test_StatePreVerification;
 	friend class::test_StateCertificateDescriptionCheck;
@@ -69,7 +71,7 @@ class Eac1InputType
 
 		void appendCvcerts(QSharedPointer<CVCertificate> cvcert)
 		{
-			mCvCertificates.append(cvcert);
+			mCvCertificates += cvcert;
 		}
 
 

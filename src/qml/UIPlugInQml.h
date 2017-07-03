@@ -13,12 +13,13 @@
 #include "CertificateDescriptionModel.h"
 #include "ChangePinModel.h"
 #include "ChatModel.h"
+#include "ConnectivityManager.h"
 #include "HistoryModel.h"
 #include "NumberModel.h"
-#include "ProviderModel.h"
+#include "ProviderCategoryFilterModel.h"
+#include "QmlExtension.h"
 #include "SelfAuthenticationModel.h"
 #include "SettingsModel.h"
-#include "ShareUtil.h"
 #include "StatusBarUtil.h"
 #include "VersionInformationModel.h"
 #include <QQmlApplicationEngine>
@@ -39,12 +40,12 @@ class UIPlugInQml
 	private:
 		QScopedPointer<QQmlApplicationEngine> mEngine;
 		qreal mDpi;
-		ProviderModel mProviderModel;
+		ProviderCategoryFilterModel mProviderModel;
 		HistoryModel mHistoryModel;
 		ChangePinModel mChangePinModel;
 		AuthModel mAuthModel;
 		VersionInformationModel mVersionInformationModel;
-		ShareUtil mShareUtil;
+		QmlExtension mQmlExtension;
 		SelfAuthenticationModel mSelfAuthenticationModel;
 		SettingsModel mSettingsModel;
 		CertificateDescriptionModel mCertificateDescriptionModel;
@@ -53,8 +54,7 @@ class UIPlugInQml
 		ApplicationModel mApplicationModel;
 		QString mExplicitPlatformStyle;
 		StatusBarUtil mStatusBarUtil;
-
-		QUrl getFile(const QString& pFile) const;
+		ConnectivityManager mConnectivityManager;
 
 		QString getPlatformSelectors() const;
 
@@ -65,6 +65,8 @@ class UIPlugInQml
 		Q_INVOKABLE void applyPlatformStyle(const QString& pPlatformStyle);
 		Q_INVOKABLE bool isDeveloperBuild() const;
 		Q_INVOKABLE void init();
+
+		static QUrl getFile(const QString& pFile);
 
 	private Q_SLOTS:
 		virtual void doShutdown() override;

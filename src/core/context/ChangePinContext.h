@@ -17,7 +17,6 @@ class ChangePinContext
 	Q_OBJECT
 
 	QString mNewPin;
-	QString mPuk;
 	QString mSuccessMessage;
 
 	public:
@@ -26,15 +25,11 @@ class ChangePinContext
 		const QString& getNewPin() const;
 		void setNewPin(const QString& pNewPin);
 
-		const QString& getPuk() const;
-		void setPuk(const QString& pPuk);
-
 		const QString& getSuccessMessage() const;
 		void setSuccessMessage(const QString& pSuccessMessage);
 
 	Q_SIGNALS:
 		void fireNewPinChanged();
-		void firePukChanged();
 		void fireSuccessMessageChanged();
 };
 

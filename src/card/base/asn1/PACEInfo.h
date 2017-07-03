@@ -63,9 +63,9 @@ DECLARE_ASN1_FUNCTIONS(paceinfo_st)
 class PACEInfo
 	: public SecurityInfo
 {
-	const QSharedPointer<paceinfo_st> mDelegate;
+	const QSharedPointer<const paceinfo_st> mDelegate;
 
-	PACEInfo(QSharedPointer<paceinfo_st> pDelegate);
+	PACEInfo(const QSharedPointer<const paceinfo_st>& pDelegate);
 
 	ASN1_OBJECT* getProtocolObjectIdentifier() const override;
 
@@ -74,7 +74,7 @@ class PACEInfo
 	public:
 		static QSharedPointer<PACEInfo> decode(const QByteArray& pBytes)
 		{
-			if (QSharedPointer<paceinfo_st> delegate = decodeObject<paceinfo_st>(pBytes))
+			if (const auto& delegate = decodeObject<paceinfo_st>(pBytes))
 			{
 				if (PACEInfo::acceptsProtocol(delegate->mProtocol))
 				{

@@ -20,29 +20,29 @@ void SelfAuthenticationModel::onSelfAuthenticationDataChanged()
 		auto selfAuthenticationData = mContext->getSelfAuthenticationData();
 		if (!selfAuthenticationData->getValue(SelfAuthData::FamilyNames).isNull())
 		{
-			mData.append(QPair<QString, QString>(tr("Family name"), selfAuthenticationData->getValue(SelfAuthData::FamilyNames)));
+			mData += QPair<QString, QString>(tr("Family name"), selfAuthenticationData->getValue(SelfAuthData::FamilyNames));
 		}
 		if (!selfAuthenticationData->getValue(SelfAuthData::BirthName).isNull())
 		{
-			mData.append(QPair<QString, QString>(tr("Birth name"), selfAuthenticationData->getValue(SelfAuthData::BirthName)));
+			mData += QPair<QString, QString>(tr("Birth name"), selfAuthenticationData->getValue(SelfAuthData::BirthName));
 		}
 		if (!selfAuthenticationData->getValue(SelfAuthData::GivenNames).isNull())
 		{
-			mData.append(QPair<QString, QString>(tr("Given name(s)"), selfAuthenticationData->getValue(SelfAuthData::GivenNames)));
+			mData += QPair<QString, QString>(tr("Given name(s)"), selfAuthenticationData->getValue(SelfAuthData::GivenNames));
 		}
 		if (!selfAuthenticationData->getValue(SelfAuthData::AcademicTitle).isNull())
 		{
-			mData.append(QPair<QString, QString>(tr("Doctoral degree"), selfAuthenticationData->getValue(SelfAuthData::AcademicTitle)));
+			mData += QPair<QString, QString>(tr("Doctoral degree"), selfAuthenticationData->getValue(SelfAuthData::AcademicTitle));
 		}
 		if (!selfAuthenticationData->getValue(SelfAuthData::DateOfBirth).isNull())
 		{
 			QDateTime dateTime = QDateTime::fromString(selfAuthenticationData->getValue(SelfAuthData::DateOfBirth), QStringLiteral("yyyy-MM-dd+hh:mm"));
-			auto dateString = dateTime.toString(tr("dd.MM.yyyy"));
-			mData.append(QPair<QString, QString>(tr("Date of birth"), dateString));
+			auto dateString = dateTime.toString(tr("MM/dd/yyyy"));
+			mData += QPair<QString, QString>(tr("Date of birth"), dateString);
 		}
 		if (!selfAuthenticationData->getValue(SelfAuthData::PlaceOfBirth).isNull())
 		{
-			mData.append(QPair<QString, QString>(tr("Place of birth"), selfAuthenticationData->getValue(SelfAuthData::PlaceOfBirth)));
+			mData += QPair<QString, QString>(tr("Place of birth"), selfAuthenticationData->getValue(SelfAuthData::PlaceOfBirth));
 		}
 
 		QString address;
@@ -67,25 +67,25 @@ void SelfAuthenticationModel::onSelfAuthenticationDataChanged()
 		}
 		if (!address.isNull())
 		{
-			mData.append(QPair<QString, QString>(tr("Address"), address));
+			mData += QPair<QString, QString>(tr("Address"), address);
 		}
 
 		auto documentType = selfAuthenticationData->getValue(SelfAuthData::DocumentType);
 		if (!documentType.isNull())
 		{
-			mData.append(QPair<QString, QString>(tr("Document type"), documentType));
+			mData += QPair<QString, QString>(tr("Document type"), documentType);
 		}
 		if (!selfAuthenticationData->getValue(SelfAuthData::Nationality).isNull())
 		{
-			mData.append(QPair<QString, QString>(tr("Nationality"), selfAuthenticationData->getValue(SelfAuthData::Nationality)));
+			mData += QPair<QString, QString>(tr("Nationality"), selfAuthenticationData->getValue(SelfAuthData::Nationality));
 		}
 		if (!selfAuthenticationData->getValue(SelfAuthData::ArtisticName).isNull())
 		{
-			mData.append(QPair<QString, QString>(tr("Religious / artistic name"), selfAuthenticationData->getValue(SelfAuthData::ArtisticName)));
+			mData += QPair<QString, QString>(tr("Religious / artistic name"), selfAuthenticationData->getValue(SelfAuthData::ArtisticName));
 		}
 		if (!selfAuthenticationData->getValue(SelfAuthData::IssuingState).isNull())
 		{
-			mData.append(QPair<QString, QString>(tr("Issuing country"), selfAuthenticationData->getValue(SelfAuthData::IssuingState)));
+			mData += QPair<QString, QString>(tr("Issuing country"), selfAuthenticationData->getValue(SelfAuthData::IssuingState));
 		}
 
 		// Show "Residence Permit" for eAT- and Test-Cards only
@@ -97,7 +97,7 @@ void SelfAuthenticationModel::onSelfAuthenticationDataChanged()
 					documentType == QLatin1String("AF") ||
 					documentType == QLatin1String("TA")))
 		{
-			mData.append(QPair<QString, QString>(tr("Residence permit I"), selfAuthenticationData->getValue(SelfAuthData::ResidencePermitI)));
+			mData += QPair<QString, QString>(tr("Residence permit I"), selfAuthenticationData->getValue(SelfAuthData::ResidencePermitI));
 		}
 	}
 
@@ -113,7 +113,7 @@ SelfAuthenticationModel::SelfAuthenticationModel(QObject* pParent)
 }
 
 
-void SelfAuthenticationModel::resetContext(QSharedPointer<SelfAuthenticationContext> pContext)
+void SelfAuthenticationModel::resetContext(const QSharedPointer<SelfAuthenticationContext>& pContext)
 {
 	mContext = pContext;
 	if (mContext)
@@ -127,15 +127,6 @@ void SelfAuthenticationModel::resetContext(QSharedPointer<SelfAuthenticationCont
 void SelfAuthenticationModel::startWorkflow()
 {
 	Q_EMIT fireStartWorkflow();
-}
-
-
-void SelfAuthenticationModel::continueWorkflow()
-{
-	if (mContext)
-	{
-		mContext->setStateApproved();
-	}
 }
 
 

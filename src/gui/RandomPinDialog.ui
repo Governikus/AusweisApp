@@ -255,7 +255,7 @@
         <item row="0" column="0" colspan="2">
          <widget class="QLineEdit" name="pin">
           <property name="accessibleName">
-           <string>pin field</string>
+           <string>PIN field</string>
           </property>
           <property name="maxLength">
            <number>6</number>

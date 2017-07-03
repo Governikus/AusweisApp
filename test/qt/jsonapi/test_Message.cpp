@@ -130,7 +130,7 @@ class test_Message
 			QVERIFY(context->isStateApproved());
 			context->setStateApproved(false); // reset
 
-			auto msg = QByteArray("{\"cmd\":\"SET_CAN\",\"can\": \"12345\"}");
+			auto msg = QByteArray("{\"cmd\":\"SET_CAN\",\"value\": \"12345\"}");
 			auto expectedBadState = QByteArray("{\"error\":\"SET_CAN\",\"msg\":\"BAD_STATE\"}");
 			QCOMPARE(dispatcher.processCommand(msg), expectedBadState);
 
@@ -208,7 +208,7 @@ class test_Message
 		void finishAuthContext()
 		{
 			const QSharedPointer<AuthContext> context(new AuthContext(new InternalActivationContext(QUrl("http://dummy"))));
-			context->setResult(Result::createOk());
+			context->setStatus(GlobalStatus::Code::No_Error);
 			context->setRefreshUrl(QUrl("http://dummy"));
 			MessageDispatcher dispatcher;
 			dispatcher.init(context);

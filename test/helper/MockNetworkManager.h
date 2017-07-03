@@ -22,9 +22,12 @@ class MockNetworkManager
 		MockNetworkReply* mNextReply;
 		MockNetworkReply* mLastReply;
 
+		MockNetworkReply* getReply(const QNetworkRequest& pRequest);
+
 	public:
 		MockNetworkManager();
 		virtual ~MockNetworkManager();
+		virtual QNetworkReply* get(QNetworkRequest& pRequest, int pTimeoutInMilliSeconds = 30000) override;
 		virtual QNetworkReply* paos(QNetworkRequest& pRequest, const QByteArray& pData, bool pUsePsk = true, int pTimeoutInMilliSeconds = 30000) override;
 
 		void setFilename(const QString& pFilename)

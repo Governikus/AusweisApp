@@ -35,13 +35,15 @@ class test_BluetoothMessageParser
 			BluetoothMessage::Ptr message = parser1.getMessages().at(0);
 
 			QCOMPARE(message->getBluetoothMsgId(), BluetoothMsgId::TransferApduResponse);
-			QCOMPARE(message->getParameterList().size(), 2);
+			QCOMPARE(message->mMessageParameter.size(), 2);
 
-			QCOMPARE(message->getParameterList().at(0)->getParameterId(), BluetoothParamId::ResultCode);
-			QCOMPARE(message->getParameterList().at(0)->getValue(), getEnumByteValue(BluetoothResultCode::Ok));
+			const auto& params = message->mMessageParameter;
+			QCOMPARE(params.first()->getParameterId(), BluetoothParamId::ResultCode);
+			QCOMPARE(params.first()->getValue(), QByteArray(1, Enum<BluetoothResultCode>::getValue(BluetoothResultCode::Ok)));
 
-			auto paramApdu = message->getParameterList().at(1)->get<BluetoothMessageParameterApduResponse>();
-			QCOMPARE(paramApdu->getParameterId(), BluetoothParamId::ResponseAPDU);
+			const auto param = params.last();
+			QCOMPARE(param->getParameterId(), BluetoothParamId::ResponseAPDU);
+			const auto paramApdu = param.staticCast<const BluetoothMessageParameterApduResponse>();
 			QCOMPARE(paramApdu->getResponseApdu(),
 					QByteArray::fromHex("3081f9a106040400000000a20404029000a381c43181c1300d060804007f00070202020201023012060a04007f000702020302020201020201413012060a04007f0007020204020202010202010d301c060904007f000702020302300c060704007f0007010202010d020141302a060804007f0007020206161e687474703a2f2f6273692e62756e642e64652f6369662f6e70612e786d6c303e060804007f000702020831323012060a04007f00070202030202020102020145301c060904007f000702020302300c060704007f0007010202010d020145a42204209ee959c9f063c6e144b463e04fa19ef44da0f5059d817a7db2240bbee8b218a29000"));
 		}
@@ -56,7 +58,7 @@ class test_BluetoothMessageParser
 			BluetoothMessage::Ptr message = parser1.getMessages().at(0);
 
 			QCOMPARE(message->getBluetoothMsgId(), BluetoothMsgId::StatusInd);
-			auto msgInd = message->get<BluetoothMessageStatusInd>();
+			auto msgInd = message.staticCast<const BluetoothMessageStatusInd>();
 			QCOMPARE(msgInd->toString(), QString("StatusInd | Parameter: StatusChange | Value: CardNotAccessible"));
 			QCOMPARE(msgInd->getStatusChange(), BluetoothStatusChange::CardNotAccessible);
 		}
@@ -83,12 +85,14 @@ class test_BluetoothMessageParser
 			QCOMPARE(parser1.getRemainingBytes().size(), 0);
 
 			QCOMPARE(parser1.getMessages()[0]->getBluetoothMsgId(), BluetoothMsgId::TransferAtrResponse);
-			QCOMPARE(parser1.getMessages()[0]->getParameterList().size(), 2);
-			QCOMPARE(parser1.getMessages()[0]->getParameterList().at(0)->getParameterId(), BluetoothParamId::ResultCode);
-			QCOMPARE(parser1.getMessages()[0]->getParameterList().at(0)->getValue(), getEnumByteValue(BluetoothResultCode::Ok));
+			QCOMPARE(parser1.getMessages()[0]->mMessageParameter.size(), 2);
 
-			QCOMPARE(parser1.getMessages()[0]->getParameterList().at(1)->getParameterId(), BluetoothParamId::ATR);
-			QCOMPARE(parser1.getMessages()[0]->getParameterList().at(1)->getValue(), QByteArray::fromHex("4b8a80018031f873f741e082900075"));
+			const auto& params = parser1.getMessages()[0]->mMessageParameter;
+			QCOMPARE(params.first()->getParameterId(), BluetoothParamId::ResultCode);
+			QCOMPARE(params.first()->getValue(), QByteArray(1, Enum<BluetoothResultCode>::getValue(BluetoothResultCode::Ok)));
+
+			QCOMPARE(params.last()->getParameterId(), BluetoothParamId::ATR);
+			QCOMPARE(params.last()->getValue(), QByteArray::fromHex("4b8a80018031f873f741e082900075"));
 
 			QCOMPARE(parser1.getMessages()[0]->toString(),
 					QString("TransferAtrResponse | Parameter: ResultCode | Value: Ok | Parameter: ATR | Value: 4b8a80018031f873f741e082900075"));
@@ -105,14 +109,18 @@ class test_BluetoothMessageParser
 			QCOMPARE(parser1.getRemainingBytes().size(), 0);
 
 			QCOMPARE(parser1.getMessages()[0]->getBluetoothMsgId(), BluetoothMsgId::StatusInd);
-			QCOMPARE(parser1.getMessages()[0]->getParameterList().size(), 1);
-			QCOMPARE(parser1.getMessages()[0]->getParameterList().at(0)->getParameterId(), BluetoothParamId::StatusChange);
-			QCOMPARE(parser1.getMessages()[0]->getParameterList().at(0)->getValue(), getEnumByteValue(BluetoothStatusChange::CardInserted));
+			QCOMPARE(parser1.getMessages()[0]->mMessageParameter.size(), 1);
+
+			const auto& params = parser1.getMessages()[0]->mMessageParameter;
+			QCOMPARE(params.first()->getParameterId(), BluetoothParamId::StatusChange);
+			QCOMPARE(params.first()->getValue(), QByteArray(1, Enum<BluetoothStatusChange>::getValue(BluetoothStatusChange::CardInserted)));
 
 			QCOMPARE(parser1.getMessages()[1]->getBluetoothMsgId(), BluetoothMsgId::StatusInd);
-			QCOMPARE(parser1.getMessages()[1]->getParameterList().size(), 1);
-			QCOMPARE(parser1.getMessages()[1]->getParameterList().at(0)->getParameterId(), BluetoothParamId::StatusChange);
-			QCOMPARE(parser1.getMessages()[1]->getParameterList().at(0)->getValue(), getEnumByteValue(BluetoothStatusChange::CardRemoved));
+			QCOMPARE(parser1.getMessages()[1]->mMessageParameter.size(), 1);
+
+			const auto& paramsInd = parser1.getMessages()[1]->mMessageParameter;
+			QCOMPARE(paramsInd.first()->getParameterId(), BluetoothParamId::StatusChange);
+			QCOMPARE(paramsInd.first()->getValue(), QByteArray(1, Enum<BluetoothStatusChange>::getValue(BluetoothStatusChange::CardRemoved)));
 		}
 
 
@@ -125,18 +133,22 @@ class test_BluetoothMessageParser
 			QCOMPARE(parser1.getMessages().size(), 1);
 			QCOMPARE(parser1.getRemainingBytes().size(), 0);
 			QCOMPARE(parser1.getMessages()[0]->getBluetoothMsgId(), BluetoothMsgId::StatusInd);
-			QCOMPARE(parser1.getMessages()[0]->getParameterList().size(), 1);
-			QCOMPARE(parser1.getMessages()[0]->getParameterList().at(0)->getParameterId(), BluetoothParamId::StatusChange);
-			QCOMPARE(parser1.getMessages()[0]->getParameterList().at(0)->getValue(), getEnumByteValue(BluetoothStatusChange::CardInserted));
+			QCOMPARE(parser1.getMessages()[0]->mMessageParameter.size(), 1);
+
+			const auto& params = parser1.getMessages()[0]->mMessageParameter;
+			QCOMPARE(params.first()->getParameterId(), BluetoothParamId::StatusChange);
+			QCOMPARE(params.first()->getValue(), QByteArray(1, Enum<BluetoothStatusChange>::getValue(BluetoothStatusChange::CardInserted)));
 
 			response = QByteArray::fromHex("110100000800000103000000");
 			BluetoothMessageParser parser2(response);
 			QCOMPARE(parser2.getMessages().size(), 1);
 			QCOMPARE(parser2.getRemainingBytes().size(), 0);
 			QCOMPARE(parser2.getMessages()[0]->getBluetoothMsgId(), BluetoothMsgId::StatusInd);
-			QCOMPARE(parser2.getMessages()[0]->getParameterList().size(), 1);
-			QCOMPARE(parser2.getMessages()[0]->getParameterList().at(0)->getParameterId(), BluetoothParamId::StatusChange);
-			QCOMPARE(parser2.getMessages()[0]->getParameterList().at(0)->getValue(), getEnumByteValue(BluetoothStatusChange::CardRemoved));
+			QCOMPARE(parser2.getMessages()[0]->mMessageParameter.size(), 1);
+
+			const auto& paramsStatus = parser2.getMessages()[0]->mMessageParameter;
+			QCOMPARE(paramsStatus.first()->getParameterId(), BluetoothParamId::StatusChange);
+			QCOMPARE(paramsStatus.first()->getValue(), QByteArray(1, Enum<BluetoothStatusChange>::getValue(BluetoothStatusChange::CardRemoved)));
 		}
 
 

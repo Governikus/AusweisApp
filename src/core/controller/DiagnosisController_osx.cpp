@@ -219,7 +219,10 @@ void DiagnosisController::getPcscInfo(QVector<DiagnosisContext::ComponentInfo>& 
 					? driverInfo.mBundleShortVersion : driverInfo.mBundleVersion;
 		}
 
-		pDrivers.append(DiagnosisContext::ComponentInfo(driverPath, description, version,
-				driverInfo.mIfdManufacturer));
+		pDrivers += DiagnosisContext::ComponentInfo(
+				driverPath,
+				description,
+				version,
+				driverInfo.mIfdManufacturer);
 	}
 }

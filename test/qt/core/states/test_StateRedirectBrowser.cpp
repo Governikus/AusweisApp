@@ -50,7 +50,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setStateApproved();
 
 			QCOMPARE(spy.count(), 1);
-			QVERIFY(dynamic_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
+			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
 		}
 
 
@@ -64,7 +64,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setStateApproved();
 
 			QCOMPARE(spy.count(), 1);
-			QVERIFY(dynamic_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
+			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
 		}
 
 
@@ -78,7 +78,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setStateApproved();
 
 			QCOMPARE(spy.count(), 1);
-			QVERIFY(dynamic_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
+			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
 		}
 
 
@@ -92,7 +92,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setStateApproved();
 
 			QCOMPARE(spy.count(), 1);
-			QVERIFY(dynamic_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
+			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
 		}
 
 
@@ -107,7 +107,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setStateApproved();
 
 			QCOMPARE(spy.count(), 1);
-			QVERIFY(dynamic_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
+			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
 		}
 
 
@@ -122,7 +122,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setStateApproved();
 
 			QCOMPARE(spy.count(), 1);
-			QVERIFY(dynamic_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
+			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
 		}
 
 
@@ -137,7 +137,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setStateApproved();
 
 			QCOMPARE(spy.count(), 1);
-			QVERIFY(dynamic_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
+			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
 		}
 
 
@@ -152,7 +152,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setStateApproved();
 
 			QCOMPARE(spy.count(), 1);
-			QVERIFY(dynamic_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
+			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
 		}
 
 
@@ -168,7 +168,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setStateApproved();
 
 			QCOMPARE(spy.count(), 1);
-			QVERIFY(dynamic_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
+			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
 		}
 
 
@@ -184,7 +184,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setStateApproved();
 
 			QCOMPARE(spy.count(), 1);
-			QVERIFY(dynamic_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
+			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
 		}
 
 

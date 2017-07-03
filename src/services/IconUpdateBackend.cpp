@@ -49,7 +49,7 @@ void IconUpdateBackend::processSuccess(const QByteArray& pData)
 }
 
 
-void IconUpdateBackend::processError()
+void IconUpdateBackend::processError(const GlobalStatus& pError)
 {
-	// Nothing to do.
+	Q_UNUSED(pError)
 }

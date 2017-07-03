@@ -24,19 +24,19 @@ PskManager & PskManager::getInstance()
 }
 
 
-QString PskManager::generatePsk(const QString& pClientPartialPsk)
+QByteArray PskManager::generatePsk(const QByteArray& pClientPartialPsk)
 {
 	const static int TIMESTAMP_BYTE_COUNT = 64 / 8;
 	const static int RANDOM_BYTE_COUNT = 256;
 
-	QMutexLocker locker(&mPskMutex);
+	const QMutexLocker locker(&mPskMutex);
 
 	QByteArray timeStampBytes;
 	timeStampBytes.reserve(TIMESTAMP_BYTE_COUNT);
 	qint64 timeStamp = QDateTime::currentMSecsSinceEpoch();
 	for (int i = 0; i < TIMESTAMP_BYTE_COUNT; i++)
 	{
-		timeStampBytes += timeStamp & 0xFF;
+		timeStampBytes += static_cast<char>(timeStamp & 0xFF);
 		timeStamp >>= 8;
 	}
 
@@ -48,11 +48,11 @@ QString PskManager::generatePsk(const QString& pClientPartialPsk)
 	std::mt19937& generator = randomizer.getGenerator();
 	for (int i = 0; i < RANDOM_BYTE_COUNT; i += 4)
 	{
-		const qint32 randomNumber = generator();
-		randomBytes += (char) randomNumber & 0xFF;
-		randomBytes += (char) (randomNumber >> 8) & 0xFF;
-		randomBytes += (char) (randomNumber >> 16) & 0xFF;
-		randomBytes += (char) (randomNumber >> 24) & 0xFF;
+		const auto randomNumber = generator();
+		randomBytes += static_cast<char>(randomNumber & 0xFF);
+		randomBytes += static_cast<char>((randomNumber >> 8) & 0xFF);
+		randomBytes += static_cast<char>((randomNumber >> 16) & 0xFF);
+		randomBytes += static_cast<char>((randomNumber >> 24) & 0xFF);
 	}
 
 	QByteArray mServerInputBytes;
@@ -60,31 +60,30 @@ QString PskManager::generatePsk(const QString& pClientPartialPsk)
 	mServerInputBytes += timeStampBytes;
 	mServerInputBytes += randomBytes;
 
-	QString clientPartialPsk = pClientPartialPsk.trimmed();
-	if (clientPartialPsk.startsWith(QLatin1String("0x")))
+	auto clientPartialPsk = pClientPartialPsk.trimmed();
+	if (clientPartialPsk.startsWith("0x"))
 	{
 		clientPartialPsk = clientPartialPsk.mid(2, -1);
 	}
-	const QByteArray clientInputBytes = QByteArray::fromHex(clientPartialPsk.toLatin1());
+	const auto& clientInputBytes = QByteArray::fromHex(clientPartialPsk);
 
 	QCryptographicHash hashFunction(QCryptographicHash::Sha256);
 	hashFunction.addData(mServerInputBytes);
 	hashFunction.addData(clientInputBytes);
-	mPsk = hashFunction.result();
-
-	return QString::fromLatin1(mPsk.toHex());
+	mPsk = hashFunction.result().toHex();
+	return mPsk;
 }
 
 
 QByteArray PskManager::getPsk()
 {
-	QMutexLocker locker(&mPskMutex);
+	const QMutexLocker locker(&mPskMutex);
 	return mPsk;
 }
 
 
 bool PskManager::isSecureRandomPsk()
 {
-	QMutexLocker locker(&mPskMutex);
+	const QMutexLocker locker(&mPskMutex);
 	return mSecureRandomPsk;
 }

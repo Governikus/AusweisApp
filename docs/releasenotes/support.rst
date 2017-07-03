@@ -8,8 +8,6 @@ der AusweisApp2 unterstützt.
 
 Betriebssysteme
 """""""""""""""
-  - OS X 10.9
-
   - OS X 10.10
 
   - OS X 10.11

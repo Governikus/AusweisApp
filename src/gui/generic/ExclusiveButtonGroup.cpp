@@ -25,7 +25,7 @@ ExclusiveButtonGroup::~ExclusiveButtonGroup()
 
 void ExclusiveButtonGroup::addButton(QAbstractButton* pButton)
 {
-	mButtons.append(pButton);
+	mButtons += pButton;
 
 	pButton->installEventFilter(this);
 
@@ -54,7 +54,7 @@ void ExclusiveButtonGroup::removeButton(QAbstractButton* pButton)
 
 bool ExclusiveButtonGroup::eventFilter(QObject* pWatched, QEvent* pEvent)
 {
-	if (QAbstractButton* button = dynamic_cast<QAbstractButton*>(pWatched))
+	if (QAbstractButton* button = qobject_cast<QAbstractButton*>(pWatched))
 	{
 		if (pEvent->type() == QEvent::MouseButtonPress && button->isChecked())
 		{
@@ -77,7 +77,7 @@ bool ExclusiveButtonGroup::eventFilter(QObject* pWatched, QEvent* pEvent)
 
 void ExclusiveButtonGroup::onButtonClicked(bool /*pChecked*/)
 {
-	if (QAbstractButton* button = dynamic_cast<QAbstractButton*>(sender()))
+	if (QAbstractButton* button = qobject_cast<QAbstractButton*>(sender()))
 	{
 		Q_EMIT buttonClicked(button);
 	}
@@ -86,7 +86,7 @@ void ExclusiveButtonGroup::onButtonClicked(bool /*pChecked*/)
 
 void ExclusiveButtonGroup::onButtonPressed()
 {
-	if (QAbstractButton* button = dynamic_cast<QAbstractButton*>(sender()))
+	if (QAbstractButton* button = qobject_cast<QAbstractButton*>(sender()))
 	{
 		Q_EMIT buttonPressed(button);
 	}
@@ -95,7 +95,7 @@ void ExclusiveButtonGroup::onButtonPressed()
 
 void ExclusiveButtonGroup::onButtonReleased()
 {
-	if (QAbstractButton* button = dynamic_cast<QAbstractButton*>(sender()))
+	if (QAbstractButton* button = qobject_cast<QAbstractButton*>(sender()))
 	{
 		Q_EMIT buttonReleased(button);
 	}
@@ -104,7 +104,7 @@ void ExclusiveButtonGroup::onButtonReleased()
 
 void ExclusiveButtonGroup::onButtonToggled(bool pChecked)
 {
-	if (QAbstractButton* button = dynamic_cast<QAbstractButton*>(sender()))
+	if (QAbstractButton* button = qobject_cast<QAbstractButton*>(sender()))
 	{
 		if (pChecked)
 		{

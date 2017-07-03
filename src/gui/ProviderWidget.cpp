@@ -33,7 +33,7 @@ ProviderWidget::ProviderWidget(QWidget* pParent)
 	mUi->setupUi(this);
 
 	connect(mUi->providerSearch, &QLineEdit::textChanged, this, &ProviderWidget::searchProvider);
-	connect(ProviderService::getSharedInstance(), &ProviderService::fireUpdateFinished, this, &ProviderWidget::onProviderChanged);
+	connect(&ProviderService::getInstance(), &ProviderService::fireUpdateFinished, this, &ProviderWidget::onProviderChanged);
 
 	fill();
 }
@@ -55,8 +55,8 @@ void ProviderWidget::fill()
 {
 	qDebug() << "add provider for desktop widgets.";
 	QStringList header;
-	header.append(tr("Name"));
-	header.append(tr("Address"));
+	header += tr("Name");
+	header += tr("Address");
 
 	ProviderSettings& providerSettings = AppSettings::getInstance().getProviderSettings();
 	providerSettings.load();
@@ -68,7 +68,8 @@ void ProviderWidget::fill()
 	int row = 0;
 	for (const Provider& provider : providerSettings.getProviders())
 	{
-		QLabel* providerName = new QLabel(provider.getShortName());
+
+		QLabel* providerName = new QLabel(provider.getLongName().isEmpty() ? provider.getShortName() : provider.getLongName());
 		providerName->setFocusPolicy(Qt::TabFocus);
 		providerName->setToolTip(providerName->text());
 		providerName->setTextFormat(Qt::RichText);

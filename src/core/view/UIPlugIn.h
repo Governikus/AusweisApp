@@ -30,7 +30,9 @@ class UIPlugIn
 		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) = 0;
 		virtual void onApplicationStarted();
 		virtual void onShowUi(UiModule pModule);
+#ifndef QT_NO_NETWORKPROXY
 		virtual void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
+#endif
 
 	Q_SIGNALS:
 		void fireChangePinRequest();

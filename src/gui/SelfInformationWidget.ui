@@ -112,7 +112,7 @@
          <enum>Qt::TabFocus</enum>
         </property>
         <property name="text">
-         <string>Use the button 'See my personal data now…' to display the data stored on your ID card. An Internet connection is required to display the data. Your personal data is neither saved nor processed in any way.</string>
+         <string>Use the button 'See my personal data now...' to display the data stored on your ID card. An Internet connection is required to display the data. Your personal data is neither saved nor processed in any way.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -164,7 +164,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>See my personal data now…</string>
+              <string>See my personal data now...</string>
              </property>
             </widget>
            </item>

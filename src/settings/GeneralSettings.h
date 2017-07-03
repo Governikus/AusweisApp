@@ -76,7 +76,7 @@ class GeneralSettings
 		QString mPersistentSettingsVersion;
 
 		/*!
-		 * remind the user to change the transport pin before first authentication.
+		 * remind the user to change the transport PIN before first authentication.
 		 */
 		bool mTransportPinReminder;
 
@@ -95,6 +95,9 @@ class GeneralSettings
 		GeneralSettings();
 
 	public:
+		static void skipVersion(const QString& pVersion);
+		static QString getSkipVersion();
+
 		virtual ~GeneralSettings();
 
 		virtual void load() override;

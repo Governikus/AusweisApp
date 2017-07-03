@@ -16,6 +16,7 @@ Item {
 		Image {
 			id: tabImage
 			height: Utils.dp(35)
+			sourceSize.height: 96;
 			fillMode: Image.PreserveAspectFit
 			anchors.horizontalCenter: parent.horizontalCenter
 			anchors.verticalCenter: parent.verticalCenter
@@ -27,7 +28,7 @@ Item {
 		anchors.left: tabImageItem.right
 		anchors.leftMargin: Utils.dp(10)
 		anchors.verticalCenter: parent.verticalCenter
-		font.pixelSize: Utils.sp(12)
+		font.pixelSize: Constants.small_font_size
 		renderType: Text.NativeRendering
 		color: "black"
 	}

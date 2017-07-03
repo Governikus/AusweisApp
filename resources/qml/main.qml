@@ -14,7 +14,10 @@ ApplicationWindow {
 	title: "Governikus AusweisApp2"
 	color: Constants.background_color
 
+	readonly property var startTime : new Date().getTime()
+	property var lastCloseInvocation: 0
 	property int leftOverlayMargin: 0
+	property var splasScreenClosed: false
 
 	QtQuickControls14.Action {
 		shortcut: "Ctrl+Alt+R"
@@ -23,6 +26,7 @@ ApplicationWindow {
 
 	header: TitleBar {
 		id: titleBar
+		visible: splasScreenClosed
 
 		titleBarOpacity: contentArea.getVisibleItem() && contentArea.getVisibleItem().stack.currentItem ? contentArea.getVisibleItem().stack.currentItem.titleBarOpacity : 1
 
@@ -62,6 +66,7 @@ ApplicationWindow {
 
 	Navigation {
 		id: navBar
+		visible: splasScreenClosed
 		anchors.left: parent.left
 		anchors.top: PlatformConstants.leftNavigation ? parent.top : undefined
 		anchors.right: PlatformConstants.bottomNavigation ? parent.right : undefined
@@ -69,28 +74,71 @@ ApplicationWindow {
 	}
 
 	onClosing: {
-		var activeStackView = contentArea.getVisibleItem().stack
+		var visibleItem = contentArea.getVisibleItem()
 
-		if (activeStackView.depth <= 1) {
-			if (navBar.isOpen) {
-				// FIXME:
-				// On Android the closing event is caught by the Drawer, so the app is never quit
-				plugin.fireQuitApplicationRequest()
-				return
+		if (visibleItem)
+		{
+			var activeStackView = visibleItem.stack
+
+			if (activeStackView.depth <= 1 && (!activeStackView.currentItem.leftTitleBarAction || activeStackView.currentItem.leftTitleBarAction.state === "")) {
+				var currentTime = new Date().getTime();
+				if( currentTime - lastCloseInvocation < 1000 ) {
+					plugin.fireQuitApplicationRequest()
+					return
+				}
+
+				lastCloseInvocation = currentTime
+				qmlExtension.showFeedback(qsTr("Press the back button twice to close the app."))
 			}
-			else {
-				navBar.open()
-			}
-		}
-		else if (activeStackView.currentItem.leftTitleBarAction) {
-			if (navBar.isOpen) {
-				navBar.close()
-			}
-			else {
-				activeStackView.currentItem.leftTitleBarAction.clicked()
+			else if (activeStackView.currentItem.leftTitleBarAction) {
+				if (navBar.isOpen) {
+					navBar.close()
+				}
+				else {
+					activeStackView.currentItem.leftTitleBarAction.clicked()
+				}
 			}
 		}
 
 		close.accepted = false
+	}
+
+	Rectangle {
+		id: splashScreen
+		anchors.fill: parent
+		color: appWindow.color
+		visible: !splasScreenClosed
+
+		Image {
+			source: "qrc:/images/npa.svg"
+			height: appWindow.height * 0.42
+			width: height
+			fillMode: Image.PreserveAspectFit
+			anchors.centerIn: parent
+		}
+	}
+
+
+	function hideSplashScreen() {
+		if(splasScreenClosed)
+		{
+			return;
+		}
+
+		contentArea.visible = false;
+
+		var TIMEOUT = 2500;
+		var remaining = startTime + TIMEOUT - new Date().getTime();
+		var timer = Qt.createQmlObject("import QtQuick 2.0; Timer {}", appWindow);
+		timer.interval = remaining > 0 ? remaining : 0;
+		timer.repeat = false;
+		timer.triggered.connect(function(){
+			contentArea.visible = true
+			splasScreenClosed = true
+			if (!applicationModel.currentWorkflow) {
+				navBar.lockedAndHidden = false
+			}
+		})
+		timer.start();
 	}
 }

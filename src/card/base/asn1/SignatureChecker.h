@@ -17,11 +17,11 @@ class SignatureChecker
 	private:
 		const QVector<QSharedPointer<CVCertificate> > mCertificateChain;
 
-		bool checkSignature(QSharedPointer<CVCertificate> pCert, QSharedPointer<CVCertificate> pSigningCert, const EC_KEY* pKey);
+		bool checkSignature(const QSharedPointer<const CVCertificate>& pCert, const QSharedPointer<const CVCertificate>& pSigningCert, const EC_KEY* pKey);
 
 	public:
 		SignatureChecker(const QVector<QSharedPointer<CVCertificate> >& pCertificateChain);
-		virtual ~SignatureChecker();
+		~SignatureChecker() = default;
 
 		bool check();
 };

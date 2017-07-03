@@ -167,7 +167,7 @@ void LogFilesDialog::onSaveButtonClicked()
 }
 
 
-bool LogFilesDialog::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
+bool LogFilesDialog::eventFilter(QObject* pObject, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
@@ -178,5 +178,5 @@ bool LogFilesDialog::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
 			return true;
 		}
 	}
-	return false;
+	return QDialog::eventFilter(pObject, pEvent);
 }

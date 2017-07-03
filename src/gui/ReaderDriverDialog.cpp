@@ -39,7 +39,7 @@ ReaderDriverDialog::~ReaderDriverDialog()
 }
 
 
-bool ReaderDriverDialog::eventFilter(QObject* /* pObject */, QEvent* pEvent)
+bool ReaderDriverDialog::eventFilter(QObject* pObject, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
@@ -50,5 +50,5 @@ bool ReaderDriverDialog::eventFilter(QObject* /* pObject */, QEvent* pEvent)
 			return true;
 		}
 	}
-	return false;
+	return QDialog::eventFilter(pObject, pEvent);
 }

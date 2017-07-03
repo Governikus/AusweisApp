@@ -38,7 +38,7 @@ Rectangle {
 
 			height: Utils.dp(50)
 			width: height
-			source: "qrc:///images/npa.ico"
+			source: "qrc:///images/npa.svg"
 			fillMode: Image.Stretch
 		}
 
@@ -53,7 +53,7 @@ Rectangle {
 
 			text: applicationModel.currentWorkflow !== "authentication" ? qsTr("Hello, here you have the") : qsTr("Hello,")
 			wrapMode: Text.WordWrap
-			font.pixelSize: Utils.sp(18)
+			font.pixelSize: Constants.normal_font_size
 		}
 
 		Text {
@@ -68,9 +68,9 @@ Rectangle {
 
 			text: applicationModel.currentWorkflow !== "authentication" ?
 					  qsTr("opportunity to view the stored data on your identity card.") :
-					  qsTr("\"%1\",<br>wants to read your data").arg(certificateDescriptionModel.subjectName)
+					  qsTr("\"%1\"<br>wants to read your data").arg(certificateDescriptionModel.subjectName)
 			wrapMode: Text.WordWrap
-			font.pixelSize: Utils.sp(18)
+			font.pixelSize: Constants.normal_font_size
 		}
 	}
 }

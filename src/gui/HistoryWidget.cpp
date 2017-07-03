@@ -5,6 +5,7 @@
 #include "HistoryWidget.h"
 
 #include "DeleteHistoryDialog.h"
+#include "PdfCreator.h"
 #include "generic/ListCheckItemWidget.h"
 #include "generic/ListItem.h"
 #include "generic/ListItemIconLeft.h"
@@ -16,6 +17,7 @@
 #include <QDebug>
 #include <QFormLayout>
 #include <QKeyEvent>
+
 
 using namespace governikus;
 
@@ -45,8 +47,8 @@ HistoryWidget::~HistoryWidget()
 void HistoryWidget::init()
 {
 	QStringList header;
-	header.append(tr("Date"));
-	header.append(tr("Details"));
+	header += tr("Date");
+	header += tr("Details");
 
 	mUi->historyTableWidget->setColumnCount(header.count());
 	mUi->historyTableWidget->setHorizontalHeaderLabels(header);
@@ -105,14 +107,14 @@ void HistoryWidget::updateTable(const QVector<HistoryEntry>& pItems)
 		mUi->historyTableWidget->insertRow(rowIndex);
 
 		//date column with needed properties
-		QLabel* dateLabel = new QLabel(entry.getDateTime().toString(QStringLiteral("dd.MM.yyyy hh:mm")));
+		QLabel* dateLabel = new QLabel(entry.getDateTime().toString(tr("MM/dd/yyyy hh:mm AP")));
 		dateLabel->setContentsMargins(11, 11, 11, 11);
 		dateLabel->setAlignment(Qt::AlignTop);
 		dateLabel->setProperty("termsOfUsage", entry.getTermOfUsage());
-		dateLabel->setProperty("date", entry.getDateTime().toString(QStringLiteral("dd.MM.yyyy hh:mm")));
+		dateLabel->setProperty("date", entry.getDateTime().toString(tr("MM/dd/yyyy hh:mm AP")));
 
 		dateLabel->setFocusPolicy(Qt::TabFocus);
-		dateLabel->setAccessibleName(tr("Date:") + entry.getDateTime().toString(QStringLiteral("dd.MM.yyyy hh:mm")));
+		dateLabel->setAccessibleName(tr("Date:") + entry.getDateTime().toString(tr("MM/dd/yyyy hh:mm AP")));
 
 		mUi->historyTableWidget->setCellWidget(rowIndex, 0, dateLabel);
 
@@ -163,33 +165,26 @@ void HistoryWidget::updateTable(const QVector<HistoryEntry>& pItems)
 }
 
 
-bool HistoryWidget::eventFilter(QObject*, QEvent* pEvent)
+bool HistoryWidget::eventFilter(QObject* pObject, QEvent* pEvent)
 {
-	switch (pEvent->type())
+	if (pEvent->type() == QEvent::KeyPress)
 	{
-		case QEvent::KeyPress:
+		QKeyEvent* pressed = static_cast<QKeyEvent*>(pEvent);
+		if ((pressed->key() == Qt::Key_Enter) || (pressed->key() == Qt::Key_Return) || (pressed->key() == Qt::Key_Space))
 		{
-			QKeyEvent* pressed = static_cast<QKeyEvent*>(pEvent);
-			if ((pressed->key() == Qt::Key_Enter) || (pressed->key() == Qt::Key_Return) || (pressed->key() == Qt::Key_Space))
+			const auto selectedIndexes = mUi->historyTableWidget->selectionModel()->selectedIndexes();
+			for (auto index : selectedIndexes)
 			{
-				const auto selectedIndexes = mUi->historyTableWidget->selectionModel()->selectedIndexes();
-				for (auto index : selectedIndexes)
-				{
-					QWidget* tmpWidget = qobject_cast<QWidget*>(mUi->historyTableWidget->cellWidget(index.row(), dateColumn));
-					DetailDialog d(this);
-					d.setDetails(tmpWidget->property("termsOfUsage").toString());
-					d.exec();
-				}
-				return true;
+				QWidget* tmpWidget = qobject_cast<QWidget*>(mUi->historyTableWidget->cellWidget(index.row(), dateColumn));
+				DetailDialog d(this);
+				d.setDetails(tmpWidget->property("termsOfUsage").toString());
+				d.exec();
 			}
+			return true;
 		}
-		break;
-
-		default:
-			return false;
 	}
 
-	return false;
+	return QWidget::eventFilter(pObject, pEvent);
 }
 
 
@@ -234,134 +229,12 @@ void HistoryWidget::deleteHistory()
 
 void HistoryWidget::exportHistory()
 {
-	QString htmlContent, company_header, company_footer;
-	QPrinter printer;
-	QRect printer_rect(printer.pageRect());
-
 	QString pdfName = QFileDialog::getSaveFileName(this,
 			QApplication::applicationName() + " - " + tr("Save history"),
 			QDir::currentPath(),
 			tr("PDF Documents (*.pdf)"));
 
-	if (pdfName.size() > 0)
-	{
-		printer.setOutputFileName(pdfName);
-
-		//Header
-
-		//Header
-		QDateTime dateTime = QDateTime::currentDateTime();
-		QString date = dateTime.toString(QStringLiteral("dd.MM.yyyy"));
-		QString time = dateTime.toString(QStringLiteral("hh:mm"));
-
-		company_header.append("<br><br><table cellspacing='5' cellpadding='5' width='100%'>");
-		company_header.append("<tr>");
-		company_header.append(tr("<td valign='middle'><h1>History - ") + QApplication::applicationName() + tr("</h1><h3>AusweisApp2 is a product of Governikus GmbH & Co. KG - on behalf of the Bundesministerium des Innern (Federal Ministry of the Interior).</h3></td>"));
-		company_header.append("<th rowspan='2'><p align='center'><img src=':/images/information.png'></p></th>");
-		company_header.append("</tr>");
-		company_header.append("<tr>");
-
-		company_header.append(tr("<td valign='middle'><br><h3>At %1 %2 the following data were saved:").arg(date, time) + "</h3></td>");
-		company_header.append("</tr>");
-		company_header.append("</table>");
-
-		company_footer.append(tr("<h3>For further information, please see <a href='https://www.ausweisapp.bund.de/'>https://www.ausweisapp.bund.de/</a></h3>"));
-
-		//Setting up the header and calculating the header size
-		QTextDocument* document_header = new QTextDocument(this);
-		document_header->setPageSize(printer_rect.size());
-		document_header->setHtml(company_header);
-		QSizeF header_size = document_header->size();
-
-
-		//Setting up the footer and calculating the footer size
-		QTextDocument* document_footer = new QTextDocument(this);
-		document_footer->setPageSize(printer_rect.size());
-		document_footer->setHtml(company_footer);
-		QSizeF footer_size = document_footer->size();
-
-		//Calculating the main document size for one page
-		QSizeF center_size(printer_rect.width(),
-				(printer.pageRect().height() - header_size.toSize().height() - footer_size.toSize().height()));
-
-		htmlContent.append("<table width='100%' cellspacing='3' cellpadding='5'>");
-		htmlContent.append(tr("<tr><td><b>Date</b></td><td><b>Details</b></td></tr>"));
-
-		auto history = AppSettings::getInstance().getHistorySettings().getHistoryEntries();
-
-		for (int i = 0; i < history.size(); ++i)
-		{
-			if (i % 2 == 0)
-			{
-				htmlContent.append("<tr>");
-			}
-			else
-			{
-				htmlContent.append("<tr style='background-color:#f6f6f6'>");
-			}
-			htmlContent.append("<td>");
-			htmlContent.append(history.at(i).getDateTime().toString(QStringLiteral("dd.MM.yyyy hh:mm")));
-			htmlContent.append("</td>");
-			htmlContent.append("<td>");
-
-			htmlContent.append("<table><tr>");
-			htmlContent.append(tr("<td>Provider:</td>"));
-			htmlContent.append("<td>" + history.at(i).getSubjectName() + "</td>");
-			htmlContent.append("</tr><tr>");
-			htmlContent.append(tr("<td>Purpose:</td>"));
-			htmlContent.append("<td>" + history.at(i).getPurpose() + "</td>");
-			htmlContent.append("</tr><tr>");
-			htmlContent.append(tr("<td>Data:</td>"));
-			htmlContent.append("<td>" + history.at(i).getRequestedData() + "</td>");
-			htmlContent.append("</tr></table>");
-
-			htmlContent.append("</td></tr>");
-		}
-
-		htmlContent.append("</table>");
-
-		//Insert HTML in main document
-		QTextDocument* main_doc = new QTextDocument(this);
-		main_doc->setHtml(htmlContent);
-		main_doc->setPageSize(center_size);
-
-		//Setting up the rectangles for each section.
-		QRect headerRect = QRect(QPoint(0, 0), document_header->size().toSize());
-		QRect footerRect = QRect(QPoint(0, 0), document_footer->size().toSize());
-		QRect contentRect = QRect(QPoint(0, 0), main_doc->size().toSize()); // Main content rectangle.
-		QRect currentRect = QRect(QPoint(0, 0), center_size.toSize()); // Current main content rectangle.
-
-		QPainter painter(&printer);
-
-		while (currentRect.intersects(contentRect))
-		{ //Loop if the current content rectangle intersects with the main content rectangle.
-			//Resetting the painter matrix co-ordinate system.
-			painter.resetMatrix();
-			//Applying negative translation of painter co-ordinate system by current main content rectangle top y coordinate.
-			painter.translate(0, -currentRect.y());
-			//Applying positive translation of painter co-ordinate system by header hight.
-			painter.translate(0, headerRect.height());
-			//Drawing the center content for current page.
-			main_doc->drawContents(&painter, currentRect);
-			//Resetting the painter matrix co ordinate system.
-			painter.resetMatrix();
-			//Drawing the header on the top of the page
-			document_header->drawContents(&painter, headerRect);
-			//Applying positive translation of painter co-ordinate system to draw the footer
-			painter.translate(0, headerRect.height());
-			painter.translate(0, center_size.height());
-			document_footer->drawContents(&painter, footerRect);
-
-			//Translating the current rectangle to the area to be printed for the next page
-			currentRect.translate(0, currentRect.height());
-			//Inserting a new page if there is till area left to be printed
-			if (currentRect.intersects(contentRect))
-			{
-				printer.newPage();
-			}
-		}
-		QDesktopServices::openUrl(QUrl(pdfName));
-	}
+	PdfExport::exportHistory(pdfName);
 }
 
 

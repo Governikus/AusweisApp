@@ -12,7 +12,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 
-bool CVCertificateChainBuilder::isChild(const QSharedPointer<CVCertificate>& pChild, const QSharedPointer<CVCertificate>& pParent)
+bool CVCertificateChainBuilder::isChild(const QSharedPointer<const CVCertificate>& pChild, const QSharedPointer<const CVCertificate>& pParent)
 {
 	// self signed CVCs are the root of a chain, no other parent possible.
 	return !pChild->isIssuedBy(*pChild) && pChild->isIssuedBy(*pParent);
@@ -104,7 +104,7 @@ CVCertificateChain CVCertificateChainBuilder::getChainForCertificationAuthority(
 }
 
 
-CVCertificateChain CVCertificateChainBuilder::getChainStartingWith(const QSharedPointer<CVCertificate>& pChainRoot) const
+CVCertificateChain CVCertificateChainBuilder::getChainStartingWith(const QSharedPointer<const CVCertificate>& pChainRoot) const
 {
 	qCDebug(card) << "Get chain for root" << pChainRoot;
 	for (const auto& chain : getChains())

@@ -4,16 +4,19 @@
 
 #include "ReaderDriverContext.h"
 
-#include "DeviceDescriptor.h"
 #include "ReaderManager.h"
-
 
 using namespace governikus;
 
 ReaderDriverContext::ReaderDriverContext()
-	: mReaderDetector(QSharedPointer<ReaderDetector>(new ReaderDetector(getDriverSettings())))
+	: QObject()
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
+	, mReaderDetector(QSharedPointer<ReaderDetector>(new ReaderDetector(getDriverSettings())))
+#endif
 {
+	#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 	connect(mReaderDetector.data(), &ReaderDetector::fireReaderChangeDetected, this, &ReaderDriverContext::fireReaderChangeDetected);
+	#endif
 }
 
 
@@ -22,11 +25,15 @@ ReaderDriverContext::~ReaderDriverContext()
 }
 
 
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 QVector<QSharedPointer<DeviceDescriptor> > ReaderDriverContext::attachedDevices()
 {
 	const QVector<ReaderInfo> readerInfos = ReaderManager::getInstance().getReaderInfos();
 	return mReaderDetector->getAttachedDevices(readerInfos);
 }
+
+
+#endif
 
 
 QSharedPointer<DriverSettings> ReaderDriverContext::getDriverSettings() const

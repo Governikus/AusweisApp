@@ -55,15 +55,6 @@ void ConsoleReader::init()
 }
 
 
-QString ConsoleReader::requestText(const QString& pMsg)
-{
-	qFatal("Unimplemented on windows");
-
-	Q_UNUSED(pMsg);
-	return QString();
-}
-
-
 void ConsoleReader::shutdown()
 {
 	mConsoleInputThread.reset();
@@ -113,44 +104,6 @@ QString ConsoleReader::readText()
 		mInputOpen = false;
 	}
 	return line;
-}
-
-
-QString ConsoleReader::requestText(const QString& pMsg)
-{
-	Q_ASSERT(!mNotifier.isNull());
-
-	mNotifier->setEnabled(false);
-	qCInfo(cli) << pMsg;
-
-
-	// QTextStream::readText() may return without any data even if stdin is still open.
-	// Therefor we crick ourself in order to emulate a blocking readText() and be
-	// responsive to SIGTERM et al..
-
-	static const int TIMEOUT = 200;
-
-	QString input;
-	while (mInputOpen && input.isEmpty())
-	{
-		input = readText();
-		if (input.isEmpty())
-		{
-			QEventLoop loop;
-			connect(this, &ConsoleReader::fireShutdown, &loop, &QEventLoop::quit);
-
-			QTimer timer;
-			timer.setSingleShot(true);
-			timer.setInterval(TIMEOUT);
-			timer.start();
-			connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-
-			loop.exec(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
-		}
-	}
-
-	mNotifier->setEnabled(true);
-	return input;
 }
 
 

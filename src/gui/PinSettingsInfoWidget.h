@@ -1,5 +1,5 @@
 /*!
- * \brief Widget for pin settings information.
+ * \brief Widget for PIN settings information.
  *
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */

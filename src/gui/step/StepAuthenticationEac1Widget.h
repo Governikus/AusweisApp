@@ -11,7 +11,12 @@
 #include "StepGui.h"
 #include "context/AuthContext.h"
 
-class QCheckBox;
+#include <QCheckBox>
+
+#ifdef Q_OS_WIN32
+#include <QWinTaskbarButton>
+#endif
+
 class QLabel;
 class QLineEdit;
 class QProgressBar;
@@ -37,7 +42,7 @@ class StepAuthenticationEac1Widget
 		StepAuthenticationEac1Widget(QWidget* pParent = nullptr);
 		virtual ~StepAuthenticationEac1Widget();
 
-		void setContext(QSharedPointer<AuthContext> pContext);
+		void setContext(const QSharedPointer<AuthContext>& pContext);
 
 		void setState(StepDidAuthenticateEac1Ui::State pState);
 		void forwardStep();
@@ -58,17 +63,24 @@ class StepAuthenticationEac1Widget
 		void canTextEdited(const QString& pText);
 		void pinTextEdited(const QString& pText);
 		void onRandomButtonClicked();
+		void onResultChanged();
+
+	protected:
+		void hideEvent(QHideEvent* pEvent);
+		void showEvent(QShowEvent* pEvent);
 
 	private:
+		void setupChatView();
+
 		void prepareChatsForGui();
+
+		void updateProgressPanel(int pProgressValue = 0, const QString& pProgressText = QString());
 
 		void addChatRightToGui(AccessRight pRight, bool pOptional, int pListSize);
 
 		void clearPinWidgetLayout();
 
 		void createBasicReaderWidget();
-
-		void validateAndSetText(const QString& pPassword, QLineEdit* pLineEdit);
 
 	private:
 		QScopedPointer<Ui::StepAuthenticationEac1Widget> mUi;
@@ -83,6 +95,10 @@ class StepAuthenticationEac1Widget
 		QLabel* mProgressBarLabel;
 
 		bool mCloseWindowWhenFinished;
+
+		#ifdef Q_OS_WIN32
+		QWinTaskbarButton* mTaskbarButton;
+		#endif
 };
 
 } /* namespace governikus */

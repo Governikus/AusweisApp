@@ -9,36 +9,20 @@ import "../global"
 SectionPage
 {
 	id: baseItem
-
 	leftTitleBarAction: TitleBarMenuAction { state: "back"; onClicked: pop() }
-	headerTitleBarAction: TitleBarAction { text: shortName }
-	titleBarColor: Category.displayColor(selectedCategory)
+	headerTitleBarAction: TitleBarAction { text: provider.shortName }
+	titleBarColor: Category.displayColor(provider.category)
 
-	property var selectedProviderModel: ({})
+	property alias providerModelItem: provider.modelItem
+	ProviderModelItem {
+		id: provider
+	}
 
-	property string selectedCategory
-
-	// Details
-	property string shortName
-	property string longName
-	property string shortDescription
-	property string longDescription
-	property string address
-	property string homepage
-	property string phone
-	property string email
-	property string postalAddress
-	property string providerIcon
-	property string providerImage
 
 	ProviderHeader {
 		id: header
-
-		height: Utils.dp(200)
-
-		address: parent.address
-		providerIcon: parent.providerIcon !== "" ? parent.providerIcon : Category.imageSource(parent.selectedCategory)
-		providerImage: parent.providerImage !== "" ? parent.providerImage : Category.backgroundImageSource(parent.selectedCategory)
+		width: baseItem.width
+		selectedProvider: provider
 	}
 
 
@@ -120,17 +104,14 @@ SectionPage
 			clip: true
 
 			Text {
-				text: longDescription ? longDescription : qsTr("Description not avaible")
+				text: !!provider.longDescription ? provider.longDescription : qsTr("Description not avaible")
 
 				wrapMode: Text.WordWrap
 				font.pixelSize: Utils.dp(16)
 			}
 
 			ProviderContactTab {
-				homepage: baseItem.homepage ? baseItem.homepage : ""
-				phone: baseItem.phone ? baseItem.phone : ""
-				email: baseItem.email ? baseItem.email : ""
-				postalAddress: baseItem.postalAddress ? baseItem.postalAddress : ""
+				contactModel: provider.contactModel
 			}
 		}
 	}

@@ -102,17 +102,10 @@ bool PersoSimController::startProcess()
 	// wait for PersoSim command line prompt
 	QEventLoop eventLoop;
 	mEventLoop = &eventLoop;
-	try
-	{
-		int result = eventLoop.exec();
-		mEventLoop = nullptr;
-		XCOMPARE(result, 0, false);
-	}
-	catch (...)
-	{
-		mEventLoop = nullptr;
-		throw;
-	}
+
+	int result = eventLoop.exec();
+	mEventLoop = nullptr;
+	XCOMPARE(result, 0, false);
 
 	return true;
 }

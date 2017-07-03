@@ -25,6 +25,20 @@ class test_EnumHelper
 {
 	Q_OBJECT
 
+	private:
+		void testBadConverion(const int pValue, const QString& pExpectedOutput)
+		{
+			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+
+			TestEnum1 badEnumValue = static_cast<TestEnum1>(pValue);
+			QCOMPARE(Enum<TestEnum1>::getName(badEnumValue), QLatin1String());
+
+			QCOMPARE(spy.count(), 1);
+			auto result = spy.takeFirst();
+			QVERIFY(result.at(0).toString().endsWith(pExpectedOutput));
+		}
+
+
 	private Q_SLOTS:
 		void initTestCase()
 		{
@@ -67,7 +81,7 @@ class test_EnumHelper
 
 			QCOMPARE(spy.count(), 1);
 			auto result = spy.takeFirst();
-			QVERIFY(result.at(0).toString().endsWith("\"FIRST\"\n"));
+			QVERIFY(result.at(0).toString().endsWith("FIRST\n"));
 		}
 
 
@@ -76,21 +90,13 @@ class test_EnumHelper
 			QCOMPARE(Enum<TestEnum1>::getCount(), 3);
 			QCOMPARE(Enum<TestEnum1>::getName(), QStringLiteral("TestEnum1"));
 			QCOMPARE(Enum<TestEnum1>::getName(TestEnum1::FIRST), QStringLiteral("FIRST"));
+			QCOMPARE(Enum<TestEnum1>::getName(TestEnum1::SECOND), QStringLiteral("SECOND"));
+			QCOMPARE(Enum<TestEnum1>::getName(TestEnum1::THIRD), QStringLiteral("THIRD"));
 
-			TestEnum1 badEnumValue = static_cast<TestEnum1>(6);
-			QCOMPARE(Enum<TestEnum1>::getName(badEnumValue), QStringLiteral("UNKNOWN(0x6)"));
-			badEnumValue = static_cast<TestEnum1>(255);
-			QCOMPARE(Enum<TestEnum1>::getName(badEnumValue), QStringLiteral("UNKNOWN(0xff)"));
-			badEnumValue = static_cast<TestEnum1>(365);
-			QCOMPARE(Enum<TestEnum1>::getName(badEnumValue), QStringLiteral("UNKNOWN(0x16d)"));
-			badEnumValue = static_cast<TestEnum1>(2147483647);
-			QCOMPARE(Enum<TestEnum1>::getName(badEnumValue), QStringLiteral("UNKNOWN(0x7fffffff)"));
-
-			QCOMPARE(EnumTestEnum1::getCount(), 3);
-			QCOMPARE(EnumTestEnum1::getName(), QStringLiteral("TestEnum1"));
-			QCOMPARE(EnumTestEnum1::getName(TestEnum1::SECOND), QStringLiteral("SECOND"));
-
-			QCOMPARE(EnumTestEnum1::getName(EnumTestEnum1::TestEnum1::THIRD), QStringLiteral("THIRD"));
+			testBadConverion(6, QStringLiteral("UNKNOWN 0x6\n"));
+			testBadConverion(255, QStringLiteral("UNKNOWN 0xff\n"));
+			testBadConverion(365, QStringLiteral("UNKNOWN 0x16d\n"));
+			testBadConverion(2147483647, QStringLiteral("UNKNOWN 0x7fffffff\n"));
 
 			QCOMPARE(getEnumName(TestEnum1::SECOND), QStringLiteral("SECOND"));
 			QCOMPARE(getEnumName(EnumTestEnum1::TestEnum1::SECOND), QStringLiteral("SECOND"));
@@ -102,7 +108,7 @@ class test_EnumHelper
 			const QVector<TestEnum2>& list1 = Enum<TestEnum2>::getList();
 			QCOMPARE(list1.size(), 3);
 
-			const QVector<TestEnum2>& list2 = EnumTestEnum2::getList();
+			const QVector<TestEnum2>& list2 = Enum<TestEnum2>::getList();
 			QCOMPARE(list2.size(), 3);
 
 			QCOMPARE(list1, list2);
@@ -119,39 +125,37 @@ class test_EnumHelper
 			QVERIFY(!Enum<TestEnum1>::isValue(static_cast<int>(999)));
 			QVERIFY(Enum<TestEnum1>::isValue(static_cast<int>(0)));
 
-			QVERIFY(!EnumTestEnum2::isValue(static_cast<int>(0xbb)));
-			QVERIFY(EnumTestEnum2::isValue(static_cast<int>(0xFF)));
-			QVERIFY(EnumTestEnum2::isValue(static_cast<int>(0xaa)));
+			QVERIFY(!Enum<TestEnum2>::isValue(static_cast<int>(0xbb)));
+			QVERIFY(Enum<TestEnum2>::isValue(static_cast<int>(0xFF)));
+			QVERIFY(Enum<TestEnum2>::isValue(static_cast<int>(0xaa)));
 
 			QVERIFY(!Enum<TestEnum1>::isValue(char(999)));
 			QVERIFY(Enum<TestEnum1>::isValue(char(0)));
 
-			QVERIFY(!EnumTestEnum2::isValue(char(0xbb)));
-			QVERIFY(EnumTestEnum2::isValue(char(0xff)));
-			QVERIFY(EnumTestEnum2::isValue(char(0xaa)));
+			QVERIFY(!Enum<TestEnum2>::isValue(char(0xbb)));
+			QVERIFY(Enum<TestEnum2>::isValue(char(0xff)));
+			QVERIFY(Enum<TestEnum2>::isValue(char(0xaa)));
 		}
 
 
 		void fromString()
 		{
-			QCOMPARE(EnumTestEnum1::fromString("SECOND", TestEnum1::THIRD), TestEnum1::SECOND);
-			QVERIFY(EnumTestEnum1::fromString("SECOND", TestEnum1::THIRD) != TestEnum1::FIRST);
+			QCOMPARE(Enum<TestEnum1>::fromString("SECOND", TestEnum1::THIRD), TestEnum1::SECOND);
+			QVERIFY(Enum<TestEnum1>::fromString("SECOND", TestEnum1::THIRD) != TestEnum1::FIRST);
 
-			QCOMPARE(EnumTestEnum1::fromString("FIRST", TestEnum1::THIRD), TestEnum1::FIRST);
-			QVERIFY(EnumTestEnum1::fromString("FIRST", TestEnum1::THIRD) != TestEnum1::SECOND);
+			QCOMPARE(Enum<TestEnum1>::fromString("FIRST", TestEnum1::THIRD), TestEnum1::FIRST);
+			QVERIFY(Enum<TestEnum1>::fromString("FIRST", TestEnum1::THIRD) != TestEnum1::SECOND);
 
-			QVERIFY(EnumTestEnum1::fromString("first", TestEnum1::THIRD) != TestEnum1::FIRST);
-			QVERIFY(EnumTestEnum1::fromString("second", TestEnum1::THIRD) != TestEnum1::SECOND);
+			QVERIFY(Enum<TestEnum1>::fromString("first", TestEnum1::THIRD) != TestEnum1::FIRST);
+			QVERIFY(Enum<TestEnum1>::fromString("second", TestEnum1::THIRD) != TestEnum1::SECOND);
 
-			QVERIFY(EnumTestEnum1::fromString("first", TestEnum1::THIRD) != TestEnum1::SECOND);
-			QVERIFY(EnumTestEnum1::fromString("second", TestEnum1::THIRD) != TestEnum1::FIRST);
+			QVERIFY(Enum<TestEnum1>::fromString("first", TestEnum1::THIRD) != TestEnum1::SECOND);
+			QVERIFY(Enum<TestEnum1>::fromString("second", TestEnum1::THIRD) != TestEnum1::FIRST);
 
 			QCOMPARE(Enum<TestEnum1>::fromString("abc", TestEnum1::THIRD), TestEnum1::THIRD);
-			QCOMPARE(EnumTestEnum1::fromString("abc", TestEnum1::THIRD), TestEnum1::THIRD);
-			QVERIFY(EnumTestEnum1::fromString("FIRST", TestEnum1::THIRD) != TestEnum1::THIRD);
+			QVERIFY(Enum<TestEnum1>::fromString("FIRST", TestEnum1::THIRD) != TestEnum1::THIRD);
 
 			QString value = "FIRST";
-			QVERIFY(EnumTestEnum1::fromString(value, TestEnum1::THIRD) != TestEnum1::THIRD);
 			QVERIFY(Enum<TestEnum1>::fromString(value, TestEnum1::THIRD) != TestEnum1::THIRD);
 		}
 

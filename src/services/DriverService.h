@@ -1,18 +1,12 @@
 /*!
- * DriverService.h
- *
  * \brief Service providing an update mechanism for the reader driver settings
  *
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
-
 #pragma once
 
-
-#include "DriverSettings.h"
 #include "UpdateService.h"
-
 
 namespace governikus
 {
@@ -21,20 +15,12 @@ class DriverService
 {
 	Q_OBJECT
 
-	private:
-		static DriverService* mSharedInstance;
-
-	public:
-		DriverService(DriverSettings& pSettings);
-
+	protected:
+		DriverService();
 		virtual ~DriverService();
 
-		/*!
-		 * Get the singleton
-		 */
-		static DriverService* getSharedInstance();
-
-
+	public:
+		static DriverService& getInstance();
 };
 
 } /* namespace governikus */

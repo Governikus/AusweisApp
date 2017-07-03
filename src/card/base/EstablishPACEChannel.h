@@ -7,7 +7,7 @@
 #pragma once
 
 #include "Apdu.h"
-#include "ReturnCode.h"
+#include "CardReturnCode.h"
 #include "SmartCardDefinitions.h"
 #include "asn1/ASN1TemplateUtil.h"
 #include "asn1/CertificateDescription.h"
@@ -97,14 +97,14 @@ DECLARE_ASN1_OBJECT(ESTABLISHPACECHANNELOUTPUT)
 class EstablishPACEChannelOutput
 {
 	private:
-		ReturnCode mPaceReturnCode;
+		CardReturnCode mPaceReturnCode;
 		QByteArray mEfCardAccess;
 		QByteArray mCarCurr;
 		QByteArray mCarPrev;
 		QByteArray mIdIcc;
 
 
-		static uint parseUSHORT(const QByteArray& pData, int pOffset);
+		static int parseUSHORT(const QByteArray& pData, int pOffset);
 
 		static QByteArray reverse(const QByteArray& pArrayToReverse);
 
@@ -121,8 +121,8 @@ class EstablishPACEChannelOutput
 		 */
 		void parseFromCcid(const QByteArray& pOutput, PACE_PIN_ID pPinId);
 
-		ReturnCode getPaceReturnCode() const;
-		void setPaceReturnCode(ReturnCode);
+		CardReturnCode getPaceReturnCode() const;
+		void setPaceReturnCode(CardReturnCode);
 
 		QByteArray getEfCardAccess() const;
 		void setEfCardAccess(const QByteArray&);
@@ -136,7 +136,7 @@ class EstablishPACEChannelOutput
 		QByteArray getCARprev() const;
 		void setCarPrev(const QByteArray&);
 
-		static ReturnCode parseReturnCode(quint32 pPaceReturnCode, PACE_PIN_ID pPinId);
+		static CardReturnCode parseReturnCode(quint32 pPaceReturnCode, PACE_PIN_ID pPinId);
 };
 
 

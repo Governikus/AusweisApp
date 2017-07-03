@@ -29,7 +29,7 @@ class test_transmit
 		void parseXml()
 		{
 			QByteArray content = TestFileHelper::readFile(":/paos/Transmit.xml");
-			QScopedPointer<Transmit> transmit(dynamic_cast<Transmit*>(TransmitParser().parse(content)));
+			QScopedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));
 			QVERIFY(!transmit.isNull());
 			auto inputApdusInfos = transmit->getInputApduInfos();
 
@@ -65,7 +65,7 @@ class test_transmit
 		void parseXmlWithAddressing()
 		{
 			QByteArray content = TestFileHelper::readFile(":/paos/Transmit3.xml");
-			QScopedPointer<Transmit> transmit(dynamic_cast<Transmit*>(TransmitParser().parse(content)));
+			QScopedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));
 			QVERIFY(!transmit.isNull());
 			auto inputApdusInfos = transmit->getInputApduInfos();
 
@@ -103,7 +103,7 @@ class test_transmit
 		void parseAnswerAutent()
 		{
 			QByteArray content = TestFileHelper::readFile(":/paos/Transmit2.xml");
-			QScopedPointer<Transmit> transmit(dynamic_cast<Transmit*>(TransmitParser().parse(content)));
+			QScopedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));
 			QVERIFY(!transmit.isNull());
 			auto inputApduInfos = transmit->getInputApduInfos();
 

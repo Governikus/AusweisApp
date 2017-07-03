@@ -9,9 +9,9 @@ using namespace governikus;
 
 MockNetworkReply::MockNetworkReply(const QByteArray& pData, QObject* pParent)
 	: QNetworkReply(pParent)
-	, mData(pData)
-	, mDataPosition(0)
+	, mSocket()
 {
+	mSocket.mReadBuffer = pData;
 	setOpenMode(QIODevice::ReadOnly);
 }
 
@@ -23,12 +23,5 @@ MockNetworkReply::~MockNetworkReply()
 
 qint64 MockNetworkReply::readData(char* pDst, qint64 pMaxSize)
 {
-	QByteArray data = mData.mid(mDataPosition, pMaxSize);
-	int length = data.length();
-	if (length)
-	{
-		qstrncpy(pDst, data.constData(), length);
-		mDataPosition += length;
-	}
-	return length;
+	return mSocket.readData(pDst, pMaxSize);
 }

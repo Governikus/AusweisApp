@@ -219,10 +219,11 @@ class test_EcdsaPublicKey
 
 
 			const EC_POINT* generator = EC_GROUP_get0_generator(ecGroup);
-			int bufLen = EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);
+			auto bufLen = EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);
 
-			QVector<char> buf(bufLen);
-			EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, reinterpret_cast<unsigned char*>(buf.data()), buf.size(), nullptr);
+			Q_ASSERT(bufLen <= INT_MAX);
+			QVector<char> buf(static_cast<int>(bufLen));
+			EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, reinterpret_cast<unsigned char*>(buf.data()), static_cast<size_t>(buf.size()), nullptr);
 			QCOMPARE(QByteArray(buf.data(), buf.size()).toHex().toUpper(), QByteArray("048BD2AEB9CB7E57CB2C4B482FFC81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9C27745132DED8E545C1D54C72F046997"));
 
 			QCOMPARE(ecdsaPublicKey->getPublicKeyOid(), QByteArray("0.4.0.127.0.7.2.2.2.2.3"));
@@ -273,10 +274,11 @@ class test_EcdsaPublicKey
 
 
 			const EC_POINT* generator = EC_GROUP_get0_generator(ecGroup);
-			int bufLen = EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);
+			auto bufLen = EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);
+			Q_ASSERT(bufLen <= INT_MAX);
 
-			QVector<char> buf(bufLen);
-			EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, reinterpret_cast<unsigned char*>(buf.data()), buf.size(), nullptr);
+			QVector<char> buf(static_cast<int>(bufLen));
+			EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, reinterpret_cast<unsigned char*>(buf.data()), static_cast<size_t>(buf.size()), nullptr);
 			QCOMPARE(QByteArray(buf.data(), buf.size()).toHex().toUpper(), QByteArray("048BD2AEB9CB7E57CB2C4B482FFC81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9C27745132DED8E545C1D54C72F046997"));
 
 			QCOMPARE(ecdsaPublicKey->getPublicKeyOid(), QByteArray("0.4.0.127.0.7.2.2.2.2.3"));

@@ -31,7 +31,6 @@ class StepChooseCardGui
 		QPointer<DiagnosisGui> mDiagnosisGui;
 		QPointer<ReaderDriverGui> mReaderDriverGui;
 		QPushButton* mCancelButton, * mReaderDriverButton, * mDiagnosisButton;
-		AuthenticateStepsWidget* mStepsWidget;
 
 		QSharedPointer<WorkflowContext> mContext;
 

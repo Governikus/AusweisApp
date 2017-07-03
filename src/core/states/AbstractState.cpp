@@ -5,6 +5,7 @@
  */
 
 #include "AbstractState.h"
+
 #include "ReaderManager.h"
 
 #include <QLoggingCategory>
@@ -75,7 +76,7 @@ void AbstractState::onEntry(QEvent* pEvent)
 	mConnections += connect(mContext.data(), &WorkflowContext::fireCancelWorkflow, this, &AbstractState::onUserCancelled);
 	mConnections += connect(mContext.data(), &WorkflowContext::fireStateApprovedChanged, this, &AbstractState::onStateApprovedChanged);
 
-	qCDebug(statemachine) << "Next state" << getStateName();
+	qCDebug(statemachine) << "Next state is" << getStateName();
 	mContext->setCurrentState(getStateName());
 }
 
@@ -91,24 +92,20 @@ void AbstractState::onExit(QEvent* pEvent)
 
 	mContext->setStateApproved(false);
 
-	qCDebug(statemachine) << "Leaving state" << getStateName() << "with result:";
-	qCDebug(statemachine) << "        " << mContext->getResult().getMajor();
-	qCDebug(statemachine) << "        " << mContext->getResult().getMinor();
-	qCDebug(statemachine) << "        " << mContext->getResult().getMinorDescription();
-	qCDebug(statemachine) << "        " << mContext->getResult().getMessage();
+	qCDebug(statemachine) << "Leaving state" << getStateName() << "with status:" << mContext->getStatus();
 }
 
 
 bool AbstractState::isCancellationByUser()
 {
-	return mContext->getResult().getMinor() == Result::Minor::SAL_Cancellation_by_User;
+	return mContext->getStatus().isCancellationByUser();
 }
 
 
 void AbstractState::onUserCancelled()
 {
 	qCInfo(support) << "Cancellation by user";
-	setResult(Result::createCancelByUserError());
+	setStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
 	Q_EMIT fireCancel();
 }
 
@@ -117,17 +114,16 @@ void AbstractState::onCardRemoved(const QString& pReaderName)
 {
 	if (pReaderName == mContext->getReaderName())
 	{
-		QString errorMessage = tr("The ID card has been removed. The process is aborted.");
-		setResult(Result::createCardRemovedError(errorMessage));
+		setStatus(GlobalStatus::Code::Workflow_Card_Removed);
 		Q_EMIT fireError();
 	}
 }
 
 
-void AbstractState::setResult(const Result& pResult)
+void AbstractState::setStatus(const GlobalStatus& pStatus)
 {
-	if (!pResult.isOk() && mContext->getResult().isOk())
+	if (pStatus.isError() && mContext->getStatus().isNoError())
 	{
-		mContext->setResult(pResult);
+		mContext->setStatus(pStatus);
 	}
 }

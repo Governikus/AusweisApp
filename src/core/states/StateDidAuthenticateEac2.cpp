@@ -37,7 +37,7 @@ void StateDidAuthenticateEac2::run()
 	auto cvcChain = getContext()->getChainForCertificationAuthority(*getContext()->getPaceOutputData());
 	if (!cvcChain.isValid())
 	{
-		setResult(Result::createNoPermissionError(tr("Authentication failed.")));
+		setStatus(GlobalStatus::Code::Workflow_No_Permission_Error);
 		Q_EMIT fireError();
 		return;
 	}
@@ -49,9 +49,9 @@ void StateDidAuthenticateEac2::run()
 
 void StateDidAuthenticateEac2::onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 {
-	if (pCommand->getReturnCode() != ReturnCode::OK)
+	if (pCommand->getReturnCode() != CardReturnCode::OK)
 	{
-		setResult(Result::createNoPermissionError(tr("Authentication failed.")));
+		setStatus(GlobalStatus::Code::Workflow_No_Permission_Error);
 		Q_EMIT fireError();
 	}
 

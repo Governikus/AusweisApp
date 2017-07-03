@@ -110,7 +110,7 @@ class BluetoothMessageCreator
 		Q_DISABLE_COPY(BluetoothMessageCreator)
 
 	public:
-		static BluetoothMessageConnectRequest createConnectRequest(int pMaxMsgSize = 20);
+		static BluetoothMessageConnectRequest createConnectRequest(uint pMaxMsgSize = 20);
 		static BluetoothMessageDisconnectRequest createDisconnectRequest();
 		static BluetoothMessageTransferApduRequest createTransferApduRequest(const QByteArray& pApdu);
 		static BluetoothMessageTransferAtrRequest createTransferAtrRequest();

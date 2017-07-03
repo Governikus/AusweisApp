@@ -34,13 +34,13 @@ CustomSchemeActivationContext::~CustomSchemeActivationContext()
 		 * Therefore we open the URL during deletion, which takes place when authentication
 		 * has finished and the AuthMdel is deleted.
 		 */
-		qDebug() << "Redirecting now to URL " << mRedirectAddress;
+		qDebug() << "Perform redirect to URL" << mRedirectAddress;
 		QDesktopServices::openUrl(mRedirectAddress);
 	}
 }
 
 
-QUrl CustomSchemeActivationContext::getActivationURL()
+QUrl CustomSchemeActivationContext::getActivationURL() const
 {
 	return mActivationUrl;
 }
@@ -61,20 +61,20 @@ bool CustomSchemeActivationContext::sendOperationAlreadyActive()
 }
 
 
-bool CustomSchemeActivationContext::sendErrorPage(HttpStatusCode pStatusCode, const Result& pResult)
+bool CustomSchemeActivationContext::sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus)
 {
 	Q_UNUSED(pStatusCode);
-	Q_UNUSED(pResult);
+	Q_UNUSED(pStatus);
 	// probably we emit a signal, that will be caught by the AppController
 	// so that then UI can display some message or so?
 	return true;
 }
 
 
-bool CustomSchemeActivationContext::sendRedirect(const QUrl& pRedirectAddress, const Result& pResult)
+bool CustomSchemeActivationContext::sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pStatus)
 {
-	mRedirectAddress = UrlUtil::addMajorMinor(pRedirectAddress, pResult);
-	qDebug() << "Redirect URL:" << mRedirectAddress;
+	mRedirectAddress = UrlUtil::addMajorMinor(pRedirectAddress, pStatus);
+	qDebug() << "Determined redirect URL" << mRedirectAddress;
 	return true;
 
 	/*

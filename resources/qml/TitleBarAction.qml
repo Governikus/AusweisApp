@@ -26,18 +26,14 @@ Item
 		id: invisibleText
 		visible: false
 		text: textItem.text
+		font.bold: textItem.font.bold
 		font.pointSize: textItem.font.pointSize
 	}
 
-	Text {
+	TitleBarText {
 		id: textItem
-		anchors.verticalCenter: parent.verticalCenter
-		anchors.horizontalCenter: plugin.platformStyle.indexOf("android") !== -1 ? undefined : parent.horizontalCenter
-		color: "white"
-		font.pixelSize: Constants.titlebar_font_size
+		anchors.horizontalCenter: parent.horizontalCenter
 		width: Math.min(parent.width, invisibleText.contentWidth)
-		height: contentHeight
-		elide: invisibleText.contentWidth > width ? Text.ElideRight : Text.ElideNone
 		text: root.text !== "" ? root.text :
 				root.state === "cancel" ? qsTr("Cancel") :
 				root.state === "edit" ? qsTr("Edit") :

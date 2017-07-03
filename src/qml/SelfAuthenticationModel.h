@@ -36,10 +36,9 @@ class SelfAuthenticationModel
 
 	public:
 		SelfAuthenticationModel(QObject* pParent = nullptr);
-		void resetContext(QSharedPointer<SelfAuthenticationContext> pContext = QSharedPointer<SelfAuthenticationContext>());
+		void resetContext(const QSharedPointer<SelfAuthenticationContext>& pContext = QSharedPointer<SelfAuthenticationContext>());
 
 		Q_INVOKABLE void startWorkflow();
-		Q_INVOKABLE void continueWorkflow();
 		Q_INVOKABLE void cancelWorkflow();
 		Q_INVOKABLE bool isBasicReader();
 

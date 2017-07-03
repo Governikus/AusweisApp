@@ -30,7 +30,7 @@ class PaceHandler
 	private:
 		const QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
 		QSharedPointer<KeyAgreement> mKeyAgreement;
-		QSharedPointer<PACEInfo> mPaceInfo;
+		QSharedPointer<const PACEInfo> mPaceInfo;
 		QByteArray mIdIcc;
 		QByteArray mEncryptionKey;
 		QByteArray mMacKey;
@@ -40,7 +40,7 @@ class PaceHandler
 		/*!
 		 * \brief checks for implementation support
 		 */
-		bool isSupportedProtocol(const QSharedPointer<PACEInfo>& pPaceInfo) const;
+		bool isSupportedProtocol(const QSharedPointer<const PACEInfo>& pPaceInfo) const;
 
 		/*!
 		 * \brief Perform initialization of the handler. During initialization the PACE protocol parameters to be used are determined.
@@ -67,7 +67,7 @@ class PaceHandler
 		 * \param pPin the PIN value, e.g. "123456"
 		 * \return false on any errors during establishment
 		 */
-		ReturnCode establishPaceChannel(PACE_PIN_ID pPinId, const QString& pPin);
+		CardReturnCode establishPaceChannel(PACE_PIN_ID pPinId, const QString& pPin);
 
 		/*!
 		 * \brief The certificate holder authorization template to be supplied to the card. May be empty

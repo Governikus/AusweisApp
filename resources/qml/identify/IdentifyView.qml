@@ -23,7 +23,9 @@ SectionPage
 		width: identifyEditChatView.width
 	}
 
-	IdentifyController {}
+	IdentifyController {
+		id: identifyController
+	}
 
 	SelfAuthenticationData {
 		id: selfAuthenticationData
@@ -37,7 +39,14 @@ SectionPage
 
 	EnterPinView {
 		id: enterPinView
+		leftTitleBarAction: TitleBarMenuAction { state: "cancel"; onClicked: authModel.cancelWorkflow() }
+		headerTitleBarAction: TitleBarAction { text: qsTr("Identify") }
 		visible: false
+
+		onPinEntered: {
+			numberModel.continueWorkflow()
+			identifyView.push(identifyProgressView)
+		}
 	}
 
 	ProgressView {
@@ -49,13 +58,23 @@ SectionPage
 		subText: qsTr("Please wait a moment...")
 	}
 
+	ProgressView {
+		id: checkConnectivityView
+		leftTitleBarAction: TitleBarMenuAction { state: "cancel"; onClicked: authModel.cancelWorkflow() }
+		headerTitleBarAction: TitleBarAction { text: qsTr("Identify"); font.bold: true }
+		visible: false
+		text: qsTr("No network connectivity")
+		subText: qsTr("Please enable the network interface or cancel the workflow.")
+		subTextColor: Constants.red
+	}
+
 	ResultView {
 		id: identifyResult
 		headerTitleBarAction: TitleBarAction { text: qsTr("Identify"); font.bold: true }
 		isError: authModel.resultString
 		text: authModel.resultString
 		onClicked: {
-			authModel.continueWorkflow()
+			numberModel.continueWorkflow()
 			titleBar.reset()
 			identifyView.pop(null)
 			navBar.lockedAndHidden = false

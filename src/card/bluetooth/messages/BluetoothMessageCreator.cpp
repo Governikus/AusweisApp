@@ -15,7 +15,7 @@
 using namespace governikus;
 
 
-BluetoothMessageConnectRequest BluetoothMessageCreator::createConnectRequest(int pMaxMsgSize)
+BluetoothMessageConnectRequest BluetoothMessageCreator::createConnectRequest(uint pMaxMsgSize)
 {
 	BluetoothMessageConnectRequest msg;
 	msg.copyParameter(BluetoothMessageParameterMaxMsgSize(pMaxMsgSize));
@@ -70,7 +70,7 @@ BluetoothMessageTransferCardReaderStatusRequest BluetoothMessageCreator::createT
 BluetoothMessageSetTransportProtocolRequest BluetoothMessageCreator::createSetTransportProtocolRequest(BluetoothTransportProtocol pProtocol)
 {
 	BluetoothMessageSetTransportProtocolRequest msg;
-	msg.copyParameter(BluetoothMessageParameter(BluetoothParamId::TransportProtocol, getEnumByteValue(pProtocol)));
+	msg.copyParameter(BluetoothMessageParameter(BluetoothParamId::TransportProtocol, QByteArray(1, Enum<BluetoothTransportProtocol>::getValue(pProtocol))));
 	return msg;
 }
 

@@ -4,8 +4,10 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "AppSettings.h"
 #include "TlsConfiguration.h"
+
+#include "AppSettings.h"
+#include "MockNetworkReply.h"
 
 #include <QtTest>
 
@@ -24,23 +26,18 @@ class test_TlsConfiguration
 		}
 
 
-		void createSslConfiguration()
-		{
-			QSslConfiguration config = TlsConfiguration::createSslConfiguration();
-			QCOMPARE(config.ciphers().size(), 24);
-		}
-
-
 		void containsFatalError()
 		{
+			MockNetworkReply reply;
 			QList<QSslError> errors;
-			QVERIFY(!TlsConfiguration::containsFatalError(errors));
+
+			QVERIFY(!TlsConfiguration::containsFatalError(&reply, errors));
 
 			errors.append(QSslError(QSslError::SslError::SelfSignedCertificate));
-			QVERIFY(!TlsConfiguration::containsFatalError(errors));
+			QVERIFY(!TlsConfiguration::containsFatalError(&reply, errors));
 
 			errors.append(QSslError(QSslError::SslError::SubjectIssuerMismatch));
-			QVERIFY(TlsConfiguration::containsFatalError(errors));
+			QVERIFY(TlsConfiguration::containsFatalError(&reply, errors));
 		}
 
 

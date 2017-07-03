@@ -5,11 +5,12 @@ FUNCTION(ADD_TEST_EXECUTABLE testname)
 
 	TARGET_INCLUDE_DIRECTORIES(${testname} SYSTEM PUBLIC ${OPENSSL_INCLUDE_DIR})
 	TARGET_LINK_LIBRARIES(${testname} Qt5::Network Qt5::Xml Qt5::Test ${OPENSSL_LIBRARIES})
-	TARGET_LINK_LIBRARIES(${testname} AusweisAppTestHelper AusweisAppCore AusweisAppCard AusweisAppCardDrivers AusweisAppGlobal AusweisAppServices AusweisAppSettings AusweisAppNetwork)
-	TARGET_LINK_LIBRARIES(${testname} AusweisAppActivationWebservice AusweisAppActivationInternal AusweisAppJsonApi)
+	TARGET_LINK_LIBRARIES(${testname} AusweisAppTestHelper AusweisAppCore AusweisAppCard AusweisAppGlobal AusweisAppServices AusweisAppSettings AusweisAppNetwork)
+	TARGET_LINK_LIBRARIES(${testname} AusweisAppActivationInternal AusweisAppJsonApi AusweisAppAidl AusweisAppQml)
+	TARGET_LINK_LIBRARIES(${testname} AusweisAppCardRemote)
 
-	IF(LINUX OR WIN32 OR MAC OR BSD)
-		TARGET_LINK_LIBRARIES(${testname} Qt5::Widgets AusweisAppWidget AusweisAppCardPcsc)
+	IF(DESKTOP)
+		TARGET_LINK_LIBRARIES(${testname} Qt5::Widgets AusweisAppWidget AusweisAppCardPcsc AusweisAppCardDrivers AusweisAppActivationWebservice)
 	ENDIF()
 
 	IF(LINUX OR ANDROID OR IOS)
@@ -26,24 +27,6 @@ FUNCTION(ADD_TEST_EXECUTABLE testname)
 ENDFUNCTION()
 
 
-FUNCTION(GET_TEST_CMDLINE cmdline testname)
-	IF(NOT WIN32 AND "${testname}" MATCHES "gui")
-		SET(PLATFORM -platform offscreen)
-	ENDIF()
-
-	SET(${cmdline} ${PLATFORM} -v2 -o ${CMAKE_CURRENT_BINARY_DIR}/results.${testname}.log.xml,xml PARENT_SCOPE)
-ENDFUNCTION()
-
-
-FUNCTION(EXTRACT_TESTNAME result filepath)
-	STRING(REPLACE ".cpp" "" testname ${filepath})
-	STRING(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" testname ${testname})
-	STRING(REPLACE "/" "_" testname ${testname})
-	STRING(REPLACE "_test_" "_" testname ${testname})
-	SET(${result} "Test_${testname}" PARENT_SCOPE)
-ENDFUNCTION()
-
-
 FUNCTION(ADD_TEST_EXECUTABLE_SUBDIR)
 	SUBDIRLIST(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
 	IF(APPLE OR WIN32 OR BSD)
@@ -51,10 +34,10 @@ FUNCTION(ADD_TEST_EXECUTABLE_SUBDIR)
 	ENDIF()
 	IF(IOS OR ANDROID)
 		LIST(REMOVE_ITEM SUBDIRS gui)
+		LIST(REMOVE_ITEM SUBDIRS cli)
 		LIST(REMOVE_ITEM SUBDIRS pcsc)
-	ENDIF()
-	IF(BSD) # remove me if platform is fixed
-		LIST(REMOVE_ITEM SUBDIRS gui)
+		LIST(REMOVE_ITEM SUBDIRS drivers)
+		LIST(REMOVE_ITEM SUBDIRS activation_webservice)
 	ENDIF()
 
 	FOREACH(SUBDIR ${SUBDIRS})

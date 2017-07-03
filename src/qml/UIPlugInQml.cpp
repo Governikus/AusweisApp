@@ -2,11 +2,6 @@
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
-#ifndef QT_NO_DEBUG
-#define QT_QML_DEBUG
-#include <QQmlDebuggingEnabler>
-#endif
-
 #include "AppSettings.h"
 #include "DpiCalculator.h"
 #include "FileDestination.h"
@@ -41,21 +36,10 @@ Q_IMPORT_PLUGIN(QtQuick2WindowPlugin)
 Q_IMPORT_PLUGIN(QtQuickLayoutsPlugin)
 Q_IMPORT_PLUGIN(QtQmlModelsPlugin)
 Q_IMPORT_PLUGIN(QtQmlStateMachinePlugin)
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
 Q_IMPORT_PLUGIN(QtGraphicalEffectsPlugin)
-#if (QT_VERSION < QT_VERSION_CHECK(5, 7, 0))
-Q_IMPORT_PLUGIN(QtQuickControlsPlugin)
-Q_IMPORT_PLUGIN(QtLabsControlsPlugin)
-Q_IMPORT_PLUGIN(QtLabsTemplatesPlugin)
-#endif
-#endif
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
 //Q_IMPORT_PLUGIN(QtQuickControls2Plugin)
 //Q_IMPORT_PLUGIN(QtQuickExtrasFlatPlugin)
 //Q_IMPORT_PLUGIN(QtQuickTemplates2Plugin)
-#endif
 
 #endif
 
@@ -71,7 +55,7 @@ UIPlugInQml::UIPlugInQml()
 	, mChangePinModel()
 	, mAuthModel()
 	, mVersionInformationModel()
-	, mShareUtil()
+	, mQmlExtension()
 	, mSelfAuthenticationModel()
 	, mSettingsModel()
 	, mCertificateDescriptionModel()
@@ -80,6 +64,7 @@ UIPlugInQml::UIPlugInQml()
 	, mApplicationModel()
 	, mExplicitPlatformStyle(getPlatformSelectors())
 	, mStatusBarUtil()
+	, mConnectivityManager()
 {
 #if defined(Q_OS_ANDROID)
 	QGuiApplication::setFont(QFont("Roboto"));
@@ -123,7 +108,7 @@ void UIPlugInQml::init()
 	mEngine->rootContext()->setContextProperty("changePinModel", &mChangePinModel);
 	mEngine->rootContext()->setContextProperty("authModel", &mAuthModel);
 	mEngine->rootContext()->setContextProperty("versionInformationModel", &mVersionInformationModel);
-	mEngine->rootContext()->setContextProperty("shareUtil", &mShareUtil);
+	mEngine->rootContext()->setContextProperty("qmlExtension", &mQmlExtension);
 	mEngine->rootContext()->setContextProperty("selfAuthenticationModel", &mSelfAuthenticationModel);
 	mEngine->rootContext()->setContextProperty("settingsModel", &mSettingsModel);
 	mEngine->rootContext()->setContextProperty("certificateDescriptionModel", &mCertificateDescriptionModel);
@@ -131,6 +116,7 @@ void UIPlugInQml::init()
 	mEngine->rootContext()->setContextProperty("numberModel", &mNumberModel);
 	mEngine->rootContext()->setContextProperty("applicationModel", &mApplicationModel);
 	mEngine->rootContext()->setContextProperty("statusBarUtil", &mStatusBarUtil);
+	mEngine->rootContext()->setContextProperty("connectivityManager", &mConnectivityManager);
 
 	mEngine->load(getFile(QStringLiteral("qml/main.qml")));
 
@@ -172,27 +158,24 @@ QString UIPlugInQml::getPlatformSelectors() const
 void UIPlugInQml::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 {
 	mApplicationModel.resetContext(pContext);
+	mNumberModel.resetContext(pContext);
 
-	if (auto changePinContext = pContext.dynamicCast<ChangePinContext>())
+	if (auto changePinContext = pContext.objectCast<ChangePinContext>())
 	{
 		mChangePinModel.resetContext(changePinContext);
 	}
 
-	if (auto authContext = pContext.dynamicCast<AuthContext>())
+	if (auto authContext = pContext.objectCast<AuthContext>())
 	{
+		mConnectivityManager.startWatching();
 		mAuthModel.resetContext(authContext);
 		mCertificateDescriptionModel.resetContext(authContext);
 		mChatModel.resetContext(authContext);
 	}
 
-	if (auto authContext = pContext.dynamicCast<SelfAuthenticationContext>())
+	if (auto authContext = pContext.objectCast<SelfAuthenticationContext>())
 	{
 		mSelfAuthenticationModel.resetContext(authContext);
-	}
-
-	if (auto workflowContext = pContext.dynamicCast<WorkflowContext>())
-	{
-		mNumberModel.resetContext(workflowContext);
 	}
 }
 
@@ -200,29 +183,25 @@ void UIPlugInQml::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 void UIPlugInQml::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 {
 	mApplicationModel.resetContext();
+	mNumberModel.resetContext();
 
-	if (pContext.dynamicCast<ChangePinContext>())
+	if (pContext.objectCast<ChangePinContext>())
 	{
 		mChangePinModel.resetContext();
 	}
 
-	if (pContext.dynamicCast<AuthContext>())
+	if (pContext.objectCast<AuthContext>())
 	{
+		mConnectivityManager.stopWatching();
 		mAuthModel.resetContext();
 		mCertificateDescriptionModel.resetContext();
 		mChatModel.resetContext();
 	}
 
-	if (pContext.dynamicCast<SelfAuthenticationContext>())
+	if (pContext.objectCast<SelfAuthenticationContext>())
 	{
 		mSelfAuthenticationModel.resetContext();
 	}
-
-	if (pContext.dynamicCast<WorkflowContext>())
-	{
-		mNumberModel.resetContext();
-	}
-
 }
 
 
@@ -232,18 +211,24 @@ void UIPlugInQml::doShutdown()
 }
 
 
-QUrl UIPlugInQml::getFile(const QString& pFile) const
+QUrl UIPlugInQml::getFile(const QString& pFile)
 {
 	const QString path = FileDestination::getPath(pFile);
 
-#if !defined(QT_NO_DEBUG) && !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID)
+#if !defined(QT_NO_DEBUG) && !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID) && !defined(Q_OS_WINRT)
 	if (!QFile::exists(path))
 	{
 		return QUrl::fromLocalFile(QStringLiteral(RES_DIR) + QLatin1Char('/') + pFile);
 	}
 #endif
 
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
 	return path;
+
+#else
+	return QUrl::fromLocalFile(path);
+
+#endif
 }
 
 

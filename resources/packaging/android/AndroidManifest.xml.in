@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
-<manifest package="com.governikus.ausweisapp2" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="@PROJECT_VERSION@" android:versionCode="@ANDROID_VERSION_CODE@" android:installLocation="auto">
+<manifest package="@ANDROID_PACKAGE_NAME@" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="@ANDROID_VERSION_NAME@" android:versionCode="@ANDROID_VERSION_CODE@" android:installLocation="auto">
     <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="@string/app_name" android:icon="@drawable/npa">
         <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation"
                   android:name="com.governikus.ausweisapp2.MainActivity"
                   android:label="@string/app_name"
-                  android:launchMode="singleTask">
+                  android:launchMode="singleTask"
+                  android:theme="@style/Theme.NoTitle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -13,7 +14,13 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="eid" />
+                <data android:scheme="eid" android:host="127.0.0.1" android:port="24727" android:path="/eID-Client"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="eid" android:host="localhost" android:port="24727" android:path="/eID-Client"/>
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -143,15 +150,19 @@
     <uses-sdk android:minSdkVersion="18" android:targetSdkVersion="23"/>
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 
-    <!-- The following comment will be replaced upon deployment with default permissions based on the dependencies of the application.
-         Remove the comment if you do not require these default permissions. -->
-    <!-- %%INSERT_PERMISSIONS -->
+    <!-- Normal Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.NFC"/>
+    <!-- Dangerous Permissions -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!-- The following comment will be replaced upon deployment with default features based on the dependencies of the application.
          Remove the comment if you do not require these default features. -->
     <!-- %%INSERT_FEATURES -->
-
-    <uses-permission android:name="android.permission.NFC"/>
 
     <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />

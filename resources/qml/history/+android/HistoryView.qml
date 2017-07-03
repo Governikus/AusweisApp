@@ -13,25 +13,24 @@ SectionPage {
 
 	headerTitleBarAction: TitleBarAction { text: qsTr("History"); font.bold: true }
 
-	HistoryViewBackground {
-		visible: listView.count !== 0
-	}
-
 	Text {
 		anchors.centerIn: parent
 		text: qsTr("Currently there are no history entries.")
 		wrapMode: Text.WordWrap
-		font.pixelSize: Utils.sp(18)
+		font.pixelSize: Constants.normal_font_size
 		visible: listView.count === 0
 	}
 
 	ListView {
 		id: listView
 		anchors.fill: parent
-		anchors.topMargin: Utils.dp(5)
-
 		model: historyModel
-		spacing: Utils.dp(10)
+		onContentYChanged: {
+			if (contentY < 0) {
+				// prevent flicking over the top
+				contentY = 0
+			}
+		}
 
 		delegate:
 			HistoryListViewDelegate {
@@ -39,7 +38,8 @@ SectionPage {
 				anchors.left: parent.left
 				anchors.right: parent.right
 				height: Utils.dp(120)
-				property var modelItem: model
+				listModel: historyModel
+				property var historyModelItem: model
 				showDetail: false
 		}
 	}

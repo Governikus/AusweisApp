@@ -22,7 +22,7 @@ Item {
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.bottom: parent.bottom
 		anchors.bottomMargin: font.pixelSize / 10
-		font.pixelSize: Constants.tabbar_font_size
+		font.pixelSize: Constants.small_font_size
 		renderType: Text.NativeRendering
 	}
 

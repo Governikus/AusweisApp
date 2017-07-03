@@ -36,7 +36,7 @@ QStringList takeWhileNonEmpty(const QStringList& lines)
 }
 
 
-QString getField(const QString& pData, const QStringList& pSearchItems, const QString& pDefaultValue)
+QString getField(const QString& pData, const QStringList& pSearchItems)
 {
 	static const QString NEW_LINE("\r\n");
 
@@ -56,7 +56,7 @@ QString getField(const QString& pData, const QStringList& pSearchItems, const QS
 		}
 	}
 
-	return pDefaultValue;
+	return QString();
 }
 
 
@@ -243,23 +243,23 @@ QSet<QString> CertificateDescription::getCommCertificates() const
 QString CertificateDescription::getServiceProviderAddress() const
 {
 	static const QStringList SEARCH_ITEMS({
-		QStringLiteral("Name, Anschrift und E-Mail-Adresse des Diensteanbieters:\r\n")
-	});
+				QStringLiteral("Name, Anschrift und E-Mail-Adresse des Diensteanbieters:\r\n")
+			});
 
-	return getField(getTermsOfUsage(), SEARCH_ITEMS, QString());
+	return getField(getTermsOfUsage(), SEARCH_ITEMS);
 }
 
 
 QString CertificateDescription::getPurpose() const
 {
 	static const QStringList SEARCH_ITEMS({
-		QStringLiteral("Gesch\u00E4ftszweck:\r\n"),
-		QStringLiteral("Zweck des Auslesevorgangs:\r\n"),
-		QStringLiteral("Verwendung der Daten:\r\n"),
-		QStringLiteral("Zweck der Daten\u00FCbermittlung:\r\n")
-	});
+				QStringLiteral("Gesch\u00E4ftszweck:\r\n"),
+				QStringLiteral("Zweck des Auslesevorgangs:\r\n"),
+				QStringLiteral("Verwendung der Daten:\r\n"),
+				QStringLiteral("Zweck der Daten\u00FCbermittlung:\r\n")
+			});
 
-	return getField(getTermsOfUsage(), SEARCH_ITEMS, tr("see details under more..."));
+	return getField(getTermsOfUsage(), SEARCH_ITEMS);
 }
 
 
@@ -269,5 +269,5 @@ QString CertificateDescription::getDataSecurityOfficer() const
 										   "Hinweis auf die f\u00FCr den Diensteanbieter zust\u00E4ndigen Stellen, "
 										   "die die Einhaltung der Vorschriften zum Datenschutz kontrollieren:\r\n")});
 
-	return getField(getTermsOfUsage(), SEARCH_ITEMS, QString());
+	return getField(getTermsOfUsage(), SEARCH_ITEMS);
 }

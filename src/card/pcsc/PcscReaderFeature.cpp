@@ -33,7 +33,7 @@ template<typename T> static QString toStringListing(const T& pList)
 }
 
 
-const QMap<FeatureID, int>& PcscReaderFeature::getFeatures() const
+const QMap<FeatureID, PCSC_INT>& PcscReaderFeature::getFeatures() const
 {
 	return mFeatures;
 }
@@ -64,8 +64,8 @@ PcscReaderFeature::PcscReaderFeature(const char* pFeaturesTLV, PCSC_INT pLength)
 		// skip length byte (always 1 byte : 0x04)
 		++runner;
 
-		int value = 0;
-		value += *runner++ << 24 & 0xff000000;
+		PCSC_INT value = 0;
+		value += static_cast<PCSC_INT>(*runner++) << 24 & 0xff000000;
 		value += *runner++ << 16 & 0x00ff0000;
 		value += *runner++ << 8 & 0x0000ff00;
 		value += *runner++ << 0 & 0x000000ff;
@@ -102,11 +102,11 @@ PcscReaderPaceCapability::PcscReaderPaceCapability(const char* pCapabilitiesTLV,
 	}
 
 	// in contrast to PCSC 10 Amendment 1: the output data of GetReaderPACECapabilities on Reiner SCT Konfort is of size 1!
-	for (PaceCapabilityId capability : EnumPaceCapabilityId::getList())
+	for (PaceCapabilityId capability : Enum<PaceCapabilityId>::getList())
 	{
 		if (pCapabilitiesTLV[6] & static_cast<char>(capability))
 		{
-			mPaceCapabilities.append(capability);
+			mPaceCapabilities += capability;
 		}
 	}
 }

@@ -55,7 +55,7 @@ void BluetoothMessageParser::parse()
 
 		if (parseParameter(message, parameterCount))
 		{
-			mMessages.append(message);
+			mMessages += message;
 		}
 		else
 		{
@@ -74,7 +74,7 @@ bool BluetoothMessageParser::parseParameter(QSharedPointer<BluetoothMessage> pMe
 		if (data.size() >= 4)
 		{
 			BluetoothParamId paramId = static_cast<BluetoothParamId>(data.at(0));
-			ushort paramLength = getParamLength(data.at(2), data.at(3));
+			ushort paramLength = getParamLength(static_cast<uchar>(data.at(2)), static_cast<uchar>(data.at(3)));
 			data = data.mid(4);
 
 			/*!
@@ -107,7 +107,7 @@ bool BluetoothMessageParser::parseParameter(QSharedPointer<BluetoothMessage> pMe
 
 ushort BluetoothMessageParser::getParamLength(uchar pHigh, uchar pLow) const
 {
-	return (pHigh << 8) + pLow;
+	return static_cast<ushort>((pHigh << 8) + pLow);
 }
 
 

@@ -51,7 +51,7 @@ AppQtMainWidget::AppQtMainWidget()
 
 	mUi->appLogoWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
 
-	QStackedLayout* centralStackLayout = dynamic_cast<QStackedLayout*>(mUi->centralWidget->layout());
+	QStackedLayout* centralStackLayout = qobject_cast<QStackedLayout*>(mUi->centralWidget->layout());
 	centralStackLayout->setStackingMode(QStackedLayout::StackAll);
 	centralStackLayout->setCurrentIndex(1);
 
@@ -69,7 +69,7 @@ AppQtMainWidget::AppQtMainWidget()
 	connect(mUi->actionBeenden, &QAction::triggered, this, &AppQtMainWidget::fireQuitApplicationRequested);
 	connect(mUi->actionSettings, &QAction::triggered, this, &AppQtMainWidget::onSettingsButtonClicked);
 
-	//menu pin management
+	//menu PIN management
 	connect(mUi->actionChangePin, &QAction::triggered, this, &AppQtMainWidget::onChangePinButtonClicked);
 
 	//help
@@ -221,9 +221,9 @@ void AppQtMainWidget::workflowActivated(WorkflowWidgetParent pParent, const QStr
 	while (containingWidget != nullptr)
 	{
 		QWidget* containerParent = containingWidget->parentWidget();
-		if (QStackedWidget* stackedWidget = dynamic_cast<QStackedWidget*>(containerParent))
+		if (QStackedWidget* stackedWidget = qobject_cast<QStackedWidget*>(containerParent))
 		{
-			mSelectedPagesBeforeWorkflow.append(stackedWidget->currentWidget());
+			mSelectedPagesBeforeWorkflow += stackedWidget->currentWidget();
 			stackedWidget->setCurrentWidget(containingWidget);
 		}
 
@@ -246,7 +246,7 @@ void AppQtMainWidget::workflowDeactivated()
 
 	for (auto widget : qAsConst(mSelectedPagesBeforeWorkflow))
 	{
-		if (QStackedWidget* stackedWidget = dynamic_cast<QStackedWidget*>(widget->parentWidget()))
+		if (QStackedWidget* stackedWidget = qobject_cast<QStackedWidget*>(widget->parentWidget()))
 		{
 			stackedWidget->setCurrentWidget(widget);
 		}
@@ -296,7 +296,7 @@ void AppQtMainWidget::switchToPinSettingsAfterWorkflow()
 	while (containingWidget != nullptr)
 	{
 		QWidget* containerParent = containingWidget->parentWidget();
-		if (dynamic_cast<QStackedWidget*>(containerParent) != nullptr)
+		if (qobject_cast<QStackedWidget*>(containerParent) != nullptr)
 		{
 			mSelectedPagesBeforeWorkflow += containingWidget;
 		}
@@ -403,7 +403,7 @@ void AppQtMainWidget::updateGeometryRecursively(QWidget* pWidget, QSet<QObject*>
 
 	for (QObject* child : pWidget->children())
 	{
-		if (QWidget* widget = dynamic_cast<QWidget*>(child))
+		if (QWidget* widget = qobject_cast<QWidget*>(child))
 		{
 			updateGeometryRecursively(widget, pVisitedObjects);
 		}
@@ -458,12 +458,12 @@ void AppQtMainWidget::onOpenLoggingFileButtonClicked()
 
 void AppQtMainWidget::onSaveLoggingFileButtonClicked()
 {
-	QString filename = QFileDialog::getSaveFileName(this, QCoreApplication::applicationName() + " - " + tr("Save file"), QDir::homePath().append("/AusweisApp2.log"), QStringLiteral("*.log"));
+	QString filename = QFileDialog::getSaveFileName(this, QCoreApplication::applicationName() + " - " + tr("Save file"), QDir::homePath() + QStringLiteral("/AusweisApp2.log"), QStringLiteral("*.log"));
 	if (!filename.isNull())
 	{
 		if (!filename.endsWith(QStringLiteral(".log"), Qt::CaseSensitivity::CaseInsensitive))
 		{
-			filename.append(".log");
+			filename += QStringLiteral(".log");
 		}
 
 		qCDebug(gui) << "File location:" << filename;
@@ -494,7 +494,7 @@ void AppQtMainWidget::onTabButtonToggled(QAbstractButton* pButton, bool pChecked
 
 void AppQtMainWidget::onTabActionTriggered()
 {
-	if (QAction* action = dynamic_cast<QAction*>(sender()))
+	if (QAction* action = qobject_cast<QAction*>(sender()))
 	{
 		if (QAbstractButton* button = mTabAction2Button.value(action))
 		{

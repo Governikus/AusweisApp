@@ -63,9 +63,9 @@ QByteArray SecureMessaging::padToCipherBlockSize(const QByteArray& pData) const
 	int paddingSize = (remainder == 0) ? mCipher.getBlockSize() : mCipher.getBlockSize() - remainder;
 
 	QByteArray paddedData;
-	paddedData.append(pData);
-	paddedData.append(ISO_LEADING_PAD_BYTE);
-	paddedData.append(QByteArray().fill(ISO_PAD_BYTE, paddingSize - 1));
+	paddedData += pData;
+	paddedData += ISO_LEADING_PAD_BYTE;
+	paddedData += QByteArray(paddingSize - 1, ISO_PAD_BYTE);
 	return paddedData;
 }
 
@@ -124,7 +124,7 @@ CommandApdu SecureMessaging::encrypt(const CommandApdu& pCommandApdu)
 		securedLe = encodeObject(protectedLeObject.data());
 	}
 	QByteArray mac = createMac(securedHeader, formattedEncryptedData, securedLe);
-	QByteArray securedData = QByteArray().append(formattedEncryptedData).append(securedLe).append(mac);
+	QByteArray securedData = formattedEncryptedData + securedLe + mac;
 	int newLe = createNewLe(securedData, pCommandApdu.getLe());
 
 	return CommandApdu(securedHeader, securedData, newLe);
@@ -134,10 +134,10 @@ CommandApdu SecureMessaging::encrypt(const CommandApdu& pCommandApdu)
 QByteArray SecureMessaging::createSecuredHeader(const CommandApdu& pCommandApdu) const
 {
 	QByteArray securedHeader;
-	securedHeader.append((pCommandApdu.getCLA() & 0xF0) | Apdu::CLA_SECURE_MESSAGING);
-	securedHeader.append(pCommandApdu.getINS());
-	securedHeader.append(pCommandApdu.getP1());
-	securedHeader.append(pCommandApdu.getP2());
+	securedHeader += static_cast<char>((pCommandApdu.getCLA() & 0xF0) | Apdu::CLA_SECURE_MESSAGING);
+	securedHeader += pCommandApdu.getINS();
+	securedHeader += pCommandApdu.getP1();
+	securedHeader += pCommandApdu.getP2();
 	return securedHeader;
 }
 
@@ -149,9 +149,9 @@ QByteArray SecureMessaging::createSecuredLe(int pLe)
 	{
 		if (pLe > Apdu::SHORT_MAX_LE)
 		{
-			buffer.append(pLe >> 0x08 & 0xff);
+			buffer += static_cast<char>(pLe >> 0x08 & 0xff);
 		}
-		buffer.append(pLe >> 0x00 & 0xff);
+		buffer += static_cast<char>(pLe >> 0x00 & 0xff);
 	}
 	return buffer;
 }
@@ -163,8 +163,8 @@ QByteArray SecureMessaging::createMac(const QByteArray& pSecuredHeader,
 {
 	QByteArray dataToMac(pSecuredHeader);
 	dataToMac = padToCipherBlockSize(dataToMac);
-	dataToMac.append(pFormattedEncryptedData);
-	dataToMac.append(pSecuredLe);
+	dataToMac += pFormattedEncryptedData;
+	dataToMac += pSecuredLe;
 	if (!pFormattedEncryptedData.isNull() || !pSecuredLe.isNull())
 	{
 		dataToMac = padToCipherBlockSize(dataToMac);
@@ -191,7 +191,7 @@ int SecureMessaging::createNewLe(const QByteArray& pSecuredData, int pOldLe) con
 QByteArray SecureMessaging::getSendSequenceCounter() const
 {
 	QByteArray ssc = toBigEndian(mSendSequenceCounter);
-	return QByteArray().fill(0x00, mCipher.getBlockSize() - ssc.size()).append(ssc);
+	return QByteArray(mCipher.getBlockSize() - ssc.size(), 0x00) + ssc;
 }
 
 
@@ -226,9 +226,9 @@ bool SecureMessaging::decrypt(const ResponseApdu& pEncryptedResponseApdu, Respon
 	QByteArray dataToMac;
 	if (!secureResponse.getEncryptedData().isEmpty())
 	{
-		dataToMac.append(secureResponse.getEncryptedDataObjectEncoded());
+		dataToMac += secureResponse.getEncryptedDataObjectEncoded();
 	}
-	dataToMac.append(secureResponse.getSecuredStatusCodeObjectEncoded());
+	dataToMac += secureResponse.getSecuredStatusCodeObjectEncoded();
 	dataToMac = padToCipherBlockSize(dataToMac);
 	dataToMac.prepend(getSendSequenceCounter());
 	if (mCipherMac.generate(dataToMac) != secureResponse.getMac())
@@ -245,7 +245,7 @@ bool SecureMessaging::decrypt(const ResponseApdu& pEncryptedResponseApdu, Respon
 		decryptedData = unpadFromCipherBlockSize(paddedDecryptedData);
 	}
 
-	pDecryptedResponseApdu.setBuffer(decryptedData.append(secureResponse.getSecuredStatusCodeBytes()));
+	pDecryptedResponseApdu.setBuffer(decryptedData + secureResponse.getSecuredStatusCodeBytes());
 
 	qCDebug(secure) << "Plain ResponseApdu: " << pDecryptedResponseApdu.getBuffer().toHex();
 

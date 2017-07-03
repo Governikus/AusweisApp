@@ -13,9 +13,9 @@ namespace governikus
 
 struct FileRef
 {
-	FileRef(int pType, const QByteArray& pPath);
+	FileRef(char pType, const QByteArray& pPath);
 
-	const int type;
+	const char type;
 	const QByteArray path;
 
 	static FileRef masterFile();

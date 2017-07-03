@@ -4,14 +4,15 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include <QtCore>
-#include <QtTest>
 
+#include "asn1/CVCertificate.h"
+
+#include "LogHandler.h"
 #include "TestFileHelper.h"
 #include "asn1/ASN1Util.h"
-#include "asn1/CVCertificate.h"
 #include "asn1/KnownOIDs.h"
 
+#include <QtTest>
 
 using namespace governikus;
 
@@ -34,6 +35,18 @@ class test_CVCertificate
 
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			LogHandler::getInstance().init();
+		}
+
+
+		void cleanup()
+		{
+			LogHandler::getInstance().resetBacklog();
+		}
+
+
 		void getRawBody()
 		{
 			QByteArray body("7f4e82016e5f290100420e44454356434165494430303130337f4982011d060a04007f000702020202038120a9fb57dba1eea9bc3e660a909d838d726e3bf623d52620282013481d1f6e537782207d5a0975fc2c3057eef67530417affe7fb8055c126dc5c6ce94a4b44f330b5d9832026dc5c6ce94a4b44f330b5d9bbd77cbf958416295cf7e1ce6bccdc18ff8c07b68441048bd2aeb9cb7e57cb2c4b482ffc81b7afb9de27e1e3bd23c23a4453bd9ace3262547ef835c3dac4fd97f8461a14611dc9c27745132ded8e545c1d54c72f0469978520a9fb57dba1eea9bc3e660a909d838d718c397aa3b561a6f7901e0e82974856a78641048925419fc7f194922cfc6b8dd25ae6a19c1b59216e6cf06270e5d75cfd64205f55cf867bbfefeefd6e680e1fd197f18ab684484901362568efc9adb5c6018d728701015f200e44454356434165494430303130337f4c12060904007f0007030102025305fc0f13ffff5f25060102010200035f2406010501020003");
@@ -121,6 +134,55 @@ class test_CVCertificate
 			auto ecdsaSignature = cvca1->getEcdsaSignature();
 			QCOMPARE(valueOf(ecdsaSignature->r).toHex(), QByteArray("9f25ebfaf4b91e4c60a1683754c5dc076a3179753ef97d9f8cb01fe1dcd3b8c8"));
 			QCOMPARE(valueOf(ecdsaSignature->s).toHex(), QByteArray("3e7a26602ab1f344be5706006d79a9ff6a9716404dc83b9f30e1213b393128a2"));
+		}
+
+
+		void debugStream()
+		{
+			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+
+			QLatin1String output(R"(CVC(type=CVCA, car="DETESTeID00001", chr="DETESTeID00001", valid=["2010-08-13","2013-08-13"])");
+			QSharedPointer<CVCertificate> cvca = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
+
+			qDebug() << cvca;
+			QCOMPARE(spy.count(), 1);
+			auto param = spy.takeFirst();
+			QVERIFY(param.at(0).toString().contains(output));
+
+			QSharedPointer<const CVCertificate> cvcsConst(cvca);
+			qDebug() << cvcsConst;
+			QCOMPARE(spy.count(), 1);
+			param = spy.takeFirst();
+			QVERIFY(param.at(0).toString().contains(output));
+
+			QVector<QSharedPointer<CVCertificate> > cvcsVector({cvca});
+			qDebug() << cvcsVector;
+			QCOMPARE(spy.count(), 1);
+			param = spy.takeFirst();
+			QVERIFY(param.at(0).toString().contains(output));
+
+			QVector<QSharedPointer<const CVCertificate> > cvcsVectorConst({cvca});
+			qDebug() << cvcsVectorConst;
+			QCOMPARE(spy.count(), 1);
+			param = spy.takeFirst();
+			QVERIFY(param.at(0).toString().contains(output));
+		}
+
+
+		void equals()
+		{
+			QSharedPointer<CVCertificate> cvca1 = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
+			QSharedPointer<CVCertificate> cvca2 = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
+			QVERIFY(cvca1 == cvca2);
+
+			QSharedPointer<const CVCertificate> cvca1_const = cvca1;
+			QSharedPointer<const CVCertificate> cvca2_const = cvca2;
+			QVERIFY(cvca1_const == cvca2_const);
+
+			QVERIFY(cvca1 == cvca2_const);
+			QVERIFY(cvca2_const == cvca1);
+			QVERIFY(cvca1_const == cvca2);
+			QVERIFY(cvca2 == cvca1_const);
 		}
 
 

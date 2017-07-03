@@ -47,7 +47,7 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_NfcAdapterStateChangeRece
 
 
 NfcReaderManagerPlugIn::NfcReaderManagerPlugIn()
-	: ReaderManagerPlugIn(ReaderManagerPlugInType::NFC)
+	: ReaderManagerPlugIn(ReaderManagerPlugInType::NFC, NfcBridge::getInstance().isNfcAvailable())
 	, mInitialized(false)
 	, mReaderList()
 {

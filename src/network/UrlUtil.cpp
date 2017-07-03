@@ -54,27 +54,28 @@ QString UrlUtil::removePrefix(QString pStr)
 }
 
 
-QUrl UrlUtil::addMajorMinor(const QUrl& pOriginUrl, const Result& pResult)
+QUrl UrlUtil::addMajorMinor(const QUrl& pOriginUrl, const GlobalStatus& pStatus)
 {
-	QString major = removePrefix(pResult.getMajorString());
+	const Result result(pStatus);
+	const QString& major = removePrefix(result.getMajorString());
 
 	QUrlQuery q;
 	q.setQuery(pOriginUrl.query());
 	q.addQueryItem(QStringLiteral("ResultMajor"), major);
 
-	if (pResult.getMinor() != Result::Minor::null)
+	if (result.getMinor() != GlobalStatus::Code::Unknown_Error)
 	{
 		QString minor;
 
-		if (pResult.isOriginServer())
+		if (result.isOriginServer())
 		{
 			minor = QStringLiteral("serverError");
 		}
-		else if (pResult.getMinor() == Result::Minor::AL_Communication_Error ||
-				pResult.getMinor() == Result::Minor::DP_Trusted_Channel_Establishment_Failed ||
-				pResult.getMinor() == Result::Minor::SAL_Cancellation_by_User)
+		else if (result.getMinor() == GlobalStatus::Code::Paos_Error_AL_Communication_Error ||
+				result.getMinor() == GlobalStatus::Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed ||
+				result.getMinor() == GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User)
 		{
-			minor = removePrefix(pResult.getMinorString());
+			minor = removePrefix(result.getMinorString());
 		}
 		else
 		{

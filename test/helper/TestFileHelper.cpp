@@ -7,7 +7,7 @@
 #include "FileDestination.h"
 
 #include <QFile>
-#include <QtTest/QtTest>
+#include <QtTest>
 
 using namespace governikus;
 
@@ -40,8 +40,8 @@ QByteArray TestFileHelper::readFile(const QString& pFileName)
 void TestFileHelper::createTranslations(const QString& pTranslationDir)
 {
 	const QStringList testFiles({
-		"de_AT", "de_DE", "en", "fr_FR", "es", "defect", "de_fe", "en_gb", "it"
-	});
+				"de_AT", "de_DE", "en", "fr_FR", "es", "defect", "de_fe", "en_gb", "it"
+			});
 
 	QDir dir(pTranslationDir);
 	if (dir.exists())
@@ -58,4 +58,17 @@ void TestFileHelper::createTranslations(const QString& pTranslationDir)
 		QVERIFY(file.write(reinterpret_cast<const char*>(qm_content), sizeof(qm_content)));
 		QVERIFY(file.exists());
 	}
+}
+
+
+bool TestFileHelper::containsLog(const QSignalSpy& pSpy, const QLatin1String& pStr)
+{
+	for (const auto& entry : pSpy)
+	{
+		if (entry.at(0).toString().contains(pStr))
+		{
+			return true;
+		}
+	}
+	return false;
 }

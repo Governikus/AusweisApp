@@ -112,7 +112,7 @@ Parameter notwendig um das APK zu signieren.
    -DAPK_SIGN_KEYSTORE_PSW=123456
 
 Wie schon bei der Toolchain wird standardmäßig die Architektur "armeabi-v7a" verwendet.
-Dies kann mittels CMake Parameter "-DANDROID_ABI=x86" verändert werden.
+Dies kann mittels CMake Parameter "-DCMAKE_ANDROID_ARCH_ABI=x86" verändert werden.
 
 
 

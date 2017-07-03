@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "DeviceError.h"
 #include "ReaderManagerPlugInInfo.h"
 
 #include <QObject>
@@ -36,6 +37,12 @@ class ReaderManagerPlugIn
 		}
 
 
+		void setReaderInfoAvailable(bool pAvailable)
+		{
+			mInfo.setAvailable(pAvailable);
+		}
+
+
 		void setReaderInfoValue(ReaderManagerPlugInInfo::Key pKey, const QVariant& pValue)
 		{
 			mInfo.setValue(pKey, pValue);
@@ -43,8 +50,10 @@ class ReaderManagerPlugIn
 
 
 	public:
-		ReaderManagerPlugIn(ReaderManagerPlugInType pPlugInType, bool pPlugInEnabled = false);
-		virtual ~ReaderManagerPlugIn();
+		ReaderManagerPlugIn(ReaderManagerPlugInType pPlugInType,
+				bool pAvailable = false,
+				bool pPlugInEnabled = false);
+		virtual ~ReaderManagerPlugIn() = default;
 
 		const ReaderManagerPlugInInfo& getInfo() const
 		{
@@ -80,11 +89,12 @@ class ReaderManagerPlugIn
 		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
 		void fireReaderAdded(const QString& pReaderName);
 		void fireReaderConnected(const QString& pReaderName);
+		void fireReaderDeviceError(DeviceError pDeviceError);
 		void fireReaderRemoved(const QString& pReaderName);
 		void fireCardInserted(const QString& pReaderName);
 		void fireCardRemoved(const QString& pReaderName);
 		void fireCardRetryCounterChanged(const QString& pReaderName);
-		void fireReaderPropertiesUpdated();
+		void fireReaderPropertiesUpdated(const QString& pReaderName);
 };
 
 } /* namespace governikus */

@@ -8,25 +8,14 @@ Item {
 	state: "identify"
 	width: !PlatformConstants.is_tablet || lockedAndHidden ? 0 : Constants.menubar_width
 
-	property bool lockedAndHidden: false
-	property bool isOpen: false
+	property bool lockedAndHidden: true
+	property bool isOpen: drawer.position > 0
 	property int currentIndex: 0
-
-	signal opened()
-	signal closed()
 
 	onLockedAndHiddenChanged: {
 		if (lockedAndHidden) {
 			drawer.close()
 		}
-	}
-
-	onOpened: {
-		isOpen = true
-	}
-
-	onClosed: {
-		isOpen = false
 	}
 
 	function open() {
@@ -78,18 +67,7 @@ Item {
 			}
 		}
 
-		// FIXME:
-		// when lockedAndHidden is true, dragging is still possible although the documentation stated:
-		// "Setting the value to 0 or less prevents opening the drawer by dragging"
-		dragMargin: lockedAndHidden ? 0 : Qt.styleHints.startDragDistance
-
-		onOpened: {
-			parent.opened()
-		}
-
-		onClosed: {
-			parent.closed()
-		}
+		dragMargin: lockedAndHidden ? 0 : Utils.dp(Qt.styleHints.startDragDistance)
 
 		onPositionChanged: {
 			if (PlatformConstants.is_tablet && position > 0) {

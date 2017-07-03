@@ -12,7 +12,7 @@ def getJobs()
 		list << 'Android_APK_' + ARCH
 	}
 
-	def unitTests = ['Linux', 'MacOS', 'Win32_GNU']
+	def unitTests = ['Linux', 'MacOS', 'Win32_GNU', 'FreeBSD']
 	list += unitTests
 
 	return list
@@ -83,6 +83,8 @@ j.with
 			phaseJob(getName('Win32_GNU'))
 
 			phaseJob(getName('MacOS'))
+
+			phaseJob(getName('FreeBSD'))
 		}
 	}
 

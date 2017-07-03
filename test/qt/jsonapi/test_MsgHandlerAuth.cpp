@@ -132,7 +132,7 @@ class test_MsgHandlerAuth
 		void result()
 		{
 			const QSharedPointer<AuthContext> context(new AuthContext(new InternalActivationContext(QUrl())));
-			context->setResult(Result::createOk());
+			context->setStatus(GlobalStatus::Code::No_Error);
 			MsgHandlerAuth msg(context);
 			QCOMPARE(msg.toJson(), QByteArray("{\"msg\":\"AUTH\",\"result\":{\"major\":\"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok\"}}"));
 		}
@@ -141,7 +141,7 @@ class test_MsgHandlerAuth
 		void resultWithUrl()
 		{
 			const QSharedPointer<AuthContext> context(new AuthContext(new InternalActivationContext(QUrl())));
-			context->setResult(Result::createOk());
+			context->setStatus(GlobalStatus::Code::No_Error);
 			context->setRefreshUrl(QUrl("http://www.governikus.de"));
 			MsgHandlerAuth msg(context);
 			QCOMPARE(msg.toJson(), QByteArray("{\"msg\":\"AUTH\",\"result\":{\"major\":\"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok\"},\"url\":\"http://www.governikus.de\"}"));
@@ -162,13 +162,14 @@ class test_MsgHandlerAuth
 																	   "</TCTokenType>")));
 
 			const QSharedPointer<AuthContext> context(new AuthContext(new InternalActivationContext(QUrl())));
-			context->setResult(Result::createCommunicationError());
+			context->setStatus(GlobalStatus::Code::Workflow_Reader_Became_Inaccessible);
 			context->setTcToken(token);
 			MsgHandlerAuth msg(context);
 			QCOMPARE(msg.toJson(), QByteArray("{\"msg\":\"AUTH\","
 											  "\"result\":{\"description\":\"A Communication error occurred during processing.\","
 											  "\"language\":\"en\","
 											  "\"major\":\"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error\","
+											  "\"message\":\"The selected card reader cannot be accessed anymore.\","
 											  "\"minor\":\"http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#communicationError\"},"
 											  "\"url\":\"https://service.example.de/ComError?7eb39f62\"}"));
 		}

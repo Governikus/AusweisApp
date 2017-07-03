@@ -6,106 +6,48 @@ import "../global"
 
 Rectangle {
 	id: baseItem
+	property alias contactModel: contactListView.model
 
-	height: parent.height
-
-	readonly property int providerContactInfoItemHeight: Utils.dp(60)
-
-	property color backgroundColor: PlatformConstants.blue
-	property string homepage: ""
-	property string email: ""
-	property string phone: ""
-	property string postalAddress: ""
+	onHeightChanged: { info.scalingAllowed = true; info.updateScaleFactor() }
+	onVisibleChanged: info.scalingAllowed = visible
 
 	Column {
-		height: parent.height
-		width: parent.width
+		id: info
+		width: baseItem.width / info.scaleFactor // fill whole width
+		transform: Scale { yScale: info.scaleFactor; xScale: info.scaleFactor }
+		property bool scalingAllowed: true
+		property real scaleFactor: 1
+
+		function updateScaleFactor() {
+			if (scalingAllowed) {
+				scalingAllowed = false; // just scale once to prevent flickering of height and a corresponding deadlock
+				scaleFactor =  height > 0 && baseItem.height > 0 ? baseItem.height/height : 1
+			}
+		}
+		onHeightChanged: info.updateScaleFactor()
 
 		Text {
-			id: contactText
 			text: qsTr("Contact")
-
-			padding: Utils.dp(19)
+			padding: Constants.component_spacing
 			font.pixelSize: Constants.header_font_size
 			color: "white"
 		}
-
-		Flickable {
-			id: info
-			height: parent.height - contactText.height
-			width: parent.width
-
-			contentHeight: baseItem.providerContactInfoItemHeight * 4 + 3
-			contentWidth: width
-
-			clip: true
-			flickableDirection: Flickable.VerticalFlick
-			boundsBehavior: Flickable.StopAtBounds
-
-			Item {
-				height: info.contentHeight
+		Rectangle {
+			anchors.left: parent.left
+			anchors.right: parent.right
+			height: contactListView.height
+			ListView {
+				id: contactListView
 				width: parent.width
-
-				Rectangle {
-					anchors.fill: infoTable
-					color: baseItem.backgroundColor
-				}
-
-				Column {
-					id: infoTable
-
-					height: info.contentHeight
-					width: parent.width
-					anchors.centerIn: parent
-
-					ProviderContactInfoItem {
-						height: baseItem.providerContactInfoItemHeight
-						backgroundColor: baseItem.backgroundColor
-						imageSource: Utils.providerIconSource("url")
-						itemText: baseItem.homepage
-					}
-
-					Rectangle {
-						anchors.left: infoTable.left
-						height: 1
-						width: parent.width
-						color: "white"
-					}
-
-					ProviderContactInfoItem {
-						height: baseItem.providerContactInfoItemHeight
-						backgroundColor: baseItem.backgroundColor
-						imageSource: Utils.providerIconSource("mail")
-						itemText: baseItem.email
-					}
-
-					Rectangle {
-						anchors.left: infoTable.left
-						height: 1
-						width: parent.width
-						color: "white"
-					}
-
-					ProviderContactInfoItem {
-						height: baseItem.providerContactInfoItemHeight
-						backgroundColor: baseItem.backgroundColor
-						imageSource: Utils.providerIconSource("telefon")
-						itemText: baseItem.phone
-					}
-
-					Rectangle {
-						anchors.left: infoTable.left
-						height: 1
-						width: parent.width
-						color: "white"
-					}
-
-					ProviderContactInfoItem {
-						height: baseItem.providerContactInfoItemHeight
-						backgroundColor: baseItem.backgroundColor
-						imageSource: Utils.providerIconSource("adresse")
-						itemText: baseItem.postalAddress
-					}
+				height: contentHeight
+				interactive: false
+				spacing: 2
+				delegate:  ProviderContactInfoItem {
+					width: contactListView.width
+					color: baseItem.color
+					imageSource: Qt.resolvedUrl(model.iconSource)
+					itemText: !!model.text ? model.text : qsTr("Unknown")
+					link: model.link
 				}
 			}
 		}

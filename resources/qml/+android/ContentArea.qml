@@ -37,8 +37,14 @@ Item {
 
 	TabBarView {
 		anchors.fill: parent
-		visible: baseItem.state === "versionInformation"
-		source: "more/VersionInformation.qml"
+		visible: baseItem.state === "feedback"
+		source: "more/Feedback.qml"
+	}
+
+	TabBarView {
+		anchors.fill: parent
+		visible: baseItem.state === "information"
+		source: "more/Information.qml"
 	}
 
 	TabBarView {

@@ -111,7 +111,7 @@ QSharedPointer<AuthenticatedAuxiliaryData> AuthenticatedAuxiliaryData::decode(co
 			auxDate.clear();
 			break;
 		}
-		oids.append(oid);
+		oids += oid;
 	}
 	oids.removeOne(KnownOIDs::AuxilaryData::id_CommunityID);
 	oids.removeOne(KnownOIDs::AuxilaryData::id_DateOfBirth);

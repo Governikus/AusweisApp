@@ -45,6 +45,7 @@ void StepAuthenticationEac1Gui::activate()
 	connect(this, &StepAuthenticationEac1Gui::fireUiFinished, this, &StepAuthenticationEac1Gui::onUiFinished);
 
 	mWidget->setContext(mContext);
+	mWidget->setState(StepDidAuthenticateEac1Ui::State::INITIAL);
 	mStepsWidget->setCurrentWidget(mWidget);
 }
 

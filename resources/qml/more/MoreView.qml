@@ -22,25 +22,25 @@ SectionPage {
 
 		MoreViewMenuItem {
 			text: qsTr("Version information")
-			imageSource: "qrc:///images/information.png"
+			imageSource: "qrc:///images/npa.svg"
 			onClicked: push(versionInformationPage)
 		}
 
 		MoreViewMenuItem {
 			text: qsTr("FAQ")
-			imageSource: "qrc:///images/more/icon_mehr_info.svg"
+			imageSource: "qrc:///images/iOS/more/icon_mehr_info.svg"
 			onClicked: Qt.openUrlExternally("https://www.ausweisapp.bund.de/service/haeufig-gestellte-fragen/")
 		}
 
 		MoreViewMenuItem {
 			text: qsTr("Support")
-			imageSource: "qrc:///images/more/icon_mehr_fragen.svg"
+			imageSource: "qrc:///images/iOS/more/icon_mehr_fragen.svg"
 			onClicked: push(supportPage)
 		}
 
 		MoreViewMenuItem {
 			text: qsTr("Rate app");
-			imageSource: "qrc:///images/more/icon_mehr_favorit.svg";
+			imageSource: "qrc:///images/iOS/more/icon_mehr_favorit.svg";
 			// Use Qt.platform.os here instead of platformstyle because rating market URLs on iOS doesn't work and vice versa
 			onClicked: {
 				if (Qt.platform.os === "android") {
@@ -54,8 +54,8 @@ SectionPage {
 
 		MoreViewMenuItem {
 			text: qsTr("Share");
-			imageSource: "qrc:///images/more/icon_mehr_upload.svg";
-			onClicked: shareUtil.shareText(qsTr("I'm using Ausweisapp2, download it here for Android: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2&hl=de or here for iOS: https://itunes.apple.com/de/app/wikipedia-mobile/id324715238?mt=8"), qsTr("Share with"))
+			imageSource: "qrc:///images/iOS/more/icon_mehr_upload.svg";
+			onClicked: qmlExtension.shareText(qsTr("I'm using Ausweisapp2, download it here for Android: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2&hl=de or here for iOS: https://itunes.apple.com/de/app/wikipedia-mobile/id324715238?mt=8"), qsTr("Share with"))
 		}
 
 		MoreViewMenuItem {

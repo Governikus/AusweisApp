@@ -45,7 +45,7 @@ StepAdviseUserToRemoveCardGui::~StepAdviseUserToRemoveCardGui()
 
 void StepAdviseUserToRemoveCardGui::activate()
 {
-	Q_EMIT setCancelButtonState(ButtonState::HIDDEN);
+	setCancelButtonState(ButtonState::HIDDEN);
 
 	if (ReaderManager::getInstance().getReaderInfo(mContext->getReaderName()).getCardType() == CardType::NONE)
 	{
@@ -62,9 +62,9 @@ void StepAdviseUserToRemoveCardGui::activate()
 		mMessageBox = new QMessageBox(mMainWidget);
 		mMessageBox->setWindowTitle(QCoreApplication::applicationName() + " - Information");
 		mMessageBox->setWindowModality(Qt::WindowModal);
-		mMessageBox->setText(tr("You may now remove your ID card from the card reader."));
-		mMessageBox->setIconPixmap(QPixmap(QStringLiteral(":images/autentapp2.iconset/icon_32x32.png")));
 		mMessageBox->setWindowFlags(mMessageBox->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+		mMessageBox->setText(tr("You may now remove your ID card from the card reader."));
+		mMessageBox->setIconPixmap(QIcon(QStringLiteral(":/images/npa.svg")).pixmap(32, 32));
 	}
 
 	mMessageBox->exec();

@@ -18,12 +18,16 @@ namespace governikus
 
 class AndroidBluetoothAdapter
 {
+	private:
+		static QBluetoothDeviceInfo::CoreConfiguration fromAndroidDeviceType(quint32 pAndroidDeviceTypeConstant);
 
-	bool mStateOn;
-	QVector<QBluetoothDeviceInfo> mBondedDevices;
+		bool mAvailable;
+		bool mStateOn;
+		QVector<QBluetoothDeviceInfo> mBondedDevices;
 
-	AndroidBluetoothAdapter(bool pStateOn = false, const QVector<QBluetoothDeviceInfo>& pKnownBluetoothDevices = QVector<QBluetoothDeviceInfo>());
-	static QBluetoothDeviceInfo::CoreConfiguration fromAndroidDeviceType(quint32 pAndroidDeviceTypeConstant);
+		AndroidBluetoothAdapter(bool pAvailable = false,
+				bool pStateOn = false,
+				const QVector<QBluetoothDeviceInfo>& pKnownBluetoothDevices = QVector<QBluetoothDeviceInfo>());
 
 	public:
 		/*!
@@ -40,6 +44,8 @@ class AndroidBluetoothAdapter
 		 * Returns true, if bluetooth is turned on.
 		 */
 		bool isStateOn() const;
+
+		bool isAvailable() const;
 };
 
 } /* namespace governikus */

@@ -9,6 +9,7 @@ SectionPage
 	id: baseItem
 	property alias text: text.text
 	property alias subText: subText.text
+	property alias subTextColor: subText.color
 
 	BusyIndicator {
 		id: busyIndicator
@@ -38,7 +39,6 @@ SectionPage
 		verticalAlignment: Text.AlignVCenter
 		horizontalAlignment: Text.AlignHCenter
 		font.pixelSize: Constants.normal_font_size
-		color: Constants.grey
 		anchors.top: text.bottom
 		anchors.topMargin: Utils.dp(10)
 		anchors.horizontalCenter: parent.horizontalCenter

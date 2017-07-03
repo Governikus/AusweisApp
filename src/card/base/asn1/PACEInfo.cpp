@@ -74,7 +74,7 @@ bool PACEInfo::acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier)
 }
 
 
-PACEInfo::PACEInfo(QSharedPointer<paceinfo_st> pDelegate)
+PACEInfo::PACEInfo(const QSharedPointer<const paceinfo_st>& pDelegate)
 	: SecurityInfo()
 	, mDelegate(pDelegate)
 {

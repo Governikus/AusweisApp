@@ -9,7 +9,7 @@ Item {
 	readonly property string headerBackgroundInProviderView: ""
 
 	// Provider category list properties
-	readonly property int categoryFontPixelSize: Utils.sp(14)
+	readonly property int categoryFontPixelSize: Constants.normal_font_size
 	readonly property bool categoryFontBold: false
 	readonly property color categoryColor: Constants.accent_color
 	readonly property int leftIconMargin: Utils.dp(0)

@@ -18,22 +18,13 @@ struct StepDidAuthenticateEac1Ui
 {
 	enum class State
 	{
+		INITIAL,
 		EDIT_CHAT,
+		ENTER_PIN,
 		AUTHENTICATING_ESERVICE,
 		AUTHENTICATING_CARD,
 		READING_CARD_DATA,
 		REDIRECTING_BROWSER,
-		FINISHED,
-	};
-};
-
-struct StepChooseDeviceUi
-{
-	enum class State
-	{
-		INITIAL,
-		SCAN_STARTED,
-		SCAN_STOPPED,
 		FINISHED,
 	};
 };

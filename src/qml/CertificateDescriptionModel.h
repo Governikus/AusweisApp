@@ -39,6 +39,7 @@ class CertificateDescriptionModel
 
 	inline QSharedPointer<CertificateDescription> getCertificateDescription() const;
 	inline QString getValidity() const;
+	void initModelData(const QSharedPointer<CertificateDescription>& pCertDescription);
 
 	private Q_SLOTS:
 		void onDidAuthenticateEac1Changed();
@@ -46,7 +47,7 @@ class CertificateDescriptionModel
 	public:
 		CertificateDescriptionModel(QObject* pParent = nullptr);
 
-		void resetContext(QSharedPointer<AuthContext> pContext = QSharedPointer<AuthContext>());
+		void resetContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());
 
 		QString getSubjectName() const;
 		QString getSubjectUrl() const;

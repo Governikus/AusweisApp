@@ -74,9 +74,9 @@ SetupAssistantWizard::SetupAssistantWizard(QWidget* pParent)
 	setMinimumSize(700, 450);
 	setWizardStyle(QWizard::ClassicStyle);
 	setWindowModality(Qt::WindowModal);
+	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 	setOption(QWizard::NoCancelButton, false);
 	setAttribute(Qt::WA_DeleteOnClose);
-	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 	mPageCount = 3;
 	if (mNoScriptFinder.isExtensionFound())
@@ -380,10 +380,10 @@ QWizardPage* SetupAssistantWizard::createConclusionPage()
 
 	QLabel* transportPinLabel = new QLabel(tr("<b>Personal 6-digit PIN</b>"
 											  "<br><br>"
-											  "Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. The AusweisApp's PIN management offers this function. For replacing the transport PIN you need the letter sent to you by Bundesdruckerei GmbH on behalf of your citizen centre."));
+											  "Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. The AusweisApp's PIN management offers this function. For replacing the transport PIN you need the letter sent to you by your competent authority."));
 	transportPinLabel->setWordWrap(true);
 	transportPinLabel->setFocusPolicy(Qt::TabFocus);
-	transportPinLabel->setAccessibleName(tr("Personal 6-digit PIN. Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. The AusweisApp's PIN management offers this function. For replacing the transport PIN you need the letter sent to you by Bundesdruckerei GmbH on behalf of your citizen centre."));
+	transportPinLabel->setAccessibleName(tr("Personal 6-digit PIN. Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. The AusweisApp's PIN management offers this function. For replacing the transport PIN you need the letter sent to you by your competent authority."));
 
 	GuiUtils::updateFontSize(transportPinLabel);
 
@@ -433,7 +433,7 @@ void SetupAssistantWizard::accept()
 }
 
 
-bool SetupAssistantWizard::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
+bool SetupAssistantWizard::eventFilter(QObject* pObject, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
@@ -444,5 +444,5 @@ bool SetupAssistantWizard::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
 			return true;
 		}
 	}
-	return false;
+	return QWizard::eventFilter(pObject, pEvent);
 }

@@ -29,9 +29,19 @@ UIPlugInJsonApi::~UIPlugInJsonApi()
 }
 
 
+void UIPlugInJsonApi::callFireMessage(const QByteArray& pMsg) const
+{
+	if (!pMsg.isEmpty())
+	{
+		qCDebug(jsonapi) << "Fire message:" << pMsg;
+		Q_EMIT fireMessage(pMsg);
+	}
+}
+
+
 void UIPlugInJsonApi::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 {
-	if (pContext.dynamicCast<AuthContext>())
+	if (pContext.objectCast<AuthContext>())
 	{
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 		pContext->setReaderType(ReaderManagerPlugInType::NFC);
@@ -42,49 +52,31 @@ void UIPlugInJsonApi::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext
 		connect(pContext.data(), &WorkflowContext::fireCurrentStateChanged, this, &UIPlugInJsonApi::onCurrentStateChanged);
 	}
 
-	const auto& msg = mMessageDispatcher.init(pContext);
-	if (!msg.isEmpty())
-	{
-		Q_EMIT fireMessage(msg);
-	}
+	callFireMessage(mMessageDispatcher.init(pContext));
 }
 
 
 void UIPlugInJsonApi::onWorkflowFinished(QSharedPointer<WorkflowContext> )
 {
-	const auto& response = mMessageDispatcher.finish();
-	if (!response.isEmpty())
-	{
-		Q_EMIT fireMessage(response);
-	}
+	callFireMessage(mMessageDispatcher.finish());
 }
 
 
 void UIPlugInJsonApi::onReaderEvent(const QString& pName)
 {
-	Q_EMIT fireMessage(mMessageDispatcher.createMsgReader(pName));
+	callFireMessage(mMessageDispatcher.createMsgReader(pName));
 }
 
 
 void UIPlugInJsonApi::onCurrentStateChanged(const QString& pNewState)
 {
-	const auto& response = mMessageDispatcher.processStateChange(pNewState);
-	if (!response.isEmpty())
-	{
-		qDebug(jsonapi) << "Fire message:" << response;
-		Q_EMIT fireMessage(response);
-	}
+	callFireMessage(mMessageDispatcher.processStateChange(pNewState));
 }
 
 
 void UIPlugInJsonApi::doMessageProcessing(const QByteArray& pMsg)
 {
-	const auto& response = mMessageDispatcher.processCommand(pMsg);
-	if (!response.isEmpty())
-	{
-		qDebug(jsonapi) << "Fire message:" << response;
-		Q_EMIT fireMessage(response);
-	}
+	callFireMessage(mMessageDispatcher.processCommand(pMsg));
 }
 
 

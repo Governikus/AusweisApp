@@ -16,62 +16,39 @@ Rectangle {
 		id: navModel
 
 		ListElement {
-			image: "qrc:///images/android/navigation/ausweisen.png"
+			image: "qrc:///images/android/navigation/ausweisen.svg"
 			desc: qsTr("Identify")
 			condition: "identify"
 		}
 
 		ListElement {
-			image: "qrc:///images/android/navigation/anbieter.png"
+			image: "qrc:///images/android/navigation/anbieter.svg"
 			desc: qsTr("Provider")
 			condition: "provider"
 		}
 
 		ListElement {
-			image: "qrc:///images/android/navigation/verlauf.png"
+			image: "qrc:///images/android/navigation/verlauf.svg"
 			desc: qsTr("History")
 			condition: "history"
 		}
 
 		ListElement {
-			image: "qrc:///images/android/navigation/pin.png"
-			desc: qsTr("Pin")
+			image: "qrc:///images/android/navigation/pin.svg"
+			desc: qsTr("PIN Management")
 			condition: "pin"
 		}
 
 		ListElement {
-			image: "qrc:///images/android/navigation/versionsinformation.png"
-			desc: qsTr("Versioninformation")
-			condition: "versionInformation"
+			image: "qrc:///images/android/navigation/balloon.svg"
+			desc: qsTr("Dialog & Feedback")
+			condition: "feedback"
 		}
 
 		ListElement {
-			image: "qrc:///images/android/navigation/faq.png"
-			desc: qsTr("FAQ")
-			condition: "external"
-			external: qsTr("https://www.ausweisapp.bund.de/en/service/haeufig-gestellte-fragen/")
-		}
-
-		ListElement {
-			image: "qrc:///images/android/navigation/support.png"
-			desc: qsTr("Support")
-			condition: "external"
-			external: qsTr("https://www.ausweisapp.bund.de/en/service/support/")
-		}
-
-		ListElement {
-			image: "qrc:///images/android/navigation/bewerten.png"
-			desc: qsTr("Rate app")
-			condition: "external"
-			external: "market://details?id=com.governikus.ausweisapp2"
-		}
-
-		ListElement {
-			image: "qrc:///images/android/navigation/teilen.png"
-			desc: qsTr("Share...")
-			condition: "share"
-			share: qsTr("I'm using AusweisApp2, download it here for Android: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2 or here for iOS: https://itunes.apple.com/de/app/wikipedia-mobile/id324715238?mt=8")
-			shareTitle: qsTr("Share with")
+			image: "qrc:///images/android/navigation/faq.svg"
+			desc: qsTr("Info & Help")
+			condition: "information"
 		}
 
 		ListElement {
@@ -104,17 +81,8 @@ Rectangle {
 			source: image
 			text: desc
 			onClicked: {
-				if (condition === "share") {
-					shareUtil.shareText(share, shareTitle)
-				}
-				else if (condition === "external") {
-					Qt.openUrlExternally(external)
-				}
-				else {
-					navigationController.currentIndex = index
-					navigationController.state = condition
-				}
-
+				navigationController.currentIndex = index
+				navigationController.state = condition
 				navigationController.close()
 			}
 			// Hide developer options if we are not using developer build (debug build)

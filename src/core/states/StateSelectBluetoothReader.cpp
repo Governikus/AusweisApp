@@ -18,12 +18,44 @@ StateSelectBluetoothReader::StateSelectBluetoothReader(const QSharedPointer<Work
 void StateSelectBluetoothReader::run()
 {
 	mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderAdded, this, &StateSelectBluetoothReader::onReaderDetected);
+	mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderDeviceError, this, &StateSelectBluetoothReader::onReaderDeviceError);
 	mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderRemoved, this, &StateSelectBluetoothReader::onReaderDetected);
 	mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderConnected, this, &StateSelectBluetoothReader::onReaderConnected);
-	mConnections += connect(getContext().data(), &WorkflowContext::fireAbortCardSelection, this, &StateSelectBluetoothReader::fireAbort);
 
-	ReaderManager::getInstance().startScan();
-	onReaderDetected();
+	startScan();
+}
+
+
+void StateSelectBluetoothReader::startScan()
+{
+	Q_ASSERT(getContext());
+
+	const auto& pluginInfos = ReaderManager::getInstance().getPlugInInfos();
+	for (const ReaderManagerPlugInInfo& pInfo : pluginInfos)
+	{
+		if (pInfo.getPlugInType() != ReaderManagerPlugInType::BLUETOOTH)
+		{
+			continue;
+		}
+
+		if (!pInfo.isEnabled())
+		{
+			qDebug() << "Skipping scan because bluetooth is disabled";
+			return;
+		}
+
+		onReaderDetected();
+		if (!getContext()->getReaderName().isEmpty())
+		{
+			qDebug() << "Skipping scan because there is already a paired device:" << getContext()->getReaderName();
+			return;
+		}
+
+		qDebug() << "Start bluetooth scan";
+		ReaderManager::getInstance().startScan();
+
+		return;
+	}
 }
 
 
@@ -57,7 +89,7 @@ void StateSelectBluetoothReader::onReaderConnected()
 	ReaderInfo readerInfo = ReaderManager::getInstance().getReaderInfo(getContext()->getReaderName());
 	if (!readerInfo.isValid())
 	{
-		setResult(Result::createCommunicationError(tr("The selected card reader cannot be accessed anymore.")));
+		setStatus(GlobalStatus::Code::Workflow_Reader_Became_Inaccessible);
 		Q_EMIT fireError();
 	}
 	else if (readerInfo.isConnected())
@@ -65,4 +97,43 @@ void StateSelectBluetoothReader::onReaderConnected()
 		qDebug() << "Bluetooth reader connected" << readerInfo.getName();
 		Q_EMIT fireSuccess();
 	}
+}
+
+
+void StateSelectBluetoothReader::onAbort()
+{
+	const auto& readerName = getContext()->getReaderName();
+	if (!readerName.isEmpty())
+	{
+		ReaderInfo readerInfo = ReaderManager::getInstance().getReaderInfo(readerName);
+		if (readerInfo.isValid() && readerInfo.isConnected())
+		{
+			ReaderManager::getInstance().disconnectReader(readerInfo.getName());
+		}
+	}
+	Q_EMIT fireAbort();
+}
+
+
+void StateSelectBluetoothReader::onReaderDeviceError(DeviceError pDeviceError)
+{
+	if (pDeviceError != DeviceError::DEVICE_POWERED_OFF)
+	{
+		setStatus(DeviceErrorUtil::toGlobalStatus(pDeviceError));
+		Q_EMIT fireError();
+	}
+}
+
+
+void StateSelectBluetoothReader::onExit(QEvent* pEvent)
+{
+	AbstractGenericState::onExit(pEvent);
+	ReaderManager::getInstance().stopScan();
+}
+
+
+void StateSelectBluetoothReader::onEntry(QEvent* pEvent)
+{
+	AbstractGenericState::onEntry(pEvent);
+	mConnections += connect(getContext().data(), &WorkflowContext::fireAbortCardSelection, this, &StateSelectBluetoothReader::onAbort);
 }

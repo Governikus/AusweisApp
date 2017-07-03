@@ -28,7 +28,7 @@ PcscReader::PcscReader(const QString& pReaderName)
 
 	PCSC_RETURNCODE returnCode = SCardEstablishContext(SCARD_SCOPE_USER, nullptr, nullptr, &mContextHandle);
 	qCDebug(card_pcsc) << "SCardEstablishContext: " << PcscUtils::toString(returnCode);
-	if (returnCode != SCARD_S_SUCCESS)
+	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Cannot establish context";
 		return;
@@ -45,7 +45,7 @@ PcscReader::PcscReader(const QString& pReaderName)
 #endif
 
 	returnCode = readReaderFeaturesAndPACECapabilities();
-	if (returnCode != SCARD_S_SUCCESS)
+	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Features / Capabilities not successful: " << returnCode;
 		return;
@@ -90,57 +90,57 @@ PCSC_INT PcscReader::getFeatureValue(FeatureID pFeatureID)
 }
 
 
-static QString SCARD_STATE_toString(int i)
+template<typename T> static QString SCARD_STATE_toString(T i)
 {
-	QString sb = QString().sprintf("(%#x)", i);
+	QString sb = QString().sprintf("(%#lx)", static_cast<ulong>(i));
 
 	if ((i & SCARD_STATE_UNAWARE) != 0)
 	{
-		sb.append(" UNAWARE");
+		sb += QStringLiteral(" UNAWARE");
 	}
 	if ((i & SCARD_STATE_IGNORE) != 0)
 	{
-		sb.append(" IGNORE");
+		sb += QStringLiteral(" IGNORE");
 	}
 	if ((i & SCARD_STATE_CHANGED) != 0)
 	{
-		sb.append(" CHANGED");
+		sb += QStringLiteral(" CHANGED");
 	}
 	if ((i & SCARD_STATE_UNKNOWN) != 0)
 	{
-		sb.append(" UNKNOWN");
+		sb += QStringLiteral(" UNKNOWN");
 	}
 	if ((i & SCARD_STATE_UNAVAILABLE) != 0)
 	{
-		sb.append(" UNAVAILABLE");
+		sb += QStringLiteral(" UNAVAILABLE");
 	}
 	if ((i & SCARD_STATE_EMPTY) != 0)
 	{
-		sb.append(" EMPTY");
+		sb += QStringLiteral(" EMPTY");
 	}
 	if ((i & SCARD_STATE_PRESENT) != 0)
 	{
-		sb.append(" PRESENT");
+		sb += QStringLiteral(" PRESENT");
 	}
 	if ((i & SCARD_STATE_ATRMATCH) != 0)
 	{
-		sb.append(" ATRMATCH");
+		sb += QStringLiteral(" ATRMATCH");
 	}
 	if ((i & SCARD_STATE_EXCLUSIVE) != 0)
 	{
-		sb.append(" EXCLUSIVE");
+		sb += QStringLiteral(" EXCLUSIVE");
 	}
 	if ((i & SCARD_STATE_INUSE) != 0)
 	{
-		sb.append(" INUSE");
+		sb += QStringLiteral(" INUSE");
 	}
 	if ((i & SCARD_STATE_MUTE) != 0)
 	{
-		sb.append(" MUTE");
+		sb += QStringLiteral(" MUTE");
 	}
 	if ((i & SCARD_STATE_UNPOWERED) != 0)
 	{
-		sb.append(" UNPOWERED");
+		sb += QStringLiteral(" UNPOWERED");
 	}
 	return sb;
 }
@@ -158,11 +158,11 @@ bool PcscReader::hasPaceCapability(PaceCapabilityId pPaceCapability)
 Reader::CardEvent PcscReader::updateCard()
 {
 	PCSC_RETURNCODE returnCode = SCardGetStatusChange(mContextHandle, 0, &mReaderState, 1);
-	if (returnCode == SCARD_E_TIMEOUT)
+	if (returnCode == PcscUtils::Scard_E_Timeout)
 	{
 		return Reader::CardEvent::NONE;
 	}
-	else if (returnCode == SCARD_E_UNKNOWN_READER)
+	else if (returnCode == PcscUtils::Scard_E_Unknown_Reader)
 	{
 		qCWarning(card_pcsc) << "SCardGetStatusChange: " << PcscUtils::toString(returnCode);
 		qCWarning(card_pcsc) << "Reader unknown, stop updating reader information";
@@ -173,7 +173,7 @@ Reader::CardEvent PcscReader::updateCard()
 		}
 		return Reader::CardEvent::NONE;
 	}
-	else if (returnCode != SCARD_S_SUCCESS)
+	else if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "SCardGetStatusChange: " << PcscUtils::toString(returnCode);
 		qCWarning(card_pcsc) << "Cannot update reader";
@@ -250,7 +250,7 @@ PCSC_RETURNCODE PcscReader::readReaderFeaturesAndPACECapabilities()
 	qCDebug(card_pcsc) << str;
 	PCSC_RETURNCODE returnCode = SCardConnect(mContextHandle, mReaderState.szReader, SCARD_SHARE_DIRECT, PROTOCOL, &cardHandle, &protocol);
 	qCDebug(card_pcsc) << "SCardConnect for " << mReaderInfo.getName() << ": " << PcscUtils::toString(returnCode);
-	if (returnCode != SCARD_S_SUCCESS)
+	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		return returnCode;
 	}
@@ -269,20 +269,32 @@ PCSC_RETURNCODE PcscReader::readReaderFeaturesAndPACECapabilities()
 
 	PCSC_INT clen = 0;
 	returnCode = SCardControl(cardHandle, CM_IOCTL_GET_FEATURE_REQUEST, inBuffer1, 2, buffer, sizeof(buffer), &clen);
-	Q_ASSERT(sizeof(buffer) >= clen);
 	qCDebug(card_pcsc) << "SCardControl for " << mReaderInfo.getName() << ": " << PcscUtils::toString(returnCode);
-	if (returnCode != SCARD_S_SUCCESS)
+
+	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		clen = 0;
 	}
+	if (sizeof(buffer) < clen)
+	{
+		qCCritical(card_pcsc) << "Buffer size smaller than read length";
+		Q_ASSERT(sizeof(buffer) >= clen);
+		return PcscUtils::Scard_F_Unknown_Error;
+	}
+	if (clen > INT_MAX)
+	{
+		qCCritical(card_pcsc) << "Read length > INT_MAX not supported";
+		Q_ASSERT(clen <= INT_MAX);
+		return PcscUtils::Scard_F_Unknown_Error;
+	}
 
-	qCDebug(card_pcsc) << "FEATURES:" << QByteArray(buffer, clen).toHex();
+	qCDebug(card_pcsc) << "FEATURES:" << QByteArray(buffer, static_cast<int>(clen)).toHex();
 	mReaderFeatures = PcscReaderFeature(buffer, clen);
 	qCDebug(card_pcsc) << "FEATURES:" << mReaderFeatures.toString();
 
 	if (mReaderFeatures.getFeatures().contains(FeatureID::EXECUTE_PACE))
 	{
-		int cmdID = mReaderFeatures.getFeatures().find(FeatureID::EXECUTE_PACE).value();
+		PCSC_INT cmdID = mReaderFeatures.getFeatures().find(FeatureID::EXECUTE_PACE).value();
 
 		clen = 0;
 
@@ -291,20 +303,33 @@ PCSC_RETURNCODE PcscReader::readReaderFeaturesAndPACECapabilities()
 		};           // idx for GetReaderPACECapabilities (0x01), length (0, 0)
 		qCDebug(card_pcsc) << "SCardControl ... ";
 		returnCode = SCardControl(cardHandle, cmdID, inBuffer2, 3, buffer, sizeof(buffer), &clen);
-		Q_ASSERT(sizeof(buffer) >= clen);
 		qCDebug(card_pcsc) << "SCardControl for " << mReaderInfo.getName() << ": " << PcscUtils::toString(returnCode);
-		if (returnCode != SCARD_S_SUCCESS)
+
+		if (returnCode != PcscUtils::Scard_S_Success)
 		{
 			clen = 0;
 		}
+		if (sizeof(buffer) < clen)
+		{
+			qCCritical(card_pcsc) << "Buffer size smaller than read length";
+			Q_ASSERT(sizeof(buffer) >= clen);
+			return PcscUtils::Scard_F_Unknown_Error;
+		}
+		if (clen > INT_MAX)
+		{
+			qCCritical(card_pcsc) << "Read length bigger than INT_MAX";
+			Q_ASSERT(clen <= INT_MAX);
+			return PcscUtils::Scard_F_Unknown_Error;
+		}
+
+		qCDebug(card_pcsc) << "PACE_CAPABILITIES:" << QByteArray(buffer, static_cast<int>(clen)).toHex();
+		mPaceCapabilities = PcscReaderPaceCapability(buffer, clen);
+		qCDebug(card_pcsc) << "PACE_CAPABILITIES:" << mPaceCapabilities.toString();
 	}
 	else
 	{
 		clen = 0;
 	}
-	qCDebug(card_pcsc) << "PACE_CAPABILITIES:" << QByteArray(buffer, clen).toHex();
-	mPaceCapabilities = PcscReaderPaceCapability(buffer, clen);
-	qCDebug(card_pcsc) << "PACE_CAPABILITIES:" << mPaceCapabilities.toString();
 
 	// disconnect
 	returnCode = SCardDisconnect(cardHandle, SCARD_LEAVE_CARD);

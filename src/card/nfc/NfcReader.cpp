@@ -43,7 +43,7 @@ Reader::CardEvent NfcReader::updateCard()
 	if (mReaderInfo.getExtendedLengthApduSupportCode() != code)
 	{
 		mReaderInfo.setExtendedLengthApduSupportCode(code);
-		Q_EMIT fireReaderPropertiesUpdated();
+		Q_EMIT fireReaderPropertiesUpdated(getName());
 	}
 
 	if (mCard.isNull() && NfcBridge::getInstance().getCardStatus() == NfcCardCode::NEW_CARD)
@@ -57,19 +57,11 @@ Reader::CardEvent NfcReader::updateCard()
 		return CardEvent::CARD_INSERTED;
 	}
 
-	if (!mCard.isNull())
+	if (!mCard.isNull() && NfcBridge::getInstance().getCardStatus() == NfcCardCode::NO_CARD)
 	{
-		QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
-		static CommandApdu selectMfCommand = SelectBuilder(FileRef::masterFile()).build();
-		static ResponseApdu response;
-		const QSignalBlocker blockFireCardRemoved(mCard.data());
-		if (!cardConnection.isNull() && cardConnection->transmit(selectMfCommand, response) != ReturnCode::OK)
-		{
-			qCDebug(card_nfc) << "Card removed";
-			mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
-			mCard.reset();
-			return CardEvent::CARD_REMOVED;
-		}
+		mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
+		mCard.reset();
+		return CardEvent::CARD_REMOVED;
 	}
 
 #endif
@@ -84,5 +76,4 @@ void NfcReader::onCardRemoved()
 	mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
 	mCard.reset();
 	Q_EMIT fireCardRemoved(getName());
-
 }

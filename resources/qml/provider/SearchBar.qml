@@ -4,20 +4,20 @@ import QtQuick.Controls.Styles 1.4
 
 import "../global"
 
+
 Rectangle {
 	id: baseItem
+	height: Constants.titlebar_height + Constants.searchbar_height
 
 	readonly property alias searchText: searchField.text
-
-	property color searchBarColor: Constants.blue
-
-	color: searchBarColor
-	height: Constants.searchbar_height
 
 	MouseArea {
 		id: pageArea
 		onClicked: pageArea.focus = true
-		anchors.fill: parent
+
+		height: Constants.searchbar_height
+		width: parent.width
+		anchors.bottom: parent.bottom
 
 		Rectangle {
 			anchors.left: parent.left
@@ -49,9 +49,9 @@ Rectangle {
 					anchors.right: parent.right
 					anchors.rightMargin: Utils.dp(8)
 					anchors.verticalCenter: parent.verticalCenter
-					width: Utils.dp(sourceSize.width / 2)
-					height: Utils.dp(sourceSize.height / 2)
-					source: "qrc:///images/text-edit-x.png"
+					width: Utils.dp(64)
+					height: Utils.dp(64)
+					source: "qrc:///images/iOS/search_cancel.svg"
 					visible: searchField.text.length > 0
 
 					MouseArea {
@@ -77,7 +77,7 @@ Rectangle {
 					height: textEditX.height
 					width: textEditX.width
 					fillMode: Image.PreserveAspectFit
-					source: "qrc:///images/magnifying-glass.png"
+					source: "qrc:///images/iOS/search_icon.svg"
 					visible: searchField.text.trim().length === 0
 				}
 
@@ -88,7 +88,7 @@ Rectangle {
 					anchors.verticalCenter: glassIcon.verticalCenter
 					text: qsTr("Search")
 					color: Constants.grey
-					font.pixelSize: Utils.sp(14)
+					font.pixelSize: Constants.normal_font_size
 					visible: searchField.text.trim().length === 0
 				}
 			}
@@ -103,7 +103,7 @@ Rectangle {
 			anchors.verticalCenter: parent.verticalCenter
 			clip: true
 			font.family: "Helvetica"
-			font.pixelSize: Utils.sp(15)
+			font.pixelSize: Constants.normal_font_size
 			color: "white"
 			text: qsTr("Cancel")
 			onClicked: {

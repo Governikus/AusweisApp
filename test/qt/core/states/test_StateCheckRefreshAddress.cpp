@@ -4,7 +4,9 @@
 
 #include "states/StateCheckRefreshAddress.h"
 
+#include "MockNetworkManager.h"
 #include "context/AuthContext.h"
+#include "states/StateBuilder.h"
 
 #include <QThread>
 #include <QtCore>
@@ -27,8 +29,8 @@ class test_StateCheckRefreshAddress
 		void init()
 		{
 			mAuthContext.reset(new AuthContext(nullptr));
-			mState.reset(new StateCheckRefreshAddress(mAuthContext));
-			mState->setStateName("StateCheckRefreshAddress");
+			mAuthContext->setNetworkManager(new MockNetworkManager);
+			mState.reset(StateBuilder::createState<StateCheckRefreshAddress>(mAuthContext));
 			connect(this, &test_StateCheckRefreshAddress::fireStateStart, mState.data(), &AbstractState::onEntry, Qt::ConnectionType::DirectConnection);
 		}
 
@@ -40,16 +42,36 @@ class test_StateCheckRefreshAddress
 		}
 
 
+		void mappingToCommunicationError()
+		{
+			const QVector<GlobalStatus::Code> states = QVector<GlobalStatus::Code>()
+					<< GlobalStatus::Code::Network_Ssl_Establishment_Error
+					<< GlobalStatus::Code::Network_Ssl_Establishment_Error
+					<< GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length
+					<< GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length
+					<< GlobalStatus::Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description
+					<< GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url
+					<< GlobalStatus::Code::Workflow_Network_Expected_Redirect
+					<< GlobalStatus::Code::Workflow_Network_Invalid_Scheme
+					<< GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url
+					<< GlobalStatus::Code::Network_TimeOut
+					<< GlobalStatus::Code::Network_Proxy_Error;
+
+			for (const GlobalStatus::Code state : states)
+			{
+				const Result& result = GlobalStatus(state);
+				QCOMPARE(result.getMinor(), GlobalStatus::Code::Paos_Error_AL_Communication_Error);
+			}
+		}
+
+
 		void sendGetRequestWithoutAnyAdditionalParameters()
 		{
 			QUrl redirectUrl("http://localhost:12345/test_StateCheckRefreshAddress/");
-			Result result = Result::createCommunicationError("Fehlertext");
-			mAuthContext->setResult(result);
+			mAuthContext->setStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
 			mState->mUrl = redirectUrl;
 
 			mState->sendGetRequest();
-
-			mState->mReply->abort();
 			QCOMPARE(mState->mReply->request().url(), redirectUrl);
 		}
 

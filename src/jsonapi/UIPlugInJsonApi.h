@@ -23,6 +23,8 @@ class UIPlugInJsonApi
 	private:
 		MessageDispatcher mMessageDispatcher;
 
+		inline void callFireMessage(const QByteArray& pMsg) const;
+
 	public:
 		UIPlugInJsonApi();
 		virtual ~UIPlugInJsonApi();
@@ -38,7 +40,7 @@ class UIPlugInJsonApi
 		void doMessageProcessing(const QByteArray& pMsg);
 
 	Q_SIGNALS:
-		void fireMessage(const QByteArray& pMsg);
+		void fireMessage(const QByteArray& pMsg) const;
 };
 
 } /* namespace governikus */

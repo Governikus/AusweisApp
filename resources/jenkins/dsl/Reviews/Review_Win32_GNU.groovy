@@ -31,6 +31,7 @@ j.with
 			set PATH=%WORKSPACE%/libs/build/dist/bin;%PATH%
 			set PATH=%WORKSPACE%/install;%PATH%
 			set QT_PLUGIN_PATH=%WORKSPACE%/libs/build/dist/plugins
+			set QML2_IMPORT_PATH=%WORKSPACE%/libs/build/dist/qml
 			cd build & ctest %MAKE_FLAGS%
 			'''.stripIndent().trim())
 	}

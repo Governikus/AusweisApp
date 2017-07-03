@@ -13,7 +13,6 @@
 #include <QtAndroidExtras/QAndroidJniEnvironment>
 #include <QtAndroidExtras/QAndroidJniObject>
 
-
 Q_DECLARE_LOGGING_CATEGORY(bluetooth)
 
 using namespace governikus;
@@ -64,7 +63,9 @@ BluetoothReaderManagerPlugInPrivate::BluetoothReaderManagerPlugInPrivate(Bluetoo
 void BluetoothReaderManagerPlugInPrivate::init()
 {
 	Q_Q(BluetoothReaderManagerPlugIn);
-	q->setBluetoothStatus(AndroidBluetoothAdapter::getDefaultAdapter().isStateOn());
+	const auto& adapter = AndroidBluetoothAdapter::getDefaultAdapter();
+	q->setReaderInfoAvailable(adapter.isAvailable());
+	q->setBluetoothStatus(adapter.isStateOn());
 }
 
 
@@ -87,20 +88,29 @@ void BluetoothReaderManagerPlugInPrivate::onScanStart()
 
 void BluetoothReaderManagerPlugInPrivate::handlePairedDevices()
 {
-	auto pairedDevices = AndroidBluetoothAdapter::getDefaultAdapter().getBondedDevices();
-	if (pairedDevices.isEmpty())
+	static QVector<QBluetoothDeviceInfo> knownPairedDevices;
+	const QVector<QBluetoothDeviceInfo>& currentlyPairedDevices = AndroidBluetoothAdapter::getDefaultAdapter().getBondedDevices();
+	QVector<QBluetoothDeviceInfo> newlyPairedDevices;
+
+	for (const QBluetoothDeviceInfo& device : qAsConst(currentlyPairedDevices))
 	{
-		qCDebug(bluetooth) << "No paired devices found";
-	}
-	else
-	{
-		qCDebug(bluetooth) << "Found" << pairedDevices.size() << "paired devices";
-		Q_Q(BluetoothReaderManagerPlugIn);
-		for (QBluetoothDeviceInfo pairedDevice : pairedDevices)
+		if (!knownPairedDevices.contains(device))
 		{
-			q->onDeviceDiscovered(pairedDevice);
+			newlyPairedDevices.append(device);
 		}
 	}
+
+	if (!newlyPairedDevices.isEmpty())
+	{
+		qCDebug(bluetooth) << "Found" << newlyPairedDevices.size() << "paired devices";
+		Q_Q(BluetoothReaderManagerPlugIn);
+		for (const QBluetoothDeviceInfo& device : qAsConst(newlyPairedDevices))
+		{
+			q->onDeviceDiscovered(device);
+		}
+	}
+
+	knownPairedDevices = currentlyPairedDevices;
 }
 
 

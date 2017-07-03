@@ -7,11 +7,11 @@
 #pragma once
 
 #include "Apdu.h"
+#include "CardReturnCode.h"
 #include "Commands.h"
 #include "EstablishPACEChannel.h"
 #include "FileRef.h"
 #include "Reader.h"
-#include "ReturnCode.h"
 #include "SmartCardDefinitions.h"
 #include "asn1/SecurityInfos.h"
 #include "pace/SecureMessaging.h"
@@ -32,7 +32,7 @@ class CardConnectionWorker
 		Q_OBJECT
 
 		/*!
-		 * The connection talks to the Card hold by the Reader
+		 * The connection talks to the Card held by the Reader
 		 */
 		QPointer<Reader> mReader;
 
@@ -64,18 +64,18 @@ class CardConnectionWorker
 
 		Q_INVOKABLE ReaderInfo getReaderInfo() const;
 
-		virtual ReturnCode updateRetryCounter();
+		virtual CardReturnCode updateRetryCounter();
 
-		virtual ReturnCode readFile(const FileRef& pFileRef, QByteArray& pFileContent);
+		virtual CardReturnCode readFile(const FileRef& pFileRef, QByteArray& pFileContent);
 
-		virtual ReturnCode transmit(const CommandApdu& pCommandApdu, ResponseApdu& pResponseApdu);
+		virtual CardReturnCode transmit(const CommandApdu& pCommandApdu, ResponseApdu& pResponseApdu);
 
 		/*!
 		 * Performs PACE and establishes a PACE channel.
 		 * If the Reader is a basic reader and the PACE channel is successfully established, the subsequent transmits will be secured using, secure messaging.
 		 * I. e., a secure messaging channel is established.
 		 */
-		virtual ReturnCode establishPaceChannel(PACE_PIN_ID pPinId,
+		virtual CardReturnCode establishPaceChannel(PACE_PIN_ID pPinId,
 				const QString& pPinValue,
 				EstablishPACEChannelOutput& pChannelOutput);
 
@@ -84,7 +84,7 @@ class CardConnectionWorker
 		 * If the Reader is a basic reader and the PACE channel is successfully established, the subsequent transmits will be secured using, secure messaging.
 		 * I. e., a secure messaging channel is established.
 		 */
-		virtual ReturnCode establishPaceChannel(PACE_PIN_ID pPinId,
+		virtual CardReturnCode establishPaceChannel(PACE_PIN_ID pPinId,
 				const QString& pPinValue,
 				const QByteArray& pChat,
 				const QByteArray& pCertificateDescription,
@@ -93,14 +93,14 @@ class CardConnectionWorker
 		/*!
 		 * Destroys a previously established PACE channel.
 		 */
-		virtual ReturnCode destroyPaceChannel();
+		virtual CardReturnCode destroyPaceChannel();
 
 		/*!
 		 * Destroys an established secure messaging channel, if there is one.
 		 */
 		virtual bool stopSecureMessaging();
 
-		virtual ReturnCode setEidPin(const QString& pNewPin, unsigned int pTimeoutSeconds);
+		virtual CardReturnCode setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds);
 
 	Q_SIGNALS:
 		void fireRetryCounterPotentiallyChanged();

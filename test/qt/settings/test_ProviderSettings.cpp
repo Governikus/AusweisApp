@@ -4,11 +4,11 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
+#include "ProviderSettings.h"
+
 #include <QCoreApplication>
 #include <QFile>
 #include <QtTest>
-
-#include "ProviderSettings.h"
 
 using namespace governikus;
 
@@ -93,6 +93,47 @@ class test_ProviderSettings
 		}
 
 
+		void testProviderUrls()
+		{
+			const Provider provider1(
+				/* short name  */ QString(),
+				/* long name  */ QString(),
+				/* short description */ QString(),
+				/* long description */ QString(),
+				/* address */ QStringLiteral("ftp://homepage.com/form"),
+				/* homepage */ QStringLiteral("ftp://www.homepage.de/bla/bla1")
+				);
+			QCOMPARE(provider1.getAddressDomain(), QStringLiteral("homepage.com"));
+			QCOMPARE(provider1.getHomepageBase(), QStringLiteral("www.homepage.de"));
+
+			const Provider provider2(
+				/* short name  */ QString(),
+				/* long name  */ QString(),
+				/* short description */ QString(),
+				/* long description */ QString(),
+				/* address */ QStringLiteral("https://homepage.com/form"),
+				/* homepage */ QStringLiteral("https://www.homepage.de/bla/bla1")
+				);
+			QCOMPARE(provider2.getAddressDomain(), QStringLiteral("homepage.com"));
+			QCOMPARE(provider2.getHomepageBase(), QStringLiteral("www.homepage.de"));
+
+			const Provider provider3(
+				/* short name  */ QString(),
+				/* long name  */ QString(),
+				/* short description */ QString(),
+				/* long description */ QString(),
+				/* address */ QStringLiteral("homepage.com/form"),
+				/* homepage */ QStringLiteral("www.homepage.de/bla/bla1")
+				);
+			QCOMPARE(provider3.getAddressDomain(), QStringLiteral("homepage.com"));
+			QCOMPARE(provider3.getHomepageBase(), QStringLiteral("www.homepage.de"));
+
+			const Provider provider4;
+			QCOMPARE(provider4.getAddressDomain(), QString());
+			QCOMPARE(provider4.getHomepageBase(), QString());
+		}
+
+
 		void testProviderFields()
 		{
 			settings.reset(new ProviderSettings(settings->getIssueDate(), QVector<Provider>()));
@@ -112,7 +153,11 @@ class test_ProviderSettings
 				/* email */ QStringLiteral("abc@def.de"),
 				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 				/* icon */ QStringLiteral("images/npa.ico"),
-				/* image */ QStringLiteral("images/iOS/Header-Ausweisapp@3x.png"));
+				/* image */ QStringLiteral("images/iOS/Header-Ausweisapp@3x.png"),
+				/* tcTokenUrl */ QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf"),
+				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
+				/* subjectUrls */ QStringList({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla1")})
+				);
 
 			const QVector<Provider> providers = {
 				provider
@@ -141,6 +186,87 @@ class test_ProviderSettings
 			QCOMPARE(otherProvider.getPostalAddress(), QStringLiteral("Am Fallturm 9\n28359 Bremen"));
 			QCOMPARE(otherProvider.getIcon(), QStringLiteral("images/npa.ico"));
 			QCOMPARE(otherProvider.getImage(), QStringLiteral("images/iOS/Header-Ausweisapp@3x.png"));
+			QCOMPARE(otherProvider.getTcTokenUrl(), QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf"));
+			QCOMPARE(otherProvider.getClientUrl(), QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"));
+			QCOMPARE(otherProvider.getSubjectUrls(), QStringList({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla1")}));
+		}
+
+
+		void callCostSave()
+		{
+			QMap<QString, CallCost> callCosts;
+			callCosts.insert("1805", CallCost(0, 3.9, 0, 42, 0));
+			callCosts.insert("1806", CallCost(0, 4.9, 0, 43, 0));
+
+			settings->setCallCosts(callCosts);
+			QVERIFY(settings->isUnsaved());
+
+			settings->save();
+			QVERIFY(!settings->isUnsaved());
+		}
+
+
+		void callCostLoad()
+		{
+			QMap<QString, CallCost> callCosts;
+			callCosts.insert("1805", CallCost(0, 3.9, 0, 42, 0));
+			callCosts.insert("1806", CallCost(0, 4.9, 0, 43, 0));
+			settings->setCallCosts(callCosts);
+			settings->save();
+
+			settings.reset(new ProviderSettings());
+			settings->load();
+
+			QCOMPARE(settings->mCallCosts, callCosts);
+		}
+
+
+		void getCallCost()
+		{
+			QMap<QString, CallCost> callCosts;
+			callCosts.insert("1805", CallCost(0, 3.9, 0, 42, 0));
+			callCosts.insert("1806", CallCost(0, 4.9, 0, 43, 0));
+			settings->setCallCosts(callCosts);
+
+			const CallCost& callCost = settings->getCallCost(QStringLiteral("+49 1805-123456789"));
+
+			QVERIFY(!callCost.isNull());
+			QCOMPARE(callCost.getFreeSeconds(), 0);
+			QCOMPARE(callCost.getLandlineCentsPerMinute(), 3.9);
+			QCOMPARE(callCost.getLandlineCentsPerCall(), 0.0);
+			QCOMPARE(callCost.getMobileCentsPerMinute(), 42.0);
+			QCOMPARE(callCost.getMobileCentsPerCall(), 0.0);
+		}
+
+
+		void getCallCost_withDelimiters()
+		{
+			QMap<QString, CallCost> callCosts;
+			callCosts.insert("1805", CallCost(0, 3.9, 0, 42, 0));
+			callCosts.insert("1806", CallCost(0, 4.9, 0, 43, 0));
+			settings->setCallCosts(callCosts);
+
+			const CallCost& callCost = settings->getCallCost(QStringLiteral("+49  1-8/05-123456789"));
+
+			QVERIFY(!callCost.isNull());
+			QCOMPARE(callCost.getFreeSeconds(), 0);
+			QCOMPARE(callCost.getLandlineCentsPerMinute(), 3.9);
+			QCOMPARE(callCost.getLandlineCentsPerCall(), 0.0);
+			QCOMPARE(callCost.getMobileCentsPerMinute(), 42.0);
+			QCOMPARE(callCost.getMobileCentsPerCall(), 0.0);
+		}
+
+
+		void getCallCost_nonExisting()
+		{
+			QMap<QString, CallCost> callCosts;
+			callCosts.insert("1805", CallCost(0, 3.9, 0, 42, 0));
+			callCosts.insert("1806", CallCost(0, 4.9, 0, 43, 0));
+			settings->setCallCosts(callCosts);
+
+			const CallCost& callCost = settings->getCallCost(QStringLiteral("123456"));
+
+			QVERIFY(callCost.isNull());
 		}
 
 

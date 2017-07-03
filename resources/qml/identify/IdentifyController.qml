@@ -1,12 +1,31 @@
 import QtQuick 2.5
-import QtQml.StateMachine 1.0
 
 import "../"
 
 
 Item {
 	id: controller
+	readonly property string statePrefix: readerType === "BLUETOOTH" ? "bt_" : "nfc_"
 	property string readerType
+	property bool showRemoveCardFeedback: false
+
+	states: [
+		State {
+			when: authModel.currentState === "StateGetTcToken" && !connectivityManager.networkInterfaceActive
+			StateChangeScript {
+				script: identifyView.push(checkConnectivityView)
+			}
+		},
+		State {
+			when: authModel.currentState === "StateGetTcToken" && connectivityManager.networkInterfaceActive
+			StateChangeScript {
+				script: {
+					identifyView.push(identifyProgressView)
+					numberModel.continueWorkflow()
+				}
+			}
+		}
+	]
 
 	Connections {
 		target: authModel
@@ -16,31 +35,36 @@ Item {
 					break;
 				case "StateGetTcToken":
 					enterPinView.state = "INITIAL"
-					identifyView.push(identifyProgressView)
 					navBar.lockedAndHidden = true
 					navBar.state = "identify"
 					navBar.currentIndex = 0
-					setIdentifyWorkflowStateAndContinue("initial")
-					break;
+					identifyWorkflow.state = "initial"
+					break
 				case "StateEditAccessRights":
 					if (applicationModel.currentWorkflow === "selfauthentication") {
 						identifyView.push(identifyWorkflow)
 						chatModel.transferAccessRights()
-						authModel.continueWorkflow()
+						numberModel.continueWorkflow()
 					}
 					if (applicationModel.currentWorkflow === "authentication") {
 						identifyView.push(identifyEditChatView)
 					}
+					readerType = Qt.platform.os === "android" ? "NFC" : "PCSC"
+					break
+				case "StateSelectReaderType":
+					authModel.setReaderType(readerType);
+					setIdentifyWorkflowStateAndContinue("initial")
 					break
 				case "StateSelectNfcReader":
-					readerType = "nfc_"
 					identifyView.push(identifyWorkflow)
 					setIdentifyWorkflowStateAndContinue("connect")
 					break
 				case "StateSelectBluetoothReader":
-					readerType = "bt_"
 					identifyView.push(identifyWorkflow)
-					setIdentifyWorkflowStateAndContinue("connect")
+					setIdentifyWorkflowState("connect")
+					if (applicationModel.bluetoothEnabled && !applicationModel.locationPermissionRequired) {
+						numberModel.continueWorkflow()
+					}
 					break
 				case "StateConnectCard":
 					setIdentifyWorkflowStateAndContinue("card")
@@ -54,15 +78,27 @@ Item {
 				case "StateEstablishPacePin":
 					setIdentifyWorkflowStateAndRequestInput("identify_enterpin", "PIN")
 					break
+				case "StateEstablishPacePuk":
+					authModel.cancelWorkflowOnPinBlocked()
+					break
+				case "StateCleanUpReaderManager":
+					controller.showRemoveCardFeedback = numberModel.cardConnected && !authModel.isError;
+					numberModel.continueWorkflow()
+					break;
 				case "FinalState":
 					navBar.lockedAndHidden = true
+					if (controller.showRemoveCardFeedback) {
+						controller.showRemoveCardFeedback = false
+						qmlExtension.showFeedback(qsTr("You may now remove your ID card from the device."))
+					}
+
 					if (authModel.error)
 						identifyView.push(identifyResult)
 					else {
 						if (applicationModel.currentWorkflow === "selfauthentication") {
 							identifyView.push(selfAuthenticationData)
 						} else {
-							authModel.continueWorkflow()
+							numberModel.continueWorkflow()
 							titleBar.reset()
 							identifyView.pop(null)
 							navBar.lockedAndHidden = false
@@ -70,22 +106,26 @@ Item {
 					}
 					break
 				default:
-					authModel.continueWorkflow()
+					numberModel.continueWorkflow()
 			}
 		}
 	}
 
+	function setIdentifyWorkflowState(pState) {
+		identifyWorkflow.state = statePrefix + pState
+	}
+
 	function setIdentifyWorkflowStateAndContinue(pState) {
-		identifyWorkflow.state = readerType + pState
-		authModel.continueWorkflow()
+		setIdentifyWorkflowState(pState);
+		numberModel.continueWorkflow()
 	}
 
 	function setIdentifyWorkflowStateAndRequestInput(pState, pInput) {
-		identifyWorkflow.state = readerType + pState
+		identifyWorkflow.state = statePrefix + pState
 		if (authModel.isBasicReader()) {
 			identifyView.push(enterPinView, {state: pInput})
 		} else {
-			authModel.continueWorkflow()
+			numberModel.continueWorkflow()
 		}
 	}
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="170px" height="170px" viewBox="0 0 1700 1700">
+  <defs>
+    <g id="form">
+      <circle cx="855" cy="330" r="140" />
+      <path d="M 990 1370 a 70 70 0 0 1 -70 70 h -130 a 70 70 0 0 1 -70 -70 v -310 h -10 a 70 70 0 0 1 -70 -70 v -400 a 70 70 0 0 1 70 -70 h 320 a 100 100 0 0 0 -50 90 v 450 a 100 100 0 0 0 10 40 z" />
+    </g>
+  </defs>
+  <rect x="0" y="0" rx="350" ry="350" width="1700" height="1700" fill="#ffffff" style="opacity: 0.7;" />
+  <g fill="#b62d7c">
+    <circle cx="855" cy="330" r="140" />
+    <rect x="640" y="520" rx="70" ry="70" width="430" height="540" />
+    <rect x="720" y="940" rx="70" ry="70" width="270" height="500" />
+    <use xlink:href="#form" transform="translate(-290,44) scale(0.91,0.91)" />
+    <use xlink:href="#form" transform="translate(2000,44) scale(-0.91,0.91)" />
+  </g>
+</svg>

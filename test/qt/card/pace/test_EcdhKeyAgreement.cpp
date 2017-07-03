@@ -38,9 +38,9 @@ class test_EcdhKeyAgreement
 		void perform_failureOnGetNonce()
 		{
 			QVector<TransmitConfig> transmitConfigs;
-			transmitConfigs.append(TransmitConfig(ReturnCode::OK, QByteArray::fromHex("6982")));
+			transmitConfigs.append(TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("6982")));
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(transmitConfigs, mEfCardAccess));
-			QSharedPointer<PACEInfo> paceInfo = mEfCardAccess->getSecurityInfos<PACEInfo>().at(0);
+			QSharedPointer<const PACEInfo> paceInfo = mEfCardAccess->getPACEInfos().at(0);
 			QScopedPointer<KeyAgreement> keyAgreement(new EcdhKeyAgreement(paceInfo, reader->createCardConnectionWorker()));
 
 			KeyAgreementStatus result = keyAgreement->perform("123456");

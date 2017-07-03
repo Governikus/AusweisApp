@@ -5,6 +5,7 @@
 #include "AuthContext.h"
 
 #include "AppSettings.h"
+#include "asn1/Chat.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
 #include <QSignalBlocker>
@@ -36,7 +37,9 @@ AuthContext::AuthContext(ActivationContext* pActivationContext)
 	, mTransmitResponses()
 	, mDisconnectResponse()
 	, mStartPaosResponse()
-	, mEffectiveChat()
+	, mEffectiveAccessRights()
+	, mRequiredAccessRights()
+	, mOptionalAccessRights()
 	, mCertificates()
 	, mTerminalCvc()
 	, mDvCvc()
@@ -51,79 +54,108 @@ AuthContext::~AuthContext()
 }
 
 
-bool AuthContext::sanitizeEffectiveAccessRights()
+void AuthContext::initializeChat()
+{
+	Q_ASSERT(mTerminalCvc);
+	Q_ASSERT(mDIDAuthenticateEAC1);
+
+	mRequiredAccessRights.clear();
+	if (const auto& requiredChat = mDIDAuthenticateEAC1->getRequiredChat())
+	{
+		mRequiredAccessRights = requiredChat.data()->getAccessRights();
+		removeForbiddenAccessRights(mRequiredAccessRights);
+	}
+
+	mOptionalAccessRights.clear();
+	if (const auto& optionalChat = mDIDAuthenticateEAC1->getOptionalChat())
+	{
+		mOptionalAccessRights = optionalChat.data()->getAccessRights();
+		removeForbiddenAccessRights(mOptionalAccessRights);
+
+		if (mOptionalAccessRights.size() > 0 && mRequiredAccessRights.size() > 0)
+		{
+			mOptionalAccessRights -= mRequiredAccessRights;
+		}
+	}
+
+	if (mOptionalAccessRights.isEmpty() && mRequiredAccessRights.isEmpty())
+	{
+		mOptionalAccessRights = mTerminalCvc->getBody().getCHAT().getAccessRights();
+		removeForbiddenAccessRights(mOptionalAccessRights);
+	}
+
+	mEffectiveAccessRights = mRequiredAccessRights + mOptionalAccessRights;
+
+	Q_EMIT fireAuthenticationDataChanged();
+	Q_EMIT fireEffectiveChatChanged();
+}
+
+
+bool AuthContext::removeForbiddenAccessRights(QSet<AccessRight>& pAccessRights)
 {
 	bool changed = false;
 
-	if (!mEffectiveChat)
+	if (!mTerminalCvc)
 	{
 		return changed;
 	}
 
-	const auto& effectiveAccessRights = mEffectiveChat->getAccessRights();
-	for (const auto& right : effectiveAccessRights)
+	const auto& allowedCvcAccessRights = mTerminalCvc->getBody().getCHAT().getAccessRights();
+	// TODO Don't display = Don't use: why?
+	const auto& allDisplayedOrderedRights = AccessRoleAndRightsUtil::allDisplayedOrderedRights().toSet();
+	const auto& allowedAccessRights = allowedCvcAccessRights & allDisplayedOrderedRights;
+
+	const auto rightsToCheck = pAccessRights;
+	for (const AccessRight& accessRight : rightsToCheck)
 	{
-		if (mRequiredChat && mRequiredChat->hasAccessRight(right))
+		if (allowedAccessRights.contains(accessRight))
 		{
 			continue;
 		}
-		if (mOptionalChat && mOptionalChat->hasAccessRight(right))
-		{
-			continue;
-		}
+		qWarning() << "Access right" << accessRight << "is used in chat but it's not included in CVC or it's not allowed to display!";
+		pAccessRights.remove(accessRight);
 		changed = true;
-		mEffectiveChat->removeAccessRight(right);
-		qWarning() << "Access right" << right << "was in effective chat but not in required or optional chat!";
 	}
 
-	if (!mRequiredChat)
+	if (!mDIDAuthenticateEAC1)
 	{
 		return changed;
 	}
 
-	const auto& requiredAccessRights = mRequiredChat->getAccessRights();
-	for (const auto& right : requiredAccessRights)
+	const auto& auxiliaryData = mDIDAuthenticateEAC1->getAuthenticatedAuxiliaryData();
+	if (pAccessRights.contains(AccessRight::AGE_VERIFICATION))
 	{
-		if (mEffectiveChat->hasAccessRight(right))
+		if (!auxiliaryData || !auxiliaryData->hasAgeVerificationDate())
 		{
-			continue;
+			qWarning() << "AGE_VERIFICATION requested, but no age specified";
+			pAccessRights.remove(AccessRight::AGE_VERIFICATION);
+			changed = true;
 		}
-		changed = true;
-		mEffectiveChat->setAccessRight(right);
-		qWarning() << "Access right" << right << "is required but was not in effective chat!";
+	}
+	if (pAccessRights.contains(AccessRight::COMMUNITY_ID_VERIFICATION))
+	{
+		if (!auxiliaryData || !auxiliaryData->hasCommunityID())
+		{
+			qWarning() << "COMMUNITY_ID_VERIFICATION requested, but no community id specified";
+			pAccessRights.remove(AccessRight::COMMUNITY_ID_VERIFICATION);
+			changed = true;
+		}
 	}
 
 	return changed;
 }
 
 
-bool AuthContext::setEffectiveChat(const QSharedPointer<CHAT>& pEffectiveChat)
-{
-	mEffectiveChat = pEffectiveChat;
-	bool changed = sanitizeEffectiveAccessRights();
-	Q_EMIT fireEffectiveChatChanged();
-	return !changed;
-}
-
-
 bool AuthContext::addEffectiveAccessRight(AccessRight pAccessRight)
 {
-	Q_ASSERT(mEffectiveChat);
-
-	if (mEffectiveChat->hasAccessRight(pAccessRight))
+	if (mEffectiveAccessRights.contains(pAccessRight))
 	{
 		return true;
 	}
 
-	if (mRequiredChat && mRequiredChat->hasAccessRight(pAccessRight))
+	if (mOptionalAccessRights.contains(pAccessRight))
 	{
-		mEffectiveChat->setAccessRight(pAccessRight);
-		Q_EMIT fireEffectiveChatChanged();
-		return true;
-	}
-	if (mOptionalChat && mOptionalChat->hasAccessRight(pAccessRight))
-	{
-		mEffectiveChat->setAccessRight(pAccessRight);
+		mEffectiveAccessRights += pAccessRight;
 		Q_EMIT fireEffectiveChatChanged();
 		return true;
 	}
@@ -134,16 +166,14 @@ bool AuthContext::addEffectiveAccessRight(AccessRight pAccessRight)
 
 bool AuthContext::removeEffectiveAccessRight(AccessRight pAccessRight)
 {
-	Q_ASSERT(mEffectiveChat);
-
-	if (mRequiredChat && mRequiredChat->hasAccessRight(pAccessRight))
+	if (mRequiredAccessRights.contains(pAccessRight))
 	{
 		return false;
 	}
 
-	if (mEffectiveChat->hasAccessRight(pAccessRight))
+	if (mEffectiveAccessRights.contains(pAccessRight))
 	{
-		mEffectiveChat->removeAccessRight(pAccessRight);
+		mEffectiveAccessRights -= pAccessRight;
 		Q_EMIT fireEffectiveChatChanged();
 	}
 
@@ -153,46 +183,44 @@ bool AuthContext::removeEffectiveAccessRight(AccessRight pAccessRight)
 
 bool AuthContext::setEffectiveAccessRights(const QSet<AccessRight>& pAccessRights)
 {
-	Q_ASSERT(mEffectiveChat);
+	const auto oldRights = mEffectiveAccessRights;
 
-	const auto oldRights = mEffectiveChat->getAccessRights();
-
-	mEffectiveChat->removeAllAccessRights();
-	for (auto& right : pAccessRights)
+	mEffectiveAccessRights.clear();
+	if (!mRequiredAccessRights.isEmpty())
+	{
+		mEffectiveAccessRights += mRequiredAccessRights;
+	}
+	for (const auto& effectiveRight : pAccessRights)
 	{
 		const QSignalBlocker blocker(this);
-		addEffectiveAccessRight(right);
+		addEffectiveAccessRight(effectiveRight);
 	}
-	sanitizeEffectiveAccessRights();
 
-	if (oldRights != mEffectiveChat->getAccessRights())
+	if (oldRights != mEffectiveAccessRights)
 	{
 		Q_EMIT fireEffectiveChatChanged();
 	}
 
-	return pAccessRights == mEffectiveChat->getAccessRights();
+	return pAccessRights == mEffectiveAccessRights;
 }
 
 
-void AuthContext::setOptionalChat(const QSharedPointer<CHAT>& pOptionalChat)
+void AuthContext::setTerminalCvc(const QSharedPointer<CVCertificate>& pTerminalCvc)
 {
-	mOptionalChat = pOptionalChat;
-	if (sanitizeEffectiveAccessRights())
-	{
-		Q_EMIT fireEffectiveChatChanged();
-	}
-	Q_EMIT fireOptionalChatChanged();
+	mTerminalCvc = pTerminalCvc;
+	initializeChat();
 }
 
 
-void AuthContext::setRequiredChat(const QSharedPointer<CHAT>& pRequiredChat)
+QByteArray AuthContext::encodeEffectiveChat()
 {
-	mRequiredChat = pRequiredChat;
-	if (sanitizeEffectiveAccessRights())
-	{
-		Q_EMIT fireEffectiveChatChanged();
-	}
-	Q_EMIT fireRequiredChatChanged();
+	Q_ASSERT(mTerminalCvc);
+
+	CHAT effectiveChat(mTerminalCvc->getBody().getCHAT());
+	effectiveChat.removeAllAccessRights();
+	effectiveChat.setAccessRights(mEffectiveAccessRights);
+	qDebug() << "Using effective chat:" << effectiveChat.encode().toHex();
+	return effectiveChat.encode();
 }
 
 

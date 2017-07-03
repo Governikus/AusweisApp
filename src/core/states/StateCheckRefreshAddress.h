@@ -47,14 +47,13 @@ class StateCheckRefreshAddress
 		void fetchServerCertificate();
 		bool checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
 		void doneSuccess();
-		void reportCommunicationError(const QString& pMessage);
+		void reportCommunicationError(const GlobalStatus& pStatus);
 
 	private Q_SLOTS:
 		void onSslHandshakeDone();
 		void onNetworkReply();
 		void onSslErrors(const QList<QSslError>& errors);
 		void onSslHandshakeDoneFetchingServerCertificate();
-		void onSslErrorsFetchingServerCertificate(const QList<QSslError>& errors);
 		void onNetworkErrorFetchingServerCertificate(QNetworkReply::NetworkError pError);
 
 };

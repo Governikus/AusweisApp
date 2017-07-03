@@ -2,15 +2,11 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-
-#include <QApplication>
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
-
 #include "asn1/KnownOIDs.h"
 #include "pace/CipherMac.h"
 #include "pace/KeyDerivationFunction.h"
 
+#include <QtTest>
 
 using namespace governikus;
 

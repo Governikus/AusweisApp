@@ -5,7 +5,6 @@
  */
 
 #include "ReaderManager.h"
-#include "ReturnCodeUtil.h"
 #include "StateChangePin.h"
 
 #include <QMetaObject>
@@ -23,33 +22,33 @@ void StateChangePin::run()
 	auto cardConnection = getContext()->getCardConnection();
 
 	Q_ASSERT(cardConnection);
-	qDebug() << "Invoke set Eid pin command";
+	qDebug() << "Invoke set Eid PIN command";
 	mConnections += cardConnection->callSetEidPinCommand(this, &StateChangePin::onSetEidPinDone, getContext()->getNewPin());
 }
 
 
 void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 {
-	const ReturnCode returnCode = pCommand->getReturnCode();
+	const CardReturnCode returnCode = pCommand->getReturnCode();
 	switch (returnCode)
 	{
-		case ReturnCode::OK:
-			getContext()->setSuccessMessage(tr("Pin successfully changed"));
+		case CardReturnCode::OK:
+			getContext()->setSuccessMessage(tr("You have successfully changed your PIN."));
 			Q_EMIT fireSuccess();
 			break;
 
-		case ReturnCode::CANCELLATION_BY_USER:
-			setResult(Result::createCancelByUserError());
+		case CardReturnCode::CANCELLATION_BY_USER:
+			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireCancel();
 			break;
 
-		case ReturnCode::NEW_PINS_DONT_MATCH:
-			setResult(Result::createInternalError(ReturnCodeUtil::toMessage(returnCode)));
+		case CardReturnCode::NEW_PIN_MISMATCH:
+			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireInvalidPin();
 			break;
 
 		default:
-			setResult(Result::createInternalError(ReturnCodeUtil::toMessage(returnCode)));
+			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireError();
 			break;
 	}

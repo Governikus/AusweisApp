@@ -3,6 +3,7 @@
  */
 
 #include "PaosCreator.h"
+
 #include "paos/ResponseType.h"
 
 #include <QDebug>
@@ -77,8 +78,8 @@ QString PaosCreator::getNamespacePrefix(Namespace pPrefix, const QString& pSuffi
 	{
 		Q_ASSERT(pPrefix != Namespace::DEFAULT);
 		Q_ASSERT(!value.isEmpty());
-		value.append(':');
-		value.append(pSuffix);
+		value += ':';
+		value += pSuffix;
 	}
 	return value;
 }
@@ -197,10 +198,11 @@ QDomElement PaosCreator::createResultElement()
 		Result result = paosResponse->getResult();
 
 		element.appendChild(createTextElement(QStringLiteral("ResultMajor"), result.getMajorString()));
-		if (result.getMinor() != Result::Minor::null)
+		if (result.getMinor() != GlobalStatus::Code::Unknown_Error)
 		{
 			element.appendChild(createTextElement(QStringLiteral("ResultMinor"), result.getMinorString()));
 		}
+
 		if (!result.getMessage().isNull())
 		{
 			QDomElement resultElement = createTextElement(QStringLiteral("ResultMessage"), result.getMessage());

@@ -10,33 +10,43 @@ SectionPage
 {
 	id: root
 	leftTitleBarAction: TitleBarMenuAction { state: "back"; onClicked: pop() }
-	headerTitleBarAction: TitleBarAction { text: name }
+	headerTitleBarAction: TitleBarAction { text: name; font.bold: true }
 
-	content: Column {
+	property string name
+
+	content: Item
+	{
+		height: pane.height + 2 * Constants.component_spacing
 		width: root.width
 
-		Item { width: parent.width; height: Utils.dp(10)}
-		Pane {
-			id: pane
+		Column
+		{
+			anchors.fill: parent
+			anchors.margins: Constants.component_spacing
 
-			Text {
-				height: implicitHeight * 2
-				verticalAlignment: Text.AlignVCenter
-				text: qsTr("Provider Information")
-				color: Constants.blue
-				font.pixelSize: Constants.header_font_size
-				elide: Text.ElideRight
-			}
+			Pane {
+				id: pane
 
-			Repeater {
-				id: listView
-				model: certificateDescriptionModel
+				Text {
+					height: implicitHeight * 2
+					verticalAlignment: Text.AlignVCenter
+					text: qsTr("Provider Information")
+					color: Constants.blue
+					font.pixelSize: Constants.header_font_size
+					elide: Text.ElideRight
+				}
 
-				LabeledText {
-					id: delegate
-					label: model.label
-					text: model.text
-					width: parent.width
+				Repeater {
+					id: listView
+					model: certificateDescriptionModel
+
+					LabeledText {
+						id: delegate
+						label: model.label
+						text: model.text
+						textFormat: Text.PlainText
+						width: parent.width
+					}
 				}
 			}
 		}

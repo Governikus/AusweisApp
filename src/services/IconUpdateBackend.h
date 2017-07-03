@@ -10,17 +10,12 @@
 #include "UpdateBackend.h"
 
 #include <QDateTime>
-#include <QObject>
-
 
 namespace governikus
 {
 class IconUpdateBackend
-	: public QObject
-	, public UpdateBackend
+	: public UpdateBackend
 {
-	Q_OBJECT
-
 	private:
 		const QString mIcon;
 
@@ -35,7 +30,7 @@ class IconUpdateBackend
 
 		virtual void processSuccess(const QByteArray& pData) override;
 
-		virtual void processError() override;
+		virtual void processError(const GlobalStatus& pError) override;
 
 };
 

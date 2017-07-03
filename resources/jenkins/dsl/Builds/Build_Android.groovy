@@ -10,7 +10,7 @@ def j = new Build
 		name: 'Android_APK_' + ARCH,
 		libraries: 'Android_' + ARCH,
 		label: 'Android',
-		artifacts: 'build/dist/bin/AusweisApp2-*.apk'
+		artifacts: 'build/dist/**/AusweisApp2-*.apk'
 	).generate(this)
 
 
@@ -21,10 +21,14 @@ j.with
 		shell(strip("""\
 			cd build;
 			cmake ../source
+			-DCMAKE_BUILD_TYPE=release
 			-DCMAKE_PREFIX_PATH=\${WORKSPACE}/libs/build/dist
 			-DCMAKE_TOOLCHAIN_FILE=../source/cmake/android.toolchain.cmake
-			-DNDK_CCACHE=/usr/bin/ccache
-			-DANDROID_ABI=${ARCH}
+			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+			-DCMAKE_ANDROID_ARCH_ABI=${ARCH}
+			-DAPK_SIGN_KEYSTORE=\${APK_SIGN_KEYSTORE}
+			-DAPK_SIGN_KEYSTORE_ALIAS=\${APK_SIGN_KEYSTORE_ALIAS}
+			-DAPK_SIGN_KEYSTORE_PSW=\${APK_SIGN_KEYSTORE_PSW}
 			"""))
 
 		shell('cd build; make \${MAKE_FLAGS} install')

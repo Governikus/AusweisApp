@@ -10,9 +10,9 @@ Item {
 
 	property TitleBarMenuAction leftTitleBarAction: TitleBarMenuAction {}
 	property TitleBarAction headerTitleBarAction: TitleBarAction { text: qsTr("Provider"); font.bold: true }
-	property Item rightTitleBarAction: TitleBarSearchAction {
-		availableWidth: baseItem.width - leftTitleBarAction.contentWidth
-		onSearchTextChanged: providerModel.categoryFilter.updateSearchString(searchText)
+	property Item rightTitleBarAction: SearchBar {
+		availableWidth: baseItem.width
+		onSearchTextChanged: providerModel.searchString = searchText
 	}
 
 	property color titleBarColor: Constants.blue
@@ -28,9 +28,9 @@ Item {
 		visible: false
 	}
 
-	function pushProviderDetails(providerDetails) {
-		historyModel.nameFilter.setProviderAddress(providerDetails['address'])
-		push(providerDetailView, providerDetails)
+	function pushProviderDetails(model) {
+		historyModel.nameFilter.setProviderAddress(model.providerAddress)
+		push(providerDetailView, {providerModelItem: model})
 	}
 
 	Column {
@@ -54,6 +54,9 @@ Item {
 
 				padding: Utils.dp(30)
 				spacing: Utils.dp(30)
+
+				transformOrigin: Item.Center
+				scale: Math.min(parent.width / width, 1)
 
 				CategoryCheckbox {
 					id: checkBoxCitizen
@@ -108,72 +111,59 @@ Item {
 				id: noResultsText
 
 				anchors.centerIn: mainPane
-				text: qsTr("No results found")
+				text: qsTr("No match found")
 
 				wrapMode: Text.WordWrap
-				font.pixelSize: Utils.sp(18)
+				font.pixelSize: Constants.normal_font_size
 				visible: !flickable.visible
 			}
 
 			Flickable {
 				id: flickable
-
-				readonly property int paddingWidth: Utils.dp(10)
-				readonly property int spacingWidth: Utils.dp(20)
-
+				anchors.fill: mainPane
 				clip: true
 				flickableDirection: Flickable.VerticalFlick
 				visible: grid.hasResults
 
 				contentHeight: grid.height
 				contentWidth: parent.width
-				height: mainPane.height
-				width: mainPane.width
 
-				anchors.centerIn: parent
+				onContentYChanged: {
+					if (contentY < 0) { contentY = 0 /* prevent flicking over the top */}
+				}
 
 				Grid {
 					id: grid
-					columns: 4
-					padding: flickable.paddingWidth
-					spacing: flickable.spacingWidth
+					columns: Math.floor((parent.width - Constants.component_spacing) / (Utils.dp(196) + Constants.component_spacing))
+					padding: Constants.component_spacing
+					spacing: Constants.component_spacing
 					width: parent.width
 
-					property int cardHeight: (flickable.height - 2 * grid.padding - grid.spacing) / 2
-					property int cardWidth: (flickable.width - 2 * grid.padding - (grid.columns - 1) *
-												grid.spacing) / grid.columns
-					property bool hasResults: gridRepeater.count > 0 || additionalResults.visible
+					property int cardHeight: (flickable.height - Constants.component_spacing) / 2
+					property int cardWidth: (flickable.width - (grid.columns + 1) * Constants.component_spacing) / grid.columns
+					property bool hasResults: gridRepeater.count > 0 || additionalResults.totalHits > 0
 
 					Repeater {
 						id: gridRepeater
 
-						model: providerModel.categoryFilter
+						model: providerModel
 
 						ProviderCard {
-							pushFunction: baseItem.pushProviderDetails
-
-							height: grid.cardHeight
 							width: grid.cardWidth
-
-							providerCategory: category
-							headerImage: image
-							headerIcon: icon
-							providerName: longName !== "" ? longName : shortName
-							providerShortDescription: shortDescription
-							providerLongDescription: longDescription
-							providerAddress: address
-							providerHomepageBase: homepagebase
-							providerEmail: email
-							providerPhone: phone
-							providerPostalAddress: postalAddress
+							headerHeight: width / 1.80
+							textHeight: Utils.dp(64)
+							footerHeight: Utils.dp(30)
+							pushFunction: baseItem.pushProviderDetails
+							providerModel: model
 						}
 					}
 
-					AdditionalResultsCard {
+					AdditionalResultsItem {
 						id: additionalResults
-
-						height: grid.cardHeight
 						width: grid.cardWidth
+						headerHeight: width / 1.80
+						textHeight: Utils.dp(64)
+						footerHeight: Utils.dp(30)
 					}
 				}
 			}

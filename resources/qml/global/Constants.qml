@@ -23,9 +23,11 @@ Item {
 
 	readonly property int header_font_size: Utils.sp(22)
 	readonly property int normal_font_size: Utils.sp(16)
+	readonly property int label_font_size: Utils.sp(14)
 	readonly property int small_font_size: Utils.sp(12)
 
 	readonly property int titlebar_height: Utils.dp(48)
+	readonly property int titlebar_padding: Utils.dp(12)
 	readonly property int titlebar_font_size: PlatformConstants.titlebar_font_size
 
 	readonly property int menubar_width: Utils.dp(60)
@@ -41,5 +43,8 @@ Item {
 	readonly property int button_height: PlatformConstants.button_height
 
 	readonly property int tabbar_height: Utils.dp(48)
-	readonly property int tabbar_font_size: Utils.sp(10)
+
+	readonly property int component_spacing: Utils.dp(20)
+	readonly property int pane_padding: Utils.dp(20)
+	readonly property int pane_spacing: Utils.dp(20)
 }

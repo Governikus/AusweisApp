@@ -18,15 +18,13 @@ BluetoothReaderManagerPlugInPrivate::BluetoothReaderManagerPlugInPrivate(Bluetoo
 	: QObject(pPublic)
 	, q_ptr(pPublic)
 {
-	qRegisterMetaType<QBluetoothDeviceInfo>("QBluetoothDeviceInfo");
-	qRegisterMetaType<QLowEnergyCharacteristic>("QLowEnergyCharacteristic");
-	qRegisterMetaType<QLowEnergyDescriptor>("QLowEnergyDescriptor");
 }
 
 
 void BluetoothReaderManagerPlugInPrivate::init()
 {
 	Q_Q(BluetoothReaderManagerPlugIn);
+	q->setReaderInfoAvailable(true);
 	q->setBluetoothStatus(true);
 }
 

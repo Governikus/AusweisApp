@@ -12,7 +12,6 @@ Item {
 	id: header
 	/* this is interpreted by the SectionPage component */
 	readonly property real titleBarOpacity: shadow.opacity === 1 ? 1 : 0
-	readonly property int stopFlickOn: Constants.titlebar_height
 
 	Image {
 		id: dna
@@ -31,16 +30,13 @@ Item {
 			anchors.fill: parent
 			color: Constants.blue
 			opacity: Math.min(1, 0.5 + parent.transition() * 0.5)
-			Behavior on opacity {
-				NumberAnimation {}
-			}
 		}
 	}
 
 	Item {
 		id: information
 		height: Math.max(npa.height, text.height)
-		anchors.margins: Utils.dp(15)
+		anchors.margins: Constants.component_spacing
 		anchors.left: parent.left
 		anchors.right: parent.right
 		anchors.bottom: parent.bottom
@@ -52,18 +48,18 @@ Item {
 
 			height: Utils.dp(60)
 			width: height
-			source: "qrc:///images/npa.ico"
+			source: "qrc:///images/npa.svg"
 		}
 		Text {
 			id: text
 			anchors.verticalCenter: npa.verticalCenter
 			anchors.left: npa.right
-			anchors.leftMargin: Utils.dp(15)
+			anchors.leftMargin: Constants.component_spacing
 			anchors.right: parent.right
 
 			text: (applicationModel.currentWorkflow !== "authentication") ?
 					qsTr("Hello, here you have the opportunity to view the stored data on your identity card.") :
-					qsTr("Hello, \"%1\", wants to read your data").arg(certificateDescriptionModel.subjectName)
+					qsTr("Hello, \"%1\" wants to read your data.").arg(certificateDescriptionModel.subjectName)
 			wrapMode: Text.WordWrap
 			font.pixelSize: Constants.normal_font_size
 		}

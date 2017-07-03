@@ -1,0 +1,9 @@
+		{
+			"date": "APPCAST_DATE",
+			"platform": "APPCAST_PLATFORM",
+			"version": "APPCAST_VERSION",
+			"url": "APPCAST_URL",
+			"size": APPCAST_SIZE,
+			"checksum": "APPCAST_CHECKSUM",
+			"notes": "APPCAST_NOTES"
+		}

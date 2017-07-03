@@ -12,9 +12,11 @@ SectionPage {
 	id: baseItem
 
 	disableFlicking: true
-	headerTitleBarAction: TitleBarAction { text: "Pin"; font.bold: true }
+	headerTitleBarAction: TitleBarAction { text: qsTr("PIN Management"); font.bold: true }
 
-	ChangePinController {}
+	ChangePinController {
+		id: changePinControllern
+	}
 
 	content: PinViewContent {
 		height: baseItem.height
@@ -28,11 +30,11 @@ SectionPage {
 
 	ResultView {
 		id: pinResult
-		headerTitleBarAction: TitleBarAction { text: qsTr("Pin"); font.bold: true }
+		headerTitleBarAction: TitleBarAction { text: qsTr("PIN Management"); font.bold: true }
 		isError: !changePinModel.changedPinSuccessfully
 		text: changePinModel.resultString
 		onClicked: {
-			changePinModel.continueWorkflow()
+			numberModel.continueWorkflow()
 			pop(null)
 			navBar.lockedAndHidden = false
 		}
@@ -41,13 +43,20 @@ SectionPage {
 
 	EnterPinView {
 		id: enterPinView
+		leftTitleBarAction: TitleBarMenuAction { state: "cancel"; onClicked: changePinModel.cancelWorkflow() }
+		headerTitleBarAction: TitleBarAction { text: qsTr("Change PIN") }
 		visible: false
+
+		onPinEntered: {
+			numberModel.continueWorkflow()
+			pinView.push(pinProgressView)
+		}
 	}
 
 	ProgressView {
 		id: pinProgressView
 		leftTitleBarAction: TitleBarMenuAction { state: "cancel"; onClicked: changePinModel.cancelWorkflow() }
-		headerTitleBarAction: TitleBarAction { text: qsTr("Pin"); font.bold: true }
+		headerTitleBarAction: TitleBarAction { text: qsTr("PIN Management"); font.bold: true }
 		visible: false
 		text: qsTr("Processing...")
 	}

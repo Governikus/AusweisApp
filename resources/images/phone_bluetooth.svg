@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="320" height="500" viewBox="0 0 320 500">
+	<defs>
+		<g id="bt_symbol">
+			<path d="m 128,190 62,62 -30,36 0,-128 30,34 -62,60" fill="none" stroke="white" stroke-width="10" />
+		</g>
+	</defs>
+	<rect x="0" y="0" width="320" height="500" rx="20" ry="20" fill="#444445" />
+	<circle cx="160" cy="220" r="80" fill="#659ccd" />
+	<path d="m40 40 h240 v360 h-240 v-360 m40,180 a80,80,0 0 0 160,0 a80,80,0 0 0 -160,0 Z" fill="#eef5fb" />
+	<use xlink:href="#bt_symbol" x="40" y="50" transform="scale(0.8,0.8)"/>
+</svg>

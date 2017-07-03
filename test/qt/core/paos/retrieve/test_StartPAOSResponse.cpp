@@ -33,7 +33,7 @@ class test_StartPAOSResponse
 			StartPaosResponse message(content);
 
 			QCOMPARE(message.getResult().getMajor(), Result::Major::Ok);
-			QCOMPARE(message.getResult().getMinor(), Result::Minor::null);
+			QCOMPARE(message.getResult().getMinor(), GlobalStatus::Code::Unknown_Error);
 			QVERIFY(message.getResult().getMessage().isNull());
 		}
 
@@ -45,7 +45,7 @@ class test_StartPAOSResponse
 			StartPaosResponse message(content);
 
 			QCOMPARE(message.getResult().getMajor(), Result::Major::Error);
-			QCOMPARE(message.getResult().getMinor(), Result::Minor::DP_Timeout_Error);
+			QCOMPARE(message.getResult().getMinor(), GlobalStatus::Code::Paos_Error_DP_Timeout_Error);
 			QVERIFY(message.getResult().getMessage().isNull());
 		}
 
@@ -57,7 +57,7 @@ class test_StartPAOSResponse
 			StartPaosResponse message(content);
 
 			QCOMPARE(message.getResult().getMajor(), Result::Major::Error);
-			QCOMPARE(message.getResult().getMinor(), Result::Minor::DP_Timeout_Error);
+			QCOMPARE(message.getResult().getMinor(), GlobalStatus::Code::Paos_Error_DP_Timeout_Error);
 			QCOMPARE(message.getResult().getMessage(), QString("Detail message"));
 		}
 

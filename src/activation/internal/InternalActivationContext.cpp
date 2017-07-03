@@ -23,7 +23,7 @@ InternalActivationContext::~InternalActivationContext()
 }
 
 
-QUrl InternalActivationContext::getActivationURL()
+QUrl InternalActivationContext::getActivationURL() const
 {
 	return mTcTokenUrl;
 }
@@ -41,17 +41,17 @@ bool InternalActivationContext::sendOperationAlreadyActive()
 }
 
 
-bool InternalActivationContext::sendErrorPage(HttpStatusCode pStatusCode, const Result& pResult)
+bool InternalActivationContext::sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus)
 {
 	Q_UNUSED(pStatusCode)
-	Q_UNUSED(pResult)
+	Q_UNUSED(pStatus)
 	return true;
 }
 
 
-bool InternalActivationContext::sendRedirect(const QUrl& pRedirectAddress, const Result& pResult)
+bool InternalActivationContext::sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pStatus)
 {
 	Q_UNUSED(pRedirectAddress)
-	Q_UNUSED(pResult)
+	Q_UNUSED(pStatus)
 	return true;
 }

@@ -18,28 +18,28 @@ MockCard::~MockCard()
 }
 
 
-ReturnCode MockCard::connect()
+CardReturnCode MockCard::connect()
 {
-	mConnected = mCardConfig.mConnect == ReturnCode::OK;
+	mConnected = mCardConfig.mConnect == CardReturnCode::OK;
 	return mCardConfig.mConnect;
 }
 
 
-ReturnCode MockCard::disconnect()
+CardReturnCode MockCard::disconnect()
 {
-	mConnected = mCardConfig.mDisconnect == ReturnCode::OK;
+	mConnected = mCardConfig.mDisconnect == CardReturnCode::OK;
 	return mCardConfig.mDisconnect;
 }
 
 
-ReturnCode MockCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
+CardReturnCode MockCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 {
 	Q_UNUSED(pCmd);
 	if (mCardConfig.mTransmits.isEmpty())
 	{
 		qFatal("No (more) response APDU configured, but a(nother) command transmitted");
 	}
-	QPair<ReturnCode, QByteArray> config = mCardConfig.mTransmits.takeFirst();
+	QPair<CardReturnCode, QByteArray> config = mCardConfig.mTransmits.takeFirst();
 	pRes.setBuffer(config.second);
 	return config.first;
 }

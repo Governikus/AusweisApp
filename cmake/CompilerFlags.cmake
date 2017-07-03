@@ -5,6 +5,7 @@ ADD_DEFINITIONS(-DQT_NO_CAST_TO_ASCII)
 ADD_DEFINITIONS(-DQT_RESTRICTED_CAST_FROM_ASCII)
 ADD_DEFINITIONS(-DQT_NO_FOREACH)
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
+ADD_DEFINITIONS(-DQT_NO_EXCEPTIONS)
 
 IF(QT_VENDOR STREQUAL "Governikus")
 	ADD_DEFINITIONS(-DGOVERNIKUS_QT)
@@ -30,11 +31,13 @@ IF(MSVC)
 ELSE()
 	ADD_DEFINITIONS(-DQT_STRICT_ITERATORS)
 
+	STRING(REPLACE "-fexceptions" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wcast-qual -Wshadow -Wvla")
 
+	ADD_FLAG(-fno-exceptions)
 	ADD_FLAG(-fstack-protector-strong -fstack-protector)
 	ADD_FLAG(-fuse-ld=gold VAR CMAKE_EXE_LINKER_FLAGS CMAKE_SHARED_LINKER_FLAGS LINK -fuse-ld=gold)
-	ADD_FLAG(-Wfloat-conversion)
+	ADD_FLAG(-Wconversion)
 	ADD_FLAG(-Wloop-analysis)
 	ADD_FLAG(-Wlogical-op)
 	ADD_FLAG(-Wmisleading-indentation)
@@ -42,6 +45,17 @@ ELSE()
 	ADD_FLAG(-Wweak-vtables)
 	ADD_FLAG(-Wcovered-switch-default)
 	ADD_FLAG(-Wno-gnu-zero-variadic-macro-arguments) # Qt (qDebug) is not compatible
+
+	IF(ANDROID)
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now")
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -finline-limit=64")
+		SET(CMAKE_CXX_VISIBILITY_PRESET hidden)
+	ENDIF()
+
+	IF("${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
+		ADD_FLAG(-flto VAR CMAKE_EXE_LINKER_FLAGS CMAKE_SHARED_LINKER_FLAGS LINK -flto)
+	ENDIF()
+
 
 	IF(WARNINGS_ARE_ERRORS AND NOT CMAKE_GENERATOR STREQUAL Xcode)
 		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
@@ -58,10 +72,12 @@ ELSE()
 
 	SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 
-	IF(SANITIZER STREQUAL "address")
-		ADD_FLAG("-fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls" LINK -fsanitize=address)
-	ELSEIF(SANITIZER STREQUAL "undefined")
-		ADD_FLAG("-fsanitize=undefined -fno-omit-frame-pointer -fno-optimize-sibling-calls" LINK -fsanitize=undefined)
+	IF(SANITIZER)
+		IF(CMAKE_COMPILER_IS_GNUCXX)
+			ADD_FLAG("-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer -fno-optimize-sibling-calls" LINK -fsanitize=address -fsanitize=undefined)
+		ELSE()
+			ADD_FLAG("-fsanitize=address -fsanitize=undefined -fsanitize=unsigned-integer-overflow -fsanitize-address-use-after-scope -fno-omit-frame-pointer -fno-optimize-sibling-calls" LINK -fsanitize=address -fsanitize=undefined)
+		ENDIF()
 	ENDIF()
 ENDIF()
 

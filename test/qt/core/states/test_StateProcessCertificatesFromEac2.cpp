@@ -7,6 +7,7 @@
 #include "states/StateProcessCertificatesFromEac2.h"
 
 #include "Commands.h"
+#include "TestAuthContext.h"
 #include "TestFileHelper.h"
 #include "asn1/CVCertificateChainBuilder.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
@@ -32,10 +33,8 @@ class test_StateProcessCertificatesFromEac2
 	private Q_SLOTS:
 		void init()
 		{
-			mAuthContext.reset(new AuthContext(nullptr));
-			QSharedPointer<DIDAuthenticateEAC1> didAuthEac1(dynamic_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"))));
-			mAuthContext->setDidAuthenticateEac1(didAuthEac1);
-			QSharedPointer<DIDAuthenticateEAC2> didAuthEac2(dynamic_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"))));
+			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
+			QSharedPointer<DIDAuthenticateEAC2> didAuthEac2(static_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"))));
 			mAuthContext->setDidAuthenticateEac2(didAuthEac2);
 			EstablishPACEChannelOutput paceOutput;
 			paceOutput.parse(QByteArray::fromHex(TestFileHelper::readFile(":/card/EstablishPACEChannelOutput.hex")), PACE_PIN_ID::PACE_PIN);

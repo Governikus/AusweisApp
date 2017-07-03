@@ -5,7 +5,7 @@
 #include "GeneralSettingsWidget.h"
 
 #include "AppSettings.h"
-#include "Updater.h"
+#include "UpdateWindow.h"
 #include "ui_GeneralSettingsWidget.h"
 
 using namespace governikus;
@@ -76,5 +76,5 @@ void GeneralSettingsWidget::onCheckBoxStateChanged(int)
 
 void GeneralSettingsWidget::onUpdateCheckButtonClicked()
 {
-	Updater::getInstance().checkAppUpdate();
+	new UpdateWindow(false, this);
 }

@@ -7,7 +7,7 @@ SectionPage
 {
 	id: baseItem
 	leftTitleBarAction: TitleBarMenuAction { state: "cancel"; onClicked: {changePinModel.cancelWorkflow()} }
-	headerTitleBarAction: TitleBarAction { text: qsTr("Pin"); font.bold: true }
+	headerTitleBarAction: TitleBarAction { text: qsTr("PIN Management"); font.bold: true }
 
 	NfcWorkflow
 	{
@@ -15,8 +15,8 @@ SectionPage
 		state: parent.state
 		visible: parent.state.indexOf("nfc_") === 0
 		onAbortNfc: {
+			changePinControllern.readerType = "BLUETOOTH"
 			changePinModel.abortCardSelection()
-			changePinModel.setReaderType("BLUETOOTH");
 		}
 	}
 
@@ -26,5 +26,9 @@ SectionPage
 		anchors.fill: parent
 		state: parent.state
 		visible: parent.state.indexOf("bt_") === 0
+		onAbortBluetooth: {
+			changePinControllern.readerType = "NFC"
+			changePinModel.abortCardSelection()
+		}
 	}
 }

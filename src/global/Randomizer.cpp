@@ -39,9 +39,9 @@ template<typename T> QList<T> Randomizer::getEntropy()
 {
 	QList<T> entropy;
 
-	entropy += std::chrono::system_clock::now().time_since_epoch().count();
+	entropy += static_cast<T>(std::chrono::system_clock::now().time_since_epoch().count());
 	entropy += std::random_device()();
-	entropy += qrand();
+	entropy += static_cast<T>(qrand());
 
 	UniversalBuffer<T> buffer;
 	if (RAND_bytes(buffer.data, sizeof(buffer.data)))
@@ -61,7 +61,7 @@ template<typename T> QList<T> Randomizer::getEntropyWin()
 {
 	QList<T> entropy;
 
-#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN32
 	UniversalBuffer<T> buffer;
 	HCRYPTPROV provider = 0;
 	if (CryptAcquireContext(&provider, 0, 0, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT | CRYPT_SILENT))

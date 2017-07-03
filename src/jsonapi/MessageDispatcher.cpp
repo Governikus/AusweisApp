@@ -11,6 +11,7 @@
 #include "messages/MsgHandlerCertificate.h"
 #include "messages/MsgHandlerEnterCan.h"
 #include "messages/MsgHandlerEnterPin.h"
+#include "messages/MsgHandlerEnterPuk.h"
 #include "messages/MsgHandlerInfo.h"
 #include "messages/MsgHandlerInsertCard.h"
 #include "messages/MsgHandlerInternalError.h"
@@ -94,6 +95,9 @@ MsgHandler MessageDispatcher::createForStateChange(MsgType pStateType)
 		case MsgType::ENTER_CAN:
 			return MsgHandlerEnterCan(mContext);
 
+		case MsgType::ENTER_PUK:
+			return MsgHandlerEnterPuk(mContext);
+
 		case MsgType::ACCESS_RIGHTS:
 			return MsgHandlerAccessRights(mContext);
 
@@ -102,7 +106,7 @@ MsgHandler MessageDispatcher::createForStateChange(MsgType pStateType)
 
 		default:
 			mContext.getWorkflowContext()->setStateApproved();
-			return MsgHandler::MsgVoid;
+			return MsgHandler::Void;
 	}
 }
 
@@ -197,7 +201,7 @@ MsgHandler MessageDispatcher::cancel()
 	if (mContext.isActiveWorkflow())
 	{
 		Q_EMIT mContext.getWorkflowContext()->fireCancelWorkflow();
-		return MsgHandler::MsgVoid;
+		return MsgHandler::Void;
 	}
 
 	return MsgHandlerBadState(MsgCmdType::CANCEL);
@@ -209,7 +213,7 @@ MsgHandler MessageDispatcher::accept()
 	if (mContext.getLastStateMsg() == MsgType::ACCESS_RIGHTS)
 	{
 		mContext.getWorkflowContext()->setStateApproved();
-		return MsgHandler::MsgVoid;
+		return MsgHandler::Void;
 	}
 
 	return MsgHandlerBadState(MsgCmdType::ACCEPT);

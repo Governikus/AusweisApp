@@ -22,8 +22,7 @@ namespace governikus
 
 
 class BluetoothReader
-	: public Reader
-	, public ConnectableReader
+	: public ConnectableReader
 {
 	Q_OBJECT
 
@@ -38,6 +37,7 @@ class BluetoothReader
 	private Q_SLOTS:
 		void onInitialized(const QBluetoothDeviceInfo& pInfo);
 		void onDisconnected(const QBluetoothDeviceInfo& pInfo);
+		void onError(QLowEnergyController::Error pError);
 		void onStatusCharacteristicChanged(const QByteArray& pValue);
 
 	Q_SIGNALS:

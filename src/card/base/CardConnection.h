@@ -53,7 +53,7 @@ class CardConnection
 		UnblockPinCommand* createUnblockPinCommand(const QString& pPuk);
 
 		EstablishPaceChannelCommand* createEstablishPaceChannelCommand(PACE_PIN_ID pPacePinId, const QString& pPacePin, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription);
-		SetEidPinCommand* createSetEidPinCommand(const QString& pNewPin, uint pTimeoutSeconds = 60);
+		SetEidPinCommand* createSetEidPinCommand(const QString& pNewPin, quint8 pTimeoutSeconds);
 		DestroyPaceChannelCommand* createDestroyPaceChannelCommand();
 
 		DidAuthenticateEAC1Command* createDidAuthenticateEAC1Command();
@@ -87,7 +87,7 @@ class CardConnection
 		void onReaderInfoChanged(const ReaderInfo& pReaderInfo);
 
 	public:
-		CardConnection(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
+		CardConnection(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 		/*!
 		 * Destroys the CardConnection and disconnects from the card.
@@ -144,7 +144,7 @@ class CardConnection
 		template<typename T>
 		QMetaObject::Connection callSetEidPinCommand(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc,
 			const QString& pNewPin,
-			uint pTimeoutSeconds = 60)
+			quint8 pTimeoutSeconds = 60)
 		{
 			auto command = createSetEidPinCommand(pNewPin, pTimeoutSeconds);
 			return call(command, pReceiver, pFunc);

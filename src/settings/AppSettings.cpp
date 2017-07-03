@@ -19,16 +19,17 @@ AppSettings::AppSettings()
 	, mGeneralSettings()
 	, mPreVerificationSettings()
 	, mProviderSettings()
-	, mProxySettings()
 	, mSecureStorage()
 	, mHistorySettings()
+	, mRemoteReaderSettings()
 {
 	connect(&mDriverSettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
 	connect(&mGeneralSettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
 	connect(&mPreVerificationSettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
 	connect(&mProviderSettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
-	connect(&mProxySettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
 	connect(&mHistorySettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
+	connect(&mRemoteReaderSettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
+
 }
 
 
@@ -49,9 +50,9 @@ void AppSettings::load()
 	mGeneralSettings.load();
 	mPreVerificationSettings.load();
 	mProviderSettings.load();
-	mProxySettings.load();
 	mSecureStorage.load();
 	mHistorySettings.load();
+	mRemoteReaderSettings.load();
 }
 
 
@@ -69,8 +70,8 @@ void AppSettings::save()
 	mGeneralSettings.save();
 	mPreVerificationSettings.save();
 	mProviderSettings.save();
-	mProxySettings.save();
 	mHistorySettings.save();
+	mRemoteReaderSettings.save();
 }
 
 
@@ -98,12 +99,6 @@ ProviderSettings& AppSettings::getProviderSettings()
 }
 
 
-ProxySettings& AppSettings::getProxySettings()
-{
-	return mProxySettings;
-}
-
-
 SecureStorage& AppSettings::getSecureStorage()
 {
 	return mSecureStorage;
@@ -113,4 +108,10 @@ SecureStorage& AppSettings::getSecureStorage()
 HistorySettings& AppSettings::getHistorySettings()
 {
 	return mHistorySettings;
+}
+
+
+RemoteReaderSettings& AppSettings::getRemoteReaderSettings()
+{
+	return mRemoteReaderSettings;
 }

@@ -35,9 +35,9 @@ class UIPlugInAidl
 		static UIPlugInAidl* getInstance(bool pBlock = true);
 		bool isSuccessfullInitialized();
 		Q_INVOKABLE void onReceived(const QByteArray& pMessage);
-		void reset();
 
 	private Q_SLOTS:
+		void reset();
 		virtual void doShutdown() override;
 		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
 		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;

@@ -1,5 +1,5 @@
 /*!
- * \brief Unit tests for \ref test_NetworkManager
+ * \brief Unit tests for \ref NetworkManager
  *
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
@@ -31,29 +31,6 @@ class test_NetworkManager
 		void cleanup()
 		{
 			LogHandler::getInstance().resetBacklog();
-		}
-
-
-		void setProxy()
-		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
-
-			NetworkManager::getGlobalInstance().setProxy(QNetworkProxy::NoProxy);
-
-			QNetworkProxyQuery query;
-			QCOMPARE(QNetworkProxyFactory::proxyForQuery(query).size(), 1);
-
-			QCOMPARE(spy.count(), 3);
-			auto param = spy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("proxy -> none"));
-			spy.clear();
-
-			NetworkManager::getGlobalInstance().setProxy(QNetworkProxy::DefaultProxy);
-			QCOMPARE(QNetworkProxyFactory::proxyForQuery(query).size(), 1);
-
-			QCOMPARE(spy.count(), 3);
-			param = spy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("proxy -> system"));
 		}
 
 

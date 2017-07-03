@@ -214,7 +214,8 @@ bool CHAT::hasAccessRight(AccessRight pAccessRight) const
 
 void CHAT::removeAllAccessRights()
 {
-	for (auto accessRight : getAccessRights())
+	const auto& rights = getAccessRights();
+	for (auto accessRight : rights)
 	{
 		removeAccessRight(accessRight);
 	}
@@ -229,6 +230,11 @@ void CHAT::removeAccessRight(AccessRight pAccessRight)
 
 void chat_st::setTemplateBit(uint pBitIndex, bool pOn)
 {
+	if (pBitIndex > 39)
+	{
+		qCritical() << "Setting template bit > 39 not supported";
+		return;
+	}
 	if (mTemplate->length == 0)
 	{
 		static const unsigned char nullBytes[5] = {
@@ -237,15 +243,16 @@ void chat_st::setTemplateBit(uint pBitIndex, bool pOn)
 		ASN1_OCTET_STRING_set(mTemplate, nullBytes, 5);
 	}
 
-	quint8 byteNumber = 4 - (pBitIndex / 8);
+	// because pBitIndex < 40, it follows that pBitIndex / 8 <= 4, so byteNumber has no underflow
+	quint8 byteNumber = static_cast<quint8>(4 - (pBitIndex / 8));
 	quint8 bitNumberInByte = pBitIndex % 8;
 	if (pOn)
 	{
-		mTemplate->data[byteNumber] |= (0x01 << bitNumberInByte);
+		mTemplate->data[byteNumber] = static_cast<uchar>(mTemplate->data[byteNumber] | (0x01 << bitNumberInByte));
 	}
 	else
 	{
-		mTemplate->data[byteNumber] &= ~(0x01 << bitNumberInByte);
+		mTemplate->data[byteNumber] = static_cast<uchar>(mTemplate->data[byteNumber] & ~(0x01 << bitNumberInByte));
 	}
 
 }

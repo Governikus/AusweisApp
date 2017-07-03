@@ -29,50 +29,52 @@ BluetoothCard::BluetoothCard(QSharedPointer<CyberJackWaveDevice> pDevice)
 }
 
 
-ReturnCode BluetoothCard::connect()
+CardReturnCode BluetoothCard::connect()
 {
 	if (isConnected())
 	{
 		qCCritical(bluetooth) << "Card is already connected";
-		return ReturnCode::COMMAND_FAILED;
+		return CardReturnCode::COMMAND_FAILED;
 	}
 
 	auto request = BluetoothMessageCreator::createSetTransportProtocolRequest(BluetoothTransportProtocol::T1);
-	auto response = SynchronousBtCall(mDevice).send<BluetoothMessageSetTransportProtocolResponse>(request);
-	if (response == nullptr)
+	auto response = SynchronousBtCall(mDevice).send(request, BluetoothMsgId::SetTransportProtocolResponse);
+	if (response.isNull())
 	{
 		qCCritical(bluetooth) << "Response is empty";
-		return ReturnCode::COMMAND_FAILED;
+		return CardReturnCode::COMMAND_FAILED;
 	}
-	else if (response->getResultCode() != BluetoothResultCode::Ok)
+
+	auto resultCode = response.staticCast<const BluetoothMessageSetTransportProtocolResponse>()->getResultCode();
+	if (resultCode != BluetoothResultCode::Ok)
 	{
-		qCCritical(bluetooth) << "Cannot set transport protocol on card" << response->getResultCode();
-		return ReturnCode::COMMAND_FAILED;
+		qCCritical(bluetooth) << "Cannot set transport protocol on card" << resultCode;
+		return CardReturnCode::COMMAND_FAILED;
 	}
 
 	mConnected = true;
-	return ReturnCode::OK;
+	return CardReturnCode::OK;
 }
 
 
-ReturnCode BluetoothCard::disconnect()
+CardReturnCode BluetoothCard::disconnect()
 {
 	if (!isConnected())
 	{
 		qCCritical(bluetooth) << "Card is already disconnected";
-		return ReturnCode::COMMAND_FAILED;
+		return CardReturnCode::COMMAND_FAILED;
 	}
 
 	auto request = BluetoothMessageCreator::createDisconnectRequest();
-	auto response = SynchronousBtCall(mDevice).send<BluetoothMessageDisconnectResponse>(request, 1);
+	auto response = SynchronousBtCall(mDevice).send(request, BluetoothMsgId::DisconnectResponse, 1);
 	mConnected = false;
-	if (response == nullptr)
+	if (response.isNull())
 	{
 		qCCritical(bluetooth) << "Response is empty";
-		return ReturnCode::COMMAND_FAILED;
+		return CardReturnCode::COMMAND_FAILED;
 	}
 
-	return ReturnCode::OK;
+	return CardReturnCode::OK;
 }
 
 
@@ -82,44 +84,46 @@ bool BluetoothCard::isConnected()
 }
 
 
-ReturnCode BluetoothCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
+CardReturnCode BluetoothCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 {
 	return transmit(pCmd, pRes, 30);
 }
 
 
-ReturnCode BluetoothCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes, unsigned int pTimeoutSeconds)
+CardReturnCode BluetoothCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes, quint8 pTimeoutSeconds)
 {
 	if (!isConnected())
 	{
 		qCCritical(bluetooth) << "Card is not connected, abort transmit";
-		return ReturnCode::COMMAND_FAILED;
+		return CardReturnCode::COMMAND_FAILED;
 	}
 
 	qCDebug(bluetooth) << "Transmit command APDU: " << pCmd.getBuffer().toHex();
 	auto request = BluetoothMessageCreator::createTransferApduRequest(pCmd.getBuffer());
-	auto response = SynchronousBtCall(mDevice).send<BluetoothMessageTransferApduResponse>(request, pTimeoutSeconds);
-	if (response == nullptr)
+	auto response = SynchronousBtCall(mDevice).send(request, BluetoothMsgId::TransferApduResponse, pTimeoutSeconds);
+	if (response.isNull())
 	{
 		qCCritical(bluetooth) << "Response is empty";
-		return ReturnCode::COMMAND_FAILED;
+		return CardReturnCode::COMMAND_FAILED;
 	}
-	if (response->getResultCode() != BluetoothResultCode::Ok)
+
+	auto apduResponse = response.staticCast<const BluetoothMessageTransferApduResponse>();
+	if (apduResponse->getResultCode() != BluetoothResultCode::Ok)
 	{
-		qCCritical(bluetooth) << "TransferApduResponse failed : " << response->getResultCode();
-		return ReturnCode::COMMAND_FAILED;
+		qCCritical(bluetooth) << "TransferApduResponse failed : " << apduResponse->getResultCode();
+		return CardReturnCode::COMMAND_FAILED;
 	}
-	pRes.setBuffer(response->getResponseAPDU());
+	pRes.setBuffer(apduResponse->getResponseAPDU());
 	qCDebug(bluetooth) << "Transmit response APDU: " << pRes.getBuffer().toHex();
-	return ReturnCode::OK;
+	return CardReturnCode::OK;
 }
 
 
-ReturnCode BluetoothCard::establishPaceChannel(PACE_PIN_ID pPinId,
+CardReturnCode BluetoothCard::establishPaceChannel(PACE_PIN_ID pPinId,
 		const QByteArray& pChat,
 		const QByteArray& pCertificateDescription,
 		EstablishPACEChannelOutput& pChannelOutput,
-		int pTimeoutSeconds)
+		quint8 pTimeoutSeconds)
 {
 	EstablishPACEChannelBuilder builder;
 	builder.setPinId(pPinId);
@@ -128,8 +132,8 @@ ReturnCode BluetoothCard::establishPaceChannel(PACE_PIN_ID pPinId,
 
 	ResponseApdu response;
 
-	ReturnCode returnCode = transmit(builder.createCommandDataCcid(), response, pTimeoutSeconds);
-	if (returnCode != ReturnCode::OK)
+	CardReturnCode returnCode = transmit(builder.createCommandDataCcid(), response, pTimeoutSeconds);
+	if (returnCode != CardReturnCode::OK)
 	{
 		return returnCode;
 	}
@@ -139,7 +143,7 @@ ReturnCode BluetoothCard::establishPaceChannel(PACE_PIN_ID pPinId,
 }
 
 
-ReturnCode BluetoothCard::destroyPaceChannel()
+CardReturnCode BluetoothCard::destroyPaceChannel()
 {
 	DestroyPACEChannelBuilder builder;
 	ResponseApdu response;
@@ -147,14 +151,14 @@ ReturnCode BluetoothCard::destroyPaceChannel()
 }
 
 
-ReturnCode BluetoothCard::setEidPin(unsigned int pTimeoutSeconds)
+CardReturnCode BluetoothCard::setEidPin(quint8 pTimeoutSeconds)
 {
 	PinModifyBuilder builder;
 	CommandApdu command = builder.createCommandDataCcid(pTimeoutSeconds);
 
 	ResponseApdu response;
-	ReturnCode returnCode = transmit(command, response, pTimeoutSeconds);
-	if (returnCode != ReturnCode::OK)
+	CardReturnCode returnCode = transmit(command, response, pTimeoutSeconds);
+	if (returnCode != CardReturnCode::OK)
 	{
 		return returnCode;
 	}

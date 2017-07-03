@@ -154,6 +154,96 @@ class test_ProviderParser
 		}
 
 
+		void parseTcTokenUrl()
+		{
+			QByteArray data = QByteArray("{"
+										 "   \"provider\": ["
+										 "      {"
+										 "      },"
+										 "      {"
+										 "         \"tcTokenUrl\": \"https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf\""
+										 "      }"
+										 "   ]"
+										 "}");
+
+			QSharedPointer<ProviderSettings> providerSettings = parser.parse(data);
+
+			QVERIFY(providerSettings);
+			QVERIFY(providerSettings->getIssueDate().isNull());
+			QCOMPARE(providerSettings->getProviders().size(), 2);
+
+			auto provider = providerSettings->getProviders()[0];
+			QCOMPARE(provider.getTcTokenUrl(), QString());
+
+			provider = providerSettings->getProviders()[1];
+			QCOMPARE(provider.getTcTokenUrl(), QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf"));
+		}
+
+
+		void parseClientUrl()
+		{
+			QByteArray data = QByteArray("{"
+										 "   \"provider\": ["
+										 "      {"
+										 "      },"
+										 "      {"
+										 "         \"clientUrl\": \"https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld\""
+										 "      }"
+										 "   ]"
+										 "}");
+
+			QSharedPointer<ProviderSettings> providerSettings = parser.parse(data);
+
+			QVERIFY(providerSettings);
+			QVERIFY(providerSettings->getIssueDate().isNull());
+			QCOMPARE(providerSettings->getProviders().size(), 2);
+
+			auto provider = providerSettings->getProviders()[0];
+			QCOMPARE(provider.getTcTokenUrl(), QString());
+
+			provider = providerSettings->getProviders()[1];
+			QCOMPARE(provider.getClientUrl(), QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"));
+		}
+
+
+		void parseSubjectUrls()
+		{
+			QByteArray data = QByteArray("{"
+										 "   \"provider\": ["
+										 "      {"
+										 "      },"
+										 "      {"
+										 "         \"subjectUrls\": []"
+										 "      },"
+										 "      {"
+										 "         \"subjectUrls\": [\"https://npa.allianz.de/bla1\"]"
+										 "      },"
+										 "      {"
+										 "         \"subjectUrls\": [\"https://npa.allianz.de/bla1\", \"https://npa.allianz.de/bla2\"]"
+										 "      }"
+										 "   ]"
+										 "}");
+
+			QSharedPointer<ProviderSettings> providerSettings = parser.parse(data);
+
+			QVERIFY(providerSettings);
+			QVERIFY(providerSettings->getIssueDate().isNull());
+			QCOMPARE(providerSettings->getProviders().size(), 4);
+
+			auto provider = providerSettings->getProviders()[0];
+			QCOMPARE(provider.getSubjectUrls(), QStringList());
+
+			provider = providerSettings->getProviders()[1];
+			QCOMPARE(provider.getSubjectUrls(), QStringList());
+
+			provider = providerSettings->getProviders()[2];
+			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://npa.allianz.de/bla1")}));
+
+			provider = providerSettings->getProviders()[3];
+			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla2")}));
+		}
+
+
 		void defaultProviders()
 		{
 			QByteArray data = TestFileHelper::readFile(QCoreApplication::applicationDirPath() + "/default-providers.json");
@@ -163,6 +253,17 @@ class test_ProviderParser
 			QVERIFY(providerSettings);
 			QVERIFY(providerSettings->getIssueDate().isValid());
 			QVERIFY(!providerSettings->getProviders().isEmpty());
+		}
+
+
+		void parseCallCosts()
+		{
+			QByteArray data = TestFileHelper::readFile(QCoreApplication::applicationDirPath() + "/default-providers.json");
+
+			QSharedPointer<ProviderSettings> providerSettings = parser.parse(data);
+
+			QVERIFY(providerSettings);
+			QCOMPARE(providerSettings->mCallCosts.size(), 17);
 		}
 
 

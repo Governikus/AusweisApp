@@ -8,8 +8,6 @@
 
 #include "Template.h"
 #include "UrlUtil.h"
-#include "qhttpserver/qhttprequest.h"
-#include "qhttpserver/qhttpresponse.h"
 
 #include <QFile>
 #include <QLoggingCategory>
@@ -20,19 +18,17 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(activation)
 
-void WebserviceActivationContext::setCommonHeaders(QSharedPointer<QHttpResponse> pResponse)
+void WebserviceActivationContext::setCommonHeaders(HttpResponse& pResponse)
 {
-	WebserviceActivationContext::setServerHeader(*pResponse.data());
-	pResponse->setHeader(QStringLiteral("Connection"), QStringLiteral("close"));
-	pResponse->setHeader(QStringLiteral("Cache-Control"), QStringLiteral("no-cache, no-store"));
-	pResponse->setHeader(QStringLiteral("Pragma"), QStringLiteral("no-cache"));
+	pResponse.setHeader(QByteArrayLiteral("Connection"), QByteArrayLiteral("close"));
+	pResponse.setHeader(QByteArrayLiteral("Cache-Control"), QByteArrayLiteral("no-cache, no-store"));
+	pResponse.setHeader(QByteArrayLiteral("Pragma"), QByteArrayLiteral("no-cache"));
 }
 
 
-WebserviceActivationContext::WebserviceActivationContext(QSharedPointer<QHttpRequest> pRequest, QSharedPointer<QHttpResponse> pResponse)
+WebserviceActivationContext::WebserviceActivationContext(const QSharedPointer<HttpRequest>& pRequest)
 	: ActivationContext()
 	, mRequest(pRequest)
-	, mResponse(pResponse)
 {
 }
 
@@ -42,32 +38,28 @@ WebserviceActivationContext::~WebserviceActivationContext()
 }
 
 
-QUrl WebserviceActivationContext::getActivationURL()
+QUrl WebserviceActivationContext::getActivationURL() const
 {
-	return mRequest->url();
+	return mRequest->getUrl();
 }
 
 
 bool WebserviceActivationContext::sendProcessing()
 {
-	if (mResponse->getState() != QAbstractSocket::ConnectedState)
+	if (!mRequest->isConnected())
 	{
 		mSendError = tr("The browser connection was lost.");
 		return false;
 	}
 
-	WebserviceActivationContext::setServerHeader(*mResponse.data());
-	mResponse->setHeader(QStringLiteral("Content-Length"), QStringLiteral("0"));
-	mResponse->writeHead(QHttpResponse::STATUS_PROCESSING);
-	// allow final writing in StateRedirectBrowser
-	mResponse->clearHeaders();
+	mRequest->send(HttpStatusCode::PROCESSING);
 	return true;
 }
 
 
 bool WebserviceActivationContext::sendOperationAlreadyActive()
 {
-	if (mResponse->getState() != QAbstractSocket::ConnectedState)
+	if (!mRequest->isConnected())
 	{
 		mSendError = tr("The browser connection was lost.");
 		return false;
@@ -78,22 +70,21 @@ bool WebserviceActivationContext::sendOperationAlreadyActive()
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER"), tr("Cannot start authentication"));
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER_EXPLANATION"), tr("An operation is already in progress."));
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_HEADER"), tr("Would you like to try again?"));
-	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_LINK"), mRequest->url().toString());
+	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_LINK"), mRequest->getUrl().toString());
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_BUTTON"), tr("Try again"));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
-	WebserviceActivationContext::setServerHeader(*mResponse.data());
-	mResponse->setHeader(QStringLiteral("Content-Type"), QStringLiteral("text/html; charset=utf-8"));
-	mResponse->setHeader(QStringLiteral("Content-Length"), QString::number(htmlPage.size()));
-	mResponse->writeHead(QHttpResponse::STATUS_NOT_FOUND);
-	mResponse->end(htmlPage);
+	HttpResponse response;
+	response.setStatus(HttpStatusCode::NOT_FOUND);
+	response.setBody(htmlPage, QByteArrayLiteral("text/html; charset=utf-8"));
+	mRequest->send(response);
 	return true;
 }
 
 
-bool WebserviceActivationContext::sendErrorPage(HttpStatusCode pStatusCode, const Result& pResult)
+bool WebserviceActivationContext::sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus)
 {
-	if (mResponse->getState() != QAbstractSocket::ConnectedState)
+	if (!mRequest->isConnected())
 	{
 		mSendError = tr("The browser connection was lost.");
 		return false;
@@ -116,27 +107,27 @@ bool WebserviceActivationContext::sendErrorPage(HttpStatusCode pStatusCode, cons
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER"), tr("Invalid request"));
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER_EXPLANATION"), tr("Your browser sent a request that couldn't be interpreted."));
 	htmlTemplate.setContextParameter(QStringLiteral("ERROR_MESSAGE_LABEL"), tr("Error message"));
-	htmlTemplate.setContextParameter(QStringLiteral("ERROR_MESSAGE"), pResult.getMessage());
+	htmlTemplate.setContextParameter(QStringLiteral("ERROR_MESSAGE"), pStatus.toErrorDescription(true));
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_HEADER"), tr("Would you like to report this error?"));
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_LINK"), tr("https://www.ausweisapp.bund.de/en/feedback/melden-sie-einen-fehler/"));
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_BUTTON"), tr("Report now"));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
-	setCommonHeaders(mResponse);
-	mResponse->setHeader(QStringLiteral("Content-Type"), QStringLiteral("text/html; charset=utf-8"));
-	mResponse->setHeader(QStringLiteral("Content-Length"), QString::number(htmlPage.size()));
-	mResponse->writeHead(static_cast<int>(pStatusCode));
-	mResponse->end(htmlPage);
+	HttpResponse response;
+	setCommonHeaders(response);
+	response.setStatus(pStatusCode);
+	response.setBody(htmlPage, QByteArrayLiteral("text/html; charset=utf-8"));
+	mRequest->send(response);
 	return true;
 }
 
 
-bool WebserviceActivationContext::sendRedirect(const QUrl& pRedirectAddress, const Result& pResult)
+bool WebserviceActivationContext::sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pStatus)
 {
-	QUrl redirectAddressWithResult = UrlUtil::addMajorMinor(pRedirectAddress, pResult);
+	QUrl redirectAddressWithResult = UrlUtil::addMajorMinor(pRedirectAddress, pStatus);
 	qCDebug(activation) << "Redirect URL:" << redirectAddressWithResult;
 
-	if (mResponse->getState() != QAbstractSocket::ConnectedState)
+	if (!mRequest->isConnected())
 	{
 		mSendError = tr("The connection to the bowser was lost. No forwarding was executed. Please try to"
 						" call the URL again manually: <a href='%1'>%2</a>").arg(redirectAddressWithResult.toString(), redirectAddressWithResult.host());
@@ -144,19 +135,10 @@ bool WebserviceActivationContext::sendRedirect(const QUrl& pRedirectAddress, con
 	}
 
 	qCDebug(activation) << "Redirecting now to URL:" << redirectAddressWithResult;
-	setCommonHeaders(mResponse);
-	mResponse->setHeader(QStringLiteral("Location"), QString::fromLatin1(redirectAddressWithResult.toEncoded()));
-	mResponse->setHeader(QStringLiteral("Content-Length"), QStringLiteral("0"));
-	mResponse->writeHead(QHttpResponse::STATUS_SEE_OTHER);
-	mResponse->end();
+	HttpResponse response;
+	setCommonHeaders(response);
+	response.setHeader(QByteArrayLiteral("Location"), redirectAddressWithResult.toEncoded());
+	response.setStatus(HttpStatusCode::SEE_OTHER);
+	mRequest->send(response);
 	return true;
-}
-
-
-void WebserviceActivationContext::setServerHeader(QHttpResponse& pReply)
-{
-	/*
-	 * According to TR-03124-1, chapter 2.2.2.1, the Server-header shall have the following form:
-	 */
-	pReply.setHeader(QStringLiteral("Server"), QCoreApplication::applicationName() + "/" + QCoreApplication::applicationVersion() + " (TR-03124-1/1.2)");
 }

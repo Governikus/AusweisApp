@@ -17,7 +17,6 @@ CreateCardConnectionCommand::CreateCardConnectionCommand(const QString& pReaderN
 	, mReaderManagerWorker(pReaderManagerWorker)
 	, mCardConnection(nullptr)
 {
-	qRegisterMetaType<QSharedPointer<CreateCardConnectionCommand> >("QSharedPointer<CreateCardConnectionCommand>");
 }
 
 
@@ -53,4 +52,15 @@ void CreateCardConnectionCommand::onCardConnectionWorkerCreated(QSharedPointer<C
 QSharedPointer<CardConnection> CreateCardConnectionCommand::getCardConnection() const
 {
 	return mCardConnection;
+}
+
+
+void CreateCardConnectionCommand::registerMetaTypes()
+{
+	static bool registered = false;
+	if (!registered)
+	{
+		qRegisterMetaType<QSharedPointer<CreateCardConnectionCommand> >("QSharedPointer<CreateCardConnectionCommand>");
+		registered = true;
+	}
 }

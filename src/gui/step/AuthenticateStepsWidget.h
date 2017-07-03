@@ -23,7 +23,6 @@ namespace governikus
 
 class BusyOverlayContainer;
 class SelfInfoWidget;
-class StepChooseDeviceWidget;
 class StepAuthenticationEac1Widget;
 
 class AuthenticateStepsWidget
@@ -40,8 +39,6 @@ class AuthenticateStepsWidget
 			return mProcessingPage;
 		}
 
-
-		StepChooseDeviceWidget* getChooseDevicePage() const;
 
 		StepAuthenticationEac1Widget* getEac1Page() const;
 

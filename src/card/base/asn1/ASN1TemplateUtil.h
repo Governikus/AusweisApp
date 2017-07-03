@@ -99,18 +99,16 @@ void freeAsn1Object(T*)
 template<typename T>
 QSharedPointer<T> decodeObject(const QByteArray& pData)
 {
-	{
-		const char* tmp = pData.constData();
-		const unsigned char** dataPointer = reinterpret_cast<unsigned const char**>(&tmp);
+	const char* tmp = pData.constData();
+	const unsigned char** dataPointer = reinterpret_cast<unsigned const char**>(&tmp);
 
-		T* object = nullptr;
-		decodeAsn1Object(&object, dataPointer, pData.length());
-		static auto deleter = [](T* pTypeObject)
-				{
-					freeAsn1Object(pTypeObject);
-				};
-		return QSharedPointer<T>(object, deleter);
-	}
+	T* object = nullptr;
+	decodeAsn1Object(&object, dataPointer, pData.length());
+	static auto deleter = [](T* pTypeObject)
+			{
+				freeAsn1Object(pTypeObject);
+			};
+	return QSharedPointer<T>(object, deleter);
 }
 
 

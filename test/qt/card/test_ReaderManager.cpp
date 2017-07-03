@@ -5,12 +5,12 @@
 
 #include "MockReaderManagerPlugIn.h"
 #include "ReaderManager.h"
+#include "ReaderManagerWorker.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QSharedPointer>
 #include <QSignalSpy>
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtTest>
 
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
@@ -58,6 +58,7 @@ class test_ReaderManager
 	private Q_SLOTS:
 		void initTestCase()
 		{
+			ReaderManagerWorker::registerMetaTypes();
 			ReaderManager::getInstance().init();
 			ReaderManager::getInstance().getPlugInInfos(); // just to wait until initialization finished
 		}
@@ -124,7 +125,7 @@ class test_ReaderManager
 			CreateCardConnectionCommandSlot commandSlot;
 			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711");
 			MockCardConfig cardConfig;
-			cardConfig.mConnect = ReturnCode::COMMAND_FAILED;
+			cardConfig.mConnect = CardReturnCode::COMMAND_FAILED;
 			reader->setCard(cardConfig);
 
 			ReaderManager::getInstance().callCreateCardConnectionCommand("MockReader 4711", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
@@ -140,7 +141,7 @@ class test_ReaderManager
 			CreateCardConnectionCommandSlot commandSlot;
 			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711");
 			MockCardConfig cardConfig;
-			cardConfig.mConnect = ReturnCode::OK;
+			cardConfig.mConnect = CardReturnCode::OK;
 			reader->setCard(cardConfig);
 
 			ReaderManager::getInstance().callCreateCardConnectionCommand("MockReader 4711", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);

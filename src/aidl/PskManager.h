@@ -24,7 +24,7 @@ class PskManager
 
 	public:
 		static PskManager& getInstance();
-		QString generatePsk(const QString& pClientPartialPsk);
+		QByteArray generatePsk(const QByteArray& pClientPartialPsk = QByteArray());
 		QByteArray getPsk();
 		bool isSecureRandomPsk();
 };

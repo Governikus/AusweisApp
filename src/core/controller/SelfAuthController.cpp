@@ -18,6 +18,7 @@
 #include "states/StateEACAdditionalInputType.h"
 #include "states/StateEstablishPaceCan.h"
 #include "states/StateEstablishPacePin.h"
+#include "states/StateEstablishPacePuk.h"
 #include "states/StateGenericSendReceive.h"
 #include "states/StateGetSelfAuthenticationData.h"
 #include "states/StateGetTcToken.h"
@@ -57,6 +58,7 @@ SelfAuthController::SelfAuthController(QSharedPointer<SelfAuthenticationContext>
 	auto sUpdateRetryCounter = addAndConnectState<StateUpdateRetryCounter>();
 	auto sEstablishPaceCan = addAndConnectState<StateEstablishPaceCan>();
 	auto sEstablishPacePin = addAndConnectState<StateEstablishPacePin>();
+	auto sEstablishPacePuk = addAndConnectState<StateEstablishPacePuk>();
 	auto sDidAuthenticateEac1 = addAndConnectState<StateDidAuthenticateEac1>();
 	auto sSendDidAuthenticateResponseEac1 = addAndConnectState<StateSendDIDAuthenticateResponseEAC1>();
 	auto sEacAdditionalInputType = addAndConnectState<StateEACAdditionalInputType>();
@@ -124,9 +126,14 @@ SelfAuthController::SelfAuthController(QSharedPointer<SelfAuthenticationContext>
 
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &StateUpdateRetryCounter::fireRetryCounterIsGTOne, sEstablishPacePin);
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &StateUpdateRetryCounter::fireRetryCounterIsOne, sEstablishPaceCan);
-	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &StateUpdateRetryCounter::fireRetryCounterIsZero, sSendDidAuthenticateResponseEac1);
+	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &StateUpdateRetryCounter::fireRetryCounterIsZero, sEstablishPacePuk);
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireError, sSendDidAuthenticateResponseEac1);
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireCancel, sSendDidAuthenticateResponseEac1);
+
+	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireSuccess, sEstablishPacePin);
+	sEstablishPacePuk->addTransition(sEstablishPacePuk, &StateEstablishPacePuk::fireInvalidPuk, sUpdateRetryCounter);
+	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireError, sSendDidAuthenticateResponseEac1);
+	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireCancel, sSendDidAuthenticateResponseEac1);
 
 	sEstablishPaceCan->addTransition(sEstablishPaceCan, &AbstractState::fireSuccess, sEstablishPacePin);
 	sEstablishPaceCan->addTransition(sEstablishPaceCan, &StateEstablishPaceCan::fireInvalidCan, sUpdateRetryCounter);

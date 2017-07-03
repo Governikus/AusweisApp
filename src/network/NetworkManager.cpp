@@ -4,10 +4,9 @@
 
 #include "NetworkManager.h"
 
-#include "ErrorMessage.h"
+#include "AppSettings.h"
 #include "NetworkReplyError.h"
 #include "NetworkReplyTimeout.h"
-#include "TlsConfiguration.h"
 #include "VersionInfo.h"
 
 #include <QCoreApplication>
@@ -104,8 +103,10 @@ NetworkManager::NetworkManager()
 		mNetAccessManagerPsk->useAuthenticationManagerFrom(*mNetAccessManager);
 	}
 
+#ifndef QT_NO_NETWORKPROXY
 	connect(mNetAccessManager.data(), &QNetworkAccessManager::proxyAuthenticationRequired, this, &NetworkManager::fireProxyAuthenticationRequired);
 	connect(mNetAccessManagerPsk.data(), &QNetworkAccessManager::proxyAuthenticationRequired, this, &NetworkManager::fireProxyAuthenticationRequired);
+#endif
 }
 
 
@@ -137,12 +138,12 @@ QNetworkReply* NetworkManager::paos(QNetworkRequest& pRequest, const QByteArray&
 	QNetworkReply* response;
 	if (pUsePsk)
 	{
-		pRequest.setSslConfiguration(TlsConfiguration::createPskSslConfiguration());
+		pRequest.setSslConfiguration(AppSettings::getInstance().getSecureStorage().getTlsSettingsPsk().getConfiguration());
 		response = mNetAccessManagerPsk->post(pRequest, pData);
 	}
 	else
 	{
-		pRequest.setSslConfiguration(TlsConfiguration::createSslConfiguration());
+		pRequest.setSslConfiguration(AppSettings::getInstance().getSecureStorage().getTlsSettings().getConfiguration());
 		response = mNetAccessManager->post(pRequest, pData);
 	}
 
@@ -159,7 +160,7 @@ QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest, int pTimeoutInMill
 	}
 
 	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
-	pRequest.setSslConfiguration(TlsConfiguration::createSslConfiguration());
+	pRequest.setSslConfiguration(AppSettings::getInstance().getSecureStorage().getTlsSettings().getConfiguration());
 	QNetworkReply* response = mNetAccessManager->get(pRequest);
 	trackConnection(response, pTimeoutInMilliSeconds);
 	return response;
@@ -169,7 +170,7 @@ QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest, int pTimeoutInMill
 QSslSocket* NetworkManager::createSslSocket(const QUrl& pUrl)
 {
 	QSslSocket* socket = new QSslSocket();
-	socket->setSslConfiguration(TlsConfiguration::createSslConfiguration());
+	socket->setSslConfiguration(AppSettings::getInstance().getSecureStorage().getTlsSettings().getConfiguration());
 	configureProxy(socket, pUrl);
 	return socket;
 }
@@ -177,12 +178,17 @@ QSslSocket* NetworkManager::createSslSocket(const QUrl& pUrl)
 
 void NetworkManager::configureProxy(QTcpSocket* pSocket, const QUrl& pUrl)
 {
+#ifndef QT_NO_NETWORKPROXY
 	// set the proxy explicitly, otherwise the proxy exception don't count
 	QNetworkProxyQuery query(pUrl, QNetworkProxyQuery::QueryType::TcpSocket);
-	QNetworkProxy proxy = QNetworkProxyFactory::proxyForQuery(query).last();
+	const QNetworkProxy& proxy = QNetworkProxyFactory::proxyForQuery(query).constLast();
 	pSocket->setProxy(proxy);
 
 	connect(pSocket, &QTcpSocket::proxyAuthenticationRequired, this, &NetworkManager::fireProxyAuthenticationRequired);
+#else
+	Q_UNUSED(pSocket)
+	Q_UNUSED(pUrl)
+#endif
 }
 
 
@@ -201,36 +207,72 @@ void NetworkManager::onShutdown()
 }
 
 
-QString NetworkManager::getLocalizedErrorString(QNetworkReply* pNetworkReply)
+NetworkManager::NetworkError NetworkManager::toNetworkError(const QNetworkReply* const pNetworkReply)
 {
 	qCDebug(network) << "Select error message for:" << pNetworkReply->error();
-	const QString requestUrl = pNetworkReply->request().url().toString();
 	switch (pNetworkReply->error())
 	{
 		case QNetworkReply::TimeoutError:
-			return ErrorMessage::toString(ErrorMessageId::TIME_OUT);
+			return NetworkError::TimeOut;
 
-		// Fall through
 		case QNetworkReply::ProxyAuthenticationRequiredError:
 		case QNetworkReply::ProxyConnectionClosedError:
 		case QNetworkReply::ProxyConnectionRefusedError:
 		case QNetworkReply::ProxyNotFoundError:
 		case QNetworkReply::ProxyTimeoutError:
 		case QNetworkReply::UnknownProxyError:
-			return ErrorMessage::toString(ErrorMessageId::PROXY_ERROR);
+			return NetworkError::ProxyError;
 
 		case QNetworkReply::SslHandshakeFailedError:
-			return ErrorMessage::toString(ErrorMessageId::SSL_ERROR);
+			return NetworkError::SslError;
 
 		default:
-			return getLocalizedErrorString(pNetworkReply->errorString(), requestUrl);
+			qCCritical(network) << "Network error opening URL" << pNetworkReply->request().url().toString();
+			qCCritical(network) << "Network error description" << pNetworkReply->errorString();
+			return NetworkError::OtherError;
 	}
 }
 
 
-QString NetworkManager::getLocalizedErrorString(QTcpSocket* pTcpSocket, const QString& pPeerAddress)
+GlobalStatus NetworkManager::toTrustedChannelStatus(const QNetworkReply* const pNetworkReply)
 {
-	return getLocalizedErrorString(pTcpSocket->errorString(), pPeerAddress);
+	switch (toNetworkError(pNetworkReply))
+	{
+		case NetworkManager::NetworkError::TimeOut:
+			return GlobalStatus::Code::Workflow_TrustedChannel_TimeOut;
+
+		case NetworkManager::NetworkError::ProxyError:
+			return GlobalStatus::Code::Workflow_TrustedChannel_Proxy_Error;
+
+		case NetworkManager::NetworkError::SslError:
+			return GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Establishment_Error;
+
+		case NetworkManager::NetworkError::OtherError:
+			return GlobalStatus::Code::Workflow_TrustedChannel_Other_Network_Error;
+	}
+
+	return GlobalStatus::Code::Unknown_Error;
+}
+
+
+GlobalStatus NetworkManager::toStatus(const QNetworkReply* const pNetworkReply)
+{
+	switch (toNetworkError(pNetworkReply))
+	{
+		case NetworkManager::NetworkError::TimeOut:
+			return GlobalStatus::Code::Network_TimeOut;
+
+		case NetworkManager::NetworkError::ProxyError:
+			return GlobalStatus::Code::Network_Proxy_Error;
+
+		case NetworkManager::NetworkError::SslError:
+			return GlobalStatus::Code::Network_Ssl_Establishment_Error;
+
+		case NetworkManager::NetworkError::OtherError:
+			return GlobalStatus::Code::Network_Other_Error;
+	}
+
+	return GlobalStatus::Code::Unknown_Error;
 }
 
 
@@ -240,29 +282,14 @@ void NetworkManager::trackConnection(QNetworkReply* pResponse, const int pTimeou
 
 	mOpenConnectionCount++;
 	connect(pResponse, &QNetworkReply::finished, [&] {
-		--mOpenConnectionCount;
-	});
+				--mOpenConnectionCount;
+			});
 
 	NetworkReplyTimeout::setTimeout(pResponse, pTimeoutInMilliSeconds);
 }
 
 
-QString NetworkManager::getLocalizedErrorString(const QString& pErrorString, const QString& pRequestUrl)
-{
-	qCCritical(network) << "Network error opening URL" << pRequestUrl;
-	qCCritical(network) << "Network error description" << pErrorString;
-	return ErrorMessage::tr(ErrorMessage::CONTACT_SUPPORT);
-}
-
-
-QDebug operator <<(QDebug pDbg, const QNetworkProxyQuery& pQuery)
-{
-	QDebugStateSaver saver(pDbg);
-	pDbg.nospace() << "ProxyQuery(type:" << (int) pQuery.queryType() << ", protocol:" << pQuery.protocolTag() << ", peerPort:" << pQuery.peerPort() << ", peerHostName:" << pQuery.peerHostName() << ", localPort:" << pQuery.localPort() << ", url:" << pQuery.url() << ")";
-	return pDbg;
-}
-
-
+#ifndef QT_NO_NETWORKPROXY
 namespace
 {
 class NoProxyFactory
@@ -314,25 +341,20 @@ class SystemProxyFactory
 
 }
 
-void NetworkManager::setProxy(QNetworkProxy::ProxyType pProxyType)
+void NetworkManager::setApplicationProxyFactory()
 {
 	if (Q_UNLIKELY(mLockProxy))
 	{
-		qCWarning(network) << "Won't use proxy settings because they are locked!";
-		pProxyType = QNetworkProxy::NoProxy;
+		qCWarning(network) << "Won't use system proxy because user locked it!";
+		qCDebug(network) << "proxy -> none";
+		QNetworkProxyFactory::setApplicationProxyFactory(new NoProxyFactory());
 	}
-
-	switch (pProxyType)
+	else
 	{
-		case QNetworkProxy::NoProxy:
-			qCDebug(network) << "proxy -> none";
-			QNetworkProxyFactory::setApplicationProxyFactory(new NoProxyFactory());
-			break;
-
-		default:
-		case QNetworkProxy::DefaultProxy:
-			qCDebug(network) << "proxy -> system";
-			QNetworkProxyFactory::setApplicationProxyFactory(new SystemProxyFactory());
-			break;
+		qCDebug(network) << "proxy -> system";
+		QNetworkProxyFactory::setApplicationProxyFactory(new SystemProxyFactory());
 	}
 }
+
+
+#endif

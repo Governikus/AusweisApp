@@ -22,8 +22,28 @@ Card::~Card()
 }
 
 
-ReturnCode Card::destroyPaceChannel()
+CardReturnCode Card::establishPaceChannel(PACE_PIN_ID pPinId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds)
+{
+	Q_UNUSED(pPinId);
+	Q_UNUSED(pChat);
+	Q_UNUSED(pCertificateDescription);
+	Q_UNUSED(pChannelOutput);
+	Q_UNUSED(pTimeoutSeconds);
+	qCWarning(card) << "Establishment of PACE channel not supported";
+	return CardReturnCode::COMMAND_FAILED;
+}
+
+
+CardReturnCode Card::destroyPaceChannel()
 {
 	qCWarning(card) << "Destruction of PACE channel not supported";
-	return ReturnCode::COMMAND_FAILED;
+	return CardReturnCode::COMMAND_FAILED;
+}
+
+
+CardReturnCode Card::setEidPin(quint8 pTimeoutSeconds)
+{
+	Q_UNUSED(pTimeoutSeconds);
+	qCWarning(card) << "Setting eID PIN is not supported";
+	return CardReturnCode::COMMAND_FAILED;
 }

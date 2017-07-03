@@ -7,7 +7,7 @@
 
 #include "StateEstablishPacePuk.h"
 
-#include "ReturnCodeUtil.h"
+#include "context/ChangePinContext.h"
 
 
 using namespace governikus;
@@ -23,7 +23,7 @@ void StateEstablishPacePuk::run()
 	auto cardConnection = getContext()->getCardConnection();
 
 	Q_ASSERT(cardConnection);
-	qDebug() << "Invoke unblock pin command";
+	qDebug() << "Invoke unblock PIN command";
 	mConnections += cardConnection->callUnblockPinCommand(this, &StateEstablishPacePuk::onEstablishConnectionDone, getContext()->getPuk());
 	getContext()->setPuk(QString());
 }
@@ -31,40 +31,44 @@ void StateEstablishPacePuk::run()
 
 void StateEstablishPacePuk::onUserCancelled()
 {
-	getContext()->setLastPaceResultAndRetryCounter(ReturnCode::CANCELLATION_BY_USER, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
+	getContext()->setLastPaceResultAndRetryCounter(CardReturnCode::CANCELLATION_BY_USER, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
 	AbstractState::onUserCancelled();
 }
 
 
 void StateEstablishPacePuk::onEstablishConnectionDone(QSharedPointer<BaseCardCommand> pCommand)
 {
-	ReturnCode returnCode = pCommand->getReturnCode();
+	CardReturnCode returnCode = pCommand->getReturnCode();
 	switch (returnCode)
 	{
-		case ReturnCode::OK:
+		case CardReturnCode::OK:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
-			getContext()->setSuccessMessage(tr("Pin successfully unblocked"));
+			if (auto changePinContext = getContext().objectCast<ChangePinContext>())
+			{
+				changePinContext->setSuccessMessage(tr("PIN successfully unblocked"));
+			}
 			Q_EMIT fireSuccess();
 			break;
 
-		case ReturnCode::CANCELLATION_BY_USER:
+		case CardReturnCode::CANCELLATION_BY_USER:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
-			setResult(Result::createCancelByUserError());
+			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireCancel();
 			break;
 
-		case ReturnCode::PUK_INVALID:
+		case CardReturnCode::INVALID_PUK:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
 			Q_EMIT fireInvalidPuk();
 			break;
 
-		case ReturnCode::PUK_INOPERATIVE:
+		case CardReturnCode::PUK_INOPERATIVE:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
+			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireInoperativePuk();
 			break;
 
 		default:
-			setResult(Result::createInternalError(ReturnCodeUtil::toMessage(returnCode)));
+			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireError();
 			break;
 	}

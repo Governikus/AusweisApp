@@ -17,7 +17,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
 
 
 PcscReaderManagerPlugIn::PcscReaderManagerPlugIn()
-	: ReaderManagerPlugIn(ReaderManagerPlugInType::PCSC)
+	: ReaderManagerPlugIn(ReaderManagerPlugInType::PCSC, true)
 	, mContextHandle(0)
 	, mReaderState()
 	, mTimerId(0)
@@ -40,7 +40,7 @@ PcscReaderManagerPlugIn::~PcscReaderManagerPlugIn()
 
 	while (!mReaders.isEmpty())
 	{
-		removeReader(mReaders.first()->getName());
+		removeReader(qAsConst(mReaders).first()->getName());
 	}
 }
 
@@ -55,9 +55,9 @@ void PcscReaderManagerPlugIn::init()
 {
 	ReaderManagerPlugIn::init();
 	PCSC_RETURNCODE returnCode = SCardEstablishContext(SCARD_SCOPE_USER, nullptr, nullptr, &mContextHandle);
-	setReaderInfoEnabled(returnCode == SCARD_S_SUCCESS);
+	setReaderInfoEnabled(returnCode == PcscUtils::Scard_S_Success);
 	qCDebug(card_pcsc) << "SCardEstablishContext: " << PcscUtils::toString(returnCode);
-	if (returnCode != SCARD_S_SUCCESS)
+	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Not started: Cannot establish context";
 	}
@@ -81,7 +81,7 @@ void PcscReaderManagerPlugIn::shutdown()
 		PCSC_RETURNCODE returnCode = SCardReleaseContext(mContextHandle);
 		qCDebug(card_pcsc) << "SCardReleaseContext: " << PcscUtils::toString(returnCode);
 		mContextHandle = 0;
-		if (returnCode != SCARD_S_SUCCESS)
+		if (returnCode != PcscUtils::Scard_S_Success)
 		{
 			qCWarning(card_pcsc) << "Error releasing context";
 		}
@@ -122,11 +122,11 @@ void PcscReaderManagerPlugIn::updateReaders()
 	}
 
 	PCSC_RETURNCODE returnCode = readReaderNames(readersToAdd);
-	if (returnCode != SCARD_S_SUCCESS && returnCode != SCARD_E_NO_READERS_AVAILABLE)
+	if (returnCode != PcscUtils::Scard_S_Success && returnCode != PcscUtils::Scard_E_No_Readers_Available)
 	{
 		qCWarning(card_pcsc) << "Cannot update readers";
 
-		if (returnCode == SCARD_E_NO_SERVICE && mTimerId != 0)
+		if (returnCode == PcscUtils::Scard_E_No_Service && mTimerId != 0)
 		{
 			// Work around for an issue on Linux: Sometimes when unplugging a reader
 			// the library seems to get confused and any further calls with existing
@@ -136,7 +136,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 			shutdown();
 			init();
 		}
-		else if (returnCode == SCARD_E_SERVICE_STOPPED && mTimerId != 0)
+		else if (returnCode == PcscUtils::Scard_E_Service_Stopped && mTimerId != 0)
 		{
 			// Work around for an issue on Windows 8.1: Sometimes when unplugging a reader
 			// the library seems to get confused and any further calls with existing
@@ -146,7 +146,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 			shutdown();
 			init();
 		}
-		else if (returnCode == SCARD_E_INVALID_HANDLE && mTimerId != 0)
+		else if (returnCode == PcscUtils::Scard_E_Invalid_Handle && mTimerId != 0)
 		{
 			// If the pc/sc daemon terminates on Linux, the handle is invalidated. We try
 			// to restart the manager in this case.
@@ -213,13 +213,13 @@ PCSC_RETURNCODE PcscReaderManagerPlugIn::readReaderNames(QStringList& pReaderNam
 {
 	QVarLengthArray<PCSC_CHAR, 8192> readers;
 
-	PCSC_INT maxReadersSize = readers.capacity();
+	PCSC_INT maxReadersSize = static_cast<PCSC_INT>(readers.capacity());
 	PCSC_RETURNCODE returnCode = SCardListReaders(mContextHandle, nullptr, readers.data(), &maxReadersSize);
-	if (returnCode == SCARD_E_NO_READERS_AVAILABLE)
+	if (returnCode == PcscUtils::Scard_E_No_Readers_Available)
 	{
 		return returnCode;
 	}
-	else if (returnCode != SCARD_S_SUCCESS)
+	else if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "SCardListReaders: " << PcscUtils::toString(returnCode);
 		qCWarning(card_pcsc) << "Cannot read reader names";
@@ -231,7 +231,7 @@ PCSC_RETURNCODE PcscReaderManagerPlugIn::readReaderNames(QStringList& pReaderNam
 	while (pReader < end)
 	{
 		QString readerName = extractReaderName(pReader);
-		pReaderNames.append(readerName);
+		pReaderNames += readerName;
 		// Advance to the next value.
 		pReader += readerName.size() + 1;
 	}

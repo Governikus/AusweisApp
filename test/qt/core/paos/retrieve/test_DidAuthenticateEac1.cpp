@@ -24,7 +24,7 @@ class test_DidAuthenticateEac1
 		void parseXml()
 		{
 			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml");
-			QScopedPointer<DIDAuthenticateEAC1> eac1(dynamic_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+			QScopedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
 			QVERIFY(!eac1.isNull());
 
 			QCOMPARE(eac1->getConnectionHandle().getCardApplication(), QString("4549445F49534F5F32343732375F42415345"));
@@ -50,7 +50,7 @@ class test_DidAuthenticateEac1
 		void test_TS_TA_2_1_1()
 		{
 			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_TS_TA_2.1.1.xml");
-			QScopedPointer<DIDAuthenticateEAC1> eac1(dynamic_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+			QScopedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
 
 			QVERIFY(eac1 == nullptr);
 		}

@@ -43,18 +43,17 @@ MsgHandlerAccessRights::MsgHandlerAccessRights(const QJsonObject& pObj, MsgConte
 void MsgHandlerAccessRights::handleSetRawData(const QJsonArray& pRaw, const QSharedPointer<AuthContext>& pContext)
 {
 	Q_ASSERT(pContext);
-	Q_ASSERT(pContext->getEffectiveChat());
 
 	QSet<AccessRight> effectiveChat;
 
-	if (pContext->getOptionalChat())
+	if (!pContext->getOptionalAccessRights().isEmpty())
 	{
 		for (const auto& entry : pRaw)
 		{
 			if (entry.isDouble())
 			{
 				const auto value = static_cast<AccessRight>(entry.toInt());
-				if (pContext->getOptionalChat()->hasAccessRight(value))
+				if (pContext->getOptionalAccessRights().contains(value))
 				{
 					effectiveChat += value;
 				}
@@ -82,18 +81,17 @@ void MsgHandlerAccessRights::handleSetRawData(const QJsonArray& pRaw, const QSha
 }
 
 
-QJsonArray MsgHandlerAccessRights::getAccessRights(const QSharedPointer<const CHAT>& pChat) const
+QJsonArray MsgHandlerAccessRights::getAccessRights(const QSet<AccessRight>& pRights) const
 {
 	QJsonArray array;
-	if (pChat)
+
+	QList<AccessRight> accessRights = pRights.toList();
+	std::sort(accessRights.rbegin(), accessRights.rend());
+	for (auto entry : qAsConst(accessRights))
 	{
-		QList<AccessRight> accessRights = pChat->getAccessRights().toList();
-		std::sort(accessRights.rbegin(), accessRights.rend());
-		for (auto entry : qAsConst(accessRights))
-		{
-			array += static_cast<int>(entry);
-		}
+		array += static_cast<int>(entry);
 	}
+
 	return array;
 }
 
@@ -103,9 +101,9 @@ void MsgHandlerAccessRights::fillAccessRights(const QSharedPointer<const AuthCon
 	Q_ASSERT(pContext);
 
 	QJsonObject raw;
-	raw["required"] = getAccessRights(pContext->getRequiredChat());
-	raw["optional"] = getAccessRights(pContext->getOptionalChat());
-	raw["effective"] = getAccessRights(pContext->getEffectiveChat());
+	raw["required"] = getAccessRights(pContext->getRequiredAccessRights());
+	raw["optional"] = getAccessRights(pContext->getOptionalAccessRights());
+	raw["effective"] = getAccessRights(pContext->getEffectiveAccessRights());
 
 	mJsonObject["raw"] = raw;
 }

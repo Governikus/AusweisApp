@@ -1,6 +1,6 @@
 /*!
  * \brief Controller for the step that tries to establish a PACE
- *        connection using the card's Puk.
+ *        connection using the card's PUK.
  *
  * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
  */
@@ -9,13 +9,11 @@
 
 #include "AbstractGenericState.h"
 
-#include "context/ChangePinContext.h"
-
 namespace governikus
 {
 
 class StateEstablishPacePuk
-	: public AbstractGenericState<ChangePinContext>
+	: public AbstractGenericState<WorkflowContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

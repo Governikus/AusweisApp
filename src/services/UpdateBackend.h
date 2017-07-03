@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "GlobalStatus.h"
 
 #include <QByteArray>
 #include <QDateTime>
@@ -28,7 +29,7 @@ class UpdateBackend
 
 		virtual void processSuccess(const QByteArray& pData) = 0;
 
-		virtual void processError() = 0;
+		virtual void processError(const GlobalStatus& pError) = 0;
 };
 
 }

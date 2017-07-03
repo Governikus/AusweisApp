@@ -35,7 +35,7 @@ class MsgHandler
 		void setVoid(bool pVoid = true);
 
 	public:
-		static const MsgHandler MsgVoid;
+		static const MsgHandler Void;
 		static const MsgLevel DEFAULT_MSG_LEVEL;
 		static MsgType getStateMsgType(const QString& pState);
 

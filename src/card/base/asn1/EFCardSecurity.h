@@ -87,22 +87,16 @@ namespace governikus
  */
 class EFCardSecurity
 {
-	QSharedPointer<SecurityInfos> mSecurityInfos;
+	const QSharedPointer<const SecurityInfos> mSecurityInfos;
 
-	EFCardSecurity(QSharedPointer<SecurityInfos> pSecurityInfos);
+	EFCardSecurity(const QSharedPointer<const SecurityInfos>& pSecurityInfos);
 	Q_DISABLE_COPY(EFCardSecurity)
 
 	public:
 		static QSharedPointer<EFCardSecurity> fromHex(const QByteArray& pHexString);
 		static QSharedPointer<EFCardSecurity> decode(const QByteArray& pBytes);
 
-		template<typename T> QVector<QSharedPointer<T> > getSecurityInfos() const
-		{
-			Q_ASSERT(mSecurityInfos != nullptr);
-			return mSecurityInfos->getSecurityInfos<T>();
-		}
-
-
+		const QSharedPointer<const SecurityInfos>& getSecurityInfos() const;
 };
 
 template<>

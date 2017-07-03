@@ -5,45 +5,45 @@ import "global"
 Rectangle {
 	id: baseItem
 
-	property string address
-	property string providerIcon
-	property string providerImage
-	property color transparentColor : Constants.blue
+	// Properties that are set by HistoryViewPage
+	property var selectedProvider
 
-	width: parent.width
-	height: Utils.dp(160)
+	// Internal vars
+	readonly property color shadowColor: Category.displayColor(selectedProvider.category)
+	readonly property string backgroundImage: !!selectedProvider.image ? selectedProvider.image : Category.backgroundImageSource(selectedProvider.category)
+	readonly property string providerIcon: !!selectedProvider.icon ? selectedProvider.icon : Category.buttonImageSource(selectedProvider.category)
+	readonly property string providerAddress: selectedProvider.address
+	readonly property string providerShortDescription: selectedProvider.shortDescription
 
+	height: headerBackgroundImage.height + buttonText.height + Constants.pane_spacing
 	color: Constants.background_color
 
 	Image {
 		id: headerBackgroundImage
-
+		source: backgroundImage
+		height: width / 1.80
+		width: parent.width
+		fillMode: Image.PreserveAspectCrop
 		anchors.top:  parent.top
 		anchors.left:  parent.left
 		anchors.right:  parent.right
 
-		width: parent.width
-		height: parent.height * 0.7
-		source: providerImage
-		fillMode: Image.PreserveAspectCrop
-	}
-
-
-	Rectangle {
-		width: headerBackgroundImage.width
-		height: headerBackgroundImage.height
-		color: transparentColor
-		opacity: transparentColor === Constants.blue ? 0 : 0.7
+		Rectangle {
+			anchors.fill: parent
+			color: shadowColor
+			opacity: shadowColor === Constants.blue ? 0 : 0.7
+		}
 	}
 
 	Image {
+		source: providerIcon
+		asynchronous: true
+		height: Utils.dp(70)
+		width: height
+		fillMode: Image.PreserveAspectFit
 		anchors.left: baseItem.left
 		anchors.leftMargin: Utils.dp(30)
 		anchors.verticalCenter: headerBackgroundImage.bottom
-		height: Utils.dp(70)
-		width: height
-		source: providerIcon
-		fillMode: Image.Stretch
 	}
 
 	Button {
@@ -51,10 +51,10 @@ Rectangle {
 		width: baseItem.width / 2
 		anchors.bottom: baseItem.bottom
 		anchors.right: parent.right
-		anchors.rightMargin: Utils.dp(20)
-		text: qsTr("Online-Application")
+		anchors.rightMargin: Constants.component_spacing
+		text: qsTr("Online Application")
 		onClicked: {
-			Qt.openUrlExternally(address)
+			Qt.openUrlExternally(providerAddress)
 		}
 	}
 }

@@ -81,7 +81,7 @@ QByteArray KeyDerivationFunction::pi(const QString& pSecret)
 }
 
 
-QByteArray KeyDerivationFunction::deriveKey(const QByteArray& pK, const QByteArray& pNonce, uint32_t pC)
+QByteArray KeyDerivationFunction::deriveKey(const QByteArray& pK, const QByteArray& pNonce, quint32 pC)
 {
 	if (!isInitialized())
 	{
@@ -90,23 +90,23 @@ QByteArray KeyDerivationFunction::deriveKey(const QByteArray& pK, const QByteArr
 	}
 
 	QByteArray dataBytes(pK);
-	dataBytes.append(pNonce);
-	dataBytes.append((pC >> 24) & 0xFF);
-	dataBytes.append((pC >> 16) & 0xFF);
-	dataBytes.append((pC >> 8) & 0xFF);
-	dataBytes.append(pC & 0xFF);
+	dataBytes += pNonce;
+	dataBytes += static_cast<char>((pC >> 24) & 0xFF);
+	dataBytes += static_cast<char>((pC >> 16) & 0xFF);
+	dataBytes += static_cast<char>((pC >> 8) & 0xFF);
+	dataBytes += static_cast<char>(pC & 0xFF);
 
 	QByteArray hashBytes;
 	if (mHashAlgorithm == QCryptographicHash::Sha1)
 	{
 		char md[SHA_DIGEST_LENGTH];
-		SHA1(reinterpret_cast<const uchar*>(dataBytes.constData()), dataBytes.size(), reinterpret_cast<uchar*>(md));
+		SHA1(reinterpret_cast<const uchar*>(dataBytes.constData()), static_cast<size_t>(dataBytes.size()), reinterpret_cast<uchar*>(md));
 		hashBytes.append(md, mKeySize);
 	}
 	else if (mHashAlgorithm == QCryptographicHash::Sha256)
 	{
 		char md[SHA256_DIGEST_LENGTH];
-		SHA256(reinterpret_cast<const uchar*>(dataBytes.constData()), dataBytes.size(), reinterpret_cast<uchar*>(md));
+		SHA256(reinterpret_cast<const uchar*>(dataBytes.constData()), static_cast<size_t>(dataBytes.size()), reinterpret_cast<uchar*>(md));
 		hashBytes.append(md, mKeySize);
 	}
 	return hashBytes;

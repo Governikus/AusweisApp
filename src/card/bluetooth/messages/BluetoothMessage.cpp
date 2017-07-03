@@ -6,9 +6,12 @@
 
 #include "BluetoothMessage.h"
 
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(bluetooth)
+
 using namespace governikus;
 
-static int registerBluetoothMessagePtr = qRegisterMetaType<BluetoothMessage::Ptr>("BluetoothMessage::Ptr");
 
 QDebug operator<<(QDebug pDbg, const governikus::BluetoothMessage& pMsg)
 {
@@ -21,7 +24,6 @@ BluetoothMessage::BluetoothMessage(BluetoothMsgId pMsgId)
 	: mMsgId(pMsgId)
 	, mMessageParameter()
 {
-	Q_UNUSED(registerBluetoothMessagePtr);
 }
 
 
@@ -30,15 +32,22 @@ BluetoothMessage::~BluetoothMessage()
 }
 
 
-void BluetoothMessage::addParameter(BluetoothMessageParameter::Ptr pMessageParameter)
+BluetoothMessageParameter::Ptr BluetoothMessage::getParameter(BluetoothParamId pId) const
 {
-	mMessageParameter.append(pMessageParameter);
+	return mMessageParameter.value(pId);
 }
 
 
-const BluetoothMessage::ParameterList& BluetoothMessage::getParameterList() const
+void BluetoothMessage::addParameter(BluetoothMessageParameter::Ptr pMessageParameter)
 {
-	return mMessageParameter;
+	Q_ASSERT(!pMessageParameter.isNull());
+
+	if (mMessageParameter.contains(pMessageParameter->getParameterId()))
+	{
+		qCWarning(bluetooth) << "Parameter ID is already added:" << pMessageParameter->getParameterId();
+	}
+
+	mMessageParameter.insertMulti(pMessageParameter->getParameterId(), pMessageParameter);
 }
 
 
@@ -51,14 +60,20 @@ BluetoothMsgId BluetoothMessage::getBluetoothMsgId() const
 QByteArray BluetoothMessage::toData() const
 {
 	QByteArray data;
-	data.append(static_cast<char>(mMsgId));
-	data.append(static_cast<char>(mMessageParameter.size()));
-	data.append(static_cast<char>(0x00));
-	data.append(static_cast<char>(0x00));
-
-	for (const auto& parameter : getParameterList())
+	data += Enum<BluetoothMsgId>::getValue(mMsgId);
+	if (mMessageParameter.size() > CHAR_MAX)
 	{
-		data.append(parameter->toData());
+		qCCritical(bluetooth) << "Message parameter count > CHAR_MAX not supported";
+		Q_ASSERT(mMessageParameter.size() <= CHAR_MAX);
+		return QByteArray();
+	}
+	data += static_cast<char>(mMessageParameter.size());
+	data += char(0x00);
+	data += char(0x00);
+
+	for (const auto& parameter : qAsConst(mMessageParameter))
+	{
+		data += parameter->toData();
 	}
 
 	return data;
@@ -70,9 +85,20 @@ QString BluetoothMessage::toString() const
 	static const QString paramDesc(QStringLiteral(" | Parameter: "));
 
 	QString str = getEnumName(mMsgId);
-	for (const auto& parameter : getParameterList())
+	for (const auto& parameter : qAsConst(mMessageParameter))
 	{
 		str += paramDesc + parameter->toString();
 	}
 	return str;
+}
+
+
+void BluetoothMessage::registerMetaTypes()
+{
+	static bool registered = false;
+	if (!registered)
+	{
+		qRegisterMetaType<BluetoothMessage::Ptr>("BluetoothMessage::Ptr");
+		registered = true;
+	}
 }

@@ -66,8 +66,9 @@ class test_Command
 		void testPinModifyBuilder_createChangeEidPinCommandData()
 		{
 			PinModifyBuilder builder;
-			unsigned int timeout = 77;
-			QCOMPARE(builder.createChangeEidPinCommandData(timeout), QByteArray::fromHex("82000000000606010202070400010200000004000000002C0203").prepend(timeout).prepend(timeout));
+			quint8 timeout = 77;
+			auto timeoutBytes = QByteArray::fromHex(QByteArray::number(timeout, 16));
+			QCOMPARE(builder.createChangeEidPinCommandData(timeout), QByteArray::fromHex("82000000000606010202070400010200000004000000002C0203").prepend(timeoutBytes).prepend(timeoutBytes));
 		}
 
 

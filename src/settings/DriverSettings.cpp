@@ -181,7 +181,7 @@ void DriverSettings::save()
 
 void DriverSettings::update(const AbstractSettings& pOther)
 {
-	const DriverSettings* const other = dynamic_cast<const DriverSettings* const>(&pOther);
+	const DriverSettings* const other = qobject_cast<const DriverSettings* const>(&pOther);
 	if (other != nullptr)
 	{
 		mIssueDate = other->getIssueDate();

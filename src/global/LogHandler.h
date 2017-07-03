@@ -28,7 +28,7 @@ class LogHandler
 		const bool mEnvPattern;
 		const int mFunctionFilenameSize;
 		qint64 mBacklogPosition;
-		const QString mDefaultMessagePattern;
+		const QString mMessagePattern, mDefaultMessagePattern;
 		QTemporaryFile mLogFile;
 		QtMessageHandler mHandler;
 		const QByteArray mFilePrefix;

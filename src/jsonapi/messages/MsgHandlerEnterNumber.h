@@ -25,7 +25,7 @@ class MsgHandlerEnterNumber
 	protected:
 		MsgHandlerEnterNumber(MsgType pType, const MsgContext& pContext);
 
-		void parseValue(const QJsonValue& pObj,
+		void parseValue(const QJsonObject& pObj,
 				const std::function<void(const QString& pNumber)>& pFunc,
 				ushort pCount = 6);
 };

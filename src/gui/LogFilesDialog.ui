@@ -80,14 +80,14 @@
      <item>
       <widget class="QPushButton" name="saveButton">
        <property name="text">
-        <string>Save…</string>
+        <string>Save...</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="deleteButton">
        <property name="text">
-        <string>Delete old files…</string>
+        <string>Delete old files...</string>
        </property>
       </widget>
      </item>

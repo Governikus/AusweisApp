@@ -23,20 +23,23 @@ VersionInformationModel::VersionInformationModel(QObject* pParent)
 	: QAbstractListModel(pParent)
 	, mData()
 {
-	mData.append(QPair<QString, QString>(tr("Application Name"), QCoreApplication::applicationName()));
-	mData.append(QPair<QString, QString>(tr("Application Version"), QCoreApplication::applicationVersion()));
-	mData.append(QPair<QString, QString>(tr("Organization"), QCoreApplication::organizationName()));
-	mData.append(QPair<QString, QString>(tr("Organization domain"), QCoreApplication::organizationDomain()));
-	mData.append(QPair<QString, QString>(tr("Build date"), QString::fromLatin1(BuildHelper::getDateTime())));
-	mData.append(QPair<QString, QString>(tr("System version"), QSysInfo::prettyProductName()));
-	mData.append(QPair<QString, QString>(tr("Kernel"), QSysInfo::kernelVersion()));
-	mData.append(QPair<QString, QString>(tr("Architecture"), QSysInfo::currentCpuArchitecture()));
+	mData += QPair<QString, QString>(tr("Application Name"), QCoreApplication::applicationName());
+	mData += QPair<QString, QString>(tr("Application Version"), QCoreApplication::applicationVersion());
+	mData += QPair<QString, QString>(tr("Organization"), QCoreApplication::organizationName());
+	mData += QPair<QString, QString>(tr("Organization domain"), QCoreApplication::organizationDomain());
+	mData += QPair<QString, QString>(tr("Build date"), QString::fromLatin1(BuildHelper::getDateTime()));
 #ifdef Q_OS_ANDROID
-	mData.append(QPair<QString, QString>(tr("Compiled architecture"), QSysInfo::buildCpuArchitecture()));
-	mData.append(QPair<QString, QString>(tr("Device"), DeviceInfo::getPrettyInfo()));
+	mData += QPair<QString, QString>(tr("VersionCode"), QString::number(BuildHelper::getVersionCode()));
 #endif
-	mData.append(QPair<QString, QString>(tr("Qt Version"), QString::fromLatin1(qVersion())));
-	mData.append(QPair<QString, QString>(tr("OpenSSL Version"), QSslSocket::sslLibraryVersionString()));
+	mData += QPair<QString, QString>(tr("System version"), QSysInfo::prettyProductName());
+	mData += QPair<QString, QString>(tr("Kernel"), QSysInfo::kernelVersion());
+	mData += QPair<QString, QString>(tr("Architecture"), QSysInfo::currentCpuArchitecture());
+#ifdef Q_OS_ANDROID
+	mData += QPair<QString, QString>(tr("Compiled architecture"), QSysInfo::buildCpuArchitecture());
+	mData += QPair<QString, QString>(tr("Device"), DeviceInfo::getPrettyInfo());
+#endif
+	mData += QPair<QString, QString>(tr("Qt Version"), QString::fromLatin1(qVersion()));
+	mData += QPair<QString, QString>(tr("OpenSSL Version"), QSslSocket::sslLibraryVersionString());
 }
 
 

@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.7
 
 import "../"
 import "../global"
@@ -9,56 +9,56 @@ SectionPage {
 	headerTitleBarAction: TitleBarAction { text: qsTr("Identify"); font.bold: true }
 
 	function close() {
-		selfAuthenticationModel.continueWorkflow()
+		numberModel.continueWorkflow()
 		pop(null)
 		navBar.lockedAndHidden = false
 	}
 
-	Item {
-		anchors.fill: parent
+	content: Item {
+		height: content.height + okButton.height + Constants.component_spacing
+		width: root.width
 
-		Item {
-			id: message
-			height: Utils.dp(120)
-			width: resultImage.width + successText.width
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.top: parent.top
+		Column {
+			id: content
+			width: parent.width
+			padding: Constants.component_spacing
+			spacing: Constants.component_spacing
 
-			Image {
-				id: resultImage
-				anchors.left: parent.left
-				anchors.verticalCenter: parent.verticalCenter
-				height: Utils.dp(100)
-				width: height
-				fillMode: Image.PreserveAspectFit
-				source: "qrc:///images/iOS/gruener_Haken.svg"
+			Item {
+				id: message
+				height: Utils.dp(60)
+				width: resultImage.width + Constants.component_spacing + successText.width
+				anchors.horizontalCenter: parent.horizontalCenter
+
+				Image {
+					id: resultImage
+					anchors.top: parent.top
+					anchors.verticalCenter: parent.verticalCenter
+					height: parent.height
+					width: height
+					fillMode: Image.PreserveAspectFit
+					source: "qrc:///images/gruener_Haken.svg"
+				}
+
+				Text {
+					id: successText
+					anchors.left: resultImage.right
+					anchors.leftMargin: Constants.component_spacing
+					anchors.verticalCenter: resultImage.verticalCenter
+					text: qsTr("Successfull reading data")
+					font.pixelSize: PlatformConstants.is_tablet ? Constants.header_font_size : Constants.normal_font_size
+					color: Constants.blue
+				}
 			}
 
-			Text {
-				id: successText
-				anchors.left: resultImage.right
-				anchors.verticalCenter: resultImage.verticalCenter
-				text: qsTr("Successfull reading data")
-				font.pixelSize: PlatformConstants.is_tablet ? Constants.header_font_size : Constants.normal_font_size
-				color: Constants.blue
-			}
-		}
-
-		Pane {
-			id: pane
-			anchors.top: message.bottom
-			anchors.bottom: okButton.top
-			anchors.bottomMargin: Utils.dp(30)
-
-			Flickable {
-				id: paneflick
-				height: pane.height - 2 * pane.margin
-				width: pane.width - 2 * pane.margin
-				contentWidth: grid.width
-				contentHeight: grid.height
+			Pane {
+				id: pane
+				anchors.leftMargin: Constants.component_spacing
+				anchors.rightMargin: Constants.component_spacing
 
 				Grid {
 					id: grid
+					width: parent.width
 					columns: PlatformConstants.is_tablet ? 3 : 1
 					spacing: Utils.dp(15)
 					verticalItemAlignment: Grid.AlignBottom
@@ -68,31 +68,20 @@ SectionPage {
 						LabeledText {
 							label: name
 							text: value === "" ? "---" : value
-							width: (pane.width - 2 * pane.margin - (grid.columns - 1) * grid.spacing) / grid.columns
+							width: (pane.width - 2 * Constants.pane_padding - (grid.columns - 1) * grid.spacing) / grid.columns
 						}
 					}
 				}
 			}
 		}
+	}
 
-		Image {
-			source: "qrc:///images/android/android_arrow_back.svg"
-			height: Utils.dp(60)
-			width: Utils.dp(60)
-			anchors.horizontalCenter: pane.horizontalCenter
-			anchors.verticalCenter: pane.top
-			visible: paneflick.atYBeginning && !paneflick.atYEnd && !paneflick.moving
-			rotation: 90
-			fillMode: Image.PreserveAspectFit
-		}
-
-		Button {
-			id: okButton
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.bottom: parent.bottom
-			anchors.bottomMargin: Utils.dp(30)
-			text: qsTr("Ok")
-			onClicked: root.close()
-		}
+	Button {
+		id: okButton
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.bottom: parent.bottom
+		anchors.bottomMargin: Constants.component_spacing
+		text: qsTr("Ok")
+		onClicked: root.close()
 	}
 }

@@ -12,25 +12,30 @@ SectionPage
 	leftTitleBarAction: TitleBarMenuAction { state: stack.depth > 1 ? "back" : ""; onClicked: pop() }
 	headerTitleBarAction: TitleBarAction { text: qsTr("Version Information"); font.bold: true }
 
-
-	content: Column{
+	content: Item
+	{
+		height: pane.height + 2 * Constants.component_spacing
 		width: root.width
-		Item { width: parent.width;  height: Constants.titlebar_height }
-		Pane {
-			id: pane
-			width: root.width
-			height: childrenRect.height
-			Repeater {
-				model: versionInformationModel
 
-				LabeledText {
-					id: delegate
-					label: model.label
-					text: model.text
-					width: pane.width
+		Column
+		{
+			anchors.fill: parent
+			anchors.margins: Constants.component_spacing
+
+			Pane {
+				id: pane
+
+				Repeater {
+					model: versionInformationModel
+
+					LabeledText {
+						id: delegate
+						label: model.label
+						text: model.text
+						width: pane.width
+					}
 				}
 			}
 		}
 	}
-
 }

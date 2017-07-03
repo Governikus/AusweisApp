@@ -21,11 +21,6 @@ SignatureChecker::SignatureChecker(const QVector<QSharedPointer<CVCertificate> >
 }
 
 
-SignatureChecker::~SignatureChecker()
-{
-}
-
-
 bool SignatureChecker::check()
 {
 	if (mCertificateChain.isEmpty())
@@ -61,7 +56,7 @@ bool SignatureChecker::check()
 }
 
 
-bool SignatureChecker::checkSignature(QSharedPointer<CVCertificate> pCert, QSharedPointer<CVCertificate> pSigningCert, const EC_KEY* pKey)
+bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>& pCert, const QSharedPointer<const CVCertificate>& pSigningCert, const EC_KEY* pKey)
 {
 	// We duplicate the key because we modify it by setting the public point.
 	QSharedPointer<EC_KEY> signingKey = EcUtil::create(EC_KEY_dup(pKey));
@@ -69,7 +64,7 @@ bool SignatureChecker::checkSignature(QSharedPointer<CVCertificate> pCert, QShar
 
 	QByteArray uncompPublicPoint = pSigningCert->getBody().getPublicKey().getUncompressedPublicPoint();
 	const unsigned char* uncompPublicPointData = reinterpret_cast<const unsigned char*>(uncompPublicPoint.constData());
-	int uncompPublicPointLen = uncompPublicPoint.size();
+	size_t uncompPublicPointLen = static_cast<size_t>(uncompPublicPoint.size());
 
 	EC_POINT* publicPoint = EC_POINT_new(EC_KEY_get0_group(signingKey.data()));
 	const EC_GROUP* ecGroup = EC_KEY_get0_group(signingKey.data());

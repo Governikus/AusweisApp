@@ -26,7 +26,8 @@ class StateGetSelfAuthenticationData
 
 	StateGetSelfAuthenticationData(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
-	void reportCommunicationError(const QString& pMessage);
+	void reportCommunicationError(const GlobalStatus& pStatus);
+	bool checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
 
 	public:
 		~StateGetSelfAuthenticationData();

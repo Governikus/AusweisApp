@@ -42,9 +42,9 @@ DECLARE_ASN1_FUNCTIONS(chipauthenticationinfo_st)
 class ChipAuthenticationInfo
 	: public SecurityInfo
 {
-	QSharedPointer<chipauthenticationinfo_st> mDelegate;
+	const QSharedPointer<const chipauthenticationinfo_st> mDelegate;
 
-	ChipAuthenticationInfo(QSharedPointer<chipauthenticationinfo_st> pDelegate);
+	ChipAuthenticationInfo(const QSharedPointer<const chipauthenticationinfo_st>& pDelegate);
 
 	ASN1_OBJECT* getProtocolObjectIdentifier() const override;
 
@@ -53,7 +53,7 @@ class ChipAuthenticationInfo
 	public:
 		static QSharedPointer<ChipAuthenticationInfo> decode(const QByteArray& pBytes)
 		{
-			if (QSharedPointer<chipauthenticationinfo_st> delegate = decodeObject<chipauthenticationinfo_st>(pBytes))
+			if (const auto& delegate = decodeObject<chipauthenticationinfo_st>(pBytes))
 			{
 				if (ChipAuthenticationInfo::acceptsProtocol(delegate->mProtocol))
 				{

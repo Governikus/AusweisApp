@@ -6,11 +6,8 @@
 
 #pragma once
 
-
 #include "ActivationHandler.h"
-#include "qhttpserver/qhttprequest.h"
-#include "qhttpserver/qhttpresponse.h"
-#include "qhttpserver/qhttpserver.h"
+#include "HttpServer.h"
 
 class test_WebserviceActivationHandler;
 
@@ -28,29 +25,26 @@ class WebserviceActivationHandler
 	Q_PLUGIN_METADATA(IID "governikus.ActivationHandler" FILE "metadata.json")
 	Q_INTERFACES(governikus::ActivationHandler)
 
-	friend class::test_WebserviceActivationHandler;
+	private:
+		friend class::test_WebserviceActivationHandler;
+		QSharedPointer<HttpServer> mServer;
 
-	QHttpServer mHttpServer;
+		static void addStatusLine(QString& pContent, StatusFormat pStatusFormat, const QString& pKey, const QString& pValue);
 
-	static void addStatusLine(QString& pContent, StatusFormat pStatusFormat, const QString& pKey, const QString& pValue);
-
-	void handleImageRequest(QSharedPointer<QHttpResponse> pResponse, const QString& pImagePath);
-	QString guessImageContentType(const QString& pFileName) const;
-	void handleShowUiRequest(UiModule pUiModule, QSharedPointer<QHttpRequest> pRequest, QSharedPointer<QHttpResponse> pResponse);
-	void handleStatusRequest(StatusFormat pStatusFormat, QSharedPointer<QHttpResponse> pResponse);
+		void handleImageRequest(const QSharedPointer<HttpRequest>& pRequest, const QString& pImagePath);
+		QByteArray guessImageContentType(const QString& pFileName) const;
+		void handleShowUiRequest(UiModule pUiModule, const QSharedPointer<HttpRequest>& pRequest);
+		void handleStatusRequest(StatusFormat pStatusFormat, const QSharedPointer<HttpRequest>& pRequest);
 
 	private Q_SLOTS:
-		void onNewRequest(QSharedPointer<QHttpRequest> pRequest, QSharedPointer<QHttpResponse> pResponse);
+		void onNewRequest(const QSharedPointer<HttpRequest>& pRequest);
 
 	public:
-		static quint16 PORT;
 		WebserviceActivationHandler();
 		virtual ~WebserviceActivationHandler();
 
-		quint16 getServerPort();
 		virtual bool start() override;
 		virtual void stop() override;
-
 };
 
 } /* namespace governikus */

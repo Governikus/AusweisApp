@@ -25,11 +25,13 @@ class test_UIPlugInCli
 			QSKIP("Console is not supported at the moment");
 			#endif
 
-			#ifdef Q_OS_BSD4
-			QSKIP("Platform plugin seems broken");
+			#ifdef Q_OS_OSX
+			QSKIP("QProcess/CliHelper is flaky on OSX");
 			#endif
 
-			QSKIP("QProcess/CliHelper is flaky");
+			#if defined(Q_OS_BSD4) || defined (Q_OS_LINUX)
+			QSKIP("Platform plugin seems broken");
+			#endif
 		}
 
 
@@ -42,13 +44,13 @@ class test_UIPlugInCli
 		void cleanup()
 		{
 			cli->tearDown();
-
 		}
 
 
 		void quit()
 		{
 			CLI_VERIFY(cli->run());
+			CLI_VERIFY(cli->waitForOutput("ready"));
 			CLI_VERIFY(cli->waitForPong());
 			cli->send("help");
 			CLI_VERIFY(cli->waitForOutput("Available commands:"));
@@ -67,6 +69,7 @@ class test_UIPlugInCli
 		void term()
 		{
 			CLI_VERIFY(cli->run());
+			CLI_VERIFY(cli->waitForOutput("ready"));
 			CLI_VERIFY(cli->waitForPong());
 			cli->stop();
 			QCOMPARE(cli->state(), QProcess::NotRunning);
@@ -77,6 +80,7 @@ class test_UIPlugInCli
 		void termDuringOldPin()
 		{
 			CLI_VERIFY(cli->run());
+			CLI_VERIFY(cli->waitForOutput("ready"));
 			cli->send("changepin");
 			CLI_VERIFY(cli->waitForOutput("Please enter old PIN"));
 			cli->stop();
@@ -87,9 +91,8 @@ class test_UIPlugInCli
 
 		void changePin()
 		{
-			QSKIP("unfinished");
-
 			CLI_VERIFY(cli->run());
+			CLI_VERIFY(cli->waitForOutput("ready"));
 			cli->send("changepin");
 			CLI_VERIFY(cli->waitForOutput("Please enter old PIN"));
 			cli->send("123456");
@@ -104,6 +107,7 @@ class test_UIPlugInCli
 		void getServerPort()
 		{
 			CLI_VERIFY(cli->run());
+			CLI_VERIFY(cli->waitForOutput("ready"));
 			QVERIFY(cli->getServerPort() > 0);
 		}
 

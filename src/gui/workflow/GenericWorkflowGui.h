@@ -43,7 +43,7 @@ class GenericWorkflowGui
 			, mParentWidget(pParentWidget)
 			, mWidget(pWidget)
 			, mStepGui(nullptr)
-			, mContext(pContext.dynamicCast<CONTEXT>())
+			, mContext(pContext.objectCast<CONTEXT>())
 		{
 			Q_ASSERT(mContext != nullptr);
 			connect(this, &WorkflowGui::fireUserCancelled, mContext.data(), &WorkflowContext::fireCancelWorkflow);

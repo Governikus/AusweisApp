@@ -2,15 +2,11 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-
-#include <QApplication>
-#include <QSignalSpy>
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
-#include <openssl/obj_mac.h>
-
 #include "pace/ec/EllipticCurveFactory.h"
 
+#include <QSignalSpy>
+#include <QtTest>
+#include <openssl/obj_mac.h>
 
 using namespace governikus;
 

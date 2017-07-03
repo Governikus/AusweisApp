@@ -40,7 +40,7 @@ class UrlUtil
 		/*!
 		 * Append result to URL.
 		 */
-		static QUrl addMajorMinor(const QUrl& pUrl, const Result& pResult);
+		static QUrl addMajorMinor(const QUrl& pUrl, const GlobalStatus& pStatus);
 
 };
 

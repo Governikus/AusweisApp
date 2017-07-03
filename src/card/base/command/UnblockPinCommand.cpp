@@ -27,20 +27,20 @@ UnblockPinCommand::~UnblockPinCommand()
 void UnblockPinCommand::internalExecute()
 {
 	mReturnCode = mCardConnectionWorker->updateRetryCounter();
-	if (mReturnCode != ReturnCode::OK)
+	if (mReturnCode != CardReturnCode::OK)
 	{
 		return;
 	}
 
 	if (mCardConnectionWorker->getReaderInfo().getRetryCounter() != 0 || mCardConnectionWorker->getReaderInfo().isPinDeactivated())
 	{
-		mReturnCode = ReturnCode::PIN_NOT_BLOCKED;
+		mReturnCode = CardReturnCode::PIN_NOT_BLOCKED;
 		return;
 	}
 
 	EstablishPACEChannelOutput output;
 	mReturnCode = mCardConnectionWorker->establishPaceChannel(PACE_PIN_ID::PACE_PUK, mPuk, output);
-	if (mReturnCode != ReturnCode::OK)
+	if (mReturnCode != CardReturnCode::OK)
 	{
 		return;
 	}
@@ -48,8 +48,8 @@ void UnblockPinCommand::internalExecute()
 	// unblock PIN (reset retry counter)
 	ResponseApdu response;
 	mReturnCode = mCardConnectionWorker->transmit(ResetRetryCounterBuilder().build(), response);
-	if (mReturnCode == ReturnCode::OK && response.getSW1() == EnumSW1::getValue(SW1::ERROR_COMMAND_NOT_ALLOWED))
+	if (mReturnCode == CardReturnCode::OK && response.getSW1() == Enum<SW1>::getValue(SW1::ERROR_COMMAND_NOT_ALLOWED))
 	{
-		mReturnCode = ReturnCode::PUK_INOPERATIVE;
+		mReturnCode = CardReturnCode::PUK_INOPERATIVE;
 	}
 }

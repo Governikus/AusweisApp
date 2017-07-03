@@ -10,7 +10,6 @@ using namespace governikus;
 ChangePinContext::ChangePinContext()
 	: WorkflowContext()
 	, mNewPin()
-	, mPuk()
 	, mSuccessMessage()
 {
 }
@@ -28,22 +27,6 @@ void ChangePinContext::setNewPin(const QString& pNewPin)
 	{
 		mNewPin = pNewPin;
 		Q_EMIT fireNewPinChanged();
-	}
-}
-
-
-const QString& ChangePinContext::getPuk() const
-{
-	return mPuk;
-}
-
-
-void ChangePinContext::setPuk(const QString& pPuk)
-{
-	if (mPuk != pPuk)
-	{
-		mPuk = pPuk;
-		Q_EMIT firePukChanged();
 	}
 }
 

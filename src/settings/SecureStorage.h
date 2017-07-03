@@ -10,6 +10,7 @@
 #pragma once
 
 #include "AbstractSettings.h"
+#include "TlsSettings.h"
 
 #include <QByteArrayList>
 #include <QDateTime>
@@ -51,21 +52,16 @@ class SecureStorage final
 		QUrl mAppcastUpdateUrl;
 		QUrl mAppcastBetaUpdateUrl;
 
-		QVector<QString> mAllowedSslEllipticCurves;
-		QVector<QString> mPskCiphers;
-		QVector<QString> mCiphersWithForwardSecrecy;
-		QVector<QString> mCiphersWithSha1ForBackwardCompatibility;
-		QSsl::SslProtocol mProtocolVersion;
-		QSsl::SslProtocol mProtocolVersionPsk;
-		QVector<SignatureAlgorithmPair> mSignatureAlgorithms, mSignatureAlgorithmsPsk;
+		TlsSettings mTlsSettings, mTlsSettingsPsk;
+		QMap<QSsl::KeyAlgorithm, int> mMinStaticKeySizes;
+		QMap<QSsl::KeyAlgorithm, int> mMinEphemeralKeySizes;
 
 		SecureStorage();
 		~SecureStorage();
 
 		bool readJsonArray(QJsonArray& pArray, const QJsonObject& pConfig, const QLatin1String& pName);
 		QString readGroup(const QJsonObject& pConfig, const QLatin1String& pGroup, const QLatin1String& pName);
-		QSsl::SslProtocol readSslProtocol(const QJsonObject& pConfig, const QLatin1String& pName);
-		QVector<SignatureAlgorithmPair> readSignatureAlgorithms(const QJsonObject& pConfig, const QLatin1String& pKey);
+		QMap<QSsl::KeyAlgorithm, int> readKeySizes(const QJsonObject& pConfig, const QLatin1String& pKey);
 		void readByteArrayList(QByteArrayList& pArray, const QJsonObject& pConfig, const QLatin1String& pName);
 
 	public:
@@ -80,14 +76,10 @@ class SecureStorage final
 		const QString& getProviderIconUpdateUrlBase() const;
 		const QUrl& getAppcastUpdateUrl() const;
 		const QUrl& getAppcastBetaUpdateUrl() const;
-		const QVector<QString>& getAllowedSslEllipticCurves() const;
-		const QVector<QString>& getCiphersWithPsk() const;
-		const QVector<QString>& getCiphersWithForwardSecrecy() const;
-		const QVector<QString>& getCiphersWithSha1ForBackwardCompatibility() const;
-		QSsl::SslProtocol getSslProtocolVersion() const;
-		QSsl::SslProtocol getSslProtocolVersionPsk() const;
-		const QVector<SignatureAlgorithmPair>& getSignatureAlgorithms() const;
-		const QVector<SignatureAlgorithmPair>& getSignatureAlgorithmsPsk() const;
+		const TlsSettings& getTlsSettings() const;
+		const TlsSettings& getTlsSettingsPsk() const;
+		int getMinimumStaticKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
+		int getMinimumEphemeralKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
 };
 
 inline bool operator==(const SecureStorage& pLeft, const SecureStorage& pRight)
@@ -104,7 +96,11 @@ inline bool operator==(const SecureStorage& pLeft, const SecureStorage& pRight)
 		pLeft.mSelfAuthenticationCertDescr == pRight.mSelfAuthenticationCertDescr &&
 		pLeft.mSelfAuthenticationTestCertDescr == pRight.mSelfAuthenticationTestCertDescr &&
 		pLeft.mAppcastUpdateUrl == pRight.mAppcastUpdateUrl &&
-		pLeft.mAppcastBetaUpdateUrl == pRight.mAppcastBetaUpdateUrl);
+		pLeft.mAppcastBetaUpdateUrl == pRight.mAppcastBetaUpdateUrl &&
+		pLeft.mTlsSettings == pRight.mTlsSettings &&
+		pLeft.mTlsSettingsPsk == pRight.mTlsSettingsPsk &&
+		pLeft.mMinStaticKeySizes == pRight.mMinStaticKeySizes &&
+		pLeft.mMinEphemeralKeySizes == pRight.mMinEphemeralKeySizes);
 }
 
 

@@ -4,13 +4,11 @@
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
-#include <QApplication>
-#include <QSharedPointer>
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
-
 #include "TestFileHelper.h"
 #include "asn1/EFCardSecurity.h"
+
+#include <QSharedPointer>
+#include <QtTest>
 
 using namespace governikus;
 
@@ -143,7 +141,7 @@ class test_efCardSecurity
 			auto efCardSecurity = EFCardSecurity::decode(bytes);
 
 			QVERIFY(efCardSecurity != nullptr);
-			QCOMPARE(efCardSecurity->getSecurityInfos<SecurityInfo>().size(), 9);
+			QCOMPARE(efCardSecurity->getSecurityInfos()->getSecurityInfos().size(), 9);
 		}
 
 

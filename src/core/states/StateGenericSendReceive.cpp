@@ -92,24 +92,19 @@ void StateGenericSendReceive::setRemoteMessageId(QSharedPointer<PaosMessage> pPa
 }
 
 
-void StateGenericSendReceive::reportChannelEstablishmentError(const QString& pMessage)
+void StateGenericSendReceive::reportChannelEstablishmentError(const GlobalStatus::Code pStatusCode)
 {
-	qCCritical(network) << pMessage;
-	setResult(Result::createTrustedChannelEstablishmentError(pMessage));
+	qCCritical(network) << GlobalStatus(pStatusCode);
+	setStatus(pStatusCode);
 	Q_EMIT fireError();
 }
 
 
 void StateGenericSendReceive::onSslErrors(const QList<QSslError>& pErrors)
 {
-	if (TlsConfiguration::containsFatalError(pErrors))
+	if (TlsConfiguration::containsFatalError(mReply, pErrors))
 	{
-		reportChannelEstablishmentError(tr("Failed to establish secure connection"));
-	}
-	else
-	{
-		qCDebug(network) << "Ignore SSL errors on QNetworkReply";
-		mReply->ignoreSslErrors();
+		reportChannelEstablishmentError(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
 	}
 }
 
@@ -144,14 +139,21 @@ void StateGenericSendReceive::onPreSharedKeyAuthenticationRequired(QSslPreShared
 
 bool StateGenericSendReceive::checkAndSaveCertificate(const QSslCertificate& pCertificate)
 {
-	QString errorMsg = CertificateChecker::checkAndSaveCertificate(pCertificate, getContext()->getTcToken()->getServerAddress(), getContext());
-	if (!errorMsg.isNull())
+	switch (CertificateChecker::checkAndSaveCertificate(pCertificate, getContext()->getTcToken()->getServerAddress(), getContext()))
 	{
-		reportChannelEstablishmentError(errorMsg);
-		return false;
+		case CertificateChecker::CertificateStatus::Good:
+			return true;
+
+		case CertificateChecker::CertificateStatus::Unsupported_Algorithm_Or_Length:
+			reportChannelEstablishmentError(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length);
+			return false;
+
+		case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
+			reportChannelEstablishmentError(GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description);
+			return false;
 	}
 
-	return true;
+	return false;
 }
 
 
@@ -163,9 +165,9 @@ void StateGenericSendReceive::run()
 	setMessageId(messageToSend.dynamicCast<PaosMessage>());
 	if (QSharedPointer<ResponseType> paosResponse = messageToSend.dynamicCast<ResponseType>())
 	{
-		if (!getContext()->isErrorReportedToServer() && !getContext()->getResult().isOk() && !getContext()->getResult().isOriginServer())
+		if (!getContext()->isErrorReportedToServer() && getContext()->getStatus().isError() && !getContext()->getStatus().isOriginServer())
 		{
-			paosResponse->setResult(getContext()->getResult());
+			paosResponse->setResult(getContext()->getStatus());
 			getContext()->setErrorReportedToServer(true);
 		}
 		else
@@ -199,7 +201,7 @@ void StateGenericSendReceive::onReplyFinished()
 
 	if (reply->error() != QNetworkReply::NoError)
 	{
-		reportChannelEstablishmentError(NetworkManager::getLocalizedErrorString(reply));
+		reportChannelEstablishmentError(NetworkManager::toTrustedChannelStatus(reply));
 		return;
 	}
 
@@ -210,7 +212,7 @@ void StateGenericSendReceive::onReplyFinished()
 	const int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 	if (statusCode >= 500)
 	{
-		reportChannelEstablishmentError(tr("The program received an error from the server."));
+		reportChannelEstablishmentError(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server);
 		return;
 	}
 
@@ -232,13 +234,13 @@ void StateGenericSendReceive::onReplyFinished()
 		if (paosHandler.getDetectedPaosType() == PaosType::UNKNOWN)
 		{
 			qCCritical(network) << "The program received an unknown message from the server.";
-			setResult(Result::createInternalError(tr("The program received an unknown message from the server.")));
+			setStatus(GlobalStatus::Code::Workflow_Unknown_Paos_Form_EidServer);
 			Q_EMIT fireError();
 		}
 		else
 		{
 			qCCritical(network) << "The program received an unexpected message from the server.";
-			setResult(Result::createInternalError(tr("The program received an unexpected message from the server.")));
+			setStatus(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer);
 			Q_EMIT fireError();
 		}
 		return;

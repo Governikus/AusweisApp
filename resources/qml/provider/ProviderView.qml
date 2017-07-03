@@ -3,201 +3,105 @@ import QtQuick 2.5
 import "../"
 import "../global"
 
+
 SectionPage {
 	id: baseItem
+
+	readonly property var category: providerModel.categories.length === 0 ? "" : providerModel.categories[0]
+
+	Component.onCompleted: providerModel.sortByCategoryFirst(true)
+
+	onCategoryChanged: {
+		providerModel.sortByCategoryFirst(category === "")
+	}
 
 	ProviderStyle {
 		id: providerStyle
 	}
 
+	leftTitleBarAction: TitleBarMenuAction {
+		state: category !== "" ? "back" : ""
+		onClicked: {
+			if (state === "back") {
+				providerModel.setCategorySelection("")
+			}
+		}
+	}
+
 	headerTitleBarAction: TitleBarAction { text: qsTr("Provider"); font.bold: true }
 
-	rightTitleBarAction: TitleBarSearchAction {
-		availableWidth: baseItem.width - leftTitleBarAction.contentWidth - Constants.menubar_width
-		onSearchTextChanged: baseItem.searchText = searchText
-	}
-
-	ProviderSectionView {
-		id: categoryProviderView
-		visible: false
-	}
+	titleBarColor: Category.displayColor(category)
 
 	ProviderDetailView {
 		id: providerDetailView
 		visible: false
 	}
 
-	property string searchText: ""
-
-	header: ProviderViewHeader {
-		id: providerViewHeader
-
+	header: SearchBar {
 		width: baseItem.width
-
-		onSearchTextChanged: baseItem.searchText = searchText
+		color: Category.displayColor(category)
+		onSearchTextChanged: providerModel.searchString = searchText
 	}
 
 	content: Column {
-		height: Math.max(providerList.height, baseItem.height)
 		width: baseItem.width
 
 		Rectangle {
+			height: Utils.dp(200)
+			width: parent.width
+			color: Constants.background_color
+			visible: providerModel.rowCount === 0 && !additionalResults.visible
+
+			Text {
+				anchors.centerIn: parent
+				text: qsTr("No match found")
+				font.pixelSize: Constants.normal_font_size
+			}
+		}
+
+		ProviderSectionDelegate {
 			id: allSection
+			sectionName: "all"
+			visible: providerModel.searchString === "" && providerModel.categories.length === 0
+			height: visible ? Constants.provider_section_height : 0
+		}
 
+		ListView {
+			id: providerListMain
+			height: childrenRect.height
 			width: baseItem.width
-			height: Constants.provider_section_height
-			color: "white"
-			visible: baseItem.searchText === ""
+			interactive: false
+			visible: category === ""
 
-			Item {
-				anchors.fill: parent
-				anchors.topMargin: Utils.dp(5)
-				anchors.bottomMargin: Utils.dp(5)
+			model: providerModel
 
-				Rectangle {
-					id: iconBackground
-
-					anchors.centerIn: allImage
-					height: allImage.height
-					width: height
-					radius: width * 0.5
-
-					border.width: 0
-					color: Constants.all_image_background_color
-				}
-
-
-				Image {
-					id: allImage
-					source: "qrc:///images/All.png"
-					anchors.left: parent.left
-					anchors.verticalCenter: parent.verticalCenter
-					anchors.leftMargin: providerStyle.leftIconMargin
-					height: parent.height
-					width: parent.width * 0.15
-					fillMode: Image.PreserveAspectFit
-				}
-
-				Text {
-					anchors.verticalCenter: parent.verticalCenter
-					anchors.left: allImage.right
-					anchors.leftMargin: providerStyle.leftProviderListMargin
-					font.pixelSize: providerStyle.categoryFontPixelSize
-					font.bold: providerStyle.categoryFontBold
-					color: providerStyle.categoryColor
-					elide: Text.ElideRight
-					text: qsTr("All")
-				}
-
-				Text {
-					anchors.right: parent.right
-					anchors.rightMargin: Utils.dp(5)
-					anchors.verticalCenter: parent.verticalCenter
-
-					text: ">"
-					color: Constants.grey
-					font.pixelSize: Utils.sp(14)
-					visible: providerStyle.showCategoryRightArrow
-				}
-
-				MouseArea {
-					anchors.fill: parent
-					onClicked: {
-						push(categoryProviderView, {selectedCategory: "all"})
-					}
-				}
+			delegate: ProviderViewDelegate {
+				height: visible ? Constants.provider_section_height : 0
+				visible: providerModel.searchString !== ""
 			}
 
-			Rectangle {
-				width: parent.width * 0.85
-				anchors.top: parent.bottom
-				anchors.topMargin: -height
-				anchors.right: parent.right
-				height: 1
-				color: Constants.grey
+			section.property: "providerCategory"
+			section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
+			section.delegate: ProviderSectionDelegate {
+				sectionName: section
 			}
 		}
 
 		ListView {
-			id: providerList
-			height: contentHeight
+			id: providerListSection
+			height: childrenRect.height
 			width: baseItem.width
+			interactive: false
+			visible: !providerListMain.visible
 
-			section.property: "category"
-			section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
+			model: providerModel
 
-			model: ProviderDelegateModel {
-				model: providerModel.sortModel
-				searchText: baseItem.searchText
-				delegate: ProviderViewDelegate {
-					height: visible ? Constants.provider_section_height : 0
-					visible: baseItem.searchText !== ""
-				}
-			}
+			delegate: ProviderViewDelegate {}
+		}
 
-			section.delegate: Rectangle {
-				id: sectionDelegate
-				width: parent.width
-				height: Constants.provider_section_height
-				visible: baseItem.searchText === ""
-				color: "white"
-				clip: true
-
-				Item {
-					anchors.fill: parent
-					anchors.topMargin: Utils.dp(5)
-					anchors.bottomMargin: Utils.dp(5)
-
-					Image {
-						id: sectionImage
-						source: Category.imageSource(section)
-						anchors.left: parent.left
-						anchors.verticalCenter: parent.verticalCenter
-						anchors.leftMargin: providerStyle.leftIconMargin
-						height: parent.height
-						width: parent.width * 0.15
-						fillMode: Image.PreserveAspectFit
-					}
-
-					Text {
-						anchors.verticalCenter: parent.verticalCenter
-						anchors.left: sectionImage.right
-						anchors.leftMargin: providerStyle.leftProviderListMargin
-						color: providerStyle.categoryColor
-						font.pixelSize: providerStyle.categoryFontPixelSize
-						font.bold: providerStyle.categoryFontBold
-						elide: Text.ElideRight
-						text: Category.displayString(section)
-					}
-
-					Text {
-						anchors.right: parent.right
-						anchors.rightMargin: Utils.dp(5)
-						anchors.verticalCenter: parent.verticalCenter
-
-						text: ">"
-						color: Constants.grey
-						font.pixelSize: Utils.sp(14)
-						visible: providerStyle.showCategoryRightArrow
-					}
-
-					MouseArea {
-						anchors.fill: parent
-						onClicked: {
-							push(categoryProviderView, {selectedCategory: section})
-						}
-					}
-				}
-
-				Rectangle {
-					width: parent.width * 0.85
-					anchors.top: parent.bottom
-					anchors.topMargin: -height
-					anchors.right: parent.right
-					height: 1
-					color: Constants.grey
-				}
-			}
+		AdditionalResultsItem {
+			id: additionalResults
+			width: parent.width
 		}
 	}
 }

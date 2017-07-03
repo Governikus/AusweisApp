@@ -281,15 +281,18 @@ For detailed information see message :ref:`enter_pin`.
 
 If the PIN was correct, the workflow will continue.
 
+If the last attempt to enter the PIN failed, AusweisApp2
+will send the message :ref:`enter_puk`.
 
-- **pin**: The personal identification number of the card.
+
+- **value**: The personal identification number of the card.
   This must be 6 digits.
 
 .. code-block:: json
 
   {
     "cmd": "SET_PIN",
-    "pin": "123456"
+    "value": "123456"
   }
 
 .. note::
@@ -313,14 +316,14 @@ The AusweisApp2 will send an :ref:`enter_can` message on error.
 Otherwise the workflow will continue with :ref:`enter_pin`.
 
 
-- **can**: The card access number of the card.
+- **value**: The card access number of the card.
   This must be 6 digits.
 
 .. code-block:: json
 
   {
     "cmd": "SET_CAN",
-    "can": "123456"
+    "value": "123456"
   }
 
 .. note::

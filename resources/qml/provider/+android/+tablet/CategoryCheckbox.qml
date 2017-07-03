@@ -5,59 +5,44 @@ import "../../../global"
 
 Item {
 	id: baseItem
-
 	height: parent.height
 	width: mainContent.width
 	anchors.verticalCenter: parent.verticalCenter
 
 	property string category: ""
-	property string imageSource: ""
-	property string text: ""
-	property bool checked: false
-
-	onCheckedChanged: providerModel.categoryFilter.updateCategorySelection(category, checked)
-
-	Connections {
-		target: providerModel.categoryFilter
-		onFireCriteriaChanged: {
-			baseItem.checked = providerModel.categoryFilter.isSelected(category)
-		}
-	}
+	property alias imageSource: icon.source
+	property alias text: label.text
 
 	Row {
 		id: mainContent
-
 		height: parent.height
 		spacing: Utils.dp(5)
 		anchors.verticalCenter: parent.verticalCenter
 
 		Image {
 			id: icon
-			source: baseItem.imageSource
-
-			fillMode: Image.PreserveAspectFit
 			height: baseItem.height * 0.7
 			width: height
+			fillMode: Image.PreserveAspectFit
 			anchors.verticalCenter: parent.verticalCenter
 		}
 
 		Text {
-			text: baseItem.text
-			color: "black"
-			font.pixelSize: Utils.sp(16)
+			id: label
+			font.pixelSize: Constants.normal_font_size
 			anchors.verticalCenter: parent.verticalCenter
 		}
 
-		CheckBox {
+		GCheckBox {
+			id: checkbox
 			anchors.verticalCenter: parent.verticalCenter
 			visible: true
-			checked: baseItem.checked
+			checked: providerModel.categories.indexOf(baseItem.category) !== -1
 		}
 	}
 
 	MouseArea {
 		anchors.fill: parent
-		enabled: true
-		onClicked: baseItem.checked = !baseItem.checked
+		onClicked: providerModel.updateCategorySelection(category, !checkbox.checked)
 	}
 }

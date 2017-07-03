@@ -38,6 +38,7 @@ class UpdateService
 		QVector<QSslCertificate> mTrustedUpdateCertificates;
 
 		QPointer<QNetworkReply> mReply;
+		bool mCancel;
 
 	private Q_SLOTS:
 		void onSslErrors(const QList<QSslError>& pErrors);
@@ -49,7 +50,19 @@ class UpdateService
 		void onNetworkReplyFinished();
 
 	protected:
-		QSharedPointer<UpdateBackend> getUpdateBackend();
+		template<typename T = UpdateBackend>
+		QSharedPointer<T> getUpdateBackend()
+		{
+			return mUpdateBackend.staticCast<T>();
+		}
+
+
+		template<typename T = UpdateBackend>
+		QSharedPointer<const T> getUpdateBackend() const
+		{
+			return mUpdateBackend.staticCast<const T>();
+		}
+
 
 	public:
 		UpdateService(const QSharedPointer<UpdateBackend>& pUpdateBackend,
@@ -58,9 +71,7 @@ class UpdateService
 		virtual ~UpdateService();
 
 		void setUpdateUrl(const QUrl& pUpdateUrl);
-
-		void setTrustedUpdateCertificates(const QVector<QSslCertificate>& pTrustedUpdateCertificates);
-
+		virtual void setTrustedUpdateCertificates(const QVector<QSslCertificate>& pTrustedUpdateCertificates);
 		void runUpdate();
 
 	Q_SIGNALS:

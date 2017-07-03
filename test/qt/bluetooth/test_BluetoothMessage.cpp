@@ -17,14 +17,6 @@ class test_BluetoothMessage
 	Q_OBJECT
 
 	private Q_SLOTS:
-		void get()
-		{
-			BluetoothMessage msg(BluetoothMsgId::StatusInd);
-			const BluetoothMessageStatusInd* obj = msg.get<BluetoothMessageStatusInd>();
-			QVERIFY(obj != nullptr);
-		}
-
-
 		void statusIndCtor()
 		{
 			BluetoothMessageStatusInd msg;
@@ -34,11 +26,10 @@ class test_BluetoothMessage
 
 		void statusIndStatusChange()
 		{
-			BluetoothMessageParameterStatusChange param(getEnumByteValue(BluetoothStatusChange::CardRecovered));
+			BluetoothMessageParameterStatusChange param(QByteArray(1, Enum<BluetoothStatusChange>::getValue(BluetoothStatusChange::CardRecovered)));
 			BluetoothMessageStatusInd msg;
 			msg.copyParameter(param);
 
-			QVERIFY(msg.getParamStatusChange()->get<BluetoothMessageParameterStatusChange>() != nullptr);
 			QCOMPARE(msg.getStatusChange(), BluetoothStatusChange::CardRecovered);
 		}
 

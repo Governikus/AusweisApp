@@ -31,7 +31,7 @@ QSharedPointer<AuthContext> MsgContext::getAuthContext()
 {
 	if (mContext)
 	{
-		return mContext.dynamicCast<AuthContext>();
+		return mContext.objectCast<AuthContext>();
 	}
 
 	return QSharedPointer<AuthContext>();
@@ -42,7 +42,7 @@ QSharedPointer<const AuthContext> MsgContext::getAuthContext() const
 {
 	if (mContext)
 	{
-		return mContext.dynamicCast<const AuthContext>();
+		return mContext.objectCast<const AuthContext>();
 	}
 
 	return QSharedPointer<const AuthContext>();

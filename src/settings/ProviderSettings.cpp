@@ -8,6 +8,7 @@
 #include "AppSettings.h"
 #include "VersionNumber.h"
 
+#include <QRegularExpression>
 #include <QSet>
 
 using namespace governikus;
@@ -29,6 +30,16 @@ const QLatin1String SETTINGS_NAME_EMAIL("email");
 const QLatin1String SETTINGS_NAME_POSTALADDRESS("postalAddress");
 const QLatin1String SETTINGS_NAME_ICON("icon");
 const QLatin1String SETTINGS_NAME_IMAGE("image");
+const QLatin1String SETTINGS_NAME_TCTOKENURL("tcTokenUrl");
+const QLatin1String SETTINGS_NAME_CLIENTURL("clientUrl");
+const QLatin1String SETTINGS_NAME_SUBJECTURLS("subjectUrls");
+const QLatin1String SETTINGS_NAME_CALLCOSTS("callcosts");
+const QLatin1String SETTINGS_NAME_CALLCOST_PREFIX("prefix");
+const QLatin1String SETTINGS_NAME_CALLCOST_FREESECS("free-seconds");
+const QLatin1String SETTINGS_NAME_CALLCOST_LANDLINE_PER_MIN("landline-per-minute");
+const QLatin1String SETTINGS_NAME_CALLCOST_LANDLINE_PER_CALL("landline-per-call");
+const QLatin1String SETTINGS_NAME_CALLCOST_MOB_PER_MIN("mobile-per-minute");
+const QLatin1String SETTINGS_NAME_CALLCOST_MOB_PER_CALL("mobile-per-call");
 
 
 Provider::Provider(const LanguageString& pShortName,
@@ -44,7 +55,8 @@ Provider::Provider(const LanguageString& pShortName,
 		const QString& pIcon,
 		const QString& pImage,
 		const QString& pTcTokenUrl,
-		const QString& pClientUrl)
+		const QString& pClientUrl,
+		const QStringList& pSubjectUrls)
 	: mShortName(pShortName)
 	, mLongName(pLongName)
 	, mShortDescription(pShortDescription)
@@ -61,6 +73,7 @@ Provider::Provider(const LanguageString& pShortName,
 	, mLocalImageUrl()
 	, mTcTokenUrl(pTcTokenUrl)
 	, mClientUrl(pClientUrl)
+	, mSubjectUrls(pSubjectUrls)
 {
 }
 
@@ -97,15 +110,7 @@ const QString& Provider::getAddress() const
 
 QString Provider::getAddressDomain() const
 {
-	if (mAddress.isNull())
-	{
-		return QString();
-	}
-	else
-	{
-		auto domain = mAddress.split('/');
-		return domain[0] + QLatin1String("//") + domain[2];
-	}
+	return QUrl::fromUserInput(mAddress).host();
 }
 
 
@@ -117,17 +122,7 @@ const QString& Provider::getHomepage() const
 
 QString Provider::getHomepageBase() const
 {
-	const auto chunks = mHomepage.split('/');
-	if (chunks[0] == QLatin1String("https:") || chunks[0] == QLatin1String("http:"))
-	{
-		Q_ASSERT(chunks.size() >= 3);
-
-		return chunks[2];
-	}
-	else
-	{
-		return chunks[0];
-	}
+	return QUrl::fromUserInput(mHomepage).host();
 }
 
 
@@ -191,6 +186,12 @@ const QString& Provider::getClientUrl() const
 }
 
 
+const QStringList& Provider::getSubjectUrls() const
+{
+	return mSubjectUrls;
+}
+
+
 void Provider::setTcTokenUrl(const QString& pTcTokenUrl)
 {
 	mTcTokenUrl = pTcTokenUrl;
@@ -225,9 +226,11 @@ ProviderSettings::ProviderSettings()
 	, mIssueDate()
 	, mProviders()
 	, mIconMap()
+	, mCallCosts()
 {
 	connect(this, &ProviderSettings::fireIssueDateChanged, this, &ProviderSettings::fireSettingsChanged);
 	connect(this, &ProviderSettings::fireProvidersChanged, this, &ProviderSettings::fireSettingsChanged);
+	connect(this, &ProviderSettings::fireCallCostsChanged, this, &ProviderSettings::fireSettingsChanged);
 }
 
 
@@ -255,14 +258,20 @@ QStringList ProviderSettings::getRequiredIcons() const
 }
 
 
+#ifndef QT_NO_DEBUG
+
+
 ProviderSettings::ProviderSettings(const QDateTime& pIssueDate, const QVector<Provider>& pProviders)
 	: AbstractSettings()
 	, mIssueDate(pIssueDate)
 	, mProviders(pProviders)
 	, mIconMap()
+	, mCallCosts()
 {
-	Q_EMIT fireRequiredIcons(getRequiredIcons());
 }
+
+
+#endif
 
 
 ProviderSettings::~ProviderSettings()
@@ -304,6 +313,10 @@ void ProviderSettings::load()
 		const QString postalAddress = getSettingsValue(settings, SETTINGS_NAME_POSTALADDRESS).toString();
 		const QString icon = getSettingsValue(settings, SETTINGS_NAME_ICON).toString();
 		const QString image = getSettingsValue(settings, SETTINGS_NAME_IMAGE).toString();
+		const QString tcTokenUrl = getSettingsValue(settings, SETTINGS_NAME_TCTOKENURL).toString();
+		const QString clientUrl = getSettingsValue(settings, SETTINGS_NAME_CLIENTURL).toString();
+		const QStringList subjectUrls = getSettingsValue(settings, SETTINGS_NAME_SUBJECTURLS).toStringList();
+
 		providers += Provider(shortName,
 				longName,
 				shortDescription,
@@ -315,12 +328,32 @@ void ProviderSettings::load()
 				email,
 				postalAddress,
 				icon,
-				image);
+				image,
+				tcTokenUrl,
+				clientUrl,
+				subjectUrls);
 	}
 	settings->endArray();
 
 	setProviders(providers);
 	setIssueDate(settings->value(SETTINGS_NAME_ISSUEDATE).toDateTime());
+
+	const int callCostListSize = settings->beginReadArray(SETTINGS_NAME_CALLCOSTS);
+	QMap<QString, CallCost> callCosts;
+	providers.reserve(listSize);
+	for (int i = 0; i < callCostListSize; ++i)
+	{
+		settings->setArrayIndex(i);
+		const int freeSeconds = getSettingsValue(settings, SETTINGS_NAME_CALLCOST_FREESECS).toInt();
+		const double landlinePerMin = getSettingsValue(settings, SETTINGS_NAME_CALLCOST_LANDLINE_PER_MIN).toDouble();
+		const double landlinePerCall = getSettingsValue(settings, SETTINGS_NAME_CALLCOST_LANDLINE_PER_CALL).toDouble();
+		const double mobilePerMin = getSettingsValue(settings, SETTINGS_NAME_CALLCOST_MOB_PER_MIN).toDouble();
+		const double mobilePerCall = getSettingsValue(settings, SETTINGS_NAME_CALLCOST_MOB_PER_CALL).toDouble();
+		const QString prefix = getSettingsValue(settings, SETTINGS_NAME_CALLCOST_PREFIX).toString();
+		callCosts.insert(prefix, CallCost(freeSeconds, landlinePerMin, landlinePerCall, mobilePerMin, mobilePerCall));
+	}
+	settings->endArray();
+	setCallCosts(callCosts);
 
 	settings->endGroup();
 }
@@ -395,8 +428,29 @@ void ProviderSettings::save()
 		settings->setValue(SETTINGS_NAME_POSTALADDRESS, provider.getPostalAddress());
 		settings->setValue(SETTINGS_NAME_ICON, provider.getIcon());
 		settings->setValue(SETTINGS_NAME_IMAGE, provider.getImage());
+		settings->setValue(SETTINGS_NAME_TCTOKENURL, provider.getTcTokenUrl());
+		settings->setValue(SETTINGS_NAME_CLIENTURL, provider.getClientUrl());
+		settings->setValue(SETTINGS_NAME_SUBJECTURLS, provider.getSubjectUrls());
 	}
 	settings->endArray();
+
+	settings->beginWriteArray(SETTINGS_NAME_CALLCOSTS);
+	const auto& prefixes = mCallCosts.keys();
+	for (int i = 0; i < prefixes.size(); ++i)
+	{
+		settings->setArrayIndex(i);
+		const auto& prefix = prefixes.at(i);
+		const auto callCost = mCallCosts.value(prefix);
+
+		settings->setValue(SETTINGS_NAME_CALLCOST_FREESECS, callCost.getFreeSeconds());
+		settings->setValue(SETTINGS_NAME_CALLCOST_LANDLINE_PER_MIN, callCost.getLandlineCentsPerMinute());
+		settings->setValue(SETTINGS_NAME_CALLCOST_LANDLINE_PER_CALL, callCost.getLandlineCentsPerCall());
+		settings->setValue(SETTINGS_NAME_CALLCOST_MOB_PER_MIN, callCost.getMobileCentsPerMinute());
+		settings->setValue(SETTINGS_NAME_CALLCOST_MOB_PER_CALL, callCost.getMobileCentsPerCall());
+		settings->setValue(SETTINGS_NAME_CALLCOST_PREFIX, prefix);
+	}
+	settings->endArray();
+
 
 	settings->setValue(SETTINGS_NAME_ISSUEDATE, mIssueDate);
 
@@ -407,11 +461,12 @@ void ProviderSettings::save()
 
 void ProviderSettings::update(const AbstractSettings& pOther)
 {
-	const ProviderSettings* const other = dynamic_cast<const ProviderSettings* const>(&pOther);
+	const ProviderSettings* const other = qobject_cast<const ProviderSettings* const>(&pOther);
 	if (other != nullptr)
 	{
 		mIssueDate = other->getIssueDate();
 		setProviders(other->getProviders());
+		setCallCosts(other->getCallCosts());
 	}
 }
 
@@ -448,6 +503,49 @@ void ProviderSettings::setProviders(const QVector<Provider>& pProviders)
 
 		Q_EMIT fireRequiredIcons(getRequiredIcons());
 	}
+}
+
+
+void ProviderSettings::setCallCosts(const QMap<QString, CallCost>& pCallCosts)
+{
+	if (mCallCosts != pCallCosts)
+	{
+		mCallCosts = pCallCosts;
+		Q_EMIT fireCallCostsChanged();
+	}
+}
+
+
+const QMap<QString, CallCost>& ProviderSettings::getCallCosts() const
+{
+	return mCallCosts;
+}
+
+
+CallCost ProviderSettings::getCallCost(const Provider& pProvider) const
+{
+	return getCallCost(pProvider.getPhone());
+}
+
+
+CallCost ProviderSettings::getCallCost(const QString& pProviderPhone) const
+{
+	QString standardisedPhoneNumber = pProviderPhone;
+	standardisedPhoneNumber = standardisedPhoneNumber.remove(QLatin1String("+49"));
+	standardisedPhoneNumber = standardisedPhoneNumber.remove(QRegularExpression("[^\\d]"));
+
+	if (!standardisedPhoneNumber.isEmpty())
+	{
+		const auto& prefixes = mCallCosts.keys();
+		for (const auto& prefix : prefixes)
+		{
+			if (standardisedPhoneNumber.startsWith(prefix))
+			{
+				return mCallCosts[prefix];
+			}
+		}
+	}
+	return CallCost();
 }
 
 

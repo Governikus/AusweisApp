@@ -8,8 +8,8 @@
 
 #include "states/StateExtractCvcsFromEac1IntputType.h"
 
+#include "TestAuthContext.h"
 #include "TestFileHelper.h"
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
 #include <QtCore>
 #include <QtTest>
@@ -44,11 +44,11 @@ class test_StateExtractCvcsFromEac1InputType
 
 		void init()
 		{
-			mAuthContext.reset(new AuthContext(nullptr));
+			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1_3.xml"));
+
 			mState.reset(new StateExtractCvcsFromEac1IntputType(mAuthContext));
 			mState->setStateName("StateExtractCvcsFromEac1IntputType");
-			QSharedPointer<DIDAuthenticateEAC1> didAuthEac1(dynamic_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_3.xml"))));
-			mAuthContext->setDidAuthenticateEac1(didAuthEac1);
+
 			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.clear();
 			connect(this, &test_StateExtractCvcsFromEac1InputType::fireStateStart, mState.data(), &AbstractState::onEntry, Qt::ConnectionType::DirectConnection);
 		}

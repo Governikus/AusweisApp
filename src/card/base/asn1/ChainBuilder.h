@@ -44,7 +44,7 @@ class ChainBuilder
 				if (mIsChildFunc(elem, pChain.last()))
 				{
 					QVector<T> extendedChain(pChain);
-					extendedChain.append(elem);
+					extendedChain += elem;
 					buildChain(pAllElements, extendedChain);
 					chainComplete = false;
 				}

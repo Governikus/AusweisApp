@@ -56,15 +56,14 @@ class test_AppSettings
 			otherSettings->getProviderSettings().setIssueDate(QDateTime(QDate(1989, 11, 9)));
 			QVERIFY(*settings == *otherSettings);
 
-			auto proxyType = settings->getProxySettings().getProxyType() == QNetworkProxy::DefaultProxy ? QNetworkProxy::NoProxy : QNetworkProxy::DefaultProxy;
-			settings->getProxySettings().setProxyType(proxyType);
-			QVERIFY(*settings != *otherSettings);
-			otherSettings->getProxySettings().setProxyType(proxyType);
-			QVERIFY(*settings == *otherSettings);
-
 			settings->getSecureStorage().load();
 			QVERIFY(*settings != *otherSettings);
 			otherSettings->getSecureStorage().load();
+			QVERIFY(*settings == *otherSettings);
+
+			settings->getRemoteReaderSettings().setServerName(QLatin1String("Google Pixel"));
+			QVERIFY(*settings != *otherSettings);
+			otherSettings->getRemoteReaderSettings().setServerName(QLatin1String("Google Pixel"));
 			QVERIFY(*settings == *otherSettings);
 
 			delete otherSettings;

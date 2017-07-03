@@ -144,17 +144,21 @@ IF(UNCRUSTIFY)
 	IF("${UNCRUSTIFY_VERSION}" STRLESS "${UNCRUSTIFY_NEEDED_VERSION}")
 		MESSAGE(WARNING "Uncrustify seems to be too old. Use at least ${UNCRUSTIFY_NEEDED_VERSION}... you are using: ${UNCRUSTIFY_VERSION}")
 	ELSE()
-		ADD_CUSTOM_TARGET(format COMMAND ${UNCRUSTIFY_CMD} SOURCES ${UNCRUSTIFY_CFG})
+		ADD_CUSTOM_TARGET(format COMMAND ${UNCRUSTIFY_CMD} SOURCES ${UNCRUSTIFY_CFG} ${FILES})
 	ENDIF()
 ENDIF()
 
 FIND_PROGRAM(QMLLINT_BIN qmllint CMAKE_FIND_ROOT_PATH_BOTH)
 IF(QMLLINT_BIN)
+	FILE(GLOB_RECURSE TEST_FILES_QML ${TEST_DIR}/qml/*.qml)
+	FILE(GLOB_RECURSE TEST_FILES_QML_STATIONARY ${TEST_DIR}/qml_stationary/*.qml)
 	FILE(GLOB_RECURSE FILES_QML ${RESOURCES_DIR}/qml/*.qml)
+	FILE(GLOB_RECURSE FILES_QML_STATIONARY ${RESOURCES_DIR}/qml_stationary/*.qml)
 	FILE(GLOB_RECURSE FILES_JS ${RESOURCES_DIR}/qml/*.js)
-	SET(QMLLINT_CMD ${QMLLINT_BIN} ${FILES_QML} ${FILES_JS})
+	FILE(GLOB_RECURSE FILES_JS_STATIONARY ${RESOURCES_DIR}/qml_stationary/*.js)
+	SET(QMLLINT_CMD ${QMLLINT_BIN} ${FILES_QML} ${FILES_QML_STATIONARY} ${FILES_JS})
 
-	ADD_CUSTOM_TARGET(qmllint COMMAND ${QMLLINT_CMD} SOURCES ${FILES_QML} ${FILES_JS})
+	ADD_CUSTOM_TARGET(qmllint COMMAND ${QMLLINT_CMD} SOURCES ${TEST_FILES_QML} ${TEST_FILES_QML_STATIONARY} ${FILES_QML} ${FILES_QML_STATIONARY} ${FILES_JS} ${FILES_JS_STATIONARY})
 ENDIF()
 
 # doc8 (https://pypi.python.org/pypi/doc8)
@@ -168,5 +172,64 @@ FUNCTION(CREATE_DOC8_TARGET _dir _name)
 		ADD_DEPENDENCIES(doc8 doc8.${_name})
 	ENDIF()
 ENDFUNCTION()
+
+FIND_PROGRAM(CONVERT convert CMAKE_FIND_ROOT_PATH_BOTH)
+IF(CONVERT)
+	SET(CONVERT_CMD convert -background transparent)
+	ADD_CUSTOM_TARGET(npaicons
+		COMMAND ${CONVERT_CMD} npa.svg -define icon:auto-resize=256,96,64,48,40,32,24,20,16 npa.ico
+		COMMAND ${CONVERT_CMD} npa.svg -resize 16x16 autentapp2.iconset/icon_16x16.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 32x32 autentapp2.iconset/icon_16x16@2x.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 32x32 autentapp2.iconset/icon_32x32.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 64x64 autentapp2.iconset/icon_32x32@2x.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 128x128 autentapp2.iconset/icon_128x128.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 256x256 autentapp2.iconset/icon_128x128@2x.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 256x256 autentapp2.iconset/icon_256x256.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 512x512 autentapp2.iconset/icon_256x256@2x.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 512x512 autentapp2.iconset/icon_512x512.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 1024x1024 autentapp2.iconset/icon_512x512@2x.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 36x36 android/ldpi/npa.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 48x48 android/mdpi/npa.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 72x72 android/hdpi/npa.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 96x96 android/xhdpi/npa.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 144x144 android/xxhdpi/npa.png
+		COMMAND ${CONVERT_CMD} npa.svg -resize 192x192 android/xxxhdpi/npa.png
+		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 36x36 android/ldpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 48x48 android/mdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 72x72 android/hdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 96x96 android/xhdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 144x144 android/xxhdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 192x192 android/xxxhdpi/npa_beta.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+ENDIF()
+
+FIND_PROGRAM(PNGQUANT pngquant CMAKE_FIND_ROOT_PATH_BOTH)
+IF(PNGQUANT)
+SET(PNGQUANT_CMD pngquant -f -o)
+	ADD_CUSTOM_TARGET(pngquant
+		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_16x16.png -- autentapp2.iconset/icon_16x16.png
+		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_16x16@2x.png -- autentapp2.iconset/icon_16x16@2x.png
+		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_32x32.png -- autentapp2.iconset/icon_32x32.png
+		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_32x32@2x.png -- autentapp2.iconset/icon_32x32@2x.png
+		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_128x128.png -- autentapp2.iconset/icon_128x128.png
+		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_128x128@2x.png -- autentapp2.iconset/icon_128x128@2x.png
+		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_256x256.png -- autentapp2.iconset/icon_256x256.png
+		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_256x256@2x.png -- autentapp2.iconset/icon_256x256@2x.png
+		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_512x512.png -- autentapp2.iconset/icon_512x512.png
+		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_512x512@2x.png -- autentapp2.iconset/icon_512x512@2x.png
+		COMMAND ${PNGQUANT_CMD} android/ldpi/npa.png -- android/ldpi/npa.png
+		COMMAND ${PNGQUANT_CMD} android/mdpi/npa.png -- android/mdpi/npa.png
+		COMMAND ${PNGQUANT_CMD} android/hdpi/npa.png -- android/hdpi/npa.png
+		COMMAND ${PNGQUANT_CMD} android/xhdpi/npa.png -- android/xhdpi/npa.png
+		COMMAND ${PNGQUANT_CMD} android/xxhdpi/npa.png -- android/xxhdpi/npa.png
+		COMMAND ${PNGQUANT_CMD} android/xxxhdpi/npa.png -- android/xxxhdpi/npa.png
+		COMMAND ${PNGQUANT_CMD} android/ldpi/npa_beta.png -- android/ldpi/npa_beta.png
+		COMMAND ${PNGQUANT_CMD} android/mdpi/npa_beta.png -- android/mdpi/npa_beta.png
+		COMMAND ${PNGQUANT_CMD} android/hdpi/npa_beta.png -- android/hdpi/npa_beta.png
+		COMMAND ${PNGQUANT_CMD} android/xhdpi/npa_beta.png -- android/xhdpi/npa_beta.png
+		COMMAND ${PNGQUANT_CMD} android/xxhdpi/npa_beta.png -- android/xxhdpi/npa_beta.png
+		COMMAND ${PNGQUANT_CMD} android/xxxhdpi/npa_beta.png -- android/xxxhdpi/npa_beta.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+ENDIF()
 
 INCLUDE(Sphinx)

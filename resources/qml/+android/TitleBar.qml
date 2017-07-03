@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.7
 import QtQuick.Controls 1.4
 
 import "global"
@@ -10,38 +10,33 @@ Item
 	id: titleBar
 	height: Constants.titlebar_height
 
-	readonly property var standardMenuAction: TitleBarMenuAction { state: "" }
-	readonly property var standardTitle: TitleBarAction { text: qsTr("Identify"); font.bold: true }
+	readonly property TitleBarMenuAction standardMenuAction: TitleBarMenuAction { state: "" }
+	readonly property TitleBarAction standardTitle: TitleBarAction { text: qsTr("Identify"); font.bold: true }
+
+	property TitleBarMenuAction menuAction: standardMenuAction
+	property TitleBarAction titleItem: standardTitle
 
 	function reset() {
-		leftActionStack.clear()
-		headerActionStack.clear()
 		rightActionStack.clear()
 
-		leftActionStack.push(standardMenuAction)
-		headerActionStack.push(standardTitle)
-		background.color = PlatformConstants.blue
+		setColor(PlatformConstants.blue)
+		menuAction = standardMenuAction
+		titleItem = standardTitle
 	}
 
 	function push(leftAction, headerAction, rightAction, color) {
-		// TODO Remove Stacks because they are not longer needed
-		leftActionStack.pop()
-		headerActionStack.pop()
+		// TODO Remove Stack because we no longer need it
 		rightActionStack.pop()
 
-		background.color = color
-		leftActionStack.push(leftAction)
-		headerActionStack.push(headerAction)
+		setColor(color)
+		menuAction = leftAction
+		titleItem = headerAction
 		rightActionStack.push(rightAction)
 	}
 
-
-	function pop(item) {
-		leftActionStack.pop(item)
-		headerActionStack.pop(item)
-		rightActionStack.pop(item)
+	function setColor(color) {
+		background.color = color
 	}
-
 
 	Rectangle {
 		id: background
@@ -51,28 +46,7 @@ Item
 		anchors.bottom: parent.bottom
 		anchors.right: parent.right
 
-		onColorChanged: {
-			var colorString
-			var colorCompare = String(color)
-			switch(colorCompare) {
-			case Category.CATEGORY_COLOR_CITIZEN:
-				colorString = "CITIZEN"
-				break;
-			case Category.CATEGORY_COLOR_INSURANCE:
-				colorString = "INSURANCE"
-				break;
-			case Category.CATEGORY_COLOR_FINANCE:
-				colorString = "FINANCE"
-				break;
-			case Category.CATEGORY_COLOR_OTHER:
-				colorString = "OTHER"
-				break;
-			default:
-				colorString = "DEFAULT"
-			}
-			statusBarUtil.setStatusBarColor(colorString)
-		}
-
+		onColorChanged: statusBarUtil.setStatusBarColor(String(color))
 		Behavior on color { ColorAnimation { duration: titleBar.duration } }
 	}
 
@@ -90,7 +64,7 @@ Item
 		anchors.horizontalCenter: hamburgerFrame.horizontalCenter
 		height: parent.height
 		width: height
-		state: navBar.isOpen ? "back" : (leftActionStack.currentItem ? leftActionStack.currentItem.state : "")
+		state: navBar.isOpen ? "back" : menuAction.state
 
 		MouseArea {
 			anchors.fill: parent
@@ -103,71 +77,63 @@ Item
 						if (navBar.isOpen) {
 							navBar.close()
 						} else {
-							leftActionStack.currentItem.clicked()
+							menuAction.clicked()
 						}
 						break
 					default:
-						leftActionStack.currentItem.clicked()
+						menuAction.clicked()
 				}
 			}
 		}
 	}
 
-	StackView {
-		id: leftActionStack
-		anchors.left: hamburgerFrame.right
-		anchors.leftMargin: Utils.dp(10)
-		height: parent.height
-		// We dont need this view on android at this time: width = 0
-		width: 0 //currentItem ? currentItem.contentWidth : parent.height
-		delegate: StackViewDelegate {
-			pushTransition: StackViewTransition {
-				PropertyAnimation { duration: titleBar.duration; target: exitItem; property: "opacity"; to: 0 }
-				PropertyAnimation { duration: titleBar.duration; target: exitItem; property: "x"; from: 0; to: -headerActionStack.x }
-				PropertyAnimation { duration: titleBar.duration; target: enterItem; property: "opacity"; from: 0; to: 1 }
-				PropertyAnimation { duration: titleBar.duration; target: enterItem; property: "x"; from: headerActionStack.x; to: 0 }
-			}
-			popTransition: StackViewTransition {
-				PropertyAnimation { duration: titleBar.duration; target: exitItem; property: "opacity"; to: 0 }
-				PropertyAnimation { duration: titleBar.duration; target: exitItem; property: "x"; to: headerActionStack.x }
-				PropertyAnimation { duration: titleBar.duration; target: enterItem; property: "opacity"; from: 0; to: 1 }
-				PropertyAnimation { duration: titleBar.duration; target: enterItem; property: "x"; from: -headerActionStack.x; to: 0 }
-			}
-		}
-	}
+	Item {
+		id: titleText
+		property string text: titleItem.text
+		property bool bold: titleItem.font.bold
+		property int _width: parent.width - 2 * (Math.max(hamburgerFrame.width, rightActionStack.width) + Constants.titlebar_padding)
 
-	StackView {
-		property int _width: parent.width - 2 * Math.max(hamburgerFrame.width, rightActionStack.width) - Utils.dp(20) // 20 == margin
-
-		id: headerActionStack
 		anchors.centerIn: parent
 		height: parent.height
 		width: Math.max(_width, 0)
-		delegate: StackViewDelegate {
-			pushTransition: StackViewTransition {
-				PropertyAnimation { duration: titleBar.duration; target: exitItem; property: "opacity"; to: 0 }
-				PropertyAnimation { duration: titleBar.duration; target: exitItem; property: "x"; from: 0; to: headerActionStack.getRelX(leftActionStack) }
-				PropertyAnimation { duration: titleBar.duration; target: enterItem; property: "opacity"; from: 0; to: 1 }
-				PropertyAnimation { duration: titleBar.duration; target: enterItem; property: "x"; from: headerActionStack.getRelX(rightActionStack); to: 0 }
-			}
-			popTransition: StackViewTransition {
-				PropertyAnimation { duration: titleBar.duration; target: exitItem; property: "opacity"; to: 0 }
-				PropertyAnimation { duration: titleBar.duration; target: exitItem; property: "x"; to: headerActionStack.getRelX(rightActionStack) }
-				PropertyAnimation { duration: titleBar.duration; target: enterItem; property: "opacity"; from: 0; to: 1 }
-				PropertyAnimation { duration: titleBar.duration; target: enterItem; property: "x"; from: headerActionStack.getRelX(leftActionStack); to: 0 }
+		clip: true
+
+		TitleBarText {
+			id: oldTitle
+			text: parent.text
+			Component.onCompleted: font.bold = parent.bold
+			opacity: 0
+
+			Behavior on text {
+				SequentialAnimation {
+					PropertyAnimation { target: oldTitle; property: "opacity"; from: 1; to: 0; duration: titleBar.duration }
+					PropertyAction { target: oldTitle; property: "font.bold"; value: titleText.bold }
+					PropertyAction { target: oldTitle; property: "text" }
+				}
 			}
 		}
-		function getRelX(otherItem) {
-			return headerActionStack.mapFromItem(otherItem,otherItem.x,0).x
+
+		TitleBarText {
+			id: newTitle
+			text: parent.text
+			font.bold: parent.bold
+
+			Behavior on text {
+				ParallelAnimation {
+					PropertyAnimation { target: newTitle; property: "opacity"; from: 0; to: 1; duration: titleBar.duration }
+					PropertyAnimation { target: newTitle; property: "x"; from: width; to: 0; duration: titleBar.duration }
+				}
+			}
 		}
+
 	}
 
 	StackView {
 		id: rightActionStack
+		anchors.margins: Constants.titlebar_padding
+		anchors.top: parent.top
 		anchors.right: parent.right
-		anchors.rightMargin: Utils.dp(10)
-		anchors.verticalCenter: parent.verticalCenter
-		height: parent.height
+		anchors.bottom: parent.bottom
 		width: currentItem ? currentItem.contentWidth : 0
 		delegate: StackViewDelegate {
 			pushTransition: StackViewTransition {

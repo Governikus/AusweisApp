@@ -43,14 +43,32 @@ class test_SecureStorage
 		void testGetCVRootCertificates()
 		{
 			QVector<QSharedPointer<CVCertificate> > cvcs = CVCertificate::fromHex(secureStorage.getCVRootCertificates(true));
-			QCOMPARE(cvcs.count(), 4);
-		}
+			cvcs += CVCertificate::fromHex(secureStorage.getCVRootCertificates(false));
 
+			const int count = cvcs.count();
+			QCOMPARE(count, 10);
 
-		void testGetCVRootCertificatesTest()
-		{
-			QVector<QSharedPointer<CVCertificate> > cvcs = CVCertificate::fromHex(secureStorage.getCVRootCertificates(false));
-			QCOMPARE(cvcs.count(), 4);
+			// Check that each certificate has a unique car/chr.
+			for (int j = 0; j < count; ++j)
+			{
+				for (int i = 0; i < j; ++i)
+				{
+					const CVCertificateBody& bodyI = cvcs[i]->getBody();
+					const QByteArray carI = bodyI.getCertificationAuthorityReference();
+					const QByteArray chrI = bodyI.getCertificateHolderReference();
+
+					const CVCertificateBody& bodyJ = cvcs[j]->getBody();
+					const QByteArray carJ = bodyJ.getCertificationAuthorityReference();
+					const QByteArray chrJ = bodyJ.getCertificateHolderReference();
+
+					if (carI == carJ && chrI == chrJ)
+					{
+						qWarning() << "certificate" << i << "and certificate" << j << "have the same car/chr";
+					}
+
+					QVERIFY(carI != carJ || chrI != chrJ);
+				}
+			}
 		}
 
 
@@ -78,47 +96,65 @@ class test_SecureStorage
 
 		void testAppcast()
 		{
-			QCOMPARE(secureStorage.getAppcastUpdateUrl(), QUrl("https://appl.governikus-asp.de/ausweisapp2/Appcast.xml"));
-			QCOMPARE(secureStorage.getAppcastBetaUpdateUrl(), QUrl("https://appl.governikus-asp.de/ausweisapp2/beta/Appcast.xml"));
+			QCOMPARE(secureStorage.getAppcastUpdateUrl(), QUrl("https://appl.governikus-asp.de/ausweisapp2/Appcast.json"));
+			QCOMPARE(secureStorage.getAppcastBetaUpdateUrl(), QUrl("https://appl.governikus-asp.de/ausweisapp2/beta/Appcast.json"));
+		}
+
+
+		void testMinStaticKeySizes()
+		{
+			QCOMPARE(secureStorage.getMinimumStaticKeySize(QSsl::KeyAlgorithm::Rsa), 2000);
+			QCOMPARE(secureStorage.getMinimumStaticKeySize(QSsl::KeyAlgorithm::Dsa), 2000);
+			QCOMPARE(secureStorage.getMinimumStaticKeySize(QSsl::KeyAlgorithm::Ec), 224);
+		}
+
+
+		void testMinEphemeralKeySizes()
+		{
+			QCOMPARE(secureStorage.getMinimumEphemeralKeySize(QSsl::KeyAlgorithm::Rsa), 2000);
+			QCOMPARE(secureStorage.getMinimumEphemeralKeySize(QSsl::KeyAlgorithm::Dsa), 1024);
+			QCOMPARE(secureStorage.getMinimumEphemeralKeySize(QSsl::KeyAlgorithm::Ec), 224);
 		}
 
 
 		void testSignatureAlgorithms()
 		{
-			QCOMPARE(secureStorage.getSignatureAlgorithms().size(), 12);
-			QCOMPARE(secureStorage.getSignatureAlgorithms().first().first, QSsl::KeyAlgorithm::Rsa);
-			QCOMPARE(secureStorage.getSignatureAlgorithms().first().second, QCryptographicHash::Algorithm::Sha512);
-			QCOMPARE(secureStorage.getSignatureAlgorithms().last().first, QSsl::KeyAlgorithm::Ec);
-			QCOMPARE(secureStorage.getSignatureAlgorithms().last().second, QCryptographicHash::Algorithm::Sha224);
+			const auto& tlsSettings = secureStorage.getTlsSettings();
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 12);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst().first, QSsl::KeyAlgorithm::Rsa);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst().second, QCryptographicHash::Algorithm::Sha512);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast().first, QSsl::KeyAlgorithm::Ec);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast().second, QCryptographicHash::Algorithm::Sha224);
 		}
 
 
 		void testSignatureAlgorithmsPsk()
 		{
-			QCOMPARE(secureStorage.getSignatureAlgorithmsPsk().size(), 4);
-			QCOMPARE(secureStorage.getSignatureAlgorithmsPsk().first().first, QSsl::KeyAlgorithm::Rsa);
-			QCOMPARE(secureStorage.getSignatureAlgorithmsPsk().first().second, QCryptographicHash::Algorithm::Sha512);
-			QCOMPARE(secureStorage.getSignatureAlgorithmsPsk().last().first, QSsl::KeyAlgorithm::Rsa);
-			QCOMPARE(secureStorage.getSignatureAlgorithmsPsk().last().second, QCryptographicHash::Algorithm::Sha224);
+			const auto& tlsSettings = secureStorage.getTlsSettingsPsk();
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 4);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst().first, QSsl::KeyAlgorithm::Rsa);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst().second, QCryptographicHash::Algorithm::Sha512);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast().first, QSsl::KeyAlgorithm::Rsa);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast().second, QCryptographicHash::Algorithm::Sha224);
 		}
 
 
 		void orderOfCiphers()
 		{
-			const auto& ciphersForwardSecrecy = secureStorage.getCiphersWithForwardSecrecy();
-			QCOMPARE(ciphersForwardSecrecy.count(), 16);
-			QCOMPARE(ciphersForwardSecrecy.first(), QStringLiteral("ECDHE-ECDSA-AES256-GCM-SHA384"));
-			QCOMPARE(ciphersForwardSecrecy.last(), QStringLiteral("DHE-RSA-AES128-SHA256"));
+			const auto& ciphersForwardSecrecy = secureStorage.getTlsSettings().getCiphers();
+			QCOMPARE(ciphersForwardSecrecy.count(), 24);
+			QCOMPARE(ciphersForwardSecrecy.first(), QSslCipher("ECDHE-ECDSA-AES256-GCM-SHA384"));
+			QCOMPARE(ciphersForwardSecrecy.last(), QSslCipher("DHE-RSA-AES128-SHA"));
 
-			const auto& ciphersPsk = secureStorage.getCiphersWithPsk();
+			const auto& ciphersPsk = secureStorage.getTlsSettingsPsk().getCiphers();
 			QCOMPARE(ciphersPsk.count(), 5);
-			QCOMPARE(ciphersPsk.first(), QStringLiteral("RSA-PSK-AES256-GCM-SHA384"));
-			QCOMPARE(ciphersPsk.last(), QStringLiteral("RSA-PSK-AES256-CBC-SHA"));
+			QCOMPARE(ciphersPsk.first(), QSslCipher("RSA-PSK-AES256-GCM-SHA384"));
+			QCOMPARE(ciphersPsk.last(), QSslCipher("RSA-PSK-AES256-CBC-SHA"));
 
-			const auto& ciphersEc = secureStorage.getAllowedSslEllipticCurves();
+			const auto& ciphersEc = secureStorage.getTlsSettings().getEllipticCurves();
 			QCOMPARE(ciphersEc.count(), 6);
-			QCOMPARE(ciphersEc.first(), QStringLiteral("brainpoolP512r1"));
-			QCOMPARE(ciphersEc.last(), QStringLiteral("secp224r1"));
+			QCOMPARE(ciphersEc.first(), QSslEllipticCurve::fromLongName("brainpoolP512r1"));
+			QCOMPARE(ciphersEc.last(), QSslEllipticCurve::fromLongName("secp224r1"));
 		}
 
 
@@ -133,13 +169,32 @@ class test_SecureStorage
 
 		void getSslProtocolVersion()
 		{
-			QCOMPARE(secureStorage.getSslProtocolVersion(), QSsl::SslProtocol::TlsV1_0OrLater);
+			QCOMPARE(secureStorage.getTlsSettings().getProtocolVersion(), QSsl::SslProtocol::TlsV1_0OrLater);
 		}
 
 
 		void getSslProtocolVersionPsk()
 		{
-			QCOMPARE(secureStorage.getSslProtocolVersionPsk(), QSsl::SslProtocol::TlsV1_1OrLater);
+			QCOMPARE(secureStorage.getTlsSettingsPsk().getProtocolVersion(), QSsl::SslProtocol::TlsV1_1OrLater);
+		}
+
+
+		void getConfiguration_data()
+		{
+			QTest::addColumn<QSslConfiguration>("configuration");
+			QTest::addColumn<int>("cipherSize");
+
+			QTest::newRow("ciphers non PSK") << secureStorage.getTlsSettings().getConfiguration() << 24;
+			QTest::newRow("ciphers for PSK") << secureStorage.getTlsSettingsPsk().getConfiguration() << 5;
+		}
+
+
+		void getConfiguration()
+		{
+			QFETCH(QSslConfiguration, configuration);
+			QFETCH(int, cipherSize);
+
+			QCOMPARE(configuration.ciphers().size(), cipherSize);
 		}
 
 

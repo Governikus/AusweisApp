@@ -33,14 +33,14 @@ VersionInfo::VersionInfo()
 VersionInfo VersionInfo::getInstance()
 {
 	return VersionInfo({
-		{NAME, QCoreApplication::applicationName()},
-		{IMPL_TITLE, QCoreApplication::applicationName()},
-		{IMPL_VENDOR, QCoreApplication::organizationName()},
-		{IMPL_VERSION, QCoreApplication::applicationVersion()},
-		{SPEC_TITLE, QStringLiteral("TR-03124")},
-		{SPEC_VENDOR, QStringLiteral("Federal Office for Information Security")},
-		{SPEC_VERSION, QStringLiteral("1.2")}
-	});
+				{NAME, QCoreApplication::applicationName()},
+				{IMPL_TITLE, QCoreApplication::applicationName()},
+				{IMPL_VENDOR, QCoreApplication::organizationName()},
+				{IMPL_VERSION, QCoreApplication::applicationVersion()},
+				{SPEC_TITLE, QStringLiteral("TR-03124")},
+				{SPEC_VENDOR, QStringLiteral("Federal Office for Information Security")},
+				{SPEC_VERSION, QStringLiteral("1.2")}
+			});
 }
 
 

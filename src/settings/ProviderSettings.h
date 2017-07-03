@@ -5,6 +5,7 @@
 #pragma once
 
 #include "AbstractSettings.h"
+#include "CallCost.h"
 #include "LanguageString.h"
 
 #include <QDateTime>
@@ -40,6 +41,7 @@ class Provider
 		QString mLocalImageUrl;
 		QString mTcTokenUrl;
 		QString mClientUrl;
+		QStringList mSubjectUrls;
 
 	public:
 		Provider(const LanguageString& pShortName = QString(),
@@ -55,7 +57,9 @@ class Provider
 				const QString& pIcon = QString(),
 				const QString& pImage = QString(),
 				const QString& pTcTokenUrl = QString(),
-				const QString& pClientUrl = QString());
+				const QString& pClientUrl = QString(),
+				const QStringList& pSubjectUrls = QStringList()
+				);
 
 		const LanguageString& getShortName() const;
 		const LanguageString& getLongName() const;
@@ -75,6 +79,7 @@ class Provider
 		const QString& getImageUrl() const;
 		const QString& getTcTokenUrl() const;
 		const QString& getClientUrl() const;
+		const QStringList& getSubjectUrls() const;
 
 		void setTcTokenUrl(const QString& pTcTokenUrl);
 
@@ -114,12 +119,14 @@ class ProviderSettings
 	friend class AppSettings;
 	friend class ProviderParser;
 	friend class::test_ProviderSettings;
+	friend class::test_ProviderParser;
 	friend bool operator==(const ProviderSettings& pLeft, const ProviderSettings& pRight);
 
 	private:
 		QDateTime mIssueDate;
 		QVector<Provider> mProviders;
 		QMap<QString, QString> mIconMap;
+		QMap<QString, CallCost> mCallCosts;
 
 		// Use mIconMap to update icon and image urls in all providers.
 		void applyMap();
@@ -127,10 +134,15 @@ class ProviderSettings
 		QStringList getRequiredIcons() const;
 
 		ProviderSettings();
+	#ifndef QT_NO_DEBUG
+		// This constructor is only for use in testcases
 		ProviderSettings(const QDateTime& pIssueDate, const QVector<Provider>& pProviders);
+	#endif
 
 		static void save(QSharedPointer<QSettings>& pSettings, const QString& pGroupName, LanguageString const& pLanguageString);
 		static LanguageString load(const QSharedPointer<QSettings>& pSettings, const QString& pGroupName);
+
+		CallCost getCallCost(const QString& pProviderPhone) const;
 
 	public:
 		virtual ~ProviderSettings();
@@ -149,6 +161,11 @@ class ProviderSettings
 		const QVector<Provider>& getProviders() const;
 		void setProviders(const QVector<Provider>& pProviders);
 
+		void setCallCosts(const QMap<QString, CallCost>& pCallCosts);
+		const QMap<QString, CallCost>& getCallCosts() const;
+
+		CallCost getCallCost(const Provider& pProvider) const;
+
 		void requestIconMap();
 
 	public Q_SLOTS:
@@ -156,10 +173,9 @@ class ProviderSettings
 
 	Q_SIGNALS:
 		void fireIssueDateChanged();
-
 		void fireProvidersChanged();
-
 		void fireRequiredIcons(const QStringList& pIcons);
+		void fireCallCostsChanged();
 };
 
 inline bool operator==(const ProviderSettings& pLeft, const ProviderSettings& pRight)
@@ -167,7 +183,8 @@ inline bool operator==(const ProviderSettings& pLeft, const ProviderSettings& pR
 	return &pLeft == &pRight || (
 		pLeft.mIssueDate == pRight.mIssueDate &&
 		pLeft.mProviders == pRight.mProviders &&
-		pLeft.mIconMap == pRight.mIconMap);
+		pLeft.mIconMap == pRight.mIconMap &&
+		pLeft.mCallCosts == pRight.mCallCosts);
 }
 
 

@@ -40,14 +40,14 @@ AppController::AppController()
 	setObjectName(QStringLiteral("AppController"));
 	// read and apply the settings
 	AppSettings::getInstance().load();
-	NetworkManager::setProxy(AppSettings::getInstance().getProxySettings().getProxyType());
-
-	connect(&AppSettings::getInstance(), &AbstractSettings::fireSettingsChanged, this, &AppController::onAppSettingsChanged);
 
 	LanguageLoader::getInstance().load();
 	ResourceLoader::getInstance().init();
 
+#ifndef QT_NO_NETWORKPROXY
+	NetworkManager::setApplicationProxyFactory();
 	connect(&NetworkManager::getGlobalInstance(), &NetworkManager::fireProxyAuthenticationRequired, this, &AppController::fireProxyAuthenticationRequired);
+#endif
 
 	connect(this, &AppController::fireShutdown, &NetworkManager::getGlobalInstance(), &NetworkManager::onShutdown, Qt::QueuedConnection);
 }
@@ -84,8 +84,8 @@ bool AppController::start()
 
 	ReaderManager::getInstance().init();
 	connect(this, &AppController::fireShutdown, &ReaderManager::getInstance(), &ReaderManager::shutdown, Qt::DirectConnection);
+	connect(&ReaderManager::getInstance(), &ReaderManager::fireInitialized, this, &AppController::fireStarted, Qt::QueuedConnection);
 
-	Q_EMIT fireStarted();
 	return true;
 }
 
@@ -93,7 +93,9 @@ bool AppController::start()
 void AppController::onAuthenticationRequest(ActivationContext* pActivationContext)
 {
 	QSharedPointer<AuthContext> authContext(new AuthContext(pActivationContext));
+#ifndef QT_NO_NETWORKPROXY
 	connect(&authContext->getNetworkManager(), &NetworkManager::fireProxyAuthenticationRequired, this, &AppController::fireProxyAuthenticationRequired);
+#endif
 
 	if (!startNewWorkflow<AuthController>(Action::AUTH, authContext))
 	{
@@ -136,16 +138,6 @@ void AppController::onActiveControllerDone()
 }
 
 
-void AppController::onAppSettingsChanged()
-{
-	bool proxySettingsChanged = AppSettings::getInstance().getProxySettings().isUnsaved();
-	if (proxySettingsChanged)
-	{
-		NetworkManager::setProxy(AppSettings::getInstance().getProxySettings().getProxyType());
-	}
-}
-
-
 void AppController::onCloseReminderFinished(bool pDontRemindAgain)
 {
 	if (pDontRemindAgain)
@@ -171,7 +163,9 @@ void AppController::onSelfAuthenticationRequested()
 {
 	qDebug() << "self authentication requested";
 	QSharedPointer<SelfAuthenticationContext> context(new SelfAuthenticationContext(nullptr));
+#ifndef QT_NO_NETWORKPROXY
 	connect(&context->getNetworkManager(), &NetworkManager::fireProxyAuthenticationRequired, this, &AppController::fireProxyAuthenticationRequired);
+#endif
 	startNewWorkflow<SelfAuthController>(Action::SELF, context);
 }
 
@@ -186,25 +180,25 @@ void AppController::doShutdown()
 	static const int TIMER_INTERVAL = 50;
 	timer->setInterval(TIMER_INTERVAL);
 	connect(timer, &QTimer::timeout, [ = ](){
-		// Only wait for connections created by the global network manager here. We assume,
-		// that each context has already cleaned up its own connections before discarding
-		// their NetworkManager instances.
-		const int openConnectionCount = NetworkManager::getGlobalInstance().getOpenConnectionCount();
-		static int timesInvoked = 0;
-		static const int THREE_SECONDS = 3000;
-		if (openConnectionCount > 0)
-		{
-			if (++timesInvoked % (THREE_SECONDS / TIMER_INTERVAL) == 0)
-			{
-				qDebug() << "There are still" << openConnectionCount << "pending network connections";
-			}
-			return;
-		}
+			    // Only wait for connections created by the global network manager here. We assume,
+			    // that each context has already cleaned up its own connections before discarding
+			    // their NetworkManager instances.
+				const int openConnectionCount = NetworkManager::getGlobalInstance().getOpenConnectionCount();
+				static int timesInvoked = 0;
+				static const int THREE_SECONDS = 3000;
+				if (openConnectionCount > 0)
+				{
+					if (++timesInvoked % (THREE_SECONDS / TIMER_INTERVAL) == 0)
+					{
+						qDebug() << "There are still" << openConnectionCount << "pending network connections";
+					}
+					return;
+				}
 
-		timer->deleteLater();
-		qDebug() << "Quit event loop of QCoreApplication";
-		qApp->quit();
-	});
+				timer->deleteLater();
+				qDebug() << "Quit event loop of QCoreApplication";
+				qApp->quit();
+			});
 	timer->start();
 }
 
@@ -217,8 +211,12 @@ void AppController::onUiPlugin(UIPlugIn* pPlugin)
 	connect(this, &AppController::fireWorkflowFinished, pPlugin, &UIPlugIn::onWorkflowFinished);
 	connect(this, &AppController::fireStarted, pPlugin, &UIPlugIn::onApplicationStarted);
 	connect(this, &AppController::fireShowUi, pPlugin, &UIPlugIn::onShowUi);
-	connect(this, &AppController::fireProxyAuthenticationRequired, pPlugin, &UIPlugIn::onProxyAuthenticationRequired);
 	connect(this, &AppController::fireShowUserInformation, pPlugin, &UIPlugIn::fireShowUserInformation);
+
+#ifndef QT_NO_NETWORKPROXY
+	connect(this, &AppController::fireProxyAuthenticationRequired, pPlugin, &UIPlugIn::onProxyAuthenticationRequired);
+#endif
+
 	connect(pPlugin, &UIPlugIn::fireChangePinRequest, this, &AppController::onChangePinRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireSelfAuthenticationRequested, this, &AppController::onSelfAuthenticationRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireQuitApplicationRequest, this, &AppController::doShutdown);

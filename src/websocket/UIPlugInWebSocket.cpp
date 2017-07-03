@@ -7,6 +7,7 @@
 #include "view/UILoader.h"
 
 #include <QCoreApplication>
+#include <QFile>
 #include <QLoggingCategory>
 #include <QPluginLoader>
 
@@ -16,7 +17,7 @@ Q_DECLARE_LOGGING_CATEGORY(websocket)
 using namespace governikus;
 
 
-int UIPlugInWebSocket::WEBSOCKET_PORT = UIPlugInWebSocket::WEBSOCKET_DEFAULT_PORT;
+quint16 UIPlugInWebSocket::cWebSocketPort = UIPlugInWebSocket::WEBSOCKET_DEFAULT_PORT;
 
 
 UIPlugInWebSocket::UIPlugInWebSocket()
@@ -24,22 +25,44 @@ UIPlugInWebSocket::UIPlugInWebSocket()
 	, mServer(QCoreApplication::applicationName() + QLatin1Char('/') + QCoreApplication::applicationVersion(), QWebSocketServer::NonSecureMode)
 	, mConnection(nullptr)
 	, mJsonApi(nullptr)
+	, mContext()
 {
-	if (UILoader::getInstance().load(UIPlugInName::UIPlugInJsonApi))
-	{
-		mJsonApi = qobject_cast<UIPlugInJsonApi*>(UILoader::getInstance().getLoaded(UIPlugInName::UIPlugInJsonApi));
-		Q_ASSERT(mJsonApi);
-		connect(&mServer, &QWebSocketServer::newConnection, this, &UIPlugInWebSocket::onNewConnection);
-		qDebug(websocket) << "Starting WebSocket..." << mServer.listen(QHostAddress::LocalHost, WEBSOCKET_PORT);
-		if (!mServer.isListening())
-		{
-			qCritical(websocket) << mServer.errorString();
-		}
-	}
-	else
+	if (!UILoader::getInstance().load(UIPlugInName::UIPlugInJsonApi))
 	{
 		qWarning(websocket) << "Cannot start WebSocket because JSON-API is missing";
+		return;
 	}
+
+	mJsonApi = qobject_cast<UIPlugInJsonApi*>(UILoader::getInstance().getLoaded(UIPlugInName::UIPlugInJsonApi));
+	Q_ASSERT(mJsonApi);
+	connect(&mServer, &QWebSocketServer::newConnection, this, &UIPlugInWebSocket::onNewConnection);
+	qDebug(websocket) << "Starting WebSocket..." << mServer.listen(QHostAddress::LocalHost, cWebSocketPort);
+	if (!mServer.isListening())
+	{
+		qCritical(websocket) << mServer.errorString();
+		return;
+	}
+
+	const quint16 port = mServer.serverPort();
+	qDebug(websocket) << "Listening on port" << port;
+
+#ifndef QT_NO_DEBUG
+	if (cWebSocketPort == 0)
+	{
+		const QString path = WEBSOCKET_PORT_FILENAME(QCoreApplication::applicationPid());
+		QFile file(path);
+		if (file.open(QIODevice::WriteOnly))
+		{
+			QTextStream(&file) << port;
+			qDebug(websocket) << "Stored port number to info file" << path;
+		}
+		else
+		{
+			qCritical(websocket) << "Failed to store port number to info file" << path;
+		}
+	}
+#endif
+
 }
 
 
@@ -48,27 +71,29 @@ UIPlugInWebSocket::~UIPlugInWebSocket()
 }
 
 
-void UIPlugInWebSocket::setPort(int pPort)
+void UIPlugInWebSocket::setPort(quint16 pPort)
 {
-	WEBSOCKET_PORT = pPort;
+	cWebSocketPort = pPort;
 }
 
 
-int UIPlugInWebSocket::getPort()
+quint16 UIPlugInWebSocket::getPort()
 {
-	return WEBSOCKET_PORT;
+	return cWebSocketPort;
 }
 
 
 void UIPlugInWebSocket::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 {
-	Q_UNUSED(pContext)
+	mContext = pContext;
 }
 
 
 void UIPlugInWebSocket::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 {
-	Q_UNUSED(pContext)
+	Q_UNUSED(pContext);
+
+	mContext.clear();
 }
 
 
@@ -95,6 +120,13 @@ void UIPlugInWebSocket::onNewConnection()
 void UIPlugInWebSocket::onClientDisconnected()
 {
 	qDebug(websocket) << "Client disconnected...";
+
+	if (mContext)
+	{
+		const QSignalBlocker blocker(mJsonApi);
+		Q_EMIT mContext->fireCancelWorkflow();
+	}
+
 	mConnection.reset();
 	disconnect(mJsonApi, &UIPlugInJsonApi::fireMessage, this, &UIPlugInWebSocket::onJsonApiMessage);
 }

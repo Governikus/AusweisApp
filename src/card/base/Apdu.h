@@ -78,7 +78,7 @@ class Apdu
 		static const char CLA_COMMAND_CHAINING = 0x10;
 		static const char CLA_SECURE_MESSAGING = 0x0c;
 		const QByteArray& getBuffer() const;
-		size_t length() const;
+		int length() const;
 };
 
 class CommandApdu
@@ -117,8 +117,8 @@ class ResponseApdu
 		QByteArray getData() const;
 		int getDataLength() const;
 		StatusCode getReturnCode() const;
-		int getSW1() const;
-		int getSW2() const;
+		char getSW1() const;
+		char getSW2() const;
 };
 
 } /* namespace governikus */

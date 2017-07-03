@@ -11,8 +11,12 @@
 #include "view/UILoader.h"
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-#include "GuiProfile.h"
-#include "WebserviceActivationHandler.h"
+#include "HttpServer.h"
+
+#ifndef Q_OS_WINRT
+	#include "GuiProfile.h"
+#endif
+
 #endif
 
 #ifndef QT_NO_DEBUG
@@ -38,7 +42,7 @@ QString defaultUi(const QVector<UIPlugInName>& pPlugins)
 	QStringList list;
 	for (auto entry : pPlugins)
 	{
-		list << getEnumName(entry).remove(prefixUi);
+		list << QString(getEnumName(entry)).remove(prefixUi);
 	}
 	return list.join(',');
 }
@@ -80,7 +84,7 @@ void CommandLineParser::addOptions()
 
 	mParser.addOption(mOptionKeepLog);
 
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 	mParser.addOption(mOptionShowWindow);
 #endif
 
@@ -111,7 +115,7 @@ void CommandLineParser::parse(QCoreApplication* pApp)
 		LogHandler::getInstance().setAutoRemove(false);
 	}
 
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 	if (mParser.isSet(mOptionShowWindow))
 	{
 		GuiProfile::getProfile().setShowWindow(true);
@@ -142,9 +146,9 @@ void CommandLineParser::parse(QCoreApplication* pApp)
 	{
 		bool converted = false;
 		const uint port = mParser.value(mOptionPort).toUInt(&converted);
-		if (converted && port < 65536)
+		if (converted && port < USHRT_MAX)
 		{
-			WebserviceActivationHandler::PORT = port;
+			HttpServer::cPort = static_cast<ushort>(port);
 		}
 		else
 		{
@@ -158,9 +162,9 @@ void CommandLineParser::parse(QCoreApplication* pApp)
 	{
 		bool converted = false;
 		const uint port = mParser.value(mOptionPortWebSocket).toUInt(&converted);
-		if (converted && port < 65536)
+		if (converted && port < USHRT_MAX)
 		{
-			UIPlugInWebSocket::setPort(port);
+			UIPlugInWebSocket::setPort(static_cast<ushort>(port));
 		}
 		else
 		{
@@ -176,12 +180,14 @@ void CommandLineParser::parseUiPlugin()
 	if (mParser.isSet(mOptionUi))
 	{
 		QVector<UIPlugInName> selectedPlugins;
-		const auto& availablePlugins = EnumUIPlugInName::getList();
-		for (const auto& parsedUiOption : mParser.values(mOptionUi))
+		const auto& availablePlugins = Enum<UIPlugInName>::getList();
+		const auto& requestedUis = mParser.values(mOptionUi);
+
+		for (const auto& parsedUiOption : requestedUis)
 		{
 			for (auto availablePluginEntry : availablePlugins)
 			{
-				if (parsedUiOption.compare(getEnumName(availablePluginEntry).remove(prefixUi), Qt::CaseInsensitive) == 0)
+				if (parsedUiOption.compare(QString(getEnumName(availablePluginEntry)).remove(prefixUi), Qt::CaseInsensitive) == 0)
 				{
 					selectedPlugins << availablePluginEntry;
 				}

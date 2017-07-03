@@ -10,57 +10,25 @@
 
 #include <QAbstractListModel>
 #include <QPointer>
-#include <QSet>
-#include <QSharedPointer>
-#include <QSortFilterProxyModel>
+
+
+class test_ProviderModel;
 
 
 namespace governikus
 {
-class ProviderCategoryFilterModel
-	: public QSortFilterProxyModel
-{
-	Q_OBJECT
-
-	private:
-		QString mSearchString;
-
-		QSet<QString> mSelectedCategories;
-
-	protected:
-		bool filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const override;
-
-	public:
-		ProviderCategoryFilterModel();
-
-		virtual ~ProviderCategoryFilterModel();
-
-		Q_INVOKABLE void updateSearchString(const QString& pSearchString);
-
-		Q_INVOKABLE void updateCategorySelection(const QString& pCategory, bool pSelected);
-
-		Q_INVOKABLE int matchesForExcludedCategory(const QString& pCategory) const;
-
-		Q_INVOKABLE bool isSelected(const QString& pCategory) const;
-
-	Q_SIGNALS:
-		void fireCriteriaChanged();
-
-};
-
 
 class ProviderModel
 	: public QAbstractListModel
 {
+	friend class::test_ProviderModel;
+
 	Q_OBJECT
-	Q_PROPERTY(QSortFilterProxyModel * filter READ getFilterModel CONSTANT)
-	Q_PROPERTY(QSortFilterProxyModel * sortModel READ getSortModel CONSTANT)
-	Q_PROPERTY(ProviderCategoryFilterModel * categoryFilter READ getCategoryFilterModel CONSTANT)
 
 	QPointer<ProviderSettings> mSettings;
-	QSortFilterProxyModel mFilterModel;
-	QSortFilterProxyModel mSortModel;
-	ProviderCategoryFilterModel mCategoryFilterModel;
+
+	static QString createCostString(double pCostsPerMinute, double pCostsPerCall);
+	static QString createAmountString(double pCents);
 
 	private Q_SLOTS:
 		void onProvidersChanged();
@@ -78,6 +46,7 @@ class ProviderModel
 			HOMEPAGE,
 			HOMEPAGE_BASE,
 			PHONE,
+			PHONE_COST,
 			EMAIL,
 			POSTALADDRESS,
 			ICON,
@@ -92,9 +61,7 @@ class ProviderModel
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
 		QHash<int, QByteArray> roleNames() const override;
 
-		Q_INVOKABLE QSortFilterProxyModel* getFilterModel();
-		Q_INVOKABLE QSortFilterProxyModel* getSortModel();
-		Q_INVOKABLE ProviderCategoryFilterModel* getCategoryFilterModel();
+		static QString createCostString(const CallCost& pCosts);
 };
 
 

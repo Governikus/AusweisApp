@@ -26,7 +26,8 @@ defineEnumType(MsgType,
 		ACCESS_RIGHTS,
 		INSERT_CARD,
 		ENTER_PIN,
-		ENTER_CAN)
+		ENTER_CAN,
+		ENTER_PUK)
 
 defineEnumType(MsgCmdType,
 		UNDEFINED,

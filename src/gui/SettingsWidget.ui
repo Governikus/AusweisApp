@@ -71,7 +71,7 @@
       <item>
        <widget class="QPushButton" name="diagnosisButton">
         <property name="text">
-         <string>Diagnosis…</string>
+         <string>Diagnosis...</string>
         </property>
        </widget>
       </item>

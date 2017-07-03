@@ -62,14 +62,16 @@ void MsgHandlerReader::setReaderInfo(QJsonObject& pObj, const ReaderInfo& pInfo,
 	pObj["attached"] = pInfo.isValid();
 	if (pInfo.isValid())
 	{
-		QJsonObject card;
-		const bool npa = pInfo.getCardType() == CardType::EID_CARD;
-		card["inserted"] = npa;
-		if (npa)
+		if (pInfo.getCardType() == CardType::EID_CARD)
 		{
+			QJsonObject card;
 			card["deactivated"] = pInfo.isPinDeactivated();
 			card["retryCounter"] = pInfo.getRetryCounter();
+			pObj["card"] = card;
 		}
-		pObj["card"] = card;
+		else
+		{
+			pObj["card"] = QJsonValue::Null;
+		}
 	}
 }

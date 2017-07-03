@@ -3,6 +3,7 @@
  */
 
 #include "AuthModel.h"
+
 #include "ReaderManagerPlugInInfo.h"
 #include "context/AuthContext.h"
 
@@ -12,6 +13,7 @@ using namespace governikus;
 AuthModel::AuthModel(QObject* pParent)
 	: QObject(pParent)
 	, mContext()
+	, mTransactionInfo()
 {
 }
 
@@ -21,18 +23,21 @@ AuthModel::~AuthModel()
 }
 
 
-void AuthModel::resetContext(QSharedPointer<AuthContext> pContext)
+void AuthModel::resetContext(const QSharedPointer<AuthContext>& pContext)
 {
+	if (!mTransactionInfo.isEmpty())
+	{
+		mTransactionInfo.clear();
+
+		Q_EMIT fireTransactionInfoChanged();
+	}
+
 	mContext = pContext;
 	if (mContext)
 	{
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-		mContext->setReaderType(ReaderManagerPlugInType::NFC);
-#else
-		mContext->setReaderType(ReaderManagerPlugInType::PCSC);
-#endif
 		connect(mContext.data(), &AuthContext::fireCurrentStateChanged, this, &AuthModel::fireCurrentStateChanged);
 		connect(mContext.data(), &WorkflowContext::fireResultChanged, this, &AuthModel::fireResultChanged);
+		connect(mContext.data(), &AuthContext::fireDidAuthenticateEac1Changed, this, &AuthModel::onDidAuthenticateEac1Changed);
 	}
 
 	/*
@@ -50,13 +55,19 @@ QString AuthModel::getCurrentState() const
 
 QString AuthModel::getResultString() const
 {
-	return mContext ? mContext->getResult().getMessage() : QString();
+	return mContext ? mContext->getStatus().toErrorDescription(true) : QString();
 }
 
 
 bool AuthModel::isError() const
 {
-	return mContext && !mContext->getResult().isOk();
+	return mContext && mContext->getStatus().isError();
+}
+
+
+const QString& AuthModel::getTransactionInfo() const
+{
+	return mTransactionInfo;
 }
 
 
@@ -78,11 +89,21 @@ void AuthModel::cancelWorkflow()
 }
 
 
+void AuthModel::cancelWorkflowOnPinBlocked()
+{
+	if (mContext)
+	{
+		mContext->setStatus(GlobalStatus::Code::Workflow_Pin_Blocked_And_Puk_Objectionable);
+		Q_EMIT mContext->fireCancelWorkflow();
+	}
+}
+
+
 void AuthModel::setReaderType(const QString& pReaderType)
 {
 	if (mContext)
 	{
-		mContext->setReaderType(EnumReaderManagerPlugInType::fromString(pReaderType, ReaderManagerPlugInType::UNKNOWN));
+		mContext->setReaderType(Enum<ReaderManagerPlugInType>::fromString(pReaderType, ReaderManagerPlugInType::UNKNOWN));
 	}
 }
 
@@ -103,5 +124,21 @@ void AuthModel::abortCardSelection()
 	if (mContext)
 	{
 		Q_EMIT mContext->fireAbortCardSelection();
+	}
+}
+
+
+void AuthModel::onDidAuthenticateEac1Changed()
+{
+	if (mContext)
+	{
+		const QSharedPointer<DIDAuthenticateEAC1>& didAuthenticateEAC1 = mContext->getDidAuthenticateEac1();
+		const QString newTransactionInfo = didAuthenticateEAC1.isNull() ? QString() : didAuthenticateEAC1->getTransactionInfo();
+		if (newTransactionInfo != mTransactionInfo)
+		{
+			mTransactionInfo = newTransactionInfo;
+
+			Q_EMIT fireTransactionInfoChanged();
+		}
 	}
 }

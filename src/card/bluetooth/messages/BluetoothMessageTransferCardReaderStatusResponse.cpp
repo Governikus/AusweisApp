@@ -19,10 +19,10 @@ BluetoothMessageTransferCardReaderStatusResponse::~BluetoothMessageTransferCardR
 
 BluetoothStatusChange BluetoothMessageTransferCardReaderStatusResponse::getStatusChange() const
 {
-	auto ptr = getParameter<BluetoothMessageParameterCardReaderStatus>();
-	if (ptr)
+	const auto& param = getParameter(BluetoothParamId::CardReaderStatus);
+	if (param)
 	{
-		return ptr->getStatusChange();
+		return param.staticCast<const BluetoothMessageParameterCardReaderStatus>()->getStatusChange();
 	}
 
 	Q_ASSERT(false); // check for isValid before you call this

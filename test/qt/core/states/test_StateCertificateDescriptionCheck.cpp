@@ -9,8 +9,8 @@
 #include "asn1/ASN1Util.h"
 #include "asn1/CVCertificate.h"
 #include "context/AuthContext.h"
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
+#include "TestAuthContext.h"
 #include <QThread>
 #include <QtCore>
 #include <QtTest>
@@ -31,11 +31,7 @@ class test_StateCertificateDescriptionCheck
 	private Q_SLOTS:
 		void init()
 		{
-			mAuthContext.reset(new AuthContext(nullptr));
-			QSharedPointer<DIDAuthenticateEAC1> didAuthEac1(dynamic_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"))));
-			mAuthContext->setDidAuthenticateEac1(didAuthEac1);
-			mAuthContext->setTerminalCvc(didAuthEac1->getCvCertificates().at(0));
-			mAuthContext->setDvCvc(didAuthEac1->getCvCertificates().at(1));
+			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
 			mAuthContext->setTcTokenUrl(QUrl("https://dev-demo.governikus-eid.de:8443/Autent-DemoApplication/RequestServlet;jsessionid=14w5aKuENyd2D4ZsMmuaeX2g"));
 
 			mState.reset(new StateCertificateDescriptionCheck(mAuthContext));

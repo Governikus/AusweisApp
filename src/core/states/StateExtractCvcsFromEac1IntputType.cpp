@@ -26,7 +26,7 @@ void StateExtractCvcsFromEac1IntputType::run()
 			if (foundTerminalCvc)
 			{
 				qCritical() << "More than one terminal certificate found in EAC1InputType";
-				setResult(Result::createCertChainInterruptedError(tr("No unique AT CVC")));
+				setStatus(GlobalStatus::Code::Workflow_No_Unique_AtCvc);
 				Q_EMIT fireError();
 				return;
 			}
@@ -38,7 +38,7 @@ void StateExtractCvcsFromEac1IntputType::run()
 			if (foundDvCvc)
 			{
 				qCritical() << "More than one DV certificate found in EAC1InputType";
-				setResult(Result::createCertChainInterruptedError(tr("No unique DV CVC")));
+				setStatus(GlobalStatus::Code::Workflow_No_Unique_DvCvc);
 				Q_EMIT fireError();
 				return;
 			}
@@ -50,14 +50,14 @@ void StateExtractCvcsFromEac1IntputType::run()
 	if (!foundTerminalCvc)
 	{
 		qCritical() << "No terminal certificate found in EAC1InputType";
-		setResult(Result::createCertChainInterruptedError(tr("No unique AT CVC")));
+		setStatus(GlobalStatus::Code::Workflow_No_Unique_AtCvc);
 		Q_EMIT fireError();
 		return;
 	}
 	if (!foundDvCvc)
 	{
 		qCritical() << "No DV certificate found in EAC1InputType";
-		setResult(Result::createCertChainInterruptedError(tr("No unique DV CVC")));
+		setStatus(GlobalStatus::Code::Workflow_No_Unique_DvCvc);
 		Q_EMIT fireError();
 		return;
 	}

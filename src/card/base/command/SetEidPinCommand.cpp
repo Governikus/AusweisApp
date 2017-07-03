@@ -12,7 +12,7 @@ using namespace governikus;
 
 
 SetEidPinCommand::SetEidPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
-		const QString& pNewPin, unsigned int pTimeoutSeconds)
+		const QString& pNewPin, quint8 pTimeoutSeconds)
 	: BaseCardCommand(pCardConnectionWorker)
 	, mNewPin(pNewPin)
 	, mTimeoutSeconds(pTimeoutSeconds)

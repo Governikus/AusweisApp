@@ -4,7 +4,6 @@
 
 #include "Commands.h"
 #include "PersoSimWorkaround.h"
-#include "ReturnCodeUtil.h"
 #include "asn1/PACEInfo.h"
 #include "pace/CipherMac.h"
 #include "pace/KeyAgreement.h"
@@ -22,10 +21,10 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 
 
 template<typename ResponseType>
-static QString getResponseErrorString(ReturnCode pReturnCode, const ResponseType& pResponse)
+static QString getResponseErrorString(CardReturnCode pReturnCode, const ResponseType& pResponse)
 {
-	QString errorString = ReturnCodeUtil::toString(pReturnCode);
-	if (pReturnCode == ReturnCode::OK)
+	QString errorString = CardReturnCodeUtil::toGlobalStatus(pReturnCode).toErrorDescription();
+	if (pReturnCode == CardReturnCode::OK)
 	{
 		errorString += QStringLiteral(" | ") + pResponse.getReturnCode();
 	}
@@ -33,7 +32,7 @@ static QString getResponseErrorString(ReturnCode pReturnCode, const ResponseType
 }
 
 
-QSharedPointer<KeyAgreement> KeyAgreement::create(QSharedPointer<PACEInfo> pPaceInfo,
+QSharedPointer<KeyAgreement> KeyAgreement::create(const QSharedPointer<const PACEInfo>& pPaceInfo,
 		QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
 {
 	if (pPaceInfo->getKeyAgreementType() == KeyAgreementType::ECDH)
@@ -48,7 +47,7 @@ QSharedPointer<KeyAgreement> KeyAgreement::create(QSharedPointer<PACEInfo> pPace
 }
 
 
-KeyAgreement::KeyAgreement(QSharedPointer<PACEInfo> pPaceInfo, QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
+KeyAgreement::KeyAgreement(const QSharedPointer<const PACEInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 	: mCardConnectionWorker(pCardConnectionWorker)
 	, mEncryptionKey()
 	, mMacKey()
@@ -143,8 +142,8 @@ QByteArray KeyAgreement::transmitGAEncryptedNonce()
 	GABuilder builder(CommandApdu::CLA_COMMAND_CHAINING);
 	GAEncryptedNonceResponse response;
 
-	ReturnCode returnCode = mCardConnectionWorker->transmit(builder.build(), response);
-	if (returnCode != ReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
+	CardReturnCode returnCode = mCardConnectionWorker->transmit(builder.build(), response);
+	if (returnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCCritical(card) << "Error on GA (Encrypted Nonce):" << getResponseErrorString(returnCode, response);
 		return QByteArray();
@@ -159,8 +158,8 @@ QByteArray KeyAgreement::transmitGAEphemeralPublicKey(const QByteArray& pEphemer
 	commandBuilder.setPaceEphemeralPublicKey(pEphemeralPublicKey);
 	GAPerformKeyAgreementResponse response;
 
-	ReturnCode returnCode = mCardConnectionWorker->transmit(commandBuilder.build(), response);
-	if (returnCode != ReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
+	CardReturnCode returnCode = mCardConnectionWorker->transmit(commandBuilder.build(), response);
+	if (returnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCCritical(card) << "Error on GA(Perform Key Agreement):" << getResponseErrorString(returnCode, response);
 		return QByteArray();
@@ -176,8 +175,8 @@ QByteArray KeyAgreement::transmitGAMappingData(const QByteArray& pMappingData)
 	commandBuilder.setPaceMappingData(pMappingData);
 	GAMapNonceResponse response;
 
-	ReturnCode returnCode = mCardConnectionWorker->transmit(commandBuilder.build(), response);
-	if (returnCode != ReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
+	CardReturnCode returnCode = mCardConnectionWorker->transmit(commandBuilder.build(), response);
+	if (returnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCCritical(card) << "Error on GA(Mapping Data):" << getResponseErrorString(returnCode, response);
 		return QByteArray();
@@ -192,8 +191,8 @@ QSharedPointer<GAMutualAuthenticationResponse> KeyAgreement::transmitGAMutualAut
 	commandBuilder.setPaceAuthenticationToken(pMutualAuthenticationData);
 	QSharedPointer<GAMutualAuthenticationResponse> response(new GAMutualAuthenticationResponse());
 
-	ReturnCode returnCode = mCardConnectionWorker->transmit(commandBuilder.build(), *response);
-	if (returnCode != ReturnCode::OK || response->getReturnCode() != StatusCode::SUCCESS)
+	CardReturnCode returnCode = mCardConnectionWorker->transmit(commandBuilder.build(), *response);
+	if (returnCode != CardReturnCode::OK || response->getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCCritical(card) << "Error on GA(Mutual Authentication):" << getResponseErrorString(returnCode, *response);
 	}

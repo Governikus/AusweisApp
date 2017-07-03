@@ -6,33 +6,38 @@ IF(MAC OR LINUX OR WIN32)
 	ENDIF()
 
 	MACRO(ADD_APPCAST_FILE _files _system)
+		SET(HASHFILE_ENDING "sha256")
+		STRING(TIMESTAMP APPCAST_DATE "%Y-%m-%dT%H:%M:%S")
+
 		FOREACH(filePath ${_files})
 			FILE_SIZE(fileSize ${filePath})
+			GET_FILENAME_COMPONENT(file ${filePath} NAME)
+
 			IF(NOT DEFINED fileSize)
 				MESSAGE(FATAL_ERROR "Cannot get file size of: ${file}")
 			ENDIF()
 
-			GET_FILENAME_COMPONENT(file ${filePath} NAME)
 			MESSAGE(STATUS "Processing: ${file}")
 			IF(NOT "${_system}" STREQUAL "SOURCES")
-				FILE(READ ${PACKAGING_DIR}/updater/Appcast.item.xml.in item)
+				FILE(READ ${PACKAGING_DIR}/updater/Appcast.item.json.in item)
 
 				STRING(REPLACE "AusweisApp2-" "" APPCAST_FILE_VERSION ${file})
 				STRING(REPLACE ".dmg" "" APPCAST_FILE_VERSION ${APPCAST_FILE_VERSION})
 				STRING(REPLACE ".msi" "" APPCAST_FILE_VERSION ${APPCAST_FILE_VERSION})
 
-				STRING(TIMESTAMP currentDate "%Y-%m-%dT%H:%M:%S")
-				STRING(REPLACE "APPCAST_DATE" ${currentDate} item ${item})
-				STRING(REPLACE "APPCAST_DOWNLOAD_URL" "${APPCAST_URL}/${file}" item ${item})
+				STRING(REPLACE "APPCAST_DATE" "${APPCAST_DATE}" item ${item})
+				STRING(REPLACE "APPCAST_PLATFORM" ${_system} item ${item})
 				STRING(REPLACE "APPCAST_VERSION" "${APPCAST_FILE_VERSION}" item ${item})
-				STRING(REPLACE "APPCAST_OS" ${_system} item ${item})
-				STRING(REPLACE "APPCAST_PACKAGE_SIZE" "${fileSize}" item ${item})
-				STRING(REPLACE "APPCAST_URL" "${APPCAST_URL}" item ${item})
-				SET(APPCAST_ITEMS "${APPCAST_ITEMS}\n${item}")
+				STRING(REPLACE "APPCAST_URL" "${APPCAST_URL}/${file}" item ${item})
+				STRING(REPLACE "APPCAST_SIZE" "${fileSize}" item ${item})
+				STRING(REPLACE "APPCAST_CHECKSUM" "${APPCAST_URL}/${file}.${HASHFILE_ENDING}" item ${item})
+				STRING(REPLACE "APPCAST_NOTES" "${APPCAST_URL}/ReleaseNotes.html#${APPCAST_FILE_VERSION}" item ${item})
+
+				SET(APPCAST_ITEMS "${APPCAST_ITEMS}${item},")
 			ENDIF()
 
 			FILE(SHA256 ${filePath} fileHash)
-			FILE(WRITE ${filePath}.sha256 "${fileHash}  ${file}\n")
+			FILE(WRITE ${filePath}.${HASHFILE_ENDING} "${fileHash}  ${file}\n")
 		ENDFOREACH()
 	ENDMACRO()
 
@@ -54,7 +59,8 @@ IF(MAC OR LINUX OR WIN32)
 		ENDIF()
 
 		IF(APPCAST_ITEMS)
-			CONFIGURE_FILE(${PACKAGING_DIR}/updater/Appcast.xml.in ${PROJECT_BINARY_DIR}/Appcast.xml @ONLY)
+			STRING(REGEX REPLACE ",$" "" APPCAST_ITEMS "${APPCAST_ITEMS}")
+			CONFIGURE_FILE(${PACKAGING_DIR}/updater/Appcast.json.in ${PROJECT_BINARY_DIR}/Appcast.json @ONLY)
 		ENDIF()
 	ENDIF()
 

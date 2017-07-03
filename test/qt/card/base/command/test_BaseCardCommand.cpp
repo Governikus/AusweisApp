@@ -28,7 +28,7 @@ class BaseCardCommandDummy
 
 		virtual void internalExecute()
 		{
-			mReturnCode = ReturnCode::OK;
+			mReturnCode = CardReturnCode::OK;
 		}
 
 
@@ -44,7 +44,7 @@ class test_BaseCardCommand
 		{
 			MockReader reader("dummy reader");
 			BaseCardCommandDummy command(&reader);
-			QCOMPARE(command.getReturnCode(), ReturnCode::UNKNOWN);
+			QCOMPARE(command.getReturnCode(), CardReturnCode::UNKNOWN);
 
 			QSignalSpy spy(&command, &BaseCardCommand::commandDone);
 			QMetaObject::invokeMethod(&command, "execute");
@@ -53,7 +53,7 @@ class test_BaseCardCommand
 			auto param = spy.takeFirst();
 			QSharedPointer<BaseCardCommand> sharedCommand = param.at(0).value<QSharedPointer<BaseCardCommand> >();
 			QCOMPARE(sharedCommand.data(), &command);
-			QCOMPARE(command.getReturnCode(), ReturnCode::OK);
+			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
 		}
 
 
@@ -61,7 +61,7 @@ class test_BaseCardCommand
 		{
 			MockReader reader("dummy reader");
 			BaseCardCommandDummy command(&reader);
-			QCOMPARE(command.checkRetryCounterAndPrepareForPace("test"), ReturnCode::NO_CARD);
+			QCOMPARE(command.checkRetryCounterAndPrepareForPace("test"), CardReturnCode::CARD_NOT_FOUND);
 		}
 
 

@@ -22,7 +22,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 
 NfcBridge::NfcBridge()
 #ifdef Q_OS_ANDROID
-	: mJavaConnector(getJavaParent().callObjectMethod("getNfcConnector", "()Lcom/governikus/ausweisapp2/NFCConnector;"))
+	: mJavaConnector(QtAndroid::androidContext().callObjectMethod("getNfcConnector", "()Lcom/governikus/ausweisapp2/NFCConnector;"))
 #endif
 {
 }
@@ -40,22 +40,9 @@ NfcBridge& NfcBridge::getInstance()
 
 
 #ifdef Q_OS_ANDROID
-QAndroidJniObject NfcBridge::getJavaParent()
-{
-	if (QtAndroid::androidActivity().isValid())
-	{
-		qCDebug(card_nfc) << "Parent is an activity.";
-		return QtAndroid::androidActivity();
-	}
-
-	qCDebug(card_nfc) << "Parent is a service.";
-	return QtAndroid::androidService();
-}
-
-
 QAndroidJniObject NfcBridge::getApplicationContext()
 {
-	QAndroidJniObject application = getJavaParent().callObjectMethod("getApplication", "()Landroid/app/Application;");
+	QAndroidJniObject application = QtAndroid::androidContext().callObjectMethod("getApplication", "()Landroid/app/Application;");
 	if (application == nullptr)
 	{
 		qCCritical(card_nfc) << "Cannot get application";
@@ -96,9 +83,22 @@ QByteArray NfcBridge::convert(const jbyteArray& pData)
 }
 
 
+QAndroidJniObject NfcBridge::getNfcAdapter()
+{
+	QAndroidJniObject context = getApplicationContext();
+	if (context == nullptr)
+	{
+		qCCritical(card_nfc) << "Cannot get context";
+		return QAndroidJniObject();
+	}
+
+	return QAndroidJniObject::callStaticObjectMethod("android/nfc/NfcAdapter", "getDefaultAdapter", "(Landroid/content/Context;)Landroid/nfc/NfcAdapter;", context.object());
+}
+
+
 #endif
 
-NfcCardCode NfcBridge::getCardStatus()
+NfcCardCode NfcBridge::getCardStatus() const
 {
 #ifdef Q_OS_ANDROID
 	if (isValid())
@@ -112,7 +112,46 @@ NfcCardCode NfcBridge::getCardStatus()
 }
 
 
-ExtendedLengthApduSupportCode NfcBridge::getExtendedLengthApduSupportStatus()
+bool NfcBridge::connectCard() const
+{
+#ifdef Q_OS_ANDROID
+	if (isValid())
+	{
+		return static_cast<bool>(mJavaConnector.callMethod<jboolean>("connectCard"));
+	}
+
+#endif
+	return false;
+}
+
+
+bool NfcBridge::disconnectCard() const
+{
+#ifdef Q_OS_ANDROID
+	if (isValid())
+	{
+		return static_cast<bool>(mJavaConnector.callMethod<jboolean>("disconnectCard"));
+	}
+
+#endif
+	return false;
+}
+
+
+bool NfcBridge::isCardConnected() const
+{
+#ifdef Q_OS_ANDROID
+	if (isValid())
+	{
+		return static_cast<bool>(mJavaConnector.callMethod<jboolean>("isCardConnected"));
+	}
+
+#endif
+	return false;
+}
+
+
+ExtendedLengthApduSupportCode NfcBridge::getExtendedLengthApduSupportStatus() const
 {
 #ifdef Q_OS_ANDROID
 	if (isValid())
@@ -126,17 +165,11 @@ ExtendedLengthApduSupportCode NfcBridge::getExtendedLengthApduSupportStatus()
 }
 
 
-bool NfcBridge::isNfcEnabled()
+bool NfcBridge::isNfcEnabled() const
 {
 #ifdef Q_OS_ANDROID
-	QAndroidJniObject context = getApplicationContext();
-	if (context == nullptr)
-	{
-		qCCritical(card_nfc) << "Cannot get context";
-		return false;
-	}
+	auto nfcAdapter = getNfcAdapter();
 
-	QAndroidJniObject nfcAdapter = QAndroidJniObject::callStaticObjectMethod("android/nfc/NfcAdapter", "getDefaultAdapter", "(Landroid/content/Context;)Landroid/nfc/NfcAdapter;", context.object());
 	if (nfcAdapter == nullptr)
 	{
 		qCWarning(card_nfc) << "Cannot get default NfcAdapter";
@@ -152,7 +185,19 @@ bool NfcBridge::isNfcEnabled()
 }
 
 
-bool NfcBridge::isValid()
+bool NfcBridge::isNfcAvailable() const
+{
+#ifdef Q_OS_ANDROID
+	return getNfcAdapter() != nullptr;
+
+#else
+	return false;
+
+#endif
+}
+
+
+bool NfcBridge::isValid() const
 {
 #ifdef Q_OS_ANDROID
 	return mJavaConnector != nullptr;

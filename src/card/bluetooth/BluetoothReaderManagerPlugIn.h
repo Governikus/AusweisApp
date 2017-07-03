@@ -39,8 +39,10 @@ class BluetoothReaderManagerPlugIn
 		QMap<QString, QSharedPointer<CyberJackWaveDevice> > mInitializingDevices;
 		QMap<QString, BluetoothReader*> mReaders;
 		bool mScanInProgress;
+		int mTimerIdDiscoverPairedDevices;
 
 		void onRemoveReader(const QString& pDeviceId);
+		void timerEvent(QTimerEvent* event) override;
 
 	private Q_SLOTS:
 		void onDeviceDisconnected(const QBluetoothDeviceInfo& pInfo);

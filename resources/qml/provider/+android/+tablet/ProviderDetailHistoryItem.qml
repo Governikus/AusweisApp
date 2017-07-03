@@ -11,7 +11,7 @@ Item {
 
 	property string providerName: ""
 	property string providerPostalAddress: ""
-	property string timeText: ""
+	property var dateTime: ""
 	property string infoText: ""
 	property string purposeText: ""
 	property string requestedDataText: ""
@@ -45,24 +45,33 @@ Item {
 		anchors.topMargin: baseItem.itemMargin
 
 		Text {
-			text: timeText
 			height: baseItem.lineHeight
-			color: PlatformConstants.blue_primary
+			verticalAlignment: Text.AlignVCenter
+			font.pixelSize: Constants.label_font_size
+			font.capitalization: Font.AllUppercase
+			color: Constants.blue
+			text: {
+				if (!new Date(dateTime)) {
+					return ""
+				}
+				else if (Utils.isToday(dateTime)) {
+					return qsTr("today")
+				}
+				else if (Utils.isYesterday(dateTime)) {
+					return qsTr("yesterday")
+				}
+				else if (Utils.isThisWeek(dateTime)) {
+					return dateTime.toLocaleString(Qt.locale(), qsTr("dddd"))
+				}
+				return dateTime.toLocaleString(Qt.locale(), qsTr("MM/dd/yyyy"))
+			}
 		}
 
-		Text {
-			text: infoText
+		LabeledText {
+			label: infoText
+			text: !!purposeText ? purposeText : qsTr("Touch for more details")
+			width: parent.width
 			height: baseItem.lineHeight
-		}
-
-		Text {
-			text: purposeText
-			height: baseItem.lineHeight
-			color: PlatformConstants.blue_primary
-			font.bold: true
-			font.pixelSize: Constants.normal_font_size
-			elide: Text.ElideRight
-			maximumLineCount: 1
 		}
 	}
 

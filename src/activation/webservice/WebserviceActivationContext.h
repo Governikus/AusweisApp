@@ -7,14 +7,9 @@
 #pragma once
 
 #include "ActivationContext.h"
-#include "qhttpserver/qhttprequest.h"
-#include "qhttpserver/qhttpresponse.h"
+#include "HttpRequest.h"
 
 #include <QSharedPointer>
-
-
-class QHttpResponse;
-
 
 namespace governikus
 {
@@ -24,27 +19,24 @@ class WebserviceActivationContext
 {
 	Q_OBJECT
 
-	const QSharedPointer<QHttpRequest> mRequest;
-	const QSharedPointer<QHttpResponse> mResponse;
+	const QSharedPointer<HttpRequest> mRequest;
 
-	void setCommonHeaders(QSharedPointer<QHttpResponse> pResponse);
+	void setCommonHeaders(HttpResponse& pResponse);
 
 	public:
-		WebserviceActivationContext(QSharedPointer<QHttpRequest> pRequest, QSharedPointer<QHttpResponse> pResponse);
+		WebserviceActivationContext(const QSharedPointer<HttpRequest>& pRequest);
 
 		virtual ~WebserviceActivationContext();
 
-		QUrl getActivationURL() override;
+		QUrl getActivationURL() const override;
 
 		bool sendProcessing() override;
 
 		bool sendOperationAlreadyActive() override;
 
-		bool sendErrorPage(HttpStatusCode pStatusCode, const Result& pResult) override;
+		bool sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus) override;
 
-		bool sendRedirect(const QUrl& pRedirectAddress, const Result& pResult) override;
-
-		static void setServerHeader(QHttpResponse& pReply);
+		bool sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pStatus) override;
 };
 
 } /* namespace governikus */

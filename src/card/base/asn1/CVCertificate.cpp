@@ -75,7 +75,7 @@ QVector<QSharedPointer<CVCertificate> > CVCertificate::fromHex(const QByteArrayL
 	{
 		if (auto cvc = CVCertificate::fromHex(hexBytes))
 		{
-			cvcs.append(cvc);
+			cvcs += cvc;
 		}
 	}
 	return cvcs;
@@ -142,6 +142,24 @@ bool CVCertificate::isIssuedBy(const CVCertificate& pIssuer) const
 
 bool operator==(const QSharedPointer<governikus::CVCertificate>& pCvc1, const QSharedPointer<governikus::CVCertificate>& pCvc2)
 {
+	return QSharedPointer<const governikus::CVCertificate>(pCvc1) == QSharedPointer<const governikus::CVCertificate>(pCvc2);
+}
+
+
+bool operator==(const QSharedPointer<governikus::CVCertificate>& pCvc1, const QSharedPointer<const governikus::CVCertificate>& pCvc2)
+{
+	return QSharedPointer<const governikus::CVCertificate>(pCvc1) == pCvc2;
+}
+
+
+bool operator==(const QSharedPointer<const governikus::CVCertificate>& pCvc1, const QSharedPointer<governikus::CVCertificate>& pCvc2)
+{
+	return pCvc1 == QSharedPointer<const governikus::CVCertificate>(pCvc2);
+}
+
+
+bool operator==(const QSharedPointer<const governikus::CVCertificate>& pCvc1, const QSharedPointer<const governikus::CVCertificate>& pCvc2)
+{
 	if ((pCvc1.isNull() && !pCvc2.isNull()) || (!pCvc1.isNull() && pCvc2.isNull()))
 	{
 		return false;
@@ -166,7 +184,7 @@ QDebug operator <<(QDebug pDbg, const governikus::CVCertificate& pCvc)
 }
 
 
-QDebug operator<<(QDebug pDbg, QSharedPointer<governikus::CVCertificate>& pCvc)
+QDebug operator<<(QDebug pDbg, const QSharedPointer<const governikus::CVCertificate>& pCvc)
 {
 	if (pCvc == nullptr)
 	{
@@ -178,6 +196,15 @@ QDebug operator<<(QDebug pDbg, QSharedPointer<governikus::CVCertificate>& pCvc)
 	{
 		return operator<<(pDbg, *pCvc);
 	}
+}
+
+
+QDebug operator<<(QDebug pDbg, QSharedPointer<governikus::CVCertificate>& pCvc)
+{
+	const QSharedPointer<const governikus::CVCertificate> constPtr(pCvc);
+	pDbg << constPtr;
+
+	return pDbg;
 }
 
 

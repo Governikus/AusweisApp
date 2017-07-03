@@ -107,7 +107,7 @@ bool TabButtonGroup::eventFilter(QObject* pWatched, QEvent* pEvent)
 		return false;
 	}
 
-	QAbstractButton* button = dynamic_cast<QAbstractButton*>(pWatched);
+	QAbstractButton* button = qobject_cast<QAbstractButton*>(pWatched);
 	if (button == nullptr)
 	{
 		return false;

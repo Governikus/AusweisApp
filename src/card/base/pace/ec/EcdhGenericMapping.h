@@ -20,15 +20,15 @@ class EcdhGenericMapping
 	: public DomainParameterMapping<EC_GROUP>
 {
 	private:
-		QSharedPointer<EC_GROUP> mCurve;
+		const QSharedPointer<EC_GROUP> mCurve;
 		QSharedPointer<EC_KEY> mTerminalKey;
 
-		QSharedPointer<EC_POINT> createNewGenerator(QSharedPointer<EC_POINT> pCardPubKey, QSharedPointer<BIGNUM> pS);
+		QSharedPointer<EC_POINT> createNewGenerator(const QSharedPointer<const EC_POINT>& pCardPubKey, const QSharedPointer<const BIGNUM>& pS);
 
-		void setGenerator(QSharedPointer<EC_POINT> newGenerator);
+		void setGenerator(const QSharedPointer<const EC_POINT>& pNewGenerator);
 
 	public:
-		EcdhGenericMapping(QSharedPointer<EC_GROUP> pCurve);
+		EcdhGenericMapping(const QSharedPointer<EC_GROUP>& pCurve);
 		virtual ~EcdhGenericMapping();
 
 		QByteArray generateTerminalMappingData() override;

@@ -29,7 +29,7 @@ class EllipticCurveFactory
 		 * \param pPaceInfo PACEInfo element containing domain parameter
 		 * \return elliptic curve object
 		 */
-		static QSharedPointer<EC_GROUP> create(QSharedPointer<PACEInfo> pPaceInfo);
+		static QSharedPointer<EC_GROUP> create(const QSharedPointer<const PACEInfo>& pPaceInfo);
 
 		/*!
 		 * \brief Creates a standardized elliptic curve with specified curve index..

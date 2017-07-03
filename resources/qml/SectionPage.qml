@@ -18,6 +18,8 @@ Item {
 	property alias contentY: flickable.contentY
 	property bool disableFlicking: false
 
+	onTitleBarColorChanged: titleBar.setColor(titleBarColor)
+
 	Flickable {
 		property real startContentY: 0
 		id: flickable
@@ -34,18 +36,6 @@ Item {
 		}
 		onContentYChanged: {
 			if (disableFlicking || contentY < 0) { contentY = 0 /* prevent flicking over the top */}
-
-			if (!headerLoader.item || typeof(headerLoader.item.stopFlickOn) === "undefined") {
-				return
-			}
-			if (startContentY > headerLoader.item.stopFlickOn && contentY < headerLoader.item.stopFlickOn) {
-				cancelFlick()
-				contentY = headerLoader.item.stopFlickOn
-			}
-			if (startContentY < headerLoader.item.stopFlickOn && contentY > headerLoader.item.stopFlickOn) {
-				cancelFlick()
-				contentY = headerLoader.item.stopFlickOn
-			}
 		}
 		Column {
 			id: flickableContent

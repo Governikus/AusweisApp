@@ -43,26 +43,26 @@ QByteArray PaceHandler::getPaceProtocol() const
 }
 
 
-ReturnCode PaceHandler::establishPaceChannel(PACE_PIN_ID pPinId, const QString& pPin)
+CardReturnCode PaceHandler::establishPaceChannel(PACE_PIN_ID pPinId, const QString& pPin)
 {
 	auto efCardAccess = mCardConnectionWorker->getReaderInfo().getCardInfo().getEfCardAccess();
 	if (!efCardAccess)
 	{
-		return ReturnCode::PROTOCOL_ERROR;
+		return CardReturnCode::PROTOCOL_ERROR;
 	}
 	if (!initialize(efCardAccess))
 	{
-		return ReturnCode::PROTOCOL_ERROR;
+		return CardReturnCode::PROTOCOL_ERROR;
 	}
 	if (!transmitMSESetAT(pPinId))
 	{
-		return ReturnCode::PROTOCOL_ERROR;
+		return CardReturnCode::PROTOCOL_ERROR;
 	}
 
 	KeyAgreementStatus keyAgreementStatus = mKeyAgreement->perform(pPin);
 	if (keyAgreementStatus == KeyAgreementStatus::PROTOCOLL_ERROR)
 	{
-		return ReturnCode::PROTOCOL_ERROR;
+		return CardReturnCode::PROTOCOL_ERROR;
 	}
 	else if (keyAgreementStatus == KeyAgreementStatus::FAILED)
 	{
@@ -71,13 +71,13 @@ ReturnCode PaceHandler::establishPaceChannel(PACE_PIN_ID pPinId, const QString& 
 			case PACE_PIN_ID::PACE_MRZ:
 			// No separate error code (yet).
 			case PACE_PIN_ID::PACE_CAN:
-				return ReturnCode::CAN_INVALID;
+				return CardReturnCode::INVALID_CAN;
 
 			case PACE_PIN_ID::PACE_PIN:
-				return ReturnCode::PIN_INVALID;
+				return CardReturnCode::INVALID_PIN;
 
 			case PACE_PIN_ID::PACE_PUK:
-				return ReturnCode::PUK_INVALID;
+				return CardReturnCode::INVALID_PUK;
 		}
 	}
 	mEncryptionKey = mKeyAgreement->getEncryptionKey();
@@ -86,7 +86,7 @@ ReturnCode PaceHandler::establishPaceChannel(PACE_PIN_ID pPinId, const QString& 
 	mCarPrev = mKeyAgreement->getCarPrev();
 	mIdIcc = mKeyAgreement->getCompressedCardPublicKey();
 	qCDebug(card) << "Pace channel established";
-	return ReturnCode::OK;
+	return CardReturnCode::OK;
 }
 
 
@@ -97,7 +97,7 @@ bool PaceHandler::initialize(const QSharedPointer<const EFCardAccess>& pEfCardAc
 		return false;
 	}
 
-	const auto& infos = pEfCardAccess->getSecurityInfos<PACEInfo>();
+	const auto& infos = pEfCardAccess->getPACEInfos();
 	for (const auto& paceInfo : infos)
 	{
 		if (isSupportedProtocol(paceInfo))
@@ -117,7 +117,7 @@ bool PaceHandler::initialize(const QSharedPointer<const EFCardAccess>& pEfCardAc
 }
 
 
-bool PaceHandler::isSupportedProtocol(const QSharedPointer<PACEInfo>& pPaceInfo) const
+bool PaceHandler::isSupportedProtocol(const QSharedPointer<const PACEInfo>& pPaceInfo) const
 {
 	const auto protocol = pPaceInfo->getProtocol();
 
@@ -146,12 +146,12 @@ bool PaceHandler::transmitMSESetAT(PACE_PIN_ID pPinId)
 	mseBuilder.setPrivateKey(mPaceInfo->getParameterId());
 	if (!mChat.isNull())
 	{
-		mseBuilder.setChat(mChat, true);
+		mseBuilder.setChat(mChat);
 	}
 
 	ResponseApdu response;
-	ReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), response);
-	if (returnCode != ReturnCode::OK)
+	CardReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), response);
+	if (returnCode != CardReturnCode::OK)
 	{
 		qCCritical(card) << "Error on MSE:Set AT";
 		return false;

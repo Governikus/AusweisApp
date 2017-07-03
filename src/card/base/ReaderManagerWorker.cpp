@@ -18,7 +18,6 @@ ReaderManagerWorker::ReaderManagerWorker()
 	, mPlugIns()
 	, mScanStarted(false)
 {
-	qRegisterMetaType<QSharedPointer<CardConnectionWorker> >("QSharedPointer<CardConnectionWorker>");
 }
 
 
@@ -40,13 +39,16 @@ void ReaderManagerWorker::onThreadStarted()
 
 	qCDebug(card) << "Thread started";
 	registerPlugIns();
+
+	Q_EMIT fireInitialized();
 }
 
 
 void ReaderManagerWorker::registerPlugIns()
 {
 	qCDebug(card) << "Try to register plugins";
-	for (auto plugin : QPluginLoader::staticPlugins())
+	const auto& plugins = QPluginLoader::staticPlugins();
+	for (const auto& plugin : plugins)
 	{
 		if (isPlugIn(plugin.metaData()))
 		{
@@ -85,6 +87,7 @@ void ReaderManagerWorker::registerPlugIn(ReaderManagerPlugIn* pPlugIn)
 	connect(pPlugIn, &ReaderManagerPlugIn::fireCardRetryCounterChanged, this, &ReaderManagerWorker::fireCardRetryCounterChanged);
 	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderAdded, this, &ReaderManagerWorker::fireReaderAdded);
 	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderConnected, this, &ReaderManagerWorker::fireReaderConnected);
+	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderDeviceError, this, &ReaderManagerWorker::fireReaderDeviceError);
 	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderRemoved, this, &ReaderManagerWorker::fireReaderRemoved);
 	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderPropertiesUpdated, this, &ReaderManagerWorker::fireReaderPropertiesUpdated);
 }
@@ -152,7 +155,8 @@ QVector<ReaderInfo> ReaderManagerWorker::getReaderInfos(const QVector<ReaderMana
 	{
 		if (pTypes.contains(plugIn->getInfo().getPlugInType()))
 		{
-			for (const Reader* reader : plugIn->getReader())
+			const auto& readerList = plugIn->getReader();
+			for (const Reader* reader : readerList)
 			{
 				list += reader->getReaderInfo();
 			}
@@ -175,9 +179,10 @@ Reader* ReaderManagerWorker::getReader(const QString& pReaderName) const
 {
 	Q_ASSERT(thread() == QThread::currentThread());
 
-	for (auto plugin : mPlugIns)
+	for (auto plugin : qAsConst(mPlugIns))
 	{
-		for (Reader* reader : plugin->getReader())
+		const auto& readerList = plugin->getReader();
+		for (Reader* reader : readerList)
 		{
 			if (reader->getName() == pReaderName)
 			{
@@ -208,7 +213,7 @@ void ReaderManagerWorker::connectReader(const QString& pReaderName)
 {
 	Q_ASSERT(thread() == QThread::currentThread());
 
-	if (ConnectableReader* reader = dynamic_cast<ConnectableReader*>(getReader(pReaderName)))
+	if (ConnectableReader* reader = qobject_cast<ConnectableReader*>(getReader(pReaderName)))
 	{
 		reader->connectReader();
 	}
@@ -219,7 +224,7 @@ void ReaderManagerWorker::disconnectReader(const QString& pReaderName)
 {
 	Q_ASSERT(thread() == QThread::currentThread());
 
-	if (ConnectableReader* reader = dynamic_cast<ConnectableReader*>(getReader(pReaderName)))
+	if (ConnectableReader* reader = qobject_cast<ConnectableReader*>(getReader(pReaderName)))
 	{
 		reader->disconnectReader();
 	}
@@ -230,8 +235,19 @@ void ReaderManagerWorker::disconnectAllReaders()
 {
 	Q_ASSERT(thread() == QThread::currentThread());
 
-	for (auto& info : getReaderInfos(EnumReaderManagerPlugInType::getList()))
+	for (auto& info : getReaderInfos(Enum<ReaderManagerPlugInType>::getList()))
 	{
 		disconnectReader(info.getName());
+	}
+}
+
+
+void ReaderManagerWorker::registerMetaTypes()
+{
+	static bool registered = false;
+	if (!registered)
+	{
+		qRegisterMetaType<QSharedPointer<CardConnectionWorker> >("QSharedPointer<CardConnectionWorker>");
+		registered = true;
 	}
 }

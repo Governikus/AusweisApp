@@ -62,7 +62,7 @@ SectionPage {
 		anchors.centerIn: parent
 		text: qsTr("Currently there are no history entries.")
 		wrapMode: Text.WordWrap
-		font.pixelSize: Utils.sp(18)
+		font.pixelSize: Constants.normal_font_size
 		visible: historyListView.count === 0
 	}
 

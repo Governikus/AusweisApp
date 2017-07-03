@@ -47,7 +47,7 @@ QSharedPointer<CardConnectionWorker> Reader::createCardConnectionWorker()
 		return QSharedPointer<CardConnectionWorker>();
 	}
 
-	if (currentCard->connect() != ReturnCode::OK)
+	if (currentCard->connect() != CardReturnCode::OK)
 	{
 		qCCritical(card) << "Cannot connect to card";
 		return QSharedPointer<CardConnectionWorker>();
@@ -89,13 +89,13 @@ void Reader::updateRetryCounterIfNecessary()
 }
 
 
-ReturnCode Reader::updateRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
+CardReturnCode Reader::updateRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
 {
 	int newRetryCounter = -1;
 	bool newPinDeactivated = false;
 
-	ReturnCode returnCode = getRetryCounter(pCardConnectionWorker, newRetryCounter, newPinDeactivated);
-	if (returnCode == ReturnCode::OK)
+	CardReturnCode returnCode = getRetryCounter(pCardConnectionWorker, newRetryCounter, newPinDeactivated);
+	if (returnCode == CardReturnCode::OK)
 	{
 		bool changed = (newRetryCounter != mReaderInfo.getRetryCounter()) || (newPinDeactivated != mReaderInfo.isPinDeactivated());
 		qCInfo(support) << "retrieved retry counter:" << newRetryCounter << ", was:" << mReaderInfo.getRetryCounter() << ", PIN deactivated:" << newPinDeactivated;
@@ -113,16 +113,16 @@ ReturnCode Reader::updateRetryCounter(QSharedPointer<CardConnectionWorker> pCard
 }
 
 
-ReturnCode Reader::getRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, int& pRetryCounter, bool& pPinDeactivated)
+CardReturnCode Reader::getRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, int& pRetryCounter, bool& pPinDeactivated)
 {
 	if (!mReaderInfo.getCardInfo().getEfCardAccess())
 	{
 		qCCritical(card) << "Cannot get EF.CardAccess";
-		return ReturnCode::COMMAND_FAILED;
+		return CardReturnCode::COMMAND_FAILED;
 	}
 
 	// we don't need to establish PACE with this protocol (i.e. we don't need to support it), so we just take the fist one
-	QSharedPointer<PACEInfo> paceInfo = mReaderInfo.getCardInfo().getEfCardAccess()->getSecurityInfos<PACEInfo>().at(0);
+	const auto& paceInfo = mReaderInfo.getCardInfo().getEfCardAccess()->getPACEInfos().at(0);
 	QByteArray cryptographicMechanismReference = paceInfo->getProtocolValueBytes();
 	QByteArray referencePrivateKey = paceInfo->getParameterId();
 
@@ -135,8 +135,8 @@ ReturnCode Reader::getRetryCounter(QSharedPointer<CardConnectionWorker> pCardCon
 	mseBuilder.setPrivateKey(referencePrivateKey);
 
 	ResponseApdu mseSetAtResponse;
-	ReturnCode returnCode = pCardConnectionWorker->transmit(mseBuilder.build(), mseSetAtResponse);
-	if (returnCode != ReturnCode::OK)
+	CardReturnCode returnCode = pCardConnectionWorker->transmit(mseBuilder.build(), mseSetAtResponse);
+	if (returnCode != CardReturnCode::OK)
 	{
 		return returnCode;
 	}
@@ -162,7 +162,7 @@ ReturnCode Reader::getRetryCounter(QSharedPointer<CardConnectionWorker> pCardCon
 
 	pPinDeactivated = statusCode == StatusCode::PIN_DEACTIVATED;
 
-	return ReturnCode::OK;
+	return CardReturnCode::OK;
 }
 
 
@@ -189,11 +189,6 @@ void Reader::fireUpdateSignal(CardEvent pCardEvent)
 void Reader::onRetryCounterPotentiallyChanged()
 {
 	mUpdateRetryCounter = true;
-}
-
-
-ConnectableReader::ConnectableReader()
-{
 }
 
 

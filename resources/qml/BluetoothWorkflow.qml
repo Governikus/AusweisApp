@@ -1,13 +1,26 @@
 import QtQuick 2.5
-import QtQuick.Controls 1.4
+import QtQuick.Layouts 1.1
 
 import "global"
 
-Item
-{
+Item {
 	id: baseItem
+	signal abortBluetooth
 
-	state: "initial"
+	readonly property bool showLocationPermissionInfo: applicationModel.locationPermissionRequired && !locationPermissionInfoConfirmed
+	property bool locationPermissionInfoConfirmed: false
+
+	onStateChanged: {
+		if (state === "bt_connect") {
+			locationPermissionInfoConfirmed = false
+		}
+	}
+
+	onShowLocationPermissionInfoChanged: {
+		if (applicationModel.bluetoothEnabled && !showLocationPermissionInfo) {
+			numberModel.continueWorkflow()
+		}
+	}
 
 	function isInProcessingState() {
 		return state === "bt_enternewpin" || state === "bt_updateretrycounter" ||
@@ -16,182 +29,69 @@ Item
 				state === "bt_identify_enterpin"
 	}
 
-	function processingText() {
-		if (state === "bt_enterpuk") {
-			return qsTr("Enter PUK...")
-		}
-		else if (state === "bt_changepin_entercan"|| state === "bt_identify_entercan") {
-			return qsTr("Enter CAN...")
-		}
-		else if (state === "bt_changepin_enterpin" || state === "bt_identify_enterpin") {
-			return qsTr("Enter PIN...")
-		}
-		else if (state === "bt_enternewpin") {
-			return qsTr("Enter new PIN...")
-		}
-		// This should never happen
-		else {
-			return ""
-		}
-	}
-
-	Item {
-		id: currentAction
+	BluetoothProgressIndicator {
+		id: progressIndicator
 		anchors.left: parent.left
-		anchors.right: parent.right
 		anchors.top: parent.top
-		anchors.bottom: pCircle.top
-		anchors.margins: Utils.dp(40)
-		height: parent.height * 0.25
-
-		BusyImageIndicator {
-			anchors.centerIn: parent
-			width: height
-			height: parent.height - Utils.dp(40)
-			image: "qrc:///images/icon_Bluetooth.svg"
-			running: visible
-			visible: baseItem.state === "bt_connect"
-		}
-
-		CardReader {
-			anchors.centerIn: parent
-			height: parent.height
-			visible: baseItem.state === "bt_card" || baseItem.isInProcessingState()
-			cardAnimation: baseItem.state === "bt_card"
-			pinFieldAnimation: baseItem.state === "bt_enternewpin"
-		}
-	}
-
-	ProgressCircle {
-		id: pCircle
-		anchors.top: baseItem.verticalCenter
-		anchors.left: parent.left
 		anchors.right: parent.right
-		state: {
-			if (baseItem.state === "bt_connect") {
-				return "one"
-			}
-			if (baseItem.state === "bt_card") {
-				return "two"
-			}
-			if (baseItem.isInProcessingState()) {
-				return "three"
-			}
-			return "initial"
-		}
+		height: parent.height / 2
+		state: (!applicationModel.bluetoothAvailable || !applicationModel.bluetoothEnabled || parent.showLocationPermissionInfo) ? "off" :
+			   (baseItem.state === "bt_connect") ? "one" :
+			   (baseItem.state === "bt_card") ? "two" :
+			   (baseItem.isInProcessingState()) ? "three" :""
 	}
 
-	Text {
-		id: titleText
-		verticalAlignment: Text.AlignVCenter
-		horizontalAlignment: Text.AlignHCenter
-		font.pixelSize: Constants.header_font_size
-		font.weight: Font.Bold
-		color: Constants.blue
-		anchors.top: pCircle.bottom
-		anchors.topMargin: Utils.dp(20)
+	TechnologyInfo {
+		id: techInfo
 		anchors.left: parent.left
+		anchors.leftMargin: Utils.dp(5)
 		anchors.right: parent.right
+		anchors.rightMargin: anchors.leftMargin
+		anchors.top: progressIndicator.bottom
+		anchors.bottom: switchToNfcAction.top
+		state: parent.state
 
-		states: [
-			State { when: baseItem.state === "bt_connect";
-				PropertyChanges { target: titleText; text: qsTr("Establish connection") }
-			},
-			State { when: baseItem.state === "bt_card";
-				PropertyChanges { target: titleText; text: qsTr("Determine card") }
-			},
-			State { when: (baseItem.state === "bt_enternewpin" ||
-						   baseItem.state === "bt_enterpuk" ||
-						   baseItem.state === "bt_changepin_entercan" ||
-						   baseItem.state === "bt_changepin_enterpin");
-				PropertyChanges { target: titleText; text: qsTr("Change PIN") }
-			},
-			State { when: (baseItem.state === "bt_identify_entercan" ||
-						   baseItem.state === "bt_identify_enterpin");
-				PropertyChanges { target: titleText; text: qsTr("Authenticate") }
-			}
-		]
-
-		transitions: [
-			Transition {
-				SequentialAnimation {
-					NumberAnimation { target: rotation; property: "angle"; to: 90; duration: 500 }
-					PropertyAction { target: titleText; property: "text" }
-					NumberAnimation { target: rotation; property: "angle"; to: 0; duration: 500 }
-				}
-			}
-		]
-
-		transform: Rotation {
-			id: rotation
-			origin.x: 0
-			origin.y: titleText.height/2
-			axis.x: 1; axis.y: 0; axis.z: 0
-			angle: 0
-		}
-	}
-
-
-	Rectangle {
-		id: subTitleTextBackground
-		color: Constants.red
-		anchors.centerIn: subTitleText
-		width: subTitleText.width  + 2 * Utils.dp(5)
-		height: subTitleText.height + 2 * Utils.dp(5)
-		visible: false
-	}
-	Text {
-		id: subTitleText
-		verticalAlignment: Text.AlignVCenter
-		horizontalAlignment: Text.AlignHCenter
-		font.pixelSize: Constants.normal_font_size
-		color: Constants.grey
-		anchors.top: titleText.bottom
-		anchors.topMargin: Utils.dp(10)
-		anchors.horizontalCenter: baseItem.horizontalCenter
-		width: baseItem.width * 0.8
-		wrapMode: Text.WordWrap
-
-		states: [
-			State { when: baseItem.state === "bt_connect"
-				PropertyChanges { target: subTitleText; text: qsTr("Establish connection...") }
-				PropertyChanges { target: subTitleText; color: Constants.grey }
-			},
-			State { when: baseItem.state === "bt_card"
-				PropertyChanges { target: subTitleText; text: qsTr("Insert card...") }
-				PropertyChanges { target: subTitleText; color: Constants.grey }
-			},
-			State { when: baseItem.isInProcessingState() && numberModel.inputError
-				PropertyChanges { target: subTitleText; text: numberModel.inputError }
-				PropertyChanges { target: subTitleText; color: "white" }
-				PropertyChanges { target: subTitleTextBackground; visible: true }
-			},
-			State { when: baseItem.isInProcessingState()
-				PropertyChanges { target: subTitleText; text: baseItem.processingText() }
-				PropertyChanges { target: subTitleText; color: Constants.grey }
-			}
-		]
-
-		Behavior on text {
-			SequentialAnimation {
-				animations: animation
+		enableButtonVisible: applicationModel.bluetoothAvailable && (!applicationModel.bluetoothEnabled || parent.showLocationPermissionInfo)
+		enableButtonText: !applicationModel.bluetoothEnabled ? qsTr("Enable Bluetooth") : qsTr("Continue")
+		onEnableClicked: {
+			if (!applicationModel.bluetoothEnabled) {
+				applicationModel.bluetoothEnabled = true
+			} else {
+				parent.locationPermissionInfoConfirmed = true
 			}
 		}
+		enableText: !visible ? "" :
+					!applicationModel.bluetoothAvailable ? qsTr("Bluetooth is not supported by your device.<br/>Please try NFC.") :
+					!applicationModel.bluetoothEnabled ? qsTr("Bluetooth is switched off.<br/>Please enable Bluetooth.") :
+					parent.showLocationPermissionInfo ? qsTr("No paired and activated Bluetooth device was detected. The AusweisApp2 needs access to your location in order to discover available devices. You can grant this permission after clicking the continue button.") : ""
 
-		transitions: [
-			Transition {
-				id: transition
-				animations: animation
-			}
-		]
+		titleText: (baseItem.state === "bt_connect") ? qsTr("Establish connection") :
+				   (baseItem.state === "bt_card") ? qsTr("Determine card") :
+				   (baseItem.state === "bt_enternewpin" || baseItem.state === "bt_enterpuk"
+					|| baseItem.state === "bt_changepin_entercan" || baseItem.state === "bt_changepin_enterpin") ? qsTr("Change PIN") :
+				   (baseItem.state === "bt_identify_entercan" || baseItem.state === "bt_identify_enterpin") ? qsTr("Authenticate") : ""
 
-		SequentialAnimation {
-			id: animation
-			PropertyAnimation { target: subTitleText; property: "anchors.topMargin"; to: baseItem.height - subTitleText.y + subTitleText.height; duration: 500}
-			PropertyAction { target: subTitleText; property: "text" }
-			PropertyAction { target: subTitleText; property: "color" }
-			PropertyAction { target: subTitleTextBackground; property: "visible" }
-			PropertyAnimation { target: subTitleText; property: "anchors.topMargin"; to: Utils.dp(10); duration: 500 }
+		subTitleText: !visible ? "" :
+					  !!numberModel.inputError ? numberModel.inputError :
+					  numberModel.pinDeactivated ? qsTr("The online identification function of your ID card is deactivated. Please contact your competent authority to activate the online identification function.") :
+					  (state === "bt_connect") ? qsTr("Connecting...") :
+					  (state === "bt_card") ? qsTr("Please insert your ID card.") :
+					  (state === "bt_changepin_enterpin") ? qsTr("Please enter your old PIN or your initial transport PIN first.") :
+					  (state === "bt_identify_enterpin") ? qsTr("Please enter your personal PIN.") :
+					  (state === "bt_changepin_entercan"|| state === "bt_identify_entercan") ? qsTr("You have entered the wrong PIN twice. For a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.") :
+					  (state === "bt_enterpuk") ? qsTr("You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.") :
+					  (state === "bt_enternewpin") ? qsTr("Please enter a new arbitrary 6-digit PIN.") : ""
+		subTitleTextRedColor: numberModel.inputError || numberModel.pinDeactivated || state === "bt_changepin_entercan" || state === "bt_identify_entercan" || state === "bt_enterpuk"	}
+
+	TechnologySwitchButton {
+		id: switchToNfcAction
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.bottom: parent.bottom
+		onClicked: {
+			parent.abortBluetooth()
 		}
+		imageSource: "qrc:///images/icon_nfc.svg"
+		text: qsTr("Use NFC instead of<br/>Bluetooth card reader")
+		enabled: parent.state === "bt_connect" || parent.state === "bt_card"
 	}
 }

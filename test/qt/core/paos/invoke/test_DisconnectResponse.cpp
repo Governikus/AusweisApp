@@ -48,7 +48,7 @@ class test_DisconnectResponse
 
 			DisconnectResponse responseWithSlot;
 			responseWithSlot.setMessageId("dummy");
-			responseWithSlot.setResult(Result::createError(ReturnCode::NO_CARD));
+			responseWithSlot.setResult(Result(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CARD_NOT_FOUND)));
 			responseWithSlot.setSlotHandle("huhu");
 			elem = responseWithSlot.marshall();
 

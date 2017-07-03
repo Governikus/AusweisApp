@@ -94,21 +94,41 @@ QByteArray EstablishPACEChannelBuilder::createCommandData()
 	static const char INDEX_ESTABLISH_PACE_CHANNEL = 0x02;
 
 	QByteArray inputData;
-	inputData.append(static_cast<char>(mPinId));
+	inputData += static_cast<char>(mPinId);
 
-	inputData.append(mChat.size());
-	inputData.append(mChat);
+	if (mChat.size() > 0xFF)
+	{
+		qCCritical(card) << "Certificate Holder Authorization Template of size > 0xFF not supported";
+		Q_ASSERT(mChat.size() <= 0xFF);
+		return QByteArray();
+	}
+	inputData += static_cast<char>(mChat.size());
+	inputData += mChat;
 
-	inputData.append(static_cast<char>(0));
-	inputData.append((mCertificateDescription.size() >> 0) & 0xff);
-	inputData.append((mCertificateDescription.size() >> 8) & 0xff);
-	inputData.append(mCertificateDescription);
+	inputData += char(0x00); // length of PIN
+
+	if (mCertificateDescription.size() > 0xFFFF)
+	{
+		qCCritical(card) << "Certificate Description of size > 0xFFFF not supported";
+		Q_ASSERT(mCertificateDescription.size() <= 0xFFFF);
+		return QByteArray();
+	}
+	inputData += static_cast<char>((mCertificateDescription.size() >> 0) & 0xff);
+	inputData += static_cast<char>((mCertificateDescription.size() >> 8) & 0xff);
+	inputData += mCertificateDescription;
 
 	QByteArray commandData;
-	commandData.append(INDEX_ESTABLISH_PACE_CHANNEL);
-	commandData.append((inputData.size() >> 0) & 0xff);
-	commandData.append((inputData.size() >> 8) & 0xff);
-	commandData.append(inputData);
+	commandData += (INDEX_ESTABLISH_PACE_CHANNEL);
+
+	if (inputData.size() > 0xFFFF)
+	{
+		qCCritical(card) << "InputData of size > 0xFFFF not supported";
+		Q_ASSERT(inputData.size() <= 0xFFFF);
+		return QByteArray();
+	}
+	commandData += static_cast<char>((inputData.size() >> 0) & 0xff);
+	commandData += static_cast<char>((inputData.size() >> 8) & 0xff);
+	commandData += inputData;
 	return commandData;
 }
 
@@ -125,7 +145,7 @@ CommandApdu EstablishPACEChannelBuilder::createCommandDataCcid()
 	}
 	if (!mCertificateDescription.isEmpty())
 	{
-		const unsigned char* unsignedCharPointer = reinterpret_cast<unsigned char*>(mCertificateDescription.data());
+		const uchar* unsignedCharPointer = reinterpret_cast<const uchar*>(mCertificateDescription.constData());
 		decodeAsn1Object(&channelInput->mCertificateDescription, &unsignedCharPointer, mCertificateDescription.size());
 	}
 
@@ -137,7 +157,7 @@ CommandApdu EstablishPACEChannelBuilder::createCommandDataCcid()
 
 
 EstablishPACEChannelOutput::EstablishPACEChannelOutput()
-	: mPaceReturnCode(ReturnCode::UNKNOWN)
+	: mPaceReturnCode(CardReturnCode::UNKNOWN)
 	, mEfCardAccess()
 	, mCarCurr()
 	, mCarPrev()
@@ -146,7 +166,7 @@ EstablishPACEChannelOutput::EstablishPACEChannelOutput()
 }
 
 
-ReturnCode EstablishPACEChannelOutput::getPaceReturnCode() const
+CardReturnCode EstablishPACEChannelOutput::getPaceReturnCode() const
 {
 	return mPaceReturnCode;
 }
@@ -204,15 +224,15 @@ void EstablishPACEChannelOutput::setIdIcc(const QByteArray& pIDicc)
 }
 
 
-void EstablishPACEChannelOutput::setPaceReturnCode(ReturnCode pPaceReturnCode)
+void EstablishPACEChannelOutput::setPaceReturnCode(CardReturnCode pPaceReturnCode)
 {
 	mPaceReturnCode = pPaceReturnCode;
 }
 
 
-uint EstablishPACEChannelOutput::parseUSHORT(const QByteArray& pData, int pOffset)
+int EstablishPACEChannelOutput::parseUSHORT(const QByteArray& pData, int pOffset)
 {
-	uint len = static_cast<uchar>(pData.at(pOffset));
+	int len = static_cast<uchar>(pData.at(pOffset));
 	len += (static_cast<uchar>(pData.at(pOffset + 1)) << 8);
 	return len;
 }
@@ -223,7 +243,7 @@ QByteArray EstablishPACEChannelOutput::reverse(const QByteArray& pArrayToReverse
 	QByteArray reversed;
 	for (int i = pArrayToReverse.size() - 1; i >= 0; i--)
 	{
-		reversed.append(pArrayToReverse.at(i));
+		reversed += (pArrayToReverse.at(i));
 	}
 	return reversed;
 }
@@ -239,13 +259,13 @@ void EstablishPACEChannelOutput::parse(const QByteArray& pControlOutput, PACE_PI
 	quint32 paceReturnCode;
 	QDataStream(reverse(pControlOutput.mid(0, 4))) >> paceReturnCode;
 	mPaceReturnCode = parseReturnCode(paceReturnCode, pPinId);
-	if (mPaceReturnCode == ReturnCode::UNKNOWN)
+	if (mPaceReturnCode == CardReturnCode::UNKNOWN)
 	{
 		mPaceReturnCode = PersoSimWorkaround::parsingEstablishPACEChannelOutput(pControlOutput, pPinId);
 	}
 
-	uint dataLength = parseUSHORT(pControlOutput.mid(4, 2), 0);
-	if (static_cast<uint>(pControlOutput.size()) < 6 + dataLength)
+	int dataLength = parseUSHORT(pControlOutput.mid(4, 2), 0);
+	if (pControlOutput.size() < 6 + dataLength)
 	{
 		qCWarning(card) << "Output of EstablishPACEChannel has wrong size";
 		return;
@@ -263,10 +283,10 @@ void EstablishPACEChannelOutput::parse(const QByteArray& pControlOutput, PACE_PI
 	//status += static_cast<uchar>(pControlOutput.at(it));
 	++it;
 
-	uint lengthCardAccess = parseUSHORT(pControlOutput, it);
+	int lengthCardAccess = parseUSHORT(pControlOutput, it);
 	it += 2;
 
-	mEfCardAccess.append(pControlOutput.mid(it, lengthCardAccess));
+	mEfCardAccess = (pControlOutput.mid(it, lengthCardAccess));
 	it += lengthCardAccess;
 
 	if (it >= pControlOutput.size())
@@ -276,21 +296,21 @@ void EstablishPACEChannelOutput::parse(const QByteArray& pControlOutput, PACE_PI
 		return;
 	}
 
-	uint length_CARcurr = static_cast<uchar>(pControlOutput.at(it));
+	int length_CARcurr = pControlOutput.at(it);
 	++it;
-	mCarCurr.append(pControlOutput.mid(it, length_CARcurr));
+	mCarCurr = (pControlOutput.mid(it, length_CARcurr));
 	it += length_CARcurr;
 	qCDebug(card) << "mCarCurr" << mCarCurr;
 
-	uint length_CARprev = static_cast<uchar>(pControlOutput.at(it));
+	int length_CARprev = pControlOutput.at(it);
 	++it;
-	mCarPrev.append(pControlOutput.mid(it, length_CARprev));
+	mCarPrev = (pControlOutput.mid(it, length_CARprev));
 	it += length_CARprev;
 	qCDebug(card) << "mCarPrev" << mCarPrev;
 
-	uint length_IDicc = parseUSHORT(pControlOutput, it);
+	int length_IDicc = parseUSHORT(pControlOutput, it);
 	it += 2;
-	mIdIcc.append(pControlOutput.mid(it, length_IDicc));
+	mIdIcc = (pControlOutput.mid(it, length_IDicc));
 }
 
 
@@ -359,14 +379,14 @@ void EstablishPACEChannelOutput::parseFromCcid(const QByteArray& pOutput, PACE_P
 }
 
 
-ReturnCode EstablishPACEChannelOutput::parseReturnCode(quint32 pPaceReturnCode, PACE_PIN_ID pPinId)
+CardReturnCode EstablishPACEChannelOutput::parseReturnCode(quint32 pPaceReturnCode, PACE_PIN_ID pPinId)
 {
 	// error codes from the reader
 	switch (pPaceReturnCode)
 	{
 		case 0:
 			// no error
-			return ReturnCode::OK;
+			return CardReturnCode::OK;
 
 		case 0xd0000001: // Inconsistent lengths in input
 		case 0xd0000002: // Unexpected data in input
@@ -375,18 +395,18 @@ ReturnCode EstablishPACEChannelOutput::parseReturnCode(quint32 pPaceReturnCode, 
 		case 0xe0000002: // Unexpected or missing object in TLV response
 		case 0xe0000003: // Unknown PIN-ID
 		case 0xe0000006: // Wrong Authentication Token
-			return ReturnCode::COMMAND_FAILED;
+			return CardReturnCode::COMMAND_FAILED;
 
 		// 0xf00663c2 -- invalid PIN?
 		case 0xf0100001: // Communication abort (e.g. card removed during protocol)
 		case 0xf0100002: // No card
-			return ReturnCode::COMMAND_FAILED;
+			return CardReturnCode::COMMAND_FAILED;
 
 		case 0xf0200001: // Abort
-			return ReturnCode::CANCELLATION_BY_USER;
+			return CardReturnCode::CANCELLATION_BY_USER;
 
 		case 0xf0200002: // Timeout
-			return ReturnCode::TIME_OUT;
+			return CardReturnCode::INPUT_TIME_OUT;
 	}
 
 	// Error codes wrapping error codes from the card. The format is 0xXXXXYYZZ, where XXXX identifies
@@ -411,17 +431,17 @@ ReturnCode EstablishPACEChannelOutput::parseReturnCode(quint32 pPaceReturnCode, 
 					case PACE_PIN_ID::PACE_MRZ:
 					// No separate error code (yet).
 					case PACE_PIN_ID::PACE_CAN:
-						return ReturnCode::CAN_INVALID;
+						return CardReturnCode::INVALID_CAN;
 
 					case PACE_PIN_ID::PACE_PIN:
-						return ReturnCode::PIN_INVALID;
+						return CardReturnCode::INVALID_PIN;
 
 					case PACE_PIN_ID::PACE_PUK:
-						return ReturnCode::PUK_INVALID;
+						return CardReturnCode::INVALID_PUK;
 				}
 			}
 			break;
 	}
 
-	return ReturnCode::UNKNOWN;
+	return CardReturnCode::UNKNOWN;
 }

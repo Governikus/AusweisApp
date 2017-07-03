@@ -20,7 +20,7 @@ class KeyDerivationFunction
 	private:
 		QCryptographicHash::Algorithm mHashAlgorithm;
 		int mKeySize;
-		QByteArray deriveKey(const QByteArray& pK, const QByteArray& pNonce, uint32_t pC);
+		QByteArray deriveKey(const QByteArray& pK, const QByteArray& pNonce, quint32 pC);
 
 	public:
 		/*!

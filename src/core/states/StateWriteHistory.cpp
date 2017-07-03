@@ -25,16 +25,14 @@ void StateWriteHistory::run()
 		return;
 	}
 
-	if (getContext()->getDidAuthenticateEac1() == nullptr || getContext()->getEffectiveChat() == nullptr)
+	if (getContext()->getDidAuthenticateEac1() == nullptr || getContext()->getEffectiveAccessRights().isEmpty())
 	{
 		qWarning() << "No EAC1 structure or effective CHAT in model.";
 		Q_EMIT fireError();
 		return;
 	}
 
-	if (getContext()->getResult().isOk() &&
-			getContext()->getDidAuthenticateEac1() != nullptr &&
-			getContext()->getEffectiveChat() != nullptr)
+	if (getContext()->getStatus().isNoError())
 	{
 		if (auto certDesc = getContext()->getDidAuthenticateEac1()->getCertificateDescription())
 		{
@@ -48,7 +46,7 @@ void StateWriteHistory::run()
 			QString validity = tr("Validity:\n%1 - %2").arg(effectiveDate, expirationDate);
 
 			QStringList requestedData;
-			const auto& rights = getContext()->getEffectiveChat()->getAccessRights();
+			const auto& rights = getContext()->getEffectiveAccessRights();
 			for (const auto& entry : rights)
 			{
 				requestedData += AccessRoleAndRightsUtil::toDisplayText(entry);
@@ -56,7 +54,7 @@ void StateWriteHistory::run()
 
 			if (!subjectName.isNull() && !termOfUsage.isNull())
 			{
-				HistoryEntry entry(subjectName, subjectUrl, certDesc->getPurpose(), QDateTime::currentDateTime(), termOfUsage.append("\n\n").append(validity), requestedData.join(QStringLiteral(", ")));
+				HistoryEntry entry(subjectName, subjectUrl, certDesc->getPurpose(), QDateTime::currentDateTime(), termOfUsage + QStringLiteral("\n\n") + validity, requestedData.join(QStringLiteral(", ")));
 				AppSettings::getInstance().getHistorySettings().addHistoryEntry(entry);
 				AppSettings::getInstance().getHistorySettings().save();
 			}

@@ -19,11 +19,11 @@ BluetoothMessageParameterMaxMsgSize::BluetoothMessageParameterMaxMsgSize(const Q
 		mValid = false;
 		return;
 	}
-	mMaxMsgSize = pValue.at(1) | (pValue.at(0) << 8);
+	mMaxMsgSize = static_cast<uint>(pValue.at(1) | (pValue.at(0) << 8));
 }
 
 
-BluetoothMessageParameterMaxMsgSize::BluetoothMessageParameterMaxMsgSize(int pMaxMsgSize)
+BluetoothMessageParameterMaxMsgSize::BluetoothMessageParameterMaxMsgSize(uint pMaxMsgSize)
 	: BluetoothMessageParameter(BluetoothParamId::MaxMsgSize, QByteArray())
 	, mMaxMsgSize(0)
 {
@@ -33,8 +33,8 @@ BluetoothMessageParameterMaxMsgSize::BluetoothMessageParameterMaxMsgSize(int pMa
 		mValid = false;
 		return;
 	}
-	mValue.append((pMaxMsgSize >> 8) % 256);
-	mValue.append(pMaxMsgSize % 256);
+	mValue += static_cast<char>((pMaxMsgSize >> 8) & 0xFF);
+	mValue += static_cast<char>(pMaxMsgSize & 0xFF);
 	mMaxMsgSize = pMaxMsgSize;
 }
 

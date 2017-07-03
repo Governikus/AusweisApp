@@ -17,13 +17,13 @@ class StateConnectCard
 	friend class StateBuilder;
 
 	StateConnectCard(const QSharedPointer<WorkflowContext>& pContext);
-	void error(const QString& pText);
 	virtual void run() override;
 
 	private Q_SLOTS:
 		void onCardInserted();
 		void onCommandDone(QSharedPointer<CreateCardConnectionCommand> pCommand);
 		void onReaderRemoved(const QString& pReaderName);
+		void onAbort();
 
 	Q_SIGNALS:
 		void fireAbort();

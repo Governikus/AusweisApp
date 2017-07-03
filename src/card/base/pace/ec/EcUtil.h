@@ -26,9 +26,9 @@ namespace governikus
 class EcUtil
 {
 	public:
-		static QByteArray point2oct(QSharedPointer<EC_GROUP> pCurve, const EC_POINT* pPoint);
+		static QByteArray point2oct(const QSharedPointer<const EC_GROUP>& pCurve, const EC_POINT* pPoint);
 
-		static QSharedPointer<EC_POINT> oct2point(QSharedPointer<EC_GROUP> pCurve, const QByteArray& pCompressedData);
+		static QSharedPointer<EC_POINT> oct2point(const QSharedPointer<const EC_GROUP>& pCurve, const QByteArray& pCompressedData);
 
 		static QSharedPointer<EC_GROUP> create(EC_GROUP* pEcGroup);
 
@@ -42,26 +42,39 @@ class EcUtil
 
 };
 
-inline QByteArray EcUtil::point2oct(QSharedPointer<EC_GROUP> pCurve, const EC_POINT* pPoint)
+inline QByteArray EcUtil::point2oct(const QSharedPointer<const EC_GROUP>& pCurve, const EC_POINT* pPoint)
 {
 	size_t buf_size = EC_POINT_point2oct(pCurve.data(), pPoint, POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);
-	Q_ASSERT(buf_size > 0);
 
-	QVector<uchar> buf(buf_size);
+	if (buf_size == 0)
+	{
+		qCCritical(card) << "Cannot encode elliptic curve point";
+		Q_ASSERT(buf_size != 0);
+		return QByteArray();
+	}
+	if (buf_size > INT_MAX)
+	{
+		qCCritical(card) << "Cannot encode elliptic curve point";
+		Q_ASSERT(buf_size <= INT_MAX);
+		return QByteArray();
+	}
+
+	QVector<uchar> buf(static_cast<int>(buf_size));
 	if (!EC_POINT_point2oct(pCurve.data(), pPoint, POINT_CONVERSION_UNCOMPRESSED, buf.data(), buf_size, nullptr))
 	{
 		qCCritical(card) << "Cannot encode elliptic curve point";
+		return QByteArray();
 	}
 
-	QByteArray uncompressed(reinterpret_cast<char*>(buf.data()), buf_size);
+	QByteArray uncompressed(reinterpret_cast<char*>(buf.data()), static_cast<int>(buf_size));
 	return uncompressed;
 }
 
 
-inline QSharedPointer<EC_POINT> EcUtil::oct2point(QSharedPointer<EC_GROUP> pCurve, const QByteArray& pCompressedData)
+inline QSharedPointer<EC_POINT> EcUtil::oct2point(const QSharedPointer<const EC_GROUP>& pCurve, const QByteArray& pCompressedData)
 {
 	QSharedPointer<EC_POINT> point = EcUtil::create(EC_POINT_new(pCurve.data()));
-	if (!EC_POINT_oct2point(pCurve.data(), point.data(), reinterpret_cast<const uchar*>(pCompressedData.constData()), pCompressedData.size(), nullptr))
+	if (!EC_POINT_oct2point(pCurve.data(), point.data(), reinterpret_cast<const uchar*>(pCompressedData.constData()), static_cast<size_t>(pCompressedData.size()), nullptr))
 	{
 		qCCritical(card) << "Cannot decode elliptic curve point";
 		return QSharedPointer<EC_POINT>();

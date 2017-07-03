@@ -30,7 +30,7 @@ defineEnumType(CardType,
 		UNKNOWN,
 		EID_CARD)
 
-defineEnumType(PACE_PIN_ID,
+defineTypedEnumType(PACE_PIN_ID, char,
 		PACE_MRZ = 0x01,
 		PACE_CAN = 0x02,
 		PACE_PIN = 0x03,

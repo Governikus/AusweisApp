@@ -1,36 +1,33 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.4
+import QtQuick 2.6
 import QtQuick.Layouts 1.2
-import QtQuick.Controls 2.0 as QtControls
+import QtQuick.Controls 2.0
 
 import "../"
 import "../global"
 
 SectionPage {
 	id: baseItem
-
-	property var modelItem
+	property var historyModelItem
+	readonly property real headerHeight: Utils.dp(200)
+	ProviderModelItem {
+		id: provider
+		modelItem: baseItem.historyModelItem
+	}
 
 	leftTitleBarAction: TitleBarMenuAction { state: "back"; onClicked: pop() }
-	headerTitleBarAction: TitleBarAction { text: modelItem ? modelItem.subject : ""; font.bold: true }
-	titleBarColor: modelItem ? Category.displayColor(modelItem.provider_category) : ""
+	headerTitleBarAction: TitleBarAction { text: historyModelItem ? historyModelItem.subject : ""; font.bold: true }
+	titleBarColor: !!provider.category ? Category.displayColor(provider.category) : ""
 
-	readonly property real headerHeight: Utils.dp(200)
 
 	header: ProviderHeader {
 		id: providerHeader
 		width: baseItem.width
-		height: headerHeight
-
-		address: modelItem ? modelItem.provider_address : ""
-		providerIcon: !modelItem ? "" : modelItem.provider_icon !== "" ? modelItem.provider_icon : Category.buttonImageSource(modelItem.provider_category)
-		providerImage: !modelItem ? "" : modelItem.provider_image !== "" ? modelItem.provider_image : Category.backgroundImageSource(modelItem.provider_category)
-		transparentColor: modelItem ? Category.displayColor(modelItem.provider_category) : ""
+		selectedProvider: provider
 	}
 
 	content: Item {
+		height: swipeBar.height + swipeViewBackground.height + Constants.component_spacing
 		width: baseItem.width
-		height: baseItem.height
 
 		CustomSwipeBar {
 			id: swipeBar
@@ -40,49 +37,43 @@ SectionPage {
 		}
 
 		Rectangle {
-			anchors.fill: swipeView
-			color: Constants.background_color
-		}
-
-		QtControls.SwipeView {
-			id: swipeView
+			id: swipeViewBackground
 			anchors.top: swipeBar.bottom
-			anchors.bottom: parent.bottom
-			anchors.left: parent.left
-			anchors.right: parent.right
-			width: baseItem.width
-			currentIndex: swipeBar.currentIndex
-			clip: true
+			anchors.horizontalCenter: swipeBar.horizontalCenter
+			height: swipeView.height + 2 * Constants.component_spacing
+			width: parent.width
 
-			Item {
-				Rectangle {
-					anchors.fill: parent
+			SwipeView {
+				id: swipeView
+				height: Math.max(providerInfo.contentHeight, detailsHistoryListView.contentHeight)
+				anchors.margins: Constants.component_spacing
+				anchors.left: parent.left
+				anchors.top: parent.top
+				anchors.right: parent.right
 
-					ProviderContactTab {
-						anchors.fill: parent
+				currentIndex: swipeBar.currentIndex
+				clip: true
 
-						homepage: modelItem ? modelItem.provider_homepage : ""
-						phone: modelItem ? modelItem.provider_phone : ""
-						email: modelItem ? modelItem.provider_email : ""
-						postalAddress: modelItem ? modelItem.provider_postaladdress : ""
-					}
-				}
-			}
-
-			HistoryListView {
-				id: detailsHistoryListView
-
-				onVisibleChanged: {
-					if (visible) {
-						historyModel.filter.setFilterFixedString(modelItem.subject)
-					}
+				ProviderContactTab {
+					id: providerInfo
+					contactModel: provider.contactModel
 				}
 
-				listViewModel: historyModel.filter
-				delegate: HistoryListViewDelegate {
-					id: detailsHistoryDelegate
-					showDetail: true
-					listModel: historyModel.filter
+				HistoryListView {
+					id: detailsHistoryListView
+
+					onVisibleChanged: {
+						if (visible) {
+							historyModel.filter.setFilterFixedString(historyModelItem.subject)
+						}
+					}
+
+					listViewModel: historyModel.filter
+					delegate: HistoryListViewDelegate {
+						id: detailsHistoryDelegate
+						showDetail: true
+						listModel: historyModel.filter
+					}
 				}
 			}
 		}

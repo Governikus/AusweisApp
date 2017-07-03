@@ -6,11 +6,13 @@
 
 #include "AppSettings.h"
 #include "ProviderParser.h"
+#include "ProviderSettings.h"
+#include "SingletonHelper.h"
 #include "UpdateSettingsBackend.h"
 
-#include <QMutexLocker>
-
 using namespace governikus;
+
+defineSingleton(ProviderService)
 
 namespace
 {
@@ -36,11 +38,8 @@ class UpdateProviderSettingsBackend
 
 }
 
-
-ProviderService* ProviderService::mSharedInstance = nullptr;
-
-ProviderService::ProviderService(ProviderSettings& pSettings)
-	: UpdateService(QSharedPointer<UpdateBackend>(new UpdateProviderSettingsBackend(pSettings)),
+ProviderService::ProviderService()
+	: UpdateService(QSharedPointer<UpdateBackend>(new UpdateProviderSettingsBackend(AppSettings::getInstance().getProviderSettings())),
 			QStringLiteral("provider configuration"))
 {
 }
@@ -51,16 +50,7 @@ ProviderService::~ProviderService()
 }
 
 
-ProviderService* ProviderService::getSharedInstance()
+ProviderService& ProviderService::getInstance()
 {
-	static QMutex mutex;
-	if (!mSharedInstance)
-	{
-		QMutexLocker locker(&mutex);
-		if (!mSharedInstance)
-		{
-			mSharedInstance = new ProviderService(AppSettings::getInstance().getProviderSettings());
-		}
-	}
-	return mSharedInstance;
+	return *Instance;
 }

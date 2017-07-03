@@ -16,10 +16,9 @@ using namespace governikus;
 
 BaseCardCommand::BaseCardCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
 	: mCardConnectionWorker(pCardConnectionWorker)
-	, mReturnCode(ReturnCode::UNKNOWN)
+	, mReturnCode(CardReturnCode::UNKNOWN)
 {
 	Q_ASSERT(mCardConnectionWorker);
-	qRegisterMetaType<QSharedPointer<BaseCardCommand> >("QSharedPointer<BaseCardCommand>");
 }
 
 
@@ -40,10 +39,10 @@ void BaseCardCommand::execute()
 }
 
 
-ReturnCode BaseCardCommand::checkRetryCounterAndPrepareForPace(const QString& pCan)
+CardReturnCode BaseCardCommand::checkRetryCounterAndPrepareForPace(const QString& pCan)
 {
-	ReturnCode returnCode = mCardConnectionWorker->updateRetryCounter();
-	if (returnCode != ReturnCode::OK)
+	CardReturnCode returnCode = mCardConnectionWorker->updateRetryCounter();
+	if (returnCode != CardReturnCode::OK)
 	{
 		return returnCode;
 	}
@@ -58,10 +57,21 @@ ReturnCode BaseCardCommand::checkRetryCounterAndPrepareForPace(const QString& pC
 
 		case 2:
 		case 3: // only PIN required
-			return ReturnCode::OK;
+			return CardReturnCode::OK;
 
 		default:
 			qCWarning(card) << "Card blocked or deactivated.";
-			return ReturnCode::PIN_BLOCKED;
+			return CardReturnCode::PIN_BLOCKED;
+	}
+}
+
+
+void BaseCardCommand::registerMetaTypes()
+{
+	static bool registered = false;
+	if (!registered)
+	{
+		qRegisterMetaType<QSharedPointer<BaseCardCommand> >("QSharedPointer<BaseCardCommand>");
+		registered = true;
 	}
 }

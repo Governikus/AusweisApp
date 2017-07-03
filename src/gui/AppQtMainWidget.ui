@@ -18,7 +18,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../../resources/ausweisapp.qrc">
-    <normaloff>:/images/npa.ico</normaloff>:/images/npa.ico</iconset>
+    <normaloff>:/images/npa.svg</normaloff>:/images/npa.svg</iconset>
   </property>
   <property name="iconSize">
    <size>

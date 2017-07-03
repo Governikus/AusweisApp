@@ -32,8 +32,9 @@ class ReaderManagerPlugInInfo
 		};
 
 	public:
-		ReaderManagerPlugInInfo(ReaderManagerPlugInType pType = ReaderManagerPlugInType::UNKNOWN, bool pEnabled = false);
-
+		ReaderManagerPlugInInfo(ReaderManagerPlugInType pType = ReaderManagerPlugInType::UNKNOWN,
+				bool pEnabled = false,
+				bool pAvailable = false);
 
 		const ReaderManagerPlugInType& getPlugInType() const
 		{
@@ -74,10 +75,26 @@ class ReaderManagerPlugInInfo
 		}
 
 
+		/*!
+		 * Is there a device/interface?
+		 */
+		bool isAvailable() const
+		{
+			return mAvailable;
+		}
+
+
+		void setAvailable(bool pAvailable)
+		{
+			mAvailable = pAvailable;
+		}
+
+
 	private:
 		ReaderManagerPlugInType mType;
 		QMap<Key, QVariant> mValues;
 		bool mEnabled;
+		bool mAvailable;
 };
 
 } /* namespace governikus */

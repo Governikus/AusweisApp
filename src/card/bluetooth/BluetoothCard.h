@@ -25,22 +25,22 @@ class BluetoothCard
 		bool mConnected;
 		QSharedPointer<CyberJackWaveDevice> mDevice;
 
-		ReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes, unsigned int pTimeoutSeconds);
+		CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes, quint8 pTimeoutSeconds);
 
 	public:
 		BluetoothCard(QSharedPointer<CyberJackWaveDevice> pDevice);
 
-		ReturnCode connect() override;
-		ReturnCode disconnect() override;
+		CardReturnCode connect() override;
+		CardReturnCode disconnect() override;
 		bool isConnected() override;
 
-		ReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
+		CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
 
-		ReturnCode establishPaceChannel(PACE_PIN_ID pPinId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, int pTimeoutSeconds) override;
+		CardReturnCode establishPaceChannel(PACE_PIN_ID pPinId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds) override;
 
-		ReturnCode destroyPaceChannel() override;
+		CardReturnCode destroyPaceChannel() override;
 
-		ReturnCode setEidPin(unsigned int pTimeoutSeconds) override;
+		CardReturnCode setEidPin(quint8 pTimeoutSeconds) override;
 };
 
 } /* namespace governikus */

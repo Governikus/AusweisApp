@@ -26,7 +26,7 @@
       <enum>Qt::TabFocus</enum>
      </property>
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Information on the service provider who wants to read out data from your ID card is given here. For further information press the button &amp;quot;more…&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Information on the service provider who wants to read out data from your ID card is given here. For further information press the button &amp;quot;more...&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="accessibleName">
       <string/>

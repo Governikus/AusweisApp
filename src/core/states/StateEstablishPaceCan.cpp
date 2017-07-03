@@ -7,9 +7,6 @@
 
 #include "StateEstablishPaceCan.h"
 
-#include "ReturnCodeUtil.h"
-
-
 using namespace governikus;
 
 StateEstablishPaceCan::StateEstablishPaceCan(const QSharedPointer<WorkflowContext>& pContext)
@@ -23,7 +20,7 @@ void StateEstablishPaceCan::run()
 	auto cardConnection = getContext()->getCardConnection();
 
 	Q_ASSERT(cardConnection);
-	qDebug() << "Establish Pace connection with Can";
+	qDebug() << "Establish Pace connection with CAN";
 	mConnections += cardConnection->callEstablishPaceChannelCommand(this, &StateEstablishPaceCan::onEstablishConnectionDone, PACE_PIN_ID::PACE_CAN, getContext()->getCan());
 	getContext()->setCan(QString());
 }
@@ -31,34 +28,34 @@ void StateEstablishPaceCan::run()
 
 void StateEstablishPaceCan::onUserCancelled()
 {
-	getContext()->setLastPaceResultAndRetryCounter(ReturnCode::CANCELLATION_BY_USER, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
+	getContext()->setLastPaceResultAndRetryCounter(CardReturnCode::CANCELLATION_BY_USER, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
 	AbstractState::onUserCancelled();
 }
 
 
 void StateEstablishPaceCan::onEstablishConnectionDone(QSharedPointer<BaseCardCommand> pCommand)
 {
-	const ReturnCode returnCode = pCommand->getReturnCode();
+	const CardReturnCode returnCode = pCommand->getReturnCode();
 	switch (returnCode)
 	{
-		case ReturnCode::OK:
+		case CardReturnCode::OK:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
 			Q_EMIT fireSuccess();
 			break;
 
-		case ReturnCode::CANCELLATION_BY_USER:
+		case CardReturnCode::CANCELLATION_BY_USER:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
-			setResult(Result::createCancelByUserError());
+			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireCancel();
 			break;
 
-		case ReturnCode::CAN_INVALID:
+		case CardReturnCode::INVALID_CAN:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
 			Q_EMIT fireInvalidCan();
 			break;
 
 		default:
-			setResult(Result::createInternalError(ReturnCodeUtil::toMessage(returnCode)));
+			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireError();
 			break;
 	}

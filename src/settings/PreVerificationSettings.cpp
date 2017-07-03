@@ -38,7 +38,7 @@ void PreVerificationSettings::load()
 	for (int i = 0; i < itemCount; ++i)
 	{
 		settings->setArrayIndex(i);
-		linkCertificates.append(settings->value(SETTINGS_NAME_LINKCERTIFICATE).toByteArray());
+		linkCertificates += settings->value(SETTINGS_NAME_LINKCERTIFICATE).toByteArray();
 	}
 	mLinkCertificates = linkCertificates;
 
@@ -111,7 +111,7 @@ bool PreVerificationSettings::addLinkCertificate(const QByteArray& pCert)
 	{
 		return false;
 	}
-	mLinkCertificates.append(pCert);
+	mLinkCertificates += pCert;
 	Q_EMIT fireSettingsChanged();
 	return true;
 }

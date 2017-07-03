@@ -5,91 +5,62 @@ import "../../../global"
 
 Rectangle {
 	id: baseItem
+	height: column.height
+	color: Category.displayColor(providerModel.providerCategory)
 
-	readonly property int sidePadding: width * 0.0512
-	readonly property int nameFontSize: Constants.normal_font_size
-	readonly property int homepageFontSize: Constants.normal_font_size
+	property int headerHeight: 0
+	property int textHeight: 0
+	property int footerHeight: 0
 
-	readonly property int headerHeight: height * 0.4752
-	readonly property int nameHeight: height * 0.3168
-	readonly property int footerHeight: height - (headerHeight + nameHeight)
-
-	property string providerCategory: ""
-	property string headerImage: ""
-	property string headerIcon: ""
-	property string providerName: ""
-	property string providerShortDescription: ""
-	property string providerLongDescription: ""
-	property string providerAddress: ""
-	property string providerHomepageBase: ""
-	property string providerEmail: ""
-	property string providerPhone: ""
-	property string providerPostalAddress: ""
-
-	property var pushFunction: function(providerDetails) {}
-
-	border.width: 2
-	border.color: "black"
+	property var providerModel: null
+	property var pushFunction: function(model) {}
 
 	Column {
-		height: baseItem.height
+		id: column
 		width: baseItem.width
 
 		Image {
-			source: baseItem.headerImage !== "" ? baseItem.headerImage :
-					Category.backgroundImageSource(baseItem.providerCategory)
-
+			source: providerModel.providerImage !== "" ? providerModel.providerImage :
+					Category.backgroundImageSource(providerModel.providerCategory)
+			asynchronous: true
 			height: baseItem.headerHeight
 			width: parent.width
-			fillMode: Image.Stretch
+			fillMode: Image.PreserveAspectCrop
 			anchors.horizontalCenter: parent.horizontalCenter
 		}
 
 		ProviderCardNameRow {
-			headerIcon: baseItem.headerIcon
-			nameHeight: baseItem.nameHeight
-			providerCategory: baseItem.providerCategory
-			sidePadding: baseItem.sidePadding
+			height: baseItem.textHeight
+			providerName: providerModel.providerLongName !== "" ? providerModel.providerLongName : providerModel.providerShortName
+			headerIcon:  providerModel.providerIcon
+			providerCategory: providerModel.providerCategory
 		}
 
 		Rectangle {
-			color: Category.displayColor(baseItem.providerCategory)
+			color: Category.displayColor(providerModel.providerCategory)
 			height: baseItem.footerHeight
 			width: parent.width
 
 			Text {
-				text: baseItem.providerHomepageBase
+				text: providerModel.providerHomepageBase
 
 				anchors.centerIn: parent
 
-				leftPadding: baseItem.sidePadding
-				rightPadding: baseItem.sidePadding
+				leftPadding: Constants.pane_padding
+				rightPadding: Constants.pane_padding
 				elide: Text.ElideRight
 				maximumLineCount: 1
 
-				font.pixelSize: baseItem.homepageFontSize
+				font.pixelSize: Constants.normal_font_size
 				color: "white"
+
+				scale: Math.min(1, parent.width / (contentWidth + leftPadding + rightPadding))
 			}
 		}
 	}
 
 	MouseArea {
 		anchors.fill: parent
-		onClicked: baseItem.pushFunction(
-							  {
-								  selectedCategory: baseItem.providerCategory,
-								  shortName: baseItem.providerName,
-								  longName: baseItem.providerName,
-								  shortDescription: baseItem.providerShortDescription,
-								  longDescription: baseItem.providerLongDescription,
-								  address: baseItem.providerAddress,
-								  homepage: "",
-								  homepageBase: baseItem.providerHomepageBase,
-								  phone: baseItem.providerPhone,
-								  email: baseItem.providerEmail,
-								  postalAddress: baseItem.providerPostalAddress,
-								  providerIcon: baseItem.headerIcon,
-								  providerImage: baseItem.headerImage
-							  })
+		onClicked: baseItem.pushFunction(providerModel)
 	}
 }

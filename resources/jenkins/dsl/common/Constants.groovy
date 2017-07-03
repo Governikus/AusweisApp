@@ -2,7 +2,7 @@ package common
 
 class Constants
 {
-	static final AndroidArch = ["armeabi-v7a", "x86"]
+	static final AndroidArch = ["armeabi-v7a", "x86", "arm64-v8a"]
 
 	static String strip(String content)
 	{

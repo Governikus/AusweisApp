@@ -31,13 +31,13 @@ class DidAuthenticateEAC2Command
 		QByteArray mNonceAsHex;
 		QByteArray mAuthTokenAsHex;
 
-		ReturnCode putCertificateChain(const CVCertificateChain& pCvcChain);
-		ReturnCode performTerminalAuthentication(const QByteArray& taProtocol,
+		CardReturnCode putCertificateChain(const CVCertificateChain& pCvcChain);
+		CardReturnCode performTerminalAuthentication(const QByteArray& taProtocol,
 				const QByteArray& chr,
 				const QByteArray& auxiliaryData,
 				const QByteArray& compressedEphemeralPublicKey,
 				const QByteArray& signature);
-		ReturnCode performChipAuthentication(QSharedPointer<const ChipAuthenticationInfo> pChipAuthInfo,
+		CardReturnCode performChipAuthentication(QSharedPointer<const ChipAuthenticationInfo> pChipAuthInfo,
 				const QByteArray& ephemeralPublicKey,
 				QByteArray& pNonceAsHex,
 				QByteArray& pAuthTokenAsHex);

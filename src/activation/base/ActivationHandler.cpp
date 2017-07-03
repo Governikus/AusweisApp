@@ -53,7 +53,8 @@ const QVector<ActivationHandler*>& ActivationHandler::getInstances()
 	if (instances.isEmpty())
 	{
 		qCDebug(activation) << "Try to register plugin";
-		for (auto plugin : QPluginLoader::staticPlugins())
+		const auto& plugins = QPluginLoader::staticPlugins();
+		for (const auto& plugin : plugins)
 		{
 			if (isPlugIn(plugin.metaData()))
 			{

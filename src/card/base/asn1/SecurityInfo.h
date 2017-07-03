@@ -44,9 +44,9 @@ DECLARE_STACK_OF(securityinfo_st)
  */
 class SecurityInfo
 {
-	const QSharedPointer<securityinfo_st> mDelegate;
+	const QSharedPointer<const securityinfo_st> mDelegate;
 
-	SecurityInfo(QSharedPointer<securityinfo_st> pDelegate);
+	SecurityInfo(const QSharedPointer<const securityinfo_st>& pDelegate);
 	Q_DISABLE_COPY(SecurityInfo)
 
 	/*
@@ -61,7 +61,7 @@ class SecurityInfo
 	public:
 		static QSharedPointer<SecurityInfo> decode(const QByteArray& pBytes)
 		{
-			if (QSharedPointer<securityinfo_st> delegate = decodeObject<securityinfo_st>(pBytes))
+			if (const auto& delegate = decodeObject<securityinfo_st>(pBytes))
 			{
 				return QSharedPointer<SecurityInfo>(new SecurityInfo(delegate));
 			}
@@ -82,12 +82,6 @@ class SecurityInfo
 		QByteArray getProtocol() const;
 };
 
-
-class SecurityInfoFactory
-{
-	public:
-		static QSharedPointer<SecurityInfo> createSecurityInfo(const QByteArray& pBytes);
-};
 
 DECLARE_ASN1_OBJECT(securityinfo_st)
 

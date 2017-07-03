@@ -64,7 +64,9 @@ class AppQtGui
 		virtual void show(UiModule pModule = UiModule::CURRENT);
 		virtual void onApplicationStarted();
 		virtual void onShowUserInformation(const QString& pAppName);
+#ifndef QT_NO_NETWORKPROXY
 		void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
+#endif
 
 	private Q_SLOTS:
 		void onActivated(QSystemTrayIcon::ActivationReason reason);
@@ -78,6 +80,7 @@ class AppQtGui
 
 	private:
 		AppQtMainWidget* mMainWidget;
+		QIcon mIcon;
 		QSystemTrayIcon* mTrayIcon;
 		QSharedPointer<WorkflowGui> mActiveWorkflowUi;
 		SetupAssistantGui* mSetupAssistantGui;

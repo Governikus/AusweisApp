@@ -10,6 +10,7 @@
 #include "BluetoothReader.h"
 #include "BluetoothReaderManagerPlugIn.h"
 #include "BluetoothReaderManagerPlugIn_p.h"
+#include "DeviceError.h"
 
 #include <QLoggingCategory>
 
@@ -28,6 +29,7 @@ BluetoothReaderManagerPlugIn::BluetoothReaderManagerPlugIn()
 	, mInitializingDevices()
 	, mReaders()
 	, mScanInProgress(false)
+	, mTimerIdDiscoverPairedDevices(0)
 {
 	connect(&mDeviceDiscoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &BluetoothReaderManagerPlugIn::onDeviceDiscovered);
 	connect(&mDeviceDiscoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this, &BluetoothReaderManagerPlugIn::onDeviceDiscoveryFinished);
@@ -41,6 +43,10 @@ void BluetoothReaderManagerPlugIn::init()
 	ReaderManagerPlugIn::init();
 	Q_D(BluetoothReaderManagerPlugIn);
 	d->init();
+
+	qCDebug(bluetooth) << "Handle already paired devices";
+	d->handlePairedDevices();
+	mTimerIdDiscoverPairedDevices = startTimer(1000);
 }
 
 
@@ -110,7 +116,7 @@ void BluetoothReaderManagerPlugIn::onDeviceDiscovered(const QBluetoothDeviceInfo
 	QString deviceId = BluetoothDeviceUtil::getDeviceId(pInfo);
 	if (mReaders.contains(deviceId))
 	{
-		mDiscoveredReadersInCurrentScan.append(deviceId);
+		mDiscoveredReadersInCurrentScan += deviceId;
 		return;
 	}
 	if (mInitializingDevices.contains(deviceId))
@@ -138,7 +144,7 @@ void BluetoothReaderManagerPlugIn::onDeviceInitialized(const QBluetoothDeviceInf
 			if (mReaders.contains(deviceId))
 			{
 				qCDebug(bluetooth) << "Device is already determined as reader, skip further processing";
-				mDiscoveredReadersInCurrentScan.append(deviceId);
+				mDiscoveredReadersInCurrentScan += deviceId;
 			}
 			else
 			{
@@ -149,8 +155,9 @@ void BluetoothReaderManagerPlugIn::onDeviceInitialized(const QBluetoothDeviceInf
 				connect(reader, &Reader::fireCardInserted, this, &ReaderManagerPlugIn::fireCardInserted);
 				connect(reader, &Reader::fireCardRemoved, this, &ReaderManagerPlugIn::fireCardRemoved);
 				connect(reader, &Reader::fireCardRetryCounterChanged, this, &ReaderManagerPlugIn::fireCardRetryCounterChanged);
+				connect(reader, &Reader::fireReaderDeviceError, this, &ReaderManagerPlugIn::fireReaderDeviceError);
 
-				mDiscoveredReadersInCurrentScan.append(deviceId);
+				mDiscoveredReadersInCurrentScan += deviceId;
 				mReaders.insert(deviceId, reader);
 				connect(device.data(), &CyberJackWaveDevice::fireDisconnected, this, &BluetoothReaderManagerPlugIn::onDeviceDisconnected);
 			}
@@ -190,6 +197,8 @@ void BluetoothReaderManagerPlugIn::onDeviceDiscoveryFinished()
 void BluetoothReaderManagerPlugIn::onDeviceDiscoveryError(QBluetoothDeviceDiscoveryAgent::Error pError)
 {
 	qCCritical(bluetooth) << "Error on Bluetooth device discovery" << pError;
+
+	Q_EMIT fireReaderDeviceError(pError == QBluetoothDeviceDiscoveryAgent::PoweredOffError ? DeviceError::DEVICE_POWERED_OFF : DeviceError::DEVICE_SCAN_ERROR);
 }
 
 
@@ -212,4 +221,17 @@ void BluetoothReaderManagerPlugIn::onRemoveReader(const QString& pDeviceId)
 		Q_EMIT fireReaderRemoved(reader->getName());
 		delete reader;
 	}
+}
+
+
+void BluetoothReaderManagerPlugIn::timerEvent(QTimerEvent* pEvent)
+{
+	if (pEvent->timerId() == mTimerIdDiscoverPairedDevices)
+	{
+		Q_D(BluetoothReaderManagerPlugIn);
+		d->handlePairedDevices();
+		return;
+	}
+
+	ReaderManagerPlugIn::timerEvent(pEvent);
 }

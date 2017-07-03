@@ -7,7 +7,7 @@
 
 using namespace governikus;
 
-CardConnection::CardConnection(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
+CardConnection::CardConnection(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 	: QObject()
 	, mCardConnectionWorker(pCardConnectionWorker)
 	, mReaderInfo()
@@ -47,7 +47,7 @@ EstablishPaceChannelCommand* CardConnection::createEstablishPaceChannelCommand(P
 }
 
 
-SetEidPinCommand* CardConnection::createSetEidPinCommand(const QString& pNewPin, uint pTimeoutSeconds)
+SetEidPinCommand* CardConnection::createSetEidPinCommand(const QString& pNewPin, quint8 pTimeoutSeconds)
 {
 	return new SetEidPinCommand(mCardConnectionWorker, pNewPin, pTimeoutSeconds);
 }

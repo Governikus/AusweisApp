@@ -7,8 +7,6 @@
 
 #include "StateDestroyPace.h"
 
-#include "ReturnCodeUtil.h"
-
 
 using namespace governikus;
 

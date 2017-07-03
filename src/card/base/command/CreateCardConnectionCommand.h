@@ -36,6 +36,7 @@ class CreateCardConnectionCommand
 		CreateCardConnectionCommand(const QString& pReaderName, const QPointer<ReaderManagerWorker>& pReaderManagerWorker);
 		Q_INVOKABLE void execute();
 		QSharedPointer<CardConnection> getCardConnection() const;
+		static void registerMetaTypes();
 
 	private Q_SLOTS:
 		void onCardConnectionWorkerCreated(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);

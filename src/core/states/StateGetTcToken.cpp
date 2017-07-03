@@ -4,10 +4,10 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "CertificateChecker.h"
-#include "ErrorMessage.h"
-#include "NetworkManager.h"
 #include "StateGetTcToken.h"
+
+#include "CertificateChecker.h"
+#include "NetworkManager.h"
 #include "TlsConfiguration.h"
 
 #include <QDebug>
@@ -41,10 +41,12 @@ void StateGetTcToken::run()
 	auto url = getContext()->getTcTokenUrl();
 	qDebug() << "Got TC Token URL:" << url;
 
-	if (isValidRedirectUrl(url))
+	if (!isValidRedirectUrl(url))
 	{
-		sendRequest(url);
+		Q_EMIT fireError();
+		return;
 	}
+	sendRequest(url);
 }
 
 
@@ -53,8 +55,7 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 	if (pUrl.isEmpty())
 	{
 		qCritical() << "Error while connecting to the service provider. The server returns an invalid or empty redirect URL.";
-		setResult(Result::createTrustedChannelEstablishmentError(ErrorMessage::toString(ErrorMessageId::FORMAT_ERROR)));
-		Q_EMIT fireError();
+		setStatus(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
 		return false;
 	}
 	else if (pUrl.scheme() != QLatin1String("https"))
@@ -70,8 +71,7 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 		{
 			qCritical() << httpsError;
 			getContext()->setTcTokenNotFound(false);
-			setResult(Result::createTrustedChannelEstablishmentError(ErrorMessage::toString(ErrorMessageId::FORMAT_ERROR)));
-			Q_EMIT fireError();
+			setStatus(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
 			return false;
 		}
 	}
@@ -96,11 +96,7 @@ void StateGetTcToken::sendRequest(const QUrl& pUrl)
 
 void StateGetTcToken::onSslErrors(const QList<QSslError>& pErrors)
 {
-	if (!TlsConfiguration::containsFatalError(pErrors))
-	{
-		qDebug() << "Ignore SSL errors on QNetworkReply";
-		mReply->ignoreSslErrors();
-	}
+	TlsConfiguration::containsFatalError(mReply, pErrors);
 }
 
 
@@ -117,7 +113,7 @@ void StateGetTcToken::onSslHandshakeDone()
 	{
 		mReply->abort();
 		qCritical() << "Error while connecting to the service provider. The server's SSL certificate uses an unsupported key algorithm or length.";
-		setResult(Result::createTrustedChannelEstablishmentError(ErrorMessage::toString(ErrorMessageId::SSL_ERROR)));
+		setStatus(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Establishment_Error);
 		Q_EMIT fireError();
 		return;
 	}
@@ -126,7 +122,7 @@ void StateGetTcToken::onSslHandshakeDone()
 	{
 		mReply->abort();
 		qCritical() << "Error while connecting to the service provider. The SSL connection uses an unsupported key algorithm or length.";
-		setResult(Result::createTrustedChannelEstablishmentError(ErrorMessage::toString(ErrorMessageId::SSL_ERROR)));
+		setStatus(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Establishment_Error);
 		Q_EMIT fireError();
 		return;
 	}
@@ -143,8 +139,8 @@ void StateGetTcToken::onNetworkReply()
 
 	if (mReply->error() != QNetworkReply::NoError)
 	{
-		qCritical() << NetworkManager::getLocalizedErrorString(mReply.data());
-		setResult(Result::createTrustedChannelEstablishmentError(NetworkManager::getLocalizedErrorString(mReply.data())));
+		qCritical() << NetworkManager::toStatus(mReply.data());
+		setStatus(NetworkManager::toTrustedChannelStatus(mReply.data()));
 		Q_EMIT fireError();
 		return;
 	}
@@ -152,17 +148,24 @@ void StateGetTcToken::onNetworkReply()
 	if (statusCode == HttpStatusCode::OK)
 	{
 		parseTcToken();
+		return;
 	}
-	else if (isValidRedirectUrl(redirectUrl) && (statusCode == HttpStatusCode::SEE_OTHER || statusCode == HttpStatusCode::FOUND || statusCode == HttpStatusCode::TEMPORARY_REDIRECT))
+
+	if (!isValidRedirectUrl(redirectUrl))
 	{
-		sendRequest(redirectUrl);
+		Q_EMIT fireError();
+		return;
 	}
-	else
+
+	if (statusCode != HttpStatusCode::SEE_OTHER && statusCode != HttpStatusCode::FOUND && statusCode != HttpStatusCode::TEMPORARY_REDIRECT)
 	{
 		qCritical() << "Error while connecting to the service provider. The server returns an unexpected status code:" << statusCode;
-		setResult(Result::createTrustedChannelEstablishmentError(ErrorMessage::toString(ErrorMessageId::FORMAT_ERROR)));
+		setStatus(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
 		Q_EMIT fireError();
+		return;
 	}
+
+	sendRequest(redirectUrl);
 }
 
 
@@ -174,7 +177,7 @@ void StateGetTcToken::parseTcToken()
 	if (data.isEmpty())
 	{
 		qDebug() << "Received no data.";
-		setResult(Result::createTrustedChannelEstablishmentError(tr("Received no data.")));
+		setStatus(GlobalStatus::Code::Workflow_TrustedChannel_No_Data_Received);
 		Q_EMIT fireError();
 		return;
 	}
@@ -189,6 +192,6 @@ void StateGetTcToken::parseTcToken()
 	}
 
 	qCritical() << "TCToken invalid";
-	setResult(Result::createTrustedChannelEstablishmentError(ErrorMessage::toString(ErrorMessageId::FORMAT_ERROR)));
+	setStatus(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
 	Q_EMIT fireError();
 }

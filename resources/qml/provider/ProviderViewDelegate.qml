@@ -37,7 +37,7 @@ Rectangle {
 				id: subjectText
 				width: parent.width
 				verticalAlignment: Text.AlignVCenter
-				font.pixelSize: Utils.sp(14)
+				font.pixelSize: Constants.normal_font_size
 				elide: Text.ElideRight
 				text: display
 			}
@@ -47,10 +47,10 @@ Rectangle {
 				width: parent.width
 
 				verticalAlignment: Text.AlignVCenter
-				font.pixelSize: Utils.sp(11)
+				font.pixelSize: Constants.small_font_size
 				color: Constants.blue_dark
 				elide: Text.ElideRight
-				text: addressDomain
+				text: providerAddressDomain
 			}
 		}
 		Item {
@@ -81,22 +81,6 @@ Rectangle {
 
 	MouseArea {
 		anchors.fill: parent
-		onClicked: {
-			push(providerDetailView,
-							  {
-								  selectedCategory: category,
-								  shortName: model.shortName,
-								  longName: model.longName,
-								  shortDescription: model.shortDescription,
-								  longDescription: model.longDescription,
-								  address: model.address,
-								  homepage: model.homepage,
-								  phone: model.phone,
-								  email: model.email,
-								  postalAddress: model.postalAddress,
-								  providerIcon: model.icon,
-								  providerImage: model.image
-							  })
-		}
+		onClicked: push(providerDetailView, {providerModelItem: model})
 	}
 }

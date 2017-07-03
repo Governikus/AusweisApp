@@ -13,7 +13,7 @@
 namespace governikus
 {
 
-defineEnumType(BluetoothMsgId,
+defineTypedEnumType(BluetoothMsgId, char,
 		ConnectRequest = 0x00,
 		ConnectResponse = 0x01,
 		DisconnectRequest = 0x02,
@@ -36,7 +36,7 @@ defineEnumType(BluetoothMsgId,
 		SetTransportProtocolRequest = 0x13,
 		SetTransportProtocolResponse = 0x14)
 
-defineEnumType(BluetoothParamId,
+defineTypedEnumType(BluetoothParamId, char,
 		MaxMsgSize = 0x00,
 		ConnectionStatus = 0x01,
 		ResultCode = 0x02,
@@ -58,7 +58,7 @@ defineEnumType(BluetoothConnectionStatus,
 
 defineEnumType(BluetoothDisconnectionType, Graceful = 0x00, Immediate = 0x01)
 
-defineEnumType(BluetoothResultCode,
+defineTypedEnumType(BluetoothResultCode, char,
 		Ok = 0x00,
 		ErrorNoReasonDefined = 0x01,
 		ErrorCardNotAccessible = 0x02,
@@ -68,7 +68,7 @@ defineEnumType(BluetoothResultCode,
 		ErrorDataNotAvailabe = 0x06,
 		ErrorNotSupport = 0x07)
 
-defineEnumType(BluetoothStatusChange,
+defineTypedEnumType(BluetoothStatusChange, char,
 		Unknown = 0x00,
 		CardReset = 0x01,
 		CardNotAccessible = 0x02,
@@ -76,7 +76,7 @@ defineEnumType(BluetoothStatusChange,
 		CardInserted = 0x04,
 		CardRecovered = 0x05)
 
-defineEnumType(BluetoothTransportProtocol, T0 = 0x00, T1 = 0x01)
+defineTypedEnumType(BluetoothTransportProtocol, char, T0 = 0x00, T1 = 0x01)
 
 defineEnumType(BluetoothCardReaderStatus, Unknown = 0x00, CardInserted = 0x78, CardRemoved = 0x38)
 

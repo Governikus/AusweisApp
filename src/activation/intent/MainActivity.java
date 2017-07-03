@@ -50,13 +50,19 @@ public class MainActivity extends QtActivity
 
 		void enable()
 		{
-			mAdapter.enableForegroundDispatch(mActivity, mPendingIntent, mFilters, mTechLists);
+			if (mAdapter != null)
+			{
+				mAdapter.enableForegroundDispatch(mActivity, mPendingIntent, mFilters, mTechLists);
+			}
 		}
 
 
 		void disable()
 		{
-			mAdapter.disableForegroundDispatch(mActivity);
+			if (mAdapter != null)
+			{
+				mAdapter.disableForegroundDispatch(mActivity);
+			}
 		}
 
 

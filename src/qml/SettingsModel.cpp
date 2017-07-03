@@ -19,8 +19,14 @@ bool SettingsModel::isDeveloperMode() const
 
 void SettingsModel::setDeveloperMode(bool pEnable)
 {
+	if (isDeveloperMode() == pEnable)
+	{
+		return;
+	}
+
 	AppSettings::getInstance().getGeneralSettings().setDeveloperMode(pEnable);
 	AppSettings::getInstance().getGeneralSettings().save();
+	Q_EMIT fireDeveloperModeChanged();
 }
 
 
@@ -32,6 +38,12 @@ bool SettingsModel::useSelfauthenticationTestUri() const
 
 void SettingsModel::setUseSelfauthenticationTestUri(bool pUse)
 {
+	if (useSelfauthenticationTestUri() == pUse)
+	{
+		return;
+	}
+
 	AppSettings::getInstance().getGeneralSettings().setUseSelfauthenticationTestUri(pUse);
 	AppSettings::getInstance().getGeneralSettings().save();
+	Q_EMIT fireUseSelfauthenticationTestUriChanged();
 }

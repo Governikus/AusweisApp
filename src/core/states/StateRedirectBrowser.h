@@ -25,7 +25,7 @@ class StateRedirectBrowser
 
 	void reportCommunicationError();
 	void sendErrorPage(HttpStatusCode pStatus);
-	bool sendRedirect(const QUrl& pRedirectAddress, const Result& pResult);
+	bool sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pStatus);
 	virtual void run() override;
 
 };

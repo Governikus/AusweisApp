@@ -1,5 +1,5 @@
 /*!
- * \brief Model implementation for the pin action.
+ * \brief Model implementation for the PIN action.
  *
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
@@ -29,14 +29,13 @@ class ChangePinModel
 		ChangePinModel(QObject* pParent = nullptr);
 		virtual ~ChangePinModel();
 
-		void resetContext(QSharedPointer<ChangePinContext> pContext = QSharedPointer<ChangePinContext>());
+		void resetContext(const QSharedPointer<ChangePinContext>& pContext = QSharedPointer<ChangePinContext>());
 
 		QString getCurrentState() const;
 		QString getResultString() const;
 		bool isResultOk() const;
 
 		Q_INVOKABLE void startWorkflow();
-		Q_INVOKABLE void continueWorkflow();
 		Q_INVOKABLE void cancelWorkflow();
 		Q_INVOKABLE void setReaderType(const QString& pReaderType);
 		Q_INVOKABLE bool isBasicReader();

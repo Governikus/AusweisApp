@@ -16,8 +16,8 @@ class SettingsModel
 	: public QObject
 {
 	Q_OBJECT
-	Q_PROPERTY(bool developerMode READ isDeveloperMode WRITE setDeveloperMode)
-	Q_PROPERTY(bool useSelfauthenticationTestUri READ useSelfauthenticationTestUri WRITE setUseSelfauthenticationTestUri)
+	Q_PROPERTY(bool developerMode READ isDeveloperMode WRITE setDeveloperMode NOTIFY fireDeveloperModeChanged)
+	Q_PROPERTY(bool useSelfauthenticationTestUri READ useSelfauthenticationTestUri WRITE setUseSelfauthenticationTestUri NOTIFY fireUseSelfauthenticationTestUriChanged)
 
 	public:
 		bool isDeveloperMode() const;
@@ -25,6 +25,10 @@ class SettingsModel
 
 		bool useSelfauthenticationTestUri() const;
 		void setUseSelfauthenticationTestUri(bool pUse);
+
+	Q_SIGNALS:
+		void fireDeveloperModeChanged();
+		void fireUseSelfauthenticationTestUriChanged();
 };
 
 } /* namespace governikus */

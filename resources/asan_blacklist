@@ -1,0 +1,7 @@
+# Recommended usage:
+# LSAN_OPTIONS=suppressions=/home/dev/src/asan_blacklist ./AusweisApp2
+
+leak:g_malloc*
+leak:CRYPTO_malloc
+leak:libxcb*
+leak:Q*

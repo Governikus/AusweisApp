@@ -25,7 +25,6 @@ class BluetoothMessageStatusInd
 		BluetoothMessageStatusInd();
 		virtual ~BluetoothMessageStatusInd();
 
-		BluetoothMessageParameterStatusChange::Ptr getParamStatusChange() const;
 		BluetoothStatusChange getStatusChange() const;
 };
 

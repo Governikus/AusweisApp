@@ -9,6 +9,7 @@
 #include "InternalActivationContext.h"
 #include "MessageDispatcher.h"
 
+#include "TestAuthContext.h"
 #include <QtTest>
 
 using namespace governikus;
@@ -26,12 +27,11 @@ class test_MsgHandlerAccessRights
 	}
 
 
-	QSharedPointer<AuthContext> getContextWithChat()
+	QSharedPointer<TestAuthContext> getContextWithChat()
 	{
-		QSharedPointer<AuthContext> context(new AuthContext(new InternalActivationContext(QUrl("http://dummy"))));
-		context->setRequiredChat(getChat({AccessRight::READ_DG01, AccessRight::READ_DG04}));
-		context->setOptionalChat(getChat({AccessRight::AGE_VERIFICATION, AccessRight::READ_DG21}));
-		context->setEffectiveChat(getChat({AccessRight::READ_DG01, AccessRight::READ_DG04, AccessRight::READ_DG21, AccessRight::AGE_VERIFICATION}));
+		QSharedPointer<TestAuthContext> context(new TestAuthContext(new InternalActivationContext(QUrl("http://dummy")), ":/paos/DIDAuthenticateEAC1.xml"));
+		context->setRequiredAccessRights({AccessRight::READ_DG01, AccessRight::READ_DG04});
+		context->setOptionalAccessRights({AccessRight::AGE_VERIFICATION, AccessRight::READ_DG05});
 		return context;
 	}
 
@@ -42,7 +42,7 @@ class test_MsgHandlerAccessRights
 			MessageDispatcher dispatcher;
 			dispatcher.init(getContextWithChat());
 
-			QCOMPARE(dispatcher.processStateChange("StateEditAccessRights"), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[28,11,8,0],\"optional\":[28,0],\"required\":[11,8]}}"));
+			QCOMPARE(dispatcher.processStateChange("StateEditAccessRights"), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[12,11,8,0],\"optional\":[12,0],\"required\":[11,8]}}"));
 		}
 
 
@@ -69,7 +69,7 @@ class test_MsgHandlerAccessRights
 
 			QVERIFY(!context->isStateApproved());
 			QByteArray msg = QByteArray("{\"cmd\": \"GET_ACCESS_RIGHTS\"}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[28,11,8,0],\"optional\":[28,0],\"required\":[11,8]}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[12,11,8,0],\"optional\":[12,0],\"required\":[11,8]}}"));
 
 			msg = QByteArray("{\"cmd\": \"ACCEPT\"}");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
@@ -84,7 +84,7 @@ class test_MsgHandlerAccessRights
 
 			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
 			QByteArray msg = QByteArray("{\"cmd\": \"GET_ACCESS_RIGHTS\"}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[28,11,8,0],\"optional\":[28,0],\"required\":[11,8]}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[12,11,8,0],\"optional\":[12,0],\"required\":[11,8]}}"));
 		}
 
 
@@ -95,49 +95,49 @@ class test_MsgHandlerAccessRights
 			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
 
 			QByteArray msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [8,\"11\"]}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Entry in 'raw' data needs to be integer\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[28,11,8,0],\"optional\":[28,0],\"required\":[11,8]}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Entry in 'raw' data needs to be integer\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[12,11,8,0],\"optional\":[12,0],\"required\":[11,8]}}"));
 
 			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [0, 123]}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Entry in 'raw' data is invalid\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[28,11,8,0],\"optional\":[28,0],\"required\":[11,8]}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Entry in 'raw' data is invalid\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[12,11,8,0],\"optional\":[12,0],\"required\":[11,8]}}"));
 
-			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [28]}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[28,11,8],\"optional\":[28,0],\"required\":[11,8]}}"));
+			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [12]}");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[12,11,8],\"optional\":[12,0],\"required\":[11,8]}}"));
 
 			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [0, 11]}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Entry in 'raw' data is invalid\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[28,11,8],\"optional\":[28,0],\"required\":[11,8]}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Entry in 'raw' data is invalid\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[12,11,8],\"optional\":[12,0],\"required\":[11,8]}}"));
 
-			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [0,28]}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[28,11,8,0],\"optional\":[28,0],\"required\":[11,8]}}"));
+			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [0,12]}");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[12,11,8,0],\"optional\":[12,0],\"required\":[11,8]}}"));
 
 			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [0]}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[11,8,0],\"optional\":[28,0],\"required\":[11,8]}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[11,8,0],\"optional\":[12,0],\"required\":[11,8]}}"));
 
-			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [0,28]}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[28,11,8,0],\"optional\":[28,0],\"required\":[11,8]}}"));
+			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [0,12]}");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[12,11,8,0],\"optional\":[12,0],\"required\":[11,8]}}"));
 
 			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": []}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[11,8],\"optional\":[28,0],\"required\":[11,8]}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[11,8],\"optional\":[12,0],\"required\":[11,8]}}"));
 		}
 
 
 		void setAccessRightsWithoutChat()
 		{
-			const QSharedPointer<AuthContext> context(new AuthContext(new InternalActivationContext(QUrl("http://dummy"))));
-			context->setEffectiveChat(getChat({}));
+			const auto& context = getContextWithChat();
+			context->setOptionalAccessRights({});
 
 			MessageDispatcher dispatcher;
 			dispatcher.init(context);
 			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
 
 			QByteArray msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [0]}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"No optional access rights available\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[],\"optional\":[],\"required\":[]}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"No optional access rights available\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[11,8],\"optional\":[],\"required\":[11,8]}}"));
 
-			context->setOptionalChat(getChat({AccessRight::AGE_VERIFICATION}));
+			context->setOptionalAccessRights({AccessRight::AGE_VERIFICATION});
 			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [0]}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[0],\"optional\":[0],\"required\":[]}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[11,8,0],\"optional\":[0],\"required\":[11,8]}}"));
 
-			context->setOptionalChat(QSharedPointer<CHAT>());
-			context->setRequiredChat(getChat({AccessRight::AGE_VERIFICATION}));
+			context->setRequiredAccessRights({AccessRight::AGE_VERIFICATION});
+			context->setOptionalAccessRights({});
 			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": [0]}");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"No optional access rights available\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[0],\"optional\":[],\"required\":[0]}}"));
 		}
@@ -150,10 +150,10 @@ class test_MsgHandlerAccessRights
 			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
 
 			QByteArray msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"raw\": null}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Invalid 'raw' data\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[28,11,8,0],\"optional\":[28,0],\"required\":[11,8]}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Invalid 'raw' data\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[12,11,8,0],\"optional\":[12,0],\"required\":[11,8]}}"));
 
 			msg = QByteArray("{\"cmd\": \"SET_ACCESS_RIGHTS\", \"RAW\": []}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"'raw' cannot be undefined\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[28,11,8,0],\"optional\":[28,0],\"required\":[11,8]}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"'raw' cannot be undefined\",\"msg\":\"ACCESS_RIGHTS\",\"raw\":{\"effective\":[12,11,8,0],\"optional\":[12,0],\"required\":[11,8]}}"));
 		}
 
 

@@ -8,16 +8,16 @@
 
 #pragma once
 
-#include <QObject>
-
 #include "AbstractSettings.h"
 #include "DriverSettings.h"
 #include "GeneralSettings.h"
 #include "HistorySettings.h"
 #include "PreVerificationSettings.h"
 #include "ProviderSettings.h"
-#include "ProxySettings.h"
+#include "RemoteReaderSettings.h"
 #include "SecureStorage.h"
+
+#include <QObject>
 
 class test_AppSettings;
 
@@ -39,9 +39,9 @@ class AppSettings
 		GeneralSettings mGeneralSettings;
 		PreVerificationSettings mPreVerificationSettings;
 		ProviderSettings mProviderSettings;
-		ProxySettings mProxySettings;
 		SecureStorage mSecureStorage;
 		HistorySettings mHistorySettings;
+		RemoteReaderSettings mRemoteReaderSettings;
 
 	protected:
 		AppSettings();
@@ -58,9 +58,9 @@ class AppSettings
 		GeneralSettings& getGeneralSettings();
 		PreVerificationSettings& getPreVerificationSettings();
 		ProviderSettings& getProviderSettings();
-		ProxySettings& getProxySettings();
 		SecureStorage& getSecureStorage();
 		HistorySettings& getHistorySettings();
+		RemoteReaderSettings& getRemoteReaderSettings();
 };
 
 inline bool operator==(const AppSettings& pLeft, const AppSettings& pRight)
@@ -70,9 +70,9 @@ inline bool operator==(const AppSettings& pLeft, const AppSettings& pRight)
 		pLeft.mGeneralSettings == pRight.mGeneralSettings &&
 		pLeft.mPreVerificationSettings == pRight.mPreVerificationSettings &&
 		pLeft.mProviderSettings == pRight.mProviderSettings &&
-		pLeft.mProxySettings == pRight.mProxySettings &&
 		pLeft.mSecureStorage == pRight.mSecureStorage &&
-		pLeft.mHistorySettings == pRight.mHistorySettings);
+		pLeft.mHistorySettings == pRight.mHistorySettings &&
+		pLeft.mRemoteReaderSettings == pRight.mRemoteReaderSettings);
 }
 
 

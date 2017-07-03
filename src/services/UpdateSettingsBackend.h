@@ -67,25 +67,10 @@ class UpdateSettingsBackend
 
 		void saveLatestSettings(QSharedPointer<SettingsClass> pUpdatedSettings)
 		{
-			bool needsSaving = false;
-
-			QSharedPointer<SettingsClass> defaultSettings = loadDefaultSettings();
-			if (defaultSettings != nullptr && defaultSettings->getIssueDate() > mCurrentSettings.getIssueDate())
-			{
-				qCDebug(update) << QStringLiteral("Replacing current %1 with default %1 issued on %2").arg(mNameForLog, defaultSettings->getIssueDate().toString(Qt::DateFormat::ISODate));
-				mCurrentSettings.update(*defaultSettings);
-				needsSaving = true;
-			}
-
 			if (pUpdatedSettings != nullptr && pUpdatedSettings->getIssueDate() > mCurrentSettings.getIssueDate())
 			{
 				qCDebug(update) << QStringLiteral("Replacing current %1 with updated %1 issued on %2").arg(mNameForLog, pUpdatedSettings->getIssueDate().toString(Qt::DateFormat::ISODate));
 				mCurrentSettings.update(*pUpdatedSettings);
-				needsSaving = true;
-			}
-
-			if (needsSaving)
-			{
 				mCurrentSettings.save();
 			}
 			else
@@ -109,6 +94,15 @@ class UpdateSettingsBackend
 			// (re-)load current settings to have the up-to-date issue date.
 			mCurrentSettings.load();
 			qCDebug(update) << QStringLiteral("Loaded current %1 issued on %2").arg(mNameForLog, mCurrentSettings.getIssueDate().toString(Qt::DateFormat::ISODate));
+
+			// Check if more recent default settings have been installed.
+			QSharedPointer<SettingsClass> defaultSettings = loadDefaultSettings();
+			if (defaultSettings != nullptr && defaultSettings->getIssueDate() > mCurrentSettings.getIssueDate())
+			{
+				qCDebug(update) << QStringLiteral("Replacing current %1 with default %1 issued on %2").arg(mNameForLog, defaultSettings->getIssueDate().toString(Qt::DateFormat::ISODate));
+				mCurrentSettings.update(*defaultSettings);
+				mCurrentSettings.save();
+			}
 		}
 
 
@@ -139,8 +133,9 @@ class UpdateSettingsBackend
 		}
 
 
-		virtual void processError() override
+		virtual void processError(const GlobalStatus& pError) override
 		{
+			Q_UNUSED(pError)
 			saveLatestSettings(QSharedPointer<SettingsClass>());
 		}
 

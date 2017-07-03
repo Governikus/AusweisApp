@@ -32,22 +32,22 @@ void StateTransmit::onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 {
 	auto transmitCommand = pCommand.staticCast<TransmitCommand>();
 	auto returnCode = transmitCommand->getReturnCode();
-	if (returnCode == ReturnCode::OK)
+	if (returnCode == CardReturnCode::OK)
 	{
 		QSharedPointer<TransmitResponse> response(getContext()->getTransmitResponses().last());
 		response->setOutputApdus(transmitCommand->getOutputApduAsHex());
 		Q_EMIT fireSuccess();
 	}
-	else if (returnCode == ReturnCode::UNEXPECTED_TRANSMIT_STATUS)
+	else if (returnCode == CardReturnCode::UNEXPECTED_TRANSMIT_STATUS)
 	{
 		QSharedPointer<TransmitResponse> response(getContext()->getTransmitResponses().last());
 		response->setOutputApdus(transmitCommand->getOutputApduAsHex());
-		setResult(Result::createError(returnCode)); // set the result to the model so it is written to the PAOS response
+		setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode)); // set the result to the model so it is written to the PAOS response
 		Q_EMIT fireSuccess();
 	}
 	else
 	{
-		setResult(Result::createError(returnCode));
+		setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 		Q_EMIT fireError();
 	}
 }

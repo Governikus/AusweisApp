@@ -49,7 +49,7 @@ void StatePreVerification::run()
 		if (certificateChain.isProductive())
 		{
 			qCritical() << "Using the developer mode is only allowed in a test environment";
-			setResult(Result::createCertChainInterruptedError(tr("Using the developer mode is only allowed in a test environment.")));
+			setStatus(GlobalStatus::Code::Workflow_Preverification_Developermode_Error);
 			Q_EMIT fireError();
 			return;
 		}
@@ -65,21 +65,21 @@ void StatePreVerification::run()
 	if (!certificateChain.isValid())
 	{
 		qCritical() << "Pre-verification failed: cannot build certificate chain";
-		setResult(Result::createCertChainInterruptedError(tr("Pre-verification failed.")));
+		setStatus(GlobalStatus::Code::Workflow_Preverification_Error);
 		Q_EMIT fireError();
 		return;
 	}
 	else if (!SignatureChecker(certificateChain).check())
 	{
 		qCritical() << "Pre-verification failed: signature check failed";
-		setResult(Result::createCertChainInterruptedError(tr("Pre-verification failed.")));
+		setStatus(GlobalStatus::Code::Workflow_Preverification_Error);
 		Q_EMIT fireError();
 		return;
 	}
 	else if (!isValid(certificateChain))
 	{
 		qCritical() << "Pre-verification failed: certificate not valid ";
-		setResult(Result::createCertChainInterruptedError(tr("Pre-verification failed.")));
+		setStatus(GlobalStatus::Code::Workflow_Preverification_Error);
 		Q_EMIT fireError();
 		return;
 	}

@@ -24,7 +24,7 @@ Apdu::~Apdu()
 }
 
 
-size_t Apdu::length() const
+int Apdu::length() const
 {
 	return mBuffer.size();
 }
@@ -48,7 +48,7 @@ bool CommandApdu::isExtendedLength() const
 	// no data, short le: size == 5
 	// no data, extended le: size == 7, high order le byte == 0
 	// data, with/without le: high order size byte == 0 <=> extended data length
-	return mBuffer.size() > 5 && mBuffer.at(4) == static_cast<char>(0x00);
+	return length() > 5 && mBuffer.at(4) == char(0x00);
 }
 
 
@@ -84,10 +84,10 @@ CommandApdu::CommandApdu(char pCla, char pIns, char pP1, char pP2, const QByteAr
 		return;
 	}
 
-	mBuffer.append(pCla);
-	mBuffer.append(pIns);
-	mBuffer.append(pP1);
-	mBuffer.append(pP2);
+	mBuffer += pCla;
+	mBuffer += pIns;
+	mBuffer += pP1;
+	mBuffer += pP2;
 
 	//
 	// according to ISO 7816 Part 4, chapter 5.1
@@ -96,16 +96,16 @@ CommandApdu::CommandApdu(char pCla, char pIns, char pP1, char pP2, const QByteAr
 	{
 		if (CommandApdu::isExtendedLength(pData, pLe))
 		{
-			mBuffer.append(char(0x00));
-			mBuffer.append(pData.size() >> 8 & 0xff);
-			mBuffer.append(pData.size() & 0xff);
+			mBuffer += char(0x00);
+			mBuffer += static_cast<char>(pData.size() >> 8 & 0xff);
+			mBuffer += static_cast<char>(pData.size() & 0xff);
 		}
 		else
 		{
-			mBuffer.append(pData.size() & 0xff);
+			mBuffer += static_cast<char>(pData.size() & 0xff);
 		}
 
-		mBuffer.append(pData);
+		mBuffer += pData;
 	}
 
 	if (pLe > 0)
@@ -114,11 +114,11 @@ CommandApdu::CommandApdu(char pCla, char pIns, char pP1, char pP2, const QByteAr
 		{
 			if (pData.isEmpty())
 			{
-				mBuffer.append(char(0x00));
+				mBuffer += char(0x00);
 			}
-			mBuffer.append(pLe >> 8 & 0xff);
+			mBuffer += static_cast<char>(pLe >> 8 & 0xff);
 		}
-		mBuffer.append(pLe & 0xff);
+		mBuffer += static_cast<char>(pLe & 0xff);
 	}
 }
 
@@ -130,19 +130,19 @@ CommandApdu::~CommandApdu()
 
 char CommandApdu::getCLA() const
 {
-	return mBuffer.size() > 0 ? mBuffer.at(0) : 0;
+	return length() > 0 ? mBuffer.at(0) : 0;
 }
 
 
 char CommandApdu::getINS() const
 {
-	return mBuffer.size() > 1 ? mBuffer.at(1) : 0;
+	return length() > 1 ? mBuffer.at(1) : 0;
 }
 
 
 char CommandApdu::getP1() const
 {
-	return mBuffer.size() > 2 ? mBuffer.at(2) : 0;
+	return length() > 2 ? mBuffer.at(2) : 0;
 }
 
 
@@ -160,7 +160,7 @@ static inline int readLength(const QByteArray& pByteArray, int pOffset)
 
 int CommandApdu::getLc() const
 {
-	if (mBuffer.size() <= 5)
+	if (length() <= 5)
 	{
 		return 0;
 	}
@@ -170,7 +170,7 @@ int CommandApdu::getLc() const
 		return static_cast<uchar>(mBuffer.at(4));
 	}
 	// extended length command apdu
-	if (mBuffer.size() <= 6)
+	if (length() <= 6)
 	{
 		qCCritical(card) << "Cannot determine Lc, returning 0";
 		return 0;
@@ -187,7 +187,7 @@ int CommandApdu::getLe() const
 		// no data (so lc==0): we have 4 bytes header and the le field is prefixed with 0 byte
 		// with data: we have 4 bytes header, lc field encoded in 3 bytes and the data field
 		int offset = lc == 0 ? 5 : 7 + lc;
-		if (mBuffer.size() < offset + 2)
+		if (length() < offset + 2)
 		{
 			return 0;
 		}
@@ -197,7 +197,7 @@ int CommandApdu::getLe() const
 	// no data (so lc==0): we have 4 bytes header
 	// with data: we have 4 bytes header, lc field encoded in 1 byte and the data field
 	int offset = lc == 0 ? 4 : 5 + lc;
-	if (mBuffer.size() < offset + 1)
+	if (length() < offset + 1)
 	{
 		return 0;
 	}
@@ -253,37 +253,38 @@ QByteArray ResponseApdu::getData() const
 
 int ResponseApdu::getDataLength() const
 {
-	return mBuffer.size() - 2;
+	return length() - 2;
 }
 
 
 StatusCode ResponseApdu::getReturnCode() const
 {
-	unsigned int sw1 = getSW1();
-	unsigned int sw2 = getSW2();
-	return StatusCode(((sw1 << 8) & 0xff00) + (sw2 & 0xff));
+	// avoid "undefined-behavior" with explicit "uint" variable
+	const uint sw1 = static_cast<uchar>(getSW1());
+	const uchar sw2 = static_cast<uchar>(getSW2());
+	return StatusCode((sw1 << 8) + sw2);
 }
 
 
-int ResponseApdu::getSW1() const
+char ResponseApdu::getSW1() const
 {
-	if (mBuffer.size() < 2)
+	if (length() < 2)
 	{
 		qCCritical(card) << "Buffer too short, returning 0";
 		return 0;
 	}
-	return mBuffer.at(mBuffer.size() - 2);
+	return mBuffer.at(length() - 2);
 }
 
 
-int ResponseApdu::getSW2() const
+char ResponseApdu::getSW2() const
 {
-	if (mBuffer.size() < 1)
+	if (length() < 1)
 	{
 		qCCritical(card) << "Buffer too short, returning 0";
 		return 0;
 	}
-	return mBuffer.at(mBuffer.size() - 1);
+	return mBuffer.at(length() - 1);
 }
 
 

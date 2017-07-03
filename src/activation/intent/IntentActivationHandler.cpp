@@ -6,9 +6,9 @@
 
 #include "IntentActivationHandler.h"
 
-#include <QDebug>
+#include "IntentActivationContext.h"
+
 #include <QLoggingCategory>
-#include <QUrl>
 
 #ifdef Q_OS_ANDROID
 #include <QtAndroidExtras/QAndroidJniObject>
@@ -32,50 +32,30 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_triggerActiv
 		{
 			auto handler = ActivationHandler::getInstance<IntentActivationHandler>();
 			Q_ASSERT(handler);
-			handler->onCustomUrl(QUrl(lastIntentString));
+			handler->onIntent(QUrl(lastIntentString));
 		}
 	}
 }
 
 
-namespace governikus
-{
-/*!
- * Accessor of Java class MainActivitiy
- */
-class MainActivityAccessor
-{
-	public:
-		static QString getInitialIntent()
-		{
-			return QAndroidJniObject::callStaticObjectMethod<jstring>("com/governikus/ausweisapp2/MainActivity", "getInitialIntent").toString();
-		}
-
-
-};
-
-}
 #endif
 
 
-IntentActivationHandler::IntentActivationHandler()
-	: CustomSchemeActivationHandler()
+void IntentActivationHandler::onIntent(const QUrl& pUrl)
 {
-}
-
-
-IntentActivationHandler::~IntentActivationHandler()
-{
+	qCDebug(activation) << "Got new authentication request";
+	qCDebug(activation) << "Request URL:" << pUrl;
+	Q_EMIT fireAuthenticationRequest(new IntentActivationContext(pUrl));
 }
 
 
 bool IntentActivationHandler::start()
 {
 #ifdef Q_OS_ANDROID
-	QString initialIntent = MainActivityAccessor::getInitialIntent();
+	const QString& initialIntent = QAndroidJniObject::callStaticObjectMethod<jstring>("com/governikus/ausweisapp2/MainActivity", "getInitialIntent").toString();
 	if (!initialIntent.isNull())
 	{
-		onCustomUrl(initialIntent);
+		onIntent(initialIntent);
 	}
 
 	return true;

@@ -7,7 +7,6 @@
 #include "CardConnection.h"
 #include "DidAuthenticateEAC2Command.h"
 #include "GeneralAuthenticateResponse.h"
-#include "ReturnCodeUtil.h"
 #include "asn1/ChipAuthenticationInfo.h"
 #include "asn1/EFCardSecurity.h"
 
@@ -44,7 +43,7 @@ DidAuthenticateEAC2Command::~DidAuthenticateEAC2Command()
 void DidAuthenticateEAC2Command::internalExecute()
 {
 	mReturnCode = putCertificateChain(mCvcChain);
-	if (mReturnCode != ReturnCode::OK)
+	if (mReturnCode != CardReturnCode::OK)
 	{
 		return;
 	}
@@ -73,7 +72,7 @@ void DidAuthenticateEAC2Command::internalExecute()
 			compressedEphemeralPublicKey,
 			signature);
 
-	if (mReturnCode != ReturnCode::OK)
+	if (mReturnCode != CardReturnCode::OK)
 	{
 		return;
 	}
@@ -82,40 +81,39 @@ void DidAuthenticateEAC2Command::internalExecute()
 	QByteArray efCardSecurityBytes;
 	qCDebug(card) << "Performing Read EF.CardSecurity";
 	mReturnCode = mCardConnectionWorker->readFile(FileRef::efCardSecurity(), efCardSecurityBytes);
-	if (mReturnCode != ReturnCode::OK)
+	if (mReturnCode != CardReturnCode::OK)
 	{
 		return;
 	}
-	mEfCardSecurityAsHex.append(efCardSecurityBytes.toHex());
+	mEfCardSecurityAsHex += efCardSecurityBytes.toHex();
 	QSharedPointer<EFCardSecurity> efCardSecurity = EFCardSecurity::decode(efCardSecurityBytes);
 	if (efCardSecurity == nullptr)
 	{
 		qCCritical(card) << "Cannot parse EF.CardSecurity";
-		mReturnCode = ReturnCode::PROTOCOL_ERROR;
+		mReturnCode = CardReturnCode::PROTOCOL_ERROR;
 		return;
 	}
 
-	QVector<QSharedPointer<ChipAuthenticationInfo> > chipAuthenticationInfoList = efCardSecurity->getSecurityInfos<ChipAuthenticationInfo>();
+	const auto& chipAuthenticationInfoList = efCardSecurity->getSecurityInfos()->getChipAuthenticationInfos();
 	if (chipAuthenticationInfoList.isEmpty())
 	{
 		qCCritical(card) << "No ChipAuthenticationInfo found in EF.CardAccess";
-		mReturnCode = ReturnCode::PROTOCOL_ERROR;
+		mReturnCode = CardReturnCode::PROTOCOL_ERROR;
 		return;
 	}
 	// we do not know of any procedural rule to determine the ChipAuthenticationInfo, so we just take the first one
-	QSharedPointer<ChipAuthenticationInfo> chipAuthenticationInfo = chipAuthenticationInfoList.at(0);
+	const auto& chipAuthenticationInfo = chipAuthenticationInfoList.at(0);
 	qCDebug(card) << "Chose ChipAuthenticationInfo(0): protocol" << chipAuthenticationInfo->getProtocol() << ", keyId" << chipAuthenticationInfo->getKeyId().toHex();
 
 	mReturnCode = performChipAuthentication(chipAuthenticationInfo, ephemeralPublicKey, mNonceAsHex, mAuthTokenAsHex);
-	if (ReturnCode::OK == mReturnCode)
+	if (CardReturnCode::OK == mReturnCode)
 	{
 		mCardConnectionWorker->stopSecureMessaging();
 	}
-	return;
 }
 
 
-ReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertificateChain& pCvcChain)
+CardReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertificateChain& pCvcChain)
 {
 	for (const auto& cvCertificate : pCvcChain)
 	{
@@ -126,8 +124,8 @@ ReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertificateCh
 		ResponseApdu mseResult;
 		qCDebug(card) << "Performing TA MSE:Set DST";
 		qCDebug(card) << "Sending CAR" << car;
-		ReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), mseResult);
-		if (returnCode != ReturnCode::OK)
+		CardReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), mseResult);
+		if (returnCode != CardReturnCode::OK)
 		{
 			qCWarning(card) << "TA MSE:Set DST failed.";
 			return returnCode;
@@ -136,18 +134,18 @@ ReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertificateCh
 		if (mseResult.getReturnCode() != StatusCode::SUCCESS)
 		{
 			qCWarning(card) << "TA MSE:Set DST failed: " << mseResult.getReturnCode();
-			return ReturnCode::PROTOCOL_ERROR;
+			return CardReturnCode::PROTOCOL_ERROR;
 		}
 
 		PSOBuilder psoBuilder(PSOBuilder::P1::VERIFY, PSOBuilder::P2::CERTIFICATE);
-		psoBuilder.setCertificateBody(cvCertificate->getRawBody(), true);
-		psoBuilder.setSignature(cvCertificate->getRawSignature(), true);
+		psoBuilder.setCertificateBody(cvCertificate->getRawBody());
+		psoBuilder.setSignature(cvCertificate->getRawSignature());
 
 		qCDebug(card) << "Performing TA PSO:Verify Certificate";
 		qCDebug(card) << "Sending certificate" << *cvCertificate;
 		ResponseApdu psoResult;
 		returnCode = mCardConnectionWorker->transmit(psoBuilder.build(), psoResult);
-		if (returnCode != ReturnCode::OK)
+		if (returnCode != CardReturnCode::OK)
 		{
 			return returnCode;
 		}
@@ -155,15 +153,15 @@ ReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertificateCh
 		if (psoResult.getReturnCode() != StatusCode::SUCCESS)
 		{
 			qCWarning(card) << "TA PSO:Verify Certificate failed: " << psoResult.getReturnCode();
-			return ReturnCode::PROTOCOL_ERROR;
+			return CardReturnCode::PROTOCOL_ERROR;
 		}
 	}
 
-	return ReturnCode::OK;
+	return CardReturnCode::OK;
 }
 
 
-ReturnCode DidAuthenticateEAC2Command::performTerminalAuthentication(const QByteArray& taProtocol,
+CardReturnCode DidAuthenticateEAC2Command::performTerminalAuthentication(const QByteArray& taProtocol,
 		const QByteArray& chr,
 		const QByteArray& auxiliaryData,
 		const QByteArray& compressedEphemeralPublicKey,
@@ -173,21 +171,21 @@ ReturnCode DidAuthenticateEAC2Command::performTerminalAuthentication(const QByte
 	MSEBuilder mseBuilder(MSEBuilder::P1::SET_DST, MSEBuilder::P2::SET_AT);
 	mseBuilder.setOid(taProtocol);
 	mseBuilder.setPublicKey(chr);
-	mseBuilder.setAuxiliaryData(auxiliaryData, true);
+	mseBuilder.setAuxiliaryData(auxiliaryData);
 	mseBuilder.setEphemeralPublicKey(compressedEphemeralPublicKey);
 
 	ResponseApdu mseResult;
 	qCDebug(card) << "Performing TA MSE:Set AT";
-	ReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), mseResult);
-	if (returnCode != ReturnCode::OK)
+	CardReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), mseResult);
+	if (returnCode != CardReturnCode::OK)
 	{
-		qCWarning(card) << "TA MSE:Set AT failed: " << ReturnCodeUtil::toString(returnCode);
+		qCWarning(card) << "TA MSE:Set AT failed: " << CardReturnCodeUtil::toGlobalStatus(returnCode);
 		return returnCode;
 	}
 	if (mseResult.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "TA MSE:Set AT failed: " << mseResult.getReturnCode();
-		return ReturnCode::PROTOCOL_ERROR;
+		return CardReturnCode::PROTOCOL_ERROR;
 	}
 
 	ResponseApdu eaResult;
@@ -195,22 +193,22 @@ ReturnCode DidAuthenticateEAC2Command::performTerminalAuthentication(const QByte
 	eaBuilder.setSignature(signature);
 	qCDebug(card) << "Performing TA External Authenticate";
 	returnCode = mCardConnectionWorker->transmit(eaBuilder.build(), eaResult);
-	if (returnCode != ReturnCode::OK)
+	if (returnCode != CardReturnCode::OK)
 	{
-		qCWarning(card) << "TA External Authenticate failed: " << ReturnCodeUtil::toString(returnCode);
+		qCWarning(card) << "TA External Authenticate failed: " << CardReturnCodeUtil::toGlobalStatus(returnCode);
 		return returnCode;
 	}
 	if (eaResult.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "TA External Authenticate failed: " << eaResult.getReturnCode();
-		return ReturnCode::PROTOCOL_ERROR;
+		return CardReturnCode::PROTOCOL_ERROR;
 	}
 
-	return ReturnCode::OK;
+	return CardReturnCode::OK;
 }
 
 
-ReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPointer<const ChipAuthenticationInfo> pChipAuthInfo,
+CardReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPointer<const ChipAuthenticationInfo> pChipAuthInfo,
 		const QByteArray& ephemeralPublicKey,
 		QByteArray& pNonceAsHex,
 		QByteArray& pAuthTokenAsHex)
@@ -221,15 +219,15 @@ ReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPointer<
 	mseBuilder.setPrivateKey(pChipAuthInfo->getKeyId());
 
 	qCDebug(card) << "Performing CA MSE:Set AT";
-	ReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), mseResult);
-	if (returnCode != ReturnCode::OK)
+	CardReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), mseResult);
+	if (returnCode != CardReturnCode::OK)
 	{
 		return returnCode;
 	}
 	if (mseResult.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "CA MSE:Set AT failed: " << mseResult.getReturnCode();
-		return ReturnCode::PROTOCOL_ERROR;
+		return CardReturnCode::PROTOCOL_ERROR;
 	}
 
 	GAChipAuthenticationResponse gaResponse;
@@ -238,17 +236,17 @@ ReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPointer<
 
 	qCDebug(card) << "Performing CA General Authenticate";
 	returnCode = mCardConnectionWorker->transmit(gaBuilder.build(), gaResponse);
-	if (returnCode != ReturnCode::OK)
+	if (returnCode != CardReturnCode::OK)
 	{
 		return returnCode;
 	}
 	if (gaResponse.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "CA General Authenticate failed: " << gaResponse.getReturnCode();
-		return ReturnCode::PROTOCOL_ERROR;
+		return CardReturnCode::PROTOCOL_ERROR;
 	}
-	pNonceAsHex.append(gaResponse.getNonce().toHex());
-	pAuthTokenAsHex.append(gaResponse.getAuthenticationToken().toHex());
+	pNonceAsHex += gaResponse.getNonce().toHex();
+	pAuthTokenAsHex += gaResponse.getAuthenticationToken().toHex();
 
-	return ReturnCode::OK;
+	return CardReturnCode::OK;
 }

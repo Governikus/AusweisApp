@@ -29,7 +29,7 @@ class test_DidAuthenticateEac2
 		void parseXml()
 		{
 			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml");
-			QScopedPointer<DIDAuthenticateEAC2> eac2(dynamic_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(content)));
+			QScopedPointer<DIDAuthenticateEAC2> eac2(static_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(content)));
 			QVERIFY(!eac2.isNull());
 
 			QCOMPARE(eac2->getConnectionHandle().getCardApplication(), QString("4549445F49534F5F32343732375F42415345"));

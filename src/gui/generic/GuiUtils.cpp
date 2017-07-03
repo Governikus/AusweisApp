@@ -8,6 +8,7 @@
 
 #include <QApplication>
 #include <QFrame>
+#include <QIcon>
 #include <QMessageBox>
 
 using namespace governikus;
@@ -31,33 +32,33 @@ QFrame* GuiUtils::createLine(bool pHorizontal)
 }
 
 
-void GuiUtils::showPinCanPukErrorDialog(ReturnCode pReturnCode, int pRetryCounter, QWidget* pParent)
+void GuiUtils::showPinCanPukErrorDialog(CardReturnCode pReturnCode, int pRetryCounter, QWidget* pParent)
 {
 	QMessageBox messageBox(pParent);
 	QString title;
 	QString text;
 	switch (pReturnCode)
 	{
-		case ReturnCode::CAN_INVALID:
+		case CardReturnCode::INVALID_CAN:
 			title = tr("Wrong card access number (CAN)");
 			text = tr("The given card access number (CAN) is not correct. You have one more try to enter the correct PIN."
 					  " Please mind that you have to acknowledge this last try with your card access"
 					  " number (CAN).");
 			break;
 
-		case ReturnCode::PUK_INVALID:
+		case CardReturnCode::INVALID_PUK:
 			title = tr("Wrong PUK");
 			text = tr("Please enter your PUK again.");
 			break;
 
-		case ReturnCode::PUK_INOPERATIVE:
+		case CardReturnCode::PUK_INOPERATIVE:
 			title = tr("PUK is inoperative");
 			text = tr("You have correctly entered the PUK ten times and have thus reached the maximum count."
-					  " The PUK is now inoperative and can no longer be used for unblocking the PIN. Please address the"
-					  " citizen centre that has issued your ID card for unblocking your PIN.");
+					  " The PUK is now inoperative and can no longer be used for unblocking the PIN. Please address your"
+					  " competent authority that has issued your ID card for unblocking your PIN.");
 			break;
 
-		case ReturnCode::PIN_INVALID:
+		case CardReturnCode::INVALID_PIN:
 		default:
 			title = tr("Wrong PIN");
 			break;
@@ -88,7 +89,7 @@ void GuiUtils::showPinCanPukErrorDialog(ReturnCode pReturnCode, int pRetryCounte
 	messageBox.setWindowTitle(QCoreApplication::applicationName() + " - " + title);
 	messageBox.setWindowModality(Qt::WindowModal);
 	messageBox.setText(QStringLiteral("<h4>%1</h4><p>%2</p>").arg(title, text));
-	messageBox.setIconPixmap(QPixmap(QStringLiteral(":images/autentapp2.iconset/icon_32x32.png")));
+	messageBox.setIconPixmap(QIcon(QStringLiteral(":/images/npa.svg")).pixmap(32, 32));
 	messageBox.setStandardButtons(QMessageBox::StandardButton::Ok);
 
 	messageBox.exec();
@@ -146,5 +147,5 @@ void GuiUtils::updateFontSize(QWidget* pWidget)
 		newFont.setPointSizeF(newFont.pointSizeF() * factor);
 	}
 
-	return pWidget->setFont(newFont);
+	pWidget->setFont(newFont);
 }

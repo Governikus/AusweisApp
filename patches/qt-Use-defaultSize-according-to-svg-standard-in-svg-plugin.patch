@@ -1,0 +1,379 @@
+From eba0d9bdf34f60f2c36f8cef6c412cbed210fa2f Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Fri, 2 Dec 2016 08:05:46 +0100
+Subject: Use defaultSize according to svg standard in svg plugin
+
+The viewBox attribute defines the svg internal coordinate system. If no
+width/height is set, the viewBox size is the right choice for defaultSize.
+Otherwise the standard prescribes that the specified height/width must be
+used.
+
+The old behavior ignored the width and height attributes, and this caused a
+lot of problems in qml. If the viewBox was very small the result was a low
+resolution image. If the viewBox was very large, loading took ages and the
+result used much more memory than needed. Both situations could be avoided
+by setting sourceSize. But when using the same image several times, the
+sourceSize must be set every time to the same value, otherwise the image
+cache would not work. It is cheaper to have the same high-quality source
+image in the cache, and scale it down when required.
+
+With the new behavior it is possible to control the default image size
+directly in the svg file at one place while it is still possible to set
+different sourceSizes if needed.
+
+Task-number: QTBUG-44863
+Change-Id: I9c2fc7c122a29ebcf288b7cbd12427e081d404d5
+---
+ src/plugins/imageformats/svg/qsvgiohandler.cpp |   2 +-
+ tests/auto/auto.pro                            |   1 +
+ tests/auto/qsvgplugin/.gitignore               |   1 +
+ tests/auto/qsvgplugin/qsvgplugin.pro           |   8 ++
+ tests/auto/qsvgplugin/resources.qrc            |  16 ++++
+ tests/auto/qsvgplugin/square.svg               |   5 ++
+ tests/auto/qsvgplugin/square_size.svg          |   5 ++
+ tests/auto/qsvgplugin/square_size_viewbox.svg  |   5 ++
+ tests/auto/qsvgplugin/square_viewbox.svg       |   5 ++
+ tests/auto/qsvgplugin/tall.svg                 |   5 ++
+ tests/auto/qsvgplugin/tall_size.svg            |   5 ++
+ tests/auto/qsvgplugin/tall_size_viewbox.svg    |   5 ++
+ tests/auto/qsvgplugin/tall_viewbox.svg         |   5 ++
+ tests/auto/qsvgplugin/tst_qsvgplugin.cpp       | 108 +++++++++++++++++++++++++
+ tests/auto/qsvgplugin/wide.svg                 |   5 ++
+ tests/auto/qsvgplugin/wide_size.svg            |   5 ++
+ tests/auto/qsvgplugin/wide_size_viewbox.svg    |   5 ++
+ tests/auto/qsvgplugin/wide_viewbox.svg         |   5 ++
+ 18 files changed, 195 insertions(+), 1 deletion(-)
+ create mode 100644 tests/auto/qsvgplugin/.gitignore
+ create mode 100644 tests/auto/qsvgplugin/qsvgplugin.pro
+ create mode 100644 tests/auto/qsvgplugin/resources.qrc
+ create mode 100644 tests/auto/qsvgplugin/square.svg
+ create mode 100644 tests/auto/qsvgplugin/square_size.svg
+ create mode 100644 tests/auto/qsvgplugin/square_size_viewbox.svg
+ create mode 100644 tests/auto/qsvgplugin/square_viewbox.svg
+ create mode 100644 tests/auto/qsvgplugin/tall.svg
+ create mode 100644 tests/auto/qsvgplugin/tall_size.svg
+ create mode 100644 tests/auto/qsvgplugin/tall_size_viewbox.svg
+ create mode 100644 tests/auto/qsvgplugin/tall_viewbox.svg
+ create mode 100644 tests/auto/qsvgplugin/tst_qsvgplugin.cpp
+ create mode 100644 tests/auto/qsvgplugin/wide.svg
+ create mode 100644 tests/auto/qsvgplugin/wide_size.svg
+ create mode 100644 tests/auto/qsvgplugin/wide_size_viewbox.svg
+ create mode 100644 tests/auto/qsvgplugin/wide_viewbox.svg
+
+diff --git x/qtsvg/src/plugins/imageformats/svg/qsvgiohandler.cpp y/qtsvg/src/plugins/imageformats/svg/qsvgiohandler.cpp
+index 88d37bc..0c26cb5 100644
+--- x/qtsvg/src/plugins/imageformats/svg/qsvgiohandler.cpp
++++ y/qtsvg/src/plugins/imageformats/svg/qsvgiohandler.cpp
+@@ -98,7 +98,7 @@ bool QSvgIOHandlerPrivate::load(QIODevice *device)
+     }
+ 
+     if (res) {
+-        defaultSize = QSize(r.viewBox().width(), r.viewBox().height());
++        defaultSize = r.defaultSize();
+         loaded = true;
+     }
+ 
+diff --git x/qtsvg/tests/auto/auto.pro y/qtsvg/tests/auto/auto.pro
+index 43ff500..e2d84ec 100644
+--- x/qtsvg/tests/auto/auto.pro
++++ y/qtsvg/tests/auto/auto.pro
+@@ -4,6 +4,7 @@ qtHaveModule(widgets) {
+         qsvgdevice \
+         qsvggenerator \
+         qsvgrenderer \
++        qsvgplugin \
+         qicon_svg \
+         cmake \
+         installed_cmake
+diff --git x/qtsvg/tests/auto/qsvgplugin/.gitignore y/qtsvg/tests/auto/qsvgplugin/.gitignore
+new file mode 100644
+index 0000000..c41c448
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/.gitignore
+@@ -0,0 +1 @@
++tst_qsvgplugin
+diff --git x/qtsvg/tests/auto/qsvgplugin/qsvgplugin.pro y/qtsvg/tests/auto/qsvgplugin/qsvgplugin.pro
+new file mode 100644
+index 0000000..3fec52e
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/qsvgplugin.pro
+@@ -0,0 +1,8 @@
++TARGET = tst_qsvgplugin
++CONFIG += testcase
++QT += svg testlib widgets gui-private
++
++SOURCES += tst_qsvgplugin.cpp
++RESOURCES += resources.qrc
++
++DEFINES += SRCDIR=\\\"$$PWD/\\\"
+diff --git x/qtsvg/tests/auto/qsvgplugin/resources.qrc y/qtsvg/tests/auto/qsvgplugin/resources.qrc
+new file mode 100644
+index 0000000..fcb311a
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/resources.qrc
+@@ -0,0 +1,16 @@
++<!DOCTYPE RCC><RCC version="1.0">
++<qresource>
++   <file>square.svg</file>
++   <file>square_size.svg</file>
++   <file>square_size_viewbox.svg</file>
++   <file>square_viewbox.svg</file>
++   <file>tall.svg</file>
++   <file>tall_size.svg</file>
++   <file>tall_size_viewbox.svg</file>
++   <file>tall_viewbox.svg</file>
++   <file>wide.svg</file>
++   <file>wide_size.svg</file>
++   <file>wide_size_viewbox.svg</file>
++   <file>wide_viewbox.svg</file>
++</qresource>
++</RCC>
+diff --git x/qtsvg/tests/auto/qsvgplugin/square.svg y/qtsvg/tests/auto/qsvgplugin/square.svg
+new file mode 100644
+index 0000000..f35fb87
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/square.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
++<svg version="1.0" xmlns="http://www.w3.org/2000/svg">
++  <circle cx="50" cy="50" r="25" fill="#00ff00" />
++</svg>
+diff --git x/qtsvg/tests/auto/qsvgplugin/square_size.svg y/qtsvg/tests/auto/qsvgplugin/square_size.svg
+new file mode 100644
+index 0000000..f4aeb67
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/square_size.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
++<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="200px" height="200px">
++  <circle cx="50" cy="50" r="25" fill="#00ff00" />
++</svg>
+diff --git x/qtsvg/tests/auto/qsvgplugin/square_size_viewbox.svg y/qtsvg/tests/auto/qsvgplugin/square_size_viewbox.svg
+new file mode 100644
+index 0000000..cf39bd7
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/square_size_viewbox.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
++<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="200px" height="200px" viewBox="0 0 100 100">
++  <circle cx="50" cy="50" r="25" fill="#00ff00" />
++</svg>
+diff --git x/qtsvg/tests/auto/qsvgplugin/square_viewbox.svg y/qtsvg/tests/auto/qsvgplugin/square_viewbox.svg
+new file mode 100644
+index 0000000..5811505
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/square_viewbox.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
++<svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
++  <circle cx="50" cy="50" r="25" fill="#00ff00" />
++</svg>
+diff --git x/qtsvg/tests/auto/qsvgplugin/tall.svg y/qtsvg/tests/auto/qsvgplugin/tall.svg
+new file mode 100644
+index 0000000..b243b62
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/tall.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
++<svg version="1.0" xmlns="http://www.w3.org/2000/svg">
++  <ellipse cx="25" cy="50" rx="12.5" ry="25" fill="#00ff00" />
++</svg>
+diff --git x/qtsvg/tests/auto/qsvgplugin/tall_size.svg y/qtsvg/tests/auto/qsvgplugin/tall_size.svg
+new file mode 100644
+index 0000000..6121451
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/tall_size.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
++<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="100px" height="200px">
++  <ellipse cx="25" cy="50" rx="12.5" ry="25" fill="#00ff00" />
++</svg>
+diff --git x/qtsvg/tests/auto/qsvgplugin/tall_size_viewbox.svg y/qtsvg/tests/auto/qsvgplugin/tall_size_viewbox.svg
+new file mode 100644
+index 0000000..9d82492
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/tall_size_viewbox.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
++<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="100px" height="200px" viewBox="0 0 50 100">
++  <ellipse cx="25" cy="50" rx="12.5" ry="25" fill="#00ff00" />
++</svg>
+diff --git x/qtsvg/tests/auto/qsvgplugin/tall_viewbox.svg y/qtsvg/tests/auto/qsvgplugin/tall_viewbox.svg
+new file mode 100644
+index 0000000..8ed61a9
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/tall_viewbox.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
++<svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 100">
++  <ellipse cx="25" cy="50" rx="12.5" ry="25" fill="#00ff00" />
++</svg>
+diff --git x/qtsvg/tests/auto/qsvgplugin/tst_qsvgplugin.cpp y/qtsvg/tests/auto/qsvgplugin/tst_qsvgplugin.cpp
+new file mode 100644
+index 0000000..4ec1737
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/tst_qsvgplugin.cpp
+@@ -0,0 +1,108 @@
++/****************************************************************************
++**
++** Copyright (C) 2016 The Qt Company Ltd.
++** Contact: https://www.qt.io/licensing/
++**
++** This file is part of the test suite of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:GPL-EXCEPT$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and The Qt Company. For licensing terms
++** and conditions see https://www.qt.io/terms-conditions. For further
++** information use the contact form at https://www.qt.io/contact-us.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3 as published by the Free Software
++** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
++** included in the packaging of this file. Please review the following
++** information to ensure the GNU General Public License requirements will
++** be met: https://www.gnu.org/licenses/gpl-3.0.html.
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++
++#include <QtTest/QtTest>
++
++#include "../../../src/plugins/imageformats/svg/qsvgiohandler.cpp"
++#include <QImage>
++#include <QStringList>
++#include <QVector>
++
++#ifndef SRCDIR
++#define SRCDIR
++#endif
++
++
++class tst_QSvgPlugin : public QObject
++{
++Q_OBJECT
++
++public:
++    tst_QSvgPlugin();
++    virtual ~tst_QSvgPlugin();
++
++private slots:
++    void checkSize_data();
++    void checkSize();
++};
++
++
++
++tst_QSvgPlugin::tst_QSvgPlugin()
++{
++}
++
++tst_QSvgPlugin::~tst_QSvgPlugin()
++{
++}
++
++void tst_QSvgPlugin::checkSize_data()
++{
++    QTest::addColumn<QString>("filename");
++    QTest::addColumn<int>("imageHeight");
++    QTest::addColumn<int>("imageWidth");
++
++    QTest::newRow("square")              << SRCDIR "square.svg"              <<  50 <<  50;
++    QTest::newRow("square_size")         << SRCDIR "square_size.svg"         << 200 << 200;
++    QTest::newRow("square_size_viewbox") << SRCDIR "square_size_viewbox.svg" << 200 << 200;
++    QTest::newRow("square_viewbox")      << SRCDIR "square_viewbox.svg"      << 100 << 100;
++    QTest::newRow("tall")                << SRCDIR "tall.svg"                <<  50 <<  25;
++    QTest::newRow("tall_size")           << SRCDIR "tall_size.svg"           << 200 << 100;
++    QTest::newRow("tall_size_viewbox")   << SRCDIR "tall_size_viewbox.svg"   << 200 << 100;
++    QTest::newRow("tall_viewbox")        << SRCDIR "tall_viewbox.svg"        << 100 <<  50;
++    QTest::newRow("wide")                << SRCDIR "wide.svg"                <<  25 <<  50;
++    QTest::newRow("wide_size")           << SRCDIR "wide_size.svg"           << 100 << 200;
++    QTest::newRow("wide_size_viewbox")   << SRCDIR "wide_size_viewbox.svg"   << 100 << 200;
++    QTest::newRow("wide_viewbox")        << SRCDIR "wide_viewbox.svg"        <<  50 << 100;
++}
++
++void tst_QSvgPlugin::checkSize()
++{
++    QFETCH(QString, filename);
++    QFETCH(int, imageHeight);
++    QFETCH(int, imageWidth);
++
++    QFile file(filename);
++    file.open(QIODevice::ReadOnly);
++
++    QSvgIOHandler plugin;
++    plugin.setDevice(&file);
++
++    QImage image;
++    plugin.read(&image);
++
++    file.close();
++
++    QCOMPARE(imageHeight, image.height());
++    QCOMPARE(imageWidth, image.width());
++}
++
++
++QTEST_MAIN(tst_QSvgPlugin)
++#include "tst_qsvgplugin.moc"
+diff --git x/qtsvg/tests/auto/qsvgplugin/wide.svg y/qtsvg/tests/auto/qsvgplugin/wide.svg
+new file mode 100644
+index 0000000..9166606
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/wide.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
++<svg version="1.0" xmlns="http://www.w3.org/2000/svg">
++  <ellipse cx="50" cy="25" rx="25" ry="12.5" fill="#00ff00" />
++</svg>
+diff --git x/qtsvg/tests/auto/qsvgplugin/wide_size.svg y/qtsvg/tests/auto/qsvgplugin/wide_size.svg
+new file mode 100644
+index 0000000..e816154
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/wide_size.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
++<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="200px" height="100px">
++  <ellipse cx="50" cy="25" rx="25" ry="12.5" fill="#00ff00" />
++</svg>
+diff --git x/qtsvg/tests/auto/qsvgplugin/wide_size_viewbox.svg y/qtsvg/tests/auto/qsvgplugin/wide_size_viewbox.svg
+new file mode 100644
+index 0000000..3d9b044
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/wide_size_viewbox.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
++<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="200px" height="100px" viewBox="0 0 100 50">
++  <ellipse cx="50" cy="25" rx="25" ry="12.5" fill="#00ff00" />
++</svg>
+diff --git x/qtsvg/tests/auto/qsvgplugin/wide_viewbox.svg y/qtsvg/tests/auto/qsvgplugin/wide_viewbox.svg
+new file mode 100644
+index 0000000..aface45
+--- /dev/null
++++ y/qtsvg/tests/auto/qsvgplugin/wide_viewbox.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
++<svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
++  <ellipse cx="50" cy="25" rx="25" ry="12.5" fill="#00ff00" />
++</svg>
+-- 
+2.11.0
+

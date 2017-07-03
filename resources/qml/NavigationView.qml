@@ -36,7 +36,7 @@ Rectangle {
 		ListElement {
 			imageOn: "qrc:///images/iOS/tabBar/Pin-on.png"
 			imageOff: "qrc:///images/iOS/tabBar/Pin-off.png"
-			desc: qsTr("Pin")
+			desc: qsTr("PIN Management")
 			condition: "pin"
 		}
 

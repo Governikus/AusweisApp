@@ -1,134 +1,29 @@
 #include "ProviderModel.h"
 
+
 using namespace governikus;
 
 
-bool ProviderCategoryFilterModel::filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const
-{
-	QAbstractItemModel* const model = sourceModel();
-	Q_ASSERT(model != nullptr);
-	const QModelIndex idx = model->index(pSourceRow, 0, pSourceParent);
+static const QStringList CATEGORIES({"citizen", "insurance", "finance", "other"});
 
-	if (!mSearchString.isEmpty())
+
+QString ProviderModel::createCostString(double pCostsPerMinute, double pCostsPerCall)
+{
+	if (pCostsPerMinute > 0.0)
 	{
-		const QString dt = model->data(idx, Qt::DisplayRole).toString().toLower();
-		if (!dt.contains(mSearchString))
-		{
-			return false;
-		}
+		return tr("%1/min").arg(createAmountString(pCostsPerMinute));
 	}
-
-	return mSelectedCategories.isEmpty() ||
-		   mSelectedCategories.contains(model->data(idx, ProviderModel::CATEGORY).toString().toLower());
-}
-
-
-ProviderCategoryFilterModel::ProviderCategoryFilterModel()
-{
-}
-
-
-ProviderCategoryFilterModel::~ProviderCategoryFilterModel()
-{
-}
-
-
-void ProviderCategoryFilterModel::updateSearchString(const QString& pSearchString)
-{
-	const QString lowerSearchString = pSearchString.toLower();
-	if (mSearchString != lowerSearchString)
+	if (pCostsPerCall > 0.0)
 	{
-		mSearchString = lowerSearchString;
-
-		invalidateFilter();
-		Q_EMIT fireCriteriaChanged();
+		return tr("%1/call").arg(createAmountString(pCostsPerCall));
 	}
+	return QString();
 }
 
 
-void ProviderCategoryFilterModel::updateCategorySelection(const QString& pCategory, bool pSelected)
+QString ProviderModel::createAmountString(double pCents)
 {
-	const int categoryCount = mSelectedCategories.count();
-	if (pSelected)
-	{
-		mSelectedCategories.insert(pCategory.toLower());
-	}
-	else
-	{
-		mSelectedCategories.remove(pCategory.toLower());
-	}
-
-	if (mSelectedCategories.count() != categoryCount)
-	{
-		invalidateFilter();
-
-		fireCriteriaChanged();
-	}
-}
-
-
-int ProviderCategoryFilterModel::matchesForExcludedCategory(const QString& pCategory) const
-{
-	if (mSearchString.isEmpty() || mSelectedCategories.isEmpty() || mSelectedCategories.contains(pCategory))
-	{
-		return 0;
-	}
-
-	QAbstractItemModel* const model = sourceModel();
-	Q_ASSERT(model != nullptr);
-	const int count = model->rowCount();
-	int matchCount = 0;
-	for (int sourceRow = 0; sourceRow < count; ++sourceRow)
-	{
-		const QModelIndex idx = model->index(sourceRow, 0, QModelIndex());
-		if (!mSearchString.isEmpty())
-		{
-			const QString dt = model->data(idx, Qt::DisplayRole).toString().toLower();
-			if (!dt.contains(mSearchString))
-			{
-				continue;
-			}
-		}
-
-		if (pCategory.toLower() == model->data(idx, ProviderModel::CATEGORY).toString().toLower())
-		{
-			matchCount++;
-		}
-	}
-
-	return matchCount;
-}
-
-
-bool ProviderCategoryFilterModel::isSelected(const QString& pCategory) const
-{
-	return mSelectedCategories.contains(pCategory);
-}
-
-
-ProviderModel::ProviderModel(ProviderSettings* pSettings, QObject* pParent)
-	: QAbstractListModel(pParent)
-	, mSettings(pSettings)
-	, mFilterModel()
-	, mSortModel()
-	, mCategoryFilterModel()
-{
-	mFilterModel.setSourceModel(this);
-	mFilterModel.sort(0);
-	mFilterModel.setFilterRole(CATEGORY);
-
-	mSortModel.setSourceModel(this);
-	mSortModel.sort(0);
-	mSortModel.setSortRole(SORT_ROLE);
-
-	mCategoryFilterModel.setSourceModel(this);
-
-	connect(mSettings, &ProviderSettings::fireProvidersChanged, this, &ProviderModel::onProvidersChanged);
-}
-
-
-ProviderModel::~ProviderModel()
-{
+	return pCents > 100 ? tr("%1 EUR").arg(pCents / 100.0) : tr("%1 ct").arg(pCents);
 }
 
 
@@ -136,6 +31,19 @@ void ProviderModel::onProvidersChanged()
 {
 	beginResetModel();
 	endResetModel();
+}
+
+
+ProviderModel::ProviderModel(ProviderSettings* pSettings, QObject* pParent)
+	: QAbstractListModel(pParent)
+	, mSettings(pSettings)
+{
+	connect(mSettings, &ProviderSettings::fireSettingsChanged, this, &ProviderModel::onProvidersChanged);
+}
+
+
+ProviderModel::~ProviderModel()
+{
 }
 
 
@@ -153,8 +61,8 @@ QVariant ProviderModel::data(const QModelIndex& pIndex, int pRole) const
 
 		if (pRole == Qt::DisplayRole)
 		{
-			auto value = provider.getLongName();
-			return QVariant(value.isEmpty() ? provider.getShortName() : value);
+			auto longName = provider.getLongName();
+			return longName.isEmpty() ? provider.getShortName().toString() : longName.toString();
 		}
 
 		if (pRole == CATEGORY)
@@ -163,19 +71,19 @@ QVariant ProviderModel::data(const QModelIndex& pIndex, int pRole) const
 		}
 		if (pRole == SHORTNAME)
 		{
-			return QVariant(provider.getShortName());
+			return provider.getShortName().toString();
 		}
 		if (pRole == LONGNAME)
 		{
-			return QVariant(provider.getLongName());
+			return provider.getLongName().toString();
 		}
 		if (pRole == SHORTDESCRIPTION)
 		{
-			return QVariant(provider.getShortDescription());
+			return provider.getShortDescription().toString();
 		}
 		if (pRole == LONGDESCRIPTION)
 		{
-			return QVariant(provider.getLongDescription());
+			return provider.getLongDescription().toString();
 		}
 		if (pRole == ADDRESS)
 		{
@@ -196,6 +104,11 @@ QVariant ProviderModel::data(const QModelIndex& pIndex, int pRole) const
 		if (pRole == PHONE)
 		{
 			return provider.getPhone();
+		}
+		if (pRole == PHONE_COST)
+		{
+			const auto& cost = mSettings->getCallCost(provider);
+			return createCostString(cost);
 		}
 		if (pRole == EMAIL)
 		{
@@ -228,38 +141,40 @@ QVariant ProviderModel::data(const QModelIndex& pIndex, int pRole) const
 QHash<int, QByteArray> ProviderModel::roleNames() const
 {
 	QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
-	roles.insert(CATEGORY, "category");
-	roles.insert(SHORTNAME, "shortName");
-	roles.insert(LONGNAME, "longName");
-	roles.insert(SHORTDESCRIPTION, "shortDescription");
-	roles.insert(LONGDESCRIPTION, "longDescription");
-	roles.insert(ADDRESS, "address");
-	roles.insert(ADDRESS_DOMAIN, "addressDomain");
-	roles.insert(HOMEPAGE, "homepage");
-	roles.insert(HOMEPAGE_BASE, "homepagebase");
-	roles.insert(PHONE, "phone");
-	roles.insert(EMAIL, "email");
-	roles.insert(POSTALADDRESS, "postalAddress");
-	roles.insert(ICON, "icon");
-	roles.insert(IMAGE, "image");
+	roles.insert(CATEGORY, "providerCategory");
+	roles.insert(SHORTNAME, "providerShortName");
+	roles.insert(LONGNAME, "providerLongName");
+	roles.insert(SHORTDESCRIPTION, "providerShortDescription");
+	roles.insert(LONGDESCRIPTION, "providerLongDescription");
+	roles.insert(ADDRESS, "providerAddress");
+	roles.insert(ADDRESS_DOMAIN, "providerAddressDomain");
+	roles.insert(HOMEPAGE, "providerHomepage");
+	roles.insert(HOMEPAGE_BASE, "providerHomepageBase");
+	roles.insert(PHONE, "providerPhone");
+	roles.insert(PHONE_COST, "providerPhoneCost");
+	roles.insert(EMAIL, "providerEmail");
+	roles.insert(POSTALADDRESS, "providerPostalAddress");
+	roles.insert(ICON, "providerIcon");
+	roles.insert(IMAGE, "providerImage");
 
 	return roles;
 }
 
 
-QSortFilterProxyModel* ProviderModel::getFilterModel()
+QString ProviderModel::createCostString(const CallCost& pCosts)
 {
-	return &mFilterModel;
-}
+	if (pCosts.isNull())
+	{
+		return QString();
+	}
 
-
-QSortFilterProxyModel* ProviderModel::getSortModel()
-{
-	return &mSortModel;
-}
-
-
-ProviderCategoryFilterModel* ProviderModel::getCategoryFilterModel()
-{
-	return &mCategoryFilterModel;
+	QString msg;
+	if (pCosts.getFreeSeconds() > 0)
+	{
+		msg += tr("%1 seconds free, afterwards ").arg(pCosts.getFreeSeconds());
+	}
+	msg += tr("landline costs %1; ").arg(createCostString(pCosts.getLandlineCentsPerMinute(), pCosts.getLandlineCentsPerCall()));
+	const auto mobileCosts = createCostString(pCosts.getMobileCentsPerMinute(), pCosts.getMobileCentsPerCall());
+	msg += mobileCosts.isEmpty() ? tr("mobile costs may vary.") : tr("mobile costs %1").arg(mobileCosts);
+	return msg;
 }

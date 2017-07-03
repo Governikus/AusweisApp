@@ -28,6 +28,10 @@ Item
 		rightActionStack.pop(item)
 	}
 
+	function setColor(color) {
+		colorStack.color = color
+	}
+
 	Rectangle {
 		id: colorStack
 		anchors.fill: parent

@@ -7,6 +7,7 @@
 #include "StateCheckRefreshAddress.h"
 
 #include "CertificateChecker.h"
+#include "HttpStatusCode.h"
 #include "NetworkManager.h"
 #include "StateRedirectBrowser.h"
 #include "TlsConfiguration.h"
@@ -130,22 +131,17 @@ void StateCheckRefreshAddress::sendGetRequest()
 
 void StateCheckRefreshAddress::onSslErrors(const QList<QSslError>& pErrors)
 {
-	if (TlsConfiguration::containsFatalError(pErrors))
+	if (TlsConfiguration::containsFatalError(mReply, pErrors))
 	{
-		reportCommunicationError(tr("Failed to establish secure connection"));
-	}
-	else
-	{
-		qDebug() << "Ignore SSL errors on QNetworkReply";
-		mReply->ignoreSslErrors();
+		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Ssl_Establishment_Error));
 	}
 }
 
 
-void StateCheckRefreshAddress::reportCommunicationError(const QString& pMessage)
+void StateCheckRefreshAddress::reportCommunicationError(const GlobalStatus& pStatus)
 {
-	qCritical() << pMessage;
-	setResult(Result::createCommunicationError(pMessage));
+	qCritical() << pStatus;
+	setStatus(pStatus);
 	Q_EMIT fireError();
 }
 
@@ -167,16 +163,23 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 	qDebug() << "Used server certificate:" << pSslConfiguration.peerCertificate();
 	qDebug() << "Used ephemeral server key:" << pSslConfiguration.ephemeralServerKey();
 
-	QString errorMsg = CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), mUrl, getContext());
-	if (!errorMsg.isNull())
+	switch (CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), mUrl, getContext()))
 	{
-		reportCommunicationError(errorMsg);
-		return false;
+		case CertificateChecker::CertificateStatus::Good:
+			break;
+
+		case CertificateChecker::CertificateStatus::Unsupported_Algorithm_Or_Length:
+			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length));
+			return false;
+
+		case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
+			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description));
+			return false;
 	}
+
 	if (!CertificateChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
-		errorMsg = tr("Error while connecting to the service provider. The SSL connection uses an unsupported key algorithm or length.");
-		reportCommunicationError(errorMsg);
+		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length));
 		return false;
 	}
 
@@ -193,27 +196,48 @@ void StateCheckRefreshAddress::onNetworkReply()
 	if (mReply->error() != QNetworkReply::NoError)
 	{
 		qCritical() << "An error occured: " << mReply->errorString();
-		reportCommunicationError(NetworkManager::getLocalizedErrorString(mReply.data()));
+		switch (NetworkManager::toNetworkError(mReply.data()))
+		{
+			case NetworkManager::NetworkError::TimeOut:
+				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_TimeOut));
+				break;
+
+			case NetworkManager::NetworkError::ProxyError:
+				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Proxy_Error));
+				break;
+
+			case NetworkManager::NetworkError::SslError:
+				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Ssl_Establishment_Error));
+				break;
+
+			case NetworkManager::NetworkError::OtherError:
+				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Other_Error));
+				break;
+		}
 		return;
 	}
-	if (statusCode != 302 && statusCode != 303 && statusCode != 307)
+
+	if (statusCode != HttpStatusCode::FOUND && statusCode != HttpStatusCode::SEE_OTHER && statusCode != HttpStatusCode::TEMPORARY_REDIRECT)
 	{
 		qCritical() << "Got unexpected status code: " << statusCode;
-		reportCommunicationError(tr("Expected redirect, got %1").arg(QString::number(statusCode)));
+		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Expected_Redirect, QString::number(statusCode)));
 		return;
 	}
+
 	if (redirectUrl.isEmpty())
 	{
 		qCritical() << "Got empty redirect URL";
-		reportCommunicationError(tr("Empty redirect URL"));
+		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url));
 		return;
 	}
+
 	if (!redirectUrl.isValid())
 	{
 		qCritical() << "Got malformed redirect URL:" << redirectUrl;
-		reportCommunicationError(tr("Malformed redirect URL: %1").arg(QString::fromLatin1(redirectUrl.toEncoded())));
+		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url, QString::fromLatin1(redirectUrl.toEncoded())));
 		return;
 	}
+
 	if (redirectUrl.scheme() != QLatin1String("https"))
 	{
 		auto httpsError = QStringLiteral("Redirect URL is not https: %1").arg(redirectUrl.toString());
@@ -225,7 +249,7 @@ void StateCheckRefreshAddress::onNetworkReply()
 		else
 		{
 			qCritical() << httpsError;
-			reportCommunicationError(tr("Invalid scheme: %1").arg(redirectUrl.scheme()));
+			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Invalid_Scheme, redirectUrl.scheme()));
 			return;
 		}
 	}
@@ -279,7 +303,7 @@ void StateCheckRefreshAddress::fetchServerCertificate()
 	mReply = mNetworkManager.get(request);
 
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDoneFetchingServerCertificate);
-	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrorsFetchingServerCertificate);
+	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);
 	mConnections += connect(mReply.data(), QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this, &StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate);
 }
 
@@ -309,20 +333,6 @@ void StateCheckRefreshAddress::doneSuccess()
 }
 
 
-void StateCheckRefreshAddress::onSslErrorsFetchingServerCertificate(const QList<QSslError>& pErrors)
-{
-	if (TlsConfiguration::containsFatalError(pErrors))
-	{
-		reportCommunicationError(tr("Failed to establish secure connection"));
-	}
-	else
-	{
-		qDebug() << "Ignore SSL errors on QSslSocket";
-		mReply->ignoreSslErrors();
-	}
-}
-
-
 void StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate(QNetworkReply::NetworkError pError)
 {
 	if (mCertificateFetched && pError == QNetworkReply::NetworkError::OperationCanceledError)
@@ -330,5 +340,5 @@ void StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate(QNetworkR
 		return;
 	}
 	qCritical() << "An error occured fetching the server certificate: " << mReply->errorString();
-	reportCommunicationError(tr("Failed to establish secure connection"));
+	reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url));
 }

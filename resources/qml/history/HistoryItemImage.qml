@@ -14,13 +14,13 @@ Item {
 	width: Utils.dp(40)
 
 	Image {
-		anchors.centerIn: parent
-		height: parent.height * 0.6
-		width: height
 		source: baseItem.imageUrl !== "" ?
 				baseItem.imageUrl :
-				(modelItem ? Category.imageSource(modelItem.provider_category) : Category.imageSource("unknown"))
-
+				(historyModelItem ? Category.imageSource(historyModelItem.providerCategory) : Category.imageSource("unknown"))
+		asynchronous: true
+		height: parent.height * 0.6
+		width: height
 		fillMode: Image.PreserveAspectFit
+		anchors.centerIn: parent
 	}
 }

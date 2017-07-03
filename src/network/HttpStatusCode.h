@@ -11,7 +11,9 @@
 namespace governikus
 {
 
+// see https://www.ietf.org/rfc/rfc2616.txt
 defineEnumType(HttpStatusCode,
+		UNDEFINED = 0,
 		CONTINUE = 100,
 		SWITCH_PROTOCOLS = 101,
 		PROCESSING = 102,

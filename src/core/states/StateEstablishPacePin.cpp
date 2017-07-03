@@ -5,8 +5,8 @@
  */
 
 
-#include "ReturnCodeUtil.h"
 #include "StateEstablishPacePin.h"
+
 #include "context/AuthContext.h"
 
 
@@ -24,7 +24,7 @@ void StateEstablishPacePin::run()
 	Q_ASSERT(cardConnection);
 
 	QByteArray certificateDescription, effectiveChat;
-	if (auto authContext = getContext().dynamicCast<AuthContext>())
+	if (auto authContext = getContext().objectCast<AuthContext>())
 	{
 		// if PACE is performed for authentication purposes,
 		// the chat and certificate description need to be send
@@ -32,12 +32,12 @@ void StateEstablishPacePin::run()
 		// in other scenarios, e.g. for changing the PIN, the data
 		// is not needed
 		Q_ASSERT(authContext->getDidAuthenticateEac1());
-		Q_ASSERT(authContext->getEffectiveChat());
+		Q_ASSERT(!authContext->encodeEffectiveChat().isEmpty());
 		certificateDescription = authContext->getDidAuthenticateEac1()->getCertificateDescriptionAsBinary();
-		effectiveChat = authContext->getEffectiveChat()->encode();
+		effectiveChat = authContext->encodeEffectiveChat();
 	}
 
-	qDebug() << "Establish connection using Pin";
+	qDebug() << "Establish connection using PIN";
 	mConnections += cardConnection->callEstablishPaceChannelCommand(this,
 			&StateEstablishPacePin::onEstablishConnectionDone,
 			PACE_PIN_ID::PACE_PIN,
@@ -50,38 +50,38 @@ void StateEstablishPacePin::run()
 
 void StateEstablishPacePin::onUserCancelled()
 {
-	getContext()->setLastPaceResultAndRetryCounter(ReturnCode::CANCELLATION_BY_USER, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
+	getContext()->setLastPaceResultAndRetryCounter(CardReturnCode::CANCELLATION_BY_USER, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
 	AbstractState::onUserCancelled();
 }
 
 
 void StateEstablishPacePin::onEstablishConnectionDone(QSharedPointer<BaseCardCommand> pCommand)
 {
-	ReturnCode returnCode = pCommand->getReturnCode();
+	CardReturnCode returnCode = pCommand->getReturnCode();
 
 	auto paceCommand = pCommand.staticCast<EstablishPaceChannelCommand>();
 	getContext()->setPaceOutputData(paceCommand->getPaceOutput());
 
 	switch (returnCode)
 	{
-		case ReturnCode::OK:
+		case CardReturnCode::OK:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
 			Q_EMIT fireSuccess();
 			break;
 
-		case ReturnCode::CANCELLATION_BY_USER:
+		case CardReturnCode::CANCELLATION_BY_USER:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
-			setResult(Result::createCancelByUserError());
+			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireCancel();
 			break;
 
-		case ReturnCode::PIN_INVALID:
+		case CardReturnCode::INVALID_PIN:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
 			Q_EMIT fireInvalidPin();
 			break;
 
 		default:
-			setResult(Result::createInternalError(ReturnCodeUtil::toMessage(returnCode)));
+			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireError();
 			break;
 	}

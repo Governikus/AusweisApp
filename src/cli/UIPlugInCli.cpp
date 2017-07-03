@@ -4,8 +4,11 @@
 
 #include "UIPlugInCli.h"
 
+#include "states/StateEstablishPacePin.h"
+
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-#include "WebserviceActivationHandler.h"
+#include "EnvHolder.h"
+#include "HttpServer.h"
 #endif
 
 #include <QLoggingCategory>
@@ -20,6 +23,7 @@ UIPlugInCli::UIPlugInCli()
 	: mReader()
 	, mAvailableCommands()
 {
+	addCommand(QStringLiteral("cancel"), &UIPlugInCli::handleCancelWorkflow);
 	addCommand(QStringLiteral("changepin"), &UIPlugInCli::handleChangePin);
 	addCommand(QStringLiteral("enter-pin"), &UIPlugInCli::handleEnterPin);
 	addCommand(QStringLiteral("help"), &UIPlugInCli::handleHelp);
@@ -78,7 +82,7 @@ void UIPlugInCli::onCurrentStateChanged(const QString& pState)
 
 	bool userInteractionRequired = false;
 
-	if (pState == QLatin1String("StateEstablishPacePin"))
+	if (AbstractState::isState<StateEstablishPacePin>(pState))
 	{
 		userInteractionRequired = true;
 		qCInfo(cli) << "enter-pin";
@@ -108,38 +112,80 @@ void UIPlugInCli::doInput(const QString& pData)
 
 void UIPlugInCli::handleChangePin()
 {
+	mOldPin.clear();
+	mNewPin.clear();
+
 	qCDebug(cli) << "Change PIN requested";
+	qCInfo(cli) << "Please enter old PIN";
 
+	disconnect(&mReader, &ConsoleReader::fireText, this, &UIPlugInCli::doInput);
+	connect(&mReader, &ConsoleReader::fireText, this, &UIPlugInCli::handleOldPinEntered);
+}
+
+
+void UIPlugInCli::handleOldPinEntered(const QString& pLine)
+{
 	const QRegularExpression regexOldPin(QStringLiteral("^[0-9]{5,6}$"));
-	QString oldPin;
-	while (!regexOldPin.match(oldPin).hasMatch() && mReader.isInputOpen())
+	if (regexOldPin.match(pLine).hasMatch() && mReader.isInputOpen())
 	{
-		oldPin = mReader.requestText(QStringLiteral("Please enter old PIN"));
+		mOldPin = pLine;
+		qCInfo(cli) << "Please enter new PIN";
+		disconnect(&mReader, &ConsoleReader::fireText, this, &UIPlugInCli::handleOldPinEntered);
+		connect(&mReader, &ConsoleReader::fireText, this, &UIPlugInCli::handleNewPinEntered);
 	}
+	else
+	{
+		qCInfo(cli) << "Please enter old PIN";
+	}
+}
 
+
+void UIPlugInCli::handleNewPinEntered(const QString& pLine)
+{
 	const QRegularExpression regexNewPin(QStringLiteral("^[0-9]{6}$"));
-	QString newPin;
-	for (QString newPin2; (newPin != newPin2 || newPin.isEmpty()) && mReader.isInputOpen(); )
+	if (regexNewPin.match(pLine).hasMatch() && mReader.isInputOpen())
 	{
-		while (!regexNewPin.match(newPin).hasMatch() && mReader.isInputOpen())
-		{
-			newPin = mReader.requestText(QStringLiteral("Please enter new PIN"));
-		}
-
-		if (mReader.isInputOpen())
-		{
-			newPin2 = mReader.requestText(QStringLiteral("Please enter new PIN again"));
-			if (newPin != newPin2)
-			{
-				qCInfo(cli) << "PINs were not equal";
-			}
-		}
+		mNewPin = pLine;
+		qCInfo(cli) << "Please enter new PIN again";
+		disconnect(&mReader, &ConsoleReader::fireText, this, &UIPlugInCli::handleNewPinEntered);
+		connect(&mReader, &ConsoleReader::fireText, this, &UIPlugInCli::handleNewPinEnteredAgain);
 	}
+	else
+	{
+		qCInfo(cli) << "Please enter new PIN";
+	}
+}
 
-	if (mReader.isInputOpen())
+
+void UIPlugInCli::handleNewPinEnteredAgain(const QString& pLine)
+{
+	if (mNewPin != pLine)
+	{
+		qCInfo(cli) << "PINs were not equal";
+		qCInfo(cli) << "Please enter new PIN";
+
+		disconnect(&mReader, &ConsoleReader::fireText, this, &UIPlugInCli::handleNewPinEnteredAgain);
+		connect(&mReader, &ConsoleReader::fireText, this, &UIPlugInCli::handleNewPinEntered);
+	}
+	else if (mReader.isInputOpen())
 	{
 		qCDebug(cli) << "Start";
 		Q_EMIT fireChangePinRequest();
+		connect(&mReader, &ConsoleReader::fireText, this, &UIPlugInCli::doInput);
+	}
+}
+
+
+void UIPlugInCli::handleCancelWorkflow()
+{
+	if (mContext.isNull())
+	{
+		qCInfo(cli) << "error";
+	}
+	else
+	{
+		Q_EMIT mContext->fireCancelWorkflow();
+		qCInfo(cli) << "ok";
 	}
 }
 
@@ -161,7 +207,7 @@ void UIPlugInCli::handleEnterPin()
 
 void UIPlugInCli::handleHelp()
 {
-	qCInfo(cli) << "Available commands:" << QStringList(mAvailableCommands.keys()).join(QStringLiteral(" | "));
+	qCInfo(cli) << "Available commands:" << mAvailableCommands.keys().join(QStringLiteral(" | "));
 }
 
 
@@ -174,11 +220,7 @@ void UIPlugInCli::handlePing()
 void UIPlugInCli::handlePort()
 {
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-	auto handler = ActivationHandler::getInstance<WebserviceActivationHandler>();
-	if (handler)
-	{
-		qCInfo(cli) << "Port:" << handler->getServerPort();
-	}
+	qCInfo(cli) << "Port:" << EnvHolder::shared<HttpServer>()->getServerPort();
 #else
 	qCInfo(cli) << "Port is undefined";
 #endif

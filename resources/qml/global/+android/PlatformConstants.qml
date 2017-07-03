@@ -13,6 +13,7 @@ Item {
 	readonly property color white_primary_text: "#ffffff"
 	readonly property color dark_grey_secondary_text: "#444444"
 	readonly property color grey_light: "#bbbbbb"
+	readonly property color grey_border: "lightslategrey"
 
 	readonly property color all_image_background_color: "#dcebf6"
 	readonly property color blue: blue_primary

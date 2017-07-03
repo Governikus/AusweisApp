@@ -4,7 +4,7 @@ This chapter deals with the Android specific properties of the AusweisApp2 SDK.
 The AusweisApp2 core is encapsulated into an **Android service** which is
 running in the background without a user interface. This service is interfaced
 via an Android specific interprocess communication (IPC) mechanism. The basics
-of this very mechanism - the **Android Interface Definition Language** (AIDL) -
+of this mechanism - the **Android Interface Definition Language** (AIDL) -
 are introduced in the following section. The following section deals with the
 cryptographic verification of the SDKs authenticity. This step is necessary to
 ensure that the SDK has not been modified in a malicious way. Subsequent
@@ -12,6 +12,32 @@ sections deal with the SDK interface itself and explain which steps are
 necessary in order to talk to the AusweisApp2 SDK.
 
 
+Security
+--------
+The following listing provides information about the solution to provide a
+secure connection to AusweisApp2.
+
+  - Data between two apps connected via AIDL as a bound service cannot be
+    grabbed by an attacker. Android will send the data to the corresponding
+    app directly. There is no broadcast like an implicit intent.
+
+  - An attacker cannot bind to an already bound service as AusweisApp2 will
+    accept only one connection at the same time.
+
+  - An attacker cannot resume a connection after the previous app disconnects
+    because AusweisApp2 will reset the internal state if an app connects
+    with another session ID.
+
+  - An attacker cannot grab the session ID of the previous app because
+    AusweisApp2 uses multiple sources of secure random number generator and
+    provides an optional API for the app to provide additional random number
+    entropy.
+
+  - An attacker cannot fake AusweisApp2 for other apps because the connection
+    via AIDL is bound with package name "com.governikus.ausweisapp2". Google
+    ensures that there is no other app in Google Play Store with that package
+    name. Also the client app can check the fingerprint of signature certificate
+    used for that package name.
 
 
 
@@ -623,15 +649,17 @@ are shown in code listing below.
 
     void enable()
     {
-      mAdapter.enableForegroundDispatch(mActivity,
-                                        mPendingIntent,
-                                        mFilters,
-                                        mTechLists);
+      if (mAdapter != null)
+        mAdapter.enableForegroundDispatch(mActivity,
+                                          mPendingIntent,
+                                          mFilters,
+                                          mTechLists);
     }
 
     void disable()
     {
-      mAdapter.disableForegroundDispatch(mActivity);
+      if (mAdapter != null)
+        mAdapter.disableForegroundDispatch(mActivity);
     }
   }
 

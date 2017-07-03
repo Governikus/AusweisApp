@@ -46,8 +46,11 @@ QBluetoothDeviceInfo::CoreConfiguration AndroidBluetoothAdapter::fromAndroidDevi
 }
 
 
-AndroidBluetoothAdapter::AndroidBluetoothAdapter(bool pStateOn, const QVector<QBluetoothDeviceInfo>& pKnownBluetoothDevices)
-	: mStateOn(pStateOn)
+AndroidBluetoothAdapter::AndroidBluetoothAdapter(bool pAvailable,
+		bool pStateOn,
+		const QVector<QBluetoothDeviceInfo>& pKnownBluetoothDevices)
+	: mAvailable(pAvailable)
+	, mStateOn(pStateOn)
 	, mBondedDevices(pKnownBluetoothDevices)
 {
 }
@@ -55,42 +58,22 @@ AndroidBluetoothAdapter::AndroidBluetoothAdapter(bool pStateOn, const QVector<QB
 
 AndroidBluetoothAdapter AndroidBluetoothAdapter::getDefaultAdapter()
 {
+	bool available = false;
 	bool stateOn = false;
 	QVector<QBluetoothDeviceInfo> bondedDevices;
 
 #ifdef Q_OS_ANDROID
-	QAndroidJniEnvironment env;
-	jclass adapterClass = env->FindClass("android/bluetooth/BluetoothAdapter");
-	if (adapterClass == nullptr)
+	QAndroidJniObject adapter = QAndroidJniObject::callStaticObjectMethod("android/bluetooth/BluetoothAdapter", "getDefaultAdapter", "()Landroid/bluetooth/BluetoothAdapter;");
+
+	if (!adapter.isValid())
 	{
 		return AndroidBluetoothAdapter();
 	}
 
-	jmethodID defaultAdapter = env->GetStaticMethodID(adapterClass, "getDefaultAdapter", "()Landroid/bluetooth/BluetoothAdapter;");
-	if (defaultAdapter == nullptr)
-	{
-		env->DeleteLocalRef(adapterClass);
-		return AndroidBluetoothAdapter();
-	}
+	available = true;
+	stateOn = (adapter.callMethod<jint>("getState") == STATE_ON);
 
-	jobject adapterObject = env->CallStaticObjectMethod(adapterClass, defaultAdapter);
-	if (adapterObject == nullptr)
-	{
-		env->DeleteLocalRef(adapterClass);
-		return AndroidBluetoothAdapter();
-	}
-
-	QAndroidJniObject o(adapterObject);
-	if (!o.isValid())
-	{
-		env->DeleteLocalRef(adapterObject);
-		env->DeleteLocalRef(adapterClass);
-		return AndroidBluetoothAdapter();
-	}
-
-	stateOn = (o.callMethod<jint>("getState") == STATE_ON);
-
-	QAndroidJniObject deviceSet = o.callObjectMethod("getBondedDevices", "()Ljava/util/Set;");
+	QAndroidJniObject deviceSet = adapter.callObjectMethod("getBondedDevices", "()Ljava/util/Set;");
 	for (QAndroidJniObject iter = deviceSet.callObjectMethod("iterator", "()Ljava/util/Iterator;"); (bool) iter.callMethod<jboolean>("hasNext", "()Z"); )
 	{
 		QAndroidJniObject device = iter.callObjectMethod("next", "()Ljava/lang/Object;");
@@ -104,16 +87,13 @@ AndroidBluetoothAdapter AndroidBluetoothAdapter::getDefaultAdapter()
 		QBluetoothDeviceInfo deviceInfo(QBluetoothAddress(address), name, deviceClass);
 		deviceInfo.setCoreConfigurations(fromAndroidDeviceType(type));
 		deviceInfo.setCached(true);
-		bondedDevices.append(deviceInfo);
+		bondedDevices += deviceInfo;
 	}
-
-	env->DeleteLocalRef(adapterObject);
-	env->DeleteLocalRef(adapterClass);
 #else
 	Q_UNUSED(STATE_ON)
 #endif
 
-	return AndroidBluetoothAdapter(stateOn, bondedDevices);
+	return AndroidBluetoothAdapter(available, stateOn, bondedDevices);
 }
 
 
@@ -126,4 +106,10 @@ QVector<QBluetoothDeviceInfo> AndroidBluetoothAdapter::getBondedDevices() const
 bool AndroidBluetoothAdapter::isStateOn() const
 {
 	return mStateOn;
+}
+
+
+bool AndroidBluetoothAdapter::isAvailable() const
+{
+	return mAvailable;
 }

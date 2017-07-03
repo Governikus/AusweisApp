@@ -21,13 +21,8 @@ MockNetworkManager::~MockNetworkManager()
 }
 
 
-QNetworkReply* MockNetworkManager::paos(QNetworkRequest& pRequest, const QByteArray& pData, bool pUsePsk, int pTimeoutInMilliSeconds)
+MockNetworkReply* MockNetworkManager::getReply(const QNetworkRequest& pRequest)
 {
-	Q_UNUSED(pRequest);
-	Q_UNUSED(pData);
-	Q_UNUSED(pUsePsk);
-	Q_UNUSED(pTimeoutInMilliSeconds);
-
 	if (mNextReply)
 	{
 		mLastReply = mNextReply;
@@ -47,5 +42,26 @@ QNetworkReply* MockNetworkManager::paos(QNetworkRequest& pRequest, const QByteAr
 		mLastReply = new MockNetworkReply(content);
 	}
 
+	mLastReply->setRequest(pRequest);
 	return mLastReply;
+}
+
+
+QNetworkReply* MockNetworkManager::get(QNetworkRequest& pRequest, int pTimeoutInMilliSeconds)
+{
+	Q_UNUSED(pRequest);
+	Q_UNUSED(pTimeoutInMilliSeconds);
+
+	return getReply(pRequest);
+}
+
+
+QNetworkReply* MockNetworkManager::paos(QNetworkRequest& pRequest, const QByteArray& pData, bool pUsePsk, int pTimeoutInMilliSeconds)
+{
+	Q_UNUSED(pRequest);
+	Q_UNUSED(pData);
+	Q_UNUSED(pUsePsk);
+	Q_UNUSED(pTimeoutInMilliSeconds);
+
+	return getReply(pRequest);
 }

@@ -23,15 +23,10 @@ const QLatin1String SETTINGS_GROUP_NAME_CV_ROOT_CERTIFICATE_TEST("cvRootCertific
 
 const QLatin1String SETTINGS_GROUP_NAME_UPDATE_CERTIFICATES("updateCertificates");
 
-const QLatin1String SETTINGS_GROUP_NAME_SIGNATURE_ALGORITHMS("signatureAlgorithms");
-const QLatin1String SETTINGS_GROUP_NAME_SIGNATURE_ALGORITHMS_PSK("signatureAlgorithmsPsk");
-
-const QLatin1String SETTINGS_GROUP_NAME_ALLOWED_ECS("ecCiphers");
-const QLatin1String SETTINGS_GROUP_NAME_PSK_CIPHERS("pskCiphers");
-const QLatin1String SETTINGS_GROUP_NAME_FS_CIPHERS("fsCiphers");
-const QLatin1String SETTINGS_GROUP_NAME_FS_CIPHERS_WITH_BACKWARD_COMPATIBILITY("fsCiphersWithBc");
-const QLatin1String SETTINGS_NAME_SSL_PROTOCOL_VERSION("sslProtocolVersion");
-const QLatin1String SETTINGS_NAME_SSL_PROTOCOL_VERSION_PSK("sslProtocolVersionPsk");
+const QLatin1String SETTINGS_GROUP_NAME_TLS_SETTINGS("tlsSettings");
+const QLatin1String SETTINGS_GROUP_NAME_TLS_SETTINGS_PSK("tlsSettingsPsk");
+const QLatin1String SETTINGS_GROUP_NAME_MIN_STATIC_KEY_SIZES("minStaticKeySizes");
+const QLatin1String SETTINGS_GROUP_NAME_MIN_EPHEMERAL_KEY_SIZES("minEphemeralKeySizes");
 
 const QLatin1String SETTINGS_GROUP_NAME_SELF_AUTHENTICATION("selfAuthentication");
 const QLatin1String SETTINGS_NAME_SELF_AUTHENTICATION_URL("url");
@@ -64,14 +59,8 @@ SecureStorage::SecureStorage()
 	, mSelfAuthenticationTestCertDescr()
 	, mAppcastUpdateUrl()
 	, mAppcastBetaUpdateUrl()
-	, mAllowedSslEllipticCurves()
-	, mPskCiphers()
-	, mCiphersWithForwardSecrecy()
-	, mCiphersWithSha1ForBackwardCompatibility()
-	, mProtocolVersion(QSsl::SslProtocol::SecureProtocols)
-	, mProtocolVersionPsk(QSsl::SslProtocol::SecureProtocols)
-	, mSignatureAlgorithms()
-	, mSignatureAlgorithmsPsk()
+	, mTlsSettings()
+	, mTlsSettingsPsk()
 {
 }
 
@@ -133,58 +122,20 @@ void SecureStorage::load()
 		mUpdateCertificates += certificate;
 	}
 
-	mAllowedSslEllipticCurves.clear();
-	QJsonArray allowedEcs;
-	if (readJsonArray(allowedEcs, config, SETTINGS_GROUP_NAME_ALLOWED_ECS))
+	QJsonValue tlsValue = config.value(SETTINGS_GROUP_NAME_TLS_SETTINGS);
+	if (!tlsValue.isUndefined())
 	{
-		for (const QJsonValue& line : qAsConst(allowedEcs))
-		{
-			mAllowedSslEllipticCurves += line.toString();
-		}
+		mTlsSettings.load(tlsValue.toObject());
 	}
 
-	mPskCiphers.clear();
-	QJsonArray pskCiphers;
-	if (readJsonArray(pskCiphers, config, SETTINGS_GROUP_NAME_PSK_CIPHERS))
+	QJsonValue tlsPskValue = config.value(SETTINGS_GROUP_NAME_TLS_SETTINGS_PSK);
+	if (!tlsPskValue.isUndefined())
 	{
-		for (const QJsonValue& line : qAsConst(pskCiphers))
-		{
-			mPskCiphers += line.toString();
-		}
+		mTlsSettingsPsk.load(tlsPskValue.toObject());
 	}
+	mMinStaticKeySizes = readKeySizes(config, SETTINGS_GROUP_NAME_MIN_STATIC_KEY_SIZES);
+	mMinEphemeralKeySizes = readKeySizes(config, SETTINGS_GROUP_NAME_MIN_EPHEMERAL_KEY_SIZES);
 
-	mCiphersWithForwardSecrecy.clear();
-	QJsonArray fsCiphers;
-	if (readJsonArray(fsCiphers, config, SETTINGS_GROUP_NAME_FS_CIPHERS))
-	{
-		for (const QJsonValue& line : qAsConst(fsCiphers))
-		{
-			mCiphersWithForwardSecrecy += line.toString();
-		}
-	}
-
-	mCiphersWithSha1ForBackwardCompatibility.clear();
-	QJsonArray fsCiphersWithBc;
-	if (readJsonArray(fsCiphersWithBc, config, SETTINGS_GROUP_NAME_FS_CIPHERS_WITH_BACKWARD_COMPATIBILITY))
-	{
-		for (const QJsonValue& line : qAsConst(fsCiphersWithBc))
-		{
-			mCiphersWithSha1ForBackwardCompatibility += line.toString();
-		}
-	}
-	mProtocolVersion = readSslProtocol(config, SETTINGS_NAME_SSL_PROTOCOL_VERSION);
-	mProtocolVersionPsk = readSslProtocol(config, SETTINGS_NAME_SSL_PROTOCOL_VERSION_PSK);
-
-	mSignatureAlgorithms = readSignatureAlgorithms(config, SETTINGS_GROUP_NAME_SIGNATURE_ALGORITHMS);
-	if (mSignatureAlgorithms.isEmpty())
-	{
-		qWarning() << "Using default for" << SETTINGS_GROUP_NAME_SIGNATURE_ALGORITHMS;
-	}
-	mSignatureAlgorithmsPsk = readSignatureAlgorithms(config, SETTINGS_GROUP_NAME_SIGNATURE_ALGORITHMS_PSK);
-	if (mSignatureAlgorithmsPsk.isEmpty())
-	{
-		qWarning() << "Using default for" << SETTINGS_GROUP_NAME_SIGNATURE_ALGORITHMS_PSK;
-	}
 
 	mSelfAuthenticationUrl = readGroup(config, SETTINGS_GROUP_NAME_SELF_AUTHENTICATION, SETTINGS_NAME_SELF_AUTHENTICATION_URL);
 	mSelfAuthenticationTestUrl = readGroup(config, SETTINGS_GROUP_NAME_SELF_AUTHENTICATION, SETTINGS_NAME_SELF_AUTHENTICATION_TEST_URL);
@@ -258,51 +209,35 @@ const QUrl& SecureStorage::getAppcastBetaUpdateUrl() const
 }
 
 
-const QVector<QString>& SecureStorage::getAllowedSslEllipticCurves() const
+const TlsSettings& SecureStorage::getTlsSettings() const
 {
-	return mAllowedSslEllipticCurves;
+	return mTlsSettings;
 }
 
 
-const QVector<QString>& SecureStorage::getCiphersWithPsk() const
+const TlsSettings& SecureStorage::getTlsSettingsPsk() const
 {
-	return mPskCiphers;
+	return mTlsSettingsPsk;
 }
 
 
-const QVector<QString>& SecureStorage::getCiphersWithForwardSecrecy() const
+int SecureStorage::getMinimumStaticKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const
 {
-	return mCiphersWithForwardSecrecy;
+	if (!mMinStaticKeySizes.contains(pKeyAlgorithm))
+	{
+		qWarning() << "No minimum ephemeral key size specified, returning default";
+	}
+	return mMinStaticKeySizes.value(pKeyAlgorithm, 0);
 }
 
 
-const QVector<QString>& SecureStorage::getCiphersWithSha1ForBackwardCompatibility() const
+int SecureStorage::getMinimumEphemeralKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const
 {
-	return mCiphersWithSha1ForBackwardCompatibility;
-}
-
-
-QSsl::SslProtocol SecureStorage::getSslProtocolVersion() const
-{
-	return mProtocolVersion;
-}
-
-
-QSsl::SslProtocol SecureStorage::getSslProtocolVersionPsk() const
-{
-	return mProtocolVersionPsk;
-}
-
-
-const QVector<SignatureAlgorithmPair>& SecureStorage::getSignatureAlgorithms() const
-{
-	return mSignatureAlgorithms;
-}
-
-
-const QVector<SignatureAlgorithmPair>& SecureStorage::getSignatureAlgorithmsPsk() const
-{
-	return mSignatureAlgorithmsPsk;
+	if (!mMinEphemeralKeySizes.contains(pKeyAlgorithm))
+	{
+		qWarning() << "No minimum ephemeral key size specified, returning default";
+	}
+	return mMinEphemeralKeySizes.value(pKeyAlgorithm, 0);
 }
 
 
@@ -340,76 +275,35 @@ QString SecureStorage::readGroup(const QJsonObject& pConfig, const QLatin1String
 }
 
 
-QSsl::SslProtocol SecureStorage::readSslProtocol(const QJsonObject& pConfig, const QLatin1String& pName)
+QMap<QSsl::KeyAlgorithm, int> SecureStorage::readKeySizes(const QJsonObject& pConfig, const QLatin1String& pKey)
 {
-	const auto& value = pConfig.value(pName).toString();
-	if (value == QLatin1String("TlsV1_0OrLater"))
+	QMap<QSsl::KeyAlgorithm, int> keySizes;
+	const auto& object = pConfig.value(pKey).toObject();
+	if (!object.isEmpty())
 	{
-		return QSsl::SslProtocol::TlsV1_0OrLater;
-	}
-	if (value == QLatin1String("TlsV1_1OrLater"))
-	{
-		return QSsl::SslProtocol::TlsV1_1OrLater;
-	}
-	if (value == QLatin1String("TlsV1_2OrLater"))
-	{
-		return QSsl::SslProtocol::TlsV1_2OrLater;
-	}
-	qCritical() << pName << ": Unsupported TLS protocol version detected" << value;
-	qCritical() << "Returning default \"SecureProtocols\"";
-	return QSsl::SslProtocol::SecureProtocols;
-}
-
-
-QVector<SignatureAlgorithmPair> SecureStorage::readSignatureAlgorithms(const QJsonObject& pConfig, const QLatin1String& pKey)
-{
-	const QJsonValue& tmp = pConfig[pKey];
-	if (tmp.isUndefined() || !tmp.isArray())
-	{
-		qCritical() << pKey << "is malformed";
-		return QVector<SignatureAlgorithmPair>();
-	}
-	const QJsonArray& array = tmp.toArray();
-
-	QVector<SignatureAlgorithmPair> algorithms;
-	for (const QJsonValue& line : array)
-	{
-		const auto& parts = line.toString().split(QLatin1Char('+'));
-		if (parts.size() != 2)
+		const auto& keys = object.keys();
+		for (const QString& key : keys)
 		{
-			qCritical() << pKey << "has malformed item" << line;
-			return QVector<SignatureAlgorithmPair>();
-		}
-
-		static const auto& hashMetaEnum = QMetaEnum::fromType<QCryptographicHash::Algorithm>();
-		bool hashConversionSuccessfull;
-		const int hashInt = hashMetaEnum.keyToValue(parts[1].toLatin1().constData(), &hashConversionSuccessfull);
-		if (!hashConversionSuccessfull)
-		{
-			qCritical() << "Not a hash algorithm" << parts[1];
-			return QVector<SignatureAlgorithmPair>();
-		}
-		auto hash = static_cast<QCryptographicHash::Algorithm>(hashInt);
-
-		if (parts[0] == QLatin1String("Rsa"))
-		{
-			algorithms += SignatureAlgorithmPair(QSsl::KeyAlgorithm::Rsa, hash);
-		}
-		else if (parts[0] == QLatin1String("Dsa"))
-		{
-			algorithms += SignatureAlgorithmPair(QSsl::KeyAlgorithm::Dsa, hash);
-		}
-		else if (parts[0] == QLatin1String("Ec"))
-		{
-			algorithms += SignatureAlgorithmPair(QSsl::KeyAlgorithm::Ec, hash);
-		}
-		else
-		{
-			qCritical() << "Not a signature algorithm" << parts[0];
-			return QVector<SignatureAlgorithmPair>();
+			const auto value = object.value(key).toInt(0);
+			if (key == QLatin1String("Rsa"))
+			{
+				keySizes.insert(QSsl::KeyAlgorithm::Rsa, value);
+			}
+			else if (key == QLatin1String("Dsa"))
+			{
+				keySizes.insert(QSsl::KeyAlgorithm::Dsa, value);
+			}
+			else if (key == QLatin1String("Ec"))
+			{
+				keySizes.insert(QSsl::KeyAlgorithm::Ec, value);
+			}
+			else
+			{
+				qCritical() << "Ignore unknown key type" << key;
+			}
 		}
 	}
-	return algorithms;
+	return keySizes;
 }
 
 

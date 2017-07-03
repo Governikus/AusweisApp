@@ -9,9 +9,9 @@
 #pragma once
 
 #include "Card.h"
+#include "CardReturnCode.h"
 #include "PcscReader.h"
 #include "PcscUtils.h"
-#include "ReturnCode.h"
 
 #include <QByteArray>
 #include <QPointer>
@@ -50,17 +50,17 @@ class PcscCard
 		PcscCard(PcscReader* pPcscReader);
 		virtual ~PcscCard();
 
-		virtual ReturnCode connect() override;
-		virtual ReturnCode disconnect() override;
+		virtual CardReturnCode connect() override;
+		virtual CardReturnCode disconnect() override;
 		virtual bool isConnected() override;
 
-		virtual ReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
+		virtual CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
 
-		virtual ReturnCode establishPaceChannel(PACE_PIN_ID pPinId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, int pTimeoutSeconds) override;
+		virtual CardReturnCode establishPaceChannel(PACE_PIN_ID pPinId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds) override;
 
-		virtual ReturnCode destroyPaceChannel() override;
+		virtual CardReturnCode destroyPaceChannel() override;
 
-		virtual ReturnCode setEidPin(unsigned int pTimeoutSeconds) override;
+		virtual CardReturnCode setEidPin(uchar pTimeoutSeconds) override;
 };
 
 } /* namespace governikus */

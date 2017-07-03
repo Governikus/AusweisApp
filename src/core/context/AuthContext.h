@@ -18,7 +18,6 @@
 #include "UrlUtil.h"
 #include "asn1/CVCertificate.h"
 #include "asn1/CVCertificateChainBuilder.h"
-#include "asn1/Chat.h"
 #include "context/WorkflowContext.h"
 #include "paos/MessageIdHandler.h"
 #include "paos/invoke/DidAuthenticateResponseEac1.h"
@@ -87,20 +86,20 @@ class AuthContext
 		QVector<QSharedPointer<TransmitResponse> > mTransmitResponses;
 		QSharedPointer<DisconnectResponse> mDisconnectResponse;
 		QSharedPointer<StartPaosResponse> mStartPaosResponse;
-		QSharedPointer<CHAT> mOptionalChat, mRequiredChat, mEffectiveChat;
-		QString mRequiredAge;
+		QSet<AccessRight> mEffectiveAccessRights;
+		QSet<AccessRight> mRequiredAccessRights;
+		QSet<AccessRight> mOptionalAccessRights;
 		QMultiMap<QUrl, QSslCertificate> mCertificates;
 		QSharedPointer<CVCertificate> mTerminalCvc, mDvCvc;
 		CVCertificateChainBuilder mCvcChainBuilderProd, mCvcChainBuilderTest;
 
-		bool sanitizeEffectiveAccessRights();
+		void initializeChat();
+		bool removeForbiddenAccessRights(QSet<AccessRight>& pSet);
 
 	Q_SIGNALS:
 		void fireDidAuthenticateEac1Changed();
+		void fireAuthenticationDataChanged();
 		void fireEffectiveChatChanged();
-		void fireOptionalChatChanged();
-		void fireRequiredChatChanged();
-		void fireRequiredAgeChanged();
 
 	public:
 		AuthContext(ActivationContext* pActivationContext);
@@ -369,7 +368,7 @@ class AuthContext
 		void addTransmitResponse(const QSharedPointer<TransmitResponse>& pTransmitResponse)
 		{
 			Q_ASSERT(!pTransmitResponse.isNull());
-			mTransmitResponses.append(pTransmitResponse);
+			mTransmitResponses += pTransmitResponse;
 		}
 
 
@@ -382,21 +381,34 @@ class AuthContext
 		void addTransmit(const QSharedPointer<Transmit>& pTransmit)
 		{
 			Q_ASSERT(!pTransmit.isNull());
-			mTransmits.append(pTransmit);
+			mTransmits += pTransmit;
 		}
 
 
-		const QSharedPointer<const CHAT> getEffectiveChat() const
+		QString getRequiredAge()
 		{
-			return mEffectiveChat;
+			Q_ASSERT(mDIDAuthenticateEAC1);
+			Q_ASSERT(mDIDAuthenticateEAC1->getAuthenticatedAuxiliaryData());
+			return mDIDAuthenticateEAC1->getAuthenticatedAuxiliaryData()->getRequiredAge();
 		}
 
 
-		/*!
-		 * \return Returns false if the accessrights were
-		 *         not valid and an adjustment was made.
-		 */
-		bool setEffectiveChat(const QSharedPointer<CHAT>& pEffectiveChat);
+		const QSet<AccessRight>& getOptionalAccessRights() const
+		{
+			return mOptionalAccessRights;
+		}
+
+
+		const QSet<AccessRight>& getRequiredAccessRights() const
+		{
+			return mRequiredAccessRights;
+		}
+
+
+		const QSet<AccessRight> getEffectiveAccessRights() const
+		{
+			return mEffectiveAccessRights;
+		}
 
 
 		/*!
@@ -418,37 +430,7 @@ class AuthContext
 		bool setEffectiveAccessRights(const QSet<AccessRight>& pAccessRights);
 
 
-		const QSharedPointer<const CHAT> getOptionalChat() const
-		{
-			return mOptionalChat;
-		}
-
-
-		void setOptionalChat(const QSharedPointer<CHAT>& pOptionalChat);
-
-
-		const QSharedPointer<const CHAT> getRequiredChat() const
-		{
-			return mRequiredChat;
-		}
-
-
-		void setRequiredChat(const QSharedPointer<CHAT>& pRequiredChat);
-
-		const QString& getRequiredAge()
-		{
-			return mRequiredAge;
-		}
-
-
-		void setRequiredAge(const QString& pRequiredAge)
-		{
-			if (mRequiredAge != pRequiredAge)
-			{
-				mRequiredAge = pRequiredAge;
-				Q_EMIT fireRequiredAgeChanged();
-			}
-		}
+		QByteArray encodeEffectiveChat();
 
 
 		const QSharedPointer<StartPaos>& getStartPaos() const
@@ -493,10 +475,7 @@ class AuthContext
 		}
 
 
-		void setTerminalCvc(const QSharedPointer<CVCertificate>& terminalCvc)
-		{
-			mTerminalCvc = terminalCvc;
-		}
+		void setTerminalCvc(const QSharedPointer<CVCertificate>& pTerminalCvc);
 
 
 };

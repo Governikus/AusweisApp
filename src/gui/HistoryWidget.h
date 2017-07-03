@@ -10,8 +10,6 @@
 #include "generic/ListCheckItemWidget.h"
 #include "generic/Page.h"
 
-#include <QDateTime>
-#include <QDesktopServices>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QPainter>

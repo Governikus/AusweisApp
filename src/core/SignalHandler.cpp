@@ -42,7 +42,7 @@ void SignalHandler::init()
 	{
 #if (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_OSX)
 		initUnix();
-#elif defined(Q_OS_WIN)
+#elif defined(Q_OS_WIN32)
 		SetConsoleCtrlHandler((PHANDLER_ROUTINE) ctrlHandler, true);
 #endif
 

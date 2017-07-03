@@ -34,38 +34,38 @@ SectionPage {
 
 	Image {
 		id: resultImage
+		source: isError ? "qrc:///images/rotes_X.svg" : "qrc:///images/android/" + imageDir + "/haken.png"
+		height: Utils.dp(100)
+		width: height
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.top: parent.top
 		anchors.topMargin: Utils.dp(60)
-
 		fillMode: Image.PreserveAspectFit
-
-		source: isError ? "qrc:///images/iOS/rotes_X.svg" : "qrc:///images/android/" + imageDir + "/haken.png"
-		width: Utils.dp(160)
 	}
 
 	Text {
 		id: resultText
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.verticalCenter: parent.verticalCenter
-
 		width: parent.width * 0.9
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.top: resultImage.bottom
+		anchors.bottom: button.top
 
 		font.pixelSize: Constants.header_font_size
 		horizontalAlignment: Text.AlignHCenter
+		verticalAlignment: Text.AlignVCenter
 		wrapMode: Text.WordWrap
 		color: Constants.blue
+		onLinkActivated: Qt.openUrlExternally(link)
 	}
 
 	Button {
+		id: button
 		width: Utils.dp(90)
-
 		anchors.bottom: parent.bottom
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.bottomMargin: Utils.dp(30)
 
 		text: qsTr("Ok")
-
 		onClicked: baseItem.clicked()
 	}
 }

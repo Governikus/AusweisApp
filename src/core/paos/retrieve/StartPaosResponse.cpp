@@ -12,7 +12,7 @@ StartPaosResponse::StartPaosResponse(const QByteArray& pXmlData)
 	, ElementDetector(pXmlData)
 {
 	parse();
-	setResult(Result(mResultMajor, mResultMinor, mResultMessage, QString(), ReturnCode::UNDEFINED, Result::Origin::SERVER));
+	setResult(Result(mResultMajor, mResultMinor, mResultMessage, Origin::Server));
 }
 
 

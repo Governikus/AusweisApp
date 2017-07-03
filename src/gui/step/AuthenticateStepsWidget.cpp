@@ -36,12 +36,6 @@ StepAuthenticationEac1Widget* AuthenticateStepsWidget::getEac1Page() const
 }
 
 
-StepChooseDeviceWidget* AuthenticateStepsWidget::getChooseDevicePage() const
-{
-	return mUi->chooseDevicePage;
-}
-
-
 SelfInfoWidget* AuthenticateStepsWidget::getSelfInfoPage() const
 {
 	return mUi->selfInfoPage;

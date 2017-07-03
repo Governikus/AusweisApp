@@ -7,6 +7,7 @@
 #pragma once
 
 #include "CardConnection.h"
+#include "GlobalStatus.h"
 #include "Result.h"
 
 #include <QSharedPointer>
@@ -27,10 +28,11 @@ class WorkflowContext
 	QSharedPointer<CardConnection> mCardConnection;
 	QString mCan;
 	QString mPin;
+	QString mPuk;
 	QScopedPointer<EstablishPACEChannelOutput> mPaceOutputData;
 	int mOldRetryCounter;
-	ReturnCode mLastPaceResult;
-	Result mResult;
+	CardReturnCode mLastPaceResult;
+	GlobalStatus mStatus;
 	bool mErrorReportedToUser;
 	bool mWorkflowFinished;
 
@@ -42,6 +44,7 @@ class WorkflowContext
 		void fireCardConnectionChanged();
 		void fireCanChanged();
 		void firePinChanged();
+		void firePukChanged();
 		void fireLastPaceResultChanged();
 		void fireResultChanged();
 
@@ -51,198 +54,46 @@ class WorkflowContext
 	public:
 		WorkflowContext();
 
+		bool isErrorReportedToUser() const;
+		void setErrorReportedToUser(bool pErrorReportedToUser = true);
 
-		bool isErrorReportedToUser() const
-		{
-			return mErrorReportedToUser;
-		}
+		void setStateApproved(bool pApproved = true);
+		bool isStateApproved();
 
+		const QString& getCurrentState() const;
+		void setCurrentState(const QString& pNewState);
 
-		void setErrorReportedToUser(bool pErrorReportedToUser = true)
-		{
-			mErrorReportedToUser = pErrorReportedToUser;
-		}
+		ReaderManagerPlugInType getReaderType() const;
+		void setReaderType(ReaderManagerPlugInType pReaderType);
 
+		const QString& getReaderName() const;
+		void setReaderName(const QString& pReaderName);
 
-		void setStateApproved(bool pApproved = true)
-		{
-			if (mStateApproved != pApproved)
-			{
-				mStateApproved = pApproved;
-				Q_EMIT fireStateApprovedChanged();
-			}
-		}
+		const QSharedPointer<CardConnection>& getCardConnection() const;
+		void setCardConnection(const QSharedPointer<CardConnection>& pCardConnection);
 
+		const QString& getPuk() const;
+		void setPuk(const QString& pPuk);
 
-		bool isStateApproved()
-		{
-			return mStateApproved;
-		}
+		const QString& getCan() const;
+		void setCan(const QString& pCan);
 
+		const QString& getPin() const;
+		void setPin(const QString& pPin);
 
-		const QString& getCurrentState() const
-		{
-			return mCurrentState;
-		}
+		EstablishPACEChannelOutput* getPaceOutputData() const;
+		void setPaceOutputData(const EstablishPACEChannelOutput& pPaceOutputData);
 
+		bool isPinBlocked();
+		CardReturnCode getLastPaceResult() const;
+		int getOldRetryCounter() const;
+		void setLastPaceResultAndRetryCounter(CardReturnCode pLastPaceResult, int pOldRetryCounter);
 
-		void setCurrentState(const QString& pNewState)
-		{
-			if (mCurrentState != pNewState)
-			{
-				mCurrentState = pNewState;
-				Q_EMIT fireCurrentStateChanged(pNewState);
-			}
-		}
+		const GlobalStatus& getStatus() const;
+		void setStatus(const GlobalStatus& pResult);
 
-
-		ReaderManagerPlugInType getReaderType() const
-		{
-			return mReaderType;
-		}
-
-
-		void setReaderType(ReaderManagerPlugInType pReaderType)
-		{
-			if (mReaderType != pReaderType)
-			{
-				mReaderType = pReaderType;
-				Q_EMIT fireReaderTypeChanged();
-			}
-		}
-
-
-		const QString& getReaderName() const
-		{
-			return mReaderName;
-		}
-
-
-		void setReaderName(const QString& pReaderName)
-		{
-			if (mReaderName != pReaderName)
-			{
-				mReaderName = pReaderName;
-				Q_EMIT fireReaderNameChanged();
-			}
-		}
-
-
-		const QSharedPointer<CardConnection>& getCardConnection() const
-		{
-			return mCardConnection;
-		}
-
-
-		void setCardConnection(const QSharedPointer<CardConnection>& pCardConnection)
-		{
-			if (mCardConnection != pCardConnection)
-			{
-				mCardConnection = pCardConnection;
-				Q_EMIT fireCardConnectionChanged();
-			}
-		}
-
-
-		bool isPinBlocked()
-		{
-			return mCardConnection != nullptr && mCardConnection->getReaderInfo().getRetryCounter() == 0;
-		}
-
-
-		const QString& getCan() const
-		{
-			return mCan;
-		}
-
-
-		void setCan(const QString& pCan)
-		{
-			if (mCan != pCan)
-			{
-				mCan = pCan;
-				Q_EMIT fireCanChanged();
-			}
-		}
-
-
-		const QString& getPin() const
-		{
-			return mPin;
-		}
-
-
-		void setPin(const QString& pPin)
-		{
-			if (mPin != pPin)
-			{
-				mPin = pPin;
-				Q_EMIT firePinChanged();
-			}
-		}
-
-
-		EstablishPACEChannelOutput* getPaceOutputData() const
-		{
-			return mPaceOutputData.data();
-		}
-
-
-		void setPaceOutputData(const EstablishPACEChannelOutput& pPaceOutputData)
-		{
-			mPaceOutputData.reset(new EstablishPACEChannelOutput(pPaceOutputData));
-		}
-
-
-		ReturnCode getLastPaceResult() const
-		{
-			return mLastPaceResult;
-		}
-
-
-		int getOldRetryCounter() const
-		{
-			return mOldRetryCounter;
-		}
-
-
-		void setLastPaceResultAndRetryCounter(ReturnCode pLastPaceResult, int pOldRetryCounter)
-		{
-			if (mLastPaceResult != pLastPaceResult || mOldRetryCounter != pOldRetryCounter)
-			{
-				mLastPaceResult = pLastPaceResult;
-				mOldRetryCounter = pOldRetryCounter;
-				Q_EMIT fireLastPaceResultChanged();
-			}
-		}
-
-
-		const Result& getResult() const
-		{
-			return mResult;
-		}
-
-
-		void setResult(const Result& pResult)
-		{
-			mResult = pResult;
-			mErrorReportedToUser = false;
-			Q_EMIT fireResultChanged();
-		}
-
-
-		bool isWorkflowFinished() const
-		{
-			return mWorkflowFinished;
-		}
-
-
-		void setWorkflowFinished(bool pWorkflowFinished)
-		{
-			mWorkflowFinished = pWorkflowFinished;
-		}
-
-
+		bool isWorkflowFinished() const;
+		void setWorkflowFinished(bool pWorkflowFinished);
 };
 
 } /* namespace governikus */

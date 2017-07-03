@@ -8,10 +8,6 @@
 
 #include "CertificateChecker.h"
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
-#include "HashAlgorithmUtil.h"
-#endif
-
 #include <QDate>
 #include <QSslKey>
 
@@ -21,8 +17,8 @@
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
-
 using namespace governikus;
+
 
 Q_DECLARE_LOGGING_CATEGORY(developermode)
 
@@ -90,80 +86,68 @@ bool CertificateChecker::hasValidEphemeralKeyLength(const QSslKey& pEphemeralSer
 }
 
 
-bool CertificateChecker::isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorithm, bool pIsEphemeral)
+CertificateChecker::CertificateStatus CertificateChecker::checkAndSaveCertificate(const QSslCertificate& pCertificate, const QUrl& pUrl, QSharedPointer<AuthContext> pContext)
 {
-	switch (pKeyAlgorithm)
+	Q_ASSERT(!pContext.isNull());
+
+	if (!hasValidCertificateKeyLength(pCertificate))
 	{
-		case QSsl::KeyAlgorithm::Rsa:
-		{
-			bool sufficient = pKeyLength >= 2000;
-			if (!sufficient)
-			{
-				auto keySizeError = QStringLiteral("RSA key with insufficient key size found %1").arg(pKeyLength);
-				if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
-				{
-					qCWarning(developermode) << keySizeError;
-					sufficient = true;
-				}
-				else
-				{
-					qWarning() << keySizeError;
-				}
-			}
-			return sufficient;
-		}
-
-		case QSsl::KeyAlgorithm::Dsa:
-		{
-			bool sufficient = (pIsEphemeral ? pKeyLength >= 1024 : pKeyLength >= 2000);
-			if (!sufficient)
-			{
-				auto keySizeError = QStringLiteral("DSA key with insufficient key size found %1").arg(pKeyLength);
-				if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
-				{
-					qCWarning(developermode) << keySizeError;
-					sufficient = true;
-				}
-				else
-				{
-					qWarning() << keySizeError;
-				}
-			}
-			return sufficient;
-		}
-
-		case QSsl::KeyAlgorithm::Ec:
-		{
-			bool sufficient = pKeyLength >= 224;
-			if (!sufficient)
-			{
-				auto keySizeError = QStringLiteral("EC key with insufficient key size found %1").arg(pKeyLength);
-				if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
-				{
-					qCWarning(developermode) << keySizeError;
-					sufficient = true;
-				}
-				else
-				{
-					qWarning() << keySizeError;
-				}
-			}
-			return sufficient;
-		}
-
-		default:
-			auto algorithmError = QStringLiteral("Unknown algorithm used");
-			if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
-			{
-				qCWarning(developermode) << algorithmError;
-			}
-			else
-			{
-				qWarning() << algorithmError;
-			}
+		return CertificateStatus::Unsupported_Algorithm_Or_Length;
 	}
 
-	return false;
+	// the call to cvc.isSyntaxValid is made to check, whether the cvc is set
+	// TODO: do it more explicitly, e.g. implement a method cvc.isNull or so
+	auto eac1 = pContext->getDidAuthenticateEac1();
+	if (eac1 && pContext->getDvCvc())
+	{
+		if (auto certificateDescription = eac1->getCertificateDescription())
+		{
+			const QSet<QString> certHashes = certificateDescription->getCommCertificates();
+			QCryptographicHash::Algorithm hashAlgo = pContext->getDvCvc()->getBody().getHashAlgorithm();
+			if (!checkCertificate(pCertificate, hashAlgo, certHashes))
+			{
+				auto hashError = QStringLiteral("hash of certificate not in certificate description");
+
+				if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+				{
+					qCCritical(developermode) << hashError;
+				}
+				else
+				{
+					qCritical() << hashError;
+					return CertificateStatus::Hash_Not_In_Description;
+				}
+			}
+		}
+	}
+
+	pContext->addCertificateData(pUrl, pCertificate);
+	return CertificateStatus::Good;
+}
+
+
+bool CertificateChecker::isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorithm, bool pIsEphemeral)
+{
+	const auto& secureStorage = AppSettings::getInstance().getSecureStorage();
+	const int minKeySize = pIsEphemeral ? secureStorage.getMinimumEphemeralKeySize(pKeyAlgorithm) : secureStorage.getMinimumStaticKeySize(pKeyAlgorithm);
+
+	qDebug() << "Minimum requested key size" << minKeySize;
+
+	bool sufficient = pKeyLength >= minKeySize;
+	if (!sufficient)
+	{
+		auto keySizeError = QStringLiteral("%1 key with insufficient key size found %2").arg(toString(pKeyAlgorithm)).arg(pKeyLength);
+		if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+		{
+			qCWarning(developermode) << keySizeError;
+			sufficient = true;
+		}
+		else
+		{
+			qWarning() << keySizeError;
+		}
+	}
+	return sufficient;
 }
 
 

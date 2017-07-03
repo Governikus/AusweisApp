@@ -54,7 +54,7 @@ Rectangle {
 				anchors.rightMargin: Utils.dp(5)
 
 				verticalAlignment: Text.AlignVCenter
-				font.pixelSize: Utils.sp(14)
+				font.pixelSize: Constants.normal_font_size
 				color: providerStyle.subjectTextColor
 				font.bold: providerStyle.subjectTextFontBold
 				elide: Text.ElideRight
@@ -75,7 +75,7 @@ Rectangle {
 				font.pixelSize: providerStyle.addressTextFontSize
 				color: providerStyle.addressTextColor
 				elide: Text.ElideRight
-				text: addressDomain
+				text: providerAddressDomain
 			}
 
 			Item {
@@ -114,23 +114,7 @@ Rectangle {
 
 	MouseArea {
 		anchors.fill: parent
-		onClicked: {
-			push(providerDetailView,
-							  {
-								  selectedCategory: category,
-								  shortName: model.shortName,
-								  longName: model.longName,
-								  shortDescription: model.shortDescription,
-								  longDescription: model.longDescription,
-								  address: model.address,
-								  homepage: model.homepage,
-								  phone: model.phone,
-								  email: model.email,
-								  postalAddress: model.postalAddress,
-								  providerIcon: model.icon,
-								  providerImage: model.image
-							  })
-		}
+		onClicked: push(providerDetailView, {providerModelItem: model})
 	}
 
 	Rectangle {

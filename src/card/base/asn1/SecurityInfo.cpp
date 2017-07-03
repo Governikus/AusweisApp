@@ -47,7 +47,7 @@ SecurityInfo::SecurityInfo()
 }
 
 
-SecurityInfo::SecurityInfo(QSharedPointer<securityinfo_st> pDelegate)
+SecurityInfo::SecurityInfo(const QSharedPointer<const securityinfo_st>& pDelegate)
 	: mDelegate(pDelegate)
 {
 	Q_ASSERT(pDelegate != nullptr);
@@ -74,27 +74,4 @@ QByteArray SecurityInfo::getProtocol() const
 
 SecurityInfo::~SecurityInfo()
 {
-}
-
-
-QSharedPointer<SecurityInfo> SecurityInfoFactory::createSecurityInfo(const QByteArray& pBytes)
-{
-	if (QSharedPointer<SecurityInfo> pi = PACEInfo::decode(pBytes))
-	{
-		qCDebug(card) << "Parsed PACEInfo";
-		return pi;
-	}
-	else if (QSharedPointer<SecurityInfo> cai = ChipAuthenticationInfo::decode(pBytes))
-	{
-		qCDebug(card) << "Parsed ChipAuthenticationInfo";
-		return cai;
-	}
-
-	if (QSharedPointer<SecurityInfo> secInfo = SecurityInfo::decode(pBytes))
-	{
-		qCDebug(card) << "Parsed SecurityInfo for protocol" << secInfo->getProtocol();
-		return secInfo;
-	}
-	qCCritical(card) << "Cannot parse as SecurityInfo" << pBytes.toHex();
-	return QSharedPointer<SecurityInfo>();
 }

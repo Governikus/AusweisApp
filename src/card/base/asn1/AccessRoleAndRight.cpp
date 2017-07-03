@@ -51,47 +51,47 @@ const QList<AccessRight>& AccessRoleAndRightsUtil::allRights()
 {
 	if (mAllRights.isEmpty())
 	{
-		mAllRights.append(AccessRight::WRITE_DG17);
-		mAllRights.append(AccessRight::WRITE_DG18);
-		mAllRights.append(AccessRight::WRITE_DG19);
-		mAllRights.append(AccessRight::WRITE_DG20);
-		mAllRights.append(AccessRight::WRITE_DG21);
+		mAllRights += AccessRight::WRITE_DG17;
+		mAllRights += AccessRight::WRITE_DG18;
+		mAllRights += AccessRight::WRITE_DG19;
+		mAllRights += AccessRight::WRITE_DG20;
+		mAllRights += AccessRight::WRITE_DG21;
 
-		mAllRights.append(AccessRight::RFU_32);
-		mAllRights.append(AccessRight::RFU_31);
-		mAllRights.append(AccessRight::RFU_30);
-		mAllRights.append(AccessRight::RFU_29);
+		mAllRights += AccessRight::RFU_32;
+		mAllRights += AccessRight::RFU_31;
+		mAllRights += AccessRight::RFU_30;
+		mAllRights += AccessRight::RFU_29;
 
-		mAllRights.append(AccessRight::READ_DG21);
-		mAllRights.append(AccessRight::READ_DG20);
-		mAllRights.append(AccessRight::READ_DG19);
-		mAllRights.append(AccessRight::READ_DG18);
-		mAllRights.append(AccessRight::READ_DG17);
-		mAllRights.append(AccessRight::READ_DG16);
-		mAllRights.append(AccessRight::READ_DG15);
-		mAllRights.append(AccessRight::READ_DG14);
-		mAllRights.append(AccessRight::READ_DG13);
-		mAllRights.append(AccessRight::READ_DG12);
-		mAllRights.append(AccessRight::READ_DG11);
-		mAllRights.append(AccessRight::READ_DG10);
-		mAllRights.append(AccessRight::READ_DG09);
-		mAllRights.append(AccessRight::READ_DG08);
-		mAllRights.append(AccessRight::READ_DG07);
-		mAllRights.append(AccessRight::READ_DG06);
-		mAllRights.append(AccessRight::READ_DG05);
-		mAllRights.append(AccessRight::READ_DG04);
-		mAllRights.append(AccessRight::READ_DG03);
-		mAllRights.append(AccessRight::READ_DG02);
-		mAllRights.append(AccessRight::READ_DG01);
+		mAllRights += AccessRight::READ_DG21;
+		mAllRights += AccessRight::READ_DG20;
+		mAllRights += AccessRight::READ_DG19;
+		mAllRights += AccessRight::READ_DG18;
+		mAllRights += AccessRight::READ_DG17;
+		mAllRights += AccessRight::READ_DG16;
+		mAllRights += AccessRight::READ_DG15;
+		mAllRights += AccessRight::READ_DG14;
+		mAllRights += AccessRight::READ_DG13;
+		mAllRights += AccessRight::READ_DG12;
+		mAllRights += AccessRight::READ_DG11;
+		mAllRights += AccessRight::READ_DG10;
+		mAllRights += AccessRight::READ_DG09;
+		mAllRights += AccessRight::READ_DG08;
+		mAllRights += AccessRight::READ_DG07;
+		mAllRights += AccessRight::READ_DG06;
+		mAllRights += AccessRight::READ_DG05;
+		mAllRights += AccessRight::READ_DG04;
+		mAllRights += AccessRight::READ_DG03;
+		mAllRights += AccessRight::READ_DG02;
+		mAllRights += AccessRight::READ_DG01;
 
-		mAllRights.append(AccessRight::INSTALL_QUAL_CERT);
-		mAllRights.append(AccessRight::INSTALL_CERT);
-		mAllRights.append(AccessRight::PIN_MANAGEMENT);
-		mAllRights.append(AccessRight::CAN_ALLOWED);
-		mAllRights.append(AccessRight::PRIVILEGED_TERMINAL);
-		mAllRights.append(AccessRight::RESTRICTED_IDENTIFICATION);
-		mAllRights.append(AccessRight::COMMUNITY_ID_VERIFICATION);
-		mAllRights.append(AccessRight::AGE_VERIFICATION);
+		mAllRights += AccessRight::INSTALL_QUAL_CERT;
+		mAllRights += AccessRight::INSTALL_CERT;
+		mAllRights += AccessRight::PIN_MANAGEMENT;
+		mAllRights += AccessRight::CAN_ALLOWED;
+		mAllRights += AccessRight::PRIVILEGED_TERMINAL;
+		mAllRights += AccessRight::RESTRICTED_IDENTIFICATION;
+		mAllRights += AccessRight::COMMUNITY_ID_VERIFICATION;
+		mAllRights += AccessRight::AGE_VERIFICATION;
 	}
 
 	return mAllRights;

@@ -31,6 +31,8 @@ void StateSelectReaderType::run()
 
 void StateSelectReaderType::onReaderTypeChanged()
 {
+	getContext()->setReaderName(QString());
+
 	switch (getContext()->getReaderType())
 	{
 		case ReaderManagerPlugInType::BLUETOOTH:

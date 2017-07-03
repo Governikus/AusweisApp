@@ -9,6 +9,7 @@
 #include "LogHandler.h"
 #include "Result.h"
 
+#include <QString>
 #include <QtTest/QtTest>
 
 using namespace governikus;
@@ -39,15 +40,15 @@ class test_result
 
 		void parse()
 		{
-			QCOMPARE(Result::parseMajor("crap"), Result::Major::null);
-			QCOMPARE(Result::parseMinor("crap"), Result::Minor::null);
+			QCOMPARE(Result::parseMajor("crap"), Result::Major::Unknown);
+			QCOMPARE(Result::parseMinor("crap"), GlobalStatus::Code::Unknown_Error);
 
 			QVERIFY(!Result::isMajor("crap"));
 			QVERIFY(!Result::isMinor("crap"));
 
 			QCOMPARE(Result::parseMajor("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok"), Result::Major::Ok);
 			QCOMPARE(Result::parseMinor("http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#noPermission"),
-					Result::Minor::AL_No_Permission);
+					GlobalStatus::Code::Paos_Error_AL_No_Permission);
 
 			QVERIFY(Result::isMajor("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok"));
 			QVERIFY(Result::isMinor("http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#noPermission"));
@@ -56,20 +57,10 @@ class test_result
 
 		void createInternalError()
 		{
-			Result result = Result::createInternalError();
+			Result result = Result(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity);
 			QCOMPARE(result.getMajor(), Result::Major::Error);
-			QCOMPARE(result.getMinor(), Result::Minor::AL_Internal_Error);
-			QCOMPARE(result.getMessage(), QString());
-			QCOMPARE(result.getMessageLang(), QString("en"));
-		}
-
-
-		void createInternalErrorMessage()
-		{
-			Result result = Result::createInternalError("test message");
-			QCOMPARE(result.getMajor(), Result::Major::Error);
-			QCOMPARE(result.getMinor(), Result::Minor::AL_Internal_Error);
-			QCOMPARE(result.getMessage(), QString("test message"));
+			QCOMPARE(result.getMinor(), GlobalStatus::Code::Paos_Error_AL_Internal_Error);
+			QCOMPARE(result.getMessage(), QString("The authenticity of your ID card could not be confirmed."));
 			QCOMPARE(result.getMessageLang(), QString("en"));
 		}
 
@@ -78,7 +69,7 @@ class test_result
 		{
 			Result result = Result::createOk();
 			QCOMPARE(result.getMajor(), Result::Major::Ok);
-			QCOMPARE(result.getMinor(), Result::Minor::null);
+			QCOMPARE(result.getMinor(), GlobalStatus::Code::Unknown_Error);
 			QCOMPARE(result.getMessage(), QString());
 			QCOMPARE(result.getMessageLang(), QString("en"));
 		}
@@ -95,31 +86,31 @@ class test_result
 
 			spy.clear();
 
-			qDebug() << Result::createInternalError("dummy message");
+			qDebug() << Result(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity);
 			QCOMPARE(spy.count(), 1);
 			param = spy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#internalError | dummy message\""));
+			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#internalError | The authenticity of your ID card could not be confirmed.\""));
 
 			spy.clear();
 
-			qDebug() << Result::createCancelByUserError();
+			qDebug() << Result(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
 			QCOMPARE(spy.count(), 1);
 			param = spy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser | The process was cancelled by the user.\""));
 
 			spy.clear();
 
-			qDebug() << Result::createError(ReturnCode::UNDEFINED);
+			qDebug() << Result(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::UNDEFINED));
 			QCOMPARE(spy.count(), 1);
 			param = spy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#unknownError | An unknown error occurred: UNDEFINED\""));
+			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#unknownError | An unexpected error has occurred during processing.\""));
 
 			spy.clear();
 
-			qDebug() << Result::createCertChainInterruptedError("");
+			qDebug() << Result(GlobalStatus::Code::Workflow_Preverification_Error);
 			QCOMPARE(spy.count(), 1);
 			param = spy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#certificateChainInterrupted | \""));
+			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#certificateChainInterrupted | Pre-verification failed.\""));
 		}
 
 
@@ -134,13 +125,60 @@ class test_result
 					   "\"language\":\"en\",\"major\":\"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error\","
 					   "\"message\":\"The process was cancelled by the user.\","
 					   "\"minor\":\"http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser\"}";
-			QCOMPARE(bytes(Result::createCancelByUserError().toJson()), expected);
+			QCOMPARE(bytes(Result(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER)).toJson()), expected);
 
 			expected = "{\"description\":\"A Communication error occurred during processing.\","
 					   "\"language\":\"en\",\"major\":\"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error\","
-					   "\"message\":\"BAMM!\","
+					   "\"message\":\"The selected card reader cannot be accessed anymore.\","
 					   "\"minor\":\"http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#communicationError\"}";
-			QCOMPARE(bytes(Result::createCommunicationError("BAMM!").toJson()), expected);
+			QCOMPARE(bytes(Result(GlobalStatus::Code::Workflow_Reader_Became_Inaccessible).toJson()), expected);
+		}
+
+
+		void comparison()
+		{
+			QVERIFY(!(Result::createOk() == Result(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER))));
+
+			const Result& result = Result::createOk();
+			QVERIFY(result == Result(result.toStatus()));
+		}
+
+
+		void conversion_data()
+		{
+			QTest::addColumn<GlobalStatus::Code>("minor");
+
+			const QMetaEnum& metaEnum = QMetaEnum::fromType<GlobalStatus::Code>();
+			for (int i = 0; i < metaEnum.keyCount(); i++)
+			{
+				const GlobalStatus::Code minor = static_cast<GlobalStatus::Code>(i);
+				const char* name = metaEnum.valueToKey(i);
+				const QString check = QString::fromStdString(name);
+
+				if (minor == GlobalStatus::Code::Paos_Unexpected_Warning || !check.startsWith(QLatin1String("Paos_")))
+				{
+					continue;
+				}
+
+				QTest::newRow(name) << minor;
+			}
+		}
+
+
+		void conversion()
+		{
+			QFETCH(GlobalStatus::Code, minor);
+
+			const Result result_1(Result::Major::Error, minor, "Game Over :(", Origin::Client);
+			QVERIFY(result_1 == Result(result_1.toStatus()));
+
+			const Result result_2(Result::Major::Error, minor, "Game Over :(", Origin::Server);
+			QVERIFY(!(result_2 == Result(result_2.toStatus())));
+
+			const Result result_3(Result::Major::Error, minor, Result::getMessage(minor), Origin::Server);
+			QVERIFY(result_3 == Result(result_3.toStatus()));
+
+			QVERIFY(!(result_1 == result_2));
 		}
 
 

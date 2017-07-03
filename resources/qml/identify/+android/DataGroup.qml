@@ -10,23 +10,22 @@ import "../global"
 Rectangle {
 	id: root
 	property string title;
+	property int columns: 1
 	property var chat
 
 	width: parent.width
 	height: column.height
-	color: "white"
+	visible: repeater.count > 0
 
 	Column {
 		id: column
-		anchors.verticalCenter: parent.verticalCenter
+		anchors.top: parent.top
 		anchors.left: parent.left
-		anchors.leftMargin: Utils.dp(20)
 		anchors.right: parent.right
-		anchors.rightMargin: anchors.leftMargin
 
 		Text {
-			height: implicitHeight * 2
-			verticalAlignment: Text.AlignVCenter
+			height: implicitHeight * 1.5
+			verticalAlignment: Text.AlignTop
 			text: title
 			color: Constants.blue
 			font.pixelSize: Constants.header_font_size
@@ -41,8 +40,8 @@ Rectangle {
 				id: emptyText
 				anchors.verticalCenter: parent.verticalCenter
 				width: parent.width
-				font.pixelSize: Utils.sp(14)
-				text: qsTr("No data available")
+				font.pixelSize: Constants.normal_font_size
+				text: qsTr("No data requested")
 			}
 			Rectangle {
 				anchors.top: parent.bottom
@@ -53,47 +52,61 @@ Rectangle {
 			}
 		}
 
-		Repeater {
-			id: repeater
-			model: chat
-			visible: repeater.count > 0
+		Grid {
+			id: grid
+			columns: root.columns
+			columnSpacing: Constants.pane_spacing
+			width: parent.width
+			verticalItemAlignment: Grid.AlignBottom
 
-			Rectangle {
-				width: parent.width
-				height: Utils.dp(40)
-				color: "white"
-				Text {
-					id: text
-					anchors.verticalCenter: parent.verticalCenter
-					width: parent.width
-					font.pixelSize: Utils.sp(14)
-					text: name
-				}
+			Repeater {
+				id: repeater
+				model: chat
+				visible: repeater.count > 0
+
 				Rectangle {
-					anchors.top: parent.bottom
-					anchors.topMargin: -height
-					height: 1
-					width: parent.width
-					color: Constants.grey
-				}
-				CheckBox {
-					anchors.right: parent.right
-					anchors.verticalCenter: parent.verticalCenter
-					visible: optional
-					checked: selected
-				}
+					width: (grid.width - ((grid.columns - 1) * grid.columnSpacing)) / grid.columns
+					height: Utils.dp(40)
+					color: "white"
 
-				MouseArea {
-					anchors.fill: parent
-					enabled: optional
-					onClicked: selected = !selected
+					Text {
+						id: text
+						anchors.verticalCenter: parent.verticalCenter
+						anchors.left: parent.left
+						anchors.right: checkBox.left
+						font.pixelSize: Constants.normal_font_size
+						text: name
+						wrapMode: Text.WordWrap
+					}
+
 					Rectangle {
-						anchors.centerIn: parent
-						width: root.width
-						height: parent.height
-						color: Constants.accent_color
-						opacity: parent.pressed ? 0.5 : 0
-						Behavior on opacity { NumberAnimation { duration: 100 } }
+						anchors.top: parent.bottom
+						anchors.topMargin: -height
+						height: 1
+						width: parent.width
+						color: Constants.grey
+					}
+
+					GCheckBox {
+						id: checkBox
+						anchors.right: parent.right
+						anchors.verticalCenter: parent.verticalCenter
+						visible: optional
+						checked: selected
+					}
+
+					MouseArea {
+						anchors.fill: parent
+						enabled: optional
+						onClicked: selected = !selected
+						Rectangle {
+							anchors.centerIn: parent
+							width: root.width
+							height: parent.height
+							color: Constants.accent_color
+							opacity: parent.pressed ? 0.5 : 0
+							Behavior on opacity { NumberAnimation { duration: 100 } }
+						}
 					}
 				}
 			}

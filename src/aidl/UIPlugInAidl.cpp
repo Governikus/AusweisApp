@@ -40,7 +40,7 @@ UIPlugInAidl::UIPlugInAidl()
 	{
 		mJsonApi = qobject_cast<UIPlugInJsonApi*>(UILoader::getInstance().getLoaded(UIPlugInName::UIPlugInJsonApi));
 		Q_ASSERT(mJsonApi);
-		connect(mJsonApi, &UIPlugInJsonApi::fireMessage, this, &UIPlugInAidl::onToSend);
+		connect(mJsonApi, &UIPlugInJsonApi::fireMessage, this, &UIPlugInAidl::onToSend, Qt::QueuedConnection);
 
 		mInitializationSuccessfull = true;
 	}
@@ -88,7 +88,9 @@ void UIPlugInAidl::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 
 void UIPlugInAidl::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 {
-	mContext = pContext;
+	Q_UNUSED(pContext);
+
+	mContext.clear();
 }
 
 
@@ -115,8 +117,7 @@ void UIPlugInAidl::onToSend(const QByteArray& pMessage)
 	QAndroidJniObject jsonAndroidString = QAndroidJniObject::fromString(json);
 
 	QAndroidJniObject aidlBinder = QtAndroid::androidService().callObjectMethod("getAidlBinder", "()Lcom/governikus/ausweisapp2/AidlBinder;");
-	// FIXME This function is meant to return void istead of java.lang.Object but JNI does not like void
-	aidlBinder.callObjectMethod("aidlReceive", "(Ljava/lang/String;)Ljava/lang/Object;", jsonAndroidString.object<jstring>());
+	aidlBinder.callMethod<void>("aidlReceive", "(Ljava/lang/String;)V", jsonAndroidString.object<jstring>());
 #else
 	Q_UNUSED(pMessage);
 #endif
@@ -140,7 +141,7 @@ JNIEXPORT jstring JNICALL Java_com_governikus_ausweisapp2_AidlBinder_resetValidS
 	Q_UNUSED(pObj);
 
 	const char* nativeString = pEnv->GetStringUTFChars(pClientPartialPsk, 0);
-	const QString clientPartialPsk = QString::fromUtf8(nativeString);
+	const auto& clientPartialPsk = QByteArray(nativeString);
 	pEnv->ReleaseStringUTFChars(pClientPartialPsk, nativeString);
 
 
@@ -153,8 +154,8 @@ JNIEXPORT jstring JNICALL Java_com_governikus_ausweisapp2_AidlBinder_resetValidS
 	QMetaObject::invokeMethod(plugin, "reset", Qt::BlockingQueuedConnection);
 
 
-	const QString finalPsk = PskManager::getInstance().generatePsk(clientPartialPsk);
-	return pEnv->NewStringUTF(finalPsk.toUtf8().constData());
+	const auto& finalPsk = PskManager::getInstance().generatePsk(clientPartialPsk);
+	return pEnv->NewStringUTF(finalPsk.constData());
 }
 
 

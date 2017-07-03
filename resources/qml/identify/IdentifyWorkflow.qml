@@ -16,8 +16,8 @@ SectionPage
 		state: parent.state
 		visible: parent.state.indexOf("nfc_") === 0
 		onAbortNfc: {
+			identifyController.readerType = "BLUETOOTH"
 			authModel.abortCardSelection()
-			authModel.setReaderType("BLUETOOTH");
 		}
 	}
 
@@ -27,5 +27,9 @@ SectionPage
 		anchors.fill: parent
 		state: parent.state
 		visible: parent.state.indexOf("bt_") === 0
+		onAbortBluetooth: {
+			identifyController.readerType = "NFC"
+			authModel.abortCardSelection()
+		}
 	}
 }

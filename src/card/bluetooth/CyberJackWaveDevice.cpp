@@ -190,6 +190,7 @@ void CyberJackWaveDevice::onDeviceStateChanged(QLowEnergyController::ControllerS
 void CyberJackWaveDevice::onDeviceError(QLowEnergyController::Error pError)
 {
 	qCDebug(bluetooth) << "Error" << pError << mLeController.errorString() << "on device" << mDeviceInfo;
+	Q_EMIT fireError(pError);
 }
 
 

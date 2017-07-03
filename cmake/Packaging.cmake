@@ -4,7 +4,7 @@
 SET(FILENAME ${PROJECT_NAME}-${PROJECT_VERSION})
 
 IF(ANDROID)
-	SET(FILENAME ${FILENAME}-${ANDROID_ABI})
+	SET(FILENAME ${FILENAME}-${CMAKE_ANDROID_ARCH_ABI})
 ENDIF()
 
 IF(DEFINED dvcs_distance)
@@ -160,55 +160,48 @@ ELSEIF(ANDROID)
 	ENDIF()
 	MESSAGE(STATUS "Using androiddeployqt: ${androiddeployqt}")
 
-	SET(ANDROID_APK_DIR ${CMAKE_INSTALL_PREFIX})
-	SET(DEPLOYMENT_SETTINGS ${PROJECT_BINARY_DIR}/libAusweisApp2.so-deployment-settings.json)
-	SET(PACKAGE_SRC_DIR ${PROJECT_BINARY_DIR}/package-src-dir)
-
-	IF("${ANDROID_ABI}" STREQUAL "x86")
-		SET(ANDROID_TOOLCHAIN_PREFIX x86)
-		SET(ANDROID_TOOL_PREFIX i686-linux-android)
-	ELSEIF("${ANDROID_ABI}" STREQUAL "armeabi-v7a")
-		SET(ANDROID_TOOLCHAIN_PREFIX arm-linux-androideabi)
-		SET(ANDROID_TOOL_PREFIX arm-linux-androideabi)
-	ELSEIF("${ANDROID_ABI}" STREQUAL "arm64-v8a")
-		SET(ANDROID_TOOLCHAIN_PREFIX aarch64-linux-android)
-		SET(ANDROID_TOOL_PREFIX aarch64-linux-android)
-	ELSE()
-		MESSAGE(FATAL_ERROR "Unsupported ANDROID_ABI: ${ANDROID_ABI}")
-	ENDIF()
-
-	CONFIGURE_FILE(${PACKAGING_DIR}/android/AndroidManifest.xml.in ${PACKAGE_SRC_DIR}/AndroidManifest.xml @ONLY)
-	CONFIGURE_FILE(${PACKAGING_DIR}/android/libAusweisApp2.so-deployment-settings.json.in ${DEPLOYMENT_SETTINGS} @ONLY)
+	OPTION(ANDROID_USE_GRADLE "Use gradle for androiddeployqt" OFF)
 
 	IF(${CMAKE_BUILD_TYPE} STREQUAL "RELEASE")
 		IF(APK_SIGN_KEYSTORE AND APK_SIGN_KEYSTORE_ALIAS AND APK_SIGN_KEYSTORE_PSW)
 			MESSAGE(STATUS "Release build will be signed using: ${APK_SIGN_KEYSTORE} | Alias: ${APK_SIGN_KEYSTORE_ALIAS}")
 			SET(DEPLOY_CMD_SIGN --sign ${APK_SIGN_KEYSTORE} ${APK_SIGN_KEYSTORE_ALIAS} --storepass ${APK_SIGN_KEYSTORE_PSW} --digestalg SHA-256 --sigalg SHA256WithRSA)
-			SET(APK_FILE QtApp-release-signed.apk)
+			IF(ANDROID_USE_GRADLE)
+				SET(APK_FILE dist-release-signed.apk)
+			ELSE()
+				SET(APK_FILE QtApp-release-signed.apk)
+			ENDIF()
 		ELSE()
 			MESSAGE(FATAL_ERROR "Cannot sign release build! Set APK_SIGN_KEYSTORE, APK_SIGN_KEYSTORE_ALIAS and APK_SIGN_KEYSTORE_PSW!")
 		ENDIF()
 
 	ELSE()
-		SET(APK_FILE QtApp-debug.apk)
+		IF(ANDROID_USE_GRADLE)
+			SET(APK_FILE dist-debug.apk)
+		ELSE()
+			SET(APK_FILE QtApp-debug.apk)
+		ENDIF()
 	ENDIF()
 
-	SET(DEPLOY_CMD ${androiddeployqt} --verbose --input ${DEPLOYMENT_SETTINGS} --output ${ANDROID_APK_DIR} ${DEPLOY_CMD_SIGN})
-	SET(DESTINATION_APK_FILE ${CMAKE_INSTALL_PREFIX}/bin/${CPACK_PACKAGE_FILE_NAME}.apk)
+	SET(DEPLOY_CMD ${androiddeployqt} --verbose --input ${ANDROID_DEPLOYMENT_SETTINGS} --output ${CMAKE_INSTALL_PREFIX} ${DEPLOY_CMD_SIGN})
 
+	IF(ANDROID_USE_GRADLE)
+		SET(DEPLOY_CMD ${DEPLOY_CMD} --gradle)
+		SET(SOURCE_APK_FILE ${CMAKE_INSTALL_PREFIX}/build/outputs/apk/${APK_FILE})
+	ELSE()
+		SET(SOURCE_APK_FILE ${CMAKE_INSTALL_PREFIX}/bin/${APK_FILE})
+	ENDIF()
+
+	SET(DESTINATION_APK_FILE ${CMAKE_INSTALL_PREFIX}/${CPACK_PACKAGE_FILE_NAME}.apk)
 	# Add DEPENDS install someday
 	# http://public.kitware.com/Bug/view.php?id=8438
 	ADD_CUSTOM_TARGET(apk
 				COMMAND ${DEPLOY_CMD}
-				COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_INSTALL_PREFIX}/bin/${APK_FILE} ${DESTINATION_APK_FILE})
+				COMMAND ${CMAKE_COMMAND} -E copy ${SOURCE_APK_FILE} ${DESTINATION_APK_FILE})
 
-	FIND_PROGRAM(jarsigner jarsigner CMAKE_FIND_ROOT_PATH_BOTH)
-	IF(jarsigner)
-		IF(APK_SIGN_KEYSTORE)
-			SET(jarsigner_keystore -keystore ${APK_SIGN_KEYSTORE})
-		ENDIF()
-		ADD_CUSTOM_TARGET(verify.signature
-				COMMAND ${jarsigner} -verify -verbose -certs ${jarsigner_keystore} ${DESTINATION_APK_FILE})
+	FIND_PROGRAM(apksigner apksigner HINTS ${ANDROID_SDK}/build-tools/${ANDROID_BUILD_TOOLS_REVISION} CMAKE_FIND_ROOT_PATH_BOTH)
+	IF(apksigner)
+		ADD_CUSTOM_TARGET(verify.signature COMMAND ${apksigner} verify --verbose --print-certs -Werr ${DESTINATION_APK_FILE})
 	ENDIF()
 
 ELSEIF(UNIX)

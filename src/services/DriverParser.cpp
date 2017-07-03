@@ -65,20 +65,20 @@ class EntryParser
 EntryParser::EntryParser(const QJsonValue& pJsonValue)
 	: mJsonValue(pJsonValue)
 	, mWinVersion(
-{
-	{"WV_WINDOWS7", QSysInfo::WV_WINDOWS7},
-	{"WV_WINDOWS8", QSysInfo::WV_WINDOWS8},
-	{"WV_WINDOWS8_1", QSysInfo::WV_WINDOWS8_1},
-	{"WV_WINDOWS10", QSysInfo::WV_WINDOWS10}
-}
+		{
+			{"WV_WINDOWS7", QSysInfo::WV_WINDOWS7},
+			{"WV_WINDOWS8", QSysInfo::WV_WINDOWS8},
+			{"WV_WINDOWS8_1", QSysInfo::WV_WINDOWS8_1},
+			{"WV_WINDOWS10", QSysInfo::WV_WINDOWS10}
+		}
 
 
 		)
 	, mMacVersion({
-	{"MV_10_9", QSysInfo::MV_10_9},
-	{"MV_10_10", QSysInfo::MV_10_10},
-	{"MV_10_11", QSysInfo::MV_10_11}
-}
+				{"MV_10_9", QSysInfo::MV_10_9},
+				{"MV_10_10", QSysInfo::MV_10_10},
+				{"MV_10_11", QSysInfo::MV_10_11}
+			}
 			)
 {
 }

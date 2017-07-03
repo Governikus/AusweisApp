@@ -179,8 +179,8 @@ class test_ReaderDetector
 		void nonSupportedDeviceAttached_noAttachedDevicesFound()
 		{
 			ReaderDetectorMock readerDetector({
-			{0x413C, 0x2107}
-		});
+						{0x413C, 0x2107}
+					});
 
 			QCOMPARE(readerDetector.getAttachedDevices({}).size(), 0);
 		}
@@ -189,8 +189,8 @@ class test_ReaderDetector
 		void supportedDeviceAttachedButNoDriverInstalled_attachedDeviceFound()
 		{
 			ReaderDetectorMock readerDetector({
-			{0x0C4B, 0x0501}
-		});
+						{0x0C4B, 0x0501}
+					});
 			const auto devs = readerDetector.getAttachedDevices({});
 
 			QCOMPARE(devs.size(), 1);
@@ -206,8 +206,8 @@ class test_ReaderDetector
 			static const ReaderManagerPlugInType PLUGIN_TYPE = ReaderManagerPlugInType::UNKNOWN;
 
 			ReaderDetectorMock readerDetector({
-			{0x0C4B, 0x0501}
-		});
+						{0x0C4B, 0x0501}
+					});
 
 			const auto devs = readerDetector.getAttachedDevices({ReaderInfo(PLUGIN_TYPE, READER_NAME, READER_TYPE)});
 

@@ -5,15 +5,12 @@
 #include "Updater.h"
 
 #include "AppSettings.h"
+#include "AppUpdateService.h"
 #include "DriverService.h"
 #include "ProviderService.h"
 #include "SecureStorage.h"
 #include "SingletonHelper.h"
 #include "VersionNumber.h"
-
-#if defined(Q_OS_WIN) || defined(Q_OS_OSX) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
-#include "fervor/fvupdater.h"
-#endif
 
 #include <QLoggingCategory>
 
@@ -28,19 +25,21 @@ Updater::Updater()
 	SecureStorage& secureStorage = AppSettings::getInstance().getSecureStorage();
 	secureStorage.load();
 
-#if defined(Q_OS_WIN) || defined(Q_OS_OSX) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
 	auto url = VersionNumber::getApplicationVersion().isDeveloperVersion() ? secureStorage.getAppcastBetaUpdateUrl() : secureStorage.getAppcastUpdateUrl();
-	FvUpdater::sharedUpdater()->SetFeedURL(url);
+	AppUpdateService::getInstance().setUpdateUrl(url);
+	AppUpdateService::getInstance().setTrustedUpdateCertificates(secureStorage.getUpdateCertificates());
+	connect(&AppUpdateService::getInstance(), &AppUpdateService::fireAppUpdateCheckFinished, this, &Updater::fireAppUpdateCheckFinished);
 
+#if defined(Q_OS_WIN) || defined(Q_OS_OSX) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
 	//	qDebug() << "Driver update url =" << secureStorage.getDriverUpdateUrl();
-	//	DriverService::getSharedInstance()->setUpdateUrl(secureStorage.getDriverUpdateUrl());
-	//	DriverService::getSharedInstance()->setTrustedUpdateCertificates(secureStorage.getUpdateCertificates());
+	//	DriverService::getInstance().setUpdateUrl(secureStorage.getDriverUpdateUrl());
+	//	DriverService::getInstance().setTrustedUpdateCertificates(secureStorage.getUpdateCertificates());
 #endif
 
 	qDebug() << "Provider update url =" << secureStorage.getProviderUpdateUrl();
-	ProviderService::getSharedInstance()->setUpdateUrl(secureStorage.getProviderUpdateUrl());
-	ProviderService::getSharedInstance()->setTrustedUpdateCertificates(secureStorage.getUpdateCertificates());
-	connect(ProviderService::getSharedInstance(), &UpdateService::fireUpdateFinished, this, &Updater::onUpdateProviderSettingsFinished);
+	ProviderService::getInstance().setUpdateUrl(secureStorage.getProviderUpdateUrl());
+	ProviderService::getInstance().setTrustedUpdateCertificates(secureStorage.getUpdateCertificates());
+	connect(&ProviderService::getInstance(), &UpdateService::fireUpdateFinished, this, &Updater::onUpdateProviderSettingsFinished);
 
 	mIconCache.init();
 	mIconCache.setTrustedUpdateCertificates(secureStorage.getUpdateCertificates());
@@ -65,20 +64,9 @@ void Updater::update()
 }
 
 
-void Updater::checkAppUpdate(bool pSilent)
+void Updater::checkAppUpdate()
 {
-#if defined(Q_OS_WIN) || defined(Q_OS_OSX) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
-	if (pSilent)
-	{
-		FvUpdater::sharedUpdater()->CheckForUpdatesSilent();
-	}
-	else
-	{
-		FvUpdater::sharedUpdater()->CheckForUpdatesNotSilent();
-	}
-#else
-	Q_UNUSED(pSilent)
-#endif
+	AppUpdateService::getInstance().runUpdate();
 }
 
 
@@ -88,13 +76,25 @@ const IconCache& Updater::getIconCache() const
 }
 
 
+const AppUpdateData& Updater::getUpdateData() const
+{
+	return AppUpdateService::getInstance().getUpdateData();
+}
+
+
+void Updater::skipVersion(const QString& pVersion)
+{
+	AppUpdateService::getInstance().skipVersion(pVersion);
+}
+
+
 void Updater::doUpdateRemoteSettings()
 {
 #if defined(Q_OS_WIN) || defined(Q_OS_OSX) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
-	//	DriverService::getSharedInstance()->runUpdate();
+	//	DriverService::getInstance().runUpdate();
 #endif
 
-	ProviderService::getSharedInstance()->runUpdate();
+	ProviderService::getInstance().runUpdate();
 }
 
 

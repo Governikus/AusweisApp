@@ -2,15 +2,12 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include <QApplication>
-#include <QSharedPointer>
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
-#include <openssl/ec.h>
-
 #include "pace/ec/EcUtil.h"
 #include "pace/ec/EllipticCurveFactory.h"
 
+#include <QSharedPointer>
+#include <QtTest>
+#include <openssl/ec.h>
 
 using namespace governikus;
 

@@ -21,10 +21,8 @@ class SetEidPinCommand
 	Q_OBJECT
 
 	private:
-		/* QString mOldPin; */
 		QString mNewPin;
-		/* QString mCan; */
-		unsigned int mTimeoutSeconds;
+		quint8 mTimeoutSeconds;
 
 	protected:
 		virtual void internalExecute() override;
@@ -32,7 +30,7 @@ class SetEidPinCommand
 
 	public:
 		SetEidPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
-				const QString& pNewPin, unsigned int pTimeoutSeconds = 90);
+				const QString& pNewPin, quint8 pTimeoutSeconds);
 };
 
 } /* namespace governikus */

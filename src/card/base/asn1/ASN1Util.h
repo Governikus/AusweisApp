@@ -23,6 +23,19 @@ namespace governikus
 {
 
 
+class Asn1Util
+{
+	Asn1Util() = delete;
+	~Asn1Util() = delete;
+
+	public:
+		/*!
+		 * Encodes the data as ASN.1 object with specified tag byte.
+		 */
+		static QByteArray encode(char pTagByte, const QByteArray& pData);
+};
+
+
 /*!
  * Utility for OpenSSL type ASN1_OBJECT, i.e. ASN.1 type OBJECT_IDENTIFIER
  */

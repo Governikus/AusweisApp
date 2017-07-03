@@ -16,6 +16,10 @@ IF(POLICY CMP0054)
 	CMAKE_POLICY(SET CMP0054 NEW)
 ENDIF()
 
+IF(POLICY CMP0063)
+	CMAKE_POLICY(SET CMP0063 NEW)
+ENDIF()
+
 # "tools.only" can be defined to disable the normal build and enable
 # cmdline "tools" only. For example: "make format" or "make package_source"
 IF(tools.only)
@@ -25,7 +29,7 @@ ELSE()
 ENDIF()
 
 
-PROJECT(AusweisApp2 VERSION 1.10.3 LANGUAGES ${LANGUAGES})
+PROJECT(AusweisApp2 VERSION 1.12.2 LANGUAGES ${LANGUAGES})
 
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it
