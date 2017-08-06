@@ -124,12 +124,12 @@ eingebettet werden kann. Zu beachten ist vor allem, dass in der Umgebungsvariabl
 eingerichtet ist. Im Ordner "~/Library/MobileDevice/Provisioning Profiles"
 sind diese ebenfalls einsehbar.
 Unter Umständen kann es zu Berechtigungsproblemen mit XCode und den Zugriff auf
-die Keys kommen. Dabei ist es oft hilfreich die Keys im MacOS-Schlüsselbund
+die Keys kommen. Dabei ist es oft hilfreich die Keys im macOS-Schlüsselbund
 freizuschalten bzw. den Schlüsselbund freizugeben.
 
 security unlock-keychain -pPASSWORD ${HOME}/Library/Keychains/login.keychain
 
-Unter iOS wird die AusweisApp2 mittels XCode gebaut!
+Für iOS wird die AusweisApp2 mittels XCode gebaut!
 
 ::
 
@@ -152,7 +152,7 @@ Nachdem die Build-Umgebung eingerichtet ist, kann je nach System ein Package ers
   notwendig.
   Mittels "mingw32-make package" wird die AusweisApp2 gebaut und ein MSI Paket bereitgestellt.
 
-- Unter MacOS wird mittels "make package" die AusweisApp2 gebaut und ein DMG bereitgestellt.
+- Unter macOS wird mittels "make package" die AusweisApp2 gebaut und ein DMG bereitgestellt.
 
 - Um ein APK für Android zu bauen, sind zwei Schritte notwendig, da CMake das Format bisher
   nicht unterstützt. Daher sind nach der Konfiguration des Projektes folgende Befehle notwendig
@@ -192,9 +192,9 @@ Tag anbringen
 
 Tag bauen
 ^^^^^^^^^
-Wichtig: Der Jenkins erstellt das Release anhand des Bookmarks "release".
+Wichtig: Jenkins erstellt das Release anhand des Bookmarks "release".
          Die Jobs müssen nach dem Setzen manuell gestartet werden!
-         Nachdem die Jobs für Windows und MacOS durchgelaufen sind, muss
+         Nachdem die Jobs für Windows und macOS durchgelaufen sind, muss
          der Job für den AppCast gestartet werden.
 
 Für einen sauberen Build sollte folgendes Vorgehen angewandt werden.
