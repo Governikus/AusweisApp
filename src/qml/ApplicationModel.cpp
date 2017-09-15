@@ -11,7 +11,7 @@
 #include "ReaderManager.h"
 #include "SingletonHelper.h"
 
-#if defined(Q_OS_LINUX) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+#if (defined(Q_OS_LINUX) && !defined(QT_NO_DEBUG)) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 #include <QBluetoothLocalDevice>
 #endif
 
@@ -127,7 +127,7 @@ QString ApplicationModel::getCurrentWorkflow() const
 
 void ApplicationModel::setBluetoothEnabled(bool pEnabled)
 {
-#if defined(Q_OS_LINUX) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+#if (defined(Q_OS_LINUX) && !defined(QT_NO_DEBUG)) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	if (pEnabled)
 	{
 		QBluetoothLocalDevice localDevice;
