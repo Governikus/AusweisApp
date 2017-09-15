@@ -7,10 +7,10 @@
 #include "UIPlugInWebSocket.h"
 #include "WebSocketHelper.h"
 
+#include <climits>
 #include <QFile>
 #include <QProcess>
 #include <QtTest/QtTest>
-#include <climits>
 
 using namespace governikus;
 

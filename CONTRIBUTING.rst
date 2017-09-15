@@ -47,7 +47,6 @@ Lizenz
 Wir benötigen eine persönliche CLA (contributor license agreement) für
 die eingereichten Änderungen.
 
-Siehe `LICENSE.AusweisApp2.German.txt`_ oder `LICENSE.AusweisApp2.English.txt`_ für Details.
+Siehe `Governikus_CLA.pdf`_ für Details.
 
-.. _`LICENSE.AusweisApp2.German.txt`: LICENSE.AusweisApp2.German.txt
-.. _`LICENSE.AusweisApp2.English.txt`: LICENSE.AusweisApp2.English.txt
+.. _`Governikus_CLA.pdf`: Governikus_CLA.pdf

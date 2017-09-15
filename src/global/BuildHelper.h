@@ -28,6 +28,7 @@ class BuildHelper
 #ifdef Q_OS_ANDROID
 		static int getVersionCode();
 		static int getVersionCode(const QString& pPackageName);
+		static QString getPackageName();
 
 #endif
 

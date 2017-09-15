@@ -6,9 +6,9 @@
  * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
  */
 
+#include "testMacros.h"
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
-#include "testMacros.h"
 
 #include <QSharedPointer>
 #include <QSignalSpy>

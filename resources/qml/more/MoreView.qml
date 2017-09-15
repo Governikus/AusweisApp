@@ -47,7 +47,7 @@ SectionPage {
 					Qt.openUrlExternally("market://details?id=com.governikus.ausweisapp2")
 				}
 				else if (Qt.platform.os === "ios") {
-					Qt.openUrlExternally("itms://itunes.apple.com/de/app/wikipedia-mobile/id324715238?mt=8")
+					Qt.openUrlExternally("https://www.ausweisapp.bund.de/en/questions-and-answers/evaluate-us/")
 				}
 			}
 		}
@@ -55,7 +55,7 @@ SectionPage {
 		MoreViewMenuItem {
 			text: qsTr("Share");
 			imageSource: "qrc:///images/iOS/more/icon_mehr_upload.svg";
-			onClicked: qmlExtension.shareText(qsTr("I'm using Ausweisapp2, download it here for Android: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2&hl=de or here for iOS: https://itunes.apple.com/de/app/wikipedia-mobile/id324715238?mt=8"), qsTr("Share with"))
+			onClicked: qmlExtension.shareText(qsTr("I'm using Ausweisapp2, download it here for Android: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2"), qsTr("Share with"))
 		}
 
 		MoreViewMenuItem {

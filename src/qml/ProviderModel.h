@@ -21,7 +21,7 @@ namespace governikus
 class ProviderModel
 	: public QAbstractListModel
 {
-	friend class::test_ProviderModel;
+	friend class ::test_ProviderModel;
 
 	Q_OBJECT
 

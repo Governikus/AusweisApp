@@ -33,7 +33,10 @@ class ReaderInfo
 	ExtendedLengthApduSupportCode mExtendedLengthApduSupportCode;
 
 	public:
-		ReaderInfo(ReaderManagerPlugInType pPlugInType = ReaderManagerPlugInType::UNKNOWN, const QString& pName = QString(), ReaderType pReaderType = ReaderType::UNKNOWN, const CardInfo& pCardInfo = CardInfo(CardType::NONE));
+		ReaderInfo(ReaderManagerPlugInType pPlugInType = ReaderManagerPlugInType::UNKNOWN,
+				const QString& pName = QString(),
+				ReaderType pReaderType = ReaderType::UNKNOWN,
+				const CardInfo& pCardInfo = CardInfo(CardType::NONE));
 
 		bool isValid() const
 		{
@@ -68,6 +71,12 @@ class ReaderInfo
 		bool isPinDeactivated() const
 		{
 			return mCardInfo.isPinDeactivated();
+		}
+
+
+		bool isPukInoperative() const
+		{
+			return mCardInfo.isPukInoperative();
 		}
 
 

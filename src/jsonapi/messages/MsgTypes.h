@@ -43,6 +43,7 @@ defineEnumType(MsgCmdType,
 		GET_ACCESS_RIGHTS,
 		SET_ACCESS_RIGHTS,
 		SET_PIN,
-		SET_CAN)
+		SET_CAN,
+		SET_PUK)
 
 } /* namespace governikus */

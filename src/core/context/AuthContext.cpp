@@ -4,8 +4,8 @@
 
 #include "AuthContext.h"
 
-#include "AppSettings.h"
 #include "asn1/Chat.h"
+#include "AppSettings.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
 #include <QSignalBlocker>
@@ -266,4 +266,17 @@ void AuthContext::initCvcChainBuilder(const QVector<QSharedPointer<CVCertificate
 	const auto& secureStorage = AppSettings::getInstance().getSecureStorage();
 	mCvcChainBuilderProd = CVCertificateChainBuilder(cvcs + CVCertificate::fromHex(secureStorage.getCVRootCertificates(true)), true);
 	mCvcChainBuilderTest = CVCertificateChainBuilder(cvcs + CVCertificate::fromHex(secureStorage.getCVRootCertificates(false)), false);
+}
+
+
+QString AuthContext::getRequiredAge() const
+{
+	Q_ASSERT(mDIDAuthenticateEAC1);
+	Q_ASSERT(mDIDAuthenticateEAC1->getAuthenticatedAuxiliaryData());
+
+	if (mDIDAuthenticateEAC1 && mDIDAuthenticateEAC1->getAuthenticatedAuxiliaryData())
+	{
+		return mDIDAuthenticateEAC1->getAuthenticatedAuxiliaryData()->getRequiredAge();
+	}
+	return QString();
 }

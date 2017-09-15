@@ -4,8 +4,8 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "DidAuthenticateEac1.h"
 #include "asn1/ASN1Util.h"
+#include "DidAuthenticateEac1.h"
 
 using namespace governikus;
 

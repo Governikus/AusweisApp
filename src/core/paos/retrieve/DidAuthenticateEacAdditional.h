@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "paos/PaosMessage.h"
 #include "paos/element/ConnectionHandle.h"
+#include "paos/PaosMessage.h"
 
 #include <QString>
 

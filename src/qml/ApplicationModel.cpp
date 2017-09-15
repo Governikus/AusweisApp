@@ -4,12 +4,12 @@
 
 #include "ApplicationModel.h"
 
-#include "ReaderInfo.h"
-#include "ReaderManager.h"
-#include "SingletonHelper.h"
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
 #include "context/SelfAuthenticationContext.h"
+#include "ReaderInfo.h"
+#include "ReaderManager.h"
+#include "SingletonHelper.h"
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 #include <QBluetoothLocalDevice>
@@ -132,7 +132,11 @@ void ApplicationModel::setBluetoothEnabled(bool pEnabled)
 	{
 		QBluetoothLocalDevice localDevice;
 		localDevice.powerOn();
-		qDebug() << "Bluetooth" << (pEnabled ? "Enabled" : "Disabled");
+		qDebug() << "Bluetooth enabled";
+	}
+	else
+	{
+		qWarning() << "Cannot disable Bluetooth: not supported";
 	}
 #else
 	qWarning() << (pEnabled ? "Enabling" : "Disabling") << "Bluetooth not supported on this platform";

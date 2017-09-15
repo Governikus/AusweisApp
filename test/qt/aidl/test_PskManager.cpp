@@ -38,20 +38,6 @@ class test_PskManager
 		}
 
 
-		void generatePskWithClientPartial()
-		{
-			QByteArray prev("0xABCDEF");
-			for (int i = 0; i < 100; ++i)
-			{
-				const auto& tmp = PskManager::getInstance().generatePsk(prev);
-				QVERIFY(prev != tmp);
-				QCOMPARE(tmp, PskManager::getInstance().getPsk());
-				QVERIFY(PskManager::getInstance().isSecureRandomPsk());
-				prev = tmp;
-			}
-		}
-
-
 };
 
 QTEST_GUILESS_MAIN(test_PskManager)

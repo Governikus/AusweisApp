@@ -1,8 +1,8 @@
 #include "ReaderDriverWidget.h"
 
 #include "DriverSettings.h"
-#include "ReaderManager.h"
 #include "generic/SmartCardUtil.h"
+#include "ReaderManager.h"
 #include "ui_ReaderDriverWidget.h"
 
 #include <QLoggingCategory>

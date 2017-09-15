@@ -20,6 +20,35 @@ Also this documentation provides some example workflows to
 show a possible communication.
 
 
+.. important::
+   The AusweisApp2 does **not** provide any personal data to
+   your client application directly as AusweisApp2 does not
+   have access to this data for security reasons.
+   AusweisApp2 facilitates a secure connection between the
+   eID server and the ID card, enabling the eID server to get
+   those data from the card.
+
+   This way your backend receives high level trust data.
+   Since your client application runs in a user's environment,
+   you could not be sure about the integrity of the data
+   if your client application were to receive high sensitive
+   data from the AusweisApp2 directly as your backend does
+   not have any possibility to verify the source of the data.
+
+   Also this approach, recommended for compliance reasons by the
+   Federal Office for Information Security, spares your client
+   application the necessity of encypting these high sensitive
+   data.
+
+   In case your client application requires data input from the
+   ID card, you need to get this from the backend system
+   (e.g. the eID server) after a succesfull authentication.
+
+
+   .. seealso::
+     `TR-03124`_, part 1: Specifications
+
+   .. _TR-03124: https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/TechnischeRichtlinien/TR03124/TR-03124-1.pdf
 
 
 Recommended

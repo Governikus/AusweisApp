@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <QByteArray>
 #include <openssl/cmac.h>
+#include <QByteArray>
 
 namespace governikus
 {

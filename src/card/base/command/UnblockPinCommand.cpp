@@ -50,6 +50,7 @@ void UnblockPinCommand::internalExecute()
 	mReturnCode = mCardConnectionWorker->transmit(ResetRetryCounterBuilder().build(), response);
 	if (mReturnCode == CardReturnCode::OK && response.getSW1() == Enum<SW1>::getValue(SW1::ERROR_COMMAND_NOT_ALLOWED))
 	{
+		mCardConnectionWorker->setPukInoperative();
 		mReturnCode = CardReturnCode::PUK_INOPERATIVE;
 	}
 }

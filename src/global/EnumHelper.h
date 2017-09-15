@@ -24,18 +24,18 @@ namespace governikus
 		return pDbg.noquote() << Enum<enumName>::getName(pType);\
 	}\
 \
-	inline QString& operator+=(QString& pStr, enumName pType)\
+	inline QString& operator+=(QString & pStr, enumName pType)\
 	{\
 		pStr += Enum<enumName>::getName(pType);\
 		return pStr;\
 	}\
 \
-	inline QString operator+(const QString& pStr, enumName pType)\
+	inline QString operator+(const QString &pStr, enumName pType)\
 	{\
 		return pStr + Enum<enumName>::getName(pType);\
 	}\
 \
-	inline QString operator+(enumName pType, const QString& pStr)\
+	inline QString operator+(enumName pType, const QString &pStr)\
 	{\
 		return Enum<enumName>::getName(pType) + pStr;\
 	}\

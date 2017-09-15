@@ -10,6 +10,7 @@
 #include "view/UIPlugIn.h"
 
 #include <QAtomicPointer>
+#include <QMutex>
 
 namespace governikus
 {
@@ -24,6 +25,7 @@ class UIPlugInAidl
 	private:
 		UIPlugInJsonApi* mJsonApi;
 		QSharedPointer<WorkflowContext> mContext;
+		QMutex mWorkflowIsActive;
 
 		static QAtomicPointer<UIPlugInAidl> instance;
 		bool mInitializationSuccessfull;
@@ -35,6 +37,7 @@ class UIPlugInAidl
 		static UIPlugInAidl* getInstance(bool pBlock = true);
 		bool isSuccessfullInitialized();
 		Q_INVOKABLE void onReceived(const QByteArray& pMessage);
+		bool waitForWorkflowToFinish();
 
 	private Q_SLOTS:
 		void reset();

@@ -31,7 +31,7 @@ class AppSettings
 	: public AbstractSettings
 {
 	Q_OBJECT
-	friend class::test_AppSettings;
+	friend class ::test_AppSettings;
 	friend bool operator==(const AppSettings& pLeft, const AppSettings& pRight);
 
 	private:

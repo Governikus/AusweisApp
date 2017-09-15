@@ -17,9 +17,9 @@
 #include <QThread>
 
 #ifdef Q_OS_ANDROID
+#include <jni.h>
 #include <QtAndroidExtras/QAndroidJniEnvironment>
 #include <QtAndroidExtras/QtAndroid>
-#include <jni.h>
 #endif
 
 
@@ -34,6 +34,7 @@ UIPlugInAidl::UIPlugInAidl()
 	: UIPlugIn()
 	, mJsonApi(nullptr)
 	, mContext()
+	, mWorkflowIsActive()
 	, mInitializationSuccessfull(false)
 {
 	if (UILoader::getInstance().load(UIPlugInName::UIPlugInJsonApi))
@@ -82,6 +83,7 @@ bool UIPlugInAidl::isSuccessfullInitialized()
 
 void UIPlugInAidl::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 {
+	mWorkflowIsActive.lock();
 	mContext = pContext;
 }
 
@@ -91,6 +93,8 @@ void UIPlugInAidl::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 	Q_UNUSED(pContext);
 
 	mContext.clear();
+	mJsonApi->blockSignals(false);
+	mWorkflowIsActive.unlock();
 }
 
 
@@ -100,11 +104,23 @@ void UIPlugInAidl::onReceived(const QByteArray& pMessage)
 }
 
 
+bool UIPlugInAidl::waitForWorkflowToFinish()
+{
+	const int fiveSeconds = 5000;
+	bool success = mWorkflowIsActive.tryLock(fiveSeconds);
+	if (success)
+	{
+		mWorkflowIsActive.unlock();
+	}
+	return success;
+}
+
+
 void UIPlugInAidl::reset()
 {
 	if (mContext)
 	{
-		const QSignalBlocker blocker(mJsonApi);
+		mJsonApi->blockSignals(true);
 		Q_EMIT mContext->fireCancelWorkflow();
 	}
 }
@@ -136,25 +152,24 @@ extern "C"
 // These functions need to be explicitly exported so that the JVM can bind to them.
 // At the moment only the Q_Plugins seem to be appropriate locations.
 
-JNIEXPORT jstring JNICALL Java_com_governikus_ausweisapp2_AidlBinder_resetValidSessionID(JNIEnv* pEnv, jobject pObj, jstring pClientPartialPsk)
+JNIEXPORT jstring JNICALL Java_com_governikus_ausweisapp2_AidlBinder_resetValidSessionID(JNIEnv* pEnv, jobject pObj)
 {
 	Q_UNUSED(pObj);
-
-	const char* nativeString = pEnv->GetStringUTFChars(pClientPartialPsk, 0);
-	const auto& clientPartialPsk = QByteArray(nativeString);
-	pEnv->ReleaseStringUTFChars(pClientPartialPsk, nativeString);
-
 
 	UIPlugInAidl* plugin = UIPlugInAidl::getInstance();
 	if (!plugin->isSuccessfullInitialized())
 	{
-		qCritical(aidl) << "Cannot call AIDL plugin";
-		return pEnv->NewStringUTF(QString().toUtf8().constData());
+		qCCritical(aidl) << "Cannot call AIDL plugin";
+		return pEnv->NewStringUTF("");
 	}
-	QMetaObject::invokeMethod(plugin, "reset", Qt::BlockingQueuedConnection);
+	QMetaObject::invokeMethod(plugin, "reset", Qt::QueuedConnection);
+	if (!plugin->waitForWorkflowToFinish())
+	{
+		qCCritical(aidl) << "Cannot acquire workflow mutex";
+		return pEnv->NewStringUTF("");
+	}
 
-
-	const auto& finalPsk = PskManager::getInstance().generatePsk(clientPartialPsk);
+	const auto& finalPsk = PskManager::getInstance().generatePsk();
 	return pEnv->NewStringUTF(finalPsk.constData());
 }
 

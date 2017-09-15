@@ -5,11 +5,11 @@
  */
 #include "BluetoothCard.h"
 #include "DestroyPACEChannel.h"
-#include "SynchronousBtCall.h"
 #include "messages/BluetoothMessageCreator.h"
 #include "messages/BluetoothMessageDisconnectResponse.h"
 #include "messages/BluetoothMessageSetTransportProtocolResponse.h"
 #include "messages/BluetoothMessageTransferApduResponse.h"
+#include "SynchronousBtCall.h"
 
 
 #include <QLoggingCategory>

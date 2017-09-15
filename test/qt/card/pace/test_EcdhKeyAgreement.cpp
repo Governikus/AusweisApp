@@ -8,9 +8,9 @@
 
 #include "pace/ec/EcdhKeyAgreement.h"
 
+#include "asn1/PACEInfo.h"
 #include "MockReader.h"
 #include "TestFileHelper.h"
-#include "asn1/PACEInfo.h"
 
 #include <QtCore>
 #include <QtTest>

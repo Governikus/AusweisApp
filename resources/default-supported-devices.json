@@ -18,7 +18,7 @@
 					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/pcsc-cyberjack_3.99.5final.SP07-universal-signed.pkg"
 				},
 				{
-					"Platforms": ["MV_10_11"],
+					"Platforms": ["MV_10_11", "MV_10_12"],
 					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/01_pcsc-cyberjack_3.99.5final.SP08-universal-osx10.11-signed.pkg"
 				},
 				{
@@ -44,7 +44,7 @@
 					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/pcsc-cyberjack_3.99.5final.SP07-universal-signed.pkg"
 				},
 				{
-					"Platforms": ["MV_10_11"],
+					"Platforms": ["MV_10_11", "MV_10_12"],
 					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/01_pcsc-cyberjack_3.99.5final.SP08-universal-osx10.11-signed.pkg"
 				},
 				{
@@ -66,7 +66,7 @@
 					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/01_cJRFIDbasisIFD.exe"
 				},
 				{
-					"Platforms": ["MV_10_9", "MV_10_10", "MV_10_11"],
+					"Platforms": ["MV_10_9", "MV_10_10", "MV_10_11", "MV_10_12"],
 					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/ifd-ccid-1.4.8-universal-signed.pkg"
 				},
 				{
@@ -88,7 +88,7 @@
 					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/SDI011_win_installer_V1.01.zip"
 				},
 				{
-					"Platforms": ["MV_10_9", "MV_10_10", "MV_10_11"],
+					"Platforms": ["MV_10_9", "MV_10_10", "MV_10_11", "MV_10_12"],
 					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/SDI011_mac_V5.0.18.zip"
 				},
 				{
@@ -110,7 +110,7 @@
 					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/SCL011_win_installer_V1.01.zip"
 				},
 				{
-					"Platforms": ["MV_10_9", "MV_10_10", "MV_10_11"],
+					"Platforms": ["MV_10_9", "MV_10_10", "MV_10_11", "MV_10_12"],
 					"URL": "https://appl.governikus-asp.de/ausweisapp2/driver/SCL011_V2.09_mac.zip"
 				},
 				{

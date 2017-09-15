@@ -1,16 +1,16 @@
-#include "CommandLineParser.h"
-#include "MetaTypeRegister.h"
-#include "SignalHandler.h"
 #include "controller/AppController.h"
 #include "core/DeviceInfo.h"
+#include "CommandLineParser.h"
 #include "global/BuildHelper.h"
 #include "global/LogHandler.h"
+#include "MetaTypeRegister.h"
+#include "SignalHandler.h"
 
 #include <QLoggingCategory>
 #include <QSslSocket>
 #include <QSysInfo>
-#include <QThread>
 #include <QtPlugin>
+#include <QThread>
 
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || defined(Q_OS_WINRT)
 #include <QGuiApplication>
@@ -40,7 +40,7 @@ Q_IMPORT_PLUGIN(IntentActivationHandler)
 Q_IMPORT_PLUGIN(CustomSchemeActivationHandler)
 #endif
 
-#if defined(Q_OS_ANDROID) || defined(Q_OS_LINUX) || defined(Q_OS_IOS)
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || (defined(Q_OS_LINUX) && !defined(QT_NO_DEBUG))
 Q_IMPORT_PLUGIN(BluetoothReaderManagerPlugIn)
 #endif
 

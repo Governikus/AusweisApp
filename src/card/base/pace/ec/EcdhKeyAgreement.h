@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include "CardConnectionWorker.h"
 #include "asn1/SecurityInfo.h"
+#include "CardConnectionWorker.h"
 #include "pace/DomainParameterMapping.h"
 #include "pace/KeyAgreement.h"
 
-#include <QSharedPointer>
 #include <openssl/ec.h>
+#include <QSharedPointer>
 
 class test_EcdhKeyAgreement;
 
@@ -21,7 +21,7 @@ class EcdhKeyAgreement
 	: public KeyAgreement
 {
 	private:
-		friend class::test_EcdhKeyAgreement;
+		friend class ::test_EcdhKeyAgreement;
 
 		QSharedPointer<DomainParameterMapping<EC_GROUP> > mMapping;
 		QSharedPointer<EC_GROUP> mEphemeralCurve;

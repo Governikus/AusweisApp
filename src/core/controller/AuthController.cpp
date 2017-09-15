@@ -31,8 +31,8 @@
 #include "states/StateUpdateRetryCounter.h"
 #include "states/StateWriteHistory.h"
 
-#include <QDebug>
 #include <initializer_list>
+#include <QDebug>
 
 
 using namespace governikus;
@@ -135,6 +135,7 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 
 	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireSuccess, sEstablishPacePin);
 	sEstablishPacePuk->addTransition(sEstablishPacePuk, &StateEstablishPacePuk::fireInvalidPuk, sUpdateRetryCounter);
+	sEstablishPacePuk->addTransition(sEstablishPacePuk, &StateEstablishPacePuk::fireInoperativePuk, sUpdateRetryCounter);
 	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireError, sSendDidAuthenticateResponseEac1);
 	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireCancel, sSendDidAuthenticateResponseEac1);
 

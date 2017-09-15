@@ -21,8 +21,8 @@ namespace governikus
 class LanguageLoader
 {
 	private:
-		friend class::test_LanguageLoader;
-		friend class::test_ProviderParser;
+		friend class ::test_LanguageLoader;
+		friend class ::test_ProviderParser;
 		static const QLocale::Language mFallbackLanguage;
 		static QLocale mDefaultLanguage;
 

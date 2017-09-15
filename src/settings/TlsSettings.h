@@ -50,7 +50,7 @@ class SslEllipticCurveVector
 class TlsSettings final
 {
 	friend class SecureStorage;
-	friend class::test_TlsSettings;
+	friend class ::test_TlsSettings;
 	friend bool operator==(const TlsSettings& pLeft, const TlsSettings& pRight);
 
 	private:

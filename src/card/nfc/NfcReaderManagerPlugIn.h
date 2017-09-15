@@ -32,7 +32,7 @@ class NfcReaderManagerPlugIn
 	Q_INTERFACES(governikus::ReaderManagerPlugIn)
 
 #ifdef Q_OS_ANDROID
-	friend void::Java_com_governikus_ausweisapp2_NfcAdapterStateChangeReceiver_nfcAdapterStateChanged(JNIEnv * env, jobject obj, jint newState);
+	friend void ::Java_com_governikus_ausweisapp2_NfcAdapterStateChangeReceiver_nfcAdapterStateChanged(JNIEnv * env, jobject obj, jint newState);
 #endif
 
 	private:

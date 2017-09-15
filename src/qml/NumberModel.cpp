@@ -4,9 +4,9 @@
 
 #include "NumberModel.h"
 
-#include "ReaderManager.h"
 #include "context/ChangePinContext.h"
 #include "context/WorkflowContext.h"
+#include "ReaderManager.h"
 
 
 using namespace governikus;

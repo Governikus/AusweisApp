@@ -4,8 +4,8 @@
 
 #include "UpdateWindow.h"
 
-#include "Updater.h"
 #include "ui_UpdateWindow.h"
+#include "Updater.h"
 
 #include <QApplication>
 #include <QDesktopServices>

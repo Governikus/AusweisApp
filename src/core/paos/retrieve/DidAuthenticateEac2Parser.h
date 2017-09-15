@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "paos/PaosMessage.h"
 #include "paos/element/Eac2InputType.h"
+#include "paos/PaosMessage.h"
 #include "paos/retrieve/DidAuthenticateEac2.h"
 #include "paos/retrieve/PaosParser.h"
 

@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "DiagnosisWidget.h"
 #include "context/DiagnosisContext.h"
+#include "DiagnosisWidget.h"
 
 #include <QDialog>
 #include <QScopedPointer>

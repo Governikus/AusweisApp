@@ -4,10 +4,10 @@
 
 #include "StatePreVerification.h"
 
-#include "AppSettings.h"
-#include "EnumHelper.h"
 #include "asn1/CVCertificateChainBuilder.h"
 #include "asn1/SignatureChecker.h"
+#include "AppSettings.h"
+#include "EnumHelper.h"
 
 #include <QVector>
 

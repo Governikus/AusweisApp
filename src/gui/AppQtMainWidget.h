@@ -13,9 +13,9 @@
 #include <QSettings>
 #include <QTableWidgetItem>
 
-#include "LogFilesDialog.h"
 #include "context/ChangePinContext.h"
 #include "generic/GuiModule.h"
+#include "LogFilesDialog.h"
 #include "workflow/WorkflowWidgetParent.h"
 
 namespace Ui

@@ -17,11 +17,14 @@ const VersionNumber &VersionNumber::getApplicationVersion()
 }
 
 VersionNumber::VersionNumber(const QString& pVersion)
-	: mOriginalVersion(pVersion)
-	, mSuffixIndex()
-	, mVersionNumber(QVersionNumber::fromString(pVersion, &mSuffixIndex))
-	, mSuffix(mOriginalVersion.mid(mSuffixIndex).trimmed())
+	: mVersionNumber()
+	, mSuffix()
 {
+	// do not initialize idx, otherwise you will trap into
+	// a gcc bug: https://bugs.alpinelinux.org/issues/7584
+	int idx;
+	mVersionNumber = QVersionNumber::fromString(pVersion, &idx);
+	mSuffix = pVersion.mid(idx).trimmed();
 }
 
 
@@ -33,7 +36,7 @@ const QVersionNumber& VersionNumber::getVersionNumber() const
 
 bool VersionNumber::isDeveloperVersion() const
 {
-	return (mVersionNumber.minorVersion() & 1) || !mSuffix.isEmpty();
+	return mVersionNumber.isNull() || (mVersionNumber.minorVersion() & 1) || !mSuffix.isEmpty();
 }
 
 

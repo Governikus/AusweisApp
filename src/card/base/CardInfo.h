@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "SmartCardDefinitions.h"
 #include "asn1/SecurityInfos.h"
+#include "SmartCardDefinitions.h"
 
 #include <QSharedPointer>
 
@@ -31,9 +31,11 @@ class CardInfo
 	QSharedPointer<const EFCardAccess> mEfCardAccess;
 	int mRetryCounter;
 	bool mPinDeactivated;
+	bool mPukInoperative;
 
 	public:
-		CardInfo(CardType pCardType, QSharedPointer<const EFCardAccess> = QSharedPointer<const EFCardAccess>(), int pRetryCounter = -1, bool pPinDeactivated = false);
+		CardInfo(CardType pCardType, QSharedPointer<const EFCardAccess> = QSharedPointer<const EFCardAccess>(),
+				int pRetryCounter = -1, bool pPinDeactivated = false, bool pPukInoperative = false);
 
 		CardType getCardType() const;
 
@@ -47,6 +49,11 @@ class CardInfo
 		 * The online identification function has not been activated by the competent authority.
 		 */
 		bool isPinDeactivated() const;
+
+		/*!
+		 * The PUK is inoperative. User is not able to unblock the PIN anymore.
+		 */
+		bool isPukInoperative() const;
 
 		friend class Reader;
 };

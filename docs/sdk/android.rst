@@ -61,9 +61,9 @@ to send JSON commands to the SDK and to pass discovered NFC tags to the SDK.
 
 The second AIDL interface is given to the SDK by the client application. It
 enables the client to receive the intial session parameters as well as
-JSON messages
-from the SDK. Both interfaces are listed below and you need to import them into
-your build environment.
+JSON messages from the SDK. Furthermore it has a function which is called
+when an existing connection with the SDK is dropped by the SDK. Both interfaces
+are listed below and you need to import them into your build environment.
 
 .. seealso::
 
@@ -101,6 +101,7 @@ Callback
   {
       void sessionIdGenerated(String pSessionId, boolean pIsSecureSessionId);
       void receive(String pJson);
+      void sdkDisconnected();
   }
 
 
@@ -124,7 +125,7 @@ fingerprint of the authentic SDK certificate is the following:
 
 .. code-block:: text
 
-  B0:2A:C7:6B:50:A4:97:AE:81:0A:EA:C2:25:98:18:7B:3D:42:90:27:7D:08:51:A7:FA:8E:1A:EA:5A:97:98:70
+  B0 2A C7 6B 50 A4 97 AE 81 0A EA C2 25 98 18 7B 3D 42 90 27 7D 08 51 A7 FA 8E 1A EA 5A 97 98 70
 
 
 
@@ -187,15 +188,17 @@ To differentiate between different connected clients, virtual sessions are used
 once the binding is completed. These sessions are discussed in a separate
 section, section :ref:`android_create_session`.
 
+.. seealso::
+  :ref:`android_disconnect_sdk`
+
 
 
 Create connection
 ^^^^^^^^^^^^^^^^^
-First of all, in order to bind to the service, one needs to instantiate an
-Android ServiceConnection.
-Subsequently, the object is passed to the Android API and the contained
-methods are invoked
-by Android on service connection and disconnection.
+First of all, in order to bind to the service, one needs to instantiate
+an Android ServiceConnection. Subsequently, the object is passed to the
+Android API and the contained methods are invoked by Android on service
+connection and disconnection.
 
 
 .. code-block:: java
@@ -223,13 +226,12 @@ by Android on service connection and disconnection.
 
 Bind service to raw connection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-In order to perform the actual binding a directed Intent, which identifies
-the AusweisApp2 SDK, is created.
-This Intent is send to
-the Android API along with the ServiceConnection created above.
+In order to perform the actual binding a directed Intent, which
+identifies the AusweisApp2 SDK, is created. This Intent is send
+to the Android API along with the ServiceConnection created above.
 This API call either starts up the SDK if it is the first client,
-or connects to the running SDK instance
-if there is already another client bound.
+or connects to the running SDK instance if there is already
+another client bound.
 
 
 .. code-block:: java
@@ -355,10 +357,16 @@ connected clients. There is a maximum of one established session at a time.
 In order to open a session with the SDK you need to pass an
 instance of **IAusweisApp2SdkCallback** to the **connectSdk** function of your
 previously acquired instance of **IAusweisApp2Sdk**. If your callback is accepted,
-the function returns true. Otherwise there is another session connected.
+the function returns true. Otherwise there is a problem with your supplied callback.
 Sessions will be disconnected once the IBinder instance of the connected client is
-invalidated or another communication error occurs. Please see
+invalidated, another communication error occurs or another Client connects. Please see
 :ref:`android_disconnect_sdk` for instructions to gracefully disconnect from the SDK.
+
+As mentioned above: If there already is a connected client and a second client attempts
+to connect, the first client is disconnected and the second client is granted exclusive
+access to the SDK. The first client is informed via its callback by **sdkDisconnected**.
+The second client is presented a fresh environment and it has no access to any data of
+the first client.
 
 If you have successfully established a session, the **sessionIdGenerated** function
 of your callback is invoked. With this invocation you receive two arguments.
@@ -464,15 +472,14 @@ The **receive** method is called each time the SDK sends a message.
   :ref:`android_create_session`
 
 
+
 .. _android_disconnect_sdk:
 
 Disconnect from SDK
 -------------------
 In order to disconnect from the AusweisApp2 SDK you need to invalidate your
-instance of **IBinder**. There are two possibilities to do this. The first
-one is to unbind from the SDK Android service to undo your binding, like
-shown in the code listing below. The second one is to return false in the
-**pingBinder** function of your IBinder instance.
+instance of **IBinder**. You can unbind from the SDK Android service to undo
+your binding, like shown in the code listing below.
 
 .. code-block:: java
 
@@ -663,7 +670,10 @@ are shown in code listing below.
     }
   }
 
-  // [...]
+
+This class must now be added to the activity:
+
+.. code-block:: java
 
   ForegroundDispatcher mDispatcher = new ForegroundDispatcher(this);
 

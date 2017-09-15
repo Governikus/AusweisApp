@@ -6,8 +6,8 @@
 
 #include "paos/invoke/DidAuthenticateResponseEac1.h"
 
-#include "TestFileHelper.h"
 #include "asn1/CVCertificate.h"
+#include "TestFileHelper.h"
 
 #include <QtTest>
 

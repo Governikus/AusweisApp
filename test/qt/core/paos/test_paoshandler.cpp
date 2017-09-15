@@ -7,8 +7,8 @@
 #include <QtCore/QtCore>
 #include <QtTest/QtTest>
 
-#include "TestFileHelper.h"
 #include "paos/PaosHandler.h"
+#include "TestFileHelper.h"
 
 
 using namespace governikus;

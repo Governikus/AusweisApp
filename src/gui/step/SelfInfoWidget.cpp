@@ -6,11 +6,11 @@
 
 #include "SelfInfoWidget.h"
 
-#include "PdfCreator.h"
-#include "SelfAuthenticationData.h"
 #include "generic/ListItem.h"
 #include "generic/ListItemSubTitle.h"
 #include "generic/ListItemTitle.h"
+#include "PdfCreator.h"
+#include "SelfAuthenticationData.h"
 #include "ui_SelfInfoWidget.h"
 
 #include <QDateTime>

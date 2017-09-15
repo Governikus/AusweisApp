@@ -10,8 +10,8 @@
 #include "MockReaderManagerPlugIn.h"
 #include "ReaderManager.h"
 
-#include <QTest>
 #include <QtPlugin>
+#include <QTest>
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
@@ -136,9 +136,9 @@ class test_MsgHandlerEnterCan
 
 
 			context->setReaderName("MockReader CARD");
-			QCOMPARE(dispatcher.processStateChange("StateEstablishPaceCan"), QByteArray("{\"msg\":\"ENTER_CAN\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
+			QCOMPARE(dispatcher.processStateChange("StateEstablishPaceCan"), QByteArray("{\"msg\":\"ENTER_CAN\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
 			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"54321\"}";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_CAN\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_CAN\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
 		}
 
 

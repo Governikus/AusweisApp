@@ -6,8 +6,8 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "TestFileHelper.h"
 #include "paos/retrieve/StartPaosResponse.h"
+#include "TestFileHelper.h"
 
 #include <QtCore/QtCore>
 #include <QtTest/QtTest>

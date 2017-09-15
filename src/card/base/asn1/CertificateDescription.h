@@ -40,9 +40,7 @@ namespace governikus
  *      redirectURL            [0x06] PrintableString OPTIONAL,
  *      commCertificates       [0x07] SET OF OCTET STRING OPTIONAL
  * }
- * \brief The CertificateDescription class
  */
-
 struct CertificateDescription
 {
 	Q_DECLARE_TR_FUNCTIONS(CertificateDescription)

@@ -2,14 +2,14 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "TestFileHelper.h"
 #include "controller/AuthController.h"
 #include "states/StateBuilder.h"
 #include "states/StateInitializeFramework.h"
+#include "TestFileHelper.h"
 
-#include <QThread>
 #include <QtCore/QtCore>
 #include <QtTest/QtTest>
+#include <QThread>
 
 
 using namespace governikus;

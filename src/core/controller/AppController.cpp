@@ -5,6 +5,13 @@
  */
 
 #include "AppSettings.h"
+#include "context/AuthContext.h"
+#include "context/ChangePinContext.h"
+#include "context/SelfAuthenticationContext.h"
+#include "controller/AppController.h"
+#include "controller/AuthController.h"
+#include "controller/ChangePinController.h"
+#include "controller/SelfAuthController.h"
 #include "DriverService.h"
 #include "HttpServerRequestor.h"
 #include "HttpServerStatusParser.h"
@@ -14,13 +21,6 @@
 #include "ProviderService.h"
 #include "ReaderManager.h"
 #include "ResourceLoader.h"
-#include "context/AuthContext.h"
-#include "context/ChangePinContext.h"
-#include "context/SelfAuthenticationContext.h"
-#include "controller/AppController.h"
-#include "controller/AuthController.h"
-#include "controller/ChangePinController.h"
-#include "controller/SelfAuthController.h"
 #include "view/UILoader.h"
 
 #include <QCoreApplication>

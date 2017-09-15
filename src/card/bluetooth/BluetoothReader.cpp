@@ -8,11 +8,11 @@
 #include "BluetoothDebug.h"
 #include "BluetoothReader.h"
 #include "DeviceError.h"
-#include "SynchronousBtCall.h"
 #include "messages/BluetoothMessageCreator.h"
 #include "messages/BluetoothMessageParser.h"
 #include "messages/BluetoothMessageSetTransportProtocolResponse.h"
 #include "messages/BluetoothMessageStatusInd.h"
+#include "SynchronousBtCall.h"
 
 #include <QDebug>
 #include <QLoggingCategory>

@@ -12,8 +12,8 @@
 #include <QPainter>
 #include <QStringBuilder>
 #include <QSvgRenderer>
-#include <QTextDocument>
 #include <QtPrintSupport/QPrinter>
+#include <QTextDocument>
 
 
 using namespace governikus;

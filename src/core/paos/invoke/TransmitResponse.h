@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "PaosCreator.h"
 #include "paos/ResponseType.h"
+#include "PaosCreator.h"
 
 class test_TransmitResponse;
 
@@ -18,7 +18,7 @@ class TransmitResponse
 	: public PaosCreator
 	, public ResponseType
 {
-	friend class::test_TransmitResponse;
+	friend class ::test_TransmitResponse;
 
 	private:
 		QByteArrayList mOutputApdus;

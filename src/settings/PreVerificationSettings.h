@@ -22,8 +22,8 @@ class PreVerificationSettings
 	Q_OBJECT
 
 	friend class AppSettings;
-	friend class::test_PreVerificationSettings;
-	friend class::test_StatePreVerification;
+	friend class ::test_PreVerificationSettings;
+	friend class ::test_StatePreVerification;
 
 	private:
 		QByteArrayList mLinkCertificates;

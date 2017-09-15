@@ -22,7 +22,7 @@ class LogHandler
 	: public QObject
 {
 	Q_OBJECT
-	friend class::test_LogHandler;
+	friend class ::test_LogHandler;
 
 	private:
 		const bool mEnvPattern;

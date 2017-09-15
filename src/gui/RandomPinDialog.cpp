@@ -7,12 +7,12 @@
 #include "RandomPinDialog.h"
 #include "ui_RandomPinDialog.h"
 
+#include "generic/HelpAction.h"
 #include "Randomizer.h"
 #include "ReaderManager.h"
-#include "generic/HelpAction.h"
 
-#include <QCloseEvent>
 #include <algorithm>
+#include <QCloseEvent>
 
 using namespace governikus;
 

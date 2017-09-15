@@ -4,10 +4,10 @@
  * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
  */
 
+#include "messages/MsgHandlerReader.h"
 #include "MessageDispatcher.h"
 #include "MockReaderManagerPlugIn.h"
 #include "ReaderManager.h"
-#include "messages/MsgHandlerReader.h"
 
 #include <QtTest>
 
@@ -59,7 +59,7 @@ class test_MsgHandlerReaderList
 
 			MessageDispatcher dispatcher;
 			QByteArray msg("{\"cmd\": \"GET_READER_LIST\"}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"READER_LIST\",\"reader\":[{\"attached\":true,\"card\":{\"deactivated\":false,\"retryCounter\":-1},\"name\":\"MockReader 0815\"}]}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"READER_LIST\",\"reader\":[{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"name\":\"MockReader 0815\"}]}"));
 		}
 
 
@@ -86,11 +86,11 @@ class test_MsgHandlerReaderList
 			QByteArray msg("{\"cmd\": \"GET_READER_LIST\"}");
 
 			QByteArray expected("{\"msg\":\"READER_LIST\",\"reader\":["
-								"{\"attached\":true,\"card\":{\"deactivated\":false,\"retryCounter\":-1},\"name\":\"MockReader 0815\"},"
-								"{\"attached\":true,\"card\":{\"deactivated\":false,\"retryCounter\":-1},\"name\":\"ReaderMock\"},"
+								"{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"name\":\"MockReader 0815\"},"
+								"{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"name\":\"ReaderMock\"},"
 								"{\"attached\":true,\"card\":null,\"name\":\"ReaderMockXYZ\"},"
 								"{\"attached\":true,\"card\":null,\"name\":\"SpecialMock\"},"
-								"{\"attached\":true,\"card\":{\"deactivated\":true,\"retryCounter\":3},\"name\":\"SpecialMockWithGermanCard\"}"
+								"{\"attached\":true,\"card\":{\"deactivated\":true,\"inoperative\":false,\"retryCounter\":3},\"name\":\"SpecialMockWithGermanCard\"}"
 								"]}");
 
 			QCOMPARE(dispatcher.processCommand(msg), expected);

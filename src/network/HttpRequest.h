@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "HttpResponse.h"
 #include "http_parser/http_parser.h"
+#include "HttpResponse.h"
 
 #include <QAbstractSocket>
 #include <QByteArray>
@@ -27,7 +27,7 @@ class HttpRequest
 	Q_OBJECT
 
 	private:
-		friend class::test_WebserviceActivationHandler;
+		friend class ::test_WebserviceActivationHandler;
 
 		static int onMessageBegin(http_parser* pParser);
 		static int onMessageComplete(http_parser* pParser);

@@ -42,7 +42,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'AusweisApp2'
-copyright = '2016, Governikus GmbH & Co. KG'
+copyright = '2016-2017, Governikus GmbH & Co. KG'
 author = 'Governikus GmbH & Co. KG'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -145,7 +145,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'AusweisApp2_ReleaseNotes.tex', 'AusweisApp2 Release Notes',
+  (master_doc, 'AusweisApp2-@VERSION_DVCS@-ReleaseNotes.tex', 'AusweisApp2 Release Notes',
    'Governikus GmbH \& Co. KG', 'howto'),
 ]
 

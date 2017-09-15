@@ -6,6 +6,7 @@
 
 #include "AccessRoleAndRight.h"
 
+#include <QDebug>
 
 using namespace governikus;
 
@@ -208,4 +209,30 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 		default:
 			return tr("Unknown");
 	}
+}
+
+
+QLatin1String AccessRoleAndRightsUtil::toTechnicalName(AccessRight pRight)
+{
+	const auto name = getEnumName(static_cast<AccessRightNames>(pRight));
+	if (!name.size())
+	{
+		qCritical() << "Requested AccessRight without mapping:" << pRight;
+	}
+	return name;
+}
+
+
+bool AccessRoleAndRightsUtil::fromTechnicalName(const char* pStr, const std::function<void(AccessRight)>& pFunc)
+{
+	const AccessRightNames undefined = static_cast<AccessRightNames>(UINT_MAX);
+
+	auto entry = Enum<AccessRightNames>::fromString(pStr, undefined);
+	if (entry != undefined)
+	{
+		Q_ASSERT(Enum<AccessRight>::isValue(static_cast<int>(entry)));
+		pFunc(static_cast<AccessRight>(entry));
+		return true;
+	}
+	return false;
 }

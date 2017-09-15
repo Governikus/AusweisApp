@@ -7,8 +7,8 @@
 #pragma once
 
 #include "EstablishPACEChannel.h"
-#include "PaosCreator.h"
 #include "paos/ResponseType.h"
+#include "PaosCreator.h"
 
 #include <QByteArrayList>
 #include <QString>

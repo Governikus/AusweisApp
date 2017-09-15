@@ -1,22 +1,17 @@
 /*!
- * PskManager.h
- *
  * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
  */
 
 #pragma once
 
-
 #include <QByteArray>
 #include <QMutex>
-
 
 namespace governikus
 {
 
 class PskManager
 {
-
 	private:
 		QByteArray mPsk;
 		bool mSecureRandomPsk;
@@ -24,7 +19,9 @@ class PskManager
 
 	public:
 		static PskManager& getInstance();
-		QByteArray generatePsk(const QByteArray& pClientPartialPsk = QByteArray());
+
+		PskManager();
+		QByteArray generatePsk();
 		QByteArray getPsk();
 		bool isSecureRandomPsk();
 };

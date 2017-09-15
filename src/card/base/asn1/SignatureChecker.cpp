@@ -5,9 +5,9 @@
 #include "asn1/SignatureChecker.h"
 #include "pace/ec/EcUtil.h"
 
-#include <QLoggingCategory>
 #include <openssl/ecdsa.h>
 #include <openssl/err.h>
+#include <QLoggingCategory>
 
 using namespace governikus;
 

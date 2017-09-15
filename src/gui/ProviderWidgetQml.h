@@ -7,10 +7,10 @@
 #pragma once
 
 #include "AppSettings.h"
+#include "generic/Page.h"
 #include "HistoryModel.h"
 #include "ProviderCategoryFilterModel.h"
 #include "QmlExtension.h"
-#include "generic/Page.h"
 
 #include <QQuickWidget>
 #include <QScopedPointer>

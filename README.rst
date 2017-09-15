@@ -9,6 +9,15 @@ Kontakt
 | ausweisapp2@governikus.de
 
 
+Lizenz
+------
+Der vorliegende Quellcode wird unter der EUPL v1.2 bereitgestellt, mit
+Ausnahme der Bibliothek OpenSSL, die unter der OpenSSL License / SSLeay License
+lizensiert ist. Die Datei ``LICENSE.officially.txt`` gilt ausschließlich für
+die offizielle Version der AusweisApp2, welche von der Governikus GmbH & Co. KG
+im Auftrag des Bundes unter https://www.ausweisapp.bund.de bereitgestellt wird.
+
+
 Toolchain / Bibliotheken
 ------------------------
 Die Einrichtung der Toolchain wird im Unterordner ``./libs``
@@ -22,8 +31,8 @@ Derzeit ist es leider noch nicht möglich, die AusweisApp2 ohne Patches
 an OpenSSL und Qt voll funktionsfähig auszuliefern.
 Dies liegt unter anderem an dem notwendigen RSA-PSK-Patch für
 OpenSSL 1.0.2, welcher mit OpenSSL 1.1.0 nicht mehr notwendig ist.
-Diese OpenSSL-Version wird allerdings voraussichtlich erst mit Qt 5.10
-bzw. 5.9.2 unterstützt. (siehe https://bugreports.qt.io/browse/QTBUG-52905)
+Diese OpenSSL-Version wird allerdings erst mit Qt 5.10 unterstützt.
+(siehe https://bugreports.qt.io/browse/QTBUG-52905)
 
 OpenSSL 1.1.0 wird mit der AusweisApp2 1.14.0 unterstützt.
 LibreSSL wird auf Grund des fehlenden RSA-PSK nicht unterstützt.
@@ -40,8 +49,8 @@ Dazu kann die Variable *CMAKE_PREFIX_PATH* verwendet werden um die Toolchain CMa
 bekannt zu machen. Alternativ zu %PATH% bzw. $PATH können alle Ordner, die dort
 für den Build eingetragen wurden, über diesen Mechanismus an CMake übergeben werden.
 
-Als Generator für Makefiles sollte eine Variante von "MinGW Makefiles" gewählt
-werden.
+Als Generator für Makefiles sollte unter Windows eine Variante von "MinGW Makefiles"
+gewählt werden.
 
 Beim Generieren des Makefiles ist zu beachten, dass die AusweisApp2 nur sogenannte
 "out of source tree"-Builds erlaubt. Daher ist die empfohlene Variante von CMake
@@ -76,7 +85,6 @@ Beispiel über die CLI:
    -- BUILD_SHARED_LIBS: OFF
    -- Found OpenSSL: C:/Toolchain/lib/libssl.dll.a;C:/Toolchain/lib/libcrypto.dll.a (found suitable version "1.0.1i", minimum required is "1.0.1")
    -- Found Hg: C:/Program Files/TortoiseHg/hg.exe (found version "3.1.1")
-   -- PLATFORM_WIDGETS: WINDOWS
    -- Configuring done
    -- Generating done
    -- Build files have been written to: C:/build
@@ -135,8 +143,8 @@ Für iOS wird die AusweisApp2 mittels XCode gebaut!
 
    $ cd build
    $ cmake -DCMAKE_PREFIX_PATH=/Users/governikus/Toolchain/dist -DCMAKE_TOOLCHAIN_FILE=../AusweisApp2/cmake/iOS.toolchain.cmake -DCMAKE_BUILD_TYPE=release ../AusweisApp2 -GXcode
-   $ cmakexbuild install -configuration Release
-   $ cmakexbuild -target ipa
+   $ xcodebuild -target install -configuration Release
+   $ xcodebuild -target ipa -configuration Release
 
 
 Im Build-Ordner befindet sich nun eine "AusweisApp2-x.y.z.ipa" Datei, welches das
@@ -162,72 +170,3 @@ Nachdem die Build-Umgebung eingerichtet ist, kann je nach System ein Package ers
 
      $ make install
      $ make apk
-
-
-
-Release
--------
-Folgende Schritte sind notwendig um ein Tag bzw. Release zu bauen.
-
-
-Tag anbringen
-^^^^^^^^^^^^^
-
-#. Mittels "hg update -r stable" auf das jeweilige Changeset wechseln, welches mit einem
-   Tag versehen werden soll.
-
-#. Mittels "hg status" überprüfen, dass keine weiteren Änderungen in der Working-Copy
-   vorhanden sind.
-
-#. In der Datei CMakeLists.txt die PROJECT_VERSION im PROJECT entsprechend anpassen.
-
-#. Mittels "hg tag x.y.z" (Beispiel: hg tag 1.0.0) den Tag anbringen.
-
-#. Mittels "hg bookmark -r x.y.z release" das Bookmark verschieben, damit der Jenkins beim
-   Release-Build den aktuellen Tag findet.
-
-#. Mittels "hg push" ins Main-Repository übertragen.
-
-
-
-Tag bauen
-^^^^^^^^^
-Wichtig: Jenkins erstellt das Release anhand des Bookmarks "release".
-         Die Jobs müssen nach dem Setzen manuell gestartet werden!
-         Nachdem die Jobs für Windows und macOS durchgelaufen sind, muss
-         der Job für den AppCast gestartet werden.
-
-Für einen sauberen Build sollte folgendes Vorgehen angewandt werden.
-Beim Durchlauf von CMake wird, sofern die Versionsverwaltung vorhanden ist, der Mercurial-Tag
-angezeigt.
-
-#. Mittels "hg clone -r x.y.z http://mercurial/AusweisApp2" den Tag ausschecken.
-
-   - **Wichtig:** Wenn ein bestehender Clone mittels "hg update -r x.y.z" benutzt wird,
-     sollte mit "hg status -i" geprüft werden, ob die Working-Copy vollständig sauber ist!
-
-#. Einen build-Ordner erstellen und in den Ordner wechseln. Zum Beispiel /tmp/buildTagXYZ
-
-#. cmake -DCMAKE_BUILD_TYPE=release ../AusweisApp2
-
-#. make package_source
-
-#. make package
-
-
-
-Probleme & Lösungen
-^^^^^^^^^^^^^^^^^^^
-
-- Das gebaute Package beinhaltet einen Hashwert im Namen
-   - CMake hat erkannt, dass sich die aktuelle Working-Copy nicht auf dem Tag befindet und hängt
-     somit den Hashwert des Changesets an. Mittels "hg id -t" kann man überprüfen, ob man sich auf
-     dem Tag befindet.
-
-   - Mittels "hg update -r x.y.z" sollte man auf den Tag wechseln.
-
-- Hinter dem Hashwert ist ein +
-   - Das bedeutet, dass "uncommitted changes" während des Builds in der Working-Copy enthalten waren.
-
-   - Dies kann man mittels "hg status" überprüfen.
-

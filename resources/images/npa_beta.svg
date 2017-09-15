@@ -11,13 +11,6 @@
       <stop style="stop-color:#5489c2;stop-opacity:1" offset="1"/>
     </linearGradient>
     <linearGradient x1="0" y1="0" x2="1" y2="0" id="linearGradient2683" xlink:href="#linearGradient2583" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0,26.61169,26.61169,0,19.60739,5.06376)" spreadMethod="pad"/>
-
-
-
-
-
-
-
     <g id="balken">
       <path fill-rule="evenodd" clip-rule="evenodd" fill="#B50202"
             d="M930.1914063,224.3017578 c0.4013672-0.0766602,0.7988281-0.1586914,1.1816406-0.2539063 C930.9677734,224.0883789,930.5751953,224.1787109,930.1914063,224.3017578z" />
@@ -98,9 +91,7 @@
               -0.82422,3.29736 0.0693,-1.30517 -0.39649,-3.14404 0.82422,-3.29736 z m -32.96973,14.83643 c -5.87598,-1.50293 -5.95215,-5.31787 -0.82324,-0.82422 2.66699,1.01855
               0.6289,-2.66699 3.2959,-1.64844 0.21582,-2.41308 -1.86329,-2.53223 -1.64844,-4.94531 -2.52051,-0.59815 -2.42383,1.42139 -4.94531,0.82422 0.0908,-2.10596
               2.75976,-1.63623 4.94531,-1.64844 2.78711,2.30371 3.21679,7.03271 -0.82422,8.24219 z"
-            inkscape:connector-curvature="0" style="clip-rule:evenodd;fill:#b50202;fill-rule:evenodd"
-            sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-                                ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccscccsccccccccccccccccccccccccccccccc" />
+            style="clip-rule:evenodd;fill:#b50202;fill-rule:evenodd" />
       <path fill-rule="evenodd" clip-rule="evenodd" fill="#B50202"
             d="M978,223.2241211c0-1.9238281,0-3.8466797,0-5.7700195 c-3-0.4731445-10.0166016,0.3754883-8.2431641,2.4726563C971.2460938,220.8037109,974,222.7402344,978,223.2241211z" />
       <path fill-rule="evenodd" clip-rule="evenodd" fill="#B50202"

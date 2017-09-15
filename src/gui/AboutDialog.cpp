@@ -37,8 +37,7 @@ AboutDialog::AboutDialog(QWidget* pParent)
 	connect(mUi->btnOkay, &QPushButton::clicked, this, &QDialog::accept);
 	connect(this, &QDialog::accepted, this, &AboutDialog::onAccept);
 
-	const bool intialCheckState = AppSettings::getInstance().getGeneralSettings().isDeveloperMode() ? Qt::Checked : Qt::Unchecked;
-	mUi->chkbDeveloperMode->setCheckState(intialCheckState ? Qt::Checked : Qt::Unchecked);
+	mUi->chkbDeveloperMode->setCheckState(AppSettings::getInstance().getGeneralSettings().isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
 
 	connect(mUi->chkbDeveloperMode, &QCheckBox::stateChanged, this, &AboutDialog::onCheckboxStateChanged);
 	onCheckboxStateChanged();

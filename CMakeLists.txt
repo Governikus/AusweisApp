@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.3.0)
 
 IF(POLICY CMP0020)
 	CMAKE_POLICY(SET CMP0020 NEW)
@@ -20,6 +20,10 @@ IF(POLICY CMP0063)
 	CMAKE_POLICY(SET CMP0063 NEW)
 ENDIF()
 
+IF(POLICY CMP0071)
+	CMAKE_POLICY(SET CMP0071 NEW)
+ENDIF()
+
 # "tools.only" can be defined to disable the normal build and enable
 # cmdline "tools" only. For example: "make format" or "make package_source"
 IF(tools.only)
@@ -29,7 +33,7 @@ ELSE()
 ENDIF()
 
 
-PROJECT(AusweisApp2 VERSION 1.12.2 LANGUAGES ${LANGUAGES})
+PROJECT(AusweisApp2 VERSION 1.12.3 LANGUAGES ${LANGUAGES})
 
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it
@@ -63,6 +67,11 @@ MESSAGE(STATUS "VENDOR: ${VENDOR}")
 MESSAGE(STATUS "VERSION: ${PROJECT_VERSION}")
 
 IF(ANDROID)
+	IF(NOT BUILD_PREVIEW)
+		SET(BUILD_PREVIEW false)
+	ENDIF()
+	MESSAGE(STATUS "BUILD_PREVIEW: ${BUILD_PREVIEW}")
+
 	IF(NOT ANDROID_VERSION_CODE)
 		SET(ANDROID_VERSION_CODE 0)
 	ENDIF()

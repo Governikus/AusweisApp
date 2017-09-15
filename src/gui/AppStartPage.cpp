@@ -6,9 +6,9 @@
 
 #include "AppStartPage.h"
 
-#include "GuiProfile.h"
 #include "generic/LayoutBuilder.h"
 #include "generic/TabButtonGroup.h"
+#include "GuiProfile.h"
 #include "ui_AppStartPage.h"
 
 #include <QPainter>

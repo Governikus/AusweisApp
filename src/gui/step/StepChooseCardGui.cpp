@@ -4,9 +4,9 @@
 
 #include "StepChooseCardGui.h"
 
-#include "GuiProfile.h"
 #include "generic/BusyOverlayContainer.h"
 #include "generic/SmartCardUtil.h"
+#include "GuiProfile.h"
 #include "step/AuthenticateStepsWidget.h"
 
 #include <QLoggingCategory>

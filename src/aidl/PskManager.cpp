@@ -18,13 +18,21 @@ using namespace governikus;
 Q_GLOBAL_STATIC(PskManager, instance)
 
 
-PskManager & PskManager::getInstance()
+PskManager::PskManager()
+	: mPsk()
+	, mSecureRandomPsk(false)
+	, mPskMutex()
+{
+}
+
+
+PskManager& PskManager::getInstance()
 {
 	return *instance;
 }
 
 
-QByteArray PskManager::generatePsk(const QByteArray& pClientPartialPsk)
+QByteArray PskManager::generatePsk()
 {
 	const static int TIMESTAMP_BYTE_COUNT = 64 / 8;
 	const static int RANDOM_BYTE_COUNT = 256;
@@ -60,16 +68,8 @@ QByteArray PskManager::generatePsk(const QByteArray& pClientPartialPsk)
 	mServerInputBytes += timeStampBytes;
 	mServerInputBytes += randomBytes;
 
-	auto clientPartialPsk = pClientPartialPsk.trimmed();
-	if (clientPartialPsk.startsWith("0x"))
-	{
-		clientPartialPsk = clientPartialPsk.mid(2, -1);
-	}
-	const auto& clientInputBytes = QByteArray::fromHex(clientPartialPsk);
-
 	QCryptographicHash hashFunction(QCryptographicHash::Sha256);
 	hashFunction.addData(mServerInputBytes);
-	hashFunction.addData(clientInputBytes);
 	mPsk = hashFunction.result().toHex();
 	return mPsk;
 }

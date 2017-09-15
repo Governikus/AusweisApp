@@ -27,7 +27,7 @@ class Result
 	Q_DECLARE_TR_FUNCTIONS(governikus::Result)
 
 	friend class StartPaosResponse;
-	friend class::test_result;
+	friend class ::test_result;
 
 	public:
 		enum class Major

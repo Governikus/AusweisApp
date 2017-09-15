@@ -24,7 +24,7 @@ class BluetoothMessage
 		typedef QSharedPointer<const BluetoothMessage> Ptr;
 
 	private:
-		friend class::test_BluetoothMessageParser;
+		friend class ::test_BluetoothMessageParser;
 		BluetoothMsgId mMsgId;
 		QMap<BluetoothParamId, BluetoothMessageParameter::Ptr> mMessageParameter;
 

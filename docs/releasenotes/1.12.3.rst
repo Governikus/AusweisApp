@@ -1,0 +1,22 @@
+AusweisApp2 1.12.3
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 15. September 2017
+
+
+Anwender
+""""""""
+  - Anzeige des Verwendungszwecks korrigiert.
+
+  - Anbieterliste beinhaltet nur noch die Anbieter
+    der aktuellen Plattform.
+
+  - Unterstützung von arm64-v8a.
+
+
+Entwickler
+""""""""""
+  - Finale API des eingebetteten SDKs.
+
+  - Anpassung der verschiedenen README-Dateien um
+    die AusweisApp2 selbst zu bauen.

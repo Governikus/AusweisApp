@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "ASN1TemplateUtil.h"
 #include "AccessRoleAndRight.h"
+#include "ASN1TemplateUtil.h"
 
 #include <openssl/asn1t.h>
 

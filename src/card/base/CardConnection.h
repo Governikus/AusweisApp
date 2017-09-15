@@ -8,15 +8,15 @@
 
 #pragma once
 
+#include "asn1/Chat.h"
+#include "asn1/CVCertificate.h"
+#include "asn1/CVCertificateChain.h"
+#include "command/BaseCardCommand.h"
 #include "CardConnectionWorker.h"
 #include "Commands.h"
 #include "InputAPDUInfo.h"
 #include "ReaderInfo.h"
 #include "SmartCardDefinitions.h"
-#include "asn1/CVCertificate.h"
-#include "asn1/CVCertificateChain.h"
-#include "asn1/Chat.h"
-#include "command/BaseCardCommand.h"
 
 #include "command/DestroyPaceChannelCommand.h"
 #include "command/EstablishPaceChannelCommand.h"

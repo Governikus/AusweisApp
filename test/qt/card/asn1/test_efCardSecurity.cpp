@@ -4,8 +4,8 @@
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
-#include "TestFileHelper.h"
 #include "asn1/EFCardSecurity.h"
+#include "TestFileHelper.h"
 
 #include <QSharedPointer>
 #include <QtTest>

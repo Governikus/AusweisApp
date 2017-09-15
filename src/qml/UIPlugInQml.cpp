@@ -3,13 +3,13 @@
  */
 
 #include "AppSettings.h"
+#include "context/AuthContext.h"
+#include "context/ChangePinContext.h"
+#include "context/SelfAuthenticationContext.h"
 #include "DpiCalculator.h"
 #include "FileDestination.h"
 #include "UIPlugInQml.h"
 #include "Updater.h"
-#include "context/AuthContext.h"
-#include "context/ChangePinContext.h"
-#include "context/SelfAuthenticationContext.h"
 
 #ifdef Q_OS_ANDROID
 #include <QtAndroidExtras/QAndroidJniEnvironment>

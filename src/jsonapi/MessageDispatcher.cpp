@@ -174,6 +174,9 @@ MsgHandler MessageDispatcher::createForCommand(const QJsonObject& pObj)
 		case MsgCmdType::SET_CAN:
 			return HANDLE_CURRENT_STATE(MsgType::ENTER_CAN, MsgHandlerEnterCan(pObj, mContext));
 
+		case MsgCmdType::SET_PUK:
+			return HANDLE_CURRENT_STATE(MsgType::ENTER_PUK, MsgHandlerEnterPuk(pObj, mContext));
+
 		case MsgCmdType::GET_ACCESS_RIGHTS:
 			return HANDLE_CURRENT_STATE(MsgType::ACCESS_RIGHTS, MsgHandlerAccessRights(mContext));
 

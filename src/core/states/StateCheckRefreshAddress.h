@@ -28,7 +28,7 @@ class StateCheckRefreshAddress
 {
 	Q_OBJECT
 	friend class StateBuilder;
-	friend class::test_StateCheckRefreshAddress;
+	friend class ::test_StateCheckRefreshAddress;
 
 	StateCheckRefreshAddress(const QSharedPointer<WorkflowContext>& pContext);
 

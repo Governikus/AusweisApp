@@ -30,7 +30,18 @@ the whole workflow.
   - **error**: This optional parameter indicates an error of a :ref:`set_access_rights` call
     if the command contained invalid data.
 
-  - **raw**: Access rights of the service provider.
+  - **aux**: Optional auxiliary data of the service provider.
+
+    - **ageVerificationDate**: Optional required date of birth for AgeVerification as ISO 8601.
+
+    - **requiredAge**: Optional required age for AgeVerification. It is calculated
+      by AusweisApp2 on the basis of ageVerificationDate and current date.
+
+    - **validityDate**: Optional validity date as ISO 8601.
+
+    - **communityId**: Optional id of community.
+
+  - **chat**: Access rights of the service provider.
 
     - **effective**: Indicates the enabled access rights of **optional** and **required**.
 
@@ -38,26 +49,73 @@ the whole workflow.
 
     - **required**: These rights are mandatory and cannot be disabled.
 
+  - **transactionInfo**: Optional transaction information.
+
 .. code-block:: json
 
  {
    "msg": "ACCESS_RIGHTS",
    "error": "some optional error message",
-   "raw":
+   "aux":
+        {
+         "ageVerificationDate": "1999-07-20",
+         "requiredAge": "18",
+         "validityDate": "2017-07-20",
+         "communityId": "02760400110000"
+        },
+   "chat":
          {
-          "effective": [24,20,16,15,14,12,11,10,9,8,2,0],
-          "optional": [15],
-          "required": [24,20,16,14,12,11,10,9,8,2,0]
+          "effective": ["Address", "FamilyName", "GivenNames", "AgeVerification"],
+          "optional": ["GivenNames", "AgeVerification"],
+          "required": ["Address", "FamilyName"]
+         },
+   "transactionInfo": "this is an example"
+ }
+
+
+.. code-block:: json
+
+ {
+   "msg": "ACCESS_RIGHTS",
+   "chat":
+         {
+          "effective": ["Address", "FamilyName", "GivenNames", "AgeVerification"],
+          "optional": ["GivenNames", "AgeVerification"],
+          "required": ["Address", "FamilyName"]
          }
  }
+
+
+The following access rights are possible:
+
+  - Address
+  - BirthName
+  - FamilyName
+  - GivenNames
+  - PlaceOfBirth
+  - DateOfBirth
+  - DoctoralDegree
+  - ArtisticName
+  - Pseudonym
+  - ValidUntil
+  - Nationality
+  - IssuingCountry
+  - DocumentType
+  - ResidencePermitI
+  - ResidencePermitII
+  - CommunityID
+  - AddressVerification
+  - AgeVerification
 
 
 .. seealso::
 
   `TR-03110`_, part 4, chapter 2.2.3
 
-.. _TR-03110: https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html
+  `TR-03127`_, chapter 3.2.2
 
+.. _TR-03110: https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html
+.. _TR-03127: https://www.bsi.bund.de/DE/Publikationen/TechnischeRichtlinien/tr03127/tr-03127.html
 
 
 
@@ -230,6 +288,8 @@ Provides information about the used certificate.
     - **termsOfUsage**: Raw certificate information about
       the terms of usage.
 
+    - **purpose**: Parsed purpose of the terms of usage.
+
   - **validity**: Validity dates of the certificate in UTC.
 
     - **effectiveDate**: Certificate is valid since this date.
@@ -246,7 +306,8 @@ Provides information about the used certificate.
                    "issuerUrl": "http://www.governikus.de",
                    "subjectName": "Governikus GmbH & Co. KG",
                    "subjectUrl": "https://test.governikus-eid.de",
-                   "termsOfUsage": "Anschrift:\t\r\nGovernikus GmbH & Co. KG\r\nAm Fallturm 9\r\n28359 Bremen\t\r\n\r\nE-Mail-Adresse:\thb@bos-bremen.de\t\r\n\r\nZweck des Auslesevorgangs:\tDemonstration des eID-Service\t\r\n\r\nZuständige Datenschutzaufsicht:\t\r\nDie Landesbeauftragte für Datenschutz und Informationsfreiheit der Freien Hansestadt Bremen\r\nArndtstraße 1\r\n27570 Bremerhaven"
+                   "termsOfUsage": "Anschrift:\t\r\nGovernikus GmbH & Co. KG\r\nAm Fallturm 9\r\n28359 Bremen\t\r\n\r\nE-Mail-Adresse:\thb@bos-bremen.de\t\r\n\r\nZweck des Auslesevorgangs:\tDemonstration des eID-Service\t\r\n\r\nZuständige Datenschutzaufsicht:\t\r\nDie Landesbeauftragte für Datenschutz und Informationsfreiheit der Freien Hansestadt Bremen\r\nArndtstraße 1\r\n27570 Bremerhaven",
+                   "purpose": "Demonstration des eID-Service"
                   },
     "validity":
                {
@@ -264,11 +325,11 @@ ENTER_CAN
 ^^^^^^^^^
 Indicates that a CAN is required to continue workflow.
 
-If the AusweisApp2 will send this message you need to
-provide the CAN of inserted card with :ref:`set_can`.
+If the AusweisApp2 sends this message, you will have to
+provide the CAN of the inserted card with :ref:`set_can`.
 
-The workflow will automatically continue if the CAN
-was correct and the AuweisApp2 will send a :ref:`enter_pin` message.
+The workflow will automatically continue if the CAN was correct
+and the AusweisApp2 will send an :ref:`enter_pin` message.
 If the correct CAN is entered the retryCounter will still be **1**.
 
 If your application provides an invalid :ref:`set_can` command
@@ -297,11 +358,15 @@ again but without an error parameter.
               "attached": true,
               "card":
                      {
+                      "inoperative": false,
                       "deactivated": false,
                       "retryCounter": 1
                      }
              }
   }
+
+.. note::
+  There is no retry limit for an incorrect CAN.
 
 
 
@@ -313,16 +378,15 @@ ENTER_PIN
 Indicates that a PIN is required to continue the workflow.
 
 If the AusweisApp2 sends this message, you will have to
-provide the PIN of inserted card with :ref:`set_pin`.
+provide the PIN of the inserted card with :ref:`set_pin`.
 
-The workflow will automatically continue if the PIN
-was correct. Otherwise you will receive another message :ref:`enter_pin`.
+The workflow will automatically continue if the PIN was correct.
+Otherwise you will receive another message :ref:`enter_pin`.
 If the correct PIN is entered the retryCounter will be set to **3**.
 
 If your application provides an invalid :ref:`set_pin` command
 the AusweisApp2 will send an :ref:`enter_pin` message with an error
-parameter and the retryCounter of the card is **not**
-decreased.
+parameter and the retryCounter of the card is **not** decreased.
 
 If your application provides a valid :ref:`set_pin` command
 and the PIN was incorrect the AusweisApp2 will send :ref:`enter_pin`
@@ -331,6 +395,10 @@ again with a decreased retryCounter but without an error parameter.
 If the value of retryCounter is **1** the AusweisApp2 will initially send an
 :ref:`enter_can` message. Once your application provides a correct CAN the
 AusweisApp2 will send an :ref:`enter_pin` again with a retryCounter of **1**.
+
+If the value of retryCounter is **0** the AusweisApp2 will initially send an
+:ref:`enter_puk` message. Once your application provides a correct PUK the
+AusweisApp2 will send an :ref:`enter_pin` again with a retryCounter of **3**.
 
 
   - **error**: Optional error message if your command :ref:`set_pin`
@@ -350,6 +418,7 @@ AusweisApp2 will send an :ref:`enter_pin` again with a retryCounter of **1**.
               "attached": true,
               "card":
                      {
+                      "inoperative": false,
                       "deactivated": false,
                       "retryCounter": 3
                      }
@@ -365,12 +434,33 @@ ENTER_PUK
 ^^^^^^^^^
 Indicates that a PUK is required to continue the workflow.
 
-If AusweisApp2 sends this message, you will have to
-show a message to the user that the card is blocked
-and needs to be unblocked by AusweisApp2.
+If the AusweisApp2 sends this message, you will have to
+provide the PUK of the inserted card with :ref:`set_puk`.
 
-You need to send a :ref:`cancel` to abort the workflow.
+The workflow will automatically continue if the PUK was correct
+and the AusweisApp2 will send an :ref:`enter_pin` message.
+Otherwise you will receive another message :ref:`enter_puk`.
+If the correct PUK is entered the retryCounter will be set to **3**.
 
+If your application provides an invalid :ref:`set_puk` command
+the AusweisApp2 will send an :ref:`enter_puk` message with an error
+parameter.
+
+If your application provides a valid :ref:`set_puk` command
+and the PUK was incorrect the AusweisApp2 will send :ref:`enter_puk`
+again but without an error parameter.
+
+If AusweisApp2 sends :ref:`enter_puk` with field "inoperative" of embedded
+:ref:`reader` message set true it is not possible to unblock the PIN.
+You will have to show a message to the user that the card is inoperative
+and the user should contact the authority responsible for issueing the
+identification document to unblock the PIN.
+You need to send a :ref:`cancel` to abort the workflow if card is operative.
+Please see the note for more information.
+
+
+  - **error**: Optional error message if your command :ref:`set_puk`
+    was invalid.
 
   - **reader**: Information about the used card and card reader.
     Please see message :ref:`reader` for details.
@@ -379,17 +469,31 @@ You need to send a :ref:`cancel` to abort the workflow.
 
   {
     "msg": "ENTER_PUK",
+    "error": "You must provide 10 digits",
     "reader":
              {
               "name": "NFC",
               "attached": true,
               "card":
                      {
+                      "inoperative": false,
                       "deactivated": false,
                       "retryCounter": 0
                      }
              }
   }
+
+.. note::
+  There is no retry limit for an incorrect PUK. But
+  be aware that the PUK can only be used 10 times to
+  unblock the PIN. There is no readable counter for this.
+  The AusweisApp2 is not able to provide any counter information
+  of PUK usage.
+  If the PUK is used 10 times it is not possible to unblock
+  the PIN anymore and the card will remain in PUK state.
+  Also it is not possible to indicate this state before the
+  user enters the correct PUK once. This information will be
+  provided as field "inoperative" of :ref:`reader` message.
 
 
 
@@ -537,6 +641,11 @@ until a card with enabled eID functionality is inserted.
 
   - **card**: Provides information about inserted card, otherwise null.
 
+    - **inoperative**: True if PUK is inoperative and cannot unblock PIN,
+      otherwise false. This can be recognized if user enters a correct
+      PUK only. It is not possbible to read this data before a user tries
+      to unblock the PIN.
+
     - **deactivated**: True if eID functionality is deactivated, otherwise false.
 
     - **retryCounter**: Count of possible retries for the PIN. If you enter a PIN
@@ -550,6 +659,7 @@ until a card with enabled eID functionality is inserted.
     "attached": true,
     "card":
            {
+            "inoperative": false,
             "deactivated": false,
             "retryCounter": 3
            }
@@ -585,6 +695,7 @@ Provides information about all connected card readers.
                 "attached": true,
                 "card":
                        {
+                        "inoperative": false,
                         "deactivated": false,
                         "retryCounter": 3
                        }
@@ -612,7 +723,7 @@ Be aware of case sensitive names in :doc:`commands`.
 .. code-block:: json
 
   {
-    "msg": "UNKNOWN_COMMAND"
-    "error": "get_INFo",
+    "msg": "UNKNOWN_COMMAND",
+    "error": "get_INFo"
   }
 

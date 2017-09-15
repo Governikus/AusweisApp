@@ -65,7 +65,7 @@ namespace
 #if defined(Q_OS_WIN)
 static const QString KOMFORT_DRIVER_URL("https://appl.governikus-asp.de/ausweisapp2/driver/bc_7_2_3.exe");
 #elif defined(Q_OS_OSX)
-static const QString KOMFORT_DRIVER_URL = QSysInfo::MacintoshVersion == QSysInfo::MV_10_11 ?
+static const QString KOMFORT_DRIVER_URL = QSysInfo::MacintoshVersion >= QSysInfo::MV_10_11 ?
 		QStringLiteral("https://appl.governikus-asp.de/ausweisapp2/driver/01_pcsc-cyberjack_3.99.5final.SP08-universal-osx10.11-signed.pkg") :
 		QStringLiteral("https://appl.governikus-asp.de/ausweisapp2/driver/pcsc-cyberjack_3.99.5final.SP07-universal-signed.pkg");
 #elif defined(Q_OS_LINUX)
@@ -120,7 +120,7 @@ class test_ReaderDetector
 				"              \"URL\": \"https://appl.governikus-asp.de/ausweisapp2/driver/pcsc-cyberjack_3.99.5final.SP07-universal-signed.pkg\"\n"
 				"          },\n"
 				"          {\n"
-				"              \"Platforms\": [\"MV_10_11\"],\n"
+				"              \"Platforms\": [\"MV_10_11\", \"MV_10_12\"],\n"
 				"              \"URL\": \"https://appl.governikus-asp.de/ausweisapp2/driver/01_pcsc-cyberjack_3.99.5final.SP08-universal-osx10.11-signed.pkg\"\n"
 				"          },\n"
 				"          {\n"
@@ -300,7 +300,7 @@ class test_ReaderDetector
 												   "              \"URL\": \"https://appl.governikus-asp.de/ausweisapp2/driver/pcsc-cyberjack_3.99.5final.SP07-universal-signed.pkg\"\n"
 												   "          },\n"
 												   "          {\n"
-												   "              \"Platforms\": [\"MV_10_11\"],\n"
+												   "              \"Platforms\": [\"MV_10_11\", \"MV_10_12\"],\n"
 												   "              \"URL\": \"https://appl.governikus-asp.de/ausweisapp2/driver/01_pcsc-cyberjack_3.99.5final.SP08-universal-osx10.11-signed.pkg\"\n"
 												   "          },\n"
 												   "          {\n"

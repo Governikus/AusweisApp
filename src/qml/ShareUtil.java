@@ -1,8 +1,8 @@
 package com.governikus.ausweisapp2;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.*;
+import android.Manifest;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;

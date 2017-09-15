@@ -6,9 +6,11 @@
 
 #pragma once
 
+#include "context/AuthContext.h"
 #include "MsgContext.h"
 #include "MsgHandler.h"
-#include "context/AuthContext.h"
+
+#include <functional>
 
 namespace governikus
 {
@@ -19,9 +21,10 @@ class MsgHandlerAccessRights
 	private:
 		void setError(const QLatin1String& pError);
 
-		void handleSetRawData(const QJsonArray& pRaw, const QSharedPointer<AuthContext>& pContext);
+		void handleSetChatData(const QJsonArray& pChat, const QSharedPointer<AuthContext>& pContext);
 		QJsonArray getAccessRights(const QSet<AccessRight>& pRights) const;
 		void fillAccessRights(const QSharedPointer<const AuthContext>& pContext);
+		QJsonObject getAuxiliaryData(const QSharedPointer<const AuthContext>& pContext);
 
 	public:
 		MsgHandlerAccessRights(const MsgContext& pContext);

@@ -21,7 +21,7 @@ class RemoteReaderSettings
 	Q_OBJECT
 
 	friend class AppSettings;
-	friend class::test_RemoteReaderSettings;
+	friend class ::test_RemoteReaderSettings;
 
 	private:
 		QString mServerName;

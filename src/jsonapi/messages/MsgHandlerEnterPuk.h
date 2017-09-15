@@ -17,6 +17,7 @@ class MsgHandlerEnterPuk
 {
 	public:
 		MsgHandlerEnterPuk(const MsgContext& pContext);
+		MsgHandlerEnterPuk(const QJsonObject& pObj, MsgContext& pContext);
 };
 
 

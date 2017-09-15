@@ -46,6 +46,12 @@ ReaderInfo CardConnectionWorker::getReaderInfo() const
 }
 
 
+void CardConnectionWorker::setPukInoperative()
+{
+	mReader->setPukInoperative();
+}
+
+
 bool CardConnectionWorker::hasCard() const
 {
 	return !mReader.isNull() && mReader->getCard() != nullptr;

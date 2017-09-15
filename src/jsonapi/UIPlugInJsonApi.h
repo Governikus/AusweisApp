@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "MessageDispatcher.h"
 #include "context/AuthContext.h"
+#include "MessageDispatcher.h"
 #include "view/UIPlugIn.h"
 
 namespace governikus

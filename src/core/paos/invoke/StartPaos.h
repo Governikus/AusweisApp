@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "paos/PaosMessage.h"
 #include "paos/element/ConnectionHandle.h"
 #include "paos/element/SupportedApi.h"
 #include "paos/element/UserAgent.h"
 #include "paos/invoke/PaosCreator.h"
+#include "paos/PaosMessage.h"
 
 class test_StartPaos;
 
@@ -21,7 +21,7 @@ class StartPaos
 	: public PaosCreator
 	, public PaosMessage
 {
-	friend class::test_StartPaos;
+	friend class ::test_StartPaos;
 
 	private:
 		const QByteArray mSessionId;

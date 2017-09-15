@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "StepGui.h"
 #include "context/SelfAuthenticationContext.h"
+#include "StepGui.h"
 
 #include <QLabel>
 

@@ -4,9 +4,9 @@
 
 #include "pace/ec/EllipticCurveFactory.h"
 
+#include <openssl/obj_mac.h>
 #include <QSignalSpy>
 #include <QtTest>
-#include <openssl/obj_mac.h>
 
 using namespace governikus;
 

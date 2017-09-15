@@ -66,6 +66,7 @@ void MsgHandlerReader::setReaderInfo(QJsonObject& pObj, const ReaderInfo& pInfo,
 		{
 			QJsonObject card;
 			card["deactivated"] = pInfo.isPinDeactivated();
+			card["inoperative"] = pInfo.isPukInoperative();
 			card["retryCounter"] = pInfo.getRetryCounter();
 			pObj["card"] = card;
 		}

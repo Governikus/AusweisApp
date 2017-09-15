@@ -2,13 +2,13 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "Commands.h"
 #include "asn1/KnownOIDs.h"
 #include "asn1/PACEInfo.h"
+#include "Commands.h"
 #include "pace/CipherMac.h"
-#include "pace/ec/EcUtil.h"
 #include "pace/ec/EcdhGenericMapping.h"
 #include "pace/ec/EcdhKeyAgreement.h"
+#include "pace/ec/EcUtil.h"
 #include "pace/ec/EllipticCurveFactory.h"
 
 #include <QLoggingCategory>

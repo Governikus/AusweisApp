@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "Result.h"
 #include "context/AuthContext.h"
+#include "Result.h"
 #include "states/AbstractGenericState.h"
 
 namespace governikus
