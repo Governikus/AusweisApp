@@ -2,11 +2,11 @@
  * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
  */
 
-#include "AppSettings.h"
-#include "CertificateDescriptionModel.h"
 #include "asn1/CertificateDescription.h"
+#include "AppSettings.h"
 #include "context/AuthContext.h"
 #include "context/SelfAuthenticationContext.h"
+#include "CertificateDescriptionModel.h"
 
 
 using namespace governikus;

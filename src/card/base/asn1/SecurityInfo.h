@@ -10,8 +10,8 @@
 
 #include "ASN1TemplateUtil.h"
 
-#include <QSharedPointer>
 #include <openssl/asn1.h>
+#include <QSharedPointer>
 
 
 namespace governikus

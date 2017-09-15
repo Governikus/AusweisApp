@@ -24,6 +24,7 @@ MsgHandlerCertificate::MsgHandlerCertificate(const MsgContext& pContext)
 	desc["issuerName"] = certificateDescription->getIssuerName();
 	desc["issuerUrl"] = certificateDescription->getIssuerUrl();
 	desc["termsOfUsage"] = certificateDescription->getTermsOfUsage();
+	desc["purpose"] = certificateDescription->getPurpose();
 
 	CVCertificateBody body = eac1->getCvCertificates().at(0)->getBody();
 	QJsonObject validity;

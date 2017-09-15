@@ -2,9 +2,9 @@
 
 #include "SecureMessagingResponse.h"
 
+#include <openssl/x509v3.h>
 #include <QDate>
 #include <QDebug>
-#include <openssl/x509v3.h>
 
 using namespace governikus;
 

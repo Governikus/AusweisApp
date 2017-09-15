@@ -6,9 +6,9 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "TestFileHelper.h"
 #include "paos/retrieve/Transmit.h"
 #include "paos/retrieve/TransmitParser.h"
+#include "TestFileHelper.h"
 
 #include <QtCore/QtCore>
 #include <QtTest/QtTest>

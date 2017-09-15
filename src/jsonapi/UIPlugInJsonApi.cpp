@@ -33,7 +33,7 @@ void UIPlugInJsonApi::callFireMessage(const QByteArray& pMsg) const
 {
 	if (!pMsg.isEmpty())
 	{
-		qCDebug(jsonapi) << "Fire message:" << pMsg;
+		qCDebug(jsonapi).noquote() << "Fire message:" << pMsg;
 		Q_EMIT fireMessage(pMsg);
 	}
 }

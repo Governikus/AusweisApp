@@ -4,16 +4,16 @@
 
 #include "pace/PaceHandler.h"
 
-#include "Commands.h"
-#include "FileRef.h"
-#include "PersoSimWorkaround.h"
 #include "asn1/KnownOIDs.h"
 #include "asn1/PACEInfo.h"
-#include "pace/KeyAgreement.h"
+#include "Commands.h"
+#include "FileRef.h"
 #include "pace/ec/EllipticCurveFactory.h"
+#include "pace/KeyAgreement.h"
+#include "PersoSimWorkaround.h"
 
-#include <QLoggingCategory>
 #include <exception>
+#include <QLoggingCategory>
 
 using namespace governikus;
 

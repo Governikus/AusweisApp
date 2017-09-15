@@ -6,9 +6,9 @@
 
 #include "Commands.h"
 
+#include "asn1/ASN1Util.h"
 #include "FileRef.h"
 #include "SecureMessagingResponse.h"
-#include "asn1/ASN1Util.h"
 
 #include <QLoggingCategory>
 

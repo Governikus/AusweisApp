@@ -5,9 +5,9 @@
 #include "pace/ec/EcUtil.h"
 #include "pace/ec/EllipticCurveFactory.h"
 
+#include <openssl/ec.h>
 #include <QSharedPointer>
 #include <QtTest>
-#include <openssl/ec.h>
 
 using namespace governikus;
 

@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "GenericWorkflowGui.h"
 #include "context/ChangePinContext.h"
+#include "GenericWorkflowGui.h"
 
 namespace governikus
 {

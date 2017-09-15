@@ -14,10 +14,8 @@ namespace governikus
 class VersionNumber
 {
 	private:
-		const QString mOriginalVersion;
-		int mSuffixIndex;
-		const QVersionNumber mVersionNumber;
-		const QString mSuffix;
+		QVersionNumber mVersionNumber;
+		QString mSuffix;
 
 		friend bool operator==(const VersionNumber& pLeft, const VersionNumber& pRight);
 

@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include "CVCertificate.h"
 #include "Commands.h"
+#include "CVCertificate.h"
 
 #include <QVector>
 

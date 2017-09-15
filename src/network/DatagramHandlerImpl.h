@@ -23,7 +23,7 @@ class DatagramHandlerImpl
 	Q_OBJECT
 
 	private:
-		friend class::test_DatagramHandlerImpl;
+		friend class ::test_DatagramHandlerImpl;
 		friend struct QtSharedPointer::CustomDeleter<DatagramHandlerImpl, QtSharedPointer::NormalDeleter>;
 
 		static quint16 cPort;

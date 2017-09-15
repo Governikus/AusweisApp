@@ -9,9 +9,9 @@
 #include <QPainter>
 #include <QStyleOption>
 
-#include "GuiProfile.h"
 #include "generic/LayoutBuilder.h"
 #include "generic/TabButtonGroup.h"
+#include "GuiProfile.h"
 
 using namespace governikus;
 

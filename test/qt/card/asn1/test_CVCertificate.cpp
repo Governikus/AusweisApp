@@ -7,10 +7,10 @@
 
 #include "asn1/CVCertificate.h"
 
-#include "LogHandler.h"
-#include "TestFileHelper.h"
 #include "asn1/ASN1Util.h"
 #include "asn1/KnownOIDs.h"
+#include "LogHandler.h"
+#include "TestFileHelper.h"
 
 #include <QtTest>
 

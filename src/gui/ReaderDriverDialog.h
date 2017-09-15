@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "ReaderDriverWidget.h"
 #include "context/ReaderDriverContext.h"
+#include "ReaderDriverWidget.h"
 
 #include <QDialog>
 #include <QScopedPointer>

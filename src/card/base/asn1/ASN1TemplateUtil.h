@@ -138,7 +138,7 @@ static const int CB_ERROR = 0;
 	}\
 \
 	template<>\
-	name * decodeAsn1Object<name>(name** pObject, const unsigned char** pData, long pDataLen)\
+	name * decodeAsn1Object<name>(name * *pObject, const unsigned char** pData, long pDataLen)\
 	{\
 		return d2i_##name(pObject, pData, pDataLen);\
 	}\
@@ -152,7 +152,7 @@ static const int CB_ERROR = 0;
 #define DECLARE_ASN1_OBJECT(name)\
 	template<> name * newAsn1Object<name>();\
 	template<> int encodeAsn1Object<name>(name * pObject, unsigned char** encoded);\
-	template<> name * decodeAsn1Object<name>(name** pObject, const unsigned char** pData, long pDataLen);\
+	template<> name * decodeAsn1Object<name>(name * *pObject, const unsigned char** pData, long pDataLen);\
 	template<> void freeAsn1Object<name>(name * pObject);
 
 

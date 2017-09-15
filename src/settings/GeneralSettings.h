@@ -36,7 +36,7 @@ class GeneralSettings
 	Q_OBJECT
 
 	friend class AppSettings;
-	friend class::test_GeneralSettings;
+	friend class ::test_GeneralSettings;
 	friend bool operator==(const GeneralSettings& pLeft, const GeneralSettings& pRight);
 
 	private:

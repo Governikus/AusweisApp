@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "PaosCreator.h"
-#include "paos/ResponseType.h"
 #include "paos/element/SupportedApi.h"
+#include "paos/ResponseType.h"
+#include "PaosCreator.h"
 
 namespace governikus
 {

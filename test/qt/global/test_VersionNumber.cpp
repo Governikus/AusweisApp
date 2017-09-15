@@ -148,6 +148,10 @@ class test_VersionNumber
 
 		void isDeveloper()
 		{
+			QString empty;
+			VersionNumber number0(empty);
+			QVERIFY(number0.isDeveloperVersion());
+
 			VersionNumber number1("1.5.0");
 			QVERIFY(number1.isDeveloperVersion());
 

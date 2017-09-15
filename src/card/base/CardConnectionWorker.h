@@ -6,15 +6,15 @@
 
 #pragma once
 
+#include "asn1/SecurityInfos.h"
 #include "Apdu.h"
 #include "CardReturnCode.h"
 #include "Commands.h"
 #include "EstablishPACEChannel.h"
 #include "FileRef.h"
+#include "pace/SecureMessaging.h"
 #include "Reader.h"
 #include "SmartCardDefinitions.h"
-#include "asn1/SecurityInfos.h"
-#include "pace/SecureMessaging.h"
 
 #include <QByteArray>
 
@@ -63,6 +63,8 @@ class CardConnectionWorker
 		static QSharedPointer<CardConnectionWorker> create(Reader* pReader);
 
 		Q_INVOKABLE ReaderInfo getReaderInfo() const;
+
+		void setPukInoperative();
 
 		virtual CardReturnCode updateRetryCounter();
 

@@ -2,10 +2,10 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "TestFileHelper.h"
 #include "asn1/ChipAuthenticationInfo.h"
 #include "asn1/PACEInfo.h"
 #include "asn1/SecurityInfos.h"
+#include "TestFileHelper.h"
 
 #include <QtTest>
 

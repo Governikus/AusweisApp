@@ -17,7 +17,7 @@ namespace governikus
 
 class PaosMessage
 {
-	friend class::test_PaosMessage;
+	friend class ::test_PaosMessage;
 
 	private:
 		QString mMessageID, mRelatesTo;

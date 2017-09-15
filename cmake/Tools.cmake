@@ -140,7 +140,7 @@ IF(UNCRUSTIFY)
 	EXECUTE_PROCESS(COMMAND ${UNCRUSTIFY} --version OUTPUT_VARIABLE UNCRUSTIFY_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
 	STRING(REPLACE "uncrustify " "" UNCRUSTIFY_VERSION ${UNCRUSTIFY_VERSION})
 
-	SET(UNCRUSTIFY_NEEDED_VERSION "0.64")
+	SET(UNCRUSTIFY_NEEDED_VERSION "0.65")
 	IF("${UNCRUSTIFY_VERSION}" STRLESS "${UNCRUSTIFY_NEEDED_VERSION}")
 		MESSAGE(WARNING "Uncrustify seems to be too old. Use at least ${UNCRUSTIFY_NEEDED_VERSION}... you are using: ${UNCRUSTIFY_VERSION}")
 	ELSE()
@@ -200,6 +200,12 @@ IF(CONVERT)
 		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 96x96 android/xhdpi/npa_beta.png
 		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 144x144 android/xxhdpi/npa_beta.png
 		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 192x192 android/xxxhdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} npa_preview.svg -resize 36x36 android/ldpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} npa_preview.svg -resize 48x48 android/mdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} npa_preview.svg -resize 72x72 android/hdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} npa_preview.svg -resize 96x96 android/xhdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} npa_preview.svg -resize 144x144 android/xxhdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} npa_preview.svg -resize 192x192 android/xxxhdpi/npa_preview.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 ENDIF()
 
@@ -229,6 +235,12 @@ SET(PNGQUANT_CMD pngquant -f -o)
 		COMMAND ${PNGQUANT_CMD} android/xhdpi/npa_beta.png -- android/xhdpi/npa_beta.png
 		COMMAND ${PNGQUANT_CMD} android/xxhdpi/npa_beta.png -- android/xxhdpi/npa_beta.png
 		COMMAND ${PNGQUANT_CMD} android/xxxhdpi/npa_beta.png -- android/xxxhdpi/npa_beta.png
+		COMMAND ${PNGQUANT_CMD} android/ldpi/npa_preview.png -- android/ldpi/npa_preview.png
+		COMMAND ${PNGQUANT_CMD} android/mdpi/npa_preview.png -- android/mdpi/npa_preview.png
+		COMMAND ${PNGQUANT_CMD} android/hdpi/npa_preview.png -- android/hdpi/npa_preview.png
+		COMMAND ${PNGQUANT_CMD} android/xhdpi/npa_preview.png -- android/xhdpi/npa_preview.png
+		COMMAND ${PNGQUANT_CMD} android/xxhdpi/npa_preview.png -- android/xxhdpi/npa_preview.png
+		COMMAND ${PNGQUANT_CMD} android/xxxhdpi/npa_preview.png -- android/xxxhdpi/npa_preview.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 ENDIF()
 

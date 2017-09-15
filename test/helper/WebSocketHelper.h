@@ -4,9 +4,9 @@
 
 #pragma once
 
+#include <functional>
 #include <QEventLoop>
 #include <QWebSocket>
-#include <functional>
 
 namespace governikus
 {

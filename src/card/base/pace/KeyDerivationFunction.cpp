@@ -5,8 +5,8 @@
 #include "asn1/KnownOIDs.h"
 #include "pace/KeyDerivationFunction.h"
 
-#include <QLoggingCategory>
 #include <openssl/sha.h>
+#include <QLoggingCategory>
 
 
 using namespace governikus;

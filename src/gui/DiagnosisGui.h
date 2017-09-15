@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "DiagnosisDialog.h"
 #include "context/DiagnosisContext.h"
 #include "controller/DiagnosisController.h"
+#include "DiagnosisDialog.h"
 
 #include <QPointer>
 #include <QWidget>

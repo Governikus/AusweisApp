@@ -2,10 +2,10 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "CardConnection.h"
-#include "StateDidAuthenticateEac2.h"
 #include "asn1/CVCertificate.h"
 #include "asn1/CVCertificateChainBuilder.h"
+#include "CardConnection.h"
+#include "StateDidAuthenticateEac2.h"
 
 using namespace governikus;
 

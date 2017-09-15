@@ -4,8 +4,8 @@
 
 #include "ChangePinModel.h"
 
-#include "ReaderManager.h"
 #include "context/ChangePinContext.h"
+#include "ReaderManager.h"
 
 #include <QDebug>
 

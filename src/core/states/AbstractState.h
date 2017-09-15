@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "Result.h"
 #include "context/WorkflowContext.h"
+#include "Result.h"
 
 #include <QSharedPointer>
 #include <QState>

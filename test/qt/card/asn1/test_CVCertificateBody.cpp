@@ -7,10 +7,10 @@
 #include <QtCore>
 #include <QtTest>
 
-#include "TestFileHelper.h"
 #include "asn1/ASN1Util.h"
 #include "asn1/CVCertificate.h"
 #include "asn1/KnownOIDs.h"
+#include "TestFileHelper.h"
 
 
 using namespace governikus;

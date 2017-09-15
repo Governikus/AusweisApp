@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "MsgTypes.h"
 #include "context/AuthContext.h"
 #include "context/WorkflowContext.h"
+#include "MsgTypes.h"
 
 namespace governikus
 {

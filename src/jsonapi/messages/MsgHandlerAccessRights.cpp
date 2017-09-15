@@ -22,25 +22,25 @@ MsgHandlerAccessRights::MsgHandlerAccessRights(const QJsonObject& pObj, MsgConte
 	auto ctx = pContext.getAuthContext();
 	Q_ASSERT(ctx);
 
-	const auto& jsonRaw = pObj["raw"];
+	const auto& jsonRaw = pObj["chat"];
 	if (jsonRaw.isUndefined())
 	{
-		setError(QLatin1String("'raw' cannot be undefined"));
+		setError(QLatin1String("'chat' cannot be undefined"));
 	}
 	else if (!jsonRaw.isArray())
 	{
-		setError(QLatin1String("Invalid 'raw' data"));
+		setError(QLatin1String("Invalid 'chat' data"));
 	}
 	else
 	{
-		handleSetRawData(jsonRaw.toArray(), ctx);
+		handleSetChatData(jsonRaw.toArray(), ctx);
 	}
 
 	fillAccessRights(ctx);
 }
 
 
-void MsgHandlerAccessRights::handleSetRawData(const QJsonArray& pRaw, const QSharedPointer<AuthContext>& pContext)
+void MsgHandlerAccessRights::handleSetChatData(const QJsonArray& pChat, const QSharedPointer<AuthContext>& pContext)
 {
 	Q_ASSERT(pContext);
 
@@ -48,23 +48,29 @@ void MsgHandlerAccessRights::handleSetRawData(const QJsonArray& pRaw, const QSha
 
 	if (!pContext->getOptionalAccessRights().isEmpty())
 	{
-		for (const auto& entry : pRaw)
+		for (const auto& entry : pChat)
 		{
-			if (entry.isDouble())
+			if (entry.isString())
 			{
-				const auto value = static_cast<AccessRight>(entry.toInt());
-				if (pContext->getOptionalAccessRights().contains(value))
+				const auto& func = [&](AccessRight pRight){
+							if (pContext->getOptionalAccessRights().contains(pRight))
+							{
+								effectiveChat += pRight;
+							}
+							else
+							{
+								setError(QLatin1String("Entry in 'chat' data is not available"));
+							}
+						};
+
+				if (!AccessRoleAndRightsUtil::fromTechnicalName(entry.toString().toLatin1().constData(), func))
 				{
-					effectiveChat += value;
-				}
-				else
-				{
-					setError(QLatin1String("Entry in 'raw' data is invalid"));
+					setError(QLatin1String("Entry in 'chat' data is invalid"));
 				}
 			}
 			else
 			{
-				setError(QLatin1String("Entry in 'raw' data needs to be integer"));
+				setError(QLatin1String("Entry in 'chat' data needs to be string"));
 			}
 		}
 	}
@@ -89,7 +95,11 @@ QJsonArray MsgHandlerAccessRights::getAccessRights(const QSet<AccessRight>& pRig
 	std::sort(accessRights.rbegin(), accessRights.rend());
 	for (auto entry : qAsConst(accessRights))
 	{
-		array += static_cast<int>(entry);
+		const QLatin1String name = AccessRoleAndRightsUtil::toTechnicalName(entry);
+		if (name.size())
+		{
+			array += name;
+		}
 	}
 
 	return array;
@@ -100,12 +110,55 @@ void MsgHandlerAccessRights::fillAccessRights(const QSharedPointer<const AuthCon
 {
 	Q_ASSERT(pContext);
 
-	QJsonObject raw;
-	raw["required"] = getAccessRights(pContext->getRequiredAccessRights());
-	raw["optional"] = getAccessRights(pContext->getOptionalAccessRights());
-	raw["effective"] = getAccessRights(pContext->getEffectiveAccessRights());
+	QJsonObject chat;
+	chat["required"] = getAccessRights(pContext->getRequiredAccessRights());
+	chat["optional"] = getAccessRights(pContext->getOptionalAccessRights());
+	chat["effective"] = getAccessRights(pContext->getEffectiveAccessRights());
 
-	mJsonObject["raw"] = raw;
+	mJsonObject["chat"] = chat;
+	const auto& transactionInfo = pContext->getDidAuthenticateEac1()->getTransactionInfo();
+	if (!transactionInfo.isEmpty())
+	{
+		mJsonObject["transactionInfo"] = transactionInfo;
+	}
+
+	const QJsonObject& aux = getAuxiliaryData(pContext);
+	if (!aux.isEmpty())
+	{
+		mJsonObject["aux"] = aux;
+	}
+}
+
+
+QJsonObject MsgHandlerAccessRights::getAuxiliaryData(const QSharedPointer<const AuthContext>& pContext)
+{
+	QJsonObject obj;
+
+	const auto& eac1 = pContext->getDidAuthenticateEac1();
+	if (eac1)
+	{
+		const auto& aux = eac1->getAuthenticatedAuxiliaryData();
+		if (aux)
+		{
+			if (aux->hasAgeVerificationDate())
+			{
+				obj["ageVerificationDate"] = aux->getAgeVerificationDate().toString(Qt::ISODate);
+				obj["requiredAge"] = aux->getRequiredAge();
+			}
+
+			if (aux->hasValidityDate())
+			{
+				obj["validityDate"] = aux->getValidityDate().toString(Qt::ISODate);
+			}
+
+			if (aux->hasCommunityID())
+			{
+				obj["communityId"] = QString::fromUtf8(aux->getCommunityID());
+			}
+		}
+	}
+
+	return obj;
 }
 
 

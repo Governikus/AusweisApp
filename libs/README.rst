@@ -8,7 +8,7 @@ Unterstützte Compiler:
 
 - MinGW 32 / 64 >= 4.9
 
-- GCC >= 4.7
+- GCC >= 4.9
 
 - Clang >= 3.4
 
@@ -17,7 +17,7 @@ Unterstützte Compiler:
 
 Notwendige Bibliotheken:
 
-- Qt >= 5.7
+- Qt >= 5.8
 
   - http://www.qt.io/download/
 
@@ -36,7 +36,7 @@ Notwendige Bibliotheken:
 
 Notwendige Tools:
 
-- CMake >= 3.1.0 (>= 3.7.0 für Android)
+- CMake >= 3.3.0 (>= 3.7.1 für Android)
 
   - http://www.cmake.org
 
@@ -46,10 +46,8 @@ Build
 -----
 Die Abhängigkeiten lassen sich mittels der CMakeLists.txt in diesem Ordner
 automatisch aufbauen.
-
 Das Skript kann die abhängigen Bibliotheken als Quellcode selbständig herunterladen,
-entpacken und bauen. Dabei ist allerdings zu beachten, dass CMake erst ab v3.1.0
-die notwendigen Kompressionen beherrscht [1].
+entpacken und bauen.
 
 Lokale Pakete können mittels -DPACKAGES_DIR=C:/packages verwendet werden.
 Wichtig: Bei PACKAGES_DIR muss ein absoluter Pfad angegeben werden!
@@ -67,8 +65,6 @@ Zusätzlich kann mit dem make Target "compress" der Inhalt der dist-Ordner berei
 ein Tarball aus den gebauten Bibliotheken erzeugt werden.
 
 
-[1] http://www.cmake.org/Bug/view.php?id=13515
-
 Proxy
 ^^^^^
 Sofern beim Download der Pakete ein Proxy notwendig ist, müssen vorm Aufruf von "make"
@@ -85,7 +81,7 @@ notwendig.)
 
 macOS
 ^^^^^
-Unter MacOS ist die Einrichtung relativ einfach und bedarf nur der oben gennanten Voreinstellungen.
+Unter MacOS ist die Einrichtung relativ einfach und bedarf nur der oben genannten Voreinstellungen.
 Es wird der von Apple ausgelieferte clang compiler verwendet.
 
 Beispiel: Innerhalb von /Users/governikus/AusweisApp2 befindet sich der Quellcode.
@@ -211,17 +207,21 @@ Komponenten vorhanden sein:
 
   - https://developer.android.com/tools/sdk/ndk/index.html
 
-  - Getestet: r13b (x86_64)
+  - Getestet: r10e (https://wiki.qt.io/Qt_for_Android_known_issues)
 
 - Android SDK mit gesetztem ANDROID_HOME
 
-  - https://developer.android.com/sdk/index.html#Other
+  - https://developer.android.com/studio/releases/sdk-tools.html
 
-  - Getestet: 25.2.2
+  - Getestet: 25.2.5
+
+    - Qt ist derzeit nicht mit aktuelleren kompatibel: https://bugreports.qt.io/browse/QTBUG-61988
 
   - Unter bestimmten Umständen kann es vorkommen, dass die Build-Tools-Version nicht erkannt
     wird. Dies kann mittels der Umgebungsvariable ANDROID_BUILD_TOOLS_REVISION behoben werden.
     Die genaue Version ist im Android Manager vom Android SDK (./tools/android) hinterlegt.
+
+    - Getestet: 26.0.1
 
 - Um Qt erfolgreich zu bauen, sind verschiedene API Level von Android notwendig.
   Diese sollten mindestens Level 18 und 21 sein. Nähere Informationen dazu
@@ -244,5 +244,5 @@ Beispiel: Innerhalb von /home/governikus/AusweisApp2 befindet sich der Quellcode
    $ make
 
 Standardmäßig wird die Architektur "armeabi-v7a" gewählt. Um zum Beispiel die Toolchain für x86-Architektur
-zu bauen , ist beim Aufruf von CMake der Parameter "-DCMAKE_ANDROID_ARCH_ABI=x86" mitzugeben.
+zu bauen, ist beim Aufruf von CMake der Parameter "-DCMAKE_ANDROID_ARCH_ABI=x86" mitzugeben.
 

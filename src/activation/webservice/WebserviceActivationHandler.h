@@ -26,7 +26,7 @@ class WebserviceActivationHandler
 	Q_INTERFACES(governikus::ActivationHandler)
 
 	private:
-		friend class::test_WebserviceActivationHandler;
+		friend class ::test_WebserviceActivationHandler;
 		QSharedPointer<HttpServer> mServer;
 
 		static void addStatusLine(QString& pContent, StatusFormat pStatusFormat, const QString& pKey, const QString& pValue);

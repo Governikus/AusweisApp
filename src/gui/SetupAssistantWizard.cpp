@@ -5,12 +5,12 @@
  */
 
 #include "AppSettings.h"
-#include "ReaderInfo.h"
-#include "ReaderManager.h"
-#include "SetupAssistantWizard.h"
 #include "generic/GuiUtils.h"
 #include "generic/HelpAction.h"
 #include "generic/SmartCardUtil.h"
+#include "ReaderInfo.h"
+#include "ReaderManager.h"
+#include "SetupAssistantWizard.h"
 
 #include "ReaderDriverWidget.h"
 
@@ -250,43 +250,43 @@ void SetupAssistantWizard::addReader(QTableWidget* pTableWidget, int pRow, Reade
 	{
 		case ReaderType::REINER_cyberJack_RFID_komfort:
 			manufacturerLabel->setText(QStringLiteral("Reiner SCT<br>cyberJack RFID komfort"));
-			manufacturerWebPage = QStringLiteral("https://www.reiner-sct.com/support/support-anfrage/?productGroup=77304735&product=77304822&q=driver#choice4");
+			manufacturerWebPage = QStringLiteral("https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304822&q=driver#choice5");
 			break;
 
 		case ReaderType::REINER_cyberJack_RFID_standard:
 			manufacturerLabel->setText(QStringLiteral("Reiner SCT<br>cyberJack RFID standard"));
-			manufacturerWebPage = QStringLiteral("https://www.reiner-sct.com/support/support-anfrage/?productGroup=77304735&product=77304820&q=driver#choice4");
+			manufacturerWebPage = QStringLiteral("https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304820&q=driver#choice5");
 			break;
 
 		case ReaderType::REINER_cyberJack_RFID_basis:
 			manufacturerLabel->setText(QStringLiteral("Reiner SCT<br>cyberJack RFID basis"));
-			manufacturerWebPage = QStringLiteral("https://www.reiner-sct.com/support/support-anfrage/?productGroup=77304735&product=77304856#choice3");
+			manufacturerWebPage = QStringLiteral("https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304856&q=driver#choice5");
 			break;
 
 		case ReaderType::REINER_cyberJack_wave:
 			manufacturerLabel->setText(QStringLiteral("Reiner SCT<br>cyberJack wave"));
-			manufacturerWebPage = QStringLiteral("https://www.reiner-sct.com/support/support-anfrage/?productGroup=77304735&product=77304828&q=driver#choice4");
+			manufacturerWebPage = QStringLiteral("https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304828&q=driver#choice5");
 			break;
 
 		case ReaderType::SCM_SCL011_Contactless_Reader:
 			manufacturerLabel->setText(QStringLiteral("Identive<br>Identive SCL011"));
-			manufacturerWebPage = QStringLiteral("https://support.identive-group.com/npa_downloads.php?lang=0");
+			manufacturerWebPage = QStringLiteral("https://support.identiv.com/scl010-scl011/");
 			break;
 
 		case ReaderType::SCM_SDI010:
 		case ReaderType::SCM_SDI011:
 			manufacturerLabel->setText(QStringLiteral("Identive<br>Identive SDI011"));
-			manufacturerWebPage = QStringLiteral("https://support.identive-group.com/npa_downloads.php?lang=0");
+			manufacturerWebPage = QStringLiteral("https://support.identiv.com/sdi010-011/");
 			break;
 
 		case ReaderType::KOBIL_IDToken:
 			manufacturerLabel->setText(QStringLiteral("Kobil<br>Kobil ID Token"));
-			manufacturerWebPage = QStringLiteral("https://www.kobil.com/de/support/treiber.html");
+			manufacturerWebPage = QStringLiteral("https://www.kobil.com/de/support_de/#drivers_de");
 			break;
 
 		case ReaderType::ACS_ACR1281_PICC_Reader:
 			manufacturerLabel->setText(QStringLiteral("ACS<br>ACR1281U"));
-			manufacturerWebPage = QStringLiteral("http://www.idvation.com/produkte/reader/npa-reader/");
+			manufacturerWebPage = QStringLiteral("http://www.idvation.com/support/faq/4-contactless-readers/acr128/?tx_irfaq_pi1%5Bcat%5D=10");
 			break;
 
 		case ReaderType::OMNIKEY_CardMan_5x21_CL:
@@ -303,7 +303,7 @@ void SetupAssistantWizard::addReader(QTableWidget* pTableWidget, int pRow, Reade
 
 		case ReaderType::FEIG_OBID_myAXXESS_basic:
 			manufacturerLabel->setText(QStringLiteral("FEIG electronic GmbH<br>myAXXESS basic"));
-			manufacturerWebPage = QStringLiteral("http://www.feig.de/produkte/obid/produktbereiche/obid-myaxxess/npa/obid-myaxxess-basic-basisleser-fuer-npa.html");
+			manufacturerWebPage = QStringLiteral("http://www.feig.de/downloads/");
 			break;
 
 		case ReaderType::Gemalto_Prox_SU:

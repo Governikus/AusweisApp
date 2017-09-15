@@ -6,9 +6,9 @@
 
 #include "pace/DomainParameterMapping.h"
 
+#include <openssl/ec.h>
 #include <QByteArray>
 #include <QSharedPointer>
-#include <openssl/ec.h>
 
 namespace governikus
 {

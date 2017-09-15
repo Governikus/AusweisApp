@@ -2,12 +2,12 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "TestAuthContext.h"
 #include "controller/AuthController.h"
 #include "paos/invoke/InitializeFrameworkResponse.h"
 #include "paos/retrieve/InitializeFramework.h"
 #include "states/StateBuilder.h"
 #include "states/StateGenericSendReceive.h"
+#include "TestAuthContext.h"
 
 #include "MockNetworkManager.h"
 

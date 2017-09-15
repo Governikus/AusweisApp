@@ -23,7 +23,7 @@ class BaseCardCommand
 	: public QObject
 {
 	Q_OBJECT
-	friend class::test_BaseCardCommand;
+	friend class ::test_BaseCardCommand;
 
 	private:
 		Q_INVOKABLE void execute(); // will be invoked by CardConnection

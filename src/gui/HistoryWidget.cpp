@@ -5,13 +5,13 @@
 #include "HistoryWidget.h"
 
 #include "DeleteHistoryDialog.h"
-#include "PdfCreator.h"
 #include "generic/ListCheckItemWidget.h"
 #include "generic/ListItem.h"
 #include "generic/ListItemIconLeft.h"
 #include "generic/ListItemIconRight.h"
 #include "generic/ListItemSubTitle.h"
 #include "generic/ListItemTitle.h"
+#include "PdfCreator.h"
 #include "ui_HistoryWidget.h"
 
 #include <QDebug>

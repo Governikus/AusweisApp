@@ -19,7 +19,7 @@ namespace governikus
 class Eac2InputType
 {
 	friend class DidAuthenticateEac2Parser;
-	friend class::test_StateProcessCertificatesFromEac2;
+	friend class ::test_StateProcessCertificatesFromEac2;
 
 	private:
 		QByteArrayList mCvCertificatesAsBinary;

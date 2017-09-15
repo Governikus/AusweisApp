@@ -9,8 +9,8 @@
 #include <QProcess>
 #include <QRegularExpression>
 #include <QStringList>
-#include <QTimer>
 #include <QtTest/QtTest>
+#include <QTimer>
 
 #define CLI_VERIFY(cmd) cmd; QVERIFY(!QTest::currentTestFailed())
 

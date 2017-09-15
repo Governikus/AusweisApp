@@ -15,6 +15,7 @@
 
 #include "EnumHelper.h"
 
+#include <functional>
 #include <QList>
 #include <QString>
 
@@ -65,6 +66,29 @@ defineTypedEnumType(AccessRight, uint,
 		AGE_VERIFICATION = 0
 		)
 
+// do NOT change any key/value as this is used as an unique identifier!
+#define TYPE(x) static_cast<std::underlying_type<AccessRight>::type>(x)
+defineTypedEnumType(AccessRightNames, std::underlying_type<AccessRight>::type,
+		ResidencePermitII = TYPE(AccessRight::READ_DG20),
+		ResidencePermitI = TYPE(AccessRight::READ_DG19),
+		CommunityID = TYPE(AccessRight::READ_DG18),
+		Address = TYPE(AccessRight::READ_DG17),
+		BirthName = TYPE(AccessRight::READ_DG13),
+		Nationality = TYPE(AccessRight::READ_DG10),
+		PlaceOfBirth = TYPE(AccessRight::READ_DG09),
+		DateOfBirth = TYPE(AccessRight::READ_DG08),
+		DoctoralDegree = TYPE(AccessRight::READ_DG07),
+		ArtisticName = TYPE(AccessRight::READ_DG06),
+		FamilyName = TYPE(AccessRight::READ_DG05),
+		GivenNames = TYPE(AccessRight::READ_DG04),
+		ValidUntil = TYPE(AccessRight::READ_DG03),
+		IssuingCountry = TYPE(AccessRight::READ_DG02),
+		DocumentType = TYPE(AccessRight::READ_DG01),
+		Pseudonym = TYPE(AccessRight::RESTRICTED_IDENTIFICATION),
+		AddressVerification = TYPE(AccessRight::COMMUNITY_ID_VERIFICATION),
+		AgeVerification = TYPE(AccessRight::AGE_VERIFICATION)
+		)
+#undef TYPE
 
 inline uint qHash(governikus::AccessRight pAccessRight)
 {
@@ -91,6 +115,8 @@ class AccessRoleAndRightsUtil
 		static const QList<AccessRight>& allDisplayedOrderedRights();
 		static const QList<AccessRight>& allRights();
 		static QString toDisplayText(AccessRight pRight);
+		static QLatin1String toTechnicalName(AccessRight pRight);
+		static bool fromTechnicalName(const char* pStr, const std::function<void(AccessRight)>& pFunc);
 };
 
 }

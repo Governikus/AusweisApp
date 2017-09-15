@@ -6,10 +6,10 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "CardConnectionWorker.h"
-#include "CardInfo.h"
 #include "asn1/PACEInfo.h"
 #include "asn1/SecurityInfos.h"
+#include "CardConnectionWorker.h"
+#include "CardInfo.h"
 
 #include <QDebug>
 #include <QLoggingCategory>
@@ -21,11 +21,12 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 
 using namespace governikus;
 
-CardInfo::CardInfo(CardType pCardType, QSharedPointer<const EFCardAccess> pEfCardAccess, int pRetryCounter, bool pPinDeactivated)
+CardInfo::CardInfo(CardType pCardType, QSharedPointer<const EFCardAccess> pEfCardAccess, int pRetryCounter, bool pPinDeactivated, bool pPukInoperative)
 	: mCardType(pCardType)
 	, mEfCardAccess(pEfCardAccess)
 	, mRetryCounter(pRetryCounter)
 	, mPinDeactivated(pPinDeactivated)
+	, mPukInoperative(pPukInoperative)
 {
 }
 
@@ -57,6 +58,12 @@ int CardInfo::getRetryCounter() const
 bool CardInfo::isPinDeactivated() const
 {
 	return mPinDeactivated;
+}
+
+
+bool CardInfo::isPukInoperative() const
+{
+	return mPukInoperative;
 }
 
 

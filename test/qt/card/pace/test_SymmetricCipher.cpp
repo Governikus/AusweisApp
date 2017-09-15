@@ -6,8 +6,8 @@
 #include "pace/KeyDerivationFunction.h"
 #include "pace/SymmetricCipher.h"
 
-#include <QtTest>
 #include <openssl/evp.h>
+#include <QtTest>
 
 using namespace governikus;
 

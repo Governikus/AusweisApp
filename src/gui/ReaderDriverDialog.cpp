@@ -4,8 +4,8 @@
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
-#include "ReaderDriverDialog.h"
 #include "generic/HelpAction.h"
+#include "ReaderDriverDialog.h"
 #include "ui_ReaderDriverDialog.h"
 
 

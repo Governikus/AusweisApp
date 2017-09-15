@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
+#include "asn1/SecurityInfos.h"
 #include "BaseCardCommand.h"
 #include "CardConnection.h"
-#include "asn1/SecurityInfos.h"
 
 #include <QLoggingCategory>
 #include <QSharedPointer>

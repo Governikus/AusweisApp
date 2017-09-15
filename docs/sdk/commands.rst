@@ -117,7 +117,7 @@ RUN_AUTH
 ^^^^^^^^
 Starts an authentication.
 
-The AusweisApp2 will send a :ref:`auth` message when the authentication is started.
+The AusweisApp2 will send an :ref:`auth` message when the authentication is started.
 
 
   - **tcTokenURL**:
@@ -166,14 +166,14 @@ SET_ACCESS_RIGHTS
 ^^^^^^^^^^^^^^^^^
 Set effective access rights.
 
-By default the **"effective"** access rights are **"optional"** + **"required"**.
-If you want to enable or disable some **"optional"** access rights you can
+By default the **effective** access rights are **optional** + **required**.
+If you want to enable or disable some **optional** access rights you can
 send this command to modify the **effective** access rights.
 
 The AusweisApp2 will send an :ref:`access_rights` message as an answer.
 
 
-  - **raw**:
+  - **chat**:
     List of enabled **optional** access rights. If you send an empty **[]**
     all **optional** access rights are disabled.
 
@@ -181,7 +181,14 @@ The AusweisApp2 will send an :ref:`access_rights` message as an answer.
 
   {
     "cmd": "SET_ACCESS_RIGHTS",
-    "raw": []
+    "chat": []
+  }
+
+.. code-block:: json
+
+  {
+    "cmd": "SET_ACCESS_RIGHTS",
+    "chat": ["FamilyName"]
   }
 
 .. note::
@@ -189,6 +196,8 @@ The AusweisApp2 will send an :ref:`access_rights` message as an answer.
   :ref:`access_rights` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
 
+.. seealso::
+  List of possible access rights are listed in :ref:`access_rights`.
 
 
 
@@ -272,7 +281,7 @@ SET_PIN
 Set PIN of inserted card.
 
 If the AusweisApp2 sends message :ref:`enter_pin` you need
-to send this command to unlock the card with the PIN.
+to send this command to unblock the card with the PIN.
 
 The AusweisApp2 will send an :ref:`enter_pin` message on error
 or message :ref:`enter_can` if the retryCounter of the card
@@ -282,10 +291,11 @@ For detailed information see message :ref:`enter_pin`.
 If the PIN was correct, the workflow will continue.
 
 If the last attempt to enter the PIN failed, AusweisApp2
-will send the message :ref:`enter_puk`.
+will send the message :ref:`enter_puk` as the retryCounter
+is decreased to **0**.
 
 
-- **value**: The personal identification number of the card.
+- **value**: The personal identification number (PIN) of the card.
   This must be 6 digits.
 
 .. code-block:: json
@@ -310,13 +320,13 @@ SET_CAN
 Set CAN of inserted card.
 
 If the AusweisApp2 sends message :ref:`enter_can` you need
-to send this command to unlock the last retry of :ref:`set_pin`.
+to send this command to unblock the last retry of :ref:`set_pin`.
 
 The AusweisApp2 will send an :ref:`enter_can` message on error.
 Otherwise the workflow will continue with :ref:`enter_pin`.
 
 
-- **value**: The card access number of the card.
+- **value**: The card access number (CAN) of the card.
   This must be 6 digits.
 
 .. code-block:: json
@@ -331,3 +341,34 @@ Otherwise the workflow will continue with :ref:`enter_pin`.
   :ref:`enter_can` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
 
+
+
+
+.. _set_puk:
+
+SET_PUK
+^^^^^^^
+Set PUK of inserted card.
+
+If the AusweisApp2 sends message :ref:`enter_puk` you need
+to send this command to unblock :ref:`set_pin`.
+
+The AusweisApp2 will send an :ref:`enter_puk` message on error
+or if the PUK is operative.
+Otherwise the workflow will continue with :ref:`enter_pin`.
+For detailed information see message :ref:`enter_puk`.
+
+- **value**: The personal unblocking key (PUK) of the card.
+  This must be 10 digits.
+
+.. code-block:: json
+
+  {
+    "cmd": "SET_PUK",
+    "value": "1234567890"
+  }
+
+.. note::
+  This command is allowed only if the AusweisApp2 sends an initial
+  :ref:`enter_puk` message. Otherwise you will get a :ref:`bad_state`
+  message as an answer.

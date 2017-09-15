@@ -3,9 +3,9 @@
  *
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
-#include "SecureMessagingResponse.h"
 #include "asn1/ASN1Util.h"
 #include "pace/SecureMessaging.h"
+#include "SecureMessagingResponse.h"
 
 #include <QLoggingCategory>
 

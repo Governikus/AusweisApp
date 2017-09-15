@@ -1062,7 +1062,7 @@
     <message>
         <location filename="../qml/more/Information.qml" line="110"/>
         <source>Read the software license text on the application homepage.</source>
-        <translation>Lesen Sie die Softwarelizenz auf der Internetseite der Anwedung.</translation>
+        <translation>Lesen Sie die Softwarelizenz auf der Internetseite der Anwendung.</translation>
     </message>
     <message>
         <location filename="../qml/more/Information.qml" line="111"/>
@@ -1155,8 +1155,8 @@
     </message>
     <message>
         <location filename="../qml/more/MoreView.qml" line="58"/>
-        <source>I&apos;m using Ausweisapp2, download it here for Android: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2&amp;hl=de or here for iOS: https://itunes.apple.com/de/app/wikipedia-mobile/id324715238?mt=8</source>
-        <translation>Ich verwende die AusweisApp2 , laden Sie die AusweisApp2 für Android: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2&amp;hl=de oder  für iOS: https: //itunes.apple . com / de / app / wikipedia -mobile / id324715238 ? mt = 8</translation>
+        <source>I&apos;m using Ausweisapp2, download it here for Android: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2</source>
+        <translation>Ich verwende die AusweisApp2, laden Sie die AusweisApp2 für Android: https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2&amp;hl=de</translation>
     </message>
     <message>
         <location filename="../qml/more/MoreView.qml" line="58"/>
@@ -3968,7 +3968,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
     <message>
         <location filename="../../src/gui/SetupAssistantWizard.cpp" line="377"/>
         <source>&lt;div align=&quot;right&quot;&gt;Step %1 of %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Almost done!&lt;/div&gt;</source>
-        <translation>&lt;div align=&quot;right&quot;&gt;Step %1 of %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Fast fertig!&lt;/div&gt;</translation>
+        <translation>&lt;div align=&quot;right&quot;&gt;Schritt %1 von %2&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Fast fertig!&lt;/div&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/SetupAssistantWizard.cpp" line="142"/>

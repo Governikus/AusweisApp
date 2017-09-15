@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "paos/PaosMessage.h"
 #include "paos/element/ConnectionHandle.h"
 #include "paos/element/Eac2InputType.h"
+#include "paos/PaosMessage.h"
 
 class test_StateProcessCertificatesFromEac2;
 
@@ -21,7 +21,7 @@ class DIDAuthenticateEAC2
 	: public PaosMessage
 {
 	friend class DidAuthenticateEac2Parser;
-	friend class::test_StateProcessCertificatesFromEac2;
+	friend class ::test_StateProcessCertificatesFromEac2;
 
 	private:
 		ConnectionHandle mConnectionHandle;

@@ -21,7 +21,7 @@ namespace governikus
 class HelpAction
 {
 	private:
-		friend class::test_HelpAction;
+		friend class ::test_HelpAction;
 
 		static const QMap<QString, QString> mHelpMapping;
 

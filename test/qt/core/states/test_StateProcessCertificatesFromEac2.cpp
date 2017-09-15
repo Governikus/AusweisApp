@@ -6,13 +6,13 @@
 
 #include "states/StateProcessCertificatesFromEac2.h"
 
-#include "Commands.h"
-#include "TestAuthContext.h"
-#include "TestFileHelper.h"
 #include "asn1/CVCertificateChainBuilder.h"
+#include "Commands.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
 #include "paos/retrieve/DidAuthenticateEac2Parser.h"
+#include "TestAuthContext.h"
+#include "TestFileHelper.h"
 
 #include <QtCore>
 #include <QtTest>

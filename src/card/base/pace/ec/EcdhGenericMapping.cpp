@@ -4,8 +4,8 @@
 
 #include <openssl/ec.h>
 
-#include "pace/ec/EcUtil.h"
 #include "pace/ec/EcdhGenericMapping.h"
+#include "pace/ec/EcUtil.h"
 
 #include <QLoggingCategory>
 

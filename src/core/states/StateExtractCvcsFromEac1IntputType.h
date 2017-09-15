@@ -19,7 +19,7 @@ class StateExtractCvcsFromEac1IntputType
 {
 	Q_OBJECT
 	friend class StateBuilder;
-	friend class::test_StateExtractCvcsFromEac1InputType;
+	friend class ::test_StateExtractCvcsFromEac1InputType;
 
 	StateExtractCvcsFromEac1IntputType(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;

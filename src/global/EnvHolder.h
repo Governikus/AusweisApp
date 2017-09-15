@@ -6,13 +6,13 @@
 
 #pragma once
 
+#include <functional>
+#include <memory>
 #include <QMap>
 #include <QMetaObject>
 #include <QObject>
 #include <QSharedPointer>
 #include <QWeakPointer>
-#include <functional>
-#include <memory>
 
 namespace governikus
 {
@@ -44,7 +44,7 @@ class EnvHolder
 		static EnvHolder& getInstance();
 
 		template<typename T>
-		typename std::enable_if<std::is_abstract<T>::value&& std::is_destructible<T>::value, T*>::type storeSingleton(Identifier pId)
+		typename std::enable_if<std::is_abstract<T>::value && std::is_destructible<T>::value, T*>::type storeSingleton(Identifier pId)
 		{
 			static_assert(std::has_virtual_destructor<T>::value, "Destructor must be virtual");
 

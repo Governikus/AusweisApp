@@ -10,9 +10,9 @@
 #include "AppSettings.h"
 #include "CardConnection.h"
 #include "DetailDialog.h"
-#include "RandomPinDialog.h"
 #include "generic/GuiUtils.h"
 #include "generic/PasswordEdit.h"
+#include "RandomPinDialog.h"
 
 #include <QApplication>
 #include <QCheckBox>
@@ -20,10 +20,10 @@
 #include <QLineEdit>
 #include <QLoggingCategory>
 #include <QProgressBar>
+#include <QtMath>
 #include <QToolButton>
 #include <QToolTip>
 #include <QWindow>
-#include <QtMath>
 
 #ifdef Q_OS_WIN32
 #include <QWinTaskbarProgress>

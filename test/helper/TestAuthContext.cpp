@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
  */
 
+#include "paos/retrieve/DidAuthenticateEac1Parser.h"
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
 
 using namespace governikus;

@@ -8,9 +8,9 @@
 
 #include "AppSettings.h"
 #include "DetailDialog.h"
+#include "generic/Page.h"
 #include "HistoryModel.h"
 #include "QmlExtension.h"
-#include "generic/Page.h"
 
 #include <QQuickWidget>
 #include <QScopedPointer>

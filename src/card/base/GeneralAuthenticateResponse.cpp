@@ -4,8 +4,8 @@
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
-#include "GeneralAuthenticateResponse.h"
 #include "asn1/ASN1Util.h"
+#include "GeneralAuthenticateResponse.h"
 
 #include <QLoggingCategory>
 

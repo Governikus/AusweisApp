@@ -2,15 +2,15 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include <QThread>
 #include <QtCore/QtCore>
 #include <QtTest/QtTest>
+#include <QThread>
 
-#include "TestFileHelper.h"
 #include "controller/AuthController.h"
 #include "paos/retrieve/StartPaosResponse.h"
 #include "states/StateBuilder.h"
 #include "states/StateStartPaosResponse.h"
+#include "TestFileHelper.h"
 
 using namespace governikus;
 

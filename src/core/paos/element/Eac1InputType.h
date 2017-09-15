@@ -7,9 +7,9 @@
 #pragma once
 
 #include "asn1/AuthenticatedAuxiliaryData.h"
-#include "asn1/CVCertificate.h"
 #include "asn1/CertificateDescription.h"
 #include "asn1/Chat.h"
+#include "asn1/CVCertificate.h"
 
 #include <QByteArray>
 #include <QSharedPointer>
@@ -29,12 +29,12 @@ class TestAuthContext;
 class Eac1InputType
 {
 	friend class DidAuthenticateEac1Parser;
-	friend class::test_StatePrepareChat;
+	friend class ::test_StatePrepareChat;
 	friend class TestAuthContext;
-	friend class::test_StateExtractCvcsFromEac1InputType;
-	friend class::test_StatePreVerification;
-	friend class::test_StateCertificateDescriptionCheck;
-	friend class::test_StateProcessCertificatesFromEac2;
+	friend class ::test_StateExtractCvcsFromEac1InputType;
+	friend class ::test_StatePreVerification;
+	friend class ::test_StateCertificateDescriptionCheck;
+	friend class ::test_StateProcessCertificatesFromEac2;
 
 	private:
 		QVector<QSharedPointer<CVCertificate> > mCvCertificates;

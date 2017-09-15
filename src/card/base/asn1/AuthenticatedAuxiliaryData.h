@@ -41,18 +41,6 @@ namespace governikus
  */
 
 
-typedef ASN1_OCTET_STRING CommunityID;
-DECLARE_ASN1_FUNCTIONS(CommunityID)
-
-
-typedef ASN1_OCTET_STRING ValidityDate;
-DECLARE_ASN1_FUNCTIONS(ValidityDate)
-
-
-typedef ASN1_STRING AgeVerificationDate;
-DECLARE_ASN1_FUNCTIONS(AgeVerificationDate)
-
-
 typedef struct auxdatatemplate_st
 {
 	ASN1_OBJECT* mAuxId;
@@ -89,7 +77,5 @@ struct AuthenticatedAuxiliaryData
 
 DECLARE_ASN1_FUNCTIONS(AuthenticatedAuxiliaryData)
 DECLARE_ASN1_OBJECT(AuthenticatedAuxiliaryData)
-
-DECLARE_ASN1_OBJECT(ValidityDate)
 
 } /* namespace governikus */

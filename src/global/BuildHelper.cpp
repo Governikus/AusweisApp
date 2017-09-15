@@ -21,12 +21,7 @@ const char* BuildHelper::mDateTime = __DATE__ " / " __TIME__;
 
 int BuildHelper::getVersionCode()
 {
-	if (VersionNumber::getApplicationVersion().isDeveloperVersion())
-	{
-		return getVersionCode(QStringLiteral("com.governikus.ausweisapp2.dev"));
-	}
-
-	return getVersionCode(QStringLiteral("com.governikus.ausweisapp2"));
+	return getVersionCode(getPackageName());
 }
 
 
@@ -64,6 +59,19 @@ int BuildHelper::getVersionCode(const QString& pPackageName)
 	}
 
 	return version_code;
+}
+
+
+QString BuildHelper::getPackageName()
+{
+	auto context = QtAndroid::androidContext();
+	auto name = context.callObjectMethod("getPackageName", "()Ljava/lang/String;");
+	if (name.isValid())
+	{
+		return name.toString();
+	}
+
+	return QString();
 }
 
 

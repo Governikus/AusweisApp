@@ -12,10 +12,10 @@
 #include <QWidget>
 
 #include "AppQtMainWidget.h"
-#include "WorkflowQtWidget.h"
-#include "WorkflowWidgetParent.h"
 #include "context/WorkflowContext.h"
 #include "step/StepGui.h"
+#include "WorkflowQtWidget.h"
+#include "WorkflowWidgetParent.h"
 
 namespace governikus
 {

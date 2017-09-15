@@ -8,9 +8,9 @@
 
 #pragma once
 
+#include "paos/element/ConnectionHandle.h"
 #include "paos/ElementDetector.h"
 #include "paos/PaosMessage.h"
-#include "paos/element/ConnectionHandle.h"
 
 namespace governikus
 {

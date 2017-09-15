@@ -4,13 +4,13 @@
 
 #include "states/StateCheckRefreshAddress.h"
 
-#include "MockNetworkManager.h"
 #include "context/AuthContext.h"
+#include "MockNetworkManager.h"
 #include "states/StateBuilder.h"
 
-#include <QThread>
 #include <QtCore>
 #include <QtTest>
+#include <QThread>
 
 using namespace governikus;
 

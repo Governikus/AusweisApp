@@ -38,14 +38,14 @@ QStringList takeWhileNonEmpty(const QStringList& lines)
 
 QString getField(const QString& pData, const QStringList& pSearchItems)
 {
-	static const QString NEW_LINE("\r\n");
+	const QLatin1Char NEW_LINE('\n');
 
 	for (const auto& item : pSearchItems)
 	{
 		const int pos = pData.indexOf(item);
 		if (pos != -1)
 		{
-			const QString rest = pData.mid(pos + item.length());
+			const QString rest = pData.mid(pos + item.length()).trimmed();
 			const QStringList lines = takeWhileNonEmpty(rest.split(NEW_LINE));
 			if (lines.isEmpty())
 			{
@@ -243,7 +243,7 @@ QSet<QString> CertificateDescription::getCommCertificates() const
 QString CertificateDescription::getServiceProviderAddress() const
 {
 	static const QStringList SEARCH_ITEMS({
-				QStringLiteral("Name, Anschrift und E-Mail-Adresse des Diensteanbieters:\r\n")
+				QStringLiteral("Name, Anschrift und E-Mail-Adresse des Diensteanbieters:")
 			});
 
 	return getField(getTermsOfUsage(), SEARCH_ITEMS);
@@ -253,10 +253,10 @@ QString CertificateDescription::getServiceProviderAddress() const
 QString CertificateDescription::getPurpose() const
 {
 	static const QStringList SEARCH_ITEMS({
-				QStringLiteral("Gesch\u00E4ftszweck:\r\n"),
-				QStringLiteral("Zweck des Auslesevorgangs:\r\n"),
-				QStringLiteral("Verwendung der Daten:\r\n"),
-				QStringLiteral("Zweck der Daten\u00FCbermittlung:\r\n")
+				QStringLiteral("Gesch\u00E4ftszweck:"),
+				QStringLiteral("Zweck des Auslesevorgangs:"),
+				QStringLiteral("Verwendung der Daten:"),
+				QStringLiteral("Zweck der Daten\u00FCbermittlung:")
 			});
 
 	return getField(getTermsOfUsage(), SEARCH_ITEMS);
@@ -267,7 +267,7 @@ QString CertificateDescription::getDataSecurityOfficer() const
 {
 	static const QStringList SEARCH_ITEMS({QStringLiteral(
 										   "Hinweis auf die f\u00FCr den Diensteanbieter zust\u00E4ndigen Stellen, "
-										   "die die Einhaltung der Vorschriften zum Datenschutz kontrollieren:\r\n")});
+										   "die die Einhaltung der Vorschriften zum Datenschutz kontrollieren:")});
 
 	return getField(getTermsOfUsage(), SEARCH_ITEMS);
 }

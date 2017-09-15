@@ -7,8 +7,8 @@
 #include "states/StatePreVerification.h"
 
 #include "AppSettings.h"
-#include "TestFileHelper.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
+#include "TestFileHelper.h"
 
 #include "TestAuthContext.h"
 #include <QtCore>

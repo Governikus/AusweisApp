@@ -24,7 +24,7 @@ class WorkflowController
 	: public QObject
 {
 	Q_OBJECT
-	friend class::test_ChangePinController;
+	friend class ::test_ChangePinController;
 
 	protected:
 		QStateMachine mStateMachine;

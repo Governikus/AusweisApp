@@ -4,8 +4,8 @@
 
 #include "StateProcessCertificatesFromEac2.h"
 
-#include "Result.h"
 #include "asn1/CVCertificateChainBuilder.h"
+#include "Result.h"
 
 #include <QDebug>
 

@@ -21,6 +21,17 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 namespace governikus
 {
 
+using CommunityID = ASN1_OCTET_STRING;
+DECLARE_ASN1_FUNCTIONS(CommunityID)
+
+using ValidityDate = ASN1_OCTET_STRING;
+DECLARE_ASN1_FUNCTIONS(ValidityDate)
+
+using AgeVerificationDate = ASN1_STRING;
+DECLARE_ASN1_FUNCTIONS(AgeVerificationDate)
+
+DECLARE_ASN1_OBJECT(ValidityDate)
+
 /*!
  * This defines the AuxDataTemplate object as SEQUENCE without the special tag.
  */

@@ -77,7 +77,8 @@ EntryParser::EntryParser(const QJsonValue& pJsonValue)
 	, mMacVersion({
 				{"MV_10_9", QSysInfo::MV_10_9},
 				{"MV_10_10", QSysInfo::MV_10_10},
-				{"MV_10_11", QSysInfo::MV_10_11}
+				{"MV_10_11", QSysInfo::MV_10_11},
+				{"MV_10_12", QSysInfo::MV_10_12}
 			}
 			)
 {

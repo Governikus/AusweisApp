@@ -73,6 +73,7 @@ class Reader
 
 		virtual Card* getCard() const = 0;
 
+		void setPukInoperative();
 
 		/*!
 		 * \brief Creates a new CardConnectionWorker if and only if there is a card in the reader which is not already exclusively connected.

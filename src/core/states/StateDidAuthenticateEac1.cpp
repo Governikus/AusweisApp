@@ -4,10 +4,10 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
+#include "asn1/CVCertificateChainBuilder.h"
 #include "CardConnection.h"
 #include "Result.h"
 #include "StateDidAuthenticateEac1.h"
-#include "asn1/CVCertificateChainBuilder.h"
 
 #include <QMetaObject>
 
