@@ -27,7 +27,7 @@ QDomElement StartPaos::createConnectionHandleElement()
 {
 	QDomElement element = mDoc.createElement(QStringLiteral("ConnectionHandle"));
 	element.setAttribute(getNamespacePrefix(Namespace::XSI), getNamespace(Namespace::XSI));
-	element.setAttribute(getNamespacePrefix(Namespace::XSI, QStringLiteral("type")), QStringLiteral("ConnectionHandle"));
+	element.setAttribute(getNamespacePrefix(Namespace::XSI, QStringLiteral("type")), QStringLiteral("ConnectionHandleType"));
 
 	element.appendChild(createTextElement(QStringLiteral("CardApplication"), QStringLiteral("e80704007f00070302")));
 	element.appendChild(createTextElement(QStringLiteral("SlotHandle"), QStringLiteral("00")));

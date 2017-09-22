@@ -1,0 +1,15 @@
+AusweisApp2 1.12.4
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 22. September 2017
+
+
+Anwender
+""""""""
+  - Einige Abstürze unter arm64-v8a behoben.
+
+
+Entwickler
+""""""""""
+  - Der XML-ConnectionHandleType ist nun korrigiert und
+    schemakonform.

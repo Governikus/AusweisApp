@@ -13,7 +13,6 @@
 #include "Reader.h"
 
 #include <QBluetoothDeviceInfo>
-#include <QBluetoothLocalDevice>
 #include <QLowEnergyController>
 
 

@@ -6,6 +6,7 @@ Versionszweig 1.12
 .. toctree::
    :maxdepth: 1
 
+   1.12.4
    1.12.3
    1.12.2
    1.12.1
@@ -17,6 +18,7 @@ Versionszweig 1.10
 .. toctree::
    :maxdepth: 1
 
+   1.10.4
    1.10.3
    1.10.2
    1.10.1

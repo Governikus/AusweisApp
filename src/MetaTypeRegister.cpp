@@ -10,7 +10,7 @@
 #include "command/BaseCardCommand.h"
 #include "command/CreateCardConnectionCommand.h"
 
-#if defined(Q_OS_LINUX) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+#if (defined(Q_OS_LINUX) && !defined(QT_NO_DEBUG)) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	#include "messages/BluetoothMessage.h"
 #endif
 
@@ -41,7 +41,7 @@ void registerMetaTypes()
 	qRegisterMetaType<QLowEnergyDescriptor>("QLowEnergyDescriptor");
 #endif
 
-#if defined(Q_OS_LINUX) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+#if (defined(Q_OS_LINUX) && !defined(QT_NO_DEBUG)) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	BluetoothMessage::registerMetaTypes();
 #endif
 }

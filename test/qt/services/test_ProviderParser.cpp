@@ -272,12 +272,12 @@ class test_ProviderParser
 		{
 			QTest::addColumn<int>("count");
 
-			const int desktop = 64;
+			const int desktop = 66;
 			QTest::newRow("win") << desktop;
 			QTest::newRow("mac") << desktop;
 			QTest::newRow("linux") << desktop;
-			QTest::newRow("android") << desktop;
-			QTest::newRow("ios") << desktop;
+			QTest::newRow("android") << desktop - 1;
+			QTest::newRow("ios") << 14;
 		}
 
 
