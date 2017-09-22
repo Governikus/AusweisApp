@@ -5,12 +5,12 @@
 #include "states/StateRedirectBrowser.h"
 
 #include "MockActivationContext.h"
-#include "TestFileHelper.h"
 #include "states/StateBuilder.h"
+#include "TestFileHelper.h"
 
-#include <QThread>
 #include <QtCore>
 #include <QtTest>
+#include <QThread>
 
 using namespace governikus;
 

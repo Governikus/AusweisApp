@@ -19,7 +19,7 @@ class StateProcessCertificatesFromEac2
 {
 	Q_OBJECT
 	friend class StateBuilder;
-	friend class::test_StateProcessCertificatesFromEac2;
+	friend class ::test_StateProcessCertificatesFromEac2;
 
 	StateProcessCertificatesFromEac2(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;

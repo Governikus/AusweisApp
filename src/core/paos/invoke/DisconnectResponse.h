@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "PaosCreator.h"
 #include "paos/ResponseType.h"
+#include "PaosCreator.h"
 
 class test_DisconnectResponse;
 
@@ -18,7 +18,7 @@ class DisconnectResponse
 	: public PaosCreator
 	, public ResponseType
 {
-	friend class::test_DisconnectResponse;
+	friend class ::test_DisconnectResponse;
 
 	private:
 		QString mSlotHandle;

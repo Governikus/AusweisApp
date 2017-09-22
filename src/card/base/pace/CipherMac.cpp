@@ -5,8 +5,8 @@
 #include "asn1/KnownOIDs.h"
 #include "pace/CipherMac.h"
 
-#include <QLoggingCategory>
 #include <openssl/evp.h>
+#include <QLoggingCategory>
 
 
 using namespace governikus;

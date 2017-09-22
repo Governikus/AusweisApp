@@ -7,8 +7,8 @@
 #include "EcdsaPublicKey.h"
 #include "pace/ec/EcUtil.h"
 
-#include <QLoggingCategory>
 #include <openssl/evp.h>
+#include <QLoggingCategory>
 
 
 using namespace governikus;

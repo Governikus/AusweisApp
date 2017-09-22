@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "StepProcessingGui.h"
 #include "generic/BusyOverlayContainer.h"
 #include "step/AuthenticateStepsWidget.h"
+#include "StepProcessingGui.h"
 
 using namespace governikus;
 

@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "Apdu.h"
 #include "asn1/ASN1TemplateUtil.h"
+#include "Apdu.h"
 #include "pace/CipherMac.h"
 #include "pace/SymmetricCipher.h"
 

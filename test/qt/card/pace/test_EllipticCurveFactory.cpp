@@ -3,11 +3,11 @@
  */
 
 
+#include <openssl/obj_mac.h>
 #include <QApplication>
 #include <QSignalSpy>
 #include <QtCore/QtCore>
 #include <QtTest/QtTest>
-#include <openssl/obj_mac.h>
 
 #include "pace/ec/EllipticCurveFactory.h"
 

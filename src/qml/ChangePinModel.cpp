@@ -2,10 +2,10 @@
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
+#include "context/ChangePinContext.h"
 #include "ChangePinModel.h"
 #include "ReaderManager.h"
 #include "ReturnCodeUtil.h"
-#include "context/ChangePinContext.h"
 
 #include <QDebug>
 

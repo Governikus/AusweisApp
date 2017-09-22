@@ -6,11 +6,11 @@
 
 #pragma once
 
+#include "context/AuthContext.h"
 #include "DiagnosisGui.h"
 #include "ReaderDriverGui.h"
 #include "ReaderManager.h"
 #include "StepGui.h"
-#include "context/AuthContext.h"
 
 #include <QMessageBox>
 

@@ -4,8 +4,8 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "StateDidList.h"
 #include "paos/invoke/DidListResponse.h"
+#include "StateDidList.h"
 
 
 using namespace governikus;

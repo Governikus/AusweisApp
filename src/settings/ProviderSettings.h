@@ -113,7 +113,7 @@ class ProviderSettings
 
 	friend class AppSettings;
 	friend class ProviderParser;
-	friend class::test_ProviderSettings;
+	friend class ::test_ProviderSettings;
 	friend bool operator==(const ProviderSettings& pLeft, const ProviderSettings& pRight);
 
 	private:

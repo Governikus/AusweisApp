@@ -1,15 +1,15 @@
-#include "CommandLineParser.h"
-#include "SignalHandler.h"
 #include "controller/AppController.h"
 #include "core/DeviceInfo.h"
+#include "CommandLineParser.h"
 #include "global/BuildHelper.h"
 #include "global/LogHandler.h"
+#include "SignalHandler.h"
 
 #include <QLoggingCategory>
 #include <QSslSocket>
 #include <QSysInfo>
-#include <QThread>
 #include <QtPlugin>
+#include <QThread>
 
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 #include <QGuiApplication>

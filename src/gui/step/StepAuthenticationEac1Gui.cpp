@@ -2,10 +2,10 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "StepAuthenticationEac1Gui.h"
 #include "generic/GuiUtils.h"
 #include "step/AuthenticateStepsWidget.h"
 #include "step/StepAuthenticationEac1Widget.h"
+#include "StepAuthenticationEac1Gui.h"
 
 #include <QTimer>
 

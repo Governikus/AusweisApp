@@ -7,8 +7,8 @@
 #include "WorkflowChangePinQtGui.h"
 
 #include "AppQtMainWidget.h"
-#include "PinSettingsWidget.h"
 #include "generic/GuiUtils.h"
+#include "PinSettingsWidget.h"
 #include "step/StepChooseCardGui.h"
 #include "step/StepErrorGui.h"
 

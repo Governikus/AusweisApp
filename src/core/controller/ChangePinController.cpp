@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "ChangePinController.h"
 #include "context/ChangePinContext.h"
+#include "ChangePinController.h"
 #include "states/CompositeStateSelectCard.h"
 #include "states/FinalState.h"
 #include "states/StateChangePin.h"

@@ -10,9 +10,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
+import android.nfc.tech.IsoDep;
 import android.nfc.Tag;
 import android.nfc.TagLostException;
-import android.nfc.tech.IsoDep;
 import android.util.Log;
 
 public class NFCConnector

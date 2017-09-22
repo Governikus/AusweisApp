@@ -9,9 +9,9 @@
 
 #include "LogHandler.h"
 #include "MockQHttpConnection.h"
-#include "ResourceLoader.h"
 #include "qhttpserver/qhttprequest.h"
 #include "qhttpserver/qhttpresponse.h"
+#include "ResourceLoader.h"
 
 #include <QtCore>
 #include <QtTest>

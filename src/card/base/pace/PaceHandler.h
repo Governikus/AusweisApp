@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include "CardConnectionWorker.h"
-#include "EnumHelper.h"
 #include "asn1/PACEInfo.h"
 #include "asn1/SecurityInfos.h"
+#include "CardConnectionWorker.h"
+#include "EnumHelper.h"
 #include "pace/KeyAgreement.h"
 #include "pace/KeyDerivationFunction.h"
 
@@ -25,7 +25,7 @@ namespace governikus
 {
 class PaceHandler
 {
-	friend class::test_PaceHandler;
+	friend class ::test_PaceHandler;
 
 	private:
 		const QSharedPointer<CardConnectionWorker> mCardConnectionWorker;

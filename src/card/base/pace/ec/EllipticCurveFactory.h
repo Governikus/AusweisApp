@@ -6,9 +6,9 @@
 
 #include "asn1/SecurityInfo.h"
 
+#include <openssl/ec.h>
 #include <QByteArray>
 #include <QSharedPointer>
-#include <openssl/ec.h>
 
 namespace governikus
 {

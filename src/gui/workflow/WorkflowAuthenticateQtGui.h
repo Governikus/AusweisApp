@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "GenericWorkflowGui.h"
 #include "context/AuthContext.h"
+#include "GenericWorkflowGui.h"
 
 
 namespace governikus

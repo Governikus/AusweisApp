@@ -7,12 +7,12 @@
 #include "StepChooseDeviceWidget.h"
 #include "ui_StepChooseDeviceWidget.h"
 
-#include "ReaderManager.h"
 #include "generic/ListItem.h"
 #include "generic/ListItemIconLeft.h"
 #include "generic/ListItemIconRight.h"
 #include "generic/ListItemSubTitle.h"
 #include "generic/ListItemTitle.h"
+#include "ReaderManager.h"
 
 #include <QLoggingCategory>
 #include <QMovie>

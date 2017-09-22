@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "PaosCreator.h"
 #include "paos/ResponseType.h"
+#include "PaosCreator.h"
 
 #include <QDebug>
 #include <QUuid>

@@ -4,9 +4,9 @@
 
 #pragma once
 
+#include "command/CreateCardConnectionCommand.h"
 #include "Reader.h"
 #include "ReaderManagerWorker.h"
-#include "command/CreateCardConnectionCommand.h"
 
 #include <QPointer>
 #include <QThread>

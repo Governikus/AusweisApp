@@ -1,565 +1,964 @@
 {
-	"issueDate": "2016-11-07T12:30:00+1:00",
+	"issueDate": "2017-09-15T11:00:00+1:00",
+	"callcosts" : [
+		{
+			"prefixes" : ["1371", "1375"],
+			"landline" : {
+				"per-call" : 14
+			}
+		},
+		{
+			"prefixes" : ["1372", "1373", "1374", "138"],
+			"landline" : {
+				"per-minute" : 14
+			}
+		},
+		{
+			"prefixes" : ["1376"],
+			"landline" : {
+				"per-call" : 25
+			}
+		},
+		{
+			"prefixes" : ["1377"],
+			"landline" : {
+				"per-call" : 100
+			}
+		},
+		{
+			"prefixes" : ["1378", "1379"],
+			"landline" : {
+				"per-call" : 50
+			}
+		},
+		{
+			"prefixes" : ["1801"],
+			"landline" : {
+				"per-minute" : 3.9
+			},
+			"mobile" : {
+				"per-minute" : 42
+			}
+		},
+		{
+			"prefixes": ["1802"],
+			"landline" : {
+				"per-call" : 6
+			},
+			"mobile" : {
+				"per-minute" : 42
+			}
+		},
+		{
+			"prefixes" : ["1803"],
+			"landline" : {
+				"per-minute" : 9
+			},
+			"mobile" : {
+				"per-minute" : 42
+			}
+		},
+		{
+			"prefixes" : ["1804"],
+			"landline" : {
+				"per-call" : 20
+			},
+			"mobile" : {
+				"per-minute" : 42
+			}
+		},
+		{
+			"prefixes" : ["1805"],
+			"landline" : {
+				"per-minute" : 14
+			},
+			"mobile" : {
+				"per-minute" : 42
+			}
+		},
+		{
+			"prefixes" : ["1806"],
+			"landline" : {
+				"per-call" : 20
+			},
+			"mobile" : {
+				"per-call" : 60
+			}
+		},
+		{
+			"prefixes" : ["1807"],
+			"free-seconds": 30,
+			"landline" : {
+				"per-minute" : 14
+			},
+			"mobile" : {
+				"per-minute" : 42
+			}
+		}
+	],
 	"provider": [
 		{
 			"shortName": {"" : ":::(bit)kasten"},
+			"longDescription": {"": "Der :::(bit)kasten ist ein elektronischer Briefkasten, in dem Sie Ihre Post elektronisch von teilnehmenden Unternehmen und Behörden zum Beispiel Rechnungen, Vertragsunterlagen oder Bescheide sicher und rechtsverbindlich empfangen. Ihre Post erhalten Sie wie bisher anhand Ihrer Postanschrift, nur eben digital. Sie müssen keine persönliche Daten an Dritte herausgeben, Ihre Postadresse reicht für den elektronischen Versand an den :::(bit)kasten aus.<br/>Eine Registrierung für den :::(bit)kasten ist nicht zwingend erforderlich. Ob Sie sich ein Konto anlegen möchten, entscheiden Sie selbst. Nach Login mit Ihrer Online-Ausweisfunktion können Sie Ihre Post abrufen und verwalten.<br/>Da Ihre Post nicht mehr als Papierpost verschickt werden muss, sparen Sie Zeit und senken den Papierverbrauch."},
 			"address": "https://www.bitkasten.de/",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.bitkasten.de/",
+			"phone": "+49 911 6000 2874",
+			"email": "nachricht@bitkasten.de",
+			"postalAddress": "Wallensteinstr. 63<br/>90431 Nürnberg",
 			"category": "other",
-			"tcTokenUrl": "https://www.bitkasten.de/portal/api/login/npa/createRequest?returnUrl=https%3A%2F%2Fwww.bitkasten.de%2Fportal%2Fapi%2Flogin%2Fnpa%2Flogin.html"
+			"tcTokenUrl": "https://www.bitkasten.de/portal/api/login/npa/createRequest?returnUrl=https%3A%2F%2Fwww.bitkasten.de%2Fportal%2Fapi%2Flogin%2Fnpa%2Flogin.html",
+			"subjectUrls": ["https://www.bitkasten.de"]
 		},
 		{
-			"shortName": {"" : "Allianz Kundenportal - Meine Allianz"},
-			"address": "https://meine.allianz.de",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "insurance",
-			"tcTokenUrl": "https://npa.allianz.de/azsecurity-npa-service/NpaEIDService/nparef/XIbOcJDGV0nWcgSIEaN8KA-",
-			"tcTokenUrlInfo" : "TcToken URL contains dynamic request id but is accepted anyway."
-		},
-		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Allianz Maklerportal"},
 			"address": "https://makler.allianz.de",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://makler.allianz.de",
+			"phone": "+49 800/22 23 557 ",
+			"email": "zviss.makler@allianz.de",
+			"postalAddress": "Königinstraße 28<br/>80802 München",
 			"category": "insurance",
 			"tcTokenUrl": "https://npa.allianz.de/azsecurity-npa-service/NpaEIDService/nparef/-wnfwSFGamtJotxe6_BKiLj",
-			"tcTokenUrlInfo" : "TcToken URL contains dynamic request id but is accepted anyway."
+			"tcTokenUrlInfo" : "TcToken URL contains dynamic request id but is accepted anyway.",
+			"subjectUrls": ["https://npa.allianz.de"]
 		},
 		{
+			"exclude": ["ios"],
+			"shortName": {"" : "Akteneinsicht in Stasi-Unterlagen"},
+			"longName": {"" : "Akteneinsicht in Stasi-Unterlagen"},
+			"shortDescription": {"": "Antragstellung auf Einsicht in Stasi-Unterlagen für Privatpersonen."},
+			"longDescription": {"": "Privatpersonen können online mittels neuem Personalausweis ohne weitere Wege die Einsichtnahme in die von der Stasi angelegten Akten zur eigenen Person oder zu verstorbenen/vermissten nahen Angehörigen beantragen."},
+			"address": "https://www.bstu.bund.de/DE/Akteneinsicht/Privatpersonen/Online-Antrag/online-antrag_node.html",
+			"homepage": "https://www.bstu.bund.de",
+			"phone": "+49 30 23 24-7000",
+			"email": "post@bstu.bund.de",
+			"postalAddress": "Der Bundesbeauftragte für die Unterlagen des Staatssicherheitsdienstes der ehemaligen Deutschen Demokratischen Republik (BStU)<br/>Karl-Liebknecht-Straße 31/33<br/>10178 Berlin",
+			"image": "stasi_image.jpg",
+			"icon": "stasi_icon.png",
+			"category": "citizen",
+			"subjectUrls": ["https://www.bstu-formulare.de/lip"]
+		},
+		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Ausweis Auskunft des Bundes"},
 			"address": "https://www.buergerserviceportal.de/bund/ausweisapp/bspx_selbstauskunft",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.buergerserviceportal.de/",
+			"phone": "+49 180-1-33 33 33",
+			"email": "eID_buergerservice@bmi.bund.de",
+			"postalAddress": "Bundesministerium des Innern<br/>Alt-Moabit 101 D<br/>10559 Berlin",
 			"category": "citizen",
-			"tcTokenUrl" : "https://www.buergerserviceportal.de:443/bund/ausweisapp/bspx_selbstauskunft/SamlAuthnRequestProvider"
+			"tcTokenUrl" : "https://www.buergerserviceportal.de:443/bund/ausweisapp/bspx_selbstauskunft/SamlAuthnRequestProvider",
+			"subjectUrls": ["https://www.buergerserviceportal.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Online"},
 			"address": "https://www.bafoegonline.bva.bund.de/",
-			"phone": "",
+			"homepage": "http://www.bafoeg.bund.de/",
+			"longDescription": {"": "Mit Ihrer Online-Ausweisfunktion können Sie sich beim Bundesverwaltungsamt für das BAföG-Rückzahlungsverfahren anmelden und sowohl Ihre persönlichen Daten als auch die erforderlichen Nachweise sicher und schnell elektronisch übermitteln. Sie müssen die Nachweise nicht mehr per Post senden.<br/>Die Online-Ausweisfunktion vereinfacht und beschleunigt das BAföG-Rückzahlungsverfahren."},
+			"phone": "+49 22899358 - 4500",
 			"email": "",
-			"postalAddress": "",
+			"postalAddress": "Bundesverwaltungsamt<br/>BT-BAföG<br/>50728 Köln",
 			"category": "citizen",
 			"tcTokenUrl" : "",
-			"clientUrl" : "https://www.bafoegonline.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeldenMitNpaPreFlow"
+			"clientUrl" : "https://www.bafoegonline.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeldenMitNpaPreFlow",
+			"subjectUrls": ["https://e-id.bva.bund.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Online Bayern (AKDB)"},
+			"longDescription": {"": "In Bayern können Sie Ihr BAföG für ein Studium bzw. eine Ausbildung in Bayern, Österreich, Liechtenstein oder der Schweiz nicht nur auf dem Postweg oder durch persönliche Abgabe beim Amt beantragen, sondern auch mit der Online-Ausweisfunktion bequem und schnell im Internet.<br/>Ihr Antrag muss dann nicht mehr ausgedruckt, unterschrieben und versandt werden, sondern gilt mit der Übermittlung Ihrer Daten als wirksam gestellt. Beizufügende und nachzureichende Unterlagen sowie Bescheinigungen können Sie über die Upload-Funktion ebenfalls elektronisch übermitteln.<br/>Nach Übermittlung der Daten wird Ihnen der Antrag als PDF-Dokument zum Download angeboten. Der Bescheid wird Ihnen per Post zugestellt."},
 			"address": "https://afoegfofa.osrz-akdb.de",
-			"phone": "",
+			"homepage":  "https://afoegfofa.osrz-akdb.de",
+			"phone": "+49 89 / 5903 - 0",
 			"email": "",
-			"postalAddress": "",
-            "category": "citizen"
+			"postalAddress": "Anstalt für Kommunale Datenverarbeitung in Bayern (AKDB)<br/>Hansastraße 12-16<br/>80686 München",
+			"category": "citizen",
+			"subjectUrls": ["https://www.buergerserviceportal.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Online Bayern (Studentenwerk)"},
 			"address": "https://www.bafoeg-bayern.de",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "citizen"
+			"homepage": "https://www.bafoeg-bayern.de",
+			"phone": "+49 800-223 63 41",
+			"email": "webmaster@bafoeg-bayern.de",
+			"postalAddress": "Studentenwerk Niederbayern/Oberpfalz, Anstalt des öffentlichen Rechts<br/>Administration BAföG-Bayern<br/>Albertus-Magnus-Straße 4<br/>93053 Regensburg",
+			"category": "citizen",
+			"subjectUrls": []
 		},
 		{
-			"shortName": {"" : "BAföG Online Berlin (Studentenwerk)"},
+			"exclude": ["ios"],
+			"shortName": {"" : "BAföG Berlin"},
+			"longName": {"" : "BAföG Online Berlin"},
+			"shortDescription": {"": "BAföG-Anträge und Formblätter online ausfüllen und unterschreiben."},
+			"longDescription": {"": "Sie wollen einen Antrag auf Ausbildungsförderung nach dem BAföG  stellen? Mit dem neuen Personalausweis / elektronischen Aufenthaltstitel können Sie Ihren Antrag elektronisch signieren und an das Amt übermitteln. Ebenso können Ihre Eltern und ggf. Ihr Ehepartner  die nötigen Formulare signieren."},
 			"address": "https://www.berlin-bafoeg.de",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "citizen"
+			"homepage": "https://www.berlin-bafoeg.de",
+			"phone": "+49 30 939 39 - 70",
+			"email": "info@stw.berlin",
+			"postalAddress": "studierendenWERK BERLIN<br/>BAföG-Amt<br/>Behrenstraße 40/41<br/>10117 Berlin",
+			"image": "BafoegBerlin_image.jpg",
+			"icon": "BafoegBerlin_icon.png",
+			"category": "citizen",
+			"subjectUrls": []
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Online Brandenburg"},
+			"longDescription": {"": "In Brandenburg können Sie Ihr BAföG nicht nur auf dem Postweg oder durch persönliche Abgabe beim Amt beantragen, sondern auch bequem und schnell im Internet.<br/>Ihr Antrag muss dann nicht mehr ausgedruckt, unterschrieben und versandt werden, sondern gilt mit der Übermittlung Ihrer Daten als wirksam gestellt. Beizufügende und nachzureichende Unterlagen sowie Bescheinigungen können Sie über die Upload-Funktion ebenfalls elektronisch übermitteln.<br/>Nach Übermittlung der Daten wird Ihnen der Antrag als PDF-Dokument zum Download angeboten. Der Bescheid wird Ihnen per Post zugestellt."},
 			"address": "https://www.bafoeg-brandenburg.de",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "citizen"
+			"homepage": "https://www.bafoeg-brandenburg.de",
+			"phone": "+49 331 / 866 45 60",
+			"email": "mwfk@mwfk.brandenburg.de",
+			"postalAddress": "Ministerium für Wissenschaft, Forschung und Kultur<br/>Presse- und Öffentlichkeitsarbeit ",
+			"category": "citizen",
+			"subjectUrls": ["https://www.bafoeg-brandenburg.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Online Hamburg"},
+			"longDescription": {"": "In Hamburg können Sie Ihr BAföG nicht nur auf dem Postweg oder durch persönliche Abgabe beim Amt beantragen, sondern auch bequem und schnell im Internet.<br/>Ihr Antrag muss dann nicht mehr ausgedruckt, unterschrieben und versandt werden, sondern gilt mit der Übermittlung Ihrer Daten als wirksam gestellt. Beizufügende und nachzureichende Unterlagen sowie Bescheinigungen können Sie über die neue Upload-Funktion ebenfalls elektronisch übermitteln.<br/>Nach Übermittlung der Daten wird Ihnen der Antrag als PDF-Dokument zum Download angeboten. Der Bescheid wird Ihnen per Post zugestellt."},
 			"address": "https://bafoeg-online.hamburg.de",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "citizen"
+			"homepage": "https://bafoeg-online.hamburg.de",
+			"phone": "+49 800-223 63 41",
+			"email": "Marita.Porr@bwfg.hamburg.de",
+			"postalAddress": "Ressortleiter Online-Redaktion der Behörde für Wissenschaft, Forschung und Gleichstellung:<br/>Kommunikation<br/>Daniel Drexelius<br/>Hamburger Straße 37<br/>22083 Hamburg",
+			"category": "citizen",
+			"subjectUrls": ["https://bafoeg-online.hamburg.de"]
 		},
 		{
-			"shortName": {"" : "BAföG Online Hessen"},
+			"exclude": ["ios"],
+			"shortName": {"" : "BAföG Hessen"},
+			"longName": {"" : "BAföG/AFBG hessenweit"},
+			"shortDescription": {"": "BAföG und AFBG Online-Antragstellung Hessen"},
+			"longDescription": {"": "Mit Hilfe dieses Angebotes können Antragstellende, Ehegatten / eingetragene Lebenspartner und Eltern die erforderlichen Antragsformblätter online ausfüllen, mit Hilfe der eID rechtswirksam unterschreiben und papierlos dem zuständigen Amt übermitteln."},
 			"address": "https://www.bafoeg-hessen.de",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "citizen"
+			"homepage": "http://www.hmwk.hessen.de",
+			"phone": "+49 611 32 - 3551",
+			"email": "hebav@hmwk.hessen.de",
+			"postalAddress": "Hessisches Ministerium für Wissenschaft und Kunst<br/>Rheinstraße 23-25<br/>65185 Wiesbaden ",
+			"image": "BafoegHessen_image.jpg",
+			"icon": "BafoegHessen_icon.png",
+			"category": "citizen",
+			"subjectUrls": ["https://www.bafoeg-hessen.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Online Mecklenburg-Vorpommern"},
 			"address": "http://www.bm.regierung-mv.de/bafoeg",
+			"homepage": "http://www.regierung-mv.de/",
 			"phone": "",
 			"email": "",
-			"postalAddress": "",
-			"category": "citizen"
+			"postalAddress": "Ministerium für Bildung, Wissenschaft und Kultur Mecklenburg-Vorpommern<br/>Werderstraße 124<br/>19055 Schwerin",
+			"category": "citizen",
+			"subjectUrls": ["https://fms.mv-regierung.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Online Nordrhein-Westfalen"},
+			"longDescription": {"": "In Nordrhein-Westfalen können Sie mit der Online-Ausweisfunktion Ihren Antrag auf BAföG für eine Ausbildung (Schulausbildung, Studium in Nordrhein-Westfalen sowie Studium in Belgien, den Niederlanden oder Luxemburg) oder Ihren Antrag auf Aufstiegsfortbildungsförderung (z. B. für die Meisterausbildung) in Nordrhein-Westfalen bequem und schnell im Internet stellen.<br/>Ihr Antrag muss dann nicht mehr ausgedruckt, unterschrieben und versandt werden, sondern gilt mit der Übermittlung Ihrer Daten als wirksam gestellt. Beizufügende und nachzureichende Unterlagen sowie Bescheinigungen können Sie über die Upload-Funktion ebenfalls elektronisch übermitteln.<br/>Nach Übermittlung der Daten wird Ihnen der Antrag als PDF-Dokument zum Download angeboten. Der Bescheid wird Ihnen per Post zugestellt."},
 			"address": "https://www.bafoeg-online.nrw.de",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "citizen"
+			"homepage": "https://www.bafoeg-online.nrw.de",
+			"phone": "+49 385-588 7145",
+			"email": "m.boehm@bm.mv-regierung.de",
+			"postalAddress": "Ministerium für Bildung, Wissenschaft und Kultur Mecklenburg-Vorpommern<br/>Abteilung 1<br/>Referat 140<br/>Werderstraße 124<br/>19055 Schwerin",
+			"category": "citizen",
+			"subjectUrls": []
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Online Schleswig-Holstein"},
+			"longDescription": {"": "In Schleswig-Holstein können Sie Ihr BAföG nicht nur auf dem Postweg oder durch persönliche Abgabe beim Amt beantragen, sondern auch bequem und schnell im Internet.<br/>Ihr Antrag muss dann nicht mehr ausgedruckt, unterschrieben und versandt werden, sondern gilt mit der Übermittlung Ihrer Daten als wirksam gestellt. Beizufügende und nachzureichende Unterlagen sowie Bescheinigungen können Sie über die Upload-Funktion ebenfalls elektronisch übermitteln.<br/>Nach Übermittlung der Daten wird Ihnen der Antrag als PDF-Dokument zum Download angeboten. Der Bescheid wird Ihnen per Post zugestellt."},
 			"address": "https://bafoeg.schleswig-holstein.de/BAfoeGOnline/ABAfoeG/",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://bafoeg.schleswig-holstein.de/",
+			"phone": "+49 431 988-0",
+			"email": "bafoeg@sozmi.landsh.de",
+			"postalAddress": "Ministerium für Soziales, Gesundheit, Wissenschaft und Gleichstellung des Landes Schleswig-Holstein<br/>Abteilung VIII 5<br/>Düsternbrooker Weg 104<br/>24105 Kiel",
 			"category": "citizen"
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Online Sachsen"},
-			"address": "https://fs.egov.sachsen.de/formserv/findform?shortname=bafoeg&amp;formtecid=11&amp;areashortname=SMWK_bafoeg",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "citizen"
+			"address": "https://fs.egov.sachsen.de/formserv/findform?shortname=bafoeg&formtecid=11&areashortname=SMWK_bafoeg",
+			"homepage": "http://www.studieren.sachsen.de/",
+			"phone": "+49 351 564-1080",
+			"email": "info@sk.sachsen.de",
+			"postalAddress": "Sächsische Staatskanzlei<br/>Redaktion Amt24 / Bürgerbüro<br/>01095 Dresden",
+			"category": "citizen",
+			"subjectUrls": ["https://fs.egov.sachsen.de"]
+		},
+		{
+			"exclude": ["ios"],
+			"shortName": {"" : "bahn.de"},
+			"address": "https://www.bahn.de/p/view/meinebahn/login.shtml",
+			"homepage": "https://www.bahn.de",
+			"phone": "+49 1806 - 996633",
+			"email": "reiseportal@bahn.de",
+			"postalAddress": "DB Vertrieb GmbH<br/>Stephensonstraße 1<br/>60326 Frankfurt am Main",
+			"category": "other",
+			"subjectUrls": ["https://www.bahn.de/"]
 		},
 		{
 			"shortName": {"" : "Beantragung Schwerbehindertenausweis Bayern"},
+			"longDescription": {"": "Einen Schwerbehindertenantrag können Sie bei der Landesbehörde Zentrum Bayern Familie und Soziales (ZBFS) mit der Online-Ausweisfunktion komplett papierlos stellen.<br/>Der papierlose Antrag ist ein bedeutender Schritt auf dem Weg zur digitalen Verwaltung – online, schnell und unkompliziert.<br/>Das Online-Verfahren hat weitere Vorteile. Gerade für sehbehinderte Menschen ist die papiergebundene Schriftform ein Hindernis. Digitale Angebote bieten ihnen die Chance, Behördenangelegenheiten ein Stück weit selbständiger erledigen zu können.<br/>Zu 100 Prozent digital – ein bisschen weniger lästiger Papierkram. Digitalisierung ist somit ein Beitrag zur Inklusion."},
 			"address": "https://www.schwerbehindertenantrag.bayern.de",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "citizen"
+			"homepage": "http://www.zbfs.bayern.de/",
+			"phone": "+49 921 605-03",
+			"email": "poststelle@zbfs.bayern.de",
+			"postalAddress": "Zentrum Bayern Familie und Soziales<br/>95440 Bayreuth",
+			"category": "citizen",
+			"subjectUrls": ["https://www.buergerserviceportal.de"]
 		},
 		{
 			"shortName": {"" : "Beantragung Schwerbehindertenausweis Saarland"},
+			"longDescription": {"": "Als erstes Bundesland bietet Ihnen das Saarland mit Schweb.NET Online die Möglichkeit, Ihren Erst- und Verschlimmerungsantrag auf Feststellung einer Behinderung nach dem Schwerbehindertenrecht online beim Landesamt für Soziales zu stellen.<br/>Weite Wege werden dadurch vermieden. Bearbeitungszeiten und Arbeitsabläufe werden verkürzt.<br/>Der Antrag ist selbsterklärend und nutzerfreundlich. "},
 			"address": "https://gatewaylas.saarland.de/FV/Onlineantrag",
-			"phone": "",
+			"homepage": "http://www.saarland.de/index.htm",
+			"phone": "+49 681/9978-2181",
 			"email": "",
-			"postalAddress": "",
+			"postalAddress": "Ministerium für Soziales, Gesundheit, Frauen und Familie<br/>Franz-Josef-Röder-Straße 23<br/>66119 Saarbrücken",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://tbklas.saarland.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Bundesagentur für Arbeit"},
+			"longDescription": {"": "Mit der Online-Ausweisfunktion des Personalausweises können Sie sich bei der Bundesagentur für Arbeit einfach und zuverlässig über Ihr Kindergeld informieren. Die Anwendung bietet u.a. die Möglichkeit:<br/>- sich über den Antragstatus und die Berechnungsgrundlage für den eigenen Kindergeldbezug zu informieren<br/>- Ihre persönlichen Daten online zu ändern, z. B. Ihre Adresse<br/>- für Kunden der Familienkasse Änderungen vollständig papierlos zu übermitteln."},
 			"address": "https://www.arbeitsagentur.de/npa",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.arbeitsagentur.de/",
+			"phone": "+49 911/179-0",
+			"email": "Zentrale@arbeitsagentur.de ",
+			"postalAddress": "Bundesagentur für Arbeit<br/>Regensburger Straße 104<br/>90478 Nürnberg",
 			"category": "other",
 			"tcTokenUrl" : "",
-			"clientUrl" : "https://formular.arbeitsagentur.de/eantrag/fallinfo-npa.page"
+			"clientUrl" : "https://formular.arbeitsagentur.de/eantrag/fallinfo-npa.page",
+			"subjectUrls": ["https://formular.arbeitsagentur.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Bundestag ePetition"},
+			"longDescription": {"": "Mit der Online-Ausweisfunktion des Personalausweises können Sie sich einfach und sicher am Petitionsportal des Deutschen Bundestages<br/>- registrieren,<br/>- eine Petition einreichen sowie<br/>- eine Petition mitzeichnen."},
 			"address": "https://epetitionen.bundestag.de/epet/anmelden.html",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.bundestag.de/",
+			"phone": "+49 30 227-35257",
+			"email": "post.pet@bundestag.de",
+			"postalAddress": "Sekretariat des Petitionsausschusses<br/>Platz der Republik 1<br/>11011 Berlin",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://epetitionen.bundestag.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Bürgerantrag Bremen"},
+			"longDescription": {"": "Mit der Online-Ausweisfunktion können Sie im Bundesland Bremen Bürgeranträge elektronisch mitzeichnen oder Unterschriften für Ihren eigenen Bürgerantrag sammeln. Mit nur 5.000 Mitzeichnerinnen und Mitzeichnern – egal ob online oder auf Papier – können Sie Anträge direkt in den Bremische Bürgerschaft (Landtag) einbringen. Für die Stadtbürgerschaft Bremen genügen sogar 4.000 Unterschriften."},
 			"address": "https://www.buergerantrag.bremen.de",
+			"homepage": "http://www.bremische-buergerschaft.de/",
 			"phone": "",
-			"email": "",
+			"email": "webmaster@buergerschaft.bremen.de",
 			"postalAddress": "",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://servicekonto.bremen.de"]
 		},
 		{
 			"shortName": {"" : "Bürgerdienste der Stadt Münster"},
-			"address": "http://www.muenster.de/stadt/neuer-personalausweis.html",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"longDescription": {"": "Die Stadt Münster bietet auf ihrer Webseite eine Reihe von Online-Diensten an. Dort können Sie mit der Online-Ausweisfunktion unter anderem:<br/>- eine Personenstandsurkunde bestellen,<br/>- Ihr Wunschkennzeichen beantragen,<br/>- geografische Karten bestellen,<br/>- Elektroschrott zur Abholung anmelden,<br/>- eine Erklärung zum Elterneinkommen für die Festsetzung des Elternbeitrags für die Kindertagesbetreuung abgeben,<br/>- eine Sondernutzungserlaubnis für private Baumaßnahmen an öffentlichen Straßen beantragen,<br/>- eine Großanlage mit zentraler Trinkwassererwärmung anzeigen,<br/>- einen Fahrradfund melden,<br/>- ein Reitkennzeichen beantragen,<br/>- Mietspiegel-Broschüren bestellen."},
+			"address": "https://www.stadt-muenster.de/rathaus/online-dienste.html",
+			"homepage": "http://www.muenster.de/",
+			"phone": "+49 251/4 92-0",
+			"email": "stadtverwaltung@stadt-muenster.de",
+			"postalAddress": "Stadt Münster<br/>48127 Münster",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": []
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Bürgerportal Baden-Württemberg"},
+			"longDescription": {"": "Das Bürgerportal ,mein service-bw' bietet Bürgerinnen und Bürgern mit dem Personalausweis praktische Anwendungen für die Online-Ausweisfunktion. Das Portal bietet seinen Nutzern unter anderem:<br/>- sicheres Registrieren und Anmelden, um Behördengänge im Internet zu erledigen<br/>- verschlüsselte Ablage persönlicher Daten und Dateien in einem Datenspeicher im Internet, dem sogenannten Dokumentensafe<br/>- orts- und zeitunabhängiger Zugang zu den Daten im Dokumentensafe sowie die Möglichkeit, diese elektronisch an Behörden weiterzuleiten (z. B. für eine Gewerbeanmeldung)."},
 			"address": "http://service-bw.de/zfinder-bw-web/welcome.do?showMsbwDetails=1",
+			"homepage": "https://www.service-bw.de/",
 			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"email": "service-bw@im.bwl.de",
+			"postalAddress": "Ministerium für Inneres, Digitalisierung und Migration Baden-Württemberg<br/>Willy-Brandt-Straße 41<br/>70173 Stuttgart",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "Unable to locate URL"
+			"tcTokenUrlInfo" : "Unable to locate URL",
+			"subjectUrls": ["https://eid.service-bw.de"]
 		},
 		{
 			"shortName": {"" : "Bürgerportal Rheinland Pfalz"},
+			"longDescription": {"": "Über 80% der Meldebehörden und über 90% der Standesämter in Rheinland-Pfalz bieten Ihnen über das Portal www.rlpdirekt.de Verwaltungsleistungen mit der Online-Ausweisfunktion an, für die Sie nicht mehr zur Behörde gehen müssen, z. B.:<br/>- Kfz abmelden<br/>- Führungszeugnis beantragen,<br/>- Meldebescheinigung beantragen,<br/>- Aufenthaltsbescheinigung beantragen,<br/>- Übermittlungssperre einrichten,<br/>- Auskunft aus dem Gewerbezentralregister beantragen,<br/>- Beurkundung im Personenstandswesen beantragen.<br/>Welche Dienste in Ihrer Kommune mit der Online-Ausweisfunktion genutzt werden können, erfahren Sie, wenn Sie auf dem Portal unter \"Stadt/Ort\" Ihren Wohnort eingeben."},
 			"address": "http://www.rlpdirekt.de/rheinland-pfalz",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.rlpdirekt.de/rheinland-pfalz/",
+			"phone": "+49 6131 / 6277-0",
+			"email": "support@kommwis.de",
+			"postalAddress": "KommWis GmbH<br/>Gesellschaft für Kommunikation und Wissenstransfer mbH<br/>Hindenburgplatz 3<br/>55118 Mainz",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "PLZ required"
+			"tcTokenUrlInfo" : "PLZ required",
+			"subjectUrls": []
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Bürgerservice-Portal Kreis Herford"},
+			"longName": {"" : "Bürgerservice-Portal Kreis Herford"},
+			"shortDescription": {"": "Anträge an die Kreisverwaltung Herford online erfassen."},
+			"longDescription": {"": "In unserem Bürgerservice-Portal können Sie Anträge an die Kreisverwaltung Herford online erfassen und direkt zur weiteren Bearbeitung an die zuständigen Stellen übermitteln."},
 			"address": "https://www.buergerserviceportal.nrw/krz/lkrherford",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.kreis-herford.de/",
+			"phone": "+49 5223/988 - 500",
+			"email": "portal@kreis-herford.de",
+			"postalAddress": "Kreis Herford<br/>Amtshausstraße 3<br/>32051 Herford",
+			"image": "KreisHerford_image.jpg",
+			"icon": "KreisHerford_icon.png",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://www.buergerserviceportal.nrw"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Bürgerservice-Portal Kreis Minden-Lübbecke"},
+			"longName": {"" : "Bürgerservice-Portal Kreis Minden-Lübbecke"},
+			"shortDescription": {"": "Anträge an den Kreis Minden-Lübbecke online erfassen."},
+			"longDescription": {"": "In unserem Portal können Sie Ihren Antrag an den Kreis Minden-Lübbecke direkt online erfassen und elektronisch übermitteln."},
 			"address": "https://www.buergerserviceportal.nrw/krz/mindenluebbecke",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.minden-luebbecke.de/",
+			"phone": "+49 571 807-0",
+			"email": "info@minden-luebbecke.de",
+			"postalAddress": "Kreis Minden-Lübbecke<br/>Portastraße 13<br/>32423 Minden",
+			"image": "KreisMindenLuebbeke_image.jpg",
+			"icon": "KreisMindenLuebbeke_icon.png",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://www.buergerserviceportal.nrw"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Bürgerservice-Portal Stadt Lage"},
+			"longName": {"" : "Bürgerservice-Portal Stadt Lage"},
+			"shortDescription": {"": "Anträge online erfassen und an die Verwaltung weiterleiten."},
+			"longDescription": {"": "Das Bürgerservice-Portal bietet die Möglichkeit, Anträge an die Verwaltung der Stadt Lage online zu erfassen und elektronisch zur weiteren Bearbeitung weiterzuleiten."},
 			"address": "https://www.buergerserviceportal.nrw/krz/lage",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.lage.de/",
+			"phone": "+49 5232/601300",
+			"email": "Buergerbuero@lage.de",
+			"postalAddress": "Bürgerbüro Lage<br/>Bergstraße 21<br/>32791 Lage",
+			"image": "StadtLage_image.jpg",
+			"icon": "StadtLage_icon.png",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://www.buergerserviceportal.nrw"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Bürgerservice-Portal Stadt Norderstedt"},
+			"longDescription": {"": "In Norderstedt können Sie mit der Online-Ausweisfunktion über das Bürgerservice-Portal folgende Bürgerdienste nutzen:<br/>- Meldebestätigung<br/>- Aufenthaltsbescheinigung<br/>- Übermittlungssperren<br/>- Umzug innerhalb der Stadt<br/>- Voranzeige einer Anmeldung<br/>- Briefwahlunterlagen<br/>- Führungszeugnis<br/>Darüber hinaus können Sie Ihr persönliches Bürgerkonto einrichten. Nach Einrichtung des Bürgerkontos werden die bei einer Nutzung des Bürgerservice-Portals notwendigen persönlichen Daten komfortabel aus Ihrem Bürgerkonto übernommen. Damit sparen Sie Zeit und erleichtern den Behörden die Bearbeitung Ihres Antrags."},
 			"address": "https://norderstedt.de/digital",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "other",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"homepage": "https://www.norderstedt.de/",
+			"phone": "+49 40 - 535 95-0 ",
+			"email": "info@norderstedt.de",
+			"postalAddress": "Stadt Norderstedt<br/>Rathausallee 50<br/>22846 Norderstedt",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://sh.buergerserviceportal.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Bürgerservice-Portal Wiesbaden"},
+			"longDescription": {"": "In Wiesbaden können Sie mit der Online-Ausweisfunktion über das Bürgerservice-Portal<br/>- Briefwahlunterlagen,<br/>- Meldebestätigungen,<br/>- Aufenthaltsbescheinigungen,<br/>- Übermittlungssperren,<br/>- Führungszeugnisse und<br/>- Auskünfte aus dem Gewerbezentralregister beantragen."},
 			"address": "https://www.buergerserviceportal.de/hessen/wiesbaden",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.wiesbaden.de/",
+			"phone": "+49 611 / 31 - 8300",
+			"email": "buergeramt@wiesbaden.de",
+			"postalAddress": "Postfach 3920<br/>65029 Wiesbaden",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://www.buergerserviceportal.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Bürgerservice-Portale der bayerischen Kommunen"},
+			"longDescription": {"": "Das BayernPortal ist das zentrale Verwaltungsportal für den Freistaat Bayern und die bayerischen Kommunen.<br/>Es bietet Ihnen eine einheitliche Anlaufstelle sowie einen einheitlichen Zugang zu den staatlichen und kommunalen Verwaltungsdienstleistungen in Bayern. Sie erreichen darüber mehr als 150 Online-Dienstleistungen, mehr als 2.000 Fachdatenbanken, über 2.500 Formulare und Merkblätter sowie mehr als 20.000 Ansprechpartnerinnen und Ansprechpartner bei Behörden.<br/>Über das BayernPortal können Sie sich zudem ein Servicekonto einrichten, das BayernID genannt wird und mit dem Sie die Verwaltungsdienstleistungen aller angeschlossenen Kommunen und des Freistaats Bayern einfach und sicher nutzen können. Die Einrichtung Ihrer BayernID und die Anmeldung an diesem persönlichen Servicekonto können Sie auch mit der Online-Ausweisfunktion vornehmen.<br/>Ihre in Ihrem Servicekonto gespeicherten Daten werden automatisch in Ihre Anträge übernommen. Dadurch sparen Sie Zeit und erleichtern der Behörde die Bearbeitung Ihres Anliegens.<br/>In Verbindung mit dem Bayerischen E-Government Gesetz bietet Ihnen die BayernID die Möglichkeit, die in vielen Fällen erforderliche Schriftform zu ersetzen und damit Ihre Anträge ohne handschriftliche Unterschrift, d. h. vollständig online abzuwickeln. Sie müssen nicht mehr zur Behörde gehen oder Unterlagen per Post senden."},
 			"address": "https://www.buergerserviceportal.de/bayern/classic/",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.freistaat.bayern/",
+			"phone": "+49 (0)89 12 22 20",
+			"email": "direkt@bayern.de",
+			"postalAddress": "Postfach 22 00 03<br/>80535 München",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://www.buergerserviceportal.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "CosmosDirekt Kundenportal meinCosmosDirekt"},
+			"longDescription": {"": "Mit der Online-Ausweisfunktion des Personalausweises können Sie sich einfach und sicher am Kundenportal ,mein Cosmos-Direkt' registrieren und anmelden. Im Portal haben Sie die Möglichkeit Ihre Versicherungen zu verwalten. Sie können online einen Antrag für ein Tagesgeldkonto stellen oder auch schnell und einfach Ihre persönlichen Daten, z.B. Ihre Adresse, ändern."},
 			"address": "https://www.cosmosdirekt.de/services/mcd-info",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.cosmosdirekt.de/",
+			"phone": "+49 681-9 66 68 00",
+			"email": "info@cosmosdirekt.de",
+			"postalAddress": "CosmosDirekt<br/>66101 Saarbrücken",
+			"image": "CosmosDirekt_image.jpg",
+			"icon": "CosmosDirekt_icon.png",
 			"category": "insurance",
-			"tcTokenUrl" : "https://www.cosmosdirekt.de/nPa/IdentifizierenNPA?back_url=https://www.cosmosdirekt.de/meincosmosdirekt-registrierung/*ident=1"
+			"tcTokenUrl" : "https://www.cosmosdirekt.de/nPa/IdentifizierenNPA?back_url=https://www.cosmosdirekt.de/meincosmosdirekt-registrierung/*ident=1",
+			"subjectUrls": ["https://www.cosmosdirekt.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "d.velop – foxdox.de: Dokumente sicher ablegen"},
+			"longDescription": {"": "Dokumente, Verträge, Reiseunterlagen, Bilder und vieles mehr können Sie einfach in Ihren persönlichen foxdox-Account hochladen. <br/>Sie melden sich mit der Online-Ausweisfunktion an und können von überall und jederzeit auf Ihre Dokumentenablage zugreifen, z. B. um sie innerhalb der Familie, Ihren Kollegen oder auch Ihrem Steuerberater zur Verfügung zu stellen. <br/>Quittungen und Belege können Sie einfach fotografieren oder scannen, hochladen und sicher in Ihrem foxdox-Account mit übersichtlichem Ordner-System speichern. Eine separate Ablage oder Kopien sind nicht mehr notwendig.  Alle Daten liegen sicher und verschlüsselt in einem Rechenzentrum in Deutschland.<br/>Ein Standard-Account ist kostenfrei erhältlich."},
 			"address": "https://mein.foxdox.de/",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.d-velop.de/foxdox/foxdox-home",
+			"phone": "+49 (0) 2542 9307-0",
+			"email": "support@foxdox.de",
+			"postalAddress": "d.velop business services GmbH<br/>Schildarpstraße 6-8<br/>48712 Gescher",
 			"category": "other",
-			"tcTokenUrl" : "https://mein.foxdox.de/npa_login?action=gettctoken&amp;next=/documents"
+			"tcTokenUrl" : "https://mein.foxdox.de/npa_login?action=gettctoken&next=/documents",
+			"subjectUrls": ["https://mein.foxdox.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Datev - Arbeitnehmer online / Lohn- und Gehaltsabrechnung"},
-			"address": "https://www.datev.de/portal/ShowPage.do?pid=ano&amp;nid=159749",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"longDescription": {"": "Nach einmaliger Freischaltung durch den Arbeitgeber erhalten Sie Ihren persönlichen Aktivierungscode per Post. Mit dem Aktivierungscode registrieren Sie sich an dem Portal „DATEV Arbeitnehmer online“, dazu können Sie u.a. die Online-Ausweisfunktion nutzen. Danach können Sie jederzeit Ihre Brutto/Netto-Abrechnungen, Sozialversicherungsnachweise und Lohnsteuerbescheinigungen online abrufen. Sie haben dadurch jederzeit und überall einen schnellen Überblick über Ihre gesamten Lohn- und Gehaltsdokumente. "},
+			"address": "https://www.datev.de/ano/",
+			"homepage": "https://www.datev.de",
+			"phone": "+49 800 3283825",
+			"email": "info@datev.de",
+			"postalAddress": "DATEV eG<br/>90329 Nürnberg",
 			"category": "other",
-			"tcTokenUrlInfo" : "Address is faulty"
+			"tcTokenUrlInfo" : "Address is faulty",
+			"subjectUrls": ["https://secure6.datev.de"]
+		},
+		{
+			"exclude": ["ios"],
+			"shortName": {"" : "Deutsche Post AG - POSTIDENT Verfahren"},
+			"longName": {"" : "Deutsche Post AG - POSTIDENT Verfahren"},
+			"shortDescription": {"": "Durch das Onlineverfahren POSTIDENT mit dem neuem Personalausweis, können Sie sich schnell und einfach online mit Ihrem neuen Personalausweis identifizieren."},
+			"longDescription": {"": "Durch das Onlineverfahren POSTIDENT mit dem neuem Personalausweis, können Sie sich schnell und einfach online mit Ihrem neuen Personalausweis z.B. zur Eröffnung eines Tagesgeldkontos identifizieren: Sie werden hierzu von Ihrer Bank automatisch auf das POSTIDENT Portal geleitet und können sich mithilfe Ihres neuen Personalausweises mit freigeschalteter Online-Ausweisfunktion, einem Kartenlesegerät sowie der AusweisApp2 in wenigen Minuten sicher identifizieren."},
+			"address": "https://www.deutschepost.de/de/p/postident/identifizierungsverfahren/postident-npa.html",
+			"homepage": "https://www.deutschepost.de/de/p/postident.html",
+			"email": "info@deutschepost.de",
+			"postalAddress": "Deutsche Post AG<br/>Charles-de-Gaulle-Str. 20<br/>53113 Bonn",
+			"image": "DeutschePost_image.jpg",
+			"icon": "DeutschePost_icon.png",
+			"category": "finance"
 		},
 		{
 			"shortName": {"" : "Deutsche Rentenversicherung"},
+			"longDescription": {"": "Mit der Online-Ausweisfunktion im neuen Personalausweis können Sie ...<br/>- auf Informationen Ihres Rentenkontos im Kundenbereich ,eService' sicher zugreifen (z. B. Versicherungsverlauf und Beitragsrechnung),<br/>- Ihre Rentenauskunft online abrufen,<br/>- schnell und einfach Ihre persönlichen Daten ändern (z. B. Ihre Adresse und Bankverbindung)."},
 			"address": "https://www.eservice-drv.de/OnlineDiensteWeb/init.do?npa=true",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.deutsche-rentenversicherung.de/",
+			"phone": "+49 800 100 048070",
+			"email": "Online-Dienste@deutsche-rentenversicherung.de",
+			"postalAddress": "Ruhrstraße 2<br/>10709 Berlin",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://www.eservice-drv.de"]
 		},
 		{
-			"shortName": {"" : "DKB-Cash - Onlineantrag Konto und Kreditkarte"},
-			"address": "http://www.dkb.de/privatkunden/dkb_cash",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "finance",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
-		},
-		{
+			"exclude": ["ios"],
 			"shortName": {"" : "eAntrag der Investitionsbank Berlin (IBB)"},
-			"address": "http://www.ibb.de/e_antrag.aspx",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"longDescription": {"": "Im Kundenportal der Investitionsbank Berlin können Sie verschiedene Förder-Produkte durchgängig elektronisch beantragen:<br/>- Berlin Kapital<br/>- IBB Familienbaudarlehen<br/>- IBB Wohnraum modernisieren<br/>- KMU-Fonds über 25.000 Euro<br/>- Liquiditätshilfen BERLIN<br/>- Mikrokredit aus dem KMU-Fonds<br/>- Pro FIT (Projektvorschlagsphase)<br/>- Pro FIT (Frühphasenfinanzierung)<br/>Für die rechtsverbindliche, fristwahrende Antragstellung der Produkte<br/>- GRW<br/>- Innovationsassistent<br/>- PFI - Gemeinschaft<br/>- PFI - KMU<br/>- PFI - Netzwerk<br/>- ProFIT (Projektantragsphase)<br/>gilt aus verwaltungsrechtlichen Anforderungen das Schriftformerfordernis: Die elektronische Antragstellung ist zwingend nachträglich schriftlich zu bestätigen.<br/>Mit der Online-Ausweisfunktion können Sie sich bequem und sicher elektronisch legitimieren und müssen dadurch Ihre Identität weder per Postident-Verfahren noch persönlich vor Ort nachweisen.<br/>Nach Ihrer Legitimierung können Sie über eine persönliche Dokumentenablage die rechtsverbindliche Kommunikation mit Ihrem IBB-Ansprechpartner online – und unabhängig von Öffnungszeiten oder Postwegen – über das Kundenportal erledigen."},
+			"address": "https://www.ibb.de/de/service/eantrag/eantrag.html",
+			"homepage": "http://www.ibb.de/",
+			"phone": "+49 30 / 2125 - 0",
+			"email": "info@ibb.de",
+			"postalAddress": "Investitionsbank Berlin (IBB)<br/>Bundesallee 210<br/>10719 Berlin",
 			"category": "finance",
-			"tcTokenUrlInfo" : "Registration required."
+			"tcTokenUrlInfo" : "Registration required.",
+			"subjectUrls": []
 		},
 		{
-			"shortName": {"" : "easy Login - Der Zugang für Finanz- &amp; Versicherungsvermittler"},
+			"exclude": ["ios"],
+			"shortName": {"" : "easy Login - Der Zugang für Finanz- & Versicherungsvermittler"},
 			"address": "http://www.easy-login.de",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.easy-login.de",
+			"phone": "+49 921 75758-555",
+			"email": "info@easy-login.de",
+			"postalAddress": "easy Login GmbH<br/>Bindlacher Str. 4<br/>95448 Bayreuth",
 			"category": "insurance",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://easy-login.vdg-portal.de"]
 		},
 		{
-			"shortName": {"" : "ElsterOnline-Portal"},
-			"address": "https://www.elsteronline.de",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"exclude": ["ios"],
+			"shortName": {"" : "ELSTER"},
+			"longName": {"" : "ELSTER - Die elektronische Steuererklärung"},
+			"shortDescription": {"": "Abwicklung der Steuererklärungen und -anmeldungen über das Internet."},
+			"longDescription": {"": "ELSTER bietet im Rahmen der Registrierung, welche Voraussetzung für die Abwicklung der Steuererklärungen und Steueranmeldungen über das Internet ist, die Möglichkeit der Nutzung der Online-Ausweisfunktion."},
+			"address": "https://www.elster.de",
+			"homepage": "https://www.elster.de",
+			"phone": "+49 89 9991 - 0",
+			"email": "info@elster.de",
+			"postalAddress": "Bayerisches Landesamt für Steuern - Dienststelle München<br/>80284 München",
+			"image": "elster_image.png",
+			"icon": "elster_icon.png",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "Registration required."
+			"tcTokenUrlInfo" : "Registration required.",
+			"subjectUrls": []
 		},
 		{
-			"shortName": {"" : "Einheitlicher Ansprechpartner Köln"},
-			"address": "http://www.einheitlicher-ansprechpartner-koeln.de/eaportal/",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "other",
-			"tcTokenUrl" : "https://ea.stadt-koeln.de/Gastzugang/EIDServiceProvider/Request.ashx?appID=6"
-		},
-		{
+			"exclude": ["ios"],
 			"shortName": {"" : "ERGO Direkt Lebensversicherung AG"},
 			"address": "https://ergodirekt.de/de/persoenlicherbereich.html#login",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "insurance"
+			"homepage": "https://ergodirekt.de",
+			"phone": "+49 800 / 444 1000",
+			"email": "beratung@ergodirekt.de",
+			"postalAddress": "Karl-Martell-Straße  60<br/>90344 Nürnberg",
+			"category": "insurance",
+			"subjectUrls": ["https://ergodirekt.de"]
 		},
 		{
 			"shortName": {"" : "Feinstaubplakette beantragen"},
+			"longDescription": {"": "In Berlin können Sie eine Feinstaubplakette für alle Kraftfahrzeuge mit der Online-Ausweisfunktion beantragen. Der Antrag ist unabhängig davon, ob Ihr Fahrzeug in Berlin, bei einer anderen deutschen Zulassungsbehörde, oder im Ausland zugelassen ist.<br/>Ihre persönlichen Daten werden verschlüsselt übertragen. Sie müssen Ihre Angaben nicht per Hand eingeben und die Behörde erhält zuverlässig korrekte Informationen, die rasch weiterverarbeitet werden können.<br/>Auf der Internet-Seite Umweltzonen und Feinstaubplaketten der Senatsverwaltung für Stadtentwicklung und Umwelt können Sie sich vorab informieren, welche Plakette Ihrem Fahrzeug zugeteilt werden kann."},
 			"address": "http://www.berlin.de/labo/fahrzeuge/kfz-zulassung/feinstaubplakette/shop.85047.php",
-			"phone": "",
+			"homepage": "https://www.berlin.de",
+			"phone": "+49 30 90269 – 0",
 			"email": "",
-			"postalAddress": "",
+			"postalAddress": "Direktorin Landesamt für Bürger- und Ordnungsangelegenheiten<br/>Friedrichstr. 219<br/>10958 Berlin",
 			"category": "other",
-			"tcTokenUrlInfo" : "Car lizence number required"
+			"tcTokenUrlInfo" : "Car lizence number required",
+			"subjectUrls": []
 		},
 		{
+			"exclude": ["ios", "android"],
 			"shortName": {"" : "Führungszeugnis und Auskunft aus dem Gewerbezentralregister"},
+			"longDescription": {"": "Sie benötigen ein Führungszeugnis oder eine Auskunft aus dem Gewerbezentralregister? Mit dem Personalausweis im Scheckkartenformat können Sie einen Behördengang sparen. Weitere Voraussetzungen sind die freigeschaltete Online-Ausweisfunktion und ein passendes Kartenlesegerät für Ihren Computer. Auf diese Weise kann eindeutig identifiziert werden, wer den Antrag stellt. Ausländische Mitbürger, die keinen deutschen Personalausweis besitzen, können in gleicher Weise die entsprechende Funktion ihres elektronischen Aufenthaltstitels nutzen.<br/>Neben Führungszeugnissen können auch Auskünfte aus dem Gewerbezentralregister über das neue Online-Portal des BfJ beantragt werden. Solche Auskünfte benötigen Unternehmen, die sich in Ausschreibungsverfahren um öffentliche Aufträge bewerben, recht häufig. Auch hier kann das Online-Verfahren den Aufwand erheblich senken."},
 			"address": "https://www.fuehrungszeugnis.bund.de/",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.bundesjustizamt.de",
+			"phone": "+49 228 99 410-40",
+			"email": "poststelle@bfj.bund.de",
+			"postalAddress": "Bundesamt für Justiz<br/>53094 Bonn",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://www.fuehrungszeugnis.bund.de/ffw"]
 		},
 		{
 			"shortName": {"" : "Halterauskunft zu einem KFZ beantragen"},
+			"longDescription": {"": "In Berlin können Sie für Fahrzeuge, die bei der Zulassungsbehörde Berlin registriert sind, mit der Online-Ausweisfunktion eine Halterauskunft beantragen.<br/>Ihre persönlichen Daten werden verschlüsselt übertragen. Sie müssen Ihre Angaben nicht per Hand eingeben und die Behörde erhält zuverlässig korrekte Informationen, die rasch weiterverarbeitet werden können.<br/>Bitte beachten Sie, dass eine Halterauskunft nur erteilt werden kann, wenn diese der Geltendmachung oder Abwehr von Rechtsansprüchen dient, die sich aus der Teilnahme am Straßenverkehr ergeben, oder wenn sie zur Erhebung einer Privatklage aufgrund im Straßenverkehr begangener Verstöße benötigt wird."},
 			"address": "https://www.berlin.de/labo/mobilitaet/kfz-zulassung/halterauskunft/shop.86598.php",
-			"phone": "",
+			"homepage": "https://www.berlin.de",
+			"phone": "+49 30 90269 – 0",
 			"email": "",
-			"postalAddress": "",
+			"postalAddress": "Direktorin Landesamt für Bürger- und Ordnungsangelegenheiten<br/>Friedrichstr. 219<br/>10958 Berlin",
 			"category": "other",
-			"tcTokenUrlInfo" : "Car lizence number required."
+			"tcTokenUrlInfo" : "Car lizence number required.",
+			"subjectUrls": []
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Hamburg Service Online-Bürgerdienste"},
+			"longDescription": {"": "Über das Portal ,HamburgService' finden Sie auf einen Blick alle Online-Dienste der Freien und Hansestadt Hamburg. Für die Dienste, die mit sensiblen Daten arbeiten (Dienste der Sicherheitsstufe 2), müssen Sie sich nach der Registrierung einmalig identifizieren. Sie können dazu die Online-Ausweisfunktion Ihres Personalausweises nutzen. Eine persönliche Identifizierung in einem Kundenzentrum der Stadt Hamburg ist dann nicht mehr nötig."},
 			"address": "https://gateway.hamburg.de/HamburgGateway/FVP/Application/Index.aspx",
+			"homepage": "http://www.hamburg.de/",
 			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"email": "dataporthamburggateway-service@dataport.de",
+			"postalAddress": "Bürgermeister Olaf Scholz<br/>Rathausmarkt 1<br/>20095 Hamburg",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://gateway.hamburg.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "HUK 24 AG - Registrierung für Servicebereich \"Meine HUK24\""},
+			"longDescription": {"": "Die Registrierung am Kundenportal ,Meine HUK24' können Sie mit der Online-Ausweisfunktion im Personalausweis schnell und einfach selbst erledigen. Ihre Versicherung lässt sich damit komplett online verwalten: egal, ob Sie einen Vertrag abändern eine neue Versicherung abschließen, oder Ihre persönlichen Daten aktualisieren möchten – mit dem Personalausweis können Sie alles problemlos von Zuhause aus erledigen."},
 			"address": "https://www.huk24.de/",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.huk24.de/",
+			"phone": "+49 95 61/96-13 38",
+			"email": "info@huk24.de",
+			"postalAddress": "HUK24 AG<br/>Willi-Hussong-Str. 2<br/>96440 Coburg",
 			"category": "insurance",
-			"tcTokenUrlInfo" : "Registration required"
+			"tcTokenUrlInfo" : "Registration required",
+			"subjectUrls": ["https://www.huk24.de"]
 		},
 		{
+			"shortName": {"" : "Kreis Borken"},
+			"longName": {"" : "Kreis Borken - Kfz-Abmeldung Internet"},
+			"shortDescription": {"": "Authentisierung für internetbasierte Kfz-Abmeldung."},
+			"longDescription": {"": "Für die internetbasierte Kfz-Abmeldung wird die eID-Funktionalität des neuen Personalausweises benötigt."},
+			"address": "https://formulare-extern.de/administrationCenter/Form-Solutions/05554004-0001/eID/eIDMandatory?directlink=https%3A%2F%2Fformulare-extern.de%2Fmetaform%2FForm-Solutions%2Fsid%2Fassistant%2F55dc839be4b054042fb93dba%3FeIDComplete%3Dtrue",
+			"homepage": "https://www.kreis-borken.de",
+			"phone": "+49 2861 / 82 - 2059",
+			"email": "zulassungsstelle@kreis-borken.de",
+			"postalAddress": "Kfz-Zulassungsstelle Borken<br/>Burloer Str. 93<br/>46325 Borken",
+			"image": "KreisBorken_image.png",
+			"icon": "KreisBorken_icon.svg",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "",
+			"subjectUrls": []
+		},
+		{
+			"exclude": ["ios"],
 			"shortName": {"" : "ID-Safe des Landkreis Kitzingen"},
+			"longDescription": {"": "Die Stadt Kitzingen bietet bei verschiedenen Bürgerdiensten die Nutzung der Online-Ausweisfunktion in Verbindung mit elektronischen Antragsformularen an:<br/>- Gewerbeanmeldung<br/>- Gewerbeummeldung<br/>- Gewerbeabmeldung<br/>- Fischereischein<br/>- Verkehrsrechtliche Anordnung<br/>- Sondernutzung<br/>- Parkerleichterung<br/>- Mängelmeldung"},
 			"address": "https://www.buergerservice.org/ID-Safe-Kitzingen",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.kitzingen.de/",
+			"phone": "+49 9321 / 928-0,",
+			"email": "info@kitzingen.de",
+			"postalAddress": "Landratsamt Kitzingen<br/>Herr Thomas Langhojer<br/>Kaiserstraße 4<br/>97318 Kitzingen",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "Registration required"
+			"tcTokenUrlInfo" : "Registration required",
+			"subjectUrls": ["https://www.buergerservice.org"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "ID-Safe des Landkreis Ostallgäu"},
+			"longDescription": {"": "Der Landkreis Ostallgäu bietet Ihnen bei verschiedenen Bürgerdiensten die Nutzung der Online-Ausweisfunktion in Verbindung mit elektronischen Antragsformularen an:<br/>- Bauantrag digital<br/>- Sperrmüll-Abholung<br/>- An-, Um- oder Abmeldung einer Abfalltonne<br/>- Antrag auf Dauergenehmigung und Feriengenehmigung für ein Segelboot oder Motorboot auf dem Forggensee<br/>Der Landkreis Ostallgäu bietet Ihnen außerdem einen ID-Safe an. Hier können Sie die Daten aus Ihrer Online-Ausweisfunktion hinterlegen und um weitere Kontaktdaten ergänzen. Anschließend können Sie die elektronischen Antragsformulare des Landkreises automatisch mit Ihren hinterlegten Daten befüllen. Dadurch vermeiden Sie Tippfehler und können die Bearbeitung Ihres Vorgangs beschleunigen.<br/>Darüber hinaus können Sie im Landkreis Ostallgäu über das bayerische Bürgerservice-Portal folgende Bürgerdienste online beantragen:<br/>- Fahrzeug-Anmeldung<br/>- Fahrzeug-Abmeldung<br/>- Feinstaubplakette<br/>- Wunschkennzeichen"},
 			"address": "https://www.sixform.com/ID-safe",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.landkreis-ostallgaeu.de/",
+			"phone": "+49 83 42 · 9 11 - 0",
+			"email": "poststelle@lra-oal.bayern.de",
+			"postalAddress": "Landkreis Ostallgäu<br/>Schwabenstraße 11<br/>87616 Marktoberdorf",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "Registration required"
+			"tcTokenUrlInfo" : "Registration required",
+			"subjectUrls": ["https://www.sixform.com"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "ID-Safe des Landkreis Würzburg"},
 			"address": "https://www.buergerservice.org/ID-Safe-Wuerzburg",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.landkreis-wuerzburg.de/startseite.phtml",
+			"phone": "+49 931 8003-0 ",
+			"email": "poststelle@lra-wue.bayern.de",
+			"postalAddress": "Landratsamt Würzburg<br/>Zeppelinstraße 15<br/>97074 Würzburg",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "Registration required"
+			"tcTokenUrlInfo" : "Registration required",
+			"subjectUrls": ["https://www.buergerservice.org"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Identitätsprüfungen nach dem Signaturgesetz und dem Geldwäschegesetz"},
+			"longDescription": {"": "Die identity Trust Management AG bietet Unternehmen die Möglichkeit, ihre Kunden schnell und sicher mit der Online-Ausweisfunktion zu identifizieren. <br/>Kunden der Kooperationspartner der identity Trust Management AG können die Identitätsprüfung nach dem Signaturgesetz und dem Geldwäschegesetz auch direkt über die Internetseite der identity Trust Management AG vornehmen."},
 			"address": "https://www.identity.tm",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.identity.tm",
+			"phone": "+49 211 68 77 3-0",
+			"email": "kontakt@identity.tm",
+			"postalAddress": "identity Trust Management AG<br/>Lierenfelder Straße 51<br/>40231 Düsseldorf",
 			"category": "other",
-			"tcTokenUrlInfo" : "Registration required"
+			"tcTokenUrlInfo" : "Registration required",
+			"subjectUrls": []
 		},
 		{
-			"shortName": {"" : "Kraftfahrt-Bundesamt - Auskunft aus dem Verkehrszentralregister"},
-			"address": "https://www.kba-online.de/faeronline/faeranfrage.do",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"exclude": ["ios"],
+			"shortName": {"" : "Kraftfahrt-Bundesamt - Registerauskunft"},
+			"longDescription": {"": "Mit der Online-Ausweisfunktion können Sie beim Kraftfahrt-Bundesamt einfach und schnell eine Auskunft über Ihren Punktestand und die zu Ihrer Person gespeicherten Eintragungen im Fahreignungsregister (FAER) beantragen. Die erforderlichen Daten werden dann von Ihrem Personalausweis ausgelesen. Die Auskunft erhalten Sie innerhalb weniger Tage per Post."},
+			"address": "https://www.kba-online.de/registerauskunft/app/registeranfrage.html",
+			"homepage": "http://www.kba.de/",
+			"phone": "+49 461 316-0",
+			"email": "poststelle@kba.de",
+			"postalAddress": "Kraftfahrt-Bundesamt <br/>Fördestraße 16<br/>24944 Flensburg",
 			"category": "citizen",
-			"tcTokenUrl" : "https://www.kba-online.de:443/faeronline/eidstart.do;jsessionid=vG0b7cExL-p+rDGAQx+aG152.as-idmz-prod1:P_faeronline?ref=vG0b7cExL-p+rDGAQx+aG152.as-idmz-prod1:P_faeronline",
-			"tcTokenUrlInfo" : "TcToken URL contains dynamic request id but is accepted anyway."
+			"tcTokenUrl" : "https://www.kba-online.de:443/registerauskunft/app/eidstart.html;jsessionid=HZFFDC4E848A794D83A1D3032252F3F905?ref=HZFFDC4E848A794D83A1D3032252F3F905",
+			"tcTokenUrlInfo" : "TcToken URL contains dynamic request id but is accepted anyway.",
+			"subjectUrls": ["https://www.kba-online.de/registerauskunft"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Login Meine VBL"},
+			"longDescription": {"": "Bei der VBL können Sie sich mit dem Personalausweis am Kundenportal ,Meine VBL' registrieren und anmelden. Dadurch entfällt der Postversand eines Freischaltcodes - Sie sparen Zeit. Im Kundenkonto können Sie Ihre Vertragsdaten und Ihre persönlichen Daten einsehen und weitere Online-Dienste nutzen, z. B.<br/>- Rentenantrag stellen,<br/>- Beitragserstattung beantragen,<br/>- Kontaktdaten ändern,<br/>- persönliche Mitteilungen von der VBL erhalten."},
 			"address": "https://vbl.de/de/meine_vbl",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://vbl.de/",
+			"phone": "+49 721 93 98 93 1",
+			"email": "info@vbl.de",
+			"postalAddress": "VBL. Kundenservice<br/>76240 Karlsruhe",
 			"category": "other",
-			"tcTokenUrlInfo" : "Registration required"
+			"tcTokenUrlInfo" : "Registration required",
+			"subjectUrls": ["https://www.vbl.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "LVM Versicherung - Kundenportal Meine LVM"},
+			"longDescription": {"": "Mit der Online-Ausweisfunktion im Personalausweis können Sie sich nach der Registrierung durch Ihre LVM-Agentur sicher am Kundenportal ,Meine LVM' anmelden. Ihre Versicherung können Sie nun selbst verwalten und beispielsweise sämtliche Vertragsdaten online einsehen. Darüber hinaus ist es möglich über das Portal Versicherungsbescheinigungen anzufordern sowie schnell und einfach Ihre persönlichen Daten wie Adresse oder Bankverbindung zu ändern."},
 			"address": "http://www.lvm.de/personalausweis",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.lvm.de/",
+			"phone": "+49 251 702-0",
+			"email": "info@lvm.de",
+			"postalAddress": "LVM Versicherung<br/>48126 Münster",
 			"category": "insurance",
-			"tcTokenUrlInfo" : "Registration required"
+			"tcTokenUrlInfo" : "Registration required",
+			"subjectUrls": ["https://www.lvm.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Mentana-Claimsoft AG - Registrierung beim De-Mail Dienst"},
 			"address": "https://www.fp-demail.de/",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.fp-demail.de/",
+			"phone": "+49 800-6368262",
+			"email": "de-mail.info@mentana.de",
+			"postalAddress": "Mentana-Claimsoft GmbH<br/>Trebuser-Str. 47 Haus 1<br/>D-15517 Fürstenwalde",
 			"category": "other",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://www.fp-demail.de"]
 		},
 		{
 			"shortName": {"" : "OpenPGP-eID"},
+			"longDescription": {"": "Durch die Verschlüsselung Ihrer Nachrichten mittels OpenPGP ist die Vertraulichkeit Ihrer Information gewährleistet. Aber kann ein Empfänger der Nachricht sicher sein, dass der Absender der ist, der er vorgibt zu sein? Die Antwortet lautet: Nein. Abhilfe schafft die Beglaubigung Ihres OpenPGP-Schlüssels durch eine Signatur. Sie benötigen hierfür einen Personalausweis bzw. elektronischen Aufenthaltstitel mit aktivierter Online-Ausweisfunktion. Diesen Dienst stellen wir im Auftrag des Bundesamtes für Sicherheit in der Informationstechnik (BSI) zur Verfügung."},
 			"address": "https://pgp.governikus-eid.de/pgp/",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.governikus.de/",
+			"phone": "+49 421 204 95-0",
+			"email": "kontakt@governikus.com",
+			"postalAddress": "Governikus GmbH & Co. KG<br/>Am Fallturm 9<br/>28359 Bremen",
 			"category": "other",
-			"tcTokenUrl" : "https://pgp.governikus-eid.de/pgp/EIDRequest"
+			"tcTokenUrl" : "https://pgp.governikus-eid.de/pgp/EIDRequest",
+			"subjectUrls": ["https://pgp.governikus-eid.de"]
 		},
 		{
-			"shortName": {"" : "Registrierung/Login auf www.tk.de"},
-			"address": "https://www.tk.de/tk/online-filiale/meine-tk/meine-tk/118032",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "other",
-			"tcTokenUrlInfo" : "Registration required"
+			"shortName": {"" : "Techniker Krankenkasse"},
+			"longDescription": {"": "Die Online-Ausweisfunktion des Personalausweises ermöglicht Ihnen die schnelle und sichere Registrierung am Kundenportal \"Meine TK\". Damit können Sie online verbindlich Anträge stellen und Ihre Unterlagen anfordern (z. B. eine neue Versichertenkarte). Außerdem lassen sich persönliche Daten wie Kontoverbindung oder Adresse selbstständig ändern und verwalten. Wenn Sie \"Meine TK\" mit der Online-Ausweisfunktion nutzen, sparen Sie Zeit und Aufwand."},
+			"address": "https://www.tk.de/tk/118032",
+			"homepage": "https://www.tk.de/",
+			"phone": "+49 800 - 285 85 85",
+			"email": "service@tk.de",
+			"postalAddress": "Techniker Krankenkasse<br/>Bramfelder Straße 140<br/>22305 Hamburg",
+			"category": "insurance",
+			"tcTokenUrlInfo" : "Registration required",
+			"subjectUrls": ["https://www.tk.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Schufa – Auskunftsportal „Meine SCHUFA“"},
+			"longDescription": {"": "Wenn Sie Ihre Bonität gegenüber Dritten z. B. für einen Mietvertrag, belegen müssen, benötigen Sie dazu in der Regel eine SCHUFA-Auskunft. Mit der Online-Ausweisfunktion können Sie sich einfach und sicher am Kundenportal „MeineSCHUFA“ registrieren. Ohne weitere Verzögerungen haben Sie nach Anmeldung am Portal die Möglichkeit Ihre Schufa-Auskunft direkt online abzurufen oder auf dem Postweg Ihren Geschäftspartnern zukommen zu lassen. Der Personalausweis erspart Ihnen hierbei unnötige Wartezeit und gewährleistet dennoch eine verlässliche Identifizierung."},
 			"address": "https://www.meineschufa.de/index.php?site=30_2_1_pa#tabNPA",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.meineschufa.de",
+			"phone": "+49 611 – 92780",
+			"email": "meineSCHUFA@SCHUFA.de",
+			"postalAddress": "SCHUFA Holding AG<br/>Postfach 10 25 66<br/>44725 Bochum",
 			"category": "citizen",
-			"tcTokenUrl" : "https://www.meineschufa.de/eID-Service-Connector-V2/createSamlRequest/Reg"
+			"tcTokenUrl" : "https://www.meineschufa.de/eID-Service-Connector-V2/createSamlRequest/Reg",
+			"subjectUrls": ["https://www.meineschufa.de"]
 		},
 		{
+			"shortName": {"" : "Selbstauskunft - „Meine Daten einsehen“"},
+			"longDescription": {"": "Die AusweisApp2 verfügt über die Funktion \"Meine Daten einsehen\". Mit dieser Funktion können die auf dem Personalausweis bzw. dem elektronischen Aufenthaltstitel gespeicherten Daten ausgelesen und angezeigt werden.<br/>Sobald Sie die AusweisApp2 gestartet und ein geeignetes Kartenlesegerät angeschlossen haben, können Sie diese Funktion unter dem Menüpunkt \"Ausweisen\" aufrufen. Über voreingestellte Checkboxen können Sie steuern, ob Sie alle gespeicherten Daten oder nur spezielle Daten auslesen möchten.<br/>Nach Ihrer PIN-Eingabe und erfolgreicher Datenübertragung werden die von Ihnen festgelegten Daten in der AusweisApp2 dargestellt.<br/>Bitte beachten Sie, dass Sie für diesen Vorgang eine Internetverbindung benötigen. Dies hat folgenden Hintergrund: Für jedes Auslesen der Daten aus dem Personalausweis oder dem elektronischen Aufenthaltstitel muss gesetzlich der Zweck des Auslesevorgangs angegeben werden. Dieser Zweck wird Ihnen auf einem speziellen Zertifikat angezeigt (Berechtigungszertifikat). Diese Zertifikate werden individuell durch die Vergabestelle für Berechtigungszertifikate beim Bundesverwaltungsamt genehmigt. Damit Sie also jederzeit genau wissen, wer zu welchem Zweck einen Auslesevorgang startet, wird eine Internetverbindung zu einem vertrauenswürdigen Authentisierungsserver aufgebaut. Die Berechtigungszertifikate dienen Ihrem Schutz!"},
+			"address": "https://www.ausweisapp.bund.de/ausweisapp2/ausprobieren-meine-daten-einsehen/",
+			"homepage": "https://www.ausweisapp.bund.de/",
+			"phone": "+49 1805 - 348743",
+			"email": "support@ausweisapp.de",
+			"postalAddress": "Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesministeriums des Innern -<br/>Am Fallturm 9<br/>D-28359 Bremen",
+			"image": "Selbstauskunft.jpg",
+			"icon": "npa.svg",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml",
+			"subjectUrls": ["https://www.autentapp.de"]
+		},
+		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Service-Portal \"Auto\" Kreis Lippe"},
+			"longName": {"" : "Service-Portal \"Auto\" Kreis Lippe"},
+			"shortDescription": {"": "Das Service-Portal bietet Online-Dienste rund um die KFZ-Zulassung."},
+			"longDescription": {"": "Im Service-Portal \"Auto\" können Sie Ihr Auto online abmelden. Weitere Angebote wie die komplette online KFZ-Wiederzulassung und -Zulassung sind im Aufbau."},
 			"address": "https://www.buergerserviceportal.nrw/krz/lkrlippe",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.kreis-lippe.de/",
+			"phone": "+49 5231/62-0",
+			"email": "stva@kreis-lippe.de",
+			"postalAddress": "Kreis Lippe<br/>Felix-Fechenbach-Straße 5<br/>32756 Detmold",
+			"image": "KreisLippe_image.jpg",
+			"icon": "KreisLippe_icon.png",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
-		},
-		{
-			"shortName": {"" : "sign-me (Bundesdruckerei)"},
-			"address": "https://live.esign-service.de/esign/start",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
-			"category": "other",
-			"tcTokenUrlInfo" : "Website enforces Java plugin :)"
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://www.buergerserviceportal.nrw"]
 		},
 		{
 			"shortName": {"" : "SkIDentity Service"},
+			"longName": {"" : "SkIDentity Service"},
+			"longDescription": {"": "SkIDentity unterstützt die Umsetzung der Cyber-Sicherheitsstrategie der Bundesregierung und macht den elektronischen Personalausweis im Internet sehr leicht und mobil nutzbar. Der SkIDentity-Dienst bietet „Mobile eID as a Service“ und leitet bei Bedarf aus elektronischen Ausweisdokumenten kryptographisch geschützte „Cloud Identitäten“ ab, die auf beliebige Smartphones übertragen und dort sicher mobil genutzt werden können. Darüber hinaus kann auch die bislang aufwändige eID-Integration in einem komfortablen Portal erfolgen und die vertrauenswürdigen Identitäten kommen nun selbst aus einer vom Bundesamt für Sicherheit in der Informationstechnik (BSI) zertifizierten „Secure Cloud Infrastructure“."},
 			"address": "https://skidentity.de/service",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.skidentity.de",
+			"phone": "+49 9571 604 8014",
+			"email": "detlef.huehnlein@ecsec.de",
+			"postalAddress": "ecsec GmbH<br/>Sudetenstraße 16<br/>96247 Michelau",
 			"category": "other",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": []
 		},
 		{
 			"shortName": {"" : "Stadt Nürnberg: Online-Bürgerdienste Service"},
+			"longDescription": {"": "Die Stadt Nürnberg bietet Ihnen mit ihrem Bürgerserviceportal ,Mein.Nürnberg' erstmals die Möglichkeit, Ihre Verwaltungsangelegenheiten komplett elektronisch abzuwickeln – von der Antragstellung bis zur Rückmeldung der Bescheide oder Schriftstücke in Ihren persönlichen Bereich auf dem Portal. Alle Online-Dienste der Stadt Nürnberg wurden zudem für die Nutzung mit mobilen Endgeräten optimiert.<br/>Bei immer mehr Verfahren akzeptiert die Stadtverwaltung einen Unterschriftersatz durch die Online-Ausweisfunktion.<br/>Jeder Online-Dienst der Stadt Nürnberg, der die Online-Ausweisfunktion nutzt, ist an dem Hinweis \"mit eID\" erkennbar. Derzeit sind dies z. B.:<br/>- Aufenthaltstitel beantragen<br/>- Gaststättenrechtliche Erlaubnis für den Ausschank von Alkohol beantragen<br/>- Hunde – Negativzeugnis für Kampfhunde beantragen<br/>- Kfz-Halterauskunft beantragen<br/>- Melderegister – Widerspruch gegen Datenübermittlung<br/>- Veranstaltung, Messe, Markt beantragen"},
 			"address": "http://www.nuernberg.de/internet/onlinedienste",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.nuernberg.de/",
+			"phone": "+49 9 11 / 2 31-8613",
+			"email": "poststelle@stadt.nuernberg.de",
+			"postalAddress": "Amt für Organisation, Informationsverarbeitung und Zentrale Dienste<br/>E-Government-Büro<br/>Rathausplatz 2<br/>III. OG<br/>90403 Nürnberg",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "Registration required"
+			"tcTokenUrlInfo" : "Registration required",
+			"subjectUrls": ["https://meinkonto.nuernberg.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Standesamt Online Mecklenburg-Vorpommern"},
+			"longDescription": {"": "In Mecklenburg-Vorpommern können Sie in immer mehr Kommunen Urkunden mit der Online-Ausweisfunktion beantragen:<br/>- Geburtsurkunden<br/>- Eheurkunden<br/>- Lebenspartnerschaftsurkunden<br/>- Sterbeurkunden"},
 			"address": "https://portal.ego-mv.de/",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.ego-mv.de/",
+			"phone": "+49 3 85 77 33 47-0",
+			"email": "info@ego-mv.de",
+			"postalAddress": "Zweckverband Elektronische Verwaltung in Mecklenburg-Vorpommern (eGo-MV)<br/>Eckdrift 103<br/>19061 Schwerin",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id."
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://tbk.ego-mv.de/BuergerKontoWeb"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Telekom DeMail für Privat- und Geschäftskunden"},
 			"address": "https://www.telekom.de/de-mail",
-			"phone": "",
+			"homepage": "https://www.telekom.de/",
+			"phone": "+49 800 33 01000",
 			"email": "",
-			"postalAddress": "",
+			"postalAddress": "Telekom Deutschland GmbH<br/>Landgrabenweg 151<br/>53227 Bonn",
 			"category": "other",
-			"tcTokenUrlInfo" : "Registration required"
+			"tcTokenUrlInfo" : "Registration required",
+			"subjectUrls": ["https://www.de-mail.t-online.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "T-Systems DeMail für Großkunden"},
 			"address": "https://www.t-systems.de/de-mail",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "https://www.t-systems.de/",
+			"phone": "+49 69 20060 - 0",
+			"email": "de-mail@t-systems.com",
+			"postalAddress": "T-Systems International GmbH<br/>Hahnstraße 43d<br/>60528 Frankfurt am Main",
 			"category": "other",
-			"tcTokenUrlInfo" : "Registration required"
+			"tcTokenUrlInfo" : "Registration required",
+			"subjectUrls": ["https://www.de-mail.t-systems.de"]
 		},
 		{
+			"exclude": ["ios"],
 			"shortName": {"" : "Urkundenservice Köln"},
+			"longDescription": {"": "Bei der Stadt Köln können Sie mit der Online-Ausweisfunktion folgende Urkunden beantragen:<br/>- Geburtsurkunden<br/>- Eheurkunden<br/>- Lebenspartnerschaftsurkunden<br/>- Sterbeurkunden<br/>Dabei werden die Adressatenangaben in den Online-Formularen automatisch befüllt."},
 			"address": "http://www.stadt-koeln.de/service/produkt/urkundenservice-des-standesamtes",
-			"phone": "",
-			"email": "",
-			"postalAddress": "",
+			"homepage": "http://www.stadt-koeln.de/",
+			"phone": "+49 221 / 221-26530",
+			"email": "standesamt@stadt-koeln.de",
+			"postalAddress": "Gülichplatz 1-3<br/>50667 Köln",
 			"category": "citizen",
-			"tcTokenUrl" : "https://ea.stadt-koeln.de/Gastzugang/EIDServiceProvider/Request.ashx?appID=7"
+			"tcTokenUrl" : "https://ea.stadt-koeln.de/Gastzugang/EIDServiceProvider/Request.ashx?appID=7",
+			"subjectUrls": ["https://ea.stadt-koeln.de"]
+		},
+		{
+			"exclude": ["ios"],
+			"shortName": {"" : "Virtuelles Rathaus Stadt Dortmund"},
+			"longDescription": {"": "Sie wollen städtische Dienstleistungen in Anspruch nehmen, sich zunächst nur informieren oder Sie suchen bereits ein bestimmtes Formular?<br/>Wir haben für Sie ein umfassendes Informationsangebot über Produkte und Leistungen (Services) der Stadt Dortmund gegliedert nach Themen und der Behördenstruktur bereitgestellt."},
+			"address": "https://www.domap.de/wps/portal/dortmund/login",
+			"homepage": "https://www.domap.de/",
+			"phone": "+49 231 / 50-25650",
+			"email": "domap-feedback@stadtdo.de",
+			"postalAddress": "Stadt Dortmund<br/>Dortmunder Systemhaus<br/>Deggingstraße 42<br/>44122 Dortmund",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": ["https://rathaus.dortmund.de"]
+		},
+		{
+			"exclude": ["ios"],
+			"shortName": {"" : "Vollstreckungsportal"},
+			"longDescription": {"": "Herzlich willkommen auf dem Gemeinsamen Vollstreckungsportal der Länder."},
+			"address": "https://www.vollstreckungsportal.de/auskunft/priv/anmelden.jsf?type=npa",
+			"homepage": "https://www.vollstreckungsportal.de/",
+			"phone": "",
+			"email": "bundesportal@ag-hagen.nrw.de",
+			"postalAddress": "Land Nordrhein-Westfalen<br/>vertreten durch das Justizministerium<br/>Martin-Luther-Platz 40<br/>40212 Düsseldorf",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "Registration required.",
+			"subjectUrls": ["https://www.vollstreckungsportal.de"]
 		}
 	]
 }

@@ -10,10 +10,10 @@
 #include <QSharedPointer>
 #include <QtTest>
 
-#include "PersoSimController.h"
-#include "ReaderManager.h"
 #include "context/AuthContext.h"
 #include "controller/ChangePinController.h"
+#include "PersoSimController.h"
+#include "ReaderManager.h"
 #include "testMacros.h"
 
 

@@ -8,8 +8,8 @@
 
 #include "states/StateExtractCvcsFromEac1IntputType.h"
 
-#include "TestFileHelper.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
+#include "TestFileHelper.h"
 
 #include <QtCore>
 #include <QtTest>

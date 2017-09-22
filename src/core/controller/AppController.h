@@ -9,8 +9,8 @@
 #pragma once
 
 #include "ActivationHandler.h"
-#include "EnumHelper.h"
 #include "context/WorkflowContext.h"
+#include "EnumHelper.h"
 #include "view/UIPlugIn.h"
 
 #include <QSharedPointer>

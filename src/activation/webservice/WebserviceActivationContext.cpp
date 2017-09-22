@@ -6,10 +6,10 @@
 
 #include "WebserviceActivationContext.h"
 
-#include "Template.h"
-#include "UrlUtil.h"
 #include "qhttpserver/qhttprequest.h"
 #include "qhttpserver/qhttpresponse.h"
+#include "Template.h"
+#include "UrlUtil.h"
 
 #include <QFile>
 #include <QLoggingCategory>

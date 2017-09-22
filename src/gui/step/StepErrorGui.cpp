@@ -3,8 +3,8 @@
  */
 
 #include "AppQtMainWidget.h"
-#include "StepErrorGui.h"
 #include "generic/GuiUtils.h"
+#include "StepErrorGui.h"
 
 #include <QCoreApplication>
 #include <QLoggingCategory>

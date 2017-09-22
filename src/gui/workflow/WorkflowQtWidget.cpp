@@ -6,9 +6,9 @@
 
 #include "WorkflowQtWidget.h"
 
+#include <algorithm>
 #include <QLabel>
 #include <QVBoxLayout>
-#include <algorithm>
 
 using namespace governikus;
 

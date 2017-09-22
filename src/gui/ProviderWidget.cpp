@@ -7,14 +7,14 @@
 #include "ProviderWidget.h"
 
 #include "AppSettings.h"
-#include "ProviderService.h"
-#include "ProviderSettings.h"
 #include "generic/ListCheckItemWidget.h"
 #include "generic/ListItem.h"
 #include "generic/ListItemIconLeft.h"
 #include "generic/ListItemIconRight.h"
 #include "generic/ListItemSubTitle.h"
 #include "generic/ListItemTitle.h"
+#include "ProviderService.h"
+#include "ProviderSettings.h"
 #include "ui_ProviderWidget.h"
 
 #include <QDebug>

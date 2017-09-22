@@ -5,9 +5,9 @@
  */
 
 
+#include "context/AuthContext.h"
 #include "ReturnCodeUtil.h"
 #include "StateEstablishPacePin.h"
-#include "context/AuthContext.h"
 
 
 using namespace governikus;

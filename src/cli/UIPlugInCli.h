@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "ConsoleReader.h"
 #include "context/WorkflowContext.h"
+#include "ConsoleReader.h"
 #include "view/UIPlugIn.h"
 
 #include <QMap>

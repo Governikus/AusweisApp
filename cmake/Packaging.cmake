@@ -90,11 +90,6 @@ IF(WIN32)
 	ENDIF()
 
 ELSEIF(IOS)
-	FIND_PROGRAM(xcrun xcrun CMAKE_FIND_ROOT_PATH_BOTH)
-	IF(NOT xcrun)
-		MESSAGE(FATAL_ERROR "Cannot find xcrun to create IPAs")
-	ENDIF()
-
 	FILE(WRITE ${PROJECT_BINARY_DIR}/ipa.cmake "
 		SET(BUNDLE_DIRS \"\${CONFIG}-iphoneos;UninstalledProducts;UninstalledProducts/iphoneos\")
 
@@ -112,7 +107,9 @@ ELSEIF(IOS)
 			MESSAGE(FATAL_ERROR \"Bundle directory does not exist\")
 		ENDIF()
 
-		EXECUTE_PROCESS(COMMAND ${xcrun} -sdk iphoneos PackageApplication \${BundleDir} -o ${PROJECT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.ipa)
+		EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy_directory \${BundleDir} Payload/AusweisApp2.app)
+		EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar cf \"${CPACK_PACKAGE_FILE_NAME}.ipa\" --format=zip Payload)
+		EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E remove_directory Payload)
 	")
 
 	ADD_CUSTOM_TARGET(ipa COMMAND ${CMAKE_COMMAND} -DCONFIG=$<CONFIGURATION> -P ${CMAKE_BINARY_DIR}/ipa.cmake)

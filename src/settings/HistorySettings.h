@@ -92,7 +92,7 @@ class HistorySettings
 {
 	Q_OBJECT
 	friend class AppSettings;
-	friend class::test_HistorySettings;
+	friend class ::test_HistorySettings;
 
 	private:
 		bool mEnabled;

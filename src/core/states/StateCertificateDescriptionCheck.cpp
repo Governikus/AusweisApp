@@ -4,10 +4,10 @@
 
 #include "StateCertificateDescriptionCheck.h"
 
-#include "AppSettings.h"
-#include "UrlUtil.h"
 #include "asn1/CVCertificateChainBuilder.h"
 #include "asn1/KnownOIDs.h"
+#include "AppSettings.h"
+#include "UrlUtil.h"
 
 
 using namespace governikus;

@@ -5,17 +5,17 @@
  */
 
 #include "AppSettings.h"
+#include "context/AuthContext.h"
 #include "CertificateChecker.h"
 #include "LogHandler.h"
 #include "SecureStorage.h"
-#include "context/AuthContext.h"
 
 #include "MockActivationContext.h"
 #include "TestFileHelper.h"
 
+#include <openssl/pem.h>
 #include <QSslKey>
 #include <QtTest>
-#include <openssl/pem.h>
 
 using namespace governikus;
 

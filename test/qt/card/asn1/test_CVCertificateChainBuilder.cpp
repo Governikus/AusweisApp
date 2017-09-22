@@ -7,8 +7,8 @@
 #include <QtCore>
 #include <QtTest>
 
-#include "TestFileHelper.h"
 #include "asn1/CVCertificateChainBuilder.h"
+#include "TestFileHelper.h"
 
 
 using namespace governikus;

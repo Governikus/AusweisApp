@@ -17,7 +17,7 @@ namespace governikus
 
 class PaosCreator
 {
-	friend class::test_PaosCreator;
+	friend class ::test_PaosCreator;
 
 	public:
 		enum class Namespace

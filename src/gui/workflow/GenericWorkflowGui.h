@@ -9,10 +9,10 @@
 #pragma once
 
 #include "AppQtMainWidget.h"
-#include "WorkflowGui.h"
-#include "WorkflowQtWidget.h"
 #include "context/WorkflowContext.h"
 #include "step/StepGui.h"
+#include "WorkflowGui.h"
+#include "WorkflowQtWidget.h"
 
 #include <QSharedPointer>
 #include <QWidget>

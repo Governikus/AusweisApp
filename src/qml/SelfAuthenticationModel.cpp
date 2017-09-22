@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
-#include "SelfAuthenticationModel.h"
 #include "context/SelfAuthenticationContext.h"
+#include "SelfAuthenticationModel.h"
 
 using namespace governikus;
 

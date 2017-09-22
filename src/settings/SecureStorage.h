@@ -33,7 +33,7 @@ using SignatureAlgorithmPair = QPair<QSsl::KeyAlgorithm, QCryptographicHash::Alg
 class SecureStorage final
 {
 	friend class AppSettings;
-	friend class::test_SecureStorage;
+	friend class ::test_SecureStorage;
 	friend bool operator==(const SecureStorage& pLeft, const SecureStorage& pRight);
 
 	private:

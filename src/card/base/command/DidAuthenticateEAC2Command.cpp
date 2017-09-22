@@ -4,12 +4,12 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
+#include "asn1/ChipAuthenticationInfo.h"
+#include "asn1/EFCardSecurity.h"
 #include "CardConnection.h"
 #include "DidAuthenticateEAC2Command.h"
 #include "GeneralAuthenticateResponse.h"
 #include "ReturnCodeUtil.h"
-#include "asn1/ChipAuthenticationInfo.h"
-#include "asn1/EFCardSecurity.h"
 
 
 #include <QLoggingCategory>

@@ -4,9 +4,9 @@
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
-#include "TestFileHelper.h"
 #include "asn1/CVCertificate.h"
 #include "asn1/EcdsaPublicKey.h"
+#include "TestFileHelper.h"
 
 #include <QtCore>
 #include <QtTest>

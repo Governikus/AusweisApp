@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "SmartCardDefinitions.h"
 #include "asn1/SecurityInfos.h"
+#include "SmartCardDefinitions.h"
 
 #include <QSharedPointer>
 

@@ -6,9 +6,9 @@
 
 #include "AppSettings.h"
 #include "DetailDialog.h"
-#include "HistoryDetailWidget.h"
 #include "generic/ListCheckItemWidget.h"
 #include "generic/Page.h"
+#include "HistoryDetailWidget.h"
 
 #include <QDateTime>
 #include <QDesktopServices>
@@ -16,11 +16,11 @@
 #include <QInputDialog>
 #include <QPainter>
 #include <QScopedPointer>
+#include <QtPrintSupport/QPrinter>
 #include <QTableWidgetItem>
 #include <QTextDocument>
 #include <QUrl>
 #include <QVector>
-#include <QtPrintSupport/QPrinter>
 
 namespace Ui
 {

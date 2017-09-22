@@ -8,9 +8,9 @@
 
 #pragma once
 
+#include "context/SelfAuthenticationContext.h"
 #include "NetworkManager.h"
 #include "Result.h"
-#include "context/SelfAuthenticationContext.h"
 #include "states/AbstractGenericState.h"
 
 namespace governikus

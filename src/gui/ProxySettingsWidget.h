@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "ProxySettings.h"
 #include "generic/Page.h"
+#include "ProxySettings.h"
 
 #include <QAbstractButton>
 #include <QScopedPointer>

@@ -3,9 +3,9 @@
  */
 
 #include "CertificateChecker.h"
+#include "paos/PaosHandler.h"
 #include "StateGenericSendReceive.h"
 #include "TlsConfiguration.h"
-#include "paos/PaosHandler.h"
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 

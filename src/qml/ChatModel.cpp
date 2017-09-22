@@ -4,11 +4,11 @@
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
-#include "AppSettings.h"
-#include "ChatModel.h"
 #include "asn1/AccessRoleAndRight.h"
 #include "asn1/CVCertificate.h"
+#include "AppSettings.h"
 #include "context/SelfAuthenticationContext.h"
+#include "ChatModel.h"
 
 using namespace governikus;
 

@@ -12,8 +12,8 @@
 #include "states/StateCheckCertificates.h"
 #include "states/StateEditAccessRights.h"
 #include "states/StateExtractCvcsFromEac1IntputType.h"
-#include "states/StatePreVerification.h"
 #include "states/StatePrepareChat.h"
+#include "states/StatePreVerification.h"
 
 
 using namespace governikus;

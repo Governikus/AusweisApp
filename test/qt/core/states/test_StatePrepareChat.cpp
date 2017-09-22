@@ -6,10 +6,10 @@
 
 #include "states/StatePrepareChat.h"
 
-#include "TestFileHelper.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
 #include "states/StateBuilder.h"
+#include "TestFileHelper.h"
 
 #include <QtCore>
 #include <QtTest>

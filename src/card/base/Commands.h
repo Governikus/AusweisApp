@@ -4,11 +4,11 @@
 
 #pragma once
 
+#include "asn1/Chat.h"
 #include "Apdu.h"
 #include "FileRef.h"
 #include "ReturnCode.h"
 #include "SmartCardDefinitions.h"
-#include "asn1/Chat.h"
 
 #include <QtEndian>
 

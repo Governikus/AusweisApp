@@ -8,9 +8,9 @@
 
 #pragma once
 
+#include "asn1/Chat.h"
 #include "BaseCardCommand.h"
 #include "Commands.h"
-#include "asn1/Chat.h"
 
 namespace governikus
 {

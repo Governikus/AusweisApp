@@ -7,8 +7,8 @@
 #pragma once
 
 #include "DiagnosisWidget.h"
-#include "PinSettingsInfoWidget.h"
 #include "generic/Page.h"
+#include "PinSettingsInfoWidget.h"
 
 #include <QPointer>
 

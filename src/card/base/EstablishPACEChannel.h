@@ -6,12 +6,12 @@
 
 #pragma once
 
-#include "Apdu.h"
-#include "ReturnCode.h"
-#include "SmartCardDefinitions.h"
 #include "asn1/ASN1TemplateUtil.h"
 #include "asn1/CertificateDescription.h"
 #include "asn1/SecurityInfos.h"
+#include "Apdu.h"
+#include "ReturnCode.h"
+#include "SmartCardDefinitions.h"
 
 #include <QByteArray>
 

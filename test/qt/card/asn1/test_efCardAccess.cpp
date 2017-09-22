@@ -7,10 +7,10 @@
 #include <QtCore/QtCore>
 #include <QtTest/QtTest>
 
-#include "TestFileHelper.h"
 #include "asn1/ChipAuthenticationInfo.h"
 #include "asn1/PACEInfo.h"
 #include "asn1/SecurityInfos.h"
+#include "TestFileHelper.h"
 
 using namespace governikus;
 

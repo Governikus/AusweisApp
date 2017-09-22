@@ -25,7 +25,7 @@ class HashAlgorithmUtil
 	~HashAlgorithmUtil() = delete;
 
 	friend QDebug operator<<(QDebug, QCryptographicHash::Algorithm);
-	friend class::test_HashAlgorithmUtil;
+	friend class ::test_HashAlgorithmUtil;
 
 	/*!
 	 * Determines a readable name for the hash algorithm.

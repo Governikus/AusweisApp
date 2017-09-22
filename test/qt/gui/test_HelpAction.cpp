@@ -8,8 +8,8 @@
 
 #include <QtTest/QtTest>
 
-#include "LanguageLoader.h"
 #include "generic/HelpAction.h"
+#include "LanguageLoader.h"
 
 using namespace governikus;
 

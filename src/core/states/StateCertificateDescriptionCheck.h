@@ -17,7 +17,7 @@ class StateCertificateDescriptionCheck
 {
 	Q_OBJECT
 	friend class StateBuilder;
-	friend class::test_StateCertificateDescriptionCheck;
+	friend class ::test_StateCertificateDescriptionCheck;
 
 	StateCertificateDescriptionCheck(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;

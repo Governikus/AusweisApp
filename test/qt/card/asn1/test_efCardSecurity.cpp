@@ -9,8 +9,8 @@
 #include <QtCore/QtCore>
 #include <QtTest/QtTest>
 
-#include "TestFileHelper.h"
 #include "asn1/EFCardSecurity.h"
+#include "TestFileHelper.h"
 
 using namespace governikus;
 

@@ -28,7 +28,7 @@ class WebserviceActivationHandler
 	Q_PLUGIN_METADATA(IID "governikus.ActivationHandler" FILE "metadata.json")
 	Q_INTERFACES(governikus::ActivationHandler)
 
-	friend class::test_WebserviceActivationHandler;
+	friend class ::test_WebserviceActivationHandler;
 
 	QHttpServer mHttpServer;
 

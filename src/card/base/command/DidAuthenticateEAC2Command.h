@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "BaseCardCommand.h"
 #include "asn1/CVCertificateChain.h"
+#include "BaseCardCommand.h"
 
 namespace governikus
 {

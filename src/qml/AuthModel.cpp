@@ -3,8 +3,8 @@
  */
 
 #include "AuthModel.h"
-#include "ReaderManagerPlugInInfo.h"
 #include "context/AuthContext.h"
+#include "ReaderManagerPlugInInfo.h"
 
 using namespace governikus;
 

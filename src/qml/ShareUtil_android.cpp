@@ -4,11 +4,11 @@
 
 #include "ShareUtil.h"
 
+#include <jni.h>
 #include <QDebug>
 #include <QtAndroidExtras/QAndroidJniEnvironment>
 #include <QtAndroidExtras/QAndroidJniObject>
 #include <QtAndroidExtras/QtAndroid>
-#include <jni.h>
 
 
 using namespace governikus;

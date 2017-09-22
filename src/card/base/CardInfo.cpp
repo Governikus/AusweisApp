@@ -6,10 +6,10 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
-#include "CardConnectionWorker.h"
-#include "CardInfo.h"
 #include "asn1/PACEInfo.h"
 #include "asn1/SecurityInfos.h"
+#include "CardConnectionWorker.h"
+#include "CardInfo.h"
 
 #include <QDebug>
 #include <QLoggingCategory>

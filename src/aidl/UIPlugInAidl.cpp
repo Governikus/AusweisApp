@@ -17,9 +17,9 @@
 #include <QThread>
 
 #ifdef Q_OS_ANDROID
+#include <jni.h>
 #include <QtAndroidExtras/QAndroidJniEnvironment>
 #include <QtAndroidExtras/QtAndroid>
-#include <jni.h>
 #endif
 
 

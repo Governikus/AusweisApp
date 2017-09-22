@@ -3,8 +3,8 @@
  */
 
 #include "CardConnection.h"
-#include "StateStartPaos.h"
 #include "paos/invoke/StartPaos.h"
+#include "StateStartPaos.h"
 
 using namespace governikus;
 

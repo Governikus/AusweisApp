@@ -4,11 +4,11 @@
 
 #include "ApplicationModel.h"
 
-#include "ReaderInfo.h"
-#include "ReaderManager.h"
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
 #include "context/SelfAuthenticationContext.h"
+#include "ReaderInfo.h"
+#include "ReaderManager.h"
 
 using namespace governikus;
 

@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "StepGui.h"
 #include "context/AuthContext.h"
+#include "StepGui.h"
 
 class QCheckBox;
 class QLabel;

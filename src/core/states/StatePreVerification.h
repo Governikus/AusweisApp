@@ -23,7 +23,7 @@ class StatePreVerification
 {
 	Q_OBJECT
 	friend class StateBuilder;
-	friend class::test_StatePreVerification;
+	friend class ::test_StatePreVerification;
 
 	const QVector<QSharedPointer<CVCertificate> > mTrustedCvcas;
 	const QDateTime mValidationDateTime;

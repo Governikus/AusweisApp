@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "ReaderDriverDialog.h"
 #include "context/ReaderDriverContext.h"
+#include "ReaderDriverDialog.h"
 
 class QWidget;
 

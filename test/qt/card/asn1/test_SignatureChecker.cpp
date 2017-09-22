@@ -13,9 +13,9 @@
 #include <openssl/err.h>
 #include <openssl/obj_mac.h>
 
-#include "TestFileHelper.h"
 #include "asn1/CVCertificate.h"
 #include "asn1/SignatureChecker.h"
+#include "TestFileHelper.h"
 #include <QDebug>
 
 #include "pace/ec/EcUtil.h"

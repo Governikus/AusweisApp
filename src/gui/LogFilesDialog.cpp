@@ -7,8 +7,8 @@
 #include "LogFilesDialog.h"
 #include "ui_LogFilesDialog.h"
 
-#include "LogHandler.h"
 #include "generic/HelpAction.h"
+#include "LogHandler.h"
 
 #include <QCloseEvent>
 #include <QComboBox>

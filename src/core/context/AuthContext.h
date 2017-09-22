@@ -8,19 +8,14 @@
 
 #pragma once
 
+#include "asn1/Chat.h"
+#include "asn1/CVCertificate.h"
+#include "asn1/CVCertificateChainBuilder.h"
 #include "ActivationHandler.h"
+#include "context/WorkflowContext.h"
 #include "Commands.h"
 #include "EnumHelper.h"
 #include "NetworkManager.h"
-#include "Result.h"
-#include "SelfAuthenticationData.h"
-#include "TcToken.h"
-#include "UrlUtil.h"
-#include "asn1/CVCertificate.h"
-#include "asn1/CVCertificateChainBuilder.h"
-#include "asn1/Chat.h"
-#include "context/WorkflowContext.h"
-#include "paos/MessageIdHandler.h"
 #include "paos/invoke/DidAuthenticateResponseEac1.h"
 #include "paos/invoke/DidAuthenticateResponseEac2.h"
 #include "paos/invoke/DidListResponse.h"
@@ -28,6 +23,7 @@
 #include "paos/invoke/InitializeFrameworkResponse.h"
 #include "paos/invoke/StartPaos.h"
 #include "paos/invoke/TransmitResponse.h"
+#include "paos/MessageIdHandler.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
 #include "paos/retrieve/DidAuthenticateEac2.h"
 #include "paos/retrieve/DidAuthenticateEacAdditional.h"
@@ -35,6 +31,10 @@
 #include "paos/retrieve/InitializeFramework.h"
 #include "paos/retrieve/StartPaosResponse.h"
 #include "paos/retrieve/Transmit.h"
+#include "Result.h"
+#include "SelfAuthenticationData.h"
+#include "TcToken.h"
+#include "UrlUtil.h"
 
 #include <QDebug>
 #include <QPointer>
@@ -57,11 +57,11 @@ class AuthContext
 	Q_OBJECT
 
 	private:
-		friend class::test_StatePrepareChat;
-		friend class::test_StateRedirectBrowser;
-		friend class::test_StatePreVerification;
-		friend class::test_StateProcessCertificatesFromEac2;
-		friend class::test_StateCertificateDescriptionCheck;
+		friend class ::test_StatePrepareChat;
+		friend class ::test_StateRedirectBrowser;
+		friend class ::test_StatePreVerification;
+		friend class ::test_StateProcessCertificatesFromEac2;
+		friend class ::test_StateCertificateDescriptionCheck;
 
 		bool mTcTokenNotFound;
 		bool mErrorReportedToServer;

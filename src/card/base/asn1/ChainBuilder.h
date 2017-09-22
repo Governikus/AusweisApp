@@ -13,9 +13,9 @@
 #pragma once
 
 
-#include <QVector>
 #include <algorithm>
 #include <functional>
+#include <QVector>
 
 
 namespace governikus

@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
  */
 
+#include "context/ChangePinContext.h"
 #include "ReaderManager.h"
 #include "StateSelectNfcReader.h"
-#include "context/ChangePinContext.h"
 
 using namespace governikus;
 

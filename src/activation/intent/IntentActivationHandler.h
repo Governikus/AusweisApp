@@ -35,7 +35,7 @@ class IntentActivationHandler
 	Q_INTERFACES(governikus::ActivationHandler)
 
 #ifdef Q_OS_ANDROID
-	friend void::Java_com_governikus_ausweisapp2_MainActivity_triggerActivation(JNIEnv*, jobject, jstring);
+	friend void ::Java_com_governikus_ausweisapp2_MainActivity_triggerActivation(JNIEnv*, jobject, jstring);
 #endif
 
 	public:

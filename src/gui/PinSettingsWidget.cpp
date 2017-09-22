@@ -4,12 +4,12 @@
 
 #include "PinSettingsWidget.h"
 
+#include "generic/PasswordEdit.h"
+#include "generic/SmartCardUtil.h"
 #include "RandomPinDialog.h"
 #include "ReaderInfo.h"
 #include "ReaderManager.h"
 #include "SmartCardDefinitions.h"
-#include "generic/PasswordEdit.h"
-#include "generic/SmartCardUtil.h"
 #include "ui_PinSettingsWidget.h"
 
 #include <QLoggingCategory>

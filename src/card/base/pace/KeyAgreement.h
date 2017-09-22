@@ -8,9 +8,9 @@
 
 #pragma once
 
+#include "asn1/SecurityInfo.h"
 #include "CardConnectionWorker.h"
 #include "GeneralAuthenticateResponse.h"
-#include "asn1/SecurityInfo.h"
 #include "pace/KeyDerivationFunction.h"
 
 #include <QSharedPointer>

@@ -6,15 +6,15 @@
 
 #pragma once
 
+#include "asn1/SecurityInfos.h"
 #include "Apdu.h"
 #include "Commands.h"
 #include "EstablishPACEChannel.h"
 #include "FileRef.h"
+#include "pace/SecureMessaging.h"
 #include "Reader.h"
 #include "ReturnCode.h"
 #include "SmartCardDefinitions.h"
-#include "asn1/SecurityInfos.h"
-#include "pace/SecureMessaging.h"
 
 #include <QByteArray>
 

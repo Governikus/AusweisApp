@@ -19,8 +19,8 @@
 #include <QLoggingCategory>
 #include <QPainter>
 #include <QPushButton>
-#include <QTextDocument>
 #include <QtPrintSupport/QPrinter>
+#include <QTextDocument>
 
 
 using namespace governikus;

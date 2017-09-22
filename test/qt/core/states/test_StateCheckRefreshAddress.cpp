@@ -6,9 +6,9 @@
 
 #include "context/AuthContext.h"
 
-#include <QThread>
 #include <QtCore>
 #include <QtTest>
+#include <QThread>
 
 using namespace governikus;
 

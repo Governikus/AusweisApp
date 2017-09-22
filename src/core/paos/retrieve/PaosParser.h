@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "paos/PaosMessage.h"
 #include "paos/element/ElementParser.h"
+#include "paos/PaosMessage.h"
 
 namespace governikus
 {

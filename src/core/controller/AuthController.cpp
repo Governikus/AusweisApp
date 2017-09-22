@@ -30,8 +30,8 @@
 #include "states/StateUpdateRetryCounter.h"
 #include "states/StateWriteHistory.h"
 
-#include <QDebug>
 #include <initializer_list>
+#include <QDebug>
 
 
 using namespace governikus;

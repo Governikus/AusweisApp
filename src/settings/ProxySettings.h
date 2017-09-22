@@ -32,7 +32,7 @@ class ProxySettings
 	Q_OBJECT
 
 	friend class AppSettings;
-	friend class::test_ProxySettings;
+	friend class ::test_ProxySettings;
 
 	private:
 		QNetworkProxy::ProxyType mProxyType;

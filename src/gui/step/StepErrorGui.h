@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "StepGui.h"
 #include "context/WorkflowContext.h"
+#include "StepGui.h"
 
 namespace governikus
 {

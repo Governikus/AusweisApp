@@ -6,16 +6,16 @@
 
 #include "AboutDialog.h"
 #include "BuildHelper.h"
+#include "generic/ExclusiveButtonGroup.h"
+#include "generic/HelpAction.h"
 #include "GuiProfile.h"
 #include "LogHandler.h"
 #include "ReaderDetector.h"
 #include "ReaderDriverDialog.h"
-#include "SetupAssistantWizard.h"
-#include "VersionNumber.h"
-#include "generic/ExclusiveButtonGroup.h"
-#include "generic/HelpAction.h"
 #include "step/AuthenticateStepsWidget.h"
+#include "SetupAssistantWizard.h"
 #include "ui_AppQtMainWidget.h"
+#include "VersionNumber.h"
 #include "workflow/WorkflowQtWidget.h"
 
 #include <QCloseEvent>

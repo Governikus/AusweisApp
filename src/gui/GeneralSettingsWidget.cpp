@@ -5,8 +5,8 @@
 #include "GeneralSettingsWidget.h"
 
 #include "AppSettings.h"
-#include "Updater.h"
 #include "ui_GeneralSettingsWidget.h"
+#include "Updater.h"
 
 using namespace governikus;
 

@@ -4,9 +4,9 @@
  * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 
+#include <algorithm>
 #include <QtCore>
 #include <QtTest>
-#include <algorithm>
 
 #include "asn1/ChainBuilder.h"
 

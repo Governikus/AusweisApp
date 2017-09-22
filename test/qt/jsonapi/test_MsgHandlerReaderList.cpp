@@ -4,10 +4,10 @@
  * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
  */
 
+#include "messages/MsgHandlerReader.h"
 #include "MessageDispatcher.h"
 #include "MockReaderManagerPlugIn.h"
 #include "ReaderManager.h"
-#include "messages/MsgHandlerReader.h"
 
 #include <QtTest>
 

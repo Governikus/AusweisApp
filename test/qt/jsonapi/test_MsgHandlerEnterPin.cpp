@@ -10,8 +10,8 @@
 #include "MockReaderManagerPlugIn.h"
 #include "ReaderManager.h"
 
-#include <QTest>
 #include <QtPlugin>
+#include <QTest>
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 

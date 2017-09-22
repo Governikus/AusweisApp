@@ -5,9 +5,9 @@
  */
 #include <QtTest>
 
+#include "asn1/CVCertificate.h"
 #include "PreVerificationSettings.h"
 #include "TestFileHelper.h"
-#include "asn1/CVCertificate.h"
 
 
 using namespace governikus;
