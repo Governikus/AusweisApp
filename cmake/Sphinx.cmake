@@ -1,4 +1,4 @@
-FIND_PROGRAM(SPHINX_BIN NAMES sphinx-build2 sphinx-build CMAKE_FIND_ROOT_PATH_BOTH)
+FIND_PROGRAM(SPHINX_BIN NAMES sphinx-build-2 sphinx-build2 sphinx-build sphinx-build-3 CMAKE_FIND_ROOT_PATH_BOTH)
 
 IF(SPHINX_BIN)
 	SET(SPHINX_FOUND TRUE)
