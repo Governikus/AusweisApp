@@ -1,0 +1,16 @@
+language: shell
+sudo: required
+
+env:
+  matrix:
+    - CHECK=format
+    - CHECK=docs
+
+install:
+  - sudo resources/travis/setup.sh $CHECK
+
+script:
+  - sudo resources/travis/build.sh $CHECK
+
+notifications:
+  email: false
