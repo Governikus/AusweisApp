@@ -1,7 +1,7 @@
 /*!
- * \brief XML element for "SupportedAPI".
+ * \brief XML element for "SupportedAPI". See TR-03112-7.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

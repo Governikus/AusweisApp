@@ -1,7 +1,5 @@
 /*!
- * CustomSchemeActivationContext.h
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,6 +28,9 @@ class CustomSchemeActivationContext
 		bool sendOperationAlreadyActive() override;
 		bool sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus) override;
 		bool sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pResult) override;
+
+	Q_SIGNALS:
+		void fireShowUserInformation(const QString& pMessage);
 };
 
 } /* namespace governikus */

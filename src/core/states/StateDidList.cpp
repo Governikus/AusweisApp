@@ -1,7 +1,5 @@
 /*!
- * StateDidList.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/invoke/DidListResponse.h"
@@ -20,5 +18,5 @@ StateDidList::StateDidList(const QSharedPointer<WorkflowContext>& pContext)
 void StateDidList::run()
 {
 	Q_ASSERT(!getContext()->getDidList().isNull());
-	Q_EMIT fireSuccess();
+	Q_EMIT fireContinue();
 }

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -8,6 +8,7 @@
 #include "DeviceError.h"
 #include "Reader.h"
 #include "ReaderManagerWorker.h"
+#include "RemoteClient.h"
 
 #include <QPointer>
 #include <QThread>
@@ -23,6 +24,7 @@ class ReaderManager
 	private:
 		QThread mThread;
 		QPointer<ReaderManagerWorker> mWorker;
+		QSharedPointer<RemoteClient> mRemoteClient;
 
 	protected:
 		ReaderManager();
@@ -35,23 +37,33 @@ class ReaderManager
 		 * Initialize the reader manager service.
 		 * The thread is started and the plug-ins are initialized, too.
 		 */
-		void init();
+		void init(const QSharedPointer<RemoteClient>& pRemoteClient = QSharedPointer<RemoteClient>());
+
+		/*!
+		 * Starts a scan for all device types.
+		 */
+		void startScanAll();
 
 		/*!
 		 * Starts a scan for devices if registered plugin don't scan anytime.
 		 */
-		void startScan();
+		void startScan(ReaderManagerPlugInType pType);
+
+		/*!
+		 * Stops scan for all device types.
+		 */
+		void stopScanAll();
 
 		/*!
 		 * Stops started scan for devices.
 		 * Be aware that some plugins don't finish the whole scan if you
 		 * abort it with stopScan!
 		 */
-		void stopScan();
+		void stopScan(ReaderManagerPlugInType pType);
 
 		QVector<ReaderManagerPlugInInfo> getPlugInInfos() const;
 		QVector<ReaderInfo> getReaderInfos(ReaderManagerPlugInType pType) const;
-		QVector<ReaderInfo> getReaderInfos(const QVector<ReaderManagerPlugInType>& pTypes = Enum<ReaderManagerPlugInType>::getList()) const;
+		virtual QVector<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const;
 		ReaderInfo getReaderInfo(const QString& pReaderName) const;
 
 		/*!
@@ -83,12 +95,14 @@ class ReaderManager
 		void disconnectReader(const QString& pReaderName);
 		void disconnectAllReaders();
 
+		QSharedPointer<RemoteClient> getRemoteClient();
+
 	Q_SIGNALS:
+		void firePluginAdded(const ReaderManagerPlugInInfo& pInfo);
 		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
 		void fireReaderAdded(const QString& pReaderName);
-		void fireReaderDeviceError(DeviceError pDeviceError);
-		void fireReaderConnected(const QString& pReaderName);
 		void fireReaderRemoved(const QString& pReaderName);
+		void fireReaderDeviceError(DeviceError pDeviceError);
 		void fireReaderPropertiesUpdated(const QString& pReaderName);
 		void fireCardInserted(const QString& pReaderName);
 		void fireCardRemoved(const QString& pReaderName);

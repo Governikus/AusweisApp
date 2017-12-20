@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.3.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0)
 
 IF(POLICY CMP0010)
 	CMAKE_POLICY(SET CMP0010 NEW)
@@ -18,6 +18,13 @@ SET(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../cmake")
 INCLUDE(ExternalProject)
 INCLUDE(Helper)
 INCLUDE(DVCS)
+
+IF(ANDROID)
+	GET_ANDROID_TOOLCHAIN_VARS(ANDROID_TOOLCHAIN_PREFIX ANDROID_TOOLCHAIN_MACHINE_NAME)
+	IF(CMAKE_SYSROOT_COMPILE)
+		SET(UNIFIED_INCLUDE ${CMAKE_SYSROOT_COMPILE}/usr/include)
+	ENDIF()
+ENDIF()
 
 ADD_FLAG(-fstack-protector-strong -fstack-protector NOQUOTES VAR COMPILER_FLAGS)
 
@@ -97,11 +104,11 @@ INCLUDE(Messages)
 
 
 ################################## Versionen
-SET(QT 5.8.0)
-SET(QT_HASH 0f4c54386d3dbac0606a936a7145cebb7b94b0ca2d29bc001ea49642984824b6)
+SET(QT 5.9.3)
+SET(QT_HASH 57acd8f03f830c2d7dc29fbe28aaa96781b2b9bdddce94196e6761a0f88c6046)
 
-SET(OPENSSL 1.0.2k)
-SET(OPENSSL_HASH 6b3977c61f2aedf0f96367dcfb5c6e578cf37e7b8d913b4ecb6643c3cb88d8c0)
+SET(OPENSSL 1.0.2n)
+SET(OPENSSL_HASH 370babb75f278c39e0c50e8c4e7493bc0f18db6867478341a832a982fd15a8fe)
 
 ################################## Files
 SET(QT_FILE qt-everywhere-opensource-src-${QT}.tar.xz)
@@ -115,7 +122,7 @@ ELSE()
 ENDIF()
 STRING(SUBSTRING ${QT} 0 3 QT_SUBVERSION)
 
-SET(QT_URL http://download.qt.io/${QT_DEST_DIR}/qt/${QT_SUBVERSION}/${QT}/single)
+SET(QT_URL https://download.qt.io/${QT_DEST_DIR}/qt/${QT_SUBVERSION}/${QT}/single)
 SET(OPENSSL_URL https://www.openssl.org/source)
 
 IF(ANDROID OR APPLE)
@@ -127,24 +134,6 @@ IF(ANDROID OR APPLE)
 	ENDIF()
 ENDIF()
 
-################################## Android NDK /SDK
-#########################################################################
-
-IF(ANDROID)
-	FIND_PROGRAM(SED_CMD sed CMAKE_FIND_ROOT_PATH_BOTH)
-	IF(SED_CMD)
-		MESSAGE(STATUS "Using 'sed' command... ${SED_CMD}")
-	ELSE()
-		MESSAGE(FATAL_ERROR "Cannot find 'sed' command")
-	ENDIF()
-ENDIF()
-
-IF(IOS)
-	SET(HOST --host=arm-apple-darwin7)
-	SET(HOST64 --host=aarch64-apple-darwin)
-	SET(IOS_ARCH armv7)
-	SET(IOS_ARCH64 arm64)
-ENDIF()
 
 SET(ENABLED_TARGETS)
 
@@ -157,10 +146,11 @@ SET(OPENSSL_CONFIGURE_FLAGS no-ssl2 no-ssl3 no-ssl3-method no-dtls no-srp no-ide
 IF(IOS)
 	SET(OPENSSL_PATCH_COMMAND ${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl_iOS.patch && )
 	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} iphoneos-cross)
-	SET(OPENSSL_PATCH_AFTER_CONFIGURE ${SH_CMD} ${PATCHES_DIR}/openssl_iOS_perl.sh ${CMAKE_IOS_SDK_ROOT} &&)
+	SET(OPENSSL_ENV export CROSS_TOP=${CMAKE_IOS_DEVELOPER_ROOT} && export CROSS_SDK=iPhoneOS.sdk &&)
+	SET(OPENSSL_COMPILER_FLAGS "-arch arm64")
 ELSEIF(APPLE)
 	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} darwin64-x86_64-cc)
-	#SET(OPENSSL_PATCH_AFTER_CONFIGURE ${SH_CMD} ${PATCHES_DIR}/openssl_MacOS_perl.sh &&)
+	SET(COMPILER_FLAGS "${COMPILER_FLAGS} -mmacosx-version-min=10.9")
 ELSEIF(MINGW)
 	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} mingw)
 ELSEIF(MSVC)
@@ -181,19 +171,25 @@ ELSEIF(ANDROID)
 	ENDIF()
 
 	SET(OPENSSL_ENV export ANDROID_DEV=${CMAKE_SYSROOT}/usr &&)
+	IF(UNIFIED_INCLUDE)
+		SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} -D__ANDROID_API__=${CMAKE_SYSTEM_VERSION} -isystem${UNIFIED_INCLUDE} -isystem${UNIFIED_INCLUDE}/${ANDROID_TOOLCHAIN_MACHINE_NAME})
+	ENDIF()
 	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} --cross-compile-prefix=${CMAKE_C_ANDROID_TOOLCHAIN_PREFIX} ${OPENSSL_ARCH})
-	SET(OPENSSL_PATCH_COMMAND ${PATCH_CMD} -p0 ${PATCH_OPTIONS} ${PATCHES_DIR}/soname/openssl_makefile.shared.patch && ${SH_CMD} ${PATCHES_DIR}/soname/openssl_sed.sh && )
-
 ELSEIF(BSD)
 	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} BSD-x86_64)
 ELSEIF(LINUX)
-	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} linux-x86_64)
+	IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "i686")
+		SET(OPENSSL_ARCH linux-generic32)
+	ELSE()
+		SET(OPENSSL_ARCH linux-x86_64)
+	ENDIF()
+	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} ${OPENSSL_ARCH})
 ELSE()
 	MESSAGE(FATAL_ERROR "Unsupported system")
 ENDIF()
 
 IF(NOT OPENSSL_PREBUILD)
-	SET(OPENSSL_PREBUILD ${OPENSSL_PATCH_AFTER_CONFIGURE} ${MAKE} depend)
+	SET(OPENSSL_PREBUILD ${MAKE} depend)
 ENDIF()
 
 IF(NOT OPENSSL_INSTALL_TARGET)
@@ -201,42 +197,6 @@ IF(NOT OPENSSL_INSTALL_TARGET)
 ENDIF()
 
 # OpenSSL does not support multiple make jobs!
-IF(IOS)
-	ExternalProject_Add(openssl64
-		URL ${OPENSSL_URL}/${OPENSSL_FILE}
-		URL_HASH SHA256=${OPENSSL_HASH}
-		DOWNLOAD_DIR ${PACKAGES_DIR}
-
-		PATCH_COMMAND
-			${OPENSSL_PATCH_COMMAND}
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-fix-no-engine-build.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl_rsa_psk.patch
-
-		CONFIGURE_COMMAND ${PERL_EXECUTABLE} Configure --prefix=${PROJECT_BINARY_DIR}/openssl64-prefix/tmp ${OPENSSL_CONFIGURE_FLAGS} "-arch ${IOS_ARCH64}" "${COMPILER_FLAGS}"
-		BUILD_COMMAND ${OPENSSL_PATCH_AFTER_CONFIGURE} ${MAKE} depend && ${MAKE}
-		BUILD_IN_SOURCE 1
-		INSTALL_COMMAND ${MAKE} install_sw
-	)
-
-	ExternalProject_Add(openssl
-		DEPENDS openssl64
-		URL ${OPENSSL_URL}/${OPENSSL_FILE}
-		URL_HASH SHA256=${OPENSSL_HASH}
-		DOWNLOAD_DIR ${PACKAGES_DIR}
-
-		PATCH_COMMAND
-			${OPENSSL_PATCH_COMMAND}
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-fix-no-engine-build.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl_rsa_psk.patch
-
-		CONFIGURE_COMMAND ${PERL_EXECUTABLE} Configure --prefix=${PROJECT_BINARY_DIR}/openssl-prefix/tmp ${OPENSSL_CONFIGURE_FLAGS} "-arch ${IOS_ARCH}" "${COMPILER_FLAGS}"
-		BUILD_COMMAND ${OPENSSL_PATCH_AFTER_CONFIGURE} ${MAKE} depend && ${MAKE}
-		BUILD_IN_SOURCE 1
-		INSTALL_COMMAND ${MAKE} install_sw
-	)
-
-	ADD_CUSTOM_COMMAND(TARGET openssl POST_BUILD COMMAND ${SH_CMD} ${PATCHES_DIR}/create_multi_architecture_build.sh ${PROJECT_BINARY_DIR}/openssl-prefix/tmp ${PROJECT_BINARY_DIR}/openssl64-prefix/tmp ${DESTINATION_DIR})
-ELSE()
 ExternalProject_Add(openssl
 	URL ${OPENSSL_URL}/${OPENSSL_FILE}
 	URL_HASH SHA256=${OPENSSL_HASH}
@@ -258,7 +218,6 @@ ExternalProject_Add_Step(openssl prebuild
 	DEPENDEES configure
 	DEPENDERS build
 	WORKING_DIRECTORY <BINARY_DIR>)
-ENDIF()
 
 IF(UNIX)
 	ADD_CUSTOM_COMMAND(TARGET openssl POST_BUILD COMMAND chmod 755 ${DESTINATION_DIR}/lib/libssl*${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libcrypto*${CMAKE_SHARED_LIBRARY_SUFFIX})
@@ -287,9 +246,18 @@ ELSE()
 	SET(QT_CONFIGURE_FLAGS -release -no-qml-debug)
 ENDIF()
 
+
 SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -prefix ${DESTINATION_DIR} -opensource -confirm-license -qt-zlib -no-mtdev -qt-libpng -qt-libjpeg -no-harfbuzz -qt-pcre -system-proxies -no-compile-examples -nomake examples -nomake tests -no-sql-sqlite -openssl-linked -I ${DESTINATION_DIR}/include -L ${DESTINATION_DIR}/lib)
+
+LIST(APPEND NO_FEATURES bearermanagement ftp paint_debug)
+LIST(APPEND NO_FEATURES imageformat_bmp imageformat_ppm imageformat_xbm)
+LIST(APPEND NO_FEATURES sharedmemory textodfwriter)
+FOREACH(feature ${NO_FEATURES})
+	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-feature-${feature})
+ENDFOREACH()
+
 SET(QT_CONFIGURE_FLAGS_OTHER -no-journald -no-dbus -no-directfb -no-linuxfb)
-SET(QT_CONFIGURE_FLAGS_SKIP_MODULES -skip qtscxml -skip qtxmlpatterns -skip qtwebchannel -skip qtwebengine -skip qtscript -skip qtactiveqt -skip qtlocation -skip qtserialbus -skip qtserialport -skip qtgamepad -skip qtvirtualkeyboard -skip qtcanvas3d -skip qtcharts -skip qtdatavis3d -skip qt3d -skip qtpurchasing)
+SET(QT_CONFIGURE_FLAGS_SKIP_MODULES -skip qtscxml -skip qtxmlpatterns -skip qtwebchannel -skip qtwebengine -skip qtscript -skip qtactiveqt -skip qtlocation -skip qtserialbus -skip qtserialport -skip qtgamepad -skip qtvirtualkeyboard -skip qtcanvas3d -skip qtcharts -skip qtdatavis3d -skip qt3d -skip qtpurchasing -skip qtwayland -skip qtremoteobjects -skip qtspeech -skip qtwebview)
 
 SET(QT_CONFIGURE ./configure)
 IF(IOS)
@@ -339,17 +307,12 @@ ExternalProject_Add(qt
 
 	PATCH_COMMAND ${QT_PATCH_COMMAND}
 			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Make-server-side-signature-algorithms-configurable.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Use-apksigner-by-default-if-available-to-sign-the-AP.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Android-Add-support-for-sendCommand-to-QNearFieldTarget.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Android-QNearfieldTarget-Introduce-maxCommandLength.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-QNearfieldTarget-Introduce-set-keepConnection-and-disconnect.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Use-defaultSize-according-to-svg-standard-in-svg-plugin.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Do-not-request-an-unnessessary-dangerous-right.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Introduce-QNetworkAccessManager-clearConnectionCache.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Introduce-QNetworkAccessManager-useAuthenticationManagerFrom.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Make-variant-selection-possible-if-base-is-missing.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Add-debug-stream-operator-for-QNetworkProxyQuery.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Allow-using-nfc-when-running-as-a-service.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Register-additional-meta-types.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Change-build-configuration-for-Qt-on-iOS.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Disable-unused-imageformats.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Avoid-using-deprecated-APIs-on-iOS-10.0.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Add-IsoDep-to-the-techList-on-Android.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-macOS-iOS-Fix-garbled-text-under-some-conditions.patch &&
 			${CMAKE_COMMAND} -E touch qtbase/.gitignore
 	CONFIGURE_COMMAND ${QT_ENV} ${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SKIP_MODULES}
 	BUILD_COMMAND ${MAKE} ${MAKE_JOBS}

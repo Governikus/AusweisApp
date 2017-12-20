@@ -1,9 +1,7 @@
 /*!
- * DiagnosisContext.h
- *
  * \brief Contains information collected by the diagnosis functionality.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

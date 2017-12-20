@@ -1,9 +1,7 @@
 /*!
- * InitializeFramework.cpp
- *
  * \brief Class represents the retrieved PAOS InitializeFramework
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/PaosType.h"

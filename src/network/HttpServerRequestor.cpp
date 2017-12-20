@@ -1,7 +1,8 @@
 /*
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
+#include "Env.h"
 #include "HttpServerRequestor.h"
 #include "NetworkManager.h"
 
@@ -49,7 +50,7 @@ QPointer<QNetworkReply> HttpServerRequestor::request(const QUrl& pUrl, int pTime
 
 	QNetworkRequest getRequest(pUrl);
 	mTimer.start(pTimeOut);
-	mReply.reset(NetworkManager::getGlobalInstance().get(getRequest));
+	mReply.reset(Env::getSingleton<NetworkManager>()->get(getRequest));
 	connect(mReply.data(), &QNetworkReply::finished, this, &HttpServerRequestor::finished);
 	mEventLoop.exec();
 

@@ -1,13 +1,12 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/KnownOIDs.h"
 #include "pace/KeyDerivationFunction.h"
 
-#include <openssl/sha.h>
 #include <QLoggingCategory>
-
+#include <QtEndian>
 
 using namespace governikus;
 
@@ -24,8 +23,7 @@ KeyDerivationFunction::KeyDerivationFunction(const QByteArray& pPaceAlgorithm)
 	if (pPaceAlgorithm == id_PACE::DH::GM_3DES_CBC_CBC || pPaceAlgorithm == id_PACE::DH::IM_3DES_CBC_CBC || pPaceAlgorithm == id_PACE::ECDH::GM_3DES_CBC_CBC
 			|| pPaceAlgorithm == id_PACE::ECDH::IM_3DES_CBC_CBC)
 	{
-		mHashAlgorithm = QCryptographicHash::Sha1;
-		mKeySize = 8;
+		qCCritical(card) << "3DES not supported";
 	}
 	else if (pPaceAlgorithm == id_PACE::DH::GM_AES_CBC_CMAC_128 || pPaceAlgorithm == id_PACE::DH::IM_AES_CBC_CMAC_128 || pPaceAlgorithm == id_PACE::ECDH::GM_AES_CBC_CMAC_128
 			|| pPaceAlgorithm == id_PACE::ECDH::IM_AES_CBC_CMAC_128)
@@ -89,25 +87,8 @@ QByteArray KeyDerivationFunction::deriveKey(const QByteArray& pK, const QByteArr
 		return QByteArray();
 	}
 
-	QByteArray dataBytes(pK);
-	dataBytes += pNonce;
-	dataBytes += static_cast<char>((pC >> 24) & 0xFF);
-	dataBytes += static_cast<char>((pC >> 16) & 0xFF);
-	dataBytes += static_cast<char>((pC >> 8) & 0xFF);
-	dataBytes += static_cast<char>(pC & 0xFF);
+	char counterBigEndian[4];
+	qToBigEndian(pC, counterBigEndian);
 
-	QByteArray hashBytes;
-	if (mHashAlgorithm == QCryptographicHash::Sha1)
-	{
-		char md[SHA_DIGEST_LENGTH];
-		SHA1(reinterpret_cast<const uchar*>(dataBytes.constData()), static_cast<size_t>(dataBytes.size()), reinterpret_cast<uchar*>(md));
-		hashBytes.append(md, mKeySize);
-	}
-	else if (mHashAlgorithm == QCryptographicHash::Sha256)
-	{
-		char md[SHA256_DIGEST_LENGTH];
-		SHA256(reinterpret_cast<const uchar*>(dataBytes.constData()), static_cast<size_t>(dataBytes.size()), reinterpret_cast<uchar*>(md));
-		hashBytes.append(md, mKeySize);
-	}
-	return hashBytes;
+	return QCryptographicHash::hash(pK + pNonce + QByteArray(counterBigEndian, 4), mHashAlgorithm).left(mKeySize);
 }

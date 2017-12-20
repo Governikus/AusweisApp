@@ -1,26 +1,22 @@
 /*!
- * ReaderManagerPlugInInfo.h
- *
  * \brief Data object providing information about a reader manager plug-in.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "EnumHelper.h"
-#include "MetaTypeHelper.h"
 
 #include <QMap>
 #include <QString>
 #include <QVariant>
 
-
 namespace governikus
 {
 
 
-defineEnumType(ReaderManagerPlugInType, UNKNOWN, PCSC, BLUETOOTH, NFC)
+defineEnumType(ReaderManagerPlugInType, UNKNOWN, PCSC, BLUETOOTH, NFC, REMOTE)
 
 
 class ReaderManagerPlugInInfo
@@ -98,5 +94,3 @@ class ReaderManagerPlugInInfo
 };
 
 } /* namespace governikus */
-
-REGISTER_META_TYPE(ReaderManagerPlugInInfo)

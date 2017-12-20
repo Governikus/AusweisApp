@@ -1,7 +1,5 @@
 /*!
- * BluetoothMessageParameterMaxMsgSize.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BluetoothMessageParameterMaxMsgSize.h"

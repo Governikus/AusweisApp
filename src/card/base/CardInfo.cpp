@@ -1,15 +1,14 @@
 /*!
- * CardInfo.cpp
- *
  * \brief CardInfo holds smart card information, such as the type and some contained data structure (currently only the EF.CardAccess).
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
+
+#include "CardInfo.h"
 
 #include "asn1/PACEInfo.h"
 #include "asn1/SecurityInfos.h"
 #include "CardConnectionWorker.h"
-#include "CardInfo.h"
 
 #include <QDebug>
 #include <QLoggingCategory>
@@ -21,7 +20,11 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 
 using namespace governikus;
 
-CardInfo::CardInfo(CardType pCardType, QSharedPointer<const EFCardAccess> pEfCardAccess, int pRetryCounter, bool pPinDeactivated, bool pPukInoperative)
+
+const int CardInfo::UNDEFINED_RETRY_COUNTER = -1;
+
+
+CardInfo::CardInfo(CardType pCardType, const QSharedPointer<const EFCardAccess>& pEfCardAccess, int pRetryCounter, bool pPinDeactivated, bool pPukInoperative)
 	: mCardType(pCardType)
 	, mEfCardAccess(pEfCardAccess)
 	, mRetryCounter(pRetryCounter)
@@ -31,9 +34,33 @@ CardInfo::CardInfo(CardType pCardType, QSharedPointer<const EFCardAccess> pEfCar
 }
 
 
-CardType CardInfo::getCardType() const
+QString CardInfo::getCardTypeString() const
 {
-	return mCardType;
+	switch (mCardType)
+	{
+		case CardType::NONE:
+			return tr("not inserted", "Karte");
+
+		case CardType::UNKNOWN:
+			return tr("unknown type", "Karte");
+
+		case CardType::EID_CARD:
+			return tr("ID card (PA/eAT)");
+	}
+
+	Q_UNREACHABLE();
+}
+
+
+bool CardInfo::isAvailable() const
+{
+	return mCardType != CardType::NONE;
+}
+
+
+bool CardInfo::isEid() const
+{
+	return mCardType == CardType::EID_CARD;
 }
 
 
@@ -52,6 +79,12 @@ QString CardInfo::getEidApplicationPath() const
 int CardInfo::getRetryCounter() const
 {
 	return mRetryCounter;
+}
+
+
+bool CardInfo::isRetryCounterDetermined() const
+{
+	return mRetryCounter != UNDEFINED_RETRY_COUNTER;
 }
 
 
@@ -193,4 +226,23 @@ bool CardInfoFactory::checkEfCardAccess(const QSharedPointer<EFCardAccess>& pEfC
 	}
 
 	return true;
+}
+
+
+namespace governikus
+{
+
+
+QDebug operator<<(QDebug pDbg, const CardInfo& pCardInfo)
+{
+	QDebugStateSaver saver(pDbg);
+	pDbg.nospace() << "{Type: " << pCardInfo.mCardType
+				   << ", Retry counter: " << pCardInfo.mRetryCounter
+				   << ", Pin deactivated: " << pCardInfo.mPinDeactivated << "}";
+	// Skipping mEfCardAccess since there is no pretty formating available.
+
+	return pDbg;
+}
+
+
 }

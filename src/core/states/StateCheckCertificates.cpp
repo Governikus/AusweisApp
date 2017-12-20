@@ -1,13 +1,11 @@
 /*!
- * StateCheckCertificates.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCheckCertificates.h"
 
 #include "AppSettings.h"
-#include "CertificateChecker.h"
+#include "TlsChecker.h"
 
 using namespace governikus;
 
@@ -22,14 +20,14 @@ StateCheckCertificates::StateCheckCertificates(const QSharedPointer<WorkflowCont
 
 void StateCheckCertificates::run()
 {
-	auto commCertificates = getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getCommCertificates();
-	auto hashAlgorithm = getContext()->getDvCvc()->getBody().getHashAlgorithm();
+	const auto& commCertificates = getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getCommCertificates();
+	const auto& hashAlgorithm = getContext()->getDvCvc()->getBody().getHashAlgorithm();
 
 	// check the certificates we've encountered so far
-	const auto certList = getContext()->getCertificateList();
+	const auto& certList = getContext()->getCertificateList();
 	for (const auto& certificate : certList)
 	{
-		if (!CertificateChecker::checkCertificate(certificate, hashAlgorithm, commCertificates))
+		if (!TlsChecker::checkCertificate(certificate, hashAlgorithm, commCertificates))
 		{
 			auto certificateDescError = QStringLiteral("Hash of certificate not in certificate description");
 			if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
@@ -39,11 +37,11 @@ void StateCheckCertificates::run()
 			else
 			{
 				qCritical() << certificateDescError;
-				setStatus(GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description);
-				Q_EMIT fireError();
+				updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description);
+				Q_EMIT fireAbort();
 				return;
 			}
 		}
 	}
-	Q_EMIT fireSuccess();
+	Q_EMIT fireContinue();
 }

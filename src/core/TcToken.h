@@ -1,9 +1,7 @@
 /*!
- * TcToken.h
- *
  * \brief Parses TCTokens from XML data and provides its content.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -53,6 +51,7 @@ class TcToken
 		const QUrl& getServerAddress() const;
 		const QUrl& getRefreshAddress() const;
 		const QUrl& getCommunicationErrorAddress() const;
+		bool usePsk() const;
 		const QByteArray& getPsk() const;
 		void clearPsk();
 

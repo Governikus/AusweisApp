@@ -16,7 +16,7 @@ using namespace governikus;
 // screen height is orientation dependent
 #define SCREEN_WIDTH ([[UIScreen mainScreen] bounds].size.width)
 #define SCREEN_HEIGHT ([[UIScreen mainScreen] bounds].size.height)
-#define SCREEN_MAX_LENGTH (MAX(SCREEN_WIDTH, SCREEN_HEIGHT))
+#define SCREEN_MAX_LENGTH (qMax(SCREEN_WIDTH, SCREEN_HEIGHT))
 
 #define IS_IPHONE_4 (IS_IPHONE && SCREEN_MAX_LENGTH == 480.0 && IS_RETINA)
 #define IS_IPHONE_5 (IS_IPHONE && SCREEN_MAX_LENGTH == 568.0)

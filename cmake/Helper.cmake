@@ -1,9 +1,22 @@
 INCLUDE(CheckCXXCompilerFlag)
-INCLUDE(CMakeParseArguments)
 
+# Check if a compiler flag is supported by current compiler.
+#
+# Options
+#   NOQUOTES: Do not add quotes to the variable (not used if it is a TARGET)
+#
+# Parameter
+#   NAME: Add a human readable name. This is for configure output only to
+#         group multiple flags or to indicate the usage.
+#   LINK: Use these linker flags to try the compiler flag. The linker
+#         flags won't be added. They are for testing only.
+#   VAR:  Checked compiler flags will be added to these variables. (default: CMAKE_CXX_FLAGS)
+#         It is possible to add multiple VAR parameter.
+#         If VAR parameter is a cmake TARGET the compiler flag will be added
+#         to the COMPILE_FLAGS property of this TARGET only.
 FUNCTION(ADD_FLAG)
 	SET(options NOQUOTES)
-	SET(oneValueArgs)
+	SET(oneValueArgs NAME)
 	SET(multiValueArgs LINK VAR)
 	cmake_parse_arguments(_PARAM "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -16,13 +29,19 @@ FUNCTION(ADD_FLAG)
 	ENDIF()
 
 	FOREACH(flag ${_PARAM_UNPARSED_ARGUMENTS})
-		STRING(REPLACE "-" "_" flagname ${flag})
+		SET(flagname ${flag})
+		IF(_PARAM_NAME)
+			SET(flagname "${flagname}_${_PARAM_NAME}")
+		ENDIF()
+		STRING(REPLACE "-" "_" flagname ${flagname})
 		STRING(REPLACE " " "_" flagname ${flagname})
 
 		CHECK_CXX_COMPILER_FLAG(${flag} ${flagname})
 		IF(${flagname})
 			FOREACH(var ${_PARAM_VAR})
-				IF(_PARAM_NOQUOTES)
+				IF (${var} MATCHES "^AusweisApp")
+					SET_PROPERTY(TARGET ${var} APPEND_STRING PROPERTY COMPILE_FLAGS " ${flag}")
+				ELSEIF(_PARAM_NOQUOTES)
 					SET(${var} ${${var}} ${flag} PARENT_SCOPE)
 				ELSE()
 					SET(${var} "${${var}} ${flag}" PARENT_SCOPE)
@@ -36,10 +55,6 @@ ENDFUNCTION()
 
 
 FUNCTION(GET_FILE_MATCHER _result_remove _result_keep)
-	IF(NOT ${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
-		LIST(APPEND matcher_remove "_debug")
-	ENDIF()
-
 	IF(NOT ANDROID)
 		LIST(APPEND matcher_remove "_android")
 	ELSE()
@@ -115,9 +130,11 @@ FUNCTION(ADD_PLATFORM_LIBRARY _name)
 	GET_FILE_MATCHER(matcher_remove matcher_keep)
 
 	FOREACH(file ${FILES})
+		STRING(REPLACE "${CMAKE_SOURCE_DIR}" "" file_stripped "${file}")
+
 		SET(keep FALSE)
 		FOREACH(match ${matcher_keep})
-			IF("${file}" MATCHES ${match})
+			IF("${file_stripped}" MATCHES ${match})
 				SET(keep TRUE)
 				BREAK()
 			ENDIF()
@@ -125,10 +142,10 @@ FUNCTION(ADD_PLATFORM_LIBRARY _name)
 
 		IF(NOT keep)
 			FOREACH(match ${matcher_remove})
-				IF("${file}" MATCHES ${match})
+				IF("${file_stripped}" MATCHES ${match})
 					LIST(REMOVE_ITEM FILES "${file}")
 					BREAK()
-				ELSEIF("${file}" MATCHES "_generic")
+				ELSEIF("${file_stripped}" MATCHES "_generic")
 					LIST(REMOVE_ITEM FILES "${file}")
 					LIST(APPEND GENERICS "${file}")
 					BREAK()
@@ -144,7 +161,8 @@ FUNCTION(ADD_PLATFORM_LIBRARY _name)
 
 		SET(found FALSE)
 		FOREACH(file ${FILES})
-			IF("${file}" MATCHES "${generic_basename}" AND NOT "${file}" MATCHES ".h$")
+			STRING(REPLACE "${CMAKE_SOURCE_DIR}" "" file_stripped "${file}")
+			IF("${file_stripped}" MATCHES "${generic_basename}" AND NOT "${file_stripped}" MATCHES ".h$")
 				SET(found TRUE)
 				BREAK()
 			ENDIF()
@@ -160,61 +178,22 @@ FUNCTION(ADD_PLATFORM_LIBRARY _name)
 ENDFUNCTION()
 
 
-# This FUNCTION is a workaround for a "bug" in cmake to use OBJECT LIBRARIES with IMPORTED TARGETS like Qt
-# http://www.cmake.org/Bug/view.php?id=14778
 FUNCTION(ADD_OBJECT_LIBRARY TargetName Files)
-	ADD_LIBRARY(${TargetName} OBJECT ${Files})
+	SET(_name ${TargetName}_ObjectLib)
+	ADD_LIBRARY(${_name} OBJECT ${Files})
 
 	FOREACH(MODULE ${ARGN})
-		TARGET_INCLUDE_DIRECTORIES(${TargetName} PRIVATE $<TARGET_PROPERTY:${MODULE},INTERFACE_INCLUDE_DIRECTORIES>)
-		TARGET_COMPILE_DEFINITIONS(${TargetName} PRIVATE $<TARGET_PROPERTY:${MODULE},INTERFACE_COMPILE_DEFINITIONS>)
+		TARGET_INCLUDE_DIRECTORIES(${_name} SYSTEM PRIVATE $<TARGET_PROPERTY:${MODULE},INTERFACE_INCLUDE_DIRECTORIES>)
+		TARGET_COMPILE_DEFINITIONS(${_name} PRIVATE $<TARGET_PROPERTY:${MODULE},INTERFACE_COMPILE_DEFINITIONS>)
 	ENDFOREACH()
 
 	IF(Qt5_POSITION_INDEPENDENT_CODE)
-		SET_TARGET_PROPERTIES(${TargetName} PROPERTIES POSITION_INDEPENDENT_CODE ON)
-	ENDIF()
-ENDFUNCTION()
-
-
-FUNCTION(GET_QUOTED_STRING _dest _str _filename)
-	IF(CMAKE_GENERATOR STREQUAL Xcode AND CMAKE_VERSION VERSION_LESS "3.5")
-		SET(tmp_var \\\\"${_str}\\\\")
-	ELSEIF(NOT "${_filename}" MATCHES ".rc$")
-		SET(tmp_var \\"${_str}\\")
-	ELSE()
-		SET(tmp_var ${_str})
+		SET_TARGET_PROPERTIES(${_name} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 	ENDIF()
 
-	SET(${_dest} ${tmp_var} PARENT_SCOPE)
-ENDFUNCTION()
-
-FUNCTION(ADD_STRING_DEFINITION _str _def)
-	IF(ARGN)
-		FOREACH(arg ${ARGN})
-			IF (${arg} MATCHES "^AusweisApp")
-				SET(ARG_TYPE TARGET)
-			ELSE()
-				SET(ARG_TYPE SOURCE)
-			ENDIF()
-
-			IF(NOT "${_str}" STREQUAL "")
-				GET_QUOTED_STRING(tmp_var ${_str} ${arg})
-				SET(tmp_var =\"${tmp_var}\")
-			ENDIF()
-
-			SET_PROPERTY(${ARG_TYPE} ${arg} APPEND_STRING PROPERTY COMPILE_FLAGS " -D${_def}${tmp_var}")
-		ENDFOREACH()
-	ELSE()
-		IF(NOT "${_str}" STREQUAL "")
-			GET_QUOTED_STRING(tmp_var ${_str} ${arg})
-			SET(tmp_var =${tmp_var})
-		ENDIF()
-		ADD_DEFINITIONS(-D${_def}${tmp_var})
-	ENDIF()
-ENDFUNCTION()
-
-FUNCTION(ADD_DEFINITION _def)
-	ADD_STRING_DEFINITION("" ${_def} ${ARGN})
+	ADD_LIBRARY(${TargetName} INTERFACE)
+	TARGET_SOURCES(${TargetName} INTERFACE $<TARGET_OBJECTS:${_name}>)
+	TARGET_INCLUDE_DIRECTORIES(${TargetName} INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>")
 ENDFUNCTION()
 
 
@@ -240,6 +219,17 @@ FUNCTION(DIRLIST_OF_FILES _result _files)
 	LIST(REMOVE_DUPLICATES dirlist)
 	SET(${_result} ${dirlist} PARENT_SCOPE)
 ENDFUNCTION()
+
+
+FUNCTION(GET_ANDROID_TOOLCHAIN_VARS _prefix _machine)
+	GET_FILENAME_COMPONENT(ANDROID_TOOLCHAIN_MACHINE_NAME "${CMAKE_CXX_ANDROID_TOOLCHAIN_PREFIX}" NAME)
+	STRING(REGEX REPLACE "-$" "" ANDROID_TOOLCHAIN_MACHINE_NAME "${ANDROID_TOOLCHAIN_MACHINE_NAME}")
+	STRING(REGEX MATCH "/toolchains/(.*)/prebuilt/" _unused "${CMAKE_CXX_ANDROID_TOOLCHAIN_PREFIX}")
+	STRING(REGEX REPLACE "-${CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION}$" "" ANDROID_TOOLCHAIN_PREFIX "${CMAKE_MATCH_1}")
+	SET(${_prefix} ${ANDROID_TOOLCHAIN_PREFIX} PARENT_SCOPE)
+	SET(${_machine} ${ANDROID_TOOLCHAIN_MACHINE_NAME} PARENT_SCOPE)
+ENDFUNCTION()
+
 
 IF("${CMAKE_SYSTEM_NAME}" MATCHES "BSD")
 	SET(BSD true)
@@ -285,6 +275,11 @@ IF(NOT COMMAND FIND_HOST_PACKAGE)
 ENDIF()
 
 FUNCTION(FETCH_TARGET_LOCATION _destination _target)
+	SET(options NAME)
+	SET(oneValueArgs)
+	SET(multiValueArgs)
+	cmake_parse_arguments(_PARAM "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
 	GET_TARGET_PROPERTY(tmp "${_target}" IMPORTED_LOCATION_${CMAKE_BUILD_TYPE})
 
 	IF(NOT tmp)
@@ -297,6 +292,11 @@ FUNCTION(FETCH_TARGET_LOCATION _destination _target)
 
 	IF(NOT tmp)
 		GET_TARGET_PROPERTY(tmp "${_target}" IMPORTED_LOCATION)
+	ENDIF()
+
+	IF(_PARAM_NAME)
+		GET_FILENAME_COMPONENT(realpath "${tmp}" REALPATH)
+		GET_FILENAME_COMPONENT(tmp "${realpath}" NAME)
 	ENDIF()
 
 	SET(${_destination} ${tmp} PARENT_SCOPE)
@@ -326,6 +326,7 @@ IF(WIN32)
 				SET(SIGNTOOL_PARAMS ${SIGNTOOL_PARAMS} /n ${WIN_SIGN_SUBJECT_NAME})
 				MESSAGE(STATUS "Files will be signed using: ${WIN_SIGN_SUBJECT_NAME}")
 			ELSE()
+				STRING(REPLACE "\\" "/" WIN_SIGN_KEYSTORE "${WIN_SIGN_KEYSTORE}")
 				SET(SIGNTOOL_PARAMS ${SIGNTOOL_PARAMS} /f ${WIN_SIGN_KEYSTORE} /p ${WIN_SIGN_KEYSTORE_PSW})
 				MESSAGE(STATUS "Files will be signed using: ${WIN_SIGN_KEYSTORE}")
 			ENDIF()

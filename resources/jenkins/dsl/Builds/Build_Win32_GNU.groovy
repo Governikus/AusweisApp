@@ -25,6 +25,7 @@ j.with
 
 		batchFile('''\
 			set PATH=%WORKSPACE%/libs/build/dist/bin;%PATH%
+			set PATH=%WORKSPACE%/build/src;%WORKSPACE%/build/test/helper;%PATH%
 			set QT_PLUGIN_PATH=%WORKSPACE%/libs/build/dist/plugins
 			set QML2_IMPORT_PATH=%WORKSPACE%/libs/build/dist/qml
 			cd build & ctest %MAKE_FLAGS%

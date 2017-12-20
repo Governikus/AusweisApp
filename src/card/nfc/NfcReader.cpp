@@ -1,24 +1,79 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
-#include "NfcReader.h"
-
 #include "CardConnectionWorker.h"
-#include "NfcBridge.h"
+#include "NfcReader.h"
 
 #include <QLoggingCategory>
 #include <QSignalBlocker>
 
-Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 
 using namespace governikus;
 
+
+Q_DECLARE_LOGGING_CATEGORY(card_nfc)
+
+
+Reader::CardEvent NfcReader::updateCard()
+{
+	Q_EMIT fireNfcAdapterStateChanged(mNfManager.isAvailable());
+
+	return CardEvent::NONE;
+}
+
+
+void NfcReader::targetDetected(QNearFieldTarget* pTarget)
+{
+	if (!pTarget)
+	{
+		return;
+	}
+	qCDebug(card_nfc) << "targetDetected, type:" << pTarget->type();
+
+	if (!(pTarget->accessMethods() & QNearFieldTarget::TagTypeSpecificAccess))
+	{
+		qCDebug(card_nfc) << "The target does not provide commands";
+		return;
+	}
+
+	int length = pTarget->maxCommandLength();
+	mReaderInfo.setMaxApduLength(length);
+	if (!mReaderInfo.sufficientApduLength())
+	{
+		Q_EMIT fireReaderPropertiesUpdated(getName());
+		qCDebug(card_nfc) << "ExtendedLengthApduSupport missing. MaxTransceiveLength:" << length;
+		return;
+	}
+
+	mCard.reset(new NfcCard(pTarget));
+	QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
+	CardInfoFactory::create(cardConnection, mReaderInfo);
+	Q_EMIT fireCardInserted(getName());
+}
+
+
+void NfcReader::targetLost(QNearFieldTarget* pTarget)
+{
+	qCDebug(card_nfc) << "targetLost";
+	if (pTarget && mCard && mCard->invalidateTarget(pTarget))
+	{
+		mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
+		Q_EMIT fireCardRemoved(getName());
+	}
+}
+
+
 NfcReader::NfcReader()
-	: Reader(ReaderManagerPlugInType::NFC, QStringLiteral("NFC"), ReaderType::UNKNOWN)
+	: Reader(ReaderManagerPlugInType::NFC, QStringLiteral("NFC"))
+	, mNfManager()
 {
 	mReaderInfo.setBasicReader(true);
 	mReaderInfo.setConnected(true);
+
+	connect(&mNfManager, &QNearFieldManager::targetDetected, this, &NfcReader::targetDetected);
+	connect(&mNfManager, &QNearFieldManager::targetLost, this, &NfcReader::targetLost);
+	mNfManager.startTargetDetection();
 
 	mTimerId = startTimer(500);
 }
@@ -26,54 +81,16 @@ NfcReader::NfcReader()
 
 NfcReader::~NfcReader()
 {
+	mNfManager.stopTargetDetection();
 }
 
 
 Card* NfcReader::getCard() const
 {
-	return mCard.data();
-}
-
-
-Reader::CardEvent NfcReader::updateCard()
-{
-#ifdef Q_OS_ANDROID
-
-	const ExtendedLengthApduSupportCode& code = NfcBridge::getInstance().getExtendedLengthApduSupportStatus();
-	if (mReaderInfo.getExtendedLengthApduSupportCode() != code)
+	if (mCard->isValid())
 	{
-		mReaderInfo.setExtendedLengthApduSupportCode(code);
-		Q_EMIT fireReaderPropertiesUpdated(getName());
+		return mCard.data();
 	}
 
-	if (mCard.isNull() && NfcBridge::getInstance().getCardStatus() == NfcCardCode::NEW_CARD)
-	{
-		mCard.reset(new NfcCard());
-		connect(mCard.data(), &NfcCard::fireCardRemoved, this, &NfcReader::onCardRemoved);
-		QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
-		CardInfoFactory::create(cardConnection, mReaderInfo);
-		const QSignalBlocker blocker(this);
-		updateRetryCounter(cardConnection);
-		return CardEvent::CARD_INSERTED;
-	}
-
-	if (!mCard.isNull() && NfcBridge::getInstance().getCardStatus() == NfcCardCode::NO_CARD)
-	{
-		mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
-		mCard.reset();
-		return CardEvent::CARD_REMOVED;
-	}
-
-#endif
-
-	return CardEvent::NONE;
-}
-
-
-void NfcReader::onCardRemoved()
-{
-	qCDebug(card_nfc) << "Card removed";
-	mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
-	mCard.reset();
-	Q_EMIT fireCardRemoved(getName());
+	return nullptr;
 }

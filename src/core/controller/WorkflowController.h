@@ -1,14 +1,11 @@
 /*!
- * WorkflowController.h
- *
  * \brief Base class for controllers controlling a workflow (using a state machine).
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include "states/AbstractGenericState.h"
 #include "states/StateBuilder.h"
 
 #include <QScopedPointer>
@@ -43,7 +40,7 @@ class WorkflowController
 
 
 		template<typename T>
-		T* addAndConnectState()
+		T* addState()
 		{
 			auto state = StateBuilder::createState<T>(mContext);
 			mStateMachine.addState(state);

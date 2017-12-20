@@ -1,4 +1,4 @@
-From 08b250d56592b8e385cfc37c2d938b839653c264 Mon Sep 17 00:00:00 2001
+From aeae7469061c1675d651224789fc664d6809b0d9 Mon Sep 17 00:00:00 2001
 From: "Dr. Stephen Henson" <steve@openssl.org>
 Date: Sat, 16 Jan 2016 16:11:34 +0000
 Subject: [PATCH] fix no-engine build
@@ -11,10 +11,10 @@ Reviewed-by: Richard Levitte <levitte@openssl.org>
  util/mk1mf.pl   | 3 +--
  3 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/crypto/ts/ts.h b/crypto/ts/ts.h
-index 2daa1b2fb..fc8c14b2d 100644
---- a/crypto/ts/ts.h
-+++ b/crypto/ts/ts.h
+diff --git x/crypto/ts/ts.h y/crypto/ts/ts.h
+index 2daa1b2fb5..fc8c14b2d0 100644
+--- x/crypto/ts/ts.h
++++ y/crypto/ts/ts.h
 @@ -737,9 +737,11 @@ EVP_PKEY *TS_CONF_load_key(const char *file, const char *pass);
  const char *TS_CONF_get_tsa_section(CONF *conf, const char *section);
  int TS_CONF_set_serial(CONF *conf, const char *section, TS_serial_cb cb,
@@ -27,10 +27,10 @@ index 2daa1b2fb..fc8c14b2d 100644
  int TS_CONF_set_signer_cert(CONF *conf, const char *section,
                              const char *cert, TS_RESP_CTX *ctx);
  int TS_CONF_set_certs(CONF *conf, const char *section, const char *certs,
-diff --git a/util/libeay.num b/util/libeay.num
-index 2094ab364..23ade08e2 100755
---- a/util/libeay.num
-+++ b/util/libeay.num
+diff --git x/util/libeay.num y/util/libeay.num
+index fddfe1cbb2..a76424ceab 100755
+--- x/util/libeay.num
++++ y/util/libeay.num
 @@ -3874,7 +3874,7 @@ b2i_PVK_bio                             4250	EXIST::FUNCTION:RC4
  ASN1_UTCTIME_adj                        4251	EXIST::FUNCTION:
  TS_TST_INFO_new                         4252	EXIST::FUNCTION:
@@ -49,15 +49,15 @@ index 2094ab364..23ade08e2 100755
  EVP_PKEY_verify_init                    4474	EXIST::FUNCTION:
  TS_CONF_set_policies                    4475	EXIST::FUNCTION:
  ASN1_PCTX_new                           4476	EXIST::FUNCTION:
-diff --git a/util/mk1mf.pl b/util/mk1mf.pl
-index 7a3ae11f7..6ada6fa62 100755
---- a/util/mk1mf.pl
-+++ b/util/mk1mf.pl
+diff --git x/util/mk1mf.pl y/util/mk1mf.pl
+index 6b31496ed1..ccfb24ca55 100755
+--- x/util/mk1mf.pl
++++ y/util/mk1mf.pl
 @@ -428,7 +428,6 @@ EOF
  		{
  		$extra_install .= <<"EOF"
  	\$(MKDIR) \"\$(INSTALLTOP)${o}lib${o}engines\"
--	\$(CP) \"\$(E_SHLIB)\" \"\$(INSTALLTOP)${o}lib${o}engines\"
+-	\$(CP) \$(E_SHLIB) \"\$(INSTALLTOP)${o}lib${o}engines\"
  EOF
  		}
  	}
@@ -71,5 +71,5 @@ index 7a3ae11f7..6ada6fa62 100755
  exe: \$(T_EXE) \$(BIN_D)$o\$(E_EXE)$exep
  
 -- 
-2.11.0
+2.15.0
 

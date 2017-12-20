@@ -20,7 +20,7 @@ j.with
 
 		batchFile(strip("""\
 			cd build &
-			cmake ../source -G\"MinGW Makefiles\"
+			cmake -Werror=dev ../source -G\"MinGW Makefiles\"
 			-DCMAKE_PREFIX_PATH=%WORKSPACE%\\libs\\build\\dist
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 			"""))
@@ -29,7 +29,7 @@ j.with
 
 		batchFile('''\
 			set PATH=%WORKSPACE%/libs/build/dist/bin;%PATH%
-			set PATH=%WORKSPACE%/install;%PATH%
+			set PATH=%WORKSPACE%/build/src;%WORKSPACE%/build/test/helper;%PATH%
 			set QT_PLUGIN_PATH=%WORKSPACE%/libs/build/dist/plugins
 			set QML2_IMPORT_PATH=%WORKSPACE%/libs/build/dist/qml
 			cd build & ctest %MAKE_FLAGS%

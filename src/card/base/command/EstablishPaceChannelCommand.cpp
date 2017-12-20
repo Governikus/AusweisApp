@@ -1,7 +1,5 @@
 /*!
- * EstablishPaceChannelCommand.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"
@@ -12,16 +10,17 @@ using namespace governikus;
 
 
 EstablishPaceChannelCommand::EstablishPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
-		PACE_PIN_ID pPacePinId,
-		const QString& pPacePin, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription)
+		PACE_PASSWORD_ID pPacePasswordId,
+		const QString& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription)
 	: BaseCardCommand(pCardConnectionWorker)
-	, mPacePinId(pPacePinId)
-	, mPacePin(pPacePin)
+	, mPacePasswordId(pPacePasswordId)
+	, mPacePassword(pPacePassword)
 	, mEffectiveChat(pEffectiveChat)
 	, mCertificateDescription(pCertificateDescription)
+	, mPaceOutput()
 {
 	// This command only supports PIN and CAN.
-	Q_ASSERT(mPacePinId == PACE_PIN_ID::PACE_PIN || mPacePinId == PACE_PIN_ID::PACE_CAN);
+	Q_ASSERT(mPacePasswordId == PACE_PASSWORD_ID::PACE_PIN || mPacePasswordId == PACE_PASSWORD_ID::PACE_CAN);
 }
 
 
@@ -38,5 +37,5 @@ const EstablishPACEChannelOutput& EstablishPaceChannelCommand::getPaceOutput() c
 
 void EstablishPaceChannelCommand::internalExecute()
 {
-	mReturnCode = mCardConnectionWorker->establishPaceChannel(mPacePinId, mPacePin, mEffectiveChat, mCertificateDescription, mPaceOutput);
+	mReturnCode = mCardConnectionWorker->establishPaceChannel(mPacePasswordId, mPacePassword, mEffectiveChat, mCertificateDescription, mPaceOutput);
 }

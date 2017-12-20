@@ -5,7 +5,7 @@ Die AusweisApp2 ist eine Software, die Sie auf Ihrem Computer installieren, um s
 Ihrem Personalausweis bzw. Ihrem elektronischen Aufenthaltstitel online auszuweisen.
 
 Für die Nutzung der Online-Ausweisfunktion benötigen die Nutzerinnen und Nutzer eine
-Software, mit deren Hilfe eine sichere Verbindung zwischen Kartenlesegerät,
+Software, mit deren Hilfe eine sichere Verbindung zwischen Kartenlesegerät oder Smartphone,
 Personalausweis und eID-Diensteanbieter hergestellt werden kann. Sie ermöglicht den
 verschlüsselten Datenaustausch zwischen Personalausweis und eID-Dienst.
 

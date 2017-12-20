@@ -1,15 +1,13 @@
 /*!
- * StateParseTcTokenUrl.cpp
- *
  * \brief Parse tcTokenURL from GET query.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateParseTcTokenUrl.h"
 
+#include "HttpStatusCode.h"
 #include "Result.h"
-
 
 #include <QUrlQuery>
 
@@ -28,7 +26,7 @@ void StateParseTcTokenUrl::run()
 	if (tcTokenURL.isValid())
 	{
 		getContext()->setTcTokenUrl(tcTokenURL);
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 	}
 	else
 	{
@@ -41,7 +39,7 @@ void StateParseTcTokenUrl::run()
 			qCritical() << "No parameter tcTokenURL";
 		}
 
-		setStatus(GlobalStatus::Code::Workflow_Wrong_Parameter_Invocation);
-		Q_EMIT fireError();
+		updateStatus(GlobalStatus::Code::Workflow_Wrong_Parameter_Invocation);
+		Q_EMIT fireAbort();
 	}
 }

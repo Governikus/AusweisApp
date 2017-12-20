@@ -1,9 +1,7 @@
 /*!
- * DidAuthenticateEAC2Command.h
- *
  * \brief Command to perform the DID Authenticate EAC2 process.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -44,7 +42,7 @@ class DidAuthenticateEAC2Command
 
 	protected:
 		virtual void internalExecute() override;
-		virtual ~DidAuthenticateEAC2Command();
+		virtual ~DidAuthenticateEAC2Command() override;
 
 	public:
 		DidAuthenticateEAC2Command(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,

@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the CV certificate description.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,9 +37,9 @@ class CertificateDescriptionModel
 	};
 
 
-	inline QSharedPointer<CertificateDescription> getCertificateDescription() const;
+	inline QSharedPointer<const CertificateDescription> getCertificateDescription() const;
 	inline QString getValidity() const;
-	void initModelData(const QSharedPointer<CertificateDescription>& pCertDescription);
+	void initModelData(const QSharedPointer<const CertificateDescription>& pCertDescription);
 
 	private Q_SLOTS:
 		void onDidAuthenticateEac1Changed();

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CVCertificateChain.h"
@@ -9,13 +9,13 @@ using namespace governikus;
 
 
 CVCertificateChain::CVCertificateChain(bool pProductive)
-	: CVCertificateChain(QVector<QSharedPointer<CVCertificate> >(), pProductive)
+	: CVCertificateChain(QVector<QSharedPointer<const CVCertificate> >(), pProductive)
 {
 }
 
 
-CVCertificateChain::CVCertificateChain(const QVector<QSharedPointer<CVCertificate> >& pCvcs, bool pProductive)
-	: QVector<QSharedPointer<CVCertificate> >(pCvcs)
+CVCertificateChain::CVCertificateChain(const QVector<QSharedPointer<const CVCertificate> >& pCvcs, bool pProductive)
+	: QVector<QSharedPointer<const CVCertificate> >(pCvcs)
 	, mProductive(pProductive)
 {
 	if (!isValid())
@@ -25,14 +25,14 @@ CVCertificateChain::CVCertificateChain(const QVector<QSharedPointer<CVCertificat
 }
 
 
-QSharedPointer<CVCertificate> CVCertificateChain::getTerminalCvc() const
+QSharedPointer<const CVCertificate> CVCertificateChain::getTerminalCvc() const
 {
 	Q_ASSERT(length() > 0);
 	return at(length() - 1);
 }
 
 
-QSharedPointer<CVCertificate> CVCertificateChain::getDvCvc() const
+QSharedPointer<const CVCertificate> CVCertificateChain::getDvCvc() const
 {
 	Q_ASSERT(length() > 1);
 	return at(length() - 2);

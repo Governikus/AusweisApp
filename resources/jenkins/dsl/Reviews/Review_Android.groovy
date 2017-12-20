@@ -22,7 +22,7 @@ j.with
 
 		shell(strip("""\
 			cd build;
-			cmake ../source
+			cmake -Werror=dev ../source
 			-DCMAKE_BUILD_TYPE=debug
 			-DCMAKE_PREFIX_PATH=\${WORKSPACE}/libs/build/dist
 			-DCMAKE_TOOLCHAIN_FILE=../source/cmake/android.toolchain.cmake

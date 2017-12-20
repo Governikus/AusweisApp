@@ -1,10 +1,10 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
+#include "ReaderManager.h"
 
 #include "MockReaderManagerPlugIn.h"
-#include "ReaderManager.h"
 #include "ReaderManagerWorker.h"
 
 #include <QCoreApplication>
@@ -58,7 +58,6 @@ class test_ReaderManager
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			ReaderManagerWorker::registerMetaTypes();
 			ReaderManager::getInstance().init();
 			ReaderManager::getInstance().getPlugInInfos(); // just to wait until initialization finished
 		}
@@ -149,6 +148,24 @@ class test_ReaderManager
 			commandSlot.wait();
 			QVERIFY(commandSlot.mSlotCalled);
 			QVERIFY(!commandSlot.mCardConnection.isNull());
+		}
+
+
+		void getInvalidReaderInfoWithAndWithoutInitializedReaderManager()
+		{
+			{
+				const auto& readerInfo = ReaderManager::getInstance().getReaderInfo("test dummy");
+				QCOMPARE(readerInfo.getPlugInType(), ReaderManagerPlugInType::UNKNOWN);
+				QCOMPARE(readerInfo.getName(), QStringLiteral("test dummy"));
+			}
+
+			cleanupTestCase();
+			{
+				const auto& readerInfo = ReaderManager::getInstance().getReaderInfo("test dummy");
+				QCOMPARE(readerInfo.getPlugInType(), ReaderManagerPlugInType::UNKNOWN);
+				QCOMPARE(readerInfo.getName(), QStringLiteral("test dummy"));
+			}
+			initTestCase();
 		}
 
 

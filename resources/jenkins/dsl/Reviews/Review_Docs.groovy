@@ -10,11 +10,13 @@ def j = new Review
 
 j.with
 {
+	concurrentBuild()
+
 	steps
 	{
 		shell('cd source; python resources/jenkins/import.py')
 
-		shell('cd build; cmake ../source -DCMAKE_BUILD_TYPE=release -Dtools.only=true')
+		shell('cd build; cmake -Werror=dev ../source -DCMAKE_BUILD_TYPE=release -Dtools.only=true')
 
 		shell('cd build; make notes')
 		shell('cd build; make notes.latex.pdf')

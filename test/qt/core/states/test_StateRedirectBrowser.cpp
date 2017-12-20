@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateRedirectBrowser.h"
@@ -44,7 +44,7 @@ class test_StateRedirectBrowser
 		{
 			mAuthContext->setTcTokenNotFound(true);
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -58,7 +58,7 @@ class test_StateRedirectBrowser
 		{
 			mAuthContext->setTcTokenNotFound(true);
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, false, true, "send error"));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireError);
+			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -72,7 +72,7 @@ class test_StateRedirectBrowser
 		{
 			mAuthContext->setTcTokenNotFound(false);
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -86,7 +86,7 @@ class test_StateRedirectBrowser
 		{
 			mAuthContext->setTcTokenNotFound(false);
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, false, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireError);
+			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -101,7 +101,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setTcTokenNotFound(false);
 			mAuthContext->setTcToken(QSharedPointer<TcToken>(new TcToken(TestFileHelper::readFile(":/tctoken/withoutCommunicationErrorAddress.xml"))));
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -116,7 +116,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setTcTokenNotFound(false);
 			mAuthContext->setTcToken(QSharedPointer<TcToken>(new TcToken(TestFileHelper::readFile(":/tctoken/withoutCommunicationErrorAddress.xml"))));
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, false, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireError);
+			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -131,7 +131,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setTcTokenNotFound(false);
 			mAuthContext->setTcToken(QSharedPointer<TcToken>(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml"))));
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -146,7 +146,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setTcTokenNotFound(false);
 			mAuthContext->setTcToken(QSharedPointer<TcToken>(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml"))));
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, false));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireError);
+			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -162,7 +162,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setTcToken(QSharedPointer<TcToken>(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml"))));
 			mAuthContext->setRefreshUrl(QUrl("https://bla.de"));
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -178,7 +178,7 @@ class test_StateRedirectBrowser
 			mAuthContext->setTcToken(QSharedPointer<TcToken>(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml"))));
 			mAuthContext->setRefreshUrl(QUrl("https://bla.de"));
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, false));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireError);
+			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();

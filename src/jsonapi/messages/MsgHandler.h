@@ -1,7 +1,7 @@
 /*!
  * \brief Base of all messages of JSON API.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,12 +25,12 @@ class MsgHandler
 
 		MsgHandler(MsgType pType);
 		MsgHandler(MsgType pType, const char* pKey, const QString& pValue);
-		MsgHandler(MsgType pType, const char* pKey, const QLatin1String& pValue);
+		MsgHandler(MsgType pType, const char* pKey, const QLatin1String pValue);
 
-		void setValue(const QLatin1String& pKey, const QString& pValue);
+		void setValue(const QLatin1String pKey, const QString& pValue);
 		void setValue(const char* pKey, const QString& pValue);
-		void setValue(const QLatin1String& pKey, const QLatin1String& pValue);
-		void setValue(const char* pKey, const QLatin1String& pValue);
+		void setValue(const QLatin1String pKey, const QLatin1String pValue);
+		void setValue(const char* pKey, const QLatin1String pValue);
 
 		void setVoid(bool pVoid = true);
 

@@ -1,16 +1,20 @@
 /*!
  * \brief Unit tests for \ref StatePreVerification
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreVerification.h"
 
 #include "AppSettings.h"
+#include "Env.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
+#include "SecureStorage.h"
 #include "TestFileHelper.h"
 
 #include "TestAuthContext.h"
+
+#include <openssl/ecdsa.h>
 #include <QtCore>
 #include <QtTest>
 
@@ -32,7 +36,6 @@ class test_StatePreVerification
 		void init()
 		{
 			AbstractSettings::mTestDir.clear();
-			AppSettings::getInstance().load();
 			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
 
 			mAuthContext->initCvcChainBuilder();
@@ -52,7 +55,7 @@ class test_StatePreVerification
 
 		void testNoCertChain()
 		{
-			QSignalSpy spy(mState.data(), &StatePreVerification::fireError);
+			QSignalSpy spy(mState.data(), &StatePreVerification::fireAbort);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
@@ -62,9 +65,9 @@ class test_StatePreVerification
 
 		void testCvcaNotTrusted()
 		{
-			const_cast<QVector<QSharedPointer<CVCertificate> >*>(&mState->mTrustedCvcas)->clear();
+			const_cast<QVector<QSharedPointer<const CVCertificate> >*>(&mState->mTrustedCvcas)->clear();
 
-			QSignalSpy spy(mState.data(), &StatePreVerification::fireError);
+			QSignalSpy spy(mState.data(), &StatePreVerification::fireAbort);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
@@ -75,10 +78,16 @@ class test_StatePreVerification
 		void testSignatureInvalid()
 		{
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2013, 12, 1));
-			BIGNUM* signaturePart = mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.at(0)->getEcdsaSignature()->r;
-			BN_pseudo_rand(signaturePart, BN_num_bits(signaturePart), 0, 0);
+			auto signature = mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.at(0)->getEcdsaSignature();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+			BIGNUM* signaturePart = signature->r;
+#else
+			const BIGNUM* signaturePart = nullptr;
+			ECDSA_SIG_get0(signature.data(), &signaturePart, nullptr);
+#endif
+			BN_pseudo_rand(const_cast<BIGNUM*>(signaturePart), BN_num_bits(signaturePart), 0, 0);
 
-			QSignalSpy spy(mState.data(), &StatePreVerification::fireError);
+			QSignalSpy spy(mState.data(), &StatePreVerification::fireAbort);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
@@ -90,7 +99,7 @@ class test_StatePreVerification
 		{
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2013, 11, 1));
 
-			QSignalSpy spy(mState.data(), &StatePreVerification::fireError);
+			QSignalSpy spy(mState.data(), &StatePreVerification::fireAbort);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
@@ -102,7 +111,7 @@ class test_StatePreVerification
 		{
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2013, 12, 1));
 
-			QSignalSpy spy(mState.data(), &StatePreVerification::fireSuccess);
+			QSignalSpy spy(mState.data(), &StatePreVerification::fireContinue);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
@@ -112,25 +121,42 @@ class test_StatePreVerification
 
 		void testSaveLinkCertificates()
 		{
-			PreVerificationSettings settings;
-			settings.load();
-			for (const QByteArray& cvc : settings.getLinkCertificates())
+			const auto& remove = [](QVector<QSharedPointer<const CVCertificate> >& pVector, const QSharedPointer<const CVCertificate>& pCert)
+					{
+						QMutableVectorIterator<QSharedPointer<const CVCertificate> > iter(pVector);
+						while (iter.hasNext())
+						{
+							iter.next();
+							if (*iter.value() == *pCert)
+							{
+								iter.remove();
+							}
+						}
+					};
+
+			auto& settings = Env::getSingleton<AppSettings>()->getPreVerificationSettings();
+			const auto& linkCerts = settings.getLinkCertificates();
+			for (const QByteArray& cvc : linkCerts)
 			{
 				settings.removeLinkCertificate(cvc);
 			}
 			settings.save();
-			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2013, 12, 1));
-			// remove DETESTeID00002_DETESTeID00001
-			const_cast<QVector<QSharedPointer<CVCertificate> >*>(&mState->mTrustedCvcas)->removeOne(mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.at(3));
-			// remove DETESTeID00004_DETESTeID00002
-			const_cast<QVector<QSharedPointer<CVCertificate> >*>(&mState->mTrustedCvcas)->removeOne(mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.at(2));
 
-			QSignalSpy spy(mState.data(), &StatePreVerification::fireSuccess);
+			const int expectedCvcaSize = 10;
+			QCOMPARE(mState->mTrustedCvcas.size(), expectedCvcaSize);
+			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2013, 12, 1));
+			auto& trustedCvcas = const_cast<QVector<QSharedPointer<const CVCertificate> >&>(mState->mTrustedCvcas);
+
+			remove(trustedCvcas, mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.at(3));
+			remove(trustedCvcas, mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.at(2));
+
+			QCOMPARE(mState->mTrustedCvcas.size(), expectedCvcaSize - 2);
+
+			QSignalSpy spy(mState.data(), &StatePreVerification::fireContinue);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
 			QCOMPARE(spy.count(), 1);
-			settings.load();
 			QCOMPARE(settings.getLinkCertificates().size(), 2);
 		}
 

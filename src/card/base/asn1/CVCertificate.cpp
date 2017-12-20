@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ASN1TemplateUtil.h"
@@ -60,17 +60,26 @@ int CVCertificate::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_
 
 			const unsigned char* sig = reinterpret_cast<const unsigned char*>(sigValue.data());
 			int siglen = sigValue.size();
-			BN_bin2bn(sig, siglen / 2, cvc->mEcdsaSignature.data()->r);
-			BN_bin2bn(sig + (siglen / 2), siglen / 2, cvc->mEcdsaSignature.data()->s);
+
+			BIGNUM* r = BN_bin2bn(sig, siglen / 2, 0);
+			BIGNUM* s = BN_bin2bn(sig + (siglen / 2), siglen / 2, 0);
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+			cvc->mEcdsaSignature.data()->r = r;
+			cvc->mEcdsaSignature.data()->s = s;
+#else
+			ECDSA_SIG_set0(cvc->mEcdsaSignature.data(), r, s);
+#endif
+
 		}
 	}
 	return CB_SUCCESS;
 }
 
 
-QVector<QSharedPointer<CVCertificate> > CVCertificate::fromHex(const QByteArrayList& pHexByteList)
+QVector<QSharedPointer<const CVCertificate> > CVCertificate::fromHex(const QByteArrayList& pHexByteList)
 {
-	QVector<QSharedPointer<CVCertificate> > cvcs;
+	QVector<QSharedPointer<const CVCertificate> > cvcs;
 	for (const QByteArray& hexBytes : pHexByteList)
 	{
 		if (auto cvc = CVCertificate::fromHex(hexBytes))
@@ -82,7 +91,7 @@ QVector<QSharedPointer<CVCertificate> > CVCertificate::fromHex(const QByteArrayL
 }
 
 
-QSharedPointer<CVCertificate> CVCertificate::fromHex(const QByteArray& pHexBytes)
+QSharedPointer<const CVCertificate> CVCertificate::fromHex(const QByteArray& pHexBytes)
 {
 	return decodeObject<CVCertificate>(QByteArray::fromHex(pHexBytes));
 
@@ -92,12 +101,6 @@ QSharedPointer<CVCertificate> CVCertificate::fromHex(const QByteArray& pHexBytes
 QByteArray CVCertificate::encode() const
 {
 	return encodeObject(const_cast<CVCertificate*>(this));
-}
-
-
-bool CVCertificate::operator ==(const cvcertificate_st& other) const
-{
-	return this->getRawBody() == other.getRawBody() && this->getRawSignature() == other.getRawSignature();
 }
 
 
@@ -136,39 +139,7 @@ bool CVCertificate::isValidOn(const QDateTime& pValidationDate) const
 
 bool CVCertificate::isIssuedBy(const CVCertificate& pIssuer) const
 {
-	return this->getBody().getCertificationAuthorityReference() == pIssuer.getBody().getCertificateHolderReference();
-}
-
-
-bool operator==(const QSharedPointer<governikus::CVCertificate>& pCvc1, const QSharedPointer<governikus::CVCertificate>& pCvc2)
-{
-	return QSharedPointer<const governikus::CVCertificate>(pCvc1) == QSharedPointer<const governikus::CVCertificate>(pCvc2);
-}
-
-
-bool operator==(const QSharedPointer<governikus::CVCertificate>& pCvc1, const QSharedPointer<const governikus::CVCertificate>& pCvc2)
-{
-	return QSharedPointer<const governikus::CVCertificate>(pCvc1) == pCvc2;
-}
-
-
-bool operator==(const QSharedPointer<const governikus::CVCertificate>& pCvc1, const QSharedPointer<governikus::CVCertificate>& pCvc2)
-{
-	return pCvc1 == QSharedPointer<const governikus::CVCertificate>(pCvc2);
-}
-
-
-bool operator==(const QSharedPointer<const governikus::CVCertificate>& pCvc1, const QSharedPointer<const governikus::CVCertificate>& pCvc2)
-{
-	if ((pCvc1.isNull() && !pCvc2.isNull()) || (!pCvc1.isNull() && pCvc2.isNull()))
-	{
-		return false;
-	}
-	if (pCvc1.isNull() && pCvc2.isNull())
-	{
-		return true;
-	}
-	return *pCvc1 == *pCvc2;
+	return getBody().getCertificationAuthorityReference() == pIssuer.getBody().getCertificateHolderReference();
 }
 
 

@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 #include "VersionInfo.h"
 
 #include <QCoreApplication>
@@ -8,14 +12,21 @@
 
 using namespace governikus;
 
+namespace
+{
+#define VERSION_NAME(_name, _key)\
+	QString _name(){\
+		return QStringLiteral(_key);\
+	}
 
-const QString NAME = QStringLiteral("Name");
-const QString IMPL_TITLE = QStringLiteral("Implementation-Title");
-const QString IMPL_VENDOR = QStringLiteral("Implementation-Vendor");
-const QString IMPL_VERSION = QStringLiteral("Implementation-Version");
-const QString SPEC_TITLE = QStringLiteral("Specification-Title");
-const QString SPEC_VENDOR = QStringLiteral("Specification-Vendor");
-const QString SPEC_VERSION = QStringLiteral("Specification-Version");
+VERSION_NAME(NAME, "Name")
+VERSION_NAME(IMPL_TITLE, "Implementation-Title")
+VERSION_NAME(IMPL_VENDOR, "Implementation-Vendor")
+VERSION_NAME(IMPL_VERSION, "Implementation-Version")
+VERSION_NAME(SPEC_TITLE, "Specification-Title")
+VERSION_NAME(SPEC_VENDOR, "Specification-Vendor")
+VERSION_NAME(SPEC_VERSION, "Specification-Version")
+}
 
 
 VersionInfo::VersionInfo(const QMap<QString, QString>& pInfo)
@@ -33,13 +44,13 @@ VersionInfo::VersionInfo()
 VersionInfo VersionInfo::getInstance()
 {
 	return VersionInfo({
-				{NAME, QCoreApplication::applicationName()},
-				{IMPL_TITLE, QCoreApplication::applicationName()},
-				{IMPL_VENDOR, QCoreApplication::organizationName()},
-				{IMPL_VERSION, QCoreApplication::applicationVersion()},
-				{SPEC_TITLE, QStringLiteral("TR-03124")},
-				{SPEC_VENDOR, QStringLiteral("Federal Office for Information Security")},
-				{SPEC_VERSION, QStringLiteral("1.2")}
+				{NAME(), QCoreApplication::applicationName()},
+				{IMPL_TITLE(), QCoreApplication::applicationName()},
+				{IMPL_VENDOR(), QCoreApplication::organizationName()},
+				{IMPL_VERSION(), QCoreApplication::applicationVersion()},
+				{SPEC_TITLE(), QStringLiteral("TR-03124")},
+				{SPEC_VENDOR(), QStringLiteral("Federal Office for Information Security")},
+				{SPEC_VERSION(), QStringLiteral("1.3")}
 			});
 }
 
@@ -47,10 +58,10 @@ VersionInfo VersionInfo::getInstance()
 VersionInfo VersionInfo::fromText(const QString& pText)
 {
 	QMap<QString, QString> infos;
-	const auto& header = pText.splitRef('\n');
+	const auto& header = pText.splitRef(QLatin1Char('\n'));
 	for (const auto& line : header)
 	{
-		const auto pair = line.split(':');
+		const auto pair = line.split(QLatin1Char(':'));
 		if (pair.size() != 2 || pair[0].trimmed().isEmpty() || pair[1].trimmed().isEmpty())
 		{
 			qWarning() << "Cannot parse line:" << line;
@@ -70,43 +81,43 @@ bool VersionInfo::isNull() const
 
 QString VersionInfo::getName() const
 {
-	return mInfo[NAME];
+	return mInfo[NAME()];
 }
 
 
 QString VersionInfo::getImplementationTitle() const
 {
-	return mInfo[IMPL_TITLE];
+	return mInfo[IMPL_TITLE()];
 }
 
 
 QString VersionInfo::getImplementationVendor() const
 {
-	return mInfo[IMPL_VENDOR];
+	return mInfo[IMPL_VENDOR()];
 }
 
 
 QString VersionInfo::getImplementationVersion() const
 {
-	return mInfo[IMPL_VERSION];
+	return mInfo[IMPL_VERSION()];
 }
 
 
 QString VersionInfo::getSpecificationTitle() const
 {
-	return mInfo[SPEC_TITLE];
+	return mInfo[SPEC_TITLE()];
 }
 
 
 QString VersionInfo::getSpecificationVendor() const
 {
-	return mInfo[SPEC_VENDOR];
+	return mInfo[SPEC_VENDOR()];
 }
 
 
 QString VersionInfo::getSpecificationVersion() const
 {
-	return mInfo[SPEC_VERSION];
+	return mInfo[SPEC_VERSION()];
 }
 
 
@@ -134,7 +145,7 @@ QString VersionInfo::toText() const
 	{
 		list += QStringLiteral("%1: %2").arg(i.key(), i.value());
 	}
-	return list.join('\n');
+	return list.join(QLatin1Char('\n'));
 }
 
 

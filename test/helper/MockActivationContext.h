@@ -1,10 +1,13 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \brief Mocked ActivationContext for unit tests.
+ *
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 
+#include "ActivationContext.h"
 #include "ActivationHandler.h"
 
 
@@ -23,7 +26,7 @@ class MockActivationContext
 
 	public:
 		MockActivationContext(bool pProcessing = false, bool pAlreadyActive = false, bool pErroPage = false, bool pRedirect = false, const QString& pSendError = QString());
-		virtual ~MockActivationContext();
+		virtual ~MockActivationContext() override;
 
 
 		virtual QUrl getActivationURL() const override

@@ -1,7 +1,7 @@
 /*!
  * \brief Message INTERNAL_ERROR of JSON API.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,7 +16,7 @@ class MsgHandlerInternalError
 {
 	public:
 		MsgHandlerInternalError(const QString& pError = QString());
-		MsgHandlerInternalError(const QLatin1String& pError);
+		MsgHandlerInternalError(const QLatin1String pError);
 };
 
 

@@ -1,9 +1,7 @@
 /*
- * StatePreVerification.h
- *
  * \brief Performs the pre-verification of cvcs. If the pre-verification succeeds the cvc chain is set to the authentication model.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,14 +23,14 @@ class StatePreVerification
 	friend class StateBuilder;
 	friend class ::test_StatePreVerification;
 
-	const QVector<QSharedPointer<CVCertificate> > mTrustedCvcas;
+	const QVector<QSharedPointer<const CVCertificate> > mTrustedCvcas;
 	const QDateTime mValidationDateTime;
 
 	StatePreVerification(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 
-	bool isValid(const QVector<QSharedPointer<CVCertificate> >& pCertificates);
-	void saveCvcaLinkCertificates(const QVector<QSharedPointer<CVCertificate> >& pCertificates);
+	bool isValid(const QVector<QSharedPointer<const CVCertificate> >& pCertificates);
+	void saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate> >& pCertificates);
 };
 
 } /* namespace governikus */

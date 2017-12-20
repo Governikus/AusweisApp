@@ -1,7 +1,5 @@
 /*!
- * CompositeStateSelectCard.cpp
- *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CompositeStateSelectCard.h"
@@ -9,11 +7,7 @@
 #include "context/WorkflowContext.h"
 #include "states/StateBuilder.h"
 #include "states/StateConnectCard.h"
-#include "states/StateSelectBluetoothReader.h"
-#include "states/StateSelectNfcReader.h"
-#include "states/StateSelectPcscReader.h"
-#include "states/StateSelectReaderType.h"
-
+#include "states/StateSelectReader.h"
 
 using namespace governikus;
 
@@ -22,46 +16,22 @@ CompositeStateSelectCard::CompositeStateSelectCard(const QSharedPointer<Workflow
 	: QState()
 	, mContext(pContext)
 {
-	auto selectReaderType = StateBuilder::createState<StateSelectReaderType>(mContext);
-	auto selectBluetoothReader = StateBuilder::createState<StateSelectBluetoothReader>(mContext);
-	auto selectNfcReader = StateBuilder::createState<StateSelectNfcReader>(mContext);
-	auto selectPcscReader = StateBuilder::createState<StateSelectPcscReader>(mContext);
+	auto selectReader = StateBuilder::createState<StateSelectReader>(mContext);
 	auto connectCard = StateBuilder::createState<StateConnectCard>(mContext);
 
-	selectReaderType->setParent(this);
-	selectBluetoothReader->setParent(this);
-	selectNfcReader->setParent(this);
-	selectPcscReader->setParent(this);
+	selectReader->setParent(this);
 	connectCard->setParent(this);
 
-	setInitialState(selectReaderType);
+	setInitialState(selectReader);
 
-	selectReaderType->addTransition(selectReaderType, &StateSelectReaderType::fireSelectBluetoothReader, selectBluetoothReader);
-	selectReaderType->addTransition(selectReaderType, &StateSelectReaderType::fireSelectNfcReader, selectNfcReader);
-	selectReaderType->addTransition(selectReaderType, &StateSelectReaderType::fireSelectPcscReader, selectPcscReader);
-	connect(selectReaderType, &AbstractState::fireError, this, &CompositeStateSelectCard::fireError);
-	connect(selectReaderType, &AbstractState::fireCancel, this, &CompositeStateSelectCard::fireCancel);
+	selectReader->addTransition(selectReader, &StateSelectReader::fireRetry, selectReader);
+	selectReader->addTransition(selectReader, &AbstractState::fireContinue, connectCard);
+	connect(selectReader, &AbstractState::fireAbort, this, &CompositeStateSelectCard::fireAbort);
 
-	selectBluetoothReader->addTransition(selectBluetoothReader, &AbstractState::fireSuccess, connectCard);
-	connect(selectBluetoothReader, &AbstractState::fireError, this, &CompositeStateSelectCard::fireError);
-	connect(selectBluetoothReader, &AbstractState::fireCancel, this, &CompositeStateSelectCard::fireCancel);
-	selectBluetoothReader->addTransition(selectBluetoothReader, &StateSelectBluetoothReader::fireAbort, selectReaderType);
-
-	selectNfcReader->addTransition(selectNfcReader, &AbstractState::fireSuccess, connectCard);
-	connect(selectNfcReader, &AbstractState::fireError, this, &CompositeStateSelectCard::fireError);
-	connect(selectNfcReader, &AbstractState::fireCancel, this, &CompositeStateSelectCard::fireCancel);
-	selectNfcReader->addTransition(selectNfcReader, &StateSelectNfcReader::fireAbort, selectReaderType);
-
-	selectPcscReader->addTransition(selectPcscReader, &AbstractState::fireSuccess, connectCard);
-	connect(selectPcscReader, &AbstractState::fireError, this, &CompositeStateSelectCard::fireError);
-	connect(selectPcscReader, &AbstractState::fireCancel, this, &CompositeStateSelectCard::fireCancel);
-	selectPcscReader->addTransition(selectPcscReader, &StateSelectPcscReader::fireAbort, selectReaderType);
-
-	connect(connectCard, &AbstractState::fireSuccess, this, &CompositeStateSelectCard::fireSuccess);
-	connect(connectCard, &AbstractState::fireError, this, &CompositeStateSelectCard::fireError);
-	connect(connectCard, &AbstractState::fireCancel, this, &CompositeStateSelectCard::fireCancel);
-	connectCard->addTransition(connectCard, &StateConnectCard::fireAbort, selectReaderType);
-	connectCard->addTransition(connectCard, &StateConnectCard::fireReaderRemoved, selectReaderType);
+	connectCard->addTransition(connectCard, &StateConnectCard::fireRetry, selectReader);
+	connectCard->addTransition(connectCard, &StateConnectCard::fireReaderRemoved, selectReader);
+	connect(connectCard, &AbstractState::fireContinue, this, &CompositeStateSelectCard::fireContinue);
+	connect(connectCard, &AbstractState::fireAbort, this, &CompositeStateSelectCard::fireAbort);
 }
 
 

@@ -1,12 +1,12 @@
 /*!
- * StateUpdateRetryCounter.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
+
+#include "StateUpdateRetryCounter.h"
 
 #include "CardConnection.h"
 #include "Result.h"
-#include "StateUpdateRetryCounter.h"
+
 
 using namespace governikus;
 
@@ -22,8 +22,15 @@ void StateUpdateRetryCounter::run()
 	qDebug() << "StateUpdateRetryCounter::run()";
 
 	auto cardConnection = getContext()->getCardConnection();
-	Q_ASSERT(cardConnection != nullptr);
-	mConnections += cardConnection->callUpdateRetryCounterCommand(this, &StateUpdateRetryCounter::onUpdateRetryCounterDone);
+	if (cardConnection != nullptr)
+	{
+		mConnections += cardConnection->callUpdateRetryCounterCommand(this, &StateUpdateRetryCounter::onUpdateRetryCounterDone);
+	}
+	else
+	{
+		qDebug() << "Skipping update because there is no card connection";
+		Q_EMIT fireContinue();
+	}
 }
 
 
@@ -34,26 +41,10 @@ void StateUpdateRetryCounter::onUpdateRetryCounterDone(QSharedPointer<BaseCardCo
 	if (pCommand->getReturnCode() != CardReturnCode::OK)
 	{
 		qCritical() << "An error occurred while communicating with the card reader, cannot determine retry counter, abort state";
-		setStatus(CardReturnCodeUtil::toGlobalStatus(pCommand->getReturnCode()));
-		Q_EMIT fireError();
+		updateStatus(CardReturnCodeUtil::toGlobalStatus(pCommand->getReturnCode()));
+		Q_EMIT fireAbort();
 		return;
 	}
 
-	auto cardConnection = getContext()->getCardConnection();
-	switch (cardConnection->getReaderInfo().getRetryCounter())
-	{
-		case 0:
-			qDebug() << "PUK required";
-			Q_EMIT fireRetryCounterIsZero();
-			break;
-
-		case 1:
-			qDebug() << "CAN required";
-			Q_EMIT fireRetryCounterIsOne();
-			break;
-
-		default:
-			qDebug() << "PIN allowed";
-			Q_EMIT fireRetryCounterIsGTOne();
-	}
+	Q_EMIT fireContinue();
 }

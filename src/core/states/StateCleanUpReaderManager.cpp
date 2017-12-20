@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManager.h"
@@ -17,7 +17,7 @@ StateCleanUpReaderManager::StateCleanUpReaderManager(const QSharedPointer<Workfl
 
 void StateCleanUpReaderManager::run()
 {
-	ReaderManager::getInstance().stopScan();
+	ReaderManager::getInstance().stopScanAll();
 
 	if (getContext()->getCardConnection())
 	{
@@ -27,5 +27,5 @@ void StateCleanUpReaderManager::run()
 
 	qDebug() << "Going to disconnect readers";
 	ReaderManager::getInstance().disconnectAllReaders();
-	Q_EMIT fireSuccess();
+	Q_EMIT fireContinue();
 }

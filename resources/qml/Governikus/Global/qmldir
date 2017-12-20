@@ -1,0 +1,13 @@
+module Global
+singleton Constants 1.0 Constants.qml
+singleton PlatformConstants 1.0 PlatformConstants.qml
+Utils 1.0 Utils.js
+Category 1.0 Category.js
+LabeledText 1.0 LabeledText.qml
+Pane 1.0 Pane.qml
+GCheckBox 1.0 GCheckBox.qml
+GTextField 1.0 GTextField.qml
+GButton 1.0 GButton.qml
+LocationButton 1.0 LocationButton.qml
+SectionPage 1.0 SectionPage.qml
+GSwitch 1.0 GSwitch.qml

@@ -1,7 +1,5 @@
 /*!
- * StateEstablishPacePin.cpp
- *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -40,7 +38,7 @@ void StateEstablishPacePin::run()
 	qDebug() << "Establish connection using PIN";
 	mConnections += cardConnection->callEstablishPaceChannelCommand(this,
 			&StateEstablishPacePin::onEstablishConnectionDone,
-			PACE_PIN_ID::PACE_PIN,
+			PACE_PASSWORD_ID::PACE_PIN,
 			getContext()->getPin(),
 			effectiveChat,
 			certificateDescription);
@@ -66,13 +64,13 @@ void StateEstablishPacePin::onEstablishConnectionDone(QSharedPointer<BaseCardCom
 	{
 		case CardReturnCode::OK:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
-			Q_EMIT fireSuccess();
+			Q_EMIT fireContinue();
 			break;
 
 		case CardReturnCode::CANCELLATION_BY_USER:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
-			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-			Q_EMIT fireCancel();
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			Q_EMIT fireAbort();
 			break;
 
 		case CardReturnCode::INVALID_PIN:
@@ -81,8 +79,8 @@ void StateEstablishPacePin::onEstablishConnectionDone(QSharedPointer<BaseCardCom
 			break;
 
 		default:
-			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-			Q_EMIT fireError();
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			Q_EMIT fireAbort();
 			break;
 	}
 }

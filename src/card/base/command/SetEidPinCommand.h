@@ -1,9 +1,7 @@
 /*!
- * SetEidPinCommand.h
- *
  * \brief Command to set the Eid PIN of a card.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,7 +24,7 @@ class SetEidPinCommand
 
 	protected:
 		virtual void internalExecute() override;
-		virtual ~SetEidPinCommand();
+		virtual ~SetEidPinCommand() override;
 
 	public:
 		SetEidPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,

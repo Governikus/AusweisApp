@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerAccessRights.h"
@@ -22,7 +22,7 @@ MsgHandlerAccessRights::MsgHandlerAccessRights(const QJsonObject& pObj, MsgConte
 	auto ctx = pContext.getAuthContext();
 	Q_ASSERT(ctx);
 
-	const auto& jsonRaw = pObj["chat"];
+	const auto& jsonRaw = pObj[QLatin1String("chat")];
 	if (jsonRaw.isUndefined())
 	{
 		setError(QLatin1String("'chat' cannot be undefined"));
@@ -80,7 +80,7 @@ void MsgHandlerAccessRights::handleSetChatData(const QJsonArray& pChat, const QS
 	}
 
 
-	if (!mJsonObject.contains("error"))
+	if (!mJsonObject.contains(QLatin1String("error")))
 	{
 		pContext->setEffectiveAccessRights(effectiveChat);
 	}
@@ -111,21 +111,21 @@ void MsgHandlerAccessRights::fillAccessRights(const QSharedPointer<const AuthCon
 	Q_ASSERT(pContext);
 
 	QJsonObject chat;
-	chat["required"] = getAccessRights(pContext->getRequiredAccessRights());
-	chat["optional"] = getAccessRights(pContext->getOptionalAccessRights());
-	chat["effective"] = getAccessRights(pContext->getEffectiveAccessRights());
+	chat[QLatin1String("required")] = getAccessRights(pContext->getRequiredAccessRights());
+	chat[QLatin1String("optional")] = getAccessRights(pContext->getOptionalAccessRights());
+	chat[QLatin1String("effective")] = getAccessRights(pContext->getEffectiveAccessRights());
 
-	mJsonObject["chat"] = chat;
+	mJsonObject[QLatin1String("chat")] = chat;
 	const auto& transactionInfo = pContext->getDidAuthenticateEac1()->getTransactionInfo();
 	if (!transactionInfo.isEmpty())
 	{
-		mJsonObject["transactionInfo"] = transactionInfo;
+		mJsonObject[QLatin1String("transactionInfo")] = transactionInfo;
 	}
 
 	const QJsonObject& aux = getAuxiliaryData(pContext);
 	if (!aux.isEmpty())
 	{
-		mJsonObject["aux"] = aux;
+		mJsonObject[QLatin1String("aux")] = aux;
 	}
 }
 
@@ -142,18 +142,18 @@ QJsonObject MsgHandlerAccessRights::getAuxiliaryData(const QSharedPointer<const 
 		{
 			if (aux->hasAgeVerificationDate())
 			{
-				obj["ageVerificationDate"] = aux->getAgeVerificationDate().toString(Qt::ISODate);
-				obj["requiredAge"] = aux->getRequiredAge();
+				obj[QLatin1String("ageVerificationDate")] = aux->getAgeVerificationDate().toString(Qt::ISODate);
+				obj[QLatin1String("requiredAge")] = aux->getRequiredAge();
 			}
 
 			if (aux->hasValidityDate())
 			{
-				obj["validityDate"] = aux->getValidityDate().toString(Qt::ISODate);
+				obj[QLatin1String("validityDate")] = aux->getValidityDate().toString(Qt::ISODate);
 			}
 
 			if (aux->hasCommunityID())
 			{
-				obj["communityId"] = QString::fromUtf8(aux->getCommunityID());
+				obj[QLatin1String("communityId")] = QString::fromUtf8(aux->getCommunityID());
 			}
 		}
 	}
@@ -162,7 +162,7 @@ QJsonObject MsgHandlerAccessRights::getAuxiliaryData(const QSharedPointer<const 
 }
 
 
-void MsgHandlerAccessRights::setError(const QLatin1String& pError)
+void MsgHandlerAccessRights::setError(const QLatin1String pError)
 {
-	mJsonObject["error"] = pError;
+	mJsonObject[QLatin1String("error")] = pError;
 }

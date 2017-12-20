@@ -1,7 +1,5 @@
 /*!
- * EFCardSecurity.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ASN1TemplateUtil.h"
@@ -54,14 +52,14 @@ QSharedPointer<EFCardSecurity> EFCardSecurity::decode(const QByteArray& pBytes)
 	}
 
 	const auto type = Asn1ObjectUtil::convertTo(CMS_get0_type(contentInfo.data()));
-	if (type != KnownOIDs::signedData)
+	if (type != KnownOIDs::Base::SIGNED_DATA)
 	{
 		qCCritical(card) << "Got unexpected ContentInfo type" << type;
 		return QSharedPointer<EFCardSecurity>();
 	}
 
 	const auto eContentType = Asn1ObjectUtil::convertTo(CMS_get0_eContentType(contentInfo.data()));
-	if (eContentType != KnownOIDs::id_SecurityObject)
+	if (eContentType != KnownOIDs::Base::ID_SECURITY_OBJECT)
 	{
 		qCCritical(card) << "Got unexpected eContentType" << eContentType;
 		return QSharedPointer<EFCardSecurity>();

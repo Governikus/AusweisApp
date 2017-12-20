@@ -1,7 +1,7 @@
 /*!
  * \brief Message API_LEVEL of JSON API.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,7 +16,7 @@ class MsgHandlerApiLevel
 	: public MsgHandler
 {
 	private:
-		void setError(const QLatin1String& pError);
+		void setError(const QLatin1String pError);
 		void setCurrentLevel(MsgLevel pLevel);
 		void setAvailableLevel();
 

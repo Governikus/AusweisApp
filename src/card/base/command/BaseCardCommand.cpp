@@ -1,10 +1,12 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
-#include "asn1/SecurityInfos.h"
 #include "BaseCardCommand.h"
+
+#include "asn1/SecurityInfos.h"
 #include "CardConnection.h"
+#include "Initializer.h"
 
 #include <QLoggingCategory>
 #include <QSharedPointer>
@@ -13,6 +15,11 @@
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 using namespace governikus;
+
+static Initializer::Entry X([] {
+			qRegisterMetaType<QSharedPointer<BaseCardCommand> >("QSharedPointer<BaseCardCommand>");
+		});
+
 
 BaseCardCommand::BaseCardCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
 	: mCardConnectionWorker(pCardConnectionWorker)
@@ -52,7 +59,7 @@ CardReturnCode BaseCardCommand::checkRetryCounterAndPrepareForPace(const QString
 		case 1: // CAN required
 		{
 			EstablishPACEChannelOutput output;
-			return mCardConnectionWorker->establishPaceChannel(PACE_PIN_ID::PACE_CAN, pCan, output);
+			return mCardConnectionWorker->establishPaceChannel(PACE_PASSWORD_ID::PACE_CAN, pCan, output);
 		}
 
 		case 2:
@@ -62,16 +69,5 @@ CardReturnCode BaseCardCommand::checkRetryCounterAndPrepareForPace(const QString
 		default:
 			qCWarning(card) << "Card blocked or deactivated.";
 			return CardReturnCode::PIN_BLOCKED;
-	}
-}
-
-
-void BaseCardCommand::registerMetaTypes()
-{
-	static bool registered = false;
-	if (!registered)
-	{
-		qRegisterMetaType<QSharedPointer<BaseCardCommand> >("QSharedPointer<BaseCardCommand>");
-		registered = true;
 	}
 }

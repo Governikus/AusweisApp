@@ -1,9 +1,7 @@
 /*!
- * SecurityInfo.h
- *
  * \brief Implementation of SecurityInfo
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -35,8 +33,11 @@ struct securityinfo_st
 };
 
 DECLARE_ASN1_FUNCTIONS(securityinfo_st)
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 DECLARE_STACK_OF(securityinfo_st)
-
+#else
+DEFINE_STACK_OF(securityinfo_st)
+#endif
 
 /*
  * Because OpenSSL's template macro system does not support inheritance,

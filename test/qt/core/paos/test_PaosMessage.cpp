@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref PaosMessage
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/PaosMessage.h"

@@ -1,7 +1,5 @@
 /*!
- * StateChangePin.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManager.h"
@@ -34,22 +32,22 @@ void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 	{
 		case CardReturnCode::OK:
 			getContext()->setSuccessMessage(tr("You have successfully changed your PIN."));
-			Q_EMIT fireSuccess();
+			Q_EMIT fireContinue();
 			break;
 
 		case CardReturnCode::CANCELLATION_BY_USER:
-			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-			Q_EMIT fireCancel();
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			Q_EMIT fireAbort();
 			break;
 
 		case CardReturnCode::NEW_PIN_MISMATCH:
-			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireInvalidPin();
 			break;
 
 		default:
-			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-			Q_EMIT fireError();
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			Q_EMIT fireAbort();
 			break;
 	}
 }

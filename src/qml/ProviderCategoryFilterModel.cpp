@@ -1,10 +1,22 @@
+/*!
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 #include "ProviderCategoryFilterModel.h"
 
 
 using namespace governikus;
 
+namespace
+{
+const QStringList& getCategories()
+{
+	static QStringList cats({QStringLiteral("citizen"), QStringLiteral("insurance"), QStringLiteral("finance"), QStringLiteral("other")});
+	return cats;
+}
 
-static const QStringList CATEGORIES({"citizen", "insurance", "finance", "other"});
+
+}
 
 
 QString ProviderCategoryFilterModel::getSearchString() const
@@ -34,7 +46,7 @@ QStringList ProviderCategoryFilterModel::getSelectedCategories() const
 int ProviderCategoryFilterModel::getAdditionalResultCount() const
 {
 	int results = 0;
-	for (const QString& p : CATEGORIES)
+	for (const QString& p : getCategories())
 	{
 		results += matchesForExcludedCategory(p);
 	}
@@ -91,12 +103,12 @@ bool ProviderCategoryFilterModel::filterAcceptsRow(int pSourceRow, const QModelI
 }
 
 
-ProviderCategoryFilterModel::ProviderCategoryFilterModel(ProviderSettings* pSettings) :
-	mProviderModel(pSettings)
+ProviderCategoryFilterModel::ProviderCategoryFilterModel() :
+	mProviderModel()
 {
-	setSourceModel(&mProviderModel);
+	QSortFilterProxyModel::setSourceModel(&mProviderModel);
 
-	sort(0);
+	QSortFilterProxyModel::sort(0);
 	sortByCategoryFirst(false);
 	setSortCaseSensitivity(Qt::CaseInsensitive);
 }
@@ -149,7 +161,7 @@ void ProviderCategoryFilterModel::updateCategorySelection(const QString& pCatego
 void ProviderCategoryFilterModel::addAdditionalResultCategories()
 {
 	bool needUpdate = false;
-	for (const QString& p : CATEGORIES)
+	for (const QString& p : getCategories())
 	{
 		if (matchesForExcludedCategory(p) > 0)
 		{

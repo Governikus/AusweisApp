@@ -1,9 +1,7 @@
 /*!
- * HttpServerStatusParser.h
- *
  * \brief Sends a status request to given url:port and tries to detect details and server header.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

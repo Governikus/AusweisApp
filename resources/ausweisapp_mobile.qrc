@@ -13,6 +13,7 @@
         <file>images/android/navigation/ausweisen.svg</file>
         <file>images/android/navigation/anbieter.svg</file>
         <file>images/android/navigation/balloon.svg</file>
+        <file>images/android/navigation/remoteleser.svg</file>
         <file>images/android/navigation/verlauf.svg</file>
         <file>images/android/navigation/pin.svg</file>
         <file>images/android/navigation/versionsinformation.svg</file>
@@ -40,22 +41,27 @@
         <file>images/android/android_arrow_back_white.svg</file>
         <file>images/iOS/more/icon_mehr_favorit.svg</file>
         <file>images/iOS/more/icon_mehr_fragen.svg</file>
-        <file>images/iOS/more/icon_mehr_upload.svg</file>
         <file>images/iOS/more/icon_mehr_info.svg</file>
-        <file>images/provider/categoryIcons/General.svg</file>
-        <file>images/provider/categoryIcons/CitizenServices.svg</file>
-        <file>images/provider/categoryIcons/Financials.svg</file>
-        <file>images/provider/categoryIcons/Insurances.svg</file>
-        <file>images/provider/categoryIcons/OtherServices.svg</file>
-        <file alias="images/provider/categoryIcons/General_bg.svg">images/provider/categoryIcons/+android/General_bg.svg</file>
-        <file alias="images/provider/categoryIcons/General_button.svg">images/provider/categoryIcons/+android/General_button.svg</file>
-        <file alias="images/provider/categoryIcons/CitizenServices_bg.svg">images/provider/categoryIcons/+android/CitizenServices_bg.svg</file>
-        <file alias="images/provider/categoryIcons/CitizenServices_button.svg">images/provider/categoryIcons/+android/CitizenServices_button.svg</file>
-        <file alias="images/provider/categoryIcons/Financials_bg.svg">images/provider/categoryIcons/+android/Financials_bg.svg</file>
-        <file alias="images/provider/categoryIcons/Financials_button.svg">images/provider/categoryIcons/+android/Financials_button.svg</file>
-        <file alias="images/provider/categoryIcons/Insurances_bg.svg">images/provider/categoryIcons/+android/Insurances_bg.svg</file>
-        <file alias="images/provider/categoryIcons/Insurances_button.svg">images/provider/categoryIcons/+android/Insurances_button.svg</file>
-        <file alias="images/provider/categoryIcons/OtherServices_bg.svg">images/provider/categoryIcons/+android/OtherServices_bg.svg</file>
-        <file alias="images/provider/categoryIcons/OtherServices_button.svg">images/provider/categoryIcons/+android/OtherServices_button.svg</file>
+        <file>images/iOS/more/icon_mehr_license.svg</file>
+        <file>images/iOS/more/icon_mehr_remotereader.svg</file>
+        <file>images/iOS/more/icon_mehr_upload.svg</file>
+        <file>images/provider/categoryIcons/general.svg</file>
+        <file>images/provider/categoryIcons/citizen.svg</file>
+        <file>images/provider/categoryIcons/finance.svg</file>
+        <file>images/provider/categoryIcons/insurance.svg</file>
+        <file>images/provider/categoryIcons/other.svg</file>
+        <file alias="images/provider/categoryIcons/general_bg.svg">images/provider/categoryIcons/+android/general_bg.svg</file>
+        <file alias="images/provider/categoryIcons/general_button.svg">images/provider/categoryIcons/+android/general_button.svg</file>
+        <file alias="images/provider/categoryIcons/citizen_bg.svg">images/provider/categoryIcons/+android/citizen_bg.svg</file>
+        <file alias="images/provider/categoryIcons/citizen_button.svg">images/provider/categoryIcons/+android/citizen_button.svg</file>
+        <file alias="images/provider/categoryIcons/finance_bg.svg">images/provider/categoryIcons/+android/finance_bg.svg</file>
+        <file alias="images/provider/categoryIcons/finance_button.svg">images/provider/categoryIcons/+android/finance_button.svg</file>
+        <file alias="images/provider/categoryIcons/insurance_bg.svg">images/provider/categoryIcons/+android/insurance_bg.svg</file>
+        <file alias="images/provider/categoryIcons/insurance_button.svg">images/provider/categoryIcons/+android/insurance_button.svg</file>
+        <file alias="images/provider/categoryIcons/other_bg.svg">images/provider/categoryIcons/+android/other_bg.svg</file>
+        <file alias="images/provider/categoryIcons/other_button.svg">images/provider/categoryIcons/+android/other_button.svg</file>
+        <file>images/phone_to_pc.svg</file>
+        <file>images/android/navigation/remotesettings.svg</file>
+        <file>images/trash_icon.svg</file>
     </qresource>
 </RCC>

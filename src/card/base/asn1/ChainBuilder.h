@@ -1,13 +1,11 @@
 /*!
- * ChainBuilder.h
- *
  * \brief Generic implementation for chain building, i.e. building ordered lists.
  * The ChainBuilder is initialized with a pool of objects and a (pointer to a) function
  * that decides if two objects have a parent child relation. Duplicates are filtered out.
  *
  * All found chains are returned by the function /ref ChainBuilder::getChains().
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

@@ -1,13 +1,16 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCheckRefreshAddress.h"
 
 #include "context/AuthContext.h"
+#include "Env.h"
 #include "MockNetworkManager.h"
 #include "states/StateBuilder.h"
 
+#include <QScopedPointer>
+#include <QSharedPointer>
 #include <QtCore>
 #include <QtTest>
 #include <QThread>
@@ -20,6 +23,7 @@ class test_StateCheckRefreshAddress
 {
 	Q_OBJECT
 	QScopedPointer<StateCheckRefreshAddress> mState;
+	QScopedPointer<MockNetworkManager> mMockNetworkManager;
 	QSharedPointer<AuthContext> mAuthContext;
 
 	Q_SIGNALS:
@@ -28,8 +32,10 @@ class test_StateCheckRefreshAddress
 	private Q_SLOTS:
 		void init()
 		{
+			mMockNetworkManager.reset(new MockNetworkManager);
+			Env::set(NetworkManager::staticMetaObject, mMockNetworkManager.data());
+
 			mAuthContext.reset(new AuthContext(nullptr));
-			mAuthContext->setNetworkManager(new MockNetworkManager);
 			mState.reset(StateBuilder::createState<StateCheckRefreshAddress>(mAuthContext));
 			connect(this, &test_StateCheckRefreshAddress::fireStateStart, mState.data(), &AbstractState::onEntry, Qt::ConnectionType::DirectConnection);
 		}
@@ -39,6 +45,7 @@ class test_StateCheckRefreshAddress
 		{
 			mState.reset();
 			mAuthContext.reset();
+			mMockNetworkManager.reset();
 		}
 
 
@@ -78,7 +85,7 @@ class test_StateCheckRefreshAddress
 
 		void abortIfNotTcToken()
 		{
-			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireContinue);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
@@ -102,7 +109,7 @@ class test_StateCheckRefreshAddress
 														"</TCTokenType>"));
 			mAuthContext->setTcToken(tcToken);
 
-			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireContinue);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 

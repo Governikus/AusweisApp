@@ -1,7 +1,5 @@
 /*!
- * Transmit.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TransmitParser.h"
@@ -91,7 +89,7 @@ void TransmitParser::parseInputApduInfo()
 		return;
 	}
 
-	inputApduInfo.setInputApdu(inputApdu.toUtf8());
+	inputApduInfo.setInputApdu(QByteArray::fromHex(inputApdu.toUtf8()));
 
 	mTransmit->appendInputApduInfo(inputApduInfo);
 }

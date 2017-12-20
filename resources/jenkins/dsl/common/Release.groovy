@@ -8,9 +8,9 @@ import common.Build
 class Release extends Build
 {
 	String namePrefix = 'Release_'
-	String tagName = 'release'
 	String trigger = null
 	List oldBuilds = null
+	boolean releaseJob = true
 	boolean cleanup = true
 	boolean sendMail = false
 
@@ -20,7 +20,10 @@ class Release extends Build
 
 		j.with
 		{
-
+			parameters
+			{
+				stringParam('changeset', 'release', 'Build given changeset (tag) as release')
+			}
 		}
 
 		return j

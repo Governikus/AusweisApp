@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateProcessCertificatesFromEac2.h"
@@ -24,11 +24,11 @@ void StateProcessCertificatesFromEac2::run()
 	if (getContext()->hasChainForCertificationAuthority(*getContext()->getPaceOutputData()))
 	{
 		qDebug() << "CVC chain already determined, skip further processing";
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 		return;
 	}
 
-	QVector<QSharedPointer<CVCertificate> > cvcs;
+	QVector<QSharedPointer<const CVCertificate> > cvcs;
 	for (const auto& cvc : getContext()->getDidAuthenticateEac2()->getCvCertificates())
 	{
 		// according to TR-03112-7, paragraph 3.6.4.2, AT certs must be ignored
@@ -44,11 +44,11 @@ void StateProcessCertificatesFromEac2::run()
 	if (!getContext()->hasChainForCertificationAuthority(*getContext()->getPaceOutputData()))
 	{
 		qCritical() << "No cvc chain determined, abort authentication";
-		setStatus(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity);
-		Q_EMIT fireError();
+		updateStatus(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity);
+		Q_EMIT fireAbort();
 	}
 	else
 	{
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 	}
 }

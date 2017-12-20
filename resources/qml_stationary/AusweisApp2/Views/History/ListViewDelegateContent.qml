@@ -26,15 +26,15 @@ Item {
 				return "";
 			}
 			else if (Utils.isToday(historyModelItem.dateTime)) {
-				return qsTr("today")
+				return qsTr("today") + settingsModel.translationTrigger
 			}
 			else if (Utils.isYesterday(historyModelItem.dateTime)) {
-				return qsTr("yesterday")
+				return qsTr("yesterday") + settingsModel.translationTrigger
 			}
 			else if (Utils.isThisWeek(historyModelItem.dateTime)) {
-				return historyModelItem.dateTime.toLocaleString(Qt.locale(), qsTr("dddd"))
+				return historyModelItem.dateTime.toLocaleString(Qt.locale(), qsTr("dddd")) + settingsModel.translationTrigger
 			}
-			return historyModelItem.dateTime.toLocaleString(Qt.locale(), qsTr("MM/dd/yyyy"))
+			return historyModelItem.dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy")) + settingsModel.translationTrigger
 		}
 	}
 	Text {

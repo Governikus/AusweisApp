@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MsgContext
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgContext.h"
@@ -68,7 +68,7 @@ class test_MsgContext
 			QVERIFY(!ctx.getAuthContext());
 			QVERIFY(!readOnly.getWorkflowContext());
 
-			ctx.setWorkflowContext(QSharedPointer<AuthContext>(new AuthContext(new InternalActivationContext(QUrl("http://www.bla.de")))));
+			ctx.setWorkflowContext(QSharedPointer<AuthContext>(new AuthContext(QSharedPointer<InternalActivationContext>::create(QUrl("http://www.bla.de")))));
 			QVERIFY(readOnly.isActiveWorkflow());
 			QVERIFY(readOnly.getAuthContext());
 			QVERIFY(ctx.getAuthContext());

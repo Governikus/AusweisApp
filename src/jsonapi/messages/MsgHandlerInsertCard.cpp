@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerInsertCard.h"
@@ -17,7 +17,7 @@ MsgHandlerInsertCard::MsgHandlerInsertCard(MsgContext& pContext)
 	const auto& infos = ReaderManager::getInstance().getReaderInfos();
 	for (const auto& entry : infos)
 	{
-		if (entry.getCardType() == CardType::EID_CARD)
+		if (entry.hasEidCard())
 		{
 			setVoid();
 			break;

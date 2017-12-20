@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDetector.h"
@@ -125,7 +125,7 @@ static bool getUintValueFromDeviceRegistryEntry(io_object_t pDevice, CFStringRef
 }
 
 
-static QPair<uint, uint> getDeviceIds(io_object_t pDevice)
+static UsbId getDeviceIds(io_object_t pDevice)
 {
 	uint vendorId = 0x0;
 	uint productId = 0x0;
@@ -134,23 +134,23 @@ static QPair<uint, uint> getDeviceIds(io_object_t pDevice)
 	{
 		qCDebug(card_drivers) << "missing or invalid vendor id";
 
-		return QPair<uint, uint>(0x0, 0x0);
+		return UsbId(0x0, 0x0);
 	}
 
 	if (!getUintValueFromDeviceRegistryEntry(pDevice, CFSTR(PRODUCT_ID), &productId))
 	{
 		qCDebug(card_drivers) << "missing or invalid product id";
 
-		return QPair<uint, uint>(0x0, 0x0);
+		return UsbId(0x0, 0x0);
 	}
 
-	return QPair<uint, uint>(vendorId, productId);
+	return UsbId(vendorId, productId);
 }
 
 
-QVector<QPair<uint, uint> > ReaderDetector::attachedDevIds() const
+QVector<UsbId> ReaderDetector::attachedDevIds() const
 {
-	QVector<QPair<uint, uint> > result;
+	QVector<UsbId> result;
 	mach_port_t myMasterPort = kIOMasterPortDefault;
 	io_iterator_t deviceIterator = 0;
 	io_object_t currentDevice = 0;
@@ -160,19 +160,15 @@ QVector<QPair<uint, uint> > ReaderDetector::attachedDevIds() const
 	{
 		qCWarning(card_drivers) << "creation of device iterator failed, exiting";
 
-		return QVector<QPair<uint, uint> >();
+		return QVector<UsbId>();
 	}
 
 	currentDevice = IOIteratorNext(deviceIterator);
 	while (currentDevice != 0)
 	{
-		QPair<uint, uint> ids = getDeviceIds(currentDevice);
-		if (ids.first != 0 && ids.second != 0)
+		UsbId ids = getDeviceIds(currentDevice);
+		if (ids.getVendorId() != 0 && ids.getProductId() != 0)
 		{
-			const QString vendorId = QString::number(ids.first, 16);
-			const QString productId = QString::number(ids.second, 16);
-			qCDebug(card_drivers) << "found device with vendor id =" << vendorId << "product id =" << productId;
-
 			result += ids;
 		}
 

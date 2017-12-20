@@ -1,16 +1,15 @@
 /*!
- * ReaderManagerPlugIn.h
- *
  * \brief PlugIn to control different kinds of reader managers that will be used in \ref ReaderManager.
  * If you implement a class of this PlugIn you need to register it in \ref ReaderManager, otherwise it won't be used.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "DeviceError.h"
 #include "ReaderManagerPlugInInfo.h"
+#include "RemoteDispatcher.h"
 
 #include <QObject>
 #include <QThread>
@@ -19,6 +18,7 @@ namespace governikus
 {
 
 class Reader;
+class RemoteClient;
 
 class ReaderManagerPlugIn
 	: public QObject
@@ -27,6 +27,11 @@ class ReaderManagerPlugIn
 	ReaderManagerPlugInInfo mInfo;
 
 	protected:
+		bool mScanInProgress;
+		bool mConnectToKnownReaders;
+
+		virtual void onConnectToKnownReadersChanged();
+
 		void setReaderInfoEnabled(bool pEnabled)
 		{
 			if (mInfo.isEnabled() != pEnabled)
@@ -61,7 +66,7 @@ class ReaderManagerPlugIn
 		}
 
 
-		virtual QList<Reader*> getReader() const = 0;
+		virtual QList<Reader*> getReaders() const = 0;
 
 
 		virtual void init()
@@ -75,22 +80,22 @@ class ReaderManagerPlugIn
 		}
 
 
-		virtual void startScan()
-		{
-		}
+		virtual void startScan();
+		virtual void stopScan();
 
+		void setConnectToKnownReaders(bool pConnectToKnownReaders);
 
-		virtual void stopScan()
+		virtual void setRemoteClient(const QSharedPointer<RemoteClient>& pRemoteClient)
 		{
+			Q_UNUSED(pRemoteClient);
 		}
 
 
 	Q_SIGNALS:
 		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
 		void fireReaderAdded(const QString& pReaderName);
-		void fireReaderConnected(const QString& pReaderName);
-		void fireReaderDeviceError(DeviceError pDeviceError);
 		void fireReaderRemoved(const QString& pReaderName);
+		void fireReaderDeviceError(DeviceError pDeviceError);
 		void fireCardInserted(const QString& pReaderName);
 		void fireCardRemoved(const QString& pReaderName);
 		void fireCardRetryCounterChanged(const QString& pReaderName);

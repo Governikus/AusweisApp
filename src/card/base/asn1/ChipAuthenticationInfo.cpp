@@ -1,7 +1,5 @@
 /*!
- * ChipAuthenticationInfo.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ASN1TemplateUtil.h"
@@ -49,15 +47,17 @@ void freeAsn1Object<chipauthenticationinfo_st>(chipauthenticationinfo_st* pObjec
 
 bool ChipAuthenticationInfo::acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier)
 {
+	using namespace KnownOIDs;
+
 	const auto protocol = Asn1ObjectUtil::convertTo(pObjectIdentifier);
-	return protocol == id_CA::DH_3DES_CBC_CBC
-		   || protocol == id_CA::DH_AES_CBC_CMAC_128
-		   || protocol == id_CA::DH_AES_CBC_CMAC_192
-		   || protocol == id_CA::DH_AES_CBC_CMAC_256
-		   || protocol == id_CA::ECDH_3DES_CBC_CBC
-		   || protocol == id_CA::ECDH_AES_CBC_CMAC_128
-		   || protocol == id_CA::ECDH_AES_CBC_CMAC_192
-		   || protocol == id_CA::ECDH_AES_CBC_CMAC_256;
+	return protocol == id_ca::DH_3DES_CBC_CBC
+		   || protocol == id_ca::DH_AES_CBC_CMAC_128
+		   || protocol == id_ca::DH_AES_CBC_CMAC_192
+		   || protocol == id_ca::DH_AES_CBC_CMAC_256
+		   || protocol == id_ca::ECDH_3DES_CBC_CBC
+		   || protocol == id_ca::ECDH_AES_CBC_CMAC_128
+		   || protocol == id_ca::ECDH_AES_CBC_CMAC_192
+		   || protocol == id_ca::ECDH_AES_CBC_CMAC_256;
 }
 
 

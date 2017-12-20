@@ -1,20 +1,19 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/AuthController.h"
+#include "Env.h"
 #include "paos/invoke/InitializeFrameworkResponse.h"
 #include "paos/retrieve/InitializeFramework.h"
 #include "states/StateBuilder.h"
 #include "states/StateGenericSendReceive.h"
-#include "TestAuthContext.h"
 
 #include "MockNetworkManager.h"
+#include "TestAuthContext.h"
+#include "TestFileHelper.h"
 
-#include <QFile>
-#include <QString>
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtTest>
 
 using namespace governikus;
 
@@ -36,12 +35,10 @@ class test_StateGenericSendReceive
 		{
 			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
 
-			QFile tcTokenFile(":/tctoken/ok.xml");
-			QVERIFY(tcTokenFile.open(QIODevice::ReadOnly));
-			QSharedPointer<TcToken> tcToken(new TcToken(tcTokenFile.readAll()));
+			QSharedPointer<TcToken> tcToken(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml")));
 			mAuthContext->setTcToken(tcToken);
 			mNetworkManager = new MockNetworkManager();
-			mAuthContext->setNetworkManager(mNetworkManager.data());
+			Env::set(NetworkManager::staticMetaObject, mNetworkManager.data());
 
 			mState.reset(StateBuilder::createState<StateSendInitializeFrameworkResponse>(mAuthContext));
 			mState->setStateName("StateSendInitializeFrameworkResponse");
@@ -57,7 +54,7 @@ class test_StateGenericSendReceive
 			QSharedPointer<InitializeFrameworkResponse> initializeFrameworkResponse(new InitializeFrameworkResponse());
 			mAuthContext->setInitializeFrameworkResponse(initializeFrameworkResponse);
 
-			QSignalSpy spy(mState.data(), &StateGenericSendReceive::fireError);
+			QSignalSpy spy(mState.data(), &StateGenericSendReceive::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -73,7 +70,7 @@ class test_StateGenericSendReceive
 			QSharedPointer<InitializeFrameworkResponse> initializeFrameworkResponse(new InitializeFrameworkResponse());
 			mAuthContext->setInitializeFrameworkResponse(initializeFrameworkResponse);
 
-			QSignalSpy spy(mState.data(), &StateGenericSendReceive::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateGenericSendReceive::fireContinue);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -105,7 +102,7 @@ class test_StateGenericSendReceive
 			QSharedPointer<InitializeFrameworkResponse> initializeFrameworkResponse(new InitializeFrameworkResponse());
 			mAuthContext->setInitializeFrameworkResponse(initializeFrameworkResponse);
 
-			QSignalSpy spy(mState.data(), &StateGenericSendReceive::fireError);
+			QSignalSpy spy(mState.data(), &StateGenericSendReceive::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();

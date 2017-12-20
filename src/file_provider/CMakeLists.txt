@@ -1,0 +1,3 @@
+ADD_PLATFORM_LIBRARY(AusweisAppFileProvider)
+
+TARGET_LINK_LIBRARIES(AusweisAppFileProvider Qt5::Core AusweisAppSecureStorage AusweisAppNetwork)

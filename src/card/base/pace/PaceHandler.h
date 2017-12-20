@@ -1,9 +1,7 @@
 /*!
- * PaceHandler.h
- *
  * \brief Handler for the PACE protocol. See TR-03110.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -11,9 +9,9 @@
 #include "asn1/PACEInfo.h"
 #include "asn1/SecurityInfos.h"
 #include "CardConnectionWorker.h"
+#include "CardOperationResult.h"
 #include "EnumHelper.h"
 #include "pace/KeyAgreement.h"
-#include "pace/KeyDerivationFunction.h"
 
 #include <QByteArray>
 #include <QSharedPointer>
@@ -31,6 +29,7 @@ class PaceHandler
 		const QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
 		QSharedPointer<KeyAgreement> mKeyAgreement;
 		QSharedPointer<const PACEInfo> mPaceInfo;
+		QByteArray mStatusMseSetAt;
 		QByteArray mIdIcc;
 		QByteArray mEncryptionKey;
 		QByteArray mMacKey;
@@ -51,10 +50,10 @@ class PaceHandler
 
 		/*!
 		 * \brief Transmit the MSE:Set AT command to the card.
-		 * \param pPinId the PIN id to use, e.g. PIN, CAN or PUK
+		 * \param pPasswordId the PACE password id to use, e.g. PIN, CAN or PUK
 		 * \return false on any card errors
 		 */
-		bool transmitMSESetAT(PACE_PIN_ID pPinId);
+		CardReturnCode transmitMSESetAT(PACE_PASSWORD_ID pPasswordId);
 
 		Q_DISABLE_COPY(PaceHandler)
 
@@ -63,11 +62,11 @@ class PaceHandler
 
 		/*!
 		 * \brief Performs the PACE protocol and establishes a PACE channel.
-		 * \param pPinId the PIN id to use, e.g. PIN, CAN or PUK
-		 * \param pPin the PIN value, e.g. "123456"
+		 * \param pPasswordId the PACE password id to use, e.g. PIN, CAN or PUK
+		 * \param pPassword the password value, e.g. "123456"
 		 * \return false on any errors during establishment
 		 */
-		CardReturnCode establishPaceChannel(PACE_PIN_ID pPinId, const QString& pPin);
+		CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QString& pPassword);
 
 		/*!
 		 * \brief The certificate holder authorization template to be supplied to the card. May be empty
@@ -107,6 +106,8 @@ class PaceHandler
 		 * \return the card's compressed ephemeral public key
 		 */
 		const QByteArray& getIdIcc() const;
+
+		const QByteArray& getStatusMseSetAt() const;
 
 		/*!
 		 * The used PACE protocol.

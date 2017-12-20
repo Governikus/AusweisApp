@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -63,7 +63,7 @@ QUrl UrlUtil::addMajorMinor(const QUrl& pOriginUrl, const GlobalStatus& pStatus)
 	q.setQuery(pOriginUrl.query());
 	q.addQueryItem(QStringLiteral("ResultMajor"), major);
 
-	if (result.getMinor() != GlobalStatus::Code::Unknown_Error)
+	if (result.getMinor() != GlobalStatus::Code::No_Error)
 	{
 		QString minor;
 

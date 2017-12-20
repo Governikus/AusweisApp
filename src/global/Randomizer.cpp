@@ -1,9 +1,17 @@
+/*
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 #include "Randomizer.h"
 
 #include "SingletonHelper.h"
 
 #include <chrono>
 #include <openssl/rand.h>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+#include <QRandomGenerator>
+#endif
 
 #ifdef Q_OS_WIN
 	#include <windows.h>
@@ -18,7 +26,7 @@
 		#include <QDebug>
 		#include <QFile>
 	#endif
-	#if defined(Q_OS_IOS) || defined(Q_OS_OSX)
+	#if defined(Q_OS_IOS) || defined(Q_OS_MACOS)
 		#include <Security/SecRandom.h>
 	#endif
 #endif
@@ -43,6 +51,10 @@ template<typename T> QList<T> Randomizer::getEntropy()
 	entropy += std::random_device()();
 	entropy += static_cast<T>(qrand());
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+	entropy += QRandomGenerator::securelySeeded().generate();
+#endif
+
 	UniversalBuffer<T> buffer;
 	if (RAND_bytes(buffer.data, sizeof(buffer.data)))
 	{
@@ -61,7 +73,7 @@ template<typename T> QList<T> Randomizer::getEntropyWin()
 {
 	QList<T> entropy;
 
-#ifdef Q_OS_WIN32
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINRT)
 	UniversalBuffer<T> buffer;
 	HCRYPTPROV provider = 0;
 	if (CryptAcquireContext(&provider, 0, 0, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT | CRYPT_SILENT))
@@ -127,7 +139,7 @@ template<typename T> QList<T> Randomizer::getEntropyApple()
 {
 	QList<T> entropy;
 
-#if defined(Q_OS_IOS) || defined(Q_OS_OSX)
+#if defined(Q_OS_IOS) || defined(Q_OS_MACOS)
 	UniversalBuffer<T> buffer;
 	if (SecRandomCopyBytes(kSecRandomDefault, sizeof(buffer.data), buffer.data) == 0)
 	{
@@ -145,8 +157,14 @@ Randomizer::Randomizer()
 	std::seed_seq seed(entropy.cbegin(), entropy.cend());
 	mGenerator.seed(seed);
 
-	static const int MINUMUM_ENTROPY_SOURCES = 5;
-	mSecureRandom = seed.size() >= MINUMUM_ENTROPY_SOURCES;
+	// We need to seed pseudo random pool of openssl.
+	// yes, OpenSSL is an entropy source, too. But not the only one!
+	UniversalBuffer<std::mt19937::result_type> buffer;
+	buffer.number = mGenerator();
+	RAND_seed(buffer.data, sizeof(std::mt19937::result_type));
+
+	static const int MINIMUM_ENTROPY_SOURCES = 5;
+	mSecureRandom = seed.size() >= MINIMUM_ENTROPY_SOURCES;
 }
 
 

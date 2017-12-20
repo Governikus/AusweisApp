@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref UIPlugInWebSocket
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInWebSocket.h"
@@ -32,10 +32,6 @@ class test_UIPlugInWebSocket
 		{
 			#ifdef Q_OS_WIN
 			QSKIP("Not supported");
-			#endif
-
-			#ifdef Q_OS_BSD4
-			QSKIP("TODO: Platform plugin seems broken");
 			#endif
 		}
 
@@ -124,6 +120,10 @@ class test_UIPlugInWebSocket
 
 		void tryLocalhostAuth()
 		{
+			#ifdef Q_OS_FREEBSD
+			QSKIP("Not supported");
+			#endif
+
 			mHelper->sendMessage("{\"cmd\": \"RUN_AUTH\", \"tcTokenURL\" : \"https://localhost/\"}");
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
 						return pMessage["msg"] == "AUTH";

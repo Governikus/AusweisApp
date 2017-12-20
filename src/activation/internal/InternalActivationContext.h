@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,7 +19,7 @@ class InternalActivationContext
 
 	public:
 		InternalActivationContext(const QUrl& pUrl);
-		virtual ~InternalActivationContext();
+		virtual ~InternalActivationContext() override;
 
 		QUrl getActivationURL() const override;
 		bool sendProcessing() override;

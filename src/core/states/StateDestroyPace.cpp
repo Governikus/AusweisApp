@@ -1,7 +1,5 @@
 /*!
- * StateDestroyPace.cpp
- *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -27,5 +25,5 @@ void StateDestroyPace::run()
 
 void StateDestroyPace::onDestroyPaceDone(QSharedPointer<BaseCardCommand> )
 {
-	Q_EMIT fireSuccess();
+	Q_EMIT fireContinue();
 }

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DestroyPACEChannel.h"
@@ -15,8 +15,8 @@ QByteArray DestroyPACEChannelBuilder::createCommandData()
 
 	QByteArray commandData;
 	commandData += INDEX_DESTROY_PACE_CHANNEL;
-	commandData += char(0x00);
-	commandData += char(0x00);
+	commandData += '\0';
+	commandData += '\0';
 	return commandData;
 }
 

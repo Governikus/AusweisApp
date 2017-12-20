@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerInvalid.h"
@@ -12,7 +12,7 @@ MsgHandlerInvalid::MsgHandlerInvalid(const QString& pError)
 }
 
 
-MsgHandlerInvalid::MsgHandlerInvalid(const QLatin1String& pError)
+MsgHandlerInvalid::MsgHandlerInvalid(const QLatin1String pError)
 	: MsgHandler(MsgType::INVALID, "error", pError)
 {
 }

@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 #include "asn1/ASN1Util.h"
 
 #include "SecureMessagingResponse.h"
@@ -9,10 +13,7 @@
 using namespace governikus;
 
 
-IMPLEMENT_STACK_OF(ASN1_OCTET_STRING)
-
-
-ASN1_OBJECT * Asn1ObjectUtil::parseFrom(const QByteArray &pOidAsText)
+ASN1_OBJECT* Asn1ObjectUtil::parseFrom(const QByteArray& pOidAsText)
 {
 	return OBJ_txt2obj(pOidAsText.constData(), 1);
 }
@@ -36,6 +37,20 @@ QByteArray Asn1ObjectUtil::convertTo(const ASN1_OBJECT* pAsn1Object)
 		return QByteArray();
 	}
 	return QByteArray(buf);
+}
+
+
+QByteArray Asn1ObjectUtil::getValue(const ASN1_OBJECT* pAsn1Object)
+{
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+	return QByteArray(reinterpret_cast<const char*>(pAsn1Object->data), pAsn1Object->length);
+
+#else
+	const size_t len = OBJ_length(pAsn1Object);
+	const unsigned char* data = OBJ_get0_data(pAsn1Object);
+	return QByteArray(reinterpret_cast<const char*>(data), static_cast<int>(len));
+
+#endif
 }
 
 

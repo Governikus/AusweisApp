@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BuildHelper.h"
@@ -18,47 +18,60 @@ const char* BuildHelper::mDateTime = __DATE__ " / " __TIME__;
 
 
 #ifdef Q_OS_ANDROID
-
-int BuildHelper::getVersionCode()
+namespace
 {
-	return getVersionCode(getPackageName());
+QAndroidJniObject getPackageInfo(const QString& pPackageName, int pFlags = 0)
+{
+	QAndroidJniEnvironment env;
+
+	auto context = QtAndroid::androidContext();
+	auto manager = context.callObjectMethod("getPackageManager",
+			"()Landroid/content/pm/PackageManager;");
+
+	if (manager.isValid())
+	{
+		const auto& str = QAndroidJniObject::fromString(pPackageName);
+		return manager.callObjectMethod("getPackageInfo",
+				"(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;",
+				str.object<jstring>(), pFlags);
+	}
+
+	if (env->ExceptionCheck())
+	{
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+
+	return QAndroidJniObject();
 }
 
 
-int BuildHelper::getVersionCode(const QString& pPackageName)
+}
+
+
+int BuildHelper::getVersionCode()
 {
 	static int version_code = -1;
 
 	if (version_code == -1)
 	{
-		QAndroidJniEnvironment env;
-
-		auto context = QtAndroid::androidContext();
-		auto manager = context.callObjectMethod("getPackageManager",
-				"()Landroid/content/pm/PackageManager;");
-
-		if (manager.isValid())
-		{
-			const auto& str = QAndroidJniObject::fromString(pPackageName);
-			auto info = manager.callObjectMethod("getPackageInfo",
-					"(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;",
-					str.object<jstring>(), 0);
-
-			if (info.isValid())
-			{
-				version_code = info.getField<jint>("versionCode");
-			}
-		}
-
-
-		if (env->ExceptionCheck())
-		{
-			env->ExceptionDescribe();
-			env->ExceptionClear();
-		}
+		version_code = getVersionCode(getPackageName());
 	}
 
 	return version_code;
+}
+
+
+int BuildHelper::getVersionCode(const QString& pPackageName)
+{
+	const auto info = getPackageInfo(pPackageName);
+
+	if (info.isValid())
+	{
+		return info.getField<jint>("versionCode");
+	}
+
+	return -1;
 }
 
 

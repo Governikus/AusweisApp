@@ -1,19 +1,16 @@
 /*!
  * \brief Class represents the retrieved PAOS EAC1InputType.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
 #pragma once
 
-#include "asn1/AuthenticatedAuxiliaryData.h"
-#include "asn1/CertificateDescription.h"
 #include "asn1/Chat.h"
 #include "asn1/CVCertificate.h"
 #include "paos/element/ConnectionHandle.h"
 #include "paos/element/Eac1InputType.h"
-#include "paos/ElementDetector.h"
 #include "paos/PaosMessage.h"
 
 #include <QVector>
@@ -53,15 +50,15 @@ class DIDAuthenticateEAC1
 		DIDAuthenticateEAC1();
 		virtual ~DIDAuthenticateEAC1();
 
-		QSharedPointer<AuthenticatedAuxiliaryData> getAuthenticatedAuxiliaryData() const;
+		const QSharedPointer<const AuthenticatedAuxiliaryData>& getAuthenticatedAuxiliaryData() const;
 		const QByteArray& getAuthenticatedAuxiliaryDataAsBinary() const;
-		QSharedPointer<CertificateDescription> getCertificateDescription() const;
+		const QSharedPointer<const CertificateDescription>& getCertificateDescription() const;
 		const QByteArray& getCertificateDescriptionAsBinary() const;
 		const ConnectionHandle& getConnectionHandle() const;
-		const QVector<QSharedPointer<CVCertificate> >& getCvCertificates() const;
+		const QVector<QSharedPointer<const CVCertificate> >& getCvCertificates() const;
 		const QString& getDidName() const;
-		const QSharedPointer<CHAT>& getOptionalChat() const;
-		const QSharedPointer<CHAT>& getRequiredChat() const;
+		const QSharedPointer<const CHAT>& getOptionalChat() const;
+		const QSharedPointer<const CHAT>& getRequiredChat() const;
 		const QString& getTransactionInfo() const;
 };
 

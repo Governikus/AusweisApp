@@ -1,7 +1,7 @@
 /*!
  * \brief Helper for some file functions.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,7 +18,7 @@ class TestFileHelper
 	public:
 		static QByteArray readFile(const QString& pFileName);
 		static void createTranslations(const QString& pTranslationDir);
-		static bool containsLog(const QSignalSpy& pSpy, const QLatin1String& pStr);
+		static bool containsLog(const QSignalSpy& pSpy, const QLatin1String pStr);
 };
 
 } /* namespace governikus */

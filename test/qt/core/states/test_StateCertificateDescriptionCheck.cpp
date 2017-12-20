@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCertificateDescriptionCheck.h"
@@ -53,7 +53,7 @@ class test_StateCertificateDescriptionCheck
 			mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCertificateDescription = QSharedPointer<CertificateDescription>(new CertificateDescription());
 			mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCertificateDescriptionAsBinary.clear();
 
-			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireError);
+			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireAbort);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
@@ -63,10 +63,10 @@ class test_StateCertificateDescriptionCheck
 
 		void noSubjectUrl()
 		{
+			const auto& desc = qSharedPointerConstCast<CertificateDescription>(mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCertificateDescription);
+			desc->setSubjectUrl(QString());
 
-			mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCertificateDescription->setSubjectUrl(QString());
-
-			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireError);
+			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireAbort);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
@@ -79,7 +79,7 @@ class test_StateCertificateDescriptionCheck
 			mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCertificateDescription = QSharedPointer<CertificateDescription>(new CertificateDescription());
 			mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCertificateDescriptionAsBinary = QByteArray::fromHex("1234567890abcdef");
 
-			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireError);
+			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireAbort);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
@@ -89,7 +89,7 @@ class test_StateCertificateDescriptionCheck
 
 		void matchingDescription()
 		{
-			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireContinue);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
@@ -101,7 +101,7 @@ class test_StateCertificateDescriptionCheck
 		{
 			mAuthContext->setTcTokenUrl(QUrl("https://dev-demo.governikus-eid.de:8442/Autent-DemoApplication/RequestServlet;jsessionid=14w5aKuENyd2D4ZsMmuaeX2g"));
 
-			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireError);
+			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireAbort);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 

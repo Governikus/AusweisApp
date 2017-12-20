@@ -1,0 +1,123 @@
+From 3885257e655cefd1f8b18247aff76020c75379e1 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Fri, 24 Mar 2017 11:20:14 +0100
+Subject: [PATCH] Register additional meta types
+
+Register QLowEnergyCharacteristic and QLowEnergyDescriptor
+as meta types because they are used in signals.
+
+[ChangeLog][QtBluetooth] Register QLowEnergyCharacteristic
+and QLowEnergyDescriptor as meta types. It is therefore
+necessary to declare them as meta types in the header files.
+This commit will cause conflicts with existing meta type
+declarations in applications using Qt. These declarations
+need to be removed.
+
+Change-Id: I18f33b1b2f159cffd6efbacc37178286b86a06e0
+Reviewed-by: Alex Blasche <alexander.blasche@qt.io>
+---
+ src/bluetooth/osx/osxbtcentralmanager.mm                             | 2 --
+ src/bluetooth/qlowenergycharacteristic.h                             | 2 ++
+ src/bluetooth/qlowenergycontroller_p.h                               | 5 -----
+ src/bluetooth/qlowenergydescriptor.h                                 | 2 ++
+ src/bluetooth/qlowenergyservice.cpp                                  | 2 ++
+ .../test/tst_qlowenergycontroller-gattserver.cpp                     | 4 ----
+ tests/auto/qlowenergycontroller/tst_qlowenergycontroller.cpp         | 3 ---
+ 7 files changed, 6 insertions(+), 14 deletions(-)
+
+diff --git x/qtconnectivity/src/bluetooth/osx/osxbtcentralmanager.mm y/qtconnectivity/src/bluetooth/osx/osxbtcentralmanager.mm
+index ec046d1b..70473f1f 100644
+--- x/qtconnectivity/src/bluetooth/osx/osxbtcentralmanager.mm
++++ y/qtconnectivity/src/bluetooth/osx/osxbtcentralmanager.mm
+@@ -48,8 +48,6 @@
+ #include <algorithm>
+ #include <limits>
+ 
+-Q_DECLARE_METATYPE(QLowEnergyCharacteristic)
+-Q_DECLARE_METATYPE(QLowEnergyDescriptor)
+ Q_DECLARE_METATYPE(QLowEnergyHandle)
+ 
+ QT_BEGIN_NAMESPACE
+diff --git x/qtconnectivity/src/bluetooth/qlowenergycharacteristic.h y/qtconnectivity/src/bluetooth/qlowenergycharacteristic.h
+index b991e9a2..154c9936 100644
+--- x/qtconnectivity/src/bluetooth/qlowenergycharacteristic.h
++++ y/qtconnectivity/src/bluetooth/qlowenergycharacteristic.h
+@@ -107,4 +107,6 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QLowEnergyCharacteristic::PropertyTypes)
+ 
+ QT_END_NAMESPACE
+ 
++Q_DECLARE_METATYPE(QLowEnergyCharacteristic)
++
+ #endif // QLOWENERGYCHARACTERISTIC_H
+diff --git x/qtconnectivity/src/bluetooth/qlowenergycontroller_p.h y/qtconnectivity/src/bluetooth/qlowenergycontroller_p.h
+index b92716e9..6e866144 100644
+--- x/qtconnectivity/src/bluetooth/qlowenergycontroller_p.h
++++ y/qtconnectivity/src/bluetooth/qlowenergycontroller_p.h
+@@ -497,11 +497,6 @@ Q_DECLARE_TYPEINFO(QLowEnergyControllerPrivate::Attribute, Q_MOVABLE_TYPE);
+ 
+ QT_END_NAMESPACE
+ 
+-#ifdef QT_WINRT_BLUETOOTH
+-Q_DECLARE_METATYPE(QLowEnergyCharacteristic)
+-Q_DECLARE_METATYPE(QLowEnergyDescriptor)
+-#endif // QT_WINRT_BLUETOOTH
+-
+ #endif // QT_OSX_BLUETOOTH || QT_IOS_BLUETOOTH
+ 
+ #endif // QLOWENERGYCONTROLLERPRIVATE_P_H
+diff --git x/qtconnectivity/src/bluetooth/qlowenergydescriptor.h y/qtconnectivity/src/bluetooth/qlowenergydescriptor.h
+index 1dfe1c35..9e71fc56 100644
+--- x/qtconnectivity/src/bluetooth/qlowenergydescriptor.h
++++ y/qtconnectivity/src/bluetooth/qlowenergydescriptor.h
+@@ -89,4 +89,6 @@ protected:
+ 
+ QT_END_NAMESPACE
+ 
++Q_DECLARE_METATYPE(QLowEnergyDescriptor)
++
+ #endif // QLOWENERGYDESCRIPTOR_H
+diff --git x/qtconnectivity/src/bluetooth/qlowenergyservice.cpp y/qtconnectivity/src/bluetooth/qlowenergyservice.cpp
+index 6e33c565..9d3129fd 100644
+--- x/qtconnectivity/src/bluetooth/qlowenergyservice.cpp
++++ y/qtconnectivity/src/bluetooth/qlowenergyservice.cpp
+@@ -380,6 +380,8 @@ QLowEnergyService::QLowEnergyService(QSharedPointer<QLowEnergyServicePrivate> p,
+     qRegisterMetaType<QLowEnergyService::ServiceError>();
+     qRegisterMetaType<QLowEnergyService::ServiceType>();
+     qRegisterMetaType<QLowEnergyService::WriteMode>();
++    qRegisterMetaType<QLowEnergyCharacteristic>();
++    qRegisterMetaType<QLowEnergyDescriptor>();
+ 
+     connect(p.data(), SIGNAL(error(QLowEnergyService::ServiceError)),
+             this, SIGNAL(error(QLowEnergyService::ServiceError)));
+diff --git x/qtconnectivity/tests/auto/qlowenergycontroller-gattserver/test/tst_qlowenergycontroller-gattserver.cpp y/qtconnectivity/tests/auto/qlowenergycontroller-gattserver/test/tst_qlowenergycontroller-gattserver.cpp
+index 3df27d92..e01457eb 100644
+--- x/qtconnectivity/tests/auto/qlowenergycontroller-gattserver/test/tst_qlowenergycontroller-gattserver.cpp
++++ y/qtconnectivity/tests/auto/qlowenergycontroller-gattserver/test/tst_qlowenergycontroller-gattserver.cpp
+@@ -243,10 +243,6 @@ void TestQLowEnergyControllerGattServer::advertisedData()
+     QVERIFY(m_serverInfo.serviceUuids().contains(QBluetoothUuid(quint16(0x2000))));
+ }
+ 
+-// TODO: Why on earth is this not in the library???
+-Q_DECLARE_METATYPE(QLowEnergyCharacteristic)
+-Q_DECLARE_METATYPE(QLowEnergyDescriptor)
+-
+ void TestQLowEnergyControllerGattServer::serverCommunication()
+ {
+     qRegisterMetaType<QLowEnergyCharacteristic>();
+diff --git x/qtconnectivity/tests/auto/qlowenergycontroller/tst_qlowenergycontroller.cpp y/qtconnectivity/tests/auto/qlowenergycontroller/tst_qlowenergycontroller.cpp
+index 7b02dbcd..c6fd83e6 100644
+--- x/qtconnectivity/tests/auto/qlowenergycontroller/tst_qlowenergycontroller.cpp
++++ y/qtconnectivity/tests/auto/qlowenergycontroller/tst_qlowenergycontroller.cpp
+@@ -91,9 +91,6 @@ private:
+     QList<QBluetoothUuid> foundServices;
+ };
+ 
+-Q_DECLARE_METATYPE(QLowEnergyCharacteristic)
+-Q_DECLARE_METATYPE(QLowEnergyDescriptor)
+-
+ tst_QLowEnergyController::tst_QLowEnergyController()
+ {
+     qRegisterMetaType<QLowEnergyCharacteristic>();
+-- 
+2.14.2
+

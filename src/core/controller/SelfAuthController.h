@@ -1,9 +1,7 @@
 /*!
- * SelfAuthController.h
- *
  * \brief Controller for the self authentication process.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -13,7 +11,7 @@
 namespace governikus
 {
 
-class SelfAuthenticationContext;
+class SelfAuthContext;
 
 class SelfAuthController
 	: public WorkflowController
@@ -21,7 +19,7 @@ class SelfAuthController
 	Q_OBJECT
 
 	public:
-		SelfAuthController(QSharedPointer<SelfAuthenticationContext> pContext);
+		SelfAuthController(QSharedPointer<SelfAuthContext> pContext);
 		virtual ~SelfAuthController();
 };
 

@@ -1,9 +1,7 @@
 /*!
- * FinalState.h
- *
  * \brief A final state which blocks the state machine before termination.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

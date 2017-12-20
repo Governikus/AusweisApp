@@ -1,0 +1,8 @@
+module ProviderInfo
+ProviderInfoSection 1.0 ProviderInfoSection.qml
+ProviderHeader 1.0 ProviderHeader.qml
+ProviderModelItem 1.0 ProviderModelItem.qml
+ProviderContactTab 1.0 ProviderContactTab.qml
+ProviderDetailView 1.0 ProviderDetailView.qml
+ProviderDetailView_tablet 1.0 ProviderDetailView_tablet.qml
+ProviderViewDelegate 1.0 ProviderViewDelegate.qml

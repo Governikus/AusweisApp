@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref StatePreVerification
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateProcessCertificatesFromEac2.h"
@@ -37,7 +37,7 @@ class test_StateProcessCertificatesFromEac2
 			QSharedPointer<DIDAuthenticateEAC2> didAuthEac2(static_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"))));
 			mAuthContext->setDidAuthenticateEac2(didAuthEac2);
 			EstablishPACEChannelOutput paceOutput;
-			paceOutput.parse(QByteArray::fromHex(TestFileHelper::readFile(":/card/EstablishPACEChannelOutput.hex")), PACE_PIN_ID::PACE_PIN);
+			paceOutput.parse(QByteArray::fromHex(TestFileHelper::readFile(":/card/EstablishPACEChannelOutput.hex")), PACE_PASSWORD_ID::PACE_PIN);
 			mAuthContext->setPaceOutputData(paceOutput);
 
 			mState.reset(new StateProcessCertificatesFromEac2(mAuthContext));
@@ -57,7 +57,7 @@ class test_StateProcessCertificatesFromEac2
 		{
 			mAuthContext->initCvcChainBuilder();
 
-			QSignalSpy spy(mState.data(), &StateProcessCertificatesFromEac2::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateProcessCertificatesFromEac2::fireContinue);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
@@ -73,7 +73,7 @@ class test_StateProcessCertificatesFromEac2
 			mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.removeAt(0);
 			mAuthContext->initCvcChainBuilder();
 
-			QSignalSpy spy(mState.data(), &StateProcessCertificatesFromEac2::fireError);
+			QSignalSpy spy(mState.data(), &StateProcessCertificatesFromEac2::fireAbort);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
@@ -91,7 +91,7 @@ class test_StateProcessCertificatesFromEac2
 			mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.removeAt(1);
 			mAuthContext->initCvcChainBuilder();
 
-			QSignalSpy spy(mState.data(), &StateProcessCertificatesFromEac2::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateProcessCertificatesFromEac2::fireContinue);
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 

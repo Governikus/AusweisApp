@@ -1,12 +1,12 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "CardInfo.h"
 #include "EnumHelper.h"
-#include "MetaTypeHelper.h"
+#include "ReaderConfigurationInfo.h"
 #include "ReaderManagerPlugInInfo.h"
 #include "SmartCardDefinitions.h"
 
@@ -14,39 +14,33 @@
 
 namespace governikus
 {
-
-defineEnumType(ExtendedLengthApduSupportCode,
-		UNKNOWN = -1,
-		NOT_SUPPORTED = 0,
-		SUPPORTED = 1)
-
 class ReaderInfo
 {
 	friend class Reader;
 
 	ReaderManagerPlugInType mPlugInType;
 	QString mName;
-	ReaderType mReaderType;
+	ReaderConfigurationInfo mReaderConfigurationInfo;
 	bool mBasicReader;
 	CardInfo mCardInfo;
 	bool mConnected;
-	ExtendedLengthApduSupportCode mExtendedLengthApduSupportCode;
+	int mMaxApduLength;
 
 	public:
-		ReaderInfo(ReaderManagerPlugInType pPlugInType = ReaderManagerPlugInType::UNKNOWN,
-				const QString& pName = QString(),
-				ReaderType pReaderType = ReaderType::UNKNOWN,
+		ReaderInfo(const QString& pName = QString(),
+				ReaderManagerPlugInType pPlugInType = ReaderManagerPlugInType::UNKNOWN,
 				const CardInfo& pCardInfo = CardInfo(CardType::NONE));
-
-		bool isValid() const
-		{
-			return !mName.isNull();
-		}
 
 
 		ReaderManagerPlugInType getPlugInType() const
 		{
 			return mPlugInType;
+		}
+
+
+		const ReaderConfigurationInfo& getReaderConfigurationInfo() const
+		{
+			return mReaderConfigurationInfo;
 		}
 
 
@@ -56,15 +50,33 @@ class ReaderInfo
 		}
 
 
-		CardType getCardType() const
+		QString getCardTypeString() const
 		{
-			return mCardInfo.getCardType();
+			return mCardInfo.getCardTypeString();
+		}
+
+
+		bool hasCard() const
+		{
+			return mCardInfo.isAvailable();
+		}
+
+
+		bool hasEidCard() const
+		{
+			return mCardInfo.isEid();
 		}
 
 
 		int getRetryCounter() const
 		{
 			return mCardInfo.getRetryCounter();
+		}
+
+
+		bool isRetryCounterDetermined() const
+		{
+			return mCardInfo.isRetryCounterDetermined();
 		}
 
 
@@ -92,12 +104,6 @@ class ReaderInfo
 		}
 
 
-		ReaderType getReaderType() const
-		{
-			return mReaderType;
-		}
-
-
 		void setBasicReader(bool pIsBasicReader)
 		{
 			mBasicReader = pIsBasicReader;
@@ -122,20 +128,24 @@ class ReaderInfo
 		}
 
 
-		void setExtendedLengthApduSupportCode(ExtendedLengthApduSupportCode pExtendedLengthApduSupportCode)
+		void setMaxApduLength(int pMaxApduLength)
 		{
-			mExtendedLengthApduSupportCode = pExtendedLengthApduSupportCode;
+			mMaxApduLength = pMaxApduLength;
 		}
 
 
-		ExtendedLengthApduSupportCode getExtendedLengthApduSupportCode() const
+		int getMaxApduLength() const
 		{
-			return mExtendedLengthApduSupportCode;
+			return mMaxApduLength;
+		}
+
+
+		bool sufficientApduLength() const
+		{
+			return mMaxApduLength == 0 || mMaxApduLength >= 500;
 		}
 
 
 };
 
 } /* namespace governikus */
-
-REGISTER_META_TYPE(ReaderInfo)

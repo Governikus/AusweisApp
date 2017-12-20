@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref StartPaos
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/invoke/StartPaos.h"
@@ -60,7 +60,7 @@ class test_StartPaos
 
 			QVERIFY(elem.contains("<Major>1</Major>"));
 			QVERIFY(elem.contains("<Minor>1</Minor>"));
-			QVERIFY(elem.contains("<Subminor>4</Subminor>"));
+			QVERIFY(elem.contains("<Subminor>5</Subminor>"));
 		}
 
 
@@ -92,7 +92,7 @@ class test_StartPaos
 			elem.setMessageId("dummy");
 			QCOMPARE(getValue(elem.createSupportedAPIVersionsElement(), "Major"), QString("1"));
 			QCOMPARE(getValue(elem.createSupportedAPIVersionsElement(), "Minor"), QString("1"));
-			QCOMPARE(getValue(elem.createSupportedAPIVersionsElement(), "Subminor"), QString("4"));
+			QCOMPARE(getValue(elem.createSupportedAPIVersionsElement(), "Subminor"), QString("5"));
 		}
 
 

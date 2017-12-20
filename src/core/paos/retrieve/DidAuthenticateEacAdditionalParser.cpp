@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/retrieve/DidAuthenticateEacAdditionalParser.h"
@@ -72,14 +72,13 @@ PaosMessage* DidAuthenticateEacAdditionalParser::parseMessage()
 
 QString DidAuthenticateEacAdditionalParser::parseEacAdditionalInputType()
 {
-
 	QString signature;
 	while (readNextStartElement())
 	{
 		qCDebug(paos) << mXmlReader->name();
 		if (mXmlReader->name() == QLatin1String("Signature"))
 		{
-			readUniqueElementText(signature);
+			Q_UNUSED(readUniqueElementText(signature))
 		}
 		else
 		{

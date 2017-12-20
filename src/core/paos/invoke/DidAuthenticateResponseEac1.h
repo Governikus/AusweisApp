@@ -1,12 +1,11 @@
 /*!
  * \brief Generate information for DIDAuthenticateResponseEAC1.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include "EstablishPACEChannel.h"
 #include "paos/ResponseType.h"
 #include "PaosCreator.h"
 
@@ -15,6 +14,9 @@
 
 namespace governikus
 {
+
+class EstablishPACEChannelOutput;
+
 
 class DIDAuthenticateResponseEAC1
 	: public PaosCreator
@@ -30,14 +32,14 @@ class DIDAuthenticateResponseEAC1
 		QDomElement createDIDAuthenticateResponseEAC1Element();
 		QDomElement createAuthenticationProtocolDataElement();
 
-		virtual QDomElement getDocumentStructure();
+		virtual QDomElement getDocumentStructure() override;
 		virtual Result getResult() const;
 
 		Q_DISABLE_COPY(DIDAuthenticateResponseEAC1)
 
 	public:
 		DIDAuthenticateResponseEAC1();
-		virtual ~DIDAuthenticateResponseEAC1();
+		virtual ~DIDAuthenticateResponseEAC1() override;
 
 
 		const QByteArray& getCertificateHolderAuthorizationTemplate() const;

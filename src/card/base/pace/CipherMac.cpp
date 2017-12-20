@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/KnownOIDs.h"
@@ -7,6 +7,7 @@
 
 #include <openssl/evp.h>
 #include <QLoggingCategory>
+#include <QVarLengthArray>
 
 
 using namespace governikus;
@@ -104,26 +105,29 @@ QByteArray CipherMac::generate(const QByteArray& pMessage)
 		return QByteArray();
 	}
 
-	if (mac_len <= 0)
-	{
-		qCCritical(card) << "Got negative mac_len" << mac_len;
-		Q_ASSERT(mac_len > 0);
-		return QByteArray();
-	}
 	if (mac_len > INT_MAX)
 	{
 		qCCritical(card) << "mac_len out of range" << mac_len;
 		Q_ASSERT(mac_len <= INT_MAX);
 		return QByteArray();
 	}
-	QVector<uchar> mac(static_cast<int>(mac_len));
+
+	const int mac_int_len = static_cast<int>(mac_len);
+	if (mac_int_len <= 0)
+	{
+		qCCritical(card) << "Got negative mac_len" << mac_int_len;
+		Q_ASSERT(mac_int_len > 0);
+		return QByteArray();
+	}
+
+	QVarLengthArray<uchar> mac(mac_int_len);
 	if (!CMAC_Final(mCtx, mac.data(), &mac_len))
 	{
 		qCCritical(card) << "Error on CMAC_Final";
 		return QByteArray();
 	}
 
-	QByteArray value(reinterpret_cast<const char*>(mac.data()), static_cast<int>(mac_len));
+	QByteArray value(reinterpret_cast<const char*>(mac.data()), mac_int_len);
 
 	// Use only 8 bytes, according to TR 03110 Part 3, A.2.4.2, E.2.2.2
 	return value.left(8);

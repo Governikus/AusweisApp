@@ -1,10 +1,10 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockHttpServer.h"
 
-#include "EnvHolder.h"
+#include "Env.h"
 
 using namespace governikus;
 
@@ -13,7 +13,7 @@ MockHttpServer::MockHttpServer()
 	, mServer()
 {
 	HttpServer::cPort = 0;
-	mServer = EnvHolder::shared<HttpServer>();
+	mServer = Env::getShared<HttpServer>();
 	QVERIFY(mServer);
 	QVERIFY(mServer->isListening());
 	connect(mServer.data(), &HttpServer::fireNewHttpRequest, this, &MockHttpServer::onNewHttpRequest);

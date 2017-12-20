@@ -1,16 +1,16 @@
 /*!
- * StateCheckRefreshAddress.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCheckRefreshAddress.h"
 
+#include "AppSettings.h"
 #include "CertificateChecker.h"
+#include "Env.h"
 #include "HttpStatusCode.h"
 #include "NetworkManager.h"
 #include "StateRedirectBrowser.h"
-#include "TlsConfiguration.h"
+#include "TlsChecker.h"
 #include "UrlUtil.h"
 
 #include <QNetworkReply>
@@ -23,6 +23,7 @@
 using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(developermode)
+Q_DECLARE_LOGGING_CATEGORY(network)
 
 
 StateCheckRefreshAddress::StateCheckRefreshAddress(const QSharedPointer<WorkflowContext>& pContext)
@@ -30,7 +31,6 @@ StateCheckRefreshAddress::StateCheckRefreshAddress(const QSharedPointer<Workflow
 	, mReply(nullptr)
 	, mUrl()
 	, mSubjectUrl()
-	, mNetworkManager()
 	, mCertificateFetched(false)
 {
 }
@@ -38,19 +38,29 @@ StateCheckRefreshAddress::StateCheckRefreshAddress(const QSharedPointer<Workflow
 
 void StateCheckRefreshAddress::run()
 {
-	if (!getContext()->getTcToken())
+	const auto tcToken = getContext()->getTcToken();
+
+	if (!tcToken)
 	{
 		qDebug() << "Invalid TCToken";
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 		return;
 	}
 
-	mUrl = getContext()->getTcToken()->getRefreshAddress();
+	if (tcToken->usePsk())
+	{
+		// When the tcToken provided a psk, it is necessary to clear
+		// all connections to force new connections without psk settings
+		// after we finished the authentication communication.
+		Env::getSingleton<NetworkManager>()->clearConnections();
+	}
+
+	mUrl = tcToken->getRefreshAddress();
 	auto refreshAddrError = QStringLiteral("Invalid RefreshAddress: %1").arg(mUrl.toString());
 	if (!mUrl.isValid())
 	{
 		qDebug() << refreshAddrError;
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 		return;
 	}
 	if (mUrl.scheme() != QLatin1String("https"))
@@ -62,7 +72,7 @@ void StateCheckRefreshAddress::run()
 		else
 		{
 			qDebug() << refreshAddrError;
-			Q_EMIT fireSuccess();
+			Q_EMIT fireContinue();
 			return;
 		}
 	}
@@ -122,7 +132,7 @@ void StateCheckRefreshAddress::sendGetRequest()
 
 	qDebug() << "Send GET request to URL: " << mUrl.toString();
 	QNetworkRequest request(mUrl);
-	mReply = getContext()->getNetworkManager().get(request);
+	mReply = Env::getSingleton<NetworkManager>()->get(request);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDone);
 	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateCheckRefreshAddress::onNetworkReply);
@@ -131,7 +141,7 @@ void StateCheckRefreshAddress::sendGetRequest()
 
 void StateCheckRefreshAddress::onSslErrors(const QList<QSslError>& pErrors)
 {
-	if (TlsConfiguration::containsFatalError(mReply, pErrors))
+	if (TlsChecker::containsFatalError(mReply, pErrors))
 	{
 		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Ssl_Establishment_Error));
 	}
@@ -141,14 +151,17 @@ void StateCheckRefreshAddress::onSslErrors(const QList<QSslError>& pErrors)
 void StateCheckRefreshAddress::reportCommunicationError(const GlobalStatus& pStatus)
 {
 	qCritical() << pStatus;
-	setStatus(pStatus);
-	Q_EMIT fireError();
+	updateStatus(pStatus);
+	Q_EMIT fireAbort();
 }
 
 
 void StateCheckRefreshAddress::onSslHandshakeDone()
 {
-	if (!checkSslConnectionAndSaveCertificate(mReply->sslConfiguration()))
+	const auto& cfg = mReply->sslConfiguration();
+	TlsChecker::logSslConfig(cfg, qInfo(network));
+
+	if (!checkSslConnectionAndSaveCertificate(cfg))
 	{
 		// checkAndSaveCertificate already set the error
 		mReply->abort();
@@ -158,12 +171,17 @@ void StateCheckRefreshAddress::onSslHandshakeDone()
 
 bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration)
 {
-	qDebug() << "Used session cipher" << pSslConfiguration.sessionCipher();
-	qDebug() << "Used session protocol:" << pSslConfiguration.sessionProtocol();
-	qDebug() << "Used server certificate:" << pSslConfiguration.peerCertificate();
-	qDebug() << "Used ephemeral server key:" << pSslConfiguration.ephemeralServerKey();
+	const QSharedPointer<AuthContext>& context = getContext();
+	Q_ASSERT(!context.isNull());
 
-	switch (CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), mUrl, getContext()))
+	std::function<void(const QUrl&, const QSslCertificate&)> saveCertificateFunc = [&]
+				(const QUrl& pUrl, const QSslCertificate& pCertificate)
+			{
+				mVerifiedRefreshUrlHosts += pUrl;
+				context->addCertificateData(pUrl, pCertificate);
+			};
+
+	switch (CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), mUrl, context->getDidAuthenticateEac1(), context->getDvCvc(), saveCertificateFunc))
 	{
 		case CertificateChecker::CertificateStatus::Good:
 			break;
@@ -177,9 +195,9 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 			return false;
 	}
 
-	if (!CertificateChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
+	if (!TlsChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
-		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length));
+		reportCommunicationError(GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length);
 		return false;
 	}
 
@@ -192,12 +210,20 @@ void StateCheckRefreshAddress::onNetworkReply()
 	int statusCode = mReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 	QUrl redirectUrl = mReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
 	qDebug() << "Status Code: " << statusCode << " | redirect URL: " << redirectUrl;
+	for (const auto& header : mReply->rawHeaderPairs())
+	{
+		qCDebug(network).nospace() << "Header | " << header.first << ": " << header.second;
+	}
 
 	if (mReply->error() != QNetworkReply::NoError)
 	{
 		qCritical() << "An error occured: " << mReply->errorString();
 		switch (NetworkManager::toNetworkError(mReply.data()))
 		{
+			case NetworkManager::NetworkError::ServiceUnavailable:
+				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_ServiceUnavailable));
+				break;
+
 			case NetworkManager::NetworkError::TimeOut:
 				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_TimeOut));
 				break;
@@ -285,22 +311,22 @@ void StateCheckRefreshAddress::fetchServerCertificate()
 	 *
 	 * But keep attention: ONLY IF THE SERVER CERTIFICATE WAS COLLECTED DURING DETERMINATION OF THE REFRESH URL *NOT* DURING DETERMINATION OF THE TCTOKEN.
 	 */
-
-	//	if (getContext()->containsCertificateFor(mUrl))
-	//	{
-	//		qDebug() << "SSL certificate already collected for" << mUrl;
-	//		doneSuccess();
-	//		return;
-	//	}
+	if (mVerifiedRefreshUrlHosts.contains(mUrl))
+	{
+		qDebug() << "SSL certificate already collected for" << mUrl;
+		doneSuccess();
+		return;
+	}
 
 	qDebug() << "Fetch TLS certificate for URL" << mUrl;
 	QNetworkRequest request(mUrl);
 
-	// use a separate NetworkManager to ensure a fresh connection is established and the encrypted signal is emitted,
-	// see Qt documentation QNetworkReply::encrypted():
+	// Clear all connections to ensure a fresh connection is established and the
+	// encrypted signal is emitted, see Qt documentation QNetworkReply::encrypted():
 	//
 	// "...This means that you are only guaranteed to receive this signal for the first connection to a site in the lifespan of the QNetworkAccessManager."
-	mReply = mNetworkManager.get(request);
+	Env::getSingleton<NetworkManager>()->clearConnections();
+	mReply = Env::getSingleton<NetworkManager>()->get(request);
 
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDoneFetchingServerCertificate);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);
@@ -310,7 +336,10 @@ void StateCheckRefreshAddress::fetchServerCertificate()
 
 void StateCheckRefreshAddress::onSslHandshakeDoneFetchingServerCertificate()
 {
-	if (checkSslConnectionAndSaveCertificate(mReply->sslConfiguration()))
+	const auto& cfg = mReply->sslConfiguration();
+	TlsChecker::logSslConfig(cfg, qInfo(network));
+
+	if (checkSslConnectionAndSaveCertificate(cfg))
 	{
 		doneSuccess();
 	}
@@ -328,8 +357,7 @@ void StateCheckRefreshAddress::doneSuccess()
 {
 	getContext()->setRefreshUrl(mUrl);
 	qDebug() << "Determined RefreshUrl: " << mUrl;
-
-	Q_EMIT fireSuccess();
+	Q_EMIT fireContinue();
 }
 
 

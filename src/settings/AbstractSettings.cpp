@@ -1,17 +1,55 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
 #include "AbstractSettings.h"
 
 #include <QCoreApplication>
+#ifdef Q_OS_MACOS
+	#include <QFileInfo>
+#endif
+#ifdef Q_OS_ANDROID
+	#include <QtAndroid>
+#endif
 
 using namespace governikus;
 
 #ifndef QT_NO_DEBUG
 QSharedPointer<QTemporaryDir> AbstractSettings::mTestDir;
 #endif
+
+void AbstractSettings::createLegacyFileMapping()
+{
+#ifdef Q_OS_MACOS
+	static bool checked = false;
+	if (checked)
+	{
+		return;
+	}
+
+	QFileInfo oldInfo(QSettings(QCoreApplication::organizationName(), QCoreApplication::applicationName()).fileName());
+	oldInfo.setCaching(false);
+	QFileInfo newInfo(QSettings().fileName());
+	newInfo.setCaching(false);
+
+	if (!oldInfo.isSymLink())
+	{
+		if (oldInfo.exists() && !newInfo.exists())
+		{
+			QFile(oldInfo.filePath()).rename(newInfo.filePath());
+		}
+
+		if (!oldInfo.exists())
+		{
+			QFile(newInfo.filePath()).link(oldInfo.filePath());
+		}
+	}
+
+	checked = true;
+#endif
+}
+
 
 AbstractSettings::AbstractSettings()
 {
@@ -25,6 +63,7 @@ AbstractSettings::~AbstractSettings()
 
 QSharedPointer<QSettings> AbstractSettings::getStore()
 {
+	createLegacyFileMapping();
 #ifndef QT_NO_DEBUG
 	if (QCoreApplication::applicationName().startsWith(QLatin1String("Test")))
 	{
@@ -37,24 +76,17 @@ QSharedPointer<QSettings> AbstractSettings::getStore()
 		return QSharedPointer<QSettings>(new QSettings(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::organizationName(), QCoreApplication::applicationName()));
 	}
 #endif
-	return QSharedPointer<QSettings>(new QSettings(QCoreApplication::organizationName(), QCoreApplication::applicationName()));
+	return QSharedPointer<QSettings>(new QSettings());
 }
 
 
-void AbstractSettings::update(const AbstractSettings&)
+bool AbstractSettings::appIsBackgroundService() const
 {
-	Q_ASSERT_X(false, "update", "method should be overridden by subclass");
-}
-
-
-QVariant AbstractSettings::getSettingsValue(const QSharedPointer<QSettings>& pSettings, const QString& key)
-{
-	if (pSettings)
+#ifdef Q_OS_ANDROID
+	if (QtAndroid::androidService().isValid())
 	{
-		return pSettings->contains(key) ? pSettings->value(key) : pSettings->value(key.toLower());
+		return true;
 	}
-	else
-	{
-		return QVariant();
-	}
+#endif
+	return false;
 }

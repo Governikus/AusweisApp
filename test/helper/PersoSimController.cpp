@@ -1,172 +1,127 @@
 /*!
- * PersoSimController.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PersoSimController.h"
 
-#include <signal.h>
+#include <QHostAddress>
+#include <QThread>
 
-#include <QEventLoop>
-
-#include "testMacros.h"
-
-
-using governikus::PersoSimController;
-
-
-static const char* const sPersoSimPrompt = "PersoSim commandline: ";
-
-PersoSimController* PersoSimController::sActiveController = nullptr;
-bool PersoSimController::sAbortSignalHandlerInstalled = false;
+#ifdef PERSOSIM_EXECUTABLE
+	#define PERSOSIM_TESTS_ENABLED
+#else
+	#define PERSOSIM_EXECUTABLE ""
+#endif
 
 
-// We very much want to clean up the active PersoSimController -- since
-// otherwise the PersoSim process keeps running -- so we use a global
-// destructor to destroy it.
-struct CleanupHelper
-{
-	~CleanupHelper()
-	{
-		PersoSimController::cleanUpActiveController();
-	}
-
-
-};
-
-static CleanupHelper sCleanupHelper;
+using namespace governikus;
 
 
 PersoSimController::PersoSimController()
 	: QObject()
 	, mProcess(nullptr)
-	, mEventLoop(nullptr)
+	, mSocket(new QTcpSocket)
 {
 }
 
 
-PersoSimController::~PersoSimController()
+bool PersoSimController::isEnabled() const
 {
-	if (sActiveController == this)
-	{
-		sActiveController = nullptr;
-	}
+#ifdef PERSOSIM_TESTS_ENABLED
+	return true;
 
-	if (mProcess != nullptr)
-	{
-		QCOMPARE(mProcess->write("exit\n"), 5);
-		mProcess->waitForFinished(-1);
-	}
+#else
+	return false;
+
+#endif
 }
 
 
 bool PersoSimController::init()
 {
-#ifdef PERSOSIM_TESTS_ENABLED
+	if (!isEnabled())
+	{
+		qDebug() << "PersoSim tests not enabled";
+		return false;
+	}
+
 	return startProcess();
-
-#else
-	XSKIP("PersoSim tests not enabled", false);
-#endif
 }
 
 
-void PersoSimController::cleanUpActiveController()
+bool PersoSimController::write(const QByteArray& pData)
 {
-	delete sActiveController;
-	sActiveController = nullptr;
+	qDebug() << "TO PersoSim:" << pData;
+	bool success = mSocket->write(pData) == pData.size();
+	if (!success)
+	{
+		qDebug() << "Write failed";
+	}
+	mSocket->flush();
+	return success;
 }
 
 
-bool PersoSimController::startProcess()
+bool PersoSimController::shutdown()
 {
-	XVERIFY(mProcess == nullptr, false);
-	XVERIFY(sActiveController == nullptr, false);
-
-	mProcess = new QProcess;
-	mProcess->setProgram(JAVA_EXECUTABLE);
-	mProcess->setArguments(QStringList() << "-jar" << PERSOSIM_EXECUTABLE << "--consoleOnly");
-	mProcess->setProcessChannelMode(QProcess::ForwardedErrorChannel);
-
-	connect(mProcess, &QProcess::readyRead, this, &PersoSimController::inputAvailable);
-	connect(mProcess, QOverload<int>::of(&QProcess::finished), this, &PersoSimController::processFinished);
-
-	mProcess->start();
-	XVERIFY(mProcess->waitForStarted(-1), false);
-	XCOMPARE(mProcess->state(), QProcess::Running, false);
-
-	sActiveController = this;
-	installAbortSignalHandler();
-
-	// wait for PersoSim command line prompt
-	QEventLoop eventLoop;
-	mEventLoop = &eventLoop;
-
-	int result = eventLoop.exec();
-	mEventLoop = nullptr;
-	XCOMPARE(result, 0, false);
+	if (mProcess != nullptr)
+	{
+		write("shutdown\n");
+		mSocket->close();
+		if (!mProcess->waitForFinished(-1))
+		{
+			qDebug() << "Failed:" << mProcess->errorString();
+			return false;
+		}
+	}
 
 	return true;
 }
 
 
-void PersoSimController::inputAvailable()
+bool PersoSimController::startProcess()
 {
-
-	QByteArray line = mProcess->readLine();
-	if (line.isEmpty())
+	if (mProcess != nullptr)
 	{
-		return;
+		return false;
 	}
 
-	if (line.endsWith('\n'))
+	mProcess = new QProcess;
+	mProcess->setProcessChannelMode(QProcess::ForwardedErrorChannel);
+
+	connect(mSocket.data(), &QTcpSocket::readyRead, this, &PersoSimController::newData);
+
+	mProcess->start(QStringLiteral(PERSOSIM_EXECUTABLE));
+	if (!mProcess->waitForStarted(-1))
 	{
-		line.truncate(line.length() - 1);
+		qDebug() << PERSOSIM_EXECUTABLE;
+		return false;
 	}
 
-	if (line == sPersoSimPrompt)
+	if (mProcess->state() != QProcess::Running)
 	{
-		if (mEventLoop != nullptr)
+		return false;
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		mSocket->connectToHost(QHostAddress(QHostAddress::LocalHost), 9091);
+		if (!mSocket->waitForConnected(500))
 		{
-			mEventLoop->exit(0);
+			qWarning() << "Error(" << i << "):" << mSocket->errorString();
+			QThread::msleep(500);
+			continue;
 		}
+
+		write("select-reader basic\n");
+		return true;
 	}
 
-	qDebug("PersoSim: %s", line.data());
+	return false;
 }
 
 
-void PersoSimController::processFinished(int /*pExitCode*/)
+void PersoSimController::newData()
 {
-	if (mEventLoop != nullptr)
-	{
-		mEventLoop->exit(1);
-	}
-
-	if (sActiveController == this)
-	{
-		sActiveController = nullptr;
-	}
-}
-
-
-void PersoSimController::installAbortSignalHandler()
-{
-	// We very much want to clean up the active PersoSimController -- since
-	// otherwise the PersoSim process keeps running -- so we install a SIGABRT
-	// signal handler for the case that something misbehaves (triggering an
-	// assert or throwing an uncaught exception) and abort() is called.
-
-	if (!sAbortSignalHandlerInstalled)
-	{
-		signal(SIGABRT, &abortSignalHandler);
-		sAbortSignalHandlerInstalled = true;
-	}
-}
-
-
-void PersoSimController::abortSignalHandler(int /*pSignal*/)
-{
-	cleanUpActiveController();
+	qDebug() << "FROM PersoSim:" << mSocket->readAll();
 }

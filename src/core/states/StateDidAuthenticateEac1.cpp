@@ -1,7 +1,5 @@
 /*!
- * StateDidAuthenticateEac1.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/CVCertificateChainBuilder.h"
@@ -54,11 +52,11 @@ void StateDidAuthenticateEac1::onCardCommandDone(QSharedPointer<BaseCardCommand>
 			qDebug() << "No cvc chain determined, request new cvc list";
 			eac1Response->setCertificationAuthorityReference(*paceOutput);
 		}
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 	}
 	else
 	{
-		setStatus(CardReturnCodeUtil::toGlobalStatus(result));
-		Q_EMIT fireError();
+		updateStatus(CardReturnCodeUtil::toGlobalStatus(result));
+		Q_EMIT fireAbort();
 	}
 }

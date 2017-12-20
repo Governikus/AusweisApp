@@ -2,12 +2,15 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 
-import "global"
+import Governikus.Global 1.0
 
 Item {
 	id: baseItem
 
-	property string source
+	property Component sourceComponent
+	readonly property bool ready: loader.status === Loader.Ready
+	property bool prefetch: false
+	readonly property var currentSectionPage: stack.currentItem
 
 	property alias stack: stack
 
@@ -21,9 +24,8 @@ Item {
 		id: loader
 		asynchronous: true
 		onLoaded: {
-			appWindow.hideSplashScreen()
-
 			baseItem.pushed = true
+			item.topLevelPage = true
 			push(item)
 
 			for (var i = 0; i < baseItem.pendingItems.length; i++) {
@@ -32,29 +34,21 @@ Item {
 			}
 
 			baseItem.pendingItems = []
-			numberModel.continueWorkflow()
 		}
 
-		source: parent.visible ? parent.source : loader.source
-	}
-
-	onVisibleChanged: {
-		if (visible) {
-			titleBar.pushTabBarSubView(stack.currentItem)
-		}
+		sourceComponent: parent.visible || baseItem.prefetch ? parent.sourceComponent : loader.sourceComponent
 	}
 
 	StackView {
 		id: stack
 		anchors.fill: parent
-
-		onCurrentItemChanged: {
-			titleBar.pushTabBarSubView(currentItem)
-		}
 	}
 
 	function push(sectionPage, properties) {
 		if (baseItem.pushed) {
+			sectionPage.firePush.connect(baseItem.push)
+			sectionPage.firePop.connect(baseItem.pop)
+			sectionPage.firePopAll.connect(baseItem.popAll)
 			stack.push(sectionPage, properties)
 		}
 		// Main item has not been loaded yet, delay push.
@@ -63,7 +57,16 @@ Item {
 		}
 	}
 
-	function pop(item) {
-		stack.pop(item)
+	function pop() {
+		var sectionPage = stack.pop()
+		sectionPage.firePush.disconnect(baseItem.push)
+		sectionPage.firePop.disconnect(baseItem.pop)
+		sectionPage.firePopAll.disconnect(baseItem.popAll)
+	}
+
+	function popAll() {
+		while (stack.depth > 1) {
+			pop()
+		}
 	}
 }

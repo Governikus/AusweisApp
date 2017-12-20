@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "QmlExtension.h"
@@ -25,11 +25,9 @@ void QmlExtension::showSettings(const QString& pAction)
 {
 	QAndroidJniEnvironment env;
 
-	QAndroidJniObject jAction = QAndroidJniObject::fromString(pAction);
+	const QAndroidJniObject& jAction = QAndroidJniObject::fromString(pAction);
 	QAndroidJniObject intent("android/content/Intent", "(Ljava/lang/String;)V", jAction.object<jstring>());
-	jint flag = QAndroidJniObject::getStaticField<jint>(
-			"android/content/Intent",
-			"FLAG_ACTIVITY_NEW_TASK");
+	const jint flag = QAndroidJniObject::getStaticField<jint>("android/content/Intent", "FLAG_ACTIVITY_NEW_TASK");
 	intent.callObjectMethod("setFlags", "(I)V", flag);
 
 	if (intent.isValid())
@@ -50,15 +48,15 @@ void QmlExtension::showSettings(const QString& pAction)
 void QmlExtension::shareText(const QString& pText, const QString& pChooserTitle)
 {
 	QAndroidJniEnvironment env;
-	QAndroidJniObject javaActivity(QtAndroid::androidActivity());
-	if (javaActivity == nullptr)
+	const QAndroidJniObject javaActivity(QtAndroid::androidActivity());
+	if (!javaActivity.isValid())
 	{
-		qCCritical(qml) << "Cannot determine android activity";
+		qCCritical(qml) << "Cannot determine android activity.";
 		return;
 	}
 
-	QAndroidJniObject jText = QAndroidJniObject::fromString(pText);
-	QAndroidJniObject jTitle = QAndroidJniObject::fromString(pChooserTitle);
+	const QAndroidJniObject& jText = QAndroidJniObject::fromString(pText);
+	const QAndroidJniObject& jTitle = QAndroidJniObject::fromString(pChooserTitle);
 	QAndroidJniObject::callStaticMethod<void>("com/governikus/ausweisapp2/ShareUtil",
 			"shareText",
 			"(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)V",
@@ -78,20 +76,30 @@ void QmlExtension::shareText(const QString& pText, const QString& pChooserTitle)
 
 void QmlExtension::showFeedback(const QString& pMessage)
 {
-	QtAndroid::runOnAndroidThread([pMessage] {
-				const QAndroidJniObject javaString = QAndroidJniObject::fromString(pMessage);
-			    // Using the appcontext is essential since it holds the default application colours
-				const QAndroidJniObject androidAppContext = QtAndroid::androidActivity().callObjectMethod(
-						"getApplicationContext",
-						"()Landroid/content/Context;");
-				QAndroidJniObject toast = QAndroidJniObject::callStaticObjectMethod(
+	// Wait for toast activation synchronously so that the app can not be deactivated
+	// in the meantime and all used Java objects are still alive when accessed.
+	QtAndroid::runOnAndroidThreadSync([pMessage](){
+				QAndroidJniEnvironment env;
+
+				const QAndroidJniObject& jMessage = QAndroidJniObject::fromString(pMessage);
+				const QAndroidJniObject& toast = QAndroidJniObject::callStaticObjectMethod(
 						"android/widget/Toast",
 						"makeText",
 						"(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;",
-						androidAppContext.object(),
-						javaString.object(),
+						QtAndroid::androidActivity().object(),
+						jMessage.object(),
 						jint(1));
 				toast.callMethod<void>("show");
+
+				if (env->ExceptionCheck())
+				{
+					qCCritical(qml) << "Suppressing an unexpected exception.";
+					env->ExceptionDescribe();
+					env->ExceptionClear();
+				    // The toast was probably not displayed (e.g. DeadObjectException). We halt on error
+				    // since it is used to display information to the user as required by the TR.
+					Q_ASSERT(false);
+				}
 			});
 }
 
@@ -103,7 +111,7 @@ void QmlExtension::showFeedback(const QString& pMessage)
  */
 QString getPublicLogFileName(QAndroidJniEnvironment& env, const QAndroidJniObject& javaActivity)
 {
-	const auto jEmptyString = QAndroidJniObject::fromString(QLatin1String(""));
+	const auto& jEmptyString = QAndroidJniObject::fromString(QLatin1String(""));
 	const auto& jExternalFilesDir = javaActivity.callObjectMethod("getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;", jEmptyString.object<jstring>());
 	if (env->ExceptionCheck())
 	{
@@ -112,7 +120,7 @@ QString getPublicLogFileName(QAndroidJniEnvironment& env, const QAndroidJniObjec
 		env->ExceptionClear();
 		return QString();
 	}
-	if (jExternalFilesDir == nullptr)
+	if (!jExternalFilesDir.isValid())
 	{
 		qCCritical(qml) << "Cannot determine externalFilesDir";
 		return QString();
@@ -126,13 +134,13 @@ QString getPublicLogFileName(QAndroidJniEnvironment& env, const QAndroidJniObjec
 		env->ExceptionClear();
 		return QString();
 	}
-	if (jExternalFilesDirPath == nullptr)
+	if (!jExternalFilesDirPath.isValid())
 	{
 		qCCritical(qml) << "Cannot determine externalFilesDir absolute path";
 		return QString();
 	}
 
-	const auto nowAsISO = QDateTime::currentDateTime().toString(QStringLiteral("yyyy-MM-dd'T'HH:mm:ss-t"));
+	const auto& nowAsISO = QDateTime::currentDateTime().toString(QStringLiteral("yyyy-MM-dd'T'HH:mm:ss-t"));
 	return QStringLiteral("%1/AusweisApp2-%2.log").arg(jExternalFilesDirPath.toString(), nowAsISO);
 }
 
@@ -140,8 +148,8 @@ QString getPublicLogFileName(QAndroidJniEnvironment& env, const QAndroidJniObjec
 void QmlExtension::mailLog(const QString& pEmail, const QString& pSubject, const QString& pMsg)
 {
 	QAndroidJniEnvironment env;
-	QAndroidJniObject javaActivity(QtAndroid::androidActivity());
-	if (javaActivity == nullptr)
+	const QAndroidJniObject javaActivity(QtAndroid::androidActivity());
+	if (!javaActivity.isValid())
 	{
 		qCCritical(qml) << "Cannot determine android activity";
 		return;
@@ -181,8 +189,23 @@ void QmlExtension::mailLog(const QString& pEmail, const QString& pSubject, const
 
 bool QmlExtension::exportHistory(const QString&) const
 {
-	qCWarning(qml) << "NOT IMPLEMENTED YET";
+	qCWarning(qml) << "NOT IMPLEMENTED";
 	return false;
+}
+
+
+void QmlExtension::keepScreenOn(bool pActive)
+{
+	QtAndroid::runOnAndroidThread([pActive](){
+				QtAndroid::androidActivity().callMethod<void>("keepScreenOn", "(Z)V", pActive);
+				QAndroidJniEnvironment env;
+				if (env->ExceptionCheck())
+				{
+					qCCritical(qml) << "Exception calling java native function.";
+					env->ExceptionDescribe();
+					env->ExceptionClear();
+				}
+			});
 }
 
 

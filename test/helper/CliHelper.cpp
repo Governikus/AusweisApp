@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CliHelper.h"
@@ -23,20 +23,20 @@ CliHelper::CliHelper(QObject* pParent)
 	connect(&mTimer, &QTimer::timeout, &mLoop, &QEventLoop::quit);
 	connect(this, &QProcess::readyRead, this, &CliHelper::storeOutput);
 
-	QString path = QCoreApplication::applicationDirPath() + "/../../src/";
-	QString app = path + "AusweisApp2";
+	QString path = QCoreApplication::applicationDirPath() + QStringLiteral("/../../src/");
+	QString app = path + QStringLiteral("AusweisApp2");
 	QStringList args;
-	args << "--ui" << "cli";
-	args << "--port" << "0";
+	args << QStringLiteral("--ui") << QStringLiteral("cli");
+	args << QStringLiteral("--port") << QStringLiteral("0");
 
 #ifdef Q_OS_WIN
 	app += ".exe";
 #else
-	args << "-platform" << "offscreen";
+	args << QStringLiteral("-platform") << QStringLiteral("offscreen");
 #endif
 
 	QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-	env.insert("QT_LOGGING_TO_CONSOLE", "1");
+	env.insert(QStringLiteral("QT_LOGGING_TO_CONSOLE"), QStringLiteral("1"));
 	setProcessEnvironment(env);
 	setProgram(app);
 	setArguments(args);
@@ -108,7 +108,7 @@ void CliHelper::run()
 	start();
 	if (waitForStarted(TIMEOUT))
 	{
-		waitForOutput("Try to load UI plugin: \"UIPlugInCli\"");
+		waitForOutput(QStringLiteral("Try to load UI plugin: \"UIPlugInCli\""));
 	}
 
 	QCOMPARE(state(), QProcess::Running);
@@ -126,8 +126,8 @@ void CliHelper::stop()
 void CliHelper::waitForPong()
 {
 	send("ping");
-	waitForOutput("^stdinput .*: \"ping\"");
-	waitForOutput("Pong!");
+	waitForOutput(QStringLiteral("^stdinput .*: \"ping\""));
+	waitForOutput(QStringLiteral("Pong!"));
 }
 
 
@@ -137,7 +137,7 @@ quint16 CliHelper::getServerPort()
 	{
 		send("port");
 		QRegularExpressionMatch matcher;
-		waitForOutput("^cli .*: Port: ([0-9]{1,5})$", &matcher);
+		waitForOutput(QStringLiteral("^cli .*: Port: ([0-9]{1,5})$"), &matcher);
 
 		if (matcher.hasMatch() && !matcher.captured(1).isNull())
 		{

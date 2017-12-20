@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref CHAT
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"

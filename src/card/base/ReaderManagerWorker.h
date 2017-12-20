@@ -1,13 +1,14 @@
 /*!
  * \brief Worker implementation of ReaderManger thread
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "CardConnectionWorker.h"
 #include "DeviceError.h"
+#include "ReaderFilter.h"
 #include "ReaderInfo.h"
 #include "ReaderManagerPlugIn.h"
 #include "ReaderManagerPlugInInfo.h"
@@ -16,6 +17,7 @@
 
 namespace governikus
 {
+class RemoteClient;
 
 class ReaderManagerWorker
 	: public QObject
@@ -23,8 +25,8 @@ class ReaderManagerWorker
 	Q_OBJECT
 
 	private:
+		const QSharedPointer<RemoteClient> mRemoteClient;
 		QVector<ReaderManagerPlugIn*> mPlugIns;
-		bool mScanStarted;
 
 		void registerPlugIns();
 		bool isPlugIn(const QJsonObject& pJson);
@@ -32,27 +34,26 @@ class ReaderManagerWorker
 		Reader* getReader(const QString& pReaderName) const;
 
 	public:
-		ReaderManagerWorker();
+		ReaderManagerWorker(const QSharedPointer<RemoteClient>& pRemoteClient);
 		~ReaderManagerWorker();
 
-		Q_INVOKABLE void startScan();
-		Q_INVOKABLE void stopScan();
+		Q_INVOKABLE void startScan(ReaderManagerPlugInType pType);
+		Q_INVOKABLE void stopScan(ReaderManagerPlugInType pType);
 
 		Q_INVOKABLE QVector<ReaderManagerPlugInInfo> getPlugInInfos() const;
-		Q_INVOKABLE QVector<ReaderInfo> getReaderInfos(const QVector<ReaderManagerPlugInType>& pTypes) const;
+		Q_INVOKABLE QVector<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const;
 		Q_INVOKABLE ReaderInfo getReaderInfo(const QString& pReaderName) const;
 		Q_INVOKABLE void createCardConnectionWorker(const QString& pReaderName);
 		Q_INVOKABLE void connectReader(const QString& pReaderName);
 		Q_INVOKABLE void disconnectReader(const QString& pReaderName);
 		Q_INVOKABLE void disconnectAllReaders();
-		static void registerMetaTypes();
 
 	Q_SIGNALS:
+		void firePluginAdded(const ReaderManagerPlugInInfo& pInfo);
 		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
 		void fireReaderAdded(const QString& pReaderName);
-		void fireReaderConnected(const QString& pReaderName);
-		void fireReaderDeviceError(DeviceError pDeviceError);
 		void fireReaderRemoved(const QString& pReaderName);
+		void fireReaderDeviceError(DeviceError pDeviceError);
 		void fireReaderPropertiesUpdated(const QString& pReaderName);
 		void fireCardInserted(const QString& pReaderName);
 		void fireCardRemoved(const QString& pReaderName);

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/AuthController.h"
@@ -41,7 +41,7 @@ class test_StateInitializeFramework
 
 		void run()
 		{
-			QSignalSpy spy(mState.data(), &StateInitializeFramework::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateInitializeFramework::fireContinue);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();

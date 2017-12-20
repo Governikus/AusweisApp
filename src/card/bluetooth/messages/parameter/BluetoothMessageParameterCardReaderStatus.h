@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,10 +16,10 @@ class BluetoothMessageParameterCardReaderStatus
 		BluetoothCardReaderStatus mCardReaderStatus;
 
 	public:
-		typedef QSharedPointer<const BluetoothMessageParameterCardReaderStatus> Ptr;
+		using Ptr = QSharedPointer<const BluetoothMessageParameterCardReaderStatus>;
 
 		BluetoothMessageParameterCardReaderStatus(const QByteArray& pValue);
-		virtual ~BluetoothMessageParameterCardReaderStatus();
+		virtual ~BluetoothMessageParameterCardReaderStatus() override;
 
 		BluetoothStatusChange getStatusChange() const;
 		BluetoothCardReaderStatus getCardReaderStatus() const;

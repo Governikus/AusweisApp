@@ -1,7 +1,5 @@
 /*!
- * InputAPDUInfo.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "InputAPDUInfo.h"
@@ -11,18 +9,14 @@ using namespace governikus;
 InputAPDUInfo::InputAPDUInfo()
 	: mInputApdu()
 	, mAcceptableStatusCodes()
+	, mUpdateRetryCounter(false)
 {
 }
 
 
-InputAPDUInfo::InputAPDUInfo(const QByteArray& pInputApdu, const QByteArrayList& pAcceptableStatusCodes)
+InputAPDUInfo::InputAPDUInfo(const QByteArray& pInputApdu, bool pUpdateRetryCounter)
 	: mInputApdu(pInputApdu)
-	, mAcceptableStatusCodes(pAcceptableStatusCodes)
+	, mAcceptableStatusCodes()
+	, mUpdateRetryCounter(pUpdateRetryCounter)
 {
-}
-
-
-bool InputAPDUInfo::isValid() const
-{
-	return !mInputApdu.isEmpty();
 }

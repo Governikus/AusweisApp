@@ -1,21 +1,13 @@
 /*!
  * \brief Generic Handler to detect and parse paos types.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "paos/ElementDetector.h"
 #include "paos/PaosMessage.h"
-#include "paos/PaosType.h"
-#include "paos/retrieve/DidAuthenticateEac1.h"
-#include "paos/retrieve/DidAuthenticateEac2.h"
-#include "paos/retrieve/DidList.h"
-#include "paos/retrieve/Disconnect.h"
-#include "paos/retrieve/InitializeFramework.h"
-#include "paos/retrieve/StartPaosResponse.h"
-#include "paos/retrieve/Transmit.h"
 
 #include <QSharedPointer>
 #include <QXmlStreamReader>

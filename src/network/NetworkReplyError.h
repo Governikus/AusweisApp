@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -15,10 +15,10 @@ class NetworkReplyError
 	Q_OBJECT
 
 	protected:
-		virtual qint64 readData(char* data, qint64 maxlen);
+		virtual qint64 readData(char* data, qint64 maxlen) override;
 
 	public Q_SLOTS:
-		virtual void abort();
+		virtual void abort() override;
 		void onErrorSignals();
 
 	public:

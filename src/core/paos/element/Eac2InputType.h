@@ -1,7 +1,7 @@
 /*!
  * \brief Store information of Eac2InputType.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,13 +23,13 @@ class Eac2InputType
 
 	private:
 		QByteArrayList mCvCertificatesAsBinary;
-		QVector<QSharedPointer<CVCertificate> > mCvCertificates;
+		QVector<QSharedPointer<const CVCertificate> > mCvCertificates;
 		QString mSignature;
 		QString mEphemeralPublicKey;
-		void appendCvcert(QSharedPointer<CVCertificate> cvcert);
-		void appendCvcertAsBinary(const QByteArray& cvcertAsBinary);
-		void setEphemeralPublicKey(const QString& ephemeralPublicKey);
-		void setSignature(const QString& signature);
+		void appendCvcert(const QSharedPointer<const CVCertificate>& pCert);
+		void appendCvcertAsBinary(const QByteArray& pCvcertAsBinary);
+		void setEphemeralPublicKey(const QString& pEphemeralPublicKey);
+		void setSignature(const QString& pSignature);
 
 	public:
 		Eac2InputType();
@@ -37,7 +37,7 @@ class Eac2InputType
 
 		const QString& getSignature() const;
 		const QString& getEphemeralPublicKey() const;
-		const QVector<QSharedPointer<CVCertificate> >& getCvCertificates() const;
+		const QVector<QSharedPointer<const CVCertificate> >& getCvCertificates() const;
 		const QByteArrayList& getCvCertificatesAsBinary() const;
 };
 

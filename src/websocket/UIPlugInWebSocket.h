@@ -1,7 +1,7 @@
 /*!
  * \brief UIPlugIn implementation of the Websocket.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -46,7 +46,7 @@ class UIPlugInWebSocket
 
 	public:
 		UIPlugInWebSocket();
-		virtual ~UIPlugInWebSocket();
+		virtual ~UIPlugInWebSocket() override;
 
 		static void setPort(quint16 pPort);
 		static quint16 getPort();

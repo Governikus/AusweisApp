@@ -65,6 +65,11 @@ JSON messages from the SDK. Furthermore it has a function which is called
 when an existing connection with the SDK is dropped by the SDK. Both interfaces
 are listed below and you need to import them into your build environment.
 
+.. important::
+  It is required that you place the AIDL files under subdirectory
+  "aidl/com.governikus.ausweisapp2". Also the interface methods
+  names must be exactly the same.
+
 .. seealso::
 
   https://developer.android.com/guide/components/aidl.html
@@ -125,7 +130,7 @@ fingerprint of the authentic SDK certificate is the following:
 
 .. code-block:: text
 
-  B0 2A C7 6B 50 A4 97 AE 81 0A EA C2 25 98 18 7B 3D 42 90 27 7D 08 51 A7 FA 8E 1A EA 5A 97 98 70
+  B0:2A:C7:6B:50:A4:97:AE:81:0A:EA:C2:25:98:18:7B:3D:42:90:27:7D:08:51:A7:FA:8E:1A:EA:5A:97:98:70
 
 
 
@@ -143,7 +148,7 @@ hash value of a signed application on Android can be verified.
   public class AusweisApp2Validator
   {
     private static final String PACKAGE = "com.governikus.ausweisapp2";
-    private static final String FINGERPRINT = "..." // see above;
+    private static final String FINGERPRINT = "..."; // see above
 
     public boolean isValid()
     {
@@ -188,17 +193,15 @@ To differentiate between different connected clients, virtual sessions are used
 once the binding is completed. These sessions are discussed in a separate
 section, section :ref:`android_create_session`.
 
-.. seealso::
-  :ref:`android_disconnect_sdk`
-
 
 
 Create connection
 ^^^^^^^^^^^^^^^^^
-First of all, in order to bind to the service, one needs to instantiate
-an Android ServiceConnection. Subsequently, the object is passed to the
-Android API and the contained methods are invoked by Android on service
-connection and disconnection.
+First of all, in order to bind to the service, one needs to instantiate an
+Android ServiceConnection.
+Subsequently, the object is passed to the Android API and the contained
+methods are invoked
+by Android on service connection and disconnection.
 
 
 .. code-block:: java
@@ -226,12 +229,13 @@ connection and disconnection.
 
 Bind service to raw connection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-In order to perform the actual binding a directed Intent, which
-identifies the AusweisApp2 SDK, is created. This Intent is send
-to the Android API along with the ServiceConnection created above.
+In order to perform the actual binding a directed Intent, which identifies
+the AusweisApp2 SDK, is created.
+This Intent is send to
+the Android API along with the ServiceConnection created above.
 This API call either starts up the SDK if it is the first client,
-or connects to the running SDK instance if there is already
-another client bound.
+or connects to the running SDK instance
+if there is already another client bound.
 
 
 .. code-block:: java
@@ -472,14 +476,15 @@ The **receive** method is called each time the SDK sends a message.
   :ref:`android_create_session`
 
 
-
 .. _android_disconnect_sdk:
 
 Disconnect from SDK
 -------------------
 In order to disconnect from the AusweisApp2 SDK you need to invalidate your
-instance of **IBinder**. You can unbind from the SDK Android service to undo
-your binding, like shown in the code listing below.
+instance of **IBinder**. There are two possibilities to do this. The first
+one is to unbind from the SDK Android service to undo your binding, like
+shown in the code listing below. The second one is to return false in the
+**pingBinder** function of your IBinder instance.
 
 .. code-block:: java
 
@@ -670,10 +675,7 @@ are shown in code listing below.
     }
   }
 
-
-This class must now be added to the activity:
-
-.. code-block:: java
+  // [...]
 
   ForegroundDispatcher mDispatcher = new ForegroundDispatcher(this);
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref Asn1StringUtil
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -27,9 +27,9 @@ class test_Asn1StringUtil
 
 			Asn1StringUtil::setValue(QString("abc"), asn1String);
 			QCOMPARE(asn1String->length, 3);
-			QCOMPARE(asn1String->data[0], (unsigned char) 'a');
-			QCOMPARE(asn1String->data[1], (unsigned char) 'b');
-			QCOMPARE(asn1String->data[2], (unsigned char) 'c');
+			QCOMPARE(asn1String->data[0], uchar('a'));
+			QCOMPARE(asn1String->data[1], uchar('b'));
+			QCOMPARE(asn1String->data[2], uchar('c'));
 
 			ASN1_STRING_free(asn1String);
 		}

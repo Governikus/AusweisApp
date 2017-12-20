@@ -1,9 +1,7 @@
 /*!
- * MockReader.h
- *
  * \brief Reader mock for tests
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,7 +27,7 @@ class MockReader
 		static MockReader* createMockReader(const QVector<TransmitConfig>& pTransmitConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess);
 
 		MockReader(const QString& pReaderName = QStringLiteral("MockReader"));
-		virtual ~MockReader();
+		virtual ~MockReader() override;
 
 
 		Card* getCard() const override

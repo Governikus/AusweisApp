@@ -1,7 +1,5 @@
 /*!
- * Result.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Result.h"
@@ -17,9 +15,9 @@ using namespace governikus;
 #define RESULTMINOR "http://www.bsi.bund.de/ecard/api/1.1/resultminor"
 
 const QMap<Result::Major, QString> Result::mMajorResults = {
-	{Result::Major::Ok, RESULTMAJOR "#ok"},
-	{Result::Major::Warning, RESULTMAJOR "#warning"},
-	{Result::Major::Error, RESULTMAJOR "#error"}
+	{Result::Major::Ok, QString::fromLatin1(RESULTMAJOR "#ok")},
+	{Result::Major::Warning, QString::fromLatin1(RESULTMAJOR "#warning")},
+	{Result::Major::Error, QString::fromLatin1(RESULTMAJOR "#error")}
 };
 
 // See TR-03112, section 4.2 for details about the codes
@@ -29,34 +27,34 @@ const QMap<Result::Major, QString> Result::mMajorResults = {
 //      KEY
 //      SAL -> Service Access Layer
 const QMap<GlobalStatus::Code, QString> Result::mMinorResults = {
-	{GlobalStatus::Code::Paos_Error_AL_Unknown_Error, RESULTMINOR "/al/common#unknownError"},
-	{GlobalStatus::Code::Paos_Error_AL_No_Permission, RESULTMINOR "/al/common#noPermission"},
-	{GlobalStatus::Code::Paos_Error_AL_Internal_Error, RESULTMINOR "/al/common#internalError"},
-	{GlobalStatus::Code::Paos_Error_AL_Parameter_Error, RESULTMINOR "/al/common#parameterError"},
-	{GlobalStatus::Code::Paos_Error_AL_Unkown_API_Function, RESULTMINOR "/al/common#unkownAPIFunction"},
-	{GlobalStatus::Code::Paos_Error_AL_Not_Initialized, RESULTMINOR "/al/common#notInitialized"},
-	{GlobalStatus::Code::Paos_Error_AL_Warning_Connection_Disconnected, RESULTMINOR "/al/common#warningConnectionDisconnected"},
-	{GlobalStatus::Code::Paos_Error_AL_Session_Terminated_Warning, RESULTMINOR "/al/common#SessionTerminatedWarning"},
-	{GlobalStatus::Code::Paos_Error_AL_Communication_Error, RESULTMINOR "/al/common#communicationError"},
-	{GlobalStatus::Code::Paos_Error_DP_Timeout_Error, RESULTMINOR "/dp#timeout"},
-	{GlobalStatus::Code::Paos_Error_DP_Unknown_Channel_Handle, RESULTMINOR "/dp#unknownChannelHandle"},
-	{GlobalStatus::Code::Paos_Error_DP_Communication_Error, RESULTMINOR "/dp#communicationError"},
-	{GlobalStatus::Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed, RESULTMINOR "/dp#trustedChannelEstablishmentFailed"},
-	{GlobalStatus::Code::Paos_Error_DP_Unknown_Protocol, RESULTMINOR "/dp#unknownProtocol"},
-	{GlobalStatus::Code::Paos_Error_DP_Unknown_Cipher_Suite, RESULTMINOR "/dp#unknownCipherSuite"},
-	{GlobalStatus::Code::Paos_Error_DP_Unknown_Webservice_Binding, RESULTMINOR "/dp#unknownWebserviceBinding"},
-	{GlobalStatus::Code::Paos_Error_DP_Node_Not_Reachable, RESULTMINOR "/dp#nodeNotReachable"},
-	{GlobalStatus::Code::Paos_Error_IFDL_Timeout_Error, RESULTMINOR "/ifdl/common#timeoutError"},
-	{GlobalStatus::Code::Paos_Error_IFDL_InvalidSlotHandle, RESULTMINOR "/ifdl/common#invalidSlotHandle"},
-	{GlobalStatus::Code::Paos_Error_IFDL_CancellationByUser, RESULTMINOR "/ifdl#cancellationByUser"},
-	{GlobalStatus::Code::Paos_Error_KEY_KeyGenerationNotPossible, RESULTMINOR "/il/key#keyGenerationNotPossible"},
-	{GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User, RESULTMINOR "/sal#cancellationByUser"},
-	{GlobalStatus::Code::Paos_Error_SAL_CertificateChainInterrupted, RESULTMINOR "/sal#certificateChainInterrupted"},
-	{GlobalStatus::Code::Paos_Error_SAL_Invalid_Key, RESULTMINOR "/sal#invalidKey"},
-	{GlobalStatus::Code::Paos_Error_SAL_SecurityConditionNotSatisfied, RESULTMINOR "/sal#securityConditionNotSatisfied"},
-	{GlobalStatus::Code::Paos_Error_SAL_MEAC_AgeVerificationFailedWarning, RESULTMINOR "/sal/mEAC#AgeVerificationFailedWarning"},
-	{GlobalStatus::Code::Paos_Error_SAL_MEAC_CommunityVerificationFailedWarning, RESULTMINOR "/sal/mEAC#CommunityVerificationFailedWarning"},
-	{GlobalStatus::Code::Paos_Error_SAL_MEAC_DocumentValidityVerificationFailed, RESULTMINOR "/sal/mEAC#DocumentValidityVerificationFailed"},
+	{GlobalStatus::Code::Paos_Error_AL_Unknown_Error, QString::fromLatin1(RESULTMINOR "/al/common#unknownError")},
+	{GlobalStatus::Code::Paos_Error_AL_No_Permission, QString::fromLatin1(RESULTMINOR "/al/common#noPermission")},
+	{GlobalStatus::Code::Paos_Error_AL_Internal_Error, QString::fromLatin1(RESULTMINOR "/al/common#internalError")},
+	{GlobalStatus::Code::Paos_Error_AL_Parameter_Error, QString::fromLatin1(RESULTMINOR "/al/common#parameterError")},
+	{GlobalStatus::Code::Paos_Error_AL_Unkown_API_Function, QString::fromLatin1(RESULTMINOR "/al/common#unkownAPIFunction")},
+	{GlobalStatus::Code::Paos_Error_AL_Not_Initialized, QString::fromLatin1(RESULTMINOR "/al/common#notInitialized")},
+	{GlobalStatus::Code::Paos_Error_AL_Warning_Connection_Disconnected, QString::fromLatin1(RESULTMINOR "/al/common#warningConnectionDisconnected")},
+	{GlobalStatus::Code::Paos_Error_AL_Session_Terminated_Warning, QString::fromLatin1(RESULTMINOR "/al/common#SessionTerminatedWarning")},
+	{GlobalStatus::Code::Paos_Error_AL_Communication_Error, QString::fromLatin1(RESULTMINOR "/al/common#communicationError")},
+	{GlobalStatus::Code::Paos_Error_DP_Timeout_Error, QString::fromLatin1(RESULTMINOR "/dp#timeout")},
+	{GlobalStatus::Code::Paos_Error_DP_Unknown_Channel_Handle, QString::fromLatin1(RESULTMINOR "/dp#unknownChannelHandle")},
+	{GlobalStatus::Code::Paos_Error_DP_Communication_Error, QString::fromLatin1(RESULTMINOR "/dp#communicationError")},
+	{GlobalStatus::Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed, QString::fromLatin1(RESULTMINOR "/dp#trustedChannelEstablishmentFailed")},
+	{GlobalStatus::Code::Paos_Error_DP_Unknown_Protocol, QString::fromLatin1(RESULTMINOR "/dp#unknownProtocol")},
+	{GlobalStatus::Code::Paos_Error_DP_Unknown_Cipher_Suite, QString::fromLatin1(RESULTMINOR "/dp#unknownCipherSuite")},
+	{GlobalStatus::Code::Paos_Error_DP_Unknown_Webservice_Binding, QString::fromLatin1(RESULTMINOR "/dp#unknownWebserviceBinding")},
+	{GlobalStatus::Code::Paos_Error_DP_Node_Not_Reachable, QString::fromLatin1(RESULTMINOR "/dp#nodeNotReachable")},
+	{GlobalStatus::Code::Paos_Error_IFDL_Timeout_Error, QString::fromLatin1(RESULTMINOR "/ifdl/common#timeoutError")},
+	{GlobalStatus::Code::Paos_Error_IFDL_InvalidSlotHandle, QString::fromLatin1(RESULTMINOR "/ifdl/common#invalidSlotHandle")},
+	{GlobalStatus::Code::Paos_Error_IFDL_CancellationByUser, QString::fromLatin1(RESULTMINOR "/ifdl#cancellationByUser")},
+	{GlobalStatus::Code::Paos_Error_KEY_KeyGenerationNotPossible, QString::fromLatin1(RESULTMINOR "/il/key#keyGenerationNotPossible")},
+	{GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User, QString::fromLatin1(RESULTMINOR "/sal#cancellationByUser")},
+	{GlobalStatus::Code::Paos_Error_SAL_CertificateChainInterrupted, QString::fromLatin1(RESULTMINOR "/sal#certificateChainInterrupted")},
+	{GlobalStatus::Code::Paos_Error_SAL_Invalid_Key, QString::fromLatin1(RESULTMINOR "/sal#invalidKey")},
+	{GlobalStatus::Code::Paos_Error_SAL_SecurityConditionNotSatisfied, QString::fromLatin1(RESULTMINOR "/sal#securityConditionNotSatisfied")},
+	{GlobalStatus::Code::Paos_Error_SAL_MEAC_AgeVerificationFailedWarning, QString::fromLatin1(RESULTMINOR "/sal/mEAC#AgeVerificationFailedWarning")},
+	{GlobalStatus::Code::Paos_Error_SAL_MEAC_CommunityVerificationFailedWarning, QString::fromLatin1(RESULTMINOR "/sal/mEAC#CommunityVerificationFailedWarning")},
+	{GlobalStatus::Code::Paos_Error_SAL_MEAC_DocumentValidityVerificationFailed, QString::fromLatin1(RESULTMINOR "/sal/mEAC#DocumentValidityVerificationFailed")}
 };
 
 
@@ -67,7 +65,7 @@ Result Result::fromStatus(const GlobalStatus& pStatus)
 		case GlobalStatus::Code::Unknown_Error:
 		case GlobalStatus::Code::Paos_Unexpected_Warning:
 		case GlobalStatus::Code::Paos_Error_AL_Unknown_Error:
-			break;
+			return Result(Result::Major::Error, GlobalStatus::Code::Paos_Error_AL_Unknown_Error, pStatus.toErrorDescription(), pStatus.getOrigin());
 
 		case GlobalStatus::Code::No_Error:
 			return createOk();
@@ -95,6 +93,7 @@ Result Result::fromStatus(const GlobalStatus& pStatus)
 		case GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description:
 		case GlobalStatus::Code::Workflow_TrustedChannel_No_Data_Received:
 		case GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length:
+		case GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable:
 		case GlobalStatus::Code::Workflow_TrustedChannel_TimeOut:
 		case GlobalStatus::Code::Workflow_TrustedChannel_Proxy_Error:
 		case GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Establishment_Error:
@@ -129,6 +128,7 @@ Result Result::fromStatus(const GlobalStatus& pStatus)
 		case GlobalStatus::Code::Workflow_Network_Expected_Redirect:
 		case GlobalStatus::Code::Workflow_Network_Invalid_Scheme:
 		case GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url:
+		case GlobalStatus::Code::Network_ServiceUnavailable:
 		case GlobalStatus::Code::Network_TimeOut:
 		case GlobalStatus::Code::Network_Proxy_Error:
 		case GlobalStatus::Code::Network_Other_Error:
@@ -140,6 +140,7 @@ Result Result::fromStatus(const GlobalStatus& pStatus)
 		case GlobalStatus::Code::Paos_Error_AL_Communication_Error:
 			return Result(Result::Major::Error, GlobalStatus::Code::Paos_Error_AL_Communication_Error, pStatus.toErrorDescription(), pStatus.getOrigin());
 
+		case GlobalStatus::Code::Workflow_AlreadyInProgress_Error:
 		case GlobalStatus::Code::Card_Not_Found:
 		case GlobalStatus::Code::Card_Communication_Error:
 		case GlobalStatus::Code::Card_Input_TimeOut:
@@ -219,16 +220,25 @@ Result Result::fromStatus(const GlobalStatus& pStatus)
 
 		case GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose:
 		case GlobalStatus::Code::RemoteReader_CloseCode_Undefined:
+		case GlobalStatus::Code::RemoteConnector_InvalidRequest:
+		case GlobalStatus::Code::RemoteConnector_EmptyPassword:
+		case GlobalStatus::Code::RemoteConnector_NoSupportedApiLevel:
+		case GlobalStatus::Code::RemoteConnector_ConnectionTimeout:
+		case GlobalStatus::Code::RemoteConnector_ConnectionError:
+		case GlobalStatus::Code::RemoteConnector_RemoteHostRefusedConnection:
+		case GlobalStatus::Code::Downloader_File_Not_Found:
+		case GlobalStatus::Code::Downloader_Cannot_Save_File:
+		case GlobalStatus::Code::Downloader_Data_Corrupted:
 			return Result(Result::Major::Error, GlobalStatus::Code::Paos_Error_AL_Unknown_Error, pStatus.toErrorDescription(), pStatus.getOrigin());
 	}
 
-	return Result(Result::Major::Error, GlobalStatus::Code::Paos_Error_AL_Unknown_Error, pStatus.toErrorDescription(), pStatus.getOrigin());
+	Q_UNREACHABLE();
 }
 
 
 Result Result::createOk()
 {
-	return Result(Result::Major::Ok, GlobalStatus::Code::Unknown_Error);
+	return Result(Result::Major::Ok, GlobalStatus::Code::No_Error);
 }
 
 
@@ -263,8 +273,10 @@ GlobalStatus::Code Result::parseMinor(const QString& pMinor)
 	if (!pMinor.isEmpty())
 	{
 		qWarning() << "Unknown ResultMinor:" << pMinor;
+		return GlobalStatus::Code::Unknown_Error;
 	}
-	return GlobalStatus::Code::Unknown_Error;
+
+	return GlobalStatus::Code::No_Error;
 }
 
 
@@ -342,13 +354,13 @@ QString Result::getMessage(GlobalStatus::Code pMinor)
 			return tr("Signature certificate key generation is not possible.");
 
 		case GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User:
-			return tr("The operation was aborted due to cancellation by user.");
+			return tr("The process was cancelled by the user.");
 
 		case GlobalStatus::Code::Paos_Error_SAL_CertificateChainInterrupted:
 			return tr("One or more certificate checks failed. The operation will be aborted due to security reasons.");
 
 		case GlobalStatus::Code::Paos_Error_SAL_Invalid_Key:
-			return tr("This action cannot be performed. The online identification function of your ID card is deactivated. Please contact your competent authority to activate the online identification function.");
+			return tr("This action cannot be performed. The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.");
 
 		case GlobalStatus::Code::Paos_Error_SAL_SecurityConditionNotSatisfied:
 			return tr("The authenticity of your ID card could not be verified. Please make sure that you are using a genuine ID card. Please note that test applications require the use of a test ID card.");
@@ -454,7 +466,7 @@ bool Result::isValid() const
 			return false;
 
 		case Major::Ok:
-			return d->mMinor == GlobalStatus::Code::Unknown_Error;
+			return d->mMinor == GlobalStatus::Code::No_Error;
 
 		default:
 			return d->mMinor != GlobalStatus::Code::Unknown_Error;
@@ -464,7 +476,7 @@ bool Result::isValid() const
 
 bool Result::isOk() const
 {
-	return d->mMajor == Major::Ok && d->mMinor == GlobalStatus::Code::Unknown_Error;
+	return d->mMajor == Major::Ok && d->mMinor == GlobalStatus::Code::No_Error;
 }
 
 
@@ -487,7 +499,7 @@ GlobalStatus Result::toStatus() const
 	switch (getMajor())
 	{
 		case Major::Unknown:
-			break;
+			return GlobalStatus(GlobalStatus::Code::Unknown_Error, message);
 
 		case Major::Ok:
 			if (isOk())
@@ -496,14 +508,14 @@ GlobalStatus Result::toStatus() const
 			}
 		// FALLTHROUGH
 
-		case Major::Warning:
-			return GlobalStatus(GlobalStatus::Code::Paos_Unexpected_Warning, message);
-
 		case Major::Error:
 			return GlobalStatus(getMinor(), message, d->mOrigin);
+
+		case Major::Warning:
+			return GlobalStatus(GlobalStatus::Code::Paos_Unexpected_Warning, message);
 	}
 
-	return GlobalStatus(GlobalStatus::Code::Unknown_Error, message);
+	Q_UNREACHABLE();
 }
 
 
@@ -517,28 +529,28 @@ QJsonObject Result::toJson() const
 {
 	QJsonObject obj;
 
-	obj["major"] = getMajorString();
-	if (getMinor() != GlobalStatus::Code::Unknown_Error)
+	obj[QLatin1String("major")] = getMajorString();
+	if (getMinor() != GlobalStatus::Code::No_Error)
 	{
-		obj["minor"] = getMinorString();
+		obj[QLatin1String("minor")] = getMinorString();
 	}
 
 	const auto& message = getMessage();
 	if (!message.isEmpty())
 	{
-		obj["message"] = message;
+		obj[QLatin1String("message")] = message;
 	}
 
 	const auto& minorDesc = Result::getMessage(getMinor());
 	if (!minorDesc.isEmpty())
 	{
-		obj["description"] = minorDesc;
+		obj[QLatin1String("description")] = minorDesc;
 	}
 
 	const auto& lang = getMessageLang();
 	if (!lang.isEmpty() && (!message.isEmpty() || !minorDesc.isEmpty()))
 	{
-		obj["language"] = lang;
+		obj[QLatin1String("language")] = lang;
 	}
 
 	return obj;
@@ -547,7 +559,7 @@ QJsonObject Result::toJson() const
 
 QDebug operator <<(QDebug pDbg, const governikus::Result& pResult)
 {
-	const QString string = pResult.getMajorString() % " | " % pResult.getMinorString() % " | " % pResult.getMessage();
+	const QString string = pResult.getMajorString() % QLatin1String(" | ") % pResult.getMinorString() % QLatin1String(" | ") % pResult.getMessage();
 	QDebugStateSaver saver(pDbg);
 	pDbg.space() << "Result:";
 	pDbg.quote() << string;

@@ -1,7 +1,7 @@
 /*!
  * \brief Worker for \ref CardConnection that will do the job in \ref ReaderManagerWorker
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -77,8 +77,8 @@ class CardConnectionWorker
 		 * If the Reader is a basic reader and the PACE channel is successfully established, the subsequent transmits will be secured using, secure messaging.
 		 * I. e., a secure messaging channel is established.
 		 */
-		virtual CardReturnCode establishPaceChannel(PACE_PIN_ID pPinId,
-				const QString& pPinValue,
+		virtual CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
+				const QString& pPasswordValue,
 				EstablishPACEChannelOutput& pChannelOutput);
 
 		/*!
@@ -86,8 +86,8 @@ class CardConnectionWorker
 		 * If the Reader is a basic reader and the PACE channel is successfully established, the subsequent transmits will be secured using, secure messaging.
 		 * I. e., a secure messaging channel is established.
 		 */
-		virtual CardReturnCode establishPaceChannel(PACE_PIN_ID pPinId,
-				const QString& pPinValue,
+		virtual CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
+				const QString& pPasswordValue,
 				const QByteArray& pChat,
 				const QByteArray& pCertificateDescription,
 				EstablishPACEChannelOutput& pChannelOutput);
@@ -100,12 +100,11 @@ class CardConnectionWorker
 		/*!
 		 * Destroys an established secure messaging channel, if there is one.
 		 */
-		virtual bool stopSecureMessaging();
+		Q_INVOKABLE virtual bool stopSecureMessaging();
 
 		virtual CardReturnCode setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds);
 
 	Q_SIGNALS:
-		void fireRetryCounterPotentiallyChanged();
 		void fireReaderInfoChanged(const ReaderInfo& pReaderInfo);
 };
 

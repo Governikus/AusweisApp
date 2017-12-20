@@ -1,7 +1,5 @@
 /*!
- * PcscReaderFeature.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscReaderFeature.h"
@@ -15,29 +13,6 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
 
-namespace
-{
-template<typename T> static QString toStringListing(const T& pList)
-{
-	QStringList list;
-	list.reserve(pList.size());
-	for (auto entry : pList)
-	{
-		list += getEnumName(entry);
-	}
-
-	return QLatin1Char('[') % list.join(' ') % QLatin1Char(']');
-}
-
-
-}
-
-
-const QMap<FeatureID, PCSC_INT>& PcscReaderFeature::getFeatures() const
-{
-	return mFeatures;
-}
-
 
 PcscReaderFeature::PcscReaderFeature(const char* pFeaturesTLV, PCSC_INT pLength)
 	: mFeatures()
@@ -50,7 +25,7 @@ PcscReaderFeature::PcscReaderFeature(const char* pFeaturesTLV, PCSC_INT pLength)
 
 	const uchar* runner = reinterpret_cast<const uchar*>(pFeaturesTLV);
 	const uchar* end = reinterpret_cast<const uchar*>(pFeaturesTLV + pLength);
-	for (; runner + 6 <= end; )
+	for (; runner + 6 <= end;)
 	{
 		if (!Enum<FeatureID>::isValue(*runner))
 		{
@@ -75,46 +50,15 @@ PcscReaderFeature::PcscReaderFeature(const char* pFeaturesTLV, PCSC_INT pLength)
 }
 
 
-QString PcscReaderFeature::toString() const
+bool PcscReaderFeature::contains(FeatureID pFeatureID) const
 {
-	return toStringListing(mFeatures.keys());
+	return mFeatures.contains(pFeatureID);
 }
 
 
-QVector<PaceCapabilityId> PcscReaderPaceCapability::getPaceCapabilities() const
+PCSC_INT PcscReaderFeature::getValue(FeatureID pFeatureID) const
 {
-	return mPaceCapabilities;
-}
-
-
-PcscReaderPaceCapability::PcscReaderPaceCapability(const char* pCapabilitiesTLV, PCSC_INT pLength)
-	: mPaceCapabilities()
-{
-	if (pCapabilitiesTLV == nullptr || pLength != 7)
-	{
-		qCDebug(card_pcsc) << "capabilities: null";
-		return;
-	}
-	else if (pCapabilitiesTLV[0] != 0x00 || pCapabilitiesTLV[1] != 0x00 || pCapabilitiesTLV[2] != 0x00 || pCapabilitiesTLV[3] != 0x00)
-	{
-		qCWarning(card_pcsc) << "Error on determination of pace capabilities";
-		return;
-	}
-
-	// in contrast to PCSC 10 Amendment 1: the output data of GetReaderPACECapabilities on Reiner SCT Konfort is of size 1!
-	for (PaceCapabilityId capability : Enum<PaceCapabilityId>::getList())
-	{
-		if (pCapabilitiesTLV[6] & static_cast<char>(capability))
-		{
-			mPaceCapabilities += capability;
-		}
-	}
-}
-
-
-QString PcscReaderPaceCapability::toString() const
-{
-	return toStringListing(mPaceCapabilities);
+	return mFeatures.find(pFeatureID).value();
 }
 
 

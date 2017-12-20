@@ -8,13 +8,13 @@ der AusweisApp2 unterstützt.
 
 Betriebssysteme
 """""""""""""""
-  - OS X 10.9
-
   - OS X 10.10
 
   - OS X 10.11
 
   - macOS 10.12
+
+  - macOS 10.13
 
   - Windows 7 SP1 (32bit / 64bit)
 
@@ -48,13 +48,13 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-  - Firefox 55
+  - Firefox 57
 
-  - Chrome 61
+  - Chrome 62
 
   - Internet Explorer 11
 
-  - Safari 10
+  - Safari 11
 
 
 
@@ -90,6 +90,13 @@ Zusätzlich werden folgende nicht zertifizierte Kartenleser getestet.
 Aktuelle Informationen zu Kartenlesern finden Sie auf unserer Webseite:
 https://www.ausweisapp.bund.de/fragen-und-antworten/voraussetzungen/
 
+Alle NFC-fähigen Smartphones bzw. Tablets, die die Onlineausweisfunktionalität
+unterstützen, können als Kartenlesegerät verwendet werden.
+Dabei ist es notwendig die mobile AusweisApp2 auf dem jeweiligen Smartphone
+zu installieren und zu starten.
+
+Details hierzu befinden sich auf der Homepage:
+https://www.ausweisapp.bund.de/mobile-geraete/
 
 
 Android
@@ -105,9 +112,9 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Diensteanbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-  - Firefox Klar 1.3
+  - Firefox Klar 2.5
 
-  - Chrome 61
+  - Chrome 63
 
   - Android System WebView 60
 
@@ -118,6 +125,10 @@ Kartenlesegeräte
 Alle NFC-fähigen Smartphones bzw. Tablets, die die Onlineausweisfunktionalität
 unterstützen. Details hierzu befinden sich auf der Homepage:
 https://www.ausweisapp.bund.de/mobile-geraete/
+
+Ebenfalls ist es möglich ein weiteres Smartphone als Kartenlesegerät zu
+verwenden. Dabei ist es notwendig die mobile AusweisApp2 auf dem jeweiligen
+Smartphone zu installieren und zu starten.
 
 Darüber hinaus ist die Verwendung eines Bluetooth-Kartenlesegeräts möglich.
 Folgendes Bluetooth-Kartenlesegerät wird von der AusweiApp2 unterstützt:

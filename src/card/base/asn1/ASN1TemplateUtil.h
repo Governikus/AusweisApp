@@ -1,7 +1,7 @@
 /*!
  * \brief Utility template functions for encoding and decoding of ASN.1 types
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

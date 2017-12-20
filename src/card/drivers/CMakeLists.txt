@@ -1,6 +1,6 @@
 ADD_PLATFORM_LIBRARY(AusweisAppCardDrivers)
 
-TARGET_LINK_LIBRARIES(AusweisAppCardDrivers Qt5::Core AusweisAppGlobal AusweisAppCard AusweisAppSettings)
+TARGET_LINK_LIBRARIES(AusweisAppCardDrivers Qt5::Core AusweisAppGlobal AusweisAppConfiguration)
 
 IF(WIN32)
 	TARGET_LINK_LIBRARIES(AusweisAppCardDrivers ${WIN_DEFAULT_LIBS})
@@ -13,7 +13,7 @@ ENDIF()
 IF(LINUX)
 	IF(LIBUDEV)
 		TARGET_LINK_LIBRARIES(AusweisAppCardDrivers ${LIBUDEV})
-		ADD_DEFINITION("HAVE_LIBUDEV" "ReaderDetector_linux.cpp")
+		SET_PROPERTY(SOURCE "ReaderDetector_linux.cpp" APPEND_STRING PROPERTY COMPILE_FLAGS " -DHAVE_LIBUDEV")
 	ELSE()
 		MESSAGE(STATUS "Hardware detection disabled - Missing libudev")
 	ENDIF()

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockDataChannel.h"
@@ -8,6 +8,7 @@ using namespace governikus;
 
 
 MockDataChannel::MockDataChannel()
+	: mReceivedDataBlocks()
 {
 }
 
@@ -37,5 +38,13 @@ void MockDataChannel::send(const QByteArray& pDataBlock)
 
 void MockDataChannel::onReceived(const QByteArray& pDataBlock)
 {
+	mReceivedDataBlocks += pDataBlock;
+
 	Q_EMIT fireReceived(pDataBlock);
+}
+
+
+const QVector<QByteArray>& MockDataChannel::getReceivedDataBlocks() const
+{
+	return mReceivedDataBlocks;
 }

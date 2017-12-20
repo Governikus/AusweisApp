@@ -1,78 +1,38 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
-#include "FileDestination.h"
 #include "ReaderDetector.h"
+
+#include "Env.h"
+#include "FuncUtils.h"
+#include "ReaderConfiguration.h"
+#include "SingletonHelper.h"
 
 #include <QFile>
 #include <QLoggingCategory>
+#include <QRegularExpression>
+#include <QScopedPointer>
 
 
 using namespace governikus;
 
 
+defineSingleton(ReaderDetector)
+
+
 Q_DECLARE_LOGGING_CATEGORY(card_drivers)
 
 
-static QVector<ReaderType> readerTypesForReaderInfos(const QVector<ReaderInfo>& pReaderInfos)
+ReaderDetector & ReaderDetector::getInstance()
 {
-	QVector<ReaderType> readerTypes;
-	readerTypes.reserve(pReaderInfos.size());
-	for (const auto& readerInfo : pReaderInfos)
-	{
-		readerTypes += readerInfo.getReaderType();
-	}
-
-	return readerTypes;
+	return *Instance;
 }
 
 
-QVector<QSharedPointer<DeviceDescriptor> > ReaderDetector::convertSettings(const QSharedPointer<DriverSettings>& pSettings)
-{
-	if (pSettings.isNull())
-	{
-		qCWarning(card_drivers) << "invalid input settings";
-
-		return QVector<QSharedPointer<DeviceDescriptor> >();
-	}
-
-	QVector<QSharedPointer<DeviceDescriptor> > devices;
-	for (const auto& driver : pSettings->getDrivers())
-	{
-		const QSharedPointer<DeviceDescriptor> device(new DeviceDescriptor(driver));
-		if (device->getReaderType() == ReaderType::UNKNOWN)
-		{
-			qCWarning(card_drivers) << "invalid reader type in input settings, bailing out";
-
-			return QVector<QSharedPointer<DeviceDescriptor> >();
-		}
-
-		devices += device;
-	}
-
-	return devices;
-}
-
-
-QSharedPointer<DeviceDescriptor> ReaderDetector::lookupDevice(uint pVendorId, uint pProductId) const
-{
-	for (const auto& descriptor : mSupportedDevices)
-	{
-		if (pVendorId == descriptor->getVendorId() && pProductId == descriptor->getProductId())
-		{
-			return descriptor;
-		}
-	}
-
-	return QSharedPointer<DeviceDescriptor>();
-}
-
-
-ReaderDetector::ReaderDetector(const QSharedPointer<DriverSettings>& pDriverSettings)
-	: mSupportedDevices(convertSettings(pDriverSettings))
+ReaderDetector::ReaderDetector()
 #ifdef Q_OS_LINUX
-	, mDeviceListener(nullptr)
+	: mDeviceListener(nullptr)
 #endif
 {
 	qCDebug(card_drivers) << "initNativeEvents() =" << initNativeEvents();
@@ -85,21 +45,39 @@ ReaderDetector::~ReaderDetector()
 }
 
 
-QVector<QSharedPointer<DeviceDescriptor> > ReaderDetector::getAttachedDevices(const QVector<ReaderInfo>& pReaderInfos) const
+QVector<ReaderConfigurationInfo> ReaderDetector::getAttachedSupportedDevices() const
 {
-	const auto readerTypes = readerTypesForReaderInfos(pReaderInfos);
+	const auto& readerConfiguration = Env::getSingleton<ReaderConfiguration>();
+	QVector<ReaderConfigurationInfo> attachedSupportedDevices;
 
-	QVector<QSharedPointer<DeviceDescriptor> > result;
-	for (const auto& devId : attachedDevIds())
+	const auto& devIds = attachedDevIds();
+	for (const auto& devId : devIds)
 	{
-		const uint vendorId = devId.first;
-		const uint productId = devId.second;
-		const QSharedPointer<DeviceDescriptor> device = lookupDevice(vendorId, productId);
-		if (device)
+		const auto& readerConfigurationInfo = readerConfiguration->getReaderConfigurationInfoById(devId);
+		if (readerConfigurationInfo.isKnownReader() && !readerConfigurationInfo.getUrl().isEmpty())
 		{
-			device->checkDriver(readerTypes);
-			result += device;
+			qCDebug(card_drivers) << "Found known reader:" << devId;
+			attachedSupportedDevices += readerConfigurationInfo;
 		}
 	}
-	return result;
+	return attachedSupportedDevices;
+}
+
+
+ReaderConfigurationInfo ReaderDetector::getReaderConfigurationInfo(const QString& pReaderName)
+{
+	QVector<ReaderConfigurationInfo> attachedSupportedDevices = getAttachedSupportedDevices();
+	attachedSupportedDevices += Env::getSingleton<ReaderConfiguration>()->getRemoteReaderConfigurationInfo();
+
+	for (const auto& info : qAsConst(attachedSupportedDevices))
+	{
+		const QString& pattern = info.getPattern();
+		const QRegularExpression expression(pattern.isEmpty() ? info.getName() : pattern);
+		if (pReaderName.contains(expression))
+		{
+			return info;
+		}
+	}
+
+	return ReaderConfigurationInfo(pReaderName);
 }

@@ -1,7 +1,5 @@
 /*!
- * BluetoothMessageParameter.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BluetoothMessageParameter.h"
@@ -67,7 +65,7 @@ QByteArray BluetoothMessageParameter::toData() const
 {
 	QByteArray data;
 	data += Enum<BluetoothParamId>::getValue(mParamId);
-	data += char(0x00);
+	data += '\0';
 	if (mValue.size() > 0xFFFF)
 	{
 		qCCritical(bluetooth) << "Value of BluetoothMessageParameter of size > 0xFFFF not supported";

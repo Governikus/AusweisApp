@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref Asn1ObjectUtil
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -27,7 +27,7 @@ class test_Asn1ObjectUtil
 
 			QVERIFY(asn1Object != nullptr);
 
-			QByteArray derEncoding(reinterpret_cast<const char*>(asn1Object->data), asn1Object->length);
+			QByteArray derEncoding = Asn1ObjectUtil::getValue(asn1Object);
 			QCOMPARE(derEncoding.toHex(), QByteArray("04008100"));
 
 			ASN1_OBJECT_free(asn1Object);

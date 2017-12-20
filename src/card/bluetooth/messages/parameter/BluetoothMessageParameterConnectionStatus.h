@@ -1,9 +1,7 @@
 /*!
- * BluetoothMessageParameterConnectionStatus.h
- *
  * \brief Implements special BluetoothMessageParameter for ConnectionStatus.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,7 +19,7 @@ class BluetoothMessageParameterConnectionStatus
 
 	public:
 		BluetoothMessageParameterConnectionStatus(const QByteArray& pValue);
-		virtual ~BluetoothMessageParameterConnectionStatus();
+		virtual ~BluetoothMessageParameterConnectionStatus() override;
 
 		BluetoothConnectionStatus getResultCode() const;
 		virtual QString toStringValue() const override;

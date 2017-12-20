@@ -170,3 +170,23 @@ Nachdem die Build-Umgebung eingerichtet ist, kann je nach System ein Package ers
 
      $ make install
      $ make apk
+
+
+
+Reproduzierbarer Build
+----------------------
+Wir sind stets bemüht den Build des offiziellen Binaries der AusweisApp2 nachvollziehbar zu gestalten.
+Daher haben wir unter anderem eine README in dem Unterordner ``./libs`` hinterlegt, die den Aufbau
+der Buildumgebung und den Build der externen Bibliotheken beschreibt.
+Anhand dieser Anleitung können Sie nachvollziehen, wie unser internes Buildsystem aufgebaut ist und
+welche Compiler bzw. Compiler-Versionen wir verwenden.
+
+Im Unterordner ``./resources/jenkins/`` ist es möglich, unsere Konfiguration des CI-Servers einzusehen.
+Die Konfiguration besteht aus mehreren Dockerfiles und JobDSL-Dateien.
+
+Anhand dieser Skripte ist es möglich, den Build der AusweisApp2 zu reproduzieren.
+Ein Unterschied zum offiziellen Binary sollte lediglich in eventuellen Pfaden,
+einem Datum bzw. Zeitstempel und Signaturen bestehen.
+
+.. seealso::
+  https://reproducible-builds.org/

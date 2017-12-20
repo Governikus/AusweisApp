@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StartPaos.h"
@@ -12,14 +12,10 @@ StartPaos::StartPaos(const QByteArray& pSessionId)
 	: PaosCreator()
 	, PaosMessage(PaosType::STARTPAOS)
 	, mSessionId(pSessionId)
+	, mUserAgent()
+	, mSupportedAPI()
 {
 	Q_ASSERT(!mSessionId.isEmpty());
-}
-
-
-QDomElement StartPaos::getDocumentStructure()
-{
-	return createEnvelopeElement(createStartPaosElement(), getRelatesTo(), getMessageId());
 }
 
 
@@ -61,6 +57,12 @@ QDomElement StartPaos::createSupportedAPIVersionsElement()
 }
 
 
+QDomElement StartPaos::createSessionIdentifierElement()
+{
+	return createTextElement(QStringLiteral("SessionIdentifier"), mSessionId);
+}
+
+
 QDomElement StartPaos::createStartPaosElement()
 {
 	QDomElement element = mDoc.createElement(QStringLiteral("StartPAOS"));
@@ -75,7 +77,7 @@ QDomElement StartPaos::createStartPaosElement()
 }
 
 
-QDomElement StartPaos::createSessionIdentifierElement()
+QDomElement StartPaos::getDocumentStructure()
 {
-	return createTextElement(QStringLiteral("SessionIdentifier"), mSessionId);
+	return createEnvelopeElement(createStartPaosElement(), getRelatesTo(), getMessageId());
 }

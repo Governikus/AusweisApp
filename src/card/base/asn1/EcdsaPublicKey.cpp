@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ASN1TemplateUtil.h"
@@ -103,13 +103,13 @@ QByteArray EcdsaPublicKey::getPublicKeyOid() const
 
 QByteArray EcdsaPublicKey::getPublicKeyOidValueBytes() const
 {
-	return QByteArray(reinterpret_cast<const char*>(mObjectIdentifier->data), mObjectIdentifier->length);
+	return Asn1ObjectUtil::getValue(mObjectIdentifier);
 }
 
 
 QByteArray EcdsaPublicKey::getUncompressedPublicPoint() const
 {
-	return QByteArray(reinterpret_cast<const char*>(mPublicPoint->data), mPublicPoint->length);
+	return Asn1OctetStringUtil::getValue(mPublicPoint);
 }
 
 

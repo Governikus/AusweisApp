@@ -1,7 +1,7 @@
 /*!
  * \brief Generate information for DisconnectResponse.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,7 +27,7 @@ class DisconnectResponse
 
 		QDomElement createDisconnectResponse();
 
-		virtual QDomElement getDocumentStructure();
+		virtual QDomElement getDocumentStructure() override;
 
 	public:
 		DisconnectResponse();

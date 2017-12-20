@@ -1,9 +1,7 @@
 /*!
- * PcscCard.h
- *
  * \brief Implementation of card object for PC/SC
  *  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,7 +28,7 @@ class PcscCard
 		QPointer<PcscReader> mReader;
 		PCSC_INT mProtocol;
 		SCARDCONTEXT mContextHandle;
-		PCSC_CARDHANDLE mCardHandle;
+		SCARDHANDLE mCardHandle;
 		QTimer mTimer;
 
 		PCSC_RETURNCODE transmit(const QByteArray& pSendBuffer, QByteArray& pReceiveBuffer);
@@ -48,7 +46,7 @@ class PcscCard
 
 	public:
 		PcscCard(PcscReader* pPcscReader);
-		virtual ~PcscCard();
+		virtual ~PcscCard() override;
 
 		virtual CardReturnCode connect() override;
 		virtual CardReturnCode disconnect() override;
@@ -56,7 +54,7 @@ class PcscCard
 
 		virtual CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
 
-		virtual CardReturnCode establishPaceChannel(PACE_PIN_ID pPinId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds) override;
+		virtual CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds) override;
 
 		virtual CardReturnCode destroyPaceChannel() override;
 

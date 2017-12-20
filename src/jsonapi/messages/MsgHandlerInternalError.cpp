@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerInternalError.h"
@@ -12,7 +12,7 @@ MsgHandlerInternalError::MsgHandlerInternalError(const QString& pError)
 }
 
 
-MsgHandlerInternalError::MsgHandlerInternalError(const QLatin1String& pError)
+MsgHandlerInternalError::MsgHandlerInternalError(const QLatin1String pError)
 	: MsgHandler(MsgType::INTERNAL_ERROR, "error", pError)
 {
 }

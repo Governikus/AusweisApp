@@ -1,0 +1,4 @@
+module Workflow
+NfcWorkflow 1.0 NfcWorkflow.qml
+RemoteWorkflow 1.0 RemoteWorkflow.qml
+BluetoothWorkflow 1.0 BluetoothWorkflow.qml

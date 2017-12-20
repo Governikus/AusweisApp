@@ -1,7 +1,5 @@
 /*!
- * AbstractState.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AbstractState.h"
@@ -22,6 +20,7 @@ AbstractState::AbstractState(const QSharedPointer<WorkflowContext>& pContext, bo
 	, mConnectOnCardRemoved(pConnectOnCardRemoved)
 	, mConnections()
 {
+	Q_ASSERT(mContext);
 }
 
 
@@ -46,9 +45,9 @@ void AbstractState::setStateName(const QString& pName)
 QString AbstractState::getClassName(const char* pName)
 {
 	QString className = QString::fromLatin1(pName);
-	if (className.contains(':'))
+	if (className.contains(QLatin1Char(':')))
 	{
-		className = className.mid(className.lastIndexOf(':') + 1);
+		className = className.mid(className.lastIndexOf(QLatin1Char(':')) + 1);
 	}
 	return className;
 }
@@ -67,7 +66,6 @@ void AbstractState::onStateApprovedChanged()
 void AbstractState::onEntry(QEvent* pEvent)
 {
 	Q_UNUSED(pEvent);
-	Q_ASSERT(mConnections.isEmpty());
 	if (mConnectOnCardRemoved)
 	{
 		mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireCardRemoved, this, &AbstractState::onCardRemoved);
@@ -84,15 +82,19 @@ void AbstractState::onEntry(QEvent* pEvent)
 void AbstractState::onExit(QEvent* pEvent)
 {
 	QState::onExit(pEvent);
+	clearConnections();
+	mContext->setStateApproved(false);
+	qCDebug(statemachine) << "Leaving state" << getStateName() << "with status:" << mContext->getStatus();
+}
+
+
+void AbstractState::clearConnections()
+{
 	for (const auto& connection : qAsConst(mConnections))
 	{
 		QObject::disconnect(connection);
 	}
 	mConnections.clear();
-
-	mContext->setStateApproved(false);
-
-	qCDebug(statemachine) << "Leaving state" << getStateName() << "with status:" << mContext->getStatus();
 }
 
 
@@ -105,8 +107,8 @@ bool AbstractState::isCancellationByUser()
 void AbstractState::onUserCancelled()
 {
 	qCInfo(support) << "Cancellation by user";
-	setStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
-	Q_EMIT fireCancel();
+	updateStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
+	Q_EMIT fireAbort();
 }
 
 
@@ -114,13 +116,13 @@ void AbstractState::onCardRemoved(const QString& pReaderName)
 {
 	if (pReaderName == mContext->getReaderName())
 	{
-		setStatus(GlobalStatus::Code::Workflow_Card_Removed);
-		Q_EMIT fireError();
+		updateStatus(GlobalStatus::Code::Workflow_Card_Removed);
+		Q_EMIT fireAbort();
 	}
 }
 
 
-void AbstractState::setStatus(const GlobalStatus& pStatus)
+void AbstractState::updateStatus(const GlobalStatus& pStatus)
 {
 	if (pStatus.isError() && mContext->getStatus().isNoError())
 	{

@@ -1,7 +1,7 @@
 /*!
  * \brief Message Auth of JSON API.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,7 +19,7 @@ class MsgHandlerAuth
 	private:
 		QUrl createUrl(const QString& pUrl);
 		void initAuth(const QUrl& pTcTokenUrl);
-		void setError(const QLatin1String& pError);
+		void setError(const QLatin1String pError);
 
 	public:
 		MsgHandlerAuth();

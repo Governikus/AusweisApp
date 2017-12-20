@@ -1,9 +1,7 @@
 /*!
- * DestroyPaceChannelCommand.h
- *
  * \brief Command to destroy a Pace channel.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,7 +20,7 @@ class DestroyPaceChannelCommand
 
 	protected:
 		virtual void internalExecute() override;
-		virtual ~DestroyPaceChannelCommand();
+		virtual ~DestroyPaceChannelCommand() override;
 
 	public:
 		DestroyPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);

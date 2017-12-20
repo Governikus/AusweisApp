@@ -1,12 +1,13 @@
 /*!
  * \brief Unit tests for \ref DidAuthenticateEAC1
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/invoke/DidAuthenticateResponseEac1.h"
 
 #include "asn1/CVCertificate.h"
+#include "EstablishPACEChannel.h"
 #include "TestFileHelper.h"
 
 #include <QtTest>

@@ -1,12 +1,10 @@
 /*!
- * test_History.h
- *
  * \brief Unit tests for History.
  *
  * All tests ends with _QTEST to be able to identify them later.
  * All original history entry from AusweisApp2 do not have this.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HistorySettings.h"
@@ -33,79 +31,52 @@ class test_HistorySettings
 		}
 
 
-		void testEquals()
-		{
-			QScopedPointer<HistorySettings> otherSettings(new HistorySettings());
-
-			QVERIFY(*settings == *otherSettings);
-
-			settings->setEnabled(!settings->isEnabled());
-			QVERIFY(*settings != *otherSettings);
-			otherSettings->setEnabled(settings->isEnabled());
-			QVERIFY(*settings == *otherSettings);
-
-			HistoryEntry entry("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", "pRequestedData");
-			settings->addHistoryEntry(entry);
-			QVERIFY(*settings != *otherSettings);
-			otherSettings->addHistoryEntry(entry);
-			QVERIFY(*settings == *otherSettings);
-
-		}
-
-
 		void testEnabled()
 		{
 			bool initial = settings->isEnabled();
 
 			settings->setEnabled(!initial);
 			QCOMPARE(settings->isEnabled(), !initial);
-			QVERIFY(settings->isUnsaved());
 			settings->save();
-			QVERIFY(!settings->isUnsaved());
 
 			settings->setEnabled(initial);
 			QCOMPARE(settings->isEnabled(), initial);
-			settings->save();
 		}
 
 
 		void testHistoryEntries()
 		{
-			QVector<HistoryEntry> initial = settings->getHistoryEntries();
-			HistoryEntry entry("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", "pRequestedData");
-			QVector<HistoryEntry> newValue(initial);
-			newValue.prepend(entry); // new values will be prepended, so that it appears on top
+			QVector<HistoryInfo> initial = settings->getHistoryInfos();
+			HistoryInfo info("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", "pRequestedData");
+			QVector<HistoryInfo> newValue(initial);
+			newValue.prepend(info); // new values will be prepended, so that it appears on top
 
-			settings->addHistoryEntry(entry);
-			QCOMPARE(settings->getHistoryEntries(), newValue);
-			QVERIFY(settings->isUnsaved());
-			settings->save();
-			QVERIFY(!settings->isUnsaved());
+			settings->addHistoryInfo(info);
+			QCOMPARE(settings->getHistoryInfos(), newValue);
 		}
 
 
 		void testDeleteHistory()
 		{
-			HistoryEntry entry("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", "pRequestedData");
-			settings->addHistoryEntry(entry);
+			HistoryInfo info("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", "pRequestedData");
+			settings->addHistoryInfo(info);
 
-			QCOMPARE(settings->getHistoryEntries().size(), 1);
+			QCOMPARE(settings->getHistoryInfos().size(), 1);
 
 			settings->deleteSettings();
 
-			QCOMPARE(settings->getHistoryEntries().size(), 0);
+			QCOMPARE(settings->getHistoryInfos().size(), 0);
 		}
 
 
 		void testDeleteHistoryFromFile()
 		{
-			settings->load();
 			const auto file = AbstractSettings::mTestDir->path() + QStringLiteral("/dummy/Test_settings_HistorySettings.ini");
 
-			HistoryEntry entry("pSubjectXYZ", "pSubjectUrlXYZ", "pUsageXYZ", QDateTime(), "pTermOfUsageXYZ", "pRequestedDataXYZ");
-			settings->addHistoryEntry(entry);
-			settings->addHistoryEntry(entry);
-			settings->addHistoryEntry(entry);
+			HistoryInfo info("pSubjectXYZ", "pSubjectUrlXYZ", "pUsageXYZ", QDateTime(), "pTermOfUsageXYZ", "pRequestedDataXYZ");
+			settings->addHistoryInfo(info);
+			settings->addHistoryInfo(info);
+			settings->addHistoryInfo(info);
 			settings->save();
 			QVERIFY(QFile::exists(file));
 

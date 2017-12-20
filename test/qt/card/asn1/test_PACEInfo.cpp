@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref PACEInfo
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore>
@@ -98,15 +98,28 @@ class test_PACEInfo
 
 		void getVersion()
 		{
-			QByteArray bytes = QByteArray::fromHex("30 12"
-												   "            06 0A 04007F00070202040202"
-												   "            02 01 02"
-												   "            02 01 08");
+			QByteArray bytes;
+			QSharedPointer<PACEInfo> paceInfo;
 
-			auto paceInfo = PACEInfo::decode(bytes);
+			bytes = QByteArray::fromHex("30 12"
+										"            06 0A 04007F00070202040202"
+										"            02 01 01"
+										"            02 01 08");
+
+			paceInfo = PACEInfo::decode(bytes);
 
 			QVERIFY(paceInfo != nullptr);
-			QCOMPARE(paceInfo->getVersion(), QByteArray::fromHex("02"));
+			QCOMPARE(paceInfo->getVersion(), 1);
+
+			bytes = QByteArray::fromHex("30 12"
+										"            06 0A 04007F00070202040202"
+										"            02 01 02"
+										"            02 01 08");
+
+			paceInfo = PACEInfo::decode(bytes);
+
+			QVERIFY(paceInfo != nullptr);
+			QCOMPARE(paceInfo->getVersion(), 2);
 		}
 
 

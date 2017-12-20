@@ -1,15 +1,14 @@
 /*!
- * KeyAgreement.h
- *
  * \brief the key agreement protocol use in PACE. For details see TR 03110.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "asn1/SecurityInfo.h"
 #include "CardConnectionWorker.h"
+#include "CardOperationResult.h"
 #include "GeneralAuthenticateResponse.h"
 #include "pace/KeyDerivationFunction.h"
 
@@ -25,8 +24,9 @@ class PACEInfo;
 enum class KeyAgreementStatus
 {
 	SUCCESS,
+	COMMUNICATION_ERROR,
 	FAILED,
-	PROTOCOLL_ERROR
+	PROTOCOL_ERROR
 };
 
 class KeyAgreement
@@ -43,7 +43,7 @@ class KeyAgreement
 		 * \param pPin PIN for decryption of the nonce
 		 * \return the decrypted nonce
 		 */
-		QByteArray determineNonce(const QString& pPin);
+		CardOperationResult<QByteArray> determineNonce(const QString& pPin);
 
 		/*!
 		 * \brief Determines the shared secret by performing the key agreement.
@@ -51,7 +51,7 @@ class KeyAgreement
 		 * \param pNonce the nonce needed for key agreement.
 		 * \return the shared secret between terminal and card
 		 */
-		virtual QByteArray determineSharedSecret(const QByteArray& pNonce) = 0;
+		virtual CardOperationResult<QByteArray> determineSharedSecret(const QByteArray& pNonce) = 0;
 
 		/*!
 		 * \brief Returns the uncompressed terminal's ephemeral public key calculated during key agreement.
@@ -64,11 +64,11 @@ class KeyAgreement
 		 * \brief Transmit the General Authenticate (Encrypted Nonce) command to the card.
 		 * \return the encrypted nonce
 		 */
-		QByteArray transmitGAEncryptedNonce();
+		CardOperationResult<QByteArray> transmitGAEncryptedNonce();
 
 		/*!
 		 * \brief Performs the mutual authentication of terminal and card using the determined shared secret.
-		 * This represents the forth step "General Authenticate" of TR-03110 Part 3, page 47.
+		 * This represents the fourth step "General Authenticate" of TR-03110 Part 3, page 47.
 		 * \return result of authentication
 		 */
 		KeyAgreementStatus performMutualAuthenticate();
@@ -84,14 +84,14 @@ class KeyAgreement
 		 * \param pMappingData the terminal's mapping data.
 		 * \return the card's mapping data
 		 */
-		QByteArray transmitGAMappingData(const QByteArray& pMappingData);
+		CardOperationResult<QByteArray> transmitGAMappingData(const QByteArray& pMappingData);
 
 		/*!
 		 * \brief Transmit the General Authenticate (Ephemeral Public Key) command to the card.
 		 * \param pEphemeralPublicKey the terminal's ephemeral public key
 		 * \return the card's ephemeral public key
 		 */
-		QByteArray transmitGAEphemeralPublicKey(const QByteArray& pEphemeralPublicKey);
+		CardOperationResult<QByteArray> transmitGAEphemeralPublicKey(const QByteArray& pEphemeralPublicKey);
 
 		/*!
 		 * \brief Transmit the General Authenticate (Mutual Authentication) command to the card.
@@ -118,7 +118,7 @@ class KeyAgreement
 		/*!
 		 * \brief Factory method to create an instance of KeyAgreement.
 		 * \param pPaceInfo the PACEInfo containing the protocol parameters
-		 * \param pReader the reader to transmit card commands
+		 * \param pCardConnectionWorker the reader connection to transmit card commands
 		 * \return new instance
 		 */
 		static QSharedPointer<KeyAgreement> create(const QSharedPointer<const PACEInfo>& pPaceInfo,

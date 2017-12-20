@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEditAccessRights.h"
@@ -14,5 +14,5 @@ StateEditAccessRights::StateEditAccessRights(const QSharedPointer<WorkflowContex
 
 void StateEditAccessRights::run()
 {
-	Q_EMIT fireSuccess();
+	Q_EMIT fireContinue();
 }

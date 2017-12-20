@@ -1,0 +1,488 @@
+{
+	"SupportedDevices":
+	[
+		{
+			"VendorId": "0x0000",
+			"ProductId": "0x0000",
+			"Name": "Smartphone als Kartenlesegerät",
+			"Pattern": "^NFC.*",
+			"Icon": "img_RemoteReader.png",
+			"IconWithNPA": "img_RemoteReader_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
+					"URL": "https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x0C4B",
+			"ProductId": "0x0501",
+			"Name": "REINER SCT cyberJack RFID komfort",
+			"Pattern": "REINER SCT cyberJack RFID komfort",
+			"Icon": "img_Reiner_SCT_cyberjack_RFID_komfort.png",
+			"IconWithNPA": "img_Reiner_SCT_cyberjack_RFID_komfort_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304822&q=driver#choice5"
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304822&q=driver#choice5"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304822&q=driver#choice5"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x0C4B",
+			"ProductId": "0x0500",
+			"Name": "REINER SCT cyberJack RFID standard",
+			"Pattern": "REINER SCT cyberJack RFID standard",
+			"Icon": "img_Reiner_SCT_cyberjack_RFID_standard.png",
+			"IconWithNPA": "img_Reiner_SCT_cyberjack_RFID_standard_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304820&q=driver#choice5"
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304820&q=driver#choice5"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304820&q=driver#choice5"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x0C4B",
+			"ProductId": "0x9102",
+			"Name": "REINER SCT cyberJack RFID basis",
+			"Pattern": "REINER SCT cyberJack RFID basis",
+			"Icon": "img_Reiner_SCT_cyberjack_RFID_basis.png",
+			"IconWithNPA": "img_Reiner_SCT_cyberjack_RFID_basis_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304856&q=driver#choice5"
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304856&q=driver#choice5"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304856&q=driver#choice5"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x0C4B",
+			"ProductId": "0x0505",
+			"Name": "REINER SCT cyberJack wave",
+			"Pattern": "REINER SCT cyberJack wave",
+			"Icon": "img_cyberjack_wave.png",
+			"IconWithNPA": "img_cyberjack_wave_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304828&q=driver#choice5"
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "10.11"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304828&q=driver#choice5"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304828&q=driver#choice5"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x0D46",
+			"ProductId": "0x301D",
+			"Name": "KOBIL IDToken",
+			"Pattern": "KOBIL (Systems )?IDToken",
+			"Icon": "img_KOBIL_ID_Token.png",
+			"IconWithNPA": "img_KOBIL_ID_Token_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://www.kobil.com/de/support_de/#drivers_de"
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"URL": "https://www.kobil.com/de/support_de/#drivers_de"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://www.kobil.com/de/support_de/#drivers_de"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x04E6",
+			"ProductId": "0x512B",
+			"Name": "SDI011 Contactless Reader",
+			"Pattern": "SDI011 (USB )?(Smart Card|Contactless) Reader",
+			"Icon": "img_Identive_SDI011.png",
+			"IconWithNPA": "img_Identive_SDI011_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}],
+					"URL": "https://support.identiv.com/sdi010-011/"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://support.identiv.com/sdi010-011/"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x04E6",
+			"ProductId": "0x5292",
+			"Name": "SCL01x Contactless Reader",
+			"Pattern": "(SCM Microsystems Inc. )?SCL011 Contactless Reader",
+			"Icon": "img_Identive_SCL011.png",
+			"IconWithNPA": "img_Identive_SCL011_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win", "min": "10.0"}],
+					"URL": "https://support.identiv.com/scl010-scl011/"
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}],
+					"URL": "https://support.identiv.com/scl010-scl011/"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://support.identiv.com/scl010-scl011/"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x04E6",
+			"ProductId": "0x5790",
+			"Name": "Identiv Cloud 3700 F",
+			"Pattern": "(CLOUD 3700 F Contactless Reader|Identiv uTrust 3700 F CL Reader)",
+			"Icon": "img_Identive_Cloud_3700_F.png",
+			"IconWithNPA": "img_Identive_Cloud_3700_F_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://support.identiv.com/3700f/"
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"URL": "https://support.identiv.com/3700f/"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://support.identiv.com/3700f/"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x04E6",
+			"ProductId": "0x5591",
+			"Name": "Identiv SCL3711",
+			"Pattern": "SCL3711",
+			"Icon": "img_Identive_SCL3711.png",
+			"IconWithNPA": "img_Identive_SCL3711_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://support.identiv.com/scl3711/"
+				},
+				{
+					"Platforms": [{"os": "mac", "max": "10.11"}],
+					"URL": "https://support.identiv.com/scl3711/"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://support.identiv.com/scl3711/"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x04E6",
+			"ProductId": "0x5720",
+			"Name": "Identiv Cloud 4700 F",
+			"Pattern": "(CLOUD 4700 F Contactless Reader|Identiv uTrust 4700 F Dual Interface Reader)",
+			"Icon": "img_Identive_Cloud_4700_F.png",
+			"IconWithNPA": "img_Identive_Cloud_4700_F_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "http://www.scm-pc-card.de/index.php?lang=en&page=download&function=show_downloads&product_id=832"
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"URL": "http://www.scm-pc-card.de/index.php?lang=en&page=download&function=show_downloads&product_id=832"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "http://www.scm-pc-card.de/index.php?lang=en&page=download&function=show_downloads&product_id=832"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x04E6",
+			"ProductId": "0x5724",
+			"Name": "Identiv Cloud 4701 F",
+			"Pattern": "(CLOUD 4701 F Contactless Reader|Identiv uTrust 4701 F Dual Interface Reader)",
+			"Icon": "img_Identive_Cloud_4701_F.png",
+			"IconWithNPA": "img_Identive_Cloud_4701_F_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://support.identiv.com/4701f/"
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"URL": "https://support.identiv.com/4701f/"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://support.identiv.com/4701f/"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x072F",
+			"ProductId": "0x2200",
+			"Name": "ACS ACR122U",
+			"Pattern": "ACS ACR122U",
+			"Icon": "img_ACS_ACR122U.png",
+			"IconWithNPA": "img_ACS_ACR122U_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}],
+					"URL": "https://www.acs.com.hk/en/products/3/acr122u-usb-nfc-reader/"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x072F",
+			"ProductId": "0x0901",
+			"Name": "ACS ACR1281U",
+			"Pattern": "ACS ACR1281 PICC Reader",
+			"Icon": "img_ACS_ACR1281U.png",
+			"IconWithNPA": "img_ACS_ACR1281U_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "http://www.acs.com.hk/en/driver/151/acr1281u-npa-contactless-reader/"
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"URL": "http://www.acs.com.hk/en/driver/151/acr1281u-npa-contactless-reader/"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x072F",
+			"ProductId": "0x223B",
+			"Name": "ACS ACR1252U",
+			"Pattern": "ACS ACR1252 Dual Reader|ACS ACR1252 1S CL Reader",
+			"Icon": "img_ACS_ACR1252U.png",
+			"IconWithNPA": "img_ACS_ACR1252U_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "http://www.acs.com.hk/en/products/342/acr1252u-usb-nfc-reader-iii-nfc-forum-certified-reader/#tab_downloads"
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "10.13", "max": "10.13"}],
+					"URL": "http://www.acs.com.hk/en/products/342/acr1252u-usb-nfc-reader-iii-nfc-forum-certified-reader/#tab_downloads"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x076B",
+			"ProductId": "0x5340",
+			"Name": "OMNIKEY 5021-CL",
+			"Pattern": "OMNIKEY CardMan 5x21-CL|OMNIKEY CardMan \\(076B:5340\\) 5021 CL",
+			"Icon": "img_HID_Omnikey_Mobile_Reader_5021_CL.png",
+			"IconWithNPA": "img_HID_Omnikey_Mobile_Reader_5021_CL_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://www.hidglobal.com/drivers?field_brand_tid=24&product_id=4077&os=All"
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}, {"os": "mac", "min": "10.13", "max": "10.13"}],
+					"URL": "https://www.hidglobal.com/drivers?field_brand_tid=24&product_id=4077&os=All"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://www.hidglobal.com/drivers?field_brand_tid=24&product_id=4077&os=All"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x076B",
+			"ProductId": "0x5421",
+			"Name": "OMNIKEY 5421",
+			"Pattern": "OMNIKEY CardMan \\(076B:5421\\) 5421|OMNIKEY Smart Card Reader USB",
+			"Icon": "img_HID_Omnikey_5421.png",
+			"IconWithNPA": "img_HID_Omnikey_5421_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://www.hidglobal.com/drivers?field_brand_tid=24&product_id=4077&os=All"
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}, {"os": "mac", "min": "10.13", "max": "10.13"}],
+					"URL": "https://www.hidglobal.com/drivers?field_brand_tid=24&product_id=4077&os=All"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://www.hidglobal.com/drivers?field_brand_tid=24&product_id=4077&os=All"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x0AB1",
+			"ProductId": "0x0003",
+			"Name": "OBID RFID-Reader",
+			"Pattern": "FEIG ELECTRONIC GmbH OBID myAXXESS basic",
+			"Icon": "img_FEIG_myAXXES_basic.png",
+			"IconWithNPA": "img_FEIG_myAXXES_basic_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "http://www.feig.de/downloads/"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x08E6",
+			"ProductId": "0x5504",
+			"Name": "Gemalto Prox-SU Contactless",
+			"Pattern": "Gemalto Prox( |-)SU",
+			"Icon": "img_Gemalto_Prox_SU.png",
+			"IconWithNPA": "img_Gemalto_Prox_SU_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win", "max": "6.1"}, {"os": "win", "min": "10.0"}],
+					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#msdrivers"
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "10.13", "max": "10.13"}],
+					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#macosxdrivers"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x08E6",
+			"ProductId": "0x5503",
+			"Name": "Prox-DU HID",
+			"Pattern": "Gemalto Prox(-DU| Dual)($| USB| Contactless_)",
+			"Icon": "img_Gemalto_Prox_DU.png",
+			"IconWithNPA": "img_Gemalto_Prox_DU_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win", "max": "6.1"}, {"os": "win", "min": "10.0"}],
+					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#.WOIQijvyjyQ"
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#.WOIQijvyjyQ"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x046A",
+			"ProductId": "0x0091",
+			"Name": "Cherry TC-1200",
+			"Pattern": "(Cherry TC 1200($|[^-])|TC 12xx-CL 0|Cherry SC Reader \\(046A:0091\\))",
+			"Icon": "img_Cherry_TC_1200.png",
+			"IconWithNPA": "img_Cherry_TC_1200_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "http://www.cherry.de/cid/download.php"
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}, {"os": "mac", "min": "10.13", "max": "10.13"}],
+					"URL": "http://www.cherry.de/cid/download.php"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "http://www.cherry.de/cid/download.php"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x046A",
+			"ProductId": "0x0092",
+			"Name": "Cherry TC-1300",
+			"Pattern": "(Cherry TC 1300|Cherry Smartcard Terminal TC 13xx-CL 0|Cherry SC Reader \\(046A:0092\\))",
+			"Icon": "img_Cherry_TC_1300.png",
+			"IconWithNPA": "img_Cherry_TC_1300_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "http://www.cherry.de/cid/download.php"
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}, {"os": "mac", "min": "10.13", "max": "10.13"}],
+					"URL": "http://www.cherry.de/cid/download.php"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "http://www.cherry.de/cid/download.php"
+				}
+			]
+		}
+	]
+}

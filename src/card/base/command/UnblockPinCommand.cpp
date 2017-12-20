@@ -1,7 +1,5 @@
 /*!
- * UnblockPinCommand.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"
@@ -39,7 +37,7 @@ void UnblockPinCommand::internalExecute()
 	}
 
 	EstablishPACEChannelOutput output;
-	mReturnCode = mCardConnectionWorker->establishPaceChannel(PACE_PIN_ID::PACE_PUK, mPuk, output);
+	mReturnCode = mCardConnectionWorker->establishPaceChannel(PACE_PASSWORD_ID::PACE_PUK, mPuk, output);
 	if (mReturnCode != CardReturnCode::OK)
 	{
 		return;
@@ -48,7 +46,7 @@ void UnblockPinCommand::internalExecute()
 	// unblock PIN (reset retry counter)
 	ResponseApdu response;
 	mReturnCode = mCardConnectionWorker->transmit(ResetRetryCounterBuilder().build(), response);
-	if (mReturnCode == CardReturnCode::OK && response.getSW1() == Enum<SW1>::getValue(SW1::ERROR_COMMAND_NOT_ALLOWED))
+	if (mReturnCode == CardReturnCode::OK && response.getSW1() == SW1::ERROR_COMMAND_NOT_ALLOWED)
 	{
 		mCardConnectionWorker->setPukInoperative();
 		mReturnCode = CardReturnCode::PUK_INOPERATIVE;

@@ -1,9 +1,7 @@
 /*!
- * test_GeneralAuthenticateResponse.cpp
- *
  * \brief Tests for GeneralAuthenticate response APDUs
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore/QtCore>

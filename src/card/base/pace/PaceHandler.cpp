@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/PaceHandler.h"
@@ -23,6 +23,7 @@ PaceHandler::PaceHandler(const QSharedPointer<CardConnectionWorker>& pCardConnec
 	: mCardConnectionWorker(pCardConnectionWorker)
 	, mKeyAgreement()
 	, mPaceInfo()
+	, mStatusMseSetAt()
 	, mIdIcc()
 	, mEncryptionKey()
 	, mMacKey()
@@ -43,40 +44,44 @@ QByteArray PaceHandler::getPaceProtocol() const
 }
 
 
-CardReturnCode PaceHandler::establishPaceChannel(PACE_PIN_ID pPinId, const QString& pPin)
+CardReturnCode PaceHandler::establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QString& pPassword)
 {
 	auto efCardAccess = mCardConnectionWorker->getReaderInfo().getCardInfo().getEfCardAccess();
-	if (!efCardAccess)
-	{
-		return CardReturnCode::PROTOCOL_ERROR;
-	}
 	if (!initialize(efCardAccess))
 	{
 		return CardReturnCode::PROTOCOL_ERROR;
 	}
-	if (!transmitMSESetAT(pPinId))
+
+	switch (transmitMSESetAT(pPasswordId))
 	{
-		return CardReturnCode::PROTOCOL_ERROR;
+		case CardReturnCode::PROTOCOL_ERROR:
+			return CardReturnCode::PROTOCOL_ERROR;
+
+		case CardReturnCode::COMMAND_FAILED:
+			return CardReturnCode::COMMAND_FAILED;
+
+		default:
+			;
 	}
 
-	KeyAgreementStatus keyAgreementStatus = mKeyAgreement->perform(pPin);
-	if (keyAgreementStatus == KeyAgreementStatus::PROTOCOLL_ERROR)
+	KeyAgreementStatus keyAgreementStatus = mKeyAgreement->perform(pPassword);
+	if (keyAgreementStatus == KeyAgreementStatus::PROTOCOL_ERROR)
 	{
 		return CardReturnCode::PROTOCOL_ERROR;
 	}
 	else if (keyAgreementStatus == KeyAgreementStatus::FAILED)
 	{
-		switch (pPinId)
+		switch (pPasswordId)
 		{
-			case PACE_PIN_ID::PACE_MRZ:
+			case PACE_PASSWORD_ID::PACE_MRZ:
 			// No separate error code (yet).
-			case PACE_PIN_ID::PACE_CAN:
+			case PACE_PASSWORD_ID::PACE_CAN:
 				return CardReturnCode::INVALID_CAN;
 
-			case PACE_PIN_ID::PACE_PIN:
+			case PACE_PASSWORD_ID::PACE_PIN:
 				return CardReturnCode::INVALID_PIN;
 
-			case PACE_PIN_ID::PACE_PUK:
+			case PACE_PASSWORD_ID::PACE_PUK:
 				return CardReturnCode::INVALID_PUK;
 		}
 	}
@@ -119,6 +124,12 @@ bool PaceHandler::initialize(const QSharedPointer<const EFCardAccess>& pEfCardAc
 
 bool PaceHandler::isSupportedProtocol(const QSharedPointer<const PACEInfo>& pPaceInfo) const
 {
+	if (pPaceInfo->getVersion() != 2)
+	{
+		qCWarning(card) << "Unsupported pace version:" << pPaceInfo->getVersion();
+		return false;
+	}
+
 	const auto protocol = pPaceInfo->getProtocol();
 
 	if (protocol == KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128 ||
@@ -131,18 +142,24 @@ bool PaceHandler::isSupportedProtocol(const QSharedPointer<const PACEInfo>& pPac
 			return true;
 		}
 	}
+
 	qCWarning(card) << "Unsupported domain parameters: " << pPaceInfo->getProtocol();
 	return false;
 }
 
 
-bool PaceHandler::transmitMSESetAT(PACE_PIN_ID pPinId)
+CardReturnCode PaceHandler::transmitMSESetAT(PACE_PASSWORD_ID pPasswordId)
 {
-	PersoSimWorkaround::sendingMseSetAt(mCardConnectionWorker);
+	CardReturnCode cardReturnCode = PersoSimWorkaround::sendingMseSetAt(mCardConnectionWorker);
+	if (cardReturnCode != CardReturnCode::OK)
+	{
+		qCCritical(card) << "Error on MSE:Set AT";
+		return CardReturnCode::COMMAND_FAILED;
+	}
 
 	MSEBuilder mseBuilder(MSEBuilder::P1::PERFORM_SECURITY_OPERATION, MSEBuilder::P2::SET_AT);
 	mseBuilder.setOid(mPaceInfo->getProtocolValueBytes());
-	mseBuilder.setPublicKey(pPinId);
+	mseBuilder.setPublicKey(pPasswordId);
 	mseBuilder.setPrivateKey(mPaceInfo->getParameterId());
 	if (!mChat.isNull())
 	{
@@ -150,18 +167,23 @@ bool PaceHandler::transmitMSESetAT(PACE_PIN_ID pPinId)
 	}
 
 	ResponseApdu response;
-	CardReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), response);
-	if (returnCode != CardReturnCode::OK)
+	cardReturnCode = mCardConnectionWorker->transmit(mseBuilder.build(), response);
+
+	Q_ASSERT(response.getBuffer().length() == 2);
+	mStatusMseSetAt = response.getBuffer().left(2);
+
+	const StatusCode responseReturnCode = response.getReturnCode();
+	if (cardReturnCode != CardReturnCode::OK)
 	{
 		qCCritical(card) << "Error on MSE:Set AT";
-		return false;
+		return responseReturnCode == StatusCode::EMPTY ? CardReturnCode::COMMAND_FAILED : CardReturnCode::PROTOCOL_ERROR;
 	}
-	if (response.getReturnCode() != StatusCode::SUCCESS && response.getReturnCode() != StatusCode::PIN_RETRY_COUNT_2 && response.getReturnCode() != StatusCode::PIN_SUSPENDED)
+	if (responseReturnCode != StatusCode::SUCCESS && responseReturnCode != StatusCode::PIN_RETRY_COUNT_2 && responseReturnCode != StatusCode::PIN_SUSPENDED)
 	{
 		qCCritical(card) << "Error on MSE:Set AT";
-		return false;
+		return CardReturnCode::PROTOCOL_ERROR;
 	}
-	return true;
+	return CardReturnCode::OK;
 }
 
 
@@ -198,4 +220,10 @@ const QByteArray& PaceHandler::getCarPrev() const
 const QByteArray& PaceHandler::getIdIcc() const
 {
 	return mIdIcc;
+}
+
+
+const QByteArray& PaceHandler::getStatusMseSetAt() const
+{
+	return mStatusMseSetAt;
 }

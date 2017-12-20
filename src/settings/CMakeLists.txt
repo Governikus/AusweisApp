@@ -1,6 +1,6 @@
 ADD_PLATFORM_LIBRARY(AusweisAppSettings)
 
-TARGET_LINK_LIBRARIES(AusweisAppSettings Qt5::Network Qt5::Core AusweisAppGlobal)
+TARGET_LINK_LIBRARIES(AusweisAppSettings Qt5::Core Qt5::Network OpenSSL::Crypto AusweisAppGlobal)
 
 IF(MAC)
 	TARGET_LINK_LIBRARIES(AusweisAppSettings ${OSX_APPKIT})

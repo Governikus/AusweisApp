@@ -1,8 +1,7 @@
 /*!
- * BluetoothCard.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
+
 #include "BluetoothCard.h"
 #include "DestroyPACEChannel.h"
 #include "messages/BluetoothMessageCreator.h"
@@ -119,14 +118,14 @@ CardReturnCode BluetoothCard::transmit(const CommandApdu& pCmd, ResponseApdu& pR
 }
 
 
-CardReturnCode BluetoothCard::establishPaceChannel(PACE_PIN_ID pPinId,
+CardReturnCode BluetoothCard::establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
 		const QByteArray& pChat,
 		const QByteArray& pCertificateDescription,
 		EstablishPACEChannelOutput& pChannelOutput,
 		quint8 pTimeoutSeconds)
 {
 	EstablishPACEChannelBuilder builder;
-	builder.setPinId(pPinId);
+	builder.setPasswordId(pPasswordId);
 	builder.setChat(pChat);
 	builder.setCertificateDescription(pCertificateDescription);
 
@@ -138,7 +137,7 @@ CardReturnCode BluetoothCard::establishPaceChannel(PACE_PIN_ID pPinId,
 		return returnCode;
 	}
 
-	pChannelOutput.parseFromCcid(response.getBuffer(), pPinId);
+	pChannelOutput.parseFromCcid(response.getBuffer(), pPasswordId);
 	return pChannelOutput.getPaceReturnCode();
 }
 

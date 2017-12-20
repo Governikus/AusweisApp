@@ -56,6 +56,7 @@
         <file>core/http/Transmit</file>
         <file>core/http/Transmit2</file>
         <file>core/network/CERT_TLS_ESERVICE_1.der</file>
+        <file>updatable-files/reader/img_ACS_ACR1252U.png</file>
         <file>tctoken/ok.xml</file>
         <file>tctoken/broken.xml</file>
         <file>tctoken/withoutCommunicationErrorAddress.xml</file>

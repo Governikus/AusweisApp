@@ -1,4 +1,3 @@
 ADD_PLATFORM_LIBRARY(AusweisAppCard)
 
-TARGET_INCLUDE_DIRECTORIES(AusweisAppCard SYSTEM PUBLIC ${OPENSSL_INCLUDE_DIR})
-TARGET_LINK_LIBRARIES(AusweisAppCard Qt5::Core AusweisAppGlobal ${OPENSSL_LIBRARIES})
+TARGET_LINK_LIBRARIES(AusweisAppCard Qt5::Core OpenSSL::Crypto AusweisAppGlobal AusweisAppConfiguration AusweisAppCardDrivers)

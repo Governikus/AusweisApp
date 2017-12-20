@@ -1,9 +1,10 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DidAuthenticateResponseEac1.h"
 
+#include "EstablishPACEChannel.h"
 #include "paos/PaosType.h"
 
 using namespace governikus;
@@ -96,7 +97,7 @@ QDomElement DIDAuthenticateResponseEAC1::createDIDAuthenticateResponseEAC1Elemen
 	element.setAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
 	element.setAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
 
-	element.appendChild(createResultElement());
+	element.appendChild(createResultElement(*this));
 	element.appendChild(createAuthenticationProtocolDataElement());
 
 	return element;

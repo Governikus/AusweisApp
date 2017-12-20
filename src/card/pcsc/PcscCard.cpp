@@ -1,28 +1,62 @@
 /*!
- * PcscCard.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DestroyPACEChannel.h"
 #include "PcscCard.h"
 
+#include <QLatin1String>
 #include <QLoggingCategory>
+#include <QOperatingSystemVersion>
 
 Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
 
 using namespace governikus;
 
+namespace
+{
+QLatin1String protocolToString(PCSC_INT pProtocol)
+{
+	switch (pProtocol)
+	{
+		case SCARD_PROTOCOL_UNDEFINED:
+			return QLatin1String("SCARD_PROTOCOL_UNDEFINED");
+
+		case SCARD_PROTOCOL_T0:
+			return QLatin1String("SCARD_PROTOCOL_T0");
+
+		case SCARD_PROTOCOL_T1:
+			return QLatin1String("SCARD_PROTOCOL_T1");
+
+		case SCARD_PROTOCOL_RAW:
+			return QLatin1String("SCARD_PROTOCOL_RAW");
+
+#ifdef SCARD_PROTOCOL_T15
+		case SCARD_PROTOCOL_T15:
+			return QLatin1String("SCARD_PROTOCOL_T15");
+
+#endif
+
+		default:
+			qCWarning(card_pcsc) << "Unknown value of SCARD_PROTOCOL:" << pProtocol;
+			return QLatin1String();
+	}
+}
+
+
+}
+
+
 PcscCard::PcscCard(PcscReader* pPcscReader)
 	: Card()
 	, mReader(pPcscReader)
-	, mProtocol(0)
+	, mProtocol(SCARD_PROTOCOL_UNDEFINED)
 	, mContextHandle(0)
 	, mCardHandle(0)
 	, mTimer()
 {
 	PCSC_RETURNCODE returnCode = SCardEstablishContext(SCARD_SCOPE_USER, nullptr, nullptr, &mContextHandle);
-	qCDebug(card_pcsc) << "SCardEstablishContext for " << mReader->getName() << ": " << PcscUtils::toString(returnCode);
+	qCDebug(card_pcsc) << "SCardEstablishContext for" << mReader->getName() << ':' << PcscUtils::toString(returnCode);
 
 	mTimer.setInterval(4000);
 	QObject::connect(&mTimer, &QTimer::timeout, this, &PcscCard::sendSCardStatus);
@@ -38,7 +72,7 @@ PcscCard::~PcscCard()
 	}
 
 	PCSC_RETURNCODE returnCode = SCardReleaseContext(mContextHandle);
-	qCDebug(card_pcsc) << "SCardReleaseContext for " << mReader->getName() << ": " << PcscUtils::toString(returnCode);
+	qCDebug(card_pcsc) << "SCardReleaseContext for" << mReader->getName() << ':' << PcscUtils::toString(returnCode);
 	mContextHandle = 0;
 }
 
@@ -74,21 +108,21 @@ CardReturnCode PcscCard::connect()
 	PCSC_INT preferredProtocols = SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1;
 
 	PCSC_RETURNCODE returnCode = SCardConnect(mContextHandle, mReader->getState().szReader, shareMode, preferredProtocols, &mCardHandle, &mProtocol);
-	qCDebug(card_pcsc) << "SCardConnect for " << mReader->getName() << " : " << PcscUtils::toString(returnCode) << " cardHandle: " << mCardHandle << " protocol: T" << (mProtocol - 1);
+	qCDebug(card_pcsc) << "SCardConnect for" << mReader->getName() << ':' << PcscUtils::toString(returnCode) << "| cardHandle:" << mCardHandle << "| protocol:" << protocolToString(mProtocol);
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
 	returnCode = SCardBeginTransaction(mCardHandle);
-	qCDebug(card_pcsc) << "SCardBeginTransaction for " << mReader->getName() << " : " << PcscUtils::toString(returnCode);
+	qCDebug(card_pcsc) << "SCardBeginTransaction for" << mReader->getName() << ':' << PcscUtils::toString(returnCode);
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		SCardDisconnect(mCardHandle, SCARD_LEAVE_CARD);
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
-	if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8)
+	if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows8)
 	{
 		mTimer.start();
 	}
@@ -106,12 +140,12 @@ CardReturnCode PcscCard::disconnect()
 	mTimer.stop();
 
 	PCSC_RETURNCODE returnCode = SCardEndTransaction(mCardHandle, SCARD_LEAVE_CARD);
-	qCDebug(card_pcsc) << "SCardEndTransaction for " << mReader->getName() << " : " << PcscUtils::toString(returnCode);
+	qCDebug(card_pcsc) << "SCardEndTransaction for" << mReader->getName() << ':' << PcscUtils::toString(returnCode);
 
 	returnCode = SCardDisconnect(mCardHandle, SCARD_RESET_CARD);
 	mCardHandle = 0;
-	mProtocol = 0;
-	qCDebug(card_pcsc) << "SCardDisconnect for " << mReader->getName() << " : " << PcscUtils::toString(returnCode);
+	mProtocol = SCARD_PROTOCOL_UNDEFINED;
+	qCDebug(card_pcsc) << "SCardDisconnect for" << mReader->getName() << ':' << PcscUtils::toString(returnCode);
 
 	return returnCode == PcscUtils::Scard_S_Success ? CardReturnCode::OK : CardReturnCode::COMMAND_FAILED;
 }
@@ -141,7 +175,7 @@ CardReturnCode PcscCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 	ResponseApdu tempResponse;
 	tempResponse.setBuffer(receiveBuffer);
 
-	if (tempResponse.getSW1() == 0x6c)
+	if (tempResponse.getSW1() == SW1::WRONG_LE_FIELD)
 	{
 		qCDebug(card_pcsc) << "got SW1 == 0x6c, retransmitting with new Le:" << tempResponse.getSW2();
 		CommandApdu retransmitCommand(pCmd.getCLA(), pCmd.getINS(), pCmd.getP1(), pCmd.getP2(), pCmd.getData(), tempResponse.getSW2());
@@ -152,7 +186,7 @@ CardReturnCode PcscCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 		}
 	}
 
-	while (tempResponse.getSW1() == 0x61)
+	while (tempResponse.getSW1() == SW1::MORE_DATA_AVAILABLE)
 	{
 		QByteArray tempReceiveBuffer;
 		qCDebug(card_pcsc) << "got SW1 == 0x61, getting response with Le:" << tempResponse.getSW2();
@@ -236,7 +270,7 @@ PCSC_RETURNCODE PcscCard::transmit(const QByteArray& pSendBuffer, QByteArray& pR
 		return PcscUtils::Scard_F_Unknown_Error;
 	}
 	pReceiveBuffer.resize(static_cast<int>(bytesReceived));
-	qCDebug(card_pcsc) << "SCardTransmit resBuffer " << pReceiveBuffer.toHex();
+	qCDebug(card_pcsc) << "SCardTransmit resBuffer:" << pReceiveBuffer.toHex();
 	if (pReceiveBuffer.size() < 2)
 	{
 		qCCritical(card_pcsc) << "Response buffer smaller than 2";
@@ -252,15 +286,15 @@ PCSC_RETURNCODE PcscCard::transmit(const QByteArray& pSendBuffer,
 		SCARD_IO_REQUEST& pRecvPci,
 		PCSC_INT& pBytesReceived)
 {
-	qCDebug(card_pcsc) << "SCardTransmit cmdBuffer " << pSendBuffer.toHex();
+	qCDebug(card_pcsc) << "SCardTransmit cmdBuffer:" << pSendBuffer.toHex();
 	PCSC_RETURNCODE returnCode = SCardTransmit(mCardHandle, pSendPci, reinterpret_cast<PCSC_CUCHAR_PTR>(pSendBuffer.data()), static_cast<PCSC_INT>(pSendBuffer.size()), &pRecvPci, reinterpret_cast<PCSC_UCHAR_PTR>(pReceiveBuffer.data()), &pBytesReceived);
-	qCDebug(card_pcsc) << "SCardTransmit for " << mReader->getName() << " : " << PcscUtils::toString(returnCode);
+	qCDebug(card_pcsc) << "SCardTransmit for" << mReader->getName() << ':' << PcscUtils::toString(returnCode);
 
 	return returnCode;
 }
 
 
-CardReturnCode PcscCard::establishPaceChannel(PACE_PIN_ID pPinId,
+CardReturnCode PcscCard::establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
 		const QByteArray& pChat,
 		const QByteArray& pCertificateDescription,
 		EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds)
@@ -273,7 +307,7 @@ CardReturnCode PcscCard::establishPaceChannel(PACE_PIN_ID pPinId,
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::EXECUTE_PACE);
 
 	EstablishPACEChannelBuilder builder;
-	builder.setPinId(pPinId);
+	builder.setPasswordId(pPasswordId);
 	builder.setChat(pChat);
 	builder.setCertificateDescription(pCertificateDescription);
 
@@ -285,7 +319,7 @@ CardReturnCode PcscCard::establishPaceChannel(PACE_PIN_ID pPinId,
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
-	pChannelOutput.parse(controlRes, pPinId);
+	pChannelOutput.parse(controlRes, pPasswordId);
 	return pChannelOutput.getPaceReturnCode();
 }
 
@@ -314,7 +348,7 @@ PCSC_RETURNCODE PcscCard::control(PCSC_INT pCntrCode, const QByteArray& pCntrInp
 {
 	char buffer[2048];
 	PCSC_INT len = 0;
-	qCDebug(card_pcsc) << "SCardControl cmdBuffer " << pCntrInput.toHex();
+	qCDebug(card_pcsc) << "SCardControl cmdBuffer:" << pCntrInput.toHex();
 	PCSC_RETURNCODE returnCode = SCardControl(mCardHandle,
 			pCntrCode,
 			pCntrInput.constData(),
@@ -342,7 +376,7 @@ PCSC_RETURNCODE PcscCard::control(PCSC_INT pCntrCode, const QByteArray& pCntrInp
 	}
 	pCntrOutput.append(buffer, static_cast<int>(len));
 
-	qCDebug(card_pcsc) << "SCardControl for " << mReader->getName() << " : " << PcscUtils::toString(returnCode) << " " << pCntrOutput.toHex();
+	qCDebug(card_pcsc) << "SCardControl for" << mReader->getName() << ':' << PcscUtils::toString(returnCode) << pCntrOutput.toHex();
 	return returnCode;
 }
 

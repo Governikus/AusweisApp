@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/KnownOIDs.h"
@@ -36,7 +36,7 @@ class test_SymmetricCipher
 
 		void tripleDes()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC);
 			KeyDerivationFunction kdf(paceAlgo);
 			QByteArray key = kdf.pi("123456");
 			SymmetricCipher sc(paceAlgo, key);
@@ -49,7 +49,7 @@ class test_SymmetricCipher
 
 		void wrongKeySize()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
 			QByteArray key("123456");
 			SymmetricCipher sc(paceAlgo, key);
 
@@ -61,7 +61,7 @@ class test_SymmetricCipher
 
 		void noData()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
 			KeyDerivationFunction kdf(paceAlgo);
 			QByteArray key = kdf.pi("123456");
 			SymmetricCipher sc(paceAlgo, key);
@@ -73,7 +73,7 @@ class test_SymmetricCipher
 
 		void aes128()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
 			KeyDerivationFunction kdf(paceAlgo);
 			QByteArray key = kdf.pi("123456");
 			SymmetricCipher sc(paceAlgo, key);
@@ -88,7 +88,7 @@ class test_SymmetricCipher
 
 		void aes196()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192);
 			KeyDerivationFunction kdf(paceAlgo);
 			QByteArray key = kdf.pi("123456");
 			SymmetricCipher sc(paceAlgo, key);
@@ -103,7 +103,7 @@ class test_SymmetricCipher
 
 		void aes256()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
 			KeyDerivationFunction kdf(paceAlgo);
 			QByteArray key = kdf.pi("123456");
 			SymmetricCipher sc(paceAlgo, key);
@@ -118,7 +118,7 @@ class test_SymmetricCipher
 
 		void multipleuse()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
 			KeyDerivationFunction kdf(paceAlgo);
 			QByteArray key = kdf.pi("123456");
 			SymmetricCipher sc(paceAlgo, key);
@@ -133,7 +133,7 @@ class test_SymmetricCipher
 
 		void setIv()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
 			KeyDerivationFunction kdf(paceAlgo);
 			QByteArray key = kdf.pi("123456");
 			SymmetricCipher sc(paceAlgo, key);

@@ -1,7 +1,7 @@
 /*!
  * \brief Utility class providing information about network connectivity status.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,7 +30,7 @@ class ConnectivityManager
 
 	public:
 		ConnectivityManager(QObject* pParent = nullptr);
-		virtual ~ConnectivityManager();
+		virtual ~ConnectivityManager() override;
 
 		bool isNetworkInterfaceActive() const;
 		void startWatching();

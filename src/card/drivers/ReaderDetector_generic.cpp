@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDetector.h"
@@ -20,7 +20,7 @@ bool ReaderDetector::terminateNativeEvents()
 }
 
 
-QVector<QPair<uint, uint> > ReaderDetector::attachedDevIds() const
+QVector<UsbId> ReaderDetector::attachedDevIds() const
 {
-	return QVector<QPair<uint, uint> >();
+	return QVector<UsbId>();
 }

@@ -17,7 +17,7 @@ ScrollView {
 		Text {
 //			font.pixelSize: Constants.header_font_size
 			color: PlatformConstants.blue_primary
-			text: qsTr("Description")
+			text: qsTr("Description") + settingsModel.translationTrigger
 		}
 
 		Text {

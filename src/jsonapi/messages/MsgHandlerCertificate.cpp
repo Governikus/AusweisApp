@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerCertificate.h"
@@ -19,18 +19,18 @@ MsgHandlerCertificate::MsgHandlerCertificate(const MsgContext& pContext)
 	const auto& certificateDescription = eac1->getCertificateDescription();
 
 	QJsonObject desc;
-	desc["subjectName"] = certificateDescription->getSubjectName();
-	desc["subjectUrl"] = certificateDescription->getSubjectUrl();
-	desc["issuerName"] = certificateDescription->getIssuerName();
-	desc["issuerUrl"] = certificateDescription->getIssuerUrl();
-	desc["termsOfUsage"] = certificateDescription->getTermsOfUsage();
-	desc["purpose"] = certificateDescription->getPurpose();
+	desc[QLatin1String("subjectName")] = certificateDescription->getSubjectName();
+	desc[QLatin1String("subjectUrl")] = certificateDescription->getSubjectUrl();
+	desc[QLatin1String("issuerName")] = certificateDescription->getIssuerName();
+	desc[QLatin1String("issuerUrl")] = certificateDescription->getIssuerUrl();
+	desc[QLatin1String("termsOfUsage")] = certificateDescription->getTermsOfUsage();
+	desc[QLatin1String("purpose")] = certificateDescription->getPurpose();
 
 	CVCertificateBody body = eac1->getCvCertificates().at(0)->getBody();
 	QJsonObject validity;
-	validity["effectiveDate"] = body.getCertificateEffectiveDate().toString(Qt::ISODate);
-	validity["expirationDate"] = body.getCertificateExpirationDate().toString(Qt::ISODate);
+	validity[QLatin1String("effectiveDate")] = body.getCertificateEffectiveDate().toString(Qt::ISODate);
+	validity[QLatin1String("expirationDate")] = body.getCertificateExpirationDate().toString(Qt::ISODate);
 
-	mJsonObject["description"] = desc;
-	mJsonObject["validity"] = validity;
+	mJsonObject[QLatin1String("description")] = desc;
+	mJsonObject[QLatin1String("validity")] = validity;
 }

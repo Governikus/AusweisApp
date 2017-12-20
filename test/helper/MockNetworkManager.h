@@ -1,7 +1,7 @@
 /*!
  * \brief Mock \ref NetworkManager for tests
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,14 +21,16 @@ class MockNetworkManager
 		QString mFilename;
 		MockNetworkReply* mNextReply;
 		MockNetworkReply* mLastReply;
+		QNetworkRequest* mLastRequest;
 
 		MockNetworkReply* getReply(const QNetworkRequest& pRequest);
 
 	public:
 		MockNetworkManager();
-		virtual ~MockNetworkManager();
+		virtual ~MockNetworkManager() override;
 		virtual QNetworkReply* get(QNetworkRequest& pRequest, int pTimeoutInMilliSeconds = 30000) override;
-		virtual QNetworkReply* paos(QNetworkRequest& pRequest, const QByteArray& pData, bool pUsePsk = true, int pTimeoutInMilliSeconds = 30000) override;
+		virtual QNetworkReply* paos(QNetworkRequest& pRequest, const QByteArray& pNamespace, const QByteArray& pData, bool pUsePsk = true, int pTimeoutInMilliSeconds = 30000) override;
+		virtual bool checkUpdateServerCertificate(const QNetworkReply& pReply) override;
 
 		void setFilename(const QString& pFilename)
 		{
@@ -50,6 +52,14 @@ class MockNetworkManager
 		}
 
 
+		QNetworkRequest* getLastRequest() const
+		{
+			return mLastRequest;
+		}
+
+
+	Q_SIGNALS:
+		void fireReply();
 };
 
 } /* namespace governikus */

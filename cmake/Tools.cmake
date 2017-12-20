@@ -175,66 +175,143 @@ ENDFUNCTION()
 
 FIND_PROGRAM(CONVERT convert CMAKE_FIND_ROOT_PATH_BOTH)
 IF(CONVERT)
-	SET(CONVERT_CMD convert -background transparent)
-	ADD_CUSTOM_TARGET(npaicons
-		COMMAND ${CONVERT_CMD} npa.svg -define icon:auto-resize=256,96,64,48,40,32,24,20,16 npa.ico
-		COMMAND ${CONVERT_CMD} npa.svg -resize 16x16 autentapp2.iconset/icon_16x16.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 32x32 autentapp2.iconset/icon_16x16@2x.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 32x32 autentapp2.iconset/icon_32x32.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 64x64 autentapp2.iconset/icon_32x32@2x.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 128x128 autentapp2.iconset/icon_128x128.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 256x256 autentapp2.iconset/icon_128x128@2x.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 256x256 autentapp2.iconset/icon_256x256.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 512x512 autentapp2.iconset/icon_256x256@2x.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 512x512 autentapp2.iconset/icon_512x512.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 1024x1024 autentapp2.iconset/icon_512x512@2x.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 36x36 android/ldpi/npa.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 48x48 android/mdpi/npa.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 72x72 android/hdpi/npa.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 96x96 android/xhdpi/npa.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 144x144 android/xxhdpi/npa.png
-		COMMAND ${CONVERT_CMD} npa.svg -resize 192x192 android/xxxhdpi/npa.png
-		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 36x36 android/ldpi/npa_beta.png
-		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 48x48 android/mdpi/npa_beta.png
-		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 72x72 android/hdpi/npa_beta.png
-		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 96x96 android/xhdpi/npa_beta.png
-		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 144x144 android/xxhdpi/npa_beta.png
-		COMMAND ${CONVERT_CMD} npa_beta.svg -resize 192x192 android/xxxhdpi/npa_beta.png
-		COMMAND ${CONVERT_CMD} npa_preview.svg -resize 36x36 android/ldpi/npa_preview.png
-		COMMAND ${CONVERT_CMD} npa_preview.svg -resize 48x48 android/mdpi/npa_preview.png
-		COMMAND ${CONVERT_CMD} npa_preview.svg -resize 72x72 android/hdpi/npa_preview.png
-		COMMAND ${CONVERT_CMD} npa_preview.svg -resize 96x96 android/xhdpi/npa_preview.png
-		COMMAND ${CONVERT_CMD} npa_preview.svg -resize 144x144 android/xxhdpi/npa_preview.png
-		COMMAND ${CONVERT_CMD} npa_preview.svg -resize 192x192 android/xxxhdpi/npa_preview.png
+	SET(CONVERT_CMD convert)
+	SET(BACKGROUND_COLOR "transparent")
+
+	ADD_CUSTOM_TARGET(npaicons.win
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -define icon:auto-resize=256,96,64,48,40,32,24,20,16 npa.svg npa.ico
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(npaicons.android.preview
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 36x36 npa_preview.svg android/ldpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 48x48 npa_preview.svg android/mdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 72x72 npa_preview.svg android/hdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 96x96 npa_preview.svg android/xhdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 144x144 npa_preview.svg android/xxhdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 192x192 npa_preview.svg android/xxxhdpi/npa_preview.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(npaicons.android.beta
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 36x36 npa_beta.svg android/ldpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 48x48 npa_beta.svg android/mdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 72x72 npa_beta.svg android/hdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 96x96 npa_beta.svg android/xhdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 144x144 npa_beta.svg android/xxhdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 192x192 npa_beta.svg android/xxxhdpi/npa_beta.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(npaicons.android
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 36x36 npa.svg android/ldpi/npa.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 48x48 npa.svg android/mdpi/npa.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 72x72 npa.svg android/hdpi/npa.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 96x96 npa.svg android/xhdpi/npa.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 144x144 npa.svg android/xxhdpi/npa.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 192x192 npa.svg android/xxxhdpi/npa.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(npaicons.ios.beta
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 29x29 npa_beta.svg iOS/appIcons/beta/iconSmall.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 58x58 npa_beta.svg iOS/appIcons/beta/iconSmall@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 87x87 npa_beta.svg iOS/appIcons/beta/iconSmall@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 40x40 npa_beta.svg iOS/appIcons/beta/iconSmall40.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 80x80 npa_beta.svg iOS/appIcons/beta/iconSmall40@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 120x120 npa_beta.svg iOS/appIcons/beta/iconSmall40@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 120x120 npa_beta.svg iOS/appIcons/beta/icon60@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 180x180 npa_beta.svg iOS/appIcons/beta/icon60@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 76x76 npa_beta.svg iOS/appIcons/beta/icon76.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 152x152 npa_beta.svg iOS/appIcons/beta/icon76@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 167x167 npa_beta.svg iOS/appIcons/beta/icon83.5@2x.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(npaicons.ios
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 29x29 npa.svg iOS/appIcons/iconSmall.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 58x58 npa.svg iOS/appIcons/iconSmall@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 87x87 npa.svg iOS/appIcons/iconSmall@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 40x40 npa.svg iOS/appIcons/iconSmall40.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 80x80 npa.svg iOS/appIcons/iconSmall40@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 120x120 npa.svg iOS/appIcons/iconSmall40@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 120x120 npa.svg iOS/appIcons/icon60@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 180x180 npa.svg iOS/appIcons/icon60@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 76x76 npa.svg iOS/appIcons/icon76.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 152x152 npa.svg iOS/appIcons/icon76@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 167x167 npa.svg iOS/appIcons/icon83.5@2x.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	SET(BACKGROUND_COLOR "rgb\(220,235,246\)")
+
+	ADD_CUSTOM_TARGET(npaicons.iphone
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 320x320 -gravity center -extent 640x1136 npa.svg iOS/launchImages/Default-568h@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 320x320 -gravity center -extent 640x1136 npa.svg iOS/launchImages/launchImage568@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 480x480 -gravity center -extent 960x1704 npa.svg iOS/launchImages/launchImage568@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 353x353 -gravity center -extent 705x1334 npa.svg iOS/launchImages/launchImage667@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 563x563 -gravity center -extent 1125x2001 npa.svg iOS/launchImages/launchImage667@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 414x414 -gravity center -extent 828x1472 npa.svg iOS/launchImages/launchImage736@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 621x621 -gravity center -extent 1242x2208 npa.svg iOS/launchImages/launchImage736@3x.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(npaicons.ipad
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 768x768 -gravity center -extent 2048x1536 npa.svg iOS/launchImages/launchImage1024@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 1152x1152 -gravity center -extent 3072x2304 npa.svg iOS/launchImages/launchImage1024@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 834x834 -gravity center -extent 2224x1668 npa.svg iOS/launchImages/launchImage1112@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 1251x1251 -gravity center -extent 3336x2502 npa.svg iOS/launchImages/launchImage1112@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 1024x1024 -gravity center -extent 2732x2048 npa.svg iOS/launchImages/launchImage1366@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 1536x1536 -gravity center -extent 4098x3072 npa.svg iOS/launchImages/launchImage1366@3x.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(npaicons DEPENDS npaicons.win npaicons.ios npaicons.ios.beta npaicons.iphone npaicons.ipad npaicons.android npaicons.android.beta npaicons.android.preview)
 ENDIF()
 
 FIND_PROGRAM(PNGQUANT pngquant CMAKE_FIND_ROOT_PATH_BOTH)
 IF(PNGQUANT)
 SET(PNGQUANT_CMD pngquant -f -o)
-	ADD_CUSTOM_TARGET(pngquant
-		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_16x16.png -- autentapp2.iconset/icon_16x16.png
-		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_16x16@2x.png -- autentapp2.iconset/icon_16x16@2x.png
-		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_32x32.png -- autentapp2.iconset/icon_32x32.png
-		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_32x32@2x.png -- autentapp2.iconset/icon_32x32@2x.png
-		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_128x128.png -- autentapp2.iconset/icon_128x128.png
-		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_128x128@2x.png -- autentapp2.iconset/icon_128x128@2x.png
-		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_256x256.png -- autentapp2.iconset/icon_256x256.png
-		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_256x256@2x.png -- autentapp2.iconset/icon_256x256@2x.png
-		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_512x512.png -- autentapp2.iconset/icon_512x512.png
-		COMMAND ${PNGQUANT_CMD} autentapp2.iconset/icon_512x512@2x.png -- autentapp2.iconset/icon_512x512@2x.png
-		COMMAND ${PNGQUANT_CMD} android/ldpi/npa.png -- android/ldpi/npa.png
-		COMMAND ${PNGQUANT_CMD} android/mdpi/npa.png -- android/mdpi/npa.png
-		COMMAND ${PNGQUANT_CMD} android/hdpi/npa.png -- android/hdpi/npa.png
-		COMMAND ${PNGQUANT_CMD} android/xhdpi/npa.png -- android/xhdpi/npa.png
-		COMMAND ${PNGQUANT_CMD} android/xxhdpi/npa.png -- android/xxhdpi/npa.png
-		COMMAND ${PNGQUANT_CMD} android/xxxhdpi/npa.png -- android/xxxhdpi/npa.png
-		COMMAND ${PNGQUANT_CMD} android/ldpi/npa_beta.png -- android/ldpi/npa_beta.png
-		COMMAND ${PNGQUANT_CMD} android/mdpi/npa_beta.png -- android/mdpi/npa_beta.png
-		COMMAND ${PNGQUANT_CMD} android/hdpi/npa_beta.png -- android/hdpi/npa_beta.png
-		COMMAND ${PNGQUANT_CMD} android/xhdpi/npa_beta.png -- android/xhdpi/npa_beta.png
-		COMMAND ${PNGQUANT_CMD} android/xxhdpi/npa_beta.png -- android/xxhdpi/npa_beta.png
-		COMMAND ${PNGQUANT_CMD} android/xxxhdpi/npa_beta.png -- android/xxxhdpi/npa_beta.png
+	ADD_CUSTOM_TARGET(pngquant.ios.beta
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/iconSmall.png -- iOS/appIcons/beta/iconSmall.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/iconSmall@2x.png -- iOS/appIcons/beta/iconSmall@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/iconSmall@3x.png -- iOS/appIcons/beta/iconSmall@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/iconSmall40.png -- iOS/appIcons/beta/iconSmall40.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/iconSmall40@2x.png -- iOS/appIcons/beta/iconSmall40@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/iconSmall40@3x.png -- iOS/appIcons/beta/iconSmall40@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/icon60@2x.png -- iOS/appIcons/beta/icon60@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/icon60@3x.png -- iOS/appIcons/beta/icon60@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/icon76.png -- iOS/appIcons/beta/icon76.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/icon76@2x.png -- iOS/appIcons/beta/icon76@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/icon83.5@2x.png -- iOS/appIcons/beta/icon83.5@2x.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(pngquant.ios
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/iconSmall.png -- iOS/appIcons/iconSmall.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/iconSmall@2x.png -- iOS/appIcons/iconSmall@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/iconSmall@3x.png -- iOS/appIcons/iconSmall@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/iconSmall40.png -- iOS/appIcons/iconSmall40.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/iconSmall40@2x.png -- iOS/appIcons/iconSmall40@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/iconSmall40@3x.png -- iOS/appIcons/iconSmall40@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/icon60@2x.png -- iOS/appIcons/icon60@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/icon60@3x.png -- iOS/appIcons/icon60@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/icon76.png -- iOS/appIcons/icon76.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/icon76@2x.png -- iOS/appIcons/icon76@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/icon83.5@2x.png -- iOS/appIcons/icon83.5@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/Default-568h@2x.png -- iOS/launchImages/Default-568h@2x.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(pngquant.iphone
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/launchImage568@2x.png -- iOS/launchImages/launchImage568@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/launchImage568@3x.png -- iOS/launchImages/launchImage568@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/launchImage667@2x.png -- iOS/launchImages/launchImage667@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/launchImage667@3x.png -- iOS/launchImages/launchImage667@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/launchImage736@2x.png -- iOS/launchImages/launchImage736@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/launchImage736@3x.png -- iOS/launchImages/launchImage736@3x.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(pngquant.ipad
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/launchImage1024@2x.png -- iOS/launchImages/launchImage1024@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/launchImage1024@3x.png -- iOS/launchImages/launchImage1024@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/launchImage1112@2x.png -- iOS/launchImages/launchImage1112@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/launchImage1112@3x.png -- iOS/launchImages/launchImage1112@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/launchImage1366@2x.png -- iOS/launchImages/launchImage1366@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/launchImages/launchImage1366@3x.png -- iOS/launchImages/launchImage1366@3x.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(pngquant.android.preview
 		COMMAND ${PNGQUANT_CMD} android/ldpi/npa_preview.png -- android/ldpi/npa_preview.png
 		COMMAND ${PNGQUANT_CMD} android/mdpi/npa_preview.png -- android/mdpi/npa_preview.png
 		COMMAND ${PNGQUANT_CMD} android/hdpi/npa_preview.png -- android/hdpi/npa_preview.png
@@ -242,6 +319,41 @@ SET(PNGQUANT_CMD pngquant -f -o)
 		COMMAND ${PNGQUANT_CMD} android/xxhdpi/npa_preview.png -- android/xxhdpi/npa_preview.png
 		COMMAND ${PNGQUANT_CMD} android/xxxhdpi/npa_preview.png -- android/xxxhdpi/npa_preview.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(pngquant.android.beta
+		COMMAND ${PNGQUANT_CMD} android/ldpi/npa_beta.png -- android/ldpi/npa_beta.png
+		COMMAND ${PNGQUANT_CMD} android/mdpi/npa_beta.png -- android/mdpi/npa_beta.png
+		COMMAND ${PNGQUANT_CMD} android/hdpi/npa_beta.png -- android/hdpi/npa_beta.png
+		COMMAND ${PNGQUANT_CMD} android/xhdpi/npa_beta.png -- android/xhdpi/npa_beta.png
+		COMMAND ${PNGQUANT_CMD} android/xxhdpi/npa_beta.png -- android/xxhdpi/npa_beta.png
+		COMMAND ${PNGQUANT_CMD} android/xxxhdpi/npa_beta.png -- android/xxxhdpi/npa_beta.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(pngquant.android
+		COMMAND ${PNGQUANT_CMD} android/ldpi/npa.png -- android/ldpi/npa.png
+		COMMAND ${PNGQUANT_CMD} android/mdpi/npa.png -- android/mdpi/npa.png
+		COMMAND ${PNGQUANT_CMD} android/hdpi/npa.png -- android/hdpi/npa.png
+		COMMAND ${PNGQUANT_CMD} android/xhdpi/npa.png -- android/xhdpi/npa.png
+		COMMAND ${PNGQUANT_CMD} android/xxhdpi/npa.png -- android/xxhdpi/npa.png
+		COMMAND ${PNGQUANT_CMD} android/xxxhdpi/npa.png -- android/xxxhdpi/npa.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
+
+	ADD_CUSTOM_TARGET(pngquant DEPENDS pngquant.ios pngquant.ios.beta pngquant.iphone pngquant.ipad pngquant.android pngquant.android.beta pngquant.android.preview)
+ENDIF()
+
+IF(NOT JAVA_EXECUTABLE)
+	FIND_PACKAGE(Java COMPONENTS Runtime)
+	IF(Java_JAVA_EXECUTABLE)
+		SET(JAVA_EXECUTABLE "${Java_JAVA_EXECUTABLE}")
+	ENDIF()
+ENDIF()
+IF(JAVA_EXECUTABLE)
+	FIND_FILE(PLANTUML plantuml.jar PATHS ENV HOME NO_DEFAULT_PATH)
+	IF(PLANTUML)
+		MESSAGE(STATUS "Target uml.statemachines is available using: ${PLANTUML}")
+		CONFIGURE_FILE(${RESOURCES_DIR}/statemachine.sh.in ${PROJECT_BINARY_DIR}/statemachine.sh @ONLY)
+		ADD_CUSTOM_TARGET(uml.statemachines COMMAND ./statemachine.sh WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
+	ENDIF()
 ENDIF()
 
 INCLUDE(Sphinx)

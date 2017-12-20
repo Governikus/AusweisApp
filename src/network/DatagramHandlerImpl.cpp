@@ -1,13 +1,14 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandlerImpl.h"
 
-#include "EnvHolder.h"
+#include "Env.h"
 
 #include <QLoggingCategory>
 #include <QMutexLocker>
+#include <QNetworkInterface>
 #include <QNetworkProxy>
 #include <QWeakPointer>
 
@@ -19,9 +20,15 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 namespace governikus
 {
 
-template<> DatagramHandler* createNewObject<DatagramHandler>()
+template<> DatagramHandler* createNewObject<DatagramHandler*>()
 {
 	return new DatagramHandlerImpl;
+}
+
+
+template<> DatagramHandler* createNewObject<DatagramHandler*, bool>(bool&& pListen)
+{
+	return new DatagramHandlerImpl(pListen);
 }
 
 
@@ -31,7 +38,7 @@ template<> DatagramHandler* createNewObject<DatagramHandler>()
 quint16 DatagramHandlerImpl::cPort = 24727;
 
 
-DatagramHandlerImpl::DatagramHandlerImpl()
+DatagramHandlerImpl::DatagramHandlerImpl(bool pListen)
 	: DatagramHandler()
 	, mSocket(new QUdpSocket)
 {
@@ -41,7 +48,11 @@ DatagramHandlerImpl::DatagramHandlerImpl()
 
 	connect(mSocket.data(), &QUdpSocket::readyRead, this, &DatagramHandlerImpl::onReadyRead);
 
-	if (mSocket->bind(cPort))
+	if (!pListen)
+	{
+		qCDebug(network) << "Skipping binding";
+	}
+	else if (mSocket->bind(cPort))
 	{
 		qCDebug(network) << "Bound on port:" << mSocket->localPort();
 	}
@@ -54,7 +65,7 @@ DatagramHandlerImpl::DatagramHandlerImpl()
 
 DatagramHandlerImpl::~DatagramHandlerImpl()
 {
-	if (isBound())
+	if (DatagramHandlerImpl::isBound())
 	{
 		qCDebug(network) << "Shutdown socket";
 		mSocket->close();
@@ -65,6 +76,47 @@ DatagramHandlerImpl::~DatagramHandlerImpl()
 bool DatagramHandlerImpl::isBound() const
 {
 	return mSocket->state() == QAbstractSocket::BoundState;
+}
+
+
+bool DatagramHandlerImpl::send(const QJsonDocument& pData)
+{
+	QVector<QHostAddress> broadcastAddresses;
+	const auto& interfaces = QNetworkInterface::allInterfaces();
+	for (const QNetworkInterface& interface : interfaces)
+	{
+		const auto& entries = interface.addressEntries();
+		for (const QNetworkAddressEntry& addressEntry : entries)
+		{
+			const QHostAddress& broadcastAddr = addressEntry.broadcast();
+			if (broadcastAddr.isNull())
+			{
+				continue;
+			}
+			if (addressEntry.ip().isEqual(QHostAddress::LocalHost, QHostAddress::TolerantConversion))
+			{
+				continue;
+			}
+
+			broadcastAddresses += broadcastAddr;
+		}
+	}
+
+	if (broadcastAddresses.isEmpty())
+	{
+		return false;
+	}
+
+	for (const QHostAddress& broadcastAddr : qAsConst(broadcastAddresses))
+	{
+		if (!send(pData, broadcastAddr))
+		{
+			qDebug() << "Broadcasting to" << broadcastAddr << "failed";
+			return false;
+		}
+	}
+
+	return true;
 }
 
 
@@ -95,12 +147,16 @@ void DatagramHandlerImpl::onReadyRead()
 		const auto& json = QJsonDocument::fromJson(datagram, &jsonError);
 		if (jsonError.error == QJsonParseError::NoError)
 		{
-			qCDebug(network) << "Fire new message";
 			Q_EMIT fireNewMessage(json, addr);
 		}
 		else
 		{
-			qCInfo(network) << "Datagram does not contain valid JSON:" << datagram;
+			static int timesLogged = 0;
+			if (timesLogged < 20)
+			{
+				qCInfo(network) << "Datagram does not contain valid JSON:" << datagram;
+				timesLogged++;
+			}
 		}
 	}
 }

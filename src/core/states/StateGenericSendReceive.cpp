@@ -1,18 +1,22 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
-#include "CertificateChecker.h"
-#include "paos/PaosHandler.h"
 #include "StateGenericSendReceive.h"
-#include "TlsConfiguration.h"
+
+#include "CertificateChecker.h"
+#include "Env.h"
+#include "paos/PaosHandler.h"
+#include "TlsChecker.h"
+
+#include <QTimer>
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
 using namespace governikus;
 
 
-StateGenericSendReceive::StateGenericSendReceive(QSharedPointer<WorkflowContext> pContext, const QVector<PaosType>& pTypesToReceive)
+StateGenericSendReceive::StateGenericSendReceive(const QSharedPointer<WorkflowContext>& pContext, const QVector<PaosType>& pTypesToReceive)
 	: AbstractGenericState(pContext)
 	, mTypesToReceive(pTypesToReceive)
 	, mReply()
@@ -20,13 +24,13 @@ StateGenericSendReceive::StateGenericSendReceive(QSharedPointer<WorkflowContext>
 }
 
 
-StateGenericSendReceive::StateGenericSendReceive(QSharedPointer<WorkflowContext> pContext, PaosType pTypesToReceive)
+StateGenericSendReceive::StateGenericSendReceive(const QSharedPointer<WorkflowContext>& pContext, PaosType pTypesToReceive)
 	: StateGenericSendReceive(pContext, QVector<PaosType>() << pTypesToReceive)
 {
 }
 
 
-void StateGenericSendReceive::setReceivedMessage(QSharedPointer<PaosMessage> pMessage)
+void StateGenericSendReceive::setReceivedMessage(const QSharedPointer<PaosMessage>& pMessage)
 {
 	switch (pMessage->mType)
 	{
@@ -67,6 +71,7 @@ void StateGenericSendReceive::setReceivedMessage(QSharedPointer<PaosMessage> pMe
 			break;
 
 		case PaosType::DISCONNECT:
+			getContext()->setDisconnect(pMessage.staticCast<Disconnect>());
 			getContext()->setDisconnectResponse(QSharedPointer<DisconnectResponse>(new DisconnectResponse()));
 			break;
 
@@ -77,48 +82,56 @@ void StateGenericSendReceive::setReceivedMessage(QSharedPointer<PaosMessage> pMe
 }
 
 
-void StateGenericSendReceive::setMessageId(QSharedPointer<PaosMessage> pPaosMessage)
+void StateGenericSendReceive::setMessageId(const QSharedPointer<PaosMessage>& pPaosMessage)
 {
-	QSharedPointer<MessageIdHandler> messageIdHandler = getContext()->getMessageIdHandler();
+	Q_ASSERT(!pPaosMessage.isNull());
+	const QSharedPointer<MessageIdHandler> messageIdHandler = getContext()->getMessageIdHandler();
 	pPaosMessage->setRelatesTo(messageIdHandler->getRemoteMsgId());
 	pPaosMessage->setMessageId(messageIdHandler->createNewMsgId());
 }
 
 
-void StateGenericSendReceive::setRemoteMessageId(QSharedPointer<PaosMessage> pPaosMessage)
+void StateGenericSendReceive::setRemoteMessageId(const QSharedPointer<PaosMessage>& pPaosMessage)
 {
-	QSharedPointer<MessageIdHandler> messageIdHandler = getContext()->getMessageIdHandler();
+	const QSharedPointer<MessageIdHandler> messageIdHandler = getContext()->getMessageIdHandler();
 	messageIdHandler->setRemoteMsgId(pPaosMessage->getMessageId());
-}
-
-
-void StateGenericSendReceive::reportChannelEstablishmentError(const GlobalStatus::Code pStatusCode)
-{
-	qCCritical(network) << GlobalStatus(pStatusCode);
-	setStatus(pStatusCode);
-	Q_EMIT fireError();
 }
 
 
 void StateGenericSendReceive::onSslErrors(const QList<QSslError>& pErrors)
 {
-	if (TlsConfiguration::containsFatalError(mReply, pErrors))
+	if (TlsChecker::containsFatalError(mReply, pErrors))
 	{
-		reportChannelEstablishmentError(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
+		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
+		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
+		Q_EMIT fireAbort();
 	}
 }
 
 
 void StateGenericSendReceive::onSslHandshakeDone()
 {
-	QSslConfiguration sslConfiguration = mReply->sslConfiguration();
-	qCDebug(network) << "Used session cipher" << sslConfiguration.sessionCipher();
-	qCDebug(network) << "Used session protocol:" << sslConfiguration.sessionProtocol();
+	const auto& cfg = mReply->sslConfiguration();
+	TlsChecker::logSslConfig(cfg, qInfo(network));
 
-	if (!checkAndSaveCertificate(sslConfiguration.peerCertificate()))
+	const auto statusCode = checkAndSaveCertificate(cfg.peerCertificate());
+	if (statusCode != GlobalStatus::Code::No_Error)
 	{
-		// checkAndSaveCertificate already set the error
+		qCCritical(network) << GlobalStatus(statusCode);
+		updateStatus(statusCode);
+
+		// Stop listening to signals from QNetworkReply to stay in
+		// this state until the following timer fires the signal.
+		clearConnections();
+
 		mReply->abort();
+
+		// We need to append the abort to the event queue, because
+		// QNetworkAccessManager::clearConnectionCache forces sending
+		// the request when the abort on QNetworkReply is not finished.
+		QTimer::singleShot(0, this, [this] {
+					Q_EMIT fireAbort();
+				});
 	}
 }
 
@@ -129,7 +142,7 @@ void StateGenericSendReceive::onPreSharedKeyAuthenticationRequired(QSslPreShared
 
 	auto token = getContext()->getTcToken();
 	Q_ASSERT(!token.isNull());
-	if (!token->getPsk().isNull())
+	if (token->usePsk())
 	{
 		pAuthenticator->setIdentity(token->getSessionIdentifier());
 		pAuthenticator->setPreSharedKey(QByteArray::fromHex(token->getPsk()));
@@ -137,37 +150,49 @@ void StateGenericSendReceive::onPreSharedKeyAuthenticationRequired(QSslPreShared
 }
 
 
-bool StateGenericSendReceive::checkAndSaveCertificate(const QSslCertificate& pCertificate)
+GlobalStatus::Code StateGenericSendReceive::checkAndSaveCertificate(const QSslCertificate& pCertificate)
 {
-	switch (CertificateChecker::checkAndSaveCertificate(pCertificate, getContext()->getTcToken()->getServerAddress(), getContext()))
+	const QSharedPointer<AuthContext> c = getContext();
+	Q_ASSERT(!c.isNull());
+
+	std::function<void(const QUrl&, const QSslCertificate&)> saveCertificateFunc = [&c]
+				(const QUrl& pUrl, const QSslCertificate& pCert)
+			{
+				c->addCertificateData(pUrl, pCert);
+			};
+
+	switch (CertificateChecker::checkAndSaveCertificate(pCertificate, c->getTcToken()->getServerAddress(), c->getDidAuthenticateEac1(), c->getDvCvc(), saveCertificateFunc))
 	{
 		case CertificateChecker::CertificateStatus::Good:
-			return true;
+			return GlobalStatus::Code::No_Error;
 
 		case CertificateChecker::CertificateStatus::Unsupported_Algorithm_Or_Length:
-			reportChannelEstablishmentError(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length);
-			return false;
+			return GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length;
 
 		case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
-			reportChannelEstablishmentError(GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description);
-			return false;
+			return GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description;
 	}
 
-	return false;
+	return GlobalStatus::Code::Workflow_Processing_Error;
 }
 
 
 void StateGenericSendReceive::run()
 {
-	QSharedPointer<PaosCreator> messageToSend = getMessageToSend();
-	Q_ASSERT(!messageToSend.isNull());
+	setMessageId(getAsMessage());
 
-	setMessageId(messageToSend.dynamicCast<PaosMessage>());
-	if (QSharedPointer<ResponseType> paosResponse = messageToSend.dynamicCast<ResponseType>())
+	if (QSharedPointer<ResponseType> paosResponse = getAsResponse())
 	{
 		if (!getContext()->isErrorReportedToServer() && getContext()->getStatus().isError() && !getContext()->getStatus().isOriginServer())
 		{
-			paosResponse->setResult(getContext()->getStatus());
+			if (getContext()->getTransmitResponseFailed())
+			{
+				paosResponse->setResult(GlobalStatus(GlobalStatus::Code::Paos_Error_AL_Unknown_Error));
+			}
+			else
+			{
+				paosResponse->setResult(getContext()->getStatus());
+			}
 			getContext()->setErrorReportedToServer(true);
 		}
 		else
@@ -182,9 +207,12 @@ void StateGenericSendReceive::run()
 
 	QNetworkRequest request(token->getServerAddress());
 	request.setRawHeader("requestid", token->getSessionIdentifier());
-	QByteArray data = messageToSend->marshall();
+	const QByteArray& data = getAsCreator()->marshall();
+	Q_ASSERT(!data.isEmpty());
+
 	qCDebug(network) << "Try to send raw data:\n" << data;
-	mReply = getContext()->getNetworkManager().paos(request, data, !token->getPsk().isNull());
+	const QByteArray& paosNamespace = PaosCreator::getNamespace(PaosCreator::Namespace::PAOS).toUtf8();
+	mReply = Env::getSingleton<NetworkManager>()->paos(request, paosNamespace, data, token->usePsk());
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGenericSendReceive::onSslErrors);
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGenericSendReceive::onSslHandshakeDone);
 	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateGenericSendReceive::onReplyFinished);
@@ -201,7 +229,10 @@ void StateGenericSendReceive::onReplyFinished()
 
 	if (reply->error() != QNetworkReply::NoError)
 	{
-		reportChannelEstablishmentError(NetworkManager::toTrustedChannelStatus(reply));
+		const auto& statusCode = NetworkManager::toTrustedChannelStatus(reply);
+		qCCritical(network) << GlobalStatus(statusCode);
+		updateStatus(statusCode);
+		Q_EMIT fireAbort();
 		return;
 	}
 
@@ -212,7 +243,9 @@ void StateGenericSendReceive::onReplyFinished()
 	const int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 	if (statusCode >= 500)
 	{
-		reportChannelEstablishmentError(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server);
+		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server);
+		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server);
+		Q_EMIT fireAbort();
 		return;
 	}
 
@@ -223,7 +256,7 @@ void StateGenericSendReceive::onReplyFinished()
 
 	if (!mTypesToReceive.contains(paosHandler.getDetectedPaosType()))
 	{
-		QString warnMsg("Received PAOS message not of expected type: ");
+		QString warnMsg = QStringLiteral("Received PAOS message not of expected type: ");
 		for (const auto expectedType : mTypesToReceive)
 		{
 			warnMsg += expectedType;
@@ -234,14 +267,14 @@ void StateGenericSendReceive::onReplyFinished()
 		if (paosHandler.getDetectedPaosType() == PaosType::UNKNOWN)
 		{
 			qCCritical(network) << "The program received an unknown message from the server.";
-			setStatus(GlobalStatus::Code::Workflow_Unknown_Paos_Form_EidServer);
-			Q_EMIT fireError();
+			updateStatus(GlobalStatus::Code::Workflow_Unknown_Paos_Form_EidServer);
+			Q_EMIT fireAbort();
 		}
 		else
 		{
 			qCCritical(network) << "The program received an unexpected message from the server.";
-			setStatus(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer);
-			Q_EMIT fireError();
+			updateStatus(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer);
+			Q_EMIT fireAbort();
 		}
 		return;
 	}
@@ -267,11 +300,11 @@ void StateGenericSendReceive::onReplyFinished()
 
 		if (result == 1)
 		{
-			Q_EMIT fireError();
+			Q_EMIT fireAbort();
 		}
 		else if (result == 2)
 		{
-			Q_EMIT fireCancel();
+			Q_EMIT fireAbort();
 		}
 		else
 		{
@@ -280,6 +313,6 @@ void StateGenericSendReceive::onReplyFinished()
 	}
 	else
 	{
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 	}
 }

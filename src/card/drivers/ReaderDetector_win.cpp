@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDetector.h"
@@ -111,9 +111,9 @@ static uint getProductId(const QString& pDevId)
 }
 
 
-QVector<QPair<uint, uint> > ReaderDetector::attachedDevIds() const
+QVector<UsbId> ReaderDetector::attachedDevIds() const
 {
-	QVector<QPair<uint, uint> > result;
+	QVector<UsbId> result;
 
 	for (auto stringDevId : attachedDevStringIds())
 	{
@@ -121,7 +121,7 @@ QVector<QPair<uint, uint> > ReaderDetector::attachedDevIds() const
 		const uint productId = getProductId(stringDevId);
 		if (vendorId != 0 && productId != 0)
 		{
-			result += QPair<uint, uint>(vendorId, productId);
+			result += UsbId(vendorId, productId);
 		}
 	}
 

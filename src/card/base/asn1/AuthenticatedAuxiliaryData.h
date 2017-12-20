@@ -1,14 +1,14 @@
 /*!
- * AuthenticatedAuxiliaryData.h
- *
  * \brief Implementation of AuthenticatedAuxiliaryData.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "ASN1TemplateUtil.h"
+
+#include "KnownOIDs.h"
 
 #include <openssl/asn1t.h>
 
@@ -16,6 +16,7 @@
 #include <QSharedPointer>
 #include <QString>
 
+class test_AuxiliaryAuthenticatedData;
 
 namespace governikus
 {
@@ -48,34 +49,39 @@ typedef struct auxdatatemplate_st
 
 } AuxDataTemplate;
 
-
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 DECLARE_STACK_OF(AuxDataTemplate)
+using AuthenticatedAuxiliaryDataInternal = stack_st_AuxDataTemplate;
+#else
+DEFINE_STACK_OF(AuxDataTemplate)
+using AuthenticatedAuxiliaryDataInternal = STACK_OF(AuxDataTemplate);
+#endif
 
-
-struct AuthenticatedAuxiliaryData
-	: stack_st_AuxDataTemplate
+class AuthenticatedAuxiliaryData
 {
-	static QSharedPointer<AuthenticatedAuxiliaryData> fromHex(const QByteArray& pHexValue);
-	static QSharedPointer<AuthenticatedAuxiliaryData> decode(const QByteArray& pBytes);
-	QByteArray encode();
-
-	bool hasValidityDate() const;
-	QDate getValidityDate() const;
-
-	bool hasAgeVerificationDate() const;
-	QDate getAgeVerificationDate() const;
-	QString getRequiredAge() const;
-
-	bool hasCommunityID() const;
-	QByteArray getCommunityID() const;
-
 	private:
-		AuxDataTemplate* getAuxDataTemplateFor(const QByteArray& pOid) const;
+		friend class ::test_AuxiliaryAuthenticatedData;
+		QSharedPointer<AuthenticatedAuxiliaryDataInternal> mData;
 
+		AuthenticatedAuxiliaryData(const QSharedPointer<AuthenticatedAuxiliaryDataInternal>& pData);
+		AuxDataTemplate* getAuxDataTemplateFor(KnownOIDs::AuxilaryData pData) const;
+
+		QString getRequiredAge(const QDate& pEffectiveDate) const;
+
+	public:
+		static QSharedPointer<AuthenticatedAuxiliaryData> fromHex(const QByteArray& pHexValue);
+		static QSharedPointer<AuthenticatedAuxiliaryData> decode(const QByteArray& pBytes);
+		QByteArray encode() const;
+
+		bool hasValidityDate() const;
+		QDate getValidityDate() const;
+
+		bool hasAgeVerificationDate() const;
+		QDate getAgeVerificationDate() const;
+		QString getRequiredAge() const;
+
+		bool hasCommunityID() const;
+		QByteArray getCommunityID() const;
 };
-
-
-DECLARE_ASN1_FUNCTIONS(AuthenticatedAuxiliaryData)
-DECLARE_ASN1_OBJECT(AuthenticatedAuxiliaryData)
 
 } /* namespace governikus */

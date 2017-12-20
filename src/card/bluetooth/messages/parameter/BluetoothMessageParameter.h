@@ -1,9 +1,7 @@
 /*!
- * BluetoothMessageParameter.h
- *
  * \brief Implements message parameter of SIM ACCESS spec.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -52,7 +50,7 @@ class BluetoothMessageParameter
 
 
 	public:
-		typedef QSharedPointer<const BluetoothMessageParameter> Ptr;
+		using Ptr = QSharedPointer<const BluetoothMessageParameter>;
 
 		BluetoothMessageParameter(BluetoothParamId pParamId, const QByteArray& pValue);
 		virtual ~BluetoothMessageParameter();

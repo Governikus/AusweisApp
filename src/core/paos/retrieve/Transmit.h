@@ -1,9 +1,7 @@
 /*!
- * Transmit.h
- *
  * \brief  Transmit objects hold a transmit request and provide access to the transmitted data via member functions.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

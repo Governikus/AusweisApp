@@ -1,12 +1,14 @@
 /*!
  * \brief Model implementation for version information.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
+#include "VersionInformationModel.h"
+
+#include "AppSettings.h"
 #include "BuildHelper.h"
 #include "DeviceInfo.h"
-#include "VersionInformationModel.h"
 
 #include <QCoreApplication>
 #include <QSslSocket>
@@ -19,10 +21,9 @@
 using namespace governikus;
 
 
-VersionInformationModel::VersionInformationModel(QObject* pParent)
-	: QAbstractListModel(pParent)
-	, mData()
+void VersionInformationModel::init()
 {
+	mData.clear();
 	mData += QPair<QString, QString>(tr("Application Name"), QCoreApplication::applicationName());
 	mData += QPair<QString, QString>(tr("Application Version"), QCoreApplication::applicationVersion());
 	mData += QPair<QString, QString>(tr("Organization"), QCoreApplication::organizationName());
@@ -40,6 +41,21 @@ VersionInformationModel::VersionInformationModel(QObject* pParent)
 #endif
 	mData += QPair<QString, QString>(tr("Qt Version"), QString::fromLatin1(qVersion()));
 	mData += QPair<QString, QString>(tr("OpenSSL Version"), QSslSocket::sslLibraryVersionString());
+}
+
+
+VersionInformationModel::VersionInformationModel(QObject* pParent)
+	: QAbstractListModel(pParent)
+	, mData()
+{
+	init();
+
+	connect(&AppSettings::getInstance().getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, [this]()
+			{
+				beginResetModel();
+				init();
+				endResetModel();
+			});
 }
 
 

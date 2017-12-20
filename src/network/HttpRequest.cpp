@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpRequest.h"
@@ -8,10 +8,9 @@
 
 using namespace governikus;
 
-#define CAST_OBJ(parser) HttpRequest * obj = static_cast<HttpRequest*>(parser->data);
-
 Q_DECLARE_LOGGING_CATEGORY(network)
 
+#define CAST_OBJ(parser) HttpRequest * obj = static_cast<HttpRequest*>(parser->data);
 
 HttpRequest::HttpRequest(QAbstractSocket* pSocket, QObject* pParent)
 	: QObject(pParent)
@@ -113,7 +112,9 @@ void HttpRequest::onReadyRead()
 		const auto& buffer = mSocket->readAll();
 		http_parser_execute(&mParser, &mParserSettings, buffer.constData(), static_cast<size_t>(buffer.size()));
 
-		const auto errorCode = HTTP_PARSER_ERRNO(&mParser);
+		// See macro HTTP_PARSER_ERRNO if http_errno fails.
+		// We do not use this to avoid -Wold-style-cast warning
+		const auto errorCode = static_cast<http_errno>(mParser.http_errno);
 		if (errorCode != HPE_OK)
 		{
 			qCWarning(network) << "Http request not well-formed:" << http_errno_name(errorCode) << "|" << http_errno_description(errorCode);

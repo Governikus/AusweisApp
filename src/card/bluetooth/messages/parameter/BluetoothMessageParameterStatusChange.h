@@ -1,9 +1,7 @@
 /*!
- * BluetoothMessageParameterStatusChange.h
- *
  * \brief Implements special BluetoothMessageParameter for StatusChange.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,10 +18,10 @@ class BluetoothMessageParameterStatusChange
 		BluetoothStatusChange mStatusChange;
 
 	public:
-		typedef QSharedPointer<const BluetoothMessageParameterStatusChange> Ptr;
+		using Ptr = QSharedPointer<const BluetoothMessageParameterStatusChange>;
 
 		BluetoothMessageParameterStatusChange(const QByteArray& pValue);
-		virtual ~BluetoothMessageParameterStatusChange();
+		virtual ~BluetoothMessageParameterStatusChange() override;
 
 		BluetoothStatusChange getStatusChange() const;
 		virtual QString toStringValue() const override;

@@ -1,11 +1,12 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerAuth.h"
 
 #include "InternalActivationHandler.h"
 
+#include <QSharedPointer>
 #include <QUrlQuery>
 
 using namespace governikus;
@@ -20,7 +21,7 @@ MsgHandlerAuth::MsgHandlerAuth()
 MsgHandlerAuth::MsgHandlerAuth(const QJsonObject& pObj)
 	: MsgHandlerAuth()
 {
-	const auto& jsonTcTokenUrl = pObj["tcTokenURL"];
+	const auto& jsonTcTokenUrl = pObj[QLatin1String("tcTokenURL")];
 	if (jsonTcTokenUrl.isUndefined())
 	{
 		setError(QLatin1String("tcTokenURL cannot be undefined"));
@@ -38,7 +39,7 @@ MsgHandlerAuth::MsgHandlerAuth(const QJsonObject& pObj)
 			setVoid();
 			return;
 		}
-		Q_ASSERT(mJsonObject["error"].isString());
+		Q_ASSERT(mJsonObject[QLatin1String("error")].isString());
 	}
 }
 
@@ -48,7 +49,7 @@ MsgHandlerAuth::MsgHandlerAuth(const QSharedPointer<AuthContext>& pContext)
 {
 	Q_ASSERT(pContext);
 
-	mJsonObject["result"] = Result(pContext->getStatus()).toJson();
+	mJsonObject[QLatin1String("result")] = Result(pContext->getStatus()).toJson();
 
 	QString url;
 	if (pContext->getRefreshUrl().isEmpty())
@@ -91,11 +92,11 @@ void MsgHandlerAuth::initAuth(const QUrl& pTcTokenUrl)
 {
 	auto handler = ActivationHandler::getInstance<InternalActivationHandler>();
 	Q_ASSERT(handler);
-	handler->runAuthentication(new InternalActivationContext(pTcTokenUrl));
+	handler->runAuthentication(QSharedPointer<InternalActivationContext>::create(pTcTokenUrl));
 }
 
 
-void MsgHandlerAuth::setError(const QLatin1String& pError)
+void MsgHandlerAuth::setError(const QLatin1String pError)
 {
 	setValue("error", pError);
 }

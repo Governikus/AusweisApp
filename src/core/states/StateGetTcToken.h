@@ -1,9 +1,7 @@
 /*!
- * StateGetTcToken.h
- *
  * \brief State machine state: Get TCToken.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,7 +31,7 @@ class StateGetTcToken
 	StateGetTcToken(const QSharedPointer<WorkflowContext>& pContext);
 
 	public:
-		virtual ~StateGetTcToken();
+		virtual ~StateGetTcToken() override;
 
 	private Q_SLOTS:
 		void onNetworkReply();

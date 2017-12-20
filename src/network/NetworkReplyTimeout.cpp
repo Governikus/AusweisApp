@@ -1,11 +1,10 @@
 /*!
- * NetworkReplyTimeout.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NetworkReplyTimeout.h"
 
+#include "Env.h"
 #include "NetworkManager.h"
 
 #include <QCoreApplication>
@@ -49,5 +48,5 @@ void NetworkReplyTimeout::setTimeout(QNetworkReply* pReply, const int pTimeout)
 {
 	// since the QNetworkReply is set as parent, we don't need to care about destruction
 	NetworkReplyTimeout* timeout = new NetworkReplyTimeout(pReply, pTimeout);
-	connect(&NetworkManager::getGlobalInstance(), &NetworkManager::fireShutdown, timeout, &NetworkReplyTimeout::onShutdown);
+	connect(Env::getSingleton<NetworkManager>(), &NetworkManager::fireShutdown, timeout, &NetworkReplyTimeout::onShutdown);
 }

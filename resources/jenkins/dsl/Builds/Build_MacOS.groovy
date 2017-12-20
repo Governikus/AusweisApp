@@ -14,14 +14,15 @@ j.with
 {
 	steps
 	{
-		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain')
+		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain-db')
 
 		shell(strip('''\
 			cd build;
 			cmake ../source
 			-DCMAKE_PREFIX_PATH=${WORKSPACE}/libs/build/dist
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-			-DBUILD_SHARED_LIBS=true
+			-DBUILD_SHARED_LIBS=on
+			-DSANITIZER=on
 			'''))
 
 		shell('''\

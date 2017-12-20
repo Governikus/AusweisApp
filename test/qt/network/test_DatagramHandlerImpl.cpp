@@ -1,12 +1,12 @@
 /*!
  * \brief Unit tests for \ref DatagramHandlerImpl
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandlerImpl.h"
 
-#include "EnvHolder.h"
+#include "Env.h"
 #include "LogHandler.h"
 
 #include <QNetworkProxy>
@@ -24,7 +24,6 @@ class test_DatagramHandlerImpl
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			DatagramHandler::registerMetaTypes();
 			LogHandler::getInstance().init();
 		}
 
@@ -44,7 +43,7 @@ class test_DatagramHandlerImpl
 		void startUpShutDown()
 		{
 			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
-			QSharedPointer<DatagramHandler> socket(EnvHolder::create<DatagramHandler>());
+			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
 
 			QVERIFY(socket->isBound());
 			QCOMPARE(spy.count(), 1);
@@ -67,7 +66,7 @@ class test_DatagramHandlerImpl
 			DatagramHandlerImpl::cPort = 80;
 
 			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
-			QSharedPointer<DatagramHandler> socket(EnvHolder::create<DatagramHandler>());
+			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
 
 			QVERIFY(!socket->isBound());
 			QCOMPARE(spy.count(), 1);
@@ -78,7 +77,7 @@ class test_DatagramHandlerImpl
 
 		void getNonJsonDatagram()
 		{
-			QSharedPointer<DatagramHandler> socket(EnvHolder::create<DatagramHandler>());
+			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
 			QVERIFY(socket->isBound());
 			QSignalSpy spySocket(socket.data(), &DatagramHandler::fireNewMessage);
 
@@ -119,11 +118,10 @@ class test_DatagramHandlerImpl
 			}
 			#endif
 
-			QSharedPointer<DatagramHandler> socket(EnvHolder::create<DatagramHandler>());
+			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
 			QVERIFY(socket->isBound());
 			QSignalSpy spySocket(socket.data(), &DatagramHandler::fireNewMessage);
 
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
 			QUdpSocket clientSocket;
 			#ifndef QT_NO_NETWORKPROXY
 			clientSocket.setProxy(QNetworkProxy::NoProxy);
@@ -131,12 +129,8 @@ class test_DatagramHandlerImpl
 
 			QByteArray data("{\"key\":\"value\"}");
 			auto written = clientSocket.writeDatagram(data, broadcast ? QHostAddress::Broadcast : QHostAddress::LocalHost, socket.staticCast<DatagramHandlerImpl>()->mSocket->localPort());
-			spy.wait();
+			spySocket.wait();
 			QCOMPARE(written, data.size());
-
-			QCOMPARE(spy.count(), 1);
-			auto param = spy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Fire new message"));
 
 			QCOMPARE(spySocket.count(), 1);
 			const auto& msg = spySocket.takeFirst();
@@ -166,7 +160,9 @@ class test_DatagramHandlerImpl
 			QVERIFY(receiver.bind());
 			QSignalSpy spyReceiver(&receiver, &QUdpSocket::readyRead);
 
-			QSharedPointer<DatagramHandler> socket(EnvHolder::create<DatagramHandler>());
+			QSharedPointer<DatagramHandlerImpl> datagramHandlerImpl = QSharedPointer<DatagramHandler>(Env::create<DatagramHandler*>()).dynamicCast<DatagramHandlerImpl>();
+			QVERIFY(datagramHandlerImpl);
+
 			DatagramHandlerImpl::cPort = receiver.localPort();
 			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
 
@@ -179,11 +175,11 @@ class test_DatagramHandlerImpl
 				#ifdef Q_OS_FREEBSD
 				QSKIP("FreeBSD does not like that");
 				#endif
-				QVERIFY(socket->send(doc));
+				QVERIFY(datagramHandlerImpl->send(doc));
 			}
 			else
 			{
-				QVERIFY(socket->send(doc, QHostAddress::LocalHost));
+				QVERIFY(datagramHandlerImpl->send(doc, QHostAddress::LocalHost));
 			}
 
 			spyReceiver.wait();

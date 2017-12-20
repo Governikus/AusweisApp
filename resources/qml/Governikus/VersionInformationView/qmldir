@@ -1,0 +1,2 @@
+module VersionInformationView
+VersionInformation 1.0 VersionInformation.qml

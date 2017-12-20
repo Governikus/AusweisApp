@@ -1,9 +1,7 @@
 /*!
- * AbstractState.h
- *
  * \brief Base class for all states taken by the state machine.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -39,9 +37,9 @@ class AbstractState
 
 		void onExit(QEvent* pEvent) override;
 
-
+		void clearConnections();
 		bool isCancellationByUser();
-		void setStatus(const GlobalStatus& pStatus);
+		void updateStatus(const GlobalStatus& pStatus);
 
 	public:
 		static QString getClassName(const char* pName);
@@ -53,7 +51,7 @@ class AbstractState
 		}
 
 
-		virtual ~AbstractState();
+		virtual ~AbstractState() override;
 
 		void onEntry(QEvent* pEvent) override;
 
@@ -61,9 +59,8 @@ class AbstractState
 		void setStateName(const QString& pName);
 
 	Q_SIGNALS:
-		void fireSuccess();
-		void fireError();
-		void fireCancel();
+		void fireContinue();
+		void fireAbort();
 
 	public Q_SLOTS:
 		void onStateApprovedChanged();

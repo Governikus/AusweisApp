@@ -1,9 +1,7 @@
 /*!
- * test_LogHandler.h
- *
  * \brief Unit tests for \ref LogHandler
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogHandler.h"
@@ -68,8 +66,15 @@ class test_LogHandler
 			QCOMPARE(spy.count(), 2);
 			auto param1 = spy.takeFirst();
 			auto param2 = spy.takeLast();
-			QVERIFY(param1.at(0).toString().endsWith("hallo\n"));
-			QVERIFY(param2.at(0).toString().endsWith("test nachricht\n"));
+
+#ifdef Q_OS_WIN
+			const QLatin1String lineBreak("\r\n");
+#else
+			const QLatin1Char lineBreak('\n');
+#endif
+
+			QVERIFY(param1.at(0).toString().endsWith(QStringLiteral("hallo") + lineBreak));
+			QVERIFY(param2.at(0).toString().endsWith(QStringLiteral("test nachricht") + lineBreak));
 		}
 
 

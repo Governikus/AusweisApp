@@ -1,9 +1,7 @@
 /*!
- * DidAuthenticateEac1Parser.h
- *
  * \brief Parser for the PAOS DidAuthenticateEac1 element.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,7 +20,7 @@ class DidAuthenticateEac1Parser
 {
 	public:
 		DidAuthenticateEac1Parser();
-		~DidAuthenticateEac1Parser();
+		virtual ~DidAuthenticateEac1Parser() override;
 
 	protected:
 		virtual PaosMessage* parseMessage() override;

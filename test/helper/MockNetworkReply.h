@@ -1,11 +1,12 @@
 /*!
  * \brief Mock a QNetworkReply for tests.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
+#include "HttpStatusCode.h"
 #include "MockSocket.h"
 
 #include <QNetworkReply>
@@ -22,8 +23,8 @@ class MockNetworkReply
 		MockSocket mSocket;
 
 	public:
-		MockNetworkReply(const QByteArray& pData = QByteArray(), QObject* pParent = nullptr);
-		virtual ~MockNetworkReply();
+		MockNetworkReply(const QByteArray& pData = QByteArray(), HttpStatusCode pStatusCode = HttpStatusCode::UNDEFINED, QObject* pParent = nullptr);
+		virtual ~MockNetworkReply() override;
 		virtual void abort() override
 		{
 
@@ -47,6 +48,12 @@ class MockNetworkReply
 		void setNetworkError(NetworkError pErrorCode, const QString& pErrorString)
 		{
 			setError(pErrorCode, pErrorString);
+		}
+
+
+		void setFileModificationTimestamp(const QVariant& pTimestamp)
+		{
+			setHeader(QNetworkRequest::KnownHeaders::LastModifiedHeader, pTimestamp);
 		}
 
 

@@ -1,7 +1,5 @@
 /*!
- * SecurityInfo.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ASN1TemplateUtil.h"
@@ -62,7 +60,7 @@ ASN1_OBJECT* SecurityInfo::getProtocolObjectIdentifier() const
 
 QByteArray SecurityInfo::getProtocolValueBytes() const
 {
-	return QByteArray(reinterpret_cast<const char*>(getProtocolObjectIdentifier()->data), getProtocolObjectIdentifier()->length);
+	return Asn1ObjectUtil::getValue(getProtocolObjectIdentifier());
 }
 
 

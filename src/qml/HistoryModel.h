@@ -1,14 +1,14 @@
 /*!
  * \brief Model implementation for the history entries.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "HistoryModelSearchFilter.h"
 #include "HistorySettings.h"
-#include "ProviderSettings.h"
+#include "ProviderConfigurationInfo.h"
 
 #include <QAbstractListModel>
 #include <QPointer>
@@ -27,7 +27,7 @@ class HistoryProxyModel
 
 		HistoryProxyModel();
 
-		virtual ~HistoryProxyModel();
+		virtual ~HistoryProxyModel() override;
 };
 
 
@@ -39,17 +39,15 @@ class ProviderNameFilterModel
 	private:
 		QPointer<HistorySettings> mHistorySettings;
 
-		QPointer<ProviderSettings> mProviderSettings;
-
-		Provider mProvider;
+		ProviderConfigurationInfo mProvider;
 
 	protected:
 		bool filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const override;
 
 	public:
-		ProviderNameFilterModel(HistorySettings* pHistorySettings, ProviderSettings* pProviderSettings);
+		ProviderNameFilterModel(HistorySettings* pHistorySettings);
 
-		virtual ~ProviderNameFilterModel();
+		virtual ~ProviderNameFilterModel() override;
 
 		Q_INVOKABLE void setProviderAddress(const QString& pProviderAddress);
 
@@ -66,27 +64,29 @@ class HistoryModel
 	Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY fireEnabledChanged)
 
 	QPointer<HistorySettings> mHistorySettings;
-	QPointer<ProviderSettings> mProviderSettings;
 	HistoryProxyModel mFilterModel;
 	ProviderNameFilterModel mNameFilterModel;
 	HistoryModelSearchFilter mHistoryModelSearchFilter;
 
 	private:
-		Provider determineProviderFor(const HistoryEntry& pHistoryEntry) const;
+		QVector<QMetaObject::Connection> mConnections;
+
+		ProviderConfigurationInfo determineProviderFor(const HistoryInfo& pHistoryInfo) const;
 
 		bool isEnabled() const;
 		void setEnabled(bool pEnabled);
+		void updateConnections();
 
 	private Q_SLOTS:
 		void onHistoryEntriesChanged();
 		void onProvidersChanged();
 
 	Q_SIGNALS:
-		void fireEnabledChanged();
+		void fireEnabledChanged(bool pValue);
 
 	public:
-		HistoryModel(HistorySettings* pHistorySettings, ProviderSettings* pProviderSettings, QObject* pParent = nullptr);
-		virtual ~HistoryModel();
+		HistoryModel(HistorySettings* pHistorySettings, QObject* pParent = nullptr);
+		virtual ~HistoryModel() override;
 
 		enum HistoryRoles
 		{

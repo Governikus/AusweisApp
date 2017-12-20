@@ -1,7 +1,5 @@
 /*!
- * CustomSchemeActivationHandler.h
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,7 +21,7 @@ class CustomSchemeActivationHandler
 	Q_PLUGIN_METADATA(IID "governikus.ActivationHandler" FILE "metadata.json")
 	Q_INTERFACES(governikus::ActivationHandler)
 
-	private:
+	private Q_SLOTS:
 		void onCustomUrl(const QUrl& pUrl);
 
 	public:

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore/QtCore>
@@ -83,7 +83,7 @@ class test_SecureMessaging
 	private Q_SLOTS:
 		void init()
 		{
-			auto paceAlgo = KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128;
+			auto paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
 			QByteArray encKey("F1234567890ABCDE");
 			QByteArray macKey("1234567890ABCDEF");
 			mSecureMessaging.reset(new SecureMessaging(paceAlgo, encKey, macKey));

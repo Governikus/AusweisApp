@@ -6,18 +6,18 @@ var CATEGORY_COLOR_OTHER = "#00868e"
 
 function displayString(cat) {
 	if (cat === "all") {
-		return qsTr("Provider")
+		return qsTr("Provider") + settingsModel.translationTrigger
 	}
 	if (cat === "citizen") {
-		return qsTr("Citizen services")
+		return qsTr("Citizen services") + settingsModel.translationTrigger
 	}
 	if (cat === "insurance") {
-		return qsTr("Insurances")
+		return qsTr("Insurances") + settingsModel.translationTrigger
 	}
 	if (cat === "finance") {
-		return qsTr("Financials")
+		return qsTr("Financials") + settingsModel.translationTrigger
 	}
-	return qsTr("Other services")
+	return qsTr("Other services") + settingsModel.translationTrigger
 }
 
 function displayColor(cat) {
@@ -38,10 +38,10 @@ function displayColor(cat) {
 
 
 var CATEGORY_TO_IMAGE_NAME = {
-	"all": "General",
-	"citizen": "CitizenServices",
-	"insurance": "Insurances",
-	"finance": "Financials"
+	"all": "general",
+	"citizen": "citizen",
+	"insurance": "insurance",
+	"finance": "finance"
 }
 
 

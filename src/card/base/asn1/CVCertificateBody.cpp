@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 #include "CVCertificateBody.h"
 
 #include "ASN1TemplateUtil.h"
@@ -92,7 +96,13 @@ ASN1_ITEM_TEMPLATE_END(CVCertificateBody)
 IMPLEMENT_ASN1_FUNCTIONS(CVCertificateBody)
 IMPLEMENT_ASN1_OBJECT(CVCertificateBody)
 
-}
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+	#define sk_CERTIFICATEEXTENSION_num(data) SKM_sk_num(CERTIFICATEEXTENSION, data)
+	#define sk_CERTIFICATEEXTENSION_value(data, i) SKM_sk_value(CERTIFICATEEXTENSION, data, i)
+#endif
+
+} /* namespace governikus */
 
 
 QSharedPointer<CVCertificateBody> CVCertificateBody::fromHex(const QString& pHexValue)
@@ -174,23 +184,23 @@ QByteArray CVCertificateBody::getCertificateHolderReference() const
 QCryptographicHash::Algorithm CVCertificateBody::getHashAlgorithm() const
 {
 	const auto oid = getPublicKey().getPublicKeyOid();
-	if (oid == KnownOIDs::id_TA::ECDSA_SHA_1)
+	if (oid == KnownOIDs::id_ta::ECDSA_SHA_1)
 	{
 		return QCryptographicHash::Sha1;
 	}
-	if (oid == KnownOIDs::id_TA::ECDSA_SHA_224)
+	if (oid == KnownOIDs::id_ta::ECDSA_SHA_224)
 	{
 		return QCryptographicHash::Sha224;
 	}
-	if (oid == KnownOIDs::id_TA::ECDSA_SHA_256)
+	if (oid == KnownOIDs::id_ta::ECDSA_SHA_256)
 	{
 		return QCryptographicHash::Sha256;
 	}
-	if (oid == KnownOIDs::id_TA::ECDSA_SHA_384)
+	if (oid == KnownOIDs::id_ta::ECDSA_SHA_384)
 	{
 		return QCryptographicHash::Sha384;
 	}
-	if (oid == KnownOIDs::id_TA::ECDSA_SHA_512)
+	if (oid == KnownOIDs::id_ta::ECDSA_SHA_512)
 	{
 		return QCryptographicHash::Sha512;
 	}
@@ -206,9 +216,9 @@ QMap<QByteArray, QByteArray> CVCertificateBody::getExtensions() const
 
 	if (mExtensions != nullptr)
 	{
-		for (int i = 0; i < SKM_sk_num(CERTIFICATEEXTENSION, mExtensions); i++)
+		for (int i = 0; i < sk_CERTIFICATEEXTENSION_num(mExtensions); i++)
 		{
-			CERTIFICATEEXTENSION* extension = SKM_sk_value(CERTIFICATEEXTENSION, mExtensions, i);
+			CERTIFICATEEXTENSION* extension = sk_CERTIFICATEEXTENSION_value(mExtensions, i);
 			ext.insert(Asn1ObjectUtil::convertTo(extension->mOid), Asn1OctetStringUtil::getValue(extension->mObject1));
 		}
 	}

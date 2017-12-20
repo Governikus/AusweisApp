@@ -32,7 +32,7 @@ Rectangle {
 	}
 
 	Text {
-		text: qsTr("Additional results in other categories: %1").arg(baseItem.totalHits)
+		text: qsTr("Additional results in other categories: %1").arg(baseItem.totalHits) + settingsModel.translationTrigger
 		anchors.verticalCenter: parent.verticalCenter
 		anchors.left: backgroundImage.right
 		anchors.margins: Utils.dp(15)

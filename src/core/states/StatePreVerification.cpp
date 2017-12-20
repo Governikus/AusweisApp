@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StatePreVerification.h"
@@ -8,6 +8,8 @@
 #include "asn1/SignatureChecker.h"
 #include "AppSettings.h"
 #include "EnumHelper.h"
+#include "Env.h"
+#include "SecureStorage.h"
 
 #include <QVector>
 
@@ -17,8 +19,8 @@ using namespace governikus;
 
 StatePreVerification::StatePreVerification(const QSharedPointer<WorkflowContext>& pContext)
 	: AbstractGenericState(pContext)
-	, mTrustedCvcas(CVCertificate::fromHex(AppSettings::getInstance().getSecureStorage().getCVRootCertificates(true))
-			+ CVCertificate::fromHex(AppSettings::getInstance().getSecureStorage().getCVRootCertificates(false)))
+	, mTrustedCvcas(CVCertificate::fromHex(SecureStorage::getInstance().getCVRootCertificates(true))
+			+ CVCertificate::fromHex(SecureStorage::getInstance().getCVRootCertificates(false)))
 	, mValidationDateTime(QDateTime::currentDateTime())
 {
 }
@@ -44,13 +46,13 @@ void StatePreVerification::run()
 		}
 	}
 
-	if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+	if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 	{
 		if (certificateChain.isProductive())
 		{
 			qCritical() << "Using the developer mode is only allowed in a test environment";
-			setStatus(GlobalStatus::Code::Workflow_Preverification_Developermode_Error);
-			Q_EMIT fireError();
+			updateStatus(GlobalStatus::Code::Workflow_Preverification_Developermode_Error);
+			Q_EMIT fireAbort();
 			return;
 		}
 	}
@@ -58,43 +60,43 @@ void StatePreVerification::run()
 	if (!AppSettings::getInstance().getPreVerificationSettings().isEnabled())
 	{
 		qInfo() << "Pre-verification is disabled";
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 		return;
 	}
 
 	if (!certificateChain.isValid())
 	{
 		qCritical() << "Pre-verification failed: cannot build certificate chain";
-		setStatus(GlobalStatus::Code::Workflow_Preverification_Error);
-		Q_EMIT fireError();
+		updateStatus(GlobalStatus::Code::Workflow_Preverification_Error);
+		Q_EMIT fireAbort();
 		return;
 	}
 	else if (!SignatureChecker(certificateChain).check())
 	{
 		qCritical() << "Pre-verification failed: signature check failed";
-		setStatus(GlobalStatus::Code::Workflow_Preverification_Error);
-		Q_EMIT fireError();
+		updateStatus(GlobalStatus::Code::Workflow_Preverification_Error);
+		Q_EMIT fireAbort();
 		return;
 	}
 	else if (!isValid(certificateChain))
 	{
 		qCritical() << "Pre-verification failed: certificate not valid ";
-		setStatus(GlobalStatus::Code::Workflow_Preverification_Error);
-		Q_EMIT fireError();
+		updateStatus(GlobalStatus::Code::Workflow_Preverification_Error);
+		Q_EMIT fireAbort();
 		return;
 	}
 
 	saveCvcaLinkCertificates(certificateChain);
 
-	Q_EMIT fireSuccess();
+	Q_EMIT fireContinue();
 }
 
 
-bool StatePreVerification::isValid(const QVector<QSharedPointer<CVCertificate> >& pCertificates)
+bool StatePreVerification::isValid(const QVector<QSharedPointer<const CVCertificate> >& pCertificates)
 {
 	qDebug() << "Check certificate chain validity on" << mValidationDateTime.toString(Qt::ISODate);
 
-	QVectorIterator<QSharedPointer<CVCertificate> > i(pCertificates);
+	QVectorIterator<QSharedPointer<const CVCertificate> > i(pCertificates);
 	i.toBack();
 	while (i.hasPrevious())
 	{
@@ -123,15 +125,28 @@ bool StatePreVerification::isValid(const QVector<QSharedPointer<CVCertificate> >
 }
 
 
-void StatePreVerification::saveCvcaLinkCertificates(const QVector<QSharedPointer<CVCertificate> >& pCertificates)
+void StatePreVerification::saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate> >& pCertificates)
 {
+	const auto& contains = [](const QVector<QSharedPointer<const CVCertificate> >& pStore, const CVCertificate& pCert) -> bool
+			{
+				for (const auto& pCertInStore : pStore)
+				{
+					if (*pCertInStore == pCert)
+					{
+						return true;
+					}
+				}
+				return false;
+			};
+
+	auto& settings = Env::getSingleton<AppSettings>()->getPreVerificationSettings();
 	for (const auto& certificate : pCertificates)
 	{
-		if (certificate->getBody().getCHAT().getAccessRole() == AccessRole::CVCA && !mTrustedCvcas.contains(certificate))
+		if (certificate->getBody().getCHAT().getAccessRole() == AccessRole::CVCA && !contains(mTrustedCvcas, *certificate))
 		{
 			qInfo() << "Save link certificate" << *certificate;
-			AppSettings::getInstance().getPreVerificationSettings().addLinkCertificate(certificate->encode().toHex());
+			settings.addLinkCertificate(certificate->encode().toHex());
 		}
 	}
-	AppSettings::getInstance().getPreVerificationSettings().save();
+	settings.save();
 }

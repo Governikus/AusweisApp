@@ -12,9 +12,16 @@ def j = new Release
 
 j.with
 {
+	parameters
+	{
+		booleanParam("USE_DISTRIBUTION_PROFILE", true, "Use the provisioning profile necessary to upload AusweisApp2 to the AppStore")
+	}
+
 	steps
 	{
-		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain')
+		buildDescription('', 'USE_DISTRIBUTION_PROFILE: ${USE_DISTRIBUTION_PROFILE}')
+
+		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain-db')
 
 		shell(strip('''\
 			cd build;
@@ -22,10 +29,11 @@ j.with
 			-DCMAKE_BUILD_TYPE=release
 			-DCMAKE_PREFIX_PATH=\${WORKSPACE}/libs/build/dist
 			-DCMAKE_TOOLCHAIN_FILE=../source/cmake/iOS.toolchain.cmake
+			-DUSE_DISTRIBUTION_PROFILE=\${USE_DISTRIBUTION_PROFILE}
 			-GXcode
 			'''))
 
-		shell('cd build; xcodebuild -target install -configuration Release PROVISIONING_PROFILE=${PROVISIONING_PROFILE_RELEASE}')
+		shell('cd build; xcodebuild -target install -configuration Release ARCHS=arm64')
 		shell('cd build; xcodebuild -target ipa -configuration Release')
 	}
 }

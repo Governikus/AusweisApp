@@ -1,18 +1,18 @@
 /*!
- * DeviceError.h
- *
  * \brief Global definitions for device error codes.
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "EnumHelper.h"
-#include "GlobalStatus.h"
 
 namespace governikus
 {
+
+class GlobalStatus;
+
 
 defineEnumType(DeviceError,
 		UNKNOWN_ERROR,

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/KnownOIDs.h"
@@ -38,7 +38,7 @@ class test_CipherMAC
 
 		void wrongKeySize()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
 			QByteArray key("123456");
 			CipherMac cipherMac(paceAlgo, key);
 
@@ -51,7 +51,7 @@ class test_CipherMAC
 
 		void tripleDes()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC);
 			KeyDerivationFunction kdf(paceAlgo);
 			QByteArray key = kdf.mac("123456");
 			CipherMac cipherMac(paceAlgo, key);
@@ -65,7 +65,7 @@ class test_CipherMAC
 
 		void aes128()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
 			KeyDerivationFunction kdf(paceAlgo);
 			QByteArray key = kdf.mac("123456");
 			CipherMac cipherMac(paceAlgo, key);
@@ -79,7 +79,7 @@ class test_CipherMAC
 
 		void aes196()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192);
 			KeyDerivationFunction kdf(paceAlgo);
 			QByteArray key = kdf.mac("123456");
 			CipherMac cipherMac(paceAlgo, key);
@@ -93,7 +93,7 @@ class test_CipherMAC
 
 		void aes256()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
 			KeyDerivationFunction kdf(paceAlgo);
 			QByteArray key = kdf.mac("123456");
 			CipherMac cipherMac(paceAlgo, key);
@@ -107,7 +107,7 @@ class test_CipherMAC
 
 		void multipleuse()
 		{
-			QByteArray paceAlgo(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
+			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
 			KeyDerivationFunction kdf(paceAlgo);
 			QByteArray key = kdf.mac("123456");
 			CipherMac cipherMac(paceAlgo, key);

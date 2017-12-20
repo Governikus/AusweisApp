@@ -1,19 +1,15 @@
 /*!
- * AuthContext.h
- *
  * \brief Authentication context.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "asn1/CVCertificate.h"
 #include "asn1/CVCertificateChainBuilder.h"
-#include "ActivationHandler.h"
+#include "ActivationContext.h"
 #include "context/WorkflowContext.h"
-#include "Commands.h"
-#include "EnumHelper.h"
 #include "NetworkManager.h"
 #include "paos/invoke/DidAuthenticateResponseEac1.h"
 #include "paos/invoke/DidAuthenticateResponseEac2.h"
@@ -27,11 +23,10 @@
 #include "paos/retrieve/DidAuthenticateEac2.h"
 #include "paos/retrieve/DidAuthenticateEacAdditional.h"
 #include "paos/retrieve/DidList.h"
+#include "paos/retrieve/Disconnect.h"
 #include "paos/retrieve/InitializeFramework.h"
 #include "paos/retrieve/StartPaosResponse.h"
 #include "paos/retrieve/Transmit.h"
-#include "Result.h"
-#include "SelfAuthenticationData.h"
 #include "TcToken.h"
 #include "UrlUtil.h"
 
@@ -41,7 +36,6 @@
 #include <QSslCertificate>
 #include <QUrl>
 
-class test_StatePrepareChat;
 class test_StateRedirectBrowser;
 class test_StatePreVerification;
 class test_StateProcessCertificatesFromEac2;
@@ -65,8 +59,7 @@ class AuthContext
 		bool mTcTokenNotFound;
 		bool mErrorReportedToServer;
 
-		QScopedPointer<ActivationContext> mActivationContext;
-		QScopedPointer<NetworkManager> mNetworkManager;
+		QSharedPointer<ActivationContext> mActivationContext;
 		QUrl mTcTokenUrl;
 		QSharedPointer<TcToken> mTcToken;
 		QUrl mRefreshUrl;
@@ -84,13 +77,15 @@ class AuthContext
 		QSharedPointer<DIDAuthenticateResponseEAC2> mDIDAuthenticateResponseEAC2;
 		QVector<QSharedPointer<Transmit> > mTransmits;
 		QVector<QSharedPointer<TransmitResponse> > mTransmitResponses;
+		bool mTransmitResponseFailed;
+		QSharedPointer<Disconnect> mDisconnect;
 		QSharedPointer<DisconnectResponse> mDisconnectResponse;
 		QSharedPointer<StartPaosResponse> mStartPaosResponse;
 		QSet<AccessRight> mEffectiveAccessRights;
 		QSet<AccessRight> mRequiredAccessRights;
 		QSet<AccessRight> mOptionalAccessRights;
 		QMultiMap<QUrl, QSslCertificate> mCertificates;
-		QSharedPointer<CVCertificate> mTerminalCvc, mDvCvc;
+		QSharedPointer<const CVCertificate> mTerminalCvc, mDvCvc;
 		CVCertificateChainBuilder mCvcChainBuilderProd, mCvcChainBuilderTest;
 
 		void initializeChat();
@@ -102,7 +97,7 @@ class AuthContext
 		void fireEffectiveChatChanged();
 
 	public:
-		AuthContext(ActivationContext* pActivationContext);
+		AuthContext(const QSharedPointer<ActivationContext>& pActivationContext);
 		virtual ~AuthContext();
 
 
@@ -126,25 +121,9 @@ class AuthContext
 
 		void setTcTokenNotFound(bool pTcTokenNotFound)
 		{
-			this->mTcTokenNotFound = pTcTokenNotFound;
+			mTcTokenNotFound = pTcTokenNotFound;
 		}
 
-
-		NetworkManager& getNetworkManager()
-		{
-			return *mNetworkManager;
-		}
-
-
-#ifndef Q_NO_DEBUG
-		// for testing purposes only!
-		void setNetworkManager(NetworkManager* pNetworkManager)
-		{
-			mNetworkManager.reset(pNetworkManager);
-		}
-
-
-#endif
 
 		QList<QSslCertificate> getCertificateList() const
 		{
@@ -233,9 +212,9 @@ class AuthContext
 		}
 
 
-		void setDidAuthenticateEac2(const QSharedPointer<DIDAuthenticateEAC2>& didAuthenticateEac2)
+		void setDidAuthenticateEac2(const QSharedPointer<DIDAuthenticateEAC2>& pDidAuthenticateEac2)
 		{
-			mDIDAuthenticateEAC2 = didAuthenticateEac2;
+			mDIDAuthenticateEAC2 = pDidAuthenticateEac2;
 		}
 
 
@@ -245,9 +224,9 @@ class AuthContext
 		}
 
 
-		void setDidAuthenticateResponseEac1(const QSharedPointer<DIDAuthenticateResponseEAC1>& didAuthenticateResponseEac1)
+		void setDidAuthenticateResponseEac1(const QSharedPointer<DIDAuthenticateResponseEAC1>& pDidAuthenticateResponseEac1)
 		{
-			mDIDAuthenticateResponseEAC1 = didAuthenticateResponseEac1;
+			mDIDAuthenticateResponseEAC1 = pDidAuthenticateResponseEac1;
 		}
 
 
@@ -257,9 +236,9 @@ class AuthContext
 		}
 
 
-		void setDidAuthenticateResponseEacAdditionalInputType(const QSharedPointer<DIDAuthenticateResponseEAC2>& didAuthenticateResponseEacAdditionalInputType)
+		void setDidAuthenticateResponseEacAdditionalInputType(const QSharedPointer<DIDAuthenticateResponseEAC2>& pDidAuthenticateResponseEacAdditionalInputType)
 		{
-			mDIDAuthenticateResponseEACAdditionalInputType = didAuthenticateResponseEacAdditionalInputType;
+			mDIDAuthenticateResponseEACAdditionalInputType = pDidAuthenticateResponseEacAdditionalInputType;
 		}
 
 
@@ -269,9 +248,9 @@ class AuthContext
 		}
 
 
-		void setDidAuthenticateEacAdditional(const QSharedPointer<DIDAuthenticateEACAdditional>& didAuthenticateEacAdditionalInputType)
+		void setDidAuthenticateEacAdditional(const QSharedPointer<DIDAuthenticateEACAdditional>& pDidAuthenticateEacAdditionalInputType)
 		{
-			mDIDAuthenticateEACAdditionalInputType = didAuthenticateEacAdditionalInputType;
+			mDIDAuthenticateEACAdditionalInputType = pDidAuthenticateEacAdditionalInputType;
 		}
 
 
@@ -281,9 +260,9 @@ class AuthContext
 		}
 
 
-		void setDidAuthenticateResponseEac2(const QSharedPointer<DIDAuthenticateResponseEAC2>& didAuthenticateResponseEac2)
+		void setDidAuthenticateResponseEac2(const QSharedPointer<DIDAuthenticateResponseEAC2>& pDidAuthenticateResponseEac2)
 		{
-			mDIDAuthenticateResponseEAC2 = didAuthenticateResponseEac2;
+			mDIDAuthenticateResponseEAC2 = pDidAuthenticateResponseEac2;
 		}
 
 
@@ -293,9 +272,9 @@ class AuthContext
 		}
 
 
-		void setDidList(const QSharedPointer<DIDList>& didList)
+		void setDidList(const QSharedPointer<DIDList>& pDidList)
 		{
-			mDIDList = didList;
+			mDIDList = pDidList;
 		}
 
 
@@ -305,9 +284,9 @@ class AuthContext
 		}
 
 
-		void setDidListResponse(const QSharedPointer<DIDListResponse>& didListResponse)
+		void setDidListResponse(const QSharedPointer<DIDListResponse>& pDidListResponse)
 		{
-			mDIDListResponse = didListResponse;
+			mDIDListResponse = pDidListResponse;
 		}
 
 
@@ -317,9 +296,9 @@ class AuthContext
 		}
 
 
-		void setInitializeFramework(const QSharedPointer<InitializeFramework>& initializeFramework)
+		void setInitializeFramework(const QSharedPointer<InitializeFramework>& pInitializeFramework)
 		{
-			mInitializeFramework = initializeFramework;
+			mInitializeFramework = pInitializeFramework;
 		}
 
 
@@ -329,9 +308,21 @@ class AuthContext
 		}
 
 
-		void setInitializeFrameworkResponse(const QSharedPointer<InitializeFrameworkResponse>& initializeFrameworkResponse)
+		void setInitializeFrameworkResponse(const QSharedPointer<InitializeFrameworkResponse>& pInitializeFrameworkResponse)
 		{
-			mInitializeFrameworkResponse = initializeFrameworkResponse;
+			mInitializeFrameworkResponse = pInitializeFrameworkResponse;
+		}
+
+
+		const QSharedPointer<Disconnect>& getDisconnect() const
+		{
+			return mDisconnect;
+		}
+
+
+		void setDisconnect(const QSharedPointer<Disconnect>& pDisconnect)
+		{
+			mDisconnect = pDisconnect;
 		}
 
 
@@ -353,9 +344,9 @@ class AuthContext
 		}
 
 
-		void setStartPaosResponse(const QSharedPointer<StartPaosResponse>& startPaosResponse)
+		void setStartPaosResponse(const QSharedPointer<StartPaosResponse>& pStartPaosResponse)
 		{
-			mStartPaosResponse = startPaosResponse;
+			mStartPaosResponse = pStartPaosResponse;
 		}
 
 
@@ -369,6 +360,18 @@ class AuthContext
 		{
 			Q_ASSERT(!pTransmitResponse.isNull());
 			mTransmitResponses += pTransmitResponse;
+		}
+
+
+		bool getTransmitResponseFailed() const
+		{
+			return mTransmitResponseFailed;
+		}
+
+
+		void setTransmitResponseFailed(bool pFailed)
+		{
+			mTransmitResponseFailed = pFailed;
 		}
 
 
@@ -439,7 +442,7 @@ class AuthContext
 		}
 
 
-		CVCertificateChain getChainStartingWith(const QSharedPointer<CVCertificate>& pChainRoot) const;
+		CVCertificateChain getChainStartingWith(const QSharedPointer<const CVCertificate>& pChainRoot) const;
 
 
 		bool hasChainForCertificationAuthority(const EstablishPACEChannelOutput& pPaceOutput) const;
@@ -448,28 +451,28 @@ class AuthContext
 		CVCertificateChain getChainForCertificationAuthority(const EstablishPACEChannelOutput& pPaceOutput) const;
 
 
-		void initCvcChainBuilder(const QVector<QSharedPointer<CVCertificate> >& pAdditionalCertificates = QVector<QSharedPointer<CVCertificate> >());
+		void initCvcChainBuilder(const QVector<QSharedPointer<const CVCertificate> >& pAdditionalCertificates = QVector<QSharedPointer<const CVCertificate> >());
 
 
-		const QSharedPointer<CVCertificate>& getDvCvc() const
+		const QSharedPointer<const CVCertificate>& getDvCvc() const
 		{
 			return mDvCvc;
 		}
 
 
-		void setDvCvc(const QSharedPointer<CVCertificate>& dvCvc)
+		void setDvCvc(const QSharedPointer<const CVCertificate>& dvCvc)
 		{
 			mDvCvc = dvCvc;
 		}
 
 
-		const QSharedPointer<CVCertificate>& getTerminalCvc() const
+		const QSharedPointer<const CVCertificate>& getTerminalCvc() const
 		{
 			return mTerminalCvc;
 		}
 
 
-		void setTerminalCvc(const QSharedPointer<CVCertificate>& pTerminalCvc);
+		void setTerminalCvc(const QSharedPointer<const CVCertificate>& pTerminalCvc);
 
 
 };

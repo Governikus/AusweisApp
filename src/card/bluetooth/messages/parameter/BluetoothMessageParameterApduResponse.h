@@ -1,9 +1,7 @@
 /*!
- * BluetoothMessageParameterApduResponse.h
- *
  * \brief Implements special BluetoothMessageParameter for TransferApduResponse.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,7 +16,7 @@ class BluetoothMessageParameterApduResponse
 {
 	public:
 		BluetoothMessageParameterApduResponse(const QByteArray& pApdu);
-		virtual ~BluetoothMessageParameterApduResponse();
+		virtual ~BluetoothMessageParameterApduResponse() override;
 
 		const QByteArray& getResponseApdu() const;
 		virtual QString toStringValue() const override;

@@ -1,7 +1,5 @@
 /*!
- * DidAuthenticateEac1.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -38,7 +36,7 @@ void DIDAuthenticateEAC1::setEac1InputType(const Eac1InputType& eac1InputType)
 }
 
 
-QSharedPointer<AuthenticatedAuxiliaryData> DIDAuthenticateEAC1::getAuthenticatedAuxiliaryData() const
+const QSharedPointer<const AuthenticatedAuxiliaryData>& DIDAuthenticateEAC1::getAuthenticatedAuxiliaryData() const
 {
 	return mEac1InputType.getAuthenticatedAuxiliaryData();
 }
@@ -50,7 +48,7 @@ const QByteArray& DIDAuthenticateEAC1::getAuthenticatedAuxiliaryDataAsBinary() c
 }
 
 
-QSharedPointer<CertificateDescription> DIDAuthenticateEAC1::getCertificateDescription() const
+const QSharedPointer<const CertificateDescription>& DIDAuthenticateEAC1::getCertificateDescription() const
 {
 	return mEac1InputType.getCertificateDescription();
 }
@@ -68,7 +66,7 @@ const ConnectionHandle& DIDAuthenticateEAC1::getConnectionHandle() const
 }
 
 
-const QVector<QSharedPointer<CVCertificate> >& DIDAuthenticateEAC1::getCvCertificates() const
+const QVector<QSharedPointer<const CVCertificate> >& DIDAuthenticateEAC1::getCvCertificates() const
 {
 	return mEac1InputType.getCvCertificates();
 }
@@ -80,13 +78,13 @@ const QString& DIDAuthenticateEAC1::getDidName() const
 }
 
 
-const QSharedPointer<CHAT>& DIDAuthenticateEAC1::getOptionalChat() const
+const QSharedPointer<const CHAT>& DIDAuthenticateEAC1::getOptionalChat() const
 {
 	return mEac1InputType.getOptionalChat();
 }
 
 
-const QSharedPointer<CHAT>& DIDAuthenticateEAC1::getRequiredChat() const
+const QSharedPointer<const CHAT>& DIDAuthenticateEAC1::getRequiredChat() const
 {
 	return mEac1InputType.getRequiredChat();
 }

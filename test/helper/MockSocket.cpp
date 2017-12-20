@@ -1,8 +1,10 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockSocket.h"
+
+#include <cstring>
 
 using namespace governikus;
 
@@ -13,7 +15,7 @@ MockSocket::MockSocket()
 	, mReaderBufferChunk(-1)
 	, mWriteBuffer()
 {
-	open(QIODevice::ReadWrite);
+	QTcpSocket::open(QIODevice::ReadWrite);
 }
 
 
@@ -42,7 +44,7 @@ qint64 MockSocket::readData(char* pDestination, qint64 pMaxSize)
 	int length = data.length();
 	if (length >= 0)
 	{
-		qstrncpy(pDestination, data.constData(), static_cast<uint>(length));
+		memcpy(pDestination, data.constData(), static_cast<size_t>(length));
 		mReaderBufferPosition += length;
 	}
 	return length;

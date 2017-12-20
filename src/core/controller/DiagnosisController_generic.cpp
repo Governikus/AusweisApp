@@ -1,9 +1,7 @@
 /*!
- * DiagnosisController_generic.cpp
- *
  * \brief Generic implementation of the controller for retrieving and presenting diagnosis info.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 

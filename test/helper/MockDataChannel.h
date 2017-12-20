@@ -1,12 +1,15 @@
 /*!
  * \brief Data channel mock for tests.
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "DataChannel.h"
+
+#include <QByteArray>
+#include <QVector>
 
 namespace governikus
 {
@@ -16,13 +19,18 @@ class MockDataChannel
 {
 	Q_OBJECT
 
+	private:
+		QVector<QByteArray> mReceivedDataBlocks;
+
 	public:
 		MockDataChannel();
-		virtual ~MockDataChannel();
+		virtual ~MockDataChannel() override;
 
 		virtual void send(const QByteArray& pDataBlock) override;
 		virtual void close() override;
 		void closeAbnormal();
+
+		const QVector<QByteArray>& getReceivedDataBlocks() const;
 
 	public Q_SLOTS:
 		void onReceived(const QByteArray& pDataBlock);

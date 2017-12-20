@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Commands.h"
@@ -56,7 +56,7 @@ class test_MSEBuilder
 
 		void setPublicKeyId()
 		{
-			PACE_PIN_ID pinId = PACE_PIN_ID::PACE_PIN;
+			PACE_PASSWORD_ID pinId = PACE_PASSWORD_ID::PACE_PIN;
 			mMseBuilder->setPublicKey(pinId);
 			assertCommandContent(QByteArray::fromHex("8301").append(static_cast<char>(pinId)));
 		}

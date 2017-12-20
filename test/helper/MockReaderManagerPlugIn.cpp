@@ -1,7 +1,5 @@
 /*!
- * MockReaderManagerPlugIn.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -32,7 +30,7 @@ MockReaderManagerPlugIn& MockReaderManagerPlugIn::getInstance()
 }
 
 
-QList<Reader*> MockReaderManagerPlugIn::getReader() const
+QList<Reader*> MockReaderManagerPlugIn::getReaders() const
 {
 	QList<Reader*> readers;
 	readers.reserve(mReaders.size());

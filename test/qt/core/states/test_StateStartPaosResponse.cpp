@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore/QtCore>
@@ -41,30 +41,13 @@ class test_StateStartPaosResponse
 		}
 
 
-		void doNotTakeResultFromStartPAOSResponse()
+		void takeResultFromStartPAOSResponse()
 		{
 			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse3.xml")));
 			mAuthContext->setStartPaosResponse(startPAOSResponse);
 			mAuthContext->setStatus(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
 
-			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireError);
-
-			Q_EMIT fireStateStart(nullptr);
-			mAuthContext->setStateApproved();
-
-			const Result& result = mState->getContext()->getStatus();
-			QCOMPARE(result.getMajor(), Result::Major::Error);
-			QCOMPARE(result.getMinor(), GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User);
-		}
-
-
-		void takeResultFromStartPAOSResponse()
-		{
-			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse3.xml")));
-			mAuthContext->setStartPaosResponse(startPAOSResponse);
-			mAuthContext->setStatus(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::OK));
-
-			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireError);
+			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -72,16 +55,15 @@ class test_StateStartPaosResponse
 			const Result& result = mState->getContext()->getStatus();
 			QCOMPARE(result.getMajor(), Result::Major::Error);
 			QCOMPARE(result.getMinor(), GlobalStatus::Code::Paos_Error_DP_Timeout_Error);
-			QCOMPARE(result.getMessage(), QString("The operation was terminated as the set time was exceeded."));
 		}
 
 
-		void Q_EMITErrorIfResultError()
+		void emitErrorIfResultError()
 		{
 			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse3.xml")));
 			mAuthContext->setStartPaosResponse(startPAOSResponse);
 
-			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireError);
+			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -90,12 +72,12 @@ class test_StateStartPaosResponse
 		}
 
 
-		void Q_EMITSuccessIfResultOk()
+		void emitSuccessIfResultOk()
 		{
 			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse1.xml")));
 			mAuthContext->setStartPaosResponse(startPAOSResponse);
 
-			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireContinue);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();

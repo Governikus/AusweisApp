@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,28 +26,21 @@ class StateGenericSendReceive
 		const QVector<PaosType> mTypesToReceive;
 		QPointer<QNetworkReply> mReply;
 
-		void setMessageId(QSharedPointer<PaosMessage> pPaosMessage);
-		void setRemoteMessageId(QSharedPointer<PaosMessage> pPaosMessage);
-		void setReceivedMessage(QSharedPointer<PaosMessage> pMessage);
-		void reportChannelEstablishmentError(const GlobalStatus::Code pStatusCode);
-		bool checkAndSaveCertificate(const QSslCertificate& pCertificate);
+		void setMessageId(const QSharedPointer<PaosMessage>& pPaosMessage);
+		void setRemoteMessageId(const QSharedPointer<PaosMessage>& pPaosMessage);
+		void setReceivedMessage(const QSharedPointer<PaosMessage>& pMessage);
+		GlobalStatus::Code checkAndSaveCertificate(const QSslCertificate& pCertificate);
 		void onSslErrors(const QList<QSslError>& pErrors);
 		void onSslHandshakeDone();
-		virtual void run();
+		virtual void run() override;
 
 	protected:
-		/**
-		 * Creates a new instance of.
-		 * \param pUiFactory the UiFactory to use
-		 * \param pNewState the entered state when executing this state
-		 * \param pTypeToSend the PAOS message type to send
-		 * \param pTypesToReceive the expected PAOS message types to receive
-		 * \return in case of any error 0 is returned. Otherwise the received PAOS messages position in the list pTypesToReceive plus one is returned.
-		 */
-		StateGenericSendReceive(QSharedPointer<WorkflowContext> pContext, const QVector<PaosType>& pTypesToReceive);
-		StateGenericSendReceive(QSharedPointer<WorkflowContext> pContext, PaosType pTypesToReceive);
+		StateGenericSendReceive(const QSharedPointer<WorkflowContext>& pContext, const QVector<PaosType>& pTypesToReceive);
+		StateGenericSendReceive(const QSharedPointer<WorkflowContext>& pContext, PaosType pTypesToReceive);
 
-		virtual QSharedPointer<PaosCreator> getMessageToSend() = 0;
+		virtual QSharedPointer<PaosMessage> getAsMessage() = 0;
+		virtual QSharedPointer<ResponseType> getAsResponse() = 0;
+		virtual QSharedPointer<PaosCreator> getAsCreator() = 0;
 		virtual void emitStateMachineSignal(int result) = 0;
 
 	private Q_SLOTS:
@@ -69,9 +62,21 @@ class StateSendStartPaos
 
 
 	protected:
-		virtual QSharedPointer<PaosCreator> getMessageToSend() override
+		virtual QSharedPointer<PaosMessage> getAsMessage() override
 		{
-			return getContext()->getStartPaos().staticCast<PaosCreator>();
+			return getContext()->getStartPaos();
+		}
+
+
+		virtual QSharedPointer<ResponseType> getAsResponse() override
+		{
+			return QSharedPointer<ResponseType>();
+		}
+
+
+		virtual QSharedPointer<PaosCreator> getAsCreator() override
+		{
+			return getContext()->getStartPaos();
 		}
 
 
@@ -113,9 +118,21 @@ class StateSendInitializeFrameworkResponse
 
 
 	protected:
-		virtual QSharedPointer<PaosCreator> getMessageToSend() override
+		virtual QSharedPointer<PaosMessage> getAsMessage() override
 		{
-			return getContext()->getInitializeFrameworkResponse().staticCast<PaosCreator>();
+			return getContext()->getInitializeFrameworkResponse();
+		}
+
+
+		virtual QSharedPointer<ResponseType> getAsResponse() override
+		{
+			return getContext()->getInitializeFrameworkResponse();
+		}
+
+
+		virtual QSharedPointer<PaosCreator> getAsCreator() override
+		{
+			return getContext()->getInitializeFrameworkResponse();
 		}
 
 
@@ -152,9 +169,21 @@ class StateSendDIDListResponse
 
 
 	protected:
-		virtual QSharedPointer<PaosCreator> getMessageToSend() override
+		virtual QSharedPointer<PaosMessage> getAsMessage() override
 		{
-			return getContext()->getDidListResponse().staticCast<PaosCreator>();
+			return getContext()->getDidListResponse();
+		}
+
+
+		virtual QSharedPointer<ResponseType> getAsResponse() override
+		{
+			return getContext()->getDidListResponse();
+		}
+
+
+		virtual QSharedPointer<PaosCreator> getAsCreator() override
+		{
+			return getContext()->getDidListResponse();
 		}
 
 
@@ -190,9 +219,21 @@ class StateSendDIDAuthenticateResponseEAC1
 
 
 	protected:
-		virtual QSharedPointer<PaosCreator> getMessageToSend() override
+		virtual QSharedPointer<PaosMessage> getAsMessage() override
 		{
-			return getContext()->getDidAuthenticateResponseEac1().staticCast<PaosCreator>();
+			return getContext()->getDidAuthenticateResponseEac1();
+		}
+
+
+		virtual QSharedPointer<ResponseType> getAsResponse() override
+		{
+			return getContext()->getDidAuthenticateResponseEac1();
+		}
+
+
+		virtual QSharedPointer<PaosCreator> getAsCreator() override
+		{
+			return getContext()->getDidAuthenticateResponseEac1();
 		}
 
 
@@ -228,9 +269,21 @@ class StateSendDIDAuthenticateResponseEACAdditionalInputType
 
 
 	protected:
-		virtual QSharedPointer<PaosCreator> getMessageToSend() override
+		virtual QSharedPointer<PaosMessage> getAsMessage() override
 		{
-			return getContext()->getDidAuthenticateResponseEacAdditionalInputType().staticCast<PaosCreator>();
+			return getContext()->getDidAuthenticateResponseEacAdditionalInputType();
+		}
+
+
+		virtual QSharedPointer<ResponseType> getAsResponse() override
+		{
+			return getContext()->getDidAuthenticateResponseEacAdditionalInputType();
+		}
+
+
+		virtual QSharedPointer<PaosCreator> getAsCreator() override
+		{
+			return getContext()->getDidAuthenticateResponseEacAdditionalInputType();
 		}
 
 
@@ -261,9 +314,21 @@ class StateSendDIDAuthenticateResponseEAC2
 
 
 	protected:
-		virtual QSharedPointer<PaosCreator> getMessageToSend() override
+		virtual QSharedPointer<PaosMessage> getAsMessage() override
 		{
-			return getContext()->getDidAuthenticateResponseEac2().staticCast<PaosCreator>();
+			return getContext()->getDidAuthenticateResponseEac2();
+		}
+
+
+		virtual QSharedPointer<ResponseType> getAsResponse() override
+		{
+			return getContext()->getDidAuthenticateResponseEac2();
+		}
+
+
+		virtual QSharedPointer<PaosCreator> getAsCreator() override
+		{
+			return getContext()->getDidAuthenticateResponseEac2();
 		}
 
 
@@ -299,9 +364,21 @@ class StateSendTransmitResponse
 
 
 	protected:
-		virtual QSharedPointer<PaosCreator> getMessageToSend() override
+		virtual QSharedPointer<PaosMessage> getAsMessage() override
 		{
-			return getContext()->getTransmitResponses().last().staticCast<PaosCreator>();
+			return getContext()->getTransmitResponses().constLast();
+		}
+
+
+		virtual QSharedPointer<ResponseType> getAsResponse() override
+		{
+			return getContext()->getTransmitResponses().constLast();
+		}
+
+
+		virtual QSharedPointer<PaosCreator> getAsCreator() override
+		{
+			return getContext()->getTransmitResponses().constLast();
 		}
 
 
@@ -338,7 +415,19 @@ class StateSendDisconnectResponse
 
 
 	protected:
-		virtual QSharedPointer<PaosCreator> getMessageToSend() override
+		virtual QSharedPointer<PaosMessage> getAsMessage() override
+		{
+			return getContext()->getDisconnectResponse();
+		}
+
+
+		virtual QSharedPointer<ResponseType> getAsResponse() override
+		{
+			return getContext()->getDisconnectResponse();
+		}
+
+
+		virtual QSharedPointer<PaosCreator> getAsCreator() override
 		{
 			return getContext()->getDisconnectResponse();
 		}

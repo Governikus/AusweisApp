@@ -1,7 +1,5 @@
 /*!
- * PACEInfo.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -78,9 +76,9 @@ PACEInfo::PACEInfo(const QSharedPointer<const paceinfo_st>& pDelegate)
 	: SecurityInfo()
 	, mDelegate(pDelegate)
 {
-	if (getVersion() != QByteArray::fromHex("02"))
+	if (getVersion() != 2)
 	{
-		qCWarning(card) << "Expect version=2, got: " << getVersion().toHex();
+		qCWarning(card) << "Expect version=2, got: " << getVersion();
 	}
 }
 
@@ -101,15 +99,18 @@ QByteArray PACEInfo::getParameterId() const
 }
 
 
-QByteArray PACEInfo::getVersion() const
+int PACEInfo::getVersion() const
 {
-	return Asn1IntegerUtil::getValue(mDelegate->mVersion);
+	const auto& version = Asn1IntegerUtil::getValue(mDelegate->mVersion);
+	return version.isEmpty() || version.size() > 1 ? -1 : version[0];
 }
 
 
 KeyAgreementType PACEInfo::getKeyAgreementType() const
 {
-	if (getProtocol().startsWith(KnownOIDs::id_PACE::DH::GM) || getProtocol().startsWith(KnownOIDs::id_PACE::DH::IM))
+	const auto& protocol = getProtocol();
+	if (protocol.startsWith(toByteArray(KnownOIDs::id_PACE::DH::GM))
+			|| protocol.startsWith(toByteArray(KnownOIDs::id_PACE::DH::IM)))
 	{
 		return KeyAgreementType::DH;
 	}
@@ -122,7 +123,9 @@ KeyAgreementType PACEInfo::getKeyAgreementType() const
 
 MappingType PACEInfo::getMappingType() const
 {
-	if (getProtocol().startsWith(KnownOIDs::id_PACE::DH::GM) || getProtocol().startsWith(KnownOIDs::id_PACE::ECDH::GM))
+	const auto& protocol = getProtocol();
+	if (protocol.startsWith(toByteArray(KnownOIDs::id_PACE::DH::GM))
+			|| protocol.startsWith(toByteArray((KnownOIDs::id_PACE::ECDH::GM))))
 	{
 		return MappingType::GM;
 	}

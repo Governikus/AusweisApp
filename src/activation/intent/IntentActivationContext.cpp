@@ -1,9 +1,10 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IntentActivationContext.h"
 
+#include "GlobalStatus.h"
 #include "UrlUtil.h"
 
 #include <QDesktopServices>
@@ -52,9 +53,7 @@ bool IntentActivationContext::sendProcessing()
 
 bool IntentActivationContext::sendOperationAlreadyActive()
 {
-	// TODO: handle this
-	// probably we emit a signal, that will be caught by the AppController
-	// so that then UI can display some message or so?
+	Q_EMIT fireShowUserInformation(GlobalStatus(GlobalStatus::Code::Workflow_AlreadyInProgress_Error).toErrorDescription());
 	return true;
 }
 

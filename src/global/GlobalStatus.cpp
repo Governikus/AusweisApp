@@ -1,14 +1,21 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GlobalStatus.h"
+
+#include "Initializer.h"
 
 #include <QDebug>
 
 #define MESSAGE_SORRY "Sorry, that should not have happened! Please contact the support team."
 
 using namespace governikus;
+
+static Initializer::Entry E([] {
+			qRegisterMetaType<GlobalStatus::Code>("GlobalStatus::Code");
+			qRegisterMetaType<GlobalStatus>("GlobalStatus");
+		});
 
 
 const QString GlobalStatus::getExternalInfo(int pIndex) const
@@ -59,6 +66,9 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 
 		case Code::Unknown_Error:
 			return tr("An unexpected error has occurred during processing.");
+
+		case Code::Workflow_AlreadyInProgress_Error:
+			return tr("Cannot start authentication. An operation is already in progress.");
 
 		case Code::Workflow_Card_Removed:
 			return tr("The ID card has been removed. The process is aborted.");
@@ -119,6 +129,10 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 
 		case Code::Workflow_TrustedChannel_No_Data_Received:
 			return maskMessage(tr("Received no data."), pSimplifiedVersion);
+
+		case Code::Workflow_TrustedChannel_ServiceUnavailable:
+		case Code::Network_ServiceUnavailable:
+			return tr("The service is temporarily not available. Please try again later.");
 
 		case Code::Network_TimeOut:
 		case Code::Workflow_TrustedChannel_TimeOut:
@@ -212,10 +226,13 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 			return tr("Card does not exist");
 
 		case Code::Card_Communication_Error:
-			return tr("An error occurred while communicating with the ID card.");
+			return tr("An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.");
 
 		case Code::Card_Protocol_Error:
-			return maskMessage(tr("A protocol error has occurred."), pSimplifiedVersion);
+			return QStringLiteral("%1 <a href=\"%2\">%3</a>.").arg(
+				tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at"),
+				tr("https://www.ausweisapp.bund.de/en/service/support/"),
+				tr("AusweisApp2 Support"));
 
 		case Code::Card_Invalid_Pin:
 			return tr("The given PIN is invalid.");
@@ -255,9 +272,36 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 
 		case Code::RemoteReader_CloseCode_Undefined:
 			return tr("Undefined error code occured when the remote card reader connection was closed.");
+
+		case Code::RemoteConnector_InvalidRequest:
+			return tr("Remote reader connection request contains invalid parameters.");
+
+		case Code::RemoteConnector_EmptyPassword:
+			return tr("Empty password in extended encryption of remote reader connection request.");
+
+		case Code::RemoteConnector_NoSupportedApiLevel:
+			return tr("Remote reader connection request does not contain any supported API level.");
+
+		case Code::RemoteConnector_ConnectionTimeout:
+			return tr("A timeout occurred while trying to establish a connection to a remote reader.");
+
+		case Code::RemoteConnector_ConnectionError:
+			return tr("An error occurred while trying to establish a connection to a remote reader.");
+
+		case Code::RemoteConnector_RemoteHostRefusedConnection:
+			return tr("Remote device has rejected the connection. Please check the pairing code.");
+
+		case Code::Downloader_File_Not_Found:
+			return tr("File not found.");
+
+		case Code::Downloader_Cannot_Save_File:
+			return tr("Cannot save file.");
+
+		case Code::Downloader_Data_Corrupted:
+			return tr("Received data were corrupted.");
 	}
 
-	return QString();
+	Q_UNREACHABLE();
 }
 
 

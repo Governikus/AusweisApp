@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 package com.governikus.ausweisapp2;
 
 import android.app.Activity;
@@ -12,6 +16,10 @@ import android.nfc.tech.IsoDep;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
+
 import org.qtproject.qt5.android.bindings.QtActivity;
 
 
@@ -84,12 +92,6 @@ public class MainActivity extends QtActivity
 	}
 
 
-	public NFCConnector getNfcConnector()
-	{
-		return NFCConnector.getInstance(this);
-	}
-
-
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -99,11 +101,8 @@ public class MainActivity extends QtActivity
 
 		// register the broadcast receiver after loading the C++ library in super.onCreate()
 		AndroidBluetoothReceiver.register(this);
-		NfcAdapterStateChangeReceiver.register(this);
 
 		mNfcForegroundDispatcher = new NfcForegroundDispatcher(this);
-		Tag tag = getIntent().getParcelableExtra(NfcAdapter.EXTRA_TAG);
-		getNfcConnector().updateNfcTag(tag);
 
 		setRequestedOrientation(isTablet() ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
@@ -114,9 +113,6 @@ public class MainActivity extends QtActivity
 	{
 		Log.d(TAG, "onNewIntent (subsequent invocation of application): " + newIntent);
 		super.onNewIntent(newIntent);
-
-		Tag tag = newIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-		getNfcConnector().updateNfcTag(tag);
 
 		triggerActivation(newIntent.getDataString());
 	}
@@ -145,9 +141,22 @@ public class MainActivity extends QtActivity
 
 		// unregister the broadcast receiver before unloading the C++ library in super.onDestroy()
 		AndroidBluetoothReceiver.unregister(this);
-		NfcAdapterStateChangeReceiver.unregister(this);
 
 		super.onDestroy();
+	}
+
+
+	public void keepScreenOn(boolean pActivate)
+	{
+		Log.d(TAG, "Keep screen on: " + pActivate);
+		if (pActivate)
+		{
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		}
+		else
+		{
+			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		}
 	}
 
 

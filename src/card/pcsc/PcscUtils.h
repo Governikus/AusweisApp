@@ -1,73 +1,63 @@
 /*!
- * PcscUtils.h
- *
  * \brief toString method for PCSC_RETURNCODE and platform dependent
  * typedefs for PCSC types.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
+#include <QMetaEnum>
 #include <QString>
 #include <QtGlobal>
 
-// TODO: Check these codes
-#ifdef Q_OS_WIN
 #include <winscard.h>
-typedef LONG PCSC_RETURNCODE;
-typedef SCARDHANDLE PCSC_CARDHANDLE;
-typedef DWORD PCSC_UINT;
-typedef DWORD PCSC_INT;
-typedef DWORD* PCSC_INT_PTR;
-#ifdef UNICODE
-typedef WCHAR PCSC_CHAR;
-#else
-typedef CHAR PCSC_CHAR;
+
+#ifndef Q_OS_WIN
+#include <wintypes.h>
 #endif
-typedef LPTSTR PCSC_CHAR_PTR;
-typedef BYTE PCSC_UCHAR;
+
+/*
+ * Because the three PC/SC implementations on Windows,
+ * MacOS and Linux have sligtly different types, we typedef
+ * an abstraction layer for those data types.
+ */
+#ifdef Q_OS_WIN
+typedef LONG PCSC_RETURNCODE;
+typedef DWORD PCSC_INT;
+typedef TCHAR PCSC_CHAR;
+typedef TCHAR* PCSC_CHAR_PTR;
 typedef LPBYTE PCSC_UCHAR_PTR;
 typedef LPCBYTE PCSC_CUCHAR_PTR;
-#elif defined Q_OS_OSX
-#include <winscard.h>
-// The return type is actually int32_t (in the system headers), but the return
-// code macros are defined without a cast operator, which makes them
-// unsigned int due to a missing cast.
-typedef int64_t PCSC_RETURNCODE;
-typedef SCARDHANDLE PCSC_CARDHANDLE;
+#elif defined Q_OS_MACOS
+typedef int32_t PCSC_RETURNCODE;
 typedef uint32_t PCSC_INT;
-typedef PCSC_INT* PCSC_INT_PTR;
 typedef char PCSC_CHAR;
 typedef char* PCSC_CHAR_PTR;
-typedef uchar PCSC_UCHAR;
 typedef uchar* PCSC_UCHAR_PTR;
 typedef const uchar* PCSC_CUCHAR_PTR;
 #elif defined Q_OS_UNIX
-#include <winscard.h>
 typedef LONG PCSC_RETURNCODE;
-typedef SCARDHANDLE PCSC_CARDHANDLE;
 typedef DWORD PCSC_INT;
-typedef PCSC_INT* PCSC_INT_PTR;
 typedef char PCSC_CHAR;
 typedef char* PCSC_CHAR_PTR;
-typedef uchar PCSC_UCHAR;
 typedef uchar* PCSC_UCHAR_PTR;
 typedef const uchar* PCSC_CUCHAR_PTR;
 #endif
+
 
 namespace governikus
 {
 
 class PcscUtils
 {
+	Q_GADGET
+
 	private:
 		PcscUtils() = delete;
 		~PcscUtils() = delete;
 
 	public:
-		static QString toString(PCSC_RETURNCODE pCode);
-
 		/**
 		 * Error codes from http://msdn.microsoft.com/en-us/library/aa924526.aspx
 		 */
@@ -104,8 +94,8 @@ class PcscUtils
 			Scard_E_Card_Unsupported = static_cast<PCSC_RETURNCODE>(SCARD_E_CARD_UNSUPPORTED), /**< The smart card does not meet minimal requirements for support. */
 			Scard_E_No_Service = static_cast<PCSC_RETURNCODE>(SCARD_E_NO_SERVICE), /**< The Smart card resource manager is not running. */
 			Scard_E_Service_Stopped = static_cast<PCSC_RETURNCODE>(SCARD_E_SERVICE_STOPPED), /**< The Smart card resource manager has shut down. */
-			Scard_E_Unexpected = static_cast<PCSC_RETURNCODE>(SCARD_E_UNEXPECTED), /**< An unexpected card error has occurred. */
 			Scard_E_Unsupported_Feature = static_cast<PCSC_RETURNCODE>(SCARD_E_UNSUPPORTED_FEATURE), /**< This smart card does not support the requested feature. */
+			Scard_E_Unexpected = static_cast<PCSC_RETURNCODE>(SCARD_E_UNEXPECTED), /**< An unexpected card error has occurred. */
 			Scard_E_Icc_Installation = static_cast<PCSC_RETURNCODE>(SCARD_E_ICC_INSTALLATION), /**< No primary provider can be found for the smart card. */
 			Scard_E_Icc_Createorder = static_cast<PCSC_RETURNCODE>(SCARD_E_ICC_CREATEORDER), /**< The requested order of object creation is not supported. */
 
@@ -138,13 +128,16 @@ class PcscUtils
 			Scard_W_Cancelled_By_User = static_cast<PCSC_RETURNCODE>(SCARD_W_CANCELLED_BY_USER), /**< The user pressed "Cancel" on a Smart Card Selection Dialog. */
 			Scard_W_Card_Not_Authenticated = static_cast<PCSC_RETURNCODE>(SCARD_W_CARD_NOT_AUTHENTICATED) /**< No PIN was presented to the smart card. */
 		};
+		Q_ENUM(PcscReturnCode);
 
+		static QString toString(PCSC_RETURNCODE pCode);
 };
 
 
 /**
  * Make sure we do not use these macros directly in our code.
  */
+#ifdef QT_NO_DEBUG
 #undef SCARD_S_SUCCESS
 #undef SCARD_F_INTERNAL_ERROR
 #undef SCARD_E_CANCELLED
@@ -209,6 +202,6 @@ class PcscUtils
 #undef SCARD_W_EOF
 #undef SCARD_W_CANCELLED_BY_USER
 #undef SCARD_W_CARD_NOT_AUTHENTICATED
-
+#endif
 
 } /* namespace governikus */

@@ -1,23 +1,40 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PreVerificationSettings.h"
 
 using namespace governikus;
 
-// names for settings groups/keys
-const QLatin1String SETTINGS_GROUP_NAME_PREVERIFICATION("preverification");
-const QLatin1String SETTINGS_NAME_ENABLED("enabled");
-const QLatin1String SETTINGS_NAME_LINKCERTIFICATES("linkcertificates");
-const QLatin1String SETTINGS_NAME_LINKCERTIFICATE("linkcertificate");
-
+namespace
+{
+SETTINGS_NAME(SETTINGS_GROUP_NAME_PREVERIFICATION, "preverification")
+SETTINGS_NAME(SETTINGS_NAME_ENABLED, "enabled")
+SETTINGS_NAME(SETTINGS_NAME_LINKCERTIFICATES, "linkcertificates")
+SETTINGS_NAME(SETTINGS_NAME_LINKCERTIFICATE, "linkcertificate")
+}
 
 PreVerificationSettings::PreVerificationSettings()
 	: AbstractSettings()
-	, mLinkCertificates()
-	, mEnabled(true)
+	, mStore(getStore())
 {
+	mStore->beginGroup(SETTINGS_GROUP_NAME_PREVERIFICATION());
+}
+
+
+void PreVerificationSettings::updateLinkCertificates(const QByteArrayList& pLinkCertificates)
+{
+	mStore->beginGroup(SETTINGS_NAME_LINKCERTIFICATES());
+	mStore->remove(QString());
+	mStore->endGroup();
+
+	mStore->beginWriteArray(SETTINGS_NAME_LINKCERTIFICATES());
+	for (int i = 0; i < pLinkCertificates.size(); ++i)
+	{
+		mStore->setArrayIndex(i);
+		mStore->setValue(SETTINGS_NAME_LINKCERTIFICATE(), pLinkCertificates.at(i));
+	}
+	mStore->endArray();
 }
 
 
@@ -26,92 +43,57 @@ PreVerificationSettings::~PreVerificationSettings()
 }
 
 
-void PreVerificationSettings::load()
-{
-	auto settings = getStore();
-	settings->beginGroup(SETTINGS_GROUP_NAME_PREVERIFICATION);
-	mEnabled = settings->value(SETTINGS_NAME_ENABLED, mEnabled).toBool();
-	const int itemCount = settings->beginReadArray(SETTINGS_NAME_LINKCERTIFICATES);
-
-	QByteArrayList linkCertificates;
-	linkCertificates.reserve(itemCount);
-	for (int i = 0; i < itemCount; ++i)
-	{
-		settings->setArrayIndex(i);
-		linkCertificates += settings->value(SETTINGS_NAME_LINKCERTIFICATE).toByteArray();
-	}
-	mLinkCertificates = linkCertificates;
-
-	settings->endArray();
-	settings->endGroup();
-}
-
-
-bool PreVerificationSettings::isUnsaved() const
-{
-	PreVerificationSettings oldSettings;
-	oldSettings.load();
-	return oldSettings != *this;
-}
-
-
 void PreVerificationSettings::save()
 {
-	auto settings = getStore();
-	settings->beginGroup(SETTINGS_GROUP_NAME_PREVERIFICATION);
-	settings->remove(QString());     // remove the whole group first
-	settings->setValue(SETTINGS_NAME_ENABLED, mEnabled);
-	settings->beginWriteArray(SETTINGS_NAME_LINKCERTIFICATES);
-
-	for (int i = 0; i < mLinkCertificates.size(); ++i)
-	{
-		settings->setArrayIndex(i);
-		settings->setValue(SETTINGS_NAME_LINKCERTIFICATE, mLinkCertificates.at(i));
-	}
-
-	settings->endArray();
-	settings->endGroup();
-
-	settings->sync();
+	mStore->sync();
 }
 
 
 bool PreVerificationSettings::isEnabled() const
 {
-	return mEnabled;
+	return mStore->value(SETTINGS_NAME_ENABLED(), true).toBool();
 }
 
 
 void PreVerificationSettings::setEnabled(bool pEnabled)
 {
-	mEnabled = pEnabled;
+	mStore->setValue(SETTINGS_NAME_ENABLED(), pEnabled);
 }
 
 
-const QByteArrayList& PreVerificationSettings::getLinkCertificates() const
+QByteArrayList PreVerificationSettings::getLinkCertificates() const
 {
-	return mLinkCertificates;
-}
+	const int itemCount = mStore->beginReadArray(SETTINGS_NAME_LINKCERTIFICATES());
 
-
-bool PreVerificationSettings::removeLinkCertificate(const QByteArray& pCert)
-{
-	bool changed = mLinkCertificates.removeAll(pCert);
-	if (changed)
+	QByteArrayList linkCertificates;
+	linkCertificates.reserve(itemCount);
+	for (int i = 0; i < itemCount; ++i)
 	{
-		Q_EMIT fireSettingsChanged();
+		mStore->setArrayIndex(i);
+		linkCertificates += mStore->value(SETTINGS_NAME_LINKCERTIFICATE()).toByteArray();
 	}
-	return changed;
+
+	mStore->endArray();
+	return linkCertificates;
 }
 
 
-bool PreVerificationSettings::addLinkCertificate(const QByteArray& pCert)
+void PreVerificationSettings::removeLinkCertificate(const QByteArray& pCert)
 {
-	if (mLinkCertificates.contains(pCert))
+	auto linkCertificates = getLinkCertificates();
+	if (linkCertificates.removeAll(pCert) > 0)
 	{
-		return false;
+		updateLinkCertificates(linkCertificates);
 	}
-	mLinkCertificates += pCert;
-	Q_EMIT fireSettingsChanged();
-	return true;
+}
+
+
+void PreVerificationSettings::addLinkCertificate(const QByteArray& pCert)
+{
+	auto linkCertificates = getLinkCertificates();
+	if (!linkCertificates.contains(pCert))
+	{
+		linkCertificates += pCert;
+		updateLinkCertificates(linkCertificates);
+	}
 }

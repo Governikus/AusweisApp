@@ -1,7 +1,7 @@
 /*
  * \brief Loads translation files for different languages.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -14,6 +14,7 @@
 
 class test_LanguageLoader;
 class test_ProviderParser;
+class test_ProviderConfigurationParser;
 
 namespace governikus
 {
@@ -23,6 +24,7 @@ class LanguageLoader
 	private:
 		friend class ::test_LanguageLoader;
 		friend class ::test_ProviderParser;
+		friend class ::test_ProviderConfigurationParser;
 		static const QLocale::Language mFallbackLanguage;
 		static QLocale mDefaultLanguage;
 

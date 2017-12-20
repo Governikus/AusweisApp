@@ -12,7 +12,12 @@ ENDFUNCTION()
 
 
 FUNCTION(GET_TEST_CMDLINE cmdline testname)
-	IF(NOT WIN32  AND "${testname}" MATCHES "gui" OR "${testname}" MATCHES "\\.qml")
+	IF(NOT WIN32
+		AND (
+		"${testname}" MATCHES "export"
+		OR "${testname}" MATCHES "widget"
+		OR "${testname}" MATCHES "\\.qml"))
+
 		SET(PLATFORM -platform offscreen)
 	ENDIF()
 

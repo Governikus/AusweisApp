@@ -1,25 +1,25 @@
 /*!
- * ActivationHandler.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ActivationHandler.h"
 
-#include "MetaTypeHelper.h"
+#include "ActivationContext.h"
+#include "Initializer.h"
 
 #include <QAtomicPointer>
 #include <QLoggingCategory>
 #include <QPluginLoader>
 #include <QUrlQuery>
 
-REGISTER_META_TYPE(StatusFormat)
-REGISTER_META_TYPE(UiModule)
-
-
 using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(activation)
+
+static Initializer::Entry X([] {
+			qRegisterMetaType<UiModule>("UiModule");
+			qRegisterMetaType<QSharedPointer<ActivationContext> >("QSharedPointer<ActivationContext>");
+		});
 
 
 ActivationHandler::ActivationHandler()

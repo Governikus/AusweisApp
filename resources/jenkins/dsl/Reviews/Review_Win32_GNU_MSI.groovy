@@ -18,7 +18,7 @@ j.with
 
 		batchFile(strip("""\
 			cd build &
-			cmake ../source -G\"MinGW Makefiles\"
+			cmake -Werror=dev ../source -G\"MinGW Makefiles\"
 			-DCMAKE_PREFIX_PATH=%WORKSPACE%\\libs\\build\\dist
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 			-DCMAKE_BUILD_TYPE=release

@@ -14,7 +14,7 @@ using namespace governikus;
 
 void QmlExtension::showSettings(const QString&)
 {
-	qCWarning(qml) << "NOT IMPLEMENTED YET";
+	qCWarning(qml) << "NOT IMPLEMENTED";
 }
 
 
@@ -35,20 +35,37 @@ void QmlExtension::shareText(const QString& pText, const QString& pChooserTitle)
 
 void QmlExtension::mailLog(const QString&, const QString&, const QString&)
 {
-	qCWarning(qml) << "NOT IMPLEMENTED YET";
+	qCWarning(qml) << "NOT IMPLEMENTED";
 }
 
 
-void QmlExtension::showFeedback(const QString&)
+void QmlExtension::showFeedback(const QString& pMessage)
 {
-	qCWarning(qml) << "NOT IMPLEMENTED YET";
+	NSString* msg = pMessage.toNSString();
+
+	UIAlertController* alert = [UIAlertController
+			alertControllerWithTitle:msg
+			message:@""
+			preferredStyle:UIAlertControllerStyleAlert];
+
+	UIViewController* rootController = [[UIApplication sharedApplication].keyWindow rootViewController];
+	[rootController presentViewController:alert animated:YES completion:nil];
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, static_cast<int64_t>(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+				[alert dismissViewControllerAnimated:YES completion:nil];
+			});
 }
 
 
 bool QmlExtension::exportHistory(const QString&) const
 {
-	qCWarning(qml) << "NOT IMPLEMENTED YET";
+	qCWarning(qml) << "NOT IMPLEMENTED";
 	return false;
+}
+
+
+void QmlExtension::keepScreenOn(bool)
+{
+	qCWarning(qml) << "NOT IMPLEMENTED";
 }
 
 

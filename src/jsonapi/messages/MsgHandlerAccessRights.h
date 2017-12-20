@@ -1,7 +1,7 @@
 /*!
  * \brief Message MsgHandlerAccessRights of JSON API.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,7 +19,7 @@ class MsgHandlerAccessRights
 	: public MsgHandler
 {
 	private:
-		void setError(const QLatin1String& pError);
+		void setError(const QLatin1String pError);
 
 		void handleSetChatData(const QJsonArray& pChat, const QSharedPointer<AuthContext>& pContext);
 		QJsonArray getAccessRights(const QSet<AccessRight>& pRights) const;

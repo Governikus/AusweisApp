@@ -1,7 +1,5 @@
 /*!
- * IntentActivationHandler.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IntentActivationHandler.h"
@@ -45,7 +43,9 @@ void IntentActivationHandler::onIntent(const QUrl& pUrl)
 {
 	qCDebug(activation) << "Got new authentication request";
 	qCDebug(activation) << "Request URL:" << pUrl;
-	Q_EMIT fireAuthenticationRequest(new IntentActivationContext(pUrl));
+	QSharedPointer<IntentActivationContext> context(new IntentActivationContext(pUrl));
+	connect(context.data(), &IntentActivationContext::fireShowUserInformation, this, &ActivationHandler::fireShowUserInformation);
+	Q_EMIT fireAuthenticationRequest(context);
 }
 
 

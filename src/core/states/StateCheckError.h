@@ -1,10 +1,8 @@
 /*!
- * StateCheckError.h
- *
  * \brief Helper state to decide whether an error has been occurred that should
  * be reported to the user.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

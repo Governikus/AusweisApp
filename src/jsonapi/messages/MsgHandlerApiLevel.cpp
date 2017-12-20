@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerApiLevel.h"
@@ -19,7 +19,7 @@ MsgHandlerApiLevel::MsgHandlerApiLevel(const MsgContext& pContext)
 MsgHandlerApiLevel::MsgHandlerApiLevel(const QJsonObject& pObj, MsgContext& pContext)
 	: MsgHandler(MsgType::API_LEVEL)
 {
-	const auto& jsonLevel = pObj["level"];
+	const auto& jsonLevel = pObj[QLatin1String("level")];
 	if (jsonLevel.isUndefined())
 	{
 		setError(QLatin1String("Level cannot be undefined"));
@@ -45,15 +45,15 @@ MsgHandlerApiLevel::MsgHandlerApiLevel(const QJsonObject& pObj, MsgContext& pCon
 }
 
 
-void MsgHandlerApiLevel::setError(const QLatin1String& pError)
+void MsgHandlerApiLevel::setError(const QLatin1String pError)
 {
-	mJsonObject["error"] = pError;
+	mJsonObject[QLatin1String("error")] = pError;
 }
 
 
 void MsgHandlerApiLevel::setCurrentLevel(MsgLevel pLevel)
 {
-	mJsonObject["current"] = static_cast<int>(pLevel);
+	mJsonObject[QLatin1String("current")] = static_cast<int>(pLevel);
 }
 
 
@@ -65,5 +65,5 @@ void MsgHandlerApiLevel::setAvailableLevel()
 	{
 		availableApiLevel += static_cast<int>(entry);
 	}
-	mJsonObject["available"] = availableApiLevel;
+	mJsonObject[QLatin1String("available")] = availableApiLevel;
 }

@@ -23,9 +23,9 @@ Rectangle {
 
 		Text {
 			width: parent.width
-			text: qsTr("<html><head><body><p>This section lists offers of service providers that support online identification. " +
+			text: "<html><head><body><p>" + qsTr("This section lists offers of service providers that support online identification. " +
 						"Click on an entry to go to the provider&apos;s web site. This section will be continuously updated with further applications for " +
-						"the online identification function.</p></body></html>")
+						"the online identification function.") + "</p></body></html>"
 			wrapMode: Text.Wrap
 		}
 
@@ -36,7 +36,7 @@ Rectangle {
 			Text {
 				id: searchLabel
 				anchors.verticalCenter: parent.verticalCenter
-				text: qsTr("Search:")
+				text: qsTr("Search:") + settingsModel.translationTrigger
 				textFormat: Text.StyledText
 			}
 			TextField {
@@ -57,32 +57,32 @@ Rectangle {
 			readonly property real space: (parent.width - checkBoxCitizen.width - checkBoxInsurance.width - checkBoxFinance.width - checkBoxOther.width) / 5
 			spacing: space
 
-			CategoryCheckbox {
+			CategoryCheckbox_tablet {
 				id: checkBoxCitizen
 				category: "citizen"
 				imageSource: Category.imageSource("citizen")
-				text: qsTr("Citizen services")
+				text: qsTr("Citizen services") + settingsModel.translationTrigger
 			}
 
-			CategoryCheckbox {
+			CategoryCheckbox_tablet {
 				id: checkBoxInsurance
 				category: "insurance"
 				imageSource: Category.imageSource("insurance")
-				text: qsTr("Insurances")
+				text: qsTr("Insurances") + settingsModel.translationTrigger
 			}
 
-			CategoryCheckbox {
+			CategoryCheckbox_tablet {
 				id: checkBoxFinance
 				category: "finance"
 				imageSource: Category.imageSource("finance")
-				text: qsTr("Financials")
+				text: qsTr("Financials") + settingsModel.translationTrigger
 			}
 
-			CategoryCheckbox {
+			CategoryCheckbox_tablet {
 				id: checkBoxOther
 				category: "other"
 				imageSource: Category.imageSource("other")
-				text: qsTr("Other services")
+				text: qsTr("Other services") + settingsModel.translationTrigger
 			}
 		}
 	}
@@ -95,7 +95,7 @@ Rectangle {
 
 		Text {
 			anchors.centerIn: parent
-			text: qsTr("No match found")
+			text: qsTr("No match found") + settingsModel.translationTrigger
 			wrapMode: Text.WordWrap
 			font.pixelSize: Constants.normal_font_size
 			visible: !scrollView.visible

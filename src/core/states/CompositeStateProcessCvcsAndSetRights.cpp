@@ -1,7 +1,5 @@
 /*!
- * CompositeStateSelectCard.cpp
- *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CompositeStateProcessCvcsAndSetRights.h"
@@ -11,7 +9,7 @@
 #include "states/StateCertificateDescriptionCheck.h"
 #include "states/StateCheckCertificates.h"
 #include "states/StateEditAccessRights.h"
-#include "states/StateExtractCvcsFromEac1IntputType.h"
+#include "states/StateExtractCvcsFromEac1InputType.h"
 #include "states/StatePreVerification.h"
 
 
@@ -22,7 +20,7 @@ CompositeStateProcessCvcsAndSetRights::CompositeStateProcessCvcsAndSetRights(con
 	: QState()
 	, mContext(pContext)
 {
-	auto sExtractCvcsFromEac1InputType = StateBuilder::createState<StateExtractCvcsFromEac1IntputType>(mContext);
+	auto sExtractCvcsFromEac1InputType = StateBuilder::createState<StateExtractCvcsFromEac1InputType>(mContext);
 	auto sPreVerification = StateBuilder::createState<StatePreVerification>(mContext);
 	auto sCertificateDescriptionCheck = StateBuilder::createState<StateCertificateDescriptionCheck>(mContext);
 	auto sCheckCertificates = StateBuilder::createState<StateCheckCertificates>(mContext);
@@ -36,25 +34,20 @@ CompositeStateProcessCvcsAndSetRights::CompositeStateProcessCvcsAndSetRights(con
 
 	setInitialState(sExtractCvcsFromEac1InputType);
 
-	sExtractCvcsFromEac1InputType->addTransition(sExtractCvcsFromEac1InputType, &AbstractState::fireSuccess, sPreVerification);
-	connect(sExtractCvcsFromEac1InputType, &AbstractState::fireError, this, &CompositeStateProcessCvcsAndSetRights::fireError);
-	connect(sExtractCvcsFromEac1InputType, &AbstractState::fireCancel, this, &CompositeStateProcessCvcsAndSetRights::fireCancel);
+	sExtractCvcsFromEac1InputType->addTransition(sExtractCvcsFromEac1InputType, &AbstractState::fireContinue, sPreVerification);
+	connect(sExtractCvcsFromEac1InputType, &AbstractState::fireAbort, this, &CompositeStateProcessCvcsAndSetRights::fireAbort);
 
-	sPreVerification->addTransition(sPreVerification, &AbstractState::fireSuccess, sCertificateDescriptionCheck);
-	connect(sPreVerification, &AbstractState::fireError, this, &CompositeStateProcessCvcsAndSetRights::fireError);
-	connect(sPreVerification, &AbstractState::fireCancel, this, &CompositeStateProcessCvcsAndSetRights::fireCancel);
+	sPreVerification->addTransition(sPreVerification, &AbstractState::fireContinue, sCertificateDescriptionCheck);
+	connect(sPreVerification, &AbstractState::fireAbort, this, &CompositeStateProcessCvcsAndSetRights::fireAbort);
 
-	sCertificateDescriptionCheck->addTransition(sCertificateDescriptionCheck, &AbstractState::fireSuccess, sCheckCertificates);
-	connect(sCertificateDescriptionCheck, &AbstractState::fireError, this, &CompositeStateProcessCvcsAndSetRights::fireError);
-	connect(sCertificateDescriptionCheck, &AbstractState::fireCancel, this, &CompositeStateProcessCvcsAndSetRights::fireCancel);
+	sCertificateDescriptionCheck->addTransition(sCertificateDescriptionCheck, &AbstractState::fireContinue, sCheckCertificates);
+	connect(sCertificateDescriptionCheck, &AbstractState::fireAbort, this, &CompositeStateProcessCvcsAndSetRights::fireAbort);
 
-	sCheckCertificates->addTransition(sCheckCertificates, &AbstractState::fireSuccess, sEditAccessRights);
-	connect(sCheckCertificates, &AbstractState::fireError, this, &CompositeStateProcessCvcsAndSetRights::fireError);
-	connect(sCheckCertificates, &AbstractState::fireCancel, this, &CompositeStateProcessCvcsAndSetRights::fireCancel);
+	sCheckCertificates->addTransition(sCheckCertificates, &AbstractState::fireContinue, sEditAccessRights);
+	connect(sCheckCertificates, &AbstractState::fireAbort, this, &CompositeStateProcessCvcsAndSetRights::fireAbort);
 
-	connect(sEditAccessRights, &AbstractState::fireSuccess, this, &CompositeStateProcessCvcsAndSetRights::fireSuccess);
-	connect(sEditAccessRights, &AbstractState::fireError, this, &CompositeStateProcessCvcsAndSetRights::fireError);
-	connect(sEditAccessRights, &AbstractState::fireCancel, this, &CompositeStateProcessCvcsAndSetRights::fireCancel);
+	connect(sEditAccessRights, &AbstractState::fireContinue, this, &CompositeStateProcessCvcsAndSetRights::fireContinue);
+	connect(sEditAccessRights, &AbstractState::fireAbort, this, &CompositeStateProcessCvcsAndSetRights::fireAbort);
 }
 
 

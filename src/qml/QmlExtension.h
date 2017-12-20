@@ -1,7 +1,7 @@
 /*!
  * \brief Utility for sharing text.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,6 +23,7 @@ class QmlExtension
 		Q_INVOKABLE void showFeedback(const QString& pMessage);
 		Q_INVOKABLE bool exportHistory(const QString& pPdfUrl) const;
 		Q_INVOKABLE void mailLog(const QString& pEmail, const QString& pSubject, const QString& pMsg);
+		Q_INVOKABLE void keepScreenOn(bool pActive);
 };
 
 }

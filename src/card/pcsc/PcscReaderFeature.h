@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -38,25 +38,27 @@ class PcscReaderFeature
 	private:
 		QMap<FeatureID, PCSC_INT> mFeatures;
 
+		friend QDebug operator<<(QDebug, const PcscReaderFeature&);
+
 	public:
 		PcscReaderFeature(const char* pFeaturesTLV, PCSC_INT pLength = 0);
 
-		QString toString() const;
-		const QMap<governikus::FeatureID, PCSC_INT>& getFeatures() const;
+		bool contains(FeatureID pFeatureID) const;
+
+		/*!
+		 * Check with contains first for existence of the
+		 * feature, otherwise this will cause an exception.
+		 */
+		PCSC_INT getValue(FeatureID pFeatureID) const;
 };
 
-defineEnumType(PaceCapabilityId, ESIGN = 0x10, EID = 0x20, GENERIC = 0x40, DESTROY_CHANNEL = 0x80)
 
-class PcscReaderPaceCapability
+inline QDebug operator<<(QDebug pDbg, const governikus::PcscReaderFeature& pPcscReaderFeature)
 {
-	private:
-		QVector<PaceCapabilityId> mPaceCapabilities;
+	QDebugStateSaver saver(pDbg);
+	pDbg << pPcscReaderFeature.mFeatures.keys();
+	return pDbg;
+}
 
-	public:
-		PcscReaderPaceCapability(const char* pCapabilitiesTLV, PCSC_INT pLength = 0);
-
-		QString toString() const;
-		QVector<PaceCapabilityId> getPaceCapabilities() const;
-};
 
 } /* namespace governikus */

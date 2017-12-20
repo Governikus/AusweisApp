@@ -1,7 +1,7 @@
 /*!
  * \brief Workflow context.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,25 +21,29 @@ class WorkflowContext
 {
 	Q_OBJECT
 
-	bool mStateApproved;
-	QString mCurrentState;
-	ReaderManagerPlugInType mReaderType;
-	QString mReaderName;
-	QSharedPointer<CardConnection> mCardConnection;
-	QString mCan;
-	QString mPin;
-	QString mPuk;
-	QScopedPointer<EstablishPACEChannelOutput> mPaceOutputData;
-	int mOldRetryCounter;
-	CardReturnCode mLastPaceResult;
-	GlobalStatus mStatus;
-	bool mErrorReportedToUser;
-	bool mWorkflowFinished;
+	private:
+		bool mStateApproved;
+		QString mCurrentState;
+		QVector<ReaderManagerPlugInType> mReaderPlugInTypes;
+		QString mReaderName;
+		QSharedPointer<CardConnection> mCardConnection;
+		QString mCan;
+		QString mPin;
+		QString mPuk;
+		QScopedPointer<EstablishPACEChannelOutput> mPaceOutputData;
+		int mOldRetryCounter;
+		CardReturnCode mLastPaceResult;
+		GlobalStatus mStatus;
+		bool mErrorReportedToUser;
+		bool mWorkflowFinished;
+
+	protected:
+		void resetLastPaceResultAndRetryCounter();
 
 	Q_SIGNALS:
 		void fireStateApprovedChanged();
-		void fireCurrentStateChanged(const QString& pNewState);
-		void fireReaderTypeChanged();
+		void fireStateChanged(const QString& pNewState);
+		void fireReaderPlugInTypesChanged();
 		void fireReaderNameChanged();
 		void fireCardConnectionChanged();
 		void fireCanChanged();
@@ -63,8 +67,8 @@ class WorkflowContext
 		const QString& getCurrentState() const;
 		void setCurrentState(const QString& pNewState);
 
-		ReaderManagerPlugInType getReaderType() const;
-		void setReaderType(ReaderManagerPlugInType pReaderType);
+		const QVector<ReaderManagerPlugInType>& getReaderPlugInTypes() const;
+		void setReaderPlugInTypes(const QVector<ReaderManagerPlugInType>& pReaderPlugInTypes);
 
 		const QString& getReaderName() const;
 		void setReaderName(const QString& pReaderName);
@@ -90,7 +94,7 @@ class WorkflowContext
 		void setLastPaceResultAndRetryCounter(CardReturnCode pLastPaceResult, int pOldRetryCounter);
 
 		const GlobalStatus& getStatus() const;
-		void setStatus(const GlobalStatus& pResult);
+		void setStatus(const GlobalStatus& pResult, bool pReportToUser = true);
 
 		bool isWorkflowFinished() const;
 		void setWorkflowFinished(bool pWorkflowFinished);

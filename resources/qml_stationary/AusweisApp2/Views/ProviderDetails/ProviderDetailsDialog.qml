@@ -7,7 +7,7 @@ import AusweisApp2.Views.Provider 1.0
 
 Window {
 	id: baseItem
-	title: qsTr("Provider details")
+	title: qsTr("Provider details") + settingsModel.translationTrigger
 	height: Utils.dp(900)
 	minimumHeight: Utils.dp(700)
 	width: Utils.dp(1200)

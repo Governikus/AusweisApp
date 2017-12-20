@@ -1,13 +1,12 @@
 /*!
  * \brief Loader to initialize UIPlugIns.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "EnumHelper.h"
-#include "UIPlugIn.h"
 
 #include <QJsonObject>
 #include <QMap>
@@ -15,6 +14,9 @@
 
 namespace governikus
 {
+
+class UIPlugIn;
+
 
 defineEnumType(UIPlugInName, UIPlugInQml, UIPlugInCli, UIPlugInWidgets, UIPlugInJsonApi, UIPlugInWebSocket, UIPlugInAidl)
 

@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 package com.governikus.ausweisapp2;
 
 import android.app.Activity;

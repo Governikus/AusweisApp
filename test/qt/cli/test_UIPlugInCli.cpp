@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref UIPlugInCli
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CliHelper.h"
@@ -25,7 +25,7 @@ class test_UIPlugInCli
 			QSKIP("Console is not supported at the moment");
 			#endif
 
-			#ifdef Q_OS_OSX
+			#ifdef Q_OS_MACOS
 			QSKIP("QProcess/CliHelper is flaky on OSX");
 			#endif
 

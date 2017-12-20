@@ -18,7 +18,7 @@ class Appcast extends Build
 	{
 		def prefixSource = ''
 
-		if(getTagName())
+		if(getReleaseJob())
 			prefixSource = 'Release_'
 
 		return buildName(prefixSource, artifactJob)
@@ -30,7 +30,7 @@ class Appcast extends Build
 
 		j.with
 		{
-			if(!getTagName())
+			if(!getReleaseJob())
 			{
 				triggers
 				{
@@ -73,7 +73,7 @@ class Appcast extends Build
 					}
 				}
 
-				def appCastJob = getTagName() ? '' : '-DJENKINS_APPCAST=\${JOB_NAME}'
+				def appCastJob = getReleaseJob() ? '' : '-DJENKINS_APPCAST=\${JOB_NAME}'
 				shell("cd build; cmake ../source -DCMAKE_BUILD_TYPE=release -Dtools.only=true ${appCastJob}")
 				shell('cd build; cmake -E copy docs/notes/singlehtml/de/appcast.html ReleaseNotes.html')
 			}

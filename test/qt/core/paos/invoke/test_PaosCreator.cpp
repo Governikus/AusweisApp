@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref PaosCreator
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/invoke/PaosCreator.h"
@@ -21,7 +21,7 @@ struct test_PaosCreatorDummy
 	QString mText;
 	bool mNamespace = false;
 
-	virtual QDomElement getDocumentStructure()
+	virtual QDomElement getDocumentStructure() override
 	{
 		if (mNamespace)
 		{
@@ -112,20 +112,6 @@ class test_PaosCreator
 			QCOMPARE(PaosCreator::getNamespacePrefix(PaosCreator::Namespace::ADDRESSING, "suffix"), QString("wsa:suffix"));
 			QCOMPARE(PaosCreator::getNamespacePrefix(PaosCreator::Namespace::ADDRESSING), QString("xmlns:wsa"));
 			QCOMPARE(PaosCreator::getNamespaceType(PaosCreator::Namespace::ADDRESSING, "test"), QString("wsa:test"));
-		}
-
-
-		void createResultElementForNonResponseType()
-		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
-			test_PaosCreatorDummy creator;
-			auto elem = creator.createResultElement();
-			QByteArray data = creator.getData(elem);
-			QVERIFY(data.contains("<Result xmlns=\"urn:oasis:names:tc:dss:1.0:core:schema\"/>"));
-
-			QCOMPARE(spy.count(), 1);
-			auto param = spy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Cannot set Result, message is not of type ResponseType"));
 		}
 
 

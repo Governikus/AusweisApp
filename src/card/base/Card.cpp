@@ -1,8 +1,7 @@
 /*!
- * Card.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
+
 #include "Card.h"
 
 #include <QLoggingCategory>
@@ -22,9 +21,9 @@ Card::~Card()
 }
 
 
-CardReturnCode Card::establishPaceChannel(PACE_PIN_ID pPinId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds)
+CardReturnCode Card::establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds)
 {
-	Q_UNUSED(pPinId);
+	Q_UNUSED(pPasswordId);
 	Q_UNUSED(pChat);
 	Q_UNUSED(pCertificateDescription);
 	Q_UNUSED(pChannelOutput);

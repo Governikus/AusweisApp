@@ -1,7 +1,7 @@
 /*!
  * \brief Utility functions, templates and other ASN.1 related helper stuff
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,8 +16,11 @@
 /*!
  * OpenSSL type declarations
  */
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 DECLARE_STACK_OF(ASN1_OCTET_STRING)
-
+#else
+DEFINE_STACK_OF(ASN1_OCTET_STRING)
+#endif
 
 namespace governikus
 {
@@ -47,6 +50,7 @@ class Asn1ObjectUtil
 	public:
 		static ASN1_OBJECT* parseFrom(const QByteArray& pOidAsText);
 		static QByteArray convertTo(const ASN1_OBJECT* pAsn1Object);
+		static QByteArray getValue(const ASN1_OBJECT* pAsn1Object);
 };
 
 

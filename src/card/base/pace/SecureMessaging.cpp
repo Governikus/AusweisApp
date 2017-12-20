@@ -1,13 +1,13 @@
 /*!
- * SecureMessaging.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
+
 #include "asn1/ASN1Util.h"
 #include "pace/SecureMessaging.h"
 #include "SecureMessagingResponse.h"
 
 #include <QLoggingCategory>
+#include <QtEndian>
 
 
 using namespace governikus;
@@ -190,8 +190,10 @@ int SecureMessaging::createNewLe(const QByteArray& pSecuredData, int pOldLe) con
 
 QByteArray SecureMessaging::getSendSequenceCounter() const
 {
-	QByteArray ssc = toBigEndian(mSendSequenceCounter);
-	return QByteArray(mCipher.getBlockSize() - ssc.size(), 0x00) + ssc;
+	static const int COUNTER_SIZE = sizeof(mSendSequenceCounter);
+	char converted[COUNTER_SIZE];
+	qToBigEndian(mSendSequenceCounter, converted);
+	return QByteArray(mCipher.getBlockSize() - COUNTER_SIZE, 0x00) + QByteArray(converted, COUNTER_SIZE);
 }
 
 

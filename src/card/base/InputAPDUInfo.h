@@ -1,10 +1,10 @@
 /*!
- * InputAPDUInfo.h
- *
  * \brief Holds the data of an InputAPDUInfo element.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
+
+#include "Apdu.h"
 
 #include <QByteArrayList>
 #include <QList>
@@ -18,13 +18,18 @@ class InputAPDUInfo
 {
 	public:
 		InputAPDUInfo();
-		InputAPDUInfo(const QByteArray& pInputApdu, const QByteArrayList& pAcceptableStatusCodes);
+		InputAPDUInfo(const QByteArray& pInputApdu, bool pUpdateRetryCounter = false);
 
-		bool isValid() const;
 
-		const QByteArray& getInputApdu() const
+		bool isValid() const
 		{
-			return mInputApdu;
+			return !mInputApdu.isEmpty();
+		}
+
+
+		const CommandApdu getInputApdu() const
+		{
+			return CommandApdu(mInputApdu, mUpdateRetryCounter);
 		}
 
 
@@ -40,15 +45,19 @@ class InputAPDUInfo
 		}
 
 
-		void addAcceptableStatusCode(const QByteArray& pStatusCode)
+		void addAcceptableStatusCode(const QByteArray& pStatusCodeAsHex)
 		{
-			mAcceptableStatusCodes += pStatusCode;
+			mAcceptableStatusCodes += pStatusCodeAsHex;
 		}
 
 
 	private:
 		QByteArray mInputApdu;
 		QByteArrayList mAcceptableStatusCodes;
+		// mUpdateRetryCounter is not part of the xml data.
+		// We use it internally to update the retry counter on a
+		// low level especially when we act as a remote card reader
+		bool mUpdateRetryCounter;
 };
 
 }

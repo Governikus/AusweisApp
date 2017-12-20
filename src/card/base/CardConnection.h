@@ -1,9 +1,7 @@
 /*!
- * CardConnection.h
- *
  * \brief Contains a card connection object
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -52,7 +50,7 @@ class CardConnection
 		UpdateRetryCounterCommand* createUpdateRetryCounterCommand();
 		UnblockPinCommand* createUnblockPinCommand(const QString& pPuk);
 
-		EstablishPaceChannelCommand* createEstablishPaceChannelCommand(PACE_PIN_ID pPacePinId, const QString& pPacePin, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription);
+		EstablishPaceChannelCommand* createEstablishPaceChannelCommand(PACE_PASSWORD_ID pPacePasswordId, const QString& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription);
 		SetEidPinCommand* createSetEidPinCommand(const QString& pNewPin, quint8 pTimeoutSeconds);
 		DestroyPaceChannelCommand* createDestroyPaceChannelCommand();
 
@@ -102,6 +100,7 @@ class CardConnection
 		 */
 		const ReaderInfo& getReaderInfo();
 
+		bool stopSecureMessaging();
 
 		template<typename T>
 		QMetaObject::Connection callDidAuthenticateEAC1Command(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc)
@@ -134,9 +133,9 @@ class CardConnection
 
 		template<typename T>
 		QMetaObject::Connection callEstablishPaceChannelCommand(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc,
-			PACE_PIN_ID pPacePinId, const QString& pPacePin, const QByteArray& pEffectiveChat = QByteArray(), const QByteArray& pCertificateDescription = QByteArray())
+			PACE_PASSWORD_ID pPacePasswordId, const QString& pPacePassword, const QByteArray& pEffectiveChat = QByteArray(), const QByteArray& pCertificateDescription = QByteArray())
 		{
-			auto command = createEstablishPaceChannelCommand(pPacePinId, pPacePin, pEffectiveChat, pCertificateDescription);
+			EstablishPaceChannelCommand* command = createEstablishPaceChannelCommand(pPacePasswordId, pPacePassword, pEffectiveChat, pCertificateDescription);
 			return call(command, pReceiver, pFunc);
 		}
 
@@ -177,7 +176,7 @@ class CardConnection
 
 
 	Q_SIGNALS:
-		void fireReaderInfoChanged();
+		void fireReaderInfoChanged(const ReaderInfo& pReaderInfo);
 };
 
 } /* namespace governikus */

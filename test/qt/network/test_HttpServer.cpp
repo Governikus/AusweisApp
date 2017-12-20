@@ -1,12 +1,12 @@
 /*!
  * \brief Unit tests for \ref HttpResponse
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpServer.h"
 
-#include "EnvHolder.h"
+#include "Env.h"
 #include "LogHandler.h"
 #include "MockSocket.h"
 
@@ -49,7 +49,7 @@ class test_HttpServer
 		void startUpShutDown()
 		{
 			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
-			auto server = EnvHolder::shared<HttpServer>();
+			auto server = Env::getShared<HttpServer>();
 
 			QVERIFY(server->isListening());
 			QCOMPARE(spy.count(), 1);

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MessageDispatcher
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MessageDispatcher.h"
@@ -207,7 +207,7 @@ class test_Message
 
 		void finishAuthContext()
 		{
-			const QSharedPointer<AuthContext> context(new AuthContext(new InternalActivationContext(QUrl("http://dummy"))));
+			const QSharedPointer<AuthContext> context(new AuthContext(QSharedPointer<InternalActivationContext>::create(QUrl("http://dummy"))));
 			context->setStatus(GlobalStatus::Code::No_Error);
 			context->setRefreshUrl(QUrl("http://dummy"));
 			MessageDispatcher dispatcher;

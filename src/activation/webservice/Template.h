@@ -1,9 +1,7 @@
 /*!
- * Template.h
- *
  * A simple template renderer.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

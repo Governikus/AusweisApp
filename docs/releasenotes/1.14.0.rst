@@ -1,0 +1,42 @@
+AusweisApp2 1.14.0
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 20. Dezember 2017
+
+
+
+Anwender
+""""""""
+  - Eine neue Funktion ermöglicht die Verwendung eines
+    geeigneten Smartphones als Kartenlesegerät über WLAN.
+
+  - Umstellmöglichkeit der Sprache zur Laufzeit ermöglicht.
+
+  - Fortschrittsanzeige unter Windows im Taskbar-Button.
+
+  - Verbesserungen bei der Erstellung von PDFs.
+
+  - Speicherung der Protokolldateien verbessert.
+
+  - Einstellungsbereich für das Verwalten von
+    Kartenlesegeräten hinzugefügt.
+
+  - Grafiken der Kartenlesegeräte erneuert und erweitert.
+
+  - Unter macOS wird die Bandbreite im WLAN nicht mehr
+    beeinträchtigt.
+
+  - Beim Ausweisen ohne aktivierte Online-Ausweisfunktion wurde
+    fälschlicherweise nach der PUK gefragt.
+
+  - Unter Windows 10 kommt es nicht mehr zu einem Absturz
+    bei Proxies mit Passwort-Authentisierung.
+
+
+Entwickler
+""""""""""
+  - Aktualisierung von OpenSSL auf die Version 1.0.2n.
+
+  - Aktualisierung von Qt auf die Version 5.9.3.
+
+  - Unterstützung von OpenSSL 1.1.0.

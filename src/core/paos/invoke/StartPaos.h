@@ -1,7 +1,7 @@
 /*!
  * \brief Generate information for StartPaos.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,9 +25,8 @@ class StartPaos
 
 	private:
 		const QByteArray mSessionId;
-		UserAgent mUserAgent;
-		SupportedAPI mSupportedAPI;
-
+		const UserAgent mUserAgent;
+		const SupportedAPI mSupportedAPI;
 
 		QDomElement createStartPaosElement();
 		QDomElement createSessionIdentifierElement();
@@ -35,7 +34,7 @@ class StartPaos
 		QDomElement createUserAgentElement();
 		QDomElement createSupportedAPIVersionsElement();
 
-		virtual QDomElement getDocumentStructure();
+		virtual QDomElement getDocumentStructure() override;
 
 		Q_DISABLE_COPY(StartPaos)
 

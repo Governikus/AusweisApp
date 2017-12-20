@@ -1,7 +1,5 @@
 /*!
- * StateCheckError.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCheckError.h"
@@ -18,9 +16,9 @@ void StateCheckError::run()
 {
 	if (getContext()->getStatus().isNoError() || getContext()->isErrorReportedToUser())
 	{
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 		return;
 	}
 
-	Q_EMIT fireError();
+	Q_EMIT fireAbort();
 }
