@@ -1,64 +1,79 @@
 /*!
- * GeneralSettings.cpp
- *
  * \brief Contains the method definitions of the GeneralSettings class.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GeneralSettings.h"
 
+#include "AutoStart.h"
+
 #include <QCoreApplication>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrentRun>
-#include <QtGlobal>
 
-#if defined(Q_OS_OSX)
-#import <Cocoa/Cocoa.h>
-#include <QRegularExpression>
-#endif
-
-#ifdef Q_OS_ANDROID
-#include <QtAndroid>
-#endif
-
-#ifndef QT_NO_DEBUG
-static bool Test_AutoStart = GENERAL_SETTINGS_DEFAULT_AUTOSTART;
-#endif
 
 using namespace governikus;
 
-const QLatin1String SETTINGS_SKIP_VERSION("skipVersion");
+namespace
+{
+SETTINGS_NAME(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION, "persistentSettingsVersion")
+SETTINGS_NAME(SETTINGS_NAME_SKIP_VERSION, "skipVersion")
+SETTINGS_NAME(SETTINGS_NAME_AUTO_CLOSE_WINDOW, "autoCloseWindow")
+SETTINGS_NAME(SETTINGS_NAME_SHOW_SETUP_ASSISTANT, "showSetupAssistant")
+SETTINGS_NAME(SETTINGS_NAME_REMIND_USER_TO_CLOSE, "remindToClose")
+SETTINGS_NAME(SETTINGS_NAME_TRANSPORT_PIN_REMINDER, "transportPinReminder")
+SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_MODE, "developerMode")
+SETTINGS_NAME(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI, "selfauthTestUri")
+SETTINGS_NAME(SETTINGS_NAME_LANGUAGE, "language")
 
-const QLatin1String SETTINGS_NAME_AUTO_CLOSE_WINDOW("autoCloseWindow");
-const QLatin1String SETTINGS_NAME_SHOW_SETUP_ASSISTANT("showSetupAssistant");
-const QLatin1String SETTINGS_NAME_REMIND_USER_TO_CLOSE("remindToClose");
-const QLatin1String SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION("persistentSettingsVersion");
-const QLatin1String SETTINGS_NAME_TRANSPORT_PIN_REMINDER("transportPinReminder");
-const QLatin1String SETTINGS_NAME_DEVELOPER_MODE("developerMode");
-const QLatin1String SETTINGS_NAME_USE_SELFAUTH_TEST_URI("selfauthTestUri");
-
-const QLatin1String SETTINGS_GROUP_NAME_GENERAL("common");
-const QLatin1String SETTINGS_NAME_AUTO("autoUpdateCheck");
-const QLatin1String SETTINGS_NAME_KEYLESS_PASSWORD("keylessPassword");
-
+SETTINGS_NAME(SETTINGS_GROUP_NAME_COMMON, "common")
+SETTINGS_NAME(SETTINGS_NAME_AUTO, "autoUpdateCheck")
+SETTINGS_NAME(SETTINGS_NAME_KEYLESS_PASSWORD, "keylessPassword")
+}
 
 GeneralSettings::GeneralSettings()
 	: AbstractSettings()
-	, mAutoCloseWindowAfterAuthentication(true)
-	, mAutoUpdateCheck(true)
-	, mUseScreenKeyboard(false)
-	, mShowSetupAssistant(true)
-	, mRemindUserToClose(true)
-	, mPersistentSettingsVersion()
-	, mTransportPinReminder(true)
-	, mDeveloperMode(false)
-	, mSelfauthenticationTestUri(false)
+	, mStoreGeneral(getStore())
+	, mStoreCommon(getStore())
 {
+	{
+		// With 1.14.0 the reader and provider are no longer stored in the settings
+
+		mStoreCommon->beginGroup(QStringLiteral("readers"));
+		mStoreCommon->remove(QString()); // remove the whole group
+		mStoreCommon->endGroup();
+
+		mStoreCommon->beginGroup(QStringLiteral("providers"));
+		mStoreCommon->remove(QString()); // remove the whole group
+		mStoreCommon->endGroup();
+	}
+
+	mStoreCommon->beginGroup(SETTINGS_GROUP_NAME_COMMON());
+
 	// QFuture.result() crashes under linux and win if uninitalized
 	mAutoStart = QtConcurrent::run([] {
-				return GENERAL_SETTINGS_DEFAULT_AUTOSTART;
+				return !GENERAL_SETTINGS_DEFAULT_AUTOSTART;
 			});
+	mAutoStart.waitForFinished();
+
+	// Check if the key "autoCloseWindow" (introduced in changeset 199210b0b20c)
+	// does not yet exist to detect a new installation. This key was the first one
+	// in the settings general group.
+	const bool isNewInstallation = !mStoreGeneral->allKeys().contains(SETTINGS_NAME_AUTO_CLOSE_WINDOW());
+	if (isNewInstallation)
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_AUTO_CLOSE_WINDOW(), true);
+		setAutoStart(GENERAL_SETTINGS_DEFAULT_AUTOSTART);
+		setTransportPinReminder(true);
+		mStoreGeneral->sync();
+	}
+
+#ifdef QT_NO_DEBUG
+	// Iterate autostart entries in order to remove broken login items on macos.
+	// This process might take up to 15s per entry.
+	mAutoStart = QtConcurrent::run(AutoStart::enabled);
+#endif
 }
 
 
@@ -68,248 +83,12 @@ GeneralSettings::~GeneralSettings()
 }
 
 
-void GeneralSettings::load()
-{
-	auto settings = getStore();
-	// Check if the key "autoCloseWindow" (introduced in changeset 199210b0b20c)
-	// does not yet exist to detect a new installation. This key was the first one
-	// in the settings general group.
-	const bool isNewInstallation = !settings->allKeys().contains(SETTINGS_NAME_AUTO_CLOSE_WINDOW);
-
-	// for historical reasons this is not loaded/saved in the general settings group
-	mAutoCloseWindowAfterAuthentication = settings->value(SETTINGS_NAME_AUTO_CLOSE_WINDOW, mAutoCloseWindowAfterAuthentication).toBool();
-	mShowSetupAssistant = settings->value(SETTINGS_NAME_SHOW_SETUP_ASSISTANT, mShowSetupAssistant).toBool();
-	mRemindUserToClose = settings->value(SETTINGS_NAME_REMIND_USER_TO_CLOSE, mRemindUserToClose).toBool();
-	mPersistentSettingsVersion = settings->value(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION, mPersistentSettingsVersion).toString();
-	mTransportPinReminder = settings->value(SETTINGS_NAME_TRANSPORT_PIN_REMINDER, isNewInstallation).toBool();
-	mDeveloperMode = settings->value(SETTINGS_NAME_DEVELOPER_MODE, mDeveloperMode).toBool();
-	mSelfauthenticationTestUri = settings->value(SETTINGS_NAME_USE_SELFAUTH_TEST_URI, mSelfauthenticationTestUri).toBool();
-
-	settings->beginGroup(SETTINGS_GROUP_NAME_GENERAL);
-
-	mAutoUpdateCheck = settings->value(SETTINGS_NAME_AUTO, mAutoUpdateCheck).toBool();
-	mUseScreenKeyboard = settings->value(SETTINGS_NAME_KEYLESS_PASSWORD, mUseScreenKeyboard).toBool();
-
-	settings->endGroup();
-
-#if defined(Q_OS_WIN32) || defined(Q_OS_OSX)
-	if (isNewInstallation)
-	{
-		setAutoStart(GENERAL_SETTINGS_DEFAULT_AUTOSTART);
-	}
-	else
-#endif
-	{
-		// Iterate autostart entries in order to remove broken login items on macos.
-		// This process might take up to 15s per entry.
-		mAutoStart.waitForFinished();
-		mAutoStart = QtConcurrent::run(readSettingsAutoStart);
-	}
-}
-
-
-bool GeneralSettings::isUnsaved() const
-{
-	GeneralSettings oldSettings;
-	oldSettings.load();
-	return oldSettings != *this;
-}
-
-
 void GeneralSettings::save()
 {
-	auto settings = getStore();
+	mStoreGeneral->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QCoreApplication::applicationVersion());
 
-	// for historical reasons this is not loaded/saved in the general settings group
-	settings->setValue(SETTINGS_NAME_AUTO_CLOSE_WINDOW, mAutoCloseWindowAfterAuthentication);
-	settings->setValue(SETTINGS_NAME_SHOW_SETUP_ASSISTANT, mShowSetupAssistant);
-	settings->setValue(SETTINGS_NAME_REMIND_USER_TO_CLOSE, mRemindUserToClose);
-
-	mPersistentSettingsVersion = QCoreApplication::applicationVersion();
-	settings->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION, mPersistentSettingsVersion);
-	settings->setValue(SETTINGS_NAME_TRANSPORT_PIN_REMINDER, mTransportPinReminder);
-	settings->setValue(SETTINGS_NAME_DEVELOPER_MODE, mDeveloperMode);
-	settings->setValue(SETTINGS_NAME_USE_SELFAUTH_TEST_URI, mSelfauthenticationTestUri);
-
-	settings->beginGroup(SETTINGS_GROUP_NAME_GENERAL);
-
-	settings->setValue(SETTINGS_NAME_AUTO, mAutoUpdateCheck);
-	settings->setValue(SETTINGS_NAME_KEYLESS_PASSWORD, mUseScreenKeyboard);
-	writeSettingsAutoStart(mAutoStart);
-
-	settings->endGroup();
-	settings->sync();
-}
-
-
-#if defined(Q_OS_OSX)
-
-bool addAutoStartMacOS()
-{
-	QRegularExpression regex("/Contents/Resources$");
-	NSString* path = QCoreApplication::applicationDirPath().remove(regex).toNSString();
-	CFURLRef url = (CFURLRef)[NSURL fileURLWithPath: path];
-
-	LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
-	if (loginItems)
-	{
-		LSSharedFileListItemRef item = LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemLast, NULL, NULL, url, NULL, NULL);
-		if (item)
-		{
-			CFRelease(item);
-			return true;
-		}
-	}
-	return false;
-}
-
-
-bool checkAndRemoveAutoStartMacOS(bool pRemove = true)
-{
-	qDebug() << "Loading OSX login items";
-
-	QRegularExpression regex("/Contents/Resources$");
-	NSString* appPath = QCoreApplication::applicationDirPath().remove(regex).toNSString();
-	CFURLRef url = (CFURLRef)[NSURL fileURLWithPath: appPath];
-
-	// Create a reference to the shared file list.
-	LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL,
-			kLSSharedFileListSessionLoginItems, NULL);
-
-	if (loginItems)
-	{
-		//Retrieve the list of Login Items and cast them to
-		// a NSArray so that it will be easier to iterate.
-		NSArray* loginItemsArray = (NSArray*) LSSharedFileListCopySnapshot(loginItems, NULL);
-		for (NSUInteger i = 0; i < [loginItemsArray count]; ++i)
-		{
-			LSSharedFileListItemRef itemRef = (LSSharedFileListItemRef)[loginItemsArray objectAtIndex:i];
-			//Resolve the item with URL
-			if (LSSharedFileListItemResolve(itemRef, 0, (CFURLRef*) &url, NULL) == noErr)
-			{
-				NSString* urlPath = [(NSURL*) url path];
-				if ([urlPath compare : appPath] == NSOrderedSame)
-				{
-					if (pRemove)
-					{
-						LSSharedFileListItemRemove(loginItems, itemRef);
-					}
-
-					return true;
-				}
-			}
-			else
-			{
-				const CFStringRef stringRef = LSSharedFileListItemCopyDisplayName(itemRef);
-				if (stringRef)
-				{
-					const QString displayName = QString::fromCFString(stringRef);
-					if (displayName.startsWith(QCoreApplication::applicationName()))
-					{
-						LSSharedFileListItemRemove(loginItems, itemRef);
-						qDebug() << "Removed the unresolvable application with diplay name" << displayName << "from OSX login items.";
-					}
-				}
-			}
-		}
-		[loginItemsArray release];
-	}
-
-	return false;
-}
-
-
-#endif
-
-
-bool GeneralSettings::readSettingsAutoStart()
-{
-#ifndef QT_NO_DEBUG
-	if (QCoreApplication::applicationName().startsWith(QLatin1String("Test")))
-	{
-		return Test_AutoStart;
-	}
-#endif
-
-#if defined(Q_OS_WIN32)
-	QSettings windowsBootUpSettings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
-	return windowsBootUpSettings.contains(QCoreApplication::applicationName());
-
-#elif defined(Q_OS_OSX)
-	return checkAndRemoveAutoStartMacOS(false);
-
-#else
-	qDebug() << "Autostart not supported on this system";
-	return false;
-
-#endif
-}
-
-
-void GeneralSettings::writeSettingsAutoStart(bool pAutoStart)
-{
-#ifndef QT_NO_DEBUG
-	if (QCoreApplication::applicationName().startsWith(QLatin1String("Test")))
-	{
-		Test_AutoStart = pAutoStart;
-		return;
-	}
-#endif
-
-
-#ifdef Q_OS_WIN32
-	QSettings windowsBootUpSettings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
-
-	if (pAutoStart)
-	{
-		QString applicationFilePath = QCoreApplication::applicationFilePath();
-		applicationFilePath.replace(QStringLiteral("/"), QString("\\"));
-		windowsBootUpSettings.setValue(QCoreApplication::applicationName(), "\"" + applicationFilePath + "\"");
-	}
-	else
-	{
-		windowsBootUpSettings.remove(QCoreApplication::applicationName());
-	}
-#elif defined(Q_OS_OSX)
-
-	pAutoStart ? addAutoStartMacOS() : checkAndRemoveAutoStartMacOS();
-
-#else
-	qDebug() << "Autostart not supported on this system";
-	Q_UNUSED(pAutoStart)
-#endif
-}
-
-
-bool GeneralSettings::isAutoCloseWindowAfterAuthentication() const
-{
-	return mAutoCloseWindowAfterAuthentication;
-}
-
-
-void GeneralSettings::setAutoCloseWindowAfterAuthentication(bool pAutoClose)
-{
-	if (pAutoClose != mAutoCloseWindowAfterAuthentication)
-	{
-		mAutoCloseWindowAfterAuthentication = pAutoClose;
-		Q_EMIT fireSettingsChanged();
-	}
-}
-
-
-bool GeneralSettings::isAutoUpdateCheck() const
-{
-	return mAutoUpdateCheck;
-}
-
-
-void GeneralSettings::setAutoUpdateCheck(bool pAutoCheck)
-{
-	if (pAutoCheck != mAutoUpdateCheck)
-	{
-		mAutoUpdateCheck = pAutoCheck;
-		Q_EMIT fireSettingsChanged();
-	}
+	mStoreGeneral->sync();
+	mStoreCommon->sync();
 }
 
 
@@ -323,27 +102,47 @@ void GeneralSettings::setAutoStart(bool pAutoStart)
 {
 	if (pAutoStart != mAutoStart)
 	{
+#ifdef QT_NO_DEBUG
+		AutoStart::set(pAutoStart);
+#endif
 		mAutoStart.waitForFinished();
 		mAutoStart = QtConcurrent::run([pAutoStart] {
 					return pAutoStart;
 				});
-
 		Q_EMIT fireSettingsChanged();
 	}
 }
 
 
-bool GeneralSettings::isUseScreenKeyboard() const
+const QString GeneralSettings::getPersistentSettingsVersion() const
 {
-	return mUseScreenKeyboard;
+	return mStoreGeneral->value(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QString()).toString();
 }
 
 
-void GeneralSettings::setUseScreenKeyboard(bool pKeylessPassword)
+QString GeneralSettings::getSkipVersion()
 {
-	if (pKeylessPassword != mUseScreenKeyboard)
+	return mStoreGeneral->value(SETTINGS_NAME_SKIP_VERSION(), QString()).toString();
+}
+
+
+void GeneralSettings::skipVersion(const QString& pVersion)
+{
+	mStoreGeneral->setValue(SETTINGS_NAME_SKIP_VERSION(), pVersion);
+}
+
+
+bool GeneralSettings::isAutoCloseWindowAfterAuthentication() const
+{
+	return mStoreGeneral->value(SETTINGS_NAME_AUTO_CLOSE_WINDOW(), true).toBool();
+}
+
+
+void GeneralSettings::setAutoCloseWindowAfterAuthentication(bool pAutoClose)
+{
+	if (pAutoClose != isAutoCloseWindowAfterAuthentication())
 	{
-		mUseScreenKeyboard = pKeylessPassword;
+		mStoreGeneral->setValue(SETTINGS_NAME_AUTO_CLOSE_WINDOW(), pAutoClose);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -351,15 +150,15 @@ void GeneralSettings::setUseScreenKeyboard(bool pKeylessPassword)
 
 bool GeneralSettings::isShowSetupAssistant() const
 {
-	return mShowSetupAssistant;
+	return mStoreGeneral->value(SETTINGS_NAME_SHOW_SETUP_ASSISTANT(), true).toBool();
 }
 
 
 void GeneralSettings::setShowSetupAssistant(bool pShowSetupAssistant)
 {
-	if (pShowSetupAssistant != mShowSetupAssistant)
+	if (pShowSetupAssistant != isShowSetupAssistant())
 	{
-		mShowSetupAssistant = pShowSetupAssistant;
+		mStoreGeneral->setValue(SETTINGS_NAME_SHOW_SETUP_ASSISTANT(), pShowSetupAssistant);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -367,37 +166,35 @@ void GeneralSettings::setShowSetupAssistant(bool pShowSetupAssistant)
 
 bool GeneralSettings::isRemindUserToClose() const
 {
-	return mRemindUserToClose;
+	return mStoreGeneral->value(SETTINGS_NAME_REMIND_USER_TO_CLOSE(), true).toBool();
 }
 
 
 void GeneralSettings::setRemindUserToClose(bool pRemindUser)
 {
-	if (pRemindUser != mRemindUserToClose)
+	if (pRemindUser != isRemindUserToClose())
 	{
-		mRemindUserToClose = pRemindUser;
+		mStoreGeneral->setValue(SETTINGS_NAME_REMIND_USER_TO_CLOSE(), pRemindUser);
 		Q_EMIT fireSettingsChanged();
 	}
 }
 
 
-const QString& GeneralSettings::getPersistentSettingsVersion() const
-{
-	return mPersistentSettingsVersion;
-}
-
-
 bool GeneralSettings::isTransportPinReminder() const
 {
-	return mTransportPinReminder;
+	// The standard value should be true but we need to set it to false for backwards
+	// compatibility. It is set to true in the constructor if we have a new
+	// installation. The the standard value used in this function will only be
+	// used if the user upgrades from AusweisApp 1.6.3 or an older version.
+	return mStoreGeneral->value(SETTINGS_NAME_TRANSPORT_PIN_REMINDER(), false).toBool();
 }
 
 
 void GeneralSettings::setTransportPinReminder(bool pTransportPinReminder)
 {
-	if (pTransportPinReminder != mTransportPinReminder)
+	if (pTransportPinReminder != isTransportPinReminder())
 	{
-		mTransportPinReminder = pTransportPinReminder;
+		mStoreGeneral->setValue(SETTINGS_NAME_TRANSPORT_PIN_REMINDER(), pTransportPinReminder);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -405,55 +202,92 @@ void GeneralSettings::setTransportPinReminder(bool pTransportPinReminder)
 
 bool GeneralSettings::isDeveloperMode() const
 {
-	// TODO Replace the following hack with a clean solution.
-	// Also remove "AndroidExtras" from module linkage.
-#ifdef Q_OS_ANDROID
-	if (QtAndroid::androidService().isValid())
+	const bool developerMode = mStoreGeneral->value(SETTINGS_NAME_DEVELOPER_MODE(), false).toBool();
+	if (developerMode && appIsBackgroundService())
 	{
-		qDebug() << "Running as android service. Developer mode is disallowed.";
+		qDebug() << "Running as a background service. Developer mode is disallowed.";
 		return false;
 	}
-#endif
 
-	return mDeveloperMode;
+	return developerMode;
 }
 
 
 void GeneralSettings::setDeveloperMode(bool pEnabled)
 {
-	if (pEnabled != mDeveloperMode)
+	if (pEnabled != isDeveloperMode())
 	{
-		mDeveloperMode = pEnabled;
+		mStoreGeneral->setValue(SETTINGS_NAME_DEVELOPER_MODE(), pEnabled);
 		Q_EMIT fireSettingsChanged();
 	}
 }
 
 
-bool GeneralSettings::useSelfauthenticationTestUri() const
+bool GeneralSettings::useSelfAuthTestUri() const
 {
-	return mSelfauthenticationTestUri;
+	return mStoreGeneral->value(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI(), false).toBool();
 }
 
 
 void GeneralSettings::setUseSelfauthenticationTestUri(bool pUse)
 {
-	if (pUse != mSelfauthenticationTestUri)
+	if (pUse != useSelfAuthTestUri())
 	{
-		mSelfauthenticationTestUri = pUse;
+		mStoreGeneral->setValue(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI(), pUse);
 		Q_EMIT fireSettingsChanged();
 	}
 }
 
 
-void GeneralSettings::skipVersion(const QString& pVersion)
+QLocale::Language GeneralSettings::getLanguage() const
 {
-	auto store = getStore();
-	store->setValue(SETTINGS_SKIP_VERSION, pVersion);
-	store->sync();
+	const QString loadedLanguage = mStoreGeneral->value(SETTINGS_NAME_LANGUAGE(), QString()).toString();
+	if (loadedLanguage.isEmpty())
+	{
+		return QLocale::C;
+	}
+
+	return QLocale(loadedLanguage).language();
 }
 
 
-QString GeneralSettings::getSkipVersion()
+void GeneralSettings::setLanguage(const QLocale::Language pLanguage)
 {
-	return getStore()->value(SETTINGS_SKIP_VERSION).toString();
+	if (pLanguage != getLanguage())
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_LANGUAGE(), pLanguage == QLocale::C ? QString() : QLocale(pLanguage).bcp47Name());
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
+bool GeneralSettings::isAutoUpdateCheck() const
+{
+	return mStoreCommon->value(SETTINGS_NAME_AUTO(), true).toBool();
+}
+
+
+void GeneralSettings::setAutoUpdateCheck(bool pAutoCheck)
+{
+	if (pAutoCheck != isAutoUpdateCheck())
+	{
+		mStoreCommon->setValue(SETTINGS_NAME_AUTO(), pAutoCheck);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
+bool GeneralSettings::isUseScreenKeyboard() const
+{
+	return mStoreCommon->value(SETTINGS_NAME_KEYLESS_PASSWORD(), false).toBool();
+}
+
+
+void GeneralSettings::setUseScreenKeyboard(bool pKeylessPassword)
+{
+	if (pKeylessPassword != isUseScreenKeyboard())
+	{
+		mStoreCommon->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), pKeylessPassword);
+		Q_EMIT fireSettingsChanged();
+	}
 }

@@ -2,7 +2,7 @@
  * \brief Implementation of ActivationContext for Intent
  * based activation on Android systems.
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,12 +16,14 @@ namespace governikus
 class IntentActivationContext
 	: public ActivationContext
 {
+	Q_OBJECT
+
 	const QUrl mActivationUrl;
 	QUrl mRedirectAddress;
 
 	public:
 		IntentActivationContext(const QUrl& pActivationUrl);
-		virtual ~IntentActivationContext();
+		virtual ~IntentActivationContext() override;
 
 		QUrl getActivationURL() const override;
 
@@ -29,6 +31,9 @@ class IntentActivationContext
 		bool sendOperationAlreadyActive() override;
 		bool sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus) override;
 		bool sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pResult) override;
+
+	Q_SIGNALS:
+		void fireShowUserInformation(const QString& pMessage);
 };
 
 } /* namespace governikus */

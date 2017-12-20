@@ -1,7 +1,7 @@
 /*!
  * \brief Utility for changing the color of the status bar.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

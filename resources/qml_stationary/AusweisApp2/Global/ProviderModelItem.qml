@@ -63,28 +63,28 @@ Item {
 
 		ListElement {
 			iconSource: "qrc:///images/provider/+tablet/url.png"
-			label: qsTr("Homepage")
+			label: QT_TR_NOOP("Homepage")
 			text: ""
 			link: ""
 		}
 
 		ListElement {
 			iconSource: "qrc:///images/provider/+tablet/mail.png"
-			label: qsTr("E-Mail")
+			label: QT_TR_NOOP("E-Mail")
 			text: ""
 			link: ""
 		}
 
 		ListElement {
 			iconSource: "qrc:///images/provider/+tablet/telefon.png"
-			label: qsTr("Phone")
+			label: QT_TR_NOOP("Phone")
 			text: ""
 			link: ""
 		}
 
 		ListElement {
 			iconSource: "qrc:///images/provider/+tablet/adresse.png"
-			label: qsTr("Contact")
+			label: QT_TR_NOOP("Contact")
 			text: ""
 			link: ""
 		}

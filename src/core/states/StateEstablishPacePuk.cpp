@@ -1,7 +1,5 @@
 /*!
- * StateEstablishPacePuk.cpp
- *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -47,13 +45,13 @@ void StateEstablishPacePuk::onEstablishConnectionDone(QSharedPointer<BaseCardCom
 			{
 				changePinContext->setSuccessMessage(tr("PIN successfully unblocked"));
 			}
-			Q_EMIT fireSuccess();
+			Q_EMIT fireContinue();
 			break;
 
 		case CardReturnCode::CANCELLATION_BY_USER:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
-			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-			Q_EMIT fireCancel();
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			Q_EMIT fireAbort();
 			break;
 
 		case CardReturnCode::INVALID_PUK:
@@ -63,13 +61,13 @@ void StateEstablishPacePuk::onEstablishConnectionDone(QSharedPointer<BaseCardCom
 
 		case CardReturnCode::PUK_INOPERATIVE:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
-			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireInoperativePuk();
 			break;
 
 		default:
-			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-			Q_EMIT fireError();
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			Q_EMIT fireAbort();
 			break;
 	}
 }

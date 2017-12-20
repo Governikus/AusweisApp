@@ -1,0 +1,4 @@
+﻿module RemoteServiceView
+RemoteServiceView 1.0 RemoteServiceView.qml
+RemoteServiceSettings 1.0 RemoteServiceSettings.qml
+RemoteServicePairingView 1.0 RemoteServicePairingView.qml

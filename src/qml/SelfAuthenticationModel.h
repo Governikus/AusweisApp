@@ -1,29 +1,30 @@
 /*!
  * \brief Model implementation for the self authentication workflow.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
+#include "SelfAuthenticationData.h"
+
 #include <QAbstractListModel>
-#include <QPair>
+#include <QEvent>
 #include <QSharedPointer>
 #include <QString>
-#include <QVector>
 
 namespace governikus
 {
 
-class SelfAuthenticationContext;
+class SelfAuthContext;
 
 class SelfAuthenticationModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
 
-	QSharedPointer<SelfAuthenticationContext> mContext;
-	QVector<QPair<QString, QString> > mData;
+	QSharedPointer<SelfAuthContext> mContext;
+	SelfAuthenticationData::OrderedSelfData mSelfData;
 
 	enum DataRoles
 	{
@@ -36,7 +37,7 @@ class SelfAuthenticationModel
 
 	public:
 		SelfAuthenticationModel(QObject* pParent = nullptr);
-		void resetContext(const QSharedPointer<SelfAuthenticationContext>& pContext = QSharedPointer<SelfAuthenticationContext>());
+		void resetContext(const QSharedPointer<SelfAuthContext>& pContext = QSharedPointer<SelfAuthContext>());
 
 		Q_INVOKABLE void startWorkflow();
 		Q_INVOKABLE void cancelWorkflow();
@@ -45,6 +46,8 @@ class SelfAuthenticationModel
 		int rowCount(const QModelIndex& = QModelIndex()) const override;
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
 		QHash<int, QByteArray> roleNames() const override;
+
+		virtual bool event(QEvent* pEvent) override;
 
 	Q_SIGNALS:
 		void fireStartWorkflow();

@@ -1,7 +1,5 @@
 /*!
- * DidAuthenticateEac2.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/retrieve/DidAuthenticateEac2.h"
@@ -38,7 +36,7 @@ const QString& DIDAuthenticateEAC2::getSignature() const
 }
 
 
-const QVector<QSharedPointer<CVCertificate> >& DIDAuthenticateEAC2::getCvCertificates() const
+const QVector<QSharedPointer<const CVCertificate> >& DIDAuthenticateEAC2::getCvCertificates() const
 {
 	return mEac2.getCvCertificates();
 }

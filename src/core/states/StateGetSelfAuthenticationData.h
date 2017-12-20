@@ -1,14 +1,12 @@
 /*!
- * StateGetSelfAuthenticationData.h
- *
  * \brief get the xml data from the given url
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include "context/SelfAuthenticationContext.h"
+#include "context/SelfAuthContext.h"
 #include "NetworkManager.h"
 #include "Result.h"
 #include "states/AbstractGenericState.h"
@@ -17,7 +15,7 @@ namespace governikus
 {
 
 class StateGetSelfAuthenticationData
-	: public AbstractGenericState<SelfAuthenticationContext>
+	: public AbstractGenericState<SelfAuthContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
@@ -30,7 +28,7 @@ class StateGetSelfAuthenticationData
 	bool checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
 
 	public:
-		~StateGetSelfAuthenticationData();
+		virtual ~StateGetSelfAuthenticationData() override;
 
 	private Q_SLOTS:
 		void onNetworkReply();

@@ -1,17 +1,17 @@
 /*!
- * DidAuthenticateEAC2Command.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
+
+#include "DidAuthenticateEAC2Command.h"
 
 #include "asn1/ChipAuthenticationInfo.h"
 #include "asn1/EFCardSecurity.h"
 #include "CardConnection.h"
-#include "DidAuthenticateEAC2Command.h"
 #include "GeneralAuthenticateResponse.h"
-
+#include "GlobalStatus.h"
 
 #include <QLoggingCategory>
+
 
 Q_DECLARE_LOGGING_CATEGORY(card)
 
@@ -57,7 +57,7 @@ void DidAuthenticateEAC2Command::internalExecute()
 		/*
 		 * According to TR-03111, chapter 3.2.1 the uncompressed encoding of an elliptic curve point is:
 		 *  0x04 | xCoordinate | yCoordinate
-		 * In contrast the AGETO server just sends xCoordinate | yCoordinate.
+		 * In contrast the AGETO and mtG server just sends xCoordinate | yCoordinate.
 		 *
 		 * We fix this by prepending 0x04
 		 */

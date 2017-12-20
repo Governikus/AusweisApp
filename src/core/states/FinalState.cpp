@@ -1,7 +1,5 @@
 /*!
- * FinalError.cpp
- *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/FinalState.h"
@@ -19,9 +17,11 @@ void FinalState::run()
 	// the state machine and since we do not want to alter our ctor pattern.
 	QFinalState* sStopMachine = new QFinalState();
 	machine()->addState(sStopMachine);
-	addTransition(this, &AbstractState::fireSuccess, sStopMachine);
-	addTransition(this, &AbstractState::fireError, sStopMachine);
-	addTransition(this, &AbstractState::fireCancel, sStopMachine);
+	addTransition(this, &AbstractState::fireContinue, sStopMachine);
+	addTransition(this, &AbstractState::fireAbort, sStopMachine);
 
-	Q_EMIT fireSuccess();
+	// Clear plugin types and disconnect all readers when the workflow has completed.
+	getContext()->setReaderPlugInTypes({});
+
+	Q_EMIT fireContinue();
 }

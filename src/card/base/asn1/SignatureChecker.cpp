@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/SignatureChecker.h"
@@ -15,7 +15,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 
-SignatureChecker::SignatureChecker(const QVector<QSharedPointer<CVCertificate> >& pCertificateChain)
+SignatureChecker::SignatureChecker(const QVector<QSharedPointer<const CVCertificate> >& pCertificateChain)
 	: mCertificateChain(pCertificateChain)
 {
 }
@@ -68,7 +68,7 @@ bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>&
 
 	EC_POINT* publicPoint = EC_POINT_new(EC_KEY_get0_group(signingKey.data()));
 	const EC_GROUP* ecGroup = EC_KEY_get0_group(signingKey.data());
-	if (!EC_POINT_oct2point(ecGroup, publicPoint, uncompPublicPointData, uncompPublicPointLen, (BN_CTX*) nullptr))
+	if (!EC_POINT_oct2point(ecGroup, publicPoint, uncompPublicPointData, uncompPublicPointLen, nullptr))
 	{
 		qCCritical(card) << "Cannot decode uncompressed public point";
 		return false;

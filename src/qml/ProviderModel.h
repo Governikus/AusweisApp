@@ -1,15 +1,15 @@
 /*!
  * \brief Model implementation for the providers.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include "ProviderSettings.h"
+#include "CallCost.h"
 
 #include <QAbstractListModel>
-#include <QPointer>
+#include <QVector>
 
 
 class test_ProviderModel;
@@ -25,10 +25,13 @@ class ProviderModel
 
 	Q_OBJECT
 
-	QPointer<ProviderSettings> mSettings;
-
 	static QString createCostString(double pCostsPerMinute, double pCostsPerCall);
 	static QString createAmountString(double pCents);
+
+	private:
+		QVector<QMetaObject::Connection> mConnections;
+
+		void updateConnections();
 
 	private Q_SLOTS:
 		void onProvidersChanged();
@@ -54,8 +57,8 @@ class ProviderModel
 			SORT_ROLE
 		};
 
-		ProviderModel(ProviderSettings* pSettings, QObject* pParent = nullptr);
-		virtual ~ProviderModel();
+		ProviderModel(QObject* pParent = nullptr);
+		virtual ~ProviderModel() override;
 
 		int rowCount(const QModelIndex&) const override;
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;

@@ -1,7 +1,7 @@
 /*!
  * \brief Data object for output of card command EstablishPACEChannel
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -11,6 +11,7 @@
 #include "asn1/SecurityInfos.h"
 #include "Apdu.h"
 #include "CardReturnCode.h"
+#include "pace/EstablishPACEChannelCode.h"
 #include "SmartCardDefinitions.h"
 
 #include <QByteArray>
@@ -46,7 +47,7 @@ DECLARE_ASN1_OBJECT(ESTABLISHPACECHANNELINPUT)
 class EstablishPACEChannelBuilder
 {
 	private:
-		PACE_PIN_ID mPinId;
+		PACE_PASSWORD_ID mPasswordId;
 		QByteArray mChat;
 		QByteArray mCertificateDescription;
 
@@ -65,7 +66,7 @@ class EstablishPACEChannelBuilder
 
 		void setCertificateDescription(const QByteArray& pCertificateDescription);
 		void setChat(const QByteArray& pChat);
-		void setPinId(PACE_PIN_ID pPinId);
+		void setPasswordId(PACE_PASSWORD_ID pPasswordId);
 };
 
 
@@ -102,11 +103,7 @@ class EstablishPACEChannelOutput
 		QByteArray mCarCurr;
 		QByteArray mCarPrev;
 		QByteArray mIdIcc;
-
-
-		static int parseUSHORT(const QByteArray& pData, int pOffset);
-
-		static QByteArray reverse(const QByteArray& pArrayToReverse);
+		QByteArray mStatusMseSetAt;
 
 	public:
 		EstablishPACEChannelOutput();
@@ -114,12 +111,13 @@ class EstablishPACEChannelOutput
 		/**
 		 * Defined in pcsc10_v2.02.08_amd1.1
 		 */
-		void parse(const QByteArray& pControlOutput, PACE_PIN_ID pPinId);
+		void parse(const QByteArray& pControlOutput, PACE_PASSWORD_ID pPasswordId);
 
 		/**
 		 * Defined in TR-03119
 		 */
-		void parseFromCcid(const QByteArray& pOutput, PACE_PIN_ID pPinId);
+		QByteArray toCcid() const;
+		void parseFromCcid(const QByteArray& pOutput, PACE_PASSWORD_ID pPasswordId);
 
 		CardReturnCode getPaceReturnCode() const;
 		void setPaceReturnCode(CardReturnCode);
@@ -136,7 +134,11 @@ class EstablishPACEChannelOutput
 		QByteArray getCARprev() const;
 		void setCarPrev(const QByteArray&);
 
-		static CardReturnCode parseReturnCode(quint32 pPaceReturnCode, PACE_PIN_ID pPinId);
+		QByteArray getMseStatusSetAt() const;
+		void setStatusMseSetAt(const QByteArray& pStatusMseSetAt);
+
+		static CardReturnCode parseReturnCode(quint32 pPaceReturnCode, PACE_PASSWORD_ID pPasswordId);
+		static EstablishPACEChannelErrorCode generateReturnCode(CardReturnCode pReturnCode);
 };
 
 

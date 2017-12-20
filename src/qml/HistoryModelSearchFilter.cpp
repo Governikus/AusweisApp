@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HistoryModelSearchFilter.h"
@@ -25,7 +25,7 @@ bool HistoryModelSearchFilter::filterAcceptsRow(int pSourceRow, const QModelInde
 	}
 
 	const QModelIndex& modelIndex = dataSourceModel->index(pSourceRow, 0);
-	if (dataSourceModel->data(modelIndex, HistoryModel::DATETIME).toDateTime().toString(tr("MM/dd/yyyy")).contains(mFilterString, Qt::CaseInsensitive)
+	if (dataSourceModel->data(modelIndex, HistoryModel::DATETIME).toDateTime().toString(tr("dd.MM.yyyy")).contains(mFilterString, Qt::CaseInsensitive)
 			|| dataSourceModel->data(modelIndex, HistoryModel::SUBJECT).toString().contains(mFilterString, Qt::CaseInsensitive)
 			|| dataSourceModel->data(modelIndex, HistoryModel::PURPOSE).toString().contains(mFilterString, Qt::CaseInsensitive)
 			|| dataSourceModel->data(modelIndex, HistoryModel::REQUESTEDDATA).toString().contains(mFilterString, Qt::CaseInsensitive))

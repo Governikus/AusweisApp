@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/invoke/InitializeFrameworkResponse.h"
@@ -16,5 +16,5 @@ StateInitializeFramework::StateInitializeFramework(const QSharedPointer<Workflow
 void StateInitializeFramework::run()
 {
 	Q_ASSERT(!getContext()->getInitializeFramework().isNull());
-	Q_EMIT fireSuccess();
+	Q_EMIT fireContinue();
 }

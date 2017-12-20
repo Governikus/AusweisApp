@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref AppSettings
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QCoreApplication>
@@ -32,41 +32,6 @@ class test_AppSettings
 		void cleanup()
 		{
 			delete settings;
-		}
-
-
-		void testEquals()
-		{
-			AppSettings* otherSettings = new AppSettings;
-
-			QVERIFY(*settings == *otherSettings);
-
-			settings->getGeneralSettings().setShowSetupAssistant(!settings->getGeneralSettings().isShowSetupAssistant());
-			QVERIFY(*settings != *otherSettings);
-			otherSettings->getGeneralSettings().setShowSetupAssistant(settings->getGeneralSettings().isShowSetupAssistant());
-			QVERIFY(*settings == *otherSettings);
-
-			settings->getPreVerificationSettings().addLinkCertificate(QByteArray("123456"));
-			QVERIFY(*settings != *otherSettings);
-			otherSettings->getPreVerificationSettings().addLinkCertificate(QByteArray("123456"));
-			QVERIFY(*settings == *otherSettings);
-
-			settings->getProviderSettings().setIssueDate(QDateTime(QDate(1989, 11, 9)));
-			QVERIFY(*settings != *otherSettings);
-			otherSettings->getProviderSettings().setIssueDate(QDateTime(QDate(1989, 11, 9)));
-			QVERIFY(*settings == *otherSettings);
-
-			settings->getSecureStorage().load();
-			QVERIFY(*settings != *otherSettings);
-			otherSettings->getSecureStorage().load();
-			QVERIFY(*settings == *otherSettings);
-
-			settings->getRemoteReaderSettings().setServerName(QLatin1String("Google Pixel"));
-			QVERIFY(*settings != *otherSettings);
-			otherSettings->getRemoteReaderSettings().setServerName(QLatin1String("Google Pixel"));
-			QVERIFY(*settings == *otherSettings);
-
-			delete otherSettings;
 		}
 
 

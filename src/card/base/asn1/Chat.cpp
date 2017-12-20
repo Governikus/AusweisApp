@@ -1,7 +1,5 @@
 /*!
- * CHAT.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ASN1TemplateUtil.h"
@@ -61,7 +59,7 @@ int CHAT::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt
 				*pVal = nullptr;
 				return CB_ERROR;
 			}
-			else if (chat->getType() != KnownOIDs::CHATType::id_AT)
+			else if (chat->getType() != KnownOIDs::CHATType::ID_AT)
 			{
 				// currently we only support Authentication Terminals
 				qDebug() << "CHAT type is unsupported" << chat->getType();

@@ -1,7 +1,7 @@
 /*!
  * \brief UIPlugIn implementation of QML.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,10 +18,12 @@
 #include "NumberModel.h"
 #include "ProviderCategoryFilterModel.h"
 #include "QmlExtension.h"
+#include "RemoteServiceModel.h"
 #include "SelfAuthenticationModel.h"
 #include "SettingsModel.h"
 #include "StatusBarUtil.h"
 #include "VersionInformationModel.h"
+
 #include <QQmlApplicationEngine>
 #include <QScopedPointer>
 
@@ -55,23 +57,24 @@ class UIPlugInQml
 		QString mExplicitPlatformStyle;
 		StatusBarUtil mStatusBarUtil;
 		ConnectivityManager mConnectivityManager;
+		RemoteServiceModel mRemoteServiceModel;
 
 		QString getPlatformSelectors() const;
+		static QUrl getPath(const QString& pRelativePath);
 
 	public:
 		UIPlugInQml();
-		virtual ~UIPlugInQml();
+		virtual ~UIPlugInQml() override;
 		QString getPlatformStyle() const;
 		Q_INVOKABLE void applyPlatformStyle(const QString& pPlatformStyle);
 		Q_INVOKABLE bool isDeveloperBuild() const;
 		Q_INVOKABLE void init();
 
-		static QUrl getFile(const QString& pFile);
-
 	private Q_SLOTS:
 		virtual void doShutdown() override;
 		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
 		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void onShowUserInformation(const QString& pMessage);
 
 	public Q_SLOTS:
 		void doRefresh();

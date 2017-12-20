@@ -1,11 +1,11 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "QmlExtension.h"
 
 #ifndef Q_OS_WINRT
-#include "PdfCreator.h"
+#include "PdfExporter.h"
 #endif
 
 #include <QLoggingCategory>
@@ -18,25 +18,25 @@ using namespace governikus;
 
 void QmlExtension::showSettings(const QString&)
 {
-	qCWarning(qml) << "NOT IMPLEMENTED YET";
+	qCWarning(qml) << "NOT IMPLEMENTED";
 }
 
 
 void QmlExtension::shareText(const QString&, const QString&)
 {
-	qCWarning(qml) << "NOT IMPLEMENTED YET";
+	qCWarning(qml) << "NOT IMPLEMENTED";
 }
 
 
 void QmlExtension::showFeedback(const QString&)
 {
-	qCWarning(qml) << "NOT IMPLEMENTED YET";
+	qCWarning(qml) << "NOT IMPLEMENTED";
 }
 
 
 void QmlExtension::mailLog(const QString&, const QString&, const QString&)
 {
-	qCWarning(qml) << "NOT IMPLEMENTED YET";
+	qCWarning(qml) << "NOT IMPLEMENTED";
 }
 
 
@@ -46,9 +46,16 @@ bool QmlExtension::exportHistory(const QString& pPdfUrl) const
 	return false;
 
 #else
-	return PdfExport::exportHistory(QUrl(pPdfUrl).toLocalFile());
+	PdfExporter exporter(QUrl(pPdfUrl).toLocalFile());
+	return exporter.exportHistory();
 
 #endif
+}
+
+
+void QmlExtension::keepScreenOn(bool)
+{
+	qCWarning(qml) << "NOT IMPLEMENTED";
 }
 
 

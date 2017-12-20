@@ -1,14 +1,19 @@
 /*!
- * CreateCardConnectionCommand.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
+
 #include "CreateCardConnectionCommand.h"
+
+#include "Initializer.h"
 #include "ReaderManagerWorker.h"
 
 #include <QThread>
 
 using namespace governikus;
+
+static Initializer::Entry X([] {
+			qRegisterMetaType<QSharedPointer<CreateCardConnectionCommand> >("QSharedPointer<CreateCardConnectionCommand>");
+		});
 
 
 CreateCardConnectionCommand::CreateCardConnectionCommand(const QString& pReaderName, const QPointer<ReaderManagerWorker>& pReaderManagerWorker)
@@ -55,12 +60,7 @@ QSharedPointer<CardConnection> CreateCardConnectionCommand::getCardConnection() 
 }
 
 
-void CreateCardConnectionCommand::registerMetaTypes()
+const QString& CreateCardConnectionCommand::getReaderName() const
 {
-	static bool registered = false;
-	if (!registered)
-	{
-		qRegisterMetaType<QSharedPointer<CreateCardConnectionCommand> >("QSharedPointer<CreateCardConnectionCommand>");
-		registered = true;
-	}
+	return mReaderName;
 }

@@ -1,8 +1,11 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowContext.h"
+
+#include "FuncUtils.h"
+#include "ReaderManager.h"
 
 using namespace governikus;
 
@@ -10,7 +13,7 @@ WorkflowContext::WorkflowContext()
 	: QObject()
 	, mStateApproved(false)
 	, mCurrentState()
-	, mReaderType(ReaderManagerPlugInType::UNKNOWN)
+	, mReaderPlugInTypes()
 	, mReaderName()
 	, mCardConnection()
 	, mCan()
@@ -62,26 +65,23 @@ const QString& WorkflowContext::getCurrentState() const
 
 void WorkflowContext::setCurrentState(const QString& pNewState)
 {
-	if (mCurrentState != pNewState)
-	{
-		mCurrentState = pNewState;
-		Q_EMIT fireCurrentStateChanged(pNewState);
-	}
+	mCurrentState = pNewState;
+	Q_EMIT fireStateChanged(pNewState);
 }
 
 
-ReaderManagerPlugInType WorkflowContext::getReaderType() const
+const QVector<ReaderManagerPlugInType>& WorkflowContext::getReaderPlugInTypes() const
 {
-	return mReaderType;
+	return mReaderPlugInTypes;
 }
 
 
-void WorkflowContext::setReaderType(ReaderManagerPlugInType pReaderType)
+void WorkflowContext::setReaderPlugInTypes(const QVector<ReaderManagerPlugInType>& pReaderPlugInTypes)
 {
-	if (mReaderType != pReaderType)
+	if (mReaderPlugInTypes != pReaderPlugInTypes)
 	{
-		mReaderType = pReaderType;
-		Q_EMIT fireReaderTypeChanged();
+		mReaderPlugInTypes = pReaderPlugInTypes;
+		Q_EMIT fireReaderPlugInTypesChanged();
 	}
 }
 
@@ -207,17 +207,29 @@ void WorkflowContext::setLastPaceResultAndRetryCounter(CardReturnCode pLastPaceR
 }
 
 
+void WorkflowContext::resetLastPaceResultAndRetryCounter()
+{
+	mOldRetryCounter = -1;
+	mLastPaceResult = CardReturnCode::OK;
+}
+
+
 const GlobalStatus& WorkflowContext::getStatus() const
 {
 	return mStatus;
 }
 
 
-void WorkflowContext::setStatus(const GlobalStatus& pStatus)
+void WorkflowContext::setStatus(const GlobalStatus& pStatus, bool pReportToUser)
 {
+	const bool forceReport = mStatus.isNoError() && pStatus.isError();
+
 	mStatus = pStatus;
-	mErrorReportedToUser = false;
-	Q_EMIT fireResultChanged();
+	if (pReportToUser || forceReport)
+	{
+		mErrorReportedToUser = false;
+		Q_EMIT fireResultChanged();
+	}
 }
 
 

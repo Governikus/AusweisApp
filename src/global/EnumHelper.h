@@ -1,9 +1,7 @@
 /*!
- * EnumHelper.h
- *
  * \brief Helper class to provide a QMetaObject handler for enumerations.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -144,9 +142,9 @@ template<typename EnumTypeT> class Enum
 		}
 
 
-		static EnumTypeT fromString(const QString& pValue, EnumTypeT pDefault)
+		static EnumTypeT fromString(const QString& pValue, EnumTypeT pDefaultType)
 		{
-			return fromString(pValue.toUtf8().constData(), pDefault);
+			return fromString(pValue.toUtf8().constData(), pDefaultType);
 		}
 
 

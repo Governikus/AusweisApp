@@ -1,0 +1,3 @@
+ADD_PLATFORM_LIBRARY(AusweisAppRemoteDevice)
+
+TARGET_LINK_LIBRARIES(AusweisAppRemoteDevice Qt5::Core Qt5::WebSockets AusweisAppCard AusweisAppGlobal AusweisAppSecureStorage AusweisAppNetwork AusweisAppSettings)

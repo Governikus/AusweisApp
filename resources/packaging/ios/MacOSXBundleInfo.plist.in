@@ -14,9 +14,9 @@
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>icon29x29</string>
-				<string>icon40x40</string>
-				<string>icon60x60</string>
+				<string>iconSmall</string>
+				<string>iconSmall40</string>
+				<string>icon60</string>
 			</array>
 		</dict>
 	</dict>
@@ -26,10 +26,11 @@
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>icon29x29</string>
-				<string>icon40x40</string>
-				<string>icon60x60</string>
-				<string>icon76x76</string>
+				<string>iconSmall</string>
+				<string>iconSmall40</string>
+				<string>icon60</string>
+				<string>icon76</string>
+				<string>icon83.5</string>
 			</array>
 		</dict>
 	</dict>
@@ -60,6 +61,10 @@
 	</array>
 	<key>CSResourcesFileMapped</key>
 	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+	</array>
 	<key>LSRequiresCarbon</key>
 	<true/>
 	<key>UIRequiresFullScreen</key>
@@ -68,30 +73,87 @@
 	<array>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-			<string>7.0</string>
+			<string>10.0</string>
 			<key>UILaunchImageName</key>
-			<string>launchIcon</string>
+			<string>launchImage568</string>
+			<key>UILaunchImageOrientation</key>
+			<string>Portrait</string>
 			<key>UILaunchImageSize</key>
 			<string>{320, 568}</string>
 		</dict>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-			<string>7.0</string>
+			<string>10.0</string>
 			<key>UILaunchImageName</key>
-			<string>launchIcon6</string>
+			<string>launchImage667</string>
+			<key>UILaunchImageOrientation</key>
+			<string>Portrait</string>
 			<key>UILaunchImageSize</key>
 			<string>{375, 667}</string>
 		</dict>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-			<string>7.0</string>
+			<string>10.0</string>
 			<key>UILaunchImageName</key>
-			<string>launchIcon6p</string>
+			<string>launchImage736</string>
+			<key>UILaunchImageOrientation</key>
+			<string>Portrait</string>
 			<key>UILaunchImageSize</key>
 			<string>{414, 736}</string>
 		</dict>
 	</array>
+	<key>UILaunchImages~ipad</key>
+	<array>
+		<dict>
+			<key>UILaunchImageMinimumOSVersion</key>
+			<string>10.0</string>
+			<key>UILaunchImageName</key>
+			<string>launchImage1024</string>
+			<key>UILaunchImageOrientation</key>
+			<string>Landscape</string>
+			<key>UILaunchImageSize</key>
+			<string>{768, 1024}</string>
+		</dict>
+		<dict>
+			<key>UILaunchImageMinimumOSVersion</key>
+			<string>10.0</string>
+			<key>UILaunchImageName</key>
+			<string>launchImage1112</string>
+			<key>UILaunchImageOrientation</key>
+			<string>Landscape</string>
+			<key>UILaunchImageSize</key>
+			<string>{834, 1112}</string>
+		</dict>
+		<dict>
+			<key>UILaunchImageMinimumOSVersion</key>
+			<string>10.0</string>
+			<key>UILaunchImageName</key>
+			<string>launchImage1366</string>
+			<key>UILaunchImageOrientation</key>
+			<string>Landscape</string>
+			<key>UILaunchImageSize</key>
+			<string>{1024, 1366}</string>
+		</dict>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
 	<key>NSHumanReadableCopyright</key>
 	<string>${MACOSX_BUNDLE_COPYRIGHT}</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+		<string>fetch</string>
+	</array>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>AusweisApp2 needs Bluetooth to enable the required card reader.</string>
+	<key>NFCReaderUsageDescription</key>
+	<string>AusweisApp2 needs NFC to access the ID card.</string>
 </dict>
 </plist>

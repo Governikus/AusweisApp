@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref Asn1OctetStringUtil
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -48,7 +48,7 @@ class test_Asn1OctetStringUtil
 			QCOMPARE(asn1OctetString->length, 15);
 			for (int i = 0; i < 15; i++)
 			{
-				QCOMPARE(asn1OctetString->data[i], (unsigned char) (i + 1));
+				QCOMPARE(asn1OctetString->data[i], uchar(i + 1));
 			}
 		}
 

@@ -1,9 +1,7 @@
 /*!
- * StartPaosResponse.h
- *
  * \brief Class represents the retrieved PAOS StartPaosResponse
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

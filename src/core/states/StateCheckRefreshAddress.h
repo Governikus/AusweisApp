@@ -1,10 +1,8 @@
 /*!
- * StateCheckRefreshAddress.h
- *
  * \brief Calls the RefreshAddress of TcToken and checks the certificates.
  * After that it will set RedirectAddress in WorkflowContext.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -36,8 +34,8 @@ class StateCheckRefreshAddress
 		QPointer<QNetworkReply> mReply;
 		QUrl mUrl;
 		QUrl mSubjectUrl;
-		NetworkManager mNetworkManager;
 		bool mCertificateFetched;
+		QVector<QUrl> mVerifiedRefreshUrlHosts;
 
 		virtual void run() override;
 

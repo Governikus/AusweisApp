@@ -33,7 +33,7 @@ class Constants
 	static String genMsgName(String name, nameGenerator)
 	{
 		def jobName = nameGenerator(name)
-		def envJobName = jobName.replaceAll('-', '_').toUpperCase()
+		def envJobName = jobName.replaceAll('-', '_').replaceAll('\\.', '_').toUpperCase()
 
 		return name + ': [' + getEnvResult(envJobName) + '](${JENKINS_URL}job/' + jobName + '/' + getEnvNumber(envJobName) + '/)'
 	}
@@ -45,7 +45,7 @@ class Constants
 		jobs.each
 		{
 			String name = nameGenerator("${it}")
-			name = name.replaceAll('-', '_').toUpperCase()
+			name = name.replaceAll('-', '_').replaceAll('\\.', '_').toUpperCase()
 			map << [(name + '_BUILD_RESULT'):'']
 			map << [(name + '_BUILD_NUMBER'):'']
 		}

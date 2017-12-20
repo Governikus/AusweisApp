@@ -1,9 +1,7 @@
 /*!
- * MockReaderManagerPlugIn.h
- *
  * \brief Mock implementation of ReaderManagerPlugIn
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -32,7 +30,7 @@ class MockReaderManagerPlugIn
 
 		static MockReaderManagerPlugIn& getInstance();
 
-		QList<Reader*> getReader() const;
+		virtual QList<Reader*> getReaders() const override;
 
 		MockReader* addReader(const QString& pReaderName);
 

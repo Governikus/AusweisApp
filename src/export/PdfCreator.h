@@ -1,52 +1,36 @@
 /*!
- * \brief Tool to create PDF-Documents for history or selfauthentication result.
+ * \brief Tool to create PDF-Documents.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include <QCoreApplication>
-#include <QObject>
+#include <QPdfWriter>
 #include <QString>
+#include <QTextDocument>
 
 namespace governikus
 {
-
-class PdfExport
-{
-	Q_DECLARE_TR_FUNCTIONS(governikus::PdfExport)
-
-	public:
-		static bool exportHistory(const QString& pFileName);
-};
-
 
 class PdfCreator
 {
 	Q_DECLARE_TR_FUNCTIONS(governikus::PdfCreator)
 
 	private:
-		QString mFilename;
-		bool mColoredRow;
-		int mColumnCount;
-		QString mHeadline;
-		QString mContent;
+		QPdfWriter mPdfWriter;
+		QTextDocument mHeader;
+		QTextDocument mContent;
+		QTextDocument mFooter;
 
-		void closeTable();
+		void createHeader(const QString& pTitle, const QString& pHeadline);
+		void createContent(const QString& pContent);
+		void createFooter();
 
 	public:
-		PdfCreator(const QString& pFilename);
-		virtual ~PdfCreator();
-
-		QUrl getFileUrl();
-
-		void setHeadline(const QString& pHeadline);
-		void initTable(int pColumnCount, const QList<int>& pWidth, const QStringList& pValues);
-		void addTableRow(const QStringList& pValues);
-		void toggleRowColor();
-		void save();
-
+		PdfCreator(const QString& pFilename, const QString& pTitle, const QString& pHeadline, const QString& pContent);
+		bool save();
 };
 
 

@@ -1,5 +1,11 @@
+/*
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 #include "CardReturnCode.h"
 #include "moc_CardReturnCode.cpp"
+
+#include "GlobalStatus.h"
 
 using namespace governikus;
 
@@ -19,7 +25,6 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 			return GlobalStatus::Code::Card_Not_Found;
 
 		case CardReturnCode::COMMAND_FAILED:
-		case CardReturnCode::GET_CHALLENGE_FAILED:
 			return GlobalStatus::Code::Card_Communication_Error;
 
 		case CardReturnCode::PROTOCOL_ERROR:
@@ -57,5 +62,5 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 			return GlobalStatus::Code::Card_Puk_Blocked;
 	}
 
-	return GlobalStatus::Code::Unknown_Error;
+	Q_UNREACHABLE();
 }

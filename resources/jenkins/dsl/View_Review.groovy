@@ -7,7 +7,7 @@ categorizedJobsView('Review')
 
 	categorizationCriteria
 	{
-		regexGroupingRule('([a-z])+_Review_(.)*', 'Branches')
+		regexGroupingRule('([a-z|0-9|.])+_Review_(.)*', 'Branches')
 	}
 
 	categorizationCriteria

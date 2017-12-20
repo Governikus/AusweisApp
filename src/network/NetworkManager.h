@@ -1,7 +1,7 @@
 /*
  * \brief Wrapper around QNetworkAccessManager
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,17 +31,20 @@ class NetworkManager
 
 		static bool mLockProxy;
 		QScopedPointer<QNetworkAccessManager, QScopedPointerDeleteLater> mNetAccessManager;
-		QScopedPointer<QNetworkAccessManager, QScopedPointerDeleteLater> mNetAccessManagerPsk;
 
-		void configureProxy(QTcpSocket* pSocket, const QUrl& pUrl);
 		QString getUserAgentHeader() const;
 
 	public Q_SLOTS:
 		void onShutdown();
 
+	protected:
+		NetworkManager();
+		virtual ~NetworkManager();
+
 	public:
 		enum class NetworkError
 		{
+			ServiceUnavailable,
 			TimeOut,
 			ProxyError,
 			SslError,
@@ -56,24 +59,19 @@ class NetworkManager
 		}
 
 
-		static NetworkManager& getGlobalInstance();
+		static NetworkManager& getInstance();
 		static NetworkError toNetworkError(const QNetworkReply* const pNetworkReply);
 		static GlobalStatus toTrustedChannelStatus(const QNetworkReply* const pNetworkReply);
 		static GlobalStatus toStatus(const QNetworkReply* const pNetworkReply);
 		static QString getTlsVersionString(QSsl::SslProtocol pProtocol);
 
-		NetworkManager();
-		virtual ~NetworkManager();
-
-		virtual QNetworkReply* paos(QNetworkRequest& pRequest, const QByteArray& pData, bool pUsePsk = true, int pTimeoutInMilliSeconds = 30000);
+		virtual void clearConnections();
+		virtual QNetworkReply* paos(QNetworkRequest& pRequest, const QByteArray& pNamespace, const QByteArray& pData, bool pUsePsk = true, int pTimeoutInMilliSeconds = 30000);
 		virtual QNetworkReply* get(QNetworkRequest& pRequest, int pTimeoutInMilliSeconds = 30000);
-		int getOpenConnectionCount();
 
-		/*!
-		 * Creates a QSslSocket. The parameter \a pUrl is used to set the proxy for this socket.
-		 * The socket is *not* connected.
-		 */
-		QSslSocket* createSslSocket(const QUrl& pUrl);
+		virtual bool checkUpdateServerCertificate(const QNetworkReply& pReply);
+
+		int getOpenConnectionCount();
 
 	Q_SIGNALS:
 		void fireProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);

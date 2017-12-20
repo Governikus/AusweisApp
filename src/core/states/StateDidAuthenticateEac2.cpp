@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/CVCertificate.h"
@@ -37,8 +37,8 @@ void StateDidAuthenticateEac2::run()
 	auto cvcChain = getContext()->getChainForCertificationAuthority(*getContext()->getPaceOutputData());
 	if (!cvcChain.isValid())
 	{
-		setStatus(GlobalStatus::Code::Workflow_No_Permission_Error);
-		Q_EMIT fireError();
+		updateStatus(GlobalStatus::Code::Workflow_No_Permission_Error);
+		Q_EMIT fireAbort();
 		return;
 	}
 
@@ -49,10 +49,11 @@ void StateDidAuthenticateEac2::run()
 
 void StateDidAuthenticateEac2::onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 {
-	if (pCommand->getReturnCode() != CardReturnCode::OK)
+	const CardReturnCode returnCode = pCommand->getReturnCode();
+	if (returnCode != CardReturnCode::OK)
 	{
-		setStatus(GlobalStatus::Code::Workflow_No_Permission_Error);
-		Q_EMIT fireError();
+		updateStatus(returnCode == CardReturnCode::COMMAND_FAILED ? GlobalStatus::Code::Workflow_Card_Removed : GlobalStatus::Code::Workflow_No_Permission_Error);
+		Q_EMIT fireAbort();
 	}
 
 	auto eac2Command = pCommand.staticCast<DidAuthenticateEAC2Command>();
@@ -61,5 +62,5 @@ void StateDidAuthenticateEac2::onCardCommandDone(QSharedPointer<BaseCardCommand>
 	response->setEfCardSecurity(eac2Command->getEfCardSecurityAsHex());
 	response->setNonce(eac2Command->getNonceAsHex());
 
-	Q_EMIT fireSuccess();
+	Q_EMIT fireContinue();
 }

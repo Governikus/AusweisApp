@@ -1,9 +1,7 @@
 /*!
- * Card.h
- *
  * \brief Class representing a smart card
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -55,7 +53,7 @@ class Card
 		/*!
 		 * Establishes a PACE channel, i.e. the corresponding reader is no basic reader.
 		 */
-		virtual CardReturnCode establishPaceChannel(PACE_PIN_ID pPinId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds = 60);
+		virtual CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds = 60);
 
 		/*!
 		 * Destroys an existing  PACE channel, i.e. the corresponding reader is no basic reader.

@@ -1,8 +1,7 @@
 /*!
- * BluetoothReaderManagerPlugInPrivate_p_android.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
+
 #include "AndroidBluetoothAdapter.h"
 #include "BluetoothReaderManagerPlugIn_p.h"
 
@@ -88,29 +87,12 @@ void BluetoothReaderManagerPlugInPrivate::onScanStart()
 
 void BluetoothReaderManagerPlugInPrivate::handlePairedDevices()
 {
-	static QVector<QBluetoothDeviceInfo> knownPairedDevices;
-	const QVector<QBluetoothDeviceInfo>& currentlyPairedDevices = AndroidBluetoothAdapter::getDefaultAdapter().getBondedDevices();
-	QVector<QBluetoothDeviceInfo> newlyPairedDevices;
-
-	for (const QBluetoothDeviceInfo& device : qAsConst(currentlyPairedDevices))
+	const QVector<QBluetoothDeviceInfo>& pairedDevices = AndroidBluetoothAdapter::getDefaultAdapter().getBondedDevices();
+	for (const QBluetoothDeviceInfo& device : pairedDevices)
 	{
-		if (!knownPairedDevices.contains(device))
-		{
-			newlyPairedDevices.append(device);
-		}
-	}
-
-	if (!newlyPairedDevices.isEmpty())
-	{
-		qCDebug(bluetooth) << "Found" << newlyPairedDevices.size() << "paired devices";
 		Q_Q(BluetoothReaderManagerPlugIn);
-		for (const QBluetoothDeviceInfo& device : qAsConst(newlyPairedDevices))
-		{
-			q->onDeviceDiscovered(device);
-		}
+		q->onDeviceDiscovered(device);
 	}
-
-	knownPairedDevices = currentlyPairedDevices;
 }
 
 
@@ -119,7 +101,7 @@ void BluetoothReaderManagerPlugInPrivate::onDeviceDiscoveryCanceled()
 	Q_Q(BluetoothReaderManagerPlugIn);
 	for (auto deviceId : q->mReaders.keys())
 	{
-		if (!q->mDiscoveredReadersInCurrentScan.contains(deviceId))
+		if (!q->mReadersDiscoveredInCurrentScan.contains(deviceId))
 		{
 			q->onRemoveReader(deviceId);
 		}

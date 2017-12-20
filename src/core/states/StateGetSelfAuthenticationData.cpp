@@ -1,18 +1,19 @@
 /*!
- * StateGetSelfAuthenticationData.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetSelfAuthenticationData.h"
 
 #include "CertificateChecker.h"
+#include "Env.h"
 #include "HttpStatusCode.h"
 #include "SelfAuthenticationData.h"
-#include "TlsConfiguration.h"
+#include "TlsChecker.h"
 
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QSslKey>
+
+Q_DECLARE_LOGGING_CATEGORY(network)
 
 using namespace governikus;
 
@@ -38,7 +39,7 @@ void StateGetSelfAuthenticationData::run()
 	qDebug() << address;
 
 	QNetworkRequest request(address);
-	mReply = getContext()->getNetworkManager().get(request);
+	mReply = Env::getSingleton<NetworkManager>()->get(request);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGetSelfAuthenticationData::onSslErrors);
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGetSelfAuthenticationData::onSslHandshakeDone);
 	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateGetSelfAuthenticationData::onNetworkReply);
@@ -48,15 +49,18 @@ void StateGetSelfAuthenticationData::run()
 void StateGetSelfAuthenticationData::reportCommunicationError(const GlobalStatus& pStatus)
 {
 	qCritical() << pStatus;
-	setStatus(pStatus);
+	updateStatus(pStatus);
 	mReply->abort();
-	Q_EMIT fireError();
+	Q_EMIT fireAbort();
 }
 
 
 void StateGetSelfAuthenticationData::onSslHandshakeDone()
 {
-	if (!checkSslConnectionAndSaveCertificate(mReply->sslConfiguration()))
+	const auto& cfg = mReply->sslConfiguration();
+	TlsChecker::logSslConfig(cfg, qInfo(network));
+
+	if (!checkSslConnectionAndSaveCertificate(cfg))
 	{
 		// checkAndSaveCertificate already set the error
 		mReply->abort();
@@ -66,12 +70,16 @@ void StateGetSelfAuthenticationData::onSslHandshakeDone()
 
 bool StateGetSelfAuthenticationData::checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration)
 {
-	qDebug() << "Used session cipher" << pSslConfiguration.sessionCipher();
-	qDebug() << "Used session protocol:" << pSslConfiguration.sessionProtocol();
-	qDebug() << "Used server certificate:" << pSslConfiguration.peerCertificate();
-	qDebug() << "Used ephemeral server key:" << pSslConfiguration.ephemeralServerKey();
+	const QSharedPointer<AuthContext>& context = getContext();
+	Q_ASSERT(!context.isNull());
 
-	switch (CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), getContext()->getRefreshUrl(), getContext()))
+	const auto& saveCertificateFunc = [&]
+				(const QUrl& pUrl, const QSslCertificate& pCertificate)
+			{
+				context->addCertificateData(pUrl, pCertificate);
+			};
+
+	switch (CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), getContext()->getRefreshUrl(), context->getDidAuthenticateEac1(), context->getDvCvc(), saveCertificateFunc))
 	{
 		case CertificateChecker::CertificateStatus::Good:
 			break;
@@ -85,9 +93,9 @@ bool StateGetSelfAuthenticationData::checkSslConnectionAndSaveCertificate(const 
 			return false;
 	}
 
-	if (!CertificateChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
+	if (!TlsChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
-		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length));
+		reportCommunicationError(GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length);
 		return false;
 	}
 
@@ -97,7 +105,7 @@ bool StateGetSelfAuthenticationData::checkSslConnectionAndSaveCertificate(const 
 
 void StateGetSelfAuthenticationData::onSslErrors(const QList<QSslError>& pErrors)
 {
-	if (TlsConfiguration::containsFatalError(mReply, pErrors))
+	if (TlsChecker::containsFatalError(mReply, pErrors))
 	{
 		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Ssl_Establishment_Error));
 	}
@@ -111,23 +119,23 @@ void StateGetSelfAuthenticationData::onNetworkReply()
 
 	if (statusCode == HttpStatusCode::OK)
 	{
-		QSharedPointer<SelfAuthenticationData> data(new SelfAuthenticationData(mReply->readAll()));
-		if (data->isValid())
+		const SelfAuthenticationData data(mReply->readAll());
+		if (data.isValid())
 		{
 			getContext()->setSelfAuthenticationData(data);
-			Q_EMIT fireSuccess();
+			Q_EMIT fireContinue();
 		}
 		else
 		{
 			qDebug() << "Could not read data for self authentication.";
-			setStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
-			Q_EMIT fireError();
+			updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			Q_EMIT fireAbort();
 		}
 	}
 	else
 	{
 		qDebug() << "Could not read data for self authentication. StatusCode:" << statusCode;
-		setStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
-		Q_EMIT fireError();
+		updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+		Q_EMIT fireAbort();
 	}
 }

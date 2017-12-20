@@ -1,12 +1,10 @@
 /*!
- * WebserviceActivationHandler.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WebserviceActivationHandler.h"
 
-#include "EnvHolder.h"
+#include "Env.h"
 #include "HttpServerStatusParser.h"
 #include "Template.h"
 #include "VersionInfo.h"
@@ -42,7 +40,7 @@ void WebserviceActivationHandler::stop()
 
 bool WebserviceActivationHandler::start()
 {
-	mServer = EnvHolder::shared<HttpServer>();
+	mServer = Env::getShared<HttpServer>();
 
 	if (mServer->isListening())
 	{
@@ -58,7 +56,7 @@ bool WebserviceActivationHandler::start()
 	{
 		qCDebug(activation) << "We are already started... calling ShowUI";
 		HttpServerRequestor requestor;
-		if (requestor.request(HttpServerRequestor::createUrl("ShowUI=" + UiModule::CURRENT, port)).isNull())
+		if (requestor.request(HttpServerRequestor::createUrl(QStringLiteral("ShowUI=") + UiModule::CURRENT, port)).isNull())
 		{
 			qCWarning(activation) << "ShowUI request timed out";
 		}
@@ -101,7 +99,7 @@ void WebserviceActivationHandler::onNewRequest(const QSharedPointer<HttpRequest>
 		else if (urlParameter.contains(QLatin1String("tctokenurl")))
 		{
 			qCDebug(activation) << "Request type: authentication";
-			Q_EMIT fireAuthenticationRequest(new WebserviceActivationContext(pRequest));
+			Q_EMIT fireAuthenticationRequest(QSharedPointer<WebserviceActivationContext>::create(pRequest));
 			return;
 		}
 	}
@@ -143,7 +141,7 @@ void WebserviceActivationHandler::handleShowUiRequest(UiModule pUiModule, const 
 	QString userAgent = QString::fromLatin1(pRequest->getHeader(QByteArrayLiteral("user-agent")));
 	if (userAgent.startsWith(QCoreApplication::applicationName()))
 	{
-		QString version = userAgent.remove(QCoreApplication::applicationName() + '/').split(' ').at(0);
+		QString version = userAgent.remove(QCoreApplication::applicationName() + QLatin1Char('/')).split(QLatin1Char(' ')).at(0);
 		VersionNumber callerVersion(version);
 
 		if (callerVersion > VersionNumber::getApplicationVersion())

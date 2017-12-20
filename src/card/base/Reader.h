@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,7 +31,6 @@ class Reader
 
 		ReaderInfo mReaderInfo;
 		int mTimerId;
-		bool mUpdateRetryCounter;
 
 		void timerEvent(QTimerEvent* pEvent) override;
 
@@ -43,15 +42,13 @@ class Reader
 	private:
 		virtual CardEvent updateCard() = 0;
 
-		void updateRetryCounterIfNecessary();
-
 		CardReturnCode getRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, int& pRetryCounter, bool& pPinDeactivated);
 
 		void fireUpdateSignal(CardEvent pCardEvent);
 
 	public:
-		Reader(ReaderManagerPlugInType pPlugInType, const QString& pReaderName, ReaderType pType);
-		virtual ~Reader();
+		Reader(ReaderManagerPlugInType pPlugInType, const QString& pReaderName);
+		virtual ~Reader() override;
 
 		const QString& getName() const
 		{
@@ -59,16 +56,13 @@ class Reader
 		}
 
 
-		ReaderType getReaderType() const
-		{
-			return mReaderInfo.getReaderType();
-		}
-
-
 		const ReaderInfo& getReaderInfo() const
 		{
 			return mReaderInfo;
 		}
+
+
+		void setRetryCounter(int pRetryCounter);
 
 
 		virtual Card* getCard() const = 0;
@@ -89,9 +83,6 @@ class Reader
 		void fireCardRetryCounterChanged(const QString& pReaderName);
 		void fireReaderPropertiesUpdated(const QString& pReaderName);
 		void fireReaderDeviceError(DeviceError pDeviceError);
-
-	public Q_SLOTS:
-		void onRetryCounterPotentiallyChanged();
 
 
 };

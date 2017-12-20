@@ -1,9 +1,7 @@
 /*!
- * MockCard.h
- *
  * \brief Card mock for tests
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -47,7 +45,7 @@ class MockCard
 
 	public:
 		MockCard(const MockCardConfig& pCardConfig);
-		virtual ~MockCard();
+		virtual ~MockCard() override;
 
 		CardReturnCode connect() override;
 		CardReturnCode disconnect() override;

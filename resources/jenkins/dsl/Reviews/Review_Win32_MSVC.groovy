@@ -20,7 +20,7 @@ j.with
 		batchFile('''\
 			cd build
 			call vcvarsall.bat
-			cmake ../source -DCMAKE_CXX_COMPILER=clcache -DCMAKE_PREFIX_PATH=%WORKSPACE%/libs/build/dist -GNinja
+			cmake -Werror=dev ../source -DCMAKE_CXX_COMPILER=clcache -DCMAKE_PREFIX_PATH=%WORKSPACE%/libs/build/dist -GNinja
 			'''.stripIndent().trim())
 
 		batchFile('''\

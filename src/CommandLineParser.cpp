@@ -1,10 +1,9 @@
 /*
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CommandLineParser.h"
 
-#include "LanguageLoader.h"
 #include "LogHandler.h"
 #include "NetworkManager.h"
 #include "SingletonHelper.h"
@@ -35,16 +34,20 @@ Q_DECLARE_LOGGING_CATEGORY(cmdline)
 
 namespace
 {
-static QString prefixUi = QStringLiteral("UIPlugIn");
+QString getPrefixUi()
+{
+	return QStringLiteral("UIPlugIn");
+}
+
 
 QString defaultUi(const QVector<UIPlugInName>& pPlugins)
 {
 	QStringList list;
 	for (auto entry : pPlugins)
 	{
-		list << QString(getEnumName(entry)).remove(prefixUi);
+		list << QString(getEnumName(entry)).remove(getPrefixUi());
 	}
-	return list.join(',');
+	return list.join(QLatin1Char(','));
 }
 
 
@@ -52,14 +55,13 @@ QString defaultUi(const QVector<UIPlugInName>& pPlugins)
 
 CommandLineParser::CommandLineParser()
 	: mParser()
-	, mOptionKeepLog("keep", "Keep log file.")
-	, mOptionShowWindow("show", "Show window on startup.")
-	, mOptionProxy("no-proxy", "Disable system proxy.")
-	, mOptionLanguage("language", "Force UI language.", LanguageLoader::getDefaultLanguage().uiLanguages().join(','))
-	, mOptionUi("ui", "Use given UI plugin.", defaultUi(UILoader::getInstance().getDefault()))
-	, mOptionPort("port", "Use listening port.", "24727")
+	, mOptionKeepLog(QStringLiteral("keep"), QStringLiteral("Keep log file."))
+	, mOptionShowWindow(QStringLiteral("show"), QStringLiteral("Show window on startup."))
+	, mOptionProxy(QStringLiteral("no-proxy"), QStringLiteral("Disable system proxy."))
+	, mOptionUi(QStringLiteral("ui"), QStringLiteral("Use given UI plugin."), defaultUi(UILoader::getInstance().getDefault()))
+	, mOptionPort(QStringLiteral("port"), QStringLiteral("Use listening port."), QStringLiteral("24727"))
 #ifndef QT_NO_DEBUG
-	, mOptionPortWebSocket("port-websocket", "Use listening port for websocket.", QString::number(UIPlugInWebSocket::WEBSOCKET_DEFAULT_PORT))
+	, mOptionPortWebSocket(QStringLiteral("port-websocket"), QStringLiteral("Use listening port for websocket."), QString::number(UIPlugInWebSocket::WEBSOCKET_DEFAULT_PORT))
 #endif
 {
 	addOptions();
@@ -89,7 +91,6 @@ void CommandLineParser::addOptions()
 #endif
 
 	mParser.addOption(mOptionProxy);
-	mParser.addOption(mOptionLanguage);
 	mParser.addOption(mOptionUi);
 	mParser.addOption(mOptionPort);
 
@@ -125,20 +126,6 @@ void CommandLineParser::parse(QCoreApplication* pApp)
 	if (mParser.isSet(mOptionProxy))
 	{
 		NetworkManager::lockProxy(true);
-	}
-
-	if (mParser.isSet(mOptionLanguage))
-	{
-		const auto& language = mParser.value(mOptionLanguage);
-		const auto& locale = QLocale(language);
-		if (locale == QLocale::C)
-		{
-			qCWarning(cmdline) << "Cannot detect language:" << language;
-		}
-		else
-		{
-			LanguageLoader::setDefaultLanguage(locale);
-		}
 	}
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
@@ -187,7 +174,7 @@ void CommandLineParser::parseUiPlugin()
 		{
 			for (auto availablePluginEntry : availablePlugins)
 			{
-				if (parsedUiOption.compare(QString(getEnumName(availablePluginEntry)).remove(prefixUi), Qt::CaseInsensitive) == 0)
+				if (parsedUiOption.compare(QString(getEnumName(availablePluginEntry)).remove(getPrefixUi()), Qt::CaseInsensitive) == 0)
 				{
 					selectedPlugins << availablePluginEntry;
 				}

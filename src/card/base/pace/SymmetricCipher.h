@@ -1,9 +1,7 @@
 /*!
- * SymmetricCipher.h
- *
  * \brief Symmetric decryption method used for PACE.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

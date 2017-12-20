@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -17,12 +17,15 @@ class VersionInformationModel
 {
 	Q_OBJECT
 
-	enum HistoryRoles
-	{
-		LABEL = Qt::UserRole + 1,
-		TEXT
-	};
-	QVector<QPair<QString, QString> > mData;
+	private:
+		enum HistoryRoles
+		{
+			LABEL = Qt::UserRole + 1,
+			TEXT
+		};
+		QVector<QPair<QString, QString> > mData;
+
+		void init();
 
 	public:
 		VersionInformationModel(QObject* pParent = nullptr);

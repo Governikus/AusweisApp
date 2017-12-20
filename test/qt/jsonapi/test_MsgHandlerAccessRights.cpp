@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerAccessRights
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerAccessRights.h"
@@ -36,7 +36,22 @@ class test_MsgHandlerAccessRights
 	}
 
 
-#define AUX R"({"aux":{"ageVerificationDate":"1992-12-06","communityId":"02760400110000","requiredAge":"24","validityDate":"2013-12-06"},)"
+	QByteArray getAux() const
+	{
+		const QDate today = QDateTime::currentDateTimeUtc().date();
+		const QDate ageVerificationDate = QDate(1992, 12, 6);
+
+		const QByteArray age =
+				(today.month() > ageVerificationDate.month() || (today.month() == ageVerificationDate.month() && today.day() >= ageVerificationDate.day()))
+				? QByteArray::number(today.year() - ageVerificationDate.year())
+				: QByteArray::number(today.year() - ageVerificationDate.year() - 1);
+
+		QByteArray aux(R"({"aux":{"ageVerificationDate":"%1","communityId":"02760400110000","requiredAge":"%2","validityDate":"2013-12-06"},)");
+		aux.replace(QByteArrayLiteral("%1"), ageVerificationDate.toString(Qt::ISODate).toLatin1());
+		aux.replace(QByteArrayLiteral("%2"), age);
+		return aux;
+	}
+
 
 	private Q_SLOTS:
 		void nonExistingTransactionInfo()
@@ -56,7 +71,7 @@ class test_MsgHandlerAccessRights
 			dispatcher.init(getContextWithChat());
 
 			QCOMPARE(dispatcher.processStateChange("StateEditAccessRights"),
-					QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 		}
 
 
@@ -83,7 +98,7 @@ class test_MsgHandlerAccessRights
 
 			QVERIFY(!context->isStateApproved());
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
-					QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "ACCEPT"}   )")), QByteArray());
 			QVERIFY(context->isStateApproved());
@@ -97,7 +112,7 @@ class test_MsgHandlerAccessRights
 
 			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
-					QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 		}
 
 
@@ -107,28 +122,28 @@ class test_MsgHandlerAccessRights
 			QTest::addColumn<QByteArray>("msg");
 
 			QTest::newRow("chat_invalid") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["8",11]}   )")
-										  << QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data needs to be string","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+										  << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data needs to be string","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 
 			QTest::newRow("chat_needs_be_string") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": [8,"11"]}   )")
-												  << QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data is invalid","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+												  << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data is invalid","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 
 			QTest::newRow("chat_unknown_id") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["y", "123"]}   )")
-											 << QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data is invalid","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+											 << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data is invalid","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 
 			QTest::newRow("chat_set_optional") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["FamilyName"]}   )")
-											   << QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+											   << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 
 			QTest::newRow("chat_mixed_valid_and_required") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["AgeVerification", "GivenNames"]}   )")
-														   << QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data is not available","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+														   << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data is not available","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 
 			QTest::newRow("chat_both_optional") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["AgeVerification", "FamilyName"]}   )")
-												<< QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+												<< getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 
 			QTest::newRow("chat_single_optional") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["AgeVerification"]}   )")
-												  << QByteArray(AUX R"("chat":{"effective":["Address","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+												  << getAux() + QByteArray(R"("chat":{"effective":["Address","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 
 			QTest::newRow("chat_disable_optional") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": []}   )")
-												   << QByteArray(AUX R"("chat":{"effective":["Address","GivenNames","DocumentType"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+												   << getAux() + QByteArray(R"("chat":{"effective":["Address","GivenNames","DocumentType"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 		}
 
 
@@ -143,7 +158,7 @@ class test_MsgHandlerAccessRights
 
 			// check original state
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
-					QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 
 			// check cmd
 			QCOMPARE(dispatcher.processCommand(cmd), msg);
@@ -158,15 +173,15 @@ class test_MsgHandlerAccessRights
 
 			// check original state
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
-					QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 
 			// check cmds
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["FamilyName"]}   )")),
-					QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 
 			// 11 is not valid, 0 is valid ... we do not accept partial valid values!
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["AgeVerification", "GivenNames"]}   )")),
-					QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data is not available","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data is not available","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 		}
 
 
@@ -180,16 +195,16 @@ class test_MsgHandlerAccessRights
 			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
 
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["AgeVerification"]}   )")),
-					QByteArray(AUX R"("chat":{"effective":["Address","GivenNames","DocumentType"],"optional":[],"required":["Address","GivenNames","DocumentType"]},"error":"No optional access rights available","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+					getAux() + QByteArray(R"("chat":{"effective":["Address","GivenNames","DocumentType"],"optional":[],"required":["Address","GivenNames","DocumentType"]},"error":"No optional access rights available","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 
 			context->setOptionalAccessRights({AccessRight::AGE_VERIFICATION});
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["AgeVerification"]}   )")),
-					QByteArray(AUX R"("chat":{"effective":["Address","GivenNames","DocumentType","AgeVerification"],"optional":["AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+					getAux() + QByteArray(R"("chat":{"effective":["Address","GivenNames","DocumentType","AgeVerification"],"optional":["AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 
 			context->setRequiredAccessRights({AccessRight::AGE_VERIFICATION, AccessRight::READ_DG17});
 			context->setOptionalAccessRights({});
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["AgeVerification"]}   )")),
-					QByteArray(AUX R"("chat":{"effective":["Address","AgeVerification"],"optional":[],"required":["Address","AgeVerification"]},"error":"No optional access rights available","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+					getAux() + QByteArray(R"("chat":{"effective":["Address","AgeVerification"],"optional":[],"required":["Address","AgeVerification"]},"error":"No optional access rights available","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 		}
 
 
@@ -199,10 +214,10 @@ class test_MsgHandlerAccessRights
 			QTest::addColumn<QByteArray>("msg");
 
 			QTest::newRow("chat_null") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": null}   )")
-									   << QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Invalid 'chat' data","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+									   << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Invalid 'chat' data","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 
 			QTest::newRow("CHAT") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "CHAT": []}   )")
-								  << QByteArray(AUX R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"'chat' cannot be undefined","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+								  << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"'chat' cannot be undefined","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 		}
 
 

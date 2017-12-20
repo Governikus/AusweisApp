@@ -2,7 +2,7 @@
  * \brief Controller for the step that updates the retry
  *        counter of a card.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,11 +25,6 @@ class StateUpdateRetryCounter
 
 	private Q_SLOTS:
 		void onUpdateRetryCounterDone(QSharedPointer<BaseCardCommand> pCommand);
-
-	Q_SIGNALS:
-		void fireRetryCounterIsZero();
-		void fireRetryCounterIsOne();
-		void fireRetryCounterIsGTOne();
 };
 
 } /* namespace governikus */

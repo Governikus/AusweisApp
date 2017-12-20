@@ -1,22 +1,28 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderInfo.h"
 
+#include "Env.h"
+#include "Initializer.h"
+#include "ReaderDetector.h"
+
 using namespace governikus;
 
+static Initializer::Entry X([] {
+			qRegisterMetaType<ReaderInfo>("ReaderInfo");
+		});
 
-ReaderInfo::ReaderInfo(ReaderManagerPlugInType pPlugInType,
-		const QString& pName,
-		ReaderType pReaderType,
+ReaderInfo::ReaderInfo(const QString& pName,
+		ReaderManagerPlugInType pPlugInType,
 		const CardInfo& pCardInfo)
 	: mPlugInType(pPlugInType)
 	, mName(pName)
-	, mReaderType(pReaderType)
+	, mReaderConfigurationInfo(Env::getSingleton<ReaderDetector>()->getReaderConfigurationInfo(pName))
 	, mBasicReader(true)
 	, mCardInfo(pCardInfo)
 	, mConnected(false)
-	, mExtendedLengthApduSupportCode(pPlugInType == ReaderManagerPlugInType::NFC ? ExtendedLengthApduSupportCode::UNKNOWN : ExtendedLengthApduSupportCode::SUPPORTED)
+	, mMaxApduLength(pPlugInType == ReaderManagerPlugInType::NFC ? 0 : 500)
 {
 }

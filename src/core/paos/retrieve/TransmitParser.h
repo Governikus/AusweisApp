@@ -1,9 +1,7 @@
 /*!
- * Transmit.h
- *
  * \brief Parser for the PAOS Transmit element.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,7 +20,7 @@ class TransmitParser
 {
 	public:
 		TransmitParser();
-		~TransmitParser();
+		virtual ~TransmitParser() override;
 
 	protected:
 		virtual PaosMessage* parseMessage() override;

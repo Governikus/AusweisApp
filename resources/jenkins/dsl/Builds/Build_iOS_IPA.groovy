@@ -14,7 +14,7 @@ j.with
 {
 	steps
 	{
-		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain')
+		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain-db')
 
 		shell(strip('''\
 			cd build;
@@ -25,7 +25,7 @@ j.with
 			-GXcode
 			'''))
 
-		shell('cd build; CC=${CC_IOS} xcodebuild -target install -configuration Release PROVISIONING_PROFILE=${PROVISIONING_PROFILE_DEBUG}')
+		shell('cd build; xcodebuild -target install -configuration Release ARCHS=arm64')
 		shell('cd build; xcodebuild -target ipa -configuration Release')
 	}
 }

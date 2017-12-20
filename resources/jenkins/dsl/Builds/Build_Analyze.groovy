@@ -37,7 +37,7 @@ j.with
 
 	publishers
 	{
-		tasks('source/**/*.cpp,source/**/*.h,source/**/*.m,source/**/*.mm,source/**/*.cmake,source/**/CMakeLists.txt', '', 'FIXME', 'TODO', 'FINDME', true)
+		tasks('source/**/*.cpp,source/**/*.h,source/**/*.m,source/**/*.mm,source/**/*.qml,source/**/*.js,source/**/*.cmake,source/**/CMakeLists.txt', '', 'FIXME', 'TODO', 'FINDME', true)
 		{
 			defaultEncoding('UTF-8')
 		}

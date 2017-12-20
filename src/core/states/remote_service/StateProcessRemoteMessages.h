@@ -1,0 +1,45 @@
+/*!
+ * \brief This state allows the processing of ordenary remote messages in the
+ * background and handles special PACE messages.
+ *
+ * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ */
+
+#pragma once
+
+
+#include "context/RemoteServiceContext.h"
+#include "states/AbstractGenericState.h"
+
+namespace governikus
+{
+
+class StateProcessRemoteMessages
+	: public AbstractGenericState<RemoteServiceContext>
+{
+	Q_OBJECT
+	friend class StateBuilder;
+
+	private:
+		QVector<QMetaObject::Connection> mMessageConnections;
+
+		StateProcessRemoteMessages(const QSharedPointer<WorkflowContext>& pContext);
+		virtual void run() override;
+
+	private Q_SLOTS:
+		void onMessageHandlerAdded(const QSharedPointer<ServerMessageHandler>& pHandler);
+		void onClosed();
+		void onEstablishPaceChannel(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage, const QSharedPointer<CardConnection>& pConnection);
+
+	protected:
+		void onExit(QEvent* pEvent) override;
+
+	public:
+		virtual ~StateProcessRemoteMessages() override;
+
+	Q_SIGNALS:
+		void fireEstablishPaceChannel();
+
+};
+
+} /* namespace governikus */

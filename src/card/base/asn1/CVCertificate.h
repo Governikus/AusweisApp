@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of Card Verifiable Certificate, CVC.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -50,17 +50,14 @@ typedef struct cvcertificate_st
 	SIGNATURE* mSignature;
 	QSharedPointer<ECDSA_SIG> mEcdsaSignature;
 
-	static QVector<QSharedPointer<cvcertificate_st> > fromHex(const QByteArrayList& pHexByteList);
-	static QSharedPointer<cvcertificate_st> fromHex(const QByteArray& pHexBytes);
+	static QVector<QSharedPointer<const cvcertificate_st> > fromHex(const QByteArrayList& pHexByteList);
+	static QSharedPointer<const cvcertificate_st> fromHex(const QByteArray& pHexBytes);
 	QByteArray encode() const;
-
-	bool operator==(const cvcertificate_st& other) const;
 
 	const CVCertificateBody& getBody() const;
 	QByteArray getRawBody() const;
 	QSharedPointer<const ECDSA_SIG> getEcdsaSignature() const;
 	QByteArray getRawSignature() const;
-
 
 	bool isValidOn(const QDateTime& pValidationDate) const;
 	bool isIssuedBy(const cvcertificate_st& pIssuer) const;
@@ -74,14 +71,19 @@ DECLARE_ASN1_FUNCTIONS(CVCertificate)
 DECLARE_ASN1_OBJECT(CVCertificate)
 
 
+inline bool operator==(const CVCertificate& pLeft, const CVCertificate& pRight)
+{
+	return pLeft.getRawBody() == pRight.getRawBody() && pLeft.getRawSignature() == pRight.getRawSignature();
+}
+
+
+inline bool operator!=(const CVCertificate& pLeft, const CVCertificate& pRight)
+{
+	return !(pLeft == pRight);
+}
+
+
 } /* namespace governikus */
-
-
-bool operator==(const QSharedPointer<governikus::CVCertificate>& pCvc1, const QSharedPointer<governikus::CVCertificate>& pCvc2);
-bool operator==(const QSharedPointer<governikus::CVCertificate>& pCvc1, const QSharedPointer<const governikus::CVCertificate>& pCvc2);
-bool operator==(const QSharedPointer<const governikus::CVCertificate>& pCvc1, const QSharedPointer<governikus::CVCertificate>& pCvc2);
-bool operator==(const QSharedPointer<const governikus::CVCertificate>& pCvc1, const QSharedPointer<const governikus::CVCertificate>& pCvc2);
-
 
 QDebug operator<<(QDebug pDbg, const governikus::CVCertificate& pCvc);
 QDebug operator<<(QDebug pDbg, const QSharedPointer<const governikus::CVCertificate>& pCvc);

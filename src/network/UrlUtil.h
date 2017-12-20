@@ -1,6 +1,6 @@
 /*!
  * \brief Helper to convert \ref Result to Redirect-Result-String and some other URL stuff.
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

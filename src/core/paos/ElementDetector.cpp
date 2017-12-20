@@ -1,7 +1,5 @@
 /*!
- * ElementDetector.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ElementDetector.h"

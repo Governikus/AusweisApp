@@ -1,10 +1,14 @@
+/*!
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 #include "ProviderModel.h"
+
+#include "Env.h"
+#include "ProviderConfiguration.h"
 
 
 using namespace governikus;
-
-
-static const QStringList CATEGORIES({"citizen", "insurance", "finance", "other"});
 
 
 QString ProviderModel::createCostString(double pCostsPerMinute, double pCostsPerCall)
@@ -27,18 +31,44 @@ QString ProviderModel::createAmountString(double pCents)
 }
 
 
+void ProviderModel::updateConnections()
+{
+	for (const auto& connection : qAsConst(mConnections))
+	{
+		disconnect(connection);
+	}
+	mConnections.clear();
+
+	const auto& providerConfigurationInfos = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
+	mConnections.reserve(providerConfigurationInfos.size() * 2);
+	for (int i = 0; i < providerConfigurationInfos.size(); i++)
+	{
+		const auto& provider = providerConfigurationInfos.at(i);
+		const QModelIndex& modelIndex = createIndex(i, 0);
+
+		mConnections += connect(provider.getIcon().data(), &UpdatableFile::fireUpdated, [ = ] {
+					Q_EMIT dataChanged(modelIndex, modelIndex, {ProviderRoles::ICON});
+				});
+		mConnections += connect(provider.getImage().data(), &UpdatableFile::fireUpdated, [ = ] {
+					Q_EMIT dataChanged(modelIndex, modelIndex, {ProviderRoles::IMAGE});
+				});
+	}
+}
+
+
 void ProviderModel::onProvidersChanged()
 {
 	beginResetModel();
+	updateConnections();
 	endResetModel();
 }
 
 
-ProviderModel::ProviderModel(ProviderSettings* pSettings, QObject* pParent)
+ProviderModel::ProviderModel(QObject* pParent)
 	: QAbstractListModel(pParent)
-	, mSettings(pSettings)
 {
-	connect(mSettings, &ProviderSettings::fireSettingsChanged, this, &ProviderModel::onProvidersChanged);
+	updateConnections();
+	connect(Env::getSingleton<ProviderConfiguration>(), &ProviderConfiguration::fireUpdated, this, &ProviderModel::onProvidersChanged);
 }
 
 
@@ -49,15 +79,17 @@ ProviderModel::~ProviderModel()
 
 int ProviderModel::rowCount(const QModelIndex&) const
 {
-	return mSettings->getProviders().size();
+	return Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos().size();
 }
 
 
 QVariant ProviderModel::data(const QModelIndex& pIndex, int pRole) const
 {
+	const auto& providerConfiguration = Env::getSingleton<ProviderConfiguration>();
+
 	if (pIndex.isValid())
 	{
-		auto provider = mSettings->getProviders().at(pIndex.row());
+		auto provider = providerConfiguration->getProviderConfigurationInfos().at(pIndex.row());
 
 		if (pRole == Qt::DisplayRole)
 		{
@@ -107,7 +139,7 @@ QVariant ProviderModel::data(const QModelIndex& pIndex, int pRole) const
 		}
 		if (pRole == PHONE_COST)
 		{
-			const auto& cost = mSettings->getCallCost(provider);
+			const auto& cost = providerConfiguration->getCallCost(provider);
 			return createCostString(cost);
 		}
 		if (pRole == EMAIL)
@@ -120,11 +152,11 @@ QVariant ProviderModel::data(const QModelIndex& pIndex, int pRole) const
 		}
 		if (pRole == ICON)
 		{
-			return provider.getIconUrl();
+			return provider.getIcon()->lookupUrl();
 		}
 		if (pRole == IMAGE)
 		{
-			return provider.getImageUrl();
+			return provider.getImage()->lookupUrl();
 		}
 		if (pRole == SORT_ROLE)
 		{

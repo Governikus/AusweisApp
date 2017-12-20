@@ -1,9 +1,7 @@
 /*!
- * BluetoothMessageParameterResultCode.h
- *
  * \brief Implements special BluetoothMessageParameter for ResultCode.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,7 +19,7 @@ class BluetoothMessageParameterResultCode
 
 	public:
 		BluetoothMessageParameterResultCode(const QByteArray& pValue);
-		virtual ~BluetoothMessageParameterResultCode();
+		virtual ~BluetoothMessageParameterResultCode() override;
 
 		BluetoothResultCode getResultCode() const;
 		virtual QString toStringValue() const override;

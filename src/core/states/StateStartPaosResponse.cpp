@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateStartPaosResponse.h"
@@ -20,12 +20,12 @@ void StateStartPaosResponse::run()
 	const Result& result = startPaosResponse->getResult();
 	if (result.isOk())
 	{
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 		return;
 	}
 
+	// we override our result with the one sent from server
 	qDebug() << "Processing server result:" << result.getMajorString() << result.getMinorString() << result.getMessage();
-	setStatus(result.toStatus());
-	Q_EMIT fireError();
-
+	getContext()->setStatus(result.toStatus(), false);
+	Q_EMIT fireAbort();
 }

@@ -1,7 +1,5 @@
 /*!
- * PcscReaderManagerPlugIn.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscReaderManagerPlugIn.h"
@@ -45,7 +43,7 @@ PcscReaderManagerPlugIn::~PcscReaderManagerPlugIn()
 }
 
 
-QList<Reader*> PcscReaderManagerPlugIn::getReader() const
+QList<Reader*> PcscReaderManagerPlugIn::getReaders() const
 {
 	return mReaders.values();
 }
@@ -157,7 +155,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 
 	}
 
-	for (QMutableListIterator<QString> it(readersToAdd); it.hasNext(); )
+	for (QMutableListIterator<QString> it(readersToAdd); it.hasNext();)
 	{
 		QString readerName = it.next();
 		if (readersToRemove.contains(readerName))
@@ -172,7 +170,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 		removeReader(readerName);
 	}
 
-	for (QMutableListIterator<QString> iterator(readersToAdd); iterator.hasNext(); )
+	for (QMutableListIterator<QString> iterator(readersToAdd); iterator.hasNext();)
 	{
 		QString readerName = iterator.next();
 		Reader* reader = new PcscReader(readerName);

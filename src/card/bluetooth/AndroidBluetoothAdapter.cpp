@@ -1,7 +1,5 @@
 /*!
- * AndroidBluetoothAdapter.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AndroidBluetoothAdapter.h"
@@ -27,7 +25,7 @@ const int DEVICE_TYPE_LE = 2;
  */
 const int STATE_ON = 12;
 
-QBluetoothDeviceInfo::CoreConfiguration AndroidBluetoothAdapter::fromAndroidDeviceType(quint32 pAndroidDeviceTypeConstant)
+QBluetoothDeviceInfo::CoreConfiguration AndroidBluetoothAdapter::fromAndroidDeviceType(int pAndroidDeviceTypeConstant)
 {
 	switch (pAndroidDeviceTypeConstant)
 	{
@@ -74,17 +72,19 @@ AndroidBluetoothAdapter AndroidBluetoothAdapter::getDefaultAdapter()
 	stateOn = (adapter.callMethod<jint>("getState") == STATE_ON);
 
 	QAndroidJniObject deviceSet = adapter.callObjectMethod("getBondedDevices", "()Ljava/util/Set;");
-	for (QAndroidJniObject iter = deviceSet.callObjectMethod("iterator", "()Ljava/util/Iterator;"); (bool) iter.callMethod<jboolean>("hasNext", "()Z"); )
+	for (QAndroidJniObject iter = deviceSet.callObjectMethod("iterator", "()Ljava/util/Iterator;")
+			; static_cast<bool>(iter.callMethod<jboolean>("hasNext", "()Z"))
+			;)
 	{
 		QAndroidJniObject device = iter.callObjectMethod("next", "()Ljava/lang/Object;");
 
 		QString name = device.callObjectMethod<jstring>("getName").toString();
 		QString address = device.callObjectMethod<jstring>("getAddress").toString();
 		QAndroidJniObject bluetoothClass = device.callObjectMethod("getBluetoothClass", "()Landroid/bluetooth/BluetoothClass;");
-		quint32 deviceClass = bluetoothClass.callMethod<jint>("getDeviceClass");
-		quint32 type = device.callMethod<jint>("getType");
+		int deviceClass = bluetoothClass.callMethod<jint>("getDeviceClass");
+		int type = device.callMethod<jint>("getType");
 
-		QBluetoothDeviceInfo deviceInfo(QBluetoothAddress(address), name, deviceClass);
+		QBluetoothDeviceInfo deviceInfo(QBluetoothAddress(address), name, static_cast<quint32>(deviceClass));
 		deviceInfo.setCoreConfigurations(fromAndroidDeviceType(type));
 		deviceInfo.setCached(true);
 		bondedDevices += deviceInfo;

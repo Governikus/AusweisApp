@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 #include "DpiCalculator.h"
 
 #include <QGuiApplication>
@@ -32,9 +36,18 @@ qreal DpiCalculator::getDpi()
 	auto app = static_cast<QGuiApplication*>(QCoreApplication::instance());
 	auto screen = app->primaryScreen();
 	dpi = screen->logicalDotsPerInch();
-
 #endif
 	qCInfo(qml) << "Determined dpi" << dpi;
+
+#ifndef Q_NO_DEBUG
+	const char* overrideDpi = "OVERRIDE_DPI";
+	if (!qEnvironmentVariableIsEmpty(overrideDpi))
+	{
+		dpi = qEnvironmentVariableIntValue(overrideDpi);
+		qCDebug(qml) << "Override DPI:" << dpi;
+	}
+#endif
+
 	return dpi;
 
 }

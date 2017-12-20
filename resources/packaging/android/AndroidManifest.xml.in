@@ -1,11 +1,14 @@
 <?xml version="1.0"?>
 <manifest package="@ANDROID_PACKAGE_NAME@" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="@ANDROID_VERSION_NAME@" android:versionCode="@ANDROID_VERSION_CODE@" android:installLocation="auto">
     <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="@string/app_name" android:icon="@drawable/npa">
+        <meta-data android:name="android.max_aspect" android:value="2.1" />
+
         <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation"
                   android:name="com.governikus.ausweisapp2.MainActivity"
                   android:label="@string/app_name"
                   android:launchMode="singleTask"
-                  android:theme="@style/Theme.NoTitle">
+                  android:theme="@style/Theme.NoTitle"
+                  android:resizeableActivity="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -26,18 +29,14 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="127.0.0.1" android:port="24727" android:path="/eID-Client"/>
+                <data android:scheme="http" android:host="127.0.0.1" android:port="24727" android:path="/eID-Client" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="localhost" android:port="24727" android:path="/eID-Client"/>
+                <data android:scheme="http" android:host="localhost" android:port="24727" android:path="/eID-Client" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.nfc.action.TECH_DISCOVERED" />
-            </intent-filter>
-            <meta-data android:name="android.nfc.action.TECH_DISCOVERED" android:resource="@xml/nfc_tech_filter" />
 
             <!-- Application arguments -->
             <!-- meta-data android:name="android.app.arguments" android:value="arg1 arg2 arg3"/ -->
@@ -89,9 +88,9 @@
                 -->
             <meta-data android:name="android.app.extract_android_style" android:value="minimal"/>
             <!-- extract android style -->
-    </activity>
+        </activity>
 
-    <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
+        <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
 
         <service
             android:process=":ausweisapp2_service"
@@ -143,8 +142,6 @@
                 <action android:name="com.governikus.ausweisapp2.START_SERVICE" />
             </intent-filter>
         </service>
-
-
 
     </application>
     <uses-sdk android:minSdkVersion="18" android:targetSdkVersion="23"/>

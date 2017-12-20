@@ -1,7 +1,5 @@
 /*
- * StateWriteHistory.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppSettings.h"
@@ -21,14 +19,14 @@ void StateWriteHistory::run()
 	if (!AppSettings::getInstance().getHistorySettings().isEnabled())
 	{
 		qDebug() << "History disabled";
-		Q_EMIT fireError();
+		Q_EMIT fireContinue();
 		return;
 	}
 
 	if (getContext()->getDidAuthenticateEac1() == nullptr || getContext()->getEffectiveAccessRights().isEmpty())
 	{
 		qWarning() << "No EAC1 structure or effective CHAT in model.";
-		Q_EMIT fireError();
+		Q_EMIT fireAbort();
 		return;
 	}
 
@@ -54,11 +52,11 @@ void StateWriteHistory::run()
 
 			if (!subjectName.isNull() && !termOfUsage.isNull())
 			{
-				HistoryEntry entry(subjectName, subjectUrl, certDesc->getPurpose(), QDateTime::currentDateTime(), termOfUsage + QStringLiteral("\n\n") + validity, requestedData.join(QStringLiteral(", ")));
-				AppSettings::getInstance().getHistorySettings().addHistoryEntry(entry);
+				HistoryInfo info(subjectName, subjectUrl, certDesc->getPurpose(), QDateTime::currentDateTime(), termOfUsage + QStringLiteral("\n\n") + validity, requestedData.join(QStringLiteral(", ")));
+				AppSettings::getInstance().getHistorySettings().addHistoryInfo(info);
 				AppSettings::getInstance().getHistorySettings().save();
 			}
 		}
 	}
-	Q_EMIT fireSuccess();
+	Q_EMIT fireContinue();
 }

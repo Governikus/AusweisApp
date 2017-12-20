@@ -1,9 +1,7 @@
 /*!
- * BluetoothMessageParameterMaxMsgSize.h
- *
  * \brief Implements special BluetoothMessageParameter for MaxMsgSize.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,7 +20,7 @@ class BluetoothMessageParameterMaxMsgSize
 	public:
 		BluetoothMessageParameterMaxMsgSize(const QByteArray& pValue);
 		BluetoothMessageParameterMaxMsgSize(uint pMaxMsgSize);
-		virtual ~BluetoothMessageParameterMaxMsgSize();
+		virtual ~BluetoothMessageParameterMaxMsgSize() override;
 
 		unsigned int getMaxMsgSize() const;
 		virtual QString toStringValue() const override;

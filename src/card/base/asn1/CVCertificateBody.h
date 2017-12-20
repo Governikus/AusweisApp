@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -34,6 +34,12 @@ typedef struct CERTIFICATEEXTENSION_st
 	ASN1_OCTET_STRING* mObject8;
 } CERTIFICATEEXTENSION;
 DECLARE_ASN1_FUNCTIONS(CERTIFICATEEXTENSION)
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+DECLARE_STACK_OF(CERTIFICATEEXTENSION)
+#else
+DEFINE_STACK_OF(CERTIFICATEEXTENSION)
+#endif
 
 typedef struct certificateprofilebody_st
 {

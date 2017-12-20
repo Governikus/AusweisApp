@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TransmitResponse.h"
@@ -25,7 +25,7 @@ QDomElement TransmitResponse::createTransmitResponse()
 	element.setAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
 	element.setAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
 
-	element.appendChild(createResultElement());
+	element.appendChild(createResultElement(*this));
 
 	for (const auto& apdu : qAsConst(mOutputApdus))
 	{

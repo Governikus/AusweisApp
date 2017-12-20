@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -19,6 +19,7 @@ NumberModel::NumberModel(QObject* pParent)
 	connect(&ReaderManager::getInstance(), &ReaderManager::fireCardRetryCounterChanged, this, &NumberModel::onReaderInfoChanged);
 	connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderRemoved, this, &NumberModel::onReaderInfoChanged);
 	connect(&ReaderManager::getInstance(), &ReaderManager::fireCardRemoved, this, &NumberModel::onReaderInfoChanged);
+	connect(&ReaderManager::getInstance(), &ReaderManager::fireCardInserted, this, &NumberModel::onReaderInfoChanged);
 }
 
 
@@ -146,12 +147,12 @@ QString NumberModel::getInputError() const
 		int oldRetryCounter = mContext->getOldRetryCounter();
 		if (oldRetryCounter > 2)
 		{
-			return tr("You have entered a wrong PIN, please try again.");
+			return tr("The given PIN is not correct. You have 2 tries to enter the correct PIN.");
 		}
 		if (oldRetryCounter == 2)
 		{
 			return tr("You have entered the wrong PIN twice. "
-					  "For a third attempt, you have to enter your six-digit card access number first. "
+					  "Prior to a third attempt, you have to enter your six-digit card access number first. "
 					  "You can find your card access number on the front of your ID card.");
 		}
 		if (oldRetryCounter == 1)
@@ -203,7 +204,7 @@ bool NumberModel::isExtendedLengthApdusUnsupported() const
 	if (mContext && !mContext->getReaderName().isEmpty())
 	{
 		ReaderInfo readerInfo = ReaderManager::getInstance().getReaderInfo(mContext->getReaderName());
-		return readerInfo.getExtendedLengthApduSupportCode() == ExtendedLengthApduSupportCode::NOT_SUPPORTED;
+		return !readerInfo.sufficientApduLength();
 	}
 	return false;
 }
@@ -223,7 +224,7 @@ bool NumberModel::isCardConnected() const
 {
 	if (mContext && !mContext->getReaderName().isEmpty())
 	{
-		return ReaderManager::getInstance().getReaderInfo(mContext->getReaderName()).getCardType() != CardType::NONE;
+		return ReaderManager::getInstance().getReaderInfo(mContext->getReaderName()).hasCard();
 	}
 	return false;
 }

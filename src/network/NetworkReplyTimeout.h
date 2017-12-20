@@ -1,9 +1,7 @@
 /*!
- * NetworkReplyTimeout.h
- *
  * \brief Utility class to set a timeout on a QNetworkReply
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

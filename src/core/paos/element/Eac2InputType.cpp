@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Eac2InputType.h"
@@ -22,7 +22,7 @@ const QString& Eac2InputType::getSignature() const
 }
 
 
-const QVector<QSharedPointer<CVCertificate> >& Eac2InputType::getCvCertificates() const
+const QVector<QSharedPointer<const CVCertificate> >& Eac2InputType::getCvCertificates() const
 {
 	return mCvCertificates;
 }
@@ -40,25 +40,25 @@ const QString& Eac2InputType::getEphemeralPublicKey() const
 }
 
 
-void Eac2InputType::setEphemeralPublicKey(const QString& ephemeralPublicKey)
+void Eac2InputType::setEphemeralPublicKey(const QString& pEphemeralPublicKey)
 {
-	mEphemeralPublicKey = ephemeralPublicKey;
+	mEphemeralPublicKey = pEphemeralPublicKey;
 }
 
 
-void Eac2InputType::setSignature(const QString& signature)
+void Eac2InputType::setSignature(const QString& pSignature)
 {
-	mSignature = signature;
+	mSignature = pSignature;
 }
 
 
-void Eac2InputType::appendCvcert(QSharedPointer<CVCertificate> cvcert)
+void Eac2InputType::appendCvcert(const QSharedPointer<const CVCertificate>& pCert)
 {
-	mCvCertificates += cvcert;
+	mCvCertificates += pCert;
 }
 
 
-void Eac2InputType::appendCvcertAsBinary(const QByteArray& cvcertAsBinary)
+void Eac2InputType::appendCvcertAsBinary(const QByteArray& pCvcertAsBinary)
 {
-	mCvCertificatesAsBinary += cvcertAsBinary;
+	mCvCertificatesAsBinary += pCvcertAsBinary;
 }

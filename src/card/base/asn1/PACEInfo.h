@@ -1,9 +1,7 @@
 /*!
- * PACEInfo.h
- *
  * \brief Implementation of PACEInfo
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -87,7 +85,7 @@ class PACEInfo
 
 		QByteArray getParameterId() const;
 		int getParameterIdAsInt() const;
-		QByteArray getVersion() const;
+		int getVersion() const;
 		KeyAgreementType getKeyAgreementType() const;
 		MappingType getMappingType() const;
 		bool isStandardizedDomainParameters() const;

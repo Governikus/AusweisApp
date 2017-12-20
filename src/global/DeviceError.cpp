@@ -1,11 +1,11 @@
 /*!
- * DeviceError.cpp
- *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DeviceError.h"
 #include "moc_DeviceError.cpp"
+
+#include "GlobalStatus.h"
 
 namespace governikus
 {
@@ -33,7 +33,7 @@ GlobalStatus toGlobalStatus(DeviceError pDeviceError)
 			return GlobalStatus::Code::Unknown_Error;
 	}
 
-	return GlobalStatus::Code::Unknown_Error;
+	Q_UNREACHABLE();
 }
 
 

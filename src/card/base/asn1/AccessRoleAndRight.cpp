@@ -1,7 +1,5 @@
 /*!
- * AccessRoleAndRight.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AccessRoleAndRight.h"
@@ -15,12 +13,7 @@ QList<AccessRight> AccessRoleAndRightsUtil::mAllRights;
 QList<AccessRight> AccessRoleAndRightsUtil::mAllDisplayedOrderedRights;
 
 
-AccessRoleAndRightsUtil::AccessRoleAndRightsUtil()
-	: QObject()
-{
-}
-
-
+// TR-03124, 3.8: Access rights for data groups or functions not defined in [TR-03127] SHALL NOT be available.
 const QList<AccessRight>& AccessRoleAndRightsUtil::allDisplayedOrderedRights()
 {
 	if (mAllDisplayedOrderedRights.isEmpty())
@@ -48,6 +41,7 @@ const QList<AccessRight>& AccessRoleAndRightsUtil::allDisplayedOrderedRights()
 }
 
 
+// TR 03127 - 3.2.2
 const QList<AccessRight>& AccessRoleAndRightsUtil::allRights()
 {
 	if (mAllRights.isEmpty())
@@ -99,6 +93,7 @@ const QList<AccessRight>& AccessRoleAndRightsUtil::allRights()
 }
 
 
+// TR-03127, Annex C
 QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 {
 	switch (pRight)
@@ -126,6 +121,7 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 			return tr("Residence permit II");
 
 		case AccessRight::READ_DG19:
+			// "Auxiliary conditions" are replaced with "Residence permit I" in agreement with the BMI
 			return tr("Residence permit I");
 
 		case AccessRight::READ_DG18:
@@ -236,3 +232,6 @@ bool AccessRoleAndRightsUtil::fromTechnicalName(const char* pStr, const std::fun
 	}
 	return false;
 }
+
+
+#include "moc_AccessRoleAndRight.cpp"

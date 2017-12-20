@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,13 +28,13 @@ class EcdhKeyAgreement
 		QSharedPointer<EC_POINT> mTerminalPublicKey;
 		QSharedPointer<EC_POINT> mCardPublicKey;
 
-		QSharedPointer<EC_GROUP> determineEphemeralDomainParameters(const QByteArray& pNonce);
-		QSharedPointer<EC_POINT> performKeyExchange(const QSharedPointer<const EC_GROUP>& pCurve);
+		CardOperationResult<QSharedPointer<EC_GROUP> > determineEphemeralDomainParameters(const QByteArray& pNonce);
+		CardOperationResult<QSharedPointer<EC_POINT> > performKeyExchange(const QSharedPointer<const EC_GROUP>& pCurve);
 
 		static QByteArray encodeUncompressedPublicKey(const QSharedPointer<const PACEInfo>& pPaceInfo, const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint);
 		static QByteArray encodeCompressedPublicKey(const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint);
 
-		QByteArray determineSharedSecret(const QByteArray& pNonce) override;
+		CardOperationResult<QByteArray> determineSharedSecret(const QByteArray& pNonce) override;
 		QByteArray getUncompressedTerminalPublicKey() override;
 		QByteArray getUncompressedCardPublicKey() override;
 		QByteArray getCompressedCardPublicKey() override;
@@ -45,7 +45,7 @@ class EcdhKeyAgreement
 		static QSharedPointer<KeyAgreement> create(const QSharedPointer<const PACEInfo>& pPaceInfo,
 				const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
-		virtual ~EcdhKeyAgreement();
+		virtual ~EcdhKeyAgreement() override;
 };
 
 } /* namespace governikus */

@@ -1,0 +1,25 @@
+From e06d2d0d163501fdb0926175d7c539c7bb413d70 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Wed, 22 Nov 2017 07:35:56 +0100
+Subject: Add IsoDep to the techList on Android
+
+Change-Id: I26c183c1344cd0d9323fcedde82347487eebdffb
+---
+ src/android/nfc/src/org/qtproject/qt5/android/nfc/QtNfc.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git x/qtconnectivity/src/android/nfc/src/org/qtproject/qt5/android/nfc/QtNfc.java y/qtconnectivity/src/android/nfc/src/org/qtproject/qt5/android/nfc/QtNfc.java
+index 345b87d3..a1ae5c37 100644
+--- x/qtconnectivity/src/android/nfc/src/org/qtproject/qt5/android/nfc/QtNfc.java
++++ y/qtconnectivity/src/android/nfc/src/org/qtproject/qt5/android/nfc/QtNfc.java
+@@ -127,6 +127,7 @@ public class QtNfc
+                 filters[2] = new IntentFilter();
+                 filters[2].addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
+                 String[][] techList = new String[][]{
++                        {"android.nfc.tech.IsoDep"},
+                         {"android.nfc.tech.Ndef"},
+                         {"android.nfc.tech.NdefFormatable"}
+                     };
+-- 
+2.14.2
+

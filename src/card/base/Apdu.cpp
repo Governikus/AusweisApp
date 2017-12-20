@@ -1,11 +1,13 @@
 /*!
- * Apdu.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Apdu.h"
+
+#include "Commands.h"
+
 #include <QLoggingCategory>
+
 
 using namespace governikus;
 
@@ -36,8 +38,9 @@ const QByteArray& Apdu::getBuffer() const
 }
 
 
-CommandApdu::CommandApdu(const QByteArray& pBuffer)
+CommandApdu::CommandApdu(const QByteArray& pBuffer, bool pUpdateRetryCounter)
 	: Apdu(pBuffer)
+	, mUpdateRetryCounter(pUpdateRetryCounter)
 {
 }
 
@@ -48,7 +51,7 @@ bool CommandApdu::isExtendedLength() const
 	// no data, short le: size == 5
 	// no data, extended le: size == 7, high order le byte == 0
 	// data, with/without le: high order size byte == 0 <=> extended data length
-	return length() > 5 && mBuffer.at(4) == char(0x00);
+	return length() > 5 && mBuffer.at(4) == '\0';
 }
 
 
@@ -72,6 +75,7 @@ CommandApdu::CommandApdu(const QByteArray& pHeader, const QByteArray& pData, int
 
 CommandApdu::CommandApdu(char pCla, char pIns, char pP1, char pP2, const QByteArray& pData, int pLe)
 	: Apdu(QByteArray())
+	, mUpdateRetryCounter(false)
 {
 	if (pData.size() > EXTENDED_MAX_LC)
 	{
@@ -96,7 +100,7 @@ CommandApdu::CommandApdu(char pCla, char pIns, char pP1, char pP2, const QByteAr
 	{
 		if (CommandApdu::isExtendedLength(pData, pLe))
 		{
-			mBuffer += char(0x00);
+			mBuffer += '\0';
 			mBuffer += static_cast<char>(pData.size() >> 8 & 0xff);
 			mBuffer += static_cast<char>(pData.size() & 0xff);
 		}
@@ -114,7 +118,7 @@ CommandApdu::CommandApdu(char pCla, char pIns, char pP1, char pP2, const QByteAr
 		{
 			if (pData.isEmpty())
 			{
-				mBuffer += char(0x00);
+				mBuffer += '\0';
 			}
 			mBuffer += static_cast<char>(pLe >> 8 & 0xff);
 		}
@@ -130,25 +134,25 @@ CommandApdu::~CommandApdu()
 
 char CommandApdu::getCLA() const
 {
-	return length() > 0 ? mBuffer.at(0) : 0;
+	return length() > 0 ? mBuffer.at(0) : '\0';
 }
 
 
 char CommandApdu::getINS() const
 {
-	return length() > 1 ? mBuffer.at(1) : 0;
+	return length() > 1 ? mBuffer.at(1) : '\0';
 }
 
 
 char CommandApdu::getP1() const
 {
-	return length() > 2 ? mBuffer.at(2) : 0;
+	return length() > 2 ? mBuffer.at(2) : '\0';
 }
 
 
 char CommandApdu::getP2() const
 {
-	return mBuffer.size() > 3 ? mBuffer.at(3) : 0;
+	return mBuffer.size() > 3 ? mBuffer.at(3) : '\0';
 }
 
 
@@ -223,6 +227,12 @@ QByteArray CommandApdu::getData() const
 }
 
 
+bool CommandApdu::isUpdateRetryCounter() const
+{
+	return mUpdateRetryCounter;
+}
+
+
 ResponseApdu::ResponseApdu(const QByteArray& pBuffer)
 	: Apdu(pBuffer)
 {
@@ -242,7 +252,7 @@ void ResponseApdu::setBuffer(const QByteArray& pBuffer)
 
 QByteArray ResponseApdu::getData() const
 {
-	if (length() < 2)
+	if (length() < RETURN_CODE_LENGTH)
 	{
 		return QByteArray();
 	}
@@ -253,27 +263,59 @@ QByteArray ResponseApdu::getData() const
 
 int ResponseApdu::getDataLength() const
 {
-	return length() - 2;
+	return length() - RETURN_CODE_LENGTH;
 }
 
 
 StatusCode ResponseApdu::getReturnCode() const
 {
-	// avoid "undefined-behavior" with explicit "uint" variable
-	const uint sw1 = static_cast<uchar>(getSW1());
-	const uchar sw2 = static_cast<uchar>(getSW2());
-	return StatusCode((sw1 << 8) + sw2);
+	if (mBuffer.isEmpty())
+	{
+		return StatusCode::EMPTY;
+	}
+
+	const int returnCodeAsInt = getReturnCodeAsHex().toInt(nullptr, 16);
+	return Enum<StatusCode>::isValue(returnCodeAsInt) ? StatusCode(returnCodeAsInt) : StatusCode::INVALID;
 }
 
 
-char ResponseApdu::getSW1() const
+QByteArray ResponseApdu::getReturnCodeAsHex() const
 {
-	if (length() < 2)
+	return mBuffer.right(RETURN_CODE_LENGTH).toHex();
+}
+
+
+int ResponseApdu::getRetryCounter() const
+{
+	StatusCode statusCode = getReturnCode();
+	if (statusCode == StatusCode::SUCCESS)
 	{
-		qCCritical(card) << "Buffer too short, returning 0";
+		return 3;
+	}
+	if (statusCode == StatusCode::PIN_RETRY_COUNT_2)
+	{
+		return 2;
+	}
+	if (statusCode == StatusCode::PIN_SUSPENDED)
+	{
+		return 1;
+	}
+	if (statusCode == StatusCode::PIN_BLOCKED || statusCode == StatusCode::PIN_DEACTIVATED)
+	{
 		return 0;
 	}
-	return mBuffer.at(length() - 2);
+	return -1;
+}
+
+
+SW1 ResponseApdu::getSW1() const
+{
+	if (length() < RETURN_CODE_LENGTH)
+	{
+		qCCritical(card) << "Buffer too short, returning 0";
+		return SW1::INVALID;
+	}
+	return SW1(mBuffer.at(length() - RETURN_CODE_LENGTH));
 }
 
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Message Invalid of JSON API.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,7 +18,7 @@ class MsgHandlerInvalid
 {
 	public:
 		MsgHandlerInvalid(const QString& pError = QString());
-		MsgHandlerInvalid(const QLatin1String& pError);
+		MsgHandlerInvalid(const QLatin1String pError);
 		MsgHandlerInvalid(const QJsonParseError& pError);
 };
 

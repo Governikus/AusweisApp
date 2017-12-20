@@ -1,7 +1,7 @@
 /*!
  * \brief Holds some basic card control commands
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -45,8 +45,6 @@ class BaseCardCommand
 			return mReturnCode;
 		}
 
-
-		static void registerMetaTypes();
 
 	Q_SIGNALS:
 		void commandDone(QSharedPointer<BaseCardCommand> pCommand);

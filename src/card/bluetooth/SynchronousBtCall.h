@@ -1,10 +1,8 @@
 /*!
- * SynchronousBtCall.h
- *
  * \brief Helper class to make a synchronous call to a Bluetooth device, i.e.
  * send the request data and wait for the response data to arrive.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

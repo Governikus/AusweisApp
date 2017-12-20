@@ -3,5 +3,14 @@ import common.Appcast
 def j = new Appcast
 	(
 		namePrefix: 'Release_',
-		tagName: 'release'
+		releaseJob: true
 	).generate(this)
+
+
+j.with
+{
+	parameters
+	{
+		stringParam('changeset', 'release', 'Build given changeset (tag) as release')
+	}
+}

@@ -1,9 +1,7 @@
 /*!
- * CompositeStateSelectCard.h
- *
  * \brief Composite state for selecting a card.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,9 +27,8 @@ class CompositeStateSelectCard
 		virtual ~CompositeStateSelectCard();
 
 	Q_SIGNALS:
-		void fireSuccess();
-		void fireCancel();
-		void fireError();
+		void fireContinue();
+		void fireAbort();
 };
 
 } /* namespace governikus */

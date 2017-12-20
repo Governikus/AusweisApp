@@ -1,21 +1,19 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandler.h"
 
+#include "Initializer.h"
 
 using namespace governikus;
 
+static Initializer::Entry X([] {
+			qRegisterMetaType<QHostAddress>("QHostAddress");
+		});
 
-void DatagramHandler::registerMetaTypes()
+DatagramHandler::DatagramHandler(bool)
 {
-	static bool registered = false;
-	if (!registered)
-	{
-		qRegisterMetaType<QHostAddress>("QHostAddress");
-		registered = true;
-	}
 }
 
 

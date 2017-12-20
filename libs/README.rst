@@ -17,7 +17,7 @@ Unterstützte Compiler:
 
 Notwendige Bibliotheken:
 
-- Qt >= 5.8
+- Qt >= 5.9
 
   - http://www.qt.io/download/
 
@@ -31,12 +31,12 @@ Notwendige Bibliotheken:
 
     - openssl_rsa_psk.patch
 
-- pcsclite >= 1.8 (nur Linux)
+- pcsclite >= 1.8 (nur Linux/FreeBSD)
 
 
 Notwendige Tools:
 
-- CMake >= 3.3.0 (>= 3.7.1 für Android)
+- CMake >= 3.5.0 (>= 3.7.1 für Android)
 
   - http://www.cmake.org
 
@@ -221,7 +221,7 @@ Komponenten vorhanden sein:
     wird. Dies kann mittels der Umgebungsvariable ANDROID_BUILD_TOOLS_REVISION behoben werden.
     Die genaue Version ist im Android Manager vom Android SDK (./tools/android) hinterlegt.
 
-    - Getestet: 26.0.1
+    - Getestet: 27.0.1
 
 - Um Qt erfolgreich zu bauen, sind verschiedene API Level von Android notwendig.
   Diese sollten mindestens Level 18 und 21 sein. Nähere Informationen dazu

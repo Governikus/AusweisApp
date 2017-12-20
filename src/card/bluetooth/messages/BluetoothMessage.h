@@ -1,9 +1,7 @@
 /*!
- * BluetoothMessage.h
- *
  * \brief Implements a message of SIM ACCESS profile.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,7 +19,7 @@ namespace governikus
 class BluetoothMessage
 {
 	public:
-		typedef QSharedPointer<const BluetoothMessage> Ptr;
+		using Ptr = QSharedPointer<const BluetoothMessage>;
 
 	private:
 		friend class ::test_BluetoothMessageParser;
@@ -45,8 +43,6 @@ class BluetoothMessage
 		BluetoothMsgId getBluetoothMsgId() const;
 		QByteArray toData() const;
 		QString toString() const;
-
-		static void registerMetaTypes();
 };
 
 } /* namespace governikus */

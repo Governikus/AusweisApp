@@ -1,7 +1,7 @@
 /*!
  * \brief Mock a QAbstractSocket for tests.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,7 +24,7 @@ class MockSocket
 		QByteArray mWriteBuffer;
 
 		MockSocket();
-		virtual ~MockSocket();
+		virtual ~MockSocket() override;
 
 		qint64 bytesAvailable() const override;
 		qint64 readData(char* pDestination, qint64 pMaxSize) override;

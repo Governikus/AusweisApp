@@ -1,14 +1,13 @@
 /*!
- * StateRedirectBrowser.h
- *
  * \brief Send a redirect to the browser.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "context/AuthContext.h"
+#include "HttpStatusCode.h"
 #include "Result.h"
 #include "states/AbstractGenericState.h"
 

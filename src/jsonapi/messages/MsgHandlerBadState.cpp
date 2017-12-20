@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerBadState.h"
@@ -11,6 +11,6 @@ MsgHandlerBadState::MsgHandlerBadState(MsgCmdType pType)
 {
 	if (pType != MsgCmdType::UNDEFINED)
 	{
-		mJsonObject["error"] = getEnumName(pType);
+		mJsonObject[QLatin1String("error")] = getEnumName(pType);
 	}
 }

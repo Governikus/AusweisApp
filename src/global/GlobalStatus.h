@@ -1,7 +1,7 @@
 /*!
  * \brief A global mapping for errors
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,11 +26,17 @@ class GlobalStatus
 			Unknown_Error,
 			No_Error,
 
+			Network_ServiceUnavailable,
 			Network_Ssl_Establishment_Error,
 			Network_TimeOut,
 			Network_Proxy_Error,
 			Network_Other_Error,
 
+			Downloader_File_Not_Found,
+			Downloader_Cannot_Save_File,
+			Downloader_Data_Corrupted,
+
+			Workflow_AlreadyInProgress_Error,
 			Workflow_Communication_Missing_Redirect_Url,
 			Workflow_Cancellation_By_User,
 			Workflow_Card_Removed,
@@ -55,6 +61,7 @@ class GlobalStatus
 			Workflow_TrustedChannel_Hash_Not_In_Description,
 			Workflow_TrustedChannel_No_Data_Received,
 			Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length,
+			Workflow_TrustedChannel_ServiceUnavailable,
 			Workflow_TrustedChannel_TimeOut,
 			Workflow_TrustedChannel_Proxy_Error,
 			Workflow_TrustedChannel_Ssl_Establishment_Error,
@@ -122,7 +129,14 @@ class GlobalStatus
 
 			RemoteReader_CloseCode_NormalClose,
 			RemoteReader_CloseCode_AbnormalClose,
-			RemoteReader_CloseCode_Undefined
+			RemoteReader_CloseCode_Undefined,
+
+			RemoteConnector_InvalidRequest,
+			RemoteConnector_EmptyPassword,
+			RemoteConnector_NoSupportedApiLevel,
+			RemoteConnector_ConnectionTimeout,
+			RemoteConnector_ConnectionError,
+			RemoteConnector_RemoteHostRefusedConnection
 		};
 
 		enum class Origin
@@ -167,7 +181,7 @@ class GlobalStatus
 		static QString maskMessage(const QString& pMessage, const bool pMask);
 
 	public:
-		GlobalStatus(Code pStatusCode, const QStringList& pExternalInformation = QStringList(), const Origin pOrigin = Origin::Client)
+		GlobalStatus(Code pStatusCode = Code::Unknown_Error, const QStringList& pExternalInformation = QStringList(), const Origin pOrigin = Origin::Client)
 			: d(new InternalStatus(pStatusCode, pExternalInformation, pOrigin))
 		{
 
@@ -197,7 +211,7 @@ class GlobalStatus
 		bool isCancellationByUser() const;
 };
 
-typedef GlobalStatus::Origin Origin;
+using Origin = GlobalStatus::Origin;
 
 defineEnumOperators(GlobalStatus::Code)
 

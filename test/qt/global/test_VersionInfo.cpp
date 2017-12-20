@@ -1,7 +1,5 @@
 /*!
- * test_VersionInfo.cpp
- *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore/QtCore>
@@ -50,7 +48,7 @@ class test_VersionInfo
 			QCOMPARE(parseError->error, QJsonParseError::ParseError::NoError);
 			QCOMPARE(obj["Name"].toString(), QLatin1String("Test_global_VersionInfo"));
 			QCOMPARE(obj["Specification-Title"].toString(), QLatin1String("TR-03124"));
-			QCOMPARE(obj["Specification-Version"].toString(), QLatin1String("1.2"));
+			QCOMPARE(obj["Specification-Version"].toString(), QLatin1String("1.3"));
 			QCOMPARE(obj["Specification-Vendor"].toString(), QLatin1String("Federal Office for Information Security"));
 			QCOMPARE(obj["Implementation-Title"].toString(), QLatin1String("Test_global_VersionInfo"));
 			QCOMPARE(obj["Implementation-Version"].toString(), QLatin1String("x.y.z"));
@@ -102,7 +100,7 @@ class test_VersionInfo
 
 			QVERIFY(text.contains(QLatin1String("Name: Test_global_VersionInfo")));
 			QVERIFY(text.contains(QLatin1String("Specification-Title: TR-03124")));
-			QVERIFY(text.contains(QLatin1String("Specification-Version: 1.2")));
+			QVERIFY(text.contains(QLatin1String("Specification-Version: 1.3")));
 			QVERIFY(text.contains(QLatin1String("Specification-Vendor: Federal Office for Information Security")));
 			QVERIFY(text.contains(QLatin1String("Implementation-Title: Test_global_VersionInfo")));
 			QVERIFY(text.contains(QLatin1String("Implementation-Version: x.y.z")));

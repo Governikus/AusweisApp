@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"
@@ -29,6 +29,14 @@ const ReaderInfo& CardConnection::getReaderInfo()
 }
 
 
+bool CardConnection::stopSecureMessaging()
+{
+	bool result;
+	QMetaObject::invokeMethod(mCardConnectionWorker.data(), "stopSecureMessaging", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, result));
+	return result;
+}
+
+
 UpdateRetryCounterCommand* CardConnection::createUpdateRetryCounterCommand()
 {
 	return new UpdateRetryCounterCommand(mCardConnectionWorker);
@@ -41,9 +49,9 @@ UnblockPinCommand* CardConnection::createUnblockPinCommand(const QString& pPuk)
 }
 
 
-EstablishPaceChannelCommand* CardConnection::createEstablishPaceChannelCommand(PACE_PIN_ID pPacePinId, const QString& pPacePin, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription)
+EstablishPaceChannelCommand* CardConnection::createEstablishPaceChannelCommand(PACE_PASSWORD_ID pPacePasswordId, const QString& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription)
 {
-	return new EstablishPaceChannelCommand(mCardConnectionWorker, pPacePinId, pPacePin, pEffectiveChat, pCertificateDescription);
+	return new EstablishPaceChannelCommand(mCardConnectionWorker, pPacePasswordId, pPacePassword, pEffectiveChat, pCertificateDescription);
 }
 
 
@@ -77,7 +85,7 @@ DidAuthenticateEAC2Command* CardConnection::createDidAuthenticateEAC2Command(
 void CardConnection::onReaderInfoChanged(const ReaderInfo& pReaderInfo)
 {
 	mReaderInfo = pReaderInfo;
-	Q_EMIT fireReaderInfoChanged();
+	Q_EMIT fireReaderInfoChanged(mReaderInfo);
 }
 
 

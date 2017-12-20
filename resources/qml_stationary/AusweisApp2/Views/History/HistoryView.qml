@@ -31,7 +31,7 @@ Item {
 			Text {
 				id: searchLabel
 				anchors.verticalCenter: parent.verticalCenter
-				text: qsTr("Search:")
+				text: qsTr("Search:") + settingsModel.translationTrigger
 				textFormat: Text.StyledText
 			}
 			TextField {
@@ -53,7 +53,7 @@ Item {
 
 		Text {
 			anchors.centerIn: parent
-			text: qsTr("No history entry available")
+			text: qsTr("No history entry available") + settingsModel.translationTrigger
 			wrapMode: Text.WordWrap
 			font.pixelSize: Constants.normal_font_size
 			visible: !scrollView.visible
@@ -118,7 +118,7 @@ Item {
 			spacing: Constants.pane_spacing
 
 			Text {
-				text: qsTr("History:")
+				text: qsTr("History:") + settingsModel.translationTrigger
 			}
 
 			CheckBox {
@@ -135,7 +135,7 @@ Item {
 				Text {
 					anchors.left: parent.left
 					anchors.leftMargin: -Constants.pane_spacing
-					text: qsTr("save")
+					text: qsTr("save") + settingsModel.translationTrigger
 				}
 			}
 
@@ -144,13 +144,13 @@ Item {
 			}
 
 			Button {
-				text: qsTr("Delete History")
+				text: qsTr("Delete History") + settingsModel.translationTrigger
 				enabled:  listView.count > 0
 				onClicked: deleteConfirmationDialog.open()
 			}
 
 			Button {
-				text: qsTr("Save as PDF")
+				text: qsTr("Save as PDF") + settingsModel.translationTrigger
 				enabled:  listView.count > 0
 				onClicked: fileDialog.open()
 			}
@@ -163,17 +163,17 @@ Item {
 		icon: StandardIcon.Question
 		modality: Qt.ApplicationModal
 		standardButtons: StandardButton.Yes | StandardButton.No
-		title: qsTr("Delete history")
-		text: qsTr("Do you really want to delete the history?")
+		title: qsTr("Delete history") + settingsModel.translationTrigger
+		text: qsTr("Do you really want to delete the history?") + settingsModel.translationTrigger
 		onYes: { historyModel.removeRows(0, historyModel.rowCount()) }
 	}
 	FileDialog {
 		id: fileDialog
 		modality: Qt.ApplicationModal
 		selectExisting: false
-		title: Qt.application.name + " - " + qsTr("Save history")
+		title: Qt.application.name + " - " + qsTr("Save history") + settingsModel.translationTrigger
 		folder: shortcuts.home
-		nameFilters: [qsTr("PDF Documents (*.pdf)")]
+		nameFilters: [qsTr("PDF Documents (*.pdf)") + settingsModel.translationTrigger]
 		onAccepted: {
 			qmlExtension.exportHistory(fileDialog.fileUrls)
 		}

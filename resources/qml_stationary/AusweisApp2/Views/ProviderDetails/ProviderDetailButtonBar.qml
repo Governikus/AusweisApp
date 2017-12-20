@@ -30,7 +30,7 @@ Item {
 
 	Button {
 		id: button
-		text: qsTr("ONLINE-APPLICATION")
+		text: qsTr("ONLINE-APPLICATION") + settingsModel.translationTrigger
 		// TODO: Use custom button
 //		buttonColor: baseItem.titleBarColor
 		anchors.left: icon.right

@@ -1,7 +1,7 @@
 /*!
  * \brief ActivationHandler for Internal usage like JSON API.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,12 +21,12 @@ class InternalActivationHandler
 
 	public:
 		InternalActivationHandler();
-		virtual ~InternalActivationHandler();
+		virtual ~InternalActivationHandler() override;
 
 		virtual bool start() override;
 		virtual void stop() override;
 
-		void runAuthentication(InternalActivationContext* pContext);
+		void runAuthentication(const QSharedPointer<ActivationContext>& pContext);
 };
 
 } /* namespace governikus */

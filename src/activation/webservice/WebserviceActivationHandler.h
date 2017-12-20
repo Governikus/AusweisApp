@@ -1,7 +1,5 @@
 /*!
- * WebserviceActivationHandler.h
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -41,7 +39,7 @@ class WebserviceActivationHandler
 
 	public:
 		WebserviceActivationHandler();
-		virtual ~WebserviceActivationHandler();
+		virtual ~WebserviceActivationHandler() override;
 
 		virtual bool start() override;
 		virtual void stop() override;

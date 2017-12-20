@@ -1,4 +1,4 @@
-From 992a338b639e4df6da16659dc238dbaae0ae802f Mon Sep 17 00:00:00 2001
+From b0404383ab573d7550a6564405bb9b1316ff193a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Sebastian=20L=C3=B6sch?= <Sebastian.Loesch@governikus.de>
 Date: Thu, 21 Apr 2016 09:19:19 +0200
 Subject: [PATCH] Make server side signature algorithms configurable
@@ -10,18 +10,17 @@ server side.
 
 Change-Id: Ia178efd4778b91863fcc919bf50219115b300d77
 ---
- src/network/ssl/qsslconfiguration.cpp              | 42 +++++++++++++
- src/network/ssl/qsslconfiguration.h                |  8 ++-
- src/network/ssl/qsslconfiguration_p.h              |  5 ++
- src/network/ssl/qsslcontext_openssl.cpp            | 45 ++++++++++++++
- src/network/ssl/qsslcontext_openssl_p.h            |  1 +
- src/network/ssl/qsslsocket.cpp                     |  2 +
- src/network/ssl/qsslsocket_openssl_symbols_p.h     |  5 ++
- .../auto/network/ssl/qsslsocket/tst_qsslsocket.cpp | 70 ++++++++++++++++++++++
- 8 files changed, 177 insertions(+), 1 deletion(-)
+ src/network/ssl/qsslconfiguration.cpp          | 42 ++++++++++++++++++++++++
+ src/network/ssl/qsslconfiguration.h            |  8 ++++-
+ src/network/ssl/qsslconfiguration_p.h          |  5 +++
+ src/network/ssl/qsslcontext_openssl.cpp        | 45 ++++++++++++++++++++++++++
+ src/network/ssl/qsslcontext_openssl_p.h        |  1 +
+ src/network/ssl/qsslsocket.cpp                 |  2 ++
+ src/network/ssl/qsslsocket_openssl_symbols_p.h |  5 +++
+ 7 files changed, 107 insertions(+), 1 deletion(-)
 
 diff --git x/qtbase/src/network/ssl/qsslconfiguration.cpp y/qtbase/src/network/ssl/qsslconfiguration.cpp
-index 75a880f..37f99fe 100644
+index 75a880f115..37f99feef1 100644
 --- x/qtbase/src/network/ssl/qsslconfiguration.cpp
 +++ y/qtbase/src/network/ssl/qsslconfiguration.cpp
 @@ -221,6 +221,7 @@ bool QSslConfiguration::operator==(const QSslConfiguration &other) const
@@ -40,10 +39,11 @@ index 75a880f..37f99fe 100644
              d->sslOptions == QSslConfigurationPrivate::defaultSslOptions &&
              d->sslSession.isNull() &&
              d->sslSessionTicketLifeTimeHint == -1 &&
-@@ -870,6 +872,46 @@ void QSslConfiguration::setDiffieHellmanParameters(const QSslDiffieHellmanParame
+@@ -869,6 +871,46 @@ void QSslConfiguration::setDiffieHellmanParameters(const QSslDiffieHellmanParame
+     d->dhParams = dhparams;
  }
  
- /*!
++/*!
 +    \since 5.9
 +
 +    Returns the connection's current list of supported signature
@@ -83,12 +83,11 @@ index 75a880f..37f99fe 100644
 +    d->signatureAndHashAlgorithms = algorithms;
 +}
 +
-+/*!
+ /*!
    \since 5.3
  
-   This function returns the protocol negotiated with the server
 diff --git x/qtbase/src/network/ssl/qsslconfiguration.h y/qtbase/src/network/ssl/qsslconfiguration.h
-index 1c57beb..4d3e512 100644
+index 1c57bebd65..4d3e5129d5 100644
 --- x/qtbase/src/network/ssl/qsslconfiguration.h
 +++ y/qtbase/src/network/ssl/qsslconfiguration.h
 @@ -56,10 +56,13 @@
@@ -117,7 +116,7 @@ index 1c57beb..4d3e512 100644
      static void setDefaultConfiguration(const QSslConfiguration &configuration);
  
 diff --git x/qtbase/src/network/ssl/qsslconfiguration_p.h y/qtbase/src/network/ssl/qsslconfiguration_p.h
-index 6adf2c9..7be2539 100644
+index 6adf2c9b54..7be253973b 100644
 --- x/qtbase/src/network/ssl/qsslconfiguration_p.h
 +++ y/qtbase/src/network/ssl/qsslconfiguration_p.h
 @@ -75,6 +75,9 @@
@@ -140,7 +139,7 @@ index 6adf2c9..7be2539 100644
      int sslSessionTicketLifeTimeHint;
  
 diff --git x/qtbase/src/network/ssl/qsslcontext_openssl.cpp y/qtbase/src/network/ssl/qsslcontext_openssl.cpp
-index c92d8fc..29df53a 100644
+index c92d8fc3f8..29df53abc0 100644
 --- x/qtbase/src/network/ssl/qsslcontext_openssl.cpp
 +++ y/qtbase/src/network/ssl/qsslcontext_openssl.cpp
 @@ -42,6 +42,7 @@
@@ -210,7 +209,7 @@ index c92d8fc..29df53a 100644
  
  QSslContext* QSslContext::fromConfiguration(QSslSocket::SslMode mode, const QSslConfiguration &configuration, bool allowRootCertOnDemandLoading)
 diff --git x/qtbase/src/network/ssl/qsslcontext_openssl_p.h y/qtbase/src/network/ssl/qsslcontext_openssl_p.h
-index 06a31af..c8c8e194 100644
+index 06a31af5e5..c8c8e1941b 100644
 --- x/qtbase/src/network/ssl/qsslcontext_openssl_p.h
 +++ y/qtbase/src/network/ssl/qsslcontext_openssl_p.h
 @@ -54,6 +54,7 @@
@@ -222,7 +221,7 @@ index 06a31af..c8c8e194 100644
  #include <QtNetwork/qsslcertificate.h>
  #include <QtNetwork/qsslconfiguration.h>
 diff --git x/qtbase/src/network/ssl/qsslsocket.cpp y/qtbase/src/network/ssl/qsslsocket.cpp
-index 29e1f32..8257112 100644
+index 8eba5db9fe..c0aa8b9bdf 100644
 --- x/qtbase/src/network/ssl/qsslsocket.cpp
 +++ y/qtbase/src/network/ssl/qsslsocket.cpp
 @@ -922,6 +922,7 @@ void QSslSocket::setSslConfiguration(const QSslConfiguration &configuration)
@@ -233,7 +232,7 @@ index 29e1f32..8257112 100644
      d->configuration.sslOptions = configuration.d->sslOptions;
      d->configuration.sslSession = configuration.sessionTicket();
      d->configuration.sslSessionTicketLifeTimeHint = configuration.sessionTicketLifeTimeHint();
-@@ -2230,6 +2231,7 @@ void QSslConfigurationPrivate::deepCopyDefaultConfiguration(QSslConfigurationPri
+@@ -2249,6 +2250,7 @@ void QSslConfigurationPrivate::deepCopyDefaultConfiguration(QSslConfigurationPri
      ptr->peerVerifyDepth = global->peerVerifyDepth;
      ptr->sslOptions = global->sslOptions;
      ptr->ellipticCurves = global->ellipticCurves;
@@ -242,7 +241,7 @@ index 29e1f32..8257112 100644
  
  /*!
 diff --git x/qtbase/src/network/ssl/qsslsocket_openssl_symbols_p.h y/qtbase/src/network/ssl/qsslsocket_openssl_symbols_p.h
-index b35a895..d4cd493 100644
+index b35a895d38..d4cd493c45 100644
 --- x/qtbase/src/network/ssl/qsslsocket_openssl_symbols_p.h
 +++ y/qtbase/src/network/ssl/qsslsocket_openssl_symbols_p.h
 @@ -517,6 +517,11 @@ int q_EC_curve_nist2nid(const char *name);
@@ -257,94 +256,6 @@ index b35a895..d4cd493 100644
  // PKCS#12 support
  int q_PKCS12_parse(PKCS12 *p12, const char *pass, EVP_PKEY **pkey, X509 **cert, STACK_OF(X509) **ca);
  PKCS12 *q_d2i_PKCS12_bio(BIO *bio, PKCS12 **pkcs12);
-diff --git x/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp y/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
-index 4eb26d1..79a55cc 100644
---- x/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
-+++ y/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
-@@ -236,6 +236,8 @@ private slots:
-     void ephemeralServerKey();
-     void allowedProtocolNegotiation();
-     void pskServer();
-+    void signatureAlgorithm_data();
-+    void signatureAlgorithm();
- #endif
- 
-     void setEmptyDefaultConfiguration(); // this test should be last
-@@ -3744,6 +3746,74 @@ void tst_QSslSocket::pskServer()
-     QCOMPARE(socket.state(), QAbstractSocket::UnconnectedState);
-     QCOMPARE(disconnectedSpy.count(), 1);
- }
-+using SigAlgPair = QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm>;
-+Q_DECLARE_METATYPE(QCryptographicHash::Algorithm);
-+Q_DECLARE_METATYPE(QSsl::KeyAlgorithm);
-+Q_DECLARE_METATYPE(SigAlgPair);
-+
-+void tst_QSslSocket::signatureAlgorithm_data()
-+{
-+    QTest::addColumn<SigAlgPair>("serverSigAlgPair");
-+    QTest::addColumn<QSsl::SslProtocol>("serverProtocol");
-+    QTest::addColumn<SigAlgPair>("clientSigAlgPair");
-+    QTest::addColumn<QSsl::SslProtocol>("clientProtocol");
-+    QTest::addColumn<QAbstractSocket::SocketState>("state");
-+
-+    auto rsaSha256 = SigAlgPair(QSsl::Rsa, QCryptographicHash::Sha256);
-+    auto rsaSha512 = SigAlgPair(QSsl::Rsa, QCryptographicHash::Sha512);
-+    auto ecdsaSha512= SigAlgPair(QSsl::Ec, QCryptographicHash::Sha512);
-+
-+    QTest::newRow("match_TlsV1_2") << rsaSha256 << QSsl::TlsV1_2 << rsaSha256 << QSsl::AnyProtocol << QAbstractSocket::ConnectedState;
-+    QTest::newRow("no_hashalg_match_TlsV1_2") << rsaSha256 << QSsl::TlsV1_2 << rsaSha512 << QSsl::AnyProtocol << QAbstractSocket::UnconnectedState;
-+    QTest::newRow("no_sigalg_match_TlsV1_2") << ecdsaSha512 << QSsl::TlsV1_2 << rsaSha512 << QSsl::AnyProtocol << QAbstractSocket::UnconnectedState;
-+    QTest::newRow("no_cipher_match_AnyProtocol") << rsaSha512 << QSsl::TlsV1_2 << ecdsaSha512 << QSsl::AnyProtocol << QAbstractSocket::UnconnectedState;
-+
-+    // signature algorithms do not match, but are ignored because the tls version is not v1.2
-+    QTest::newRow("client_ignore_TlsV1_1") << rsaSha256 << QSsl::TlsV1_1 << rsaSha512 << QSsl::AnyProtocol << QAbstractSocket::ConnectedState;
-+    QTest::newRow("server_ignore_TlsV1_1") << rsaSha256 << QSsl::AnyProtocol << rsaSha512 << QSsl::TlsV1_1 << QAbstractSocket::ConnectedState;
-+    QTest::newRow("client_ignore_TlsV1_0") << rsaSha256 << QSsl::TlsV1_0 << rsaSha512 << QSsl::AnyProtocol << QAbstractSocket::ConnectedState;
-+    QTest::newRow("server_ignore_TlsV1_0") << rsaSha256 << QSsl::AnyProtocol << rsaSha512 << QSsl::TlsV1_0 << QAbstractSocket::ConnectedState;
-+}
-+
-+
-+void tst_QSslSocket::signatureAlgorithm()
-+{
-+    QFETCH_GLOBAL(bool, setProxy);
-+    if (!QSslSocket::supportsSsl() || setProxy)
-+       return;
-+
-+    QFETCH(SigAlgPair, serverSigAlgPair);
-+    QFETCH(QSsl::SslProtocol, serverProtocol);
-+    QFETCH(SigAlgPair, clientSigAlgPair);
-+    QFETCH(QSsl::SslProtocol, clientProtocol);
-+    QFETCH(QAbstractSocket::SocketState, state);
-+
-+
-+    SslServer server;
-+    server.protocol = serverProtocol;
-+    server.config.setCiphers({QSslCipher("ECDHE-RSA-AES256-SHA")});
-+    server.config.setSignatureAndHashAlgorithms({serverSigAlgPair});
-+    QVERIFY(server.listen());
-+
-+    QSslConfiguration clientConfig = QSslConfiguration::defaultConfiguration();
-+    clientConfig.setSignatureAndHashAlgorithms({clientSigAlgPair});
-+    clientConfig.setProtocol(clientProtocol);
-+    QSslSocket client;
-+    client.setSslConfiguration(clientConfig);
-+    socket = &client;
-+
-+    QEventLoop loop;
-+    QTimer::singleShot(5000, &loop, SLOT(quit()));
-+    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), &loop, SLOT(quit()));
-+    connect(socket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(ignoreErrorSlot()));
-+    connect(socket, SIGNAL(encrypted()), &loop, SLOT(quit()));
-+
-+
-+    client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
-+    loop.exec();
-+    QCOMPARE(client.state(), state);
-+}
-+
- 
- #endif // QT_NO_OPENSSL
- 
 -- 
-2.10.2
+2.15.0
 

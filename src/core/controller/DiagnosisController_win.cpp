@@ -1,9 +1,7 @@
 /*!
- * DiagnosisController_win.cpp
- *
  * \brief Windows specific implementation of the controller for retrieving and presenting diagnosis info.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -161,7 +159,7 @@ static QSet<QString> getWindowsSmartCardDriverModuleNames()
 				{
 					QVector<wchar_t> serviceName((propertySize + 1) / 2);
 					if (SetupDiGetDeviceRegistryProperty(deviceInfoSet, &deviceInfoData, SPDRP_SERVICE, nullptr,
-							(PBYTE) serviceName.data(), propertySize, &propertySize))
+							PBYTE(serviceName.data()), propertySize, &propertySize))
 					{
 						moduleNames.insert(QString::fromWCharArray(serviceName.data()));
 					}

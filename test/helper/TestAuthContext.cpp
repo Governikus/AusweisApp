@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
@@ -11,7 +11,7 @@ using namespace governikus;
 
 
 TestAuthContext::TestAuthContext(ActivationContext* pActivationContext, const QString& pFileName)
-	: AuthContext(pActivationContext)
+	: AuthContext(QSharedPointer<ActivationContext>(pActivationContext))
 	, mDidAuthenticateEac1()
 {
 	mDidAuthenticateEac1.reset(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(TestFileHelper::readFile(pFileName))));
@@ -38,8 +38,8 @@ void TestAuthContext::setRequiredAccessRights(const QSet<AccessRight>& pAccessRi
 		{
 			mDidAuthenticateEac1->mEac1InputType.mRequiredChat.reset(new CHAT(getTerminalCvc()->getBody().getCHAT()));
 		}
-		mDidAuthenticateEac1->getRequiredChat()->removeAllAccessRights();
-		mDidAuthenticateEac1->getRequiredChat()->setAccessRights(pAccessRights);
+		qSharedPointerConstCast<CHAT>(mDidAuthenticateEac1->getRequiredChat())->removeAllAccessRights();
+		qSharedPointerConstCast<CHAT>(mDidAuthenticateEac1->getRequiredChat())->setAccessRights(pAccessRights);
 	}
 	setDidAuthenticateEac1(mDidAuthenticateEac1);
 	setTerminalCvc(mDidAuthenticateEac1->getCvCertificates().at(0));
@@ -58,8 +58,8 @@ void TestAuthContext::setOptionalAccessRights(const QSet<AccessRight>& pAccessRi
 		{
 			mDidAuthenticateEac1->mEac1InputType.mOptionalChat.reset(new CHAT(getTerminalCvc()->getBody().getCHAT()));
 		}
-		mDidAuthenticateEac1->getOptionalChat()->removeAllAccessRights();
-		mDidAuthenticateEac1->getOptionalChat()->setAccessRights(pAccessRights);
+		qSharedPointerConstCast<CHAT>(mDidAuthenticateEac1->getOptionalChat())->removeAllAccessRights();
+		qSharedPointerConstCast<CHAT>(mDidAuthenticateEac1->getOptionalChat())->setAccessRights(pAccessRights);
 	}
 	setDidAuthenticateEac1(mDidAuthenticateEac1);
 	setTerminalCvc(mDidAuthenticateEac1->getCvCertificates().at(0));

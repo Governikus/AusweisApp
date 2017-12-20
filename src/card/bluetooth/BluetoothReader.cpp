@@ -1,7 +1,5 @@
 /*!
- * BluetoothReader.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BluetoothCard.h"
@@ -25,17 +23,18 @@ using namespace governikus;
 
 
 BluetoothReader::BluetoothReader(const QSharedPointer<CyberJackWaveDevice>& pDevice)
-	: ConnectableReader(ReaderManagerPlugInType::BLUETOOTH, pDevice->getName(), ReaderType::REINER_cyberJack_wave)
+	: ConnectableReader(ReaderManagerPlugInType::BLUETOOTH, pDevice->getName())
 	, mDevice(pDevice)
 	, mLastCardEvent(CardEvent::NONE)
 	, mCard()
 {
 	mReaderInfo.setBasicReader(false);
-	mReaderInfo.setConnected(false);
 	connect(mDevice.data(), &CyberJackWaveDevice::fireInitialized, this, &BluetoothReader::onInitialized);
 	connect(mDevice.data(), &CyberJackWaveDevice::fireDisconnected, this, &BluetoothReader::onDisconnected);
 	connect(mDevice.data(), &CyberJackWaveDevice::fireError, this, &BluetoothReader::onError);
 	connect(mDevice.data(), &CyberJackWaveDevice::fireStatusCharacteristicChanged, this, &BluetoothReader::onStatusCharacteristicChanged);
+	mReaderInfo.setConnected(mDevice->isValid());
+	qCDebug(bluetooth) << "Created reader" << getName() << "with connected status:" << mReaderInfo.isConnected();
 }
 
 
@@ -138,8 +137,6 @@ void BluetoothReader::onStatusCharacteristicChanged(const QByteArray& pValue)
 		mCard.reset(new BluetoothCard(mDevice));
 		QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
 		CardInfoFactory::create(cardConnection, mReaderInfo);
-		const QSignalBlocker blocker(this);
-		updateRetryCounter(cardConnection);
 		mLastCardEvent = CardEvent::CARD_INSERTED;
 	}
 	else if (!mCard.isNull() && statusChange == BluetoothStatusChange::CardRemoved)
@@ -157,7 +154,6 @@ void BluetoothReader::onCardRemoved()
 {
 	qCDebug(card) << "Card removed" << getName();
 	mLastCardEvent = CardEvent::CARD_REMOVED;
-	mUpdateRetryCounter = false;
 	mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
 	mCard.reset();
 }

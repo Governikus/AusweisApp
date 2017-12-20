@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDetector.h"
@@ -24,17 +24,16 @@ class DeviceListener
 {
 	Q_OBJECT
 
-	private:
 #ifdef HAVE_LIBUDEV
+
+	private:
 		struct udev* mUserDevices;
 		struct udev_monitor* mDeviceMonitor;
 		int mFileDescriptor;
-#endif
 
-		void run() override
+		virtual void run() override
 		{
-#ifdef HAVE_LIBUDEV
-			for (;; )
+			for (;;)
 			{
 				fd_set fds;
 				FD_ZERO(&fds);
@@ -53,14 +52,12 @@ class DeviceListener
 					Q_EMIT fireDeviceChangeDetected();
 				}
 			}
-#endif
 		}
 
 
 	public:
 		DeviceListener()
 		{
-#ifdef HAVE_LIBUDEV
 			mUserDevices = udev_new();
 
 			// Set up a monitor to monitor usb devices
@@ -70,19 +67,19 @@ class DeviceListener
 
 			/// Get the file descriptor (fd) for the monitor
 			mFileDescriptor = udev_monitor_get_fd(mDeviceMonitor);
-#endif
 		}
 
 
-		~DeviceListener()
+		virtual ~DeviceListener() override
 		{
-#ifdef HAVE_LIBUDEV
 			udev_monitor_unref(mDeviceMonitor);
 			udev_unref(mUserDevices);
-#endif
 		}
 
 
+#endif
+
+	public:
 	Q_SIGNALS:
 		void fireDeviceChangeDetected();
 };
@@ -109,9 +106,9 @@ bool ReaderDetector::terminateNativeEvents()
 }
 
 
-QVector<QPair<uint, uint> > ReaderDetector::attachedDevIds() const
+QVector<UsbId> ReaderDetector::attachedDevIds() const
 {
-	QVector<QPair<uint, uint> > result;
+	QVector<UsbId> result;
 
 #ifdef HAVE_LIBUDEV
 	// http://www.signal11.us/oss/udev/
@@ -146,10 +143,6 @@ QVector<QPair<uint, uint> > ReaderDetector::attachedDevIds() const
 		const char* path = udev_list_entry_get_name(dev_list_entry);
 		struct udev_device* dev = udev_device_new_from_syspath(udev, path);
 
-		/* usb_device_get_devnode() returns the path to the device node
-		   itself in /dev. */
-		qCDebug(card_drivers) << "Device Node Path:" << udev_device_get_devnode(dev);
-
 		/* The device pointed to by dev contains information about
 		   the hidraw device. In order to get information about the
 		   USB device, get the parent device with the
@@ -159,7 +152,6 @@ QVector<QPair<uint, uint> > ReaderDetector::attachedDevIds() const
 		dev = udev_device_get_parent_with_subsystem_devtype(dev, "usb", "usb_device");
 		if (!dev)
 		{
-			qCDebug(card_drivers) << "Unable to find parent usb device.";
 			continue;
 		}
 
@@ -172,10 +164,8 @@ QVector<QPair<uint, uint> > ReaderDetector::attachedDevIds() const
 		   udev_device_get_sysattr_value() are UTF-8 encoded. */
 		QByteArray vid(udev_device_get_sysattr_value(dev, "idVendor"));
 		QByteArray pid(udev_device_get_sysattr_value(dev, "idProduct"));
-		result += QPair<uint, uint>(vid.toUInt(nullptr, 16), pid.toUInt(nullptr, 16));
-		qCDebug(card_drivers) << "VID / PID:" << vid << "/" << pid;
-		qCDebug(card_drivers) << "Manufacturer:" << udev_device_get_sysattr_value(dev, "manufacturer");
-		qCDebug(card_drivers) << "Product:" << udev_device_get_sysattr_value(dev, "product");
+		const UsbId usbId(vid.toUInt(nullptr, 16), pid.toUInt(nullptr, 16));
+		result += usbId;
 
 		udev_device_unref(dev);
 	}

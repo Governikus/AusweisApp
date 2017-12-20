@@ -1,9 +1,7 @@
 /*!
- * TransmitCommand.h
- *
  * \brief Command to transmit data to/from the card.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,11 +21,12 @@ class TransmitCommand
 
 	private:
 		const QVector<InputAPDUInfo> mInputApduInfos;
+		const QString mReaderName;
 		QByteArrayList mOutputApduAsHex;
 
 	protected:
 		virtual void internalExecute() override;
-		virtual ~TransmitCommand();
+		virtual ~TransmitCommand() override;
 
 	public:
 		TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
@@ -36,6 +35,12 @@ class TransmitCommand
 		const QByteArrayList& getOutputApduAsHex() const
 		{
 			return mOutputApduAsHex;
+		}
+
+
+		const QString& getReaderName() const
+		{
+			return mReaderName;
 		}
 
 

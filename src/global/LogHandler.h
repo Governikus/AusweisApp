@@ -1,11 +1,12 @@
 /*
  * \brief Logging handler of QtMessageHandler
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
+#include <QDateTime>
 #include <QDebug>
 #include <QFileInfoList>
 #include <QMessageLogContext>
@@ -36,9 +37,9 @@ class LogHandler
 
 		inline void copyMessageLogContext(const QMessageLogContext& pSource, QMessageLogContext& pDestination, const QByteArray& pFilename = QByteArray(), const QByteArray& pFunction = QByteArray(), const QByteArray& pCategory = QByteArray());
 		inline void logToFile(const QString& pOutput);
-		inline QByteArray formatFunction(const char* pFunction, const QByteArray& pFilename, int pLine);
-		inline QByteArray formatFilename(const char* pFilename);
-		inline QByteArray formatCategory(const char* pCategory);
+		inline QByteArray formatFunction(const char* pFunction, const QByteArray& pFilename, int pLine) const;
+		inline QByteArray formatFilename(const char* pFilename) const;
+		inline QByteArray formatCategory(const QByteArray& pCategory) const;
 
 		QString getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg);
 		void handleMessage(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg);
@@ -59,6 +60,8 @@ class LogHandler
 		void resetBacklog();
 		QByteArray getBacklog();
 
+		static QDateTime getFileDate(const QFileInfo& pInfo);
+		QDateTime getCurrentLogfileDate() const;
 		QFileInfoList getOtherLogfiles() const;
 		void removeOtherLogfiles();
 

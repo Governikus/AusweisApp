@@ -1,14 +1,16 @@
 /*!
  * \brief Model implementation for the chat.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
+
+#include "ChatModel.h"
 
 #include "asn1/AccessRoleAndRight.h"
 #include "asn1/CVCertificate.h"
 #include "AppSettings.h"
-#include "context/SelfAuthenticationContext.h"
-#include "ChatModel.h"
+#include "context/SelfAuthContext.h"
+
 
 using namespace governikus;
 
@@ -26,6 +28,12 @@ ChatModel::ChatModel(QObject* pParent)
 
 	initFilterModel(mFilterOptionalModel, QStringLiteral("true"));
 	initFilterModel(mFilterRequiredModel, QStringLiteral("false"));
+
+	connect(&AppSettings::getInstance().getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, [this]()
+			{
+				beginResetModel();
+				endResetModel();
+			});
 }
 
 
@@ -41,7 +49,7 @@ void ChatModel::resetContext(const QSharedPointer<AuthContext>& pContext)
 {
 	mAuthContext = pContext;
 
-	if (pContext.objectCast<SelfAuthenticationContext>())
+	if (pContext.objectCast<SelfAuthContext>())
 	{
 		/* nothing to do, access rights are static */
 	}

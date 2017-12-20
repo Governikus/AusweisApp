@@ -1,9 +1,7 @@
 /*!
- * test_DidAuthenticateEac1.cpp
- *
  * \brief Unit tests for \DidAuthenticateEac1
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/retrieve/DidAuthenticateEac1.h"

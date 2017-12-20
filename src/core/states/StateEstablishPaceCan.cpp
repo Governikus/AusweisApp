@@ -1,7 +1,5 @@
 /*!
- * StateEstablishPaceCan.cpp
- *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -21,7 +19,7 @@ void StateEstablishPaceCan::run()
 
 	Q_ASSERT(cardConnection);
 	qDebug() << "Establish Pace connection with CAN";
-	mConnections += cardConnection->callEstablishPaceChannelCommand(this, &StateEstablishPaceCan::onEstablishConnectionDone, PACE_PIN_ID::PACE_CAN, getContext()->getCan());
+	mConnections += cardConnection->callEstablishPaceChannelCommand(this, &StateEstablishPaceCan::onEstablishConnectionDone, PACE_PASSWORD_ID::PACE_CAN, getContext()->getCan());
 	getContext()->setCan(QString());
 }
 
@@ -40,13 +38,13 @@ void StateEstablishPaceCan::onEstablishConnectionDone(QSharedPointer<BaseCardCom
 	{
 		case CardReturnCode::OK:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
-			Q_EMIT fireSuccess();
+			Q_EMIT fireContinue();
 			break;
 
 		case CardReturnCode::CANCELLATION_BY_USER:
 			getContext()->setLastPaceResultAndRetryCounter(returnCode, getContext()->getCardConnection()->getReaderInfo().getRetryCounter());
-			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-			Q_EMIT fireCancel();
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			Q_EMIT fireAbort();
 			break;
 
 		case CardReturnCode::INVALID_CAN:
@@ -55,8 +53,8 @@ void StateEstablishPaceCan::onEstablishConnectionDone(QSharedPointer<BaseCardCom
 			break;
 
 		default:
-			setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-			Q_EMIT fireError();
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			Q_EMIT fireAbort();
 			break;
 	}
 }

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpResponse.h"
@@ -13,10 +13,15 @@ using namespace governikus;
 
 namespace
 {
-static const auto HEADER_CONTENT_LENGTH = QByteArrayLiteral("Content-Length");
-static const auto HEADER_CONTENT_TYPE = QByteArrayLiteral("Content-Type");
-static const auto HEADER_SERVER = QByteArrayLiteral("Server");
-static const auto HEADER_DATE = QByteArrayLiteral("Date");
+#define HEADER_NAME(_name, _key)\
+	QByteArray _name(){\
+		return QByteArrayLiteral(_key);\
+	}
+
+HEADER_NAME(HEADER_CONTENT_LENGTH, "Content-Length")
+HEADER_NAME(HEADER_CONTENT_TYPE, "Content-Type")
+HEADER_NAME(HEADER_SERVER, "Server")
+HEADER_NAME(HEADER_DATE, "Date")
 }
 
 Q_DECLARE_LOGGING_CATEGORY(network)
@@ -34,9 +39,9 @@ HttpResponse::HttpResponse(HttpStatusCode pStatus, const QByteArray& pBody, cons
 	{
 		version.prepend('/');
 	}
-	setHeader(HEADER_SERVER, QCoreApplication::applicationName().toUtf8() % version % QByteArrayLiteral(" (TR-03124-1/1.2)"));
-	setHeader(HEADER_DATE, QLocale::c().toString(QDateTime::currentDateTimeUtc(), QStringLiteral("ddd, dd MMM yyyy hh:mm:ss")).toUtf8() + QByteArrayLiteral(" GMT"));
-	setHeader(HEADER_CONTENT_LENGTH, QByteArray::number(mBody.size()));
+	setHeader(HEADER_SERVER(), QCoreApplication::applicationName().toUtf8() % version % QByteArrayLiteral(" (TR-03124-1/1.3)"));
+	setHeader(HEADER_DATE(), QLocale::c().toString(QDateTime::currentDateTimeUtc(), QStringLiteral("ddd, dd MMM yyyy hh:mm:ss")).toUtf8() + QByteArrayLiteral(" GMT"));
+	setHeader(HEADER_CONTENT_LENGTH(), QByteArray::number(mBody.size()));
 }
 
 
@@ -90,15 +95,15 @@ const QByteArray& HttpResponse::getBody() const
 void HttpResponse::setBody(const QByteArray& pBody, const QByteArray& pContentType)
 {
 	mBody = pBody;
-	setHeader(HEADER_CONTENT_LENGTH, QByteArray::number(mBody.size()));
+	setHeader(HEADER_CONTENT_LENGTH(), QByteArray::number(mBody.size()));
 	if (mBody.isEmpty() || pContentType.isEmpty())
 	{
 		Q_ASSERT(pContentType.isEmpty());
-		mHeader.remove(HEADER_CONTENT_TYPE);
+		mHeader.remove(HEADER_CONTENT_TYPE());
 	}
 	else if (!pContentType.isEmpty())
 	{
-		setHeader(HEADER_CONTENT_TYPE, pContentType);
+		setHeader(HEADER_CONTENT_TYPE(), pContentType);
 	}
 }
 

@@ -1,0 +1,4 @@
+module TitleBar
+TitleBar 1.0 TitleBar.qml
+TitleBarAction 1.0 TitleBarAction.qml
+Hamburger 1.0 Hamburger.qml

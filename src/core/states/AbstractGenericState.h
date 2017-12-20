@@ -1,12 +1,10 @@
 /*!
- * AbstractGenericState.h
- *
  * \brief Template base class for all steps taken by the state machine.
  *        It is parameterized over the model type and contains a getter for the model.
  *        We cannot parameterize the super class AbstractState because Qt does not
  *        support template classes.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

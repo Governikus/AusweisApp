@@ -1,4 +1,4 @@
-From 496ac24b811593df82490643d574a037aa47d80e Mon Sep 17 00:00:00 2001
+From e681bc2125a396ff34aab4c3f629683dd0ce28bb Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
 Date: Thu, 23 Apr 2015 20:59:30 +0200
 Subject: [PATCH] Introduce TLS-RSA-PSK support
@@ -12,21 +12,21 @@ This work has been sponsored by Governikus GmbH & Co. KG.
 PR: 2464
 ---
  doc/apps/ciphers.pod |  12 +++
- ssl/s3_clnt.c        | 122 ++++++++++++++++++++++-----
+ ssl/s3_clnt.c        | 106 ++++++++++++++++++++----
  ssl/s3_lib.c         | 206 +++++++++++++++++++++++++++++++++++++++++++++-
- ssl/s3_srvr.c        | 227 ++++++++++++++++++++++++++++++++++++++++++++++++---
+ ssl/s3_srvr.c        | 226 ++++++++++++++++++++++++++++++++++++++++++++++++---
  ssl/ssl.h            |   2 +
  ssl/ssl_ciph.c       |   9 +-
  ssl/ssl_lib.c        |   6 ++
  ssl/ssl_locl.h       |   2 +
  ssl/tls1.h           |  36 ++++++++
- 9 files changed, 587 insertions(+), 35 deletions(-)
+ 9 files changed, 572 insertions(+), 33 deletions(-)
 
 diff --git x/doc/apps/ciphers.pod y/doc/apps/ciphers.pod
-index 922455725..234350faa 100644
+index fa16124d08..45db06c168 100644
 --- x/doc/apps/ciphers.pod
 +++ y/doc/apps/ciphers.pod
-@@ -583,10 +583,22 @@ Note: these ciphers can also be used in SSL v3.
+@@ -585,10 +585,22 @@ Note: these ciphers can also be used in SSL v3.
  
  =head2 Pre shared keying (PSK) cipheruites
  
@@ -50,10 +50,10 @@ index 922455725..234350faa 100644
  =head2 Deprecated SSL v2.0 cipher suites.
  
 diff --git x/ssl/s3_clnt.c y/ssl/s3_clnt.c
-index 32f2f1aee..cd05f4d52 100644
+index 5b8b2da59f..ae0d4d840c 100644
 --- x/ssl/s3_clnt.c
 +++ y/ssl/s3_clnt.c
-@@ -337,7 +337,7 @@ int ssl3_connect(SSL *s)
+@@ -342,7 +342,7 @@ int ssl3_connect(SSL *s)
              }
  #endif
              /* Check if it is anon DH/ECDH, SRP auth */
@@ -62,7 +62,7 @@ index 32f2f1aee..cd05f4d52 100644
              if (!
                  (s->s3->tmp.
                   new_cipher->algorithm_auth & (SSL_aNULL | SSL_aSRP))
-@@ -1419,9 +1419,9 @@ int ssl3_get_key_exchange(SSL *s)
+@@ -1424,9 +1424,9 @@ int ssl3_get_key_exchange(SSL *s)
          }
  #ifndef OPENSSL_NO_PSK
          /*
@@ -75,53 +75,30 @@ index 32f2f1aee..cd05f4d52 100644
           */
          if (alg_k & SSL_kPSK) {
              s->session->sess_cert = ssl_sess_cert_new();
-@@ -1466,7 +1466,12 @@ int ssl3_get_key_exchange(SSL *s)
+@@ -1471,7 +1471,12 @@ int ssl3_get_key_exchange(SSL *s)
      al = SSL_AD_DECODE_ERROR;
  
  #ifndef OPENSSL_NO_PSK
 -    if (alg_k & SSL_kPSK) {
 +    /* handle PSK identity hint */
-+    if (alg_k & (SSL_kPSK
++    if (alg_k & SSL_kPSK
 +#ifndef OPENSSL_NO_RSA
-+                 | SSL_kRSAPSK
++                 || alg_k & SSL_kRSAPSK
 +#endif
-+                 )) {
++                 ) {
          param_len = 2;
          if (param_len > n) {
              SSLerr(SSL_F_SSL3_GET_KEY_EXCHANGE, SSL_R_LENGTH_TOO_SHORT);
-@@ -1610,7 +1615,11 @@ int ssl3_get_key_exchange(SSL *s)
-     } else
- #endif                          /* !OPENSSL_NO_SRP */
- #ifndef OPENSSL_NO_RSA
--    if (alg_k & SSL_kRSA) {
-+    if (alg_k & (SSL_kRSA
-+#ifndef OPENSSL_NO_PSK
-+                 | SSL_kRSAPSK
-+#endif
-+                 )) {
-         /* Temporary RSA keys only allowed in export ciphersuites */
-         if (!SSL_C_IS_EXPORT(s->s3->tmp.new_cipher)) {
-             al = SSL_AD_UNEXPECTED_MESSAGE;
-@@ -2034,8 +2043,16 @@ int ssl3_get_key_exchange(SSL *s)
-             }
+@@ -2041,7 +2046,7 @@ int ssl3_get_key_exchange(SSL *s)
          }
      } else {
--        /* aNULL, aSRP or kPSK do not need public keys */
+         /* aNULL, aSRP or kPSK do not need public keys */
 -        if (!(alg_a & (SSL_aNULL | SSL_aSRP)) && !(alg_k & SSL_kPSK)) {
-+        /* aNULL, aSRP, kPSK or kRSAPSK do not need public keys */
-+        if (!(alg_a & (SSL_aNULL | SSL_aSRP))
-+#ifndef OPENSSL_NO_PSK
-+                && !(alg_k & (SSL_kPSK
-+#ifndef OPENSSL_NO_RSA
-+                              | SSL_kRSAPSK
-+#endif
-+                              ))
-+#endif
-+            ) {
++        if (!(alg_a & (SSL_aNULL | SSL_aSRP)) && !(alg_k & SSL_kPSK) && !(alg_k & SSL_kRSAPSK)) {
              /* Might be wrong key type, check it */
              if (ssl3_check_cert_and_algorithm(s))
                  /* Otherwise this shouldn't happen */
-@@ -3124,7 +3141,11 @@ int ssl3_send_client_key_exchange(SSL *s)
+@@ -3130,7 +3135,11 @@ int ssl3_send_client_key_exchange(SSL *s)
          }
  #endif
  #ifndef OPENSSL_NO_PSK
@@ -134,7 +111,7 @@ index 32f2f1aee..cd05f4d52 100644
              /*
               * The callback needs PSK_MAX_IDENTITY_LEN + 1 bytes to return a
               * \0-terminated identity. The last byte is for us for simulating
-@@ -3132,8 +3153,8 @@ int ssl3_send_client_key_exchange(SSL *s)
+@@ -3138,8 +3147,8 @@ int ssl3_send_client_key_exchange(SSL *s)
               */
              char identity[PSK_MAX_IDENTITY_LEN + 2];
              size_t identity_len;
@@ -144,7 +121,7 @@ index 32f2f1aee..cd05f4d52 100644
              unsigned int pre_ms_len = 0, psk_len = 0;
              int psk_err = 1;
  
-@@ -3165,14 +3186,34 @@ int ssl3_send_client_key_exchange(SSL *s)
+@@ -3171,14 +3180,34 @@ int ssl3_send_client_key_exchange(SSL *s)
                         ERR_R_INTERNAL_ERROR);
                  goto psk_err;
              }
@@ -187,7 +164,7 @@ index 32f2f1aee..cd05f4d52 100644
  
              if (s->session->psk_identity_hint != NULL)
                  OPENSSL_free(s->session->psk_identity_hint);
-@@ -3202,8 +3243,41 @@ int ssl3_send_client_key_exchange(SSL *s)
+@@ -3208,8 +3237,41 @@ int ssl3_send_client_key_exchange(SSL *s)
                                                              pre_ms_len);
              s2n(identity_len, p);
              memcpy(p, identity, identity_len);
@@ -229,34 +206,34 @@ index 32f2f1aee..cd05f4d52 100644
   psk_err:
              OPENSSL_cleanse(identity, sizeof(identity));
              OPENSSL_cleanse(psk_or_pre_ms, sizeof(psk_or_pre_ms));
-@@ -3574,7 +3648,11 @@ int ssl3_check_cert_and_algorithm(SSL *s)
+@@ -3580,7 +3642,11 @@ int ssl3_check_cert_and_algorithm(SSL *s)
      }
  #endif
  #ifndef OPENSSL_NO_RSA
 -    if (alg_k & SSL_kRSA) {
-+    if (alg_k & (SSL_kRSA
++    if (alg_k & SSL_kRSA
 +#ifndef OPENSSL_NO_PSK
-+                  | SSL_kRSAPSK
++                  || alg_k & SSL_kRSAPSK
 +#endif
-+          )) {
++          ) {
          if (!SSL_C_IS_EXPORT(s->s3->tmp.new_cipher) &&
              !has_bits(i, EVP_PK_RSA | EVP_PKT_ENC)) {
              SSLerr(SSL_F_SSL3_CHECK_CERT_AND_ALGORITHM,
-@@ -3641,7 +3719,11 @@ int ssl3_check_cert_and_algorithm(SSL *s)
+@@ -3647,7 +3713,11 @@ int ssl3_check_cert_and_algorithm(SSL *s)
      if (SSL_C_IS_EXPORT(s->s3->tmp.new_cipher) &&
          pkey_bits > SSL_C_EXPORT_PKEYLENGTH(s->s3->tmp.new_cipher)) {
  #ifndef OPENSSL_NO_RSA
 -        if (alg_k & SSL_kRSA) {
-+        if (alg_k & (SSL_kRSA
++        if (alg_k & SSL_kRSA
 +#ifndef OPENSSL_NO_PSK
-+                     | SSL_kRSAPSK
++                     || alg_k & SSL_kRSAPSK
 +#endif
-+                )) {
++                ) {
              if (rsa == NULL) {
                  SSLerr(SSL_F_SSL3_CHECK_CERT_AND_ALGORITHM,
                         SSL_R_MISSING_EXPORT_TMP_RSA_KEY);
 diff --git x/ssl/s3_lib.c y/ssl/s3_lib.c
-index 0385e039c..ce69ec470 100644
+index 1014a3fce1..0187d508a1 100644
 --- x/ssl/s3_lib.c
 +++ y/ssl/s3_lib.c
 @@ -1765,6 +1765,74 @@ OPENSSL_GLOBAL SSL_CIPHER ssl3_ciphers[] = {
@@ -482,15 +459,15 @@ index 0385e039c..ce69ec470 100644
  #ifndef OPENSSL_NO_PSK
          /* with PSK there must be server callback set */
 -        if ((alg_k & SSL_kPSK) && s->psk_server_callback == NULL)
-+        if ((alg_k & (SSL_kPSK | SSL_kRSAPSK)) && s->psk_server_callback == NULL)
++        if ((alg_k & SSL_kPSK || alg_k & SSL_kRSAPSK) && s->psk_server_callback == NULL)
              continue;
  #endif                          /* OPENSSL_NO_PSK */
  
 diff --git x/ssl/s3_srvr.c y/ssl/s3_srvr.c
-index ea56f9ca8..2b1797cc8 100644
+index 0fb4845d44..3498836e7d 100644
 --- x/ssl/s3_srvr.c
 +++ y/ssl/s3_srvr.c
-@@ -458,19 +458,23 @@ int ssl3_accept(SSL *s)
+@@ -467,19 +467,22 @@ int ssl3_accept(SSL *s)
  
              /*
               * only send if a DH key exchange, fortezza or RSA but we have a
@@ -513,15 +490,14 @@ index ea56f9ca8..2b1797cc8 100644
 -                 */
  #ifndef OPENSSL_NO_PSK
 -                || ((alg_k & SSL_kPSK) && s->ctx->psk_identity_hint)
-+                || ((alg_k & (SSL_kPSK
++                || (alg_k & SSL_kPSK && s->ctx->psk_identity_hint)
 +#ifndef OPENSSL_NO_RSA
-+                              | SSL_kRSAPSK
++                || (alg_k & SSL_kRSAPSK && s->ctx->psk_identity_hint)
 +#endif
-+                    )) && s->ctx->psk_identity_hint)
  #endif
  #ifndef OPENSSL_NO_SRP
                  /* SRP: send ServerKeyExchange */
-@@ -526,11 +530,14 @@ int ssl3_accept(SSL *s)
+@@ -535,11 +538,14 @@ int ssl3_accept(SSL *s)
                     (s->s3->tmp.new_cipher->algorithm_auth & SSL_aKRB5) ||
                     /* don't request certificate for SRP auth */
                     (s->s3->tmp.new_cipher->algorithm_auth & SSL_aSRP)
@@ -538,49 +514,56 @@ index ea56f9ca8..2b1797cc8 100644
                  /* no cert request */
                  skip = 1;
                  s->s3->tmp.cert_request = 0;
-@@ -1830,7 +1837,11 @@ int ssl3_send_server_key_exchange(SSL *s)
+@@ -1835,7 +1841,11 @@ int ssl3_send_server_key_exchange(SSL *s)
          } else
  #endif                          /* !OPENSSL_NO_ECDH */
  #ifndef OPENSSL_NO_PSK
 -        if (type & SSL_kPSK) {
-+        if (type & (SSL_kPSK
++        if (type & SSL_kPSK
 +#ifndef OPENSSL_NO_RSA
-+                    | SSL_kRSAPSK
++                    || type & SSL_kRSAPSK
 +#endif
-+                    )) {
++                    ) {
              /*
               * reserve size for record length and PSK identity hint
               */
-@@ -1879,7 +1890,14 @@ int ssl3_send_server_key_exchange(SSL *s)
+@@ -1884,7 +1894,8 @@ int ssl3_send_server_key_exchange(SSL *s)
          }
  
          if (!(s->s3->tmp.new_cipher->algorithm_auth & (SSL_aNULL | SSL_aSRP))
 -            && !(s->s3->tmp.new_cipher->algorithm_mkey & SSL_kPSK)) {
-+#ifndef OPENSSL_NO_PSK
-+            && !(s->s3->tmp.new_cipher->algorithm_mkey & (SSL_kPSK
-+#ifndef OPENSSL_NO_RSA
-+                                                          | SSL_kRSAPSK
-+#endif
-+                                                          ))
-+#endif
-+                ) {
++            && !(s->s3->tmp.new_cipher->algorithm_mkey & SSL_kPSK)
++            && !(s->s3->tmp.new_cipher->algorithm_mkey & SSL_kRSAPSK)) {
              if ((pkey = ssl_get_sign_pkey(s, s->s3->tmp.new_cipher, &md))
                  == NULL) {
                  al = SSL_AD_DECODE_ERROR;
-@@ -1953,7 +1971,11 @@ int ssl3_send_server_key_exchange(SSL *s)
+@@ -1899,6 +1910,12 @@ int ssl3_send_server_key_exchange(SSL *s)
+         } else {
+             pkey = NULL;
+             kn = 0;
++            /* Allow space for signature algorithm */
++            if (SSL_USE_SIGALGS(s)) {
++                kn += 4;
++                const unsigned char *sig;
++                kn += tls12_get_psigalgs(s, 1, &sig);
++            }
+         }
+ 
+         if (!BUF_MEM_grow_clean(buf, n + SSL_HM_HEADER_LENGTH(s) + kn)) {
+@@ -1958,7 +1975,11 @@ int ssl3_send_server_key_exchange(SSL *s)
  #endif
  
  #ifndef OPENSSL_NO_PSK
 -        if (type & SSL_kPSK) {
-+        if (type & (SSL_kPSK
++        if (type & SSL_kPSK
 +#ifndef OPENSSL_NO_RSA
-+                    | SSL_kRSAPSK
++                    || type & SSL_kRSAPSK
 +#endif
-+                )) {
++                ) {
              /* copy PSK identity hint */
              s2n(strlen(s->ctx->psk_identity_hint), p);
              strncpy((char *)p, s->ctx->psk_identity_hint,
-@@ -1969,7 +1991,11 @@ int ssl3_send_server_key_exchange(SSL *s)
+@@ -1974,7 +1995,11 @@ int ssl3_send_server_key_exchange(SSL *s)
               * points to the space at the end.
               */
  #ifndef OPENSSL_NO_RSA
@@ -593,7 +576,7 @@ index ea56f9ca8..2b1797cc8 100644
                  q = md_buf;
                  j = 0;
                  for (num = 2; num > 0; num--) {
-@@ -2843,6 +2869,181 @@ int ssl3_get_client_key_exchange(SSL *s)
+@@ -2870,6 +2895,181 @@ int ssl3_get_client_key_exchange(SSL *s)
              goto f_err;
      } else
  #endif
@@ -776,7 +759,7 @@ index ea56f9ca8..2b1797cc8 100644
      if (alg_k & SSL_kSRP) {
          int param_len;
 diff --git x/ssl/ssl.h y/ssl/ssl.h
-index 90aeb0ce4..78cf2212e 100644
+index 90aeb0ce4e..78cf2212ed 100644
 --- x/ssl/ssl.h
 +++ y/ssl/ssl.h
 @@ -254,6 +254,7 @@ extern "C" {
@@ -796,7 +779,7 @@ index 90aeb0ce4..78cf2212e 100644
  
  # define SSL_TXT_DES             "DES"
 diff --git x/ssl/ssl_ciph.c y/ssl/ssl_ciph.c
-index 2ad8f4392..33f6da1be 100644
+index ccdf00fa1b..19c4ac0656 100644
 --- x/ssl/ssl_ciph.c
 +++ y/ssl/ssl_ciph.c
 @@ -263,6 +263,7 @@ static const SSL_CIPHER cipher_aliases[] = {
@@ -844,10 +827,10 @@ index 2ad8f4392..33f6da1be 100644
          kx = "SRP";
          break;
 diff --git x/ssl/ssl_lib.c y/ssl/ssl_lib.c
-index f8054dae6..b835f1fa5 100644
+index 3539f4b8d2..df6a45bdc4 100644
 --- x/ssl/ssl_lib.c
 +++ y/ssl/ssl_lib.c
-@@ -2434,8 +2434,14 @@ void ssl_set_cert_masks(CERT *c, const SSL_CIPHER *cipher)
+@@ -2442,8 +2442,14 @@ void ssl_set_cert_masks(CERT *c, const SSL_CIPHER *cipher)
  
  #ifndef OPENSSL_NO_PSK
      mask_k |= SSL_kPSK;
@@ -863,7 +846,7 @@ index f8054dae6..b835f1fa5 100644
  #endif
  
 diff --git x/ssl/ssl_locl.h y/ssl/ssl_locl.h
-index d50edd18c..3c59fff1b 100644
+index aeffc00634..25b9f1d5b1 100644
 --- x/ssl/ssl_locl.h
 +++ y/ssl/ssl_locl.h
 @@ -314,6 +314,8 @@
@@ -876,7 +859,7 @@ index d50edd18c..3c59fff1b 100644
  /* Bits for algorithm_auth (server authentication) */
  /* RSA auth */
 diff --git x/ssl/tls1.h y/ssl/tls1.h
-index 7e237d063..173be499f 100644
+index dd1d8c109e..e04e7ddabc 100644
 --- x/ssl/tls1.h
 +++ y/ssl/tls1.h
 @@ -410,6 +410,24 @@ SSL_CTX_callback_ctrl(ssl,SSL_CTRL_SET_TLSEXT_TICKET_KEY_CB,(void (*)(void))cb)
@@ -930,5 +913,5 @@ index 7e237d063..173be499f 100644
  # define TLS1_TXT_SRP_SHA_WITH_3DES_EDE_CBC_SHA          "SRP-3DES-EDE-CBC-SHA"
  # define TLS1_TXT_SRP_SHA_RSA_WITH_3DES_EDE_CBC_SHA      "SRP-RSA-3DES-EDE-CBC-SHA"
 -- 
-2.11.0
+2.15.0
 

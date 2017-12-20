@@ -1,7 +1,5 @@
 /*!
- * TcToken.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -248,6 +246,12 @@ const QUrl& TcToken::getRefreshAddress() const
 const QUrl& TcToken::getCommunicationErrorAddress() const
 {
 	return mCommunicationErrorAddress;
+}
+
+
+bool TcToken::usePsk() const
+{
+	return !mPsk.isNull();
 }
 
 

@@ -47,25 +47,6 @@
 		<?endif?>
 
 		<!-- ############################################################## -->
-		<!-- Rewrite autostart registry entry if defined                    -->
-		<!-- ############################################################## -->
-		<Property Id="AUTOSTART">
-			<RegistrySearch Id="AUTOSTART" Root="HKCU"
-				Key="Software\Microsoft\Windows\CurrentVersion\Run"
-				Name="AusweisApp2"
-				Type="raw" />
-		</Property>
-		<DirectoryRef Id="TARGETDIR">
-			<Component Id="RegistryEntryAutoStart" Guid="*">
-				<Condition>AUTOSTART</Condition>
-				<RegistryKey Root="HKCU" Key="Software\Microsoft\Windows\CurrentVersion\Run">
-					<RegistryValue Type="string" Name="AusweisApp2" Value="&quot;[INSTALL_ROOT][ProductName].exe&quot;" KeyPath="no"/>
-				</RegistryKey>
-			</Component>
-		</DirectoryRef>
-
-
-		<!-- ############################################################## -->
 		<!-- Create registry entry and add 127.0.0.1 to trusted sites       -->
 		<!-- ############################################################## -->
 		<Property Id="SYSTEMSETTINGS" Value="1"/><!-- default: true -->
@@ -83,36 +64,12 @@
 					<RegistryValue Type="string" Name="AusweisApp2-Firewall-Rule"
 						Value="v2.20|Action=Allow|Active=TRUE|Dir=Out|App=[INSTALL_ROOT][ProductName].exe|Name=AusweisApp2|Desc=AusweisApp2 firewall rule|"
 						KeyPath="no"/>
+					<RegistryValue Type="string" Name="AusweisApp2-Firewall-Rule-In"
+						Value="v2.20|Action=Allow|Active=TRUE|Dir=In|Protocol=17|LPort=24727|RA4=LocalSubnet|RA6=LocalSubnet|App=[INSTALL_ROOT][ProductName].exe|Name=AusweisApp2|Desc=Allow inbound udp connections for Smartphone as Cardreader.|Edge=TRUE|"
+						KeyPath="no"/>
 				</RegistryKey>
 			</Component>
 		</DirectoryRef>
-
-
-		<!-- ################################################################### -->
-		<!-- Add AusweisApp2 Listening Port Allow Rule to Windows Firewall       -->
-		<!-- ################################################################### -->
-		<CustomAction Id="AddListeningPortWindowsFirewall"
-				Directory="TARGETDIR"
-				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall add rule name=AusweisApp2 dir=in action=allow service=any description=&quot;AusweisApp2 listening port allow rule&quot; enable=yes localip=127.0.0.1 remoteip=any localport=24727 remoteport=any protocol=tcp"
-				Execute="commit"
-				Return="asyncWait" />
-		<InstallExecuteSequence>
-			<Custom Action="AddListeningPortWindowsFirewall" Before="InstallFinalize">SYSTEMSETTINGS and NOT Installed</Custom>
-		</InstallExecuteSequence>
-
-
-		<!-- ############################################################################## -->
-		<!-- UNINSTALL Delete AusweisApp2 Listening Port Allow Rule to Windows Firewall     -->
-		<!-- ############################################################################## -->
-		<CustomAction Id="DeleteListeningPortWindowsFirewall"
-				Directory="TARGETDIR"
-				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall delete rule name=AusweisApp2"
-				Execute="commit"
-				Return="asyncWait" />
-		<InstallExecuteSequence>
-			<Custom Action="DeleteListeningPortWindowsFirewall" Before="InstallFinalize">Installed and NOT REINSTALL</Custom>
-		</InstallExecuteSequence>
-
 
 		<!-- ############################# -->
 		<!-- Create desktop shortcut       -->
@@ -144,7 +101,6 @@
 		<FeatureRef Id="ProductFeature">
 			<ComponentRef Id="ProgrammDesktopShortcut" />
 			<ComponentRef Id="RegistryEntryIE" />
-			<ComponentRef Id="RegistryEntryAutoStart" />
 		</FeatureRef>
 
 

@@ -14,7 +14,7 @@ j.with
 {
 	steps
 	{
-		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain')
+		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain-db')
 
 		shell(strip("""\
 			cd build;

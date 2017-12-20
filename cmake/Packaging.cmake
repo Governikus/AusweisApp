@@ -71,6 +71,7 @@ LIST(APPEND CPACK_SOURCE_IGNORE_FILES "\\\\.cproject")
 LIST(APPEND CPACK_SOURCE_IGNORE_FILES "\\\\.reviewboardrc")
 LIST(APPEND CPACK_SOURCE_IGNORE_FILES "utils/tlscheck")
 LIST(APPEND CPACK_SOURCE_IGNORE_FILES "utils/testbedtool")
+LIST(APPEND CPACK_SOURCE_IGNORE_FILES "utils/fuzzing")
 
 SET(CPACK_MONOLITHIC_INSTALL true)
 
@@ -97,7 +98,7 @@ IF(WIN32)
 
 ELSEIF(IOS)
 	FILE(WRITE ${PROJECT_BINARY_DIR}/ipa.cmake "
-		SET(BUNDLE_DIRS \"\${CONFIG}-iphoneos;UninstalledProducts;UninstalledProducts/iphoneos\")
+		SET(BUNDLE_DIRS \"\${CONFIG}-iphoneos;\${CONFIG};UninstalledProducts;UninstalledProducts/iphoneos\")
 
 		FOREACH(dir \${BUNDLE_DIRS})
 			SET(tmpBundleDir ${PROJECT_BINARY_DIR}/src/\${dir}/${PROJECT_NAME}.app)

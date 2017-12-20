@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SignalHandler.h"
@@ -23,7 +23,7 @@ void SignalHandler::initUnix()
 	// Signal handling on POSIX systems is some what messed up since there exists
 	// only a limited set of API calls which are usable. Therefore we create a private
 	// socketpair to cross thread borders.
-	// http://doc.qt.io/qt-5.7/unix-signals.html
+	// http://doc.qt.io/qt-5/unix-signals.html
 
 	if (::socketpair(AF_UNIX, SOCK_STREAM, 0, cSignalSocketPair))
 	{
@@ -52,8 +52,13 @@ void SignalHandler::onSignalSocketActivated()
 {
 	mSignalSocketNotifier->setEnabled(false);
 
-	int signal;
-	::read(cSignalSocketPair[1], &signal, sizeof(signal));
+	int signal = -1;
+	const auto bytes = ::read(cSignalSocketPair[1], &signal, sizeof(signal));
+	if (bytes == 0 || signal == -1)
+	{
+		qCWarning(system) << "Cannot read signal:" << signal << "| bytes:" << bytes;
+		return;
+	}
 
 	qCWarning(system) << "Got signal:" << signal;
 

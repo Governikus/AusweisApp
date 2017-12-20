@@ -1,27 +1,22 @@
 /*!
- * CertificateChecker.h
- *
  * \brief Contains the definition of the CertificateChecker class.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include "AppSettings.h"
-#include "context/AuthContext.h"
+#include "asn1/CVCertificate.h"
 
-#include <QCryptographicHash>
-#include <QDebug>
-#include <QLoggingCategory>
 #include <QSet>
 #include <QSslCertificate>
 #include <QString>
 
-Q_DECLARE_LOGGING_CATEGORY(developermode)
+#include <functional>
 
 namespace governikus
 {
+class DIDAuthenticateEAC1;
 
 /*!
  * \brief Utility class for checking various constraints on certificates
@@ -32,8 +27,6 @@ class CertificateChecker
 {
 	Q_GADGET
 
-	static bool isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorithm, bool pIsEphemeral);
-
 	public:
 		enum class CertificateStatus
 		{
@@ -43,30 +36,17 @@ class CertificateChecker
 		};
 		Q_ENUM(CertificateStatus)
 
-		static QString toString(QSsl::KeyAlgorithm pKeyAlgorithm);
 
 		/*!
-		 * Checks, whether the certificate's hash is contained in a set of accepted certificate hashes.
-		 */
-		static bool checkCertificate(const QSslCertificate& pCertificate,
-				QCryptographicHash::Algorithm pAlgorithm,
-				const QSet<QString>& pAcceptedCertificateHashes);
-
-		/*!
-		 * Checks, whether the key length of the SSL certificate is of sufficient length.
-		 */
-		static bool hasValidCertificateKeyLength(const QSslCertificate& pCertificate);
-
-		/*!
-		 * Checks, whether the length of the ephemeral key is of sufficient length.
-		 */
-		static bool hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey);
-
-		/*!
-		 * Checks and save certificate into given WorkflowContext
+		 * Checks certificate and, if OK, save it using a callback function.
+		 *
 		 * \return Returns a translated error string if an error happened, otherwise QString()
 		 */
-		static CertificateStatus checkAndSaveCertificate(const QSslCertificate& pCertificate, const QUrl& pUrl, QSharedPointer<AuthContext> pContext);
+		static CertificateStatus checkAndSaveCertificate(const QSslCertificate& pCertificate,
+				const QUrl& pUrl,
+				const QSharedPointer<DIDAuthenticateEAC1>& pEAC1,
+				const QSharedPointer<const CVCertificate>& pDvCvc,
+				const std::function<void(const QUrl&, const QSslCertificate&)>& pSaveCertificateFunc);
 };
 
 } // namespace governikus

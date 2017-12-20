@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref GeneralSettings
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QCoreApplication>
@@ -17,102 +17,59 @@ class test_GeneralSettings
 	: public QObject
 {
 	Q_OBJECT
-	QScopedPointer<GeneralSettings> settings;
+	QScopedPointer<GeneralSettings> mSettings;
 
 	private Q_SLOTS:
 		void init()
 		{
 			AbstractSettings::mTestDir.clear();
-			settings.reset(new GeneralSettings());
-		}
-
-
-		void testEquals()
-		{
-			GeneralSettings otherSettings;
-			otherSettings.load();
-
-			QVERIFY(*settings == otherSettings);
-
-			settings->setAutoCloseWindowAfterAuthentication(!settings->isAutoCloseWindowAfterAuthentication());
-			QVERIFY(*settings != otherSettings);
-			otherSettings.setAutoCloseWindowAfterAuthentication(settings->isAutoCloseWindowAfterAuthentication());
-			QVERIFY(*settings == otherSettings);
-
-			settings->setAutoUpdateCheck(false);
-			QVERIFY(*settings != otherSettings);
-			otherSettings.setAutoUpdateCheck(false);
-
-			settings->setAutoStart(!GENERAL_SETTINGS_DEFAULT_AUTOSTART);
-			QVERIFY(*settings != otherSettings);
-			otherSettings.setAutoStart(!GENERAL_SETTINGS_DEFAULT_AUTOSTART);
-
-			settings->setUseScreenKeyboard(true);
-			QVERIFY(*settings != otherSettings);
-			otherSettings.setUseScreenKeyboard(true);
-
-			settings->setShowSetupAssistant(!settings->isShowSetupAssistant());
-			QVERIFY(*settings != otherSettings);
-			otherSettings.setShowSetupAssistant(settings->isShowSetupAssistant());
-			QVERIFY(*settings == otherSettings);
-
-			settings->setRemindUserToClose(!settings->isRemindUserToClose());
-			QVERIFY(*settings != otherSettings);
-			otherSettings.setRemindUserToClose(settings->isRemindUserToClose());
-			QVERIFY(*settings == otherSettings);
+			mSettings.reset(new GeneralSettings());
 		}
 
 
 		void testAutoCloseWindowAfterAuthentication()
 		{
-			bool initial = settings->isAutoCloseWindowAfterAuthentication();
+			bool initial = mSettings->isAutoCloseWindowAfterAuthentication();
 			bool newValue = !initial;
 
-			settings->setAutoCloseWindowAfterAuthentication(newValue);
-			QCOMPARE(settings->isAutoCloseWindowAfterAuthentication(), newValue);
-			QVERIFY(settings->isUnsaved());
-			settings->save();
-			QVERIFY(!settings->isUnsaved());
+			mSettings->setAutoCloseWindowAfterAuthentication(newValue);
+			QCOMPARE(mSettings->isAutoCloseWindowAfterAuthentication(), newValue);
+			mSettings->save();
 
-			settings->setAutoCloseWindowAfterAuthentication(initial);
-			QCOMPARE(settings->isAutoCloseWindowAfterAuthentication(), initial);
-			settings->save();
+			mSettings->setAutoCloseWindowAfterAuthentication(initial);
+			QCOMPARE(mSettings->isAutoCloseWindowAfterAuthentication(), initial);
+			mSettings->save();
 		}
 
 
 		void testAutoCheck()
 		{
-			bool initial = settings->isAutoUpdateCheck();
+			bool initial = mSettings->isAutoUpdateCheck();
 
-			settings->setAutoUpdateCheck(!initial);
-			QCOMPARE(settings->isAutoUpdateCheck(), !initial);
-			QVERIFY(settings->isUnsaved());
-			settings->save();
-			QVERIFY(!settings->isUnsaved());
+			mSettings->setAutoUpdateCheck(!initial);
+			QCOMPARE(mSettings->isAutoUpdateCheck(), !initial);
+			mSettings->save();
 
-
-			settings->setAutoUpdateCheck(initial);
-			QCOMPARE(settings->isAutoUpdateCheck(), initial);
-			settings->save();
+			mSettings->setAutoUpdateCheck(initial);
+			QCOMPARE(mSettings->isAutoUpdateCheck(), initial);
+			mSettings->save();
 
 		}
 
 
 		void testAutoStart()
 		{
-			#if defined(Q_OS_WIN32) || defined(Q_OS_OSX)
-			bool initial = settings->isAutoStart();
+			#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+			bool initial = mSettings->isAutoStart();
 
-			settings->setAutoStart(!initial);
-			QCOMPARE(settings->isAutoStart(), !initial);
-			QVERIFY(settings->isUnsaved());
-			settings->save();
-			QVERIFY(!settings->isUnsaved());
+			mSettings->setAutoStart(!initial);
+			QCOMPARE(mSettings->isAutoStart(), !initial);
+			mSettings->save();
 
 
-			settings->setAutoStart(initial);
-			QCOMPARE(settings->isAutoStart(), initial);
-			settings->save();
+			mSettings->setAutoStart(initial);
+			QCOMPARE(mSettings->isAutoStart(), initial);
+			mSettings->save();
 
 			#else
 			QSKIP("Autostart currently only on windows and mac os");
@@ -122,70 +79,61 @@ class test_GeneralSettings
 
 		void testUseScreenKeyboard()
 		{
-			bool initial = settings->isUseScreenKeyboard();
+			bool initial = mSettings->isUseScreenKeyboard();
 
-			settings->setUseScreenKeyboard(!initial);
-			QCOMPARE(settings->isUseScreenKeyboard(), !initial);
-			QVERIFY(settings->isUnsaved());
-			settings->save();
-			QVERIFY(!settings->isUnsaved());
+			mSettings->setUseScreenKeyboard(!initial);
+			QCOMPARE(mSettings->isUseScreenKeyboard(), !initial);
+			mSettings->save();
 
-			settings->setUseScreenKeyboard(initial);
-			QCOMPARE(settings->isUseScreenKeyboard(), initial);
-			settings->save();
+			mSettings->setUseScreenKeyboard(initial);
+			QCOMPARE(mSettings->isUseScreenKeyboard(), initial);
+			mSettings->save();
 
 		}
 
 
 		void testDefaultValues()
 		{
-			GeneralSettings defaultSettings;
-			QCOMPARE(defaultSettings.isAutoCloseWindowAfterAuthentication(), true);
-			QCOMPARE(defaultSettings.isAutoStart(), GENERAL_SETTINGS_DEFAULT_AUTOSTART);
-			QCOMPARE(defaultSettings.isAutoUpdateCheck(), true);
-			QCOMPARE(defaultSettings.isUseScreenKeyboard(), false);
-			QCOMPARE(defaultSettings.isShowSetupAssistant(), true);
-			QCOMPARE(defaultSettings.isRemindUserToClose(), true);
-			QCOMPARE(defaultSettings.isTransportPinReminder(), true);
-			QCOMPARE(defaultSettings.getPersistentSettingsVersion(), QString());
-			QCOMPARE(defaultSettings.isDeveloperMode(), false);
-			QCOMPARE(defaultSettings.useSelfauthenticationTestUri(), false);
+			QCOMPARE(mSettings->isAutoCloseWindowAfterAuthentication(), true);
+			QCOMPARE(mSettings->isAutoStart(), GENERAL_SETTINGS_DEFAULT_AUTOSTART);
+			QCOMPARE(mSettings->isAutoUpdateCheck(), true);
+			QCOMPARE(mSettings->isUseScreenKeyboard(), false);
+			QCOMPARE(mSettings->isShowSetupAssistant(), true);
+			QCOMPARE(mSettings->isRemindUserToClose(), true);
+			QCOMPARE(mSettings->isTransportPinReminder(), true);
+			QCOMPARE(mSettings->getPersistentSettingsVersion(), QString());
+			QCOMPARE(mSettings->isDeveloperMode(), false);
+			QCOMPARE(mSettings->useSelfAuthTestUri(), false);
 		}
 
 
 		void testRemindStartupWizard()
 		{
-			bool initial = settings->isShowSetupAssistant();
+			bool initial = mSettings->isShowSetupAssistant();
 			bool newValue = !initial;
 
-			settings->setShowSetupAssistant(newValue);
-			QCOMPARE(settings->isShowSetupAssistant(), newValue);
-			QVERIFY(settings->isUnsaved());
-			settings->save();
-			QVERIFY(!settings->isUnsaved());
+			mSettings->setShowSetupAssistant(newValue);
+			QCOMPARE(mSettings->isShowSetupAssistant(), newValue);
+			mSettings->save();
 
-			settings->setShowSetupAssistant(initial);
-			QCOMPARE(settings->isShowSetupAssistant(), initial);
-			QVERIFY(settings->isUnsaved());
-			settings->save();
+			mSettings->setShowSetupAssistant(initial);
+			QCOMPARE(mSettings->isShowSetupAssistant(), initial);
+			mSettings->save();
 		}
 
 
 		void testRemindUserToClose()
 		{
-			bool initial = settings->isRemindUserToClose();
+			bool initial = mSettings->isRemindUserToClose();
 			bool newValue = !initial;
 
-			settings->setRemindUserToClose(newValue);
-			QCOMPARE(settings->isRemindUserToClose(), newValue);
-			QVERIFY(settings->isUnsaved());
-			settings->save();
-			QVERIFY(!settings->isUnsaved());
+			mSettings->setRemindUserToClose(newValue);
+			QCOMPARE(mSettings->isRemindUserToClose(), newValue);
+			mSettings->save();
 
-			settings->setRemindUserToClose(initial);
-			QCOMPARE(settings->isRemindUserToClose(), initial);
-			QVERIFY(settings->isUnsaved());
-			settings->save();
+			mSettings->setRemindUserToClose(initial);
+			QCOMPARE(mSettings->isRemindUserToClose(), initial);
+			mSettings->save();
 		}
 
 
@@ -195,29 +143,41 @@ class test_GeneralSettings
 			// the persistent settings version contains the application version number
 			// last saving the settings --> in this test the settings have
 			// never been saved, so the empty string is expected
-			QCOMPARE(settings->getPersistentSettingsVersion(), QString());
+			QCOMPARE(mSettings->getPersistentSettingsVersion(), QString());
 
-			settings->save();
-			QCOMPARE(settings->getPersistentSettingsVersion(), QCoreApplication::applicationVersion());
+			mSettings->save();
+			QCOMPARE(mSettings->getPersistentSettingsVersion(), QCoreApplication::applicationVersion());
 		}
 
 
 		void testTransportPinReminder()
 		{
-			bool initialValue = settings->isTransportPinReminder();
+			bool initialValue = mSettings->isTransportPinReminder();
 			bool newValue = !initialValue;
 
-			QVERIFY(!settings->isUnsaved());
-			settings->setTransportPinReminder(newValue);
-			QCOMPARE(settings->isTransportPinReminder(), newValue);
-			QVERIFY(settings->isUnsaved());
-			settings->save();
+			mSettings->save();
+			mSettings->setTransportPinReminder(newValue);
+			QCOMPARE(mSettings->isTransportPinReminder(), newValue);
+			mSettings->save();
 
-			QVERIFY(!settings->isUnsaved());
-			settings->setTransportPinReminder(initialValue);
-			QCOMPARE(settings->isTransportPinReminder(), initialValue);
-			QVERIFY(settings->isUnsaved());
-			settings->save();
+			mSettings->setTransportPinReminder(initialValue);
+			QCOMPARE(mSettings->isTransportPinReminder(), initialValue);
+			mSettings->save();
+		}
+
+
+		void testLanguage()
+		{
+			const QLocale::Language initialValue = mSettings->getLanguage();
+			const QLocale::Language newValue = QLocale::English;
+
+			mSettings->save();
+			mSettings->setLanguage(newValue);
+			QCOMPARE(mSettings->getLanguage(), newValue);
+			mSettings->save();
+
+			mSettings->setLanguage(initialValue);
+			QCOMPARE(mSettings->getLanguage(), initialValue);
 		}
 
 

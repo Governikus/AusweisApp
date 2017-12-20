@@ -16,10 +16,10 @@ class Build
 	String libraries
 	String artifacts
 	String label
-	String tagName
 	String trigger = '@daily'
 	String excludePattern = 'source/**'
 	List oldBuilds = [7, 15]
+	boolean releaseJob = false
 	boolean xunit = false
 	boolean cleanup = false
 	boolean sendMail = true
@@ -36,7 +36,7 @@ class Build
 	{
 		def branchPrefix = ''
 
-		if(!getTagName())
+		if(!getReleaseJob())
 		{
 			if(libs && getReview())
 				branchPrefix = '${Libraries}_'
@@ -56,7 +56,7 @@ class Build
 	{
 		def prefix = 'Libs_'
 
-		if(getTagName())
+		if(getReleaseJob())
 		{
 			prefix = '${MERCURIAL_REVISION_BRANCH}_' + prefix
 		}
@@ -104,7 +104,7 @@ class Build
 			{
 				preBuildCleanup()
 				{
-					if(!getTagName() && getExcludePattern())
+					if(!getReleaseJob() && getExcludePattern())
 						excludePattern(getExcludePattern())
 
 					deleteDirectories(true)
@@ -125,8 +125,8 @@ class Build
 			{
 				hg(dslFactory.MERCURIAL_REPOSITORY_URL)
 				{
-					if(getTagName())
-						tag(getTagName())
+					if(getReleaseJob())
+						tag('${changeset}')
 					else
 						branch(dslFactory.MERCURIAL_REVISION_BRANCH)
 

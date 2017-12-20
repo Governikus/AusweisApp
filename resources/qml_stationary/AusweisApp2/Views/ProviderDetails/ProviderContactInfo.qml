@@ -24,7 +24,7 @@ Rectangle {
 		}
 
 		Text {
-			text: qsTr("Contact")
+			text: qsTr("Contact") + settingsModel.translationTrigger
 			padding: Constants.component_spacing
 			font.pixelSize: Constants.header_font_size
 			color: "white"
@@ -43,7 +43,7 @@ Rectangle {
 					width: contactListView.width
 					color: baseItem.color
 					imageSource: Qt.resolvedUrl(model.iconSource)
-					itemText: !!model.text ? model.text : qsTr("Unknown")
+					itemText: (!!model.text ? model.text : qsTr("Unknown")) + settingsModel.translationTrigger
 					link: model.link
 				}
 			}

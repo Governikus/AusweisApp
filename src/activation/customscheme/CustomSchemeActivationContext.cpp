@@ -1,7 +1,5 @@
 /*!
- * CustomSchemeActivationContext.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CustomSchemeActivationContext.h"
@@ -55,18 +53,15 @@ bool CustomSchemeActivationContext::sendProcessing()
 
 bool CustomSchemeActivationContext::sendOperationAlreadyActive()
 {
-	// probably we emit a signal, that will be caught by the AppController
-	// so that then UI can display some message or so?
+	Q_EMIT fireShowUserInformation(GlobalStatus(GlobalStatus::Code::Workflow_AlreadyInProgress_Error).toErrorDescription());
 	return true;
 }
 
 
-bool CustomSchemeActivationContext::sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus)
+bool CustomSchemeActivationContext::sendErrorPage(HttpStatusCode, const GlobalStatus&)
 {
-	Q_UNUSED(pStatusCode);
-	Q_UNUSED(pStatus);
-	// probably we emit a signal, that will be caught by the AppController
-	// so that then UI can display some message or so?
+	// The error is displayed in the application,
+	// so here is nothing to be done in this case.
 	return true;
 }
 

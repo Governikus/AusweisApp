@@ -1,9 +1,7 @@
 /*!
- * KeyDerivationFunction.h
- *
  * \brief Creates key according to TR 03110 Part 3 chapters A.2.3 ff.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,7 +25,6 @@ class KeyDerivationFunction
 		 * \brief Creates a new instance with derivation function algorithm determined by parameter.
 		 * \param pPaceAlgorithm algorithm of PACE protocol. This will determine the key derivation algorithm to use. E.g. a
 		 *        PACE protocol of id_PACE::DH::GM_AES_CBC_CMAC_128 will result in SHA256 to be used internally to derive keys.
-		 * \param pKeyBytes the bytes of the key
 		 */
 		KeyDerivationFunction(const QByteArray& pPaceAlgorithm);
 		virtual ~KeyDerivationFunction();

@@ -1,9 +1,7 @@
 /*!
- * PersoSim.h
- *
  * \brief This class is only to mark it as a workaround for working with the PersoSim.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,10 +31,11 @@ class PersoSimWorkaround
 		 *
 		 * As soon as PersoSim is fixed in that point, we will remove the workaround.
 		 */
-		static void sendingMseSetAt(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
+		static CardReturnCode sendingMseSetAt(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 		{
 			ResponseApdu response;
-			pCardConnectionWorker->transmit(SelectBuilder(FileRef::efCardAccess()).build(), response);
+			const CardReturnCode returnCode = pCardConnectionWorker->transmit(SelectBuilder(FileRef::efCardAccess()).build(), response);
+			return (returnCode == CardReturnCode::COMMAND_FAILED && response.getReturnCode() != StatusCode::EMPTY) ? CardReturnCode::OK : returnCode;
 		}
 
 
@@ -46,11 +45,11 @@ class PersoSimWorkaround
 		 *
 		 * As soon as PersoSim is fixed in that point, we will remove the workaround.
 		 */
-		static CardReturnCode parsingEstablishPACEChannelOutput(const QByteArray& pControlOutput, PACE_PIN_ID pPinId)
+		static CardReturnCode parsingEstablishPACEChannelOutput(const QByteArray& pControlOutput, PACE_PASSWORD_ID pPasswordId)
 		{
 			quint32 paceReturnCode;
 			QDataStream(pControlOutput.mid(0, 4)) >> paceReturnCode;
-			return EstablishPACEChannelOutput::parseReturnCode(paceReturnCode, pPinId);
+			return EstablishPACEChannelOutput::parseReturnCode(paceReturnCode, pPasswordId);
 		}
 
 

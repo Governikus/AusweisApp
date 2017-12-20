@@ -1,15 +1,16 @@
 /*!
- * PaosHandler.h
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
+#include "paos/retrieve/DidList.h"
+#include "paos/retrieve/Disconnect.h"
+#include "paos/retrieve/InitializeFramework.h"
+#include "paos/retrieve/StartPaosResponse.h"
 #include "PaosHandler.h"
 #include "retrieve/DidAuthenticateEac1Parser.h"
 #include "retrieve/DidAuthenticateEac2Parser.h"
 #include "retrieve/DidAuthenticateEacAdditionalParser.h"
 #include "retrieve/TransmitParser.h"
-
 
 using namespace governikus;
 

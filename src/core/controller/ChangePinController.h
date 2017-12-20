@@ -1,9 +1,7 @@
 /*!
- * ChangePinController.h
- *
  * \brief Controller for the PIN changing process.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

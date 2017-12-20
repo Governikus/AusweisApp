@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -10,7 +10,9 @@
 namespace governikus
 {
 
-defineEnumType(StatusCode,
+defineTypedEnumType(StatusCode, quint16,
+		EMPTY = 0x0000,
+		INVALID = 0x0001,
 		SUCCESS = 0x9000,
 		NO_PKCS15_APP = 0x6200,
 		END_OF_FILE = 0x6282,
@@ -57,7 +59,10 @@ defineEnumType(StatusCode,
  * As defined in ISO-7816-4 Table-5
  */
 defineEnumType(SW1,
+		INVALID = 0x00,
+		MORE_DATA_AVAILABLE = 0x61,
 		ERROR_COMMAND_NOT_ALLOWED = 0x69,
+		WRONG_LE_FIELD = 0x6c,
 		)
 
 class Apdu
@@ -85,10 +90,12 @@ class CommandApdu
 	: public Apdu
 {
 	private:
+		bool mUpdateRetryCounter;
+
 		inline bool isExtendedLength() const;
 
 	public:
-		CommandApdu(const QByteArray& pBuffer);
+		CommandApdu(const QByteArray& pBuffer, bool pUpdateRetryCounter = false);
 		CommandApdu(const QByteArray& pHeader, const QByteArray& pData, int pLe);
 		CommandApdu(char pCla, char pIns, char pP1, char pP2, const QByteArray& pData = QByteArray(), int pLe = NO_LE);
 		virtual ~CommandApdu();
@@ -100,6 +107,7 @@ class CommandApdu
 		int getLc() const;
 		int getLe() const;
 		QByteArray getData() const;
+		bool isUpdateRetryCounter() const;
 
 		static bool isExtendedLength(const QByteArray& pData, int pLe);
 		static bool isSecureMessaging(const QByteArray& pCommandBuffer);
@@ -109,6 +117,9 @@ class ResponseApdu
 	: public Apdu
 {
 
+	private:
+		static const int RETURN_CODE_LENGTH = 2;
+
 	public:
 		ResponseApdu(const QByteArray& pBuffer = QByteArray());
 		virtual ~ResponseApdu();
@@ -117,7 +128,9 @@ class ResponseApdu
 		QByteArray getData() const;
 		int getDataLength() const;
 		StatusCode getReturnCode() const;
-		char getSW1() const;
+		QByteArray getReturnCodeAsHex() const;
+		int getRetryCounter() const;
+		SW1 getSW1() const;
 		char getSW2() const;
 };
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ElementParser.h"
@@ -59,16 +59,13 @@ bool ElementParser::assertNoDuplicateElement(bool pNotYetSeen)
 }
 
 
-bool ElementParser::assertMandatoryElement(const QString& pValue, const char* pElementName)
+void ElementParser::assertMandatoryElement(const QString& pValue, const char* pElementName)
 {
 	if (pValue.isNull())
 	{
 		qCWarning(paos) << "Mandatory element is null:" << pElementName;
 		mParseError = true;
-		return false;
 	}
-
-	return true;
 }
 
 

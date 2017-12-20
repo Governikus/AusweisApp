@@ -1,10 +1,8 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PaosCreator.h"
-
-#include "paos/ResponseType.h"
 
 #include <QDebug>
 #include <QUuid>
@@ -13,26 +11,26 @@ using namespace governikus;
 
 
 const QMap<PaosCreator::Namespace, QString> PaosCreator::mNamespacePrefix = {
-	{PaosCreator::Namespace::DEFAULT, ""},
-	{PaosCreator::Namespace::ADDRESSING, "wsa"},
-	{PaosCreator::Namespace::DSS, "dss"},
-	{PaosCreator::Namespace::ECARD, "ecard"},
-	{PaosCreator::Namespace::PAOS, "paos"},
-	{PaosCreator::Namespace::TECHSCHEMA, "iso"},
-	{PaosCreator::Namespace::XSD, "xsd"},
-	{PaosCreator::Namespace::XSI, "xsi"},
-	{PaosCreator::Namespace::SOAP, "soap"}
+	{PaosCreator::Namespace::DEFAULT, QString()},
+	{PaosCreator::Namespace::ADDRESSING, QStringLiteral("wsa")},
+	{PaosCreator::Namespace::DSS, QStringLiteral("dss")},
+	{PaosCreator::Namespace::ECARD, QStringLiteral("ecard")},
+	{PaosCreator::Namespace::PAOS, QStringLiteral("paos")},
+	{PaosCreator::Namespace::TECHSCHEMA, QStringLiteral("iso")},
+	{PaosCreator::Namespace::XSD, QStringLiteral("xsd")},
+	{PaosCreator::Namespace::XSI, QStringLiteral("xsi")},
+	{PaosCreator::Namespace::SOAP, QStringLiteral("soap")}
 };
 
 const QMap<PaosCreator::Namespace, QString> PaosCreator::mNamespace = {
-	{PaosCreator::Namespace::ADDRESSING, "http://www.w3.org/2005/03/addressing"},
-	{PaosCreator::Namespace::DSS, "urn:oasis:names:tc:dss:1.0:core:schema"},
-	{PaosCreator::Namespace::ECARD, "http://www.bsi.bund.de/ecard/api/1.1"},
-	{PaosCreator::Namespace::PAOS, "urn:liberty:paos:2006-08"},
-	{PaosCreator::Namespace::TECHSCHEMA, "urn:iso:std:iso-iec:24727:tech:schema"},
-	{PaosCreator::Namespace::XSD, "http://www.w3.org/2001/XMLSchema"},
-	{PaosCreator::Namespace::XSI, "http://www.w3.org/2001/XMLSchema-instance"},
-	{PaosCreator::Namespace::SOAP, "http://schemas.xmlsoap.org/soap/envelope/"}
+	{PaosCreator::Namespace::ADDRESSING, QStringLiteral("http://www.w3.org/2005/03/addressing")},
+	{PaosCreator::Namespace::DSS, QStringLiteral("urn:oasis:names:tc:dss:1.0:core:schema")},
+	{PaosCreator::Namespace::ECARD, QStringLiteral("http://www.bsi.bund.de/ecard/api/1.1")},
+	{PaosCreator::Namespace::PAOS, QStringLiteral("urn:liberty:paos:2006-08")},
+	{PaosCreator::Namespace::TECHSCHEMA, QStringLiteral("urn:iso:std:iso-iec:24727:tech:schema")},
+	{PaosCreator::Namespace::XSD, QStringLiteral("http://www.w3.org/2001/XMLSchema")},
+	{PaosCreator::Namespace::XSI, QStringLiteral("http://www.w3.org/2001/XMLSchema-instance")},
+	{PaosCreator::Namespace::SOAP, QStringLiteral("http://schemas.xmlsoap.org/soap/envelope/")}
 };
 
 PaosCreator::PaosCreator()
@@ -58,7 +56,7 @@ QString PaosCreator::getNamespaceType(Namespace pPrefix, const QString& pType)
 {
 	QString prefix = mNamespacePrefix.value(pPrefix);
 	Q_ASSERT(!prefix.isEmpty());
-	return prefix + ":" + pType;
+	return prefix + QLatin1Char(':') + pType;
 }
 
 
@@ -70,15 +68,15 @@ QString PaosCreator::getNamespacePrefix(Namespace pPrefix, const QString& pSuffi
 		Q_ASSERT(pSuffix.isNull());
 		if (!value.isEmpty())
 		{
-			value.prepend(":");
+			value.prepend(QLatin1Char(':'));
 		}
-		value.prepend("xmlns");
+		value.prepend(QLatin1String("xmlns"));
 	}
 	else
 	{
 		Q_ASSERT(pPrefix != Namespace::DEFAULT);
 		Q_ASSERT(!value.isEmpty());
-		value += ':';
+		value += QLatin1Char(':');
 		value += pSuffix;
 	}
 	return value;
@@ -188,33 +186,24 @@ QDomElement PaosCreator::createEnvelopeElement(const QDomElement& pBody, const Q
 }
 
 
-QDomElement PaosCreator::createResultElement()
+QDomElement PaosCreator::createResultElement(const ResponseType& pResponse)
 {
 	QDomElement element = mDoc.createElement(QStringLiteral("Result"));
 	element.setAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::DSS));
 
-	if (ResponseType* paosResponse = dynamic_cast<ResponseType*>(this))
+	const Result& result = pResponse.getResult();
+	element.appendChild(createTextElement(QStringLiteral("ResultMajor"), result.getMajorString()));
+	if (result.getMinor() != GlobalStatus::Code::No_Error)
 	{
-		Result result = paosResponse->getResult();
-
-		element.appendChild(createTextElement(QStringLiteral("ResultMajor"), result.getMajorString()));
-		if (result.getMinor() != GlobalStatus::Code::Unknown_Error)
-		{
-			element.appendChild(createTextElement(QStringLiteral("ResultMinor"), result.getMinorString()));
-		}
-
-		if (!result.getMessage().isNull())
-		{
-			QDomElement resultElement = createTextElement(QStringLiteral("ResultMessage"), result.getMessage());
-			resultElement.setAttribute(QStringLiteral("xml:lang"), result.getMessageLang());
-			element.appendChild(resultElement);
-		}
-	}
-	else
-	{
-		qCritical() << "Cannot set Result, message is not of type ResponseType";
+		element.appendChild(createTextElement(QStringLiteral("ResultMinor"), result.getMinorString()));
 	}
 
+	if (!result.getMessage().isNull())
+	{
+		QDomElement resultElement = createTextElement(QStringLiteral("ResultMessage"), result.getMessage());
+		resultElement.setAttribute(QStringLiteral("xml:lang"), result.getMessageLang());
+		element.appendChild(resultElement);
+	}
 
 	return element;
 }

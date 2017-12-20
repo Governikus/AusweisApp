@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerReader.h"
@@ -11,7 +11,7 @@ using namespace governikus;
 MsgHandlerReader::MsgHandlerReader(const QJsonObject& pObj)
 	: MsgHandler(MsgType::READER)
 {
-	const auto& jsonName = pObj["name"];
+	const auto& jsonName = pObj[QLatin1String("name")];
 	if (jsonName.isUndefined())
 	{
 		setError(QLatin1String("Name cannot be undefined"));
@@ -35,15 +35,15 @@ MsgHandlerReader::MsgHandlerReader(const QString& pName)
 }
 
 
-void MsgHandlerReader::setError(const QLatin1String& pError)
+void MsgHandlerReader::setError(const QLatin1String pError)
 {
-	mJsonObject["error"] = pError;
+	mJsonObject[QLatin1String("error")] = pError;
 }
 
 
 void MsgHandlerReader::setReaderInfo(const QString& pName)
 {
-	setReaderInfo(mJsonObject, ReaderManager::getInstance().getReaderInfo(pName), pName);
+	setReaderInfo(mJsonObject, ReaderManager::getInstance().getReaderInfo(pName));
 }
 
 
@@ -51,28 +51,28 @@ QJsonObject MsgHandlerReader::createReaderInfo(const ReaderInfo& pInfo)
 {
 	Q_ASSERT(!pInfo.getName().isEmpty());
 	QJsonObject obj;
-	setReaderInfo(obj, pInfo, pInfo.getName());
+	setReaderInfo(obj, pInfo);
 	return obj;
 }
 
 
-void MsgHandlerReader::setReaderInfo(QJsonObject& pObj, const ReaderInfo& pInfo, const QString& pName)
+void MsgHandlerReader::setReaderInfo(QJsonObject& pObj, const ReaderInfo& pInfo)
 {
-	pObj["name"] = pName; // do NOT use pInfo here as it can be empty!
-	pObj["attached"] = pInfo.isValid();
-	if (pInfo.isValid())
+	pObj[QLatin1String("name")] = pInfo.getName();
+	pObj[QLatin1String("attached")] = pInfo.isConnected();
+	if (pInfo.isConnected())
 	{
-		if (pInfo.getCardType() == CardType::EID_CARD)
+		if (pInfo.hasEidCard())
 		{
 			QJsonObject card;
-			card["deactivated"] = pInfo.isPinDeactivated();
-			card["inoperative"] = pInfo.isPukInoperative();
-			card["retryCounter"] = pInfo.getRetryCounter();
-			pObj["card"] = card;
+			card[QLatin1String("deactivated")] = pInfo.isPinDeactivated();
+			card[QLatin1String("inoperative")] = pInfo.isPukInoperative();
+			card[QLatin1String("retryCounter")] = pInfo.getRetryCounter();
+			pObj[QLatin1String("card")] = card;
 		}
 		else
 		{
-			pObj["card"] = QJsonValue::Null;
+			pObj[QLatin1String("card")] = QJsonValue::Null;
 		}
 	}
 }

@@ -1,12 +1,9 @@
 /*!
- * test_AuthContext.cpp
- *
  * \brief Test for the chat administration in authentication context.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
-#include "testMacros.h"
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
 

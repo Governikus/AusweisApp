@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,7 +26,7 @@ class StateConnectCard
 		void onAbort();
 
 	Q_SIGNALS:
-		void fireAbort();
+		void fireRetry();
 		void fireReaderRemoved();
 
 };

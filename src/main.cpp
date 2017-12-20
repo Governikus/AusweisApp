@@ -1,9 +1,12 @@
+/*
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 #include "controller/AppController.h"
-#include "core/DeviceInfo.h"
 #include "CommandLineParser.h"
 #include "global/BuildHelper.h"
+#include "global/DeviceInfo.h"
 #include "global/LogHandler.h"
-#include "MetaTypeRegister.h"
 #include "SignalHandler.h"
 
 #include <QLoggingCategory>
@@ -24,6 +27,10 @@
 // Includes for version API
 #include <openssl/crypto.h>
 
+#if !defined(Q_OS_WINRT)
+Q_IMPORT_PLUGIN(RemoteReaderManagerPlugIn)
+#endif
+
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 Q_IMPORT_PLUGIN(PcscReaderManagerPlugIn)
 Q_IMPORT_PLUGIN(WebserviceActivationHandler)
@@ -38,6 +45,29 @@ Q_IMPORT_PLUGIN(IntentActivationHandler)
 
 #if defined(Q_OS_IOS)
 Q_IMPORT_PLUGIN(CustomSchemeActivationHandler)
+
+Q_IMPORT_PLUGIN(QJpegPlugin)
+Q_IMPORT_PLUGIN(QSvgPlugin)
+Q_IMPORT_PLUGIN(QtQmlModelsPlugin)
+Q_IMPORT_PLUGIN(QtQmlStateMachinePlugin)
+Q_IMPORT_PLUGIN(QtGraphicalEffectsPlugin)
+Q_IMPORT_PLUGIN(QtGraphicalEffectsPrivatePlugin)
+
+// Do not delete the comments to avoid searching for the class name
+Q_IMPORT_PLUGIN(QtQuickExtrasStylesPlugin)
+Q_IMPORT_PLUGIN(QtQuickControls1Plugin)
+//Q_IMPORT_PLUGIN(QtQuickControls2MaterialStylePlugin)
+//Q_IMPORT_PLUGIN(QtQuickControls2UniversalStylePlugin)
+Q_IMPORT_PLUGIN(QtQuickControls2Plugin)
+//Q_IMPORT_PLUGIN(QtQuick2DialogsPrivatePlugin)
+Q_IMPORT_PLUGIN(QtQuick2DialogsPlugin)
+//Q_IMPORT_PLUGIN(QtQuickExtrasPlugin)
+Q_IMPORT_PLUGIN(QtQuickLayoutsPlugin)
+//Q_IMPORT_PLUGIN(QQmlLocalStoragePlugin)
+//Q_IMPORT_PLUGIN(QtQuick2ParticlesPlugin)
+Q_IMPORT_PLUGIN(QtQuickTemplates2Plugin)
+Q_IMPORT_PLUGIN(QtQuick2WindowPlugin)
+Q_IMPORT_PLUGIN(QtQuick2Plugin)
 #endif
 
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || (defined(Q_OS_LINUX) && !defined(QT_NO_DEBUG))
@@ -82,6 +112,8 @@ static inline void printInfo()
 #ifdef Q_OS_ANDROID
 	qCInfo(init) << "### Device:" << DeviceInfo::getPrettyInfo();
 	qCInfo(init) << "### VersionCode:" << BuildHelper::getVersionCode();
+#else
+	qCInfo(init) << "### Devicename:" << DeviceInfo::getName();
 #endif
 	qCInfo(init) << "### Qt Version:" << qVersion();
 	qCInfo(init) << "### OpenSSL Version:" << QSslSocket::sslLibraryVersionString();
@@ -100,13 +132,16 @@ static inline void printInfo()
 }
 
 
+#include "config.h" // use in main only!
 Q_DECL_EXPORT int main(int argc, char** argv)
 {
-	QCoreApplication::setOrganizationName(QStringLiteral(VENDOR));
-#ifdef VENDOR_DOMAIN
-	QCoreApplication::setOrganizationDomain(QStringLiteral(VENDOR_DOMAIN));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+	QCoreApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 #endif
-	QCoreApplication::setApplicationName(QStringLiteral("AusweisApp2"));
+
+	QCoreApplication::setOrganizationName(QStringLiteral(VENDOR));
+	QCoreApplication::setOrganizationDomain(QStringLiteral(VENDOR_DOMAIN));
+	QCoreApplication::setApplicationName(QStringLiteral(PRODUCT));
 	QCoreApplication::setApplicationVersion(QStringLiteral(VERSION));
 	QGuiApplication::setQuitOnLastWindowClosed(false);
 
@@ -117,8 +152,6 @@ Q_DECL_EXPORT int main(int argc, char** argv)
 	SignalHandler::getInstance().init();
 	CommandLineParser::getInstance().parse();
 	printInfo();
-
-	MetaTypes::registerMetaTypes();
 
 	AppController controller;
 	if (!controller.start())

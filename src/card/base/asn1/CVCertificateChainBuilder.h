@@ -1,7 +1,7 @@
 /*!
  * \brief Builder for CVC chains.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -17,7 +17,7 @@ namespace governikus
 
 
 class CVCertificateChainBuilder
-	: private ChainBuilder<QSharedPointer<CVCertificate> >
+	: private ChainBuilder<QSharedPointer<const CVCertificate> >
 {
 	private:
 		bool mProductive;
@@ -34,7 +34,7 @@ class CVCertificateChainBuilder
 		/*!
 		 * Creates a new instance. All chains are build using the CVCs passed in as parameter.
 		 */
-		CVCertificateChainBuilder(const QVector<QSharedPointer<CVCertificate> >& pCvcPool, bool pProductive);
+		CVCertificateChainBuilder(const QVector<QSharedPointer<const CVCertificate> >& pCvcPool, bool pProductive);
 
 
 		/*!

@@ -1,7 +1,5 @@
 /*!
- * Commands.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Commands.h"
@@ -92,6 +90,33 @@ QByteArray GetChallengeResponse::getChallenge() const
 /*
  * MSEBuilder
  */
+bool MSEBuilder::isUpdateRetryCounterCommand(const QByteArray& cmd)
+{
+	if (cmd.size() < 4)
+	{
+		return false;
+	}
+
+	if (cmd.at(0) != CommandApdu::CLA)
+	{
+		return false;
+	}
+	if (cmd.at(1) != static_cast<char>(MSEBuilder::INS::MANAGE_SECURITY_ENVIRONMENT))
+	{
+		return false;
+	}
+	if (cmd.at(2) != static_cast<char>(MSEBuilder::P1::PERFORM_SECURITY_OPERATION))
+	{
+		return false;
+	}
+	if (cmd.at(3) != static_cast<char>(MSEBuilder::P2::SET_AT))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 
 MSEBuilder::MSEBuilder(P1 p1, P2 p2)
 	: CommandApduBuilder()
@@ -127,11 +152,11 @@ void MSEBuilder::setPublicKey(const QByteArray& pData)
 }
 
 
-void MSEBuilder::setPublicKey(PACE_PIN_ID pPin)
+void MSEBuilder::setPublicKey(PACE_PASSWORD_ID pPasswordId)
 {
 	static const char TAG_PUBLIC_KEY = char(0x83);
 	QByteArray data;
-	data += Enum<PACE_PIN_ID>::getValue(pPin);
+	data += Enum<PACE_PASSWORD_ID>::getValue(pPasswordId);
 	mPublicKey = Asn1Util::encode(TAG_PUBLIC_KEY, data);
 }
 
@@ -158,8 +183,6 @@ void MSEBuilder::setChat(const QByteArray& pData)
 
 CommandApdu MSEBuilder::build()
 {
-	static const char INS = 0x22;
-
 	QByteArray data;
 	data += mOid;
 	data += mPublicKey;
@@ -168,7 +191,7 @@ CommandApdu MSEBuilder::build()
 	data += mEphemeralPublicKey;
 	data += mChat;
 
-	return CommandApdu(CommandApdu::CLA, INS, static_cast<char>(mP1), static_cast<char>(mP2), data);
+	return CommandApdu(CommandApdu::CLA, static_cast<char>(MSEBuilder::INS::MANAGE_SECURITY_ENVIRONMENT), static_cast<char>(mP1), static_cast<char>(mP2), data);
 }
 
 
@@ -328,7 +351,7 @@ CommandApdu ResetRetryCounterBuilder::build()
 {
 	static const char INS = 0x2c;
 	// P1: 2 (change), 3 (unblock)
-	char p1 = mPin.isNull() ? 3 : 2;
+	const char p1 = mPin.isNull() ? char(3) : char(2);
 	// P2: 3 (PIN) (2 (CAN) -- not used)
 	// data: new PIN, when changing
 	return CommandApdu(CommandApdu::CLA, INS, p1, 3, mPin);
@@ -355,13 +378,13 @@ QByteArray PinModifyBuilder::createCommandData(quint8 pTimeoutSeconds, char pMsg
 	//	bmFormatString (PIN format): system unit is bytes (0x80), ASCII format (0x02)
 	command += char(0x82);
 	//	bmPINBlockString (PIN block size and length info): PIN not in APDU command
-	command += char(0x00);
+	command += '\0';
 	//	bmPINLengthFormat (format of PIN length field in APDU command): PIN not in APDU command
-	command += char(0x00);
+	command += '\0';
 	//	bInsertionOffsetOld (insertion position offset for old PIN)
-	command += char(0x00);
+	command += '\0';
 	//	bInsertionOffsetNew BYTE (insertion position offset for new PIN)
-	command += char(0x00);
+	command += '\0';
 	//	wPINMaxExtraDigit USHORT (0xXXYY, min (XX) and max (length) of new PIN)
 	command += 0x06;
 	command += 0x06;
@@ -381,9 +404,9 @@ QByteArray PinModifyBuilder::createCommandData(quint8 pTimeoutSeconds, char pMsg
 	//	bMsgIndex3 (index (into reader table) of third message to display)
 	command += pMsgIndex3;
 	//	bTeoPrologue (T1 only: I-block prologue field to use): fill with 0
-	command += char(0x00);
-	command += char(0x00);
-	command += char(0x00);
+	command += '\0';
+	command += '\0';
+	command += '\0';
 
 	if (pAbData.size() > 0xFF)
 	{
@@ -393,9 +416,9 @@ QByteArray PinModifyBuilder::createCommandData(quint8 pTimeoutSeconds, char pMsg
 	}
 	//	ulDataLength (length of the APDU to be sent to ICC)
 	command += static_cast<char>(pAbData.size());
-	command += char(0x00);
-	command += char(0x00);
-	command += char(0x00);
+	command += '\0';
+	command += '\0';
+	command += '\0';
 	command += pAbData;
 
 	return command;
@@ -416,13 +439,13 @@ CommandApdu PinModifyBuilder::createCommandDataCcid(quint8 pTimeoutSeconds) cons
 	//	bmFormatString (PIN format): system unit is bytes (0x80), ASCII format (0x02)
 	abPINDataStructure += char(0x82);
 	//	bmPINBlockString (PIN block size and length info): PIN not in APDU command
-	abPINDataStructure += char(0x00);
+	abPINDataStructure += '\0';
 	//	bmPINLengthFormat (format of PIN length field in APDU command): PIN not in APDU command
-	abPINDataStructure += char(0x00);
+	abPINDataStructure += '\0';
 	//	bInsertionOffsetOld (insertion position offset for old PIN)
-	abPINDataStructure += char(0x00);
+	abPINDataStructure += '\0';
 	//	bInsertionOffsetNew BYTE (insertion position offset for new PIN)
-	abPINDataStructure += char(0x00);
+	abPINDataStructure += '\0';
 	//	wPINMaxExtraDigit USHORT (0xXXYY, min (XX) and max (length) of new PIN)
 	abPINDataStructure += char(0x06);
 	abPINDataStructure += char(0x06);
@@ -440,13 +463,13 @@ CommandApdu PinModifyBuilder::createCommandDataCcid(quint8 pTimeoutSeconds) cons
 	//	bMsgIndex2 (index (into reader table) of second message to display)
 	abPINDataStructure += char(0x02);
 	//	bMsgIndex3 (index (into reader table) of third message to display)
-	abPINDataStructure += char(0x00);
+	abPINDataStructure += '\0';
 	//	bTeoPrologue (T1 only: I-block prologue field to use): fill with 0
-	abPINDataStructure += char(0x00);
-	abPINDataStructure += char(0x00);
-	abPINDataStructure += char(0x00);
+	abPINDataStructure += '\0';
+	abPINDataStructure += '\0';
+	abPINDataStructure += '\0';
 	//	abData (APDU to be sent to ICC)
-	abPINDataStructure += char(0x00); // CLA: command
+	abPINDataStructure += '\0'; // CLA: command
 	abPINDataStructure += char(0x2c); // INS: Reset Retry Counter
 	abPINDataStructure += char(0x02); // P1: new PIN/CAN
 	abPINDataStructure += char(0x03); // P2: PIN

@@ -1,9 +1,7 @@
 /*!
- * test_EstablishPACEChannelBuilder.cpp
- *
  * \brief Tests for card EstablishPACEChannelBuilder
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore/QtCore>
@@ -21,13 +19,13 @@ class test_EstablishPACEChannelBuilder
 	Q_OBJECT
 
 	private Q_SLOTS:
-		void setPinId()
+		void setPasswordId()
 		{
 			QByteArray hexBytes("30 05"
 								"        A1 03 02 01 03"
 					);
 			EstablishPACEChannelBuilder builder;
-			builder.setPinId(PACE_PIN_ID::PACE_PIN);
+			builder.setPasswordId(PACE_PASSWORD_ID::PACE_PIN);
 
 			QCOMPARE(builder.createCommandDataCcid().getData(), QByteArray::fromHex(hexBytes));
 		}
@@ -40,7 +38,7 @@ class test_EstablishPACEChannelBuilder
 								"        A3 17 04 15 7F4C 12 060904007F00070301020253050000000F0F"
 					);
 			EstablishPACEChannelBuilder builder;
-			builder.setPinId(PACE_PIN_ID::PACE_PIN);
+			builder.setPasswordId(PACE_PASSWORD_ID::PACE_PIN);
 			builder.setChat(QByteArray::fromHex(" 7F4C12060904007F00070301020253050000000F0F"));
 
 			QCOMPARE(builder.createCommandDataCcid().getData(), QByteArray::fromHex(hexBytes));
@@ -65,7 +63,7 @@ class test_EstablishPACEChannelBuilder
 			hexBytes = hexBytes.replace("CERTDESCR", certDescriptionHex);
 
 			EstablishPACEChannelBuilder builder;
-			builder.setPinId(PACE_PIN_ID::PACE_PIN);
+			builder.setPasswordId(PACE_PASSWORD_ID::PACE_PIN);
 			builder.setChat(QByteArray::fromHex(" 7F4C12060904007F00070301020253050000000F0F"));
 			builder.setCertificateDescription(QByteArray::fromHex(certDescriptionHex));
 

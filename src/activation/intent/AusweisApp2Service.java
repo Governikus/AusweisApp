@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 package com.governikus.ausweisapp2;
 
 import android.content.Intent;
@@ -26,12 +30,6 @@ public class AusweisApp2Service
 	}
 
 
-	public NFCConnector getNfcConnector()
-	{
-		return NFCConnector.getInstance(this);
-	}
-
-
 	@Override
 	public IBinder onBind(Intent intent)
 	{
@@ -56,7 +54,6 @@ public class AusweisApp2Service
 
 		// register the broadcast receiver after loading the C++ library in super.onCreate()
 		AndroidBluetoothReceiver.register(this);
-		NfcAdapterStateChangeReceiver.register(this);
 	}
 
 
@@ -67,7 +64,6 @@ public class AusweisApp2Service
 
 		// unregister the broadcast receiver before unloading the C++ library in super.onDestroy()
 		AndroidBluetoothReceiver.unregister(this);
-		NfcAdapterStateChangeReceiver.unregister(this);
 
 		super.onDestroy();
 

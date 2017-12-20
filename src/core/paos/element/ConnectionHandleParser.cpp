@@ -1,8 +1,10 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ConnectionHandleParser.h"
+
+#include "ConnectionHandle.h"
 
 using namespace governikus;
 
@@ -22,7 +24,6 @@ ConnectionHandle ConnectionHandleParser::parse()
 {
 	ConnectionHandle connectionHandle;
 
-	bool hasNoRecognitionInfoDuplicate = true;
 	QString contexthandle, ifdName, slotIndex, cardApplication, slotHandle;
 	while (readNextStartElement())
 	{
@@ -64,8 +65,7 @@ ConnectionHandle ConnectionHandleParser::parse()
 		}
 		else if (mXmlReader->name() == QLatin1String("RecognitionInfo"))
 		{
-			// not yet interpreted
-			assertNoDuplicateElement(hasNoRecognitionInfoDuplicate);
+			qCWarning(paos) << "Unsupported element:" << mXmlReader->name();
 			mXmlReader->skipCurrentElement();
 		}
 		else

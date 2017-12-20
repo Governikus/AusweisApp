@@ -1,9 +1,7 @@
 /*!
- * StateParseTcTokenUrl.h
- *
  * \brief Implements the parsing of TcTokenUrl in header of browser request.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

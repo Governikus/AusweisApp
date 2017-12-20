@@ -1,13 +1,11 @@
 /*!
- * AuthenticatedAuxiliaryData.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
+
+#include "AuthenticatedAuxiliaryData.h"
 
 #include "ASN1TemplateUtil.h"
 #include "ASN1Util.h"
-#include "AuthenticatedAuxiliaryData.h"
-#include "KnownOIDs.h"
 
 #include <QLoggingCategory>
 
@@ -53,15 +51,15 @@ ASN1_ITEM_TEMPLATE_END(AuxDataTemplate)
 
 
 /*!
- * This defines the AuthenticatedAuxiliaryData object with the special tag 0x07.
+ * This defines the AuthenticatedAuxiliaryDataInternal object with the special tag 0x07.
  */
-ASN1_ITEM_TEMPLATE(AuthenticatedAuxiliaryData) =
-			ASN1_EX_TEMPLATE_TYPE(ASN1_TFLG_SET_OF | ASN1_TFLG_IMPTAG | ASN1_TFLG_APPLICATION, 0x07, AuthenticatedAuxiliaryData, AuxDataTemplate)
-ASN1_ITEM_TEMPLATE_END(AuthenticatedAuxiliaryData)
+ASN1_ITEM_TEMPLATE(AuthenticatedAuxiliaryDataInternal) =
+			ASN1_EX_TEMPLATE_TYPE(ASN1_TFLG_SET_OF | ASN1_TFLG_IMPTAG | ASN1_TFLG_APPLICATION, 0x07, AuthenticatedAuxiliaryDataInternal, AuxDataTemplate)
+ASN1_ITEM_TEMPLATE_END(AuthenticatedAuxiliaryDataInternal)
 
 
-IMPLEMENT_ASN1_FUNCTIONS(AuthenticatedAuxiliaryData)
-IMPLEMENT_ASN1_OBJECT(AuthenticatedAuxiliaryData)
+IMPLEMENT_ASN1_FUNCTIONS(AuthenticatedAuxiliaryDataInternal)
+IMPLEMENT_ASN1_OBJECT(AuthenticatedAuxiliaryDataInternal)
 
 
 /*!
@@ -97,8 +95,23 @@ ASN1_ITEM_TEMPLATE_END(AgeVerificationDate)
 
 IMPLEMENT_ASN1_FUNCTIONS(AgeVerificationDate)
 
+DECLARE_ASN1_FUNCTIONS(AuthenticatedAuxiliaryDataInternal)
+DECLARE_ASN1_OBJECT(AuthenticatedAuxiliaryDataInternal)
 
-}  // namespace governikus
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+	#define sk_AuxDataTemplate_num(data) SKM_sk_num(AuxDataTemplate, data)
+	#define sk_AuxDataTemplate_value(data, i) SKM_sk_value(AuxDataTemplate, data, i)
+#endif
+
+} /* namespace governikus */
+
+
+AuthenticatedAuxiliaryData::AuthenticatedAuxiliaryData(const QSharedPointer<AuthenticatedAuxiliaryDataInternal>& pData)
+	: mData(pData)
+{
+	Q_ASSERT(mData);
+}
 
 
 QSharedPointer<AuthenticatedAuxiliaryData> AuthenticatedAuxiliaryData::fromHex(const QByteArray& pHexValue)
@@ -109,49 +122,55 @@ QSharedPointer<AuthenticatedAuxiliaryData> AuthenticatedAuxiliaryData::fromHex(c
 
 QSharedPointer<AuthenticatedAuxiliaryData> AuthenticatedAuxiliaryData::decode(const QByteArray& pBytes)
 {
-	auto auxDate = decodeObject<AuthenticatedAuxiliaryData>(pBytes);
+	auto auxDate = decodeObject<AuthenticatedAuxiliaryDataInternal>(pBytes);
+
+	if (!auxDate)
+	{
+		return nullptr;
+	}
 
 	QByteArrayList oids;
-	for (int i = 0; i < SKM_sk_num(AuxDataTemplate, auxDate.data()); i++)
+	for (int i = 0; i < sk_AuxDataTemplate_num(auxDate.data()); i++)
 	{
-		AuxDataTemplate* auxDataTemplate = SKM_sk_value(AuxDataTemplate, auxDate.data(), i);
+		AuxDataTemplate* auxDataTemplate = sk_AuxDataTemplate_value(auxDate.data(), i);
 		const auto oid = Asn1ObjectUtil::convertTo(auxDataTemplate->mAuxId);
 		if (oids.contains(oid))
 		{
-			qCritical(card) << "More than one AuxDataTemplate with OID" << oid;
-			auxDate.clear();
-			break;
+			qCCritical(card) << "More than one AuxDataTemplate with OID" << oid;
+			return nullptr;
 		}
 		oids += oid;
 	}
-	oids.removeOne(KnownOIDs::AuxilaryData::id_CommunityID);
-	oids.removeOne(KnownOIDs::AuxilaryData::id_DateOfBirth);
-	oids.removeOne(KnownOIDs::AuxilaryData::id_DateOfExpiry);
+
+	oids.removeOne(toByteArray(KnownOIDs::AuxilaryData::ID_COMMUNITY_ID));
+	oids.removeOne(toByteArray(KnownOIDs::AuxilaryData::ID_DATE_OF_BIRTH));
+	oids.removeOne(toByteArray(KnownOIDs::AuxilaryData::ID_DATE_OF_EXPIRY));
 	if (!oids.isEmpty())
 	{
-		qCritical() << "Unknown AuxDataTemplate with oid" << oids.first();
-		auxDate.clear();
+		qCCritical(card) << "Unknown AuxDataTemplate with OID" << oids.first();
+		return nullptr;
 	}
 
-	return auxDate;
+	return QSharedPointer<AuthenticatedAuxiliaryData>(new AuthenticatedAuxiliaryData(auxDate));
 }
 
 
-QByteArray AuthenticatedAuxiliaryData::encode()
+QByteArray AuthenticatedAuxiliaryData::encode() const
 {
-	return encodeObject(this);
+	Q_ASSERT(mData);
+	return encodeObject(mData.data());
 }
 
 
 bool AuthenticatedAuxiliaryData::hasValidityDate() const
 {
-	return getAuxDataTemplateFor(KnownOIDs::AuxilaryData::id_DateOfExpiry) != nullptr;
+	return getAuxDataTemplateFor(KnownOIDs::AuxilaryData::ID_DATE_OF_EXPIRY) != nullptr;
 }
 
 
 QDate AuthenticatedAuxiliaryData::getValidityDate() const
 {
-	if (auto auxData = getAuxDataTemplateFor(KnownOIDs::AuxilaryData::id_DateOfExpiry))
+	if (auto auxData = getAuxDataTemplateFor(KnownOIDs::AuxilaryData::ID_DATE_OF_EXPIRY))
 	{
 		QByteArray extBytes = Asn1TypeUtil::encode(auxData->mExtInfo);
 
@@ -168,13 +187,13 @@ QDate AuthenticatedAuxiliaryData::getValidityDate() const
 
 bool AuthenticatedAuxiliaryData::hasAgeVerificationDate() const
 {
-	return getAuxDataTemplateFor(KnownOIDs::AuxilaryData::id_DateOfBirth) != nullptr;
+	return getAuxDataTemplateFor(KnownOIDs::AuxilaryData::ID_DATE_OF_BIRTH) != nullptr;
 }
 
 
 QDate AuthenticatedAuxiliaryData::getAgeVerificationDate() const
 {
-	if (auto auxData = getAuxDataTemplateFor(KnownOIDs::AuxilaryData::id_DateOfBirth))
+	if (auto auxData = getAuxDataTemplateFor(KnownOIDs::AuxilaryData::ID_DATE_OF_BIRTH))
 	{
 		QByteArray extBytes = Asn1TypeUtil::encode(auxData->mExtInfo);
 
@@ -189,32 +208,40 @@ QDate AuthenticatedAuxiliaryData::getAgeVerificationDate() const
 }
 
 
+QString AuthenticatedAuxiliaryData::getRequiredAge(const QDate& pEffectiveDate) const
+{
+	const QDate ageVerificationDate = getAgeVerificationDate();
+	if (!pEffectiveDate.isValid() || !ageVerificationDate.isValid())
+	{
+		return QString();
+	}
+
+	int age = pEffectiveDate.year() - ageVerificationDate.year();
+
+	if (pEffectiveDate.month() <= ageVerificationDate.month() && (pEffectiveDate.month() != ageVerificationDate.month() || pEffectiveDate.day() < ageVerificationDate.day()))
+	{
+		--age;
+	}
+
+	return QString::number(age);
+}
+
+
 QString AuthenticatedAuxiliaryData::getRequiredAge() const
 {
-	QDateTime now = QDateTime::currentDateTime();
-	QDate nowDateGMT = now.toUTC().date();
-	QDate ageVerificationDate = getAgeVerificationDate();
-
-	if (nowDateGMT.month() > ageVerificationDate.month() || (nowDateGMT.month() == ageVerificationDate.month() && nowDateGMT.day() >= ageVerificationDate.day()))
-	{
-		return QString::number(nowDateGMT.year() - ageVerificationDate.year());
-	}
-	else
-	{
-		return QString::number(nowDateGMT.year() - ageVerificationDate.year() - 1);
-	}
+	return getRequiredAge(QDateTime::currentDateTimeUtc().date());
 }
 
 
 bool AuthenticatedAuxiliaryData::hasCommunityID() const
 {
-	return getAuxDataTemplateFor(KnownOIDs::AuxilaryData::id_CommunityID) != nullptr;
+	return getAuxDataTemplateFor(KnownOIDs::AuxilaryData::ID_COMMUNITY_ID) != nullptr;
 }
 
 
 QByteArray AuthenticatedAuxiliaryData::getCommunityID() const
 {
-	if (auto auxData = getAuxDataTemplateFor(KnownOIDs::AuxilaryData::id_CommunityID))
+	if (auto auxData = getAuxDataTemplateFor(KnownOIDs::AuxilaryData::ID_COMMUNITY_ID))
 	{
 		QByteArray extBytes = Asn1TypeUtil::encode(auxData->mExtInfo);
 		auto communityId = decodeObject<CommunityID>(extBytes);
@@ -227,15 +254,14 @@ QByteArray AuthenticatedAuxiliaryData::getCommunityID() const
 }
 
 
-AuxDataTemplate* AuthenticatedAuxiliaryData::getAuxDataTemplateFor(const QByteArray& pOid) const
+AuxDataTemplate* AuthenticatedAuxiliaryData::getAuxDataTemplateFor(KnownOIDs::AuxilaryData pData) const
 {
-	// unfortunately OpenSSL cannot handle const pointers, so we cast it away
-	AuthenticatedAuxiliaryData* notConstThis = const_cast<AuthenticatedAuxiliaryData*>(this);
+	const auto& oid = toByteArray(pData);
 
-	for (int i = 0; i < SKM_sk_num(AuxDataTemplate, notConstThis); i++)
+	for (int i = 0; i < sk_AuxDataTemplate_num(mData.data()); i++)
 	{
-		AuxDataTemplate* auxDataTemplate = SKM_sk_value(AuxDataTemplate, notConstThis, i);
-		if (Asn1ObjectUtil::convertTo(auxDataTemplate->mAuxId) == pOid)
+		AuxDataTemplate* auxDataTemplate = sk_AuxDataTemplate_value(mData.data(), i);
+		if (Asn1ObjectUtil::convertTo(auxDataTemplate->mAuxId) == oid)
 		{
 			return auxDataTemplate;
 		}

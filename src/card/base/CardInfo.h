@@ -1,9 +1,7 @@
 /*!
- * CardInfo.h
- *
  * \brief Contains the CardInfo and the CardInfoFactory
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -11,6 +9,7 @@
 #include "asn1/SecurityInfos.h"
 #include "SmartCardDefinitions.h"
 
+#include <QCoreApplication>
 #include <QSharedPointer>
 
 namespace governikus
@@ -27,23 +26,33 @@ class ReaderInfo;
  */
 class CardInfo
 {
-	CardType mCardType;
-	QSharedPointer<const EFCardAccess> mEfCardAccess;
-	int mRetryCounter;
-	bool mPinDeactivated;
-	bool mPukInoperative;
+	Q_DECLARE_TR_FUNCTIONS(governikus::CardInfo)
+
+	private:
+		CardType mCardType;
+		QSharedPointer<const EFCardAccess> mEfCardAccess;
+		int mRetryCounter;
+		bool mPinDeactivated;
+		bool mPukInoperative;
+		static const int UNDEFINED_RETRY_COUNTER;
+
+		friend QDebug operator<<(QDebug, const CardInfo&);
 
 	public:
-		CardInfo(CardType pCardType, QSharedPointer<const EFCardAccess> = QSharedPointer<const EFCardAccess>(),
-				int pRetryCounter = -1, bool pPinDeactivated = false, bool pPukInoperative = false);
+		CardInfo(CardType pCardType, const QSharedPointer<const EFCardAccess>& = QSharedPointer<const EFCardAccess>(),
+				int pRetryCounter = UNDEFINED_RETRY_COUNTER, bool pPinDeactivated = false, bool pPukInoperative = false);
 
-		CardType getCardType() const;
+		QString getCardTypeString() const;
+		bool isAvailable() const;
+		bool isEid() const;
 
 		QSharedPointer<const EFCardAccess> getEfCardAccess() const;
 
 		QString getEidApplicationPath() const;
 
 		int getRetryCounter() const;
+
+		bool isRetryCounterDetermined() const;
 
 		/*!
 		 * The online identification function has not been activated by the competent authority.
@@ -88,6 +97,9 @@ class CardInfoFactory
 		 */
 		static bool checkEfCardAccess(const QSharedPointer<EFCardAccess>& pEfCardAccess);
 };
+
+
+QDebug operator<<(QDebug pDbg, const CardInfo& pCardInfo);
 
 
 } /* namespace governikus */

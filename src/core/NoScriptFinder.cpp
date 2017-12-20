@@ -1,7 +1,5 @@
 /*!
- * NoScriptFinder.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NoScriptFinder.h"
@@ -33,9 +31,9 @@ class NoScriptFinderPrivate
 		QStringList profileIniFiles;
 #if defined(Q_OS_LINUX)
 		profileIniFiles += QDir::homePath() + QStringLiteral("/.mozilla/firefox/profiles.ini");
-#elif defined(Q_OS_WIN32)
+#elif defined(Q_OS_WIN)
 		profileIniFiles += QDir::homePath() + QStringLiteral("/AppData/Roaming/Mozilla/Firefox/profiles.ini");
-#elif defined(Q_OS_MAC)
+#elif defined(Q_OS_MACOS)
 		profileIniFiles += QDir::homePath() + QStringLiteral("/Library/Application Support/Firefox/profiles.ini");
 		profileIniFiles += QDir::homePath() + QStringLiteral("/Library/Mozilla/Firefox/profiles.ini");
 #endif
@@ -55,7 +53,8 @@ class NoScriptFinderPrivate
 			}
 
 			QSettings profileSettings(profileFileInfo.canonicalFilePath(), QSettings::Format::IniFormat);
-			for (const auto& profileGroup : profileSettings.childGroups().filter(QRegularExpression(QStringLiteral("Profile[0-9]*"))))
+			const auto& filtered = profileSettings.childGroups().filter(QRegularExpression(QStringLiteral("Profile[0-9]*")));
+			for (const auto& profileGroup : filtered)
 			{
 				profileSettings.beginGroup(profileGroup);
 				bool isRelative = profileSettings.value(QStringLiteral("IsRelative")).toBool();
@@ -63,7 +62,7 @@ class NoScriptFinderPrivate
 
 				if (!path.isEmpty())
 				{
-					QString extensionFile = isRelative ? profileFileInfo.canonicalPath() + '/' + path : path;
+					QString extensionFile = isRelative ? profileFileInfo.canonicalPath() + QLatin1Char('/') + path : path;
 					extensionFile += QStringLiteral("/extensions.json");
 
 					if ((mExtensionFound = isNoScriptConfigured(extensionFile)))

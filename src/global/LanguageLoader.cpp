@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LanguageLoader.h"
@@ -145,7 +145,7 @@ void LanguageLoader::load(const QLocale& pLocale)
 		}
 	}
 
-	if (!loaded && !pLocale.uiLanguages().contains(pLocale.name().replace('_', '-')))
+	if (!loaded && !pLocale.uiLanguages().contains(pLocale.name().replace(QLatin1Char('_'), QLatin1Char('-'))))
 	{
 		qCDebug(language) << "No UI translation found... try to use system locale:" << pLocale.name();
 		loadTranslationFiles(QLocale(pLocale.name()));

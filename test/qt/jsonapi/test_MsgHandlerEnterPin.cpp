@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerEnterPin
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerEnterPin.h"

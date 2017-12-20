@@ -1,11 +1,12 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include <functional>
 #include <QEventLoop>
+#include <QStringList>
 #include <QWebSocket>
 
 namespace governikus
@@ -19,7 +20,7 @@ class WebSocketHelper
 	private:
 		const int mConnectionTiemout;
 		QWebSocket mWebSocket;
-		QVector<QString> mInput;
+		QStringList mInput;
 
 		void connectWebsocket(int pPort);
 

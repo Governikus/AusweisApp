@@ -11,7 +11,7 @@ j.with
 {
 	steps
 	{
-		shell('security unlock-keychain \${KEYCHAIN_CREDENTIALS} \${HOME}/Library/Keychains/login.keychain')
+		shell('security unlock-keychain \${KEYCHAIN_CREDENTIALS} \${HOME}/Library/Keychains/login.keychain-db')
 
 		shell("cd build; cmake ../source/libs -DCMAKE_BUILD_TYPE=release -DCMAKE_TOOLCHAIN_FILE=../source/cmake/iOS.toolchain.cmake -DPACKAGES_DIR=\${PACKAGES_DIR}")
 

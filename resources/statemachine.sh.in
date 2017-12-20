@@ -1,0 +1,24 @@
+#!/bin/sh
+
+RULE='
+s/([[:alnum:]]+)\.setInitialState\(([[:alnum:]]+)\)\;/[*] --> \2/p
+s/setInitialState\(([[:alnum:]]+)\)\;/[*] --> \1/p
+s/([[:alnum:]]+)\-.addTransition\(([[:alnum:]]+)\,[[:space:]]+\&([[:alnum:]]+)\:\:fire([[:alnum:]]+)\,[[:space:]]+([[:alnum:]]+)\)\;/\2 --> \5 : \4/p
+s/auto[[:space:]]+([[:alnum:]]+)[[:space:]]+=\s+addAndConnectState<FinalState>\(\);/\1 --> [*]/p
+'
+
+function createImage {
+	echo "@startuml" > $2.uml
+	sed -E -n -e "$RULE" < $1 >> $2.uml
+	echo "@enduml" >> $2.uml
+	cat $2.uml
+	@JAVA_EXECUTABLE@ -DPLANTUML_LIMIT_SIZE=8192 -jar @PLANTUML@ $2.uml
+	rm $2.uml
+}
+
+createImage @PROJECT_SOURCE_DIR@/src/core/states/CompositeStateSelectCard.cpp @PROJECT_BINARY_DIR@/uml_SelectCard
+createImage @PROJECT_SOURCE_DIR@/src/core/states/CompositeStateProcessCvcsAndSetRights.cpp @PROJECT_BINARY_DIR@/uml_ProcessCvcsAndSetRights
+createImage @PROJECT_SOURCE_DIR@/src/core/controller/ChangePinController.cpp @PROJECT_BINARY_DIR@/uml_ChangePinController
+createImage @PROJECT_SOURCE_DIR@/src/core/controller/SelfAuthController.cpp @PROJECT_BINARY_DIR@/uml_SelfAuthController
+createImage @PROJECT_SOURCE_DIR@/src/core/controller/AuthController.cpp @PROJECT_BINARY_DIR@/uml_AuthController
+createImage @PROJECT_SOURCE_DIR@/src/core/controller/RemoteServiceController.cpp @PROJECT_BINARY_DIR@/uml_RemoteServiceController

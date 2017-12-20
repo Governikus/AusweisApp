@@ -4,7 +4,10 @@ import QtQuick.Controls 2.0
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 
-import "global"
+import Governikus.Global 1.0
+import Governikus.TitleBar 1.0
+import Governikus.Navigation 1.0
+import Governikus.SplashScreen 1.0
 
 ApplicationWindow {
 	id: appWindow
@@ -14,10 +17,9 @@ ApplicationWindow {
 	title: "Governikus AusweisApp2"
 	color: Constants.background_color
 
-	readonly property var startTime : new Date().getTime()
 	property var lastCloseInvocation: 0
 	property int leftOverlayMargin: 0
-	property var splasScreenClosed: false
+
 
 	QtQuickControls14.Action {
 		shortcut: "Ctrl+Alt+R"
@@ -26,18 +28,19 @@ ApplicationWindow {
 
 	header: TitleBar {
 		id: titleBar
-		visible: splasScreenClosed
+		visible: !splashScreen.visible
 
-		titleBarOpacity: contentArea.getVisibleItem() && contentArea.getVisibleItem().stack.currentItem ? contentArea.getVisibleItem().stack.currentItem.titleBarOpacity : 1
+		titleBarOpacity: contentArea.visibleItem && contentArea.visibleItem.stack.currentItem ? contentArea.visibleItem.stack.currentItem.titleBarOpacity : 1
 
-		function pushTabBarSubView(sectionPage) {
-			if (sectionPage) {
-				titleBar.push(sectionPage.leftTitleBarAction,
-					 sectionPage.headerTitleBarAction,
-					 sectionPage.rightTitleBarAction,
-					 sectionPage.titleBarColor)
-			}
-		}
+		property var currentSectionPage: if (contentArea) contentArea.currentSectionPage
+
+		leftAction: if (currentSectionPage) currentSectionPage.leftTitleBarAction
+		titleItem: if (currentSectionPage) currentSectionPage.headerTitleBarAction
+		rightAction: if (currentSectionPage) currentSectionPage.rightTitleBarAction
+		subTitleBarAction: if (currentSectionPage) currentSectionPage.subTitleBarAction
+		color: if (currentSectionPage) currentSectionPage.titleBarColor
+
+
 	}
 
 	overlay.modal: Item {
@@ -55,7 +58,7 @@ ApplicationWindow {
 		}
 	}
 
-	ContentArea {
+	ContentAreaLoader {
 		id: contentArea
 		state: navBar.state
 		anchors.left: PlatformConstants.leftNavigation ? navBar.right : parent.left
@@ -66,7 +69,7 @@ ApplicationWindow {
 
 	Navigation {
 		id: navBar
-		visible: splasScreenClosed
+		visible: !splashScreen.visible
 		anchors.left: parent.left
 		anchors.top: PlatformConstants.leftNavigation ? parent.top : undefined
 		anchors.right: PlatformConstants.bottomNavigation ? parent.right : undefined
@@ -74,11 +77,9 @@ ApplicationWindow {
 	}
 
 	onClosing: {
-		var visibleItem = contentArea.getVisibleItem()
-
-		if (visibleItem)
+		if (contentArea.visibleItem)
 		{
-			var activeStackView = visibleItem.stack
+			var activeStackView = contentArea.visibleItem.stack
 
 			if (activeStackView.depth <= 1 && (!activeStackView.currentItem.leftTitleBarAction || activeStackView.currentItem.leftTitleBarAction.state === "")) {
 				var currentTime = new Date().getTime();
@@ -95,7 +96,7 @@ ApplicationWindow {
 					navBar.close()
 				}
 				else {
-					activeStackView.currentItem.leftTitleBarAction.clicked()
+					activeStackView.currentItem.leftTitleBarAction.clicked(undefined)
 				}
 			}
 		}
@@ -103,42 +104,16 @@ ApplicationWindow {
 		close.accepted = false
 	}
 
-	Rectangle {
+	SplashScreen {
 		id: splashScreen
-		anchors.fill: parent
 		color: appWindow.color
-		visible: !splasScreenClosed
 
-		Image {
-			source: "qrc:/images/npa.svg"
-			height: appWindow.height * 0.42
-			width: height
-			fillMode: Image.PreserveAspectFit
-			anchors.centerIn: parent
-		}
-	}
-
-
-	function hideSplashScreen() {
-		if(splasScreenClosed)
-		{
-			return;
-		}
-
-		contentArea.visible = false;
-
-		var TIMEOUT = 2500;
-		var remaining = startTime + TIMEOUT - new Date().getTime();
-		var timer = Qt.createQmlObject("import QtQuick 2.0; Timer {}", appWindow);
-		timer.interval = remaining > 0 ? remaining : 0;
-		timer.repeat = false;
-		timer.triggered.connect(function(){
-			contentArea.visible = true
-			splasScreenClosed = true
+		property alias ready: contentArea.ready
+		onReadyChanged: {
+			splashScreen.hide()
 			if (!applicationModel.currentWorkflow) {
 				navBar.lockedAndHidden = false
 			}
-		})
-		timer.start();
+		}
 	}
 }

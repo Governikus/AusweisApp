@@ -1,7 +1,7 @@
 /*!
  * \brief UIPlugIn implementation of CLI.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,7 +25,7 @@ class UIPlugInCli
 	Q_PLUGIN_METADATA(IID "governikus.UIPlugIn" FILE "metadata.json")
 	Q_INTERFACES(governikus::UIPlugIn)
 
-	typedef void (UIPlugInCli::* MemberFunc)();
+	using MemberFunc = void (UIPlugInCli::*)();
 
 	private:
 		QString mOldPin;
@@ -51,7 +51,7 @@ class UIPlugInCli
 
 	public:
 		UIPlugInCli();
-		virtual ~UIPlugInCli();
+		virtual ~UIPlugInCli() override;
 
 	public Q_SLOTS:
 		virtual void onApplicationStarted() override;
@@ -62,7 +62,7 @@ class UIPlugInCli
 		void doInput(const QString& pData);
 		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
 		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
-		void onCurrentStateChanged(const QString& pState);
+		void onStateChanged(const QString& pState);
 
 		void handleOldPinEntered(const QString& pLine);
 		void handleNewPinEntered(const QString& pLine);

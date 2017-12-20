@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerEnterNumber.h"
@@ -21,7 +21,7 @@ MsgHandlerEnterNumber::MsgHandlerEnterNumber(MsgType pType, const MsgContext& pC
 
 void MsgHandlerEnterNumber::setError(const QString& pError)
 {
-	mJsonObject["error"] = pError;
+	mJsonObject[QLatin1String("error")] = pError;
 }
 
 
@@ -31,9 +31,9 @@ void MsgHandlerEnterNumber::setReader(const QSharedPointer<const WorkflowContext
 	if (!reader.isEmpty())
 	{
 		const auto& info = ReaderManager::getInstance().getReaderInfo(reader);
-		if (info.isValid())
+		if (info.isConnected())
 		{
-			mJsonObject["reader"] = MsgHandlerReader::createReaderInfo(info);
+			mJsonObject[QLatin1String("reader")] = MsgHandlerReader::createReaderInfo(info);
 		}
 	}
 }

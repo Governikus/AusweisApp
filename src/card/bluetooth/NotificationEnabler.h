@@ -1,6 +1,4 @@
 /*!
- * NotificationEnabler.h
- *
  * \brief If a QLowEnergyCharacteristic is able to notify about changes, i.e.
  * it has property QLowEnergyCharacteristic::PropertyType::Notify,
  * one needs to enable notification explicitly.
@@ -8,7 +6,7 @@
  *
  * For details see the Qt documentation on QLowEnergyService and topic "Service Interaction".
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -45,7 +43,8 @@ class NotificationEnabler
 
 	public:
 		/*!
-		 * \param QLowEnergyService the service corresponding to the characteristic to be enabled/disabled.
+		 * \param pService the service corresponding to the characteristic to be enabled/disabled.
+		 * \param pTimeoutSeconds time out in seconds.
 		 */
 		NotificationEnabler(QLowEnergyService* pService, int pTimeoutSeconds = 5);
 		virtual ~NotificationEnabler();

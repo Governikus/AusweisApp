@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -10,30 +10,9 @@
 #include "FileRef.h"
 #include "SmartCardDefinitions.h"
 
-#include <QtEndian>
-
 
 namespace governikus
 {
-
-// TODO: brauchen wir das wirklich?
-template<typename T> QByteArray toBigEndian(T pDataToConvert)
-{
-	uchar converted[sizeof(T)];
-	qToBigEndian(pDataToConvert, converted);
-
-	unsigned long position;
-	for (position = 0; position < sizeof(T) - 1; ++position)
-	{
-		if (converted[position] != 0)
-		{
-			break;
-		}
-	}
-
-	return QByteArray(reinterpret_cast<char*>(&converted[position]), static_cast<int>(sizeof(T) - position));
-}
-
 
 class CommandApduBuilder
 {
@@ -88,21 +67,28 @@ class MSEBuilder
 	: public CommandApduBuilder
 {
 	public:
-		enum class P1 : int
+		enum class INS : char
 		{
-			COMPUTE_DIGITAL_SIGNATURE = 0x41, PUT_HASH = 0xa0, PERFORM_SECURITY_OPERATION = 0xc1, SET_DST = 0x81, ERASE = 0xF3,
+			MANAGE_SECURITY_ENVIRONMENT = 0x22,
 		};
 
-		enum class P2 : int
+		enum class P1 : char
 		{
-			SET_AT = 0xa4, HASH_ALGORITHM = 0xaa, COMPUTE_DIGITAL_SIGNATURE = 0xb6, ENCRYPTION_OPERATION = 0xb8, DEFAULT_CHANNEL = 0x00,
+			COMPUTE_DIGITAL_SIGNATURE = 0x41, PUT_HASH = char(0xa0), PERFORM_SECURITY_OPERATION = char(0xc1), SET_DST = char(0x81), ERASE = char(0xF4),
 		};
+
+		enum class P2 : char
+		{
+			SET_AT = char(0xa4), HASH_ALGORITHM = char(0xaa), COMPUTE_DIGITAL_SIGNATURE = char(0xb6), ENCRYPTION_OPERATION = char(0xb8), DEFAULT_CHANNEL = 0x01,
+		};
+
+		static bool isUpdateRetryCounterCommand(const QByteArray& cmd);
 
 		MSEBuilder(P1 p1, P2 p2);
 		void setAuxiliaryData(const QByteArray& pData);
 		void setOid(const QByteArray& pData);
 		void setPublicKey(const QByteArray& pData);
-		void setPublicKey(PACE_PIN_ID pPin);
+		void setPublicKey(PACE_PASSWORD_ID pPassword);
 		void setPrivateKey(const QByteArray& pData);
 		void setEphemeralPublicKey(const QByteArray& pData);
 		void setChat(const QByteArray& pData);

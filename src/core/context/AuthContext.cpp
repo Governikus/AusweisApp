@@ -1,23 +1,24 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthContext.h"
 
 #include "asn1/Chat.h"
 #include "AppSettings.h"
+#include "Env.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
+#include "SecureStorage.h"
 
 #include <QSignalBlocker>
 
 using namespace governikus;
 
-AuthContext::AuthContext(ActivationContext* pActivationContext)
+AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationContext)
 	: WorkflowContext()
 	, mTcTokenNotFound(true)
 	, mErrorReportedToServer(false)
 	, mActivationContext(pActivationContext)
-	, mNetworkManager(new NetworkManager())
 	, mTcTokenUrl()
 	, mTcToken()
 	, mRefreshUrl()
@@ -35,6 +36,7 @@ AuthContext::AuthContext(ActivationContext* pActivationContext)
 	, mDIDAuthenticateResponseEAC2()
 	, mTransmits()
 	, mTransmitResponses()
+	, mTransmitResponseFailed(false)
 	, mDisconnectResponse()
 	, mStartPaosResponse()
 	, mEffectiveAccessRights()
@@ -101,7 +103,6 @@ bool AuthContext::removeForbiddenAccessRights(QSet<AccessRight>& pAccessRights)
 	}
 
 	const auto& allowedCvcAccessRights = mTerminalCvc->getBody().getCHAT().getAccessRights();
-	// TODO Don't display = Don't use: why?
 	const auto& allDisplayedOrderedRights = AccessRoleAndRightsUtil::allDisplayedOrderedRights().toSet();
 	const auto& allowedAccessRights = allowedCvcAccessRights & allDisplayedOrderedRights;
 
@@ -205,7 +206,7 @@ bool AuthContext::setEffectiveAccessRights(const QSet<AccessRight>& pAccessRight
 }
 
 
-void AuthContext::setTerminalCvc(const QSharedPointer<CVCertificate>& pTerminalCvc)
+void AuthContext::setTerminalCvc(const QSharedPointer<const CVCertificate>& pTerminalCvc)
 {
 	mTerminalCvc = pTerminalCvc;
 	initializeChat();
@@ -224,7 +225,7 @@ QByteArray AuthContext::encodeEffectiveChat()
 }
 
 
-CVCertificateChain AuthContext::getChainStartingWith(const QSharedPointer<CVCertificate>& pChainRoot) const
+CVCertificateChain AuthContext::getChainStartingWith(const QSharedPointer<const CVCertificate>& pChainRoot) const
 {
 	const auto& productionChain = mCvcChainBuilderProd.getChainStartingWith(pChainRoot);
 	if (productionChain.isValid())
@@ -254,16 +255,16 @@ CVCertificateChain AuthContext::getChainForCertificationAuthority(const Establis
 }
 
 
-void AuthContext::initCvcChainBuilder(const QVector<QSharedPointer<CVCertificate> >& pAdditionalCertificates)
+void AuthContext::initCvcChainBuilder(const QVector<QSharedPointer<const CVCertificate> >& pAdditionalCertificates)
 {
 	Q_ASSERT(mDIDAuthenticateEAC1);
 
-	QVector<QSharedPointer<CVCertificate> > cvcs;
-	cvcs += CVCertificate::fromHex(AppSettings::getInstance().getPreVerificationSettings().getLinkCertificates());
+	QVector<QSharedPointer<const CVCertificate> > cvcs;
+	cvcs += CVCertificate::fromHex(Env::getSingleton<AppSettings>()->getPreVerificationSettings().getLinkCertificates());
 	cvcs += getDidAuthenticateEac1()->getCvCertificates();
 	cvcs += pAdditionalCertificates;
 
-	const auto& secureStorage = AppSettings::getInstance().getSecureStorage();
+	const SecureStorage& secureStorage = SecureStorage::getInstance();
 	mCvcChainBuilderProd = CVCertificateChainBuilder(cvcs + CVCertificate::fromHex(secureStorage.getCVRootCertificates(true)), true);
 	mCvcChainBuilderTest = CVCertificateChainBuilder(cvcs + CVCertificate::fromHex(secureStorage.getCVRootCertificates(false)), false);
 }

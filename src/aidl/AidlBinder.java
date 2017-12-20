@@ -1,5 +1,11 @@
+/*
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 package com.governikus.ausweisapp2;
 
+import android.content.Intent;
+import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.DeadObjectException;
 import android.os.IBinder;
@@ -8,6 +14,8 @@ import android.util.Log;
 import java.lang.Throwable;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.qtproject.qt5.android.QtNative;
 
 class AidlBinder extends IAusweisApp2Sdk.Stub
 {
@@ -124,12 +132,17 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 
 	public synchronized boolean updateNfcTag(String pSessionId, Tag pTag)
 	{
+		Log.d(LOG_TAG, "Android service: Received nfc tag from client");
+
 		if (!isValidSessionId(mCallbackSessionId))
 		{
 			return false;
 		}
 
-		mService.getNfcConnector().updateNfcTag(pTag);
+		Intent newIntent = new Intent();
+		newIntent.putExtra(NfcAdapter.EXTRA_TAG, pTag);
+		QtNative.onNewIntent(newIntent);
+
 		return true;
 	}
 

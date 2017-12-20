@@ -1,10 +1,10 @@
 /*!
- * SelfAuthenticationData.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfAuthenticationData.h"
+
+#include "LanguageLoader.h"
 
 #include <QDomDocument>
 #include <QLoggingCategory>
@@ -15,23 +15,45 @@ using namespace governikus;
 
 
 SelfAuthenticationData::SelfAuthenticationData(const QByteArray& pData)
-	: QObject()
-	, mValid(false)
+	: d(new SelfData(pData))
+{
+}
+
+
+bool SelfAuthenticationData::isValid() const
+{
+	return d->mValid;
+}
+
+
+QString SelfAuthenticationData::getValue(SelfAuthData pData) const
+{
+	return d->getValue(pData);
+}
+
+
+const QDateTime& SelfAuthenticationData::getDateTime() const
+{
+	return d->mDateTime;
+}
+
+
+SelfAuthenticationData::OrderedSelfData SelfAuthenticationData::getOrderedSelfData() const
+{
+	return d->getOrderedSelfInfo();
+}
+
+
+SelfAuthenticationData::SelfData::SelfData(const QByteArray& pData)
+	: mValid(false)
+	, mDateTime(QDateTime::currentDateTime())
 	, mOperationsAllowed()
 	, mSelfAuthData()
-	, mDateTime(QDateTime::currentDateTime())
 {
-	parse(pData);
-}
-
-
-SelfAuthenticationData::~SelfAuthenticationData()
-{
-}
-
-
-void SelfAuthenticationData::parse(const QByteArray& pData)
-{
+	if (pData.isEmpty())
+	{
+		return;
+	}
 	qCDebug(secure) << "parsing data:" << pData;
 
 	QDomDocument doc(QStringLiteral("dataXML"));
@@ -46,13 +68,33 @@ void SelfAuthenticationData::parse(const QByteArray& pData)
 		return;
 	}
 
-	const auto& parseOperations = std::bind(&SelfAuthenticationData::parseOperationsAllowedByUser, this, std::placeholders::_1);
-	const auto& parsePersonal = std::bind(&SelfAuthenticationData::parsePersonalData, this, std::placeholders::_1);
+	const auto& parseOperations = std::bind(&SelfAuthenticationData::SelfData::parseOperationsAllowedByUser, this, std::placeholders::_1);
+	const auto& parsePersonal = std::bind(&SelfAuthenticationData::SelfData::parsePersonalData, this, std::placeholders::_1);
 	mValid = parse(doc, QStringLiteral("OperationsAllowedByUser"), parseOperations) && parse(doc, QStringLiteral("PersonalData"), parsePersonal);
 }
 
 
-bool SelfAuthenticationData::parseOperationsAllowedByUser(const QDomElement& pElement)
+QString SelfAuthenticationData::SelfData::getValue(SelfAuthData pData) const
+{
+	if (mOperationsAllowed.value(pData) == SelfAuthDataPermission::ALLOWED)
+	{
+		return mSelfAuthData.value(pData);
+	}
+	else if (mOperationsAllowed.value(pData) == SelfAuthDataPermission::NOTONCHIP)
+	{
+		if (pData == SelfAuthData::Nationality && getValue(SelfAuthData::DocumentType) == QLatin1String("ID"))
+		{
+			return QStringLiteral("D");
+		}
+
+		return tr("This data has not been stored in this chip generation.");
+	}
+
+	return QString();
+}
+
+
+bool SelfAuthenticationData::SelfData::parseOperationsAllowedByUser(const QDomElement& pElement)
 {
 	for (auto elem = pElement; !elem.isNull(); elem = elem.nextSiblingElement())
 	{
@@ -77,7 +119,7 @@ bool SelfAuthenticationData::parseOperationsAllowedByUser(const QDomElement& pEl
 }
 
 
-bool SelfAuthenticationData::parsePersonalData(const QDomElement& pElement)
+bool SelfAuthenticationData::SelfData::parsePersonalData(const QDomElement& pElement)
 {
 	for (auto elem = pElement; !elem.isNull(); elem = elem.nextSiblingElement())
 	{
@@ -131,7 +173,7 @@ bool SelfAuthenticationData::parsePersonalData(const QDomElement& pElement)
 }
 
 
-bool SelfAuthenticationData::tryToInsertChild(const QDomElement& pElement, SelfAuthData pAuthData)
+bool SelfAuthenticationData::SelfData::tryToInsertChild(const QDomElement& pElement, SelfAuthData pAuthData)
 {
 	if (pElement.isNull() || pElement.text().isNull())
 	{
@@ -143,7 +185,7 @@ bool SelfAuthenticationData::tryToInsertChild(const QDomElement& pElement, SelfA
 }
 
 
-bool SelfAuthenticationData::parse(const QDomDocument& pDoc, const QString& pElementName, const std::function<bool(const QDomElement&)>& pParserFunc)
+bool SelfAuthenticationData::SelfData::parse(const QDomDocument& pDoc, const QString& pElementName, const std::function<bool(const QDomElement&)>& pParserFunc)
 {
 	const QDomNodeList nodeList = pDoc.documentElement().elementsByTagName(pElementName);
 	if (nodeList.size() == 0)
@@ -156,33 +198,107 @@ bool SelfAuthenticationData::parse(const QDomDocument& pDoc, const QString& pEle
 }
 
 
-bool SelfAuthenticationData::isValid() const
+SelfAuthenticationData::OrderedSelfData SelfAuthenticationData::SelfData::getOrderedSelfInfo() const
 {
-	return mValid;
-}
+	OrderedSelfData orderedSelfData;
 
-
-QString SelfAuthenticationData::getValue(SelfAuthData pData) const
-{
-	if (mOperationsAllowed.value(pData) == SelfAuthDataPermission::ALLOWED)
+	if (!mValid)
 	{
-		return mSelfAuthData.value(pData);
-	}
-	else if (mOperationsAllowed.value(pData) == SelfAuthDataPermission::NOTONCHIP)
-	{
-		if (pData == SelfAuthData::Nationality && getValue(SelfAuthData::DocumentType) == QLatin1String("ID"))
-		{
-			return QStringLiteral("D");
-		}
-
-		return tr("This data has not been stored in this chip generation.");
+		return orderedSelfData;
 	}
 
-	return QString();
+	const auto& formatDate = [](const QString& pIn){
+				QDateTime dateTime = QDateTime::fromString(pIn, QStringLiteral("yyyy-MM-dd+hh:mm"));
+				return LanguageLoader::getInstance().getUsedLocale().toString(dateTime, tr("dd.MM.yyyy"));
+			};
+
+	const auto& add = [&](const QString& pKey, const QString& pValue){
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+				if (!pKey.isEmpty())
+				{
+					orderedSelfData << qMakePair(pKey + QLatin1Char(':'), pValue);
+				}
+				else
+#endif
+				{
+					orderedSelfData << qMakePair(pKey, pValue);
+				}
+			};
+
+	//fill layout with new data, see 18 Personalausweisgesetz (PAuswG)
+	if (!getValue(SelfAuthData::FamilyNames).isNull())
+	{
+		add(tr("Family name"), getValue(SelfAuthData::FamilyNames));
+	}
+	if (!getValue(SelfAuthData::BirthName).isNull())
+	{
+		add(tr("Birth name"), getValue(SelfAuthData::BirthName));
+	}
+	if (!getValue(SelfAuthData::GivenNames).isNull())
+	{
+		add(tr("Given name(s)"), getValue(SelfAuthData::GivenNames));
+	}
+	if (!getValue(SelfAuthData::AcademicTitle).isNull())
+	{
+		add(tr("Doctoral degree"), getValue(SelfAuthData::AcademicTitle));
+	}
+	if (!getValue(SelfAuthData::DateOfBirth).isNull())
+	{
+		add(tr("Date of birth"), formatDate(getValue(SelfAuthData::DateOfBirth)));
+	}
+	if (!getValue(SelfAuthData::PlaceOfBirth).isNull())
+	{
+		add(tr("Place of birth"), getValue(SelfAuthData::PlaceOfBirth));
+	}
+	if (!getValue(SelfAuthData::PlaceOfResidenceNoPlaceInfo).isNull())
+	{
+		add(tr("Address"), getValue(SelfAuthData::PlaceOfResidenceNoPlaceInfo));
+	}
+	if (!getValue(SelfAuthData::PlaceOfResidenceStreet).isNull())
+	{
+		add(getValue(SelfAuthData::PlaceOfResidenceNoPlaceInfo).isNull() ? tr("Address") : QString(), getValue(SelfAuthData::PlaceOfResidenceStreet));
+	}
+	if (!getValue(SelfAuthData::PlaceOfResidenceZipCode).isNull() || !getValue(SelfAuthData::PlaceOfResidenceCity).isNull())
+	{
+		add(getValue(SelfAuthData::PlaceOfResidenceStreet).isNull() ? tr("Address") : QString(), getValue(SelfAuthData::PlaceOfResidenceZipCode) + QLatin1Char(' ') + getValue(SelfAuthData::PlaceOfResidenceCity));
+	}
+	if (!getValue(SelfAuthData::PlaceOfResidenceCountry).isNull())
+	{
+		add(QString(), getValue(SelfAuthData::PlaceOfResidenceCountry));
+	}
+
+	const auto& documentType = getValue(SelfAuthData::DocumentType);
+	if (!documentType.isNull())
+	{
+		add(tr("Document type"), documentType);
+	}
+	if (!getValue(SelfAuthData::Nationality).isNull())
+	{
+		add(tr("Nationality"), getValue(SelfAuthData::Nationality));
+	}
+	if (!getValue(SelfAuthData::ArtisticName).isNull())
+	{
+		add(tr("Religious / artistic name"), getValue(SelfAuthData::ArtisticName));
+	}
+	if (!getValue(SelfAuthData::IssuingState).isNull())
+	{
+		add(tr("Issuing country"), getValue(SelfAuthData::IssuingState));
+	}
+
+	// Show "Residence Permit" for eAT- and Test-Cards only
+	// AR, AS, AF --> see TR-03127 (v1.16) chapter 3.2.3
+	// TA --> Used by Test-Cards
+	if (!getValue(SelfAuthData::ResidencePermitI).isNull() && (
+				documentType == QLatin1String("AR") ||
+				documentType == QLatin1String("AS") ||
+				documentType == QLatin1String("AF") ||
+				documentType == QLatin1String("TA")))
+	{
+		add(tr("Residence permit I"), getValue(SelfAuthData::ResidencePermitI));
+	}
+
+	return orderedSelfData;
 }
 
 
-const QDateTime& SelfAuthenticationData::getDateTime() const
-{
-	return mDateTime;
-}
+#include "moc_SelfAuthenticationData.cpp"

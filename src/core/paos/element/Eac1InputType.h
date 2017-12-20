@@ -1,7 +1,7 @@
 /*!
  * \brief Store information of Eac1InputType.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,59 +37,59 @@ class Eac1InputType
 	friend class ::test_StateProcessCertificatesFromEac2;
 
 	private:
-		QVector<QSharedPointer<CVCertificate> > mCvCertificates;
+		QVector<QSharedPointer<const CVCertificate> > mCvCertificates;
 		QByteArray mCertificateDescriptionAsBinary;
-		QSharedPointer<CertificateDescription> mCertificateDescription;
-		QSharedPointer<CHAT> mRequiredChat, mOptionalChat;
+		QSharedPointer<const CertificateDescription> mCertificateDescription;
+		QSharedPointer<const CHAT> mRequiredChat, mOptionalChat;
 		QByteArray mAuthenticatedAuxiliaryDataAsBinary;
-		QSharedPointer<AuthenticatedAuxiliaryData> mAuthenticatedAuxiliaryData;
+		QSharedPointer<const AuthenticatedAuxiliaryData> mAuthenticatedAuxiliaryData;
 		QString mTransactionInfo;
 
-		void setAuthenticatedAuxiliaryData(const QSharedPointer<AuthenticatedAuxiliaryData>& authenticatedAuxiliaryData)
+		void setAuthenticatedAuxiliaryData(const QSharedPointer<const AuthenticatedAuxiliaryData>& pAuthenticatedAuxiliaryData)
 		{
-			mAuthenticatedAuxiliaryData = authenticatedAuxiliaryData;
+			mAuthenticatedAuxiliaryData = pAuthenticatedAuxiliaryData;
 		}
 
 
-		void setAuthenticatedAuxiliaryDataAsBinary(const QByteArray& authenticatedAuxiliaryDataAsBinary)
+		void setAuthenticatedAuxiliaryDataAsBinary(const QByteArray& pAuthenticatedAuxiliaryDataAsBinary)
 		{
-			mAuthenticatedAuxiliaryDataAsBinary = authenticatedAuxiliaryDataAsBinary;
+			mAuthenticatedAuxiliaryDataAsBinary = pAuthenticatedAuxiliaryDataAsBinary;
 		}
 
 
-		void setCertificateDescription(QSharedPointer<CertificateDescription> certificateDescription)
+		void setCertificateDescription(const QSharedPointer<const CertificateDescription>& pCertificateDescription)
 		{
-			mCertificateDescription = certificateDescription;
+			mCertificateDescription = pCertificateDescription;
 		}
 
 
-		void setCertificateDescriptionAsBinary(const QByteArray& certificateDescriptionAsBinary)
+		void setCertificateDescriptionAsBinary(const QByteArray& pCertificateDescriptionAsBinary)
 		{
-			mCertificateDescriptionAsBinary = certificateDescriptionAsBinary;
+			mCertificateDescriptionAsBinary = pCertificateDescriptionAsBinary;
 		}
 
 
-		void appendCvcerts(QSharedPointer<CVCertificate> cvcert)
+		void appendCvcerts(const QSharedPointer<const CVCertificate>& pCert)
 		{
-			mCvCertificates += cvcert;
+			mCvCertificates += pCert;
 		}
 
 
-		void setOptionalChat(const QSharedPointer<CHAT>& optionalChat)
+		void setOptionalChat(const QSharedPointer<const CHAT>& pOptionalChat)
 		{
-			mOptionalChat = optionalChat;
+			mOptionalChat = pOptionalChat;
 		}
 
 
-		void setRequiredChat(const QSharedPointer<CHAT>& requiredChat)
+		void setRequiredChat(const QSharedPointer<CHAT>& pRequiredChat)
 		{
-			mRequiredChat = requiredChat;
+			mRequiredChat = pRequiredChat;
 		}
 
 
-		void setTransactionInfo(const QString& transactionInfo)
+		void setTransactionInfo(const QString& pTransactionInfo)
 		{
-			mTransactionInfo = transactionInfo;
+			mTransactionInfo = pTransactionInfo;
 		}
 
 
@@ -97,7 +97,7 @@ class Eac1InputType
 		Eac1InputType();
 		~Eac1InputType();
 
-		QSharedPointer<AuthenticatedAuxiliaryData> getAuthenticatedAuxiliaryData() const
+		const QSharedPointer<const AuthenticatedAuxiliaryData>& getAuthenticatedAuxiliaryData() const
 		{
 			return mAuthenticatedAuxiliaryData;
 		}
@@ -109,7 +109,7 @@ class Eac1InputType
 		}
 
 
-		QSharedPointer<CertificateDescription> getCertificateDescription() const
+		const QSharedPointer<const CertificateDescription>& getCertificateDescription() const
 		{
 			return mCertificateDescription;
 		}
@@ -121,19 +121,19 @@ class Eac1InputType
 		}
 
 
-		const QVector<QSharedPointer<CVCertificate> >& getCvCertificates() const
+		const QVector<QSharedPointer<const CVCertificate> >& getCvCertificates() const
 		{
 			return mCvCertificates;
 		}
 
 
-		const QSharedPointer<CHAT>& getOptionalChat() const
+		const QSharedPointer<const CHAT>& getOptionalChat() const
 		{
 			return mOptionalChat;
 		}
 
 
-		const QSharedPointer<CHAT>& getRequiredChat() const
+		const QSharedPointer<const CHAT>& getRequiredChat() const
 		{
 			return mRequiredChat;
 		}

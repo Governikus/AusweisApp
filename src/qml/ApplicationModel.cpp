@@ -1,15 +1,15 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
 
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
-#include "context/SelfAuthenticationContext.h"
+#include "context/SelfAuthContext.h"
+#include "Env.h"
 #include "ReaderInfo.h"
 #include "ReaderManager.h"
-#include "SingletonHelper.h"
 
 #if (defined(Q_OS_LINUX) && !defined(QT_NO_DEBUG)) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 #include <QBluetoothLocalDevice>
@@ -22,8 +22,6 @@
 #endif
 
 using namespace governikus;
-
-defineSingleton(ApplicationModel)
 
 
 void ApplicationModel::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
@@ -42,12 +40,20 @@ void ApplicationModel::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
 ApplicationModel::ApplicationModel(QObject* pParent)
 	: QObject(pParent)
 	, mContext()
+	, mWifiInfo()
 {
-	connect(&ReaderManager::getInstance(), &ReaderManager::fireStatusChanged, this, &ApplicationModel::onStatusChanged);
 	connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderAdded, this, &ApplicationModel::fireBluetoothReaderChanged);
-	connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderConnected, this, &ApplicationModel::fireBluetoothReaderChanged);
 	connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderRemoved, this, &ApplicationModel::fireBluetoothReaderChanged);
+	connect(&ReaderManager::getInstance(), &ReaderManager::fireStatusChanged, this, &ApplicationModel::onStatusChanged);
 	connect(&ReaderManager::getInstance(), &ReaderManager::fireStatusChanged, this, &ApplicationModel::fireBluetoothReaderChanged);
+	connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderAdded, this, &ApplicationModel::fireSelectedReaderChanged);
+	connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderRemoved, this, &ApplicationModel::fireSelectedReaderChanged);
+	connect(&mWifiInfo, &WifiInfo::fireWifiEnabledChanged, this, &ApplicationModel::onWifiEnabledChanged);
+
+	onWifiEnabledChanged();
+
+	const QSharedPointer<RemoteClient>& remoteClient = Env::getSingleton<ReaderManager>()->getRemoteClient();
+	connect(remoteClient.data(), &RemoteClient::fireCertificateRemoved, this, &ApplicationModel::fireCertificateRemoved);
 }
 
 
@@ -56,15 +62,17 @@ ApplicationModel::~ApplicationModel()
 }
 
 
-ApplicationModel& ApplicationModel::getWidgetInstance()
-{
-	return *Instance;
-}
-
-
 void ApplicationModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 {
-	mContext = pContext;
+	if (mContext)
+	{
+		disconnect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &ApplicationModel::fireSelectedReaderChanged);
+	}
+
+	if ((mContext = pContext))
+	{
+		connect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &ApplicationModel::fireSelectedReaderChanged);
+	}
 	Q_EMIT fireCurrentWorkflowChanged();
 }
 
@@ -85,13 +93,25 @@ ReaderManagerPlugInInfo ApplicationModel::getFirstPlugInInfo(ReaderManagerPlugIn
 
 bool ApplicationModel::isNfcAvailable() const
 {
+#if !defined(QT_NO_DEBUG) && !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID) && !defined(Q_OS_WINRT)
+	return getFirstPlugInInfo(ReaderManagerPlugInType::PCSC).isAvailable();
+
+#else
 	return getFirstPlugInInfo(ReaderManagerPlugInType::NFC).isAvailable();
+
+#endif
 }
 
 
 bool ApplicationModel::isNfcEnabled() const
 {
+#if !defined(QT_NO_DEBUG) && !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID) && !defined(Q_OS_WINRT)
+	return getFirstPlugInInfo(ReaderManagerPlugInType::PCSC).isEnabled();
+
+#else
 	return getFirstPlugInInfo(ReaderManagerPlugInType::NFC).isEnabled();
+
+#endif
 }
 
 
@@ -104,24 +124,6 @@ bool ApplicationModel::isBluetoothAvailable() const
 bool ApplicationModel::isBluetoothEnabled() const
 {
 	return getFirstPlugInInfo(ReaderManagerPlugInType::BLUETOOTH).isEnabled();
-}
-
-
-QString ApplicationModel::getCurrentWorkflow() const
-{
-	if (mContext.objectCast<ChangePinContext>())
-	{
-		return QStringLiteral("changepin");
-	}
-	if (mContext.objectCast<SelfAuthenticationContext>())
-	{
-		return QStringLiteral("selfauthentication");
-	}
-	if (mContext.objectCast<AuthContext>())
-	{
-		return QStringLiteral("authentication");
-	}
-	return QString();
 }
 
 
@@ -175,4 +177,40 @@ bool ApplicationModel::locationPermissionRequired() const
 	return false;
 
 #endif
+}
+
+
+QString ApplicationModel::getCurrentWorkflow() const
+{
+	if (mContext.objectCast<ChangePinContext>())
+	{
+		return QStringLiteral("changepin");
+	}
+	if (mContext.objectCast<SelfAuthContext>())
+	{
+		return QStringLiteral("selfauthentication");
+	}
+	if (mContext.objectCast<AuthContext>())
+	{
+		return QStringLiteral("authentication");
+	}
+	return QString();
+}
+
+
+bool ApplicationModel::foundSelectedReader() const
+{
+	if (!mContext)
+	{
+		return false;
+	}
+
+	return ReaderManager::getInstance().getReaderInfos(mContext->getReaderPlugInTypes()).size() > 0;
+}
+
+
+void ApplicationModel::onWifiEnabledChanged()
+{
+	mWifiEnabled = mWifiInfo.isWifiEnabled();
+	Q_EMIT fireWifiEnabledChanged();
 }

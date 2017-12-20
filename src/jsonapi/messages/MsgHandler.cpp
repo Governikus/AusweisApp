@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandler.h"
@@ -8,8 +8,7 @@
 #include "states/StateEstablishPaceCan.h"
 #include "states/StateEstablishPacePin.h"
 #include "states/StateEstablishPacePuk.h"
-#include "states/StateSelectNfcReader.h"
-#include "states/StateSelectPcscReader.h"
+#include "states/StateSelectReader.h"
 
 #include <QJsonDocument>
 
@@ -38,8 +37,7 @@ MsgType MsgHandler::getStateMsgType(const QString& pState)
 	{
 		return MsgType::ACCESS_RIGHTS;
 	}
-	else if (AbstractState::isState<StateSelectNfcReader>(pState)
-			|| AbstractState::isState<StateSelectPcscReader>(pState))
+	else if (AbstractState::isState<StateSelectReader>(pState))
 	{
 		return MsgType::INSERT_CARD;
 	}
@@ -61,7 +59,7 @@ MsgHandler::MsgHandler(MsgType pType)
 	, mVoid(false)
 	, mJsonObject()
 {
-	mJsonObject["msg"] = getEnumName(mType);
+	mJsonObject[QLatin1String("msg")] = getEnumName(mType);
 }
 
 
@@ -72,7 +70,7 @@ MsgHandler::MsgHandler(MsgType pType, const char* pKey, const QString& pValue)
 }
 
 
-MsgHandler::MsgHandler(MsgType pType, const char* pKey, const QLatin1String& pValue)
+MsgHandler::MsgHandler(MsgType pType, const char* pKey, const QLatin1String pValue)
 	: MsgHandler(pType)
 {
 	setValue(pKey, pValue);
@@ -81,7 +79,7 @@ MsgHandler::MsgHandler(MsgType pType, const char* pKey, const QLatin1String& pVa
 
 QByteArray MsgHandler::toJson() const
 {
-	Q_ASSERT(mJsonObject["msg"].isString());
+	Q_ASSERT(mJsonObject[QLatin1String("msg")].isString());
 	return QJsonDocument(mJsonObject).toJson(QJsonDocument::Compact);
 }
 
@@ -111,7 +109,7 @@ MsgType MsgHandler::getType() const
 
 void MsgHandler::setRequest(const QJsonObject& pRequest)
 {
-	static const QLatin1String requestName("request");
+	const QLatin1String requestName("request");
 
 	const auto& requestValue = pRequest[requestName];
 	if (!requestValue.isUndefined())
@@ -127,7 +125,7 @@ void MsgHandler::setValue(const char* pKey, const QString& pValue)
 }
 
 
-void MsgHandler::setValue(const QLatin1String& pKey, const QLatin1String& pValue)
+void MsgHandler::setValue(const QLatin1String pKey, const QLatin1String pValue)
 {
 	if (pValue.size())
 	{
@@ -136,7 +134,7 @@ void MsgHandler::setValue(const QLatin1String& pKey, const QLatin1String& pValue
 }
 
 
-void MsgHandler::setValue(const char* pKey, const QLatin1String& pValue)
+void MsgHandler::setValue(const char* pKey, const QLatin1String pValue)
 {
 	setValue(QLatin1String(pKey), pValue);
 }
@@ -148,7 +146,7 @@ void MsgHandler::setVoid(bool pVoid)
 }
 
 
-void MsgHandler::setValue(const QLatin1String& pKey, const QString& pValue)
+void MsgHandler::setValue(const QLatin1String pKey, const QString& pValue)
 {
 	if (!pValue.isEmpty())
 	{

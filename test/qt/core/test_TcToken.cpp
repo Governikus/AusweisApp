@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref TcToken
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TcToken.h"
@@ -48,7 +48,7 @@ class test_TcToken
 			QCOMPARE(token.getPsk(), QByteArray("4BC1A0B5"));
 
 			token.clearPsk();
-			QVERIFY(token.getPsk().isNull());
+			QVERIFY(!token.usePsk());
 		}
 
 
@@ -71,7 +71,7 @@ class test_TcToken
 			QVERIFY(!token.getServerAddress().isEmpty());
 			QVERIFY(!token.getRefreshAddress().isEmpty());
 			QVERIFY(token.getCommunicationErrorAddress().isEmpty());
-			QVERIFY(!token.getPsk().isNull());
+			QVERIFY(token.usePsk());
 		}
 
 
@@ -96,7 +96,7 @@ class test_TcToken
 			QVERIFY(token.getServerAddress().isEmpty());
 			QVERIFY(token.getRefreshAddress().isEmpty());
 			QVERIFY(!token.getCommunicationErrorAddress().isEmpty());
-			QVERIFY(token.getPsk().isNull());
+			QVERIFY(!token.usePsk());
 		}
 
 
@@ -121,7 +121,7 @@ class test_TcToken
 			QVERIFY(token.getServerAddress().isEmpty());
 			QVERIFY(token.getRefreshAddress().isEmpty());
 			QVERIFY(!token.getCommunicationErrorAddress().isEmpty());
-			QVERIFY(token.getPsk().isNull());
+			QVERIFY(!token.usePsk());
 		}
 
 
@@ -140,7 +140,7 @@ class test_TcToken
 									 "  </PathSecurity-Parameters>"
 									 "</TCTokenType>"));
 			QVERIFY(!token.isValid());
-			QVERIFY(!token.getPsk().isNull());
+			QVERIFY(token.usePsk());
 		}
 
 
@@ -159,7 +159,7 @@ class test_TcToken
 									 "  </PathSecurity-Parameters>"
 									 "</TCTokenType>"));
 			QVERIFY(!token.isValid());
-			QVERIFY(!token.getPsk().isNull());
+			QVERIFY(token.usePsk());
 		}
 
 
@@ -206,10 +206,10 @@ class test_TcToken
 			QVERIFY(token.getServerAddress().isEmpty());
 			QVERIFY(token.getRefreshAddress().isEmpty());
 			QVERIFY(token.getCommunicationErrorAddress().isEmpty());
-			QVERIFY(token.getPsk().isNull());
+			QVERIFY(!token.usePsk());
 
 			token.clearPsk();
-			QVERIFY(token.getPsk().isNull());
+			QVERIFY(!token.usePsk());
 		}
 
 

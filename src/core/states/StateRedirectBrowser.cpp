@@ -1,7 +1,5 @@
 /*!
- * StateRedirectBrowser.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateRedirectBrowser.h"
@@ -34,7 +32,7 @@ void StateRedirectBrowser::run()
 	}
 	else if (sendRedirect(getContext()->getRefreshUrl(), getContext()->getStatus()))
 	{
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 	}
 }
 
@@ -44,13 +42,13 @@ void StateRedirectBrowser::sendErrorPage(HttpStatusCode pStatus)
 	auto activationContext = getContext()->getActivationContext();
 	if (activationContext->sendErrorPage(pStatus, getContext()->getStatus()))
 	{
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 	}
 	else
 	{
 		qCritical() << "Cannot send error page to caller: " << activationContext->getSendError();
-		setStatus(GlobalStatus(GlobalStatus::Code::Workflow_Error_Page_Transmission_Error, activationContext->getSendError()));
-		Q_EMIT fireError();
+		updateStatus(GlobalStatus(GlobalStatus::Code::Workflow_Error_Page_Transmission_Error, activationContext->getSendError()));
+		Q_EMIT fireAbort();
 	}
 }
 
@@ -62,7 +60,7 @@ void StateRedirectBrowser::reportCommunicationError()
 	{
 		if (sendRedirect(getContext()->getTcToken()->getCommunicationErrorAddress(), GlobalStatus::Code::Workflow_Communication_Missing_Redirect_Url))
 		{
-			Q_EMIT fireSuccess();
+			Q_EMIT fireContinue();
 		}
 	}
 	else
@@ -75,15 +73,13 @@ void StateRedirectBrowser::reportCommunicationError()
 bool StateRedirectBrowser::sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pStatus)
 {
 	auto activationContext = getContext()->getActivationContext();
-	if (activationContext->sendRedirect(pRedirectAddress, pStatus))
-	{
-		return true;
-	}
-	else
+	if (!activationContext->sendRedirect(pRedirectAddress, pStatus))
 	{
 		qCritical() << "Cannot send redirect to caller: " << activationContext->getSendError();
-		setStatus(GlobalStatus(GlobalStatus::Code::Workflow_Redirect_Transmission_Error, activationContext->getSendError()));
-		Q_EMIT fireError();
+		updateStatus(GlobalStatus(GlobalStatus::Code::Workflow_Redirect_Transmission_Error, activationContext->getSendError()));
+		Q_EMIT fireAbort();
 		return false;
 	}
+
+	return true;
 }

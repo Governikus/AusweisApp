@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref  SignatureChecker
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore>
@@ -29,9 +29,9 @@ class test_SignatureChecker
 {
 	Q_OBJECT
 
-	QVector<QSharedPointer<CVCertificate> > cvcs;
+	QVector<QSharedPointer<const CVCertificate> > cvcs;
 
-	static QSharedPointer<CVCertificate> load(const QString& pName)
+	static QSharedPointer<const CVCertificate> load(const QString& pName)
 	{
 		QByteArray bytes = TestFileHelper::readFile(pName);
 		return CVCertificate::fromHex(bytes);
@@ -52,7 +52,7 @@ class test_SignatureChecker
 
 		void verifyEmptyList()
 		{
-			QVector<QSharedPointer<CVCertificate> > certs;
+			QVector<QSharedPointer<const CVCertificate> > certs;
 			SignatureChecker checker(certs);
 
 			QVERIFY(!checker.check());
@@ -61,7 +61,7 @@ class test_SignatureChecker
 
 		void verifyNotSelfSigned()
 		{
-			QVector<QSharedPointer<CVCertificate> > certs(cvcs);
+			QVector<QSharedPointer<const CVCertificate> > certs(cvcs);
 			certs.removeAt(0);
 			SignatureChecker checker(certs);
 
@@ -71,7 +71,7 @@ class test_SignatureChecker
 
 		void verifyNoCertificateWithCurveParameters()
 		{
-			QVector<QSharedPointer<CVCertificate> > certs(cvcs);
+			QVector<QSharedPointer<const CVCertificate> > certs(cvcs);
 			certs.removeAt(2);
 			certs.removeAt(1);
 			certs.removeAt(0);
@@ -83,7 +83,7 @@ class test_SignatureChecker
 
 		void verifyNoValidChain()
 		{
-			QVector<QSharedPointer<CVCertificate> > certs(cvcs);
+			QVector<QSharedPointer<const CVCertificate> > certs(cvcs);
 			certs.removeAt(2);
 			SignatureChecker checker(certs);
 

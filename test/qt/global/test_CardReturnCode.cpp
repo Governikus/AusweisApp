@@ -1,14 +1,15 @@
 /*!
  * \brief Unit tests for return codes.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
+
+#include "CardReturnCode.h"
+#include "Result.h"
 
 #include <QPair>
 #include <QString>
 #include <QtTest>
-
-#include "Result.h"
 
 using namespace governikus;
 

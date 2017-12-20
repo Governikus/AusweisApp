@@ -1,7 +1,5 @@
 /*!
- * StateProcessing.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateProcessing.h"
@@ -19,12 +17,12 @@ void StateProcessing::run()
 	auto activationContext = getContext()->getActivationContext();
 	if (activationContext->sendProcessing())
 	{
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 	}
 	else
 	{
 		qCritical() << "Cannot send \"Processing\" to caller: " << activationContext->getSendError();
-		setStatus(GlobalStatus(GlobalStatus::Code::Workflow_Processing_Error, activationContext->getSendError()));
-		Q_EMIT fireError();
+		updateStatus(GlobalStatus(GlobalStatus::Code::Workflow_Processing_Error, activationContext->getSendError()));
+		Q_EMIT fireAbort();
 	}
 }

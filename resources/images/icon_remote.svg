@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="604" height="604" viewBox="0 0 160 160">
+  <defs>
+    <g id="air">
+      <path d="M 0 0 l -16.7 -20 a 27 27 0 0 1 33.4 0 Z" fill="#ffffff"/>
+      <path d="M -24 -30 a 38 38 0 0 1 48 0 M -37 -47 a 58 58 0 0 1 74 0 M -50 -64 a 78 78 0 0 1 100 0" stroke="#ffffff" stroke-width="18" fill="none"/>
+    </g>
+  </defs>
+  <circle cx="80" cy="80" r="80" fill="#659ccd"/>
+  <use x="80" y="130" xlink:href="#air" />
+</svg>

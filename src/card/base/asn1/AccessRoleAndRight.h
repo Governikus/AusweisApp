@@ -1,6 +1,4 @@
 /*!
- * AccessRoleAndRight.h
- *
  * \brief Defines the AccessRight and AccessRole enum.
  *
  * Note: When using a QHash<AccessRight,...> directly or indirectly (e.g. via QSet),
@@ -8,7 +6,7 @@
  * or otherwise the complain about the qHash() function for AccessRight not being
  * found.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,6 +14,7 @@
 #include "EnumHelper.h"
 
 #include <functional>
+#include <QCoreApplication>
 #include <QList>
 #include <QString>
 
@@ -102,14 +101,13 @@ defineEnumType(AccessRole,
 
 
 class AccessRoleAndRightsUtil
-	: public QObject
 {
-	Q_OBJECT
+	Q_DECLARE_TR_FUNCTIONS(governikus::AccessRoleAndRightsUtil)
 
 	private:
 		static QList<AccessRight> mAllRights;
 		static QList<AccessRight> mAllDisplayedOrderedRights;
-		AccessRoleAndRightsUtil();
+		AccessRoleAndRightsUtil() = delete;
 
 	public:
 		static const QList<AccessRight>& allDisplayedOrderedRights();

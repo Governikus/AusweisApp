@@ -1,12 +1,11 @@
 /*
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogHandler.h"
 
 #include "SingletonHelper.h"
 
-#include <QDateTime>
 #include <QDir>
 
 using namespace governikus;
@@ -24,7 +23,7 @@ LogHandler::LogHandler()
 	, mEnvPattern(!qEnvironmentVariableIsEmpty("QT_MESSAGE_PATTERN"))
 	, mFunctionFilenameSize(74)
 	, mBacklogPosition(0)
-	, mMessagePattern(QStringLiteral("%{category} %{time yyyy.MM.dd hh:mm:ss.zzz} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif} %{function}(%{file}:%{line}) %{message}"))
+	, mMessagePattern(QStringLiteral("%{category} %{time yyyy.MM.dd hh:mm:ss.zzz} %{if-debug} %{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif} %{function}(%{file}:%{line}) %{message}"))
 	, mDefaultMessagePattern(QStringLiteral("%{if-category}%{category}: %{endif}%{message}")) // as defined in qlogging.cpp
 	, mLogFile(QDir::tempPath() + QStringLiteral("/AusweisApp2.XXXXXX.log")) // if you change value you need to adjust getOtherLogfiles()
 	, mHandler(nullptr)
@@ -95,6 +94,31 @@ QByteArray LogHandler::getBacklog()
 }
 
 
+QDateTime LogHandler::getFileDate(const QFileInfo& pInfo)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+	const QFileInfo info(pInfo);
+	const auto& dateTime = info.birthTime();
+	if (dateTime.isValid())
+	{
+		return dateTime;
+	}
+
+	return info.metadataChangeTime();
+
+#else
+	return QFileInfo(pInfo).created();
+
+#endif
+}
+
+
+QDateTime LogHandler::getCurrentLogfileDate() const
+{
+	return getFileDate(mLogFile);
+}
+
+
 void LogHandler::resetBacklog()
 {
 	const QMutexLocker mutexLocker(&mMutex);
@@ -113,7 +137,7 @@ void LogHandler::copyMessageLogContext(const QMessageLogContext& pSource, QMessa
 }
 
 
-QByteArray LogHandler::formatFilename(const char* pFilename)
+QByteArray LogHandler::formatFilename(const char* pFilename) const
 {
 	QByteArray filename(pFilename);
 
@@ -125,7 +149,7 @@ QByteArray LogHandler::formatFilename(const char* pFilename)
 }
 
 
-QByteArray LogHandler::formatFunction(const char* pFunction, const QByteArray& pFilename, int pLine)
+QByteArray LogHandler::formatFunction(const char* pFunction, const QByteArray& pFilename, int pLine) const
 {
 	QByteArray function(pFunction);
 
@@ -165,17 +189,15 @@ QByteArray LogHandler::formatFunction(const char* pFunction, const QByteArray& p
 }
 
 
-QByteArray LogHandler::formatCategory(const char* pCategory)
+QByteArray LogHandler::formatCategory(const QByteArray& pCategory) const
 {
-	static const char* PADDING = "          ";
-	static const int MAX_LENGTH = static_cast<int>(qstrlen(PADDING));
-
-	QByteArray category(pCategory);
-	if (category.length() > MAX_LENGTH)
+	const int MAX_CATEGORY_LENGTH = 10;
+	if (pCategory.length() > MAX_CATEGORY_LENGTH)
 	{
-		category = category.left(MAX_LENGTH - 3) + QByteArrayLiteral("...");
+		return pCategory.left(MAX_CATEGORY_LENGTH - 3) + QByteArrayLiteral("...");
 	}
-	return category.append(PADDING, MAX_LENGTH - category.size());
+
+	return pCategory + QByteArray(MAX_CATEGORY_LENGTH - pCategory.size(), ' ');
 }
 
 
@@ -198,9 +220,9 @@ void LogHandler::handleMessage(QtMsgType pType, const QMessageLogContext& pConte
 {
 	const QMutexLocker mutexLocker(&mMutex);
 
-	QByteArray filename = formatFilename(pContext.file);
-	QByteArray function = formatFunction(pContext.function, filename, pContext.line);
-	QByteArray category = formatCategory(pContext.category);
+	const QByteArray& filename = formatFilename(pContext.file);
+	const QByteArray& function = formatFunction(pContext.function, filename, pContext.line);
+	const QByteArray& category = formatCategory(pContext.category);
 
 	QMessageLogContext ctx;
 	copyMessageLogContext(pContext, ctx, filename, function, category);
@@ -208,7 +230,14 @@ void LogHandler::handleMessage(QtMsgType pType, const QMessageLogContext& pConte
 	const QString& message = mEnvPattern ? pMsg : getPaddedLogMsg(ctx, pMsg);
 
 	qSetMessagePattern(mMessagePattern);
-	QString logMsg = qFormatLogMessage(pType, ctx, message) + QLatin1Char('\n');
+
+#ifdef Q_OS_WIN
+	const QLatin1String lineBreak("\r\n");
+#else
+	const QLatin1Char lineBreak('\n');
+#endif
+
+	QString logMsg = qFormatLogMessage(pType, ctx, message) + lineBreak;
 	logToFile(logMsg);
 
 #ifdef ENABLE_MESSAGE_PATTERN

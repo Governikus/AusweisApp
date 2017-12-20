@@ -1,9 +1,7 @@
 /*!
- * UpdateRetryCounterCommand.h
- *
  * \brief Command to update the retry counter of a card.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,7 +20,7 @@ class UpdateRetryCounterCommand
 
 	protected:
 		virtual void internalExecute() override;
-		virtual ~UpdateRetryCounterCommand();
+		virtual ~UpdateRetryCounterCommand() override;
 
 	public:
 		UpdateRetryCounterCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);

@@ -1,9 +1,12 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/KnownOIDs.h"
 #include "pace/KeyDerivationFunction.h"
+
+#include "LogHandler.h"
+#include "TestFileHelper.h"
 
 #include <QtTest>
 
@@ -18,6 +21,18 @@ class test_KeyDerivationFunction
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			LogHandler::getInstance().init();
+		}
+
+
+		void cleanup()
+		{
+			LogHandler::getInstance().resetBacklog();
+		}
+
+
 		void unknownAlgorithm()
 		{
 			KeyDerivationFunction kdf("unknown-algorithm");
@@ -31,18 +46,19 @@ class test_KeyDerivationFunction
 
 		void desKey()
 		{
-			KeyDerivationFunction kdf(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC);
+			QSignalSpy spyLog(&LogHandler::getInstance(), &LogHandler::fireLog);
 
-			QByteArray key = kdf.pi("123456");
+			KeyDerivationFunction kdf = toByteArray(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC);
 
-			QVERIFY(kdf.isInitialized());
-			QCOMPARE(key.toHex(), QByteArray("591468cda83d6521"));
+			QCOMPARE(spyLog.count(), 1);
+			QVERIFY(TestFileHelper::containsLog(spyLog, QLatin1String("3DES not supported")));
+			QVERIFY(!kdf.isInitialized());
 		}
 
 
 		void aes128Key()
 		{
-			KeyDerivationFunction kdf(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
+			KeyDerivationFunction kdf = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
 
 			QByteArray key = kdf.pi("123456");
 
@@ -53,7 +69,7 @@ class test_KeyDerivationFunction
 
 		void aes196Key()
 		{
-			KeyDerivationFunction kdf(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192);
+			KeyDerivationFunction kdf = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192);
 
 			QByteArray key = kdf.pi("123456");
 
@@ -64,7 +80,7 @@ class test_KeyDerivationFunction
 
 		void aes256Key()
 		{
-			KeyDerivationFunction kdf(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
+			KeyDerivationFunction kdf = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
 
 			QByteArray key = kdf.pi("123456");
 

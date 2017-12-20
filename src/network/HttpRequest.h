@@ -1,12 +1,12 @@
 /*!
  * \brief Class to parse http request.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include "http_parser/http_parser.h"
+#include "http_parser.h"
 #include "HttpResponse.h"
 
 #include <QAbstractSocket>

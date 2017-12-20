@@ -1,0 +1,49 @@
+// http://msdn.microsoft.com/en-us/library/aa381058(VS.85).aspx
+#include <windows.h>
+#include "config.h"
+
+#define EXECUTABLE   PRODUCT ".exe"
+#define COPYRIGHT    "2014-2017 " VENDOR
+
+IDR_MAINFRAME ICON "..\\resources\\images\\npa.ico"
+
+1 VERSIONINFO
+FILEVERSION VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,VERSION_TWEAK
+PRODUCTVERSION VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,VERSION_TWEAK
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+
+BEGIN
+  BLOCK "StringFileInfo"
+ 
+  BEGIN
+    BLOCK "040704B0"            // LANG_GERMAN/SUBLANG_DEFAULT, Unicode CP
+    BEGIN
+      VALUE "CompanyName",      VENDOR
+      VALUE "FileDescription",  PRODUCT
+      VALUE "FileVersion",      VERSION
+      VALUE "InternalName",     PRODUCT
+      VALUE "LegalCopyright",   COPYRIGHT
+      VALUE "OriginalFilename", EXECUTABLE
+      VALUE "ProductName",      PRODUCT
+      VALUE "ProductVersion",   VERSION
+    END
+
+    BLOCK "040904B0"            // LANG_ENGLISH/SUBLANG_ENGLISH_US, Unicode CP
+    BEGIN
+      VALUE "CompanyName",      VENDOR
+      VALUE "FileDescription",  PRODUCT
+      VALUE "FileVersion",      VERSION
+      VALUE "InternalName",     PRODUCT
+      VALUE "LegalCopyright",   COPYRIGHT
+      VALUE "OriginalFilename", EXECUTABLE
+      VALUE "ProductName",      PRODUCT
+      VALUE "ProductVersion",   VERSION
+    END
+  END
+ 
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0407, 0x04B0
+  END
+END

@@ -1,9 +1,7 @@
 /*!
- * DiagnosisController_osx.cpp
- *
  * \brief Mac OS X specific implementation of the controller for retrieving and presenting diagnosis info.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 

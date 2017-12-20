@@ -1,12 +1,9 @@
 /*!
- * ActivationHandler.h
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include "ActivationContext.h"
 #include "EnumHelper.h"
 
 #include <QMap>
@@ -15,12 +12,15 @@
 namespace governikus
 {
 
+class ActivationContext;
+
 /*!
  * UI modules that can be requested to show.
  */
 defineEnumType(UiModule,
 		CURRENT,
 		DEFAULT,
+		IDENTIFY,
 		SETTINGS,
 		PINMANAGEMENT
 		)
@@ -83,7 +83,7 @@ class ActivationHandler
 	Q_SIGNALS:
 		void fireShowUserInformation(const QString& pErrorMessage = QString());
 		void fireShowUiRequest(UiModule pModule);
-		void fireAuthenticationRequest(ActivationContext* pActivationContext);
+		void fireAuthenticationRequest(const QSharedPointer<ActivationContext>& pActivationContext);
 };
 
 } /* namespace governikus */

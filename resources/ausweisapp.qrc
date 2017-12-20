@@ -29,7 +29,6 @@
         <file>images/iOS/tabBar/Pin-on.png</file>
         <file>images/iOS/tabBar/Verlauf-off.png</file>
         <file>images/iOS/tabBar/Verlauf-on.png</file>
-        <file>images/icon_Bluetooth.svg</file>
         <file>images/icon_Pin.svg</file>
         <file>images/iOS/tabBar/More-off.svg</file>
         <file>images/iOS/tabBar/More-on.svg</file>
@@ -57,28 +56,34 @@
         <file>images/provider/gradient-insurance.png</file>
         <file>images/provider/gradient-finance.png</file>
         <file>images/provider/gradient-other.png</file>
-        <file>images/provider/categoryIcons/+android/General.svg</file>
-        <file>images/provider/categoryIcons/+android/CitizenServices.svg</file>
-        <file>images/provider/categoryIcons/+android/Financials.svg</file>
-        <file>images/provider/categoryIcons/+android/Insurances.svg</file>
-        <file>images/provider/categoryIcons/+android/OtherServices.svg</file>
-        <file>images/provider/categoryIcons/+android/General_bg.svg</file>
-        <file>images/provider/categoryIcons/+android/General_button.svg</file>
-        <file>images/provider/categoryIcons/+android/CitizenServices_bg.svg</file>
-        <file>images/provider/categoryIcons/+android/CitizenServices_button.svg</file>
-        <file>images/provider/categoryIcons/+android/Financials_bg.svg</file>
-        <file>images/provider/categoryIcons/+android/Financials_button.svg</file>
-        <file>images/provider/categoryIcons/+android/Insurances_bg.svg</file>
-        <file>images/provider/categoryIcons/+android/Insurances_button.svg</file>
-        <file>images/provider/categoryIcons/+android/OtherServices_bg.svg</file>
-        <file>images/provider/categoryIcons/+android/OtherServices_button.svg</file>
-        <file>images/provider/categoryIcons/+android/General_section.svg</file>
-        <file>images/provider/categoryIcons/+android/CitizenServices_section.svg</file>
-        <file>images/provider/categoryIcons/+android/Financials_section.svg</file>
-        <file>images/provider/categoryIcons/+android/Insurances_section.svg</file>
-        <file>images/provider/categoryIcons/+android/OtherServices_section.svg</file>
+        <file>images/provider/categoryIcons/+android/general.svg</file>
+        <file>images/provider/categoryIcons/+android/citizen.svg</file>
+        <file>images/provider/categoryIcons/+android/finance.svg</file>
+        <file>images/provider/categoryIcons/+android/insurance.svg</file>
+        <file>images/provider/categoryIcons/+android/other.svg</file>
+        <file>images/provider/categoryIcons/+android/general_bg.svg</file>
+        <file>images/provider/categoryIcons/+android/general_button.svg</file>
+        <file>images/provider/categoryIcons/+android/citizen_bg.svg</file>
+        <file>images/provider/categoryIcons/+android/citizen_button.svg</file>
+        <file>images/provider/categoryIcons/+android/finance_bg.svg</file>
+        <file>images/provider/categoryIcons/+android/finance_button.svg</file>
+        <file>images/provider/categoryIcons/+android/insurance_bg.svg</file>
+        <file>images/provider/categoryIcons/+android/insurance_button.svg</file>
+        <file>images/provider/categoryIcons/+android/other_bg.svg</file>
+        <file>images/provider/categoryIcons/+android/other_button.svg</file>
+        <file>images/provider/categoryIcons/+android/general_section.svg</file>
+        <file>images/provider/categoryIcons/+android/citizen_section.svg</file>
+        <file>images/provider/categoryIcons/+android/finance_section.svg</file>
+        <file>images/provider/categoryIcons/+android/insurance_section.svg</file>
+        <file>images/provider/categoryIcons/+android/other_section.svg</file>
+        <file>updatable-files/supported-providers.json</file>
         <file>images/icon_nfc.svg</file>
+        <file>images/icon_remote.svg</file>
+        <file>images/icon_bluetooth.svg</file>
         <file>images/phone_nfc.svg</file>
+        <file>images/phone_remote.svg</file>
         <file>images/phone_bluetooth.svg</file>
+        <file>images/location_flag_de.svg</file>
+        <file>images/location_flag_en.svg</file>
     </qresource>
 </RCC>

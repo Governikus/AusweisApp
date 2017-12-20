@@ -1,9 +1,7 @@
 /*!
- * DidAuthenticateEac2.h
- *
  * \brief Class represents the retrieved PAOS EAC2InputType.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -40,7 +38,7 @@ class DIDAuthenticateEAC2
 		const QString& getDidName() const;
 		const QString& getSignature() const;
 		const QString& getEphemeralPublicKey() const;
-		const QVector<QSharedPointer<CVCertificate> >& getCvCertificates() const;
+		const QVector<QSharedPointer<const CVCertificate> >& getCvCertificates() const;
 		const QByteArrayList& getCvCertificatesAsBinary() const;
 };
 

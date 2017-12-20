@@ -1,11 +1,14 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \brief Implementation of \ref Reader for PCSC.
+ *
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "CardConnectionWorker.h"
 #include "PcscReaderFeature.h"
+#include "PcscReaderPaceCapability.h"
 #include "PcscUtils.h"
 #include "Reader.h"
 
@@ -40,7 +43,7 @@ class PcscReader
 
 	public:
 		PcscReader(const QString& pReaderName);
-		~PcscReader();
+		virtual ~PcscReader() override;
 
 		Card* getCard() const override;
 

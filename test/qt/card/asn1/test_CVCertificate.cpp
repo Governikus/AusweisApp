@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref CVCertificate
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -132,8 +132,18 @@ class test_CVCertificate
 			auto cvca1 = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
 
 			auto ecdsaSignature = cvca1->getEcdsaSignature();
-			QCOMPARE(valueOf(ecdsaSignature->r).toHex(), QByteArray("9f25ebfaf4b91e4c60a1683754c5dc076a3179753ef97d9f8cb01fe1dcd3b8c8"));
-			QCOMPARE(valueOf(ecdsaSignature->s).toHex(), QByteArray("3e7a26602ab1f344be5706006d79a9ff6a9716404dc83b9f30e1213b393128a2"));
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+			const BIGNUM* r = ecdsaSignature->r;
+			const BIGNUM* s = ecdsaSignature->s;
+#else
+			const BIGNUM* r = nullptr;
+			const BIGNUM* s = nullptr;
+			ECDSA_SIG_get0(ecdsaSignature.data(), &r, &s);
+#endif
+
+			QCOMPARE(valueOf(r).toHex(), QByteArray("9f25ebfaf4b91e4c60a1683754c5dc076a3179753ef97d9f8cb01fe1dcd3b8c8"));
+			QCOMPARE(valueOf(s).toHex(), QByteArray("3e7a26602ab1f344be5706006d79a9ff6a9716404dc83b9f30e1213b393128a2"));
 		}
 
 
@@ -142,20 +152,20 @@ class test_CVCertificate
 			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
 
 			QLatin1String output(R"(CVC(type=CVCA, car="DETESTeID00001", chr="DETESTeID00001", valid=["2010-08-13","2013-08-13"])");
-			QSharedPointer<CVCertificate> cvca = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
+			QSharedPointer<const CVCertificate> cvca = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
 
 			qDebug() << cvca;
 			QCOMPARE(spy.count(), 1);
 			auto param = spy.takeFirst();
 			QVERIFY(param.at(0).toString().contains(output));
 
-			QSharedPointer<const CVCertificate> cvcsConst(cvca);
-			qDebug() << cvcsConst;
+			QSharedPointer<CVCertificate> cvcsNonConst = qSharedPointerConstCast<CVCertificate>(cvca);
+			qDebug() << cvcsNonConst;
 			QCOMPARE(spy.count(), 1);
 			param = spy.takeFirst();
 			QVERIFY(param.at(0).toString().contains(output));
 
-			QVector<QSharedPointer<CVCertificate> > cvcsVector({cvca});
+			QVector<QSharedPointer<const CVCertificate> > cvcsVector({cvca});
 			qDebug() << cvcsVector;
 			QCOMPARE(spy.count(), 1);
 			param = spy.takeFirst();
@@ -171,18 +181,33 @@ class test_CVCertificate
 
 		void equals()
 		{
-			QSharedPointer<CVCertificate> cvca1 = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
-			QSharedPointer<CVCertificate> cvca2 = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
-			QVERIFY(cvca1 == cvca2);
+			QSharedPointer<const CVCertificate> cvca1_const = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
+			QSharedPointer<const CVCertificate> cvca2_const = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
+			QSharedPointer<CVCertificate> cvca1 = qSharedPointerConstCast<CVCertificate>(cvca1_const);
+			QSharedPointer<CVCertificate> cvca2 = qSharedPointerConstCast<CVCertificate>(cvca2_const);
 
-			QSharedPointer<const CVCertificate> cvca1_const = cvca1;
-			QSharedPointer<const CVCertificate> cvca2_const = cvca2;
-			QVERIFY(cvca1_const == cvca2_const);
+			QVERIFY(*cvca1 == *cvca2);
+			QVERIFY(*cvca1_const == *cvca2_const);
+			QVERIFY(*cvca1 == *cvca2_const);
+			QVERIFY(*cvca2_const == *cvca1);
+			QVERIFY(*cvca1_const == *cvca2);
+			QVERIFY(*cvca2 == *cvca1_const);
+		}
 
-			QVERIFY(cvca1 == cvca2_const);
-			QVERIFY(cvca2_const == cvca1);
-			QVERIFY(cvca1_const == cvca2);
-			QVERIFY(cvca2 == cvca1_const);
+
+		void notEquals()
+		{
+			QSharedPointer<const CVCertificate> cvca1_const = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
+			QSharedPointer<const CVCertificate> cvca2_const = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00002.hex"));
+			QSharedPointer<CVCertificate> cvca1 = qSharedPointerConstCast<CVCertificate>(cvca1_const);
+			QSharedPointer<CVCertificate> cvca2 = qSharedPointerConstCast<CVCertificate>(cvca2_const);
+
+			QVERIFY(*cvca1 != *cvca2);
+			QVERIFY(*cvca1_const != *cvca2_const);
+			QVERIFY(*cvca1 != *cvca2_const);
+			QVERIFY(*cvca2_const != *cvca1);
+			QVERIFY(*cvca1_const != *cvca2);
+			QVERIFY(*cvca2 != *cvca1_const);
 		}
 
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockNetworkReply.h"
@@ -7,12 +7,13 @@
 using namespace governikus;
 
 
-MockNetworkReply::MockNetworkReply(const QByteArray& pData, QObject* pParent)
+MockNetworkReply::MockNetworkReply(const QByteArray& pData, HttpStatusCode pStatusCode, QObject* pParent)
 	: QNetworkReply(pParent)
 	, mSocket()
 {
 	mSocket.mReadBuffer = pData;
 	setOpenMode(QIODevice::ReadOnly);
+	setAttribute(QNetworkRequest::HttpStatusCodeAttribute, QVariant(Enum<HttpStatusCode>::getValue(pStatusCode)));
 }
 
 

@@ -1,11 +1,10 @@
 /*!
- * test_result.h
- *
  * \brief Unit tests for \ref result
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
+#include "CardReturnCode.h"
 #include "LogHandler.h"
 #include "Result.h"
 
@@ -52,6 +51,9 @@ class test_result
 
 			QVERIFY(Result::isMajor("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok"));
 			QVERIFY(Result::isMinor("http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#noPermission"));
+
+			QCOMPARE(Result::parseMinor(QString()), GlobalStatus::Code::No_Error);
+			QVERIFY(Result::isMinor(QString()));
 		}
 
 
@@ -69,7 +71,7 @@ class test_result
 		{
 			Result result = Result::createOk();
 			QCOMPARE(result.getMajor(), Result::Major::Ok);
-			QCOMPARE(result.getMinor(), GlobalStatus::Code::Unknown_Error);
+			QCOMPARE(result.getMinor(), GlobalStatus::Code::No_Error);
 			QCOMPARE(result.getMessage(), QString());
 			QCOMPARE(result.getMessageLang(), QString("en"));
 		}
@@ -121,7 +123,7 @@ class test_result
 			expected = "{\"major\":\"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok\"}";
 			QCOMPARE(bytes(Result::createOk().toJson()), expected);
 
-			expected = "{\"description\":\"The operation was aborted due to cancellation by user.\","
+			expected = "{\"description\":\"The process was cancelled by the user.\","
 					   "\"language\":\"en\",\"major\":\"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error\","
 					   "\"message\":\"The process was cancelled by the user.\","
 					   "\"minor\":\"http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser\"}";

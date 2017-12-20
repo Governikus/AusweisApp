@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "VersionNumber.h"
@@ -11,20 +11,23 @@ using namespace governikus;
 
 Q_GLOBAL_STATIC_WITH_ARGS(VersionNumber, AppVersionNumber, (QCoreApplication::applicationVersion()))
 
-const VersionNumber &VersionNumber::getApplicationVersion()
-{
-	return *AppVersionNumber;
-}
 
 VersionNumber::VersionNumber(const QString& pVersion)
 	: mVersionNumber()
 	, mSuffix()
 {
-	// do not initialize idx, otherwise you will trap into
-	// a gcc bug: https://bugs.alpinelinux.org/issues/7584
-	int idx;
+	int idx = 0;
 	mVersionNumber = QVersionNumber::fromString(pVersion, &idx);
+#ifdef Q_CC_GNU
+	__sync_synchronize(); // a gcc bug: https://bugs.alpinelinux.org/issues/7584
+#endif
 	mSuffix = pVersion.mid(idx).trimmed();
+}
+
+
+const VersionNumber& VersionNumber::getApplicationVersion()
+{
+	return *AppVersionNumber;
 }
 
 
@@ -42,8 +45,8 @@ bool VersionNumber::isDeveloperVersion() const
 
 int VersionNumber::getDistance() const
 {
-	const int indexStart = mSuffix.indexOf(QChar('+')) + 1;
-	const int indexEnd = mSuffix.indexOf(QChar('-'), indexStart);
+	const int indexStart = mSuffix.indexOf(QLatin1Char('+')) + 1;
+	const int indexEnd = mSuffix.indexOf(QLatin1Char('-'), indexStart);
 	if (indexStart && indexEnd)
 	{
 		bool ok;
@@ -60,8 +63,8 @@ int VersionNumber::getDistance() const
 
 QString VersionNumber::getBranch() const
 {
-	const int indexStart = mSuffix.indexOf(QChar('-')) + 1;
-	const int indexEnd = mSuffix.indexOf(QChar('-'), indexStart);
+	const int indexStart = mSuffix.indexOf(QLatin1Char('-')) + 1;
+	const int indexEnd = mSuffix.indexOf(QLatin1Char('-'), indexStart);
 	if (indexStart && indexEnd)
 	{
 		return mSuffix.mid(indexStart, indexEnd - indexStart);
@@ -73,9 +76,9 @@ QString VersionNumber::getBranch() const
 
 QString VersionNumber::getRevision() const
 {
-	if (mSuffix.count(QChar('-')) > 1)
+	if (mSuffix.count(QLatin1Char('-')) > 1)
 	{
-		const int index = mSuffix.lastIndexOf(QChar('-')) + 1;
+		const int index = mSuffix.lastIndexOf(QLatin1Char('-')) + 1;
 		if (index)
 		{
 			return mSuffix.mid(index);

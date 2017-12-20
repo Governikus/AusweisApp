@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInCli.h"
@@ -7,7 +7,7 @@
 #include "states/StateEstablishPacePin.h"
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-#include "EnvHolder.h"
+#include "Env.h"
 #include "HttpServer.h"
 #endif
 
@@ -58,9 +58,9 @@ void UIPlugInCli::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 	mContext = pContext;
 	if (!mContext.isNull())
 	{
-		connect(mContext.data(), &WorkflowContext::fireCurrentStateChanged,
-				this, &UIPlugInCli::onCurrentStateChanged);
-		mContext->setReaderType(ReaderManagerPlugInType::PCSC);
+		connect(mContext.data(), &WorkflowContext::fireStateChanged,
+				this, &UIPlugInCli::onStateChanged);
+		mContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC});
 	}
 }
 
@@ -76,7 +76,7 @@ void UIPlugInCli::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 }
 
 
-void UIPlugInCli::onCurrentStateChanged(const QString& pState)
+void UIPlugInCli::onStateChanged(const QString& pState)
 {
 	Q_UNUSED(pState);
 
@@ -96,7 +96,7 @@ void UIPlugInCli::doInput(const QString& pData)
 {
 	qCInfo(stdinput) << pData;
 
-	const QStringList chunks = pData.split(QChar(' '));
+	const QStringList chunks = pData.split(QLatin1Char(' '));
 	auto func = mAvailableCommands.value(chunks.at(0).toLower());
 	if (func)
 	{
@@ -220,7 +220,7 @@ void UIPlugInCli::handlePing()
 void UIPlugInCli::handlePort()
 {
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-	qCInfo(cli) << "Port:" << EnvHolder::shared<HttpServer>()->getServerPort();
+	qCInfo(cli) << "Port:" << Env::getShared<HttpServer>()->getServerPort();
 #else
 	qCInfo(cli) << "Port is undefined";
 #endif

@@ -1,7 +1,7 @@
 /*!
  * \brief Generate information for DIDListResponse.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,7 +20,7 @@ class DIDListResponse
 		QDomElement createDidListResponseElement();
 		QDomElement createDidListElement();
 
-		virtual QDomElement getDocumentStructure();
+		virtual QDomElement getDocumentStructure() override;
 
 		Q_DISABLE_COPY(DIDListResponse)
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref AuxiliaryAuthenticatedData
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -23,9 +23,10 @@ class test_AuxiliaryAuthenticatedData
 		void parseCrap()
 		{
 			QByteArray hexString("30 8202A4");
-
 			auto auxData = AuthenticatedAuxiliaryData::fromHex(hexString);
+			QVERIFY(auxData == nullptr);
 
+			auxData = AuthenticatedAuxiliaryData::fromHex(QByteArray());
 			QVERIFY(auxData == nullptr);
 		}
 
@@ -71,6 +72,49 @@ class test_AuxiliaryAuthenticatedData
 			auto auxData = AuthenticatedAuxiliaryData::fromHex(hexString);
 
 			QVERIFY(auxData == nullptr);
+		}
+
+
+		void requiredAge_data()
+		{
+			// date of birth: 1978-08-16
+			QTest::addColumn<QString>("age");
+			QTest::addColumn<QDate>("effectiveDate");
+
+			QTest::newRow("invalid") << QString() << QDate();
+
+			QTest::newRow("vor der Geburt (1 Jahr, 2 Tage)") << QStringLiteral("-2") << QDate(1977, 8, 14);
+			QTest::newRow("vor der Geburt (2 Tage)") << QStringLiteral("-1") << QDate(1978, 8, 14);
+			QTest::newRow("vor der Geburt (1 Tag)") << QStringLiteral("-1") << QDate(1978, 8, 15);
+
+			QTest::newRow("Geburt") << QStringLiteral("0") << QDate(1978, 8, 16);
+
+			QTest::newRow("1 Tag") << QStringLiteral("0") << QDate(1978, 8, 17);
+			QTest::newRow("Ende des Jahres") << QStringLiteral("0") << QDate(1978, 12, 31);
+			QTest::newRow("Anfang nächstes Jahr") << QStringLiteral("0") << QDate(1979, 1, 1);
+
+			QTest::newRow("vorm 1. Geburtstag") << QStringLiteral("0") << QDate(1979, 8, 15);
+			QTest::newRow("1. Geburtstag") << QStringLiteral("1") << QDate(1979, 8, 16);
+			QTest::newRow("nach 1. Geburtstag") << QStringLiteral("1") << QDate(1979, 8, 17);
+			QTest::newRow("Ende Monats nach 1. Geburtstag") << QStringLiteral("1") << QDate(1979, 8, 31);
+		}
+
+
+		void requiredAge()
+		{
+			QFETCH(QString, age);
+			QFETCH(QDate, effectiveDate);
+
+			QByteArray hexString("67 17"
+								 "73 15 "
+								 "	06 09 04007F000703010401"
+								 "	53 08 3139373830383136");
+
+			auto auxData = AuthenticatedAuxiliaryData::fromHex(hexString);
+
+			QVERIFY(auxData);
+			QVERIFY(auxData->hasAgeVerificationDate());
+			QCOMPARE(auxData->getRequiredAge(effectiveDate), age);
 		}
 
 

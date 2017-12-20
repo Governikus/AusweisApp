@@ -5,7 +5,7 @@
  * (The holder is equivalent to the Subject-DN, the authority reference
  * is equivalent to the Issuer-DN.)
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,7 +19,7 @@ namespace governikus
 {
 
 class CVCertificateChain
-	: public QVector<QSharedPointer<CVCertificate> >
+	: public QVector<QSharedPointer<const CVCertificate> >
 {
 	private:
 		bool mProductive;
@@ -27,17 +27,17 @@ class CVCertificateChain
 	public:
 		CVCertificateChain(bool pProductive = true);
 
-		CVCertificateChain(const QVector<QSharedPointer<CVCertificate> >& pCvcs, bool pProductive);
+		CVCertificateChain(const QVector<QSharedPointer<const CVCertificate> >& pCvcs, bool pProductive);
 
 		/*!
 		 * Return the document verifier certificate.
 		 */
-		QSharedPointer<CVCertificate> getDvCvc() const;
+		QSharedPointer<const CVCertificate> getDvCvc() const;
 
 		/*!
 		 * Return the terminal certificate.
 		 */
-		QSharedPointer<CVCertificate> getTerminalCvc() const;
+		QSharedPointer<const CVCertificate> getTerminalCvc() const;
 
 		/*!
 		 * Is this a valid CVC chain, i.e. do DV and terminal CVCs exist?

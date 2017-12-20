@@ -7,7 +7,7 @@ categorizedJobsView("${MERCURIAL_REVISION_BRANCH}")
 
 	categorizationCriteria
 	{
-		regexGroupingRule('^[a-z]*_Libs_', '_Libraries_')
+		regexGroupingRule('^[a-z|0-9|.]*_Libs_', '_Libraries_')
 		regexGroupingRule('_Review_', '_Reviews_')
 	}
 

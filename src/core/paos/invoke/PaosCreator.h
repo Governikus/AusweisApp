@@ -1,12 +1,12 @@
 /*!
  * \brief Base class to create a PaosMessage.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include "Result.h"
+#include "paos/ResponseType.h"
 
 #include <QDomDocument>
 
@@ -43,7 +43,7 @@ class PaosCreator
 		QDomElement createHeaderElement(const QString& pRrelatesTo, const QString& pMessageID);
 		QDomElement createEnvelopeElement(const QDomElement& pBody, const QString& pRelatesTo, const QString& pMessageID);
 
-		QDomElement createResultElement();
+		QDomElement createResultElement(const ResponseType& pResponse);
 
 		PaosCreator();
 		virtual ~PaosCreator();

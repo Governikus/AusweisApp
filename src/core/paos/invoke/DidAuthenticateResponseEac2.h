@@ -1,7 +1,7 @@
 /*!
  * \brief Generate information for DIDAuthenticateResponseEAC2.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,7 +27,7 @@ class DIDAuthenticateResponseEAC2
 		QDomElement createDIDAuthenticateResponseEAC2Element();
 		QDomElement createAuthenticationProtocolDataElement();
 
-		virtual QDomElement getDocumentStructure();
+		virtual QDomElement getDocumentStructure() override;
 
 		Q_DISABLE_COPY(DIDAuthenticateResponseEAC2)
 

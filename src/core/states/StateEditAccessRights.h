@@ -2,7 +2,7 @@
  *
  * \brief This state waits for editing of the effective CHAT
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

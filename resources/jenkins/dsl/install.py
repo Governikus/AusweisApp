@@ -17,7 +17,7 @@ import time
 
 if len(sys.argv) is not 2:
 	print('Please provide address of jenkins server')
-	print('Example: buildautentapp:8090')
+	print('Example: localhost:8090')
 	sys.exit(1)
 
 if not shutil.which('java'):
@@ -86,6 +86,7 @@ plugins.append('parameterized-trigger')
 plugins.append('show-build-parameters')
 plugins.append('sloccount')
 plugins.append('sidebar-link')
+plugins.append('swarm')
 plugins.append('tasks')
 plugins.append('text-finder')
 plugins.append('timestamper')

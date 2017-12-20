@@ -1,13 +1,12 @@
 /*!
  * \brief Model implementation for the providers.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "ProviderModel.h"
-#include "ProviderSettings.h"
 
 #include <QSet>
 #include <QSortFilterProxyModel>
@@ -42,8 +41,8 @@ class ProviderCategoryFilterModel
 		bool filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const override;
 
 	public:
-		ProviderCategoryFilterModel(ProviderSettings* pSettings);
-		virtual ~ProviderCategoryFilterModel();
+		ProviderCategoryFilterModel();
+		virtual ~ProviderCategoryFilterModel() override;
 
 		Q_INVOKABLE void sortByCategoryFirst(bool pEnabled);
 		Q_INVOKABLE void setCategorySelection(const QString& pCategory);

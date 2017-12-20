@@ -1,7 +1,7 @@
 /*
  * \brief Provides and parses command line options.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,7 +19,6 @@ class CommandLineParser
 		const QCommandLineOption mOptionKeepLog;
 		const QCommandLineOption mOptionShowWindow;
 		const QCommandLineOption mOptionProxy;
-		const QCommandLineOption mOptionLanguage;
 		const QCommandLineOption mOptionUi;
 		const QCommandLineOption mOptionPort;
 #ifndef QT_NO_DEBUG

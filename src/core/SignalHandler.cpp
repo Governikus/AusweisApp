@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SignalHandler.h"
@@ -40,10 +40,10 @@ void SignalHandler::init()
 {
 	if (!mInit)
 	{
-#if (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_OSX)
+#if (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_MACOS) || defined(Q_OS_FREEBSD)
 		initUnix();
-#elif defined(Q_OS_WIN32)
-		SetConsoleCtrlHandler((PHANDLER_ROUTINE) ctrlHandler, true);
+#elif defined(Q_OS_WIN) && !defined(Q_OS_WINRT)
+		SetConsoleCtrlHandler(PHANDLER_ROUTINE(ctrlHandler), true);
 #endif
 
 		mInit = true;

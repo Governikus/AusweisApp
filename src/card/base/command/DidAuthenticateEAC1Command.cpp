@@ -1,7 +1,5 @@
 /*!
- * DidAuthenticateEAC1Command.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BaseCardCommand.h"
@@ -36,7 +34,6 @@ void DidAuthenticateEAC1Command::internalExecute()
 	if (mReturnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "GetChallenge failed";
-		mReturnCode = CardReturnCode::GET_CHALLENGE_FAILED;
 		return;
 	}
 	mChallenge = response.getChallenge();

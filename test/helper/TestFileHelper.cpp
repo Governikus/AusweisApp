@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestFileHelper.h"
@@ -40,7 +40,11 @@ QByteArray TestFileHelper::readFile(const QString& pFileName)
 void TestFileHelper::createTranslations(const QString& pTranslationDir)
 {
 	const QStringList testFiles({
-				"de_AT", "de_DE", "en", "fr_FR", "es", "defect", "de_fe", "en_gb", "it"
+				QStringLiteral("de_AT"), QStringLiteral("de_DE"),
+				QStringLiteral("en"), QStringLiteral("fr_FR"),
+				QStringLiteral("es"), QStringLiteral("defect"),
+				QStringLiteral("de_fe"), QStringLiteral("en_gb"),
+				QStringLiteral("it")
 			});
 
 	QDir dir(pTranslationDir);
@@ -52,7 +56,7 @@ void TestFileHelper::createTranslations(const QString& pTranslationDir)
 
 	for (const auto& filePart : testFiles)
 	{
-		QFile file(dir.path() + "/ausweisapp2_" + filePart + ".qm");
+		QFile file(dir.path() + QStringLiteral("/ausweisapp2_") + filePart + QStringLiteral(".qm"));
 		QVERIFY(file.open(QIODevice::WriteOnly));
 		QVERIFY(file.write(reinterpret_cast<const char*>(qm_magic), sizeof(qm_magic)));
 		QVERIFY(file.write(reinterpret_cast<const char*>(qm_content), sizeof(qm_content)));
@@ -61,7 +65,7 @@ void TestFileHelper::createTranslations(const QString& pTranslationDir)
 }
 
 
-bool TestFileHelper::containsLog(const QSignalSpy& pSpy, const QLatin1String& pStr)
+bool TestFileHelper::containsLog(const QSignalSpy& pSpy, const QLatin1String pStr)
 {
 	for (const auto& entry : pSpy)
 	{

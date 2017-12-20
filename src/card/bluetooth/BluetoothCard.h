@@ -1,9 +1,7 @@
 /*!
- * BluetoothCard.h
- *
  * \brief Implementation of Card object for Bluetooth
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -36,7 +34,7 @@ class BluetoothCard
 
 		CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
 
-		CardReturnCode establishPaceChannel(PACE_PIN_ID pPinId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds) override;
+		CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds) override;
 
 		CardReturnCode destroyPaceChannel() override;
 

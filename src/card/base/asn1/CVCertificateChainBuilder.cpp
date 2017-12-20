@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CVCertificateChainBuilder.h"
@@ -20,19 +20,19 @@ bool CVCertificateChainBuilder::isChild(const QSharedPointer<const CVCertificate
 
 
 CVCertificateChainBuilder::CVCertificateChainBuilder(bool pProductive)
-	: CVCertificateChainBuilder(QVector<QSharedPointer<CVCertificate> >(), pProductive)
+	: CVCertificateChainBuilder(QVector<QSharedPointer<const CVCertificate> >(), pProductive)
 {
 
 }
 
 
-CVCertificateChainBuilder::CVCertificateChainBuilder(const QVector<QSharedPointer<CVCertificate> >& pCvcPool, bool pProductive)
+CVCertificateChainBuilder::CVCertificateChainBuilder(const QVector<QSharedPointer<const CVCertificate> >& pCvcPool, bool pProductive)
 	: ChainBuilder(pCvcPool, &CVCertificateChainBuilder::isChild)
 	, mProductive(pProductive)
 {
 	removeInvalidChains();
 
-	for (auto cvc : pCvcPool)
+	for (const auto& cvc : pCvcPool)
 	{
 		qCDebug(card) << "CVC in pool" << cvc;
 	}
@@ -53,7 +53,7 @@ CVCertificateChainBuilder::CVCertificateChainBuilder(const QVector<QSharedPointe
 
 void CVCertificateChainBuilder::removeInvalidChains()
 {
-	QMutableVectorIterator<QVector<QSharedPointer<CVCertificate> > > chainIter(mChains);
+	QMutableVectorIterator<QVector<QSharedPointer<const CVCertificate> > > chainIter(mChains);
 	while (chainIter.hasNext())
 	{
 		if (!CVCertificateChain(chainIter.next(), mProductive).isValid())
@@ -111,7 +111,7 @@ CVCertificateChain CVCertificateChainBuilder::getChainStartingWith(const QShared
 	{
 		for (int i = 0; i < chain.length(); ++i)
 		{
-			if (chain.at(i) == pChainRoot)
+			if (*chain.at(i) == *pChainRoot)
 			{
 				CVCertificateChain subChain(chain.mid(i), mProductive);
 				if (subChain.isValid())

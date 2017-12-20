@@ -1,13 +1,16 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
-#include "NfcBridge.h"
 #include "NfcReader.h"
 #include "NfcReaderManagerPlugIn.h"
 
 #include <QLoggingCategory>
 
+#ifdef Q_OS_ANDROID
+#include <QAndroidJniObject>
+#include <QtAndroid>
+#endif
 
 using namespace governikus;
 
@@ -15,43 +18,57 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 
 
-NfcReaderManagerPlugIn * NfcReaderManagerPlugIn::mInstance = nullptr;
-
-
-#ifdef Q_OS_ANDROID
-JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_NfcAdapterStateChangeReceiver_nfcAdapterStateChanged(JNIEnv* env, jobject obj, jint newState)
+namespace
 {
-	Q_UNUSED(env)
-	Q_UNUSED(obj)
-	if (NfcReaderManagerPlugIn::mInstance == nullptr)
+bool isAvailable()
+{
+#ifdef Q_OS_ANDROID
+	QAndroidJniObject context = QtAndroid::androidContext();
+	if (context == nullptr)
 	{
-		qCWarning(card_nfc) << "NfcReaderManagerPlugIn not yet instantiated, skip processing";
+		qCCritical(card_nfc) << "Cannot get context";
+		return false;
+	}
+
+	return QAndroidJniObject::callStaticObjectMethod("android/nfc/NfcAdapter", "getDefaultAdapter", "(Landroid/content/Context;)Landroid/nfc/NfcAdapter;", context.object()) != nullptr;
+
+#else
+	QNearFieldManager manager;
+	return manager.isAvailable();
+
+#endif
+}
+
+
+}
+
+
+void NfcReaderManagerPlugIn::onNfcAdapterStateChanged(bool pEnabled)
+{
+	if (mEnabled == pEnabled)
+	{
 		return;
 	}
-	if (newState == 1) // STATE_OFF (class android.nfc.NfcAdapter)
+
+	qCDebug(card_nfc) << "NfcAdapterStateChanged:" << pEnabled;
+	mEnabled = pEnabled;
+	setReaderInfoEnabled(pEnabled);
+	if (pEnabled)
 	{
-		qCDebug(card_nfc) << "Nfc was powered off";
-		// jump from Android thread into Qt thread by invoking per BlockingQueuedConnection
-		QMetaObject::invokeMethod(NfcReaderManagerPlugIn::mInstance, "setNfcStatus", Qt::BlockingQueuedConnection, Q_ARG(bool, false));
+		Q_EMIT fireReaderAdded(mNfcReader->getName());
 	}
-	else if (newState == 3) // STATE_ON (class android.nfc.NfcAdapter)
+	else
 	{
-		qCDebug(card_nfc) << "Nfc was powered on";
-		// jump from Android thread into Qt thread by invoking per BlockingQueuedConnection
-		QMetaObject::invokeMethod(NfcReaderManagerPlugIn::mInstance, "setNfcStatus", Qt::BlockingQueuedConnection, Q_ARG(bool, true));
+		Q_EMIT fireReaderRemoved(mNfcReader->getName());
 	}
 }
 
 
-#endif
-
-
 NfcReaderManagerPlugIn::NfcReaderManagerPlugIn()
-	: ReaderManagerPlugIn(ReaderManagerPlugInType::NFC, NfcBridge::getInstance().isNfcAvailable())
-	, mInitialized(false)
-	, mReaderList()
+	: ReaderManagerPlugIn(ReaderManagerPlugInType::NFC, isAvailable())
+	, mEnabled(false)
+	, mNfcReader(nullptr)
 {
-	NfcReaderManagerPlugIn::mInstance = this;
 }
 
 
@@ -60,74 +77,42 @@ NfcReaderManagerPlugIn::~NfcReaderManagerPlugIn()
 }
 
 
-QList<Reader*> NfcReaderManagerPlugIn::getReader() const
+QList<Reader*> NfcReaderManagerPlugIn::getReaders() const
 {
-	return mReaderList;
-}
+	if (mEnabled)
+	{
+		return QList<Reader*>({mNfcReader.data()});
+	}
 
-
-void NfcReaderManagerPlugIn::addNfcReader()
-{
-	NfcReader* reader = new NfcReader();
-
-	connect(reader, &NfcReader::fireCardInserted, this, &NfcReaderManagerPlugIn::fireCardInserted);
-	connect(reader, &NfcReader::fireCardRemoved, this, &NfcReaderManagerPlugIn::fireCardRemoved);
-	connect(reader, &NfcReader::fireCardRetryCounterChanged, this, &NfcReaderManagerPlugIn::fireCardRetryCounterChanged);
-	connect(reader, &NfcReader::fireReaderPropertiesUpdated, this, &NfcReaderManagerPlugIn::fireReaderPropertiesUpdated);
-
-	mReaderList << reader;
-	qCDebug(card_nfc) << "Add reader" << reader->getName();
-	Q_EMIT fireReaderAdded(reader->getName());
+	return QList<Reader*>();
 }
 
 
 void NfcReaderManagerPlugIn::init()
 {
 	ReaderManagerPlugIn::init();
-#ifdef Q_OS_ANDROID
-	if (!mInitialized && NfcBridge::getInstance().start())
+
+	if (mNfcReader)
 	{
-		mInitialized = true;
-		setNfcStatus(NfcBridge::getInstance().isNfcEnabled());
+		return;
 	}
-#endif
+
+	mNfcReader.reset(new NfcReader());
+	connect(mNfcReader.data(), &NfcReader::fireCardInserted, this, &NfcReaderManagerPlugIn::fireCardInserted);
+	connect(mNfcReader.data(), &NfcReader::fireCardRemoved, this, &NfcReaderManagerPlugIn::fireCardRemoved);
+	connect(mNfcReader.data(), &NfcReader::fireCardRetryCounterChanged, this, &NfcReaderManagerPlugIn::fireCardRetryCounterChanged);
+	connect(mNfcReader.data(), &NfcReader::fireReaderPropertiesUpdated, this, &NfcReaderManagerPlugIn::fireReaderPropertiesUpdated);
+	connect(mNfcReader.data(), &NfcReader::fireNfcAdapterStateChanged, this, &NfcReaderManagerPlugIn::onNfcAdapterStateChanged);
+	qCDebug(card_nfc) << "Add reader" << mNfcReader->getName();
+
+	if (mEnabled)
+	{
+		Q_EMIT fireReaderAdded(mNfcReader->getName());
+	}
 }
 
 
 void NfcReaderManagerPlugIn::shutdown()
 {
-#ifdef Q_OS_ANDROID
-	if (mInitialized && NfcBridge::getInstance().stop())
-	{
-		mInitialized = false;
-	}
-#endif
-}
-
-
-void NfcReaderManagerPlugIn::setNfcStatus(bool pEnabled)
-{
-	if (!mInitialized)
-	{
-		return;
-	}
-
-	setReaderInfoEnabled(pEnabled);
-	if (pEnabled)
-	{
-		if (mReaderList.isEmpty())
-		{
-			addNfcReader();
-		}
-	}
-	else
-	{
-		while (!mReaderList.isEmpty())
-		{
-			Reader* reader = mReaderList.takeFirst();
-			qCDebug(card_nfc) << "Remove reader" << reader->getName();
-			Q_EMIT fireReaderRemoved(reader->getName());
-			delete reader;
-		}
-	}
+	mNfcReader.reset();
 }

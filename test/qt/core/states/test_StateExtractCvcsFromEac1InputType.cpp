@@ -1,12 +1,10 @@
 /*!
- * test_StateExtractCvcsFromEac1InputType.cpp
- *
  * \brief Tests the StateExtractCvcsFromEac1InputType
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
-#include "states/StateExtractCvcsFromEac1IntputType.h"
+#include "states/StateExtractCvcsFromEac1InputType.h"
 
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
@@ -22,8 +20,8 @@ class test_StateExtractCvcsFromEac1InputType
 {
 	Q_OBJECT
 
-	QVector<QSharedPointer<CVCertificate> > mTerminalCvcs, mDvCvcs, mLinkCvcs, mCvcas;
-	QScopedPointer<StateExtractCvcsFromEac1IntputType> mState;
+	QVector<QSharedPointer<const CVCertificate> > mTerminalCvcs, mDvCvcs, mLinkCvcs, mCvcas;
+	QScopedPointer<StateExtractCvcsFromEac1InputType> mState;
 	QSharedPointer<AuthContext> mAuthContext;
 
 	Q_SIGNALS:
@@ -32,13 +30,13 @@ class test_StateExtractCvcsFromEac1InputType
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			mTerminalCvcs.append(CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvat-DE0000024001HW.hex")));
-			mTerminalCvcs.append(CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvat-DEDEMOPAA00079.hex")));
-			mDvCvcs.append(CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDPST00039.hex")));
-			mDvCvcs.append(CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDTR101415.hex")));
-			mLinkCvcs.append(CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102_DECVCAeID00103.hex")));
-			mCvcas.append(CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00103.hex")));
-			mCvcas.append(CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102.hex")));
+			mTerminalCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvat-DE0000024001HW.hex"));
+			mTerminalCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvat-DEDEMOPAA00079.hex"));
+			mDvCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDPST00039.hex"));
+			mDvCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDTR101415.hex"));
+			mLinkCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102_DECVCAeID00103.hex"));
+			mCvcas << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00103.hex"));
+			mCvcas << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102.hex"));
 		}
 
 
@@ -46,8 +44,8 @@ class test_StateExtractCvcsFromEac1InputType
 		{
 			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1_3.xml"));
 
-			mState.reset(new StateExtractCvcsFromEac1IntputType(mAuthContext));
-			mState->setStateName("StateExtractCvcsFromEac1IntputType");
+			mState.reset(new StateExtractCvcsFromEac1InputType(mAuthContext));
+			mState->setStateName("StateExtractCvcsFromEac1InputType");
 
 			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.clear();
 			connect(this, &test_StateExtractCvcsFromEac1InputType::fireStateStart, mState.data(), &AbstractState::onEntry, Qt::ConnectionType::DirectConnection);
@@ -64,7 +62,7 @@ class test_StateExtractCvcsFromEac1InputType
 		void testNoDvCvc()
 		{
 			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mTerminalCvcs.at(0));
-			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1IntputType::fireError);
+			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -78,7 +76,7 @@ class test_StateExtractCvcsFromEac1InputType
 			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mTerminalCvcs.at(0));
 			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mDvCvcs.at(0));
 			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mDvCvcs.at(1));
-			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1IntputType::fireError);
+			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -90,7 +88,7 @@ class test_StateExtractCvcsFromEac1InputType
 		void testNoTerminalCvc()
 		{
 			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mDvCvcs.at(0));
-			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1IntputType::fireError);
+			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -104,7 +102,7 @@ class test_StateExtractCvcsFromEac1InputType
 			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mDvCvcs.at(0));
 			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mTerminalCvcs.at(0));
 			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mTerminalCvcs.at(1));
-			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1IntputType::fireError);
+			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
@@ -117,7 +115,7 @@ class test_StateExtractCvcsFromEac1InputType
 		{
 			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mDvCvcs.at(0));
 			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mTerminalCvcs.at(0));
-			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1IntputType::fireSuccess);
+			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireContinue);
 
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();

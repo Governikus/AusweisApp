@@ -1,7 +1,7 @@
 /*!
  * \brief UIPlugIn implementation of the AIDL UI.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,7 +32,7 @@ class UIPlugInAidl
 
 	public:
 		UIPlugInAidl();
-		virtual ~UIPlugInAidl();
+		virtual ~UIPlugInAidl() override;
 
 		static UIPlugInAidl* getInstance(bool pBlock = true);
 		bool isSuccessfullInitialized();

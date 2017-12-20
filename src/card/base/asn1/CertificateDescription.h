@@ -1,9 +1,7 @@
 /*!
- * CertificateDescription.h
- *
  * \brief Implementation of ASN.1 type CertificateDescription with OpenSSL
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -13,8 +11,6 @@
 
 #include <openssl/asn1t.h>
 #include <openssl/err.h>
-
-#include <QCoreApplication>
 
 #include <QSet>
 #include <QSharedPointer>
@@ -43,77 +39,76 @@ namespace governikus
  */
 struct CertificateDescription
 {
-	Q_DECLARE_TR_FUNCTIONS(CertificateDescription)
+	enum class TermsOfUsageType
+	{
+		PLAIN_TEXT, HTML, PDF
+	};
 
-	// public is necessary here, because Q_DECLARE_TR_FUNCTIONS leaves
-	// the visibility set to private.
-
-	public:
-		enum class TermsOfUsageType
-		{
-			PLAIN_TEXT, HTML, PDF
-		};
-
-		ASN1_OBJECT* mDescriptionType;
-		ASN1_UTF8STRING* mIssuerName;
-		ASN1_PRINTABLESTRING* mIssuerURL;
-		ASN1_UTF8STRING* mSubjectName;
-		ASN1_PRINTABLESTRING* mSubjectURL;
-		ASN1_TYPE* mTermsOfUsage;
-		ASN1_PRINTABLESTRING* mRedirectURL;
-		STACK_OF(ASN1_OCTET_STRING) * mCommCertificates;
+	ASN1_OBJECT* mDescriptionType;
+	ASN1_UTF8STRING* mIssuerName;
+	ASN1_PRINTABLESTRING* mIssuerURL;
+	ASN1_UTF8STRING* mSubjectName;
+	ASN1_PRINTABLESTRING* mSubjectURL;
+	ASN1_TYPE* mTermsOfUsage;
+	ASN1_PRINTABLESTRING* mRedirectURL;
+	STACK_OF(ASN1_OCTET_STRING) * mCommCertificates;
 
 
-		static QSharedPointer<CertificateDescription> fromHex(const QByteArray& pHexValue);
-		static QSharedPointer<CertificateDescription> decode(const QByteArray& pBytes);
-		QByteArray encode();
+	static QSharedPointer<const CertificateDescription> fromHex(const QByteArray& pHexValue);
+	static QSharedPointer<const CertificateDescription> decode(const QByteArray& pBytes);
+	QByteArray encode();
 
-		void setDescriptionType(const QByteArray& pOidAsText);
-		QByteArray getDescriptionType() const;
+	void setDescriptionType(const QByteArray& pOidAsText);
+	QByteArray getDescriptionType() const;
 
-		void setIssuerName(const QString& pIssuerName);
-		QString getIssuerName() const;
+	void setIssuerName(const QString& pIssuerName);
+	QString getIssuerName() const;
 
-		void setIssuerUrl(const QString& pIssuerUrl);
-		QString getIssuerUrl() const;
+	void setIssuerUrl(const QString& pIssuerUrl);
+	QString getIssuerUrl() const;
 
-		void setSubjectName(const QString& pSubjectName);
-		QString getSubjectName() const;
+	void setSubjectName(const QString& pSubjectName);
+	QString getSubjectName() const;
 
-		void setSubjectUrl(const QString& pSubjectUrl);
-		QString getSubjectUrl() const;
+	void setSubjectUrl(const QString& pSubjectUrl);
+	QString getSubjectUrl() const;
 
-		TermsOfUsageType getTermsOfUsageType() const;
-		QString getTermsOfUsage() const;
+	TermsOfUsageType getTermsOfUsageType() const;
+	QString getTermsOfUsage() const;
 
-		void setRedirectUrl(const QString& pRedirectUrl);
-		QString getRedirectUrl() const;
+	void setRedirectUrl(const QString& pRedirectUrl);
+	QString getRedirectUrl() const;
 
-		QSet<QString> getCommCertificates() const;
+	QSet<QString> getCommCertificates() const;
 
-		/*!
-		 * \brief Returns the address of service provider.
-		 *
-		 * \return The address.
-		 */
-		QString getServiceProviderAddress() const;
+	/*!
+	 * \brief Returns the address of service provider.
+	 *
+	 * \return The address.
+	 */
+	QString getServiceProviderAddress() const;
 
-		/*!
-		 * \brief Returns the purpose of the certificate description.
-		 *
-		 * \return The purpose.
-		 */
-		QString getPurpose() const;
+	/*!
+	 * \brief Returns the purpose of the certificate description.
+	 *
+	 * \return The purpose.
+	 */
+	QString getPurpose() const;
 
-		/*!
-		 * \brief Returns the data security officer of the certificate description.
-		 *
-		 * \return The data security officer.
-		 */
-		QString getDataSecurityOfficer() const;
+	/*!
+	 * \brief Returns the data security officer of the certificate description.
+	 *
+	 * \return The data security officer.
+	 */
+	QString getDataSecurityOfficer() const;
 };
 
 DECLARE_ASN1_FUNCTIONS(CertificateDescription)
 DECLARE_ASN1_OBJECT(CertificateDescription)
 
-}  // namespace governikus
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+	#define sk_ASN1_OCTET_STRING_num(data) data->stack.num
+	#define sk_ASN1_OCTET_STRING_value(data, i) SKM_sk_value(ASN1_OCTET_STRING, data, i)
+#endif
+
+} /* namespace governikus */

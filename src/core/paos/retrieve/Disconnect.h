@@ -1,9 +1,7 @@
 /*!
- * Disconnect.h
- *
  * \brief Class represents the retrieved PAOS Disconnect.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,7 +25,7 @@ class Disconnect
 
 	public:
 		Disconnect(const QByteArray& pXmlData);
-		virtual ~Disconnect();
+		virtual ~Disconnect() override;
 
 		const QString& getSlotHandle() const;
 };

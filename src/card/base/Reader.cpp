@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -18,11 +18,10 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 Q_DECLARE_LOGGING_CATEGORY(support)
 
 
-Reader::Reader(ReaderManagerPlugInType pPlugInType, const QString& pReaderName, ReaderType pType)
+Reader::Reader(ReaderManagerPlugInType pPlugInType, const QString& pReaderName)
 	: QObject()
-	, mReaderInfo(pPlugInType, pReaderName, pType)
+	, mReaderInfo(pReaderName, pPlugInType)
 	, mTimerId(0)
-	, mUpdateRetryCounter(true)
 {
 }
 
@@ -35,6 +34,18 @@ Reader::~Reader()
 void Reader::setPukInoperative()
 {
 	mReaderInfo.mCardInfo.mPukInoperative = true;
+}
+
+
+void Reader::setRetryCounter(int pRetryCounter)
+{
+	if (mReaderInfo.getRetryCounter() != pRetryCounter)
+	{
+		qCInfo(support) << "retry counter updated:" << pRetryCounter << ", was:" << mReaderInfo.getRetryCounter();
+
+		mReaderInfo.mCardInfo.mRetryCounter = pRetryCounter;
+		Q_EMIT fireCardRetryCounterChanged(mReaderInfo.getName());
+	}
 }
 
 
@@ -76,22 +87,6 @@ void Reader::update()
 {
 	CardEvent cardEvent = updateCard();
 	fireUpdateSignal(cardEvent);
-	updateRetryCounterIfNecessary();
-}
-
-
-void Reader::updateRetryCounterIfNecessary()
-{
-	if (!mUpdateRetryCounter || mReaderInfo.getCardInfo().getCardType() != CardType::EID_CARD)
-	{
-		return;
-	}
-
-	auto cardConnection = createCardConnectionWorker();
-	if (cardConnection)
-	{
-		updateRetryCounter(cardConnection);
-	}
 }
 
 
@@ -103,13 +98,13 @@ CardReturnCode Reader::updateRetryCounter(QSharedPointer<CardConnectionWorker> p
 	CardReturnCode returnCode = getRetryCounter(pCardConnectionWorker, newRetryCounter, newPinDeactivated);
 	if (returnCode == CardReturnCode::OK)
 	{
-		bool changed = (newRetryCounter != mReaderInfo.getRetryCounter()) || (newPinDeactivated != mReaderInfo.isPinDeactivated());
+		bool emitSignal = mReaderInfo.isRetryCounterDetermined() && ((newRetryCounter != mReaderInfo.getRetryCounter()) || (newPinDeactivated != mReaderInfo.isPinDeactivated()));
+
 		qCInfo(support) << "retrieved retry counter:" << newRetryCounter << ", was:" << mReaderInfo.getRetryCounter() << ", PIN deactivated:" << newPinDeactivated;
-		mUpdateRetryCounter = false;
 		mReaderInfo.mCardInfo.mRetryCounter = newRetryCounter;
 		mReaderInfo.mCardInfo.mPinDeactivated = newPinDeactivated;
 
-		if (changed)
+		if (emitSignal)
 		{
 			qCDebug(card) << "fireCardRetryCounterChanged";
 			Q_EMIT fireCardRetryCounterChanged(mReaderInfo.getName());
@@ -132,16 +127,21 @@ CardReturnCode Reader::getRetryCounter(QSharedPointer<CardConnectionWorker> pCar
 	QByteArray cryptographicMechanismReference = paceInfo->getProtocolValueBytes();
 	QByteArray referencePrivateKey = paceInfo->getParameterId();
 
-	PersoSimWorkaround::sendingMseSetAt(pCardConnectionWorker);
+	CardReturnCode returnCode = PersoSimWorkaround::sendingMseSetAt(pCardConnectionWorker);
+	if (returnCode != CardReturnCode::OK)
+	{
+		qCCritical(card) << "Error on MSE:Set AT";
+		return returnCode;
+	}
 
 	// MSE:Set AT
 	MSEBuilder mseBuilder(MSEBuilder::P1::PERFORM_SECURITY_OPERATION, MSEBuilder::P2::SET_AT);
 	mseBuilder.setOid(cryptographicMechanismReference);
-	mseBuilder.setPublicKey(PACE_PIN_ID::PACE_PIN);
+	mseBuilder.setPublicKey(PACE_PASSWORD_ID::PACE_PIN);
 	mseBuilder.setPrivateKey(referencePrivateKey);
 
 	ResponseApdu mseSetAtResponse;
-	CardReturnCode returnCode = pCardConnectionWorker->transmit(mseBuilder.build(), mseSetAtResponse);
+	returnCode = pCardConnectionWorker->transmit(mseBuilder.build(), mseSetAtResponse);
 	if (returnCode != CardReturnCode::OK)
 	{
 		return returnCode;
@@ -149,23 +149,7 @@ CardReturnCode Reader::getRetryCounter(QSharedPointer<CardConnectionWorker> pCar
 
 	StatusCode statusCode = mseSetAtResponse.getReturnCode();
 	qCDebug(card) << "StatusCode: " << statusCode;
-	if (statusCode == StatusCode::SUCCESS)
-	{
-		pRetryCounter = 3;
-	}
-	else if (statusCode == StatusCode::PIN_RETRY_COUNT_2)
-	{
-		pRetryCounter = 2;
-	}
-	else if (statusCode == StatusCode::PIN_SUSPENDED)
-	{
-		pRetryCounter = 1;
-	}
-	else if (statusCode == StatusCode::PIN_BLOCKED || statusCode == StatusCode::PIN_DEACTIVATED)
-	{
-		pRetryCounter = 0;
-	}
-
+	pRetryCounter = mseSetAtResponse.getRetryCounter();
 	pPinDeactivated = statusCode == StatusCode::PIN_DEACTIVATED;
 
 	return CardReturnCode::OK;
@@ -180,7 +164,7 @@ void Reader::fireUpdateSignal(CardEvent pCardEvent)
 			break;
 
 		case CardEvent::CARD_INSERTED:
-			qCInfo(support) << "Card inserted of type" << mReaderInfo.getCardType();
+			qCInfo(support) << "Card inserted:" << mReaderInfo.getCardInfo();
 			Q_EMIT fireCardInserted(mReaderInfo.getName());
 			break;
 
@@ -189,12 +173,6 @@ void Reader::fireUpdateSignal(CardEvent pCardEvent)
 			Q_EMIT fireCardRemoved(mReaderInfo.getName());
 			break;
 	}
-}
-
-
-void Reader::onRetryCounterPotentiallyChanged()
-{
-	mUpdateRetryCounter = true;
 }
 
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockReader.h"
@@ -30,9 +30,10 @@ MockReader* MockReader::createMockReader(const QVector<TransmitConfig>& pTransmi
 
 
 MockReader::MockReader(const QString& pReaderName)
-	: Reader(ReaderManagerPlugInType::UNKNOWN, pReaderName, ReaderType::UNKNOWN)
+	: Reader(ReaderManagerPlugInType::UNKNOWN, pReaderName)
 	, mCard(nullptr)
 {
+	mReaderInfo.setConnected(true);
 	mReaderInfo.setBasicReader(true);
 }
 

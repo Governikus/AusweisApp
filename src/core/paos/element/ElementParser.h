@@ -1,7 +1,7 @@
 /*!
  * \brief Base class for all XML element parser.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -43,9 +43,8 @@ class ElementParser
 		 * \brief Issues a log warning and sets the error when the element has not been set, i.e. the element is null.
 		 * \param pValue the elements value to check.
 		 * \param pElementName the elements name used to generate the log message.
-		 * \return \c true, if the assertion holds, \c false otherwise.
 		 */
-		bool assertMandatoryElement(const QString& pValue, const char* pElementName);
+		void assertMandatoryElement(const QString& pValue, const char* pElementName);
 
 		/*!
 		 * \brief Issues a log warning and sets the error when the list is empty.

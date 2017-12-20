@@ -1,9 +1,7 @@
 /*!
- * PcscReaderManagerPlugIn.h
- *
  * \brief Implementation of \ref ReaderManagerPlugIn for PCSC.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -43,9 +41,9 @@ class PcscReaderManagerPlugIn
 
 	public:
 		PcscReaderManagerPlugIn();
-		virtual ~PcscReaderManagerPlugIn();
+		virtual ~PcscReaderManagerPlugIn() override;
 
-		QList<Reader*> getReader() const override;
+		QList<Reader*> getReaders() const override;
 
 		void init() override;
 		void shutdown() override;

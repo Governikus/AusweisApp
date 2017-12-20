@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RandomPinDialog</class>
+ <widget class="QDialog" name="RandomPinDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>293</width>
+    <height>181</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Screen keyboard</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>6</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="buttonWidget" native="true">
+     <layout class="QGridLayout" name="gridLayout_4">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="buttonLayout">
+        <item row="0" column="2">
+         <widget class="QToolButton" name="clrButton">
+          <property name="accessibleName">
+           <string>Clear</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="4" column="1">
+         <widget class="QToolButton" name="button_pos_8">
+          <property name="accessibleName">
+           <string notr="true">*</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">pinButtons</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QToolButton" name="button_pos_4">
+          <property name="accessibleName">
+           <string notr="true">*</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">pinButtons</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QToolButton" name="button_pos_0">
+          <property name="accessibleName">
+           <string notr="true">*</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">pinButtons</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QToolButton" name="button_pos_2">
+          <property name="accessibleName">
+           <string notr="true">*</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">pinButtons</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QToolButton" name="button_pos_3">
+          <property name="accessibleName">
+           <string notr="true">*</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">pinButtons</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="5" column="2">
+         <widget class="QToolButton" name="okButton">
+          <property name="accessibleName">
+           <string>OK</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QToolButton" name="button_pos_1">
+          <property name="accessibleName">
+           <string notr="true">*</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">pinButtons</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QToolButton" name="button_pos_7">
+          <property name="accessibleName">
+           <string notr="true">*</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">pinButtons</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QToolButton" name="cnlButton">
+          <property name="accessibleName">
+           <string>Cancel</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QToolButton" name="button_pos_6">
+          <property name="accessibleName">
+           <string notr="true">*</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">pinButtons</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QToolButton" name="button_pos_5">
+          <property name="accessibleName">
+           <string notr="true">*</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">pinButtons</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QToolButton" name="button_pos_9">
+          <property name="accessibleName">
+           <string notr="true">*</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">pinButtons</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QLineEdit" name="pin">
+          <property name="accessibleName">
+           <string>PIN field</string>
+          </property>
+          <property name="maxLength">
+           <number>6</number>
+          </property>
+          <property name="echoMode">
+           <enum>QLineEdit::Password</enum>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>button_pos_1</tabstop>
+  <tabstop>button_pos_2</tabstop>
+  <tabstop>button_pos_3</tabstop>
+  <tabstop>button_pos_4</tabstop>
+  <tabstop>button_pos_5</tabstop>
+  <tabstop>button_pos_6</tabstop>
+  <tabstop>button_pos_7</tabstop>
+  <tabstop>button_pos_8</tabstop>
+  <tabstop>button_pos_9</tabstop>
+  <tabstop>button_pos_0</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>clrButton</tabstop>
+  <tabstop>cnlButton</tabstop>
+  <tabstop>pin</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="pinButtons">
+   <property name="exclusive">
+    <bool>false</bool>
+   </property>
+  </buttongroup>
+ </buttongroups>
+</ui>

@@ -1,7 +1,5 @@
 /*!
- * SecurityInfos.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ASN1TemplateUtil.h"
@@ -27,7 +25,12 @@ IMPLEMENT_ASN1_FUNCTIONS(securityinfos_st)
 
 IMPLEMENT_ASN1_OBJECT(securityinfos_st)
 
-}  // namespace governikus
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+	#define sk_securityinfo_st_num(data) SKM_sk_num(securityinfo_st, data)
+	#define sk_securityinfo_st_value(data, i) SKM_sk_value(securityinfo_st, data, i)
+#endif
+
+} /* namespace governikus */
 
 
 QSharedPointer<SecurityInfos> SecurityInfos::fromHex(const QByteArray& pHexString)
@@ -48,9 +51,9 @@ QSharedPointer<SecurityInfos> SecurityInfos::decode(const QByteArray& pBytes)
 	QVector<QSharedPointer<const PACEInfo> > paceInfos;
 	QVector<QSharedPointer<const ChipAuthenticationInfo> > chipAuthenticationInfos;
 
-	for (int i = 0; i < SKM_sk_num(securityinfo_st, securityInfosStruct.data()); ++i)
+	for (int i = 0; i < sk_securityinfo_st_num(securityInfosStruct.data()); ++i)
 	{
-		securityinfo_st* secInfoStruct = SKM_sk_value(securityinfo_st, securityInfosStruct.data(), i);
+		securityinfo_st* secInfoStruct = sk_securityinfo_st_value(securityInfosStruct.data(), i);
 		QByteArray bytes = encodeObject(secInfoStruct);
 
 		if (auto pi = PACEInfo::decode(bytes))

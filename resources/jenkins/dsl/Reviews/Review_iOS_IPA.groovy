@@ -16,18 +16,18 @@ j.with
 	{
 		shell('cd source; python resources/jenkins/import.py')
 
-		shell('security unlock-keychain \${KEYCHAIN_CREDENTIALS} \${HOME}/Library/Keychains/login.keychain')
+		shell('security unlock-keychain \${KEYCHAIN_CREDENTIALS} \${HOME}/Library/Keychains/login.keychain-db')
 
 		shell(strip('''\
 			cd build;
-			cmake ../source
+			cmake -Werror=dev ../source
 			-DCMAKE_BUILD_TYPE=release
 			-DCMAKE_PREFIX_PATH=\${WORKSPACE}/libs/build/dist
 			-DCMAKE_TOOLCHAIN_FILE=../source/cmake/iOS.toolchain.cmake
 			-GXcode
 			'''))
 
-		shell('cd build; CC=${CC_IOS} xcodebuild -target install -configuration Release PROVISIONING_PROFILE=${PROVISIONING_PROFILE_DEBUG}')
+		shell('cd build; xcodebuild -target install -configuration Release ARCHS=arm64')
 		shell('cd build; xcodebuild -target ipa -configuration Release')
 	}
 }

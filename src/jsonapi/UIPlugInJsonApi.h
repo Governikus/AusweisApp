@@ -1,7 +1,7 @@
 /*!
  * \brief UIPlugIn implementation of the Json API.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,24 +23,24 @@ class UIPlugInJsonApi
 	private:
 		MessageDispatcher mMessageDispatcher;
 
-		inline void callFireMessage(const QByteArray& pMsg) const;
+		inline void callFireMessage(const QByteArray& pMsg);
 
 	public:
 		UIPlugInJsonApi();
-		virtual ~UIPlugInJsonApi();
+		virtual ~UIPlugInJsonApi() override;
 
 	private Q_SLOTS:
 		virtual void doShutdown() override;
 		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
 		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
 		void onReaderEvent(const QString& pName);
-		void onCurrentStateChanged(const QString& pNewState);
+		void onStateChanged(const QString& pNewState);
 
 	public Q_SLOTS:
 		void doMessageProcessing(const QByteArray& pMsg);
 
 	Q_SIGNALS:
-		void fireMessage(const QByteArray& pMsg) const;
+		void fireMessage(const QByteArray& pMsg);
 };
 
 } /* namespace governikus */

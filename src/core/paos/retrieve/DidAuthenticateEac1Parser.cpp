@@ -1,9 +1,7 @@
 /*!
- * DidAuthenticateEac1Parser.cpp
- *
  * \brief Parser for the PAOS DidAuthenticateEac1 element.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -156,7 +154,7 @@ Eac1InputType DidAuthenticateEac1Parser::parseEac1InputType()
 			mXmlReader->skipCurrentElement();
 		}
 	}
-	assertMandatoryList<QSharedPointer<CVCertificate> >(eac1.getCvCertificates(), "Certificate");
+	assertMandatoryList<QSharedPointer<const CVCertificate> >(eac1.getCvCertificates(), "Certificate");
 
 	return eac1;
 }

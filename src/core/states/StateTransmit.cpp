@@ -1,7 +1,5 @@
 /*!
- * StateTransmit.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"
@@ -36,18 +34,19 @@ void StateTransmit::onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 	{
 		QSharedPointer<TransmitResponse> response(getContext()->getTransmitResponses().last());
 		response->setOutputApdus(transmitCommand->getOutputApduAsHex());
-		Q_EMIT fireSuccess();
+		Q_EMIT fireContinue();
 	}
 	else if (returnCode == CardReturnCode::UNEXPECTED_TRANSMIT_STATUS)
 	{
 		QSharedPointer<TransmitResponse> response(getContext()->getTransmitResponses().last());
 		response->setOutputApdus(transmitCommand->getOutputApduAsHex());
-		setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode)); // set the result to the model so it is written to the PAOS response
-		Q_EMIT fireSuccess();
+		updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode)); // set the result to the model so it is written to the PAOS response
+		getContext()->setTransmitResponseFailed(true);  // Return the correct return code according to the last minute test spec update.
+		Q_EMIT fireContinue();
 	}
 	else
 	{
-		setStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-		Q_EMIT fireError();
+		updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+		Q_EMIT fireAbort();
 	}
 }

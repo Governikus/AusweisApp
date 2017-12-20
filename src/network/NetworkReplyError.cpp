@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ */
+
 #include "NetworkReplyError.h"
 
 using namespace governikus;
@@ -27,7 +31,7 @@ NetworkReplyError::NetworkReplyError(QNetworkRequest const& pRequest, QObject* p
 	: QNetworkReply(pParent)
 {
 	setRequest(pRequest);
-	setError(NetworkError::OperationCanceledError, "Application shutting down");
+	setError(NetworkError::OperationCanceledError, QStringLiteral("Application shutting down"));
 
 	QMetaObject::invokeMethod(this, "onErrorSignals", Qt::QueuedConnection);
 }

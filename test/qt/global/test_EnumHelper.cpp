@@ -1,9 +1,7 @@
 /*!
- * test_EnumHelper.h
- *
  * \brief Unit tests for EnumHelper.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EnumHelper.h"
@@ -13,6 +11,16 @@
 #include <QtTest>
 
 using namespace governikus;
+
+namespace
+{
+#ifdef Q_OS_WIN
+const QLatin1String lineBreak("\r\n");
+#else
+const QLatin1Char lineBreak('\n');
+#endif
+}
+
 namespace governikus
 {
 defineEnumType(TestEnum1, FIRST, SECOND, THIRD)
@@ -81,7 +89,7 @@ class test_EnumHelper
 
 			QCOMPARE(spy.count(), 1);
 			auto result = spy.takeFirst();
-			QVERIFY(result.at(0).toString().endsWith("FIRST\n"));
+			QVERIFY(result.at(0).toString().endsWith(QStringLiteral("FIRST") + lineBreak));
 		}
 
 
@@ -93,10 +101,10 @@ class test_EnumHelper
 			QCOMPARE(Enum<TestEnum1>::getName(TestEnum1::SECOND), QStringLiteral("SECOND"));
 			QCOMPARE(Enum<TestEnum1>::getName(TestEnum1::THIRD), QStringLiteral("THIRD"));
 
-			testBadConverion(6, QStringLiteral("UNKNOWN 0x6\n"));
-			testBadConverion(255, QStringLiteral("UNKNOWN 0xff\n"));
-			testBadConverion(365, QStringLiteral("UNKNOWN 0x16d\n"));
-			testBadConverion(2147483647, QStringLiteral("UNKNOWN 0x7fffffff\n"));
+			testBadConverion(6, QStringLiteral("UNKNOWN 0x6") + lineBreak);
+			testBadConverion(255, QStringLiteral("UNKNOWN 0xff") + lineBreak);
+			testBadConverion(365, QStringLiteral("UNKNOWN 0x16d") + lineBreak);
+			testBadConverion(2147483647, QStringLiteral("UNKNOWN 0x7fffffff") + lineBreak);
 
 			QCOMPARE(getEnumName(TestEnum1::SECOND), QStringLiteral("SECOND"));
 			QCOMPARE(getEnumName(EnumTestEnum1::TestEnum1::SECOND), QStringLiteral("SECOND"));
@@ -130,7 +138,7 @@ class test_EnumHelper
 			QVERIFY(Enum<TestEnum2>::isValue(static_cast<int>(0xaa)));
 
 			QVERIFY(!Enum<TestEnum1>::isValue(char(999)));
-			QVERIFY(Enum<TestEnum1>::isValue(char(0)));
+			QVERIFY(Enum<TestEnum1>::isValue('\0'));
 
 			QVERIFY(!Enum<TestEnum2>::isValue(char(0xbb)));
 			QVERIFY(Enum<TestEnum2>::isValue(char(0xff)));

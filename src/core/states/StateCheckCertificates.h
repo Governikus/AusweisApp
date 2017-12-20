@@ -1,11 +1,9 @@
 /*!
- * StateCheckCertificates.h
- *
  * \brief Checks whether the hashes of the certificates encountered so far
  * (i.e. those stored in the AuthContext) are in the CertificateDescription
  * extension of the eService certificate.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

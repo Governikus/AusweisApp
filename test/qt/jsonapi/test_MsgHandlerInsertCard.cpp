@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerInsertCard
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerInsertCard.h"
@@ -62,8 +62,7 @@ class test_MsgHandlerInsertCard
 			MessageDispatcher dispatcher;
 			setContext(dispatcher);
 
-			QCOMPARE(dispatcher.processStateChange(QStringLiteral("StateSelectPcscReader")), QByteArray("{\"msg\":\"INSERT_CARD\"}"));
-			QCOMPARE(dispatcher.processStateChange(QStringLiteral("StateSelectNfcReader")), QByteArray("{\"msg\":\"INSERT_CARD\"}"));
+			QCOMPARE(dispatcher.processStateChange(QStringLiteral("StateSelectReader")), QByteArray("{\"msg\":\"INSERT_CARD\"}"));
 		}
 
 
@@ -76,8 +75,7 @@ class test_MsgHandlerInsertCard
 			MessageDispatcher dispatcher;
 			setContext(dispatcher);
 
-			QCOMPARE(dispatcher.processStateChange(QStringLiteral("StateSelectPcscReader")), QByteArray("{\"msg\":\"INSERT_CARD\"}"));
-			QCOMPARE(dispatcher.processStateChange(QStringLiteral("StateSelectNfcReader")), QByteArray("{\"msg\":\"INSERT_CARD\"}"));
+			QCOMPARE(dispatcher.processStateChange(QStringLiteral("StateSelectReader")), QByteArray("{\"msg\":\"INSERT_CARD\"}"));
 		}
 
 
@@ -90,8 +88,7 @@ class test_MsgHandlerInsertCard
 			MessageDispatcher dispatcher;
 			setContext(dispatcher);
 
-			QCOMPARE(dispatcher.processStateChange(QStringLiteral("StateSelectPcscReader")), QByteArray());
-			QCOMPARE(dispatcher.processStateChange(QStringLiteral("StateSelectNfcReader")), QByteArray());
+			QCOMPARE(dispatcher.processStateChange(QStringLiteral("StateSelectReader")), QByteArray());
 		}
 
 

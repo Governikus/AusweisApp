@@ -1,10 +1,11 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UILoader.h"
 
 #include "SingletonHelper.h"
+#include "UIPlugIn.h"
 
 #include <QLoggingCategory>
 #include <QPluginLoader>

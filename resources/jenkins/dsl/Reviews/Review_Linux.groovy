@@ -35,7 +35,7 @@ j.with
 
 		shell(strip('''\
 			cd build;
-			cmake ../source
+			cmake -Werror=dev ../source
 			-DCMAKE_PREFIX_PATH=${WORKSPACE}/libs/build/dist
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 			-DCMAKE_CXX_COMPILER=${Compiler}

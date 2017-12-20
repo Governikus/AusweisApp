@@ -1,9 +1,7 @@
 /*!
- * EcUtil.h
- *
  * \brief Elliptic curve utility.
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -44,6 +42,12 @@ class EcUtil
 
 inline QByteArray EcUtil::point2oct(const QSharedPointer<const EC_GROUP>& pCurve, const EC_POINT* pPoint)
 {
+	if (pCurve.isNull() || pPoint == nullptr)
+	{
+		qCCritical(card) << "Invalid input data, cannot encode elliptic curve point";
+		return QByteArray();
+	}
+
 	size_t buf_size = EC_POINT_point2oct(pCurve.data(), pPoint, POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);
 
 	if (buf_size == 0)

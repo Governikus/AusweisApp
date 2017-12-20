@@ -1,7 +1,5 @@
 /*!
- * BluetoothUtils.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BluetoothUtils.h"
@@ -32,6 +30,6 @@ void BluetoothUtils::addPadding(QByteArray& pData, const QByteArray& pContent, u
 	ushort paddingLength = getPaddingLength(static_cast<ushort>(pContent.size()), pPaddingLen);
 	for (ushort i = 0; i < paddingLength; ++i)
 	{
-		pData += char(0x00);
+		pData += '\0';
 	}
 }

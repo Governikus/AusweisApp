@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugIn.h"
@@ -25,6 +25,17 @@ void UIPlugIn::onApplicationStarted()
 void UIPlugIn::onShowUi(UiModule pModule)
 {
 	Q_UNUSED(pModule)
+}
+
+
+void UIPlugIn::onShowReaderSettings()
+{
+}
+
+
+void UIPlugIn::onSwitchToReaderSettingsRequested()
+{
+	Q_EMIT fireSwitchToReaderSettingsRequested();
 }
 
 

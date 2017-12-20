@@ -1,9 +1,7 @@
 /*!
- * GeneralAuthenticateResponse.h
- *
  * \brief Implementation of GeneralAuthenticate response APDUs.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,7 +22,7 @@ class GAResponseApdu
 
 	public:
 		GAResponseApdu();
-		virtual ~GAResponseApdu();
+		virtual ~GAResponseApdu() override;
 		virtual void setBuffer(const QByteArray& pBuffer) override;
 
 };
@@ -52,7 +50,7 @@ class GAEncryptedNonceResponse
 
 	public:
 		GAEncryptedNonceResponse();
-		virtual ~GAEncryptedNonceResponse();
+		virtual ~GAEncryptedNonceResponse() override;
 		const QByteArray& getEncryptedNonce();
 
 };
@@ -80,7 +78,7 @@ class GAMapNonceResponse
 
 	public:
 		GAMapNonceResponse();
-		virtual ~GAMapNonceResponse();
+		virtual ~GAMapNonceResponse() override;
 		const QByteArray& getMappingData();
 
 };
@@ -108,7 +106,7 @@ class GAPerformKeyAgreementResponse
 
 	public:
 		GAPerformKeyAgreementResponse();
-		virtual ~GAPerformKeyAgreementResponse();
+		virtual ~GAPerformKeyAgreementResponse() override;
 		const QByteArray& getEphemeralPublicKey();
 
 };
@@ -140,7 +138,7 @@ class GAMutualAuthenticationResponse
 
 	public:
 		GAMutualAuthenticationResponse();
-		virtual ~GAMutualAuthenticationResponse();
+		virtual ~GAMutualAuthenticationResponse() override;
 		const QByteArray& getAuthenticationToken();
 		const QByteArray& getCarCurr();
 		const QByteArray& getCarPrev();
@@ -172,7 +170,7 @@ class GAChipAuthenticationResponse
 
 	public:
 		GAChipAuthenticationResponse();
-		virtual ~GAChipAuthenticationResponse();
+		virtual ~GAChipAuthenticationResponse() override;
 		const QByteArray& getNonce();
 		const QByteArray& getAuthenticationToken();
 

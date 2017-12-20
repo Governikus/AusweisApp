@@ -1,9 +1,7 @@
 /*!
- * test_Command.cpp
- *
  * \brief Tests for card commands
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore/QtCore>
@@ -23,43 +21,6 @@ class test_Command
 	private Q_SLOTS:
 		void initTestCase()
 		{
-		}
-
-
-		void testToBigEndian_fatInt()
-		{
-			QByteArray value = toBigEndian(static_cast<int>(0xFFEE));
-
-			QCOMPARE(value.size(), 2);
-			QCOMPARE(value.at(0), char(0xFF));
-			QCOMPARE(value.at(1), char(0xEE));
-		}
-
-
-		void testToBigEndian_int()
-		{
-			QByteArray value = toBigEndian(static_cast<int>(0x11));
-
-			QCOMPARE(value.size(), 1);
-			QCOMPARE(value.at(0), static_cast<char>(0x11));
-		}
-
-
-		void testToBigEndian_zero()
-		{
-			QByteArray value = toBigEndian(static_cast<int>(0x00));
-
-			QCOMPARE(value.size(), 1);
-			QCOMPARE(value.at(0), static_cast<char>(0x00));
-		}
-
-
-		void testToBigEndian_long()
-		{
-			QByteArray value = toBigEndian(static_cast<long>(0x11));
-
-			QCOMPARE(value.size(), 1);
-			QCOMPARE(value.at(0), static_cast<char>(0x11));
 		}
 
 

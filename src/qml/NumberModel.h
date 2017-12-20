@@ -2,7 +2,7 @@
  * \brief Model for accessing PIN, CAN, PUK, according to the
  * currently active workflow.
  *
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

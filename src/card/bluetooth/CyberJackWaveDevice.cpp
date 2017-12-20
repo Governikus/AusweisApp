@@ -1,7 +1,5 @@
 /*!
- * CyberJackWaveDevice.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BluetoothDebug.h"
@@ -110,15 +108,18 @@ void CyberJackWaveDevice::onConnectedDevice()
 void CyberJackWaveDevice::onServiceDiscoveryFinished()
 {
 	qCDebug(bluetooth) << "Services discovered for device" << mDeviceInfo;
-	for (const auto& serviceUuid : mLeController.services())
+	const auto& services = mLeController.services();
+	for (const auto& serviceUuid : services)
 	{
 		qCDebug(bluetooth) << "Found service" << serviceUuid;
-		if (const auto service = QSharedPointer<QLowEnergyService>(mLeController.createServiceObject(serviceUuid)))
+		if (const auto& service = QSharedPointer<const QLowEnergyService>(mLeController.createServiceObject(serviceUuid)))
 		{
-			for (const auto& characteristic : service->characteristics())
+			const auto& serviceCharacteristis = service->characteristics();
+			for (const auto& characteristic : serviceCharacteristis)
 			{
 				qCDebug(bluetooth) << "Found service characteristic" << characteristic.uuid();
-				for (const auto& descriptor : characteristic.descriptors())
+				const auto& characteristicDescriptors = characteristic.descriptors();
+				for (const auto& descriptor : characteristicDescriptors)
 				{
 					qCDebug(bluetooth) << "Found service characteristic descriptor" << descriptor.uuid();
 				}
@@ -246,7 +247,7 @@ QLowEnergyService::WriteMode CyberJackWaveDevice::determineWriteMode(int pBlockI
 	 * confirmation response.
 	 */
 	static int IOS_CONFIRMATION_BLOCK_NUMBER = 6;
-	return pBlockIndex % IOS_CONFIRMATION_BLOCK_NUMBER ? QLowEnergyService::WriteWithoutResponse : QLowEnergyService::WriteWithResponse;
+	return (pBlockIndex % IOS_CONFIRMATION_BLOCK_NUMBER) ? QLowEnergyService::WriteWithoutResponse : QLowEnergyService::WriteWithResponse;
 
 #else
 	Q_UNUSED(pBlockIndex);

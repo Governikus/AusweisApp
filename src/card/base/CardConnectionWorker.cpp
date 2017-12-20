@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnectionWorker.h"
@@ -18,7 +18,6 @@ CardConnectionWorker::CardConnectionWorker(Reader* pReader)
 	, mReader(pReader)
 	, mSecureMessaging()
 {
-	connect(this, &CardConnectionWorker::fireRetryCounterPotentiallyChanged, mReader.data(), &Reader::onRetryCounterPotentiallyChanged);
 	connect(mReader, &Reader::fireCardInserted, this, &CardConnectionWorker::onReaderInfoChanged);
 	connect(mReader, &Reader::fireCardRemoved, this, &CardConnectionWorker::onReaderInfoChanged);
 	connect(mReader, &Reader::fireCardRetryCounterChanged, this, &CardConnectionWorker::onReaderInfoChanged);
@@ -78,18 +77,30 @@ CardReturnCode CardConnectionWorker::transmit(const CommandApdu& pCommandApdu, R
 		return CardReturnCode::CARD_NOT_FOUND;
 	}
 
+	CardReturnCode returnCode;
+
 	if (mSecureMessaging)
 	{
 		CommandApdu securedCommandApdu = mSecureMessaging->encrypt(pCommandApdu);
 		ResponseApdu securedResponseApdu;
-		CardReturnCode returnCode = mReader->getCard()->transmit(securedCommandApdu, securedResponseApdu);
+		returnCode = mReader->getCard()->transmit(securedCommandApdu, securedResponseApdu);
 		if (!mSecureMessaging->decrypt(securedResponseApdu, pResponseApdu))
 		{
 			return CardReturnCode::COMMAND_FAILED;
 		}
-		return returnCode;
 	}
-	return mReader->getCard()->transmit(pCommandApdu, pResponseApdu);
+	else
+	{
+		returnCode = mReader->getCard()->transmit(pCommandApdu, pResponseApdu);
+	}
+
+	if (pCommandApdu.isUpdateRetryCounter())
+	{
+		int retryCounter = pResponseApdu.getRetryCounter();
+		mReader->setRetryCounter(retryCounter);
+	}
+
+	return returnCode;
 }
 
 
@@ -145,16 +156,16 @@ bool CardConnectionWorker::stopSecureMessaging()
 }
 
 
-CardReturnCode CardConnectionWorker::establishPaceChannel(PACE_PIN_ID pPinId,
-		const QString& pPinValue,
+CardReturnCode CardConnectionWorker::establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
+		const QString& pPasswordValue,
 		EstablishPACEChannelOutput& pChannelOutput)
 {
-	return establishPaceChannel(pPinId, pPinValue, nullptr, nullptr, pChannelOutput);
+	return establishPaceChannel(pPasswordId, pPasswordValue, nullptr, nullptr, pChannelOutput);
 }
 
 
-CardReturnCode CardConnectionWorker::establishPaceChannel(PACE_PIN_ID pPinId,
-		const QString& pPinValue,
+CardReturnCode CardConnectionWorker::establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
+		const QString& pPasswordValue,
 		const QByteArray& pChat,
 		const QByteArray& pCertificateDescription,
 		EstablishPACEChannelOutput& pChannelOutput)
@@ -165,13 +176,15 @@ CardReturnCode CardConnectionWorker::establishPaceChannel(PACE_PIN_ID pPinId,
 	}
 	CardReturnCode returnCode;
 
-	qCInfo(support) << "Starting PACE for" << pPinId;
+	qCInfo(support) << "Starting PACE for" << pPasswordId;
 	if (mReader->getReaderInfo().isBasicReader())
 	{
-		Q_ASSERT(!pPinValue.isEmpty());
+		Q_ASSERT(!pPasswordValue.isEmpty());
 		PaceHandler paceHandler(sharedFromThis());
 		paceHandler.setChat(pChat);
-		returnCode = paceHandler.establishPaceChannel(pPinId, pPinValue);
+		returnCode = paceHandler.establishPaceChannel(pPasswordId, pPasswordValue);
+		pChannelOutput.setPaceReturnCode(returnCode);
+		pChannelOutput.setStatusMseSetAt(paceHandler.getStatusMseSetAt());
 
 		if (returnCode == CardReturnCode::OK)
 		{
@@ -185,12 +198,12 @@ CardReturnCode CardConnectionWorker::establishPaceChannel(PACE_PIN_ID pPinId,
 	}
 	else
 	{
-		Q_ASSERT(pPinValue.isNull());
-		returnCode = mReader->getCard()->establishPaceChannel(pPinId, pChat, pCertificateDescription, pChannelOutput);
+		Q_ASSERT(pPasswordValue.isNull());
+		returnCode = mReader->getCard()->establishPaceChannel(pPasswordId, pChat, pCertificateDescription, pChannelOutput);
+		pChannelOutput.setPaceReturnCode(returnCode);
 	}
-	Q_EMIT fireRetryCounterPotentiallyChanged();
 
-	qCInfo(support) << "Finished PACE for" << pPinId << "with result" << returnCode;
+	qCInfo(support) << "Finished PACE for" << pPasswordId << "with result" << returnCode;
 	return returnCode;
 }
 
@@ -208,7 +221,9 @@ CardReturnCode CardConnectionWorker::destroyPaceChannel()
 		stopSecureMessaging();
 		MSEBuilder builder(MSEBuilder::P1::ERASE, MSEBuilder::P2::DEFAULT_CHANNEL);
 		ResponseApdu response;
-		return mReader->getCard()->transmit(builder.build(), response);
+		CardReturnCode cardReturnCode = mReader->getCard()->transmit(builder.build(), response);
+		qCDebug(card) << "Destroying PACE channel with invalid command causing 6700 as return code";
+		return cardReturnCode;
 	}
 	else
 	{

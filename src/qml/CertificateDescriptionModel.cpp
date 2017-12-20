@@ -1,27 +1,29 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/CertificateDescription.h"
 #include "AppSettings.h"
 #include "context/AuthContext.h"
-#include "context/SelfAuthenticationContext.h"
+#include "context/SelfAuthContext.h"
 #include "CertificateDescriptionModel.h"
+#include "Env.h"
+#include "SecureStorage.h"
 
 
 using namespace governikus;
 
 
-QSharedPointer<CertificateDescription> CertificateDescriptionModel::getCertificateDescription() const
+QSharedPointer<const CertificateDescription> CertificateDescriptionModel::getCertificateDescription() const
 {
 	if (mContext && mContext->getDidAuthenticateEac1())
 	{
 		return mContext->getDidAuthenticateEac1()->getCertificateDescription();
 	}
 
-	const bool useTestUri = AppSettings::getInstance().getGeneralSettings().useSelfauthenticationTestUri();
-	const auto& rawCertDescr = AppSettings::getInstance().getSecureStorage().getSelfAuthenticationCertDescr(useTestUri);
-	QSharedPointer<CertificateDescription> selfAuthCertificateDescription(CertificateDescription::fromHex(rawCertDescr));
+	const bool useTestUri = Env::getSingleton<AppSettings>()->getGeneralSettings().useSelfAuthTestUri();
+	const auto& rawCertDescr = SecureStorage::getInstance().getSelfAuthenticationCertDescr(useTestUri);
+	QSharedPointer<const CertificateDescription> selfAuthCertificateDescription(CertificateDescription::fromHex(rawCertDescr));
 	Q_ASSERT(selfAuthCertificateDescription);
 
 	return selfAuthCertificateDescription;
@@ -42,7 +44,7 @@ void CertificateDescriptionModel::onDidAuthenticateEac1Changed()
 }
 
 
-void CertificateDescriptionModel::initModelData(const QSharedPointer<CertificateDescription>& pCertDescription)
+void CertificateDescriptionModel::initModelData(const QSharedPointer<const CertificateDescription>& pCertDescription)
 {
 	const QString& serviceProviderAddress = pCertDescription->getServiceProviderAddress();
 	const QString& purpose = getPurpose();
@@ -50,8 +52,8 @@ void CertificateDescriptionModel::initModelData(const QSharedPointer<Certificate
 	const QString& termsOfUsage = pCertDescription->getTermsOfUsage();
 	const bool showDetailedProviderInfo = !(serviceProviderAddress.isEmpty() || purpose.isEmpty() || dataSecurityOfficer.isEmpty());
 
-	mData += QPair<QString, QString>(tr("Service provider"), getSubjectName() + '\n' + getSubjectUrl());
-	mData += QPair<QString, QString>(tr("Certificate issuer"), pCertDescription->getIssuerName() + '\n' + pCertDescription->getIssuerUrl());
+	mData += QPair<QString, QString>(tr("Service provider"), getSubjectName() + QLatin1Char('\n') + getSubjectUrl());
+	mData += QPair<QString, QString>(tr("Certificate issuer"), pCertDescription->getIssuerName() + QLatin1Char('\n') + pCertDescription->getIssuerUrl());
 	if (showDetailedProviderInfo)
 	{
 		mData += QPair<QString, QString>(tr("Name, address and mail address of the service provider"), serviceProviderAddress);
@@ -77,6 +79,12 @@ CertificateDescriptionModel::CertificateDescriptionModel(QObject* pParent)
 {
 	resetContext();
 	connect(&AppSettings::getInstance(), &AppSettings::fireSettingsChanged, this, &CertificateDescriptionModel::onDidAuthenticateEac1Changed);
+	connect(&AppSettings::getInstance().getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, [this]()
+			{
+				beginResetModel();
+				onDidAuthenticateEac1Changed();
+				endResetModel();
+			});
 }
 
 

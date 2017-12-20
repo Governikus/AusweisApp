@@ -16,11 +16,11 @@ j.with
 	{
 		shell('cd source; python resources/jenkins/import.py')
 
-		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain')
+		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain-db')
 
 		shell(strip("""\
 			cd build;
-			cmake ../source
+			cmake -Werror=dev ../source
 			-DCMAKE_PREFIX_PATH=\${WORKSPACE}/libs/build/dist
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 			-DCMAKE_BUILD_TYPE=release

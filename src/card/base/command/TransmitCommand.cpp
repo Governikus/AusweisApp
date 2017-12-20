@@ -1,13 +1,13 @@
 /*!
- * TransmitCommand.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
+
+#include "TransmitCommand.h"
 
 #include "CardConnection.h"
 #include "CardReturnCode.h"
+#include "GlobalStatus.h"
 #include "InputAPDUInfo.h"
-#include "TransmitCommand.h"
 
 #include <QLoggingCategory>
 
@@ -20,6 +20,7 @@ TransmitCommand::TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConne
 		const QVector<InputAPDUInfo>& pInputApduInfos)
 	: BaseCardCommand(pCardConnectionWorker)
 	, mInputApduInfos(pInputApduInfos)
+	, mReaderName(pCardConnectionWorker->getReaderInfo().getName())
 	, mOutputApduAsHex()
 {
 }
@@ -39,9 +40,7 @@ void TransmitCommand::internalExecute()
 	for (const auto& inputApduInfo : mInputApduInfos)
 	{
 		ResponseApdu response;
-		CommandApdu request(QByteArray::fromHex(inputApduInfo.getInputApdu()));
-
-		mReturnCode = mCardConnectionWorker->transmit(request, response);
+		mReturnCode = mCardConnectionWorker->transmit(inputApduInfo.getInputApdu(), response);
 		if (mReturnCode != CardReturnCode::OK)
 		{
 			qCWarning(card) << "Transmit unsuccessful. Return code:" << CardReturnCodeUtil::toGlobalStatus(mReturnCode);
@@ -57,12 +56,7 @@ void TransmitCommand::internalExecute()
 			for (const QByteArray& acceptableStatusCodeAsHex : inputApduInfo.getAcceptableStatusCodes())
 			{
 				// according to TR-03112-6 chapter 3.2.5
-				QByteArray acceptableStatusCode = QByteArray::fromHex(acceptableStatusCodeAsHex);
-				QByteArray actualStatusCode(2, 0x00);
-				actualStatusCode[0] = response.getSW1();
-				actualStatusCode[1] = response.getSW2();
-
-				if (actualStatusCode.startsWith(acceptableStatusCode))
+				if (response.getReturnCodeAsHex() == acceptableStatusCodeAsHex)
 				{
 					isAcceptable = true;
 					break;

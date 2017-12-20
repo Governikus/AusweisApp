@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInJsonApi.h"
@@ -29,7 +29,7 @@ UIPlugInJsonApi::~UIPlugInJsonApi()
 }
 
 
-void UIPlugInJsonApi::callFireMessage(const QByteArray& pMsg) const
+void UIPlugInJsonApi::callFireMessage(const QByteArray& pMsg)
 {
 	if (!pMsg.isEmpty())
 	{
@@ -44,12 +44,12 @@ void UIPlugInJsonApi::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext
 	if (pContext.objectCast<AuthContext>())
 	{
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-		pContext->setReaderType(ReaderManagerPlugInType::NFC);
+		pContext->setReaderPlugInTypes({ReaderManagerPlugInType::NFC});
 #else
-		pContext->setReaderType(ReaderManagerPlugInType::PCSC);
+		pContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC});
 #endif
 
-		connect(pContext.data(), &WorkflowContext::fireCurrentStateChanged, this, &UIPlugInJsonApi::onCurrentStateChanged);
+		connect(pContext.data(), &WorkflowContext::fireStateChanged, this, &UIPlugInJsonApi::onStateChanged);
 	}
 
 	callFireMessage(mMessageDispatcher.init(pContext));
@@ -68,7 +68,7 @@ void UIPlugInJsonApi::onReaderEvent(const QString& pName)
 }
 
 
-void UIPlugInJsonApi::onCurrentStateChanged(const QString& pNewState)
+void UIPlugInJsonApi::onStateChanged(const QString& pNewState)
 {
 	callFireMessage(mMessageDispatcher.processStateChange(pNewState));
 }

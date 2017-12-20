@@ -1,12 +1,14 @@
 /*
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NetworkManager.h"
 
-#include "AppSettings.h"
+#include "Env.h"
 #include "NetworkReplyError.h"
 #include "NetworkReplyTimeout.h"
+#include "SecureStorage.h"
+#include "SingletonHelper.h"
 #include "VersionInfo.h"
 
 #include <QCoreApplication>
@@ -18,69 +20,9 @@
 
 using namespace governikus;
 
-Q_GLOBAL_STATIC(NetworkManager, Instance)
+defineSingleton(NetworkManager)
 
 Q_DECLARE_LOGGING_CATEGORY(network)
-
-
-QString NetworkManager::getTlsVersionString(QSsl::SslProtocol pProtocol)
-{
-	switch (pProtocol)
-	{
-		case QSsl::SslProtocol::AnyProtocol:
-			return QStringLiteral("AnyProtocol");
-
-		case QSsl::SslProtocol::SecureProtocols:
-			return QStringLiteral("SecureProtocols");
-
-		case QSsl::SslProtocol::SslV2:
-			return QStringLiteral("SslV2");
-
-		case QSsl::SslProtocol::SslV3:
-			return QStringLiteral("SslV3");
-
-		case QSsl::SslProtocol::TlsV1SslV3:
-			return QStringLiteral("TlsV1SslV3");
-
-		case QSsl::SslProtocol::TlsV1_0:
-			return QStringLiteral("TlsV1_0");
-
-		case QSsl::SslProtocol::TlsV1_0OrLater:
-			return QStringLiteral("TlsV1_0OrLater");
-
-		case QSsl::SslProtocol::TlsV1_1:
-			return QStringLiteral("TlsV1_1");
-
-		case QSsl::SslProtocol::TlsV1_1OrLater:
-			return QStringLiteral("TlsV1_1OrLater");
-
-		case QSsl::SslProtocol::TlsV1_2:
-			return QStringLiteral("TlsV1_2");
-
-		case QSsl::SslProtocol::TlsV1_2OrLater:
-			return QStringLiteral("TlsV1_2OrLater");
-
-		case QSsl::SslProtocol::UnknownProtocol:
-			return QStringLiteral("UnknownProtocol");
-	}
-
-	Q_UNREACHABLE();
-}
-
-
-int NetworkManager::getOpenConnectionCount()
-{
-	return mOpenConnectionCount;
-}
-
-
-QDebug operator <<(QDebug pDbg, QSsl::SslProtocol pProtocol)
-{
-	QDebugStateSaver saver(pDbg);
-	pDbg.nospace() << NetworkManager::getTlsVersionString(pProtocol);
-	return pDbg;
-}
-
 
 bool NetworkManager::mLockProxy = false;
 
@@ -89,23 +31,9 @@ NetworkManager::NetworkManager()
 	, mApplicationExitInProgress(false)
 	, mOpenConnectionCount(0)
 	, mNetAccessManager(new QNetworkAccessManager())
-	, mNetAccessManagerPsk(new QNetworkAccessManager())
 {
-	if (Instance.exists())
-	{
-		mNetAccessManager->useAuthenticationManagerFrom(*Instance->mNetAccessManager);
-		mNetAccessManagerPsk->useAuthenticationManagerFrom(*Instance->mNetAccessManagerPsk);
-
-		connect(&NetworkManager::getGlobalInstance(), &NetworkManager::fireShutdown, this, &NetworkManager::onShutdown);
-	}
-	else
-	{
-		mNetAccessManagerPsk->useAuthenticationManagerFrom(*mNetAccessManager);
-	}
-
 #ifndef QT_NO_NETWORKPROXY
 	connect(mNetAccessManager.data(), &QNetworkAccessManager::proxyAuthenticationRequired, this, &NetworkManager::fireProxyAuthenticationRequired);
-	connect(mNetAccessManagerPsk.data(), &QNetworkAccessManager::proxyAuthenticationRequired, this, &NetworkManager::fireProxyAuthenticationRequired);
 #endif
 }
 
@@ -115,13 +43,25 @@ NetworkManager::~NetworkManager()
 }
 
 
-NetworkManager& NetworkManager::getGlobalInstance()
+NetworkManager& NetworkManager::getInstance()
 {
 	return *Instance;
 }
 
 
-QNetworkReply* NetworkManager::paos(QNetworkRequest& pRequest, const QByteArray& pData, bool pUsePsk, int pTimeoutInMilliSeconds)
+int NetworkManager::getOpenConnectionCount()
+{
+	return mOpenConnectionCount;
+}
+
+
+void NetworkManager::clearConnections()
+{
+	mNetAccessManager->clearConnectionCache();
+}
+
+
+QNetworkReply* NetworkManager::paos(QNetworkRequest& pRequest, const QByteArray& pNamespace, const QByteArray& pData, bool pUsePsk, int pTimeoutInMilliSeconds)
 {
 	if (mApplicationExitInProgress)
 	{
@@ -129,23 +69,16 @@ QNetworkReply* NetworkManager::paos(QNetworkRequest& pRequest, const QByteArray&
 	}
 
 	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
-	pRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/vnd.paos+xml; charset=UTF-8");
+	pRequest.setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("application/vnd.paos+xml; charset=UTF-8"));
 	pRequest.setHeader(QNetworkRequest::ContentLengthHeader, QString::number(pData.size()));
 	pRequest.setRawHeader("Connection", "keep-alive");
 	pRequest.setRawHeader("Accept", "text/html; application/vnd.paos+xml");
-	pRequest.setRawHeader("PAOS", "ver=\"urn:liberty:paos:2006-08\"");
+	pRequest.setRawHeader("PAOS", QByteArray("ver=\"%1\"").replace(QByteArray("%1"), pNamespace));
 
 	QNetworkReply* response;
-	if (pUsePsk)
-	{
-		pRequest.setSslConfiguration(AppSettings::getInstance().getSecureStorage().getTlsSettingsPsk().getConfiguration());
-		response = mNetAccessManagerPsk->post(pRequest, pData);
-	}
-	else
-	{
-		pRequest.setSslConfiguration(AppSettings::getInstance().getSecureStorage().getTlsSettings().getConfiguration());
-		response = mNetAccessManager->post(pRequest, pData);
-	}
+	SecureStorage::TlsSuite tlsSuite = pUsePsk ? SecureStorage::TlsSuite::PSK : SecureStorage::TlsSuite::DEFAULT;
+	pRequest.setSslConfiguration(SecureStorage::getInstance().getTlsConfig(tlsSuite).getConfiguration());
+	response = mNetAccessManager->post(pRequest, pData);
 
 	trackConnection(response, pTimeoutInMilliSeconds);
 	return response;
@@ -160,35 +93,19 @@ QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest, int pTimeoutInMill
 	}
 
 	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
-	pRequest.setSslConfiguration(AppSettings::getInstance().getSecureStorage().getTlsSettings().getConfiguration());
+	pRequest.setSslConfiguration(SecureStorage::getInstance().getTlsConfig().getConfiguration());
 	QNetworkReply* response = mNetAccessManager->get(pRequest);
 	trackConnection(response, pTimeoutInMilliSeconds);
 	return response;
 }
 
 
-QSslSocket* NetworkManager::createSslSocket(const QUrl& pUrl)
+bool NetworkManager::checkUpdateServerCertificate(const QNetworkReply& pReply)
 {
-	QSslSocket* socket = new QSslSocket();
-	socket->setSslConfiguration(AppSettings::getInstance().getSecureStorage().getTlsSettings().getConfiguration());
-	configureProxy(socket, pUrl);
-	return socket;
-}
+	const QVector<QSslCertificate>& trustedCertificates = SecureStorage::getInstance().getUpdateCertificates();
 
-
-void NetworkManager::configureProxy(QTcpSocket* pSocket, const QUrl& pUrl)
-{
-#ifndef QT_NO_NETWORKPROXY
-	// set the proxy explicitly, otherwise the proxy exception don't count
-	QNetworkProxyQuery query(pUrl, QNetworkProxyQuery::QueryType::TcpSocket);
-	const QNetworkProxy& proxy = QNetworkProxyFactory::proxyForQuery(query).constLast();
-	pSocket->setProxy(proxy);
-
-	connect(pSocket, &QTcpSocket::proxyAuthenticationRequired, this, &NetworkManager::fireProxyAuthenticationRequired);
-#else
-	Q_UNUSED(pSocket)
-	Q_UNUSED(pUrl)
-#endif
+	const auto& cert = pReply.sslConfiguration().peerCertificate();
+	return !cert.isNull() && trustedCertificates.contains(cert);
 }
 
 
@@ -215,6 +132,9 @@ NetworkManager::NetworkError NetworkManager::toNetworkError(const QNetworkReply*
 		case QNetworkReply::TimeoutError:
 			return NetworkError::TimeOut;
 
+		case QNetworkReply::ServiceUnavailableError:
+			return NetworkError::ServiceUnavailable;
+
 		case QNetworkReply::ProxyAuthenticationRequiredError:
 		case QNetworkReply::ProxyConnectionClosedError:
 		case QNetworkReply::ProxyConnectionRefusedError:
@@ -238,6 +158,9 @@ GlobalStatus NetworkManager::toTrustedChannelStatus(const QNetworkReply* const p
 {
 	switch (toNetworkError(pNetworkReply))
 	{
+		case NetworkManager::NetworkError::ServiceUnavailable:
+			return GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable;
+
 		case NetworkManager::NetworkError::TimeOut:
 			return GlobalStatus::Code::Workflow_TrustedChannel_TimeOut;
 
@@ -259,6 +182,9 @@ GlobalStatus NetworkManager::toStatus(const QNetworkReply* const pNetworkReply)
 {
 	switch (toNetworkError(pNetworkReply))
 	{
+		case NetworkManager::NetworkError::ServiceUnavailable:
+			return GlobalStatus::Code::Network_ServiceUnavailable;
+
 		case NetworkManager::NetworkError::TimeOut:
 			return GlobalStatus::Code::Network_TimeOut;
 

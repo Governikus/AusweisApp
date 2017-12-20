@@ -1,9 +1,7 @@
 /*!
- * test_InitializeFramework.cpp
- *
  * \brief Unit tests for \InitializeFramework
  *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/retrieve/StartPaosResponse.h"
@@ -33,7 +31,7 @@ class test_StartPAOSResponse
 			StartPaosResponse message(content);
 
 			QCOMPARE(message.getResult().getMajor(), Result::Major::Ok);
-			QCOMPARE(message.getResult().getMinor(), GlobalStatus::Code::Unknown_Error);
+			QCOMPARE(message.getResult().getMinor(), GlobalStatus::Code::No_Error);
 			QVERIFY(message.getResult().getMessage().isNull());
 		}
 

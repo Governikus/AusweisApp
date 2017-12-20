@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref ReaderManagerPlugIn for NFC on Android.
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -9,16 +9,8 @@
 #include "Reader.h"
 #include "ReaderManagerPlugIn.h"
 
-
-#ifdef Q_OS_ANDROID
-#include <jni.h>
-
-
-extern "C"
-{
-JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_NfcAdapterStateChangeReceiver_nfcAdapterStateChanged(JNIEnv* env, jobject obj, jint newState);
-}
-#endif
+#include <QNearFieldManager>
+#include <QScopedPointer>
 
 
 namespace governikus
@@ -31,25 +23,18 @@ class NfcReaderManagerPlugIn
 	Q_PLUGIN_METADATA(IID "governikus.ReaderManagerPlugIn" FILE "metadata.json")
 	Q_INTERFACES(governikus::ReaderManagerPlugIn)
 
-#ifdef Q_OS_ANDROID
-	friend void ::Java_com_governikus_ausweisapp2_NfcAdapterStateChangeReceiver_nfcAdapterStateChanged(JNIEnv * env, jobject obj, jint newState);
-#endif
-
 	private:
-		static NfcReaderManagerPlugIn* mInstance;
-		bool mInitialized;
-		QList<Reader*> mReaderList;
-
-		void addNfcReader();
+		bool mEnabled;
+		QScopedPointer<NfcReader> mNfcReader;
 
 	private Q_SLOTS:
-		void setNfcStatus(bool pEnabled);
+		void onNfcAdapterStateChanged(bool pEnabled);
 
 	public:
 		NfcReaderManagerPlugIn();
-		virtual ~NfcReaderManagerPlugIn();
+		virtual ~NfcReaderManagerPlugIn() override;
 
-		virtual QList<Reader*> getReader() const override;
+		virtual QList<Reader*> getReaders() const override;
 
 		virtual void init() override;
 		virtual void shutdown() override;

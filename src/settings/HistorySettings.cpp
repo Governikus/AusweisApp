@@ -1,96 +1,33 @@
 /*!
- * HistorySetting.cpp
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HistorySettings.h"
 
+#include <QDebug>
 #include <QSettings>
 
-#ifdef Q_OS_ANDROID
-#include <QDebug>
-#include <QtAndroid>
-#endif
-
-
-// names for settings groups/keys
-const QLatin1String SETTINGS_GROUP_NAME_CHRONIC("history");
-const QLatin1String SETTINGS_NAME_HISTORY_ITEMS("items");
-const QLatin1String SETTINGS_NAME_HISTORY_ENABLED("enable");
-const QLatin1String SETTINGS_NAME_CHRONIC_SUBJECTNAME("subjectName");
-const QLatin1String SETTINGS_NAME_CHRONIC_SUBJECTURL("subjectUrl");
-const QLatin1String SETTINGS_NAME_CHRONIC_USAGE("usage");
-const QLatin1String SETTINGS_NAME_CHRONIC_DATETIME("dateTime");
-const QLatin1String SETTINGS_NAME_CHRONIC_TOU("termOfUsage");
-const QLatin1String SETTINGS_NAME_CHRONIC_REQUESTED_DATA("requestedData");
-
+namespace
+{
+SETTINGS_NAME(SETTINGS_GROUP_NAME_CHRONIC, "history")
+SETTINGS_NAME(SETTINGS_NAME_HISTORY_ITEMS, "items")
+SETTINGS_NAME(SETTINGS_NAME_HISTORY_ENABLED, "enable")
+SETTINGS_NAME(SETTINGS_NAME_CHRONIC_SUBJECTNAME, "subjectName")
+SETTINGS_NAME(SETTINGS_NAME_CHRONIC_SUBJECTURL, "subjectUrl")
+SETTINGS_NAME(SETTINGS_NAME_CHRONIC_USAGE, "usage")
+SETTINGS_NAME(SETTINGS_NAME_CHRONIC_DATETIME, "dateTime")
+SETTINGS_NAME(SETTINGS_NAME_CHRONIC_TOU, "termOfUsage")
+SETTINGS_NAME(SETTINGS_NAME_CHRONIC_REQUESTED_DATA, "requestedData")
+}
 
 using namespace governikus;
 
 
-HistoryEntry::HistoryEntry(const QString& pSubjectName, const QString& pSubjectUrl, const QString& pUsage, const QDateTime& pDateTime, const QString& pTermOfUsage, const QString& pRequestedData)
-	: mSubjectName(pSubjectName)
-	, mSubjectUrl(pSubjectUrl)
-	, mPurpose(pUsage)
-	, mDateTime(roundToSeconds(pDateTime))
-	, mTermOfUsage(pTermOfUsage)
-	, mRequestedData(pRequestedData)
-{
-}
-
-
-QDateTime HistoryEntry::roundToSeconds(const QDateTime& pDateTime)
-{
-	QDateTime roundedDateTime;
-	roundedDateTime.setMSecsSinceEpoch(pDateTime.toMSecsSinceEpoch() - pDateTime.toMSecsSinceEpoch() % 1000);
-	return roundedDateTime;
-}
-
-
-const QString& HistoryEntry::getRequestedData() const
-{
-	return mRequestedData;
-}
-
-
-const QString& HistoryEntry::getTermOfUsage() const
-{
-	return mTermOfUsage;
-}
-
-
-const QDateTime& HistoryEntry::getDateTime() const
-{
-	return mDateTime;
-}
-
-
-const QString& HistoryEntry::getPurpose() const
-{
-	return mPurpose;
-}
-
-
-const QString& HistoryEntry::getSubjectName() const
-{
-	return mSubjectName;
-}
-
-
-const QString& HistoryEntry::getSubjectUrl() const
-{
-	return mSubjectUrl;
-}
-
-
 HistorySettings::HistorySettings()
 	: AbstractSettings()
-	, mEnabled(true)
-	, mHistoryEntries()
+	, mStore(getStore())
 {
-	connect(this, &HistorySettings::fireEnabledChanged, this, &AbstractSettings::fireSettingsChanged);
-	connect(this, &HistorySettings::fireHistoryEntriesChanged, this, &AbstractSettings::fireSettingsChanged);
+	mStore->beginGroup(SETTINGS_GROUP_NAME_CHRONIC());
 }
 
 
@@ -99,128 +36,100 @@ HistorySettings::~HistorySettings()
 }
 
 
-void HistorySettings::load()
-{
-	auto settings = AbstractSettings::getStore();
-	settings->beginGroup(SETTINGS_GROUP_NAME_CHRONIC);
-
-	setEnabled(settings->value(SETTINGS_NAME_HISTORY_ENABLED, true).toBool());
-
-	const int itemCount = settings->beginReadArray(SETTINGS_NAME_HISTORY_ITEMS);
-	QVector<HistoryEntry> items;
-	items.reserve(itemCount);
-	for (int i = 0; i < itemCount; ++i)
-	{
-		settings->setArrayIndex(i);
-		QString subjectName = settings->value(SETTINGS_NAME_CHRONIC_SUBJECTNAME, "").toString();
-		QString subjectUrl = settings->value(SETTINGS_NAME_CHRONIC_SUBJECTURL, "").toString();
-		QString usage = settings->value(SETTINGS_NAME_CHRONIC_USAGE, "").toString();
-		QDateTime dateTime = QDateTime::fromString(settings->value(SETTINGS_NAME_CHRONIC_DATETIME, "").toString(), Qt::ISODate);
-		QString termsOfUsage = settings->value(SETTINGS_NAME_CHRONIC_TOU, "").toString();
-		QString requestData = settings->value(SETTINGS_NAME_CHRONIC_REQUESTED_DATA, "").toString();
-		items += HistoryEntry(subjectName, subjectUrl, usage, dateTime, termsOfUsage, requestData);
-	}
-	settings->endArray();
-	setHistoryEntries(items);
-
-	settings->endGroup();
-}
-
-
-bool HistorySettings::isUnsaved() const
-{
-	HistorySettings oldSettings;
-	oldSettings.load();
-	return oldSettings != *this;
-}
-
-
 void HistorySettings::save()
 {
-	auto settings = AbstractSettings::getStore();
-	settings->beginGroup(SETTINGS_GROUP_NAME_CHRONIC);
-	settings->remove(QString()); // remove the whole group first
+	mStore->sync();
+}
 
-	settings->setValue(SETTINGS_NAME_HISTORY_ENABLED, mEnabled);
 
-	settings->beginWriteArray(SETTINGS_NAME_HISTORY_ITEMS);
-	const int itemCount = mHistoryEntries.count();
+bool HistorySettings::isEnabled() const
+{
+	return mStore->value(SETTINGS_NAME_HISTORY_ENABLED(), true).toBool();
+}
+
+
+void HistorySettings::setEnabled(bool pEnabled)
+{
+	if (isEnabled() != pEnabled)
+	{
+		mStore->setValue(SETTINGS_NAME_HISTORY_ENABLED(), pEnabled);
+		Q_EMIT fireEnabledChanged(pEnabled);
+	}
+}
+
+
+QVector<HistoryInfo> HistorySettings::getHistoryInfos() const
+{
+	const int itemCount = mStore->beginReadArray(SETTINGS_NAME_HISTORY_ITEMS());
+
+	QVector<HistoryInfo> historyInfos;
+	historyInfos.reserve(itemCount);
 	for (int i = 0; i < itemCount; ++i)
 	{
-		const HistoryEntry& item = mHistoryEntries.at(i);
-		settings->setArrayIndex(i);
-		settings->setValue(SETTINGS_NAME_CHRONIC_SUBJECTNAME, item.getSubjectName());
-		settings->setValue(SETTINGS_NAME_CHRONIC_SUBJECTURL, item.getSubjectUrl());
-		settings->setValue(SETTINGS_NAME_CHRONIC_USAGE, item.getPurpose());
-		settings->setValue(SETTINGS_NAME_CHRONIC_DATETIME, item.getDateTime().toString(Qt::ISODate));
-		settings->setValue(SETTINGS_NAME_CHRONIC_TOU, item.getTermOfUsage());
-		settings->setValue(SETTINGS_NAME_CHRONIC_REQUESTED_DATA, item.getRequestedData());
+		mStore->setArrayIndex(i);
+		const QString subjectName = mStore->value(SETTINGS_NAME_CHRONIC_SUBJECTNAME(), QString()).toString();
+		const QString subjectUrl = mStore->value(SETTINGS_NAME_CHRONIC_SUBJECTURL(), QString()).toString();
+		const QString usage = mStore->value(SETTINGS_NAME_CHRONIC_USAGE(), QString()).toString();
+		const QDateTime dateTime = QDateTime::fromString(mStore->value(SETTINGS_NAME_CHRONIC_DATETIME(), QString()).toString(), Qt::ISODate);
+		const QString termsOfUsage = mStore->value(SETTINGS_NAME_CHRONIC_TOU(), QString()).toString();
+		const QString requestData = mStore->value(SETTINGS_NAME_CHRONIC_REQUESTED_DATA(), QString()).toString();
+		historyInfos += HistoryInfo(subjectName, subjectUrl, usage, dateTime, termsOfUsage, requestData);
 	}
-	settings->endArray();
 
-	settings->endGroup();
-	settings->sync();
+	mStore->endArray();
+	return historyInfos;
+}
+
+
+void HistorySettings::setHistoryInfos(const QVector<HistoryInfo>& pHistoryInfos)
+{
+	mStore->beginGroup(SETTINGS_NAME_HISTORY_ITEMS());
+	mStore->remove(QString());
+	mStore->endGroup();
+
+	mStore->beginWriteArray(SETTINGS_NAME_HISTORY_ITEMS());
+	for (int i = 0; i < pHistoryInfos.size(); ++i)
+	{
+		const HistoryInfo& item = pHistoryInfos.at(i);
+
+		mStore->setArrayIndex(i);
+		mStore->setValue(SETTINGS_NAME_CHRONIC_SUBJECTNAME(), item.getSubjectName());
+		mStore->setValue(SETTINGS_NAME_CHRONIC_SUBJECTURL(), item.getSubjectUrl());
+		mStore->setValue(SETTINGS_NAME_CHRONIC_USAGE(), item.getPurpose());
+		mStore->setValue(SETTINGS_NAME_CHRONIC_DATETIME(), item.getDateTime().toString(Qt::ISODate));
+		mStore->setValue(SETTINGS_NAME_CHRONIC_TOU(), item.getTermOfUsage());
+		mStore->setValue(SETTINGS_NAME_CHRONIC_REQUESTED_DATA(), item.getRequestedData());
+	}
+	mStore->endArray();
+
+	Q_EMIT fireHistoryInfosChanged();
+}
+
+
+void HistorySettings::addHistoryInfo(const HistoryInfo& pHistoryInfo)
+{
+	if (appIsBackgroundService())
+	{
+		qDebug() << "Running as a background service. Ignoring save request for history.";
+		return;
+	}
+
+	auto historyInfos = getHistoryInfos();
+	historyInfos.prepend(pHistoryInfo);
+	setHistoryInfos(historyInfos);
 }
 
 
 void HistorySettings::deleteSettings(const QDateTime& pLatestToKeep)
 {
-	QVector<HistoryEntry> remainingItems;
-	for (const auto& item : qAsConst(mHistoryEntries))
+	const auto historyInfos = getHistoryInfos();
+	QVector<HistoryInfo> remainingItems;
+	for (const auto& item : historyInfos)
 	{
 		if (!pLatestToKeep.isNull() && item.getDateTime() <= pLatestToKeep)
 		{
 			remainingItems += item;
 		}
 	}
-	setHistoryEntries(remainingItems);
-}
-
-
-bool HistorySettings::isEnabled() const
-{
-	return mEnabled;
-}
-
-
-void HistorySettings::setEnabled(bool pEnabled)
-{
-	if (mEnabled != pEnabled)
-	{
-		mEnabled = pEnabled;
-		Q_EMIT fireEnabledChanged();
-	}
-}
-
-
-const QVector<HistoryEntry>& HistorySettings::getHistoryEntries() const
-{
-	return mHistoryEntries;
-}
-
-
-void HistorySettings::setHistoryEntries(const QVector<HistoryEntry>& pHistoryEntries)
-{
-	if (mHistoryEntries != pHistoryEntries)
-	{
-		mHistoryEntries = pHistoryEntries;
-		Q_EMIT fireHistoryEntriesChanged();
-	}
-}
-
-
-void HistorySettings::addHistoryEntry(const HistoryEntry& pHistoryEntry)
-{
-	// TODO Replace the following hack with a clean solution.
-	// Also remove "AndroidExtras" from module linkage.
-#ifdef Q_OS_ANDROID
-	if (QtAndroid::androidService().isValid())
-	{
-		qDebug() << "Running as android service. Ignoring save request for history.";
-		return;
-	}
-#endif
-
-	mHistoryEntries.prepend(pHistoryEntry);
-	Q_EMIT fireHistoryEntriesChanged();
+	setHistoryInfos(remainingItems);
 }

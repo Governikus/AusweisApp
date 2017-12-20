@@ -1,7 +1,5 @@
 /*!
- * CertificateDescription.cpp
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CertificateDescription.h"
@@ -84,15 +82,16 @@ ASN1_SEQUENCE_END(CertificateDescription)
 IMPLEMENT_ASN1_FUNCTIONS(CertificateDescription)
 IMPLEMENT_ASN1_OBJECT(CertificateDescription)
 
-}  // namespace governikus
+} /* namespace governikus */
 
-QSharedPointer<CertificateDescription> CertificateDescription::fromHex(const QByteArray& pHexValue)
+
+QSharedPointer<const CertificateDescription> CertificateDescription::fromHex(const QByteArray& pHexValue)
 {
 	return decode(QByteArray::fromHex(pHexValue));
 }
 
 
-QSharedPointer<CertificateDescription> CertificateDescription::decode(const QByteArray& pBytes)
+QSharedPointer<const CertificateDescription> CertificateDescription::decode(const QByteArray& pBytes)
 {
 	return decodeObject<CertificateDescription>(pBytes);
 }
@@ -175,11 +174,11 @@ QString CertificateDescription::getSubjectUrl() const
 
 CertificateDescription::TermsOfUsageType CertificateDescription::getTermsOfUsageType() const
 {
-	if (getDescriptionType() == KnownOIDs::TermsOfUsageType::id_plainFormat)
+	if (getDescriptionType() == KnownOIDs::TermsOfUsageType::ID_PLAIN_FORMAT)
 	{
 		return TermsOfUsageType::PLAIN_TEXT;
 	}
-	if (getDescriptionType() == KnownOIDs::TermsOfUsageType::id_htmlFormat)
+	if (getDescriptionType() == KnownOIDs::TermsOfUsageType::ID_HTML_FORMAT)
 	{
 		return TermsOfUsageType::HTML;
 	}
@@ -228,10 +227,11 @@ QSet<QString> CertificateDescription::getCommCertificates() const
 	QSet<QString> commCerts;
 	if (mCommCertificates != nullptr)
 	{
-		commCerts.reserve(mCommCertificates->stack.num);
-		for (int i = 0; i < mCommCertificates->stack.num; i++)
+		const auto size = sk_ASN1_OCTET_STRING_num(mCommCertificates);
+		commCerts.reserve(size);
+		for (int i = 0; i < size; i++)
 		{
-			ASN1_OCTET_STRING* octetString = SKM_sk_value(ASN1_OCTET_STRING, mCommCertificates, i);
+			ASN1_OCTET_STRING* octetString = sk_ASN1_OCTET_STRING_value(mCommCertificates, i);
 			QByteArray byteBuf(reinterpret_cast<char*>(octetString->data), octetString->length);
 			commCerts += QString::fromLatin1(byteBuf.toHex().toUpper());
 		}
