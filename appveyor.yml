@@ -1,0 +1,55 @@
+version: 1.12.4.{build}
+image: Visual Studio 2015
+
+
+environment:
+  matrix:
+    - PlatformToolset: v140_xp
+
+platform:
+    - x64
+    - Win32
+
+configuration:
+    - Release
+    #- Debug
+
+install:
+    - if "%platform%"=="x64" set archi=amd64
+    - if "%platform%"=="Win32" set archi=x86
+    - if "%PlatformToolset%"=="v140_xp" call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %archi%
+
+build:
+    verbosity: minimal
+
+before_build:
+- ps: |
+    Write-Output "Configuration: $env:CONFIGURATION"
+    Write-Output "Platform: $env:PLATFORM"
+    $generator = switch ($env:PLATFORMTOOLSET)
+    {
+        "v140_xp" {"Visual Studio 14 2015"}
+        "v120_xp" {"Visual Studio 12 2013"}
+    }
+    if ($env:PLATFORM -eq "x64")
+    {
+        $generator = "$generator Win64"
+    }
+
+build_script:
+    - cd "%APPVEYOR_BUILD_FOLDER%"
+    - if "%platform%"=="X64" set PATH=C:\Qt\5.9.1\msvc2015_64;%PATH%
+    - if "%platform%"=="Win32" set PATH=C:\Qt\5.9.1\msvc2015;%PATH%
+    - mkdir _build
+    - cd _build
+
+    - ps: |
+        cmake -G "$generator" -T "$env:PLATFORMTOOLSET" -DCMAKE_BUILD_TYPE="$env:CONFIGURATION" ..
+        if ($LastExitCode -ne 0) {
+            throw "Exec: $ErrorMessage"
+        }
+        & cmake --build . --config $env:CONFIGURATION -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+        if ($LastExitCode -ne 0) {
+            throw "Exec: $ErrorMessage"
+        }
+
