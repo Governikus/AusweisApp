@@ -1,0 +1,79 @@
+version: "{build}"
+
+environment:
+  matrix:
+    - PlatformToolset: v140_xp
+      platform: x64
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      QTPath: C:\Qt\5.9.2\msvc2015_64
+      ARCHI: amd64
+
+    - PlatformToolset: v140_xp
+      platform: Win32
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      QTPath: C:\Qt\5.9.2\msvc2015
+      ARCHI: x86
+
+    - PlatformToolset: v141_xp
+      platform: x64
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      QTPath: C:\Qt\5.9.2\msvc2017_64
+      ARCHI: amd64
+
+configuration:
+    - Release
+    #- Debug
+
+install:
+    - if "%PlatformToolset%"=="v140_xp" call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %archi%
+    - if "%PlatformToolset%"=="v141_xp" call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
+
+build:
+    verbosity: minimal
+
+before_build:
+- ps: |
+    Write-Output "Configuration: $env:CONFIGURATION"
+    Write-Output "Platform: $env:PLATFORM"
+    $generator = switch ($env:PLATFORMTOOLSET)
+    {
+        "v141_xp" {"Visual Studio 15 2017"}
+        "v140_xp" {"Visual Studio 14 2015"}
+    }
+    if ($env:PLATFORM -eq "x64")
+    {
+        $generator = "$generator Win64"
+    }
+
+build_script:
+    - cd "%APPVEYOR_BUILD_FOLDER%"
+    - set PATH=%QTPATH%;%QTPATH%/bin;%PATH%
+    - echo %PATH%
+    - mkdir _build
+    - cd _build
+
+    - ps: |
+        # Use -DFORCE_LEGACY_OPENSSL=ON to build with the available openssl 1.0.2 of the appveyor build image
+        # otherwise openssl 1.1.x is required with an additional download and build step
+        cmake -G "$generator" -T "$env:PLATFORMTOOLSET" -DCMAKE_BUILD_TYPE="$env:CONFIGURATION" -DFORCE_LEGACY_OPENSSL=ON ..
+        if ($LastExitCode -ne 0) {
+            throw "Exec: $ErrorMessage"
+        }
+        & cmake --build . --config $env:CONFIGURATION -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+        if ($LastExitCode -ne 0) {
+            throw "Exec: $ErrorMessage"
+        }
+
+test_script:
+    - cd "%APPVEYOR_BUILD_FOLDER%"/_build
+    - set PATH=%QTPATH%;%QTPATH%/bin;%PATH%
+    - echo %PATH%
+    - ctest -VV -C "%CONFIGURATION%"
+
+on_finish:
+    - cd "%APPVEYOR_BUILD_FOLDER%"
+
+    - ps: |
+        $version = Select-String -Path .\CMakeLists.txt -Pattern "AusweisApp2 VERSION ([0-9.]+)" | % { $_.Matches[0].Groups[1].Value }
+        Update-AppveyorBuild -Version "$version-$env:APPVEYOR_BUILD_NUMBER"
+
