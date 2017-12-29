@@ -38,9 +38,9 @@ IF(ANDROID)
 ENDIF()
 
 SET(QT_HOST_PREFIX ${_qt5Core_install_prefix})
-FOREACH(dest "" "share/qt" "share/qt5")
-	IF(EXISTS "${QT_HOST_PREFIX}/${dest}/translations")
-		SET(QT_TRANSLATIONS_DIR ${QT_HOST_PREFIX}/${dest}/translations)
+FOREACH(dest "${QT_HOST_PREFIX}" "${QT_HOST_PREFIX}/share/qt" "${QT_HOST_PREFIX}/share/qt5" "/usr/share/qt5")
+	IF(EXISTS "${dest}/translations")
+		SET(QT_TRANSLATIONS_DIR ${dest}/translations)
 	ENDIF()
 ENDFOREACH()
 
