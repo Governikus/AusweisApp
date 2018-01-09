@@ -59,7 +59,7 @@ build_script:
         if ($LastExitCode -ne 0) {
             throw "Exec: $ErrorMessage"
         }
-        & cmake --build . --config $env:CONFIGURATION -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+        & cmake --build . --target package --config $env:CONFIGURATION -- /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
         if ($LastExitCode -ne 0) {
             throw "Exec: $ErrorMessage"
         }
