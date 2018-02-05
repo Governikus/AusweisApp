@@ -4,24 +4,24 @@ environment:
   matrix:
     - PlatformToolset: mingw-w64
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      QTPath: C:\Qt\5.9.2\mingw53_32
+      QTPath: C:\Qt\5.9\mingw53_32
 
     - PlatformToolset: v140
       platform: x64
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      QTPath: C:\Qt\5.9.2\msvc2015_64
+      QTPath: C:\Qt\5.9\msvc2015_64
       ARCHI: amd64
 
     - PlatformToolset: v140
       platform: Win32
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      QTPath: C:\Qt\5.9.2\msvc2015
+      QTPath: C:\Qt\5.9\msvc2015
       ARCHI: x86
 
     - PlatformToolset: v141
       platform: x64
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      QTPath: C:\Qt\5.9.2\msvc2017_64
+      QTPath: C:\Qt\5.9\msvc2017_64
       ARCHI: amd64
 
 configuration:
