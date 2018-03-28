@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceList.h"
@@ -26,7 +26,7 @@ class test_RemoteDeviceListImpl
 			QSharedPointer<const Discovery> offerMsg1;
 			QHostAddress addr1;
 			{
-				offerMsg1 = QSharedPointer<const Discovery>(new Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {QStringLiteral("IFDInterface_WebSocket_v0")}));
+				offerMsg1 = QSharedPointer<const Discovery>(new Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {IfdVersion::Version::v0}));
 				addr1 = QHostAddress(QString("5.6.7.8"));
 				const RemoteDeviceDescriptor descr(offerMsg1, addr1);
 
@@ -38,7 +38,7 @@ class test_RemoteDeviceListImpl
 			QSharedPointer<const Discovery> offerMsg2;
 			QHostAddress addr2;
 			{
-				offerMsg2 = QSharedPointer<const Discovery>(new Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {QStringLiteral("IFDInterface_WebSocket_v0")}));
+				offerMsg2 = QSharedPointer<const Discovery>(new Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {IfdVersion::Version::v0}));
 				addr2 = QHostAddress(QString("5.6.7.8"));
 				const RemoteDeviceDescriptor descr(offerMsg1, addr2);
 
@@ -48,7 +48,7 @@ class test_RemoteDeviceListImpl
 			}
 
 			{
-				offerMsg2 = QSharedPointer<const Discovery>(new Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {QStringLiteral("IFDInterface_WebSocket_v0")}));
+				offerMsg2 = QSharedPointer<const Discovery>(new Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {IfdVersion::Version::v0}));
 				addr2 = QHostAddress(QString("5.6.7.9"));
 				const RemoteDeviceDescriptor descr(offerMsg1, addr2);
 

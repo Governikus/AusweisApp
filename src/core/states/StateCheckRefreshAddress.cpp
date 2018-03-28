@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCheckRefreshAddress.h"
@@ -33,6 +33,39 @@ StateCheckRefreshAddress::StateCheckRefreshAddress(const QSharedPointer<Workflow
 	, mSubjectUrl()
 	, mCertificateFetched(false)
 {
+}
+
+
+bool StateCheckRefreshAddress::isMatchingSameOriginPolicyInDevMode() const
+{
+	// Checking for same origin policy needs a special treatment in developer mode because
+	// a tcTokenURL with the http scheme is acceptable.
+	if (!AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+	{
+		return false;
+	}
+
+	if (mUrl.scheme() == QLatin1String("http") || mSubjectUrl.scheme() == QLatin1String("http"))
+	{
+		QUrl devModeUrl = mUrl;
+		QUrl devModeSubjectUrl = mSubjectUrl;
+
+		// Accept http and ignore redirects, i.e. only compare domains (ignore schemes and ports).
+		devModeUrl.setScheme(QStringLiteral("http"));
+		devModeSubjectUrl.setScheme(QStringLiteral("http"));
+		devModeUrl.setPort(80);
+		devModeSubjectUrl.setPort(80);
+		const bool matching = UrlUtil::isMatchingSameOriginPolicy(devModeUrl, devModeSubjectUrl);
+		if (matching)
+		{
+			qCCritical(developermode) << "SOP-Check: Ignoring scheme and port in developer mode.";
+			qCCritical(developermode).noquote() << "  Origin URL:" << mSubjectUrl.toString();
+			qCCritical(developermode).noquote() << "  Refresh URL:" << mUrl.toString();
+		}
+		return matching;
+	}
+
+	return false;
 }
 
 
@@ -81,7 +114,7 @@ void StateCheckRefreshAddress::run()
 	mSubjectUrl = determineSubjectUrl();
 	qDebug() << "SubjectUrl: " << mSubjectUrl.toString();
 
-	if (UrlUtil::isMatchingSameOriginPolicy(mUrl, mSubjectUrl))
+	if (UrlUtil::isMatchingSameOriginPolicy(mUrl, mSubjectUrl) || isMatchingSameOriginPolicyInDevMode())
 	{
 		qDebug() << "SOP-Check succeeded, abort process";
 		fetchServerCertificate();
@@ -280,7 +313,7 @@ void StateCheckRefreshAddress::onNetworkReply()
 		}
 	}
 
-	if (UrlUtil::isMatchingSameOriginPolicy(mUrl, mSubjectUrl))
+	if (UrlUtil::isMatchingSameOriginPolicy(mUrl, mSubjectUrl) || isMatchingSameOriginPolicyInDevMode())
 	{
 		qDebug() << "SOP-Check succeeded, abort process";
 		mUrl = redirectUrl;

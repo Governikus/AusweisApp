@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -16,6 +16,8 @@
 #include "messages/IfdEstablishContextResponse.h"
 #include "messages/IfdEstablishPaceChannel.h"
 #include "messages/IfdEstablishPaceChannelResponse.h"
+#include "messages/IfdModifyPin.h"
+#include "messages/IfdModifyPinResponse.h"
 #include "messages/IfdStatus.h"
 #include "messages/IfdTransmit.h"
 #include "messages/IfdTransmitResponse.h"
@@ -101,6 +103,12 @@ static QSharedPointer<const RemoteMessage> parseMessage(const QJsonObject& pJson
 		case RemoteCardMessageType::IFDEstablishPACEChannelResponse:
 			return QSharedPointer<RemoteMessage>(new IfdEstablishPaceChannelResponse(pJsonObject));
 
+		case RemoteCardMessageType::IFDModifyPIN:
+			return QSharedPointer<RemoteMessage>(new IfdModifyPin(pJsonObject));
+
+		case RemoteCardMessageType::IFDModifyPINResponse:
+			return QSharedPointer<RemoteMessage>(new IfdModifyPinResponse(pJsonObject));
+
 		case RemoteCardMessageType::UNDEFINED:
 			return fail(QStringLiteral("Unknown RemoteMessage received"));
 	}
@@ -177,7 +185,17 @@ QSharedPointer<const Discovery> RemoteMessageParser::parseDiscovery(const QJsonD
 		qCWarning(remote_device) << "The value of \"availableApiLevels\" should be of type string array";
 		return QSharedPointer<const Discovery>();
 	}
-	const QStringList& availableApiLevels = parseArrayOfString(supportedApisValue.toArray());
+	const QStringList& availableApiLevelStrings = parseArrayOfString(supportedApisValue.toArray());
+
+	QVector<IfdVersion::Version> availableApiLevels;
+	for (const QString& levelString : availableApiLevelStrings)
+	{
+		const IfdVersion& level = IfdVersion::fromString(levelString);
+		if (level.isValid())
+		{
+			availableApiLevels += level.getVersion();
+		}
+	}
 
 	return QSharedPointer<Discovery>(new Discovery(idfName, ifdId, port, availableApiLevels));
 }

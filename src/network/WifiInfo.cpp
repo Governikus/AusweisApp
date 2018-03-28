@@ -1,95 +1,40 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WifiInfo.h"
 
-#include <QLoggingCategory>
-#include <QTimerEvent>
-#if defined(Q_OS_ANDROID)
-	#include <QAndroidJniEnvironment>
-	#include <QAndroidJniObject>
-	#include <QtAndroid>
-#endif
-
-Q_DECLARE_LOGGING_CATEGORY(qml)
+#include <QNetworkInterface>
 
 
 using namespace governikus;
 
 
-WifiInfo::WifiInfo()
-	: QObject()
-	, mWifiEnabled(getCurrentWifiEnabled())
-	, mWifiEnabledTimerId(0)
+bool WifiInfo::isPrivateIp(const QHostAddress& pAddress)
 {
-#if defined(Q_OS_ANDROID)
-	const int timeoutMs = 1000;
-	mWifiEnabledTimerId = startTimer(timeoutMs);
-#endif
+	return !pAddress.isNull() &&
+		   (
+		pAddress.isInSubnet(QHostAddress::parseSubnet(QStringLiteral("10.0.0.0/8"))) ||
+		pAddress.isInSubnet(QHostAddress::parseSubnet(QStringLiteral("172.16.0.0/12"))) ||
+		pAddress.isInSubnet(QHostAddress::parseSubnet(QStringLiteral("192.168.0.0/16")))
+		   );
 }
 
 
-WifiInfo::~WifiInfo()
+bool WifiInfo::hasPrivateIpAddress() const
 {
-
-}
-
-
-bool WifiInfo::getCurrentWifiEnabled()
-{
-#if !defined(Q_OS_ANDROID)
-	return true;
-
-#else
-	QAndroidJniEnvironment env;
-	const QAndroidJniObject context(QtAndroid::androidContext());
-	if (!context.isValid())
+	const auto& interfaces = QNetworkInterface::allInterfaces();
+	for (const QNetworkInterface& interface : interfaces)
 	{
-		qCCritical(qml) << "Cannot determine android context.";
-		return false;
-	}
-
-	const jboolean jEnabled = QAndroidJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/WifiInfo",
-			"wifiEnabled",
-			"(Landroid/content/Context;)Z",
-			context.object<jobject>());
-
-	if (env->ExceptionCheck())
-	{
-		qCCritical(qml) << "Cannot call WifiInfo.wifiEnabled()";
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-		return false;
-	}
-
-	return jEnabled == JNI_TRUE;
-
-#endif
-}
-
-
-void WifiInfo::timerEvent(QTimerEvent* pEvent)
-{
-	if (pEvent->timerId() == mWifiEnabledTimerId)
-	{
-		const bool currentEnabled = getCurrentWifiEnabled();
-		if (mWifiEnabled != currentEnabled)
+		const auto& entries = interface.addressEntries();
+		for (const QNetworkAddressEntry& addressEntry : entries)
 		{
-			mWifiEnabled = currentEnabled;
-			Q_EMIT fireWifiEnabledChanged(mWifiEnabled);
+			if (isPrivateIp(addressEntry.ip()))
+			{
+				return true;
+			}
 		}
 	}
 
-	QObject::timerEvent(pEvent);
-}
-
-
-bool WifiInfo::isWifiEnabled()
-{
-#if !defined(Q_OS_ANDROID)
-	qCWarning(qml) << "NOT IMPLEMENTED";
-#endif
-
-	return mWifiEnabled;
+	return false;
 }

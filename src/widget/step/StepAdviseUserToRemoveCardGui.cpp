@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StepAdviseUserToRemoveCardGui.h"
@@ -7,9 +7,9 @@
 #include "PinSettingsWidget.h"
 #include "ReaderManager.h"
 
+#include <QAbstractButton>
 #include <QCoreApplication>
 #include <QIcon>
-
 
 using namespace governikus;
 
@@ -85,6 +85,8 @@ void StepAdviseUserToRemoveCardGui::activate()
 		mMessageBox->setWindowFlags(mMessageBox->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 		mMessageBox->setText(tr("You may now remove your ID card from the card reader."));
 		mMessageBox->setIconPixmap(QIcon(QStringLiteral(":/images/npa.svg")).pixmap(32, 32));
+		mMessageBox->setStandardButtons(QMessageBox::Ok);
+		mMessageBox->button(QMessageBox::Ok)->setFocus();
 	}
 
 	mMessageBox->exec();

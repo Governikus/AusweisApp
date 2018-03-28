@@ -11,7 +11,7 @@ fingerprints=${FINGERPRINTS:-68:21:59:5C:C0:B0:1F:78:FF:23:DE:D4:D8:05:0F:74:38:
 
 /usr/bin/java                                          \
     -jar /swarm-client.jar                             \
-    -name $name                                        \
+    -name $name-$HOSTNAME                              \
     -mode $mode                                        \
     -executors $executor                               \
     -labels "$labels"                                  \
@@ -19,5 +19,6 @@ fingerprints=${FINGERPRINTS:-68:21:59:5C:C0:B0:1F:78:FF:23:DE:D4:D8:05:0F:74:38:
     -username $user                                    \
     -passwordEnvVariable PASSWORD                      \
     -sslFingerprints $fingerprints                     \
-    -fsroot $dest
+    -fsroot $dest                                      \
+    -disableClientsUniqueId
 

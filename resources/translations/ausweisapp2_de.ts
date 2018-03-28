@@ -5,8 +5,8 @@
     <name>AboutDialog</name>
     <message>
         <location filename="../../src/widget/AboutDialog.ui"/>
-        <source>AusweisApp2 is a product of Governikus GmbH &amp; Co. KG - on behalf of the Federal Ministry of the Interior.</source>
-        <translation>Die AusweisApp2 ist ein Produkt der Governikus GmbH &amp; Co. KG - im Auftrag des Bundesministeriums des Innern.</translation>
+        <source>AusweisApp2 is a product of Governikus GmbH &amp; Co. KG - on behalf of the Federal Ministry of the Interior, Building and Community.</source>
+        <translation>Die AusweisApp2 ist ein Produkt der Governikus GmbH &amp; Co. KG - im Auftrag des Bundesministeriums des Innern, für Bau und Heimat.</translation>
     </message>
     <message>
         <location filename="../../src/widget/AboutDialog.ui"/>
@@ -124,8 +124,8 @@
     </message>
     <message>
         <location filename="../../src/widget/AppQtMainWidget.ui"/>
-        <source>&amp;Manual</source>
-        <translation>&amp;Handbuch</translation>
+        <source>&amp;Online help</source>
+        <translation>&amp;Online-Hilfe</translation>
     </message>
     <message>
         <location filename="../../src/widget/AppQtMainWidget.ui"/>
@@ -209,59 +209,72 @@
     </message>
 </context>
 <context>
+    <name>AvailableDevicesListDelegate</name>
+    <message>
+        <location filename="../qml/Governikus/RemoteServiceView/AvailableDevicesListDelegate.qml" line="29"/>
+        <source>Unsupported</source>
+        <translation>Nicht unterstützt</translation>
+    </message>
+</context>
+<context>
     <name>BluetoothWorkflow</name>
     <message>
-        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="57"/>
+        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="55"/>
         <source>Enable Bluetooth</source>
         <translation>Bluetooth aktivieren</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="57"/>
+        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="55"/>
         <source>Continue</source>
         <translation>Fortsetzen</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="66"/>
+        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="64"/>
         <source>Bluetooth is not supported by your device.</source>
         <translation>Ihr Gerät unterstützt kein Bluetooth.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="66"/>
+        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="64"/>
         <source>Please try NFC.</source>
         <translation>Bitte versuchen Sie NFC.</translation>
     </message>
     <message>
         <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="67"/>
+        <source>An error occured while connecting to your bluetooth device. Try to pair your device in the system settings and restart the app.</source>
+        <translation>Beim Verbindungsaufbau zum Bluetooth-Kartenlesegerät ist ein Fehler aufgetreten. Bitte koppeln Sie das Gerät über die Einstellungen des Systems und starten Sie die App erneut.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="65"/>
         <source>Bluetooth is switched off.</source>
         <translation>Bluetooth ist deaktiviert.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="67"/>
+        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="65"/>
         <source>Please enable Bluetooth.</source>
         <translation>Bitte aktivieren Sie Bluetooth.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="68"/>
+        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="66"/>
         <source>No paired and activated Bluetooth device was detected. The AusweisApp2 needs access to your location in order to discover available devices. You can grant this permission after clicking the continue button.</source>
-        <translation>Es konnte kein gekoppeltes, eingeschaltetes Bluetooth-Kartenlesegerät erkannt werden. Zur Erkennung benötigt die AusweisApp2 Zugriff auf Ihren Standort. Nach Klicken auf den Weiter-Knopf können Sie die benötigte Freigabe erteilen.</translation>
+        <translation>Es konnte kein gekoppeltes, eingeschaltetes Bluetooth-Kartenlesegerät erkannt werden. Zur Erkennung benötigt die AusweisApp2 Zugriff auf Ihren Standort. Nach Klicken auf den Fortsetzen-Knopf können Sie die benötigte Freigabe erteilen.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="71"/>
+        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="70"/>
         <source>Establish connection</source>
         <translation>Verbindung wird hergestellt</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="72"/>
+        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="71"/>
         <source>Determine card</source>
         <translation>Ermittle Ausweis</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="78"/>
+        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="77"/>
         <source>Search card reader...</source>
         <translation>Suche Kartenlesegerät...</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="80"/>
+        <location filename="../qml/Governikus/Workflow/BluetoothWorkflow.qml" line="79"/>
         <source>Please insert your ID card.</source>
         <translation>Bitte legen Sie Ihren Ausweis ein.</translation>
     </message>
@@ -323,7 +336,7 @@
 <context>
     <name>ChangePinController</name>
     <message>
-        <location filename="../qml/Governikus/PinView/ChangePinController.qml" line="87"/>
+        <location filename="../qml/Governikus/PinView/ChangePinController.qml" line="81"/>
         <source>You may now remove your ID card from the device.</source>
         <translation>Sie können nun Ihr Ausweisdokument vom Gerät entfernen.</translation>
     </message>
@@ -387,8 +400,8 @@
 <context>
     <name>DataGroup</name>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/+android/DataGroup.qml" line="43"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/DataGroup.qml" line="43"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/DataGroup.qml" line="44"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/DataGroup.qml" line="44"/>
         <source>No data requested</source>
         <translation>Keine Daten erforderlich</translation>
     </message>
@@ -461,37 +474,42 @@
 <context>
     <name>EnterPinView</name>
     <message>
-        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="52"/>
+        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="55"/>
         <source>The entered PIN does not match the new PIN. Please correct your input.</source>
         <translation>Die eingegebene PIN stimmt nicht mit Ihrer neuen PIN überein. Bitte korrigieren Sie Ihre PIN-Eingabe.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="54"/>
+        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="57"/>
         <source>You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.</source>
         <translation>Sie haben Ihre PIN zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher Ihre 6-stellige Zugangsnummer eingeben. Sie finden Ihre Zugangsnummer auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="55"/>
+        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="58"/>
         <source>You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.</source>
         <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Ihre PIN ist jetzt gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="56"/>
+        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="59"/>
         <source>Please enter a new 6-digit PIN of your choice.</source>
         <translation>Geben Sie nun bitte eine neue 6-stellige PIN Ihrer Wahl ein.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="57"/>
+        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="60"/>
         <source>Please enter your new 6-digit PIN again.</source>
         <translation>Wiederholen Sie bitte Ihre neue 6-stellige PIN.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="59"/>
+        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="62"/>
+        <source>Enter the pairing code shown on your other device to use it as a card reader.</source>
+        <translation>Geben Sie den Kopplungscode, der auf Ihrem anderen Gerät angezeigt wird, ein, um dieses als Kartenlesegerät verwenden zu können.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="63"/>
         <source>Please enter your current PIN or your initial transport PIN first.</source>
         <translation>Geben Sie bitte zunächst Ihre aktuelle PIN bzw. die Transport-PIN ein.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="58"/>
+        <location filename="../qml/Governikus/EnterPinView/EnterPinView.qml" line="61"/>
         <source>Please enter your personal PIN.</source>
         <translation>Geben Sie bitte Ihre persönliche PIN ein.</translation>
     </message>
@@ -499,17 +517,17 @@
 <context>
     <name>Feedback</name>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="65"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="66"/>
         <source>Your opinion matters</source>
         <translation>Ihre Meinung zählt</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="74"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="76"/>
         <source>We are happy about every feedback on our software.</source>
         <translation>Wir freuen uns über Ihre Rückmeldung zu unserem Programm.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="97"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="99"/>
         <source>Rate AusweisApp2</source>
         <translation>Bewerten Sie die AusweisApp2</translation>
     </message>
@@ -519,57 +537,57 @@
         <translation>Hilfe &amp; Feedback</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="81"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="83"/>
         <source>FAQ</source>
         <translation>FAQ</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="82"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="84"/>
         <source>Do you have questions how to use AusweisApp2?</source>
         <translation>Haben Sie Fragen zur Nutzung der AusweisApp2?</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="83"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="85"/>
         <source>https://www.ausweisapp.bund.de/en/questions-and-answers/frequently-asked-questions/</source>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/haeufig-gestellte-fragen/</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="89"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="91"/>
         <source>Support</source>
         <translation>Support</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="90"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="92"/>
         <source>You need further help?</source>
         <translation>Benötigen Sie weitere Hilfe?</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="91"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="93"/>
         <source>https://www.ausweisapp.bund.de/en/questions-and-answers/support/</source>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/support/</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="98"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="100"/>
         <source>Please rate us in the Google Play Store.</source>
         <translation>Bewerten Sie die AusweisApp2.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="105"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="107"/>
         <source>Report error</source>
         <translation>Melden Sie einen Fehler</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="106"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="108"/>
         <source>You found a bug? Please tell us, so we can fix it.</source>
         <translation>Sie haben einen Fehler gefunden? Teilen Sie ihn uns mit, damit wir ihn beheben können.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="108"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="110"/>
         <source>Android log file</source>
         <translation>Android Protokolle</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="109"/>
+        <location filename="../qml/Governikus/FeedbackView/Feedback.qml" line="111"/>
         <source>&lt;Please describe the error&gt;</source>
         <translation>&lt;Bitte beschreiben Sie den Fehler&gt;</translation>
     </message>
@@ -649,12 +667,85 @@
     <message>
         <location filename="../../src/widget/GeneralSettingsWidget.ui"/>
         <source>Close AusweisApp2 window automatically after successful identification</source>
-        <translation>AusweisApp2 automatisch nach erfolgreicher Authentifizierung schließen</translation>
+        <translation>AusweisApp2 automatisch nach erfolgreicher Authentisierung schließen</translation>
     </message>
     <message>
         <location filename="../../src/widget/GeneralSettingsWidget.ui"/>
         <source>use on screen password</source>
         <translation>Bildschirmtastatur verwenden</translation>
+    </message>
+</context>
+<context>
+    <name>HistoryContextMenu</name>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="43"/>
+        <source>Disable history</source>
+        <translation>Verlauf deaktivieren</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="43"/>
+        <source>Enable history</source>
+        <translation>Verlauf aktivieren</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="46"/>
+        <source>History enabled</source>
+        <translation>Verlauf aktiviert</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="46"/>
+        <source>History disabled</source>
+        <translation>Verlauf deaktiviert</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="58"/>
+        <source>Delete all</source>
+        <translation>Lösche alle</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="60"/>
+        <source>Please confirm that you want to delete your complete history.</source>
+        <translation>Bitte bestätigen Sie, dass der komplette Verlauf gelöscht werden soll.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="67"/>
+        <source>Delete last 4 weeks</source>
+        <translation>Lösche die letzten 4 Wochen</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="69"/>
+        <source>Please confirm that you want to delete your history from the last four weeks.</source>
+        <translation>Bitte bestätigen Sie, dass der Verlauf der letzten vier Wochen gelöscht werden soll.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="76"/>
+        <source>Delete last week</source>
+        <translation>Lösche letzte Woche</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="78"/>
+        <source>Please confirm that you want to delete your history from the last week.</source>
+        <translation>Bitte bestätigen Sie, dass der Verlauf der letzten Woche gelöscht werden soll.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="85"/>
+        <source>Delete last day</source>
+        <translation>Lösche letzten Tag</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="87"/>
+        <source>Please confirm that you want to delete your history from the last day.</source>
+        <translation>Bitte bestätigen Sie, dass der Verlauf des letzten Tages gelöscht werden soll.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="94"/>
+        <source>Delete last hour</source>
+        <translation>Lösche letzte Stunde</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryContextMenu.qml" line="96"/>
+        <source>Please confirm that you want to delete your history from the last hour.</source>
+        <translation>Bitte bestätigen Sie, dass der Verlauf der letzten Stunde gelöscht werden soll.</translation>
     </message>
 </context>
 <context>
@@ -668,27 +759,27 @@
 <context>
     <name>HistoryListViewDelegateContent</name>
     <message>
-        <location filename="../qml/Governikus/HistoryView/HistoryListViewDelegateContent.qml" line="51"/>
+        <location filename="../qml/Governikus/HistoryView/HistoryListViewDelegateContent.qml" line="55"/>
         <source>today</source>
         <translation>heute</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/HistoryView/HistoryListViewDelegateContent.qml" line="52"/>
+        <location filename="../qml/Governikus/HistoryView/HistoryListViewDelegateContent.qml" line="56"/>
         <source>yesterday</source>
         <translation>gestern</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/HistoryView/HistoryListViewDelegateContent.qml" line="53"/>
+        <location filename="../qml/Governikus/HistoryView/HistoryListViewDelegateContent.qml" line="57"/>
         <source>dddd</source>
         <translation>dddd</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/HistoryView/HistoryListViewDelegateContent.qml" line="54"/>
+        <location filename="../qml/Governikus/HistoryView/HistoryListViewDelegateContent.qml" line="58"/>
         <source>dd.MM.yyyy</source>
         <translation>dd.MM.yyyy</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/HistoryView/HistoryListViewDelegateContent.qml" line="76"/>
+        <location filename="../qml/Governikus/HistoryView/HistoryListViewDelegateContent.qml" line="82"/>
         <source>Tap for more details</source>
         <translation>Berühren Sie hier für mehr Details</translation>
     </message>
@@ -696,18 +787,18 @@
 <context>
     <name>HistoryView</name>
     <message>
-        <location filename="../qml/Governikus/HistoryView/+android/+tablet/HistoryView.qml" line="14"/>
-        <location filename="../qml/Governikus/HistoryView/+android/HistoryView.qml" line="13"/>
+        <location filename="../qml/Governikus/HistoryView/+android/+tablet/HistoryView.qml" line="15"/>
+        <location filename="../qml/Governikus/HistoryView/+android/HistoryView.qml" line="15"/>
         <location filename="../qml/Governikus/HistoryView/+ios/+tablet/HistoryView.qml" line="32"/>
         <location filename="../qml/Governikus/HistoryView/+ios/HistoryView.qml" line="31"/>
         <source>History</source>
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/HistoryView/+android/+tablet/HistoryView.qml" line="18"/>
-        <location filename="../qml/Governikus/HistoryView/+android/HistoryView.qml" line="17"/>
-        <location filename="../qml/Governikus/HistoryView/+ios/+tablet/HistoryView.qml" line="66"/>
-        <location filename="../qml/Governikus/HistoryView/+ios/HistoryView.qml" line="65"/>
+        <location filename="../qml/Governikus/HistoryView/+android/+tablet/HistoryView.qml" line="26"/>
+        <location filename="../qml/Governikus/HistoryView/+android/HistoryView.qml" line="26"/>
+        <location filename="../qml/Governikus/HistoryView/+ios/+tablet/HistoryView.qml" line="67"/>
+        <location filename="../qml/Governikus/HistoryView/+ios/HistoryView.qml" line="66"/>
         <source>Currently there are no history entries.</source>
         <translation>Derzeit gibt es keine Einträge im Verlauf.</translation>
     </message>
@@ -721,7 +812,7 @@
         <location filename="../qml/Governikus/HistoryView/+ios/+tablet/HistoryView.qml" line="51"/>
         <location filename="../qml/Governikus/HistoryView/+ios/HistoryView.qml" line="50"/>
         <source>Delete all</source>
-        <translation>Alle löschen</translation>
+        <translation>Lösche alle</translation>
     </message>
     <message>
         <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="21"/>
@@ -777,6 +868,29 @@
         <location filename="../qml_stationary/AusweisApp2/Views/History/HistoryView.qml" line="176"/>
         <source>PDF Documents (*.pdf)</source>
         <translation>PDF Dokumente (*.pdf)</translation>
+    </message>
+</context>
+<context>
+    <name>HistoryViewConfirmationPopup</name>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryViewConfirmationPopup.qml" line="34"/>
+        <source>Delete history</source>
+        <translation>Verlauf löschen</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryViewConfirmationPopup.qml" line="61"/>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryViewConfirmationPopup.qml" line="78"/>
+        <source>Delete</source>
+        <translation>Löschen</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/HistoryView/HistoryViewConfirmationPopup.qml" line="85"/>
+        <source>Removed %1 entries from the history.</source>
+        <translation>Es wurden %1 Einträge aus dem Verlauf entfernt.</translation>
     </message>
 </context>
 <context>
@@ -878,7 +992,7 @@
 <context>
     <name>IdentifyController</name>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyController.qml" line="112"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyController.qml" line="118"/>
         <source>You may now remove your ID card from the device.</source>
         <translation>Sie können nun Ihr Ausweisdokument vom Gerät entfernen.</translation>
     </message>
@@ -887,51 +1001,76 @@
     <name>IdentifyView</name>
     <message>
         <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="19"/>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="42"/>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="55"/>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="79"/>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="88"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="49"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="62"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="95"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="104"/>
         <source>Identify</source>
         <translation>Ausweisen</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="57"/>
-        <source>Authenticate</source>
-        <translation>Jetzt ausweisen</translation>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="64"/>
+        <source>Authentication in progress</source>
+        <translation>Authentisierung wird durchgeführt</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="60"/>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="71"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="67"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="78"/>
         <source>Please wait a moment...</source>
         <translation>Bitte warten Sie einen Moment...</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="64"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="71"/>
         <source>The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.</source>
         <translation>Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="66"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="73"/>
         <source>Please observe the display of your card reader.</source>
         <translation>Bitte beachten Sie die Anzeige Ihres Kartenlesegeräts.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="68"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="75"/>
         <source>You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.</source>
         <translation>Sie haben Ihre PIN zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher Ihre 6-stellige Zugangsnummer eingeben. Sie finden Ihre Zugangsnummer auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="70"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="77"/>
         <source>You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.</source>
         <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Ihre PIN ist jetzt gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="81"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="83"/>
+        <source>Service provider is being verified</source>
+        <translation>Diensteanbieter wird geprüft</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="84"/>
+        <source>Card is being verified</source>
+        <translation>Karte wird geprüft</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="85"/>
+        <source>Reading data</source>
+        <translation>Daten werden gelesen</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="86"/>
+        <source>Sending data to service provider</source>
+        <translation>Sende Daten an den Dienstanbieter</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="87"/>
+        <source>Preparing results</source>
+        <translation>Bereite Ergebnisse vor</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="97"/>
         <source>No network connectivity</source>
         <translation>Keine Netzwerkverbindung</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="82"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyView.qml" line="98"/>
         <source>Please enable the network interface or cancel the workflow.</source>
         <translation>Bitte stellen Sie eine Internetverbindung her oder beenden Sie den Vorgang.</translation>
     </message>
@@ -939,81 +1078,94 @@
 <context>
     <name>IdentifyViewContent</name>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="46"/>
-        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="40"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="40"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="40"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="52"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="47"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="47"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="48"/>
         <source>Service provider</source>
         <translation>Diensteanbieter</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="51"/>
-        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="45"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="45"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="45"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="57"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="52"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="52"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="53"/>
         <source>Purpose for reading out requested data</source>
         <translation>Zweck des Auslesevorgangs</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="80"/>
-        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="77"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="76"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="76"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="84"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="83"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="83"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="84"/>
         <source>Identify now</source>
         <translation>Jetzt ausweisen</translation>
     </message>
     <message>
         <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="117"/>
-        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="108"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="110"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="97"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="110"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="113"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="101"/>
         <source>Transactional information</source>
         <translation>Transaktionsinformationen</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="141"/>
-        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="125"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="134"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="111"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="142"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="128"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="138"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="116"/>
         <source>Required Data</source>
         <translation>Erforderliche Daten</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="150"/>
-        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="130"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="143"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="116"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="151"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="133"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="147"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="121"/>
         <source>Optional Data</source>
         <translation>Optionale Daten</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="23"/>
-        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="22"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="22"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="22"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="29"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="29"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="29"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="30"/>
         <source>You are about to identify yourself towards the following service provider:</source>
         <translation>Sie möchten sich bei folgendem Diensteanbieter ausweisen:</translation>
     </message>
     <message>
+        <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="14"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="14"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="14"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="14"/>
+        <source>Identify</source>
+        <translation>Ausweisen</translation>
+    </message>
+    <message>
         <location filename="../qml/Governikus/IdentifyView/+android/+tablet/IdentifyViewContent.qml" line="99"/>
-        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="93"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="92"/>
-        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="92"/>
+        <location filename="../qml/Governikus/IdentifyView/+android/IdentifyViewContent.qml" line="95"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/+tablet/IdentifyViewContent.qml" line="95"/>
+        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewContent.qml" line="96"/>
         <source>The following data will be transferred to the service provider when you enter the PIN:</source>
         <translation>Folgende Daten Ihres Ausweises werden nach Eingabe der PIN ausgelesen und an den Diensteanbieter übermittelt:</translation>
     </message>
 </context>
 <context>
-    <name>IdentifyViewHeader</name>
+    <name>IdentifyViewInfo</name>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewHeader.qml" line="90"/>
-        <source>Hello, here you have the opportunity to view the stored data on your identity card.</source>
-        <translation>Hallo, hier haben Sie die Möglichkeit, die auf Ihrem Personalausweis hinterlegten Daten einzusehen.</translation>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyViewInfo.qml" line="36"/>
+        <source>You can use your ID card anywhere you see this logo.</source>
+        <translation>Überall wo Sie dieses Logo sehen, können Sie Ihr Ausweisdokument einsetzen.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/+ios/IdentifyViewHeader.qml" line="91"/>
-        <source>Hello, &quot;%1&quot; wants to read your data.</source>
-        <translation>Hallo, &quot;%1&quot; möchte Ihre Daten auslesen.</translation>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyViewInfo.qml" line="50"/>
+        <source>Use the button &apos;See my personal data&apos; to display the data stored on your ID card. An Internet connection is required to display the data. Your personal data is neither saved nor processed in any way.</source>
+        <translation>Über die Schaltfläche &quot;Meine Daten einsehen&quot; können Sie sich die im Chip Ihres Ausweisdokuments gespeicherten Daten anzeigen lassen. Um die Daten anzeigen zu können, benötigt diese Anwendung eine Internetverbindung. Es erfolgt keine Speicherung oder Weiterverarbeitung Ihrer persönlichen Daten.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyViewInfo.qml" line="64"/>
+        <source>See my personal data</source>
+        <translation>Meine Daten einsehen</translation>
     </message>
 </context>
 <context>
@@ -1027,12 +1179,12 @@
 <context>
     <name>Information</name>
     <message>
-        <location filename="../qml/Governikus/InformationView/Information.qml" line="70"/>
+        <location filename="../qml/Governikus/InformationView/Information.qml" line="71"/>
         <source>You need help?</source>
         <translation>Benötigen Sie Hilfe?</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/InformationView/Information.qml" line="79"/>
+        <location filename="../qml/Governikus/InformationView/Information.qml" line="81"/>
         <source>Here you are in the right place.</source>
         <translation>Dann sind Sie hier richtig.</translation>
     </message>
@@ -1042,27 +1194,27 @@
         <translation>Information</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/InformationView/Information.qml" line="86"/>
+        <location filename="../qml/Governikus/InformationView/Information.qml" line="88"/>
         <source>Version information</source>
         <translation>Versionsinformationen</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/InformationView/Information.qml" line="87"/>
+        <location filename="../qml/Governikus/InformationView/Information.qml" line="89"/>
         <source>Here you can see detailed information about AusweisApp2.</source>
         <translation>Hier finden Sie detaillierte Informationen zur AusweisApp2.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/InformationView/Information.qml" line="94"/>
+        <location filename="../qml/Governikus/InformationView/Information.qml" line="96"/>
         <source>Software license</source>
         <translation>Softwarelizenz</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/InformationView/Information.qml" line="95"/>
+        <location filename="../qml/Governikus/InformationView/Information.qml" line="97"/>
         <source>Read the software license text on the application homepage.</source>
         <translation>Lesen Sie die Softwarelizenz auf der Internetseite der Anwendung.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/InformationView/Information.qml" line="96"/>
+        <location filename="../qml/Governikus/InformationView/Information.qml" line="98"/>
         <source>https://www.ausweisapp.bund.de/en/download/</source>
         <translation>https://www.ausweisapp.bund.de/download/</translation>
     </message>
@@ -1070,14 +1222,19 @@
 <context>
     <name>KnownDevicesListDelegate</name>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/KnownDevicesListDelegate.qml" line="20"/>
-        <source> (Available)</source>
-        <translation> (Verfügbar)</translation>
+        <location filename="../qml/Governikus/RemoteServiceView/KnownDevicesListDelegate.qml" line="28"/>
+        <source>Available</source>
+        <translation>Verfügbar</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/KnownDevicesListDelegate.qml" line="29"/>
-        <source>Last connection: </source>
-        <translation>Letzte Verbindung: </translation>
+        <location filename="../qml/Governikus/RemoteServiceView/KnownDevicesListDelegate.qml" line="30"/>
+        <source>Available, but unsupported</source>
+        <translation>Verfügbar, aber nicht unterstützt</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/RemoteServiceView/KnownDevicesListDelegate.qml" line="41"/>
+        <source>Last connection:</source>
+        <translation>Letzte Verbindung:</translation>
     </message>
 </context>
 <context>
@@ -1139,57 +1296,57 @@
         <translation>Mehr</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="26"/>
+        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="33"/>
         <source>Version information</source>
         <translation>Versionsinformationen</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="33"/>
+        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="40"/>
         <source>FAQ</source>
         <translation>FAQ</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="35"/>
+        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="42"/>
         <source>https://www.ausweisapp.bund.de/en/questions-and-answers/frequently-asked-questions/</source>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/haeufig-gestellte-fragen/</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="39"/>
+        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="46"/>
         <source>Support</source>
         <translation>Support</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="41"/>
+        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="48"/>
         <source>https://www.ausweisapp.bund.de/en/questions-and-answers/support/</source>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/support/</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="45"/>
+        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="52"/>
         <source>Rate app</source>
         <translation>Bewerten</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="53"/>
+        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="60"/>
         <source>https://www.ausweisapp.bund.de/en/questions-and-answers/evaluate-us/</source>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/bewerten-sie-uns/</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="59"/>
+        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="66"/>
         <source>Software license</source>
         <translation>Softwarelizenz</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="61"/>
+        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="68"/>
         <source>https://www.ausweisapp.bund.de/en/download/</source>
         <translation>https://www.ausweisapp.bund.de/download/</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="66"/>
+        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="73"/>
         <source>Configure remote service</source>
         <translation>Fernzugriff konfigurieren</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="73"/>
+        <location filename="../qml/Governikus/MoreView/MoreView.qml" line="83"/>
         <source>Developer options</source>
         <translation>Entwickleroptionen</translation>
     </message>
@@ -1249,53 +1406,58 @@
 <context>
     <name>NfcWorkflow</name>
     <message>
-        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="37"/>
+        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="35"/>
         <source>NFC is not supported by your device.</source>
         <translation>Ihr Gerät unterstützt kein NFC.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="37"/>
+        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="35"/>
         <source>Please try Bluetooth.</source>
         <translation>Bitte versuchen Sie Bluetooth.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="38"/>
+        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="36"/>
         <source>NFC is switched off.</source>
         <translation>NFC ist nicht aktiv.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="34"/>
+        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="32"/>
         <source>Go to NFC settings</source>
         <translation>Zu den NFC Einstellungen</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="38"/>
+        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="36"/>
         <source>Please enable NFC in your system settings.</source>
         <translation>Bitte aktivieren Sie NFC in Ihren Systemeinstellungen.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="41"/>
+        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="39"/>
         <source>Establish connection</source>
         <translation>Verbindung wird hergestellt</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="44"/>
+        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="42"/>
         <source>Your device does not meet the technical requirements (Extended Length not supported). You require an additional &apos;Bluetooth card reader&apos; or an additional &apos;smartphone as card reader&apos; to use the online identification function with this device.</source>
         <translation>Ihr Gerät erfüllt leider nicht die technischen Voraussetzungen (Extended Length). Sie können die Online-Ausweisfunktion daher mit diesem Gerät nur über einen separaten Bluetooth-Leser oder mit einem separaten Smartphone als Kartenleser nutzen.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="45"/>
+        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="43"/>
         <source>The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.</source>
         <translation>Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="46"/>
+        <location filename="../qml/Governikus/Workflow/NfcWorkflow.qml" line="44"/>
         <source>Please place your device&lt;br/&gt;on your ID card.</source>
         <translation>Bitte platzieren Sie Ihr Gerät&lt;br/&gt;über Ihrem Personalausweis.</translation>
     </message>
 </context>
 <context>
     <name>PinSettingsWidget</name>
+    <message>
+        <location filename="../../src/widget/PinSettingsWidget.ui"/>
+        <source>open on screen keyboard</source>
+        <translation>öffne bildschirmtastatur</translation>
+    </message>
     <message>
         <location filename="../../src/widget/PinSettingsWidget.ui"/>
         <source>Please pay attention to the display of your card reader.</source>
@@ -1549,14 +1711,14 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>PIN-Verwaltung</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/PinView/+android/PinViewContent.qml" line="45"/>
-        <location filename="../qml/Governikus/PinView/+ios/PinViewContent.qml" line="27"/>
+        <location filename="../qml/Governikus/PinView/+android/PinViewContent.qml" line="46"/>
+        <location filename="../qml/Governikus/PinView/+ios/PinViewContent.qml" line="28"/>
         <source>You have the opportunity to change your transport PIN into a personal PIN. You can also change the PIN at any time or unblock the PIN using the personal unblocking key (PUK). The transport PIN and the PUK can be found in the letter sent to you by your competent authority.</source>
         <translation>Hier haben Sie die Möglichkeit, Ihre Transport-PIN in eine persönliche PIN zu ändern. Zudem können Sie jederzeit Ihre persönliche PIN ändern oder eine Blockierung mit Hilfe der Entsperrnummer (PUK) aufheben. Sie finden Ihre initiale PIN und die PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweisdokuments von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde erhalten haben.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/PinView/+android/PinViewContent.qml" line="59"/>
-        <location filename="../qml/Governikus/PinView/+ios/PinViewContent.qml" line="59"/>
+        <location filename="../qml/Governikus/PinView/+android/PinViewContent.qml" line="60"/>
+        <location filename="../qml/Governikus/PinView/+ios/PinViewContent.qml" line="60"/>
         <source>Change PIN now</source>
         <translation>Jetzt PIN ändern</translation>
     </message>
@@ -1598,7 +1760,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>ProviderContactTab</name>
     <message>
-        <location filename="../qml/Governikus/Provider/ProviderContactTab.qml" line="35"/>
+        <location filename="../qml/Governikus/Provider/ProviderContactTab.qml" line="36"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
@@ -1653,7 +1815,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Daten auslesen</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Provider/ProviderDetailHistoryInfo_tablet.qml" line="125"/>
+        <location filename="../qml/Governikus/Provider/ProviderDetailHistoryInfo_tablet.qml" line="126"/>
         <source>Terms of usage</source>
         <translation>Nutzungsbedingungen</translation>
     </message>
@@ -1722,8 +1884,8 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Kontakt</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Provider/+android/ProviderDetailView.qml" line="102"/>
-        <location filename="../qml/Governikus/Provider/+ios/ProviderDetailView.qml" line="105"/>
+        <location filename="../qml/Governikus/Provider/+android/ProviderDetailView.qml" line="103"/>
+        <location filename="../qml/Governikus/Provider/+ios/ProviderDetailView.qml" line="106"/>
         <source>Description not available</source>
         <translation>Beschreibung nicht verfügbar</translation>
     </message>
@@ -1739,7 +1901,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>ProviderHeader</name>
     <message>
-        <location filename="../qml/Governikus/Provider/ProviderHeader.qml" line="165"/>
+        <location filename="../qml/Governikus/Provider/ProviderHeader.qml" line="166"/>
         <source>To service provider</source>
         <translation>Zum Anbieter</translation>
     </message>
@@ -1816,10 +1978,10 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Weitere Services</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/ProviderView/+android/+tablet/ProviderView.qml" line="115"/>
-        <location filename="../qml/Governikus/ProviderView/+android/ProviderView.qml" line="66"/>
-        <location filename="../qml/Governikus/ProviderView/+ios/+tablet/ProviderView.qml" line="116"/>
-        <location filename="../qml/Governikus/ProviderView/+ios/ProviderView.qml" line="60"/>
+        <location filename="../qml/Governikus/ProviderView/+android/+tablet/ProviderView.qml" line="116"/>
+        <location filename="../qml/Governikus/ProviderView/+android/ProviderView.qml" line="67"/>
+        <location filename="../qml/Governikus/ProviderView/+ios/+tablet/ProviderView.qml" line="117"/>
+        <location filename="../qml/Governikus/ProviderView/+ios/ProviderView.qml" line="61"/>
         <location filename="../qml_stationary/AusweisApp2/Views/Provider/ProviderView.qml" line="98"/>
         <source>No match found</source>
         <translation>Kein Ergebnis gefunden</translation>
@@ -1838,7 +2000,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>ProviderViewDelegate</name>
     <message>
-        <location filename="../qml/Governikus/Provider/+ios/ProviderViewDelegate.qml" line="74"/>
+        <location filename="../qml/Governikus/Provider/+ios/ProviderViewDelegate.qml" line="75"/>
         <source>i</source>
         <translation>i</translation>
     </message>
@@ -1929,11 +2091,6 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
     </message>
     <message>
         <location filename="../../src/widget/ReaderDeviceWidget.ui"/>
-        <source>No smartphone with enabled remote service found. See online help for details of use.</source>
-        <translation>Es wurde kein Smartphone mit aktiviertem Fernzugriff gefunden. Details zur Verwendung finden Sie in der Online-Hilfe.</translation>
-    </message>
-    <message>
-        <location filename="../../src/widget/ReaderDeviceWidget.ui"/>
         <source>Pair</source>
         <translation>Koppeln</translation>
     </message>
@@ -1946,11 +2103,6 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <location filename="../../src/widget/ReaderDeviceWidget.ui"/>
         <source>Card readers</source>
         <translation>Kartenlesegeräte</translation>
-    </message>
-    <message>
-        <location filename="../../src/widget/ReaderDeviceWidget.ui"/>
-        <source>No connected card reader found. See online help for installation of card readers.</source>
-        <translation>Es wurde kein angeschlossenes Kartenlesegerät gefunden. Details zur Installation von Kartenlesegeräten finden Sie in der Online-Hilfe.</translation>
     </message>
     <message>
         <location filename="../../src/widget/ReaderDeviceWidget.ui"/>
@@ -1979,22 +2131,22 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>RemoteServicePairingPopup</name>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServicePairingPopup.qml" line="32"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServicePairingPopup.qml" line="33"/>
         <source>Pairing code</source>
         <translation>Kopplungscode</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServicePairingPopup.qml" line="43"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServicePairingPopup.qml" line="45"/>
         <source>Enter the pairing code shown on your other device to use it as a card reader</source>
         <translation>Geben Sie den Kopplungscode ein, der auf Ihrem anderen Gerät angezeigt wird, um es als Kartenlesegerät zu verwenden</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServicePairingPopup.qml" line="44"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServicePairingPopup.qml" line="46"/>
         <source>Enter this code on your other device to use this device as a card reader</source>
         <translation>Geben Sie diesen Code auf Ihrem anderen Gerät ein, um dieses Gerät als Kartenlesegerät zu verwenden</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServicePairingPopup.qml" line="65"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServicePairingPopup.qml" line="68"/>
         <source>Start pairing</source>
         <translation>Kopplung starten</translation>
     </message>
@@ -2002,17 +2154,17 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>RemoteServiceSettings</name>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="11"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="12"/>
         <source>Configure remote service</source>
         <translation>Fernzugriff konfigurieren</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="17"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="16"/>
         <source>Pairing failed. Please try again to activate pairing on your other device and enter the shown pairing code.</source>
         <translation>Die Kopplung ist fehlgeschlagen. Bitte starten Sie eine neue Kopplung an Ihrem anderen Gerät und geben den angezeigten Kopplungscode ein.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="44"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="43"/>
         <source>Device name</source>
         <translation>Gerätename</translation>
     </message>
@@ -2022,17 +2174,17 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Wählen Sie einen Gerätenamen, unter dem Ihr Smartphone im Netzwerk gefunden werden kann:</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="94"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="93"/>
         <source>PIN pad mode</source>
         <translation>Tastaturmodus</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="104"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="103"/>
         <source>Enter PIN on smartphone</source>
         <translation>PIN-Eingabe auf dem Smartphone</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="122"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="121"/>
         <source>Paired devices</source>
         <translation>Gekoppelte Geräte</translation>
     </message>
@@ -2042,7 +2194,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Kein Gerät gekoppelt.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="154"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="153"/>
         <source>Available devices</source>
         <translation>Verfügbare Geräte</translation>
     </message>
@@ -2052,14 +2204,19 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Kein entferntes Kartenlesegerät in Ihrem Netzwerk verfügbar. Bitte stellen Sie sicher, dass die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem anderen Gerät aktiviert ist. Beide Geräte müssen sich im selben Netzwerk befinden.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="209"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="208"/>
         <source>Start the pairing mode on the other device if it is not already started.</source>
         <translation>Aktivieren Sie den Kopplungsmodus auf dem anderen Gerät wenn er noch nicht aktiviert sein sollte.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="213"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="212"/>
         <source>OK</source>
         <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceSettings.qml" line="227"/>
+        <source>Pairing code</source>
+        <translation>Kopplungscode</translation>
     </message>
 </context>
 <context>
@@ -2070,42 +2227,42 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Smartphone als Kartenlesegerät</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="66"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="73"/>
         <source>Please start the remote service in order to use your smartphone as a card reader with AusweisApp2. Please note: Both your devices have to be connected to the same WiFi.</source>
         <translation>Bitte starten Sie den Fernzugriff, damit Sie Ihr Smartphone als Kartenlesegerät für die AusweisApp2 nutzen können. Bitte beachten Sie: dies ist nur möglich, wenn beide Geräte mit demselben WLAN verbunden sind.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="96"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="101"/>
         <source>Enable NFC</source>
         <translation>NFC aktivieren</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="98"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="103"/>
         <source>Stop remote service</source>
         <translation>Fernzugriff stoppen</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="100"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="105"/>
         <source>Start remote service</source>
         <translation>Fernzugriff starten</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="114"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="118"/>
         <source>Start pairing</source>
         <translation>Kopplung starten</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="159"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="163"/>
         <source>Card access in progress</source>
         <translation>Kartenzugriff</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="172"/>
-        <source>Please pay attention to the display on your other device.</source>
-        <translation>Bitte beachten Sie die Anzeige auf Ihrem anderen Gerät.</translation>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="177"/>
+        <source>Please pay attention to the display on your other device %1.</source>
+        <translation>Bitte beachten Sie die Anzeige auf Ihrem anderen Gerät %1.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="217"/>
+        <location filename="../qml/Governikus/RemoteServiceView/RemoteServiceView.qml" line="225"/>
         <source>Settings</source>
         <translation>Einstellungen</translation>
     </message>
@@ -2113,48 +2270,63 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>RemoteWorkflow</name>
     <message>
-        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="33"/>
-        <source>Enable Wifi</source>
-        <translation>WLAN aktivieren</translation>
-    </message>
-    <message>
-        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="33"/>
+        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="59"/>
         <source>Continue</source>
         <translation>Fortsetzen</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="39"/>
+        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="57"/>
+        <source>Pair device</source>
+        <translation>Gerät koppeln</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="55"/>
+        <source>Enable Wifi</source>
+        <translation>WLAN aktivieren</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="84"/>
         <source>Establish connection</source>
         <translation>Verbindung wird hergestellt</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="40"/>
+        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="95"/>
+        <source>The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.</source>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="97"/>
+        <source>Connected to %1. Please insert your ID card.</source>
+        <translation>Verbunden mit %1. Bitte legen Sie Ihr Ausweisdokument auf.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="83"/>
         <source>Determine card</source>
         <translation>Ermittle Ausweis</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="45"/>
-        <source>To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.</source>
-        <translation>Um den Fernzugriff zu nutzen muss WLAN aktiviert werden. Bitte aktivieren Sie WLAN in Ihren Einstellungen.</translation>
+        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="19"/>
+        <source>The device %1 was unpaired because it does not react to connection attempts. Retry the pairing process if you want to use this device to authenticate yourself.</source>
+        <translation>Das Gerät %1 wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Versuchen Sie das Gerät erneut zu koppeln, wenn Sie es zur Authentisierung verwenden möchten.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="47"/>
+        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="74"/>
+        <source>To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.</source>
+        <translation>Um den Fernzugriff zu nutzen, muss WLAN aktiviert werden. Bitte aktivieren Sie WLAN in Ihren Einstellungen.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="76"/>
         <source>No paired and activated remote device was detected. Make sure that you have started remote service on you remote device.</source>
         <translation>Kein gekoppeltes und aktiviertes Gerät gefunden. Stellen Sie sicher, dass der Fernzugriff auf Ihrem Gerät gestartet wurde.</translation>
-    </message>
-    <message>
-        <location filename="../qml/Governikus/Workflow/RemoteWorkflow.qml" line="48"/>
-        <source>Please insert your ID card.</source>
-        <translation>Bitte legen Sie Ihren Ausweis auf.</translation>
     </message>
 </context>
 <context>
     <name>ResultView</name>
     <message>
-        <location filename="../qml/Governikus/ResultView/+android/ResultView.qml" line="69"/>
+        <location filename="../qml/Governikus/ResultView/+android/ResultView.qml" line="56"/>
         <location filename="../qml/Governikus/ResultView/+ios/ResultView.qml" line="44"/>
-        <source>Ok</source>
-        <translation>Ok</translation>
+        <source>OK</source>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -2184,8 +2356,8 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
     </message>
     <message>
         <location filename="../qml/Governikus/IdentifyView/SelfAuthenticationData.qml" line="84"/>
-        <source>Ok</source>
-        <translation>Ok</translation>
+        <source>OK</source>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -2306,37 +2478,29 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
     </message>
 </context>
 <context>
-    <name>TechnologyInfo</name>
-    <message>
-        <location filename="../qml/Governikus/TechnologyInfo/TechnologyInfo.qml" line="18"/>
-        <source>The device %1 was unpaired because it does not react to connection attempts. Retry the pairing process if you want to use this device to authenticate yourself.</source>
-        <translation>Das Gerät %1 wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Versuchen Sie das Gerät erneut zu koppeln wenn sie es zur Selbstauthentifizierung verwenden möchten.</translation>
-    </message>
-</context>
-<context>
     <name>TechnologySwitch</name>
     <message>
-        <location filename="../qml/Governikus/TechnologyInfo/+android/TechnologySwitch.qml" line="25"/>
+        <location filename="../qml/Governikus/TechnologyInfo/+android/TechnologySwitch.qml" line="24"/>
         <source>NFC</source>
         <translation>NFC</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/TechnologyInfo/+android/TechnologySwitch.qml" line="32"/>
+        <location filename="../qml/Governikus/TechnologyInfo/+android/TechnologySwitch.qml" line="31"/>
         <source>WiFi</source>
         <translation>WLAN</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/TechnologyInfo/+android/TechnologySwitch.qml" line="39"/>
+        <location filename="../qml/Governikus/TechnologyInfo/+android/TechnologySwitch.qml" line="38"/>
         <source>Bluetooth</source>
         <translation>Bluetooth</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/TechnologyInfo/+ios/TechnologySwitch.qml" line="25"/>
+        <location filename="../qml/Governikus/TechnologyInfo/+ios/TechnologySwitch.qml" line="24"/>
         <source>Use WiFi card reader instead&lt;br/&gt;of Bluetooth card reader</source>
         <translation>WLAN Kartenlesegerät anstelle &lt;br/&gt;vom Bluetooth Kartenlesegerät verwenden</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/TechnologyInfo/+ios/TechnologySwitch.qml" line="33"/>
+        <location filename="../qml/Governikus/TechnologyInfo/+ios/TechnologySwitch.qml" line="32"/>
         <source>Use Bluetooth card reader instead&lt;br/&gt;of remote card reader</source>
         <translation>Bluetooth Kartenlesegerät anstelle &lt;br/&gt;vom WLAN Kartenlesegerät verwenden</translation>
     </message>
@@ -2617,17 +2781,17 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::AppQtGui</name>
     <message>
-        <location filename="../../src/widget/AppQtGui.cpp" line="117"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="128"/>
         <source>AusweisApp2 was started.</source>
         <translation>AusweisApp2 wurde gestartet.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtGui.cpp" line="517"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="477"/>
         <source>Do not show this dialog again.</source>
         <translation>Diesen Hinweis nicht mehr anzeigen.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtGui.cpp" line="430"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="390"/>
         <source>Open</source>
         <translation>Öffnen</translation>
     </message>
@@ -2637,67 +2801,73 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Aktualisierungen</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtGui.cpp" line="219"/>
-        <location filename="../../src/widget/AppQtGui.cpp" line="283"/>
-        <location filename="../../src/widget/AppQtGui.cpp" line="511"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="77"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="233"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="310"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="471"/>
         <source>Information</source>
         <translation>Information</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtGui.cpp" line="246"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="272"/>
         <source>The developer mode is enabled.</source>
         <translation>Der Entwicklermodus ist aktiviert.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtGui.cpp" line="247"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="273"/>
         <source>Do you want to disable the developer mode?</source>
         <translation>Möchten Sie den Entwicklermodus deaktivieren?</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtGui.cpp" line="286"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="313"/>
         <source>Did you change the initial transport PIN already?&lt;br&gt;&lt;br&gt;Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. Online identification with transport PIN is not possible.</source>
         <translation>Haben Sie Ihre Transport-PIN schon geändert? &lt;br&gt;&lt;br&gt;Bevor Sie das erste mal die Online-Ausweisfunktion nutzen können, müssen Sie Ihre Transport-PIN durch eine persönliche, 6-stellige PIN ersetzen. Die Online-Ausweisfunktion ist mit der Transport-PIN nicht möglich.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtGui.cpp" line="288"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="316"/>
         <source>No, change transport PIN now</source>
         <translation>Nein, PIN jetzt ändern</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtGui.cpp" line="436"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="396"/>
         <source>Exit AusweisApp2</source>
         <translation>AusweisApp2 beenden</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtGui.cpp" line="515"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="475"/>
         <source>The user interface of the %1 is closed.</source>
         <translation>Die Benutzeroberfläche der %1 wird geschlossen.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtGui.cpp" line="516"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="476"/>
         <source>The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.</source>
         <translation>Das Programm steht weiterhin im Infobereich zur Verfügung. Klicken Sie auf das Symbol der %1, um die Anwendung wieder zu öffnen.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtGui.cpp" line="668"/>
+        <location filename="../../src/widget/AppQtGui.cpp" line="617"/>
         <source>Your software is up to date.</source>
         <translation>Ihre Software ist auf dem aktuellen Stand.</translation>
+    </message>
+    <message>
+        <location filename="../../src/widget/AppQtGui.cpp" line="634"/>
+        <source>The device &quot;%1&quot; was unpaired because it does not react to connection attempts. Retry the pairing process if you want to use this device to authenticate yourself.</source>
+        <translation>Das Gerät &quot;%1&quot; wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Versuchen Sie das Gerät erneut zu koppeln wenn Sie es zur Authentisierung verwenden möchten.</translation>
     </message>
 </context>
 <context>
     <name>governikus::AppQtMainWidget</name>
     <message>
-        <location filename="../../src/widget/AppQtMainWidget.cpp" line="529"/>
+        <location filename="../../src/widget/AppQtMainWidget.cpp" line="534"/>
         <source>https://www.ausweisapp.bund.de/en/service/haeufig-gestellte-fragen/</source>
         <translation>https://www.ausweisapp.bund.de/service/haeufig-gestellte-fragen/</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtMainWidget.cpp" line="536"/>
+        <location filename="../../src/widget/AppQtMainWidget.cpp" line="541"/>
         <source>https://www.ausweisapp.bund.de/en/feedback/melden-sie-einen-fehler/</source>
         <translation>https://www.ausweisapp.bund.de/feedback/melden-sie-einen-fehler/</translation>
     </message>
     <message>
-        <location filename="../../src/widget/AppQtMainWidget.cpp" line="543"/>
+        <location filename="../../src/widget/AppQtMainWidget.cpp" line="548"/>
         <source>https://www.ausweisapp.bund.de/en/feedback/bewerten-sie-uns/</source>
         <translation>https://www.ausweisapp.bund.de/feedback/bewerten-sie-uns/</translation>
     </message>
@@ -2725,37 +2895,37 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::CertificateDescriptionModel</name>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="55"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="50"/>
         <source>Service provider</source>
         <translation>Diensteanbieter</translation>
     </message>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="56"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="51"/>
         <source>Certificate issuer</source>
         <translation>Aussteller des Berechtigungszertifikats</translation>
     </message>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="59"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="54"/>
         <source>Name, address and mail address of the service provider</source>
         <translation>Name, Adresse und E-Mail vom Diensteanbieter</translation>
     </message>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="60"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="55"/>
         <source>Purpose</source>
         <translation>Zweck</translation>
     </message>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="61"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="56"/>
         <source>Indication of the bodies responsible for the service provider, that verify the compliance with data security regulations</source>
         <translation>Angabe der für den Dienstanbieter zuständigen Datenschutzaufsicht</translation>
     </message>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="66"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="61"/>
         <source>Service provider information</source>
         <translation>Dienstanbieterinformationen</translation>
     </message>
     <message>
-        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="70"/>
+        <location filename="../../src/qml/CertificateDescriptionModel.cpp" line="65"/>
         <source>Validity</source>
         <translation>Gültigkeit</translation>
     </message>
@@ -2809,7 +2979,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::DetailDialog</name>
     <message>
-        <location filename="../../src/widget/DetailDialog.cpp" line="20"/>
+        <location filename="../../src/widget/DetailDialog.cpp" line="24"/>
         <source>Service provider data</source>
         <translation>Angaben zum Diensteanbieter</translation>
     </message>
@@ -2817,7 +2987,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::DetailWidget</name>
     <message>
-        <location filename="../../src/widget/DetailWidget.cpp" line="41"/>
+        <location filename="../../src/widget/DetailWidget.cpp" line="42"/>
         <source>Service provider details dialog</source>
         <translation>Dialog mit Details des Diensteanbieters</translation>
     </message>
@@ -2848,27 +3018,23 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Diagnose</translation>
     </message>
     <message>
-        <location filename="../../src/widget/DiagnosisDialog.cpp" line="49"/>
-        <source>Save diagnosis result</source>
-        <translation>Diagnoseergebnis speichern</translation>
+        <location filename="../../src/widget/DiagnosisDialog.cpp" line="51"/>
+        <source>Save</source>
+        <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../../src/widget/DiagnosisDialog.cpp" line="52"/>
-        <source>AusweisApp2-diagnosis.txt</source>
-        <translation>AusweisApp2-Diagnose.txt</translation>
+        <location filename="../../src/widget/DiagnosisDialog.cpp" line="54"/>
+        <location filename="../../src/widget/DiagnosisDialog.cpp" line="56"/>
+        <source>Text files</source>
+        <translation>Textdateien</translation>
     </message>
     <message>
-        <location filename="../../src/widget/DiagnosisDialog.cpp" line="53"/>
-        <source>Text files (*.txt)</source>
-        <translation>Textdateien (*.txt)</translation>
-    </message>
-    <message>
-        <location filename="../../src/widget/DiagnosisDialog.cpp" line="72"/>
+        <location filename="../../src/widget/DiagnosisDialog.cpp" line="77"/>
         <source>File error</source>
         <translation>Dateifehler</translation>
     </message>
     <message>
-        <location filename="../../src/widget/DiagnosisDialog.cpp" line="72"/>
+        <location filename="../../src/widget/DiagnosisDialog.cpp" line="81"/>
         <source>An error occurred while saving the file.</source>
         <translation>Beim Speichern der Datei ist ein Fehler aufgetreten.</translation>
     </message>
@@ -2915,8 +3081,8 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
     <message>
         <location filename="../../src/widget/DiagnosisWidget.cpp" line="211"/>
         <location filename="../../src/widget/DiagnosisWidget.cpp" line="213"/>
-        <location filename="../../src/widget/DiagnosisWidget.cpp" line="390"/>
-        <location filename="../../src/widget/DiagnosisWidget.cpp" line="391"/>
+        <location filename="../../src/widget/DiagnosisWidget.cpp" line="396"/>
+        <location filename="../../src/widget/DiagnosisWidget.cpp" line="397"/>
         <source>Version: %1</source>
         <translation>Version: %1</translation>
     </message>
@@ -2977,17 +3143,17 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
     <message>
         <location filename="../../src/widget/DiagnosisWidget.cpp" line="306"/>
         <source>d. MMMM yyyy, hh:mm:ss AP</source>
-        <translation>d. MMMM yyyy, HH:mm:ss Uhr</translation>
+        <translation>d. MMMM yyyy, HH:mm:ss &apos;Uhr&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/widget/DiagnosisWidget.cpp" line="385"/>
-        <location filename="../../src/widget/DiagnosisWidget.cpp" line="386"/>
+        <location filename="../../src/widget/DiagnosisWidget.cpp" line="391"/>
+        <location filename="../../src/widget/DiagnosisWidget.cpp" line="392"/>
         <source>Vendor: %1</source>
         <translation>Hersteller: %1</translation>
     </message>
     <message>
-        <location filename="../../src/widget/DiagnosisWidget.cpp" line="395"/>
-        <location filename="../../src/widget/DiagnosisWidget.cpp" line="396"/>
+        <location filename="../../src/widget/DiagnosisWidget.cpp" line="401"/>
+        <location filename="../../src/widget/DiagnosisWidget.cpp" line="402"/>
         <source>File path: %1</source>
         <translation>Dateipfad: %1</translation>
     </message>
@@ -3023,11 +3189,6 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <location filename="../../src/global/GlobalStatus.cpp" line="83"/>
         <source>The program received an unexpected message from the server.</source>
         <translation>Die Anwendung hat eine nicht erwartete Nachricht vom Server erhalten.</translation>
-    </message>
-    <message>
-        <location filename="../../src/global/GlobalStatus.cpp" line="86"/>
-        <source>After three wrong entries your PIN is blocked. Using the online identification function is no longer possible.</source>
-        <translation>Nach dreimaliger Falscheingabe ist Ihre PIN gesperrt. Die Nutzung der Online-Ausweisfunktion ist nun nicht mehr möglich.</translation>
     </message>
     <message>
         <location filename="../../src/global/GlobalStatus.cpp" line="92"/>
@@ -3098,6 +3259,11 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <location filename="../../src/global/GlobalStatus.cpp" line="71"/>
         <source>Cannot start authentication. An operation is already in progress.</source>
         <translation>Die Authentisierung kann nicht gestartet werden. Es läuft bereits eine Operation.</translation>
+    </message>
+    <message>
+        <location filename="../../src/global/GlobalStatus.cpp" line="86"/>
+        <source>After three wrong entries your PIN is blocked. Please use the PIN management in this app to unblock it with the help of your PUK.</source>
+        <translation>Ihre PIN ist nach dreimaliger Fehleingabe gesperrt. Verwenden Sie die PIN-Verwaltung dieser App, um diese mit Ihrer PUK zu entsperren.</translation>
     </message>
     <message>
         <location filename="../../src/global/GlobalStatus.cpp" line="89"/>
@@ -3296,8 +3462,8 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
     </message>
     <message>
         <location filename="../../src/global/GlobalStatus.cpp" line="283"/>
-        <source>Remote reader connection request does not contain any supported API level.</source>
-        <translation>Die Verbindungsanforderung zum entfernten Kartenlesegerät enthält keine unterstützte API-Version.</translation>
+        <source>Your remote reader version is incompatible with the local version. Please install the latest AusweisApp2 version on both your smartphone and your computer.</source>
+        <translation>Die Version Ihres Smartphones als Kartenlesegerätes ist inkompatibel. Bitte aktualisieren Sie Ihre Installation.</translation>
     </message>
     <message>
         <location filename="../../src/global/GlobalStatus.cpp" line="286"/>
@@ -3333,62 +3499,62 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::GuiUtils</name>
     <message>
-        <location filename="../../src/widget/generic/GuiUtils.cpp" line="23"/>
+        <location filename="../../src/widget/generic/GuiUtils.cpp" line="24"/>
         <source>Wrong card access number (CAN)</source>
         <translation>Falsche Zugangsnummer (CAN)</translation>
     </message>
     <message>
-        <location filename="../../src/widget/generic/GuiUtils.cpp" line="24"/>
+        <location filename="../../src/widget/generic/GuiUtils.cpp" line="25"/>
         <source>The given card access number (CAN) is not correct. You have one more try to enter the correct PIN. Please mind that you have to acknowledge this last try with your card access number (CAN).</source>
         <translation>Die eingegebene Zugangsnummer (CAN) ist nicht korrekt. Sie haben noch eine weitere Möglichkeit die korrekte PIN einzugeben. Beachten Sie, dass Sie diesen letzten Versuch mit der Zugangsnummer (CAN) bestätigen müssen.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/generic/GuiUtils.cpp" line="30"/>
+        <location filename="../../src/widget/generic/GuiUtils.cpp" line="31"/>
         <source>Wrong PUK</source>
         <translation>Falsche PUK</translation>
     </message>
     <message>
-        <location filename="../../src/widget/generic/GuiUtils.cpp" line="35"/>
+        <location filename="../../src/widget/generic/GuiUtils.cpp" line="36"/>
         <source>PUK is inoperative</source>
         <translation>PUK ist außer Betrieb</translation>
     </message>
     <message>
-        <location filename="../../src/widget/generic/GuiUtils.cpp" line="31"/>
+        <location filename="../../src/widget/generic/GuiUtils.cpp" line="32"/>
         <source>Please enter your PUK again.</source>
         <translation>Bitte geben Sie Ihre PUK erneut ein.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/generic/GuiUtils.cpp" line="36"/>
+        <location filename="../../src/widget/generic/GuiUtils.cpp" line="37"/>
         <source>You have correctly entered the PUK ten times and have thus reached the maximum count. The PUK is now inoperative and can no longer be used for unblocking the PIN. Please address your competent authority that has issued your ID card for unblocking your PIN.</source>
         <translation>Sie haben die PUK zehn Mal korrekt eingegeben und damit die maximale Anzahl erreicht. Die PUK ist daher außer Betrieb und kann nicht mehr zum Entsperren der PIN verwendet werden. Bitte wenden Sie sich zum Entsperren der PIN an die zuständige Behörde, die Ihr Ausweisdokument ausgegeben hat.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/generic/GuiUtils.cpp" line="43"/>
+        <location filename="../../src/widget/generic/GuiUtils.cpp" line="44"/>
         <source>Wrong PIN</source>
         <translation>Falsche PIN</translation>
     </message>
     <message>
-        <location filename="../../src/widget/generic/GuiUtils.cpp" line="52"/>
+        <location filename="../../src/widget/generic/GuiUtils.cpp" line="53"/>
         <source>After three wrong entries your PIN is blocked. Using the online identification function is no longer possible. &lt;/p&gt;&lt;p&gt;You can unblock your PIN in the following dialog. The program supports you with the steps now required.</source>
         <translation>Ihre PIN ist nach dreimaliger Fehleingabe gesperrt. Die Nutzung der Online-Ausweisfunktion ist in diesem Zustand nicht mehr möglich.&lt;/p&gt;&lt;p&gt;Sie können die PIN im folgenden Dialog entsperren. Die Anwendung unterstützt Sie in den nun notwendigen Schritten.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/generic/GuiUtils.cpp" line="58"/>
+        <location filename="../../src/widget/generic/GuiUtils.cpp" line="59"/>
         <source>The given PIN is not correct. You have one more try to enter the correct PIN. Please mind that you have to acknowledge this last try with your card access number (CAN).</source>
         <translation>Die eingegebene PIN ist nicht korrekt. Sie haben noch eine weitere Möglichkeit die korrekte PIN einzugeben. Beachten Sie, dass Sie diesen letzten Versuch mit der Zugangsnummer (CAN) bestätigen müssen.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/generic/GuiUtils.cpp" line="64"/>
+        <location filename="../../src/widget/generic/GuiUtils.cpp" line="65"/>
         <source>The given PIN is not correct. You have %1 tries to enter the correct PIN.</source>
         <translation>Die eingegebene PIN ist nicht korrekt. Sie haben noch %1 weitere Möglichkeiten die korrekte PIN einzugeben.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/generic/GuiUtils.cpp" line="84"/>
+        <location filename="../../src/widget/generic/GuiUtils.cpp" line="86"/>
         <source>PIN blocked</source>
         <translation>PIN gesperrt</translation>
     </message>
     <message>
-        <location filename="../../src/widget/generic/GuiUtils.cpp" line="85"/>
+        <location filename="../../src/widget/generic/GuiUtils.cpp" line="87"/>
         <source>After three wrong entries your PIN is blocked. Using the online identification function is no longer possible. &lt;br/&gt;You can unblock the PIN as follows:&lt;ol&gt;&lt;li&gt; Select the &quot;Settings&quot; function.&lt;/li&gt;&lt;li&gt;Select the &quot;PIN Management&quot; tab. &lt;/li&gt;&lt;li&gt;Follow the instructions on the screen.&lt;/li&gt;&lt;/ol&gt;Note: You will find the PUK in the letter you received during the application for the ID card in the &quot;Unblocking key PUK&quot; section. Further information is available on the site &lt;a href=&quot;http://www.personalausweisportal.de&quot;&gt;http://www.personalausweisportal.de&lt;/a&gt;.&lt;br&gt;Do you want to unblock the PIN now?</source>
         <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Die Online-Ausweisfunktion ist jetzt blockiert. Die Blockierung können Sie mit Ihrer Entsperrnummer (PUK) aufheben. Sie finden Ihre PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweisdokuments von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde erhalten haben. Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis entsperren. Sollten Sie Ihre PIN vergessen haben, können Sie von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde eine neue PIN setzen lassen.&lt;br&gt;Wollen Sie die Blockierung nun aufheben?</translation>
     </message>
@@ -3439,17 +3605,18 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Daten</translation>
     </message>
     <message>
-        <location filename="../../src/widget/HistoryWidget.cpp" line="240"/>
+        <location filename="../../src/widget/HistoryWidget.cpp" line="216"/>
         <source>AusweisApp2.History.%1.pdf</source>
         <translation>AusweisApp2.Verlauf.%1.pdf</translation>
     </message>
     <message>
-        <location filename="../../src/widget/HistoryWidget.cpp" line="242"/>
+        <location filename="../../src/widget/HistoryWidget.cpp" line="218"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../../src/widget/HistoryWidget.cpp" line="244"/>
+        <location filename="../../src/widget/HistoryWidget.cpp" line="221"/>
+        <location filename="../../src/widget/HistoryWidget.cpp" line="223"/>
         <source>PDF Documents</source>
         <translation>PDF-Dokumente</translation>
     </message>
@@ -3482,27 +3649,27 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Die Datei ist größer als 3MB und kann nicht angezeigt werden: </translation>
     </message>
     <message>
-        <location filename="../../src/widget/LogFilesDialog.cpp" line="135"/>
+        <location filename="../../src/widget/LogFilesDialog.cpp" line="136"/>
         <source>Delete log files</source>
         <translation>Protokolle löschen</translation>
     </message>
     <message>
-        <location filename="../../src/widget/LogFilesDialog.cpp" line="135"/>
+        <location filename="../../src/widget/LogFilesDialog.cpp" line="140"/>
         <source>Do you really want to delete all old log files?</source>
         <translation>Wolle Sie wirklich alle alten Protokolle löschen?</translation>
     </message>
     <message>
-        <location filename="../../src/widget/LogFilesDialog.cpp" line="189"/>
+        <location filename="../../src/widget/LogFilesDialog.cpp" line="197"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../../src/widget/LogFilesDialog.cpp" line="216"/>
+        <location filename="../../src/widget/LogFilesDialog.cpp" line="225"/>
         <source>File error</source>
         <translation>Dateifehler</translation>
     </message>
     <message>
-        <location filename="../../src/widget/LogFilesDialog.cpp" line="216"/>
+        <location filename="../../src/widget/LogFilesDialog.cpp" line="229"/>
         <source>An error occurred while saving the file.</source>
         <translation>Beim Speichern der Datei ist ein Fehler aufgetreten.</translation>
     </message>
@@ -3518,27 +3685,27 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::NumberModel</name>
     <message>
-        <location filename="../../src/qml/NumberModel.cpp" line="150"/>
+        <location filename="../../src/qml/NumberModel.cpp" line="157"/>
         <source>The given PIN is not correct. You have 2 tries to enter the correct PIN.</source>
         <translation>Die eingegebene PIN ist nicht korrekt. Sie haben noch 2 weitere Möglichkeiten die korrekte PIN einzugeben.</translation>
     </message>
     <message>
-        <location filename="../../src/qml/NumberModel.cpp" line="154"/>
+        <location filename="../../src/qml/NumberModel.cpp" line="161"/>
         <source>You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.</source>
         <translation>Sie haben Ihre PIN zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher Ihre 6-stellige Zugangsnummer eingeben. Sie finden Ihre Zugangsnummer auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
-        <location filename="../../src/qml/NumberModel.cpp" line="160"/>
+        <location filename="../../src/qml/NumberModel.cpp" line="167"/>
         <source>You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.</source>
         <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Ihre PIN ist jetzt gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
     </message>
     <message>
-        <location filename="../../src/qml/NumberModel.cpp" line="167"/>
+        <location filename="../../src/qml/NumberModel.cpp" line="174"/>
         <source>You have entered a wrong CAN, please try again.</source>
         <translation>Sie haben eine falsche CAN eingegeben. Bitte versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <location filename="../../src/qml/NumberModel.cpp" line="171"/>
+        <location filename="../../src/qml/NumberModel.cpp" line="178"/>
         <source>You have entered a wrong PUK. Please try again.</source>
         <translation>Sie haben eine falsche PUK eingegeben. Bitte versuchen Sie es erneut.</translation>
     </message>
@@ -3547,8 +3714,8 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
     <name>governikus::PdfCreator</name>
     <message>
         <location filename="../../src/export/PdfCreator.cpp" line="57"/>
-        <source>AusweisApp2 is a product of Governikus GmbH &amp; Co. KG - on behalf of the Bundesministerium des Innern (Federal Ministry of the Interior).</source>
-        <translation>Die AusweisApp2 ist ein Produkt der Governikus GmbH &amp; Co. KG - im Auftrag des Bundesministeriums des Innern.</translation>
+        <source>AusweisApp2 is a product of Governikus GmbH &amp; Co. KG - on behalf of the Federal Ministry of the Interior, Building and Community.</source>
+        <translation>Die AusweisApp2 ist ein Produkt der Governikus GmbH &amp; Co. KG - im Auftrag des Bundesministeriums des Innern, für Bau und Heimat.</translation>
     </message>
     <message>
         <location filename="../../src/export/PdfCreator.cpp" line="80"/>
@@ -3634,44 +3801,43 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::PinSettingsWidget</name>
     <message>
-        <location filename="../../src/widget/PinSettingsWidget.cpp" line="40"/>
-        <location filename="../../src/widget/PinSettingsWidget.cpp" line="44"/>
-        <location filename="../../src/widget/PinSettingsWidget.cpp" line="55"/>
-        <location filename="../../src/widget/PinSettingsWidget.cpp" line="63"/>
-        <location filename="../../src/widget/PinSettingsWidget.cpp" line="71"/>
+        <location filename="../../src/widget/PinSettingsWidget.cpp" line="41"/>
+        <location filename="../../src/widget/PinSettingsWidget.cpp" line="45"/>
+        <location filename="../../src/widget/PinSettingsWidget.cpp" line="56"/>
+        <location filename="../../src/widget/PinSettingsWidget.cpp" line="64"/>
+        <location filename="../../src/widget/PinSettingsWidget.cpp" line="72"/>
         <source>Only digits (0-9) are allowed.</source>
         <translation>Es sind nur Ziffern (0-9) erlaubt.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/PinSettingsWidget.cpp" line="157"/>
+        <location filename="../../src/widget/PinSettingsWidget.cpp" line="158"/>
         <source>Enter PUK</source>
         <translation>PUK eingeben</translation>
     </message>
     <message>
-        <location filename="../../src/widget/PinSettingsWidget.cpp" line="157"/>
+        <location filename="../../src/widget/PinSettingsWidget.cpp" line="158"/>
         <source>Change PIN</source>
         <translation>PIN ändern</translation>
     </message>
     <message>
-        <location filename="../../src/widget/PinSettingsWidget.cpp" line="493"/>
+        <location filename="../../src/widget/PinSettingsWidget.cpp" line="494"/>
         <source>The PIN in the field &quot;%1&quot; does not match the PIN in the field &quot;%2&quot;.</source>
         <translation>Die PIN im Feld &quot;%1&quot; stimmt nicht mit der PIN im Feld &quot;%2&quot; überein.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/PinSettingsWidget.cpp" line="222"/>
-        <location filename="../../src/widget/PinSettingsWidget.cpp" line="485"/>
+        <location filename="../../src/widget/PinSettingsWidget.cpp" line="223"/>
         <source>PIN correct.</source>
         <translation>Die PIN stimmt überein.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/PinSettingsWidget.cpp" line="525"/>
-        <source>Card reader icon</source>
-        <translation>Icon des Kartenlesegeräts</translation>
+        <location filename="../../src/widget/PinSettingsWidget.cpp" line="526"/>
+        <source>card inserted</source>
+        <translation>karte aufgelegt</translation>
     </message>
     <message>
-        <location filename="../../src/widget/PinSettingsWidget.cpp" line="530"/>
-        <source>Empty card reader icon</source>
-        <translation>Kein Kartenlesegerät icon</translation>
+        <location filename="../../src/widget/PinSettingsWidget.cpp" line="531"/>
+        <source>no card inserted</source>
+        <translation>karte nicht aufgelegt</translation>
     </message>
 </context>
 <context>
@@ -3720,12 +3886,12 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::ProviderWidget</name>
     <message>
-        <location filename="../../src/widget/ProviderWidget.cpp" line="58"/>
+        <location filename="../../src/widget/ProviderWidget.cpp" line="57"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../src/widget/ProviderWidget.cpp" line="59"/>
+        <location filename="../../src/widget/ProviderWidget.cpp" line="58"/>
         <source>Address</source>
         <translation>Adresse</translation>
     </message>
@@ -3757,32 +3923,48 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::ReaderDeviceWidget</name>
     <message>
-        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="159"/>
+        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="122"/>
+        <source>online help</source>
+        <extracomment>Is embedded in a sentence.</extracomment>
+        <translation>Online-Hilfe</translation>
+    </message>
+    <message>
+        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="124"/>
+        <source>No smartphone with enabled remote service found. See %1 for details of use.</source>
+        <translation>Kein Smartphone mit aktiviertem Fernzugriff gefunden. Informationen zur Verwendung befinden sich unter %1.</translation>
+    </message>
+    <message>
+        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="128"/>
+        <source>No connected card reader found. See %1 for installation of card readers.</source>
+        <translation>Es konnte kein verbundenes Kartelesegerät gefunden werden. Informationen zur Installation von Kartenlesegeräten befinden sich unter %1.</translation>
+    </message>
+    <message>
+        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="175"/>
         <source>No card reader detected</source>
         <translation>Kein Kartenlesegerät erkannt</translation>
     </message>
     <message>
-        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="163"/>
+        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="179"/>
         <source>Select a device to display more information about it</source>
         <translation>Wählen Sie ein Kartenlesegerät aus, um mehr Informationen zu erhalten</translation>
     </message>
     <message>
-        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="186"/>
+        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="202"/>
         <source>hh:mm:ss AP</source>
         <translation>HH:mm:ss</translation>
     </message>
     <message>
-        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="187"/>
+        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="203"/>
         <source>The list of card readers was last updated at %1.</source>
         <translation>Die Liste der Kartenlesegeräte wurde zuletzt um %1 aktualisiert.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="281"/>
+        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="297"/>
         <source>Start the pairing mode on the other device if it is not already started.</source>
         <translation>Aktivieren Sie den Kopplungsmodus auf dem anderen Gerät wenn er noch nicht aktiviert sein sollte.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="316"/>
+        <location filename="../../src/widget/ReaderDeviceWidget.cpp" line="333"/>
         <source>Pairing</source>
         <translation>Kopplung</translation>
     </message>
@@ -3828,37 +4010,47 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::RemoteDeviceModel</name>
     <message>
-        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="150"/>
+        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="155"/>
         <source>Not connected</source>
         <translation>Nicht verbunden</translation>
     </message>
     <message>
-        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="157"/>
+        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="164"/>
         <source>Paired and available</source>
         <translation>Gekoppelt und verfügbar</translation>
     </message>
     <message>
-        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="161"/>
-        <source>Paired and not available</source>
-        <translation>Gekoppelt aber nicht verfügbar</translation>
+        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="166"/>
+        <source>Paired, but unsupported</source>
+        <translation>Gekoppelt, aber nicht unterstützt</translation>
     </message>
     <message>
-        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="166"/>
+        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="168"/>
+        <source>Paired, but unavailable</source>
+        <translation>Gekoppelt, aber nicht verfügbar</translation>
+    </message>
+    <message>
+        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="173"/>
+        <source>Unsupported version</source>
+        <translation>Nicht unterstützte Version</translation>
+    </message>
+    <message>
+        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="176"/>
         <source>Not paired</source>
         <translation>Nicht gekoppelt</translation>
     </message>
     <message>
-        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="178"/>
+        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="187"/>
         <source>Device</source>
         <translation>Gerät</translation>
     </message>
     <message>
-        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="181"/>
+        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="190"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="224"/>
+        <location filename="../../src/remote_device/RemoteDeviceModel.cpp" line="233"/>
         <source>dd.MM.YYYY hh:mm AP</source>
         <translation>dd.MM.yyyy HH:mm</translation>
     </message>
@@ -3879,17 +4071,17 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::RemoteServiceModel</name>
     <message>
-        <location filename="../../src/qml/RemoteServiceModel.cpp" line="284"/>
+        <location filename="../../src/qml/RemoteServiceModel.cpp" line="298"/>
         <source>NFC is not available on your device.</source>
         <translation>NFC ist auf Ihrem Gerät nicht verfügbar.</translation>
     </message>
     <message>
-        <location filename="../../src/qml/RemoteServiceModel.cpp" line="288"/>
+        <location filename="../../src/qml/RemoteServiceModel.cpp" line="302"/>
         <source>Please enable NFC to use the remote service.</source>
         <translation>Bitte aktivieren Sie NFC, um den Fernzugriff zu benutzen.</translation>
     </message>
     <message>
-        <location filename="../../src/qml/RemoteServiceModel.cpp" line="292"/>
+        <location filename="../../src/qml/RemoteServiceModel.cpp" line="306"/>
         <source>Please connect your WiFi to use the remote service.</source>
         <translation>Bitte verbinden Sie sich mit Ihrem WLAN, um den Fernzugriff zu benutzen.</translation>
     </message>
@@ -4097,27 +4289,28 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::SelfInfoWidget</name>
     <message>
-        <location filename="../../src/widget/step/SelfInfoWidget.cpp" line="68"/>
+        <location filename="../../src/widget/step/SelfInfoWidget.cpp" line="72"/>
         <source>Save as PDF...</source>
         <translation>Als PDF speichern...</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/SelfInfoWidget.cpp" line="69"/>
+        <location filename="../../src/widget/step/SelfInfoWidget.cpp" line="73"/>
         <source>save id card data as pdf</source>
         <translation>Daten des Ausweisdokuments als PDF speichern</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/SelfInfoWidget.cpp" line="111"/>
+        <location filename="../../src/widget/step/SelfInfoWidget.cpp" line="115"/>
         <source>AusweisApp2.Information.%1.pdf</source>
         <translation>AusweisApp2.Selbstauskunft.%1.pdf</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/SelfInfoWidget.cpp" line="113"/>
+        <location filename="../../src/widget/step/SelfInfoWidget.cpp" line="117"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/SelfInfoWidget.cpp" line="115"/>
+        <location filename="../../src/widget/step/SelfInfoWidget.cpp" line="120"/>
+        <location filename="../../src/widget/step/SelfInfoWidget.cpp" line="122"/>
         <source>PDF Documents</source>
         <translation>PDF-Dokumente</translation>
     </message>
@@ -4125,7 +4318,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::SelfInformationWidget</name>
     <message>
-        <location filename="../../src/widget/SelfInformationWidget.cpp" line="51"/>
+        <location filename="../../src/widget/SelfInformationWidget.cpp" line="52"/>
         <source>Test environment</source>
         <translation>Testumgebung</translation>
     </message>
@@ -4133,27 +4326,27 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::SettingsWidget</name>
     <message>
-        <location filename="../../src/widget/SettingsWidget.cpp" line="302"/>
+        <location filename="../../src/widget/SettingsWidget.cpp" line="331"/>
         <source>Apply</source>
         <translation>Übernehmen</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SettingsWidget.cpp" line="288"/>
+        <location filename="../../src/widget/SettingsWidget.cpp" line="317"/>
         <source>Developer Settings</source>
         <translation>Entwicklereinstellungen</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SettingsWidget.cpp" line="168"/>
+        <location filename="../../src/widget/SettingsWidget.cpp" line="195"/>
         <source>Apply settings?</source>
         <translation>Einstellungen übernehmen?</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SettingsWidget.cpp" line="170"/>
+        <location filename="../../src/widget/SettingsWidget.cpp" line="197"/>
         <source>Do you want to apply the changes?</source>
         <translation>Möchten Sie die Änderungen übernehmen?</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SettingsWidget.cpp" line="310"/>
+        <location filename="../../src/widget/SettingsWidget.cpp" line="339"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -4161,83 +4354,73 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::SetupAssistantWizard</name>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="113"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="102"/>
         <source>Welcome to the AusweisApp2 setup assistant. This assistant will guide you through the setup process in %1 steps. The setup assistant can be cancelled at any time and can be started again later from the Help menu.</source>
         <translation>Willkommen zum Einrichtungsassistenten der AusweisApp2. Sie werden in %1 Schritten durch die Einrichtung geführt. Sie können diesen Einrichtungsassistenten jederzeit abbrechen und später über das Hilfe-Menü erneut starten.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="218"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="185"/>
         <source>Change PIN</source>
         <translation>PIN ändern</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="181"/>
-        <source>The Firefox browser extension NoScript was found on your computer. The configuration of this extension may block authentication requests from being passed to %1. Refer to the online help for further details.</source>
-        <translation>Die Firefox-Erweiterung NoScript wurde auf Ihrem System gefunden. Die Konfiguration dieser Erweiterung kann Authentisierungs-Aufrufe für die %1 blockieren. Weitere Informationen erhalten Sie in der Online-Hilfe.</translation>
-    </message>
-    <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="51"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="50"/>
         <source>setup assistant</source>
         <translation>Einrichtungsassistent</translation>
     </message>
     <message>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="74"/>
         <location filename="../../src/widget/SetupAssistantWizard.cpp" line="85"/>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="96"/>
         <source>Step %1 of %2</source>
         <translation>Schritt %1 von %2</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="110"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="99"/>
         <source>Introduction</source>
         <translation>Einleitung</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="124"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="113"/>
         <source>History</source>
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="125"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="114"/>
         <source>AusweisApp2 offers saving the course of your authentications in a history. Subsequently you can activate this option.</source>
         <translation>Die AusweisApp2 bietet Ihnen die Möglichkeit, durchgeführte Authentisierungen in einem Verlauf zu speichern. Nachfolgend haben Sie die Möglichkeit, diese Option zu aktivieren.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="151"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="140"/>
         <source>save</source>
         <translation>speichern</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="152"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="141"/>
         <source>save history</source>
         <translation>Verlauf speichern</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="168"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="157"/>
         <source>Card Readers</source>
         <translation>Kartenlesegeräte</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="178"/>
-        <source>Firefox extension NoScript</source>
-        <translation>Firefox-Erweiterung NoScript</translation>
-    </message>
-    <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="200"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="167"/>
         <source>Almost done!</source>
         <translation>Fast fertig!</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="206"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="173"/>
         <source>Personal 6 - digit PIN</source>
         <translation>Persönliche 6-stellige PIN</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="207"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="174"/>
         <source>Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. The AusweisApp&apos;s PIN management offers this function. For replacing the transport PIN you need the letter sent to you by your competent authority.</source>
         <translation>Vor der ersten Nutzung der Online-Ausweisfunktion müssen Sie die Transport-PIN durch eine persönliche 6-stellige PIN ersetzen. Die PIN-Verwaltung der AusweisApp2 bietet Ihnen dazu die Möglichkeit. Für das Ersetzen der Transport-PIN benötigen Sie den PIN-Brief, welcher Ihnen von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde zugesandt wurde.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="230"/>
+        <location filename="../../src/widget/SetupAssistantWizard.cpp" line="197"/>
         <source>AusweisApp2 is now ready for use. You can further configure AusweisApp2 via the &quot;Settings&quot; dialog from the navigation section. AusweisApp2 uses the proxy settings configured in your system. This setup assistant can be started at any time from the &quot;Help&quot; menu. The &quot;Finish&quot; button closes the setup assistant.</source>
         <translation>Sie können die AusweisApp2 nun verwenden. Weitere Einstellungen können Sie über die Funktion &quot;Einstellungen&quot; im Navigationsbereich vornehmen. Die AusweisApp2 verwendet die in Ihrem System konfigurierten Proxy-Einstellungen. Sie können diesen Einrichtungsassistenten jederzeit über das Menü &quot;Hilfe&quot; erneut starten. Die Schaltfläche &quot;Abschließen&quot; schließt den Einrichtungsassistenten und öffnet die Dialogseite &quot;Einstellungen&quot;.</translation>
     </message>
@@ -4304,8 +4487,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 %1 - %2</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="367"/>
-        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="394"/>
+        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="363"/>
         <source>Only digits (0-9) are permitted.</source>
         <translation>Es sind nur Ziffern (0-9) erlaubt.</translation>
     </message>
@@ -4333,8 +4515,8 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="86"/>
         <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="149"/>
         <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="300"/>
-        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="601"/>
         <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="606"/>
+        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="611"/>
         <source>Identify now</source>
         <translation>Jetzt ausweisen</translation>
     </message>
@@ -4349,22 +4531,22 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="447"/>
+        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="452"/>
         <source>Identify</source>
         <translation>Ausweisen</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="465"/>
+        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="470"/>
         <source>Identification successful</source>
         <translation>Ausweisen erfolgreich</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="465"/>
+        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="470"/>
         <source>The process was cancelled by the user</source>
         <translation>Der Benutzer hat den Vorgang abgebrochen</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="471"/>
+        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="476"/>
         <source>Result</source>
         <translation>Ergebnis</translation>
     </message>
@@ -4404,23 +4586,28 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Hier können Sie die Datenfelder an/abwählen, die ausgelesen werden sollen. Felder, die Sie nicht abwählen können, sind durch den Diensteanbieter als Pflichtfelder festgelegt worden. Diese Felder sind daher nicht abwählbar.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="370"/>
+        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="374"/>
         <source>Card access number (CAN):</source>
         <translation>Zugangsnummer (CAN):</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="379"/>
-        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="411"/>
-        <source>Open on screen password dialog</source>
-        <translation>Öffnen Sie den Bildschirmtastatur-Passwortdialog</translation>
+        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="383"/>
+        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="416"/>
+        <source>open on screen keyboard</source>
+        <translation>öffne bildschirmtastatur</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="392"/>
-        <source>More information with TAB</source>
-        <translation>Weitere Informationen mit dem Tabulator</translation>
+        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="368"/>
+        <source>please enter your can</source>
+        <translation>bitte geben sie ihre zugangsnummer (can) ein</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="402"/>
+        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="396"/>
+        <source>please enter your pin</source>
+        <translation>bitte geben sie ihre pin ein</translation>
+    </message>
+    <message>
+        <location filename="../../src/widget/step/StepAuthenticationEac1Widget.cpp" line="407"/>
         <source>PIN:</source>
         <translation>PIN:</translation>
     </message>
@@ -4448,70 +4635,70 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="179"/>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="195"/>
         <source>No card reader detected. Please make sure that a card reader is connected.</source>
         <translation>Es wurde kein Kartenlesegerät erkannt. Bitte stellen Sie sicher, dass ein Kartenlesegerät angeschlossen ist.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="180"/>
-        <source>If you would like to set up a local or remote card reader, click on the &quot;Settings&quot; button to cancel the current operation and open the reader settings.</source>
-        <translation>Wenn Sie ein lokales oder entferntes Kartenlesegerät einrichten wollen, klicken Sie auf die Schaltfläche &quot;Einstellungen&quot;, um den laufenden Vorgang abzubrechen und die Einstellungen für das Kartenlesegerät zu öffnen.</translation>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="196"/>
+        <source>If you would like to set up a local or remote card reader, click on the &quot;Settings&quot; button to open the reader settings.</source>
+        <translation>Wenn Sie ein lokales oder entferntes Kartenlesegerät einrichten wollen, klicken Sie auf die Schaltfläche &quot;Einstellungen&quot;, um die Einstellungen für das Kartenlesegerät zu öffnen.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="182"/>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="198"/>
         <source>If you need help or have problems with your card reader click on the &quot;Diagnosis&quot; button for further information.</source>
         <translation>Wenn Sie Hilfe benötigen oder Probleme mit Ihrem Kartenlesegerät haben, klicken Sie auf die Schaltfläche &quot;Diagnose&quot; für weitere Informationen.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="194"/>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="202"/>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="210"/>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="218"/>
         <source>Extended Length is not supported.</source>
         <translation>Extended Length wird nicht überstützt.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="195"/>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="211"/>
         <source>Your remote reader does not meet the technical requirements (Extended Length not supported).</source>
         <translation>Ihr entferntes Kartenlesegerät erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="203"/>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="219"/>
         <source>At least one of your card readers does not meet the technical requirements (Extended Length not supported). Please place the ID card on a different card reader.</source>
         <translation>Mindestens eines Ihrer Kartenlesegeräte erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt). Bitte platzieren Sie Ihren Ausweis auf einem anderen Kartenlesegerät.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="210"/>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="229"/>
+        <source>Connected to following remote readers: %1.</source>
+        <translation>Verbunden mit den folgenden entfernten Lesegeräten: %1.</translation>
+    </message>
+    <message>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="231"/>
         <source>Please place an ID card on the card reader.</source>
         <translation>Bitte legen Sie ein Ausweisdokument auf.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="211"/>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="232"/>
         <source>If you have already placed an ID card on your card reader, click on &quot;Diagnosis&quot; for further information.</source>
         <translation>Sollten Sie bereits Ihr Ausweisdokument aufgelegt haben, klicken Sie auf die Schaltfläche &quot;Diagnose&quot; für weitere Informationen.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="219"/>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="240"/>
         <source>Please place only one ID card on the card reader.</source>
         <translation>Bitte legen Sie nur ein Ausweisdokument auf.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="220"/>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="241"/>
         <source>Please make sure that only one card reader with an ID card on it is connected to your computer. If you have already placed an ID card on your card reader, click on &quot;Diagnosis&quot; for further information.</source>
         <translation>Bitte stellen Sie sicher, dass an Ihrem Computer nur ein Kartenlesegerät mit aufliegendem Ausweisdokument angeschlossen ist. Sollten Sie bereits ein Ausweisdokument aufgelegt haben, klicken Sie auf die Schaltfläche &quot;Diagnose&quot; für weitere Informationen.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="230"/>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="251"/>
         <source>Online identification function is disabled.</source>
         <translation>Die Online-Ausweisfunktion ist deaktiviert.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="231"/>
+        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="252"/>
         <source>This action cannot be performed. The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.</source>
         <translation>Diese Aktion kann leider nicht durchgeführt werden. Die Online-Ausweisfunktion Ihres Ausweisdokuments ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
-    </message>
-    <message>
-        <location filename="../../src/widget/step/StepChooseCardGui.cpp" line="247"/>
-        <source>The device %1 was unpaired because it does not react to connection attempts. Retry the pairing process if you want to use this device to authenticate yourself.</source>
-        <translation>Das Gerät %1 wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Versuchen Sie das Gerät erneut zu koppeln wenn sie es zur Selbstauthentifizierung verwenden möchten.</translation>
     </message>
 </context>
 <context>
@@ -4522,7 +4709,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>Entschuldigung, das hätte nicht passieren dürfen! Bitte kontaktieren Sie das Support Team.</translation>
     </message>
     <message>
-        <location filename="../../src/widget/step/StepErrorGui.cpp" line="62"/>
+        <location filename="../../src/widget/step/StepErrorGui.cpp" line="63"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
@@ -4758,22 +4945,22 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::WorkflowAuthenticateQtGui</name>
     <message>
-        <location filename="../../src/widget/workflow/WorkflowAuthenticateQtGui.cpp" line="60"/>
+        <location filename="../../src/widget/workflow/WorkflowAuthenticateQtGui.cpp" line="59"/>
         <source>Identify</source>
         <translation>Ausweisen</translation>
     </message>
     <message>
-        <location filename="../../src/widget/workflow/WorkflowAuthenticateQtGui.cpp" line="74"/>
+        <location filename="../../src/widget/workflow/WorkflowAuthenticateQtGui.cpp" line="73"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../../src/widget/workflow/WorkflowAuthenticateQtGui.cpp" line="76"/>
+        <location filename="../../src/widget/workflow/WorkflowAuthenticateQtGui.cpp" line="75"/>
         <source>&lt;b&gt;Do you really want to cancel?&lt;/b&gt;</source>
         <translation>&lt;b&gt;Wollen Sie wirklich abbrechen?&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/widget/workflow/WorkflowAuthenticateQtGui.cpp" line="77"/>
+        <location filename="../../src/widget/workflow/WorkflowAuthenticateQtGui.cpp" line="76"/>
         <source>You can as well identity later by calling the service provider&apos;s Internet page again.</source>
         <translation>Sie können sich auch später ausweisen, indem Sie erneut auf die Internetseite des Diensteanbieters gehen.</translation>
     </message>
@@ -4794,7 +4981,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::WorkflowSelfInfoQtGui</name>
     <message>
-        <location filename="../../src/widget/workflow/WorkflowSelfInfoQtGui.cpp" line="59"/>
+        <location filename="../../src/widget/workflow/WorkflowSelfInfoQtGui.cpp" line="58"/>
         <source>Identify</source>
         <translation>Ausweisen</translation>
     </message>
@@ -4802,9 +4989,9 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>main</name>
     <message>
-        <location filename="../qml/main.qml" line="92"/>
-        <source>Press the back button twice to close the app.</source>
-        <translation>Drücken Sie zweimal die Zurück-Taste, um die Anwendung zu schließen.</translation>
+        <location filename="../qml/main.qml" line="96"/>
+        <source>To close the app, quickly press the back button twice.</source>
+        <translation>Um die Anwendung zu schließen, drücken Sie zweimal schnell die Zurück-Taste.</translation>
     </message>
 </context>
 </TS>

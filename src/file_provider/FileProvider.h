@@ -1,7 +1,7 @@
 /*!
  * \brief Class that holds a table of the UpdatableFile instances currently in use.
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -9,6 +9,7 @@
 #include "UpdatableFile.h"
 
 #include <QHash>
+#include <QMutex>
 #include <QSharedPointer>
 
 
@@ -20,6 +21,7 @@ class FileProvider
 
 	private:
 		QHash<QString, QSharedPointer<UpdatableFile> > mUpdatableFiles;
+		QMutex mGetFileMutex;
 
 	protected:
 		FileProvider();

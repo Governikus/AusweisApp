@@ -1,7 +1,7 @@
 /*!
  * \brief Worker implementation of ReaderManger thread
  *
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,7 +37,7 @@ class ReaderManagerWorker
 		ReaderManagerWorker(const QSharedPointer<RemoteClient>& pRemoteClient);
 		~ReaderManagerWorker();
 
-		Q_INVOKABLE void startScan(ReaderManagerPlugInType pType);
+		Q_INVOKABLE void startScan(ReaderManagerPlugInType pType, bool pAutoConnect);
 		Q_INVOKABLE void stopScan(ReaderManagerPlugInType pType);
 
 		Q_INVOKABLE QVector<ReaderManagerPlugInInfo> getPlugInInfos() const;

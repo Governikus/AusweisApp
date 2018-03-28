@@ -1,7 +1,7 @@
 /*!
  * \brief Widget for the settings.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,6 +27,7 @@ class SettingsWidget
 
 	private:
 		QScopedPointer<Ui::SettingsWidget> mUi;
+		bool mScanRunning;
 		bool mWorkflowRunning;
 		bool mSettingsChanged;
 
@@ -53,6 +54,7 @@ class SettingsWidget
 	protected:
 		virtual void paintEvent(QPaintEvent*) override;
 		virtual void hideEvent(QHideEvent* pEvent) override;
+		virtual void showEvent(QShowEvent* pEvent) override;
 		virtual void changeEvent(QEvent* pEvent) override;
 
 	public:
@@ -60,6 +62,12 @@ class SettingsWidget
 		virtual ~SettingsWidget() override;
 
 		void keyPressEvent(QKeyEvent* pEvent) override;
+
+		bool remoteScanRunning() const
+		{
+			return mScanRunning;
+		}
+
 
 		void workflowStarted();
 		void workflowFinished();

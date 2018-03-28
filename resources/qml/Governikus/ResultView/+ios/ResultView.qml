@@ -41,7 +41,7 @@ SectionPage {
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.bottom: parent.bottom
 		anchors.bottomMargin: Utils.dp(30)
-		text: qsTr("Ok") + settingsModel.translationTrigger
+		text: qsTr("OK") + settingsModel.translationTrigger
 		onClicked: baseItem.clicked()
 	}
 }

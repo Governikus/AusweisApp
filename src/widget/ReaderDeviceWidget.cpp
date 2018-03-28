@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDeviceWidget.h"
@@ -7,6 +7,7 @@
 #include "ui_ReaderDeviceWidget.h"
 
 #include "Env.h"
+#include "generic/HelpAction.h"
 #include "LanguageLoader.h"
 #include "ReaderConfiguration.h"
 #include "ReaderManager.h"
@@ -32,6 +33,8 @@ ReaderDeviceWidget::ReaderDeviceWidget(QWidget* pParent)
 {
 	mUi->setupUi(this);
 
+	setDisplayText();
+
 	mUi->tableViewLocal->setModel(&mLocalReaderDataModel);
 	mUi->tableViewLocal->horizontalHeader()->setStretchLastSection(true);
 	mUi->tableViewLocal->verticalHeader()->setVisible(false);
@@ -44,9 +47,6 @@ ReaderDeviceWidget::ReaderDeviceWidget(QWidget* pParent)
 
 	connect(Env::getSingleton<ReaderConfiguration>(), &ReaderConfiguration::fireUpdated, this, &ReaderDeviceWidget::onAdjustReaderNameColumnWidth);
 	onAdjustReaderNameColumnWidth();
-
-	connect(this, &ReaderDeviceWidget::fireWidgetShown, &mRemoteReaderDataModel, &RemoteDeviceModel::onWidgetShown);
-	connect(this, &ReaderDeviceWidget::fireWidgetHidden, &mRemoteReaderDataModel, &RemoteDeviceModel::onWidgetHidden);
 
 	connect(&mLocalReaderDataModel, &ReaderDriverModel::fireModelChanged, this, &ReaderDeviceWidget::onUpdateLocalTableSelection);
 	connect(&mRemoteReaderDataModel, &RemoteDeviceModel::fireModelChanged, this, &ReaderDeviceWidget::onUpdateRemoteTableSelection);
@@ -99,7 +99,7 @@ void ReaderDeviceWidget::onRemoteSelectionChanged()
 		}
 		else
 		{
-			mUi->connectRemote->setEnabled(true);
+			mUi->connectRemote->setEnabled(mRemoteReaderDataModel.isSupported(index));
 			mUi->forgetRemote->setEnabled(false);
 		}
 	}
@@ -112,6 +112,22 @@ void ReaderDeviceWidget::onUpdateInfo()
 	updateInfoIcon();
 	updateInfoText();
 	updateInfoUpdate();
+}
+
+
+void ReaderDeviceWidget::setDisplayText()
+{
+	const QString& url = HelpAction::getOnlineUrl(QStringLiteral("readerDeviceTab"));
+	//: Is embedded in a sentence.
+	const QString hyperlink = QStringLiteral("<a href=\"%1\">%2</a>").arg(url, tr("online help"));
+
+	const QString remoteEmptyListDescriptionString = tr("No smartphone with enabled remote service found. See %1 for details of use.").arg(hyperlink);
+	mUi->remoteEmptyListDescription->setText(remoteEmptyListDescriptionString);
+	mUi->remoteEmptyListDescription->setAccessibleName(remoteEmptyListDescriptionString);
+
+	const QString localEmptyListDescriptionString = tr("No connected card reader found. See %1 for installation of card readers.").arg(hyperlink);
+	mUi->localEmptyListDescription->setText(localEmptyListDescriptionString);
+	mUi->localEmptyListDescription->setAccessibleDescription(localEmptyListDescriptionString);
 }
 
 
@@ -283,6 +299,7 @@ void ReaderDeviceWidget::onConnectClicked()
 		pairingInfoBox.setWindowFlags(pairingInfoBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 		pairingInfoBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 		pairingInfoBox.setDefaultButton(QMessageBox::Ok);
+		pairingInfoBox.button(QMessageBox::Ok)->setFocus();
 		pairingInfoBox.setIconPixmap(QIcon(QStringLiteral(":/images/npa.svg")).pixmap(32, 32));
 
 		if (pairingInfoBox.exec() == QMessageBox::Cancel)
@@ -317,10 +334,9 @@ void ReaderDeviceWidget::onEstablishConnectionDone(const QSharedPointer<RemoteDe
 		box.setWindowIcon(QIcon(QStringLiteral(":/images/npa.svg")));
 		box.setWindowModality(Qt::WindowModal);
 		box.setText(pStatus.toErrorDescription());
+		box.setStandardButtons(QMessageBox::Ok);
+		box.button(QMessageBox::Ok)->setFocus();
 		box.exec();
-	}
-	else
-	{
 	}
 }
 
@@ -359,6 +375,7 @@ void ReaderDeviceWidget::changeEvent(QEvent* pEvent)
 	if (pEvent->type() == QEvent::LanguageChange)
 	{
 		mUi->retranslateUi(this);
+		setDisplayText();
 		onUpdateInfo();
 	}
 	QWidget::changeEvent(pEvent);
@@ -367,7 +384,7 @@ void ReaderDeviceWidget::changeEvent(QEvent* pEvent)
 
 void ReaderDeviceWidget::onRemoteDoubleClicked(const QModelIndex& pIndex)
 {
-	if (!mRemoteReaderDataModel.isPaired(pIndex))
+	if (!mRemoteReaderDataModel.isPaired(pIndex) && mRemoteReaderDataModel.isSupported((pIndex)))
 	{
 		onConnectClicked();
 	}

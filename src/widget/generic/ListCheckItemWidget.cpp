@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QApplication>
@@ -7,6 +7,7 @@
 #include <QPainter>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QStyleOption>
 
 #include "generic/ListCheckItemWidget.h"
 #include "ui_ListCheckItemWidget.h"
@@ -127,6 +128,7 @@ void ListCheckItemWidget::changeEvent(QEvent* pEvent)
 	if (pEvent->type() == QEvent::LanguageChange)
 	{
 		mUi->retranslateUi(this);
-		QWidget::changeEvent(pEvent);
 	}
+
+	QWidget::changeEvent(pEvent);
 }

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WebserviceActivationHandler.h"
@@ -202,7 +202,7 @@ QByteArray WebserviceActivationHandler::guessImageContentType(const QString& pFi
 	{
 		return QByteArrayLiteral("image/svg+xml");
 	}
-	qCWarning(activation) << "Unknown content type, returing default for image" << pFileName;
+	qCWarning(activation) << "Unknown content type, returning default for image" << pFileName;
 	return QByteArrayLiteral("image");
 }
 
@@ -212,6 +212,7 @@ void WebserviceActivationHandler::handleStatusRequest(StatusFormat pStatusFormat
 	qCDebug(activation) << "Create response with status format:" << pStatusFormat;
 
 	HttpResponse response(HttpStatusCode::OK);
+	response.setHeader(QByteArrayLiteral("Access-Control-Allow-Origin"), QByteArrayLiteral("*"));
 	switch (pStatusFormat)
 	{
 		case StatusFormat::PLAIN:

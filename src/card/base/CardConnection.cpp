@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"
@@ -89,7 +89,7 @@ void CardConnection::onReaderInfoChanged(const ReaderInfo& pReaderInfo)
 }
 
 
-TransmitCommand* CardConnection::createTransmitCommand(const QVector<InputAPDUInfo>& pInputApduInfos)
+TransmitCommand* CardConnection::createTransmitCommand(const QVector<InputAPDUInfo>& pInputApduInfos, const QString pSlotHandle)
 {
-	return new TransmitCommand(mCardConnectionWorker, pInputApduInfos);
+	return new TransmitCommand(mCardConnectionWorker, pInputApduInfos, pSlotHandle);
 }

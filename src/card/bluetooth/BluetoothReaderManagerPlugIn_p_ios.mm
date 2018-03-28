@@ -1,7 +1,7 @@
 /*!
  * BluetoothReaderManagerPlugInPrivate_p_ios.mm
  *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BluetoothReaderManagerPlugIn_p.h"

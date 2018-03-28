@@ -22,13 +22,7 @@ Item {
 				baseItem.firePopAll()
 				baseItem.firePush(pinWorkflow, {})
 
-				if (Qt.platform.os === "android") {
-					changePinModel.readerPlugInType = "NFC"
-				} else if (Qt.platform.os === "ios") {
-					changePinModel.readerPlugInType = "BLUETOOTH"
-				} else {
-					changePinModel.readerPlugInType = "PCSC"
-				}
+				changePinModel.setInitialPluginType()
 			}
 
 			navBar.lockedAndHidden = true

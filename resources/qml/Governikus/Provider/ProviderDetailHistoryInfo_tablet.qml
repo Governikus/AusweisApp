@@ -92,6 +92,7 @@ Item {
 								}
 
 								Text {
+									color: Constants.secondary_text
 									text: modelData.trim()
 
 									anchors.verticalCenter: parent.verticalCenter
@@ -129,6 +130,7 @@ Item {
 
 					Text {
 						id: termsOfUsageTextItem
+						color: Constants.secondary_text
 
 						text: baseItem.termsOfUsageText
 						width: parent.width

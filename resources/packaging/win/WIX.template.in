@@ -64,12 +64,34 @@
 					<RegistryValue Type="string" Name="AusweisApp2-Firewall-Rule"
 						Value="v2.20|Action=Allow|Active=TRUE|Dir=Out|App=[INSTALL_ROOT][ProductName].exe|Name=AusweisApp2|Desc=AusweisApp2 firewall rule|"
 						KeyPath="no"/>
-					<RegistryValue Type="string" Name="AusweisApp2-Firewall-Rule-In"
-						Value="v2.20|Action=Allow|Active=TRUE|Dir=In|Protocol=17|LPort=24727|RA4=LocalSubnet|RA6=LocalSubnet|App=[INSTALL_ROOT][ProductName].exe|Name=AusweisApp2|Desc=Allow inbound udp connections for Smartphone as Cardreader.|Edge=TRUE|"
-						KeyPath="no"/>
 				</RegistryKey>
 			</Component>
 		</DirectoryRef>
+
+		<!-- ################################################################### -->
+		<!--    Add/remove  SaC listening port to/from Windows Firewall          -->
+		<!-- ################################################################### -->
+		<CustomAction Id="AddListeningPortWindowsFirewallSaC"
+				Directory="TARGETDIR"
+				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall add rule name=AusweisApp2-Firewall-Rule-SaC-In dir=in action=allow description=&quot;Allow inbound udp connections for Smartphone as card reader.&quot; localip=any remoteip=localsubnet localport=24727 remoteport=any protocol=udp"
+				Execute="commit"
+				Impersonate="no"
+				Return="asyncWait" />
+
+		<InstallExecuteSequence>
+			<Custom Action="AddListeningPortWindowsFirewallSaC" Before="InstallFinalize">SYSTEMSETTINGS and NOT Installed</Custom>
+		</InstallExecuteSequence>
+
+		<CustomAction Id="DeleteListeningPortWindowsFirewallSaC"
+				Directory="TARGETDIR"
+				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall delete rule name=AusweisApp2-Firewall-Rule-SaC-In"
+				Execute="commit"
+				Impersonate="no"
+				Return="asyncWait" />
+
+		<InstallExecuteSequence>
+			<Custom Action="DeleteListeningPortWindowsFirewallSaC" Before="InstallFinalize">Installed and Not REINSTALL</Custom>
+		</InstallExecuteSequence>
 
 		<!-- ############################# -->
 		<!-- Create desktop shortcut       -->

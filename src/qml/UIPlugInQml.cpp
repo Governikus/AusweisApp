@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInQml.h"
@@ -152,6 +152,10 @@ QString UIPlugInQml::getPlatformSelectors() const
 
 void UIPlugInQml::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 {
+#if defined(Q_OS_ANDROID)
+	mQmlExtension.keepScreenOn(true);
+#endif
+
 	mApplicationModel.resetContext(pContext);
 	mNumberModel.resetContext(pContext);
 
@@ -182,6 +186,10 @@ void UIPlugInQml::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 
 void UIPlugInQml::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 {
+#if defined(Q_OS_ANDROID)
+	mQmlExtension.keepScreenOn(false);
+#endif
+
 	mApplicationModel.resetContext();
 	mNumberModel.resetContext();
 

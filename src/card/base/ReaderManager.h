@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -42,12 +42,12 @@ class ReaderManager
 		/*!
 		 * Starts a scan for all device types.
 		 */
-		void startScanAll();
+		void startScanAll(bool pAutoConnect = true);
 
 		/*!
 		 * Starts a scan for devices if registered plugin don't scan anytime.
 		 */
-		void startScan(ReaderManagerPlugInType pType);
+		void startScan(ReaderManagerPlugInType pType, bool pAutoConnect = true);
 
 		/*!
 		 * Stops scan for all device types.

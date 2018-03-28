@@ -1,14 +1,15 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AutoStart.h"
 
-#include <QDebug>
+#include <QLoggingCategory>
 
 
 using namespace governikus;
 
+Q_DECLARE_LOGGING_CATEGORY(settings)
 
 bool AutoStart::enabled()
 {
@@ -20,6 +21,6 @@ void AutoStart::set(bool pEnabled)
 {
 	if (pEnabled)
 	{
-		qDebug() << "Autostart not supported on this system";
+		qCDebug(settings) << "Autostart not supported on this system";
 	}
 }

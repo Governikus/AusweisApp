@@ -1,46 +1,43 @@
 /*
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkInfo;
-import android.os.Build;
-import android.util.Log;
+import android.net.wifi.WifiManager;
 
-public class WifiInfo
+public final class WifiInfo
 {
-	private static final String TAG = "AusweisApp2";
-
-	public static boolean wifiEnabled(Context context)
+	private WifiInfo()
 	{
-		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	}
 
-		if (android.os.Build.VERSION.SDK_INT < 21)
+
+	public static boolean wifiEnabled(Context pContext)
+	{
+		WifiManager wifi;
+		wifi = (WifiManager) pContext.getSystemService(Context.WIFI_SERVICE);
+
+		switch (wifi.getWifiState())
 		{
-			for (NetworkInfo networkInfo : connectivityManager.getAllNetworkInfo())
-			{
-				if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.getState().equals(NetworkInfo.State.CONNECTED))
-				{
-					return true;
-				}
-			}
+			case WifiManager.WIFI_STATE_ENABLED:
+			case WifiManager.WIFI_STATE_ENABLING:
+				return true;
+
+			default:
+				return false;
 		}
-		else
-		{
-			for (Network mNetwork : connectivityManager.getAllNetworks())
-			{
-				NetworkInfo networkInfo = connectivityManager.getNetworkInfo(mNetwork);
-				if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.getState().equals(NetworkInfo.State.CONNECTED))
-				{
-					return true;
-				}
-			}
-		}
-		return false;
+	}
+
+
+	public static boolean enableWifi(Context pContext)
+	{
+		WifiManager wifi;
+		wifi = (WifiManager) pContext.getSystemService(Context.WIFI_SERVICE);
+
+		wifi.setWifiEnabled(true);
+		return true;
 	}
 
 

@@ -106,7 +106,7 @@
        <item>
         <widget class="QLabel" name="DescriptionLabel">
          <property name="text">
-          <string>AusweisApp2 is a product of Governikus GmbH &amp; Co. KG - on behalf of the Federal Ministry of the Interior.</string>
+          <string>AusweisApp2 is a product of Governikus GmbH &amp; Co. KG - on behalf of the Federal Ministry of the Interior, Building and Community.</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

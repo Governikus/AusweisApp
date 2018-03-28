@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -183,32 +183,6 @@ class ResetRetryCounterBuilder
 
 	private:
 		QByteArray mPin;
-};
-
-
-class PinModifyBuilder
-{
-	private:
-		QByteArray createCommandData(quint8 pTimeoutSeconds, char pMsgIndex1, char pMsgIndex2, char pMsgIndex3, const QByteArray& pAbData) const;
-
-	public:
-		QByteArray createChangeEidPinCommandData(quint8 pTimeoutSeconds) const;
-
-		/**
-		 * According to DWG_Smart-Card_CCID_Rev110.pdf as mentioned in [TR-03110].
-		 */
-		CommandApdu createCommandDataCcid(quint8 pTimeoutSeconds) const;
-};
-
-class PinModifyOutput
-{
-	private:
-		CardReturnCode mReturnCode;
-
-	public:
-		void parse(const QByteArray& pData);
-		void parseFromCcid(const QByteArray& pData);
-		CardReturnCode getReturnCode() const;
 };
 
 } /* namespace governikus */

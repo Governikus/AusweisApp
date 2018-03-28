@@ -151,6 +151,7 @@ Rectangle {
 
 			Text {
 				id: providerText
+				color: Constants.secondary_text
 				width: parent.width
 				text: selectedProvider ? selectedProvider.shortDescription : ""
 				font.pixelSize: Constants.normal_font_size

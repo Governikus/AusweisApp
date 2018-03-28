@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfInfoWidget.h"
@@ -15,6 +15,7 @@
 #include <QLoggingCategory>
 #include <QPainter>
 #include <QPushButton>
+#include <QStyleOption>
 
 using namespace governikus;
 
@@ -55,7 +56,10 @@ void SelfInfoWidget::fillLayout()
 	for (const auto& entry : orderedSelfData)
 	{
 		QLabel* const tmpLabel = new QLabel(entry.first);
-		tmpLabel->setFocusPolicy(Qt::TabFocus);
+		if (!entry.first.isEmpty())
+		{
+			tmpLabel->setFocusPolicy(Qt::TabFocus);
+		}
 		tmpLabel->setAlignment(Qt::AlignLeading | Qt::AlignLeft | Qt::AlignTop);
 
 		QLabel* const tmpField = new QLabel(entry.second);

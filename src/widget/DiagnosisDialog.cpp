@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisDialog.h"
@@ -44,25 +44,25 @@ DiagnosisDialog::~DiagnosisDialog()
 
 void DiagnosisDialog::onSaveButtonClicked()
 {
-	QString fileName = QFileDialog::getSaveFileName(this, QCoreApplication::applicationName()
-			+ QStringLiteral(" - ")
-			+ tr("Save diagnosis result")
-			, QDir::homePath()
-			+ QLatin1Char('/')
-			+ tr("AusweisApp2-diagnosis.txt")
+	const auto& creationTime = mDiagnosisWidget->getCreationTime();
+
+	QString filename = QStringLiteral("AusweisApp2.Diagnosis.%1.txt").arg(creationTime.toString(QStringLiteral("yyyy-MM-dd_HH-mm")));
+	filename = QFileDialog::getSaveFileName(this,
+			QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Save"),
+			QDir::homePath() + QLatin1Char('/') + filename,
 #ifndef Q_OS_MACOS
-			, tr("Text files (*.txt)"));
+			tr("Text files") + QStringLiteral(" (*.txt)"));
 #else
-			, tr("Text files (*.txt)"), nullptr, QFileDialog::DontUseNativeDialog);
+			tr("Text files") + QStringLiteral(" (*.txt)"), nullptr, QFileDialog::DontUseNativeDialog);
 #endif
 
-	if (fileName.isEmpty())
+	if (filename.isEmpty())
 	{
 		return;
 	}
-	if (!fileName.endsWith(QLatin1String(".txt"), Qt::CaseSensitivity::CaseInsensitive))
+	if (!filename.endsWith(QLatin1String(".txt"), Qt::CaseSensitivity::CaseInsensitive))
 	{
-		fileName += QStringLiteral(".txt");
+		filename += QStringLiteral(".txt");
 	}
 
 	QString text = mDiagnosisWidget->getInfoTextEdit();
@@ -70,10 +70,18 @@ void DiagnosisDialog::onSaveButtonClicked()
 	text.replace(QLatin1Char('\n'), QStringLiteral("\r\n"));
 #endif
 
-	QFile file(fileName);
+	QFile file(filename);
 	if (!file.open(QIODevice::WriteOnly | QFile::Truncate) || file.write(text.toUtf8()) < 0)
 	{
-		QMessageBox::warning(this, QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("File error"), tr("An error occurred while saving the file."));
+		QMessageBox box(this);
+		box.setWindowTitle(QApplication::applicationName() + QStringLiteral(" - ") + tr("File error"));
+		box.setWindowModality(Qt::ApplicationModal);
+		box.setIcon(QMessageBox::Warning);
+		box.setWindowFlags(box.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+		box.setText(tr("An error occurred while saving the file."));
+		box.setStandardButtons(QMessageBox::Ok);
+		box.button(QMessageBox::Ok)->setFocus();
+		box.exec();
 	}
 }
 

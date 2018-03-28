@@ -29,7 +29,7 @@ Item {
 		anchors.verticalCenter: parent.verticalCenter
 		font.pixelSize: Constants.small_font_size
 		renderType: Text.NativeRendering
-		color: "black"
+		color: Constants.secondary_text
 	}
 
 	MouseArea {

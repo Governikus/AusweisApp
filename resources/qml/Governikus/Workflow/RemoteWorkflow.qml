@@ -2,11 +2,29 @@ import QtQuick 2.5
 import QtQuick.Layouts 1.1
 
 import Governikus.Global 1.0
+import Governikus.RemoteServiceView 1.0
 import Governikus.TechnologyInfo 1.0
 
 Item {
 	id: baseItem
 	signal requestPluginType(string pReaderPlugInType)
+
+	property bool settingsPushed: remoteServiceSettings.visible
+	property bool wifiEnabled: applicationModel.wifiEnabled
+	property bool foundSelectedReader: applicationModel.foundSelectedReader
+
+	Connections {
+		target: applicationModel
+		onFireCertificateRemoved: {
+			qmlExtension.showFeedback(qsTr("The device %1 was unpaired because it does not react to connection attempts. Retry the pairing process if you want to use this device to authenticate yourself.").arg(pDeviceName))
+		}
+	}
+
+	onFoundSelectedReaderChanged: {
+		if (baseItem.settingsPushed && foundSelectedReader) {
+			remoteServiceSettings.firePop()
+		}
+	}
 
 	ProgressIndicator {
 		id: progressIndicator
@@ -16,7 +34,7 @@ Item {
 		height: parent.height / 2
 		imageIconSource: "qrc:///images/icon_remote.svg"
 		imagePhoneSource: "qrc:///images/phone_remote.svg"
-		state: applicationModel.foundSelectedReader ? "two" : "one"
+		state: foundSelectedReader ? "two" : "one"
 	}
 
 	TechnologyInfo {
@@ -29,25 +47,57 @@ Item {
 		anchors.bottom: switchToNfcAction.top
 		state: parent.state
 
-		enableButtonVisible: false
-		enableButtonText: (!applicationModel.wifiEnabled ? qsTr("Enable Wifi") : qsTr("Continue")) + settingsModel.translationTrigger
-		onEnableClicked: {
-			// open wifi dialogue
+		enableButtonVisible: !wifiEnabled || !foundSelectedReader
+		enableButtonText: {
+			settingsModel.translationTrigger
+
+			if (!wifiEnabled) {
+				return qsTr("Enable Wifi");
+			} else if (!foundSelectedReader) {
+				return qsTr("Pair device");
+			} else {
+				return qsTr("Continue")
+			}
 		}
 
-		titleText: (!applicationModel.foundSelectedReader ?
-						qsTr("Establish connection") :
-						qsTr("Determine card")
-					) + settingsModel.translationTrigger
+		onEnableClicked: {
+			if (!wifiEnabled) {
+				applicationModel.enableWifi()
+			} else if (!baseItem.settingsPushed) {
+				firePush(remoteServiceSettings, {})
+			}
+		}
+		enableText: {
+			settingsModel.translationTrigger
 
-		subTitleText: (!visible ? "" :
-					  !!numberModel.inputError ? numberModel.inputError :
-					  !applicationModel.wifiEnabled ? qsTr("To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.") :
-					  !applicationModel.foundSelectedReader ?
-							qsTr("No paired and activated remote device was detected. Make sure that you have started remote service on you remote device.") :
-							qsTr("Please insert your ID card.")
-					  ) + settingsModel.translationTrigger
-		subTitleTextRedColor: !applicationModel.wifiEnabled
+			if (!wifiEnabled) {
+				return qsTr("To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.");
+			} else if (!foundSelectedReader) {
+				return qsTr("No paired and activated remote device was detected. Make sure that you have started remote service on you remote device.");
+			} else {
+				return "";
+			}
+		}
+
+		titleText: (foundSelectedReader ?
+			qsTr("Determine card") :
+			qsTr("Establish connection")
+		) + settingsModel.translationTrigger
+
+		subTitleText: {
+			settingsModel.translationTrigger
+
+			if (!visible) {
+				return "";
+			} else if (!!numberModel.inputError) {
+				return numberModel.inputError;
+			} else if (numberModel.pinDeactivated) {
+				qsTr("The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.");
+			} else {
+				return qsTr("Connected to %1. Please insert your ID card.").arg(remoteServiceModel.connectedServerDeviceNames);
+			}
+		}
+		subTitleTextRedColor: false
 	}
 
 	TechnologySwitch {
@@ -57,5 +107,10 @@ Item {
 		anchors.bottom: parent.bottom
 		selectedTechnology: "REMOTE"
 		onRequestPluginType: parent.requestPluginType(pReaderPlugInType)
+	}
+
+	RemoteServiceSettings {
+		id: remoteServiceSettings
+		visible: false
 	}
 }

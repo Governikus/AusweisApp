@@ -102,6 +102,7 @@ SectionPage {
 
 				Text {
 					id: providerText
+					color: Constants.secondary_text
 					text: (!!provider.longDescription ? provider.longDescription : qsTr("Description not available")) + settingsModel.translationTrigger
 					horizontalAlignment: Text.AlignLeft
 					wrapMode: Text.WordWrap

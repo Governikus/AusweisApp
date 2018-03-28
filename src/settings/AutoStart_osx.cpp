@@ -1,11 +1,11 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AutoStart.h"
 
 #include <QCoreApplication>
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QRegularExpression>
 
 #import <Cocoa/Cocoa.h>
@@ -13,10 +13,11 @@
 
 using namespace governikus;
 
+Q_DECLARE_LOGGING_CATEGORY(settings)
 
 static bool checkAndRemoveAutoStart(bool pRemove)
 {
-	qDebug() << "Loading OSX login items";
+	qCDebug(settings) << "Loading OSX login items";
 
 	QRegularExpression regex("/Contents/Resources$");
 	NSString* appPath = QCoreApplication::applicationDirPath().remove(regex).toNSString();
@@ -58,7 +59,7 @@ static bool checkAndRemoveAutoStart(bool pRemove)
 					if (displayName.startsWith(QCoreApplication::applicationName()))
 					{
 						LSSharedFileListItemRemove(loginItems, itemRef);
-						qDebug() << "Removed the unresolvable application with diplay name" << displayName << "from OSX login items.";
+						qCDebug(settings) << "Removed the unresolvable application with diplay name" << displayName << "from OSX login items.";
 					}
 				}
 			}

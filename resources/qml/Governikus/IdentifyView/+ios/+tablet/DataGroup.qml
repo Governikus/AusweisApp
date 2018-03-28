@@ -36,6 +36,7 @@ Rectangle {
 			height: Utils.dp(40)
 			visible: repeater.count < 1
 			Text {
+				color: Constants.secondary_text
 				id: emptyText
 				anchors.verticalCenter: parent.verticalCenter
 				width: parent.width
@@ -70,6 +71,7 @@ Rectangle {
 
 					Text {
 						id: text
+						color: Constants.secondary_text
 						anchors.verticalCenter: parent.verticalCenter
 						anchors.left: parent.left
 						anchors.right: checkBox.left

@@ -600,16 +600,15 @@ However, you can change your PIN on your smartphone directly as long as the remo
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="governikus::PasswordEdit" name="oldPinEdit">
-               <property name="focusPolicy">
-                <enum>Qt::StrongFocus</enum>
-               </property>
-              </widget>
+              <widget class="governikus::PasswordEdit" name="oldPinEdit"/>
              </item>
              <item row="1" column="2">
               <widget class="QToolButton" name="oldRandomPinButton">
                <property name="focusPolicy">
                 <enum>Qt::StrongFocus</enum>
+               </property>
+               <property name="accessibleName">
+                <string>open on screen keyboard</string>
                </property>
                <property name="autoRaise">
                 <bool>true</bool>
@@ -627,16 +626,15 @@ However, you can change your PIN on your smartphone directly as long as the remo
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="governikus::PasswordEdit" name="newPinEdit">
-               <property name="focusPolicy">
-                <enum>Qt::StrongFocus</enum>
-               </property>
-              </widget>
+              <widget class="governikus::PasswordEdit" name="newPinEdit"/>
              </item>
              <item row="2" column="2">
               <widget class="QToolButton" name="newRandomPinButton">
                <property name="focusPolicy">
                 <enum>Qt::StrongFocus</enum>
+               </property>
+               <property name="accessibleName">
+                <string>open on screen keyboard</string>
                </property>
                <property name="autoRaise">
                 <bool>true</bool>
@@ -654,16 +652,15 @@ However, you can change your PIN on your smartphone directly as long as the remo
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="governikus::PasswordEdit" name="repeatNewPinEdit">
-               <property name="focusPolicy">
-                <enum>Qt::StrongFocus</enum>
-               </property>
-              </widget>
+              <widget class="governikus::PasswordEdit" name="repeatNewPinEdit"/>
              </item>
              <item row="3" column="2">
               <widget class="QToolButton" name="repeatNewRandomPinButton">
                <property name="focusPolicy">
                 <enum>Qt::StrongFocus</enum>
+               </property>
+               <property name="accessibleName">
+                <string>open on screen keyboard</string>
                </property>
                <property name="autoRaise">
                 <bool>true</bool>
@@ -734,14 +731,16 @@ However, you can change your PIN on your smartphone directly as long as the remo
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="governikus::PasswordEdit" name="canEdit">
-                   <property name="focusPolicy">
-                    <enum>Qt::StrongFocus</enum>
-                   </property>
-                  </widget>
+                  <widget class="governikus::PasswordEdit" name="canEdit"/>
                  </item>
                  <item>
                   <widget class="QToolButton" name="canRandomPinButton">
+                   <property name="focusPolicy">
+                    <enum>Qt::StrongFocus</enum>
+                   </property>
+                   <property name="accessibleName">
+                    <string>open on screen keyboard</string>
+                   </property>
                    <property name="autoRaise">
                     <bool>true</bool>
                    </property>
@@ -797,14 +796,20 @@ However, you can change your PIN on your smartphone directly as long as the remo
                 </widget>
                </item>
                <item>
-                <widget class="governikus::PasswordEdit" name="pukEdit">
+                <widget class="governikus::PasswordEdit" name="pukEdit"/>
+               </item>
+               <item>
+                <widget class="QToolButton" name="pukRandomPinButton">
                  <property name="focusPolicy">
                   <enum>Qt::StrongFocus</enum>
                  </property>
+                 <property name="accessibleName">
+                  <string>open on screen keyboard</string>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>true</bool>
+                 </property>
                 </widget>
-               </item>
-               <item>
-                <widget class="QToolButton" name="pukRandomPinButton"/>
                </item>
                <item>
                 <spacer name="horizontalSpacer">

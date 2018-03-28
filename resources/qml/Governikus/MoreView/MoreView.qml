@@ -16,6 +16,13 @@ SectionPage {
 		color: "white"
 	}
 
+
+	onVisibleChanged: {
+		if (visible) {
+			remoteServiceModel.detectRemoteDevices = false
+		}
+	}
+
 	Column {
 		id: menu
 		width: parent.width
@@ -65,7 +72,10 @@ SectionPage {
 			imageSource: "qrc:///images/android/navigation/remotesettings.svg"
 			text: qsTr("Configure remote service") + settingsModel.translationTrigger
 			showRightArrow: true
-			onClicked: firePush(remoteServiceSettings, {})
+			onClicked: {
+				remoteServiceModel.detectRemoteDevices = true
+				firePush(remoteServiceSettings, {})
+			}
 		}
 
 		MoreViewMenuItem {

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGenericSendReceive.h"
@@ -114,12 +114,29 @@ void StateGenericSendReceive::onSslHandshakeDone()
 	const auto& cfg = mReply->sslConfiguration();
 	TlsChecker::logSslConfig(cfg, qInfo(network));
 
+	bool abort = false;
 	const auto statusCode = checkAndSaveCertificate(cfg.peerCertificate());
 	if (statusCode != GlobalStatus::Code::No_Error)
 	{
 		qCCritical(network) << GlobalStatus(statusCode);
 		updateStatus(statusCode);
+		abort = true;
+	}
 
+	auto context = getContext();
+	if (!abort && !context->getTcToken()->usePsk())
+	{
+		const auto& session = context->getSslSession();
+		if (session.isEmpty() || session != cfg.sessionTicket())
+		{
+			qCCritical(network) << "Session resumption failed";
+			updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Establishment_Error);
+			abort = true;
+		}
+	}
+
+	if (abort)
+	{
 		// Stop listening to signals from QNetworkReply to stay in
 		// this state until the following timer fires the signal.
 		clearConnections();
@@ -129,6 +146,7 @@ void StateGenericSendReceive::onSslHandshakeDone()
 		// We need to append the abort to the event queue, because
 		// QNetworkAccessManager::clearConnectionCache forces sending
 		// the request when the abort on QNetworkReply is not finished.
+		// See https://bugreports.qt.io/browse/QTBUG-65960
 		QTimer::singleShot(0, this, [this] {
 					Q_EMIT fireAbort();
 				});
@@ -212,7 +230,8 @@ void StateGenericSendReceive::run()
 
 	qCDebug(network) << "Try to send raw data:\n" << data;
 	const QByteArray& paosNamespace = PaosCreator::getNamespace(PaosCreator::Namespace::PAOS).toUtf8();
-	mReply = Env::getSingleton<NetworkManager>()->paos(request, paosNamespace, data, token->usePsk());
+	const auto& session = token->usePsk() ? QByteArray() : getContext()->getSslSession();
+	mReply = Env::getSingleton<NetworkManager>()->paos(request, paosNamespace, data, token->usePsk(), session);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGenericSendReceive::onSslErrors);
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGenericSendReceive::onSslHandshakeDone);
 	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateGenericSendReceive::onReplyFinished);

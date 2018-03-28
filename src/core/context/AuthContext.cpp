@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthContext.h"
@@ -47,6 +47,7 @@ AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationCon
 	, mDvCvc()
 	, mCvcChainBuilderProd()
 	, mCvcChainBuilderTest()
+	, mSslSession()
 {
 }
 
@@ -210,6 +211,18 @@ void AuthContext::setTerminalCvc(const QSharedPointer<const CVCertificate>& pTer
 {
 	mTerminalCvc = pTerminalCvc;
 	initializeChat();
+}
+
+
+const QByteArray& AuthContext::getSslSession() const
+{
+	return mSslSession;
+}
+
+
+void AuthContext::setSslSession(const QByteArray& pSession)
+{
+	mSslSession = pSession;
 }
 
 

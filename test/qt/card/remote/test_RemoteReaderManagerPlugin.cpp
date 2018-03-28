@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteReaderManagerPlugIn
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReaderManagerPlugIn.h"
@@ -448,7 +448,7 @@ class test_RemoteReaderManagerPlugIn
 			QCOMPARE(result->getType(), RemoteCardMessageType::IFDDisconnect);
 
 			QCOMPARE(mPlugin->getReaders().size(), 1);
-			Card* card = mPlugin->getReaders()[0]->getCard();
+			Card* card = mPlugin->getReaders().at(0)->getCard();
 			QVERIFY(card != nullptr);
 
 			QCOMPARE(card->connect(), CardReturnCode::OK);

@@ -1,7 +1,7 @@
 /*!
  * \brief Contains the method definitions of the GeneralSettings class.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GeneralSettings.h"
@@ -9,11 +9,13 @@
 #include "AutoStart.h"
 
 #include <QCoreApplication>
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QtConcurrent/QtConcurrentRun>
 
 
 using namespace governikus;
+
+Q_DECLARE_LOGGING_CATEGORY(settings)
 
 namespace
 {
@@ -30,6 +32,7 @@ SETTINGS_NAME(SETTINGS_NAME_LANGUAGE, "language")
 SETTINGS_NAME(SETTINGS_GROUP_NAME_COMMON, "common")
 SETTINGS_NAME(SETTINGS_NAME_AUTO, "autoUpdateCheck")
 SETTINGS_NAME(SETTINGS_NAME_KEYLESS_PASSWORD, "keylessPassword")
+SETTINGS_NAME(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE, "lastTechnology")
 }
 
 GeneralSettings::GeneralSettings()
@@ -205,7 +208,7 @@ bool GeneralSettings::isDeveloperMode() const
 	const bool developerMode = mStoreGeneral->value(SETTINGS_NAME_DEVELOPER_MODE(), false).toBool();
 	if (developerMode && appIsBackgroundService())
 	{
-		qDebug() << "Running as a background service. Developer mode is disallowed.";
+		qCDebug(settings) << "Running as a background service. Developer mode is disallowed.";
 		return false;
 	}
 
@@ -288,6 +291,22 @@ void GeneralSettings::setUseScreenKeyboard(bool pKeylessPassword)
 	if (pKeylessPassword != isUseScreenKeyboard())
 	{
 		mStoreCommon->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), pKeylessPassword);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
+QString GeneralSettings::getLastReaderPluginType() const
+{
+	return mStoreGeneral->value(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE(), QString()).toString();
+}
+
+
+void GeneralSettings::setLastReaderPluginType(const QString& pLastReaderPluginType)
+{
+	if (pLastReaderPluginType != getLastReaderPluginType())
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE(), pLastReaderPluginType);
 		Q_EMIT fireSettingsChanged();
 	}
 }

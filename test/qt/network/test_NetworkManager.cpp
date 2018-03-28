@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref NetworkManager
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "context/SelfAuthContext.h"
@@ -43,7 +43,7 @@ class test_NetworkManager
 		void paosRequestAttached()
 		{
 			QNetworkRequest request(QUrl("https://dummy"));
-			auto reply = Env::getSingleton<NetworkManager>()->paos(request, "paosNamespace", "content", false, 1);
+			auto reply = Env::getSingleton<NetworkManager>()->paos(request, "paosNamespace", "content", false, QByteArray(), 1);
 			QVERIFY(request.hasRawHeader("PAOS"));
 			QCOMPARE(request.rawHeader("PAOS"), QByteArray("ver=\"paosNamespace\""));
 			QCOMPARE(reply->request(), request);
@@ -61,7 +61,7 @@ class test_NetworkManager
 		void paosRequestPsk()
 		{
 			QNetworkRequest request(QUrl("https://dummy"));
-			auto reply = Env::getSingleton<NetworkManager>()->paos(request, "paosNamespace", "content", true, 1);
+			auto reply = Env::getSingleton<NetworkManager>()->paos(request, "paosNamespace", "content", true, QByteArray(), 1);
 			QVERIFY(request.hasRawHeader("PAOS"));
 			QCOMPARE(request.rawHeader("PAOS"), QByteArray("ver=\"paosNamespace\""));
 			QCOMPARE(reply->request(), request);

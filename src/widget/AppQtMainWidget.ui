@@ -742,7 +742,7 @@
   </action>
   <action name="actionHelp">
    <property name="text">
-    <string>&amp;Manual</string>
+    <string>&amp;Online help</string>
    </property>
   </action>
   <action name="actionEvaluate">

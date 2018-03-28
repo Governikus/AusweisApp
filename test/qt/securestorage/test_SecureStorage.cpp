@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref SecureStorage
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QCoreApplication>
@@ -192,8 +192,6 @@ class test_SecureStorage
 		{
 			QVERIFY(mSecureStorage.getSelfAuthenticationUrl(false).isValid());
 			QVERIFY(mSecureStorage.getSelfAuthenticationUrl(true).isValid());
-			QVERIFY(!mSecureStorage.getSelfAuthenticationCertDescr(false).isEmpty());
-			QVERIFY(!mSecureStorage.getSelfAuthenticationCertDescr(true).isEmpty());
 		}
 
 

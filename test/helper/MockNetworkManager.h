@@ -1,7 +1,7 @@
 /*!
  * \brief Mock \ref NetworkManager for tests
  *
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,8 +28,15 @@ class MockNetworkManager
 	public:
 		MockNetworkManager();
 		virtual ~MockNetworkManager() override;
-		virtual QNetworkReply* get(QNetworkRequest& pRequest, int pTimeoutInMilliSeconds = 30000) override;
-		virtual QNetworkReply* paos(QNetworkRequest& pRequest, const QByteArray& pNamespace, const QByteArray& pData, bool pUsePsk = true, int pTimeoutInMilliSeconds = 30000) override;
+		virtual QNetworkReply* paos(QNetworkRequest& pRequest,
+				const QByteArray& pNamespace,
+				const QByteArray& pData,
+				bool pUsePsk = true,
+				const QByteArray& pSslSession = QByteArray(),
+				int pTimeoutInMilliSeconds = 30000) override;
+		virtual QNetworkReply* get(QNetworkRequest& pRequest,
+				const QByteArray& pSslSession = QByteArray(),
+				int pTimeoutInMilliSeconds = 30000) override;
 		virtual bool checkUpdateServerCertificate(const QNetworkReply& pReply) override;
 
 		void setFilename(const QString& pFilename)

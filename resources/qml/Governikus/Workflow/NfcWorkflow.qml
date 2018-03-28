@@ -9,8 +9,6 @@ Item {
 	signal requestPluginType(string pReaderPlugInType)
 	clip: true
 
-	property alias allowRemote: technologySwitch.allowRemote
-
 	NfcProgressIndicator {
 		id: progressIndicator
 		anchors.left: parent.left

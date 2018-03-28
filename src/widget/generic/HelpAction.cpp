@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HelpAction.h"
@@ -118,7 +118,7 @@ QUrl HelpAction::getHelpUrlWrapper(const QString& pObjectName) const
 }
 
 
-QString HelpAction::getOnlineUrl(const QString& pObjectName) const
+QString HelpAction::getOnlineUrl(const QString& pObjectName)
 {
 #ifdef Q_OS_MACOS
 	const QLatin1String osPath("macOS");
@@ -129,7 +129,7 @@ QString HelpAction::getOnlineUrl(const QString& pObjectName) const
 	const auto& appVersion = VersionNumber::getApplicationVersion().getVersionNumber();
 	const QString ver = QString::number(appVersion.majorVersion()) % QLatin1Char('.') % QString::number(appVersion.minorVersion());
 	const QString locale = QLocale(LanguageLoader::getInstance().getUsedLocale().language()).bcp47Name().mid(0, 2);
-	const QString mapping = getContextMapping(pObjectName);
+	const QString mapping = getInstance().getContextMapping(pObjectName);
 	return QStringLiteral("https://www.ausweisapp.bund.de/ausweisapp2/handbuch/") % ver % QLatin1Char('/') % locale % QLatin1Char('/') % osPath % QLatin1Char('/') % mapping;
 }
 
@@ -137,7 +137,7 @@ QString HelpAction::getOnlineUrl(const QString& pObjectName) const
 void HelpAction::openContextHelp(const QString& pObjectName)
 {
 	//const auto& url = getInstance().getHelpUrlWrapper(pObjectName);
-	const auto& url = QUrl(getInstance().getOnlineUrl(pObjectName));
-	qCDebug(gui) << "Open manual:" << pObjectName << '|' << url;
+	const auto& url = QUrl(getOnlineUrl(pObjectName));
+	qCDebug(gui) << "Open online help:" << pObjectName << '|' << url;
 	QDesktopServices::openUrl(url);
 }

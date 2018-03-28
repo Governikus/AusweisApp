@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppController.h"
@@ -53,6 +53,7 @@ using namespace governikus;
 
 
 Q_DECLARE_LOGGING_CATEGORY(support)
+Q_DECLARE_LOGGING_CATEGORY(system)
 
 
 WorkflowRequest::WorkflowRequest(Action pAction,
@@ -107,6 +108,21 @@ AppController::~AppController()
 }
 
 
+bool AppController::eventFilter(QObject* pObj, QEvent* pEvent)
+{
+#ifdef Q_OS_MACOS
+	// This event gets send on reopen events in macOS (opening the app again while
+	// it is in the background). Currently the event handling is only needed on macOS.
+	if (pEvent && pEvent->type() == QEvent::ApplicationActivate)
+	{
+		qCDebug(system) << "Got an ApplicationActivate event, showing current UI Workflow.";
+		Q_EMIT fireShowUi(UiModule::CURRENT);
+	}
+#endif
+	return QObject::eventFilter(pObj, pEvent);
+}
+
+
 bool AppController::start()
 {
 	ReaderManager::getInstance().init(QSharedPointer<RemoteClient>(Env::create<RemoteClient*>()));
@@ -134,6 +150,8 @@ bool AppController::start()
 		}
 		qDebug() << "Successfully started activation handler:" << handler;
 	}
+
+	QCoreApplication::instance()->installEventFilter(this);
 
 	return true;
 }
@@ -245,9 +263,6 @@ void AppController::onSelfAuthenticationRequested()
 	if (canStartNewAction())
 	{
 		const QSharedPointer<SelfAuthContext> context(new SelfAuthContext());
-	#ifndef QT_NO_NETWORKPROXY
-		connect(Env::getSingleton<NetworkManager>(), &NetworkManager::fireProxyAuthenticationRequired, this, &AppController::fireProxyAuthenticationRequired);
-	#endif
 		startNewWorkflow<SelfAuthController>(Action::SELF, context);
 	}
 }
@@ -259,11 +274,7 @@ void AppController::onAuthenticationRequest(const QSharedPointer<ActivationConte
 	const QSharedPointer<AuthContext> authContext(new AuthContext(pActivationContext));
 	if (canStartNewAction())
 	{
-#ifndef QT_NO_NETWORKPROXY
-		connect(Env::getSingleton<NetworkManager>(), &NetworkManager::fireProxyAuthenticationRequired, this, &AppController::fireProxyAuthenticationRequired);
-#endif
 		startNewWorkflow<AuthController>(Action::AUTH, authContext);
-
 		return;
 	}
 

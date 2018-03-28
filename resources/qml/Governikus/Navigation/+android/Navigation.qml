@@ -7,6 +7,7 @@ Item {
 	id: navigation
 	state: "identify"
 	width: !PlatformConstants.is_tablet || lockedAndHidden ? 0 : Constants.menubar_width
+	enabled: !lockedAndHidden
 
 	property bool lockedAndHidden: true
 	property bool isOpen: drawer.position > 0

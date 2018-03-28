@@ -201,6 +201,9 @@
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
+          <property name="tabKeyNavigation">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -225,6 +228,9 @@
           </property>
           <property name="autoScrollMargin">
            <number>0</number>
+          </property>
+          <property name="tabKeyNavigation">
+           <bool>true</bool>
           </property>
          </widget>
         </item>

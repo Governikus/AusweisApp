@@ -1,0 +1,68 @@
+AusweisApp2 1.14.1
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 28. März 2018
+
+
+
+Anwender
+""""""""
+  - Die Nutzung der PIN-Verwaltung ist nun auch mit der Funktion
+    "Smartphone als Kartenleser" möglich.
+
+  - Die mobile Startseite wurde überarbeitet.
+
+  - Beim Koppeln von zwei Geräten für die Funktion "Smartphone als Kartenleser"
+    wird nun eine einheitliche PIN-Tastatur verwendet.
+
+  - Während einer Authentisierung wird nun eine Fortschrittsanzeige
+    zusammen mit dem Namen des aktuellen Authentisierungsschrittes angezeigt.
+
+  - Während der Verwendung der Funktion "Smartphone als Kartenleser" wird auf
+    beiden Geräten jeweils der Name des verbundenen Gerätes angezeigt.
+
+  - Die Anzeige der unterstützten Kartenlesegeräte wurde optimiert.
+
+  - Das Koppeln für die Funktion "Smartphone als Kartenleser" ist jetzt während
+    eines Authentisierungsvorgangs möglich und führt nicht mehr zum Abbruch des
+    Vorgangs.
+
+  - Bei der Android-Version der AusweisApp2 ist es jetzt möglich, den Verlauf
+    zu deaktivieren und Einträge zu löschen.
+
+  - Die AusweisApp2 kommt nun auch beim erneuten Starten aus dem Launchpad oder
+    per Doppelklick in den Vordergrund. Voraussetzung ist, dass sie bereits
+    vorher gestartet wurde.
+
+  - Bei einem Update bleibt der Autostart-Eintrag erhalten.
+
+  - Bei der Android-Version wird die letzte Auswahl einer
+    Authentisierungsmethode (NFC, Bluetooth oder WLAN) nun als bevorzugte
+    Methode gespeichert.
+
+  - Bei der Android-Version wurden die Fehlermeldungen / Hinweise bei
+    Fehleingaben optimiert.
+
+  - Der Begriff "Handbuch" wurde gegen "Online-Hilfe" ausgetauscht und an
+    geeigneten Stellen wurden Verlinkungen eingefügt.
+
+  - Optimierung der Anzeige der Diensteanbieter im Anbieterverzeichnis
+    (macOS und Windows).
+
+  - Die Funktion "Smartphone als Kartenleser" unterstützt nun auch einen
+    mobilen Hotspot des selben Gerätes.
+
+  - Die Unterstützung von Bildschirmlesern wurde verbessert.
+
+
+Entwickler
+""""""""""
+  - Beim Aufruf von "eID-Client?status" wird nun auch
+    der Header "Access-Control-Allow-Origin" gesetzt.
+
+  - Im Protokoll wird nun auch das TLS-Zertifikat angezeigt,
+    welches einen Fehler verursacht.
+
+  - Es wird nun TLS-Session-Resumption beim Attached-eID erzwungen.
+
+  - Fehlercode bei fehlgeschlagenen Transmits korrigiert.

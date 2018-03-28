@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppQtGui.h"
@@ -11,6 +11,8 @@
 #include "generic/HelpAction.h"
 #include "GuiProfile.h"
 #include "NetworkManager.h"
+#include "ReaderManager.h"
+#include "RemoteClient.h"
 #include "Service.h"
 #include "SetupAssistantGui.h"
 #include "UpdateWindow.h"
@@ -23,13 +25,10 @@
 #include <QCloseEvent>
 #include <QDesktopWidget>
 #include <QFile>
-#include <QFileSystemWatcher>
 #include <QHBoxLayout>
 #include <QLoggingCategory>
 #include <QMenu>
 #include <QMessageBox>
-#include <QRegularExpression>
-#include <QRegularExpressionMatchIterator>
 
 #ifndef QT_NO_NETWORKPROXY
 	#include <QAuthenticator>
@@ -57,9 +56,10 @@ AppQtGui::AppQtGui()
 	, mSetupAssistantGui(nullptr)
 	, mDiagnosisGui(nullptr)
 	, mUpdateInfo(nullptr)
+	, mCertificateInfo(nullptr)
 	, mAggressiveToForeground(false)
 {
-	initGuiProfile();
+	loadStyleSheet();
 
 	mMainWidget = new AppQtMainWidget();
 	mMainWidget->setWindowIcon(mIcon);
@@ -68,6 +68,16 @@ AppQtGui::AppQtGui()
 	mUpdateInfo->setWindowTitle(QApplication::applicationName() + QStringLiteral(" - ") + tr("Updates"));
 	mUpdateInfo->setWindowIcon(QIcon(QStringLiteral(":/images/npa.svg")));
 	mUpdateInfo->setWindowModality(Qt::WindowModal);
+	mUpdateInfo->setStandardButtons(QMessageBox::Ok);
+	mUpdateInfo->button(QMessageBox::Ok)->setFocus();
+
+	mCertificateInfo = new QMessageBox(mMainWidget);
+	mCertificateInfo->setWindowModality(Qt::ApplicationModal);
+	mCertificateInfo->setWindowFlags(mCertificateInfo->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+	mCertificateInfo->setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Information"));
+	mCertificateInfo->setIconPixmap(mMainWidget->windowIcon().pixmap(QSize(48, 48)));
+	mCertificateInfo->setStandardButtons(QMessageBox::Ok);
+	mCertificateInfo->button(QMessageBox::Ok)->setFocus();
 
 	Service* service = Env::getSingleton<Service>();
 	connect(service, &Service::fireAppUpdateFinished, this, &AppQtGui::onAppUpdateReady);
@@ -88,6 +98,7 @@ AppQtGui::~AppQtGui()
 	}
 
 	delete mUpdateInfo;
+	delete mCertificateInfo;
 	delete mMainWidget;
 }
 
@@ -139,6 +150,9 @@ void AppQtGui::onApplicationStarted()
 	{
 		QMetaObject::invokeMethod(this, "onDeveloperModeQuestion", Qt::QueuedConnection);
 	}
+
+	const QSharedPointer<RemoteClient>& remoteClient = Env::getSingleton<ReaderManager>()->getRemoteClient();
+	connect(remoteClient.data(), &RemoteClient::fireCertificateRemoved, this, &AppQtGui::onCertificateRemoved);
 }
 
 
@@ -219,7 +233,8 @@ void AppQtGui::onShowUserInformation(const QString& pInformationMessage)
 	msgBox.setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Information"));
 	msgBox.setIcon(QMessageBox::Information);
 	msgBox.setText(pInformationMessage);
-	msgBox.setStandardButtons(QMessageBox::StandardButton::Ok);
+	msgBox.setStandardButtons(QMessageBox::Ok);
+	msgBox.button(QMessageBox::Ok)->setFocus();
 	msgBox.exec();
 }
 
@@ -233,7 +248,18 @@ void AppQtGui::onSetupAssistantWizardRequest()
 		mSetupAssistantGui = new SetupAssistantGui(mMainWidget);
 		connect(mSetupAssistantGui, &SetupAssistantGui::fireChangePinButtonClicked, mMainWidget, &AppQtMainWidget::onChangePinButtonClicked);
 	}
+
+	bool stopRemoteScan = false;
+	if (!mMainWidget->remoteScanRunning())
+	{
+		Env::getSingleton<ReaderManager>()->startScanAll(false);
+		stopRemoteScan = true;
+	}
 	mSetupAssistantGui->activate();
+	if (stopRemoteScan)
+	{
+		Env::getSingleton<ReaderManager>()->stopScanAll();
+	}
 }
 
 
@@ -247,6 +273,7 @@ void AppQtGui::onDeveloperModeQuestion()
 	msgBox.setInformativeText(tr("Do you want to disable the developer mode?"));
 	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 	msgBox.setDefaultButton(QMessageBox::Yes);
+	msgBox.button(QMessageBox::Yes)->setFocus();
 
 	if (msgBox.exec() == QMessageBox::Yes)
 	{
@@ -285,6 +312,7 @@ bool AppQtGui::askChangeTransportPinNow()
 	messageBox.setWindowFlags(messageBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 	messageBox.setText(tr("Did you change the initial transport PIN already?<br><br>Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. Online identification with transport PIN is not possible."));
 	messageBox.setStandardButtons(QMessageBox::Yes);
+	messageBox.button(QMessageBox::Yes)->setFocus();
 	auto changePinButton = messageBox.addButton(tr("No, change transport PIN now"), QMessageBox::NoRole);
 	messageBox.exec();
 
@@ -325,87 +353,19 @@ bool AppQtGui::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
 }
 
 
-void AppQtGui::initGuiProfile()
+void AppQtGui::loadStyleSheet()
 {
-	GuiProfile& profile = GuiProfile::getProfile();
-
-	// set style sheet only if none has be specified on the command line
-	if (qApp->styleSheet().isEmpty())
-	{
-		if (profile.getDebugStyleSheet().isEmpty())
-		{
-			loadStyleSheet(profile.getStyleSheetName(), true);
-		}
-		else
-		{
-			QFileSystemWatcher* watcher = new QFileSystemWatcher(QStringList() << profile.getDebugStyleSheet(), this);
-			connect(watcher, &QFileSystemWatcher::fileChanged, this, &AppQtGui::onDebugStyleSheetChanged);
-			loadStyleSheet(profile.getDebugStyleSheet(), false);
-		}
-	}
-}
-
-
-void AppQtGui::loadStyleSheet(const QString& pStyleSheetName, bool pIsResource)
-{
-	QString styleSheetName = pIsResource ? QStringLiteral(":/stylesheets/") + pStyleSheetName : pStyleSheetName;
+	const auto& styleSheetName = QStringLiteral(":/stylesheets/desktop.qss");
 	qCDebug(gui) << "loading style sheet" << styleSheetName;
-	QString styleSheet = readStyleSheet(styleSheetName);
-	if (!styleSheet.isEmpty())
-	{
-		qApp->setStyleSheet(styleSheet);
-	}
-	else
-	{
-		qCWarning(gui) << "Failed to load global style sheet!";
-	}
-}
 
-
-QString AppQtGui::readStyleSheet(const QString& pFileName)
-{
-	// read the file into a string
-	QFile file(pFileName);
+	QFile file(styleSheetName);
 	if (!file.open(QIODevice::ReadOnly))
 	{
-		qCWarning(gui) << "Failed to read style sheet:" << pFileName;
-		return QString();
+		qCWarning(gui) << "Failed to read style sheet";
+		return;
 	}
 
-	QString styleSheet = QString::fromLatin1(file.readAll());
-	file.close();
-
-	// resolve imports
-	// Note: The algorithm is very simple and e.g. doesn't detect that an import is commented out.
-	QRegularExpression regExp(QStringLiteral("@import\\s+\"([^\"]*)\"\\s*;"));
-	QRegularExpressionMatchIterator it = regExp.globalMatch(styleSheet);
-	if (!it.hasNext())
-	{
-		return styleSheet;
-	}
-
-	QString result;
-	int lastOffset = 0;
-
-	while (it.hasNext())
-	{
-		QRegularExpressionMatch match = it.next();
-		if (lastOffset < match.capturedStart())
-		{
-			result += styleSheet.midRef(lastOffset, match.capturedStart() - lastOffset);
-		}
-
-		result += readStyleSheet(match.captured(1));
-
-		lastOffset = match.capturedEnd();
-	}
-
-	if (lastOffset < styleSheet.length())
-	{
-		result += styleSheet.midRef(lastOffset);
-	}
-
-	return result;
+	qApp->setStyleSheet(QString::fromLatin1(file.readAll()));
 }
 
 
@@ -417,7 +377,7 @@ void AppQtGui::onChangeHighContrast(bool* pHighContrastOn)
 	}
 	else
 	{
-		initGuiProfile();
+		loadStyleSheet();
 	}
 }
 
@@ -515,6 +475,8 @@ void AppQtGui::onCloseWindowRequested(bool* pDoClose)
 		messageBox.setText(tr("The user interface of the %1 is closed.").arg(QApplication::applicationName()));
 		messageBox.setInformativeText(tr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(QApplication::applicationName()));
 		messageBox.setCheckBox(new QCheckBox(tr("Do not show this dialog again.")));
+		messageBox.setStandardButtons(QMessageBox::Ok);
+		messageBox.button(QMessageBox::Ok)->setFocus();
 		messageBox.exec();
 
 		Q_EMIT fireCloseReminderFinished(messageBox.checkBox()->isChecked());
@@ -535,19 +497,6 @@ void AppQtGui::onCloseWindowRequested(bool* pDoClose)
 	{
 		hideFromTaskbar();
 	}
-}
-
-
-void AppQtGui::onDebugStyleSheetChanged(const QString& pPath)
-{
-	if (QFileSystemWatcher* watcher = qobject_cast<QFileSystemWatcher*>(sender()))
-	{
-		// work-around for QFileSystemWatcher no longer knowing the file after receiving the first notification
-		watcher->removePath(pPath);
-		watcher->addPath(pPath);
-	}
-
-	loadStyleSheet(pPath, false);
 }
 
 
@@ -653,7 +602,7 @@ void AppQtGui::onAppUpdateReady(bool pSuccess, const GlobalStatus& pError)
 	else if (pSuccess)
 	{
 		const auto updateWindow = new UpdateWindow(mMainWidget);
-		connect(updateWindow, &UpdateWindow::fireShowUpdateDialog,
+		connect(updateWindow, &UpdateWindow::fireShowUpdateDialog, this,
 				[this](QMessageBox::Icon pIcon, const QString& pMsg)
 				{
 					mUpdateInfo->setIcon(pIcon);
@@ -677,6 +626,13 @@ void AppQtGui::onUpdateScheduled()
 	{
 		Env::getSingleton<Service>()->runUpdateIfNeeded();
 	}
+}
+
+
+void AppQtGui::onCertificateRemoved(QString pDeviceName)
+{
+	mCertificateInfo->setText(tr("The device \"%1\" was unpaired because it does not react to connection attempts. Retry the pairing process if you want to use this device to authenticate yourself.").arg(pDeviceName));
+	mCertificateInfo->show();
 }
 
 

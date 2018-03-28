@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Apdu.h"
@@ -7,6 +7,7 @@
 #include "Commands.h"
 
 #include <QLoggingCategory>
+#include <QtEndian>
 
 
 using namespace governikus;
@@ -233,6 +234,15 @@ bool CommandApdu::isUpdateRetryCounter() const
 }
 
 
+ResponseApdu::ResponseApdu(StatusCode pStatusCode)
+	: Apdu(QByteArray())
+{
+	char buffer[2];
+	qToBigEndian<quint16>(Enum<StatusCode>::getValue(pStatusCode), buffer);
+	setBuffer(QByteArray(buffer, 2));
+}
+
+
 ResponseApdu::ResponseApdu(const QByteArray& pBuffer)
 	: Apdu(pBuffer)
 {
@@ -327,6 +337,36 @@ char ResponseApdu::getSW2() const
 		return 0;
 	}
 	return mBuffer.at(length() - 1);
+}
+
+
+CardReturnCode ResponseApdu::getCardReturnCode() const
+{
+	switch (getReturnCode())
+	{
+		case StatusCode::SUCCESS:
+			return CardReturnCode::OK;
+
+		case StatusCode::INPUT_TIMEOUT:
+			return CardReturnCode::INPUT_TIME_OUT;
+
+		case StatusCode::INPUT_CANCELLED:
+			return CardReturnCode::CANCELLATION_BY_USER;
+
+		case StatusCode::PASSWORDS_DIFFER:
+			return CardReturnCode::NEW_PIN_MISMATCH;
+
+		case StatusCode::PASSWORD_OUTOF_RANGE:
+			return CardReturnCode::NEW_PIN_INVALID_LENGTH;
+
+		case StatusCode::PIN_BLOCKED:
+			return CardReturnCode::PIN_BLOCKED;
+
+		default:
+			return CardReturnCode::PROTOCOL_ERROR;
+	}
+
+	Q_UNREACHABLE();
 }
 
 

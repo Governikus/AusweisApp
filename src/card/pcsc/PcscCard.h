@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of card object for PC/SC
  *  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -58,7 +58,7 @@ class PcscCard
 
 		virtual CardReturnCode destroyPaceChannel() override;
 
-		virtual CardReturnCode setEidPin(uchar pTimeoutSeconds) override;
+		virtual CardReturnCode setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu) override;
 };
 
 } /* namespace governikus */

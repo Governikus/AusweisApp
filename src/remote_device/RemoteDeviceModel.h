@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the remote device table
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,12 +29,13 @@ class RemoteDeviceModelEntry
 		QString mId;
 		bool mPaired;
 		bool mNetworkVisible;
+		bool mSupported;
 		QDateTime mLastConnected;
 		QSharedPointer<RemoteDeviceListEntry> mRemoteDeviceListEntry;
 
 	public:
 		RemoteDeviceModelEntry(const QString pDeviceName, const QString mId, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry);
-		RemoteDeviceModelEntry(const QString pDeviceName, const QString mId, bool pPaired, bool pNetworkVisible, const QDateTime& pLastConnected);
+		RemoteDeviceModelEntry(const QString pDeviceName, const QString mId, bool pPaired, bool pNetworkVisible, bool pSupported, const QDateTime& pLastConnected);
 		RemoteDeviceModelEntry(const QString pDeviceName = QStringLiteral("UnknownReader"));
 
 		bool isPaired() const;
@@ -42,6 +43,7 @@ class RemoteDeviceModelEntry
 		const QString& getId() const;
 		void setId(QString pId);
 		bool isNetworkVisible() const;
+		bool isSupported() const;
 		void setNetworkVisible(bool pNetworkVisible);
 		const QDateTime& getLastConnected() const;
 		void setLastConnected(const QDateTime& pLastConnected);
@@ -73,7 +75,8 @@ class RemoteDeviceModel
 			REMOTE_DEVICE_NAME = Qt::UserRole + 1,
 			LAST_CONNECTED,
 			DEVICE_ID,
-			IS_NETWORK_VISIBLE
+			IS_NETWORK_VISIBLE,
+			IS_SUPPORTED
 		};
 
 		enum ColumnId : int
@@ -83,7 +86,6 @@ class RemoteDeviceModel
 		};
 
 		RemoteDeviceModel(QObject* pParent = nullptr, bool pShowPairedReaders = true, bool pShowUnpairedReaders = true);
-		virtual ~RemoteDeviceModel() override;
 
 		virtual QVariant headerData(int pSection, Qt::Orientation pOrientation, int pRole) const override;
 		virtual int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
@@ -94,6 +96,7 @@ class RemoteDeviceModel
 		const QSharedPointer<RemoteDeviceListEntry> getRemoteDeviceListEntry(const QModelIndex& pIndex) const;
 		const QSharedPointer<RemoteDeviceListEntry> getRemoteDeviceListEntry(QString pDeviceId) const;
 		bool isPaired(const QModelIndex& pIndex) const;
+		bool isSupported(const QModelIndex& pIndex) const;
 		void forgetDevice(const QModelIndex& pIndex);
 		void forgetDevice(const QString& pDeviceId);
 

@@ -3,7 +3,7 @@
  * \brief An interface for RemoteHandleImpl, meant to omit the
  * dependency between card_base and remote_device.
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -34,6 +34,7 @@ class RemoteDispatcher
 
 		virtual const QString& getId() const = 0;
 		virtual const QString& getContextHandle() const = 0;
+		virtual void close() = 0;
 		Q_INVOKABLE virtual void send(const QSharedPointer<const RemoteMessage>& pMessage) = 0;
 
 	Q_SIGNALS:

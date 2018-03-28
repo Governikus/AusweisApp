@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisWidget.h"
@@ -303,16 +303,22 @@ void DiagnosisWidget::onReaderInfosChanged()
 
 void DiagnosisWidget::onTimestampChanged()
 {
-	QString timestamp = LanguageLoader::getInstance().getUsedLocale().toString(mContext->getTimestamp(), tr("d. MMMM yyyy, hh:mm:ss AP"));
+	QString timestamp = LanguageLoader::getInstance().getUsedLocale().toString(getCreationTime(), tr("d. MMMM yyyy, hh:mm:ss AP"));
 	setFieldText(mTimestampField, timestamp);
 	(new QTreeWidgetItem(mTimestampItem))->setText(0, timestamp);
 
 }
 
 
-QString DiagnosisWidget::getInfoTextEdit()
+QString DiagnosisWidget::getInfoTextEdit() const
 {
 	return mUi->infoTextEdit->toPlainText();
+}
+
+
+QDateTime DiagnosisWidget::getCreationTime() const
+{
+	return mContext->getTimestamp();
 }
 
 

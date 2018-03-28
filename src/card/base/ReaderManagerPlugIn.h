@@ -2,7 +2,7 @@
  * \brief PlugIn to control different kinds of reader managers that will be used in \ref ReaderManager.
  * If you implement a class of this PlugIn you need to register it in \ref ReaderManager, otherwise it won't be used.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -45,6 +45,16 @@ class ReaderManagerPlugIn
 		void setReaderInfoAvailable(bool pAvailable)
 		{
 			mInfo.setAvailable(pAvailable);
+		}
+
+
+		void setReaderInfoResponding(bool pResponding)
+		{
+			if (mInfo.isResponding() != pResponding)
+			{
+				mInfo.setResponding(pResponding);
+				Q_EMIT fireStatusChanged(mInfo);
+			}
 		}
 
 

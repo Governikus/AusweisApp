@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TlsChecker.h"
@@ -8,6 +8,7 @@
 #include "Env.h"
 #include "SecureStorage.h"
 
+#include <QCryptographicHash>
 #include <QLoggingCategory>
 
 #include <openssl/dh.h>
@@ -187,16 +188,24 @@ QStringList TlsChecker::getFatalErrors(const QList<QSslError>& pErrors)
 	QStringList fatalErrorStrings;
 	for (const auto& error : pErrors)
 	{
-		QString msg = QStringLiteral("%1: %2").arg(static_cast<int>(error.error())).arg(error.errorString());
+		const auto& msg = error.errorString();
 		if (fatalErrors.contains(error.error()))
 		{
 			if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
 			{
 				qCWarning(developermode) << msg;
+				if (!error.certificate().isNull())
+				{
+					qCWarning(developermode) << error.certificate();
+				}
 			}
 			else
 			{
 				qCWarning(network) << msg;
+				if (!error.certificate().isNull())
+				{
+					qCWarning(network) << error.certificate();
+				}
 				fatalErrorStrings += msg;
 			}
 		}
@@ -240,6 +249,14 @@ void TlsChecker::logSslConfig(const QSslConfiguration pCfg, QDebug pDebug)
 	}
 
 	logger.info(network) << "Used peer certificate:" << pCfg.peerCertificate();
+
+	auto session = pCfg.sessionTicket();
+	if (!session.isEmpty())
+	{
+		// do not print session ticket as plain text
+		session = QCryptographicHash::hash(session, QCryptographicHash::Sha256).toHex();
+	}
+	logger.info(network) << "Used ssl session:" << session;
 
 	pDebug << "Handshake of tls connection done!";
 }

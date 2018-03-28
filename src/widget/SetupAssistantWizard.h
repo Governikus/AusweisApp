@@ -1,12 +1,10 @@
 /*!
  * \brief Setup assistant wizard before application startup.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
-
-#include "NoScriptFinder.h"
 
 #include <QCheckBox>
 #include <QFormLayout>
@@ -45,7 +43,6 @@ class SetupAssistantWizard
 	Q_OBJECT
 
 	int mPageCount;
-	NoScriptFinder mNoScriptFinder;
 	QPointer<QCheckBox> mSaveHistoryCheckBox;
 	QPointer<QPushButton> mChangeTransportPinButton;
 
@@ -65,7 +62,6 @@ class SetupAssistantWizard
 		QString createDescription(const QString& pTitle, const QString& pSummary) const;
 		QWizardPage* createWizardInitialPinPage();
 		QWizardPage* createWizardCardReaderPage();
-		QWizardPage* createWizardNoScriptExtensionPage();
 		QWizardPage* createConclusionPage();
 
 	private Q_SLOTS:

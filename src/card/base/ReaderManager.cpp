@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManager.h"
@@ -94,7 +94,7 @@ void ReaderManager::shutdown()
 }
 
 
-void ReaderManager::startScan(ReaderManagerPlugInType pType)
+void ReaderManager::startScan(ReaderManagerPlugInType pType, bool pAutoConnect)
 {
 	if (!mThread.isRunning())
 	{
@@ -102,15 +102,15 @@ void ReaderManager::startScan(ReaderManagerPlugInType pType)
 		return;
 	}
 
-	QMetaObject::invokeMethod(mWorker.data(), "startScan", Qt::QueuedConnection, Q_ARG(ReaderManagerPlugInType, pType));
+	QMetaObject::invokeMethod(mWorker.data(), "startScan", Qt::QueuedConnection, Q_ARG(ReaderManagerPlugInType, pType), Q_ARG(bool, pAutoConnect));
 }
 
 
-void ReaderManager::startScanAll()
+void ReaderManager::startScanAll(bool pAutoConnect)
 {
 	for (const auto& plugInType : Enum<ReaderManagerPlugInType>::getList())
 	{
-		startScan(plugInType);
+		startScan(plugInType, pAutoConnect);
 	}
 }
 

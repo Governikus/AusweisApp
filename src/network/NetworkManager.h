@@ -1,7 +1,7 @@
 /*
  * \brief Wrapper around QNetworkAccessManager
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -66,8 +66,15 @@ class NetworkManager
 		static QString getTlsVersionString(QSsl::SslProtocol pProtocol);
 
 		virtual void clearConnections();
-		virtual QNetworkReply* paos(QNetworkRequest& pRequest, const QByteArray& pNamespace, const QByteArray& pData, bool pUsePsk = true, int pTimeoutInMilliSeconds = 30000);
-		virtual QNetworkReply* get(QNetworkRequest& pRequest, int pTimeoutInMilliSeconds = 30000);
+		virtual QNetworkReply* paos(QNetworkRequest& pRequest,
+				const QByteArray& pNamespace,
+				const QByteArray& pData,
+				bool pUsePsk = true,
+				const QByteArray& pSslSession = QByteArray(),
+				int pTimeoutInMilliSeconds = 30000);
+		virtual QNetworkReply* get(QNetworkRequest& pRequest,
+				const QByteArray& pSslSession = QByteArray(),
+				int pTimeoutInMilliSeconds = 30000);
 
 		virtual bool checkUpdateServerCertificate(const QNetworkReply& pReply);
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteCard.h"
@@ -8,10 +8,15 @@
 #include "messages/IfdConnectResponse.h"
 #include "messages/IfdDisconnect.h"
 #include "messages/IfdDisconnectResponse.h"
+#include "messages/IfdError.h"
 #include "messages/IfdEstablishPaceChannel.h"
 #include "messages/IfdEstablishPaceChannelResponse.h"
+#include "messages/IfdModifyPin.h"
+#include "messages/IfdModifyPinResponse.h"
 #include "messages/IfdTransmit.h"
 #include "messages/IfdTransmitResponse.h"
+#include "PinModify.h"
+#include "PinModifyOutput.h"
 
 #include <QLoggingCategory>
 #include <QMutexLocker>
@@ -58,7 +63,7 @@ void RemoteCard::onMessageReceived(const QSharedPointer<const RemoteMessage>& pM
 		return;
 	}
 
-	if (pMessage->getType() == mExpectedAnswerType)
+	if (pMessage->getType() == mExpectedAnswerType || pMessage->getType() == RemoteCardMessageType::IFDError)
 	{
 		mResponse = pMessage;
 		mWaitingForAnswer = false;
@@ -121,6 +126,7 @@ CardReturnCode RemoteCard::connect()
 			if (!response->resultHasError())
 			{
 				mConnected = true;
+				mSlotHandle = response->getSlotHandle();
 				return CardReturnCode::OK;
 			}
 			qCWarning(card_remote) << response->getResultMinor();
@@ -132,7 +138,7 @@ CardReturnCode RemoteCard::connect()
 
 CardReturnCode RemoteCard::disconnect()
 {
-	const QSharedPointer<IfdDisconnect> disconnectCmd(new IfdDisconnect(mReaderName));
+	const QSharedPointer<IfdDisconnect> disconnectCmd(new IfdDisconnect(mSlotHandle));
 	if (sendMessage(disconnectCmd, RemoteCardMessageType::IFDDisconnectResponse, 5000))
 	{
 		const QSharedPointer<const IfdDisconnectResponse> response = mResponse.dynamicCast<const IfdDisconnectResponse>();
@@ -158,7 +164,7 @@ bool RemoteCard::isConnected()
 
 CardReturnCode RemoteCard::transmit(const CommandApdu& pCommand, ResponseApdu& pResponse)
 {
-	QSharedPointer<const IfdTransmit> transmitCmd(new IfdTransmit(mReaderName, pCommand.getBuffer()));
+	QSharedPointer<const IfdTransmit> transmitCmd(new IfdTransmit(mSlotHandle, pCommand.getBuffer()));
 	if (sendMessage(transmitCmd, RemoteCardMessageType::IFDTransmitResponse, 5000))
 	{
 		const QSharedPointer<const IfdTransmitResponse> response = mResponse.dynamicCast<const IfdTransmitResponse>();
@@ -184,7 +190,7 @@ CardReturnCode RemoteCard::establishPaceChannel(PACE_PASSWORD_ID pPasswordId, co
 	builder.setCertificateDescription(pCertificateDescription);
 	const QByteArray inputData = builder.createCommandDataCcid().getBuffer();
 
-	QSharedPointer<const IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel(mReaderName, inputData));
+	QSharedPointer<const IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel(mSlotHandle, inputData));
 	if (sendMessage(message, RemoteCardMessageType::IFDEstablishPACEChannelResponse, pTimeoutSeconds * 1000))
 	{
 		const QSharedPointer<const IfdEstablishPaceChannelResponse> response = mResponse.dynamicCast<const IfdEstablishPaceChannelResponse>();
@@ -192,6 +198,45 @@ CardReturnCode RemoteCard::establishPaceChannel(PACE_PASSWORD_ID pPasswordId, co
 		{
 			pChannelOutput.parseFromCcid(response->getOutputData(), pPasswordId);
 			return pChannelOutput.getPaceReturnCode();
+		}
+	}
+
+	return CardReturnCode::COMMAND_FAILED;
+}
+
+
+CardReturnCode RemoteCard::setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu)
+{
+	PinModify pinModify(pTimeoutSeconds);
+	const QByteArray inputData = pinModify.createCcidForRemote();
+
+	QSharedPointer<const IfdModifyPin> message(new IfdModifyPin(mSlotHandle, inputData));
+	if (sendMessage(message, RemoteCardMessageType::IFDModifyPINResponse, pTimeoutSeconds * 1000))
+	{
+		const QSharedPointer<const IfdModifyPinResponse> response = mResponse.dynamicCast<const IfdModifyPinResponse>();
+		if (response)
+		{
+			PinModifyOutput output(response->getOutputData());
+			pResponseApdu.setBuffer(output.getResponseApdu().getBuffer());
+			if (response->resultHasError())
+			{
+				return response->getReturnCode();
+			}
+			else
+			{
+				return output.getReturnCode();
+			}
+		}
+
+		const QSharedPointer<const IfdError> ifdError = mResponse.dynamicCast<const IfdError>();
+		if (ifdError)
+		{
+			if (ifdError->getResultMinor() == QLatin1String("http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#unknownAPIFunction"))
+			{
+				return CardReturnCode::PROTOCOL_ERROR;
+			}
+
+			return CardReturnCode::UNKNOWN;
 		}
 	}
 

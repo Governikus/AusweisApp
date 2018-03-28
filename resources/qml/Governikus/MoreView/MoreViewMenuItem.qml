@@ -25,6 +25,7 @@ Item {
 
 	Text {
 		id: textItem
+		color: Constants.secondary_text
 		height: parent.height
 		verticalAlignment: Text.AlignVCenter
 		anchors.left: imageItem.right

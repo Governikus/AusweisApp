@@ -1,7 +1,7 @@
 /*!
  * \brief Tool to create PDF-Documents.
  *
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

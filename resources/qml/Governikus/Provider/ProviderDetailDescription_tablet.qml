@@ -16,6 +16,7 @@ Column {
 	}
 
 	Text {
+		color: Constants.secondary_text
 		font.pixelSize: Constants.normal_font_size
 		horizontalAlignment: Text.AlignLeft
 		text: baseItem.description

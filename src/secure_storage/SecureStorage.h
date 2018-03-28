@@ -2,7 +2,7 @@
  * \brief Utility class that provides access to the "secure storage" of the application, which contains
  * the certificates for preverification and update checks.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -40,8 +40,6 @@ class SecureStorage
 		QUrl mSelfAuthenticationUrl;
 		QUrl mSelfAuthenticationTestUrl;
 		QUrl mUpdateServerBaseUrl;
-		QByteArray mSelfAuthenticationCertDescr;
-		QByteArray mSelfAuthenticationTestCertDescr;
 		QUrl mAppcastUpdateUrl;
 		QUrl mAppcastBetaUpdateUrl;
 
@@ -71,7 +69,6 @@ class SecureStorage
 		const QByteArrayList& getCVRootCertificates(bool pProductive) const;
 		const QVector<QSslCertificate>& getUpdateCertificates() const;
 		const QUrl& getSelfAuthenticationUrl(bool pTest = false) const;
-		const QByteArray& getSelfAuthenticationCertDescr(bool pTest = false) const;
 		const QUrl& getUpdateServerBaseUrl() const;
 		const QUrl& getAppcastUpdateUrl() const;
 		const QUrl& getAppcastBetaUpdateUrl() const;

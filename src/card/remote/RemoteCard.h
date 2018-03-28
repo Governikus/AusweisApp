@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref Card for remote reader.
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,6 +33,7 @@ class RemoteCard
 		QSharedPointer<const RemoteMessage> mResponse;
 		const QSharedPointer<RemoteDispatcher> mRemoteDispatcher;
 		QString mReaderName;
+		QString mSlotHandle;
 		bool mConnected;
 
 		bool sendMessage(const QSharedPointer<const RemoteMessage>& pMessage, RemoteCardMessageType pExpectedAnswer, unsigned long pTimeout);
@@ -56,6 +57,7 @@ class RemoteCard
 
 		virtual CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds = 60) override;
 
+		virtual CardReturnCode setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu) override;
 };
 
 } /* namespace governikus */

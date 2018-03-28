@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateProcessRemoteMessages.h"
@@ -50,6 +50,7 @@ void StateProcessRemoteMessages::onMessageHandlerAdded(const QSharedPointer<Serv
 	}
 
 	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireEstablishPaceChannel, this, &StateProcessRemoteMessages::onEstablishPaceChannel, Qt::UniqueConnection);
+	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireModifyPin, this, &StateProcessRemoteMessages::onModifyPin, Qt::UniqueConnection);
 	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireClosed, this, &StateProcessRemoteMessages::onClosed, Qt::UniqueConnection);
 }
 
@@ -72,6 +73,19 @@ void StateProcessRemoteMessages::onEstablishPaceChannel(const QSharedPointer<con
 	getContext()->setEstablishPaceChannelMessage(pMessage);
 	getContext()->setCardConnection(pConnection);
 	Q_EMIT fireEstablishPaceChannel();
+}
+
+
+void StateProcessRemoteMessages::onModifyPin(const QSharedPointer<const IfdModifyPin>& pMessage, const QSharedPointer<CardConnection>& pConnection)
+{
+	Q_ASSERT(pMessage);
+
+	const QSharedPointer<RemoteServiceContext> context = getContext();
+	Q_ASSERT(context);
+
+	context->setModifyPinMessage(pMessage);
+	context->setCardConnection(pConnection);
+	Q_EMIT fireModifyPin();
 }
 
 

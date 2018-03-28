@@ -1,7 +1,7 @@
 /*!
  * \brief Class representing a smart card
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -63,7 +63,7 @@ class Card
 		/*!
 		 * Sets a new eID PIN, i.e. the corresponding reader is no basic reader.
 		 */
-		virtual CardReturnCode setEidPin(quint8 pTimeoutSeconds);
+		virtual CardReturnCode setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu);
 
 };
 

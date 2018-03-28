@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StepAuthenticationEac1Widget.h"
@@ -338,6 +338,7 @@ void StepAuthenticationEac1Widget::addChatRightToGui(AccessRight pRight, bool pO
 
 	QListWidgetItem* item = new QListWidgetItem();
 	item->setSizeHint(QSize(0, 20));
+	item->setData(Qt::AccessibleTextRole, displayText);
 	if (mUi->listWidgetWest->count() < pListSize)
 	{
 		mUi->listWidgetWest->addItem(item);
@@ -359,12 +360,15 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 
 	AppSettings& appSettings = AppSettings::getInstance();
 
+	const auto& allowedDigitsMsg = tr("Only digits (0-9) are permitted.");
 	QRegularExpression onlyNumbersExpression(QStringLiteral("[0-9]*"));
 	if (mContext->getCardConnection()->getReaderInfo().getRetryCounter() == 1)
 	{
 		mCANField = new PasswordEdit();
+		mCANField->setAccessibleName(tr("please enter your can"));
+		mCANField->setAccessibleDescription(allowedDigitsMsg);
 		mCANField->setMaxLength(6);
-		mCANField->configureValidation(onlyNumbersExpression, tr("Only digits (0-9) are permitted."));
+		mCANField->configureValidation(onlyNumbersExpression, allowedDigitsMsg);
 		connect(mCANField, &PasswordEdit::textEdited, this, &StepAuthenticationEac1Widget::canTextEdited);
 
 		QLabel* canLabel = new QLabel(tr("Card access number (CAN):"));
@@ -376,7 +380,7 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 		{
 			QToolButton* button = new QToolButton();
 			button->setObjectName(QStringLiteral("canRandomButton"));
-			button->setAccessibleName(tr("Open on screen password dialog"));
+			button->setAccessibleName(tr("open on screen keyboard"));
 			button->setAutoRaise(true);
 			button->setIcon(QPixmap(QStringLiteral(":/images/randompin/screen_keyboard.png")));
 			button->setIconSize(QSize(44, 26));
@@ -389,9 +393,10 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 	}
 
 	mPINField = new PasswordEdit();
-	mPINField->setAccessibleName(tr("More information with TAB"));
+	mPINField->setAccessibleName(tr("please enter your pin"));
+	mPINField->setAccessibleDescription(allowedDigitsMsg);
 	mPINField->setMaxLength(6);
-	mPINField->configureValidation(onlyNumbersExpression, tr("Only digits (0-9) are permitted."));
+	mPINField->configureValidation(onlyNumbersExpression, allowedDigitsMsg);
 	connect(mPINField, &PasswordEdit::textEdited, this, &StepAuthenticationEac1Widget::pinTextEdited);
 
 	if (mContext->getCardConnection()->getReaderInfo().getRetryCounter() == 1)
@@ -408,7 +413,7 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 	{
 		QToolButton* button = new QToolButton();
 		button->setObjectName(QStringLiteral("pinRandomButton"));
-		button->setAccessibleName(tr("Open on screen password dialog"));
+		button->setAccessibleName(tr("open on screen keyboard"));
 		button->setAutoRaise(true);
 		button->setIcon(QPixmap(QStringLiteral(":/images/randompin/screen_keyboard.png")));
 		button->setIconSize(QSize(44, 26));

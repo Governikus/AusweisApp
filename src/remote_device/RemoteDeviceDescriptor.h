@@ -2,10 +2,12 @@
  * \brief Information needed to display a remote device in the GUI and to open
  * a websocket connection to it.
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
+
+#include "messages/IfdVersion.h"
 
 #include <QHostAddress>
 #include <QSharedDataPointer>
@@ -27,14 +29,14 @@ class RemoteDeviceDescriptor
 			public:
 				RemoteDeviceDescriptorData(const QString& pIfdName,
 						const QString& pIfdId,
-						const QStringList& pSupportedApis,
+						const QVector<IfdVersion::Version>& pApiVersions,
 						const QUrl& pUrl);
 
 				virtual ~RemoteDeviceDescriptorData();
 
 				const QString mIfdName;
 				const QString mIfdId;
-				const QStringList mSupportedApis;
+				const QVector<IfdVersion::Version> mApiVersions;
 				const QUrl mUrl;
 				bool operator==(const RemoteDeviceDescriptorData& pOther) const;
 		};
@@ -56,7 +58,8 @@ class RemoteDeviceDescriptor
 
 		const QString& getIfdName() const;
 		const QString& getIfdId() const;
-		const QStringList& getSupportedApis() const;
+		const QVector<IfdVersion::Version>& getApiVersions() const;
+		bool isSupported() const;
 		const QUrl& getUrl() const;
 		bool isNull() const;
 
@@ -71,7 +74,7 @@ inline QDebug operator<<(QDebug pDbg, const RemoteDeviceDescriptor& pRemoteDevic
 	return pDbg.noquote().nospace() << "RemoteDevice(" << pRemoteDeviceDescriptor.getIfdName() << ", " <<
 		   pRemoteDeviceDescriptor.getIfdId() << ", " <<
 		   pRemoteDeviceDescriptor.getUrl() << ", " <<
-		   pRemoteDeviceDescriptor.getSupportedApis() << ")";
+		   pRemoteDeviceDescriptor.getApiVersions() << ")";
 }
 
 

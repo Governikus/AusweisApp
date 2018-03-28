@@ -1,7 +1,7 @@
 /*!
  * \brief Data object providing information about a reader manager plug-in.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -86,11 +86,24 @@ class ReaderManagerPlugInInfo
 		}
 
 
+		bool isResponding() const
+		{
+			return mResponding;
+		}
+
+
+		void setResponding(bool pResponding)
+		{
+			mResponding = pResponding;
+		}
+
+
 	private:
 		ReaderManagerPlugInType mType;
 		QMap<Key, QVariant> mValues;
 		bool mEnabled;
 		bool mAvailable;
+		bool mResponding;
 };
 
 } /* namespace governikus */

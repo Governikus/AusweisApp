@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LanguageLoader.h"
@@ -132,8 +132,16 @@ void LogFilesDialog::onCurrentIndexChanged(int pIndex)
 
 void LogFilesDialog::onDeleteButtonClicked()
 {
-	QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Delete log files"), tr("Do you really want to delete all old log files?"), QMessageBox::Yes | QMessageBox::No);
-	if (reply == QMessageBox::Yes)
+	QMessageBox box(this);
+	box.setWindowTitle(tr("Delete log files"));
+	box.setWindowModality(Qt::ApplicationModal);
+	box.setIcon(QMessageBox::Question);
+	box.setWindowFlags(box.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+	box.setText(tr("Do you really want to delete all old log files?"));
+	box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	box.button(QMessageBox::Yes)->setFocus();
+
+	if (box.exec() == QMessageBox::Yes)
 	{
 		LogHandler::getInstance().removeOtherLogfiles();
 		init();
@@ -213,7 +221,15 @@ void LogFilesDialog::saveLogFile(QWidget* pParent, const QString& pSource)
 		qCDebug(gui) << "Copy log to file location:" << copied;
 		if (!copied)
 		{
-			QMessageBox::warning(pParent, QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("File error"), tr("An error occurred while saving the file."));
+			QMessageBox box(pParent);
+			box.setWindowTitle(QApplication::applicationName() + QStringLiteral(" - ") + tr("File error"));
+			box.setWindowModality(Qt::ApplicationModal);
+			box.setIcon(QMessageBox::Warning);
+			box.setWindowFlags(box.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+			box.setText(tr("An error occurred while saving the file."));
+			box.setStandardButtons(QMessageBox::Ok);
+			box.button(QMessageBox::Ok)->setFocus();
+			box.exec();
 		}
 	}
 }

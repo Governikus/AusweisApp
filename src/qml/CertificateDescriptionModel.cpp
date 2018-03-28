@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/CertificateDescription.h"
@@ -21,12 +21,7 @@ QSharedPointer<const CertificateDescription> CertificateDescriptionModel::getCer
 		return mContext->getDidAuthenticateEac1()->getCertificateDescription();
 	}
 
-	const bool useTestUri = Env::getSingleton<AppSettings>()->getGeneralSettings().useSelfAuthTestUri();
-	const auto& rawCertDescr = SecureStorage::getInstance().getSelfAuthenticationCertDescr(useTestUri);
-	QSharedPointer<const CertificateDescription> selfAuthCertificateDescription(CertificateDescription::fromHex(rawCertDescr));
-	Q_ASSERT(selfAuthCertificateDescription);
-
-	return selfAuthCertificateDescription;
+	return QSharedPointer<const CertificateDescription>();
 }
 
 

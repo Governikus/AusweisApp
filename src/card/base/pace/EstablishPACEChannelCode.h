@@ -1,7 +1,7 @@
 /*!
  * \brief EstablishPACEChannel error code definitions
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -50,10 +50,10 @@ defineTypedEnumType(EstablishPACEChannelErrorCode, quint32,
 		//		  0xF000SW1SW2
 		//		Read Binary EF.CardAccess
 		//		  0xF001SW1SW2
-		//		MSE: Set AT für PACE
+		//		MSE: Set AT for PACE
 		//		  0xF002SW1SW2
 		//		General Authenticate Step 1 - 4
-		//		  0xF003SW1SW2 – 0xF006SW1SW2
+		//		  0xF003SW1SW2 - 0xF006SW1SW2
 
 		// A specific case with "SW1 == 0x63 == warning" and a "dummy SW2".
 		GeneralAuthenticateStep1_4_Warning

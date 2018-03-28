@@ -1,10 +1,10 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HistorySettings.h"
 
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QSettings>
 
 namespace
@@ -22,6 +22,7 @@ SETTINGS_NAME(SETTINGS_NAME_CHRONIC_REQUESTED_DATA, "requestedData")
 
 using namespace governikus;
 
+Q_DECLARE_LOGGING_CATEGORY(settings)
 
 HistorySettings::HistorySettings()
 	: AbstractSettings()
@@ -110,7 +111,7 @@ void HistorySettings::addHistoryInfo(const HistoryInfo& pHistoryInfo)
 {
 	if (appIsBackgroundService())
 	{
-		qDebug() << "Running as a background service. Ignoring save request for history.";
+		qCDebug(settings) << "Running as a background service. Ignoring save request for history.";
 		return;
 	}
 
@@ -120,7 +121,7 @@ void HistorySettings::addHistoryInfo(const HistoryInfo& pHistoryInfo)
 }
 
 
-void HistorySettings::deleteSettings(const QDateTime& pLatestToKeep)
+int HistorySettings::deleteSettings(const QDateTime& pLatestToKeep)
 {
 	const auto historyInfos = getHistoryInfos();
 	QVector<HistoryInfo> remainingItems;
@@ -131,5 +132,41 @@ void HistorySettings::deleteSettings(const QDateTime& pLatestToKeep)
 			remainingItems += item;
 		}
 	}
+	int numberOfItemsToRemove = historyInfos.size() - remainingItems.size();
 	setHistoryInfos(remainingItems);
+	return numberOfItemsToRemove;
+}
+
+
+int HistorySettings::deleteSettings(const TimePeriod& pPeriodToRemove)
+{
+	QDateTime latestToKeep = QDateTime::currentDateTime();
+	switch (pPeriodToRemove)
+	{
+		case TimePeriod::PAST_HOUR:
+			latestToKeep = latestToKeep.addSecs(-60 * 60);
+			break;
+
+		case TimePeriod::PAST_DAY:
+			latestToKeep = latestToKeep.addDays(-1);
+			break;
+
+		case TimePeriod::PAST_WEEK:
+			latestToKeep = latestToKeep.addDays(-7);
+			break;
+
+		case TimePeriod::LAST_FOUR_WEEKS:
+			latestToKeep = latestToKeep.addDays(-7 * 4);
+			break;
+
+		case TimePeriod::ALL_HISTORY:
+			latestToKeep = QDateTime();
+			break;
+
+		case TimePeriod::UNKNOWN:
+			return 0;
+	}
+
+	qCDebug(settings) << "Remove history entries until timestamp:" << latestToKeep;
+	return deleteSettings(latestToKeep);
 }

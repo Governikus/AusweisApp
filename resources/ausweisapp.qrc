@@ -85,5 +85,6 @@
         <file>images/phone_bluetooth.svg</file>
         <file>images/location_flag_de.svg</file>
         <file>images/location_flag_en.svg</file>
+        <file>images/siteWithLogo.png</file>
     </qresource>
 </RCC>

@@ -1,11 +1,12 @@
 /*!
  * \brief Widget for display the diagnosis information.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
+#include <QDateTime>
 #include <QScopedPointer>
 #include <QTextCharFormat>
 #include <QTreeWidgetItem>
@@ -74,7 +75,8 @@ class DiagnosisWidget
 		DiagnosisWidget(DiagnosisContext* pContext, QWidget* pParent = nullptr);
 		virtual ~DiagnosisWidget() override;
 
-		QString getInfoTextEdit();
+		QString getInfoTextEdit() const;
+		QDateTime getCreationTime() const;
 };
 
 } /* namespace governikus */

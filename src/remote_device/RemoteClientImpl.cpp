@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteClientImpl.h"
@@ -164,9 +164,9 @@ void RemoteClientImpl::onRemoteDispatcherError(const RemoteDeviceDescriptor& pRe
 	if (pErrorCode == RemoteErrorCode::REMOTE_HOST_REFUSED_CONNECTION || pErrorCode == RemoteErrorCode::NO_SUPPORTED_API_LEVEL)
 	{
 		mErrorCounter[pRemoteDeviceDescriptor.getIfdId()] += 1;
-		if (mErrorCounter[pRemoteDeviceDescriptor.getIfdId()] >= 3)
+		if (mErrorCounter[pRemoteDeviceDescriptor.getIfdId()] >= 7)
 		{
-			qCCritical(remote_device) << "Remote device refused connection three times, removing certificate with fingerprint:" << pRemoteDeviceDescriptor.getIfdId();
+			qCCritical(remote_device) << "Remote device refused connection seven times, removing certificate with fingerprint:" << pRemoteDeviceDescriptor.getIfdId();
 			RemoteServiceSettings& settings = AppSettings::getInstance().getRemoteServiceSettings();
 			QString deviceName;
 			const auto& infos = settings.getRemoteInfos();

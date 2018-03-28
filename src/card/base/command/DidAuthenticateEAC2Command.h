@@ -1,7 +1,7 @@
 /*!
  * \brief Command to perform the DID Authenticate EAC2 process.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

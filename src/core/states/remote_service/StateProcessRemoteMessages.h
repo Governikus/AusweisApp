@@ -2,7 +2,7 @@
  * \brief This state allows the processing of ordenary remote messages in the
  * background and handles special PACE messages.
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,6 +29,7 @@ class StateProcessRemoteMessages
 	private Q_SLOTS:
 		void onMessageHandlerAdded(const QSharedPointer<ServerMessageHandler>& pHandler);
 		void onClosed();
+		void onModifyPin(const QSharedPointer<const IfdModifyPin>& pMessage, const QSharedPointer<CardConnection>& pConnection);
 		void onEstablishPaceChannel(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage, const QSharedPointer<CardConnection>& pConnection);
 
 	protected:
@@ -39,6 +40,7 @@ class StateProcessRemoteMessages
 
 	Q_SIGNALS:
 		void fireEstablishPaceChannel();
+		void fireModifyPin();
 
 };
 

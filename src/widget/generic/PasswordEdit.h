@@ -1,7 +1,7 @@
 /*!
  * \brief Widget for entering a password that uses the password echo mode.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

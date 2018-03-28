@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StepErrorGui.h"
@@ -7,7 +7,7 @@
 #include "AppQtMainWidget.h"
 #include "generic/GuiUtils.h"
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QLoggingCategory>
 #include <QMessageBox>
 #include <QTimer>
@@ -59,7 +59,16 @@ void StepErrorGui::reportError()
 		Q_ASSERT(!message.isEmpty());
 	}
 
-	QMessageBox::warning(mMainWidget, QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Error"), message);
+	QMessageBox box(mMainWidget);
+	box.setWindowTitle(QApplication::applicationName() + QStringLiteral(" - ") + tr("Error"));
+	box.setWindowModality(Qt::ApplicationModal);
+	box.setIcon(QMessageBox::Warning);
+	box.setWindowFlags(box.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+	box.setText(message);
+	box.setStandardButtons(QMessageBox::Ok);
+	box.button(QMessageBox::Ok)->setFocus();
+	box.exec();
+
 	Q_EMIT fireUiFinished();
 }
 

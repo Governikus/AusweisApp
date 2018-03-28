@@ -1,10 +1,10 @@
 /*
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include "EnumHelper.h"
+#include "HistorySettings.h"
 
 #include <QButtonGroup>
 #include <QComboBox>
@@ -14,14 +14,6 @@
 
 namespace governikus
 {
-
-defineEnumType(TimePeriod,
-		PAST_HOUR,
-		PAST_DAY,
-		PAST_WEEK,
-		LAST_FOUR_WEEKS,
-		ALL_HISTORY
-		)
 
 class DeleteHistoryDialog
 	: public QDialog

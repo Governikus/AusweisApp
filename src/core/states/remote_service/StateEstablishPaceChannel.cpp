@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEstablishPaceChannel.h"
@@ -48,7 +48,7 @@ void StateEstablishPaceChannel::onEntry(QEvent* pEvent)
 	}
 
 	mConnections += connect(cardConnection.data(), &CardConnection::fireReaderInfoChanged, this, &StateEstablishPaceChannel::onReaderInfoChanged);
-	mConnections += connect(getContext().data(), &RemoteServiceContext::fireCancelEstablishPaceChannel, this, &StateEstablishPaceChannel::onCancelEstablishPaceChannel);
+	mConnections += connect(getContext().data(), &RemoteServiceContext::fireCancelPasswordRequest, this, &StateEstablishPaceChannel::onCancelEstablishPaceChannel);
 	mConnections += connect(getContext()->getRemoteServer().data(), &RemoteServer::fireConnectedChanged, this, &AbstractState::fireContinue);
 }
 
@@ -66,21 +66,21 @@ void StateEstablishPaceChannel::run()
 	const QSharedPointer<RemoteServiceContext>& context = getContext();
 
 	EstablishPACEChannelParser parser = EstablishPACEChannelParser::fromCcid(mEstablishPaceChannelMessage->getInputData());
-	QString pacePin;
+	QString pacePassword;
 	switch (parser.getPasswordId())
 	{
 		case PACE_PASSWORD_ID::PACE_CAN:
-			pacePin = context->getCan();
+			pacePassword = context->getCan();
 			context->setCan(QString());
 			break;
 
 		case PACE_PASSWORD_ID::PACE_PIN:
-			pacePin = context->getPin();
+			pacePassword = context->getPin();
 			context->setPin(QString());
 			break;
 
 		case PACE_PASSWORD_ID::PACE_PUK:
-			pacePin = context->getPuk();
+			pacePassword = context->getPuk();
 			context->setPuk(QString());
 			break;
 
@@ -94,7 +94,7 @@ void StateEstablishPaceChannel::run()
 	mConnections += cardConnection->callEstablishPaceChannelCommand(this,
 			&StateEstablishPaceChannel::onEstablishConnectionDone,
 			parser.getPasswordId(),
-			pacePin,
+			pacePassword,
 			parser.getChat(),
 			parser.getCertificateDescription());
 }

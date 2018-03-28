@@ -1,10 +1,11 @@
 /*!
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
 
 #include "context/ChangePinContext.h"
+#include "context/RemoteServiceContext.h"
 #include "context/WorkflowContext.h"
 #include "ReaderManager.h"
 
@@ -110,6 +111,12 @@ void NumberModel::setNewPin(const QString& pNewPin)
 	if (changePinContext)
 	{
 		changePinContext->setNewPin(pNewPin);
+	}
+
+	const auto remoteServiceContext = mContext.objectCast<RemoteServiceContext>();
+	if (remoteServiceContext)
+	{
+		remoteServiceContext->setNewPin(pNewPin);
 	}
 }
 

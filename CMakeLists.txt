@@ -33,7 +33,7 @@ ELSE()
 ENDIF()
 
 
-PROJECT(AusweisApp2 VERSION 1.14.0 LANGUAGES ${LANGUAGES})
+PROJECT(AusweisApp2 VERSION 1.14.1 LANGUAGES ${LANGUAGES})
 
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it

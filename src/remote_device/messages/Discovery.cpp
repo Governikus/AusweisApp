@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -23,7 +23,7 @@ static Initializer::Entry E([] {
 		});
 
 
-Discovery::Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QStringList& pSupportedApis)
+Discovery::Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis)
 	: mIfdName(pIfdName)
 	, mIfdId(pIfdId)
 	, mPort(pPort)
@@ -50,7 +50,7 @@ quint16 Discovery::getPort() const
 }
 
 
-const QStringList& Discovery::getSupportedApis() const
+const QVector<IfdVersion::Version>& Discovery::getSupportedApis() const
 {
 	return mSupportedApis;
 }
@@ -68,7 +68,7 @@ QJsonDocument Discovery::toJson() const
 	QJsonArray levels;
 	for (const auto& level : qAsConst(mSupportedApis))
 	{
-		levels += level;
+		levels += IfdVersion(level).toString();
 	}
 	result[QLatin1String("SupportedAPI")] = levels;
 

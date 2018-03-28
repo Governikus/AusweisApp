@@ -36,6 +36,7 @@ Item {
 
 	Text {
 		id: pinDesc
+		color: Constants.secondary_text
 
 		anchors.margins: Utils.dp(10)
 		anchors.top: pinHeader.bottom

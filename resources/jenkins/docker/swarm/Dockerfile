@@ -1,7 +1,7 @@
 FROM alpine:latest
 MAINTAINER Governikus KG <ausweisapp2@governikus.com>
 
-ARG JENKINS_SWARM_VERSION=3.6
+ARG JENKINS_SWARM_VERSION=3.8
 ENV EXECUTOR=3 LABELS= NAME= PASSWORD=
 
 RUN adduser governikus -s /bin/sh -D

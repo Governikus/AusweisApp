@@ -3,6 +3,21 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.7.1)
 SET(ANDROID_SDK $ENV{ANDROID_HOME})
 SET(ANDROID_BUILD_TOOLS_REVISION $ENV{ANDROID_BUILD_TOOLS_REVISION})
 
+IF(NOT EXISTS "${ANDROID_SDK}")
+	MESSAGE(FATAL_ERROR "Environment variable ANDROID_HOME is undefined")
+ENDIF()
+
+IF(NOT ANDROID_BUILD_TOOLS_REVISION)
+	SET(_android_build_tools_dir "${ANDROID_SDK}/build-tools")
+	FILE(GLOB build_tools ${_android_build_tools_dir}/*)
+	LIST(LENGTH build_tools build_tools_len)
+	IF(NOT build_tools_len EQUAL 1)
+		MESSAGE(FATAL_ERROR "Cannot determine ANDROID_BUILD_TOOLS_REVISION: ${_android_build_tools_dir}")
+	ENDIF()
+
+	GET_FILENAME_COMPONENT(ANDROID_BUILD_TOOLS_REVISION "${build_tools}" NAME)
+ENDIF()
+
 SET(CMAKE_SYSTEM_NAME Android)
 SET(CMAKE_ANDROID_STL_TYPE gnustl_shared)
 

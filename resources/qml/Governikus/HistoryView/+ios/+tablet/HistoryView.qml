@@ -62,6 +62,7 @@ SectionPage {
 	}
 
 	Text {
+		color: Constants.secondary_text
 		anchors.centerIn: parent
 		text: qsTr("Currently there are no history entries.") + settingsModel.translationTrigger
 		wrapMode: Text.WordWrap

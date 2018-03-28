@@ -29,6 +29,7 @@ Popup {
 
 		Text {
 			id: header
+			color: Constants.secondary_text
 			text: qsTr("Pairing code") + settingsModel.translationTrigger
 			font.pixelSize: Constants.header_font_size
 			font.bold: true
@@ -36,6 +37,7 @@ Popup {
 
 		Text {
 			id: info
+			color: Constants.secondary_text
 			width: parent.width
 			wrapMode: Text.WordWrap
 			font.pixelSize: Constants.normal_font_size
@@ -47,6 +49,7 @@ Popup {
 
 		TextField {
 			id: name
+			focus: true
 			width: parent.width
 			horizontalAlignment: Text.AlignHCenter
 			font.letterSpacing: Utils.dp(5)

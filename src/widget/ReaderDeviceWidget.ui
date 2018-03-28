@@ -127,9 +127,12 @@
             <item>
              <widget class="QLabel" name="remoteEmptyListDescription">
               <property name="text">
-               <string>No smartphone with enabled remote service found. See online help for details of use.</string>
+               <string notr="true">$text</string>
               </property>
               <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="openExternalLinks">
                <bool>true</bool>
               </property>
              </widget>
@@ -280,9 +283,12 @@
             <item>
              <widget class="QLabel" name="localEmptyListDescription">
               <property name="text">
-               <string>No connected card reader found. See online help for installation of card readers.</string>
+               <string notr="true">$text</string>
               </property>
               <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="openExternalLinks">
                <bool>true</bool>
               </property>
              </widget>

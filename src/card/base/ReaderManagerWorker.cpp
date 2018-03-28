@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManagerWorker.h"
@@ -103,7 +103,7 @@ void ReaderManagerWorker::registerPlugIn(ReaderManagerPlugIn* pPlugIn)
 }
 
 
-void ReaderManagerWorker::startScan(ReaderManagerPlugInType pType)
+void ReaderManagerWorker::startScan(ReaderManagerPlugInType pType, bool pAutoConnect)
 {
 	Q_ASSERT(thread() == QThread::currentThread());
 
@@ -112,7 +112,7 @@ void ReaderManagerWorker::startScan(ReaderManagerPlugInType pType)
 		if (plugin->getInfo().getPlugInType() == pType)
 		{
 			qCDebug(card) << "Start scan on plugin:" << plugin->metaObject()->className();
-			plugin->setConnectToKnownReaders(true);
+			plugin->setConnectToKnownReaders(pAutoConnect);
 			plugin->startScan();
 		}
 	}

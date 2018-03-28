@@ -1,25 +1,25 @@
 /*
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
 
+import java.io.File;
+
 import android.app.Activity;
-import android.content.*;
-import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 
-import java.io.*;
-import java.nio.channels.FileChannel;
-import java.text.*;
-import java.util.*;
 
-
-public class ShareUtil
+public final class ShareUtil
 {
-	private static final String TAG = "AusweisApp2";
+	private static final String LOG_TAG = AusweisApp2Service.LOG_TAG;
+
+	private ShareUtil()
+	{
+	}
 
 
 	public static void shareText(Context ctx, final String text, final String chooserTitle)
@@ -36,8 +36,6 @@ public class ShareUtil
 	{
 		try
 		{
-			File logFile = new File(logFilePath);
-
 			Intent shareData = new Intent();
 			shareData.setType("message/rfc822");
 			shareData.setAction(Intent.ACTION_SEND);
@@ -49,7 +47,7 @@ public class ShareUtil
 		}
 		catch (Exception e)
 		{
-			Log.e(TAG, "Error sharing log file", e);
+			Log.e(LOG_TAG, "Error sharing log file", e);
 		}
 	}
 

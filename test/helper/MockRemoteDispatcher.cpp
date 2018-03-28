@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockRemoteDispatcher.h"
@@ -107,4 +107,9 @@ void MockRemoteDispatcher::onClosed()
 void MockRemoteDispatcher::onReceived(const QSharedPointer<const RemoteMessage>& pMessage)
 {
 	Q_EMIT fireReceived(pMessage, sharedFromThis());
+}
+
+
+void MockRemoteDispatcher::close()
+{
 }

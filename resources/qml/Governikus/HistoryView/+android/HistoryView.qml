@@ -1,18 +1,27 @@
 import QtQuick 2.5
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.2
+import QtQuick.Dialogs 1.2
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 
 SectionPage {
+	id: rootPage
 	property alias listViewModel: listView.model
 	property var selectedIndices: []
 
 	headerTitleBarAction: TitleBarAction { text: qsTr("History") + settingsModel.translationTrigger; font.bold: true }
+	rightTitleBarAction: HistoryContextMenu { historyReminderPopup: deleteHistoryConfirmationDialog }
+
+	HistoryViewConfirmationPopup {
+		id: deleteHistoryConfirmationDialog
+		baseItem: rootPage
+	}
 
 	Text {
+		color: Constants.secondary_text
 		anchors.centerIn: parent
 		text: qsTr("Currently there are no history entries.") + settingsModel.translationTrigger
 		wrapMode: Text.WordWrap

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppQtMainWidget.h"
@@ -23,7 +23,6 @@
 #include <QDesktopServices>
 #include <QIcon>
 #include <QLoggingCategory>
-#include <QMessageBox>
 #include <QStackedLayout>
 #include <QTimer>
 
@@ -197,6 +196,12 @@ void AppQtMainWidget::changeEvent(QEvent* pEvent)
 #endif
 	}
 	QWidget::changeEvent(pEvent);
+}
+
+
+bool AppQtMainWidget::remoteScanRunning() const
+{
+	return mUi->settingsPage->remoteScanRunning();
 }
 
 

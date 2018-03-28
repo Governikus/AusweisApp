@@ -8,8 +8,6 @@ Item {
 	id: baseItem
 	signal requestPluginType(string pReaderPlugInType)
 
-	property alias allowRemote: technologySwitch.allowRemote
-
 	property bool locationPermissionInfoConfirmed: false
 	onLocationPermissionInfoConfirmedChanged: {
 		if (identifyController) identifyController.locationPermissionConfirmed = locationPermissionInfoConfirmed
@@ -65,7 +63,8 @@ Item {
 		enableText: (!visible ? "" :
 					!applicationModel.bluetoothAvailable ? qsTr("Bluetooth is not supported by your device.") + "<br/>" + qsTr("Please try NFC.") :
 					!applicationModel.bluetoothEnabled ? qsTr("Bluetooth is switched off.") + "<br/>" + qsTr("Please enable Bluetooth.") :
-					parent.showLocationPermissionInfo ? qsTr("No paired and activated Bluetooth device was detected. The AusweisApp2 needs access to your location in order to discover available devices. You can grant this permission after clicking the continue button.") : ""
+					parent.showLocationPermissionInfo ? qsTr("No paired and activated Bluetooth device was detected. The AusweisApp2 needs access to your location in order to discover available devices. You can grant this permission after clicking the continue button.") :
+					!applicationModel.bluetoothResponding ? qsTr("An error occured while connecting to your bluetooth device. Try to pair your device in the system settings and restart the app.") : ""
 					) + settingsModel.translationTrigger
 
 		titleText: ((baseItem.state === "reader") ? qsTr("Establish connection") :

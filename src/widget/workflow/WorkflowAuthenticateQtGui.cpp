@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowAuthenticateQtGui.h"
@@ -45,7 +45,6 @@ WorkflowAuthenticateQtGui::WorkflowAuthenticateQtGui(const QSharedPointer<AuthCo
 	Q_ASSERT(mAuthenticateStepsWidget != nullptr);
 	connect(mWidget, &WorkflowQtWidget::fireUserCancelled, this, &WorkflowGui::fireUserCancelled);
 	connect(mWidget, &WorkflowQtWidget::forwardStep, this, &WorkflowAuthenticateQtGui::onForwardStep);
-	connect(mChooseCardGui.data(), &StepChooseCardGui::fireSwitchToReaderSettingsRequested, this, &WorkflowGui::fireSwitchToReaderSettingsRequested);
 }
 
 
@@ -77,8 +76,10 @@ bool WorkflowAuthenticateQtGui::verifyAbortWorkflow()
 	msgBox.setInformativeText(tr("You can as well identity later by calling the service provider's Internet page"
 								 " again."));
 	msgBox.setIconPixmap(QIcon(QStringLiteral(":/images/npa.svg")).pixmap(32, 32));
-	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 	msgBox.setWindowFlags(msgBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	msgBox.button(QMessageBox::Yes)->setFocus();
+
 	return msgBox.exec() == QMessageBox::Yes;
 }
 

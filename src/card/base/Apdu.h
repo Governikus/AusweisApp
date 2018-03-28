@@ -1,10 +1,12 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
+#include "CardReturnCode.h"
 #include "EnumHelper.h"
+
 #include <QByteArray>
 
 namespace governikus
@@ -121,6 +123,7 @@ class ResponseApdu
 		static const int RETURN_CODE_LENGTH = 2;
 
 	public:
+		ResponseApdu(StatusCode pStatusCode);
 		ResponseApdu(const QByteArray& pBuffer = QByteArray());
 		virtual ~ResponseApdu();
 
@@ -132,6 +135,7 @@ class ResponseApdu
 		int getRetryCounter() const;
 		SW1 getSW1() const;
 		char getSW2() const;
+		CardReturnCode getCardReturnCode() const;
 };
 
 } /* namespace governikus */

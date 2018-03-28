@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteMessages
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/Discovery.h"
@@ -48,7 +48,7 @@ class test_RemoteMessages
 				new Discovery(QStringLiteral("Sony Xperia Z5 compact"),
 				QStringLiteral("0123456789ABCDEF"),
 				24728,
-				{QStringLiteral("IFDInterface_WebSocket_v0"), QStringLiteral("IFDInterface_WebSocket_v2")})
+				{IfdVersion::Version::v0})
 				);
 
 			mChecker.processDiscovery(message);
@@ -64,17 +64,15 @@ class test_RemoteMessages
 			QCOMPARE(object.value(QLatin1String("port")).toInt(), 24728);
 			const QJsonValue apiLevels = object.value(QLatin1String("SupportedAPI"));
 			QVERIFY(apiLevels.isArray());
-			QCOMPARE(apiLevels.toArray().size(), 2);
+			QCOMPARE(apiLevels.toArray().size(), 1);
 			QCOMPARE(apiLevels.toArray().at(0).toString(), QStringLiteral("IFDInterface_WebSocket_v0"));
-			QCOMPARE(apiLevels.toArray().at(1).toString(), QStringLiteral("IFDInterface_WebSocket_v2"));
 
 			QCOMPARE(document.toJson(),
 					QByteArray("{\n"
 							   "    \"IFDID\": \"0123456789ABCDEF\",\n"
 							   "    \"IFDName\": \"Sony Xperia Z5 compact\",\n"
 							   "    \"SupportedAPI\": [\n"
-							   "        \"IFDInterface_WebSocket_v0\",\n"
-							   "        \"IFDInterface_WebSocket_v2\"\n"
+							   "        \"IFDInterface_WebSocket_v0\"\n"
 							   "    ],\n"
 							   "    \"msg\": \"REMOTE_IFD\",\n"
 							   "    \"port\": 24728\n"
@@ -84,7 +82,7 @@ class test_RemoteMessages
 
 		void ifdEstablishContext()
 		{
-			const QSharedPointer<const IfdEstablishContext> message(new IfdEstablishContext("IFDInterface_WebSocket_v0", "MAC-MINI"));
+			const QSharedPointer<const IfdEstablishContext> message(new IfdEstablishContext(IfdVersion::Version::v0, "MAC-MINI"));
 
 			mChecker.receive(message);
 

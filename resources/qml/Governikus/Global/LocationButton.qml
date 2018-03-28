@@ -29,6 +29,7 @@ MouseArea {
 
 	Text {
 		text: name
+		color: Gov.Constants.secondary_text
 
 		anchors.margins: Utils.dp(2)
 		anchors.top: parent.top

@@ -1,9 +1,10 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GuiUtils.h"
 
+#include <QAbstractButton>
 #include <QApplication>
 #include <QFrame>
 #include <QIcon>
@@ -71,7 +72,8 @@ void GuiUtils::showPinCanPukErrorDialog(CardReturnCode pReturnCode, int pRetryCo
 	messageBox.setWindowFlags(messageBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 	messageBox.setText(QStringLiteral("<h4>%1</h4><p>%2</p>").arg(title, text));
 	messageBox.setIconPixmap(QIcon(QStringLiteral(":/images/npa.svg")).pixmap(32, 32));
-	messageBox.setStandardButtons(QMessageBox::StandardButton::Ok);
+	messageBox.setStandardButtons(QMessageBox::Ok);
+	messageBox.button(QMessageBox::Ok)->setFocus();
 
 	messageBox.exec();
 }
@@ -95,7 +97,8 @@ bool GuiUtils::showWrongPinBlockedDialog(QWidget* pParent)
 	messageBox.setWindowModality(Qt::WindowModal);
 	messageBox.setText(QStringLiteral("<h4>%1</h4><p>%2</p>").arg(title, text));
 	messageBox.setIcon(QMessageBox::Warning);
-
 	messageBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+	messageBox.button(QMessageBox::Yes)->setFocus();
+
 	return messageBox.exec() == QMessageBox::Yes;
 }

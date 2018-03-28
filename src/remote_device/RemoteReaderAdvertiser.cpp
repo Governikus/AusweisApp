@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReaderAdvertiser.h"
@@ -60,7 +60,7 @@ RemoteReaderAdvertiserImpl::RemoteReaderAdvertiserImpl(const QString& pIfdName, 
 	: RemoteReaderAdvertiser()
 	, mHandler(Env::create<DatagramHandler*>(false))
 	, mTimerId(startTimer(pTimerInterval))
-	, mDiscovery(Discovery(pIfdName, pIfdId, pPort, {QStringLiteral("IFDInterface_WebSocket_v0")}).toJson())
+	, mDiscovery(Discovery(pIfdName, pIfdId, pPort, {IfdVersion::supported()}).toJson())
 {
 	qCDebug(remote_device) << "Start advertising every" << pTimerInterval << "msecs";
 }

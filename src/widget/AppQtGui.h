@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -57,9 +57,7 @@ class AppQtGui
 		virtual bool eventFilter(QObject* pObject, QEvent* pEvent) override;
 
 	private:
-		void initGuiProfile();
-		void loadStyleSheet(const QString& pStyleSheetName, bool pIsResource);
-		QString readStyleSheet(const QString& pFileName);
+		void loadStyleSheet();
 		void createTrayIcon();
 		void closeDialogs();
 		void hideFromTaskbar();
@@ -76,13 +74,13 @@ class AppQtGui
 	private Q_SLOTS:
 		void onActivated(QSystemTrayIcon::ActivationReason reason);
 		void onCloseWindowRequested(bool* pDoClose);
-		void onDebugStyleSheetChanged(const QString& pPath);
 		void onChangeHighContrast(bool* pHighContrastOn);
 		void onSetupAssistantWizardRequest();
 		void onDeveloperModeQuestion();
 		void onDiagnosisRequested();
 		void onAppUpdateReady(bool pSuccess, const GlobalStatus& pError);
 		void onUpdateScheduled();
+		void onCertificateRemoved(QString pDeviceName);
 		void onSwitchToReaderSettingsRequested();
 
 	private:
@@ -93,6 +91,7 @@ class AppQtGui
 		SetupAssistantGui* mSetupAssistantGui;
 		DiagnosisGui* mDiagnosisGui;
 		QMessageBox* mUpdateInfo;
+		QMessageBox* mCertificateInfo;
 		bool mAggressiveToForeground;
 
 	Q_SIGNALS:

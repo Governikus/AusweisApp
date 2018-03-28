@@ -45,10 +45,21 @@ j.with
 			'''.stripIndent().trim())
 
 		shell('cd build; make gcovr')
+
+		shell('cd build; make cloc.report')
 	}
 
 	publishers
 	{
 		cobertura('build/gcovr.xml')
+
+		slocCount
+		{
+			pattern('build/cloc.xml')
+			encoding('UTF-8')
+			commentIsCode(false)
+			buildsInGraph(0)
+			ignoreBuildFailure(false)
+		}
 	}
 }

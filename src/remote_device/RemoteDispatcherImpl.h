@@ -1,7 +1,7 @@
 /*!
  * \brief Class that dispatches incoming and outgoing remote messages.
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -36,6 +36,7 @@ class RemoteDispatcherImpl
 
 		virtual const QString& getId() const override;
 		virtual const QString& getContextHandle() const override;
+		Q_INVOKABLE virtual void close() override;
 		Q_INVOKABLE virtual void send(const QSharedPointer<const RemoteMessage>& pMessage) override;
 };
 

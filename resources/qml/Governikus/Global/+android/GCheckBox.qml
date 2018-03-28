@@ -38,6 +38,7 @@ Item {
 
 		Text {
 			id: description
+			color: Gov.Constants.secondary_text
 			visible: text !== ""
 			anchors.verticalCenter: box.verticalCenter
 			font.pixelSize: Gov.Constants.normal_font_size

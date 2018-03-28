@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PdfExporter.h"
@@ -52,7 +52,7 @@ void PdfExporter::checkOpenFile(bool pSuccess)
 {
 	if (mOpenFile && pSuccess)
 	{
-		QDesktopServices::openUrl(QUrl(mFilename));
+		QDesktopServices::openUrl(QUrl(QStringLiteral("file:///") + mFilename));
 	}
 }
 

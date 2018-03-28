@@ -2,7 +2,7 @@
  * \brief Widget for detecting attached card readers and
  * suggesting an appropriate driver to be installed.
  *
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,6 +33,8 @@ class ReaderDeviceWidget
 		QScopedPointer<Ui::ReaderDeviceWidget> mUi;
 		ReaderDriverModel mLocalReaderDataModel;
 		RemoteDeviceModel mRemoteReaderDataModel;
+
+		void setDisplayText();
 
 		void updateInfoIcon();
 		void updateInfoText();

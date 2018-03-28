@@ -19,6 +19,7 @@ Item {
 
 	Text {
 		id: tabText
+		color: Constants.secondary_text
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.bottom: parent.bottom
 		anchors.bottomMargin: font.pixelSize / 10

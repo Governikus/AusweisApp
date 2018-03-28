@@ -5,10 +5,12 @@ import "."
 
 /* Custom implementation to be replaced with template specialization of Qt.labs.controls Button*/
 Rectangle {
+	id: rect
 	property alias text: textItem.text
 	property color buttonColor : Constants.blue
 	property int maxWidth: 0
 	property int preferedWidth: parent.width - 4 * Constants.component_spacing
+	property alias iconSource: icon.source
 
 	signal clicked
 
@@ -17,13 +19,25 @@ Rectangle {
 	width: maxWidth > 0 ? Math.min(maxWidth, preferedWidth) : preferedWidth
 	clip: true
 
+	Image {
+		id: icon
+		visible: source.toString().length > 0
+		height: rect.height - Utils.dp(10)
+		width: height
+		anchors.left: rect.left
+		anchors.leftMargin: Utils.dp(5)
+		anchors.verticalCenter: rect.verticalCenter
+	}
+
 	Text {
 		id: textItem
 		anchors.centerIn: parent
 		color: enabled ? "white" : "#40000000"
 		opacity: mouseArea.containsMouse ? 0.5 : 1
+		anchors.leftMargin: icon.visible ? icon.width + icon.anchors.leftMargin : 0
 		font.pixelSize: Utils.dp(16)
 	}
+
 	MouseArea{
 		id: mouseArea
 		anchors.fill: parent

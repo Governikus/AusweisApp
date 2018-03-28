@@ -54,6 +54,25 @@ FUNCTION(ADD_FLAG)
 ENDFUNCTION()
 
 
+FUNCTION(QUERY_QMAKE _out _var)
+	IF(NOT TARGET Qt5::qmake)
+		MESSAGE(WARNING "qmake not found")
+		RETURN()
+	ENDIF()
+
+	GET_TARGET_PROPERTY(qmake_bin Qt5::qmake LOCATION)
+	EXECUTE_PROCESS(COMMAND "${qmake_bin}" -query ${_var}
+		RESULT_VARIABLE _result
+		OUTPUT_VARIABLE _output
+		ERROR_QUIET
+		OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+	IF(_result EQUAL 0)
+		SET(${_out} "${_output}" PARENT_SCOPE)
+	ENDIF()
+ENDFUNCTION()
+
+
 FUNCTION(GET_FILE_MATCHER _result_remove _result_keep)
 	IF(NOT ANDROID)
 		LIST(APPEND matcher_remove "_android")

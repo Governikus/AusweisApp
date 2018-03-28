@@ -13,7 +13,7 @@ MouseArea {
 		anchors.centerIn: parent
 		font.pixelSize: Utils.sp(24)
 		wrapMode: Text.WordWrap
-		color: "black"
+		color: Constants.secondary_text
 	}
 
 	Image {

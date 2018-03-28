@@ -111,6 +111,7 @@ SectionPage {
 
 			Text {
 				id: noResultsText
+				color: Constants.secondary_text
 
 				anchors.centerIn: mainPane
 				text: qsTr("No match found") + settingsModel.translationTrigger
