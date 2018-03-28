@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StepChooseCardGui.h"
@@ -39,12 +39,10 @@ StepChooseCardGui::StepChooseCardGui(const QSharedPointer<AuthContext>& pContext
 	mCancelButton = mInformationMessageBox->addButton(tr("Cancel"), QMessageBox::NoRole);
 	mDiagnosisButton = mInformationMessageBox->addButton(tr("Diagnosis"), QMessageBox::YesRole);
 	mDeviceButton = mInformationMessageBox->addButton(tr("Settings"), QMessageBox::YesRole);
+	mDiagnosisButton->setFocus();
 
 	connect(mDiagnosisGui, &DiagnosisGui::fireFinished, this, &StepChooseCardGui::onSubDialogFinished);
 	connect(mReaderDeviceGui, &ReaderDeviceGui::fireFinished, this, &StepChooseCardGui::onSubDialogFinished);
-
-	const QSharedPointer<RemoteClient>& remoteClient = Env::getSingleton<ReaderManager>()->getRemoteClient();
-	connect(remoteClient.data(), &RemoteClient::fireCertificateRemoved, this, &StepChooseCardGui::onCertificateRemoved);
 }
 
 
@@ -137,8 +135,7 @@ void StepChooseCardGui::updateErrorMessage(const QString& pTitle, const QString&
 		}
 		else if (mInformationMessageBox->clickedButton() == mDeviceButton)
 		{
-			Q_EMIT fireCancelled();
-			Q_EMIT fireSwitchToReaderSettingsRequested();
+			mReaderDeviceGui->activate();
 		}
 	}
 	// else: dialog was closed by an onErrorMessage(..., true) call (i.e. card found)
@@ -150,7 +147,20 @@ void StepChooseCardGui::onSubDialogFinished()
 	mSubDialogOpen = false;
 	const QSharedPointer<RemoteClient>& remoteClient = ReaderManager::getInstance().getRemoteClient();
 	remoteClient->startDetection();
-	onReaderManagerSignal();
+	QMetaObject::invokeMethod(this, "onReaderManagerSignal", Qt::QueuedConnection);
+}
+
+
+const QString StepChooseCardGui::connectedRemoteReaderNames() const
+{
+	const QSharedPointer<RemoteClient>& remoteClient = Env::getSingleton<ReaderManager>()->getRemoteClient();
+	const auto deviceInfos = remoteClient->getConnectedDeviceInfos();
+	QStringList deviceNames;
+	for (const auto& info : deviceInfos)
+	{
+		deviceNames.append(QLatin1Char('"') + info.getName() + QLatin1Char('"'));
+	}
+	return deviceNames.join(QLatin1String(", "));
 }
 
 
@@ -159,9 +169,11 @@ void StepChooseCardGui::onReaderManagerSignal()
 	const auto readers = ReaderManager::getInstance().getReaderInfos();
 
 	mDeviceButton->setEnabled(readers.isEmpty());
+	mReaderDeviceGui->reactToReaderCount(readers.size());
 
 	bool readerWithInsufficientApduLength = false;
 	QVector<ReaderInfo> readersWithNpa;
+	QVector<ReaderInfo> remoteReaders;
 	for (const auto& readerInfo : readers)
 	{
 		if (!readerInfo.sufficientApduLength())
@@ -172,13 +184,17 @@ void StepChooseCardGui::onReaderManagerSignal()
 		{
 			readersWithNpa << readerInfo;
 		}
+		if (readerInfo.getPlugInType() == ReaderManagerPlugInType::REMOTE)
+		{
+			remoteReaders << readerInfo;
+		}
 	}
 
 	if (readers.size() == 0)
 	{
 		updateErrorMessage(tr("No card reader detected. Please make sure that a card reader is connected."),
 				tr("If you would like to set up a local or remote card reader, click on the \"Settings\" button"
-				   " to cancel the current operation and open the reader settings."),
+				   " to open the reader settings."),
 				tr("If you need help or have problems with your card reader click on the"
 				   " \"Diagnosis\" button for further information."),
 				false);
@@ -207,10 +223,15 @@ void StepChooseCardGui::onReaderManagerSignal()
 		}
 		else
 		{
+			QString remoteReaderInfo;
+			if (remoteReaders.size() > 0)
+			{
+				remoteReaderInfo = tr("Connected to following remote readers: %1.").arg(connectedRemoteReaderNames());
+			}
 			updateErrorMessage(tr("Please place an ID card on the card reader."),
 					tr("If you have already placed an ID card on your card reader, click on \"Diagnosis\""
 					   " for further information."),
-					QString(),
+					remoteReaderInfo,
 					false);
 		}
 	}
@@ -238,14 +259,4 @@ void StepChooseCardGui::onReaderManagerSignal()
 			updateErrorMessage(QString(), QString(), QString(), true);
 		}
 	}
-}
-
-
-void StepChooseCardGui::onCertificateRemoved(QString pDeviceName)
-{
-	QMessageBox messageBox;
-	messageBox.setText(tr("The device %1 was unpaired because it does not react to connection attempts. Retry the pairing process if you want to use this device to authenticate yourself.").arg(pDeviceName));
-	messageBox.setStandardButtons(QMessageBox::Ok);
-	messageBox.setDefaultButton(QMessageBox::Ok);
-	messageBox.exec();
 }

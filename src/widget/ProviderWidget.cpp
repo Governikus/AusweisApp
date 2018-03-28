@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderWidget.h"
@@ -34,7 +34,6 @@ ProviderWidget::ProviderWidget(QWidget* pParent)
 
 	fill();
 	mUi->noResultWidget->setVisible(false);
-	mUi->providerTableWidget->resizeColumnsToContents();
 }
 
 
@@ -75,8 +74,16 @@ void ProviderWidget::fill()
 		providerName->setMargin(3);
 		mUi->providerTableWidget->setCellWidget(row, 0, providerName);
 
-		QLabel* providerLink = new QLabel(QStringLiteral(R"(<a href="%1">%1</a>)").arg(provider.getAddress()));
-		providerLink->setToolTip(providerLink->text());
+		const QString& url = provider.getAddress();
+		QString displayUrl = url;
+		const int maxUrlLength = 70;
+		if (url.length() > maxUrlLength)
+		{
+			displayUrl = url.left(maxUrlLength) + QStringLiteral("...");
+		}
+
+		QLabel* providerLink = new QLabel(QStringLiteral(R"(<a href="%1">%2</a>)").arg(url, displayUrl));
+		providerLink->setToolTip(url);
 		providerLink->setFocusPolicy(Qt::TabFocus);
 		providerLink->setTextFormat(Qt::RichText);
 		providerLink->setTextInteractionFlags(Qt::TextBrowserInteraction);
@@ -85,6 +92,11 @@ void ProviderWidget::fill()
 		mUi->providerTableWidget->setCellWidget(row, 1, providerLink);
 
 		++row;
+	}
+
+	for (int i = 0; i < header.size(); ++i)
+	{
+		mUi->providerTableWidget->resizeColumnToContents(i);
 	}
 
 	mUi->providerTableWidget->verticalHeader()->setVisible(false); //Hide row number

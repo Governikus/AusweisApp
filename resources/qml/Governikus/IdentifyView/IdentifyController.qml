@@ -53,21 +53,9 @@ Item {
 				navBar.currentIndex = 0
 				break
 			case "StateEditAccessRights":
-				if (applicationModel.currentWorkflow === "selfauthentication") {
-					chatModel.transferAccessRights()
-					numberModel.continueWorkflow()
-				}
-				if (applicationModel.currentWorkflow === "authentication") {
-					firePopAll()
-				}
+				firePush(identifyViewContent, {})
 
-				if (Qt.platform.os === "android") {
-					authModel.readerPlugInType = "NFC";
-				} else if (Qt.platform.os === "ios") {
-					authModel.readerPlugInType = "BLUETOOTH";
-				} else {
-					authModel.readerPlugInType = "PCSC";
-				}
+				authModel.setInitialPluginType()
 				break
 			case "StateSelectReader":
 				firePush(identifyWorkflow, {})
@@ -96,15 +84,33 @@ Item {
 				setIdentifyWorkflowStateAndRequestInput("identify_enterpin", "PIN")
 				break
 			case "StateDidAuthenticateEac1":
+				identifyProgressView.progressBarVisible = true
+				setIdentifyProgressViewValue(1)
 				setIdentifyWorkflowStateAndContinue("identify_processing")
 				break
 			case "StateEstablishPacePuk":
 				authModel.cancelWorkflowOnPinBlocked()
 				break
+			case "StateDidAuthenticateEac2":
+				setIdentifyProgressViewValue(2)
+				numberModel.continueWorkflow()
+				break
+			case "StateTransmit":
+				setIdentifyProgressViewValue(3)
+				numberModel.continueWorkflow()
+				break
 			case "StateCleanUpReaderManager":
 				controller.showRemoveCardFeedback = numberModel.cardConnected && !authModel.isError;
 				numberModel.continueWorkflow()
 				break;
+			case "StateCheckRefreshAddress":
+				setIdentifyProgressViewValue(4)
+				numberModel.continueWorkflow()
+				break
+			case "StateWriteHistory":
+				setIdentifyProgressViewValue(5)
+				numberModel.continueWorkflow()
+				break
 			case "FinalState":
 				navBar.lockedAndHidden = true
 				if (controller.showRemoveCardFeedback) {
@@ -123,10 +129,16 @@ Item {
 						navBar.lockedAndHidden = false
 					}
 				}
+				identifyProgressView.progressBarVisible = false
+				setIdentifyProgressViewValue(0)
 				break
 			default:
 				numberModel.continueWorkflow()
 		}
+	}
+
+	function setIdentifyProgressViewValue(value){
+		identifyProgressView.progressValue = value
 	}
 
 	function setIdentifyWorkflowState(pState) {

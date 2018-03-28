@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016 Governikus GmbH & Co. KG
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "QmlExtension.h"

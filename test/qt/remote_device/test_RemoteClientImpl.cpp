@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteClientImpl.h"
@@ -288,7 +288,7 @@ class test_RemoteClient
 
 			QVERIFY(!mRemoteConnectorMock.isNull());
 			QSignalSpy spyConnectionRequest(mRemoteConnectorMock.data(), &RemoteConnectorMock::fireConnectionRequestReceived);
-			const QSharedPointer<Discovery> msg(new Discovery("", QStringLiteral("0123456789ABCDEF"), 12345, {QStringLiteral("IFDInterface_WebSocket_v0"), QStringLiteral("IFDInterface_WebSocket_v2")}));
+			const QSharedPointer<Discovery> msg(new Discovery("", QStringLiteral("0123456789ABCDEF"), 12345, {IfdVersion::Version::v0}));
 			const RemoteDeviceDescriptor descr(msg, QHostAddress("192.168.1.88"));
 			QSharedPointer<RemoteDeviceListEntry> emptyEntry(new RemoteDeviceListEntry(descr));
 			client.establishConnection(emptyEntry, QString("password1"));

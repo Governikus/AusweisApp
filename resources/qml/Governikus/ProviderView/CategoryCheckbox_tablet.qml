@@ -29,6 +29,7 @@ Item {
 
 		Text {
 			id: label
+			color: Constants.secondary_text
 			font.pixelSize: Constants.normal_font_size
 			anchors.verticalCenter: parent.verticalCenter
 		}

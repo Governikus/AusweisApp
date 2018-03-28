@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceDescriptor.h"
@@ -73,11 +73,11 @@ QUrl urlFromMsgAndHost(const QSharedPointer<const Discovery>& pMsg,
 
 RemoteDeviceDescriptor::RemoteDeviceDescriptorData::RemoteDeviceDescriptorData(const QString& pIfdName,
 		const QString& pIfdId,
-		const QStringList& pSupportedApis,
+		const QVector<IfdVersion::Version>& pApiVersions,
 		const QUrl& pRemoteUrl)
 	: mIfdName(pIfdName)
 	, mIfdId(pIfdId)
-	, mSupportedApis(pSupportedApis)
+	, mApiVersions(pApiVersions)
 	, mUrl(pRemoteUrl)
 {
 }
@@ -92,7 +92,7 @@ bool RemoteDeviceDescriptor::RemoteDeviceDescriptorData::operator==(const Remote
 {
 	return mIfdName == pOther.mIfdName &&
 		   mIfdId == pOther.mIfdId &&
-		   mSupportedApis == pOther.mSupportedApis &&
+		   mApiVersions == pOther.mApiVersions &&
 		   mUrl == pOther.mUrl;
 }
 
@@ -109,7 +109,7 @@ RemoteDeviceDescriptor::RemoteDeviceDescriptorData* RemoteDeviceDescriptor::crea
 
 	const QString& ifdName = pMsg->getIfdName();
 	const QString& ifdId = pMsg->getIfdId();
-	const QStringList& supportedApis = pMsg->getSupportedApis();
+	const QVector<IfdVersion::Version>& supportedApis = pMsg->getSupportedApis();
 
 	return new RemoteDeviceDescriptorData(ifdName, ifdId, supportedApis, url);
 }
@@ -139,11 +139,17 @@ const QString& RemoteDeviceDescriptor::getIfdId() const
 }
 
 
-const QStringList& RemoteDeviceDescriptor::getSupportedApis() const
+const QVector<IfdVersion::Version>& RemoteDeviceDescriptor::getApiVersions() const
 {
-	static const QStringList EMPTY_VECTOR;
+	static const QVector<IfdVersion::Version> EMPTY_VECTOR;
 
-	return d.data() == nullptr ? EMPTY_VECTOR : d->mSupportedApis;
+	return d.data() == nullptr ? EMPTY_VECTOR : d->mApiVersions;
+}
+
+
+bool RemoteDeviceDescriptor::isSupported() const
+{
+	return IfdVersion::selectLatestSupported(getApiVersions()).isValid();
 }
 
 

@@ -1,10 +1,12 @@
 /*!
  * \brief Model implementation for the authentication action.
  *
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
+
+#include "ReaderManagerPlugInInfo.h"
 
 #include <QObject>
 #include <QSharedPointer>
@@ -28,6 +30,8 @@ class WorkflowModel
 	private:
 		QSharedPointer<WorkflowContext> mContext;
 
+		void setReaderPlugInType(const ReaderManagerPlugInType pReaderPlugInType);
+
 	public:
 		WorkflowModel(QObject* pParent = nullptr);
 		virtual ~WorkflowModel();
@@ -47,6 +51,7 @@ class WorkflowModel
 		Q_INVOKABLE void cancelWorkflow();
 		Q_INVOKABLE void cancelWorkflowOnPinBlocked();
 		Q_INVOKABLE void continueWorkflow();
+		Q_INVOKABLE void setInitialPluginType();
 
 	Q_SIGNALS:
 		void fireStartWorkflow();

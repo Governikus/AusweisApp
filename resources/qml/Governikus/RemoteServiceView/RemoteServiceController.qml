@@ -23,7 +23,11 @@ Item {
 					break
 				case "StateEstablishPaceChannel":
 					enterPinView.state = "INITIAL"
-					setWorkflowStateAndRequestInput("establishPaceChannel")
+					setWorkflowStateAndRequestInput("establishPaceChannel", remoteServiceModel.getPacePasswordId())
+					break
+				case "StateChangePinRemote":
+					enterPinView.state = "INITIAL"
+					setWorkflowStateAndRequestInput("changePinRemote", "PIN_NEW")
 					break
 				case "FinalState":
 					numberModel.continueWorkflow()
@@ -44,10 +48,10 @@ Item {
 		numberModel.continueWorkflow()
 	}
 
-	function setWorkflowStateAndRequestInput(pState) {
+	function setWorkflowStateAndRequestInput(pState, pEnterPinState) {
 		setWorkflowState(pState)
 		if (remoteServiceModel.pinPadModeOn()) {
-			firePush(enterPinView, {state: remoteServiceModel.getPacePasswordId()})
+			firePush(enterPinView, {state: pEnterPinState})
 		}
 	}
 }

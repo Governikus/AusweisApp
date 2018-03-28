@@ -82,14 +82,19 @@ ApplicationWindow {
 			var activeStackView = contentArea.visibleItem.stack
 
 			if (activeStackView.depth <= 1 && (!activeStackView.currentItem.leftTitleBarAction || activeStackView.currentItem.leftTitleBarAction.state === "")) {
-				var currentTime = new Date().getTime();
-				if( currentTime - lastCloseInvocation < 1000 ) {
-					plugin.fireQuitApplicationRequest()
-					return
-				}
+				if (contentArea.state != "identify") {
+					navBar.state = "identify"
+					navBar.currentIndex = 0
+				} else {
+					var currentTime = new Date().getTime();
+					if( currentTime - lastCloseInvocation < 1000 ) {
+						plugin.fireQuitApplicationRequest()
+						return
+					}
 
-				lastCloseInvocation = currentTime
-				qmlExtension.showFeedback(qsTr("Press the back button twice to close the app."))
+					lastCloseInvocation = currentTime
+					qmlExtension.showFeedback(qsTr("To close the app, quickly press the back button twice."))
+				}
 			}
 			else if (activeStackView.currentItem.leftTitleBarAction) {
 				if (navBar.isOpen) {

@@ -1,7 +1,7 @@
 /*!
  * \brief Authentication context.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -87,6 +87,7 @@ class AuthContext
 		QMultiMap<QUrl, QSslCertificate> mCertificates;
 		QSharedPointer<const CVCertificate> mTerminalCvc, mDvCvc;
 		CVCertificateChainBuilder mCvcChainBuilderProd, mCvcChainBuilderTest;
+		QByteArray mSslSession;
 
 		void initializeChat();
 		bool removeForbiddenAccessRights(QSet<AccessRight>& pSet);
@@ -474,7 +475,8 @@ class AuthContext
 
 		void setTerminalCvc(const QSharedPointer<const CVCertificate>& pTerminalCvc);
 
-
+		const QByteArray& getSslSession() const;
+		void setSslSession(const QByteArray& pSession);
 };
 
 } /* namespace governikus */

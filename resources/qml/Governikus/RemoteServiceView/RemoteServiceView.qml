@@ -18,6 +18,12 @@ SectionPage {
 		font.bold: true
 	}
 
+	onVisibleChanged: {
+		if (visible) {
+			remoteServiceModel.detectRemoteDevices = false
+		}
+	}
+
 	readonly property int maxWidth: Math.min(width - 2 * Constants.component_spacing, Utils.dp(500))
 	id: root
 
@@ -57,6 +63,7 @@ SectionPage {
 
 	Text {
 		id: text
+		color: Constants.secondary_text
 
 		width: parent.maxWidth
 		anchors.top: image.bottom
@@ -67,7 +74,6 @@ SectionPage {
 				+ " Please note: Both your devices have to be connected to the same WiFi.")
 				+ settingsModel.translationTrigger
 		font.pixelSize: Constants.normal_font_size
-		horizontalAlignment: Text.AlignJustify
 		wrapMode: Text.WordWrap
 	}
 
@@ -86,7 +92,6 @@ SectionPage {
 			} else {
 				var newRunning = !running;
 				remoteServiceModel.running = newRunning
-				qmlExtension.keepScreenOn(newRunning)
 			}
 		}
 		text: {
@@ -103,7 +108,6 @@ SectionPage {
 		onRunningChanged: {
 			navBar.lockedAndHidden = running
 		}
-		enabled: remoteServiceModel.runnable || canEnableNfc
 	}
 
 	GButton {
@@ -160,6 +164,7 @@ SectionPage {
 			}
 			Text {
 				id: subText
+				color: Constants.secondary_text
 				verticalAlignment: Text.AlignVCenter
 				horizontalAlignment: Text.AlignHCenter
 				font.pixelSize: Constants.normal_font_size
@@ -169,7 +174,7 @@ SectionPage {
 				width: connectedText.width * 0.8
 				wrapMode: Text.WordWrap
 
-				text: qsTr("Please pay attention to the display on your other device.") + settingsModel.translationTrigger;
+				text: qsTr("Please pay attention to the display on your other device %1.").arg("\"" + remoteServiceModel.connectedClientDeviceName + "\"") + settingsModel.translationTrigger;
 			}
 
 			states: [
@@ -212,7 +217,10 @@ SectionPage {
 		id: switchTo
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.bottom: parent.bottom
-		onClicked: firePush(remoteSettings, {})
+		onClicked: {
+			remoteServiceModel.detectRemoteDevices = true
+			firePush(remoteSettings, {})
+		}
 		imageSource: "qrc:///images/android/navigation/remotesettings.svg"
 		text: qsTr("Settings") + settingsModel.translationTrigger
 		opacity: 1
@@ -223,10 +231,12 @@ SectionPage {
 		State { name: "OFF"; when: !remoteServiceModel.running
 			PropertyChanges { target: pairingButton; opacity: 0 }
 			PropertyChanges { target: switchTo; opacity: 1 }
+			AnchorChanges { target: statusText; anchors.top: startButton.bottom }
 		},
 		State { name: "ON"; when: remoteServiceModel.running
 			PropertyChanges { target: pairingButton; opacity: 1 }
 			PropertyChanges { target: switchTo; opacity: 0 }
+			AnchorChanges { target: statusText; anchors.top: pairingButton.bottom }
 		}
 	]
 	transitions: [
@@ -235,6 +245,9 @@ SectionPage {
 				property: "opacity"
 				duration: 500
 				easing.type: Easing.InOutQuad
+			}
+			AnchorAnimation {
+				duration: 500
 			}
 		}
 	]

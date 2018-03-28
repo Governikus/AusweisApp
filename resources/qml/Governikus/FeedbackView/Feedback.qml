@@ -34,6 +34,7 @@ SectionPage {
 					text: titleText
 				}
 				Text {
+					color: Constants.secondary_text
 					width: parent.width
 					font.pixelSize: Constants.normal_font_size
 					wrapMode: Text.WordWrap
@@ -69,6 +70,7 @@ SectionPage {
 			}
 			Text {
 				id: subtitle
+				color: Constants.secondary_text
 				anchors.left: parent.left
 				anchors.right: parent.right
 				text: qsTr("We are happy about every feedback on our software.") + settingsModel.translationTrigger

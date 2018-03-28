@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PdfCreator.h"
@@ -54,7 +54,7 @@ void PdfCreator::createHeader(const QString& pTitle, const QString& pHeadline)
 										"</table>").arg(
 			pTitle,
 			QCoreApplication::applicationName(),
-			tr("AusweisApp2 is a product of Governikus GmbH & Co. KG - on behalf of the Bundesministerium des Innern (Federal Ministry of the Interior)."),
+			tr("AusweisApp2 is a product of Governikus GmbH & Co. KG - on behalf of the Federal Ministry of the Interior, Building and Community."),
 			pHeadline);
 
 	QSvgRenderer renderer(QStringLiteral(":/images/npa.svg"));

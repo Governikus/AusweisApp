@@ -1,13 +1,16 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BluetoothCard.h"
+
 #include "DestroyPACEChannel.h"
 #include "messages/BluetoothMessageCreator.h"
 #include "messages/BluetoothMessageDisconnectResponse.h"
 #include "messages/BluetoothMessageSetTransportProtocolResponse.h"
 #include "messages/BluetoothMessageTransferApduResponse.h"
+#include "PinModify.h"
+#include "PinModifyOutput.h"
 #include "SynchronousBtCall.h"
 
 
@@ -150,19 +153,17 @@ CardReturnCode BluetoothCard::destroyPaceChannel()
 }
 
 
-CardReturnCode BluetoothCard::setEidPin(quint8 pTimeoutSeconds)
+CardReturnCode BluetoothCard::setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu)
 {
-	PinModifyBuilder builder;
-	CommandApdu command = builder.createCommandDataCcid(pTimeoutSeconds);
+	PinModify pinModify(pTimeoutSeconds);
+	CommandApdu command = pinModify.createCcidForBluetooth();
 
-	ResponseApdu response;
-	CardReturnCode returnCode = transmit(command, response, pTimeoutSeconds);
+	CardReturnCode returnCode = transmit(command, pResponseApdu, pTimeoutSeconds);
 	if (returnCode != CardReturnCode::OK)
 	{
 		return returnCode;
 	}
 
-	PinModifyOutput output;
-	output.parseFromCcid(response.getBuffer());
+	PinModifyOutput output(pResponseApdu);
 	return output.getReturnCode();
 }

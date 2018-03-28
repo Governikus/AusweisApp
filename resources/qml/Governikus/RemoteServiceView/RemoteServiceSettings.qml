@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.1
 
+import Governikus.EnterPinView 1.0
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 
@@ -9,8 +10,6 @@ SectionPage {
 	id: rootPage
 	leftTitleBarAction: TitleBarAction { state: "back"; onClicked: firePop() }
 	headerTitleBarAction: TitleBarAction { text: qsTr("Configure remote service") + settingsModel.translationTrigger; font.bold: true }
-
-	onVisibleChanged: remoteServiceModel.detectRemoteDevices = visible
 
 	Connections {
 		target: remoteServiceModel
@@ -48,10 +47,10 @@ SectionPage {
 			}
 
 			Text {
+				color: Constants.secondary_text
 				text: qsTr("Choose a device name here to identify it in the network:") + settingsModel.translationTrigger
 				width: parent.width
 				font.pixelSize: Constants.normal_font_size
-				horizontalAlignment: Text.AlignJustify
 				wrapMode: Text.WordWrap
 			}
 
@@ -89,7 +88,7 @@ SectionPage {
 					id: nameText
 					anchors.bottomMargin: Utils.dp(2)
 					font.pixelSize: Utils.sp(16)
-					color: "#000000"
+					color: Constants.secondary_text
 					opacity: 0.87
 					text: qsTr("PIN pad mode") + settingsModel.translationTrigger
 				}
@@ -99,7 +98,7 @@ SectionPage {
 					width: parent.width
 					anchors.top: nameText.bottom
 					font.pixelSize: Utils.sp(14)
-					color: "#000000"
+					color: Constants.secondary_text
 					opacity: 0.38
 					text: qsTr("Enter PIN on smartphone") + settingsModel.translationTrigger
 					wrapMode: Text.WordWrap
@@ -126,11 +125,11 @@ SectionPage {
 			}
 
 			Text {
+				color: Constants.secondary_text
 				text: qsTr("No device is paired.") + settingsModel.translationTrigger
 				width: parent.width
 				visible: !knownDeviceList.visible
 				font.pixelSize: Constants.normal_font_size
-				horizontalAlignment: Text.AlignJustify
 				wrapMode: Text.WordWrap
 			}
 
@@ -158,11 +157,11 @@ SectionPage {
 			}
 
 			Text {
+				color: Constants.secondary_text
 				text: qsTr("No new remote reader was found on your network. Make sure that the remote reader functionality in AusweisApp2 on your other device is activated and that your devices are connected to the same network.") + settingsModel.translationTrigger
 				width: parent.width
 				visible: !searchDeviceList.visible
 				font.pixelSize: Constants.normal_font_size
-				horizontalAlignment: Text.AlignJustify
 				wrapMode: Text.WordWrap
 			}
 
@@ -174,8 +173,7 @@ SectionPage {
 				delegate: AvailableDevicesListDelegate {
 					width: searchDeviceList.width
 					onRequestPairing: {
-						popup.deviceId = pDeviceId
-						popup.pin = ""
+						enterPinView.remoteDeviceId = pDeviceId
 						informationPairingPopup.open()
 					}
 				}
@@ -203,6 +201,7 @@ SectionPage {
 
 			Text {
 				id: info
+				color: Constants.secondary_text
 				width: parent.width
 				wrapMode: Text.WordWrap
 				font.pixelSize: Constants.normal_font_size
@@ -214,18 +213,22 @@ SectionPage {
 				width: parent.width
 
 				onClicked: {
-					popup.open()
 					informationPairingPopup.close()
+					firePush(enterPinView, {})
 				}
 			}
 		}
 	}
 
-	RemoteServicePairingPopup {
-		id: popup
-		requestInput: true
+	EnterPinView {
+		id: enterPinView
+		state: "REMOTE_PIN"
+		leftTitleBarAction: TitleBarAction { state: "cancel"; onClicked: firePop() }
+		headerTitleBarAction: TitleBarAction { text: qsTr("Pairing code") + settingsModel.translationTrigger }
+		visible: false
 
-		x: (rootPage.width - width) / 2
-		y: Constants.pane_padding
+		onPinEntered: {
+			firePop()
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -29,6 +29,7 @@ void ApplicationModel::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
 	if (pInfo.getPlugInType() == ReaderManagerPlugInType::BLUETOOTH)
 	{
 		Q_EMIT fireBluetoothEnabledChanged();
+		Q_EMIT fireBluetoothRespondingChanged();
 	}
 	else if (pInfo.getPlugInType() == ReaderManagerPlugInType::NFC)
 	{
@@ -41,6 +42,7 @@ ApplicationModel::ApplicationModel(QObject* pParent)
 	: QObject(pParent)
 	, mContext()
 	, mWifiInfo()
+	, mBluetoothResponding(true)
 {
 	connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderAdded, this, &ApplicationModel::fireBluetoothReaderChanged);
 	connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderRemoved, this, &ApplicationModel::fireBluetoothReaderChanged);
@@ -118,6 +120,12 @@ bool ApplicationModel::isNfcEnabled() const
 bool ApplicationModel::isBluetoothAvailable() const
 {
 	return getFirstPlugInInfo(ReaderManagerPlugInType::BLUETOOTH).isAvailable();
+}
+
+
+bool ApplicationModel::isBluetoothResponding() const
+{
+	return getFirstPlugInInfo(ReaderManagerPlugInType::BLUETOOTH).isResponding();
 }
 
 
@@ -213,4 +221,10 @@ void ApplicationModel::onWifiEnabledChanged()
 {
 	mWifiEnabled = mWifiInfo.isWifiEnabled();
 	Q_EMIT fireWifiEnabledChanged();
+}
+
+
+Q_INVOKABLE void ApplicationModel::enableWifi()
+{
+	mWifiInfo.enableWifi();
 }

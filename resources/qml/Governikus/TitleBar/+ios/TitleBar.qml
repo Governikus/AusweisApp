@@ -41,10 +41,12 @@ Item {
 		width: parent.width
 
 		Item {
+			id: leftActionStack
 			data: activeleftAction
 			width: activeleftAction.width
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: parent.left
+			anchors.leftMargin: Constants.titlebar_padding
 		}
 
 		Item {
@@ -52,10 +54,10 @@ Item {
 			property string text: activeTitleItem.text
 			property bool bold: activeTitleItem.font.bold
 
-			anchors.left: burger.right
-			anchors.leftMargin: Constants.titlebar_spacing
+			anchors.left: parent.left
+			anchors.leftMargin: leftActionStack.width > 0 ? leftAction.width + Constants.titlebar_spacing : 0
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.titlebar_padding + (rightActionStack.width > 0 ? rightAction.width + Constants.titlebar_spacing : 0)
+			anchors.rightMargin: rightActionStack.width > 0 ? rightAction.width + Constants.titlebar_spacing : 0
 			height: parent.height
 			clip: true
 
@@ -93,10 +95,12 @@ Item {
 		}
 
 		Item {
+			id: rightActionStack
 			data: activeRightAction
 			width: activeRightAction.width
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.right: parent.right
+			anchors.rightMargin: Constants.titlebar_padding
 		}
 	}
 

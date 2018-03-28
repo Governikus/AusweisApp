@@ -9,7 +9,6 @@ Item {
 
 	signal requestPluginType(string pReaderPlugInType)
 
-	property bool allowRemote: true
 	property string selectedTechnology
 
 	Row {
@@ -19,7 +18,7 @@ Item {
 		anchors.horizontalCenter: parent.horizontalCenter
 
 		Gov.TechnologySwitchButton {
-			visible: allowRemote && selectedTechnology !== "REMOTE"
+			visible: selectedTechnology !== "REMOTE"
 			onClicked: baseItem.requestPluginType("REMOTE")
 			imageSource: "qrc:///images/icon_remote.svg"
 			text: qsTr("Use WiFi card reader instead<br/>of Bluetooth card reader") + settingsModel.translationTrigger

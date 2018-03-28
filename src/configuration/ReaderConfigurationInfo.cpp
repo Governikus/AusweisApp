@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfigurationInfo.h"
@@ -66,6 +66,15 @@ const QString& ReaderConfigurationInfo::getName() const
 
 const QString& ReaderConfigurationInfo::getUrl() const
 {
+#ifndef QT_NO_DEBUG
+	if (QCoreApplication::applicationName() == QLatin1String("Test_configuration_ReaderConfiguration"))
+	{
+		// Make the reader available on all platforms
+		static const QString url = QLatin1String("https://www.governikus.de/");
+		return url;
+	}
+#endif
+
 	return d->mUrl;
 }
 

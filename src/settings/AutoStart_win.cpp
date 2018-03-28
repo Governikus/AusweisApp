@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AutoStart.h"
@@ -8,26 +8,54 @@
 #include <QSettings>
 #include <QString>
 
-
 using namespace governikus;
 
+namespace
+{
+
+static QString appPath()
+{
+	QString applicationFilePath = QCoreApplication::applicationFilePath();
+	applicationFilePath.replace(QLatin1Char('/'), QLatin1Char('\\'));
+	applicationFilePath = QLatin1Char('"') + applicationFilePath + QLatin1Char('"');
+	return applicationFilePath;
+}
+
+
+static QString registryPath()
+{
+	return QStringLiteral("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run");
+}
+
+
+}
 
 bool AutoStart::enabled()
 {
-	QSettings windowsBootUpSettings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
-	return windowsBootUpSettings.contains(QCoreApplication::applicationName());
+	QSettings windowsBootUpSettings(registryPath(), QSettings::NativeFormat);
+	if (!windowsBootUpSettings.contains(QCoreApplication::applicationName()))
+	{
+		return false;
+	}
+
+	if (windowsBootUpSettings.value(QCoreApplication::applicationName(), QString()).toString() != appPath())
+	{
+		// Update entries from previous versions, e.g.
+		// C:\Program Files (x86)\AusweisApp2 1.13.0 -> C:\Program Files (x86)\AusweisApp2 1.14.0
+		set(true);
+	}
+
+	return true;
 }
 
 
 void AutoStart::set(bool pEnabled)
 {
-	QSettings windowsBootUpSettings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
+	QSettings windowsBootUpSettings(registryPath(), QSettings::NativeFormat);
 
 	if (pEnabled)
 	{
-		QString applicationFilePath = QCoreApplication::applicationFilePath();
-		applicationFilePath.replace(QStringLiteral("/"), QString("\\"));
-		windowsBootUpSettings.setValue(QCoreApplication::applicationName(), "\"" + applicationFilePath + "\"");
+		windowsBootUpSettings.setValue(QCoreApplication::applicationName(), appPath());
 	}
 	else
 	{

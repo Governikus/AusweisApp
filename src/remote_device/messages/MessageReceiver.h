@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,6 +24,8 @@ class IfdTransmit;
 class IfdTransmitResponse;
 class IfdEstablishPaceChannel;
 class IfdEstablishPaceChannelResponse;
+class IfdModifyPin;
+class IfdModifyPinResponse;
 class RemoteDispatcher;
 
 class MessageReceiver
@@ -47,6 +49,8 @@ class MessageReceiver
 		virtual void process(const QSharedPointer<const IfdTransmitResponse>& pMessage);
 		virtual void process(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage);
 		virtual void process(const QSharedPointer<const IfdEstablishPaceChannelResponse>& pMessage);
+		virtual void process(const QSharedPointer<const IfdModifyPin>& pMessage);
+		virtual void process(const QSharedPointer<const IfdModifyPinResponse>& pMessage);
 
 		virtual void unprocessed(const QSharedPointer<const RemoteMessage>& pMessage);
 

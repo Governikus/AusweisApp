@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BusyOverlay.h"
@@ -10,6 +10,7 @@
 #include <QPainter>
 #include <QSizePolicy>
 #include <QStackedLayout>
+#include <QStyleOption>
 
 using namespace governikus;
 

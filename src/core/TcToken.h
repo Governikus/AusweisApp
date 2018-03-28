@@ -1,7 +1,7 @@
 /*!
  * \brief Parses TCTokens from XML data and provides its content.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

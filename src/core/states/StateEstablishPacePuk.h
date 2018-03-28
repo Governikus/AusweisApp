@@ -2,7 +2,7 @@
  * \brief Controller for the step that tries to establish a PACE
  *        connection using the card's PUK.
  *
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

@@ -1,7 +1,7 @@
 /*!
  * \brief GUI to select reader/card.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -39,13 +39,13 @@ class StepChooseCardGui
 		QString getCurrentReaderImage(const QVector<ReaderInfo>& pReaderInfos);
 		static QString formatErrorMessages(const QString& pMessage1, const QString& pMessage2);
 		void updateErrorMessage(const QString& pTitle, const QString& pMessage1, const QString& pMessage2 = QString(), bool closeErrorMessage = false);
+		const QString connectedRemoteReaderNames() const;
 
 	private Q_SLOTS:
 		void onSubDialogFinished();
 
 	public Q_SLOTS:
 		void onReaderManagerSignal();
-		void onCertificateRemoved(QString pDeviceName);
 
 	public:
 		StepChooseCardGui(const QSharedPointer<AuthContext>& pContext, AuthenticateStepsWidget* pStepsWidget);
@@ -53,9 +53,6 @@ class StepChooseCardGui
 
 		virtual void activate() override;
 		virtual void deactivate() override;
-
-	Q_SIGNALS:
-		void fireSwitchToReaderSettingsRequested();
 };
 
 } /* namespace governikus */

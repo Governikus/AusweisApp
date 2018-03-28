@@ -1,4 +1,5 @@
 module TitleBar
 TitleBar 1.0 TitleBar.qml
 TitleBarAction 1.0 TitleBarAction.qml
+TitleBarText 1.0 TitleBarText.qml
 Hamburger 1.0 Hamburger.qml

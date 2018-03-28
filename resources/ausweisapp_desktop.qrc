@@ -2,9 +2,6 @@
     <qresource prefix="/">
         <file>html_templates/alreadyactive.html</file>
         <file>html_templates/error.html</file>
-        <file>stylesheets/common.qss</file>
-        <file>stylesheets/macos.qss</file>
-        <file>stylesheets/windows.qss</file>
         <file>stylesheets/desktop.qss</file>
         <file>images/beta.svg</file>
         <file>images/green_check_mark.svg</file>
@@ -12,7 +9,6 @@
         <file>images/MenuUnselected.png</file>
         <file>images/MenuUnselectedDisabled.png</file>
         <file>images/npa.ico</file>
-        <file>images/siteWithLogo.png</file>
         <file>images/Logo_AutentApp2_2014.png</file>
         <file>images/AppLogo_AutentApp2_2014.png</file>
         <file>images/start_nPA_eAT.png</file>

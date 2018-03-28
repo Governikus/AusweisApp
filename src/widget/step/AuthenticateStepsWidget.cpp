@@ -1,11 +1,12 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthenticateStepsWidget.h"
 #include "ui_AuthenticateStepsWidget.h"
 
 #include <QPainter>
+#include <QStyleOption>
 
 #include "AppStartPage.h"
 #include "generic/BusyOverlayContainer.h"

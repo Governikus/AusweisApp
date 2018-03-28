@@ -1,7 +1,7 @@
 /*!
  * \brief Class to provide information about available card readers.
  *
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

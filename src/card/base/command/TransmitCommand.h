@@ -1,13 +1,15 @@
 /*!
  * \brief Command to transmit data to/from the card.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "BaseCardCommand.h"
 #include "InputAPDUInfo.h"
+
+class test_TransmitCommand;
 
 namespace governikus
 {
@@ -20,9 +22,13 @@ class TransmitCommand
 	Q_OBJECT
 
 	private:
+		friend class ::test_TransmitCommand;
+
 		const QVector<InputAPDUInfo> mInputApduInfos;
-		const QString mReaderName;
+		const QString mSlotHandle;
 		QByteArrayList mOutputApduAsHex;
+
+		static bool isAcceptable(const InputAPDUInfo& pInputApduInfo, const ResponseApdu& pResponse);
 
 	protected:
 		virtual void internalExecute() override;
@@ -30,7 +36,8 @@ class TransmitCommand
 
 	public:
 		TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
-				const QVector<InputAPDUInfo>& pInputApduInfos);
+				const QVector<InputAPDUInfo>& pInputApduInfos,
+				const QString pSlotHandle);
 
 		const QByteArrayList& getOutputApduAsHex() const
 		{
@@ -38,9 +45,9 @@ class TransmitCommand
 		}
 
 
-		const QString& getReaderName() const
+		const QString& getSlotHandle() const
 		{
-			return mReaderName;
+			return mSlotHandle;
 		}
 
 

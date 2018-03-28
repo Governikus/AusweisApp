@@ -12,8 +12,6 @@ Pane {
 	id: pane
 	spacing: 0
 	visible: repeater.count > 0
-	anchors.topMargin: Constants.component_spacing
-	anchors.top: header.bottom
 
 	Repeater {
 		id: repeater
@@ -25,6 +23,7 @@ Pane {
 			color: "white"
 			Text {
 				id: dataGroup
+				color: Constants.secondary_text
 				anchors.left: parent.left
 				anchors.verticalCenter: parent.verticalCenter
 				anchors.right: checkBox.left

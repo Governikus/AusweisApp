@@ -1,9 +1,11 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "DestroyPACEChannel.h"
 #include "PcscCard.h"
+
+#include "DestroyPACEChannel.h"
+#include "PinModify.h"
 
 #include <QLatin1String>
 #include <QLoggingCategory>
@@ -381,7 +383,7 @@ PCSC_RETURNCODE PcscCard::control(PCSC_INT pCntrCode, const QByteArray& pCntrInp
 }
 
 
-CardReturnCode PcscCard::setEidPin(uchar pTimeoutSeconds)
+CardReturnCode PcscCard::setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu)
 {
 	if (!mReader->hasFeature(FeatureID::MODIFY_PIN_DIRECT))
 	{
@@ -389,17 +391,15 @@ CardReturnCode PcscCard::setEidPin(uchar pTimeoutSeconds)
 	}
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::MODIFY_PIN_DIRECT);
 
-	PinModifyBuilder builder;
+	PinModify pinModify(pTimeoutSeconds);
 	QByteArray controlRes;
-	PCSC_RETURNCODE pcscReturnCode = control(cmdID, builder.createChangeEidPinCommandData(pTimeoutSeconds), controlRes);
+	PCSC_RETURNCODE pcscReturnCode = control(cmdID, pinModify.createCcidForPcsc(), controlRes);
 	if (pcscReturnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Modify PIN failed";
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
-	PinModifyOutput output;
-	output.parse(controlRes);
-
-	return output.getReturnCode();
+	pResponseApdu.setBuffer(controlRes);
+	return pResponseApdu.getCardReturnCode();
 }

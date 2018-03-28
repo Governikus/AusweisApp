@@ -6,6 +6,8 @@ import Governikus.Global 1.0
 Item {
 	property bool lockedAndHidden: false
 	property bool isOpen: true
+	property int currentIndex: 0
+	enabled: !lockedAndHidden
 
 	id: baseItem
 	state: "identify"

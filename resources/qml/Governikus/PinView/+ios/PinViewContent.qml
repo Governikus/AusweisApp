@@ -21,6 +21,7 @@ Item {
 
 	Text {
 		id: pinDesc
+		color: Constants.secondary_text
 
 		width: parent.width * 0.9
 

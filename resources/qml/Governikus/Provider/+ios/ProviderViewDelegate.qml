@@ -34,6 +34,7 @@ Rectangle {
 
 			Text {
 				id: subjectText
+				color: Constants.secondary_text
 				width: parent.width
 				verticalAlignment: Text.AlignVCenter
 				font.pixelSize: Constants.normal_font_size

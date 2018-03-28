@@ -2,7 +2,7 @@
  * \brief Definition of all logging categories.
  *
  * \see Q_LOGGING_CATEGORY
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QLoggingCategory>
@@ -79,3 +79,8 @@ Q_LOGGING_CATEGORY(support, "support")
  * Logging category for normally critical errors which are allowed to occur in developer mode
  */
 Q_LOGGING_CATEGORY(developermode, "developermode")
+
+/*!
+ * Loggin category for persistent settings
+ */
+Q_LOGGING_CATEGORY(settings, "settings")

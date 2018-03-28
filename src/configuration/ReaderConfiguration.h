@@ -1,7 +1,7 @@
 /*!
  * \brief Class to store configuration data about available card readers.
  *
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -51,10 +51,6 @@ class ReaderConfiguration
 		const QVector<ReaderConfigurationInfo>& getReaderConfigurationInfos() const;
 		const QVector<ReaderConfigurationInfo> getSupportedReaderConfigurationInfos() const;
 
-#ifndef QT_NO_DEBUG
-		// This function is only for use in testcases
-		ReaderConfigurationInfo getReaderConfigurationInfo(const QString& pReaderName) const;
-#endif
 		ReaderConfigurationInfo getReaderConfigurationInfoById(const UsbId& pId) const;
 
 	Q_SIGNALS:

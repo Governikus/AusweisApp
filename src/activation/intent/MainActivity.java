@@ -1,8 +1,10 @@
 /*
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
+
+import org.qtproject.qt5.android.bindings.QtActivity;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -13,30 +15,25 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.nfc.NfcAdapter;
 import android.nfc.tech.IsoDep;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Window;
 import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
-
-import org.qtproject.qt5.android.bindings.QtActivity;
 
 
 public class MainActivity extends QtActivity
 {
-	private static final String TAG = "AusweisApp2";
+	private static final String LOG_TAG = AusweisApp2Service.LOG_TAG;
 
-	private static Intent INITIAL_INTENT = null;
+	private static Intent cIntent;
 
 	private NfcForegroundDispatcher mNfcForegroundDispatcher;
-	private class NfcForegroundDispatcher
+	private static class NfcForegroundDispatcher
 	{
-		private Activity mActivity;
-		private NfcAdapter mAdapter;
-		private PendingIntent mPendingIntent;
-		private IntentFilter[] mFilters;
-		private String[][] mTechLists;
+		private final Activity mActivity;
+		private final NfcAdapter mAdapter;
+		private final PendingIntent mPendingIntent;
+		private final IntentFilter[] mFilters;
+		private final String[][] mTechLists;
 
 		NfcForegroundDispatcher(Activity pActivity)
 		{
@@ -78,26 +75,24 @@ public class MainActivity extends QtActivity
 
 
 	// required by IntentActivationHandler -> MainActivityAccessor
-	public static String getInitialIntent()
+	public static String getStoredIntent()
 	{
-		if (INITIAL_INTENT != null)
+		if (cIntent == null)
 		{
-			return INITIAL_INTENT.getDataString();
-		}
-		else
-		{
-			Log.e(TAG, "No initial intent available, returning null");
+			Log.e(LOG_TAG, "No stored intent available, returning null");
 			return null;
 		}
+
+		return cIntent.getDataString();
 	}
 
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		Log.d(TAG, "onCreate (initial invocation of application): " + getIntent());
+		Log.d(LOG_TAG, "onCreate (initial invocation of application): " + getIntent());
 		super.onCreate(savedInstanceState);
-		INITIAL_INTENT = getIntent();
+		cIntent = getIntent();
 
 		// register the broadcast receiver after loading the C++ library in super.onCreate()
 		AndroidBluetoothReceiver.register(this);
@@ -111,7 +106,7 @@ public class MainActivity extends QtActivity
 	@Override
 	protected void onNewIntent(Intent newIntent)
 	{
-		Log.d(TAG, "onNewIntent (subsequent invocation of application): " + newIntent);
+		Log.d(LOG_TAG, "onNewIntent (subsequent invocation of application): " + newIntent);
 		super.onNewIntent(newIntent);
 
 		triggerActivation(newIntent.getDataString());
@@ -137,7 +132,7 @@ public class MainActivity extends QtActivity
 	@Override
 	protected void onDestroy()
 	{
-		Log.d(TAG, "onDestroy");
+		Log.d(LOG_TAG, "onDestroy");
 
 		// unregister the broadcast receiver before unloading the C++ library in super.onDestroy()
 		AndroidBluetoothReceiver.unregister(this);
@@ -148,7 +143,7 @@ public class MainActivity extends QtActivity
 
 	public void keepScreenOn(boolean pActivate)
 	{
-		Log.d(TAG, "Keep screen on: " + pActivate);
+		Log.d(LOG_TAG, "Keep screen on: " + pActivate);
 		if (pActivate)
 		{
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -165,8 +160,8 @@ public class MainActivity extends QtActivity
 	{
 		final Context context = getBaseContext();
 		final int screenLayout = context.getResources().getConfiguration().screenLayout;
-		final boolean xlarge = ((screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE);
-		final boolean large = ((screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
+		final boolean xlarge = (screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
+		final boolean large = (screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE;
 
 		return xlarge || large;
 	}

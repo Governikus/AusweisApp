@@ -6,6 +6,7 @@ import Governikus.Global 1.0
 SectionPage
 {
 	id: baseItem
+	property string remoteDeviceId: ""
 	signal pinEntered()
 
 	onVisibleChanged: {
@@ -29,8 +30,10 @@ SectionPage
 				anchors.verticalCenter: parent.verticalCenter
 				width: Utils.dp(58)
 				height: width
+				// because RowLayout uses implicitHeight that is based on sourceSize we have to explicitly set the sourceSize
+				sourceSize.height: baseItem.state === "REMOTE_PIN" ? Utils.dp(58) : 143
 				Layout.maximumWidth: width
-				source: "qrc:///images/NFCPhoneCard.png"
+				source: baseItem.state === "REMOTE_PIN" ? "qrc:///images/icon_remote.svg" : "qrc:///images/NFCPhoneCard.png"
 				fillMode: Image.PreserveAspectFit
 			}
 
@@ -56,6 +59,7 @@ SectionPage
 					  baseItem.state === "PIN_NEW" ? qsTr("Please enter a new 6-digit PIN of your choice.") :
 					  baseItem.state === "PIN_NEW_AGAIN" ? qsTr("Please enter your new 6-digit PIN again.") :
 					  baseItem.state === "PIN" ? qsTr("Please enter your personal PIN.") :
+					  baseItem.state === "REMOTE_PIN" ? qsTr("Enter the pairing code shown on your other device to use it as a card reader.") :
 					  /*"PIN_OR_TRANSPORT_PIN"*/ qsTr("Please enter your current PIN or your initial transport PIN first.")
 					  ) + settingsModel.translationTrigger
 			}
@@ -106,6 +110,10 @@ SectionPage
 						break
 					case "PUK":
 						numberModel.puk = pinField.text
+						baseItem.pinEntered()
+						break
+					case "REMOTE_PIN":
+						remoteServiceModel.connectToServer(remoteDeviceId, pinField.text)
 						baseItem.pinEntered()
 						break
 				}

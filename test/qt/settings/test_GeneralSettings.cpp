@@ -1,11 +1,12 @@
 /*!
  * \brief Unit tests for \ref GeneralSettings
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QCoreApplication>
 #include <QFile>
+#include <QSignalSpy>
 #include <QtTest>
 
 #include "GeneralSettings.h"
@@ -104,6 +105,7 @@ class test_GeneralSettings
 			QCOMPARE(mSettings->getPersistentSettingsVersion(), QString());
 			QCOMPARE(mSettings->isDeveloperMode(), false);
 			QCOMPARE(mSettings->useSelfAuthTestUri(), false);
+			QCOMPARE(mSettings->getLastReaderPluginType(), QString());
 		}
 
 
@@ -178,6 +180,26 @@ class test_GeneralSettings
 
 			mSettings->setLanguage(initialValue);
 			QCOMPARE(mSettings->getLanguage(), initialValue);
+		}
+
+
+		void testLastReaderPluginType()
+		{
+			QString initial = mSettings->getLastReaderPluginType();
+			QCOMPARE(initial, QString());
+			QSignalSpy spy(mSettings.data(), &GeneralSettings::fireSettingsChanged);
+
+			QString newValue;
+			mSettings->setLastReaderPluginType(newValue);
+
+			QCOMPARE(mSettings->getLastReaderPluginType(), newValue);
+			mSettings->save();
+			QCOMPARE(spy.count(), 0);
+			newValue = QStringLiteral("REMOTE");
+			mSettings->setLastReaderPluginType(newValue);
+			QCOMPARE(mSettings->getLastReaderPluginType(), newValue);
+			QCOMPARE(spy.count(), 1);
+			mSettings->save();
 		}
 
 

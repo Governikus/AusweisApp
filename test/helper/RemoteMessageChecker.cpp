@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -32,14 +32,14 @@ void RemoteMessageChecker::processDiscovery(const QSharedPointer<const Discovery
 	QCOMPARE(pMessage->getIfdName(), QStringLiteral("Sony Xperia Z5 compact"));
 	QCOMPARE(pMessage->getIfdId(), QStringLiteral("0123456789ABCDEF"));
 	QVERIFY(pMessage->getPort() == static_cast<quint16>(24728));
-	QCOMPARE(pMessage->getSupportedApis(), QStringList({QStringLiteral("IFDInterface_WebSocket_v0"), QStringLiteral("IFDInterface_WebSocket_v2")}));
+	QCOMPARE(pMessage->getSupportedApis(), {IfdVersion::Version::v0});
 }
 
 
 void RemoteMessageChecker::process(const QSharedPointer<const IfdEstablishContext>& pMessage)
 {
 	QCOMPARE(pMessage->getType(), RemoteCardMessageType::IFDEstablishContext);
-	QCOMPARE(pMessage->getProtocol(), QStringLiteral("IFDInterface_WebSocket_v0"));
+	QCOMPARE(pMessage->getProtocol().toString(), QStringLiteral("IFDInterface_WebSocket_v0"));
 }
 
 

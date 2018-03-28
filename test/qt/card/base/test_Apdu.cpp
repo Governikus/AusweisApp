@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref Apdu
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Apdu.h"
@@ -47,19 +47,33 @@ class test_Apdu
 		}
 
 
+		void testReturnCode_data()
+		{
+			QTest::addColumn<StatusCode>("statusCode");
+			QTest::addColumn<QByteArray>("bufferIn");
+			QTest::addColumn<QByteArray>("bufferOut");
+
+			QTest::newRow("empty") << StatusCode::EMPTY << QByteArray() << QByteArray::fromHex("0000");
+			QTest::newRow("01") << StatusCode::INVALID << QByteArray::fromHex("01") << QByteArray::fromHex("0001");
+			QTest::newRow("63c2") << StatusCode::PIN_RETRY_COUNT_2 << QByteArray::fromHex("63c2") << QByteArray::fromHex("63c2");
+			QTest::newRow("6401") << StatusCode::INPUT_CANCELLED << QByteArray::fromHex("6401") << QByteArray::fromHex("6401");
+			QTest::newRow("73c2") << StatusCode::INVALID << QByteArray::fromHex("73c2") << QByteArray::fromHex("0001");
+		}
+
+
 		void testReturnCode()
 		{
-			ResponseApdu apdu = ResponseApdu(QByteArray());
-			QCOMPARE(apdu.getReturnCode(), StatusCode::EMPTY);
+			QFETCH(StatusCode, statusCode);
+			QFETCH(QByteArray, bufferIn);
+			QFETCH(QByteArray, bufferOut);
 
-			apdu.setBuffer(QByteArray::fromHex("01"));
-			QCOMPARE(apdu.getReturnCode(), StatusCode::INVALID);
+			ResponseApdu apdu = ResponseApdu(statusCode);
+			QCOMPARE(apdu.getReturnCode(), statusCode);
+			QCOMPARE(apdu.getBuffer(), bufferOut);
 
-			apdu.setBuffer(QByteArray::fromHex("73c2"));
-			QCOMPARE(apdu.getReturnCode(), StatusCode::INVALID);
-
-			apdu.setBuffer(QByteArray::fromHex("63c2"));
-			QCOMPARE(apdu.getReturnCode(), StatusCode::PIN_RETRY_COUNT_2);
+			apdu.setBuffer(bufferIn);
+			QCOMPARE(apdu.getReturnCode(), statusCode);
+			QCOMPARE(apdu.getBuffer(), bufferIn);
 		}
 
 

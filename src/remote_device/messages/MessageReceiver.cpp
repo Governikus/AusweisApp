@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MessageReceiver.h"
@@ -15,6 +15,8 @@
 #include "IfdEstablishContextResponse.h"
 #include "IfdEstablishPaceChannel.h"
 #include "IfdEstablishPaceChannelResponse.h"
+#include "IfdModifyPin.h"
+#include "IfdModifyPinResponse.h"
 #include "IfdStatus.h"
 #include "IfdTransmit.h"
 #include "IfdTransmitResponse.h"
@@ -96,6 +98,18 @@ void MessageReceiver::process(const QSharedPointer<const IfdEstablishPaceChannel
 
 
 void MessageReceiver::process(const QSharedPointer<const IfdEstablishPaceChannelResponse>& pMessage)
+{
+	unprocessed(pMessage);
+}
+
+
+void MessageReceiver::process(const QSharedPointer<const IfdModifyPin>& pMessage)
+{
+	unprocessed(pMessage);
+}
+
+
+void MessageReceiver::process(const QSharedPointer<const IfdModifyPinResponse>& pMessage)
 {
 	unprocessed(pMessage);
 }
@@ -201,6 +215,20 @@ void MessageReceiver::receive(const QSharedPointer<const RemoteMessage>& pMessag
 		case RemoteCardMessageType::IFDEstablishPACEChannelResponse:
 		{
 			const QSharedPointer<const IfdEstablishPaceChannelResponse> castMessage = pMessage.dynamicCast<const IfdEstablishPaceChannelResponse>();
+			process(castMessage);
+			break;
+		}
+
+		case RemoteCardMessageType::IFDModifyPIN:
+		{
+			const QSharedPointer<const IfdModifyPin> castMessage = pMessage.dynamicCast<const IfdModifyPin>();
+			process(castMessage);
+			break;
+		}
+
+		case RemoteCardMessageType::IFDModifyPINResponse:
+		{
+			const QSharedPointer<const IfdModifyPinResponse> castMessage = pMessage.dynamicCast<const IfdModifyPinResponse>();
 			process(castMessage);
 			break;
 		}

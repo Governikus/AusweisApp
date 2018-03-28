@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceDescriptor.h"
@@ -29,7 +29,7 @@ class test_RemoteDeviceDescriptor
 
 		void testValidDescriptorIsEqualToItself()
 		{
-			const QSharedPointer<const Discovery> validMsg(new Discovery(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {QStringLiteral("IFDInterface_WebSocket_v0")}));
+			const QSharedPointer<const Discovery> validMsg(new Discovery(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::v0}));
 			const QHostAddress address(QHostAddress::LocalHost);
 			const RemoteDeviceDescriptor valid(validMsg, address);
 
@@ -51,7 +51,7 @@ class test_RemoteDeviceDescriptor
 
 		void testValidDescriptorIsDifferentFromInvalid()
 		{
-			const QSharedPointer<const Discovery> validMsg(new Discovery(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {QStringLiteral("IFDInterface_WebSocket_v0")}));
+			const QSharedPointer<const Discovery> validMsg(new Discovery(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::v0}));
 			const QSharedPointer<const Discovery> invalidMsg;
 			const QHostAddress address(QHostAddress::LocalHost);
 
@@ -64,8 +64,8 @@ class test_RemoteDeviceDescriptor
 
 		void testDistinctValidDescriptorsWithDifferentDataAreDifferent()
 		{
-			const QSharedPointer<const Discovery> validMsg1(new Discovery(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {QStringLiteral("IFDInterface_WebSocket_v0")}));
-			const QSharedPointer<const Discovery> validMsg2(new Discovery(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {QStringLiteral("IFDInterface_WebSocket_v0"), QStringLiteral("IFDInterface_WebSocket_v2")}));
+			const QSharedPointer<const Discovery> validMsg1(new Discovery(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::v0}));
+			const QSharedPointer<const Discovery> validMsg2(new Discovery(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::v0, IfdVersion::Version::Unknown}));
 			const QHostAddress address(QHostAddress::LocalHost);
 
 			const RemoteDeviceDescriptor valid1(validMsg1, address);
@@ -77,8 +77,8 @@ class test_RemoteDeviceDescriptor
 
 		void testDistinctValidDescriptorsWithTheSameDataAreEqual()
 		{
-			const QSharedPointer<const Discovery> validMsg1(new Discovery(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {QStringLiteral("IFDInterface_WebSocket_v0")}));
-			const QSharedPointer<const Discovery> validMsg2(new Discovery(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {QStringLiteral("IFDInterface_WebSocket_v0")}));
+			const QSharedPointer<const Discovery> validMsg1(new Discovery(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::v0}));
+			const QSharedPointer<const Discovery> validMsg2(new Discovery(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::v0}));
 			const QHostAddress address(QHostAddress::LocalHost);
 
 			const RemoteDeviceDescriptor valid1(validMsg1, address);

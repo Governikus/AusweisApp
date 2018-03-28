@@ -1,8 +1,10 @@
 /*
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
+
+import org.qtproject.qt5.android.QtNative;
 
 import android.content.Intent;
 import android.nfc.NfcAdapter;
@@ -11,24 +13,12 @@ import android.os.DeadObjectException;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.lang.Throwable;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.qtproject.qt5.android.QtNative;
 
 class AidlBinder extends IAusweisApp2Sdk.Stub
 {
-	public final static String LOG_TAG = AusweisApp2Service.LOG_TAG;
-	private final AusweisApp2Service mService;
-	private IAusweisApp2SdkCallback mCallback = null;
-	private String mCallbackSessionId = null;
-
-	public AidlBinder(AusweisApp2Service pService)
-	{
-		mService = pService;
-	}
-
+	private static final String LOG_TAG = AusweisApp2Service.LOG_TAG;
+	private IAusweisApp2SdkCallback mCallback;
+	private String mCallbackSessionId;
 
 	private void cleanUpDeadCallback()
 	{
@@ -59,12 +49,6 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 		{
 			Log.w(LOG_TAG, "Android service: Supplied callback is null.");
 			return false;
-		}
-
-		if (pCallback == mCallback)
-		{
-			Log.i(LOG_TAG, "Android service: Supplied callback is already in use.");
-			return true;
 		}
 
 		cleanUpDeadCallback();
@@ -120,7 +104,7 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 	{
 		Log.d(LOG_TAG, "Android service: Received JSON from client");
 
-		if (!isValidSessionId(mCallbackSessionId))
+		if (!isValidSessionId(pSessionId))
 		{
 			return false;
 		}
@@ -134,7 +118,7 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 	{
 		Log.d(LOG_TAG, "Android service: Received nfc tag from client");
 
-		if (!isValidSessionId(mCallbackSessionId))
+		if (!isValidSessionId(pSessionId))
 		{
 			return false;
 		}

@@ -13,11 +13,6 @@ Item {
 
 	signal enableClicked()
 
-	Connections {
-		target: applicationModel
-		onFireCertificateRemoved: qmlExtension.showFeedback(qsTr("The device %1 was unpaired because it does not react to connection attempts. Retry the pairing process if you want to use this device to authenticate yourself.").arg(pDeviceName))
-	}
-
 	Text {
 		id: enableInfo
 		anchors.bottom: enableButton.top
@@ -30,6 +25,15 @@ Item {
 		color: Constants.red
 		wrapMode: Text.WordWrap
 		visible: !!text
+
+
+		Behavior on text {
+			SequentialAnimation {
+				PropertyAnimation { target: enableInfo; property: "opacity"; to: 0; duration: 500}
+				PropertyAction { target: enableInfo; property: "text" }
+				PropertyAnimation { target: enableInfo; property: "opacity"; to: 1.0; duration: 500}
+			}
+		}
 	}
 
 	GButton {
@@ -81,7 +85,7 @@ Item {
 			anchors.right: parent.right
 			horizontalAlignment: Text.AlignHCenter
 			font.pixelSize: Constants.normal_font_size
-			color: "#000000"
+			color: Constants.secondary_text
 			wrapMode: Text.WordWrap
 			visible: !enableInfo.visible && !enableButton.visible
 
@@ -89,7 +93,7 @@ Item {
 				SequentialAnimation {
 					PropertyAnimation { target: subTitle; property: "anchors.topMargin"; to: baseItem.height/2; duration: 500}
 					PropertyAction { target: subTitle; property: "text" }
-					PropertyAction { target: subTitle; property: "color"; value: baseItem.subTitleTextRedColor ? Constants.red : "#000000" }
+					PropertyAction { target: subTitle; property: "color"; value: baseItem.subTitleTextRedColor ? Constants.red : Constants.secondary_texte }
 					PropertyAnimation { target: subTitle; property: "anchors.topMargin"; to: 0; duration: 500 }
 				}
 			}

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref PdfExporter
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PdfExporter.h"
@@ -83,7 +83,7 @@ class test_PdfExporter
 			{
 				data << QPair<QString, QString>(QString("key"), QString("value"));
 			}
-			QTest::newRow("filled") << 25000 << 100000 << data;
+			QTest::newRow("filled") << 25000 << 150000 << data;
 		}
 
 

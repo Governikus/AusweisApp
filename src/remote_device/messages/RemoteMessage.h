@@ -1,7 +1,7 @@
 /*!
  * \brief Classes that model remote card reader messages.
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -35,6 +35,8 @@ defineEnumType(RemoteCardMessageType,
 		IFDTransmitResponse,
 		IFDEstablishPACEChannel,
 		IFDEstablishPACEChannelResponse,
+		IFDModifyPIN,
+		IFDModifyPINResponse,
 		UNDEFINED)
 
 

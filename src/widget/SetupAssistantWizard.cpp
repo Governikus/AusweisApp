@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SetupAssistantWizard.h"
@@ -35,8 +35,7 @@ CardReaderPage::CardReaderPage(const QString& pTitle, const QString& pAccessible
 
 SetupAssistantWizard::SetupAssistantWizard(QWidget* pParent)
 	: QWizard(pParent)
-	, mPageCount(0)
-	, mNoScriptFinder()
+	, mPageCount(3)
 	, mSaveHistoryCheckBox(new QCheckBox(this))
 	, mChangeTransportPinButton()
 {
@@ -56,17 +55,7 @@ SetupAssistantWizard::SetupAssistantWizard(QWidget* pParent)
 	setOption(QWizard::NoCancelButton, false);
 	setAttribute(Qt::WA_DeleteOnClose);
 
-	mPageCount = 3;
-	if (mNoScriptFinder.isExtensionFound())
-	{
-		++mPageCount;
-	}
-
 	addPage(createWizardInitialPinPage());
-	if (mNoScriptFinder.isExtensionFound())
-	{
-		addPage(createWizardNoScriptExtensionPage());
-	}
 	addPage(createWizardCardReaderPage());
 	addPage(createConclusionPage());
 }
@@ -169,28 +158,6 @@ QWizardPage* SetupAssistantWizard::createWizardCardReaderPage()
 	const auto& titleField = createTitle(title);
 	const auto& accessibleField = createAccessibleName(title);
 	return new CardReaderPage(titleField, accessibleField);
-}
-
-
-QWizardPage* SetupAssistantWizard::createWizardNoScriptExtensionPage()
-{
-	QWizardPage* wizardPage = new QWizardPage;
-	const auto& title = tr("Firefox extension NoScript");
-	wizardPage->setTitle(createTitle(title));
-
-	QString descriptionText = tr("The Firefox browser extension NoScript was found on your computer."
-								 " The configuration of this extension may block authentication requests from being passed to %1."
-								 " Refer to the online help for further details.").arg(QCoreApplication::applicationName());
-	QLabel* label = new QLabel(descriptionText);
-	label->setWordWrap(true);
-	label->setFocusPolicy(Qt::TabFocus);
-	label->setAccessibleName(createAccessibleName(title, descriptionText));
-
-	QVBoxLayout* pageLayout = new QVBoxLayout;
-	pageLayout->addWidget(label);
-	wizardPage->setLayout(pageLayout);
-
-	return wizardPage;
 }
 
 

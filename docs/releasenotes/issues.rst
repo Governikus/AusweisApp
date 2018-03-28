@@ -22,8 +22,5 @@ Die nachfolgende Liste bezieht sich auf die aktuelle Version der AusweisApp2.
     oder eine PIN-Änderung mit Komfort-Kartenlesegerät durchgeführt wird,
     kann es unter Windows und macOS zu einem Absturz kommen.
 
-  - Die PIN-Änderung über ein Smartphone als Kartenlesegerät wird nicht
-    unterstützt.
-
   - Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle
     auf Android.

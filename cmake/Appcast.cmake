@@ -18,7 +18,7 @@ IF(MAC OR LINUX OR WIN32)
 			ENDIF()
 
 			MESSAGE(STATUS "Processing: ${file}")
-			IF(NOT "${_system}" STREQUAL "SOURCES")
+			IF(NOT "${_system}" STREQUAL "src")
 				FILE(READ ${PACKAGING_DIR}/updater/Appcast.item.json.in item)
 
 				STRING(REPLACE "AusweisApp2-" "" APPCAST_FILE_VERSION ${file})

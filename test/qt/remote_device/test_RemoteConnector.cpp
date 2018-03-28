@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteConnector
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteConnectorImpl.h"
@@ -162,7 +162,7 @@ class test_RemoteConnector
 
 			// No device name.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const QSharedPointer<const Discovery> msg(new Discovery(QString(), QStringLiteral("0123456789ABCDEF"), 2020, {QStringLiteral("IFDInterface_WebSocket_v0")}));
+			const QSharedPointer<const Discovery> msg(new Discovery(QString(), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v0}));
 			sendRequest(connector, hostAddress, msg, QString());
 			waitForSignals(&spyError, 1, cSignalTimeoutMs);
 
@@ -213,7 +213,7 @@ class test_RemoteConnector
 
 			// Password is empty.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), server->getServerPort(), {QStringLiteral("IFDInterface_WebSocket_v0")}));
+			const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), server->getServerPort(), {IfdVersion::Version::v0}));
 			sendRequest(connector, hostAddress, msg, QString());
 			waitForSignals(&spyError, 1, cSignalTimeoutMs);
 
@@ -238,7 +238,7 @@ class test_RemoteConnector
 
 			// Currently, only API level 1 is supported.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {QStringLiteral("IFDInterface_WebSocket_v2")}));
+			const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::Unknown}));
 			sendRequest(connector, hostAddress, msg, QStringLiteral("secret"));
 			waitForSignals(&spyError, 1, cSignalTimeoutMs);
 
@@ -263,7 +263,7 @@ class test_RemoteConnector
 
 			// Correct request but no server is running.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {QStringLiteral("IFDInterface_WebSocket_v0")}));
+			const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v0}));
 			sendRequest(connector, hostAddress, msg, QString("dummy"));
 			waitForSignals(&spyError, 1, cSignalTimeoutMs);
 
@@ -343,7 +343,7 @@ class test_RemoteConnector
 
 				// Send valid encrypted connect request.
 				const QHostAddress hostAddress(QHostAddress::LocalHost);
-				const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), serverPort, {QStringLiteral("IFDInterface_WebSocket_v0")}));
+				const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), serverPort, {IfdVersion::Version::v0}));
 				sendRequest(connector, hostAddress, msg, psk);
 
 				waitForSignals(&spyConnectorSuccess, 1, cSignalTimeoutMs);
@@ -405,7 +405,7 @@ class test_RemoteConnector
 
 			// Send encrypted connect request with wrong psk.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), serverPort, {QStringLiteral("IFDInterface_WebSocket_v0")}));
+			const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), serverPort, {IfdVersion::Version::v0}));
 			sendRequest(connector, hostAddress, msg, QStringLiteral("sekret"));
 
 			waitForSignals(&spyConnectorError, 1, cSignalTimeoutMs);

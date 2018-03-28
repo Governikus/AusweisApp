@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceModel.h"
@@ -21,6 +21,8 @@ RemoteServiceModel::RemoteServiceModel()
 	, mPsk()
 	, mAvailableRemoteDevices(this, false, true)
 	, mKnownDevices(this, true, false)
+	, mConnectedClientDeviceName()
+	, mConnectedServerDeviceNames()
 {
 	connect(&ReaderManager::getInstance(), &ReaderManager::firePluginAdded, this, &RemoteServiceModel::onEnvironmentChanged);
 	connect(&ReaderManager::getInstance(), &ReaderManager::fireStatusChanged, this, &RemoteServiceModel::onEnvironmentChanged);
@@ -30,7 +32,8 @@ RemoteServiceModel::RemoteServiceModel()
 
 	const QSharedPointer<RemoteClient>& remoteClient = ReaderManager::getInstance().getRemoteClient();
 	connect(remoteClient.data(), &RemoteClient::fireDetectionChanged, this, &RemoteServiceModel::fireDetectionChanged);
-
+	connect(remoteClient.data(), &RemoteClient::fireNewRemoteDispatcher, this, &RemoteServiceModel::onConnectedDevicesChanged);
+	connect(remoteClient.data(), &RemoteClient::fireDispatcherDestroyed, this, &RemoteServiceModel::onConnectedDevicesChanged);
 	onEnvironmentChanged();
 }
 
@@ -172,6 +175,7 @@ void RemoteServiceModel::connectToServer(const QString& pDeviceId, const QString
 	{
 		const QSharedPointer<RemoteClient>& remoteClient = Env::getSingleton<ReaderManager>()->getRemoteClient();
 		connect(remoteClient.data(), &RemoteClient::fireEstablishConnectionDone, this, &RemoteServiceModel::onEstablishConnectionDone);
+
 		remoteClient->establishConnection(mAvailableRemoteDevices.getRemoteDeviceListEntry(pDeviceId), pServerPsk);
 	}
 }
@@ -189,6 +193,16 @@ void RemoteServiceModel::onEstablishConnectionDone(const QSharedPointer<RemoteDe
 }
 
 
+void RemoteServiceModel::onClientConnectedChanged(bool pConnected)
+{
+	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	const QString peerName = settings.getRemoteInfo(getCurrentFingerprint()).getName();
+	mConnectedClientDeviceName = peerName;
+	Q_EMIT fireConnectedClientDeviceNameChanged();
+	Q_EMIT fireConnectedChanged(pConnected);
+}
+
+
 void RemoteServiceModel::resetContext(const QSharedPointer<RemoteServiceContext>& pContext)
 {
 	mPsk.clear();
@@ -202,7 +216,7 @@ void RemoteServiceModel::resetContext(const QSharedPointer<RemoteServiceContext>
 					mPsk = pPsk;
 				});
 		connect(mContext->getRemoteServer().data(), &RemoteServer::firePskChanged, this, &RemoteServiceModel::firePskChanged);
-		connect(mContext->getRemoteServer().data(), &RemoteServer::fireConnectedChanged, this, &RemoteServiceModel::fireConnectedChanged);
+		connect(mContext->getRemoteServer().data(), &RemoteServer::fireConnectedChanged, this, &RemoteServiceModel::onClientConnectedChanged);
 	}
 
 	Q_EMIT fireConnectedChanged(isConnected());
@@ -306,6 +320,20 @@ void RemoteServiceModel::cancelPasswordRequest()
 {
 	if (mContext)
 	{
-		Q_EMIT mContext->fireCancelEstablishPaceChannel();
+		Q_EMIT mContext->fireCancelPasswordRequest();
 	}
+}
+
+
+void RemoteServiceModel::onConnectedDevicesChanged()
+{
+	const QSharedPointer<RemoteClient>& remoteClient = Env::getSingleton<ReaderManager>()->getRemoteClient();
+	const auto deviceInfos = remoteClient->getConnectedDeviceInfos();
+	QStringList deviceNames;
+	for (const auto& info : deviceInfos)
+	{
+		deviceNames.append(QLatin1Char('"') + info.getName() + QLatin1Char('"'));
+	}
+	mConnectedServerDeviceNames = deviceNames.join(QLatin1String(", "));
+	Q_EMIT fireConnectedServerDeviceNamesChanged();
 }

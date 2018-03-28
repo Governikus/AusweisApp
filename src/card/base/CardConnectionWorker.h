@@ -1,7 +1,7 @@
 /*!
  * \brief Worker for \ref CardConnection that will do the job in \ref ReaderManagerWorker
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -102,7 +102,7 @@ class CardConnectionWorker
 		 */
 		Q_INVOKABLE virtual bool stopSecureMessaging();
 
-		virtual CardReturnCode setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds);
+		virtual CardReturnCode setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu);
 
 	Q_SIGNALS:
 		void fireReaderInfoChanged(const ReaderInfo& pReaderInfo);

@@ -56,6 +56,7 @@ SectionPage {
 			visible: providerModel.rowCount === 0 && !additionalResults.visible
 
 			Text {
+				color: Constants.secondary_text
 				anchors.centerIn: parent
 				text: qsTr("No match found") + settingsModel.translationTrigger
 				font.pixelSize: Constants.normal_font_size

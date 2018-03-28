@@ -14,6 +14,14 @@
 					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
 					"URL": "https://play.google.com/store/apps/details?id=com.governikus.ausweisapp2"
 				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
+					"DE": "Erfordert ein Android-Gerät mit aktiviertem Fernzugriff.",
+					"EN": "Requires an Android device with enabled remote access."
+				}
 			]
 		},
 
@@ -38,6 +46,14 @@
 					"Platforms": [{"os": "unknown"}],
 					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304822&q=driver#choice5"
 				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
+					"DE": "Es ist notwendig die Treiber vom Hersteller zu installieren.",
+					"EN": "It is necessary to install the drivers from the manufacturer."
+				}
 			]
 		},
 
@@ -61,6 +77,14 @@
 				{
 					"Platforms": [{"os": "unknown"}],
 					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304820&q=driver#choice5"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
+					"DE": "Es ist notwendig die Treiber vom Hersteller zu installieren.",
+					"EN": "It is necessary to install the drivers from the manufacturer."
 				}
 			]
 		},
@@ -177,6 +201,14 @@
 				{
 					"Platforms": [{"os": "unknown"}],
 					"URL": "https://support.identiv.com/scl010-scl011/"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win", "min": "6.1", "max": "6.1"}],
+					"DE": "Weder der Windows Driver noch der Installer werden dem Kartenlesegerät zugeordnet. Erst eine manuelle Installation über den Gerätemanager, bei der der Hinweis ignoriert wird, dass es sich um den falschen Treiber handelt, führt zu einem Erfolg.",
+					"EN": "Neither the Windows driver nor the installer are assigned to the card reader. Only a manual installation via the device manager, ignoring the note that it is the wrong driver, leads to a success."
 				}
 			]
 		},
@@ -359,6 +391,26 @@
 
 		{
 			"VendorId": "0x076B",
+			"ProductId": "0x5321",
+			"Name": "OMNIKEY 5321 v2",
+			"Pattern": "OMNIKEY CardMan 5x21-CL|OMNIKEY CardMan \\(076B:5321\\) 5321",
+			"Icon": "img_HID_Global_OMNIKEY_5321_V2.png",
+			"IconWithNPA": "img_HID_Global_OMNIKEY_5321_V2_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://www.hidglobal.de/Download-EULA?headless=&regionfree=&nid=29765"
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}],
+					"URL": "https://www.hidglobal.de/drivers"
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x076B",
 			"ProductId": "0x5421",
 			"Name": "OMNIKEY 5421",
 			"Pattern": "OMNIKEY CardMan \\(076B:5421\\) 5421|OMNIKEY Smart Card Reader USB",
@@ -401,7 +453,7 @@
 			"VendorId": "0x08E6",
 			"ProductId": "0x5504",
 			"Name": "Gemalto Prox-SU Contactless",
-			"Pattern": "Gemalto Prox( |-)SU",
+			"Pattern": "Gemalto Prox( |-)SU($| USB| Contactless_)",
 			"Icon": "img_Gemalto_Prox_SU.png",
 			"IconWithNPA": "img_Gemalto_Prox_SU_mit_ausweis.png",
 			"Drivers":
@@ -451,12 +503,30 @@
 					"URL": "http://www.cherry.de/cid/download.php"
 				},
 				{
-					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}, {"os": "mac", "min": "10.13", "max": "10.13"}],
+					"Platforms": [{"os": "mac", "min": "10.11"}],
 					"URL": "http://www.cherry.de/cid/download.php"
 				},
 				{
 					"Platforms": [{"os": "unknown"}],
 					"URL": "http://www.cherry.de/cid/download.php"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren.",
+					"EN": "It is necessary to install the drivers from the manufacturer."
+				},
+				{
+					"Platforms": [{"os": "mac", "max": "10.10"}],
+					"DE": "Der Treiber vom Hersteller wird nicht unterstützt. Für die Funktion des Kartenlesegeräts muss der Treiber von macOS 10.12 installiert werden.",
+					"EN": "The driver from the manufacturer is not supported. For the function of the card reader the driver for macOS 10.12 must be installed."
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "10.11"}],
+					"DE": "Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "A reboot is required after the installation of the driver."
 				}
 			]
 		},
@@ -475,12 +545,30 @@
 					"URL": "http://www.cherry.de/cid/download.php"
 				},
 				{
-					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}, {"os": "mac", "min": "10.13", "max": "10.13"}],
+					"Platforms": [{"os": "mac", "min": "10.11"}],
 					"URL": "http://www.cherry.de/cid/download.php"
 				},
 				{
 					"Platforms": [{"os": "unknown"}],
 					"URL": "http://www.cherry.de/cid/download.php"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren.",
+					"EN": "It is necessary to install the drivers from the manufacturer."
+				},
+				{
+					"Platforms": [{"os": "mac", "max": "10.10"}],
+					"DE": "Der Treiber vom Hersteller wird nicht unterstützt. Für die Funktion des Kartenlesegeräts muss der Treiber von macOS 10.12 installiert werden.",
+					"EN": "The driver from the manufacturer is not supported. For the function of the card reader the driver for macOS 10.12 must be installed."
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "10.11"}],
+					"DE": "Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "A reboot is required after the installation of the driver."
 				}
 			]
 		}

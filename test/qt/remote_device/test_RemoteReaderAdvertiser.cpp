@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteReaderAdvertiserImpl
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReaderAdvertiser.h"
@@ -104,7 +104,7 @@ class test_RemoteReaderAdvertiser
 			QCOMPARE(offerMsg->getIfdName(), ifdName);
 			QCOMPARE(offerMsg->getIfdId(), ifdId);
 			QCOMPARE(offerMsg->getPort(), port);
-			QCOMPARE(offerMsg->getSupportedApis(), {QStringLiteral("IFDInterface_WebSocket_v0")});
+			QCOMPARE(offerMsg->getSupportedApis(), {IfdVersion::Version::v0});
 		}
 
 

@@ -81,7 +81,7 @@ SectionPage {
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.bottom: parent.bottom
 		anchors.bottomMargin: Constants.component_spacing
-		text: qsTr("Ok") + settingsModel.translationTrigger
+		text: qsTr("OK") + settingsModel.translationTrigger
 		onClicked: root.close()
 	}
 }

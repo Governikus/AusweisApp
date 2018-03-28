@@ -45,6 +45,11 @@ Item {
 	}
 
 	function push(sectionPage, properties) {
+		var dep = stack.depth
+		if (dep !== 0 && stack.get(dep - 1) === sectionPage) {
+			return
+		}
+
 		if (baseItem.pushed) {
 			sectionPage.firePush.connect(baseItem.push)
 			sectionPage.firePop.connect(baseItem.pop)

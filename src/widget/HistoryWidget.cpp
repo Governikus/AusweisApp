@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HistoryWidget.h"
@@ -205,32 +205,8 @@ void HistoryWidget::deleteHistory()
 		return;
 	}
 
-	QDateTime latestToKeep = QDateTime::currentDateTime();
-	switch (deleteHistoryDialog->getTimePeriod())
-	{
-		case TimePeriod::PAST_HOUR:
-			latestToKeep = latestToKeep.addSecs(-60 * 60);
-			break;
-
-		case TimePeriod::PAST_DAY:
-			latestToKeep = latestToKeep.addDays(-1);
-			break;
-
-		case TimePeriod::PAST_WEEK:
-			latestToKeep = latestToKeep.addDays(-7);
-			break;
-
-		case TimePeriod::LAST_FOUR_WEEKS:
-			latestToKeep = latestToKeep.addDays(-7 * 4);
-			break;
-
-		case TimePeriod::ALL_HISTORY:
-			latestToKeep = QDateTime();
-			break;
-	}
-
 	auto& settings = AppSettings::getInstance().getHistorySettings();
-	settings.deleteSettings(latestToKeep);
+	settings.deleteSettings(deleteHistoryDialog->getTimePeriod());
 	settings.save();
 }
 

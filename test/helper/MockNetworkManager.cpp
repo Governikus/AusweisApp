@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockNetworkManager.h"
@@ -57,9 +57,12 @@ MockNetworkReply* MockNetworkManager::getReply(const QNetworkRequest& pRequest)
 }
 
 
-QNetworkReply* MockNetworkManager::get(QNetworkRequest& pRequest, int pTimeoutInMilliSeconds)
+QNetworkReply* MockNetworkManager::get(QNetworkRequest& pRequest,
+		const QByteArray& pSslSession,
+		int pTimeoutInMilliSeconds)
 {
 	Q_UNUSED(pRequest);
+	Q_UNUSED(pSslSession);
 	Q_UNUSED(pTimeoutInMilliSeconds);
 
 	mLastRequest = &pRequest;
@@ -68,12 +71,18 @@ QNetworkReply* MockNetworkManager::get(QNetworkRequest& pRequest, int pTimeoutIn
 }
 
 
-QNetworkReply* MockNetworkManager::paos(QNetworkRequest& pRequest, const QByteArray& pNamespace, const QByteArray& pData, bool pUsePsk, int pTimeoutInMilliSeconds)
+QNetworkReply* MockNetworkManager::paos(QNetworkRequest& pRequest,
+		const QByteArray& pNamespace,
+		const QByteArray& pData,
+		bool pUsePsk,
+		const QByteArray& pSslSession,
+		int pTimeoutInMilliSeconds)
 {
 	Q_UNUSED(pRequest);
 	Q_UNUSED(pNamespace);
 	Q_UNUSED(pData);
 	Q_UNUSED(pUsePsk);
+	Q_UNUSED(pSslSession);
 	Q_UNUSED(pTimeoutInMilliSeconds);
 
 	return getReply(pRequest);

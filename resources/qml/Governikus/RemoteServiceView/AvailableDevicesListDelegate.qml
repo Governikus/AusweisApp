@@ -10,16 +10,24 @@ MouseArea {
 	signal requestPairing(string pDeviceId)
 
 	onClicked: {
-		requestPairing(deviceId)
+		if (isSupported) requestPairing(deviceId)
 	}
 
 	Text {
 		id: nameText
+		color: Constants.secondary_text
 		width: parent.width
 		font.pixelSize: Utils.sp(16)
 		anchors.verticalCenter: parent.verticalCenter
 		opacity: 0.87
-		text: remoteDeviceName
+		text: {
+			settingsModel.translationTrigger
+
+			if (isSupported) {
+				return remoteDeviceName;
+			}
+			return remoteDeviceName + " (" + qsTr("Unsupported") + ")"
+		}
 	}
 
 	Rectangle {

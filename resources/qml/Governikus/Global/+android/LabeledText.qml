@@ -22,6 +22,7 @@ Item {
 		anchors.rightMargin: margin
 		font.pixelSize: Gov.Constants.normal_font_size
 		font.capitalization: fontUppercase
+		color: Gov.Constants.secondary_text
 		wrapMode: Text.WordWrap
 		onLinkActivated: parent.linkActivated(link)
 	}

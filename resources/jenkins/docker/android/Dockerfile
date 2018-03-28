@@ -7,7 +7,7 @@ RUN echo "[multilib]" >> /etc/pacman.conf && echo 'Include = /etc/pacman.d/mirro
 
 RUN chown -R governikus: /var/cache/pacman/pkg/
 
-ARG JENKINS_SWARM_VERSION=3.6
+ARG JENKINS_SWARM_VERSION=3.8
 ARG TINI_VERSION=0.16.1
 RUN curl -L -o /sbin/tini https://github.com/krallin/tini/releases/download/v$TINI_VERSION/tini-static-muslc-amd64 && chmod 755 /sbin/tini && \
     curl -L -o /swarm-client.jar https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/$JENKINS_SWARM_VERSION/swarm-client-$JENKINS_SWARM_VERSION.jar
@@ -24,9 +24,6 @@ RUN pacaur -Sy --noconfirm cmake ccache python2-hglib apache-ant jdk8-openjdk jr
                           android-ndk-10e android-sdk-25.2.5 android-sdk-build-tools android-sdk-platform-tools \
                           android-platform-18 android-platform-21 android-platform-25 \
                           && rm -rf /var/cache/pacman/pkg/* && rm -rf /home/governikus/.cache/pacaur
-
-RUN pacman -Qi android-sdk-build-tools | grep Version | sed -E 's|.*r([0-9]+\.[0-9]\.[0-9]).*|export ANDROID_BUILD_TOOLS_REVISION=\1|' > /home/governikus/build_tools.sh
-RUN echo '. /etc/profile ; . /home/governikus/build_tools.sh ;' >> /home/governikus/.profile
 
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD sh -l -c /swarm.sh

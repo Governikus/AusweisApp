@@ -1,7 +1,7 @@
 /*!
  * \brief Remote dispatcher mock for tests.
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,6 +37,7 @@ class MockRemoteDispatcher
 		virtual const QString& getId() const override;
 		virtual const QString& getContextHandle() const override;
 		virtual void send(const QSharedPointer<const RemoteMessage>& pMessage) override;
+		virtual void close() override;
 
 		DispatcherState getState() const;
 		void setState(DispatcherState pState);

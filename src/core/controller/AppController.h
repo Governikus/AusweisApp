@@ -1,7 +1,7 @@
 /*!
  * \brief Controller of the whole program.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -50,7 +50,9 @@ class AppController
 
 	public:
 		AppController();
-		virtual ~AppController();
+		virtual ~AppController() override;
+
+		virtual bool eventFilter(QObject* pObj, QEvent* pEvent) override;
 
 		bool start();
 

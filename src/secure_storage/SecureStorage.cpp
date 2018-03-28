@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -45,8 +45,6 @@ CONFIG_NAME(CONFIGURATION_GROUP_NAME_MIN_EPHEMERAL_KEY_SIZES, "minEphemeralKeySi
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_SELF_AUTHENTICATION, "selfAuthentication")
 CONFIG_NAME(CONFIGURATION_NAME_SELF_AUTHENTICATION_URL, "url")
 CONFIG_NAME(CONFIGURATION_NAME_SELF_AUTHENTICATION_TEST_URL, "testUrl")
-CONFIG_NAME(CONFIGURATION_NAME_SELF_AUTHENTICATION_CERTDESCR, "certDescr")
-CONFIG_NAME(CONFIGURATION_NAME_SELF_AUTHENTICATION_TEST_CERTDESCR, "testCertDescr")
 
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_UPDATE_SERVER, "updateServer")
 CONFIG_NAME(CONFIGURATION_NAME_UPDATE_SERVER_BASE_URL, "baseUrl")
@@ -67,8 +65,6 @@ SecureStorage::SecureStorage()
 	, mSelfAuthenticationUrl()
 	, mSelfAuthenticationTestUrl()
 	, mUpdateServerBaseUrl()
-	, mSelfAuthenticationCertDescr()
-	, mSelfAuthenticationTestCertDescr()
 	, mAppcastUpdateUrl()
 	, mAppcastBetaUpdateUrl()
 	, mTlsConfig()
@@ -175,8 +171,6 @@ void SecureStorage::load()
 
 	mSelfAuthenticationUrl = readGroup(config, CONFIGURATION_GROUP_NAME_SELF_AUTHENTICATION(), CONFIGURATION_NAME_SELF_AUTHENTICATION_URL());
 	mSelfAuthenticationTestUrl = readGroup(config, CONFIGURATION_GROUP_NAME_SELF_AUTHENTICATION(), CONFIGURATION_NAME_SELF_AUTHENTICATION_TEST_URL());
-	mSelfAuthenticationCertDescr = readGroup(config, CONFIGURATION_GROUP_NAME_SELF_AUTHENTICATION(), CONFIGURATION_NAME_SELF_AUTHENTICATION_CERTDESCR()).toLatin1();
-	mSelfAuthenticationTestCertDescr = readGroup(config, CONFIGURATION_GROUP_NAME_SELF_AUTHENTICATION(), CONFIGURATION_NAME_SELF_AUTHENTICATION_TEST_CERTDESCR()).toLatin1();
 
 	mUpdateServerBaseUrl = readGroup(config, CONFIGURATION_GROUP_NAME_UPDATE_SERVER(), CONFIGURATION_NAME_UPDATE_SERVER_BASE_URL());
 
@@ -203,12 +197,6 @@ const QVector<QSslCertificate>& SecureStorage::getUpdateCertificates() const
 const QUrl& SecureStorage::getSelfAuthenticationUrl(bool pTest) const
 {
 	return pTest ? mSelfAuthenticationTestUrl : mSelfAuthenticationUrl;
-}
-
-
-const QByteArray& SecureStorage::getSelfAuthenticationCertDescr(bool pTest) const
-{
-	return pTest ? mSelfAuthenticationTestCertDescr : mSelfAuthenticationCertDescr;
 }
 
 

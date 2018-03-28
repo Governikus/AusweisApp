@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfiguration.h"
@@ -118,26 +118,6 @@ const QVector<ReaderConfigurationInfo> ReaderConfiguration::getSupportedReaderCo
 				return !i.getUrl().isEmpty();
 			}, qAsConst(mReaderConfigurationInfos));
 }
-
-
-#ifndef QT_NO_DEBUG
-ReaderConfigurationInfo ReaderConfiguration::getReaderConfigurationInfo(const QString& pReaderName) const
-{
-	for (const auto& info : qAsConst(mReaderConfigurationInfos))
-	{
-		const QString& pattern = info.getPattern();
-		const QRegularExpression expression(pattern.isEmpty() ? info.getName() : pattern);
-		if (pReaderName.contains(expression))
-		{
-			return info;
-		}
-	}
-
-	return ReaderConfigurationInfo(pReaderName);
-}
-
-
-#endif
 
 
 ReaderConfigurationInfo ReaderConfiguration::getReaderConfigurationInfoById(const UsbId& pId) const

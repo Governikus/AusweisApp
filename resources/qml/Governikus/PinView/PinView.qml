@@ -78,6 +78,6 @@ SectionPage {
 							qsTr("You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.") :
 					  qsTr("Please wait a moment...")
 				 ) + settingsModel.translationTrigger
-		subTextColor: !changePinModel.isBasicReader && (numberModel.inputError || numberModel.pinDeactivated || state === "changepin_entercan" || state === "enterpuk") ? "red" : "black"
+		subTextColor: !changePinModel.isBasicReader && (numberModel.inputError || numberModel.pinDeactivated || state === "changepin_entercan" || state === "enterpuk") ? "red" : Constants.secondary_text
 	}
 }

@@ -27,6 +27,7 @@ Item {
 
 	Text {
 		id: bodyText
+		color: Constants.secondary_text
 		anchors.top: labelText.bottom
 		anchors.left: parent.left
 		anchors.leftMargin: margin

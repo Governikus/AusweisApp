@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -12,7 +12,7 @@ import android.content.IntentFilter;
 import android.util.Log;
 
 
-public class AndroidBluetoothReceiver extends BroadcastReceiver
+public final class AndroidBluetoothReceiver extends BroadcastReceiver
 {
 
 	public enum BluetoothAdapterState
@@ -23,33 +23,42 @@ public class AndroidBluetoothReceiver extends BroadcastReceiver
 		STATE_TURNING_OFF(BluetoothAdapter.STATE_TURNING_OFF),
 		STATE_TURNING_ON(BluetoothAdapter.STATE_TURNING_ON);
 
-		public int value;
+		private final int mValue;
 
-		private BluetoothAdapterState(int value)
+		BluetoothAdapterState(int pValue)
 		{
-			this.value = value;
+			mValue = pValue;
 		}
 
-		public static BluetoothAdapterState forInt(int value)
+		public static BluetoothAdapterState forInt(int pValue)
 		{
 			for (BluetoothAdapterState state : BluetoothAdapterState.values())
 			{
-				if (state.value == value)
+				if (state.getValue() == pValue)
 				{
 					return state;
 				}
 			}
-			Log.e(LOG_TAG, "Unknown state " + value);
+
+			Log.e(AusweisApp2Service.LOG_TAG, "Unknown state " + pValue);
 			return STATE_UNKNOWN;
+		}
+
+
+		int getValue()
+		{
+			return mValue;
 		}
 
 
 	}
 
-	private static final String LOG_TAG = "AusweisApp2";
+	private static final String LOG_TAG = AusweisApp2Service.LOG_TAG;
 
-	private static final BroadcastReceiver singleInstance = new AndroidBluetoothReceiver();
-
+	private static final class InstanceHolder
+	{
+		static final BroadcastReceiver INSTANCE = new AndroidBluetoothReceiver();
+	}
 
 	private AndroidBluetoothReceiver()
 	{
@@ -61,7 +70,7 @@ public class AndroidBluetoothReceiver extends BroadcastReceiver
 	{
 		try
 		{
-			context.registerReceiver(AndroidBluetoothReceiver.singleInstance, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+			context.registerReceiver(InstanceHolder.INSTANCE, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
 		}
 		catch (Throwable t)
 		{
@@ -74,7 +83,7 @@ public class AndroidBluetoothReceiver extends BroadcastReceiver
 	{
 		try
 		{
-			context.unregisterReceiver(AndroidBluetoothReceiver.singleInstance);
+			context.unregisterReceiver(InstanceHolder.INSTANCE);
 		}
 		catch (Throwable t)
 		{
@@ -89,7 +98,7 @@ public class AndroidBluetoothReceiver extends BroadcastReceiver
 		BluetoothAdapterState currentState = BluetoothAdapterState.forInt(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1));
 
 		Log.d(LOG_TAG, "state changed " + previousState + " -> " + currentState);
-		bluetoothAdapterStateChanged(previousState.value, currentState.value);
+		bluetoothAdapterStateChanged(previousState.getValue(), currentState.getValue());
 	}
 
 

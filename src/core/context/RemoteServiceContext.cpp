@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceContext.h"
@@ -11,7 +11,9 @@ using namespace governikus;
 
 RemoteServiceContext::RemoteServiceContext()
 	: mRemoteServer(Env::create<RemoteServer*>())
+	, mNewPin()
 	, mEstablishPaceChannelMessage()
+	, mModifyPinMessage()
 {
 }
 
@@ -35,6 +37,18 @@ bool RemoteServiceContext::isRunning() const
 }
 
 
+const QString& RemoteServiceContext::getNewPin() const
+{
+	return mNewPin;
+}
+
+
+void RemoteServiceContext::setNewPin(const QString& pNewPin)
+{
+	mNewPin = pNewPin;
+}
+
+
 void RemoteServiceContext::setEstablishPaceChannelMessage(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage)
 {
 	mEstablishPaceChannelMessage = pMessage;
@@ -47,12 +61,26 @@ const QSharedPointer<const IfdEstablishPaceChannel>& RemoteServiceContext::getEs
 }
 
 
+void RemoteServiceContext::setModifyPinMessage(const QSharedPointer<const IfdModifyPin>& pMessage)
+{
+	mModifyPinMessage = pMessage;
+}
+
+
+const QSharedPointer<const IfdModifyPin>& RemoteServiceContext::getModifyPinMessage() const
+{
+	return mModifyPinMessage;
+}
+
+
 void RemoteServiceContext::onResetMessageHandler()
 {
 	setCardConnection(QSharedPointer<CardConnection>());
 	setCan(QString());
 	setPin(QString());
 	setPuk(QString());
+	setNewPin(QString());
 	resetLastPaceResultAndRetryCounter();
 	mEstablishPaceChannelMessage = QSharedPointer<const IfdEstablishPaceChannel>();
+	mModifyPinMessage = QSharedPointer<const IfdModifyPin>();
 }

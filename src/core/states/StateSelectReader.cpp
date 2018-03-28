@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateSelectReader.h"
@@ -96,7 +96,7 @@ void StateSelectReader::onAbort()
 
 void StateSelectReader::onReaderDeviceError(DeviceError pDeviceError)
 {
-	if (pDeviceError != DeviceError::DEVICE_POWERED_OFF)
+	if (pDeviceError != DeviceError::DEVICE_POWERED_OFF && pDeviceError != DeviceError::DEVICE_SCAN_ERROR)
 	{
 		updateStatus(DeviceErrorUtil::toGlobalStatus(pDeviceError));
 		Q_EMIT fireAbort();

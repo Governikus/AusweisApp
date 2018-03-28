@@ -29,9 +29,7 @@ secure connection to AusweisApp2.
     with another session ID.
 
   - An attacker cannot grab the session ID of the previous app because
-    AusweisApp2 uses multiple sources of secure random number generator and
-    provides an optional API for the app to provide additional random number
-    entropy.
+    AusweisApp2 uses multiple sources of secure random number generator.
 
   - An attacker cannot fake AusweisApp2 for other apps because the connection
     via AIDL is bound with package name "com.governikus.ausweisapp2". Google
@@ -130,7 +128,7 @@ fingerprint of the authentic SDK certificate is the following:
 
 .. code-block:: text
 
-  B0:2A:C7:6B:50:A4:97:AE:81:0A:EA:C2:25:98:18:7B:3D:42:90:27:7D:08:51:A7:FA:8E:1A:EA:5A:97:98:70
+  B0 2A C7 6B 50 A4 97 AE 81 0A EA C2 25 98 18 7B 3D 42 90 27 7D 08 51 A7 FA 8E 1A EA 5A 97 98 70
 
 
 
@@ -637,11 +635,11 @@ are shown in code listing below.
 
   class ForegroundDispatcher
   {
-    private Activity mActivity;
-    private NfcAdapter mAdapter;
-    private PendingIntent mPendingIntent;
-    private IntentFilter[] mFilters;
-    private String[][] mTechLists;
+    private final Activity mActivity;
+    private final NfcAdapter mAdapter;
+    private final PendingIntent mPendingIntent;
+    private final IntentFilter[] mFilters;
+    private final String[][] mTechLists;
 
     ForegroundDispatcher(Activity pActivity)
     {

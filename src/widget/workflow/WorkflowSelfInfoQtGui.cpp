@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowSelfInfoQtGui.h"
@@ -44,7 +44,6 @@ WorkflowSelfInfoQtGui::WorkflowSelfInfoQtGui(const QSharedPointer<SelfAuthContex
 	Q_ASSERT(mAuthenticateStepsWidget != nullptr);
 	connect(mWidget, &WorkflowQtWidget::fireUserCancelled, this, &WorkflowGui::fireUserCancelled);
 	connect(mWidget, &WorkflowQtWidget::forwardStep, this, &WorkflowSelfInfoQtGui::onForwardStep);
-	connect(mChooseCardGui.data(), &StepChooseCardGui::fireSwitchToReaderSettingsRequested, this, &WorkflowGui::fireSwitchToReaderSettingsRequested);
 }
 
 

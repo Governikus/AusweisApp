@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EstablishPACEChannelParser.h"
@@ -69,28 +69,28 @@ EstablishPACEChannelParser EstablishPACEChannelParser::fromCcid(const QByteArray
 		Q_ASSERT(false);
 	}
 
-	// With CAN and PUK mode there is no certificate description.
-	QByteArray certificateDescription;
-	Q_ASSERT(passwordId != PACE_PASSWORD_ID::PACE_PIN || channelInput->mCertificateDescription);
-	if (channelInput->mCertificateDescription)
-	{
-		certificateDescription = channelInput->mCertificateDescription->encode();
-	}
-	else if (passwordId == PACE_PASSWORD_ID::PACE_PIN)
-	{
-		qCDebug(card) << "Decapsulation: No certificate description!";
-	}
-
-	// With CAN and PUK mode there is no chat.
 	QByteArray chat;
-	Q_ASSERT(passwordId != PACE_PASSWORD_ID::PACE_PIN || channelInput->mCHAT);
-	if (channelInput->mCHAT)
+	QByteArray certificateDescription;
+	// Chat and certificate description are only available in PIN mode in an authentication.
+	if (passwordId == PACE_PASSWORD_ID::PACE_PIN)
 	{
-		chat = Asn1OctetStringUtil::getValue(channelInput->mCHAT);
-	}
-	else if (passwordId == PACE_PASSWORD_ID::PACE_PIN)
-	{
-		qCDebug(card) << "Decapsulation: No CHAT!";
+		if (channelInput->mCertificateDescription)
+		{
+			certificateDescription = channelInput->mCertificateDescription->encode();
+		}
+		else
+		{
+			qCDebug(card) << "Decapsulation: No certificate description";
+		}
+
+		if (channelInput->mCHAT)
+		{
+			chat = Asn1OctetStringUtil::getValue(channelInput->mCHAT);
+		}
+		else
+		{
+			qCDebug(card) << "Decapsulation: No CHAT";
+		}
 	}
 
 	return EstablishPACEChannelParser(passwordId, chat, certificateDescription, commandData);

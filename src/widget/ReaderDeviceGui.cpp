@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDeviceGui.h"
@@ -45,6 +45,15 @@ void ReaderDeviceGui::activate()
 void ReaderDeviceGui::deactivate()
 {
 	if (mDialog)
+	{
+		mDialog->close();
+	}
+}
+
+
+void ReaderDeviceGui::reactToReaderCount(int pReaderCount)
+{
+	if (mDialog && pReaderCount > 0)
 	{
 		mDialog->close();
 	}

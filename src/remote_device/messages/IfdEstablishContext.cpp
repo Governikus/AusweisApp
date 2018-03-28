@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -22,7 +22,7 @@ VALUE_NAME(UD_NAME, "UDName")
 }
 
 
-IfdEstablishContext::IfdEstablishContext(const QString& pProtocol, const QString& pUdName)
+IfdEstablishContext::IfdEstablishContext(const IfdVersion& pProtocol, const QString& pUdName)
 	: RemoteMessage(RemoteCardMessageType::IFDEstablishContext)
 	, mProtocol(pProtocol)
 	, mUdName(pUdName)
@@ -32,15 +32,22 @@ IfdEstablishContext::IfdEstablishContext(const QString& pProtocol, const QString
 
 IfdEstablishContext::IfdEstablishContext(const QJsonObject& pMessageObject)
 	: RemoteMessage(pMessageObject)
-	, mProtocol(getStringValue(pMessageObject, PROTOCOL()))
+	, mProtocolRaw(getStringValue(pMessageObject, PROTOCOL()))
+	, mProtocol(IfdVersion(mProtocolRaw))
 	, mUdName(getStringValue(pMessageObject, UD_NAME()))
 {
 }
 
 
-const QString& IfdEstablishContext::getProtocol() const
+const IfdVersion& IfdEstablishContext::getProtocol() const
 {
 	return mProtocol;
+}
+
+
+const QString& IfdEstablishContext::getProtocolRaw() const
+{
+	return mProtocolRaw;
 }
 
 
@@ -53,7 +60,7 @@ const QString& IfdEstablishContext::getUdName() const
 QJsonDocument IfdEstablishContext::toJson(const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
-	result[PROTOCOL()] = mProtocol;
+	result[PROTOCOL()] = mProtocol.toString();
 	result[UD_NAME()] = mUdName;
 	return QJsonDocument(result);
 }

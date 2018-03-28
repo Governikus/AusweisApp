@@ -9,7 +9,6 @@ Item {
 
 	signal requestPluginType(string pReaderPlugInType)
 
-	property bool allowRemote: true
 	property string selectedTechnology
 
 	Row {
@@ -26,7 +25,7 @@ Item {
 		}
 
 		Gov.TechnologySwitchButton {
-			visible: allowRemote && selectedTechnology !== "REMOTE"
+			visible: selectedTechnology !== "REMOTE"
 			onClicked: baseItem.requestPluginType("REMOTE")
 			imageSource: "qrc:///images/icon_remote.svg"
 			text: qsTr("WiFi") + settingsModel.translationTrigger

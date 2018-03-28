@@ -25,7 +25,6 @@ ScrollView {
 			text: baseItem.description
 			width: baseItem.width - Utils.dp(50)
 			wrapMode: Text.Wrap
-			horizontalAlignment: Text.AlignJustify
 		}
 	}
 }

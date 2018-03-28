@@ -23,6 +23,7 @@ Item {
 
 	TextInput {
 		id: echoField
+		color: Constants.secondary_text
 		verticalAlignment: TextInput.AlignVCenter
 		echoMode: TextInput.Password
 		font.pixelSize: Utils.sp(18)
@@ -33,13 +34,17 @@ Item {
 		focus: false
 		validator: RegExpValidator {
 			regExp: baseItem.state === "PUK" ? /[0-9]{10}/ :
-					baseItem.state === "PIN_OR_TRANSPORT_PIN" ? /[0-9]{5,6}/ : /[0-9]{6}/ }
-		maximumLength: baseItem.state === "PUK" ? 10 : 6
+					baseItem.state === "PIN_OR_TRANSPORT_PIN" ? /[0-9]{5,6}/ :
+					baseItem.state === "REMOTE_PIN" ? /[0-9]{4}/ : /[0-9]{6}/
+		}
+		maximumLength: baseItem.state === "PUK" ? 10 :
+					   baseItem.state === "REMOTE_PIN" ? 4 : 6
 		clip: true
 	}
 
 	TextInput {
 		id: sample
+		color: Constants.secondary_text
 		visible: false
 		echoMode: echoField.echoMode
 		font: echoField.font
@@ -53,7 +58,8 @@ Item {
 		anchors.left: echoField.left
 
 		Repeater {
-			model: baseItem.state === "PUK" ? 10 : 6
+			model: baseItem.state === "PUK" ? 10 :
+				   baseItem.state === "REMOTE_PIN" ? 4 : 6
 			delegate:
 				Rectangle {
 					width: sample.contentWidth - sample.font.letterSpacing

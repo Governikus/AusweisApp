@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnectionWorker.h"
@@ -232,7 +232,7 @@ CardReturnCode CardConnectionWorker::destroyPaceChannel()
 }
 
 
-CardReturnCode CardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds)
+CardReturnCode CardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu)
 {
 	if (!hasCard())
 	{
@@ -243,8 +243,7 @@ CardReturnCode CardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pT
 	{
 		Q_ASSERT(!pNewPin.isEmpty());
 		ResetRetryCounterBuilder commandBuilder(pNewPin.toUtf8());
-		ResponseApdu response;
-		if (transmit(commandBuilder.build(), response) != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
+		if (transmit(commandBuilder.build(), pResponseApdu) != CardReturnCode::OK || pResponseApdu.getReturnCode() != StatusCode::SUCCESS)
 		{
 			qCWarning(card) << "Modify PIN failed";
 			return CardReturnCode::COMMAND_FAILED;
@@ -254,7 +253,7 @@ CardReturnCode CardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pT
 	else
 	{
 		Q_ASSERT(pNewPin.isEmpty());
-		return mReader->getCard()->setEidPin(pTimeoutSeconds);
+		return mReader->getCard()->setEidPin(pTimeoutSeconds, pResponseApdu);
 	}
 }
 

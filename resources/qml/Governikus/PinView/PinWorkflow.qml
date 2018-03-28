@@ -19,7 +19,6 @@ SectionPage
 
 	NfcWorkflow
 	{
-		allowRemote: false
 		anchors.fill: parent
 		state: parent.state
 		visible: changePinModel.readerPlugInType === "NFC"
@@ -36,7 +35,6 @@ SectionPage
 
 	BluetoothWorkflow
 	{
-		allowRemote: false
 		anchors.fill: parent
 		state: parent.state
 		visible: changePinModel.readerPlugInType === "BLUETOOTH"

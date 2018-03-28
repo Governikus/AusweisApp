@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IntentActivationHandler.h"
@@ -52,10 +52,10 @@ void IntentActivationHandler::onIntent(const QUrl& pUrl)
 bool IntentActivationHandler::start()
 {
 #ifdef Q_OS_ANDROID
-	const QString& initialIntent = QAndroidJniObject::callStaticObjectMethod<jstring>("com/governikus/ausweisapp2/MainActivity", "getInitialIntent").toString();
-	if (!initialIntent.isNull())
+	const QString& intent = QAndroidJniObject::callStaticObjectMethod<jstring>("com/governikus/ausweisapp2/MainActivity", "getStoredIntent").toString();
+	if (!intent.isNull())
 	{
-		onIntent(initialIntent);
+		onIntent(intent);
 	}
 
 	return true;

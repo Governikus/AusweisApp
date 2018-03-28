@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TlsConfiguration.h"
@@ -88,6 +88,7 @@ void TlsConfiguration::load(const QJsonObject& pConfig)
 	const auto& signatureAlgorithms = readSignatureAlgorithms(pConfig, SETTINGS_GROUP_NAME_SIGNATURE_ALGORITHMS);
 
 	mConfiguration = QSslConfiguration::defaultConfiguration();
+	mConfiguration.setSslOption(QSsl::SslOptionDisableSessionPersistence, false); // enable SessionTicket, otherwise "sessionTicket()" returns empty data
 	mConfiguration.setCaCertificates(QList<QSslCertificate>()); // disable fetching of system CA certificates. Set allowRootCertOnDemandLoading to false in Qt
 	mConfiguration.setProtocol(protocolVersion);
 	mConfiguration.setCiphers(ciphers);

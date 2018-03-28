@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref AuxiliaryAuthenticatedData
  *
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -91,7 +91,7 @@ class test_AuxiliaryAuthenticatedData
 
 			QTest::newRow("1 Tag") << QStringLiteral("0") << QDate(1978, 8, 17);
 			QTest::newRow("Ende des Jahres") << QStringLiteral("0") << QDate(1978, 12, 31);
-			QTest::newRow("Anfang nächstes Jahr") << QStringLiteral("0") << QDate(1979, 1, 1);
+			QTest::newRow("Anfang naechstes Jahr") << QStringLiteral("0") << QDate(1979, 1, 1);
 
 			QTest::newRow("vorm 1. Geburtstag") << QStringLiteral("0") << QDate(1979, 8, 15);
 			QTest::newRow("1. Geburtstag") << QStringLiteral("1") << QDate(1979, 8, 16);

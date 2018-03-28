@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GlobalStatus.h"
@@ -83,7 +83,7 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 			return maskMessage(tr("The program received an unexpected message from the server."), pSimplifiedVersion);
 
 		case Code::Workflow_Pin_Blocked_And_Puk_Objectionable:
-			return tr("After three wrong entries your PIN is blocked. Using the online identification function is no longer possible.");
+			return tr("After three wrong entries your PIN is blocked. Please use the PIN management in this app to unblock it with the help of your PUK.");
 
 		case Code::Workflow_Preverification_Developermode_Error:
 			return tr("Using the developer mode is only allowed in a test environment.");
@@ -280,7 +280,7 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 			return tr("Empty password in extended encryption of remote reader connection request.");
 
 		case Code::RemoteConnector_NoSupportedApiLevel:
-			return tr("Remote reader connection request does not contain any supported API level.");
+			return tr("Your remote reader version is incompatible with the local version. Please install the latest AusweisApp2 version on both your smartphone and your computer.");
 
 		case Code::RemoteConnector_ConnectionTimeout:
 			return tr("A timeout occurred while trying to establish a connection to a remote reader.");

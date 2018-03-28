@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PinSettingsWidget.h"
@@ -15,6 +15,7 @@
 
 #include <QLoggingCategory>
 #include <QPainter>
+#include <QStyleOption>
 #include <QTimer>
 
 Q_DECLARE_LOGGING_CATEGORY(gui)
@@ -480,9 +481,9 @@ void PinSettingsWidget::onRepeatNewPinTextEdited(const QString& pText)
 		mUi->repeatNewPinEdit->setText(pText);
 	}
 
-	if (!mUi->repeatNewPinEdit->isEnabled() || mUi->newPinEdit->text().startsWith(mUi->repeatNewPinEdit->text()))
+	if (!mUi->repeatNewPinEdit->isEnabled() || mUi->newPinEdit->text().startsWith(mUi->repeatNewPinEdit->text()) || mUi->repeatNewPinEdit->text().length() != 6)
 	{
-		mUi->repeatNewPinEdit->setDigitFieldInvalid(false, tr("PIN correct."));
+		mUi->repeatNewPinEdit->setDigitFieldInvalid(false, QString());
 
 		bool inputOk = mUi->repeatNewPinEdit->text().length() == 6 && mUi->repeatNewPinEdit->text() == mUi->newPinEdit->text();
 		mPinButtonEnabled = inputOk;
@@ -522,12 +523,12 @@ void PinSettingsWidget::setupPinBasicPage(const ReaderInfo& pReaderInfo)
 	if (hasCard)
 	{
 		pixmap = pReaderInfo.getReaderConfigurationInfo().getIconWithNPA()->lookupPath();
-		mUi->basicReaderImageLabel->setAccessibleName(tr("Card reader icon"));
+		mUi->basicReaderImageLabel->setAccessibleName(tr("card inserted"));
 	}
 	else
 	{
 		pixmap = pReaderInfo.getReaderConfigurationInfo().getIcon()->lookupPath();
-		mUi->basicReaderImageLabel->setAccessibleName(tr("Empty card reader icon"));
+		mUi->basicReaderImageLabel->setAccessibleName(tr("no card inserted"));
 	}
 
 	mUi->basicReaderImageLabel->setPixmap(pixmap.scaledToWidth(SCALEWIDTH, Qt::SmoothTransformation));

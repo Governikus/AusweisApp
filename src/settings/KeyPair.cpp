@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -12,10 +12,12 @@
 #include <openssl/rsa.h>
 
 #include <QCoreApplication>
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QScopedPointer>
 
 using namespace governikus;
+
+Q_DECLARE_LOGGING_CATEGORY(settings)
 
 namespace
 {
@@ -65,7 +67,7 @@ KeyPair KeyPair::generate()
 {
 	if (!Randomizer::getInstance().isSecureRandom())
 	{
-		qCritical() << "Cannot get enough entropy";
+		qCCritical(settings) << "Cannot get enough entropy";
 		return KeyPair();
 	}
 
@@ -107,20 +109,20 @@ EVP_PKEY* KeyPair::createKey()
 
 	if (pkey.isNull() || rsa.isNull() || exponent.isNull())
 	{
-		qCritical() << "Cannot create EVP_PKEY/RSA/BIGNUM structure";
+		qCCritical(settings) << "Cannot create EVP_PKEY/RSA/BIGNUM structure";
 		return nullptr;
 	}
 
 	BN_set_word(exponent.data(), RSA_F4);
 	if (!RSA_generate_key_ex(rsa.data(), 2048, exponent.data(), nullptr))
 	{
-		qCritical() << "Cannot generate rsa key";
+		qCCritical(settings) << "Cannot generate rsa key";
 		return nullptr;
 	}
 
 	if (!EVP_PKEY_assign(pkey.data(), EVP_PKEY_RSA, rsa.data()))
 	{
-		qCritical() << "Cannot assign rsa key";
+		qCCritical(settings) << "Cannot assign rsa key";
 		return nullptr;
 	}
 
@@ -134,7 +136,7 @@ QSharedPointer<X509> KeyPair::createCertificate(EVP_PKEY* pPkey)
 	QSharedPointer<X509> x509(X509_new(), &X509_free);
 	if (x509.isNull())
 	{
-		qCritical() << "Cannot create X509 structure";
+		qCCritical(settings) << "Cannot create X509 structure";
 		return nullptr;
 	}
 
@@ -159,7 +161,7 @@ QSharedPointer<X509> KeyPair::createCertificate(EVP_PKEY* pPkey)
 
 	if (!X509_sign(x509.data(), pPkey, EVP_sha256()))
 	{
-		qCritical() << "Cannot sign certificate";
+		qCCritical(settings) << "Cannot sign certificate";
 		return nullptr;
 	}
 

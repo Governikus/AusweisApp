@@ -32,6 +32,7 @@ Item {
 
 			Text {
 				id: textItem
+				color: Constants.secondary_text
 				text: !!model.text ? model.text : qsTr("Unknown") + settingsModel.translationTrigger
 				verticalAlignment: Text.AlignVCenter
 				anchors.left: imageItem.right

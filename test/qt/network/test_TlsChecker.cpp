@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref CertificateChecker
  *
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TlsChecker.h"
@@ -299,12 +299,13 @@ class test_TlsChecker
 			QSslConfiguration cfg;
 			TlsChecker::logSslConfig(cfg, qInfo(network));
 
-			QCOMPARE(spy.count(), 5);
+			QCOMPARE(spy.count(), 6);
 			QVERIFY(spy.at(0).at(0).toString().contains("Used session cipher QSslCipher(name=, bits=0, proto=)"));
 			QVERIFY(spy.at(1).at(0).toString().contains("Used session protocol: \"UnknownProtocol\""));
 			QVERIFY(spy.at(2).at(0).toString().contains("Used ephemeral server key:"));
 			QVERIFY(spy.at(3).at(0).toString().contains("Used peer certificate: QSslCertificate(\"\", \"\", \"1B2M2Y8AsgTpgAmY7PhCfg==\""));
-			QVERIFY(spy.at(4).at(0).toString().contains("Handshake of tls connection done!"));
+			QVERIFY(spy.at(4).at(0).toString().contains("Used ssl session: \"\""));
+			QVERIFY(spy.at(5).at(0).toString().contains("Handshake of tls connection done!"));
 		}
 
 

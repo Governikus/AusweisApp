@@ -24,6 +24,7 @@ Item {
 
 		Text {
 			id: description
+			color: Constants.secondary_text
 			visible: text !== ""
 			anchors.verticalCenter: image.verticalCenter
 			font.pixelSize: Constants.normal_font_size

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NetworkManager.h"
@@ -61,7 +61,12 @@ void NetworkManager::clearConnections()
 }
 
 
-QNetworkReply* NetworkManager::paos(QNetworkRequest& pRequest, const QByteArray& pNamespace, const QByteArray& pData, bool pUsePsk, int pTimeoutInMilliSeconds)
+QNetworkReply* NetworkManager::paos(QNetworkRequest& pRequest,
+		const QByteArray& pNamespace,
+		const QByteArray& pData,
+		bool pUsePsk,
+		const QByteArray& pSslSession,
+		int pTimeoutInMilliSeconds)
 {
 	if (mApplicationExitInProgress)
 	{
@@ -77,7 +82,9 @@ QNetworkReply* NetworkManager::paos(QNetworkRequest& pRequest, const QByteArray&
 
 	QNetworkReply* response;
 	SecureStorage::TlsSuite tlsSuite = pUsePsk ? SecureStorage::TlsSuite::PSK : SecureStorage::TlsSuite::DEFAULT;
-	pRequest.setSslConfiguration(SecureStorage::getInstance().getTlsConfig(tlsSuite).getConfiguration());
+	auto cfg = SecureStorage::getInstance().getTlsConfig(tlsSuite).getConfiguration();
+	cfg.setSessionTicket(pSslSession);
+	pRequest.setSslConfiguration(cfg);
 	response = mNetAccessManager->post(pRequest, pData);
 
 	trackConnection(response, pTimeoutInMilliSeconds);
@@ -85,7 +92,9 @@ QNetworkReply* NetworkManager::paos(QNetworkRequest& pRequest, const QByteArray&
 }
 
 
-QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest, int pTimeoutInMilliSeconds)
+QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest,
+		const QByteArray& pSslSession,
+		int pTimeoutInMilliSeconds)
 {
 	if (mApplicationExitInProgress)
 	{
@@ -93,7 +102,9 @@ QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest, int pTimeoutInMill
 	}
 
 	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
-	pRequest.setSslConfiguration(SecureStorage::getInstance().getTlsConfig().getConfiguration());
+	auto cfg = SecureStorage::getInstance().getTlsConfig().getConfiguration();
+	cfg.setSessionTicket(pSslSession);
+	pRequest.setSslConfiguration(cfg);
 	QNetworkReply* response = mNetAccessManager->get(pRequest);
 	trackConnection(response, pTimeoutInMilliSeconds);
 	return response;

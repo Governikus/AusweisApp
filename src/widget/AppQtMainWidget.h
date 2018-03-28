@@ -1,7 +1,7 @@
 /*!
  * \brief Main class for the top level main widget
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -36,6 +36,7 @@ class AppQtMainWidget
 		AppQtMainWidget();
 		virtual ~AppQtMainWidget() override;
 
+		bool remoteScanRunning() const;
 		void workflowActivated(WorkflowWidgetParent pParent, const QString& pName);
 		void workflowDeactivated();
 

@@ -1,11 +1,12 @@
 /*!
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SettingsModel.h"
 
 #include "AppSettings.h"
 #include "Env.h"
+#include "HistorySettings.h"
 #include "LanguageLoader.h"
 
 using namespace governikus;
@@ -13,6 +14,8 @@ using namespace governikus;
 
 SettingsModel::SettingsModel()
 {
+	const HistorySettings& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
+	connect(&settings, &HistorySettings::fireEnabledChanged, this, &SettingsModel::fireHistoryEnabledChanged);
 }
 
 
@@ -113,4 +116,28 @@ void SettingsModel::setPinPadMode(bool pPinPadMode)
 	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	settings.setPinPadMode(pPinPadMode);
 	settings.save();
+}
+
+
+bool SettingsModel::isHistoryEnabled() const
+{
+	const HistorySettings& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
+	return settings.isEnabled();
+}
+
+
+void SettingsModel::setHistoryEnabled(bool pEnabled)
+{
+	HistorySettings& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
+	settings.setEnabled(pEnabled);
+	settings.save();
+}
+
+
+int SettingsModel::removeHistory(const QString& pPeriodToRemove)
+{
+	HistorySettings& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
+	int removedItemCount = settings.deleteSettings(Enum<TimePeriod>::fromString(pPeriodToRemove, TimePeriod::UNKNOWN));
+	settings.save();
+	return removedItemCount;
 }

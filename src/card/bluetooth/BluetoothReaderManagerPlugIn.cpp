@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BluetoothReaderManagerPlugIn.h"
@@ -145,6 +145,7 @@ void BluetoothReaderManagerPlugIn::onConnectToKnownReadersChanged()
 
 void BluetoothReaderManagerPlugIn::onDeviceDiscovered(const QBluetoothDeviceInfo& pInfo)
 {
+	setReaderInfoResponding(true);
 	QString deviceId = BluetoothDeviceUtil::getDeviceId(pInfo);
 	if (mReaders.contains(deviceId))
 	{
@@ -257,6 +258,11 @@ void BluetoothReaderManagerPlugIn::onDeviceDiscoveryFinished()
 void BluetoothReaderManagerPlugIn::onDeviceDiscoveryError(QBluetoothDeviceDiscoveryAgent::Error pError)
 {
 	qCCritical(bluetooth) << "Error on Bluetooth device discovery" << pError;
+
+	if (pError == QBluetoothDeviceDiscoveryAgent::InputOutputError)
+	{
+		setReaderInfoResponding(false);
+	}
 
 	Q_EMIT fireReaderDeviceError(pError == QBluetoothDeviceDiscoveryAgent::PoweredOffError ? DeviceError::DEVICE_POWERED_OFF : DeviceError::DEVICE_SCAN_ERROR);
 }

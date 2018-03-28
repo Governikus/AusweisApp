@@ -18,12 +18,19 @@ SectionPage
 	}
 	headerTitleBarAction: TitleBarAction { text: qsTr("Identify") + settingsModel.translationTrigger; font.bold: true }
 
-	content: IdentifyViewContent {
+	content: IdentifyViewInfo {
+		id: identifyViewInfo
 		width: identifyEditChatView.width
+		height: identifyEditChatView.height
 	}
 
 	IdentifyController {
 		id: identifyController
+	}
+
+	IdentifyViewContent {
+		id: identifyViewContent
+		visible: false
 	}
 
 	SelfAuthenticationData {
@@ -54,7 +61,7 @@ SectionPage
 		leftTitleBarAction: TitleBarAction { state: authModel.isBasicReader ? "cancel" : "hidden"; onClicked: authModel.cancelWorkflow() }
 		headerTitleBarAction: TitleBarAction { text: qsTr("Identify") + settingsModel.translationTrigger; font.bold: true }
 		visible: false
-		text: qsTr("Authenticate") + settingsModel.translationTrigger
+		text: qsTr("Authentication in progress") + settingsModel.translationTrigger
 		subText: (!visible ? "" :
 					  authModel.isBasicReader ?
 							qsTr("Please wait a moment...") :
@@ -70,7 +77,16 @@ SectionPage
 							qsTr("You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.") :
 					  qsTr("Please wait a moment...")
 				 ) + settingsModel.translationTrigger
-		subTextColor: !authModel.isBasicReader && (numberModel.inputError || numberModel.pinDeactivated || state === "identify_entercan" || state === "enterpuk") ? "red" : "black"
+		subTextColor: !authModel.isBasicReader && (numberModel.inputError || numberModel.pinDeactivated || state === "identify_entercan" || state === "enterpuk") ? "red" : Constants.secondary_text
+		progressValue: 0
+		progressText: (progressValue == 0 ? "" :
+						progressValue == 1 ? qsTr("Service provider is being verified") :
+						progressValue == 2 ? qsTr("Card is being verified") :
+						progressValue == 3 ? qsTr("Reading data") :
+						progressValue == 4 ? qsTr("Sending data to service provider") :
+						progressValue == 5 ? qsTr("Preparing results") :
+						"") + settingsModel.translationTrigger
+		progressBarVisible: false
 	}
 
 	ProgressView {

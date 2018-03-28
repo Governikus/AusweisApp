@@ -28,12 +28,16 @@ Item {
 
 		Rectangle {
 			id: purposeObject
+			height: purposeColumn.height
+			property alias truncated: purposeText.truncated
+
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.left: showDetail ? parent.left : categoryImage.right
 			anchors.leftMargin: showDetail ? 0 : Utils.dp(15)
 			anchors.right: deleteButton.left
 
 			Column {
+				id: purposeColumn
 				anchors.verticalCenter: parent.verticalCenter
 				anchors.left: parent.left
 				anchors.right: parent.right
@@ -56,6 +60,7 @@ Item {
 				}
 				Text {
 					id: subjectText
+					color: Constants.secondary_text
 
 					anchors.left: parent.left
 					anchors.right: parent.right
@@ -73,9 +78,19 @@ Item {
 					font.pixelSize: Constants.small_font_size
 					color: Constants.history_delegate_address_color
 					wrapMode: Text.WordWrap
+					maximumLineCount: 2
 					text: historyModelItem ? !!historyModelItem.purpose ? historyModelItem.purpose : qsTr("Tap for more details") + settingsModel.translationTrigger : ""
 				}
 			}
+		}
+
+		Text {
+			visible: purposeText.truncated
+			anchors.left: purposeObject.right
+			anchors.bottom: purposeObject.bottom
+			font.pixelSize: Constants.small_font_size
+			color: Constants.history_delegate_address_color
+			text: "..."
 		}
 
 		Image {

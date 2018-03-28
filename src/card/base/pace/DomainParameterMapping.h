@@ -1,7 +1,7 @@
 /*!
  * \brief Mapping protocol for PACE domain parameters. For details see TR 03110.
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

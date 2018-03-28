@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDispatcherImpl.h"
@@ -42,9 +42,9 @@ void RemoteDispatcherImpl::createAndSendContext(const QJsonObject& pMessageObjec
 	}
 
 	IfdEstablishContext establishContext(pMessageObject);
-	if (establishContext.getProtocol() != QLatin1String("IFDInterface_WebSocket_v0"))
+	if (!establishContext.getProtocol().isSupported())
 	{
-		qCWarning(remote_device) << "Unsupported API protocol requested:" << establishContext.getProtocol();
+		qCWarning(remote_device) << "Unsupported API protocol requested:" << establishContext.getProtocolRaw();
 		fail = QStringLiteral("/al/common#unknownError");
 	}
 
@@ -89,12 +89,6 @@ void RemoteDispatcherImpl::onReceived(const QByteArray& pDataBlock)
 		return;
 	}
 
-	if (remoteMessage.getType() == RemoteCardMessageType::IFDError)
-	{
-		qCWarning(remote_device) << "Error message received:" << pDataBlock;
-		return;
-	}
-
 	if (remoteMessage.getType() == RemoteCardMessageType::IFDEstablishContext)
 	{
 		IfdEstablishContext establishContext(msgObject);
@@ -127,6 +121,12 @@ void RemoteDispatcherImpl::onReceived(const QByteArray& pDataBlock)
 
 	qCDebug(remote_device) << "Received message type:" << remoteMessage.getType();
 	Q_EMIT fireReceived(mParser.parse(pDataBlock), sharedFromThis());
+}
+
+
+void RemoteDispatcherImpl::close()
+{
+	mDataChannel->close();
 }
 
 

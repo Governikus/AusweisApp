@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the settings.
  *
- * \copyright Copyright (c) 2016-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,6 +21,7 @@ class SettingsModel
 	Q_PROPERTY(bool useSelfauthenticationTestUri READ useSelfauthenticationTestUri WRITE setUseSelfauthenticationTestUri NOTIFY fireUseSelfauthenticationTestUriChanged)
 	Q_PROPERTY(bool pinPadMode READ getPinPadMode WRITE setPinPadMode NOTIFY firePinPadModeChanged)
 	Q_PROPERTY(QString serverName READ getServerName WRITE setServerName NOTIFY fireDeviceNameChanged)
+	Q_PROPERTY(bool historyEnabled READ isHistoryEnabled WRITE setHistoryEnabled NOTIFY fireHistoryEnabledChanged)
 
 	public:
 		SettingsModel();
@@ -40,9 +41,13 @@ class SettingsModel
 		void setServerName(const QString& name);
 
 		Q_INVOKABLE void removeTrustedCertificate(const QString& pFingerprint);
+		Q_INVOKABLE int removeHistory(const QString& pPeriodToRemove);
 
 		bool getPinPadMode() const;
 		void setPinPadMode(bool pPinPadMode);
+
+		bool isHistoryEnabled() const;
+		void setHistoryEnabled(bool pEnabled);
 
 	Q_SIGNALS:
 		void fireLanguageChanged();
@@ -50,6 +55,7 @@ class SettingsModel
 		void fireUseSelfauthenticationTestUriChanged();
 		void fireDeviceNameChanged();
 		void firePinPadModeChanged();
+		void fireHistoryEnabledChanged();
 };
 
 } /* namespace governikus */

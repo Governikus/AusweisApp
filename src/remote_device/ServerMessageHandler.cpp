@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ServerMessageHandler.h"
@@ -15,9 +15,12 @@
 #include "messages/IfdEstablishContext.h"
 #include "messages/IfdEstablishPaceChannel.h"
 #include "messages/IfdEstablishPaceChannelResponse.h"
+#include "messages/IfdModifyPin.h"
+#include "messages/IfdModifyPinResponse.h"
 #include "messages/IfdStatus.h"
 #include "messages/IfdTransmit.h"
 #include "messages/IfdTransmitResponse.h"
+#include "PinModifyOutput.h"
 #include "ReaderManager.h"
 #include "RemoteDispatcher.h"
 
@@ -128,41 +131,66 @@ void ServerMessageHandlerImpl::onCreateCardConnectionCommandDone(QSharedPointer<
 		return;
 	}
 
-	qCInfo(remote_device) << "Card successfully connected" << pCommand->getReaderName();
-	mCardConnections.insert(pCommand->getReaderName(), pCommand->getCardConnection());
-	const QSharedPointer<IfdConnectResponse> response(new IfdConnectResponse(pCommand->getReaderName()));
+	QString slotHandle = QUuid::createUuid().toString();
+	qCInfo(remote_device) << "Card successfully connected" << pCommand->getReaderName() << ", using handle " << slotHandle;
+	mCardConnections.insert(slotHandle, pCommand->getCardConnection());
+
+	const QSharedPointer<IfdConnectResponse> response(new IfdConnectResponse(slotHandle));
 	mRemoteDispatcher->send(response);
+}
+
+
+QString ServerMessageHandlerImpl::convertSlotHandleBackwardsCompatibility(const QString& pSlotHandle)
+{
+	if (!mCardConnections.contains(pSlotHandle))
+	{
+		const auto& slotHandles = mCardConnections.keys();
+		for (const auto& slotHandle : slotHandles)
+		{
+			if (mCardConnections[slotHandle]->getReaderInfo().getName() == pSlotHandle)
+			{
+				return slotHandle;
+			}
+		}
+	}
+	return pSlotHandle;
 }
 
 
 void ServerMessageHandlerImpl::process(const QSharedPointer<const IfdDisconnect>& pMessage)
 {
-	if (!mCardConnections.contains(pMessage->getSlotHandle()))
+	QString slotHandle = pMessage->getSlotHandle();
+	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
+
+	if (!mCardConnections.contains(slotHandle))
 	{
-		qCWarning(remote_device) << "Card is not connected" << pMessage->getSlotHandle();
-		const QSharedPointer<IfdDisconnectResponse> response(new IfdDisconnectResponse(pMessage->getSlotHandle(), QStringLiteral("/ifdl/common#invalidSlotHandle")));
+		qCWarning(remote_device) << "Card is not connected" << slotHandle;
+		const QSharedPointer<IfdDisconnectResponse> response(new IfdDisconnectResponse(slotHandle, QStringLiteral("/ifdl/common#invalidSlotHandle")));
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
-	mCardConnections.remove(pMessage->getSlotHandle());
-	qCInfo(remote_device) << "Card successfully disconnected" << pMessage->getSlotHandle();
-	const QSharedPointer<IfdDisconnectResponse> response(new IfdDisconnectResponse(pMessage->getSlotHandle()));
+	mCardConnections.remove(slotHandle);
+	qCInfo(remote_device) << "Card successfully disconnected" << slotHandle;
+	const QSharedPointer<IfdDisconnectResponse> response(new IfdDisconnectResponse(slotHandle));
 	mRemoteDispatcher->send(response);
 }
 
 
 void ServerMessageHandlerImpl::process(const QSharedPointer<const IfdTransmit>& pMessage)
 {
-	if (!mCardConnections.contains(pMessage->getSlotHandle()))
+	QString slotHandle = pMessage->getSlotHandle();
+	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
+
+	if (!mCardConnections.contains(slotHandle))
 	{
-		qCWarning(remote_device) << "Card is not connected" << pMessage->getSlotHandle();
-		const QSharedPointer<IfdTransmitResponse> response(new IfdTransmitResponse(pMessage->getSlotHandle(), QByteArray(), QStringLiteral("/ifdl/common#invalidSlotHandle")));
+		qCWarning(remote_device) << "Card is not connected" << slotHandle;
+		const QSharedPointer<IfdTransmitResponse> response(new IfdTransmitResponse(slotHandle, QByteArray(), QStringLiteral("/ifdl/common#invalidSlotHandle")));
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
-	const QSharedPointer<CardConnection>& cardConnection = mCardConnections.value(pMessage->getSlotHandle());
+	const QSharedPointer<CardConnection>& cardConnection = mCardConnections.value(slotHandle);
 	const auto& commandApdu = pMessage->getInputApdu();
 
 	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
@@ -175,47 +203,116 @@ void ServerMessageHandlerImpl::process(const QSharedPointer<const IfdTransmit>& 
 		}
 	}
 
-	qCDebug(remote_device) << "Transmit card APDU for" << pMessage->getSlotHandle();
+	qCDebug(remote_device) << "Transmit card APDU for" << slotHandle;
 	InputAPDUInfo inputApduInfo(commandApdu, MSEBuilder::isUpdateRetryCounterCommand(commandApdu));
-	cardConnection->callTransmitCommand(this, &ServerMessageHandlerImpl::onTransmitCardCommandDone, {inputApduInfo});
+	cardConnection->callTransmitCommand(this, &ServerMessageHandlerImpl::onTransmitCardCommandDone, {inputApduInfo}, slotHandle);
 }
 
 
 void ServerMessageHandlerImpl::process(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage)
 {
+	QString slotHandle = pMessage->getSlotHandle();
+	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
+
 	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
 	if (!pinPadMode)
 	{
 		qCWarning(remote_device) << "EstablishPaceChannel is only available in pin pad mode.";
-		const QSharedPointer<IfdEstablishPaceChannelResponse> response(new IfdEstablishPaceChannelResponse(pMessage->getSlotHandle(), QByteArray(), QStringLiteral("/al/common#unknownError")));
+		const QSharedPointer<IfdEstablishPaceChannelResponse> response(new IfdEstablishPaceChannelResponse(slotHandle, QByteArray(), QStringLiteral("/al/common#unknownError")));
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
-	if (!mCardConnections.contains(pMessage->getSlotHandle()))
+	if (!mCardConnections.contains(slotHandle))
 	{
-		qCWarning(remote_device) << "Card is not connected" << pMessage->getSlotHandle();
-		const QSharedPointer<IfdEstablishPaceChannelResponse> response(new IfdEstablishPaceChannelResponse(pMessage->getSlotHandle(), QByteArray(), QStringLiteral("/ifdl/common#invalidSlotHandle")));
+		qCWarning(remote_device) << "Card is not connected" << slotHandle;
+		const QSharedPointer<IfdEstablishPaceChannelResponse> response(new IfdEstablishPaceChannelResponse(slotHandle, QByteArray(), QStringLiteral("/ifdl/common#invalidSlotHandle")));
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
-	QSharedPointer<CardConnection> connection = mCardConnections[pMessage->getSlotHandle()];
+	QSharedPointer<CardConnection> connection = mCardConnections[slotHandle];
 	Q_EMIT fireEstablishPaceChannel(pMessage, connection);
 }
 
 
-void ServerMessageHandlerImpl::sendEstablishPaceChannelResponse(const QString& pSlotName, const EstablishPACEChannelOutput& pChannelOutput)
+void ServerMessageHandlerImpl::sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPACEChannelOutput& pChannelOutput)
 {
 	const QByteArray& ccid = pChannelOutput.toCcid();
 	if (pChannelOutput.getPaceReturnCode() == CardReturnCode::UNKNOWN)
 	{
-		const QSharedPointer<IfdEstablishPaceChannelResponse> response(new IfdEstablishPaceChannelResponse(pSlotName, ccid, QStringLiteral("/al/common#unknownError")));
+		const QSharedPointer<IfdEstablishPaceChannelResponse> response(new IfdEstablishPaceChannelResponse(pSlotHandle, ccid, QStringLiteral("/al/common#unknownError")));
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
-	const QSharedPointer<IfdEstablishPaceChannelResponse> response(new IfdEstablishPaceChannelResponse(pSlotName, ccid));
+	const QSharedPointer<IfdEstablishPaceChannelResponse> response(new IfdEstablishPaceChannelResponse(pSlotHandle, ccid));
+	mRemoteDispatcher->send(response);
+}
+
+
+void ServerMessageHandlerImpl::process(const QSharedPointer<const IfdModifyPin>& pMessage)
+{
+	QString slotHandle = pMessage->getSlotHandle();
+	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
+
+	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
+	if (!pinPadMode)
+	{
+		qCWarning(remote_device) << "ModifyPin is only available in pin pad mode.";
+		const QSharedPointer<IfdModifyPinResponse> response(new IfdModifyPinResponse(slotHandle, QByteArray(), QStringLiteral("/al/common#unknownError")));
+		mRemoteDispatcher->send(response);
+		return;
+	}
+
+	if (!mCardConnections.contains(slotHandle))
+	{
+		qCWarning(remote_device) << "Card is not connected" << slotHandle;
+		const QSharedPointer<IfdModifyPinResponse> response(new IfdModifyPinResponse(slotHandle, QByteArray(), QStringLiteral("/ifdl/common#invalidSlotHandle")));
+		mRemoteDispatcher->send(response);
+		return;
+	}
+
+	Q_EMIT fireModifyPin(pMessage, mCardConnections[slotHandle]);
+}
+
+
+void ServerMessageHandlerImpl::sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu)
+{
+	PinModifyOutput pinModifyOutput(pResponseApdu);
+	const QByteArray& ccid = pinModifyOutput.toCcid();
+
+	QString minor;
+	switch (pResponseApdu.getReturnCode())
+	{
+		case StatusCode::SUCCESS:
+			break;
+
+		case StatusCode::EMPTY:
+			minor = QStringLiteral("/ifdl/terminal#noCard");
+			break;
+
+		case StatusCode::INPUT_TIMEOUT:
+			minor = QStringLiteral("/ifdl/common#timeoutError");
+			break;
+
+		case StatusCode::INPUT_CANCELLED:
+			minor = QStringLiteral("/ifdl#cancellationByUser");
+			break;
+
+		case StatusCode::PASSWORDS_DIFFER:
+			minor = QStringLiteral("/ifdl/IO#repeatedDataMismatch");
+			break;
+
+		case StatusCode::PASSWORD_OUTOF_RANGE:
+			minor = QStringLiteral("/ifdl/IO#unknownPINFormat");
+			break;
+
+		default:
+			minor = QStringLiteral("/al/common#unknownError");
+	}
+
+	const QSharedPointer<IfdModifyPinResponse> response(new IfdModifyPinResponse(pSlotHandle, ccid, minor));
 	mRemoteDispatcher->send(response);
 }
 
@@ -223,10 +320,13 @@ void ServerMessageHandlerImpl::sendEstablishPaceChannelResponse(const QString& p
 void ServerMessageHandlerImpl::onTransmitCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 {
 	auto transmitCommand = pCommand.staticCast<TransmitCommand>();
+	QString slotHandle = transmitCommand->getSlotHandle();
+	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
+
 	if (transmitCommand->getReturnCode() != CardReturnCode::OK)
 	{
-		qCWarning(remote_device) << "Card transmit for" << transmitCommand->getReaderName() << "failed" << transmitCommand->getReturnCode();
-		QSharedPointer<IfdTransmitResponse> response(new IfdTransmitResponse(transmitCommand->getReaderName(), QByteArray(), QStringLiteral("/al/common#unknownError")));
+		qCWarning(remote_device) << "Card transmit for" << slotHandle << "failed" << transmitCommand->getReturnCode();
+		QSharedPointer<IfdTransmitResponse> response(new IfdTransmitResponse(slotHandle, QByteArray(), QStringLiteral("/al/common#unknownError")));
 		mRemoteDispatcher->send(response);
 		return;
 	}
@@ -237,8 +337,8 @@ void ServerMessageHandlerImpl::onTransmitCardCommandDone(QSharedPointer<BaseCard
 	{
 		responseApdu = QByteArray::fromHex(transmitCommand->getOutputApduAsHex().first());
 	}
-	qCInfo(remote_device) << "Card transmit succeeded" << transmitCommand->getReaderName();
-	QSharedPointer<IfdTransmitResponse> response(new IfdTransmitResponse(transmitCommand->getReaderName(), responseApdu));
+	qCInfo(remote_device) << "Card transmit succeeded" << slotHandle;
+	QSharedPointer<IfdTransmitResponse> response(new IfdTransmitResponse(slotHandle, responseApdu));
 	mRemoteDispatcher->send(response);
 }
 
@@ -276,7 +376,8 @@ void ServerMessageHandlerImpl::onReceived(const QSharedPointer<const RemoteMessa
 				RemoteCardMessageType::IFDConnectResponse,
 				RemoteCardMessageType::IFDDisconnectResponse,
 				RemoteCardMessageType::IFDTransmitResponse,
-				RemoteCardMessageType::IFDEstablishPACEChannelResponse
+				RemoteCardMessageType::IFDEstablishPACEChannelResponse,
+				RemoteCardMessageType::IFDModifyPINResponse
 			});
 
 	if (serverMessageTypes.contains(pMessage->getType()))

@@ -7,7 +7,7 @@ MouseArea {
 	property alias font: titleBarText.font
 
 	height: Constants.titlebar_height
-	width: titleBarText.width + 2 * Constants.titlebar_padding
+	width: titleBarText.width
 	anchors.centerIn: parent
 
 	TitleBarText {

@@ -1,10 +1,12 @@
 /*!
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowModel.h"
 
+#include "AppSettings.h"
 #include "context/AuthContext.h"
+#include "GeneralSettings.h"
 
 using namespace governikus;
 
@@ -70,10 +72,21 @@ QString WorkflowModel::getReaderPlugInType() const
 
 void WorkflowModel::setReaderPlugInType(const QString& pReaderPlugInType)
 {
-	if (mContext)
+	setReaderPlugInType(Enum<ReaderManagerPlugInType>::fromString(pReaderPlugInType, ReaderManagerPlugInType::UNKNOWN));
+}
+
+
+void WorkflowModel::setReaderPlugInType(const ReaderManagerPlugInType pReaderPlugInType)
+{
+	if (!mContext)
 	{
-		mContext->setReaderPlugInTypes({Enum<ReaderManagerPlugInType>::fromString(pReaderPlugInType, ReaderManagerPlugInType::UNKNOWN)});
+		return;
 	}
+	mContext->setReaderPlugInTypes({pReaderPlugInType});
+
+	GeneralSettings& settings = AppSettings::getInstance().getGeneralSettings();
+	settings.setLastReaderPluginType(getEnumName(pReaderPlugInType));
+	settings.save();
 }
 
 
@@ -119,4 +132,26 @@ bool WorkflowModel::isBasicReader()
 	}
 
 	return true;
+}
+
+
+void WorkflowModel::setInitialPluginType()
+{
+	const GeneralSettings& settings = AppSettings::getInstance().getGeneralSettings();
+
+	const QString& lastReaderPluginTypeString = settings.getLastReaderPluginType();
+	const auto& lastReaderPluginType = Enum<ReaderManagerPlugInType>::fromString(lastReaderPluginTypeString, ReaderManagerPlugInType::UNKNOWN);
+
+	if (lastReaderPluginType == ReaderManagerPlugInType::UNKNOWN)
+	{
+#if defined(Q_OS_ANDROID)
+		setReaderPlugInType(ReaderManagerPlugInType::NFC);
+#elif defined(Q_OS_IOS)
+		setReaderPlugInType(ReaderManagerPlugInType::BLUETOOTH);
+#else
+		setReaderPlugInType(ReaderManagerPlugInType::PCSC);
+#endif
+		return;
+	}
+	setReaderPlugInType(lastReaderPluginType);
 }

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetTcToken.h"
@@ -66,14 +66,17 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 	{
 		// according to TR-03124-1 in case of a non-HTTPS URL a createTrustedChannelEstablishmentError error must be sent
 		// in contrast a HTTP error 404 must be sent, if the TCToken could not be determined
-		auto httpsError = QStringLiteral("Error while connecting to the service provider. A secure connection could not be established. The used URL is not of type HTTPS.");
+		const auto httpsError1 = QStringLiteral("Error while connecting to the service provider. A secure connection could not be established.");
+		const auto httpsError2 = QStringLiteral("  The used URL is not of type HTTPS: %1").arg(pUrl.toString());
 		if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
 		{
-			qCCritical(developermode) << httpsError;
+			qCCritical(developermode) << httpsError1;
+			qCCritical(developermode) << httpsError2;
 		}
 		else
 		{
-			qCritical() << httpsError;
+			qCritical() << httpsError1;
+			qCritical() << httpsError2;
 			getContext()->setTcTokenNotFound(false);
 			updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
 			return false;
@@ -128,7 +131,9 @@ void StateGetTcToken::onSslHandshakeDone()
 		return;
 	}
 
-	getContext()->addCertificateData(mReply->request().url(), cfg.peerCertificate());
+	auto context = getContext();
+	context->addCertificateData(mReply->request().url(), cfg.peerCertificate());
+	context->setSslSession(cfg.sessionTicket());
 }
 
 

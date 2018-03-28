@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the remote service component
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,6 +30,8 @@ class RemoteServiceModel
 	Q_PROPERTY(QByteArray psk MEMBER mPsk NOTIFY firePskChanged)
 	Q_PROPERTY(QString currentFingerprint READ getCurrentFingerprint NOTIFY fireConnectedChanged)
 	Q_PROPERTY(bool connected READ isConnected NOTIFY fireConnectedChanged)
+	Q_PROPERTY(QString connectedClientDeviceName MEMBER mConnectedClientDeviceName NOTIFY fireConnectedClientDeviceNameChanged)
+	Q_PROPERTY(QString connectedServerDeviceNames MEMBER mConnectedServerDeviceNames NOTIFY fireConnectedServerDeviceNamesChanged)
 	Q_PROPERTY(QString readerPlugInType READ getReaderPlugInType WRITE setReaderPlugInType NOTIFY fireReaderPlugInTypeChanged)
 	Q_PROPERTY(RemoteDeviceModel * availableRemoteDevices READ getAvailableRemoteDevices CONSTANT)
 	Q_PROPERTY(RemoteDeviceModel * knownDevices READ getKnownDevices CONSTANT)
@@ -44,12 +46,16 @@ class RemoteServiceModel
 		QByteArray mPsk;
 		RemoteDeviceModel mAvailableRemoteDevices;
 		RemoteDeviceModel mKnownDevices;
+		QString mConnectedClientDeviceName;
+		QString mConnectedServerDeviceNames;
 
 		void onEnvironmentChanged();
 		QString getErrorMessage(bool pNfcPluginAvailable, bool pNfcPluginEnabled, bool pWifiEnabled) const;
 
 	private Q_SLOTS:
 		void onEstablishConnectionDone(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const GlobalStatus& pStatus);
+		void onClientConnectedChanged(bool pConnected);
+		void onConnectedDevicesChanged();
 
 	public:
 		RemoteServiceModel();
@@ -87,6 +93,8 @@ class RemoteServiceModel
 		void fireServerPskChanged();
 		void fireDetectionChanged();
 		void firePairingFailed();
+		void fireConnectedClientDeviceNameChanged();
+		void fireConnectedServerDeviceNamesChanged();
 };
 
 

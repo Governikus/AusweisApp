@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteConnectorImpl.h"
@@ -299,7 +299,7 @@ void RemoteConnectorImpl::onConnectRequest(const RemoteDeviceDescriptor& pRemote
 	}
 
 	// Currently, we only support API level 1.
-	if (!pRemoteDeviceDescriptor.getSupportedApis().contains(QLatin1String("IFDInterface_WebSocket_v0")))
+	if (!pRemoteDeviceDescriptor.isSupported())
 	{
 		Q_EMIT fireRemoteDispatcherError(pRemoteDeviceDescriptor, RemoteErrorCode::NO_SUPPORTED_API_LEVEL);
 		return;

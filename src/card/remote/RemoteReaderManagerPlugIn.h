@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref ReaderManagerPlugIn for remote reader.
  *
- * \copyright Copyright (c) 2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,12 +37,13 @@ class RemoteReaderManagerPlugIn
 		QWeakPointer<RemoteDispatcher> mRemoteToUpdate;
 		QMultiMap<QSharedPointer<RemoteDispatcher>, QString> mRemoteDispatchers;
 		QMap<QString, Reader*> mReaderList;
+		bool mConnectionCheckInProgress;
 
 		void updateReader(const IfdStatus& pIfdStatus);
 		void removeDispatcher(const QSharedPointer<RemoteDispatcher>& pRemoteDispatcher);
 		void removeAllDispatchers();
 		void connectToPairedReaders();
-		void unexpectedMessage(const QSharedPointer<const RemoteMessage>& pMessage, const QSharedPointer<RemoteDispatcher>& pRemoteDispatcher = QSharedPointer<RemoteDispatcher>(), bool pSendMessage = false);
+		void unexpectedMessage(const QSharedPointer<const RemoteMessage>& pMessage, const QSharedPointer<RemoteDispatcher>& pRemoteDispatcher = QSharedPointer<RemoteDispatcher>());
 
 	private Q_SLOTS:
 		void onRemoteMessage(const QSharedPointer<const RemoteMessage>& pMessage, const QSharedPointer<RemoteDispatcher>& pRemoteDispatcher);

@@ -1,7 +1,7 @@
 /*!
  * \brief Contains a card connection object
  *
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -41,12 +41,12 @@ class CardConnection
 		Q_OBJECT
 
 		/*!
-		 * The connection worker talks to the Card held by the Reader
+		 * The connection worker talks to the Card held by the Reader.
 		 */
 		QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
 		ReaderInfo mReaderInfo;
 
-		TransmitCommand* createTransmitCommand(const QVector<InputAPDUInfo>& pInputApduInfos);
+		TransmitCommand* createTransmitCommand(const QVector<InputAPDUInfo>& pInputApduInfos, const QString pSlotHandle);
 		UpdateRetryCounterCommand* createUpdateRetryCounterCommand();
 		UnblockPinCommand* createUnblockPinCommand(const QString& pPuk);
 
@@ -160,9 +160,9 @@ class CardConnection
 
 		template<typename T>
 		QMetaObject::Connection callTransmitCommand(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc,
-			const QVector<InputAPDUInfo>& pInputApduInfos)
+			const QVector<InputAPDUInfo>& pInputApduInfos, const QString pSlotHandle = QString())
 		{
-			auto command = createTransmitCommand(pInputApduInfos);
+			auto command = createTransmitCommand(pInputApduInfos, pSlotHandle);
 			return call(command, pReceiver, pFunc);
 		}
 

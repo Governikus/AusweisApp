@@ -12,8 +12,10 @@ Row {
 	readonly property alias searchText: searchField.displayText
 
 	anchors.top: parent ? parent.top : undefined
+	anchors.topMargin: Constants.titlebar_padding
 	anchors.right: parent ? parent.right : undefined
 	anchors.bottom: parent ? parent.bottom : undefined
+	anchors.bottomMargin: Constants.titlebar_padding
 	spacing: Constants.titlebar_padding
 
 	GTextField {

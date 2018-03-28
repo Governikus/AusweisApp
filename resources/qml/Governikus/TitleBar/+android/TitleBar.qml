@@ -120,7 +120,7 @@ Item
 
 	Item {
 		id: rightActionStack
-		anchors.margins: Constants.titlebar_padding
+		anchors.rightMargin: Constants.titlebar_padding
 		anchors.top: parent.top
 		anchors.right: parent.right
 		anchors.bottom: parent.bottom

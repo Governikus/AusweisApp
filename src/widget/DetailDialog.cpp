@@ -1,12 +1,16 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DetailDialog.h"
+
+#include "ui_DetailDialog.h"
+
 #include "DetailWidget.h"
 #include "generic/HelpAction.h"
-#include "ui_DetailDialog.h"
+
 #include <QKeyEvent>
+#include <QPushButton>
 
 using namespace governikus;
 
@@ -34,6 +38,7 @@ DetailDialog::~DetailDialog()
 void DetailDialog::setDetails(const QString& pDetails)
 {
 	mUi->detailWidget->setDetails(pDetails);
+	mUi->buttonBox->button(QDialogButtonBox::Close)->setFocus();
 	adjustSize();
 }
 

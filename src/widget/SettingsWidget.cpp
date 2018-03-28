@@ -1,10 +1,11 @@
 /*!
- * \copyright Copyright (c) 2014-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SettingsWidget.h"
 
 #include "AppSettings.h"
+#include "ReaderManager.h"
 #include "ui_SettingsWidget.h"
 
 #include <QKeyEvent>
@@ -18,6 +19,7 @@ using namespace governikus;
 SettingsWidget::SettingsWidget(QWidget* pParent)
 	: QWidget(pParent)
 	, mUi(new Ui::SettingsWidget())
+	, mScanRunning(false)
 	, mWorkflowRunning(false)
 	, mSettingsChanged(false)
 {
@@ -141,9 +143,23 @@ void SettingsWidget::hideEvent(QHideEvent* pEvent)
 }
 
 
+void SettingsWidget::showEvent(QShowEvent* pEvent)
+{
+	QWidget::showEvent(pEvent);
+
+	if (mUi->settingsTabWidget->currentWidget() == mUi->pinTab || mUi->settingsTabWidget->currentWidget() == mUi->readerDeviceTab)
+	{
+		mScanRunning = true;
+		ReaderManager& readerManager = ReaderManager::getInstance();
+		readerManager.startScanAll(mUi->settingsTabWidget->currentWidget() == mUi->pinTab);
+	}
+}
+
+
 void SettingsWidget::onTabChanged(int pIndex)
 {
-	if (mUi->settingsTabWidget->widget(pIndex) != mUi->generalTab)
+	QWidget* const currentWidget = mUi->settingsTabWidget->widget(pIndex);
+	if (currentWidget != mUi->generalTab)
 	{
 		if (mSettingsChanged)
 		{
@@ -156,6 +172,18 @@ void SettingsWidget::onTabChanged(int pIndex)
 		setSettingsChanged(mSettingsChanged);
 	}
 
+	ReaderManager& readerManager = ReaderManager::getInstance();
+	if (currentWidget == mUi->pinTab || currentWidget == mUi->readerDeviceTab)
+	{
+		mScanRunning = true;
+		readerManager.startScanAll(currentWidget == mUi->pinTab);
+	}
+	else if (mScanRunning)
+	{
+		mScanRunning = false;
+		readerManager.stopScanAll();
+	}
+
 	onUpdateApplyButtonText();
 	onUpdateButtonState();
 }
@@ -164,10 +192,11 @@ void SettingsWidget::onTabChanged(int pIndex)
 void SettingsWidget::showSettingsChangedMessage()
 {
 	QMessageBox msgBox(this);
-	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 	msgBox.setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Apply settings?"));
 	msgBox.setWindowModality(Qt::WindowModal);
 	msgBox.setText(tr("Do you want to apply the changes?"));
+	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	msgBox.button(QMessageBox::Yes)->setFocus();
 
 	if (msgBox.exec() == QMessageBox::Yes)
 	{

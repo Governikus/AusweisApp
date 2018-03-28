@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of Card object for Bluetooth
  *
- * \copyright Copyright (c) 2015-2017 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -38,7 +38,7 @@ class BluetoothCard
 
 		CardReturnCode destroyPaceChannel() override;
 
-		CardReturnCode setEidPin(quint8 pTimeoutSeconds) override;
+		CardReturnCode setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu) override;
 };
 
 } /* namespace governikus */
