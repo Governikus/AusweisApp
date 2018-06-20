@@ -48,7 +48,7 @@ SectionPage {
 
 			Text {
 				color: Constants.secondary_text
-				text: qsTr("Choose a device name here to identify it in the network:") + settingsModel.translationTrigger
+				text: qsTr("Set device name:") + settingsModel.translationTrigger
 				width: parent.width
 				font.pixelSize: Constants.normal_font_size
 				wrapMode: Text.WordWrap
@@ -87,9 +87,9 @@ SectionPage {
 				Text {
 					id: nameText
 					anchors.bottomMargin: Utils.dp(2)
-					font.pixelSize: Utils.sp(16)
-					color: Constants.secondary_text
-					opacity: 0.87
+					font.pixelSize: Constants.normal_font_size
+					color: Constants.blue
+					font.bold: true
 					text: qsTr("PIN pad mode") + settingsModel.translationTrigger
 				}
 
@@ -97,10 +97,9 @@ SectionPage {
 					id: dateText
 					width: parent.width
 					anchors.top: nameText.bottom
-					font.pixelSize: Utils.sp(14)
+					font.pixelSize: Constants.normal_font_size
 					color: Constants.secondary_text
-					opacity: 0.38
-					text: qsTr("Enter PIN on smartphone") + settingsModel.translationTrigger
+					text: qsTr("Enter PIN on this device") + settingsModel.translationTrigger
 					wrapMode: Text.WordWrap
 				}
 			}
@@ -205,7 +204,7 @@ SectionPage {
 				width: parent.width
 				wrapMode: Text.WordWrap
 				font.pixelSize: Constants.normal_font_size
-				text: qsTr("Start the pairing mode on the other device if it is not already started.") + settingsModel.translationTrigger
+				text: qsTr("Please start pairing mode first.") + settingsModel.translationTrigger
 			}
 
 			GButton {

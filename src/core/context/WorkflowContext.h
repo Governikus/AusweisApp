@@ -36,6 +36,7 @@ class WorkflowContext
 		GlobalStatus mStatus;
 		bool mErrorReportedToUser;
 		bool mWorkflowFinished;
+		bool mCanAllowedMode;
 
 	protected:
 		void resetLastPaceResultAndRetryCounter();
@@ -51,6 +52,7 @@ class WorkflowContext
 		void firePukChanged();
 		void fireLastPaceResultChanged();
 		void fireResultChanged();
+		void fireCanAllowedModeChanged();
 
 		void fireCancelWorkflow();
 		void fireAbortCardSelection();
@@ -98,6 +100,9 @@ class WorkflowContext
 
 		bool isWorkflowFinished() const;
 		void setWorkflowFinished(bool pWorkflowFinished);
+
+		bool isCanAllowedMode() const;
+		void setCanAllowedMode(bool pCanAllowedMode);
 };
 
 } /* namespace governikus */

@@ -43,7 +43,6 @@ Item {
 					  numberModel.pinDeactivated ? qsTr("The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.") :
 					  qsTr("Please place your device<br/>on your ID card.")
 					  ) + settingsModel.translationTrigger
-		subTitleTextRedColor: numberModel.extendedLengthApdusUnsupported || numberModel.pinDeactivated
 	}
 
 

@@ -95,7 +95,17 @@ SectionPage {
 				Loader {
 					readonly property string titleText: qsTr("Software license") + settingsModel.translationTrigger
 					readonly property string descriptionText: qsTr("Read the software license text on the application homepage.") + settingsModel.translationTrigger
-					function onClickFunction() { Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/download/")) }
+					function onClickFunction() {
+							if (Qt.platform.os === "android") {
+								Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/download/android/"))
+							}
+							else if (Qt.platform.os === "ios") {
+								Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/download/ios/"))
+							}
+							else {
+								Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/download/windows-and-mac/"))
+							}
+					}
 					width: parent.width
 					sourceComponent: subMenu
 				}

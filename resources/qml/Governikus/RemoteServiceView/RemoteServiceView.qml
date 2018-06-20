@@ -86,6 +86,7 @@ SectionPage {
 		anchors.top: text.bottom
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.margins: Constants.component_spacing
+		enabled: canEnableNfc || remoteServiceModel.runnable || running
 		onClicked: {
 			if (canEnableNfc) {
 				qmlExtension.showSettings("android.settings.NFC_SETTINGS")

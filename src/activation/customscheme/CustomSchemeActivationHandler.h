@@ -26,7 +26,7 @@ class CustomSchemeActivationHandler
 
 	public:
 		CustomSchemeActivationHandler();
-		virtual ~CustomSchemeActivationHandler();
+		virtual ~CustomSchemeActivationHandler() override;
 
 		virtual bool start() override;
 		virtual void stop() override;

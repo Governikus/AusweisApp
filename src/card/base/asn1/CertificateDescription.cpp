@@ -7,6 +7,7 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QRegularExpression>
 
 
 using namespace governikus;
@@ -37,14 +38,20 @@ QStringList takeWhileNonEmpty(const QStringList& lines)
 QString getField(const QString& pData, const QStringList& pSearchItems)
 {
 	const QLatin1Char NEW_LINE('\n');
+	const QRegularExpression REGEX_EMPTY_SECTION(QStringLiteral("^\\R{2,}"));
 
 	for (const auto& item : pSearchItems)
 	{
 		const int pos = pData.indexOf(item);
 		if (pos != -1)
 		{
-			const QString rest = pData.mid(pos + item.length()).trimmed();
-			const QStringList lines = takeWhileNonEmpty(rest.split(NEW_LINE));
+			const QString rest = pData.mid(pos + item.length());
+			if (REGEX_EMPTY_SECTION.match(rest).hasMatch())
+			{
+				continue;
+			}
+
+			const QStringList lines = takeWhileNonEmpty(rest.trimmed().split(NEW_LINE));
 			if (lines.isEmpty())
 			{
 				continue;

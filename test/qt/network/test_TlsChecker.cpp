@@ -93,7 +93,7 @@ class test_TlsChecker
 		void checkCertificateHash()
 		{
 			QVERIFY(!TlsChecker::checkCertificate(certs.at(0), QCryptographicHash::Algorithm::Sha256, QSet<QString>() << "dummy" << "bla bla"));
-			const QString hash = "D06F1E6E5968653E67B4DBE93895C70E9B74B0E28BA5DBCFC3B4540B77F7B88E";
+			const QString hash = QStringLiteral("25:1C:0F:A5:FA:C2:25:39:A5:DF:32:BB:1C:F8:3E:DD:82:E8:5E:A3:85:2E:67:FF:A9:63:E7:20:77:BE:0C:9D").remove(QLatin1Char(':'));
 			QVERIFY(TlsChecker::checkCertificate(certs.at(0), QCryptographicHash::Algorithm::Sha256, QSet<QString>() << "dummy" << hash << "bla bla"));
 		}
 

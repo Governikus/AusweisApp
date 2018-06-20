@@ -8,8 +8,7 @@ Item {
 	property alias enableButtonText: enableButton.text
 	property alias enableButtonVisible: enableButton.visible
 	property alias titleText: title.text
-	property alias subTitleText: subTitle.text
-	property bool subTitleTextRedColor
+	property string subTitleText: ""
 
 	signal enableClicked()
 
@@ -71,6 +70,11 @@ Item {
 		}
 	}
 
+	onSubTitleTextChanged: {
+		subTitleTextColor.value = numberModel.hasError ? Constants.red : Constants.secondary_text
+		subTitle.text = subTitleText
+	}
+
 	Item {
 		anchors.left: parent.left
 		anchors.top: parent.verticalCenter
@@ -93,7 +97,12 @@ Item {
 				SequentialAnimation {
 					PropertyAnimation { target: subTitle; property: "anchors.topMargin"; to: baseItem.height/2; duration: 500}
 					PropertyAction { target: subTitle; property: "text" }
-					PropertyAction { target: subTitle; property: "color"; value: baseItem.subTitleTextRedColor ? Constants.red : Constants.secondary_texte }
+					PropertyAction {
+						id: subTitleTextColor
+						target: subTitle;
+						property: "color";
+						value: Constants.secondary_text
+					}
 					PropertyAnimation { target: subTitle; property: "anchors.topMargin"; to: 0; duration: 500 }
 				}
 			}

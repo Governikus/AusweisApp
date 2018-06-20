@@ -35,7 +35,7 @@ void StateConnectCard::onCardInserted()
 	ReaderInfo readerInfo = ReaderManager::getInstance().getReaderInfo(getContext()->getReaderName());
 	if (readerInfo.hasEidCard())
 	{
-		if (!readerInfo.isPinDeactivated())
+		if (readerInfo.sufficientApduLength() && (!readerInfo.isPinDeactivated() || getContext()->isCanAllowedMode()))
 		{
 			qCDebug(statemachine) << "Card has been inserted, trying to connect";
 			mConnections += ReaderManager::getInstance().callCreateCardConnectionCommand(readerInfo.getName(), this, &StateConnectCard::onCommandDone);

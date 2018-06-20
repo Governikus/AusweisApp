@@ -78,7 +78,6 @@ Item {
 					  (state === "card") ?
 							qsTr("Please insert your ID card.") : ""
 					  ) + settingsModel.translationTrigger
-		subTitleTextRedColor: false
 	}
 
 	TechnologySwitch {

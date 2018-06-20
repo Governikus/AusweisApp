@@ -92,7 +92,7 @@ void StepAuthenticationEac1Gui::incorrectPinError()
 {
 	mWidget->updateButtonsAndPinWidget();
 
-	GuiUtils::showPinCanPukErrorDialog(mContext->getLastPaceResult(), mContext->getCardConnection()->getReaderInfo().getRetryCounter(), mStepsWidget->window());
+	GuiUtils::showPinCanPukErrorDialog(mContext->getLastPaceResult(), mContext->getCardConnection()->getReaderInfo().getRetryCounter(), mContext->isCanAllowedMode(), mStepsWidget->window());
 }
 
 
@@ -124,7 +124,14 @@ void StepAuthenticationEac1Gui::onShowPayAttentionToReader()
 
 void StepAuthenticationEac1Gui::onPinUpdated(const QString& pPin)
 {
-	mPin = pPin;
+	if (!mContext->isCanAllowedMode())
+	{
+		mPin = pPin;
+	}
+	else
+	{
+		mCan = pPin;
+	}
 }
 
 

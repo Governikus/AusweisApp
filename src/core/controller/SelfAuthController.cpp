@@ -25,6 +25,7 @@
 #include "states/StateInitializeFramework.h"
 #include "states/StateLoadTcTokenUrl.h"
 #include "states/StateProcessCertificatesFromEac2.h"
+#include "states/StateSelectPasswordId.h"
 #include "states/StateStartPaos.h"
 #include "states/StateStartPaosResponse.h"
 #include "states/StateTransmit.h"
@@ -55,11 +56,13 @@ SelfAuthController::SelfAuthController(QSharedPointer<SelfAuthContext> pContext)
 	mStateMachine.addState(sProcessCvcsAndSetRights);
 	auto sSelectCard = new CompositeStateSelectCard(pContext);
 	mStateMachine.addState(sSelectCard);
+	auto sSelectPasswordId = addState<StateSelectPasswordId>();
 	auto sUpdateRetryCounter = addState<StateUpdateRetryCounter>();
 	auto sHandleRetryCounter = addState<StateHandleRetryCounter>();
 	auto sEstablishPaceCan = addState<StateEstablishPaceCan>();
 	auto sEstablishPacePin = addState<StateEstablishPacePin>();
 	auto sEstablishPacePuk = addState<StateEstablishPacePuk>();
+	auto sEstablishPaceCanCanMode = addState<StateEstablishPaceCan>();
 	auto sDidAuthenticateEac1 = addState<StateDidAuthenticateEac1>();
 	auto sSendDidAuthenticateResponseEac1 = addState<StateSendDIDAuthenticateResponseEAC1>();
 	auto sEacAdditionalInputType = addState<StateEACAdditionalInputType>();
@@ -113,8 +116,12 @@ SelfAuthController::SelfAuthController(QSharedPointer<SelfAuthContext> pContext)
 	sProcessCvcsAndSetRights->addTransition(sProcessCvcsAndSetRights, &CompositeStateProcessCvcsAndSetRights::fireContinue, sSelectCard);
 	sProcessCvcsAndSetRights->addTransition(sProcessCvcsAndSetRights, &CompositeStateProcessCvcsAndSetRights::fireAbort, sSendDidAuthenticateResponseEac1);
 
-	sSelectCard->addTransition(sSelectCard, &CompositeStateSelectCard::fireContinue, sUpdateRetryCounter);
+	sSelectCard->addTransition(sSelectCard, &CompositeStateSelectCard::fireContinue, sSelectPasswordId);
 	sSelectCard->addTransition(sSelectCard, &CompositeStateSelectCard::fireAbort, sSendDidAuthenticateResponseEac1);
+
+	sSelectPasswordId->addTransition(sSelectPasswordId, &AbstractState::fireContinue, sUpdateRetryCounter);
+	sSelectPasswordId->addTransition(sSelectPasswordId, &StateSelectPasswordId::firePasswordIdCAN, sEstablishPaceCanCanMode);
+	sSelectPasswordId->addTransition(sSelectPasswordId, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);
 
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireContinue, sHandleRetryCounter);
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);
@@ -135,6 +142,10 @@ SelfAuthController::SelfAuthController(QSharedPointer<SelfAuthContext> pContext)
 	sEstablishPacePin->addTransition(sEstablishPacePin, &AbstractState::fireContinue, sDidAuthenticateEac1);
 	sEstablishPacePin->addTransition(sEstablishPacePin, &StateEstablishPacePin::fireInvalidPin, sUpdateRetryCounter);
 	sEstablishPacePin->addTransition(sEstablishPacePin, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);
+
+	sEstablishPaceCanCanMode->addTransition(sEstablishPaceCanCanMode, &AbstractState::fireContinue, sDidAuthenticateEac1);
+	sEstablishPaceCanCanMode->addTransition(sEstablishPaceCanCanMode, &StateEstablishPaceCan::fireInvalidCan, sEstablishPaceCanCanMode);
+	sEstablishPaceCanCanMode->addTransition(sEstablishPaceCanCanMode, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);
 
 	sDidAuthenticateEac1->addTransition(sDidAuthenticateEac1, &AbstractState::fireContinue, sSendDidAuthenticateResponseEac1);
 	sDidAuthenticateEac1->addTransition(sDidAuthenticateEac1, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);

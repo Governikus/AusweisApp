@@ -5,6 +5,8 @@
 
 #include "StateEstablishPaceCan.h"
 
+#include "context/AuthContext.h"
+
 using namespace governikus;
 
 StateEstablishPaceCan::StateEstablishPaceCan(const QSharedPointer<WorkflowContext>& pContext)
@@ -16,10 +18,31 @@ StateEstablishPaceCan::StateEstablishPaceCan(const QSharedPointer<WorkflowContex
 void StateEstablishPaceCan::run()
 {
 	auto cardConnection = getContext()->getCardConnection();
-
 	Q_ASSERT(cardConnection);
+
+	QByteArray certificateDescription, effectiveChat;
+	const auto& authContext = getContext().objectCast<AuthContext>();
+	if (getContext()->isCanAllowedMode() && authContext)
+	{
+		// if PACE is performed for authentication purposes,
+		// the chat and certificate description need to be send
+		//
+		// in other scenarios, e.g. for changing the PIN, the data
+		// is not needed
+		Q_ASSERT(authContext->getDidAuthenticateEac1());
+		Q_ASSERT(!authContext->encodeEffectiveChat().isEmpty());
+		certificateDescription = authContext->getDidAuthenticateEac1()->getCertificateDescriptionAsBinary();
+		effectiveChat = authContext->encodeEffectiveChat();
+	}
+
 	qDebug() << "Establish Pace connection with CAN";
-	mConnections += cardConnection->callEstablishPaceChannelCommand(this, &StateEstablishPaceCan::onEstablishConnectionDone, PACE_PASSWORD_ID::PACE_CAN, getContext()->getCan());
+	mConnections += cardConnection->callEstablishPaceChannelCommand(
+			this,
+			&StateEstablishPaceCan::onEstablishConnectionDone,
+			PACE_PASSWORD_ID::PACE_CAN,
+			getContext()->getCan(),
+			effectiveChat,
+			certificateDescription);
 	getContext()->setCan(QString());
 }
 
@@ -34,6 +57,12 @@ void StateEstablishPaceCan::onUserCancelled()
 void StateEstablishPaceCan::onEstablishConnectionDone(QSharedPointer<BaseCardCommand> pCommand)
 {
 	const CardReturnCode returnCode = pCommand->getReturnCode();
+	if (getContext()->isCanAllowedMode())
+	{
+		auto paceCommand = pCommand.staticCast<EstablishPaceChannelCommand>();
+		getContext()->setPaceOutputData(paceCommand->getPaceOutput());
+	}
+
 	switch (returnCode)
 	{
 		case CardReturnCode::OK:

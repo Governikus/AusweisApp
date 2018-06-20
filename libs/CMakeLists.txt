@@ -107,8 +107,8 @@ INCLUDE(Messages)
 SET(QT 5.9.3)
 SET(QT_HASH 57acd8f03f830c2d7dc29fbe28aaa96781b2b9bdddce94196e6761a0f88c6046)
 
-SET(OPENSSL 1.0.2n)
-SET(OPENSSL_HASH 370babb75f278c39e0c50e8c4e7493bc0f18db6867478341a832a982fd15a8fe)
+SET(OPENSSL 1.0.2o)
+SET(OPENSSL_HASH ec3f5c9714ba0fd45cb4e087301eb1336c317e0d20b575a125050470e8089e4d)
 
 ################################## Files
 SET(QT_FILE qt-everywhere-opensource-src-${QT}.tar.xz)
@@ -205,6 +205,8 @@ ExternalProject_Add(openssl
 	PATCH_COMMAND
 		${OPENSSL_PATCH_COMMAND}
 		${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-fix-no-engine-build.patch &&
+		${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-Revert-Configure-use-a-better-method-to-identify-gcc.patch &&
+		${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-RSA-key-generation-ensure-BN_mod_inverse-and-BN_mod_.patch &&
 		${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl_rsa_psk.patch
 
 	CONFIGURE_COMMAND ${OPENSSL_ENV} ${PERL_EXECUTABLE} Configure --prefix=${DESTINATION_DIR} ${OPENSSL_CONFIGURE_FLAGS} "${COMPILER_FLAGS}" "${OPENSSL_COMPILER_FLAGS}"
@@ -313,7 +315,7 @@ ExternalProject_Add(qt
 			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Avoid-using-deprecated-APIs-on-iOS-10.0.patch &&
 			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Add-IsoDep-to-the-techList-on-Android.patch &&
 			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-macOS-iOS-Fix-garbled-text-under-some-conditions.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Fix-reopening-on-macOS.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-QCoreTextFontEngine-Fix-build-with-Xcode-9.3.patch &&
 			${CMAKE_COMMAND} -E touch qtbase/.gitignore
 	CONFIGURE_COMMAND ${QT_ENV} ${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SKIP_MODULES}
 	BUILD_COMMAND ${MAKE} ${MAKE_JOBS}

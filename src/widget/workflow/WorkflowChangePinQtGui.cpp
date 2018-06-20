@@ -70,7 +70,7 @@ void WorkflowChangePinQtGui::onStateChanged(const QString& pNextState)
 		if (mContext->getLastPaceResult() != CardReturnCode::OK)
 		{
 			auto newRetryCounter = mContext->getCardConnection()->getReaderInfo().getRetryCounter();
-			GuiUtils::showPinCanPukErrorDialog(mContext->getLastPaceResult(), newRetryCounter, mPinSettingsWidget);
+			GuiUtils::showPinCanPukErrorDialog(mContext->getLastPaceResult(), newRetryCounter, mContext->isCanAllowedMode(), mPinSettingsWidget);
 
 			/*
 			 * In the desktop version we cancel the workflow after a wrong user input.

@@ -101,7 +101,7 @@ QWizardPage* SetupAssistantWizard::createWizardInitialPinPage()
 
 	const auto& welcome = tr("Welcome to the AusweisApp2 setup assistant."
 							 " This assistant will guide you through the setup process in %1 steps."
-							 " The setup assistant can be cancelled at any time and can be started again later from the Help menu.").arg(mPageCount);
+							 " You can cancel the setup assistant at any time. To restart it, go to the tab \"Help\" and select \"Setup assistant\".").arg(mPageCount);
 	QLabel* label = new QLabel(welcome);
 	label->setWordWrap(true);
 	label->setFocusPolicy(Qt::TabFocus);
@@ -111,8 +111,7 @@ QWizardPage* SetupAssistantWizard::createWizardInitialPinPage()
 	initialPinPageLayout->addWidget(label);
 
 	const auto& historyTitle = tr("History");
-	const auto& historySummary = tr("AusweisApp2 offers saving the course of your authentications in a history."
-									" Subsequently you can activate this option.");
+	const auto& historySummary = tr("Do you want to save the history of your authentications?");
 	QLabel* historyDescLabel = new QLabel(createDescription(historyTitle, historySummary));
 	historyDescLabel->setWordWrap(true);
 	historyDescLabel->setFocusPolicy(Qt::TabFocus);
@@ -171,9 +170,8 @@ QWizardPage* SetupAssistantWizard::createConclusionPage()
 
 
 	const auto& title = tr("Personal 6 - digit PIN");
-	const auto& desc = tr("Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN."
-						  " The AusweisApp's PIN management offers this function."
-						  " For replacing the transport PIN you need the letter sent to you by your competent authority.");
+	const auto& desc = tr("Prior to the first use of the online identification function, you have to replace the transport PIN by an individual 6-digit PIN. "
+						  "The transport PIN was sent to you by postal mail.");
 	QLabel* transportPinLabel = new QLabel(createDescription(title, desc));
 	transportPinLabel->setWordWrap(true);
 	transportPinLabel->setFocusPolicy(Qt::TabFocus);
@@ -182,7 +180,7 @@ QWizardPage* SetupAssistantWizard::createConclusionPage()
 	conclusionPageVLayout->addWidget(transportPinLabel);
 
 	mChangeTransportPinButton = new QPushButton(conclusionPage);
-	mChangeTransportPinButton->setText(tr("Change PIN"));
+	mChangeTransportPinButton->setText(tr("Set individual PIN"));
 	connect(mChangeTransportPinButton.data(), &QAbstractButton::clicked, this, &SetupAssistantWizard::onChangeTransportPinButtonPressed);
 
 	QSizePolicy transportPinSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -193,16 +191,16 @@ QWizardPage* SetupAssistantWizard::createConclusionPage()
 
 	conclusionPageVLayout->addWidget(mChangeTransportPinButton);
 
-
-	const auto conclusionDesc = tr("AusweisApp2 is now ready for use."
-								   " You can further configure AusweisApp2 via the \"Settings\" dialog from the navigation section."
-								   " AusweisApp2 uses the proxy settings configured in your system."
-								   " This setup assistant can be started at any time from the \"Help\" menu."
-								   " The \"Finish\" button closes the setup assistant.");
+	const QString onlineHelpUrl = HelpAction::getOnlineUrl(QStringLiteral("setupAssistantSetupCompleted"));
+	const auto conclusionDesc =
+			tr("AusweisApp2 is now ready for use."
+			   " For more information on the software or the online identification function, visit the %1online help%2.")
+			.arg(QStringLiteral("<a href=\"%1\">").arg(onlineHelpUrl), QStringLiteral("</a>"));
 	QLabel* conclusionDescLabel = new QLabel(QStringLiteral("<br>") + conclusionDesc);
 	conclusionDescLabel->setWordWrap(true);
 	conclusionDescLabel->setFocusPolicy(Qt::TabFocus);
 	conclusionDescLabel->setAccessibleName(createAccessibleName(almostDone, conclusionDesc));
+	conclusionDescLabel->setOpenExternalLinks(true);
 
 	conclusionPageVLayout->addWidget(conclusionDescLabel);
 

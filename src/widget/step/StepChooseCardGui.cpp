@@ -5,6 +5,7 @@
 #include "StepChooseCardGui.h"
 
 #include "Env.h"
+#include "generic/HelpAction.h"
 #include "GuiProfile.h"
 #include "ReaderConfiguration.h"
 #include "step/AuthenticateStepsWidget.h"
@@ -26,22 +27,18 @@ StepChooseCardGui::StepChooseCardGui(const QSharedPointer<AuthContext>& pContext
 	, mContext(pContext)
 	, mWidget(pStepsWidget->getEac1Page())
 	, mInformationMessageBox(new QMessageBox(pStepsWidget))
-	, mDiagnosisGui(new DiagnosisGui(pStepsWidget))
 	, mReaderDeviceGui(new ReaderDeviceGui(pStepsWidget))
 	, mCancelButton(nullptr)
 	, mDeviceButton(nullptr)
-	, mDiagnosisButton(nullptr)
 	, mSubDialogOpen(false)
 {
 	mInformationMessageBox->setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Information"));
 	mInformationMessageBox->setWindowModality(Qt::WindowModal);
 	mInformationMessageBox->setWindowFlags(mInformationMessageBox->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 	mCancelButton = mInformationMessageBox->addButton(tr("Cancel"), QMessageBox::NoRole);
-	mDiagnosisButton = mInformationMessageBox->addButton(tr("Diagnosis"), QMessageBox::YesRole);
 	mDeviceButton = mInformationMessageBox->addButton(tr("Settings"), QMessageBox::YesRole);
-	mDiagnosisButton->setFocus();
+	mDeviceButton->setFocus();
 
-	connect(mDiagnosisGui, &DiagnosisGui::fireFinished, this, &StepChooseCardGui::onSubDialogFinished);
 	connect(mReaderDeviceGui, &ReaderDeviceGui::fireFinished, this, &StepChooseCardGui::onSubDialogFinished);
 }
 
@@ -97,7 +94,6 @@ void StepChooseCardGui::updateErrorMessage(const QString& pTitle, const QString&
 {
 	if (closeErrorMessage || mContext->getStatus().isError())
 	{
-		mDiagnosisGui->deactivate();
 		mReaderDeviceGui->deactivate();
 		mInformationMessageBox->done(QMessageBox::InvalidRole);
 		return;
@@ -129,11 +125,7 @@ void StepChooseCardGui::updateErrorMessage(const QString& pTitle, const QString&
 		}
 
 		mSubDialogOpen = true;
-		if (mInformationMessageBox->clickedButton() == mDiagnosisButton)
-		{
-			mDiagnosisGui->activate();
-		}
-		else if (mInformationMessageBox->clickedButton() == mDeviceButton)
+		if (mInformationMessageBox->clickedButton() == mDeviceButton)
 		{
 			mReaderDeviceGui->activate();
 		}
@@ -168,18 +160,12 @@ void StepChooseCardGui::onReaderManagerSignal()
 {
 	const auto readers = ReaderManager::getInstance().getReaderInfos();
 
-	mDeviceButton->setEnabled(readers.isEmpty());
 	mReaderDeviceGui->reactToReaderCount(readers.size());
 
-	bool readerWithInsufficientApduLength = false;
 	QVector<ReaderInfo> readersWithNpa;
 	QVector<ReaderInfo> remoteReaders;
 	for (const auto& readerInfo : readers)
 	{
-		if (!readerInfo.sufficientApduLength())
-		{
-			readerWithInsufficientApduLength = true;
-		}
 		if (readerInfo.hasEidCard())
 		{
 			readersWithNpa << readerInfo;
@@ -192,61 +178,52 @@ void StepChooseCardGui::onReaderManagerSignal()
 
 	if (readers.size() == 0)
 	{
-		updateErrorMessage(tr("No card reader detected. Please make sure that a card reader is connected."),
-				tr("If you would like to set up a local or remote card reader, click on the \"Settings\" button"
-				   " to open the reader settings."),
-				tr("If you need help or have problems with your card reader click on the"
-				   " \"Diagnosis\" button for further information."),
+		const QString onlineHelpUrl = HelpAction::getOnlineUrl(QStringLiteral("stepChooseCardGui"));
+		const QString onlineHelpText = tr("If you need help or have problems with your card reader, you can consult the "
+										  "%1online help%2 for futher information.")
+				.arg(QStringLiteral("<a href=\"%1\">").arg(onlineHelpUrl), QStringLiteral("</a>"));
+
+		updateErrorMessage(tr("No card reader found. Please connect card reader first."),
+				tr("Please choose \"Settings\" to install a card reader or configure your smartphone as a card reader."),
+				onlineHelpText,
 				false);
 		return;
 	}
 
 	if (readersWithNpa.size() == 0)
 	{
-		if (readerWithInsufficientApduLength)
+		QString remoteReaderInfo;
+		if (remoteReaders.size() > 0)
 		{
-			if (readers.size() == 1)
-			{
-				updateErrorMessage(tr("Extended Length is not supported."),
-						tr("Your remote reader does not meet the technical requirements (Extended Length not supported)."),
-						QString(),
-						false);
-				return;
-			}
-			else
-			{
-				updateErrorMessage(tr("Extended Length is not supported."),
-						tr("At least one of your card readers does not meet the technical requirements (Extended Length not supported). Please place the ID card on a different card reader."),
-						QString(),
-						false);
-			}
+			remoteReaderInfo = tr("Connected to following remote readers: %1.").arg(connectedRemoteReaderNames());
 		}
-		else
-		{
-			QString remoteReaderInfo;
-			if (remoteReaders.size() > 0)
-			{
-				remoteReaderInfo = tr("Connected to following remote readers: %1.").arg(connectedRemoteReaderNames());
-			}
-			updateErrorMessage(tr("Please place an ID card on the card reader."),
-					tr("If you have already placed an ID card on your card reader, click on \"Diagnosis\""
-					   " for further information."),
-					remoteReaderInfo,
-					false);
-		}
+		const QString onlineHelpUrl = HelpAction::getOnlineUrl(QStringLiteral("stepChooseCardGui"));
+		const QString onlineHelpText = tr("If you have already placed an ID card on your card reader, "
+										  "you can consult the %1online help%2 for futher information.")
+				.arg(QStringLiteral("<a href=\"%1\">").arg(onlineHelpUrl), QStringLiteral("</a>"));
+
+		updateErrorMessage(tr("Please place an ID card on the card reader."), onlineHelpText, remoteReaderInfo, false);
 	}
 	else if (readersWithNpa.size() > 1)
 	{
-		updateErrorMessage(tr("Please place only one ID card on the card reader."),
-				tr("Please make sure that only one card reader with an ID card on it is connected to"
-				   " your computer. If you have already placed an ID card on your card reader, click"
-				   " on \"Diagnosis\" for further information."),
-				QString(),
-				false);
+		const QString onlineHelpUrl = HelpAction::getOnlineUrl(QStringLiteral("stepChooseCardGui"));
+		const QString onlineHelpText = tr("Please make sure that only one card reader with an ID card on it is connected to "
+										  "your computer. If you have already placed an ID card on your card reader, "
+										  "you can consult the %1online help%2 for futher information.")
+				.arg(QStringLiteral("<a href=\"%1\">").arg(onlineHelpUrl), QStringLiteral("</a>"));
+
+		updateErrorMessage(tr("Please place only one ID card on the card reader."), onlineHelpText, QString(), false);
 	}
 	else
 	{
-		if (readersWithNpa[0].isPinDeactivated())
+		if (!readersWithNpa[0].sufficientApduLength())
+		{
+			updateErrorMessage(tr("Extended Length is not supported."),
+					tr("Your remote reader does not meet the technical requirements (Extended Length not supported)."),
+					QString(),
+					false);
+		}
+		else if (readersWithNpa[0].isPinDeactivated() && !mContext->isCanAllowedMode())
 		{
 			updateErrorMessage(tr("Online identification function is disabled."),
 					tr("This action cannot be performed. The online identification function of your ID card is deactivated."

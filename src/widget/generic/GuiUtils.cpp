@@ -13,7 +13,7 @@
 using namespace governikus;
 
 
-void GuiUtils::showPinCanPukErrorDialog(CardReturnCode pReturnCode, int pRetryCounter, QWidget* pParent)
+void GuiUtils::showPinCanPukErrorDialog(CardReturnCode pReturnCode, int pRetryCounter, bool pCanAllowedMode, QWidget* pParent)
 {
 	QMessageBox messageBox(pParent);
 	QString title;
@@ -22,9 +22,16 @@ void GuiUtils::showPinCanPukErrorDialog(CardReturnCode pReturnCode, int pRetryCo
 	{
 		case CardReturnCode::INVALID_CAN:
 			title = tr("Wrong card access number (CAN)");
-			text = tr("The given card access number (CAN) is not correct. You have one more try to enter the correct PIN."
-					  " Please mind that you have to acknowledge this last try with your card access"
-					  " number (CAN).");
+			if (pCanAllowedMode)
+			{
+				text = tr("The given card access number (CAN) is not correct.");
+			}
+			else
+			{
+				text = tr("The given card access number (CAN) is not correct. You have one more try to enter the correct PIN."
+						  " Please mind that you have to acknowledge this last try with your card access"
+						  " number (CAN).");
+			}
 			break;
 
 		case CardReturnCode::INVALID_PUK:
