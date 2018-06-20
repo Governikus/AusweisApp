@@ -31,9 +31,8 @@ class StepChooseCardGui
 		const QSharedPointer<AuthContext> mContext;
 		StepAuthenticationEac1Widget* const mWidget;
 		QPointer<QMessageBox> mInformationMessageBox;
-		QPointer<DiagnosisGui> mDiagnosisGui;
 		QPointer<ReaderDeviceGui> mReaderDeviceGui;
-		QPushButton* mCancelButton, * mDeviceButton, * mDiagnosisButton;
+		QPushButton* mCancelButton, * mDeviceButton;
 		bool mSubDialogOpen;
 
 		QString getCurrentReaderImage(const QVector<ReaderInfo>& pReaderInfos);

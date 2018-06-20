@@ -25,6 +25,7 @@ WorkflowContext::WorkflowContext()
 	, mStatus(GlobalStatus::Code::No_Error)
 	, mErrorReportedToUser(true)
 	, mWorkflowFinished(false)
+	, mCanAllowedMode(false)
 {
 }
 
@@ -242,4 +243,17 @@ bool WorkflowContext::isWorkflowFinished() const
 void WorkflowContext::setWorkflowFinished(bool pWorkflowFinished)
 {
 	mWorkflowFinished = pWorkflowFinished;
+}
+
+
+bool WorkflowContext::isCanAllowedMode() const
+{
+	return mCanAllowedMode;
+}
+
+
+void WorkflowContext::setCanAllowedMode(bool pCanAllowedMode)
+{
+	mCanAllowedMode = pCanAllowedMode;
+	Q_EMIT fireCanAllowedModeChanged();
 }

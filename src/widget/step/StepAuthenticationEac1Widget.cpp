@@ -120,7 +120,11 @@ void StepAuthenticationEac1Widget::updateButtonsAndPinWidget()
 {
 	Q_EMIT setCancelButtonState(ButtonState::ENABLED);
 
-	if (mContext->getCardConnection()->getReaderInfo().getRetryCounter() == 1)
+	if (mContext->isCanAllowedMode())
+	{
+		mUi->pinGroupBox->setTitle(tr("Please enter the six-digit card access number (CAN) for identification."));
+	}
+	else if (mContext->getCardConnection()->getReaderInfo().getRetryCounter() == 1)
 	{
 		mUi->pinGroupBox->setTitle(tr("Please enter your six-digit card access number (CAN) and your PIN for identification."));
 	}
@@ -362,7 +366,7 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 
 	const auto& allowedDigitsMsg = tr("Only digits (0-9) are permitted.");
 	QRegularExpression onlyNumbersExpression(QStringLiteral("[0-9]*"));
-	if (mContext->getCardConnection()->getReaderInfo().getRetryCounter() == 1)
+	if (mContext->getCardConnection()->getReaderInfo().getRetryCounter() == 1 && !mContext->isCanAllowedMode())
 	{
 		mCANField = new PasswordEdit();
 		mCANField->setAccessibleName(tr("please enter your can"));
@@ -399,12 +403,13 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 	mPINField->configureValidation(onlyNumbersExpression, allowedDigitsMsg);
 	connect(mPINField, &PasswordEdit::textEdited, this, &StepAuthenticationEac1Widget::pinTextEdited);
 
-	if (mContext->getCardConnection()->getReaderInfo().getRetryCounter() == 1)
+	if (mContext->getCardConnection()->getReaderInfo().getRetryCounter() == 1 && !mContext->isCanAllowedMode())
 	{
 		mPINField->setEnabled(false);
 	}
 
-	QLabel* pinLabel = new QLabel(tr("PIN:"));
+	const QString labelLabel = mContext->isCanAllowedMode() == false ? tr("PIN:") : tr("CAN:");
+	QLabel* pinLabel = new QLabel(labelLabel);
 	pinLabel->setFocusPolicy(Qt::TabFocus);
 	basicReaderWidgetLayout->addWidget(pinLabel);
 	basicReaderWidgetLayout->addWidget(mPINField);
@@ -615,7 +620,7 @@ void StepAuthenticationEac1Widget::pinTextEdited(const QString& pText)
 
 void StepAuthenticationEac1Widget::focusWidget()
 {
-	if (mContext->getCardConnection()->getReaderInfo().getRetryCounter() == 1)
+	if (mContext->getCardConnection()->getReaderInfo().getRetryCounter() == 1 && !mContext->isCanAllowedMode())
 	{
 		mCANField->setFocus();
 		mCANField->setCursorPosition(0);

@@ -43,7 +43,6 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 	{
 		Q_EMIT fireReaderPropertiesUpdated(getName());
 		qCDebug(card_nfc) << "ExtendedLengthApduSupport missing. MaxTransceiveLength:" << length;
-		return;
 	}
 
 	mCard.reset(new NfcCard(pTarget));

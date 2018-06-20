@@ -163,16 +163,15 @@ class test_SecureStorage
 			QTest::addColumn<QString>("issuerInfo");
 			QTest::addColumn<QString>("expiryDate");
 
-			QTest::newRow("production") << 0 << "appl.governikus-asp.de" << "TeleSec ServerPass CA 2" << "2018-05-25T23:59:59Z";
+			QTest::newRow("production") << 0 << "appl.governikus-asp.de" << "TeleSec ServerPass Class 2 CA" << "2020-12-06T23:59:59Z";
 			QTest::newRow("ci") << 1 << "*.tf.bos-test.de" << "govkgrootca" << "2018-12-29T09:59:02Z";
-			QTest::newRow("production_2020") << 2 << "appl.governikus-asp.de" << "TeleSec ServerPass Class 2 CA" << "2020-12-06T23:59:59Z";
 		}
 
 
 		void testGetUpdateCertificate()
 		{
 			const auto& certificates = mSecureStorage.getUpdateCertificates();
-			QCOMPARE(certificates.count(), 3);
+			QCOMPARE(certificates.count(), 2);
 
 			QFETCH(int, index);
 			QFETCH(QString, subjectInfo);

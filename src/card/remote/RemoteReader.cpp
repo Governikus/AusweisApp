@@ -53,10 +53,6 @@ void RemoteReader::update(const IfdStatus& pIfdStatus)
 		if (!mReaderInfo.sufficientApduLength())
 		{
 			qCDebug(card_remote) << "ExtendedLengthApduSupport missing. maxAPDULength:" << mReaderInfo.getMaxApduLength();
-			if (!mCard)
-			{
-				return;
-			}
 		}
 	}
 

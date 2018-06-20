@@ -121,7 +121,7 @@ class test_ReaderDriverModel
 			ReaderDriverModel readerDriverModel;
 			QCOMPARE(readerDriverModel.rowCount(), 1);
 			const auto& index = readerDriverModel.index(0, ReaderDriverModel::ColumnId::ReaderStatus, QModelIndex());
-			QCOMPARE(readerDriverModel.data(index).toString(), tr("Connected w/o driver"));
+			QCOMPARE(readerDriverModel.data(index).toString(), tr("No driver installed"));
 		}
 
 
@@ -145,7 +145,7 @@ class test_ReaderDriverModel
 			ReaderDriverModel readerDriverModel;
 			QCOMPARE(readerDriverModel.rowCount(), 1);
 			const auto& index = readerDriverModel.index(0, ReaderDriverModel::ColumnId::ReaderStatus, QModelIndex());
-			QCOMPARE(readerDriverModel.data(index).toString(), tr("Connected w/ driver"));
+			QCOMPARE(readerDriverModel.data(index).toString(), tr("Driver installed"));
 		}
 
 
@@ -162,9 +162,9 @@ class test_ReaderDriverModel
 			ReaderDriverModel readerDriverModel;
 			QCOMPARE(readerDriverModel.rowCount(), 2);
 			index = readerDriverModel.index(0, ReaderDriverModel::ColumnId::ReaderStatus, QModelIndex());
-			QCOMPARE(readerDriverModel.data(index).toString(), tr("Connected w/ driver"));
+			QCOMPARE(readerDriverModel.data(index).toString(), tr("Driver installed"));
 			index = readerDriverModel.index(1, ReaderDriverModel::ColumnId::ReaderStatus, QModelIndex());
-			QCOMPARE(readerDriverModel.data(index).toString(), tr("Connected w/o driver"));
+			QCOMPARE(readerDriverModel.data(index).toString(), tr("No driver installed"));
 		}
 
 

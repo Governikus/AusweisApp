@@ -215,13 +215,13 @@ QVariant RemoteDeviceModel::data(const QModelIndex& pIndex, int pRole) const
 	switch (pRole)
 	{
 		case Qt::DisplayRole:
-			switch (pIndex.column())
+			if (pIndex.column() == ColumnId::ReaderStatus)
 			{
-				case ColumnId::ReaderName:
-					return reader.getDeviceName();
-
-				case ColumnId::ReaderStatus:
-					return getStatus(reader);
+				return getStatus(reader);
+			}
+			else
+			{
+				return reader.getDeviceName();
 			}
 
 		case REMOTE_DEVICE_NAME:

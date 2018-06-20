@@ -210,6 +210,12 @@ bool AuthContext::setEffectiveAccessRights(const QSet<AccessRight>& pAccessRight
 void AuthContext::setTerminalCvc(const QSharedPointer<const CVCertificate>& pTerminalCvc)
 {
 	mTerminalCvc = pTerminalCvc;
+
+	const CHAT& terminalChat = mTerminalCvc->getBody().getCHAT();
+	bool canAllowed = terminalChat.getAccessRights().contains(AccessRight::CAN_ALLOWED);
+	setCanAllowedMode(canAllowed);
+	qDebug() << "CAN allowed mode:" << canAllowed;
+
 	initializeChat();
 }
 
@@ -233,7 +239,14 @@ QByteArray AuthContext::encodeEffectiveChat()
 	CHAT effectiveChat(mTerminalCvc->getBody().getCHAT());
 	effectiveChat.removeAllAccessRights();
 	effectiveChat.setAccessRights(mEffectiveAccessRights);
-	qDebug() << "Using effective chat:" << effectiveChat.encode().toHex();
+
+	if (isCanAllowedMode())
+	{
+		qDebug() << "Enabling \"CAN allowed\" in effective CHAT.";
+		effectiveChat.setAccessRight(AccessRight::CAN_ALLOWED);
+	}
+
+	qDebug() << "Using effective CHAT:" << effectiveChat.encode().toHex();
 	return effectiveChat.encode();
 }
 

@@ -22,7 +22,7 @@ class GuiUtils
 	Q_OBJECT
 
 	public:
-		static void showPinCanPukErrorDialog(CardReturnCode pReturnCode, int pRetryCounter, QWidget* pParent);
+		static void showPinCanPukErrorDialog(CardReturnCode pReturnCode, int pRetryCounter, bool pCanAllowedMode, QWidget* pParent);
 		static bool showWrongPinBlockedDialog(QWidget* pParent);
 };
 

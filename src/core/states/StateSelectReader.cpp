@@ -68,7 +68,8 @@ void StateSelectReader::onReaderInfoChanged()
 	const ReaderInfo& readerInfo = selectableReaders.first();
 	const QString readerName = readerInfo.getName();
 	context->setReaderName(readerName);
-	qCDebug(statemachine) << "Select first found reader" << readerName << "of type" << readerInfo.getPlugInType();
+	qCDebug(statemachine) << "Select first found reader:" << readerName;
+	qCDebug(statemachine) << "Type:" << readerInfo.getPlugInType() << "BasicReader:" << readerInfo.isBasicReader();
 
 	Q_EMIT fireContinue();
 }

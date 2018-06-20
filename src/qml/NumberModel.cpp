@@ -36,6 +36,7 @@ void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 	{
 		connect(mContext.data(), &WorkflowContext::fireCanChanged, this, &NumberModel::fireCanChanged);
 		connect(mContext.data(), &WorkflowContext::firePinChanged, this, &NumberModel::firePinChanged);
+		connect(mContext.data(), &WorkflowContext::fireCanAllowedModeChanged, this, &NumberModel::fireCanAllowedModeChanged);
 
 		const auto changePinContext = mContext.objectCast<ChangePinContext>();
 		if (changePinContext)
@@ -55,6 +56,7 @@ void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 	Q_EMIT firePukChanged();
 	Q_EMIT fireInputErrorChanged();
 	Q_EMIT fireReaderInfoChanged();
+	Q_EMIT fireCanAllowedModeChanged();
 }
 
 
@@ -135,6 +137,12 @@ void NumberModel::setPuk(const QString& pPuk)
 	{
 		changePinContext->setPuk(pPuk);
 	}
+}
+
+
+bool NumberModel::hasError()
+{
+	return !getInputError().isEmpty() || isExtendedLengthApdusUnsupported() || isPinDeactivated();
 }
 
 
@@ -232,6 +240,16 @@ bool NumberModel::isCardConnected() const
 	if (mContext && !mContext->getReaderName().isEmpty())
 	{
 		return ReaderManager::getInstance().getReaderInfo(mContext->getReaderName()).hasCard();
+	}
+	return false;
+}
+
+
+bool NumberModel::isCanAllowedMode()
+{
+	if (mContext)
+	{
+		return mContext->isCanAllowedMode();
 	}
 	return false;
 }

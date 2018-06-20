@@ -42,7 +42,7 @@ show a possible communication.
 
    In case your client application requires data input from the
    ID card, you need to get this from the backend system
-   (e.g. the eID server) after a succesfull authentication.
+   (e.g. the eID server) after a successful authentication.
 
 
    .. seealso::

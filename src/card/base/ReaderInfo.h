@@ -142,6 +142,10 @@ class ReaderInfo
 
 		bool sufficientApduLength() const
 		{
+			if (!hasCard())
+			{
+				return true;
+			}
 			return mMaxApduLength == 0 || mMaxApduLength >= 500;
 		}
 

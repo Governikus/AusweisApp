@@ -172,7 +172,7 @@ void ReaderDeviceWidget::updateInfoText()
 	{
 		if (mLocalReaderDataModel.rowCount() == 0)
 		{
-			infoText = tr("No card reader detected");
+			infoText = tr("Please connect suitable card reader");
 		}
 		else
 		{
@@ -294,7 +294,7 @@ void ReaderDeviceWidget::onConnectClicked()
 		setEnabled(false);
 
 		QMessageBox pairingInfoBox(this);
-		pairingInfoBox.setText(tr("Start the pairing mode on the other device if it is not already started."));
+		pairingInfoBox.setText(tr("Please start pairing mode first."));
 		pairingInfoBox.setWindowModality(Qt::WindowModal);
 		pairingInfoBox.setWindowFlags(pairingInfoBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 		pairingInfoBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);

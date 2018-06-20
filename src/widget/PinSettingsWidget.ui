@@ -370,7 +370,7 @@ However, you can change your PIN on your smartphone directly as long as the remo
        </item>
       </layout>
      </widget>
-	 <widget class="QWidget" name="errorInsufficientApduLengthSingle">
+	 <widget class="QWidget" name="errorInsufficientApduLength">
 	  <layout class="QVBoxLayout" name="verticalLayout_29">
 	   <property name="spacing">
 	    <number>0</number>
@@ -396,44 +396,6 @@ However, you can change your PIN on your smartphone directly as long as the remo
 		  <string>&lt;html&gt;
 &lt;h4&gt;Extended Length is not supported.&lt;/h4&gt;
 &lt;p&gt;Your remote reader does not meet the technical requirements (Extended Length not supported).&lt;/p&gt;
-&lt;/html&gt;</string>
-         </property>
-		 <property name="alignment">
-		  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-		 </property>
-		 <property name="wordWrap">
-		  <bool>true</bool>
-		 </property>
-		</widget>
-		</item>
-	  </layout>
-	 </widget>
-	 <widget class="QWidget" name="errorInsufficientApduLengthMulti">
-	  <layout class="QVBoxLayout" name="verticalLayout_30">
-	   <property name="spacing">
-	    <number>0</number>
-		</property>
-	   <property name="leftMargin">
-	    <number>0</number>
-		</property>
-	   <property name="topMargin">
-	    <number>0</number>
-		</property>
-	   <property name="rightMargin">
-	    <number>0</number>
-		</property>
-	   <property name="bottomMargin">
-	    <number>0</number>
-		</property>
-	   <item>
-	    <widget class="QLabel" name="label_30">
-		 <property name="focusPolicy">
-		  <enum>Qt::TabFocus</enum>
-		 </property>
-		 <property name="text">
-		  <string>&lt;html&gt;
-&lt;h4&gt;Extended Length is not supported.&lt;/h4&gt;
-&lt;p&gt;At least one of your card readers does not meet the technical requirements (Extended Length not supported). Please place the ID card on a different card reader.&lt;/p&gt;
 &lt;/html&gt;</string>
          </property>
 		 <property name="alignment">

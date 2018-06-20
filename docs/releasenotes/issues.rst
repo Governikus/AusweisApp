@@ -24,3 +24,7 @@ Die nachfolgende Liste bezieht sich auf die aktuelle Version der AusweisApp2.
 
   - Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle
     auf Android.
+
+  - Das Vor-Ort-Auslesen von Ausweisdaten unter Anwesenden (gem. §18a PAuswG)
+    funktioniert nicht, wenn ein Smartphone als Kartenlesegerät genutzt wird
+    und der Tastaturmodus "PIN-Eingabe auf diesem Gerät" aktiviert ist.

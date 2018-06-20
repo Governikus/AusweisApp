@@ -54,6 +54,7 @@ SectionPage
 				}
 				text: (!pinField.confirmedInput ? qsTr("The entered PIN does not match the new PIN. Please correct your input.") :
 					  !!numberModel.inputError ? numberModel.inputError :
+					  baseItem.state === "CAN" && numberModel.isCanAllowedMode ? qsTr("Please enter the six-digit card access number. You can find the card access number on the front of the ID card.") :
 					  baseItem.state === "CAN" ? qsTr("You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.") :
 					  baseItem.state === "PUK" ? qsTr("You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.") :
 					  baseItem.state === "PIN_NEW" ? qsTr("Please enter a new 6-digit PIN of your choice.") :

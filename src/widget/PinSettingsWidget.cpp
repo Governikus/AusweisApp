@@ -179,15 +179,6 @@ void PinSettingsWidget::updateReadersWithoutNPA(const QVector<ReaderInfo>& pRead
 	mMode = Mode::Normal;
 	mUi->headerStackedWidget->setCurrentWidget(mUi->errorNoNpaHeaderPage);
 
-	bool readerWithInsufficientApduLength = false;
-	for (const auto& readerInfo : pReaderInfos)
-	{
-		if (!readerInfo.sufficientApduLength())
-		{
-			readerWithInsufficientApduLength = true;
-		}
-	}
-
 	bool basicReaderPage = false;
 	if (pReaderInfos.size() == 1)
 	{
@@ -202,21 +193,11 @@ void PinSettingsWidget::updateReadersWithoutNPA(const QVector<ReaderInfo>& pRead
 			QPixmap pixmap(readerInfo.getReaderConfigurationInfo().getIcon()->lookupPath());
 			mUi->noNpaLabel->setPixmap(pixmap.scaledToWidth(SCALEWIDTH, Qt::SmoothTransformation));
 		}
-
-		if (readerWithInsufficientApduLength)
-		{
-			mUi->headerStackedWidget->setCurrentWidget(mUi->errorInsufficientApduLengthSingle);
-		}
 	}
 	else
 	{
 		QPixmap pixmap(ReaderConfiguration::getMultipleReaderIconPath());
 		mUi->noNpaLabel->setPixmap(pixmap.scaledToWidth(250, Qt::SmoothTransformation));
-
-		if (readerWithInsufficientApduLength)
-		{
-			mUi->headerStackedWidget->setCurrentWidget(mUi->errorInsufficientApduLengthMulti);
-		}
 	}
 
 	mUi->stackedWidget->setCurrentWidget(basicReaderPage ? mUi->changePinBasicPage : mUi->errorNoNpaPage);
@@ -257,25 +238,12 @@ bool PinSettingsWidget::updateReadersForOneNPA(const ReaderInfo& pReaderInfo)
 		setupPinSuccessfullyChangedPage(pReaderInfo);
 		mUi->headerStackedWidget->setCurrentWidget(mUi->pinSuccessHeaderPage);
 		mUi->stackedWidget->setCurrentWidget(mUi->pinSuccessPage);
+		mUi->canEdit->clear();
+		mUi->oldPinEdit->clear();
+		mUi->newPinEdit->clear();
+		mUi->repeatNewPinEdit->clear();
+		mUi->pukEdit->clear();
 		return true;
-	}
-
-	if (mPinDeactivated)
-	{
-		if (pReaderInfo.isBasicReader())
-		{
-			setupPinBasicPage(pReaderInfo);
-			mUi->stackedWidget->setCurrentWidget(mUi->changePinBasicPage);
-		}
-		else
-		{
-			QPixmap pixmap(pReaderInfo.getReaderConfigurationInfo().getIconWithNPA()->lookupPath());
-			mUi->deactivatedReaderImageLabel->setPixmap(pixmap.scaledToWidth(SCALEWIDTH, Qt::SmoothTransformation));
-			mUi->stackedWidget->setCurrentWidget(mUi->errorPinDeactivatedPage);
-		}
-
-		mUi->headerStackedWidget->setCurrentWidget(mUi->errorPinDeactivatedHeaderPage);
-		return false;
 	}
 
 	if (pReaderInfo.isBasicReader())
@@ -287,6 +255,30 @@ bool PinSettingsWidget::updateReadersForOneNPA(const ReaderInfo& pReaderInfo)
 	{
 		setupPinComfortPage(pReaderInfo);
 		mUi->stackedWidget->setCurrentWidget(mUi->changePinComfortPage);
+	}
+
+	if (!pReaderInfo.sufficientApduLength())
+	{
+		if (!pReaderInfo.isBasicReader())
+		{
+			mUi->stackedWidget->setCurrentWidget(mUi->errorNoNpaPage);
+		}
+
+		mUi->headerStackedWidget->setCurrentWidget(mUi->errorInsufficientApduLength);
+		return false;
+	}
+
+	if (mPinDeactivated)
+	{
+		if (!pReaderInfo.isBasicReader())
+		{
+			QPixmap pixmap(pReaderInfo.getReaderConfigurationInfo().getIconWithNPA()->lookupPath());
+			mUi->deactivatedReaderImageLabel->setPixmap(pixmap.scaledToWidth(SCALEWIDTH, Qt::SmoothTransformation));
+			mUi->stackedWidget->setCurrentWidget(mUi->errorPinDeactivatedPage);
+		}
+
+		mUi->headerStackedWidget->setCurrentWidget(mUi->errorPinDeactivatedHeaderPage);
+		return false;
 	}
 
 	return !pReaderInfo.isBasicReader();

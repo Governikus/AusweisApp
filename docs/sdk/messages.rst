@@ -328,9 +328,14 @@ Indicates that a CAN is required to continue workflow.
 If the AusweisApp2 sends this message, you will have to
 provide the CAN of the inserted card with :ref:`set_can`.
 
-The workflow will automatically continue if the CAN was correct
-and the AusweisApp2 will send an :ref:`enter_pin` message.
-If the correct CAN is entered the retryCounter will still be **1**.
+The CAN is required to enable the last attempt of PIN input if
+the retryCounter is **1**. The workflow continues automatically with
+the correct CAN and the AusweisApp2 will send an :ref:`enter_pin` message.
+Despite the correct CAN being entered, the retryCounter remains at **1**.
+
+The CAN is also required, if the authentication terminal has an approved
+"CAN allowed right". This allows the workflow to continue without
+an additional PIN.
 
 If your application provides an invalid :ref:`set_can` command
 the AusweisApp2 will send an :ref:`enter_can` message with an error
@@ -339,6 +344,9 @@ parameter.
 If your application provides a valid :ref:`set_can` command
 and the CAN was incorrect the AusweisApp2 will send :ref:`enter_can`
 again but without an error parameter.
+
+.. versionadded:: 1.14.2
+   Support of "CAN allowed right".
 
 
   - **error**: Optional error message if your command :ref:`set_can`

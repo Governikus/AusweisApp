@@ -157,18 +157,6 @@
 		},
 		{
 			"exclude": ["ios"],
-			"shortName": {"" : "Ausweis Auskunft des Bundes"},
-			"address": "https://www.buergerserviceportal.de/bund/ausweisapp/bspx_selbstauskunft",
-			"homepage": "https://www.buergerserviceportal.de/",
-			"phone": "+49 180-1-33 33 33",
-			"email": "eID_buergerservice@bmi.bund.de",
-			"postalAddress": "Bundesministerium des Innern, für Bau und Heimat<br/>Alt-Moabit 101 D<br/>10559 Berlin",
-			"category": "citizen",
-			"tcTokenUrl" : "https://www.buergerserviceportal.de:443/bund/ausweisapp/bspx_selbstauskunft/SamlAuthnRequestProvider",
-			"subjectUrls": ["https://www.buergerserviceportal.de"]
-		},
-		{
-			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Berlin"},
 			"longName": {"" : "BAföG Online Berlin"},
 			"shortDescription": {"": "BAföG-Anträge und Formblätter online ausfüllen und unterschreiben."},
@@ -667,7 +655,7 @@
 		},
 		{
 			"exclude": ["ios"],
-			"shortName": {"" : "Identitätsprüfungen nach dem Signaturgesetz und dem Geldwäschegesetz"},
+			"shortName": {"" : "Identitätsprüfungen nach der eIDAS und dem Geldwäschegesetz"},
 			"longDescription": {"": "Die identity Trust Management AG bietet Unternehmen die Möglichkeit, ihre Kunden schnell und sicher mit der Online-Ausweisfunktion zu identifizieren. <br/>Kunden der Kooperationspartner der identity Trust Management AG können die Identitätsprüfung nach dem Signaturgesetz und dem Geldwäschegesetz auch direkt über die Internetseite der identity Trust Management AG vornehmen."},
 			"address": "https://www.identity.tm",
 			"homepage": "https://www.identity.tm",
@@ -718,13 +706,17 @@
 		},
 		{
 			"exclude": ["ios"],
-			"shortName": {"" : "Kraftfahrt-Bundesamt - Registerauskunft"},
-			"longDescription": {"": "Mit der Online-Ausweisfunktion können Sie beim Kraftfahrt-Bundesamt einfach und schnell eine Auskunft über Ihren Punktestand und die zu Ihrer Person gespeicherten Eintragungen im Fahreignungsregister (FAER) beantragen. Die erforderlichen Daten werden dann von Ihrem Personalausweis ausgelesen. Die Auskunft erhalten Sie innerhalb weniger Tage per Post."},
+			"shortName": {"" : "Online-Registerauskunft"},
+			"longName": {"" : "Auskunft aus den Zentralen Registern des Kraftfahrt-Bundesamtes"},
+			"shortDescription": {"": "Mit der Anwendung können Privatpersonen eine Auskunft aus dem Fahreignungsregister -(Punkteauskunft) und aus dem Zentralen Fahrzeugregister (Fahrzeugzulassungen) des Kraftfahrt-Bundesamtes erhalten. Diese umfasst ausgewählte Daten, die zu der jeweiligen Person gespeichert sind."},
+			"longDescription": {"": "Die Online-Auskunft aus dem Zentralen Fahrzeugregister umfasst Informationen zur Fahrzeugbeschreibung, den Halterdaten, der Haftpflichtversicherung, der Fahrzeughistorie und den zulassungsrechtlich relevanten Ereignissen. Daten von vormaligen Haltern und interne Verwaltungsdaten sind von der Auskunft ausgenommen.<br/>Die Online-Auskunft aus dem Fahreignungsregister umfasst Informationen zu den eingetragenen Verkehrsverstößen, deren Punktbewertung und  Löschungsdatum."},
 			"address": "https://www.kba-online.de/registerauskunft/app/registeranfrage.html",
-			"homepage": "https://www.kba.de/",
-			"phone": "+49 461 316-0",
-			"email": "poststelle@kba.de",
-			"postalAddress": "Kraftfahrt-Bundesamt <br/>Fördestraße 16<br/>24944 Flensburg",
+			"homepage": "https://www.kba.de",
+			"phone": "+49 461 316-1717",
+			"email": "Anwenderbetreuung@kba.de",
+			"postalAddress": "Kraftfahrt-Bundesamt<br/>24932 Flensburg",
+			"image": "KraftfahrtBundesamt_image.png",
+			"icon": "KraftfahrtBundesamt_icon.png",
 			"category": "citizen",
 			"tcTokenUrl" : "https://www.kba-online.de:443/registerauskunft/app/eidstart.html;jsessionid=HZFFDC4E848A794D83A1D3032252F3F905?ref=HZFFDC4E848A794D83A1D3032252F3F905",
 			"tcTokenUrlInfo" : "TcToken URL contains dynamic request id but is accepted anyway.",
@@ -785,21 +777,8 @@
 			"subjectUrls": ["https://www.fp-demail.de"]
 		},
 		{
-			"exclude": ["ios", "android"],
-			"shortName": {"" : "Schufa – Auskunftsportal „Meine SCHUFA“"},
-			"longDescription": {"": "Wenn Sie Ihre Bonität gegenüber Dritten z. B. für einen Mietvertrag, belegen müssen, benötigen Sie dazu in der Regel eine SCHUFA-Auskunft. Mit der Online-Ausweisfunktion können Sie sich einfach und sicher am Kundenportal „MeineSCHUFA“ registrieren. Ohne weitere Verzögerungen haben Sie nach Anmeldung am Portal die Möglichkeit Ihre Schufa-Auskunft direkt online abzurufen oder auf dem Postweg Ihren Geschäftspartnern zukommen zu lassen. Der Personalausweis erspart Ihnen hierbei unnötige Wartezeit und gewährleistet dennoch eine verlässliche Identifizierung."},
-			"address": "https://www.meineschufa.de/index.php?site=30_2_1_pa#tabNPA",
-			"homepage": "https://www.meineschufa.de",
-			"phone": "+49 611 – 92780",
-			"email": "meineSCHUFA@SCHUFA.de",
-			"postalAddress": "SCHUFA Holding AG<br/>Postfach 10 25 66<br/>44725 Bochum",
-			"category": "citizen",
-			"tcTokenUrl" : "https://www.meineschufa.de/eID-Service-Connector-V2/createSamlRequest/Reg",
-			"subjectUrls": ["https://www.meineschufa.de"]
-		},
-		{
 			"shortName": {"" : "Selbstauskunft - „Meine Daten einsehen“"},
-			"longDescription": {"": "Die AusweisApp2 verfügt über die Funktion \"Meine Daten einsehen\". Mit dieser Funktion können die auf dem Personalausweis bzw. dem elektronischen Aufenthaltstitel gespeicherten Daten ausgelesen und angezeigt werden.<br/>Sobald Sie die AusweisApp2 gestartet und ein geeignetes Kartenlesegerät angeschlossen haben, können Sie diese Funktion unter dem Menüpunkt \"Ausweisen\" aufrufen. Über voreingestellte Checkboxen können Sie steuern, ob Sie alle gespeicherten Daten oder nur spezielle Daten auslesen möchten.<br/>Nach Ihrer PIN-Eingabe und erfolgreicher Datenübertragung werden die von Ihnen festgelegten Daten in der AusweisApp2 dargestellt.<br/>Bitte beachten Sie, dass Sie für diesen Vorgang eine Internetverbindung benötigen. Dies hat folgenden Hintergrund: Für jedes Auslesen der Daten aus dem Personalausweis oder dem elektronischen Aufenthaltstitel muss gesetzlich der Zweck des Auslesevorgangs angegeben werden. Dieser Zweck wird Ihnen auf einem speziellen Zertifikat angezeigt (Berechtigungszertifikat). Diese Zertifikate werden individuell durch die Vergabestelle für Berechtigungszertifikate beim Bundesverwaltungsamt genehmigt. Damit Sie also jederzeit genau wissen, wer zu welchem Zweck einen Auslesevorgang startet, wird eine Internetverbindung zu einem vertrauenswürdigen Authentisierungsserver aufgebaut. Die Berechtigungszertifikate dienen Ihrem Schutz!"},
+			"longDescription": {"": "Die AusweisApp2 verfügt über die Funktion \"Meine Daten einsehen\". Mit dieser Funktion können die auf dem Personalausweis bzw. dem elektronischen Aufenthaltstitel gespeicherten Daten ausgelesen und angezeigt werden. Hierbei sprechen wir auch von einer sogenannten Selbstauskunft.<br/><br/>Sobald Sie die AusweisApp2 gestartet und ein geeignetes Kartenlesegerät installiert bzw. ein Android-Smartphone verbunden haben, können Sie diese Funktion unter dem Menüpunkt \"Ausweisen\" aufrufen. (Auf Mobilgeräten finden Sie die Ausweis-Auskunft übrigens auch direkt auf der Startseite sowie im Menüeintrag „Ausweisen“.)<br/><br/>Nach Ihrer PIN-Eingabe und erfolgreicher Datenübertragung werden die Daten in der AusweisApp2 dargestellt.<br/><br/>Bei der Selbstauskunft handelt es sich um einen reinen Demonstrationsdienst. Die ausgelesenen Daten werden lediglich zur Anzeige gebracht und nicht weitergegeben.<br/><br/>Bitte beachten Sie, dass Sie auch für diesen Vorgang eine Internetverbindung benötigen. Dies hat folgenden Hintergrund: Der Zugriff auf die Daten des Personalausweises bzw. des elektronischen Aufenthaltstitels ist nur möglich, wenn derjenige, der auf die Daten zugreifen möchte sich selbst zunächst eindeutig identifiziert. Dies geschieht über das sog. Berechtigungszertifikat. Es wird Ihnen immer angezeigt, wer auf Ihre Daten zugreifen möchte. Die Erlaubnis, ein Berechtigungszertifikat zu erhalten, wird einen Diensteanbieter auf Antrag und nach Prüfung bei der Vergabestelle für Berechtigungszertifikate beim Bundesverwaltungsamt erteilt. Um das technische Berechtigungszertifikat anzuzeigen und darüber hinaus eine Gültigkeitsprüfung des Ausweisdokuments durchführen zu können, ist eine Internetverbindung zwingend erforderlich. Aus diesem Grund spricht man auch von der Online-Ausweisfunktion."},
 			"address": "https://www.ausweisapp.bund.de/ausweisapp2/ausprobieren-meine-daten-einsehen/",
 			"homepage": "https://www.ausweisapp.bund.de/",
 			"phone": "+49 1805 - 348743",
@@ -865,18 +844,6 @@
 			"category": "citizen",
 			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
 			"subjectUrls": ["https://tbk.ego-mv.de/BuergerKontoWeb"]
-		},
-		{
-			"shortName": {"" : "Techniker Krankenkasse"},
-			"longDescription": {"": "Die Online-Ausweisfunktion des Personalausweises ermöglicht Ihnen die schnelle und sichere Registrierung am Kundenportal \"Meine TK\". Damit können Sie online verbindlich Anträge stellen und Ihre Unterlagen anfordern (z. B. eine neue Versichertenkarte). Außerdem lassen sich persönliche Daten wie Kontoverbindung oder Adresse selbstständig ändern und verwalten. Wenn Sie \"Meine TK\" mit der Online-Ausweisfunktion nutzen, sparen Sie Zeit und Aufwand."},
-			"address": "https://www.tk.de/tk/118032",
-			"homepage": "https://www.tk.de/",
-			"phone": "+49 800 - 285 85 85",
-			"email": "service@tk.de",
-			"postalAddress": "Techniker Krankenkasse<br/>Bramfelder Straße 140<br/>22305 Hamburg",
-			"category": "insurance",
-			"tcTokenUrlInfo" : "Registration required",
-			"subjectUrls": ["https://www.tk.de"]
 		},
 		{
 			"exclude": ["ios"],

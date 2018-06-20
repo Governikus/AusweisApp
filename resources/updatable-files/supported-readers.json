@@ -207,7 +207,7 @@
 			[
 				{
 					"Platforms": [{"os": "win", "min": "6.1", "max": "6.1"}],
-					"DE": "Weder der Windows Driver noch der Installer werden dem Kartenlesegerät zugeordnet. Erst eine manuelle Installation über den Gerätemanager, bei der der Hinweis ignoriert wird, dass es sich um den falschen Treiber handelt, führt zu einem Erfolg.",
+					"DE": "Weder der Windows Treiber noch der Installer werden dem Kartenlesegerät zugeordnet. Erst eine manuelle Installation über den Gerätemanager, bei der der Hinweis, dass es sich um einen falschen Treiber handelt, zu ignorieren ist, führt zu einem Erfolg.",
 					"EN": "Neither the Windows driver nor the installer are assigned to the card reader. Only a manual installation via the device manager, ignoring the note that it is the wrong driver, leads to a success."
 				}
 			]
@@ -520,8 +520,8 @@
 				},
 				{
 					"Platforms": [{"os": "mac", "max": "10.10"}],
-					"DE": "Der Treiber vom Hersteller wird nicht unterstützt. Für die Funktion des Kartenlesegeräts muss der Treiber von macOS 10.12 installiert werden.",
-					"EN": "The driver from the manufacturer is not supported. For the function of the card reader the driver for macOS 10.12 must be installed."
+					"DE": "Der vom Hersteller angebotene Treiber für OS X 10.10 führt nicht zum Erfolg. Bitte verwenden Sie alternativ den ebenfalls vom Hersteller angebotenen Treiber für macOS 10.12.",
+					"EN": "The driver from the manufacturer is not supported on OS X 10.10. For the function of the card reader the driver for macOS 10.12 must be installed."
 				},
 				{
 					"Platforms": [{"os": "mac", "min": "10.11"}],
@@ -562,8 +562,8 @@
 				},
 				{
 					"Platforms": [{"os": "mac", "max": "10.10"}],
-					"DE": "Der Treiber vom Hersteller wird nicht unterstützt. Für die Funktion des Kartenlesegeräts muss der Treiber von macOS 10.12 installiert werden.",
-					"EN": "The driver from the manufacturer is not supported. For the function of the card reader the driver for macOS 10.12 must be installed."
+					"DE": "Der vom Hersteller angebotene Treiber für OS X 10.10 führt nicht zum Erfolg. Bitte verwenden Sie alternativ den ebenfalls vom Hersteller angebotenen Treiber für macOS 10.12.",
+					"EN": "The driver from the manufacturer is not supported on OS X 10.10. For the function of the card reader the driver for macOS 10.12 must be installed."
 				},
 				{
 					"Platforms": [{"os": "mac", "min": "10.11"}],

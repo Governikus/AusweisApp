@@ -91,13 +91,14 @@ Item {
 				return "";
 			} else if (!!numberModel.inputError) {
 				return numberModel.inputError;
+			} else if (numberModel.extendedLengthApdusUnsupported) {
+				qsTr("Your remote device does not meet the technical requirements (Extended Length not supported).");
 			} else if (numberModel.pinDeactivated) {
 				qsTr("The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.");
 			} else {
 				return qsTr("Connected to %1. Please insert your ID card.").arg(remoteServiceModel.connectedServerDeviceNames);
 			}
 		}
-		subTitleTextRedColor: false
 	}
 
 	TechnologySwitch {

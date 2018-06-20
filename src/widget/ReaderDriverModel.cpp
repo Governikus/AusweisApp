@@ -72,10 +72,10 @@ QString ReaderDriverModel::getStatus(const ReaderConfigurationInfo& pReaderConfi
 
 	if (mKnownDrivers.contains(pReaderConfigurationInfo))
 	{
-		return tr("Connected w/ driver");
+		return tr("Driver installed");
 	}
 
-	return tr("Connected w/o driver");
+	return tr("No driver installed");
 }
 
 
@@ -155,10 +155,10 @@ QString ReaderDriverModel::getHTMLDescription(const QModelIndex& pIndex) const
 
 	if (mKnownDrivers.contains(mConnectedReaders.at(pIndex.row())))
 	{
-		return tr("Device is installed correctly.");
+		return tr("Card reader ready for use.");
 	}
 
-	return tr("Device is not configured, please download and install the driver you can find at url: %1").
+	return tr("Please download and install the driver you can find at: %1").
 		   arg(QStringLiteral("<a href=\"%1\">%1</a>").arg(mConnectedReaders.at(pIndex.row()).getUrl()));
 }
 

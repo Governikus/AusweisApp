@@ -65,7 +65,17 @@ SectionPage {
 		MoreViewMenuItem {
 			text: qsTr("Software license") + settingsModel.translationTrigger
 			imageSource: "qrc:///images/iOS/more/icon_mehr_license.svg"
-			onClicked: Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/download/"))
+			onClicked: {
+				if (Qt.platform.os === "android") {
+					Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/download/android/"))
+				}
+				else if (Qt.platform.os === "ios") {
+					Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/download/ios/"))
+				}
+				else {
+					Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/download/windows-and-mac/"))
+				}
+			}
 		}
 
 		MoreViewMenuItem {

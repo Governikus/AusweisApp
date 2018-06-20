@@ -150,8 +150,14 @@ class Env
 		template<typename T>
 		inline T* fetchSingleton()
 		{
+			#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+			static_assert(QtPrivate::IsGadgetHelper<T>::IsRealGadget || QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value,
+					"Singletons needs to be a Q_GADGET or an QObject/Q_OBJECT");
+			#else
 			static_assert(QtPrivate::IsGadgetHelper<T>::Value || QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value,
 					"Singletons needs to be a Q_GADGET or an QObject/Q_OBJECT");
+			#endif
+
 			Identifier id = T::staticMetaObject.className();
 			void* obj = fetchStoredSingleton(id);
 
@@ -236,8 +242,13 @@ class Env
 		template<typename T>
 		static QSharedPointer<T> getShared()
 		{
+			#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+			static_assert(QtPrivate::IsGadgetHelper<T>::IsRealGadget || QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value,
+					"Shared class needs to be a Q_GADGET or an QObject/Q_OBJECT");
+			#else
 			static_assert(QtPrivate::IsGadgetHelper<T>::Value || QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value,
 					"Shared class needs to be a Q_GADGET or an QObject/Q_OBJECT");
+			#endif
 
 			auto& holder = getInstance().mSharedInstances;
 			const auto* className = T::staticMetaObject.className();

@@ -26,12 +26,14 @@ Q_DECLARE_LOGGING_CATEGORY(gui)
 //Mapping object name to help file, \see AppQtMainWidget::onContentActionClicked()
 const QMap<QString, QString> HelpAction::mHelpMapping = {
 	{QStringLiteral("setupAssistant"), QStringLiteral("wizard-info.html")},
+	{QStringLiteral("setupAssistantSetupCompleted"), QString()},
 	{QStringLiteral("ausweisenPage"), QStringLiteral("identify.html")},
 	{QStringLiteral("providerPage"), QStringLiteral("provider.html")},
 	{QStringLiteral("historyPage"), QStringLiteral("history.html")},
 	{QStringLiteral("generalTab"), QStringLiteral("settings-general.html")},
 	{QStringLiteral("pinTab"), QStringLiteral("settings-pin-management.html")},
-	{QStringLiteral("readerDeviceTab"), QStringLiteral("settings-reader-detection.html")}
+	{QStringLiteral("readerDeviceTab"), QStringLiteral("settings-reader-detection.html")},
+	{QStringLiteral("stepChooseCardGui"), QStringLiteral("settings-reader-detection.html")}
 };
 
 

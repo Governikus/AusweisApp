@@ -20,7 +20,7 @@ class CustomSchemeActivationContext
 
 	public:
 		CustomSchemeActivationContext(const QUrl& pActivationUrl);
-		virtual ~CustomSchemeActivationContext();
+		virtual ~CustomSchemeActivationContext() override;
 
 		QUrl getActivationURL() const override;
 

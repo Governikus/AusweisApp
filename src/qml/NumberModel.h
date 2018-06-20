@@ -23,11 +23,13 @@ class NumberModel
 	Q_PROPERTY(QString pin READ getPin WRITE setPin NOTIFY firePinChanged)
 	Q_PROPERTY(QString newPin READ getNewPin WRITE setNewPin NOTIFY fireNewPinChanged)
 	Q_PROPERTY(QString puk READ getPuk WRITE setPuk NOTIFY firePukChanged)
+	Q_PROPERTY(bool hasError READ hasError NOTIFY fireReaderInfoChanged)
 	Q_PROPERTY(QString inputError READ getInputError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(int retryCounter READ getRetryCounter NOTIFY fireReaderInfoChanged)
 	Q_PROPERTY(bool extendedLengthApdusUnsupported READ isExtendedLengthApdusUnsupported NOTIFY fireReaderInfoChanged)
 	Q_PROPERTY(bool pinDeactivated READ isPinDeactivated NOTIFY fireReaderInfoChanged)
 	Q_PROPERTY(bool cardConnected READ isCardConnected NOTIFY fireReaderInfoChanged)
+	Q_PROPERTY(bool isCanAllowedMode READ isCanAllowedMode NOTIFY fireCanAllowedModeChanged)
 
 	QSharedPointer<WorkflowContext> mContext;
 
@@ -53,6 +55,8 @@ class NumberModel
 		QString getPuk() const;
 		void setPuk(const QString& pPuk);
 
+		bool hasError();
+
 		QString getInputError() const;
 
 		int getRetryCounter() const;
@@ -62,6 +66,8 @@ class NumberModel
 		bool isPinDeactivated() const;
 
 		bool isCardConnected() const;
+
+		bool isCanAllowedMode();
 
 	private Q_SLOTS:
 		void onReaderInfoChanged(const QString& pReaderName);
@@ -73,6 +79,7 @@ class NumberModel
 		void firePukChanged();
 		void fireInputErrorChanged();
 		void fireReaderInfoChanged();
+		void fireCanAllowedModeChanged();
 };
 
 
