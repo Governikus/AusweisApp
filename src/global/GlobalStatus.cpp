@@ -230,9 +230,9 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 
 		case Code::Card_Protocol_Error:
 			return QStringLiteral("%1 <a href=\"%2\">%3</a>.").arg(
-				tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at"),
-				tr("https://www.ausweisapp.bund.de/en/service/support/"),
-				tr("AusweisApp2 Support"));
+					tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at"),
+					tr("https://www.ausweisapp.bund.de/en/service/support/"),
+					tr("AusweisApp2 Support"));
 
 		case Code::Card_Invalid_Pin:
 			return tr("The given PIN is invalid.");

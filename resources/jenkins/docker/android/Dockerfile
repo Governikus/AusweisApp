@@ -7,8 +7,8 @@ RUN echo "[multilib]" >> /etc/pacman.conf && echo 'Include = /etc/pacman.d/mirro
 
 RUN chown -R governikus: /var/cache/pacman/pkg/
 
-ARG JENKINS_SWARM_VERSION=3.8
-ARG TINI_VERSION=0.16.1
+ARG JENKINS_SWARM_VERSION=3.13
+ARG TINI_VERSION=0.18.0
 RUN curl -L -o /sbin/tini https://github.com/krallin/tini/releases/download/v$TINI_VERSION/tini-static-muslc-amd64 && chmod 755 /sbin/tini && \
     curl -L -o /swarm-client.jar https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/$JENKINS_SWARM_VERSION/swarm-client-$JENKINS_SWARM_VERSION.jar
 ADD ../swarm/swarm.sh /

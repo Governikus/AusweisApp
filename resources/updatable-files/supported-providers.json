@@ -1,5 +1,5 @@
 {
-	"issueDate": "2017-12-14T12:00:00+1:00",
+	"issueDate": "2018-07-05T12:00:00+1:00",
 	"callcosts" : [
 		{
 			"prefixes" : ["1371", "1375"],
@@ -395,8 +395,8 @@
 		{
 			"shortName": {"" : "Bürgerportal Rheinland Pfalz"},
 			"longDescription": {"": "Über 80% der Meldebehörden und über 90% der Standesämter in Rheinland-Pfalz bieten Ihnen über das Portal www.rlpdirekt.de Verwaltungsleistungen mit der Online-Ausweisfunktion an, für die Sie nicht mehr zur Behörde gehen müssen, z. B.:<br/>- Kfz abmelden<br/>- Führungszeugnis beantragen,<br/>- Meldebescheinigung beantragen,<br/>- Aufenthaltsbescheinigung beantragen,<br/>- Übermittlungssperre einrichten,<br/>- Auskunft aus dem Gewerbezentralregister beantragen,<br/>- Beurkundung im Personenstandswesen beantragen.<br/>Welche Dienste in Ihrer Kommune mit der Online-Ausweisfunktion genutzt werden können, erfahren Sie, wenn Sie auf dem Portal unter \"Stadt/Ort\" Ihren Wohnort eingeben."},
-			"address": "https://www.rlpdirekt.de/rheinland-pfalz",
-			"homepage": "https://www.rlpdirekt.de/rheinland-pfalz/",
+			"address": "https://www.rlpdirekt.de/",
+			"homepage": "https://www.rlpdirekt.de/",
 			"phone": "+49 6131 / 6277-0",
 			"email": "support@kommwis.de",
 			"postalAddress": "KommWis GmbH<br/>Gesellschaft für Kommunikation und Wissenstransfer mbH<br/>Hindenburgplatz 3<br/>55118 Mainz",
@@ -668,19 +668,6 @@
 		},
 		{
 			"exclude": ["ios"],
-			"shortName": {"" : "ID-Safe des Landkreis Kitzingen"},
-			"longDescription": {"": "Die Stadt Kitzingen bietet bei verschiedenen Bürgerdiensten die Nutzung der Online-Ausweisfunktion in Verbindung mit elektronischen Antragsformularen an:<br/>- Gewerbeanmeldung<br/>- Gewerbeummeldung<br/>- Gewerbeabmeldung<br/>- Fischereischein<br/>- Verkehrsrechtliche Anordnung<br/>- Sondernutzung<br/>- Parkerleichterung<br/>- Mängelmeldung"},
-			"address": "https://www.buergerservice.org/ID-Safe-Kitzingen",
-			"homepage": "https://www.kitzingen.de/",
-			"phone": "+49 9321 / 928-0,",
-			"email": "info@kitzingen.de",
-			"postalAddress": "Landratsamt Kitzingen<br/>Herr Thomas Langhojer<br/>Kaiserstraße 4<br/>97318 Kitzingen",
-			"category": "citizen",
-			"tcTokenUrlInfo" : "Registration required",
-			"subjectUrls": ["https://www.buergerservice.org"]
-		},
-		{
-			"exclude": ["ios"],
 			"shortName": {"" : "ID-Safe des Landkreis Ostallgäu"},
 			"longDescription": {"": "Der Landkreis Ostallgäu bietet Ihnen bei verschiedenen Bürgerdiensten die Nutzung der Online-Ausweisfunktion in Verbindung mit elektronischen Antragsformularen an:<br/>- Bauantrag digital<br/>- Sperrmüll-Abholung<br/>- An-, Um- oder Abmeldung einer Abfalltonne<br/>- Antrag auf Dauergenehmigung und Feriengenehmigung für ein Segelboot oder Motorboot auf dem Forggensee<br/>Der Landkreis Ostallgäu bietet Ihnen außerdem einen ID-Safe an. Hier können Sie die Daten aus Ihrer Online-Ausweisfunktion hinterlegen und um weitere Kontaktdaten ergänzen. Anschließend können Sie die elektronischen Antragsformulare des Landkreises automatisch mit Ihren hinterlegten Daten befüllen. Dadurch vermeiden Sie Tippfehler und können die Bearbeitung Ihres Vorgangs beschleunigen.<br/>Darüber hinaus können Sie im Landkreis Ostallgäu über das bayerische Bürgerservice-Portal folgende Bürgerdienste online beantragen:<br/>- Fahrzeug-Anmeldung<br/>- Fahrzeug-Abmeldung<br/>- Feinstaubplakette<br/>- Wunschkennzeichen"},
 			"address": "https://www.sixform.com/ID-safe",
@@ -691,18 +678,6 @@
 			"category": "citizen",
 			"tcTokenUrlInfo" : "Registration required",
 			"subjectUrls": ["https://www.sixform.com"]
-		},
-		{
-			"exclude": ["ios"],
-			"shortName": {"" : "ID-Safe des Landkreis Würzburg"},
-			"address": "https://www.buergerservice.org/ID-Safe-Wuerzburg",
-			"homepage": "https://www.landkreis-wuerzburg.de/startseite.phtml",
-			"phone": "+49 931 8003-0 ",
-			"email": "poststelle@lra-wue.bayern.de",
-			"postalAddress": "Landratsamt Würzburg<br/>Zeppelinstraße 15<br/>97074 Würzburg",
-			"category": "citizen",
-			"tcTokenUrlInfo" : "Registration required",
-			"subjectUrls": ["https://www.buergerservice.org"]
 		},
 		{
 			"exclude": ["ios"],
@@ -831,19 +806,6 @@
 			"category": "citizen",
 			"tcTokenUrlInfo" : "Registration required",
 			"subjectUrls": ["https://meinkonto.nuernberg.de"]
-		},
-		{
-			"exclude": ["ios"],
-			"shortName": {"" : "Standesamt Online Mecklenburg-Vorpommern"},
-			"longDescription": {"": "In Mecklenburg-Vorpommern können Sie in immer mehr Kommunen Urkunden mit der Online-Ausweisfunktion beantragen:<br/>- Geburtsurkunden<br/>- Eheurkunden<br/>- Lebenspartnerschaftsurkunden<br/>- Sterbeurkunden"},
-			"address": "https://portal.ego-mv.de/",
-			"homepage": "http://www.ego-mv.de/",
-			"phone": "+49 3 85 77 33 47-0",
-			"email": "info@ego-mv.de",
-			"postalAddress": "Zweckverband Elektronische Verwaltung in Mecklenburg-Vorpommern (eGo-MV)<br/>Eckdrift 103<br/>19061 Schwerin",
-			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
-			"subjectUrls": ["https://tbk.ego-mv.de/BuergerKontoWeb"]
 		},
 		{
 			"exclude": ["ios"],

@@ -46,6 +46,11 @@ void SelfInformationWidget::paintEvent(QPaintEvent*)
 
 void SelfInformationWidget::onSettingsChanged()
 {
+	const auto desc = tr("Use the button 'See my personal data now...' to display the data stored on your ID card. An Internet connection is required to display the data.");
+	const auto hyperlink = QStringLiteral(R"(<a href="%1">%2</a>)").arg(tr("https://www.ausweisapp.bund.de/datenschutz/"), tr("data privacy statement"));
+	const auto info = tr("Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.").arg(hyperlink);
+	mUi->descriptionLabel->setText(desc + QStringLiteral("<br><br>") + info);
+
 	if (AppSettings::getInstance().getGeneralSettings().useSelfAuthTestUri())
 	{
 		mUi->selfAuthenticationButton->setStyleSheet(QStringLiteral("QPushButton { background: red; }"));
@@ -64,6 +69,7 @@ void SelfInformationWidget::changeEvent(QEvent* pEvent)
 	if (pEvent->type() == QEvent::LanguageChange)
 	{
 		mUi->retranslateUi(this);
+		onSettingsChanged();
 	}
 	QWidget::changeEvent(pEvent);
 }

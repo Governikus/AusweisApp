@@ -144,7 +144,7 @@
         </service>
 
     </application>
-    <uses-sdk android:minSdkVersion="18" android:targetSdkVersion="23"/>
+    <uses-sdk android:minSdkVersion="18" android:targetSdkVersion="26"/>
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 
     <!-- Normal Permissions -->

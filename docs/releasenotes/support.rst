@@ -48,9 +48,9 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-  - Firefox 60
+  - Firefox 61
 
-  - Chrome 66
+  - Chrome 67
 
   - Internet Explorer 11
 
@@ -112,11 +112,11 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Diensteanbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-  - Firefox Klar 5.0
+  - Firefox Klar 5.2
 
-  - Chrome 66
+  - Chrome 67
 
-  - Android System WebView 60
+  - Android System WebView 67
 
 
 

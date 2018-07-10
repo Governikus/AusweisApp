@@ -170,7 +170,7 @@ class test_ReaderConfigurationParser
 			{
 				// Key with index skipIndex is not in the test Json data.
 				const QString devicesPair = jsonSingleDeviceString(incompleteKeyValuePairs(skipIndex,
-								/* skipOnlyValue */false));
+						/* skipOnlyValue */ false));
 				const QByteArray data = jsonDataString(devicesPair).toUtf8();
 
 				QCOMPARE(ReaderConfigurationParser::parse(data).size(), 0);
@@ -181,7 +181,7 @@ class test_ReaderConfigurationParser
 			{
 				// Key with index skipIndex is in the test Json data but has the invalid value ""
 				const QString devicesPair = jsonSingleDeviceString(incompleteKeyValuePairs(skipIndex,
-								/* skipOnlyValue */true));
+						/* skipOnlyValue */ true));
 				const QByteArray data = jsonDataString(devicesPair).toUtf8();
 
 				QCOMPARE(ReaderConfigurationParser::parse(data).size(), 0);

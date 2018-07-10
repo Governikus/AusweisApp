@@ -45,7 +45,7 @@ IF(COVERAGE)
 		SET(GCOVR_FILE "${PROJECT_BINARY_DIR}/gcovr.xml")
 		SET(GCOVR_CMD ${GCOVR_BIN} -x -o ${GCOVR_FILE} --exclude="src/external" --exclude="test" -r ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
 
-		ADD_CUSTOM_COMMAND(OUTPUT ${GCOVR_FILE} COMMAND ${GCOVR_CMD})
+		ADD_CUSTOM_COMMAND(OUTPUT ${GCOVR_FILE} COMMAND ${GCOVR_CMD} WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 		ADD_CUSTOM_TARGET(gcovr DEPENDS ${GCOVR_FILE})
 	ENDIF()
 
@@ -140,7 +140,7 @@ IF(UNCRUSTIFY)
 	EXECUTE_PROCESS(COMMAND ${UNCRUSTIFY} --version OUTPUT_VARIABLE UNCRUSTIFY_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
 	STRING(REPLACE "uncrustify " "" UNCRUSTIFY_VERSION ${UNCRUSTIFY_VERSION})
 
-	SET(UNCRUSTIFY_NEEDED_VERSION "0.65")
+	SET(UNCRUSTIFY_NEEDED_VERSION "0.67")
 	IF("${UNCRUSTIFY_VERSION}" STRLESS "${UNCRUSTIFY_NEEDED_VERSION}")
 		MESSAGE(WARNING "Uncrustify seems to be too old. Use at least ${UNCRUSTIFY_NEEDED_VERSION}... you are using: ${UNCRUSTIFY_VERSION}")
 	ELSE()
@@ -210,31 +210,39 @@ IF(CONVERT)
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	ADD_CUSTOM_TARGET(npaicons.ios.beta
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 29x29 npa_beta.svg iOS/appIcons/beta/iconSmall.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 58x58 npa_beta.svg iOS/appIcons/beta/iconSmall@2x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 87x87 npa_beta.svg iOS/appIcons/beta/iconSmall@3x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 40x40 npa_beta.svg iOS/appIcons/beta/iconSmall40.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 80x80 npa_beta.svg iOS/appIcons/beta/iconSmall40@2x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 120x120 npa_beta.svg iOS/appIcons/beta/iconSmall40@3x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 120x120 npa_beta.svg iOS/appIcons/beta/icon60@2x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 180x180 npa_beta.svg iOS/appIcons/beta/icon60@3x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 76x76 npa_beta.svg iOS/appIcons/beta/icon76.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 152x152 npa_beta.svg iOS/appIcons/beta/icon76@2x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 167x167 npa_beta.svg iOS/appIcons/beta/icon83.5@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 20x20 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon20.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 40x40 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon20@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 60x60 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon20@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 29x29 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 58x58 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 87x87 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 40x40 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall40.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 80x80 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall40@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 120x120 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall40@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 120x120 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon60@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 180x180 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon60@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 76x76 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon76.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 152x152 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon76@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 167x167 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon83.5@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 1024x1024 npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon1024.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	ADD_CUSTOM_TARGET(npaicons.ios
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 29x29 npa.svg iOS/appIcons/iconSmall.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 58x58 npa.svg iOS/appIcons/iconSmall@2x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 87x87 npa.svg iOS/appIcons/iconSmall@3x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 40x40 npa.svg iOS/appIcons/iconSmall40.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 80x80 npa.svg iOS/appIcons/iconSmall40@2x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 120x120 npa.svg iOS/appIcons/iconSmall40@3x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 120x120 npa.svg iOS/appIcons/icon60@2x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 180x180 npa.svg iOS/appIcons/icon60@3x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 76x76 npa.svg iOS/appIcons/icon76.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 152x152 npa.svg iOS/appIcons/icon76@2x.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 167x167 npa.svg iOS/appIcons/icon83.5@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 20x20 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon20.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 40x40 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon20@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 60x60 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon20@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 29x29 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 58x58 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 87x87 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 40x40 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall40.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 80x80 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall40@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 120x120 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall40@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 120x120 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon60@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 180x180 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon60@3x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 76x76 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon76.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 152x152 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon76@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 167x167 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon83.5@2x.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 1024x1024 npa.svg iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon1024.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	SET(BACKGROUND_COLOR "rgb\(220,235,246\)")
@@ -265,31 +273,35 @@ FIND_PROGRAM(PNGQUANT pngquant CMAKE_FIND_ROOT_PATH_BOTH)
 IF(PNGQUANT)
 SET(PNGQUANT_CMD pngquant -f -o)
 	ADD_CUSTOM_TARGET(pngquant.ios.beta
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/iconSmall.png -- iOS/appIcons/beta/iconSmall.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/iconSmall@2x.png -- iOS/appIcons/beta/iconSmall@2x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/iconSmall@3x.png -- iOS/appIcons/beta/iconSmall@3x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/iconSmall40.png -- iOS/appIcons/beta/iconSmall40.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/iconSmall40@2x.png -- iOS/appIcons/beta/iconSmall40@2x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/iconSmall40@3x.png -- iOS/appIcons/beta/iconSmall40@3x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/icon60@2x.png -- iOS/appIcons/beta/icon60@2x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/icon60@3x.png -- iOS/appIcons/beta/icon60@3x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/icon76.png -- iOS/appIcons/beta/icon76.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/icon76@2x.png -- iOS/appIcons/beta/icon76@2x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/icon83.5@2x.png -- iOS/appIcons/beta/icon83.5@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon20.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon20.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon20@2x.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon20@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon20@3x.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon20@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall@2x.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall@3x.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall40.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall40.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall40@2x.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall40@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall40@3x.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/iconSmall40@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon60@2x.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon60@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon60@3x.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon60@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon76.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon76.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon76@2x.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon76@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon83.5@2x.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon83.5@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon1024.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon1024.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	ADD_CUSTOM_TARGET(pngquant.ios
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/iconSmall.png -- iOS/appIcons/iconSmall.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/iconSmall@2x.png -- iOS/appIcons/iconSmall@2x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/iconSmall@3x.png -- iOS/appIcons/iconSmall@3x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/iconSmall40.png -- iOS/appIcons/iconSmall40.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/iconSmall40@2x.png -- iOS/appIcons/iconSmall40@2x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/iconSmall40@3x.png -- iOS/appIcons/iconSmall40@3x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/icon60@2x.png -- iOS/appIcons/icon60@2x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/icon60@3x.png -- iOS/appIcons/icon60@3x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/icon76.png -- iOS/appIcons/icon76.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/icon76@2x.png -- iOS/appIcons/icon76@2x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/icon83.5@2x.png -- iOS/appIcons/icon83.5@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall@2x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall@3x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall40.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall40.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall40@2x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall40@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall40@3x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall40@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon60@2x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon60@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon60@3x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon60@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon76.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon76.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon76@2x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon76@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon83.5@2x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon83.5@2x.png
 		COMMAND ${PNGQUANT_CMD} iOS/launchImages/Default-568h@2x.png -- iOS/launchImages/Default-568h@2x.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 

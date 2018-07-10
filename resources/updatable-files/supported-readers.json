@@ -51,8 +51,8 @@
 			[
 				{
 					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
-					"DE": "Es ist notwendig die Treiber vom Hersteller zu installieren.",
-					"EN": "It is necessary to install the drivers from the manufacturer."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -83,8 +83,8 @@
 			[
 				{
 					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
-					"DE": "Es ist notwendig die Treiber vom Hersteller zu installieren.",
-					"EN": "It is necessary to install the drivers from the manufacturer."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -110,6 +110,14 @@
 					"Platforms": [{"os": "unknown"}],
 					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304856&q=driver#choice5"
 				}
+			],
+			"Information":
+			[
+				{
+					"Platforms":[{"os": "win", "min": "10.0"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				}
 			]
 		},
 
@@ -133,6 +141,19 @@
 				{
 					"Platforms": [{"os": "unknown"}],
 					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304828&q=driver#choice5"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms":[{"os": "mac", "max": "10.10"}],
+					"DE": "Trotz der Installation des vom Hersteller bereitgestellten Treibers, wird das Kartenlesegerät vom System nicht erkannt.",
+					"EN": "Despite the driver being installed correctly, the card reader will not be recognized by the operating system."
+				},
+				{
+					"Platforms":[{"os": "mac", "min": "10.11"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -171,12 +192,30 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}],
-					"URL": "https://support.identiv.com/sdi010-011/"
+					"Platforms": [{"os": "win"}],
+					"URL": "http://www.scm-pc-card.de/index.php?page=download&function=show_downloads&lang=de&product_id=738"
 				},
 				{
 					"Platforms": [{"os": "unknown"}],
 					"URL": "https://support.identiv.com/sdi010-011/"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win", "max": "6.1"}],
+					"DE": "Bitte beachten Sie, dass das Kartenlesegerät nur mit der SDI011-generic-version funktioniert. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "Please note that the card reader only works with the SDI011-generic-version. A reboot is required after the installation of the driver."
+				},
+				{
+					"Platforms":[{"os": "win", "min": "6.2"}],
+					"DE": "Bitte beachten Sie, dass das Kartenlesegerät nur mit der SDI011-nPA-version funktioniert. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "Please note that the card reader only works with the SDI011-nPA-version. A reboot is required after the installation of the driver."
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"DE": "Der Status des Kartenlesegeräts wird nach der Treiberinstallation und einem Neustart zwar als 'Treiber installiert' angezeigt, allerdings tritt bei der PIN-Eingabe ein Protokollfehler auf.",
+					"EN": "Once the driver is installed and the system is re-booted, the card reader state will be shown as 'Driver installed'. However, upon entering the PIN a protocol error occurs."
 				}
 			]
 		},
@@ -185,18 +224,14 @@
 			"VendorId": "0x04E6",
 			"ProductId": "0x5292",
 			"Name": "SCL01x Contactless Reader",
-			"Pattern": "(SCM Microsystems Inc. )?SCL011 Contactless Reader",
+			"Pattern": "^(SCM Microsystems Inc. )?SCL011 Contactless Reader( 0)?$",
 			"Icon": "img_Identive_SCL011.png",
 			"IconWithNPA": "img_Identive_SCL011_mit_ausweis.png",
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win", "min": "10.0"}],
-					"URL": "https://support.identiv.com/scl010-scl011/"
-				},
-				{
-					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}],
-					"URL": "https://support.identiv.com/scl010-scl011/"
+					"Platforms": [{"os": "win"}, {"os": "mac"}],
+					"URL": "https://www.scm-pc-card.de/index.php?lang=de&page=download&function=show_downloads&product_id=630"
 				},
 				{
 					"Platforms": [{"os": "unknown"}],
@@ -206,9 +241,14 @@
 			"Information":
 			[
 				{
-					"Platforms": [{"os": "win", "min": "6.1", "max": "6.1"}],
-					"DE": "Weder der Windows Treiber noch der Installer werden dem Kartenlesegerät zugeordnet. Erst eine manuelle Installation über den Gerätemanager, bei der der Hinweis, dass es sich um einen falschen Treiber handelt, zu ignorieren ist, führt zu einem Erfolg.",
-					"EN": "Neither the Windows driver nor the installer are assigned to the card reader. Only a manual installation via the device manager, ignoring the note that it is the wrong driver, leads to a success."
+					"Platforms": [{"os": "win"}],
+					"DE": "Das Kartenlesegerät funktioniert nur mit der SCL011-nPA-version. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "The cardreader works only with the SCL011-nPA-version. A reboot is required after the installation of the driver."
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
 			]
 		},
@@ -217,7 +257,7 @@
 			"VendorId": "0x04E6",
 			"ProductId": "0x5790",
 			"Name": "Identiv Cloud 3700 F",
-			"Pattern": "(CLOUD 3700 F Contactless Reader|Identiv uTrust 3700 F CL Reader)",
+			"Pattern": "(Identiv CLOUD 3700 F Contactless Reader 0|Identiv uTrust 3700 F CL Reader)",
 			"Icon": "img_Identive_Cloud_3700_F.png",
 			"IconWithNPA": "img_Identive_Cloud_3700_F_mit_ausweis.png",
 			"Drivers":
@@ -241,7 +281,7 @@
 			"VendorId": "0x04E6",
 			"ProductId": "0x5591",
 			"Name": "Identiv SCL3711",
-			"Pattern": "SCL3711",
+			"Pattern": "(SCM Microsystems SCL3711 reader & NFC device 0|SCL3711 reader and NFC device)",
 			"Icon": "img_Identive_SCL3711.png",
 			"IconWithNPA": "img_Identive_SCL3711_mit_ausweis.png",
 			"Drivers":
@@ -251,12 +291,20 @@
 					"URL": "https://support.identiv.com/scl3711/"
 				},
 				{
-					"Platforms": [{"os": "mac", "max": "10.11"}],
+					"Platforms": [{"os": "mac"}],
 					"URL": "https://support.identiv.com/scl3711/"
 				},
 				{
 					"Platforms": [{"os": "unknown"}],
 					"URL": "https://support.identiv.com/scl3711/"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os":"mac", "max": "10.10"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -265,7 +313,7 @@
 			"VendorId": "0x04E6",
 			"ProductId": "0x5720",
 			"Name": "Identiv Cloud 4700 F",
-			"Pattern": "(CLOUD 4700 F Contactless Reader|Identiv uTrust 4700 F Dual Interface Reader)",
+			"Pattern": "(Identiv CLOUD 4700 F Contact(less)? Reader( 0| 1)|Identiv uTrust 4700 F Dual Interface Reader)",
 			"Icon": "img_Identive_Cloud_4700_F.png",
 			"IconWithNPA": "img_Identive_Cloud_4700_F_mit_ausweis.png",
 			"Drivers":
@@ -282,6 +330,14 @@
 					"Platforms": [{"os": "unknown"}],
 					"URL": "http://www.scm-pc-card.de/index.php?lang=en&page=download&function=show_downloads&product_id=832"
 				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "mac"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				}
 			]
 		},
 
@@ -289,22 +345,30 @@
 			"VendorId": "0x04E6",
 			"ProductId": "0x5724",
 			"Name": "Identiv Cloud 4701 F",
-			"Pattern": "(CLOUD 4701 F Contactless Reader|Identiv uTrust 4701 F Dual Interface Reader)",
+			"Pattern": "(Identiv CLOUD 4701 F Contact(less)? Reader( 0| 1)|Identiv uTrust 4701 F Dual Interface Reader)",
 			"Icon": "img_Identive_Cloud_4701_F.png",
 			"IconWithNPA": "img_Identive_Cloud_4701_F_mit_ausweis.png",
 			"Drivers":
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"URL": "https://support.identiv.com/4701f/"
+					"URL": "http://www.scm-pc-card.de/index.php?page=download&function=show_downloads&lang=de&product_id=921"
 				},
 				{
 					"Platforms": [{"os": "mac"}],
-					"URL": "https://support.identiv.com/4701f/"
+					"URL": "http://www.scm-pc-card.de/index.php?page=download&function=show_downloads&lang=de&product_id=921"
 				},
 				{
 					"Platforms": [{"os": "unknown"}],
-					"URL": "https://support.identiv.com/4701f/"
+					"URL": "http://www.scm-pc-card.de/index.php?page=download&function=show_downloads&lang=de&product_id=921"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -313,7 +377,7 @@
 			"VendorId": "0x072F",
 			"ProductId": "0x2200",
 			"Name": "ACS ACR122U",
-			"Pattern": "ACS ACR122U",
+			"Pattern": "ACS ACR122U PICC Interface( 0)?",
 			"Icon": "img_ACS_ACR122U.png",
 			"IconWithNPA": "img_ACS_ACR122U_mit_ausweis.png",
 			"Drivers":
@@ -322,6 +386,15 @@
 					"Platforms": [{"os": "win"}, {"os": "mac"}],
 					"URL": "https://www.acs.com.hk/en/products/3/acr122u-usb-nfc-reader/"
 				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}],
+					"DE":"Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"EN":"The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
+				}
+
 			]
 		},
 
@@ -329,7 +402,7 @@
 			"VendorId": "0x072F",
 			"ProductId": "0x0901",
 			"Name": "ACS ACR1281U",
-			"Pattern": "ACS ACR1281 PICC Reader",
+			"Pattern": "ACS ACR1281 PICC Reader( 0)?",
 			"Icon": "img_ACS_ACR1281U.png",
 			"IconWithNPA": "img_ACS_ACR1281U_mit_ausweis.png",
 			"Drivers":
@@ -342,6 +415,19 @@
 					"Platforms": [{"os": "mac"}],
 					"URL": "http://www.acs.com.hk/en/driver/151/acr1281u-npa-contactless-reader/"
 				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"DE":"Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"EN":"The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				}
 			]
 		},
 
@@ -349,7 +435,7 @@
 			"VendorId": "0x072F",
 			"ProductId": "0x223B",
 			"Name": "ACS ACR1252U",
-			"Pattern": "ACS ACR1252 Dual Reader|ACS ACR1252 1S CL Reader",
+			"Pattern": "ACS ACR1252 1S CL Reader PICC 0|ACS ACR1252 Dual Reader(\\(1\\)|\\(2\\))",
 			"Icon": "img_ACS_ACR1252U.png",
 			"IconWithNPA": "img_ACS_ACR1252U_mit_ausweis.png",
 			"Drivers":
@@ -359,9 +445,23 @@
 					"URL": "http://www.acs.com.hk/en/products/342/acr1252u-usb-nfc-reader-iii-nfc-forum-certified-reader/#tab_downloads"
 				},
 				{
-					"Platforms": [{"os": "mac", "min": "10.13", "max": "10.13"}],
+					"Platforms": [{"os": "mac"}],
 					"URL": "http://www.acs.com.hk/en/products/342/acr1252u-usb-nfc-reader-iii-nfc-forum-certified-reader/#tab_downloads"
 				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"DE":"Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"EN":"The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				}
+
 			]
 		},
 
@@ -369,22 +469,58 @@
 			"VendorId": "0x076B",
 			"ProductId": "0x5340",
 			"Name": "OMNIKEY 5021-CL",
-			"Pattern": "OMNIKEY CardMan 5x21-CL|OMNIKEY CardMan \\(076B:5340\\) 5021 CL",
-			"Icon": "img_HID_Omnikey_Mobile_Reader_5021_CL.png",
-			"IconWithNPA": "img_HID_Omnikey_Mobile_Reader_5021_CL_mit_ausweis.png",
+			"Pattern": "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5340\\) 5021 CL",
+			"Icon": "img_HID_Omnikey_Mobile_Reader_502X_CL.png",
+			"IconWithNPA": "img_HID_Omnikey_Mobile_Reader_502X_CL_mit_ausweis.png",
 			"Drivers":
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"URL": "https://www.hidglobal.com/drivers?field_brand_tid=24&product_id=4077&os=All"
+					"URL": "https://www.hidglobal.de/drivers"
 				},
 				{
-					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}, {"os": "mac", "min": "10.13", "max": "10.13"}],
-					"URL": "https://www.hidglobal.com/drivers?field_brand_tid=24&product_id=4077&os=All"
+					"Platforms": [{"os": "mac"}],
+					"URL": "https://www.hidglobal.de/drivers"
 				},
 				{
 					"Platforms": [{"os": "unknown"}],
-					"URL": "https://www.hidglobal.com/drivers?field_brand_tid=24&product_id=4077&os=All"
+					"URL": "https://www.hidglobal.de/drivers"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms":[{"os": "win"}, {"os": "mac"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x076B",
+			"ProductId": "0x5022",
+			"Name": "OMNIKEY 5022-CL",
+			"Pattern": "HID Global OMNIKEY 5022 Smart Card Reader 0|HID Global OMNIKEY 5022 Smart Card Reader",
+			"Icon": "img_HID_Omnikey_Mobile_Reader_502X_CL.png",
+			"IconWithNPA": "img_HID_Omnikey_Mobile_Reader_502X_CL_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://www.hidglobal.de/drivers"
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"URL": "https://www.hidglobal.de/drivers"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms":[{"os": "win"}, {"os": "mac"}],
+					"DE":"Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"EN":"The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
 			]
 		},
@@ -393,18 +529,26 @@
 			"VendorId": "0x076B",
 			"ProductId": "0x5321",
 			"Name": "OMNIKEY 5321 v2",
-			"Pattern": "OMNIKEY CardMan 5x21-CL|OMNIKEY CardMan \\(076B:5321\\) 5321",
+			"Pattern": "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5321\\) 5321(\\(1\\)|\\(2\\))",
 			"Icon": "img_HID_Global_OMNIKEY_5321_V2.png",
 			"IconWithNPA": "img_HID_Global_OMNIKEY_5321_V2_mit_ausweis.png",
 			"Drivers":
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"URL": "https://www.hidglobal.de/Download-EULA?headless=&regionfree=&nid=29765"
+					"URL": "https://www.hidglobal.de/drivers"
 				},
 				{
-					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}],
+					"Platforms": [{"os": "mac"}],
 					"URL": "https://www.hidglobal.de/drivers"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms":[{"os": "win"}, {"os": "mac"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -413,22 +557,30 @@
 			"VendorId": "0x076B",
 			"ProductId": "0x5421",
 			"Name": "OMNIKEY 5421",
-			"Pattern": "OMNIKEY CardMan \\(076B:5421\\) 5421|OMNIKEY Smart Card Reader USB",
+			"Pattern": "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5421\\) 5421(\\(1\\)|\\(2\\))",
 			"Icon": "img_HID_Omnikey_5421.png",
 			"IconWithNPA": "img_HID_Omnikey_5421_mit_ausweis.png",
 			"Drivers":
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"URL": "https://www.hidglobal.com/drivers?field_brand_tid=24&product_id=4077&os=All"
+					"URL": "https://www.hidglobal.com/drivers"
 				},
 				{
-					"Platforms": [{"os": "mac", "min": "10.11", "max": "10.11"}, {"os": "mac", "min": "10.13", "max": "10.13"}],
-					"URL": "https://www.hidglobal.com/drivers?field_brand_tid=24&product_id=4077&os=All"
+					"Platforms": [{"os": "mac"}],
+					"URL": "https://www.hidglobal.com/drivers"
 				},
 				{
 					"Platforms": [{"os": "unknown"}],
-					"URL": "https://www.hidglobal.com/drivers?field_brand_tid=24&product_id=4077&os=All"
+					"URL": "https://www.hidglobal.com/drivers"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms":[{"os": "win"}, {"os": "mac"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -437,14 +589,27 @@
 			"VendorId": "0x0AB1",
 			"ProductId": "0x0003",
 			"Name": "OBID RFID-Reader",
-			"Pattern": "FEIG ELECTRONIC GmbH OBID myAXXESS basic",
+			"Pattern": "FEIG ELECTRONIC GmbH OBID myAXXESS basic Slot:CL 358334430",
 			"Icon": "img_FEIG_myAXXES_basic.png",
 			"IconWithNPA": "img_FEIG_myAXXES_basic_mit_ausweis.png",
 			"Drivers":
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"URL": "http://www.feig.de/downloads/"
+					"URL": "https://www.feig.de/login/"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms":[{"os": "win"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"DE": "Es ist kein Treiber vom Hersteller vorhanden.",
+					"EN": "There is no driver from the manufacturer."
 				}
 			]
 		},
@@ -453,18 +618,26 @@
 			"VendorId": "0x08E6",
 			"ProductId": "0x5504",
 			"Name": "Gemalto Prox-SU Contactless",
-			"Pattern": "Gemalto Prox( |-)SU($| USB| Contactless_)",
+			"Pattern": "Gemalto Prox( |-)SU( Contactless_| USB PC LinkReader(\\(1\\)|\\(2\\)))",
 			"Icon": "img_Gemalto_Prox_SU.png",
 			"IconWithNPA": "img_Gemalto_Prox_SU_mit_ausweis.png",
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win", "max": "6.1"}, {"os": "win", "min": "10.0"}],
-					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#msdrivers"
+					"Platforms": [{"os": "win"}],
+					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#windows10"
 				},
 				{
-					"Platforms": [{"os": "mac", "min": "10.13", "max": "10.13"}],
+					"Platforms": [{"os": "mac"}],
 					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#macosxdrivers"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms":[{"os": "win"}, {"os":"mac","max":"10.10"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -473,18 +646,26 @@
 			"VendorId": "0x08E6",
 			"ProductId": "0x5503",
 			"Name": "Prox-DU HID",
-			"Pattern": "Gemalto Prox(-DU| Dual)($| USB| Contactless_)",
+			"Pattern": "Gemalto Prox(-DU| Dual)( Contactless_| USB PC Link(Reader| Reader)(\\(2\\)|\\(1\\)))",
 			"Icon": "img_Gemalto_Prox_DU.png",
 			"IconWithNPA": "img_Gemalto_Prox_DU_mit_ausweis.png",
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win", "max": "6.1"}, {"os": "win", "min": "10.0"}],
-					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#.WOIQijvyjyQ"
+					"Platforms": [{"os": "win"}],
+					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#windows10"
 				},
 				{
 					"Platforms": [{"os": "mac"}],
-					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#.WOIQijvyjyQ"
+					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#macosxdrivers"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}],
+					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
 			]
 		},
@@ -499,34 +680,26 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}],
-					"URL": "http://www.cherry.de/cid/download.php"
-				},
-				{
-					"Platforms": [{"os": "mac", "min": "10.11"}],
-					"URL": "http://www.cherry.de/cid/download.php"
-				},
-				{
-					"Platforms": [{"os": "unknown"}],
-					"URL": "http://www.cherry.de/cid/download.php"
+					"Platforms": [{"os": "win"}, {"os": "mac", "min": "10.11"}, {"os": "unknown"}],
+					"URL": "https://cherry.de/download/de/download.php"
 				}
 			],
 			"Information":
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren.",
-					"EN": "It is necessary to install the drivers from the manufacturer."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				},
 				{
 					"Platforms": [{"os": "mac", "max": "10.10"}],
 					"DE": "Der vom Hersteller angebotene Treiber für OS X 10.10 führt nicht zum Erfolg. Bitte verwenden Sie alternativ den ebenfalls vom Hersteller angebotenen Treiber für macOS 10.12.",
-					"EN": "The driver from the manufacturer is not supported on OS X 10.10. For the function of the card reader the driver for macOS 10.12 must be installed."
+					"DE": "The driver from the manufacturer is not supported on OS X 10.10. Please install the driver for macOS 10.12 instead."
 				},
 				{
 					"Platforms": [{"os": "mac", "min": "10.11"}],
-					"DE": "Nach der Installation ist ein Neustart erforderlich.",
-					"EN": "A reboot is required after the installation of the driver."
+					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
 			]
 		},
@@ -541,36 +714,86 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}],
-					"URL": "http://www.cherry.de/cid/download.php"
-				},
-				{
-					"Platforms": [{"os": "mac", "min": "10.11"}],
-					"URL": "http://www.cherry.de/cid/download.php"
-				},
-				{
-					"Platforms": [{"os": "unknown"}],
-					"URL": "http://www.cherry.de/cid/download.php"
+					"Platforms": [{"os": "win"}, {"os": "mac", "min": "10.11"}, {"os": "unknown"}],
+					"URL": "https://cherry.de/download/de/download.php"
 				}
 			],
 			"Information":
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren.",
-					"EN": "It is necessary to install the drivers from the manufacturer."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				},
 				{
 					"Platforms": [{"os": "mac", "max": "10.10"}],
 					"DE": "Der vom Hersteller angebotene Treiber für OS X 10.10 führt nicht zum Erfolg. Bitte verwenden Sie alternativ den ebenfalls vom Hersteller angebotenen Treiber für macOS 10.12.",
-					"EN": "The driver from the manufacturer is not supported on OS X 10.10. For the function of the card reader the driver for macOS 10.12 must be installed."
+					"EN": "The driver from the manufacturer is not supported on OS X 10.10. Please install the driver for macOS 10.12 instead."
 				},
 				{
 					"Platforms": [{"os": "mac", "min": "10.11"}],
-					"DE": "Nach der Installation ist ein Neustart erforderlich.",
-					"EN": "A reboot is required after the installation of the driver."
+					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x046A",
+			"ProductId": "0x0072",
+			"Name": "Cherry ST-1275",
+			"Pattern": "(Cherry ST-1275|Cherry SmartTerminal XX7X-RF 0)",
+			"Icon": "img_Cherry_ST_1275.png",
+			"IconWithNPA": "img_Cherry_ST_1275_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "unknown"}],
+					"URL": "https://cherry.de/download/de/download.php"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"DE": "Es ist kein Treiber vom Hersteller vorhanden.",
+					"EN": "There is no driver from the manufacturer."
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x2133",
+			"ProductId": "0x010B",
+			"Name": "Signotec Omega Pad",
+			"Pattern": "NXP PR533( 0)?",
+			"Icon": "img_Signotec_Omega_Pad.png",
+			"IconWithNPA": "img_Signotec_Omega_Pad_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}],
+					"URL": "https://www.signotec.com/download/treiber/"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://www.signotec.com/download/treiber/"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}],
+					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Es ist kein Treiber vom Hersteller vorhanden.",
+					"EN": "The card reader operates with the driver automatically installed by the system. There is no driver from the manufacturer."
 				}
 			]
 		}
+
 	]
 }

@@ -207,6 +207,7 @@ ExternalProject_Add(openssl
 		${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-fix-no-engine-build.patch &&
 		${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-Revert-Configure-use-a-better-method-to-identify-gcc.patch &&
 		${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-RSA-key-generation-ensure-BN_mod_inverse-and-BN_mod_.patch &&
+		${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-Reject-excessively-large-primes-in-DH-key-generation.patch &&
 		${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl_rsa_psk.patch
 
 	CONFIGURE_COMMAND ${OPENSSL_ENV} ${PERL_EXECUTABLE} Configure --prefix=${DESTINATION_DIR} ${OPENSSL_CONFIGURE_FLAGS} "${COMPILER_FLAGS}" "${OPENSSL_COMPILER_FLAGS}"
@@ -249,7 +250,7 @@ ELSE()
 ENDIF()
 
 
-SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -prefix ${DESTINATION_DIR} -opensource -confirm-license -qt-zlib -no-mtdev -qt-libpng -qt-libjpeg -no-harfbuzz -qt-pcre -system-proxies -no-compile-examples -nomake examples -nomake tests -no-sql-sqlite -openssl-linked -I ${DESTINATION_DIR}/include -L ${DESTINATION_DIR}/lib)
+SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -prefix ${DESTINATION_DIR} -opensource -confirm-license -c++std c++11 -qt-zlib -no-mtdev -qt-libpng -qt-libjpeg -no-harfbuzz -qt-pcre -system-proxies -no-compile-examples -nomake examples -nomake tests -no-sql-sqlite -openssl-linked -I ${DESTINATION_DIR}/include -L ${DESTINATION_DIR}/lib)
 
 LIST(APPEND NO_FEATURES bearermanagement ftp paint_debug)
 LIST(APPEND NO_FEATURES imageformat_bmp imageformat_ppm imageformat_xbm)

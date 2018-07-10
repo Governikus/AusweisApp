@@ -71,8 +71,8 @@ EstablishPACEChannelParser EstablishPACEChannelParser::fromCcid(const QByteArray
 
 	QByteArray chat;
 	QByteArray certificateDescription;
-	// Chat and certificate description are only available in PIN mode in an authentication.
-	if (passwordId == PACE_PASSWORD_ID::PACE_PIN)
+	// Chat and certificate description are only available in authentications via PIN mode or CAN allowed mode
+	if (passwordId == PACE_PASSWORD_ID::PACE_PIN || passwordId == PACE_PASSWORD_ID::PACE_CAN)
 	{
 		if (channelInput->mCertificateDescription)
 		{
