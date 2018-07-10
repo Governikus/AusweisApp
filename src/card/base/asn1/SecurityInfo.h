@@ -54,7 +54,7 @@ class SecurityInfo
 	 * Sub classes must override this method to allow the base class to access
 	 * the protocol's ASN1_OBJECT pointer.
 	 */
-	virtual ASN1_OBJECT * getProtocolObjectIdentifier() const;
+	virtual ASN1_OBJECT* getProtocolObjectIdentifier() const;
 
 	protected:
 		SecurityInfo();

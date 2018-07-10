@@ -48,9 +48,13 @@ Item {
 				anchors.left: parent.left
 				anchors.right: parent.right
 				text: qsTr("Use the button 'See my personal data' to display the data stored on your ID card."
-							+ " An Internet connection is required to display the data."
-							+ " Your personal data is neither saved nor processed in any way.")
+							+ " An Internet connection is required to display the data.")
+							+ "<br><br><b>"
+							+ qsTr("Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.")
+								.arg('<a href="' + qsTr("https://www.ausweisapp.bund.de/datenschutz/") + '">' + qsTr("data privacy statement") + '</a>')
+							+ "</b>"
 							+ settingsModel.translationTrigger
+				onLinkActivated: Qt.openUrlExternally(link)
 			}
 		}
 	}

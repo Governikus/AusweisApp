@@ -10,7 +10,7 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
-#define CAST_OBJ(parser) HttpRequest * obj = static_cast<HttpRequest*>(parser->data);
+#define CAST_OBJ(parser) HttpRequest* obj = static_cast<HttpRequest*>(parser->data);
 
 HttpRequest::HttpRequest(QAbstractSocket* pSocket, QObject* pParent)
 	: QObject(pParent)

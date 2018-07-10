@@ -41,6 +41,7 @@ Rectangle {
 	MouseArea{
 		id: mouseArea
 		anchors.fill: parent
+		preventStealing: true
 		hoverEnabled: true
 		onClicked: parent.clicked()
 	}

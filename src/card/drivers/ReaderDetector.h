@@ -45,7 +45,7 @@ class ReaderDetector
 	#endif
 
 	#ifdef Q_OS_LINUX
-		DeviceListener * mDeviceListener;
+		DeviceListener* mDeviceListener;
 	#endif
 
 		bool initNativeEvents();

@@ -273,8 +273,8 @@ QString CertificateDescription::getPurpose() const
 QString CertificateDescription::getDataSecurityOfficer() const
 {
 	static const QStringList SEARCH_ITEMS({QStringLiteral(
-										   "Hinweis auf die f\u00FCr den Diensteanbieter zust\u00E4ndigen Stellen, "
-										   "die die Einhaltung der Vorschriften zum Datenschutz kontrollieren:")});
+			"Hinweis auf die f\u00FCr den Diensteanbieter zust\u00E4ndigen Stellen, "
+			"die die Einhaltung der Vorschriften zum Datenschutz kontrollieren:")});
 
 	return getField(getTermsOfUsage(), SEARCH_ITEMS);
 }

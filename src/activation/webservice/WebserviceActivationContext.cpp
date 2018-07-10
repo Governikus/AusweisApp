@@ -127,7 +127,7 @@ bool WebserviceActivationContext::sendRedirect(const QUrl& pRedirectAddress, con
 
 	if (!mRequest->isConnected())
 	{
-		mSendError = tr("The connection to the bowser was lost. No forwarding was executed. Please try to"
+		mSendError = tr("The connection to the browser was lost. No forwarding was executed. Please try to"
 						" call the URL again manually: <a href='%1'>%2</a>").arg(redirectAddressWithResult.toString(), redirectAddressWithResult.host());
 		return false;
 	}

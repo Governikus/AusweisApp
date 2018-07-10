@@ -17,7 +17,7 @@ class BluetoothReaderManagerPlugInPrivate
 	Q_OBJECT
 	Q_DECLARE_PUBLIC(BluetoothReaderManagerPlugIn)
 
-	BluetoothReaderManagerPlugIn * const q_ptr;
+	BluetoothReaderManagerPlugIn* const q_ptr;
 	BluetoothReaderManagerPlugInPrivate(BluetoothReaderManagerPlugIn* pPublic);
 
 	private Q_SLOTS:

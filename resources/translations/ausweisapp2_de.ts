@@ -1164,11 +1164,26 @@
     </message>
     <message>
         <location filename="../qml/Governikus/IdentifyView/IdentifyViewInfo.qml" line="50"/>
-        <source>Use the button &apos;See my personal data&apos; to display the data stored on your ID card. An Internet connection is required to display the data. Your personal data is neither saved nor processed in any way.</source>
-        <translation>Über die Schaltfläche &quot;Meine Daten einsehen&quot; können Sie sich die im Chip Ihres Ausweisdokuments gespeicherten Daten anzeigen lassen. Um die Daten anzeigen zu können, benötigt diese Anwendung eine Internetverbindung. Es erfolgt keine Speicherung oder Weiterverarbeitung Ihrer persönlichen Daten.</translation>
+        <source>Use the button &apos;See my personal data&apos; to display the data stored on your ID card. An Internet connection is required to display the data.</source>
+        <translation>Über die Schaltfläche &apos;Meine Daten einsehen&apos; können Sie sich die im Chip Ihres Ausweisdokuments gespeicherten Daten anzeigen lassen. Um die Daten anzeigen zu können, benötigt diese Anwendung eine Internetverbindung.</translation>
     </message>
     <message>
-        <location filename="../qml/Governikus/IdentifyView/IdentifyViewInfo.qml" line="64"/>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyViewInfo.qml" line="53"/>
+        <source>Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.</source>
+        <translation>Es erfolgt keine Speicherung oder Weiterverarbeitung Ihrer persönlichen Daten. Näheres dazu erfahren Sie in unserer %1.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyViewInfo.qml" line="54"/>
+        <source>https://www.ausweisapp.bund.de/datenschutz/</source>
+        <translation>https://www.ausweisapp.bund.de/datenschutz/</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyViewInfo.qml" line="54"/>
+        <source>data privacy statement</source>
+        <translation>Datenschutzerklärung</translation>
+    </message>
+    <message>
+        <location filename="../qml/Governikus/IdentifyView/IdentifyViewInfo.qml" line="68"/>
         <source>See my personal data</source>
         <translation>Meine Daten einsehen</translation>
     </message>
@@ -1364,10 +1379,6 @@
         <location filename="../qml/Governikus/MoreView/MoreView.qml" line="76"/>
         <source>https://www.ausweisapp.bund.de/en/download/windows-and-mac/</source>
         <translation>https://www.ausweisapp.bund.de/download/windows-und-mac/</translation>
-    </message>
-    <message>
-        <source>https://www.ausweisapp.bund.de/en/download/</source>
-        <translation type="vanished">https://www.ausweisapp.bund.de/download/</translation>
     </message>
     <message>
         <location filename="../qml/Governikus/MoreView/MoreView.qml" line="83"/>
@@ -2410,11 +2421,6 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <location filename="../../src/widget/SelfInformationWidget.ui"/>
         <source>See my personal data now...</source>
         <translation>Meine Daten jetzt einsehen...</translation>
-    </message>
-    <message>
-        <location filename="../../src/widget/SelfInformationWidget.ui"/>
-        <source>Use the button &apos;See my personal data now...&apos; to display the data stored on your ID card. An Internet connection is required to display the data. Your personal data is neither saved nor processed in any way.</source>
-        <translation>Über die Schaltfläche &quot;Meine Daten jetzt einsehen...&quot; können Sie sich die im Chip Ihres Ausweisdokuments gespeicherten Daten anzeigen lassen. Um die Daten anzeigen zu können, benötigt diese Anwendung eine Internetverbindung. Es erfolgt keine Speicherung oder Weiterverarbeitung Ihrer persönlichen Daten.</translation>
     </message>
     <message>
         <location filename="../../src/widget/SelfInformationWidget.ui"/>
@@ -4349,7 +4355,27 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
 <context>
     <name>governikus::SelfInformationWidget</name>
     <message>
-        <location filename="../../src/widget/SelfInformationWidget.cpp" line="52"/>
+        <location filename="../../src/widget/SelfInformationWidget.cpp" line="49"/>
+        <source>Use the button &apos;See my personal data now...&apos; to display the data stored on your ID card. An Internet connection is required to display the data.</source>
+        <translation>Über die Schaltfläche &apos;Meine Daten einsehen...&apos; können Sie sich die im Chip Ihres Ausweisdokuments gespeicherten Daten anzeigen lassen. Um die Daten anzeigen zu können, benötigt diese Anwendung eine Internetverbindung.</translation>
+    </message>
+    <message>
+        <location filename="../../src/widget/SelfInformationWidget.cpp" line="50"/>
+        <source>https://www.ausweisapp.bund.de/datenschutz/</source>
+        <translation>https://www.ausweisapp.bund.de/datenschutz/</translation>
+    </message>
+    <message>
+        <location filename="../../src/widget/SelfInformationWidget.cpp" line="50"/>
+        <source>data privacy statement</source>
+        <translation>Datenschutzerklärung</translation>
+    </message>
+    <message>
+        <location filename="../../src/widget/SelfInformationWidget.cpp" line="51"/>
+        <source>Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.</source>
+        <translation>Es erfolgt keine Speicherung oder Weiterverarbeitung Ihrer persönlichen Daten. Näheres dazu erfahren Sie in unserer %1.</translation>
+    </message>
+    <message>
+        <location filename="../../src/widget/SelfInformationWidget.cpp" line="57"/>
         <source>Test environment</source>
         <translation>Testumgebung</translation>
     </message>
@@ -4905,7 +4931,7 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
     </message>
     <message>
         <location filename="../../src/activation/webservice/WebserviceActivationContext.cpp" line="130"/>
-        <source>The connection to the bowser was lost. No forwarding was executed. Please try to call the URL again manually: &lt;a href=&apos;%1&apos;&gt;%2&lt;/a&gt;</source>
+        <source>The connection to the browser was lost. No forwarding was executed. Please try to call the URL again manually: &lt;a href=&apos;%1&apos;&gt;%2&lt;/a&gt;</source>
         <translation>Die Verbindung zum Browser ging verloren. Es konnte keine Weiterleitung durchgeführt werden. Bitte versuchen Sie die URL manuell aufzurufen: &lt;a href=&apos;%1&apos;&gt;%2&lt;/a&gt;</translation>
     </message>
 </context>
