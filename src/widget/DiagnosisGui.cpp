@@ -47,7 +47,7 @@ void DiagnosisGui::activate()
 
 	auto context = new DiagnosisContext();
 	mDialog = new DiagnosisDialog(context, dialogParent);
-	connect(mDialog, &QDialog::finished, this, &DiagnosisGui::fireFinished);
+	connect(mDialog.data(), &QDialog::finished, this, &DiagnosisGui::fireFinished);
 	mDialog->show();
 
 	auto controller = new DiagnosisController(context, mDialog);

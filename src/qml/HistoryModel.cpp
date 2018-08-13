@@ -119,8 +119,8 @@ HistoryModel::HistoryModel(HistorySettings* pHistorySettings, QObject* pParent)
 	mFilterModel.setFilterCaseSensitivity(Qt::CaseInsensitive);
 	mNameFilterModel.setSourceModel(this);
 	mHistoryModelSearchFilter.setSourceModel(this);
-	connect(mHistorySettings, &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
-	connect(mHistorySettings, &HistorySettings::fireEnabledChanged, this, &HistoryModel::fireEnabledChanged);
+	connect(mHistorySettings.data(), &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
+	connect(mHistorySettings.data(), &HistorySettings::fireEnabledChanged, this, &HistoryModel::fireEnabledChanged);
 	connect(Env::getSingleton<ProviderConfiguration>(), &ProviderConfiguration::fireUpdated, this, &HistoryModel::onProvidersChanged);
 }
 
@@ -366,9 +366,9 @@ bool HistoryModel::removeRows(int pRow, int pCount, const QModelIndex& pParent)
 	entries.remove(pRow, pCount);
 
 	// disconnect the signal, otherwise this model gets reset
-	disconnect(mHistorySettings, &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
+	disconnect(mHistorySettings.data(), &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
 	mHistorySettings->setHistoryInfos(entries);
-	connect(mHistorySettings, &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
+	connect(mHistorySettings.data(), &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
 
 	mHistorySettings->save();
 
