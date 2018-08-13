@@ -39,7 +39,7 @@ StepChooseCardGui::StepChooseCardGui(const QSharedPointer<AuthContext>& pContext
 	mDeviceButton = mInformationMessageBox->addButton(tr("Settings"), QMessageBox::YesRole);
 	mDeviceButton->setFocus();
 
-	connect(mReaderDeviceGui, &ReaderDeviceGui::fireFinished, this, &StepChooseCardGui::onSubDialogFinished);
+	connect(mReaderDeviceGui.data(), &ReaderDeviceGui::fireFinished, this, &StepChooseCardGui::onSubDialogFinished);
 }
 
 

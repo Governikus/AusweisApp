@@ -36,7 +36,7 @@ void SetupAssistantGui::activate()
 		}
 
 		mWizard = new SetupAssistantWizard(dialogParent);
-		connect(mWizard, &SetupAssistantWizard::fireChangePinButtonClicked, this, &SetupAssistantGui::fireChangePinButtonClicked);
+		connect(mWizard.data(), &SetupAssistantWizard::fireChangePinButtonClicked, this, &SetupAssistantGui::fireChangePinButtonClicked);
 	}
 
 	mWizard->exec();

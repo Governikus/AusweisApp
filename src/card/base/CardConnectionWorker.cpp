@@ -18,9 +18,9 @@ CardConnectionWorker::CardConnectionWorker(Reader* pReader)
 	, mReader(pReader)
 	, mSecureMessaging()
 {
-	connect(mReader, &Reader::fireCardInserted, this, &CardConnectionWorker::onReaderInfoChanged);
-	connect(mReader, &Reader::fireCardRemoved, this, &CardConnectionWorker::onReaderInfoChanged);
-	connect(mReader, &Reader::fireCardRetryCounterChanged, this, &CardConnectionWorker::onReaderInfoChanged);
+	connect(mReader.data(), &Reader::fireCardInserted, this, &CardConnectionWorker::onReaderInfoChanged);
+	connect(mReader.data(), &Reader::fireCardRemoved, this, &CardConnectionWorker::onReaderInfoChanged);
+	connect(mReader.data(), &Reader::fireCardRetryCounterChanged, this, &CardConnectionWorker::onReaderInfoChanged);
 }
 
 
