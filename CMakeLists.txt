@@ -24,6 +24,10 @@ IF(POLICY CMP0071)
 	CMAKE_POLICY(SET CMP0071 NEW)
 ENDIF()
 
+IF(POLICY CMP0074)
+	CMAKE_POLICY(SET CMP0074 NEW)
+ENDIF()
+
 # "tools.only" can be defined to disable the normal build and enable
 # cmdline "tools" only. For example: "make format" or "make package_source"
 IF(tools.only)
