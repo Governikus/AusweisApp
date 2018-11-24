@@ -6,5 +6,6 @@ Icon=AusweisApp2
 StartupNotify=true
 Terminal=false
 Categories=Utility;Accessibility;
+GenericName=Authentication App
 Keywords=nPA,eID,eAT,Personalausweis,Aufenthaltstitel,Identity,Card
 Name=AusweisApp2
