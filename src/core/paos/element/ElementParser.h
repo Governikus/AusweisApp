@@ -91,4 +91,4 @@ template<typename T> bool ElementParser::assertMandatoryList(const QVector<T>& p
 }
 
 
-} /* namespace governikus */
+} // namespace governikus

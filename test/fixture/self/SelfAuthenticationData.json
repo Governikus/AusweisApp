@@ -1,0 +1,51 @@
+{
+  "PersonalData": {
+    "DocumentType": "TA",
+    "IssuingState": "D",
+    "DateOfExpiry": "2020-10-31+01:00",
+    "GivenNames": "ANDRÉ",
+    "FamilyNames": "MUSTERMANN",
+    "ArtisticName": "",
+    "AcademicTitle": "",
+    "PlaceOfBirth": {
+      "FreetextPlace": "FRANKFURT (ODER)"
+    },
+    "Nationality": "AZE",
+    "BirthName": "",
+    "PlaceOfResidence": {
+      "StructuredPlace": {
+        "Street": "EHM-WELK-STRAßE 33",
+        "City": "LÜBBENAU/SPREEWALD",
+        "Country": "D",
+        "ZipCode": "03222"
+      }
+    },
+    "ResidencePermitI": "ERWERBSTÄTIGKEIT/BESCHÄFTIGUNG GESTATTET.",
+    "DateOfBirth": "1981-06-17+02:00"
+  },
+  "OperationsAllowedByUser": {
+    "DocumentType": "ALLOWED",
+    "IssuingState": "ALLOWED",
+    "DateOfExpiry": "ALLOWED",
+    "GivenNames": "ALLOWED",
+    "FamilyNames": "ALLOWED",
+    "ArtisticName": "ALLOWED",
+    "AcademicTitle": "ALLOWED",
+    "DateOfBirth": "ALLOWED",
+    "PlaceOfBirth": "ALLOWED",
+    "Nationality": "ALLOWED",
+    "BirthName": "ALLOWED",
+    "PlaceOfResidence": "ALLOWED",
+    "ResidencePermitI": "ALLOWED",
+    "RestrictedID": "PROHIBITED",
+    "AgeVerification": "PROHIBITED",
+    "PlaceVerification": "PROHIBITED"
+  },
+  "Result": {
+    "ResultMajor": "http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok",
+    "ResultMessage": {
+      "Value": "",
+      "Lang": "en"
+    }
+  }
+}

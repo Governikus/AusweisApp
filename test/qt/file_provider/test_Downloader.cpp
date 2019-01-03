@@ -20,6 +20,7 @@ class test_Downloader
 
 	private:
 		QTemporaryDir mCacheDir;
+		MockNetworkManager mMockNetworkManager;
 
 		void verifySuccessReply(const QSignalSpy& pSpy, const QUrl& pUrl, const QDateTime& pTimestamp, const QByteArray& pData)
 		{
@@ -78,7 +79,7 @@ class test_Downloader
 
 		void init()
 		{
-			Env::set(NetworkManager::staticMetaObject, std::make_shared<MockNetworkManager>());
+			Env::set(NetworkManager::staticMetaObject, &mMockNetworkManager);
 		}
 
 
@@ -92,9 +93,9 @@ class test_Downloader
 		{
 			const QByteArray fileContent("Some icon data");
 			const QDateTime timestampOnServer(QDate(2017, 6, 1), QTime(12, 00, 0, 0));
-			MockNetworkReply* const reply = new MockNetworkReply(fileContent, HttpStatusCode::OK);
+			MockNetworkReply* const reply = new MockNetworkReply(fileContent, HTTP_STATUS_OK);
 			reply->setFileModificationTimestamp(timestampOnServer);
-			Env::getSingleton<NetworkManager, MockNetworkManager>()->setNextReply(reply);
+			mMockNetworkManager.setNextReply(reply);
 
 			Downloader* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadSuccess);
@@ -102,7 +103,7 @@ class test_Downloader
 			const QUrl url("http://server/reader/icons/icon.png");
 			downloader->download(url);
 
-			Env::getSingleton<NetworkManager, MockNetworkManager>()->fireFinished();
+			mMockNetworkManager.fireFinished();
 
 			verifySuccessReply(spy, url, timestampOnServer, fileContent);
 		}
@@ -110,8 +111,8 @@ class test_Downloader
 
 		void downloadNonExistingFile()
 		{
-			MockNetworkReply* const reply = new MockNetworkReply(QByteArray(), HttpStatusCode::NOT_FOUND);
-			Env::getSingleton<NetworkManager, MockNetworkManager>()->setNextReply(reply);
+			MockNetworkReply* const reply = new MockNetworkReply(QByteArray(), HTTP_STATUS_NOT_FOUND);
+			mMockNetworkManager.setNextReply(reply);
 
 			Downloader* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadFailed);
@@ -119,7 +120,7 @@ class test_Downloader
 			const QUrl url("http://server/reader/icons/icon.png");
 			downloader->download(url);
 
-			Env::getSingleton<NetworkManager, MockNetworkManager>()->fireFinished();
+			mMockNetworkManager.fireFinished();
 
 			verifyFailedReply(spy, url, GlobalStatus::Code::Downloader_File_Not_Found);
 		}
@@ -128,10 +129,10 @@ class test_Downloader
 		void conditionalDownloadOfNewerFile()
 		{
 			const QByteArray fileContent("Some icon data");
-			MockNetworkReply* const reply = new MockNetworkReply(fileContent, HttpStatusCode::OK);
+			MockNetworkReply* const reply = new MockNetworkReply(fileContent, HTTP_STATUS_OK);
 			const QDateTime timestampOnServer(QDate(2017, 7, 1), QTime(12, 00, 0, 0));
 			reply->setFileModificationTimestamp(timestampOnServer);
-			Env::getSingleton<NetworkManager, MockNetworkManager>()->setNextReply(reply);
+			mMockNetworkManager.setNextReply(reply);
 
 			Downloader* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadSuccess);
@@ -140,11 +141,11 @@ class test_Downloader
 			const QDateTime timestampInCache(QDate(2017, 6, 1), QTime(12, 00, 0, 0));
 			downloader->downloadIfNew(url, timestampInCache);
 
-			Env::getSingleton<NetworkManager, MockNetworkManager>()->fireFinished();
+			mMockNetworkManager.fireFinished();
 
 			verifySuccessReply(spy, url, timestampOnServer, fileContent);
 
-			QNetworkRequest* const lastRequest = Env::getSingleton<NetworkManager, MockNetworkManager>()->getLastRequest();
+			QNetworkRequest* const lastRequest = mMockNetworkManager.getLastRequest();
 			QVERIFY(lastRequest);
 			QCOMPARE(lastRequest->rawHeader(QByteArray("If-Modified-Since")), QLocale::c().toString(timestampInCache, QStringLiteral("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
 			QCOMPARE(lastRequest->rawHeader(QByteArray("If-Modified-Since")), QByteArray("Thu, 01 Jun 2017 12:00:00 GMT"));
@@ -153,10 +154,10 @@ class test_Downloader
 
 		void conditionalDownloadOfOlderFile()
 		{
-			MockNetworkReply* const reply = new MockNetworkReply(QByteArray(), HttpStatusCode::NOT_MODIFIED);
+			MockNetworkReply* const reply = new MockNetworkReply(QByteArray(), HTTP_STATUS_NOT_MODIFIED);
 			const QDateTime timestampOnServer(QDate(2017, 6, 1), QTime(12, 00, 0, 0));
 			reply->setFileModificationTimestamp(timestampOnServer);
-			Env::getSingleton<NetworkManager, MockNetworkManager>()->setNextReply(reply);
+			mMockNetworkManager.setNextReply(reply);
 
 			Downloader* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadUnnecessary);
@@ -165,11 +166,11 @@ class test_Downloader
 			const QDateTime timestampInCache(QDate(2017, 7, 1), QTime(12, 00, 0, 0));
 			downloader->downloadIfNew(url, timestampInCache);
 
-			Env::getSingleton<NetworkManager, MockNetworkManager>()->fireFinished();
+			mMockNetworkManager.fireFinished();
 
 			verifyUnnecessaryDownloadReply(spy, url);
 
-			QNetworkRequest* const lastRequest = Env::getSingleton<NetworkManager, MockNetworkManager>()->getLastRequest();
+			QNetworkRequest* const lastRequest = mMockNetworkManager.getLastRequest();
 			QVERIFY(lastRequest);
 			QCOMPARE(lastRequest->rawHeader(QByteArray("If-Modified-Since")), QLocale::c().toString(timestampInCache, QStringLiteral("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
 			QCOMPARE(lastRequest->rawHeader(QByteArray("If-Modified-Since")), QByteArray("Sat, 01 Jul 2017 12:00:00 GMT"));

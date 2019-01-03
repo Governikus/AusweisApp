@@ -6,17 +6,18 @@
 
 #pragma once
 
-#include "http_parser.h"
 #include "HttpResponse.h"
 
-#include <QAbstractSocket>
+#include <http_parser.h>
 #include <QByteArray>
 #include <QMap>
 #include <QObject>
-#include <QSharedPointer>
+#include <QScopedPointer>
+#include <QTcpSocket>
 #include <QUrl>
 
 class test_WebserviceActivationHandler;
+class test_WebserviceActivationContext;
 
 namespace governikus
 {
@@ -28,6 +29,8 @@ class HttpRequest
 
 	private:
 		friend class ::test_WebserviceActivationHandler;
+		friend class ::test_WebserviceActivationContext;
+		friend class HttpServer;
 
 		static int onMessageBegin(http_parser* pParser);
 		static int onMessageComplete(http_parser* pParser);
@@ -46,10 +49,11 @@ class HttpRequest
 		QByteArray mUrl;
 		QMap<QByteArray, QByteArray> mHeader;
 		QByteArray mBody;
-		QSharedPointer<QAbstractSocket> mSocket;
+		QScopedPointer<QTcpSocket, QScopedPointerDeleteLater> mSocket;
 		http_parser mParser;
 		http_parser_settings mParserSettings;
 
+		bool mSocketDisconnected;
 		bool mFinished;
 		QByteArray mCurrentHeaderField;
 		QByteArray mCurrentHeaderValue;
@@ -57,7 +61,7 @@ class HttpRequest
 		void insertHeader();
 
 	public:
-		HttpRequest(QAbstractSocket* pSocket, QObject* pParent = nullptr);
+		HttpRequest(QTcpSocket* pSocket, QObject* pParent = nullptr);
 		virtual ~HttpRequest();
 
 		bool isConnected() const;
@@ -71,11 +75,14 @@ class HttpRequest
 
 		bool send(const HttpResponse& pResponse);
 
+		QTcpSocket* take();
+
 	private Q_SLOTS:
 		void onReadyRead();
+		void onSocketDisconnected();
 
 	Q_SIGNALS:
-		void fireMessageComplete(HttpRequest* pSelf, QSharedPointer<QAbstractSocket> pSocket);
+		void fireMessageComplete(HttpRequest* pSelf);
 };
 
-} /* namespace governikus */
+} // namespace governikus

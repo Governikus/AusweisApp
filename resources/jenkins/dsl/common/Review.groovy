@@ -8,6 +8,6 @@ class Review extends Trigger
 	String label = 'Review'
 	String trigger = null
 	List oldBuilds = [14, -1]
-	int timeout = 60
+	int timeout = 90
 	boolean review = true
 }

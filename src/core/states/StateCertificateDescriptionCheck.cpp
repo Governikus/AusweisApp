@@ -16,9 +16,8 @@ Q_DECLARE_LOGGING_CATEGORY(developermode)
 
 
 StateCertificateDescriptionCheck::StateCertificateDescriptionCheck(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractGenericState(pContext, false)
 {
-
 }
 
 
@@ -52,7 +51,7 @@ void StateCertificateDescriptionCheck::run()
 	if (hashCalculator.result() != hashOfDescription)
 	{
 		auto certificateHashError = QStringLiteral("The certificate description does not match the certificate.");
-		if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 		{
 			qCCritical(developermode) << certificateHashError;
 		}
@@ -66,11 +65,22 @@ void StateCertificateDescriptionCheck::run()
 	}
 
 	// check same origin policy for TCToken URL and subject URL
-	const QUrl& subjectUrl = getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getSubjectUrl();
-	if (!UrlUtil::isMatchingSameOriginPolicy(subjectUrl, getContext()->getTcTokenUrl()))
+	const QString& subjectUrlString = getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getSubjectUrl();
+	const QUrl& tcTockenUrl = getContext()->getTcTokenUrl();
+
+	qDebug() << "Subject URL from AT CVC (eService certificate) description:" << subjectUrlString;
+	qDebug() << "TCToken URL:" << tcTockenUrl;
+
+	if (UrlUtil::isMatchingSameOriginPolicy(QUrl(subjectUrlString), tcTockenUrl))
 	{
+		qDebug() << "SOP-Check succeeded.";
+	}
+	else
+	{
+		qDebug() << "SOP-Check failed.";
+
 		auto sameOriginPolicyError = QStringLiteral("The subject URL in the certificate description and the TCToken URL don't satisfy the same origin policy.");
-		if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 		{
 			qCCritical(developermode) << sameOriginPolicyError;
 		}

@@ -10,7 +10,6 @@
 #include "paos/element/Eac2InputType.h"
 #include "paos/PaosMessage.h"
 
-class test_StateProcessCertificatesFromEac2;
 
 namespace governikus
 {
@@ -42,4 +41,4 @@ class DIDAuthenticateEAC2
 		const QByteArrayList& getCvCertificatesAsBinary() const;
 };
 
-}
+} // namespace governikus

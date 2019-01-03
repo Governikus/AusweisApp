@@ -6,7 +6,6 @@
 
 #include "ProviderConfiguration.h"
 
-#include "Env.h"
 #include "ResourceLoader.h"
 
 #include <QtTest>
@@ -114,7 +113,6 @@ class test_ProviderConfiguration
 			{
 				QVERIFY(provider.getPhone().isEmpty() || provider.getPhone().startsWith("+49 "));
 			}
-
 		}
 
 

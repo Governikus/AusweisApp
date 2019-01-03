@@ -8,7 +8,6 @@
 
 #include "context/SelfAuthContext.h"
 #include "NetworkManager.h"
-#include "Result.h"
 #include "states/AbstractGenericState.h"
 
 namespace governikus
@@ -22,7 +21,7 @@ class StateGetSelfAuthenticationData
 
 	QPointer<QNetworkReply> mReply;
 
-	StateGetSelfAuthenticationData(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateGetSelfAuthenticationData(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 	void reportCommunicationError(const GlobalStatus& pStatus);
 	bool checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
@@ -36,4 +35,4 @@ class StateGetSelfAuthenticationData
 		void onSslHandshakeDone();
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -7,6 +7,7 @@
 #pragma once
 
 
+#include "Env.h"
 #include "ReaderConfigurationInfo.h"
 #include "UpdatableFile.h"
 #include "UsbId.h"
@@ -25,6 +26,7 @@ class ReaderConfiguration
 	: public QObject
 {
 	Q_OBJECT
+	friend class Env;
 
 	private:
 		friend class MockReaderConfiguration;
@@ -40,9 +42,9 @@ class ReaderConfiguration
 	protected:
 		ReaderConfiguration();
 		virtual ~ReaderConfiguration() = default;
+		static ReaderConfiguration& getInstance();
 
 	public:
-		static ReaderConfiguration& getInstance();
 		static QString getNoReaderFoundIconPath();
 		static QString getMultipleReaderIconPath();
 
@@ -57,4 +59,4 @@ class ReaderConfiguration
 		void fireUpdated();
 };
 
-} /* namespace governikus */
+} // namespace governikus

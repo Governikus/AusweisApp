@@ -4,8 +4,8 @@ import static common.Constants.strip
 def j = new Build
 	(
 		name: 'Win32_GNU_MSI_dev',
-		libraries: 'Win32_GNU_dev',
-		label: "Windows7_${MERCURIAL_REVISION_BRANCH}",
+		libraries: ['Win32_GNU_dev'],
+		label: 'Windows',
 		artifacts: 'build/*.msi'
 	).generate(this)
 
@@ -26,6 +26,8 @@ j.with
 			"""))
 
 		batchFile('cd build & mingw32-make %MAKE_FLAGS% package')
+
+		batchFile('cd build & cmake -DCMD=CHECK_WIX_WARNING -DFILE=./_CPack_Packages/win32/WIX/wix.log -P ../source/cmake/cmd.cmake')
 
 		batchFile('cd build & mingw32-make package.sign')
 	}

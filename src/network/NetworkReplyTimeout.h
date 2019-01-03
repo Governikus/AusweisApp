@@ -33,4 +33,4 @@ class NetworkReplyTimeout
 		static void setTimeout(QNetworkReply* pReply, const int pTimeoutMilliSeconds);
 };
 
-} /* namespace governikus */
+} // namespace governikus

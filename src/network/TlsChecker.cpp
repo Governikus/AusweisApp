@@ -5,7 +5,6 @@
 #include "TlsChecker.h"
 
 #include "AppSettings.h"
-#include "Env.h"
 #include "SecureStorage.h"
 
 #include <QCryptographicHash>
@@ -45,6 +44,12 @@ bool TlsChecker::checkCertificate(const QSslCertificate& pCertificate,
 
 bool TlsChecker::hasValidCertificateKeyLength(const QSslCertificate& pCertificate)
 {
+	if (pCertificate.isNull())
+	{
+		qDebug() << "Certificate is null";
+		return false;
+	}
+
 	auto keyLength = pCertificate.publicKey().length();
 	auto keyAlgorithm = pCertificate.publicKey().algorithm();
 	qDebug() << "Check certificate key of type" << TlsChecker::toString(keyAlgorithm) << "and key size" << keyLength;
@@ -59,6 +64,7 @@ bool TlsChecker::hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey)
 
 	if (keyAlgorithm == QSsl::Opaque)
 	{
+		qWarning() << "Qt failed to determine algorithm... fallback to internal handling";
 		// try do determine key algorithm and length
 		if (auto key = static_cast<EVP_PKEY*>(pEphemeralServerKey.handle()))
 		{
@@ -87,6 +93,17 @@ bool TlsChecker::hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey)
 }
 
 
+QString TlsChecker::getCertificateIssuerName(const QSslCertificate& pCertificate)
+{
+	const auto& issuerNameList = pCertificate.issuerInfo(QSslCertificate::CommonName);
+	if (!issuerNameList.isEmpty())
+	{
+		return issuerNameList.first();
+	}
+	return QString();
+}
+
+
 bool TlsChecker::isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorithm, bool pIsEphemeral)
 {
 	const auto& secureStorage = SecureStorage::getInstance();
@@ -100,12 +117,12 @@ bool TlsChecker::isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorit
 		auto keySizeError = QStringLiteral("%1 key with insufficient key size found %2").arg(toString(pKeyAlgorithm)).arg(pKeyLength);
 		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 		{
-			qCWarning(developermode) << keySizeError;
+			qCWarning(developermode).noquote() << keySizeError;
 			sufficient = true;
 		}
 		else
 		{
-			qWarning() << keySizeError;
+			qWarning().noquote() << keySizeError;
 		}
 	}
 	return sufficient;
@@ -149,6 +166,26 @@ QString TlsChecker::toString(QSsl::SslProtocol pProtocol)
 		case QSsl::SslProtocol::TlsV1_2OrLater:
 			return QStringLiteral("TlsV1_2OrLater");
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+		case QSsl::SslProtocol::TlsV1_3:
+			return QStringLiteral("TlsV1_3");
+
+		case QSsl::SslProtocol::TlsV1_3OrLater:
+			return QStringLiteral("TlsV1_3OrLater");
+
+		case QSsl::SslProtocol::DtlsV1_0:
+			return QStringLiteral("DtlsV1_0");
+
+		case QSsl::SslProtocol::DtlsV1_0OrLater:
+			return QStringLiteral("DtlsV1_0OrLater");
+
+		case QSsl::SslProtocol::DtlsV1_2:
+			return QStringLiteral("DtlsV1_2");
+
+		case QSsl::SslProtocol::DtlsV1_2OrLater:
+			return QStringLiteral("DtlsV1_2OrLater");
+
+#endif
 		case QSsl::SslProtocol::UnknownProtocol:
 			return QStringLiteral("UnknownProtocol");
 	}
@@ -161,6 +198,9 @@ QString TlsChecker::toString(QSsl::KeyAlgorithm pKeyAlgorithm)
 {
 	switch (pKeyAlgorithm)
 	{
+		case QSsl::KeyAlgorithm::Opaque:
+			return QStringLiteral("Opaque");
+
 		case QSsl::KeyAlgorithm::Dsa:
 			return QStringLiteral("Dsa");
 
@@ -169,21 +209,21 @@ QString TlsChecker::toString(QSsl::KeyAlgorithm pKeyAlgorithm)
 
 		case QSsl::KeyAlgorithm::Ec:
 			return QStringLiteral("Ec");
-
-		default:
-			return QStringLiteral("Unknown (%1)").arg(pKeyAlgorithm);
 	}
+
+	return QStringLiteral("Unknown (%1)").arg(pKeyAlgorithm);
 }
 
 
 QStringList TlsChecker::getFatalErrors(const QList<QSslError>& pErrors)
 {
 	static const QSet<QSslError::SslError> fatalErrors(
-		{QSslError::CertificateSignatureFailed, QSslError::CertificateNotYetValid, QSslError::CertificateExpired,
-		 QSslError::InvalidNotBeforeField, QSslError::InvalidNotAfterField, QSslError::CertificateRevoked, QSslError::InvalidCaCertificate,
-		 QSslError::CertificateRejected, QSslError::SubjectIssuerMismatch, QSslError::HostNameMismatch,
-		 QSslError::UnspecifiedError, QSslError::NoSslSupport, QSslError::CertificateBlacklisted}
-		);
+		{
+			QSslError::CertificateSignatureFailed, QSslError::CertificateNotYetValid, QSslError::CertificateExpired,
+			QSslError::InvalidNotBeforeField, QSslError::InvalidNotAfterField, QSslError::CertificateRevoked, QSslError::InvalidCaCertificate,
+			QSslError::CertificateRejected, QSslError::SubjectIssuerMismatch, QSslError::HostNameMismatch,
+			QSslError::UnspecifiedError, QSslError::NoSslSupport, QSslError::CertificateBlacklisted
+		});
 
 	QStringList fatalErrorStrings;
 	for (const auto& error : pErrors)
@@ -191,7 +231,7 @@ QStringList TlsChecker::getFatalErrors(const QList<QSslError>& pErrors)
 		const auto& msg = error.errorString();
 		if (fatalErrors.contains(error.error()))
 		{
-			if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+			if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 			{
 				qCWarning(developermode) << msg;
 				if (!error.certificate().isNull())
@@ -211,7 +251,7 @@ QStringList TlsChecker::getFatalErrors(const QList<QSslError>& pErrors)
 		}
 		else
 		{
-			qCDebug(network) << "(ignored) " << msg;
+			qCDebug(network) << "(ignored)" << msg;
 		}
 	}
 	return fatalErrorStrings;
@@ -220,7 +260,12 @@ QStringList TlsChecker::getFatalErrors(const QList<QSslError>& pErrors)
 
 bool TlsChecker::containsFatalError(QNetworkReply* pReply, const QList<QSslError>& pErrors)
 {
-	Q_ASSERT(pReply);
+	if (pReply == nullptr)
+	{
+		qCCritical(network) << "Reply should not be nullptr";
+		Q_ASSERT(pReply);
+		return false;
+	}
 
 	if (getFatalErrors(pErrors).isEmpty())
 	{
@@ -233,14 +278,13 @@ bool TlsChecker::containsFatalError(QNetworkReply* pReply, const QList<QSslError
 }
 
 
-void TlsChecker::logSslConfig(const QSslConfiguration pCfg, QDebug pDebug)
+void TlsChecker::logSslConfig(const QSslConfiguration pCfg, const QMessageLogger& pLogger)
 {
-	QMessageLogger logger("", 0, "");
-	logger.info(network) << "Used session cipher" << pCfg.sessionCipher();
-	logger.info(network) << "Used session protocol:" << toString(pCfg.sessionProtocol());
+	pLogger.info() << "Used session cipher" << pCfg.sessionCipher();
+	pLogger.info() << "Used session protocol:" << toString(pCfg.sessionProtocol());
 
 	{
-		auto stream = logger.info(network);
+		auto stream = pLogger.info();
 		stream << "Used ephemeral server key:";
 		if (!pCfg.ephemeralServerKey().isNull())
 		{
@@ -248,7 +292,7 @@ void TlsChecker::logSslConfig(const QSslConfiguration pCfg, QDebug pDebug)
 		}
 	}
 
-	logger.info(network) << "Used peer certificate:" << pCfg.peerCertificate();
+	pLogger.info() << "Used peer certificate:" << pCfg.peerCertificate();
 
 	auto session = pCfg.sessionTicket();
 	if (!session.isEmpty())
@@ -256,7 +300,6 @@ void TlsChecker::logSslConfig(const QSslConfiguration pCfg, QDebug pDebug)
 		// do not print session ticket as plain text
 		session = QCryptographicHash::hash(session, QCryptographicHash::Sha256).toHex();
 	}
-	logger.info(network) << "Used ssl session:" << session;
-
-	pDebug << "Handshake of tls connection done!";
+	pLogger.info() << "Used ssl session:" << session;
+	pLogger.info() << "Handshake of tls connection done!";
 }

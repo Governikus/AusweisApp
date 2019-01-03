@@ -10,6 +10,7 @@
 #include <QLoggingCategory>
 #include <QSharedPointer>
 
+#include <openssl/bn.h>
 #include <openssl/ec.h>
 #include <openssl/ecdsa.h>
 #include <openssl/evp.h>
@@ -147,4 +148,4 @@ inline QSharedPointer<ECDSA_SIG> EcUtil::create(ECDSA_SIG* pEcdsaSignature)
 }
 
 
-} /* namespace governikus */
+} // namespace governikus

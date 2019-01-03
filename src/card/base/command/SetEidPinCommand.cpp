@@ -2,9 +2,7 @@
  * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "CardConnection.h"
 #include "SetEidPinCommand.h"
-
 
 using namespace governikus;
 
@@ -15,11 +13,6 @@ SetEidPinCommand::SetEidPinCommand(QSharedPointer<CardConnectionWorker> pCardCon
 	, mNewPin(pNewPin)
 	, mTimeoutSeconds(pTimeoutSeconds)
 	, mResponseApdu()
-{
-}
-
-
-SetEidPinCommand::~SetEidPinCommand()
 {
 }
 

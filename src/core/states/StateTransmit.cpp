@@ -41,7 +41,6 @@ void StateTransmit::onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 		QSharedPointer<TransmitResponse> response(getContext()->getTransmitResponses().last());
 		response->setOutputApdus(transmitCommand->getOutputApduAsHex());
 		updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode)); // set the result to the model so it is written to the PAOS response
-		getContext()->setTransmitResponseFailed(true);  // Return the correct return code according to the last minute test spec update.
 		Q_EMIT fireContinue();
 	}
 	else

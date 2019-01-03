@@ -22,4 +22,4 @@ class BluetoothMessagePowerSimOffResponse
 		BluetoothResultCode getResultCode() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

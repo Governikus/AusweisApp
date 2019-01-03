@@ -6,7 +6,6 @@
 
 #include "messages/BluetoothMessage.h"
 #include "parameter/BluetoothMessageParameterCardReaderStatus.h"
-#include "parameter/BluetoothMessageParameterStatusChange.h"
 
 namespace governikus
 {
@@ -21,4 +20,4 @@ class BluetoothMessageTransferCardReaderStatusResponse
 		BluetoothStatusChange getStatusChange() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

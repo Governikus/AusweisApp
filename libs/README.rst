@@ -17,7 +17,7 @@ Unterstützte Compiler:
 
 Notwendige Bibliotheken:
 
-- Qt >= 5.9
+- Qt >= 5.10
 
   - http://www.qt.io/download/
 
@@ -25,11 +25,7 @@ Notwendige Bibliotheken:
 
   - https://www.openssl.org/source/
 
-  - Aus dem Ordner "patches" müssen die folgenden Patches angewandt werden.
-    (Sofern der automatische Build mittels CMake gestartet wird, werden
-    die Patches automatisch angewandt.)
-
-    - openssl_rsa_psk.patch
+  - LibreSSL wird auf Grund des fehlenden RSA-PSK nicht unterstützt.
 
 - pcsclite >= 1.8 (nur Linux/FreeBSD)
 
@@ -97,8 +93,8 @@ Beispiel: Innerhalb von /Users/governikus/AusweisApp2 befindet sich der Quellcod
 
 Windows MinGW
 ^^^^^^^^^^^^^
-Unter Windows ist es derzeit empfohlen einen Teil der Toolchain mittels MSYS zu bauen.
-Perl muss dafür ebenfalls installiert sein.
+Unter Windows ist es derzeit empfohlen einen Teil der Toolchain mittels MSYS2 zu bauen.
+Perl muss dafür in MSYS2 nachinstalliert werden. Außerdem ist das Windows SDK notwendig.
 
 MinGW
 """""
@@ -109,20 +105,28 @@ MinGW
     https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/5.3.0/threads-posix/dwarf/i686-5.3.0-release-posix-dwarf-rt_v4-rev0.7z/download
 
 
-MSYS
-""""
+MSYS2
+"""""
 
-- http://www.mingw.org/wiki/msys
+- https://sourceforge.net/projects/msys2/files/Base/x86_64/
 
-  - Getestet: 1.0.11
+  - Getestet: msys2-base-x86_64-20180531.tar.xz
 
 
-Perl
-""""
+Windows SDK
+"""""""""""
 
-- http://www.activestate.com/activeperl/downloads
+- https://developer.microsoft.com/de-de/windows/downloads/windows-10-sdk
 
-  - Getestet: 5.24.0
+  - Getestet: 10.0.14393.795 und 10.0.16299.0
+
+
+Python 2
+""""""""
+
+- https://www.python.org/downloads/
+
+  - Getestet: python-2.7.15.amd64.msi
 
 
 Vorbereitung
@@ -131,46 +135,72 @@ Vorbereitung
 
 #. Eintragen des Ordners "bin" von der MinGW-Installation in %PATH%.
 
-#. Installation von MSYS, welche sich auf die MinGW-Installation bezieht.
+#. Entpacken von MSYS2.
 
-#. Der Ordner von Perl muss sich in %PATH% befinden.
+#. Start von "msys2_shell.cmd -use-full-path".
 
-#. In der Datei "fstab" unter C:\msys\1.0\etc folgende Einträge mit den jeweiligen Pfaden:
+#. System aktualisieren mittels "pacman -Syu" (danach MSYS2 neustarten).
+
+#. Perl nachinstallieren mittels "pacman -S perl".
+
+#. Installation des Windows SDK und setzen einer Systemvariable:
 
 ::
 
-   C:/mingw32/i686-5.3.0-release-posix-dwarf-rt_v4-rev0    /mingw
-   C:/Perl    /perl
-
+   Für das Windows SDK 10.0.15063.0 und neuer:
+       WindowsSdkVerBinPath = C:\Program Files (x86)\Windows Kits\10\bin\%VERSION%
+   Für alle älteren Versionen:
+       WindowsSdkDir = C:\Program Files (x86)\Windows Kits\10
 
 Durch einige Probleme mit Unix-Shell-Skripten ist es derzeit leider
-notwendig die Toolchain in zwei Schritten aufzubauen.
+notwendig die Toolchain in zwei Schritten zu bauen.
 Hierzu muss OpenSSL und Qt separat gebaut werden.
+
+#. Download und Start der Installation von Python.
+
+#. Sicherstellen, dass die python.exe während der Installation zum PATH hinzugefügt wird.
+
+
+Eventuell muss für MinGW folgende Option gesetzt werden (QTBUG-16443):
+
+#. Windows --> gpedit.msc --> Enter (als Administrator)
+
+#. Richtlinien für Lokaler Computer
+
+#. Computerkonfiguration
+
+#. Administrative Vorlagen
+
+#. System
+
+#. Dateisystem
+
+#. Lange Win32-Pfade aktivieren
 
 
 openssl / Qt
 """"""""""""
 Da Qt mittels Batchskript gebaut werden muss, ist es leider nicht möglich dies innerhalb
-von MSYS zu bauen [2]. Daher wird OpenSSL und Qt mittels Windows-CLI konfiguriert.
-Dabei wird Qt über Windows-CLI und OpenSSL unter MSYS gebaut.
+von MSYS2 zu bauen [2]. Daher wird OpenSSL und Qt mittels Windows-CLI konfiguriert.
+Dabei wird Qt über Windows-CLI und OpenSSL unter MSYS2 gebaut.
 
 #. cmd.exe von Windows starten
 
-#. mkdir c:\msys\1.0\home\user\qt ("user" ist der Benutzer, der unter MSYS verwendet wird)
+#. mkdir c:\msys64\home\user\qt ("user" ist der Benutzer, der unter MSYS2 verwendet wird)
 
-#. cd c:\msys\1.0\home\user\qt
+#. cd c:\msys64\home\user\qt
 
 #. cmake -DCMAKE_BUILD_TYPE=release -DPACKAGES_DIR=C:/packages C:/AusweisApp2/libs -G "MinGW Makefiles"
 
-#. MSYS Shell starten
+#. MSYS2 Shell starten ("msys2_shell.cmd -use-full-path")
 
 #. cd qt
 
 #. mingw32-make openssl
 
-#. MSYS Shell verlassen
+#. MSYS2 Shell verlassen
 
-#. In der cmd.exe: c:\msys\1.0\home\user\qt
+#. In der cmd.exe: c:\msys64\home\user\qt
 
 #. mingw32-make qt
 
@@ -182,7 +212,7 @@ iOS
 """
 Die Toolchain für iOS kann nur auf MacOS gebaut werden. Dabei müssen XCode und
 die Command Line Tools (siehe "xcode-select -p" bzw. "xcode-select --install")
-auf dem Mac vorhanden sein. Die folgende Anleitung wurde unter MacOS 10.9 und 10.11 getestet.
+auf dem Mac vorhanden sein. Die folgende Anleitung wurde unter macOS 10.12 getestet.
 
 Ebenfalls muss für den Build-Vorgang von Qt ein iOS Developer-Zertifikat mit Wildcard (*)
 im Keystore von MacOS hinterlegt sein.
@@ -207,30 +237,33 @@ Komponenten vorhanden sein:
 
   - https://developer.android.com/tools/sdk/ndk/index.html
 
-  - Getestet: r10e (https://wiki.qt.io/Qt_for_Android_known_issues)
+  - Getestet: r18 (https://wiki.qt.io/Qt_for_Android_known_issues)
 
 - Android SDK mit gesetztem ANDROID_HOME
 
   - https://developer.android.com/studio/releases/sdk-tools.html
 
-  - Getestet: 25.2.5
+  - Getestet: 26.1.1
 
-    - Qt ist derzeit nicht mit aktuelleren kompatibel: https://bugreports.qt.io/browse/QTBUG-61988
+- SDK build tools
 
-  - Unter bestimmten Umständen kann es vorkommen, dass die Build-Tools-Version nicht erkannt
-    wird. Dies kann mittels der Umgebungsvariable ANDROID_BUILD_TOOLS_REVISION behoben werden.
-    Die genaue Version ist im Android Manager vom Android SDK (./tools/android) hinterlegt.
+  - https://developer.android.com/studio/releases/build-tools
 
-    - Getestet: 27.0.1
+  - Getestet: 28.0.3
 
-- Um Qt erfolgreich zu bauen, sind verschiedene API Level von Android notwendig.
-  Diese sollten mindestens Level 18 und 21 sein. Nähere Informationen dazu
+- SDK platform tools
+
+  - https://developer.android.com/studio/releases/platform-tools
+
+  - Getestet: 28.0.1
+
+- Um Qt erfolgreich zu bauen, ist mindestens ein API-Levelpaket von Android notwendig.
+  Dieses sollte mindestens Level 21 sein. Nähere Informationen dazu
   sind im Wiki von Qt enthalten: http://wiki.qt.io/Android
   Die Plattformen können mittels Android Manager nachinstalliert werden.
 
 - JDK mit gesetztem JAVA_HOME
 
-- Apache Ant mit gesetztem ANT_HOME
 
 
 Beispiel: Innerhalb von /home/governikus/AusweisApp2 befindet sich der Quellcode.

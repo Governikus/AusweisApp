@@ -40,9 +40,7 @@ class test_ReaderConfigurationEntryParser
 			QVERIFY(parser.matchPlatform(data, QOperatingSystemVersion::OSXYosemite));
 			QVERIFY(parser.matchPlatform(data, QOperatingSystemVersion::OSXElCapitan));
 			QVERIFY(parser.matchPlatform(data, QOperatingSystemVersion::MacOSSierra));
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 9, 1))
 			QVERIFY(parser.matchPlatform(data, QOperatingSystemVersion::MacOSHighSierra));
-#endif
 		}
 
 

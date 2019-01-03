@@ -14,7 +14,6 @@
 namespace governikus
 {
 
-
 class GlobalStatus
 {
 	Q_GADGET
@@ -81,34 +80,14 @@ class GlobalStatus
 
 			Paos_Unexpected_Warning,
 
+			Paos_Generic_Server_Error,
+
 			Paos_Error_AL_Unknown_Error,
-			Paos_Error_AL_No_Permission,
 			Paos_Error_AL_Internal_Error,
-			Paos_Error_AL_Parameter_Error,
-			Paos_Error_AL_Unkown_API_Function,
-			Paos_Error_AL_Not_Initialized,
-			Paos_Error_AL_Warning_Connection_Disconnected,
-			Paos_Error_AL_Session_Terminated_Warning,
 			Paos_Error_AL_Communication_Error,
-			Paos_Error_DP_Timeout_Error,
-			Paos_Error_DP_Unknown_Channel_Handle,
-			Paos_Error_DP_Communication_Error,
 			Paos_Error_DP_Trusted_Channel_Establishment_Failed,
-			Paos_Error_DP_Unknown_Protocol,
-			Paos_Error_DP_Unknown_Cipher_Suite,
-			Paos_Error_DP_Unknown_Webservice_Binding,
-			Paos_Error_DP_Node_Not_Reachable,
-			Paos_Error_IFDL_Timeout_Error,
-			Paos_Error_IFDL_InvalidSlotHandle,
-			Paos_Error_IFDL_CancellationByUser,
-			Paos_Error_KEY_KeyGenerationNotPossible,
 			Paos_Error_SAL_Cancellation_by_User,
-			Paos_Error_SAL_CertificateChainInterrupted,
 			Paos_Error_SAL_Invalid_Key,
-			Paos_Error_SAL_SecurityConditionNotSatisfied,
-			Paos_Error_SAL_MEAC_AgeVerificationFailedWarning,
-			Paos_Error_SAL_MEAC_CommunityVerificationFailedWarning,
-			Paos_Error_SAL_MEAC_DocumentValidityVerificationFailed,
 
 			Workflow_Reader_Device_Connection_Error,
 			Workflow_Reader_Device_Scan_Error,
@@ -116,6 +95,7 @@ class GlobalStatus
 			Card_Not_Found,
 			Card_Communication_Error,
 			Card_Protocol_Error,
+			Card_Unexpected_Transmit_Status,
 			Card_Cancellation_By_User,
 			Card_Input_TimeOut,
 			Card_Invalid_Pin,
@@ -161,7 +141,6 @@ class GlobalStatus
 					, mExternalInformation(pExternalInformation)
 					, mOrigin(pOrigin)
 				{
-
 				}
 
 
@@ -178,20 +157,18 @@ class GlobalStatus
 		QSharedDataPointer<InternalStatus> d;
 		const QString getExternalInfo(int pIndex = 0) const;
 
-		static QString maskMessage(const QString& pMessage, const bool pMask);
+		QString toErrorDescriptionInternal() const;
 
 	public:
 		GlobalStatus(Code pStatusCode = Code::Unknown_Error, const QStringList& pExternalInformation = QStringList(), const Origin pOrigin = Origin::Client)
 			: d(new InternalStatus(pStatusCode, pExternalInformation, pOrigin))
 		{
-
 		}
 
 
 		GlobalStatus(Code pStatusCode, const QString& pExternalInformation, const Origin pOrigin = Origin::Client)
 			: GlobalStatus(pStatusCode, QStringList(pExternalInformation), pOrigin)
 		{
-
 		}
 
 
@@ -199,7 +176,6 @@ class GlobalStatus
 		bool is(const Code pStatusCode) const;
 
 		Code getStatusCode() const;
-		operator GlobalStatus::Code() const;
 
 		QString toErrorDescription(const bool pSimplifiedVersion = false) const;
 
@@ -209,13 +185,14 @@ class GlobalStatus
 		bool isNoError() const;
 		bool isError() const;
 		bool isCancellationByUser() const;
+		bool isMessageMasked() const;
 };
 
 using Origin = GlobalStatus::Origin;
 
 defineEnumOperators(GlobalStatus::Code)
 
-} /* namespace governikus */
+} // namespace governikus
 
 
 QDebug operator <<(QDebug pDbg, const governikus::GlobalStatus& pStatus);

@@ -4,8 +4,8 @@
 
 #include "WifiInfo.h"
 
+#include <QCoreApplication>
 #include <QLoggingCategory>
-#include <QNetworkInterface>
 #include <QTimerEvent>
 
 Q_DECLARE_LOGGING_CATEGORY(qml)
@@ -31,7 +31,13 @@ bool WifiInfo::getCurrentWifiEnabled()
 
 void WifiInfo::enableWifi()
 {
-	qCWarning(qml) << "NOT IMPLEMENTED";
+#ifndef QT_NO_DEBUG
+	if (!QCoreApplication::applicationName().startsWith(QLatin1String("QmlTest")))
+
+#endif
+	{
+		qCWarning(qml) << "NOT IMPLEMENTED";
+	}
 }
 
 
@@ -43,7 +49,13 @@ void WifiInfo::timerEvent(QTimerEvent* pEvent)
 
 bool WifiInfo::isWifiEnabled()
 {
-	qCWarning(qml) << "NOT IMPLEMENTED";
+#ifndef QT_NO_DEBUG
+	if (!QCoreApplication::applicationName().startsWith(QLatin1String("QmlTest")))
+
+#endif
+	{
+		qCWarning(qml) << "NOT IMPLEMENTED";
+	}
 
 	return mWifiEnabled;
 }

@@ -48,8 +48,7 @@ bool WebserviceActivationHandler::start()
 		return true;
 	}
 
-
-	const int port = HttpServer::cPort;
+	const quint16 port = HttpServer::cPort;
 	HttpServerStatusParser parser(port);
 	QString serverAppName = parser.request() ? parser.getVersionInfo().getName() : parser.getServerHeader();
 	if (serverAppName.startsWith(VersionInfo::getInstance().getName()))
@@ -128,7 +127,7 @@ void WebserviceActivationHandler::onNewRequest(const QSharedPointer<HttpRequest>
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
 	HttpResponse response;
-	response.setStatus(HttpStatusCode::NOT_FOUND);
+	response.setStatus(HTTP_STATUS_NOT_FOUND);
 	response.setBody(htmlPage, QByteArrayLiteral("text/html; charset=utf-8"));
 	pRequest->send(response);
 }
@@ -136,7 +135,7 @@ void WebserviceActivationHandler::onNewRequest(const QSharedPointer<HttpRequest>
 
 void WebserviceActivationHandler::handleShowUiRequest(UiModule pUiModule, const QSharedPointer<HttpRequest>& pRequest)
 {
-	pRequest->send(HttpStatusCode::OK);
+	pRequest->send(HTTP_STATUS_OK);
 
 	QString userAgent = QString::fromLatin1(pRequest->getHeader(QByteArrayLiteral("user-agent")));
 	if (userAgent.startsWith(QCoreApplication::applicationName()))
@@ -169,14 +168,14 @@ void WebserviceActivationHandler::handleImageRequest(const QSharedPointer<HttpRe
 	QFile imageFile(pImagePath);
 	if (imageFile.open(QIODevice::ReadOnly))
 	{
-		response.setStatus(HttpStatusCode::OK);
+		response.setStatus(HTTP_STATUS_OK);
 		response.setBody(imageFile.readAll(), guessImageContentType(pImagePath));
 		imageFile.close();
 	}
 	else
 	{
 		qCCritical(activation) << "Unknown image file requested" << pImagePath;
-		response.setStatus(HttpStatusCode::NOT_FOUND);
+		response.setStatus(HTTP_STATUS_NOT_FOUND);
 		response.setBody(QByteArrayLiteral("Not found"), QByteArrayLiteral("text/plain; charset=utf-8"));
 	}
 
@@ -211,7 +210,7 @@ void WebserviceActivationHandler::handleStatusRequest(StatusFormat pStatusFormat
 {
 	qCDebug(activation) << "Create response with status format:" << pStatusFormat;
 
-	HttpResponse response(HttpStatusCode::OK);
+	HttpResponse response(HTTP_STATUS_OK);
 	response.setHeader(QByteArrayLiteral("Access-Control-Allow-Origin"), QByteArrayLiteral("*"));
 	switch (pStatusFormat)
 	{

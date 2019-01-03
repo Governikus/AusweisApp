@@ -6,7 +6,7 @@
 
 #include "AppSettings.h"
 #include "Env.h"
-#include "messages/GetIfdStatus.h"
+#include "FuncUtils.h"
 #include "messages/IfdConnect.h"
 #include "messages/IfdConnectResponse.h"
 #include "messages/IfdDisconnect.h"
@@ -15,6 +15,7 @@
 #include "messages/IfdEstablishContext.h"
 #include "messages/IfdEstablishPaceChannel.h"
 #include "messages/IfdEstablishPaceChannelResponse.h"
+#include "messages/IfdGetStatus.h"
 #include "messages/IfdModifyPin.h"
 #include "messages/IfdModifyPinResponse.h"
 #include "messages/IfdStatus.h"
@@ -22,7 +23,6 @@
 #include "messages/IfdTransmitResponse.h"
 #include "PinModifyOutput.h"
 #include "ReaderManager.h"
-#include "RemoteDispatcher.h"
 
 #include <QLoggingCategory>
 
@@ -46,29 +46,33 @@ ServerMessageHandler::~ServerMessageHandler()
 
 ServerMessageHandlerImpl::ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel)
 	: ServerMessageHandler()
-	, MessageReceiver()
 	, mReaderManager(Env::getSingleton<ReaderManager>())
-	, mRemoteDispatcher(Env::create<RemoteDispatcher*>(pDataChannel), &QObject::deleteLater)
+	, mRemoteDispatcher(Env::create<RemoteDispatcherServer*>(pDataChannel), &QObject::deleteLater)
 	, mCardConnections()
 {
-	connect(mRemoteDispatcher.data(), &RemoteDispatcher::fireReceived, this, &ServerMessageHandlerImpl::onReceived);
-	connect(mRemoteDispatcher.data(), &RemoteDispatcher::fireClosed, this, &ServerMessageHandlerImpl::onClosed);
+	connect(mRemoteDispatcher.data(), &RemoteDispatcherServer::fireReceived, this, &ServerMessageHandlerImpl::onRemoteMessage);
+	connect(mRemoteDispatcher.data(), &RemoteDispatcherServer::fireClosed, this, &ServerMessageHandlerImpl::onClosed);
 
-	connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderAdded, this, &ServerMessageHandlerImpl::onReaderChanged);
-	connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderRemoved, this, &ServerMessageHandlerImpl::onReaderRemoved);
-	connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderPropertiesUpdated, this, &ServerMessageHandlerImpl::onReaderChanged);
-	connect(&ReaderManager::getInstance(), &ReaderManager::fireCardInserted, this, &ServerMessageHandlerImpl::onReaderChanged);
-	connect(&ReaderManager::getInstance(), &ReaderManager::fireCardRemoved, this, &ServerMessageHandlerImpl::onReaderChanged);
-	connect(&ReaderManager::getInstance(), &ReaderManager::fireCardRetryCounterChanged, this, &ServerMessageHandlerImpl::onReaderChanged);
+	connect(mRemoteDispatcher.data(), &RemoteDispatcherServer::fireContextEstablished, this, [this] {
+				const auto readerManager = Env::getSingleton<ReaderManager>();
+				connect(readerManager, &ReaderManager::fireReaderAdded, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
+				connect(readerManager, &ReaderManager::fireReaderRemoved, this, &ServerMessageHandlerImpl::onReaderRemoved, Qt::UniqueConnection);
+				connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
+				connect(readerManager, &ReaderManager::fireCardInserted, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
+				connect(readerManager, &ReaderManager::fireCardRemoved, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
+				connect(readerManager, &ReaderManager::fireCardRetryCounterChanged, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
+			});
 }
 
 
-void ServerMessageHandlerImpl::process(const QSharedPointer<const GetIfdStatus>& pMessage)
+void ServerMessageHandlerImpl::handleIfdGetStatus(const QJsonObject& pJsonObject)
 {
-	if (!pMessage->getSlotName().isEmpty())
+	const IfdGetStatus ifdGetStatus(pJsonObject);
+
+	if (!ifdGetStatus.getSlotName().isEmpty())
 	{
-		const auto& readerInfo = mReaderManager->getReaderInfo(pMessage->getSlotName());
-		const QSharedPointer<IfdStatus> ifdStatusMsg(new IfdStatus(readerInfo));
+		const auto& readerInfo = mReaderManager->getReaderInfo(ifdGetStatus.getSlotName());
+		const auto& ifdStatusMsg = QSharedPointer<IfdStatus>::create(readerInfo);
 		mRemoteDispatcher->send(ifdStatusMsg);
 
 		return;
@@ -82,41 +86,47 @@ void ServerMessageHandlerImpl::process(const QSharedPointer<const GetIfdStatus>&
 			continue;
 		}
 
-		const QSharedPointer<IfdStatus> ifdStatusMsg(new IfdStatus(readerInfo));
+		const auto& ifdStatusMsg = QSharedPointer<IfdStatus>::create(readerInfo);
 		mRemoteDispatcher->send(ifdStatusMsg);
 	}
 }
 
 
-void ServerMessageHandlerImpl::process(const QSharedPointer<const IfdConnect>& pMessage)
+void ServerMessageHandlerImpl::handleIfdConnect(const QJsonObject& pJsonObject)
 {
-	const auto& info = mReaderManager->getReaderInfo(pMessage->getSlotName());
+	const IfdConnect ifdConnect(pJsonObject);
+
+	const auto& info = mReaderManager->getReaderInfo(ifdConnect.getSlotName());
 	if (!info.isConnected())
 	{
-		qCWarning(remote_device) << "Unknown reader" << pMessage->getSlotName();
-		const QSharedPointer<IfdConnectResponse> response(new IfdConnectResponse(pMessage->getSlotName(), QStringLiteral("/ifdl/terminal#unknownSlot")));
+		qCWarning(remote_device) << "Unknown reader" << ifdConnect.getSlotName();
+		const auto& response = QSharedPointer<IfdConnectResponse>::create(ifdConnect.getSlotName(), ECardApiResult::Minor::IFDL_UnknownSlot);
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
 	if (!info.hasEidCard())
 	{
-		qCWarning(remote_device) << "Cannot determine eID card for reader" << pMessage->getSlotName();
-		const QSharedPointer<IfdConnectResponse> response(new IfdConnectResponse(pMessage->getSlotName(), QStringLiteral("/al/common#unknownError")));
+		qCWarning(remote_device) << "Cannot determine eID card for reader" << ifdConnect.getSlotName();
+		const auto& response = QSharedPointer<IfdConnectResponse>::create(ifdConnect.getSlotName(), ECardApiResult::Minor::AL_Unknown_Error);
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
-	if (mCardConnections.contains(pMessage->getSlotName()))
+	const auto& connections = mCardConnections.values();
+	const auto& slotNames = map<QSharedPointer<CardConnection>, QString>([](const QSharedPointer<CardConnection>& c){
+				return c ? c->getReaderInfo().getName() : QString();
+			}, connections);
+	if (slotNames.contains(ifdConnect.getSlotName()))
 	{
-		qCWarning(remote_device) << "Card is already connected" << pMessage->getSlotName();
-		const QSharedPointer<IfdConnectResponse> response(new IfdConnectResponse(pMessage->getSlotName(), QStringLiteral("/al/common#unknownError")));
+		qCWarning(remote_device) << "Card is already connected" << ifdConnect.getSlotName();
+		const auto& response = QSharedPointer<IfdConnectResponse>::create(ifdConnect.getSlotName(), ECardApiResult::Minor::IFDL_IFD_SharingViolation);
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
-	qCDebug(remote_device) << "Connect card" << pMessage->getSlotName();
-	mReaderManager->callCreateCardConnectionCommand(pMessage->getSlotName(), this, &ServerMessageHandlerImpl::onCreateCardConnectionCommandDone);
+	qCDebug(remote_device) << "Connect card" << ifdConnect.getSlotName();
+	mReaderManager->callCreateCardConnectionCommand(ifdConnect.getSlotName(), this, &ServerMessageHandlerImpl::onCreateCardConnectionCommandDone);
 }
 
 
@@ -126,7 +136,7 @@ void ServerMessageHandlerImpl::onCreateCardConnectionCommandDone(QSharedPointer<
 	if (pCommand->getCardConnection() == nullptr)
 	{
 		qCWarning(remote_device) << "Cannot connect card" << pCommand->getReaderName();
-		const QSharedPointer<IfdConnectResponse> response(new IfdConnectResponse(pCommand->getReaderName(), QStringLiteral("/al/common#unknownError")));
+		const auto& response = QSharedPointer<IfdConnectResponse>::create(pCommand->getReaderName(), ECardApiResult::Minor::AL_Unknown_Error);
 		mRemoteDispatcher->send(response);
 		return;
 	}
@@ -135,63 +145,76 @@ void ServerMessageHandlerImpl::onCreateCardConnectionCommandDone(QSharedPointer<
 	qCInfo(remote_device) << "Card successfully connected" << pCommand->getReaderName() << ", using handle " << slotHandle;
 	mCardConnections.insert(slotHandle, pCommand->getCardConnection());
 
-	const QSharedPointer<IfdConnectResponse> response(new IfdConnectResponse(slotHandle));
+	const auto& response = QSharedPointer<IfdConnectResponse>::create(slotHandle);
 	mRemoteDispatcher->send(response);
 }
 
 
-QString ServerMessageHandlerImpl::convertSlotHandleBackwardsCompatibility(const QString& pSlotHandle)
+QString ServerMessageHandlerImpl::slotHandleForReaderName(const QString& pReaderName) const
 {
-	if (!mCardConnections.contains(pSlotHandle))
+	const auto& slotHandles = mCardConnections.keys();
+	for (const auto& slotHandle : slotHandles)
 	{
-		const auto& slotHandles = mCardConnections.keys();
-		for (const auto& slotHandle : slotHandles)
+		if (mCardConnections[slotHandle]->getReaderInfo().getName() == pReaderName)
 		{
-			if (mCardConnections[slotHandle]->getReaderInfo().getName() == pSlotHandle)
-			{
-				return slotHandle;
-			}
+			return slotHandle;
 		}
 	}
-	return pSlotHandle;
+	return QString();
 }
 
 
-void ServerMessageHandlerImpl::process(const QSharedPointer<const IfdDisconnect>& pMessage)
+QString ServerMessageHandlerImpl::convertSlotHandleBackwardsCompatibility(const QString& pReaderName)
 {
-	QString slotHandle = pMessage->getSlotHandle();
+	if (!mCardConnections.contains(pReaderName))
+	{
+		const QString& slotHandle = slotHandleForReaderName(pReaderName);
+		if (!slotHandle.isEmpty())
+		{
+			return slotHandle;
+		}
+	}
+	return pReaderName;
+}
+
+
+void ServerMessageHandlerImpl::handleIfdDisconnect(const QJsonObject& pJsonObject)
+{
+	const IfdDisconnect ifdDisconnect(pJsonObject);
+	QString slotHandle = ifdDisconnect.getSlotHandle();
 	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
 
 	if (!mCardConnections.contains(slotHandle))
 	{
 		qCWarning(remote_device) << "Card is not connected" << slotHandle;
-		const QSharedPointer<IfdDisconnectResponse> response(new IfdDisconnectResponse(slotHandle, QStringLiteral("/ifdl/common#invalidSlotHandle")));
+		const auto& response = QSharedPointer<IfdDisconnectResponse>::create(slotHandle, ECardApiResult::Minor::IFDL_InvalidSlotHandle);
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
 	mCardConnections.remove(slotHandle);
 	qCInfo(remote_device) << "Card successfully disconnected" << slotHandle;
-	const QSharedPointer<IfdDisconnectResponse> response(new IfdDisconnectResponse(slotHandle));
+	const auto& response = QSharedPointer<IfdDisconnectResponse>::create(slotHandle);
 	mRemoteDispatcher->send(response);
 }
 
 
-void ServerMessageHandlerImpl::process(const QSharedPointer<const IfdTransmit>& pMessage)
+void ServerMessageHandlerImpl::handleIfdTransmit(const QJsonObject& pJsonObject)
 {
-	QString slotHandle = pMessage->getSlotHandle();
+	const IfdTransmit ifdTransmit(pJsonObject);
+	QString slotHandle = ifdTransmit.getSlotHandle();
 	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
 
 	if (!mCardConnections.contains(slotHandle))
 	{
 		qCWarning(remote_device) << "Card is not connected" << slotHandle;
-		const QSharedPointer<IfdTransmitResponse> response(new IfdTransmitResponse(slotHandle, QByteArray(), QStringLiteral("/ifdl/common#invalidSlotHandle")));
+		const auto& response = QSharedPointer<IfdTransmitResponse>::create(slotHandle, QByteArray(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
 	const QSharedPointer<CardConnection>& cardConnection = mCardConnections.value(slotHandle);
-	const auto& commandApdu = pMessage->getInputApdu();
+	const auto& commandApdu = ifdTransmit.getInputApdu();
 
 	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
 	if (pinPadMode && CommandApdu::isSecureMessaging(commandApdu))
@@ -200,67 +223,77 @@ void ServerMessageHandlerImpl::process(const QSharedPointer<const IfdTransmit>& 
 		if (stopped)
 		{
 			qCDebug(remote_device) << "The eService has established Secure Messaging. Stopping local Secure Messaging.";
+			Q_EMIT fireSecureMessagingStopped();
 		}
 	}
 
 	qCDebug(remote_device) << "Transmit card APDU for" << slotHandle;
-	InputAPDUInfo inputApduInfo(commandApdu, MSEBuilder::isUpdateRetryCounterCommand(commandApdu));
+	InputAPDUInfo inputApduInfo(commandApdu);
 	cardConnection->callTransmitCommand(this, &ServerMessageHandlerImpl::onTransmitCardCommandDone, {inputApduInfo}, slotHandle);
 }
 
 
-void ServerMessageHandlerImpl::process(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage)
+void ServerMessageHandlerImpl::handleIfdEstablishPaceChannel(const QJsonObject& pJsonObject)
 {
-	QString slotHandle = pMessage->getSlotHandle();
+	const auto& ifdEstablishPaceChannel = QSharedPointer<IfdEstablishPaceChannel>::create(pJsonObject);
+	QString slotHandle = ifdEstablishPaceChannel->getSlotHandle();
 	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
-
-	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
-	if (!pinPadMode)
-	{
-		qCWarning(remote_device) << "EstablishPaceChannel is only available in pin pad mode.";
-		const QSharedPointer<IfdEstablishPaceChannelResponse> response(new IfdEstablishPaceChannelResponse(slotHandle, QByteArray(), QStringLiteral("/al/common#unknownError")));
-		mRemoteDispatcher->send(response);
-		return;
-	}
 
 	if (!mCardConnections.contains(slotHandle))
 	{
 		qCWarning(remote_device) << "Card is not connected" << slotHandle;
-		const QSharedPointer<IfdEstablishPaceChannelResponse> response(new IfdEstablishPaceChannelResponse(slotHandle, QByteArray(), QStringLiteral("/ifdl/common#invalidSlotHandle")));
+		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(slotHandle, QByteArray(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
-	QSharedPointer<CardConnection> connection = mCardConnections[slotHandle];
-	Q_EMIT fireEstablishPaceChannel(pMessage, connection);
+	QSharedPointer<CardConnection> cardConnection = mCardConnections[slotHandle];
+
+	const bool isBasicReader = cardConnection->getReaderInfo().isBasicReader();
+	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
+	if (isBasicReader && !pinPadMode)
+	{
+		qCWarning(remote_device) << "EstablishPaceChannel is only available in pin pad mode.";
+		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(slotHandle, QByteArray(), ECardApiResult::Minor::AL_Unknown_Error);
+		mRemoteDispatcher->send(response);
+		return;
+	}
+
+	Q_EMIT fireEstablishPaceChannel(ifdEstablishPaceChannel, cardConnection);
 }
 
 
-void ServerMessageHandlerImpl::sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPACEChannelOutput& pChannelOutput)
+void ServerMessageHandlerImpl::sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pChannelOutput)
 {
 	const QByteArray& ccid = pChannelOutput.toCcid();
 	if (pChannelOutput.getPaceReturnCode() == CardReturnCode::UNKNOWN)
 	{
-		const QSharedPointer<IfdEstablishPaceChannelResponse> response(new IfdEstablishPaceChannelResponse(pSlotHandle, ccid, QStringLiteral("/al/common#unknownError")));
+		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, ccid, ECardApiResult::Minor::AL_Unknown_Error);
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
-	const QSharedPointer<IfdEstablishPaceChannelResponse> response(new IfdEstablishPaceChannelResponse(pSlotHandle, ccid));
+	if (pChannelOutput.getPaceReturnCode() == CardReturnCode::CARD_NOT_FOUND)
+	{
+		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, ccid, ECardApiResult::Minor::IFDL_Terminal_NoCard);
+		mRemoteDispatcher->send(response);
+		return;
+	}
+
+	const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, ccid);
 	mRemoteDispatcher->send(response);
 }
 
 
-void ServerMessageHandlerImpl::process(const QSharedPointer<const IfdModifyPin>& pMessage)
+void ServerMessageHandlerImpl::handleIfdModifyPIN(const QJsonObject& pJsonObject)
 {
-	QString slotHandle = pMessage->getSlotHandle();
-	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
-
+	const auto& ifdModifyPin = QSharedPointer<IfdModifyPin>::create(pJsonObject);
+	const QString slotHandle = ifdModifyPin->getSlotHandle();
 	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
 	if (!pinPadMode)
 	{
 		qCWarning(remote_device) << "ModifyPin is only available in pin pad mode.";
-		const QSharedPointer<IfdModifyPinResponse> response(new IfdModifyPinResponse(slotHandle, QByteArray(), QStringLiteral("/al/common#unknownError")));
+		const auto& response = QSharedPointer<IfdModifyPinResponse>::create(slotHandle, QByteArray(), ECardApiResult::Minor::AL_Unknown_Error);
 		mRemoteDispatcher->send(response);
 		return;
 	}
@@ -268,12 +301,12 @@ void ServerMessageHandlerImpl::process(const QSharedPointer<const IfdModifyPin>&
 	if (!mCardConnections.contains(slotHandle))
 	{
 		qCWarning(remote_device) << "Card is not connected" << slotHandle;
-		const QSharedPointer<IfdModifyPinResponse> response(new IfdModifyPinResponse(slotHandle, QByteArray(), QStringLiteral("/ifdl/common#invalidSlotHandle")));
+		const auto& response = QSharedPointer<IfdModifyPinResponse>::create(slotHandle, QByteArray(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
-	Q_EMIT fireModifyPin(pMessage, mCardConnections[slotHandle]);
+	Q_EMIT fireModifyPin(ifdModifyPin, mCardConnections[slotHandle]);
 }
 
 
@@ -282,37 +315,37 @@ void ServerMessageHandlerImpl::sendModifyPinResponse(const QString& pSlotHandle,
 	PinModifyOutput pinModifyOutput(pResponseApdu);
 	const QByteArray& ccid = pinModifyOutput.toCcid();
 
-	QString minor;
+	ECardApiResult::Minor minor = ECardApiResult::Minor::null;
 	switch (pResponseApdu.getReturnCode())
 	{
 		case StatusCode::SUCCESS:
 			break;
 
 		case StatusCode::EMPTY:
-			minor = QStringLiteral("/ifdl/terminal#noCard");
+			minor = ECardApiResult::Minor::IFDL_Terminal_NoCard;
 			break;
 
 		case StatusCode::INPUT_TIMEOUT:
-			minor = QStringLiteral("/ifdl/common#timeoutError");
+			minor = ECardApiResult::Minor::IFDL_Timeout_Error;
 			break;
 
 		case StatusCode::INPUT_CANCELLED:
-			minor = QStringLiteral("/ifdl#cancellationByUser");
+			minor = ECardApiResult::Minor::IFDL_CancellationByUser;
 			break;
 
 		case StatusCode::PASSWORDS_DIFFER:
-			minor = QStringLiteral("/ifdl/IO#repeatedDataMismatch");
+			minor = ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch;
 			break;
 
 		case StatusCode::PASSWORD_OUTOF_RANGE:
-			minor = QStringLiteral("/ifdl/IO#unknownPINFormat");
+			minor = ECardApiResult::Minor::IFDL_IO_UnknownPINFormat;
 			break;
 
 		default:
-			minor = QStringLiteral("/al/common#unknownError");
+			minor = ECardApiResult::Minor::AL_Unknown_Error;
 	}
 
-	const QSharedPointer<IfdModifyPinResponse> response(new IfdModifyPinResponse(pSlotHandle, ccid, minor));
+	const auto& response = QSharedPointer<IfdModifyPinResponse>::create(pSlotHandle, ccid, minor);
 	mRemoteDispatcher->send(response);
 }
 
@@ -326,7 +359,7 @@ void ServerMessageHandlerImpl::onTransmitCardCommandDone(QSharedPointer<BaseCard
 	if (transmitCommand->getReturnCode() != CardReturnCode::OK)
 	{
 		qCWarning(remote_device) << "Card transmit for" << slotHandle << "failed" << transmitCommand->getReturnCode();
-		QSharedPointer<IfdTransmitResponse> response(new IfdTransmitResponse(slotHandle, QByteArray(), QStringLiteral("/al/common#unknownError")));
+		const auto& response = QSharedPointer<IfdTransmitResponse>::create(slotHandle, QByteArray(), ECardApiResult::Minor::AL_Unknown_Error);
 		mRemoteDispatcher->send(response);
 		return;
 	}
@@ -338,26 +371,8 @@ void ServerMessageHandlerImpl::onTransmitCardCommandDone(QSharedPointer<BaseCard
 		responseApdu = QByteArray::fromHex(transmitCommand->getOutputApduAsHex().first());
 	}
 	qCInfo(remote_device) << "Card transmit succeeded" << slotHandle;
-	QSharedPointer<IfdTransmitResponse> response(new IfdTransmitResponse(slotHandle, responseApdu));
+	const auto& response = QSharedPointer<IfdTransmitResponse>::create(slotHandle, responseApdu);
 	mRemoteDispatcher->send(response);
-}
-
-
-void ServerMessageHandlerImpl::unprocessed(const QSharedPointer<const RemoteMessage>& pMessage)
-{
-	unexpectedMessage(pMessage);
-}
-
-
-void ServerMessageHandlerImpl::unexpectedMessage(const QSharedPointer<const RemoteMessage>& pMessage, bool pSendMessage)
-{
-	qCWarning(remote_device) << "Received an unexpected message of type:" << pMessage->getType();
-
-	if (pSendMessage)
-	{
-		const QSharedPointer<const IfdError> errorMessage(new IfdError(QString(), QStringLiteral("/al/common#unknownAPIFunction")));
-		QMetaObject::invokeMethod(mRemoteDispatcher.data(), "send", Qt::QueuedConnection, Q_ARG(QSharedPointer<const RemoteMessage>, errorMessage));
-	}
 }
 
 
@@ -369,44 +384,79 @@ void ServerMessageHandlerImpl::onClosed()
 }
 
 
-void ServerMessageHandlerImpl::onReceived(const QSharedPointer<const RemoteMessage>& pMessage)
+void ServerMessageHandlerImpl::onRemoteMessage(RemoteCardMessageType pMessageType, const QJsonObject pJsonObject)
 {
-	const QVector<RemoteCardMessageType> serverMessageTypes({
-				RemoteCardMessageType::IFDStatus,
-				RemoteCardMessageType::IFDConnectResponse,
-				RemoteCardMessageType::IFDDisconnectResponse,
-				RemoteCardMessageType::IFDTransmitResponse,
-				RemoteCardMessageType::IFDEstablishPACEChannelResponse,
-				RemoteCardMessageType::IFDModifyPINResponse
-			});
-
-	if (serverMessageTypes.contains(pMessage->getType()))
+	switch (pMessageType)
 	{
-		unexpectedMessage(pMessage, true);
-		return;
-	}
+		case RemoteCardMessageType::IFDError:
+		case RemoteCardMessageType::UNDEFINED:
+		case RemoteCardMessageType::IFDEstablishContext:
+		case RemoteCardMessageType::IFDEstablishContextResponse:
+			break;
 
-	receive(pMessage);
+		case RemoteCardMessageType::IFDStatus:
+		case RemoteCardMessageType::IFDConnectResponse:
+		case RemoteCardMessageType::IFDDisconnectResponse:
+		case RemoteCardMessageType::IFDTransmitResponse:
+		case RemoteCardMessageType::IFDEstablishPACEChannelResponse:
+		case RemoteCardMessageType::IFDModifyPINResponse:
+		{
+			qCWarning(remote_device) << "Received an unexpected message of type:" << pMessageType;
+			const auto& localCopy = mRemoteDispatcher;
+			QMetaObject::invokeMethod(localCopy.data(), [localCopy] {
+						const auto& errorMessage = QSharedPointer<const IfdError>::create(QString(), ECardApiResult::Minor::AL_Unkown_API_Function);
+						localCopy->send(errorMessage);
+					}, Qt::QueuedConnection);
+			break;
+		}
+
+		case RemoteCardMessageType::IFDGetStatus:
+			handleIfdGetStatus(pJsonObject);
+			break;
+
+		case RemoteCardMessageType::IFDConnect:
+			handleIfdConnect(pJsonObject);
+			break;
+
+		case RemoteCardMessageType::IFDTransmit:
+			handleIfdTransmit(pJsonObject);
+			break;
+
+		case RemoteCardMessageType::IFDDisconnect:
+			handleIfdDisconnect(pJsonObject);
+			break;
+
+		case RemoteCardMessageType::IFDEstablishPACEChannel:
+			handleIfdEstablishPaceChannel(pJsonObject);
+			break;
+
+		case RemoteCardMessageType::IFDModifyPIN:
+			handleIfdModifyPIN(pJsonObject);
+			break;
+	}
 }
 
 
 void ServerMessageHandlerImpl::onReaderChanged(const QString& pReaderName)
 {
 	ReaderInfo info = mReaderManager->getReaderInfo(pReaderName);
-	if (!info.hasEidCard() && mCardConnections.contains(pReaderName))
+	if (!info.hasEidCard())
 	{
-		mCardConnections.remove(pReaderName);
-		qCInfo(remote_device) << "Removed CardConnection for" << pReaderName;
+		const QString& slotHandle = slotHandleForReaderName(pReaderName);
+		if (mCardConnections.remove(slotHandle) > 0)
+		{
+			qCInfo(remote_device) << "Removed CardConnection for" << slotHandle;
+		}
 	}
 
-	mRemoteDispatcher->send(QSharedPointer<IfdStatus>(new IfdStatus(info)));
+	mRemoteDispatcher->send(QSharedPointer<IfdStatus>::create(info));
 }
 
 
 void ServerMessageHandlerImpl::onReaderRemoved(const QString& pReaderName)
 {
-	mRemoteDispatcher->send(QSharedPointer<IfdStatus>(new IfdStatus(pReaderName)));
+	mRemoteDispatcher->send(QSharedPointer<IfdStatus>::create(pReaderName));
 }
 
 
-} /* namespace governikus */
+} // namespace governikus

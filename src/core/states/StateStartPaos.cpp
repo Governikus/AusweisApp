@@ -19,7 +19,7 @@ void StateStartPaos::run()
 	Q_ASSERT(getContext()->getTcToken());
 
 	auto sessionId = getContext()->getTcToken()->getSessionIdentifier();
-	getContext()->setStartPaos(QSharedPointer<StartPaos>(new StartPaos(sessionId)));
+	getContext()->setStartPaos(QSharedPointer<StartPaos>::create(sessionId));
 
 	Q_EMIT fireContinue();
 }

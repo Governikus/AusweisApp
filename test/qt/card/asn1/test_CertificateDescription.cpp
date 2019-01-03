@@ -35,7 +35,7 @@ const char* HEX_STRING("30 8202E0"
 					   "");
 
 const char* SELF_AUTH_CERT_2017 = "308202e6060a04007f00070301030101a10e0c0c442d547275737420476d6248a2181316687474703a2f2f7777772e642d74727573742e6e6574a31a0c18476f7665726e696b757320476d6248202620436f2e204b47a41a131868747470733a2f2f7777772e617574656e746170702e6465a582020a0c820206efbbbf4e616d652c20416e7363687269667420756e6420452d4d61696c2d4164726573736520646573204469656e737465616e626965746572733a0d0a476f7665726e696b757320476d6248202620436f2e204b470d0a416d2046616c6c7475726d20390d0a3238333539204272656d656e0d0a6b6f6e74616b7440676f7665726e696b75732e636f6d0d0a0d0a4765736368c3a46674737a7765636b3a200d0a53656c6273746175736b756e66740d0a0d0a48696e7765697320617566206469652066c3bc722064656e204469656e737465616e626965746572207a757374c3a46e646967656e205374656c6c656e2c20646965206469652045696e68616c74756e672064657220566f7273636872696674656e207a756d20446174656e73636875747a206b6f6e74726f6c6c696572656e3a0d0a446965204c616e64657362656175667472616774652066c3bc7220446174656e73636875747a20756e6420496e666f726d6174696f6e736672656968656974206465722046726569656e2048616e73657374616474204272656d656e0d0a41726e647473747261c39f6520310d0a3237353730204272656d6572686176656e0d0a303432312f3539362d323031300d0a6f666669636540646174656e73636875747a2e6272656d656e2e64650d0a687474703a2f2f7777772e646174656e73636875747a2e6272656d656e2e64650d0aa76831660420a30a9a4617dc153926f731064043bba624b0cdd3b458ed8723c1cda33f1ffdd70420ab9fce5da4ba24d0b2664450fcced618f68fe9cbcdc4ee6e0bb0c59bd2aa86b60420fbf9f26b56b74cdf1c6e5cb1811bec1a8283a174c629b1974de17dc058b31bda";
-}
+} // namespace
 
 
 class test_CertificateDescription
@@ -57,6 +57,18 @@ class test_CertificateDescription
 	 */
 
 	private Q_SLOTS:
+		void init()
+		{
+			ERR_clear_error();
+		}
+
+
+		void cleanup()
+		{
+			QCOMPARE(ERR_get_error(), 0);
+		}
+
+
 		void parseCrap()
 		{
 			QByteArray hexString("30 8202A4");
@@ -240,7 +252,6 @@ class test_CertificateDescription
 			certDescr = CertificateDescription::fromHex(SELF_AUTH_CERT_2017);
 			QVERIFY(certDescr);
 			QCOMPARE(certDescr->getServiceProviderAddress(), providerAddress2017);
-
 		}
 
 
@@ -286,15 +297,7 @@ class test_CertificateDescription
 
 		void opensslEncode()
 		{
-			CertificateDescription* certDescr = nullptr;
-			if (!(certDescr = CertificateDescription_new()))
-			{
-				BIO* bio_err = BIO_new_fp(stderr, BIO_NOCLOSE);
-				ERR_print_errors(bio_err);
-				BIO_free(bio_err);
-				return;
-			}
-
+			CertificateDescription* certDescr = CertificateDescription_new();
 
 			certDescr->setDescriptionType("0.4.0.127.0.7.3.1.3.1.3");
 			certDescr->setIssuerName("D-Trust GmbH");
@@ -316,7 +319,7 @@ class test_CertificateDescription
 				QVERIFY(byteBuf.contains("Name, Anschrift und E-Mail-Adresse des Diensteanbieters:"));
 			}
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 			certDescr->mCommCertificates = SKM_sk_new(ASN1_OCTET_STRING, 0);
 #else
 			certDescr->mCommCertificates = sk_ASN1_OCTET_STRING_new(0);
@@ -330,7 +333,7 @@ class test_CertificateDescription
 			{
 				ASN1_OCTET_STRING* octetString = ASN1_OCTET_STRING_new();
 				ASN1_OCTET_STRING_set(octetString, reinterpret_cast<const unsigned char*>(commCertByte.constData()), commCertByte.length());
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 				SKM_sk_push(ASN1_OCTET_STRING, certDescr->mCommCertificates, octetString);
 #else
 				sk_ASN1_OCTET_STRING_push(certDescr->mCommCertificates, octetString);
@@ -344,7 +347,6 @@ class test_CertificateDescription
 					QVERIFY(!byteBuf.isEmpty());
 				}
 			}
-
 
 			QByteArray hexString("30 82038D"
 								 "        06 0A 04007F00070301030103"

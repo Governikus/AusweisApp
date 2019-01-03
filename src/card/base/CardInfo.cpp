@@ -6,7 +6,7 @@
 
 #include "CardInfo.h"
 
-#include "asn1/PACEInfo.h"
+#include "asn1/PaceInfo.h"
 #include "asn1/SecurityInfos.h"
 #include "CardConnectionWorker.h"
 
@@ -210,7 +210,7 @@ bool CardInfoFactory::checkEfCardAccess(const QSharedPointer<EFCardAccess>& pEfC
 	 * At least one PACEInfo must have standardized domain parameters
 	 */
 	bool containsStandardizedDomainParameters = false;
-	const auto& infos = pEfCardAccess->getPACEInfos();
+	const auto& infos = pEfCardAccess->getPaceInfos();
 	for (const auto& paceInfo : infos)
 	{
 		if (paceInfo->isStandardizedDomainParameters())
@@ -232,7 +232,6 @@ bool CardInfoFactory::checkEfCardAccess(const QSharedPointer<EFCardAccess>& pEfC
 namespace governikus
 {
 
-
 QDebug operator<<(QDebug pDbg, const CardInfo& pCardInfo)
 {
 	QDebugStateSaver saver(pDbg);
@@ -245,4 +244,4 @@ QDebug operator<<(QDebug pDbg, const CardInfo& pCardInfo)
 }
 
 
-}
+} // namespace governikus

@@ -21,4 +21,4 @@ class TestFileHelper
 		static bool containsLog(const QSignalSpy& pSpy, const QLatin1String pStr);
 };
 
-} /* namespace governikus */
+} // namespace governikus

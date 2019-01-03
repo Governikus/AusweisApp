@@ -5,7 +5,6 @@
 #include "CertificateChecker.h"
 
 #include "AppSettings.h"
-#include "paos/retrieve/DidAuthenticateEac1.h"
 #include "TlsChecker.h"
 
 #include <QCryptographicHash>
@@ -31,15 +30,15 @@ CertificateChecker::CertificateStatus CertificateChecker::checkAndSaveCertificat
 
 	if (pEAC1 && pDvCvc)
 	{
-		if (auto certificateDescription = pEAC1->getCertificateDescription())
+		if (const auto& certificateDescription = pEAC1->getCertificateDescription())
 		{
-			const QSet<QString> certHashes = certificateDescription->getCommCertificates();
+			const QSet<QString>& certHashes = certificateDescription->getCommCertificates();
 			QCryptographicHash::Algorithm hashAlgo = pDvCvc->getBody().getHashAlgorithm();
 			if (!TlsChecker::checkCertificate(pCertificate, hashAlgo, certHashes))
 			{
-				auto hashError = QStringLiteral("hash of certificate not in certificate description");
+				const auto& hashError = QStringLiteral("hash of certificate not in certificate description");
 
-				if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+				if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 				{
 					qCCritical(developermode) << hashError;
 				}

@@ -26,4 +26,4 @@ class BluetoothMessageParameterMaxMsgSize
 		virtual QString toStringValue() const override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

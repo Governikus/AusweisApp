@@ -27,9 +27,10 @@ class WifiInfo
 		int mWifiEnableWaitCounter;
 
 		static bool isPrivateIp(const QHostAddress& pAddress);
+		static bool hasPrivateIpAddress();
+
 		bool getCurrentWifiEnabled();
 		bool shouldWifiEnabledBeCalled();
-		bool hasPrivateIpAddress() const;
 
 	protected:
 		void timerEvent(QTimerEvent* pEvent) override;
@@ -47,4 +48,4 @@ class WifiInfo
 };
 
 
-}
+} // namespace governikus

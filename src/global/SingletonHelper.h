@@ -22,4 +22,16 @@
 \
 	Q_GLOBAL_STATIC(Singleton##className, instanceName)
 
+#define defineSingletonInstanceImpl(className, instanceName, impl)\
+	defineSingletonInstance(impl, instanceName)\
+	namespace governikus\
+	{\
+	template<> className * singleton<className>()\
+	{\
+		return Instance;\
+	}\
+	}
+
 #define defineSingleton(className) defineSingletonInstance(className, Instance)
+
+#define defineSingletonImpl(className, impl) defineSingletonInstanceImpl(className, Instance, impl)

@@ -13,7 +13,6 @@
 #include <QJsonArray>
 #include <QString>
 
-class test_ProviderConfigurationParser;
 
 namespace governikus
 {
@@ -33,4 +32,4 @@ class ProviderConfigurationParser
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

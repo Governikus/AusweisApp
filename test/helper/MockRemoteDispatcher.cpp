@@ -11,23 +11,24 @@
 #include "messages/IfdStatus.h"
 #include "messages/IfdTransmit.h"
 #include "messages/IfdTransmitResponse.h"
-#include "MockIfdStatus.h"
 
 #include <QTest>
+#include <QUuid>
 
 
 using namespace governikus;
 
 
 MockRemoteDispatcher::MockRemoteDispatcher(DispatcherState pState)
-	: mState(pState)
-	, mId()
-	, mContextHandle()
+	: RemoteDispatcherClient(IfdVersion::Version::v_test, QSharedPointer<DataChannel>())
+	, mState(pState)
+	, mId(QUuid::createUuid().toString())
+	, mContextHandle(QStringLiteral("#TestContext"))
 {
 }
 
 
-const QString& MockRemoteDispatcher::getId() const
+QString MockRemoteDispatcher::getId() const
 {
 	return mId;
 }
@@ -53,35 +54,35 @@ void MockRemoteDispatcher::send(const QSharedPointer<const RemoteMessage>& pMess
 		}
 
 		bool withCard = (mState == DispatcherState::ReaderWithCard || mState == DispatcherState::ReaderWithCardError);
-		const QSharedPointer<RemoteMessage> message(new MockIfdStatus(QStringLiteral("NFC Reader"), PaceCapabilities(false), 500, true, withCard));
-		Q_EMIT fireReceived(message, sharedFromThis());
+		const QSharedPointer<RemoteMessage> message(new IfdStatus(QStringLiteral("NFC Reader"), PaceCapabilities(false), 500, true, withCard));
+		Q_EMIT fireReceived(message->getType(), QJsonDocument::fromJson(message->toByteArray(mContextHandle)).object(), mId);
 		return;
 	}
 
-	const QString errorMsg = mState == DispatcherState::ReaderWithCardError ? QStringLiteral("Error requested by the test") : QString();
+	const ECardApiResult::Minor resultMinor = (mState == DispatcherState::ReaderWithCardError ? ECardApiResult::Minor::AL_Unknown_Error : ECardApiResult::Minor::null);
 
 	if (pMessage->getType() == RemoteCardMessageType::IFDConnect)
 	{
 		const QSharedPointer<const IfdConnect> request = pMessage.dynamicCast<const IfdConnect>();
 		const QString readerName = request->getSlotName();
-		const QSharedPointer<RemoteMessage> message(new IfdConnectResponse(readerName, errorMsg));
-		Q_EMIT fireReceived(message, sharedFromThis());
+		const QSharedPointer<RemoteMessage> message(new IfdConnectResponse(readerName, resultMinor));
+		Q_EMIT fireReceived(message->getType(), QJsonDocument::fromJson(message->toByteArray(mContextHandle)).object(), mId);
 	}
 
 	if (pMessage->getType() == RemoteCardMessageType::IFDTransmit)
 	{
 		const QSharedPointer<const IfdTransmit> request = pMessage.dynamicCast<const IfdTransmit>();
 		const QString readerName = request->getSlotHandle();
-		const QSharedPointer<RemoteMessage> message(new IfdTransmitResponse(readerName, errorMsg.isEmpty() ? QByteArray("pong") : QByteArray(), errorMsg));
-		Q_EMIT fireReceived(message, sharedFromThis());
+		const QSharedPointer<RemoteMessage> message(new IfdTransmitResponse(readerName, resultMinor == ECardApiResult::Minor::null ? QByteArray("pong") : QByteArray(), resultMinor));
+		Q_EMIT fireReceived(message->getType(), QJsonDocument::fromJson(message->toByteArray(mContextHandle)).object(), mId);
 	}
 
 	if (pMessage->getType() == RemoteCardMessageType::IFDDisconnect)
 	{
 		const QSharedPointer<const IfdDisconnect> request = pMessage.dynamicCast<const IfdDisconnect>();
 		const QString readerName = request->getSlotHandle();
-		const QSharedPointer<RemoteMessage> message(new IfdDisconnectResponse(readerName, errorMsg));
-		Q_EMIT fireReceived(message, sharedFromThis());
+		const QSharedPointer<RemoteMessage> message(new IfdDisconnectResponse(readerName, resultMinor));
+		Q_EMIT fireReceived(message->getType(), QJsonDocument::fromJson(message->toByteArray(mContextHandle)).object(), mId);
 	}
 }
 
@@ -100,16 +101,11 @@ void MockRemoteDispatcher::setState(DispatcherState pState)
 
 void MockRemoteDispatcher::onClosed()
 {
-	Q_EMIT fireClosed(GlobalStatus::Code::RemoteReader_CloseCode_NormalClose, sharedFromThis());
+	Q_EMIT fireClosed(GlobalStatus::Code::RemoteReader_CloseCode_NormalClose, mId);
 }
 
 
 void MockRemoteDispatcher::onReceived(const QSharedPointer<const RemoteMessage>& pMessage)
 {
-	Q_EMIT fireReceived(pMessage, sharedFromThis());
-}
-
-
-void MockRemoteDispatcher::close()
-{
+	Q_EMIT fireReceived(pMessage->getType(), QJsonDocument::fromJson(pMessage->toByteArray(mContextHandle)).object(), mId);
 }

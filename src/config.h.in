@@ -1,5 +1,7 @@
 /* DO NOT TOUCH THIS MANUALLY */
 
+#cmakedefine ANDROID_BUILD_AAR
+
 #define PRODUCT "@PRODUCT@"
 #define VENDOR "@VENDOR@"
 #define VENDOR_DOMAIN "@VENDOR_DOMAIN@"

@@ -5,14 +5,13 @@
 
 #include "KeyAgreement.h"
 
-#include "asn1/PACEInfo.h"
+#include "asn1/PaceInfo.h"
 #include "Commands.h"
 #include "GlobalStatus.h"
 #include "pace/CipherMac.h"
 #include "pace/ec/EcdhKeyAgreement.h"
 #include "pace/KeyDerivationFunction.h"
 #include "pace/SymmetricCipher.h"
-#include "PersoSimWorkaround.h"
 
 #include <QLoggingCategory>
 
@@ -25,12 +24,7 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 
 static QString getResponseErrorString(CardReturnCode pReturnCode, StatusCode pResponseReturnCode)
 {
-	QString errorString = CardReturnCodeUtil::toGlobalStatus(pReturnCode).toErrorDescription();
-	if (pReturnCode == CardReturnCode::OK)
-	{
-		errorString += QStringLiteral(" | ") + pResponseReturnCode;
-	}
-	return errorString;
+	return CardReturnCodeUtil::toGlobalStatus(pReturnCode).toErrorDescription() + QStringLiteral(" | ") + pResponseReturnCode;
 }
 
 
@@ -44,13 +38,22 @@ static CardOperationResult<QByteArray> makeTransmitResult(CardReturnCode pReturn
 		return CardOperationResult<QByteArray>(pReturnCode, pResultData);
 	}
 
-	const CardReturnCode newReturnCode = pReturnCode == CardReturnCode::OK ? CardReturnCode::PROTOCOL_ERROR : CardReturnCode::COMMAND_FAILED;
-	qCCritical(card).noquote() << pLogMessage << getResponseErrorString(pReturnCode, pResponseReturnCode);
+	CardReturnCode newReturnCode = CardReturnCode::COMMAND_FAILED;
+	if (pResponseReturnCode == StatusCode::EMPTY)
+	{
+		newReturnCode = CardReturnCode::RETRY_ALLOWED;
+	}
+	else if (pReturnCode == CardReturnCode::OK)
+	{
+		newReturnCode = CardReturnCode::PROTOCOL_ERROR;
+	}
+
+	qCCritical(card).noquote() << pLogMessage << getResponseErrorString(newReturnCode, pResponseReturnCode);
 	return CardOperationResult<QByteArray>(newReturnCode, QByteArray());
 }
 
 
-QSharedPointer<KeyAgreement> KeyAgreement::create(const QSharedPointer<const PACEInfo>& pPaceInfo,
+QSharedPointer<KeyAgreement> KeyAgreement::create(const QSharedPointer<const PaceInfo>& pPaceInfo,
 		QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
 {
 	if (pPaceInfo->getKeyAgreementType() == KeyAgreementType::ECDH)
@@ -65,7 +68,7 @@ QSharedPointer<KeyAgreement> KeyAgreement::create(const QSharedPointer<const PAC
 }
 
 
-KeyAgreement::KeyAgreement(const QSharedPointer<const PACEInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
+KeyAgreement::KeyAgreement(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 	: mCardConnectionWorker(pCardConnectionWorker)
 	, mEncryptionKey()
 	, mMacKey()
@@ -93,8 +96,11 @@ KeyAgreementStatus KeyAgreement::perform(const QString& pPin)
 		case CardReturnCode::COMMAND_FAILED:
 			return KeyAgreementStatus::COMMUNICATION_ERROR;
 
+		case CardReturnCode::RETRY_ALLOWED:
+			return KeyAgreementStatus::RETRY_ALLOWED;
+
 		default:
-			;
+		{}
 	}
 
 	QByteArray nonce = nonceResult.getPayload();
@@ -107,8 +113,11 @@ KeyAgreementStatus KeyAgreement::perform(const QString& pPin)
 		case CardReturnCode::PROTOCOL_ERROR:
 			return KeyAgreementStatus::PROTOCOL_ERROR;
 
+		case CardReturnCode::RETRY_ALLOWED:
+			return KeyAgreementStatus::RETRY_ALLOWED;
+
 		default:
-			;
+		{}
 	}
 
 	QByteArray sharedSecret = sharedSecretResult.getPayload();
@@ -143,11 +152,14 @@ KeyAgreementStatus KeyAgreement::performMutualAuthenticate()
 	QByteArray mutualAuthenticationCardData = cmac.generate(uncompressedCardPublicKey);
 
 	QSharedPointer<GAMutualAuthenticationResponse> response = transmitGAMutualAuthentication(mutualAuthenticationCardData);
-	if (response->getReturnCode() == StatusCode::VERIFICATION_FAILED ||
+	if (response->getReturnCode() == StatusCode::EMPTY)
+	{
+		return KeyAgreementStatus::RETRY_ALLOWED;
+	}
+	else if (response->getReturnCode() == StatusCode::VERIFICATION_FAILED ||
 			response->getReturnCode() == StatusCode::PIN_BLOCKED ||
 			response->getReturnCode() == StatusCode::PIN_SUSPENDED ||
-			response->getReturnCode() == StatusCode::PIN_RETRY_COUNT_2 ||
-			PersoSimWorkaround::isWrongCanEntry(response))
+			response->getReturnCode() == StatusCode::PIN_RETRY_COUNT_2)
 	{
 		return KeyAgreementStatus::FAILED;
 	}
@@ -161,7 +173,7 @@ KeyAgreementStatus KeyAgreement::performMutualAuthenticate()
 
 	if (mutualAuthenticationTerminalData != response->getAuthenticationToken())
 	{
-		qCCritical(card) << "Error on mutual authentication ";
+		qCCritical(card) << "Error on mutual authentication";
 		return KeyAgreementStatus::PROTOCOL_ERROR;
 	}
 
@@ -209,7 +221,7 @@ QSharedPointer<GAMutualAuthenticationResponse> KeyAgreement::transmitGAMutualAut
 {
 	GABuilder commandBuilder(CommandApdu::CLA);
 	commandBuilder.setPaceAuthenticationToken(pMutualAuthenticationData);
-	QSharedPointer<GAMutualAuthenticationResponse> response(new GAMutualAuthenticationResponse());
+	auto response = QSharedPointer<GAMutualAuthenticationResponse>::create();
 
 	CardReturnCode returnCode = mCardConnectionWorker->transmit(commandBuilder.build(), *response);
 	if (returnCode != CardReturnCode::OK || response->getReturnCode() != StatusCode::SUCCESS)

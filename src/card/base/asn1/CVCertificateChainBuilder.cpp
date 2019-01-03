@@ -22,7 +22,6 @@ bool CVCertificateChainBuilder::isChild(const QSharedPointer<const CVCertificate
 CVCertificateChainBuilder::CVCertificateChainBuilder(bool pProductive)
 	: CVCertificateChainBuilder(QVector<QSharedPointer<const CVCertificate> >(), pProductive)
 {
-
 }
 
 
@@ -64,7 +63,7 @@ void CVCertificateChainBuilder::removeInvalidChains()
 }
 
 
-CVCertificateChain CVCertificateChainBuilder::getChainForCertificationAuthority(const EstablishPACEChannelOutput& pPaceOutput) const
+CVCertificateChain CVCertificateChainBuilder::getChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const
 {
 	CVCertificateChain chain = getChainForCertificationAuthority(pPaceOutput.getCARcurr());
 	if (!chain.isValid())

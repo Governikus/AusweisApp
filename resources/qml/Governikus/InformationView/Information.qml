@@ -1,11 +1,10 @@
-import QtQuick 2.7
+import QtQuick 2.10
 import QtQuick.Layouts 1.2
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
-import Governikus.VersionInformationView 1.0
-
+import Governikus.View 1.0
 
 SectionPage {
 	id: root
@@ -29,7 +28,7 @@ SectionPage {
 				spacing: Constants.component_spacing
 				Text {
 					width: parent.width
-					font.pixelSize: Utils.sp(18)
+					font.pixelSize: Utils.dp(18)
 					color: Constants.blue
 					wrapMode: Text.WordWrap
 					text: titleText
@@ -64,30 +63,11 @@ SectionPage {
 			spacing: Constants.component_spacing
 			padding: Constants.component_spacing
 
-			Text {
-				id: title
-				anchors.left: parent.left
-				anchors.right: parent.right
-				text: qsTr("You need help?") + settingsModel.translationTrigger
-				font.pixelSize: Constants.header_font_size
-				color: Constants.blue
-				wrapMode: Text.WordWrap
-			}
-			Text {
-				id: subtitle
-				color: Constants.secondary_text
-				anchors.left: parent.left
-				anchors.right: parent.right
-				text: qsTr("Here you are in the right place.") + settingsModel.translationTrigger
-				font.pixelSize: Constants.normal_font_size
-				wrapMode: Text.WordWrap
-			}
-
 			Pane {
 				Loader {
 					readonly property string titleText: qsTr("Version information") + settingsModel.translationTrigger
 					readonly property string descriptionText: qsTr("Here you can see detailed information about AusweisApp2.") + settingsModel.translationTrigger
-					function onClickFunction() { firePush(versionInformationPage, {}) }
+					function onClickFunction() { firePush(versionInformationPage) }
 					width: parent.width
 					sourceComponent: subMenu
 				}

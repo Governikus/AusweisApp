@@ -13,7 +13,6 @@
 namespace governikus
 {
 
-
 /*!
  * Message part of the Secure Messaging response APDU containing
  * the encrypted data.

@@ -1,5 +1,5 @@
-import QtQuick 2.5
-import QtQuick.Controls 2.0
+import QtQuick 2.10
+import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
 
@@ -42,6 +42,12 @@ Rectangle {
 			image: "qrc:///images/android/navigation/remoteleser.svg"
 			desc: QT_TR_NOOP("Smartphone as card reader")
 			condition: "remoteservice"
+		}
+
+		ListElement {
+			image: "qrc:///images/android/navigation/tutorial.svg"
+			desc: QT_TR_NOOP("Tutorial")
+			condition: "tutorial"
 		}
 
 		ListElement {

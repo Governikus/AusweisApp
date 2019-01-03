@@ -7,7 +7,6 @@
 #pragma once
 
 #include "context/WorkflowContext.h"
-#include "Result.h"
 
 #include <QSharedPointer>
 #include <QState>
@@ -15,7 +14,6 @@
 
 namespace governikus
 {
-
 
 class AbstractState
 	: public QState
@@ -29,7 +27,7 @@ class AbstractState
 		const QSharedPointer<WorkflowContext> mContext;
 		const bool mConnectOnCardRemoved;
 
-		AbstractState(const QSharedPointer<WorkflowContext>& pContext, bool pConnectOnCardRemoved);
+		explicit AbstractState(const QSharedPointer<WorkflowContext>& pContext, bool pConnectOnCardRemoved);
 		virtual void run() = 0;
 
 	protected:
@@ -40,6 +38,7 @@ class AbstractState
 		void clearConnections();
 		bool isCancellationByUser();
 		void updateStatus(const GlobalStatus& pStatus);
+		void updateStartPaosResult(const ECardApiResult& pStartPaosResult);
 
 	public:
 		static QString getClassName(const char* pName);
@@ -68,4 +67,4 @@ class AbstractState
 		void onCardRemoved(const QString& pReaderName);
 };
 
-} /* namespace governikus */
+} // namespace governikus

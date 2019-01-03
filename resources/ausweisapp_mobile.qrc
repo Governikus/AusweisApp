@@ -3,43 +3,133 @@
         <file>qtquickcontrols2.conf</file>
         <file>images/zahnraeder.svg</file>
         <file>images/check.svg</file>
-        <file>images/iOS/arrowLeft.svg</file>
-        <file>images/iOS/arrowRight.svg</file>
-        <file>images/iOS/list_item_arrow.svg</file>
-        <file>images/iOS/radio_button_check_ios.svg</file>
-        <file>images/iOS/toggle_on.png</file>
-        <file>images/iOS/toggle_off.png</file>
-        <file>images/iOS/toggle_disabled.png</file>
+        <file>images/arrowRight.svg</file>
+        <file>images/share.svg</file>
         <file>images/android/navigation/ausweisen.svg</file>
         <file>images/android/navigation/anbieter.svg</file>
         <file>images/android/navigation/balloon.svg</file>
         <file>images/android/navigation/remoteleser.svg</file>
         <file>images/android/navigation/verlauf.svg</file>
         <file>images/android/navigation/pin.svg</file>
-        <file>images/android/navigation/versionsinformation.svg</file>
         <file>images/android/navigation/faq.svg</file>
         <file>images/android/navigation/support.svg</file>
         <file>images/android/navigation/bewerten.svg</file>
-        <file>images/android/navigation/teilen.svg</file>
-        <file>images/android/checkbox_0.svg</file>
-        <file>images/android/checkbox_1.svg</file>
-        <file>images/android/tabDivider.svg</file>
-        <file>images/android/arrowRight.svg</file>
-        <file>images/android/arrowLeft.svg</file>
-        <file>images/android/arrowRightWhite.svg</file>
-        <file>images/android/arrowLeftWhite.svg</file>
-        <file>images/android/android_toggle_on.png</file>
-        <file>images/android/android_toggle_off.png</file>
-        <file>images/android/android_toggle_on_disabled.png</file>
-        <file>images/android/android_toggle_off_disabled.png</file>
-        <file>images/android/android_arrow_back.svg</file>
-        <file>images/android/android_arrow_back_white.svg</file>
+        <file>images/android/navigation/tutorial.svg</file>
+        <file>images/iOS/search_icon.svg</file>
+        <file>images/iOS/search_cancel.svg</file>
         <file>images/iOS/more/icon_mehr_favorit.svg</file>
         <file>images/iOS/more/icon_mehr_fragen.svg</file>
         <file>images/iOS/more/icon_mehr_info.svg</file>
         <file>images/iOS/more/icon_mehr_license.svg</file>
         <file>images/iOS/more/icon_mehr_remotereader.svg</file>
         <file>images/iOS/more/icon_mehr_upload.svg</file>
+        <file>images/iOS/more/icon_mehr_log.svg</file>
+        <file>images/iOS/more/icon_mehr_tutorial.svg</file>
+        <file>images/tutorial/main_menu_what_caret.svg</file>
+        <file>images/tutorial/main_menu_where_caret.svg</file>
+        <file>images/tutorial/main_menu_how_caret.svg</file>
+        <file>images/tutorial/main_menu_important_caret.svg</file>
+        <file>images/tutorial/arrow_blue.svg</file>
+        <file>images/tutorial/arrows.svg</file>
+        <file>images/tutorial/button_de.png</file>
+        <file>images/tutorial/button_en.png</file>
+        <file>images/tutorial/idcard.svg</file>
+        <file>images/tutorial/identify.svg</file>
+        <file>images/tutorial/questionmark.svg</file>
+        <file>images/tutorial/hint.svg</file>
+        <file>images/tutorial/thumb_up.svg</file>
+        <file>images/tutorial/hand.svg</file>
+        <file>images/tutorial/check.svg</file>
+        <file>images/tutorial/click.svg</file>
+        <file>images/tutorial/save.svg</file>
+        <file>images/tutorial/bva.svg</file>
+        <file>images/tutorial/provider_home.svg</file>
+        <file>images/tutorial/rectangles.svg</file>
+        <file>images/tutorial/zoom_triangle.svg</file>
+        <file>images/tutorial/laptop.svg</file>
+        <file>images/tutorial/tablet.svg</file>
+        <file>images/tutorial/tablet-nfc.svg</file>
+        <file>images/tutorial/tablet-no-nfc.svg</file>
+        <file>images/tutorial/reader.svg</file>
+        <file>images/tutorial/desktop.svg</file>
+        <file>images/tutorial/phone.svg</file>
+        <file>images/tutorial/phone_list.svg</file>
+        <file>images/tutorial/phone-screen.svg</file>
+        <file>images/tutorial/nfc.svg</file>
+        <file>images/tutorial/no-nfc.svg</file>
+        <file>images/tutorial/wifi.svg</file>
+        <file>images/tutorial/bluetooth.svg</file>
+        <file>images/tutorial/letters.svg</file>
+        <file>images/tutorial/usb.svg</file>
+        <file>images/tutorial/circle-1.svg</file>
+        <file>images/tutorial/circle-2.svg</file>
+        <file>images/tutorial/circle-3.svg</file>
+        <file>images/tutorial/circle-4.svg</file>
+        <file>images/tutorial/circle-lock.svg</file>
+        <file>images/tutorial/circle-lock-2.svg</file>
+        <file>images/tutorial/up_icon.svg</file>
+        <file>images/tutorial/phone_screen_de.jpg</file>
+        <file>images/tutorial/phone_screen_en.jpg</file>
+        <file>images/tutorial/pin-5@2x.png</file>
+        <file>images/tutorial/pin-6@2x.png</file>
+        <file>images/tutorial/user-tine@3x.png</file>
+        <file>images/tutorial/providericons.png</file>
+        <file>images/tutorial/play_movie.png</file>
+        <file>images/tutorial/screenshot_cert_de.png</file>
+        <file>images/tutorial/screenshot_cert_en.png</file>
+        <file>images/tutorial/screenshot_providerlist_de.png</file>
+        <file>images/tutorial/screenshot_providerlist_en.png</file>
+        <file>images/tutorial/screenshot_menu_providerlist_de.png</file>
+        <file>images/tutorial/screenshot_menu_providerlist_en.png</file>
+        <file>images/tutorial/screenshot_pairing_de.png</file>
+        <file>images/tutorial/screenshot_pairing_en.png</file>
+        <file>images/tutorial/screenshot_sac_menu_de.png</file>
+        <file>images/tutorial/screenshot_sac_menu_en.png</file>
+        <file>images/tutorial/screenshot_choose_reader_de.png</file>
+        <file>images/tutorial/screenshot_choose_reader_en.png</file>
+        <file>images/tutorial/screenshot_pin_management_menu_en.png</file>
+        <file>images/tutorial/screenshot_pin_management_menu_de.png</file>
+        <file>images/tutorial/section_seperator_what.svg</file>
+        <file>images/tutorial/section_seperator_where.svg</file>
+        <file>images/tutorial/section_seperator_how.svg</file>
+        <file>images/tutorial/section_seperator_important.svg</file>
+        <file>images/tutorial/generated/where_overview_question.svg</file>
+        <file>images/tutorial/generated/where_providerlist_screenshot_de.svg</file>
+        <file>images/tutorial/generated/where_providerlist_screenshot_en.svg</file>
+        <file>images/tutorial/generated/where_identify_now_de.svg</file>
+        <file>images/tutorial/generated/where_identify_now_en.svg</file>
+        <file>images/tutorial/generated/where_userdata_example_de.svg</file>
+        <file>images/tutorial/generated/where_userdata_example_en.svg</file>
+        <file>images/tutorial/generated/where_lay_down_id.svg</file>
+        <file>images/tutorial/generated/where_pin6.svg</file>
+        <file>images/tutorial/generated/how_questions_everywhere.svg</file>
+        <file>images/tutorial/generated/how_device_lineup.svg</file>
+        <file>images/tutorial/generated/how_method_nfc.svg</file>
+        <file>images/tutorial/generated/how_method_sac_desktop.svg</file>
+        <file>images/tutorial/generated/how_method_sac_mobile.svg</file>
+        <file>images/tutorial/generated/how_method_bluetooth.svg</file>
+        <file>images/tutorial/generated/how_form_no_fun.svg</file>
+        <file>images/tutorial/generated/how_desktop.svg</file>
+        <file>images/tutorial/generated/important_pin5.svg</file>
+        <file>images/tutorial/generated/important_pin6.svg</file>
+        <file>images/tutorial/generated/important_lets_go.svg</file>
+        <file>images/tutorial/generated/important_space_questionmark.svg</file>
+        <file>images/tutorial/generated/reader_nfc_provider_on_smartphone.svg</file>
+        <file>images/tutorial/generated/reader_nfc_npa_on_smartphone.svg</file>
+        <file>images/tutorial/generated/reader_nfc_smartphone_nfc_position.svg</file>
+        <file>images/tutorial/generated/reader_nfc_finished.svg</file>
+        <file>images/tutorial/generated/reader_nfc_pin6.svg</file>
+        <file>images/tutorial/generated/reader_nfc_userdata_example_de.svg</file>
+        <file>images/tutorial/generated/reader_nfc_userdata_example_en.svg</file>
+        <file>images/tutorial/generated/reader_sac_provider_on_laptop.svg</file>
+        <file>images/tutorial/generated/reader_sac_npa_on_laptop.svg</file>
+        <file>images/tutorial/generated/reader_sac_aa2_ok.svg</file>
+        <file>images/tutorial/generated/reader_sac_menu_de.svg</file>
+        <file>images/tutorial/generated/reader_sac_menu_en.svg</file>
+        <file>images/tutorial/generated/reader_sac_no_nfc_devices.svg</file>
+        <file>images/tutorial/generated/reader_sac_no_nfc_provider.svg</file>
+        <file>images/tutorial/generated/reader_bluetooth_card_inserted.svg</file>
+        <file>images/tutorial/generated/reader_bluetooth_connection.svg</file>
         <file>images/provider/categoryIcons/general.svg</file>
         <file>images/provider/categoryIcons/citizen.svg</file>
         <file>images/provider/categoryIcons/finance.svg</file>
@@ -58,5 +148,7 @@
         <file>images/phone_to_pc.svg</file>
         <file>images/android/navigation/remotesettings.svg</file>
         <file>images/trash_icon.svg</file>
+        <file>images/trash_icon_all.svg</file>
+        <file>images/trash_icon_white.svg</file>
     </qresource>
 </RCC>

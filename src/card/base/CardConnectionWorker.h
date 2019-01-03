@@ -7,13 +7,14 @@
 #pragma once
 
 #include "asn1/SecurityInfos.h"
-#include "Apdu.h"
 #include "CardReturnCode.h"
+#include "CommandApdu.h"
 #include "Commands.h"
-#include "EstablishPACEChannel.h"
+#include "EstablishPaceChannel.h"
 #include "FileRef.h"
 #include "pace/SecureMessaging.h"
 #include "Reader.h"
+#include "ResponseApdu.h"
 #include "SmartCardDefinitions.h"
 
 #include <QByteArray>
@@ -77,20 +78,20 @@ class CardConnectionWorker
 		 * If the Reader is a basic reader and the PACE channel is successfully established, the subsequent transmits will be secured using, secure messaging.
 		 * I. e., a secure messaging channel is established.
 		 */
-		virtual CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
+		virtual CardReturnCode establishPaceChannel(PacePasswordId pPasswordId,
 				const QString& pPasswordValue,
-				EstablishPACEChannelOutput& pChannelOutput);
+				EstablishPaceChannelOutput& pChannelOutput);
 
 		/*!
 		 * Performs PACE and establishes a PACE channel for later terminal authentication.
 		 * If the Reader is a basic reader and the PACE channel is successfully established, the subsequent transmits will be secured using, secure messaging.
 		 * I. e., a secure messaging channel is established.
 		 */
-		virtual CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
+		virtual CardReturnCode establishPaceChannel(PacePasswordId pPasswordId,
 				const QString& pPasswordValue,
 				const QByteArray& pChat,
 				const QByteArray& pCertificateDescription,
-				EstablishPACEChannelOutput& pChannelOutput);
+				EstablishPaceChannelOutput& pChannelOutput);
 
 		/*!
 		 * Destroys a previously established PACE channel.
@@ -108,4 +109,4 @@ class CardConnectionWorker
 		void fireReaderInfoChanged(const ReaderInfo& pReaderInfo);
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "EnumHelper.h"
+#include "UIPlugIn.h"
 
 #include <QMap>
 #include <QUrl>
@@ -13,18 +14,6 @@ namespace governikus
 {
 
 class ActivationContext;
-
-/*!
- * UI modules that can be requested to show.
- */
-defineEnumType(UiModule,
-		CURRENT,
-		DEFAULT,
-		IDENTIFY,
-		SETTINGS,
-		PINMANAGEMENT
-		)
-
 
 /*!
  * Format types for status responses
@@ -51,8 +40,8 @@ class ActivationHandler
 		static bool isPlugIn(const QJsonObject& pJson);
 
 	protected:
-		ActivationHandler();
-		virtual ~ActivationHandler();
+		ActivationHandler() = default;
+		virtual ~ActivationHandler() = default;
 
 		/*!
 		 * \brief Get the query items with lower-case keys, so we can support case-insensitive keys.
@@ -86,6 +75,6 @@ class ActivationHandler
 		void fireAuthenticationRequest(const QSharedPointer<ActivationContext>& pActivationContext);
 };
 
-} /* namespace governikus */
+} // namespace governikus
 
 Q_DECLARE_INTERFACE(governikus::ActivationHandler, "governikus.ActivationHandler")

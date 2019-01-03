@@ -42,11 +42,9 @@ class AbstractSettings
 
 		virtual void save() = 0;
 
-		bool appIsBackgroundService() const;
-
 	Q_SIGNALS:
 		void fireSettingsChanged();
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

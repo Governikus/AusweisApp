@@ -1,0 +1,30 @@
+From 2bcd8e6e1fe62ef5667c1bb8ad1bfe54a0aeaa99 Mon Sep 17 00:00:00 2001
+From: Matt Caswell <matt@openssl.org>
+Date: Wed, 24 Oct 2018 10:11:00 +0100
+Subject: [PATCH] Ignore disabled ciphers when deciding if we are using ECC
+
+use_ecc() was always returning 1 because there are default (TLSv1.3)
+ciphersuites that use ECC - even if those ciphersuites are disabled by
+other options.
+
+Fixes #7471
+---
+ ssl/statem/extensions_clnt.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git x/ssl/statem/extensions_clnt.c y/ssl/statem/extensions_clnt.c
+index 4b5e6fe2b87..dcadc2a3231 100644
+--- x/ssl/statem/extensions_clnt.c
++++ y/ssl/statem/extensions_clnt.c
+@@ -128,6 +128,10 @@ static int use_ecc(SSL *s)
+     for (i = 0; i < end; i++) {
+         const SSL_CIPHER *c = sk_SSL_CIPHER_value(cipher_stack, i);
+ 
++        /* Skip disabled ciphers */
++        if (ssl_cipher_disabled(s, c, SSL_SECOP_CIPHER_SUPPORTED, 0))
++            continue;
++
+         alg_k = c->algorithm_mkey;
+         alg_a = c->algorithm_auth;
+         if ((alg_k & (SSL_kECDHE | SSL_kECDHEPSK))
+

@@ -6,8 +6,7 @@
 
 #pragma once
 
-#include "HttpStatusCode.h"
-
+#include <http_parser.h>
 #include <QByteArray>
 #include <QMap>
 
@@ -17,21 +16,23 @@ namespace governikus
 class HttpResponse
 {
 	private:
-		HttpStatusCode mStatus;
+		http_status mStatus;
 		QMap<QByteArray, QByteArray> mHeader;
 		QByteArray mBody;
 
+		QByteArray getStatusMessage() const;
+
 	public:
-		HttpResponse(HttpStatusCode pStatus = HttpStatusCode::UNDEFINED, const QByteArray& pBody = QByteArray(), const QByteArray& pContentType = QByteArray());
-		virtual ~HttpResponse();
-		bool isValid() const;
+		HttpResponse(http_status pStatus = HTTP_STATUS_INTERNAL_SERVER_ERROR,
+				const QByteArray& pBody = QByteArray(),
+				const QByteArray& pContentType = QByteArray());
 
 		QByteArray getHeader(const QByteArray& pKey) const;
 		const QMap<QByteArray, QByteArray>& getHeaders() const;
 		void setHeader(const QByteArray& pKey, const QByteArray& pValue);
 
-		HttpStatusCode getStatus() const;
-		void setStatus(HttpStatusCode pStatus);
+		http_status getStatus() const;
+		void setStatus(http_status pStatus);
 
 		const QByteArray& getBody() const;
 		void setBody(const QByteArray& pBody, const QByteArray& pContentType = QByteArray());
@@ -39,4 +40,4 @@ class HttpResponse
 		QByteArray getMessage() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

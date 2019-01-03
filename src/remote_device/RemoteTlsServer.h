@@ -43,4 +43,4 @@ class RemoteTlsServer
 		void firePskChanged(const QByteArray& pPsk);
 };
 
-} /* namespace governikus */
+} // namespace governikus

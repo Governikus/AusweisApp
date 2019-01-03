@@ -6,13 +6,20 @@
 
 #include "Env.h"
 
+#include "LogHandler.h"
+
 #include <QScopedPointer>
+#include <QtConcurrent/QtConcurrentRun>
 #include <QtTest>
 
 using namespace governikus;
 
 namespace
 {
+struct TestEmptyTmp
+{
+};
+
 class AbstractTestPodInstance
 {
 	public:
@@ -192,22 +199,45 @@ class TestMoveCtorAssign
 
 };
 
-}
+class TestSingleInCtor
+{
+	Q_GADGET
+
+	public:
+		TestSingleInCtor()
+		{
+			Env::create<TestEmptyTmp>();
+			Env::getSingleton<TestAbstractUnmanagedInstance>();
+		}
+
+
+		static TestSingleInCtor& getInstance()
+		{
+			static TestSingleInCtor Instance;
+			return Instance;
+		}
+
+
+};
+
+} // namespace
+
+Q_DECLARE_METATYPE(std::function<TestEmptyTmp()> )
 
 namespace governikus
 {
 
-template<> TestAbstractUnmanagedInstance* singleton<TestAbstractUnmanagedInstance>(bool& pTakeOwnership)
+template<> TestAbstractUnmanagedInstance* singleton<TestAbstractUnmanagedInstance>()
 {
-	pTakeOwnership = false;
 	static TestUnmanagedInstance instance;
 	return &instance;
 }
 
 
-template<> AbstractTestInstance* singleton<AbstractTestInstance>(bool&)
+template<> AbstractTestInstance* singleton<AbstractTestInstance>()
 {
-	return new AbstractTestInstanceImpl;
+	static AbstractTestInstanceImpl instance;
+	return &instance;
 }
 
 
@@ -230,12 +260,10 @@ template<> AbstractTestInstance* createNewObject<AbstractTestInstance*, QString>
 			{
 			}
 
-
 			virtual QString dummy() override
 			{
 				return mDummy;
 			}
-
 
 	};
 
@@ -255,7 +283,7 @@ template<> AbstractTestPodInstance* createNewObject<AbstractTestPodInstance*, QS
 }
 
 
-}
+} // namespace governikus
 
 
 class test_Env
@@ -264,8 +292,15 @@ class test_Env
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			Env::getSingleton<LogHandler>()->init();
+		}
+
+
 		void cleanup()
 		{
+			Env::getSingleton<LogHandler>()->resetBacklog();
 			Env::clear();
 		}
 
@@ -365,43 +400,6 @@ class test_Env
 		}
 
 
-		void getMockSingleton()
-		{
-			MockedAbstractTestInstance m;
-			Env::set(AbstractTestInstance::staticMetaObject, &m);
-			MockedAbstractTestInstance* mocked = Env::getSingleton<AbstractTestInstance, MockedAbstractTestInstance>();
-			QVERIFY(mocked);
-			QCOMPARE(mocked->dummy(), QLatin1String("mocked"));
-
-			Env::set(AbstractTestInstance::staticMetaObject);
-			mocked = Env::getSingleton<AbstractTestInstance, MockedAbstractTestInstance>();
-			QVERIFY(!mocked);
-
-
-			Env::set(AbstractTestInstance::staticMetaObject, &m);
-			Env::set(AbstractTestInstance::staticMetaObject, std::make_shared<MockedAbstractTestInstance>());
-			MockedAbstractTestInstance* mocked2 = Env::getSingleton<AbstractTestInstance, MockedAbstractTestInstance>();
-			QVERIFY(mocked2);
-			QCOMPARE(mocked2->dummy(), QLatin1String("mocked"));
-
-			Env::set(AbstractTestInstance::staticMetaObject);
-			AbstractTestInstance* orig = Env::getSingleton<AbstractTestInstance>();
-			QVERIFY(orig);
-			QCOMPARE(orig->dummy(), QLatin1String("impl"));
-			QVERIFY((!Env::getSingleton<AbstractTestInstance, MockedAbstractTestInstance>()));
-
-			Env::set(AbstractTestInstance::staticMetaObject, std::make_shared<MockedAbstractTestInstance>());
-			AbstractTestInstance* mocked3 = Env::getSingleton<AbstractTestInstance>();
-			QVERIFY(mocked3);
-			QCOMPARE(mocked3->dummy(), QLatin1String("mocked"));
-
-			Env::set(AbstractTestInstance::staticMetaObject, std::shared_ptr<void>());
-			mocked3 = Env::getSingleton<AbstractTestInstance>();
-			QVERIFY(mocked3);
-			QCOMPARE(mocked3->dummy(), QLatin1String("impl"));
-		}
-
-
 		void mockCreateNewInstance()
 		{
 			QScopedPointer<AbstractTestInstance> implOrig(Env::create<AbstractTestInstance*>());
@@ -417,7 +415,6 @@ class test_Env
 							{
 								return QStringLiteral("lambda");
 							}
-
 
 						};
 
@@ -456,12 +453,10 @@ class test_Env
 								{
 								}
 
-
 								virtual QString dummy() override
 								{
 									return mDummy;
 								}
-
 
 						};
 
@@ -477,7 +472,6 @@ class test_Env
 								{
 									return QStringLiteral("default");
 								}
-
 
 						};
 
@@ -510,12 +504,10 @@ class test_Env
 					{
 					}
 
-
 					int data()
 					{
 						return mData;
 					}
-
 
 			};
 
@@ -568,7 +560,6 @@ class test_Env
 				{
 				}
 
-
 			};
 
 			auto obj = Env::create<TestTmp>();
@@ -618,6 +609,137 @@ class test_Env
 			Env::clear();
 			QCOMPARE(Env::getCounter<TestTmp>(), -1);
 			QCOMPARE((Env::getCounter<TestTmp, int>()), -1);
+		}
+
+
+		void threadSafeCheckSetCreator()
+		{
+			QVERIFY(QThreadPool::globalInstance()->maxThreadCount() > 1);
+
+			const std::function<TestEmptyTmp()> func = [](){
+						return TestEmptyTmp();
+					};
+
+			TestMockedInstance mock;
+			QVector<QFuture<void> > threads;
+
+			for (int i = 0; i < 100; ++i)
+			{
+				threads << QtConcurrent::run([func, &mock] {
+							for (int j = 0; j < 100; ++j)
+							{
+								Env::setCreator<TestEmptyTmp>(func);
+								Env::create<TestEmptyTmp>();
+								Env::getSingleton<TestSingleInCtor>();
+								Env::getShared<TestSharedInstance>();
+								Env::set(TestInstance::staticMetaObject, &mock);
+							}
+						});
+			}
+
+			for (auto future : qAsConst(threads))
+			{
+				future.waitForFinished();
+			}
+		}
+
+
+		void threadSafeDeadlockDuringCreate_data()
+		{
+			QTest::addColumn<std::function<TestEmptyTmp()> >("creator");
+
+			QTest::newRow("with mock") << std::function<TestEmptyTmp()>([](){
+						return TestEmptyTmp();
+					});
+
+			QTest::newRow("without mock") << std::function<TestEmptyTmp()>();
+		}
+
+
+		void threadSafeDeadlockDuringCreate()
+		{
+			QFETCH(std::function<TestEmptyTmp()>, creator);
+
+			if (creator)
+			{
+				Env::setCreator<TestEmptyTmp>(creator);
+			}
+
+			class CreateTmp
+			{
+				public:
+					CreateTmp()
+					{
+						Env::create<TestEmptyTmp>();
+						Env::getSingleton<TestSingleInCtor>();
+					}
+
+			};
+
+			Env::create<CreateTmp>();
+
+			if (creator)
+			{
+				QVERIFY(Env::getCounter<TestEmptyTmp>() > 0);
+			}
+		}
+
+
+		void checkLogForSameThreadsGadget()
+		{
+			QThread::currentThread()->setObjectName("Main");
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+
+			Env::getSingleton<TestAbstractUnmanagedInstance>();
+			QCOMPARE(spy.count(), 0);
+
+			Env::getSingleton<TestAbstractUnmanagedInstance>();
+			QCOMPARE(spy.count(), 0);
+		}
+
+
+		void checkLogForDifferentThreadsGadget()
+		{
+			QThread::currentThread()->setObjectName("Main");
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+
+			Env::getSingleton<TestAbstractUnmanagedInstance>();
+			QCOMPARE(spy.count(), 0);
+
+			QThreadPool pool; // do not use global one, otherwise the main thread is allowed, too
+			QtConcurrent::run(&pool, [] {
+						Env::getSingleton<TestAbstractUnmanagedInstance>();
+					}).waitForFinished();
+
+			QCOMPARE(spy.count(), 0);
+		}
+
+
+		void checkLogForSameThreadsQObject()
+		{
+			QThread::currentThread()->setObjectName("Main");
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+
+			Env::getSingleton<LogHandler>();
+			QCOMPARE(spy.count(), 0);
+		}
+
+
+		void checkLogForDifferentThreadsQObject()
+		{
+			QThread::currentThread()->setObjectName("Main");
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+
+			Env::getSingleton<LogHandler>();
+			QCOMPARE(spy.count(), 0);
+
+			QThreadPool pool; // do not use global one, otherwise the main thead is allowed, too
+			QtConcurrent::run(&pool, [] {
+						Env::getSingleton<LogHandler>();
+					}).waitForFinished();
+
+			QCOMPARE(spy.count(), 1);
+			QVERIFY(spy.takeLast().at(0).toString().contains(QLatin1String("governikus::LogHandler was created in \"Main\" but is requested by \"Thread (pooled)\"")));
 		}
 
 

@@ -39,4 +39,4 @@ class CardOperationResult
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

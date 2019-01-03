@@ -7,7 +7,7 @@
 #pragma once
 
 #include "ChipAuthenticationInfo.h"
-#include "PACEInfo.h"
+#include "PaceInfo.h"
 #include "SecurityInfo.h"
 
 #include <QByteArray>
@@ -29,16 +29,18 @@ DECLARE_ASN1_OBJECT(securityinfos_st)
  */
 class SecurityInfos
 {
+	Q_DISABLE_COPY(SecurityInfos)
+	friend class QSharedPointer<SecurityInfos>;
+
 	const QByteArray mContentBytes;
 	const QVector<QSharedPointer<const SecurityInfo> > mSecurityInfos;
-	const QVector<QSharedPointer<const PACEInfo> > mPACEInfos;
+	const QVector<QSharedPointer<const PaceInfo> > mPaceInfos;
 	const QVector<QSharedPointer<const ChipAuthenticationInfo> > mChipAuthenticationInfos;
 
 	SecurityInfos(const QByteArray& pBytes,
 			const QVector<QSharedPointer<const SecurityInfo> >& pSecurityInfos,
-			const QVector<QSharedPointer<const PACEInfo> >& pPACEInfos,
+			const QVector<QSharedPointer<const PaceInfo> >& pPaceInfos,
 			const QVector<QSharedPointer<const ChipAuthenticationInfo> >& pChipAuthenticationInfos);
-	Q_DISABLE_COPY(SecurityInfos)
 
 	public:
 		static QSharedPointer<SecurityInfos> fromHex(const QByteArray& pHexString);
@@ -46,7 +48,7 @@ class SecurityInfos
 
 		const QByteArray& getContentBytes() const;
 		const QVector<QSharedPointer<const SecurityInfo> >& getSecurityInfos() const;
-		const QVector<QSharedPointer<const PACEInfo> >& getPACEInfos() const;
+		const QVector<QSharedPointer<const PaceInfo> >& getPaceInfos() const;
 		const QVector<QSharedPointer<const ChipAuthenticationInfo> >& getChipAuthenticationInfos() const;
 };
 
@@ -59,4 +61,4 @@ class SecurityInfos
 typedef SecurityInfos EFCardAccess;
 
 
-} /* namespace governikus */
+} // namespace governikus

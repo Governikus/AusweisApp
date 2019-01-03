@@ -103,4 +103,4 @@ typedef struct chat_st
 DECLARE_ASN1_FUNCTIONS(CHAT)
 DECLARE_ASN1_OBJECT(CHAT)
 
-} /* namespace governikus */
+} // namespace governikus

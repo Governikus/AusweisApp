@@ -6,8 +6,8 @@
 
 #include "AppSettings.h"
 #include "Env.h"
-#include "RemoteDispatcherImpl.h"
-#include "RemoteHelper.h"
+#include "LogHandler.h"
+#include "RemoteDispatcher.h"
 #include "SecureStorage.h"
 #include "TlsChecker.h"
 #include "WebSocketChannel.h"
@@ -63,8 +63,7 @@ class ConnectRequest
 		void fireConnectionTimeout(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor);
 };
 
-
-}
+} // namespace governikus
 
 
 using namespace governikus;
@@ -75,7 +74,7 @@ void ConnectRequest::onConnected()
 	mTimer.stop();
 
 	const auto& cfg = mSocket->sslConfiguration();
-	TlsChecker::logSslConfig(cfg, qInfo(remote_device));
+	TlsChecker::logSslConfig(cfg, spawnMessageLogger(remote_device));
 
 	if (!TlsChecker::hasValidCertificateKeyLength(cfg.peerCertificate()) ||
 			(!cfg.ephemeralServerKey().isNull() && !TlsChecker::hasValidEphemeralKeyLength(cfg.ephemeralServerKey())))
@@ -109,12 +108,7 @@ void ConnectRequest::onConnected()
 
 void ConnectRequest::onError(QAbstractSocket::SocketError pError)
 {
-	static int timesLogged = 0;
-	if (timesLogged < 20)
-	{
-		qCWarning(remote_device) << "Connection error:" << pError;
-		timesLogged++;
-	}
+	qCWarning(remote_device) << "Connection error:" << pError;
 
 	mTimer.stop();
 	if (pError == QAbstractSocket::SocketError::RemoteHostClosedError)
@@ -182,18 +176,19 @@ ConnectRequest::ConnectRequest(const RemoteDeviceDescriptor& pRemoteDeviceDescri
 	, mSocket(new QWebSocket(), &QObject::deleteLater)
 	, mTimer()
 {
-	if (!RemoteHelper::checkAndGenerateKey())
+	auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	const bool invalidLength = !TlsChecker::hasValidCertificateKeyLength(remoteServiceSettings.getCertificate());
+	if (!remoteServiceSettings.checkAndGenerateKey(invalidLength))
 	{
 		qCCritical(remote_device) << "Cannot get required key/certificate for tls";
 		return;
 	}
 
-	auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	QSslConfiguration config;
 	if (mPsk.isEmpty())
 	{
 		config = SecureStorage::getInstance().getTlsConfigRemote().getConfiguration();
-		config.setCaCertificates(settings.getTrustedCertificates());
+		config.setCaCertificates(remoteServiceSettings.getTrustedCertificates());
 		qCCritical(remote_device) << "Start reconnect to server";
 	}
 	else
@@ -201,8 +196,8 @@ ConnectRequest::ConnectRequest(const RemoteDeviceDescriptor& pRemoteDeviceDescri
 		config = SecureStorage::getInstance().getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
 		qCCritical(remote_device) << "Start pairing to server";
 	}
-	config.setPrivateKey(settings.getKey());
-	config.setLocalCertificate(settings.getCertificate());
+	config.setPrivateKey(remoteServiceSettings.getKey());
+	config.setLocalCertificate(remoteServiceSettings.getCertificate());
 	config.setPeerVerifyMode(QSslSocket::VerifyPeer);
 	mSocket->setSslConfiguration(config);
 
@@ -259,7 +254,8 @@ void RemoteConnectorImpl::onConnectionCreated(const RemoteDeviceDescriptor& pRem
 		const QSharedPointer<QWebSocket>& pWebSocket)
 {
 	const QSharedPointer<DataChannel> channel(new WebSocketChannel(pWebSocket), &QObject::deleteLater);
-	const QSharedPointer<RemoteDispatcher> dispatcher(Env::create<RemoteDispatcher*>(channel), &QObject::deleteLater);
+	const IfdVersion::Version latestSupportedVersion = IfdVersion::selectLatestSupported(pRemoteDeviceDescriptor.getApiVersions());
+	const QSharedPointer<RemoteDispatcherClient> dispatcher(Env::create<RemoteDispatcherClient*>(latestSupportedVersion, channel), &QObject::deleteLater);
 
 	removeRequest(pRemoteDeviceDescriptor);
 

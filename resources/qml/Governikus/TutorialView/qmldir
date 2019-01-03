@@ -1,0 +1,20 @@
+module TutorialView
+
+internal TutorialHeader TutorialHeader.qml
+internal TutorialContent TutorialContent.qml
+internal TutorialWhat TutorialWhat.qml
+internal TutorialWhere TutorialWhere.qml
+internal TutorialHow TutorialHow.qml
+internal TutorialImportant TutorialImportant.qml
+internal TutorialImage TutorialImage.qml
+internal TutorialFooter TutorialFooter.qml
+internal TutorialSeperator TutorialSeperator.qml
+internal TutorialSpacer TutorialSpacer.qml
+internal TutorialReaderMethodNfc TutorialReaderMethodNfc.qml
+internal TutorialReaderMethodSacMobile TutorialReaderMethodSacMobile.qml
+internal TutorialReaderMethodSacDesktop TutorialReaderMethodSacDesktop.qml
+internal TutorialReaderMethodBluetooth TutorialReaderMethodBluetooth.qml
+internal TutorialReaderMethodFooter TutorialReaderMethodFooter.qml
+internal TutorialExpandAnimation TutorialExpandAnimation.qml
+internal TutorialCollapseAnimation TutorialCollapseAnimation.qml
+TutorialView 1.0 TutorialView.qml

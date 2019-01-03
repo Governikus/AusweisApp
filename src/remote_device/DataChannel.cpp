@@ -16,11 +16,3 @@ DataChannel::DataChannel()
 DataChannel::~DataChannel()
 {
 }
-
-
-const QString& DataChannel::getId() const
-{
-	static const QString EMPTY_STRING;
-
-	return EMPTY_STRING;
-}

@@ -45,8 +45,8 @@ class PcscReaderManagerPlugIn
 
 		QList<Reader*> getReaders() const override;
 
-		void init() override;
-		void shutdown() override;
+		virtual void startScan(bool pAutoConnect) override;
+		virtual void stopScan() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

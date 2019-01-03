@@ -13,26 +13,20 @@ TransmitResponse::TransmitResponse()
 }
 
 
-QDomElement TransmitResponse::getDocumentStructure()
+void TransmitResponse::createBodyElement()
 {
-	return createEnvelopeElement(createTransmitResponse(), getRelatesTo(), getMessageId());
-}
+	mWriter.writeStartElement(QStringLiteral("TransmitResponse"));
+	mWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
+	mWriter.writeAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
 
-
-QDomElement TransmitResponse::createTransmitResponse()
-{
-	QDomElement element = mDoc.createElement(QStringLiteral("TransmitResponse"));
-	element.setAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
-	element.setAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
-
-	element.appendChild(createResultElement(*this));
+	createResultElement(*this);
 
 	for (const auto& apdu : qAsConst(mOutputApdus))
 	{
-		element.appendChild(createTextElement(QStringLiteral("OutputAPDU"), apdu));
+		writeTextElement(QStringLiteral("OutputAPDU"), apdu);
 	}
 
-	return element;
+	mWriter.writeEndElement(); // TransmitResponse
 }
 
 

@@ -8,14 +8,14 @@
 
 #pragma once
 
-#include <QJsonDocument>
+#include "DatagramHandler.h"
+
 #include <QObject>
 #include <QScopedPointer>
 
 
 namespace governikus
 {
-
 
 class RemoteReaderAdvertiser
 	: public QObject
@@ -29,10 +29,6 @@ class RemoteReaderAdvertiser
 		virtual ~RemoteReaderAdvertiser();
 };
 
-
-class DatagramHandler;
-
-
 class RemoteReaderAdvertiserImpl
 	: public RemoteReaderAdvertiser
 {
@@ -40,7 +36,7 @@ class RemoteReaderAdvertiserImpl
 
 	const QScopedPointer<DatagramHandler> mHandler;
 	const int mTimerId;
-	const QJsonDocument mDiscovery;
+	const QByteArray mDiscovery;
 
 	void timerEvent(QTimerEvent* pEvent) override;
 
@@ -50,4 +46,4 @@ class RemoteReaderAdvertiserImpl
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

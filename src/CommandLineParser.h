@@ -17,13 +17,11 @@ class CommandLineParser
 	private:
 		QCommandLineParser mParser;
 		const QCommandLineOption mOptionKeepLog;
+		const QCommandLineOption mOptionNoLogFile;
 		const QCommandLineOption mOptionShowWindow;
 		const QCommandLineOption mOptionProxy;
 		const QCommandLineOption mOptionUi;
 		const QCommandLineOption mOptionPort;
-#ifndef QT_NO_DEBUG
-		const QCommandLineOption mOptionPortWebSocket;
-#endif
 
 		Q_DISABLE_COPY(CommandLineParser)
 
@@ -32,7 +30,7 @@ class CommandLineParser
 
 	protected:
 		CommandLineParser();
-		~CommandLineParser();
+		~CommandLineParser() = default;
 
 	public:
 		static CommandLineParser& getInstance();
@@ -41,4 +39,4 @@ class CommandLineParser
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

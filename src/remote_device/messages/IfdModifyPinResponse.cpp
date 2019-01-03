@@ -18,10 +18,10 @@ namespace
 {
 VALUE_NAME(SLOT_HANDLE, "SlotHandle")
 VALUE_NAME(OUTPUT_DATA, "OutputData")
-}
+} // namespace
 
 
-IfdModifyPinResponse::IfdModifyPinResponse(const QString& pSlotHandle, const QByteArray& pOutputData, const QString& pResultMinor)
+IfdModifyPinResponse::IfdModifyPinResponse(const QString& pSlotHandle, const QByteArray& pOutputData, ECardApiResult::Minor pResultMinor)
 	: RemoteMessageResponse(RemoteCardMessageType::IFDModifyPINResponse, pResultMinor)
 	, mSlotHandle(pSlotHandle)
 	, mOutputData(pOutputData)
@@ -38,6 +38,11 @@ IfdModifyPinResponse::IfdModifyPinResponse(const QJsonObject& pMessageObject)
 
 	const QString& inputData = getStringValue(pMessageObject, OUTPUT_DATA());
 	mOutputData = QByteArray::fromHex(inputData.toUtf8());
+
+	if (getType() != RemoteCardMessageType::IFDModifyPINResponse)
+	{
+		markIncomplete(QStringLiteral("The value of msg should be IFDModifyPINResponse"));
+	}
 }
 
 
@@ -60,38 +65,41 @@ CardReturnCode IfdModifyPinResponse::getReturnCode() const
 		return CardReturnCode::OK;
 	}
 
-	const auto& minor = getResultMinor();
-	if (minor == QLatin1String("http://www.bsi.bund.de/ecard/api/1.1/resultminor/ifdl/common#timeoutError"))
+	switch (getResultMinor())
 	{
-		return CardReturnCode::INPUT_TIME_OUT;
-	}
-	if (minor == QLatin1String("http://www.bsi.bund.de/ecard/api/1.1/resultminor/ifdl#cancellationByUser"))
-	{
-		return CardReturnCode::CANCELLATION_BY_USER;
-	}
-	if (minor == QLatin1String("http://www.bsi.bund.de/ecard/api/1.1/resultminor/ifdl/IO#repeatedDataMismatch"))
-	{
-		return CardReturnCode::NEW_PIN_MISMATCH;
-	}
-	if (minor == QLatin1String("http://www.bsi.bund.de/ecard/api/1.1/resultminor/ifdl/IO#unknownPINFormat"))
-	{
-		return CardReturnCode::NEW_PIN_INVALID_LENGTH;
-	}
-	if (minor == QLatin1String("http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#unknownError"))
-	{
-		return CardReturnCode::UNKNOWN;
-	}
+		case ECardApiResult::Minor::IFDL_Timeout_Error:
+			return CardReturnCode::INPUT_TIME_OUT;
 
-	return CardReturnCode::COMMAND_FAILED;
+		case ECardApiResult::Minor::IFDL_CancellationByUser:
+			return CardReturnCode::CANCELLATION_BY_USER;
+
+		case ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch:
+			return CardReturnCode::NEW_PIN_MISMATCH;
+
+		case ECardApiResult::Minor::IFDL_IO_UnknownPINFormat:
+			return CardReturnCode::NEW_PIN_INVALID_LENGTH;
+
+		case ECardApiResult::Minor::IFDL_Terminal_NoCard:
+			return CardReturnCode::CARD_NOT_FOUND;
+
+		case ECardApiResult::Minor::AL_Unkown_API_Function:
+			return CardReturnCode::PROTOCOL_ERROR;
+
+		case ECardApiResult::Minor::AL_Unknown_Error:
+			return CardReturnCode::UNKNOWN;
+
+		default:
+			return CardReturnCode::COMMAND_FAILED;
+	}
 }
 
 
-QJsonDocument IfdModifyPinResponse::toJson(const QString& pContextHandle) const
+QByteArray IfdModifyPinResponse::toByteArray(const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 
 	result[SLOT_HANDLE()] = mSlotHandle;
 	result[OUTPUT_DATA()] = QString::fromLatin1(mOutputData.toHex());
 
-	return QJsonDocument(result);
+	return RemoteMessage::toByteArray(result);
 }

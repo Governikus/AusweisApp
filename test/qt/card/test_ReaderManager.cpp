@@ -5,13 +5,11 @@
 #include "ReaderManager.h"
 
 #include "MockReaderManagerPlugIn.h"
-#include "ReaderManagerWorker.h"
 
 #include <QCoreApplication>
 #include <QSharedPointer>
 #include <QSignalSpy>
 #include <QtTest>
-
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
@@ -26,22 +24,10 @@ class CreateCardConnectionCommandSlot
 	public:
 		QSharedPointer<CardConnection> mCardConnection;
 		bool mSlotCalled = false;
-		QTime mDieTime;
-
-		void wait(int pMillis = 1000)
-		{
-			mDieTime = QTime::currentTime().addMSecs(pMillis);
-			while (QTime::currentTime() < mDieTime)
-			{
-				QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-			}
-		}
-
 
 	public Q_SLOTS:
 		void onCardCommandDone(QSharedPointer<CreateCardConnectionCommand> pCommand)
 		{
-			mDieTime = QTime::currentTime();
 			mSlotCalled = true;
 			mCardConnection = pCommand->getCardConnection();
 		}
@@ -58,38 +44,37 @@ class test_ReaderManager
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			ReaderManager::getInstance().init();
-			ReaderManager::getInstance().getPlugInInfos(); // just to wait until initialization finished
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			readerManager->init();
+			readerManager->getPlugInInfos(); // just to wait until initialization finished
 		}
 
 
 		void cleanupTestCase()
 		{
-			ReaderManager::getInstance().shutdown();
+			Env::getSingleton<ReaderManager>()->shutdown();
 		}
 
 
 		void fireReaderAdded()
 		{
-			QSignalSpy spy(&ReaderManager::getInstance(), &ReaderManager::fireReaderAdded);
+			QSignalSpy spy(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderAdded);
 
 			MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711");
 
-			spy.wait();
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1);
 			QCOMPARE(spy.takeFirst().at(0).toString(), QString("MockReader 4711"));
 		}
 
 
 		void fireReaderRemoved()
 		{
-			QSignalSpy spy(&ReaderManager::getInstance(), &ReaderManager::fireReaderRemoved);
+			QSignalSpy spy(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderRemoved);
 			MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711");
 
 			MockReaderManagerPlugIn::getInstance().removeReader("MockReader 4711");
 
-			spy.wait();
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1);
 			QCOMPARE(spy.takeFirst().at(0).toString(), QString("MockReader 4711"));
 		}
 
@@ -98,10 +83,9 @@ class test_ReaderManager
 		{
 			CreateCardConnectionCommandSlot commandSlot;
 
-			ReaderManager::getInstance().callCreateCardConnectionCommand("UnknownReader", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
+			Env::getSingleton<ReaderManager>()->callCreateCardConnectionCommand("UnknownReader", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
 
-			commandSlot.wait();
-			QVERIFY(commandSlot.mSlotCalled);
+			QTRY_COMPARE(commandSlot.mSlotCalled, true);
 			QVERIFY(commandSlot.mCardConnection.isNull());
 		}
 
@@ -111,10 +95,9 @@ class test_ReaderManager
 			CreateCardConnectionCommandSlot commandSlot;
 			MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711");
 
-			ReaderManager::getInstance().callCreateCardConnectionCommand("UnknownReader", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
+			Env::getSingleton<ReaderManager>()->callCreateCardConnectionCommand("UnknownReader", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
 
-			commandSlot.wait();
-			QVERIFY(commandSlot.mSlotCalled);
+			QTRY_COMPARE(commandSlot.mSlotCalled, true);
 			QVERIFY(commandSlot.mCardConnection.isNull());
 		}
 
@@ -127,10 +110,9 @@ class test_ReaderManager
 			cardConfig.mConnect = CardReturnCode::COMMAND_FAILED;
 			reader->setCard(cardConfig);
 
-			ReaderManager::getInstance().callCreateCardConnectionCommand("MockReader 4711", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
+			Env::getSingleton<ReaderManager>()->callCreateCardConnectionCommand("MockReader 4711", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
 
-			commandSlot.wait();
-			QVERIFY(commandSlot.mSlotCalled);
+			QTRY_COMPARE(commandSlot.mSlotCalled, true);
 			QVERIFY(commandSlot.mCardConnection.isNull());
 		}
 
@@ -143,10 +125,9 @@ class test_ReaderManager
 			cardConfig.mConnect = CardReturnCode::OK;
 			reader->setCard(cardConfig);
 
-			ReaderManager::getInstance().callCreateCardConnectionCommand("MockReader 4711", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
+			Env::getSingleton<ReaderManager>()->callCreateCardConnectionCommand("MockReader 4711", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
 
-			commandSlot.wait();
-			QVERIFY(commandSlot.mSlotCalled);
+			QTRY_COMPARE(commandSlot.mSlotCalled, true);
 			QVERIFY(!commandSlot.mCardConnection.isNull());
 		}
 
@@ -154,14 +135,14 @@ class test_ReaderManager
 		void getInvalidReaderInfoWithAndWithoutInitializedReaderManager()
 		{
 			{
-				const auto& readerInfo = ReaderManager::getInstance().getReaderInfo("test dummy");
+				const auto& readerInfo = Env::getSingleton<ReaderManager>()->getReaderInfo("test dummy");
 				QCOMPARE(readerInfo.getPlugInType(), ReaderManagerPlugInType::UNKNOWN);
 				QCOMPARE(readerInfo.getName(), QStringLiteral("test dummy"));
 			}
 
 			cleanupTestCase();
 			{
-				const auto& readerInfo = ReaderManager::getInstance().getReaderInfo("test dummy");
+				const auto& readerInfo = Env::getSingleton<ReaderManager>()->getReaderInfo("test dummy");
 				QCOMPARE(readerInfo.getPlugInType(), ReaderManagerPlugInType::UNKNOWN);
 				QCOMPARE(readerInfo.getName(), QStringLiteral("test dummy"));
 			}

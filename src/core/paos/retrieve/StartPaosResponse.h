@@ -30,4 +30,4 @@ class StartPaosResponse
 		virtual bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -19,7 +19,6 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 namespace governikus
 {
 
-
 ASN1_ITEM_TEMPLATE(CertificateProfileIdentifier) =
 			ASN1_EX_TEMPLATE_TYPE(ASN1_TFLG_IMPTAG | ASN1_TFLG_APPLICATION, 0x29, CertificateProfileIdentifier, ASN1_OCTET_STRING)
 ASN1_ITEM_TEMPLATE_END(CertificateProfileIdentifier)
@@ -97,12 +96,12 @@ IMPLEMENT_ASN1_FUNCTIONS(CVCertificateBody)
 IMPLEMENT_ASN1_OBJECT(CVCertificateBody)
 
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	#define sk_CERTIFICATEEXTENSION_num(data) SKM_sk_num(CERTIFICATEEXTENSION, data)
 	#define sk_CERTIFICATEEXTENSION_value(data, i) SKM_sk_value(CERTIFICATEEXTENSION, data, i)
 #endif
 
-} /* namespace governikus */
+} // namespace governikus
 
 
 QSharedPointer<CVCertificateBody> CVCertificateBody::fromHex(const QString& pHexValue)

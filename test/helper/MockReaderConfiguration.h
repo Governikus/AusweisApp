@@ -24,4 +24,4 @@ class MockReaderConfiguration
 		void clearReaderConfiguration();
 };
 
-} /* namespace governikus */
+} // namespace governikus

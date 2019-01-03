@@ -21,6 +21,7 @@ class test_StateExtractCvcsFromEac1InputType;
 class test_StatePreVerification;
 class test_StateCertificateDescriptionCheck;
 class test_StateProcessCertificatesFromEac2;
+class test_AuthModel;
 
 namespace governikus
 {
@@ -29,12 +30,12 @@ class TestAuthContext;
 class Eac1InputType
 {
 	friend class DidAuthenticateEac1Parser;
-	friend class ::test_StatePrepareChat;
 	friend class TestAuthContext;
 	friend class ::test_StateExtractCvcsFromEac1InputType;
 	friend class ::test_StatePreVerification;
 	friend class ::test_StateCertificateDescriptionCheck;
 	friend class ::test_StateProcessCertificatesFromEac2;
+	friend class ::test_AuthModel;
 
 	private:
 		QVector<QSharedPointer<const CVCertificate> > mCvCertificates;
@@ -147,4 +148,4 @@ class Eac1InputType
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

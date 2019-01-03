@@ -17,9 +17,9 @@ class test_IfdVersion
 	private Q_SLOTS:
 		void stringParsing()
 		{
-			QCOMPARE(IfdVersion::fromString("IFDInterface_WebSocket_v0"), IfdVersion(IfdVersion::Version::v0));
+			QCOMPARE(IfdVersion::fromString("IFDInterface_WebSocket_v0"), IfdVersion::Version::v0);
 
-			QCOMPARE(IfdVersion::fromString("IFDInterface_WebSocket_v9001"), IfdVersion(IfdVersion::Version::Unknown));
+			QCOMPARE(IfdVersion::fromString("IFDInterface_WebSocket_v9001"), IfdVersion::Version::Unknown);
 		}
 
 
@@ -45,9 +45,10 @@ class test_IfdVersion
 
 		void selectSupportedVersions()
 		{
-			QCOMPARE(IfdVersion::selectLatestSupported({}), IfdVersion(IfdVersion::Version::Unknown));
-			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::Unknown}), IfdVersion(IfdVersion::Version::Unknown));
-			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v0}), IfdVersion(IfdVersion::Version::v0));
+			QCOMPARE(IfdVersion::selectLatestSupported({}), IfdVersion::Version::Unknown);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v_test}), IfdVersion::Version::Unknown);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v0}), IfdVersion::Version::v0);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v0, IfdVersion::Version::v_test}), IfdVersion::Version::v0);
 		}
 
 

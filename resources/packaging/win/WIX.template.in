@@ -12,17 +12,27 @@
 		Manufacturer="$(var.CPACK_PACKAGE_VENDOR)"
 		UpgradeCode="$(var.CPACK_WIX_UPGRADE_GUID)">
 
-		<Package InstallerVersion="301" Compressed="yes"/>
+		<Package InstallerVersion="301"
+			InstallScope="perMachine"
+			Compressed="yes"
+			Description="$(var.CPACK_PACKAGE_NAME)"
+			Keywords="!(loc.PackageKeywords)"
+			Comments="!(loc.PackageComments)"/>
+
+		<Property Id="ARPCOMMENTS" Value="!(loc.ArpComment)"/>
+		<Property Id="ARPHELPLINK" Value="!(loc.ArpHelp)"/>
+		<Property Id="ARPURLINFOABOUT" Value="!(loc.ArpAbout)"/>
+		<Property Id="ARPURLUPDATEINFO" Value="!(loc.ArpUpdate)"/>
+		<Property Id="ARPCONTACT" Value="$(var.CPACK_PACKAGE_VENDOR)"/>
 
 		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes"/>
 
 		<MajorUpgrade
 			Schedule="afterInstallInitialize"
-			AllowSameVersionUpgrades="yes"
 			DowngradeErrorMessage="!(loc.DowngradeErrorMessage)"/>
 
 		<Condition Message="!(loc.WindowsServerNotSupported)">
-			<![CDATA[Installed OR MsiNTProductType = 1]]>
+			<![CDATA[Installed OR (MsiNTProductType = 1)]]>
 		</Condition>
 
 		<Condition Message="!(loc.Windows7SP1Required)">
@@ -46,89 +56,29 @@
 			<WixVariable Id="WixUIDialogBmp" Value="$(var.CPACK_WIX_UI_DIALOG)"/>
 		<?endif?>
 
-		<!-- ############################################################## -->
-		<!-- Create registry entry and add 127.0.0.1 to trusted sites       -->
-		<!-- ############################################################## -->
-		<Property Id="SYSTEMSETTINGS" Value="1"/><!-- default: true -->
-		<DirectoryRef Id="TARGETDIR">
-			<Component Id="RegistryEntryIE" Guid="*">
-				<Condition>SYSTEMSETTINGS</Condition>
-				<RegistryKey Root="HKCU"
-						Key="Software\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\Domains\127.0.0.1"
-						Action="createAndRemoveOnUninstall">
-					<RegistryValue Type="integer" Name="http" Value="2" KeyPath="no"/>
-				</RegistryKey>
-				<RegistryKey Root="HKLM"
-					Key="SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules"
-					Action="create">
-					<RegistryValue Type="string" Name="AusweisApp2-Firewall-Rule"
-						Value="v2.20|Action=Allow|Active=TRUE|Dir=Out|App=[INSTALL_ROOT][ProductName].exe|Name=AusweisApp2|Desc=AusweisApp2 firewall rule|"
-						KeyPath="no"/>
-				</RegistryKey>
-			</Component>
-		</DirectoryRef>
-
-		<!-- ################################################################### -->
-		<!--    Add/remove  SaC listening port to/from Windows Firewall          -->
-		<!-- ################################################################### -->
-		<CustomAction Id="AddListeningPortWindowsFirewallSaC"
-				Directory="TARGETDIR"
-				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall add rule name=AusweisApp2-Firewall-Rule-SaC-In dir=in action=allow description=&quot;Allow inbound udp connections for Smartphone as card reader.&quot; localip=any remoteip=localsubnet localport=24727 remoteport=any protocol=udp"
-				Execute="commit"
-				Impersonate="no"
-				Return="asyncWait" />
-
-		<InstallExecuteSequence>
-			<Custom Action="AddListeningPortWindowsFirewallSaC" Before="InstallFinalize">SYSTEMSETTINGS and NOT Installed</Custom>
-		</InstallExecuteSequence>
-
-		<CustomAction Id="DeleteListeningPortWindowsFirewallSaC"
-				Directory="TARGETDIR"
-				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall delete rule name=AusweisApp2-Firewall-Rule-SaC-In"
-				Execute="commit"
-				Impersonate="no"
-				Return="asyncWait" />
-
-		<InstallExecuteSequence>
-			<Custom Action="DeleteListeningPortWindowsFirewallSaC" Before="InstallFinalize">Installed and Not REINSTALL</Custom>
-		</InstallExecuteSequence>
-
-		<!-- ############################# -->
-		<!-- Create desktop shortcut       -->
-		<!-- ############################# -->
-		<Property Id="INSTALLDESKTOPSHORTCUT" Value="1"/><!-- default: true -->
-		<DirectoryRef Id="TARGETDIR">
-			<Directory Id="DesktopFolder" Name="Desktop" >
-				<Component Id="ProgrammDesktopShortcut" Guid="*">
-					<Condition>INSTALLDESKTOPSHORTCUT</Condition>
-					<Shortcut Id="ProgrammStartDesktopShortcut"
-						Name="$(var.CPACK_PACKAGE_NAME)"
-						Description="!(loc.ProgramDescription)"
-						Icon="ProductIcon.ico"
-						Target="[INSTALL_ROOT][ProductName].exe"
-						WorkingDirectory="INSTALL_ROOT"
-						Advertise="no" />
-					<RegistryKey Root="HKCU"
-							Key="Software\Governikus GmbH &amp; Co. KG\AusweisApp2">
-						<RegistryValue Name="DesktopSC" Type="integer" Value="1" KeyPath="yes" />
-					</RegistryKey>
-				</Component>
-			</Directory>
-		</DirectoryRef>
-
-
-		<!-- ############################ -->
-		<!-- ProductFeature components    -->
-		<!-- ############################ -->
+		<!-- ######################### -->
+		<!-- ProductFeature components -->
+		<!-- ######################### -->
 		<FeatureRef Id="ProductFeature">
-			<ComponentRef Id="ProgrammDesktopShortcut" />
-			<ComponentRef Id="RegistryEntryIE" />
+			<!-- Installation settings -->
+			<ComponentRef Id="OutgoingRuleWindowsFirewall" />
+			<ComponentRef Id="DesktopShortcut" />
+			<ComponentRef Id="StartmenuShortcut"/>
+
+			<!-- Runtime settings -->
+			<ComponentRef Id="AutoStart"/>
+			<ComponentRef Id="AutoHide"/>
+			<ComponentRef Id="RemindToClose"/>
+			<ComponentRef Id="Assistant"/>
+			<ComponentRef Id="TransportPinReminder"/>
+			<ComponentRef Id="UpdateCheck"/>
+			<ComponentRef Id="OnScreenKeyboard"/>
+			<ComponentRef Id="History"/>
 		</FeatureRef>
 
-
-		<!-- ############################# -->
-		<!-- Launch application on exit    -->
-		<!-- ############################# -->
+		<!-- ########################## -->
+		<!-- Launch application on exit -->
+		<!-- ########################## -->
 		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1"/><!-- default: true -->
 		<UI>
 			<UIRef Id="CustomWixUI_InstallDir" />
@@ -137,7 +87,7 @@
 				Control="Finish"
 				Order="1"
 				Event="DoAction"
-				Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+				Value="LaunchApplication">(WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1) AND NOT Installed</Publish>
 		</UI>
 		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="!(loc.CustomExitDialog_LaunchCheckBox)"/>
 		<Property Id="WixShellExecTarget" Value="[#CM_FP_AusweisApp2.exe]" />
@@ -218,8 +168,8 @@
 				<Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
 				<Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
 
-				<Control Id="SystemSettingsCheckBox" Type="CheckBox" X="20" Y="70" Width="290" Height="17" Property="SYSTEMSETTINGS" CheckBoxValue="1" Text="!(loc.CustomInstallDirDlg_SystemSettingsCheckBox)" />
-				<Control Id="DesktopShortcutCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="INSTALLDESKTOPSHORTCUT" CheckBoxValue="1" Text="!(loc.CustomInstallDirDlg_DesktopShortcutCheckBox)" />
+				<Control Id="SystemSettingsCheckBox" Type="CheckBox" X="20" Y="70" Width="290" Height="17" Property="SYSTEMSETTINGS" CheckBoxValue="true" Text="!(loc.CustomInstallDirDlg_SystemSettingsCheckBox)" />
+				<Control Id="DesktopShortcutCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="DESKTOPSHORTCUT" CheckBoxValue="true" Text="!(loc.CustomInstallDirDlg_DesktopShortcutCheckBox)" />
 
 				<Control Id="FolderLabel" Type="Text" X="22" Y="175" Width="290" Height="30" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)" Transparent="yes" />
 				<Control Id="Folder" Type="PathEdit" X="20" Y="195" Width="272" Height="18" Property="WIXUI_INSTALLDIR" Indirect="yes" />

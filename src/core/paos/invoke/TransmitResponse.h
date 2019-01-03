@@ -23,9 +23,9 @@ class TransmitResponse
 	private:
 		QByteArrayList mOutputApdus;
 
-		QDomElement createTransmitResponse();
+		void createTransmitResponse();
 
-		virtual QDomElement getDocumentStructure() override;
+		virtual void createBodyElement() override;
 
 		Q_DISABLE_COPY(TransmitResponse)
 
@@ -35,4 +35,4 @@ class TransmitResponse
 		void setOutputApdus(const QByteArrayList& outputApdus);
 };
 
-} /* namespace governikus */
+} // namespace governikus

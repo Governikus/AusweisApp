@@ -2,8 +2,9 @@
  * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "asn1/ASN1Util.h"
 #include "SecureMessagingResponse.h"
+
+#include "asn1/ASN1Util.h"
 
 #include <QLoggingCategory>
 
@@ -51,7 +52,7 @@ SecureMessagingResponse::SecureMessagingResponse(const QByteArray& pBuffer)
 	ResponseApdu::setBuffer(pBuffer);
 	QByteArray data = getData();
 
-	if (auto tmp = decodeObject<SM_ENCRYPTED_DATA>(data))
+	if (auto tmp = decodeObject<SM_ENCRYPTED_DATA>(data, false))
 	{
 		mEncryptedData = tmp;
 		QByteArray encryptedDataValue = Asn1OctetStringUtil::getValue(mEncryptedData.data());

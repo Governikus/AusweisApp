@@ -23,7 +23,6 @@ class PreVerificationSettings
 
 	friend class AppSettings;
 	friend class ::test_PreVerificationSettings;
-	friend class ::test_StatePreVerification;
 
 	private:
 		QSharedPointer<QSettings> mStore;
@@ -43,4 +42,4 @@ class PreVerificationSettings
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

@@ -29,7 +29,7 @@ class MsgTest
 
 };
 
-}
+} // namespace
 
 
 class test_MsgHandler

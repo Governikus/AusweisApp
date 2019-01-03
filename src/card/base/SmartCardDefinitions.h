@@ -13,10 +13,13 @@ defineEnumType(CardType,
 		UNKNOWN,
 		EID_CARD)
 
-defineTypedEnumType(PACE_PASSWORD_ID, char,
+defineTypedEnumType(PacePasswordId, char,
+		UNKNOWN = 0x00,
 		PACE_MRZ = 0x01,
 		PACE_CAN = 0x02,
 		PACE_PIN = 0x03,
 		PACE_PUK = 0x04)
 
-}
+} // namespace governikus
+
+Q_DECLARE_METATYPE(governikus::PacePasswordId)

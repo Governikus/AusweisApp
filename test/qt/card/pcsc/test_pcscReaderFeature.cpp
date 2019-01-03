@@ -39,13 +39,13 @@ class test_pcscReaderFeature
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
 		void cleanup()
 		{
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
@@ -53,7 +53,7 @@ class test_pcscReaderFeature
 		{
 			PcscReaderFeature readerFeature(nullptr);
 
-			QSignalSpy spyLog(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			qDebug() << readerFeature;
 			QVERIFY(TestFileHelper::containsLog(spyLog, QLatin1String("()")));
 
@@ -66,7 +66,7 @@ class test_pcscReaderFeature
 			QByteArray featuresTLV = QByteArray::fromHex("120442330012");
 			PcscReaderFeature readerFeature(featuresTLV.constData(), static_cast<PCSC_INT>(featuresTLV.length()));
 
-			QSignalSpy spyLog(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			qDebug() << readerFeature;
 			QVERIFY(TestFileHelper::containsLog(spyLog, QLatin1String("(TLV_PROPERTIES)")));
 
@@ -81,7 +81,7 @@ class test_pcscReaderFeature
 			QByteArray featuresTLV = QByteArray::fromHex("060442000db2070442000db3080442000db4090442000db5200442000dcc");
 			PcscReaderFeature readerFeature(featuresTLV.constData(), static_cast<PCSC_INT>(featuresTLV.length()));
 
-			QSignalSpy spyLog(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			qDebug() << readerFeature;
 			QVERIFY(TestFileHelper::containsLog(spyLog, QLatin1String("(VERIFY_PIN_DIRECT, MODIFY_PIN_DIRECT, MCT_READERDIRECT, MCT_UNIVERSAL, EXECUTE_PACE)")));
 

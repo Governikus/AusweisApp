@@ -31,7 +31,7 @@ template<> RemoteDeviceList* createNewObject<RemoteDeviceList*, int, int>(int&& 
 }
 
 
-} /* namespace governikus */
+} // namespace governikus
 
 
 RemoteDeviceListEntry::RemoteDeviceListEntry(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor)
@@ -47,9 +47,9 @@ void RemoteDeviceListEntry::setLastSeenToNow()
 }
 
 
-bool RemoteDeviceListEntry::contains(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor) const
+bool RemoteDeviceListEntry::containsEquivalent(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor) const
 {
-	return mRemoteDeviceDescriptor == pRemoteDeviceDescriptor;
+	return mRemoteDeviceDescriptor.isEquivalent(pRemoteDeviceDescriptor);
 }
 
 
@@ -75,13 +75,11 @@ const RemoteDeviceDescriptor& RemoteDeviceListEntry::getRemoteDeviceDescriptor()
 
 RemoteDeviceList::RemoteDeviceList(int, int)
 {
-
 }
 
 
 RemoteDeviceList::~RemoteDeviceList()
 {
-
 }
 
 
@@ -112,14 +110,14 @@ void RemoteDeviceListImpl::update(const RemoteDeviceDescriptor& pDescriptor)
 {
 	for (const QSharedPointer<RemoteDeviceListEntry>& entry : qAsConst(mList))
 	{
-		if (entry->contains(pDescriptor))
+		if (entry->containsEquivalent(pDescriptor))
 		{
 			entry->setLastSeenToNow();
 			return;
 		}
 	}
 
-	const QSharedPointer<RemoteDeviceListEntry> newDevice(new RemoteDeviceListEntry(pDescriptor));
+	const auto& newDevice = QSharedPointer<RemoteDeviceListEntry>::create(pDescriptor);
 	mList.append(newDevice);
 
 	if (!mTimer.isActive())

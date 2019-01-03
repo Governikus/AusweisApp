@@ -19,7 +19,7 @@ namespace
 {
 VALUE_NAME(SLOT_NAME, "SlotName")
 VALUE_NAME(EXCLUSIVE, "exclusive")
-}
+} // namespace
 
 
 IfdConnect::IfdConnect(const QString& pSlotName, bool pExclusive)
@@ -37,6 +37,11 @@ IfdConnect::IfdConnect(const QJsonObject& pMessageObject)
 {
 	mSlotName = getStringValue(pMessageObject, SLOT_NAME());
 	mExclusive = getBoolValue(pMessageObject, EXCLUSIVE());
+
+	if (getType() != RemoteCardMessageType::IFDConnect)
+	{
+		markIncomplete(QStringLiteral("The value of msg should be IFDConnect"));
+	}
 }
 
 
@@ -52,12 +57,12 @@ bool IfdConnect::isExclusive() const
 }
 
 
-QJsonDocument IfdConnect::toJson(const QString& pContextHandle) const
+QByteArray IfdConnect::toByteArray(const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 
 	result[SLOT_NAME()] = mSlotName;
 	result[EXCLUSIVE()] = mExclusive;
 
-	return QJsonDocument(result);
+	return RemoteMessage::toByteArray(result);
 }

@@ -97,12 +97,13 @@ class test_Message
 		}
 
 
-		void processStateEstablishPacePin()
+		void processStateEnterPacePassword()
 		{
 			MessageDispatcher dispatcher;
 			dispatcher.init(QSharedPointer<WorkflowContext>(new WorkflowContext()));
 
-			const auto& msg = dispatcher.processStateChange(QStringLiteral("StateEstablishPacePin"));
+			dispatcher.mContext.getWorkflowContext()->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
+			const auto& msg = dispatcher.processStateChange(QStringLiteral("StateEnterPacePassword"));
 			QCOMPARE(msg, QByteArray("{\"msg\":\"ENTER_PIN\"}"));
 		}
 
@@ -125,6 +126,7 @@ class test_Message
 			MessageDispatcher dispatcher;
 			dispatcher.init(context);
 
+			context->setReaderName("dummy");
 			QVERIFY(!context->isStateApproved());
 			QCOMPARE(dispatcher.processStateChange(QStringLiteral("SomeUnknownState")), QByteArray());
 			QVERIFY(context->isStateApproved());
@@ -134,7 +136,8 @@ class test_Message
 			auto expectedBadState = QByteArray("{\"error\":\"SET_CAN\",\"msg\":\"BAD_STATE\"}");
 			QCOMPARE(dispatcher.processCommand(msg), expectedBadState);
 
-			QVERIFY(!dispatcher.processStateChange(QStringLiteral("StateEstablishPaceCan")).isEmpty());
+			dispatcher.mContext.getWorkflowContext()->setEstablishPaceChannelType(PacePasswordId::PACE_CAN);
+			QVERIFY(!dispatcher.processStateChange(QStringLiteral("StateEnterPacePassword")).isEmpty());
 			QVERIFY(!context->isStateApproved());
 
 			auto expectedEnterCan = QByteArray("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_CAN\"}");

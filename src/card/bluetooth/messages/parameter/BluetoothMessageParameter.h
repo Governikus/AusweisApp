@@ -50,8 +50,6 @@ class BluetoothMessageParameter
 
 
 	public:
-		using Ptr = QSharedPointer<const BluetoothMessageParameter>;
-
 		BluetoothMessageParameter(BluetoothParamId pParamId, const QByteArray& pValue);
 		virtual ~BluetoothMessageParameter();
 
@@ -64,6 +62,6 @@ class BluetoothMessageParameter
 		virtual QString toStringValue() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus
 
 QDebug operator<<(QDebug pDbg, const governikus::BluetoothMessageParameter& pMsg);

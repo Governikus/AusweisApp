@@ -35,4 +35,4 @@ class PaosParser
 		QString mRelatesTo;
 };
 
-}
+} // namespace governikus

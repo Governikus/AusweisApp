@@ -26,8 +26,6 @@ class SelfAuthContext
 
 	public:
 		SelfAuthContext();
-		virtual ~SelfAuthContext();
-
 
 		const SelfAuthenticationData& getSelfAuthenticationData() const
 		{
@@ -44,4 +42,4 @@ class SelfAuthContext
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

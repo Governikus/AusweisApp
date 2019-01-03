@@ -5,14 +5,18 @@
 #include "RemoteServiceSettings.h"
 
 #include "DeviceInfo.h"
+#include "KeyPair.h"
 
 #include <QCryptographicHash>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QLoggingCategory>
 #include <QMutableVectorIterator>
 
 using namespace governikus;
+
+Q_DECLARE_LOGGING_CATEGORY(settings)
 
 namespace
 {
@@ -24,7 +28,7 @@ SETTINGS_NAME(SETTINGS_NAME_TRUSTED_CERTIFICATE_ITEM, "certificate")
 SETTINGS_NAME(SETTINGS_NAME_TRUSTED_REMOTE_INFO, "trustedRemoteInfo")
 SETTINGS_NAME(SETTINGS_NAME_KEY, "key")
 SETTINGS_NAME(SETTINGS_NAME_CERTIFICATE, "certificate")
-}
+} // namespace
 
 
 QString RemoteServiceSettings::generateFingerprint(const QSslCertificate& pCert)
@@ -170,6 +174,29 @@ void RemoteServiceSettings::removeTrustedCertificate(const QString& pFingerprint
 			return;
 		}
 	}
+}
+
+
+bool RemoteServiceSettings::checkAndGenerateKey(bool pForceGeneration)
+{
+	if (getKey().isNull()
+			|| getCertificate().isNull()
+			|| getCertificate().expiryDate() < QDateTime::currentDateTime()
+			|| pForceGeneration)
+	{
+		qCDebug(settings) << "Generate local keypair...";
+		const auto& pair = KeyPair::generate();
+		if (pair.isValid())
+		{
+			setKey(pair.getKey());
+			setCertificate(pair.getCertificate());
+			return true;
+		}
+
+		return false;
+	}
+
+	return true;
 }
 
 

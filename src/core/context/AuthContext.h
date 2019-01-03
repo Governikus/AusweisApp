@@ -18,7 +18,6 @@
 #include "paos/invoke/InitializeFrameworkResponse.h"
 #include "paos/invoke/StartPaos.h"
 #include "paos/invoke/TransmitResponse.h"
-#include "paos/MessageIdHandler.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
 #include "paos/retrieve/DidAuthenticateEac2.h"
 #include "paos/retrieve/DidAuthenticateEacAdditional.h"
@@ -37,9 +36,7 @@
 #include <QUrl>
 
 class test_StateRedirectBrowser;
-class test_StatePreVerification;
-class test_StateProcessCertificatesFromEac2;
-class test_StateCertificateDescriptionCheck;
+class test_ChatModel;
 
 namespace governikus
 {
@@ -50,20 +47,20 @@ class AuthContext
 	Q_OBJECT
 
 	private:
-		friend class ::test_StatePrepareChat;
 		friend class ::test_StateRedirectBrowser;
 		friend class ::test_StatePreVerification;
 		friend class ::test_StateProcessCertificatesFromEac2;
 		friend class ::test_StateCertificateDescriptionCheck;
+		friend class ::test_ChatModel;
 
 		bool mTcTokenNotFound;
 		bool mErrorReportedToServer;
 
 		QSharedPointer<ActivationContext> mActivationContext;
 		QUrl mTcTokenUrl;
-		QSharedPointer<TcToken> mTcToken;
+		QSharedPointer<const TcToken> mTcToken;
 		QUrl mRefreshUrl;
-		QSharedPointer<MessageIdHandler> mMessageIdHandler;
+		QString mReceivedMessageId;
 		QSharedPointer<StartPaos> mStartPaos;
 		QSharedPointer<InitializeFramework> mInitializeFramework;
 		QSharedPointer<InitializeFrameworkResponse> mInitializeFrameworkResponse;
@@ -77,7 +74,6 @@ class AuthContext
 		QSharedPointer<DIDAuthenticateResponseEAC2> mDIDAuthenticateResponseEAC2;
 		QVector<QSharedPointer<Transmit> > mTransmits;
 		QVector<QSharedPointer<TransmitResponse> > mTransmitResponses;
-		bool mTransmitResponseFailed;
 		QSharedPointer<Disconnect> mDisconnect;
 		QSharedPointer<DisconnectResponse> mDisconnectResponse;
 		QSharedPointer<StartPaosResponse> mStartPaosResponse;
@@ -99,8 +95,6 @@ class AuthContext
 
 	public:
 		AuthContext(const QSharedPointer<ActivationContext>& pActivationContext);
-		virtual ~AuthContext();
-
 
 		bool isErrorReportedToServer() const
 		{
@@ -164,21 +158,27 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<TcToken>& getTcToken() const
+		const QSharedPointer<const TcToken>& getTcToken() const
 		{
 			return mTcToken;
 		}
 
 
-		void setTcToken(const QSharedPointer<TcToken>& pTcToken)
+		void setTcToken(const QSharedPointer<const TcToken>& pTcToken)
 		{
 			mTcToken = pTcToken;
 		}
 
 
-		const QSharedPointer<MessageIdHandler>& getMessageIdHandler() const
+		const QString& getReceivedMessageId() const
 		{
-			return mMessageIdHandler;
+			return mReceivedMessageId;
+		}
+
+
+		void setReceivedMessageId(const QString& pReceivedMessageId)
+		{
+			mReceivedMessageId = pReceivedMessageId;
 		}
 
 
@@ -364,18 +364,6 @@ class AuthContext
 		}
 
 
-		bool getTransmitResponseFailed() const
-		{
-			return mTransmitResponseFailed;
-		}
-
-
-		void setTransmitResponseFailed(bool pFailed)
-		{
-			mTransmitResponseFailed = pFailed;
-		}
-
-
 		const QVector<QSharedPointer<Transmit> >& getTransmits()
 		{
 			return mTransmits;
@@ -446,10 +434,10 @@ class AuthContext
 		CVCertificateChain getChainStartingWith(const QSharedPointer<const CVCertificate>& pChainRoot) const;
 
 
-		bool hasChainForCertificationAuthority(const EstablishPACEChannelOutput& pPaceOutput) const;
+		bool hasChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const;
 
 
-		CVCertificateChain getChainForCertificationAuthority(const EstablishPACEChannelOutput& pPaceOutput) const;
+		CVCertificateChain getChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const;
 
 
 		void initCvcChainBuilder(const QVector<QSharedPointer<const CVCertificate> >& pAdditionalCertificates = QVector<QSharedPointer<const CVCertificate> >());
@@ -479,4 +467,4 @@ class AuthContext
 		void setSslSession(const QByteArray& pSession);
 };
 
-} /* namespace governikus */
+} // namespace governikus

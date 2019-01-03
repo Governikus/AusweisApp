@@ -7,8 +7,6 @@
 #include "asn1/ASN1Util.h"
 #include "asn1/CVCertificate.h"
 #include "context/AuthContext.h"
-#include "Result.h"
-#include "TestFileHelper.h"
 
 #include "TestAuthContext.h"
 #include <QtCore>

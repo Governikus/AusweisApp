@@ -5,7 +5,6 @@
 #include "StateStartRemoteService.h"
 
 #include "AppSettings.h"
-#include "Env.h"
 #include "ServerMessageHandler.h"
 
 using namespace governikus;

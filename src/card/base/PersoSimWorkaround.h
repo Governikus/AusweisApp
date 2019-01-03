@@ -17,8 +17,7 @@ namespace governikus
 class PersoSimWorkaround
 {
 	private:
-		PersoSimWorkaround();
-		~PersoSimWorkaround();
+		PersoSimWorkaround() = delete;
 		Q_DISABLE_COPY(PersoSimWorkaround)
 
 	public:
@@ -35,36 +34,21 @@ class PersoSimWorkaround
 		{
 			ResponseApdu response;
 			const CardReturnCode returnCode = pCardConnectionWorker->transmit(SelectBuilder(FileRef::efCardAccess()).build(), response);
-			return (returnCode == CardReturnCode::COMMAND_FAILED && response.getReturnCode() != StatusCode::EMPTY) ? CardReturnCode::OK : returnCode;
-		}
 
+			if (response.getReturnCode() == StatusCode::EMPTY)
+			{
+				return CardReturnCode::RETRY_ALLOWED;
+			}
 
-		/*
-		 * The PersoSim engine sends the result bytes in the control output of PACE in little endian.
-		 * So we try to parse it that way, if we get unknown return codes.
-		 *
-		 * As soon as PersoSim is fixed in that point, we will remove the workaround.
-		 */
-		static CardReturnCode parsingEstablishPACEChannelOutput(const QByteArray& pControlOutput, PACE_PASSWORD_ID pPasswordId)
-		{
-			quint32 paceReturnCode;
-			QDataStream(pControlOutput.mid(0, 4)) >> paceReturnCode;
-			return EstablishPACEChannelOutput::parseReturnCode(paceReturnCode, pPasswordId);
-		}
+			if (returnCode == CardReturnCode::COMMAND_FAILED)
+			{
+				return CardReturnCode::OK;
+			}
 
-
-		/*
-		 * The PersoSim engine sends 6A80 on wrong CAN entry in PACE. This means "Invalid data" which is
-		 * wrong. We interpret it as wrong CAN
-		 *
-		 * As soon as PersoSim is fixed in that point, we will remove the workaround.
-		 */
-		static bool isWrongCanEntry(QSharedPointer<ResponseApdu> pResponseApdu)
-		{
-			return pResponseApdu->getReturnCode() == StatusCode::INVALID_DATAFIELD;
+			return returnCode;
 		}
 
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -16,7 +16,7 @@ IfdVersion::IfdVersion(IfdVersion::Version pVersion)
 
 
 IfdVersion::IfdVersion(const QString& pVersionString)
-	: IfdVersion(fromString(pVersionString).getVersion())
+	: IfdVersion(fromString(pVersionString))
 {
 }
 
@@ -42,39 +42,44 @@ QString IfdVersion::toString() const
 
 		case IfdVersion::Version::v0:
 			return QStringLiteral("IFDInterface_WebSocket_v0");
+
+#ifndef QT_NO_DEBUG
+		case IfdVersion::Version::v_test:
+			return QStringLiteral("IFDInterface_WebSocket_v_test");
+
+#endif
 	}
 
 	Q_UNREACHABLE();
 }
 
 
-IfdVersion IfdVersion::fromString(const QString& pVersionString)
+IfdVersion::Version IfdVersion::fromString(const QString& pVersionString)
 {
 	const IfdVersion& v0 = Version::v0;
 	if (pVersionString == v0.toString())
 	{
-		return v0;
+		return Version::v0;
 	}
+
+#ifndef QT_NO_DEBUG
+	if (pVersionString == IfdVersion(Version::v_test).toString())
+	{
+		return Version::v_test;
+	}
+#endif
 
 	return Version::Unknown;
 }
 
 
-IfdVersion IfdVersion::latest()
-{
-	return Version::v0;
-}
-
-
 QVector<IfdVersion::Version> IfdVersion::supported()
 {
-	return {
-			   Version::v0
-	};
+	return QVector<IfdVersion::Version>({Version::v0});
 }
 
 
-IfdVersion IfdVersion::selectLatestSupported(const QVector<IfdVersion::Version>& pVersions)
+IfdVersion::Version IfdVersion::selectLatestSupported(const QVector<IfdVersion::Version>& pVersions)
 {
 	QVector<IfdVersion::Version> supported;
 	supported += IfdVersion::Version::Unknown;

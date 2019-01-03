@@ -3,7 +3,7 @@
  */
 
 #include "asn1/ChipAuthenticationInfo.h"
-#include "asn1/PACEInfo.h"
+#include "asn1/PaceInfo.h"
 #include "asn1/SecurityInfos.h"
 #include "TestFileHelper.h"
 
@@ -30,7 +30,7 @@ class test_efCardAccess
 
 			QVERIFY(efCardAccess != nullptr);
 			QCOMPARE(efCardAccess->getChipAuthenticationInfos().size(), 1);
-			QCOMPARE(efCardAccess->getPACEInfos().size(), 1);
+			QCOMPARE(efCardAccess->getPaceInfos().size(), 1);
 			QCOMPARE(efCardAccess->getContentBytes(), bytes);
 		}
 

@@ -6,13 +6,19 @@
 
 #pragma once
 
+#include "Env.h"
+
 #include <QDateTime>
 #include <QDebug>
 #include <QFileInfoList>
+#include <QLoggingCategory>
 #include <QMessageLogContext>
 #include <QMutex>
 #include <QStringList>
 #include <QTemporaryFile>
+
+#define spawnMessageLogger(category)\
+	QMessageLogger(QT_MESSAGELOG_FILE, QT_MESSAGELOG_LINE, QT_MESSAGELOG_FUNC, category().categoryName())
 
 class test_LogHandler;
 
@@ -23,6 +29,7 @@ class LogHandler
 	: public QObject
 {
 	Q_OBJECT
+	friend class Env;
 	friend class ::test_LogHandler;
 
 	private:
@@ -30,6 +37,7 @@ class LogHandler
 		const int mFunctionFilenameSize;
 		qint64 mBacklogPosition;
 		const QString mMessagePattern, mDefaultMessagePattern;
+		const QString mLogFileTemplate;
 		QTemporaryFile mLogFile;
 		QtMessageHandler mHandler;
 		const QByteArray mFilePrefix;
@@ -50,9 +58,16 @@ class LogHandler
 	protected:
 		LogHandler();
 		virtual ~LogHandler();
+		static LogHandler& getInstance();
+
+#ifndef QT_NO_DEBUG
 
 	public:
-		static LogHandler& getInstance();
+#endif
+		void reset();
+		bool isInitialized() const;
+
+	public:
 		void init();
 
 		void setAutoRemove(bool pRemove);
@@ -63,7 +78,9 @@ class LogHandler
 		static QDateTime getFileDate(const QFileInfo& pInfo);
 		QDateTime getCurrentLogfileDate() const;
 		QFileInfoList getOtherLogfiles() const;
-		void removeOtherLogfiles();
+		bool removeOtherLogfiles();
+		void setLogfile(bool pEnable);
+		bool useLogfile() const;
 
 	Q_SIGNALS:
 		/**
@@ -82,4 +99,4 @@ inline QDebug operator<<(QDebug pDbg, const governikus::LogHandler& pHandler)
 }
 
 
-} /* namespace governikus */
+} // namespace governikus

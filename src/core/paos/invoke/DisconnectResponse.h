@@ -25,13 +25,13 @@ class DisconnectResponse
 
 		Q_DISABLE_COPY(DisconnectResponse)
 
-		QDomElement createDisconnectResponse();
+		void createDisconnectResponse();
 
-		virtual QDomElement getDocumentStructure() override;
+		virtual void createBodyElement() override;
 
 	public:
 		DisconnectResponse();
 		void setSlotHandle(const QString& slotHandle);
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -29,4 +29,4 @@ class DIDList
 		const ConnectionHandle& getConnectionHandle() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

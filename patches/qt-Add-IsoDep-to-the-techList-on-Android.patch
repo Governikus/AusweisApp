@@ -1,4 +1,4 @@
-From e06d2d0d163501fdb0926175d7c539c7bb413d70 Mon Sep 17 00:00:00 2001
+From 1d9b03157657e398a99f3f183bb7399b8905eb55 Mon Sep 17 00:00:00 2001
 From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
 Date: Wed, 22 Nov 2017 07:35:56 +0100
 Subject: Add IsoDep to the techList on Android
@@ -21,5 +21,5 @@ index 345b87d3..a1ae5c37 100644
                          {"android.nfc.tech.NdefFormatable"}
                      };
 -- 
-2.14.2
+2.18.0
 

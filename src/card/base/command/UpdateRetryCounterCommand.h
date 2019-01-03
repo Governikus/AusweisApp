@@ -8,23 +8,26 @@
 
 #include "BaseCardCommand.h"
 
+class test_UpdateRetryCounterCommand;
+
 namespace governikus
 {
-
-class CardConnection;
 
 class UpdateRetryCounterCommand
 	: public BaseCardCommand
 {
 	Q_OBJECT
 
+	private:
+		friend class ::test_UpdateRetryCounterCommand;
+
 	protected:
 		virtual void internalExecute() override;
-		virtual ~UpdateRetryCounterCommand() override;
+		virtual ~UpdateRetryCounterCommand() override = default;
 
 	public:
 		UpdateRetryCounterCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

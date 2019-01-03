@@ -2,7 +2,9 @@ package common
 
 class Constants
 {
-	static final AndroidArch = ["armeabi-v7a", "x86", "arm64-v8a"]
+	static final AndroidArchAPK = ["armeabi-v7a", "x86", "arm64-v8a"]
+	static final AndroidArchAAR = ["arm64-v8a"]
+	static final AndroidArch = (AndroidArchAPK + AndroidArchAAR).unique()
 
 	static String strip(String content)
 	{

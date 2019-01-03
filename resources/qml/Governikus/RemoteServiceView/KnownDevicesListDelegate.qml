@@ -1,7 +1,8 @@
-import QtQuick 2.7
+import QtQuick 2.10
 import QtQuick.Layouts 1.1
 
 import Governikus.Global 1.0
+import Governikus.Type.RemoteServiceModel 1.0
 
 Item {
 	id: root
@@ -16,7 +17,7 @@ Item {
 		Text {
 			id: nameText
 			color: Constants.secondary_text
-			font.pixelSize: Utils.sp(16)
+			font.pixelSize: Utils.dp(16)
 			opacity: 0.87
 			text: {
 				settingsModel.translationTrigger
@@ -36,7 +37,7 @@ Item {
 			color: Constants.secondary_text
 			anchors.top: nameText.bottom
 			anchors.topMargin: Utils.dp(2)
-			font.pixelSize: Utils.sp(14)
+			font.pixelSize: Utils.dp(14)
 			opacity: 0.38
 			text: qsTr("Last connection:") + " " + lastConnected + settingsModel.translationTrigger
 		}
@@ -59,7 +60,7 @@ Item {
 		}
 
 		onClicked: {
-			remoteServiceModel.forgetDevice(deviceId)
+			RemoteServiceModel.forgetDevice(deviceId)
 		}
 	}
 

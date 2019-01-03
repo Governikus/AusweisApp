@@ -11,7 +11,6 @@ using namespace governikus;
 ConnectionHandleParser::ConnectionHandleParser(QSharedPointer<QXmlStreamReader> pXmlReader)
 	: ElementParser(pXmlReader)
 {
-
 }
 
 

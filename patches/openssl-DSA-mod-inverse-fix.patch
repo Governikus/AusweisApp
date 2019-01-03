@@ -1,0 +1,78 @@
+From f1b12b8713a739f27d74e6911580b2e70aea2fa4 Mon Sep 17 00:00:00 2001
+From: Pauli <paul.dale@oracle.com>
+Date: Mon, 29 Oct 2018 06:50:51 +1000
+Subject: [PATCH 1/3] DSA mod inverse fix
+
+There is a side channel attack against the division used to calculate one of
+the modulo inverses in the DSA algorithm.  This change takes advantage of the
+primality of the modulo and Fermat's little theorem to calculate the inverse
+without leaking information.
+
+Thanks to Samuel Weiser for finding and reporting this.
+
+Reviewed-by: Matthias St. Pierre <Matthias.St.Pierre@ncp-e.com>
+Reviewed-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+(Merged from https://github.com/openssl/openssl/pull/7487)
+
+(cherry picked from commit 415c33563528667868c3c653a612e6fc8736fd79)
+---
+ crypto/dsa/dsa_ossl.c | 32 +++++++++++++++++++++++++++++++-
+ 1 file changed, 31 insertions(+), 1 deletion(-)
+
+diff --git x/crypto/dsa/dsa_ossl.c y/crypto/dsa/dsa_ossl.c
+index ac1f65a51a..ca20811200 100644
+--- x/crypto/dsa/dsa_ossl.c
++++ y/crypto/dsa/dsa_ossl.c
+@@ -23,6 +23,8 @@ static int dsa_do_verify(const unsigned char *dgst, int dgst_len,
+                          DSA_SIG *sig, DSA *dsa);
+ static int dsa_init(DSA *dsa);
+ static int dsa_finish(DSA *dsa);
++static BIGNUM *dsa_mod_inverse_fermat(const BIGNUM *k, const BIGNUM *q,
++                                      BN_CTX *ctx);
+ 
+ static DSA_METHOD openssl_dsa_meth = {
+     "OpenSSL DSA method",
+@@ -259,7 +261,7 @@ static int dsa_sign_setup(DSA *dsa, BN_CTX *ctx_in,
+         goto err;
+ 
+     /* Compute  part of 's = inv(k) (m + xr) mod q' */
+-    if ((kinv = BN_mod_inverse(NULL, k, dsa->q, ctx)) == NULL)
++    if ((kinv = dsa_mod_inverse_fermat(k, dsa->q, ctx)) == NULL)
+         goto err;
+ 
+     BN_clear_free(*kinvp);
+@@ -393,3 +395,31 @@ static int dsa_finish(DSA *dsa)
+     BN_MONT_CTX_free(dsa->method_mont_p);
+     return 1;
+ }
++
++/*
++ * Compute the inverse of k modulo q.
++ * Since q is prime, Fermat's Little Theorem applies, which reduces this to
++ * mod-exp operation.  Both the exponent and modulus are public information
++ * so a mod-exp that doesn't leak the base is sufficient.  A newly allocated
++ * BIGNUM is returned which the caller must free.
++ */
++static BIGNUM *dsa_mod_inverse_fermat(const BIGNUM *k, const BIGNUM *q,
++                                      BN_CTX *ctx)
++{
++    BIGNUM *res = NULL;
++    BIGNUM *r, *e;
++
++    if ((r = BN_new()) == NULL)
++        return NULL;
++
++    BN_CTX_start(ctx);
++    if ((e = BN_CTX_get(ctx)) != NULL
++            && BN_set_word(r, 2)
++            && BN_sub(e, q, r)
++            && BN_mod_exp_mont(r, k, e, q, ctx, NULL))
++        res = r;
++    else
++        BN_free(r);
++    BN_CTX_end(ctx);
++    return res;
++}
+-- 
+2.19.1
+

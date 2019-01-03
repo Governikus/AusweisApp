@@ -1,4 +1,4 @@
-From 978caa044d4e1c52c90a87490defbac387db58d6 Mon Sep 17 00:00:00 2001
+From e1c05843ae1609075807d5a789fc4e6cd8154520 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
 Date: Mon, 25 Sep 2017 14:10:56 +0200
 Subject: [PATCH] Disable unused imageformats
@@ -8,10 +8,10 @@ Subject: [PATCH] Disable unused imageformats
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git x/qtimageformats/src/plugins/imageformats/imageformats.pro y/qtimageformats/src/plugins/imageformats/imageformats.pro
-index 8c79379..2aa80f5 100644
+index d6c59ee..f1fb6d0 100644
 --- x/qtimageformats/src/plugins/imageformats/imageformats.pro
 +++ y/qtimageformats/src/plugins/imageformats/imageformats.pro
-@@ -16,8 +16,7 @@ config_jasper {
+@@ -18,8 +18,7 @@ config_jasper {
      SUBDIRS += macjp2
  }
  
@@ -22,5 +22,5 @@ index 8c79379..2aa80f5 100644
                 webp
 -}
 -- 
-2.14.1
+2.16.2
 

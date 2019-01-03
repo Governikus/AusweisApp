@@ -26,9 +26,6 @@ class NfcCard
 	private Q_SLOTS:
 		void onError(QNearFieldTarget::Error pError, const QNearFieldTarget::RequestId& pId);
 
-	Q_SIGNALS:
-		void fireCardRemoved();
-
 	public:
 		NfcCard(QNearFieldTarget* pNearFieldTarget);
 		virtual ~NfcCard() override;
@@ -43,4 +40,4 @@ class NfcCard
 		virtual CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

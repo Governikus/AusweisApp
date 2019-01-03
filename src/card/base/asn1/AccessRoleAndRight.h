@@ -3,7 +3,7 @@
  *
  * Note: When using a QHash<AccessRight,...> directly or indirectly (e.g. via QSet),
  * this header must be included before <QHash> (also indirectly via <QSet> or <QList>),
- * or otherwise the complain about the qHash() function for AccessRight not being
+ * or otherwise they complain about the qHash() function for AccessRight not being
  * found.
  *
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
@@ -21,7 +21,6 @@
 
 namespace governikus
 {
-
 
 defineTypedEnumType(AccessRight, uint,
 		WRITE_DG17 = 37,
@@ -108,15 +107,18 @@ class AccessRoleAndRightsUtil
 		static QList<AccessRight> mAllRights;
 		static QList<AccessRight> mAllDisplayedOrderedRights;
 		AccessRoleAndRightsUtil() = delete;
+		static bool fromTechnicalName(const char* pStr, const std::function<void(AccessRight)>& pFunc);
+		static QStringList fromTechnicalName(const QStringList& pStr);
 
 	public:
 		static const QList<AccessRight>& allDisplayedOrderedRights();
 		static const QList<AccessRight>& allRights();
 		static QString toDisplayText(AccessRight pRight);
 		static QLatin1String toTechnicalName(AccessRight pRight);
-		static bool fromTechnicalName(const char* pStr, const std::function<void(AccessRight)>& pFunc);
+		static bool fromTechnicalName(const QString& pStr, const std::function<void(AccessRight)>& pFunc);
+		static QString joinFromTechnicalName(const QStringList& pStr, const QString& pJoin = QStringLiteral(", "));
 };
 
-}
+} // namespace governikus
 
 Q_DECLARE_TYPEINFO(governikus::AccessRight, Q_PRIMITIVE_TYPE);

@@ -9,14 +9,12 @@ using namespace governikus;
 InputAPDUInfo::InputAPDUInfo()
 	: mInputApdu()
 	, mAcceptableStatusCodes()
-	, mUpdateRetryCounter(false)
 {
 }
 
 
-InputAPDUInfo::InputAPDUInfo(const QByteArray& pInputApdu, bool pUpdateRetryCounter)
+InputAPDUInfo::InputAPDUInfo(const QByteArray& pInputApdu)
 	: mInputApdu(pInputApdu)
 	, mAcceptableStatusCodes()
-	, mUpdateRetryCounter(pUpdateRetryCounter)
 {
 }

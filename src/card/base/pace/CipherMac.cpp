@@ -2,13 +2,13 @@
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "asn1/KnownOIDs.h"
 #include "pace/CipherMac.h"
+
+#include "asn1/KnownOIDs.h"
 
 #include <openssl/evp.h>
 #include <QLoggingCategory>
 #include <QVarLengthArray>
-
 
 using namespace governikus;
 
@@ -46,12 +46,12 @@ CipherMac::CipherMac(const QByteArray& pPaceAlgorithm, const QByteArray& pKeyByt
 	}
 	else
 	{
-		qCCritical(card) << "Unknown algorithm: " << pPaceAlgorithm;
+		qCCritical(card) << "Unknown algorithm:" << pPaceAlgorithm;
 		return;
 	}
 	if (mKeyBytes.size() != EVP_CIPHER_key_length(cipher))
 	{
-		qCCritical(card) << "Key has wrong size (expected/got):" << EVP_CIPHER_key_length(cipher) << "/" << mKeyBytes.size();
+		qCCritical(card) << "Key has wrong size (expected/got):" << EVP_CIPHER_key_length(cipher) << '/' << mKeyBytes.size();
 		return;
 	}
 	mCtx = CMAC_CTX_new();

@@ -7,7 +7,6 @@
 #include "ResourceLoader.h"
 
 #include "LogHandler.h"
-#include "TestFileHelper.h"
 
 #include <QtTest/QtTest>
 
@@ -21,7 +20,7 @@ class test_ResourceLoader
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
@@ -31,13 +30,13 @@ class test_ResourceLoader
 			{
 				ResourceLoader::getInstance().shutdown();
 			}
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
 		void initAndLog()
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			QVERIFY(!ResourceLoader::getInstance().isLoaded());
 			ResourceLoader::getInstance().init();
@@ -52,7 +51,7 @@ class test_ResourceLoader
 
 		void initAndShutdown()
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			QVERIFY(!ResourceLoader::getInstance().isLoaded());
 			ResourceLoader::getInstance().init();

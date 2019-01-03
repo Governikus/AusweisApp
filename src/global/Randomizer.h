@@ -38,4 +38,4 @@ class Randomizer
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

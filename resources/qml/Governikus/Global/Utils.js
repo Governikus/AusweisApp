@@ -1,3 +1,7 @@
+function noTest()
+{
+	return typeof(plugin) !== 'undefined'
+}
 
 function escapeHtml(str)
 {
@@ -37,19 +41,12 @@ function getRandomInt(min, max)
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-var contentScaleFactor = screenDpi / 160
+var contentScaleFactor = noTest() ? screenDpiScale : 1
 
 function dp(value)
 {
 	return value * contentScaleFactor
 }
-
-function sp(value)
-{
-	var textScale = 1
-	return dp(value) * textScale
-}
-
 
 function providerIconSource(baseName) {
 	var platform = plugin.platformStyle.indexOf("tablet") !== -1 ? "+tablet/" : ""

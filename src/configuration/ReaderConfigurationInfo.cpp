@@ -4,7 +4,6 @@
 
 #include "ReaderConfigurationInfo.h"
 
-#include "Env.h"
 #include "FileProvider.h"
 
 using namespace governikus;
@@ -70,7 +69,7 @@ const QString& ReaderConfigurationInfo::getUrl() const
 	if (QCoreApplication::applicationName() == QLatin1String("Test_configuration_ReaderConfiguration"))
 	{
 		// Make the reader available on all platforms
-		static const QString url = QLatin1String("https://www.governikus.de/");
+		static const QString url = QStringLiteral("https://www.governikus.de/");
 		return url;
 	}
 #endif

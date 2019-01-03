@@ -4,7 +4,6 @@
 
 #include "ProviderConfigurationInfo.h"
 
-#include "Env.h"
 #include "FileProvider.h"
 
 #include <QOperatingSystemVersion>

@@ -44,3 +44,17 @@ void DiagnosisContext::setTimestamp(const QDateTime& pTimestamp)
 
 	Q_EMIT timestampChanged();
 }
+
+
+void DiagnosisContext::setNetworkInterfaces(const QList<QNetworkInterface>& pNetworkInterface)
+{
+	mNetworkInterfaces = pNetworkInterface;
+
+	Q_EMIT fireNetworkInfoChanged();
+}
+
+
+const QList<QNetworkInterface>& DiagnosisContext::getNetworkInterfaces() const
+{
+	return mNetworkInterfaces;
+}

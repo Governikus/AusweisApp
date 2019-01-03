@@ -7,9 +7,8 @@
 
 #pragma once
 
-#include "DeviceError.h"
+#include "GlobalStatus.h"
 #include "ReaderManagerPlugInInfo.h"
-#include "RemoteDispatcher.h"
 
 #include <QObject>
 #include <QThread>
@@ -18,7 +17,6 @@ namespace governikus
 {
 
 class Reader;
-class RemoteClient;
 
 class ReaderManagerPlugIn
 	: public QObject
@@ -27,11 +25,6 @@ class ReaderManagerPlugIn
 	ReaderManagerPlugInInfo mInfo;
 
 	protected:
-		bool mScanInProgress;
-		bool mConnectToKnownReaders;
-
-		virtual void onConnectToKnownReadersChanged();
-
 		void setReaderInfoEnabled(bool pEnabled)
 		{
 			if (mInfo.isEnabled() != pEnabled)
@@ -81,7 +74,7 @@ class ReaderManagerPlugIn
 
 		virtual void init()
 		{
-			Q_ASSERT(thread() == QThread::currentThread());
+			Q_ASSERT(QObject::thread() == QThread::currentThread());
 		}
 
 
@@ -90,28 +83,20 @@ class ReaderManagerPlugIn
 		}
 
 
-		virtual void startScan();
+		virtual void startScan(bool pAutoConnect);
 		virtual void stopScan();
-
-		void setConnectToKnownReaders(bool pConnectToKnownReaders);
-
-		virtual void setRemoteClient(const QSharedPointer<RemoteClient>& pRemoteClient)
-		{
-			Q_UNUSED(pRemoteClient);
-		}
-
 
 	Q_SIGNALS:
 		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
 		void fireReaderAdded(const QString& pReaderName);
 		void fireReaderRemoved(const QString& pReaderName);
-		void fireReaderDeviceError(DeviceError pDeviceError);
+		void fireReaderDeviceError(GlobalStatus::Code pError);
 		void fireCardInserted(const QString& pReaderName);
 		void fireCardRemoved(const QString& pReaderName);
 		void fireCardRetryCounterChanged(const QString& pReaderName);
 		void fireReaderPropertiesUpdated(const QString& pReaderName);
 };
 
-} /* namespace governikus */
+} // namespace governikus
 
 Q_DECLARE_INTERFACE(governikus::ReaderManagerPlugIn, "governikus.ReaderManagerPlugIn")

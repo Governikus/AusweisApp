@@ -13,7 +13,6 @@
 #include <QPointer>
 #include <QtTest/QtTest>
 
-
 using namespace governikus;
 
 
@@ -35,7 +34,7 @@ class DatagramHandlerMock
 		}
 
 
-		virtual bool send(const QJsonDocument&) override
+		virtual bool send(const QByteArray&) override
 		{
 			return true;
 		}
@@ -57,7 +56,6 @@ class RemoteDeviceListMock
 		RemoteDeviceListMock(int pI1, int pI2)
 			: RemoteDeviceList(pI1, pI2)
 		{
-
 		}
 
 
@@ -71,7 +69,6 @@ class RemoteDeviceListMock
 
 		virtual void clear() override
 		{
-
 		}
 
 
@@ -79,7 +76,6 @@ class RemoteDeviceListMock
 
 RemoteDeviceListMock::~RemoteDeviceListMock()
 {
-
 }
 
 
@@ -102,7 +98,7 @@ void RemoteConnectorMock::onConnectRequest(const RemoteDeviceDescriptor&, const 
 }
 
 
-}
+} // namespace governikus
 
 class test_RemoteClient
 	: public QObject
@@ -117,7 +113,7 @@ class test_RemoteClient
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
@@ -172,74 +168,95 @@ class test_RemoteClient
 		}
 
 
-		void testReceiveIPv6()
+		void testReceiveIPv6LinkLocal()
 		{
-			QSignalSpy logSpy(&LogHandler::getInstance(), &LogHandler::fireLog);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)) || defined(GOVERNIKUS_QT)
+			QSKIP("QTBUG-25550 is fixed in the used Qt version.");
+#endif
 
-			const auto& offerJson = QJsonDocument::fromJson("{\n"
-															"    \"deviceName\": \"Sony Xperia Z5 compact\",\n"
-															"    \"encrypted\": true,\n"
-															"    \"port\": 24728,\n"
-															"    \"availableApiLevels\": [1, 2, 3, 4]\n"
-															"}");
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+
+			const QByteArray offerJson("{\n"
+									   "    \"IFDName\": \"Sony Xperia Z5 compact\",\n"
+									   "    \"IFDID\": \"0123456789ABCDEF\",\n"
+									   "    \"encrypted\": true,\n"
+									   "    \"msg\": \"REMOTE_IFD\",\n"
+									   "    \"port\": 24728,\n"
+									   "    \"SupportedAPI\": [\"IFDInterface_WebSocket_v0\", \"IFDInterface_WebSocket_v2\"]\n"
+									   "}");
 
 			RemoteClientImpl client;
 			QSignalSpy spyAppeared(&client, &RemoteClient::fireDeviceAppeared);
 			client.startDetection();
-			Q_EMIT mDatagramHandlerMock->fireNewMessage(offerJson, QHostAddress("2001:0db8:85a3:08d3:1319:8a2e:0370:7344"));
+			Q_EMIT mDatagramHandlerMock->fireNewMessage(offerJson, QHostAddress("fe80::5a38:a519:8ff4:1f1f%enp0s31f6"));
 
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("IPv6 not supported"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Dropping message from unparsable address:"));
 			QVERIFY(spyAppeared.isEmpty());
 		}
 
 
 		void testReceiveUnparsable()
 		{
-			QSignalSpy logSpy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
-			const auto& unparsableJson = QJsonDocument::fromJson("{\n"
-																 "    \"device___Name\": \"Sony Xperia Z5 compact\",\n"
-																 "    \"encrypted\": true,\n"
-																 "    \"port\": 24728,\n"
-																 "    \"availableApiLevels\": [1, 2, 3, 4]\n"
-																 "}");
+			const QByteArray unparsableJson("{\n"
+											"    \"device___Name\": \"Sony Xperia Z5 compact\",\n"
+											"    \"encrypted\": true,\n"
+											"    \"port\": 24728,\n"
+											"    \"availableApiLevels\": [1, 2, 3, 4]\n"
+											"}");
 
 			RemoteClientImpl client;
 			client.startDetection();
 			QVERIFY(!mDatagramHandlerMock.isNull());
 
 			Q_EMIT mDatagramHandlerMock->fireNewMessage(unparsableJson, QHostAddress("192.168.1.88"));
-			QCOMPARE(logSpy.count(), 2);
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Discarding unparsable message"));
+			QCOMPARE(logSpy.count(), 6);
+			QVERIFY(logSpy.at(5).at(0).toString().contains("Discarding unparsable message"));
 		}
 
 
 		void testReceiveUnexpected()
 		{
-			QSignalSpy logSpy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			RemoteClientImpl client;
 			client.startDetection();
 			QVERIFY(!mDatagramHandlerMock.isNull());
 
-			Q_EMIT mDatagramHandlerMock->fireNewMessage(IfdEstablishContext(QStringLiteral("IFDInterface_WebSocket_v0"), DeviceInfo::getName()).toJson(QStringLiteral("TestContext")), QHostAddress("192.168.1.88"));
-			QCOMPARE(logSpy.count(), 2);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"IFDName\" should be of type string"));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Discarding unparsable message"));
+			const auto& json = IfdEstablishContext(QStringLiteral("IFDInterface_WebSocket_v0"), DeviceInfo::getName()).toByteArray(QStringLiteral("TestContext"));
+			Q_EMIT mDatagramHandlerMock->fireNewMessage(json, QHostAddress("192.168.1.88"));
+			QCOMPARE(logSpy.count(), 6);
+			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be REMOTE_IFD"));
+			QVERIFY(logSpy.at(5).at(0).toString().contains("Discarding unparsable message"));
+		}
+
+
+		void testReceive_data()
+		{
+			QTest::addColumn<QString>("hostAddress");
+
+			QTest::newRow("IPv4") << "192.168.1.88";
+			QTest::newRow("IPv6 link-global") << "2001:0db8:85a3:08d3:1319:8a2e:0370:7344";
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)) || defined(GOVERNIKUS_QT)
+			QTest::newRow("IPv6 link-local") << "fe80::5a38:a519:8ff4:1f1f%enp0s31f6";
+#endif
 		}
 
 
 		void testReceive()
 		{
-			const auto& offerJson = QJsonDocument::fromJson("{\n"
-															"    \"IFDName\": \"Sony Xperia Z5 compact\",\n"
-															"    \"IFDID\": \"0123456789ABCDEF\",\n"
-															"    \"encrypted\": true,\n"
-															"    \"msg\": \"REMOTE_IFD\",\n"
-															"    \"port\": 24728,\n"
-															"    \"SupportedAPI\": [\"IFDInterface_WebSocket_v0\", \"IFDInterface_WebSocket_v2\"]\n"
-															"}");
+			QFETCH(QString, hostAddress);
+
+			const QByteArray offerJson("{\n"
+									   "    \"IFDName\": \"Sony Xperia Z5 compact\",\n"
+									   "    \"IFDID\": \"0123456789ABCDEF\",\n"
+									   "    \"encrypted\": true,\n"
+									   "    \"msg\": \"REMOTE_IFD\",\n"
+									   "    \"port\": 24728,\n"
+									   "    \"SupportedAPI\": [\"IFDInterface_WebSocket_v0\", \"IFDInterface_WebSocket_v2\"]\n"
+									   "}");
 
 			RemoteClientImpl client;
 			client.startDetection();
@@ -249,7 +266,7 @@ class test_RemoteClient
 			QSignalSpy spyAppearedList(mRemoteDeviceListMock.data(), &RemoteDeviceListMock::fireDeviceAppeared);
 			QSignalSpy spyAppeared(&client, &RemoteClient::fireDeviceAppeared);
 
-			Q_EMIT mDatagramHandlerMock->fireNewMessage(offerJson, QHostAddress("192.168.1.88"));
+			Q_EMIT mDatagramHandlerMock->fireNewMessage(offerJson, QHostAddress(hostAddress));
 			QCOMPARE(spyAppearedList.count(), 1);
 			QCOMPARE(spyAppeared.count(), 1);
 
@@ -274,12 +291,12 @@ class test_RemoteClient
 
 		void testRemoteConnectorEstablish()
 		{
-			const auto& offerJson = QJsonDocument::fromJson("{\n"
-															"    \"deviceName\": \"Sony Xperia Z5 compact\",\n"
-															"    \"encrypted\": true,\n"
-															"    \"port\": 24728,\n"
-															"    \"availableApiLevels\": [\"IFDInterface_WebSocket_v0\", \"IFDInterface_WebSocket_v2\"]\n"
-															"}");
+			const QByteArray offerJson("{\n"
+									   "    \"deviceName\": \"Sony Xperia Z5 compact\",\n"
+									   "    \"encrypted\": true,\n"
+									   "    \"port\": 24728,\n"
+									   "    \"availableApiLevels\": [\"IFDInterface_WebSocket_v0\", \"IFDInterface_WebSocket_v2\"]\n"
+									   "}");
 
 			RemoteClientImpl client;
 			client.startDetection();
@@ -288,13 +305,12 @@ class test_RemoteClient
 
 			QVERIFY(!mRemoteConnectorMock.isNull());
 			QSignalSpy spyConnectionRequest(mRemoteConnectorMock.data(), &RemoteConnectorMock::fireConnectionRequestReceived);
-			const QSharedPointer<Discovery> msg(new Discovery("", QStringLiteral("0123456789ABCDEF"), 12345, {IfdVersion::Version::v0}));
-			const RemoteDeviceDescriptor descr(msg, QHostAddress("192.168.1.88"));
+			const Discovery discovery("", QStringLiteral("0123456789ABCDEF"), 12345, {IfdVersion::Version::v0, IfdVersion::Version::v_test});
+			const RemoteDeviceDescriptor descr(discovery, QHostAddress("192.168.1.88"));
 			QSharedPointer<RemoteDeviceListEntry> emptyEntry(new RemoteDeviceListEntry(descr));
 			client.establishConnection(emptyEntry, QString("password1"));
 
-			spyConnectionRequest.wait();
-			QCOMPARE(spyConnectionRequest.count(), 1);
+			QTRY_COMPARE(spyConnectionRequest.count(), 1);
 
 			QSignalSpy spyConnectionDone(&client, &RemoteClient::fireEstablishConnectionDone);
 			Q_EMIT mRemoteConnectorMock->fireRemoteDispatcherError(emptyEntry->getRemoteDeviceDescriptor(), RemoteErrorCode::CONNECTION_ERROR);

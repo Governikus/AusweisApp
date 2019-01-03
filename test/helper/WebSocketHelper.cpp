@@ -19,7 +19,7 @@ void WebSocketHelper::connectWebsocket(int pPort)
 	connect(&mWebSocket, &QWebSocket::disconnected, &eventLoop, &QEventLoop::quit);
 	connect(&mWebSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), &eventLoop, &QEventLoop::quit);
 
-	const QString address = QStringLiteral("ws://localhost:%1").arg(pPort);
+	const QString address = QStringLiteral("ws://localhost:%1/eID-Kernel").arg(pPort);
 	mWebSocket.open(QUrl(address));
 
 	QTimer timer;

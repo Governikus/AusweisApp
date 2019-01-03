@@ -49,14 +49,13 @@ class test_transmit
 			QCOMPARE(inputApdusInfos[6].getInputApdu().getBuffer(),
 					QByteArray::fromHex("0C86000000014287820131014B102237A6D2AC0A7873562D14A36A98CEF053674C3CAB4F09FAFB09ED12941F0DDC27655679D4BD86A12FFD6A3F490B73F2DF03EF19C106D4519929A3116B7BD3AF9FE960BD88F301275EAD3FAA9E832BF93991728E378A2848D60596B1C643DA3E5ADBC119EB3EB444A3789367815B600D218C407A4016F8B3A7923EE8DC3CBE0BD8AA91763859E819B325479F605AA50FC8FF6066055678CE6C1A3FD1DB536E55C3A3D131367AD84B78213667F899D059D313CA7F1EC0785F20F4FEF14D1E3D077B620223E75F101B66262642B1D6416C44AA4ED2EFAC88D7E38EA4EE9EFAA3DAD71E70E96C696A137960532807B52C74070EDA3F573939B39725B86AD0A255E62D26A33C54154ADDF871ED06FD5038B38E3E5E42FF680807734385B900833F54350A447DF71F012B0BE59AB4C6F09701248E0826C663CDA8343CBD0000"));
 
-			const QByteArrayList emptyList;
-			QCOMPARE(inputApdusInfos[0].getAcceptableStatusCodes(), emptyList);
-			QCOMPARE(inputApdusInfos[1].getAcceptableStatusCodes(), emptyList);
-			QCOMPARE(inputApdusInfos[2].getAcceptableStatusCodes(), QByteArrayList(emptyList) << QByteArray("9000"));
-			QCOMPARE(inputApdusInfos[3].getAcceptableStatusCodes(), QByteArrayList(emptyList) << QByteArray("9001"));
-			QCOMPARE(inputApdusInfos[4].getAcceptableStatusCodes(), emptyList);
-			QCOMPARE(inputApdusInfos[5].getAcceptableStatusCodes(), QByteArrayList(emptyList) << QByteArray("9002"));
-			QCOMPARE(inputApdusInfos[6].getAcceptableStatusCodes(), QByteArrayList(emptyList) << QByteArray("9003"));
+			QCOMPARE(inputApdusInfos[0].getAcceptableStatusCodes(), QByteArrayList());
+			QCOMPARE(inputApdusInfos[1].getAcceptableStatusCodes(), QByteArrayList());
+			QCOMPARE(inputApdusInfos[2].getAcceptableStatusCodes(), QByteArrayList {"9000"});
+			QCOMPARE(inputApdusInfos[3].getAcceptableStatusCodes(), QByteArrayList {"9001"});
+			QCOMPARE(inputApdusInfos[4].getAcceptableStatusCodes(), QByteArrayList());
+			QCOMPARE(inputApdusInfos[5].getAcceptableStatusCodes(), QByteArrayList {"9002"});
+			QCOMPARE(inputApdusInfos[6].getAcceptableStatusCodes(), QByteArrayList {"9003"});
 		}
 
 
@@ -87,14 +86,13 @@ class test_transmit
 			QCOMPARE(inputApdusInfos[6].getInputApdu().getBuffer(),
 					QByteArray::fromHex("0C86000000014287820131014B102237A6D2AC0A7873562D14A36A98CEF053674C3CAB4F09FAFB09ED12941F0DDC27655679D4BD86A12FFD6A3F490B73F2DF03EF19C106D4519929A3116B7BD3AF9FE960BD88F301275EAD3FAA9E832BF93991728E378A2848D60596B1C643DA3E5ADBC119EB3EB444A3789367815B600D218C407A4016F8B3A7923EE8DC3CBE0BD8AA91763859E819B325479F605AA50FC8FF6066055678CE6C1A3FD1DB536E55C3A3D131367AD84B78213667F899D059D313CA7F1EC0785F20F4FEF14D1E3D077B620223E75F101B66262642B1D6416C44AA4ED2EFAC88D7E38EA4EE9EFAA3DAD71E70E96C696A137960532807B52C74070EDA3F573939B39725B86AD0A255E62D26A33C54154ADDF871ED06FD5038B38E3E5E42FF680807734385B900833F54350A447DF71F012B0BE59AB4C6F09701248E0826C663CDA8343CBD0000"));
 
-			const QByteArrayList emptyList;
-			QCOMPARE(inputApdusInfos[0].getAcceptableStatusCodes(), emptyList);
-			QCOMPARE(inputApdusInfos[1].getAcceptableStatusCodes(), emptyList);
-			QCOMPARE(inputApdusInfos[2].getAcceptableStatusCodes(), QByteArrayList(emptyList) << QByteArray("9000"));
-			QCOMPARE(inputApdusInfos[3].getAcceptableStatusCodes(), QByteArrayList(emptyList) << QByteArray("9001"));
-			QCOMPARE(inputApdusInfos[4].getAcceptableStatusCodes(), emptyList);
-			QCOMPARE(inputApdusInfos[5].getAcceptableStatusCodes(), QByteArrayList(emptyList) << QByteArray("9002"));
-			QCOMPARE(inputApdusInfos[6].getAcceptableStatusCodes(), QByteArrayList(emptyList) << QByteArray("9003"));
+			QCOMPARE(inputApdusInfos[0].getAcceptableStatusCodes(), QByteArrayList());
+			QCOMPARE(inputApdusInfos[1].getAcceptableStatusCodes(), QByteArrayList());
+			QCOMPARE(inputApdusInfos[2].getAcceptableStatusCodes(), QByteArrayList {"9000"});
+			QCOMPARE(inputApdusInfos[3].getAcceptableStatusCodes(), QByteArrayList {"9001"});
+			QCOMPARE(inputApdusInfos[4].getAcceptableStatusCodes(), QByteArrayList());
+			QCOMPARE(inputApdusInfos[5].getAcceptableStatusCodes(), QByteArrayList {"9002"});
+			QCOMPARE(inputApdusInfos[6].getAcceptableStatusCodes(), QByteArrayList {"9003"});
 		}
 
 

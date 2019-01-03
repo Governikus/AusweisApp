@@ -39,4 +39,4 @@ inline QDebug operator<<(QDebug pDbg, const governikus::PcscReaderPaceCapability
 }
 
 
-} /* namespace governikus */
+} // namespace governikus

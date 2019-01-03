@@ -1,26 +1,22 @@
-import QtQuick 2.5
+import QtQuick 2.10
 import QtQuick.Layouts 1.2
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
-import Governikus.VersionInformationView 1.0
+import Governikus.FeedbackView 1.0
+import Governikus.InformationView 1.0
 import Governikus.RemoteServiceView 1.0
 import Governikus.DeveloperView 1.0
+import Governikus.TutorialView 1.0
+import Governikus.View 1.0
+import Governikus.Type.RemoteServiceModel 1.0
 
 SectionPage {
 	headerTitleBarAction: TitleBarAction { text: qsTr("More") + settingsModel.translationTrigger; font.bold: true }
 
-
 	Rectangle {
 		anchors.fill: menu
 		color: "white"
-	}
-
-
-	onVisibleChanged: {
-		if (visible) {
-			remoteServiceModel.detectRemoteDevices = false
-		}
 	}
 
 	Column {
@@ -33,7 +29,14 @@ SectionPage {
 			text: qsTr("Version information") + settingsModel.translationTrigger
 			imageSource: "qrc:///images/npa.svg"
 			showRightArrow: true
-			onClicked: firePush(versionInformationPage, {})
+			onClicked: firePush(versionInformationPage)
+		}
+
+		MoreViewMenuItem {
+			text: qsTr("Tutorial") + settingsModel.translationTrigger
+			imageSource: "qrc:///images/iOS/more/icon_mehr_tutorial.svg"
+			showRightArrow: true
+			onClicked: firePush(tutorialView)
 		}
 
 		MoreViewMenuItem {
@@ -79,13 +82,19 @@ SectionPage {
 		}
 
 		MoreViewMenuItem {
-			imageSource: "qrc:///images/android/navigation/remotesettings.svg"
+			imageSource: "qrc:///images/iOS/more/icon_mehr_remotereader"
 			text: qsTr("Configure remote service") + settingsModel.translationTrigger
 			showRightArrow: true
 			onClicked: {
-				remoteServiceModel.detectRemoteDevices = true
-				firePush(remoteServiceSettings, {})
+				firePush(remoteServiceView)
 			}
+		}
+
+		MoreViewMenuItem {
+			text: qsTr("Show log") + settingsModel.translationTrigger
+			imageSource: "qrc:///images/iOS/more/icon_mehr_log.svg"
+			showRightArrow: true
+			onClicked: firePush(logView)
 		}
 
 		MoreViewMenuItem {
@@ -93,7 +102,7 @@ SectionPage {
 			text: qsTr("Developer options") + settingsModel.translationTrigger
 			imageSource: "qrc:///images/zahnraeder.svg"
 			showRightArrow: true
-			onClicked: firePush(developerView, {})
+			onClicked: firePush(developerView)
 		}
 	}
 
@@ -143,13 +152,23 @@ SectionPage {
 		visible: false
 	}
 
-	RemoteServiceSettings {
-		id: remoteServiceSettings
+	RemoteServiceView {
+		id: remoteServiceView
 		visible: false
 	}
 
 	DeveloperView {
 		id: developerView
+		visible: false
+	}
+
+	Log {
+		id: logView
+		visible: false
+	}
+
+	TutorialView {
+		id: tutorialView
 		visible: false
 	}
 }

@@ -1,0 +1,45 @@
+/*!
+ * \copyright Copyright (c) 2018 Governikus GmbH & Co. KG, Germany
+ */
+
+#pragma once
+
+
+#include <QIcon>
+#include <QObject>
+
+#if defined(Q_OS_WIN) || (defined(Q_OS_BSD4) && !defined(Q_OS_IOS)) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
+	#include <QSystemTrayIcon>
+#endif
+
+
+namespace governikus
+{
+
+class TrayIcon
+	: public QObject
+{
+	Q_OBJECT
+
+	private:
+		QIcon mIcon;
+#if defined(Q_OS_WIN) || (defined(Q_OS_BSD4) && !defined(Q_OS_IOS)) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
+		QSystemTrayIcon* mTrayIcon;
+
+	private Q_SLOTS:
+		void onActivated(QSystemTrayIcon::ActivationReason pReason);
+#endif
+
+	public:
+		TrayIcon();
+		~TrayIcon();
+
+		void create();
+		void hide();
+
+	Q_SIGNALS:
+		void fireShow();
+		void fireQuit();
+};
+
+} // namespace governikus

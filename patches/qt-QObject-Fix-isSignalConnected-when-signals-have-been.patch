@@ -1,0 +1,185 @@
+From 78ab3263caae535a3bd31fa35c733ae2a28ca8ba Mon Sep 17 00:00:00 2001
+From: Kari Oikarinen <kari.oikarinen@qt.io>
+Date: Wed, 26 Sep 2018 10:29:14 +0300
+Subject: [PATCH] QObject: Fix isSignalConnected() when signals have been
+ disconnected
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The bitmap cache for the first 64 signals being connected was only set when the
+connection is added. It was never unset when the connection was removed.
+
+Internal use of the connectedSignals bitmap is not hurt by it occasionally
+saying a signal is connected even though it is not, since the purpose of those
+checks is avoiding expensive operations that are not necessary if nothing is
+connected to the signal.
+
+However, the public API using this cache meant that it also never spotted
+signals being disconnected. This was not documented. Fix the behavior by only
+using the cache if it is up to date. If it is not, use a slower path that gives
+the correct answer.
+
+To avoid making disconnections and QObject destructions slower, the cache is
+only updated to unset disconnected signals when new signal connections are
+added. No extra work is done in the common case where signals are only
+removed in the end of the QObject's lifetime.
+
+Fixes: QTBUG-32340
+Change-Id: Ieb6e498060157153cec60d9c8f1c33056993fda1
+Reviewed-by: Ville Voutilainen <ville.voutilainen@qt.io>
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+Reviewed-by: Olivier Goffart (Woboq GmbH) <ogoffart@woboq.com>
+Reviewed-by: Jędrzej Nowacki <jedrzej.nowacki@qt.io>
+---
+ src/corelib/kernel/qobject.cpp                | 34 ++++++++----
+ .../corelib/kernel/qobject/tst_qobject.cpp    | 53 +++++++++++++++++++
+ 2 files changed, 76 insertions(+), 11 deletions(-)
+
+diff --git x/qtbase/src/corelib/kernel/qobject.cpp y/qtbase/src/corelib/kernel/qobject.cpp
+index c6fe787e03..4532eacf0c 100644
+--- x/qtbase/src/corelib/kernel/qobject.cpp
++++ y/qtbase/src/corelib/kernel/qobject.cpp
+@@ -418,6 +418,7 @@ void QObjectPrivate::cleanConnectionLists()
+ {
+     if (connectionLists->dirty && !connectionLists->inUse) {
+         // remove broken connections
++        bool allConnected = false;
+         for (int signal = -1; signal < connectionLists->count(); ++signal) {
+             QObjectPrivate::ConnectionList &connectionList =
+                 (*connectionLists)[signal];
+@@ -429,11 +430,13 @@ void QObjectPrivate::cleanConnectionLists()
+ 
+             QObjectPrivate::Connection **prev = &connectionList.first;
+             QObjectPrivate::Connection *c = *prev;
++            bool connected = false; // whether the signal is still connected somewhere
+             while (c) {
+                 if (c->receiver) {
+                     last = c;
+                     prev = &c->nextConnectionList;
+                     c = *prev;
++                    connected = true;
+                 } else {
+                     QObjectPrivate::Connection *next = c->nextConnectionList;
+                     *prev = next;
+@@ -445,6 +448,14 @@ void QObjectPrivate::cleanConnectionLists()
+             // Correct the connection list's last pointer.
+             // As conectionList.last could equal last, this could be a noop
+             connectionList.last = last;
++
++            if (!allConnected && !connected && signal >= 0
++                && size_t(signal) < sizeof(connectedSignals) * 8) {
++                // This signal is no longer connected
++                connectedSignals[signal >> 5] &= ~(1 << (signal & 0x1f));
++            } else if (signal == -1) {
++                allConnected = connected;
++            }
+         }
+         connectionLists->dirty = false;
+     }
+@@ -2503,19 +2514,20 @@ bool QObject::isSignalConnected(const QMetaMethod &signal) const
+ 
+     signalIndex += QMetaObjectPrivate::signalOffset(signal.mobj);
+ 
+-    if (signalIndex < sizeof(d->connectedSignals) * 8)
++    QMutexLocker locker(signalSlotLock(this));
++    if (!d->connectionLists)
++        return false;
++
++    if (signalIndex < sizeof(d->connectedSignals) * 8 && !d->connectionLists->dirty)
+         return d->isSignalConnected(signalIndex);
+ 
+-    QMutexLocker locker(signalSlotLock(this));
+-    if (d->connectionLists) {
+-        if (signalIndex < uint(d->connectionLists->count())) {
+-            const QObjectPrivate::Connection *c =
+-                d->connectionLists->at(signalIndex).first;
+-            while (c) {
+-                if (c->receiver)
+-                    return true;
+-                c = c->nextConnectionList;
+-            }
++    if (signalIndex < uint(d->connectionLists->count())) {
++        const QObjectPrivate::Connection *c =
++            d->connectionLists->at(signalIndex).first;
++        while (c) {
++            if (c->receiver)
++                return true;
++            c = c->nextConnectionList;
+         }
+     }
+     return false;
+diff --git x/qtbase/tests/auto/corelib/kernel/qobject/tst_qobject.cpp y/qtbase/tests/auto/corelib/kernel/qobject/tst_qobject.cpp
+index ec57522f48..20ce905265 100644
+--- x/qtbase/tests/auto/corelib/kernel/qobject/tst_qobject.cpp
++++ y/qtbase/tests/auto/corelib/kernel/qobject/tst_qobject.cpp
+@@ -104,6 +104,7 @@ private slots:
+     void deleteQObjectWhenDeletingEvent();
+     void overloads();
+     void isSignalConnected();
++    void isSignalConnectedAfterDisconnection();
+     void qMetaObjectConnect();
+     void qMetaObjectDisconnectOne();
+     void sameName();
+@@ -3843,6 +3844,58 @@ void tst_QObject::isSignalConnected()
+     QVERIFY(!o.isSignalConnected(QMetaMethod()));
+ }
+ 
++void tst_QObject::isSignalConnectedAfterDisconnection()
++{
++    ManySignals o;
++    const QMetaObject *meta = o.metaObject();
++
++    const QMetaMethod sig00 = meta->method(meta->indexOfSignal("sig00()"));
++    QVERIFY(!o.isSignalConnected(sig00));
++    QObject::connect(&o, &ManySignals::sig00, qt_noop);
++    QVERIFY(o.isSignalConnected(sig00));
++    QVERIFY(QObject::disconnect(&o, &ManySignals::sig00, 0, 0));
++    QVERIFY(!o.isSignalConnected(sig00));
++
++    const QMetaMethod sig69 = meta->method(meta->indexOfSignal("sig69()"));
++    QVERIFY(!o.isSignalConnected(sig69));
++    QObject::connect(&o, &ManySignals::sig69, qt_noop);
++    QVERIFY(o.isSignalConnected(sig69));
++    QVERIFY(QObject::disconnect(&o, &ManySignals::sig69, 0, 0));
++    QVERIFY(!o.isSignalConnected(sig69));
++
++    {
++        ManySignals o2;
++        QObject::connect(&o, &ManySignals::sig00, &o2, &ManySignals::sig00);
++        QVERIFY(o.isSignalConnected(sig00));
++        // o2 is destructed
++    }
++    QVERIFY(!o.isSignalConnected(sig00));
++
++    const QMetaMethod sig01 = meta->method(meta->indexOfSignal("sig01()"));
++    QObject::connect(&o, &ManySignals::sig00, qt_noop);
++    QObject::connect(&o, &ManySignals::sig01, qt_noop);
++    QObject::connect(&o, &ManySignals::sig69, qt_noop);
++    QVERIFY(o.isSignalConnected(sig00));
++    QVERIFY(o.isSignalConnected(sig01));
++    QVERIFY(o.isSignalConnected(sig69));
++    QVERIFY(QObject::disconnect(&o, &ManySignals::sig69, 0, 0));
++    QVERIFY(o.isSignalConnected(sig00));
++    QVERIFY(o.isSignalConnected(sig01));
++    QVERIFY(!o.isSignalConnected(sig69));
++    QVERIFY(QObject::disconnect(&o, &ManySignals::sig00, 0, 0));
++    QVERIFY(!o.isSignalConnected(sig00));
++    QVERIFY(o.isSignalConnected(sig01));
++    QVERIFY(!o.isSignalConnected(sig69));
++    QObject::connect(&o, &ManySignals::sig69, qt_noop);
++    QVERIFY(!o.isSignalConnected(sig00));
++    QVERIFY(o.isSignalConnected(sig01));
++    QVERIFY(o.isSignalConnected(sig69));
++    QVERIFY(QObject::disconnect(&o, &ManySignals::sig01, 0, 0));
++    QVERIFY(!o.isSignalConnected(sig00));
++    QVERIFY(!o.isSignalConnected(sig01));
++    QVERIFY(o.isSignalConnected(sig69));
++}
++
+ void tst_QObject::qMetaObjectConnect()
+ {
+     SenderObject *s = new SenderObject;
+-- 
+2.19.1
+

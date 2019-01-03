@@ -4,8 +4,8 @@ import static common.Constants.strip
 def j = new Build
 	(
 		name: 'Win32_GNU',
-		libraries: 'Win32_GNU',
-		label: "Windows7_${MERCURIAL_REVISION_BRANCH}",
+		libraries: ['Win32_GNU'],
+		label: 'Windows',
 		xunit: true
 	).generate(this)
 
@@ -28,7 +28,7 @@ j.with
 			set PATH=%WORKSPACE%/build/src;%WORKSPACE%/build/test/helper;%PATH%
 			set QT_PLUGIN_PATH=%WORKSPACE%/libs/build/dist/plugins
 			set QML2_IMPORT_PATH=%WORKSPACE%/libs/build/dist/qml
-			cd build & ctest %MAKE_FLAGS%
+			cd build & ctest --output-on-failure %MAKE_FLAGS%
 			'''.stripIndent().trim())
 	}
 }

@@ -4,7 +4,6 @@
 
 #include "ReaderInfo.h"
 
-#include "Env.h"
 #include "Initializer.h"
 #include "ReaderDetector.h"
 
@@ -19,10 +18,15 @@ ReaderInfo::ReaderInfo(const QString& pName,
 		const CardInfo& pCardInfo)
 	: mPlugInType(pPlugInType)
 	, mName(pName)
-	, mReaderConfigurationInfo(Env::getSingleton<ReaderDetector>()->getReaderConfigurationInfo(pName))
 	, mBasicReader(true)
 	, mCardInfo(pCardInfo)
 	, mConnected(false)
 	, mMaxApduLength(pPlugInType == ReaderManagerPlugInType::NFC ? 0 : 500)
 {
+}
+
+
+ReaderConfigurationInfo ReaderInfo::getReaderConfigurationInfo() const
+{
+	return Env::getSingleton<ReaderDetector>()->getReaderConfigurationInfo(mName);
 }

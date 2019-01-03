@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "EstablishPaceChannelOutput.h"
 #include "messages/IfdEstablishPaceChannel.h"
 #include "messages/IfdModifyPin.h"
 #include "RemoteServer.h"
@@ -13,6 +14,7 @@
 #include "WorkflowContext.h"
 
 #include <QSharedPointer>
+
 
 namespace governikus
 {
@@ -27,14 +29,16 @@ class RemoteServiceContext
 
 		QString mNewPin;
 		QSharedPointer<const IfdEstablishPaceChannel> mEstablishPaceChannelMessage;
+		EstablishPaceChannelOutput mEstablishPaceChannelOutput;
 		QSharedPointer<const IfdModifyPin> mModifyPinMessage;
+		ResponseApdu mModifyPinMessageResponseApdu;
 
 	Q_SIGNALS:
 		void fireCancelPasswordRequest();
+		void fireEstablishPaceChannelMessageUpdated(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage);
 
 	public:
 		RemoteServiceContext();
-		virtual ~RemoteServiceContext();
 
 		const QSharedPointer<RemoteServer>& getRemoteServer() const;
 		bool isRunning() const;
@@ -45,11 +49,19 @@ class RemoteServiceContext
 		void setEstablishPaceChannelMessage(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage);
 		const QSharedPointer<const IfdEstablishPaceChannel>& getEstablishPaceChannelMessage() const;
 
+		void setEstablishPaceChannelOutput(EstablishPaceChannelOutput pEstablishPaceChannelOutput);
+		const EstablishPaceChannelOutput& getEstablishPaceChannelOutput() const;
+
 		void setModifyPinMessage(const QSharedPointer<const IfdModifyPin>& pMessage);
 		const QSharedPointer<const IfdModifyPin>& getModifyPinMessage() const;
+
+		void setModifyPinMessageResponseApdu(const ResponseApdu& pModifyPinMessageResponseApdu);
+		const ResponseApdu& getModifyPinMessageResponseApdu() const;
+
+		void resetPacePasswords() override;
 
 	public Q_SLOTS:
 		void onResetMessageHandler();
 };
 
-} /* namespace governikus */
+} // namespace governikus

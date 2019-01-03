@@ -9,11 +9,9 @@
 #include "DatagramHandler.h"
 #include "Env.h"
 #include "messages/Discovery.h"
-#include "messages/RemoteMessageParser.h"
 
 #include <QNetworkProxy>
 #include <QtTest>
-
 
 using namespace governikus;
 
@@ -26,7 +24,7 @@ class DatagramHandlerMock
 	public:
 		virtual bool isBound() const override;
 
-		virtual bool send(const QJsonDocument& pData) override
+		virtual bool send(const QByteArray& pData) override
 		{
 			Q_EMIT fireSend(pData);
 			return true;
@@ -34,7 +32,7 @@ class DatagramHandlerMock
 
 
 	Q_SIGNALS:
-		void fireSend(const QJsonDocument& pData);
+		void fireSend(const QByteArray& pData);
 };
 
 
@@ -77,13 +75,7 @@ class test_RemoteReaderAdvertiser
 
 			QSignalSpy spy(mMock.data(), &DatagramHandlerMock::fireSend);
 			QScopedPointer<RemoteReaderAdvertiser> advertiser(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port, pTimerInterval));
-			spy.wait();
-			spy.wait();
-			spy.wait();
-			spy.wait();
-			spy.wait();
-
-			QCOMPARE(spy.count(), 5);
+			QTRY_COMPARE(spy.count(), 5);
 		}
 
 
@@ -96,15 +88,16 @@ class test_RemoteReaderAdvertiser
 
 			QSignalSpy spy(mMock.data(), &DatagramHandlerMock::fireSend);
 			QScopedPointer<RemoteReaderAdvertiser> advertiser(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port, pTimerInterval));
-			spy.wait();
+			QTRY_COMPARE(spy.count(), 1);
 			advertiser.reset();
 
-			const auto& offerMsg = RemoteMessageParser().parseDiscovery(spy.at(0).at(0).toJsonDocument());
+			const auto& byteArray = spy.at(0).at(0).toByteArray();
+			const auto& offerMsg = Discovery(QJsonDocument::fromJson(byteArray).object());
 
-			QCOMPARE(offerMsg->getIfdName(), ifdName);
-			QCOMPARE(offerMsg->getIfdId(), ifdId);
-			QCOMPARE(offerMsg->getPort(), port);
-			QCOMPARE(offerMsg->getSupportedApis(), {IfdVersion::Version::v0});
+			QCOMPARE(offerMsg.getIfdName(), ifdName);
+			QCOMPARE(offerMsg.getIfdId(), ifdId);
+			QCOMPARE(offerMsg.getPort(), port);
+			QCOMPARE(offerMsg.getSupportedApis(), {IfdVersion::Version::v0});
 		}
 
 

@@ -69,4 +69,4 @@ class MockNetworkManager
 		void fireReply();
 };
 
-} /* namespace governikus */
+} // namespace governikus

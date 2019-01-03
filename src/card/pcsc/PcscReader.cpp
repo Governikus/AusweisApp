@@ -3,12 +3,12 @@
  */
 
 #include "PcscCard.h"
-#include "PcscReader.h"
 
 #include <QLoggingCategory>
 #include <QStringList>
 
 using namespace governikus;
+
 
 Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
 
@@ -24,7 +24,7 @@ PcscReader::PcscReader(const QString& pReaderName)
 	setObjectName(pReaderName);
 
 	PCSC_RETURNCODE returnCode = SCardEstablishContext(SCARD_SCOPE_USER, nullptr, nullptr, &mContextHandle);
-	qCDebug(card_pcsc) << "SCardEstablishContext: " << PcscUtils::toString(returnCode);
+	qCDebug(card_pcsc) << "SCardEstablishContext:" << PcscUtils::toString(returnCode);
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Cannot establish context";
@@ -44,7 +44,7 @@ PcscReader::PcscReader(const QString& pReaderName)
 	returnCode = readReaderFeaturesAndPACECapabilities();
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
-		qCWarning(card_pcsc) << "Features / Capabilities not successful: " << returnCode;
+		qCWarning(card_pcsc) << "Features / Capabilities not successful:" << returnCode;
 		return;
 	}
 
@@ -250,7 +250,7 @@ PCSC_RETURNCODE PcscReader::readReaderFeaturesAndPACECapabilities()
 
 	qCDebug(card_pcsc) << str;
 	PCSC_RETURNCODE returnCode = SCardConnect(mContextHandle, mReaderState.szReader, SCARD_SHARE_DIRECT, PROTOCOL, &cardHandle, &protocol);
-	qCDebug(card_pcsc) << "SCardConnect for " << mReaderInfo.getName() << ": " << PcscUtils::toString(returnCode);
+	qCDebug(card_pcsc) << "SCardConnect for" << mReaderInfo.getName() << ':' << PcscUtils::toString(returnCode);
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		return returnCode;
@@ -270,7 +270,7 @@ PCSC_RETURNCODE PcscReader::readReaderFeaturesAndPACECapabilities()
 
 	PCSC_INT clen = 0;
 	returnCode = SCardControl(cardHandle, CM_IOCTL_GET_FEATURE_REQUEST, inBuffer1, 2, buffer, sizeof(buffer), &clen);
-	qCDebug(card_pcsc) << "SCardControl for " << mReaderInfo.getName() << ": " << PcscUtils::toString(returnCode);
+	qCDebug(card_pcsc) << "SCardControl for" << mReaderInfo.getName() << ':' << PcscUtils::toString(returnCode);
 
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
@@ -302,9 +302,9 @@ PCSC_RETURNCODE PcscReader::readReaderFeaturesAndPACECapabilities()
 		const uchar inBuffer2[3] = {
 			1, 0, 0
 		};           // idx for GetReaderPACECapabilities (0x01), length (0, 0)
-		qCDebug(card_pcsc) << "SCardControl ... ";
+		qCDebug(card_pcsc) << "SCardControl ...";
 		returnCode = SCardControl(cardHandle, cmdID, inBuffer2, 3, buffer, sizeof(buffer), &clen);
-		qCDebug(card_pcsc) << "SCardControl for " << mReaderInfo.getName() << ": " << PcscUtils::toString(returnCode);
+		qCDebug(card_pcsc) << "SCardControl for" << mReaderInfo.getName() << ':' << PcscUtils::toString(returnCode);
 
 		if (returnCode != PcscUtils::Scard_S_Success)
 		{
@@ -334,7 +334,7 @@ PCSC_RETURNCODE PcscReader::readReaderFeaturesAndPACECapabilities()
 
 	// disconnect
 	returnCode = SCardDisconnect(cardHandle, SCARD_LEAVE_CARD);
-	qCDebug(card_pcsc) << "SCardDisconnect for " << mReaderInfo.getName() << ": " << PcscUtils::toString(returnCode);
+	qCDebug(card_pcsc) << "SCardDisconnect for" << mReaderInfo.getName() << ':' << PcscUtils::toString(returnCode);
 	return returnCode;
 }
 

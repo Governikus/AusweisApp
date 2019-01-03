@@ -12,29 +12,17 @@ DIDListResponse::DIDListResponse()
 }
 
 
-QDomElement DIDListResponse::getDocumentStructure()
+void DIDListResponse::createBodyElement()
 {
-	return createEnvelopeElement(createDidListResponseElement(), getRelatesTo(), getMessageId());
-}
+	mWriter.writeStartElement(QStringLiteral("DIDListResponse"));
+	mWriter.writeAttribute(getNamespacePrefix(Namespace::TECHSCHEMA), getNamespace(Namespace::TECHSCHEMA));
+	mWriter.writeAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
 
+	createResultElement(*this);
 
-QDomElement DIDListResponse::createDidListResponseElement()
-{
-	QDomElement element = mDoc.createElement(QStringLiteral("DIDListResponse"));
-	element.setAttribute(getNamespacePrefix(Namespace::TECHSCHEMA), getNamespace(Namespace::TECHSCHEMA));
-	element.setAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
+	mWriter.writeStartElement(QStringLiteral("DIDNameList"));
+	mWriter.writeTextElement(QStringLiteral("DIDName"), QStringLiteral("PIN"));
+	mWriter.writeEndElement(); // DIDNameList
 
-	element.appendChild(createResultElement(*this));
-	element.appendChild(createDidListElement());
-
-	return element;
-}
-
-
-QDomElement DIDListResponse::createDidListElement()
-{
-	QDomElement didNameList = mDoc.createElement(QStringLiteral("DIDNameList"));
-	// create enumeration for PIN (see TR)
-	didNameList.appendChild(createTextElement(QStringLiteral("DIDName"), QStringLiteral("PIN")));
-	return didNameList;
+	mWriter.writeEndElement(); // DIDListResponse
 }

@@ -7,19 +7,13 @@
 #include "RemoteWebSocketServer.h"
 
 #include "AppSettings.h"
-#include "Env.h"
 #include "KeyPair.h"
 #include "NetworkManager.h"
 #include "SecureStorage.h"
-#include "ServerMessageHandler.h"
 
 #include <QByteArray>
 #include <QtTest>
 #include <QWebSocket>
-
-#if defined(Q_CC_CLANG) && Q_CC_CLANG < 350
-QT_WARNING_DISABLE_CLANG("-Wshadow") // QTRY_COMPARE
-#endif
 
 using namespace governikus;
 
@@ -285,8 +279,7 @@ class test_RemoteWebSocketServer
 			mServer->setPairing();
 			client.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
 
-			serverConnectedSpy.wait();
-			QCOMPARE(serverConnectedSpy.count(), 1);
+			QTRY_COMPARE(serverConnectedSpy.count(), 1);
 			QVERIFY(serverConnectedSpy[0][0].toBool());
 			QVERIFY(mServer->isConnected());
 

@@ -22,13 +22,13 @@ class test_VersionInfo
 		{
 			QCoreApplication::setOrganizationName(QStringLiteral("Governikus GmbH & Co. KG"));
 			QCoreApplication::setApplicationVersion(QStringLiteral("x.y.z"));
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
 		void cleanup()
 		{
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
@@ -111,7 +111,7 @@ class test_VersionInfo
 		void logging()
 		{
 			auto versionInfo = VersionInfo::getInstance();
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			qDebug() << versionInfo;
 

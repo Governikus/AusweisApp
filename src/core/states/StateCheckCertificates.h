@@ -20,8 +20,8 @@ class StateCheckCertificates
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateCheckCertificates(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateCheckCertificates(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -3,7 +3,6 @@
  */
 
 #include "Commands.h"
-#include "TestFileHelper.h"
 
 #include <QtCore/QtCore>
 #include <QtTest/QtTest>
@@ -56,7 +55,7 @@ class test_MSEBuilder
 
 		void setPublicKeyId()
 		{
-			PACE_PASSWORD_ID pinId = PACE_PASSWORD_ID::PACE_PIN;
+			PacePasswordId pinId = PacePasswordId::PACE_PIN;
 			mMseBuilder->setPublicKey(pinId);
 			assertCommandContent(QByteArray::fromHex("8301").append(static_cast<char>(pinId)));
 		}

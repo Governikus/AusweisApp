@@ -34,12 +34,6 @@ DidAuthenticateEAC2Command::DidAuthenticateEAC2Command(QSharedPointer<CardConnec
 }
 
 
-DidAuthenticateEAC2Command::~DidAuthenticateEAC2Command()
-{
-
-}
-
-
 void DidAuthenticateEAC2Command::internalExecute()
 {
 	mReturnCode = putCertificateChain(mCvcChain);
@@ -76,7 +70,6 @@ void DidAuthenticateEAC2Command::internalExecute()
 	{
 		return;
 	}
-
 
 	QByteArray efCardSecurityBytes;
 	qCDebug(card) << "Performing Read EF.CardSecurity";
@@ -133,7 +126,7 @@ CardReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertifica
 
 		if (mseResult.getReturnCode() != StatusCode::SUCCESS)
 		{
-			qCWarning(card) << "TA MSE:Set DST failed: " << mseResult.getReturnCode();
+			qCWarning(card) << "TA MSE:Set DST failed:" << mseResult.getReturnCode();
 			return CardReturnCode::PROTOCOL_ERROR;
 		}
 
@@ -152,7 +145,7 @@ CardReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertifica
 
 		if (psoResult.getReturnCode() != StatusCode::SUCCESS)
 		{
-			qCWarning(card) << "TA PSO:Verify Certificate failed: " << psoResult.getReturnCode();
+			qCWarning(card) << "TA PSO:Verify Certificate failed:" << psoResult.getReturnCode();
 			return CardReturnCode::PROTOCOL_ERROR;
 		}
 	}
@@ -179,12 +172,12 @@ CardReturnCode DidAuthenticateEAC2Command::performTerminalAuthentication(const Q
 	CardReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), mseResult);
 	if (returnCode != CardReturnCode::OK)
 	{
-		qCWarning(card) << "TA MSE:Set AT failed: " << CardReturnCodeUtil::toGlobalStatus(returnCode);
+		qCWarning(card) << "TA MSE:Set AT failed:" << CardReturnCodeUtil::toGlobalStatus(returnCode);
 		return returnCode;
 	}
 	if (mseResult.getReturnCode() != StatusCode::SUCCESS)
 	{
-		qCWarning(card) << "TA MSE:Set AT failed: " << mseResult.getReturnCode();
+		qCWarning(card) << "TA MSE:Set AT failed:" << mseResult.getReturnCode();
 		return CardReturnCode::PROTOCOL_ERROR;
 	}
 
@@ -195,12 +188,12 @@ CardReturnCode DidAuthenticateEAC2Command::performTerminalAuthentication(const Q
 	returnCode = mCardConnectionWorker->transmit(eaBuilder.build(), eaResult);
 	if (returnCode != CardReturnCode::OK)
 	{
-		qCWarning(card) << "TA External Authenticate failed: " << CardReturnCodeUtil::toGlobalStatus(returnCode);
+		qCWarning(card) << "TA External Authenticate failed:" << CardReturnCodeUtil::toGlobalStatus(returnCode);
 		return returnCode;
 	}
 	if (eaResult.getReturnCode() != StatusCode::SUCCESS)
 	{
-		qCWarning(card) << "TA External Authenticate failed: " << eaResult.getReturnCode();
+		qCWarning(card) << "TA External Authenticate failed:" << eaResult.getReturnCode();
 		return CardReturnCode::PROTOCOL_ERROR;
 	}
 
@@ -226,7 +219,7 @@ CardReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPoin
 	}
 	if (mseResult.getReturnCode() != StatusCode::SUCCESS)
 	{
-		qCWarning(card) << "CA MSE:Set AT failed: " << mseResult.getReturnCode();
+		qCWarning(card) << "CA MSE:Set AT failed:" << mseResult.getReturnCode();
 		return CardReturnCode::PROTOCOL_ERROR;
 	}
 
@@ -242,7 +235,7 @@ CardReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPoin
 	}
 	if (gaResponse.getReturnCode() != StatusCode::SUCCESS)
 	{
-		qCWarning(card) << "CA General Authenticate failed: " << gaResponse.getReturnCode();
+		qCWarning(card) << "CA General Authenticate failed:" << gaResponse.getReturnCode();
 		return CardReturnCode::PROTOCOL_ERROR;
 	}
 	pNonceAsHex += gaResponse.getNonce().toHex();

@@ -8,7 +8,6 @@
 
 #include "Env.h"
 #include "LogHandler.h"
-#include "MockSocket.h"
 
 #include <QMetaType>
 #include <QNetworkAccessManager>
@@ -30,7 +29,7 @@ class test_HttpServer
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
@@ -42,18 +41,21 @@ class test_HttpServer
 
 		void cleanup()
 		{
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
 		void startUpShutDown()
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			auto server = Env::getShared<HttpServer>();
 
 			QVERIFY(server->isListening());
-			QCOMPARE(spy.count(), 1);
+			QCOMPARE(spy.count(), 2);
+
 			auto param = spy.takeFirst();
+			QVERIFY(param.at(0).toString().contains("Spawn shared instance: governikus::HttpServer"));
+			param = spy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Listening on port:"));
 
 			server.reset();
@@ -71,7 +73,7 @@ class test_HttpServer
 
 			HttpServer::cPort = 80;
 
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			HttpServer server;
 
 			QVERIFY(!server.isListening());
@@ -87,21 +89,19 @@ class test_HttpServer
 			QVERIFY(server.isListening());
 			QSignalSpy spyServer(&server, &HttpServer::fireNewHttpRequest);
 
-			auto url = QUrl("http://localhost:" + QString::number(server.getServerPort()) + "/eID-Client?tcTokenURL=https%3A%2F%2Fdummy.de");
+			auto url = QUrl("http://127.0.0.1:" + QString::number(server.getServerPort()) + "/eID-Client?tcTokenURL=https%3A%2F%2Fdummy.de");
 			auto reply = mAccessManager.get(QNetworkRequest(url));
 			QSignalSpy spyClient(reply, &QNetworkReply::finished);
 
-			spyServer.wait();
-			QCOMPARE(spyServer.count(), 1);
+			QTRY_COMPARE(spyServer.count(), 1);
 			auto param = spyServer.takeFirst();
 			auto httpRequest = qvariant_cast<QSharedPointer<HttpRequest> >(param.at(0));
 			QCOMPARE(httpRequest->getMethod(), QByteArray("GET"));
 			QCOMPARE(httpRequest->getUrl(), QUrl("/eID-Client?tcTokenURL=https%3A%2F%2Fdummy.de"));
 
-			QVERIFY(httpRequest->send(HttpStatusCode::NOT_FOUND));
+			QVERIFY(httpRequest->send(HTTP_STATUS_NOT_FOUND));
 
-			spyClient.wait();
-			QCOMPARE(spyClient.count(), 1);
+			QTRY_COMPARE(spyClient.count(), 1);
 			QCOMPARE(reply->error(), QNetworkReply::ContentNotFoundError);
 			QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), 404);
 		}
@@ -113,16 +113,15 @@ class test_HttpServer
 			QVERIFY(server.isListening());
 			QSignalSpy spyServer(&server, &HttpServer::fireNewWebSocketRequest);
 
-			QNetworkRequest request(QUrl("http://localhost:" + QString::number(server.getServerPort())));
+			QNetworkRequest request(QUrl("http://127.0.0.1:" + QString::number(server.getServerPort())));
 			request.setRawHeader("upgrade", "websocket");
 			request.setRawHeader("connection", "upgrade");
 			mAccessManager.get(request);
 
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
-			spyServer.wait();
-			QCOMPARE(spyServer.count(), 1);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QTRY_COMPARE(spyServer.count(), 1);
 			auto param = spyServer.takeFirst();
-			auto socket = qvariant_cast<QSharedPointer<QAbstractSocket> >(param.at(0));
+			auto socket = qvariant_cast<QSharedPointer<HttpRequest> >(param.at(0))->take();
 			QVERIFY(socket->bytesAvailable() > 0); // check rollbackTransaction
 			const auto& requestData = socket->readAll();
 			QVERIFY(requestData.contains("GET / HTTP/1.1"));
@@ -140,20 +139,56 @@ class test_HttpServer
 			HttpServer server;
 			QVERIFY(server.isListening());
 
-			QNetworkRequest request(QUrl("http://localhost:" + QString::number(server.getServerPort())));
+			QNetworkRequest request(QUrl("http://127.0.0.1:" + QString::number(server.getServerPort())));
 			request.setRawHeader("upgrade", "unknown");
 			request.setRawHeader("connection", "upgrade");
 			auto reply = mAccessManager.get(request);
 			QSignalSpy spyClient(reply, &QNetworkReply::finished);
 
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
-			spyClient.wait();
-			QCOMPARE(spyClient.count(), 1);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QTRY_COMPARE(spyClient.count(), 1);
 			QCOMPARE(reply->error(), QNetworkReply::ContentNotFoundError);
 			QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), 404);
 
 			auto param = spy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Unknown upgrade requested"));
+		}
+
+
+		void methodWithoutReceiver_data()
+		{
+			QTest::addColumn<QNetworkRequest>("request");
+			QTest::addColumn<QString>("signal");
+
+			QNetworkRequest request;
+
+			QTest::newRow("http") << request << QStringLiteral("fireNewHttpRequest");
+
+			request.setRawHeader("upgrade", "websocket");
+			request.setRawHeader("connection", "upgrade");
+			QTest::newRow("ws") << request << QStringLiteral("fireNewWebSocketRequest");
+		}
+
+
+		void methodWithoutReceiver()
+		{
+			QFETCH(QNetworkRequest, request);
+			QFETCH(QString, signal);
+
+			HttpServer server;
+			QVERIFY(server.isListening());
+			request.setUrl(QUrl("http://127.0.0.1:" + QString::number(server.getServerPort())));
+
+			auto reply = mAccessManager.get(request);
+
+			QSignalSpy spyClient(reply, &QNetworkReply::finished);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+
+			QTRY_COMPARE(spyClient.count(), 1);
+			QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), 503);
+
+			auto noSignalFound = QStringLiteral("No registration found: \"%1\"").arg(signal);
+			QVERIFY(spy.takeLast().at(0).toString().contains(noSignalFound));
 		}
 
 

@@ -12,7 +12,7 @@
 namespace governikus
 {
 
-class SymmetricCipher
+class SymmetricCipher final
 {
 	private:
 		EVP_CIPHER_CTX* mCtx;
@@ -60,4 +60,4 @@ class SymmetricCipher
 		int getBlockSize() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -12,32 +12,27 @@ InitializeFrameworkResponse::InitializeFrameworkResponse()
 }
 
 
-QDomElement InitializeFrameworkResponse::getDocumentStructure()
+void InitializeFrameworkResponse::createBodyElement()
 {
-	return createEnvelopeElement(createInitializeFrameworkResponse(), getRelatesTo(), getMessageId());
+	mWriter.writeStartElement(QStringLiteral("InitializeFrameworkResponse"));
+
+	mWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::ECARD));
+	mWriter.writeAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
+
+	createResultElement(*this);
+	createVersionElement();
+
+	mWriter.writeEndElement(); // InitializeFrameworkResponse
 }
 
 
-QDomElement InitializeFrameworkResponse::createInitializeFrameworkResponse()
+void InitializeFrameworkResponse::createVersionElement()
 {
-	QDomElement element = mDoc.createElement(QStringLiteral("InitializeFrameworkResponse"));
-	element.setAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::ECARD));
-	element.setAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
+	mWriter.writeStartElement(QStringLiteral("Version"));
 
-	element.appendChild(createResultElement(*this));
-	element.appendChild(createVersionElement());
+	mWriter.writeTextElement(QStringLiteral("Major"), mSupportedAPI.getMajor());
+	mWriter.writeTextElement(QStringLiteral("Minor"), mSupportedAPI.getMinor());
+	mWriter.writeTextElement(QStringLiteral("SubMinor"), mSupportedAPI.getSubminor());
 
-	return element;
-}
-
-
-QDomElement InitializeFrameworkResponse::createVersionElement()
-{
-	QDomElement element = mDoc.createElement(QStringLiteral("Version"));
-
-	element.appendChild(createTextElement(QStringLiteral("Major"), mSupportedAPI.getMajor()));
-	element.appendChild(createTextElement(QStringLiteral("Minor"), mSupportedAPI.getMinor()));
-	element.appendChild(createTextElement(QStringLiteral("SubMinor"), mSupportedAPI.getSubminor()));
-
-	return element;
+	mWriter.writeEndElement(); // InitializeFrameworkResponse
 }

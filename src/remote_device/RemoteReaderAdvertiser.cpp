@@ -30,7 +30,7 @@ template<> RemoteReaderAdvertiser* createNewObject<RemoteReaderAdvertiser*, cons
 }
 
 
-} /* namespace governikus */
+} // namespace governikus
 
 
 using namespace governikus;
@@ -60,7 +60,7 @@ RemoteReaderAdvertiserImpl::RemoteReaderAdvertiserImpl(const QString& pIfdName, 
 	: RemoteReaderAdvertiser()
 	, mHandler(Env::create<DatagramHandler*>(false))
 	, mTimerId(startTimer(pTimerInterval))
-	, mDiscovery(Discovery(pIfdName, pIfdId, pPort, {IfdVersion::supported()}).toJson())
+	, mDiscovery(Discovery(pIfdName, pIfdId, pPort, {IfdVersion::supported()}).toByteArray())
 {
 	qCDebug(remote_device) << "Start advertising every" << pTimerInterval << "msecs";
 }

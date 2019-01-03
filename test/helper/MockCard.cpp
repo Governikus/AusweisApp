@@ -43,3 +43,9 @@ CardReturnCode MockCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 	pRes.setBuffer(config.second);
 	return config.first;
 }
+
+
+void MockCard::setConnected(bool pConnected)
+{
+	mConnected = pConnected;
+}

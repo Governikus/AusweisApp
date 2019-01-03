@@ -8,7 +8,6 @@
 
 #include "DeviceInfo.h"
 #include "KeyPair.h"
-#include "TestFileHelper.h"
 
 #include <QtTest>
 
@@ -144,6 +143,29 @@ class test_RemoteServiceSettings
 			settings.removeTrustedCertificate(fingerprint);
 			QCOMPARE(settings.getTrustedCertificates().size(), 1);
 			QCOMPARE(settings.getTrustedCertificates().at(0), pair2.getCertificate());
+		}
+
+
+		void testCheckAndGenerateKey()
+		{
+			RemoteServiceSettings settings;
+			QCOMPARE(settings.getKey(), QSslKey());
+			QCOMPARE(settings.getCertificate(), QSslCertificate());
+
+			QVERIFY(settings.checkAndGenerateKey());
+			const auto& key = settings.getKey();
+			const auto& cert = settings.getCertificate();
+			QVERIFY(!key.isNull());
+			QVERIFY(!cert.isNull());
+
+			QVERIFY(settings.checkAndGenerateKey());
+			QCOMPARE(settings.getKey(), key);
+			QCOMPARE(settings.getCertificate(), cert);
+
+			QCOMPARE(settings.getCertificate().effectiveDate(), QDateTime::fromString(QStringLiteral("1970-01-01T00:00:00Z"), Qt::ISODate));
+			QCOMPARE(settings.getCertificate().expiryDate(), QDateTime::fromString(QStringLiteral("9999-12-31T23:59:59Z"), Qt::ISODate));
+			QVERIFY(settings.getCertificate().effectiveDate().isValid());
+			QVERIFY(settings.getCertificate().expiryDate().isValid());
 		}
 
 

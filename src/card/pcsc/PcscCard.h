@@ -54,11 +54,11 @@ class PcscCard
 
 		virtual CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
 
-		virtual CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds) override;
+		virtual CardReturnCode establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPaceChannelOutput& pChannelOutput, quint8 pTimeoutSeconds) override;
 
 		virtual CardReturnCode destroyPaceChannel() override;
 
 		virtual CardReturnCode setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu) override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

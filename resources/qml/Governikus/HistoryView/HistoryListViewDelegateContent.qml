@@ -1,6 +1,4 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
+import QtQuick 2.10
 
 import Governikus.Global 1.0
 
@@ -95,7 +93,7 @@ Item {
 
 		Image {
 			height: Utils.dp(35)
-			source: "qrc:///images/android/arrowRight.svg"
+			source: "qrc:///images/arrowRight.svg"
 			anchors.right: parent.right
 			anchors.verticalCenter: purposeObject.verticalCenter
 			anchors.rightMargin: Utils.dp(2)
@@ -104,7 +102,10 @@ Item {
 
 		MouseArea {
 			anchors.fill: parent
-			onClicked: firePush(detailsHistoryView, { historyModelItem: historyModelItem })
+			onClicked: {
+				detailsHistoryView.historyModelItem = historyModelItem
+				firePush(detailsHistoryView)
+			}
 		}
 
 		MouseArea {
@@ -114,7 +115,7 @@ Item {
 			anchors.topMargin: Utils.dp(5)
 			height: parent.height * 0.3
 			width: height
-			visible: PlatformConstants.is_layout_ios ? false : true
+			visible: Constants.is_layout_ios ? false : true
 
 			onClicked: {
 				if (typeof(listModel) === "object") {

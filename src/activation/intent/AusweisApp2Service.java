@@ -44,9 +44,6 @@ public class AusweisApp2Service
 	{
 		Log.d(LOG_TAG, "Android service created.");
 		super.onCreate();
-
-		// register the broadcast receiver after loading the C++ library in super.onCreate()
-		AndroidBluetoothReceiver.register(this);
 	}
 
 
@@ -54,9 +51,6 @@ public class AusweisApp2Service
 	public void onDestroy()
 	{
 		Log.d(LOG_TAG, "Android service destroyed.");
-
-		// unregister the broadcast receiver before unloading the C++ library in super.onDestroy()
-		AndroidBluetoothReceiver.unregister(this);
 
 		super.onDestroy();
 

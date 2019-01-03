@@ -5,10 +5,13 @@
 #pragma once
 
 #include "AppUpdateData.h"
+#include "Env.h"
 #include "GlobalStatus.h"
 
 #include <QDateTime>
 #include <QUrl>
+
+class test_AppUpdater;
 
 namespace governikus
 {
@@ -18,17 +21,20 @@ class AppUpdater
 	Q_OBJECT
 
 	private:
+		friend class Env;
+		friend class ::test_AppUpdater;
 		bool mIgnoreNextVersionskip;
 		QUrl mAppUpdateJsonUrl;
 		AppUpdateData mAppUpdateData;
 
 		void clearDownloaderConnection();
 
-	public:
+	protected:
 		AppUpdater();
 		virtual ~AppUpdater() = default;
 		static AppUpdater& getInstance();
 
+	public:
 		void checkAppUpdate(bool pIgnoreNextVersionskip = false);
 		const AppUpdateData& getUpdateData() const;
 		void skipVersion(const QString& pVersion);
@@ -42,4 +48,4 @@ class AppUpdater
 		void fireAppUpdateCheckFinished(bool pUpdateAvailable, const GlobalStatus& pError);
 };
 
-} /* namespace governikus */
+} // namespace governikus

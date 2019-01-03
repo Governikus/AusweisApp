@@ -2,9 +2,10 @@
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
+#include "CVCertificate.h"
+
 #include "ASN1TemplateUtil.h"
 #include "ASN1Util.h"
-#include "CVCertificate.h"
 #include "pace/ec/EcUtil.h"
 
 #include <QLoggingCategory>
@@ -64,13 +65,12 @@ int CVCertificate::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_
 			BIGNUM* r = BN_bin2bn(sig, siglen / 2, 0);
 			BIGNUM* s = BN_bin2bn(sig + (siglen / 2), siglen / 2, 0);
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 			cvc->mEcdsaSignature.data()->r = r;
 			cvc->mEcdsaSignature.data()->s = s;
 #else
 			ECDSA_SIG_set0(cvc->mEcdsaSignature.data(), r, s);
 #endif
-
 		}
 	}
 	return CB_SUCCESS;
@@ -94,7 +94,6 @@ QVector<QSharedPointer<const CVCertificate> > CVCertificate::fromHex(const QByte
 QSharedPointer<const CVCertificate> CVCertificate::fromHex(const QByteArray& pHexBytes)
 {
 	return decodeObject<CVCertificate>(QByteArray::fromHex(pHexBytes));
-
 }
 
 
@@ -150,7 +149,8 @@ QDebug operator <<(QDebug pDbg, const governikus::CVCertificate& pCvc)
 				   << ", car=" << pCvc.getBody().getCertificationAuthorityReference()
 				   << ", chr=" << pCvc.getBody().getCertificateHolderReference()
 				   << ", valid=[" << pCvc.getBody().getCertificateEffectiveDate().toString(Qt::ISODate)
-				   << "," << pCvc.getBody().getCertificateExpirationDate().toString(Qt::ISODate) << "])";
+				   << "," << pCvc.getBody().getCertificateExpirationDate().toString(Qt::ISODate) << "]="
+				   << pCvc.isValidOn(QDateTime::currentDateTime()) << ")";
 	return pDbg;
 }
 

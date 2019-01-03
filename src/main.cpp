@@ -9,25 +9,36 @@
 #include "global/LogHandler.h"
 #include "SignalHandler.h"
 
+#include <openssl/crypto.h> // version API
+
 #include <QLoggingCategory>
+#include <QScopedPointer>
 #include <QSslSocket>
 #include <QSysInfo>
 #include <QtPlugin>
 #include <QThread>
 
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || defined(Q_OS_WINRT)
-#include <QGuiApplication>
-#define QAPP QGuiApplication
+#include "config.h" // use in main only!
+
+#ifdef ANDROID_BUILD_AAR
+	#include <QAndroidService>
+	#define QAPP QAndroidService
+
+#elif defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || defined(Q_OS_WINRT)
+	#ifdef Q_OS_ANDROID
+		#include <QAndroidService>
+		#include <QtAndroid>
+	#endif
+
+	#include <QGuiApplication>
+	#define QAPP QGuiApplication
 #else
-#include <QApplication>
-#define QAPP QApplication
+	#include <QApplication>
+	#define QAPP QApplication
 #endif
 
 
-// Includes for version API
-#include <openssl/crypto.h>
-
-#if !defined(Q_OS_WINRT)
+#if !defined(Q_OS_WINRT) && !defined(ANDROID_BUILD_AAR)
 Q_IMPORT_PLUGIN(RemoteReaderManagerPlugIn)
 #endif
 
@@ -40,8 +51,13 @@ Q_IMPORT_PLUGIN(InternalActivationHandler)
 
 #if defined(Q_OS_ANDROID)
 Q_IMPORT_PLUGIN(NfcReaderManagerPlugIn)
+
+#ifndef ANDROID_BUILD_AAR
 Q_IMPORT_PLUGIN(IntentActivationHandler)
 #endif
+
+#endif
+
 
 #if defined(Q_OS_IOS)
 Q_IMPORT_PLUGIN(CustomSchemeActivationHandler)
@@ -54,14 +70,9 @@ Q_IMPORT_PLUGIN(QtGraphicalEffectsPlugin)
 Q_IMPORT_PLUGIN(QtGraphicalEffectsPrivatePlugin)
 
 // Do not delete the comments to avoid searching for the class name
-Q_IMPORT_PLUGIN(QtQuickExtrasStylesPlugin)
-Q_IMPORT_PLUGIN(QtQuickControls1Plugin)
 //Q_IMPORT_PLUGIN(QtQuickControls2MaterialStylePlugin)
 //Q_IMPORT_PLUGIN(QtQuickControls2UniversalStylePlugin)
 Q_IMPORT_PLUGIN(QtQuickControls2Plugin)
-//Q_IMPORT_PLUGIN(QtQuick2DialogsPrivatePlugin)
-Q_IMPORT_PLUGIN(QtQuick2DialogsPlugin)
-//Q_IMPORT_PLUGIN(QtQuickExtrasPlugin)
 Q_IMPORT_PLUGIN(QtQuickLayoutsPlugin)
 //Q_IMPORT_PLUGIN(QQmlLocalStoragePlugin)
 //Q_IMPORT_PLUGIN(QtQuick2ParticlesPlugin)
@@ -70,7 +81,7 @@ Q_IMPORT_PLUGIN(QtQuick2WindowPlugin)
 Q_IMPORT_PLUGIN(QtQuick2Plugin)
 #endif
 
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || (defined(Q_OS_LINUX) && !defined(QT_NO_DEBUG))
+#if (defined(Q_OS_ANDROID) && !defined(ANDROID_BUILD_AAR)) || defined(Q_OS_IOS) || (defined(Q_OS_LINUX) && !defined(QT_NO_DEBUG) && !defined(ANDROID_BUILD_AAR))
 Q_IMPORT_PLUGIN(BluetoothReaderManagerPlugIn)
 #endif
 
@@ -81,14 +92,15 @@ Q_IMPORT_PLUGIN(UIPlugInWidgets)
 #endif
 
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || !defined(QT_NO_DEBUG)
-Q_IMPORT_PLUGIN(UIPlugInJsonApi)
 Q_IMPORT_PLUGIN(UIPlugInAidl)
+#endif
+
+#if (defined(Q_OS_ANDROID) && !defined(ANDROID_BUILD_AAR)) || defined(Q_OS_IOS) || (!defined(QT_NO_DEBUG) && !defined(ANDROID_BUILD_AAR))
 Q_IMPORT_PLUGIN(UIPlugInQml)
 #endif
 
-#ifndef QT_NO_DEBUG
+Q_IMPORT_PLUGIN(UIPlugInJsonApi)
 Q_IMPORT_PLUGIN(UIPlugInWebSocket)
-#endif
 
 
 using namespace governikus;
@@ -98,14 +110,13 @@ Q_DECLARE_LOGGING_CATEGORY(init)
 
 static inline void printInfo()
 {
-	qCDebug(init) << "Logging to" << LogHandler::getInstance();
+	qCDebug(init) << "Logging to" << *Env::getSingleton<LogHandler>();
 
 	qCInfo(init) << "##################################################";
 	qCInfo(init) << "### ApplicationName:" << QCoreApplication::applicationName();
 	qCInfo(init) << "### ApplicationVersion:" << QCoreApplication::applicationVersion();
 	qCInfo(init) << "### OrganizationName:" << QCoreApplication::organizationName();
 	qCInfo(init) << "### OrganizationDomain:" << QCoreApplication::organizationDomain();
-	qCInfo(init) << "### Build:" << BuildHelper::getDateTime();
 	qCInfo(init) << "### System:" << QSysInfo::prettyProductName();
 	qCInfo(init) << "### Kernel:" << QSysInfo::kernelVersion();
 	qCInfo(init) << "### Architecture:" << QSysInfo::currentCpuArchitecture();
@@ -119,9 +130,14 @@ static inline void printInfo()
 	qCInfo(init) << "### OpenSSL Version:" << QSslSocket::sslLibraryVersionString();
 	qCInfo(init) << "##################################################";
 
-	if (QSslSocket::sslLibraryVersionString() != QLatin1String(SSLeay_version(0)))
+	#if OPENSSL_VERSION_NUMBER < 0x10100000L
+		#define OpenSSL_version SSLeay_version
+		#define OPENSSL_VERSION SSLEAY_VERSION
+	#endif
+
+	if (QSslSocket::sslLibraryVersionString() != QLatin1String(OpenSSL_version(OPENSSL_VERSION)))
 	{
-		qCWarning(init) << "Linked OpenSSL Version differs:" << SSLeay_version(0);
+		qCWarning(init) << "Linked OpenSSL Version differs:" << OpenSSL_version(OPENSSL_VERSION);
 	}
 
 	const auto libPathes = QCoreApplication::libraryPaths();
@@ -132,10 +148,9 @@ static inline void printInfo()
 }
 
 
-#include "config.h" // use in main only!
-Q_DECL_EXPORT int main(int argc, char** argv)
+static inline QCoreApplication* initQt(int& argc, char** argv)
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 	QCoreApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 #endif
 
@@ -143,14 +158,30 @@ Q_DECL_EXPORT int main(int argc, char** argv)
 	QCoreApplication::setOrganizationDomain(QStringLiteral(VENDOR_DOMAIN));
 	QCoreApplication::setApplicationName(QStringLiteral(PRODUCT));
 	QCoreApplication::setApplicationVersion(QStringLiteral(VERSION));
-	QGuiApplication::setQuitOnLastWindowClosed(false);
 
-	QAPP app(argc, argv);
+#ifndef ANDROID_BUILD_AAR
+	QGuiApplication::setQuitOnLastWindowClosed(false);
+#endif
+
+#if defined(Q_OS_ANDROID) && !defined(ANDROID_BUILD_AAR)
+	if (QtAndroid::androidService().isValid())
+	{
+		return new QAndroidService(argc, argv);
+	}
+#endif
+
+	return new QAPP(argc, argv);
+}
+
+
+Q_DECL_EXPORT int main(int argc, char** argv)
+{
+	const QScopedPointer<QCoreApplication> app(initQt(argc, argv));
 	QThread::currentThread()->setObjectName(QStringLiteral("MainThread"));
 
-	LogHandler::getInstance().init();
-	SignalHandler::getInstance().init();
 	CommandLineParser::getInstance().parse();
+	Env::getSingleton<LogHandler>()->init();
+	SignalHandler::getInstance().init();
 	printInfo();
 
 	AppController controller;
@@ -161,5 +192,5 @@ Q_DECL_EXPORT int main(int argc, char** argv)
 	}
 
 	SignalHandler::getInstance().setController(controller);
-	return SignalHandler::getInstance().shouldQuit() ? EXIT_SUCCESS : app.exec();
+	return SignalHandler::getInstance().shouldQuit() ? EXIT_SUCCESS : app->exec();
 }

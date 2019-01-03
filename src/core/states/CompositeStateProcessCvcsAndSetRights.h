@@ -23,7 +23,7 @@ class CompositeStateProcessCvcsAndSetRights
 	const QSharedPointer<WorkflowContext> mContext;
 
 	public:
-		CompositeStateProcessCvcsAndSetRights(const QSharedPointer<WorkflowContext>& pContext);
+		explicit CompositeStateProcessCvcsAndSetRights(const QSharedPointer<WorkflowContext>& pContext);
 		virtual ~CompositeStateProcessCvcsAndSetRights();
 
 	Q_SIGNALS:
@@ -31,4 +31,4 @@ class CompositeStateProcessCvcsAndSetRights
 		void fireAbort();
 };
 
-} /* namespace governikus */
+} // namespace governikus

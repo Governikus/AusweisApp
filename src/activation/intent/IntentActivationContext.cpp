@@ -58,7 +58,7 @@ bool IntentActivationContext::sendOperationAlreadyActive()
 }
 
 
-bool IntentActivationContext::sendErrorPage(HttpStatusCode, const GlobalStatus&)
+bool IntentActivationContext::sendErrorPage(http_status, const GlobalStatus&)
 {
 	// the error is displayed in the application,
 	// so here is nothing to be done in this case

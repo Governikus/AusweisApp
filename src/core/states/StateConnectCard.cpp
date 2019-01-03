@@ -4,7 +4,6 @@
 
 #include "CardConnection.h"
 #include "ReaderManager.h"
-#include "Result.h"
 #include "StateConnectCard.h"
 
 #include <QLoggingCategory>
@@ -21,9 +20,9 @@ StateConnectCard::StateConnectCard(const QSharedPointer<WorkflowContext>& pConte
 
 void StateConnectCard::run()
 {
-	qCDebug(statemachine) << "StateConnectCard::run()";
-	mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireCardInserted, this, &StateConnectCard::onCardInserted);
-	mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderRemoved, this, &StateConnectCard::onReaderRemoved);
+	const auto readerManager = Env::getSingleton<ReaderManager>();
+	mConnections += connect(readerManager, &ReaderManager::fireCardInserted, this, &StateConnectCard::onCardInserted);
+	mConnections += connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateConnectCard::onReaderRemoved);
 	mConnections += connect(getContext().data(), &WorkflowContext::fireAbortCardSelection, this, &StateConnectCard::onAbort);
 	mConnections += connect(getContext().data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &StateConnectCard::fireRetry);
 	onCardInserted();
@@ -32,13 +31,14 @@ void StateConnectCard::run()
 
 void StateConnectCard::onCardInserted()
 {
-	ReaderInfo readerInfo = ReaderManager::getInstance().getReaderInfo(getContext()->getReaderName());
+	const auto readerManager = Env::getSingleton<ReaderManager>();
+	ReaderInfo readerInfo = readerManager->getReaderInfo(getContext()->getReaderName());
 	if (readerInfo.hasEidCard())
 	{
 		if (readerInfo.sufficientApduLength() && (!readerInfo.isPinDeactivated() || getContext()->isCanAllowedMode()))
 		{
 			qCDebug(statemachine) << "Card has been inserted, trying to connect";
-			mConnections += ReaderManager::getInstance().callCreateCardConnectionCommand(readerInfo.getName(), this, &StateConnectCard::onCommandDone);
+			mConnections += readerManager->callCreateCardConnectionCommand(readerInfo.getName(), this, &StateConnectCard::onCommandDone);
 		}
 	}
 }
@@ -49,7 +49,7 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 	qCDebug(statemachine) << "Card connection command completed";
 	if (pCommand->getCardConnection() == nullptr)
 	{
-		updateStatus(GlobalStatus::Code::Workflow_Reader_Communication_Error);
+		qCDebug(statemachine) << "Card connection failed";
 		Q_EMIT fireAbort();
 		return;
 	}
@@ -74,12 +74,11 @@ void StateConnectCard::onAbort()
 	const QSharedPointer<WorkflowContext> context = getContext();
 	Q_ASSERT(context);
 
-	ReaderManager::getInstance().stopScanAll();
-
-	ReaderInfo readerInfo = ReaderManager::getInstance().getReaderInfo(context->getReaderName());
+	const auto readerManager = Env::getSingleton<ReaderManager>();
+	ReaderInfo readerInfo = readerManager->getReaderInfo(context->getReaderName());
 	if (readerInfo.isConnected())
 	{
-		ReaderManager::getInstance().disconnectReader(readerInfo.getName());
+		readerManager->disconnectReader(readerInfo.getName());
 	}
 	Q_EMIT fireRetry();
 }

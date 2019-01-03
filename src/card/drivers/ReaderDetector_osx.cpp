@@ -49,8 +49,7 @@ static bool listenTo(const io_name_t notificationType, ReaderDetector* readerDet
 			matchingDict,
 			deviceChanged,
 			readerDetector,
-			iterator
-			);
+			iterator);
 
 	if (kr != KERN_SUCCESS)
 	{

@@ -2,8 +2,11 @@
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "AppSettings.h"
 #include "StateWriteHistory.h"
+
+#include "asn1/AccessRoleAndRight.h"
+
+#include "AppSettings.h"
 
 using namespace governikus;
 
@@ -16,7 +19,7 @@ StateWriteHistory::StateWriteHistory(const QSharedPointer<WorkflowContext>& pCon
 
 void StateWriteHistory::run()
 {
-	if (!AppSettings::getInstance().getHistorySettings().isEnabled())
+	if (!Env::getSingleton<AppSettings>()->getHistorySettings().isEnabled())
 	{
 		qDebug() << "History disabled";
 		Q_EMIT fireContinue();
@@ -44,17 +47,22 @@ void StateWriteHistory::run()
 			QString validity = tr("Validity:\n%1 - %2").arg(effectiveDate, expirationDate);
 
 			QStringList requestedData;
-			const auto& rights = getContext()->getEffectiveAccessRights();
-			for (const auto& entry : rights)
+			QList<AccessRight> rights = getContext()->getEffectiveAccessRights().toList();
+			std::sort(rights.begin(), rights.end());
+			for (const auto& entry : qAsConst(rights))
 			{
-				requestedData += AccessRoleAndRightsUtil::toDisplayText(entry);
+				const auto data = AccessRoleAndRightsUtil::toTechnicalName(entry);
+				if (!data.isEmpty())
+				{
+					requestedData += data;
+				}
 			}
 
 			if (!subjectName.isNull() && !termOfUsage.isNull())
 			{
-				HistoryInfo info(subjectName, subjectUrl, certDesc->getPurpose(), QDateTime::currentDateTime(), termOfUsage + QStringLiteral("\n\n") + validity, requestedData.join(QStringLiteral(", ")));
-				AppSettings::getInstance().getHistorySettings().addHistoryInfo(info);
-				AppSettings::getInstance().getHistorySettings().save();
+				HistoryInfo info(subjectName, subjectUrl, certDesc->getPurpose(), QDateTime::currentDateTime(), termOfUsage + QStringLiteral("\n\n") + validity, requestedData);
+				Env::getSingleton<AppSettings>()->getHistorySettings().addHistoryInfo(info);
+				Env::getSingleton<AppSettings>()->getHistorySettings().save();
 			}
 		}
 	}

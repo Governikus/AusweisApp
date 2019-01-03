@@ -8,6 +8,8 @@
 
 #include "context/WorkflowContext.h"
 
+class test_StateSelectPasswordId;
+
 namespace governikus
 {
 
@@ -16,12 +18,13 @@ class StateSelectPasswordId
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateSelectPasswordId;
 
-	StateSelectPasswordId(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateSelectPasswordId(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 
 	Q_SIGNALS:
 		void firePasswordIdCAN();
 };
 
-} /* namespace governikus */
+} // namespace governikus

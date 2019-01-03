@@ -6,6 +6,10 @@
 
 #include "SingletonHelper.h"
 
+#ifdef Q_OS_ANDROID
+	#include <QtAndroid>
+#endif
+
 using namespace governikus;
 
 defineSingleton(AppSettings)
@@ -13,11 +17,19 @@ defineSingleton(AppSettings)
 
 AppSettings::AppSettings()
 	: AbstractSettings()
+	, mUsedAsSdk(false)
 	, mGeneralSettings()
 	, mPreVerificationSettings()
 	, mHistorySettings()
 	, mRemoteReaderSettings()
 {
+#ifdef Q_OS_ANDROID
+	if (QtAndroid::androidService().isValid())
+	{
+		mUsedAsSdk = true;
+	}
+#endif
+
 	connect(&mGeneralSettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
 	connect(&mPreVerificationSettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
 	connect(&mHistorySettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
@@ -33,6 +45,18 @@ AppSettings::~AppSettings()
 AppSettings& AppSettings::getInstance()
 {
 	return *Instance;
+}
+
+
+bool AppSettings::isUsedAsSDK() const
+{
+	return mUsedAsSdk;
+}
+
+
+void AppSettings::setUsedAsSDK(bool pSdk)
+{
+	mUsedAsSdk = pSdk;
 }
 
 

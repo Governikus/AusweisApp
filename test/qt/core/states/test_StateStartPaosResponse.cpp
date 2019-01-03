@@ -6,8 +6,6 @@
 #include <QtTest/QtTest>
 #include <QThread>
 
-#include "controller/AuthController.h"
-#include "paos/retrieve/StartPaosResponse.h"
 #include "states/StateBuilder.h"
 #include "states/StateStartPaosResponse.h"
 #include "TestFileHelper.h"
@@ -52,9 +50,12 @@ class test_StateStartPaosResponse
 			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			const Result& result = mState->getContext()->getStatus();
-			QCOMPARE(result.getMajor(), Result::Major::Error);
-			QCOMPARE(result.getMinor(), GlobalStatus::Code::Paos_Error_DP_Timeout_Error);
+			const GlobalStatus& status = mState->getContext()->getStatus();
+			QCOMPARE(status.getStatusCode(), GlobalStatus::Code::Card_Cancellation_By_User);
+
+			const ECardApiResult& result = mState->getContext()->getStartPaosResult();
+			QCOMPARE(result.getMajor(), ECardApiResult::Major::Error);
+			QCOMPARE(result.getMinor(), ECardApiResult::Minor::DP_Timeout_Error);
 		}
 
 

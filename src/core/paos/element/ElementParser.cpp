@@ -10,7 +10,6 @@ ElementParser::ElementParser(QSharedPointer<QXmlStreamReader> pXmlReader)
 	: mXmlReader(pXmlReader)
 	, mParseError(false)
 {
-
 }
 
 

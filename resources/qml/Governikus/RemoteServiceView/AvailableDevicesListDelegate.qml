@@ -1,5 +1,5 @@
-import QtQuick 2.7
-import QtQuick.Controls 2.2
+import QtQuick 2.10
+import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.1
 
 import Governikus.Global 1.0
@@ -17,7 +17,7 @@ MouseArea {
 		id: nameText
 		color: Constants.secondary_text
 		width: parent.width
-		font.pixelSize: Utils.sp(16)
+		font.pixelSize: Utils.dp(16)
 		anchors.verticalCenter: parent.verticalCenter
 		opacity: 0.87
 		text: {

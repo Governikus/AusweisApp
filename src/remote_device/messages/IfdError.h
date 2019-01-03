@@ -16,13 +16,13 @@ class IfdError
 		QString mSlotHandle;
 
 	public:
-		IfdError(const QString& pSlotHandle, const QString& pResultMinor = QString());
+		IfdError(const QString& pSlotHandle, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		IfdError(const QJsonObject& pMessageObject);
 		virtual ~IfdError() override = default;
 
 		const QString& getSlotHandle() const;
-		virtual QJsonDocument toJson(const QString& pContextHandle) const override;
+		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

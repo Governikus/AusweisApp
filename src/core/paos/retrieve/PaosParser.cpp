@@ -9,7 +9,7 @@
 using namespace governikus;
 
 PaosParser::PaosParser(const QString& pMessageName)
-	: ElementParser(QSharedPointer<QXmlStreamReader>(new QXmlStreamReader()))
+	: ElementParser(QSharedPointer<QXmlStreamReader>::create())
 	, mMessageName(pMessageName)
 	, mMessageID()
 	, mRelatesTo()

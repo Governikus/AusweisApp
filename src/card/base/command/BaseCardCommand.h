@@ -12,21 +12,20 @@
 #include <QSharedPointer>
 
 class test_BaseCardCommand;
+class test_CardConnection;
 
 namespace governikus
 {
-
-class CardConnection;
-
 
 class BaseCardCommand
 	: public QObject
 {
 	Q_OBJECT
-	friend class ::test_BaseCardCommand;
 
 	private:
-		Q_INVOKABLE void execute(); // will be invoked by CardConnection
+		friend class ::test_BaseCardCommand;
+		friend class ::test_CardConnection;
+		Q_INVOKABLE void execute();
 
 	protected:
 		QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
@@ -34,12 +33,12 @@ class BaseCardCommand
 
 		BaseCardCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
-		CardReturnCode checkRetryCounterAndPrepareForPace(const QString& pCan);
-
 		virtual void internalExecute() = 0;
 		virtual ~BaseCardCommand();
 
 	public:
+		void run();
+
 		CardReturnCode getReturnCode() const
 		{
 			return mReturnCode;
@@ -50,4 +49,4 @@ class BaseCardCommand
 		void commandDone(QSharedPointer<BaseCardCommand> pCommand);
 };
 
-} /* namespace governikus */
+} // namespace governikus

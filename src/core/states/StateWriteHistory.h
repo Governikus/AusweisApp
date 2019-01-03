@@ -20,8 +20,8 @@ class StateWriteHistory
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateWriteHistory(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateWriteHistory(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

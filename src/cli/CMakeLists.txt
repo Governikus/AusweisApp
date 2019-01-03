@@ -1,4 +1,0 @@
-ADD_PLATFORM_LIBRARY(AusweisAppCli)
-
-TARGET_LINK_LIBRARIES(AusweisAppCli Qt5::Core AusweisAppCore AusweisAppGlobal AusweisAppActivationWebservice)
-TARGET_COMPILE_DEFINITIONS(AusweisAppCli PRIVATE QT_STATICPLUGIN)

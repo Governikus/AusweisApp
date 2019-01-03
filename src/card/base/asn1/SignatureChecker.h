@@ -26,4 +26,4 @@ class SignatureChecker
 		bool check();
 };
 
-} /* namespace governikus */
+} // namespace governikus

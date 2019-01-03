@@ -30,8 +30,8 @@ class IfdEstablishContext
 		const IfdVersion& getProtocol() const;
 		const QString& getProtocolRaw() const;
 		const QString& getUdName() const;
-		virtual QJsonDocument toJson(const QString& pContextHandle) const override;
+		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

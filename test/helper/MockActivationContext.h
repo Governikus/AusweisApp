@@ -14,7 +14,6 @@
 namespace governikus
 {
 
-
 class MockActivationContext
 	: public ActivationContext
 {
@@ -51,7 +50,7 @@ class MockActivationContext
 		}
 
 
-		virtual bool sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus) override
+		virtual bool sendErrorPage(http_status pStatusCode, const GlobalStatus& pStatus) override
 		{
 			Q_UNUSED(pStatusCode);
 			Q_UNUSED(pStatus);
@@ -98,4 +97,4 @@ class MockActivationContext
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

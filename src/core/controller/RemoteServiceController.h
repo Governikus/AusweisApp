@@ -23,4 +23,4 @@ class RemoteServiceController
 		virtual ~RemoteServiceController();
 };
 
-} /* namespace governikus */
+} // namespace governikus

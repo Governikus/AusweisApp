@@ -18,8 +18,8 @@ class StateProcessing
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateProcessing(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateProcessing(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

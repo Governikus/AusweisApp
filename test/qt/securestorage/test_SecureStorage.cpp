@@ -15,6 +15,9 @@
 
 using namespace governikus;
 
+Q_DECLARE_METATYPE(SecureStorage::TlsSuite)
+Q_DECLARE_METATYPE(QSsl::SslProtocol)
+
 class test_SecureStorage
 	: public QObject
 {
@@ -43,7 +46,7 @@ class test_SecureStorage
 			configFile.close();
 			if (parseError.error != QJsonParseError::NoError)
 			{
-				qCritical() << "Parse error while reading SecureStorage on position " << parseError.offset << ": " << parseError.errorString();
+				qCritical() << "Parse error while reading SecureStorage on position" << parseError.offset << ':' << parseError.errorString();
 				return QStringList();
 			}
 
@@ -76,7 +79,7 @@ class test_SecureStorage
 	private Q_SLOTS:
 		void testGetCVRootCertificatesUnique()
 		{
-			static const int EXPECTED_CERTIFICATE_COUNT = 10;
+			static const int EXPECTED_CERTIFICATE_COUNT = 12;
 
 			QVector<QSharedPointer<const CVCertificate> > cvcs = CVCertificate::fromHex(mSecureStorage.getCVRootCertificates(true))
 					+ CVCertificate::fromHex(mSecureStorage.getCVRootCertificates(false));
@@ -116,8 +119,8 @@ class test_SecureStorage
 			QTest::addColumn<bool>("isProductive");
 			QTest::addColumn<QString>("commentName");
 
-			QTest::newRow("production") << 3 << true << "_comment_2";
-			QTest::newRow("test") << 7 << false << "_comment_4";
+			QTest::newRow("production") << 4 << true << "_comment_2";
+			QTest::newRow("test") << 8 << false << "_comment_4";
 		}
 
 
@@ -200,6 +203,12 @@ class test_SecureStorage
 		}
 
 
+		void testWhitelistServerBaseUrl()
+		{
+			QVERIFY(mSecureStorage.getWhitelistServerBaseUrl().isValid());
+		}
+
+
 		void testAppcast()
 		{
 			QCOMPARE(mSecureStorage.getAppcastUpdateUrl(), QUrl("https://appl.governikus-asp.de/ausweisapp2/Appcast.json"));
@@ -225,37 +234,33 @@ class test_SecureStorage
 
 		void testSignatureAlgorithms()
 		{
-			#ifndef GOVERNIKUS_QT
+			#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
 			QSKIP("SignatureAlgorithms not supported");
 			#endif
 
 			const auto& tlsSettings = mSecureStorage.getTlsConfig();
 			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 12);
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst().first, QSsl::KeyAlgorithm::Rsa);
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst().second, QCryptographicHash::Algorithm::Sha512);
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast().first, QSsl::KeyAlgorithm::Ec);
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast().second, QCryptographicHash::Algorithm::Sha224);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst(), QByteArray("RSA+SHA512"));
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast(), QByteArray("ECDSA+SHA224"));
 		}
 
 
 		void testSignatureAlgorithmsPsk()
 		{
-			#ifndef GOVERNIKUS_QT
+			#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
 			QSKIP("SignatureAlgorithms not supported");
 			#endif
 
 			const auto& tlsSettings = mSecureStorage.getTlsConfig(SecureStorage::TlsSuite::PSK);
 			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 4);
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst().first, QSsl::KeyAlgorithm::Rsa);
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst().second, QCryptographicHash::Algorithm::Sha512);
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast().first, QSsl::KeyAlgorithm::Rsa);
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast().second, QCryptographicHash::Algorithm::Sha224);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst(), QByteArray("RSA+SHA512"));
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast(), QByteArray("RSA+SHA224"));
 		}
 
 
 		void testSignatureAlgorithmsRemoteReader()
 		{
-			#ifndef GOVERNIKUS_QT
+			#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
 			QSKIP("SignatureAlgorithms not supported");
 			#endif
 
@@ -271,10 +276,10 @@ class test_SecureStorage
 		{
 			const auto& ciphersForwardSecrecy = mSecureStorage.getTlsConfig().getCiphers();
 			QCOMPARE(ciphersForwardSecrecy.first(), QSslCipher("ECDHE-ECDSA-AES256-GCM-SHA384"));
-			QCOMPARE(ciphersForwardSecrecy.last(), QSslCipher("DHE-RSA-AES128-SHA"));
+			QCOMPARE(ciphersForwardSecrecy.last(), QSslCipher("DHE-RSA-AES128-SHA256"));
 
 			const auto& ciphersPsk = mSecureStorage.getTlsConfig(SecureStorage::TlsSuite::PSK).getCiphers();
-			QCOMPARE(ciphersPsk.count(), 5);
+			QVERIFY(ciphersPsk.count() > 0);
 			QCOMPARE(ciphersPsk.first(), QSslCipher("RSA-PSK-AES256-GCM-SHA384"));
 			QCOMPARE(ciphersPsk.last(), QSslCipher("RSA-PSK-AES256-CBC-SHA"));
 
@@ -292,21 +297,28 @@ class test_SecureStorage
 			QCOMPARE(ciphersEcRemoteReaderPairing.count(), 0);
 
 			const auto& ciphersRemoteReader = mSecureStorage.getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
-			QCOMPARE(ciphersRemoteReader.count(), 5);
+			QVERIFY(ciphersRemoteReader.count() > 0);
 			QCOMPARE(ciphersRemoteReader.first(), QSslCipher("RSA-PSK-AES256-GCM-SHA384"));
 			QCOMPARE(ciphersRemoteReader.last(), QSslCipher("RSA-PSK-AES256-CBC-SHA"));
 		}
 
 
-		void getSslProtocolVersion()
+		void getSslProtocolVersion_data()
 		{
-			QCOMPARE(mSecureStorage.getTlsConfig().getProtocolVersion(), QSsl::SslProtocol::TlsV1_0OrLater);
+			QTest::addColumn<SecureStorage::TlsSuite>("suite");
+			QTest::addColumn<QSsl::SslProtocol>("protocol");
+
+			QTest::newRow("default") << SecureStorage::TlsSuite::DEFAULT << QSsl::SslProtocol::TlsV1_2;
+			QTest::newRow("PSK") << SecureStorage::TlsSuite::PSK << QSsl::SslProtocol::TlsV1_2;
 		}
 
 
-		void getSslProtocolVersionPsk()
+		void getSslProtocolVersion()
 		{
-			QCOMPARE(mSecureStorage.getTlsConfig(SecureStorage::TlsSuite::PSK).getProtocolVersion(), QSsl::SslProtocol::TlsV1_1OrLater);
+			QFETCH(SecureStorage::TlsSuite, suite);
+			QFETCH(QSsl::SslProtocol, protocol);
+
+			QCOMPARE(mSecureStorage.getTlsConfig(suite).getProtocolVersion(), protocol);
 		}
 
 
@@ -315,12 +327,7 @@ class test_SecureStorage
 			QTest::addColumn<QSslConfiguration>("configuration");
 			QTest::addColumn<int>("cipherSize");
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-			QTest::newRow("ciphers non PSK") << mSecureStorage.getTlsConfig().getConfiguration() << 24;
-#else
-			QTest::newRow("ciphers non PSK") << mSecureStorage.getTlsConfig().getConfiguration() << 18;
-#endif
-
+			QTest::newRow("ciphers non PSK") << mSecureStorage.getTlsConfig().getConfiguration() << 12;
 			QTest::newRow("ciphers for PSK") << mSecureStorage.getTlsConfig(SecureStorage::TlsSuite::PSK).getConfiguration() << 5;
 			QTest::newRow("remote reader") << mSecureStorage.getTlsConfigRemote().getConfiguration() << 7;
 			QTest::newRow("remote reader pairing") << mSecureStorage.getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration() << 5;

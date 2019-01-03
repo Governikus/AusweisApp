@@ -1,0 +1,132 @@
+From d64ee0c6be7e9ce672382709d8ea38e30d1d5e0d Mon Sep 17 00:00:00 2001
+From: Oliver Wolff <oliver.wolff@qt.io>
+Date: Tue, 12 Dec 2017 20:02:55 +0100
+Subject: configure: detect fxc.exe more thoroughly
+
+When building ANGLE, we need the shader compiler (fxc.exe), which is not
+shipped with MinGW. Previously, we required an installed DirectX SDK.
+For Windows versions >= 8, the DX SDK is also part of the Windows Kit,
+so we also allow the user to specify the location of the Windows Kit.
+We also detect fxc on 64-bit hosts now, and in newer SDK versions which
+version the binary directory.
+
+The detected binary is now exported by configure, so the ANGLE project
+file does not need to duplicate the logic anymore.
+
+Task-number: QTBUG-52487
+Change-Id: I41a17992909041dd84291b69498195cc8b8fab8a
+---
+ src/angle/src/common/common.pri | 16 +---------------
+ src/gui/configure.json          | 11 +++--------
+ src/gui/configure.pri           | 31 +++++++++++++++++++++++++++----
+ 3 files changed, 31 insertions(+), 27 deletions(-)
+
+diff --git x/qtbase/src/angle/src/common/common.pri y/qtbase/src/angle/src/common/common.pri
+index c1fad14951..2c0af02b58 100644
+--- x/qtbase/src/angle/src/common/common.pri
++++ y/qtbase/src/angle/src/common/common.pri
+@@ -21,20 +21,6 @@ lib_replace.replace = \$\$\$\$[QT_INSTALL_LIBS]
+ lib_replace.CONFIG = path
+ QMAKE_PRL_INSTALL_REPLACE += lib_replace
+ 
+-# DirectX is included in the Windows 8 Kit, but everything else requires the DX SDK.
+-winrt|msvc {
+-    FXC = fxc.exe
+-} else {
+-    DX_DIR = $$(DXSDK_DIR)
+-    isEmpty(DX_DIR) {
+-        error("Cannot determine DirectX SDK location. Please set DXSDK_DIR environment variable.")
+-    }
+-
+-    equals(QMAKE_TARGET.arch, x86_64) {
+-        FXC = \"$${DX_DIR}Utilities\\bin\\x64\\fxc.exe\"
+-    } else {
+-        FXC = \"$${DX_DIR}Utilities\\bin\\x86\\fxc.exe\"
+-    }
+-}
++FXC = $$shell_quote($$shell_path($$QMAKE_FXC_LOCATION))
+ 
+ static: DEFINES *= LIBGLESV2_EXPORT_H_ ANGLE_EXPORT=
+diff --git x/qtbase/src/gui/configure.json y/qtbase/src/gui/configure.json
+index 4145ceddf6..2a96bc5a75 100644
+--- x/qtbase/src/gui/configure.json
++++ y/qtbase/src/gui/configure.json
+@@ -702,10 +702,6 @@
+         }
+     },
+ 
+-    "testTypeAliases": {
+-        "files": [ "fxc" ]
+-    },
+-
+     "tests": {
+         "angle_d3d11_qdtd": {
+             "label": "D3D11_QUERY_DATA_TIMESTAMP_DISJOINT",
+@@ -721,9 +717,7 @@
+         "fxc": {
+             "label": "Direct3D Shader Compiler",
+             "type": "fxc",
+-            "files": [
+-                "fxc.exe"
+-            ]
++            "log": "value"
+         },
+         "egl-x11": {
+             "label": "EGL on X11",
+@@ -976,7 +970,8 @@
+             "condition": "features.dxguid && tests.fxc && (features.direct3d9 || (config.winrt && features.direct3d11 && libs.d3dcompiler))",
+             "output": [
+                 "publicFeature",
+-                { "type": "define", "name": "QT_OPENGL_ES_2_ANGLE" }
++                { "type": "define", "name": "QT_OPENGL_ES_2_ANGLE" },
++                { "type": "varAssign", "name": "QMAKE_FXC_LOCATION", "value": "tests.fxc.value" }
+             ]
+         },
+         "angle_d3d11_qdtd": {
+diff --git x/qtbase/src/gui/configure.pri y/qtbase/src/gui/configure.pri
+index f53a93063c..bc27a756a3 100644
+--- x/qtbase/src/gui/configure.pri
++++ y/qtbase/src/gui/configure.pri
+@@ -20,12 +20,35 @@ defineTest(qtConfLibrary_freetype) {
+ # DXSDK_DIR variable. Starting with Windows Kit 8, it is included in
+ # the Windows SDK.
+ defineTest(qtConfTest_fxc) {
+-    dxdir = $$getenv("DXSDK_DIR")
+-    !isEmpty(dxdir) {
+-        EXTRA_PATH += $$dxdir/Utilities/bin/x86
++    !mingw {
++        fxc = $$qtConfFindInPath("fxc.exe")
++    } else {
++        equals(QMAKE_HOST.arch, x86_64): \
++            fns = x64/fxc.exe
++        else: \
++            fns = x86/fxc.exe
++        dxdir = $$(DXSDK_DIR)
++        !isEmpty(dxdir) {
++            fxc = $$dxdir/Utilities/bin/$$fns
++        } else {
++            winkitbindir = $$(WindowsSdkVerBinPath)
++            !isEmpty(winkitbindir) {
++                fxc = $$winkitbindir/$$fns
++            } else {
++                winkitdir = $$(WindowsSdkDir)
++                !isEmpty(winkitdir): \
++                    fxc = $$winkitdir/bin/$$fns
++            }
++        }
+     }
+ 
+-    qtConfTest_files($${1}): return(true)
++    !isEmpty(fxc):exists($$fxc) {
++        $${1}.value = $$clean_path($$fxc)
++        export($${1}.value)
++        $${1}.cache += value
++        export($${1}.cache)
++        return(true)
++    }
+     return(false)
+ }
+ 
+-- 
+2.17.0
+

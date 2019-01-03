@@ -1,11 +1,11 @@
-import QtQuick 2.5
-import QtQuick.Controls 2.2
-import QtQuick.Controls.Styles 1.4
+import QtQuick 2.10
+import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.2
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Provider 1.0
+import Governikus.View 1.0
 
 SectionPage {
 	id: rootPage
@@ -13,10 +13,13 @@ SectionPage {
 	property var selectedIndices: []
 
 	headerTitleBarAction: TitleBarAction { text: qsTr("History") + settingsModel.translationTrigger; font.bold: true }
-	rightTitleBarAction: HistoryContextMenu { historyReminderPopup: deleteHistoryConfirmationDialog }
+	rightTitleBarAction: HistoryViewTitleBarControls {
+		 id: historyControls
+		 deleteHistoryConfirmationPopup: deleteHistoryConfirmationPopup
+	 }
 
 	HistoryViewConfirmationPopup {
-		id: deleteHistoryConfirmationDialog
+		id: deleteHistoryConfirmationPopup
 		baseItem: rootPage
 	}
 
@@ -52,7 +55,7 @@ SectionPage {
 		}
 	}
 
-	ProviderDetailView_tablet {
+	ProviderDetailView {
 		id: providerHistoryView
 		visible: false
 	}

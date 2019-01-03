@@ -34,5 +34,8 @@ void StateStopRemoteService::onExit(QEvent* pEvent)
 	Q_ASSERT(server);
 	server->stop();
 
+	// Request an asynchronous update of all retry counters
+	Env::getSingleton<ReaderManager>()->updateRetryCounters();
+
 	AbstractState::onExit(pEvent);
 }

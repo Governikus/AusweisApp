@@ -33,7 +33,7 @@ QString toString(QBluetoothDeviceInfo::CoreConfigurations pConfig)
 }
 
 
-}
+} // namespace
 
 
 QDebug operator <<(QDebug pDbg, const QBluetoothDeviceInfo::CoreConfigurations& pConfig)

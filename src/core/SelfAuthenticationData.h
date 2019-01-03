@@ -1,5 +1,5 @@
 /*!
- * \brief Parses self authentication data from XML data and provides its content.
+ * \brief Parses self authentication data from JSON data and provides its content.
  *
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
@@ -12,7 +12,8 @@
 
 #include <QCoreApplication>
 #include <QDateTime>
-#include <QDomElement>
+#include <QJsonObject>
+#include <QJsonValue>
 #include <QMap>
 #include <QPair>
 #include <QSharedData>
@@ -66,10 +67,10 @@ class SelfAuthenticationData
 			Q_DECLARE_TR_FUNCTIONS(governikus::SelfData)
 
 			private:
-				bool parse(const QDomDocument& pDoc, const QString& pElementName, const std::function<bool(const QDomElement&)>& pParserFunc);
-				bool parseOperationsAllowedByUser(const QDomElement& pElement);
-				bool parsePersonalData(const QDomElement& pElement);
-				bool tryToInsertChild(const QDomElement& pElement, SelfAuthData pAuthData);
+				bool parse(const QByteArray& pData);
+				bool parseOperationsAllowedByUser(const QJsonObject& pObject);
+				bool parsePersonalData(const QJsonObject& pObject);
+				bool tryToInsertChild(const QJsonValue& pValue, SelfAuthData pAuthData);
 
 			public:
 				bool mValid;
@@ -97,4 +98,4 @@ class SelfAuthenticationData
 		OrderedSelfData getOrderedSelfData() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <QByteArrayList>
 #include <QCryptographicHash>
 #include <QJsonObject>
 #include <QList>
@@ -22,9 +23,7 @@ class test_TlsConfiguration;
 namespace governikus
 {
 
-
 class SecureStorage;
-using SignatureAlgorithmPair = QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm>;
 
 
 class SslCipherList
@@ -57,7 +56,7 @@ class TlsConfiguration final
 
 		bool readJsonArray(QJsonArray& pArray, const QJsonObject& pConfig, const QLatin1String pName);
 		QSsl::SslProtocol readSslProtocol(const QJsonObject& pConfig, const QLatin1String pName);
-		QVector<SignatureAlgorithmPair> readSignatureAlgorithms(const QJsonObject& pConfig, const QLatin1String pKey);
+		QByteArrayList readSignatureAlgorithms(const QJsonObject& pConfig, const QLatin1String pKey);
 
 	public:
 		void load(const QJsonObject& pConfig);
@@ -65,7 +64,7 @@ class TlsConfiguration final
 		QSsl::SslProtocol getProtocolVersion() const;
 		QList<QSslCipher> getCiphers() const;
 		QVector<QSslEllipticCurve> getEllipticCurves() const;
-		QVector<SignatureAlgorithmPair> getSignatureAlgorithms() const;
+		QByteArrayList getSignatureAlgorithms() const;
 		const QSslConfiguration& getConfiguration() const;
 };
 

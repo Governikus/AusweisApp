@@ -4,6 +4,7 @@
 
 #include "states/StateCheckRefreshAddress.h"
 
+#include "AppSettings.h"
 #include "context/AuthContext.h"
 #include "Env.h"
 #include "MockNetworkManager.h"
@@ -66,8 +67,8 @@ class test_StateCheckRefreshAddress
 
 			for (const GlobalStatus::Code state : states)
 			{
-				const Result& result = GlobalStatus(state);
-				QCOMPARE(result.getMinor(), GlobalStatus::Code::Paos_Error_AL_Communication_Error);
+				const ECardApiResult& result = GlobalStatus(state);
+				QCOMPARE(result.getMinor(), ECardApiResult::Minor::AL_Communication_Error);
 			}
 		}
 
@@ -115,6 +116,154 @@ class test_StateCheckRefreshAddress
 
 			QCOMPARE(spy.count(), 1);
 			QVERIFY(mAuthContext->getRefreshUrl().isEmpty());
+		}
+
+
+		void isMatchingSameOriginPolicyInDevMode()
+		{
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(false);
+			QVERIFY(!mState->isMatchingSameOriginPolicyInDevMode());
+
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(true);
+			const QUrl pUrlHttps("https://test/");
+			const QUrl pUrlHttp("http://localhost:12345/test_StateCheckRefreshAddress/");
+			const QUrl pSubjectUrl("http://localhost:12345/test_StateCheckRefreshAddress/");
+
+			mState->mUrl = pUrlHttps;
+			mState->mSubjectUrl = pSubjectUrl;
+			QVERIFY(!mState->isMatchingSameOriginPolicyInDevMode());
+
+			mState->mUrl = pUrlHttp;
+			QTest::ignoreMessage(QtCriticalMsg, "SOP-Check: Ignoring scheme and port in developer mode.");
+			QTest::ignoreMessage(QtCriticalMsg, "  Origin URL: http://localhost:12345/test_StateCheckRefreshAddress/");
+			QTest::ignoreMessage(QtCriticalMsg, "  Refresh URL: http://localhost:12345/test_StateCheckRefreshAddress/");
+			QVERIFY(mState->isMatchingSameOriginPolicyInDevMode());
+		}
+
+
+		void determinateSubjectUrl()
+		{
+			const QUrl tcTokenUrl("http://test/");
+			mAuthContext->setTcTokenUrl(tcTokenUrl);
+
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(false);
+			QTest::ignoreMessage(QtWarningMsg, "No subjectURL/certificate description available, take the TcToken-URL instead");
+			QCOMPARE(mState->determineSubjectUrl(), tcTokenUrl);
+
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(true);
+			QCOMPARE(mState->determineSubjectUrl(), tcTokenUrl);
+		}
+
+
+		void reportCommunicationError()
+		{
+			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireAbort);
+
+			QTest::ignoreMessage(QtCriticalMsg, "Card_Communication_Error | \"An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.\"");
+			mState->reportCommunicationError(GlobalStatus::Code::Card_Communication_Error);
+			QCOMPARE(mAuthContext->getStatus().getStatusCode(), GlobalStatus::Code::Card_Communication_Error);
+			QCOMPARE(spy.count(), 1);
+
+			mAuthContext->setStatus(GlobalStatus::Code::No_Error);
+
+			QTest::ignoreMessage(QtCriticalMsg, "Network_Other_Error | \"An unknown network error occurred.\"");
+			mState->reportCommunicationError(GlobalStatus::Code::Network_Other_Error);
+			QCOMPARE(mAuthContext->getStatus().getStatusCode(), GlobalStatus::Code::Network_Other_Error);
+			QCOMPARE(spy.count(), 2);
+		}
+
+
+		void onNetworkReply_data()
+		{
+			QTest::addColumn<QNetworkReply::NetworkError>("networkError");
+			QTest::addColumn<GlobalStatus::Code>("status");
+			QTest::addColumn<int>("statusCode");
+			QTest::addColumn<QUrl>("redirectUrl");
+			QTest::addColumn<bool>("developerMode");
+
+			QTest::newRow("service unavailable") << QNetworkReply::NetworkError::ServiceUnavailableError << GlobalStatus::Code::Network_ServiceUnavailable << 1 << QUrl("http://test.com/") << false;
+			QTest::newRow("timeout") << QNetworkReply::NetworkError::TimeoutError << GlobalStatus::Code::Network_TimeOut << 2 << QUrl() << false;
+			QTest::newRow("proxy error") << QNetworkReply::NetworkError::ProxyNotFoundError << GlobalStatus::Code::Network_Proxy_Error << 0 << QUrl("test") << false;
+			QTest::newRow("ssl error") << QNetworkReply::NetworkError::SslHandshakeFailedError << GlobalStatus::Code::Network_Ssl_Establishment_Error << 1 << QUrl("https://test.com/") << false;
+			QTest::newRow("other error") << QNetworkReply::NetworkError::OperationCanceledError << GlobalStatus::Code::Network_Other_Error << 2 << QUrl("https://test.com/") << false;
+			QTest::newRow("no error unexpected status") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Expected_Redirect << 2 << QUrl("https://test.com/") << false;
+			QTest::newRow("no error empty url") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url << 302 << QUrl() << false;
+			QTest::newRow("no error invalid url") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url << 302 << QUrl("://://") << false;
+			QTest::newRow("no error http") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Invalid_Scheme << 302 << QUrl("http://test.com/") << false;
+			QTest::newRow("no error http developer mode") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::No_Error << 302 << QUrl("http://test.com/") << true;
+		}
+
+
+		void onNetworkReply()
+		{
+			QFETCH(QNetworkReply::NetworkError, networkError);
+			QFETCH(GlobalStatus::Code, status);
+			QFETCH(int, statusCode);
+			QFETCH(QUrl, redirectUrl);
+			QFETCH(bool, developerMode);
+
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(developerMode);
+
+			QPointer<MockNetworkReply> reply(new MockNetworkReply());
+			mState->mReply = reply;
+
+			const QByteArray headerName("name");
+			const QByteArray value("value");
+			reply->setRawHeader(headerName, value);
+			reply->setAttribute(QNetworkRequest::HttpStatusCodeAttribute, QVariant(statusCode));
+			reply->setAttribute(QNetworkRequest::RedirectionTargetAttribute, QVariant(redirectUrl));
+			reply->setError(networkError, QString());
+
+			mAuthContext->setStatus(GlobalStatus::Code::No_Error);
+			QTest::ignoreMessage(QtDebugMsg, R"(Header | name: value)");
+			mState->onNetworkReply();
+			if (!developerMode)
+			{
+				QCOMPARE(mAuthContext->getStatus().getStatusCode(), status);
+			}
+		}
+
+
+		void fetchServerCertificate_DeveloperMode()
+		{
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(true);
+			const QUrl url("http://test.de/");
+			mState->mUrl = url;
+			QTest::ignoreMessage(QtWarningMsg, "Refresh URL is http only. Certificate check skipped.");
+			mState->fetchServerCertificate();
+		}
+
+
+		void fetchServerCertificate_AlreadyVerified()
+		{
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(false);
+			const QUrl url("https://test.de/");
+			mState->mUrl = url;
+			mState->mVerifiedRefreshUrlHosts.insert(0, url);
+			QTest::ignoreMessage(QtDebugMsg, "SSL certificate already collected for QUrl(\"https://test.de/\")");
+			mState->fetchServerCertificate();
+		}
+
+
+		void fetchServerCertificate()
+		{
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(false);
+			const QUrl url("https://test.de/");
+			mState->mUrl = url;
+			mState->fetchServerCertificate();
+			QCOMPARE(mState->mConnections.size(), 3);
+		}
+
+
+		void doneSuccess()
+		{
+			const QUrl url("https://test.de/");
+			mState->mUrl = url;
+			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireContinue);
+
+			QTest::ignoreMessage(QtDebugMsg, "Determined RefreshUrl: QUrl(\"https://test.de/\")");
+			mState->doneSuccess();
+			QCOMPARE(mAuthContext->getRefreshUrl(), url);
 		}
 
 

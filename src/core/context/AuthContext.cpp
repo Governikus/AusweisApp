@@ -6,7 +6,6 @@
 
 #include "asn1/Chat.h"
 #include "AppSettings.h"
-#include "Env.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
 #include "SecureStorage.h"
 
@@ -22,7 +21,7 @@ AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationCon
 	, mTcTokenUrl()
 	, mTcToken()
 	, mRefreshUrl()
-	, mMessageIdHandler(new MessageIdHandler())
+	, mReceivedMessageId()
 	, mStartPaos()
 	, mInitializeFramework()
 	, mInitializeFrameworkResponse()
@@ -36,7 +35,6 @@ AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationCon
 	, mDIDAuthenticateResponseEAC2()
 	, mTransmits()
 	, mTransmitResponses()
-	, mTransmitResponseFailed(false)
 	, mDisconnectResponse()
 	, mStartPaosResponse()
 	, mEffectiveAccessRights()
@@ -48,11 +46,6 @@ AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationCon
 	, mCvcChainBuilderProd()
 	, mCvcChainBuilderTest()
 	, mSslSession()
-{
-}
-
-
-AuthContext::~AuthContext()
 {
 }
 
@@ -256,20 +249,28 @@ CVCertificateChain AuthContext::getChainStartingWith(const QSharedPointer<const 
 	const auto& productionChain = mCvcChainBuilderProd.getChainStartingWith(pChainRoot);
 	if (productionChain.isValid())
 	{
+		qDebug() << "Found chain within productive PKI.";
 		return productionChain;
 	}
 
-	return mCvcChainBuilderTest.getChainStartingWith(pChainRoot);
+	const auto& testChain = mCvcChainBuilderTest.getChainStartingWith(pChainRoot);
+	if (testChain.isValid())
+	{
+		qDebug() << "Found chain within test PKI.";
+		return testChain;
+	}
+
+	return CVCertificateChain();
 }
 
 
-bool AuthContext::hasChainForCertificationAuthority(const EstablishPACEChannelOutput& pPaceOutput) const
+bool AuthContext::hasChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const
 {
 	return getChainForCertificationAuthority(pPaceOutput).isValid();
 }
 
 
-CVCertificateChain AuthContext::getChainForCertificationAuthority(const EstablishPACEChannelOutput& pPaceOutput) const
+CVCertificateChain AuthContext::getChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const
 {
 	const auto& productionChain = mCvcChainBuilderProd.getChainForCertificationAuthority(pPaceOutput);
 	if (productionChain.isValid())

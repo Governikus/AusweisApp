@@ -27,6 +27,12 @@ class DeviceInfo
 		static QString getPrettyInfo();
 		static QString getName();
 		static QString getFingerprint();
+		static QString getOSBuildNumber();
+		static QString getOSVersion();
+		static QString getKernelVersion();
+		static QString getVendor();
+		static QString getModelNumber();
+		static QString getModelName();
 };
 
-} /* namespace governikus */
+} // namespace governikus

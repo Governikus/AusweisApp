@@ -65,4 +65,4 @@ class MockWorkflowAuthenticateUi
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

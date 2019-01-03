@@ -15,7 +15,7 @@
 namespace governikus
 {
 
-class EstablishPACEChannelOutput;
+class EstablishPaceChannelOutput;
 
 
 class DIDAuthenticateResponseEAC1
@@ -29,11 +29,11 @@ class DIDAuthenticateResponseEAC1
 		QByteArray mIdPICC;
 		QByteArray mChallenge;
 
-		QDomElement createDIDAuthenticateResponseEAC1Element();
-		QDomElement createAuthenticationProtocolDataElement();
+		void createDIDAuthenticateResponseEAC1Element();
+		void createAuthenticationProtocolDataElement();
 
-		virtual QDomElement getDocumentStructure() override;
-		virtual Result getResult() const;
+		virtual void createBodyElement() override;
+		virtual ECardApiResult getResult() const;
 
 		Q_DISABLE_COPY(DIDAuthenticateResponseEAC1)
 
@@ -48,10 +48,10 @@ class DIDAuthenticateResponseEAC1
 		const QByteArray& getChallenge() const;
 
 		void setCertificateHolderAuthorizationTemplate(const QByteArray& pValue);
-		void setCertificationAuthorityReference(const EstablishPACEChannelOutput& pPaceChannelOutput);
+		void setCertificationAuthorityReference(const EstablishPaceChannelOutput& pPaceChannelOutput);
 		void setEFCardAccess(const QByteArray& pValue);
 		void setIDPICC(const QByteArray& pValue);
 		void setChallenge(const QByteArray& pValue);
 };
 
-} /* namespace governikus */
+} // namespace governikus

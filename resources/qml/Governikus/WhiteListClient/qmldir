@@ -1,0 +1,5 @@
+module WhiteListClient
+
+internal BulletPointDelegate BulletPointDelegate.qml
+
+WhiteListSurveyView 1.0 WhiteListSurveyView.qml

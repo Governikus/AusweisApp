@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600px" height="400px" viewBox="0 0 600 400">
+  <image xlink:href=":/images/tutorial/idcard.svg" transform="rotate(80)" height="145" width="145" y="-495" x="165" />
+  <image xlink:href=":/images/tutorial/reader.svg" height="130" width="112" y="180" x="400" />
+  <image xlink:href=":/images/tutorial/circle-3.svg" transform="rotate(-45)" height="178" width="162" y="310" x="-80" />
+  <image xlink:href=":/images/tutorial/tablet.svg" x="40" y="170" width="115" height="100" />
+  <image xlink:href=":/images/tutorial/tablet-nfc.svg" x="80" y="145" width="80" height="116" />
+  <image xlink:href=":/images/tutorial/tablet-no-nfc.svg" x="60" y="200" width="50" height="73" />
+  <image xlink:href=":/images/npa.svg" height="76" width="76" y="200" x="135" />
+  <image xlink:href=":/images/tutorial/circle-1.svg" x="168" y="0" width="304" height="123" />
+</svg>

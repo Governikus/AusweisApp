@@ -15,7 +15,6 @@
 namespace governikus
 {
 
-
 defineEnumType(ReaderManagerPlugInType, UNKNOWN, PCSC, BLUETOOTH, NFC, REMOTE)
 
 
@@ -106,4 +105,4 @@ class ReaderManagerPlugInInfo
 		bool mResponding;
 };
 
-} /* namespace governikus */
+} // namespace governikus

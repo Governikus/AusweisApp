@@ -11,6 +11,8 @@
 #include "context/RemoteServiceContext.h"
 #include "states/AbstractGenericState.h"
 
+class test_StateProcessRemoteMessages;
+
 namespace governikus
 {
 
@@ -19,11 +21,12 @@ class StateProcessRemoteMessages
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateProcessRemoteMessages;
 
 	private:
 		QVector<QMetaObject::Connection> mMessageConnections;
 
-		StateProcessRemoteMessages(const QSharedPointer<WorkflowContext>& pContext);
+		explicit StateProcessRemoteMessages(const QSharedPointer<WorkflowContext>& pContext);
 		virtual void run() override;
 
 	private Q_SLOTS:
@@ -41,7 +44,7 @@ class StateProcessRemoteMessages
 	Q_SIGNALS:
 		void fireEstablishPaceChannel();
 		void fireModifyPin();
-
+		void fireSecureMessagingStopped();
 };
 
-} /* namespace governikus */
+} // namespace governikus

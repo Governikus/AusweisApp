@@ -4,8 +4,10 @@
 
 #include "HistorySettings.h"
 
+#include "AppSettings.h"
+#include "Env.h"
+
 #include <QLoggingCategory>
-#include <QSettings>
 
 namespace
 {
@@ -18,7 +20,7 @@ SETTINGS_NAME(SETTINGS_NAME_CHRONIC_USAGE, "usage")
 SETTINGS_NAME(SETTINGS_NAME_CHRONIC_DATETIME, "dateTime")
 SETTINGS_NAME(SETTINGS_NAME_CHRONIC_TOU, "termOfUsage")
 SETTINGS_NAME(SETTINGS_NAME_CHRONIC_REQUESTED_DATA, "requestedData")
-}
+} // namespace
 
 using namespace governikus;
 
@@ -73,7 +75,7 @@ QVector<HistoryInfo> HistorySettings::getHistoryInfos() const
 		const QString usage = mStore->value(SETTINGS_NAME_CHRONIC_USAGE(), QString()).toString();
 		const QDateTime dateTime = QDateTime::fromString(mStore->value(SETTINGS_NAME_CHRONIC_DATETIME(), QString()).toString(), Qt::ISODate);
 		const QString termsOfUsage = mStore->value(SETTINGS_NAME_CHRONIC_TOU(), QString()).toString();
-		const QString requestData = mStore->value(SETTINGS_NAME_CHRONIC_REQUESTED_DATA(), QString()).toString();
+		const QStringList requestData = mStore->value(SETTINGS_NAME_CHRONIC_REQUESTED_DATA(), QStringList()).toStringList();
 		historyInfos += HistoryInfo(subjectName, subjectUrl, usage, dateTime, termsOfUsage, requestData);
 	}
 
@@ -109,9 +111,9 @@ void HistorySettings::setHistoryInfos(const QVector<HistoryInfo>& pHistoryInfos)
 
 void HistorySettings::addHistoryInfo(const HistoryInfo& pHistoryInfo)
 {
-	if (appIsBackgroundService())
+	if (Env::getSingleton<AppSettings>()->isUsedAsSDK())
 	{
-		qCDebug(settings) << "Running as a background service. Ignoring save request for history.";
+		qCDebug(settings) << "Running as SDK. Ignoring save request for history.";
 		return;
 	}
 
@@ -160,7 +162,7 @@ int HistorySettings::deleteSettings(const TimePeriod& pPeriodToRemove)
 			break;
 
 		case TimePeriod::ALL_HISTORY:
-			latestToKeep = QDateTime();
+			latestToKeep = QDateTime::fromMSecsSinceEpoch(1);
 			break;
 
 		case TimePeriod::UNKNOWN:

@@ -1,5 +1,5 @@
-import QtQuick 2.7
-import QtQuick.Controls 2.2
+import QtQuick 2.10
+import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
 
@@ -81,7 +81,7 @@ Popup {
 				}
 
 				onClicked: {
-					var removedItems = settingsModel.removeHistory(deleteHistoryConfirmationDialog.timePeriod);
+					var removedItems = settingsModel.removeHistory(popupObject.timePeriod);
 					qmlExtension.showFeedback(qsTr("Removed %1 entries from the history.").arg(removedItems))
 					popupObject.close()
 				}

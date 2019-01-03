@@ -5,11 +5,12 @@
 #pragma once
 
 #include "asn1/Chat.h"
-#include "Apdu.h"
-#include "CardReturnCode.h"
+#include "CommandApdu.h"
 #include "FileRef.h"
+#include "ResponseApdu.h"
 #include "SmartCardDefinitions.h"
 
+class test_Commands;
 
 namespace governikus
 {
@@ -82,13 +83,11 @@ class MSEBuilder
 			SET_AT = char(0xa4), HASH_ALGORITHM = char(0xaa), COMPUTE_DIGITAL_SIGNATURE = char(0xb6), ENCRYPTION_OPERATION = char(0xb8), DEFAULT_CHANNEL = 0x01,
 		};
 
-		static bool isUpdateRetryCounterCommand(const QByteArray& cmd);
-
 		MSEBuilder(P1 p1, P2 p2);
 		void setAuxiliaryData(const QByteArray& pData);
 		void setOid(const QByteArray& pData);
 		void setPublicKey(const QByteArray& pData);
-		void setPublicKey(PACE_PASSWORD_ID pPassword);
+		void setPublicKey(PacePasswordId pPassword);
 		void setPrivateKey(const QByteArray& pData);
 		void setEphemeralPublicKey(const QByteArray& pData);
 		void setChat(const QByteArray& pData);
@@ -125,6 +124,7 @@ class PSOBuilder
 		CommandApdu build() override;
 
 	private:
+		friend class ::test_Commands;
 		P1 mP1;
 		P2 mP2;
 		QByteArray mCertificateBody;
@@ -140,6 +140,7 @@ class EABuilder
 		CommandApdu build() override;
 
 	private:
+		friend class ::test_Commands;
 		QByteArray mSignature;
 };
 
@@ -155,6 +156,7 @@ class GABuilder
 		CommandApdu build() override;
 
 	private:
+		friend class ::test_Commands;
 		char mClassByte;
 		QByteArray mCaEphemeralPublicKey;
 		QByteArray mPaceMappingData;
@@ -185,4 +187,4 @@ class ResetRetryCounterBuilder
 		QByteArray mPin;
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -8,13 +8,13 @@ der AusweisApp2 unterstützt.
 
 Betriebssysteme
 """""""""""""""
-  - OS X 10.10
-
   - OS X 10.11
 
   - macOS 10.12
 
   - macOS 10.13
+
+  - macOS 10.14
 
   - Windows 7 SP1 (32bit / 64bit)
 
@@ -22,13 +22,13 @@ Betriebssysteme
 
   - Windows 10 (64bit)
 
-  - Android 4.3 und höher (x86, armeabi-v7a, arm64-v8a)
+  - Android 5.0 und höher (x86, armeabi-v7a)
 
 
 
 Karten
 """"""
-  - Neuer Personalausweis
+  - Personalausweis
 
   - Elektronischer Aufenthaltstitel
 
@@ -48,13 +48,15 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-  - Firefox 61
+  - Firefox 64
 
-  - Chrome 67
+  - Chrome 71
 
   - Internet Explorer 11
 
-  - Safari 11.1.1
+  - Safari 12
+
+  - Edge 44
 
 
 
@@ -112,11 +114,11 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Diensteanbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-  - Firefox Klar 5.2
+  - Firefox Klar 8
 
-  - Chrome 67
+  - Chrome 71
 
-  - Android System WebView 67
+  - Android System WebView 70
 
 
 

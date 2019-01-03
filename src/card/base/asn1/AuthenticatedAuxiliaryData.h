@@ -49,7 +49,7 @@ typedef struct auxdatatemplate_st
 
 } AuxDataTemplate;
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 DECLARE_STACK_OF(AuxDataTemplate)
 using AuthenticatedAuxiliaryDataInternal = stack_st_AuxDataTemplate;
 #else
@@ -59,14 +59,14 @@ using AuthenticatedAuxiliaryDataInternal = STACK_OF(AuxDataTemplate);
 
 class AuthenticatedAuxiliaryData
 {
-	private:
-		friend class ::test_AuxiliaryAuthenticatedData;
-		QSharedPointer<AuthenticatedAuxiliaryDataInternal> mData;
+	friend class ::test_AuxiliaryAuthenticatedData;
+	friend class QSharedPointer<AuthenticatedAuxiliaryData>;
+	QSharedPointer<AuthenticatedAuxiliaryDataInternal> mData;
 
-		AuthenticatedAuxiliaryData(const QSharedPointer<AuthenticatedAuxiliaryDataInternal>& pData);
-		AuxDataTemplate* getAuxDataTemplateFor(KnownOIDs::AuxilaryData pData) const;
+	AuthenticatedAuxiliaryData(const QSharedPointer<AuthenticatedAuxiliaryDataInternal>& pData);
+	AuxDataTemplate* getAuxDataTemplateFor(KnownOIDs::AuxilaryData pData) const;
 
-		QString getRequiredAge(const QDate& pEffectiveDate) const;
+	QString getRequiredAge(const QDate& pEffectiveDate) const;
 
 	public:
 		static QSharedPointer<AuthenticatedAuxiliaryData> fromHex(const QByteArray& pHexValue);
@@ -84,4 +84,4 @@ class AuthenticatedAuxiliaryData
 		QByteArray getCommunityID() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

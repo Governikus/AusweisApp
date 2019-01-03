@@ -4,7 +4,6 @@
 
 #include "ReaderManager.h"
 
-#include "CardConnection.h"
 #include "SingletonHelper.h"
 
 #include <QLoggingCategory>
@@ -18,9 +17,9 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 
 ReaderManager::ReaderManager()
 	: QObject()
+	, mMutex()
 	, mThread()
 	, mWorker()
-	, mRemoteClient()
 {
 	mThread.setObjectName(QStringLiteral("ReaderManagerThread"));
 }
@@ -28,11 +27,16 @@ ReaderManager::ReaderManager()
 
 ReaderManager::~ReaderManager()
 {
-	if (mThread.isRunning())
 	{
-		qCWarning(card) << "ReaderManager is not stopped correctly...";
-		shutdown();
+		const QMutexLocker mutexLocker(&mMutex);
+		if (!mThread.isRunning())
+		{
+			return;
+		}
 	}
+
+	qCWarning(card) << "ReaderManager is not stopped correctly...";
+	shutdown();
 }
 
 
@@ -42,8 +46,10 @@ ReaderManager& ReaderManager::getInstance()
 }
 
 
-void ReaderManager::init(const QSharedPointer<RemoteClient>& pRemoteClient)
+void ReaderManager::init()
 {
+	const QMutexLocker mutexLocker(&mMutex);
+
 	if (mThread.isRunning())
 	{
 		qCWarning(card) << "ReaderManager already initialized";
@@ -52,8 +58,7 @@ void ReaderManager::init(const QSharedPointer<RemoteClient>& pRemoteClient)
 
 	if (mWorker.isNull())
 	{
-		mRemoteClient = pRemoteClient;
-		mWorker = new ReaderManagerWorker(pRemoteClient);
+		mWorker = new ReaderManagerWorker();
 		mWorker->moveToThread(&mThread);
 
 		connect(&mThread, &QThread::started, mWorker.data(), &ReaderManagerWorker::onThreadStarted);
@@ -83,26 +88,32 @@ void ReaderManager::init(const QSharedPointer<RemoteClient>& pRemoteClient)
 
 void ReaderManager::shutdown()
 {
+	const QMutexLocker mutexLocker(&mMutex);
+
 	if (mThread.isRunning() && !mThread.isInterruptionRequested())
 	{
 		qCDebug(card) << "Shutdown ReaderManager...";
 		mThread.requestInterruption(); // do not try to stop AGAIN from dtor
 		mThread.quit();
-		mThread.wait(2500);
-		qCDebug(card) << "Stopping..." << mThread.isRunning();
+		mThread.wait(5000);
+		qCDebug(card).noquote() << mThread.objectName() << "stopped:" << !mThread.isRunning();
 	}
 }
 
 
 void ReaderManager::startScan(ReaderManagerPlugInType pType, bool pAutoConnect)
 {
+	const QMutexLocker mutexLocker(&mMutex);
+
 	if (!mThread.isRunning())
 	{
 		qCWarning(card) << "Cannot start scan if ReaderManager-Thread is not active";
 		return;
 	}
 
-	QMetaObject::invokeMethod(mWorker.data(), "startScan", Qt::QueuedConnection, Q_ARG(ReaderManagerPlugInType, pType), Q_ARG(bool, pAutoConnect));
+	QMetaObject::invokeMethod(mWorker.data(), [ = ] {
+				mWorker->startScan(pType, pAutoConnect);
+			}, Qt::QueuedConnection);
 }
 
 
@@ -117,13 +128,17 @@ void ReaderManager::startScanAll(bool pAutoConnect)
 
 void ReaderManager::stopScan(ReaderManagerPlugInType pType)
 {
+	const QMutexLocker mutexLocker(&mMutex);
+
 	if (!mThread.isRunning())
 	{
 		qCWarning(card) << "Cannot stop scan if ReaderManager-Thread is not active";
 		return;
 	}
 
-	QMetaObject::invokeMethod(mWorker.data(), "stopScan", Qt::QueuedConnection, Q_ARG(ReaderManagerPlugInType, pType));
+	QMetaObject::invokeMethod(mWorker.data(), [ = ] {
+				mWorker->stopScan(pType);
+			}, Qt::QueuedConnection);
 }
 
 
@@ -138,53 +153,83 @@ void ReaderManager::stopScanAll()
 
 QVector<ReaderManagerPlugInInfo> ReaderManager::getPlugInInfos() const
 {
+	const QMutexLocker mutexLocker(&mMutex);
+
 	QVector<ReaderManagerPlugInInfo> list;
-	QMetaObject::invokeMethod(mWorker.data(), "getPlugInInfos", Qt::BlockingQueuedConnection, Q_RETURN_ARG(QVector<ReaderManagerPlugInInfo>, list));
+	QMetaObject::invokeMethod(mWorker.data(), &ReaderManagerWorker::getPlugInInfos, Qt::BlockingQueuedConnection, &list);
 	return list;
 }
 
 
 QVector<ReaderInfo> ReaderManager::getReaderInfos(ReaderManagerPlugInType pType) const
 {
-	return getReaderInfos(QVector<ReaderManagerPlugInType>() << pType);
+	return getReaderInfos(QVector<ReaderManagerPlugInType> {pType});
 }
 
 
 QVector<ReaderInfo> ReaderManager::getReaderInfos(const ReaderFilter& pFilter) const
 {
+	const QMutexLocker mutexLocker(&mMutex);
+
 	QVector<ReaderInfo> list;
-	QMetaObject::invokeMethod(mWorker.data(), "getReaderInfos", Qt::BlockingQueuedConnection, Q_RETURN_ARG(QVector<ReaderInfo>, list), Q_ARG(ReaderFilter, pFilter));
-	return list;
+	QMetaObject::invokeMethod(mWorker.data(), [ = ] {
+				return mWorker->getReaderInfos(pFilter);
+			}, Qt::BlockingQueuedConnection, &list);
+	return pFilter.apply(list);
 }
 
 
 ReaderInfo ReaderManager::getReaderInfo(const QString& pReaderName) const
 {
+	const QMutexLocker mutexLocker(&mMutex);
+
 	ReaderInfo info(pReaderName);
-	QMetaObject::invokeMethod(mWorker.data(), "getReaderInfo", Qt::BlockingQueuedConnection, Q_RETURN_ARG(ReaderInfo, info), Q_ARG(QString, pReaderName));
+	QMetaObject::invokeMethod(mWorker.data(), [ = ] {
+				return mWorker->getReaderInfo(pReaderName);
+			}, Qt::BlockingQueuedConnection, &info);
 	return info;
+}
+
+
+void ReaderManager::updateReaderInfo(const QString& pReaderName)
+{
+	QMetaObject::invokeMethod(mWorker.data(), [ = ] {
+				mWorker->updateReaderInfo(pReaderName);
+			}, Qt::BlockingQueuedConnection); // needed to force the ReaderInfo update, else StateMachine loops based on stale state can occur
 }
 
 
 void ReaderManager::connectReader(const QString& pReaderName)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "connectReader", Qt::QueuedConnection, Q_ARG(QString, pReaderName));
+	const QMutexLocker mutexLocker(&mMutex);
+
+	QMetaObject::invokeMethod(mWorker.data(), [ = ] {
+				mWorker->connectReader(pReaderName);
+			}, Qt::QueuedConnection);
 }
 
 
 void ReaderManager::disconnectReader(const QString& pReaderName)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "disconnectReader", Qt::QueuedConnection, Q_ARG(QString, pReaderName));
+	const QMutexLocker mutexLocker(&mMutex);
+
+	QMetaObject::invokeMethod(mWorker.data(), [ = ] {
+				mWorker->disconnectReader(pReaderName);
+			}, Qt::QueuedConnection);
 }
 
 
 void ReaderManager::disconnectAllReaders()
 {
-	QMetaObject::invokeMethod(mWorker.data(), "disconnectAllReaders", Qt::QueuedConnection);
+	const QMutexLocker mutexLocker(&mMutex);
+
+	QMetaObject::invokeMethod(mWorker.data(), &ReaderManagerWorker::disconnectAllReaders, Qt::QueuedConnection);
 }
 
 
-QSharedPointer<RemoteClient> ReaderManager::getRemoteClient()
+void ReaderManager::updateRetryCounters()
 {
-	return mRemoteClient;
+	const QMutexLocker mutexLocker(&mMutex);
+
+	QMetaObject::invokeMethod(mWorker.data(), &ReaderManagerWorker::updateRetryCounters, Qt::QueuedConnection);
 }

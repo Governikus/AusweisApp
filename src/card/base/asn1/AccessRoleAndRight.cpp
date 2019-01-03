@@ -202,20 +202,51 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 		case AccessRight::AGE_VERIFICATION:
 			return tr("Age verification");
 
-		default:
-			return tr("Unknown");
+		case AccessRight::RFU_29:
+		case AccessRight::RFU_30:
+		case AccessRight::RFU_31:
+		case AccessRight::RFU_32:
+			return tr("Unknown (reserved)");
 	}
+
+	return tr("Unknown");
 }
 
 
 QLatin1String AccessRoleAndRightsUtil::toTechnicalName(AccessRight pRight)
 {
 	const auto name = getEnumName(static_cast<AccessRightNames>(pRight));
-	if (!name.size())
+	if (name.isEmpty())
 	{
 		qCritical() << "Requested AccessRight without mapping:" << pRight;
 	}
 	return name;
+}
+
+
+QString AccessRoleAndRightsUtil::joinFromTechnicalName(const QStringList& pStr, const QString& pJoin)
+{
+	return fromTechnicalName(pStr).join(pJoin);
+}
+
+
+QStringList AccessRoleAndRightsUtil::fromTechnicalName(const QStringList& pStr)
+{
+	QStringList result;
+	for (auto entry : pStr)
+	{
+		fromTechnicalName(entry, [&entry](AccessRight pRight){
+					entry = AccessRoleAndRightsUtil::toDisplayText(pRight);
+				});
+		result << entry;
+	}
+	return result;
+}
+
+
+bool AccessRoleAndRightsUtil::fromTechnicalName(const QString& pStr, const std::function<void(AccessRight)>& pFunc)
+{
+	return fromTechnicalName(pStr.toLatin1().constData(), pFunc);
 }
 
 

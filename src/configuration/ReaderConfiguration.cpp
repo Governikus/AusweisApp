@@ -4,7 +4,6 @@
 
 #include "ReaderConfiguration.h"
 
-#include "Env.h"
 #include "FileDestination.h"
 #include "FileProvider.h"
 #include "FuncUtils.h"
@@ -27,7 +26,7 @@ defineSingleton(ReaderConfiguration)
 bool ReaderConfiguration::parseReaderConfiguration()
 {
 	const QString& path = mUpdatableFile->lookupPath();
-	if (!QFile::exists(path))
+	if (path.isEmpty() || !QFile::exists(path))
 	{
 		qCCritical(configuration) << "ReaderConfiguration file not found";
 		return false;

@@ -22,22 +22,21 @@ class MockReaderManagerPlugIn
 	Q_PLUGIN_METADATA(IID "governikus.ReaderManagerPlugIn" FILE "MockReaderManagerPlugIn.metadata.json")
 	Q_INTERFACES(governikus::ReaderManagerPlugIn)
 
-	public:
+	private:
 		static MockReaderManagerPlugIn* mInstance;
 		QMap<QString, MockReader*> mReaders;
 
+	public:
 		MockReaderManagerPlugIn();
+		virtual ~MockReaderManagerPlugIn() override;
 
 		static MockReaderManagerPlugIn& getInstance();
 
 		virtual QList<Reader*> getReaders() const override;
-
 		MockReader* addReader(const QString& pReaderName);
-
 		void removeReader(const QString& pReaderName);
-
-
+		void removeAllReader();
 };
 
 
-}
+} // namespace governikus

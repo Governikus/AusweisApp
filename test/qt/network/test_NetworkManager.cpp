@@ -4,11 +4,12 @@
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
+#include "NetworkManager.h"
+
 #include "context/SelfAuthContext.h"
 #include "controller/SelfAuthController.h"
 #include "Env.h"
 #include "LogHandler.h"
-#include "NetworkManager.h"
 #include "SecureStorage.h"
 
 #include "MockNetworkManager.h"
@@ -30,13 +31,13 @@ class test_NetworkManager
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
 		void cleanup()
 		{
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
@@ -49,11 +50,8 @@ class test_NetworkManager
 			QCOMPARE(reply->request(), request);
 			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 6);
 			QVERIFY(request.sslConfiguration().ellipticCurves().contains(QSslEllipticCurve::fromLongName("prime256v1")));
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-			QCOMPARE(request.sslConfiguration().ciphers().size(), 24);
-#else
-			QCOMPARE(request.sslConfiguration().ciphers().size(), 18);
-#endif
+			const int cipherCount = SecureStorage::getInstance().getTlsConfig().getCiphers().size();
+			QCOMPARE(request.sslConfiguration().ciphers().size(), cipherCount);
 			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("ECDHE-RSA-AES256-GCM-SHA384")));
 		}
 
@@ -66,8 +64,8 @@ class test_NetworkManager
 			QCOMPARE(request.rawHeader("PAOS"), QByteArray("ver=\"paosNamespace\""));
 			QCOMPARE(reply->request(), request);
 			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 0);
-			QCOMPARE(request.sslConfiguration().ciphers().size(), 5);
-			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES256-CBC-SHA")));
+			const int cipherCount = SecureStorage::getInstance().getTlsConfig(SecureStorage::TlsSuite::PSK).getCiphers().size();
+			QCOMPARE(request.sslConfiguration().ciphers().size(), cipherCount);
 			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES128-CBC-SHA256")));
 			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES128-GCM-SHA256")));
 			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES256-CBC-SHA384")));
@@ -126,7 +124,6 @@ class test_NetworkManager
 			reply->setNetworkError(QNetworkReply::ServiceUnavailableError, "dummy");
 			networkManager.setNextReply(reply);
 
-
 			auto context = QSharedPointer<SelfAuthContext>::create();
 			connect(context.data(), &AuthContext::fireStateChanged, this, [&] {
 						context->setStateApproved();
@@ -137,11 +134,7 @@ class test_NetworkManager
 
 			controller.run();
 
-			if (spy.count() == 0)
-			{
-				spy.wait();
-			}
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1);
 			QCOMPARE(context->getStatus(), GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable));
 		}
 

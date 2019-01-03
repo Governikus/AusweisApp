@@ -16,22 +16,22 @@ CompositeStateSelectCard::CompositeStateSelectCard(const QSharedPointer<Workflow
 	: QState()
 	, mContext(pContext)
 {
-	auto selectReader = StateBuilder::createState<StateSelectReader>(mContext);
-	auto connectCard = StateBuilder::createState<StateConnectCard>(mContext);
+	auto sSelectReader = StateBuilder::createState<StateSelectReader>(mContext);
+	auto sConnectCard = StateBuilder::createState<StateConnectCard>(mContext);
 
-	selectReader->setParent(this);
-	connectCard->setParent(this);
+	sSelectReader->setParent(this);
+	sConnectCard->setParent(this);
 
-	setInitialState(selectReader);
+	setInitialState(sSelectReader);
 
-	selectReader->addTransition(selectReader, &StateSelectReader::fireRetry, selectReader);
-	selectReader->addTransition(selectReader, &AbstractState::fireContinue, connectCard);
-	connect(selectReader, &AbstractState::fireAbort, this, &CompositeStateSelectCard::fireAbort);
+	sSelectReader->addTransition(sSelectReader, &StateSelectReader::fireRetry, sSelectReader);
+	sSelectReader->addTransition(sSelectReader, &AbstractState::fireContinue, sConnectCard);
+	connect(sSelectReader, &AbstractState::fireAbort, this, &CompositeStateSelectCard::fireAbort);
 
-	connectCard->addTransition(connectCard, &StateConnectCard::fireRetry, selectReader);
-	connectCard->addTransition(connectCard, &StateConnectCard::fireReaderRemoved, selectReader);
-	connect(connectCard, &AbstractState::fireContinue, this, &CompositeStateSelectCard::fireContinue);
-	connect(connectCard, &AbstractState::fireAbort, this, &CompositeStateSelectCard::fireAbort);
+	sConnectCard->addTransition(sConnectCard, &StateConnectCard::fireRetry, sSelectReader);
+	sConnectCard->addTransition(sConnectCard, &StateConnectCard::fireReaderRemoved, sSelectReader);
+	connect(sConnectCard, &AbstractState::fireContinue, this, &CompositeStateSelectCard::fireContinue);
+	connect(sConnectCard, &AbstractState::fireAbort, this, &CompositeStateSelectCard::fireAbort);
 }
 
 

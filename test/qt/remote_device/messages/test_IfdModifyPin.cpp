@@ -20,25 +20,28 @@ class test_IfdModifyPin
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
 		void invalidJson()
 		{
-			QSignalSpy logSpy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			QByteArray message("FooBar");
 			const auto& obj = QJsonDocument::fromJson(message).object();
 			QVERIFY(obj.isEmpty());
 
 			IfdModifyPin msg(obj);
+			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 4);
+			QCOMPARE(logSpy.count(), 6);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Missing value \"ContextHandle\""));
-			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"SlotHandle\""));
-			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"InputData\""));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""));
+			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""));
+			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"SlotHandle\""));
+			QVERIFY(logSpy.at(4).at(0).toString().contains("Missing value \"InputData\""));
+			QVERIFY(logSpy.at(5).at(0).toString().contains("The value of msg should be IFDModifyPIN"));
 		}
 
 
@@ -49,6 +52,7 @@ class test_IfdModifyPin
 				QByteArray::fromHex("abcd1234")
 				);
 
+			QVERIFY(!ifdModifyPin.isIncomplete());
 			QCOMPARE(ifdModifyPin.getType(), RemoteCardMessageType::IFDModifyPIN);
 			QCOMPARE(ifdModifyPin.getContextHandle(), QString());
 			QCOMPARE(ifdModifyPin.getSlotHandle(), QStringLiteral("SlotHandle"));
@@ -63,9 +67,8 @@ class test_IfdModifyPin
 				QByteArray::fromHex("abcd1234")
 				);
 
-			const QJsonDocument& doc = ifdModifyPin.toJson(QStringLiteral("TestContext"));
-			QVERIFY(doc.isObject());
-			QCOMPARE(doc.toJson(),
+			const QByteArray& byteArray = ifdModifyPin.toByteArray(QStringLiteral("TestContext"));
+			QCOMPARE(byteArray,
 					QByteArray("{\n"
 							   "    \"ContextHandle\": \"TestContext\",\n"
 							   "    \"InputData\": \"abcd1234\",\n"
@@ -73,7 +76,7 @@ class test_IfdModifyPin
 							   "    \"msg\": \"IFDModifyPIN\"\n"
 							   "}\n"));
 
-			const QJsonObject obj = doc.object();
+			const QJsonObject obj = QJsonDocument::fromJson(byteArray).object();
 			QCOMPARE(obj.size(), 4);
 			QCOMPARE(obj.value(QLatin1String("msg")).toString(), QStringLiteral("IFDModifyPIN"));
 			QCOMPARE(obj.value(QLatin1String("ContextHandle")).toString(), QStringLiteral("TestContext"));
@@ -84,7 +87,7 @@ class test_IfdModifyPin
 
 		void fromJson()
 		{
-			QSignalSpy logSpy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"ContextHandle\": \"TestContext\",\n"
@@ -95,6 +98,7 @@ class test_IfdModifyPin
 
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
 			const IfdModifyPin ifdModifyPin(obj);
+			QVERIFY(!ifdModifyPin.isIncomplete());
 			QCOMPARE(ifdModifyPin.getType(), RemoteCardMessageType::IFDModifyPIN);
 			QCOMPARE(ifdModifyPin.getContextHandle(), QStringLiteral("TestContext"));
 			QCOMPARE(ifdModifyPin.getSlotHandle(), QStringLiteral("SlotHandle"));
@@ -120,7 +124,7 @@ class test_IfdModifyPin
 		{
 			QFETCH(RemoteCardMessageType, type);
 
-			QSignalSpy logSpy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			QByteArray message("{\n"
 							   "    \"ContextHandle\": \"TestContext\",\n"
@@ -133,6 +137,7 @@ class test_IfdModifyPin
 
 			if (type == RemoteCardMessageType::IFDModifyPIN)
 			{
+				QVERIFY(!ifdModifyPin.isIncomplete());
 				QCOMPARE(ifdModifyPin.getType(), RemoteCardMessageType::IFDModifyPIN);
 
 				QCOMPARE(logSpy.count(), 0);
@@ -140,16 +145,26 @@ class test_IfdModifyPin
 				return;
 			}
 
-			QVERIFY(ifdModifyPin.isValid());
+			QVERIFY(ifdModifyPin.isIncomplete());
 			QCOMPARE(ifdModifyPin.getType(), type);
 
-			QCOMPARE(logSpy.count(), 0);
+			if (type == RemoteCardMessageType::UNDEFINED)
+			{
+				QCOMPARE(logSpy.count(), 2);
+				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""));
+				QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDModifyPIN"));
+
+				return;
+			}
+
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be IFDModifyPIN"));
 		}
 
 
 		void wrongTypes()
 		{
-			QSignalSpy logSpy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"ContextHandle\": \"TestContext\",\n"
@@ -160,6 +175,7 @@ class test_IfdModifyPin
 
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
 			const IfdModifyPin ifdModifyPin(obj);
+			QVERIFY(ifdModifyPin.isIncomplete());
 			QCOMPARE(ifdModifyPin.getType(), RemoteCardMessageType::IFDModifyPIN);
 			QCOMPARE(ifdModifyPin.getContextHandle(), QStringLiteral("TestContext"));
 			QCOMPARE(ifdModifyPin.getSlotHandle(), QString());

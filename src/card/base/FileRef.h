@@ -26,4 +26,4 @@ struct FileRef
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

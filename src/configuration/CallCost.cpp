@@ -18,7 +18,7 @@ inline double getValue(const QJsonValue& pJson, const char* pSection, const char
 }
 
 
-}
+} // namespace
 
 CallCost::CallCost(int pFreeSeconds, double pLandlineCentsPerMinute, double pLandlineCentsPerCall, double pMobileCentsPerMinute, double pMobileCentsPerCall)
 	: mFreeSeconds(pFreeSeconds)

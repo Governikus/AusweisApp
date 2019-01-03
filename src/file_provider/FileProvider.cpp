@@ -37,7 +37,7 @@ const QSharedPointer<UpdatableFile> FileProvider::getFile(const QString& pSectio
 	const QSharedPointer<UpdatableFile> existingF = mUpdatableFiles.value(key, QSharedPointer<UpdatableFile>());
 	if (existingF.isNull())
 	{
-		const QSharedPointer<UpdatableFile> newF(new UpdatableFile(pSection, pName, pDefaultPath));
+		const QSharedPointer<UpdatableFile> newF(new UpdatableFile(pSection, pName, pDefaultPath), &QObject::deleteLater);
 		if (!pName.isEmpty())
 		{
 			mUpdatableFiles.insert(key, newF);

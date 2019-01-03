@@ -24,4 +24,4 @@ class ChangePinController
 		virtual ~ChangePinController();
 };
 
-} /* namespace governikus */
+} // namespace governikus

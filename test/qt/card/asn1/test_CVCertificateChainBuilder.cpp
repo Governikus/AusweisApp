@@ -39,11 +39,11 @@ class test_CVCertificateChainBuilder
 
 
 	/*!
-	 * Creates an object of EstablishPACEChannelOutput with CARcurr, and CARprev equal to
+	 * Creates an object of EstablishPaceChannelOutput with CARcurr, and CARprev equal to
 	 */
-	static EstablishPACEChannelOutput createPaceOutput(QSharedPointer<const CVCertificate> pCvcCarCurr, QSharedPointer<const CVCertificate> pCvcCarPrev)
+	static EstablishPaceChannelOutput createPaceOutput(QSharedPointer<const CVCertificate> pCvcCarCurr, QSharedPointer<const CVCertificate> pCvcCarPrev)
 	{
-		EstablishPACEChannelOutput output;
+		EstablishPaceChannelOutput output;
 		if (pCvcCarCurr != nullptr)
 		{
 			output.setCarCurr(pCvcCarCurr->getBody().getCertificateHolderReference());
@@ -392,7 +392,7 @@ class test_CVCertificateChainBuilder
 			list.append(mCvdv_DEDVeIDDPST00035);
 			list.append(mCvat_DEDEMODEV00038);
 			CVCertificateChainBuilder builder(list, false);
-			EstablishPACEChannelOutput output = createPaceOutput(mCvca_DETESTeID00004_DETESTeID00002, mCvca_DETESTeID00002);
+			EstablishPaceChannelOutput output = createPaceOutput(mCvca_DETESTeID00004_DETESTeID00002, mCvca_DETESTeID00002);
 
 			CVCertificateChain chain = builder.getChainForCertificationAuthority(output);
 
@@ -415,7 +415,7 @@ class test_CVCertificateChainBuilder
 			list.append(mCvdv_DEDVeIDDPST00035);
 			list.append(mCvat_DEDEMODEV00038);
 			CVCertificateChainBuilder builder(list, false);
-			EstablishPACEChannelOutput output = createPaceOutput(mCvca_DETESTeID00005, mCvca_DETESTeID00002);
+			EstablishPaceChannelOutput output = createPaceOutput(mCvca_DETESTeID00005, mCvca_DETESTeID00002);
 
 			CVCertificateChain chain = builder.getChainForCertificationAuthority(output);
 

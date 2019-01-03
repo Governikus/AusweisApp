@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "Env.h"
 #include "UpdatableFile.h"
 
 #include <QHash>
@@ -18,6 +19,7 @@ namespace governikus
 class FileProvider
 {
 	Q_GADGET
+	friend class Env;
 
 	private:
 		QHash<QString, QSharedPointer<UpdatableFile> > mUpdatableFiles;
@@ -26,11 +28,10 @@ class FileProvider
 	protected:
 		FileProvider();
 		~FileProvider() = default;
+		static FileProvider& getInstance();
 
 	public:
 		const QSharedPointer<UpdatableFile> getFile(const QString& pSection, const QString& pName, const QString& pDefaultPath = QString());
-
-		static FileProvider& getInstance();
 };
 
 } // namespace governikus

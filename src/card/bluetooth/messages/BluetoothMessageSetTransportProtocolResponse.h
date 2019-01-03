@@ -24,4 +24,4 @@ class BluetoothMessageSetTransportProtocolResponse
 		BluetoothResultCode getResultCode() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

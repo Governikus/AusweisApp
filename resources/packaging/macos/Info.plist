@@ -2,6 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>LSEnvironment</key>
+	<dict>
+	    <key>QT_MAC_DISABLE_FOREGROUND_APPLICATION_TRANSFORM</key>
+	    <string>true</string>
+	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>de_DE</string>
 	<key>CFBundleDisplayName</key>
@@ -25,12 +30,14 @@
 	<key>CFBundleSignature</key>
 	<string>aaii</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>© 2014 Governikus GmbH &amp; Co. KG</string>
+	<string>@CPACK_BUNDLE_COPYRIGHT@</string>
 	<key>LSBackgroundOnly</key>
 	<string>0</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>10.9.0</string>
+	<string>10.11.0</string>
 	<key>LSUIElement</key>
 	<string>1</string>
+	<key>NSHighResolutionCapable</key>
+	<string>True</string>
 </dict>
 </plist>

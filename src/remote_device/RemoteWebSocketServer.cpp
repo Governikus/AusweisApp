@@ -26,7 +26,7 @@ template<> RemoteWebSocketServer* createNewObject<RemoteWebSocketServer*>()
 }
 
 
-} /* namespace governikus */
+} // namespace governikus
 
 using namespace governikus;
 
@@ -67,12 +67,7 @@ void RemoteWebSocketServerImpl::onConnectionClosed()
 
 void RemoteWebSocketServerImpl::onServerError(QWebSocketProtocol::CloseCode pCloseCode)
 {
-	static int timesLogged = 0;
-	if (timesLogged < 20)
-	{
-		qCCritical(remote_device) << pCloseCode;
-		timesLogged++;
-	}
+	qCCritical(remote_device) << pCloseCode;
 }
 
 

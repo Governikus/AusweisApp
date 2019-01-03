@@ -1,3 +1,3 @@
 ADD_PLATFORM_LIBRARY(AusweisAppActivation)
 
-TARGET_LINK_LIBRARIES(AusweisAppActivation Qt5::Core AusweisAppGlobal AusweisAppNetwork)
+TARGET_LINK_LIBRARIES(AusweisAppActivation Qt5::Core AusweisAppExternal::HttpParser AusweisAppGlobal AusweisAppNetwork AusweisAppUi)

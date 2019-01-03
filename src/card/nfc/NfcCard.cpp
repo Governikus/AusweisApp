@@ -107,7 +107,7 @@ CardReturnCode NfcCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
-	qCDebug(card_nfc) << "Transmit command APDU: " << pCmd.getBuffer().toHex();
+	qCDebug(card_nfc) << "Transmit command APDU:" << pCmd.getBuffer().toHex();
 
 	if (!mNearFieldTarget->accessMethods().testFlag(QNearFieldTarget::AccessMethod::TagTypeSpecificAccess))
 	{
@@ -122,10 +122,8 @@ CardReturnCode NfcCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
-	if (!mNearFieldTarget->waitForRequestCompleted(id, 750))
+	if (!mNearFieldTarget->waitForRequestCompleted(id, 1500))
 	{
-		Q_EMIT fireCardRemoved();
-
 		qCWarning(card_nfc) << "Transmit timeout reached";
 		return CardReturnCode::COMMAND_FAILED;
 	}
@@ -138,7 +136,7 @@ CardReturnCode NfcCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 	}
 
 	QByteArray recvBuffer = response.toByteArray();
-	qCDebug(card_nfc) << "Transmit response APDU: " << recvBuffer.toHex();
+	qCDebug(card_nfc) << "Transmit response APDU:" << recvBuffer.toHex();
 	pRes.setBuffer(recvBuffer);
 	return CardReturnCode::OK;
 }

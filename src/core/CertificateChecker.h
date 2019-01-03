@@ -7,6 +7,7 @@
 #pragma once
 
 #include "asn1/CVCertificate.h"
+#include "paos/retrieve/DidAuthenticateEac1.h"
 
 #include <QSet>
 #include <QSslCertificate>
@@ -16,7 +17,6 @@
 
 namespace governikus
 {
-class DIDAuthenticateEAC1;
 
 /*!
  * \brief Utility class for checking various constraints on certificates

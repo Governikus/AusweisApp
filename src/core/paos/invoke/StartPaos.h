@@ -28,13 +28,12 @@ class StartPaos
 		const UserAgent mUserAgent;
 		const SupportedAPI mSupportedAPI;
 
-		QDomElement createStartPaosElement();
-		QDomElement createSessionIdentifierElement();
-		QDomElement createConnectionHandleElement();
-		QDomElement createUserAgentElement();
-		QDomElement createSupportedAPIVersionsElement();
+		void createSessionIdentifierElement();
+		void createConnectionHandleElement();
+		void createUserAgentElement();
+		void createSupportedAPIVersionsElement();
 
-		virtual QDomElement getDocumentStructure() override;
+		virtual void createBodyElement() override;
 
 		Q_DISABLE_COPY(StartPaos)
 
@@ -42,4 +41,4 @@ class StartPaos
 		StartPaos(const QByteArray& pSessionId);
 };
 
-} /* namespace governikus */
+} // namespace governikus

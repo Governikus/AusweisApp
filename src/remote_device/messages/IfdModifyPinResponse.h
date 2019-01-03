@@ -18,15 +18,16 @@ class IfdModifyPinResponse
 		QByteArray mOutputData;
 
 	public:
-		IfdModifyPinResponse(const QString& pSlotHandle, const QByteArray& pOutputData, const QString& pResultMinor = QString());
+		IfdModifyPinResponse(const QString& pSlotHandle, const QByteArray& pOutputData, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		IfdModifyPinResponse(const QJsonObject& pMessageObject);
 		virtual ~IfdModifyPinResponse() override = default;
 
 		const QString& getSlotHandle() const;
 		const QByteArray& getOutputData() const;
 		CardReturnCode getReturnCode() const;
-		virtual QJsonDocument toJson(const QString& pContextHandle) const override;
+
+		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

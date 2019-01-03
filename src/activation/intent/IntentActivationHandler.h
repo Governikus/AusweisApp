@@ -46,4 +46,4 @@ class IntentActivationHandler
 		virtual void stop() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

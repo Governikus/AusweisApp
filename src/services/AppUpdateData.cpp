@@ -5,7 +5,6 @@
 #include "AppUpdateData.h"
 
 #include "AppSettings.h"
-#include "Env.h"
 #include "VersionNumber.h"
 
 #include <QJsonArray>

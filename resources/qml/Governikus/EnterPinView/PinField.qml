@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.10
 
 import Governikus.Global 1.0
 
@@ -6,6 +6,7 @@ Item {
 	id: baseItem
 
 	property alias text: echoField.text
+	property int passwordLength: 6
 	property string inputConfirmation
 	readonly property bool confirmedInput: inputConfirmation.length != text.length || inputConfirmation === text
 	readonly property bool validInput: echoField.acceptableInput && confirmedInput
@@ -26,25 +27,21 @@ Item {
 		color: Constants.secondary_text
 		verticalAlignment: TextInput.AlignVCenter
 		echoMode: TextInput.Password
-		font.pixelSize: Utils.sp(18)
+		font.pixelSize: Utils.dp(18)
 		font.letterSpacing: Utils.dp(10)
 		passwordMaskDelay: 500
 		cursorVisible: false
 		activeFocusOnPress: false
 		focus: false
 		validator: RegExpValidator {
-			regExp: baseItem.state === "PUK" ? /[0-9]{10}/ :
-					baseItem.state === "PIN_OR_TRANSPORT_PIN" ? /[0-9]{5,6}/ :
-					baseItem.state === "REMOTE_PIN" ? /[0-9]{4}/ : /[0-9]{6}/
+			regExp: new RegExp("[0-9]{" + echoField.maximumLength + "}")
 		}
-		maximumLength: baseItem.state === "PUK" ? 10 :
-					   baseItem.state === "REMOTE_PIN" ? 4 : 6
+		maximumLength: baseItem.passwordLength
 		clip: true
 	}
 
 	TextInput {
 		id: sample
-		color: Constants.secondary_text
 		visible: false
 		echoMode: echoField.echoMode
 		font: echoField.font
@@ -58,14 +55,12 @@ Item {
 		anchors.left: echoField.left
 
 		Repeater {
-			model: baseItem.state === "PUK" ? 10 :
-				   baseItem.state === "REMOTE_PIN" ? 4 : 6
-			delegate:
-				Rectangle {
-					width: sample.contentWidth - sample.font.letterSpacing
-					height: 1
-					color: "black"
-			   }
+			model: baseItem.passwordLength
+			delegate: Rectangle {
+				width: sample.contentWidth - sample.font.letterSpacing
+				height: 1
+				color: "black"
+		   }
 		}
 	}
 }

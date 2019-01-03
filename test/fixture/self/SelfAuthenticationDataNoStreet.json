@@ -1,0 +1,50 @@
+{
+  "PersonalData": {
+    "DocumentType": "TP",
+    "IssuingState": "D",
+    "DateOfExpiry": "2020-10-31+01:00",
+    "GivenNames": "ANNEKATHRIN",
+    "FamilyNames": "LERCH",
+    "ArtisticName": "",
+    "AcademicTitle": "",
+    "PlaceOfBirth": {
+      "FreetextPlace": "BAD KÖNIGSHOFEN I. GRABFELD"
+    },
+    "Nationality": "AZE",
+    "BirthName": "",
+    "PlaceOfResidence": {
+      "StructuredPlace": {
+        "City": "LÜBBENAU/SPREEWALD",
+        "Country": "D",
+        "ZipCode": "06108"
+      }
+    },
+    "ResidencePermitI": "ERWERBSTÄTIGKEIT/BESCHÄFTIGUNG GESTATTET.",
+    "DateOfBirth": "1976-07-05+01:00"
+  },
+  "OperationsAllowedByUser": {
+    "DocumentType": "ALLOWED",
+    "IssuingState": "ALLOWED",
+    "DateOfExpiry": "ALLOWED",
+    "GivenNames": "ALLOWED",
+    "FamilyNames": "ALLOWED",
+    "ArtisticName": "ALLOWED",
+    "AcademicTitle": "ALLOWED",
+    "DateOfBirth": "ALLOWED",
+    "PlaceOfBirth": "ALLOWED",
+    "Nationality": "ALLOWED",
+    "BirthName": "ALLOWED",
+    "PlaceOfResidence": "ALLOWED",
+    "ResidencePermitI": "ALLOWED",
+    "RestrictedID": "PROHIBITED",
+    "AgeVerification": "PROHIBITED",
+    "PlaceVerification": "PROHIBITED"
+  },
+  "Result": {
+    "ResultMajor": "http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok",
+    "ResultMessage": {
+      "Value": "",
+      "Lang": "en"
+    }
+  }
+}

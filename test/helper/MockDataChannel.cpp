@@ -4,11 +4,15 @@
 
 #include "MockDataChannel.h"
 
+#include <QUuid>
+
+
 using namespace governikus;
 
 
 MockDataChannel::MockDataChannel()
-	: mReceivedDataBlocks()
+	: mId(QUuid::createUuid().toString())
+	, mReceivedDataBlocks()
 {
 }
 
@@ -21,6 +25,12 @@ MockDataChannel::~MockDataChannel()
 void MockDataChannel::close()
 {
 	Q_EMIT fireClosed(GlobalStatus::Code::RemoteReader_CloseCode_NormalClose);
+}
+
+
+const QString& MockDataChannel::getId() const
+{
+	return mId;
 }
 
 

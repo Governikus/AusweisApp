@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "asn1/SecurityInfo.h"
 #include "CardConnectionWorker.h"
 #include "CardOperationResult.h"
 #include "GeneralAuthenticateResponse.h"
@@ -17,13 +16,10 @@
 namespace governikus
 {
 
-
-class PACEInfo;
-
-
 enum class KeyAgreementStatus
 {
 	SUCCESS,
+	RETRY_ALLOWED,
 	COMMUNICATION_ERROR,
 	FAILED,
 	PROTOCOL_ERROR
@@ -74,10 +70,10 @@ class KeyAgreement
 		KeyAgreementStatus performMutualAuthenticate();
 
 	protected:
-		const QSharedPointer<const PACEInfo> mPaceInfo;
+		const QSharedPointer<const PaceInfo> mPaceInfo;
 		KeyDerivationFunction mKeyDerivationFunction;
 
-		KeyAgreement(const QSharedPointer<const PACEInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
+		KeyAgreement(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 		/*!
 		 * \brief Transmit the General Authenticate (Mapping Data) command to the card.
@@ -121,7 +117,7 @@ class KeyAgreement
 		 * \param pCardConnectionWorker the reader connection to transmit card commands
 		 * \return new instance
 		 */
-		static QSharedPointer<KeyAgreement> create(const QSharedPointer<const PACEInfo>& pPaceInfo,
+		static QSharedPointer<KeyAgreement> create(const QSharedPointer<const PaceInfo>& pPaceInfo,
 				QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 		virtual ~KeyAgreement();
 
@@ -159,4 +155,4 @@ class KeyAgreement
 		const QByteArray& getCarPrev() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -1,0 +1,641 @@
+/*!
+ * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ */
+
+#include "ECardApiResult.h"
+
+#include "LanguageLoader.h"
+
+#include <QDebug>
+#include <QStringBuilder>
+
+using namespace governikus;
+
+#define RESULTMAJOR "http://www.bsi.bund.de/ecard/api/1.1/resultmajor"
+#define RESULTMINOR "http://www.bsi.bund.de/ecard/api/1.1/resultminor"
+
+const QMap<ECardApiResult::Major, QString> ECardApiResult::cMajorResults = {
+	{ECardApiResult::Major::Ok, QString::fromLatin1(RESULTMAJOR "#ok")},
+	{ECardApiResult::Major::Warning, QString::fromLatin1(RESULTMAJOR "#warning")},
+	{ECardApiResult::Major::Error, QString::fromLatin1(RESULTMAJOR "#error")}
+};
+
+// See TR-03112, section 4.2 for details about the codes
+//      AL -> Applicaction Layer
+//      DP -> Dispatcher
+//      IFDL -> Interface Device Layer
+//      IL -> Identify Layer
+//      KEY
+//      SAL -> Service Access Layer
+const QMap<ECardApiResult::Minor, QString> ECardApiResult::cMinorResults = {
+	{ECardApiResult::Minor::AL_Unknown_Error, QString::fromLatin1(RESULTMINOR "/al/common#unknownError")},
+	{ECardApiResult::Minor::AL_No_Permission, QString::fromLatin1(RESULTMINOR "/al/common#noPermission")},
+	{ECardApiResult::Minor::AL_Internal_Error, QString::fromLatin1(RESULTMINOR "/al/common#internalError")},
+	{ECardApiResult::Minor::AL_Parameter_Error, QString::fromLatin1(RESULTMINOR "/al/common#parameterError")},
+	{ECardApiResult::Minor::AL_Unkown_API_Function, QString::fromLatin1(RESULTMINOR "/al/common#unknownAPIFunction")},
+	{ECardApiResult::Minor::AL_Not_Initialized, QString::fromLatin1(RESULTMINOR "/al/common#notInitialized")},
+	{ECardApiResult::Minor::AL_Warning_Connection_Disconnected, QString::fromLatin1(RESULTMINOR "/al/common#warningConnectionDisconnected")},
+	{ECardApiResult::Minor::AL_Session_Terminated_Warning, QString::fromLatin1(RESULTMINOR "/al/common#SessionTerminatedWarning")},
+	{ECardApiResult::Minor::AL_Communication_Error, QString::fromLatin1(RESULTMINOR "/al/common#communicationError")},
+	{ECardApiResult::Minor::DP_Timeout_Error, QString::fromLatin1(RESULTMINOR "/dp#timeout")},
+	{ECardApiResult::Minor::DP_Unknown_Channel_Handle, QString::fromLatin1(RESULTMINOR "/dp#unknownChannelHandle")},
+	{ECardApiResult::Minor::DP_Communication_Error, QString::fromLatin1(RESULTMINOR "/dp#communicationError")},
+	{ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed, QString::fromLatin1(RESULTMINOR "/dp#trustedChannelEstablishmentFailed")},
+	{ECardApiResult::Minor::DP_Unknown_Protocol, QString::fromLatin1(RESULTMINOR "/dp#unknownProtocol")},
+	{ECardApiResult::Minor::DP_Unknown_Cipher_Suite, QString::fromLatin1(RESULTMINOR "/dp#unknownCipherSuite")},
+	{ECardApiResult::Minor::DP_Unknown_Webservice_Binding, QString::fromLatin1(RESULTMINOR "/dp#unknownWebserviceBinding")},
+	{ECardApiResult::Minor::DP_Node_Not_Reachable, QString::fromLatin1(RESULTMINOR "/dp#nodeNotReachable")},
+	{ECardApiResult::Minor::IFDL_Timeout_Error, QString::fromLatin1(RESULTMINOR "/ifdl/common#timeoutError")},
+	{ECardApiResult::Minor::IFDL_UnknownSlot, QString::fromLatin1(RESULTMINOR "/ifdl/terminal#unknownSlot")},
+	{ECardApiResult::Minor::IFDL_InvalidSlotHandle, QString::fromLatin1(RESULTMINOR "/ifdl/common#invalidSlotHandle")},
+	{ECardApiResult::Minor::IFDL_CancellationByUser, QString::fromLatin1(RESULTMINOR "/ifdl#cancellationByUser")},
+	{ECardApiResult::Minor::IFDL_IFD_SharingViolation, QString::fromLatin1(RESULTMINOR "ifdl/terminal#IFDSharingViolation")},
+	{ECardApiResult::Minor::IFDL_Terminal_NoCard, QString::fromLatin1(RESULTMINOR "/ifdl/terminal#noCard")},
+	{ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch, QString::fromLatin1(RESULTMINOR "/ifdl/IO#repeatedDataMismatch")},
+	{ECardApiResult::Minor::IFDL_IO_UnknownPINFormat, QString::fromLatin1(RESULTMINOR "/ifdl/IO#unknownPINFormat")},
+	{ECardApiResult::Minor::IL_Signature_InvalidCertificatePath, QString::fromLatin1(RESULTMINOR "/il/signature#invalidCertificatePath")},
+	{ECardApiResult::Minor::KEY_KeyGenerationNotPossible, QString::fromLatin1(RESULTMINOR "/il/key#keyGenerationNotPossible")},
+	{ECardApiResult::Minor::SAL_Cancellation_by_User, QString::fromLatin1(RESULTMINOR "/sal#cancellationByUser")},
+	{ECardApiResult::Minor::SAL_Invalid_Key, QString::fromLatin1(RESULTMINOR "/sal#invalidKey")},
+	{ECardApiResult::Minor::SAL_SecurityConditionNotSatisfied, QString::fromLatin1(RESULTMINOR "/sal#securityConditionNotSatisfied")},
+	{ECardApiResult::Minor::SAL_MEAC_AgeVerificationFailedWarning, QString::fromLatin1(RESULTMINOR "/sal/mEAC#AgeVerificationFailedWarning")},
+	{ECardApiResult::Minor::SAL_MEAC_CommunityVerificationFailedWarning, QString::fromLatin1(RESULTMINOR "/sal/mEAC#CommunityVerificationFailedWarning")},
+	{ECardApiResult::Minor::SAL_MEAC_DocumentValidityVerificationFailed, QString::fromLatin1(RESULTMINOR "/sal/mEAC#DocumentValidityVerificationFailed")},
+};
+
+QMap<GlobalStatus::Code, ECardApiResult::Minor> ECardApiResult::cConversionMap1 = {};
+QMap<ECardApiResult::Minor, GlobalStatus::Code> ECardApiResult::cConversionMap2 = {};
+
+
+ECardApiResult ECardApiResult::fromStatus(const GlobalStatus& pStatus)
+{
+	if (pStatus.getStatusCode() == GlobalStatus::Code::No_Error || pStatus.getStatusCode() == GlobalStatus::Code::RemoteReader_CloseCode_NormalClose)
+	{
+		return createOk();
+	}
+
+	const QString& message = pStatus.toErrorDescription();
+	const Minor minor = fromStatus((pStatus.getStatusCode()));
+	const Origin status = fromStatus(pStatus.getOrigin());
+
+	return ECardApiResult(Major::Error, minor, message, status);
+}
+
+
+ECardApiResult ECardApiResult::createOk()
+{
+	return ECardApiResult(Major::Ok, Minor::null);
+}
+
+
+void ECardApiResult::initConversionMaps()
+{
+	if (!cConversionMap1.isEmpty() || !cConversionMap2.isEmpty())
+	{
+		return;
+	}
+
+	addConversionElement(GlobalStatus::Code::Paos_Error_AL_Unknown_Error, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Paos_Unexpected_Warning, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Unknown_Error, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Card_Unexpected_Transmit_Status, Minor::AL_Unknown_Error);
+
+	addConversionElement(GlobalStatus::Code::No_Error, Minor::null);
+	addConversionElement(GlobalStatus::Code::RemoteReader_CloseCode_NormalClose, Minor::null);
+
+	addConversionElement(GlobalStatus::Code::Workflow_Card_Removed, Minor::IFDL_CancellationByUser);
+
+	addConversionElement(GlobalStatus::Code::Workflow_No_Unique_DvCvc, ECardApiResult::Minor::IL_Signature_InvalidCertificatePath);
+	addConversionElement(GlobalStatus::Code::Workflow_No_Unique_AtCvc, ECardApiResult::Minor::IL_Signature_InvalidCertificatePath);
+	addConversionElement(GlobalStatus::Code::Workflow_Preverification_Error, ECardApiResult::Minor::IL_Signature_InvalidCertificatePath);
+	addConversionElement(GlobalStatus::Code::Workflow_Preverification_Developermode_Error, ECardApiResult::Minor::IL_Signature_InvalidCertificatePath);
+
+	addConversionElement(GlobalStatus::Code::Workflow_Certificate_No_Description, Minor::AL_Parameter_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Certificate_No_Url_In_Description, Minor::AL_Parameter_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Certificate_Hash_Error, Minor::AL_Parameter_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Certificate_Sop_Error, Minor::AL_Parameter_Error);
+
+	addConversionElement(GlobalStatus::Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_No_Data_Received, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_TimeOut, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Proxy_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Establishment_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Other_Network_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
+
+	addConversionElement(GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User, Minor::SAL_Cancellation_by_User);
+	addConversionElement(GlobalStatus::Code::Workflow_Cancellation_By_User, Minor::SAL_Cancellation_by_User);
+	addConversionElement(GlobalStatus::Code::Card_Cancellation_By_User, Minor::SAL_Cancellation_by_User);
+
+	addConversionElement(GlobalStatus::Code::Workflow_No_Permission_Error, Minor::AL_No_Permission);
+
+	addConversionElement(GlobalStatus::Code::Paos_Error_AL_Communication_Error, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Communication_Missing_Redirect_Url, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Error_Page_Transmission_Error, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Redirect_Transmission_Error, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Processing_Error, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Reader_Became_Inaccessible, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Reader_Communication_Error, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Reader_Device_Connection_Error, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Reader_Device_Scan_Error, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Network_Ssl_Establishment_Error, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Network_Expected_Redirect, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Network_Invalid_Scheme, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Network_ServiceUnavailable, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Network_TimeOut, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Network_Proxy_Error, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Network_Other_Error, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Wrong_Parameter_Invocation, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Card_Invalid_Pin, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Card_Invalid_Can, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Card_Invalid_Puk, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Card_Puk_Blocked, Minor::AL_Communication_Error);
+
+	addConversionElement(GlobalStatus::Code::Card_NewPin_Invalid_Length, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_AlreadyInProgress_Error, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Card_Not_Found, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Card_Communication_Error, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Card_Input_TimeOut, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Card_Pin_Blocked, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Card_Pin_Not_Blocked, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Card_NewPin_Mismatch, Minor::AL_Unknown_Error);
+
+	addConversionElement(GlobalStatus::Code::Paos_Error_AL_Internal_Error, Minor::AL_Internal_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity, Minor::AL_Internal_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Unknown_Paos_Form_EidServer, Minor::AL_Internal_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, Minor::AL_Internal_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Pin_Blocked_And_Puk_Objectionable, Minor::AL_Internal_Error);
+	addConversionElement(GlobalStatus::Code::Card_Protocol_Error, Minor::AL_Internal_Error);
+
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::AL_Unkown_API_Function);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::AL_Not_Initialized);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::AL_Warning_Connection_Disconnected);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::AL_Session_Terminated_Warning);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::DP_Timeout_Error);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::DP_Unknown_Channel_Handle);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::DP_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::DP_Unknown_Protocol);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::DP_Unknown_Cipher_Suite);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::DP_Unknown_Webservice_Binding);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::DP_Node_Not_Reachable);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_Timeout_Error);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_UnknownSlot);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_InvalidSlotHandle);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_IFD_SharingViolation);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_Terminal_NoCard);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_IO_RepeatedDataMismatch);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_IO_UnknownPINFormat);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::KEY_KeyGenerationNotPossible);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IL_Signature_InvalidCertificatePath);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_SecurityConditionNotSatisfied);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_MEAC_AgeVerificationFailedWarning);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_MEAC_CommunityVerificationFailedWarning);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_MEAC_DocumentValidityVerificationFailed);
+
+	addConversionElement(GlobalStatus::Code::Paos_Error_SAL_Invalid_Key, Minor::SAL_Invalid_Key);
+
+	addConversionElement(GlobalStatus::Code::Downloader_Data_Corrupted, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::RemoteReader_CloseCode_Undefined, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::RemoteConnector_InvalidRequest, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::RemoteConnector_EmptyPassword, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::RemoteConnector_NoSupportedApiLevel, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::RemoteConnector_ConnectionTimeout, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::RemoteConnector_ConnectionError, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::RemoteConnector_RemoteHostRefusedConnection, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Downloader_File_Not_Found, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Downloader_Cannot_Save_File, Minor::AL_Unknown_Error);
+}
+
+
+void ECardApiResult::addConversionElement(const GlobalStatus::Code pCode, const Minor pMinor)
+{
+	if (!cConversionMap1.contains(pCode))
+	{
+		cConversionMap1[pCode] = pMinor;
+	}
+
+	if (!cConversionMap2.contains(pMinor))
+	{
+		cConversionMap2[pMinor] = pCode;
+	}
+}
+
+
+GlobalStatus::Code ECardApiResult::toStatus(const Minor pMinor)
+{
+	initConversionMaps();
+
+	if (!cConversionMap2.contains(pMinor))
+	{
+		qCritical() << "Critical conversion missmatch for" << pMinor;
+		Q_ASSERT(false);
+		return GlobalStatus::Code::Unknown_Error;
+	}
+
+	return cConversionMap2[pMinor];
+}
+
+
+ECardApiResult::Minor ECardApiResult::fromStatus(const GlobalStatus::Code pCode)
+{
+	initConversionMaps();
+
+	if (!cConversionMap1.contains(pCode))
+	{
+		qCritical() << "Critical conversion missmatch for" << pCode;
+		Q_ASSERT(false);
+		return Minor::AL_Unknown_Error;
+	}
+
+	return cConversionMap1[pCode];
+}
+
+
+GlobalStatus::Origin ECardApiResult::toStatus(const ECardApiResult::Origin pSelf)
+{
+	switch (pSelf)
+	{
+		case governikus::ECardApiResult::Origin::Client:
+			return governikus::GlobalStatus::Origin::Client;
+
+		case governikus::ECardApiResult::Origin::Server:
+			return governikus::GlobalStatus::Origin::Server;
+	}
+
+	Q_UNREACHABLE();
+}
+
+
+ECardApiResult::Origin ECardApiResult::fromStatus(const GlobalStatus::Origin pSelf)
+{
+	switch (pSelf)
+	{
+		case governikus::GlobalStatus::Origin::Client:
+			return governikus::ECardApiResult::Origin::Client;
+
+		case governikus::GlobalStatus::Origin::Server:
+			return governikus::ECardApiResult::Origin::Server;
+	}
+
+	Q_UNREACHABLE();
+}
+
+
+ECardApiResult::Major ECardApiResult::parseMajor(const QString& pMajor)
+{
+	for (auto iter = cMajorResults.cbegin(); iter != cMajorResults.cend(); ++iter)
+	{
+		if (pMajor == iter.value())
+		{
+			return iter.key();
+		}
+	}
+
+	if (!pMajor.isEmpty())
+	{
+		qWarning() << "Unknown ResultMajor:" << pMajor;
+	}
+	return Major::Unknown;
+}
+
+
+ECardApiResult::Minor ECardApiResult::parseMinor(const QString& pMinor)
+{
+	for (auto iter = cMinorResults.cbegin(); iter != cMinorResults.cend(); ++iter)
+	{
+		if (pMinor == iter.value())
+		{
+			return iter.key();
+		}
+	}
+
+	if (!pMinor.isEmpty())
+	{
+		qWarning() << "Unknown ResultMinor:" << pMinor;
+	}
+
+	return Minor::null;
+}
+
+
+bool ECardApiResult::isMajor(const QString& major)
+{
+	return Major::Unknown != parseMajor(major);
+}
+
+
+bool ECardApiResult::isMinor(const QString& minor)
+{
+	return Minor::null != parseMinor(minor);
+}
+
+
+QString ECardApiResult::getMessage(Minor pMinor)
+{
+	switch (pMinor)
+	{
+		case Minor::AL_Unknown_Error:
+			return tr("An unexpected error has occurred during processing.");
+
+		case Minor::AL_No_Permission:
+			return tr("Use of the function by the client application is not permitted.");
+
+		case Minor::AL_Internal_Error:
+			return tr("An internal error has occurred during processing.");
+
+		case Minor::AL_Parameter_Error:
+			return tr("There was some problem with a provided or omitted parameter.");
+
+		case Minor::AL_Unkown_API_Function:
+			return tr("The API function is unknown.");
+
+		case Minor::AL_Not_Initialized:
+			return tr("The framework or layer has not been initialized.");
+
+		case Minor::AL_Warning_Connection_Disconnected:
+			return tr("The active session has been terminated.");
+
+		case Minor::AL_Session_Terminated_Warning:
+			return tr("The active session has been terminated.");
+
+		case Minor::AL_Communication_Error:
+			return tr("A Communication error occurred during processing.");
+
+		case Minor::DP_Timeout_Error:
+			return tr("The operation was terminated as the set time was exceeded.");
+
+		case Minor::DP_Unknown_Channel_Handle:
+			return tr("The operation was aborted as an invalid channel handle was used.");
+
+		case Minor::DP_Communication_Error:
+			return tr("A Communication error occurred during processing.");
+
+		case Minor::DP_Trusted_Channel_Establishment_Failed:
+			return tr("A trusted channel could not be opened.");
+
+		case Minor::DP_Unknown_Protocol:
+			return tr("The operation was aborted as an unknown protocol was used.");
+
+		case Minor::DP_Unknown_Cipher_Suite:
+			return tr("The operation was aborted as an unknown cipher suite was used.");
+
+		case Minor::DP_Unknown_Webservice_Binding:
+			return tr("The operation was aborted as an unknown web service binding was used.");
+
+		case Minor::DP_Node_Not_Reachable:
+			return tr("A Communication error occurred during processing.");
+
+		case Minor::IFDL_Timeout_Error:
+			return tr("The operation was terminated as the set time was exceeded.");
+
+		case Minor::IFDL_Terminal_NoCard:
+			return tr("The card is missing or was removed.");
+
+		case Minor::IFDL_IO_RepeatedDataMismatch:
+			return tr("The new PIN and the confirmation do not match.");
+
+		case Minor::IFDL_IO_UnknownPINFormat:
+			return tr("The format of the PIN is wrong.");
+
+		case Minor::KEY_KeyGenerationNotPossible:
+			return tr("Signature certificate key generation is not possible.");
+
+		case Minor::SAL_Cancellation_by_User:
+			return tr("The process was cancelled by the user.");
+
+		case Minor::IL_Signature_InvalidCertificatePath:
+			return tr("One or more certificate checks failed. The operation will be aborted due to security reasons.");
+
+		case Minor::SAL_Invalid_Key:
+			return tr("This action cannot be performed. The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.");
+
+		case Minor::SAL_SecurityConditionNotSatisfied:
+			return tr("The authenticity of your ID card could not be verified. Please make sure that you are using a genuine ID card. Please note that test applications require the use of a test ID card.");
+
+		case Minor::SAL_MEAC_AgeVerificationFailedWarning:
+			return tr("The age verification failed.");
+
+		case Minor::SAL_MEAC_CommunityVerificationFailedWarning:
+			return tr("The community verification failed.");
+
+		case Minor::SAL_MEAC_DocumentValidityVerificationFailed:
+			return tr("The ID card is invalid or disabled.");
+
+		case Minor::null:
+		default:
+			return QString();
+	}
+}
+
+
+ECardApiResult::ResultData::ResultData(Major pMajor, Minor pMinor, const QString& pMessage, Origin pOrigin)
+	: QSharedData()
+	, mMajor(pMajor)
+	, mMinor(pMinor)
+	, mMessage(pMessage)
+	, mMessageLang(LanguageLoader::getInstance().getUsedLocale().bcp47Name().left(2))
+	, mOrigin(pOrigin)
+{
+}
+
+
+ECardApiResult::ECardApiResult(Major pMajor, Minor pMinor, const QString& pMessage, Origin pOrigin)
+	: d(new ResultData(pMajor, pMinor, pMessage, pOrigin))
+{
+	const bool nullWithoutOk = pMajor != Major::Ok && pMinor == Minor::null;
+	const bool okWithoutNull = pMajor == Major::Ok && pMinor != Minor::null;
+
+	if (nullWithoutOk || okWithoutNull)
+	{
+		qCritical() << "Invalid combination of Major(" << pMajor << ") and Minor (" << pMinor << ") supplied.";
+		d = new ResultData(Major::Error, Minor::AL_Internal_Error, pMessage, pOrigin);
+	}
+}
+
+
+ECardApiResult::ECardApiResult(const QString& pMajor, const QString& pMinor, const QString& pMessage, Origin pOrigin)
+	: d(new ResultData(parseMajor(pMajor), parseMinor(pMinor), pMessage, pOrigin))
+{
+	// No parameter sanitization here, since we receive values from remote hosts.
+}
+
+
+ECardApiResult::ECardApiResult(const GlobalStatus& pStatus)
+	: ECardApiResult(fromStatus(pStatus))
+{
+}
+
+
+bool ECardApiResult::operator ==(const ECardApiResult& pResult) const
+{
+	return *d == *pResult.d;
+}
+
+
+ECardApiResult::Major ECardApiResult::getMajor() const
+{
+	return d->mMajor;
+}
+
+
+ECardApiResult::Minor ECardApiResult::getMinor() const
+{
+	return d->mMinor;
+}
+
+
+QString ECardApiResult::getMessage() const
+{
+	return d->mMessage;
+}
+
+
+const QString& ECardApiResult::getMessageLang() const
+{
+	return d->mMessageLang;
+}
+
+
+QString ECardApiResult::getMajorString(ECardApiResult::Major pMajor)
+{
+	return cMajorResults.value(pMajor);
+}
+
+
+QString ECardApiResult::getMinorString(ECardApiResult::Minor pMinor)
+{
+	return cMinorResults.value(pMinor);
+}
+
+
+QString ECardApiResult::getMajorString() const
+{
+	return getMajorString(d->mMajor);
+}
+
+
+QString ECardApiResult::getMinorString() const
+{
+	return getMinorString(d->mMinor);
+}
+
+
+bool ECardApiResult::isValid() const
+{
+	switch (d->mMajor)
+	{
+		case Major::Unknown:
+			return false;
+
+		case Major::Ok:
+			return d->mMinor == Minor::null;
+
+		default:
+			return d->mMinor != Minor::null;
+	}
+}
+
+
+bool ECardApiResult::isOk() const
+{
+	return d->mMajor == Major::Ok && d->mMinor == Minor::null;
+}
+
+
+bool ECardApiResult::isOriginServer() const
+{
+	return d->mOrigin == Origin::Server;
+}
+
+
+GlobalStatus ECardApiResult::toStatus() const
+{
+	QString message = getMessage();
+	if (message.isEmpty() || isOriginServer())
+	{
+		// if the message is not set, we clearly use the result minor
+		// if the server sent the message, it can be in any language, so we take the result minor
+		message = ECardApiResult::getMessage(getMinor());
+	}
+
+	switch (getMajor())
+	{
+		case Major::Unknown:
+			return GlobalStatus(GlobalStatus::Code::Unknown_Error, message);
+
+		case Major::Ok:
+			if (isOk())
+			{
+				return GlobalStatus::Code::No_Error;
+			}
+		// FALLTHROUGH
+
+		case Major::Error:
+			return GlobalStatus(toStatus(getMinor()), message, toStatus(d->mOrigin));
+
+		case Major::Warning:
+			return GlobalStatus(GlobalStatus::Code::Paos_Unexpected_Warning, message);
+	}
+
+	Q_UNREACHABLE();
+}
+
+
+governikus::ECardApiResult::operator GlobalStatus() const
+{
+	return toStatus();
+}
+
+
+QJsonObject ECardApiResult::toJson() const
+{
+	QJsonObject obj;
+
+	obj[QLatin1String("major")] = getMajorString();
+	if (getMinor() != Minor::null)
+	{
+		obj[QLatin1String("minor")] = getMinorString();
+	}
+
+	const auto& message = getMessage();
+	if (!message.isEmpty())
+	{
+		obj[QLatin1String("message")] = message;
+	}
+
+	const auto& minorDesc = ECardApiResult::getMessage(getMinor());
+	if (!minorDesc.isEmpty())
+	{
+		obj[QLatin1String("description")] = minorDesc;
+	}
+
+	const auto& lang = getMessageLang();
+	if (!lang.isEmpty() && (!message.isEmpty() || !minorDesc.isEmpty()))
+	{
+		obj[QLatin1String("language")] = lang;
+	}
+
+	return obj;
+}
+
+
+QDebug operator <<(QDebug pDbg, const governikus::ECardApiResult& pResult)
+{
+	const QString string = pResult.getMajorString() % QLatin1String(" | ") % pResult.getMinorString() % QLatin1String(" | ") % pResult.getMessage();
+	QDebugStateSaver saver(pDbg);
+	pDbg.space() << "Result:";
+	pDbg.quote() << string;
+	return pDbg;
+}

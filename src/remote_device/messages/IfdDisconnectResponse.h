@@ -16,13 +16,13 @@ class IfdDisconnectResponse
 		QString mSlotHandle;
 
 	public:
-		IfdDisconnectResponse(const QString& pSlotHandle, const QString& pResultMinor = QString());
+		IfdDisconnectResponse(const QString& pSlotHandle, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		IfdDisconnectResponse(const QJsonObject& pMessageObject);
 		virtual ~IfdDisconnectResponse() override = default;
 
 		const QString& getSlotHandle() const;
-		virtual QJsonDocument toJson(const QString& pContextHandle) const override;
+		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

@@ -34,4 +34,4 @@ class DidAuthenticateEac2Parser
 		QScopedPointer<DIDAuthenticateEAC2> mDidAuthenticateEac2;
 };
 
-} /* namespace governikus */
+} // namespace governikus

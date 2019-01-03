@@ -40,4 +40,4 @@ class NfcReader
 		virtual Card* getCard() const override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

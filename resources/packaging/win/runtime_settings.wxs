@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- The path is no longer necessary with CMake 3.13.0 -->
+<!-- https://gitlab.kitware.com/cmake/cmake/merge_requests/2194 -->
+<?include "$(sys.CURRENTDIR)_CPack_Packages\win32\WIX\cpack_variables.wxi"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+		<Property Id="AUTOSTART" Value="undefined" />
+		<Property Id="AUTOHIDE" Value="undefined" />
+		<Property Id="REMINDTOCLOSE" Value="undefined" />
+		<Property Id="ASSISTANT" Value="undefined" />
+		<Property Id="TRANSPORTPINREMINDER" Value="undefined"/>
+		<Property Id="UPDATECHECK" Value="undefined"/>
+		<Property Id="ONSCREENKEYBOARD" Value="undefined"/>
+		<Property Id="HISTORY" Value="undefined"/>
+
+		<DirectoryRef Id="TARGETDIR">
+			<Component Id="AutoStart" Guid="*">
+				<Condition>AUTOSTART = "true"</Condition>
+				<RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Run">
+					<RegistryValue Type="string" Name="AusweisApp2" Value="[INSTALL_ROOT][ProductName].exe" KeyPath="yes" />
+				</RegistryKey>
+			</Component>
+
+			<Component Id="AutoHide" Guid="*">
+				<Condition>AUTOHIDE = "true" OR AUTOHIDE = "false"</Condition>
+				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)">
+					<RegistryValue Name="autoCloseWindow" Type="string" Value="[AUTOHIDE]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+
+			<Component Id="RemindToClose" Guid="*">
+				<Condition>REMINDTOCLOSE = "true" OR REMINDTOCLOSE = "false"</Condition>
+				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)">
+					<RegistryValue Name="remindToClose" Type="string" Value="[REMINDTOCLOSE]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+
+			<Component Id="Assistant" Guid="*">
+				<Condition>ASSISTANT = "true" OR ASSISTANT = "false"</Condition>
+				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)">
+					<RegistryValue Name="showSetupAssistant" Type="string" Value="[ASSISTANT]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+
+			<Component Id="TransportPinReminder" Guid="*">
+				<Condition>TRANSPORTPINREMINDER = "true" OR TRANSPORTPINREMINDER = "false"</Condition>
+				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)">
+					<RegistryValue Name="transportPinReminder" Type="string" Value="[TRANSPORTPINREMINDER]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+
+			<Component Id="UpdateCheck" Guid="*">
+				<Condition>UPDATECHECK = "true" OR UPDATECHECK = "false"</Condition>
+				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)\common">
+					<RegistryValue Name="autoUpdateCheck" Type="string" Value="[UPDATECHECK]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+
+			<Component Id="OnScreenKeyboard" Guid="*">
+				<Condition>ONSCREENKEYBOARD = "true" OR ONSCREENKEYBOARD = "false"</Condition>
+				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)\common">
+					<RegistryValue Name="keylessPassword" Type="string" Value="[ONSCREENKEYBOARD]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+
+			<Component Id="History" Guid="*">
+				<Condition>HISTORY = "true" OR HISTORY = "false"</Condition>
+				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)\history">
+					<RegistryValue Name="enable" Type="string" Value="[HISTORY]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+		</DirectoryRef>
+	</Fragment>
+</Wix>

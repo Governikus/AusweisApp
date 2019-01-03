@@ -1,2 +1,4 @@
 module InformationView
+
 Information 1.0 Information.qml
+VersionInformation 1.0 VersionInformation.qml

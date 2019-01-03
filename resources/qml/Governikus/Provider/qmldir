@@ -1,8 +1,17 @@
 module ProviderInfo
-ProviderInfoSection 1.0 ProviderInfoSection.qml
-ProviderHeader 1.0 ProviderHeader.qml
-ProviderModelItem 1.0 ProviderModelItem.qml
+
+internal ProviderContactInfoItem ProviderContactInfoItem.qml
+internal ProviderContactInfo ProviderContactInfo.qml
+internal ProviderDetailButtonBar ProviderDetailButtonBar.qml
+internal ProviderDetailDescription ProviderDetailDescription.qml
+internal ProviderDetailTab ProviderDetailTab.qml
+internal ProviderDetailHistoryInfo ProviderDetailHistoryInfo.qml
+internal ProviderDetailHistoryItem ProviderDetailHistoryItem.qml
+internal ProviderDetailHistory ProviderDetailHistory.qml
+
 ProviderContactTab 1.0 ProviderContactTab.qml
 ProviderDetailView 1.0 ProviderDetailView.qml
-ProviderDetailView_tablet 1.0 ProviderDetailView_tablet.qml
+ProviderHeader 1.0 ProviderHeader.qml
+ProviderInfoSection 1.0 ProviderInfoSection.qml
+ProviderModelItem 1.0 ProviderModelItem.qml
 ProviderViewDelegate 1.0 ProviderViewDelegate.qml

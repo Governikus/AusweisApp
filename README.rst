@@ -4,7 +4,7 @@ AusweisApp2
 Kontakt
 -------
 | Governikus GmbH & Co. KG
-| Am Fallturm 9
+| Hochschulring 4
 | 28359 Bremen
 | ausweisapp2@governikus.de
 
@@ -27,15 +27,6 @@ Die separate README und das Skript unter "libs" dienen dem Aufzusetzen
 der notwendigen Build-Umgebung und dem automatisierten Bauen der
 notwendigen Bibliotheken mit den entsprechenden Patches.
 
-Derzeit ist es leider noch nicht möglich, die AusweisApp2 ohne Patches
-an OpenSSL und Qt voll funktionsfähig auszuliefern.
-Dies liegt unter anderem an dem notwendigen RSA-PSK-Patch für
-OpenSSL 1.0.2, welcher mit OpenSSL 1.1.0 nicht mehr notwendig ist.
-Diese OpenSSL-Version wird allerdings erst mit Qt 5.10 unterstützt.
-(siehe https://bugreports.qt.io/browse/QTBUG-52905)
-
-OpenSSL 1.1.0 wird mit der AusweisApp2 1.14.0 unterstützt.
-LibreSSL wird auf Grund des fehlenden RSA-PSK nicht unterstützt.
 
 
 Build

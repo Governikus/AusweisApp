@@ -24,11 +24,6 @@ EcdhGenericMapping::EcdhGenericMapping(const QSharedPointer<EC_GROUP>& pCurve)
 }
 
 
-EcdhGenericMapping::~EcdhGenericMapping()
-{
-}
-
-
 QByteArray EcdhGenericMapping::generateTerminalMappingData()
 {
 	Q_ASSERT(!mCurve.isNull());

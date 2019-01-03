@@ -41,7 +41,7 @@ class test_TlsChecker
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 			certs = SecureStorage::getInstance().getUpdateCertificates();
 			QVERIFY(certs.size() > 0);
 		}
@@ -49,7 +49,7 @@ class test_TlsChecker
 
 		void cleanup()
 		{
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
@@ -81,7 +81,7 @@ class test_TlsChecker
 			const auto& content = TestFileHelper::readFile(filename);
 			QVERIFY(!content.isEmpty());
 			QSslCertificate invalidCert(content);
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			QVERIFY(!TlsChecker::hasValidCertificateKeyLength(invalidCert));
 
 			QVERIFY(spy.count() > 0);
@@ -295,9 +295,9 @@ class test_TlsChecker
 
 		void sslConfigLog()
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			QSslConfiguration cfg;
-			TlsChecker::logSslConfig(cfg, qInfo(network));
+			TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
 
 			QCOMPARE(spy.count(), 6);
 			QVERIFY(spy.at(0).at(0).toString().contains("Used session cipher QSslCipher(name=, bits=0, proto=)"));

@@ -48,8 +48,8 @@ class ChainBuilder
 				}
 				else if (mIsChildFunc(pChain.first(), elem))
 				{
-					QVector<T> extendedChain(pChain);
-					extendedChain.prepend(elem);
+					QVector<T> extendedChain({elem});
+					extendedChain += pChain;
 					buildChain(pAllElements, extendedChain);
 					chainComplete = false;
 				}
@@ -100,4 +100,4 @@ class ChainBuilder
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

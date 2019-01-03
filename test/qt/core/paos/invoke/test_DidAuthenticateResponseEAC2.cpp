@@ -6,6 +6,8 @@
 
 #include "paos/invoke/DidAuthenticateResponseEac2.h"
 
+#include "TestFileHelper.h"
+
 #include <QtCore/QtCore>
 #include <QtTest/QtTest>
 
@@ -21,7 +23,6 @@ class test_DidAuthenticateResponseEAC2
 		void type()
 		{
 			DIDAuthenticateResponseEAC2 elem;
-			elem.setMessageId("dummy");
 			QCOMPARE(elem.mType, PaosType::DID_AUTHENTICATE_RESPONSE_EAC2);
 		}
 
@@ -29,7 +30,6 @@ class test_DidAuthenticateResponseEAC2
 		void emptyAuthenticationProtocolData()
 		{
 			DIDAuthenticateResponseEAC2 msg;
-			msg.setMessageId("dummy");
 
 			QVERIFY(!msg.marshall().contains("EFCardSecurity"));
 			QVERIFY(!msg.marshall().contains("AuthenticationToken"));
@@ -41,7 +41,6 @@ class test_DidAuthenticateResponseEAC2
 		void efCardSecurity()
 		{
 			DIDAuthenticateResponseEAC2 msg;
-			msg.setMessageId("dummy");
 			msg.setEfCardSecurity(QByteArray::fromHex(QByteArray("1234567890")));
 
 			QVERIFY(msg.marshall().contains("EFCardSecurity"));
@@ -51,7 +50,6 @@ class test_DidAuthenticateResponseEAC2
 		void authenticationToken()
 		{
 			DIDAuthenticateResponseEAC2 msg;
-			msg.setMessageId("dummy");
 			msg.setAuthenticationToken(QByteArray::fromHex(QByteArray("1234567890")));
 
 			QVERIFY(msg.marshall().contains("AuthenticationToken"));
@@ -61,7 +59,6 @@ class test_DidAuthenticateResponseEAC2
 		void nonce()
 		{
 			DIDAuthenticateResponseEAC2 msg;
-			msg.setMessageId("dummy");
 			msg.setNonce(QByteArray::fromHex(QByteArray("1234567890")));
 
 			QVERIFY(msg.marshall().contains("Nonce"));
@@ -71,10 +68,21 @@ class test_DidAuthenticateResponseEAC2
 		void challenge()
 		{
 			DIDAuthenticateResponseEAC2 msg;
-			msg.setMessageId("dummy");
 			msg.setChallenge("1234567890");
 
 			QVERIFY(msg.marshall().contains("Challenge"));
+		}
+
+
+		void checkTemplate()
+		{
+			DIDAuthenticateResponseEAC2 msg;
+			msg.setEfCardSecurity("a");
+			msg.setAuthenticationToken("b");
+			msg.setNonce("c");
+			auto data = QString::fromLatin1(msg.marshall());
+			data.replace(QRegularExpression("<wsa:MessageID>.*</wsa:MessageID>"), "<wsa:MessageID>STRIP ME</wsa:MessageID>");
+			QCOMPARE(data, QString::fromLatin1(TestFileHelper::readFile(":/paos/DIDAuthenticateResponse.xml")));
 		}
 
 

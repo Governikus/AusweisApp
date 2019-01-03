@@ -17,7 +17,6 @@
 namespace governikus
 {
 
-
 class BluetoothReader
 	: public ConnectableReader
 {
@@ -39,6 +38,7 @@ class BluetoothReader
 
 	Q_SIGNALS:
 		void fireReaderConnected(const QString& pReaderName);
+		void fireReaderConnectionFailed(const QString& pReaderName);
 
 	public:
 		BluetoothReader(const QSharedPointer<CyberJackWaveDevice>& pDevice);
@@ -49,4 +49,4 @@ class BluetoothReader
 		void disconnectReader() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

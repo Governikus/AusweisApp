@@ -16,12 +16,7 @@ Card::Card()
 }
 
 
-Card::~Card()
-{
-}
-
-
-CardReturnCode Card::establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds)
+CardReturnCode Card::establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPaceChannelOutput& pChannelOutput, quint8 pTimeoutSeconds)
 {
 	Q_UNUSED(pPasswordId);
 	Q_UNUSED(pChat);

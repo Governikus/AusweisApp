@@ -28,14 +28,14 @@ class StateCheckRefreshAddress
 	friend class StateBuilder;
 	friend class ::test_StateCheckRefreshAddress;
 
-	StateCheckRefreshAddress(const QSharedPointer<WorkflowContext>& pContext);
-
 	private:
 		QPointer<QNetworkReply> mReply;
 		QUrl mUrl;
 		QUrl mSubjectUrl;
 		bool mCertificateFetched;
 		QVector<QUrl> mVerifiedRefreshUrlHosts;
+
+		explicit StateCheckRefreshAddress(const QSharedPointer<WorkflowContext>& pContext);
 
 		bool isMatchingSameOriginPolicyInDevMode() const;
 		virtual void run() override;
@@ -55,6 +55,8 @@ class StateCheckRefreshAddress
 		void onSslHandshakeDoneFetchingServerCertificate();
 		void onNetworkErrorFetchingServerCertificate(QNetworkReply::NetworkError pError);
 
+	public:
+		virtual ~StateCheckRefreshAddress() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

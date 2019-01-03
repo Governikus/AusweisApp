@@ -25,12 +25,12 @@ ls busybox* >/dev/null
 
 echo "Building base Arch ..."
 docker build -t arch:latest .
+cd ..
 
 images=(android)
 for i in "${images[@]}"
 do
 	echo "Building $i ..."
-	cd ../$i
-	docker build -t arch:$i .
+	docker build -t arch:$i -f $i/Dockerfile .
 done
 

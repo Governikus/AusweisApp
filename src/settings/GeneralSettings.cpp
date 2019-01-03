@@ -6,7 +6,9 @@
 
 #include "GeneralSettings.h"
 
+#include "AppSettings.h"
 #include "AutoStart.h"
+#include "Env.h"
 
 #include <QCoreApplication>
 #include <QLoggingCategory>
@@ -28,12 +30,18 @@ SETTINGS_NAME(SETTINGS_NAME_TRANSPORT_PIN_REMINDER, "transportPinReminder")
 SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_MODE, "developerMode")
 SETTINGS_NAME(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI, "selfauthTestUri")
 SETTINGS_NAME(SETTINGS_NAME_LANGUAGE, "language")
+SETTINGS_NAME(SETTINGS_NAME_SELECTED_UI, "selectedUi")
+SETTINGS_NAME(SETTINGS_NAME_DEVICE_SURVEY_PENDING, "deviceSurveyPending")
+SETTINGS_NAME(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE, "lastTechnology")
+
+#if !defined(Q_OS_IOS)
+SETTINGS_NAME(SETTINGS_NAME_REQUEST_STORE_FEEDBACK, "requestStoreFeedback")
+#endif
 
 SETTINGS_NAME(SETTINGS_GROUP_NAME_COMMON, "common")
 SETTINGS_NAME(SETTINGS_NAME_AUTO, "autoUpdateCheck")
 SETTINGS_NAME(SETTINGS_NAME_KEYLESS_PASSWORD, "keylessPassword")
-SETTINGS_NAME(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE, "lastTechnology")
-}
+} // namespace
 
 GeneralSettings::GeneralSettings()
 	: AbstractSettings()
@@ -63,12 +71,11 @@ GeneralSettings::GeneralSettings()
 	// Check if the key "autoCloseWindow" (introduced in changeset 199210b0b20c)
 	// does not yet exist to detect a new installation. This key was the first one
 	// in the settings general group.
-	const bool isNewInstallation = !mStoreGeneral->allKeys().contains(SETTINGS_NAME_AUTO_CLOSE_WINDOW());
+	const bool isNewInstallation = getPersistentSettingsVersion().isEmpty();
 	if (isNewInstallation)
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_AUTO_CLOSE_WINDOW(), true);
+		mStoreGeneral->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QCoreApplication::applicationVersion());
 		setAutoStart(GENERAL_SETTINGS_DEFAULT_AUTOSTART);
-		setTransportPinReminder(true);
 		mStoreGeneral->sync();
 	}
 
@@ -98,6 +105,12 @@ void GeneralSettings::save()
 bool GeneralSettings::isAutoStart() const
 {
 	return mAutoStart;
+}
+
+
+bool GeneralSettings::autoStartIsSetByAdmin() const
+{
+	return AutoStart::isSetByAdmin();
 }
 
 
@@ -185,11 +198,7 @@ void GeneralSettings::setRemindUserToClose(bool pRemindUser)
 
 bool GeneralSettings::isTransportPinReminder() const
 {
-	// The standard value should be true but we need to set it to false for backwards
-	// compatibility. It is set to true in the constructor if we have a new
-	// installation. The the standard value used in this function will only be
-	// used if the user upgrades from AusweisApp 1.6.3 or an older version.
-	return mStoreGeneral->value(SETTINGS_NAME_TRANSPORT_PIN_REMINDER(), false).toBool();
+	return mStoreGeneral->value(SETTINGS_NAME_TRANSPORT_PIN_REMINDER(), true).toBool();
 }
 
 
@@ -206,9 +215,9 @@ void GeneralSettings::setTransportPinReminder(bool pTransportPinReminder)
 bool GeneralSettings::isDeveloperMode() const
 {
 	const bool developerMode = mStoreGeneral->value(SETTINGS_NAME_DEVELOPER_MODE(), false).toBool();
-	if (developerMode && appIsBackgroundService())
+	if (developerMode && Env::getSingleton<AppSettings>()->isUsedAsSDK())
 	{
-		qCDebug(settings) << "Running as a background service. Developer mode is disallowed.";
+		qCDebug(settings) << "Running as SDK. Developer mode is disallowed.";
 		return false;
 	}
 
@@ -264,35 +273,72 @@ void GeneralSettings::setLanguage(const QLocale::Language pLanguage)
 }
 
 
-bool GeneralSettings::isAutoUpdateCheck() const
+QString GeneralSettings::getSelectedUi() const
 {
-	return mStoreCommon->value(SETTINGS_NAME_AUTO(), true).toBool();
+	return mStoreGeneral->value(SETTINGS_NAME_SELECTED_UI(), QStringLiteral(DEFAULT_UI)).toString();
 }
 
 
-void GeneralSettings::setAutoUpdateCheck(bool pAutoCheck)
+void GeneralSettings::setSelectedUi(const QString& pSelectedUi)
 {
-	if (pAutoCheck != isAutoUpdateCheck())
+	if (pSelectedUi != getSelectedUi())
 	{
-		mStoreCommon->setValue(SETTINGS_NAME_AUTO(), pAutoCheck);
+		mStoreGeneral->setValue(SETTINGS_NAME_SELECTED_UI(), pSelectedUi);
 		Q_EMIT fireSettingsChanged();
 	}
 }
 
 
-bool GeneralSettings::isUseScreenKeyboard() const
+bool GeneralSettings::askForDeviceSurvey() const
 {
-	return mStoreCommon->value(SETTINGS_NAME_KEYLESS_PASSWORD(), false).toBool();
+	return !mStoreGeneral->contains(SETTINGS_NAME_DEVICE_SURVEY_PENDING());
 }
 
 
-void GeneralSettings::setUseScreenKeyboard(bool pKeylessPassword)
+bool GeneralSettings::isDeviceSurveyPending() const
 {
-	if (pKeylessPassword != isUseScreenKeyboard())
+	return mStoreGeneral->value(SETTINGS_NAME_DEVICE_SURVEY_PENDING(), false).toBool();
+}
+
+
+void GeneralSettings::setDeviceSurveyPending(bool pDeviceSurveyPending)
+{
+	if (askForDeviceSurvey() || pDeviceSurveyPending != isDeviceSurveyPending())
 	{
-		mStoreCommon->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), pKeylessPassword);
+		mStoreGeneral->setValue(SETTINGS_NAME_DEVICE_SURVEY_PENDING(), pDeviceSurveyPending);
 		Q_EMIT fireSettingsChanged();
 	}
+}
+
+
+bool GeneralSettings::isRequestStoreFeedback() const
+{
+#if defined(Q_OS_IOS)
+	qCWarning(settings) << "NOT IMPLEMENTED";
+	return false;
+
+#else
+
+	return mStoreGeneral->value(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), true).toBool();
+
+#endif
+}
+
+
+void GeneralSettings::setRequestStoreFeedback(bool pRequest)
+{
+#if defined(Q_OS_IOS)
+	Q_UNUSED(pRequest);
+	qCWarning(settings) << "NOT IMPLEMENTED";
+	return;
+
+#else
+	if (pRequest != isRequestStoreFeedback())
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), pRequest);
+		Q_EMIT fireSettingsChanged();
+	}
+#endif
 }
 
 
@@ -307,6 +353,56 @@ void GeneralSettings::setLastReaderPluginType(const QString& pLastReaderPluginTy
 	if (pLastReaderPluginType != getLastReaderPluginType())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE(), pLastReaderPluginType);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
+bool GeneralSettings::isAutoUpdateCheck() const
+{
+	if (autoUpdateCheckIsSetByAdmin())
+	{
+		mStoreCommon->remove(SETTINGS_NAME_AUTO());
+	}
+
+	return mStoreCommon->value(SETTINGS_NAME_AUTO(), true).toBool();
+}
+
+
+bool GeneralSettings::autoUpdateCheckIsSetByAdmin() const
+{
+#ifdef Q_OS_MACOS
+	QSettings settings(QSettings::Scope::SystemScope, QCoreApplication::organizationDomain(), QCoreApplication::applicationName());
+#else
+	QSettings settings(QSettings::Scope::SystemScope, QCoreApplication::organizationName(), QCoreApplication::applicationName());
+#endif
+
+	settings.beginGroup(SETTINGS_GROUP_NAME_COMMON());
+	return settings.contains(SETTINGS_NAME_AUTO());
+}
+
+
+void GeneralSettings::setAutoUpdateCheck(bool pAutoUpdateCheck)
+{
+	if (!autoUpdateCheckIsSetByAdmin() && pAutoUpdateCheck != isAutoUpdateCheck())
+	{
+		mStoreCommon->setValue(SETTINGS_NAME_AUTO(), pAutoUpdateCheck);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
+bool GeneralSettings::isUseScreenKeyboard() const
+{
+	return mStoreCommon->value(SETTINGS_NAME_KEYLESS_PASSWORD(), false).toBool();
+}
+
+
+void GeneralSettings::setUseScreenKeyboard(bool pUseScreenKeyboard)
+{
+	if (pUseScreenKeyboard != isUseScreenKeyboard())
+	{
+		mStoreCommon->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), pUseScreenKeyboard);
 		Q_EMIT fireSettingsChanged();
 	}
 }

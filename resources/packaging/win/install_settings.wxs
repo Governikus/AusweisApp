@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- The path is no longer necessary with CMake 3.13.0 -->
+<!-- https://gitlab.kitware.com/cmake/cmake/merge_requests/2194 -->
+<?include "$(sys.CURRENTDIR)_CPack_Packages\win32\WIX\cpack_variables.wxi"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+		<!-- ######################################################## -->
+		<!-- Create registry entry and add 127.0.0.1 to trusted sites -->
+		<!-- ######################################################## -->
+		<Property Id="SYSTEMSETTINGS" Value="true"/>
+		<DirectoryRef Id="TARGETDIR">
+			<Component Id="OutgoingRuleWindowsFirewall" Guid="*">
+				<Condition>SYSTEMSETTINGS = "true"</Condition>
+				<RegistryKey Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules">
+					<RegistryValue Type="string" Name="AusweisApp2-Firewall-Rule" Value="v2.20|Action=Allow|Active=TRUE|Dir=Out|App=[INSTALL_ROOT][ProductName].exe|Name=AusweisApp2|Desc=AusweisApp2 firewall rule|" />
+				</RegistryKey>
+			</Component>
+		</DirectoryRef>
+
+		<!-- ###################################################### -->
+		<!-- Add/remove SaC listening port to/from Windows Firewall -->
+		<!-- ###################################################### -->
+		<Property Id="FirewallSacParams" Value="dir=in action=allow description=&quot;Allow inbound udp connections for Smartphone as card reader.&quot; localip=any remoteip=localsubnet localport=24727 remoteport=any protocol=udp"/>
+		<CustomAction Id="AddListeningPortWindowsFirewallSaC"
+				Directory="TARGETDIR"
+				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall add rule name=AusweisApp2-Firewall-Rule-SaC-In [FirewallSacParams]"
+				Execute="commit"
+				Impersonate="no"
+				Return="asyncWait" />
+
+		<InstallExecuteSequence>
+			<Custom Action="AddListeningPortWindowsFirewallSaC" Before="InstallFinalize">(SYSTEMSETTINGS = "true") AND NOT Installed</Custom>
+		</InstallExecuteSequence>
+
+		<CustomAction Id="DeleteListeningPortWindowsFirewallSaC"
+				Directory="TARGETDIR"
+				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall delete rule name=AusweisApp2-Firewall-Rule-SaC-In"
+				Execute="commit"
+				Impersonate="no"
+				Return="asyncWait" />
+
+		<InstallExecuteSequence>
+			<Custom Action="DeleteListeningPortWindowsFirewallSaC" Before="InstallFinalize">Installed AND NOT REINSTALL</Custom>
+		</InstallExecuteSequence>
+
+		<!-- ####################### -->
+		<!-- Create desktop shortcut -->
+		<!-- ####################### -->
+		<Property Id="DESKTOPSHORTCUT" Value="true"/>
+		<DirectoryRef Id="TARGETDIR">
+			<Directory Id="DesktopFolder" Name="Desktop" >
+				<Component Id="DesktopShortcut" Guid="*">
+					<Condition>DESKTOPSHORTCUT = "true"</Condition>
+					<Shortcut Id="DesktopExec"
+						Name="$(var.CPACK_PACKAGE_NAME)"
+						Description="!(loc.ProgramDescription)"
+						Target="[INSTALL_ROOT][ProductName].exe"
+						WorkingDirectory="INSTALL_ROOT" />
+					<RegistryKey Root="HKCU" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)">
+						<RegistryValue Name="SC_Desktop" Type="integer" Value="1" KeyPath="yes" />
+					</RegistryKey>
+				</Component>
+			</Directory>
+		</DirectoryRef>
+
+		<!-- ######################### -->
+		<!-- Create startmenu shortcut -->
+		<!-- ######################### -->
+		<Property Id="STARTMENUSHORTCUT" Value="true"/>
+		<DirectoryRef Id="TARGETDIR">
+			<Directory Id="ProgramMenuFolder">
+				<Component Id="StartmenuShortcut" Guid="*">
+					<Condition>STARTMENUSHORTCUT = "true"</Condition>
+					<Shortcut Id="StartmenuExec"
+						Name="$(var.CPACK_PACKAGE_NAME)"
+						Description="!(loc.ProgramDescription)"
+						Target="[INSTALL_ROOT][ProductName].exe"
+						WorkingDirectory="INSTALL_ROOT"/>
+					<RegistryKey Root="HKCU" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)">
+						<RegistryValue Name="SC_Startmenu" Type="integer" Value="1" KeyPath="yes"/>
+					</RegistryKey>
+				</Component>
+			</Directory>
+		</DirectoryRef>
+	</Fragment>
+</Wix>

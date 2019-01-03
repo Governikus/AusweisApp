@@ -18,8 +18,8 @@ class StateInitializeFramework
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateInitializeFramework(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateInitializeFramework(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

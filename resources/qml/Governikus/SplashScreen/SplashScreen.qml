@@ -1,5 +1,4 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
+import QtQuick 2.10
 
 Rectangle {
 	id: splashScreen
@@ -26,7 +25,7 @@ Rectangle {
 
 		var TIMEOUT = 1000;
 		var remaining = startTime + TIMEOUT - new Date().getTime();
-		var timer = Qt.createQmlObject("import QtQuick 2.0; Timer {}", splashScreen);
+		var timer = Qt.createQmlObject("import QtQuick 2.10; Timer {}", splashScreen);
 		timer.interval = remaining > 0 ? remaining : 0;
 		timer.repeat = false;
 		timer.triggered.connect(function(){

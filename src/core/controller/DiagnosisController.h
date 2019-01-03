@@ -28,17 +28,19 @@ class DiagnosisController
 	};
 
 	private:
-		QScopedPointer<DiagnosisContext> mContext;
+		QSharedPointer<DiagnosisContext> mContext;
 		QFutureWatcher<PcscInfo> mWatcherPcscInfo;
 
 		void checkDone();
+
+		void collectInterfaceInformation();
 
 		static PcscInfo retrievePcscInfo();
 		static void getPcscInfo(QVector<DiagnosisContext::ComponentInfo>& pComponents,
 				QVector<DiagnosisContext::ComponentInfo>& pDrivers);
 
 	public:
-		DiagnosisController(DiagnosisContext* pContext, QObject* pParent = nullptr);
+		explicit DiagnosisController(const QSharedPointer<DiagnosisContext>& pContext, QObject* pParent = nullptr);
 		virtual ~DiagnosisController();
 
 		void run();
@@ -50,4 +52,4 @@ class DiagnosisController
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

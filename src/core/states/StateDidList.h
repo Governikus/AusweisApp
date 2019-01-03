@@ -16,8 +16,8 @@ class StateDidList
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateDidList(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateDidList(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

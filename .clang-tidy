@@ -1,0 +1,18 @@
+---
+Checks: '
+       ,*,
+       ,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+       ,-cppcoreguidelines-special-member-functions,
+       ,-cppcoreguidelines-pro-type-union-access,
+       ,-hicpp-special-member-functions,
+       ,-hicpp-use-override,
+       ,-google-build-using-namespace,
+       ,-modernize-use-default-member-init,
+       ,-modernize-use-override,
+       ,-readability-redundant-member-init,
+       ,-readability-implicit-bool-cast,
+'
+
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+AnalyzeTemporaryDtors: false

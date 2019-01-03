@@ -6,7 +6,6 @@
 
 #include "Initializer.h"
 #include "Reader.h"
-#include "RemoteClient.h"
 
 #include <QLoggingCategory>
 #include <QPluginLoader>
@@ -21,9 +20,8 @@ static Initializer::Entry X([] {
 		});
 
 
-ReaderManagerWorker::ReaderManagerWorker(const QSharedPointer<RemoteClient>& pRemoteClient)
+ReaderManagerWorker::ReaderManagerWorker()
 	: QObject()
-	, mRemoteClient(pRemoteClient)
 	, mPlugIns()
 {
 }
@@ -31,7 +29,7 @@ ReaderManagerWorker::ReaderManagerWorker(const QSharedPointer<RemoteClient>& pRe
 
 ReaderManagerWorker::~ReaderManagerWorker()
 {
-	Q_ASSERT(thread() == QThread::currentThread());
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	for (auto& plugin : qAsConst(mPlugIns))
 	{
@@ -43,7 +41,7 @@ ReaderManagerWorker::~ReaderManagerWorker()
 
 void ReaderManagerWorker::onThreadStarted()
 {
-	Q_ASSERT(thread() == QThread::currentThread());
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	qCDebug(card) << "Thread started";
 	registerPlugIns();
@@ -70,7 +68,6 @@ void ReaderManagerWorker::registerPlugIns()
 			{
 				registerPlugIn(pluginInstance);
 				pluginInstance->init();
-				pluginInstance->setRemoteClient(mRemoteClient);
 
 				Q_EMIT firePluginAdded(pluginInstance->getInfo());
 			}
@@ -90,7 +87,7 @@ void ReaderManagerWorker::registerPlugIn(ReaderManagerPlugIn* pPlugIn)
 	Q_ASSERT(pPlugIn != nullptr);
 	Q_ASSERT(!mPlugIns.contains(pPlugIn));
 
-	mPlugIns.push_back(pPlugIn);
+	mPlugIns << pPlugIn;
 
 	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderAdded, this, &ReaderManagerWorker::fireReaderAdded);
 	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderRemoved, this, &ReaderManagerWorker::fireReaderRemoved);
@@ -105,15 +102,14 @@ void ReaderManagerWorker::registerPlugIn(ReaderManagerPlugIn* pPlugIn)
 
 void ReaderManagerWorker::startScan(ReaderManagerPlugInType pType, bool pAutoConnect)
 {
-	Q_ASSERT(thread() == QThread::currentThread());
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	for (auto& plugin : qAsConst(mPlugIns))
 	{
 		if (plugin->getInfo().getPlugInType() == pType)
 		{
 			qCDebug(card) << "Start scan on plugin:" << plugin->metaObject()->className();
-			plugin->setConnectToKnownReaders(pAutoConnect);
-			plugin->startScan();
+			plugin->startScan(pAutoConnect);
 		}
 	}
 }
@@ -121,14 +117,13 @@ void ReaderManagerWorker::startScan(ReaderManagerPlugInType pType, bool pAutoCon
 
 void ReaderManagerWorker::stopScan(ReaderManagerPlugInType pType)
 {
-	Q_ASSERT(thread() == QThread::currentThread());
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	for (auto& plugin : qAsConst(mPlugIns))
 	{
 		if (plugin->getInfo().getPlugInType() == pType)
 		{
 			qCDebug(card) << "Stop scan on plugin:" << plugin->metaObject()->className();
-			plugin->setConnectToKnownReaders(false);
 			plugin->stopScan();
 		}
 	}
@@ -137,7 +132,7 @@ void ReaderManagerWorker::stopScan(ReaderManagerPlugInType pType)
 
 QVector<ReaderManagerPlugInInfo> ReaderManagerWorker::getPlugInInfos() const
 {
-	Q_ASSERT(thread() == QThread::currentThread());
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	QVector<ReaderManagerPlugInInfo> infos;
 	infos.reserve(mPlugIns.size());
@@ -152,7 +147,7 @@ QVector<ReaderManagerPlugInInfo> ReaderManagerWorker::getPlugInInfos() const
 
 QVector<ReaderInfo> ReaderManagerWorker::getReaderInfos(const ReaderFilter& pFilter) const
 {
-	Q_ASSERT(thread() == QThread::currentThread());
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	QVector<ReaderInfo> list;
 	const QVector<ReaderManagerPlugIn*>& plugIns = pFilter.apply(mPlugIns);
@@ -164,22 +159,36 @@ QVector<ReaderInfo> ReaderManagerWorker::getReaderInfos(const ReaderFilter& pFil
 			list += reader->getReaderInfo();
 		}
 	}
-	return pFilter.apply(list);
+	return list;
 }
 
 
 ReaderInfo ReaderManagerWorker::getReaderInfo(const QString& pReaderName) const
 {
-	Q_ASSERT(thread() == QThread::currentThread());
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	const Reader* reader = getReader(pReaderName);
 	return reader ? reader->getReaderInfo() : ReaderInfo(pReaderName);
 }
 
 
+void ReaderManagerWorker::updateReaderInfo(const QString& pReaderName)
+{
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
+
+	Reader* reader = getReader(pReaderName);
+	if (!reader)
+	{
+		qCWarning(card) << "Requested reader does not exist:" << pReaderName;
+		return;
+	}
+	reader->update();
+}
+
+
 Reader* ReaderManagerWorker::getReader(const QString& pReaderName) const
 {
-	Q_ASSERT(thread() == QThread::currentThread());
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	for (auto& plugin : qAsConst(mPlugIns))
 	{
@@ -200,7 +209,7 @@ Reader* ReaderManagerWorker::getReader(const QString& pReaderName) const
 
 void ReaderManagerWorker::createCardConnectionWorker(const QString& pReaderName)
 {
-	Q_ASSERT(thread() == QThread::currentThread());
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	QSharedPointer<CardConnectionWorker> worker;
 	if (auto reader = getReader(pReaderName))
@@ -213,7 +222,7 @@ void ReaderManagerWorker::createCardConnectionWorker(const QString& pReaderName)
 
 void ReaderManagerWorker::connectReader(const QString& pReaderName)
 {
-	Q_ASSERT(thread() == QThread::currentThread());
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	if (ConnectableReader* reader = qobject_cast<ConnectableReader*>(getReader(pReaderName)))
 	{
@@ -224,7 +233,7 @@ void ReaderManagerWorker::connectReader(const QString& pReaderName)
 
 void ReaderManagerWorker::disconnectReader(const QString& pReaderName)
 {
-	Q_ASSERT(thread() == QThread::currentThread());
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	if (ConnectableReader* reader = qobject_cast<ConnectableReader*>(getReader(pReaderName)))
 	{
@@ -235,10 +244,30 @@ void ReaderManagerWorker::disconnectReader(const QString& pReaderName)
 
 void ReaderManagerWorker::disconnectAllReaders()
 {
-	Q_ASSERT(thread() == QThread::currentThread());
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	for (auto& info : getReaderInfos())
 	{
 		disconnectReader(info.getName());
+	}
+}
+
+
+void ReaderManagerWorker::updateRetryCounters()
+{
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
+
+	const auto& readerInfos = getReaderInfos();
+	for (const auto& readerInfo : readerInfos)
+	{
+		QSharedPointer<CardConnectionWorker> worker;
+		if (const auto& reader = getReader(readerInfo.getName()))
+		{
+			worker = reader->createCardConnectionWorker();
+			if (worker)
+			{
+				worker->updateRetryCounter();
+			}
+		}
 	}
 }

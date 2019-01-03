@@ -1,4 +1,14 @@
 module Workflow
-NfcWorkflow 1.0 NfcWorkflow.qml
-RemoteWorkflow 1.0 RemoteWorkflow.qml
-BluetoothWorkflow 1.0 BluetoothWorkflow.qml
+
+internal BluetoothWorkflow BluetoothWorkflow.qml
+internal BusyImageIndicator BusyImageIndicator.qml
+internal CardReader CardReader.qml
+internal NfcProgressIndicator NfcProgressIndicator.qml
+internal NfcWorkflow NfcWorkflow.qml
+internal ProgressCircle ProgressCircle.qml
+internal ProgressIndicator ProgressIndicator.qml
+internal RemoteWorkflow RemoteWorkflow.qml
+internal TextCircle TextCircle.qml
+
+Workflow 1.0 Workflow.qml
+GeneralWorkflow 1.0 GeneralWorkflow.qml

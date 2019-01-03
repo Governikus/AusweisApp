@@ -5,27 +5,25 @@
 #include "controller/AuthController.h"
 
 #include "context/AuthContext.h"
+#include "states/CompositeStatePace.h"
 #include "states/CompositeStateProcessCvcsAndSetRights.h"
-#include "states/CompositeStateSelectCard.h"
 #include "states/FinalState.h"
 #include "states/StateCheckRefreshAddress.h"
 #include "states/StateCleanUpReaderManager.h"
+#include "states/StateClearPacePasswords.h"
 #include "states/StateDidAuthenticateEac1.h"
 #include "states/StateDidAuthenticateEac2.h"
 #include "states/StateDidList.h"
 #include "states/StateEACAdditionalInputType.h"
-#include "states/StateEstablishPaceCan.h"
-#include "states/StateEstablishPacePin.h"
-#include "states/StateEstablishPacePuk.h"
 #include "states/StateGenericSendReceive.h"
 #include "states/StateGetTcToken.h"
-#include "states/StateHandleRetryCounter.h"
 #include "states/StateInitializeFramework.h"
 #include "states/StateParseTcTokenUrl.h"
 #include "states/StateProcessCertificatesFromEac2.h"
 #include "states/StateProcessing.h"
 #include "states/StateRedirectBrowser.h"
 #include "states/StateSelectPasswordId.h"
+#include "states/StateSendWhitelistSurvey.h"
 #include "states/StateStartPaos.h"
 #include "states/StateStartPaosResponse.h"
 #include "states/StateTransmit.h"
@@ -54,15 +52,9 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 	auto sSendDidListResponse = addState<StateSendDIDListResponse>();
 	auto sProcessCvcsAndSetRights = new CompositeStateProcessCvcsAndSetRights(pContext);
 	mStateMachine.addState(sProcessCvcsAndSetRights);
-	auto sSelectCard = new CompositeStateSelectCard(pContext);
-	mStateMachine.addState(sSelectCard);
-	auto sSelectPasswordId = addState<StateSelectPasswordId>();
-	auto sUpdateRetryCounter = addState<StateUpdateRetryCounter>();
-	auto sHandleRetryCounter = addState<StateHandleRetryCounter>();
-	auto sEstablishPaceCan = addState<StateEstablishPaceCan>();
-	auto sEstablishPacePin = addState<StateEstablishPacePin>();
-	auto sEstablishPacePuk = addState<StateEstablishPacePuk>();
-	auto sEstablishPaceCanCanMode = addState<StateEstablishPaceCan>();
+	auto sStatePace = new CompositeStatePace(pContext);
+	mStateMachine.addState(sStatePace);
+	auto sClearPacePasswords = addState<StateClearPacePasswords>();
 	auto sDidAuthenticateEac1 = addState<StateDidAuthenticateEac1>();
 	auto sSendDidAuthenticateResponseEac1 = addState<StateSendDIDAuthenticateResponseEAC1>();
 	auto sEacAdditionalInputType = addState<StateEACAdditionalInputType>();
@@ -79,6 +71,7 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 	auto sRedirectBrowser = addState<StateRedirectBrowser>();
 	auto sUpdateRetryCounterFinal = addState<StateUpdateRetryCounter>();
 	auto sCleanUpReaderManager = addState<StateCleanUpReaderManager>();
+	auto sSendWhitelistSurvey = addState<StateSendWhitelistSurvey>();
 	auto sFinal = addState<FinalState>();
 
 	sProcessing->addTransition(sProcessing, &AbstractState::fireContinue, sParseTcTokenUrl);
@@ -115,40 +108,15 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 	sSendDidListResponse->addTransition(sSendDidListResponse, &StateSendDIDListResponse::fireReceivedDisconnect, sSendDisconnectResponse);
 	sSendDidListResponse->addTransition(sSendDidListResponse, &StateSendDIDListResponse::fireReceivedStartPaosResponse, sStartPaosResponse);
 
-	sProcessCvcsAndSetRights->addTransition(sProcessCvcsAndSetRights, &CompositeStateProcessCvcsAndSetRights::fireContinue, sSelectCard);
+	sProcessCvcsAndSetRights->addTransition(sProcessCvcsAndSetRights, &CompositeStateProcessCvcsAndSetRights::fireContinue, sStatePace);
 	sProcessCvcsAndSetRights->addTransition(sProcessCvcsAndSetRights, &CompositeStateProcessCvcsAndSetRights::fireAbort, sSendDidAuthenticateResponseEac1);
 
-	sSelectCard->addTransition(sSelectCard, &CompositeStateSelectCard::fireContinue, sSelectPasswordId);
-	sSelectCard->addTransition(sSelectCard, &CompositeStateSelectCard::fireAbort, sSendDidAuthenticateResponseEac1);
+	sStatePace->addTransition(sStatePace, &CompositeStatePace::firePaceChannelEstablished, sClearPacePasswords);
+	sStatePace->addTransition(sStatePace, &CompositeStatePace::firePacePukEstablished, sStatePace);
+	sStatePace->addTransition(sStatePace, &CompositeStatePace::fireAbort, sSendDidAuthenticateResponseEac1);
 
-	sSelectPasswordId->addTransition(sSelectPasswordId, &AbstractState::fireContinue, sUpdateRetryCounter);
-	sSelectPasswordId->addTransition(sSelectPasswordId, &StateSelectPasswordId::firePasswordIdCAN, sEstablishPaceCanCanMode);
-	sSelectPasswordId->addTransition(sSelectPasswordId, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);
-
-	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireContinue, sHandleRetryCounter);
-	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);
-
-	sHandleRetryCounter->addTransition(sHandleRetryCounter, &StateHandleRetryCounter::fireRetryCounterIsGTOne, sEstablishPacePin);
-	sHandleRetryCounter->addTransition(sHandleRetryCounter, &StateHandleRetryCounter::fireRetryCounterIsOne, sEstablishPaceCan);
-	sHandleRetryCounter->addTransition(sHandleRetryCounter, &StateHandleRetryCounter::fireRetryCounterIsZero, sEstablishPacePuk);
-	sHandleRetryCounter->addTransition(sHandleRetryCounter, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);
-
-	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireContinue, sEstablishPacePin);
-	sEstablishPacePuk->addTransition(sEstablishPacePuk, &StateEstablishPacePuk::fireInvalidPuk, sUpdateRetryCounter);
-	sEstablishPacePuk->addTransition(sEstablishPacePuk, &StateEstablishPacePuk::fireInoperativePuk, sUpdateRetryCounter);
-	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);
-
-	sEstablishPaceCan->addTransition(sEstablishPaceCan, &AbstractState::fireContinue, sEstablishPacePin);
-	sEstablishPaceCan->addTransition(sEstablishPaceCan, &StateEstablishPaceCan::fireInvalidCan, sUpdateRetryCounter);
-	sEstablishPaceCan->addTransition(sEstablishPaceCan, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);
-
-	sEstablishPacePin->addTransition(sEstablishPacePin, &AbstractState::fireContinue, sDidAuthenticateEac1);
-	sEstablishPacePin->addTransition(sEstablishPacePin, &StateEstablishPacePin::fireInvalidPin, sUpdateRetryCounter);
-	sEstablishPacePin->addTransition(sEstablishPacePin, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);
-
-	sEstablishPaceCanCanMode->addTransition(sEstablishPaceCanCanMode, &AbstractState::fireContinue, sDidAuthenticateEac1);
-	sEstablishPaceCanCanMode->addTransition(sEstablishPaceCanCanMode, &StateEstablishPaceCan::fireInvalidCan, sEstablishPaceCanCanMode);
-	sEstablishPaceCanCanMode->addTransition(sEstablishPaceCanCanMode, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);
+	sClearPacePasswords->addTransition(sClearPacePasswords, &AbstractState::fireContinue, sDidAuthenticateEac1);
+	sClearPacePasswords->addTransition(sClearPacePasswords, &AbstractState::fireAbort, sDidAuthenticateEac1);
 
 	sDidAuthenticateEac1->addTransition(sDidAuthenticateEac1, &AbstractState::fireContinue, sSendDidAuthenticateResponseEac1);
 	sDidAuthenticateEac1->addTransition(sDidAuthenticateEac1, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac1);
@@ -200,14 +168,12 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireContinue, sWriteHistory);
 	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireAbort, sRedirectBrowser);
 
-	sWriteHistory->addTransition(sWriteHistory, &AbstractState::fireContinue, sRedirectBrowser);
+	sWriteHistory->addTransition(sWriteHistory, &AbstractState::fireContinue, sSendWhitelistSurvey);
 	sWriteHistory->addTransition(sWriteHistory, &AbstractState::fireAbort, sRedirectBrowser);
+
+	sSendWhitelistSurvey->addTransition(sSendWhitelistSurvey, &AbstractState::fireContinue, sRedirectBrowser);
+	sSendWhitelistSurvey->addTransition(sSendWhitelistSurvey, &AbstractState::fireAbort, sRedirectBrowser);
 
 	sRedirectBrowser->addTransition(sRedirectBrowser, &AbstractState::fireContinue, sFinal);
 	sRedirectBrowser->addTransition(sRedirectBrowser, &AbstractState::fireAbort, sFinal);
-}
-
-
-AuthController::~AuthController()
-{
 }

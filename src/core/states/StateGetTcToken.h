@@ -12,6 +12,8 @@
 #include "context/AuthContext.h"
 #include "states/AbstractGenericState.h"
 
+class test_StateGetTcToken;
+
 namespace governikus
 {
 
@@ -20,6 +22,7 @@ class StateGetTcToken
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateGetTcToken;
 
 	QPointer<QNetworkReply> mReply;
 
@@ -28,7 +31,7 @@ class StateGetTcToken
 	bool isValidRedirectUrl(const QUrl& pUrl);
 	virtual void run() override;
 
-	StateGetTcToken(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateGetTcToken(const QSharedPointer<WorkflowContext>& pContext);
 
 	public:
 		virtual ~StateGetTcToken() override;
@@ -39,4 +42,4 @@ class StateGetTcToken
 		void onSslErrors(const QList<QSslError>& pErrors);
 };
 
-} /* namespace governikus */
+} // namespace governikus

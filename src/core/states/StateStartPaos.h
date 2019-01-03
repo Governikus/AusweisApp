@@ -18,8 +18,8 @@ class StateStartPaos
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateStartPaos(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateStartPaos(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

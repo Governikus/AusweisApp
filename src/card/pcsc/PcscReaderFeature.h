@@ -61,4 +61,4 @@ inline QDebug operator<<(QDebug pDbg, const governikus::PcscReaderFeature& pPcsc
 }
 
 
-} /* namespace governikus */
+} // namespace governikus

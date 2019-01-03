@@ -18,8 +18,8 @@ class StateLoadTcTokenUrl
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateLoadTcTokenUrl(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateLoadTcTokenUrl(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

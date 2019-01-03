@@ -6,13 +6,14 @@
 
 #pragma once
 
-#include "RemoteDispatcher.h"
+#include "RemoteDispatcherClient.h"
+
 
 namespace governikus
 {
 
 class MockRemoteDispatcher
-	: public RemoteDispatcher
+	: public RemoteDispatcherClient
 {
 	Q_OBJECT
 
@@ -32,12 +33,10 @@ class MockRemoteDispatcher
 
 	public:
 		MockRemoteDispatcher(DispatcherState pState = DispatcherState::WithoutReader);
-		virtual ~MockRemoteDispatcher() override = default;
 
-		virtual const QString& getId() const override;
+		virtual QString getId() const override;
 		virtual const QString& getContextHandle() const override;
-		virtual void send(const QSharedPointer<const RemoteMessage>& pMessage) override;
-		virtual void close() override;
+		Q_INVOKABLE virtual void send(const QSharedPointer<const RemoteMessage>& pMessage) override;
 
 		DispatcherState getState() const;
 		void setState(DispatcherState pState);
@@ -52,4 +51,4 @@ class MockRemoteDispatcher
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

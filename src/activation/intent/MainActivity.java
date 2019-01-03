@@ -4,8 +4,6 @@
 
 package com.governikus.ausweisapp2;
 
-import org.qtproject.qt5.android.bindings.QtActivity;
-
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -19,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 
+import org.qtproject.qt5.android.bindings.QtActivity;
 
 public class MainActivity extends QtActivity
 {
@@ -84,6 +83,16 @@ public class MainActivity extends QtActivity
 		}
 
 		return cIntent.getDataString();
+	}
+
+
+	public static boolean isStartedByAuth()
+	{
+		if (cIntent == null)
+		{
+			return false;
+		}
+		return cIntent.getAction().equals("android.intent.action.VIEW");
 	}
 
 

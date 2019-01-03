@@ -11,8 +11,3 @@ SelfAuthContext::SelfAuthContext()
 	, mSelfAuthenticationData()
 {
 }
-
-
-SelfAuthContext::~SelfAuthContext()
-{
-}

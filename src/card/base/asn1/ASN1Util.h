@@ -16,7 +16,7 @@
 /*!
  * OpenSSL type declarations
  */
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 DECLARE_STACK_OF(ASN1_OCTET_STRING)
 #else
 DEFINE_STACK_OF(ASN1_OCTET_STRING)
@@ -24,7 +24,6 @@ DEFINE_STACK_OF(ASN1_OCTET_STRING)
 
 namespace governikus
 {
-
 
 class Asn1Util
 {
@@ -122,4 +121,4 @@ class Asn1BCDDateUtil
 };
 
 
-}
+} // namespace governikus

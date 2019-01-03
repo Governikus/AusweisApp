@@ -15,11 +15,6 @@
 
 #include <QVector>
 
-class test_StatePrepareChat;
-class test_StatePreVerification;
-class test_StateExtractCvcsFromEac1InputType;
-class test_StateProcessCertificatesFromEac2;
-class test_StateCertificateDescriptionCheck;
 
 namespace governikus
 {
@@ -29,12 +24,12 @@ class DIDAuthenticateEAC1
 	: public PaosMessage
 {
 	friend class DidAuthenticateEac1Parser;
-	friend class ::test_StatePrepareChat;
 	friend class TestAuthContext;
 	friend class ::test_StatePreVerification;
 	friend class ::test_StateExtractCvcsFromEac1InputType;
 	friend class ::test_StateProcessCertificatesFromEac2;
 	friend class ::test_StateCertificateDescriptionCheck;
+	friend class ::test_AuthModel;
 
 	private:
 		ConnectionHandle mConnectionHandle;
@@ -62,4 +57,4 @@ class DIDAuthenticateEAC1
 		const QString& getTransactionInfo() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

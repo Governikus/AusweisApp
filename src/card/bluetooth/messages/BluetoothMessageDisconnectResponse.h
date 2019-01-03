@@ -18,4 +18,4 @@ class BluetoothMessageDisconnectResponse
 		virtual ~BluetoothMessageDisconnectResponse();
 };
 
-} /* namespace governikus */
+} // namespace governikus

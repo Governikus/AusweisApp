@@ -10,11 +10,10 @@
 #include "InputAPDUInfo.h"
 
 class test_TransmitCommand;
+class test_CardConnection;
 
 namespace governikus
 {
-
-class CardConnection;
 
 class TransmitCommand
 	: public BaseCardCommand
@@ -23,6 +22,7 @@ class TransmitCommand
 
 	private:
 		friend class ::test_TransmitCommand;
+		friend class ::test_CardConnection;
 
 		const QVector<InputAPDUInfo> mInputApduInfos;
 		const QString mSlotHandle;
@@ -32,7 +32,7 @@ class TransmitCommand
 
 	protected:
 		virtual void internalExecute() override;
-		virtual ~TransmitCommand() override;
+		virtual ~TransmitCommand() override = default;
 
 	public:
 		TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
@@ -53,4 +53,4 @@ class TransmitCommand
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

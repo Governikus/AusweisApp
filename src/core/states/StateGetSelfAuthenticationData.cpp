@@ -5,11 +5,11 @@
 #include "StateGetSelfAuthenticationData.h"
 
 #include "CertificateChecker.h"
-#include "Env.h"
-#include "HttpStatusCode.h"
+#include "LogHandler.h"
 #include "SelfAuthenticationData.h"
 #include "TlsChecker.h"
 
+#include <http_parser.h>
 #include <QLoggingCategory>
 #include <QSslKey>
 
@@ -58,7 +58,7 @@ void StateGetSelfAuthenticationData::reportCommunicationError(const GlobalStatus
 void StateGetSelfAuthenticationData::onSslHandshakeDone()
 {
 	const auto& cfg = mReply->sslConfiguration();
-	TlsChecker::logSslConfig(cfg, qInfo(network));
+	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
 
 	if (!checkSslConnectionAndSaveCertificate(cfg))
 	{
@@ -79,17 +79,18 @@ bool StateGetSelfAuthenticationData::checkSslConnectionAndSaveCertificate(const 
 				context->addCertificateData(pUrl, pCertificate);
 			};
 
+	const auto& issuerName = TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate());
 	switch (CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), getContext()->getRefreshUrl(), context->getDidAuthenticateEac1(), context->getDvCvc(), saveCertificateFunc))
 	{
 		case CertificateChecker::CertificateStatus::Good:
 			break;
 
 		case CertificateChecker::CertificateStatus::Unsupported_Algorithm_Or_Length:
-			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length));
+			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length, issuerName));
 			return false;
 
 		case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
-			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description));
+			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description, issuerName));
 			return false;
 	}
 
@@ -114,10 +115,8 @@ void StateGetSelfAuthenticationData::onSslErrors(const QList<QSslError>& pErrors
 
 void StateGetSelfAuthenticationData::onNetworkReply()
 {
-	int statusCode = mReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-	qDebug() << statusCode;
-
-	if (statusCode == HttpStatusCode::OK)
+	const auto statusCode = NetworkManager::getLoggedStatusCode(mReply, spawnMessageLogger(network));
+	if (statusCode == HTTP_STATUS_OK)
 	{
 		const SelfAuthenticationData data(mReply->readAll());
 		if (data.isValid())
@@ -127,14 +126,14 @@ void StateGetSelfAuthenticationData::onNetworkReply()
 		}
 		else
 		{
-			qDebug() << "Could not read data for self authentication.";
+			qDebug() << "No valid data of self authentication.";
 			updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
 			Q_EMIT fireAbort();
 		}
 	}
 	else
 	{
-		qDebug() << "Could not read data for self authentication. StatusCode:" << statusCode;
+		qDebug() << "Could not read data for self authentication.";
 		updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
 		Q_EMIT fireAbort();
 	}

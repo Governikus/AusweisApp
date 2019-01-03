@@ -34,11 +34,11 @@ class BluetoothCard
 
 		CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
 
-		CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds) override;
+		CardReturnCode establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPaceChannelOutput& pChannelOutput, quint8 pTimeoutSeconds) override;
 
 		CardReturnCode destroyPaceChannel() override;
 
 		CardReturnCode setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu) override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

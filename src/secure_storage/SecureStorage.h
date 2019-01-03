@@ -40,6 +40,7 @@ class SecureStorage
 		QUrl mSelfAuthenticationUrl;
 		QUrl mSelfAuthenticationTestUrl;
 		QUrl mUpdateServerBaseUrl;
+		QUrl mWhitelistServerBaseUrl;
 		QUrl mAppcastUpdateUrl;
 		QUrl mAppcastBetaUpdateUrl;
 
@@ -53,6 +54,9 @@ class SecureStorage
 		void readByteArrayList(QByteArrayList& pArray, const QJsonObject& pConfig, const QLatin1String pName);
 
 		void load();
+
+		QByteArrayList loadTestCvcsFromAppDir();
+		QByteArray loadTestCvc(const QString& pPath);
 
 	protected:
 		SecureStorage();
@@ -70,6 +74,7 @@ class SecureStorage
 		const QVector<QSslCertificate>& getUpdateCertificates() const;
 		const QUrl& getSelfAuthenticationUrl(bool pTest = false) const;
 		const QUrl& getUpdateServerBaseUrl() const;
+		const QUrl& getWhitelistServerBaseUrl() const;
 		const QUrl& getAppcastUpdateUrl() const;
 		const QUrl& getAppcastBetaUpdateUrl() const;
 		const TlsConfiguration& getTlsConfig(TlsSuite pTlsSuite = TlsSuite::DEFAULT) const;

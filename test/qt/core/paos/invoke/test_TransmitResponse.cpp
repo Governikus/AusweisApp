@@ -6,6 +6,8 @@
 
 #include "paos/invoke/TransmitResponse.h"
 
+#include "TestFileHelper.h"
+
 #include <QtCore>
 #include <QtTest>
 
@@ -20,7 +22,6 @@ class test_TransmitResponse
 		void type()
 		{
 			TransmitResponse elem;
-			elem.setMessageId("dummy");
 			QCOMPARE(elem.mType, PaosType::TRANSMIT_RESPONSE);
 		}
 
@@ -28,7 +29,6 @@ class test_TransmitResponse
 		void marshall()
 		{
 			TransmitResponse response;
-			response.setMessageId("dummy");
 			QByteArray elem = response.marshall();
 
 			QVERIFY(elem.contains("<TransmitResponse "));
@@ -37,23 +37,21 @@ class test_TransmitResponse
 
 			TransmitResponse responseWithApdu;
 			responseWithApdu.setMessageId("dummy");
-			responseWithApdu.setOutputApdus(QByteArrayList() << "bla");
+			responseWithApdu.setOutputApdus(QByteArrayList {"bla"});
 			elem = responseWithApdu.marshall();
 
 			QVERIFY(elem.contains("<OutputAPDU>bla</OutputAPDU>"));
 		}
 
 
-		void elements()
+		void checkTemplate()
 		{
-			TransmitResponse elem;
-			elem.setMessageId("dummy");
-
-			QCOMPARE(elem.createTransmitResponse().nodeName(), QString("TransmitResponse"));
-			QVERIFY(elem.createTransmitResponse().elementsByTagName("OutputAPDU").isEmpty());
-
-			elem.setOutputApdus(QByteArrayList() << "bla");
-			QVERIFY(!elem.createTransmitResponse().elementsByTagName("OutputAPDU").isEmpty());
+			TransmitResponse response;
+			response.setResult(ECardApiResult(GlobalStatus::Code::Workflow_Wrong_Parameter_Invocation));
+			response.setOutputApdus(QByteArrayList{"a", "b", "c"});
+			auto data = QString::fromLatin1(response.marshall());
+			data.replace(QRegularExpression("<wsa:MessageID>.*</wsa:MessageID>"), "<wsa:MessageID>STRIP ME</wsa:MessageID>");
+			QCOMPARE(data, QString::fromLatin1(TestFileHelper::readFile(":/paos/TransmitResponse.xml")));
 		}
 
 

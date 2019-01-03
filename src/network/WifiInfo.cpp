@@ -21,7 +21,7 @@ bool WifiInfo::isPrivateIp(const QHostAddress& pAddress)
 }
 
 
-bool WifiInfo::hasPrivateIpAddress() const
+bool WifiInfo::hasPrivateIpAddress()
 {
 	const auto& interfaces = QNetworkInterface::allInterfaces();
 	for (const QNetworkInterface& interface : interfaces)

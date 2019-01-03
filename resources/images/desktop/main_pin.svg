@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 840 840" >
+  <g transform="translate(-400,-600) scale(1.5,1.5)" fill="#ffffff">
+    <path d="M 330 630 a 50 50 0 0 1 50 -50 h 10 a 156 156 0 0 1 310 0 h 10 a 50 50 0 0 1 50 50 v 240 a 50 50 0 0 1 -50 50 h -330 a 50 50 0 0 1 -50 -50 z
+             M 400 630 a 20 20 0 0 0 -20 20 v 200 a 20 20 0 0 0 20 20 h 290 a 20 20 0 0 0 20 -20 v -200 a 20 20 0 0 0 -20 -20 z
+             M 650 580 a 106 106 0 0 0 -210 0 z
+             M 525 750 a 50 50 0 1 1 40 0 l 20 100 h -80 z" />
+  </g>
+</svg>

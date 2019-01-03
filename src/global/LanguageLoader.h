@@ -23,7 +23,6 @@ class LanguageLoader
 {
 	private:
 		friend class ::test_LanguageLoader;
-		friend class ::test_ProviderParser;
 		friend class ::test_ProviderConfigurationParser;
 		static const QLocale::Language mFallbackLanguage;
 		static QLocale mDefaultLanguage;
@@ -60,4 +59,4 @@ class LanguageLoader
 		QList<QLocale> getAvailableLocales() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

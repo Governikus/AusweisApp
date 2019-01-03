@@ -39,4 +39,4 @@ class ConnectionHandle
 		const QString& getContextHandle() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

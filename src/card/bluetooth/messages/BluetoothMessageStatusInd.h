@@ -26,4 +26,4 @@ class BluetoothMessageStatusInd
 		BluetoothStatusChange getStatusChange() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -58,7 +58,7 @@ bool CustomSchemeActivationContext::sendOperationAlreadyActive()
 }
 
 
-bool CustomSchemeActivationContext::sendErrorPage(HttpStatusCode, const GlobalStatus&)
+bool CustomSchemeActivationContext::sendErrorPage(http_status, const GlobalStatus&)
 {
 	// The error is displayed in the application,
 	// so here is nothing to be done in this case.

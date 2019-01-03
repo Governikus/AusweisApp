@@ -19,14 +19,14 @@ const QLatin1String lineBreak("\r\n");
 #else
 const QLatin1Char lineBreak('\n');
 #endif
-}
+} // namespace
 
 namespace governikus
 {
 defineEnumType(TestEnum1, FIRST, SECOND, THIRD)
 
 defineEnumType(TestEnum2, FIRST = 0xff, SECOND = 0x01, THIRD = 0xaa)
-}
+} // namespace governikus
 
 class test_EnumHelper
 	: public QObject
@@ -36,7 +36,7 @@ class test_EnumHelper
 	private:
 		void testBadConverion(const int pValue, const QString& pExpectedOutput)
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			TestEnum1 badEnumValue = static_cast<TestEnum1>(pValue);
 			QCOMPARE(Enum<TestEnum1>::getName(badEnumValue), QLatin1String());
@@ -50,13 +50,13 @@ class test_EnumHelper
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
 		void cleanup()
 		{
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
@@ -84,7 +84,7 @@ class test_EnumHelper
 
 		void operatorDebug()
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			qDebug() << TestEnum1::FIRST;
 
 			QCOMPARE(spy.count(), 1);

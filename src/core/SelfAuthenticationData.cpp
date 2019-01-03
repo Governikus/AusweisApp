@@ -6,7 +6,7 @@
 
 #include "LanguageLoader.h"
 
-#include <QDomDocument>
+#include <QJsonDocument>
 #include <QLoggingCategory>
 
 Q_DECLARE_LOGGING_CATEGORY(secure)
@@ -54,23 +54,25 @@ SelfAuthenticationData::SelfData::SelfData(const QByteArray& pData)
 	{
 		return;
 	}
-	qCDebug(secure) << "parsing data:" << pData;
+	qCDebug(secure).noquote() << "parsing data:\n" << pData;
 
-	QDomDocument doc(QStringLiteral("dataXML"));
+	mValid = parse(pData);
+}
 
-	QString errorMsg;
-	int errorLine;
-	int errorColumn;
-	if (!doc.setContent(pData, true, &errorMsg, &errorLine, &errorColumn))
+
+bool SelfAuthenticationData::SelfData::parse(const QByteArray& pData)
+{
+	QJsonParseError jsonError;
+	const auto& json = QJsonDocument::fromJson(pData, &jsonError);
+	if (jsonError.error != QJsonParseError::NoError)
 	{
-		qDebug() << "XML parsing failed. No valid values to parse. Error in line" << errorLine << "column"
-				 << errorColumn << ":" << errorMsg;
-		return;
+		qDebug() << "JSON parsing failed:" << jsonError.errorString();
+		return false;
 	}
 
-	const auto& parseOperations = std::bind(&SelfAuthenticationData::SelfData::parseOperationsAllowedByUser, this, std::placeholders::_1);
-	const auto& parsePersonal = std::bind(&SelfAuthenticationData::SelfData::parsePersonalData, this, std::placeholders::_1);
-	mValid = parse(doc, QStringLiteral("OperationsAllowedByUser"), parseOperations) && parse(doc, QStringLiteral("PersonalData"), parsePersonal);
+	const auto& obj = json.object();
+	return parseOperationsAllowedByUser(obj.value(QLatin1String("OperationsAllowedByUser")).toObject())
+		   && parsePersonalData(obj.value(QLatin1String("PersonalData")).toObject());
 }
 
 
@@ -94,21 +96,23 @@ QString SelfAuthenticationData::SelfData::getValue(SelfAuthData pData) const
 }
 
 
-bool SelfAuthenticationData::SelfData::parseOperationsAllowedByUser(const QDomElement& pElement)
+bool SelfAuthenticationData::SelfData::parseOperationsAllowedByUser(const QJsonObject& pObject)
 {
-	for (auto elem = pElement; !elem.isNull(); elem = elem.nextSiblingElement())
+	const auto& keys = pObject.keys();
+	for (const auto& entry : keys)
 	{
-		auto authData = Enum<SelfAuthData>::fromString(elem.tagName(), SelfAuthData::UNKNOWN);
+		auto authData = Enum<SelfAuthData>::fromString(entry, SelfAuthData::UNKNOWN);
 		if (authData == SelfAuthData::UNKNOWN)
 		{
-			qWarning() << "SelfAuthData is unknown:" << elem.tagName();
+			qWarning() << "SelfAuthData is unknown:" << entry;
 			continue;
 		}
 
-		auto permission = Enum<SelfAuthDataPermission>::fromString(elem.text(), SelfAuthDataPermission::UNKNOWN);
+		const auto tagName = pObject.value(entry).toString();
+		auto permission = Enum<SelfAuthDataPermission>::fromString(tagName, SelfAuthDataPermission::UNKNOWN);
 		if (permission == SelfAuthDataPermission::UNKNOWN)
 		{
-			qWarning() << "SelfAuthDataPermission is unknown:" << elem.tagName();
+			qWarning() << "SelfAuthDataPermission is unknown:" << entry << '|' << tagName;
 			continue;
 		}
 
@@ -119,28 +123,29 @@ bool SelfAuthenticationData::SelfData::parseOperationsAllowedByUser(const QDomEl
 }
 
 
-bool SelfAuthenticationData::SelfData::parsePersonalData(const QDomElement& pElement)
+bool SelfAuthenticationData::SelfData::parsePersonalData(const QJsonObject& pObject)
 {
-	for (auto elem = pElement; !elem.isNull(); elem = elem.nextSiblingElement())
+	const auto& keys = pObject.keys();
+	for (const auto& entry : keys)
 	{
-		auto authData = Enum<SelfAuthData>::fromString(elem.tagName(), SelfAuthData::UNKNOWN);
+		const auto subvalue = [&pObject, &entry](const char* pValue){
+					return pObject.value(entry).toObject().value(QLatin1String(pValue));
+				};
+
+		auto authData = Enum<SelfAuthData>::fromString(entry, SelfAuthData::UNKNOWN);
 		if (authData == SelfAuthData::UNKNOWN)
 		{
-			qWarning() << "PersonalData is unknown:" << elem.tagName();
+			qWarning() << "PersonalData is unknown:" << entry;
 			continue;
 		}
 
-		if (authData == SelfAuthData::DateOfBirth)
+		if (authData == SelfAuthData::PlaceOfBirth)
 		{
-			tryToInsertChild(elem.firstChildElement(QStringLiteral("DateValue")), authData);
-		}
-		else if (authData == SelfAuthData::PlaceOfBirth)
-		{
-			tryToInsertChild(elem.firstChildElement(QStringLiteral("FreetextPlace")), authData);
+			tryToInsertChild(subvalue("FreetextPlace"), authData);
 		}
 		else if (authData == SelfAuthData::PlaceOfResidence)
 		{
-			if (tryToInsertChild(elem.firstChildElement(QStringLiteral("NoPlaceInfo")), SelfAuthData::PlaceOfResidenceNoPlaceInfo))
+			if (tryToInsertChild(subvalue("NoPlaceInfo"), SelfAuthData::PlaceOfResidenceNoPlaceInfo))
 			{
 				mOperationsAllowed.insert(SelfAuthData::PlaceOfResidenceNoPlaceInfo, mOperationsAllowed.value(authData));
 			}
@@ -153,10 +158,10 @@ bool SelfAuthenticationData::SelfData::parsePersonalData(const QDomElement& pEle
 					{QStringLiteral("ZipCode"), SelfAuthData::PlaceOfResidenceZipCode}
 				};
 
-				auto structuredPlace = elem.firstChildElement(QStringLiteral("StructuredPlace"));
+				const auto structuredPlace = subvalue("StructuredPlace").toObject();
 				for (auto iter = placeInfo.constBegin(); iter != placeInfo.constEnd(); ++iter)
 				{
-					if (tryToInsertChild(structuredPlace.firstChildElement(iter.key()), iter.value()))
+					if (tryToInsertChild(structuredPlace.value(iter.key()), iter.value()))
 					{
 						mOperationsAllowed.insert(iter.value(), mOperationsAllowed.value(authData));
 					}
@@ -165,7 +170,7 @@ bool SelfAuthenticationData::SelfData::parsePersonalData(const QDomElement& pEle
 		}
 		else
 		{
-			tryToInsertChild(elem, authData);
+			tryToInsertChild(pObject.value(entry), authData);
 		}
 	}
 
@@ -173,28 +178,15 @@ bool SelfAuthenticationData::SelfData::parsePersonalData(const QDomElement& pEle
 }
 
 
-bool SelfAuthenticationData::SelfData::tryToInsertChild(const QDomElement& pElement, SelfAuthData pAuthData)
+bool SelfAuthenticationData::SelfData::tryToInsertChild(const QJsonValue& pValue, SelfAuthData pAuthData)
 {
-	if (pElement.isNull() || pElement.text().isNull())
+	if (pValue.isString())
 	{
-		return false;
+		mSelfAuthData.insert(pAuthData, pValue.toString());
+		return true;
 	}
 
-	mSelfAuthData.insert(pAuthData, pElement.text());
-	return true;
-}
-
-
-bool SelfAuthenticationData::SelfData::parse(const QDomDocument& pDoc, const QString& pElementName, const std::function<bool(const QDomElement&)>& pParserFunc)
-{
-	const QDomNodeList nodeList = pDoc.documentElement().elementsByTagName(pElementName);
-	if (nodeList.size() == 0)
-	{
-		qCritical() << "XML parsing failed. No valid values to parse for:" << pElementName;
-		return false;
-	}
-
-	return pParserFunc(nodeList.at(0).toElement().firstChildElement());
+	return false;
 }
 
 
@@ -213,7 +205,7 @@ SelfAuthenticationData::OrderedSelfData SelfAuthenticationData::SelfData::getOrd
 			};
 
 	const auto& add = [&](const QString& pKey, const QString& pValue){
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+#if !defined(Q_OS_ANDROID)
 				if (!pKey.isEmpty())
 				{
 					orderedSelfData << qMakePair(pKey + QLatin1Char(':'), pValue);

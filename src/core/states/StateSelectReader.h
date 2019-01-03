@@ -6,6 +6,8 @@
 
 #include "AbstractGenericState.h"
 
+class test_StateSelectReader;
+
 namespace governikus
 {
 
@@ -14,9 +16,10 @@ class StateSelectReader
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateSelectReader;
 
 	private:
-		StateSelectReader(const QSharedPointer<WorkflowContext>& pContext);
+		explicit StateSelectReader(const QSharedPointer<WorkflowContext>& pContext);
 		virtual void run() override;
 
 		static bool requiresCard(ReaderManagerPlugInType pPlugInType);
@@ -24,7 +27,7 @@ class StateSelectReader
 	private Q_SLOTS:
 		void onReaderInfoChanged();
 		void onAbort();
-		void onReaderDeviceError(DeviceError pDeviceError);
+		void onReaderDeviceError(const GlobalStatus pError);
 
 	public:
 		void onEntry(QEvent* pEvent) override;
@@ -33,4 +36,4 @@ class StateSelectReader
 		void fireRetry();
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "Env.h"
 #include "GlobalStatus.h"
 #include "NetworkManager.h"
 
@@ -23,6 +24,7 @@ class Downloader
 	: public QObject
 {
 	Q_OBJECT
+	friend class Env;
 
 	private:
 		QSharedPointer<QNetworkRequest> mCurrentRequest;
@@ -35,6 +37,7 @@ class Downloader
 	protected:
 		Downloader();
 		virtual ~Downloader();
+		static Downloader& getInstance();
 
 	private Q_SLOTS:
 		void onSslErrors(const QList<QSslError>& pErrors);
@@ -47,12 +50,10 @@ class Downloader
 		Q_INVOKABLE virtual void downloadIfNew(const QUrl& pUpdateUrl,
 				const QDateTime& pCurrentTimestamp);
 
-		static Downloader& getInstance();
-
 	Q_SIGNALS:
 		void fireDownloadSuccess(const QUrl& pUpdateUrl, const QDateTime& pNewTimestamp, const QByteArray& pData);
 		void fireDownloadFailed(const QUrl& pUpdateUrl, GlobalStatus::Code pErrorCode);
 		void fireDownloadUnnecessary(const QUrl& pUpdateUrl);
 };
 
-} /* namespace governikus */
+} // namespace governikus

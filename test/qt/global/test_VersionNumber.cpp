@@ -35,7 +35,6 @@ class test_VersionNumber
 			VersionNumber number6("");
 			QVERIFY(number1 != number6);
 
-
 			VersionNumber number7("1.12.0+123-default-abc123");
 			VersionNumber number8("1.12.0+123-default-abc123");
 			QVERIFY(number7 == number8);

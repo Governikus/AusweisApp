@@ -6,10 +6,12 @@
 
 #pragma once
 
-#include "HttpStatusCode.h"
 #include "MockSocket.h"
 
+#include <http_parser.h>
 #include <QNetworkReply>
+
+class test_StateCheckRefreshAddress;
 
 namespace governikus
 {
@@ -20,14 +22,14 @@ class MockNetworkReply
 	Q_OBJECT
 
 	private:
+		friend class ::test_StateCheckRefreshAddress;
 		MockSocket mSocket;
 
 	public:
-		MockNetworkReply(const QByteArray& pData = QByteArray(), HttpStatusCode pStatusCode = HttpStatusCode::UNDEFINED, QObject* pParent = nullptr);
+		MockNetworkReply(const QByteArray& pData = QByteArray(), http_status pStatusCode = HTTP_STATUS_OK, QObject* pParent = nullptr);
 		virtual ~MockNetworkReply() override;
 		virtual void abort() override
 		{
-
 		}
 
 
@@ -59,4 +61,4 @@ class MockNetworkReply
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

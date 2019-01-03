@@ -7,11 +7,12 @@
 #pragma once
 
 #include "HttpRequest.h"
+#include "PortFile.h"
 
+#include <QMetaMethod>
 #include <QScopedPointer>
 #include <QSharedPointer>
 #include <QTcpServer>
-#include <QTcpSocket>
 
 namespace governikus
 {
@@ -23,6 +24,9 @@ class HttpServer
 
 	private:
 		QScopedPointer<QTcpServer, QScopedPointerDeleteLater> mServer;
+		PortFile mPortFile;
+
+		bool checkReceiver(const QMetaMethod& pSignal, HttpRequest* pRequest);
 
 	public:
 		static quint16 cPort;
@@ -35,11 +39,11 @@ class HttpServer
 
 	private Q_SLOTS:
 		void onNewConnection();
-		void onMessageComplete(HttpRequest* pRequest, QSharedPointer<QAbstractSocket> pSocket);
+		void onMessageComplete(HttpRequest* pRequest);
 
 	Q_SIGNALS:
 		void fireNewHttpRequest(const QSharedPointer<HttpRequest>& pRequest);
-		void fireNewWebSocketRequest(const QSharedPointer<QAbstractSocket>& pSocket);
+		void fireNewWebSocketRequest(const QSharedPointer<HttpRequest>& pRequest);
 };
 
-} /* namespace governikus */
+} // namespace governikus

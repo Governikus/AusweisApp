@@ -59,7 +59,6 @@ void PaosHandler::parse()
 	{
 		setParsedObject(new StartPaosResponse(mXmlData));
 	}
-
 }
 
 
@@ -89,9 +88,7 @@ bool PaosHandler::handleFoundElement(const QString& pElementName, const QString&
 	}
 	else if (pElementName == QLatin1String("DIDAuthenticate"))
 	{
-		QStringList expectedElements;
-		expectedElements.push_back(QStringLiteral("AuthenticationProtocolData"));
-		detectStartElements(expectedElements);
+		detectStartElements({QStringLiteral("AuthenticationProtocolData")});
 	}
 	else if (pElementName == QLatin1String("AuthenticationProtocolData"))
 	{
@@ -129,13 +126,15 @@ bool PaosHandler::handleFoundElement(const QString& pElementName, const QString&
 
 void PaosHandler::detect()
 {
-	QStringList expectedElements;
-	expectedElements.push_back(QStringLiteral("InitializeFramework"));
-	expectedElements.push_back(QStringLiteral("DIDList"));
-	expectedElements.push_back(QStringLiteral("DIDAuthenticate"));
-	expectedElements.push_back(QStringLiteral("Transmit"));
-	expectedElements.push_back(QStringLiteral("Disconnect"));
-	expectedElements.push_back(QStringLiteral("StartPAOSResponse"));
+	const QStringList expectedElements({
+				QStringLiteral("InitializeFramework"),
+				QStringLiteral("DIDList"),
+				QStringLiteral("DIDAuthenticate"),
+				QStringLiteral("Transmit"),
+				QStringLiteral("Disconnect"),
+				QStringLiteral("StartPAOSResponse")
+			});
+
 	detectStartElements(expectedElements);
 }
 

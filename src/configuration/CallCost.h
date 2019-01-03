@@ -13,7 +13,6 @@
 namespace governikus
 {
 
-
 class CallCost
 {
 	friend bool operator==(const CallCost& pLeft, const CallCost& pRight);
@@ -49,6 +48,6 @@ inline bool operator==(const CallCost& pLeft, const CallCost& pRight)
 }
 
 
-} /* namespace governikus */
+} // namespace governikus
 
 QDebug operator<<(QDebug pDbg, const governikus::CallCost& pCallCost);

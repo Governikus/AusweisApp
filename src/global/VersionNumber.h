@@ -60,4 +60,4 @@ inline bool operator>(const VersionNumber& pLeft, const VersionNumber& pRight)
 }
 
 
-} /* namespace governikus */
+} // namespace governikus

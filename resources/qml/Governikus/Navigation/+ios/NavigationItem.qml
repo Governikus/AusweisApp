@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.10
 
 import Governikus.Global 1.0
 

@@ -7,7 +7,6 @@
 #pragma once
 
 #include "context/AuthContext.h"
-#include "paos/retrieve/DidAuthenticateEac1.h"
 
 #include <QString>
 
@@ -30,4 +29,4 @@ class TestAuthContext
 		void setOptionalAccessRights(const QSet<AccessRight>& pAccessRights);
 };
 
-} /* namespace governikus */
+} // namespace governikus

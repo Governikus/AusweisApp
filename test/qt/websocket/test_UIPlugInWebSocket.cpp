@@ -5,6 +5,8 @@
  */
 
 #include "UIPlugInWebSocket.h"
+
+#include "PortFile.h"
 #include "WebSocketHelper.h"
 
 #include <climits>
@@ -49,7 +51,6 @@ class test_UIPlugInWebSocket
 			QStringList args;
 			args << "--ui" << "websocket";
 			args << "--port" << "0";
-			args << "--port-websocket" << "0";
 		#ifndef Q_OS_WIN
 			args << "-platform" << "offscreen";
 		#endif
@@ -63,12 +64,8 @@ class test_UIPlugInWebSocket
 			mApp2->waitForStarted(PROCESS_TIMEOUT);
 			QCOMPARE(mApp2->state(), QProcess::Running);
 
-			QFile portInfoFile(WEBSOCKET_PORT_FILENAME(mApp2->processId()));
-			for (int i = 0; i < PROCESS_TIMEOUT && portInfoFile.size() == 0; i += 200)
-			{
-				QThread::msleep(200);
-			}
-			QVERIFY(portInfoFile.size() != 0);
+			QFile portInfoFile(PortFile::getPortFilename(QString(), mApp2->processId(), QStringLiteral("AusweisApp2")));
+			QTRY_COMPARE_WITH_TIMEOUT(portInfoFile.exists(), true, PROCESS_TIMEOUT);
 			QVERIFY(portInfoFile.open(QIODevice::ReadOnly));
 
 			quint16 webSocketPort = 0;
@@ -82,17 +79,27 @@ class test_UIPlugInWebSocket
 
 		void cleanup()
 		{
+			const QString portFile = PortFile::getPortFilename(QString(), mApp2->processId(), QStringLiteral("AusweisApp2"));
+			QVERIFY(QFile::exists(portFile));
 			mHelper.reset();
+
+			QCOMPARE(mApp2->state(), QProcess::Running);
 
 			mApp2->terminate();
 			mApp2->waitForFinished(PROCESS_TIMEOUT);
-			QCOMPARE(mApp2->state(), QProcess::NotRunning);
-			QCOMPARE(mApp2->exitCode(), 0);
 
 			if (mApp2->state() != QProcess::NotRunning)
 			{
 				mApp2->kill();
 			}
+			QCOMPARE(mApp2->state(), QProcess::NotRunning);
+
+			if (mApp2->exitCode() != 0)
+			{
+				qDebug().noquote() << "Error output from AusweisApp2 process:\n" << mApp2->readAllStandardError();
+			}
+			QCOMPARE(mApp2->exitCode(), 0);
+			QVERIFY(!QFile::exists(portFile));
 		}
 
 
@@ -108,7 +115,6 @@ class test_UIPlugInWebSocket
 						return pMessage["msg"] == "INFO" &&
 						pMessage["VersionInfo"].toObject()["Name"] == "AusweisApp2";
 					}));
-
 
 			mHelper->sendMessage("{\"cmd\": \"GET_API_LEVEL\"}");
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){

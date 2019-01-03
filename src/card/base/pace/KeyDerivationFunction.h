@@ -13,7 +13,7 @@
 namespace governikus
 {
 
-class KeyDerivationFunction
+class KeyDerivationFunction final
 {
 	private:
 		QCryptographicHash::Algorithm mHashAlgorithm;
@@ -27,7 +27,7 @@ class KeyDerivationFunction
 		 *        PACE protocol of id_PACE::DH::GM_AES_CBC_CMAC_128 will result in SHA256 to be used internally to derive keys.
 		 */
 		KeyDerivationFunction(const QByteArray& pPaceAlgorithm);
-		virtual ~KeyDerivationFunction();
+		~KeyDerivationFunction() = default;
 
 		/*!
 		 * Returns true, if initialization succeeded, i.e. the algorithm is known, supported and the key bytes have correct size.
@@ -57,4 +57,4 @@ class KeyDerivationFunction
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

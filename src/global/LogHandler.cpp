@@ -4,6 +4,7 @@
 
 #include "LogHandler.h"
 
+#include "BreakPropertyBindingDiagnosticLogFilter.h"
 #include "SingletonHelper.h"
 
 #include <QDir>
@@ -25,23 +26,21 @@ LogHandler::LogHandler()
 	, mBacklogPosition(0)
 	, mMessagePattern(QStringLiteral("%{category} %{time yyyy.MM.dd hh:mm:ss.zzz} %{if-debug} %{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif} %{function}(%{file}:%{line}) %{message}"))
 	, mDefaultMessagePattern(QStringLiteral("%{if-category}%{category}: %{endif}%{message}")) // as defined in qlogging.cpp
-	, mLogFile(QDir::tempPath() + QStringLiteral("/AusweisApp2.XXXXXX.log")) // if you change value you need to adjust getOtherLogfiles()
+	, mLogFileTemplate(QDir::tempPath() + QStringLiteral("/AusweisApp2.XXXXXX.log")) // if you change value you need to adjust getOtherLogfiles()
+	, mLogFile(mLogFileTemplate)
 	, mHandler(nullptr)
 	, mFilePrefix("/src/")
 	, mMutex()
 {
-	mLogFile.open();
+#ifndef QT_NO_DEBUG
+	new BreakPropertyBindingDiagnosticLogFilter(this);
+#endif
 }
 
 
 LogHandler::~LogHandler()
 {
-	const QMutexLocker mutexLocker(&mMutex);
-	if (mHandler)
-	{
-		qInstallMessageHandler(nullptr);
-		mHandler = nullptr;
-	}
+	reset();
 }
 
 
@@ -51,13 +50,34 @@ LogHandler& LogHandler::getInstance()
 }
 
 
+void LogHandler::reset()
+{
+	const QMutexLocker mutexLocker(&mMutex);
+	if (isInitialized())
+	{
+		qInstallMessageHandler(nullptr);
+		mHandler = nullptr;
+	}
+}
+
+
 void LogHandler::init()
 {
 	const QMutexLocker mutexLocker(&mMutex);
-	if (!mHandler)
+	if (!isInitialized())
 	{
+		if (useLogfile())
+		{
+			mLogFile.open();
+		}
 		mHandler = qInstallMessageHandler(&LogHandler::messageHandler);
 	}
+}
+
+
+bool LogHandler::isInitialized() const
+{
+	return mHandler;
 }
 
 
@@ -90,26 +110,24 @@ QByteArray LogHandler::getBacklog()
 		return backlog;
 	}
 
-	return tr("An error occurred in log handling: %1").arg(mLogFile.errorString()).toUtf8();
+	if (useLogfile())
+	{
+		return tr("An error occurred in log handling: %1").arg(mLogFile.errorString()).toUtf8();
+	}
+
+	return QByteArray();
 }
 
 
 QDateTime LogHandler::getFileDate(const QFileInfo& pInfo)
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
-	const QFileInfo info(pInfo);
-	const auto& dateTime = info.birthTime();
+	const auto& dateTime = pInfo.birthTime();
 	if (dateTime.isValid())
 	{
 		return dateTime;
 	}
 
-	return info.metadataChangeTime();
-
-#else
-	return QFileInfo(pInfo).created();
-
-#endif
+	return pInfo.metadataChangeTime();
 }
 
 
@@ -267,6 +285,7 @@ bool LogHandler::copy(const QString& pDest)
 QFileInfoList LogHandler::getOtherLogfiles() const
 {
 	QDir tmpPath = QDir::temp();
+	tmpPath.setSorting(QDir::Time);
 	tmpPath.setFilter(QDir::Files);
 	tmpPath.setNameFilters(QStringList({QStringLiteral("AusweisApp2.*.log")}));
 
@@ -277,13 +296,46 @@ QFileInfoList LogHandler::getOtherLogfiles() const
 }
 
 
-void LogHandler::removeOtherLogfiles()
+bool LogHandler::removeOtherLogfiles()
 {
 	const auto otherLogFiles = getOtherLogfiles();
 	for (const auto& entry : otherLogFiles)
 	{
 		qDebug() << "Remove old log file:" << entry.absoluteFilePath() << "|" << QFile::remove(entry.absoluteFilePath());
 	}
+
+	return !otherLogFiles.isEmpty();
+}
+
+
+void LogHandler::setLogfile(bool pEnable)
+{
+	const QMutexLocker mutexLocker(&mMutex);
+
+	if (pEnable)
+	{
+		if (!mLogFile.isOpen())
+		{
+			mLogFile.setFileTemplate(mLogFileTemplate);
+			mLogFile.open();
+		}
+	}
+	else
+	{
+		if (mLogFile.isOpen())
+		{
+			mLogFile.close();
+			mLogFile.remove();
+			mBacklogPosition = 0;
+		}
+		mLogFile.setFileTemplate(QString());
+	}
+}
+
+
+bool LogHandler::useLogfile() const
+{
+	return !mLogFile.fileTemplate().isNull();
 }
 
 

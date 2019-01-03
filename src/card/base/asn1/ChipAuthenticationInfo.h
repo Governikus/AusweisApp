@@ -13,7 +13,6 @@
 namespace governikus
 {
 
-
 /**
  * ChipAuthenticationInfo ::= SEQUENCE {
  *    protocol OBJECT IDENTIFIER( id-CA-DH-3DES-CBC-CBC | id-CA-DH-AES-CBC-CMAC-128 | id-CA-DH-AES-CBC-CMAC-192 |
@@ -40,22 +39,21 @@ DECLARE_ASN1_FUNCTIONS(chipauthenticationinfo_st)
 class ChipAuthenticationInfo
 	: public SecurityInfo
 {
+	friend class QSharedPointer<ChipAuthenticationInfo>;
 	const QSharedPointer<const chipauthenticationinfo_st> mDelegate;
 
 	ChipAuthenticationInfo(const QSharedPointer<const chipauthenticationinfo_st>& pDelegate);
-
 	ASN1_OBJECT* getProtocolObjectIdentifier() const override;
-
 	static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
 
 	public:
 		static QSharedPointer<ChipAuthenticationInfo> decode(const QByteArray& pBytes)
 		{
-			if (const auto& delegate = decodeObject<chipauthenticationinfo_st>(pBytes))
+			if (const auto& delegate = decodeObject<chipauthenticationinfo_st>(pBytes, false))
 			{
 				if (ChipAuthenticationInfo::acceptsProtocol(delegate->mProtocol))
 				{
-					return QSharedPointer<ChipAuthenticationInfo>(new ChipAuthenticationInfo(delegate));
+					return QSharedPointer<ChipAuthenticationInfo>::create(delegate);
 				}
 			}
 			return QSharedPointer<ChipAuthenticationInfo>();

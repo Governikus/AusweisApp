@@ -29,4 +29,4 @@ class InternalActivationHandler
 		void runAuthentication(const QSharedPointer<ActivationContext>& pContext);
 };
 
-} /* namespace governikus */
+} // namespace governikus

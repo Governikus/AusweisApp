@@ -4,6 +4,8 @@
 
 #include "HttpResponse.h"
 
+#include "NetworkManager.h"
+
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QLoggingCategory>
@@ -22,11 +24,11 @@ HEADER_NAME(HEADER_CONTENT_LENGTH, "Content-Length")
 HEADER_NAME(HEADER_CONTENT_TYPE, "Content-Type")
 HEADER_NAME(HEADER_SERVER, "Server")
 HEADER_NAME(HEADER_DATE, "Date")
-}
+} // namespace
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
-HttpResponse::HttpResponse(HttpStatusCode pStatus, const QByteArray& pBody, const QByteArray& pContentType)
+HttpResponse::HttpResponse(http_status pStatus, const QByteArray& pBody, const QByteArray& pContentType)
 	: mStatus(pStatus)
 	, mHeader()
 	, mBody()
@@ -42,17 +44,6 @@ HttpResponse::HttpResponse(HttpStatusCode pStatus, const QByteArray& pBody, cons
 	setHeader(HEADER_SERVER(), QCoreApplication::applicationName().toUtf8() % version % QByteArrayLiteral(" (TR-03124-1/1.3)"));
 	setHeader(HEADER_DATE(), QLocale::c().toString(QDateTime::currentDateTimeUtc(), QStringLiteral("ddd, dd MMM yyyy hh:mm:ss")).toUtf8() + QByteArrayLiteral(" GMT"));
 	setHeader(HEADER_CONTENT_LENGTH(), QByteArray::number(mBody.size()));
-}
-
-
-HttpResponse::~HttpResponse()
-{
-}
-
-
-bool HttpResponse::isValid() const
-{
-	return mStatus != HttpStatusCode::UNDEFINED;
 }
 
 
@@ -74,13 +65,13 @@ void HttpResponse::setHeader(const QByteArray& pKey, const QByteArray& pValue)
 }
 
 
-HttpStatusCode HttpResponse::getStatus() const
+http_status HttpResponse::getStatus() const
 {
 	return mStatus;
 }
 
 
-void HttpResponse::setStatus(HttpStatusCode pStatus)
+void HttpResponse::setStatus(http_status pStatus)
 {
 	mStatus = pStatus;
 }
@@ -108,16 +99,17 @@ void HttpResponse::setBody(const QByteArray& pBody, const QByteArray& pContentTy
 }
 
 
+QByteArray HttpResponse::getStatusMessage() const
+{
+	return NetworkManager::getStatusMessage(mStatus);
+}
+
+
 QByteArray HttpResponse::getMessage() const
 {
-	Q_ASSERT(mStatus != HttpStatusCode::UNDEFINED);
-
 	static const QByteArray CR_LF = QByteArrayLiteral("\r\n");
 	QByteArrayList list;
-
-	const auto& statusCode = QByteArray::number(static_cast<int>(mStatus));
-	QByteArray statusMsg(getEnumName(mStatus).data());
-	list += QByteArrayLiteral("HTTP/1.0 ") % statusCode % ' ' % statusMsg.replace('_', ' ');
+	list += QByteArrayLiteral("HTTP/1.0 ") % QByteArray::number(mStatus) % ' ' % getStatusMessage();
 
 	const auto& end = mHeader.constEnd();
 	for (auto iter = mHeader.constBegin(); iter != end; ++iter)

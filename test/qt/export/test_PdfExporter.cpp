@@ -42,7 +42,7 @@ class test_PdfExporter
 
 			for (int i = 0; i < 100; ++i)
 			{
-				entries << HistoryInfo("SubjectName", "SubjectUrl", "Usage", QDateTime::currentDateTime(), "TermOfUsage", "RequestedData");
+				entries << HistoryInfo("SubjectName", "SubjectUrl", "Usage", QDateTime::currentDateTime(), "TermOfUsage", {"RequestedData"});
 			}
 			QTest::newRow("multiple") << 50000 << 350000 << entries;
 		}
@@ -54,8 +54,8 @@ class test_PdfExporter
 			QFETCH(int, max);
 			QFETCH(QVector<HistoryInfo>, infos);
 
-			AppSettings::getInstance().getHistorySettings().setHistoryInfos(infos);
-			AppSettings::getInstance().getHistorySettings().save();
+			Env::getSingleton<AppSettings>()->getHistorySettings().setHistoryInfos(infos);
+			Env::getSingleton<AppSettings>()->getHistorySettings().save();
 
 			QTemporaryFile file;
 			QVERIFY(file.open());

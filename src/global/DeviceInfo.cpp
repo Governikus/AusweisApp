@@ -46,7 +46,6 @@ QString DeviceInfo::getPrettyInfo()
 
 QString DeviceInfo::getName()
 {
-
 #ifdef Q_OS_ANDROID
 	return getField("MODEL");
 
@@ -61,6 +60,66 @@ QString DeviceInfo::getFingerprint()
 {
 #ifdef Q_OS_ANDROID
 	return getField("FINGERPRINT");
+
+#else
+	return QString();
+
+#endif
+}
+
+
+QString DeviceInfo::getOSBuildNumber()
+{
+#ifdef Q_OS_ANDROID
+	return getField("DISPLAY");
+
+#else
+	return QString();
+
+#endif
+}
+
+
+QString DeviceInfo::getOSVersion()
+{
+	return QSysInfo::productVersion();
+}
+
+
+QString DeviceInfo::getKernelVersion()
+{
+	return QSysInfo::kernelVersion();
+}
+
+
+QString DeviceInfo::getVendor()
+{
+#ifdef Q_OS_ANDROID
+	return getField("MANUFACTURER");
+
+#else
+	return QString();
+
+#endif
+}
+
+
+QString DeviceInfo::getModelNumber()
+{
+#ifdef Q_OS_ANDROID
+	return getField("MODEL");
+
+#else
+	return QString();
+
+#endif
+}
+
+
+QString DeviceInfo::getModelName()
+{
+#ifdef Q_OS_ANDROID
+	return getField("PRODUCT");
 
 #else
 	return QString();

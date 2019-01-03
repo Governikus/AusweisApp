@@ -38,7 +38,7 @@ class test_ChangePinController
 
 		void onCardInserted(const QString& pReaderName)
 		{
-			if (ReaderManager::getInstance().getReaderInfo(pReaderName).hasEidCard())
+			if (Env::getSingleton<ReaderManager>()->getReaderInfo(pReaderName).hasEidCard())
 			{
 				Q_EMIT fireEidCardInserted();
 			}
@@ -80,8 +80,9 @@ class test_ChangePinController
 
 			QSignalSpy eidCardDetected(this, &test_ChangePinController::fireEidCardInserted);
 
-			connect(&ReaderManager::getInstance(), &ReaderManager::fireCardInserted, this, &test_ChangePinController::onCardInserted);
-			ReaderManager::getInstance().init();
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			connect(readerManager, &ReaderManager::fireCardInserted, this, &test_ChangePinController::onCardInserted);
+			readerManager->init();
 
 			QVERIFY(eidCardDetected.wait(20000));
 		}
@@ -89,8 +90,9 @@ class test_ChangePinController
 
 		void cleanupTestCase()
 		{
-			ReaderManager::getInstance().shutdown();
-			disconnect(&ReaderManager::getInstance(), &ReaderManager::fireCardInserted, this, &test_ChangePinController::onCardInserted);
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			readerManager->shutdown();
+			disconnect(readerManager, &ReaderManager::fireCardInserted, this, &test_ChangePinController::onCardInserted);
 
 			QVERIFY(mPersoSim->shutdown());
 			mPersoSim.reset();
@@ -152,7 +154,6 @@ class test_ChangePinController
 
 	Q_SIGNALS:
 		void fireEidCardInserted();
-
 };
 
 QTEST_GUILESS_MAIN(test_ChangePinController)

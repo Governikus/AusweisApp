@@ -99,4 +99,4 @@ class CyberJackWaveDevice
 		void fireStatusCharacteristicChanged(const QByteArray& pValue);
 };
 
-} /* namespace governikus */
+} // namespace governikus

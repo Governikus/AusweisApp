@@ -6,6 +6,8 @@
 
 #include "paos/invoke/StartPaos.h"
 
+#include "TestFileHelper.h"
+
 #include <QtCore>
 #include <QtTest>
 
@@ -15,12 +17,6 @@ class test_StartPaos
 	: public QObject
 {
 	Q_OBJECT
-
-	QString getValue(const QDomElement& pElement, const QString& pName)
-	{
-		return pElement.elementsByTagName(pName).at(0).firstChild().nodeValue();
-	}
-
 
 	private Q_SLOTS:
 		void initTestCase()
@@ -32,7 +28,6 @@ class test_StartPaos
 		void type()
 		{
 			StartPaos elem("session");
-			elem.setMessageId("dummy");
 			QCOMPARE(elem.mType, PaosType::STARTPAOS);
 		}
 
@@ -40,7 +35,6 @@ class test_StartPaos
 		void marshall()
 		{
 			StartPaos startPaos("session");
-			startPaos.setMessageId("dummy");
 			QByteArray elem = startPaos.marshall();
 
 			QVERIFY(elem.contains("<StartPAOS xmlns=\"urn:iso:std:iso-iec:24727:tech:schema\">"));
@@ -64,35 +58,13 @@ class test_StartPaos
 		}
 
 
-		void elements()
+		void checkTemplate()
 		{
-			StartPaos ctor("session123");
-			ctor.setMessageId("dummy");
-
-			QCOMPARE(ctor.createSessionIdentifierElement().nodeName(), QString("SessionIdentifier"));
-			QCOMPARE(ctor.createSessionIdentifierElement().firstChild().nodeValue(), QString("session123"));
-
-			auto elem = ctor.createConnectionHandleElement();
-			QCOMPARE(getValue(elem, "CardApplication"), QString("e80704007f00070302"));
-			QCOMPARE(getValue(elem, "SlotHandle"), QString("00"));
-		}
-
-
-		void userAgentElement()
-		{
-			StartPaos elem("session123");
-			elem.setMessageId("dummy");
-			QCOMPARE(getValue(elem.createUserAgentElement(), "Name"), QString("Test_core_paos_invoke_StartPaos"));
-		}
-
-
-		void supportedAPIVersionsElement()
-		{
-			StartPaos elem("session123");
-			elem.setMessageId("dummy");
-			QCOMPARE(getValue(elem.createSupportedAPIVersionsElement(), "Major"), QString("1"));
-			QCOMPARE(getValue(elem.createSupportedAPIVersionsElement(), "Minor"), QString("1"));
-			QCOMPARE(getValue(elem.createSupportedAPIVersionsElement(), "Subminor"), QString("5"));
+			StartPaos startPaos("abcd");
+			startPaos.setRelatedMessageId("urn:uuid:dummy");
+			auto data = QString::fromLatin1(startPaos.marshall());
+			data.replace(QRegularExpression("<wsa:MessageID>.*</wsa:MessageID>"), "<wsa:MessageID>STRIP ME</wsa:MessageID>");
+			QCOMPARE(data, QString::fromLatin1(TestFileHelper::readFile(":/paos/StartPAOS.xml")));
 		}
 
 

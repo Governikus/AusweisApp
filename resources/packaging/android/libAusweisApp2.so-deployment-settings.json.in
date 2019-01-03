@@ -6,9 +6,10 @@
    "sdkBuildToolsRevision": "@ANDROID_BUILD_TOOLS_REVISION@",
    "toolchain-prefix": "@ANDROID_TOOLCHAIN_PREFIX@",
    "tool-prefix": "@ANDROID_TOOLCHAIN_MACHINE_NAME@",
-   "toolchain-version": "@CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION@",
+   "toolchain-version": "@ANDROID_NDK_TOOLCHAIN_VERSION@",
    "ndk-host": "@CMAKE_ANDROID_NDK_TOOLCHAIN_HOST_TAG@",
    "target-architecture": "@CMAKE_ANDROID_ARCH_ABI@",
    "android-package-source-directory": "@ANDROID_PACKAGE_SRC_DIR@",
+   "stdcpp-path": "@CMAKE_ANDROID_NDK@/sources/cxx-stl/@ANDROID_STL_PATH@/libs/@CMAKE_ANDROID_ARCH_ABI@/lib@CMAKE_ANDROID_STL_TYPE@.so",
    "application-binary": "@ANDROID_APP_BINARY@"
 }

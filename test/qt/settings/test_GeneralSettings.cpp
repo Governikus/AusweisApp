@@ -54,7 +54,6 @@ class test_GeneralSettings
 			mSettings->setAutoUpdateCheck(initial);
 			QCOMPARE(mSettings->isAutoUpdateCheck(), initial);
 			mSettings->save();
-
 		}
 
 
@@ -66,7 +65,6 @@ class test_GeneralSettings
 			mSettings->setAutoStart(!initial);
 			QCOMPARE(mSettings->isAutoStart(), !initial);
 			mSettings->save();
-
 
 			mSettings->setAutoStart(initial);
 			QCOMPARE(mSettings->isAutoStart(), initial);
@@ -89,7 +87,6 @@ class test_GeneralSettings
 			mSettings->setUseScreenKeyboard(initial);
 			QCOMPARE(mSettings->isUseScreenKeyboard(), initial);
 			mSettings->save();
-
 		}
 
 
@@ -200,6 +197,20 @@ class test_GeneralSettings
 			QCOMPARE(mSettings->getLastReaderPluginType(), newValue);
 			QCOMPARE(spy.count(), 1);
 			mSettings->save();
+		}
+
+
+		void testStoreFeedbackRequested()
+		{
+#if defined(Q_OS_IOS)
+			QCOMPARE(mSettings->isRequestStoreFeedback(), false);
+#else
+			QCOMPARE(mSettings->isRequestStoreFeedback(), true);
+#endif
+
+			mSettings->setRequestStoreFeedback(false);
+			mSettings->save();
+			QCOMPARE(mSettings->isRequestStoreFeedback(), false);
 		}
 
 

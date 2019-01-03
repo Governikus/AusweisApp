@@ -11,6 +11,7 @@
 
 Q_DECLARE_LOGGING_CATEGORY(card)
 
+
 using namespace governikus;
 
 
@@ -18,12 +19,6 @@ DidAuthenticateEAC1Command::DidAuthenticateEAC1Command(QSharedPointer<CardConnec
 	: BaseCardCommand(pCardConnectionWorker)
 	, mChallenge()
 {
-}
-
-
-DidAuthenticateEAC1Command::~DidAuthenticateEAC1Command()
-{
-
 }
 
 

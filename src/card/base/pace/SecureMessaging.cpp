@@ -39,13 +39,8 @@ SecureMessaging::SecureMessaging(const QByteArray& pPaceAlgorithm, const QByteAr
 	, mCipherMac(pPaceAlgorithm, pMacKey)
 	, mSendSequenceCounter(0)
 {
-	qCDebug(secure) << "Encryption key: " << pEncKey.toHex();
+	qCDebug(secure) << "Encryption key:" << pEncKey.toHex();
 	qCDebug(secure) << "MAC key:" << pMacKey.toHex();
-}
-
-
-SecureMessaging::~SecureMessaging()
-{
 }
 
 
@@ -101,7 +96,7 @@ CommandApdu SecureMessaging::encrypt(const CommandApdu& pCommandApdu)
 
 	++mSendSequenceCounter;
 
-	qCDebug(secure) << "Plain CommandApdu: " << pCommandApdu.getBuffer().toHex();
+	qCDebug(secure) << "Plain CommandApdu:" << pCommandApdu.getBuffer().toHex();
 
 	QByteArray formattedEncryptedData;
 	if (!pCommandApdu.getData().isEmpty())
@@ -117,7 +112,7 @@ CommandApdu SecureMessaging::encrypt(const CommandApdu& pCommandApdu)
 
 	QByteArray securedHeader = createSecuredHeader(pCommandApdu);
 	QByteArray securedLe;
-	if (pCommandApdu.getLe() > Apdu::NO_LE)
+	if (pCommandApdu.getLe() > CommandApdu::NO_LE)
 	{
 		auto protectedLeObject = newObject<SM_PROTECTED_LE>();
 		Asn1OctetStringUtil::setValue(createSecuredLe(pCommandApdu.getLe()), protectedLeObject.data());
@@ -134,7 +129,7 @@ CommandApdu SecureMessaging::encrypt(const CommandApdu& pCommandApdu)
 QByteArray SecureMessaging::createSecuredHeader(const CommandApdu& pCommandApdu) const
 {
 	QByteArray securedHeader;
-	securedHeader += static_cast<char>((pCommandApdu.getCLA() & 0xF0) | Apdu::CLA_SECURE_MESSAGING);
+	securedHeader += static_cast<char>((pCommandApdu.getCLA() & 0xF0) | CommandApdu::CLA_SECURE_MESSAGING);
 	securedHeader += pCommandApdu.getINS();
 	securedHeader += pCommandApdu.getP1();
 	securedHeader += pCommandApdu.getP2();
@@ -145,9 +140,9 @@ QByteArray SecureMessaging::createSecuredHeader(const CommandApdu& pCommandApdu)
 QByteArray SecureMessaging::createSecuredLe(int pLe)
 {
 	QByteArray buffer;
-	if (pLe > Apdu::NO_LE)
+	if (pLe > CommandApdu::NO_LE)
 	{
-		if (pLe > Apdu::SHORT_MAX_LE)
+		if (pLe > CommandApdu::SHORT_MAX_LE)
 		{
 			buffer += static_cast<char>(pLe >> 0x08 & 0xff);
 		}
@@ -249,7 +244,7 @@ bool SecureMessaging::decrypt(const ResponseApdu& pEncryptedResponseApdu, Respon
 
 	pDecryptedResponseApdu.setBuffer(decryptedData + secureResponse.getSecuredStatusCodeBytes());
 
-	qCDebug(secure) << "Plain ResponseApdu: " << pDecryptedResponseApdu.getBuffer().toHex();
+	qCDebug(secure) << "Plain ResponseApdu:" << pDecryptedResponseApdu.getBuffer().toHex();
 
 	return true;
 }

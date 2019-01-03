@@ -7,11 +7,15 @@
 #pragma once
 
 #include "CardConnection.h"
+#include "ECardApiResult.h"
 #include "GlobalStatus.h"
-#include "Result.h"
+#include "SmartCardDefinitions.h"
 
+#include <QElapsedTimer>
 #include <QSharedPointer>
 #include <QString>
+
+class test_WorkflowContext;
 
 namespace governikus
 {
@@ -22,24 +26,33 @@ class WorkflowContext
 	Q_OBJECT
 
 	private:
+		friend class ::test_WorkflowContext;
 		bool mStateApproved;
+		bool mWorkflowKilled;
 		QString mCurrentState;
 		QVector<ReaderManagerPlugInType> mReaderPlugInTypes;
 		QString mReaderName;
 		QSharedPointer<CardConnection> mCardConnection;
+		int mCardVanishedDuringPacePinCount;
+		QElapsedTimer mCardVanishedDuringPacePinTimer;
 		QString mCan;
 		QString mPin;
 		QString mPuk;
-		QScopedPointer<EstablishPACEChannelOutput> mPaceOutputData;
-		int mOldRetryCounter;
+		PacePasswordId mEstablishPaceChannelType;
+		QScopedPointer<EstablishPaceChannelOutput> mPaceOutputData;
+		QString mExpectedReaderName;
+		int mExpectedRetryCounter;
 		CardReturnCode mLastPaceResult;
 		GlobalStatus mStatus;
+		ECardApiResult mStartPaosResult;
 		bool mErrorReportedToUser;
+		bool mPaceResultReportedToUser;
 		bool mWorkflowFinished;
+		bool mWorkflowCancelled;
 		bool mCanAllowedMode;
 
-	protected:
-		void resetLastPaceResultAndRetryCounter();
+	private Q_SLOTS:
+		void onWorkflowCancelled();
 
 	Q_SIGNALS:
 		void fireStateApprovedChanged();
@@ -63,8 +76,14 @@ class WorkflowContext
 		bool isErrorReportedToUser() const;
 		void setErrorReportedToUser(bool pErrorReportedToUser = true);
 
+		bool isPaceResultReportedToUser() const;
+		void setPaceResultReportedToUser(bool pReported = true);
+
 		void setStateApproved(bool pApproved = true);
-		bool isStateApproved();
+		bool isStateApproved() const;
+
+		void killWorkflow();
+		bool isWorkflowKilled() const;
 
 		const QString& getCurrentState() const;
 		void setCurrentState(const QString& pNewState);
@@ -77,6 +96,11 @@ class WorkflowContext
 
 		const QSharedPointer<CardConnection>& getCardConnection() const;
 		void setCardConnection(const QSharedPointer<CardConnection>& pCardConnection);
+		void resetCardConnection();
+
+		bool isNpaRepositioningRequired() const;
+		void setNpaPositionVerified();
+		void handleWrongNpaPosition();
 
 		const QString& getPuk() const;
 		void setPuk(const QString& pPuk);
@@ -87,22 +111,38 @@ class WorkflowContext
 		const QString& getPin() const;
 		void setPin(const QString& pPin);
 
-		EstablishPACEChannelOutput* getPaceOutputData() const;
-		void setPaceOutputData(const EstablishPACEChannelOutput& pPaceOutputData);
+		PacePasswordId getEstablishPaceChannelType() const;
+		void setEstablishPaceChannelType(PacePasswordId pType);
+
+		virtual void resetPacePasswords();
+
+		EstablishPaceChannelOutput* getPaceOutputData() const;
+		void setPaceOutputData(const EstablishPaceChannelOutput& pPaceOutputData);
 
 		bool isPinBlocked();
 		CardReturnCode getLastPaceResult() const;
-		int getOldRetryCounter() const;
-		void setLastPaceResultAndRetryCounter(CardReturnCode pLastPaceResult, int pOldRetryCounter);
+		void setLastPaceResult(CardReturnCode pLastPaceResult);
+		void resetLastPaceResult();
+
+		bool isExpectedReader() const;
+		void rememberReader();
+
+		int getExpectedRetryCounter() const;
+		void setExpectedRetryCounter(int pExpectedRetryCounter);
 
 		const GlobalStatus& getStatus() const;
-		void setStatus(const GlobalStatus& pResult, bool pReportToUser = true);
+		void setStatus(const GlobalStatus& pResult);
+
+		const ECardApiResult getStartPaosResult() const;
+		void setStartPaosResult(const ECardApiResult& pStartPaosResult);
 
 		bool isWorkflowFinished() const;
 		void setWorkflowFinished(bool pWorkflowFinished);
+
+		bool isWorkflowCancelled() const;
 
 		bool isCanAllowedMode() const;
 		void setCanAllowedMode(bool pCanAllowedMode);
 };
 
-} /* namespace governikus */
+} // namespace governikus

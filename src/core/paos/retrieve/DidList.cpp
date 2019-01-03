@@ -21,16 +21,16 @@ DIDList::DIDList(const QByteArray& xmlData)
 
 void DIDList::parse()
 {
-	QStringList expectedElements;
-	expectedElements.push_back(QStringLiteral("RelatesTo"));
-	expectedElements.push_back(QStringLiteral("MessageID"));
-
-	expectedElements.push_back(QStringLiteral("ContextHandle"));
-	expectedElements.push_back(QStringLiteral("IFDName"));
-	expectedElements.push_back(QStringLiteral("SlotIndex"));
-	expectedElements.push_back(QStringLiteral("CardApplication"));
-	expectedElements.push_back(QStringLiteral("SlotHandle"));
-	expectedElements.push_back(QStringLiteral("RecognitionInfo"));
+	const QStringList expectedElements({
+				QStringLiteral("RelatesTo"),
+				QStringLiteral("MessageID"),
+				QStringLiteral("ContextHandle"),
+				QStringLiteral("IFDName"),
+				QStringLiteral("SlotIndex"),
+				QStringLiteral("CardApplication"),
+				QStringLiteral("SlotHandle"),
+				QStringLiteral("RecognitionInfo")
+			});
 
 	detectStartElements(expectedElements);
 }

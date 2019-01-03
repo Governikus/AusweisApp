@@ -1,6 +1,6 @@
 .. only:: html
 
-  .. image:: ../../resources/images/AppLogo_AutentApp2_2014.png
+  .. image:: ../../resources/images/Logo_AusweisApp2.png
      :alt: AusweisApp2
      :align: center
      :width: 200pt
@@ -27,12 +27,14 @@ Table of contents
 
 
 
+.. _connection:
 
 .. toctree::
    :maxdepth: 3
    :caption: Connection
 
    android
+   desktop
 
 
 .. raw:: latex
@@ -42,6 +44,7 @@ Table of contents
 
 
 
+.. _protocol:
 
 .. toctree::
    :maxdepth: 2

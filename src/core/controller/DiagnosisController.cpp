@@ -3,20 +3,17 @@
  */
 
 #include "DiagnosisController.h"
+
 #include "ReaderManager.h"
 
+#include <QNetworkInterface>
 #include <QSysInfo>
 #include <QtConcurrent/QtConcurrent>
-
-#ifdef Q_OS_UNIX
-#   include <sys/utsname.h>
-#endif
-
 
 using namespace governikus;
 
 
-DiagnosisController::DiagnosisController(DiagnosisContext* pContext, QObject* pParent)
+DiagnosisController::DiagnosisController(const QSharedPointer<DiagnosisContext>& pContext, QObject* pParent)
 	: QObject(pParent)
 	, mContext(pContext)
 	, mWatcherPcscInfo()
@@ -33,6 +30,7 @@ DiagnosisController::~DiagnosisController()
 void DiagnosisController::run()
 {
 	mWatcherPcscInfo.setFuture(QtConcurrent::run(&DiagnosisController::retrievePcscInfo));
+	collectInterfaceInformation();
 }
 
 
@@ -48,9 +46,15 @@ void DiagnosisController::checkDone()
 {
 	if (mWatcherPcscInfo.isFinished())
 	{
-		mContext->setReaderInfos(ReaderManager::getInstance().getReaderInfos());
+		mContext->setReaderInfos(Env::getSingleton<ReaderManager>()->getReaderInfos());
 		mContext->setTimestamp(QDateTime::currentDateTime());
 	}
+}
+
+
+void DiagnosisController::collectInterfaceInformation()
+{
+	mContext->setNetworkInterfaces(QNetworkInterface::allInterfaces());
 }
 
 
@@ -59,7 +63,7 @@ DiagnosisController::PcscInfo DiagnosisController::retrievePcscInfo()
 	PcscInfo result;
 
 	bool hasPcsc = false;
-	const auto infos = ReaderManager::getInstance().getPlugInInfos();
+	const auto infos = Env::getSingleton<ReaderManager>()->getPlugInInfos();
 	for (const auto& info : infos)
 	{
 		if (info.getPlugInType() == ReaderManagerPlugInType::PCSC)

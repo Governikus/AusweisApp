@@ -4,7 +4,7 @@ import static common.Constants.strip
 def j = new Release
 	(
 		name: 'MacOS_DMG',
-		libraries: 'MacOS',
+		libraries: ['MacOS'],
 		label: 'MacOS',
 		artifacts: 'build/*.dmg'
 	).generate(this)
@@ -21,7 +21,7 @@ j.with
 			cmake ../source
 			-DCMAKE_PREFIX_PATH=\${WORKSPACE}/libs/build/dist
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-			-DCMAKE_BUILD_TYPE=release
+			-DCMAKE_BUILD_TYPE=MinSizeRel
 			"""))
 
 		shell('''\

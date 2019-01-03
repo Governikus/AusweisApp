@@ -4,8 +4,6 @@
 
 #include "TestFileHelper.h"
 
-#include "FileDestination.h"
-
 #include <QFile>
 #include <QtTest>
 

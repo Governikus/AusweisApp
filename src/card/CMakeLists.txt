@@ -1,3 +1,14 @@
+#####################################################################
+# The module card is responsible to handle all generic card commands
+# (APDU).
+#
+# It provides an interface that can be implemented by plugins like
+# PCSC or Android-NFC called ReaderManagerPlugIn.
+# Also it provides a ReaderManager that can be used as a generic
+# control interface. It handles access and commands to specific
+# reader, cards and commands to the identity card.
+#####################################################################
+
 ADD_SUBDIRECTORY(base)
 
 IF(DESKTOP)
@@ -8,9 +19,8 @@ IF(TARGET Qt5::Nfc)
 	ADD_SUBDIRECTORY(nfc)
 ENDIF()
 
-IF(ANDROID OR IOS OR WINDOWS_STORE OR "${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
+IF(TARGET Qt5::Bluetooth)
 	ADD_SUBDIRECTORY(bluetooth)
 ENDIF()
 
 ADD_SUBDIRECTORY(drivers)
-ADD_SUBDIRECTORY(remote)

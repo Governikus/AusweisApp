@@ -65,8 +65,6 @@ build_script:
     - cd _build
 
     - ps: |
-        # Use -DFORCE_LEGACY_OPENSSL=ON to build with the available openssl 1.0.2 of the appveyor build image
-        # otherwise openssl 1.1.x is required with an additional download and build step
         cmake -G "$generator" -DCMAKE_BUILD_TYPE="$env:CONFIGURATION" ..
         if ($LastExitCode -ne 0) {
             throw "Exec: $ErrorMessage"
@@ -80,7 +78,7 @@ test_script:
     - cd "%APPVEYOR_BUILD_FOLDER%"/_build
     - set PATH=%QTPATH%;%QTPATH%/bin;%PATH%
     - echo %PATH%
-    - ctest -VV -C "%CONFIGURATION%"
+    - ctest --output-on-failure -C "%CONFIGURATION%"
 
 on_finish:
     - cd "%APPVEYOR_BUILD_FOLDER%"

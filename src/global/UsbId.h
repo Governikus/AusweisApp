@@ -6,7 +6,6 @@
 
 #include <QtGlobal>
 
-class QDebug;
 
 namespace governikus
 {
@@ -26,7 +25,7 @@ class UsbId
 		bool operator==(const UsbId& pOther) const;
 };
 
-} /* namespace governikus */
+} // namespace governikus
 
 Q_DECLARE_TYPEINFO(governikus::UsbId, Q_PRIMITIVE_TYPE);
 

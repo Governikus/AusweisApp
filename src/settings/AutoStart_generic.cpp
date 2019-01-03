@@ -17,6 +17,12 @@ bool AutoStart::enabled()
 }
 
 
+bool AutoStart::isSetByAdmin()
+{
+	return false;
+}
+
+
 void AutoStart::set(bool pEnabled)
 {
 	if (pEnabled)

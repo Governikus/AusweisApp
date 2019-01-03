@@ -4,18 +4,25 @@
         <file>html_templates/error.html</file>
         <file>stylesheets/desktop.qss</file>
         <file>images/beta.svg</file>
-        <file>images/green_check_mark.svg</file>
         <file>images/MenuSelected.png</file>
         <file>images/MenuUnselected.png</file>
         <file>images/MenuUnselectedDisabled.png</file>
         <file>images/npa.ico</file>
-        <file>images/Logo_AutentApp2_2014.png</file>
-        <file>images/AppLogo_AutentApp2_2014.png</file>
+        <file>images/Logo_Governikus.png</file>
+        <file>images/Logo_AusweisApp2.png</file>
         <file>images/start_nPA_eAT.png</file>
         <file>images/busy_animation.gif</file>
         <file>images/html_message_section.jpg</file>
-        <file>images/padlock.svg</file>
-        <file>images/padlock_empty.svg</file>
+        <file>images/desktop/background.png</file>
+        <file>images/desktop/help_icon.svg</file>
+        <file>images/desktop/main_history.svg</file>
+        <file>images/desktop/main_identify.svg</file>
+        <file>images/desktop/main_pin.svg</file>
+        <file>images/desktop/main_provider.svg</file>
+        <file>images/desktop/sandglass.svg</file>
+        <file>images/desktop/settings_icon.svg</file>
+        <file>images/desktop/titlebar_arrow.svg</file>
+        <file>images/desktop/continue_arrow.svg</file>
         <file>images/randompin/btn_normal_0.png</file>
         <file>images/randompin/btn_normal_1.png</file>
         <file>images/randompin/btn_normal_2.png</file>
@@ -56,8 +63,8 @@
         <file>updatable-files/reader/img_Gemalto_Prox_SU_mit_ausweis.png</file>
         <file>updatable-files/reader/img_HID_Global_OMNIKEY_5321_V2.png</file>
         <file>updatable-files/reader/img_HID_Global_OMNIKEY_5321_V2_mit_ausweis.png</file>
-        <file>updatable-files/reader/img_HID_Omnikey_5421.png</file>
-        <file>updatable-files/reader/img_HID_Omnikey_5421_mit_ausweis.png</file>
+        <file>updatable-files/reader/img_HID_Omnikey_542x.png</file>
+        <file>updatable-files/reader/img_HID_Omnikey_542x_mit_ausweis.png</file>
         <file>updatable-files/reader/img_HID_Omnikey_Mobile_Reader_502X_CL.png</file>
         <file>updatable-files/reader/img_HID_Omnikey_Mobile_Reader_502X_CL_mit_ausweis.png</file>
         <file>updatable-files/reader/img_HID_Omnikey_Mobile_Reader_4121_CL.png</file>
@@ -86,5 +93,9 @@
         <file>updatable-files/reader/img_Reiner_SCT_cyberjack_RFID_standard_mit_ausweis.png</file>
         <file>updatable-files/reader/img_RemoteReader.png</file>
         <file>updatable-files/reader/img_RemoteReader_mit_ausweis.png</file>
+        <file>updatable-files/reader/img_Cherry_ST_1275.png</file>
+        <file>updatable-files/reader/img_Cherry_ST_1275_mit_ausweis.png</file>
+        <file>updatable-files/reader/img_Signotec_Omega_Pad.png</file>
+        <file>updatable-files/reader/img_Signotec_Omega_Pad_mit_ausweis.png</file>
     </qresource>
 </RCC>

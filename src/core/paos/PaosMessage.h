@@ -57,4 +57,4 @@ class PaosMessage
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

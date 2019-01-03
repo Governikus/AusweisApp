@@ -19,8 +19,8 @@ class StateCheckError
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateCheckError(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateCheckError(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

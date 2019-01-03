@@ -8,7 +8,7 @@
 #include <QtTest>
 
 #include "asn1/ChipAuthenticationInfo.h"
-#include "asn1/PACEInfo.h"
+#include "asn1/PaceInfo.h"
 #include "asn1/SecurityInfos.h"
 
 
@@ -48,7 +48,7 @@ class test_SecurityInfos
 		}
 
 
-		void setWithPACEInfo()
+		void setWithPaceInfo()
 		{
 			QByteArray hexString("31 14"
 								 "        30 12"
@@ -60,7 +60,7 @@ class test_SecurityInfos
 
 			QVERIFY(securityInfos != nullptr);
 			QCOMPARE(securityInfos->getSecurityInfos().size(), 1);
-			QCOMPARE(securityInfos->getPACEInfos().size(), 1);
+			QCOMPARE(securityInfos->getPaceInfos().size(), 1);
 			QCOMPARE(securityInfos->getChipAuthenticationInfos().size(), 0);
 		}
 
@@ -77,7 +77,7 @@ class test_SecurityInfos
 
 			QVERIFY(securityInfos != nullptr);
 			QCOMPARE(securityInfos->getSecurityInfos().size(), 1);
-			QCOMPARE(securityInfos->getPACEInfos().size(), 0);
+			QCOMPARE(securityInfos->getPaceInfos().size(), 0);
 			QCOMPARE(securityInfos->getChipAuthenticationInfos().size(), 1);
 		}
 
@@ -102,7 +102,7 @@ class test_SecurityInfos
 
 			QVERIFY(securityInfos != nullptr);
 			QCOMPARE(securityInfos->getSecurityInfos().size(), 3);
-			QCOMPARE(securityInfos->getPACEInfos().size(), 1);
+			QCOMPARE(securityInfos->getPaceInfos().size(), 1);
 			QCOMPARE(securityInfos->getChipAuthenticationInfos().size(), 1);
 		}
 

@@ -6,9 +6,9 @@
 
 #include "AppSettings.h"
 #include "Downloader.h"
-#include "Env.h"
 #include "ProviderConfiguration.h"
 #include "SecureStorage.h"
+#include "SingletonHelper.h"
 #include "VersionNumber.h"
 
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
@@ -18,6 +18,8 @@
 #include <QLoggingCategory>
 
 using namespace governikus;
+
+defineSingleton(AppUpdater)
 
 Q_DECLARE_LOGGING_CATEGORY(appupdate)
 
@@ -29,6 +31,12 @@ AppUpdater::AppUpdater()
 	const SecureStorage& secureStorage = SecureStorage::getInstance();
 
 	mAppUpdateJsonUrl = VersionNumber::getApplicationVersion().isDeveloperVersion() ? secureStorage.getAppcastBetaUpdateUrl() : secureStorage.getAppcastUpdateUrl();
+}
+
+
+AppUpdater& AppUpdater::getInstance()
+{
+	return *Instance;
 }
 
 
@@ -104,7 +112,6 @@ void AppUpdater::onUpdateDownloadFinished(const QUrl& pUpdateUrl, const QDateTim
 		Q_EMIT fireAppUpdateCheckFinished(true, GlobalStatus::Code::No_Error);
 		clearDownloaderConnection();
 	}
-
 }
 
 

@@ -5,6 +5,9 @@
  */
 
 #include "SelfAuthenticationData.h"
+
+#include "TestFileHelper.h"
+
 #include <QtTest>
 
 using namespace governikus;
@@ -14,77 +17,48 @@ class test_SelfAuthenticationData
 {
 	Q_OBJECT
 
-	private:
-		QFile selfAuthenticationDataXmlFile;
-		QFile selfAuthenticationDataNoStreetXmlFile;
-		QFile selfAuthenticationDataNoAddressXmlFile;
-
-		void checkAndOpenFile(QFile& file)
-		{
-			QVERIFY(file.exists());
-			QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
-		}
-
-
-	public:
-		test_SelfAuthenticationData()
-			: selfAuthenticationDataXmlFile(":/self/SelfAuthenticationData.xml")
-			, selfAuthenticationDataNoStreetXmlFile(":/self/SelfAuthenticationDataNoStreet.xml")
-			, selfAuthenticationDataNoAddressXmlFile(":/self/SelfAuthenticationDataNoAddress.xml")
-		{
-			checkAndOpenFile(selfAuthenticationDataXmlFile);
-			checkAndOpenFile(selfAuthenticationDataNoStreetXmlFile);
-			checkAndOpenFile(selfAuthenticationDataNoAddressXmlFile);
-		}
-
-
 	private Q_SLOTS:
+		void parsedCrap()
+		{
+			QTest::ignoreMessage(QtDebugMsg, "JSON parsing failed: \"illegal value\"");
+			SelfAuthenticationData selfAuthenticationData("abc");
+			QVERIFY(!selfAuthenticationData.isValid());
+
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DateOfExpiry), QString());
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::GivenNames), QString());
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::Nationality), QString());
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::IssuingState), QString());
+		}
+
+
 		void parsedValues()
 		{
-			SelfAuthenticationData selfAuthenticationData(selfAuthenticationDataXmlFile.readAll());
+			const auto& data = TestFileHelper::readFile(":/self/SelfAuthenticationData.json");
+			SelfAuthenticationData selfAuthenticationData(data);
 			QVERIFY(selfAuthenticationData.isValid());
 
-
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DocumentType), QString("TP"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DateOfExpiry), QString("2020-10-31+01:00"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DocumentType), QString("TA"));
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::IssuingState), QString("D"));
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::GivenNames), QString("ERIKA"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::Nationality), QString("AZE"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::GivenNames), QStringLiteral("ANDR\u00c9"));
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::FamilyNames), QString("MUSTERMANN"));
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::ArtisticName), QString());
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::AcademicTitle), QString());
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::BirthName), QString("GABLER"));
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DateOfBirth), QString("1964-08-12+01:00"));
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfBirth), QString("BERLIN"));
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceStreet), QString("HEIDESTRASSE 17"));
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceCity), QStringLiteral("K\u00D6LN"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::BirthName), QString());
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DateOfBirth), QString("1981-06-17+02:00"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfBirth), QString("FRANKFURT (ODER)"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceStreet), QStringLiteral("EHM-WELK-STRA\u00dfE 33"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceCity), QStringLiteral("L\u00dcBBENAU/SPREEWALD"));
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceCountry), QString("D"));
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceZipCode), QString("51147"));
-		}
-
-
-		void parsedValuesNoStreet()
-		{
-			SelfAuthenticationData selfAuthenticationData(selfAuthenticationDataNoStreetXmlFile.readAll());
-			QVERIFY(selfAuthenticationData.isValid());
-
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DocumentType), QString("TP"));
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::IssuingState), QString("D"));
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::GivenNames), QString("ANNEKATHRIN"));
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::FamilyNames), QString("LERCH"));
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::ArtisticName), QString());
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::AcademicTitle), QString());
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DateOfBirth), QString("1976-07-05+01:00"));
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceCity), QString("HALLE (SAALE)"));
-
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceStreet), QString());
-
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceCountry), QString("D"));
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceZipCode), QString("06108"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceZipCode), QString("03222"));
 		}
 
 
 		void parsedValuesNoAddress()
 		{
-			SelfAuthenticationData selfAuthenticationData(selfAuthenticationDataNoAddressXmlFile.readAll());
+			const auto& data = TestFileHelper::readFile(":/self/SelfAuthenticationDataNoAddress.json");
+			SelfAuthenticationData selfAuthenticationData(data);
 			QVERIFY(selfAuthenticationData.isValid());
 
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DocumentType), QString("TP"));
@@ -93,6 +67,7 @@ class test_SelfAuthenticationData
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::FamilyNames), QString("HILLEBRANDT"));
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::ArtisticName), QStringLiteral("GRAF V. L\u00DDSKY"));
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::AcademicTitle), QString("DR.HC."));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::BirthName), QString("This data has not been stored in this chip generation."));
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DateOfBirth), QString("1952-06-17+01:00"));
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfBirth), QString("TRIER"));
 
@@ -103,19 +78,27 @@ class test_SelfAuthenticationData
 		}
 
 
-		void tryToParseClosedFile()
+		void parsedValuesNoStreet()
 		{
-			selfAuthenticationDataXmlFile.close();
-			SelfAuthenticationData selfAuthenticationData(selfAuthenticationDataXmlFile.readAll());
-			QVERIFY(!selfAuthenticationData.isValid());
+			const auto& data = TestFileHelper::readFile(":/self/SelfAuthenticationDataNoStreet.json");
+			SelfAuthenticationData selfAuthenticationData(data);
+			QVERIFY(selfAuthenticationData.isValid());
 
-			selfAuthenticationDataNoStreetXmlFile.close();
-			SelfAuthenticationData selfAuthenticationDataNoStreet(selfAuthenticationDataNoStreetXmlFile.readAll());
-			QVERIFY(!selfAuthenticationDataNoStreet.isValid());
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DocumentType), QString("TP"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::IssuingState), QString("D"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::GivenNames), QString("ANNEKATHRIN"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::FamilyNames), QString("LERCH"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::ArtisticName), QString());
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::AcademicTitle), QString());
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::BirthName), QString());
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DateOfBirth), QString("1976-07-05+01:00"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfBirth), QStringLiteral("BAD K\u00D6NIGSHOFEN I. GRABFELD"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceCity), QStringLiteral("L\u00DCBBENAU/SPREEWALD"));
 
-			selfAuthenticationDataNoAddressXmlFile.close();
-			SelfAuthenticationData selfAuthenticationDataNoAddress(selfAuthenticationDataNoAddressXmlFile.readAll());
-			QVERIFY(!selfAuthenticationDataNoAddress.isValid());
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceStreet), QString());
+
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceCountry), QString("D"));
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceZipCode), QString("06108"));
 		}
 
 

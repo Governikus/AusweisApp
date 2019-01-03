@@ -16,100 +16,50 @@ using namespace governikus;
 
 
 StateChangePinRemote::StateChangePinRemote(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
-	, mModifyPinMessage()
-	, mMessageHandler()
+	: AbstractGenericState(pContext, false)
 {
-}
-
-
-StateChangePinRemote::~StateChangePinRemote()
-{
-}
-
-
-void StateChangePinRemote::onEntry(QEvent* pEvent)
-{
-	AbstractGenericState::onEntry(pEvent);
-
-	const QSharedPointer<RemoteServiceContext>& context = getContext();
-
-	mModifyPinMessage = context->getModifyPinMessage();
-	Q_ASSERT(mModifyPinMessage);
-
-	const QSharedPointer<RemoteServer> remoteServer = context->getRemoteServer();
-	Q_ASSERT(remoteServer);
-	mMessageHandler = remoteServer->getMessageHandler();
-	Q_ASSERT(mMessageHandler);
-
-	auto cardConnection = context->getCardConnection();
-	if (cardConnection.isNull())
-	{
-		Q_EMIT fireContinue();
-		return;
-	}
-
-	mConnections += connect(context.data(), &RemoteServiceContext::fireCancelPasswordRequest, this, &StateChangePinRemote::onCancelChangePin);
-	mConnections += connect(cardConnection.data(), &CardConnection::fireReaderInfoChanged, this, &StateChangePinRemote::onReaderInfoChanged);
-	mConnections += connect(remoteServer.data(), &RemoteServer::fireConnectedChanged, this, &AbstractState::fireContinue);
-}
-
-
-void StateChangePinRemote::onExit(QEvent* pEvent)
-{
-	AbstractGenericState::onExit(pEvent);
-
-	mMessageHandler.reset();
 }
 
 
 void StateChangePinRemote::run()
 {
-	const QSharedPointer<RemoteServiceContext>& context = getContext();
+	Q_ASSERT(getContext());
+	Q_ASSERT(getContext()->getModifyPinMessage());
 
-	PinModify pinModify(mModifyPinMessage->getInputData());
-	const QString newPin = context->getNewPin();
-	context->setPin(QString());
+	const QSharedPointer<RemoteServiceContext>& context = getContext();
+	auto cardConnection = context->getCardConnection();
+	if (cardConnection.isNull())
+	{
+		context->setModifyPinMessageResponseApdu(ResponseApdu(StatusCode::EMPTY));
+		Q_EMIT fireContinue();
+		return;
+	}
+
+	QSharedPointer<const IfdModifyPin> modifyPinMessage = context->getModifyPinMessage();
+
+	PinModify pinModify(modifyPinMessage->getInputData());
 	const quint8 timeoutSeconds = pinModify.getTimeoutSeconds();
 
-	auto cardConnection = context->getCardConnection();
 	Q_ASSERT(cardConnection);
 	mConnections += cardConnection->callSetEidPinCommand(this,
 			&StateChangePinRemote::onChangePinDone,
-			newPin,
+			context->getNewPin(),
 			timeoutSeconds);
-}
-
-
-void StateChangePinRemote::onCancelChangePin()
-{
-	mMessageHandler->sendModifyPinResponse(mModifyPinMessage->getSlotHandle(), ResponseApdu(StatusCode::INPUT_CANCELLED));
-	Q_EMIT fireContinue();
-}
-
-
-void StateChangePinRemote::onReaderInfoChanged(const ReaderInfo& pReaderInfo)
-{
-	if (!pReaderInfo.hasEidCard())
-	{
-		mMessageHandler->sendModifyPinResponse(mModifyPinMessage->getSlotHandle(), ResponseApdu(StatusCode::EMPTY));
-		Q_EMIT fireContinue();
-	}
 }
 
 
 void StateChangePinRemote::onChangePinDone(QSharedPointer<BaseCardCommand> pCommand)
 {
-	const QSharedPointer<SetEidPinCommand> command = pCommand.dynamicCast<SetEidPinCommand>();
+	const QSharedPointer<SetEidPinCommand> command = pCommand.objectCast<SetEidPinCommand>();
 	if (command)
 	{
-		mMessageHandler->sendModifyPinResponse(mModifyPinMessage->getSlotHandle(), command->getResponseApdu());
+		getContext()->setModifyPinMessageResponseApdu(ResponseApdu(command->getResponseApdu()));
 	}
 	else
 	{
 		Q_ASSERT(false);
 		qCDebug(remote_device) << "Expected a SetEidPinCommand as response!";
-		mMessageHandler->sendModifyPinResponse(mModifyPinMessage->getSlotHandle(), ResponseApdu());
+		getContext()->setModifyPinMessageResponseApdu(ResponseApdu());
 	}
 
 	Q_EMIT fireContinue();

@@ -13,23 +13,26 @@
 namespace governikus
 {
 class Discovery
+	: public RemoteMessage
 {
 	private:
-		const QString mIfdName;
-		const QString mIfdId;
-		const quint16 mPort;
-		const QVector<IfdVersion::Version> mSupportedApis;
+		QString mIfdName;
+		QString mIfdId;
+		quint16 mPort;
+		QVector<IfdVersion::Version> mSupportedApis;
 
 	public:
 		Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis);
-		~Discovery() = default;
+		Discovery(const QJsonObject& pMessageObject);
+		virtual ~Discovery() override;
 
 		const QString& getIfdName() const;
 		const QString& getIfdId() const;
 		quint16 getPort() const;
 		const QVector<IfdVersion::Version>& getSupportedApis() const;
-		QJsonDocument toJson() const;
+
+		virtual QByteArray toByteArray(const QString& pContextHandle = QString()) const override;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

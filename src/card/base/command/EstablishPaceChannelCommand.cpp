@@ -2,15 +2,13 @@
  * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "CardConnection.h"
 #include "EstablishPaceChannelCommand.h"
-
 
 using namespace governikus;
 
 
 EstablishPaceChannelCommand::EstablishPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
-		PACE_PASSWORD_ID pPacePasswordId,
+		PacePasswordId pPacePasswordId,
 		const QString& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription)
 	: BaseCardCommand(pCardConnectionWorker)
 	, mPacePasswordId(pPacePasswordId)
@@ -20,16 +18,11 @@ EstablishPaceChannelCommand::EstablishPaceChannelCommand(QSharedPointer<CardConn
 	, mPaceOutput()
 {
 	// This command only supports PIN and CAN.
-	Q_ASSERT(mPacePasswordId == PACE_PASSWORD_ID::PACE_PIN || mPacePasswordId == PACE_PASSWORD_ID::PACE_CAN);
+	Q_ASSERT(mPacePasswordId == PacePasswordId::PACE_PIN || mPacePasswordId == PacePasswordId::PACE_CAN);
 }
 
 
-EstablishPaceChannelCommand::~EstablishPaceChannelCommand()
-{
-}
-
-
-const EstablishPACEChannelOutput& EstablishPaceChannelCommand::getPaceOutput() const
+const EstablishPaceChannelOutput& EstablishPaceChannelCommand::getPaceOutput() const
 {
 	return mPaceOutput;
 }

@@ -9,12 +9,17 @@
 #include <QUrl>
 #include <QXmlStreamReader>
 
+class test_TcToken;
+class test_StateGenericSendReceive;
+
 namespace governikus
 {
 
 class TcToken
 {
 	private:
+		friend class ::test_TcToken;
+		friend class ::test_StateGenericSendReceive;
 		bool mSchemaConform;
 		QString mBinding;
 		QString mPathSecurityProtocol;
@@ -53,7 +58,6 @@ class TcToken
 		const QUrl& getCommunicationErrorAddress() const;
 		bool usePsk() const;
 		const QByteArray& getPsk() const;
-		void clearPsk();
 
 		bool isSchemaConform() const
 		{
@@ -63,4 +67,4 @@ class TcToken
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

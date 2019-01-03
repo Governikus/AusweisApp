@@ -31,4 +31,4 @@ class ElementDetector
 		virtual ~ElementDetector();
 };
 
-} /* namespace governikus */
+} // namespace governikus

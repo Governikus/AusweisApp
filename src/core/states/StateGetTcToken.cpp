@@ -5,10 +5,11 @@
 #include "StateGetTcToken.h"
 
 #include "AppSettings.h"
-#include "Env.h"
+#include "LogHandler.h"
 #include "NetworkManager.h"
 #include "TlsChecker.h"
 
+#include <http_parser.h>
 #include <QDebug>
 #include <QNetworkRequest>
 #include <QSslKey>
@@ -21,7 +22,7 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 
 
 StateGetTcToken::StateGetTcToken(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractGenericState(pContext, false)
 	, mReply()
 {
 }
@@ -68,7 +69,7 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 		// in contrast a HTTP error 404 must be sent, if the TCToken could not be determined
 		const auto httpsError1 = QStringLiteral("Error while connecting to the service provider. A secure connection could not be established.");
 		const auto httpsError2 = QStringLiteral("  The used URL is not of type HTTPS: %1").arg(pUrl.toString());
-		if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 		{
 			qCCritical(developermode) << httpsError1;
 			qCCritical(developermode) << httpsError2;
@@ -110,7 +111,7 @@ void StateGetTcToken::onSslErrors(const QList<QSslError>& pErrors)
 void StateGetTcToken::onSslHandshakeDone()
 {
 	const auto& cfg = mReply->sslConfiguration();
-	TlsChecker::logSslConfig(cfg, qInfo(network));
+	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
 
 	// At this point we can only check the certificate key's length.
 	if (!TlsChecker::hasValidCertificateKeyLength(cfg.peerCertificate()))
@@ -139,13 +140,7 @@ void StateGetTcToken::onSslHandshakeDone()
 
 void StateGetTcToken::onNetworkReply()
 {
-	int statusCode = mReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-	QUrl redirectUrl = mReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-	qDebug() << "Status Code: " << statusCode << " | RedirectUrl: " << redirectUrl;
-	for (const auto& header : mReply->rawHeaderPairs())
-	{
-		qCDebug(network).nospace() << "Header | " << header.first << ": " << header.second;
-	}
+	const auto statusCode = NetworkManager::getLoggedStatusCode(mReply, spawnMessageLogger(network));
 
 	if (mReply->error() != QNetworkReply::NoError)
 	{
@@ -155,19 +150,20 @@ void StateGetTcToken::onNetworkReply()
 		return;
 	}
 
-	if (statusCode == HttpStatusCode::OK)
+	if (statusCode == HTTP_STATUS_OK)
 	{
 		parseTcToken();
 		return;
 	}
 
+	const QUrl& redirectUrl = mReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
 	if (!isValidRedirectUrl(redirectUrl))
 	{
 		Q_EMIT fireAbort();
 		return;
 	}
 
-	if (statusCode != HttpStatusCode::SEE_OTHER && statusCode != HttpStatusCode::FOUND && statusCode != HttpStatusCode::TEMPORARY_REDIRECT)
+	if (statusCode != HTTP_STATUS_SEE_OTHER && statusCode != HTTP_STATUS_FOUND && statusCode != HTTP_STATUS_TEMPORARY_REDIRECT)
 	{
 		qCritical() << "Error while connecting to the service provider. The server returns an unexpected status code:" << statusCode;
 		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
@@ -191,7 +187,7 @@ void StateGetTcToken::parseTcToken()
 		Q_EMIT fireAbort();
 		return;
 	}
-	QSharedPointer<TcToken> tcToken(new TcToken(data));
+	const auto& tcToken = QSharedPointer<const TcToken>::create(data);
 	getContext()->setTcToken(tcToken);
 	getContext()->setTcTokenNotFound(!tcToken->isSchemaConform());
 

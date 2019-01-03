@@ -8,6 +8,7 @@
 #include <QLoggingCategory>
 #include <QRegularExpression>
 
+#import <ServiceManagement/ServiceManagement.h>
 #import <Cocoa/Cocoa.h>
 
 
@@ -15,13 +16,11 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(settings)
 
-static bool checkAndRemoveAutoStart(bool pRemove)
+static void cleanupOldAutoStart()
 {
-	qCDebug(settings) << "Loading OSX login items";
-
-	QRegularExpression regex("/Contents/Resources$");
-	NSString* appPath = QCoreApplication::applicationDirPath().remove(regex).toNSString();
-	CFURLRef url = static_cast<CFURLRef>([NSURL fileURLWithPath: appPath]);
+	const QRegularExpression regex(QStringLiteral("/Contents/Resources$"));
+	const QRegularExpression regex2(QStringLiteral("/Contents/MacOS$"));
+	NSString* appPath = QCoreApplication::applicationDirPath().remove(regex).remove(regex2).toNSString();
 
 	// Create a reference to the shared file list.
 	LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL,
@@ -36,18 +35,15 @@ static bool checkAndRemoveAutoStart(bool pRemove)
 		{
 			LSSharedFileListItemRef itemRef = static_cast<LSSharedFileListItemRef>([loginItemsArray objectAtIndex:i]);
 			//Resolve the item with URL
-			if (LSSharedFileListItemResolve(itemRef, 0, static_cast<CFURLRef*>(&url), NULL) == noErr)
+			CFURLRef url = LSSharedFileListItemCopyResolvedURL(itemRef, 0, nullptr);
+			if (url)
 			{
 				NSURL* nsUrl = static_cast<NSURL*>(url);
 				NSString* urlPath = [nsUrl path];
 				if ([urlPath compare : appPath] == NSOrderedSame)
 				{
-					if (pRemove)
-					{
-						LSSharedFileListItemRemove(loginItems, itemRef);
-					}
-
-					return true;
+					LSSharedFileListItemRemove(loginItems, itemRef);
+					qCDebug(settings) << "Removed old autostart entry";
 				}
 			}
 			else
@@ -66,37 +62,55 @@ static bool checkAndRemoveAutoStart(bool pRemove)
 		}
 		[loginItemsArray release];
 	}
-
-	return false;
 }
 
 
 bool AutoStart::enabled()
 {
-	return checkAndRemoveAutoStart(false);
+	cleanupOldAutoStart();
+	CFStringRef autostartBundleName = CFSTR("com.governikus.AusweisApp2.AutostartHelper");
+	CFStringRef dictionaryKey = CFSTR("Label");
+	CFArrayRef jobDictioniaries = SMCopyAllJobDictionaries(kSMDomainUserLaunchd);
+	if (jobDictioniaries == nullptr)
+	{
+		qCCritical(settings) << "Getting autostart entries failed";
+		return false;
+	}
+	for (int i = 0; i < CFArrayGetCount(jobDictioniaries); ++i)
+	{
+		CFDictionaryRef jobDictionary = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(jobDictioniaries, i));
+		if (jobDictionary == nullptr)
+		{
+			continue;
+		}
+
+		CFStringRef jobLabel = static_cast<CFStringRef>(CFDictionaryGetValue(jobDictionary, dictionaryKey));
+		if (jobLabel != nullptr && CFStringCompare(jobLabel, autostartBundleName, 0) == kCFCompareEqualTo)
+		{
+			qCDebug(settings) << "Autostart entry found";
+			return true;
+		}
+	}
+	qCDebug(settings) << "No autostart entry found";
+	return false;
+}
+
+
+bool AutoStart::isSetByAdmin()
+{
+	return false;
 }
 
 
 void AutoStart::set(bool pEnabled)
 {
-	if (pEnabled)
+	CFStringRef autostartBundleName = CFSTR("com.governikus.AusweisApp2.AutostartHelper");
+	if (SMLoginItemSetEnabled(autostartBundleName, pEnabled))
 	{
-		QRegularExpression regex("/Contents/Resources$");
-		NSString* path = QCoreApplication::applicationDirPath().remove(regex).toNSString();
-		CFURLRef url = static_cast<CFURLRef>([NSURL fileURLWithPath: path]);
-
-		LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
-		if (loginItems)
-		{
-			LSSharedFileListItemRef item = LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemLast, NULL, NULL, url, NULL, NULL);
-			if (item)
-			{
-				CFRelease(item);
-				return;
-			}
-		}
-		return;
+		qCCritical(settings) << "Setting autostart succeded:" << pEnabled;
 	}
-
-	checkAndRemoveAutoStart(true);
+	else
+	{
+		qCCritical(settings) << "Setting autostart failed";
+	}
 }

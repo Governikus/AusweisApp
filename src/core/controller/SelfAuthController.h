@@ -20,7 +20,7 @@ class SelfAuthController
 
 	public:
 		SelfAuthController(QSharedPointer<SelfAuthContext> pContext);
-		virtual ~SelfAuthController();
+		virtual ~SelfAuthController() = default;
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -11,7 +11,6 @@
 
 #include <QDateTime>
 
-class test_StatePreVerification;
 
 namespace governikus
 {
@@ -26,11 +25,11 @@ class StatePreVerification
 	const QVector<QSharedPointer<const CVCertificate> > mTrustedCvcas;
 	const QDateTime mValidationDateTime;
 
-	StatePreVerification(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StatePreVerification(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 
 	bool isValid(const QVector<QSharedPointer<const CVCertificate> >& pCertificates);
 	void saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate> >& pCertificates);
 };
 
-} /* namespace governikus */
+} // namespace governikus

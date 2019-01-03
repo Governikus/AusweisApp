@@ -5,7 +5,6 @@
 #include "BluetoothCard.h"
 #include "BluetoothDebug.h"
 #include "BluetoothReader.h"
-#include "DeviceError.h"
 #include "messages/BluetoothMessageCreator.h"
 #include "messages/BluetoothMessageParser.h"
 #include "messages/BluetoothMessageSetTransportProtocolResponse.h"
@@ -52,7 +51,8 @@ void BluetoothReader::connectReader()
 
 void BluetoothReader::onInitialized(const QBluetoothDeviceInfo&)
 {
-	qCDebug(bluetooth) << "Connected reader" << getName() << "is valid:" << mDevice->isValid();
+	const QString& name = mReaderInfo.getName();
+	qCDebug(bluetooth) << "Connected reader" << name << "is valid:" << mDevice->isValid();
 
 	/*
 	 * Attention: This also triggers the pairing!
@@ -63,6 +63,7 @@ void BluetoothReader::onInitialized(const QBluetoothDeviceInfo&)
 	if (response.isNull())
 	{
 		qCCritical(bluetooth) << "Response is empty";
+		Q_EMIT fireReaderConnectionFailed(name);
 		return;
 	}
 
@@ -70,10 +71,11 @@ void BluetoothReader::onInitialized(const QBluetoothDeviceInfo&)
 	if (protocolResponse->getResultCode() != BluetoothResultCode::Ok)
 	{
 		qCCritical(bluetooth) << "Error setting transport protocol";
+		Q_EMIT fireReaderConnectionFailed(name);
 		return;
 	}
 
-	Q_EMIT fireReaderConnected(mReaderInfo.getName());
+	Q_EMIT fireReaderConnected(name);
 
 	mReaderInfo.setConnected(mDevice->isValid());
 	mLastCardEvent = CardEvent::CARD_REMOVED;
@@ -108,7 +110,7 @@ void BluetoothReader::onError(QLowEnergyController::Error pError)
 {
 	if (pError == QLowEnergyController::ConnectionError)
 	{
-		Q_EMIT fireReaderDeviceError(DeviceError::DEVICE_CONNECTION_ERROR);
+		Q_EMIT fireReaderDeviceError(GlobalStatus::Code::Workflow_Reader_Device_Connection_Error);
 	}
 }
 

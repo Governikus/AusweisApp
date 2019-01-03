@@ -41,4 +41,4 @@ class MockWorkflowChangePinUi
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -73,4 +73,4 @@ typename std::enable_if<!std::is_void<T>::value, QVector<T> >::type filter(const
 }
 
 
-}
+} // namespace governikus

@@ -36,8 +36,8 @@ class test_StateProcessCertificatesFromEac2
 			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
 			QSharedPointer<DIDAuthenticateEAC2> didAuthEac2(static_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"))));
 			mAuthContext->setDidAuthenticateEac2(didAuthEac2);
-			EstablishPACEChannelOutput paceOutput;
-			paceOutput.parse(QByteArray::fromHex(TestFileHelper::readFile(":/card/EstablishPACEChannelOutput.hex")), PACE_PASSWORD_ID::PACE_PIN);
+			EstablishPaceChannelOutput paceOutput;
+			paceOutput.parse(QByteArray::fromHex(TestFileHelper::readFile(":/card/EstablishPaceChannelOutput.hex")), PacePasswordId::PACE_PIN);
 			mAuthContext->setPaceOutputData(paceOutput);
 
 			mState.reset(new StateProcessCertificatesFromEac2(mAuthContext));

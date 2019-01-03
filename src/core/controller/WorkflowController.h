@@ -21,7 +21,6 @@ class WorkflowController
 	: public QObject
 {
 	Q_OBJECT
-	friend class ::test_ChangePinController;
 
 	protected:
 		QStateMachine mStateMachine;
@@ -53,4 +52,4 @@ class WorkflowController
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

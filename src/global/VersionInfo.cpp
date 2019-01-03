@@ -26,7 +26,7 @@ VERSION_NAME(IMPL_VERSION, "Implementation-Version")
 VERSION_NAME(SPEC_TITLE, "Specification-Title")
 VERSION_NAME(SPEC_VENDOR, "Specification-Vendor")
 VERSION_NAME(SPEC_VERSION, "Specification-Version")
-}
+} // namespace
 
 
 VersionInfo::VersionInfo(const QMap<QString, QString>& pInfo)

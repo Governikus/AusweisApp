@@ -8,8 +8,6 @@
 
 #include <QDebug>
 
-#define MESSAGE_SORRY "Sorry, that should not have happened! Please contact the support team."
-
 using namespace governikus;
 
 static Initializer::Entry E([] {
@@ -24,9 +22,45 @@ const QString GlobalStatus::getExternalInfo(int pIndex) const
 }
 
 
-QString GlobalStatus::maskMessage(const QString& pMessage, const bool pMask)
+bool GlobalStatus::isMessageMasked() const
 {
-	return pMask ? tr("An error occurred. Please contact our support at <a href=\"https://www.ausweisapp.bund.de/en/service/support/\">AusweisApp2 Support</a>.") : pMessage;
+	switch (d->mStatusCode)
+	{
+		case Code::Workflow_Unknown_Paos_Form_EidServer:
+		case Code::Workflow_Unexpected_Message_From_EidServer:
+		case Code::Workflow_Preverification_Error:
+		case Code::Workflow_No_Unique_AtCvc:
+		case Code::Workflow_No_Unique_DvCvc:
+		case Code::Workflow_Certificate_No_Description:
+		case Code::Workflow_Certificate_No_Url_In_Description:
+		case Code::Workflow_Certificate_Hash_Error:
+		case Code::Workflow_Certificate_Sop_Error:
+		case Code::Workflow_Error_Page_Transmission_Error:
+		case Code::Workflow_Processing_Error:
+		case Code::Workflow_Redirect_Transmission_Error:
+		case Code::Workflow_TrustedChannel_Establishment_Error:
+		case Code::Workflow_TrustedChannel_Error_From_Server:
+		case Code::Workflow_TrustedChannel_No_Data_Received:
+		case Code::Network_TimeOut:
+		case Code::Workflow_TrustedChannel_TimeOut:
+		case Code::Network_Proxy_Error:
+		case Code::Workflow_TrustedChannel_Proxy_Error:
+		case Code::Workflow_TrustedChannel_Server_Format_Error:
+		case Code::Network_Ssl_Establishment_Error:
+		case Code::Workflow_TrustedChannel_Ssl_Establishment_Error:
+		case Code::Workflow_Wrong_Parameter_Invocation:
+		case Code::Network_Other_Error:
+		case Code::Workflow_TrustedChannel_Other_Network_Error:
+		case Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length:
+		case Code::Workflow_Network_Empty_Redirect_Url:
+		case Code::Workflow_Network_Expected_Redirect:
+		case Code::Workflow_Network_Invalid_Scheme:
+		case Code::Workflow_Network_Malformed_Redirect_Url:
+			return true;
+
+		default:
+			return false;
+	}
 }
 
 
@@ -48,13 +82,23 @@ GlobalStatus::Code GlobalStatus::getStatusCode() const
 }
 
 
-GlobalStatus::operator GlobalStatus::Code() const
+QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 {
-	return getStatusCode();
+	if (pSimplifiedVersion && isMessageMasked())
+	{
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+		return tr("An error occurred. Please contact our support at <a href=\"https://www.ausweisapp.bund.de/en/service/support/\">AusweisApp2 Support</a>.");
+
+#else
+		return tr("An error occurred. Please contact our support at <a href=\"https://www.ausweisapp.bund.de/en/service/support/\">AusweisApp2 Support</a> or feel free to send us an email at <a href=\"mailto:support@ausweisapp.de?subject=Log file&body=<Please describe the error>\">support@ausweisapp.de</a>.");
+
+#endif
+	}
+	return toErrorDescriptionInternal();
 }
 
 
-QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
+QString GlobalStatus::toErrorDescriptionInternal() const
 {
 	switch (d->mStatusCode)
 	{
@@ -77,10 +121,10 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 			return tr("The authenticity of your ID card could not be confirmed.");
 
 		case Code::Workflow_Unknown_Paos_Form_EidServer:
-			return maskMessage(tr("The program received an unknown message from the server."), pSimplifiedVersion);
+			return tr("The program received an unknown message from the server.");
 
 		case Code::Workflow_Unexpected_Message_From_EidServer:
-			return maskMessage(tr("The program received an unexpected message from the server."), pSimplifiedVersion);
+			return tr("The program received an unexpected message from the server.");
 
 		case Code::Workflow_Pin_Blocked_And_Puk_Objectionable:
 			return tr("After three wrong entries your PIN is blocked. Please use the PIN management in this app to unblock it with the help of your PUK.");
@@ -89,46 +133,46 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 			return tr("Using the developer mode is only allowed in a test environment.");
 
 		case Code::Workflow_Preverification_Error:
-			return maskMessage(tr("Pre-verification failed."), pSimplifiedVersion);
+			return tr("Pre-verification failed.");
 
 		case Code::Workflow_No_Unique_AtCvc:
-			return maskMessage(tr("No unique AT CVC"), pSimplifiedVersion);
+			return tr("No unique AT CVC");
 
 		case Code::Workflow_No_Unique_DvCvc:
-			return maskMessage(tr("No unique DV CVC"), pSimplifiedVersion);
+			return tr("No unique DV CVC");
 
 		case Code::Workflow_No_Permission_Error:
 			return tr("Authentication failed.");
 
 		case Code::Workflow_Certificate_No_Description:
-			return maskMessage(tr("No certificate description available."), pSimplifiedVersion);
+			return tr("No certificate description available.");
 
 		case Code::Workflow_Certificate_No_Url_In_Description:
-			return maskMessage(tr("No subject url available in certificate description."), pSimplifiedVersion);
+			return tr("No subject url available in certificate description.");
 
 		case Code::Workflow_Certificate_Hash_Error:
-			return maskMessage(tr("The certificate description does not match the certificate."), pSimplifiedVersion);
+			return tr("The certificate description does not match the certificate.");
 
 		case Code::Workflow_Certificate_Sop_Error:
-			return maskMessage(tr("The subject URL in the certificate description and the TCToken URL don't satisfy the same origin policy."), pSimplifiedVersion);
+			return tr("The subject URL in the certificate description and the TCToken URL don't satisfy the same origin policy.");
 
 		case Code::Workflow_Error_Page_Transmission_Error:
 		case Code::Workflow_Processing_Error:
 		case Code::Workflow_Redirect_Transmission_Error:
-			return maskMessage(getExternalInfo(), pSimplifiedVersion);
+			return getExternalInfo();
 
 		case Code::Workflow_TrustedChannel_Establishment_Error:
-			return maskMessage(tr("Failed to establish secure connection"), pSimplifiedVersion);
+			return tr("Failed to establish secure connection");
 
 		case Code::Workflow_TrustedChannel_Error_From_Server:
-			return maskMessage(tr("The program received an error from the server."), pSimplifiedVersion);
+			return tr("The program received an error from the server.");
 
 		case Code::Workflow_TrustedChannel_Hash_Not_In_Description:
 		case Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description:
-			return maskMessage(tr("Hash of certificate not in certificate description"), pSimplifiedVersion);
+			return tr("Hash of certificate not in certificate description (issuer: %1). This indicates a misconfiguration or manipulation of the certificate. Please check that your antivirus-software and firewalls are not interfering with SSL traffic.").arg(getExternalInfo());
 
 		case Code::Workflow_TrustedChannel_No_Data_Received:
-			return maskMessage(tr("Received no data."), pSimplifiedVersion);
+			return tr("Received no data.");
 
 		case Code::Workflow_TrustedChannel_ServiceUnavailable:
 		case Code::Network_ServiceUnavailable:
@@ -136,25 +180,25 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 
 		case Code::Network_TimeOut:
 		case Code::Workflow_TrustedChannel_TimeOut:
-			return maskMessage(tr("Establishing a connection is taking too long."), pSimplifiedVersion);
+			return tr("Establishing a connection is taking too long.");
 
 		case Code::Network_Proxy_Error:
 		case Code::Workflow_TrustedChannel_Proxy_Error:
-			return maskMessage(tr("Establishing a connection via the proxy did not succeed."), pSimplifiedVersion);
+			return tr("Establishing a connection via the proxy did not succeed.");
 
 		case Code::Workflow_TrustedChannel_Server_Format_Error:
-			return maskMessage(tr("It wasn't possible to connect to the server: the server sent a non-standard response."), pSimplifiedVersion);
+			return tr("It wasn't possible to connect to the server: the server sent a non-standard response.");
 
 		case Code::Network_Ssl_Establishment_Error:
 		case Code::Workflow_TrustedChannel_Ssl_Establishment_Error:
-			return maskMessage(tr("It wasn't possible to connect to the server: a secure connection could not be established."), pSimplifiedVersion);
+			return tr("It wasn't possible to connect to the server: a secure connection could not be established.");
 
 		case Code::Workflow_Wrong_Parameter_Invocation:
-			return maskMessage(tr("Application was invoked with wrong parameters."), pSimplifiedVersion);
+			return tr("Application was invoked with wrong parameters.");
 
 		case Code::Network_Other_Error:
 		case Code::Workflow_TrustedChannel_Other_Network_Error:
-			return maskMessage(tr("An unknown network error occurred."), pSimplifiedVersion);
+			return tr("An unknown network error occurred.");
 
 		case Code::Workflow_Reader_Became_Inaccessible:
 			return tr("The selected card reader cannot be accessed anymore.");
@@ -166,57 +210,36 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 			return tr("The server provided no or incomplete information. Your personal data could not be read out.");
 
 		case Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length:
-			return maskMessage(tr("Error while connecting to the service provider. The SSL connection uses an unsupported key algorithm or length."), pSimplifiedVersion);
+			return tr("Error while connecting to the service provider. The SSL connection uses an unsupported key algorithm or length.");
 
 		case Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length:
 		case Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length:
-			return maskMessage(tr("Error while connecting to the server. The SSL certificate uses an unsupported key algorithm or length."), pSimplifiedVersion);
+			return tr("Error while connecting to the server. The SSL certificate uses an unsupported key algorithm or length. Certificate issuer: %1").arg(getExternalInfo());
 
 		case Code::Workflow_Network_Empty_Redirect_Url:
-			return maskMessage(tr("Empty redirect URL"), pSimplifiedVersion);
+			return tr("Empty redirect URL");
 
 		case Code::Workflow_Network_Expected_Redirect:
-			return maskMessage(tr("Expected redirect, got %1").arg(getExternalInfo()), pSimplifiedVersion);
+			return tr("Expected redirect, got %1").arg(getExternalInfo());
 
 		case Code::Workflow_Network_Invalid_Scheme:
-			return maskMessage(tr("Invalid scheme: %1").arg(getExternalInfo()), pSimplifiedVersion);
+			return tr("Invalid scheme: %1").arg(getExternalInfo());
 
 		case Code::Workflow_Network_Malformed_Redirect_Url:
-			return maskMessage(tr("Malformed redirect URL: %1").arg(getExternalInfo()), pSimplifiedVersion);
+			return tr("Malformed redirect URL: %1").arg(getExternalInfo());
 
 		case Code::Workflow_Cancellation_By_User:
 		case Code::Card_Cancellation_By_User:
 			return tr("The process was cancelled by the user.");
 
+		case Code::Paos_Generic_Server_Error:
 		case Code::Paos_Unexpected_Warning:
 		case Code::Paos_Error_AL_Unknown_Error:
-		case Code::Paos_Error_AL_No_Permission:
 		case Code::Paos_Error_AL_Internal_Error:
-		case Code::Paos_Error_AL_Parameter_Error:
-		case Code::Paos_Error_AL_Unkown_API_Function:
-		case Code::Paos_Error_AL_Not_Initialized:
-		case Code::Paos_Error_AL_Warning_Connection_Disconnected:
-		case Code::Paos_Error_AL_Session_Terminated_Warning:
 		case Code::Paos_Error_AL_Communication_Error:
-		case Code::Paos_Error_DP_Timeout_Error:
-		case Code::Paos_Error_DP_Unknown_Channel_Handle:
-		case Code::Paos_Error_DP_Communication_Error:
 		case Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed:
-		case Code::Paos_Error_DP_Unknown_Protocol:
-		case Code::Paos_Error_DP_Unknown_Cipher_Suite:
-		case Code::Paos_Error_DP_Unknown_Webservice_Binding:
-		case Code::Paos_Error_DP_Node_Not_Reachable:
-		case Code::Paos_Error_IFDL_Timeout_Error:
-		case Code::Paos_Error_IFDL_InvalidSlotHandle:
-		case Code::Paos_Error_IFDL_CancellationByUser:
-		case Code::Paos_Error_KEY_KeyGenerationNotPossible:
 		case Code::Paos_Error_SAL_Cancellation_by_User:
-		case Code::Paos_Error_SAL_CertificateChainInterrupted:
 		case Code::Paos_Error_SAL_Invalid_Key:
-		case Code::Paos_Error_SAL_SecurityConditionNotSatisfied:
-		case Code::Paos_Error_SAL_MEAC_AgeVerificationFailedWarning:
-		case Code::Paos_Error_SAL_MEAC_CommunityVerificationFailedWarning:
-		case Code::Paos_Error_SAL_MEAC_DocumentValidityVerificationFailed:
 			return getExternalInfo();
 
 		case Code::Card_Input_TimeOut:
@@ -229,6 +252,7 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 			return tr("An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.");
 
 		case Code::Card_Protocol_Error:
+		case Code::Card_Unexpected_Transmit_Status:
 			return QStringLiteral("%1 <a href=\"%2\">%3</a>.").arg(
 					tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at"),
 					tr("https://www.ausweisapp.bund.de/en/service/support/"),

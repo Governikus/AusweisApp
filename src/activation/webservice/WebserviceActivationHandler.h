@@ -7,7 +7,6 @@
 #include "ActivationHandler.h"
 #include "HttpServer.h"
 
-class test_WebserviceActivationHandler;
 
 namespace governikus
 {
@@ -45,4 +44,4 @@ class WebserviceActivationHandler
 		virtual void stop() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

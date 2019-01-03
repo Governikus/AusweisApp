@@ -38,4 +38,4 @@ class PersoSimController
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

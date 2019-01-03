@@ -1,4 +1,5 @@
 module TechnologyInfo
+
 TechnologyInfo 1.0 TechnologyInfo.qml
 TechnologySwitch 1.0 TechnologySwitch.qml
 TechnologySwitchButton 1.0 TechnologySwitchButton.qml

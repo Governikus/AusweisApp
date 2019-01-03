@@ -1,40 +1,55 @@
-import QtQuick 2.5
+import QtQuick 2.10
+
+import Governikus.Type.RemoteServiceModel 1.0
+import Governikus.EnterPinView 1.0
+import Governikus.TitleBar 1.0
+import Governikus.Type.ReaderPlugIn 1.0
+import Governikus.Type.NumberModel 1.0
 
 Item {
 	id: controller
 
 	Connections {
-		target: remoteServiceModel
+		target: RemoteServiceModel
 		onFireCurrentStateChanged: {
-			switch (remoteServiceModel.currentState) {
+			switch (RemoteServiceModel.currentState) {
 				case "":
 					break
 				case "StateStartRemoteService":
 					navBar.lockedAndHidden = true
 					if (Qt.platform.os === "android") {
-						remoteServiceModel.readerPlugInType = "NFC";
+						RemoteServiceModel.readerPlugInType = ReaderPlugIn.NFC;
 					} else {
-						remoteServiceModel.readerPlugInType = "PCSC";
+						RemoteServiceModel.readerPlugInType = ReaderPlugIn.PCSC;
 					}
 					setWorkflowStateAndContinue("startRemoteService")
+					break
 				case "StateProcessRemoteMessages":
 					firePopAll()
-					numberModel.continueWorkflow()
+					RemoteServiceModel.continueWorkflow()
 					break
-				case "StateEstablishPaceChannel":
-					enterPinView.state = "INITIAL"
-					setWorkflowStateAndRequestInput("establishPaceChannel", remoteServiceModel.getPacePasswordId())
+				case "StateEnterPacePasswordRemote":
+					if (RemoteServiceModel.isBasicReader) {
+						enterPinView.state = "INITIAL"
+						setWorkflowStateAndRequestInput("establishPaceChannelRemote", RemoteServiceModel.getPacePasswordId())
+					} else {
+						RemoteServiceModel.continueWorkflow()
+					}
 					break
-				case "StateChangePinRemote":
-					enterPinView.state = "INITIAL"
-					setWorkflowStateAndRequestInput("changePinRemote", "PIN_NEW")
+				case "StateEnterNewPacePinRemote":
+					if (RemoteServiceModel.isBasicReader) {
+						enterPinView.state = "INITIAL"
+						setWorkflowStateAndRequestInput("changePinRemote", "PIN_NEW")
+					} else {
+						RemoteServiceModel.continueWorkflow()
+					}
 					break
 				case "FinalState":
-					numberModel.continueWorkflow()
+					RemoteServiceModel.continueWorkflow()
 					navBar.lockedAndHidden = false
 					break
 				default:
-					numberModel.continueWorkflow()
+					RemoteServiceModel.continueWorkflow()
 			}
 		}
 	}
@@ -45,13 +60,35 @@ Item {
 
 	function setWorkflowStateAndContinue(pState) {
 		setWorkflowState(pState)
-		numberModel.continueWorkflow()
+		RemoteServiceModel.continueWorkflow()
 	}
 
 	function setWorkflowStateAndRequestInput(pState, pEnterPinState) {
 		setWorkflowState(pState)
-		if (remoteServiceModel.pinPadModeOn()) {
-			firePush(enterPinView, {state: pEnterPinState})
+		if (RemoteServiceModel.pinPadModeOn()) {
+			enterPinView.state = pEnterPinState
+			firePush(enterPinView)
 		}
+	}
+
+	EnterPinView {
+		id: enterPinView
+		visible: false
+		enableTransportPinLink: RemoteServiceModel.isSaCPinChangeWorkflow
+
+		leftTitleBarAction: TitleBarAction {
+			state: "cancel"
+			onClicked: {
+				firePop()
+				RemoteServiceModel.cancelPasswordRequest()
+			}
+		}
+
+		onPinEntered: {
+			firePop()
+			RemoteServiceModel.continueWorkflow()
+		}
+
+		onChangePinLength: NumberModel.requestTransportPin = !NumberModel.requestTransportPin
 	}
 }

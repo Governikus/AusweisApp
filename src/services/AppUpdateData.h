@@ -64,4 +64,4 @@ class AppUpdateData
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

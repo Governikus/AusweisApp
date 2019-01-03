@@ -28,10 +28,15 @@ static QString registryPath()
 }
 
 
-}
+} // namespace
 
 bool AutoStart::enabled()
 {
+	if (isSetByAdmin())
+	{
+		return true;
+	}
+
 	QSettings windowsBootUpSettings(registryPath(), QSettings::NativeFormat);
 	if (!windowsBootUpSettings.contains(QCoreApplication::applicationName()))
 	{
@@ -49,16 +54,23 @@ bool AutoStart::enabled()
 }
 
 
+bool AutoStart::isSetByAdmin()
+{
+	QSettings settings(QStringLiteral("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"), QSettings::NativeFormat);
+	return settings.contains(QCoreApplication::applicationName());
+}
+
+
 void AutoStart::set(bool pEnabled)
 {
 	QSettings windowsBootUpSettings(registryPath(), QSettings::NativeFormat);
 
-	if (pEnabled)
+	if (isSetByAdmin() || !pEnabled)
 	{
-		windowsBootUpSettings.setValue(QCoreApplication::applicationName(), appPath());
+		windowsBootUpSettings.remove(QCoreApplication::applicationName());
 	}
 	else
 	{
-		windowsBootUpSettings.remove(QCoreApplication::applicationName());
+		windowsBootUpSettings.setValue(QCoreApplication::applicationName(), appPath());
 	}
 }

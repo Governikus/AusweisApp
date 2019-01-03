@@ -66,7 +66,8 @@ void WifiInfo::timerEvent(QTimerEvent* pEvent)
 	if (pEvent->timerId() == mWifiCheckTimerId)
 	{
 		pEvent->accept();
-		const bool currentEnabled = getCurrentWifiEnabled();
+
+		const bool currentEnabled = getCurrentWifiEnabled() || hasPrivateIpAddress();
 		if (mWifiEnabled != currentEnabled)
 		{
 			mWifiEnabled = currentEnabled;

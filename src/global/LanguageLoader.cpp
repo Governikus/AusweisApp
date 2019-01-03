@@ -23,7 +23,7 @@ const QLocale::Language LanguageLoader::mFallbackLanguage = QLocale::Language::E
 QLocale LanguageLoader::mDefaultLanguage = QLocale::system();
 
 LanguageLoader::LanguageLoader()
-	: mPath(FileDestination::getPath("translations"))
+	: mPath(FileDestination::getPath(QStringLiteral("translations")))
 	, mTranslatorList()
 	, mComponentList(
 		{
@@ -75,10 +75,10 @@ void LanguageLoader::setPath(const QString& pPath)
 
 QSharedPointer<QTranslator> LanguageLoader::createTranslator(const QLocale& pLocale, const QString& pComponent)
 {
-	QSharedPointer<QTranslator> translator(new QTranslator());
+	auto translator = QSharedPointer<QTranslator>::create();
 	translator->setObjectName(pLocale.name() + QLatin1Char('/') + pComponent);
 	bool loaded = translator->load(pLocale, pComponent, QStringLiteral("_"), mPath);
-	qCDebug(language) << "Load translation:" << pComponent << " | " << loaded;
+	qCDebug(language) << "Load translation:" << pComponent << '|' << loaded;
 
 	if (!loaded)
 	{

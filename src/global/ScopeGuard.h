@@ -34,4 +34,4 @@ class ScopeGuard
 		void setEnabled(bool pEnabled = true);
 };
 
-} /* namespace governikus */
+} // namespace governikus

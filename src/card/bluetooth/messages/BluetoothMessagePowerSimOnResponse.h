@@ -23,4 +23,4 @@ class BluetoothMessagePowerSimOnResponse
 		BluetoothResultCode getResultCode() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -11,7 +11,7 @@
 using namespace governikus;
 
 
-HistoryInfo::HistoryInfo(const QString& pSubjectName, const QString& pSubjectUrl, const QString& pUsage, const QDateTime& pDateTime, const QString& pTermOfUsage, const QString& pRequestedData)
+HistoryInfo::HistoryInfo(const QString& pSubjectName, const QString& pSubjectUrl, const QString& pUsage, const QDateTime& pDateTime, const QString& pTermOfUsage, const QStringList& pRequestedData)
 	: mSubjectName(pSubjectName)
 	, mSubjectUrl(pSubjectUrl)
 	, mPurpose(pUsage)
@@ -30,7 +30,7 @@ QDateTime HistoryInfo::roundToSeconds(const QDateTime& pDateTime)
 }
 
 
-const QString& HistoryInfo::getRequestedData() const
+const QStringList& HistoryInfo::getRequestedData() const
 {
 	return mRequestedData;
 }

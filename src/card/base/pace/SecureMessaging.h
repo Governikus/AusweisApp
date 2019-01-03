@@ -7,9 +7,10 @@
 #pragma once
 
 #include "asn1/ASN1TemplateUtil.h"
-#include "Apdu.h"
+#include "CommandApdu.h"
 #include "pace/CipherMac.h"
 #include "pace/SymmetricCipher.h"
+#include "ResponseApdu.h"
 
 #include <QByteArray>
 
@@ -26,7 +27,7 @@ struct SM_PROTECTED_LE
 DECLARE_ASN1_OBJECT(SM_PROTECTED_LE)
 
 
-class SecureMessaging
+class SecureMessaging final
 {
 	private:
 		SymmetricCipher mCipher;
@@ -45,7 +46,7 @@ class SecureMessaging
 
 	public:
 		SecureMessaging(const QByteArray& pPaceAlgorithm, const QByteArray& pEncKey, const QByteArray& pMacKey);
-		virtual ~SecureMessaging();
+		~SecureMessaging() = default;
 
 		/*!
 		 * Returns true, if initialization succeeded, i.e. the algorithm is known, supported and the keys have correct size.
@@ -56,4 +57,4 @@ class SecureMessaging
 		bool decrypt(const ResponseApdu& pEncryptedResponseApdu, ResponseApdu& pDecryptedResponseApdu);
 };
 
-} /* namespace governikus */
+} // namespace governikus
