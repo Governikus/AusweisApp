@@ -15,7 +15,6 @@
 namespace governikus
 {
 
-
 typedef QPair<CardReturnCode, QByteArray> TransmitConfig;
 
 
@@ -57,7 +56,9 @@ class MockCard
 
 
 		CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
+
+		void setConnected(bool pConnected);
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

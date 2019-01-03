@@ -18,6 +18,7 @@
 #include <QSslCertificate>
 #include <QVector>
 
+class test_RemoteDeviceModel;
 
 namespace governikus
 {
@@ -25,6 +26,7 @@ namespace governikus
 class RemoteDeviceModelEntry
 {
 	private:
+		friend class ::test_RemoteDeviceModel;
 		QString mDeviceName;
 		QString mId;
 		bool mPaired;
@@ -59,6 +61,8 @@ class RemoteDeviceModel
 	Q_OBJECT
 
 	private:
+		friend class ::test_RemoteDeviceModel;
+
 		const int NUMBER_OF_COLUMNS = 2;
 
 		QMap<QString, RemoteServiceSettings::RemoteInfo> mPairedReaders;
@@ -104,7 +108,7 @@ class RemoteDeviceModel
 		void onWidgetShown();
 		void onWidgetHidden();
 		void onKnownRemoteReadersChanged();
-		void onDeviceDisconnected(GlobalStatus::Code pCloseCode, const QSharedPointer<RemoteDispatcher>& pRemoteDispatcher);
+		void onDeviceDisconnected(GlobalStatus::Code pCloseCode, const QString& pId);
 
 	Q_SIGNALS:
 		void fireModelChanged();
@@ -112,4 +116,4 @@ class RemoteDeviceModel
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

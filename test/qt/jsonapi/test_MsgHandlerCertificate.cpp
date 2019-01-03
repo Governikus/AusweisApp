@@ -8,7 +8,6 @@
 
 #include "InternalActivationContext.h"
 #include "MessageDispatcher.h"
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
 #include "TestAuthContext.h"
 #include <QtTest>

@@ -18,9 +18,9 @@ CardConnectionWorker::CardConnectionWorker(Reader* pReader)
 	, mReader(pReader)
 	, mSecureMessaging()
 {
-	connect(mReader, &Reader::fireCardInserted, this, &CardConnectionWorker::onReaderInfoChanged);
-	connect(mReader, &Reader::fireCardRemoved, this, &CardConnectionWorker::onReaderInfoChanged);
-	connect(mReader, &Reader::fireCardRetryCounterChanged, this, &CardConnectionWorker::onReaderInfoChanged);
+	connect(mReader.data(), &Reader::fireCardInserted, this, &CardConnectionWorker::onReaderInfoChanged);
+	connect(mReader.data(), &Reader::fireCardRemoved, this, &CardConnectionWorker::onReaderInfoChanged);
+	connect(mReader.data(), &Reader::fireCardRetryCounterChanged, this, &CardConnectionWorker::onReaderInfoChanged);
 }
 
 
@@ -94,12 +94,6 @@ CardReturnCode CardConnectionWorker::transmit(const CommandApdu& pCommandApdu, R
 		returnCode = mReader->getCard()->transmit(pCommandApdu, pResponseApdu);
 	}
 
-	if (pCommandApdu.isUpdateRetryCounter())
-	{
-		int retryCounter = pResponseApdu.getRetryCounter();
-		mReader->setRetryCounter(retryCounter);
-	}
-
 	return returnCode;
 }
 
@@ -130,11 +124,12 @@ CardReturnCode CardConnectionWorker::readFile(const FileRef& pFileRef, QByteArra
 		}
 
 		pFileContent += res.getData();
-		if (res.getData().size() != 0xff && res.getReturnCode() == StatusCode::END_OF_FILE)
+		const StatusCode statusCode = res.getReturnCode();
+		if (statusCode == StatusCode::END_OF_FILE)
 		{
 			return CardReturnCode::OK;
 		}
-		if (res.getReturnCode() != StatusCode::SUCCESS)
+		if (statusCode != StatusCode::SUCCESS)
 		{
 			break;
 		}
@@ -156,22 +151,23 @@ bool CardConnectionWorker::stopSecureMessaging()
 }
 
 
-CardReturnCode CardConnectionWorker::establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
+CardReturnCode CardConnectionWorker::establishPaceChannel(PacePasswordId pPasswordId,
 		const QString& pPasswordValue,
-		EstablishPACEChannelOutput& pChannelOutput)
+		EstablishPaceChannelOutput& pChannelOutput)
 {
 	return establishPaceChannel(pPasswordId, pPasswordValue, nullptr, nullptr, pChannelOutput);
 }
 
 
-CardReturnCode CardConnectionWorker::establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
+CardReturnCode CardConnectionWorker::establishPaceChannel(PacePasswordId pPasswordId,
 		const QString& pPasswordValue,
 		const QByteArray& pChat,
 		const QByteArray& pCertificateDescription,
-		EstablishPACEChannelOutput& pChannelOutput)
+		EstablishPaceChannelOutput& pChannelOutput)
 {
 	if (!hasCard())
 	{
+		pChannelOutput.setPaceReturnCode(CardReturnCode::CARD_NOT_FOUND);
 		return CardReturnCode::CARD_NOT_FOUND;
 	}
 	CardReturnCode returnCode;

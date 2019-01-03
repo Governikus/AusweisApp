@@ -8,10 +8,7 @@
 
 #include <chrono>
 #include <openssl/rand.h>
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
 #include <QRandomGenerator>
-#endif
 
 #ifdef Q_OS_WIN
 	#include <windows.h>
@@ -50,10 +47,7 @@ template<typename T> QList<T> Randomizer::getEntropy()
 	entropy += static_cast<T>(std::chrono::system_clock::now().time_since_epoch().count());
 	entropy += std::random_device()();
 	entropy += static_cast<T>(qrand());
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
 	entropy += QRandomGenerator::securelySeeded().generate();
-#endif
 
 	UniversalBuffer<T> buffer;
 	if (RAND_bytes(buffer.data, sizeof(buffer.data)))

@@ -92,6 +92,8 @@ class RemoteServiceSettings
 		void removeTrustedCertificate(const QSslCertificate& pCertificate);
 		void removeTrustedCertificate(const QString& pFingerprint);
 
+		bool checkAndGenerateKey(bool pForceGeneration = false);
+
 		QSslCertificate getCertificate() const;
 		void setCertificate(const QSslCertificate& pCert) const;
 
@@ -109,6 +111,6 @@ class RemoteServiceSettings
 };
 
 
-} /* namespace governikus */
+} // namespace governikus
 
 Q_DECLARE_TYPEINFO(governikus::RemoteServiceSettings::RemoteInfo, Q_MOVABLE_TYPE);

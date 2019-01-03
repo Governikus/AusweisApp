@@ -8,10 +8,10 @@
 
 #include "BaseCardCommand.h"
 
+class test_UnblockPinCommand;
+
 namespace governikus
 {
-
-class CardConnection;
 
 class UnblockPinCommand
 	: public BaseCardCommand
@@ -19,15 +19,16 @@ class UnblockPinCommand
 	Q_OBJECT
 
 	private:
+		friend class ::test_UnblockPinCommand;
 		QString mPuk;
 
 	protected:
 		virtual void internalExecute() override;
-		virtual ~UnblockPinCommand() override;
+		virtual ~UnblockPinCommand() override = default;
 
 	public:
 		UnblockPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, const QString& pPuk);
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

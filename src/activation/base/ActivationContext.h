@@ -5,15 +5,14 @@
 #pragma once
 
 #include "GlobalStatus.h"
-#include "HttpStatusCode.h"
 
+#include <http_parser.h>
 #include <QObject>
 #include <QString>
 #include <QUrl>
 
 namespace governikus
 {
-
 
 class ActivationContext
 	: public QObject
@@ -25,7 +24,7 @@ class ActivationContext
 
 	public:
 		ActivationContext();
-		virtual ~ActivationContext();
+		virtual ~ActivationContext() = default;
 
 		virtual QUrl getActivationURL() const = 0;
 
@@ -48,7 +47,7 @@ class ActivationContext
 		 *
 		 * \return true, if sending succeeded, false otherwise. On failure an error message can be retrieved via getSendError.
 		 */
-		virtual bool sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus) = 0;
+		virtual bool sendErrorPage(http_status pStatusCode, const GlobalStatus& pStatus) = 0;
 
 		/*!
 		 * Sends a redirect to the caller.
@@ -68,4 +67,4 @@ class ActivationContext
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

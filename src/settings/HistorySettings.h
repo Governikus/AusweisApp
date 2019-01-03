@@ -60,4 +60,4 @@ class HistorySettings
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

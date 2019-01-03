@@ -32,7 +32,7 @@ into the connected card reader.
 
   {"cmd": "ACCEPT"}
 
-  {"msg": "ENTER_PIN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"inserted":true,"retryCounter":3},"name":"NFC"}}
+  {"msg": "ENTER_PIN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"retryCounter":3},"keypad":false,"name":"NFC"}}
 
   {"cmd": "SET_PIN", "value": "123456"}
 
@@ -62,23 +62,23 @@ into the connected card reader.
 
   {"msg": "INSERT_CARD"}
 
-  {"msg": "ENTER_PIN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"inserted":true,"retryCounter":3},"name":"NFC"}}
+  {"msg": "ENTER_PIN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"retryCounter":3},"keypad":false,"name":"NFC"}}
 
   {"cmd": "SET_PIN", "value": "000000"}
 
-  {"msg": "ENTER_PIN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"inserted":true,"retryCounter":2},"name":"NFC"}}
+  {"msg": "ENTER_PIN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"retryCounter":2},"keypad":false,"name":"NFC"}}
 
   {"cmd": "SET_PIN", "value": "000001"}
 
-  {"msg": "ENTER_CAN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"inserted":true,"retryCounter":1},"name":"NFC"}}
+  {"msg": "ENTER_CAN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"retryCounter":1},"keypad":false,"name":"NFC"}}
 
   {"cmd": "SET_CAN", "value": "000000"}
 
-  {"msg": "ENTER_CAN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"inserted":true,"retryCounter":1},"name":"NFC"}}
+  {"msg": "ENTER_CAN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"retryCounter":1},"keypad":false,"name":"NFC"}}
 
   {"cmd": "SET_CAN", "value": "654321"}
 
-  {"msg": "ENTER_PIN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"inserted":true,"retryCounter":1},"name":"NFC"}}
+  {"msg": "ENTER_PIN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"retryCounter":1},"keypad":false,"name":"NFC"}}
 
   {"cmd": "SET_PIN", "value": "123456"}
 

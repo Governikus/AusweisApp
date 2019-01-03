@@ -6,9 +6,7 @@
 #include "IfdStatus.h"
 
 #include "AppSettings.h"
-#include "Env.h"
 
-#include <QJsonArray>
 #include <QLoggingCategory>
 
 
@@ -31,7 +29,7 @@ VALUE_NAME(CONNECTED_READER, "ConnectedReader")
 VALUE_NAME(CARD_AVAILABLE, "CardAvailable")
 VALUE_NAME(EF_ATR, "EFATR")
 VALUE_NAME(EF_DIR, "EFDIR")
-}
+} // namespace
 
 
 PaceCapabilities::PaceCapabilities(bool pPace, bool pEId, bool pESign, bool pDestroy)
@@ -78,13 +76,27 @@ QJsonValue PaceCapabilities::toJson() const
 }
 
 
-IfdStatus::IfdStatus(const ReaderInfo& pReaderInfo)
+IfdStatus::IfdStatus(const QString& pSlotName,
+		const PaceCapabilities& pPaceCapabilities,
+		int pMaxApduLength,
+		bool pConnected,
+		bool pCardAvailable)
 	: RemoteMessage(RemoteCardMessageType::IFDStatus)
-	, mSlotName(pReaderInfo.getName())
-	, mPaceCapabilities(Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode())
-	, mMaxApduLength(pReaderInfo.getMaxApduLength())
-	, mConnectedReader(pReaderInfo.isConnected())
-	, mCardAvailable(pReaderInfo.hasCard())
+	, mSlotName(pSlotName)
+	, mPaceCapabilities(pPaceCapabilities)
+	, mMaxApduLength(pMaxApduLength)
+	, mConnectedReader(pConnected)
+	, mCardAvailable(pCardAvailable)
+{
+}
+
+
+IfdStatus::IfdStatus(const ReaderInfo& pReaderInfo)
+	: IfdStatus(pReaderInfo.getName()
+			, pReaderInfo.isBasicReader() ? Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode() : true
+			, pReaderInfo.getMaxApduLength()
+			, pReaderInfo.isConnected()
+			, pReaderInfo.hasCard())
 {
 }
 
@@ -124,6 +136,11 @@ IfdStatus::IfdStatus(const QJsonObject& pMessageObject)
 	mMaxApduLength = getIntValue(pMessageObject, MAX_APDU_LENGTH());
 	mConnectedReader = getBoolValue(pMessageObject, CONNECTED_READER());
 	mCardAvailable = getBoolValue(pMessageObject, CARD_AVAILABLE());
+
+	if (getType() != RemoteCardMessageType::IFDStatus)
+	{
+		markIncomplete(QStringLiteral("The value of msg should be IFDStatus"));
+	}
 }
 
 
@@ -157,7 +174,7 @@ bool IfdStatus::getCardAvailable() const
 }
 
 
-QJsonDocument IfdStatus::toJson(const QString& pContextHandle) const
+QByteArray IfdStatus::toByteArray(const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 
@@ -169,5 +186,5 @@ QJsonDocument IfdStatus::toJson(const QString& pContextHandle) const
 	result[EF_ATR()] = QJsonValue();
 	result[EF_DIR()] = QJsonValue();
 
-	return QJsonDocument(result);
+	return RemoteMessage::toByteArray(result);
 }

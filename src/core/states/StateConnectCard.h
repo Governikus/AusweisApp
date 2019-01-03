@@ -7,6 +7,8 @@
 #include "AbstractGenericState.h"
 #include "command/CreateCardConnectionCommand.h"
 
+class test_StateConnectCard;
+
 namespace governikus
 {
 
@@ -15,8 +17,9 @@ class StateConnectCard
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateConnectCard;
 
-	StateConnectCard(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateConnectCard(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 
 	private Q_SLOTS:
@@ -31,4 +34,4 @@ class StateConnectCard
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.10
 import QtGraphicalEffects 1.0
 
 import Governikus.Global 1.0
@@ -11,7 +11,7 @@ MouseArea {
 	Text {
 		id: textItem
 		anchors.centerIn: parent
-		font.pixelSize: Utils.sp(24)
+		font.pixelSize: Utils.dp(24)
 		wrapMode: Text.WordWrap
 		color: Constants.secondary_text
 	}

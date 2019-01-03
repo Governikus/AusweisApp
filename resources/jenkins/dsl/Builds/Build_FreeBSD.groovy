@@ -4,7 +4,7 @@ import static common.Constants.strip
 def j = new Build
 	(
 		name: 'FreeBSD',
-		libraries: 'FreeBSD',
+		libraries: ['FreeBSD'],
 		label: 'FreeBSD',
 		xunit: true
 	).generate(this)
@@ -40,7 +40,7 @@ j.with
 			export QML2_IMPORT_PATH=$WORKSPACE/libs/build/dist/qml
 			export LD_LIBRARY_PATH=$WORKSPACE/libs/build/dist/lib:$LD_LIBRARY_PATH
 			export ASAN_OPTIONS=detect_leaks=0,new_delete_type_mismatch=0
-			cd build; ctest ${MAKE_FLAGS}
+			cd build; ctest --output-on-failure ${MAKE_FLAGS}
 			'''.stripIndent().trim())
 	}
 }

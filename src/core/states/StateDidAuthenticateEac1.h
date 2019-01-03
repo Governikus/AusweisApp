@@ -8,6 +8,8 @@
 #include "context/AuthContext.h"
 #include "states/AbstractGenericState.h"
 
+class test_StateDidAuthenticateEac1;
+
 namespace governikus
 {
 
@@ -16,8 +18,9 @@ class StateDidAuthenticateEac1
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateDidAuthenticateEac1;
 
-	StateDidAuthenticateEac1(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateDidAuthenticateEac1(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 
 	private Q_SLOTS:
@@ -25,4 +28,4 @@ class StateDidAuthenticateEac1
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

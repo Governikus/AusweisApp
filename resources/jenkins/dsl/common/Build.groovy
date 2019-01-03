@@ -13,15 +13,14 @@ class Build
 	JobType jobType = JobType.Freestyle
 	String name
 	String namePrefix = ''
-	String libraries
+	String[] libraries
 	String artifacts
 	String label
 	String trigger = '@daily'
 	String excludePattern = 'source/**'
-	List oldBuilds = [7, 15]
+	List oldBuilds = [7, 30]
 	boolean releaseJob = false
 	boolean xunit = false
-	boolean cleanup = false
 	boolean sendMail = true
 	boolean disableChangelog = false
 	boolean allowEmptyArtifacts = false
@@ -52,7 +51,7 @@ class Build
 		return buildName(getNamePrefix(), getName())
 	}
 
-	String getLibName()
+	String getLibName(String partialLibName)
 	{
 		def prefix = 'Libs_'
 
@@ -61,7 +60,7 @@ class Build
 			prefix = '${MERCURIAL_REVISION_BRANCH}_' + prefix
 		}
 
-		return buildName(prefix, getLibraries(), true)
+		return buildName(prefix, partialLibName, true)
 	}
 
 
@@ -148,11 +147,21 @@ class Build
 
 			steps
 			{
-				if(getLibraries())
+				String[] requestedLibs = getLibraries()
+				String defaultTargetDestDir = 'libs'
+
+				for(String partLibName : requestedLibs)
 				{
-					copyArtifacts(getLibName())
+					String targetDestDir = defaultTargetDestDir
+					if(requestedLibs.length > 1)
 					{
-						targetDirectory('libs')
+						String arch = partLibName.split('_').last()
+						targetDestDir += '/' + arch
+					}
+
+					copyArtifacts(getLibName(partLibName))
+					{
+						targetDirectory(targetDestDir)
 						buildSelector
 						{
 							latestSuccessful(true)
@@ -160,9 +169,9 @@ class Build
 					}
 
 					if(getName().contains('_Win'))
-						batchFile('cd libs/build & FOR %%a in (Toolchain_*) DO cmake -E tar xf %%a')
+						batchFile("cd ${targetDestDir}/build & FOR %%a in (Toolchain_*) DO cmake -E tar xf %%a")
 					else
-						shell('cd libs/build; cmake -E tar xf Toolchain_*')
+						shell("cd ${targetDestDir}/build; cmake -E tar xf Toolchain_*")
 				}
 
 				if(getName().contains('_Win'))
@@ -212,15 +221,14 @@ class Build
 					}
 				}
 
-				if(getCleanup())
+				wsCleanup()
 				{
-					wsCleanup()
-					{
-						cleanWhenUnstable(false)
-						cleanWhenFailure(false)
-						cleanWhenNotBuilt(false)
-						cleanWhenAborted(false)
-					}
+					cleanWhenUnstable(false)
+					cleanWhenFailure(false)
+					cleanWhenNotBuilt(false)
+					cleanWhenAborted(false)
+					excludePattern(getExcludePattern())
+					deleteDirectories(true)
 				}
 
 				if(getSendMail())

@@ -38,17 +38,17 @@ class test_PaosMessage
 		void handleWSAddressingHeaders()
 		{
 			PaosMessage msg(PaosType::UNKNOWN);
-			QCOMPARE(msg.handleWSAddressingHeaders("elem name", "some value", QXmlStreamAttributes()), false);
+			QCOMPARE(msg.handleWSAddressingHeaders(QStringLiteral("elem name"), QStringLiteral("some value"), QXmlStreamAttributes()), false);
 			QCOMPARE(msg.getMessageId(), QString());
 			QCOMPARE(msg.getRelatesTo(), QString());
 
-			QCOMPARE(msg.handleWSAddressingHeaders("MessageID", "msg value", QXmlStreamAttributes()), true);
-			QCOMPARE(msg.getMessageId(), QString("msg value"));
+			QCOMPARE(msg.handleWSAddressingHeaders(QStringLiteral("MessageID"), QStringLiteral("msg value"), QXmlStreamAttributes()), true);
+			QCOMPARE(msg.getMessageId(), QStringLiteral("msg value"));
 			QCOMPARE(msg.getRelatesTo(), QString());
 
-			QCOMPARE(msg.handleWSAddressingHeaders("RelatesTo", "relates value", QXmlStreamAttributes()), true);
-			QCOMPARE(msg.getMessageId(), QString("msg value"));
-			QCOMPARE(msg.getRelatesTo(), QString("relates value"));
+			QCOMPARE(msg.handleWSAddressingHeaders(QStringLiteral("RelatesTo"), QStringLiteral("relates value"), QXmlStreamAttributes()), true);
+			QCOMPARE(msg.getMessageId(), QStringLiteral("msg value"));
+			QCOMPARE(msg.getRelatesTo(), QStringLiteral("relates value"));
 		}
 
 

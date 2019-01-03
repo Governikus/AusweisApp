@@ -18,10 +18,10 @@ using namespace governikus;
 namespace
 {
 VALUE_NAME(SLOT_HANDLE, "SlotHandle")
-}
+} // namespace
 
 
-IfdDisconnectResponse::IfdDisconnectResponse(const QString& pSlotHandle, const QString& pResultMinor)
+IfdDisconnectResponse::IfdDisconnectResponse(const QString& pSlotHandle, ECardApiResult::Minor pResultMinor)
 	: RemoteMessageResponse(RemoteCardMessageType::IFDDisconnectResponse, pResultMinor)
 	, mSlotHandle(pSlotHandle)
 {
@@ -33,6 +33,11 @@ IfdDisconnectResponse::IfdDisconnectResponse(const QJsonObject& pMessageObject)
 	, mSlotHandle()
 {
 	mSlotHandle = getStringValue(pMessageObject, SLOT_HANDLE());
+
+	if (getType() != RemoteCardMessageType::IFDDisconnectResponse)
+	{
+		markIncomplete(QStringLiteral("The value of msg should be IFDDisconnectResponse"));
+	}
 }
 
 
@@ -42,11 +47,11 @@ const QString& IfdDisconnectResponse::getSlotHandle() const
 }
 
 
-QJsonDocument IfdDisconnectResponse::toJson(const QString& pContextHandle) const
+QByteArray IfdDisconnectResponse::toByteArray(const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 
 	result[SLOT_HANDLE()] = mSlotHandle;
 
-	return QJsonDocument(result);
+	return RemoteMessage::toByteArray(result);
 }

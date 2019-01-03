@@ -40,7 +40,7 @@ bool isAvailable()
 }
 
 
-}
+} // namespace
 
 
 void NfcReaderManagerPlugIn::onNfcAdapterStateChanged(bool pEnabled)

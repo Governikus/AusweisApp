@@ -10,20 +10,23 @@
 
 #include "context/ChangePinContext.h"
 
+class test_StateDestroyPace;
+
 namespace governikus
 {
 
 class StateDestroyPace
-	: public AbstractGenericState<ChangePinContext>
+	: public AbstractGenericState<WorkflowContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateDestroyPace;
 
-	StateDestroyPace(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateDestroyPace(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 
 	private Q_SLOTS:
 		void onDestroyPaceDone(QSharedPointer<BaseCardCommand> pCommand);
 };
 
-} /* namespace governikus */
+} // namespace governikus

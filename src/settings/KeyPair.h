@@ -39,4 +39,4 @@ class KeyPair
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

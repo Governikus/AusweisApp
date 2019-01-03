@@ -34,40 +34,24 @@ BaseCardCommand::~BaseCardCommand()
 }
 
 
-void BaseCardCommand::execute()
+void BaseCardCommand::run()
 {
-	Q_ASSERT(thread() == QThread::currentThread());
-
-	internalExecute();
-	qDebug(card) << "ReturnCode of internal execute:" << mReturnCode;
-
-	QSharedPointer<BaseCardCommand> command(this, &QObject::deleteLater);
-	Q_EMIT commandDone(command);
+	QMetaObject::invokeMethod(this, &BaseCardCommand::execute, Qt::QueuedConnection);
 }
 
 
-CardReturnCode BaseCardCommand::checkRetryCounterAndPrepareForPace(const QString& pCan)
+void BaseCardCommand::execute()
 {
-	CardReturnCode returnCode = mCardConnectionWorker->updateRetryCounter();
-	if (returnCode != CardReturnCode::OK)
-	{
-		return returnCode;
-	}
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	switch (mCardConnectionWorker->getReaderInfo().getRetryCounter())
-	{
-		case 1: // CAN required
-		{
-			EstablishPACEChannelOutput output;
-			return mCardConnectionWorker->establishPaceChannel(PACE_PASSWORD_ID::PACE_CAN, pCan, output);
-		}
+	internalExecute();
+	qDebug(card) << metaObject()->className() << "| ReturnCode of internal execute:" << mReturnCode;
 
-		case 2:
-		case 3: // only PIN required
-			return CardReturnCode::OK;
-
-		default:
-			qCWarning(card) << "Card blocked or deactivated.";
-			return CardReturnCode::PIN_BLOCKED;
-	}
+	// A "Command" is created by CardConnection::call() in Main-Thread and moved to ReaderManager-Thread.
+	// The internal execution of a command will be self-sufficient until it has finished. After the
+	// command is finished it is a data container only. It will fires a signal with itself wrapped into a
+	// QSharedPointer to ensure the destruction in correct thread. This structure is used to have an
+	// easy-to-use API of commands without knowledge about threads.
+	QSharedPointer<BaseCardCommand> command(this, &QObject::deleteLater);
+	Q_EMIT commandDone(command);
 }

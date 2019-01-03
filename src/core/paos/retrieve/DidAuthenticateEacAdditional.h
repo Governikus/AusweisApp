@@ -36,4 +36,4 @@ class DIDAuthenticateEACAdditional
 		const QString& getSignature() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

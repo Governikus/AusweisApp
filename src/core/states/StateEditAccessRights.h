@@ -19,8 +19,8 @@ class StateEditAccessRights
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateEditAccessRights(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateEditAccessRights(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

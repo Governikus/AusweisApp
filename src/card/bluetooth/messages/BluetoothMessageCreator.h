@@ -120,4 +120,4 @@ class BluetoothMessageCreator
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

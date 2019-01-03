@@ -9,6 +9,7 @@
 #include "RemoteClient.h"
 
 #include "DatagramHandler.h"
+#include "Env.h"
 #include "RemoteConnector.h"
 #include "RemoteDeviceList.h"
 
@@ -16,6 +17,8 @@
 #include <QPointer>
 #include <QThread>
 #include <QTimer>
+
+class test_RemoteClient;
 
 namespace governikus
 {
@@ -26,6 +29,9 @@ class RemoteClientImpl
 	Q_OBJECT
 
 	private:
+		friend ::test_RemoteClient;
+		friend RemoteClient* singleton<RemoteClient>();
+
 		QSharedPointer<DatagramHandler> mDatagramHandler;
 		QScopedPointer<RemoteDeviceList> mRemoteDeviceList;
 		QMap<QString, int> mErrorCounter;
@@ -39,16 +45,17 @@ class RemoteClientImpl
 		void shutdownRemoteConnectorThread();
 		QSharedPointer<RemoteDeviceListEntry> mapToAndTakeRemoteConnectorPending(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor);
 
-	private Q_SLOTS:
-		void onNewMessage(const QJsonDocument& pData, const QHostAddress& pAddress);
-		void onRemoteDispatcherCreated(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, const QSharedPointer<RemoteDispatcher>& pAdapter);
-		void onRemoteDispatcherError(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, RemoteErrorCode pErrorCode);
-		void onDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QSharedPointer<RemoteDispatcher>& pRemoteDispatcher);
-
-	public:
+	protected:
 		RemoteClientImpl();
 		virtual ~RemoteClientImpl() override;
 
+	private Q_SLOTS:
+		void onNewMessage(const QByteArray& pData, const QHostAddress& pAddress);
+		void onRemoteDispatcherCreated(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, const QSharedPointer<RemoteDispatcherClient>& pDispatcher);
+		void onRemoteDispatcherError(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, RemoteErrorCode pErrorCode);
+		void onDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QString& pId);
+
+	public:
 		Q_INVOKABLE virtual void startDetection() override;
 		Q_INVOKABLE virtual void stopDetection() override;
 		Q_INVOKABLE virtual bool isDetecting() override;
@@ -61,4 +68,4 @@ class RemoteClientImpl
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

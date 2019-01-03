@@ -7,6 +7,9 @@
 
 #include "Initializer.h"
 
+#ifndef QT_NO_DEBUG
+	#include <QCoreApplication>
+#endif
 #include <QLoggingCategory>
 
 
@@ -20,7 +23,7 @@ namespace
 {
 VALUE_NAME(MSG_TYPE, "msg")
 VALUE_NAME(CONTEXT_HANDLE, "ContextHandle")
-}
+} // namespace
 
 
 static Initializer::Entry E([] {
@@ -38,7 +41,7 @@ QJsonObject RemoteMessage::createMessageBody(const QString& pContextHandle) cons
 	}
 	else
 	{
-		Q_ASSERT(!pContextHandle.isEmpty() || mMessageType == RemoteCardMessageType::IFDError);
+		Q_ASSERT(!pContextHandle.isEmpty() || mMessageType == RemoteCardMessageType::IFDError || mMessageType == RemoteCardMessageType::IFDEstablishContextResponse);
 	}
 
 	messageBody[CONTEXT_HANDLE()] = pContextHandle;
@@ -46,17 +49,39 @@ QJsonObject RemoteMessage::createMessageBody(const QString& pContextHandle) cons
 }
 
 
+QByteArray RemoteMessage::toByteArray(const QJsonObject& pJsonObject)
+{
+#ifndef QT_NO_DEBUG
+	if (QCoreApplication::applicationName().startsWith(QLatin1String("Test")))
+	{
+		return QJsonDocument(pJsonObject).toJson(QJsonDocument::Indented);
+	}
+#endif
+
+	return QJsonDocument(pJsonObject).toJson(QJsonDocument::Compact);
+}
+
+
+void RemoteMessage::markIncomplete(const QString& pLogMessage)
+{
+	Q_ASSERT(!pLogMessage.isEmpty());
+
+	qCCritical(remote_device) << pLogMessage;
+	mIncomplete = true;
+}
+
+
 void RemoteMessage::missingValue(const QLatin1String& pName)
 {
 	qCCritical(remote_device) << "Missing value" << pName;
-	mIsValid = false;
+	mIncomplete = true;
 }
 
 
 void RemoteMessage::invalidType(const QLatin1String& pName, const QLatin1String& pExpectedType)
 {
 	qCCritical(remote_device) << "The value of" << pName << "should be of type" << pExpectedType;
-	mIsValid = false;
+	mIncomplete = true;
 }
 
 
@@ -137,7 +162,7 @@ QJsonObject RemoteMessage::parseByteArray(const QByteArray& pMessage)
 
 
 RemoteMessage::RemoteMessage(RemoteCardMessageType pMessageType)
-	: mIsValid(true)
+	: mIncomplete(false)
 	, mMessageType(pMessageType)
 	, mContextHandle()
 {
@@ -145,12 +170,18 @@ RemoteMessage::RemoteMessage(RemoteCardMessageType pMessageType)
 
 
 RemoteMessage::RemoteMessage(const QJsonObject& pMessageObject)
-	: mIsValid(true)
+	: mIncomplete(false)
 	, mMessageType(RemoteCardMessageType::UNDEFINED)
 	, mContextHandle()
 {
-	const QString& msg = getStringValue(pMessageObject, MSG_TYPE());
-	mMessageType = Enum<RemoteCardMessageType>::fromString(msg, RemoteCardMessageType::UNDEFINED);
+	const QString& msgType = getStringValue(pMessageObject, MSG_TYPE());
+	mMessageType = Enum<RemoteCardMessageType>::fromString(msgType, RemoteCardMessageType::UNDEFINED);
+
+	if (mMessageType == RemoteCardMessageType::UNDEFINED)
+	{
+		qCWarning(remote_device) << "Invalid messageType received:" << msgType;
+		mIncomplete = true;
+	}
 
 	if (mMessageType != RemoteCardMessageType::IFDEstablishContext)
 	{
@@ -159,9 +190,9 @@ RemoteMessage::RemoteMessage(const QJsonObject& pMessageObject)
 }
 
 
-bool RemoteMessage::isValid() const
+bool RemoteMessage::isIncomplete() const
 {
-	return mIsValid;
+	return mIncomplete;
 }
 
 
@@ -177,12 +208,12 @@ const QString& RemoteMessage::getContextHandle() const
 }
 
 
-QJsonDocument RemoteMessage::toJson(const QString& pContextHandle) const
+QByteArray RemoteMessage::toByteArray(const QString& pContextHandle) const
 {
 	Q_ASSERT(false);
 
 	qCCritical(remote_device) << "Unable to convert an untyped RemoteMessage to json:" << pContextHandle;
-	return QJsonDocument();
+	return QByteArray();
 }
 
 

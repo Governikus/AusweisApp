@@ -40,4 +40,4 @@ class NfcReaderManagerPlugIn
 		virtual void shutdown() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -5,39 +5,40 @@
 #pragma once
 
 #include "command/CreateCardConnectionCommand.h"
-#include "DeviceError.h"
+#include "Env.h"
 #include "Reader.h"
 #include "ReaderManagerWorker.h"
-#include "RemoteClient.h"
 
+#include <QMutex>
 #include <QPointer>
 #include <QThread>
 
+
 namespace governikus
 {
-
 class ReaderManager
 	: public QObject
+	, private Env::ThreadSafe
 {
 	Q_OBJECT
+	friend class Env;
 
 	private:
+		mutable QMutex mMutex;
 		QThread mThread;
 		QPointer<ReaderManagerWorker> mWorker;
-		QSharedPointer<RemoteClient> mRemoteClient;
 
 	protected:
 		ReaderManager();
 		~ReaderManager();
-
-	public:
 		static ReaderManager& getInstance();
 
+	public:
 		/*!
 		 * Initialize the reader manager service.
 		 * The thread is started and the plug-ins are initialized, too.
 		 */
-		void init(const QSharedPointer<RemoteClient>& pRemoteClient = QSharedPointer<RemoteClient>());
+		void init();
 
 		/*!
 		 * Starts a scan for all device types.
@@ -65,6 +66,7 @@ class ReaderManager
 		QVector<ReaderInfo> getReaderInfos(ReaderManagerPlugInType pType) const;
 		virtual QVector<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const;
 		ReaderInfo getReaderInfo(const QString& pReaderName) const;
+		void updateReaderInfo(const QString& pReaderName);
 
 		/*!
 		 * Executes a command to create a CardConnection for a specified reader.
@@ -79,7 +81,7 @@ class ReaderManager
 			QMetaObject::Connection connection = connect(command, &CreateCardConnectionCommand::fireCommandDone, pReceiver, pSlot, Qt::UniqueConnection);
 			if (connection)
 			{
-				QMetaObject::invokeMethod(command, "execute", Qt::QueuedConnection);
+				command->run();
 			}
 			else
 			{
@@ -94,15 +96,14 @@ class ReaderManager
 		void connectReader(const QString& pReaderName);
 		void disconnectReader(const QString& pReaderName);
 		void disconnectAllReaders();
-
-		QSharedPointer<RemoteClient> getRemoteClient();
+		void updateRetryCounters();
 
 	Q_SIGNALS:
 		void firePluginAdded(const ReaderManagerPlugInInfo& pInfo);
 		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
 		void fireReaderAdded(const QString& pReaderName);
 		void fireReaderRemoved(const QString& pReaderName);
-		void fireReaderDeviceError(DeviceError pDeviceError);
+		void fireReaderDeviceError(GlobalStatus::Code pError);
 		void fireReaderPropertiesUpdated(const QString& pReaderName);
 		void fireCardInserted(const QString& pReaderName);
 		void fireCardRemoved(const QString& pReaderName);
@@ -118,4 +119,4 @@ class ReaderManager
 		void shutdown();
 };
 
-} /* namespace governikus */
+} // namespace governikus

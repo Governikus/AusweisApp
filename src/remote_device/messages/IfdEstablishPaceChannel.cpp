@@ -4,8 +4,6 @@
 
 #include "IfdEstablishPaceChannel.h"
 
-#include "MessageReceiver.h"
-
 #include <QJsonObject>
 #include <QLoggingCategory>
 
@@ -20,7 +18,7 @@ namespace
 {
 VALUE_NAME(SLOT_HANDLE, "SlotHandle")
 VALUE_NAME(INPUT_DATA, "InputData")
-}
+} // namespace
 
 
 IfdEstablishPaceChannel::IfdEstablishPaceChannel(const QString& pSlotHandle, const QByteArray& pInputData)
@@ -28,7 +26,6 @@ IfdEstablishPaceChannel::IfdEstablishPaceChannel(const QString& pSlotHandle, con
 	, mSlotHandle(pSlotHandle)
 	, mInputData(pInputData)
 {
-
 }
 
 
@@ -41,6 +38,11 @@ IfdEstablishPaceChannel::IfdEstablishPaceChannel(const QJsonObject& pMessageObje
 
 	const QString& inputData = getStringValue(pMessageObject, INPUT_DATA());
 	mInputData = QByteArray::fromHex(inputData.toUtf8());
+
+	if (getType() != RemoteCardMessageType::IFDEstablishPACEChannel)
+	{
+		markIncomplete(QStringLiteral("The value of msg should be IFDEstablishPACEChannel"));
+	}
 }
 
 
@@ -56,12 +58,12 @@ const QByteArray& IfdEstablishPaceChannel::getInputData() const
 }
 
 
-QJsonDocument IfdEstablishPaceChannel::toJson(const QString& pContextHandle) const
+QByteArray IfdEstablishPaceChannel::toByteArray(const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 
 	result[SLOT_HANDLE()] = mSlotHandle;
 	result[INPUT_DATA()] = QString::fromLatin1(mInputData.toHex());
 
-	return QJsonDocument(result);
+	return RemoteMessage::toByteArray(result);
 }

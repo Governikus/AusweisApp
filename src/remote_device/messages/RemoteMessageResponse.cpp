@@ -14,58 +14,54 @@ Q_DECLARE_LOGGING_CATEGORY(remote_device)
 using namespace governikus;
 
 
-#define RESULTMAJOR "http://www.bsi.bund.de/ecard/api/1.1/resultmajor"
-
-
 namespace
 {
 VALUE_NAME(RESULT_MAJOR, "ResultMajor")
 VALUE_NAME(RESULT_MINOR, "ResultMinor")
-}
+} // namespace
 
 
 QJsonObject RemoteMessageResponse::createMessageBody(const QString& pContextHandle) const
 {
 	QJsonObject result = RemoteMessage::createMessageBody(pContextHandle);
-	result[RESULT_MAJOR()] = mResultMajor;
-	result[RESULT_MINOR()] = mResultMinor.isEmpty() ? QJsonValue() : mResultMinor;
+	const ECardApiResult eCardApiResult(mResultMajor, mResultMinor);
+	result[RESULT_MAJOR()] = eCardApiResult.getMajorString();
+	result[RESULT_MINOR()] = mResultMinor == ECardApiResult::Minor::null ? QJsonValue() : eCardApiResult.getMinorString();
 	return result;
 }
 
 
-RemoteMessageResponse::RemoteMessageResponse(RemoteCardMessageType pMessageType, const QString& pResultMinor)
+RemoteMessageResponse::RemoteMessageResponse(RemoteCardMessageType pMessageType, ECardApiResult::Minor pResultMinor)
 	: RemoteMessage(pMessageType)
-	, mResultMajor(QStringLiteral(RESULTMAJOR "#ok"))
-	, mResultMinor()
+	, mResultMajor(pResultMinor == ECardApiResult::Minor::null ? ECardApiResult::Major::Ok : ECardApiResult::Major::Error)
+	, mResultMinor(pResultMinor)
 {
-	if (!pResultMinor.isEmpty())
-	{
-		mResultMajor = QStringLiteral(RESULTMAJOR "#error");
-		mResultMinor = QStringLiteral("http://www.bsi.bund.de/ecard/api/1.1/resultminor") + pResultMinor;
-	}
 }
 
 
 RemoteMessageResponse::RemoteMessageResponse(const QJsonObject& pMessageObject)
 	: RemoteMessage(pMessageObject)
-	, mResultMajor()
-	, mResultMinor()
+	, mResultMajor(ECardApiResult::Major::Ok)
+	, mResultMinor(ECardApiResult::Minor::null)
 {
-	mResultMajor = getStringValue(pMessageObject, RESULT_MAJOR());
+	const auto& major = getStringValue(pMessageObject, RESULT_MAJOR());
+	mResultMajor = ECardApiResult::parseMajor(major);
+
 	if (resultHasError())
 	{
-		mResultMinor = getStringValue(pMessageObject, RESULT_MINOR());
+		const auto& minor = getStringValue(pMessageObject, RESULT_MINOR());
+		mResultMinor = ECardApiResult::parseMinor(minor);
 	}
 }
 
 
 bool RemoteMessageResponse::resultHasError() const
 {
-	return mResultMajor != QLatin1String(RESULTMAJOR "#ok");
+	return mResultMajor != ECardApiResult::Major::Ok;
 }
 
 
-const QString& RemoteMessageResponse::getResultMinor() const
+ECardApiResult::Minor RemoteMessageResponse::getResultMinor() const
 {
 	return mResultMinor;
 }

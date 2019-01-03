@@ -1,3 +1,10 @@
+#####################################################################
+# The module card drivers.
+#
+# This module provides an interface to scan for connected card
+# readers and their specific drivers.
+#####################################################################
+
 ADD_PLATFORM_LIBRARY(AusweisAppCardDrivers)
 
 TARGET_LINK_LIBRARIES(AusweisAppCardDrivers Qt5::Core AusweisAppGlobal AusweisAppConfiguration)

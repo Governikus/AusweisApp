@@ -1,6 +1,4 @@
 /*!
- * \brief Classes that model remote card reader messages.
- *
  * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
@@ -43,12 +41,15 @@ defineEnumType(RemoteCardMessageType,
 class RemoteMessage
 {
 	private:
-		bool mIsValid;
+		bool mIncomplete;
 		RemoteCardMessageType mMessageType;
 		QString mContextHandle;
 
 	protected:
 		virtual QJsonObject createMessageBody(const QString& pContextHandle) const;
+		static QByteArray toByteArray(const QJsonObject& pJsonObject);
+
+		void markIncomplete(const QString& pLogMessage);
 		void missingValue(const QLatin1String& pName);
 		void invalidType(const QLatin1String& pName, const QLatin1String& pExpectedType);
 		bool getBoolValue(const QJsonObject& pJsonObject, const QLatin1String& pName);
@@ -62,12 +63,12 @@ class RemoteMessage
 		RemoteMessage(const QJsonObject& pMessageObject);
 		virtual ~RemoteMessage() = default;
 
-		bool isValid() const;
+		bool isIncomplete() const;
 		RemoteCardMessageType getType() const;
 		const QString& getContextHandle() const;
 
-		virtual QJsonDocument toJson(const QString& pContextHandle) const;
+		virtual QByteArray toByteArray(const QString& pContextHandle = QString()) const;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

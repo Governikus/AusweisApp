@@ -5,8 +5,6 @@
 #include "RemoteDeviceDescriptor.h"
 
 #include "Initializer.h"
-#include "messages/Discovery.h"
-
 
 using namespace governikus;
 
@@ -18,57 +16,25 @@ static Initializer::Entry E([] {
 
 namespace
 {
-QHostAddress convertAddressProtocol(const QHostAddress& pAddress, QAbstractSocket::NetworkLayerProtocol pRequiredProtocol)
+
+QUrl urlFromMsgAndHost(const Discovery& pDiscovery,
+		const QHostAddress& pHostAddress)
 {
-	const QAbstractSocket::NetworkLayerProtocol actualProtocol = pAddress.protocol();
-	if (actualProtocol == pRequiredProtocol)
-	{
-		return pAddress;
-	}
-
-	switch (pRequiredProtocol)
-	{
-		case QAbstractSocket::IPv4Protocol:
-		{
-			bool conversionOK = false;
-			const QHostAddress convertedAddress(pAddress.toIPv4Address(&conversionOK));
-			return conversionOK ? convertedAddress : QHostAddress();
-		}
-
-		case QAbstractSocket::IPv6Protocol:
-			return QHostAddress(pAddress.toIPv6Address());
-
-		default:
-			return QHostAddress();
-	}
-}
-
-
-QUrl urlFromMsgAndHost(const QSharedPointer<const Discovery>& pMsg,
-		const QHostAddress& pHostAddress,
-		QAbstractSocket::NetworkLayerProtocol pRequiredProtocol)
-{
-	if (pMsg.isNull())
-	{
-		return QUrl();
-	}
-
-	const QHostAddress convertedHostAddress = convertAddressProtocol(pHostAddress, pRequiredProtocol);
-	if (convertedHostAddress.isNull())
+	if (pDiscovery.isIncomplete())
 	{
 		return QUrl();
 	}
 
 	QUrl url;
 	url.setScheme(QStringLiteral("wss"));
-	url.setHost(convertedHostAddress.toString());
-	url.setPort(pMsg->getPort());
+	url.setHost(pHostAddress.toString());
+	url.setPort(pDiscovery.getPort());
 
 	return url;
 }
 
 
-}
+} // namespace
 
 
 RemoteDeviceDescriptor::RemoteDeviceDescriptorData::RemoteDeviceDescriptorData(const QString& pIfdName,
@@ -90,35 +56,39 @@ RemoteDeviceDescriptor::RemoteDeviceDescriptorData::~RemoteDeviceDescriptorData(
 
 bool RemoteDeviceDescriptor::RemoteDeviceDescriptorData::operator==(const RemoteDeviceDescriptorData& pOther) const
 {
-	return mIfdName == pOther.mIfdName &&
-		   mIfdId == pOther.mIfdId &&
-		   mApiVersions == pOther.mApiVersions &&
+	return isEquivalent(pOther) &&
 		   mUrl == pOther.mUrl;
 }
 
 
-RemoteDeviceDescriptor::RemoteDeviceDescriptorData* RemoteDeviceDescriptor::createRemoteDeviceDescriptorData(const QSharedPointer<const Discovery>& pMsg,
-		const QHostAddress& pHostAddress,
-		QAbstractSocket::NetworkLayerProtocol pRequiredProtocol)
+bool RemoteDeviceDescriptor::RemoteDeviceDescriptorData::isEquivalent(const RemoteDeviceDescriptorData& pOther) const
 {
-	const QUrl url = urlFromMsgAndHost(pMsg, pHostAddress, pRequiredProtocol);
-	if (url.isEmpty())
+	return mIfdName == pOther.mIfdName &&
+		   mIfdId == pOther.mIfdId &&
+		   mApiVersions == pOther.mApiVersions;
+}
+
+
+RemoteDeviceDescriptor::RemoteDeviceDescriptorData* RemoteDeviceDescriptor::createRemoteDeviceDescriptorData(const Discovery& pDiscovery,
+		const QHostAddress& pHostAddress)
+{
+	const QUrl url = urlFromMsgAndHost(pDiscovery, pHostAddress);
+	if (url.isEmpty() || url.host().isEmpty())
 	{
 		return nullptr;
 	}
 
-	const QString& ifdName = pMsg->getIfdName();
-	const QString& ifdId = pMsg->getIfdId();
-	const QVector<IfdVersion::Version>& supportedApis = pMsg->getSupportedApis();
+	const QString& ifdName = pDiscovery.getIfdName();
+	const QString& ifdId = pDiscovery.getIfdId();
+	const QVector<IfdVersion::Version>& supportedApis = pDiscovery.getSupportedApis();
 
 	return new RemoteDeviceDescriptorData(ifdName, ifdId, supportedApis, url);
 }
 
 
-RemoteDeviceDescriptor::RemoteDeviceDescriptor(const QSharedPointer<const Discovery>& pDiscovery,
-		const QHostAddress& pHostAddress,
-		QAbstractSocket::NetworkLayerProtocol pRequiredProtocol)
-	: d(createRemoteDeviceDescriptorData(pDiscovery, pHostAddress, pRequiredProtocol))
+RemoteDeviceDescriptor::RemoteDeviceDescriptor(const Discovery& pDiscovery,
+		const QHostAddress& pHostAddress)
+	: d(createRemoteDeviceDescriptorData(pDiscovery, pHostAddress))
 {
 }
 
@@ -149,7 +119,7 @@ const QVector<IfdVersion::Version>& RemoteDeviceDescriptor::getApiVersions() con
 
 bool RemoteDeviceDescriptor::isSupported() const
 {
-	return IfdVersion::selectLatestSupported(getApiVersions()).isValid();
+	return IfdVersion(IfdVersion::selectLatestSupported(getApiVersions())).isValid();
 }
 
 
@@ -172,4 +142,12 @@ bool RemoteDeviceDescriptor::operator==(const RemoteDeviceDescriptor& pOther) co
 	return this == &pOther ||
 		   (d.data() == nullptr && pOther.d.data() == nullptr) ||
 		   (d.data() != nullptr && pOther.d.data() != nullptr && *d == *(pOther.d));
+}
+
+
+bool RemoteDeviceDescriptor::isEquivalent(const RemoteDeviceDescriptor& pOther) const
+{
+	return this == &pOther ||
+		   (d.data() == nullptr && pOther.d.data() == nullptr) ||
+		   (d.data() != nullptr && pOther.d.data() != nullptr && d->isEquivalent(*(pOther.d)));
 }

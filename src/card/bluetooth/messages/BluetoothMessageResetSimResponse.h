@@ -23,4 +23,4 @@ class BluetoothMessageResetSimResponse
 		BluetoothResultCode getResultCode() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

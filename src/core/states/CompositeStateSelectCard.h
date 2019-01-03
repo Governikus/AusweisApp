@@ -23,7 +23,7 @@ class CompositeStateSelectCard
 	const QSharedPointer<WorkflowContext> mContext;
 
 	public:
-		CompositeStateSelectCard(const QSharedPointer<WorkflowContext>& pContext);
+		explicit CompositeStateSelectCard(const QSharedPointer<WorkflowContext>& pContext);
 		virtual ~CompositeStateSelectCard();
 
 	Q_SIGNALS:
@@ -31,4 +31,4 @@ class CompositeStateSelectCard
 		void fireAbort();
 };
 
-} /* namespace governikus */
+} // namespace governikus

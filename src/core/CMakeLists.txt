@@ -1,6 +1,12 @@
+#####################################################################
+# The module core is responsible to start up the application and main
+# event loop. It will initialize any necessary module and control
+# any workflow and communication between the modules.
+#####################################################################
+
 ADD_PLATFORM_LIBRARY(AusweisAppCore)
 
-TARGET_LINK_LIBRARIES(AusweisAppCore Qt5::Network Qt5::Xml AusweisAppCard AusweisAppGlobal AusweisAppActivation AusweisAppSettings AusweisAppNetwork AusweisAppRemoteDevice AusweisAppServices)
+TARGET_LINK_LIBRARIES(AusweisAppCore Qt5::Network AusweisAppCard AusweisAppGlobal AusweisAppUi AusweisAppActivation AusweisAppSettings AusweisAppNetwork AusweisAppRemoteDevice AusweisAppServices AusweisAppWhitelistClient)
 
 IF(WIN32)
 	TARGET_LINK_LIBRARIES(AusweisAppCore ${WIN_DEFAULT_LIBS})

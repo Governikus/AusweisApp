@@ -52,6 +52,12 @@ class MockReader
 		}
 
 
+		void setReaderInfo(const ReaderInfo& pReaderInfo)
+		{
+			mReaderInfo = pReaderInfo;
+		}
+
+
 	private:
 		virtual Reader::CardEvent updateCard() override
 		{
@@ -61,4 +67,4 @@ class MockReader
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -6,12 +6,15 @@
 
 #include "ServerMessageHandler.h"
 
+#include <QDebug>
+
+Q_DECLARE_LOGGING_CATEGORY(statemachine)
 
 using namespace governikus;
 
 
 StateProcessRemoteMessages::StateProcessRemoteMessages(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractGenericState(pContext, false)
 	, mMessageConnections()
 {
 }
@@ -51,17 +54,21 @@ void StateProcessRemoteMessages::onMessageHandlerAdded(const QSharedPointer<Serv
 
 	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireEstablishPaceChannel, this, &StateProcessRemoteMessages::onEstablishPaceChannel, Qt::UniqueConnection);
 	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireModifyPin, this, &StateProcessRemoteMessages::onModifyPin, Qt::UniqueConnection);
-	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireClosed, this, &StateProcessRemoteMessages::onClosed, Qt::UniqueConnection);
+	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::destroyed, this, &StateProcessRemoteMessages::onClosed, Qt::UniqueConnection);
+	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireSecureMessagingStopped, this, &StateProcessRemoteMessages::fireSecureMessagingStopped, Qt::UniqueConnection);
 }
 
 
 void StateProcessRemoteMessages::onClosed()
 {
+	qCDebug(statemachine) << "ServerMessageHandler closed";
+
 	for (const auto& connection : qAsConst(mMessageConnections))
 	{
 		disconnect(connection);
 	}
 
+	qCDebug(statemachine) << "Reseting all PACE passwords and further relevant context information.";
 	getContext()->onResetMessageHandler();
 }
 
@@ -70,8 +77,11 @@ void StateProcessRemoteMessages::onEstablishPaceChannel(const QSharedPointer<con
 {
 	Q_ASSERT(pMessage);
 
-	getContext()->setEstablishPaceChannelMessage(pMessage);
-	getContext()->setCardConnection(pConnection);
+	const auto& context = getContext();
+	context->setEstablishPaceChannelMessage(pMessage);
+	context->setCardConnection(pConnection);
+	context->setReaderName(pConnection->getReaderInfo().getName());
+
 	Q_EMIT fireEstablishPaceChannel();
 }
 
@@ -80,11 +90,11 @@ void StateProcessRemoteMessages::onModifyPin(const QSharedPointer<const IfdModif
 {
 	Q_ASSERT(pMessage);
 
-	const QSharedPointer<RemoteServiceContext> context = getContext();
-	Q_ASSERT(context);
-
+	const auto& context = getContext();
 	context->setModifyPinMessage(pMessage);
 	context->setCardConnection(pConnection);
+	context->setReaderName(pConnection->getReaderInfo().getName());
+
 	Q_EMIT fireModifyPin();
 }
 

@@ -32,14 +32,15 @@ class test_MsgHandlerInsertCard
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			ReaderManager::getInstance().init();
-			ReaderManager::getInstance().getPlugInInfos(); // just to wait until initialization finished
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			readerManager->init();
+			readerManager->getPlugInInfos(); // just to wait until initialization finished
 		}
 
 
 		void cleanupTestCase()
 		{
-			ReaderManager::getInstance().shutdown();
+			Env::getSingleton<ReaderManager>()->shutdown();
 		}
 
 

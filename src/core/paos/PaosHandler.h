@@ -36,4 +36,4 @@ class PaosHandler
 		QSharedPointer<PaosMessage> getPaosMessage() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

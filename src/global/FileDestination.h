@@ -21,8 +21,11 @@ class FileDestination
 
 		static QString getPath()
 		{
-			#ifdef Q_OS_ANDROID
+			#if defined(Q_OS_ANDROID)
 			return QStringLiteral("assets:");
+
+			#elif defined(Q_OS_MACOS) && defined(QT_NO_DEBUG)
+			return QCoreApplication::applicationDirPath() + QStringLiteral("/../Resources");
 
 			#else
 			return QCoreApplication::applicationDirPath();
@@ -46,4 +49,4 @@ class FileDestination
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

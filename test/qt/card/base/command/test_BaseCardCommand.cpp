@@ -6,7 +6,8 @@
 
 #include "command/BaseCardCommand.h"
 
-#include "MockReader.h"
+#include "LogHandler.h"
+#include "MockCardConnectionWorker.h"
 
 #include <QtCore>
 #include <QtTest>
@@ -22,7 +23,6 @@ class BaseCardCommandDummy
 		BaseCardCommandDummy(Reader* pReader)
 			: BaseCardCommand(CardConnectionWorker::create(pReader))
 		{
-
 		}
 
 
@@ -40,6 +40,18 @@ class test_BaseCardCommand
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			Env::getSingleton<LogHandler>()->init();
+		}
+
+
+		void cleanup()
+		{
+			Env::getSingleton<LogHandler>()->resetBacklog();
+		}
+
+
 		void commandDone()
 		{
 			MockReader reader("dummy reader");
@@ -47,21 +59,13 @@ class test_BaseCardCommand
 			QCOMPARE(command.getReturnCode(), CardReturnCode::UNKNOWN);
 
 			QSignalSpy spy(&command, &BaseCardCommand::commandDone);
-			QMetaObject::invokeMethod(&command, "execute");
+			command.run();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1);
 			auto param = spy.takeFirst();
 			QSharedPointer<BaseCardCommand> sharedCommand = param.at(0).value<QSharedPointer<BaseCardCommand> >();
 			QCOMPARE(sharedCommand.data(), &command);
 			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
-		}
-
-
-		void checkRetryCounterAndPrepareForPaceNoCard()
-		{
-			MockReader reader("dummy reader");
-			BaseCardCommandDummy command(&reader);
-			QCOMPARE(command.checkRetryCounterAndPrepareForPace("test"), CardReturnCode::CARD_NOT_FOUND);
 		}
 
 

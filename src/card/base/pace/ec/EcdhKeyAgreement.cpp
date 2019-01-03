@@ -3,9 +3,8 @@
  */
 
 #include "asn1/KnownOIDs.h"
-#include "asn1/PACEInfo.h"
+#include "asn1/PaceInfo.h"
 #include "Commands.h"
-#include "pace/CipherMac.h"
 #include "pace/ec/EcdhGenericMapping.h"
 #include "pace/ec/EcdhKeyAgreement.h"
 #include "pace/ec/EcUtil.h"
@@ -21,7 +20,7 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 Q_DECLARE_LOGGING_CATEGORY(secure)
 
 
-QByteArray EcdhKeyAgreement::encodeUncompressedPublicKey(const QSharedPointer<const PACEInfo>& pPaceInfo, const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint)
+QByteArray EcdhKeyAgreement::encodeUncompressedPublicKey(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint)
 {
 	const QByteArray& publicKeyData =
 			Asn1Util::encode(char(0x06), pPaceInfo->getProtocolValueBytes()) +
@@ -42,7 +41,7 @@ QByteArray EcdhKeyAgreement::encodeCompressedPublicKey(const QSharedPointer<cons
 }
 
 
-EcdhKeyAgreement::EcdhKeyAgreement(const QSharedPointer<const PACEInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
+EcdhKeyAgreement::EcdhKeyAgreement(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 	: KeyAgreement(pPaceInfo, pCardConnectionWorker)
 	, mMapping()
 	, mEphemeralCurve()
@@ -52,7 +51,7 @@ EcdhKeyAgreement::EcdhKeyAgreement(const QSharedPointer<const PACEInfo>& pPaceIn
 }
 
 
-QSharedPointer<KeyAgreement> EcdhKeyAgreement::create(const QSharedPointer<const PACEInfo>& pPaceInfo,
+QSharedPointer<KeyAgreement> EcdhKeyAgreement::create(const QSharedPointer<const PaceInfo>& pPaceInfo,
 		const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 {
 	QSharedPointer<EcdhKeyAgreement> keyAgreement(new EcdhKeyAgreement(pPaceInfo, pCardConnectionWorker));
@@ -72,11 +71,6 @@ QSharedPointer<KeyAgreement> EcdhKeyAgreement::create(const QSharedPointer<const
 	keyAgreement->mMapping.reset(new EcdhGenericMapping(ecGroup));
 
 	return keyAgreement;
-}
-
-
-EcdhKeyAgreement::~EcdhKeyAgreement()
-{
 }
 
 
@@ -145,7 +139,7 @@ CardOperationResult<QSharedPointer<EC_POINT> > EcdhKeyAgreement::performKeyExcha
 		return CardOperationResult<QSharedPointer<EC_POINT> >(resultCode, QSharedPointer<EC_POINT>());
 	}
 	QByteArray cardEphemeralPublicKeyBytes = result.getPayload();
-	qCDebug(secure) << "uncompressedCardEphemeralPublicKey: " << cardEphemeralPublicKeyBytes.toHex();
+	qCDebug(secure) << "uncompressedCardEphemeralPublicKey:" << cardEphemeralPublicKeyBytes.toHex();
 
 	mCardPublicKey = EcUtil::oct2point(pCurve, cardEphemeralPublicKeyBytes);
 	if (!mCardPublicKey)

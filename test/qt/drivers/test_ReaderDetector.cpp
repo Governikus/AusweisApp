@@ -6,7 +6,6 @@
 
 #include "ReaderDetector.h"
 
-#include "Env.h"
 #include "MockReaderDetector.h"
 #include "ResourceLoader.h"
 
@@ -24,7 +23,7 @@ const QLatin1String KOMFORT_DRIVER_URL("https://www.reiner-sct.com/support/suppo
 #else
 const QLatin1String KOMFORT_DRIVER_URL("https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304822&q=driver#choice5");
 #endif
-}
+} // namespace
 
 
 class test_ReaderDetector

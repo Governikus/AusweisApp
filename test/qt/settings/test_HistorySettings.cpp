@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for History.
  *
- * All tests ends with _QTEST to be able to identify them later.
+ * All tests end with _QTEST to be able to identify them later.
  * All original history entry from AusweisApp2 do not have this.
  *
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
@@ -47,7 +47,7 @@ class test_HistorySettings
 		void testHistoryEntries()
 		{
 			QVector<HistoryInfo> initial = settings->getHistoryInfos();
-			HistoryInfo info("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", "pRequestedData");
+			HistoryInfo info("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", {"pRequestedData"});
 			QVector<HistoryInfo> newValue(initial);
 			newValue.prepend(info); // new values will be prepended, so that it appears on top
 
@@ -58,7 +58,7 @@ class test_HistorySettings
 
 		void testDeleteHistory()
 		{
-			HistoryInfo info("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", "pRequestedData");
+			HistoryInfo info("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", {"pRequestedData"});
 			settings->addHistoryInfo(info);
 
 			QCOMPARE(settings->getHistoryInfos().size(), 1);
@@ -73,7 +73,7 @@ class test_HistorySettings
 		{
 			const auto file = AbstractSettings::mTestDir->path() + QStringLiteral("/dummy/Test_settings_HistorySettings.ini");
 
-			HistoryInfo info("pSubjectXYZ", "pSubjectUrlXYZ", "pUsageXYZ", QDateTime(), "pTermOfUsageXYZ", "pRequestedDataXYZ");
+			HistoryInfo info("pSubjectXYZ", "pSubjectUrlXYZ", "pUsageXYZ", QDateTime(), "pTermOfUsageXYZ", {"pRequestedDataXYZ"});
 			settings->addHistoryInfo(info);
 			settings->addHistoryInfo(info);
 			settings->addHistoryInfo(info);

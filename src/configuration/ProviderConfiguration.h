@@ -7,6 +7,7 @@
 #pragma once
 
 #include "CallCost.h"
+#include "Env.h"
 #include "ProviderConfigurationInfo.h"
 #include "UpdatableFile.h"
 
@@ -19,11 +20,11 @@
 namespace governikus
 {
 
-
 class ProviderConfiguration
 	: public QObject
 {
 	Q_OBJECT
+	friend class Env;
 
 	private:
 		const QSharedPointer<UpdatableFile> mUpdatableFile;
@@ -38,10 +39,9 @@ class ProviderConfiguration
 	protected:
 		ProviderConfiguration();
 		virtual ~ProviderConfiguration() = default;
-
-	public:
 		static ProviderConfiguration& getInstance();
 
+	public:
 		void update();
 		const QVector<ProviderConfigurationInfo>& getProviderConfigurationInfos() const;
 		const CallCost getCallCost(const ProviderConfigurationInfo& pProvider) const;
@@ -51,4 +51,4 @@ class ProviderConfiguration
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

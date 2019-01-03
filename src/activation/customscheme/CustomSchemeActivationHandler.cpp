@@ -13,15 +13,6 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(activation)
 
-CustomSchemeActivationHandler::CustomSchemeActivationHandler()
-{
-}
-
-
-CustomSchemeActivationHandler::~CustomSchemeActivationHandler()
-{
-}
-
 
 bool CustomSchemeActivationHandler::start()
 {
@@ -50,7 +41,7 @@ void CustomSchemeActivationHandler::onCustomUrl(const QUrl& pUrl)
 	}
 
 	qCDebug(activation) << "Request type: authentication";
-	QSharedPointer<CustomSchemeActivationContext> context(new CustomSchemeActivationContext(pUrl));
+	const auto& context = QSharedPointer<CustomSchemeActivationContext>::create(pUrl);
 	connect(context.data(), &CustomSchemeActivationContext::fireShowUserInformation, this, &ActivationHandler::fireShowUserInformation);
 	Q_EMIT fireAuthenticationRequest(context);
 }

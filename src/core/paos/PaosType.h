@@ -30,4 +30,4 @@ defineEnumType(PaosType,
 		DISCONNECT_RESPONSE
 		)
 
-} /* namespace governikus */
+} // namespace governikus

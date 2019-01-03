@@ -7,10 +7,11 @@
 using namespace governikus;
 
 
-ChangePinContext::ChangePinContext()
+ChangePinContext::ChangePinContext(bool pRequestTransportPin)
 	: WorkflowContext()
 	, mNewPin()
 	, mSuccessMessage()
+	, mRequestTransportPin(pRequestTransportPin)
 {
 }
 
@@ -31,6 +32,13 @@ void ChangePinContext::setNewPin(const QString& pNewPin)
 }
 
 
+void ChangePinContext::resetPacePasswords()
+{
+	setNewPin(QString());
+	WorkflowContext::resetPacePasswords();
+}
+
+
 const QString& ChangePinContext::getSuccessMessage() const
 {
 	return mSuccessMessage;
@@ -44,4 +52,10 @@ void ChangePinContext::setSuccessMessage(const QString& pSuccessMessage)
 		mSuccessMessage = pSuccessMessage;
 		Q_EMIT fireSuccessMessageChanged();
 	}
+}
+
+
+bool ChangePinContext::requestTransportPin() const
+{
+	return mRequestTransportPin;
 }

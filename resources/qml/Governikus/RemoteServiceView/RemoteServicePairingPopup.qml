@@ -1,8 +1,9 @@
-import QtQuick 2.7
-import QtQuick.Controls 2.2
+import QtQuick 2.10
+import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
+import Governikus.Type.RemoteServiceModel 1.0
 
 Popup {
 	property bool requestInput: false
@@ -18,7 +19,7 @@ Popup {
 	padding: Constants.pane_padding
 
 	Connections {
-		target: remoteServiceModel
+		target: RemoteServiceModel
 		onFireEnvironmentChanged: close()
 	}
 
@@ -53,13 +54,13 @@ Popup {
 			width: parent.width
 			horizontalAlignment: Text.AlignHCenter
 			font.letterSpacing: Utils.dp(5)
-			font.pixelSize: Utils.sp(50)
+			font.pixelSize: Utils.dp(50)
 			font.bold: true
 			readOnly: !requestInput
 			inputMethodHints: Qt.ImhDigitsOnly
 			validator: RegExpValidator { regExp: /\d\d\d\d/ }
 			onAccepted: {
-				remoteServiceModel.connectToServer(deviceId, name.getText(0,4))
+				RemoteServiceModel.connectToServer(deviceId, name.getText(0,4))
 				close()
 			}
 		}
@@ -70,7 +71,7 @@ Popup {
 			visible: requestInput
 
 			onClicked: {
-				remoteServiceModel.connectToServer(deviceId, name.getText(0,4))
+				RemoteServiceModel.connectToServer(deviceId, name.getText(0,4))
 				close()
 			}
 		}

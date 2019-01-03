@@ -6,11 +6,8 @@
 
 #pragma once
 
-#include "asn1/PACEInfo.h"
 #include "asn1/SecurityInfos.h"
 #include "CardConnectionWorker.h"
-#include "CardOperationResult.h"
-#include "EnumHelper.h"
 #include "pace/KeyAgreement.h"
 
 #include <QByteArray>
@@ -21,14 +18,14 @@ class test_PaceHandler;
 
 namespace governikus
 {
-class PaceHandler
+class PaceHandler final
 {
 	friend class ::test_PaceHandler;
 
 	private:
 		const QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
 		QSharedPointer<KeyAgreement> mKeyAgreement;
-		QSharedPointer<const PACEInfo> mPaceInfo;
+		QSharedPointer<const PaceInfo> mPaceInfo;
 		QByteArray mStatusMseSetAt;
 		QByteArray mIdIcc;
 		QByteArray mEncryptionKey;
@@ -39,7 +36,7 @@ class PaceHandler
 		/*!
 		 * \brief checks for implementation support
 		 */
-		bool isSupportedProtocol(const QSharedPointer<const PACEInfo>& pPaceInfo) const;
+		bool isSupportedProtocol(const QSharedPointer<const PaceInfo>& pPaceInfo) const;
 
 		/*!
 		 * \brief Perform initialization of the handler. During initialization the PACE protocol parameters to be used are determined.
@@ -53,7 +50,7 @@ class PaceHandler
 		 * \param pPasswordId the PACE password id to use, e.g. PIN, CAN or PUK
 		 * \return false on any card errors
 		 */
-		CardReturnCode transmitMSESetAT(PACE_PASSWORD_ID pPasswordId);
+		CardReturnCode transmitMSESetAT(PacePasswordId pPasswordId);
 
 		Q_DISABLE_COPY(PaceHandler)
 
@@ -66,7 +63,7 @@ class PaceHandler
 		 * \param pPassword the password value, e.g. "123456"
 		 * \return false on any errors during establishment
 		 */
-		CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QString& pPassword);
+		CardReturnCode establishPaceChannel(PacePasswordId pPasswordId, const QString& pPassword);
 
 		/*!
 		 * \brief The certificate holder authorization template to be supplied to the card. May be empty
@@ -116,4 +113,4 @@ class PaceHandler
 		QByteArray getPaceProtocol() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

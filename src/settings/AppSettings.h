@@ -7,6 +7,7 @@
 #pragma once
 
 #include "AbstractSettings.h"
+#include "Env.h"
 #include "GeneralSettings.h"
 #include "HistorySettings.h"
 #include "PreVerificationSettings.h"
@@ -24,11 +25,14 @@ namespace governikus
  */
 class AppSettings
 	: public AbstractSettings
+	, private Env::ThreadSafe
 {
 	Q_OBJECT
+	friend class Env;
 	friend class ::test_AppSettings;
 
 	private:
+		bool mUsedAsSdk;
 		GeneralSettings mGeneralSettings;
 		PreVerificationSettings mPreVerificationSettings;
 		HistorySettings mHistorySettings;
@@ -37,10 +41,12 @@ class AppSettings
 	protected:
 		AppSettings();
 		virtual ~AppSettings() override;
+		static AppSettings& getInstance();
 
 	public:
-		static AppSettings& getInstance();
 		virtual void save() override;
+		bool isUsedAsSDK() const;
+		void setUsedAsSDK(bool pSdk);
 
 		virtual GeneralSettings& getGeneralSettings();
 		virtual PreVerificationSettings& getPreVerificationSettings();
@@ -49,4 +55,4 @@ class AppSettings
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

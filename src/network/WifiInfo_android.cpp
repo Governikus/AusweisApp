@@ -7,7 +7,6 @@
 #include <QAndroidJniEnvironment>
 #include <QAndroidJniObject>
 #include <QLoggingCategory>
-#include <QNetworkInterface>
 #include <QtAndroid>
 #include <QTimerEvent>
 
@@ -73,7 +72,6 @@ void WifiInfo::enableWifi()
 			"enableWifi",
 			"(Landroid/content/Context;)Z",
 			context.object<jobject>());
-
 
 	qCDebug(qml) << "enableWifi() returned:" << (jSuccess == JNI_TRUE);
 

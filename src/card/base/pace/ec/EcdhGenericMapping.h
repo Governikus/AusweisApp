@@ -29,11 +29,11 @@ class EcdhGenericMapping
 
 	public:
 		EcdhGenericMapping(const QSharedPointer<EC_GROUP>& pCurve);
-		virtual ~EcdhGenericMapping() override;
+		virtual ~EcdhGenericMapping() override = default;
 
 		QByteArray generateTerminalMappingData() override;
 
 		QSharedPointer<EC_GROUP> generateEphemeralDomainParameters(const QByteArray& pCardMappingData, const QByteArray& pNonce) override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

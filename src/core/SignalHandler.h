@@ -45,7 +45,7 @@ class SignalHandler
 #elif defined(Q_OS_WIN)
 
 	private:
-		static BOOL ctrlHandler(DWORD pCtrlType);
+		static BOOL __RPC_CALLEE ctrlHandler(DWORD pCtrlType);
 #endif
 
 	private Q_SLOTS:
@@ -62,4 +62,4 @@ class SignalHandler
 		bool shouldQuit() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

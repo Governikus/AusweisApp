@@ -9,9 +9,6 @@
 #ifdef Q_OS_MACOS
 	#include <QFileInfo>
 #endif
-#ifdef Q_OS_ANDROID
-	#include <QtAndroid>
-#endif
 
 using namespace governikus;
 
@@ -52,6 +49,7 @@ void AbstractSettings::createLegacyFileMapping()
 
 
 AbstractSettings::AbstractSettings()
+	: QObject()
 {
 }
 
@@ -73,20 +71,8 @@ QSharedPointer<QSettings> AbstractSettings::getStore()
 			Q_ASSERT(mTestDir->isValid());
 		}
 		QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, mTestDir->path());
-		return QSharedPointer<QSettings>(new QSettings(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::organizationName(), QCoreApplication::applicationName()));
+		return QSharedPointer<QSettings>::create(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::organizationName(), QCoreApplication::applicationName());
 	}
 #endif
-	return QSharedPointer<QSettings>(new QSettings());
-}
-
-
-bool AbstractSettings::appIsBackgroundService() const
-{
-#ifdef Q_OS_ANDROID
-	if (QtAndroid::androidService().isValid())
-	{
-		return true;
-	}
-#endif
-	return false;
+	return QSharedPointer<QSettings>::create();
 }

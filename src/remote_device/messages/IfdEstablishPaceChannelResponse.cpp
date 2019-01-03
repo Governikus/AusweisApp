@@ -18,10 +18,10 @@ namespace
 {
 VALUE_NAME(SLOT_HANDLE, "SlotHandle")
 VALUE_NAME(OUTPUT_DATA, "OutputData")
-}
+} // namespace
 
 
-IfdEstablishPaceChannelResponse::IfdEstablishPaceChannelResponse(const QString& pSlotHandle, const QByteArray& pOutputData, const QString& pResultMinor)
+IfdEstablishPaceChannelResponse::IfdEstablishPaceChannelResponse(const QString& pSlotHandle, const QByteArray& pOutputData, ECardApiResult::Minor pResultMinor)
 	: RemoteMessageResponse(RemoteCardMessageType::IFDEstablishPACEChannelResponse, pResultMinor)
 	, mSlotHandle(pSlotHandle)
 	, mOutputData(pOutputData)
@@ -38,6 +38,11 @@ IfdEstablishPaceChannelResponse::IfdEstablishPaceChannelResponse(const QJsonObje
 
 	const QString& inputData = getStringValue(pMessageObject, OUTPUT_DATA());
 	mOutputData = QByteArray::fromHex(inputData.toUtf8());
+
+	if (getType() != RemoteCardMessageType::IFDEstablishPACEChannelResponse)
+	{
+		markIncomplete(QStringLiteral("The value of msg should be IFDEstablishPACEChannelResponse"));
+	}
 }
 
 
@@ -53,12 +58,12 @@ const QByteArray& IfdEstablishPaceChannelResponse::getOutputData() const
 }
 
 
-QJsonDocument IfdEstablishPaceChannelResponse::toJson(const QString& pContextHandle) const
+QByteArray IfdEstablishPaceChannelResponse::toByteArray(const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 
 	result[SLOT_HANDLE()] = mSlotHandle;
 	result[OUTPUT_DATA()] = QString::fromLatin1(mOutputData.toHex());
 
-	return QJsonDocument(result);
+	return RemoteMessage::toByteArray(result);
 }

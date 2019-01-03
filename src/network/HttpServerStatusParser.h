@@ -30,7 +30,7 @@ class HttpServerStatusParser
 		bool parseReply(const QPointer<QNetworkReply>& pReply);
 
 	public:
-		HttpServerStatusParser(int pPort, const QHostAddress& pHost = QHostAddress::LocalHost);
+		HttpServerStatusParser(quint16 pPort, const QHostAddress& pHost = QHostAddress::LocalHost);
 		virtual ~HttpServerStatusParser();
 
 		bool request();
@@ -38,4 +38,4 @@ class HttpServerStatusParser
 		const VersionInfo& getVersionInfo() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

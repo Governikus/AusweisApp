@@ -68,8 +68,9 @@ void AbstractState::onEntry(QEvent* pEvent)
 	Q_UNUSED(pEvent);
 	if (mConnectOnCardRemoved)
 	{
-		mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireCardRemoved, this, &AbstractState::onCardRemoved);
-		mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderRemoved, this, &AbstractState::onCardRemoved);
+		const auto readerManager = Env::getSingleton<ReaderManager>();
+		mConnections += connect(readerManager, &ReaderManager::fireCardRemoved, this, &AbstractState::onCardRemoved);
+		mConnections += connect(readerManager, &ReaderManager::fireReaderRemoved, this, &AbstractState::onCardRemoved);
 	}
 	mConnections += connect(mContext.data(), &WorkflowContext::fireCancelWorkflow, this, &AbstractState::onUserCancelled);
 	mConnections += connect(mContext.data(), &WorkflowContext::fireStateApprovedChanged, this, &AbstractState::onStateApprovedChanged);
@@ -84,7 +85,8 @@ void AbstractState::onExit(QEvent* pEvent)
 	QState::onExit(pEvent);
 	clearConnections();
 	mContext->setStateApproved(false);
-	qCDebug(statemachine) << "Leaving state" << getStateName() << "with status:" << mContext->getStatus();
+	qCDebug(statemachine) << "Leaving state" << getStateName()
+						  << "with status: [" << mContext->getLastPaceResult() << "+" << mContext->getStatus() << "]";
 }
 
 
@@ -127,5 +129,15 @@ void AbstractState::updateStatus(const GlobalStatus& pStatus)
 	if (pStatus.isError() && mContext->getStatus().isNoError())
 	{
 		mContext->setStatus(pStatus);
+	}
+}
+
+
+void AbstractState::updateStartPaosResult(const ECardApiResult& pStartPaosResult)
+{
+	if (!pStartPaosResult.isOk() && mContext->getStartPaosResult().isOk())
+	{
+		mContext->setStartPaosResult(pStartPaosResult);
+		updateStatus(pStartPaosResult.toStatus());
 	}
 }

@@ -5,9 +5,8 @@
 #include "RemoteTlsServer.h"
 
 #include "AppSettings.h"
-#include "Env.h"
+#include "LogHandler.h"
 #include "Randomizer.h"
-#include "RemoteHelper.h"
 #include "SecureStorage.h"
 #include "TlsChecker.h"
 
@@ -39,7 +38,9 @@ bool RemoteTlsServer::listen()
 		return false;
 	}
 
-	if (!RemoteHelper::checkAndGenerateKey())
+	auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	const bool invalidLength = !TlsChecker::hasValidCertificateKeyLength(remoteServiceSettings.getCertificate());
+	if (!remoteServiceSettings.checkAndGenerateKey(invalidLength))
 	{
 		qCCritical(remote_device) << "Cannot get required key/certificate for tls";
 		return false;
@@ -143,7 +144,7 @@ void RemoteTlsServer::onSslErrors(const QList<QSslError>& pErrors)
 void RemoteTlsServer::onEncrypted()
 {
 	const auto& cfg = mSocket->sslConfiguration();
-	TlsChecker::logSslConfig(cfg, qInfo(remote_device));
+	TlsChecker::logSslConfig(cfg, spawnMessageLogger(remote_device));
 
 	if (!TlsChecker::hasValidCertificateKeyLength(cfg.peerCertificate()))
 	{

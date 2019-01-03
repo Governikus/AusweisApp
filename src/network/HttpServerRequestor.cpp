@@ -2,7 +2,6 @@
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "Env.h"
 #include "HttpServerRequestor.h"
 #include "NetworkManager.h"
 
@@ -32,7 +31,7 @@ HttpServerRequestor::~HttpServerRequestor()
 }
 
 
-QUrl HttpServerRequestor::createUrl(const QString& pQuery, int pPort, const QHostAddress& pHost, const QString& pPath)
+QUrl HttpServerRequestor::createUrl(const QString& pQuery, quint16 pPort, const QHostAddress& pHost, const QString& pPath)
 {
 	QUrl url;
 	url.setScheme(QStringLiteral("http"));

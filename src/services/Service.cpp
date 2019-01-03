@@ -6,7 +6,6 @@
 
 #include "AppSettings.h"
 #include "AppUpdateData.h"
-#include "Env.h"
 #include "ProviderConfiguration.h"
 #include "SingletonHelper.h"
 
@@ -24,10 +23,9 @@ Service::Service()
 	: mTimer(this)
 	, mUpdateScheduled(true)
 	, mExplicitSuccessMessage(true)
-	, mAppUpdater()
 {
 	connect(&mTimer, &QTimer::timeout, this, &Service::onTimedUpdateTriggered);
-	connect(&mAppUpdater, &AppUpdater::fireAppUpdateCheckFinished, this, &Service::onAppUpdateFinished);
+	connect(Env::getSingleton<AppUpdater>(), &AppUpdater::fireAppUpdateCheckFinished, this, &Service::onAppUpdateFinished);
 
 	mTimer.setSingleShot(true);
 	mTimer.start(mOneDayInMs);
@@ -42,16 +40,17 @@ Service& Service::getInstance()
 
 void Service::updateConfigurations()
 {
-	QMetaObject::invokeMethod(this, "doConfigurationsUpdate", Qt::QueuedConnection);
+	QMetaObject::invokeMethod(this, &Service::doConfigurationsUpdate, Qt::QueuedConnection);
 }
 
 
 void Service::updateApp(bool pIgnoreNextVersionskip)
 {
-	mUpdateScheduled = false;
 	mExplicitSuccessMessage = pIgnoreNextVersionskip;
 	mTimer.start(mOneDayInMs);
-	QMetaObject::invokeMethod(this, "doAppUpdate", Qt::QueuedConnection, Q_ARG(bool, pIgnoreNextVersionskip));
+	QMetaObject::invokeMethod(this, [ = ] {
+				doAppUpdate(pIgnoreNextVersionskip);
+			}, Qt::QueuedConnection);
 }
 
 
@@ -67,7 +66,7 @@ void Service::doConfigurationsUpdate()
 
 void Service::doAppUpdate(bool pIgnoreNextVersionskip)
 {
-	mAppUpdater.checkAppUpdate(pIgnoreNextVersionskip);
+	Env::getSingleton<AppUpdater>()->checkAppUpdate(pIgnoreNextVersionskip);
 }
 
 
@@ -88,6 +87,7 @@ void Service::runUpdateIfNeeded()
 {
 	if (mUpdateScheduled)
 	{
+		mUpdateScheduled = false;
 		updateConfigurations();
 		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoUpdateCheck())
 		{
@@ -99,7 +99,7 @@ void Service::runUpdateIfNeeded()
 
 const AppUpdateData& Service::getUpdateData() const
 {
-	return mAppUpdater.getUpdateData();
+	return Env::getSingleton<AppUpdater>()->getUpdateData();
 }
 
 

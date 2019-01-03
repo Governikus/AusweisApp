@@ -1,0 +1,45 @@
+{
+  "PersonalData": {
+    "DocumentType": "TP",
+    "IssuingState": "D",
+    "DateOfExpiry": "2020-10-31+01:00",
+    "GivenNames": "KARL",
+    "FamilyNames": "HILLEBRANDT",
+    "ArtisticName": "GRAF V. LÝSKY",
+    "AcademicTitle": "DR.HC.",
+    "PlaceOfBirth": {
+      "FreetextPlace": "TRIER"
+    },
+    "Nationality": "",
+    "PlaceOfResidence": {
+      "NoPlaceInfo": "keine Hauptwohnung in Deutschland"
+    },
+    "ResidencePermitI": "ERWERBSTÄTIGKEIT/BESCHÄFTIGUNG GESTATTET.",
+    "DateOfBirth": "1952-06-17+01:00"
+  },
+  "OperationsAllowedByUser": {
+    "DocumentType": "ALLOWED",
+    "IssuingState": "ALLOWED",
+    "DateOfExpiry": "ALLOWED",
+    "GivenNames": "ALLOWED",
+    "FamilyNames": "ALLOWED",
+    "ArtisticName": "ALLOWED",
+    "AcademicTitle": "ALLOWED",
+    "DateOfBirth": "ALLOWED",
+    "PlaceOfBirth": "ALLOWED",
+    "Nationality": "ALLOWED",
+    "BirthName": "NOTONCHIP",
+    "PlaceOfResidence": "ALLOWED",
+    "ResidencePermitI": "ALLOWED",
+    "RestrictedID": "PROHIBITED",
+    "AgeVerification": "PROHIBITED",
+    "PlaceVerification": "PROHIBITED"
+  },
+  "Result": {
+    "ResultMajor": "http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok",
+    "ResultMessage": {
+      "Value": "",
+      "Lang": "en"
+    }
+  }
+}

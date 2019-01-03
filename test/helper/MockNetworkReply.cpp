@@ -7,13 +7,13 @@
 using namespace governikus;
 
 
-MockNetworkReply::MockNetworkReply(const QByteArray& pData, HttpStatusCode pStatusCode, QObject* pParent)
+MockNetworkReply::MockNetworkReply(const QByteArray& pData, http_status pStatusCode, QObject* pParent)
 	: QNetworkReply(pParent)
 	, mSocket()
 {
 	mSocket.mReadBuffer = pData;
 	setOpenMode(QIODevice::ReadOnly);
-	setAttribute(QNetworkRequest::HttpStatusCodeAttribute, QVariant(Enum<HttpStatusCode>::getValue(pStatusCode)));
+	setAttribute(QNetworkRequest::HttpStatusCodeAttribute, QVariant(pStatusCode));
 }
 
 

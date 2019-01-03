@@ -16,9 +16,9 @@ using namespace governikus::KnownOIDs;
 
 Q_DECLARE_LOGGING_CATEGORY(card)
 
+#ifndef OPENSSL_NO_CMS
 namespace governikus
 {
-
 template<>
 CMS_ContentInfo* decodeAsn1Object<CMS_ContentInfo>(CMS_ContentInfo** pObject, const unsigned char** pData, long pDataLen)
 {
@@ -33,7 +33,9 @@ void freeAsn1Object<CMS_ContentInfo>(CMS_ContentInfo* pObject)
 }
 
 
-}
+} // namespace governikus
+
+#endif
 
 
 QSharedPointer<EFCardSecurity> EFCardSecurity::fromHex(const QByteArray& pHexString)
@@ -44,6 +46,12 @@ QSharedPointer<EFCardSecurity> EFCardSecurity::fromHex(const QByteArray& pHexStr
 
 QSharedPointer<EFCardSecurity> EFCardSecurity::decode(const QByteArray& pBytes)
 {
+#ifdef OPENSSL_NO_CMS
+#error Cryptographic Message Syntax (CMS) is required. Do you use LibreSSL?
+	Q_UNUSED(pBytes)
+	return QSharedPointer<EFCardSecurity>();
+
+#else
 	const auto contentInfo = decodeObject<CMS_ContentInfo>(pBytes);
 	if (contentInfo == nullptr)
 	{
@@ -80,7 +88,9 @@ QSharedPointer<EFCardSecurity> EFCardSecurity::decode(const QByteArray& pBytes)
 		return QSharedPointer<EFCardSecurity>();
 	}
 
-	return QSharedPointer<EFCardSecurity>(new EFCardSecurity(securityInfos));
+	return QSharedPointer<EFCardSecurity>::create(securityInfos);
+
+#endif
 }
 
 

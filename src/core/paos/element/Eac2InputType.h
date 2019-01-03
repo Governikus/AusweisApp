@@ -41,4 +41,4 @@ class Eac2InputType
 		const QByteArrayList& getCvCertificatesAsBinary() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

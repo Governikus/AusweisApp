@@ -6,9 +6,6 @@
 
 #include "StateParseTcTokenUrl.h"
 
-#include "HttpStatusCode.h"
-#include "Result.h"
-
 #include <QUrlQuery>
 
 using namespace governikus;

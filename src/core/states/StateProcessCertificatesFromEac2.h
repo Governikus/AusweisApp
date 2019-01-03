@@ -9,7 +9,6 @@
 #include "context/AuthContext.h"
 #include "states/AbstractGenericState.h"
 
-class test_StateProcessCertificatesFromEac2;
 
 namespace governikus
 {
@@ -21,8 +20,8 @@ class StateProcessCertificatesFromEac2
 	friend class StateBuilder;
 	friend class ::test_StateProcessCertificatesFromEac2;
 
-	StateProcessCertificatesFromEac2(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateProcessCertificatesFromEac2(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

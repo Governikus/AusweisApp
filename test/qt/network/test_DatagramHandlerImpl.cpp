@@ -24,7 +24,7 @@ class test_DatagramHandlerImpl
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
@@ -36,13 +36,13 @@ class test_DatagramHandlerImpl
 
 		void cleanup()
 		{
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
 		void startUpShutDown()
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
 
 			QVERIFY(socket->isBound());
@@ -65,7 +65,7 @@ class test_DatagramHandlerImpl
 
 			DatagramHandlerImpl::cPort = 80;
 
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
 
 			QVERIFY(!socket->isBound());
@@ -81,20 +81,18 @@ class test_DatagramHandlerImpl
 			QVERIFY(socket->isBound());
 			QSignalSpy spySocket(socket.data(), &DatagramHandler::fireNewMessage);
 
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			QUdpSocket clientSocket;
 			#ifndef QT_NO_NETWORKPROXY
 			clientSocket.setProxy(QNetworkProxy::NoProxy);
 			#endif
 
 			auto written = clientSocket.writeDatagram("dummy", QHostAddress::LocalHost, socket.staticCast<DatagramHandlerImpl>()->mSocket->localPort());
-			spy.wait();
+			QTRY_COMPARE(spySocket.count(), 1);
 			QCOMPARE(written, 5);
-
-			QCOMPARE(spySocket.count(), 0);
-			QCOMPARE(spy.count(), 1);
-			auto param = spy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Datagram does not contain valid JSON: \"dummy\""));
+			QCOMPARE(spy.count(), 0);
+			auto param = spySocket.takeFirst();
+			QCOMPARE(param.at(0).toByteArray(), QByteArray("dummy"));
 		}
 
 
@@ -129,13 +127,11 @@ class test_DatagramHandlerImpl
 
 			QByteArray data("{\"key\":\"value\"}");
 			auto written = clientSocket.writeDatagram(data, broadcast ? QHostAddress::Broadcast : QHostAddress::LocalHost, socket.staticCast<DatagramHandlerImpl>()->mSocket->localPort());
-			spySocket.wait();
+			QTRY_COMPARE(spySocket.count(), 1);
 			QCOMPARE(written, data.size());
-
-			QCOMPARE(spySocket.count(), 1);
 			const auto& msg = spySocket.takeFirst();
 			QCOMPARE(msg.size(), 2);
-			QCOMPARE(msg.at(0).toJsonDocument().toJson(QJsonDocument::Compact), data);
+			QCOMPARE(msg.at(0).toByteArray(), data);
 		}
 
 
@@ -160,11 +156,8 @@ class test_DatagramHandlerImpl
 			QVERIFY(receiver.bind());
 			QSignalSpy spyReceiver(&receiver, &QUdpSocket::readyRead);
 
-			QSharedPointer<DatagramHandlerImpl> datagramHandlerImpl = QSharedPointer<DatagramHandler>(Env::create<DatagramHandler*>()).dynamicCast<DatagramHandlerImpl>();
-			QVERIFY(datagramHandlerImpl);
-
-			DatagramHandlerImpl::cPort = receiver.localPort();
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSharedPointer<DatagramHandlerImpl> datagramHandlerImpl = QSharedPointer<DatagramHandlerImpl>::create(false);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			QJsonObject obj;
 			obj["test"] = "dummy";
@@ -175,16 +168,14 @@ class test_DatagramHandlerImpl
 				#ifdef Q_OS_FREEBSD
 				QSKIP("FreeBSD does not like that");
 				#endif
-				QVERIFY(datagramHandlerImpl->send(doc));
+				QVERIFY(datagramHandlerImpl->send(doc.toJson(QJsonDocument::Compact), receiver.localPort()));
 			}
 			else
 			{
-				QVERIFY(datagramHandlerImpl->send(doc, QHostAddress::LocalHost));
+				QVERIFY(datagramHandlerImpl->send(doc.toJson(QJsonDocument::Compact), QHostAddress::LocalHost, receiver.localPort()));
 			}
 
-			spyReceiver.wait();
-
-			QCOMPARE(spyReceiver.count(), 1);
+			QTRY_COMPARE(spyReceiver.count(), 1);
 			QCOMPARE(spy.count(), 0);
 
 			QVERIFY(receiver.hasPendingDatagrams());

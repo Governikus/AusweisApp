@@ -10,7 +10,7 @@
 using namespace governikus;
 
 StateChangePin::StateChangePin(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractGenericState(pContext, false)
 {
 }
 
@@ -28,6 +28,7 @@ void StateChangePin::run()
 void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 {
 	const CardReturnCode returnCode = pCommand->getReturnCode();
+	getContext()->setLastPaceResult(returnCode);
 	switch (returnCode)
 	{
 		case CardReturnCode::OK:
@@ -46,7 +47,6 @@ void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 			break;
 
 		default:
-			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireAbort();
 			break;
 	}

@@ -1,3 +1,5 @@
 module Style
+
+singleton ProviderStyle 1.0 ProviderStyle.qml
+
 NpaBusyIndicatorStyle 1.0 NpaBusyIndicatorStyle.qml
-ProviderStyle 1.0 ProviderStyle.qml

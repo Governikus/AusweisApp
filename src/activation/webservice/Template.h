@@ -55,4 +55,4 @@ class Template
 		QString render() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

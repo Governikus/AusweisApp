@@ -51,7 +51,7 @@ class HistoryInfo
 		/*!
 		 * The requested data fields during authentication
 		 */
-		QString mRequestedData;
+		QStringList mRequestedData;
 
 	public:
 		HistoryInfo()
@@ -59,7 +59,7 @@ class HistoryInfo
 		}
 
 
-		HistoryInfo(const QString& pSubjectName, const QString& pSubjectUrl, const QString& pUsage, const QDateTime& pDateTime, const QString& pTermOfUsage, const QString& pRequestedData);
+		HistoryInfo(const QString& pSubjectName, const QString& pSubjectUrl, const QString& pUsage, const QDateTime& pDateTime, const QString& pTermOfUsage, const QStringList& pRequestedData);
 
 		bool operator==(const HistoryInfo& pOther) const
 		{
@@ -79,8 +79,8 @@ class HistoryInfo
 		const QString& getPurpose() const;
 		const QDateTime& getDateTime() const;
 		const QString& getTermOfUsage() const;
-		const QString& getRequestedData() const;
+		const QStringList& getRequestedData() const;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

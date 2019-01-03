@@ -40,4 +40,4 @@ class PdfExporter
 		bool exportSelfInfo(const QDateTime& pDate, const QVector<QPair<QString, QString> >& pInfoData);
 };
 
-} /* namespace governikus */
+} // namespace governikus

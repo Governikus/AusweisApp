@@ -20,6 +20,7 @@ class MockDataChannel
 	Q_OBJECT
 
 	private:
+		QString mId;
 		QVector<QByteArray> mReceivedDataBlocks;
 
 	public:
@@ -28,6 +29,7 @@ class MockDataChannel
 
 		virtual void send(const QByteArray& pDataBlock) override;
 		virtual void close() override;
+		virtual const QString& getId() const override;
 		void closeAbnormal();
 
 		const QVector<QByteArray>& getReceivedDataBlocks() const;
@@ -40,4 +42,4 @@ class MockDataChannel
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

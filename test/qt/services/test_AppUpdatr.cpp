@@ -9,10 +9,8 @@
 
 #include "Env.h"
 #include "GlobalStatus.h"
-#include "LogHandler.h"
 #include "MockDownloader.h"
 #include "SecureStorage.h"
-#include "TestFileHelper.h"
 #include "VersionNumber.h"
 
 #include <QtTest>
@@ -53,7 +51,7 @@ const char* test_jsonData = "{"
 							"	]"
 							"}";
 const char* test_releaseNotes = "<head><body>Release Notes</head></body>";
-}
+} // namespace
 
 using namespace governikus;
 
@@ -153,7 +151,6 @@ class test_AppUpdater
 
 		void cleanup()
 		{
-
 		}
 
 

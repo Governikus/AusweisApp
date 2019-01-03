@@ -1,0 +1,7 @@
+module View
+
+ContentArea 1.0 ContentArea.qml
+ContentAreaLoader 1.0 ContentAreaLoader.qml
+SectionPage 1.0 SectionPage.qml
+TabBarView 1.0 TabBarView.qml
+FocusFrame 1.0 FocusFrame.qml

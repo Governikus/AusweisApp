@@ -9,7 +9,7 @@
 #include "EnumHelper.h"
 #include "messages/RemoteMessage.h"
 #include "RemoteDeviceDescriptor.h"
-#include "RemoteDispatcher.h"
+#include "RemoteDispatcherClient.h"
 
 #include <QObject>
 
@@ -39,9 +39,9 @@ class RemoteConnector
 		virtual void onConnectRequest(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, const QString& pPsk) = 0;
 
 	Q_SIGNALS:
-		void fireRemoteDispatcherCreated(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, const QSharedPointer<RemoteDispatcher>& pAdapter);
+		void fireRemoteDispatcherCreated(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, const QSharedPointer<RemoteDispatcherClient>& pClientDispatcher);
 		void fireRemoteDispatcherError(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, RemoteErrorCode pErrorCode);
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

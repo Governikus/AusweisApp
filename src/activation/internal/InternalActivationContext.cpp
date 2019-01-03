@@ -18,11 +18,6 @@ InternalActivationContext::InternalActivationContext(const QUrl& pUrl)
 }
 
 
-InternalActivationContext::~InternalActivationContext()
-{
-}
-
-
 QUrl InternalActivationContext::getActivationURL() const
 {
 	return mTcTokenUrl;
@@ -41,7 +36,7 @@ bool InternalActivationContext::sendOperationAlreadyActive()
 }
 
 
-bool InternalActivationContext::sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus)
+bool InternalActivationContext::sendErrorPage(http_status pStatusCode, const GlobalStatus& pStatus)
 {
 	Q_UNUSED(pStatusCode)
 	Q_UNUSED(pStatus)

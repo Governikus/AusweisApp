@@ -65,12 +65,11 @@ QString getField(const QString& pData, const QStringList& pSearchItems)
 }
 
 
-}
+} // namespace
 
 
 namespace governikus
 {
-
 
 ASN1_SEQUENCE(CertificateDescription) = {
 	ASN1_SIMPLE(CertificateDescription, mDescriptionType, ASN1_OBJECT),
@@ -89,7 +88,7 @@ ASN1_SEQUENCE_END(CertificateDescription)
 IMPLEMENT_ASN1_FUNCTIONS(CertificateDescription)
 IMPLEMENT_ASN1_OBJECT(CertificateDescription)
 
-} /* namespace governikus */
+} // namespace governikus
 
 
 QSharedPointer<const CertificateDescription> CertificateDescription::fromHex(const QByteArray& pHexValue)

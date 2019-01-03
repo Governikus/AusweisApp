@@ -6,6 +6,8 @@
 
 #include "messages/parameter/BluetoothMessageParameter.h"
 
+class test_BluetoothMessageParameterCardReaderStatus;
+
 namespace governikus
 {
 
@@ -13,6 +15,7 @@ class BluetoothMessageParameterCardReaderStatus
 	: public BluetoothMessageParameter
 {
 	private:
+		friend class ::test_BluetoothMessageParameterCardReaderStatus;
 		BluetoothCardReaderStatus mCardReaderStatus;
 
 	public:
@@ -26,4 +29,4 @@ class BluetoothMessageParameterCardReaderStatus
 		virtual QString toStringValue() const override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

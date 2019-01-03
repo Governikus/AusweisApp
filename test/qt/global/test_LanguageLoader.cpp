@@ -6,7 +6,6 @@
 
 #include "LanguageLoader.h"
 
-#include "FileDestination.h"
 #include "LogHandler.h"
 #include "TestFileHelper.h"
 
@@ -24,7 +23,7 @@ class test_LanguageLoader
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 			TestFileHelper::createTranslations(mTranslationDir.path());
 			LanguageLoader::getInstance().setPath(mTranslationDir.path());
 		}
@@ -36,7 +35,7 @@ class test_LanguageLoader
 			{
 				LanguageLoader::getInstance().unload();
 			}
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
@@ -50,7 +49,7 @@ class test_LanguageLoader
 
 		void loadTwice()
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			QVERIFY(!LanguageLoader::getInstance().isLoaded());
 			LanguageLoader::getInstance().load(QLocale::German);
@@ -133,8 +132,7 @@ class test_LanguageLoader
 			QLocale::Language lang = LanguageLoader::getInstance().getFallbackLanguage();
 			QCOMPARE(lang, QLocale::English);
 
-
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			LanguageLoader::getInstance().load(QLocale::English);
 			QVERIFY(spy.count() > 0);

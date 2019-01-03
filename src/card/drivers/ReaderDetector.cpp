@@ -4,8 +4,6 @@
 
 #include "ReaderDetector.h"
 
-#include "Env.h"
-#include "FuncUtils.h"
 #include "ReaderConfiguration.h"
 #include "SingletonHelper.h"
 
@@ -14,20 +12,11 @@
 #include <QRegularExpression>
 #include <QScopedPointer>
 
-
 using namespace governikus;
-
 
 defineSingleton(ReaderDetector)
 
-
 Q_DECLARE_LOGGING_CATEGORY(card_drivers)
-
-
-ReaderDetector & ReaderDetector::getInstance()
-{
-	return *Instance;
-}
 
 
 ReaderDetector::ReaderDetector()
@@ -45,6 +34,12 @@ ReaderDetector::~ReaderDetector()
 }
 
 
+ReaderDetector& ReaderDetector::getInstance()
+{
+	return *Instance;
+}
+
+
 QVector<ReaderConfigurationInfo> ReaderDetector::getAttachedSupportedDevices() const
 {
 	const auto& readerConfiguration = Env::getSingleton<ReaderConfiguration>();
@@ -56,7 +51,6 @@ QVector<ReaderConfigurationInfo> ReaderDetector::getAttachedSupportedDevices() c
 		const auto& readerConfigurationInfo = readerConfiguration->getReaderConfigurationInfoById(devId);
 		if (readerConfigurationInfo.isKnownReader() && !readerConfigurationInfo.getUrl().isEmpty())
 		{
-			qCDebug(card_drivers) << "Found known reader:" << devId;
 			attachedSupportedDevices += readerConfigurationInfo;
 		}
 	}

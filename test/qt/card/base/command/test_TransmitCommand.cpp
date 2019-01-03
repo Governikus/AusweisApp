@@ -4,6 +4,9 @@
 
 #include "command/TransmitCommand.h"
 
+#include "LogHandler.h"
+#include "MockCardConnectionWorker.h"
+
 #include <QtCore>
 #include <QtTest>
 
@@ -17,6 +20,12 @@ class test_TransmitCommand
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			Env::getSingleton<LogHandler>()->init();
+		}
+
+
 		void isAcceptable_data()
 		{
 			QTest::addColumn<QByteArrayList>("acceptable");
@@ -58,6 +67,160 @@ class test_TransmitCommand
 			}
 			ResponseApdu apdu(QByteArray::fromHex(response));
 			QCOMPARE(TransmitCommand::isAcceptable(info, apdu), accepted);
+		}
+
+
+		void test_InternalExecuteOkSingleCommandWithoutAcceptableStatusCode()
+		{
+			QVector<InputAPDUInfo> inputApduInfos(1);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			TransmitCommand command(worker, inputApduInfos, QStringLiteral("slotname"));
+			command.internalExecute();
+			QCOMPARE(command.getOutputApduAsHex().size(), 1);
+			QCOMPARE(command.getOutputApduAsHex()[0], QByteArray("9000"));
+			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
+		}
+
+
+		void test_InternalExecuteOkSingleCommandWithAcceptableStatusCode()
+		{
+			QVector<InputAPDUInfo> inputApduInfos(1);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+
+			inputApduInfos[0].addAcceptableStatusCode(QByteArray("90"));
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			TransmitCommand command(worker, inputApduInfos, QStringLiteral("slotname"));
+			command.internalExecute();
+			QCOMPARE(command.getOutputApduAsHex().size(), 1);
+			QCOMPARE(command.getOutputApduAsHex()[0], QByteArray("9000"));
+			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
+		}
+
+
+		void test_InternalExecuteUnsuccesfulSingleCommand()
+		{
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+
+			QVector<InputAPDUInfo> inputApduInfos(1);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+
+			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, QByteArray::fromHex("1919"));
+			TransmitCommand command1(worker, inputApduInfos, QStringLiteral("slotname"));
+			command1.internalExecute();
+			QVERIFY(command1.getOutputApduAsHex().isEmpty());
+			QCOMPARE(command1.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
+			QVERIFY(spy.takeFirst().at(0).toString().contains("Transmit unsuccessful. Return code:"));
+
+			worker->addResponse(CardReturnCode::PIN_BLOCKED, QByteArray::fromHex("63c0"));
+			TransmitCommand command2(worker, inputApduInfos, QStringLiteral("slotname"));
+			command2.internalExecute();
+			QVERIFY(command2.getOutputApduAsHex().isEmpty());
+			QCOMPARE(command2.getReturnCode(), CardReturnCode::PIN_BLOCKED);
+			QVERIFY(spy.takeFirst().at(0).toString().contains("Transmit unsuccessful. Return code:"));
+		}
+
+
+		void test_InternalExecuteUnexpectedStatusSingleCommand()
+		{
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QVector<InputAPDUInfo> inputApduInfos(1);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+
+			inputApduInfos[0].addAcceptableStatusCode(QByteArray("1010"));
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			TransmitCommand command(worker, inputApduInfos, QStringLiteral("slotname"));
+			command.internalExecute();
+			QCOMPARE(command.getOutputApduAsHex().size(), 1);
+			QCOMPARE(command.getOutputApduAsHex()[0], QByteArray("9000"));
+			QCOMPARE(command.getReturnCode(), CardReturnCode::UNEXPECTED_TRANSMIT_STATUS);
+			QVERIFY(spy.takeFirst().at(0).toString().contains("Transmit unsuccessful. StatusCode does not start with acceptable status code"));
+		}
+
+
+		void test_InternalExecuteOkMultipleCommand()
+		{
+			QVector<InputAPDUInfo> inputApduInfos(2);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			TransmitCommand command(worker, inputApduInfos, QStringLiteral("slotname"));
+			command.internalExecute();
+			QCOMPARE(command.getOutputApduAsHex().size(), 2);
+			QCOMPARE(command.getOutputApduAsHex()[0], QByteArray("9000"));
+			QCOMPARE(command.getOutputApduAsHex()[1], QByteArray("9000"));
+			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
+		}
+
+
+		void test_InternalExecuteUnsuccessfulMultipleCommand()
+		{
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+
+			QVector<InputAPDUInfo> inputApduInfos(2);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, QByteArray::fromHex("1919"));
+			TransmitCommand command1(worker, inputApduInfos, QStringLiteral("slotname"));
+			command1.internalExecute();
+			QCOMPARE(command1.getOutputApduAsHex().size(), 1);
+			QCOMPARE(command1.getOutputApduAsHex()[0], QByteArray("9000"));
+			QCOMPARE(command1.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
+			QVERIFY(spy.takeFirst().at(0).toString().contains("Transmit unsuccessful. Return code"));
+
+			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, QByteArray::fromHex("1919"));
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			TransmitCommand command2(worker, inputApduInfos, QStringLiteral("slotname"));
+			command2.internalExecute();
+			QCOMPARE(command2.getOutputApduAsHex().size(), 0);
+			QCOMPARE(command2.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
+			QVERIFY(spy.takeFirst().at(0).toString().contains("Transmit unsuccessful. Return code"));
+		}
+
+
+		void test_InternalExecuteUnexpectedStatusMultipleCommand()
+		{
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+
+			QVector<InputAPDUInfo> inputApduInfos1(2);
+			QVector<InputAPDUInfo> inputApduInfos2(2);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+
+			inputApduInfos1[0].addAcceptableStatusCode(QByteArray("90"));
+			inputApduInfos1[1].addAcceptableStatusCode(QByteArray("1010"));
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			TransmitCommand command1(worker, inputApduInfos1, QStringLiteral("slotname"));
+			command1.internalExecute();
+			QCOMPARE(command1.getOutputApduAsHex().size(), 2);
+			QCOMPARE(command1.getOutputApduAsHex()[0], QByteArray("9000"));
+			QCOMPARE(command1.getOutputApduAsHex()[1], QByteArray("9000"));
+			QCOMPARE(command1.getReturnCode(), CardReturnCode::UNEXPECTED_TRANSMIT_STATUS);
+			QVERIFY(spy.takeFirst().at(0).toString().contains("Transmit unsuccessful. StatusCode does not start with acceptable status code"));
+
+			inputApduInfos2[0].addAcceptableStatusCode(QByteArray("1010"));
+			inputApduInfos2[1].addAcceptableStatusCode(QByteArray("9000"));
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			TransmitCommand command2(worker, inputApduInfos2, QStringLiteral("slotname"));
+			command2.internalExecute();
+			QCOMPARE(command2.getOutputApduAsHex().size(), 1);
+			QCOMPARE(command2.getOutputApduAsHex()[0], QByteArray("9000"));
+			QCOMPARE(command2.getReturnCode(), CardReturnCode::UNEXPECTED_TRANSMIT_STATUS);
+			QVERIFY(spy.takeFirst().at(0).toString().contains("Transmit unsuccessful. StatusCode does not start with acceptable status code"));
+		}
+
+
+		void test_SlotHandle()
+		{
+			QVector<InputAPDUInfo> inputApduInfos(1);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const QString name = QStringLiteral("slotname");
+			TransmitCommand command(worker, inputApduInfos, name);
+			QCOMPARE(command.getSlotHandle(), name);
 		}
 
 

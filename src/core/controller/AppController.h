@@ -9,10 +9,9 @@
 #include "ActivationHandler.h"
 #include "EnumHelper.h"
 
+#include <QAbstractNativeEventFilter>
 #include <QSharedPointer>
 
-class QAuthenticator;
-class QNetworkProxy;
 
 namespace governikus
 {
@@ -26,14 +25,13 @@ defineEnumType(Action,
 		REMOTE_SERVICE)
 
 
-class UIPlugIn;
-class WorkflowContext;
 class WorkflowController;
 class WorkflowRequest;
+class CommandLineParser;
 
-
-class AppController
+class AppController final
 	: public QObject
+	, public QAbstractNativeEventFilter
 {
 	Q_OBJECT
 
@@ -41,18 +39,24 @@ class AppController
 		Q_DISABLE_COPY(AppController)
 
 		friend class SignalHandler;
+		friend class CommandLineParser;
 
+		static bool cShowUi;
 		Action mCurrentAction;
 		QScopedPointer<WorkflowRequest> mWaitingRequest;
 		QScopedPointer<WorkflowController> mActiveController;
+		bool mShutdownRunning;
+		const UIPlugIn* mUiDomination;
 
 		bool canStartNewAction();
+		void completeShutdown();
 
 	public:
 		AppController();
 		virtual ~AppController() override;
 
 		virtual bool eventFilter(QObject* pObj, QEvent* pEvent) override;
+		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult) override;
 
 		bool start();
 
@@ -62,11 +66,14 @@ class AppController
 		void fireWorkflowStarted(QSharedPointer<WorkflowContext> pContext);
 		void fireWorkflowFinished(QSharedPointer<WorkflowContext> pContext);
 		void fireShowUi(UiModule pModule);
+		void fireHideUi();
 		void fireShowUserInformation(const QString& pInformationMessage);
 		void fireShowReaderSettings();
 #ifndef QT_NO_NETWORKPROXY
 		void fireProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
 #endif
+		void fireUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted);
+		void fireUiDominationReleased();
 
 	private Q_SLOTS:
 		void doShutdown();
@@ -74,15 +81,17 @@ class AppController
 		void onWorkflowFinished();
 		void onCloseReminderFinished(bool pDontRemindAgain);
 		void onChangePinRequested();
-		void onSwitchToReaderSettingsRequested();
 		void onSelfAuthenticationRequested();
 		void onAuthenticationRequest(const QSharedPointer<ActivationContext>& pActivationContext);
 		void onRemoteServiceRequested();
 		void onSettingsChanged();
+		void onUILoaderShutdownComplete();
+		void onUiDominationRequested(const UIPlugIn* pUi, const QString& pInformation);
+		void onUiDominationRelease();
 
 	private:
 		template<typename Controller, typename Context> bool startNewWorkflow(Action pAction, const QSharedPointer<Context>& pContext);
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

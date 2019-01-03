@@ -6,12 +6,15 @@
 
 #include "messages/MsgHandlerEnterCan.h"
 
+#include "MsgHandlerEnterPassword.h"
+
 #include "MessageDispatcher.h"
-#include "MockReaderManagerPlugIn.h"
 #include "ReaderManager.h"
 
+#include "MockReaderManagerPlugIn.h"
+
 #include <QtPlugin>
-#include <QTest>
+#include <QtTest>
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
@@ -22,32 +25,33 @@ class test_MsgHandlerEnterCan
 {
 	Q_OBJECT
 
-	static void setValidCanState(MessageDispatcher& pDispatcher, const QString& pState = QStringLiteral("StateEstablishPaceCan"))
+	static void setValidCanState(MessageDispatcher& pDispatcher,
+			bool pSelectReader = true,
+			bool pBasicReader = true,
+			const PacePasswordId pPasswordID = PacePasswordId::PACE_CAN)
 	{
-		QSharedPointer<WorkflowContext> context(new WorkflowContext());
-		pDispatcher.init(context);
-
-		QByteArray expected;
-		if (pState == QLatin1String("StateEstablishPaceCan"))
-		{
-			expected = "{\"msg\":\"ENTER_CAN\"}";
-		}
-
-		QCOMPARE(pDispatcher.processStateChange(pState), expected);
+		setValidState(pDispatcher, pSelectReader, pBasicReader, pPasswordID);
 	}
 
 
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			ReaderManager::getInstance().init();
-			ReaderManager::getInstance().getPlugInInfos(); // just to wait until initialization finished
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			readerManager->init();
+			readerManager->getPlugInInfos(); // just to wait until initialization finished
 		}
 
 
 		void cleanupTestCase()
 		{
-			ReaderManager::getInstance().shutdown();
+			Env::getSingleton<ReaderManager>()->shutdown();
+		}
+
+
+		void cleanup()
+		{
+			MockReaderManagerPlugIn::getInstance().removeAllReader();
 		}
 
 
@@ -56,8 +60,8 @@ class test_MsgHandlerEnterCan
 			MessageDispatcher dispatcher;
 			setValidCanState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_CAN\"}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Value cannot be undefined\",\"msg\":\"ENTER_CAN\"}"));
+			const QByteArray msg(R"({"cmd": "SET_CAN"})");
+			QCOMPARE(dispatcher.processCommand(msg), addReaderData(R"({"error":"Value cannot be undefined","msg":"ENTER_CAN"})"));
 		}
 
 
@@ -66,8 +70,8 @@ class test_MsgHandlerEnterCan
 			MessageDispatcher dispatcher;
 			setValidCanState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_CAN\", \"value\": 123456}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Invalid value\",\"msg\":\"ENTER_CAN\"}"));
+			const QByteArray msg(R"({"cmd": "SET_CAN", "value": 123456})");
+			QCOMPARE(dispatcher.processCommand(msg), addReaderData(R"({"error":"Invalid value","msg":"ENTER_CAN"})"));
 		}
 
 
@@ -76,23 +80,23 @@ class test_MsgHandlerEnterCan
 			MessageDispatcher dispatcher;
 			setValidCanState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_CAN\", \"value\": \"12345\"}");
-			QByteArray expected("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_CAN\"}");
+			QByteArray msg(R"({"cmd": "SET_CAN", "value": "12345"})");
+			const QByteArray expected(addReaderData(R"({"error":"You must provide 6 digits","msg":"ENTER_CAN"})"));
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"1234567\"}";
+			msg = R"({"cmd": "SET_CAN", "value": "1234567"})";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"abcdef\"}";
+			msg = R"({"cmd": "SET_CAN", "value": "abcdef"})";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"\"}";
+			msg = R"({"cmd": "SET_CAN", "value": ""})";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"123456a\"}";
+			msg = R"({"cmd": "SET_CAN", "value": "123456a"})";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"12x456\"}";
+			msg = R"({"cmd": "SET_CAN", "value": "12x456"})";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 		}
 
@@ -100,13 +104,13 @@ class test_MsgHandlerEnterCan
 		void badState()
 		{
 			MessageDispatcher dispatcher;
-			setValidCanState(dispatcher, QStringLiteral("invalid"));
+			setValidCanState(dispatcher, true, true, PacePasswordId::UNKNOWN);
 
-			QByteArray msg("{\"cmd\": \"SET_CAN\", \"value\": \"12345\"}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"SET_CAN\",\"msg\":\"BAD_STATE\"}"));
+			QByteArray msg(R"({"cmd": "SET_CAN", "value": "12345"})");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"SET_CAN","msg":"BAD_STATE"})"));
 
-			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"123456\"}";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"SET_CAN\",\"msg\":\"BAD_STATE\"}"));
+			msg = R"({"cmd": "SET_CAN", "value": "123456"})";
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"SET_CAN","msg":"BAD_STATE"})"));
 		}
 
 
@@ -115,30 +119,26 @@ class test_MsgHandlerEnterCan
 			MessageDispatcher dispatcher;
 			setValidCanState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_CAN\", \"value\": \"123456\"}");
+			const QByteArray msg(R"({"cmd": "SET_CAN", "value": "123456"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
 		}
 
 
-		void readerInfo()
+		void pinPadReader()
 		{
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader CARD");
-			reader->setCard(MockCardConfig());
-
-			QSharedPointer<WorkflowContext> context(new WorkflowContext());
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			setValidCanState(dispatcher, true, false);
 
-			context->setReaderName("MockReader");
-			QCOMPARE(dispatcher.processStateChange("StateEstablishPaceCan"), QByteArray("{\"msg\":\"ENTER_CAN\"}"));
-			QByteArray msg = "{\"cmd\": \"SET_CAN\", \"value\": \"54321\"}";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_CAN\"}"));
+			QByteArray msg(R"({"cmd": "SET_CAN", "value": "111111"})");
+			QByteArray expected(addReaderData(R"({"error":"Value cannot be defined","msg":"ENTER_CAN"})", true));
+			QCOMPARE(dispatcher.processCommand(msg), expected);
 
+			msg = QByteArray(R"({"cmd": "SET_CAN", "value": ""})");
+			expected = QByteArray(addReaderData(R"({"error":"Value cannot be defined","msg":"ENTER_CAN"})", true));
+			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			context->setReaderName("MockReader CARD");
-			QCOMPARE(dispatcher.processStateChange("StateEstablishPaceCan"), QByteArray("{\"msg\":\"ENTER_CAN\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
-			msg = "{\"cmd\": \"SET_CAN\", \"value\": \"54321\"}";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_CAN\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
+			msg = QByteArray(R"({"cmd": "SET_CAN"})");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
 		}
 
 

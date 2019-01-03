@@ -23,8 +23,8 @@ Tag bauen
 ---------
 Die Release-Jobs müssen nach dem Tag manuell gestartet werden!
 
-Jenkins erstellt das Release anhand des Bookmarks "release" oder des tags/changesets,
-welcher als Parameter übergeben wird.
+Jenkins erstellt das Release anhand des Parameters 'changeset'. Dort sollte der angebrachte
+Tag oder die jeweilige Revision übergeben werden.
 Nachdem die notwendigen Jobs (Windows/macOS/Docs/...) durchgelaufen sind, muss der Job
 für den AppCast gestartet werden.
 

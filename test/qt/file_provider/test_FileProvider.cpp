@@ -22,12 +22,12 @@ class test_FileProvider
 	private Q_SLOTS:
 		void testProviderReturnsMeaningfulUpdatableFiles()
 		{
-			FileProvider& provider = FileProvider::getInstance();
-			const QSharedPointer<UpdatableFile> updatableFile1 = provider.getFile(mSection, mName1, mDefaultPath);
+			const auto fileProvider = Env::getSingleton<FileProvider>();
+			const QSharedPointer<UpdatableFile> updatableFile1 = fileProvider->getFile(mSection, mName1, mDefaultPath);
 			QVERIFY(updatableFile1);
 			QCOMPARE(updatableFile1->lookupPath(), QStringLiteral(":/updatable-files/reader/img_ACS_ACR1252U.png"));
 
-			const QSharedPointer<UpdatableFile> updatableFile2 = provider.getFile(mSection, mName2, mDefaultPath);
+			const QSharedPointer<UpdatableFile> updatableFile2 = fileProvider->getFile(mSection, mName2, mDefaultPath);
 			QVERIFY(updatableFile2);
 			QCOMPARE(updatableFile2->lookupPath(), mDefaultPath);
 		}
@@ -35,10 +35,10 @@ class test_FileProvider
 
 		void testProviderReturnsUniqueUpdatableFiles()
 		{
-			FileProvider& provider = FileProvider::getInstance();
-			const QSharedPointer<UpdatableFile> updatableFile11 = provider.getFile(mSection, mName1, mDefaultPath);
-			const QSharedPointer<UpdatableFile> updatableFile12 = provider.getFile(mSection, mName1, mDefaultPath);
-			const QSharedPointer<UpdatableFile> updatableFile2 = provider.getFile(mSection, mName2, mDefaultPath);
+			const auto fileProvider = Env::getSingleton<FileProvider>();
+			const QSharedPointer<UpdatableFile> updatableFile11 = fileProvider->getFile(mSection, mName1, mDefaultPath);
+			const QSharedPointer<UpdatableFile> updatableFile12 = fileProvider->getFile(mSection, mName1, mDefaultPath);
+			const QSharedPointer<UpdatableFile> updatableFile2 = fileProvider->getFile(mSection, mName2, mDefaultPath);
 
 			QVERIFY(updatableFile11);
 			QVERIFY(updatableFile12);

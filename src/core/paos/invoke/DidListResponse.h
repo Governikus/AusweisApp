@@ -17,10 +17,7 @@ class DIDListResponse
 	, public ResponseType
 {
 	private:
-		QDomElement createDidListResponseElement();
-		QDomElement createDidListElement();
-
-		virtual QDomElement getDocumentStructure() override;
+		virtual void createBodyElement() override;
 
 		Q_DISABLE_COPY(DIDListResponse)
 
@@ -28,4 +25,4 @@ class DIDListResponse
 		DIDListResponse();
 };
 
-} /* namespace governikus */
+} // namespace governikus

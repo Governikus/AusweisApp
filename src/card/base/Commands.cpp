@@ -90,34 +90,6 @@ QByteArray GetChallengeResponse::getChallenge() const
 /*
  * MSEBuilder
  */
-bool MSEBuilder::isUpdateRetryCounterCommand(const QByteArray& cmd)
-{
-	if (cmd.size() < 4)
-	{
-		return false;
-	}
-
-	if (cmd.at(0) != CommandApdu::CLA)
-	{
-		return false;
-	}
-	if (cmd.at(1) != static_cast<char>(MSEBuilder::INS::MANAGE_SECURITY_ENVIRONMENT))
-	{
-		return false;
-	}
-	if (cmd.at(2) != static_cast<char>(MSEBuilder::P1::PERFORM_SECURITY_OPERATION))
-	{
-		return false;
-	}
-	if (cmd.at(3) != static_cast<char>(MSEBuilder::P2::SET_AT))
-	{
-		return false;
-	}
-
-	return true;
-}
-
-
 MSEBuilder::MSEBuilder(P1 p1, P2 p2)
 	: CommandApduBuilder()
 	, mP1(p1)
@@ -152,11 +124,11 @@ void MSEBuilder::setPublicKey(const QByteArray& pData)
 }
 
 
-void MSEBuilder::setPublicKey(PACE_PASSWORD_ID pPasswordId)
+void MSEBuilder::setPublicKey(PacePasswordId pPasswordId)
 {
 	static const char TAG_PUBLIC_KEY = char(0x83);
 	QByteArray data;
-	data += Enum<PACE_PASSWORD_ID>::getValue(pPasswordId);
+	data += Enum<PacePasswordId>::getValue(pPasswordId);
 	mPublicKey = Asn1Util::encode(TAG_PUBLIC_KEY, data);
 }
 
@@ -321,7 +293,7 @@ CommandApdu GABuilder::build()
 	}
 	data = Asn1Util::encode(TAG_DYNAMIC_AUTHENTICATION_DATA, data);
 
-	return CommandApdu(mClassByte, INS, 0, 0, data, Apdu::SHORT_MAX_LE);
+	return CommandApdu(mClassByte, INS, 0, 0, data, CommandApdu::SHORT_MAX_LE);
 }
 
 

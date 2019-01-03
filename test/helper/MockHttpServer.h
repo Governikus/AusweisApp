@@ -35,4 +35,4 @@ class MockHttpServer
 		void onNewHttpRequest(const QSharedPointer<HttpRequest>& pRequest);
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -5,7 +5,7 @@
  */
 
 #include "CardReturnCode.h"
-#include "Result.h"
+#include "ECardApiResult.h"
 
 #include <QPair>
 #include <QString>
@@ -29,14 +29,14 @@ class test_CardReturnCode
 
 		void check_errorCodeToResult()
 		{
-			QCOMPARE(Result(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER)).getMinor(), GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User);
+			QCOMPARE(ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER)).getMinor(), ECardApiResult::Minor::SAL_Cancellation_by_User);
 		}
 
 
 		void check_errorCodeToError()
 		{
-			const Result& result = Result(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
-			QCOMPARE(result.getMinor(), GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User);
+			const ECardApiResult& result = ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
+			QCOMPARE(result.getMinor(), ECardApiResult::Minor::SAL_Cancellation_by_User);
 			QCOMPARE(result.getMessage(), QString("The process was cancelled by the user."));
 		}
 

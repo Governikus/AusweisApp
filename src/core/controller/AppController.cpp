@@ -14,25 +14,31 @@
 #include "controller/ChangePinController.h"
 #include "controller/RemoteServiceController.h"
 #include "controller/SelfAuthController.h"
-#include "Env.h"
 #include "HttpServerRequestor.h"
 #include "HttpServerStatusParser.h"
 #include "LanguageLoader.h"
 #include "LogHandler.h"
 #include "NetworkManager.h"
 #include "ReaderManager.h"
+#include "RemoteClient.h"
 #include "ResourceLoader.h"
-#include "view/UILoader.h"
-#include "view/UIPlugIn.h"
+#include "UILoader.h"
+#include "UIPlugIn.h"
 
 #include <QCoreApplication>
 #include <QLoggingCategory>
 #include <QSettings>
 
+#if defined(Q_OS_WIN)
+#include <windows.h>
+#endif
+
 
 namespace governikus
 {
-class WorkflowRequest
+bool AppController::cShowUi = false;
+
+class WorkflowRequest final
 {
 	private:
 		const Action mAction;
@@ -46,7 +52,7 @@ class WorkflowRequest
 		inline QSharedPointer<WorkflowContext> getContext() const;
 };
 
-}
+} // namespace governikus
 
 
 using namespace governikus;
@@ -86,10 +92,16 @@ AppController::AppController()
 	: mCurrentAction(Action::NONE)
 	, mWaitingRequest()
 	, mActiveController()
+	, mShutdownRunning(false)
+	, mUiDomination(nullptr)
 {
 	setObjectName(QStringLiteral("AppController"));
 
-	connect(&AppSettings::getInstance().getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, &AppController::onSettingsChanged, Qt::DirectConnection);
+#if defined(Q_OS_WIN)
+	QCoreApplication::instance()->installNativeEventFilter(this);
+#endif
+
+	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, &AppController::onSettingsChanged, Qt::DirectConnection);
 	onSettingsChanged();
 
 	ResourceLoader::getInstance().init();
@@ -111,23 +123,36 @@ AppController::~AppController()
 bool AppController::eventFilter(QObject* pObj, QEvent* pEvent)
 {
 #ifdef Q_OS_MACOS
-	// This event gets send on reopen events in macOS (opening the app again while
-	// it is in the background). Currently the event handling is only needed on macOS.
-	if (pEvent && pEvent->type() == QEvent::ApplicationActivate)
+	if (pEvent)
 	{
-		qCDebug(system) << "Got an ApplicationActivate event, showing current UI Workflow.";
-		Q_EMIT fireShowUi(UiModule::CURRENT);
+		// This event gets sent on reopen events in macOS (opening the app again while
+		// it is in the background). Currently the event handling is only needed on macOS.
+		if (pEvent->type() == QEvent::ApplicationActivate)
+		{
+			qCDebug(system) << "Got an ApplicationActivate event, showing current UI Workflow.";
+			Q_EMIT fireShowUi(UiModule::CURRENT);
+		}
+		else if (pEvent->type() == QEvent::Close && pObj == QCoreApplication::instance())
+		{
+			qCDebug(system) << "Got CloseEvent from system, hiding UI.";
+			Q_EMIT fireHideUi();
+		}
 	}
 #endif
+
 	return QObject::eventFilter(pObj, pEvent);
 }
 
 
 bool AppController::start()
 {
-	ReaderManager::getInstance().init(QSharedPointer<RemoteClient>(Env::create<RemoteClient*>()));
-	connect(this, &AppController::fireShutdown, &ReaderManager::getInstance(), &ReaderManager::shutdown, Qt::DirectConnection);
-	connect(&ReaderManager::getInstance(), &ReaderManager::fireInitialized, this, &AppController::fireStarted, Qt::QueuedConnection);
+	// Force construction of RemoteClient in the MainThread
+	Env::getSingleton<RemoteClient>();
+
+	const auto readerManager = Env::getSingleton<ReaderManager>();
+	readerManager->init();
+	connect(this, &AppController::fireShutdown, readerManager, &ReaderManager::shutdown, Qt::QueuedConnection);
+	connect(readerManager, &ReaderManager::fireInitialized, this, &AppController::fireStarted, Qt::QueuedConnection);
 
 	connect(&UILoader::getInstance(), &UILoader::fireLoadedPlugin, this, &AppController::onUiPlugin);
 	if (!UILoader::getInstance().load())
@@ -150,6 +175,13 @@ bool AppController::start()
 		}
 		qDebug() << "Successfully started activation handler:" << handler;
 	}
+
+	connect(this, &AppController::fireStarted, this, [this] {
+				if (cShowUi)
+				{
+					Q_EMIT fireShowUi(UiModule::DEFAULT);
+				}
+			}, Qt::QueuedConnection);
 
 	QCoreApplication::instance()->installEventFilter(this);
 
@@ -178,22 +210,22 @@ void AppController::onWorkflowFinished()
 				const QSharedPointer<ChangePinContext> context = mWaitingRequest->getContext().objectCast<ChangePinContext>();
 				Q_ASSERT(context);
 				startNewWorkflow<ChangePinController>(Action::PIN, context);
+				break;
 			}
-			break;
 
 			case Action::AUTH:
 			{
 				const QSharedPointer<AuthContext> context = mWaitingRequest->getContext().objectCast<AuthContext>();
 				Q_ASSERT(context);
 				startNewWorkflow<AuthController>(Action::AUTH, context);
+				break;
 			}
-			break;
 
 			case Action::READER_SETTINGS:
 			{
 				Q_EMIT fireShowReaderSettings();
+				break;
 			}
-			break;
 
 			default:
 				qWarning() << "Waiting action is unhandled!";
@@ -202,6 +234,11 @@ void AppController::onWorkflowFinished()
 
 		mWaitingRequest.reset();
 	}
+
+	if (mShutdownRunning)
+	{
+		completeShutdown();
+	}
 }
 
 
@@ -209,18 +246,18 @@ void AppController::onCloseReminderFinished(bool pDontRemindAgain)
 {
 	if (pDontRemindAgain)
 	{
-		AppSettings::getInstance().getGeneralSettings().setRemindUserToClose(false);
-		AppSettings::getInstance().getGeneralSettings().save();
+		Env::getSingleton<AppSettings>()->getGeneralSettings().setRemindUserToClose(false);
+		Env::getSingleton<AppSettings>()->getGeneralSettings().save();
 	}
 }
 
 
 void AppController::onChangePinRequested()
 {
-	qDebug() << "PIN change requested";
-	const QSharedPointer<ChangePinContext> context(new ChangePinContext);
 	if (canStartNewAction())
 	{
+		qDebug() << "PIN change requested";
+		const auto& context = QSharedPointer<ChangePinContext>::create();
 		startNewWorkflow<ChangePinController>(Action::PIN, context);
 
 		return;
@@ -228,6 +265,8 @@ void AppController::onChangePinRequested()
 
 	if (mWaitingRequest.isNull())
 	{
+		qDebug() << "PIN change enqueued";
+		const auto& context = QSharedPointer<ChangePinContext>::create(true);
 		mWaitingRequest.reset(new WorkflowRequest(Action::PIN, context));
 
 		return;
@@ -237,32 +276,12 @@ void AppController::onChangePinRequested()
 }
 
 
-void AppController::onSwitchToReaderSettingsRequested()
-{
-	if (canStartNewAction())
-	{
-		Q_EMIT fireShowReaderSettings();
-
-		return;
-	}
-
-	if (mWaitingRequest.isNull())
-	{
-		mWaitingRequest.reset(new WorkflowRequest(Action::READER_SETTINGS, QSharedPointer<WorkflowContext>()));
-
-		return;
-	}
-
-	qWarning() << "Cannot enqueue action" << Action::READER_SETTINGS << ", queue is already full.";
-}
-
-
 void AppController::onSelfAuthenticationRequested()
 {
-	qDebug() << "self authentication requested";
+	qDebug() << "Self authentication requested";
 	if (canStartNewAction())
 	{
-		const QSharedPointer<SelfAuthContext> context(new SelfAuthContext());
+		const auto& context = QSharedPointer<SelfAuthContext>::create();
 		startNewWorkflow<SelfAuthController>(Action::SELF, context);
 	}
 }
@@ -270,8 +289,8 @@ void AppController::onSelfAuthenticationRequested()
 
 void AppController::onAuthenticationRequest(const QSharedPointer<ActivationContext>& pActivationContext)
 {
-	qDebug() << "authentication requested";
-	const QSharedPointer<AuthContext> authContext(new AuthContext(pActivationContext));
+	qDebug() << "Authentication requested";
+	const auto& authContext = QSharedPointer<AuthContext>::create(pActivationContext);
 	if (canStartNewAction())
 	{
 		startNewWorkflow<AuthController>(Action::AUTH, authContext);
@@ -282,8 +301,9 @@ void AppController::onAuthenticationRequest(const QSharedPointer<ActivationConte
 	{
 		const QSharedPointer<WorkflowContext> activeContext = mActiveController->getContext();
 		Q_ASSERT(!activeContext.isNull());
-		if (activeContext->isWorkflowFinished())
+		if (activeContext->isWorkflowFinished() && activeContext->getStatus().isNoError())
 		{
+			qDebug() << "Auto-approving the current state";
 			if (mWaitingRequest.isNull())
 			{
 				mWaitingRequest.reset(new WorkflowRequest(Action::AUTH, authContext));
@@ -298,7 +318,7 @@ void AppController::onAuthenticationRequest(const QSharedPointer<ActivationConte
 
 	if (!pActivationContext->sendOperationAlreadyActive())
 	{
-		qCritical() << "Cannot send \"Operation already active\" to caller: " << pActivationContext->getSendError();
+		qCritical() << "Cannot send \"Operation already active\" to caller:" << pActivationContext->getSendError();
 	}
 }
 
@@ -308,7 +328,7 @@ void AppController::onRemoteServiceRequested()
 	qDebug() << "remote service requested";
 	if (canStartNewAction())
 	{
-		const QSharedPointer<RemoteServiceContext> context(new RemoteServiceContext());
+		const auto& context = QSharedPointer<RemoteServiceContext>::create();
 		startNewWorkflow<RemoteServiceController>(Action::REMOTE_SERVICE, context);
 	}
 }
@@ -317,7 +337,7 @@ void AppController::onRemoteServiceRequested()
 void AppController::onSettingsChanged()
 {
 	LanguageLoader& languageLoader = LanguageLoader::getInstance();
-	const QLocale& newLocale = QLocale(AppSettings::getInstance().getGeneralSettings().getLanguage());
+	const QLocale& newLocale = QLocale(Env::getSingleton<AppSettings>()->getGeneralSettings().getLanguage());
 	const QLocale& usedLocale = languageLoader.getUsedLocale();
 
 	if (newLocale == usedLocale)
@@ -343,17 +363,50 @@ void AppController::onSettingsChanged()
 
 void AppController::doShutdown()
 {
+	mShutdownRunning = true;
+	if (mActiveController)
+	{
+		// Make sure that any request for a new workflow is removed from the queue.
+		mWaitingRequest.reset();
+
+		// Make sure running workflow is not blocked by any open dialogs
+		// (hiding the GUI also closes open dialogs).
+		Q_EMIT fireHideUi();
+
+		// Make sure the workflow runs to the end without user interaction.
+		const QSharedPointer<WorkflowContext> context = mActiveController->getContext();
+		if (context)
+		{
+			context->killWorkflow();
+		}
+	}
+	else
+	{
+		// Make sure the GUI is not blocked by any open dialogs
+		// (hiding the GUI also closes open dialogs).
+		Q_EMIT fireHideUi();
+
+		completeShutdown();
+	}
+}
+
+
+void AppController::completeShutdown()
+{
 	qDebug() << "Emit fire shutdown";
 	Q_EMIT fireShutdown();
+
 	ResourceLoader::getInstance().shutdown();
+
+	for (const auto& handler : ActivationHandler::getInstances())
+	{
+		handler->stop();
+	}
 
 	QTimer* timer = new QTimer();
 	static const int TIMER_INTERVAL = 50;
 	timer->setInterval(TIMER_INTERVAL);
-	connect(timer, &QTimer::timeout, [ = ](){
-				// Only wait for connections created by the global network manager here. We assume
-				// that each context has already cleaned up its own connections before discarding
-				// their NetworkManager instances.
+	connect(timer, &QTimer::timeout, this, [ = ](){
 				const int openConnectionCount = Env::getSingleton<NetworkManager>()->getOpenConnectionCount();
 				if (openConnectionCount > 0)
 				{
@@ -363,38 +416,77 @@ void AppController::doShutdown()
 					{
 						return;
 					}
+
 					qWarning() << "Closing with" << openConnectionCount << "pending network connections.";
+					Q_ASSERT(false);
 				}
 
 				timer->deleteLater();
-				qDebug() << "Quit event loop of QCoreApplication";
-				qApp->quit();
+
+				connect(&UILoader::getInstance(), &UILoader::fireShutdownComplete, this, &AppController::onUILoaderShutdownComplete, Qt::QueuedConnection);
+				QMetaObject::invokeMethod(&UILoader::getInstance(), &UILoader::shutdown, Qt::QueuedConnection);
 			});
+
 	timer->start();
+}
+
+
+void AppController::onUILoaderShutdownComplete()
+{
+	qDebug() << "Quit event loop of QCoreApplication";
+	qApp->quit();
+}
+
+
+void AppController::onUiDominationRequested(const UIPlugIn* pUi, const QString& pInformation)
+{
+	bool accepted = false;
+	if (!mUiDomination && mCurrentAction == Action::NONE)
+	{
+		mUiDomination = pUi;
+		accepted = true;
+	}
+
+	qDebug() << pUi->metaObject()->className() << "requested ui domination:" << pInformation << "|" << accepted;
+	Q_EMIT fireUiDomination(pUi, pInformation, accepted);
+}
+
+
+void AppController::onUiDominationRelease()
+{
+	if (mUiDomination)
+	{
+		mUiDomination = nullptr;
+		Q_EMIT fireUiDominationReleased();
+	}
 }
 
 
 void AppController::onUiPlugin(UIPlugIn* pPlugin)
 {
 	qDebug() << "Register UI:" << pPlugin->metaObject()->className();
-	connect(this, &AppController::fireShutdown, pPlugin, &UIPlugIn::doShutdown, Qt::DirectConnection);
+	connect(this, &AppController::fireShutdown, pPlugin, &UIPlugIn::doShutdown, Qt::QueuedConnection);
 	connect(this, &AppController::fireWorkflowStarted, pPlugin, &UIPlugIn::onWorkflowStarted);
 	connect(this, &AppController::fireWorkflowFinished, pPlugin, &UIPlugIn::onWorkflowFinished);
 	connect(this, &AppController::fireStarted, pPlugin, &UIPlugIn::onApplicationStarted);
 	connect(this, &AppController::fireShowUi, pPlugin, &UIPlugIn::onShowUi);
+	connect(this, &AppController::fireHideUi, pPlugin, &UIPlugIn::onHideUi);
 	connect(this, &AppController::fireShowUserInformation, pPlugin, &UIPlugIn::fireShowUserInformation);
 	connect(this, &AppController::fireShowReaderSettings, pPlugin, &UIPlugIn::onShowReaderSettings);
+	connect(this, &AppController::fireUiDomination, pPlugin, &UIPlugIn::onUiDomination);
+	connect(this, &AppController::fireUiDominationReleased, pPlugin, &UIPlugIn::onUiDominationReleased);
 
 #ifndef QT_NO_NETWORKPROXY
 	connect(this, &AppController::fireProxyAuthenticationRequired, pPlugin, &UIPlugIn::onProxyAuthenticationRequired);
 #endif
 
 	connect(pPlugin, &UIPlugIn::fireChangePinRequest, this, &AppController::onChangePinRequested, Qt::QueuedConnection);
-	connect(pPlugin, &UIPlugIn::fireSwitchToReaderSettingsRequested, this, &AppController::onSwitchToReaderSettingsRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireSelfAuthenticationRequested, this, &AppController::onSelfAuthenticationRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireRemoteServiceRequested, this, &AppController::onRemoteServiceRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireQuitApplicationRequest, this, &AppController::doShutdown);
 	connect(pPlugin, &UIPlugIn::fireCloseReminderFinished, this, &AppController::onCloseReminderFinished);
+	connect(pPlugin, &UIPlugIn::fireUiDominationRequest, this, &AppController::onUiDominationRequested);
+	connect(pPlugin, &UIPlugIn::fireUiDominationRelease, this, &AppController::onUiDominationRelease);
 }
 
 
@@ -412,7 +504,7 @@ bool AppController::startNewWorkflow(Action pAction, const QSharedPointer<Contex
 	mActiveController.reset(new Controller(pContext));
 	mCurrentAction = pAction;
 	connect(mActiveController.data(), &WorkflowController::fireComplete, this, &AppController::onWorkflowFinished, Qt::QueuedConnection);
-	LogHandler::getInstance().resetBacklog();
+	Env::getSingleton<LogHandler>()->resetBacklog();
 	qDebug() << "Start" << mActiveController->metaObject()->className();
 
 	//first: run new active controller so that it can be canceled during UI activation if required
@@ -422,4 +514,26 @@ bool AppController::startNewWorkflow(Action pAction, const QSharedPointer<Contex
 	Q_EMIT fireWorkflowStarted(pContext);
 
 	return true;
+}
+
+
+bool AppController::nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult)
+{
+	Q_UNUSED(pResult);
+#if !defined(Q_OS_WIN)
+	Q_UNUSED(pEventType);
+	Q_UNUSED(pMessage);
+#else
+	if (pEventType == "windows_generic_MSG")
+	{
+		MSG* msg = reinterpret_cast<MSG*>(pMessage);
+		if (msg->message == WM_QUERYENDSESSION)
+		{
+			qDebug() << "WM_QUERYENDSESSION received";
+			Q_EMIT fireHideUi();
+		}
+	}
+#endif
+
+	return false;
 }

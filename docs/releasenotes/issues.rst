@@ -24,3 +24,19 @@ Die nachfolgende Liste bezieht sich auf die aktuelle Version der AusweisApp2.
 
   - Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle
     auf Android.
+
+  - Längere Texte können unter Android u.U. bei kleinen Bildschirmgrößen
+    abgeschnitten sein.
+
+  - Unter macOS wird der Hinweis bei falscher PIN-Bestätigung während der
+    PIN-Änderung nur sehr kurz angezeigt.
+
+  - Bei der Nutzung eines entfernten Kartenlesegeräts mit aktiviertem
+    Tastaturmodus kann bei einer Authentisierung nicht in die PIN-Änderung
+    gewechselt werden, wenn nur eine 5-stellige PIN vorhanden ist.
+
+  - Bei der Nutzung eines entfernten Kartenlesegeräts mit aktiviertem
+    Tastaturmodus merkt sich das entfernte Kartenlesegerät fälschlicherweise
+    die zuletzt ausgewählte Länge der PIN (5/6 Stellen). Ein Neustart des
+    Fernzugriffs auf dem entfernten Kartenlesegerät setzt die Länge auf
+    6 Stellen zurück.

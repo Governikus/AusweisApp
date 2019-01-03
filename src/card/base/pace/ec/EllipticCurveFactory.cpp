@@ -5,7 +5,7 @@
 #include <openssl/evp.h>
 #include <openssl/obj_mac.h>
 
-#include "asn1/PACEInfo.h"
+#include "asn1/PaceInfo.h"
 #include "pace/ec/EcUtil.h"
 #include "pace/ec/EllipticCurveFactory.h"
 
@@ -17,7 +17,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 
-QSharedPointer<EC_GROUP> EllipticCurveFactory::create(const QSharedPointer<const PACEInfo>& pPaceInfo)
+QSharedPointer<EC_GROUP> EllipticCurveFactory::create(const QSharedPointer<const PaceInfo>& pPaceInfo)
 {
 	if (pPaceInfo->isStandardizedDomainParameters())
 	{
@@ -38,7 +38,7 @@ QSharedPointer<EC_GROUP> EllipticCurveFactory::create(const QSharedPointer<const
 
 QSharedPointer<EC_GROUP> EllipticCurveFactory::createCurve(int pNid)
 {
-	qCDebug(card) << "Create elliptic curve " << OBJ_nid2sn(pNid);
+	qCDebug(card) << "Create elliptic curve:" << OBJ_nid2sn(pNid);
 	EC_GROUP* ecGroup = EC_GROUP_new_by_curve_name(pNid);
 	if (ecGroup == nullptr)
 	{
@@ -89,7 +89,7 @@ QSharedPointer<EC_GROUP> EllipticCurveFactory::create(int pCurveIndex)
 			return createCurve(NID_secp521r1);
 
 		default:
-			qCWarning(card) << "Creation of standardized elliptic curve " << pCurveIndex << " not supported";
+			qCWarning(card) << "Creation of standardized elliptic curve" << pCurveIndex << "not supported";
 			return EcUtil::create(static_cast<EC_GROUP*>(nullptr));
 	}
 }

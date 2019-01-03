@@ -28,7 +28,7 @@ class RemoteDeviceListEntry
 
 		void setLastSeenToNow();
 
-		bool contains(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor) const;
+		bool containsEquivalent(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor) const;
 		bool isEqual(const RemoteDeviceListEntry* const pOther) const;
 
 		const QTime& getLastSeen() const;
@@ -79,4 +79,4 @@ class RemoteDeviceListImpl
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

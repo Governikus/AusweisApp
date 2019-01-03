@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "CardConnectionWorker.h"
 #include "PcscReaderFeature.h"
 #include "PcscReaderPaceCapability.h"
 #include "PcscUtils.h"
@@ -18,9 +17,6 @@
 namespace governikus
 {
 
-
-class PcscReaderFeature;
-class PcscReaderPaceCapability;
 class PcscCard;
 
 
@@ -61,4 +57,4 @@ class PcscReader
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -20,6 +20,12 @@ MockReaderManagerPlugIn::MockReaderManagerPlugIn()
 }
 
 
+MockReaderManagerPlugIn::~MockReaderManagerPlugIn()
+{
+	removeAllReader();
+}
+
+
 MockReaderManagerPlugIn& MockReaderManagerPlugIn::getInstance()
 {
 	if (!mInstance)
@@ -63,5 +69,15 @@ void MockReaderManagerPlugIn::removeReader(const QString& pReaderName)
 	{
 		Q_EMIT fireReaderRemoved(reader->getName());
 		delete reader;
+	}
+}
+
+
+void MockReaderManagerPlugIn::removeAllReader()
+{
+	const auto& readerList = getReaders();
+	for (auto reader : readerList)
+	{
+		removeReader(reader->getName());
 	}
 }

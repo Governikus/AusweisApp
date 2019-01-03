@@ -2,10 +2,7 @@
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "controller/AuthController.h"
 #include "Env.h"
-#include "paos/invoke/InitializeFrameworkResponse.h"
-#include "paos/retrieve/InitializeFramework.h"
 #include "states/StateBuilder.h"
 #include "states/StateGenericSendReceive.h"
 
@@ -43,6 +40,102 @@ class test_StateGenericSendReceive
 			mState.reset(StateBuilder::createState<StateSendInitializeFrameworkResponse>(mAuthContext));
 			mState->setStateName("StateSendInitializeFrameworkResponse");
 			connect(this, &test_StateGenericSendReceive::fireStateStart, mState.data(), &AbstractState::onEntry, Qt::ConnectionType::DirectConnection);
+		}
+
+
+		void setReceivedMessage_data()
+		{
+			QTest::addColumn<PaosType>("type");
+			QTest::addColumn<QString>("messageId");
+			QTest::addColumn<int>("testCase");
+
+			QTest::newRow("startpaosResponse") << PaosType::STARTPAOS_RESPONSE << QString("startpaosResponse") << 0;
+			QTest::newRow("initializeFramework") << PaosType::INITIALIZE_FRAMEWORK << QString("initializeFramework") << 1;
+			QTest::newRow("didList") << PaosType::DID_LIST << QString("didList") << 2;
+			QTest::newRow("didAuthenticateEac1") << PaosType::DID_AUTHENTICATE_EAC1 << QString("didAuthenticateEac1") << 3;
+			QTest::newRow("didAuthenticateEac2") << PaosType::DID_AUTHENTICATE_EAC2 << QString("didAuthenticateEac2") << 4;
+			QTest::newRow("didAuthenticateEacAdditionalInputType") << PaosType::DID_AUTHENTICATE_EAC_ADDITIONAL_INPUT_TYPE << QString("didAuthenticateEacAdditionalInputType") << 5;
+			QTest::newRow("transmit") << PaosType::TRANSMIT << QString("transmit") << 6;
+			QTest::newRow("disconnect") << PaosType::DISCONNECT << QString("disconnect") << 7;
+			QTest::newRow("default") << PaosType::UNKNOWN << QString("default") << 8;
+		}
+
+
+		void setReceivedMessage()
+		{
+			QFETCH(PaosType, type);
+			QFETCH(QString, messageId);
+			QFETCH(int, testCase);
+
+			const QSharedPointer<PaosMessage> message(new PaosMessage(type));
+			message->setMessageId(messageId);
+
+			if (testCase == 8)
+			{
+				QTest::ignoreMessage(QtWarningMsg, "Unknown received message type: 0");
+			}
+
+			mState->setReceivedMessage(message);
+			QCOMPARE(mAuthContext->getReceivedMessageId(), messageId);
+
+			switch (testCase)
+			{
+				case 0:
+					QCOMPARE(mAuthContext->getStartPaosResponse(), message.staticCast<StartPaosResponse>());
+					break;
+
+				case 1:
+					QCOMPARE(mAuthContext->getInitializeFramework(), message.staticCast<InitializeFramework>());
+					QVERIFY(mAuthContext->getInitializeFrameworkResponse());
+					break;
+
+				case 2:
+					QCOMPARE(mAuthContext->getDidList(), message.staticCast<DIDList>());
+					QVERIFY(mAuthContext->getDidListResponse());
+					break;
+
+				case 3:
+					QCOMPARE(mAuthContext->getDidAuthenticateEac1(), message.staticCast<DIDAuthenticateEAC1>());
+					QVERIFY(mAuthContext->getDidAuthenticateResponseEac1());
+					break;
+
+				case 4:
+					QCOMPARE(mAuthContext->getDidAuthenticateEac2(), message.staticCast<DIDAuthenticateEAC2>());
+					QVERIFY(mAuthContext->getDidAuthenticateResponseEac2());
+					break;
+
+				case 5:
+					QCOMPARE(mAuthContext->getDidAuthenticateEacAdditional(), message.staticCast<DIDAuthenticateEACAdditional>());
+					break;
+
+				case 6:
+					QVERIFY(mAuthContext->getTransmits().contains(message.staticCast<Transmit>()));
+					QVERIFY(!mAuthContext->getTransmitResponses().isEmpty());
+					break;
+
+				case 7:
+					QCOMPARE(mAuthContext->getDisconnect(), message.staticCast<Disconnect>());
+					QVERIFY(mAuthContext->getDisconnectResponse());
+					break;
+			}
+		}
+
+
+		void onPreSharedKeyAuthenticationRequired()
+		{
+			const QByteArray data("data");
+			const QByteArray psk("psk");
+			const QByteArray sessionIdentifier("session");
+			const QSharedPointer<TcToken> token(new TcToken(data));
+			token->mPsk = psk;
+			token->mSessionIdentifier = sessionIdentifier;
+			mAuthContext->setTcToken(token);
+			auto* authenticator = new QSslPreSharedKeyAuthenticator();
+
+			QTest::ignoreMessage(QtDebugMsg, "pre-shared key authentication requested: \"\"");
+			mState->onPreSharedKeyAuthenticationRequired(authenticator);
+			QCOMPARE(authenticator->identity(), sessionIdentifier);
+			QCOMPARE(authenticator->preSharedKey(), QByteArray::fromHex(psk));
 		}
 
 
@@ -128,8 +221,8 @@ class test_StateGenericSendReceive
 
 			for (const GlobalStatus::Code state : states)
 			{
-				const Result& result = Result(GlobalStatus(state));
-				QCOMPARE(result.getMinor(), GlobalStatus::Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed);
+				const ECardApiResult& result = ECardApiResult(GlobalStatus(state));
+				QCOMPARE(result.getMinor(), ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed);
 			}
 		}
 

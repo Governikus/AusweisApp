@@ -8,8 +8,8 @@
 #pragma once
 
 
+#include "ECardApiResult.h"
 #include "PaosMessage.h"
-#include "Result.h"
 
 
 namespace governikus
@@ -19,14 +19,14 @@ class ResponseType
 	: public PaosMessage
 {
 	private:
-		Result mResult;
+		ECardApiResult mResult;
 
 	public:
 		ResponseType(PaosType pType);
 		virtual ~ResponseType();
 
-		const Result& getResult() const;
-		void setResult(const Result& result);
+		const ECardApiResult& getResult() const;
+		void setResult(const ECardApiResult& result);
 };
 
-} /* namespace governikus */
+} // namespace governikus

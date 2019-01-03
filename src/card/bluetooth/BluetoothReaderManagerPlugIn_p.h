@@ -20,13 +20,15 @@ class BluetoothReaderManagerPlugInPrivate
 	BluetoothReaderManagerPlugIn* const q_ptr;
 	BluetoothReaderManagerPlugInPrivate(BluetoothReaderManagerPlugIn* pPublic);
 
+	public Q_SLOTS:
+		void onBluetoothStatusChanged(bool pEnabled);
+
 	private Q_SLOTS:
 		void init();
-		void onBluetoothStatusChanged(bool pEnabled);
 		void onScanStart();
 		void handlePairedDevices();
 		void onDeviceDiscoveryCanceled();
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

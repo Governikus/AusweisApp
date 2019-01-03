@@ -7,13 +7,20 @@
 #pragma once
 
 #include <functional>
-#include <memory>
+#include <type_traits>
+
+#include <QCoreApplication>
+#include <QDebug>
 #include <QMap>
 #include <QMetaObject>
 #include <QMetaType>
 #include <QObject>
+#include <QReadLocker>
+#include <QReadWriteLock>
 #include <QSharedPointer>
+#include <QThread>
 #include <QWeakPointer>
+#include <QWriteLocker>
 
 #ifndef QT_NO_DEBUG
 #include <QMutableVectorIterator>
@@ -25,14 +32,18 @@ class test_Env;
 namespace governikus
 {
 
-template<typename T> T* singleton(bool& pTakeOwnership);
+template<typename T> T* singleton();
 template<typename T, typename ... Args> T createNewObject(Args&& ... pArgs);
 
 class Env
 {
+	public:
+		struct ThreadSafe {};
+
 	private:
 		friend class ::test_Env;
 		Q_DISABLE_COPY(Env)
+		using Identifier = const char*;
 
 #ifndef QT_NO_DEBUG
 		class FuncWrapperBase
@@ -84,66 +95,57 @@ class Env
 
 		};
 
-		using Wrapper = std::shared_ptr<FuncWrapperBase>;
+		using Wrapper = QSharedPointer<FuncWrapperBase>;
 		QVector<Wrapper> mInstancesCreator;
+		QMap<Identifier, void*> mInstancesSingleton;
+		mutable QReadWriteLock mLock;
 #endif
 
-
-		enum class Type
-		{
-			UNDEFINED,
-			OWNERSHIP,
-			UNMANAGED
-		};
-
-		using Identifier = const char*;
-		QMap<Identifier, Type> mTypeInfo;
-		QMap<Identifier, void*> mInstancesUnmanaged;
-		QMap<Identifier, std::shared_ptr<void> > mInstancesOwnership;
 		QMap<Identifier, QWeakPointer<QObject> > mSharedInstances;
+		mutable QReadWriteLock mSharedInstancesLock;
 
 		static Env& getInstance();
 
-		void storeSingleton(Identifier pId, void* pObject);
-		void storeSingleton(Identifier pId, std::shared_ptr<void> pObject);
-		void removeStoredSingleton(Identifier pId);
-		void* fetchStoredSingleton(Identifier pId) const;
-
 		template<typename T>
-		typename std::enable_if<std::is_abstract<T>::value && std::is_destructible<T>::value, T*>::type storeSingleton(Identifier pId)
+		typename std::enable_if<std::is_abstract<T>::value && std::is_destructible<T>::value, T*>::type fetchRealSingleton()
 		{
 			static_assert(std::has_virtual_destructor<T>::value, "Destructor must be virtual");
-
-			bool ownership = true;
-			T* obj = singleton<T>(ownership);
-			Q_ASSERT(obj);
-			if (ownership)
-			{
-				storeSingleton(pId, std::shared_ptr<void>(obj));
-			}
-			else
-			{
-				storeSingleton(pId, obj);
-			}
-			return obj;
+			return singleton<T>();
 		}
 
 
 		template<typename T>
-		typename std::enable_if<!std::is_destructible<T>::value, T*>::type storeSingleton(Identifier pId)
+		typename std::enable_if<!std::is_abstract<T>::value || !std::is_destructible<T>::value, T*>::type fetchRealSingleton()
 		{
-			T* obj = &T::getInstance();
-			storeSingleton(pId, obj);
-			return obj;
+			return &T::getInstance();
 		}
 
 
 		template<typename T>
-		typename std::enable_if<std::is_default_constructible<T>::value, T*>::type storeSingleton(Identifier pId)
+		#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+		inline typename std::enable_if<QtPrivate::IsGadgetHelper<T>::IsRealGadget, T*>::type checkObjectInfo(Identifier pId, T* pObject) const
+
+		#else
+		inline typename std::enable_if<QtPrivate::IsGadgetHelper<T>::Value, T*>::type checkObjectInfo(Identifier pId, T* pObject) const
+		#endif
 		{
-			auto obj = std::make_shared<T>();
-			storeSingleton(pId, obj);
-			return obj.get();
+			Q_UNUSED(pId);
+			return pObject;
+		}
+
+
+		template<typename T>
+		inline typename std::enable_if<QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value, T*>::type checkObjectInfo(Identifier pId, T* pObject) const
+		{
+			if (!std::is_base_of<ThreadSafe, T>() && pObject->thread() != QThread::currentThread())
+			{
+				qWarning() << pId << "was created in" << pObject->thread()->objectName() << "but is requested by" << QThread::currentThread()->objectName();
+#ifndef QT_NO_DEBUG
+				Q_ASSERT(QCoreApplication::applicationName().startsWith(QLatin1String("Test_global_Env")));
+#endif
+			}
+
+			return pObject;
 		}
 
 
@@ -158,15 +160,16 @@ class Env
 					"Singletons needs to be a Q_GADGET or an QObject/Q_OBJECT");
 			#endif
 
-			Identifier id = T::staticMetaObject.className();
-			void* obj = fetchStoredSingleton(id);
-
+			const Identifier id = T::staticMetaObject.className();
+			void* obj = nullptr;
+#ifndef QT_NO_DEBUG
+			const QReadLocker locker(&mLock);
+			obj = mInstancesSingleton.value(id);
 			if (!obj)
-			{
-				obj = storeSingleton<T>(id);
-			}
-
-			return static_cast<T*>(obj);
+#endif
+			obj = fetchRealSingleton<T>();
+			Q_ASSERT(obj);
+			return checkObjectInfo(id, static_cast<T*>(obj));
 		}
 
 
@@ -206,12 +209,19 @@ class Env
 		T createObject(Args&& ... pArgs) const
 		{
 #ifndef QT_NO_DEBUG
-			for (auto& mock : qAsConst(mInstancesCreator))
 			{
-				auto creator = dynamic_cast<FuncWrapper<T, Args ...>*>(mock.get());
-				if (creator)
+				QReadLocker locker(&mLock);
+
+				// copy QSharedPointer "mock" to increase ref-counter. Otherwise
+				// unlock would allow to delete the wrapper.
+				for (auto mock : qAsConst(mInstancesCreator)) // clazy:exclude=range-loop
 				{
-					return (*creator)(std::forward<Args>(pArgs) ...);
+					auto creator = mock.dynamicCast<FuncWrapper<T, Args ...> >();
+					if (creator)
+					{
+						locker.unlock();
+						return (*creator)(std::forward<Args>(pArgs) ...);
+					}
 				}
 			}
 #endif
@@ -222,7 +232,7 @@ class Env
 
 	protected:
 		Env();
-		~Env();
+		~Env() = default;
 
 	public:
 		template<typename T>
@@ -250,14 +260,23 @@ class Env
 					"Shared class needs to be a Q_GADGET or an QObject/Q_OBJECT");
 			#endif
 
-			auto& holder = getInstance().mSharedInstances;
-			const auto* className = T::staticMetaObject.className();
+			const Identifier className = T::staticMetaObject.className();
 
-			QSharedPointer<T> shared = qSharedPointerCast<T>(holder.value(className));
+			auto& holder = getInstance();
+			holder.mSharedInstancesLock.lockForRead();
+			QSharedPointer<T> shared = qSharedPointerCast<T>(holder.mSharedInstances.value(className));
+			holder.mSharedInstancesLock.unlock();
+
 			if (!shared)
 			{
-				shared = QSharedPointer<T>::create();
-				holder.insert(className, shared.toWeakRef());
+				const QWriteLocker locker(&holder.mSharedInstancesLock);
+				shared = qSharedPointerCast<T>(holder.mSharedInstances.value(className));
+				if (!shared)
+				{
+					qDebug() << "Spawn shared instance:" << className;
+					shared = QSharedPointer<T>::create();
+					holder.mSharedInstances.insert(className, shared.toWeakRef());
+				}
 			}
 
 			return shared;
@@ -268,21 +287,16 @@ class Env
 		static void resetCounter();
 		static void clear();
 		static void set(const QMetaObject& pMetaObject, void* pObject = nullptr);
-		static void set(const QMetaObject& pMetaObject, std::shared_ptr<void> pObject);
-
-		template<typename T, typename U>
-		static U* getSingleton()
-		{
-			return dynamic_cast<U*>(getSingleton<T>());
-		}
-
 
 		template<typename T, typename ... Args>
 		static int getCounter()
 		{
-			for (const auto& mock : qAsConst(getInstance().mInstancesCreator))
+			auto& holder = getInstance();
+			const QReadLocker locker(&holder.mLock);
+
+			for (const auto& mock : qAsConst(holder.mInstancesCreator))
 			{
-				if (dynamic_cast<const FuncWrapper<T, Args ...>*>(mock.get()))
+				if (mock.dynamicCast<FuncWrapper<T, Args ...> >())
 				{
 					return mock->getCounter();
 				}
@@ -297,21 +311,23 @@ class Env
 		{
 			Q_ASSERT(pFunc);
 
-			auto& holder = getInstance().mInstancesCreator;
-			const auto& value = Wrapper(new FuncWrapper<T, Args ...>(pFunc));
+			const auto& value = QSharedPointer<FuncWrapper<T, Args ...> >::create(pFunc);
 
-			QMutableVectorIterator<Wrapper> iter(holder);
+			auto& holder = getInstance();
+			const QWriteLocker locker(&holder.mLock);
+
+			QMutableVectorIterator<Wrapper> iter(holder.mInstancesCreator);
 			while (iter.hasNext())
 			{
 				iter.next();
-				if (dynamic_cast<const FuncWrapper<T, Args ...>*>(iter.value().get()))
+				if (iter.value().dynamicCast<FuncWrapper<T, Args ...> >())
 				{
 					iter.setValue(value);
 					return;
 				}
 			}
 
-			holder << value;
+			holder.mInstancesCreator << value;
 		}
 
 
@@ -320,4 +336,4 @@ class Env
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

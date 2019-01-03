@@ -45,7 +45,6 @@ class ReaderConfigurationInfo
 					, mIcon(pIcon)
 					, mIconWithNPA(pIconWithNPA)
 				{
-
 				}
 
 
@@ -94,4 +93,4 @@ inline uint qHash(const ReaderConfigurationInfo& info)
 }
 
 
-} /* namespace governikus */
+} // namespace governikus

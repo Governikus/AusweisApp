@@ -7,18 +7,12 @@
 #include "RemoteTlsServer.h"
 
 #include "AppSettings.h"
-#include "Env.h"
 #include "KeyPair.h"
-#include "RemoteHelper.h"
 #include "SecureStorage.h"
 
 #include <QSslCipher>
 #include <QSslSocket>
 #include <QtTest>
-
-#if defined(Q_CC_CLANG) && Q_CC_CLANG < 350
-QT_WARNING_DISABLE_CLANG("-Wshadow") // QTRY_COMPARE
-#endif
 
 using namespace governikus;
 
@@ -49,7 +43,7 @@ class test_RemoteTlsServer
 			QFETCH(bool, serverPairing);
 			QFETCH(SecureStorage::TlsSuite, clientConfig);
 
-			auto& settings = AppSettings::getInstance().getRemoteServiceSettings();
+			auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 			settings.setTrustedCertificates({pair.getCertificate()});
 			RemoteTlsServer server;
 			server.setPairing(serverPairing);
@@ -136,7 +130,7 @@ class test_RemoteTlsServer
 
 		void tryReconnectWithoutPairedDeviceAndReconnectedPaired()
 		{
-			auto& settings = AppSettings::getInstance().getRemoteServiceSettings();
+			auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 			settings.setTrustedCertificates({});
 			RemoteTlsServer server;
 			server.listen();
@@ -156,7 +150,6 @@ class test_RemoteTlsServer
 				QTRY_COMPARE(clientFailed.count(), 1);
 				QCOMPARE(newConnection.count(), 0);
 			}
-
 
 			QSslSocket clientPaired;
 			config.setCaCertificates({settings.getCertificate()});
@@ -183,10 +176,10 @@ class test_RemoteTlsServer
 
 		void pairDeviceAndReconnect()
 		{
-			auto& settings = AppSettings::getInstance().getRemoteServiceSettings();
+			auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 			settings.setTrustedCertificates({});
 			requiredPskForPairing();
-			QVERIFY(RemoteHelper::checkAndGenerateKey());
+			QVERIFY(settings.checkAndGenerateKey());
 
 			RemoteTlsServer server;
 			server.listen();

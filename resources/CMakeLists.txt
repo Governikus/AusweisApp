@@ -14,17 +14,20 @@ SET(QRC_FILES "ausweisapp.qrc")
 
 IF(IOS OR ANDROID OR ${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
 	LIST(APPEND QRC_FILES "ausweisapp_mobile.qrc")
-
-	SET(ausweisapp_qml.qrc "${CMAKE_CURRENT_BINARY_DIR}/ausweisapp_qml.qrc")
-	WRITE_QRC("${ausweisapp_qml.qrc}" "${CMAKE_CURRENT_SOURCE_DIR}/qml" "qml")
-	LIST(APPEND QRC_FILES "${ausweisapp_qml.qrc}")
 ENDIF()
 
 IF(DESKTOP)
 	LIST(APPEND QRC_FILES "ausweisapp_desktop.qrc")
 ENDIF()
 
+IF(TARGET Qt5::Qml)
+	SET(ausweisapp_qml.qrc "${CMAKE_CURRENT_BINARY_DIR}/ausweisapp_qml.qrc")
+	WRITE_QRC("${ausweisapp_qml.qrc}" "${CMAKE_CURRENT_SOURCE_DIR}/qml" "qml")
+	LIST(APPEND QRC_FILES "${ausweisapp_qml.qrc}")
+
+	SET(QML_IMPORT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml CACHE string "qml files" FORCE)
+ENDIF()
+
 SET(RCC ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}.rcc)
 SET(RCC ${RCC} PARENT_SCOPE)
 qt5_add_binary_resources(AusweisAppRcc "${QRC_FILES}" DESTINATION ${RCC})
-SET(QML_IMPORT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml ${CMAKE_CURRENT_SOURCE_DIR}/qml_stationary CACHE string "qml files" FORCE)

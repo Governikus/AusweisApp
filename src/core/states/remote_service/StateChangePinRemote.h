@@ -10,36 +10,24 @@
 #include "context/RemoteServiceContext.h"
 #include "states/AbstractGenericState.h"
 
+class test_StateChangePinRemote;
+
 namespace governikus
 {
-
 
 class StateChangePinRemote
 	: public AbstractGenericState<RemoteServiceContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateChangePinRemote;
 
 	private:
-		QSharedPointer<const IfdModifyPin> mModifyPinMessage;
-		QSharedPointer<ServerMessageHandler> mMessageHandler;
-
-		StateChangePinRemote(const QSharedPointer<WorkflowContext>& pContext);
+		explicit StateChangePinRemote(const QSharedPointer<WorkflowContext>& pContext);
 		virtual void run() override;
 
 	private Q_SLOTS:
-		void onCancelChangePin();
-		void onReaderInfoChanged(const ReaderInfo& pReaderInfo);
 		void onChangePinDone(QSharedPointer<BaseCardCommand> pCommand);
-
-	protected:
-		void onExit(QEvent* pEvent) override;
-
-	public:
-		virtual ~StateChangePinRemote() override;
-
-		void onEntry(QEvent* pEvent) override;
-
 };
 
-} /* namespace governikus */
+} // namespace governikus

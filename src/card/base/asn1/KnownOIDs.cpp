@@ -125,6 +125,7 @@ QByteArray governikus::toByteArray(id_ca pValue)
 {
 	switch (pValue)
 	{
+		// DH
 		case id_ca::DH:
 			return SecurityProtocol::ID_CA + QByteArrayLiteral(".1");
 
@@ -140,7 +141,7 @@ QByteArray governikus::toByteArray(id_ca pValue)
 		case id_ca::DH_AES_CBC_CMAC_256:
 			return id_ca::DH + QByteArrayLiteral(".4");
 
-
+		// ECDH
 		case id_ca::ECDH:
 			return SecurityProtocol::ID_CA + QByteArrayLiteral(".2");
 
@@ -204,6 +205,7 @@ QByteArray governikus::toByteArray(id_PACE::DH pValue)
 {
 	switch (pValue)
 	{
+		// GM
 		case id_PACE::DH::GM:
 			return SecurityProtocol::ID_PACE + QByteArrayLiteral(".1");
 
@@ -219,7 +221,7 @@ QByteArray governikus::toByteArray(id_PACE::DH pValue)
 		case id_PACE::DH::GM_AES_CBC_CMAC_256:
 			return id_PACE::DH::GM + QByteArrayLiteral(".4");
 
-
+		// IM
 		case id_PACE::DH::IM:
 			return SecurityProtocol::ID_PACE + QByteArrayLiteral(".3");
 
@@ -244,6 +246,7 @@ QByteArray governikus::toByteArray(id_PACE::ECDH pValue)
 {
 	switch (pValue)
 	{
+		// GM
 		case id_PACE::ECDH::GM:
 			return SecurityProtocol::ID_PACE + QByteArrayLiteral(".2");
 
@@ -259,7 +262,7 @@ QByteArray governikus::toByteArray(id_PACE::ECDH pValue)
 		case id_PACE::ECDH::GM_AES_CBC_CMAC_256:
 			return id_PACE::ECDH::GM + QByteArrayLiteral(".4");
 
-
+		// IM
 		case id_PACE::ECDH::IM:
 			return SecurityProtocol::ID_PACE + QByteArrayLiteral(".4");
 

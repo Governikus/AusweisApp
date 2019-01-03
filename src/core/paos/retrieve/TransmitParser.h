@@ -33,4 +33,4 @@ class TransmitParser
 		QScopedPointer<Transmit> mTransmit;
 };
 
-}
+} // namespace governikus

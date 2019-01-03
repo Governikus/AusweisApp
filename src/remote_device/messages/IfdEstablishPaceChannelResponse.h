@@ -4,9 +4,7 @@
 
 #pragma once
 
-#include "EstablishPACEChannel.h"
 #include "RemoteMessageResponse.h"
-#include "SmartCardDefinitions.h"
 
 
 namespace governikus
@@ -19,14 +17,14 @@ class IfdEstablishPaceChannelResponse
 		QByteArray mOutputData;
 
 	public:
-		IfdEstablishPaceChannelResponse(const QString& pSlotHandle, const QByteArray& pOutputData, const QString& pResultMinor = QString());
+		IfdEstablishPaceChannelResponse(const QString& pSlotHandle, const QByteArray& pOutputData, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		IfdEstablishPaceChannelResponse(const QJsonObject& pMessageObject);
 		virtual ~IfdEstablishPaceChannelResponse() override = default;
 
 		const QString& getSlotHandle() const;
 		const QByteArray& getOutputData() const;
-		virtual QJsonDocument toJson(const QString& pContextHandle) const override;
+		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

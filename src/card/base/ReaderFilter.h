@@ -41,7 +41,6 @@ class ReaderFilter
 		QVector<ReaderInfo> apply(const QVector<ReaderInfo>& pInputList) const;
 };
 
-
-}
+} // namespace governikus
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(governikus::ReaderFilter::FilterTypes)

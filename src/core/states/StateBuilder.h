@@ -31,4 +31,4 @@ class StateBuilder
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

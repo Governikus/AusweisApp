@@ -23,13 +23,13 @@ class test_KeyDerivationFunction
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
 		void cleanup()
 		{
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
@@ -46,7 +46,7 @@ class test_KeyDerivationFunction
 
 		void desKey()
 		{
-			QSignalSpy spyLog(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			KeyDerivationFunction kdf = toByteArray(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC);
 

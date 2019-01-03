@@ -27,7 +27,6 @@ class test_MsgHandlerAuth
 			MessageDispatcher dispatcher;
 			QByteArray msg("{\"cmd\": \"RUN_AUTH\"}");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"tcTokenURL cannot be undefined\",\"msg\":\"AUTH\"}"));
-
 		}
 
 

@@ -8,17 +8,17 @@
 #include "asn1/SignatureChecker.h"
 #include "AppSettings.h"
 #include "EnumHelper.h"
-#include "Env.h"
 #include "SecureStorage.h"
 
 #include <QVector>
 
+Q_DECLARE_LOGGING_CATEGORY(developermode)
 
 using namespace governikus;
 
 
 StatePreVerification::StatePreVerification(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractGenericState(pContext, false)
 	, mTrustedCvcas(CVCertificate::fromHex(SecureStorage::getInstance().getCVRootCertificates(true))
 			+ CVCertificate::fromHex(SecureStorage::getInstance().getCVRootCertificates(false)))
 	, mValidationDateTime(QDateTime::currentDateTime())
@@ -46,18 +46,16 @@ void StatePreVerification::run()
 		}
 	}
 
-	if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
+	const bool developerMode = Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode();
+	if (developerMode && certificateChain.isProductive())
 	{
-		if (certificateChain.isProductive())
-		{
-			qCritical() << "Using the developer mode is only allowed in a test environment";
-			updateStatus(GlobalStatus::Code::Workflow_Preverification_Developermode_Error);
-			Q_EMIT fireAbort();
-			return;
-		}
+		qCritical() << "Using the developer mode is only allowed in a test environment";
+		updateStatus(GlobalStatus::Code::Workflow_Preverification_Developermode_Error);
+		Q_EMIT fireAbort();
+		return;
 	}
 
-	if (!AppSettings::getInstance().getPreVerificationSettings().isEnabled())
+	if (!Env::getSingleton<AppSettings>()->getPreVerificationSettings().isEnabled())
 	{
 		qInfo() << "Pre-verification is disabled";
 		Q_EMIT fireContinue();
@@ -80,10 +78,17 @@ void StatePreVerification::run()
 	}
 	else if (!isValid(certificateChain))
 	{
-		qCritical() << "Pre-verification failed: certificate not valid ";
-		updateStatus(GlobalStatus::Code::Workflow_Preverification_Error);
-		Q_EMIT fireAbort();
-		return;
+		if (developerMode)
+		{
+			qCCritical(developermode) << "Pre-verification failed: certificate not valid";
+		}
+		else
+		{
+			qCritical() << "Pre-verification failed: certificate not valid";
+			updateStatus(GlobalStatus::Code::Workflow_Preverification_Error);
+			Q_EMIT fireAbort();
+			return;
+		}
 	}
 
 	saveCvcaLinkCertificates(certificateChain);

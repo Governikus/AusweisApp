@@ -15,7 +15,6 @@ using namespace governikus::KnownOIDs;
 namespace governikus
 {
 
-
 ASN1_SEQUENCE(chipauthenticationinfo_st) = {
 	ASN1_SIMPLE(chipauthenticationinfo_st, mProtocol, ASN1_OBJECT),
 	ASN1_SIMPLE(chipauthenticationinfo_st, mVersion, ASN1_INTEGER),

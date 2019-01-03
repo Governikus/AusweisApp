@@ -1,15 +1,16 @@
-import QtQuick 2.7
+import QtQuick 2.10
 
 import Governikus.Global 1.0
-import "." as Gov
+import Governikus.Type.ReaderPlugIn 1.0
 
-Item {
+Rectangle {
 	id: baseItem
 	height: technologyRow.height
+	color: Constants.background_color
 
-	signal requestPluginType(string pReaderPlugInType)
+	signal requestPluginType(int pReaderPlugInType)
 
-	property string selectedTechnology
+	property int selectedTechnology
 
 	Row {
 		id: technologyRow
@@ -17,23 +18,23 @@ Item {
 		anchors.bottom: parent.bottom
 		anchors.horizontalCenter: parent.horizontalCenter
 
-		Gov.TechnologySwitchButton {
-			visible: selectedTechnology !== "NFC"
-			onClicked: baseItem.requestPluginType("NFC")
+		TechnologySwitchButton {
+			buttonActive: selectedTechnology !== ReaderPlugIn.NFC
+			onClicked: baseItem.requestPluginType(ReaderPlugIn.NFC)
 			imageSource: "qrc:///images/icon_nfc.svg"
 			text: qsTr("NFC") + settingsModel.translationTrigger
 		}
 
-		Gov.TechnologySwitchButton {
-			visible: selectedTechnology !== "REMOTE"
-			onClicked: baseItem.requestPluginType("REMOTE")
+		TechnologySwitchButton {
+			buttonActive: selectedTechnology !== ReaderPlugIn.REMOTE
+			onClicked: baseItem.requestPluginType(ReaderPlugIn.REMOTE)
 			imageSource: "qrc:///images/icon_remote.svg"
 			text: qsTr("WiFi") + settingsModel.translationTrigger
 		}
 
-		Gov.TechnologySwitchButton {
-			visible: selectedTechnology !== "BLUETOOTH"
-			onClicked: baseItem.requestPluginType("BLUETOOTH")
+		TechnologySwitchButton {
+			buttonActive: selectedTechnology !== ReaderPlugIn.BLUETOOTH
+			onClicked: baseItem.requestPluginType(ReaderPlugIn.BLUETOOTH)
 			imageSource: "qrc:///images/icon_bluetooth.svg"
 			text: qsTr("Bluetooth") + settingsModel.translationTrigger
 		}

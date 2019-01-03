@@ -1,13 +1,19 @@
-import QtQuick 2.5
+import QtQuick 2.10
 import QtQuick.Layouts 1.1
 
 import Governikus.Global 1.0
+import Governikus.View 1.0
+import Governikus.Type.RemoteServiceModel 1.0
+import Governikus.Type.NumberModel 1.0
+
 
 SectionPage
 {
 	id: baseItem
 	property string remoteDeviceId: ""
+	property alias enableTransportPinLink: transportPinLink.enableTransportPinLink
 	signal pinEntered()
+	signal changePinLength()
 
 	onVisibleChanged: {
 		pinField.text = ""
@@ -27,7 +33,7 @@ SectionPage
 
 			Item {/*spacer*/ Layout.fillWidth: true; height: parent.height}
 			Image {
-				anchors.verticalCenter: parent.verticalCenter
+				Layout.alignment: Qt.AlignVCenter
 				width: Utils.dp(58)
 				height: width
 				// because RowLayout uses implicitHeight that is based on sourceSize we have to explicitly set the sourceSize
@@ -38,31 +44,52 @@ SectionPage
 			}
 
 			Text {
-				anchors.verticalCenter: parent.verticalCenter
+				Layout.alignment: Qt.AlignVCenter
 				Layout.fillWidth: true
 				Layout.maximumWidth: Math.ceil(implicitWidth)
 
 				wrapMode: Text.WordWrap
-				font.pixelSize: text.length > 150 && !PlatformConstants.is_tablet? Utils.dp(15) : Constants.header_font_size
+				font.pixelSize: text.length > 150 && !Constants.is_tablet? Utils.dp(15) : Constants.header_font_size
 				font.bold: true
 				color: {
-					if (!pinField.confirmedInput || !!numberModel.inputError || baseItem.state === "CAN" || baseItem.state === "PUK") {
+					if (!pinField.confirmedInput || !!NumberModel.inputError || baseItem.state === "CAN" || baseItem.state === "PUK") {
 						Constants.red
 					} else {
 						Constants.blue
 					}
 				}
-				text: (!pinField.confirmedInput ? qsTr("The entered PIN does not match the new PIN. Please correct your input.") :
-					  !!numberModel.inputError ? numberModel.inputError :
-					  baseItem.state === "CAN" && numberModel.isCanAllowedMode ? qsTr("Please enter the six-digit card access number. You can find the card access number on the front of the ID card.") :
-					  baseItem.state === "CAN" ? qsTr("You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.") :
-					  baseItem.state === "PUK" ? qsTr("You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.") :
-					  baseItem.state === "PIN_NEW" ? qsTr("Please enter a new 6-digit PIN of your choice.") :
-					  baseItem.state === "PIN_NEW_AGAIN" ? qsTr("Please enter your new 6-digit PIN again.") :
-					  baseItem.state === "PIN" ? qsTr("Please enter your personal PIN.") :
-					  baseItem.state === "REMOTE_PIN" ? qsTr("Enter the pairing code shown on your other device to use it as a card reader.") :
-					  /*"PIN_OR_TRANSPORT_PIN"*/ qsTr("Please enter your current PIN or your initial transport PIN first.")
-					  ) + settingsModel.translationTrigger
+				text: {
+					settingsModel.translationTrigger
+
+					if (!pinField.confirmedInput) {
+						return qsTr("The entered PIN does not match the new PIN. Please correct your input.")
+					}
+					if (!!NumberModel.inputError) {
+						return NumberModel.inputError
+					}
+					if (baseItem.state === "CAN") {
+						if (NumberModel.isCanAllowedMode) {
+							return qsTr("Please enter the six-digit card access number. You can find the card access number on the front of the ID card.")
+						}
+						return qsTr("You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.")
+					}
+					if (baseItem.state === "PUK") {
+						return qsTr("You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.")
+					}
+					if (baseItem.state === "PIN_NEW") {
+						return qsTr("Please enter a new 6-digit PIN of your choice.")
+					}
+					if (baseItem.state === "PIN_NEW_AGAIN") {
+						return qsTr("Please enter your new 6-digit PIN again.")
+					}
+					if (baseItem.state === "PIN" && NumberModel.requestTransportPin) {
+						return qsTr("Please enter your transport PIN.")
+					}
+					if (baseItem.state === "REMOTE_PIN") {
+						return qsTr("Enter the pairing code shown on your other device to use it as a card reader.")
+					}
+					return qsTr("Please enter your personal PIN.")
+				}
 			}
 			Item {/*spacer*/ Layout.fillWidth: true; height: parent.height}
 		}
@@ -71,16 +98,40 @@ SectionPage
 
 		PinField {
 			id: pinField
-			anchors.horizontalCenter: parent.horizontalCenter
-			state: baseItem.state
+			Layout.alignment: Qt.AlignHCenter
+			passwordLength: baseItem.state === "REMOTE_PIN" ? 4
+						  : baseItem.state === "PIN" && NumberModel.requestTransportPin ? 5
+						  : baseItem.state === "PUK" ? 10
+						  : 6
+			Layout.preferredHeight: height
 			Layout.preferredWidth: width
+		}
+
+		Text {
+			id: transportPinLink
+			property alias enableTransportPinLink: myMouse.enabled
+
+			visible: baseItem.state === "PIN" && enableTransportPinLink
+			text: (NumberModel.requestTransportPin ? qsTr("Your PIN has 6 digits?") : qsTr("Your PIN has 5 digits?")) + settingsModel.translationTrigger
+			Layout.alignment: Qt.AlignHCenter
+			font.pixelSize: Constants.small_font_size
+			color: Constants.blue
+			font.underline: true
+
+			MouseArea {
+				id: myMouse
+				enabled: true
+				anchors.fill: parent
+				anchors.margins: -Utils.dp(12)
+				onClicked: baseItem.changePinLength()
+			}
 		}
 
 		Item {/*spacer*/ height: Constants.component_spacing; width: parent.width }
 
 		PinPad {
-			anchors.horizontalCenter: parent.horizontalCenter
 			state: baseItem.state
+			Layout.alignment: Qt.AlignHCenter
 			Layout.preferredWidth: width
 			Layout.preferredHeight: height
 
@@ -91,9 +142,7 @@ SectionPage
 			onSubmitPressed: {
 				switch(baseItem.state) {
 					case "PIN":
-						/* fall through */
-					case "PIN_OR_TRANSPORT_PIN":
-						numberModel.pin = pinField.text
+						NumberModel.pin = pinField.text
 						baseItem.pinEntered()
 						break
 					case "PIN_NEW":
@@ -102,19 +151,19 @@ SectionPage
 						baseItem.state = "PIN_NEW_AGAIN"
 						break
 					case "PIN_NEW_AGAIN":
-						numberModel.newPin = pinField.text
+						NumberModel.newPin = pinField.text
 						baseItem.pinEntered()
 						break
 					case "CAN":
-						numberModel.can = pinField.text
+						NumberModel.can = pinField.text
 						baseItem.pinEntered()
 						break
 					case "PUK":
-						numberModel.puk = pinField.text
+						NumberModel.puk = pinField.text
 						baseItem.pinEntered()
 						break
 					case "REMOTE_PIN":
-						remoteServiceModel.connectToServer(remoteDeviceId, pinField.text)
+						RemoteServiceModel.connectToServer(remoteDeviceId, pinField.text)
 						baseItem.pinEntered()
 						break
 				}
@@ -123,5 +172,4 @@ SectionPage
 
 		Item {/*spacer*/ Layout.fillHeight: true; width: parent.width }
 	}
-
 }

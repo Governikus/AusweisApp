@@ -13,25 +13,19 @@ DisconnectResponse::DisconnectResponse()
 }
 
 
-QDomElement DisconnectResponse::getDocumentStructure()
+void DisconnectResponse::createBodyElement()
 {
-	return createEnvelopeElement(createDisconnectResponse(), getRelatesTo(), getMessageId());
-}
+	mWriter.writeStartElement(QStringLiteral("DisconnectResponse"));
+	mWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
+	mWriter.writeAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
 
-
-QDomElement DisconnectResponse::createDisconnectResponse()
-{
-	QDomElement element = mDoc.createElement(QStringLiteral("DisconnectResponse"));
-	element.setAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
-	element.setAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
-
-	element.appendChild(createResultElement(*this));
+	createResultElement(*this);
 	if (!mSlotHandle.isNull())
 	{
-		element.appendChild(createTextElement(QStringLiteral("SlotHandle"), mSlotHandle));
+		mWriter.writeTextElement(QStringLiteral("SlotHandle"), mSlotHandle);
 	}
 
-	return element;
+	mWriter.writeEndElement(); // DisconnectResponse
 }
 
 

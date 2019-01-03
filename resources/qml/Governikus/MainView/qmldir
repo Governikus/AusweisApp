@@ -1,0 +1,5 @@
+module MainView
+
+internal Tile Tile.qml
+
+MainView 1.0 MainView.qml

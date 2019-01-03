@@ -3,9 +3,8 @@
  */
 
 
-#include "asn1/PACEInfo.h"
+#include "asn1/PaceInfo.h"
 #include "CardConnectionWorker.h"
-#include "PersoSimWorkaround.h"
 #include "Reader.h"
 
 #include <QLoggingCategory>
@@ -26,26 +25,9 @@ Reader::Reader(ReaderManagerPlugInType pPlugInType, const QString& pReaderName)
 }
 
 
-Reader::~Reader()
-{
-}
-
-
 void Reader::setPukInoperative()
 {
 	mReaderInfo.mCardInfo.mPukInoperative = true;
-}
-
-
-void Reader::setRetryCounter(int pRetryCounter)
-{
-	if (mReaderInfo.getRetryCounter() != pRetryCounter)
-	{
-		qCInfo(support) << "retry counter updated:" << pRetryCounter << ", was:" << mReaderInfo.getRetryCounter();
-
-		mReaderInfo.mCardInfo.mRetryCounter = pRetryCounter;
-		Q_EMIT fireCardRetryCounterChanged(mReaderInfo.getName());
-	}
 }
 
 
@@ -123,32 +105,30 @@ CardReturnCode Reader::getRetryCounter(QSharedPointer<CardConnectionWorker> pCar
 	}
 
 	// we don't need to establish PACE with this protocol (i.e. we don't need to support it), so we just take the fist one
-	const auto& paceInfo = mReaderInfo.getCardInfo().getEfCardAccess()->getPACEInfos().at(0);
+	const auto& paceInfo = mReaderInfo.getCardInfo().getEfCardAccess()->getPaceInfos().at(0);
 	QByteArray cryptographicMechanismReference = paceInfo->getProtocolValueBytes();
 	QByteArray referencePrivateKey = paceInfo->getParameterId();
-
-	CardReturnCode returnCode = PersoSimWorkaround::sendingMseSetAt(pCardConnectionWorker);
-	if (returnCode != CardReturnCode::OK)
-	{
-		qCCritical(card) << "Error on MSE:Set AT";
-		return returnCode;
-	}
 
 	// MSE:Set AT
 	MSEBuilder mseBuilder(MSEBuilder::P1::PERFORM_SECURITY_OPERATION, MSEBuilder::P2::SET_AT);
 	mseBuilder.setOid(cryptographicMechanismReference);
-	mseBuilder.setPublicKey(PACE_PASSWORD_ID::PACE_PIN);
+	mseBuilder.setPublicKey(PacePasswordId::PACE_PIN);
 	mseBuilder.setPrivateKey(referencePrivateKey);
 
 	ResponseApdu mseSetAtResponse;
-	returnCode = pCardConnectionWorker->transmit(mseBuilder.build(), mseSetAtResponse);
+	CardReturnCode returnCode = pCardConnectionWorker->transmit(mseBuilder.build(), mseSetAtResponse);
 	if (returnCode != CardReturnCode::OK)
 	{
 		return returnCode;
 	}
 
-	StatusCode statusCode = mseSetAtResponse.getReturnCode();
-	qCDebug(card) << "StatusCode: " << statusCode;
+	const StatusCode statusCode = mseSetAtResponse.getReturnCode();
+	qCDebug(card) << "StatusCode:" << statusCode;
+	if (statusCode == StatusCode::INVALID)
+	{
+		return CardReturnCode::COMMAND_FAILED;
+	}
+
 	pRetryCounter = mseSetAtResponse.getRetryCounter();
 	pPinDeactivated = statusCode == StatusCode::PIN_DEACTIVATED;
 
@@ -173,9 +153,4 @@ void Reader::fireUpdateSignal(CardEvent pCardEvent)
 			Q_EMIT fireCardRemoved(mReaderInfo.getName());
 			break;
 	}
-}
-
-
-ConnectableReader::~ConnectableReader()
-{
 }

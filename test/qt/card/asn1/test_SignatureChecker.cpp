@@ -47,6 +47,13 @@ class test_SignatureChecker
 			cvcs.append(load(":/card/cvca-DETESTeID00004_DETESTeID00002.hex"));
 			cvcs.append(load(":/card/cvdv-DEDVeIDDPST00035.hex"));
 			cvcs.append(load(":/card/cvat-DEDEMODEV00038.hex"));
+			ERR_clear_error();
+		}
+
+
+		void cleanup()
+		{
+			QCOMPARE(ERR_get_error(), 0);
 		}
 
 

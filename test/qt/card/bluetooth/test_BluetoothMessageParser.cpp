@@ -31,7 +31,7 @@ class test_BluetoothMessageParser
 					QByteArray::fromHex("060200000200000100000000050000fe3081f9a106040400000000a20404029000a381c43181c1300d060804007f00070202020201023012060a04007f000702020302020201020201413012060a04007f0007020204020202010202010d301c060904007f000702020302300c060704007f0007010202010d020141302a060804007f0007020206161e687474703a2f2f6273692e62756e642e64652f6369662f6e70612e786d6c303e060804007f000702020831323012060a04007f00070202030202020102020145301c060904007f000702020302300c060704007f0007010202010d020145a42204209ee959c9f063c6e144b463e04fa19ef44da0f5059d817a7db2240bbee8b218a290000000");
 			BluetoothMessageParser parser1(response);
 			QCOMPARE(parser1.getMessages().size(), 1);
-			BluetoothMessage::Ptr message = parser1.getMessages().at(0);
+			auto message = parser1.getMessages().at(0);
 
 			QCOMPARE(message->getBluetoothMsgId(), BluetoothMsgId::TransferApduResponse);
 			QCOMPARE(message->mMessageParameter.size(), 2);
@@ -54,7 +54,7 @@ class test_BluetoothMessageParser
 			response = QByteArray::fromHex("110100000800000102000000");
 			BluetoothMessageParser parser1(response);
 			QCOMPARE(parser1.getMessages().size(), 1);
-			BluetoothMessage::Ptr message = parser1.getMessages().at(0);
+			auto message = parser1.getMessages().at(0);
 
 			QCOMPARE(message->getBluetoothMsgId(), BluetoothMsgId::StatusInd);
 			auto msgInd = message.staticCast<const BluetoothMessageStatusInd>();

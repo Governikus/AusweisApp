@@ -45,7 +45,7 @@ inline QLatin1String getCurrentOS()
 }
 
 
-}
+} // namespace
 
 bool ProviderConfigurationParser::isExcludedPlatform(const QJsonArray& pExcludedArray, QLatin1String pCurrentOS)
 {

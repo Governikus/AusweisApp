@@ -14,7 +14,6 @@
 namespace governikus
 {
 
-
 #define defineEnumOperators(enumName)\
 	inline QDebug operator<<(QDebug pDbg, enumName pType)\
 	{\
@@ -123,7 +122,7 @@ template<typename EnumTypeT> class Enum
 				list.reserve(metaEnum.keyCount());
 				for (int i = 0; i < metaEnum.keyCount(); ++i)
 				{
-					list.push_back(static_cast<EnumTypeT>(metaEnum.value(i)));
+					list << static_cast<EnumTypeT>(metaEnum.value(i));
 				}
 			}
 			return list;
@@ -181,4 +180,4 @@ template<typename T> inline QLatin1String getEnumName(T pType)
 }
 
 
-} /* namespace governikus */
+} // namespace governikus

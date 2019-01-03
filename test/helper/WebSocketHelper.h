@@ -35,4 +35,4 @@ class WebSocketHelper
 		void sendMessage(const QString& pMessage);
 };
 
-} /* namespace governikus */
+} // namespace governikus

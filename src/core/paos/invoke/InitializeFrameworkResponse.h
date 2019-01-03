@@ -20,10 +20,10 @@ class InitializeFrameworkResponse
 	private:
 		SupportedAPI mSupportedAPI;
 
-		QDomElement createVersionElement();
-		QDomElement createInitializeFrameworkResponse();
+		void createVersionElement();
+		void createInitializeFrameworkResponse();
 
-		virtual QDomElement getDocumentStructure() override;
+		virtual void createBodyElement() override;
 
 		Q_DISABLE_COPY(InitializeFrameworkResponse)
 
@@ -31,4 +31,4 @@ class InitializeFrameworkResponse
 		InitializeFrameworkResponse();
 };
 
-} /* namespace governikus */
+} // namespace governikus

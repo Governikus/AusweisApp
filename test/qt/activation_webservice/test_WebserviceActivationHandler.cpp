@@ -28,7 +28,7 @@ class test_WebserviceActivationHandler
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 			ResourceLoader::getInstance().init();
 		}
 
@@ -45,7 +45,7 @@ class test_WebserviceActivationHandler
 
 		void cleanup()
 		{
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
@@ -183,7 +183,7 @@ class test_WebserviceActivationHandler
 			mRequest->mUrl = QByteArray("http://localhost:24727/eID-Client?unknownRequest");
 
 			mHandler.onNewRequest(mRequest);
-			QVERIFY(mSocket->mWriteBuffer.contains("HTTP/1.0 404 NOT FOUND"));
+			QVERIFY(mSocket->mWriteBuffer.contains("HTTP/1.0 404 Not Found"));
 		}
 
 
@@ -203,7 +203,7 @@ class test_WebserviceActivationHandler
 
 		void currentHigherThanCallerUserAgent()
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			QCoreApplication::setApplicationVersion("1.0.0");
 			mRequest->mUrl = QByteArray("http://localhost:24727/eID-Client?ShowUI");
 			mRequest->mHeader.insert("user-agent", QCoreApplication::applicationName().toUtf8() + "/0.0.0 (TR-03124-1/1.2)");
@@ -223,7 +223,7 @@ class test_WebserviceActivationHandler
 
 		void currentLowerThanCallerUserAgent()
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			QCoreApplication::setApplicationVersion("1.0.0");
 			mRequest->mUrl = QByteArray("http://localhost:24727/eID-Client?ShowUI");
 			mRequest->mHeader.insert("user-agent", QCoreApplication::applicationName().toUtf8() + "/2.0.0 (TR-03124-1/1.2)");
@@ -238,6 +238,34 @@ class test_WebserviceActivationHandler
 			QVERIFY(spy.count() > 0);
 			auto param = spy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Current version is lower than caller version"));
+		}
+
+
+		void test_GuessImageContentType_data()
+		{
+			QTest::addColumn<QString>("fileName");
+			QTest::addColumn<QByteArray>("output");
+
+			QTest::newRow("x-icon") << QString("test.ico") << QByteArrayLiteral("image/x-icon");
+			QTest::newRow("X-ICON") << QString("test.iCo") << QByteArrayLiteral("image/x-icon");
+			QTest::newRow("jpg") << QString("test.jpg") << QByteArrayLiteral("image/jpeg");
+			QTest::newRow("JPG") << QString("test.JPG") << QByteArrayLiteral("image/jpeg");
+			QTest::newRow("jpeg") << QString("test.jpeg") << QByteArrayLiteral("image/jpeg");
+			QTest::newRow("JPEG") << QString("test.Jpeg") << QByteArrayLiteral("image/jpeg");
+			QTest::newRow("png") << QString("test.png") << QByteArrayLiteral("image/png");
+			QTest::newRow("PNG") << QString("test.pNG") << QByteArrayLiteral("image/png");
+			QTest::newRow("svg") << QString("test.svg") << QByteArrayLiteral("image/svg+xml");
+			QTest::newRow("SVG") << QString("TEST.SVG") << QByteArrayLiteral("image/svg+xml");
+			QTest::newRow("other") << QString("test.test") << QByteArrayLiteral("image");
+		}
+
+
+		void test_GuessImageContentType()
+		{
+			QFETCH(QString, fileName);
+			QFETCH(QByteArray, output);
+
+			QCOMPARE(mHandler.guessImageContentType(fileName), output);
 		}
 
 

@@ -4,6 +4,7 @@
 
 #include "StateSelectReader.h"
 
+#include "AppSettings.h"
 #include "FuncUtils.h"
 #include "ReaderManager.h"
 
@@ -14,6 +15,12 @@ Q_DECLARE_LOGGING_CATEGORY(statemachine)
 using namespace governikus;
 
 
+StateSelectReader::StateSelectReader(const QSharedPointer<WorkflowContext>& pContext)
+	: AbstractGenericState(pContext, false)
+{
+}
+
+
 bool StateSelectReader::requiresCard(ReaderManagerPlugInType pPlugInType)
 {
 	return pPlugInType == ReaderManagerPlugInType::PCSC ||
@@ -21,27 +28,24 @@ bool StateSelectReader::requiresCard(ReaderManagerPlugInType pPlugInType)
 }
 
 
-StateSelectReader::StateSelectReader(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
-{
-}
-
-
 void StateSelectReader::run()
 {
-	mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderAdded, this, &StateSelectReader::onReaderInfoChanged);
-	mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderRemoved, this, &StateSelectReader::onReaderInfoChanged);
-	mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireCardInserted, this, &StateSelectReader::onReaderInfoChanged);
-	mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireCardRemoved, this, &StateSelectReader::onReaderInfoChanged);
-	mConnections += connect(&ReaderManager::getInstance(), &ReaderManager::fireReaderDeviceError, this, &StateSelectReader::onReaderDeviceError);
+	const auto readerManager = Env::getSingleton<ReaderManager>();
+	mConnections += connect(readerManager, &ReaderManager::fireReaderAdded, this, &StateSelectReader::onReaderInfoChanged);
+	mConnections += connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateSelectReader::onReaderInfoChanged);
+	mConnections += connect(readerManager, &ReaderManager::fireCardInserted, this, &StateSelectReader::onReaderInfoChanged);
+	mConnections += connect(readerManager, &ReaderManager::fireCardRemoved, this, &StateSelectReader::onReaderInfoChanged);
+	mConnections += connect(readerManager, &ReaderManager::fireReaderDeviceError, this, &StateSelectReader::onReaderDeviceError);
 
 	onReaderInfoChanged();
 
-	ReaderManager& readerManager = ReaderManager::getInstance();
-	const auto& readerPlugInTypes = getContext()->getReaderPlugInTypes();
-	for (const auto t : readerPlugInTypes)
+	if (!Env::getSingleton<AppSettings>()->isUsedAsSDK())
 	{
-		readerManager.startScan(t);
+		const auto& readerPlugInTypes = getContext()->getReaderPlugInTypes();
+		for (const auto t : readerPlugInTypes)
+		{
+			readerManager->startScan(t);
+		}
 	}
 }
 
@@ -52,7 +56,7 @@ void StateSelectReader::onReaderInfoChanged()
 	Q_ASSERT(context);
 
 	const QVector<ReaderManagerPlugInType>& plugInTypes = context->getReaderPlugInTypes();
-	const auto allReaders = ReaderManager::getInstance().getReaderInfos(plugInTypes);
+	const auto allReaders = Env::getSingleton<ReaderManager>()->getReaderInfos(plugInTypes);
 	const QVector<ReaderInfo> selectableReaders = filter<ReaderInfo>([](const ReaderInfo& info)
 			{
 				return info.isConnected() && (!requiresCard(info.getPlugInType()) || info.hasEidCard());
@@ -80,26 +84,25 @@ void StateSelectReader::onAbort()
 	const QSharedPointer<WorkflowContext> context = getContext();
 	Q_ASSERT(context);
 
-	ReaderManager::getInstance().stopScanAll();
-
 	const auto& readerName = context->getReaderName();
 	if (!readerName.isEmpty())
 	{
-		const ReaderInfo readerInfo = ReaderManager::getInstance().getReaderInfo(readerName);
+		const auto readerManager = Env::getSingleton<ReaderManager>();
+		const ReaderInfo readerInfo = readerManager->getReaderInfo(readerName);
 		if (readerInfo.isConnected())
 		{
-			ReaderManager::getInstance().disconnectReader(readerName);
+			readerManager->disconnectReader(readerName);
 		}
 	}
 	Q_EMIT fireRetry();
 }
 
 
-void StateSelectReader::onReaderDeviceError(DeviceError pDeviceError)
+void StateSelectReader::onReaderDeviceError(const GlobalStatus pErrorCode)
 {
-	if (pDeviceError != DeviceError::DEVICE_POWERED_OFF && pDeviceError != DeviceError::DEVICE_SCAN_ERROR)
+	if (pErrorCode.isError() && !pErrorCode.is(GlobalStatus::Code::Workflow_Reader_Device_Scan_Error))
 	{
-		updateStatus(DeviceErrorUtil::toGlobalStatus(pDeviceError));
+		updateStatus(pErrorCode);
 		Q_EMIT fireAbort();
 	}
 }

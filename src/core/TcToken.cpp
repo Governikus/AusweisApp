@@ -3,8 +3,9 @@
  */
 
 
-#include "AppSettings.h"
 #include "TcToken.h"
+
+#include "AppSettings.h"
 
 #include <QLoggingCategory>
 #include <QRegularExpression>
@@ -36,8 +37,7 @@ TcToken::~TcToken()
 
 void TcToken::parse(const QByteArray& pData)
 {
-	qDebug() << "Parsing TcToken:";
-	qDebug() << pData;
+	qDebug().noquote() << "Parsing TcToken:\n" << pData;
 	QXmlStreamReader reader(pData);
 
 	QString binding, pathSecurityProtocol, serverAddress, refreshAddress, communicationErrorAddress;
@@ -125,7 +125,7 @@ bool TcToken::valuesAreSchemaConform(const QString& pBinding,
 
 	if (!pPathSecurityProtocol.isNull() && !QUrl(pPathSecurityProtocol).isValid())
 	{
-		qCritical() << "PathSecurity-Protocol is no valid URI " << pPathSecurityProtocol;
+		qCritical() << "PathSecurity-Protocol is no valid URI:" << pPathSecurityProtocol;
 	}
 
 	if (pPsk.isNull())
@@ -138,7 +138,6 @@ bool TcToken::valuesAreSchemaConform(const QString& pBinding,
 	{
 		qWarning() << "SessionIdentifier is null";
 	}
-
 
 	if (pServerAddress.isNull() || !isAnyUri(pServerAddress))
 	{
@@ -177,13 +176,13 @@ bool TcToken::isValid() const
 
 	if (mBinding != QLatin1String("urn:liberty:paos:2006-08"))
 	{
-		qCritical() << "Wrong binding: " << mBinding;
+		qCritical() << "Wrong binding:" << mBinding;
 		return false;
 	}
 
 	if (!mPathSecurityProtocol.isNull() && mPathSecurityProtocol != QLatin1String("urn:ietf:rfc:4279"))
 	{
-		qCritical() << "Wrong PathSecurity-Protocol: " << mPathSecurityProtocol;
+		qCritical() << "Wrong PathSecurity-Protocol:" << mPathSecurityProtocol;
 		return false;
 	}
 
@@ -196,7 +195,7 @@ bool TcToken::isValid() const
 	if (mRefreshAddress.scheme() != QLatin1String("https"))
 	{
 		const QString errorInvalidUrl = QStringLiteral("RefreshAddress no valid https url: %1").arg(mRefreshAddress.toString());
-		if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 		{
 			qCCritical(developermode) << errorInvalidUrl;
 		}
@@ -212,7 +211,6 @@ bool TcToken::isValid() const
 		qCritical() << "PSK no valid hexBinary:" << mPsk;
 		return false;
 	}
-
 
 	return true;
 }
@@ -264,10 +262,4 @@ const QByteArray& TcToken::getPsk() const
 const QString& TcToken::getBinding() const
 {
 	return mBinding;
-}
-
-
-void TcToken::clearPsk()
-{
-	mPsk.clear();
 }

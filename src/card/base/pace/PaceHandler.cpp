@@ -5,14 +5,12 @@
 #include "pace/PaceHandler.h"
 
 #include "asn1/KnownOIDs.h"
-#include "asn1/PACEInfo.h"
+#include "asn1/PaceInfo.h"
 #include "Commands.h"
-#include "FileRef.h"
 #include "pace/ec/EllipticCurveFactory.h"
 #include "pace/KeyAgreement.h"
 #include "PersoSimWorkaround.h"
 
-#include <exception>
 #include <QLoggingCategory>
 
 using namespace governikus;
@@ -44,7 +42,7 @@ QByteArray PaceHandler::getPaceProtocol() const
 }
 
 
-CardReturnCode PaceHandler::establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QString& pPassword)
+CardReturnCode PaceHandler::establishPaceChannel(PacePasswordId pPasswordId, const QString& pPassword)
 {
 	auto efCardAccess = mCardConnectionWorker->getReaderInfo().getCardInfo().getEfCardAccess();
 	if (!initialize(efCardAccess))
@@ -60,38 +58,54 @@ CardReturnCode PaceHandler::establishPaceChannel(PACE_PASSWORD_ID pPasswordId, c
 		case CardReturnCode::COMMAND_FAILED:
 			return CardReturnCode::COMMAND_FAILED;
 
+		case CardReturnCode::RETRY_ALLOWED:
+			return CardReturnCode::RETRY_ALLOWED;
+
 		default:
-			;
+		{}
 	}
 
 	KeyAgreementStatus keyAgreementStatus = mKeyAgreement->perform(pPassword);
-	if (keyAgreementStatus == KeyAgreementStatus::PROTOCOL_ERROR)
+	switch (keyAgreementStatus)
 	{
-		return CardReturnCode::PROTOCOL_ERROR;
-	}
-	else if (keyAgreementStatus == KeyAgreementStatus::FAILED)
-	{
-		switch (pPasswordId)
-		{
-			case PACE_PASSWORD_ID::PACE_MRZ:
-			// No separate error code (yet).
-			case PACE_PASSWORD_ID::PACE_CAN:
-				return CardReturnCode::INVALID_CAN;
+		case KeyAgreementStatus::RETRY_ALLOWED:
+			return CardReturnCode::RETRY_ALLOWED;
 
-			case PACE_PASSWORD_ID::PACE_PIN:
-				return CardReturnCode::INVALID_PIN;
+		case KeyAgreementStatus::PROTOCOL_ERROR:
+			return CardReturnCode::PROTOCOL_ERROR;
 
-			case PACE_PASSWORD_ID::PACE_PUK:
-				return CardReturnCode::INVALID_PUK;
-		}
+		case KeyAgreementStatus::COMMUNICATION_ERROR:
+			return CardReturnCode::COMMAND_FAILED;
+
+		case KeyAgreementStatus::FAILED:
+			switch (pPasswordId)
+			{
+				case PacePasswordId::PACE_MRZ:
+				// No separate error code (yet).
+				case PacePasswordId::PACE_CAN:
+					return CardReturnCode::INVALID_CAN;
+
+				case PacePasswordId::PACE_PIN:
+					return CardReturnCode::INVALID_PIN;
+
+				case PacePasswordId::PACE_PUK:
+					return CardReturnCode::INVALID_PUK;
+
+				case PacePasswordId::UNKNOWN:
+					return CardReturnCode::UNKNOWN;
+			}
+			return CardReturnCode::UNKNOWN;
+
+		case KeyAgreementStatus::SUCCESS:
+			mEncryptionKey = mKeyAgreement->getEncryptionKey();
+			mMacKey = mKeyAgreement->getMacKey();
+			mCarCurr = mKeyAgreement->getCarCurr();
+			mCarPrev = mKeyAgreement->getCarPrev();
+			mIdIcc = mKeyAgreement->getCompressedCardPublicKey();
+			qCDebug(card) << "Pace channel established";
+			return CardReturnCode::OK;
 	}
-	mEncryptionKey = mKeyAgreement->getEncryptionKey();
-	mMacKey = mKeyAgreement->getMacKey();
-	mCarCurr = mKeyAgreement->getCarCurr();
-	mCarPrev = mKeyAgreement->getCarPrev();
-	mIdIcc = mKeyAgreement->getCompressedCardPublicKey();
-	qCDebug(card) << "Pace channel established";
-	return CardReturnCode::OK;
+	Q_UNREACHABLE();
 }
 
 
@@ -102,7 +116,7 @@ bool PaceHandler::initialize(const QSharedPointer<const EFCardAccess>& pEfCardAc
 		return false;
 	}
 
-	const auto& infos = pEfCardAccess->getPACEInfos();
+	const auto& infos = pEfCardAccess->getPaceInfos();
 	for (const auto& paceInfo : infos)
 	{
 		if (isSupportedProtocol(paceInfo))
@@ -122,7 +136,7 @@ bool PaceHandler::initialize(const QSharedPointer<const EFCardAccess>& pEfCardAc
 }
 
 
-bool PaceHandler::isSupportedProtocol(const QSharedPointer<const PACEInfo>& pPaceInfo) const
+bool PaceHandler::isSupportedProtocol(const QSharedPointer<const PaceInfo>& pPaceInfo) const
 {
 	if (pPaceInfo->getVersion() != 2)
 	{
@@ -138,23 +152,23 @@ bool PaceHandler::isSupportedProtocol(const QSharedPointer<const PACEInfo>& pPac
 	{
 		if (pPaceInfo->isStandardizedDomainParameters())
 		{
-			qCDebug(card) << "Use ECDH with standardized domain parameters: " << pPaceInfo->getProtocol();
+			qCDebug(card) << "Use ECDH with standardized domain parameters:" << pPaceInfo->getProtocol();
 			return true;
 		}
 	}
 
-	qCWarning(card) << "Unsupported domain parameters: " << pPaceInfo->getProtocol();
+	qCWarning(card) << "Unsupported domain parameters:" << pPaceInfo->getProtocol();
 	return false;
 }
 
 
-CardReturnCode PaceHandler::transmitMSESetAT(PACE_PASSWORD_ID pPasswordId)
+CardReturnCode PaceHandler::transmitMSESetAT(PacePasswordId pPasswordId)
 {
 	CardReturnCode cardReturnCode = PersoSimWorkaround::sendingMseSetAt(mCardConnectionWorker);
 	if (cardReturnCode != CardReturnCode::OK)
 	{
-		qCCritical(card) << "Error on MSE:Set AT";
-		return CardReturnCode::COMMAND_FAILED;
+		qCCritical(card) << "Error on MSE:Set AT |" << cardReturnCode;
+		return cardReturnCode;
 	}
 
 	MSEBuilder mseBuilder(MSEBuilder::P1::PERFORM_SECURITY_OPERATION, MSEBuilder::P2::SET_AT);
@@ -168,15 +182,13 @@ CardReturnCode PaceHandler::transmitMSESetAT(PACE_PASSWORD_ID pPasswordId)
 
 	ResponseApdu response;
 	cardReturnCode = mCardConnectionWorker->transmit(mseBuilder.build(), response);
-
-	Q_ASSERT(response.getBuffer().length() == 2);
 	mStatusMseSetAt = response.getBuffer().left(2);
 
 	const StatusCode responseReturnCode = response.getReturnCode();
 	if (cardReturnCode != CardReturnCode::OK)
 	{
 		qCCritical(card) << "Error on MSE:Set AT";
-		return responseReturnCode == StatusCode::EMPTY ? CardReturnCode::COMMAND_FAILED : CardReturnCode::PROTOCOL_ERROR;
+		return responseReturnCode == StatusCode::EMPTY ? CardReturnCode::RETRY_ALLOWED : CardReturnCode::PROTOCOL_ERROR;
 	}
 	if (responseReturnCode != StatusCode::SUCCESS && responseReturnCode != StatusCode::PIN_RETRY_COUNT_2 && responseReturnCode != StatusCode::PIN_SUSPENDED)
 	{

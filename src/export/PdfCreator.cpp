@@ -28,10 +28,7 @@ PdfCreator::PdfCreator(const QString& pFilename, const QString& pTitle, const QS
 	mPdfWriter.setPageLayout(layout);
 	mPdfWriter.setCreator(QCoreApplication::applicationName());
 	mPdfWriter.setTitle(pTitle);
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
 	mPdfWriter.setPdfVersion(QPagedPaintDevice::PdfVersion_A1b);
-#endif
 
 	createHeader(pTitle, pHeadline);
 	createFooter();

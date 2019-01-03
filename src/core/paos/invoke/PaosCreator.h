@@ -8,7 +8,7 @@
 
 #include "paos/ResponseType.h"
 
-#include <QDomDocument>
+#include <QXmlStreamWriter>
 
 class test_PaosCreator;
 
@@ -31,19 +31,19 @@ class PaosCreator
 
 		Q_DISABLE_COPY(PaosCreator)
 
+		QByteArray mContent;
+		QString mRelatedMessageId;
+
+		void createEnvelopeElement();
+		void createHeaderElement();
+
 	protected:
-		QDomDocument mDoc;
+		QXmlStreamWriter mWriter;
 
-		virtual QDomElement getDocumentStructure() = 0;
-		QDomElement createTextElement(const QString& pName, const QByteArray& pContent);
-		QDomElement createTextElement(const QString& pName, const QString& pContent);
-		QDomElement createTextElement(Namespace pNamespace, const QString& pName, const QByteArray& pContent);
-		QDomElement createTextElement(Namespace pNamespace, const QString& pName, const QString& pContent);
-		QDomElement createBodyElement(const QDomElement& pBody);
-		QDomElement createHeaderElement(const QString& pRrelatesTo, const QString& pMessageID);
-		QDomElement createEnvelopeElement(const QDomElement& pBody, const QString& pRelatesTo, const QString& pMessageID);
+		void writeTextElement(const QString& pQualifiedName, const QByteArray& pText);
+		virtual void createBodyElement() = 0;
 
-		QDomElement createResultElement(const ResponseType& pResponse);
+		void createResultElement(const ResponseType& pResponse);
 
 		PaosCreator();
 		virtual ~PaosCreator();
@@ -57,9 +57,10 @@ class PaosCreator
 		 */
 		QByteArray marshall();
 
+		void setRelatedMessageId(const QString& pId);
 		static QString getNamespace(Namespace pPrefix);
 		static QString getNamespacePrefix(Namespace pPrefix, const QString& pSuffix = QString());
 		static QString getNamespaceType(Namespace pPrefix, const QString& pType);
 };
 
-} /* namespace governikus */
+} // namespace governikus

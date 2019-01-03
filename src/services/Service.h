@@ -5,6 +5,7 @@
 #pragma once
 
 #include "AppUpdater.h"
+#include "Env.h"
 
 #include <QTimer>
 
@@ -14,17 +15,18 @@ class Service
 	: public QObject
 {
 	Q_OBJECT
+	friend class Env;
 
 	private:
 		QTimer mTimer;
 		bool mUpdateScheduled;
 		bool mExplicitSuccessMessage;
-		AppUpdater mAppUpdater;
 		const int mOneDayInMs = 1000 * 60 * 60 * 24;
 
 	protected:
 		Service();
-		~Service() = default;
+		virtual ~Service() = default;
+		static Service& getInstance();
 
 	private Q_SLOTS:
 		void doConfigurationsUpdate();
@@ -33,7 +35,6 @@ class Service
 		void onAppUpdateFinished(bool pUpdateAvailable, const GlobalStatus& pError);
 
 	public:
-		static Service& getInstance();
 		void updateConfigurations();
 		void updateApp(bool pIgnoreNextVersionskip = false);
 		bool isUpdateScheduled();
@@ -45,4 +46,4 @@ class Service
 		void fireUpdateScheduled();
 };
 
-} /* namespace governikus */
+} // namespace governikus

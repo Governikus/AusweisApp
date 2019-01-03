@@ -19,9 +19,11 @@ InitializeFramework::InitializeFramework(const QByteArray& pXmlData)
 
 void InitializeFramework::parse()
 {
-	QStringList expectedElements;
-	expectedElements.push_back(QStringLiteral("RelatesTo"));
-	expectedElements.push_back(QStringLiteral("MessageID"));
+	const QStringList expectedElements({
+				QStringLiteral("RelatesTo"),
+				QStringLiteral("MessageID")
+			});
+
 	detectStartElements(expectedElements);
 }
 

@@ -43,4 +43,4 @@ class WebSocketChannel
 		void onPongTimeout();
 };
 
-} /* namespace governikus */
+} // namespace governikus

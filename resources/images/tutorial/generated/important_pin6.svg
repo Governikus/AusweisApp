@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="550px" height="400px" viewBox="0 0 550 400">
+  <g fill="#fb7a59" opacity="0.3">
+    <path d="M275 0 L 475 200 275 400 75 200Z"/>
+  </g>
+  <g fill="#fb7a59">
+    <path d="M480 115 L 520 155 480 195 440 155Z"/>
+  </g>
+  <image x="215" y="110" width="278px" height="250px" xlink:href=":/images/tutorial/pin-6@2x.png"/>
+</svg>

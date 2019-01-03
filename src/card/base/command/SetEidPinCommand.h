@@ -8,10 +8,10 @@
 
 #include "BaseCardCommand.h"
 
+class test_SetEidPinCommand;
+
 namespace governikus
 {
-
-class CardConnection;
 
 class SetEidPinCommand
 	: public BaseCardCommand
@@ -19,13 +19,15 @@ class SetEidPinCommand
 	Q_OBJECT
 
 	private:
+		friend class ::test_SetEidPinCommand;
+
 		QString mNewPin;
 		quint8 mTimeoutSeconds;
 		ResponseApdu mResponseApdu;
 
 	protected:
 		virtual void internalExecute() override;
-		virtual ~SetEidPinCommand() override;
+		virtual ~SetEidPinCommand() override = default;
 
 	public:
 		SetEidPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
@@ -34,4 +36,4 @@ class SetEidPinCommand
 		const ResponseApdu& getResponseApdu() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

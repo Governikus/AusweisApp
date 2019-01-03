@@ -4,6 +4,7 @@
 
 #include "PdfExporter.h"
 
+#include "asn1/AccessRoleAndRight.h"
 #include "AppSettings.h"
 #include "LanguageLoader.h"
 #include "PdfCreator.h"
@@ -24,7 +25,7 @@ QString getValueOrWhitespace(const QStringList& pValues, int i)
 }
 
 
-}
+} // namespace
 
 
 PdfExporter::PdfExporter(const QString& pFilename, bool pOpenFile, bool pFixFilename)
@@ -109,14 +110,15 @@ bool PdfExporter::exportHistory()
 
 	initTable(3, {180, 80}, {tr("Date"), tr("Details")});
 	const auto& dateTimeFormat = tr("dd.MM.yyyy hh:mm AP");
-	const auto& infos = AppSettings::getInstance().getHistorySettings().getHistoryInfos();
+	const auto& infos = Env::getSingleton<AppSettings>()->getHistorySettings().getHistoryInfos();
 	for (const auto& entry : infos)
 	{
 		toggleRowColor();
 		const QString& dateTimeEntry = locale.toString(entry.getDateTime(), dateTimeFormat);
 		addTableRow({dateTimeEntry, tr("Provider:"), entry.getSubjectName()});
 		addTableRow({QString(), tr("Purpose:"), entry.getPurpose()});
-		addTableRow({QString(), tr("Data:"), entry.getRequestedData()});
+		const auto& data = AccessRoleAndRightsUtil::joinFromTechnicalName(entry.getRequestedData());
+		addTableRow({QString(), tr("Data:"), data});
 	}
 	closeTable();
 

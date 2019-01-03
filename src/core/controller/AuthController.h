@@ -20,7 +20,7 @@ class AuthController
 
 	public:
 		AuthController(QSharedPointer<AuthContext> pContext);
-		virtual ~AuthController();
+		virtual ~AuthController() = default;
 };
 
-} /* namespace governikus */
+} // namespace governikus

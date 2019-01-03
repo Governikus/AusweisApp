@@ -9,12 +9,11 @@
 #include "ChainBuilder.h"
 #include "CVCertificate.h"
 #include "CVCertificateChain.h"
-#include "EstablishPACEChannel.h"
+#include "EstablishPaceChannelOutput.h"
 
 
 namespace governikus
 {
-
 
 class CVCertificateChainBuilder
 	: private ChainBuilder<QSharedPointer<const CVCertificate> >
@@ -51,7 +50,7 @@ class CVCertificateChainBuilder
 
 		/*!
 		 * Get a chain with root having Certification Authority Reference (CAR) equal to one of the
-		 * CARs in the passed parameter EstablishPACEChannelOutput. The chain root will not be a self
+		 * CARs in the passed parameter EstablishPaceChannelOutput. The chain root will not be a self
 		 * signed CVCA.
 		 * The chain is returned top down, i.e. the chain root is at position 0 in the list,
 		 * the end entity CVC (the terminal CVC) is the last element in the list.
@@ -60,7 +59,7 @@ class CVCertificateChainBuilder
 		 * occurred ( e.g. the last element in the list is no terminal CVC), an invalid chain is
 		 * returned (see CVCertificateChain::isValid()).
 		 */
-		CVCertificateChain getChainForCertificationAuthority(const EstablishPACEChannelOutput& pPaceOutput) const;
+		CVCertificateChain getChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const;
 };
 
-}
+} // namespace governikus

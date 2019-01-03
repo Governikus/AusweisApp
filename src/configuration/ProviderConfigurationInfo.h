@@ -19,7 +19,6 @@
 namespace governikus
 {
 
-
 class ProviderConfigurationInfo
 {
 	private:
@@ -144,4 +143,4 @@ class ProviderConfigurationInfo
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

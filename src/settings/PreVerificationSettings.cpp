@@ -12,7 +12,7 @@ SETTINGS_NAME(SETTINGS_GROUP_NAME_PREVERIFICATION, "preverification")
 SETTINGS_NAME(SETTINGS_NAME_ENABLED, "enabled")
 SETTINGS_NAME(SETTINGS_NAME_LINKCERTIFICATES, "linkcertificates")
 SETTINGS_NAME(SETTINGS_NAME_LINKCERTIFICATE, "linkcertificate")
-}
+} // namespace
 
 PreVerificationSettings::PreVerificationSettings()
 	: AbstractSettings()

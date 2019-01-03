@@ -4,9 +4,9 @@
 
 #include "BluetoothCard.h"
 
-#include "DestroyPACEChannel.h"
+#include "DestroyPaceChannel.h"
+#include "EstablishPaceChannel.h"
 #include "messages/BluetoothMessageCreator.h"
-#include "messages/BluetoothMessageDisconnectResponse.h"
 #include "messages/BluetoothMessageSetTransportProtocolResponse.h"
 #include "messages/BluetoothMessageTransferApduResponse.h"
 #include "PinModify.h"
@@ -100,7 +100,7 @@ CardReturnCode BluetoothCard::transmit(const CommandApdu& pCmd, ResponseApdu& pR
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
-	qCDebug(bluetooth) << "Transmit command APDU: " << pCmd.getBuffer().toHex();
+	qCDebug(bluetooth) << "Transmit command APDU:" << pCmd.getBuffer().toHex();
 	auto request = BluetoothMessageCreator::createTransferApduRequest(pCmd.getBuffer());
 	auto response = SynchronousBtCall(mDevice).send(request, BluetoothMsgId::TransferApduResponse, pTimeoutSeconds);
 	if (response.isNull())
@@ -112,22 +112,22 @@ CardReturnCode BluetoothCard::transmit(const CommandApdu& pCmd, ResponseApdu& pR
 	auto apduResponse = response.staticCast<const BluetoothMessageTransferApduResponse>();
 	if (apduResponse->getResultCode() != BluetoothResultCode::Ok)
 	{
-		qCCritical(bluetooth) << "TransferApduResponse failed : " << apduResponse->getResultCode();
+		qCCritical(bluetooth) << "TransferApduResponse failed:" << apduResponse->getResultCode();
 		return CardReturnCode::COMMAND_FAILED;
 	}
 	pRes.setBuffer(apduResponse->getResponseAPDU());
-	qCDebug(bluetooth) << "Transmit response APDU: " << pRes.getBuffer().toHex();
+	qCDebug(bluetooth) << "Transmit response APDU:" << pRes.getBuffer().toHex();
 	return CardReturnCode::OK;
 }
 
 
-CardReturnCode BluetoothCard::establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
+CardReturnCode BluetoothCard::establishPaceChannel(PacePasswordId pPasswordId,
 		const QByteArray& pChat,
 		const QByteArray& pCertificateDescription,
-		EstablishPACEChannelOutput& pChannelOutput,
+		EstablishPaceChannelOutput& pChannelOutput,
 		quint8 pTimeoutSeconds)
 {
-	EstablishPACEChannelBuilder builder;
+	EstablishPaceChannel builder;
 	builder.setPasswordId(pPasswordId);
 	builder.setChat(pChat);
 	builder.setCertificateDescription(pCertificateDescription);
@@ -147,7 +147,7 @@ CardReturnCode BluetoothCard::establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
 
 CardReturnCode BluetoothCard::destroyPaceChannel()
 {
-	DestroyPACEChannelBuilder builder;
+	DestroyPaceChannelBuilder builder;
 	ResponseApdu response;
 	return transmit(builder.createCommandDataCcid(), response);
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:paos="urn:liberty:paos:2006-08" xmlns:wsa="http://www.w3.org/2005/03/addressing" xmlns:dss="urn:oasis:names:tc:dss:1.0:core:schema" xmlns:ecard="http://www.bsi.bund.de/ecard/api/1.1" xmlns:iso="urn:iso:std:iso-iec:24727:tech:schema">
+    <soap:Header>
+        <paos:PAOS soap:mustUnderstand="1" soap:actor="http://schemas.xmlsoap.org/soap/actor/next">
+            <paos:Version>urn:liberty:paos:2006-08</paos:Version>
+            <paos:EndpointReference>
+                <paos:Address>http://www.projectliberty.org/2006/01/role/paos</paos:Address>
+                <paos:MetaData>
+                    <paos:ServiceType>http://www.bsi.bund.de/ecard/api/1.1/PAOS/GetNextCommand</paos:ServiceType>
+                </paos:MetaData>
+            </paos:EndpointReference>
+        </paos:PAOS>
+        <wsa:ReplyTo>
+            <wsa:Address>http://www.projectliberty.org/2006/02/role/paos</wsa:Address>
+        </wsa:ReplyTo>
+        <wsa:RelatesTo>urn:uuid:dummy</wsa:RelatesTo>
+        <wsa:MessageID>STRIP ME</wsa:MessageID>
+    </soap:Header>
+    <soap:Body>
+        <StartPAOS xmlns="urn:iso:std:iso-iec:24727:tech:schema">
+            <SessionIdentifier>abcd</SessionIdentifier>
+            <ConnectionHandle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ConnectionHandleType">
+                <CardApplication>e80704007f00070302</CardApplication>
+                <SlotHandle>00</SlotHandle>
+            </ConnectionHandle>
+            <UserAgent>
+                <Name>Test_core_paos_invoke_StartPaos</Name>
+                <VersionMajor>123</VersionMajor>
+                <VersionMinor>456</VersionMinor>
+                <VersionSubminor>789</VersionSubminor>
+            </UserAgent>
+            <SupportedAPIVersions>
+                <Major>1</Major>
+                <Minor>1</Minor>
+                <Subminor>5</Subminor>
+            </SupportedAPIVersions>
+        </StartPAOS>
+    </soap:Body>
+</soap:Envelope>

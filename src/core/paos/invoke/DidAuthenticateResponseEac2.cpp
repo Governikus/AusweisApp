@@ -18,49 +18,43 @@ DIDAuthenticateResponseEAC2::DIDAuthenticateResponseEAC2()
 }
 
 
-QDomElement DIDAuthenticateResponseEAC2::createDIDAuthenticateResponseEAC2Element()
+void DIDAuthenticateResponseEAC2::createBodyElement()
 {
-	QDomElement element = mDoc.createElement(QStringLiteral("DIDAuthenticateResponse"));
-	element.setAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
-	element.setAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
+	mWriter.writeStartElement(QStringLiteral("DIDAuthenticateResponse"));
+	mWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
+	mWriter.writeAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
 
-	element.appendChild(createResultElement(*this));
-	element.appendChild(createAuthenticationProtocolDataElement());
+	createResultElement(*this);
+	createAuthenticationProtocolDataElement();
 
-	return element;
+	mWriter.writeEndElement(); // DIDAuthenticateResponse
 }
 
 
-QDomElement DIDAuthenticateResponseEAC2::createAuthenticationProtocolDataElement()
+void DIDAuthenticateResponseEAC2::createAuthenticationProtocolDataElement()
 {
-	QDomElement element = mDoc.createElement(QStringLiteral("AuthenticationProtocolData"));
-
-	element.setAttribute(getNamespacePrefix(Namespace::XSI, QStringLiteral("type")), getNamespaceType(Namespace::TECHSCHEMA, QStringLiteral("EAC2OutputType")));
-	element.setAttribute(QStringLiteral("Protocol"), QStringLiteral("urn:oid:1.3.162.15480.3.0.14.2"));
+	mWriter.writeStartElement(QStringLiteral("AuthenticationProtocolData"));
+	mWriter.writeAttribute(getNamespacePrefix(Namespace::XSI, QStringLiteral("type")), getNamespaceType(Namespace::TECHSCHEMA, QStringLiteral("EAC2OutputType")));
+	mWriter.writeAttribute(QStringLiteral("Protocol"), QStringLiteral("urn:oid:1.3.162.15480.3.0.14.2"));
 
 	if (!mEfCardSecurity.isNull())
 	{
-		element.appendChild(createTextElement(QStringLiteral("EFCardSecurity"), mEfCardSecurity));
+		writeTextElement(QStringLiteral("EFCardSecurity"), mEfCardSecurity);
 	}
 	if (!mAuthenticationToken.isNull())
 	{
-		element.appendChild(createTextElement(QStringLiteral("AuthenticationToken"), mAuthenticationToken));
+		writeTextElement(QStringLiteral("AuthenticationToken"), mAuthenticationToken);
 	}
 	if (!mNonce.isNull())
 	{
-		element.appendChild(createTextElement(QStringLiteral("Nonce"), mNonce));
+		writeTextElement(QStringLiteral("Nonce"), mNonce);
 	}
 	if (!mChallenge.isNull())
 	{
-		element.appendChild(createTextElement(QStringLiteral("Challenge"), mChallenge));
+		writeTextElement(QStringLiteral("Challenge"), mChallenge);
 	}
-	return element;
-}
 
-
-QDomElement DIDAuthenticateResponseEAC2::getDocumentStructure()
-{
-	return createEnvelopeElement(createDIDAuthenticateResponseEAC2Element(), getRelatesTo(), getMessageId());
+	mWriter.writeEndElement(); // AuthenticationProtocolData
 }
 
 

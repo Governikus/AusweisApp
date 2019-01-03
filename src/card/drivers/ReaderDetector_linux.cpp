@@ -39,7 +39,28 @@ class DeviceListener
 				FD_ZERO(&fds);
 				FD_SET(mFileDescriptor, &fds);
 
-				int ret = select(mFileDescriptor + 1, &fds, nullptr, nullptr, nullptr);
+				// On Linux, select() modifies timeout to reflect the amount of time not
+				// slept; most other implementations do not do this.  (POSIX.1 permits
+				// either behavior.)
+				struct timeval timeout;
+#ifndef QT_NO_DEBUG
+				if (QCoreApplication::applicationName().startsWith(QLatin1String("Test")))
+				{
+					timeout = {
+						0, /*long tv_sec*/
+						100 /*long tv_usec*/
+					};
+				}
+				else
+#endif
+				{
+					timeout = {
+						1, /*long tv_sec*/
+						0 /*long tv_usec*/
+					};
+				}
+
+				int ret = select(mFileDescriptor + 1, &fds, nullptr, nullptr, &timeout);
 
 				// Check if our file descriptor has received data
 				if (ret > 0 && FD_ISSET(mFileDescriptor, &fds))
@@ -50,6 +71,12 @@ class DeviceListener
 					qCDebug(card_drivers) << "System information: device changed";
 
 					Q_EMIT fireDeviceChangeDetected();
+				}
+
+				if (isInterruptionRequested())
+				{
+					qCDebug(card_drivers) << "Thread interruption requested.";
+					break;
 				}
 			}
 		}
@@ -98,8 +125,14 @@ bool ReaderDetector::initNativeEvents()
 bool ReaderDetector::terminateNativeEvents()
 {
 	disconnect(mDeviceListener, &DeviceListener::fireDeviceChangeDetected, this, &ReaderDetector::fireReaderChangeDetected);
-	mDeviceListener->terminate();
-	mDeviceListener->wait();
+	mDeviceListener->requestInterruption();
+	const int waitForMilliseconds = 3 * 1000;
+	mDeviceListener->wait(waitForMilliseconds);
+	if (mDeviceListener->isRunning())
+	{
+		qCDebug(card_drivers) << "Terminating device listener thread.";
+		mDeviceListener->terminate();
+	}
 	delete mDeviceListener;
 
 	return true;

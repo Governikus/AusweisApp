@@ -13,7 +13,6 @@ MockDownloader::MockDownloader(GlobalStatus::Code pErrorCode)
 	, mTime(QTime(11, 57, 21))
 	, mTestData()
 {
-
 }
 
 

@@ -4,7 +4,7 @@ import static common.Constants.strip
 def j = new Build
 	(
 		name: 'iOS_IPA',
-		libraries: 'iOS',
+		libraries: ['iOS'],
 		label: 'iOS',
 		artifacts: 'build/*.ipa'
 	).generate(this)

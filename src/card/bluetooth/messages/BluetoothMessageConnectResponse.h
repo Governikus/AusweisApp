@@ -26,4 +26,4 @@ class BluetoothMessageConnectResponse
 		unsigned int getMaxMsgSize() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

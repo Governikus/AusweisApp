@@ -20,14 +20,17 @@ GAResponseApdu::GAResponseApdu()
 }
 
 
-GAResponseApdu::~GAResponseApdu()
-{
-}
-
-
 void GAResponseApdu::setBuffer(const QByteArray& pBuffer)
 {
 	ResponseApdu::setBuffer(pBuffer);
+
+	StatusCode statusCode = getReturnCode();
+	if (statusCode != StatusCode::SUCCESS)
+	{
+		qCCritical(card) << "Avoid parsing of the general authentication data because of StatusCode" << statusCode;
+		return;
+	}
+
 	parseDynamicAuthenticationData(getData());
 }
 
@@ -67,11 +70,6 @@ void GAEncryptedNonceResponse::parseDynamicAuthenticationData(const QByteArray& 
 GAEncryptedNonceResponse::GAEncryptedNonceResponse()
 	: GAResponseApdu()
 	, mEncryptedNonce()
-{
-}
-
-
-GAEncryptedNonceResponse::~GAEncryptedNonceResponse()
 {
 }
 
@@ -121,11 +119,6 @@ GAMapNonceResponse::GAMapNonceResponse()
 }
 
 
-GAMapNonceResponse::~GAMapNonceResponse()
-{
-}
-
-
 const QByteArray& GAMapNonceResponse::getMappingData()
 {
 	return mMappingData;
@@ -167,11 +160,6 @@ void GAPerformKeyAgreementResponse::parseDynamicAuthenticationData(const QByteAr
 GAPerformKeyAgreementResponse::GAPerformKeyAgreementResponse()
 	: GAResponseApdu()
 	, mEphemeralPublicKey()
-{
-}
-
-
-GAPerformKeyAgreementResponse::~GAPerformKeyAgreementResponse()
 {
 }
 
@@ -226,11 +214,6 @@ GAMutualAuthenticationResponse::GAMutualAuthenticationResponse()
 	, mAuthenticationToken()
 	, mCarCurr()
 	, mCarPrev()
-{
-}
-
-
-GAMutualAuthenticationResponse::~GAMutualAuthenticationResponse()
 {
 }
 
@@ -291,11 +274,6 @@ GAChipAuthenticationResponse::GAChipAuthenticationResponse()
 	: GAResponseApdu()
 	, mNonce()
 	, mAuthenticationToken()
-{
-}
-
-
-GAChipAuthenticationResponse::~GAChipAuthenticationResponse()
 {
 }
 

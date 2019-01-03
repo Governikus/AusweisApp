@@ -9,7 +9,7 @@ using namespace governikus;
 
 ResponseType::ResponseType(PaosType pType)
 	: PaosMessage(pType)
-	, mResult(Result::createOk())
+	, mResult(ECardApiResult::createOk())
 {
 }
 
@@ -19,13 +19,13 @@ ResponseType::~ResponseType()
 }
 
 
-const Result& ResponseType::getResult() const
+const ECardApiResult& ResponseType::getResult() const
 {
 	return mResult;
 }
 
 
-void ResponseType::setResult(const Result& result)
+void ResponseType::setResult(const ECardApiResult& result)
 {
 	mResult = result;
 }

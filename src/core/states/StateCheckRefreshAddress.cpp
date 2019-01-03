@@ -6,13 +6,13 @@
 
 #include "AppSettings.h"
 #include "CertificateChecker.h"
-#include "Env.h"
-#include "HttpStatusCode.h"
+#include "LogHandler.h"
 #include "NetworkManager.h"
 #include "StateRedirectBrowser.h"
 #include "TlsChecker.h"
 #include "UrlUtil.h"
 
+#include <http_parser.h>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QSslCipher>
@@ -36,11 +36,20 @@ StateCheckRefreshAddress::StateCheckRefreshAddress(const QSharedPointer<Workflow
 }
 
 
+StateCheckRefreshAddress::~StateCheckRefreshAddress()
+{
+	if (!mReply.isNull())
+	{
+		mReply->deleteLater();
+	}
+}
+
+
 bool StateCheckRefreshAddress::isMatchingSameOriginPolicyInDevMode() const
 {
 	// Checking for same origin policy needs a special treatment in developer mode because
 	// a tcTokenURL with the http scheme is acceptable.
-	if (!AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+	if (!Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 	{
 		return false;
 	}
@@ -98,7 +107,7 @@ void StateCheckRefreshAddress::run()
 	}
 	if (mUrl.scheme() != QLatin1String("https"))
 	{
-		if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 		{
 			qCDebug(developermode) << refreshAddrError;
 		}
@@ -110,18 +119,18 @@ void StateCheckRefreshAddress::run()
 		}
 	}
 
-	qDebug() << "Current URL: " << mUrl.toString();
 	mSubjectUrl = determineSubjectUrl();
-	qDebug() << "SubjectUrl: " << mSubjectUrl.toString();
+	qDebug() << "Subject URL from AT CVC (eService certificate) description:" << mSubjectUrl.toString();
+	qDebug() << "Current redirect URL:" << mUrl.toString();
 
-	if (UrlUtil::isMatchingSameOriginPolicy(mUrl, mSubjectUrl) || isMatchingSameOriginPolicyInDevMode())
+	if (UrlUtil::isMatchingSameOriginPolicy(mSubjectUrl, mUrl) || isMatchingSameOriginPolicyInDevMode())
 	{
-		qDebug() << "SOP-Check succeeded, abort process";
+		qDebug() << "SOP-Check succeeded, abort process.";
 		fetchServerCertificate();
 	}
 	else
 	{
-		qDebug() << "SOP-Check failed, start process";
+		qDebug() << "SOP-Check failed, start process.";
 		sendGetRequest();
 	}
 }
@@ -140,7 +149,7 @@ QUrl StateCheckRefreshAddress::determineSubjectUrl()
 		}
 	}
 
-	if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+	if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 	{
 		// Perform SOP-Check against TcToken-URL instead of subjectURL
 		subjectUrl = getContext()->getTcTokenUrl();
@@ -163,7 +172,7 @@ void StateCheckRefreshAddress::sendGetRequest()
 		mReply->deleteLater();
 	}
 
-	qDebug() << "Send GET request to URL: " << mUrl.toString();
+	qDebug() << "Send GET request to URL:" << mUrl.toString();
 	QNetworkRequest request(mUrl);
 	mReply = Env::getSingleton<NetworkManager>()->get(request);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);
@@ -192,7 +201,7 @@ void StateCheckRefreshAddress::reportCommunicationError(const GlobalStatus& pSta
 void StateCheckRefreshAddress::onSslHandshakeDone()
 {
 	const auto& cfg = mReply->sslConfiguration();
-	TlsChecker::logSslConfig(cfg, qInfo(network));
+	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
 
 	if (!checkSslConnectionAndSaveCertificate(cfg))
 	{
@@ -214,17 +223,18 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 				context->addCertificateData(pUrl, pCertificate);
 			};
 
+	const auto& issuerName = TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate());
 	switch (CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), mUrl, context->getDidAuthenticateEac1(), context->getDvCvc(), saveCertificateFunc))
 	{
 		case CertificateChecker::CertificateStatus::Good:
 			break;
 
 		case CertificateChecker::CertificateStatus::Unsupported_Algorithm_Or_Length:
-			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length));
+			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length, issuerName));
 			return false;
 
 		case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
-			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description));
+			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description, issuerName));
 			return false;
 	}
 
@@ -240,17 +250,11 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 
 void StateCheckRefreshAddress::onNetworkReply()
 {
-	int statusCode = mReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-	QUrl redirectUrl = mReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-	qDebug() << "Status Code: " << statusCode << " | redirect URL: " << redirectUrl;
-	for (const auto& header : mReply->rawHeaderPairs())
-	{
-		qCDebug(network).nospace() << "Header | " << header.first << ": " << header.second;
-	}
+	const auto statusCode = NetworkManager::getLoggedStatusCode(mReply, spawnMessageLogger(network));
 
 	if (mReply->error() != QNetworkReply::NoError)
 	{
-		qCritical() << "An error occured: " << mReply->errorString();
+		qCritical() << "An error occured:" << mReply->errorString();
 		switch (NetworkManager::toNetworkError(mReply.data()))
 		{
 			case NetworkManager::NetworkError::ServiceUnavailable:
@@ -276,13 +280,14 @@ void StateCheckRefreshAddress::onNetworkReply()
 		return;
 	}
 
-	if (statusCode != HttpStatusCode::FOUND && statusCode != HttpStatusCode::SEE_OTHER && statusCode != HttpStatusCode::TEMPORARY_REDIRECT)
+	if (statusCode != HTTP_STATUS_FOUND && statusCode != HTTP_STATUS_SEE_OTHER && statusCode != HTTP_STATUS_TEMPORARY_REDIRECT)
 	{
-		qCritical() << "Got unexpected status code: " << statusCode;
+		qCritical() << "Got unexpected status code:" << statusCode;
 		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Expected_Redirect, QString::number(statusCode)));
 		return;
 	}
 
+	const QUrl& redirectUrl = mReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
 	if (redirectUrl.isEmpty())
 	{
 		qCritical() << "Got empty redirect URL";
@@ -301,7 +306,7 @@ void StateCheckRefreshAddress::onNetworkReply()
 	{
 		auto httpsError = QStringLiteral("Redirect URL is not https: %1").arg(redirectUrl.toString());
 
-		if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 		{
 			qCCritical(developermode) << httpsError;
 		}
@@ -330,7 +335,7 @@ void StateCheckRefreshAddress::onNetworkReply()
 
 void StateCheckRefreshAddress::fetchServerCertificate()
 {
-	if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode() && mUrl.scheme() == QLatin1String("http"))
+	if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode() && mUrl.scheme() == QLatin1String("http"))
 	{
 		qCWarning(developermode) << "Refresh URL is http only. Certificate check skipped.";
 		doneSuccess();
@@ -370,8 +375,11 @@ void StateCheckRefreshAddress::fetchServerCertificate()
 void StateCheckRefreshAddress::onSslHandshakeDoneFetchingServerCertificate()
 {
 	const auto& cfg = mReply->sslConfiguration();
-	TlsChecker::logSslConfig(cfg, qInfo(network));
+	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
 
+	// just establish the TLS connection but do not perform HTTP request
+	mCertificateFetched = true;
+	mReply->abort();
 	if (checkSslConnectionAndSaveCertificate(cfg))
 	{
 		doneSuccess();
@@ -380,16 +388,13 @@ void StateCheckRefreshAddress::onSslHandshakeDoneFetchingServerCertificate()
 	{
 		// checkSslConnectionAndSaveCertificate already set the error
 	}
-	// just establish the TLS connection but do not perform HTTP request
-	mCertificateFetched = true;
-	mReply->abort();
 }
 
 
 void StateCheckRefreshAddress::doneSuccess()
 {
 	getContext()->setRefreshUrl(mUrl);
-	qDebug() << "Determined RefreshUrl: " << mUrl;
+	qDebug() << "Determined RefreshUrl:" << mUrl;
 	Q_EMIT fireContinue();
 }
 
@@ -400,6 +405,6 @@ void StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate(QNetworkR
 	{
 		return;
 	}
-	qCritical() << "An error occured fetching the server certificate: " << mReply->errorString();
+	qCritical() << "An error occured fetching the server certificate:" << mReply->errorString();
 	reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url));
 }

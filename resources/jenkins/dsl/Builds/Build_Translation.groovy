@@ -4,7 +4,7 @@ import static common.Constants.strip
 def j = new Build
 	(
 		name: 'Translation',
-		libraries: 'Linux',
+		libraries: ['Linux'],
 		label: 'Linux',
 		artifacts: 'source/resources/translations/*.ts'
 	).generate(this)

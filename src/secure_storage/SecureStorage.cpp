@@ -8,8 +8,8 @@
 #include "FileDestination.h"
 #include "SingletonHelper.h"
 
-
 #include <QDebug>
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonDocument>
@@ -49,10 +49,13 @@ CONFIG_NAME(CONFIGURATION_NAME_SELF_AUTHENTICATION_TEST_URL, "testUrl")
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_UPDATE_SERVER, "updateServer")
 CONFIG_NAME(CONFIGURATION_NAME_UPDATE_SERVER_BASE_URL, "baseUrl")
 
+CONFIG_NAME(CONFIGURATION_GROUP_NAME_WHITELIST_SERVER, "whitelistServer")
+CONFIG_NAME(CONFIGURATION_NAME_WHITELIST_SERVER_BASE_URL, "baseUrl")
+
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_UPDATES, "updates")
 CONFIG_NAME(CONFIGURATION_NAME_APPCAST_UPDATE_URL, "release")
 CONFIG_NAME(CONFIGURATION_NAME_APPCAST_BETA_UPDATE_URL, "beta")
-}
+} // namespace
 
 defineSingleton(SecureStorage)
 
@@ -65,6 +68,7 @@ SecureStorage::SecureStorage()
 	, mSelfAuthenticationUrl()
 	, mSelfAuthenticationTestUrl()
 	, mUpdateServerBaseUrl()
+	, mWhitelistServerBaseUrl()
 	, mAppcastUpdateUrl()
 	, mAppcastBetaUpdateUrl()
 	, mTlsConfig()
@@ -91,7 +95,7 @@ SecureStorage& SecureStorage::getInstance()
 
 void SecureStorage::load()
 {
-	const auto& path = FileDestination::getPath("config.json");
+	const auto& path = FileDestination::getPath(QStringLiteral("config.json"));
 
 	if (!QFile::exists(path))
 	{
@@ -117,7 +121,7 @@ void SecureStorage::load()
 	configFile.close();
 	if (parseError.error != QJsonParseError::NoError)
 	{
-		qCCritical(securestorage) << "Parse error while reading SecureStorage on position " << parseError.offset << ": " << parseError.errorString();
+		qCCritical(securestorage) << "Parse error while reading SecureStorage on position" << parseError.offset << ':' << parseError.errorString();
 		return;
 	}
 	QJsonObject config = document.object();
@@ -127,6 +131,7 @@ void SecureStorage::load()
 
 	mCvcasTest.clear();
 	readByteArrayList(mCvcasTest, config, CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE_TEST());
+	mCvcasTest = loadTestCvcsFromAppDir() + mCvcasTest;
 
 	QByteArrayList certificates;
 	readByteArrayList(certificates, config, CONFIGURATION_GROUP_NAME_UPDATE_CERTIFICATES());
@@ -168,17 +173,55 @@ void SecureStorage::load()
 	mMinStaticKeySizes = readKeySizes(config, CONFIGURATION_GROUP_NAME_MIN_STATIC_KEY_SIZES());
 	mMinEphemeralKeySizes = readKeySizes(config, CONFIGURATION_GROUP_NAME_MIN_EPHEMERAL_KEY_SIZES());
 
-
 	mSelfAuthenticationUrl = readGroup(config, CONFIGURATION_GROUP_NAME_SELF_AUTHENTICATION(), CONFIGURATION_NAME_SELF_AUTHENTICATION_URL());
 	mSelfAuthenticationTestUrl = readGroup(config, CONFIGURATION_GROUP_NAME_SELF_AUTHENTICATION(), CONFIGURATION_NAME_SELF_AUTHENTICATION_TEST_URL());
 
 	mUpdateServerBaseUrl = readGroup(config, CONFIGURATION_GROUP_NAME_UPDATE_SERVER(), CONFIGURATION_NAME_UPDATE_SERVER_BASE_URL());
+	mWhitelistServerBaseUrl = readGroup(config, CONFIGURATION_GROUP_NAME_WHITELIST_SERVER(), CONFIGURATION_NAME_WHITELIST_SERVER_BASE_URL());
 
 	mAppcastUpdateUrl = readGroup(config, CONFIGURATION_GROUP_NAME_UPDATES(), CONFIGURATION_NAME_APPCAST_UPDATE_URL());
 	mAppcastBetaUpdateUrl = readGroup(config, CONFIGURATION_GROUP_NAME_UPDATES(), CONFIGURATION_NAME_APPCAST_BETA_UPDATE_URL());
 
 	mLoadedTime = lastModified;
 	qCInfo(securestorage) << "SecureStorage successfully loaded";
+}
+
+
+QByteArrayList SecureStorage::loadTestCvcsFromAppDir()
+{
+	QByteArrayList testCvcs;
+	const QDir appDir(QCoreApplication::applicationDirPath());
+	const QStringList& dirEntries = appDir.entryList({QStringLiteral("*.cvcert.hex")}, QDir::Files);
+	for (QString cvcFilePath : dirEntries)
+	{
+		cvcFilePath = appDir.absolutePath() + QDir::separator() + cvcFilePath;
+		const QByteArray& hex = loadTestCvc(cvcFilePath);
+		if (hex.isEmpty())
+		{
+			qWarning() << "Can not load CVC from" << cvcFilePath;
+			continue;
+		}
+
+		qDebug() << "Adding CVC from" << cvcFilePath << ':' << hex;
+		testCvcs += hex;
+	}
+	return testCvcs;
+}
+
+
+QByteArray SecureStorage::loadTestCvc(const QString& pPath)
+{
+	QFile cvcFile(pPath);
+	const int TEN_MEGA_BYTE = 10 * 1024 * 1024;
+	if (cvcFile.size() > TEN_MEGA_BYTE)
+	{
+		return QByteArray();
+	}
+	if (!cvcFile.open(QFile::ReadOnly | QFile::Text))
+	{
+		return QByteArray();
+	}
+	return cvcFile.readAll();
 }
 
 
@@ -203,6 +246,12 @@ const QUrl& SecureStorage::getSelfAuthenticationUrl(bool pTest) const
 const QUrl& SecureStorage::getUpdateServerBaseUrl() const
 {
 	return mUpdateServerBaseUrl;
+}
+
+
+const QUrl& SecureStorage::getWhitelistServerBaseUrl() const
+{
+	return mWhitelistServerBaseUrl;
 }
 
 

@@ -17,15 +17,14 @@ void StateStartPaosResponse::run()
 	const QSharedPointer<StartPaosResponse>& startPaosResponse = getContext()->getStartPaosResponse();
 	Q_ASSERT(startPaosResponse);
 
-	const Result& result = startPaosResponse->getResult();
+	const ECardApiResult& result = startPaosResponse->getResult();
 	if (result.isOk())
 	{
 		Q_EMIT fireContinue();
 		return;
 	}
 
-	// we override our result with the one sent from server
 	qDebug() << "Processing server result:" << result.getMajorString() << result.getMinorString() << result.getMessage();
-	getContext()->setStatus(result.toStatus(), false);
+	updateStartPaosResult(result);
 	Q_EMIT fireAbort();
 }

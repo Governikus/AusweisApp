@@ -78,4 +78,4 @@ defineTypedEnumType(BluetoothTransportProtocol, char, T0 = 0x00, T1 = 0x01)
 
 defineEnumType(BluetoothCardReaderStatus, Unknown = 0x00, CardInserted = 0x78, CardRemoved = 0x38)
 
-}
+} // namespace governikus

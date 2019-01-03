@@ -8,22 +8,25 @@
 
 #include "BaseCardCommand.h"
 
+class test_DestroyPaceChannelCommand;
+
 namespace governikus
 {
-
-class CardConnection;
 
 class DestroyPaceChannelCommand
 	: public BaseCardCommand
 {
 	Q_OBJECT
 
+	private:
+		friend class ::test_DestroyPaceChannelCommand;
+
 	protected:
 		virtual void internalExecute() override;
-		virtual ~DestroyPaceChannelCommand() override;
+		virtual ~DestroyPaceChannelCommand() override = default;
 
 	public:
 		DestroyPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 };
 
-} /* namespace governikus */
+} // namespace governikus

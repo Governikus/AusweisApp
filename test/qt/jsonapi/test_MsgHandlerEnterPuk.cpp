@@ -6,12 +6,15 @@
 
 #include "messages/MsgHandlerEnterPuk.h"
 
+#include "MsgHandlerEnterPassword.h"
+
 #include "MessageDispatcher.h"
-#include "MockReaderManagerPlugIn.h"
 #include "ReaderManager.h"
 
+#include "MockReaderManagerPlugIn.h"
+
 #include <QtPlugin>
-#include <QTest>
+#include <QtTest>
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
@@ -22,72 +25,73 @@ class test_MsgHandlerEnterPuk
 {
 	Q_OBJECT
 
-	static void setValidState(MessageDispatcher& pDispatcher, const QString& pState = QStringLiteral("StateEstablishPacePuk"))
+	static void setValidPukState(MessageDispatcher& pDispatcher,
+			bool pSelectReader = true,
+			bool pBasicReader = true,
+			const PacePasswordId pPasswordID = PacePasswordId::PACE_PUK)
 	{
-		QSharedPointer<WorkflowContext> context(new WorkflowContext());
-		pDispatcher.init(context);
-
-		QByteArray expected;
-		if (pState == QLatin1String("StateEstablishPacePuk"))
-		{
-			expected = "{\"msg\":\"ENTER_PUK\"}";
-		}
-
-		QCOMPARE(pDispatcher.processStateChange(pState), expected);
+		setValidState(pDispatcher, pSelectReader, pBasicReader, pPasswordID);
 	}
 
 
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			ReaderManager::getInstance().init();
-			ReaderManager::getInstance().getPlugInInfos(); // just to wait until initialization finished
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			readerManager->init();
+			readerManager->getPlugInInfos(); // just to wait until initialization finished
 		}
 
 
 		void cleanupTestCase()
 		{
-			ReaderManager::getInstance().shutdown();
+			Env::getSingleton<ReaderManager>()->shutdown();
+		}
+
+
+		void cleanup()
+		{
+			MockReaderManagerPlugIn::getInstance().removeAllReader();
 		}
 
 
 		void stateMsg()
 		{
 			MessageDispatcher dispatcher;
-			setValidState(dispatcher);
+			setValidPukState(dispatcher);
 		}
 
 
 		void undefined()
 		{
 			MessageDispatcher dispatcher;
-			setValidState(dispatcher);
+			setValidPukState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_PUK\"}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Value cannot be undefined\",\"msg\":\"ENTER_PUK\"}"));
+			const QByteArray msg(R"({"cmd": "SET_PUK"})");
+			QCOMPARE(dispatcher.processCommand(msg), addReaderData(R"({"error":"Value cannot be undefined","msg":"ENTER_PUK"})"));
 		}
 
 
 		void invalid()
 		{
 			MessageDispatcher dispatcher;
-			setValidState(dispatcher);
+			setValidPukState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_PUK\", \"value\": 12345667890}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Invalid value\",\"msg\":\"ENTER_PUK\"}"));
+			const QByteArray msg(R"({"cmd": "SET_PUK", "value": 12345667890})");
+			QCOMPARE(dispatcher.processCommand(msg), addReaderData(R"({"error":"Invalid value","msg":"ENTER_PUK"})"));
 		}
 
 
 		void badInput()
 		{
 			MessageDispatcher dispatcher;
-			setValidState(dispatcher);
+			setValidPukState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_PUK\", \"value\": \"123456\"}");
-			QByteArray expected("{\"error\":\"You must provide 10 digits\",\"msg\":\"ENTER_PUK\"}");
+			QByteArray msg(R"({"cmd": "SET_PUK", "value": "123456"})");
+			const QByteArray expected(addReaderData(R"({"error":"You must provide 10 digits","msg":"ENTER_PUK"})"));
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_PUK\", \"value\": \"12345\"}";
+			msg = (R"({"cmd": "SET_PUK", "value": "12345"})");
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 		}
 
@@ -95,12 +99,12 @@ class test_MsgHandlerEnterPuk
 		void badState()
 		{
 			MessageDispatcher dispatcher;
-			setValidState(dispatcher, QStringLiteral("invalid"));
+			setValidPukState(dispatcher, true, true, PacePasswordId::UNKNOWN);
 
-			QByteArray msg("{\"cmd\": \"SET_PUK\", \"value\": \"12345\"}");
+			QByteArray msg(R"({"cmd": "SET_PUK", "value": "123456789"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"SET_PUK\",\"msg\":\"BAD_STATE\"}"));
 
-			msg = "{\"cmd\": \"SET_PUK\", \"value\": \"123456\"}";
+			msg = (R"({"cmd": "SET_PUK", "value": "1234567890"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"SET_PUK\",\"msg\":\"BAD_STATE\"}"));
 		}
 
@@ -108,32 +112,28 @@ class test_MsgHandlerEnterPuk
 		void noDirectResponseIfPukLooksValid()
 		{
 			MessageDispatcher dispatcher;
-			setValidState(dispatcher);
+			setValidPukState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_PUK\", \"value\": \"1234567890\"}");
+			const QByteArray msg(R"({"cmd": "SET_PUK", "value": "1234567890"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
 		}
 
 
-		void readerInfo()
+		void pinPadReader()
 		{
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader CARD");
-			reader->setCard(MockCardConfig());
-
-			QSharedPointer<WorkflowContext> context(new WorkflowContext());
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			setValidPukState(dispatcher, true, false);
 
-			context->setReaderName("MockReader");
-			QCOMPARE(dispatcher.processStateChange("StateEstablishPacePuk"), QByteArray("{\"msg\":\"ENTER_PUK\"}"));
-			QByteArray msg = "{\"cmd\": \"SET_PUK\", \"value\": \"654321\"}";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"You must provide 10 digits\",\"msg\":\"ENTER_PUK\"}"));
+			QByteArray msg(R"({"cmd": "SET_PUK", "value": "1234567890"})");
+			QByteArray expected(addReaderData(R"({"error":"Value cannot be defined","msg":"ENTER_PUK"})", true));
+			QCOMPARE(dispatcher.processCommand(msg), expected);
 
+			msg = QByteArray(R"({"cmd": "SET_PUK", "value": ""})");
+			expected = QByteArray(addReaderData(R"({"error":"Value cannot be defined","msg":"ENTER_PUK"})", true));
+			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			context->setReaderName("MockReader CARD");
-			QCOMPARE(dispatcher.processStateChange("StateEstablishPacePuk"), QByteArray("{\"msg\":\"ENTER_PUK\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
-			msg = "{\"cmd\": \"SET_PUK\", \"value\": \"654321\"}";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"You must provide 10 digits\",\"msg\":\"ENTER_PUK\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
+			msg = QByteArray(R"({"cmd": "SET_PUK"})");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
 		}
 
 

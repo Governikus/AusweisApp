@@ -1,15 +1,12 @@
+#####################################################################
+# The module activation is responsible to enable different kinds of
+# eID activation. This interface will be implemented by plugins
+# for the specific platform.
+#####################################################################
+
 ADD_SUBDIRECTORY(base)
 
-IF(IOS)
-	ADD_SUBDIRECTORY(customscheme)
-ENDIF()
-
-IF(ANDROID)
-	ADD_SUBDIRECTORY(intent)
-ENDIF()
-
-IF(DESKTOP)
-	ADD_SUBDIRECTORY(webservice)
-ENDIF()
-
+ADD_SUBDIRECTORY(customscheme)
+ADD_SUBDIRECTORY(intent)
+ADD_SUBDIRECTORY(webservice)
 ADD_SUBDIRECTORY(internal)

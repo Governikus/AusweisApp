@@ -6,12 +6,13 @@
 
 #pragma once
 
+#include "ReaderInfo.h"
+
 #include <QDateTime>
+#include <QNetworkInterface>
 #include <QObject>
 #include <QStringList>
 #include <QVector>
-
-#include "ReaderInfo.h"
 
 namespace governikus
 {
@@ -30,6 +31,7 @@ class DiagnosisContext
 		QVector<ComponentInfo> mPcscDrivers;
 		QVector<ReaderInfo> mReaderInfos;
 		QDateTime mTimestamp;
+		QList<QNetworkInterface> mNetworkInterfaces;
 
 	public:
 		DiagnosisContext();
@@ -70,12 +72,17 @@ class DiagnosisContext
 
 		void setTimestamp(const QDateTime& pTimestamp);
 
+		void setNetworkInterfaces(const QList<QNetworkInterface>& pNetworkInterface);
+		const QList<QNetworkInterface>& getNetworkInterfaces() const;
+
 	Q_SIGNALS:
 		void pcscVersionChanged();
 		void readerInfosChanged();
 		void timestampChanged();
 		void pcscInfoChanged();
 		void modelChanged();
+		void fireDataChanged();
+		void fireNetworkInfoChanged();
 };
 
 
@@ -123,4 +130,4 @@ class DiagnosisContext::ComponentInfo
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

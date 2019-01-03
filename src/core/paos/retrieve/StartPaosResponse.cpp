@@ -11,19 +11,19 @@ StartPaosResponse::StartPaosResponse(const QByteArray& pXmlData)
 	, ElementDetector(pXmlData)
 {
 	parse();
-	setResult(Result(mResultMajor, mResultMinor, mResultMessage, Origin::Server));
+	setResult(ECardApiResult(mResultMajor, mResultMinor, mResultMessage, ECardApiResult::Origin::Server));
 }
 
 
 void StartPaosResponse::parse()
 {
-	QStringList expectedElements;
-	expectedElements.push_back(QStringLiteral("RelatesTo"));
-	expectedElements.push_back(QStringLiteral("MessageID"));
-
-	expectedElements.push_back(QStringLiteral("ResultMajor"));
-	expectedElements.push_back(QStringLiteral("ResultMinor"));
-	expectedElements.push_back(QStringLiteral("ResultMessage"));
+	const QStringList expectedElements({
+				QStringLiteral("RelatesTo"),
+				QStringLiteral("MessageID"),
+				QStringLiteral("ResultMajor"),
+				QStringLiteral("ResultMinor"),
+				QStringLiteral("ResultMessage")
+			});
 
 	detectStartElements(expectedElements);
 }

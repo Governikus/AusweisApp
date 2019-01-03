@@ -7,16 +7,16 @@
 
 #pragma once
 
+#include "RemoteWebSocketServer.h"
+#include "ServerMessageHandler.h"
+
 #include <QByteArray>
 #include <QObject>
 #include <QScopedPointer>
 #include <QSslCertificate>
-#include <QString>
 
 namespace governikus
 {
-
-class ServerMessageHandler;
 
 class RemoteServer
 	: public QObject
@@ -43,33 +43,4 @@ class RemoteServer
 		void fireConnectedChanged(bool pConnected);
 };
 
-
-class RemoteReaderAdvertiser;
-class RemoteWebSocketServer;
-
-
-class RemoteServerImpl
-	: public RemoteServer
-{
-	Q_OBJECT
-
-	private:
-		QScopedPointer<RemoteReaderAdvertiser> mRemoteReaderAdvertiser;
-		QScopedPointer<RemoteWebSocketServer> mWebSocketServer;
-
-	private Q_SLOTS:
-		void onConnectedChanged(bool pConnected);
-
-	public:
-		RemoteServerImpl();
-
-		virtual bool isRunning() const override;
-		virtual bool start(const QString& pServerName) override;
-		virtual void stop() override;
-		virtual void setPairing(bool pEnable = true) override;
-		virtual bool isConnected() const override;
-		virtual QSslCertificate getCurrentCertificate() const override;
-		virtual const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;
-};
-
-} /* namespace governikus */
+} // namespace governikus

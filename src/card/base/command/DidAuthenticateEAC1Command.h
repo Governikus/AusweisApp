@@ -10,10 +10,11 @@
 #include "BaseCardCommand.h"
 #include "Commands.h"
 
+class test_DidAuthenticateEAC1Command;
+class test_StateDidAuthenticateEac1;
+
 namespace governikus
 {
-
-class CardConnection;
 
 class DidAuthenticateEAC1Command
 	: public BaseCardCommand
@@ -21,15 +22,16 @@ class DidAuthenticateEAC1Command
 	Q_OBJECT
 
 	private:
+		friend class ::test_DidAuthenticateEAC1Command;
+		friend class ::test_StateDidAuthenticateEac1;
 		QByteArray mChallenge;
 
 	protected:
 		virtual void internalExecute() override;
-		virtual ~DidAuthenticateEAC1Command() override;
+		virtual ~DidAuthenticateEAC1Command() override = default;
 
 	public:
 		DidAuthenticateEAC1Command(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
-
 
 		const QByteArray& getChallenge() const
 		{
@@ -39,4 +41,4 @@ class DidAuthenticateEAC1Command
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -24,10 +24,10 @@ class DIDAuthenticateResponseEAC2
 		QByteArray mNonce;
 		QByteArray mChallenge;
 
-		QDomElement createDIDAuthenticateResponseEAC2Element();
-		QDomElement createAuthenticationProtocolDataElement();
+		void createDIDAuthenticateResponseEAC2Element();
+		void createAuthenticationProtocolDataElement();
 
-		virtual QDomElement getDocumentStructure() override;
+		virtual void createBodyElement() override;
 
 		Q_DISABLE_COPY(DIDAuthenticateResponseEAC2)
 
@@ -40,4 +40,4 @@ class DIDAuthenticateResponseEAC2
 		void setChallenge(const QByteArray& pChallenge);
 };
 
-} /* namespace governikus */
+} // namespace governikus

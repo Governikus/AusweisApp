@@ -43,7 +43,7 @@ void IntentActivationHandler::onIntent(const QUrl& pUrl)
 {
 	qCDebug(activation) << "Got new authentication request";
 	qCDebug(activation) << "Request URL:" << pUrl;
-	QSharedPointer<IntentActivationContext> context(new IntentActivationContext(pUrl));
+	const auto& context = QSharedPointer<IntentActivationContext>::create(pUrl);
 	connect(context.data(), &IntentActivationContext::fireShowUserInformation, this, &ActivationHandler::fireShowUserInformation);
 	Q_EMIT fireAuthenticationRequest(context);
 }

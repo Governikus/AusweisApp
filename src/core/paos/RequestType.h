@@ -20,4 +20,4 @@ class RequestType
 		virtual ~RequestType();
 };
 
-} /* namespace governikus */
+} // namespace governikus

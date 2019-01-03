@@ -6,18 +6,14 @@
 
 #include "SingletonHelper.h"
 
-#include <QDebug>
-
 using namespace governikus;
 
 defineSingleton(Env)
 
 Env::Env()
-{
-}
-
-
-Env::~Env()
+#ifndef QT_NO_DEBUG
+	: mLock(QReadWriteLock::Recursive)
+#endif
 {
 }
 
@@ -25,65 +21,6 @@ Env::~Env()
 Env& Env::getInstance()
 {
 	return *Instance;
-}
-
-
-void Env::storeSingleton(Identifier pId, void* pObject)
-{
-	if (pObject)
-	{
-		qDebug() << "Add instance:" << pId;
-		mInstancesOwnership.remove(pId);
-		mInstancesUnmanaged.insert(pId, pObject);
-		mTypeInfo.insert(pId, Type::UNMANAGED);
-	}
-	else
-	{
-		removeStoredSingleton(pId);
-	}
-}
-
-
-void Env::storeSingleton(Identifier pId, std::shared_ptr<void> pObject)
-{
-	if (pObject)
-	{
-		qDebug() << "Add owned instance:" << pId;
-		mInstancesUnmanaged.remove(pId);
-		mInstancesOwnership.insert(pId, pObject);
-		mTypeInfo.insert(pId, Type::OWNERSHIP);
-	}
-	else
-	{
-		removeStoredSingleton(pId);
-	}
-}
-
-
-void Env::removeStoredSingleton(Identifier pId)
-{
-	qDebug() << "Remove instance:" << pId;
-	mInstancesOwnership.remove(pId);
-	mInstancesUnmanaged.remove(pId);
-	mTypeInfo.remove(pId);
-}
-
-
-void* Env::fetchStoredSingleton(Env::Identifier pId) const
-{
-	switch (mTypeInfo.value(pId, Type::UNDEFINED))
-	{
-		case Type::OWNERSHIP:
-			return mInstancesOwnership.value(pId).get();
-
-		case Type::UNMANAGED:
-			return mInstancesUnmanaged.value(pId);
-
-		case Type::UNDEFINED:
-			return nullptr;
-	}
-
-	Q_UNREACHABLE();
 }
 
 
@@ -101,44 +38,52 @@ void Env::resetCounter()
 void Env::clear()
 {
 	auto& holder = getInstance();
-	holder.mInstancesOwnership.clear();
-	holder.mInstancesUnmanaged.clear();
-	holder.mTypeInfo.clear();
+
+	const QWriteLocker locker(&holder.mLock);
+	holder.mInstancesSingleton.clear();
 	holder.mInstancesCreator.clear();
+
+	const QWriteLocker lockerShared(&holder.mSharedInstancesLock);
 	holder.mSharedInstances.clear();
 }
 
 
 void Env::set(const QMetaObject& pMetaObject, void* pObject)
 {
-	Identifier className = pMetaObject.className();
-	Q_ASSERT_X(!QByteArray(className).toLower().contains("mock"), "test", "Do you really want to mock a mock?");
-	getInstance().storeSingleton(className, pObject);
+	const Identifier id = pMetaObject.className();
+	Q_ASSERT_X(!QByteArray(id).toLower().contains("mock"), "test", "Do you really want to mock a mock?");
 
-}
+	auto& holder = getInstance();
+	const QWriteLocker locker(&holder.mLock);
 
-
-void Env::set(const QMetaObject& pMetaObject, std::shared_ptr<void> pObject)
-{
-	Identifier className = pMetaObject.className();
-	Q_ASSERT_X(!QByteArray(className).toLower().contains("mock"), "test", "Do you really want to mock a mock?");
-	getInstance().storeSingleton(className, pObject);
+	if (pObject)
+	{
+		qDebug() << "Add mock:" << id;
+		holder.mInstancesSingleton.insert(id, pObject);
+	}
+	else
+	{
+		qDebug() << "Remove mock:" << id;
+		holder.mInstancesSingleton.remove(id);
+	}
 }
 
 
 void Env::setShared(const QMetaObject& pMetaObject, QSharedPointer<QObject> pObject)
 {
-	Identifier className = pMetaObject.className();
-	auto& holder = getInstance().mSharedInstances;
+	const Identifier className = pMetaObject.className();
+	auto& holder = getInstance();
+	const QWriteLocker locker(&holder.mSharedInstancesLock);
+
 	if (pObject)
 	{
-		qDebug() << "Add shared instance:" << className;
-		holder.insert(className, pObject.toWeakRef());
+		qDebug() << "Add shared mock:" << className;
+		holder.mSharedInstances.insert(className, pObject.toWeakRef());
 	}
 	else
 	{
-		qDebug() << "Remove shared instance:" << className;
-		holder.remove(className);
+		qDebug() << "Remove shared mock:" << className;
+		holder.mSharedInstances.remove(className);
 	}
 }
 

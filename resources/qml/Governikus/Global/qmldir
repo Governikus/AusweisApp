@@ -1,13 +1,24 @@
 module Global
+
 singleton Constants 1.0 Constants.qml
-singleton PlatformConstants 1.0 PlatformConstants.qml
+internal PlatformConstants PlatformConstants.qml
+internal BrandConstants BrandConstants.qml
+internal DeviceConstants DeviceConstants.qml
+
 Utils 1.0 Utils.js
 Category 1.0 Category.js
-LabeledText 1.0 LabeledText.qml
-Pane 1.0 Pane.qml
-GCheckBox 1.0 GCheckBox.qml
-GTextField 1.0 GTextField.qml
+
+ConfirmationPopup 1.0 ConfirmationPopup.qml
+ContinueButton 1.0 ContinueButton.qml
 GButton 1.0 GButton.qml
-LocationButton 1.0 LocationButton.qml
-SectionPage 1.0 SectionPage.qml
+GCheckBox 1.0 GCheckBox.qml
+GComboBox 1.0 GComboBox.qml
+GRadioButton 1.0 GRadioButton.qml
 GSwitch 1.0 GSwitch.qml
+GText 1.0 GText.qml
+GTextField 1.0 GTextField.qml
+LabeledText 1.0 LabeledText.qml
+LocationButton 1.0 LocationButton.qml
+Pane 1.0 Pane.qml
+PaneTitle 1.0 PaneTitle.qml
+StatusIcon 1.0 StatusIcon.qml

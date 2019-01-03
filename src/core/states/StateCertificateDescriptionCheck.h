@@ -7,7 +7,6 @@
 #include "context/AuthContext.h"
 #include "states/AbstractGenericState.h"
 
-class test_StateCertificateDescriptionCheck;
 
 namespace governikus
 {
@@ -19,9 +18,9 @@ class StateCertificateDescriptionCheck
 	friend class StateBuilder;
 	friend class ::test_StateCertificateDescriptionCheck;
 
-	StateCertificateDescriptionCheck(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateCertificateDescriptionCheck(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

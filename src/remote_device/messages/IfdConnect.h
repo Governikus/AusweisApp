@@ -23,8 +23,8 @@ class IfdConnect
 
 		const QString& getSlotName() const;
 		bool isExclusive() const;
-		virtual QJsonDocument toJson(const QString& pContextHandle) const override;
+		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

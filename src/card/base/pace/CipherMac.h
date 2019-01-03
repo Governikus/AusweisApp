@@ -12,7 +12,7 @@
 namespace governikus
 {
 
-class CipherMac
+class CipherMac final
 {
 	private:
 		QByteArray mKeyBytes;
@@ -28,7 +28,7 @@ class CipherMac
 		 * \param pKeyBytes the bytes of the key
 		 */
 		CipherMac(const QByteArray& pPaceAlgorithm, const QByteArray& pKeyBytes);
-		virtual ~CipherMac();
+		~CipherMac();
 
 		/*!
 		 * Returns true, if initialization succeeded, i.e. the algorithm is known, supported and the key bytes have correct size.
@@ -43,4 +43,4 @@ class CipherMac
 		QByteArray generate(const QByteArray& pMessage);
 };
 
-} /* namespace governikus */
+} // namespace governikus

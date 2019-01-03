@@ -1,4 +1,0 @@
-ADD_PLATFORM_LIBRARY(AusweisAppJsonApi)
-
-TARGET_LINK_LIBRARIES(AusweisAppJsonApi Qt5::Core AusweisAppCore AusweisAppGlobal AusweisAppActivationInternal)
-TARGET_COMPILE_DEFINITIONS(AusweisAppJsonApi PRIVATE QT_STATICPLUGIN)

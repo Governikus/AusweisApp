@@ -4,7 +4,6 @@
 
 #include "ReaderFilter.h"
 
-#include "EnumHelper.h"
 #include "ReaderConfiguration.h"
 #include "ReaderManagerPlugIn.h"
 
@@ -14,7 +13,6 @@ ReaderFilter::ReaderFilter()
 	: mFilterType(NoFilter)
 	, mPluginTypes()
 {
-
 }
 
 
@@ -22,7 +20,6 @@ ReaderFilter::ReaderFilter(const QVector<ReaderManagerPlugInType>& pPluginTypes)
 	: mFilterType(PluginTypeFilter)
 	, mPluginTypes(pPluginTypes)
 {
-
 }
 
 
@@ -30,7 +27,6 @@ ReaderFilter::ReaderFilter(const ReaderFilter::FilterType pFilterType)
 	: mFilterType(pFilterType)
 	, mPluginTypes()
 {
-
 }
 
 

@@ -6,6 +6,8 @@
 
 #include "Env.h"
 
+#include <http_parser.h>
+
 using namespace governikus;
 
 MockHttpServer::MockHttpServer()
@@ -43,12 +45,5 @@ void MockHttpServer::onNewHttpRequest(const QSharedPointer<HttpRequest>& pReques
 {
 	QVERIFY(pRequest);
 	const auto& response = mMock.value(pRequest->getUrl().toEncoded());
-	if (response.isValid())
-	{
-		pRequest->send(response);
-	}
-	else
-	{
-		pRequest->send(HttpStatusCode::INTERNAL_SERVER_ERROR);
-	}
+	pRequest->send(response);
 }

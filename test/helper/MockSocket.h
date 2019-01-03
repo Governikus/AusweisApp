@@ -9,6 +9,8 @@
 #include <QByteArray>
 #include <QTcpSocket>
 
+class test_WebserviceActivationContext;
+
 namespace governikus
 {
 
@@ -16,6 +18,7 @@ class MockSocket
 	: public QTcpSocket
 {
 	Q_OBJECT
+	friend class ::test_WebserviceActivationContext;
 
 	public:
 		QByteArray mReadBuffer;
@@ -31,4 +34,4 @@ class MockSocket
 		qint64 writeData(const char* pData, qint64 pMaxSize) override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

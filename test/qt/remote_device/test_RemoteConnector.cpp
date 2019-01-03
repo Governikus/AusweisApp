@@ -10,8 +10,6 @@
 #include "Env.h"
 #include "KeyPair.h"
 #include "messages/Discovery.h"
-#include "MockDataChannel.h"
-#include "RemoteHelper.h"
 #include "RemoteWebSocketServer.h"
 #include "SecureStorage.h"
 
@@ -34,30 +32,15 @@ class test_RemoteConnector
 	Q_OBJECT
 
 	private:
-		static const int cConnectTimeoutMs = 500;
-		static const int cSignalTimeoutMs = 10 * cConnectTimeoutMs;
-
-		void waitForSignals(QSignalSpy* const pSpy, const int pExpectedCount, const int pTimeoutMs)
-		{
-			for (int tryCount = 0; pSpy->count() < pExpectedCount && tryCount < pExpectedCount; ++tryCount)
-			{
-				pSpy->wait(pTimeoutMs);
-			}
-			QCOMPARE(pSpy->count(), pExpectedCount);
-		}
-
-
 		void sendRequest(const QSharedPointer<RemoteConnectorImpl>& pConnector,
 			const QHostAddress& pHostAddress,
-			const QSharedPointer<const Discovery>& pDiscovery,
+			const Discovery& pDiscovery,
 			const QString& pPassword)
 		{
 			const RemoteDeviceDescriptor descr(pDiscovery, pHostAddress);
-			QMetaObject::invokeMethod(pConnector.data(),
-					"onConnectRequest",
-					Qt::QueuedConnection,
-					Q_ARG(RemoteDeviceDescriptor, descr),
-					Q_ARG(QString, pPassword));
+			QMetaObject::invokeMethod(pConnector.data(), [ = ] {
+						pConnector->onConnectRequest(descr, pPassword);
+					}, Qt::QueuedConnection);
 		}
 
 
@@ -76,8 +59,8 @@ class test_RemoteConnector
 				QVERIFY(!descr.isNull());
 
 				const QVariant dispatcherVariant = arguments.at(1);
-				QVERIFY(dispatcherVariant.canConvert<QSharedPointer<RemoteDispatcher> >());
-				const QSharedPointer<RemoteDispatcher> dispatcher = dispatcherVariant.value<QSharedPointer<RemoteDispatcher> >();
+				QVERIFY(dispatcherVariant.canConvert<QSharedPointer<RemoteDispatcherClient> >());
+				const QSharedPointer<RemoteDispatcherClient> dispatcher = dispatcherVariant.value<QSharedPointer<RemoteDispatcherClient> >();
 				QVERIFY(dispatcher);
 
 				const QUrl remoteUrl = descr.getUrl();
@@ -138,7 +121,6 @@ class test_RemoteConnector
 				}
 			}
 			QVERIFY(signalFound);
-
 		}
 
 
@@ -153,7 +135,7 @@ class test_RemoteConnector
 		{
 			QThread clientThread;
 
-			const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl(cConnectTimeoutMs));
+			const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl());
 			QSignalSpy spyError(connector.data(), &RemoteConnector::fireRemoteDispatcherError);
 			QSignalSpy spySuccess(connector.data(), &RemoteConnector::fireRemoteDispatcherCreated);
 
@@ -162,9 +144,9 @@ class test_RemoteConnector
 
 			// No device name.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const QSharedPointer<const Discovery> msg(new Discovery(QString(), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v0}));
-			sendRequest(connector, hostAddress, msg, QString());
-			waitForSignals(&spyError, 1, cSignalTimeoutMs);
+			const Discovery discoveryMsg(QString(), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v0});
+			sendRequest(connector, hostAddress, discoveryMsg, QString());
+			QTRY_COMPARE(spyError.count(), 1);
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -178,7 +160,7 @@ class test_RemoteConnector
 		{
 			QThread clientThread;
 
-			const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl(cConnectTimeoutMs));
+			const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl());
 			QSignalSpy spyError(connector.data(), &RemoteConnector::fireRemoteDispatcherError);
 			QSignalSpy spySuccess(connector.data(), &RemoteConnector::fireRemoteDispatcherCreated);
 
@@ -187,8 +169,8 @@ class test_RemoteConnector
 
 			// Device information is null.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			sendRequest(connector, hostAddress, QSharedPointer<const Discovery>(), QStringLiteral("secret"));
-			waitForSignals(&spyError, 1, cSignalTimeoutMs);
+			sendRequest(connector, hostAddress, Discovery(QJsonObject()), QStringLiteral("secret"));
+			QTRY_COMPARE(spyError.count(), 1);
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -204,7 +186,7 @@ class test_RemoteConnector
 			server->listen("dummy");
 			QThread clientThread;
 
-			const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl(cConnectTimeoutMs));
+			const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl());
 			QSignalSpy spyError(connector.data(), &RemoteConnector::fireRemoteDispatcherError);
 			QSignalSpy spySuccess(connector.data(), &RemoteConnector::fireRemoteDispatcherCreated);
 
@@ -213,9 +195,9 @@ class test_RemoteConnector
 
 			// Password is empty.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), server->getServerPort(), {IfdVersion::Version::v0}));
-			sendRequest(connector, hostAddress, msg, QString());
-			waitForSignals(&spyError, 1, cSignalTimeoutMs);
+			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), server->getServerPort(), {IfdVersion::Version::v0});
+			sendRequest(connector, hostAddress, discoveryMsg, QString());
+			QTRY_COMPARE(spyError.count(), 1);
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -229,7 +211,7 @@ class test_RemoteConnector
 		{
 			QThread clientThread;
 
-			const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl(cConnectTimeoutMs));
+			const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl());
 			QSignalSpy spyError(connector.data(), &RemoteConnector::fireRemoteDispatcherError);
 			QSignalSpy spySuccess(connector.data(), &RemoteConnector::fireRemoteDispatcherCreated);
 
@@ -238,9 +220,9 @@ class test_RemoteConnector
 
 			// Currently, only API level 1 is supported.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::Unknown}));
-			sendRequest(connector, hostAddress, msg, QStringLiteral("secret"));
-			waitForSignals(&spyError, 1, cSignalTimeoutMs);
+			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v_test});
+			sendRequest(connector, hostAddress, discoveryMsg, QStringLiteral("secret"));
+			QTRY_COMPARE(spyError.count(), 1);
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -254,7 +236,7 @@ class test_RemoteConnector
 		{
 			QThread clientThread;
 
-			const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl(cConnectTimeoutMs));
+			const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl(2500));
 			QSignalSpy spyError(connector.data(), &RemoteConnector::fireRemoteDispatcherError);
 			QSignalSpy spySuccess(connector.data(), &RemoteConnector::fireRemoteDispatcherCreated);
 
@@ -263,9 +245,9 @@ class test_RemoteConnector
 
 			// Correct request but no server is running.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v0}));
-			sendRequest(connector, hostAddress, msg, QString("dummy"));
-			waitForSignals(&spyError, 1, cSignalTimeoutMs);
+			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v0});
+			sendRequest(connector, hostAddress, discoveryMsg, QString("dummy"));
+			QTRY_COMPARE(spyError.count(), 1);
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -287,7 +269,8 @@ class test_RemoteConnector
 			QTest::addColumn<QList<QSslCertificate> >("trustedCertificates");
 
 			auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-			QVERIFY(RemoteHelper::checkAndGenerateKey());
+			QVERIFY(settings.checkAndGenerateKey());
+
 			const KeyPair pair = KeyPair::generate();
 			QVERIFY(pair.isValid());
 
@@ -334,7 +317,7 @@ class test_RemoteConnector
 			// Execute test in internal block so that all relevant smart pointers are released before stopping the client thread.
 			QSharedPointer<QSignalSpy> remoteDispatcherDestructionSpy;
 			{
-				const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl(cConnectTimeoutMs));
+				const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl());
 				QSignalSpy spyConnectorError(connector.data(), &RemoteConnector::fireRemoteDispatcherError);
 				QSignalSpy spyConnectorSuccess(connector.data(), &RemoteConnector::fireRemoteDispatcherCreated);
 
@@ -343,23 +326,23 @@ class test_RemoteConnector
 
 				// Send valid encrypted connect request.
 				const QHostAddress hostAddress(QHostAddress::LocalHost);
-				const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), serverPort, {IfdVersion::Version::v0}));
-				sendRequest(connector, hostAddress, msg, psk);
+				const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), serverPort, {IfdVersion::Version::v0});
+				sendRequest(connector, hostAddress, discoveryMsg, psk);
 
-				waitForSignals(&spyConnectorSuccess, 1, cSignalTimeoutMs);
+				QTRY_COMPARE(spyConnectorSuccess.count(), 1);
 				QCOMPARE(spyConnectorError.count(), 0);
 				verifySuccessSignal(spyConnectorSuccess, serverPort);
 
 				const QVariant dispatcherVariant = spyConnectorSuccess.first().at(1);
-				QVERIFY(dispatcherVariant.canConvert<QSharedPointer<RemoteDispatcher> >());
-				const QSharedPointer<RemoteDispatcher> dispatcher = dispatcherVariant.value<QSharedPointer<RemoteDispatcher> >();
+				QVERIFY(dispatcherVariant.canConvert<QSharedPointer<RemoteDispatcherClient> >());
+				const QSharedPointer<RemoteDispatcherClient> dispatcher = dispatcherVariant.value<QSharedPointer<RemoteDispatcherClient> >();
 				remoteDispatcherDestructionSpy.reset(new QSignalSpy(dispatcher.data(), &QObject::destroyed));
 			}
 
 			QCOMPARE(spySocketError.count(), 0);
 			QCOMPARE(spySocketSuccess.count(), 1);
 
-			waitForSignals(remoteDispatcherDestructionSpy.data(), 1, cSignalTimeoutMs);
+			QTRY_COMPARE(remoteDispatcherDestructionSpy->count(), 1);
 			QCOMPARE(remoteDispatcherDestructionSpy->count(), 1);
 
 			clientThread.exit();
@@ -396,7 +379,7 @@ class test_RemoteConnector
 			// Set up client thread.
 			QThread clientThread;
 
-			const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl(cConnectTimeoutMs));
+			const QSharedPointer<RemoteConnectorImpl> connector(new RemoteConnectorImpl());
 			QSignalSpy spyConnectorError(connector.data(), &RemoteConnector::fireRemoteDispatcherError);
 			QSignalSpy spyConnectorSuccess(connector.data(), &RemoteConnector::fireRemoteDispatcherCreated);
 
@@ -405,10 +388,10 @@ class test_RemoteConnector
 
 			// Send encrypted connect request with wrong psk.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const QSharedPointer<const Discovery> msg(new Discovery(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), serverPort, {IfdVersion::Version::v0}));
-			sendRequest(connector, hostAddress, msg, QStringLiteral("sekret"));
+			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), serverPort, {IfdVersion::Version::v0});
+			sendRequest(connector, hostAddress, discoveryMsg, QStringLiteral("sekret"));
 
-			waitForSignals(&spyConnectorError, 1, cSignalTimeoutMs);
+			QTRY_COMPARE(spyConnectorError.count(), 1);
 			QCOMPARE(spyConnectorSuccess.count(), 0);
 			verifyErrorSignal(spyConnectorError, {RemoteErrorCode::REMOTE_HOST_REFUSED_CONNECTION}, serverPort, QStringLiteral("Smartphone1"));
 

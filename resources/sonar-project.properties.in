@@ -1,0 +1,17 @@
+sonar.host.url=https://sonar.governikus.de
+
+sonar.projectKey=ausweisapp2:default
+sonar.projectName=AusweisApp2
+sonar.projectVersion=@PROJECT_VERSION@
+
+sonar.projectBaseDir=@PROJECT_SOURCE_DIR@
+sonar.sources=src
+
+sonar.sourceEncoding=UTF-8
+sonar.language=cpp
+sonar.cpp.file.suffixes=.cpp,.h
+sonar.objc.file.suffixes=.m,.mm
+
+sonar.cfamily.build-wrapper-output=@PROJECT_BINARY_DIR@
+sonar.cfamily.gcov.reportsPath=@PROJECT_BINARY_DIR@/Testing/CoverageInfo
+sonar.exclusions=src/external/**,utils/**,**/CMakeFiles/*

@@ -24,4 +24,4 @@ class BluetoothMessageTransferApduResponse
 		const QByteArray& getResponseAPDU() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

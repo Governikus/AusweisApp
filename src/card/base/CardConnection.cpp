@@ -11,14 +11,21 @@ CardConnection::CardConnection(const QSharedPointer<CardConnectionWorker>& pCard
 	: QObject()
 	, mCardConnectionWorker(pCardConnectionWorker)
 	, mReaderInfo()
+	, mPaceCanSuccessful(false)
+	, mPacePinSuccessful(false)
 {
 	Q_ASSERT(mCardConnectionWorker);
-	QMetaObject::invokeMethod(mCardConnectionWorker.data(), "getReaderInfo", Qt::BlockingQueuedConnection, Q_RETURN_ARG(ReaderInfo, mReaderInfo));
+	QMetaObject::invokeMethod(mCardConnectionWorker.data(), &CardConnectionWorker::getReaderInfo, Qt::BlockingQueuedConnection, &mReaderInfo);
 	connect(mCardConnectionWorker.data(), &CardConnectionWorker::fireReaderInfoChanged, this, &CardConnection::onReaderInfoChanged);
 }
 
 
-CardConnection::~CardConnection()
+CardConnection::CardConnection()
+	: QObject()
+	, mCardConnectionWorker()
+	, mReaderInfo()
+	, mPaceCanSuccessful(false)
+	, mPacePinSuccessful(false)
 {
 }
 
@@ -29,10 +36,22 @@ const ReaderInfo& CardConnection::getReaderInfo()
 }
 
 
+bool CardConnection::getPaceCanSuccessful() const
+{
+	return mPaceCanSuccessful;
+}
+
+
+bool CardConnection::getPacePinSuccessful() const
+{
+	return mPacePinSuccessful;
+}
+
+
 bool CardConnection::stopSecureMessaging()
 {
 	bool result;
-	QMetaObject::invokeMethod(mCardConnectionWorker.data(), "stopSecureMessaging", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, result));
+	QMetaObject::invokeMethod(mCardConnectionWorker.data(), &CardConnectionWorker::stopSecureMessaging, Qt::BlockingQueuedConnection, &result);
 	return result;
 }
 
@@ -49,7 +68,7 @@ UnblockPinCommand* CardConnection::createUnblockPinCommand(const QString& pPuk)
 }
 
 
-EstablishPaceChannelCommand* CardConnection::createEstablishPaceChannelCommand(PACE_PASSWORD_ID pPacePasswordId, const QString& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription)
+EstablishPaceChannelCommand* CardConnection::createEstablishPaceChannelCommand(PacePasswordId pPacePasswordId, const QString& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription)
 {
 	return new EstablishPaceChannelCommand(mCardConnectionWorker, pPacePasswordId, pPacePassword, pEffectiveChat, pCertificateDescription);
 }
@@ -89,7 +108,7 @@ void CardConnection::onReaderInfoChanged(const ReaderInfo& pReaderInfo)
 }
 
 
-TransmitCommand* CardConnection::createTransmitCommand(const QVector<InputAPDUInfo>& pInputApduInfos, const QString pSlotHandle)
+TransmitCommand* CardConnection::createTransmitCommand(const QVector<InputAPDUInfo>& pInputApduInfos, const QString& pSlotHandle)
 {
 	return new TransmitCommand(mCardConnectionWorker, pInputApduInfos, pSlotHandle);
 }

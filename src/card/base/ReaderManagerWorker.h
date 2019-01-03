@@ -7,7 +7,6 @@
 #pragma once
 
 #include "CardConnectionWorker.h"
-#include "DeviceError.h"
 #include "ReaderFilter.h"
 #include "ReaderInfo.h"
 #include "ReaderManagerPlugIn.h"
@@ -17,15 +16,12 @@
 
 namespace governikus
 {
-class RemoteClient;
-
 class ReaderManagerWorker
 	: public QObject
 {
 	Q_OBJECT
 
 	private:
-		const QSharedPointer<RemoteClient> mRemoteClient;
 		QVector<ReaderManagerPlugIn*> mPlugIns;
 
 		void registerPlugIns();
@@ -34,7 +30,7 @@ class ReaderManagerWorker
 		Reader* getReader(const QString& pReaderName) const;
 
 	public:
-		ReaderManagerWorker(const QSharedPointer<RemoteClient>& pRemoteClient);
+		ReaderManagerWorker();
 		~ReaderManagerWorker();
 
 		Q_INVOKABLE void startScan(ReaderManagerPlugInType pType, bool pAutoConnect);
@@ -43,9 +39,11 @@ class ReaderManagerWorker
 		Q_INVOKABLE QVector<ReaderManagerPlugInInfo> getPlugInInfos() const;
 		Q_INVOKABLE QVector<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const;
 		Q_INVOKABLE ReaderInfo getReaderInfo(const QString& pReaderName) const;
+		Q_INVOKABLE void updateReaderInfo(const QString& pReaderName);
 		Q_INVOKABLE void createCardConnectionWorker(const QString& pReaderName);
 		Q_INVOKABLE void connectReader(const QString& pReaderName);
 		Q_INVOKABLE void disconnectReader(const QString& pReaderName);
+		Q_INVOKABLE void updateRetryCounters();
 		Q_INVOKABLE void disconnectAllReaders();
 
 	Q_SIGNALS:
@@ -53,7 +51,7 @@ class ReaderManagerWorker
 		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
 		void fireReaderAdded(const QString& pReaderName);
 		void fireReaderRemoved(const QString& pReaderName);
-		void fireReaderDeviceError(DeviceError pDeviceError);
+		void fireReaderDeviceError(GlobalStatus::Code pError);
 		void fireReaderPropertiesUpdated(const QString& pReaderName);
 		void fireCardInserted(const QString& pReaderName);
 		void fireCardRemoved(const QString& pReaderName);
@@ -65,4 +63,4 @@ class ReaderManagerWorker
 		void onThreadStarted();
 };
 
-} /* namespace governikus */
+} // namespace governikus

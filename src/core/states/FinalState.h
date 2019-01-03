@@ -16,7 +16,6 @@ class FinalState
 	: public AbstractGenericState<WorkflowContext>
 {
 	Q_OBJECT
-	friend class StateBuilder;
 
 	private:
 		virtual void run() override;
@@ -30,7 +29,7 @@ class FinalState
 
 
 	public:
-		FinalState(const QSharedPointer<WorkflowContext>& pContext)
+		explicit FinalState(const QSharedPointer<WorkflowContext>& pContext)
 			: AbstractGenericState(pContext, false)
 		{
 		}
@@ -38,4 +37,4 @@ class FinalState
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

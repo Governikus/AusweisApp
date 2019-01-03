@@ -45,6 +45,6 @@ static void initialize()
 }
 
 
-}
+} // namespace
 
 Q_COREAPP_STARTUP_FUNCTION(initialize)

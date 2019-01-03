@@ -31,11 +31,6 @@ WebserviceActivationContext::WebserviceActivationContext(const QSharedPointer<Ht
 }
 
 
-WebserviceActivationContext::~WebserviceActivationContext()
-{
-}
-
-
 QUrl WebserviceActivationContext::getActivationURL() const
 {
 	return mRequest->getUrl();
@@ -50,7 +45,7 @@ bool WebserviceActivationContext::sendProcessing()
 		return false;
 	}
 
-	mRequest->send(HttpStatusCode::PROCESSING);
+	mRequest->send(HTTP_STATUS_PROCESSING);
 	return true;
 }
 
@@ -73,14 +68,14 @@ bool WebserviceActivationContext::sendOperationAlreadyActive()
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
 	HttpResponse response;
-	response.setStatus(HttpStatusCode::NOT_FOUND);
+	response.setStatus(HTTP_STATUS_CONFLICT);
 	response.setBody(htmlPage, QByteArrayLiteral("text/html; charset=utf-8"));
 	mRequest->send(response);
 	return true;
 }
 
 
-bool WebserviceActivationContext::sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus)
+bool WebserviceActivationContext::sendErrorPage(http_status pStatusCode, const GlobalStatus& pStatus)
 {
 	if (!mRequest->isConnected())
 	{
@@ -88,14 +83,14 @@ bool WebserviceActivationContext::sendErrorPage(HttpStatusCode pStatusCode, cons
 		return false;
 	}
 
-	qCDebug(activation) << "Send error page to browser, error code " << pStatusCode;
-	Q_ASSERT(pStatusCode == HttpStatusCode::BAD_REQUEST || pStatusCode == HttpStatusCode::NOT_FOUND);
+	qCDebug(activation) << "Send error page to browser, error code" << pStatusCode;
+	Q_ASSERT(pStatusCode == HTTP_STATUS_BAD_REQUEST || pStatusCode == HTTP_STATUS_NOT_FOUND);
 	QString statusCodeString;
-	if (pStatusCode == HttpStatusCode::BAD_REQUEST)
+	if (pStatusCode == HTTP_STATUS_BAD_REQUEST)
 	{
 		statusCodeString = tr("400 Bad Request");
 	}
-	else if (pStatusCode == HttpStatusCode::NOT_FOUND)
+	else if (pStatusCode == HTTP_STATUS_NOT_FOUND)
 	{
 		statusCodeString = tr("404 Not found");
 	}
@@ -127,8 +122,8 @@ bool WebserviceActivationContext::sendRedirect(const QUrl& pRedirectAddress, con
 
 	if (!mRequest->isConnected())
 	{
-		mSendError = tr("The connection to the browser was lost. No forwarding was executed. Please try to"
-						" call the URL again manually: <a href='%1'>%2</a>").arg(redirectAddressWithResult.toString(), redirectAddressWithResult.host());
+		const auto& url = QStringLiteral("<a href='%1'>%2</a>").arg(redirectAddressWithResult.toString(), redirectAddressWithResult.host());
+		mSendError = tr("The connection to the browser was lost. No forwarding was executed. Please try to call the URL again manually: %1").arg(url);
 		return false;
 	}
 
@@ -136,7 +131,7 @@ bool WebserviceActivationContext::sendRedirect(const QUrl& pRedirectAddress, con
 	HttpResponse response;
 	setCommonHeaders(response);
 	response.setHeader(QByteArrayLiteral("Location"), redirectAddressWithResult.toEncoded());
-	response.setStatus(HttpStatusCode::SEE_OTHER);
+	response.setStatus(HTTP_STATUS_SEE_OTHER);
 	mRequest->send(response);
 	return true;
 }

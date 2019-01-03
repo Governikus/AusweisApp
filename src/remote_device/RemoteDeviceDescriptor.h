@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "messages/IfdVersion.h"
+#include "messages/Discovery.h"
 
 #include <QHostAddress>
 #include <QSharedDataPointer>
@@ -17,8 +17,6 @@
 
 namespace governikus
 {
-class Discovery;
-
 
 class RemoteDeviceDescriptor
 {
@@ -39,20 +37,19 @@ class RemoteDeviceDescriptor
 				const QVector<IfdVersion::Version> mApiVersions;
 				const QUrl mUrl;
 				bool operator==(const RemoteDeviceDescriptorData& pOther) const;
+				bool isEquivalent(const RemoteDeviceDescriptorData& pOther) const;
 		};
 
-		static RemoteDeviceDescriptorData* createRemoteDeviceDescriptorData(const QSharedPointer<const Discovery>& pMsg,
-				const QHostAddress& pHostAddress,
-				QAbstractSocket::NetworkLayerProtocol pRequiredProtocol);
+		static RemoteDeviceDescriptorData* createRemoteDeviceDescriptorData(const Discovery& pDiscovery,
+				const QHostAddress& pHostAddress);
 
 		const QSharedDataPointer<RemoteDeviceDescriptorData> d;
 
 	public:
 		RemoteDeviceDescriptor() = default;
 
-		RemoteDeviceDescriptor(const QSharedPointer<const Discovery>& pDiscovery,
-				const QHostAddress& pHostAddress,
-				QAbstractSocket::NetworkLayerProtocol pRequiredProtocol = QAbstractSocket::IPv4Protocol);
+		RemoteDeviceDescriptor(const Discovery& pDiscovery,
+				const QHostAddress& pHostAddress);
 
 		~RemoteDeviceDescriptor() = default;
 
@@ -64,6 +61,7 @@ class RemoteDeviceDescriptor
 		bool isNull() const;
 
 		bool operator==(const RemoteDeviceDescriptor& pOther) const;
+		bool isEquivalent(const RemoteDeviceDescriptor& pOther) const;
 
 };
 
@@ -78,4 +76,4 @@ inline QDebug operator<<(QDebug pDbg, const RemoteDeviceDescriptor& pRemoteDevic
 }
 
 
-} /* namespace governikus */
+} // namespace governikus

@@ -9,7 +9,6 @@
 #include <QJsonValue>
 #include <QMetaEnum>
 
-
 using namespace governikus;
 
 const QLatin1String SETTINGS_NAME_SSL_PROTOCOL_VERSION("protocolVersion");
@@ -94,8 +93,8 @@ void TlsConfiguration::load(const QJsonObject& pConfig)
 	mConfiguration.setCiphers(ciphers);
 	mConfiguration.setEllipticCurves(ellipticCurves);
 
-#ifdef GOVERNIKUS_QT
-	mConfiguration.setSignatureAndHashAlgorithms(signatureAlgorithms);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+	mConfiguration.setBackendConfigurationOption(QByteArrayLiteral("SignatureAlgorithms"), signatureAlgorithms.join(':'));
 #else
 	Q_UNUSED(signatureAlgorithms)
 #endif
@@ -120,15 +119,16 @@ QVector<QSslEllipticCurve> TlsConfiguration::getEllipticCurves() const
 }
 
 
-QVector<SignatureAlgorithmPair> TlsConfiguration::getSignatureAlgorithms() const
+QByteArrayList TlsConfiguration::getSignatureAlgorithms() const
 {
-#ifdef GOVERNIKUS_QT
-	return mConfiguration.signatureAndHashAlgorithms();
-
-#else
-	return QVector<SignatureAlgorithmPair>();
-
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+	const auto signatureAlgorithms = mConfiguration.backendConfiguration().value(QByteArrayLiteral("SignatureAlgorithms")).toByteArray();
+	if (!signatureAlgorithms.isEmpty())
+	{
+		return signatureAlgorithms.split(':');
+	}
 #endif
+	return QByteArrayList();
 }
 
 
@@ -177,64 +177,43 @@ QSsl::SslProtocol TlsConfiguration::readSslProtocol(const QJsonObject& pConfig, 
 		{
 			return QSsl::SslProtocol::TlsV1_2OrLater;
 		}
+		if (value == QLatin1String("TlsV1_2"))
+		{
+			return QSsl::SslProtocol::TlsV1_2;
+		}
 		qCritical() << pName << ": Unsupported TLS protocol version detected" << value;
 	}
 	return QSsl::SslProtocol::SecureProtocols;
 }
 
 
-QVector<SignatureAlgorithmPair> TlsConfiguration::readSignatureAlgorithms(const QJsonObject& pConfig, const QLatin1String pKey)
+QByteArrayList TlsConfiguration::readSignatureAlgorithms(const QJsonObject& pConfig, const QLatin1String pKey)
 {
 	const QJsonValue& tmp = pConfig[pKey];
 	if (tmp.isUndefined())
 	{
 		qDebug() << pKey << "undefined, using default";
-		return QVector<SignatureAlgorithmPair>();
+		return QByteArrayList();
 	}
 	if (!tmp.isArray())
 	{
 		qCritical() << pKey << "is malformed";
-		return QVector<SignatureAlgorithmPair>();
+		return QByteArrayList();
 	}
 	const QJsonArray& array = tmp.toArray();
 
-	QVector<SignatureAlgorithmPair> algorithms;
+	QByteArrayList algorithms;
 	for (const QJsonValue& line : array)
 	{
-		const auto& parts = line.toString().split(QLatin1Char('+'));
-		if (parts.size() != 2)
+		const auto& value = line.toString();
+		if (value.count(QStringLiteral("+")) != 1)
 		{
 			qCritical() << pKey << "has malformed item" << line;
-			return QVector<SignatureAlgorithmPair>();
+			return QByteArrayList();
 		}
 
-		static const auto& hashMetaEnum = QMetaEnum::fromType<QCryptographicHash::Algorithm>();
-		bool hashConversionSuccessfull;
-		const int hashInt = hashMetaEnum.keyToValue(parts[1].toLatin1().constData(), &hashConversionSuccessfull);
-		if (!hashConversionSuccessfull)
-		{
-			qCritical() << "Not a hash algorithm" << parts[1];
-			return QVector<SignatureAlgorithmPair>();
-		}
-		auto hash = static_cast<QCryptographicHash::Algorithm>(hashInt);
-
-		if (parts[0] == QLatin1String("Rsa"))
-		{
-			algorithms += SignatureAlgorithmPair(QSsl::KeyAlgorithm::Rsa, hash);
-		}
-		else if (parts[0] == QLatin1String("Dsa"))
-		{
-			algorithms += SignatureAlgorithmPair(QSsl::KeyAlgorithm::Dsa, hash);
-		}
-		else if (parts[0] == QLatin1String("Ec"))
-		{
-			algorithms += SignatureAlgorithmPair(QSsl::KeyAlgorithm::Ec, hash);
-		}
-		else
-		{
-			qCritical() << "Not a signature algorithm" << parts[0];
-			return QVector<SignatureAlgorithmPair>();
-		}
+		algorithms += value.toUtf8();
 	}
+
 	return algorithms;
 }

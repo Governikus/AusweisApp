@@ -9,11 +9,10 @@
 #include "asn1/CVCertificateChain.h"
 #include "BaseCardCommand.h"
 
+class test_CardConnection;
+
 namespace governikus
 {
-
-class CardConnection;
-class ChipAuthenticationInfo;
 
 class DidAuthenticateEAC2Command
 	: public BaseCardCommand
@@ -21,6 +20,7 @@ class DidAuthenticateEAC2Command
 	Q_OBJECT
 
 	private:
+		friend class ::test_CardConnection;
 		CVCertificateChain mCvcChain;
 		QString mEphemeralPublicKeyAsHex;
 		QString mSignatureAsHex;
@@ -42,7 +42,7 @@ class DidAuthenticateEAC2Command
 
 	protected:
 		virtual void internalExecute() override;
-		virtual ~DidAuthenticateEAC2Command() override;
+		virtual ~DidAuthenticateEAC2Command() override = default;
 
 	public:
 		DidAuthenticateEAC2Command(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
@@ -70,4 +70,4 @@ class DidAuthenticateEAC2Command
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

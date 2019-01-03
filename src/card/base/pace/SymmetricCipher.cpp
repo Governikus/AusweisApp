@@ -2,12 +2,12 @@
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "asn1/KnownOIDs.h"
 #include "pace/SymmetricCipher.h"
+
+#include "asn1/KnownOIDs.h"
 
 #include <openssl/evp.h>
 #include <QLoggingCategory>
-
 
 using namespace governikus;
 
@@ -46,7 +46,7 @@ SymmetricCipher::SymmetricCipher(const QByteArray& pPaceAlgorithm, const QByteAr
 	}
 	else
 	{
-		qCCritical(card) << "Unknown algorithm: " << pPaceAlgorithm;
+		qCCritical(card) << "Unknown algorithm:" << pPaceAlgorithm;
 		return;
 	}
 
@@ -59,16 +59,25 @@ SymmetricCipher::SymmetricCipher(const QByteArray& pPaceAlgorithm, const QByteAr
 	}
 
 	mCtx = EVP_CIPHER_CTX_new();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	EVP_CIPHER_CTX_init(mCtx);
+#else
+	EVP_CIPHER_CTX_reset(mCtx);
+#endif
 }
 
 
 SymmetricCipher::~SymmetricCipher()
 {
 	// also frees the memory
-	if (mCtx != nullptr && !EVP_CIPHER_CTX_cleanup(mCtx))
+	if (mCtx != nullptr &&
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+			!EVP_CIPHER_CTX_cleanup(mCtx))
+#else
+			!EVP_CIPHER_CTX_reset(mCtx))
+#endif
 	{
-		qCCritical(card) << "Error on EVP_CIPHER_CTX_cleanup";
+		qCCritical(card) << "Cannot free EVP_CIPHER_CTX";
 	}
 }
 

@@ -17,6 +17,9 @@ class IfdVersion
 		{
 			Unknown = -1,
 			v0
+#ifndef QT_NO_DEBUG
+			, v_test
+#endif
 		};
 
 	private:
@@ -34,11 +37,10 @@ class IfdVersion
 		bool operator!=(const IfdVersion& pOther) const;
 
 		QString toString() const;
-		static IfdVersion fromString(const QString& pVersionString);
+		static Version fromString(const QString& pVersionString);
 
-		static IfdVersion latest();
 		static QVector<Version> supported();
-		static IfdVersion selectLatestSupported(const QVector<Version>& pVersions);
+		static Version selectLatestSupported(const QVector<Version>& pVersions);
 };
 
 

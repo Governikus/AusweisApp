@@ -10,14 +10,15 @@
 
 #include "SecurityInfos.h"
 
+#ifndef OPENSSL_NO_CMS
 #include <openssl/cms.h>
+#endif
 
 #include <QByteArray>
 
 
 namespace governikus
 {
-
 
 /*!
  * EF.CardSecurity is defined in TR-03110-3 as ContentInfo with contentType id-signedData,
@@ -85,6 +86,7 @@ namespace governikus
  */
 class EFCardSecurity
 {
+	friend class QSharedPointer<EFCardSecurity>;
 	const QSharedPointer<const SecurityInfos> mSecurityInfos;
 
 	EFCardSecurity(const QSharedPointer<const SecurityInfos>& pSecurityInfos);
@@ -97,11 +99,12 @@ class EFCardSecurity
 		const QSharedPointer<const SecurityInfos>& getSecurityInfos() const;
 };
 
+#ifndef OPENSSL_NO_CMS
 template<>
 CMS_ContentInfo* decodeAsn1Object<CMS_ContentInfo>(CMS_ContentInfo** pObject, const unsigned char** pData, long pDataLen);
 
-
 template<>
 void freeAsn1Object<CMS_ContentInfo>(CMS_ContentInfo* pObject);
+#endif
 
-}  // namespace governikus
+} // namespace governikus

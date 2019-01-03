@@ -28,11 +28,6 @@ NotificationEnabler::NotificationEnabler(QLowEnergyService* pService, int pTimeo
 }
 
 
-NotificationEnabler::~NotificationEnabler()
-{
-}
-
-
 bool NotificationEnabler::enable(const QLowEnergyCharacteristic& pCharacteristic)
 {
 	// see Qt documentation on QLowEnergyService and topic "Service Interaction"

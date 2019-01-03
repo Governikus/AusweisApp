@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Apdu.h"
 #include "CardReturnCode.h"
+#include "ResponseApdu.h"
 
 #include <QByteArray>
 
@@ -35,4 +35,4 @@ class PinModifyOutput
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

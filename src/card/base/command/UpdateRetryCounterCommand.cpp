@@ -2,9 +2,7 @@
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "CardConnection.h"
 #include "UpdateRetryCounterCommand.h"
-
 
 using namespace governikus;
 
@@ -12,12 +10,6 @@ using namespace governikus;
 UpdateRetryCounterCommand::UpdateRetryCounterCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
 	: BaseCardCommand(pCardConnectionWorker)
 {
-}
-
-
-UpdateRetryCounterCommand::~UpdateRetryCounterCommand()
-{
-
 }
 
 

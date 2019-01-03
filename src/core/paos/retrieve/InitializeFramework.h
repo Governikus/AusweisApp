@@ -24,4 +24,4 @@ class InitializeFramework
 		InitializeFramework(const QByteArray& pXmlData);
 };
 
-} /* namespace governikus */
+} // namespace governikus

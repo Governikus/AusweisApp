@@ -27,12 +27,6 @@ TransmitCommand::TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConne
 }
 
 
-TransmitCommand::~TransmitCommand()
-{
-
-}
-
-
 bool TransmitCommand::isAcceptable(const InputAPDUInfo& pInputApduInfo, const ResponseApdu& pResponse)
 {
 	if (pInputApduInfo.getAcceptableStatusCodes().isEmpty())

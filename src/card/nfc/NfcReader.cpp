@@ -86,7 +86,7 @@ NfcReader::~NfcReader()
 
 Card* NfcReader::getCard() const
 {
-	if (mCard->isValid())
+	if (mCard && mCard->isValid())
 	{
 		return mCard.data();
 	}

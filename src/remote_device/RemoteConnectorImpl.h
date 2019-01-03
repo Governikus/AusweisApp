@@ -13,6 +13,7 @@
 
 namespace governikus
 {
+
 class ConnectRequest;
 
 class RemoteConnectorImpl
@@ -39,4 +40,4 @@ class RemoteConnectorImpl
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

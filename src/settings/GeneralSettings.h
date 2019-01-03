@@ -23,6 +23,12 @@ namespace governikus
 	#define GENERAL_SETTINGS_DEFAULT_AUTOSTART false
 #endif
 
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+	#define DEFAULT_UI "qml"
+#else
+	#define DEFAULT_UI "widgets"
+#endif
+
 
 class GeneralSettings
 	: public AbstractSettings
@@ -45,6 +51,7 @@ class GeneralSettings
 		virtual void save() override;
 
 		bool isAutoStart() const;
+		bool autoStartIsSetByAdmin() const;
 		void setAutoStart(bool pAutoStart);
 
 		const QString getPersistentSettingsVersion() const;
@@ -73,15 +80,26 @@ class GeneralSettings
 		QLocale::Language getLanguage() const;
 		void setLanguage(const QLocale::Language pLanguage);
 
+		QString getSelectedUi() const;
+		void setSelectedUi(const QString& pSelectedUi);
+
+		bool askForDeviceSurvey() const;
+		bool isDeviceSurveyPending() const;
+		void setDeviceSurveyPending(bool pDeviceSurveyPending);
+
+		bool isRequestStoreFeedback() const;
+		void setRequestStoreFeedback(bool pRequest);
+
+		QString getLastReaderPluginType() const;
+		void setLastReaderPluginType(const QString& pLastReaderPluginType);
+
 		bool isAutoUpdateCheck() const;
+		bool autoUpdateCheckIsSetByAdmin() const;
 		void setAutoUpdateCheck(bool pAutoUpdateCheck);
 
 		bool isUseScreenKeyboard() const;
 		void setUseScreenKeyboard(bool pUseScreenKeyboard);
-
-		QString getLastReaderPluginType() const;
-		void setLastReaderPluginType(const QString& pLastReaderPluginType);
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

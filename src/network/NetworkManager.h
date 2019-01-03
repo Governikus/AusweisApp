@@ -6,11 +6,14 @@
 
 #pragma once
 
+#include "Env.h"
 #include "GlobalStatus.h"
 
 #include <QAtomicInt>
 #include <QAuthenticator>
 #include <QDebug>
+#include <QMessageLogger>
+#include <QMutex>
 #include <QNetworkAccessManager>
 #include <QNetworkProxy>
 #include <QNetworkReply>
@@ -23,11 +26,15 @@ class NetworkManager
 	: public QObject
 {
 	Q_OBJECT
+	friend class Env;
 
 	private:
 		bool mApplicationExitInProgress;
-		QAtomicInt mOpenConnectionCount;
+		QMutex mTrackedConnectionsMutex;
+		QSet<QNetworkReply*> mTrackedConnections;
 		void trackConnection(QNetworkReply* pResponse, const int pTimeoutInMilliSeconds);
+		void addTrackedConnection(QNetworkReply* pResponse);
+		void removeTrackedConnection(QNetworkReply* pResponse);
 
 		static bool mLockProxy;
 		QScopedPointer<QNetworkAccessManager, QScopedPointerDeleteLater> mNetAccessManager;
@@ -40,6 +47,7 @@ class NetworkManager
 	protected:
 		NetworkManager();
 		virtual ~NetworkManager();
+		static NetworkManager& getInstance();
 
 	public:
 		enum class NetworkError
@@ -59,11 +67,12 @@ class NetworkManager
 		}
 
 
-		static NetworkManager& getInstance();
+		static int getLoggedStatusCode(const QNetworkReply* const pReply, const QMessageLogger& pLogger);
 		static NetworkError toNetworkError(const QNetworkReply* const pNetworkReply);
 		static GlobalStatus toTrustedChannelStatus(const QNetworkReply* const pNetworkReply);
 		static GlobalStatus toStatus(const QNetworkReply* const pNetworkReply);
 		static QString getTlsVersionString(QSsl::SslProtocol pProtocol);
+		static QByteArray getStatusMessage(int pStatus);
 
 		virtual void clearConnections();
 		virtual QNetworkReply* paos(QNetworkRequest& pRequest,
@@ -76,6 +85,10 @@ class NetworkManager
 				const QByteArray& pSslSession = QByteArray(),
 				int pTimeoutInMilliSeconds = 30000);
 
+		QNetworkReply* post(QNetworkRequest& pRequest,
+				const QByteArray& pData,
+				int pTimeoutInMilliSeconds = 30000);
+
 		virtual bool checkUpdateServerCertificate(const QNetworkReply& pReply);
 
 		int getOpenConnectionCount();
@@ -85,6 +98,6 @@ class NetworkManager
 		void fireShutdown();
 };
 
-} /* namespace governikus */
+} // namespace governikus
 
 QDebug operator <<(QDebug pDbg, QSsl::SslProtocol pProtocol);

@@ -13,7 +13,7 @@ Q_DECLARE_LOGGING_CATEGORY(developermode)
 
 
 StateCheckCertificates::StateCheckCertificates(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractGenericState(pContext, false)
 {
 }
 
@@ -30,14 +30,15 @@ void StateCheckCertificates::run()
 		if (!TlsChecker::checkCertificate(certificate, hashAlgorithm, commCertificates))
 		{
 			auto certificateDescError = QStringLiteral("Hash of certificate not in certificate description");
-			if (AppSettings::getInstance().getGeneralSettings().isDeveloperMode())
+			if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 			{
 				qCCritical(developermode) << certificateDescError;
 			}
 			else
 			{
 				qCritical() << certificateDescError;
-				updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description);
+				const auto& issuerName = TlsChecker::getCertificateIssuerName(certificate);
+				updateStatus(GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description, issuerName));
 				Q_EMIT fireAbort();
 				return;
 			}

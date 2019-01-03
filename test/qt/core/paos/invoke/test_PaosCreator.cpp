@@ -20,29 +20,23 @@ struct test_PaosCreatorDummy
 {
 	QString mText;
 	bool mNamespace = false;
+	const QString mTag = QStringLiteral("content");
 
-	virtual QDomElement getDocumentStructure() override
+	virtual void createBodyElement() override
 	{
 		if (mNamespace)
 		{
-			return createTextElement(Namespace::SOAP, "content", mText);
+			mWriter.writeTextElement(getNamespaceType(Namespace::SOAP, mTag), mText);
 		}
 		else
 		{
-			return createTextElement("content", mText);
+			mWriter.writeTextElement(mTag, mText);
 		}
-	}
-
-
-	QByteArray getData(QDomElement& pElement)
-	{
-		mDoc.appendChild(pElement);
-		return mDoc.toByteArray();
 	}
 
 
 };
-}
+} // namespace
 
 
 class test_PaosCreator
@@ -53,13 +47,13 @@ class test_PaosCreator
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
 		void cleanup()
 		{
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
@@ -82,19 +76,25 @@ class test_PaosCreator
 		}
 
 
-		void createHeaderElement()
+		void checkRelatesTo_data()
 		{
-			test_PaosCreatorDummy creator;
-			auto elem = creator.createHeaderElement(QString(), "something");
-			QByteArray data = creator.getData(elem);
-			QVERIFY(!data.contains("RelatesTo>"));
-			QVERIFY(data.contains("<wsa:MessageID>something</wsa:MessageID>"));
+			QTest::addColumn<QString>("relatesTo");
 
-			test_PaosCreatorDummy creator2;
-			elem = creator2.createHeaderElement("first one", "second one");
-			data = creator.getData(elem);
-			QVERIFY(data.contains("<wsa:RelatesTo>first one</wsa:RelatesTo>"));
-			QVERIFY(data.contains("<wsa:MessageID>second one</wsa:MessageID>"));
+			QTest::newRow("empty") << QString();
+			QTest::newRow("related") << QStringLiteral("first one");
+		}
+
+
+		void checkRelatesTo()
+		{
+			QFETCH(QString, relatesTo);
+
+			test_PaosCreatorDummy creator;
+			creator.setRelatedMessageId(relatesTo);
+			QByteArray data = creator.marshall();
+
+			QCOMPARE(data.contains("RelatesTo>"), !relatesTo.isNull());
+			QVERIFY(data.contains("<wsa:MessageID>urn:uuid:"));
 		}
 
 

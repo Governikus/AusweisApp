@@ -30,4 +30,4 @@ class ResourceLoader
 		bool isLoaded();
 };
 
-} /* namespace governikus */
+} // namespace governikus

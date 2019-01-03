@@ -95,7 +95,7 @@ class test_SecureMessaging
 		void testCommandChainingCLA()
 		{
 			QByteArray data;
-			CommandApdu command(static_cast<char>(0x10), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, Apdu::NO_LE);
+			CommandApdu command(static_cast<char>(0x10), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, CommandApdu::NO_LE);
 			QCOMPARE(command.getBuffer(), QByteArray::fromHex("10102030"));
 			CommandApdu securedCommand = mSecureMessaging->encrypt(command);
 			QCOMPARE(securedCommand.getBuffer(), QByteArray::fromHex("1c1020300a8e0852d8f5136eddaab800"));
@@ -105,7 +105,7 @@ class test_SecureMessaging
 		void testNoDataNoLe()
 		{
 			QByteArray data;
-			CommandApdu command(static_cast<char>(0x00), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, Apdu::NO_LE);
+			CommandApdu command(static_cast<char>(0x00), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, CommandApdu::NO_LE);
 			QCOMPARE(command.getBuffer(), QByteArray::fromHex("00102030"));
 			CommandApdu securedCommand = mSecureMessaging->encrypt(command);
 			QCOMPARE(securedCommand.getBuffer(), QByteArray::fromHex("0c1020300a8e08fd824409ae18c2f500"));
@@ -125,7 +125,7 @@ class test_SecureMessaging
 		void testNoDataShortMaxLe()
 		{
 			QByteArray data;
-			CommandApdu command(static_cast<char>(0x00), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, Apdu::SHORT_MAX_LE);
+			CommandApdu command(static_cast<char>(0x00), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, CommandApdu::SHORT_MAX_LE);
 			QCOMPARE(command.getBuffer(), QByteArray::fromHex("0010203000"));
 			CommandApdu securedCommand = mSecureMessaging->encrypt(command);
 			QCOMPARE(securedCommand.getBuffer(), QByteArray::fromHex("0c1020300d9701008e08a361948e0c90464b00"));
@@ -135,7 +135,7 @@ class test_SecureMessaging
 		void testNoDataExtendedMaxLe()
 		{
 			QByteArray data;
-			CommandApdu command(static_cast<char>(0x00), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, Apdu::EXTENDED_MAX_LE);
+			CommandApdu command(static_cast<char>(0x00), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, CommandApdu::EXTENDED_MAX_LE);
 			QCOMPARE(command.getBuffer(), QByteArray::fromHex("00102030000000"));
 			CommandApdu securedCommand = mSecureMessaging->encrypt(command);
 			QCOMPARE(securedCommand.getBuffer(), QByteArray::fromHex("0c10203000000e970200008e088b5e9fdb6cc8d9c70000"));
@@ -145,7 +145,7 @@ class test_SecureMessaging
 		void testDataShortMaxLe()
 		{
 			QByteArray data = QByteArray::fromHex("D0D1D2D3");
-			CommandApdu command(static_cast<char>(0x00), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, Apdu::SHORT_MAX_LE);
+			CommandApdu command(static_cast<char>(0x00), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, CommandApdu::SHORT_MAX_LE);
 			QCOMPARE(command.getBuffer(), QByteArray::fromHex("0010203004d0d1d2d300"));
 			CommandApdu securedCommand = mSecureMessaging->encrypt(command);
 			QCOMPARE(securedCommand.getBuffer(),
@@ -156,7 +156,7 @@ class test_SecureMessaging
 		void testDataExtendedMaxLe()
 		{
 			QByteArray data = QByteArray::fromHex("D0D1D2D3");
-			CommandApdu command(static_cast<char>(0x00), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, Apdu::EXTENDED_MAX_LE);
+			CommandApdu command(static_cast<char>(0x00), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, CommandApdu::EXTENDED_MAX_LE);
 			QCOMPARE(command.getBuffer(), QByteArray::fromHex("00102030000004d0d1d2d30000"));
 			CommandApdu securedCommand = mSecureMessaging->encrypt(command);
 			QCOMPARE(securedCommand.getBuffer(),
@@ -167,7 +167,7 @@ class test_SecureMessaging
 		void testSendSequenceCounter()
 		{
 			QByteArray data = QByteArray::fromHex("D0D1D2D3");
-			CommandApdu command(static_cast<char>(0x00), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, Apdu::EXTENDED_MAX_LE);
+			CommandApdu command(static_cast<char>(0x00), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, CommandApdu::EXTENDED_MAX_LE);
 			QCOMPARE(command.getBuffer(), QByteArray::fromHex("00102030000004d0d1d2d30000"));
 
 			CommandApdu securedCommand1 = mSecureMessaging->encrypt(command);

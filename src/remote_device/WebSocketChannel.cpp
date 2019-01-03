@@ -18,7 +18,7 @@ using namespace governikus;
 namespace
 {
 const int PING_PONG_TIMEOUT_MS = 5000;
-}
+} // namespace
 
 
 QString WebSocketChannel::makeConnectionId(const QSharedPointer<QWebSocket>& pConnection)

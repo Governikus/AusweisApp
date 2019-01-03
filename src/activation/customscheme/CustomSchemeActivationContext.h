@@ -26,11 +26,11 @@ class CustomSchemeActivationContext
 
 		bool sendProcessing() override;
 		bool sendOperationAlreadyActive() override;
-		bool sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus) override;
+		bool sendErrorPage(http_status pStatusCode, const GlobalStatus& pStatus) override;
 		bool sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pResult) override;
 
 	Q_SIGNALS:
 		void fireShowUserInformation(const QString& pMessage);
 };
 
-} /* namespace governikus */
+} // namespace governikus

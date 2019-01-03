@@ -18,25 +18,22 @@ namespace governikus
 
 class BluetoothMessage
 {
-	public:
-		using Ptr = QSharedPointer<const BluetoothMessage>;
-
 	private:
 		friend class ::test_BluetoothMessageParser;
 		BluetoothMsgId mMsgId;
-		QMap<BluetoothParamId, BluetoothMessageParameter::Ptr> mMessageParameter;
+		QMap<BluetoothParamId, QSharedPointer<const BluetoothMessageParameter> > mMessageParameter;
 
 	protected:
-		BluetoothMessageParameter::Ptr getParameter(BluetoothParamId pId) const;
+		QSharedPointer<const BluetoothMessageParameter> getParameter(BluetoothParamId pId) const;
 
 	public:
 		BluetoothMessage(BluetoothMsgId pMsgId);
 		virtual ~BluetoothMessage();
 
-		void addParameter(BluetoothMessageParameter::Ptr pMessageParameter);
+		void addParameter(const QSharedPointer<const BluetoothMessageParameter>& pMessageParameter);
 		template<typename T> void copyParameter(const T& pMessageParameter)
 		{
-			addParameter(BluetoothMessageParameter::Ptr(new T(pMessageParameter)));
+			addParameter(QSharedPointer<T>::create(pMessageParameter));
 		}
 
 
@@ -45,7 +42,7 @@ class BluetoothMessage
 		QString toString() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus
 
 
 QDebug operator<<(QDebug pDbg, const governikus::BluetoothMessage& pMsg);

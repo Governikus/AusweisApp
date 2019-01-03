@@ -7,13 +7,10 @@
 #include "states/StatePreVerification.h"
 
 #include "AppSettings.h"
-#include "Env.h"
-#include "paos/retrieve/DidAuthenticateEac1.h"
-#include "SecureStorage.h"
-#include "TestFileHelper.h"
 
 #include "TestAuthContext.h"
 
+#include <openssl/bn.h>
 #include <openssl/ecdsa.h>
 #include <QtCore>
 #include <QtTest>
@@ -79,7 +76,7 @@ class test_StatePreVerification
 		{
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2013, 12, 1));
 			auto signature = mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.at(0)->getEcdsaSignature();
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 			BIGNUM* signaturePart = signature->r;
 #else
 			const BIGNUM* signaturePart = nullptr;
@@ -142,7 +139,7 @@ class test_StatePreVerification
 			}
 			settings.save();
 
-			const int expectedCvcaSize = 10;
+			const int expectedCvcaSize = 12;
 			QCOMPARE(mState->mTrustedCvcas.size(), expectedCvcaSize);
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2013, 12, 1));
 			auto& trustedCvcas = const_cast<QVector<QSharedPointer<const CVCertificate> >&>(mState->mTrustedCvcas);

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Result.h"
+#include "ECardApiResult.h"
 
 #include <QSslCertificate>
 #include <QString>
@@ -25,6 +25,7 @@ class UrlUtil
 	~UrlUtil() = delete;
 
 	static inline QString removePrefix(QString pStr);
+	static inline QString getSuffix(ECardApiResult::Minor pMinor);
 
 	public:
 		/*!
@@ -44,4 +45,4 @@ class UrlUtil
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

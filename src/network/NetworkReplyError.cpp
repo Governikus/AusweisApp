@@ -33,5 +33,5 @@ NetworkReplyError::NetworkReplyError(QNetworkRequest const& pRequest, QObject* p
 	setRequest(pRequest);
 	setError(NetworkError::OperationCanceledError, QStringLiteral("Application shutting down"));
 
-	QMetaObject::invokeMethod(this, "onErrorSignals", Qt::QueuedConnection);
+	QMetaObject::invokeMethod(this, &NetworkReplyError::onErrorSignals, Qt::QueuedConnection);
 }

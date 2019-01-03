@@ -5,7 +5,6 @@
 #include "UpdatableFile.h"
 
 #include "Downloader.h"
-#include "Env.h"
 #include "SecureStorage.h"
 
 #include <QDir>
@@ -24,7 +23,7 @@ Q_DECLARE_LOGGING_CATEGORY(fileprovider)
 namespace
 {
 const QLatin1Char Sep('/');
-}
+} // namespace
 
 
 const QString& UpdatableFile::getName()
@@ -239,6 +238,11 @@ UpdatableFile::UpdatableFile(const QString& pSection, const QString& pName, cons
 	, mUpdateUrl(updateUrl(pSection, pName))
 	, mUpdateRunning(false)
 {
+	if (mName.isEmpty() && mDefaultPath.isEmpty())
+	{
+		qCWarning(fileprovider) << "Both name and default path are empty!";
+		Q_ASSERT(false);
+	}
 }
 
 
@@ -355,7 +359,12 @@ void UpdatableFile::clearDirty() const
 
 void UpdatableFile::markDirty() const
 {
-	if (mSectionCachePath.isEmpty() && !mName.isEmpty())
+	if (mName.isEmpty())
+	{
+		return;
+	}
+
+	if (mSectionCachePath.isEmpty())
 	{
 		qCCritical(fileprovider) << "Cannot mark invalid file:" << mSection << Sep << mName;
 

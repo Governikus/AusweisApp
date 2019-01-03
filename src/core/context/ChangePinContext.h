@@ -18,19 +18,24 @@ class ChangePinContext
 
 	QString mNewPin;
 	QString mSuccessMessage;
+	const bool mRequestTransportPin;
 
 	public:
-		ChangePinContext();
+		explicit ChangePinContext(bool pRequestTransportPin = false);
 
 		const QString& getNewPin() const;
 		void setNewPin(const QString& pNewPin);
 
+		void resetPacePasswords() override;
+
 		const QString& getSuccessMessage() const;
 		void setSuccessMessage(const QString& pSuccessMessage);
+
+		bool requestTransportPin() const;
 
 	Q_SIGNALS:
 		void fireNewPinChanged();
 		void fireSuccessMessageChanged();
 };
 
-} /* namespace governikus */
+} // namespace governikus

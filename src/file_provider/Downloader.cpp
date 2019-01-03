@@ -4,12 +4,12 @@
 
 #include "Downloader.h"
 
-#include "Env.h"
-#include "HttpStatusCode.h"
+#include "LogHandler.h"
 #include "ScopeGuard.h"
 #include "SingletonHelper.h"
 #include "TlsChecker.h"
 
+#include <http_parser.h>
 #include <QFile>
 #include <QLocale>
 #include <QLoggingCategory>
@@ -72,7 +72,7 @@ void Downloader::onSslErrors(const QList<QSslError>& pErrors)
 void Downloader::onSslHandshakeDone()
 {
 	const auto& cfg = mCurrentReply->sslConfiguration();
-	TlsChecker::logSslConfig(cfg, qInfo(network));
+	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
 
 	if (!Env::getSingleton<NetworkManager>()->checkUpdateServerCertificate(*mCurrentReply))
 	{
@@ -87,27 +87,21 @@ void Downloader::onMetadataChanged()
 {
 	const QString& fileName = mCurrentRequest->url().fileName();
 
-	QVariant status = mCurrentReply->attribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute);
-	if (!status.isNull() && Enum<HttpStatusCode>::isValue(status.toInt()))
+	const auto statusCode = mCurrentReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+	if (statusCode == HTTP_STATUS_OK)
 	{
-		HttpStatusCode statusCode = static_cast<HttpStatusCode>(status.toInt());
-		if (statusCode != HttpStatusCode::OK)
-		{
-			qCDebug(fileprovider) << "Abort request for" << fileName << "with status" << status.toInt() << "-" << statusCode;
-			mCurrentReply->abort();
-			return;
-		}
-		qCDebug(fileprovider) << "Continue request for" << fileName << "with status" << status.toInt() << "-" << statusCode;
+		qCDebug(fileprovider) << "Continue request for" << fileName;
 		return;
 	}
 
-	qCDebug(fileprovider) << "Unknown or missing HttpStatusCodeAttribute for" << fileName;
+	qCDebug(fileprovider) << "Abort request for" << fileName;
+	mCurrentReply->abort();
 }
 
 
 void Downloader::onNetworkReplyFinished()
 {
-	qCDebug(fileprovider) << "Downloader::onNetworkReplyFinished()";
+	qCDebug(fileprovider) << "Downloader finished:" << mCurrentReply->request().url().fileName();
 
 	const ScopeGuard guard([this] {
 				mCurrentReply->deleteLater();
@@ -133,25 +127,27 @@ void Downloader::onNetworkReplyFinished()
 		return;
 	}
 
-	QDateTime lastModified = mCurrentReply->header(QNetworkRequest::KnownHeaders::LastModifiedHeader).toDateTime();
-	if (!lastModified.isValid())
+	const auto statusCode = NetworkManager::getLoggedStatusCode(mCurrentReply, spawnMessageLogger(network));
+	switch (statusCode)
 	{
-		qCWarning(fileprovider) << "Server did not provide a valid LastModifiedHeader";
-		lastModified = QDateTime::currentDateTime();
-	}
+		case HTTP_STATUS_OK:
+		{
+			QDateTime lastModified = mCurrentReply->header(QNetworkRequest::KnownHeaders::LastModifiedHeader).toDateTime();
+			if (!lastModified.isValid())
+			{
+				qCWarning(fileprovider) << "Server did not provide a valid LastModifiedHeader";
+				lastModified = QDateTime::currentDateTime();
+			}
 
-	const int statusCode = mCurrentReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-	switch (static_cast<HttpStatusCode>(statusCode))
-	{
-		case HttpStatusCode::OK:
 			Q_EMIT fireDownloadSuccess(mCurrentRequest->url(), lastModified, mCurrentReply->readAll());
 			break;
+		}
 
-		case HttpStatusCode::NOT_MODIFIED:
+		case HTTP_STATUS_NOT_MODIFIED:
 			Q_EMIT fireDownloadUnnecessary(url);
 			break;
 
-		case HttpStatusCode::NOT_FOUND:
+		case HTTP_STATUS_NOT_FOUND:
 			Q_EMIT fireDownloadFailed(url, GlobalStatus::Code::Downloader_File_Not_Found);
 			break;
 
@@ -159,11 +155,11 @@ void Downloader::onNetworkReplyFinished()
 			if (mCurrentReply->error() != QNetworkReply::NoError)
 			{
 				qCCritical(fileprovider).nospace() << mCurrentReply->errorString() << " [" << textForLog << "]";
-				Q_EMIT fireDownloadFailed(url, NetworkManager::toStatus(mCurrentReply));
+				Q_EMIT fireDownloadFailed(url, NetworkManager::toStatus(mCurrentReply).getStatusCode());
 			}
 			else
 			{
-				qCCritical(fileprovider).nospace() << "Invalid HTTP status code: " << statusCode << " for [" << textForLog << "]";
+				qCCritical(fileprovider).nospace() << "Invalid HTTP status code for [" << textForLog << "]";
 				Q_EMIT fireDownloadFailed(url, GlobalStatus::Code::Network_Other_Error);
 			}
 	}
@@ -196,7 +192,7 @@ Downloader::~Downloader()
 void Downloader::download(const QUrl& pUpdateUrl)
 {
 	qCDebug(fileprovider) << "Download:" << pUpdateUrl;
-	QSharedPointer<QNetworkRequest> request = QSharedPointer<QNetworkRequest>(new QNetworkRequest(pUpdateUrl));
+	auto request = QSharedPointer<QNetworkRequest>::create(pUpdateUrl);
 	scheduleDownload(request);
 }
 
@@ -204,9 +200,8 @@ void Downloader::download(const QUrl& pUpdateUrl)
 void Downloader::downloadIfNew(const QUrl& pUpdateUrl,
 		const QDateTime& pCurrentTimestamp)
 {
-
 	qCDebug(fileprovider) << "Download:" << pUpdateUrl;
-	QSharedPointer<QNetworkRequest> request = QSharedPointer<QNetworkRequest>(new QNetworkRequest(pUpdateUrl));
+	auto request = QSharedPointer<QNetworkRequest>::create(pUpdateUrl);
 	const QString& timeStampString = QLocale::c().toString(pCurrentTimestamp, QStringLiteral("ddd, dd MMM yyyy hh:mm:ss 'GMT'"));
 	if (!timeStampString.isEmpty())
 	{

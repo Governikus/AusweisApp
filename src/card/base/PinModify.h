@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Apdu.h"
+#include "CommandApdu.h"
 
 #include <QByteArray>
 
@@ -36,4 +36,4 @@ class PinModify
 		CommandApdu createCcidForBluetooth() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

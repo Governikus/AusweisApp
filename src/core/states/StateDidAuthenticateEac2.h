@@ -17,11 +17,11 @@ class StateDidAuthenticateEac2
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateDidAuthenticateEac2(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateDidAuthenticateEac2(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 
 	private Q_SLOTS:
 		void onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand);
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -1,2 +1,7 @@
 module EnterPinView
+
+internal PinField PinField.qml
+internal PinPadButton PinPadButton.qml
+internal PinPad PinPad.qml
+
 EnterPinView 1.0 EnterPinView.qml

@@ -50,4 +50,4 @@ class CVCertificateChain
 		bool isProductive() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

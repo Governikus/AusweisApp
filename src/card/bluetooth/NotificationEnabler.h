@@ -47,10 +47,10 @@ class NotificationEnabler
 		 * \param pTimeoutSeconds time out in seconds.
 		 */
 		NotificationEnabler(QLowEnergyService* pService, int pTimeoutSeconds = 5);
-		virtual ~NotificationEnabler();
+		virtual ~NotificationEnabler() = default;
 
 		bool enable(const QLowEnergyCharacteristic& pCharacteristic);
 		bool disable(const QLowEnergyCharacteristic& pCharacteristic);
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -16,7 +16,6 @@ using namespace governikus;
 DidAuthenticateEacAdditionalParser::DidAuthenticateEacAdditionalParser()
 	: PaosParser(QStringLiteral("DIDAuthenticate"))
 {
-
 }
 
 

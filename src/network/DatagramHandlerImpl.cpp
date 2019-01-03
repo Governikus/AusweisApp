@@ -32,15 +32,15 @@ template<> DatagramHandler* createNewObject<DatagramHandler*, bool>(bool&& pList
 }
 
 
-} /* namespace governikus */
+} // namespace governikus
 
+quint16 DatagramHandlerImpl::cPort = PortFile::cDefaultPort;
 
-quint16 DatagramHandlerImpl::cPort = 24727;
-
-
-DatagramHandlerImpl::DatagramHandlerImpl(bool pListen)
+DatagramHandlerImpl::DatagramHandlerImpl(bool pListen, quint16 pPort)
 	: DatagramHandler()
 	, mSocket(new QUdpSocket)
+	, mUsedPort(pPort)
+	, mPortFile(QStringLiteral("udp"))
 {
 #ifndef QT_NO_NETWORKPROXY
 	mSocket->setProxy(QNetworkProxy::NoProxy);
@@ -51,10 +51,20 @@ DatagramHandlerImpl::DatagramHandlerImpl(bool pListen)
 	if (!pListen)
 	{
 		qCDebug(network) << "Skipping binding";
+
+		// If --port 0 is given we cannot use this as a client. Automatic port
+		// usage is only supported by a server.
+		if (mUsedPort == 0)
+		{
+			mUsedPort = PortFile::cDefaultPort;
+			qCWarning(network) << "Client port cannot be 0! Reset to default:" << mUsedPort;
+		}
 	}
-	else if (mSocket->bind(cPort))
+	else if (mSocket->bind(mUsedPort))
 	{
-		qCDebug(network) << "Bound on port:" << mSocket->localPort();
+		mUsedPort = mSocket->localPort(); // if user provides 0, we need to overwrite it with real value
+		mPortFile.handlePort(mUsedPort);
+		qCDebug(network) << "Bound on port:" << mUsedPort;
 	}
 	else
 	{
@@ -79,26 +89,68 @@ bool DatagramHandlerImpl::isBound() const
 }
 
 
-bool DatagramHandlerImpl::send(const QJsonDocument& pData)
+bool DatagramHandlerImpl::send(const QByteArray& pData)
+{
+	return send(pData, 0);
+}
+
+
+bool DatagramHandlerImpl::send(const QByteArray& pData, quint16 pPort)
 {
 	QVector<QHostAddress> broadcastAddresses;
+
 	const auto& interfaces = QNetworkInterface::allInterfaces();
 	for (const QNetworkInterface& interface : interfaces)
 	{
+		bool skipFurtherIPv6AddressesOnThisInterface = false;
+
 		const auto& entries = interface.addressEntries();
 		for (const QNetworkAddressEntry& addressEntry : entries)
 		{
-			const QHostAddress& broadcastAddr = addressEntry.broadcast();
-			if (broadcastAddr.isNull())
+			switch (addressEntry.ip().protocol())
 			{
-				continue;
-			}
-			if (addressEntry.ip().isEqual(QHostAddress::LocalHost, QHostAddress::TolerantConversion))
-			{
-				continue;
-			}
+				case QAbstractSocket::NetworkLayerProtocol::IPv4Protocol:
+				{
+					const QHostAddress& broadcastAddr = addressEntry.broadcast();
+					if (broadcastAddr.isNull())
+					{
+						continue;
+					}
+					if (addressEntry.ip().isEqual(QHostAddress::LocalHost, QHostAddress::TolerantConversion))
+					{
+						continue;
+					}
 
-			broadcastAddresses += broadcastAddr;
+					broadcastAddresses += broadcastAddr;
+					break;
+				}
+
+				case QAbstractSocket::NetworkLayerProtocol::IPv6Protocol:
+				{
+					if (skipFurtherIPv6AddressesOnThisInterface)
+					{
+						continue;
+					}
+
+					const QString& scopeId = addressEntry.ip().scopeId();
+					if (scopeId.isEmpty())
+					{
+						continue;
+					}
+
+					QHostAddress scopedMulticastAddress = QHostAddress(QStringLiteral("ff02::1"));
+					scopedMulticastAddress.setScopeId(scopeId);
+					broadcastAddresses += scopedMulticastAddress;
+
+					skipFurtherIPv6AddressesOnThisInterface = true;
+					break;
+				}
+
+				default:
+				{
+					qCDebug(network) << "Skipping unknown protocol type:" << addressEntry.ip().protocol();
+				}
+			}
 		}
 	}
 
@@ -109,9 +161,9 @@ bool DatagramHandlerImpl::send(const QJsonDocument& pData)
 
 	for (const QHostAddress& broadcastAddr : qAsConst(broadcastAddresses))
 	{
-		if (!send(pData, broadcastAddr))
+		if (!send(pData, broadcastAddr, pPort))
 		{
-			qDebug() << "Broadcasting to" << broadcastAddr << "failed";
+			qCDebug(network) << "Broadcasting to" << broadcastAddr << "failed";
 			return false;
 		}
 	}
@@ -120,15 +172,19 @@ bool DatagramHandlerImpl::send(const QJsonDocument& pData)
 }
 
 
-bool DatagramHandlerImpl::send(const QJsonDocument& pData, const QHostAddress& pAddress)
+bool DatagramHandlerImpl::send(const QByteArray& pData, const QHostAddress& pAddress, quint16 pPort)
 {
-	const auto& data = pData.toJson(QJsonDocument::Compact);
-	const quint16 remotePort = cPort == 0 ? mSocket->localPort() : cPort;
-	if (mSocket->writeDatagram(data.constData(), pAddress, remotePort) != data.size())
+	// If port is 0 we should take our own listening port as destination as other instances
+	// should use the same port to receive broadcasts.
+	const auto port = pPort > 0 ? pPort : mUsedPort;
+	Q_ASSERT(port > 0);
+
+	if (mSocket->writeDatagram(pData.constData(), pAddress, port) != pData.size())
 	{
-		qCCritical(network) << "Cannot write datagram:" << mSocket->error() << '|' << mSocket->errorString();
+		qCCritical(network) << "Cannot write datagram to address" << pAddress << ':' << mSocket->error() << '|' << mSocket->errorString();
 		return false;
 	}
+
 	return true;
 }
 
@@ -143,20 +199,6 @@ void DatagramHandlerImpl::onReadyRead()
 		datagram.resize(static_cast<int>(mSocket->pendingDatagramSize()));
 		mSocket->readDatagram(datagram.data(), datagram.size(), &addr);
 
-		QJsonParseError jsonError;
-		const auto& json = QJsonDocument::fromJson(datagram, &jsonError);
-		if (jsonError.error == QJsonParseError::NoError)
-		{
-			Q_EMIT fireNewMessage(json, addr);
-		}
-		else
-		{
-			static int timesLogged = 0;
-			if (timesLogged < 20)
-			{
-				qCInfo(network) << "Datagram does not contain valid JSON:" << datagram;
-				timesLogged++;
-			}
-		}
+		Q_EMIT fireNewMessage(datagram, addr);
 	}
 }

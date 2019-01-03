@@ -5,9 +5,8 @@
 #include "RemoteDeviceModel.h"
 
 #include "AppSettings.h"
-#include "Env.h"
 #include "LanguageLoader.h"
-#include "ReaderManager.h"
+#include "RemoteClient.h"
 
 #include <QtGlobal>
 
@@ -23,7 +22,6 @@ RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString pDeviceName, const 
 	, mLastConnected()
 	, mRemoteDeviceListEntry(pRemoteDeviceListEntry)
 {
-
 }
 
 
@@ -36,7 +34,6 @@ RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString pDeviceName, const 
 	, mLastConnected(pLastConnected)
 	, mRemoteDeviceListEntry(nullptr)
 {
-
 }
 
 
@@ -49,7 +46,6 @@ RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString pDeviceName)
 	, mLastConnected()
 	, mRemoteDeviceListEntry(nullptr)
 {
-
 }
 
 
@@ -126,13 +122,13 @@ RemoteDeviceModel::RemoteDeviceModel(QObject* pParent, bool pShowPairedReaders, 
 	, mShowPairedReaders(pShowPairedReaders)
 	, mShowUnpairedReaders(pShowUnpairedReaders)
 {
-	RemoteServiceSettings& settings = AppSettings::getInstance().getRemoteServiceSettings();
+	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	connect(&settings, &RemoteServiceSettings::fireTrustedRemoteInfosChanged, this, &RemoteDeviceModel::onKnownRemoteReadersChanged);
 	onKnownRemoteReadersChanged();
 
-	const QSharedPointer<RemoteClient>& remoteClient = Env::getSingleton<ReaderManager>()->getRemoteClient();
-	connect(remoteClient.data(), &RemoteClient::fireDeviceAppeared, this, &RemoteDeviceModel::constructReaderList);
-	connect(remoteClient.data(), &RemoteClient::fireDeviceVanished, this, &RemoteDeviceModel::constructReaderList);
+	const auto& remoteClient = Env::getSingleton<RemoteClient>();
+	connect(remoteClient, &RemoteClient::fireDeviceAppeared, this, &RemoteDeviceModel::constructReaderList);
+	connect(remoteClient, &RemoteClient::fireDeviceVanished, this, &RemoteDeviceModel::constructReaderList);
 }
 
 
@@ -230,7 +226,7 @@ QVariant RemoteDeviceModel::data(const QModelIndex& pIndex, int pRole) const
 		case LAST_CONNECTED:
 		{
 			const auto& locale = LanguageLoader::getInstance().getUsedLocale();
-			const auto& dateTimeFormat = tr("dd.MM.YYYY hh:mm AP");
+			const auto& dateTimeFormat = tr("dd.MM.yyyy hh:mm AP");
 			return locale.toString(reader.getLastConnected(), dateTimeFormat);
 		}
 
@@ -296,7 +292,7 @@ void RemoteDeviceModel::onWidgetShown()
 	}
 
 	qDebug() << "Starting Remote Device Detection";
-	Env::getSingleton<ReaderManager>()->getRemoteClient()->startDetection();
+	Env::getSingleton<RemoteClient>()->startDetection();
 	constructReaderList();
 }
 
@@ -309,7 +305,7 @@ void RemoteDeviceModel::onWidgetHidden()
 	}
 
 	qDebug() << "Stopping Remote Device Detection";
-	Env::getSingleton<ReaderManager>()->getRemoteClient()->stopDetection();
+	Env::getSingleton<RemoteClient>()->stopDetection();
 	constructReaderList();
 }
 
@@ -318,7 +314,7 @@ void RemoteDeviceModel::onKnownRemoteReadersChanged()
 {
 	mPairedReaders.clear();
 
-	RemoteServiceSettings& settings = AppSettings::getInstance().getRemoteServiceSettings();
+	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	auto pairedReaders = settings.getRemoteInfos();
 	for (const auto& reader : pairedReaders)
 	{
@@ -334,27 +330,24 @@ void RemoteDeviceModel::constructReaderList()
 	beginResetModel();
 	mAllRemoteReaders.clear();
 
-	const QSharedPointer<RemoteClient>& remoteClient = Env::getSingleton<ReaderManager>()->getRemoteClient();
+	RemoteClient* const remoteClient = Env::getSingleton<RemoteClient>();
 
 	if (mShowPairedReaders)
 	{
+		const QVector<QSharedPointer<RemoteDeviceListEntry> >& foundDevices = remoteClient->getRemoteDevices();
+
 		for (const auto& pairedReader : qAsConst(mPairedReaders))
 		{
 			bool found = false;
 			bool supported = true;
-			if (remoteClient)
+			for (const auto& foundDevice : foundDevices)
 			{
-				const QVector<QSharedPointer<RemoteDeviceListEntry> >& foundDevices = remoteClient->getRemoteDevices();
-
-				for (const auto& foundDevice : foundDevices)
+				if (foundDevice && foundDevice->getRemoteDeviceDescriptor().getIfdId() == pairedReader.getFingerprint())
 				{
-					if (foundDevice && foundDevice->getRemoteDeviceDescriptor().getIfdId() == pairedReader.getFingerprint())
-					{
-						found = true;
-						supported = foundDevice->getRemoteDeviceDescriptor().isSupported();
+					found = true;
+					supported = foundDevice->getRemoteDeviceDescriptor().isSupported();
 
-						break;
-					}
+					break;
 				}
 			}
 
@@ -368,7 +361,7 @@ void RemoteDeviceModel::constructReaderList()
 		}
 	}
 
-	if (mShowUnpairedReaders && remoteClient)
+	if (mShowUnpairedReaders)
 	{
 		const QVector<QSharedPointer<RemoteDeviceListEntry> >& remoteDevices = remoteClient->getRemoteDevices();
 
@@ -402,14 +395,14 @@ void RemoteDeviceModel::forgetDevice(const QModelIndex& pIndex)
 
 void RemoteDeviceModel::forgetDevice(const QString& pDeviceId)
 {
-	RemoteServiceSettings& settings = AppSettings::getInstance().getRemoteServiceSettings();
+	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	settings.removeTrustedCertificate(pDeviceId);
 }
 
 
-void RemoteDeviceModel::onDeviceDisconnected(GlobalStatus::Code pCloseCode, const QSharedPointer<RemoteDispatcher>& pRemoteDispatcher)
+void RemoteDeviceModel::onDeviceDisconnected(GlobalStatus::Code pCloseCode, const QString& pId)
 {
 	Q_UNUSED(pCloseCode);
-	Q_UNUSED(pRemoteDispatcher);
+	Q_UNUSED(pId);
 	constructReaderList();
 }

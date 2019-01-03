@@ -6,12 +6,10 @@
 
 #include "CertificateChecker.h"
 
-#include "AppSettings.h"
 #include "context/AuthContext.h"
 #include "SecureStorage.h"
 
 #include "MockActivationContext.h"
-#include "TestFileHelper.h"
 
 #include <QtTest>
 

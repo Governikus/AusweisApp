@@ -17,6 +17,7 @@ class test_SymmetricCipher
 	Q_OBJECT
 
 	private:
+		const QString PIN = QStringLiteral("123456");
 		const QByteArray DATA = QByteArray::fromRawData("Moin Moin Anton!", 16);
 
 	private Q_SLOTS:
@@ -24,9 +25,8 @@ class test_SymmetricCipher
 		{
 			QByteArray paceAlgo("unknown-algorithm");
 			KeyDerivationFunction kdf(paceAlgo);
-			QByteArray key = kdf.pi("123456");
+			QByteArray key = kdf.pi(PIN);
 			SymmetricCipher sc(paceAlgo, key);
-
 
 			QVERIFY(!sc.isInitialized());
 			QVERIFY(sc.encrypt(QByteArray()).isEmpty());
@@ -38,7 +38,7 @@ class test_SymmetricCipher
 		{
 			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC);
 			KeyDerivationFunction kdf(paceAlgo);
-			QByteArray key = kdf.pi("123456");
+			QByteArray key = kdf.pi(PIN);
 			SymmetricCipher sc(paceAlgo, key);
 
 			QVERIFY(!sc.isInitialized());
@@ -50,8 +50,7 @@ class test_SymmetricCipher
 		void wrongKeySize()
 		{
 			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
-			QByteArray key("123456");
-			SymmetricCipher sc(paceAlgo, key);
+			SymmetricCipher sc(paceAlgo, "dummy");
 
 			QVERIFY(!sc.isInitialized());
 			QVERIFY(sc.encrypt(QByteArray()).isEmpty());
@@ -63,7 +62,7 @@ class test_SymmetricCipher
 		{
 			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
 			KeyDerivationFunction kdf(paceAlgo);
-			QByteArray key = kdf.pi("123456");
+			QByteArray key = kdf.pi(PIN);
 			SymmetricCipher sc(paceAlgo, key);
 
 			QVERIFY(sc.encrypt(QByteArray()).isEmpty());
@@ -75,7 +74,7 @@ class test_SymmetricCipher
 		{
 			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
 			KeyDerivationFunction kdf(paceAlgo);
-			QByteArray key = kdf.pi("123456");
+			QByteArray key = kdf.pi(PIN);
 			SymmetricCipher sc(paceAlgo, key);
 
 			QByteArray encryptedData = sc.encrypt(DATA);
@@ -90,7 +89,7 @@ class test_SymmetricCipher
 		{
 			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192);
 			KeyDerivationFunction kdf(paceAlgo);
-			QByteArray key = kdf.pi("123456");
+			QByteArray key = kdf.pi(PIN);
 			SymmetricCipher sc(paceAlgo, key);
 
 			QByteArray encryptedData = sc.encrypt(DATA);
@@ -105,7 +104,7 @@ class test_SymmetricCipher
 		{
 			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
 			KeyDerivationFunction kdf(paceAlgo);
-			QByteArray key = kdf.pi("123456");
+			QByteArray key = kdf.pi(PIN);
 			SymmetricCipher sc(paceAlgo, key);
 
 			QByteArray encryptedData = sc.encrypt(DATA);
@@ -120,7 +119,7 @@ class test_SymmetricCipher
 		{
 			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
 			KeyDerivationFunction kdf(paceAlgo);
-			QByteArray key = kdf.pi("123456");
+			QByteArray key = kdf.pi(PIN);
 			SymmetricCipher sc(paceAlgo, key);
 
 			QCOMPARE(sc.decrypt(sc.encrypt(DATA)), DATA);
@@ -135,7 +134,7 @@ class test_SymmetricCipher
 		{
 			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
 			KeyDerivationFunction kdf(paceAlgo);
-			QByteArray key = kdf.pi("123456");
+			QByteArray key = kdf.pi(PIN);
 			SymmetricCipher sc(paceAlgo, key);
 
 			QByteArray encryptedData = sc.encrypt(DATA);

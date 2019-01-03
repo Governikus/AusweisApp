@@ -7,7 +7,7 @@
 using namespace governikus;
 
 StateEditAccessRights::StateEditAccessRights(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractGenericState(pContext, false)
 {
 }
 

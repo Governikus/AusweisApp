@@ -1,8 +1,0 @@
-module Global
-singleton Constants 1.0 Constants.qml
-singleton PlatformConstants 1.0 PlatformConstants.qml
-Category 1.0 Category.js
-CheckBox 1.0 CheckBox.qml
-Pane 1.0 Pane.qml
-Utils 1.0 Utils.js
-ProviderModelItem 1.0 ProviderModelItem.qml

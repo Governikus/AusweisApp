@@ -8,13 +8,13 @@
 namespace governikus
 {
 
-
 class AutoStart
 {
 	public:
 		static bool enabled();
+		static bool isSetByAdmin();
 		static void set(bool pEnabled);
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

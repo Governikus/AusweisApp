@@ -5,18 +5,16 @@
 #pragma once
 
 #include "Card.h"
-#include "DeviceError.h"
 #include "ReaderInfo.h"
 
 #include <QObject>
 #include <QSharedPointer>
 #include <QTimerEvent>
 
+class test_Reader;
 
 namespace governikus
 {
-
-class CardConnectionWorker;
 
 class Reader
 	: public QObject
@@ -34,12 +32,8 @@ class Reader
 
 		void timerEvent(QTimerEvent* pEvent) override;
 
-		/*!
-		 * Periodically called to perform an update of the readers and cards state.
-		 */
-		void update();
-
 	private:
+		friend class ::test_Reader;
 		virtual CardEvent updateCard() = 0;
 
 		CardReturnCode getRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, int& pRetryCounter, bool& pPinDeactivated);
@@ -48,7 +42,12 @@ class Reader
 
 	public:
 		Reader(ReaderManagerPlugInType pPlugInType, const QString& pReaderName);
-		virtual ~Reader() override;
+		virtual ~Reader() override = default;
+
+		/*!
+		 * Periodically called to perform an update of the readers and cards state.
+		 */
+		void update();
 
 		const QString& getName() const
 		{
@@ -60,9 +59,6 @@ class Reader
 		{
 			return mReaderInfo;
 		}
-
-
-		void setRetryCounter(int pRetryCounter);
 
 
 		virtual Card* getCard() const = 0;
@@ -82,7 +78,7 @@ class Reader
 		void fireCardRemoved(const QString& pReaderName);
 		void fireCardRetryCounterChanged(const QString& pReaderName);
 		void fireReaderPropertiesUpdated(const QString& pReaderName);
-		void fireReaderDeviceError(DeviceError pDeviceError);
+		void fireReaderDeviceError(GlobalStatus::Code pErrorCode);
 
 
 };
@@ -95,10 +91,10 @@ class ConnectableReader
 
 	public:
 		using Reader::Reader;
-		virtual ~ConnectableReader();
+		virtual ~ConnectableReader() override = default;
 
 		virtual void connectReader() = 0;
 		virtual void disconnectReader() = 0;
 };
 
-} /* namespace governikus */
+} // namespace governikus

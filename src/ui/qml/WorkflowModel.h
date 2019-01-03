@@ -1,0 +1,76 @@
+/*!
+ * \brief Model implementation for the authentication action.
+ *
+ * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ */
+
+#pragma once
+
+#include "context/WorkflowContext.h"
+#include "ReaderManagerPlugInInfo.h"
+
+#include <QObject>
+#include <QSharedPointer>
+#include <QString>
+
+class test_WorkflowModel;
+
+namespace governikus
+{
+
+class WorkflowModel
+	: public QObject
+{
+	Q_OBJECT
+	Q_PROPERTY(QString currentState READ getCurrentState NOTIFY fireCurrentStateChanged)
+	Q_PROPERTY(QString resultString READ getResultString NOTIFY fireResultChanged)
+	Q_PROPERTY(bool error READ isError NOTIFY fireResultChanged)
+	Q_PROPERTY(bool errorIsMasked READ isMaskedError NOTIFY fireResultChanged)
+	Q_PROPERTY(ReaderManagerPlugInType readerPlugInType READ getReaderPlugInType WRITE setReaderPlugInType NOTIFY fireReaderPlugInTypeChanged)
+	Q_PROPERTY(bool isBasicReader READ isBasicReader NOTIFY fireIsBasicReaderChanged)
+	Q_PROPERTY(QString readerImage MEMBER mReaderImage NOTIFY fireReaderImageChanged)
+
+	private:
+		friend class ::test_WorkflowModel;
+
+		QSharedPointer<WorkflowContext> mContext;
+		QString mReaderImage;
+
+	public:
+		WorkflowModel(QObject* pParent = nullptr);
+		virtual ~WorkflowModel();
+
+		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
+
+		QString getCurrentState() const;
+		virtual QString getResultString() const;
+		bool isError() const;
+		bool isMaskedError() const;
+
+		ReaderManagerPlugInType getReaderPlugInType() const;
+		void setReaderPlugInType(ReaderManagerPlugInType pReaderPlugInType);
+
+		bool isBasicReader();
+
+		Q_INVOKABLE void startWorkflow();
+		Q_INVOKABLE void cancelWorkflow();
+		Q_INVOKABLE void cancelWorkflowOnPinBlocked();
+		Q_INVOKABLE void cancelWorkflowToChangePin();
+		Q_INVOKABLE void continueWorkflow();
+		Q_INVOKABLE void setInitialPluginType();
+		Q_INVOKABLE bool selectedReaderHasCard() const;
+
+	public Q_SLOTS:
+		void onReaderManagerSignal();
+
+	Q_SIGNALS:
+		void fireStartWorkflow();
+		void fireCurrentStateChanged(const QString& pState);
+		void fireResultChanged();
+		void fireReaderPlugInTypeChanged();
+		void fireIsBasicReaderChanged();
+		void fireReaderImageChanged();
+};
+
+
+} // namespace governikus

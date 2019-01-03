@@ -19,14 +19,14 @@ class IfdTransmitResponse
 		QByteArray mResponseApdu;
 
 	public:
-		IfdTransmitResponse(const QString& pSlotHandle, const QByteArray& pResponseApdu = QByteArray(), const QString& pResultMinor = QString());
+		IfdTransmitResponse(const QString& pSlotHandle, const QByteArray& pResponseApdu = QByteArray(), ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		IfdTransmitResponse(const QJsonObject& pMessageObject);
 		virtual ~IfdTransmitResponse() override = default;
 
 		const QString& getSlotHandle() const;
 		const QByteArray& getResponseApdu() const;
-		virtual QJsonDocument toJson(const QString& pContextHandle) const override;
+		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

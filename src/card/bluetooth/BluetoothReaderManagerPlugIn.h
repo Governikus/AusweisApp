@@ -16,7 +16,6 @@
 namespace governikus
 {
 
-
 class BluetoothReader;
 class BluetoothReaderManagerPlugInPrivate;
 
@@ -35,11 +34,17 @@ class BluetoothReaderManagerPlugIn
 		QBluetoothDeviceDiscoveryAgent mDeviceDiscoveryAgent;
 		QMap<QString, QSharedPointer<CyberJackWaveDevice> > mInitializingDevices;
 		QMap<QString, BluetoothReader*> mReaders;
+		QMap<QString, int> mPendingConnections;
 		QStringList mReadersDiscoveredInCurrentScan;
 		int mTimerIdDiscoverPairedDevices;
+		bool mScanInProgress;
 
 		void onRemoveReader(const QString& pDeviceId);
 		void timerEvent(QTimerEvent* event) override;
+		void setScanInProgress(bool pScanInProgress);
+		void onScanInProgressChanged();
+
+		QVector<QString> deviceIdsForReaderName(const QString& pReaderName);
 
 	private Q_SLOTS:
 		void onDeviceInitialized(const QBluetoothDeviceInfo& pInfo);
@@ -49,17 +54,17 @@ class BluetoothReaderManagerPlugIn
 		void onDeviceDiscoveryError(QBluetoothDeviceDiscoveryAgent::Error pError);
 		void onDeviceDiscoveryCanceled();
 		void setBluetoothStatus(bool pEnabled);
-
-	protected:
-		virtual void onConnectToKnownReadersChanged() override;
+		void onCardRemoved(const QString& pReaderName);
+		void onReaderConnected(const QString& pReaderName);
+		void onReaderConnectionFailed(const QString& pReaderName);
 
 	public:
 		BluetoothReaderManagerPlugIn();
 		void init() override;
 		QList<Reader*> getReaders() const override;
 
-		virtual void startScan() override;
+		virtual void startScan(bool pAutoConnect) override;
 		virtual void stopScan() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

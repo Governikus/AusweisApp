@@ -11,8 +11,3 @@ ActivationContext::ActivationContext()
 	: mSendError()
 {
 }
-
-
-ActivationContext::~ActivationContext()
-{
-}

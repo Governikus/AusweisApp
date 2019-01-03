@@ -11,6 +11,8 @@
 
 #include "context/ChangePinContext.h"
 
+class test_StateUpdateRetryCounter;
+
 namespace governikus
 {
 
@@ -19,12 +21,13 @@ class StateUpdateRetryCounter
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateUpdateRetryCounter;
 
-	StateUpdateRetryCounter(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateUpdateRetryCounter(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 
 	private Q_SLOTS:
 		void onUpdateRetryCounterDone(QSharedPointer<BaseCardCommand> pCommand);
 };
 
-} /* namespace governikus */
+} // namespace governikus

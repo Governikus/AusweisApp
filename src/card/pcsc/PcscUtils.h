@@ -204,4 +204,4 @@ class PcscUtils
 #undef SCARD_W_CARD_NOT_AUTHENTICATED
 #endif
 
-} /* namespace governikus */
+} // namespace governikus

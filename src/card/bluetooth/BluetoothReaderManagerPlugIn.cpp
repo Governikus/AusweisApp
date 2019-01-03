@@ -9,8 +9,7 @@
 #include "BluetoothDeviceUtil.h"
 #include "BluetoothReader.h"
 #include "BluetoothReaderManagerPlugIn_p.h"
-#include "DeviceError.h"
-#include "Initializer.h"
+#include "GlobalStatus.h"
 #include "ScopeGuard.h"
 
 #include <QLoggingCategory>
@@ -29,6 +28,7 @@ BluetoothReaderManagerPlugIn::BluetoothReaderManagerPlugIn()
 	, mReaders()
 	, mReadersDiscoveredInCurrentScan()
 	, mTimerIdDiscoverPairedDevices(0)
+	, mScanInProgress(false)
 {
 	connect(&mDeviceDiscoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &BluetoothReaderManagerPlugIn::onDeviceDiscovered);
 	connect(&mDeviceDiscoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this, &BluetoothReaderManagerPlugIn::onDeviceDiscoveryFinished);
@@ -61,7 +61,7 @@ QList<Reader*> BluetoothReaderManagerPlugIn::getReaders() const
 }
 
 
-void BluetoothReaderManagerPlugIn::startScan()
+void BluetoothReaderManagerPlugIn::startScan(bool /*pAutoConnect*/)
 {
 	if (mDeviceDiscoveryAgent.isActive())
 	{
@@ -78,9 +78,10 @@ void BluetoothReaderManagerPlugIn::startScan()
 	if (mReaders.size() < 1)
 	{
 		qCDebug(bluetooth) << "Starting Bluetooth device discovery";
-		mScanInProgress = true;
 		mDeviceDiscoveryAgent.start();
 	}
+
+	setScanInProgress(true);
 }
 
 
@@ -109,17 +110,27 @@ void BluetoothReaderManagerPlugIn::stopScan()
 		qCWarning(bluetooth) << "Bluetooth device discovery not running";
 	}
 
-	mScanInProgress = false;
+	setScanInProgress(false);
 }
 
 
-void BluetoothReaderManagerPlugIn::onConnectToKnownReadersChanged()
+void BluetoothReaderManagerPlugIn::setScanInProgress(bool pScanInProgress)
+{
+	if (mScanInProgress != pScanInProgress)
+	{
+		mScanInProgress = pScanInProgress;
+		onScanInProgressChanged();
+	}
+}
+
+
+void BluetoothReaderManagerPlugIn::onScanInProgressChanged()
 {
 	const auto& values = mReaders.values();
 	for (BluetoothReader* const reader : values)
 	{
 		const bool connected = reader->getReaderInfo().isConnected();
-		if (mConnectToKnownReaders && !connected)
+		if (mScanInProgress && !connected)
 		{
 			/*
 			 * Workaround for pairing problem on Android:
@@ -131,15 +142,33 @@ void BluetoothReaderManagerPlugIn::onConnectToKnownReadersChanged()
 			 *
 			 * This led to setting a delay of 1000 msecs.
 			 */
-			QTimer::singleShot(1000, [ = ] {
+			QTimer::singleShot(1000, reader, [ = ] {
 						reader->connectReader();
 					});
 		}
-		else if (connected && !mConnectToKnownReaders)
+		else if (connected && !mScanInProgress)
 		{
 			reader->disconnectReader();
 		}
 	}
+}
+
+
+QVector<QString> BluetoothReaderManagerPlugIn::deviceIdsForReaderName(const QString& pReaderName)
+{
+	QVector<QString> result;
+
+	for (QMap<QString, BluetoothReader*>::const_iterator it = mReaders.constBegin(); it != mReaders.constEnd(); ++it)
+	{
+		const QString& deviceId = it.key();
+		const Reader* reader = it.value();
+		if (reader->getName() == pReaderName)
+		{
+			result += deviceId;
+		}
+	}
+
+	return result;
 }
 
 
@@ -166,7 +195,7 @@ void BluetoothReaderManagerPlugIn::onDeviceDiscovered(const QBluetoothDeviceInfo
 
 	qCDebug(bluetooth) << "Bluetooth device discovered" << pInfo;
 
-	QSharedPointer<CyberJackWaveDevice> newDevice(new CyberJackWaveDevice(pInfo));
+	const auto& newDevice = QSharedPointer<CyberJackWaveDevice>::create(pInfo);
 	mInitializingDevices.insert(deviceId, newDevice);
 	connect(newDevice.data(), &CyberJackWaveDevice::fireInitialized, this, &BluetoothReaderManagerPlugIn::onDeviceInitialized);
 	newDevice->initialize();
@@ -197,9 +226,10 @@ void BluetoothReaderManagerPlugIn::onDeviceInitialized(const QBluetoothDeviceInf
 	BluetoothReader* reader = new BluetoothReader(device);
 	qCDebug(bluetooth) << "Device is successfully initialized, create reader" << reader->getName();
 
-	connect(reader, &BluetoothReader::fireReaderConnected, this, &ReaderManagerPlugIn::fireReaderAdded);
+	connect(reader, &BluetoothReader::fireReaderConnected, this, &BluetoothReaderManagerPlugIn::onReaderConnected);
+	connect(reader, &BluetoothReader::fireReaderConnectionFailed, this, &BluetoothReaderManagerPlugIn::onReaderConnectionFailed);
 	connect(reader, &Reader::fireCardInserted, this, &ReaderManagerPlugIn::fireCardInserted);
-	connect(reader, &Reader::fireCardRemoved, this, &ReaderManagerPlugIn::fireCardRemoved);
+	connect(reader, &Reader::fireCardRemoved, this, &BluetoothReaderManagerPlugIn::onCardRemoved);
 	connect(reader, &Reader::fireCardRetryCounterChanged, this, &ReaderManagerPlugIn::fireCardRetryCounterChanged);
 	connect(reader, &Reader::fireReaderDeviceError, this, &ReaderManagerPlugIn::fireReaderDeviceError);
 
@@ -207,8 +237,10 @@ void BluetoothReaderManagerPlugIn::onDeviceInitialized(const QBluetoothDeviceInf
 	mReaders.insert(deviceId, reader);
 	connect(device.data(), &CyberJackWaveDevice::fireDisconnected, this, &BluetoothReaderManagerPlugIn::onDeviceDisconnected);
 
-	if (mConnectToKnownReaders)
+	if (mScanInProgress)
 	{
+		mPendingConnections.insert(reader->getName(), 1);
+
 		/*
 		 * Workaround for pairing problem on Android:
 		 *
@@ -219,7 +251,7 @@ void BluetoothReaderManagerPlugIn::onDeviceInitialized(const QBluetoothDeviceInf
 		 *
 		 * This led to setting a delay of 1000 msecs.
 		 */
-		QTimer::singleShot(1000, [ = ] {
+		QTimer::singleShot(1000, reader, [ = ] {
 					reader->connectReader();
 				});
 	}
@@ -264,7 +296,7 @@ void BluetoothReaderManagerPlugIn::onDeviceDiscoveryError(QBluetoothDeviceDiscov
 		setReaderInfoResponding(false);
 	}
 
-	Q_EMIT fireReaderDeviceError(pError == QBluetoothDeviceDiscoveryAgent::PoweredOffError ? DeviceError::DEVICE_POWERED_OFF : DeviceError::DEVICE_SCAN_ERROR);
+	Q_EMIT fireReaderDeviceError(pError == QBluetoothDeviceDiscoveryAgent::PoweredOffError ? GlobalStatus::Code::No_Error : GlobalStatus::Code::Workflow_Reader_Device_Scan_Error);
 }
 
 
@@ -300,4 +332,86 @@ void BluetoothReaderManagerPlugIn::timerEvent(QTimerEvent* pEvent)
 	}
 
 	ReaderManagerPlugIn::timerEvent(pEvent);
+}
+
+
+void BluetoothReaderManagerPlugIn::onReaderConnected(const QString& pReaderName)
+{
+	Q_EMIT fireReaderAdded(pReaderName);
+}
+
+
+void BluetoothReaderManagerPlugIn::onCardRemoved(const QString& pReaderName)
+{
+	const QVector<QString> ids = deviceIdsForReaderName(pReaderName);
+	if (ids.isEmpty())
+	{
+		qCWarning(bluetooth) << "Card removed for unknown reader:" << pReaderName;
+		return;
+	}
+
+	for (const QString& id : ids)
+	{
+		const BluetoothReader* const reader = mReaders.value(id);
+		const bool connected = reader->getReaderInfo().isConnected();
+
+		Q_EMIT fireCardRemoved(pReaderName);
+		if (!connected)
+		{
+			qCDebug(bluetooth) << "Device is disconnected:" << pReaderName;
+			Q_EMIT fireReaderRemoved(pReaderName);
+		}
+	}
+}
+
+
+void BluetoothReaderManagerPlugIn::onReaderConnectionFailed(const QString& pReaderName)
+{
+	if (!mPendingConnections.contains(pReaderName))
+	{
+		qCWarning(bluetooth) << "Connection failed for a reader with no pending connection:" << pReaderName;
+
+		return;
+	}
+
+	const int attemptCount = mPendingConnections.value(pReaderName);
+	if (attemptCount >= 2)
+	{
+		qCWarning(bluetooth) << "Maximum connection attempt count reached for reader:" << pReaderName;
+
+		return;
+	}
+
+	BluetoothReader* const reader = mReaders.value(pReaderName, nullptr);
+	if (reader)
+	{
+		mPendingConnections.insert(pReaderName, attemptCount + 1);
+
+		/*
+		 * Sometimes a connection failure occurs after a successful
+		 * pairing. In this case, the bluetooth device is connected but
+		 * does not report a successful connection.
+		 * Before we try to reconnect to the device, it is necessary
+		 * to disconnect from it.
+		 */
+		reader->disconnectReader();
+
+		/*
+		 * Workaround for pairing problem on Android:
+		 *
+		 * The reader detection process performs a BT connect, determines the services and characteristics
+		 * and disconnects afterwards. When selecting a reader we connect again.
+		 * This causes some timing issue. Other developers have similar problems, e.g. see
+		 * https://github.com/NordicSemiconductor/Android-DFU-Library/issues/1#issuecomment-156790789
+		 *
+		 * This led to setting a delay of 1000 msecs.
+		 */
+		QTimer::singleShot(1000, reader, [ = ] {
+					reader->connectReader();
+				});
+	}
+	else
+	{
+		qCWarning(bluetooth) << "Cannot reconnect to reader, reader not found:" << pReaderName;
+	}
 }

@@ -31,10 +31,10 @@ class HttpServerRequestor
 		virtual ~HttpServerRequestor();
 
 		QPointer<QNetworkReply> request(const QUrl& pUrl, int pTimeOut = 2000);
-		static QUrl createUrl(const QString& pQuery, int pPort, const QHostAddress& pHost = QHostAddress::LocalHost, const QString& pPath = QStringLiteral("/eID-Client"));
+		static QUrl createUrl(const QString& pQuery, quint16 pPort, const QHostAddress& pHost = QHostAddress::LocalHost, const QString& pPath = QStringLiteral("/eID-Client"));
 
 	private Q_SLOTS:
 		void finished();
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -13,8 +13,7 @@
 namespace governikus
 {
 
-
-class PACEInfo;
+class PaceInfo;
 
 
 class EllipticCurveFactory
@@ -29,7 +28,7 @@ class EllipticCurveFactory
 		 * \param pPaceInfo PACEInfo element containing domain parameter
 		 * \return elliptic curve object
 		 */
-		static QSharedPointer<EC_GROUP> create(const QSharedPointer<const PACEInfo>& pPaceInfo);
+		static QSharedPointer<EC_GROUP> create(const QSharedPointer<const PaceInfo>& pPaceInfo);
 
 		/*!
 		 * \brief Creates a standardized elliptic curve with specified curve index..
@@ -39,4 +38,4 @@ class EllipticCurveFactory
 		static QSharedPointer<EC_GROUP> create(int pCurveIndex);
 };
 
-} /* namespace governikus */
+} // namespace governikus

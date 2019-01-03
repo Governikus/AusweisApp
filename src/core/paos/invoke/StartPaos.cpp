@@ -19,65 +19,59 @@ StartPaos::StartPaos(const QByteArray& pSessionId)
 }
 
 
-QDomElement StartPaos::createConnectionHandleElement()
+void StartPaos::createConnectionHandleElement()
 {
-	QDomElement element = mDoc.createElement(QStringLiteral("ConnectionHandle"));
-	element.setAttribute(getNamespacePrefix(Namespace::XSI), getNamespace(Namespace::XSI));
-	element.setAttribute(getNamespacePrefix(Namespace::XSI, QStringLiteral("type")), QStringLiteral("ConnectionHandleType"));
+	mWriter.writeStartElement(QStringLiteral("ConnectionHandle"));
+	mWriter.writeAttribute(getNamespacePrefix(Namespace::XSI), getNamespace(Namespace::XSI));
+	mWriter.writeAttribute(getNamespacePrefix(Namespace::XSI, QStringLiteral("type")), QStringLiteral("ConnectionHandleType"));
 
-	element.appendChild(createTextElement(QStringLiteral("CardApplication"), QStringLiteral("e80704007f00070302")));
-	element.appendChild(createTextElement(QStringLiteral("SlotHandle"), QStringLiteral("00")));
+	mWriter.writeTextElement(QStringLiteral("CardApplication"), QStringLiteral("e80704007f00070302"));
+	mWriter.writeTextElement(QStringLiteral("SlotHandle"), QStringLiteral("00"));
 
-	return element;
+	mWriter.writeEndElement(); // ConnectionHandle
 }
 
 
-QDomElement StartPaos::createUserAgentElement()
+void StartPaos::createUserAgentElement()
 {
-	QDomElement element = mDoc.createElement(QStringLiteral("UserAgent"));
+	mWriter.writeStartElement(QStringLiteral("UserAgent"));
 
-	element.appendChild(createTextElement(QStringLiteral("Name"), mUserAgent.getName()));
-	element.appendChild(createTextElement(QStringLiteral("VersionMajor"), mUserAgent.getVersionMajor()));
-	element.appendChild(createTextElement(QStringLiteral("VersionMinor"), mUserAgent.getVersionMinor()));
-	element.appendChild(createTextElement(QStringLiteral("VersionSubminor"), mUserAgent.getVersionSubminor()));
+	mWriter.writeTextElement(QStringLiteral("Name"), mUserAgent.getName());
+	mWriter.writeTextElement(QStringLiteral("VersionMajor"), mUserAgent.getVersionMajor());
+	mWriter.writeTextElement(QStringLiteral("VersionMinor"), mUserAgent.getVersionMinor());
+	mWriter.writeTextElement(QStringLiteral("VersionSubminor"), mUserAgent.getVersionSubminor());
 
-	return element;
+	mWriter.writeEndElement(); // UserAgent
 }
 
 
-QDomElement StartPaos::createSupportedAPIVersionsElement()
+void StartPaos::createSupportedAPIVersionsElement()
 {
-	QDomElement element = mDoc.createElement(QStringLiteral("SupportedAPIVersions"));
+	mWriter.writeStartElement(QStringLiteral("SupportedAPIVersions"));
 
-	element.appendChild(createTextElement(QStringLiteral("Major"), mSupportedAPI.getMajor()));
-	element.appendChild(createTextElement(QStringLiteral("Minor"), mSupportedAPI.getMinor()));
-	element.appendChild(createTextElement(QStringLiteral("Subminor"), mSupportedAPI.getSubminor()));
+	mWriter.writeTextElement(QStringLiteral("Major"), mSupportedAPI.getMajor());
+	mWriter.writeTextElement(QStringLiteral("Minor"), mSupportedAPI.getMinor());
+	mWriter.writeTextElement(QStringLiteral("Subminor"), mSupportedAPI.getSubminor());
 
-	return element;
+	mWriter.writeEndElement(); // SupportedAPIVersions
 }
 
 
-QDomElement StartPaos::createSessionIdentifierElement()
+void StartPaos::createSessionIdentifierElement()
 {
-	return createTextElement(QStringLiteral("SessionIdentifier"), mSessionId);
+	writeTextElement(QStringLiteral("SessionIdentifier"), mSessionId);
 }
 
 
-QDomElement StartPaos::createStartPaosElement()
+void StartPaos::createBodyElement()
 {
-	QDomElement element = mDoc.createElement(QStringLiteral("StartPAOS"));
-	element.setAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
+	mWriter.writeStartElement(QStringLiteral("StartPAOS"));
+	mWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
 
-	element.appendChild(createSessionIdentifierElement());
-	element.appendChild(createConnectionHandleElement());
-	element.appendChild(createUserAgentElement());
-	element.appendChild(createSupportedAPIVersionsElement());
+	createSessionIdentifierElement();
+	createConnectionHandleElement();
+	createUserAgentElement();
+	createSupportedAPIVersionsElement();
 
-	return element;
-}
-
-
-QDomElement StartPaos::getDocumentStructure()
-{
-	return createEnvelopeElement(createStartPaosElement(), getRelatesTo(), getMessageId());
+	mWriter.writeEndElement(); // StartPAOS
 }

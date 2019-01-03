@@ -55,4 +55,4 @@ class CliHelper
 		quint16 getServerPort();
 };
 
-} /* namespace governikus */
+} // namespace governikus

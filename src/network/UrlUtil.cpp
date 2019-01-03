@@ -34,6 +34,7 @@ QUrl UrlUtil::getUrlOrigin(const QUrl& pUrl)
 	origin.setScheme(scheme);
 	origin.setHost(pUrl.host());
 	origin.setPort(pUrl.port(defaultPort));
+	qDebug() << "Normalized URL from" << pUrl << "to" << origin;
 	return origin;
 }
 
@@ -54,34 +55,49 @@ QString UrlUtil::removePrefix(QString pStr)
 }
 
 
+QString UrlUtil::getSuffix(ECardApiResult::Minor pMinor)
+{
+	return removePrefix(ECardApiResult::getMinorString(pMinor));
+}
+
+
 QUrl UrlUtil::addMajorMinor(const QUrl& pOriginUrl, const GlobalStatus& pStatus)
 {
-	const Result result(pStatus);
-	const QString& major = removePrefix(result.getMajorString());
-
 	QUrlQuery q;
 	q.setQuery(pOriginUrl.query());
+
+	const ECardApiResult::Major majorEnumVal = pStatus.isError() ? ECardApiResult::Major::Error : ECardApiResult::Major::Ok;
+	QString major = removePrefix(ECardApiResult::getMajorString(majorEnumVal));
 	q.addQueryItem(QStringLiteral("ResultMajor"), major);
 
-	if (result.getMinor() != GlobalStatus::Code::No_Error)
+	if (pStatus.isError())
 	{
 		QString minor;
-
-		if (result.isOriginServer())
+		if (pStatus.isOriginServer())
 		{
 			minor = QStringLiteral("serverError");
 		}
-		else if (result.getMinor() == GlobalStatus::Code::Paos_Error_AL_Communication_Error ||
-				result.getMinor() == GlobalStatus::Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed ||
-				result.getMinor() == GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User)
-		{
-			minor = removePrefix(result.getMinorString());
-		}
 		else
 		{
-			minor = QStringLiteral("clientError");
-		}
+			switch (pStatus.getStatusCode())
+			{
+				case GlobalStatus::Code::Paos_Error_AL_Communication_Error:
+					minor = getSuffix(ECardApiResult::Minor::AL_Communication_Error);
+					break;
 
+				case GlobalStatus::Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed:
+					minor = getSuffix(ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed);
+					break;
+
+				case GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User:
+					minor = getSuffix(ECardApiResult::Minor::SAL_Cancellation_by_User);
+					break;
+
+				default:
+					minor = QStringLiteral("clientError");
+					break;
+			}
+		}
 		q.addQueryItem(QStringLiteral("ResultMinor"), minor);
 	}
 

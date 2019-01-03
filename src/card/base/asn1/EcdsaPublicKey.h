@@ -73,4 +73,4 @@ typedef struct ecdsapublickey_st
 DECLARE_ASN1_FUNCTIONS(EcdsaPublicKey)
 DECLARE_ASN1_OBJECT(EcdsaPublicKey)
 
-} /* namespace governikus */
+} // namespace governikus

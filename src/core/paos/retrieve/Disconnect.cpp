@@ -21,11 +21,12 @@ Disconnect::~Disconnect()
 
 void Disconnect::parse()
 {
-	QStringList expectedElements;
-	expectedElements.push_back(QStringLiteral("RelatesTo"));
-	expectedElements.push_back(QStringLiteral("MessageID"));
+	const QStringList expectedElements({
+				QStringLiteral("RelatesTo"),
+				QStringLiteral("MessageID"),
+				QStringLiteral("SlotHandle")
+			});
 
-	expectedElements.push_back(QStringLiteral("SlotHandle"));
 	detectStartElements(expectedElements);
 }
 

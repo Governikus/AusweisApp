@@ -13,7 +13,6 @@ UsbId::UsbId(unsigned int pVendorId, unsigned int pProductId)
 	: mVendorId(pVendorId)
 	, mProductId(pProductId)
 {
-
 }
 
 

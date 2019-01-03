@@ -18,7 +18,7 @@ namespace
 {
 VALUE_NAME(SLOT_HANDLE, "SlotHandle")
 VALUE_NAME(INPUT_DATA, "InputData")
-}
+} // namespace
 
 
 IfdModifyPin::IfdModifyPin(const QString& pSlotHandle, const QByteArray& pInputData)
@@ -26,7 +26,6 @@ IfdModifyPin::IfdModifyPin(const QString& pSlotHandle, const QByteArray& pInputD
 	, mSlotHandle(pSlotHandle)
 	, mInputData(pInputData)
 {
-
 }
 
 
@@ -39,6 +38,11 @@ IfdModifyPin::IfdModifyPin(const QJsonObject& pMessageObject)
 
 	const QString& inputData = getStringValue(pMessageObject, INPUT_DATA());
 	mInputData = QByteArray::fromHex(inputData.toUtf8());
+
+	if (getType() != RemoteCardMessageType::IFDModifyPIN)
+	{
+		markIncomplete(QStringLiteral("The value of msg should be IFDModifyPIN"));
+	}
 }
 
 
@@ -54,12 +58,12 @@ const QByteArray& IfdModifyPin::getInputData() const
 }
 
 
-QJsonDocument IfdModifyPin::toJson(const QString& pContextHandle) const
+QByteArray IfdModifyPin::toByteArray(const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 
 	result[SLOT_HANDLE()] = mSlotHandle;
 	result[INPUT_DATA()] = QString::fromLatin1(mInputData.toHex());
 
-	return QJsonDocument(result);
+	return RemoteMessage::toByteArray(result);
 }

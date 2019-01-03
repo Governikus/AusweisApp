@@ -1,20 +1,26 @@
 FUNCTION(ADD_TEST_EXECUTABLE testname)
-	ADD_EXECUTABLE(${testname} ${ARGN})
+	IF(ANDROID)
+		ADD_LIBRARY(${testname} SHARED ${ARGN})
+	ELSE()
+		ADD_EXECUTABLE(${testname} ${ARGN})
+	ENDIF()
 
-	TARGET_LINK_LIBRARIES(${testname} Qt5::Network Qt5::Xml Qt5::Test OpenSSL::Crypto)
+	TARGET_LINK_LIBRARIES(${testname} Qt5::Network Qt5::Test OpenSSL::Crypto)
 	TARGET_LINK_LIBRARIES(${testname} AusweisAppTestHelper AusweisAppCore AusweisAppCard AusweisAppGlobal AusweisAppCardDrivers AusweisAppServices AusweisAppSettings AusweisAppNetwork)
-	TARGET_LINK_LIBRARIES(${testname} AusweisAppActivationInternal AusweisAppJsonApi AusweisAppAidl AusweisAppQml)
-	TARGET_LINK_LIBRARIES(${testname} AusweisAppCardRemote AusweisAppExport)
+	TARGET_LINK_LIBRARIES(${testname} AusweisAppActivationInternal AusweisAppUiJsonApi AusweisAppUiAidl AusweisAppUiQml)
+	TARGET_LINK_LIBRARIES(${testname} AusweisAppRemoteDevice AusweisAppExport)
 	TARGET_LINK_LIBRARIES(${testname} AusweisAppSecureStorage AusweisAppConfiguration AusweisAppFileProvider)
 	TARGET_LINK_LIBRARIES(${testname} QRC_FIXTURE_OBJ)
 
 	IF(DESKTOP)
-		TARGET_LINK_LIBRARIES(${testname} Qt5::Widgets AusweisAppWidget AusweisAppCardPcsc AusweisAppActivationWebservice)
+		TARGET_LINK_LIBRARIES(${testname} Qt5::Widgets AusweisAppUiWidget AusweisAppCardPcsc AusweisAppActivationWebservice)
 	ENDIF()
 
 	IF(LINUX OR ANDROID OR IOS)
 		TARGET_LINK_LIBRARIES(${testname} AusweisAppCardBluetooth)
 	ENDIF()
+
+	TARGET_LINK_LIBRARIES(${testname} AusweisAppWhitelistClient)
 
 	IF(WIN32)
 		TARGET_LINK_LIBRARIES(${testname} ${WIN_DEFAULT_LIBS})

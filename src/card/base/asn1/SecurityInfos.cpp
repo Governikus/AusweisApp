@@ -25,12 +25,12 @@ IMPLEMENT_ASN1_FUNCTIONS(securityinfos_st)
 
 IMPLEMENT_ASN1_OBJECT(securityinfos_st)
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	#define sk_securityinfo_st_num(data) SKM_sk_num(securityinfo_st, data)
 	#define sk_securityinfo_st_value(data, i) SKM_sk_value(securityinfo_st, data, i)
 #endif
 
-} /* namespace governikus */
+} // namespace governikus
 
 
 QSharedPointer<SecurityInfos> SecurityInfos::fromHex(const QByteArray& pHexString)
@@ -48,7 +48,7 @@ QSharedPointer<SecurityInfos> SecurityInfos::decode(const QByteArray& pBytes)
 	}
 
 	QVector<QSharedPointer<const SecurityInfo> > securityInfos;
-	QVector<QSharedPointer<const PACEInfo> > paceInfos;
+	QVector<QSharedPointer<const PaceInfo> > paceInfos;
 	QVector<QSharedPointer<const ChipAuthenticationInfo> > chipAuthenticationInfos;
 
 	for (int i = 0; i < sk_securityinfo_st_num(securityInfosStruct.data()); ++i)
@@ -56,7 +56,7 @@ QSharedPointer<SecurityInfos> SecurityInfos::decode(const QByteArray& pBytes)
 		securityinfo_st* secInfoStruct = sk_securityinfo_st_value(securityInfosStruct.data(), i);
 		QByteArray bytes = encodeObject(secInfoStruct);
 
-		if (auto pi = PACEInfo::decode(bytes))
+		if (auto pi = PaceInfo::decode(bytes))
 		{
 			qCDebug(card) << "Parsed PACEInfo";
 			paceInfos << pi;
@@ -80,17 +80,17 @@ QSharedPointer<SecurityInfos> SecurityInfos::decode(const QByteArray& pBytes)
 		}
 	}
 
-	return QSharedPointer<SecurityInfos>(new SecurityInfos(pBytes, securityInfos, paceInfos, chipAuthenticationInfos));
+	return QSharedPointer<SecurityInfos>::create(pBytes, securityInfos, paceInfos, chipAuthenticationInfos);
 }
 
 
 SecurityInfos::SecurityInfos(const QByteArray& pBytes,
 		const QVector<QSharedPointer<const SecurityInfo> >& pSecurityInfos,
-		const QVector<QSharedPointer<const PACEInfo> >& pPACEInfos,
+		const QVector<QSharedPointer<const PaceInfo> >& pPaceInfos,
 		const QVector<QSharedPointer<const ChipAuthenticationInfo> >& pChipAuthenticationInfos)
 	: mContentBytes(pBytes)
 	, mSecurityInfos(pSecurityInfos)
-	, mPACEInfos(pPACEInfos)
+	, mPaceInfos(pPaceInfos)
 	, mChipAuthenticationInfos(pChipAuthenticationInfos)
 {
 }
@@ -108,9 +108,9 @@ const QVector<QSharedPointer<const SecurityInfo> >& SecurityInfos::getSecurityIn
 }
 
 
-const QVector<QSharedPointer<const PACEInfo> >& SecurityInfos::getPACEInfos() const
+const QVector<QSharedPointer<const PaceInfo> >& SecurityInfos::getPaceInfos() const
 {
-	return mPACEInfos;
+	return mPaceInfos;
 }
 
 

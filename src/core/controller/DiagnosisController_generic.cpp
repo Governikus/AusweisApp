@@ -16,5 +16,4 @@ void DiagnosisController::getPcscInfo(QVector<DiagnosisContext::ComponentInfo>& 
 {
 	Q_UNUSED(pComponents);
 	Q_UNUSED(pDrivers);
-
 }

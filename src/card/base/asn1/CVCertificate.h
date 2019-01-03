@@ -20,7 +20,6 @@
 namespace governikus
 {
 
-
 /*!
  * According to
  *    - TR-03110-3, chapter C.1 and
@@ -83,7 +82,7 @@ inline bool operator!=(const CVCertificate& pLeft, const CVCertificate& pRight)
 }
 
 
-} /* namespace governikus */
+} // namespace governikus
 
 QDebug operator<<(QDebug pDbg, const governikus::CVCertificate& pCvc);
 QDebug operator<<(QDebug pDbg, const QSharedPointer<const governikus::CVCertificate>& pCvc);

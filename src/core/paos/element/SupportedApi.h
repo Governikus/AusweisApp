@@ -19,4 +19,4 @@ class SupportedAPI
 		QString getSubminor() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

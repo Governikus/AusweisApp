@@ -25,4 +25,4 @@ class NetworkReplyError
 		explicit NetworkReplyError(const QNetworkRequest& pRequest, QObject* pParent = nullptr);
 };
 
-} /* namespace governikus */
+} // namespace governikus

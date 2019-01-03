@@ -1,0 +1,33 @@
+From bbd5c6feea8632c8321d3cd7a16a262d90f856e8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
+Date: Thu, 22 Nov 2018 11:44:39 +0100
+Subject: [PATCH] Use user provided session data if available
+
+If a user uses persistent sessions and provide the session to
+Qt again with setSessionTicket it should be used with a higher
+priority.
+This is also a work-around for QTBUG-71967.
+
+Change-Id: I7351b669b6de2863136d6106dc4f73fa5c7b8c51
+---
+ src/network/ssl/qsslcontext_openssl.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git x/qtbase/src/network/ssl/qsslcontext_openssl.cpp y/qtbase/src/network/ssl/qsslcontext_openssl.cpp
+index 41b759364b..24dbc9ecbc 100644
+--- x/qtbase/src/network/ssl/qsslcontext_openssl.cpp
++++ y/qtbase/src/network/ssl/qsslcontext_openssl.cpp
+@@ -134,8 +134,9 @@ SSL* QSslContext::createSsl()
+     SSL* ssl = q_SSL_new(ctx);
+     q_SSL_clear(ssl);
+ 
+-    if (!session && !sessionASN1().isEmpty()
++    if (!m_sessionASN1.isEmpty()
+             && !sslConfiguration.testSslOption(QSsl::SslOptionDisableSessionPersistence)) {
++        q_SSL_SESSION_free(session);
+         const unsigned char *data = reinterpret_cast<const unsigned char *>(m_sessionASN1.constData());
+         session = q_d2i_SSL_SESSION(0, &data, m_sessionASN1.size()); // refcount is 1 already, set by function above
+     }
+-- 
+2.19.1
+

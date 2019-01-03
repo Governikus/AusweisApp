@@ -34,4 +34,4 @@ class PdfCreator
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

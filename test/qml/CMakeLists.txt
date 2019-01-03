@@ -1,4 +1,12 @@
-ADD_QML_TEST_FILES(${RESOURCES_DIR}/qml)
+ADD_SUBDIRECTORY(mobile)
+ADD_SUBDIRECTORY(desktop)
+ADD_SUBDIRECTORY(generic)
 
-ADD_EXECUTABLE(QmlTestRunner QmlTestRunner.cpp)
-TARGET_LINK_LIBRARIES(QmlTestRunner Qt5::QuickTest Qt5::Gui)
+SET(MAIN_FILES QmlTestRunner.cpp)
+IF(ANDROID)
+	ADD_LIBRARY(QmlTestRunner SHARED ${MAIN_FILES})
+ELSE()
+	ADD_EXECUTABLE(QmlTestRunner ${MAIN_FILES})
+ENDIF()
+
+TARGET_LINK_LIBRARIES(QmlTestRunner Qt5::QuickTest Qt5::Gui AusweisAppGlobal AusweisAppUiQml)

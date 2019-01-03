@@ -4,7 +4,7 @@
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "Apdu.h"
+#include "CommandApdu.h"
 
 #include <QByteArrayList>
 #include <QList>
@@ -18,7 +18,7 @@ class InputAPDUInfo
 {
 	public:
 		InputAPDUInfo();
-		InputAPDUInfo(const QByteArray& pInputApdu, bool pUpdateRetryCounter = false);
+		InputAPDUInfo(const QByteArray& pInputApdu);
 
 
 		bool isValid() const
@@ -29,7 +29,7 @@ class InputAPDUInfo
 
 		const CommandApdu getInputApdu() const
 		{
-			return CommandApdu(mInputApdu, mUpdateRetryCounter);
+			return CommandApdu(mInputApdu);
 		}
 
 
@@ -54,10 +54,6 @@ class InputAPDUInfo
 	private:
 		QByteArray mInputApdu;
 		QByteArrayList mAcceptableStatusCodes;
-		// mUpdateRetryCounter is not part of the xml data.
-		// We use it internally to update the retry counter on a
-		// low level especially when we act as a remote card reader
-		bool mUpdateRetryCounter;
 };
 
-}
+} // namespace governikus

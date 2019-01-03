@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300px" height="200px" viewBox="0 0 300 200">
+  <image xlink:href=":/images/tutorial/tablet.svg" x="50" y="90" width="115" height="100" />
+  <image xlink:href=":/images/tutorial/no-nfc.svg" height="60" width="60" y="110" x="80" />
+  <rect fill="#fff" x="120" y="10" width="70" height="108" />
+  <image xlink:href=":/images/tutorial/phone.svg" x="120" y="10" width="70" height="108" />
+  <image xlink:href=":/images/tutorial/no-nfc.svg" height="60" width="60" y="30" x="125" />
+  <image xlink:href=":/images/npa.svg" height="76" width="76" y="103" x="175" />
+</svg>

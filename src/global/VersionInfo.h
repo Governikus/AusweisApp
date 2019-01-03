@@ -42,6 +42,6 @@ class VersionInfo
 };
 
 
-} /* namespace governikus */
+} // namespace governikus
 
 QDebug operator<<(QDebug pDbg, const governikus::VersionInfo& pVersionInfo);

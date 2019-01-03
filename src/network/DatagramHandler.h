@@ -7,8 +7,6 @@
 #pragma once
 
 #include <QHostAddress>
-#include <QJsonDocument>
-#include <QSharedPointer>
 
 class test_DatagramHandlerImpl;
 
@@ -20,18 +18,15 @@ class DatagramHandler
 {
 	Q_OBJECT
 
-	private:
-		friend class ::test_DatagramHandlerImpl;
-
 	public:
 		DatagramHandler(bool pListen = true);
 		virtual ~DatagramHandler();
 		virtual bool isBound() const = 0;
-		virtual bool send(const QJsonDocument& pData) = 0;
+		virtual bool send(const QByteArray& pData) = 0;
 
 	Q_SIGNALS:
-		void fireNewMessage(const QJsonDocument& pData, const QHostAddress& pAddress);
+		void fireNewMessage(const QByteArray& pData, const QHostAddress& pAddress);
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

@@ -8,7 +8,6 @@
 #include <QtTest/QtTest>
 
 #include "GeneralAuthenticateResponse.h"
-#include "TestFileHelper.h"
 
 
 using namespace governikus;

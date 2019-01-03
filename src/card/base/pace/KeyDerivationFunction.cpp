@@ -2,8 +2,9 @@
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "asn1/KnownOIDs.h"
 #include "pace/KeyDerivationFunction.h"
+
+#include "asn1/KnownOIDs.h"
 
 #include <QLoggingCategory>
 #include <QtEndian>
@@ -45,13 +46,8 @@ KeyDerivationFunction::KeyDerivationFunction(const QByteArray& pPaceAlgorithm)
 	}
 	else
 	{
-		qCCritical(card) << "Unknown algorithm: " << pPaceAlgorithm;
+		qCCritical(card) << "Unknown algorithm:" << pPaceAlgorithm;
 	}
-}
-
-
-KeyDerivationFunction::~KeyDerivationFunction()
-{
 }
 
 

@@ -1,3 +1,0 @@
-ADD_PLATFORM_LIBRARY(AusweisAppWidgetDesignerPlugin)
-
-TARGET_LINK_LIBRARIES(AusweisAppWidgetDesignerPlugin Qt5::Core Qt5::UiPlugin AusweisAppWidget)

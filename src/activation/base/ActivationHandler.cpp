@@ -22,16 +22,6 @@ static Initializer::Entry X([] {
 		});
 
 
-ActivationHandler::ActivationHandler()
-{
-}
-
-
-ActivationHandler::~ActivationHandler()
-{
-}
-
-
 QMap<QString, QString> ActivationHandler::getQueryParameter(const QUrl& pUrl)
 {
 	QMap<QString, QString> map;

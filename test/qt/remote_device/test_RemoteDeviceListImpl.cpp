@@ -8,7 +8,6 @@
 
 #include <QtTest/QtTest>
 
-
 using namespace governikus;
 
 
@@ -23,11 +22,12 @@ class test_RemoteDeviceListImpl
 			RemoteDeviceListImpl deviceList(10, 1);
 			QSignalSpy spyVanished(&deviceList, &RemoteDeviceListImpl::fireDeviceVanished);
 
-			QSharedPointer<const Discovery> offerMsg1;
-			QHostAddress addr1;
+			const Discovery offerMsg1 = Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {IfdVersion::Version::v0});
+			const Discovery offerMsg2 = Discovery("Dev1", QStringLiteral("0123456789ABCDFF"), 1234, {IfdVersion::Version::v0});
+			const QHostAddress addr1 = QHostAddress(QString("5.6.7.8"));
+			const QHostAddress addr2 = QHostAddress(QString("5.6.7.9"));
+
 			{
-				offerMsg1 = QSharedPointer<const Discovery>(new Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {IfdVersion::Version::v0}));
-				addr1 = QHostAddress(QString("5.6.7.8"));
 				const RemoteDeviceDescriptor descr(offerMsg1, addr1);
 
 				QSignalSpy spy(&deviceList, &RemoteDeviceListImpl::fireDeviceAppeared);
@@ -35,11 +35,15 @@ class test_RemoteDeviceListImpl
 				QCOMPARE(spy.count(), 1);
 			}
 
-			QSharedPointer<const Discovery> offerMsg2;
-			QHostAddress addr2;
 			{
-				offerMsg2 = QSharedPointer<const Discovery>(new Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {IfdVersion::Version::v0}));
-				addr2 = QHostAddress(QString("5.6.7.8"));
+				const RemoteDeviceDescriptor descr(offerMsg1, addr1);
+
+				QSignalSpy spy(&deviceList, &RemoteDeviceListImpl::fireDeviceAppeared);
+				deviceList.update(descr);
+				QCOMPARE(spy.count(), 0);
+			}
+
+			{
 				const RemoteDeviceDescriptor descr(offerMsg1, addr2);
 
 				QSignalSpy spy(&deviceList, &RemoteDeviceListImpl::fireDeviceAppeared);
@@ -48,17 +52,22 @@ class test_RemoteDeviceListImpl
 			}
 
 			{
-				offerMsg2 = QSharedPointer<const Discovery>(new Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {IfdVersion::Version::v0}));
-				addr2 = QHostAddress(QString("5.6.7.9"));
-				const RemoteDeviceDescriptor descr(offerMsg1, addr2);
+				const RemoteDeviceDescriptor descr(offerMsg2, addr2);
 
 				QSignalSpy spy(&deviceList, &RemoteDeviceListImpl::fireDeviceAppeared);
 				deviceList.update(descr);
 				QCOMPARE(spy.count(), 1);
 			}
 
-			spyVanished.wait();
-			QCOMPARE(spyVanished.count(), 2);
+			{
+				const RemoteDeviceDescriptor descr(offerMsg2, addr1);
+
+				QSignalSpy spy(&deviceList, &RemoteDeviceListImpl::fireDeviceAppeared);
+				deviceList.update(descr);
+				QCOMPARE(spy.count(), 0);
+			}
+
+			QTRY_COMPARE(spyVanished.count(), 2);
 		}
 
 

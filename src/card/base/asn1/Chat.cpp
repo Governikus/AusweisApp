@@ -252,5 +252,4 @@ void chat_st::setTemplateBit(uint pBitIndex, bool pOn)
 	{
 		mTemplate->data[byteNumber] = static_cast<uchar>(mTemplate->data[byteNumber] & ~(0x01 << bitNumberInByte));
 	}
-
 }

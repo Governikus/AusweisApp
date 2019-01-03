@@ -13,7 +13,7 @@ Q_DECLARE_LOGGING_CATEGORY(bluetooth)
 using namespace governikus;
 
 static Initializer::Entry X([] {
-			qRegisterMetaType<BluetoothMessage::Ptr>("BluetoothMessage::Ptr");
+			qRegisterMetaType<QSharedPointer<const BluetoothMessage> >("QSharedPointer<const BluetoothMessage>");
 		});
 
 
@@ -36,13 +36,13 @@ BluetoothMessage::~BluetoothMessage()
 }
 
 
-BluetoothMessageParameter::Ptr BluetoothMessage::getParameter(BluetoothParamId pId) const
+QSharedPointer<const BluetoothMessageParameter> BluetoothMessage::getParameter(BluetoothParamId pId) const
 {
 	return mMessageParameter.value(pId);
 }
 
 
-void BluetoothMessage::addParameter(BluetoothMessageParameter::Ptr pMessageParameter)
+void BluetoothMessage::addParameter(const QSharedPointer<const BluetoothMessageParameter>& pMessageParameter)
 {
 	Q_ASSERT(!pMessageParameter.isNull());
 

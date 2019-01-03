@@ -6,7 +6,7 @@
 #include "ASN1Util.h"
 #include "ChipAuthenticationInfo.h"
 #include "KnownOIDs.h"
-#include "PACEInfo.h"
+#include "PaceInfo.h"
 #include "SecurityInfo.h"
 
 #include <QLoggingCategory>
@@ -21,7 +21,6 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 
 namespace governikus
 {
-
 
 ASN1_SEQUENCE(securityinfo_st) = {
 	ASN1_SIMPLE(securityinfo_st, mProtocol, ASN1_OBJECT),

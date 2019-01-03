@@ -6,10 +6,11 @@
 
 #pragma once
 
-#include "Apdu.h"
 #include "CardReturnCode.h"
+#include "CommandApdu.h"
 #include "Commands.h"
-#include "EstablishPACEChannel.h"
+#include "EstablishPaceChannelOutput.h"
+#include "ResponseApdu.h"
 #include "SmartCardDefinitions.h"
 
 #include <QObject>
@@ -26,7 +27,7 @@ class Card
 
 	public:
 		Card();
-		virtual ~Card();
+		virtual ~Card() = default;
 
 		/*!
 		 * Establish a connection to the smart card
@@ -53,7 +54,7 @@ class Card
 		/*!
 		 * Establishes a PACE channel, i.e. the corresponding reader is no basic reader.
 		 */
-		virtual CardReturnCode establishPaceChannel(PACE_PASSWORD_ID pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds = 60);
+		virtual CardReturnCode establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPaceChannelOutput& pChannelOutput, quint8 pTimeoutSeconds = 60);
 
 		/*!
 		 * Destroys an existing  PACE channel, i.e. the corresponding reader is no basic reader.
@@ -67,4 +68,4 @@ class Card
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

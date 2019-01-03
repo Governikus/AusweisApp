@@ -5,9 +5,9 @@
 #include "RemoteClientImpl.h"
 
 #include "AppSettings.h"
-#include "Env.h"
-#include "messages/RemoteMessageParser.h"
+#include "messages/Discovery.h"
 #include "RemoteConnectorImpl.h"
+#include "SingletonHelper.h"
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -17,17 +17,7 @@ Q_DECLARE_LOGGING_CATEGORY(remote_device)
 
 using namespace governikus;
 
-namespace governikus
-{
-
-template<> RemoteClient* createNewObject<RemoteClient*>()
-{
-	return new RemoteClientImpl;
-}
-
-
-}
-
+defineSingletonImpl(RemoteClient, RemoteClientImpl)
 
 RemoteClientImpl::RemoteClientImpl()
 	: mDatagramHandler()
@@ -75,8 +65,8 @@ void RemoteClientImpl::shutdownRemoteConnectorThread()
 		qCDebug(remote_device) << "Shutdown RemoteConnector...";
 		mRemoteConnectorThread.requestInterruption(); // do not try to stop AGAIN from dtor
 		mRemoteConnectorThread.quit();
-		mRemoteConnectorThread.wait(2500);
-		qCDebug(remote_device) << "RemoteConnector:" << (mRemoteConnectorThread.isRunning() ? "still running" : "stopped");
+		mRemoteConnectorThread.wait(5000);
+		qCDebug(remote_device).noquote() << mRemoteConnectorThread.objectName() << "stopped:" << !mRemoteConnectorThread.isRunning();
 
 		Q_ASSERT(!mRemoteConnectorThread.isRunning());
 	}
@@ -89,7 +79,7 @@ QSharedPointer<RemoteDeviceListEntry> RemoteClientImpl::mapToAndTakeRemoteConnec
 	while (i.hasNext())
 	{
 		QSharedPointer<RemoteDeviceListEntry> entry = i.next();
-		if (entry->contains(pRemoteDeviceDescriptor))
+		if (entry->containsEquivalent(pRemoteDeviceDescriptor))
 		{
 			i.remove();
 			return entry;
@@ -101,38 +91,32 @@ QSharedPointer<RemoteDeviceListEntry> RemoteClientImpl::mapToAndTakeRemoteConnec
 }
 
 
-void RemoteClientImpl::onNewMessage(const QJsonDocument& pData, const QHostAddress& pAddress)
+void RemoteClientImpl::onNewMessage(const QByteArray& pData, const QHostAddress& pAddress)
 {
-	bool isIPv4;
-	pAddress.toIPv4Address(&isIPv4);
-	if (!isIPv4)
+	QJsonObject obj;
 	{
-		static int timesLogged = 0;
-		if (timesLogged < 20)
-		{
-			qCCritical(remote_device) << "IPv6 not supported" << pAddress;
-			timesLogged++;
-		}
-		return;
+		obj = RemoteMessage::parseByteArray(pData);
 	}
-	const QSharedPointer<const Discovery>& discovery = RemoteMessageParser().parseDiscovery(pData);
-	if (discovery.isNull())
+
+	const Discovery discovery(obj);
+	if (discovery.isIncomplete())
 	{
-		static int timesLogged = 0;
-		if (timesLogged < 20)
-		{
-			qCDebug(remote_device) << "Discarding unparsable message";
-			timesLogged++;
-		}
+		qCDebug(remote_device) << "Discarding unparsable message";
 		return;
 	}
 
 	const RemoteDeviceDescriptor remoteDeviceDescriptor(discovery, pAddress);
+	if (remoteDeviceDescriptor.isNull())
+	{
+		qCCritical(remote_device) << "Dropping message from unparsable address:" << pAddress;
+		return;
+	}
+
 	mRemoteDeviceList->update(remoteDeviceDescriptor);
 }
 
 
-void RemoteClientImpl::onRemoteDispatcherCreated(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, const QSharedPointer<RemoteDispatcher>& pDispatcher)
+void RemoteClientImpl::onRemoteDispatcherCreated(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, const QSharedPointer<RemoteDispatcherClient>& pDispatcher)
 {
 	mErrorCounter[pRemoteDeviceDescriptor.getIfdId()] = 0;
 	const QSharedPointer<RemoteDeviceListEntry>& entry = mapToAndTakeRemoteConnectorPending(pRemoteDeviceDescriptor);
@@ -144,7 +128,7 @@ void RemoteClientImpl::onRemoteDispatcherCreated(const RemoteDeviceDescriptor& p
 	}
 
 	mConnectedDeviceIds.append(entry->getRemoteDeviceDescriptor().getIfdId());
-	connect(pDispatcher.data(), &RemoteDispatcher::fireClosed, this, &RemoteClientImpl::onDispatcherDestroyed);
+	connect(pDispatcher.data(), &RemoteDispatcherClient::fireClosed, this, &RemoteClientImpl::onDispatcherDestroyed);
 
 	Q_EMIT fireEstablishConnectionDone(entry, GlobalStatus::Code::No_Error);
 	Q_EMIT fireNewRemoteDispatcher(pDispatcher);
@@ -167,7 +151,7 @@ void RemoteClientImpl::onRemoteDispatcherError(const RemoteDeviceDescriptor& pRe
 		if (mErrorCounter[pRemoteDeviceDescriptor.getIfdId()] >= 7)
 		{
 			qCCritical(remote_device) << "Remote device refused connection seven times, removing certificate with fingerprint:" << pRemoteDeviceDescriptor.getIfdId();
-			RemoteServiceSettings& settings = AppSettings::getInstance().getRemoteServiceSettings();
+			RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 			QString deviceName;
 			const auto& infos = settings.getRemoteInfos();
 			for (const auto& remoteInfo : infos)
@@ -239,9 +223,10 @@ void RemoteClientImpl::establishConnection(const QSharedPointer<RemoteDeviceList
 
 	mRemoteConnectorPending += pEntry;
 
-	QMetaObject::invokeMethod(mRemoteConnector.data(), "onConnectRequest", Qt::QueuedConnection,
-			Q_ARG(RemoteDeviceDescriptor, pEntry->getRemoteDeviceDescriptor()),
-			Q_ARG(QString, pPsk));
+	const auto& localCopy = mRemoteConnector;
+	QMetaObject::invokeMethod(localCopy.data(), [localCopy, pEntry, pPsk] {
+				localCopy->onConnectRequest(pEntry->getRemoteDeviceDescriptor(), pPsk);
+			}, Qt::QueuedConnection);
 }
 
 
@@ -259,7 +244,7 @@ void RemoteClientImpl::requestRemoteDevices()
 
 QVector<RemoteServiceSettings::RemoteInfo> RemoteClientImpl::getConnectedDeviceInfos()
 {
-	RemoteServiceSettings& settings = AppSettings::getInstance().getRemoteServiceSettings();
+	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	auto remoteInfos = settings.getRemoteInfos();
 	QVector<RemoteServiceSettings::RemoteInfo> result;
 	for (const auto& info : remoteInfos)
@@ -276,11 +261,8 @@ QVector<RemoteServiceSettings::RemoteInfo> RemoteClientImpl::getConnectedDeviceI
 }
 
 
-void RemoteClientImpl::onDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QSharedPointer<RemoteDispatcher>& pRemoteDispatcher)
+void RemoteClientImpl::onDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QString& pId)
 {
-	if (pRemoteDispatcher)
-	{
-		mConnectedDeviceIds.removeAll(pRemoteDispatcher->getId());
-	}
-	Q_EMIT fireDispatcherDestroyed(pCloseCode, pRemoteDispatcher);
+	mConnectedDeviceIds.removeAll(pId);
+	Q_EMIT fireDispatcherDestroyed(pCloseCode, pId);
 }

@@ -6,11 +6,11 @@
 
 #include "asn1/CVCertificate.h"
 #include "asn1/EcdsaPublicKey.h"
-#include "TestFileHelper.h"
 
 #include <QtCore>
 #include <QtTest>
 
+#include <openssl/bn.h>
 #include <openssl/objects.h>
 #include <openssl/x509v3.h>
 
@@ -217,7 +217,6 @@ class test_EcdsaPublicKey
 			QCOMPARE(convert(order).toHex().toUpper(), QByteArray("A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E82974856A7"));
 			BN_clear_free(order);
 
-
 			const EC_POINT* generator = EC_GROUP_get0_generator(ecGroup);
 			auto bufLen = EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);
 
@@ -229,7 +228,6 @@ class test_EcdsaPublicKey
 			QCOMPARE(ecdsaPublicKey->getPublicKeyOid(), QByteArray("0.4.0.127.0.7.2.2.2.2.3"));
 			QCOMPARE(ecdsaPublicKey->getPublicKeyOidValueBytes().toHex().toUpper(), QByteArray("04007F00070202020203"));
 			QCOMPARE(ecdsaPublicKey->getUncompressedPublicPoint().toHex().toUpper(), QByteArray("043347ECF96FFB4BD9B8554EFBCCFC7D0B242F1071E29B4C9C622C79E339D840AF67BEB9B912692265D9C16C62573F4579FFD4DE2DE92BAB409DD5C5D48244A9F7"));
-
 		}
 
 
@@ -246,7 +244,6 @@ class test_EcdsaPublicKey
 								 "        87 01 01");
 
 			auto ecdsaPublicKey = EcdsaPublicKey::fromHex(hexString);
-
 
 			QVERIFY(ecdsaPublicKey != nullptr);
 			QVERIFY(ecdsaPublicKey->getEcKey() != nullptr);
@@ -271,7 +268,6 @@ class test_EcdsaPublicKey
 			EC_GROUP_get_order(ecGroup, order, nullptr);
 			QCOMPARE(convert(order).toHex().toUpper(), QByteArray("A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E82974856A7"));
 			BN_clear_free(order);
-
 
 			const EC_POINT* generator = EC_GROUP_get0_generator(ecGroup);
 			auto bufLen = EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);

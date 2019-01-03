@@ -1,4 +1,0 @@
-ADD_PLATFORM_LIBRARY(AusweisAppCardRemote)
-
-TARGET_LINK_LIBRARIES(AusweisAppCardRemote Qt5::Core AusweisAppGlobal AusweisAppCard AusweisAppRemoteDevice)
-TARGET_COMPILE_DEFINITIONS(AusweisAppCardRemote PRIVATE QT_STATICPLUGIN)

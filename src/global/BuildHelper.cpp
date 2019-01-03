@@ -14,9 +14,6 @@
 
 using namespace governikus;
 
-const char* BuildHelper::mDateTime = __DATE__ " / " __TIME__;
-
-
 #ifdef Q_OS_ANDROID
 namespace
 {
@@ -46,7 +43,7 @@ QAndroidJniObject getPackageInfo(const QString& pPackageName, int pFlags = 0)
 }
 
 
-}
+} // namespace
 
 
 int BuildHelper::getVersionCode()
@@ -85,6 +82,64 @@ QString BuildHelper::getPackageName()
 	}
 
 	return QString();
+}
+
+
+QByteArrayList BuildHelper::getAppCertificates()
+{
+	return getAppCertificates(getPackageName());
+}
+
+
+QByteArrayList BuildHelper::getAppCertificates(const QString& pPackageName)
+{
+	const int flags = 0x00000040; // GET_SIGNATURES
+	const auto info = getPackageInfo(pPackageName, flags);
+
+	if (!info.isValid())
+	{
+		return QByteArrayList();
+	}
+
+	const auto signatures = info.getObjectField("signatures", "[Landroid/content/pm/Signature;");
+	if (!signatures.isValid())
+	{
+		return QByteArrayList();
+	}
+
+	QAndroidJniEnvironment env;
+	jobjectArray obj = signatures.object<jobjectArray>();
+	const jsize elementCount = env->GetArrayLength(obj);
+	QByteArrayList list;
+	list.reserve(elementCount);
+
+	for (jsize i = 0; i < elementCount; ++i)
+	{
+		QAndroidJniObject elem = env->GetObjectArrayElement(obj, i);
+		if (!elem.isValid())
+		{
+			continue;
+		}
+
+		auto bytes = elem.callObjectMethod("toByteArray", "()[B");
+		if (!bytes.isValid())
+		{
+			continue;
+		}
+
+		jbyteArray data = bytes.object<jbyteArray>();
+		const auto size = env->GetArrayLength(data);
+		jbyte* buffer = env->GetByteArrayElements(data, 0);
+		list << QByteArray(reinterpret_cast<const char*>(buffer), size).toHex();
+	}
+
+	if (env->ExceptionCheck())
+	{
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+
+	return list;
 }
 
 

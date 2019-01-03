@@ -31,7 +31,7 @@ void ElementDetector::detectStartElements(const QStringList& pStartElementNames)
 	{
 		if (mReader.hasError())
 		{
-			qCWarning(paos) << "Error parsing PAOS message: " << mReader.errorString();
+			qCWarning(paos) << "Error parsing PAOS message:" << mReader.errorString();
 			return;
 		}
 		else if (mReader.isStartElement())

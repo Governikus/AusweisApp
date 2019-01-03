@@ -36,4 +36,4 @@ class SynchronousBtCall
 		void onCharacteristicChanged(const QByteArray& pNewValue);
 };
 
-} /* namespace governikus */
+} // namespace governikus

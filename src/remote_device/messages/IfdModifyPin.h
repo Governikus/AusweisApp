@@ -10,7 +10,6 @@
 namespace governikus
 {
 
-
 class IfdModifyPin
 	: public RemoteMessage
 {
@@ -25,8 +24,8 @@ class IfdModifyPin
 
 		const QString& getSlotHandle() const;
 		const QByteArray& getInputData() const;
-		virtual QJsonDocument toJson(const QString& pContextHandle) const override;
+		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

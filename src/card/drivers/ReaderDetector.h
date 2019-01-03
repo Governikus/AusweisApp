@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "Env.h"
 #include "ReaderConfiguration.h"
 #include "UsbId.h"
 
@@ -36,6 +37,7 @@ class ReaderDetector
 	#endif
 {
 	Q_OBJECT
+	friend class Env;
 
 	private:
 	#ifdef Q_OS_MACOS
@@ -49,16 +51,14 @@ class ReaderDetector
 	#endif
 
 		bool initNativeEvents();
-
 		bool terminateNativeEvents();
 
-	public:
+	protected:
+		ReaderDetector();
+		virtual ~ReaderDetector();
 		static ReaderDetector& getInstance();
 
-		ReaderDetector();
-
-		virtual ~ReaderDetector();
-
+	public:
 		virtual QVector<UsbId> attachedDevIds() const;
 
 	#ifdef Q_OS_WIN
@@ -75,7 +75,6 @@ class ReaderDetector
 
 	Q_SIGNALS:
 		void fireReaderChangeDetected();
-
 };
 
-} /* namespace governikus */
+} // namespace governikus

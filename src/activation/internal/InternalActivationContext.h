@@ -19,13 +19,13 @@ class InternalActivationContext
 
 	public:
 		InternalActivationContext(const QUrl& pUrl);
-		virtual ~InternalActivationContext() override;
+		virtual ~InternalActivationContext() override = default;
 
 		QUrl getActivationURL() const override;
 		bool sendProcessing() override;
 		bool sendOperationAlreadyActive() override;
-		bool sendErrorPage(HttpStatusCode pStatusCode, const GlobalStatus& pStatus) override;
+		bool sendErrorPage(http_status pStatusCode, const GlobalStatus& pStatus) override;
 		bool sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pStatus) override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

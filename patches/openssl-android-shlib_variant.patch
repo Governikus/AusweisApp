@@ -1,0 +1,11 @@
+--- x/Configurations/15-android.conf
++++ y/Configurations/15-android.conf
+@@ -136,6 +136,8 @@
+         bn_ops           => sub { android_ndk()->{bn_ops} },
+         bin_cflags       => "-pie",
+         enable           => [ ],
++        shlib_variant    => '-gov',
++        shared_extension => '.so',
+     },
+     "android-arm" => {
+         ################################################################

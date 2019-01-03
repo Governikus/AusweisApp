@@ -1,36 +1,30 @@
+#####################################################################
+# The main component that will link all necessary modules and plugins
+# into AusweisApp2 executable for the specific platform.
+#
+# This component includes a main entry point and command line
+# parser only. Everything else will be included from sub-modules.
+#####################################################################
+
 ADD_SUBDIRECTORY(external)
 ADD_SUBDIRECTORY(global)
 ADD_SUBDIRECTORY(secure_storage)
-ADD_SUBDIRECTORY(configuration)
 ADD_SUBDIRECTORY(settings)
-ADD_SUBDIRECTORY(card)
-ADD_SUBDIRECTORY(network)
-ADD_SUBDIRECTORY(services)
-ADD_SUBDIRECTORY(activation)
-ADD_SUBDIRECTORY(core)
-ADD_SUBDIRECTORY(jsonapi)
-ADD_SUBDIRECTORY(websocket)
-ADD_SUBDIRECTORY(aidl)
-ADD_SUBDIRECTORY(remote_device)
+
 ADD_SUBDIRECTORY(file_provider)
+ADD_SUBDIRECTORY(configuration)
+ADD_SUBDIRECTORY(network)
+
 ADD_SUBDIRECTORY(export)
-IF(DESKTOP)
-	ADD_SUBDIRECTORY(cli)
-ENDIF()
+ADD_SUBDIRECTORY(card)
+ADD_SUBDIRECTORY(services)
 
-IF(TARGET Qt5::Qml)
-	ADD_SUBDIRECTORY(qml)
-ENDIF()
+ADD_SUBDIRECTORY(ui)
+ADD_SUBDIRECTORY(activation)
+ADD_SUBDIRECTORY(remote_device)
+ADD_SUBDIRECTORY(core)
 
-# Use this if we can use QSvgPlugin without Widgets
-# IF(TARGET Qt5::Widgets)
-# https://bugreports.qt.io/browse/QTBUG-41884
-IF(DESKTOP)
-	ADD_SUBDIRECTORY(widget)
-	IF(TARGET Qt5::UiPlugin)
-		ADD_SUBDIRECTORY(widgetDesignerPlugin)
-	ENDIF()
-ENDIF()
+ADD_SUBDIRECTORY(whitelist_client)
 
 FUNCTION(CONFIGURE_CONFIG_H)
 	IF(VENDOR_GOVERNIKUS)
@@ -45,7 +39,7 @@ FUNCTION(CONFIGURE_CONFIG_H)
 		SET(VERSION ${PROJECT_VERSION})
 	ENDIF()
 
-	SET(PRODUCT ${EXECUTABLE_BASE_NAME})
+	SET(PRODUCT ${PROJECT_NAME})
 
 	CONFIGURE_FILE(config.h.in config.h @ONLY)
 ENDFUNCTION()
@@ -67,7 +61,7 @@ OPTION(UPDATE_TRANSLATIONS "Update translations/*.ts files (WARNING: make clean 
 IF(UPDATE_TRANSLATIONS)
 	OPTION(UPDATE_TRANSLATIONS_NO_OBSOLETE "Remove obsolete translations from translations/*.ts files )")
 
-	SET(LUPDATE_OPTIONS -extensions c,cpp,h,ui,m,mm,qml,js -no-ui-lines)
+	SET(LUPDATE_OPTIONS -extensions c,cpp,h,ui,m,mm,qml,js -no-ui-lines -locations none)
 	IF(UPDATE_TRANSLATIONS_NO_OBSOLETE)
 		QT5_CREATE_TRANSLATION(QM_FILES ${SRC_DIR} ${RESOURCES_DIR} ${TRANSLATION_FILES} OPTIONS ${LUPDATE_OPTIONS} -no-obsolete)
 	ELSE()
@@ -136,10 +130,11 @@ ADD_DEPENDENCIES(AusweisApp AusweisAppRcc)
 
 CONFIGURE_CONFIG_H()
 
-TARGET_LINK_LIBRARIES(AusweisApp AusweisAppCard AusweisAppCore AusweisAppGlobal AusweisAppNetwork AusweisAppActivation AusweisAppActivationInternal)
-SET_TARGET_PROPERTIES(AusweisApp PROPERTIES OUTPUT_NAME "${EXECUTABLE_BASE_NAME}")
-SET_TARGET_PROPERTIES(AusweisApp PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME AusweisApp2)
+TARGET_LINK_LIBRARIES(AusweisApp AusweisAppGlobal AusweisAppCore)
+SET_TARGET_PROPERTIES(AusweisApp PROPERTIES OUTPUT_NAME "${PROJECT_NAME}")
+SET_TARGET_PROPERTIES(AusweisApp PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
 SET_TARGET_PROPERTIES(AusweisApp PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER com.governikus.ausweisapp2)
+SET_TARGET_PROPERTIES(AusweisApp PROPERTIES MACOSX_BUNDLE_COPYRIGHT "${COPYRIGHT_TEXT}")
 
 
 
@@ -153,7 +148,7 @@ IF(IOS)
 	TARGET_LINK_LIBRARIES(AusweisApp -lqtpcre2 -lqtlibpng -lQt5GraphicsSupport -lQt5FontDatabaseSupport -lQt5ClipboardSupport -lqios -lqsvg -lqjpeg -lqtfreetype)
 
 	TARGET_LINK_LIBRARIES(AusweisApp "-lc++ -lz -lm -u _qt_registerPlatformPlugin")
-	TARGET_LINK_LIBRARIES(AusweisApp ${IOS_ASSETSLIBRARY} ${IOS_UIKIT} ${IOS_COREBLUETOOTH} ${IOS_COREFOUNDATION} ${IOS_OPENGLES} ${IOS_FOUNDATION} ${IOS_QUARTZCORE} ${IOS_CORETEXT} ${IOS_COREGRAPHICS} ${IOS_SECURITY} ${IOS_SYSTEMCONFIGURATION} ${IOS_MOBILECORESERVICES} ${IOS_AUDIOTOOLBOX})
+	TARGET_LINK_LIBRARIES(AusweisApp ${IOS_ASSETSLIBRARY} ${IOS_UIKIT} ${IOS_COREBLUETOOTH} ${IOS_COREFOUNDATION} ${IOS_OPENGLES} ${IOS_FOUNDATION} ${IOS_QUARTZCORE} ${IOS_CORETEXT} ${IOS_COREGRAPHICS} ${IOS_SECURITY} ${IOS_SYSTEMCONFIGURATION} ${IOS_MOBILECORESERVICES} ${IOS_AUDIOTOOLBOX} ${IOS_IMAGEIO})
 
 	TARGET_LINK_LIBRARIES(AusweisApp -Wl,-e,_qt_main_wrapper)
 
@@ -164,17 +159,10 @@ IF(IOS)
 	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtGraphicalEffects/private -lqtgraphicaleffectsprivate)
 	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtGraphicalEffects -lqtgraphicaleffectsplugin)
 
-	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtQuick/Controls -lqtquickcontrolsplugin)
-	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtQuick/Controls/Styles/Flat -lqtquickextrasflatplugin)
-
 	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtQuick/Controls.2 -lqtquickcontrols2plugin)
 #	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtQuick/Controls.2/Material -lqtquickcontrols2materialstyleplugin)
 #	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtQuick/Controls.2/Universal -lqtquickcontrols2universalstyleplugin)
 
-	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtQuick/Dialogs -ldialogplugin)
-#	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtQuick/Dialogs/Private -ldialogsprivateplugin)
-
-#	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtQuick/Extras -lqtquickextrasplugin)
 	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtQuick/Layouts -lqquicklayoutsplugin)
 #	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtQuick/LocalStorage -lqmllocalstorageplugin)
 #	TARGET_LINK_LIBRARIES(AusweisApp -L${QT_HOST_PREFIX}/qml/QtQuick/Particles.2 -lparticlesplugin)
@@ -203,14 +191,25 @@ ENDIF()
 
 IF(MAC)
 	TARGET_LINK_LIBRARIES(AusweisApp ${OSX_APPKIT})
+
+	SET(AUTOSTART_HELPER_NAME AutostartHelper)
+	SET(FULL_HELPER_NAME ${PROJECT_NAME}${AUTOSTART_HELPER_NAME})
+	SET(HELPER_SOURCES autostart_helper/main.mm)
+	ADD_EXECUTABLE(${FULL_HELPER_NAME} MACOSX_BUNDLE ${HELPER_SOURCES})
+	TARGET_LINK_LIBRARIES(${FULL_HELPER_NAME} ${OSX_APPKIT})
+	CONFIGURE_FILE(${RESOURCES_DIR}/packaging/macos/autostart_helper/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/AutostartHelperInfo.plist @ONLY)
+	SET_TARGET_PROPERTIES(${FULL_HELPER_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/AutostartHelperInfo.plist)
 ENDIF()
 
 IF(ANDROID)
 	TARGET_LINK_LIBRARIES(AusweisApp Qt5::AndroidExtras)
-	TARGET_LINK_LIBRARIES(AusweisApp AusweisAppCardNfc AusweisAppActivationIntent)
+	TARGET_LINK_LIBRARIES(AusweisApp AusweisAppCardNfc)
+	IF(NOT ANDROID_BUILD_AAR)
+		TARGET_LINK_LIBRARIES(AusweisApp AusweisAppActivationIntent)
+	ENDIF()
 ENDIF()
 
-IF(ANDROID OR IOS)
+IF((ANDROID AND NOT ANDROID_BUILD_AAR) OR IOS)
 	TARGET_LINK_LIBRARIES(AusweisApp AusweisAppCardBluetooth)
 ELSEIF(LINUX)
 	TARGET_LINK_LIBRARIES(AusweisApp debug AusweisAppCardBluetooth)
@@ -220,25 +219,22 @@ IF(WIN32)
 	TARGET_LINK_LIBRARIES(AusweisApp ${WIN_DEFAULT_LIBS})
 ENDIF()
 
+IF(TARGET Qt5::Qml)
+	TARGET_LINK_LIBRARIES(AusweisApp AusweisAppUiQml)
+ENDIF()
+
 IF(IOS OR ANDROID OR WINDOWS_STORE)
-	TARGET_LINK_LIBRARIES(AusweisApp AusweisAppQml)
-	TARGET_LINK_LIBRARIES(AusweisApp AusweisAppAidl)
+	TARGET_LINK_LIBRARIES(AusweisApp AusweisAppUiAidl)
 ELSE()
-	TARGET_LINK_LIBRARIES(AusweisApp debug AusweisAppQml)
-	TARGET_LINK_LIBRARIES(AusweisApp debug AusweisAppAidl)
+	TARGET_LINK_LIBRARIES(AusweisApp debug AusweisAppUiAidl)
 ENDIF()
 
 IF(DESKTOP)
 	TARGET_LINK_LIBRARIES(AusweisApp AusweisAppCardPcsc AusweisAppCardDrivers AusweisAppActivationWebservice)
-	TARGET_LINK_LIBRARIES(AusweisApp AusweisAppWidget AusweisAppCli)
+	TARGET_LINK_LIBRARIES(AusweisApp AusweisAppUiWidget AusweisAppUiCli)
 ENDIF()
 
-TARGET_LINK_LIBRARIES(AusweisApp debug AusweisAppWebSocket)
-
-IF(NOT WINDOWS_STORE)
-	TARGET_LINK_LIBRARIES(AusweisApp AusweisAppCardRemote)
-ENDIF()
-
+TARGET_LINK_LIBRARIES(AusweisApp AusweisAppUiWebsocket)
 
 INCLUDE(Install)
 INCLUDE(FeatureSummary)

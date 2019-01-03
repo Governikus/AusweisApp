@@ -126,7 +126,6 @@ void EcdsaPublicKey::initEcKey()
 		return;
 	}
 
-
 	QSharedPointer<BIGNUM> p = EcUtil::create(BN_new());
 	if (!BN_bin2bn(mPrimeModulus->data, mPrimeModulus->length, p.data()))
 	{
@@ -161,7 +160,6 @@ void EcdsaPublicKey::initEcKey()
 		qCCritical(card) << "Cannot convert generator";
 		return;
 	}
-
 
 	QSharedPointer<BIGNUM> order = EcUtil::create(BN_new());
 	if (!BN_bin2bn(mOrderOfTheBasePoint->data, mOrderOfTheBasePoint->length, order.data()))

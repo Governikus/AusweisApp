@@ -8,11 +8,12 @@
 
 #include "DatagramHandler.h"
 
+#include "PortFile.h"
+
 #include <QScopedPointer>
 #include <QSharedPointer>
 #include <QUdpSocket>
 
-class test_DatagramHandlerImpl;
 
 namespace governikus
 {
@@ -26,21 +27,25 @@ class DatagramHandlerImpl
 		friend class ::test_DatagramHandlerImpl;
 		friend struct QtSharedPointer::CustomDeleter<DatagramHandlerImpl, QtSharedPointer::NormalDeleter>;
 
-		static quint16 cPort;
 		QScopedPointer<QUdpSocket, QScopedPointerDeleteLater> mSocket;
+		quint16 mUsedPort;
+		PortFile mPortFile;
 
-		bool send(const QJsonDocument& pData, const QHostAddress& pAddress);
+		bool send(const QByteArray& pData, const QHostAddress& pAddress, quint16 pPort = 0);
+		bool send(const QByteArray& pData, quint16 pPort);
 
 	public:
-		DatagramHandlerImpl(bool pListen = true);
+		static quint16 cPort;
+
+		DatagramHandlerImpl(bool pListen = true, quint16 pPort = DatagramHandlerImpl::cPort);
 		virtual ~DatagramHandlerImpl() override;
 
 		virtual bool isBound() const override;
-		virtual bool send(const QJsonDocument& pData) override;
+		virtual bool send(const QByteArray& pData) override;
 
 	private Q_SLOTS:
 		void onReadyRead();
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

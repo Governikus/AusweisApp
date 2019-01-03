@@ -4,7 +4,8 @@
 
 #include "DidAuthenticateResponseEac1.h"
 
-#include "EstablishPACEChannel.h"
+#include "EstablishPaceChannel.h"
+#include "EstablishPaceChannelOutput.h"
 #include "paos/PaosType.h"
 
 using namespace governikus;
@@ -24,12 +25,6 @@ DIDAuthenticateResponseEAC1::DIDAuthenticateResponseEAC1()
 
 DIDAuthenticateResponseEAC1::~DIDAuthenticateResponseEAC1()
 {
-}
-
-
-QDomElement DIDAuthenticateResponseEAC1::getDocumentStructure()
-{
-	return createEnvelopeElement(createDIDAuthenticateResponseEAC1Element(), getRelatesTo(), getMessageId());
 }
 
 
@@ -75,7 +70,7 @@ void DIDAuthenticateResponseEAC1::setIDPICC(const QByteArray& pValue)
 }
 
 
-void DIDAuthenticateResponseEAC1::setCertificationAuthorityReference(const EstablishPACEChannelOutput& pPaceChannelOutput)
+void DIDAuthenticateResponseEAC1::setCertificationAuthorityReference(const EstablishPaceChannelOutput& pPaceChannelOutput)
 {
 	mCertificationAuthorityReferences += pPaceChannelOutput.getCARcurr();
 	if (!pPaceChannelOutput.getCARprev().isEmpty())
@@ -91,52 +86,52 @@ void DIDAuthenticateResponseEAC1::setChallenge(const QByteArray& pValue)
 }
 
 
-QDomElement DIDAuthenticateResponseEAC1::createDIDAuthenticateResponseEAC1Element()
+void DIDAuthenticateResponseEAC1::createBodyElement()
 {
-	QDomElement element = mDoc.createElement(QStringLiteral("DIDAuthenticateResponse"));
-	element.setAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
-	element.setAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
+	mWriter.writeStartElement(QStringLiteral("DIDAuthenticateResponse"));
+	mWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
+	mWriter.writeAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
 
-	element.appendChild(createResultElement(*this));
-	element.appendChild(createAuthenticationProtocolDataElement());
+	createResultElement(*this);
+	createAuthenticationProtocolDataElement();
 
-	return element;
+	mWriter.writeEndElement(); // DIDAuthenticateResponse
 }
 
 
-QDomElement DIDAuthenticateResponseEAC1::createAuthenticationProtocolDataElement()
+void DIDAuthenticateResponseEAC1::createAuthenticationProtocolDataElement()
 {
-	QDomElement element = mDoc.createElement(QStringLiteral("AuthenticationProtocolData"));
+	mWriter.writeStartElement(QStringLiteral("AuthenticationProtocolData"));
 
-	element.setAttribute(getNamespacePrefix(Namespace::XSI, QStringLiteral("type")), getNamespaceType(Namespace::TECHSCHEMA, QStringLiteral("EAC1OutputType")));
-	element.setAttribute(QStringLiteral("Protocol"), QStringLiteral("urn:oid:1.3.162.15480.3.0.14.2"));
+	mWriter.writeAttribute(getNamespacePrefix(Namespace::XSI, QStringLiteral("type")), getNamespaceType(Namespace::TECHSCHEMA, QStringLiteral("EAC1OutputType")));
+	mWriter.writeAttribute(QStringLiteral("Protocol"), QStringLiteral("urn:oid:1.3.162.15480.3.0.14.2"));
 
 	if (!mCertificateHolderAuthorizationTemplate.isNull())
 	{
-		element.appendChild(createTextElement(QStringLiteral("CertificateHolderAuthorizationTemplate"), mCertificateHolderAuthorizationTemplate));
+		writeTextElement(QStringLiteral("CertificateHolderAuthorizationTemplate"), mCertificateHolderAuthorizationTemplate);
 	}
 	for (const auto& reference : qAsConst(mCertificationAuthorityReferences))
 	{
-		element.appendChild(createTextElement(QStringLiteral("CertificationAuthorityReference"), reference));
+		writeTextElement(QStringLiteral("CertificationAuthorityReference"), reference);
 	}
 	if (!mEfCardAccess.isNull())
 	{
-		element.appendChild(createTextElement(QStringLiteral("EFCardAccess"), mEfCardAccess));
+		writeTextElement(QStringLiteral("EFCardAccess"), mEfCardAccess);
 	}
 	if (!mIdPICC.isNull())
 	{
-		element.appendChild(createTextElement(QStringLiteral("IDPICC"), mIdPICC));
+		writeTextElement(QStringLiteral("IDPICC"), mIdPICC);
 	}
 	if (!mChallenge.isNull())
 	{
-		element.appendChild(createTextElement(QStringLiteral("Challenge"), mChallenge));
+		writeTextElement(QStringLiteral("Challenge"), mChallenge);
 	}
 
-	return element;
+	mWriter.writeEndElement(); // AuthenticationProtocolData
 }
 
 
-Result DIDAuthenticateResponseEAC1::getResult() const
+ECardApiResult DIDAuthenticateResponseEAC1::getResult() const
 {
 	return ResponseType::getResult();
 }

@@ -10,7 +10,7 @@ using namespace governikus;
 
 
 StateDidList::StateDidList(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractGenericState(pContext, false)
 {
 }
 

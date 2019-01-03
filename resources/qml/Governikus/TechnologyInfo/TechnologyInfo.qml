@@ -1,6 +1,8 @@
-import QtQuick 2.5
+import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Type.NumberModel 1.0
+
 
 Item {
 	id: baseItem
@@ -8,7 +10,7 @@ Item {
 	property alias enableButtonText: enableButton.text
 	property alias enableButtonVisible: enableButton.visible
 	property alias titleText: title.text
-	property string subTitleText: ""
+	property alias subTitleText: subTitle.text
 
 	signal enableClicked()
 
@@ -25,10 +27,9 @@ Item {
 		wrapMode: Text.WordWrap
 		visible: !!text
 
-
 		Behavior on text {
 			SequentialAnimation {
-				PropertyAnimation { target: enableInfo; property: "opacity"; to: 0; duration: 500}
+				PropertyAction { target: enableInfo; property: "opacity"; value: 0.0 }
 				PropertyAction { target: enableInfo; property: "text" }
 				PropertyAnimation { target: enableInfo; property: "opacity"; to: 1.0; duration: 500}
 			}
@@ -70,41 +71,26 @@ Item {
 		}
 	}
 
-	onSubTitleTextChanged: {
-		subTitleTextColor.value = numberModel.hasError ? Constants.red : Constants.secondary_text
-		subTitle.text = subTitleText
-	}
-
-	Item {
+	Text {
+		id: subTitle
 		anchors.left: parent.left
-		anchors.top: parent.verticalCenter
+		anchors.top: title.bottom
 		anchors.right: parent.right
-		anchors.bottom: parent.bottom
-		clip: true
+		anchors.bottom: enableButton.top
+		horizontalAlignment: Text.AlignHCenter
+		verticalAlignment: Text.AlignTop
+		font.pixelSize: Constants.normal_font_size
+		color: Constants.secondary_text
+		wrapMode: Text.WordWrap
+		visible: !enableInfo.visible && !enableButton.visible
 
-		Text {
-			id: subTitle
-			anchors.top: parent.top
-			anchors.left: parent.left
-			anchors.right: parent.right
-			horizontalAlignment: Text.AlignHCenter
-			font.pixelSize: Constants.normal_font_size
-			color: Constants.secondary_text
-			wrapMode: Text.WordWrap
-			visible: !enableInfo.visible && !enableButton.visible
 
-			Behavior on text {
-				SequentialAnimation {
-					PropertyAnimation { target: subTitle; property: "anchors.topMargin"; to: baseItem.height/2; duration: 500}
-					PropertyAction { target: subTitle; property: "text" }
-					PropertyAction {
-						id: subTitleTextColor
-						target: subTitle;
-						property: "color";
-						value: Constants.secondary_text
-					}
-					PropertyAnimation { target: subTitle; property: "anchors.topMargin"; to: 0; duration: 500 }
-				}
+		Behavior on text {
+			SequentialAnimation {
+				PropertyAnimation { target: subTitle; property: "opacity"; to: 0; duration: 500}
+				PropertyAction { target: subTitle; property: "text" }
+				PropertyAnimation { target: subTitle; property: "opacity"; to: 1.0; duration: 500 }
+				PropertyAction { target: subTitle; property: "color"; value: NumberModel.hasError ? Constants.red : Constants.secondary_text }
 			}
 		}
 	}

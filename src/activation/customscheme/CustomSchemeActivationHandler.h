@@ -25,11 +25,11 @@ class CustomSchemeActivationHandler
 		void onCustomUrl(const QUrl& pUrl);
 
 	public:
-		CustomSchemeActivationHandler();
-		virtual ~CustomSchemeActivationHandler() override;
+		CustomSchemeActivationHandler() = default;
+		virtual ~CustomSchemeActivationHandler() override = default;
 
 		virtual bool start() override;
 		virtual void stop() override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

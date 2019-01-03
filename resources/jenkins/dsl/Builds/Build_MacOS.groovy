@@ -4,7 +4,7 @@ import static common.Constants.strip
 def j = new Build
 	(
 		name: 'MacOS',
-		libraries: 'MacOS',
+		libraries: ['MacOS'],
 		label: 'MacOS',
 		xunit: true
 	).generate(this)
@@ -36,7 +36,7 @@ j.with
 			export DYLD_LIBRARY_PATH=${WORKSPACE}/libs/build/dist/lib
 			export QT_PLUGIN_PATH=${WORKSPACE}/libs/build/dist/plugins
 			export QML2_IMPORT_PATH=${WORKSPACE}/libs/build/dist/qml
-			cd build; ctest ${MAKE_FLAGS}
+			cd build; ctest --output-on-failure ${MAKE_FLAGS}
 			'''.stripIndent().trim())
 	}
 }

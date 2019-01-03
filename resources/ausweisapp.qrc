@@ -10,17 +10,13 @@
         <file>images/bt_3b.svg</file>
         <file>images/bt_4.svg</file>
         <file>images/bt_4b.svg</file>
-        <file>images/bspd1.svg</file>
         <file>images/canHint.png</file>
         <file>images/icon_attention.svg</file>
         <file>images/icon_ok.png</file>
         <file>images/icon_cancelled.png</file>
         <file>images/Icon_Checked.svg</file>
-        <file>images/android/search_icon.svg</file>
-        <file>images/android/search_cancel.svg</file>
-        <file>images/iOS/search_icon.svg</file>
-        <file>images/iOS/search_cancel.svg</file>
-        <file>images/back-chevron.png</file>
+        <file>images/search.svg</file>
+        <file>images/cancel.svg</file>
         <file>images/iOS/tabBar/Anbieter-off.png</file>
         <file>images/iOS/tabBar/Anbieter-on.png</file>
         <file>images/iOS/tabBar/Ausweisen-off.png</file>
@@ -32,14 +28,12 @@
         <file>images/icon_Pin.svg</file>
         <file>images/iOS/tabBar/More-off.svg</file>
         <file>images/iOS/tabBar/More-on.svg</file>
-        <file>images/rotes_X.svg</file>
-        <file>images/gruener_Haken.svg</file>
+        <file>images/status_error.svg</file>
+        <file>images/status_info.svg</file>
+        <file>images/status_ok.svg</file>
         <file>images/iOS/CheckedCheckbox.png</file>
-        <file>images/iOS/Header-Ausweisapp@3x.png</file>
-        <file>images/delete.png</file>
         <file>images/delete.svg</file>
         <file>images/NFCPhoneCard.png</file>
-        <file>images/submit.png</file>
         <file>images/submit.svg</file>
         <file>images/ausweis.png</file>
         <file>images/provider/information.svg</file>
@@ -86,5 +80,7 @@
         <file>images/location_flag_de.svg</file>
         <file>images/location_flag_en.svg</file>
         <file>images/siteWithLogo.png</file>
+        <file>images/icon_pair.svg</file>
+        <file>images/icon_settings.svg</file>
     </qresource>
 </RCC>

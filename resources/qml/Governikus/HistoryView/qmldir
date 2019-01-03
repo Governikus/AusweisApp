@@ -1,2 +1,10 @@
 module HistoryView
+
+internal HistoryDetails HistoryDetails.qml
+internal HistoryItemImage HistoryItemImage.qml
+internal HistoryListViewDelegateContent HistoryListViewDelegateContent.qml
+internal HistoryListViewDelegate HistoryListViewDelegate.qml
+internal HistoryViewDetails HistoryViewDetails.qml
+internal HistoryViewTitleBarControls HistoryViewTitleBarControls.qml
+
 HistoryView 1.0 HistoryView.qml

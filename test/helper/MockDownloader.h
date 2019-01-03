@@ -39,4 +39,4 @@ class MockDownloader
 				const QDateTime& pCurrentTimestamp) override;
 };
 
-}
+} // namespace governikus

@@ -99,12 +99,12 @@ DECLARE_ASN1_FUNCTIONS(AuthenticatedAuxiliaryDataInternal)
 DECLARE_ASN1_OBJECT(AuthenticatedAuxiliaryDataInternal)
 
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	#define sk_AuxDataTemplate_num(data) SKM_sk_num(AuxDataTemplate, data)
 	#define sk_AuxDataTemplate_value(data, i) SKM_sk_value(AuxDataTemplate, data, i)
 #endif
 
-} /* namespace governikus */
+} // namespace governikus
 
 
 AuthenticatedAuxiliaryData::AuthenticatedAuxiliaryData(const QSharedPointer<AuthenticatedAuxiliaryDataInternal>& pData)
@@ -151,7 +151,7 @@ QSharedPointer<AuthenticatedAuxiliaryData> AuthenticatedAuxiliaryData::decode(co
 		return nullptr;
 	}
 
-	return QSharedPointer<AuthenticatedAuxiliaryData>(new AuthenticatedAuxiliaryData(auxDate));
+	return QSharedPointer<AuthenticatedAuxiliaryData>::create(auxDate);
 }
 
 

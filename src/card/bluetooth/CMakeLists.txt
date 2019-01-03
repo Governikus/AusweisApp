@@ -1,3 +1,7 @@
+#####################################################################
+# The ReaderManagerPlugin for bluetooth devices.
+#####################################################################
+
 ADD_PLATFORM_LIBRARY(AusweisAppCardBluetooth)
 
 TARGET_LINK_LIBRARIES(AusweisAppCardBluetooth Qt5::Core Qt5::Bluetooth AusweisAppGlobal AusweisAppCard)

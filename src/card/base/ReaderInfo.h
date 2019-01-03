@@ -5,7 +5,6 @@
 #pragma once
 
 #include "CardInfo.h"
-#include "EnumHelper.h"
 #include "ReaderConfigurationInfo.h"
 #include "ReaderManagerPlugInInfo.h"
 #include "SmartCardDefinitions.h"
@@ -20,7 +19,6 @@ class ReaderInfo
 
 	ReaderManagerPlugInType mPlugInType;
 	QString mName;
-	ReaderConfigurationInfo mReaderConfigurationInfo;
 	bool mBasicReader;
 	CardInfo mCardInfo;
 	bool mConnected;
@@ -31,16 +29,12 @@ class ReaderInfo
 				ReaderManagerPlugInType pPlugInType = ReaderManagerPlugInType::UNKNOWN,
 				const CardInfo& pCardInfo = CardInfo(CardType::NONE));
 
+		ReaderConfigurationInfo getReaderConfigurationInfo() const;
+
 
 		ReaderManagerPlugInType getPlugInType() const
 		{
 			return mPlugInType;
-		}
-
-
-		const ReaderConfigurationInfo& getReaderConfigurationInfo() const
-		{
-			return mReaderConfigurationInfo;
 		}
 
 
@@ -152,4 +146,4 @@ class ReaderInfo
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

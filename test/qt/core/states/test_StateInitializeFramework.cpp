@@ -2,7 +2,6 @@
  * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
  */
 
-#include "controller/AuthController.h"
 #include "states/StateBuilder.h"
 #include "states/StateInitializeFramework.h"
 #include "TestFileHelper.h"

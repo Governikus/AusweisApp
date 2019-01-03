@@ -1,2 +1,10 @@
 module IdentifyView
+
+internal CertificateDescriptionPage CertificateDescriptionPage.qml
+internal DataGroup DataGroup.qml
+internal EditRights EditRights.qml
+internal IdentifyController IdentifyController.qml
+internal IdentifyViewContent IdentifyViewContent.qml
+internal SelfAuthenticationData SelfAuthenticationData.qml
+
 IdentifyView 1.0 IdentifyView.qml

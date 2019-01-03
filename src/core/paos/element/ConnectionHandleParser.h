@@ -27,4 +27,4 @@ class ConnectionHandleParser
 		ConnectionHandle parse();
 };
 
-} /* namespace governikus */
+} // namespace governikus

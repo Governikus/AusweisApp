@@ -2,7 +2,7 @@ FROM scratch
 MAINTAINER Governikus KG <ausweisapp2@governikus.com>
 
 ARG box="busybox-x86_64"
-ARG version="2017.10.01"
+ARG version="2018.01.01"
 
 ADD $box /tmp/busybox
 ADD archlinux-bootstrap-$version-x86_64.tar.gz /
@@ -26,6 +26,7 @@ RUN rm -rf /tmp/busybox /root.x86_64
 RUN pacman-key --init && pacman-key --populate archlinux
 
 RUN echo 'Server = http://mirrors.kernel.org/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist &&\
+    echo 'Server = http://ftp.uni-hannover.de/archlinux/$repo/os/$arch' >> /etc/pacman.d/mirrorlist &&\
     echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen &&\
     echo 'LANG="en_US.UTF-8"' > /etc/locale.conf
 

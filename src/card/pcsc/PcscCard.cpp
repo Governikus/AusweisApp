@@ -4,7 +4,8 @@
 
 #include "PcscCard.h"
 
-#include "DestroyPACEChannel.h"
+#include "DestroyPaceChannel.h"
+#include "EstablishPaceChannel.h"
 #include "PinModify.h"
 
 #include <QLatin1String>
@@ -46,7 +47,7 @@ QLatin1String protocolToString(PCSC_INT pProtocol)
 }
 
 
-}
+} // namespace
 
 
 PcscCard::PcscCard(PcscReader* pPcscReader)
@@ -296,10 +297,10 @@ PCSC_RETURNCODE PcscCard::transmit(const QByteArray& pSendBuffer,
 }
 
 
-CardReturnCode PcscCard::establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
+CardReturnCode PcscCard::establishPaceChannel(PacePasswordId pPasswordId,
 		const QByteArray& pChat,
 		const QByteArray& pCertificateDescription,
-		EstablishPACEChannelOutput& pChannelOutput, quint8 pTimeoutSeconds)
+		EstablishPaceChannelOutput& pChannelOutput, quint8 pTimeoutSeconds)
 {
 	Q_UNUSED(pTimeoutSeconds);
 	if (!mReader->hasFeature(FeatureID::EXECUTE_PACE))
@@ -308,7 +309,7 @@ CardReturnCode PcscCard::establishPaceChannel(PACE_PASSWORD_ID pPasswordId,
 	}
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::EXECUTE_PACE);
 
-	EstablishPACEChannelBuilder builder;
+	EstablishPaceChannel builder;
 	builder.setPasswordId(pPasswordId);
 	builder.setChat(pChat);
 	builder.setCertificateDescription(pCertificateDescription);
@@ -334,7 +335,7 @@ CardReturnCode PcscCard::destroyPaceChannel()
 	}
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::EXECUTE_PACE);
 
-	DestroyPACEChannelBuilder builder;
+	DestroyPaceChannelBuilder builder;
 	QByteArray controlRes;
 	PCSC_RETURNCODE returnCode = control(cmdID, builder.createCommandData(), controlRes);
 	if (returnCode != PcscUtils::Scard_S_Success)

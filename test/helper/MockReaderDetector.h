@@ -29,4 +29,4 @@ class MockReaderDetector
 		const QVector<UsbId>& mDevIds;
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -40,7 +40,7 @@ void SignalHandler::init()
 {
 	if (!mInit)
 	{
-#if (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_MACOS) || defined(Q_OS_FREEBSD)
+#if (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || (defined(Q_OS_BSD4) && !defined(Q_OS_IOS))
 		initUnix();
 #elif defined(Q_OS_WIN) && !defined(Q_OS_WINRT)
 		SetConsoleCtrlHandler(PHANDLER_ROUTINE(ctrlHandler), true);
@@ -63,7 +63,7 @@ void SignalHandler::quit()
 
 	if (mAppController)
 	{
-		QMetaObject::invokeMethod(mAppController.data(), "doShutdown", Qt::QueuedConnection);
+		QMetaObject::invokeMethod(mAppController.data(), &AppController::doShutdown, Qt::QueuedConnection);
 	}
 	else
 	{
@@ -82,7 +82,6 @@ bool SignalHandler::shouldQuit() const
 // A dummy is required for all platform since moc fails to handle some defines.
 void SignalHandler::onSignalSocketActivated()
 {
-
 }
 
 

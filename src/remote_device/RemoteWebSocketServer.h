@@ -21,7 +21,6 @@
 namespace governikus
 {
 
-
 class RemoteWebSocketServer
 	: public QObject
 {
@@ -79,4 +78,4 @@ class RemoteWebSocketServerImpl
 		virtual const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;
 };
 
-} /* namespace governikus */
+} // namespace governikus

@@ -36,13 +36,17 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AndroidBluetoothReceiver_
 	{
 		qCDebug(bluetooth) << "Bluetooth was powered off";
 		// jump from Android thread into Qt thread by invoking per BlockingQueuedConnection
-		QMetaObject::invokeMethod(instance, "onBluetoothStatusChanged", Qt::BlockingQueuedConnection, Q_ARG(bool, false));
+		QMetaObject::invokeMethod(instance, [] {
+					instance->onBluetoothStatusChanged(false);
+				}, Qt::BlockingQueuedConnection);
 	}
 	else if (currentState == 12) // STATE_ON (class android.bluetooth.BluetoothAdapter)
 	{
 		qCDebug(bluetooth) << "Bluetooth was powered on";
 		// jump from Android thread into Qt thread by invoking per BlockingQueuedConnection
-		QMetaObject::invokeMethod(instance, "onBluetoothStatusChanged", Qt::BlockingQueuedConnection, Q_ARG(bool, true));
+		QMetaObject::invokeMethod(instance, [] {
+					instance->onBluetoothStatusChanged(true);
+				}, Qt::BlockingQueuedConnection);
 	}
 }
 
@@ -81,7 +85,6 @@ void BluetoothReaderManagerPlugInPrivate::onBluetoothStatusChanged(bool pEnabled
 
 void BluetoothReaderManagerPlugInPrivate::onScanStart()
 {
-
 }
 
 

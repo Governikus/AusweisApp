@@ -364,6 +364,7 @@ again but without an error parameter.
              {
               "name": "NFC",
               "attached": true,
+              "keypad": false,
               "card":
                      {
                       "inoperative": false,
@@ -424,6 +425,7 @@ AusweisApp2 will send an :ref:`enter_pin` again with a retryCounter of **3**.
              {
               "name": "NFC",
               "attached": true,
+              "keypad": false,
               "card":
                      {
                       "inoperative": false,
@@ -482,6 +484,7 @@ Please see the note for more information.
              {
               "name": "NFC",
               "attached": true,
+              "keypad": false,
               "card":
                      {
                       "inoperative": false,
@@ -642,10 +645,16 @@ If a workflow is in progress and a card with disabled eID functionality was
 inserted, this message will still be sent, but the workflow will be paused
 until a card with enabled eID functionality is inserted.
 
+.. versionadded:: 1.16.0
+   Parameter **keypad** added.
+
 
   - **name**: Identifier of card reader.
 
-  - **attached**: Indicates if a card reader is connected or disconnected.
+  - **attached**: Indicates whether a card reader is connected or disconnected.
+
+  - **keypad**: Indicates whether a card reader has a keypad. The parameter
+    is only shown when a reader is attached.
 
   - **card**: Provides information about inserted card, otherwise null.
 
@@ -665,6 +674,7 @@ until a card with enabled eID functionality is inserted.
     "msg": "READER",
     "name": "NFC",
     "attached": true,
+    "keypad": false,
     "card":
            {
             "inoperative": false,
@@ -695,12 +705,14 @@ Provides information about all connected card readers.
                {
                 "name": "Example reader 1 [SmartCard] (1234567) 01 00",
                 "attached": true,
+                "keypad": true,
                 "card": null
                },
 
                {
                 "name": "NFC",
                 "attached": true,
+                "keypad": false,
                 "card":
                        {
                         "inoperative": false,

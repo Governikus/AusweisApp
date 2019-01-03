@@ -15,7 +15,6 @@
 namespace governikus
 {
 
-
 /**
  * SecurityInfo ::= SEQUENCE {
  *      protocol OBJECT IDENTIFIER,
@@ -33,7 +32,7 @@ struct securityinfo_st
 };
 
 DECLARE_ASN1_FUNCTIONS(securityinfo_st)
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 DECLARE_STACK_OF(securityinfo_st)
 #else
 DEFINE_STACK_OF(securityinfo_st)
@@ -45,10 +44,11 @@ DEFINE_STACK_OF(securityinfo_st)
  */
 class SecurityInfo
 {
+	Q_DISABLE_COPY(SecurityInfo)
+	friend class QSharedPointer<SecurityInfo>;
 	const QSharedPointer<const securityinfo_st> mDelegate;
 
 	SecurityInfo(const QSharedPointer<const securityinfo_st>& pDelegate);
-	Q_DISABLE_COPY(SecurityInfo)
 
 	/*
 	 * Sub classes must override this method to allow the base class to access
@@ -64,7 +64,7 @@ class SecurityInfo
 		{
 			if (const auto& delegate = decodeObject<securityinfo_st>(pBytes))
 			{
-				return QSharedPointer<SecurityInfo>(new SecurityInfo(delegate));
+				return QSharedPointer<SecurityInfo>::create(delegate);
 			}
 			return QSharedPointer<SecurityInfo>();
 		}
@@ -86,4 +86,4 @@ class SecurityInfo
 
 DECLARE_ASN1_OBJECT(securityinfo_st)
 
-} /* namespace governikus */
+} // namespace governikus

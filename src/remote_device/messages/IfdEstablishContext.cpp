@@ -19,7 +19,7 @@ namespace
 {
 VALUE_NAME(PROTOCOL, "Protocol")
 VALUE_NAME(UD_NAME, "UDName")
-}
+} // namespace
 
 
 IfdEstablishContext::IfdEstablishContext(const IfdVersion& pProtocol, const QString& pUdName)
@@ -36,6 +36,10 @@ IfdEstablishContext::IfdEstablishContext(const QJsonObject& pMessageObject)
 	, mProtocol(IfdVersion(mProtocolRaw))
 	, mUdName(getStringValue(pMessageObject, UD_NAME()))
 {
+	if (getType() != RemoteCardMessageType::IFDEstablishContext)
+	{
+		markIncomplete(QStringLiteral("The value of msg should be IFDEstablishContext"));
+	}
 }
 
 
@@ -57,10 +61,12 @@ const QString& IfdEstablishContext::getUdName() const
 }
 
 
-QJsonDocument IfdEstablishContext::toJson(const QString& pContextHandle) const
+QByteArray IfdEstablishContext::toByteArray(const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
+
 	result[PROTOCOL()] = mProtocol.toString();
 	result[UD_NAME()] = mUdName;
-	return QJsonDocument(result);
+
+	return RemoteMessage::toByteArray(result);
 }

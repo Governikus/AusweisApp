@@ -30,8 +30,8 @@ class test_StartPAOSResponse
 
 			StartPaosResponse message(content);
 
-			QCOMPARE(message.getResult().getMajor(), Result::Major::Ok);
-			QCOMPARE(message.getResult().getMinor(), GlobalStatus::Code::No_Error);
+			QCOMPARE(message.getResult().getMajor(), ECardApiResult::Major::Ok);
+			QCOMPARE(message.getResult().getMinor(), ECardApiResult::Minor::null);
 			QVERIFY(message.getResult().getMessage().isNull());
 		}
 
@@ -42,8 +42,8 @@ class test_StartPAOSResponse
 
 			StartPaosResponse message(content);
 
-			QCOMPARE(message.getResult().getMajor(), Result::Major::Error);
-			QCOMPARE(message.getResult().getMinor(), GlobalStatus::Code::Paos_Error_DP_Timeout_Error);
+			QCOMPARE(message.getResult().getMajor(), ECardApiResult::Major::Error);
+			QCOMPARE(message.getResult().getMinor(), ECardApiResult::Minor::DP_Timeout_Error);
 			QVERIFY(message.getResult().getMessage().isNull());
 		}
 
@@ -54,8 +54,8 @@ class test_StartPAOSResponse
 
 			StartPaosResponse message(content);
 
-			QCOMPARE(message.getResult().getMajor(), Result::Major::Error);
-			QCOMPARE(message.getResult().getMinor(), GlobalStatus::Code::Paos_Error_DP_Timeout_Error);
+			QCOMPARE(message.getResult().getMajor(), ECardApiResult::Major::Error);
+			QCOMPARE(message.getResult().getMinor(), ECardApiResult::Minor::DP_Timeout_Error);
 			QCOMPARE(message.getResult().getMessage(), QString("Detail message"));
 		}
 

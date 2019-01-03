@@ -16,11 +16,11 @@ class StateEACAdditionalInputType
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateEACAdditionalInputType(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateEACAdditionalInputType(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 
 	Q_SIGNALS:
 		void fireSendDidAuthenticatResponse();
 };
 
-} /* namespace governikus */
+} // namespace governikus

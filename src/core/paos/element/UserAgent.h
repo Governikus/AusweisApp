@@ -27,4 +27,4 @@ class UserAgent
 		const QString& getVersionSubminor() const;
 };
 
-}
+} // namespace governikus

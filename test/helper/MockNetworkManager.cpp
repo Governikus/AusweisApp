@@ -4,8 +4,7 @@
 
 #include "MockNetworkManager.h"
 
-#include "HttpStatusCode.h"
-
+#include <http_parser.h>
 #include <QTest>
 
 using namespace governikus;
@@ -43,7 +42,7 @@ MockNetworkReply* MockNetworkManager::getReply(const QNetworkRequest& pRequest)
 				msgFile.close();
 			}
 
-			mLastReply = new MockNetworkReply(content, HttpStatusCode::OK);
+			mLastReply = new MockNetworkReply(content, HTTP_STATUS_OK);
 		}
 		else
 		{

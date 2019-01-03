@@ -5,15 +5,14 @@
 #include "ChangePinController.h"
 
 #include "context/ChangePinContext.h"
-#include "states/CompositeStateSelectCard.h"
+#include "states/CompositeStatePace.h"
 #include "states/FinalState.h"
 #include "states/StateChangePin.h"
 #include "states/StateCleanUpReaderManager.h"
+#include "states/StateClearPacePasswords.h"
 #include "states/StateDestroyPace.h"
-#include "states/StateEstablishPaceCan.h"
-#include "states/StateEstablishPacePin.h"
-#include "states/StateEstablishPacePuk.h"
-#include "states/StateHandleRetryCounter.h"
+#include "states/StateEnterNewPacePin.h"
+#include "states/StatePrepareChangePin.h"
 #include "states/StateUpdateRetryCounter.h"
 
 #include <QDebug>
@@ -26,51 +25,39 @@ using namespace governikus;
 ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pContext)
 	: WorkflowController(pContext)
 {
-	auto sSelectCard = new CompositeStateSelectCard(pContext);
-	mStateMachine.addState(sSelectCard);
-	auto sUpdateRetryCounter = addState<StateUpdateRetryCounter>();
-	auto sHandleRetryCounter = addState<StateHandleRetryCounter>();
-	auto sEstablishPacePin = addState<StateEstablishPacePin>();
-	auto sEstablishPaceCan = addState<StateEstablishPaceCan>();
-	auto sEstablishPacePuk = addState<StateEstablishPacePuk>();
+	auto sStatePace = new CompositeStatePace(pContext);
+	mStateMachine.addState(sStatePace);
+	auto sPrepareChangePin = addState<StatePrepareChangePin>();
+	auto sEnterNewPacePin = addState<StateEnterNewPacePin>();
 	auto sChangePin = addState<StateChangePin>();
+	auto sClearPacePasswords = addState<StateClearPacePasswords>();
 	auto sDestroyPace = addState<StateDestroyPace>();
 	auto sUpdateRetryCounterFinal = addState<StateUpdateRetryCounter>();
 	auto sCleanUpReaderManager = addState<StateCleanUpReaderManager>();
 
 	auto sFinal = addState<FinalState>();
-	mStateMachine.setInitialState(sSelectCard);
+	mStateMachine.setInitialState(sStatePace);
 
-	sSelectCard->addTransition(sSelectCard, &CompositeStateSelectCard::fireContinue, sUpdateRetryCounter);
-	sSelectCard->addTransition(sSelectCard, &CompositeStateSelectCard::fireAbort, sCleanUpReaderManager);
+	sStatePace->addTransition(sStatePace, &CompositeStatePace::firePaceChannelEstablished, sPrepareChangePin);
+	sStatePace->addTransition(sStatePace, &CompositeStatePace::firePacePukEstablished, sClearPacePasswords);
+	sStatePace->addTransition(sStatePace, &CompositeStatePace::fireAbort, sClearPacePasswords);
 
-	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireContinue, sHandleRetryCounter);
-	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireAbort, sCleanUpReaderManager);
+	sPrepareChangePin->addTransition(sPrepareChangePin, &StatePrepareChangePin::fireContinue, sChangePin);
+	sPrepareChangePin->addTransition(sPrepareChangePin, &StatePrepareChangePin::fireEnterNewPacePin, sEnterNewPacePin);
+	sPrepareChangePin->addTransition(sPrepareChangePin, &StatePrepareChangePin::fireAbort, sStatePace);
 
-	sHandleRetryCounter->addTransition(sHandleRetryCounter, &StateHandleRetryCounter::fireRetryCounterIsZero, sEstablishPacePuk);
-	sHandleRetryCounter->addTransition(sHandleRetryCounter, &StateHandleRetryCounter::fireRetryCounterIsOne, sEstablishPaceCan);
-	sHandleRetryCounter->addTransition(sHandleRetryCounter, &StateHandleRetryCounter::fireRetryCounterIsGTOne, sEstablishPacePin);
-	sHandleRetryCounter->addTransition(sHandleRetryCounter, &AbstractState::fireAbort, sUpdateRetryCounterFinal);
-
-	sEstablishPacePuk->addTransition(sEstablishPacePuk, &StateEstablishPacePuk::fireInvalidPuk, sUpdateRetryCounter);
-	sEstablishPacePuk->addTransition(sEstablishPacePuk, &StateEstablishPacePuk::fireInoperativePuk, sUpdateRetryCounterFinal);
-	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireContinue, sUpdateRetryCounterFinal);
-	sEstablishPacePuk->addTransition(sEstablishPacePuk, &AbstractState::fireAbort, sUpdateRetryCounterFinal);
-
-	sEstablishPaceCan->addTransition(sEstablishPaceCan, &StateEstablishPaceCan::fireInvalidCan, sUpdateRetryCounter);
-	sEstablishPaceCan->addTransition(sEstablishPaceCan, &AbstractState::fireContinue, sEstablishPacePin);
-	sEstablishPaceCan->addTransition(sEstablishPaceCan, &AbstractState::fireAbort, sUpdateRetryCounterFinal);
-
-	sEstablishPacePin->addTransition(sEstablishPacePin, &StateEstablishPacePin::fireInvalidPin, sUpdateRetryCounter);
-	sEstablishPacePin->addTransition(sEstablishPacePin, &AbstractState::fireContinue, sChangePin);
-	sEstablishPacePin->addTransition(sEstablishPacePin, &AbstractState::fireAbort, sUpdateRetryCounterFinal);
+	sEnterNewPacePin->addTransition(sEnterNewPacePin, &AbstractState::fireContinue, sChangePin);
+	sEnterNewPacePin->addTransition(sEnterNewPacePin, &AbstractState::fireAbort, sStatePace);
 
 	sChangePin->addTransition(sChangePin, &AbstractState::fireContinue, sDestroyPace);
-	sChangePin->addTransition(sChangePin, &StateChangePin::fireInvalidPin, sUpdateRetryCounterFinal);
-	sChangePin->addTransition(sChangePin, &AbstractState::fireAbort, sUpdateRetryCounterFinal);
+	sChangePin->addTransition(sChangePin, &StateChangePin::fireInvalidPin, sClearPacePasswords);
+	sChangePin->addTransition(sChangePin, &AbstractState::fireAbort, sStatePace);
 
-	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireContinue, sUpdateRetryCounterFinal);
-	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireAbort, sUpdateRetryCounterFinal);
+	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireContinue, sClearPacePasswords);
+	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireAbort, sClearPacePasswords);
+
+	sClearPacePasswords->addTransition(sClearPacePasswords, &StateClearPacePasswords::fireContinue, sUpdateRetryCounterFinal);
+	sClearPacePasswords->addTransition(sClearPacePasswords, &StateClearPacePasswords::fireAbort, sUpdateRetryCounterFinal);
 
 	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &AbstractState::fireContinue, sCleanUpReaderManager);
 	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &AbstractState::fireAbort, sCleanUpReaderManager);

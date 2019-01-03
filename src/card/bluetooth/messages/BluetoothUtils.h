@@ -24,4 +24,4 @@ class BluetoothUtils
 		static void addPadding(QByteArray& pData, const QByteArray& pContent, ushort pPaddingLen = DEFAULT_PADDING_LENGTH);
 };
 
-} /* namespace governikus */
+} // namespace governikus

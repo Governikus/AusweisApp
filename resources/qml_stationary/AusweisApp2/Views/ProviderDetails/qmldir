@@ -1,7 +1,0 @@
-module AusweisApp2.Views.ProviderDetails
-ProviderDetailsDialog 1.0 ProviderDetailsDialog.qml
-ProviderContactInfoItem 1.0 ProviderContactInfoItem.qml
-ProviderContactInfo 1.0 ProviderContactInfo.qml
-ProviderDetailButtonBar 1.0 ProviderDetailButtonBar.qml
-ProviderDetailDescription 1.0 ProviderDetailDescription.qml
-ProviderDetailView 1.0 ProviderDetailView.qml

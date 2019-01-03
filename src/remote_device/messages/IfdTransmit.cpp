@@ -22,14 +22,14 @@ VALUE_NAME(SLOT_HANDLE, "SlotHandle")
 VALUE_NAME(COMMAND_APDUS, "CommandAPDUs")
 VALUE_NAME(INPUT_APDU, "InputAPDU")
 VALUE_NAME(ACCEPTABLE_STATUS_CODES, "AcceptableStatusCodes")
-}
+} // namespace
 
 
 void IfdTransmit::parseCommandApdu(QJsonValue pEntry)
 {
 	if (!pEntry.isObject())
 	{
-		invalidType(COMMAND_APDUS(), QLatin1String("object"));
+		invalidType(COMMAND_APDUS(), QLatin1String("object array"));
 		return;
 	}
 
@@ -74,6 +74,11 @@ IfdTransmit::IfdTransmit(const QJsonObject& pMessageObject)
 	{
 		missingValue(COMMAND_APDUS());
 	}
+
+	if (getType() != RemoteCardMessageType::IFDTransmit)
+	{
+		markIncomplete(QStringLiteral("The value of msg should be IFDTransmit"));
+	}
 }
 
 
@@ -89,7 +94,7 @@ const QByteArray& IfdTransmit::getInputApdu() const
 }
 
 
-QJsonDocument IfdTransmit::toJson(const QString& pContextHandle) const
+QByteArray IfdTransmit::toByteArray(const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 
@@ -102,5 +107,5 @@ QJsonDocument IfdTransmit::toJson(const QString& pContextHandle) const
 	commandApdus += commandApdu;
 	result[COMMAND_APDUS()] = commandApdus;
 
-	return QJsonDocument(result);
+	return RemoteMessage::toByteArray(result);
 }

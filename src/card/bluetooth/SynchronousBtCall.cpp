@@ -31,12 +31,12 @@ QSharedPointer<const BluetoothMessage> SynchronousBtCall::send(const BluetoothMe
 
 	if (mMessage.isNull())
 	{
-		qCCritical(bluetooth) << "No response received for " << pRequest.getBluetoothMsgId();
+		qCCritical(bluetooth) << "No response received for" << pRequest.getBluetoothMsgId();
 		return QSharedPointer<const BluetoothMessage>();
 	}
 	else if (mMessage->getBluetoothMsgId() != pResponseType)
 	{
-		qCCritical(bluetooth) << "Got unexpected response type " << mMessage->getBluetoothMsgId();
+		qCCritical(bluetooth) << "Got unexpected response type" << mMessage->getBluetoothMsgId();
 		return QSharedPointer<const BluetoothMessage>();
 	}
 

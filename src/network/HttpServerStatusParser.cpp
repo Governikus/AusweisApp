@@ -4,8 +4,10 @@
 
 #include "HttpServerStatusParser.h"
 
-#include "HttpStatusCode.h"
+#include "LogHandler.h"
+#include "NetworkManager.h"
 
+#include <http_parser.h>
 #include <QLoggingCategory>
 
 using namespace governikus;
@@ -14,7 +16,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(network)
 
 
-HttpServerStatusParser::HttpServerStatusParser(int pPort, const QHostAddress& pHost)
+HttpServerStatusParser::HttpServerStatusParser(quint16 pPort, const QHostAddress& pHost)
 	: QObject()
 	, mUrl(HttpServerRequestor::createUrl(QStringLiteral("Status"), pPort, pHost))
 	, mServerHeader()
@@ -69,8 +71,8 @@ bool HttpServerStatusParser::parseReply(const QPointer<QNetworkReply>& pReply)
 		}
 	}
 
-	int statusCode = pReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-	if (statusCode == HttpStatusCode::OK)
+	const auto statusCode = NetworkManager::getLoggedStatusCode(pReply, spawnMessageLogger(network));
+	if (statusCode == HTTP_STATUS_OK)
 	{
 		Q_ASSERT_X(pReply->isFinished(), "HttpServerStatusParser::parseReply", "Not all data available for reply");
 		mVersionInfo = VersionInfo::fromText(QString::fromUtf8(pReply->readAll()));
@@ -79,7 +81,7 @@ bool HttpServerStatusParser::parseReply(const QPointer<QNetworkReply>& pReply)
 	}
 	else
 	{
-		qCDebug(network) << "Cannot get status information! Got bad http status code:" << statusCode;
+		qCDebug(network) << "Cannot get status information! Got bad http status code.";
 	}
 
 	return false;

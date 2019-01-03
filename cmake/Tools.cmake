@@ -43,7 +43,7 @@ IF(COVERAGE)
 	FIND_PROGRAM(GCOVR_BIN gcovr CMAKE_FIND_ROOT_PATH_BOTH)
 	IF(GCOVR_BIN)
 		SET(GCOVR_FILE "${PROJECT_BINARY_DIR}/gcovr.xml")
-		SET(GCOVR_CMD ${GCOVR_BIN} -x -o ${GCOVR_FILE} --exclude="src/external" --exclude="test" -r ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
+		SET(GCOVR_CMD ${GCOVR_BIN} -x -o ${GCOVR_FILE} --exclude="utils" --exclude="src/external" --exclude="test" -r ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
 
 		ADD_CUSTOM_COMMAND(OUTPUT ${GCOVR_FILE} COMMAND ${GCOVR_CMD} WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 		ADD_CUSTOM_TARGET(gcovr DEPENDS ${GCOVR_FILE})
@@ -151,14 +151,11 @@ ENDIF()
 FIND_PROGRAM(QMLLINT_BIN qmllint CMAKE_FIND_ROOT_PATH_BOTH)
 IF(QMLLINT_BIN)
 	FILE(GLOB_RECURSE TEST_FILES_QML ${TEST_DIR}/qml/*.qml)
-	FILE(GLOB_RECURSE TEST_FILES_QML_STATIONARY ${TEST_DIR}/qml_stationary/*.qml)
 	FILE(GLOB_RECURSE FILES_QML ${RESOURCES_DIR}/qml/*.qml)
-	FILE(GLOB_RECURSE FILES_QML_STATIONARY ${RESOURCES_DIR}/qml_stationary/*.qml)
 	FILE(GLOB_RECURSE FILES_JS ${RESOURCES_DIR}/qml/*.js)
-	FILE(GLOB_RECURSE FILES_JS_STATIONARY ${RESOURCES_DIR}/qml_stationary/*.js)
-	SET(QMLLINT_CMD ${QMLLINT_BIN} ${FILES_QML} ${FILES_QML_STATIONARY} ${FILES_JS})
+	SET(QMLLINT_CMD ${QMLLINT_BIN} ${FILES_QML} ${FILES_JS})
 
-	ADD_CUSTOM_TARGET(qmllint COMMAND ${QMLLINT_CMD} SOURCES ${TEST_FILES_QML} ${TEST_FILES_QML_STATIONARY} ${FILES_QML} ${FILES_QML_STATIONARY} ${FILES_JS} ${FILES_JS_STATIONARY})
+	ADD_CUSTOM_TARGET(qmllint COMMAND ${QMLLINT_CMD} SOURCES ${TEST_FILES_QML} ${FILES_QML} ${FILES_JS})
 ENDIF()
 
 # doc8 (https://pypi.python.org/pypi/doc8)
@@ -175,8 +172,13 @@ ENDFUNCTION()
 
 FIND_PROGRAM(CONVERT convert CMAKE_FIND_ROOT_PATH_BOTH)
 IF(CONVERT)
-	SET(CONVERT_CMD convert)
-	SET(BACKGROUND_COLOR "transparent")
+	IF(IOS)
+	    SET(CONVERT_CMD convert -alpha off)
+	    SET(BACKGROUND_COLOR "#5489c2")
+	ELSE()
+	    SET(CONVERT_CMD convert)
+	    SET(BACKGROUND_COLOR "transparent")
+	ENDIF()
 
 	ADD_CUSTOM_TARGET(npaicons.win
 		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -define icon:auto-resize=256,96,64,48,40,32,24,20,16 npa.svg npa.ico
@@ -184,29 +186,29 @@ IF(CONVERT)
 
 	ADD_CUSTOM_TARGET(npaicons.android.preview
 		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 36x36 npa_preview.svg android/ldpi/npa_preview.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 48x48 npa_preview.svg android/mdpi/npa_preview.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 72x72 npa_preview.svg android/hdpi/npa_preview.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 96x96 npa_preview.svg android/xhdpi/npa_preview.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 144x144 npa_preview.svg android/xxhdpi/npa_preview.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 192x192 npa_preview.svg android/xxxhdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 160 -resize 48x48 npa_preview.svg android/mdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 240 -resize 72x72 npa_preview.svg android/hdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 320 -resize 96x96 npa_preview.svg android/xhdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 480 -resize 144x144 npa_preview.svg android/xxhdpi/npa_preview.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 640 -resize 192x192 npa_preview.svg android/xxxhdpi/npa_preview.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	ADD_CUSTOM_TARGET(npaicons.android.beta
 		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 36x36 npa_beta.svg android/ldpi/npa_beta.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 48x48 npa_beta.svg android/mdpi/npa_beta.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 72x72 npa_beta.svg android/hdpi/npa_beta.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 96x96 npa_beta.svg android/xhdpi/npa_beta.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 144x144 npa_beta.svg android/xxhdpi/npa_beta.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 192x192 npa_beta.svg android/xxxhdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 160 -resize 48x48 npa_beta.svg android/mdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 240 -resize 72x72 npa_beta.svg android/hdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 320 -resize 96x96 npa_beta.svg android/xhdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 480 -resize 144x144 npa_beta.svg android/xxhdpi/npa_beta.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 640 -resize 192x192 npa_beta.svg android/xxxhdpi/npa_beta.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	ADD_CUSTOM_TARGET(npaicons.android
 		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 36x36 npa.svg android/ldpi/npa.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 48x48 npa.svg android/mdpi/npa.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 72x72 npa.svg android/hdpi/npa.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 96x96 npa.svg android/xhdpi/npa.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 144x144 npa.svg android/xxhdpi/npa.png
-		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -resize 192x192 npa.svg android/xxxhdpi/npa.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 160 -resize 48x48 npa.svg android/mdpi/npa.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 240 -resize 72x72 npa.svg android/hdpi/npa.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 320 -resize 96x96 npa.svg android/xhdpi/npa.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 480 -resize 144x144 npa.svg android/xxhdpi/npa.png
+		COMMAND ${CONVERT_CMD} -background '${BACKGROUND_COLOR}' -units PixelsPerInch -resample 640 -resize 192x192 npa.svg android/xxxhdpi/npa.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	ADD_CUSTOM_TARGET(npaicons.ios.beta
@@ -291,6 +293,9 @@ SET(PNGQUANT_CMD pngquant -f -o)
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	ADD_CUSTOM_TARGET(pngquant.ios
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon20.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon20.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon20@2x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon20@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon20@3x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon20@3x.png
 		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall.png
 		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall@2x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall@2x.png
 		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall@3x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/iconSmall@3x.png
@@ -302,6 +307,7 @@ SET(PNGQUANT_CMD pngquant -f -o)
 		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon76.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon76.png
 		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon76@2x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon76@2x.png
 		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon83.5@2x.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon83.5@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon1024.png -- iOS/appIcons/Images.xcassets/AppIcon.appiconset/icon1024.png
 		COMMAND ${PNGQUANT_CMD} iOS/launchImages/Default-568h@2x.png -- iOS/launchImages/Default-568h@2x.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
@@ -366,6 +372,57 @@ IF(JAVA_EXECUTABLE)
 		CONFIGURE_FILE(${RESOURCES_DIR}/statemachine.sh.in ${PROJECT_BINARY_DIR}/statemachine.sh @ONLY)
 		ADD_CUSTOM_TARGET(uml.statemachines COMMAND ./statemachine.sh WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 	ENDIF()
+ENDIF()
+
+
+FIND_PROGRAM(DOT dot CMAKE_FIND_ROOT_PATH_BOTH)
+IF(DOT)
+	SET(architecture_file Architecture)
+	SET(ARCHI_PDF_DEPENDS)
+
+	ADD_CUSTOM_TARGET(architecture.graphviz ${CMAKE_COMMAND} --graphviz=${architecture_file} . WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
+	LIST(APPEND ARCHI_PDF_DEPENDS architecture.graphviz)
+
+	FIND_PROGRAM(SED sed CMAKE_FIND_ROOT_PATH_BOTH)
+	IF(SED)
+		# 1. Strip line of plugins as it is misleading
+		# 2. Strip "AusweisApp" prefix
+		ADD_CUSTOM_TARGET(architecture.sed
+			COMMAND ${SED} -i -E '/AusweisApp -> AusweisApp\(Ui|Card|Activation\).+/d' ${architecture_file}
+			COMMAND ${SED} -i'' -e 's/"AusweisApp"/"AusweisApp2"/' ${architecture_file}
+			COMMAND ${SED} -i'' -e 's/"AusweisApp2"/"REPLACE"/' ${architecture_file}
+			COMMAND ${SED} -i'' -e 's/AusweisApp//' ${architecture_file}
+			COMMAND ${SED} -i'' -e 's/"REPLACE"/"AusweisApp2"/' ${architecture_file}
+			COMMAND ${SED} -i'' -e 's/diamond/box/' ${architecture_file}
+			DEPENDS ${ARCHI_PDF_DEPENDS}
+			WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
+
+		LIST(APPEND ARCHI_PDF_DEPENDS architecture.sed)
+	ENDIF()
+
+	ADD_CUSTOM_TARGET(architecture
+		${DOT} -O -Tpdf ${architecture_file}
+		DEPENDS ${ARCHI_PDF_DEPENDS}
+		WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
+ENDIF()
+
+FIND_PACKAGE(PythonInterp 2.7)
+IF(PYTHONINTERP_FOUND)
+	ADD_CUSTOM_TARGET(checkproviderurls
+		COMMAND ${PYTHON_EXECUTABLE} "${PROJECT_SOURCE_DIR}/utils/providercheck/check-urls.py" "${PROJECT_SOURCE_DIR}/resources/updatable-files/supported-providers.json")
+ENDIF()
+
+FIND_PROGRAM(SED sed CMAKE_FIND_ROOT_PATH_BOTH)
+IF(SED)
+	FILE(GLOB FILES_TO_GENERATE ${RESOURCES_DIR}/images/tutorial/src/*.svg)
+	SET(TARGET_DIR ${RESOURCES_DIR}/images/tutorial/generated)
+	ADD_CUSTOM_TARGET(generate_composite_images.sed)
+	FOREACH(SRC ${FILES_TO_GENERATE})
+	    GET_FILENAME_COMPONENT(SRC_NAME ${SRC} NAME)
+	    ADD_CUSTOM_COMMAND(TARGET generate_composite_images.sed PRE_BUILD
+		COMMAND ${SED} -E 's/xlink:href=\\"[\\.\\/]+/xlink:href=\\":\\//' ${SRC} > ${TARGET_DIR}/${SRC_NAME})
+	ENDFOREACH(SRC)
+
 ENDIF()
 
 INCLUDE(Sphinx)

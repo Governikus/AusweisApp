@@ -46,4 +46,4 @@ class AndroidBluetoothAdapter
 		bool isAvailable() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

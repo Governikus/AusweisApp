@@ -4,7 +4,7 @@ import static common.Constants.strip
 def j = new Review
 	(
 		name: 'iOS_IPA',
-		libraries: 'iOS',
+		libraries: ['iOS'],
 		label: 'iOS',
 		artifacts: 'build/*.ipa'
 	).generate(this)

@@ -17,9 +17,9 @@ using namespace governikus;
 namespace
 {
 VALUE_NAME(IFD_NAME, "IFDName")
-}
+} // namespace
 
-IfdEstablishContextResponse::IfdEstablishContextResponse(const QString& pIfdName, const QString& pResultMinor)
+IfdEstablishContextResponse::IfdEstablishContextResponse(const QString& pIfdName, ECardApiResult::Minor pResultMinor)
 	: RemoteMessageResponse(RemoteCardMessageType::IFDEstablishContextResponse, pResultMinor)
 	, mIfdName(pIfdName)
 {
@@ -31,14 +31,21 @@ IfdEstablishContextResponse::IfdEstablishContextResponse(const QJsonObject& pMes
 	, mIfdName()
 {
 	mIfdName = getStringValue(pMessageObject, IFD_NAME());
+
+	if (getType() != RemoteCardMessageType::IFDEstablishContextResponse)
+	{
+		markIncomplete(QStringLiteral("The value of msg should be IFDEstablishContextResponse"));
+	}
 }
 
 
-QJsonDocument IfdEstablishContextResponse::toJson(const QString& pContextHandle) const
+QByteArray IfdEstablishContextResponse::toByteArray(const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
+
 	result[IFD_NAME()] = mIfdName;
-	return QJsonDocument(result);
+
+	return RemoteMessage::toByteArray(result);
 }
 
 

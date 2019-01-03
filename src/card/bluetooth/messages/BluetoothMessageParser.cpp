@@ -39,7 +39,6 @@ BluetoothMessageParser::BluetoothMessageParser(const QByteArray& pData)
 
 BluetoothMessageParser::~BluetoothMessageParser()
 {
-
 }
 
 
@@ -109,7 +108,7 @@ ushort BluetoothMessageParser::getParamLength(uchar pHigh, uchar pLow) const
 }
 
 
-const QVector<BluetoothMessage::Ptr>& BluetoothMessageParser::getMessages() const
+const QVector<QSharedPointer<const BluetoothMessage> >& BluetoothMessageParser::getMessages() const
 {
 	return mMessages;
 }

@@ -6,12 +6,15 @@
 
 #include "messages/MsgHandlerEnterPin.h"
 
+#include "MsgHandlerEnterPassword.h"
+
 #include "MessageDispatcher.h"
-#include "MockReaderManagerPlugIn.h"
 #include "ReaderManager.h"
 
+#include "MockReaderManagerPlugIn.h"
+
 #include <QtPlugin>
-#include <QTest>
+#include <QtTest>
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
@@ -22,32 +25,43 @@ class test_MsgHandlerEnterPin
 {
 	Q_OBJECT
 
-	static void setValidPinState(MessageDispatcher& pDispatcher, const QString& pState = QStringLiteral("StateEstablishPacePin"))
+	static void setValidPinState(MessageDispatcher& pDispatcher,
+			bool pSelectReader = true,
+			bool pBasicReader = true,
+			const PacePasswordId pPasswordID = PacePasswordId::PACE_PIN)
 	{
-		QSharedPointer<WorkflowContext> context(new WorkflowContext());
-		pDispatcher.init(context);
-
-		QByteArray expected;
-		if (pState == QLatin1String("StateEstablishPacePin"))
-		{
-			expected = "{\"msg\":\"ENTER_PIN\"}";
-		}
-
-		QCOMPARE(pDispatcher.processStateChange(pState), expected);
+		setValidState(pDispatcher, pSelectReader, pBasicReader, pPasswordID);
 	}
 
 
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			ReaderManager::getInstance().init();
-			ReaderManager::getInstance().getPlugInInfos(); // just to wait until initialization finished
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			readerManager->init();
+			readerManager->getPlugInInfos(); // just to wait until initialization finished
 		}
 
 
 		void cleanupTestCase()
 		{
-			ReaderManager::getInstance().shutdown();
+			Env::getSingleton<ReaderManager>()->shutdown();
+		}
+
+
+		void cleanup()
+		{
+			MockReaderManagerPlugIn::getInstance().removeAllReader();
+		}
+
+
+		void notInserted()
+		{
+			MessageDispatcher dispatcher;
+			setValidPinState(dispatcher, false);
+
+			const QByteArray msg(R"({"cmd": "SET_PIN"})");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"No card inserted","msg":"ENTER_PIN"})"));
 		}
 
 
@@ -56,8 +70,8 @@ class test_MsgHandlerEnterPin
 			MessageDispatcher dispatcher;
 			setValidPinState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_PIN\"}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Value cannot be undefined\",\"msg\":\"ENTER_PIN\"}"));
+			const QByteArray msg(R"({"cmd": "SET_PIN"})");
+			QCOMPARE(dispatcher.processCommand(msg), addReaderData(R"({"error":"Value cannot be undefined","msg":"ENTER_PIN"})"));
 		}
 
 
@@ -66,8 +80,8 @@ class test_MsgHandlerEnterPin
 			MessageDispatcher dispatcher;
 			setValidPinState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_PIN\", \"value\": 123456}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Invalid value\",\"msg\":\"ENTER_PIN\"}"));
+			const QByteArray msg(R"({"cmd": "SET_PIN", "value": 123456})");
+			QCOMPARE(dispatcher.processCommand(msg), addReaderData(R"({"error":"Invalid value","msg":"ENTER_PIN"})"));
 		}
 
 
@@ -76,23 +90,23 @@ class test_MsgHandlerEnterPin
 			MessageDispatcher dispatcher;
 			setValidPinState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_PIN\", \"value\": \"12345\"}");
-			QByteArray expected("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_PIN\"}");
+			QByteArray msg(R"({"cmd": "SET_PIN", "value": "12345"})");
+			const QByteArray expected(addReaderData(R"({"error":"You must provide 6 digits","msg":"ENTER_PIN"})"));
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_PIN\", \"value\": \"1234567\"}";
+			msg = R"({"cmd": "SET_PIN", "value": "1234567"})";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_PIN\", \"value\": \"abcdef\"}";
+			msg = R"({"cmd": "SET_PIN", "value": "abcdef"})";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_PIN\", \"value\": \"\"}";
+			msg = R"({"cmd": "SET_PIN", "value": ""})";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_PIN\", \"value\": \"123456a\"}";
+			msg = R"({"cmd": "SET_PIN", "value": "123456a"})";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			msg = "{\"cmd\": \"SET_PIN\", \"value\": \"12x456\"}";
+			msg = R"({"cmd": "SET_PIN", "value": "12x456"})";
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 		}
 
@@ -100,13 +114,13 @@ class test_MsgHandlerEnterPin
 		void badState()
 		{
 			MessageDispatcher dispatcher;
-			setValidPinState(dispatcher, QStringLiteral("invalid"));
+			setValidPinState(dispatcher, true, true, PacePasswordId::UNKNOWN);
 
-			QByteArray msg("{\"cmd\": \"SET_PIN\", \"value\": \"12345\"}");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"SET_PIN\",\"msg\":\"BAD_STATE\"}"));
+			QByteArray msg(R"({"cmd": "SET_PIN", "value": "12345"})");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"SET_PIN","msg":"BAD_STATE"})"));
 
-			msg = "{\"cmd\": \"SET_PIN\", \"value\": \"123456\"}";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"SET_PIN\",\"msg\":\"BAD_STATE\"}"));
+			msg = R"({"cmd": "SET_PIN", "value": "123456"})";
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"SET_PIN","msg":"BAD_STATE"})"));
 		}
 
 
@@ -115,30 +129,26 @@ class test_MsgHandlerEnterPin
 			MessageDispatcher dispatcher;
 			setValidPinState(dispatcher);
 
-			QByteArray msg("{\"cmd\": \"SET_PIN\", \"value\": \"123456\"}");
+			const QByteArray msg(R"({"cmd": "SET_PIN", "value": "123456"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
 		}
 
 
-		void readerInfo()
+		void pinPadReader()
 		{
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader CARD");
-			reader->setCard(MockCardConfig());
-
-			QSharedPointer<WorkflowContext> context(new WorkflowContext());
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			setValidPinState(dispatcher, true, false);
 
-			context->setReaderName("MockReader");
-			QCOMPARE(dispatcher.processStateChange("StateEstablishPacePin"), QByteArray("{\"msg\":\"ENTER_PIN\"}"));
-			QByteArray msg = "{\"cmd\": \"SET_PIN\", \"value\": \"54321\"}";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_PIN\"}"));
+			QByteArray msg(R"({"cmd": "SET_PIN", "value": "111111"})");
+			QByteArray expected(addReaderData(R"({"error":"Value cannot be defined","msg":"ENTER_PIN"})", true));
+			QCOMPARE(dispatcher.processCommand(msg), expected);
 
+			msg = QByteArray(R"({"cmd": "SET_PIN", "value": ""})");
+			expected = QByteArray(addReaderData(R"({"error":"Value cannot be defined","msg":"ENTER_PIN"})", true));
+			QCOMPARE(dispatcher.processCommand(msg), expected);
 
-			context->setReaderName("MockReader CARD");
-			QCOMPARE(dispatcher.processStateChange("StateEstablishPacePin"), QByteArray("{\"msg\":\"ENTER_PIN\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
-			msg = "{\"cmd\": \"SET_PIN\", \"value\": \"54321\"}";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_PIN\",\"reader\":{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"name\":\"MockReader CARD\"}}"));
+			msg = QByteArray(R"({"cmd": "SET_PIN"})");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
 		}
 
 

@@ -1,0 +1,36 @@
+diff --git x/qttools/src/linguist/linguist.pro y/qttools/src/linguist/linguist.pro
+index 103336da..2fe9656d 100644
+--- x/qttools/src/linguist/linguist.pro
++++ y/qttools/src/linguist/linguist.pro
+@@ -3,11 +3,6 @@ SUBDIRS  = \
+     lrelease \
+     lupdate \
+     lconvert
+-!no-png:qtHaveModule(widgets):qtConfig(process): SUBDIRS += linguist
+-
+-qtNomakeTools( \
+-    linguist \
+-)
+ 
+ equals(QMAKE_HOST.os, Windows): CMAKE_BIN_SUFFIX = ".exe"
+ 
+diff --git x/qttools/src/src.pro y/qttools/src/src.pro
+index 41064a5d..fcef4dd8 100644
+--- x/qttools/src/src.pro
++++ y/qttools/src/src.pro
+@@ -3,12 +3,6 @@ TEMPLATE = subdirs
+ qtHaveModule(widgets) {
+     no-png {
+         message("Some graphics-related tools are unavailable without PNG support")
+-    } else {
+-        SUBDIRS = assistant \
+-                  pixeltool \
+-                  designer
+-
+-        linguist.depends = designer
+     }
+ }
+ 
+-- 
+2.14.3
+

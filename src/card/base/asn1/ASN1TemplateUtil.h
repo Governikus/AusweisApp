@@ -10,12 +10,15 @@
 #include <openssl/err.h>
 
 #include <QByteArray>
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QSharedPointer>
+
+Q_DECLARE_LOGGING_CATEGORY(card)
 
 namespace governikus
 {
 
+QByteArray getOpenSslError();
 
 /*!
  * Default template function for creating an OpenSSL type. This must be specialized for each ASN.1 type.
@@ -59,15 +62,15 @@ int encodeAsn1Object(T*, unsigned char**)
 template<typename T>
 QByteArray encodeObject(T* pObject)
 {
+	ERR_clear_error();
 	unsigned char* encoded = nullptr;
-	int length = encodeAsn1Object(pObject, &encoded);
+	const int length = encodeAsn1Object(pObject, &encoded);
 	if (length < 0)
 	{
-		BIO* bio_err = BIO_new_fp(stderr, BIO_NOCLOSE);
-		ERR_print_errors(bio_err);
-		BIO_free(bio_err);
-		length = 0;
+		qCWarning(card) << "Cannot encode ASN.1 object:" << getOpenSslError();
+		return QByteArray();
 	}
+
 	return QByteArray(reinterpret_cast<char*>(encoded), length);
 }
 
@@ -97,13 +100,18 @@ void freeAsn1Object(T*)
  * Template function for decoding an OpenSSL type from DER encoded QByteArray.
  */
 template<typename T>
-QSharedPointer<T> decodeObject(const QByteArray& pData)
+QSharedPointer<T> decodeObject(const QByteArray& pData, bool pLogging = true)
 {
+	ERR_clear_error();
 	const char* tmp = pData.constData();
 	const unsigned char** dataPointer = reinterpret_cast<unsigned const char**>(&tmp);
 
 	T* object = nullptr;
-	decodeAsn1Object(&object, dataPointer, pData.length());
+	if (!decodeAsn1Object(&object, dataPointer, pData.length()) && pLogging)
+	{
+		qCWarning(card) << "Cannot decode ASN.1 object:" << getOpenSslError();
+	}
+
 	static auto deleter = [](T* pTypeObject)
 			{
 				freeAsn1Object(pTypeObject);
@@ -156,4 +164,4 @@ static const int CB_ERROR = 0;
 	template<> void freeAsn1Object<name>(name * pObject);
 
 
-}
+} // namespace governikus

@@ -19,13 +19,13 @@ class IfdEstablishContextResponse
 		QString mIfdName;
 
 	public:
-		IfdEstablishContextResponse(const QString& pIfdName, const QString& pResultMinor = QString());
+		IfdEstablishContextResponse(const QString& pIfdName, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		IfdEstablishContextResponse(const QJsonObject& pMessageObject);
 		virtual ~IfdEstablishContextResponse() override = default;
 
 		const QString& getIfdName() const;
-		virtual QJsonDocument toJson(const QString& pContextHandle) const override;
+		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

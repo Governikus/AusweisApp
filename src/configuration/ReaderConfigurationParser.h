@@ -55,4 +55,4 @@ class ReaderConfigurationParser
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

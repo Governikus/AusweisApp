@@ -294,9 +294,14 @@ If the last attempt to enter the PIN failed, AusweisApp2
 will send the message :ref:`enter_puk` as the retryCounter
 is decreased to **0**.
 
+.. versionchanged:: 1.16.0
+   The parameter "value" must be omitted if the used :ref:`reader` has a
+   keypad.
+
 
 - **value**: The personal identification number (PIN) of the card.
-  This must be 6 digits.
+  This must be 6 digits if the :ref:`reader` has no keypad, otherwise
+  this parameter must be omitted.
 
 .. code-block:: json
 
@@ -325,9 +330,14 @@ to send this command to unblock the last retry of :ref:`set_pin`.
 The AusweisApp2 will send an :ref:`enter_can` message on error.
 Otherwise the workflow will continue with :ref:`enter_pin`.
 
+.. versionchanged:: 1.16.0
+   The parameter "value" must be omitted if the used :ref:`reader` has a
+   keypad.
+
 
 - **value**: The card access number (CAN) of the card.
-  This must be 6 digits.
+  This must be 6 digits if the :ref:`reader` has no keypad, otherwise
+  this parameter must be omitted.
 
 .. code-block:: json
 
@@ -358,8 +368,14 @@ or if the PUK is operative.
 Otherwise the workflow will continue with :ref:`enter_pin`.
 For detailed information see message :ref:`enter_puk`.
 
+.. versionchanged:: 1.16.0
+   The parameter "value" must be omitted if the used :ref:`reader` has a
+   keypad.
+
+
 - **value**: The personal unblocking key (PUK) of the card.
-  This must be 10 digits.
+  This must be 10 digits if the :ref:`reader` has no keypad, otherwise
+  this parameter must be omitted.
 
 .. code-block:: json
 

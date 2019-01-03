@@ -45,4 +45,4 @@ class Initializer
 		void add(const std::function<void()>& pRegister);
 };
 
-} /* namespace governikus */
+} // namespace governikus

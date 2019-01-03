@@ -7,12 +7,11 @@
 #pragma once
 
 #include "asn1/ASN1TemplateUtil.h"
-#include "Apdu.h"
+#include "ResponseApdu.h"
 
 
 namespace governikus
 {
-
 
 class GAResponseApdu
 	: public ResponseApdu
@@ -22,7 +21,7 @@ class GAResponseApdu
 
 	public:
 		GAResponseApdu();
-		virtual ~GAResponseApdu() override;
+		virtual ~GAResponseApdu() override = default;
 		virtual void setBuffer(const QByteArray& pBuffer) override;
 
 };
@@ -50,7 +49,7 @@ class GAEncryptedNonceResponse
 
 	public:
 		GAEncryptedNonceResponse();
-		virtual ~GAEncryptedNonceResponse() override;
+		virtual ~GAEncryptedNonceResponse() override = default;
 		const QByteArray& getEncryptedNonce();
 
 };
@@ -78,7 +77,7 @@ class GAMapNonceResponse
 
 	public:
 		GAMapNonceResponse();
-		virtual ~GAMapNonceResponse() override;
+		virtual ~GAMapNonceResponse() override = default;
 		const QByteArray& getMappingData();
 
 };
@@ -106,7 +105,7 @@ class GAPerformKeyAgreementResponse
 
 	public:
 		GAPerformKeyAgreementResponse();
-		virtual ~GAPerformKeyAgreementResponse() override;
+		virtual ~GAPerformKeyAgreementResponse() override = default;
 		const QByteArray& getEphemeralPublicKey();
 
 };
@@ -138,7 +137,7 @@ class GAMutualAuthenticationResponse
 
 	public:
 		GAMutualAuthenticationResponse();
-		virtual ~GAMutualAuthenticationResponse() override;
+		virtual ~GAMutualAuthenticationResponse() override = default;
 		const QByteArray& getAuthenticationToken();
 		const QByteArray& getCarCurr();
 		const QByteArray& getCarPrev();
@@ -170,7 +169,7 @@ class GAChipAuthenticationResponse
 
 	public:
 		GAChipAuthenticationResponse();
-		virtual ~GAChipAuthenticationResponse() override;
+		virtual ~GAChipAuthenticationResponse() override = default;
 		const QByteArray& getNonce();
 		const QByteArray& getAuthenticationToken();
 

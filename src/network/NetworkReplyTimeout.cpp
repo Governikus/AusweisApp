@@ -4,7 +4,6 @@
 
 #include "NetworkReplyTimeout.h"
 
-#include "Env.h"
 #include "NetworkManager.h"
 
 #include <QCoreApplication>

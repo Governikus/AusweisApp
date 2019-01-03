@@ -5,12 +5,12 @@ the AusweisApp2 as an additional service. It distinguishes between
 a connection to the application and the communication between your
 application and AusweisApp2.
 
-The section "Connection" will show you what you need to do to
+The section :ref:`connection` will show you what you need to do to
 set up a connection to AusweisApp2. Once you have established
 a connection you can send and receive JSON documents in a
 bi-directional manner.
 There are different commands and messages. These are listed
-and described in the section "Protocol". The protocol
+and described in the section :ref:`protocol`. The protocol
 is split up in :doc:`commands` and :doc:`messages`. Commands
 will be sent by your application to control AusweisApp2.
 Messages contain additional information to your command

@@ -8,6 +8,12 @@
 
 #include <QtTest>
 
+#ifndef Q_OS_WIN
+#include <sys/time.h>
+#include <sys/types.h>
+#include <utime.h>
+#endif
+
 using namespace governikus;
 
 class test_LogHandler
@@ -15,16 +21,36 @@ class test_LogHandler
 {
 	Q_OBJECT
 
+	void fakeLastModifiedAndLastAccessTime(const QString& pPath)
+	{
+	#ifdef Q_OS_WIN
+		Q_UNUSED(pPath);
+	#else
+		struct timeval tv[2];
+
+		struct timeval& accessTime = tv[0];
+		gettimeofday(&accessTime, nullptr);
+
+		struct timeval& modifyTime = tv[1];
+		gettimeofday(&modifyTime, nullptr);
+
+		time_t fiveteenDays = 60 * 60 * 24 * 15;
+		modifyTime.tv_sec -= fiveteenDays;
+		utimes(pPath.toLatin1().constData(), tv);
+	#endif
+	}
+
+
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
 		void cleanup()
 		{
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
@@ -36,32 +62,31 @@ class test_LogHandler
 		}
 
 
-		void backlog()
+		void checkBacklog()
 		{
-			LogHandler::getInstance().resetBacklog();
-			QByteArray blog = LogHandler::getInstance().getBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
+			QByteArray blog = Env::getSingleton<LogHandler>()->getBacklog();
 			QCOMPARE(blog.size(), 0);
 
 			QByteArray msg("dummy message with some useless information ... 123456");
 			qDebug() << msg;
 
-			blog = LogHandler::getInstance().getBacklog();
+			blog = Env::getSingleton<LogHandler>()->getBacklog();
 			QVERIFY(blog.size() > 0);
 			QVERIFY(blog.contains(msg));
 
-			LogHandler::getInstance().resetBacklog();
-			blog = LogHandler::getInstance().getBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
+			blog = Env::getSingleton<LogHandler>()->getBacklog();
 			QCOMPARE(blog.size(), 0);
 		}
 
 
 		void fireLog()
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			qDebug() << "hallo";
 			qDebug() << "test nachricht";
-
 
 			QCOMPARE(spy.count(), 2);
 			auto param1 = spy.takeFirst();
@@ -80,27 +105,118 @@ class test_LogHandler
 
 		void otherLogFilesWithoutCurrent()
 		{
-			auto list = LogHandler::getInstance().getOtherLogfiles();
-			QVERIFY(!list.contains(LogHandler::getInstance().mLogFile));
+			auto list = Env::getSingleton<LogHandler>()->getOtherLogfiles();
+			QVERIFY(!list.contains(Env::getSingleton<LogHandler>()->mLogFile));
 		}
 
 
 		void debugStream()
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
-			qDebug() << LogHandler::getInstance();
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			qDebug() << *Env::getSingleton<LogHandler>();
 
 			QCOMPARE(spy.count(), 1);
 			auto param = spy.takeFirst();
-			QVERIFY(param.at(0).toString().contains(LogHandler::getInstance().mLogFile.fileName()));
+			QVERIFY(param.at(0).toString().contains(Env::getSingleton<LogHandler>()->mLogFile.fileName()));
 		}
 
 
 		void copyFile()
 		{
 			qDebug() << "dummy";
-			QVERIFY(!LogHandler::getInstance().copy(QString()));
-			QVERIFY(!LogHandler::getInstance().copy(QStringLiteral("                     ")));
+			QVERIFY(!Env::getSingleton<LogHandler>()->copy(QString()));
+			QVERIFY(!Env::getSingleton<LogHandler>()->copy(QStringLiteral("                     ")));
+		}
+
+
+		void initReset()
+		{
+			QVERIFY(Env::getSingleton<LogHandler>()->isInitialized());
+
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			qDebug() << "dummy";
+			QCOMPARE(spy.count(), 1);
+			const auto& backlog = Env::getSingleton<LogHandler>()->getBacklog();
+			QVERIFY(!backlog.isEmpty());
+			spy.clear();
+
+			Env::getSingleton<LogHandler>()->reset();
+			QVERIFY(!Env::getSingleton<LogHandler>()->isInitialized());
+			qDebug() << "dummy";
+			QCOMPARE(spy.count(), 0);
+			QCOMPARE(Env::getSingleton<LogHandler>()->getBacklog(), backlog);
+
+			Env::getSingleton<LogHandler>()->init();
+			QVERIFY(Env::getSingleton<LogHandler>()->isInitialized());
+			qDebug() << "dummy";
+			QCOMPARE(spy.count(), 1);
+			QVERIFY(Env::getSingleton<LogHandler>()->getBacklog().size() > backlog.size());
+		}
+
+
+		void useLogfile()
+		{
+			const auto& logger = Env::getSingleton<LogHandler>();
+			logger->resetBacklog();
+			QVERIFY(logger->useLogfile());
+
+			// will backlog
+			qDebug() << "dummy";
+			QVERIFY(logger->getBacklog().contains(QByteArrayLiteral("dummy")));
+
+			// enable already enabled one
+			logger->setLogfile(true);
+			QVERIFY(logger->useLogfile());
+			QVERIFY(logger->getBacklog().contains(QByteArrayLiteral("dummy")));
+
+			// disable it
+			logger->setLogfile(false);
+			qDebug() << "another dummy";
+			QVERIFY(!logger->useLogfile());
+			QVERIFY(logger->getBacklog().isNull());
+			QVERIFY(!logger->getCurrentLogfileDate().isValid());
+			logger->resetBacklog();
+			QVERIFY(logger->getBacklog().isNull());
+
+			// disable already disabled one
+			logger->setLogfile(false);
+			QVERIFY(!logger->useLogfile());
+			QVERIFY(logger->getBacklog().isNull());
+			QVERIFY(!logger->getCurrentLogfileDate().isValid());
+
+			// enable again
+			logger->setLogfile(true);
+			QVERIFY(logger->getBacklog().isEmpty());
+			qDebug() << "another yummy";
+			QVERIFY(logger->useLogfile());
+			QVERIFY(logger->getBacklog().contains(QByteArrayLiteral("another yummy")));
+			QVERIFY(logger->getCurrentLogfileDate().isValid());
+		}
+
+
+		void removeUpOldLogfiles()
+		{
+			#ifdef Q_OS_WIN
+			QSKIP("File time stamp mocking unimplemented on windows");
+			#endif
+
+			const auto& logger = Env::getSingleton<LogHandler>();
+
+			const auto& initialFiles = logger->getOtherLogfiles();
+			QTemporaryFile tmp(LogHandler::getLogFileTemplate());
+			QVERIFY(tmp.open());
+			tmp.fileName(); // touch it
+			const auto& filesWithMock = logger->getOtherLogfiles();
+			QVERIFY(filesWithMock.size() > initialFiles.size());
+
+			logger->removeOldLogfiles();
+			QVERIFY(tmp.exists());
+			QCOMPARE(filesWithMock.size(), logger->getOtherLogfiles().size());
+
+			fakeLastModifiedAndLastAccessTime(tmp.fileName());
+			logger->removeOldLogfiles();
+			QCOMPARE(initialFiles.size(), logger->getOtherLogfiles().size());
+			QVERIFY(!tmp.exists());
 		}
 
 

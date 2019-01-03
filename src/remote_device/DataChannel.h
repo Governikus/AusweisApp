@@ -25,11 +25,11 @@ class DataChannel
 
 		Q_INVOKABLE virtual void send(const QByteArray& pDataBlock) = 0;
 		Q_INVOKABLE virtual void close() = 0;
-		virtual const QString& getId() const;
+		virtual const QString& getId() const = 0;
 
 	Q_SIGNALS:
 		void fireReceived(const QByteArray& pDataBlock);
 		void fireClosed(GlobalStatus::Code pCloseCode);
 };
 
-} /* namespace governikus */
+} // namespace governikus

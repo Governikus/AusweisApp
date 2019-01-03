@@ -10,6 +10,8 @@
 #include "context/RemoteServiceContext.h"
 #include "states/AbstractGenericState.h"
 
+class test_StateStopRemoteService;
+
 namespace governikus
 {
 
@@ -18,8 +20,9 @@ class StateStopRemoteService
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateStopRemoteService;
 
-	StateStopRemoteService(const QSharedPointer<WorkflowContext>& pContext);
+	explicit StateStopRemoteService(const QSharedPointer<WorkflowContext>& pContext);
 
 	virtual void run() override;
 	void onExit(QEvent* pEvent) override;
@@ -29,4 +32,4 @@ class StateStopRemoteService
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

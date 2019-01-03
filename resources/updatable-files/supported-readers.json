@@ -135,7 +135,7 @@
 					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304828&q=driver#choice5"
 				},
 				{
-					"Platforms": [{"os": "mac", "min": "10.11"}],
+					"Platforms": [{"os": "mac"}],
 					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304828&q=driver#choice5"
 				},
 				{
@@ -146,12 +146,7 @@
 			"Information":
 			[
 				{
-					"Platforms":[{"os": "mac", "max": "10.10"}],
-					"DE": "Trotz der Installation des vom Hersteller bereitgestellten Treibers, wird das Kartenlesegerät vom System nicht erkannt.",
-					"EN": "Despite the driver being installed correctly, the card reader will not be recognized by the operating system."
-				},
-				{
-					"Platforms":[{"os": "mac", "min": "10.11"}],
+					"Platforms":[{"os": "mac"}],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
@@ -196,7 +191,7 @@
 					"URL": "http://www.scm-pc-card.de/index.php?page=download&function=show_downloads&lang=de&product_id=738"
 				},
 				{
-					"Platforms": [{"os": "unknown"}],
+					"Platforms": [{"os": "mac", "min":"10.13"}, {"os": "unknown"}],
 					"URL": "https://support.identiv.com/sdi010-011/"
 				}
 			],
@@ -213,9 +208,14 @@
 					"EN": "Please note that the card reader only works with the SDI011-nPA-version. A reboot is required after the installation of the driver."
 				},
 				{
-					"Platforms": [{"os": "mac"}],
+					"Platforms": [{"os": "mac", "max": "10.12"}],
 					"DE": "Der Status des Kartenlesegeräts wird nach der Treiberinstallation und einem Neustart zwar als 'Treiber installiert' angezeigt, allerdings tritt bei der PIN-Eingabe ein Protokollfehler auf.",
 					"EN": "Once the driver is installed and the system is re-booted, the card reader state will be shown as 'Driver installed'. However, upon entering the PIN a protocol error occurs."
+				},
+				{
+					"Platforms": [{"os": "mac", "min":"10.13"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -302,7 +302,7 @@
 			"Information":
 			[
 				{
-					"Platforms": [{"os": "win"}, {"os":"mac", "max": "10.10"}],
+					"Platforms": [{"os": "win"}],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
@@ -334,9 +334,9 @@
 			"Information":
 			[
 				{
-					"Platforms": [{"os": "mac"}],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+					"Platforms": [{"os": "win"}, {"os": "mac"}],
+					"DE":"Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"EN":"The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
 			]
 		},
@@ -367,34 +367,9 @@
 			[
 				{
 					"Platforms": [{"os": "win"}, {"os": "mac"}],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
-				}
-			]
-		},
-
-		{
-			"VendorId": "0x072F",
-			"ProductId": "0x2200",
-			"Name": "ACS ACR122U",
-			"Pattern": "ACS ACR122U PICC Interface( 0)?",
-			"Icon": "img_ACS_ACR122U.png",
-			"IconWithNPA": "img_ACS_ACR122U_mit_ausweis.png",
-			"Drivers":
-			[
-				{
-					"Platforms": [{"os": "win"}, {"os": "mac"}],
-					"URL": "https://www.acs.com.hk/en/products/3/acr122u-usb-nfc-reader/"
-				}
-			],
-			"Information":
-			[
-				{
-					"Platforms": [{"os": "win"}, {"os": "mac"}],
 					"DE":"Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN":"The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
-
 			]
 		},
 
@@ -558,8 +533,8 @@
 			"ProductId": "0x5421",
 			"Name": "OMNIKEY 5421",
 			"Pattern": "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5421\\) 5421(\\(1\\)|\\(2\\))",
-			"Icon": "img_HID_Omnikey_5421.png",
-			"IconWithNPA": "img_HID_Omnikey_5421_mit_ausweis.png",
+			"Icon": "img_HID_Omnikey_542x.png",
+			"IconWithNPA": "img_HID_Omnikey_542x_mit_ausweis.png",
 			"Drivers":
 			[
 				{
@@ -581,6 +556,35 @@
 					"Platforms":[{"os": "win"}, {"os": "mac"}],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x076B",
+			"ProductId": "0x5422",
+			"Name": "OMNIKEY 5422",
+			"Pattern": "HID Global OMNIKEY 5422(CL)? Smartcard Reader 0|HID Global OMNIKEY Smartcard Reader (\\(1\\)|\\(2\\))",
+			"Icon": "img_HID_Omnikey_542x.png",
+			"IconWithNPA": "img_HID_Omnikey_542x_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os":"mac", "min": "10.13"}],
+					"URL": "https://www.hidglobal.com/drivers"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
+				},
+				{
+					"Platforms": [{"os": "mac"}, {"max": "10.12"}],
+					"DE": "Das Kartenlesegerät funktioniert nicht mit dem systemseitig installierten Treiber. Es existiert kein Treiber vom Hersteller",
+					"EN": "The card reader not operates with the driver automatically installed by the system. There is no driver from the manufacturer"
 				}
 			]
 		},
@@ -635,9 +639,9 @@
 			"Information":
 			[
 				{
-					"Platforms":[{"os": "win"}, {"os":"mac","max":"10.10"}],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+					"Platforms":[{"os": "win"}, {"os":"mac"}],
+					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
 			]
 		},
@@ -680,7 +684,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}, {"os": "mac", "min": "10.11"}, {"os": "unknown"}],
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
 					"URL": "https://cherry.de/download/de/download.php"
 				}
 			],
@@ -692,12 +696,7 @@
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				},
 				{
-					"Platforms": [{"os": "mac", "max": "10.10"}],
-					"DE": "Der vom Hersteller angebotene Treiber für OS X 10.10 führt nicht zum Erfolg. Bitte verwenden Sie alternativ den ebenfalls vom Hersteller angebotenen Treiber für macOS 10.12.",
-					"DE": "The driver from the manufacturer is not supported on OS X 10.10. Please install the driver for macOS 10.12 instead."
-				},
-				{
-					"Platforms": [{"os": "mac", "min": "10.11"}],
+					"Platforms": [{"os": "mac"}],
 					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
@@ -714,7 +713,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}, {"os": "mac", "min": "10.11"}, {"os": "unknown"}],
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
 					"URL": "https://cherry.de/download/de/download.php"
 				}
 			],
@@ -726,12 +725,7 @@
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				},
 				{
-					"Platforms": [{"os": "mac", "max": "10.10"}],
-					"DE": "Der vom Hersteller angebotene Treiber für OS X 10.10 führt nicht zum Erfolg. Bitte verwenden Sie alternativ den ebenfalls vom Hersteller angebotenen Treiber für macOS 10.12.",
-					"EN": "The driver from the manufacturer is not supported on OS X 10.10. Please install the driver for macOS 10.12 instead."
-				},
-				{
-					"Platforms": [{"os": "mac", "min": "10.11"}],
+					"Platforms": [{"os": "mac"}],
 					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}

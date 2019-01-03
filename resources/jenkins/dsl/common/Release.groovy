@@ -11,7 +11,6 @@ class Release extends Build
 	String trigger = null
 	List oldBuilds = null
 	boolean releaseJob = true
-	boolean cleanup = true
 	boolean sendMail = false
 
 	Job generate(DslFactory dslFactory)

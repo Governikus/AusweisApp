@@ -21,7 +21,6 @@
 namespace governikus
 {
 
-
 /**
  * As specified in TR-03110-4 chapter 2.2.6:
  *
@@ -106,9 +105,9 @@ struct CertificateDescription
 DECLARE_ASN1_FUNCTIONS(CertificateDescription)
 DECLARE_ASN1_OBJECT(CertificateDescription)
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 	#define sk_ASN1_OCTET_STRING_num(data) data->stack.num
 	#define sk_ASN1_OCTET_STRING_value(data, i) SKM_sk_value(ASN1_OCTET_STRING, data, i)
 #endif
 
-} /* namespace governikus */
+} // namespace governikus

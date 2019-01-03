@@ -3,7 +3,6 @@
  */
 
 #include "BluetoothDebug.h"
-#include "BluetoothReader.h"
 #include "CyberJackWaveDevice.h"
 #include "NotificationEnabler.h"
 
@@ -83,7 +82,6 @@ void CyberJackWaveDevice::initialize()
 		Q_EMIT fireInitialized(mDeviceInfo);
 		return;
 	}
-
 
 	qCDebug(bluetooth) << "Connecting device" << mDeviceInfo;
 	mLeController.connectToDevice();

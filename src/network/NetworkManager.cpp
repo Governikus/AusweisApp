@@ -4,13 +4,13 @@
 
 #include "NetworkManager.h"
 
-#include "Env.h"
 #include "NetworkReplyError.h"
 #include "NetworkReplyTimeout.h"
 #include "SecureStorage.h"
 #include "SingletonHelper.h"
 #include "VersionInfo.h"
 
+#include <http_parser.h>
 #include <QCoreApplication>
 #include <QLoggingCategory>
 #include <QNetworkProxyFactory>
@@ -29,7 +29,8 @@ bool NetworkManager::mLockProxy = false;
 NetworkManager::NetworkManager()
 	: QObject()
 	, mApplicationExitInProgress(false)
-	, mOpenConnectionCount(0)
+	, mTrackedConnectionsMutex()
+	, mTrackedConnections()
 	, mNetAccessManager(new QNetworkAccessManager())
 {
 #ifndef QT_NO_NETWORKPROXY
@@ -51,7 +52,9 @@ NetworkManager& NetworkManager::getInstance()
 
 int NetworkManager::getOpenConnectionCount()
 {
-	return mOpenConnectionCount;
+	QMutexLocker locker(&mTrackedConnectionsMutex);
+
+	return mTrackedConnections.size();
 }
 
 
@@ -106,6 +109,27 @@ QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest,
 	cfg.setSessionTicket(pSslSession);
 	pRequest.setSslConfiguration(cfg);
 	QNetworkReply* response = mNetAccessManager->get(pRequest);
+	trackConnection(response, pTimeoutInMilliSeconds);
+	return response;
+}
+
+
+QNetworkReply* NetworkManager::post(QNetworkRequest& pRequest,
+		const QByteArray& pData,
+		int pTimeoutInMilliSeconds)
+{
+	if (mApplicationExitInProgress)
+	{
+		return new NetworkReplyError(pRequest);
+	}
+
+	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
+	pRequest.setHeader(QNetworkRequest::ContentLengthHeader, QString::number(pData.size()));
+
+	auto cfg = SecureStorage::getInstance().getTlsConfig(SecureStorage::TlsSuite::DEFAULT).getConfiguration();
+	pRequest.setSslConfiguration(cfg);
+	QNetworkReply* response = mNetAccessManager->post(pRequest, pData);
+
 	trackConnection(response, pTimeoutInMilliSeconds);
 	return response;
 }
@@ -217,12 +241,56 @@ void NetworkManager::trackConnection(QNetworkReply* pResponse, const int pTimeou
 {
 	Q_ASSERT(pResponse);
 
-	mOpenConnectionCount++;
-	connect(pResponse, &QNetworkReply::finished, [&] {
-				--mOpenConnectionCount;
+	addTrackedConnection(pResponse);
+
+	connect(pResponse, &QObject::destroyed, this, [ = ] {
+				this->removeTrackedConnection(pResponse);
 			});
 
 	NetworkReplyTimeout::setTimeout(pResponse, pTimeoutInMilliSeconds);
+}
+
+
+void NetworkManager::addTrackedConnection(QNetworkReply* pResponse)
+{
+	QMutexLocker locker(&mTrackedConnectionsMutex);
+
+	mTrackedConnections.insert(pResponse);
+}
+
+
+void NetworkManager::removeTrackedConnection(QNetworkReply* pResponse)
+{
+	QMutexLocker locker(&mTrackedConnectionsMutex);
+
+	mTrackedConnections.remove(pResponse);
+}
+
+
+QByteArray NetworkManager::getStatusMessage(int pStatus)
+{
+	switch (pStatus)
+	{
+	#define XX(num, name, string) case num:\
+		return QByteArrayLiteral(#string);
+
+		HTTP_STATUS_MAP(XX)
+	#undef XX
+	}
+
+	return QByteArray();
+}
+
+
+int NetworkManager::getLoggedStatusCode(const QNetworkReply* const pReply, const QMessageLogger& pLogger)
+{
+	const int statusCode = pReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+	pLogger.debug() << "Status Code:" << statusCode << getStatusMessage(statusCode);
+	for (const auto& header : pReply->rawHeaderPairs())
+	{
+		pLogger.debug().nospace().noquote() << "Header | " << header.first << ": " << header.second;
+	}
+	return statusCode;
 }
 
 
@@ -276,7 +344,7 @@ class SystemProxyFactory
 
 };
 
-}
+} // namespace
 
 void NetworkManager::setApplicationProxyFactory()
 {

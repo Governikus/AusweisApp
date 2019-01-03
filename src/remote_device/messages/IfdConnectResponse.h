@@ -17,13 +17,13 @@ class IfdConnectResponse
 		QString mError;
 
 	public:
-		IfdConnectResponse(const QString& pSlotHandle, const QString& pResultMinor = QString());
+		IfdConnectResponse(const QString& pSlotHandle, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		IfdConnectResponse(const QJsonObject& pMessageObject);
 		virtual ~IfdConnectResponse() override = default;
 
 		const QString& getSlotHandle() const;
-		virtual QJsonDocument toJson(const QString& pContextHandle) const override;
+		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

@@ -12,11 +12,12 @@
 #include <QCoreApplication>
 #include <QSharedPointer>
 
+class test_CardInfo;
+
 namespace governikus
 {
 
 class CardConnectionWorker;
-class PACEInfo;
 class Reader;
 class ReaderInfo;
 
@@ -29,6 +30,7 @@ class CardInfo
 	Q_DECLARE_TR_FUNCTIONS(governikus::CardInfo)
 
 	private:
+		friend class ::test_CardInfo;
 		CardType mCardType;
 		QSharedPointer<const EFCardAccess> mEfCardAccess;
 		int mRetryCounter;
@@ -102,4 +104,4 @@ class CardInfoFactory
 QDebug operator<<(QDebug pDbg, const CardInfo& pCardInfo);
 
 
-} /* namespace governikus */
+} // namespace governikus

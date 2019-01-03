@@ -4,41 +4,70 @@
 
 #include "WorkflowContext.h"
 
-#include "FuncUtils.h"
 #include "ReaderManager.h"
 
+#include <QWeakPointer>
+
 using namespace governikus;
+
+
+void WorkflowContext::onWorkflowCancelled()
+{
+	mWorkflowCancelled = true;
+}
+
 
 WorkflowContext::WorkflowContext()
 	: QObject()
 	, mStateApproved(false)
+	, mWorkflowKilled(false)
 	, mCurrentState()
 	, mReaderPlugInTypes()
 	, mReaderName()
 	, mCardConnection()
+	, mCardVanishedDuringPacePinCount(0)
+	, mCardVanishedDuringPacePinTimer()
 	, mCan()
 	, mPin()
 	, mPuk()
+	, mEstablishPaceChannelType(PacePasswordId::UNKNOWN)
 	, mPaceOutputData()
-	, mOldRetryCounter(-1)
+	, mExpectedReaderName()
+	, mExpectedRetryCounter(-1)
 	, mLastPaceResult(CardReturnCode::OK)
 	, mStatus(GlobalStatus::Code::No_Error)
+	, mStartPaosResult(ECardApiResult::createOk())
 	, mErrorReportedToUser(true)
+	, mPaceResultReportedToUser(false)
 	, mWorkflowFinished(false)
+	, mWorkflowCancelled(false)
 	, mCanAllowedMode(false)
 {
+	connect(this, &WorkflowContext::fireCancelWorkflow, this, &WorkflowContext::onWorkflowCancelled);
 }
 
 
 bool WorkflowContext::isErrorReportedToUser() const
 {
-	return mErrorReportedToUser;
+	return mErrorReportedToUser || mWorkflowKilled;
 }
 
 
 void WorkflowContext::setErrorReportedToUser(bool pErrorReportedToUser)
 {
 	mErrorReportedToUser = pErrorReportedToUser;
+}
+
+
+bool WorkflowContext::isPaceResultReportedToUser() const
+{
+	return mPaceResultReportedToUser;
+}
+
+
+void WorkflowContext::setPaceResultReportedToUser(bool pReported)
+{
+	mPaceResultReportedToUser = pReported;
 }
 
 
@@ -52,7 +81,27 @@ void WorkflowContext::setStateApproved(bool pApproved)
 }
 
 
-bool WorkflowContext::isStateApproved()
+void WorkflowContext::killWorkflow()
+{
+	qWarning() << "Killing the current workflow.";
+	mWorkflowKilled = true;
+	mStatus = GlobalStatus::Code::Card_Cancellation_By_User;
+	if (!mStateApproved)
+	{
+		setStateApproved(true);
+	}
+
+	Q_EMIT fireCancelWorkflow();
+}
+
+
+bool WorkflowContext::isWorkflowKilled() const
+{
+	return mWorkflowKilled;
+}
+
+
+bool WorkflowContext::isStateApproved() const
 {
 	return mStateApproved;
 }
@@ -68,6 +117,11 @@ void WorkflowContext::setCurrentState(const QString& pNewState)
 {
 	mCurrentState = pNewState;
 	Q_EMIT fireStateChanged(pNewState);
+
+	if (mWorkflowKilled)
+	{
+		setStateApproved(true);
+	}
 }
 
 
@@ -116,6 +170,52 @@ void WorkflowContext::setCardConnection(const QSharedPointer<CardConnection>& pC
 		mCardConnection = pCardConnection;
 		Q_EMIT fireCardConnectionChanged();
 	}
+}
+
+
+void WorkflowContext::resetCardConnection()
+{
+	setCardConnection(QSharedPointer<CardConnection>());
+	if (!mReaderName.isEmpty())
+	{
+		const auto readerManager = Env::getSingleton<ReaderManager>();
+		readerManager->updateReaderInfo(mReaderName);
+	}
+}
+
+
+bool WorkflowContext::isNpaRepositioningRequired() const
+{
+	if (mCardVanishedDuringPacePinCount >= 10)
+	{
+		return true;
+	}
+
+	const qint64 fourSeconds = 4000;
+	if (mCardVanishedDuringPacePinTimer.isValid() && mCardVanishedDuringPacePinTimer.elapsed() > fourSeconds)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+void WorkflowContext::setNpaPositionVerified()
+{
+	mCardVanishedDuringPacePinCount = 0;
+	mCardVanishedDuringPacePinTimer.invalidate();
+}
+
+
+void WorkflowContext::handleWrongNpaPosition()
+{
+	if (mCardVanishedDuringPacePinCount > 0 && !mCardVanishedDuringPacePinTimer.isValid())
+	{
+		mCardVanishedDuringPacePinTimer.restart();
+	}
+	mCardVanishedDuringPacePinCount += 1;
+	resetCardConnection();
 }
 
 
@@ -173,15 +273,35 @@ void WorkflowContext::setPin(const QString& pPin)
 }
 
 
-EstablishPACEChannelOutput* WorkflowContext::getPaceOutputData() const
+PacePasswordId WorkflowContext::getEstablishPaceChannelType() const
+{
+	return mEstablishPaceChannelType;
+}
+
+
+void WorkflowContext::setEstablishPaceChannelType(PacePasswordId pType)
+{
+	mEstablishPaceChannelType = pType;
+}
+
+
+void WorkflowContext::resetPacePasswords()
+{
+	setCan(QString());
+	setPin(QString());
+	setPuk(QString());
+}
+
+
+EstablishPaceChannelOutput* WorkflowContext::getPaceOutputData() const
 {
 	return mPaceOutputData.data();
 }
 
 
-void WorkflowContext::setPaceOutputData(const EstablishPACEChannelOutput& pPaceOutputData)
+void WorkflowContext::setPaceOutputData(const EstablishPaceChannelOutput& pPaceOutputData)
 {
-	mPaceOutputData.reset(new EstablishPACEChannelOutput(pPaceOutputData));
+	mPaceOutputData.reset(new EstablishPaceChannelOutput(pPaceOutputData));
 }
 
 
@@ -191,27 +311,44 @@ CardReturnCode WorkflowContext::getLastPaceResult() const
 }
 
 
-int WorkflowContext::getOldRetryCounter() const
+void WorkflowContext::setLastPaceResult(CardReturnCode pLastPaceResult)
 {
-	return mOldRetryCounter;
-}
-
-
-void WorkflowContext::setLastPaceResultAndRetryCounter(CardReturnCode pLastPaceResult, int pOldRetryCounter)
-{
-	if (mLastPaceResult != pLastPaceResult || mOldRetryCounter != pOldRetryCounter)
+	mPaceResultReportedToUser = false;
+	if (mLastPaceResult != pLastPaceResult)
 	{
 		mLastPaceResult = pLastPaceResult;
-		mOldRetryCounter = pOldRetryCounter;
 		Q_EMIT fireLastPaceResultChanged();
 	}
 }
 
 
-void WorkflowContext::resetLastPaceResultAndRetryCounter()
+void WorkflowContext::resetLastPaceResult()
 {
-	mOldRetryCounter = -1;
-	mLastPaceResult = CardReturnCode::OK;
+	setLastPaceResult(CardReturnCode::OK);
+}
+
+
+bool WorkflowContext::isExpectedReader() const
+{
+	return mExpectedReaderName == mReaderName;
+}
+
+
+void WorkflowContext::rememberReader()
+{
+	mExpectedReaderName = mReaderName;
+}
+
+
+int WorkflowContext::getExpectedRetryCounter() const
+{
+	return mExpectedRetryCounter;
+}
+
+
+void WorkflowContext::setExpectedRetryCounter(int pExpectedRetryCounter)
+{
+	mExpectedRetryCounter = pExpectedRetryCounter;
 }
 
 
@@ -221,16 +358,23 @@ const GlobalStatus& WorkflowContext::getStatus() const
 }
 
 
-void WorkflowContext::setStatus(const GlobalStatus& pStatus, bool pReportToUser)
+void WorkflowContext::setStatus(const GlobalStatus& pStatus)
 {
-	const bool forceReport = mStatus.isNoError() && pStatus.isError();
-
 	mStatus = pStatus;
-	if (pReportToUser || forceReport)
-	{
-		mErrorReportedToUser = false;
-		Q_EMIT fireResultChanged();
-	}
+	mErrorReportedToUser = false;
+	Q_EMIT fireResultChanged();
+}
+
+
+const ECardApiResult WorkflowContext::getStartPaosResult() const
+{
+	return mStartPaosResult;
+}
+
+
+void WorkflowContext::setStartPaosResult(const ECardApiResult& pStartPaosResult)
+{
+	mStartPaosResult = pStartPaosResult;
 }
 
 
@@ -243,6 +387,12 @@ bool WorkflowContext::isWorkflowFinished() const
 void WorkflowContext::setWorkflowFinished(bool pWorkflowFinished)
 {
 	mWorkflowFinished = pWorkflowFinished;
+}
+
+
+bool WorkflowContext::isWorkflowCancelled() const
+{
+	return mWorkflowCancelled;
 }
 
 

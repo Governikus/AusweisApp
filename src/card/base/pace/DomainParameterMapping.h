@@ -16,15 +16,7 @@ template<typename DOMAINPARAMS>
 class DomainParameterMapping
 {
 	public:
-		DomainParameterMapping()
-		{
-		}
-
-
-		virtual ~DomainParameterMapping()
-		{
-		}
-
+		virtual ~DomainParameterMapping() = default;
 
 		/*!
 		 * \brief Generates the terminal's mapping data, that will  be send to the card.
@@ -42,4 +34,4 @@ class DomainParameterMapping
 				const QByteArray& pNonce) = 0;
 };
 
-} /* namespace governikus */
+} // namespace governikus

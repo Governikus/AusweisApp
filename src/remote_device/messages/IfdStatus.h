@@ -1,6 +1,4 @@
 /*!
- * \brief Classes that model the IFDStatus message.
- *
  * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
  */
 
@@ -12,8 +10,16 @@
 #include <QJsonObject>
 
 
+class test_RemoteReaderManagerPlugIn;
+class test_ServerMessageHandler;
+class test_IfdStatus;
+
+
 namespace governikus
 {
+class MockRemoteDispatcher;
+
+
 class PaceCapabilities
 {
 	// PACECapabilities according to TR-03119, sec. D.1.1.
@@ -40,11 +46,22 @@ class IfdStatus
 	: public RemoteMessage
 {
 	private:
+		friend MockRemoteDispatcher;
+		friend ::test_RemoteReaderManagerPlugIn;
+		friend ::test_ServerMessageHandler;
+		friend ::test_IfdStatus;
+
 		QString mSlotName;
 		PaceCapabilities mPaceCapabilities;
 		int mMaxApduLength;
 		bool mConnectedReader;
 		bool mCardAvailable;
+
+		IfdStatus(const QString& pSlotName,
+				const PaceCapabilities& pPaceCapabilities,
+				int pMaxApduLength,
+				bool pConnected,
+				bool pCardAvailable = false);
 
 	public:
 		IfdStatus(const ReaderInfo& pReaderInfo);
@@ -56,8 +73,8 @@ class IfdStatus
 		int getMaxApduLength() const;
 		bool getConnectedReader() const;
 		bool getCardAvailable() const;
-		virtual QJsonDocument toJson(const QString& pContextHandle) const override;
+		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
 };
 
 
-} /* namespace governikus */
+} // namespace governikus

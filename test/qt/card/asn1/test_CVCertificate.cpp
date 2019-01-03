@@ -12,6 +12,7 @@
 #include "LogHandler.h"
 #include "TestFileHelper.h"
 
+#include <openssl/bn.h>
 #include <QtTest>
 
 using namespace governikus;
@@ -37,13 +38,13 @@ class test_CVCertificate
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			LogHandler::getInstance().init();
+			Env::getSingleton<LogHandler>()->init();
 		}
 
 
 		void cleanup()
 		{
-			LogHandler::getInstance().resetBacklog();
+			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
@@ -133,7 +134,7 @@ class test_CVCertificate
 
 			auto ecdsaSignature = cvca1->getEcdsaSignature();
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 			const BIGNUM* r = ecdsaSignature->r;
 			const BIGNUM* s = ecdsaSignature->s;
 #else
@@ -149,7 +150,7 @@ class test_CVCertificate
 
 		void debugStream()
 		{
-			QSignalSpy spy(&LogHandler::getInstance(), &LogHandler::fireLog);
+			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			QLatin1String output(R"(CVC(type=CVCA, car="DETESTeID00001", chr="DETESTeID00001", valid=["2010-08-13","2013-08-13"])");
 			QSharedPointer<const CVCertificate> cvca = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));

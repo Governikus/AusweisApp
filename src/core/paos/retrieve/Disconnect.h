@@ -30,4 +30,4 @@ class Disconnect
 		const QString& getSlotHandle() const;
 };
 
-} /* namespace governikus */
+} // namespace governikus

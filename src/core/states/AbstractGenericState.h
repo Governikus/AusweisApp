@@ -17,15 +17,15 @@
 namespace governikus
 {
 
-template<typename ModelClass>
+template<typename ContextClass>
 class AbstractGenericState
 	: public AbstractState
 {
 	public:
-		AbstractGenericState(const QSharedPointer<WorkflowContext>& pContext, bool pConnectOnCardRemoved = true)
+		explicit AbstractGenericState(const QSharedPointer<WorkflowContext>& pContext, bool pConnectOnCardRemoved = true)
 			: AbstractState(pContext, pConnectOnCardRemoved)
 		{
-			Q_ASSERT(mContext.objectCast<ModelClass>());
+			Q_ASSERT(mContext.objectCast<ContextClass>());
 		}
 
 
@@ -34,12 +34,12 @@ class AbstractGenericState
 		}
 
 
-		virtual QSharedPointer<ModelClass> getContext()
+		virtual QSharedPointer<ContextClass> getContext()
 		{
-			return mContext.staticCast<ModelClass>();
+			return mContext.staticCast<ContextClass>();
 		}
 
 
 };
 
-} /* namespace governikus */
+} // namespace governikus

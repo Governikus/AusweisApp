@@ -8,7 +8,7 @@
 using namespace governikus;
 
 StateInitializeFramework::StateInitializeFramework(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractGenericState(pContext, false)
 {
 }
 

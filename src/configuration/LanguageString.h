@@ -43,4 +43,4 @@ inline bool operator==(const LanguageString& pLeft, const LanguageString& pRight
 }
 
 
-} /* namespace governikus */
+} // namespace governikus

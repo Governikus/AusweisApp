@@ -1,0 +1,70 @@
+AusweisApp2 1.16.0
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 20. Dezember 2018
+
+
+
+Anwender
+""""""""
+  - Kleinere Fehlerbehebungen.
+
+  - Hinzufügen eines Tutorials um Hilfestellung bei der
+    Verwendung unter Android zu geben.
+
+  - Unterstützung von Android 4.3 und 4.4 wurde eingestellt.
+
+  - Unterstützung von OS X 10.10 wurde eingestellt.
+
+  - Unterstützung von macOS 10.14.
+
+  - Es ist nun möglich nach einer erfolgreichen Authentisierung
+    Daten eines verwendeten Android Smartphones anonym zu
+    übermitteln.
+
+  - Erweiterung der Diagnosefunktion.
+
+  - Bewertungsnachfrage unter Android hinzugefügt.
+
+  - Möglichkeit zur Log-Anzeige unter Android hinzugefügt.
+
+  - Unter Android wird nun eindeutiger zwischen 5 und 6-stelliger
+    PIN unterschieden.
+
+  - Das Entfernen des Ausweisdokumentes während der Eingabe von
+    PIN/CAN/PUK löst nicht mehr den Abbruch der Authentisierung
+    oder der PIN-Änderung aus.
+
+
+Entwickler
+""""""""""
+  - Unterstützung von firmenweiten Installationen des MSI-Paketes
+    (separate Dokumentation).
+
+  - Unterstützung eines SDKs mittels WebSockets unter Windows und
+    macOS (separate Dokumentation).
+
+  - Konkurrierende Zugriffe von verschiedenen Anwendungen auf
+    Kartenlesegeräte, die über PC/SC angeschlossen sind, sind
+    nun möglich.
+
+  - Aktualisierung von OpenSSL auf die Version 1.1.1.
+
+  - Aktualisierung von Qt auf die Version 5.11.2.
+
+  - Unterstützung von TLS v1.1 wurde eingestellt.
+
+  - Unterstützung folgender TLS-Cipher wurde eingestellt:
+
+    - DHE-DSS-AES256-GCM-SHA384
+    - DHE-DSS-AES256-SHA256
+    - DHE-DSS-AES128-GCM-SHA256
+    - DHE-DSS-AES128-SHA256
+    - DHE-DSS-AES256-SHA
+    - DHE-DSS-AES128-SHA
+    - ECDHE-ECDSA-AES256-SHA
+    - ECDHE-RSA-AES256-SHA
+    - DHE-RSA-AES256-SHA
+    - ECDHE-ECDSA-AES128-SHA
+    - ECDHE-RSA-AES128-SHA
+    - DHE-RSA-AES128-SHA

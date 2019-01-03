@@ -1,0 +1,442 @@
+From 6b73c48ac35de82b95b74f8dd614fe282209cd61 Mon Sep 17 00:00:00 2001
+From: Oswald Buddenhagen <oswald.buddenhagen@qt.io>
+Date: Tue, 12 Dec 2017 12:21:16 +0100
+Subject: configure: refactor directx checks
+
+properly atomize the libraries and express their dependencies, and
+adjust the project files accordingly.
+
+note that we don't try to use any additional paths, as all SDKs we
+currently support have built-in directx 11 support:
+- msvc2013 comes with win sdk 8.1; that is also used for win7 targets
+- mingw-64 5.3 (though this one is missing fxc, which is why the code
+  path for using an external sdk for that remains)
+
+Change-Id: Ib44e389ef46567308293c2bbcad20a96e8ef70c7
+---
+ src/angle/src/common/gles_common.pri          |   6 +-
+ src/angle/src/libEGL/libEGL.pro               |   5 +-
+ src/gui/configure.json                        | 176 ++++++++++++++----
+ src/gui/configure.pri                         |  19 +-
+ .../fontdatabases/windows/windows.pri         |   9 +-
+ .../fontdatabases/winrt/winrt.pri             |   4 +-
+ src/plugins/platforms/direct2d/direct2d.pro   |   3 +-
+ src/plugins/platforms/platforms.pro           |   6 +-
+ src/plugins/platforms/windows/windows.pri     |   2 +
+ src/plugins/platforms/winrt/winrt.pro         |   3 +-
+ 10 files changed, 168 insertions(+), 65 deletions(-)
+
+diff --git x/qtbase/src/angle/src/common/gles_common.pri y/qtbase/src/angle/src/common/gles_common.pri
+index 82d38a62e6..927949d758 100644
+--- x/qtbase/src/angle/src/common/gles_common.pri
++++ y/qtbase/src/angle/src/common/gles_common.pri
+@@ -5,11 +5,11 @@ INCLUDEPATH += $$OUT_PWD/.. $$ANGLE_DIR/src/libANGLE
+ 
+ # Remember to adapt src/gui/configure.* if the Direct X version changes.
+ !winrt: \
+-    LIBS_PRIVATE += -ld3d9
++    QMAKE_USE_PRIVATE += d3d9
+ winrt: \
+-    LIBS_PRIVATE += -ld3dcompiler -ldxgi -ld3d11
++    QMAKE_USE_PRIVATE += d3dcompiler d3d11 dxgi
+ 
+-LIBS_PRIVATE += -ldxguid
++QMAKE_USE_PRIVATE += dxguid
+ 
+ STATICLIBS = translator preprocessor
+ for(libname, STATICLIBS) {
+diff --git x/qtbase/src/angle/src/libEGL/libEGL.pro y/qtbase/src/angle/src/libEGL/libEGL.pro
+index 9e9c639002..ad2117f2fc 100644
+--- x/qtbase/src/angle/src/libEGL/libEGL.pro
++++ y/qtbase/src/angle/src/libEGL/libEGL.pro
+@@ -1,9 +1,10 @@
+ include(../common/common.pri)
+ DEF_FILE_TARGET = $${TARGET}
+ TARGET = $$qtLibraryTarget($${LIBEGL_NAME})
+-winrt: LIBS_PRIVATE += -ld3d11
++winrt: QMAKE_USE_PRIVATE += d3d11
++QMAKE_USE_PRIVATE += dxguid
+ 
+-LIBS_PRIVATE += -ldxguid -L$$QT_BUILD_TREE/lib -l$$qtLibraryTarget($${LIBGLESV2_NAME})
++LIBS_PRIVATE += -L$$QT_BUILD_TREE/lib -l$$qtLibraryTarget($${LIBGLESV2_NAME})
+ 
+ DEFINES += GL_APICALL= GL_GLEXT_PROTOTYPES= EGLAPI= LIBEGL_IMPLEMENTATION
+ 
+diff --git x/qtbase/src/gui/configure.json y/qtbase/src/gui/configure.json
+index 219385a108..4145ceddf6 100644
+--- x/qtbase/src/gui/configure.json
++++ y/qtbase/src/gui/configure.json
+@@ -65,21 +65,79 @@
+                 "-lbcm_host"
+             ]
+         },
+-        "direct2d": {
+-            "label": "Direct 2D",
+-            "export": "",
++        "dxguid": {
++            "label": "DirectX GUID",
++            "sources": [
++                "-ldxguid"
++            ]
++        },
++        "dxgi": {
++            "label": "DirectX GI",
++            "headers": [ "dxgi.h" ],
++            "sources": [
++                "-ldxgi"
++            ]
++        },
++        "dxgi1_2": {
++            "label": "DirectX GI 1.2",
+             "test": {
+-                "include": [ "d3d11_1.h", "d2d1_1.h", "d2d1_1helper.h", "dxgi1_2.h", "wrl.h", "dwrite.h" ],
+-                "tail": "using Microsoft::WRL::ComPtr;",
+                 "main": [
+-                    "ComPtr<ID2D1Factory1> d2dFactory;",
+-                    "D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, d2dFactory.ReleaseAndGetAddressOf());",
+-                    "ComPtr<IDXGISurface1> surface;",
++                    "// fails with mingw-w64 5.4.0 - declaration is missing from header",
++                    "IDXGISurface1 *surface;",
+                     "(void) surface;"
+                 ]
+             },
++            "headers": [ "dxgi1_2.h" ],
++            "sources": [
++                "-ldxgi"
++            ]
++        },
++        "d3d9": {
++            "label": "Direct3D 9",
++            "headers": "d3d9.h",
++            "sources": [
++                "-ld3d9"
++            ]
++        },
++        "d3d11": {
++            "label": "Direct3D 11",
++            "headers": "d3d11.h",
++            "sources": [
++                "-ld3d11"
++            ]
++        },
++        "d3d11_1": {
++            "label": "Direct3D 11.1",
++            "headers": "d3d11_1.h",
++            "sources": [
++                "-ld3d11"
++            ]
++        },
++        "d3dcompiler": {
++            "label": "Direct3D Shader Compiler Library",
++            "headers": "d3dcompiler.h",
++            "sources": [
++                "-ld3dcompiler"
++            ]
++        },
++        "d2d1": {
++            "label": "Direct2D 1",
++            "headers": [ "d2d1.h", "d2d1helper.h" ],
++            "sources": [
++                "-ld2d1"
++            ]
++        },
++        "d2d1_1": {
++            "label": "Direct2D 1.1",
++            "test": {
++                "main": [
++                    "ID2D1Factory1 *d2dFactory;",
++                    "D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &d2dFactory);"
++                ]
++            },
++            "headers": [ "d2d1_1.h", "d2d1_1helper.h" ],
+             "sources": [
+-                "-ld2d1 -ldwrite -ld3d11"
++                "-ld2d1"
+             ]
+         },
+         "directfb": {
+@@ -96,9 +154,8 @@
+                 { "type": "pkgConfig", "args": "directfb" }
+             ]
+         },
+-        "directwrite": {
++        "dwrite": {
+             "label": "DirectWrite",
+-            "export": "",
+             "test": {
+                 "include": [ "dwrite.h", "d2d1.h" ],
+                 "main": [
+@@ -107,6 +164,29 @@
+                     "                    (IUnknown **)(&factory));"
+                 ]
+             },
++            "headers": "dwrite.h",
++            "sources": [
++                "-ldwrite"
++            ]
++        },
++        "dwrite_1": {
++            "label": "DirectWrite 1",
++            "headers": "dwrite_1.h",
++            "sources": [
++                "-ldwrite"
++            ]
++        },
++        "dwrite_2": {
++            "label": "DirectWrite 2",
++            "test": {
++                "main": [
++                    "IUnknown *factory = 0;",
++                    "(void)(size_t(DWRITE_E_NOCOLOR) + sizeof(IDWriteFontFace2));",
++                    "DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory2),",
++                    "                    &factory);"
++                ]
++            },
++            "headers": "dwrite_2.h",
+             "sources": [
+                 "-ldwrite"
+             ]
+@@ -623,7 +703,7 @@
+     },
+ 
+     "testTypeAliases": {
+-        "files": [ "directX" ]
++        "files": [ "fxc" ]
+     },
+ 
+     "tests": {
+@@ -638,26 +718,10 @@
+                 ]
+             }
+         },
+-        "directwrite2": {
+-            "label": "DirectWrite 2",
+-            "type": "compile",
+-            "test": {
+-                "include": [ "dwrite_2.h", "d2d1.h" ],
+-                "main": [
+-                    "IUnknown *factory = 0;",
+-                    "(void)(size_t(DWRITE_E_NOCOLOR) + sizeof(IDWriteFontFace2));",
+-                    "DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory2),",
+-                    "                    &factory);"
+-                ]
+-            },
+-            "use": "directwrite"
+-        },
+-        "directx": {
+-            "label": "DirectX SDK",
+-            "type": "directX",
++        "fxc": {
++            "label": "Direct3D Shader Compiler",
++            "type": "fxc",
+             "files": [
+-                "d3dcompiler.h",
+-                "d3d11.lib",
+                 "fxc.exe"
+             ]
+         },
+@@ -909,7 +973,7 @@
+         "angle": {
+             "label": "ANGLE",
+             "autoDetect": "features.opengles2 || features.opengl-dynamic",
+-            "condition": "config.win32 && tests.directx",
++            "condition": "features.dxguid && tests.fxc && (features.direct3d9 || (config.winrt && features.direct3d11 && libs.d3dcompiler))",
+             "output": [
+                 "publicFeature",
+                 { "type": "define", "name": "QT_OPENGL_ES_2_ANGLE" }
+@@ -936,19 +1000,59 @@
+         "directwrite": {
+             "label": "DirectWrite",
+             "emitIf": "config.win32",
+-            "condition": "libs.directwrite",
++            "condition": "libs.dwrite",
++            "output": [ "privateFeature" ]
++        },
++        "directwrite1": {
++            "label": "DirectWrite 1",
++            "emitIf": "config.win32",
++            "condition": "libs.dwrite_1",
+             "output": [ "privateFeature" ]
+         },
+         "directwrite2": {
+             "label": "DirectWrite 2",
+             "emitIf": "config.win32",
+-            "condition": "features.directwrite && tests.directwrite2",
++            "condition": "features.directwrite1 && libs.dwrite_2",
++            "output": [ "privateFeature" ]
++        },
++        "dxguid": {
++            "label": "DirectX GUID",
++            "condition": "config.win32 && libs.dxguid",
++            "output": [ "privateFeature" ]
++        },
++        "direct3d9": {
++            "label": "Direct 3D 9",
++            "condition": "config.win32 && !config.winrt && libs.d3d9",
++            "output": [ "privateFeature" ]
++        },
++        "dxgi": {
++            "label": "DirectX GI",
++            "condition": "config.win32 && libs.dxgi",
++            "output": [ "privateFeature" ]
++        },
++        "dxgi1_2": {
++            "label": "DirectX GI 1.2",
++            "condition": "features.dxgi && libs.dxgi1_2",
++            "output": [ "privateFeature" ]
++        },
++        "direct3d11": {
++            "label": "Direct 3D 11",
++            "condition": "features.dxgi && libs.d3d11",
++            "output": [ "privateFeature" ]
++        },
++        "direct3d11_1": {
++            "label": "Direct 3D 11.1",
++            "condition": "features.direct3d11 && features.dxgi1_2 && libs.d3d11_1",
+             "output": [ "privateFeature" ]
+         },
+         "direct2d": {
+             "label": "Direct 2D",
+-            "section": "Platform plugins",
+-            "condition": "config.win32 && !config.winrt && libs.direct2d",
++            "condition": "config.win32 && !config.winrt && features.direct3d11 && libs.d2d1",
++            "output": [ "privateFeature" ]
++        },
++        "direct2d1_1": {
++            "label": "Direct 2D 1.1",
++            "condition": "features.direct2d && libs.d2d1_1",
+             "output": [ "privateFeature" ]
+         },
+         "evdev": {
+diff --git x/qtbase/src/gui/configure.pri y/qtbase/src/gui/configure.pri
+index fcd2d1f73e..f53a93063c 100644
+--- x/qtbase/src/gui/configure.pri
++++ y/qtbase/src/gui/configure.pri
+@@ -15,29 +15,16 @@ defineTest(qtConfLibrary_freetype) {
+     return(true)
+ }
+ 
+-# Check for Direct X SDK (include, lib, and direct shader compiler 'fxc').
++# Check for Direct X shader compiler 'fxc'.
+ # Up to Direct X SDK June 2010 and for MinGW, this is pointed to by the
+ # DXSDK_DIR variable. Starting with Windows Kit 8, it is included in
+-# the Windows SDK. Checking for the header is not sufficient, since it
+-# is also present in MinGW.
+-defineTest(qtConfTest_directX) {
++# the Windows SDK.
++defineTest(qtConfTest_fxc) {
+     dxdir = $$getenv("DXSDK_DIR")
+     !isEmpty(dxdir) {
+-        EXTRA_INCLUDEPATH += $$dxdir/include
+-        equals(QT_ARCH, x86_64): \
+-            EXTRA_LIBDIR += $$dxdir/lib/x64
+-        else: \
+-            EXTRA_LIBDIR += $$dxdir/lib/x86
+         EXTRA_PATH += $$dxdir/Utilities/bin/x86
+     }
+ 
+-    $$qtConfEvaluate("features.sse2") {
+-        ky = $$size($${1}.files._KEYS_)
+-        $${1}.files._KEYS_ += $$ky
+-        # Not present on MinGW-32
+-        $${1}.files.$${ky} = "intrin.h"
+-    }
+-
+     qtConfTest_files($${1}): return(true)
+     return(false)
+ }
+diff --git x/qtbase/src/platformsupport/fontdatabases/windows/windows.pri y/qtbase/src/platformsupport/fontdatabases/windows/windows.pri
+index 0e64084cf1..9c529f55ea 100644
+--- x/qtbase/src/platformsupport/fontdatabases/windows/windows.pri
++++ y/qtbase/src/platformsupport/fontdatabases/windows/windows.pri
+@@ -15,9 +15,14 @@ qtConfig(freetype) {
+     HEADERS += $$PWD/qwindowsfontdatabase_ft_p.h
+ }
+ 
+-qtConfig(directwrite) {
+-    qtConfig(directwrite2): \
++qtConfig(directwrite):qtConfig(direct2d) {
++    qtConfig(directwrite2) {
++        QMAKE_USE_PRIVATE += dwrite_2
+         DEFINES *= QT_USE_DIRECTWRITE2
++    } else {
++        QMAKE_USE_PRIVATE += dwrite
++    }
++    QMAKE_USE_PRIVATE += d2d1
+ 
+     SOURCES += $$PWD/qwindowsfontenginedirectwrite.cpp
+     HEADERS += $$PWD/qwindowsfontenginedirectwrite_p.h
+diff --git x/qtbase/src/platformsupport/fontdatabases/winrt/winrt.pri y/qtbase/src/platformsupport/fontdatabases/winrt/winrt.pri
+index 291ada220f..7617df2e7a 100644
+--- x/qtbase/src/platformsupport/fontdatabases/winrt/winrt.pri
++++ y/qtbase/src/platformsupport/fontdatabases/winrt/winrt.pri
+@@ -8,4 +8,6 @@ HEADERS += \
+ 
+ DEFINES += __WRL_NO_DEFAULT_LIB__
+ 
+-LIBS += -lws2_32 -ldwrite
++LIBS += -lws2_32
++
++QMAKE_USE_PRIVATE += dwrite_1
+diff --git x/qtbase/src/plugins/platforms/direct2d/direct2d.pro y/qtbase/src/plugins/platforms/direct2d/direct2d.pro
+index 3bfd02bdc8..9764272632 100644
+--- x/qtbase/src/plugins/platforms/direct2d/direct2d.pro
++++ y/qtbase/src/plugins/platforms/direct2d/direct2d.pro
+@@ -8,7 +8,8 @@ QT += \
+ qtConfig(accessibility): QT += accessibility_support-private
+ qtConfig(vulkan): QT += vulkan_support-private
+ 
+-LIBS += -ldwmapi -ld2d1 -ld3d11 -ldwrite -lversion -lgdi32
++LIBS += -ldwmapi -lversion -lgdi32
++QMAKE_USE_PRIVATE += dwrite_1 d2d1_1 d3d11_1 dxgi1_2
+ 
+ include(../windows/windows.pri)
+ 
+diff --git x/qtbase/src/plugins/platforms/platforms.pro y/qtbase/src/plugins/platforms/platforms.pro
+index e61887618f..b70d8d5996 100644
+--- x/qtbase/src/plugins/platforms/platforms.pro
++++ y/qtbase/src/plugins/platforms/platforms.pro
+@@ -14,10 +14,10 @@ qtConfig(xcb) {
+ uikit:!watchos: SUBDIRS += ios
+ osx: SUBDIRS += cocoa
+ 
+-win32:!winrt: SUBDIRS += windows
+-winrt: SUBDIRS += winrt
++win32:!winrt:qtConfig(direct3d9): SUBDIRS += windows
++winrt:qtConfig(direct3d11): SUBDIRS += winrt
+ 
+-qtConfig(direct2d) {
++qtConfig(direct3d11_1):qtConfig(direct2d1_1):qtConfig(directwrite1) {
+     SUBDIRS += direct2d
+ }
+ 
+diff --git x/qtbase/src/plugins/platforms/windows/windows.pri y/qtbase/src/plugins/platforms/windows/windows.pri
+index f4c396f7c5..2f244d8b71 100644
+--- x/qtbase/src/plugins/platforms/windows/windows.pri
++++ y/qtbase/src/plugins/platforms/windows/windows.pri
+@@ -9,6 +9,8 @@ mingw: LIBS *= -luuid
+ # For the dialog helpers:
+ LIBS += -lshlwapi -lshell32 -ladvapi32
+ 
++QMAKE_USE_PRIVATE += d3d9/nolink
++
+ DEFINES *= QT_NO_CAST_FROM_ASCII
+ 
+ SOURCES += \
+diff --git x/qtbase/src/plugins/platforms/winrt/winrt.pro y/qtbase/src/plugins/platforms/winrt/winrt.pro
+index 042b270cff..fc70eba979 100644
+--- x/qtbase/src/plugins/platforms/winrt/winrt.pro
++++ y/qtbase/src/plugins/platforms/winrt/winrt.pro
+@@ -8,7 +8,8 @@ QT += \
+ 
+ DEFINES *= QT_NO_CAST_FROM_ASCII __WRL_NO_DEFAULT_LIB__
+ 
+-LIBS += -lws2_32 -ld3d11
++LIBS += -lws2_32
++QMAKE_USE_PRIVATE += d3d11
+ 
+ SOURCES = \
+     main.cpp  \
+-- 
+2.17.0
+
