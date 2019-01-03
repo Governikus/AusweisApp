@@ -8,38 +8,12 @@
 
 #include <QtTest>
 
-#ifndef Q_OS_WIN
-#include <sys/time.h>
-#include <sys/types.h>
-#include <utime.h>
-#endif
-
 using namespace governikus;
 
 class test_LogHandler
 	: public QObject
 {
 	Q_OBJECT
-
-	void fakeLastModifiedAndLastAccessTime(const QString& pPath)
-	{
-	#ifdef Q_OS_WIN
-		Q_UNUSED(pPath);
-	#else
-		struct timeval tv[2];
-
-		struct timeval& accessTime = tv[0];
-		gettimeofday(&accessTime, nullptr);
-
-		struct timeval& modifyTime = tv[1];
-		gettimeofday(&modifyTime, nullptr);
-
-		time_t fiveteenDays = 60 * 60 * 24 * 15;
-		modifyTime.tv_sec -= fiveteenDays;
-		utimes(pPath.toLatin1().constData(), tv);
-	#endif
-	}
-
 
 	private Q_SLOTS:
 		void initTestCase()
@@ -191,32 +165,6 @@ class test_LogHandler
 			QVERIFY(logger->useLogfile());
 			QVERIFY(logger->getBacklog().contains(QByteArrayLiteral("another yummy")));
 			QVERIFY(logger->getCurrentLogfileDate().isValid());
-		}
-
-
-		void removeUpOldLogfiles()
-		{
-			#ifdef Q_OS_WIN
-			QSKIP("File time stamp mocking unimplemented on windows");
-			#endif
-
-			const auto& logger = Env::getSingleton<LogHandler>();
-
-			const auto& initialFiles = logger->getOtherLogfiles();
-			QTemporaryFile tmp(LogHandler::getLogFileTemplate());
-			QVERIFY(tmp.open());
-			tmp.fileName(); // touch it
-			const auto& filesWithMock = logger->getOtherLogfiles();
-			QVERIFY(filesWithMock.size() > initialFiles.size());
-
-			logger->removeOldLogfiles();
-			QVERIFY(tmp.exists());
-			QCOMPARE(filesWithMock.size(), logger->getOtherLogfiles().size());
-
-			fakeLastModifiedAndLastAccessTime(tmp.fileName());
-			logger->removeOldLogfiles();
-			QCOMPARE(initialFiles.size(), logger->getOtherLogfiles().size());
-			QVERIFY(!tmp.exists());
 		}
 
 

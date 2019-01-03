@@ -33,12 +33,11 @@ class LogHandler
 	friend class ::test_LogHandler;
 
 	private:
-		static QString getLogFileTemplate();
-
 		const bool mEnvPattern;
 		const int mFunctionFilenameSize;
 		qint64 mBacklogPosition;
 		const QString mMessagePattern, mDefaultMessagePattern;
+		const QString mLogFileTemplate;
 		QTemporaryFile mLogFile;
 		QtMessageHandler mHandler;
 		const QByteArray mFilePrefix;
@@ -52,7 +51,6 @@ class LogHandler
 
 		QString getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg);
 		void handleMessage(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg);
-		void removeOldLogfiles();
 
 		static void messageHandler(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg);
 		friend QDebug operator<<(QDebug, const LogHandler&);

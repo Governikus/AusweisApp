@@ -7,9 +7,7 @@
 #include "BreakPropertyBindingDiagnosticLogFilter.h"
 #include "SingletonHelper.h"
 
-#include <QCoreApplication>
 #include <QDir>
-#include <QStringBuilder>
 
 using namespace governikus;
 
@@ -28,7 +26,8 @@ LogHandler::LogHandler()
 	, mBacklogPosition(0)
 	, mMessagePattern(QStringLiteral("%{category} %{time yyyy.MM.dd hh:mm:ss.zzz} %{if-debug} %{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif} %{function}(%{file}:%{line}) %{message}"))
 	, mDefaultMessagePattern(QStringLiteral("%{if-category}%{category}: %{endif}%{message}")) // as defined in qlogging.cpp
-	, mLogFile(getLogFileTemplate())
+	, mLogFileTemplate(QDir::tempPath() + QStringLiteral("/AusweisApp2.XXXXXX.log")) // if you change value you need to adjust getOtherLogfiles()
+	, mLogFile(mLogFileTemplate)
 	, mHandler(nullptr)
 	, mFilePrefix("/src/")
 	, mMutex()
@@ -48,13 +47,6 @@ LogHandler::~LogHandler()
 LogHandler& LogHandler::getInstance()
 {
 	return *Instance;
-}
-
-
-QString LogHandler::getLogFileTemplate()
-{
-	// if you change value you need to adjust getOtherLogfiles()
-	return QDir::tempPath() % QLatin1Char('/') % QCoreApplication::applicationName() % QStringLiteral(".XXXXXX.log");
 }
 
 
@@ -79,7 +71,6 @@ void LogHandler::init()
 			mLogFile.open();
 		}
 		mHandler = qInstallMessageHandler(&LogHandler::messageHandler);
-		removeOldLogfiles();
 	}
 }
 
@@ -296,26 +287,12 @@ QFileInfoList LogHandler::getOtherLogfiles() const
 	QDir tmpPath = QDir::temp();
 	tmpPath.setSorting(QDir::Time);
 	tmpPath.setFilter(QDir::Files);
-	tmpPath.setNameFilters(QStringList({QCoreApplication::applicationName() + QStringLiteral(".*.log")}));
+	tmpPath.setNameFilters(QStringList({QStringLiteral("AusweisApp2.*.log")}));
 
 	QFileInfoList list = tmpPath.entryInfoList();
 	list.removeAll(mLogFile);
 
 	return list;
-}
-
-
-void LogHandler::removeOldLogfiles()
-{
-	const auto& threshold = QDateTime::currentDateTime().addDays(-14);
-	const QFileInfoList& logfileInfos = getOtherLogfiles();
-	for (const QFileInfo& entry : logfileInfos)
-	{
-		if (entry.fileTime(QFileDevice::FileModificationTime) < threshold)
-		{
-			qDebug() << "Auto-remove old log file:" << entry.absoluteFilePath() << '|' << QFile::remove(entry.absoluteFilePath());
-		}
-	}
 }
 
 
@@ -339,7 +316,7 @@ void LogHandler::setLogfile(bool pEnable)
 	{
 		if (!mLogFile.isOpen())
 		{
-			mLogFile.setFileTemplate(getLogFileTemplate());
+			mLogFile.setFileTemplate(mLogFileTemplate);
 			mLogFile.open();
 		}
 	}

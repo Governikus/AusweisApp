@@ -5,7 +5,7 @@ def j = new Review
 		name: 'Win32_MSVC',
 		libraries: ['Win32_MSVC_dev'],
 		label: 'MSVC',
-		artifacts: 'tmp/*.log',
+		artifacts: 'tmp/AusweisApp2.*.log',
 		allowEmptyArtifacts: true,
 		xunit: true
 	).generate(this)

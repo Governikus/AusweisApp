@@ -7,7 +7,7 @@ def j = new Review
 		name: 'Linux',
 		libraries: ['Linux'],
 		label: 'Linux',
-		artifacts: 'tmp/*.log',
+		artifacts: 'tmp/AusweisApp2.*.log',
 		allowEmptyArtifacts: true,
 		xunit: true,
 		jobType: JobType.Matrix

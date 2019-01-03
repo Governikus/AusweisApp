@@ -6,7 +6,7 @@ def j = new Review
 		name: 'FreeBSD',
 		libraries: ['FreeBSD'],
 		label: 'FreeBSD',
-		artifacts: 'tmp/*.log',
+		artifacts: 'tmp/AusweisApp2.*.log',
 		allowEmptyArtifacts: true,
 		xunit: true,
 	).generate(this)
