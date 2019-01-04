@@ -45,7 +45,7 @@ class SignalHandler
 #elif defined(Q_OS_WIN)
 
 	private:
-		static BOOL __RPC_CALLEE ctrlHandler(DWORD pCtrlType);
+		static BOOL WINAPI ctrlHandler(DWORD pCtrlType);
 #endif
 
 	private Q_SLOTS:
