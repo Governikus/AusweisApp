@@ -16,7 +16,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(system)
 
 
-BOOL __RPC_CALLEE SignalHandler::ctrlHandler(DWORD pCtrlType)
+BOOL WINAPI SignalHandler::ctrlHandler(DWORD pCtrlType)
 {
 	qCWarning(system) << "Got signal:" << pCtrlType;
 
