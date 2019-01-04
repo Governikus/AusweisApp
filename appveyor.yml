@@ -58,7 +58,7 @@ before_build:
 build_script:
     - cd "%APPVEYOR_BUILD_FOLDER%"
     - set OPENSSL_ROOT=%OPENSSLPath%
-    - set PATH=%QTPATH%;%QTPATH%/bin;%OPENSSLPath%;%PATH%
+    - set PATH=%PATH%;%QTPATH%;%QTPATH%/bin;%OPENSSLPath%
     - echo %PATH%
     - echo %OPENSSL_ROOT%
     - mkdir _build
@@ -76,7 +76,7 @@ build_script:
 
 test_script:
     - cd "%APPVEYOR_BUILD_FOLDER%"/_build
-    - set PATH=%QTPATH%;%QTPATH%/bin;%PATH%
+    - set PATH=%PATH%;%QTPATH%;%QTPATH%/bin
     - echo %PATH%
     - ctest --output-on-failure -C "%CONFIGURATION%"
 
