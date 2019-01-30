@@ -1,5 +1,8 @@
 readonly ALPINE_ROOT='/mnt/alpine'
 readonly ALPINE_USER='governikus'
+readonly ALPINE_HOME="${ALPINE_ROOT}/home/${ALPINE_USER}"
+readonly ALPINE_SRC="${ALPINE_HOME}/src"
+readonly ALPINE_CCACHE="${ALPINE_HOME}/.ccache"
 
 alpine_run() {
   local folding="${1:-chroot}"
