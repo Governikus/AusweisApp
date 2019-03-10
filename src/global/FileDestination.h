@@ -29,7 +29,7 @@ class FileDestination
 			return QCoreApplication::applicationDirPath() + QStringLiteral("/../Resources");
 
 			#elif defined(Q_OS_LINUX) && defined(QT_NO_DEBUG)
-			return QString("/usr/share/AusweisApp2");
+			return QStringLiteral("/usr/share/AusweisApp2");
 
 			#else
 			return QCoreApplication::applicationDirPath();
