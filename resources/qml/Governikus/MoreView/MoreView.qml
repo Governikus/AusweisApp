@@ -42,13 +42,13 @@ SectionPage {
 		MoreViewMenuItem {
 			text: qsTr("FAQ") + settingsModel.translationTrigger
 			imageSource: "qrc:///images/iOS/more/icon_mehr_info.svg"
-			onClicked: Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/questions-and-answers/frequently-asked-questions/"))
+			onClicked: Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/"))
 		}
 
 		MoreViewMenuItem {
 			text: qsTr("Support") + settingsModel.translationTrigger
 			imageSource: "qrc:///images/iOS/more/icon_mehr_fragen.svg"
-			onClicked: Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/questions-and-answers/support/"))
+			onClicked: Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/qa/support/"))
 		}
 
 		MoreViewMenuItem {
@@ -60,7 +60,7 @@ SectionPage {
 					Qt.openUrlExternally("market://details?id=com.governikus.ausweisapp2")
 				}
 				else if (Qt.platform.os === "ios") {
-					Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/questions-and-answers/evaluate-us/"))
+					Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/qa/evaluate-us/"))
 				}
 			}
 		}

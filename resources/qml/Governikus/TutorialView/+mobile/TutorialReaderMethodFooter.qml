@@ -9,5 +9,6 @@ TutorialFooter {
 	color: Constants.tutorial_blue
 	anchors.bottom: parent.bottom
 
+	backRotation: 180
 	backText: qsTr("Back") + settingsModel.translationTrigger
 }

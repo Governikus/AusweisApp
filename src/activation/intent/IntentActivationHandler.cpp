@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IntentActivationHandler.h"
@@ -17,27 +17,6 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(activation)
 
-#ifdef Q_OS_ANDROID
-
-JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_triggerActivation(JNIEnv* env, jobject obj, jstring lastIntent)
-{
-	Q_UNUSED(env)
-	Q_UNUSED(obj)
-	if (lastIntent != nullptr)
-	{
-		QString lastIntentString = QAndroidJniObject("java/lang/String", "(Ljava/lang/String;)V", lastIntent).toString();
-		if (!lastIntentString.isNull())
-		{
-			auto handler = ActivationHandler::getInstance<IntentActivationHandler>();
-			Q_ASSERT(handler);
-			handler->onIntent(QUrl(lastIntentString));
-		}
-	}
-}
-
-
-#endif
-
 
 void IntentActivationHandler::onIntent(const QUrl& pUrl)
 {
@@ -52,12 +31,6 @@ void IntentActivationHandler::onIntent(const QUrl& pUrl)
 bool IntentActivationHandler::start()
 {
 #ifdef Q_OS_ANDROID
-	const QString& intent = QAndroidJniObject::callStaticObjectMethod<jstring>("com/governikus/ausweisapp2/MainActivity", "getStoredIntent").toString();
-	if (!intent.isNull())
-	{
-		onIntent(intent);
-	}
-
 	return true;
 
 #else
@@ -70,4 +43,16 @@ bool IntentActivationHandler::start()
 
 void IntentActivationHandler::stop()
 {
+}
+
+
+void IntentActivationHandler::onApplicationActivated()
+{
+#ifdef Q_OS_ANDROID
+	const QString& intent = QAndroidJniObject::callStaticObjectMethod<jstring>("com/governikus/ausweisapp2/MainActivity", "fetchStoredIntent").toString();
+	if (!intent.isNull())
+	{
+		onIntent(intent);
+	}
+#endif
 }

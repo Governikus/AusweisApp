@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowContext.h"
@@ -42,6 +42,7 @@ WorkflowContext::WorkflowContext()
 	, mWorkflowFinished(false)
 	, mWorkflowCancelled(false)
 	, mCanAllowedMode(false)
+	, mNextWorkflowPending(false)
 {
 	connect(this, &WorkflowContext::fireCancelWorkflow, this, &WorkflowContext::onWorkflowCancelled);
 }
@@ -406,4 +407,20 @@ void WorkflowContext::setCanAllowedMode(bool pCanAllowedMode)
 {
 	mCanAllowedMode = pCanAllowedMode;
 	Q_EMIT fireCanAllowedModeChanged();
+}
+
+
+bool WorkflowContext::hasNextWorkflowPending() const
+{
+	return mNextWorkflowPending;
+}
+
+
+void WorkflowContext::setNextWorkflowPending(bool pNextWorkflowPending)
+{
+	if (pNextWorkflowPending != mNextWorkflowPending)
+	{
+		mNextWorkflowPending = pNextWorkflowPending;
+		Q_EMIT fireNextWorkflowPending();
+	}
 }

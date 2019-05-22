@@ -317,9 +317,6 @@ Please note that you can only use the PUK to unblock the eID function. If you ha
 &lt;h4&gt;No card reader detected. Please make sure that a card reader is connected.&lt;/h4&gt;
 &lt;p&gt;If you need help or have problems with your card reader click on the &quot;Diagnosis&quot; button for further information.
 &lt;/p&gt;
-&lt;p&gt;Please note: It is currently not possible to change your PIN whilst using your smartphone as a card reader.
-However, you can change your PIN on your smartphone directly as long as the remote service is disabled.
-&lt;/p&gt;
 &lt;/html&gt;</string>
          </property>
          <property name="alignment">

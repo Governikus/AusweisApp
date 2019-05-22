@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -76,13 +76,21 @@ int PasswordEdit::determindeWidth(int pNumChars)
 
 	// get the display text for a password of length pWidth
 	lineEdit->setText(QString(pNumChars, QLatin1Char('6')));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+	const int displayTextWidth = lineEdit->fontMetrics().horizontalAdvance(lineEdit->displayText());
+#else
 	const int displayTextWidth = lineEdit->fontMetrics().width(lineEdit->displayText());
+#endif
 
 	// in  QLineEdit::sizeHint() the width is calculated as
 	// 17th times the size of 'x' plus some magic margins.
 	// So we calculate this margin by subtraction to set the content size correctly.
 	const int widthHint = lineEdit->sizeHint().width();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+	const int margin = widthHint - 17 * lineEdit->fontMetrics().horizontalAdvance(QLatin1Char('x'));
+#else
 	const int margin = widthHint - 17 * lineEdit->fontMetrics().width(QLatin1Char('x'));
+#endif
 	return margin + displayTextWidth;
 }
 

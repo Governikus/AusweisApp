@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the history entries.
  *
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HistoryModel.h"
@@ -11,6 +11,7 @@
 #include "ProviderModel.h"
 
 #include <QDebug>
+#include <QQmlEngine>
 #include <QUrl>
 
 using namespace governikus;
@@ -113,6 +114,7 @@ HistoryModel::HistoryModel(HistorySettings* pHistorySettings, QObject* pParent)
 	, mHistorySettings(pHistorySettings)
 	, mFilterModel()
 	, mNameFilterModel(pHistorySettings)
+	, mHistoryModelSearchFilter()
 {
 	updateConnections();
 	mFilterModel.setSourceModel(this);
@@ -122,6 +124,10 @@ HistoryModel::HistoryModel(HistorySettings* pHistorySettings, QObject* pParent)
 	connect(mHistorySettings.data(), &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
 	connect(mHistorySettings.data(), &HistorySettings::fireEnabledChanged, this, &HistoryModel::fireEnabledChanged);
 	connect(Env::getSingleton<ProviderConfiguration>(), &ProviderConfiguration::fireUpdated, this, &HistoryModel::onProvidersChanged);
+
+	QQmlEngine::setObjectOwnership(&mFilterModel, QQmlEngine::CppOwnership);
+	QQmlEngine::setObjectOwnership(&mNameFilterModel, QQmlEngine::CppOwnership);
+	QQmlEngine::setObjectOwnership(&mHistoryModelSearchFilter, QQmlEngine::CppOwnership);
 }
 
 

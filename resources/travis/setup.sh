@@ -5,8 +5,8 @@ set -eu
 
 readonly CLONE_DIR="${CLONE_DIR:-$(pwd)}"
 
-MINIROOTFS_VERSION="3.8.0"
-MINIROOTFS_SHA="ae36d6ea2033131cfc649afa13d7271367c386e7a0dbd5b3d0671a2ede22a2f1"
+MINIROOTFS_VERSION="3.9.0"
+MINIROOTFS_SHA="f82efed1a80c9af86c38bed10f3541c5588453b97684d767a5a3b0f3fa0e3f09"
 
 MINIROOTFS="alpine-minirootfs-${MINIROOTFS_VERSION}-x86_64.tar.gz"
 MINIROOTFS_URI="http://dl-cdn.alpinelinux.org/alpine/v${MINIROOTFS_VERSION%.*}/releases/x86_64/$MINIROOTFS"
@@ -30,11 +30,12 @@ ln -sf /run/shm dev/shm
 
 
 PACKAGES="cmake make ninja git"
-for arg in "$@"
+for arg in "$CHECK"
 do
   case "$arg" in
     format) PACKAGES="$PACKAGES uncrustify";;
     docs)   PACKAGES="$PACKAGES py2-sphinx py2-setuptools";;
+    build)  PACKAGES="$PACKAGES clang g++ ccache binutils-gold eudev-dev pcsc-lite-dev http-parser-dev openssl-dev qt5-qtsvg-dev qt5-qtquickcontrols2-dev qt5-qtwebsockets-dev qt5-qtconnectivity-dev qt5-qtbase-dev qt5-qttools-dev";;
     *)      echo "Unknown command: $1" && exit 1
   esac
 done
@@ -46,7 +47,11 @@ alpine_run packages root <<-EOF
   apk add $PACKAGES
 EOF
 
-mount --bind "$CLONE_DIR" "${ALPINE_ROOT}/home/${ALPINE_USER}"
+mkdir ${ALPINE_SRC}
+mkdir ${ALPINE_CCACHE}
+mount --bind "$CLONE_DIR" "${ALPINE_SRC}"
+mount --bind "$HOME/.ccache" "${ALPINE_CCACHE}"
+chmod 777 "$ALPINE_CCACHE"
 
 alpine_run chown root <<-EOF
   chown -R $ALPINE_USER: /home/${ALPINE_USER}

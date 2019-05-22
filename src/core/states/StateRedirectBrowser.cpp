@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateRedirectBrowser.h"
@@ -22,7 +22,12 @@ StateRedirectBrowser::StateRedirectBrowser(const QSharedPointer<WorkflowContext>
 
 void StateRedirectBrowser::run()
 {
-	if (getContext()->isTcTokenNotFound())
+	if (getContext()->isSkipRedirect())
+	{
+		qDebug() << "Skipping redirect, Workflow pending";
+		Q_EMIT fireContinue();
+	}
+	else if (getContext()->isTcTokenNotFound())
 	{
 		sendErrorPage(HTTP_STATUS_NOT_FOUND);
 	}

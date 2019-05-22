@@ -34,9 +34,3 @@ Die nachfolgende Liste bezieht sich auf die aktuelle Version der AusweisApp2.
   - Bei der Nutzung eines entfernten Kartenlesegeräts mit aktiviertem
     Tastaturmodus kann bei einer Authentisierung nicht in die PIN-Änderung
     gewechselt werden, wenn nur eine 5-stellige PIN vorhanden ist.
-
-  - Bei der Nutzung eines entfernten Kartenlesegeräts mit aktiviertem
-    Tastaturmodus merkt sich das entfernte Kartenlesegerät fälschlicherweise
-    die zuletzt ausgewählte Länge der PIN (5/6 Stellen). Ein Neustart des
-    Fernzugriffs auf dem entfernten Kartenlesegerät setzt die Länge auf
-    6 Stellen zurück.

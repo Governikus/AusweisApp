@@ -15,13 +15,13 @@ j.with
 	{
 		batchFile('''\
 			cd build
-			call vcvarsall.bat
+			call vcvarsall.bat x86
 			cmake ../source -DCMAKE_CXX_COMPILER=clcache -DCMAKE_PREFIX_PATH=%WORKSPACE%/libs/build/dist -GNinja
 			'''.stripIndent().trim())
 
 		batchFile('''\
 			cd build
-			call vcvarsall.bat
+			call vcvarsall.bat x86
 			ninja %MAKE_FLAGS%
 			'''.stripIndent().trim())
 

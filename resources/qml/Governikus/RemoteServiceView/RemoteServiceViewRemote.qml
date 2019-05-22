@@ -80,7 +80,9 @@ Item {
 				delegate: AvailableDevicesListDelegate {
 					width: searchDeviceList.width
 					onRequestPairing: {
-						enterPinView.remoteDeviceId = pDeviceId
+						if (!RemoteServiceModel.rememberServer(pDeviceId)) {
+							return
+						}
 						informationPairingPopup.open()
 					}
 				}

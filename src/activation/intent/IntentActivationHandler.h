@@ -1,21 +1,10 @@
 /*!
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "ActivationHandler.h"
-
-#ifdef Q_OS_ANDROID
-#include <jni.h>
-
-
-extern "C"
-{
-JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_triggerActivation(JNIEnv* env, jobject obj, jstring lastIntent);
-}
-#endif
-
 
 namespace governikus
 {
@@ -32,10 +21,6 @@ class IntentActivationHandler
 	Q_PLUGIN_METADATA(IID "governikus.ActivationHandler" FILE "metadata.json")
 	Q_INTERFACES(governikus::ActivationHandler)
 
-#ifdef Q_OS_ANDROID
-	friend void ::Java_com_governikus_ausweisapp2_MainActivity_triggerActivation(JNIEnv*, jobject, jstring);
-#endif
-
 	private:
 		void onIntent(const QUrl& pUrl);
 
@@ -44,6 +29,7 @@ class IntentActivationHandler
 
 		virtual bool start() override;
 		virtual void stop() override;
+		virtual void onApplicationActivated() override;
 };
 
 } // namespace governikus

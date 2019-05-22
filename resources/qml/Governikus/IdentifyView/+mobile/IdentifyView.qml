@@ -103,7 +103,7 @@ SectionPage
 
 	EnterPinView {
 		id: enterPinView
-		leftTitleBarAction: TitleBarAction { state: "cancel"; onClicked: AuthModel.cancelWorkflow() }
+		leftTitleBarAction: TitleBarAction { state: "cancel"; onClicked: { firePop(); AuthModel.cancelWorkflow() } }
 		headerTitleBarAction: TitleBarAction { text: qsTr("Identify") + settingsModel.translationTrigger }
 		visible: false
 
@@ -113,7 +113,7 @@ SectionPage
 		}
 
 		onChangePinLength: {
-			firePush(changeToTransportPinView)
+			fireReplace(changeToTransportPinView)
 		}
 	}
 
@@ -174,12 +174,14 @@ SectionPage
 
 	ResultView {
 		id: changeToTransportPinView
-		leftTitleBarAction: TitleBarAction { state: "back"; onClicked: firePop() }
+		leftTitleBarAction: TitleBarAction { state: "back"; onClicked: fireReplace(enterPinView) }
 		headerTitleBarAction: TitleBarAction { text: qsTr("Change transport PIN") + settingsModel.translationTrigger; font.bold: true }
 		resultType: ResultView.Type.IsInfo
 		buttonText: qsTr("Change PIN") + settingsModel.translationTrigger
-		text: qsTr("You leave the process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.") + settingsModel.translationTrigger
+		text: qsTr("You have to change your transport PIN into a personal PIN to use the online ID function. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.") + settingsModel.translationTrigger
 		onClicked: {
+			firePop()
+			AuthModel.setSkipRedirect(true)
 			ChangePinModel.startWorkflow()
 			AuthModel.cancelWorkflowToChangePin()
 		}

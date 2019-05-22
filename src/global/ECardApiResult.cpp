@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ECardApiResult.h"
@@ -580,7 +580,7 @@ GlobalStatus ECardApiResult::toStatus() const
 			{
 				return GlobalStatus::Code::No_Error;
 			}
-		// FALLTHROUGH
+			Q_FALLTHROUGH();
 
 		case Major::Error:
 			return GlobalStatus(toStatus(getMinor()), message, toStatus(d->mOrigin));

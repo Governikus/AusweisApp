@@ -1,7 +1,7 @@
 /*!
  * \brief Controller of the whole program.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -72,6 +72,7 @@ class AppController final
 #ifndef QT_NO_NETWORKPROXY
 		void fireProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
 #endif
+		void fireApplicationActivated();
 		void fireUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted);
 		void fireUiDominationReleased();
 

@@ -5,27 +5,27 @@ environment:
     - PlatformToolset: mingw-w64
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       QTPath: C:\Qt\5.11\mingw53_32
-      OPENSSLPath: C:\OpenSSL-v11-Win32
+      OPENSSLPath: C:\OpenSSL-v111-Win32
 
     - PlatformToolset: v140
       platform: x64
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       QTPath: C:\Qt\5.11\msvc2015_64
-      OPENSSLPath: C:\OpenSSL-v11-Win64
+      OPENSSLPath: C:\OpenSSL-v111-Win64
       ARCHI: amd64
 
     - PlatformToolset: v140
       platform: Win32
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       QTPath: C:\Qt\5.11\msvc2015
-      OPENSSLPath: C:\OpenSSL-v11-Win32
+      OPENSSLPath: C:\OpenSSL-v111-Win32
       ARCHI: x86
 
     - PlatformToolset: v141
       platform: x64
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       QTPath: C:\Qt\5.11\msvc2017_64
-      OPENSSLPath: C:\OpenSSL-v11-Win64
+      OPENSSLPath: C:\OpenSSL-v111-Win64
       ARCHI: amd64
 
 configuration:
@@ -58,7 +58,7 @@ before_build:
 build_script:
     - cd "%APPVEYOR_BUILD_FOLDER%"
     - set OPENSSL_ROOT=%OPENSSLPath%
-    - set PATH=%QTPATH%;%QTPATH%/bin;%OPENSSLPath%;%PATH%
+    - set PATH=%PATH%;%QTPATH%;%QTPATH%/bin;%OPENSSLPath%
     - echo %PATH%
     - echo %OPENSSL_ROOT%
     - mkdir _build
@@ -76,7 +76,7 @@ build_script:
 
 test_script:
     - cd "%APPVEYOR_BUILD_FOLDER%"/_build
-    - set PATH=%QTPATH%;%QTPATH%/bin;%PATH%
+    - set PATH=%PATH%;%QTPATH%;%QTPATH%/bin
     - echo %PATH%
     - ctest --output-on-failure -C "%CONFIGURATION%"
 

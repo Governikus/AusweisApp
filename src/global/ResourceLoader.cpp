@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ResourceLoader.h"
@@ -52,8 +52,8 @@ void ResourceLoader::init()
 		}
 #endif
 
-		bool loaded = QResource::registerResource(path);
-		qDebug() << "Register resource:" << path << "|" << loaded;
+		const auto loaded = QResource::registerResource(path);
+		qDebug() << "Register resource:" << path << '|' << loaded;
 		if (loaded)
 		{
 			mLoadedResources << path;
@@ -66,7 +66,8 @@ void ResourceLoader::shutdown()
 {
 	for (const auto& path : qAsConst(mLoadedResources))
 	{
-		qDebug() << "Unregister resource:" << path << "|" << QResource::unregisterResource(path);
+		const auto result = QResource::unregisterResource(path);
+		qDebug() << "Unregister resource:" << path << '|' << result;
 	}
 	mLoadedResources.clear();
 }

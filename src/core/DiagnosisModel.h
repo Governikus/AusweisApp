@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -45,6 +45,7 @@ class DiagnosisModel
 
 		void initAppVersionInfo();
 		void insertPcScComponentList(const QVector<DiagnosisContext::ComponentInfo>& pComponents, const QSharedPointer<DiagnosisItem>& pParentItem);
+		void removeChildItems(QModelIndex pIndex, QSharedPointer<DiagnosisItem> pParentItem);
 		static const QString boolToString(bool pBoolean);
 
 	private Q_SLOTS:

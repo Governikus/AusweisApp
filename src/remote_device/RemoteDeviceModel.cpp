@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceModel.h"
@@ -334,27 +334,42 @@ void RemoteDeviceModel::constructReaderList()
 
 	if (mShowPairedReaders)
 	{
-		const QVector<QSharedPointer<RemoteDeviceListEntry> >& foundDevices = remoteClient->getRemoteDevices();
+		const QVector<QSharedPointer<RemoteDeviceListEntry> >& announcingDevices = remoteClient->getAnnouncingRemoteDevices();
 
 		for (const auto& pairedReader : qAsConst(mPairedReaders))
 		{
-			bool found = false;
+			bool networkVisible = false;
 			bool supported = true;
-			for (const auto& foundDevice : foundDevices)
+			for (const auto& announcingDevice : announcingDevices)
 			{
-				if (foundDevice && foundDevice->getRemoteDeviceDescriptor().getIfdId() == pairedReader.getFingerprint())
+				if (announcingDevice && announcingDevice->getRemoteDeviceDescriptor().getIfdId() == pairedReader.getFingerprint())
 				{
-					found = true;
-					supported = foundDevice->getRemoteDeviceDescriptor().isSupported();
+					networkVisible = true;
+					supported = announcingDevice->getRemoteDeviceDescriptor().isSupported();
 
 					break;
+				}
+			}
+
+			if (!networkVisible)
+			{
+				const QStringList& connectedDeviceIDs = remoteClient->getConnectedDeviceIDs();
+				for (const auto& id : connectedDeviceIDs)
+				{
+					if (id == pairedReader.getFingerprint())
+					{
+						networkVisible = true;
+						supported = true;
+
+						break;
+					}
 				}
 			}
 
 			auto newEntry = RemoteDeviceModelEntry(pairedReader.getName()
 					, pairedReader.getFingerprint()
 					, true
-					, found
+					, networkVisible
 					, supported
 					, pairedReader.getLastConnected());
 			mAllRemoteReaders.append(newEntry);
@@ -363,9 +378,9 @@ void RemoteDeviceModel::constructReaderList()
 
 	if (mShowUnpairedReaders)
 	{
-		const QVector<QSharedPointer<RemoteDeviceListEntry> >& remoteDevices = remoteClient->getRemoteDevices();
+		const QVector<QSharedPointer<RemoteDeviceListEntry> >& announcingRemoteDevices = remoteClient->getAnnouncingRemoteDevices();
 
-		for (auto deviceListEntry : remoteDevices)
+		for (auto deviceListEntry : announcingRemoteDevices)
 		{
 			if (!mPairedReaders.contains(deviceListEntry->getRemoteDeviceDescriptor().getIfdId()))
 			{

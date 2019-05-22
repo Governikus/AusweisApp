@@ -1,7 +1,7 @@
 /*!
  * \brief Class to provide information about providers.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -78,19 +78,19 @@ class ProviderConfigurationInfo
 
 				bool operator ==(const InternalInfo& pOther) const
 				{
-					return mShortName == pOther.mShortName ||
-						   mLongName == pOther.mLongName ||
-						   mShortDescription == pOther.mShortDescription ||
-						   mLongDescription == pOther.mLongDescription ||
-						   mAddress == pOther.mAddress ||
-						   mHomepage == pOther.mHomepage ||
-						   mCategory == pOther.mCategory ||
-						   mPhone == pOther.mPhone ||
-						   mEmail == pOther.mEmail ||
-						   mPostalAddress == pOther.mPostalAddress ||
-						   mIcon == pOther.mIcon ||
-						   mImage == pOther.mImage ||
-						   mTcTokenUrl == pOther.mTcTokenUrl ||
+					return mShortName == pOther.mShortName &&
+						   mLongName == pOther.mLongName &&
+						   mShortDescription == pOther.mShortDescription &&
+						   mLongDescription == pOther.mLongDescription &&
+						   mAddress == pOther.mAddress &&
+						   mHomepage == pOther.mHomepage &&
+						   mCategory == pOther.mCategory &&
+						   mPhone == pOther.mPhone &&
+						   mEmail == pOther.mEmail &&
+						   mPostalAddress == pOther.mPostalAddress &&
+						   mIcon == pOther.mIcon &&
+						   mImage == pOther.mImage &&
+						   mTcTokenUrl == pOther.mTcTokenUrl &&
 						   mClientUrl == pOther.mClientUrl;
 				}
 

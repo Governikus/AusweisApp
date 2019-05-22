@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteConnectorImpl.h"
@@ -306,6 +306,7 @@ void RemoteConnectorImpl::onConnectRequest(const RemoteDeviceDescriptor& pRemote
 	connect(newRequest.data(), &ConnectRequest::fireConnectionCreated, this, &RemoteConnectorImpl::onConnectionCreated);
 	connect(newRequest.data(), &ConnectRequest::fireConnectionError, this, &RemoteConnectorImpl::onConnectionError);
 	connect(newRequest.data(), &ConnectRequest::fireConnectionTimeout, this, &RemoteConnectorImpl::onConnectionTimeout);
+	qCDebug(remote_device) << "Request connection.";
 	newRequest->start();
 }
 

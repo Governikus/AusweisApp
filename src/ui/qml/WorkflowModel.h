@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the authentication action.
  *
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,6 +29,7 @@ class WorkflowModel
 	Q_PROPERTY(ReaderManagerPlugInType readerPlugInType READ getReaderPlugInType WRITE setReaderPlugInType NOTIFY fireReaderPlugInTypeChanged)
 	Q_PROPERTY(bool isBasicReader READ isBasicReader NOTIFY fireIsBasicReaderChanged)
 	Q_PROPERTY(QString readerImage MEMBER mReaderImage NOTIFY fireReaderImageChanged)
+	Q_PROPERTY(bool hasNextWorkflowPending READ getNextWorkflowPending NOTIFY fireNextWorkflowPendingChanged)
 
 	private:
 		friend class ::test_WorkflowModel;
@@ -52,6 +53,8 @@ class WorkflowModel
 
 		bool isBasicReader();
 
+		bool getNextWorkflowPending() const;
+
 		Q_INVOKABLE void startWorkflow();
 		Q_INVOKABLE void cancelWorkflow();
 		Q_INVOKABLE void cancelWorkflowOnPinBlocked();
@@ -70,6 +73,7 @@ class WorkflowModel
 		void fireReaderPlugInTypeChanged();
 		void fireIsBasicReaderChanged();
 		void fireReaderImageChanged();
+		void fireNextWorkflowPendingChanged();
 };
 
 

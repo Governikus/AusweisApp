@@ -198,6 +198,7 @@ SectionPage {
 						id: identifyButton
 						iconSource: "qrc:///images/npa.svg"
 						text: qsTr("Identify now") + settingsModel.translationTrigger;
+						animationsDisabled: true
 					}
 				}
 			}

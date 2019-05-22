@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInAidl.h"
@@ -48,7 +48,7 @@ UIPlugInAidl::UIPlugInAidl()
 	}
 	else
 	{
-		qWarning(aidl) << "Cannot start AIDL because JSON-API is missing";
+		qCWarning(aidl) << "Cannot start AIDL because JSON-API is missing";
 	}
 
 	instance = this;
@@ -201,7 +201,7 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AidlBinder_aidlSend(JNIEn
 	UIPlugInAidl* plugin = UIPlugInAidl::getInstance();
 	if (!plugin->isSuccessfullInitialized())
 	{
-		qCritical(aidl) << "Cannot call AIDL plugin";
+		qCCritical(aidl) << "Cannot call AIDL plugin";
 		return;
 	}
 

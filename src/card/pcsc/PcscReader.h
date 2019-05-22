@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref Reader for PCSC.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

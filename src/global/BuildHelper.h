@@ -1,28 +1,36 @@
 /*
  * \brief Helper to get build date and time.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include <QtGlobal>
+#include <QCoreApplication>
+#include <QPair>
+#include <QString>
+#include <QVector>
 
 #ifdef Q_OS_ANDROID
 #include <QByteArrayList>
 #endif
+
+#include <functional>
 
 namespace governikus
 {
 
 class BuildHelper
 {
+	Q_DECLARE_TR_FUNCTIONS(BuildHelper)
+
 	private:
 		BuildHelper() = delete;
 		~BuildHelper() = delete;
 
 	public:
-		static const char* getDateTime();
+		static QVector<QPair<QLatin1String, QString> > getInformationHeader();
+		static void processInformationHeader(const std::function<void(const QString&, const QString&)>& pFunc, bool pTranslate = true);
 
 
 #ifdef Q_OS_ANDROID

@@ -1,7 +1,7 @@
 /*!
  * \brief Abstract layer to UI implementations.
  *
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -56,6 +56,7 @@ class UIPlugIn
 		void fireRemoteServiceRequested();
 		void fireQuitApplicationRequest();
 		void fireCloseReminderFinished(bool pDontRemindAgain);
+		void fireApplicationActivated();
 
 		void fireShowUserInformation(const QString& pInformationMessage);
 		void fireUiDominationRequest(const UIPlugIn* pUi, const QString& pInformation);

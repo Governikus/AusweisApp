@@ -5,7 +5,7 @@ def j = new Review
 		name: 'Win32_MSVC',
 		libraries: ['Win32_MSVC_dev'],
 		label: 'MSVC',
-		artifacts: 'tmp/AusweisApp2.*.log',
+		artifacts: 'tmp/*.log',
 		allowEmptyArtifacts: true,
 		xunit: true
 	).generate(this)
@@ -19,13 +19,13 @@ j.with
 
 		batchFile('''\
 			cd build
-			call vcvarsall.bat
+			call vcvarsall.bat x86
 			cmake -Werror=dev ../source -DCMAKE_CXX_COMPILER=clcache -DCMAKE_PREFIX_PATH=%WORKSPACE%/libs/build/dist -GNinja
 			'''.stripIndent().trim())
 
 		batchFile('''\
 			cd build
-			call vcvarsall.bat
+			call vcvarsall.bat x86
 			ninja %MAKE_FLAGS%
 			'''.stripIndent().trim())
 

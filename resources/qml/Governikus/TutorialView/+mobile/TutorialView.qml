@@ -15,7 +15,10 @@ SectionPage {
 	property var lastVisibleItem
 	property int contentWidth: Constants.is_tablet ? root.width * 0.5 : root.width
 
-	leftTitleBarAction: TitleBarAction { state: !topLevelPage ? "back" : ""; onClicked: root.state = "" }
+	leftTitleBarAction: TitleBarAction {
+		state: topLevelPage ? "" : "back";
+		onClicked: state == "back" ? leaveView() : root.state = ""
+	}
 	headerTitleBarAction: TitleBarAction { id: header; text: qsTr("Tutorial") + settingsModel.translationTrigger; font.bold: true }
 
 	onVisibleChanged: {
@@ -182,6 +185,7 @@ SectionPage {
 					width: root.width
 					height: (flickable.height / 13.0 ) * 3.0
 					headerImageSource: "qrc:///images/tutorial/main_menu_what_caret.svg"
+					categoryAbove: false
 					titleText: qsTr("What?") + settingsModel.translationTrigger
 					initY: 0
 					z: 40
@@ -193,6 +197,18 @@ SectionPage {
 							root.state = ""
 						}
 					}
+
+					miniIconSource: "qrc:///images/tutorial/icon_circle.svg"
+					miniIconCoordinates: [
+						{"x": 0.0625,   "y": 0.5},
+						{"x": 0.1875,   "y": 0.15625},
+						{"x": 0.2,   "y": 0.59375},
+						{"x": 0.390625, "y": 0.78125},
+						{"x": 0.65625,  "y": 0.15625},
+						{"x": 0.703125, "y": 0.65625},
+						{"x": 0.890625, "y": 0.625},
+						{"x": 0.90625,  "y": 0.3125},
+					]
 				}
 
 				TutorialWhat {
@@ -217,6 +233,18 @@ SectionPage {
 							root.state = ""
 						}
 					}
+
+					miniIconSource: "qrc:///images/tutorial/icon_star.svg"
+					miniIconCoordinates: [
+						{"x": 0.046875, "y": 0.34375},
+						{"x": 0.1875,   "y": 0.09375},
+						{"x": 0.21875,  "y": 0.65625},
+						{"x": 0.4,      "y": 0.62},
+						{"x": 0.55,     "y": 0.36},
+						{"x": 0.65,     "y": 0.28125},
+						{"x": 0.75,     "y": 0.5625},
+						{"x": 0.890625, "y": 0.5}
+					]
 				}
 
 				TutorialWhere {
@@ -241,6 +269,18 @@ SectionPage {
 							root.state = ""
 						}
 					}
+
+					miniIconSource: "qrc:///images/tutorial/icon_box.svg"
+					miniIconCoordinates: [
+						{"x": 0.03125,  "y": 0.125},
+						{"x": 0.078125, "y": 0.46875},
+						{"x": 0.203125, "y": 0.4375},
+						{"x": 0.32,     "y": 0.68},
+						{"x": 0.64,     "y": 0.21875},
+						{"x": 0.78125,  "y": 0.5625},
+						{"x": 0.875,    "y": 0.0625},
+						{"x": 0.9,      "y": 0.6}
+					]
 				}
 
 				TutorialHow {
@@ -271,6 +311,18 @@ SectionPage {
 							root.state = ""
 						}
 					}
+
+					miniIconSource: "qrc:///images/tutorial/icon_diamond.svg"
+					miniIconCoordinates: [
+						{"x": 0.046875, "y": 0.46875},
+						{"x": 0.14,     "y": 0.22},
+						{"x": 0.25,     "y": 0.71875},
+						{"x": 0.62,     "y": 0.7},
+						{"x": 0.67,     "y": 0.24},
+						{"x": 0.78125,  "y": 0.4375},
+						{"x": 0.796875, "y": 0.65625},
+						{"x": 0.9375,   "y": 0.1875}
+					]
 				}
 
 				TutorialImportant {
@@ -291,6 +343,7 @@ SectionPage {
 			 : whereContent.visible && flickable.contentY > whereHeader.y - 1? Constants.tutorial_green
 			 : Constants.tutorial_orange
 		anchors.bottom: parent.bottom
+		backToMenuActive: root.state !== ""
 
 		onMenuClicked: root.state = ""
 		onQuitTutorialClicked: leaveView()

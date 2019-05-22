@@ -3,6 +3,13 @@
         <file>core/invalid.keysize.rsa.der</file>
         <file>core/invalid.keysize.dsa.der</file>
         <file>core/invalid.keysize.ec.der</file>
+
+        <!-- Data samples created on Windows 10 64 Bit -->
+        <file>core/diagnosis/antivir_one_antivirus.txt</file>
+        <file>core/diagnosis/antivir_one_antivirus_missing_timestamp.txt</file>
+        <file>core/diagnosis/antivir_two_broken_antivirus.txt</file>
+        <file>core/diagnosis/antivir_two_antivirus.txt</file>
+
         <file>core/step/2014_07_03_cvcDescription0.bin</file>
         <file>core/step/2014_07_03_cvcDescription1.bin</file>
         <file>core/step/2014_07_03_cvcDescription2.bin</file>

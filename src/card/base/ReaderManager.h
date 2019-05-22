@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -54,6 +54,11 @@ class ReaderManager
 		 * Stops scan for all device types.
 		 */
 		void stopScanAll();
+
+		/*!
+		 * Queries if any plugin is currently scanning
+		 */
+		bool isScanRunning();
 
 		/*!
 		 * Stops started scan for devices.

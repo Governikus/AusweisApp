@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for EnumHelper.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EnumHelper.h"

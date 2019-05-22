@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BaseCardCommand.h"
@@ -45,7 +45,7 @@ void BaseCardCommand::execute()
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	internalExecute();
-	qDebug(card) << metaObject()->className() << "| ReturnCode of internal execute:" << mReturnCode;
+	qCDebug(card) << metaObject()->className() << "| ReturnCode of internal execute:" << mReturnCode;
 
 	// A "Command" is created by CardConnection::call() in Main-Thread and moved to ReaderManager-Thread.
 	// The internal execution of a command will be self-sufficient until it has finished. After the

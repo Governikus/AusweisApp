@@ -1,7 +1,7 @@
 /*!
  * \brief Send RemoteReaderDiscoverCmds and maintain a list of responsive peers.
  *
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -62,8 +62,9 @@ class RemoteClientImpl
 
 		Q_INVOKABLE virtual void establishConnection(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const QString& pPsk) override;
 
-		virtual QVector<QSharedPointer<RemoteDeviceListEntry> > getRemoteDevices() const override;
+		virtual QVector<QSharedPointer<RemoteDeviceListEntry> > getAnnouncingRemoteDevices() const override;
 		Q_INVOKABLE virtual void requestRemoteDevices()  override;
+		virtual QStringList getConnectedDeviceIDs() const override;
 		virtual QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
 };
 

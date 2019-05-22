@@ -2,7 +2,7 @@
  * \brief Generic class that allows to download files from a server to the
  *        local application cache.
  *
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

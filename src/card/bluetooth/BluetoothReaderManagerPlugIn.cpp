@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BluetoothReaderManagerPlugIn.h"
@@ -28,7 +28,6 @@ BluetoothReaderManagerPlugIn::BluetoothReaderManagerPlugIn()
 	, mReaders()
 	, mReadersDiscoveredInCurrentScan()
 	, mTimerIdDiscoverPairedDevices(0)
-	, mScanInProgress(false)
 {
 	connect(&mDeviceDiscoveryAgent, &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this, &BluetoothReaderManagerPlugIn::onDeviceDiscovered);
 	connect(&mDeviceDiscoveryAgent, &QBluetoothDeviceDiscoveryAgent::finished, this, &BluetoothReaderManagerPlugIn::onDeviceDiscoveryFinished);
@@ -81,7 +80,7 @@ void BluetoothReaderManagerPlugIn::startScan(bool /*pAutoConnect*/)
 		mDeviceDiscoveryAgent.start();
 	}
 
-	setScanInProgress(true);
+	setScanRunning(true);
 }
 
 
@@ -110,27 +109,34 @@ void BluetoothReaderManagerPlugIn::stopScan()
 		qCWarning(bluetooth) << "Bluetooth device discovery not running";
 	}
 
-	setScanInProgress(false);
+	setScanRunning(false);
 }
 
 
-void BluetoothReaderManagerPlugIn::setScanInProgress(bool pScanInProgress)
+void BluetoothReaderManagerPlugIn::setScanRunning(bool pScanRunning)
 {
-	if (mScanInProgress != pScanInProgress)
+	if (isScanRunning() != pScanRunning)
 	{
-		mScanInProgress = pScanInProgress;
-		onScanInProgressChanged();
+		if (pScanRunning)
+		{
+			ReaderManagerPlugIn::startScan(false);
+		}
+		else
+		{
+			ReaderManagerPlugIn::stopScan();
+		}
+		onScanRunningChanged();
 	}
 }
 
 
-void BluetoothReaderManagerPlugIn::onScanInProgressChanged()
+void BluetoothReaderManagerPlugIn::onScanRunningChanged()
 {
 	const auto& values = mReaders.values();
 	for (BluetoothReader* const reader : values)
 	{
 		const bool connected = reader->getReaderInfo().isConnected();
-		if (mScanInProgress && !connected)
+		if (isScanRunning() && !connected)
 		{
 			/*
 			 * Workaround for pairing problem on Android:
@@ -146,7 +152,7 @@ void BluetoothReaderManagerPlugIn::onScanInProgressChanged()
 						reader->connectReader();
 					});
 		}
-		else if (connected && !mScanInProgress)
+		else if (connected && !isScanRunning())
 		{
 			reader->disconnectReader();
 		}
@@ -237,7 +243,7 @@ void BluetoothReaderManagerPlugIn::onDeviceInitialized(const QBluetoothDeviceInf
 	mReaders.insert(deviceId, reader);
 	connect(device.data(), &CyberJackWaveDevice::fireDisconnected, this, &BluetoothReaderManagerPlugIn::onDeviceDisconnected);
 
-	if (mScanInProgress)
+	if (isScanRunning())
 	{
 		mPendingConnections.insert(reader->getName(), 1);
 
@@ -278,7 +284,7 @@ void BluetoothReaderManagerPlugIn::onDeviceDisconnected(const QBluetoothDeviceIn
 
 void BluetoothReaderManagerPlugIn::onDeviceDiscoveryFinished()
 {
-	if (mScanInProgress)
+	if (isScanRunning())
 	{
 		mDeviceDiscoveryAgent.start();
 		return;

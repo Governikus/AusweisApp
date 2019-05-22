@@ -1,8 +1,10 @@
 /*
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BuildHelper.h"
+
+#include "DeviceInfo.h"
 
 #ifdef Q_OS_ANDROID
 #include "VersionNumber.h"
@@ -11,6 +13,9 @@
 #include <QAndroidJniObject>
 #include <QtAndroid>
 #endif
+
+#include <openssl/crypto.h>
+#include <QSysInfo>
 
 using namespace governikus;
 
@@ -144,3 +149,58 @@ QByteArrayList BuildHelper::getAppCertificates(const QString& pPackageName)
 
 
 #endif
+
+QVector<QPair<QLatin1String, QString> > BuildHelper::getInformationHeader()
+{
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+	#define OpenSSL_version SSLeay_version
+	#define OPENSSL_VERSION SSLEAY_VERSION
+#endif
+
+	QVector<QPair<QLatin1String, QString> > data;
+	const auto& add = [&data](const char* pKey, const QString& pStr)
+			{
+				data << qMakePair(QLatin1String(pKey), pStr);
+			};
+
+	add(QT_TR_NOOP("Application"), QCoreApplication::applicationName());
+	add(QT_TR_NOOP("Application Version"), QCoreApplication::applicationVersion());
+	add(QT_TR_NOOP("Organization"), QCoreApplication::organizationName());
+	add(QT_TR_NOOP("Organization Domain"), QCoreApplication::organizationDomain());
+
+	add(QT_TR_NOOP("System"), QSysInfo::prettyProductName());
+	add(QT_TR_NOOP("Kernel"), QSysInfo::kernelVersion());
+
+	QString architecture = QSysInfo::currentCpuArchitecture();
+#ifdef Q_OS_ANDROID
+	if (architecture != QSysInfo::buildCpuArchitecture())
+	{
+		architecture += QStringLiteral(" (%1)").arg(QSysInfo::buildCpuArchitecture());
+	}
+#endif
+	add(QT_TR_NOOP("Architecture"), architecture);
+
+#ifdef Q_OS_ANDROID
+	add(QT_TR_NOOP("Device"), DeviceInfo::getPrettyInfo());
+	add(QT_TR_NOOP("VersionCode"), QString::number(getVersionCode()));
+#else
+	add(QT_TR_NOOP("Device"), DeviceInfo::getName());
+#endif
+
+	add(QT_TR_NOOP("Qt Version"), QString::fromLatin1(qVersion()));
+	add(QT_TR_NOOP("OpenSSL Version"), QString::fromLatin1(OpenSSL_version(OPENSSL_VERSION)));
+
+	return data;
+}
+
+
+void BuildHelper::processInformationHeader(const std::function<void(const QString&, const QString&)>& pFunc, bool pTranslate)
+{
+	const auto& info = getInformationHeader();
+
+	for (const auto& entry : info)
+	{
+		const auto& key = entry.first;
+		pFunc(pTranslate ? tr(key.data()) : QString(key), entry.second);
+	}
+}

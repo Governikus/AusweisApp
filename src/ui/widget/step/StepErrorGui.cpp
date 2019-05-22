@@ -1,14 +1,19 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StepErrorGui.h"
 
 #include "AppQtMainWidget.h"
+#include "BuildHelper.h"
+#include "EnumHelper.h"
+#include "Env.h"
 #include "generic/GuiUtils.h"
 #include "LogFileSaveDialog.h"
+#include "LogHandler.h"
 
 #include <QApplication>
+#include <QDesktopServices>
 #include <QLoggingCategory>
 #include <QTimer>
 
@@ -71,11 +76,16 @@ void StepErrorGui::reportError()
 	if (mMessageBox.isNull())
 	{
 		mMessageBox = QPointer<QMessageBox>(new QMessageBox(mMainWidget));
-
 		QPushButton* saveLogButton = nullptr;
+		QPushButton* sendEmailButton = nullptr;
+
 		if (mContext->getStatus().is(GlobalStatus::Code::Card_Unexpected_Transmit_Status) || mContext->getStatus().isMessageMasked())
 		{
-			saveLogButton = mMessageBox->addButton(tr("Save Log"), QMessageBox::HelpRole);
+			if (Env::getSingleton<LogHandler>()->useLogfile())
+			{
+				saveLogButton = mMessageBox->addButton(tr("Save Log"), QMessageBox::HelpRole);
+			}
+			sendEmailButton = mMessageBox->addButton(tr("Send email"), QMessageBox::HelpRole);
 		}
 		mMessageBox->setWindowTitle(QApplication::applicationName() + QStringLiteral(" - ") + tr("Error"));
 		mMessageBox->setWindowModality(Qt::ApplicationModal);
@@ -91,8 +101,18 @@ void StepErrorGui::reportError()
 			{
 				LogFileSaveDialog().saveLogFile(mMessageBox);
 			}
+			else if (mMessageBox->clickedButton() == sendEmailButton)
+			{
+				const GlobalStatus status = mContext->getStatus();
+				//: Subject from error report mail
+				QString mailSubject = tr("AusweisApp2 error report - %1").arg(status.toErrorDescription());
+				QString mailBody = generateMailBody(status);
+				QString url = QStringLiteral("mailto:support@ausweisapp.de?subject=%1&body=%2").arg(mailSubject, mailBody);
+
+				QDesktopServices::openUrl(url);
+			}
 		}
-		while (mMessageBox->clickedButton() == saveLogButton);
+		while (mMessageBox->clickedButton() == saveLogButton || mMessageBox->clickedButton() == sendEmailButton);
 	}
 
 	Q_EMIT fireUiFinished();
@@ -111,4 +131,42 @@ void StepErrorGui::closeActiveDialogs()
 	{
 		mMessageBox->reject();
 	}
+}
+
+
+QString StepErrorGui::generateMailBody(const GlobalStatus& pStatus) const
+{
+	const auto& logHandler = Env::getSingleton<LogHandler>();
+	QStringList mailBody(tr("Please describe the error that occurred."));
+
+	if (logHandler->useLogfile())
+	{
+		mailBody << tr("You may want to attach the logfile which can be saved from the error dialog.");
+	}
+
+	const QString newLine = QStringLiteral("\n");
+	mailBody << newLine;
+
+	const auto& systemInfo = BuildHelper::getInformationHeader();
+	for (const auto& info : systemInfo)
+	{
+		QString first = info.first;
+		QString second = info.second;
+
+		first.replace(QStringLiteral("&"), QStringLiteral("%26"));
+		second.replace(QStringLiteral("&"), QStringLiteral("%26"));
+
+		mailBody << first + QStringLiteral(": ") + second;
+	}
+
+	mailBody << newLine + tr("Error code") + QLatin1Char(':');
+	mailBody << getEnumName(pStatus.getStatusCode());
+
+	if (logHandler->hasCriticalLog())
+	{
+		const QString criticalMessages = QString::fromUtf8(logHandler->getCriticalLogWindow());
+		mailBody << newLine + tr("Critical errors:") + newLine + criticalMessages;
+	}
+
+	return mailBody.join(newLine);
 }

@@ -1,7 +1,7 @@
 /*!
  * \brief Generic base class for Qt based WorkflowUi implementations.
  *
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

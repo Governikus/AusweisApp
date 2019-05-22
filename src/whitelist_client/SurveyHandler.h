@@ -2,7 +2,7 @@
  * \brief Class holding information about an Android device to be sent to
  * the whitelist server.
  *
- * \copyright Copyright (c) 2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

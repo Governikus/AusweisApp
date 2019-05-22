@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppController.h"
@@ -140,6 +140,11 @@ bool AppController::eventFilter(QObject* pObj, QEvent* pEvent)
 	}
 #endif
 
+	if (pEvent->type() == QEvent::ApplicationActivated)
+	{
+		Q_EMIT fireApplicationActivated();
+	}
+
 	return QObject::eventFilter(pObj, pEvent);
 }
 
@@ -163,9 +168,10 @@ bool AppController::start()
 
 	for (const auto& handler : ActivationHandler::getInstances())
 	{
+		connect(this, &AppController::fireApplicationActivated, handler, &ActivationHandler::onApplicationActivated);
 		connect(handler, &ActivationHandler::fireShowUserInformation, this, &AppController::fireShowUserInformation);
 		connect(handler, &ActivationHandler::fireShowUiRequest, this, &AppController::fireShowUi);
-		connect(handler, &ActivationHandler::fireAuthenticationRequest, this, &AppController::onAuthenticationRequest);
+		connect(handler, &ActivationHandler::fireAuthenticationRequest, this, &AppController::onAuthenticationRequest, Qt::QueuedConnection);
 
 		if (!handler->start())
 		{
@@ -266,6 +272,7 @@ void AppController::onChangePinRequested()
 	if (mWaitingRequest.isNull())
 	{
 		qDebug() << "PIN change enqueued";
+		mActiveController->getContext()->setNextWorkflowPending(true);
 		const auto& context = QSharedPointer<ChangePinContext>::create(true);
 		mWaitingRequest.reset(new WorkflowRequest(Action::PIN, context));
 
@@ -473,6 +480,7 @@ void AppController::onUiPlugin(UIPlugIn* pPlugin)
 	connect(this, &AppController::fireHideUi, pPlugin, &UIPlugIn::onHideUi);
 	connect(this, &AppController::fireShowUserInformation, pPlugin, &UIPlugIn::fireShowUserInformation);
 	connect(this, &AppController::fireShowReaderSettings, pPlugin, &UIPlugIn::onShowReaderSettings);
+	connect(this, &AppController::fireApplicationActivated, pPlugin, &UIPlugIn::fireApplicationActivated);
 	connect(this, &AppController::fireUiDomination, pPlugin, &UIPlugIn::onUiDomination);
 	connect(this, &AppController::fireUiDominationReleased, pPlugin, &UIPlugIn::onUiDominationReleased);
 

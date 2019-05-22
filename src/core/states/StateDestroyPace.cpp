@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -9,7 +9,7 @@
 using namespace governikus;
 
 StateDestroyPace::StateDestroyPace(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractGenericState(pContext, false)
 {
 }
 

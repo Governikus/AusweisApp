@@ -1,16 +1,25 @@
 language: shell
 sudo: required
 
+cache:
+  ccache: true
+  directories:
+    - $HOME/.ccache
+
 env:
   matrix:
     - CHECK=format
     - CHECK=docs
+    - CHECK=build TYPE=debug COMPILER=g++
+    - CHECK=build TYPE=release COMPILER=g++
+    - CHECK=build TYPE=debug COMPILER=clang++
+    - CHECK=build TYPE=release COMPILER=clang++
 
 install:
-  - sudo resources/travis/setup.sh $CHECK
+  - sudo -E resources/travis/setup.sh
 
 script:
-  - sudo resources/travis/build.sh $CHECK
+  - sudo -E resources/travis/build.sh
 
 notifications:
   email: false

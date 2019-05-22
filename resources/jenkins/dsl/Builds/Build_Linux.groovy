@@ -33,13 +33,11 @@ j.with
 			'''))
 
 		shell('''\
-			export LD_LIBRARY_PATH=$WORKSPACE/libs/build/dist/lib:$LD_LIBRARY_PATH
 			cd build; make ${MAKE_FLAGS}
 			'''.stripIndent().trim())
 
 		shell('''\
 			export QML2_IMPORT_PATH=$WORKSPACE/libs/build/dist/qml
-			export LD_LIBRARY_PATH=$WORKSPACE/libs/build/dist/lib:$LD_LIBRARY_PATH
 			export ASAN_OPTIONS=detect_leaks=0,new_delete_type_mismatch=0
 			cd build; ctest --output-on-failure ${MAKE_FLAGS}
 			'''.stripIndent().trim())

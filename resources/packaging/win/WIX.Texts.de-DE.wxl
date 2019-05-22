@@ -48,6 +48,6 @@
 	<String Id="CustomInstallDirDlg_Title" Overridable="yes">Installationsoptionen</String>
 	<String Id="CustomInstallDirDlg_Description" Overridable="yes"></String>
 	<String Id="CustomInstallDirDlg_DesktopShortcutCheckBox" Overridable="yes">Verknüpfung auf dem Desktop anlegen</String>
-	<String Id="CustomInstallDirDlg_SystemSettingsCheckBox" Overridable="yes">Die [ProductName] im System registrieren (Firewall- und Browser-Einstellungen vornehmen)</String>
+	<String Id="CustomInstallDirDlg_SystemSettingsCheckBox" Overridable="yes">Notwendige Regeln zur Windows-Firewall hinzufügen</String>
 	<String Id="CustomExitDialog_LaunchCheckBox" Overridable="yes">Starten der AusweisApp2</String>
 </WixLocalization>

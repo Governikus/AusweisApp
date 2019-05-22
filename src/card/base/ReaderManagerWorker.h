@@ -1,7 +1,7 @@
 /*!
  * \brief Worker implementation of ReaderManger thread
  *
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -35,6 +35,7 @@ class ReaderManagerWorker
 
 		Q_INVOKABLE void startScan(ReaderManagerPlugInType pType, bool pAutoConnect);
 		Q_INVOKABLE void stopScan(ReaderManagerPlugInType pType);
+		Q_INVOKABLE bool isScanRunning() const;
 
 		Q_INVOKABLE QVector<ReaderManagerPlugInInfo> getPlugInInfos() const;
 		Q_INVOKABLE QVector<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const;

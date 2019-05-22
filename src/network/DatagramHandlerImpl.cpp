@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandlerImpl.h"
@@ -8,6 +8,7 @@
 
 #include <QLoggingCategory>
 #include <QMutexLocker>
+#include <QNetworkDatagram>
 #include <QNetworkInterface>
 #include <QNetworkProxy>
 #include <QWeakPointer>
@@ -39,6 +40,7 @@ quint16 DatagramHandlerImpl::cPort = PortFile::cDefaultPort;
 DatagramHandlerImpl::DatagramHandlerImpl(bool pListen, quint16 pPort)
 	: DatagramHandler()
 	, mSocket(new QUdpSocket)
+	, mMulticastLock()
 	, mUsedPort(pPort)
 	, mPortFile(QStringLiteral("udp"))
 {
@@ -62,6 +64,7 @@ DatagramHandlerImpl::DatagramHandlerImpl(bool pListen, quint16 pPort)
 	}
 	else if (mSocket->bind(mUsedPort))
 	{
+		mMulticastLock.reset(new MulticastLock);
 		mUsedPort = mSocket->localPort(); // if user provides 0, we need to overwrite it with real value
 		mPortFile.handlePort(mUsedPort);
 		qCDebug(network) << "Bound on port:" << mUsedPort;
@@ -193,12 +196,13 @@ void DatagramHandlerImpl::onReadyRead()
 {
 	while (mSocket->hasPendingDatagrams())
 	{
-		QByteArray datagram;
-		QHostAddress addr;
-
-		datagram.resize(static_cast<int>(mSocket->pendingDatagramSize()));
-		mSocket->readDatagram(datagram.data(), datagram.size(), &addr);
-
-		Q_EMIT fireNewMessage(datagram, addr);
+		const QNetworkDatagram& datagram = mSocket->receiveDatagram();
+		if (!datagram.isValid())
+		{
+			qCCritical(network) << "Cannot read datagram";
+			Q_ASSERT(false);
+			continue;
+		}
+		Q_EMIT fireNewMessage(datagram.data(), datagram.senderAddress());
 	}
 }

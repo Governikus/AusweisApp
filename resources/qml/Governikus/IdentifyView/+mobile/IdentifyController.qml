@@ -173,7 +173,7 @@ Item {
 				break
 			case "FinalState":
 				navBar.lockedAndHidden = true
-				if (AuthModel.error) {
+				if (AuthModel.error && !AuthModel.hasNextWorkflowPending) {
 					showRemoveCardFeedback()
 					firePush(identifyResult)
 				} else {

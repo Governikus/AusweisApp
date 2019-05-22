@@ -1,34 +1,55 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisController.h"
 
 #include "ReaderManager.h"
 
+#include <QLoggingCategory>
 #include <QNetworkInterface>
 #include <QSysInfo>
 #include <QtConcurrent/QtConcurrent>
 
 using namespace governikus;
 
+Q_DECLARE_LOGGING_CATEGORY(diagnosis)
 
 DiagnosisController::DiagnosisController(const QSharedPointer<DiagnosisContext>& pContext, QObject* pParent)
 	: QObject(pParent)
 	, mContext(pContext)
 	, mWatcherPcscInfo()
+	, mScanHasToBeStopped(false)
 {
 	connect(&mWatcherPcscInfo, &QFutureWatcher<PcscInfo>::finished, this, &DiagnosisController::onPcscInfoRetrieved);
+
+	const auto& readerManager = Env::getSingleton<ReaderManager>();
+	connect(readerManager, &ReaderManager::fireReaderEvent, this, &DiagnosisController::onFireReaderEvent);
 }
 
 
 DiagnosisController::~DiagnosisController()
 {
+	if (mScanHasToBeStopped)
+	{
+		qCDebug(diagnosis) << "Stopping scans.";
+		const auto& readerManager = Env::getSingleton<ReaderManager>();
+		readerManager->stopScanAll();
+		mScanHasToBeStopped = false;
+	}
 }
 
 
 void DiagnosisController::run()
 {
+	const auto& readerManager = Env::getSingleton<ReaderManager>();
+	if (!readerManager->isScanRunning())
+	{
+		qCDebug(diagnosis) << "Scan not running, starting scan ourself and stop it afterwards.";
+		readerManager->startScanAll(true);
+		mScanHasToBeStopped = true;
+	}
+
 	mWatcherPcscInfo.setFuture(QtConcurrent::run(&DiagnosisController::retrievePcscInfo));
 	collectInterfaceInformation();
 }
@@ -46,8 +67,7 @@ void DiagnosisController::checkDone()
 {
 	if (mWatcherPcscInfo.isFinished())
 	{
-		mContext->setReaderInfos(Env::getSingleton<ReaderManager>()->getReaderInfos());
-		mContext->setTimestamp(QDateTime::currentDateTime());
+		onFireReaderEvent();
 	}
 }
 
@@ -90,4 +110,11 @@ DiagnosisController::PcscInfo DiagnosisController::retrievePcscInfo()
 	}
 
 	return result;
+}
+
+
+void DiagnosisController::onFireReaderEvent()
+{
+	mContext->setReaderInfos(Env::getSingleton<ReaderManager>()->getReaderInfos());
+	mContext->setTimestamp(QDateTime::currentDateTime());
 }

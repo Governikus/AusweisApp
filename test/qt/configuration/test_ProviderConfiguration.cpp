@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ProviderConfiguration
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfiguration.h"
@@ -10,9 +10,9 @@
 
 #include <QtTest>
 
-
 using namespace governikus;
 
+Q_DECLARE_METATYPE(ProviderConfigurationInfo)
 
 class test_ProviderConfiguration
 	: public QObject
@@ -161,6 +161,120 @@ class test_ProviderConfiguration
 			QCOMPARE(callCost.getLandlineCentsPerCall(), landlineCentsPerCall);
 			QCOMPARE(callCost.getMobileCentsPerMinute(), mobileCentsPerMinute);
 			QCOMPARE(callCost.getMobileCentsPerCall(), mobileCentsPerCall);
+		}
+
+
+		void testProviderHosts_data()
+		{
+			QTest::addColumn<ProviderConfigurationInfo>("provider");
+
+			const auto& providers = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
+			for (const auto& provider : providers)
+			{
+				QTest::newRow(provider.getShortName().toString().toUtf8().constData()) << provider;
+			}
+
+		}
+
+
+		void testProviderHosts()
+		{
+			QFETCH(ProviderConfigurationInfo, provider);
+
+			const auto& address = QUrl(provider.getAddress());
+			QVERIFY(!address.host().isEmpty());
+			QCOMPARE(address.scheme(), QString("https"));
+
+			const auto& homepage = QUrl(provider.getHomepage());
+			QVERIFY(!homepage.host().isEmpty());
+			QCOMPARE(homepage.scheme(), QString("https"));
+
+			if (!provider.getTcTokenUrl().isEmpty())
+			{
+				const auto& tcTokenUrl = QUrl(provider.getTcTokenUrl());
+				QVERIFY(!tcTokenUrl.host().isEmpty());
+				QCOMPARE(tcTokenUrl.scheme(), QString("https"));
+			}
+
+			if (!provider.getClientUrl().isEmpty())
+			{
+				const auto& clientUrl = QUrl(provider.getClientUrl());
+				QVERIFY(!clientUrl.host().isEmpty());
+				QCOMPARE(clientUrl.scheme(), QString("https"));
+			}
+
+			const auto& subjectUrls = provider.getSubjectUrls();
+			for (const auto& url : subjectUrls)
+			{
+				if (!url.isEmpty())
+				{
+					const auto& subjectUrl = QUrl(url);
+					QVERIFY(!subjectUrl.host().isEmpty());
+					QCOMPARE(subjectUrl.scheme(), QString("https"));
+				}
+			}
+		}
+
+
+		void testProvidersAreEqual()
+		{
+			const ProviderConfigurationInfo provider1(
+				/* short name  */ QStringLiteral("Provider"),
+				/* long name  */ QStringLiteral("Provider - long name"),
+				/* short description */ QStringLiteral("Provider description short"),
+				/* long description */ QStringLiteral("Provider description long"),
+				/* address */ QStringLiteral("https://www.homepage.com/form/"),
+				/* homepage */ QStringLiteral("https://www.homepage.com/"),
+				/* category */ QStringLiteral("CategoryA"),
+				/* phone */ QStringLiteral("0421 123456"),
+				/* email */ QStringLiteral("abc@def.de"),
+				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
+				/* icon */ QString(),
+				/* image */ QString(),
+				/* tcTokenUrl */ QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf"),
+				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
+				/* subjectUrls */ QStringList({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla1")})
+				);
+
+			const ProviderConfigurationInfo provider2(
+				/* short name  */ QStringLiteral("Provider"),
+				/* long name  */ QStringLiteral("Provider - long name"),
+				/* short description */ QStringLiteral("Provider description short"),
+				/* long description */ QStringLiteral("Provider description long"),
+				/* address */ QStringLiteral("https://www.homepage.com/form/"),
+				/* homepage */ QStringLiteral("https://www.homepage.com/"),
+				/* category */ QStringLiteral("CategoryB"),
+				/* phone */ QStringLiteral("0421 123456"),
+				/* email */ QStringLiteral("abc@def.de"),
+				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
+				/* icon */ QString(),
+				/* image */ QString(),
+				/* tcTokenUrl */ QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf"),
+				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
+				/* subjectUrls */ QStringList({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla1")})
+				);
+
+			const ProviderConfigurationInfo provider3(
+				/* short name  */ QStringLiteral("Provider"),
+				/* long name  */ QStringLiteral("Provider - long name"),
+				/* short description */ QStringLiteral("Provider description short"),
+				/* long description */ QStringLiteral("Provider description long"),
+				/* address */ QStringLiteral("https://www.homepage.com/form/"),
+				/* homepage */ QStringLiteral("https://www.homepage.com/"),
+				/* category */ QStringLiteral("CategoryB"),
+				/* phone */ QStringLiteral("0421 123456"),
+				/* email */ QStringLiteral("abc@def.de"),
+				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
+				/* icon */ QString(),
+				/* image */ QString(),
+				/* tcTokenUrl */ QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf"),
+				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
+				/* subjectUrls */ QStringList({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla1")})
+				);
+
+			QVERIFY(provider1 == provider1);
+			QVERIFY(!(provider1 == provider2));
+			QVERIFY(provider2 == provider3);
 		}
 
 

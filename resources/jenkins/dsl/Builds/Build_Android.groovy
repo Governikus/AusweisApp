@@ -40,6 +40,11 @@ j.with
 
 	publishers {
 		androidLint('build/dist/build/outputs/lint-results-*.xml')
+		{
+			thresholds(
+				unstableTotal: [all: 14]
+			)
+		}
 	}
 }
 
@@ -88,6 +93,11 @@ j.with
 
 	publishers {
 		androidLint('build/dist/build/outputs/lint-results-*.xml')
+		{
+			thresholds(
+				unstableTotal: [all: 12]
+			)
+		}
 	}
 }
 

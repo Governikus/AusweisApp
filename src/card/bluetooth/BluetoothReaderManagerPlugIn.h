@@ -1,7 +1,7 @@
 /*!
  * \brief Implements the ReaderManagerPlugIn with Qt'S Bluetooth API.
  *
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,12 +37,11 @@ class BluetoothReaderManagerPlugIn
 		QMap<QString, int> mPendingConnections;
 		QStringList mReadersDiscoveredInCurrentScan;
 		int mTimerIdDiscoverPairedDevices;
-		bool mScanInProgress;
 
 		void onRemoveReader(const QString& pDeviceId);
 		void timerEvent(QTimerEvent* event) override;
-		void setScanInProgress(bool pScanInProgress);
-		void onScanInProgressChanged();
+		void setScanRunning(bool pScanRunning);
+		void onScanRunningChanged();
 
 		QVector<QString> deviceIdsForReaderName(const QString& pReaderName);
 

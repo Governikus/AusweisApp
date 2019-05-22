@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref NumberModel
  *
- * \copyright Copyright (c) 2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -270,7 +270,7 @@ class test_NumberModel
 			model.mContext = context;
 			QCOMPARE(model.getInputError(), QStringLiteral("%1 <a href=\"%2\">%3</a>.").arg(
 					tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at"),
-					tr("https://www.ausweisapp.bund.de/en/service/support/"),
+					tr("https://www.ausweisapp.bund.de/en/qa/support/"),
 					tr("AusweisApp2 Support")));
 			QVERIFY(model.hasError());
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthContext.h"
@@ -17,6 +17,7 @@ AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationCon
 	: WorkflowContext()
 	, mTcTokenNotFound(true)
 	, mErrorReportedToServer(false)
+	, mSkipRedirect(false)
 	, mActivationContext(pActivationContext)
 	, mTcTokenUrl()
 	, mTcToken()

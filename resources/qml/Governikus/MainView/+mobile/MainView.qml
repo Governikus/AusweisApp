@@ -4,9 +4,34 @@ import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.ApplicationModel 1.0
 
-
 Item {
 	id: baseItem
+
+	QtObject {
+		id: d
+
+		property int testPkiCounter: 0
+
+		function toggleTestPki() {
+			d.testPkiCounter += 1
+			switch (d.testPkiCounter) {
+				case 7:
+				case 8:
+				case 9:
+					qmlExtension.showFeedback(10-d.testPkiCounter + qsTr(" more presses to toggle test PKI.") + settingsModel.translationTrigger)
+					break;
+				case 10:
+					settingsModel.useSelfauthenticationTestUri = !settingsModel.useSelfauthenticationTestUri
+					if(settingsModel.useSelfauthenticationTestUri) {
+						qmlExtension.showFeedback(qsTr("Test PKI activated.") + settingsModel.translationTrigger)
+					} else {
+						qmlExtension.showFeedback(qsTr("Test PKI deactivated.") + settingsModel.translationTrigger)
+					}
+					d.testPkiCounter = 0;
+					break;
+			}
+		}
+	}
 
 	Column {
 		readonly property int maxWidth: width - 2 * Constants.pane_padding
@@ -29,6 +54,13 @@ Item {
 				width: Math.min(maxHeight * ratio, parent.width * 0.4)
 				fillMode: Image.PreserveAspectFit
 				source: "qrc:///images/siteWithLogo.png"
+
+				MouseArea {
+					anchors.fill: parent
+					onClicked: {
+						d.toggleTestPki()
+					}
+				}
 			}
 
 			Text {

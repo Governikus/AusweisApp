@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SignalHandler.h"
@@ -16,7 +16,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(system)
 
 
-BOOL __RPC_CALLEE SignalHandler::ctrlHandler(DWORD pCtrlType)
+BOOL WINAPI SignalHandler::ctrlHandler(DWORD pCtrlType)
 {
 	qCWarning(system) << "Got signal:" << pCtrlType;
 

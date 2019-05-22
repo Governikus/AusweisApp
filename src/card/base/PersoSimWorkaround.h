@@ -1,7 +1,7 @@
 /*!
  * \brief This class is only to mark it as a workaround for working with the PersoSim.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

@@ -52,6 +52,15 @@ ApplicationWindow {
 		anchors.top: parent.top
 		anchors.right: parent.right
 		anchors.bottom: Constants.bottomNavigation ? navBar.top : parent.bottom
+
+		onReadyChanged: {
+			splashScreen.hide()
+			if (!ApplicationModel.currentWorkflow && !settingsModel.showTutorialOnStart) {
+				navBar.lockedAndHidden = false
+			}
+
+			feedback.showIfNecessary()
+		}
 	}
 
 	Navigation {
@@ -106,8 +115,7 @@ ApplicationWindow {
 		x: (appWindow.width - width) / 2
 		y: (appWindow.height - height) / 2
 
-		property alias ready: contentArea.ready
-		onReadyChanged: {
+		function showIfNecessary() {
 			if (ApplicationModel.areStoreFeedbackDialogConditionsMet()) {
 				ApplicationModel.hideFutureStoreFeedbackDialogs()
 				feedback.open()
@@ -115,16 +123,14 @@ ApplicationWindow {
 		}
 	}
 
+	Connections {
+		target: plugin
+		enabled: contentArea.ready
+		onFireApplicationActivated: feedback.showIfNecessary()
+	}
+
 	SplashScreen {
 		id: splashScreen
 		color: appWindow.color
-
-		property alias ready: contentArea.ready
-		onReadyChanged: {
-			splashScreen.hide()
-			if (!ApplicationModel.currentWorkflow && !settingsModel.showTutorialOnStart) {
-				navBar.lockedAndHidden = false
-			}
-		}
 	}
 }

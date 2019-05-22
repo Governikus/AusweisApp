@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManager.h"
@@ -148,6 +148,14 @@ void ReaderManager::stopScanAll()
 	{
 		stopScan(plugInType);
 	}
+}
+
+
+bool ReaderManager::isScanRunning()
+{
+	bool running = false;
+	QMetaObject::invokeMethod(mWorker.data(), &ReaderManagerWorker::isScanRunning, Qt::BlockingQueuedConnection, &running);
+	return running;
 }
 
 

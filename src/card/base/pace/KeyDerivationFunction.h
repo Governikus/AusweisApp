@@ -1,7 +1,7 @@
 /*!
  * \brief Creates key according to TR 03110 Part 3 chapters A.2.3 ff.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

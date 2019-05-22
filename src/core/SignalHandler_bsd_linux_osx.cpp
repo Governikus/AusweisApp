@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SignalHandler.h"
@@ -27,7 +27,7 @@ void SignalHandler::initUnix()
 
 	if (::socketpair(AF_UNIX, SOCK_STREAM, 0, cSignalSocketPair))
 	{
-		qCritical(system) << "** Failed to set up socket pair for signaling! **";
+		qCCritical(system) << "** Failed to set up socket pair for signaling! **";
 		return;
 	}
 

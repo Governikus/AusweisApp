@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref GeneralSettings
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QCoreApplication>
@@ -205,9 +205,12 @@ class test_GeneralSettings
 #if defined(Q_OS_IOS)
 			QCOMPARE(mSettings->isRequestStoreFeedback(), false);
 #else
-			QCOMPARE(mSettings->isRequestStoreFeedback(), true);
+			QCOMPARE(mSettings->isRequestStoreFeedback(), false);
 #endif
 
+			mSettings->setRequestStoreFeedback(true);
+			mSettings->save();
+			QCOMPARE(mSettings->isRequestStoreFeedback(), true);
 			mSettings->setRequestStoreFeedback(false);
 			mSettings->save();
 			QCOMPARE(mSettings->isRequestStoreFeedback(), false);

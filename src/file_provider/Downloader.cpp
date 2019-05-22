@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Downloader.h"
@@ -77,7 +77,7 @@ void Downloader::onSslHandshakeDone()
 	if (!Env::getSingleton<NetworkManager>()->checkUpdateServerCertificate(*mCurrentReply))
 	{
 		const QString& textForLog = mCurrentRequest->url().fileName();
-		qCritical(fileprovider).nospace() << "Untrusted certificate found [" << textForLog << "]: " << cfg.peerCertificate();
+		qCCritical(fileprovider).nospace() << "Untrusted certificate found [" << textForLog << "]: " << cfg.peerCertificate();
 		mCurrentReply->abort();
 	}
 }

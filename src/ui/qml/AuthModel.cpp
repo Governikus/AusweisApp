@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthModel.h"
@@ -65,4 +65,10 @@ void AuthModel::onDidAuthenticateEac1Changed()
 			Q_EMIT fireTransactionInfoChanged();
 		}
 	}
+}
+
+
+void AuthModel::setSkipRedirect(bool pSkipRedirect)
+{
+	mContext->setSkipRedirect(pSkipRedirect);
 }

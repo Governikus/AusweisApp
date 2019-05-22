@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore/QtCore>
@@ -89,6 +89,17 @@ class test_SecureMessaging
 			mSecureMessaging.reset(new SecureMessaging(paceAlgo, encKey, macKey));
 			mCipherMac.reset(new CipherMac(paceAlgo, macKey));
 			mCipher.reset(new SymmetricCipher(paceAlgo, encKey));
+		}
+
+
+		void testNotInitialized()
+		{
+			const QByteArray empty;
+			QByteArray data;
+			const CommandApdu command(static_cast<char>(0x10), static_cast<char>(0x10), static_cast<char>(0x20), static_cast<char>(0x30), data, CommandApdu::NO_LE);
+			SecureMessaging n(empty, empty, empty);
+			CommandApdu commandApdu = n.encrypt(command);
+			QCOMPARE(commandApdu.getBuffer(), QByteArray());
 		}
 
 

@@ -60,7 +60,7 @@ Popup {
 			inputMethodHints: Qt.ImhDigitsOnly
 			validator: RegExpValidator { regExp: /\d\d\d\d/ }
 			onAccepted: {
-				RemoteServiceModel.connectToServer(deviceId, name.getText(0,4))
+				RemoteServiceModel.connectToRememberedServer(name.getText(0,4))
 				close()
 			}
 		}
@@ -71,7 +71,7 @@ Popup {
 			visible: requestInput
 
 			onClicked: {
-				RemoteServiceModel.connectToServer(deviceId, name.getText(0,4))
+				RemoteServiceModel.connectToRememberedServer(name.getText(0,4))
 				close()
 			}
 		}

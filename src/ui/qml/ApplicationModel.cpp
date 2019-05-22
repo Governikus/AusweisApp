@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -255,8 +255,16 @@ bool ApplicationModel::areStoreFeedbackDialogConditionsMet() const
 		return false;
 	}
 
+#ifdef Q_OS_ANDROID
+	const bool startedByAuth = QAndroidJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
+	if (startedByAuth)
+	{
+		return false;
+	}
+#endif
+
 	const auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	return !settings.askForDeviceSurvey() && settings.isRequestStoreFeedback();
+	return settings.isRequestStoreFeedback();
 }
 
 

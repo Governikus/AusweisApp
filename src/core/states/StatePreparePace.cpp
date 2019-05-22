@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StatePreparePace.h"
@@ -64,7 +64,7 @@ void StatePreparePace::run()
 				return;
 			}
 		}
-		// FALLTHROUGH
+			Q_FALLTHROUGH();
 
 		default:
 		{

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ConsoleReader.h"
@@ -28,7 +28,7 @@ void ConsoleInputThread::run()
 
 		QTextStream input(stdin, QIODevice::ReadOnly);
 		const auto& line = input.readLine();
-		qDebug(stdinput) << line;
+		qCDebug(stdinput) << line;
 		Q_EMIT fireText(line);
 	}
 }

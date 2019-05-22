@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TlsChecker.h"
@@ -209,6 +209,12 @@ QString TlsChecker::toString(QSsl::KeyAlgorithm pKeyAlgorithm)
 
 		case QSsl::KeyAlgorithm::Ec:
 			return QStringLiteral("Ec");
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+		case QSsl::KeyAlgorithm::Dh:
+			return QStringLiteral("Dh");
+
+#endif
 	}
 
 	return QStringLiteral("Unknown (%1)").arg(pKeyAlgorithm);

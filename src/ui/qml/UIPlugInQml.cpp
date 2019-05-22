@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInQml.h"
@@ -91,7 +91,7 @@ UIPlugInQml::UIPlugInQml()
 	, mTrayIcon()
 {
 #if defined(Q_OS_ANDROID)
-	QGuiApplication::setFont(QFont("Roboto"));
+	QGuiApplication::setFont(QFont(QStringLiteral("Roboto")));
 #endif
 
 	connect(&mTrayIcon, &TrayIcon::fireShow, this, &UIPlugInQml::show);

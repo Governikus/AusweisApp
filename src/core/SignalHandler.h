@@ -1,7 +1,7 @@
 /*
  * \brief Implements signal handler for unix and windows.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -45,7 +45,7 @@ class SignalHandler
 #elif defined(Q_OS_WIN)
 
 	private:
-		static BOOL __RPC_CALLEE ctrlHandler(DWORD pCtrlType);
+		static BOOL WINAPI ctrlHandler(DWORD pCtrlType);
 #endif
 
 	private Q_SLOTS:

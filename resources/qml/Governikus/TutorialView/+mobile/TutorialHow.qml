@@ -135,10 +135,13 @@ TutorialContent {
 		source: "qrc:///images/tutorial/section_seperator_how.svg"
 	}
 
-	Item {
+	Rectangle {
 		anchors.horizontalCenter: parent.horizontalCenter
-		width: parent.width
+		width: parent.width * 0.95
 		height: methodNfcSection.height
+		color: Constants.white
+		border.width: Utils.dp(3)
+		border.color: Constants.tutorial_blue
 
 		MouseArea {
 			anchors.fill: parent
@@ -213,10 +216,13 @@ TutorialContent {
 		source: "qrc:///images/tutorial/section_seperator_how.svg"
 	}
 
-	Item {
+	Rectangle {
 		anchors.horizontalCenter: parent.horizontalCenter
-		width: parent.width
+		width: parent.width * 0.95
 		height: methodSacDesktopSection.height
+		color: Constants.white
+		border.width: Utils.dp(3)
+		border.color: Constants.tutorial_blue
 
 		MouseArea {
 			anchors.fill: parent
@@ -327,10 +333,13 @@ TutorialContent {
 		source: "qrc:///images/tutorial/section_seperator_how.svg"
 	}
 
-	Item {
+	Rectangle {
 		anchors.horizontalCenter: parent.horizontalCenter
-		width: parent.width
+		width: parent.width * 0.95
 		height: methodSacMobileSection.height
+		color: Constants.white
+		border.width: Utils.dp(3)
+		border.color: Constants.tutorial_blue
 
 		MouseArea {
 			anchors.fill: parent
@@ -430,10 +439,13 @@ TutorialContent {
 		source: "qrc:///images/tutorial/section_seperator_how.svg"
 	}
 
-	Item {
+	Rectangle {
 		anchors.horizontalCenter: parent.horizontalCenter
-		width: parent.width
+		width: parent.width * 0.95
 		height: methodBluetoothSection.height
+		color: Constants.white
+		border.width: Utils.dp(3)
+		border.color: Constants.tutorial_blue
 
 		MouseArea {
 			anchors.fill: parent

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnectionWorker.h"
@@ -81,7 +81,12 @@ CardReturnCode CardConnectionWorker::transmit(const CommandApdu& pCommandApdu, R
 
 	if (mSecureMessaging)
 	{
-		CommandApdu securedCommandApdu = mSecureMessaging->encrypt(pCommandApdu);
+		const CommandApdu securedCommandApdu = mSecureMessaging->encrypt(pCommandApdu);
+		if (securedCommandApdu.getBuffer().isEmpty())
+		{
+			return CardReturnCode::COMMAND_FAILED;
+		}
+
 		ResponseApdu securedResponseApdu;
 		returnCode = mReader->getCard()->transmit(securedCommandApdu, securedResponseApdu);
 		if (!mSecureMessaging->decrypt(securedResponseApdu, pResponseApdu))

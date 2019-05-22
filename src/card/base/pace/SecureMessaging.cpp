@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -91,7 +91,7 @@ CommandApdu SecureMessaging::encrypt(const CommandApdu& pCommandApdu)
 	if (!isInitialized())
 	{
 		qCCritical(card) << "SecureMessaging not successfully initialized";
-		return pCommandApdu;
+		return QByteArray();
 	}
 
 	++mSendSequenceCounter;

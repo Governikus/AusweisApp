@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerReader
  *
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerReader.h"

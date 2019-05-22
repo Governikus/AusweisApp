@@ -42,7 +42,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'AusweisApp2 Installation'
-copyright = '2018, Governikus GmbH & Co. KG'
+copyright = '2018-2019, Governikus GmbH & Co. KG'
 author = 'Governikus GmbH & Co. KG'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -120,7 +120,8 @@ latex_elements = {
 
 # Additional stuff for the LaTeX preamble.
 'preamble': '''
-\hypersetup{pdfauthor={Governikus GmbH \& Co. KG},
+\\usepackage{lscape}
+\\hypersetup{pdfauthor={Governikus GmbH \& Co. KG},
             pdftitle={AusweisApp2},
             pdfsubject={Installation},
             pdfkeywords={installation},

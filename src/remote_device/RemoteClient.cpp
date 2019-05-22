@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteClient.h"
@@ -13,7 +13,7 @@ RemoteClient::~RemoteClient()
 }
 
 
-QVector<QSharedPointer<RemoteDeviceListEntry> > RemoteClient::getRemoteDevices() const
+QVector<QSharedPointer<RemoteDeviceListEntry> > RemoteClient::getAnnouncingRemoteDevices() const
 {
 	return QVector<QSharedPointer<RemoteDeviceListEntry> >();
 }
@@ -22,4 +22,10 @@ QVector<QSharedPointer<RemoteDeviceListEntry> > RemoteClient::getRemoteDevices()
 void RemoteClient::requestRemoteDevices()
 {
 	Q_EMIT fireRemoteDevicesInfo(QVector<QSharedPointer<RemoteDeviceListEntry> >());
+}
+
+
+QStringList RemoteClient::getConnectedDeviceIDs() const
+{
+	return QStringList();
 }

@@ -217,6 +217,53 @@
     </message>
 </context>
 <context>
+    <name>BuildHelper</name>
+    <message>
+        <source>Application</source>
+        <translation>Anwendung</translation>
+    </message>
+    <message>
+        <source>Application Version</source>
+        <translation>Anwendungsversion</translation>
+    </message>
+    <message>
+        <source>Organization</source>
+        <translation>Organisation</translation>
+    </message>
+    <message>
+        <source>Organization Domain</source>
+        <translation>Organisation Homepage</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>System</translation>
+    </message>
+    <message>
+        <source>Kernel</source>
+        <translation>Kernel</translation>
+    </message>
+    <message>
+        <source>Architecture</source>
+        <translation>Architektur</translation>
+    </message>
+    <message>
+        <source>Device</source>
+        <translation>Gerät</translation>
+    </message>
+    <message>
+        <source>VersionCode</source>
+        <translation>Versions-Code</translation>
+    </message>
+    <message>
+        <source>Qt Version</source>
+        <translation>Qt-Version</translation>
+    </message>
+    <message>
+        <source>OpenSSL Version</source>
+        <translation>OpenSSL-Version</translation>
+    </message>
+</context>
+<context>
     <name>BusyOverlay</name>
     <message>
         <source>The process is started...</source>
@@ -573,7 +620,7 @@
         <translation>Haben Sie Fragen zur Nutzung der AusweisApp2?</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/questions-and-answers/frequently-asked-questions/</source>
+        <source>https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/</source>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/haeufig-gestellte-fragen/</translation>
     </message>
     <message>
@@ -585,7 +632,7 @@
         <translation>Benötigen Sie weitere Hilfe?</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/questions-and-answers/support/</source>
+        <source>https://www.ausweisapp.bund.de/en/qa/support/</source>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/support/</translation>
     </message>
     <message>
@@ -939,16 +986,16 @@
         <translation>PIN ändern</translation>
     </message>
     <message>
-        <source>You leave the process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.</source>
-        <translation>Sie verlassen den Vorgang und werden zur PIN-Verwaltung weitergeleitet. Starten Sie den gewünschten Vorgang bitte nach der PIN-Änderung erneut.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Erneut versuchen</translation>
     </message>
     <message>
         <source>Cancel authentication process</source>
         <translation>Beende Ausweisvorgang</translation>
+    </message>
+    <message>
+        <source>You have to change your transport PIN into a personal PIN to use the online ID function. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.</source>
+        <translation>Sie müssen Ihre fünfstellige Transport-PIN zunächst in eine persönliche PIN ändern. Sie sind dabei den aktuell laufenden Vorgang zu verlassen und zur PIN-Verwaltung weitergeleitet zu werden. Starten Sie den gewünschten Vorgang bitte nach der PIN-Änderung erneut.</translation>
     </message>
 </context>
 <context>
@@ -1125,7 +1172,7 @@
         <translation>FAQ</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/questions-and-answers/frequently-asked-questions/</source>
+        <source>https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/</source>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/haeufig-gestellte-fragen/</translation>
     </message>
     <message>
@@ -1133,7 +1180,7 @@
         <translation>Support</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/questions-and-answers/support/</source>
+        <source>https://www.ausweisapp.bund.de/en/qa/support/</source>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/support/</translation>
     </message>
     <message>
@@ -1141,7 +1188,7 @@
         <translation>Bewerten</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/questions-and-answers/evaluate-us/</source>
+        <source>https://www.ausweisapp.bund.de/en/qa/evaluate-us/</source>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/bewerten-sie-uns/</translation>
     </message>
     <message>
@@ -1282,16 +1329,10 @@ Anderenfalls können Sie nun Ihr Ausweisdokument vom Kartenlesegerät entfernen.
 &lt;h4&gt;No card reader detected. Please make sure that a card reader is connected.&lt;/h4&gt;
 &lt;p&gt;If you need help or have problems with your card reader click on the &quot;Diagnosis&quot; button for further information.
 &lt;/p&gt;
-&lt;p&gt;Please note: It is currently not possible to change your PIN whilst using your smartphone as a card reader.
-However, you can change your PIN on your smartphone directly as long as the remote service is disabled.
-&lt;/p&gt;
 &lt;/html&gt;</source>
         <translation>&lt;html&gt;
 &lt;h4&gt;Es wurde kein Kartenlesegerät gefunden. Bitte stellen Sie sicher, dass ein Kartenlesegerät angeschlossen ist.&lt;/h4&gt;
 &lt;p&gt;Wenn Sie Hilfe bei der Einrichtung Ihres Kartenlesegerät benötigen, klicken Sie auf &quot;Diagnose&quot;.&lt;/p&gt;
-&lt;p&gt;Beachten Sie: Es ist zurzeit noch nicht möglich, Ihre PIN mithilfe der &quot;Smartphone als Kartenlesegerät&quot;-Funktionalität zu ändern.
-Sie können jedoch Ihre PIN direkt am Smartphone ändern solange der Fernzugriff deaktiviert ist.
-&lt;/p&gt;
 &lt;/html&gt;</translation>
     </message>
     <message>
@@ -3291,16 +3332,16 @@ klicken.</translation>
 <context>
     <name>governikus::AppQtMainWidget</name>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/service/haeufig-gestellte-fragen/</source>
-        <translation>https://www.ausweisapp.bund.de/service/haeufig-gestellte-fragen/</translation>
+        <source>https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/</source>
+        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/haeufig-gestellte-fragen/</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/feedback/melden-sie-einen-fehler/</source>
-        <translation>https://www.ausweisapp.bund.de/feedback/melden-sie-einen-fehler/</translation>
+        <source>https://www.ausweisapp.bund.de/en/qa/report-an-error/</source>
+        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/melden-sie-einen-fehler/</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/feedback/bewerten-sie-uns/</source>
-        <translation>https://www.ausweisapp.bund.de/feedback/bewerten-sie-uns/</translation>
+        <source>https://www.ausweisapp.bund.de/en/qa/evaluate-us/</source>
+        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/bewerten-sie-uns/</translation>
     </message>
 </context>
 <context>
@@ -3874,10 +3915,6 @@ klicken.</translation>
         <translation>Keine Daten erhalten.</translation>
     </message>
     <message>
-        <source>An error occurred. Please contact our support at &lt;a href=&quot;https://www.ausweisapp.bund.de/en/service/support/&quot;&gt;AusweisApp2 Support&lt;/a&gt;.</source>
-        <translation>Ein Fehler ist aufgetreten. Bitte kontaktieren Sie unseren Support unter &lt;a href=&quot;https://www.ausweisapp.bund.de/service/support/&quot;&gt;AusweisApp2 Support&lt;/a&gt;.</translation>
-    </message>
-    <message>
         <source>Cannot start authentication. An operation is already in progress.</source>
         <translation>Die Authentisierung kann nicht gestartet werden. Es läuft bereits eine Operation.</translation>
     </message>
@@ -3970,8 +4007,8 @@ klicken.</translation>
         <translation>Ein Protokollfehler ist aufgetreten. Bitte überprüfen Sie, dass das Ausweisdokument korrekt aufgelegt ist und versuchen Sie es erneut. Wenn das Problem wieder auftritt kontaktieren Sie bitte unseren Support unter</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/service/support/</source>
-        <translation>https://www.ausweisapp.bund.de/service/support/</translation>
+        <source>https://www.ausweisapp.bund.de/en/qa/support/</source>
+        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/support/</translation>
     </message>
     <message>
         <source>AusweisApp2 Support</source>
@@ -4074,8 +4111,12 @@ klicken.</translation>
         <translation>Fehler bei der Verbindung zum Server. Der Verschlüsselungsalgorithmus oder die Länge des Schlüssels im SSL-Zertifikat des Servers wird nicht unterstützt. Zertifikatsaussteller: %1</translation>
     </message>
     <message>
-        <source>An error occurred. Please contact our support at &lt;a href=&quot;https://www.ausweisapp.bund.de/en/service/support/&quot;&gt;AusweisApp2 Support&lt;/a&gt; or feel free to send us an email at &lt;a href=&quot;mailto:support@ausweisapp.de?subject=Log file&amp;body=&lt;Please describe the error&gt;&quot;&gt;support@ausweisapp.de&lt;/a&gt;.</source>
-        <translation>Es ist ein Fehler aufgetreten. Bitte kontaktieren Sie unseren &lt;a href=&quot;https://www.ausweisapp.bund.de/en/service/support/&quot;&gt;AusweisApp2 Support&lt;/a&gt; oder senden sie uns eine Email an &lt;a href=&quot;mailto:support@ausweisapp.de?subject=Protokolldatei&amp;body=&lt;Bitte beschreiben Sie den Fehler&gt;&quot;&gt;support@ausweisapp.de&lt;/a&gt;.</translation>
+        <source>An error occurred. Please contact our %1support%2.</source>
+        <translation>Es ist ein Fehler aufgetreten. Bitte kontaktieren und Sie unseren %1Support%2.</translation>
+    </message>
+    <message>
+        <source>An error occurred. Please contact our %1support%2 or feel free to send us an email.</source>
+        <translation>Es ist ein Fehler aufgetreten. Bitte kontaktieren und Sie unseren %1Support%2 oder senden Sie uns eine Email.</translation>
     </message>
 </context>
 <context>
@@ -4194,8 +4235,8 @@ klicken.</translation>
         <translation>Dateifehler</translation>
     </message>
     <message>
-        <source>An error occurred while saving the file.</source>
-        <translation>Beim Speichern der Datei ist ein Fehler aufgetreten.</translation>
+        <source>An error occurred while saving the file:</source>
+        <translation>Während des Speichervorgangs ist ein Fehler aufgetreten:</translation>
     </message>
 </context>
 <context>
@@ -5020,6 +5061,31 @@ klicken.</translation>
         <source>Save Log</source>
         <translation>Protokoll speichern</translation>
     </message>
+    <message>
+        <source>Send email</source>
+        <translation>Email versenden</translation>
+    </message>
+    <message>
+        <source>AusweisApp2 error report - %1</source>
+        <extracomment>Subject from error report mail</extracomment>
+        <translation>AusweisApp2 Fehlerbericht - %1</translation>
+    </message>
+    <message>
+        <source>Please describe the error that occurred.</source>
+        <translation>Bitte beschreiben Sie den aufgetretenen Fehler.</translation>
+    </message>
+    <message>
+        <source>You may want to attach the logfile which can be saved from the error dialog.</source>
+        <translation>Im Fehlerdialog können Sie eine Logdatei speichern um sie an diese Email anzuhängen.</translation>
+    </message>
+    <message>
+        <source>Error code</source>
+        <translation>Fehlercode</translation>
+    </message>
+    <message>
+        <source>Critical errors:</source>
+        <translation>Kritische Fehler:</translation>
+    </message>
 </context>
 <context>
     <name>governikus::StepShowSelfAuthenticationDataGui</name>
@@ -5056,53 +5122,6 @@ klicken.</translation>
     <message>
         <source>AusweisApp2 %1 is now available - you have %2. Would you like to download it now?</source>
         <translation>AusweisApp2 %1 ist jetzt verfügbar - Sie haben %2. Wollen Sie die neue Version jetzt herunterladen?</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::VersionInformationModel</name>
-    <message>
-        <source>Application Name</source>
-        <translation>Anwendungsname</translation>
-    </message>
-    <message>
-        <source>Application Version</source>
-        <translation>Anwendungsversion</translation>
-    </message>
-    <message>
-        <source>Organization</source>
-        <translation>Organisation</translation>
-    </message>
-    <message>
-        <source>Organization domain</source>
-        <translation>Organisation Homepage</translation>
-    </message>
-    <message>
-        <source>VersionCode</source>
-        <translation>Versions-Code</translation>
-    </message>
-    <message>
-        <source>System version</source>
-        <translation>Systemversion</translation>
-    </message>
-    <message>
-        <source>Kernel</source>
-        <translation>Kernel</translation>
-    </message>
-    <message>
-        <source>Architecture</source>
-        <translation>Architektur</translation>
-    </message>
-    <message>
-        <source>Device</source>
-        <translation>Gerät</translation>
-    </message>
-    <message>
-        <source>Qt Version</source>
-        <translation>Qt-Version</translation>
-    </message>
-    <message>
-        <source>OpenSSL Version</source>
-        <translation>OpenSSL-Version</translation>
     </message>
 </context>
 <context>
@@ -5152,16 +5171,16 @@ klicken.</translation>
         <translation>Möchten Sie diesen Fehler melden?</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/feedback/melden-sie-einen-fehler/</source>
-        <translation>https://www.ausweisapp.bund.de/feedback/melden-sie-einen-fehler/</translation>
-    </message>
-    <message>
         <source>Report now</source>
         <translation>Jetzt melden</translation>
     </message>
     <message>
         <source>The connection to the browser was lost. No forwarding was executed. Please try to call the URL again manually: %1</source>
         <translation>Die Verbindung zum Browser ging verloren. Es konnte keine Weiterleitung durchgeführt werden. Bitte versuchen Sie die URL manuell aufzurufen: %1</translation>
+    </message>
+    <message>
+        <source>https://www.ausweisapp.bund.de/en/qa/report-an-error/</source>
+        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/melden-sie-einen-fehler/</translation>
     </message>
 </context>
 <context>
@@ -5199,10 +5218,6 @@ klicken.</translation>
         <translation>Möchten Sie diesen Fehler melden?</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/feedback/melden-sie-einen-fehler/</source>
-        <translation>https://www.ausweisapp.bund.de/feedback/melden-sie-einen-fehler/</translation>
-    </message>
-    <message>
         <source>Report now</source>
         <translation>Jetzt melden</translation>
     </message>
@@ -5213,6 +5228,10 @@ klicken.</translation>
     <message>
         <source>You tried to start an older version (%1) of currently running application. Please open the currently running version (%2)!</source>
         <translation>Sie versuchen eine ältere Version (%1) der aktuell laufenden Anwendung zu starten. Bitte öffnen Sie die aktuell laufende Version (%2)!</translation>
+    </message>
+    <message>
+        <source>https://www.ausweisapp.bund.de/en/qa/report-an-error/</source>
+        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/melden-sie-einen-fehler/</translation>
     </message>
 </context>
 <context>

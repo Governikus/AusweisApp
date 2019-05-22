@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReaderManagerPlugIn.h"
@@ -283,6 +283,7 @@ void RemoteReaderManagerPlugIn::startScan(bool pAutoConnect)
 	mScanTimer.start();
 	QMetaObject::invokeMethod(remoteClient, &RemoteClient::startDetection, Qt::QueuedConnection);
 	connectToPairedReaders();
+	ReaderManagerPlugIn::startScan(pAutoConnect);
 }
 
 
@@ -293,4 +294,5 @@ void RemoteReaderManagerPlugIn::stopScan()
 	mScanTimer.stop();
 	QMetaObject::invokeMethod(remoteClient, &RemoteClient::stopDetection, Qt::QueuedConnection);
 	removeAllDispatchers();
+	ReaderManagerPlugIn::stopScan();
 }

@@ -1,0 +1,19 @@
+
+__GENUS                  : 2
+__CLASS                  : AntiVirusProduct
+__SUPERCLASS             :
+__DYNASTY                : AntiVirusProduct
+__RELPATH                : AntiVirusProduct.instanceGuid="{D68DDC3A-831F-4fae-9E44-DA132C1ACF46}"
+__PROPERTY_COUNT         : 6
+__DERIVATION             : {}
+__SERVER                 : DESKTOP-DGTBB4H
+__NAMESPACE              : ROOT\SecurityCenter2
+__PATH                   : \\DESKTOP-DGTBB4H\ROOT\SecurityCenter2:AntiVirusProduct.instanceGuid="{D68DDC3A-831F-4fae-9E
+                           44-DA132C1ACF46}"
+displayName              : Windows Defender
+instanceGuid             : {D68DDC3A-831F-4fae-9E44-DA132C1ACF46}
+pathToSignedProductExe   : windowsdefender://
+pathToSignedReportingExe : %ProgramFiles%\Windows Defender\MsMpeng.exe
+productState             : 393472
+timestamp                : Mon, 26 Nov 2018 10:34:23 GMT
+PSComputerName           : DESKTOP-DGTBB4H

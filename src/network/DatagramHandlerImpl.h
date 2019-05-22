@@ -1,13 +1,13 @@
 /*!
  * \brief Provides an UDP socket to send and receive datagrams.
  *
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "DatagramHandler.h"
-
+#include "MulticastLock.h"
 #include "PortFile.h"
 
 #include <QScopedPointer>
@@ -28,6 +28,7 @@ class DatagramHandlerImpl
 		friend struct QtSharedPointer::CustomDeleter<DatagramHandlerImpl, QtSharedPointer::NormalDeleter>;
 
 		QScopedPointer<QUdpSocket, QScopedPointerDeleteLater> mSocket;
+		QScopedPointer<MulticastLock> mMulticastLock;
 		quint16 mUsedPort;
 		PortFile mPortFile;
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteClientImpl.h"
@@ -223,6 +223,7 @@ void RemoteClientImpl::establishConnection(const QSharedPointer<RemoteDeviceList
 
 	mRemoteConnectorPending += pEntry;
 
+	qCDebug(remote_device) << "Establishing connection to remote device.";
 	const auto& localCopy = mRemoteConnector;
 	QMetaObject::invokeMethod(localCopy.data(), [localCopy, pEntry, pPsk] {
 				localCopy->onConnectRequest(pEntry->getRemoteDeviceDescriptor(), pPsk);
@@ -230,7 +231,7 @@ void RemoteClientImpl::establishConnection(const QSharedPointer<RemoteDeviceList
 }
 
 
-QVector<QSharedPointer<RemoteDeviceListEntry> > RemoteClientImpl::getRemoteDevices() const
+QVector<QSharedPointer<RemoteDeviceListEntry> > RemoteClientImpl::getAnnouncingRemoteDevices() const
 {
 	return mRemoteDeviceList->getRemoteDevices();
 }
@@ -239,6 +240,12 @@ QVector<QSharedPointer<RemoteDeviceListEntry> > RemoteClientImpl::getRemoteDevic
 void RemoteClientImpl::requestRemoteDevices()
 {
 	Q_EMIT fireRemoteDevicesInfo(mRemoteDeviceList->getRemoteDevices());
+}
+
+
+QStringList RemoteClientImpl::getConnectedDeviceIDs() const
+{
+	return mConnectedDeviceIds;
 }
 
 
