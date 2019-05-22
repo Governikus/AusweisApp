@@ -1,0 +1,50 @@
+AusweisApp2 1.16.2
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 15. April 2019
+
+
+
+Anwender
+""""""""
+  - Der Abbruch-Dialog beim Wechsel in den PIN-Änderungsmodus aus einem
+    laufenden Ausweisvorgang heraus wird nicht länger angezeigt.
+
+  - Alte Log-Dateien werden unter Android automatisch bereinigt.
+
+  - Gekoppelte Smartphones als Kartenleser (SaK) werden jetzt korrekt als
+    verfügbar angezeigt, wenn die Verbindung automatisch durch die AA2
+    hergestellt wurde.
+
+  - Erklärungstexte der mobilen App wurden verbessert.
+
+  - In der mobilen App erfolgt kein Browser-Redirect mehr, wenn die
+    Transport-PIN innerhalb eines Ausweisvorgangs in eine 6-stellige PIN
+    überführt wird.
+
+  - Der Fehlerdialog wurde um die Möglichkeit erweitert, eine Email an den
+    Support der AusweisApp2 zu senden, mit der Bitte die Protokolldatei
+    anzuhängen. Die Email enthält automatisch ermittelte Daten zum
+    verwendeten System sowie die letzten, kritischen Fehlermeldungen.
+
+  - Hinterlegte Daten zu Kartenlesern und Diensteanbietern wurden aktualisiert.
+
+  - Die Versionsnummer der AusweisApp2 ist nicht mehr Teil des
+    Installationspfads, um Probleme mit Antiviren-Software zu vermeiden.
+
+  - Ein Absturz beim Start einer Authentisierung, wenn die AusweisApp2
+    im Hintergrund läuft, ist behoben.
+
+  - Die Erkennung von Smartphones als Kartenleser wurde verbessert.
+
+  - Die Erkennung der Kartenleser in der Diagnose wurde korrigiert.
+
+  - Sonstige kleinere Fehler korrigiert.
+
+
+Entwickler
+""""""""""
+  - Der Standard-Logger der jeweiligen Plattform kann mittels
+    Parameter "--no-loghandler" deaktiviert werden.
+
+  - Anleitung "Installation in Firmennetzwerken" wurde erweitert.

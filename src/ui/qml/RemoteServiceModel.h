@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the remote service component
  *
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -53,6 +53,7 @@ class RemoteServiceModel
 		QString mConnectedClientDeviceName;
 		QString mConnectedServerDeviceNames;
 		bool mIsSaCPinChangeWorkflow;
+		QSharedPointer<RemoteDeviceListEntry> mRememberedServerEntry;
 
 		void onEnvironmentChanged();
 		QString getErrorMessage(bool pNfcPluginAvailable, bool pNfcPluginEnabled, bool pWifiEnabled) const;
@@ -75,7 +76,8 @@ class RemoteServiceModel
 		RemoteDeviceModel* getKnownDevices();
 		void setDetectRemoteDevices(bool pNewStatus);
 		bool detectRemoteDevices();
-		Q_INVOKABLE void connectToServer(const QString& pDeviceId, const QString& pServerPsk);
+		Q_INVOKABLE bool rememberServer(const QString& pDeviceId);
+		Q_INVOKABLE void connectToRememberedServer(const QString& pServerPsk);
 
 		void resetContext(const QSharedPointer<RemoteServiceContext>& pContext = QSharedPointer<RemoteServiceContext>());
 		Q_INVOKABLE void setPairing(bool pEnabled = true);

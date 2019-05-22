@@ -1,7 +1,7 @@
 /*!
  * \brief GUI for step "Error".
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -35,6 +35,7 @@ class StepErrorGui
 		QSharedPointer<WorkflowContext> mContext;
 		AppQtMainWidget* const mMainWidget;
 		QPointer<QMessageBox> mMessageBox;
+		QString generateMailBody(const GlobalStatus& pStatus) const;
 
 	Q_SIGNALS:
 		void switchedToPinSettings();

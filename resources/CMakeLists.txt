@@ -25,7 +25,7 @@ IF(TARGET Qt5::Qml)
 	WRITE_QRC("${ausweisapp_qml.qrc}" "${CMAKE_CURRENT_SOURCE_DIR}/qml" "qml")
 	LIST(APPEND QRC_FILES "${ausweisapp_qml.qrc}")
 
-	SET(QML_IMPORT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml CACHE string "qml files" FORCE)
+	SET(QML_IMPORT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml CACHE STRING "qml files" FORCE)
 ENDIF()
 
 SET(RCC ${CMAKE_BINARY_DIR}/src/${PROJECT_NAME}.rcc)

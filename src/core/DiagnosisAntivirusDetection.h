@@ -1,7 +1,7 @@
 /*!
  * \brief Class for retrieving informations about installed antivirus software on windows.
  *
- * \copyright Copyright (c) 2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -9,6 +9,8 @@
 #include <QLoggingCategory>
 #include <QProcess>
 #include <QSharedPointer>
+
+class test_DiagnosisAntivirusDetection;
 
 namespace governikus
 {
@@ -49,10 +51,13 @@ class DiagnosisAntivirusDetection
 	Q_OBJECT
 
 	private:
+		friend class ::test_DiagnosisAntivirusDetection;
+
 #if defined(Q_OS_WIN)
 		QSharedPointer<QProcess> mProcess;
 #endif
 		QVector<QSharedPointer<AntivirInfo> > mAntivirInfos;
+		void parseAntivirInfos(const QString& pAntivirInfos);
 
 	private Q_SLOTS:
 #if defined(Q_OS_WIN)

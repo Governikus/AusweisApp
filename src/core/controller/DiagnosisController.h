@@ -1,7 +1,7 @@
 /*!
  * \brief Controller for retrieving and presenting diagnosis info.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,6 +30,7 @@ class DiagnosisController
 	private:
 		QSharedPointer<DiagnosisContext> mContext;
 		QFutureWatcher<PcscInfo> mWatcherPcscInfo;
+		bool mScanHasToBeStopped;
 
 		void checkDone();
 
@@ -47,6 +48,7 @@ class DiagnosisController
 
 	private Q_SLOTS:
 		void onPcscInfoRetrieved();
+		void onFireReaderEvent();
 
 
 };

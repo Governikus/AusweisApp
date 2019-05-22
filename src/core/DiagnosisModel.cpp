@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisModel.h"
@@ -123,17 +123,34 @@ void DiagnosisModel::insertPcScComponentList(const QVector<DiagnosisContext::Com
 }
 
 
+void DiagnosisModel::removeChildItems(QModelIndex pIndex, QSharedPointer<DiagnosisItem> pParentItem)
+{
+	if (pParentItem->childCount() <= 0)
+	{
+		return;
+	}
+
+	beginRemoveRows(pIndex, 0, pParentItem->childCount() - 1);
+	pParentItem->clearChildren();
+	endRemoveRows();
+}
+
+
 void DiagnosisModel::onReaderInfosChanged()
 {
-	beginResetModel();
-	mReaderItem->clearChildren();
+	auto itemModelIndex = index(2, 0);
+	removeChildItems(itemModelIndex, mReaderItem);
 
 	const auto& readerInfos = mContext->getReaderInfos();
 	if (readerInfos.isEmpty())
 	{
+		beginInsertRows(itemModelIndex, 0, 0);
 		mReaderItem->addChild(QSharedPointer<DiagnosisItem>::create(tr("Not recognised")));
+		endInsertRows();
+		return;
 	}
 
+	beginInsertRows(itemModelIndex, 0, readerInfos.size() - 1);
 	for (const ReaderInfo& info : readerInfos)
 	{
 		auto readerName = QSharedPointer<DiagnosisItem>::create(info.getName());
@@ -153,15 +170,16 @@ void DiagnosisModel::onReaderInfosChanged()
 			readerName->addChild(retryCounter);
 		}
 	}
-	endResetModel();
+	endInsertRows();
 }
 
 
 void DiagnosisModel::onPcscInfoChanged()
 {
-	beginResetModel();
-	mPcScItem->clearChildren();
+	auto itemModelIndex = index(3, 0);
+	removeChildItems(itemModelIndex, mPcScItem);
 
+	beginInsertRows(itemModelIndex, 0, 2);
 	auto pcscVersion = QSharedPointer<DiagnosisItem>::create(tr("Version: %1").arg(mContext->getPcscVersion()));
 	mPcScItem->addChild(pcscVersion);
 
@@ -172,29 +190,27 @@ void DiagnosisModel::onPcscInfoChanged()
 	auto driverItem = QSharedPointer<DiagnosisItem>::create(tr("Driver"));
 	mPcScItem->addChild(driverItem);
 	insertPcScComponentList(mContext->getPcscDrivers(), driverItem);
-	endResetModel();
+	endInsertRows();
 }
 
 
 void DiagnosisModel::onRemoteInfosChanged()
 {
-	beginResetModel();
-
-	const ScopeGuard guard([this] {
-				endResetModel();
-			});
-
-	mPairedDevices->clearChildren();
+	auto itemModelIndex = index(4, 0);
+	removeChildItems(itemModelIndex, mPairedDevices);
 
 	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	const auto& trustedCertificates = settings.getTrustedCertificates();
 
 	if (trustedCertificates.isEmpty())
 	{
+		beginInsertRows(itemModelIndex, 0, 0);
 		mPairedDevices->addChild(QSharedPointer<DiagnosisItem>::create(tr("No devices paired")));
+		endInsertRows();
 		return;
 	}
 
+	beginInsertRows(itemModelIndex, 0, trustedCertificates.size() - 1);
 	for (const auto& cert : trustedCertificates)
 	{
 		const auto& info = settings.getRemoteInfo(cert);
@@ -220,13 +236,16 @@ void DiagnosisModel::onRemoteInfosChanged()
 			deviceName->addChild(deviceInfo);
 		}
 	}
+	endInsertRows();
 }
 
 
 void DiagnosisModel::onTimestampChanged()
 {
-	beginResetModel();
-	mTimestampItem->clearChildren();
+	auto itemModelIndex = index(9, 0);
+	removeChildItems(itemModelIndex, mTimestampItem);
+
+	beginInsertRows(itemModelIndex, 0, 0);
 	QDateTime timestampValue = mContext->getTimestamp();
 	if (!timestampValue.isValid())
 	{
@@ -237,15 +256,17 @@ void DiagnosisModel::onTimestampChanged()
 		QString timestamp = LanguageLoader::getInstance().getUsedLocale().toString(timestampValue, tr("d. MMMM yyyy, hh:mm:ss AP"));
 		mTimestampItem->addChild(QSharedPointer<DiagnosisItem>::create(timestamp));
 	}
-	endResetModel();
+	endInsertRows();
 }
 
 
 void DiagnosisModel::onNetworkInfoChanged()
 {
-	beginResetModel();
-	mNetworkInterfaces->clearChildren();
+	auto itemModelIndex = index(5, 0);
+	removeChildItems(itemModelIndex, mNetworkInterfaces);
+
 	const auto& networkInterfaces = mContext->getNetworkInterfaces();
+	beginInsertRows(itemModelIndex, 0, networkInterfaces.size() - 1);
 	for (const auto& interface : networkInterfaces)
 	{
 		const auto& interfaceName = QSharedPointer<DiagnosisItem>::create(interface.humanReadableName());
@@ -270,16 +291,18 @@ void DiagnosisModel::onNetworkInfoChanged()
 			}
 		}
 	}
-	endResetModel();
+	endInsertRows();
 }
 
 
 void DiagnosisModel::onConnectionTestDone()
 {
-	beginResetModel();
-	mNetworkConnectionTest->clearChildren();
+	auto itemModelIndex = index(6, 0);
+	removeChildItems(itemModelIndex, mNetworkConnectionTest);
+
 	if (mConnectionTest.getIsProxySet())
 	{
+		beginInsertRows(itemModelIndex, 0, 2);
 		auto proxy = QSharedPointer<DiagnosisItem>::create(tr("Proxy"));
 		mNetworkConnectionTest->addChild(proxy);
 
@@ -308,6 +331,7 @@ void DiagnosisModel::onConnectionTestDone()
 	}
 	else
 	{
+		beginInsertRows(itemModelIndex, 0, 1);
 		mNetworkConnectionTest->addChild(QSharedPointer<DiagnosisItem>::create(tr("No Proxy Found")));
 	}
 
@@ -319,22 +343,24 @@ void DiagnosisModel::onConnectionTestDone()
 	{
 		mNetworkConnectionTest->addChild(QSharedPointer<DiagnosisItem>::create(tr("Connection test without proxy: Failed")));
 	}
-	endResetModel();
+	endInsertRows();
 }
 
 
 void DiagnosisModel::onAntivirusInformationChanged()
 {
-	beginResetModel();
-	mInstalledAntivirus->clearChildren();
+	auto itemModelIndex = index(7, 0);
+	removeChildItems(itemModelIndex, mInstalledAntivirus);
 
 	const auto& antivirusInfos = mAntivirusDetection.getAntivirusInformations();
 	if (antivirusInfos.isEmpty())
 	{
+		beginInsertRows(itemModelIndex, 0, 0);
 		mInstalledAntivirus->addChild(QSharedPointer<DiagnosisItem>::create(tr("No Antivirus software detected.")));
 	}
 	else
 	{
+		beginInsertRows(itemModelIndex, 0, antivirusInfos.size() - 1);
 		for (const auto& info : antivirusInfos)
 		{
 			auto antivirusName = QSharedPointer<DiagnosisItem>::create(info->getDisplayName());
@@ -347,16 +373,18 @@ void DiagnosisModel::onAntivirusInformationChanged()
 			antivirusName->addChild(QSharedPointer<DiagnosisItem>::create(tr("Executable path: %1").arg(info->getExePath())));
 		}
 	}
-	endResetModel();
+	endInsertRows();
 }
 
 
 void DiagnosisModel::onAntivirusDetectionFailed()
 {
-	beginResetModel();
-	mInstalledAntivirus->clearChildren();
+	auto itemModelIndex = index(7, 0);
+	removeChildItems(itemModelIndex, mInstalledAntivirus);
+
+	beginInsertRows(itemModelIndex, 0, 0);
 	mInstalledAntivirus->addChild(QSharedPointer<DiagnosisItem>::create(tr("Antivirus detection failed.")));
-	endResetModel();
+	endInsertRows();
 }
 
 
@@ -368,9 +396,10 @@ const QString DiagnosisModel::boolToString(bool pBoolean)
 
 void DiagnosisModel::onFirewallInformationReady()
 {
-	beginResetModel();
-	mWindowsFirewall->clearChildren();
+	auto itemModelIndex = index(8, 0);
+	removeChildItems(itemModelIndex, mWindowsFirewall);
 
+	beginInsertRows(itemModelIndex, 0, 2);
 	auto installedFirewalls = mFirewallDetection.getDetectedFirewalls();
 	if (installedFirewalls.isEmpty())
 	{
@@ -434,16 +463,18 @@ void DiagnosisModel::onFirewallInformationReady()
 	}
 	profiles->addChild(QSharedPointer<DiagnosisItem>::create(tr("Warning: The current firewall status can be obscured by additional Group Policies on your system, often set by system administrators.")));
 
-	endResetModel();
+	endInsertRows();
 }
 
 
 void DiagnosisModel::onFirewallInformationFailed()
 {
-	beginResetModel();
-	mWindowsFirewall->clearChildren();
+	auto itemModelIndex = index(8, 0);
+	removeChildItems(itemModelIndex, mWindowsFirewall);
+
+	beginInsertRows(itemModelIndex, 0, 0);
 	mWindowsFirewall->addChild(QSharedPointer<DiagnosisItem>::create(tr("An error occurred while trying to gather firewall information. Please check the log for more information.")));
-	endResetModel();
+	endInsertRows();
 }
 
 

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MessageDispatcher.h"
@@ -82,7 +82,7 @@ QByteArray MessageDispatcher::processStateChange(const QString& pState)
 {
 	if (!mContext.isActiveWorkflow() || pState.isEmpty())
 	{
-		qCritical(jsonapi) << "Unexpected condition:" << mContext.getWorkflowContext() << "|" << pState;
+		qCCritical(jsonapi) << "Unexpected condition:" << mContext.getWorkflowContext() << "|" << pState;
 		return MsgHandlerInternalError(QLatin1String("Unexpected condition")).getOutput();
 	}
 
@@ -143,7 +143,7 @@ MsgHandler MessageDispatcher::createForCommand(const QJsonObject& pObj)
 	}
 
 	auto requestType = Enum<MsgCmdType>::fromString(cmd, MsgCmdType::UNDEFINED);
-	qDebug(jsonapi) << "Process type:" << requestType;
+	qCDebug(jsonapi) << "Process type:" << requestType;
 	switch (requestType)
 	{
 		case MsgCmdType::UNDEFINED:

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/SelfAuthController.h"
@@ -8,6 +8,7 @@
 #include "states/CompositeStatePace.h"
 #include "states/CompositeStateProcessCvcsAndSetRights.h"
 #include "states/FinalState.h"
+#include "states/StateActivateStoreFeedbackDialog.h"
 #include "states/StateCheckError.h"
 #include "states/StateCheckRefreshAddress.h"
 #include "states/StateCleanUpReaderManager.h"
@@ -67,6 +68,7 @@ SelfAuthController::SelfAuthController(QSharedPointer<SelfAuthContext> pContext)
 	auto sStartPaosResponse = addState<StateStartPaosResponse>();
 	auto sCheckErrorEpilogue = addState<StateCheckError>();
 	auto sCheckRefreshAddress = addState<StateCheckRefreshAddress>();
+	auto sActivateStoreFeedbackDialog = addState<StateActivateStoreFeedbackDialog>();
 	auto sWriteHistory = addState<StateWriteHistory>();
 	auto sSendWhitelistSurvey = addState<StateSendWhitelistSurvey>();
 	auto sGetSelfAuthenticationData = addState<StateGetSelfAuthenticationData>();
@@ -166,8 +168,11 @@ SelfAuthController::SelfAuthController(QSharedPointer<SelfAuthContext> pContext)
 	sCheckErrorEpilogue->addTransition(sCheckErrorEpilogue, &AbstractState::fireContinue, sCheckRefreshAddress);
 	sCheckErrorEpilogue->addTransition(sCheckErrorEpilogue, &AbstractState::fireAbort, sFinal);
 
-	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireContinue, sWriteHistory);
+	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireContinue, sActivateStoreFeedbackDialog);
 	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireAbort, sFinal);
+
+	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireContinue, sWriteHistory);
+	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireAbort, sWriteHistory);
 
 	sWriteHistory->addTransition(sWriteHistory, &AbstractState::fireContinue, sGetSelfAuthenticationData);
 	sWriteHistory->addTransition(sWriteHistory, &AbstractState::fireAbort, sGetSelfAuthenticationData);

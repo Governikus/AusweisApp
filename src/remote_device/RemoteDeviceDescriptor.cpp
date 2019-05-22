@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceDescriptor.h"
@@ -86,8 +86,7 @@ RemoteDeviceDescriptor::RemoteDeviceDescriptorData* RemoteDeviceDescriptor::crea
 }
 
 
-RemoteDeviceDescriptor::RemoteDeviceDescriptor(const Discovery& pDiscovery,
-		const QHostAddress& pHostAddress)
+RemoteDeviceDescriptor::RemoteDeviceDescriptor(const Discovery& pDiscovery, const QHostAddress& pHostAddress)
 	: d(createRemoteDeviceDescriptorData(pDiscovery, pHostAddress))
 {
 }

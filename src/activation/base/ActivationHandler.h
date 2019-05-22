@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -68,6 +68,9 @@ class ActivationHandler
 
 		virtual bool start() = 0;
 		virtual void stop() = 0;
+
+	public Q_SLOTS:
+		virtual void onApplicationActivated();
 
 	Q_SIGNALS:
 		void fireShowUserInformation(const QString& pErrorMessage = QString());

@@ -4,7 +4,7 @@
  * This class also handles the synchronization of the local cache with the content
  * provided by a server.
  *
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

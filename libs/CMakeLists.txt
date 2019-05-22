@@ -278,7 +278,14 @@ ELSEIF(APPLE)
 	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -framework -sdk ${osx_sdk})
 ELSEIF(WIN32)
 	IF(MSVC)
-		SET(QT_PLATFORM win32-msvc2015)
+		IF(MSVC_TOOLSET_VERSION STREQUAL "140")
+			SET(QT_PLATFORM win32-msvc2015)
+		ELSEIF(MSVC_TOOLSET_VERSION STREQUAL "141")
+			SET(QT_PLATFORM win32-msvc2017)
+		ELSE()
+			MESSAGE(FATAL_ERROR "Version of MSVC not supported")
+		ENDIF()
+
 		SET(QT_OPENSSL OPENSSL_LIBS=-llibcrypto\ -llibssl)
 	ELSE()
 		SET(QT_PLATFORM win32-g++)
@@ -333,6 +340,8 @@ ExternalProject_Add(qt
 			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Android-Fix-crash.patch &&
 			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-QObject-Fix-isSignalConnected-when-signals-have-been.patch &&
 			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Use-user-provided-session-data-if-available.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Work-Around-FreeBSD-v12-build.patch &&
+			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Linux-Remove-our-use-of-syscall-for-statx-2-and-rena.patch &&
 			${CMAKE_COMMAND} -E touch qtbase/.gitignore
 	CONFIGURE_COMMAND ${QT_ENV} ${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SKIP_MODULES}
 	BUILD_COMMAND ${MAKE} ${MAKE_JOBS}

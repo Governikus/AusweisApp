@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -24,6 +24,7 @@ public class MainActivity extends QtActivity
 	private static final String LOG_TAG = AusweisApp2Service.LOG_TAG;
 
 	private static Intent cIntent;
+	private static boolean cStartedByAuth;
 
 	private NfcForegroundDispatcher mNfcForegroundDispatcher;
 	private static class NfcForegroundDispatcher
@@ -74,7 +75,7 @@ public class MainActivity extends QtActivity
 
 
 	// required by IntentActivationHandler -> MainActivityAccessor
-	public static String getStoredIntent()
+	public static String fetchStoredIntent()
 	{
 		if (cIntent == null)
 		{
@@ -82,17 +83,15 @@ public class MainActivity extends QtActivity
 			return null;
 		}
 
-		return cIntent.getDataString();
+		String url = cIntent.getDataString();
+		cIntent = null;
+		return url;
 	}
 
 
 	public static boolean isStartedByAuth()
 	{
-		if (cIntent == null)
-		{
-			return false;
-		}
-		return cIntent.getAction().equals("android.intent.action.VIEW");
+		return cStartedByAuth;
 	}
 
 
@@ -102,6 +101,7 @@ public class MainActivity extends QtActivity
 		Log.d(LOG_TAG, "onCreate (initial invocation of application): " + getIntent());
 		super.onCreate(savedInstanceState);
 		cIntent = getIntent();
+		cStartedByAuth = "android.intent.action.VIEW".equals(cIntent.getAction());
 
 		// register the broadcast receiver after loading the C++ library in super.onCreate()
 		AndroidBluetoothReceiver.register(this);
@@ -117,8 +117,8 @@ public class MainActivity extends QtActivity
 	{
 		Log.d(LOG_TAG, "onNewIntent (subsequent invocation of application): " + newIntent);
 		super.onNewIntent(newIntent);
-
-		triggerActivation(newIntent.getDataString());
+		cIntent = newIntent;
+		cStartedByAuth = "android.intent.action.VIEW".equals(cIntent.getAction());
 	}
 
 
@@ -176,5 +176,4 @@ public class MainActivity extends QtActivity
 	}
 
 
-	private native void triggerActivation(String lastIntent);
 }

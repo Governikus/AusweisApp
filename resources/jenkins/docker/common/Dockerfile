@@ -3,7 +3,7 @@ MAINTAINER Governikus KG <ausweisapp2@governikus.com>
 
 ENV NAME=Common LABELS=Common
 
-RUN apk --no-cache add cmake make uncrustify py2-pip && pip install python-hglib && apk del py2-pip
+RUN apk --no-cache add cmake make uncrustify
 
 USER governikus
 

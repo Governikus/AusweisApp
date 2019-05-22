@@ -1,12 +1,22 @@
 /*!
  * \brief Unit tests for \ref LogHandler
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogHandler.h"
 
 #include <QtTest>
+
+#ifndef Q_OS_WIN
+#include <sys/time.h>
+#include <sys/types.h>
+#include <utime.h>
+#endif
+
+Q_DECLARE_LOGGING_CATEGORY(fileprovider)
+Q_DECLARE_LOGGING_CATEGORY(securestorage)
+Q_DECLARE_LOGGING_CATEGORY(configuration)
 
 using namespace governikus;
 
@@ -14,6 +24,26 @@ class test_LogHandler
 	: public QObject
 {
 	Q_OBJECT
+
+	void fakeLastModifiedAndLastAccessTime(const QString& pPath)
+	{
+	#ifdef Q_OS_WIN
+		Q_UNUSED(pPath);
+	#else
+		struct timeval tv[2];
+
+		struct timeval& accessTime = tv[0];
+		gettimeofday(&accessTime, nullptr);
+
+		struct timeval& modifyTime = tv[1];
+		gettimeofday(&modifyTime, nullptr);
+
+		time_t fiveteenDays = 60 * 60 * 24 * 15;
+		modifyTime.tv_sec -= fiveteenDays;
+		utimes(pPath.toLatin1().constData(), tv);
+	#endif
+	}
+
 
 	private Q_SLOTS:
 		void initTestCase()
@@ -25,6 +55,8 @@ class test_LogHandler
 		void cleanup()
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
+			Env::getSingleton<LogHandler>()->setUseHandler(true);
+			Env::getSingleton<LogHandler>()->setLogfile(true);
 		}
 
 
@@ -132,6 +164,8 @@ class test_LogHandler
 		{
 			const auto& logger = Env::getSingleton<LogHandler>();
 			logger->resetBacklog();
+			logger->setUseHandler(false);
+			QVERIFY(!logger->useHandler());
 			QVERIFY(logger->useLogfile());
 
 			// will backlog
@@ -165,6 +199,156 @@ class test_LogHandler
 			QVERIFY(logger->useLogfile());
 			QVERIFY(logger->getBacklog().contains(QByteArrayLiteral("another yummy")));
 			QVERIFY(logger->getCurrentLogfileDate().isValid());
+		}
+
+
+		void removeUpOldLogfiles()
+		{
+			#ifdef Q_OS_WIN
+			QSKIP("File time stamp mocking unimplemented on windows");
+			#endif
+
+			const auto& logger = Env::getSingleton<LogHandler>();
+
+			const auto& initialFiles = logger->getOtherLogfiles();
+			QTemporaryFile tmp(LogHandler::getLogFileTemplate());
+			QVERIFY(tmp.open());
+			tmp.fileName(); // touch it
+			const auto& filesWithMock = logger->getOtherLogfiles();
+			QVERIFY(filesWithMock.size() > initialFiles.size());
+
+			logger->removeOldLogfiles();
+			QVERIFY(tmp.exists());
+			QCOMPARE(filesWithMock.size(), logger->getOtherLogfiles().size());
+
+			fakeLastModifiedAndLastAccessTime(tmp.fileName());
+			logger->removeOldLogfiles();
+			QCOMPARE(logger->getOtherLogfiles().size(), initialFiles.size());
+			QVERIFY(!tmp.exists());
+		}
+
+
+		void removeUpMultipleOldLogfilesWithInit()
+		{
+			#ifdef Q_OS_WIN
+			QSKIP("File time stamp mocking unimplemented on windows");
+			#endif
+
+			const auto& logger = Env::getSingleton<LogHandler>();
+			logger->reset();
+
+			const auto& initialFiles = logger->getOtherLogfiles();
+			QTemporaryFile tmp1(LogHandler::getLogFileTemplate());
+			QVERIFY(tmp1.open());
+			tmp1.fileName(); // touch it
+
+			QTemporaryFile tmp2(LogHandler::getLogFileTemplate());
+			QVERIFY(tmp2.open());
+			tmp2.fileName(); // touch it
+
+			const auto& filesWithMock = logger->getOtherLogfiles();
+			QVERIFY(filesWithMock.size() > initialFiles.size());
+
+			fakeLastModifiedAndLastAccessTime(tmp1.fileName());
+			fakeLastModifiedAndLastAccessTime(tmp2.fileName());
+			logger->init();
+			QTRY_COMPARE(logger->getOtherLogfiles().size(), initialFiles.size());
+			QVERIFY(!tmp1.exists());
+			QVERIFY(!tmp2.exists());
+		}
+
+
+		void getCriticalLogWindow()
+		{
+			const auto& logger = Env::getSingleton<LogHandler>();
+			logger->setCriticalLogCapacity(3);
+
+			QVERIFY(!logger->hasCriticalLog());
+			QCOMPARE(logger->getCriticalLogWindow(), QByteArray());
+			for (int i = 0; i < 10; ++i)
+			{
+				qDebug() << "debug dummy";
+			}
+			QVERIFY(!logger->hasCriticalLog());
+			QCOMPARE(logger->getCriticalLogWindow(), QByteArray());
+
+			qWarning() << "warning dummy";
+			qInfo() << "info dummy";
+			QVERIFY(!logger->hasCriticalLog());
+			QCOMPARE(logger->getCriticalLogWindow(), QByteArray());
+
+			qCritical() << "critical dummy";
+			QVERIFY(logger->hasCriticalLog());
+
+			auto window = logger->getCriticalLogWindow();
+			QVERIFY(window.size() > 0);
+			QVERIFY(!window.contains("debug dummy"));
+			QVERIFY(window.contains("warning dummy"));
+			QVERIFY(window.contains("info dummy"));
+			QVERIFY(window.contains("critical dummy"));
+
+			qDebug() << "debug dummy";
+			qCritical() << "critical 2 dummy";
+			QVERIFY(!window.contains("debug dummy"));
+			QVERIFY(window.contains("warning dummy"));
+			QVERIFY(window.contains("info dummy"));
+			QVERIFY(window.contains("critical dummy"));
+			QVERIFY(!window.contains("critical 2 dummy"));
+
+			logger->resetBacklog();
+			QVERIFY(!logger->hasCriticalLog());
+			QCOMPARE(logger->getCriticalLogWindow(), QByteArray());
+		}
+
+
+		void getCriticalLogWindowIgnore()
+		{
+			const auto& logger = Env::getSingleton<LogHandler>();
+			logger->setCriticalLogCapacity(4);
+
+			QVERIFY(!logger->hasCriticalLog());
+			qCCritical(securestorage) << "do not log 1";
+			qCCritical(securestorage) << "do not log 2";
+			qCCritical(fileprovider) << "do not log 3";
+			qCCritical(configuration) << "do not log 4";
+			QVERIFY(!logger->hasCriticalLog());
+			QCOMPARE(logger->getCriticalLogWindow(), QByteArray());
+
+			qCritical() << "critical dummy";
+			auto window = logger->getCriticalLogWindow();
+			QVERIFY(logger->hasCriticalLog());
+			QVERIFY(window.size() > 0);
+			QVERIFY(!window.contains("do not log 1"));
+			QVERIFY(window.contains("do not log 2"));
+			QVERIFY(window.contains("do not log 3"));
+			QVERIFY(window.contains("do not log 4"));
+			QVERIFY(window.contains("critical dummy"));
+		}
+
+
+		void getCriticalLogWindowWithoutLogfile()
+		{
+			const auto& logger = Env::getSingleton<LogHandler>();
+			logger->setCriticalLogCapacity(10);
+			QCOMPARE(logger->getCriticalLogCapacity(), 10);
+			logger->setLogfile(false);
+
+			QCOMPARE(logger->getCriticalLogWindow(), QByteArray());
+			QVERIFY(!logger->hasCriticalLog());
+
+			qCritical() << "critical dummy";
+			QCOMPARE(logger->getCriticalLogWindow(), QByteArray());
+			QVERIFY(!logger->hasCriticalLog());
+
+			logger->setLogfile(true);
+			qCritical() << "critical dummy";
+			QVERIFY(logger->getCriticalLogWindow().contains("critical dummy"));
+			QVERIFY(logger->hasCriticalLog());
+
+			logger->setLogfile(false);
+			logger->setLogfile(true);
+			QCOMPARE(logger->getCriticalLogWindow(), QByteArray());
+			QVERIFY(!logger->hasCriticalLog());
 		}
 
 

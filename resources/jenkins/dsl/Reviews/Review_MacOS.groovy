@@ -6,7 +6,7 @@ def j = new Review
 		name: 'MacOS',
 		libraries: ['MacOS'],
 		label: 'MacOS',
-		artifacts: 'tmp/AusweisApp2.*.log',
+		artifacts: 'tmp/*.log',
 		allowEmptyArtifacts: true,
 		xunit: true
 	).generate(this)

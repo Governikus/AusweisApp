@@ -2,7 +2,7 @@
  * \brief Information needed to display a remote device in the GUI and to open
  * a websocket connection to it.
  *
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -47,9 +47,7 @@ class RemoteDeviceDescriptor
 
 	public:
 		RemoteDeviceDescriptor() = default;
-
-		RemoteDeviceDescriptor(const Discovery& pDiscovery,
-				const QHostAddress& pHostAddress);
+		RemoteDeviceDescriptor(const Discovery& pDiscovery, const QHostAddress& pHostAddress);
 
 		~RemoteDeviceDescriptor() = default;
 

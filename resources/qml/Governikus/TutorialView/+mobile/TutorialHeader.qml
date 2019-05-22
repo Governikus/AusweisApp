@@ -9,24 +9,40 @@ Item {
 
 	property alias headerImageSource: headerImage.source
 	property alias titleText: title.text
+	property string miniIconSource
+	property alias miniIconCoordinates: backgroundIcons.model
 	property bool overlapping: true
+	property real overlappingHeight: overlapping ? height * (4.0/3.0) : height
+	property bool categoryAbove: true
 	property real initY
 	signal clicked()
 
 	Image{
 		id: headerImage
 		width: parent.width
-		height: overlapping ? parent.height * (4.0/3.0) : parent.height
+		height: baseItem.overlappingHeight
 		fillMode: Image.Stretch
 
-		MouseArea{
+		MouseArea {
 			anchors.fill: parent
 			onClicked: baseItem.clicked()
 		}
 
+		Repeater {
+			id: backgroundIcons
+			Image {
+				source: baseItem.miniIconSource
+				width: height
+				height: 0.125 * baseItem.overlappingHeight
+				x: modelData.x * baseItem.width
+				y: modelData.y * baseItem.overlappingHeight
+			}
+		}
+
 		Text {
 			id: title
-			anchors.centerIn: parent
+			anchors.horizontalCenter: parent.horizontalCenter
+			y: ((categoryAbove ? 0.575 : 0.5) * parent.height) - (0.5 * height)
 			font.bold: true
 			font.pixelSize: Constants.tutorial_header_font_size
 			layer.enabled: true

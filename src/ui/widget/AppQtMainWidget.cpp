@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppQtMainWidget.h"
@@ -518,21 +518,21 @@ void AppQtMainWidget::onChangePinButtonClicked()
 
 void AppQtMainWidget::onQuestionActionClicked()
 {
-	QString link = tr("https://www.ausweisapp.bund.de/en/service/haeufig-gestellte-fragen/");
+	QString link = tr("https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/");
 	QDesktopServices::openUrl(QUrl(link));
 }
 
 
 void AppQtMainWidget::onSendErrorActionClicked()
 {
-	QString link = tr("https://www.ausweisapp.bund.de/en/feedback/melden-sie-einen-fehler/");
+	QString link = tr("https://www.ausweisapp.bund.de/en/qa/report-an-error/");
 	QDesktopServices::openUrl(QUrl(link));
 }
 
 
 void AppQtMainWidget::onEvaluateActionClicked()
 {
-	QString link = tr("https://www.ausweisapp.bund.de/en/feedback/bewerten-sie-uns/");
+	QString link = tr("https://www.ausweisapp.bund.de/en/qa/evaluate-us/");
 	QDesktopServices::openUrl(QUrl(link));
 }
 

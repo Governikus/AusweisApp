@@ -1,13 +1,14 @@
 /*
  * \brief Logging handler of QtMessageHandler
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "Env.h"
 
+#include <QContiguousCache>
 #include <QDateTime>
 #include <QDebug>
 #include <QFileInfoList>
@@ -32,14 +33,25 @@ class LogHandler
 	friend class Env;
 	friend class ::test_LogHandler;
 
+	struct LogWindowEntry
+	{
+		qint64 mPosition;
+		qint64 mLength;
+	};
+
 	private:
+		static QString getLogFileTemplate();
+
 		const bool mEnvPattern;
 		const int mFunctionFilenameSize;
 		qint64 mBacklogPosition;
+		bool mCriticalLog;
+		QContiguousCache<LogWindowEntry> mCriticalLogWindow;
+		QStringList mCriticalLogIgnore;
 		const QString mMessagePattern, mDefaultMessagePattern;
-		const QString mLogFileTemplate;
 		QTemporaryFile mLogFile;
 		QtMessageHandler mHandler;
+		bool mUseHandler;
 		const QByteArray mFilePrefix;
 		QMutex mMutex;
 
@@ -51,6 +63,9 @@ class LogHandler
 
 		QString getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg);
 		void handleMessage(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg);
+		void handleLogWindow(QtMsgType pType, const char* pCategory, const QString& pMsg);
+		void removeOldLogfiles();
+		QByteArray readLogFile(qint64 pStart, qint64 pLength = -1);
 
 		static void messageHandler(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg);
 		friend QDebug operator<<(QDebug, const LogHandler&);
@@ -73,7 +88,11 @@ class LogHandler
 		void setAutoRemove(bool pRemove);
 		bool copy(const QString& pDest);
 		void resetBacklog();
-		QByteArray getBacklog();
+		QByteArray getBacklog(bool pAll = false);
+		QByteArray getCriticalLogWindow();
+		bool hasCriticalLog() const;
+		int getCriticalLogCapacity() const;
+		void setCriticalLogCapacity(int pSize);
 
 		static QDateTime getFileDate(const QFileInfo& pInfo);
 		QDateTime getCurrentLogfileDate() const;
@@ -81,6 +100,8 @@ class LogHandler
 		bool removeOtherLogfiles();
 		void setLogfile(bool pEnable);
 		bool useLogfile() const;
+		void setUseHandler(bool pEnable);
+		bool useHandler() const;
 
 	Q_SIGNALS:
 		/**

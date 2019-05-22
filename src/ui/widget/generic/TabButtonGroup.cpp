@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TabButtonGroup.h"
@@ -126,7 +126,8 @@ bool TabButtonGroup::eventFilter(QObject* pWatched, QEvent* pEvent)
 		case Qt::Key_Up:
 			next = false;
 
-		// fall through
+			Q_FALLTHROUGH();
+
 		case Qt::Key_Left:
 		case Qt::Key_Right:
 		case Qt::Key_Down:

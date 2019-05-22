@@ -2,7 +2,7 @@
  * \brief Definition of all logging categories.
  *
  * \see Q_LOGGING_CATEGORY
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QLoggingCategory>
@@ -26,6 +26,7 @@ Q_LOGGING_CATEGORY(cli, "cli")
 Q_LOGGING_CATEGORY(stdinput, "stdinput")
 Q_LOGGING_CATEGORY(activation, "activation")
 Q_LOGGING_CATEGORY(fileprovider, "fileprovider")
+Q_LOGGING_CATEGORY(diagnosis, "diagnosis")
 
 /*!
  * Logging category for all security relevant messages,

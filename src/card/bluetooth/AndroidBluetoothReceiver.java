@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -98,7 +98,14 @@ public final class AndroidBluetoothReceiver extends BroadcastReceiver
 		BluetoothAdapterState currentState = BluetoothAdapterState.forInt(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1));
 
 		Log.d(LOG_TAG, "state changed " + previousState + " -> " + currentState);
-		bluetoothAdapterStateChanged(previousState.getValue(), currentState.getValue());
+		try
+		{
+			bluetoothAdapterStateChanged(previousState.getValue(), currentState.getValue());
+		}
+		catch (UnsatisfiedLinkError e)
+		{
+			Log.w(LOG_TAG, "Cannot notify native core since it has been unloaded: " + e.getMessage());
+		}
 	}
 
 

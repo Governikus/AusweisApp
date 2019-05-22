@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PinSettingsWidget.h"
@@ -558,6 +558,7 @@ void PinSettingsWidget::setUserInputEnabled(bool pEnabled)
 	mUi->oldRandomPinButton->setEnabled(pEnabled);
 	mUi->newRandomPinButton->setEnabled(pEnabled);
 	mUi->repeatNewRandomPinButton->setEnabled(pEnabled);
+	mUi->pukEdit->setEnabled(pEnabled);
 }
 
 

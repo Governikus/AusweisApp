@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDeviceWidget.h"
@@ -253,7 +253,11 @@ void ReaderDeviceWidget::onAdjustReaderNameColumnWidth()
 	const QFontMetrics metrics(QGuiApplication::font());
 	for (const auto& info : infos)
 	{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+		const int deviceNameWidth = metrics.horizontalAdvance(info.getName());
+#else
 		const int deviceNameWidth = metrics.width(info.getName());
+#endif
 		if (deviceNameWidth > maxWidth)
 		{
 			maxWidth = deviceNameWidth;

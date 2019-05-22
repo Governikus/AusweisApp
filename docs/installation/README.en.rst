@@ -5,9 +5,10 @@ Windows
 -------
 
 Start the installer of AusweisApp2 using the command line to configure the
-installation process and preset system-wide default settings. In addition to the
-usual arguments [1]_, the following command contains all supported arguments,
-which are explained below.
+installation process and preset system-wide default settings.
+The return value of msiexec indicates the result of the installation [#msiexecreturnvalues]_.
+In addition to the usual arguments [#standardarguments]_, the following command
+contains all supported arguments, which are explained below.
 
 .. code-block:: winbatch
 
@@ -15,7 +16,7 @@ which are explained below.
 
 INSTALL_ROOT
   States the installation directory. If not specified, the folder
-  "C:\\Program Files (x86)\\AusweisApp2 X.YY.Z" is used.
+  "C:\\Program Files (x86)\\AusweisApp2" is used.
 
 SYSTEMSETTINGS
   Concerns the settings of firewall rules of the Windows Firewall. When not
@@ -64,6 +65,8 @@ UPDATECHECK
   UPDATECHECK to false or true deactivates or activates the update check
   respectively. Users are unable to change this setting in the AusweisApp2. Not
   specified, the update check is activated, but users can adjust the settings.
+  The UPDATECHECK parameter affects neither updates of the service
+  provider list nor updates of card reader information.
 
 ONSCREENKEYBOARD
   An on-screen keyboard is available to enter PIN, CAN or PUK. It is deactivated or
@@ -76,7 +79,7 @@ HISTORY
   content). Indicating HISTORY as false or true, the history function is
   deactivated or activated. Users are able to adjust the settings.
 
-Alternatively, Orca [2]_ can be used to create an MST file that defines the
+Alternatively, Orca [#orca]_ can be used to create an MST file that defines the
 above arguments. The arguments are available in the "Directory" and "Property"
 tables. The MST file can be transferred with the following command:
 
@@ -132,5 +135,101 @@ common.keylessPassword ONSCREENKEYBOARD
 history.enable         HISTORY
 ====================== ====================
 
-.. [1] https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options
-.. [2] https://docs.microsoft.com/en-us/windows/desktop/Msi/orca-exe
+.. [#msiexecreturnvalues] https://docs.microsoft.com/en-us/windows/desktop/msi/error-codes
+.. [#standardarguments] https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options
+.. [#orca] https://docs.microsoft.com/en-us/windows/desktop/Msi/orca-exe
+
+
+Operational Environment Requirements
+------------------------------------
+
+Required authorization for installation and execution
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Administrator privileges are required to install the AusweisApp2.
+
+The execution of the AusweisApp2 does not require administrator privileges.
+
+Used network ports
+''''''''''''''''''
+
+All network ports used by the AusweisApp2 are listed in :numref:`porttable_en`.
+:numref:`communicationmodel_en` shows a schematic representation of the
+individual connections made by the AusweisApp2.
+
+The AusweisApp2 starts a HTTP-Server on port 24727.
+The server binds only to the localhost network interface.
+The availability of the local server is necessary for the online eID function,
+because service providers will redirect the user with a HTTP redirect to the
+local server to continue the authentication process in the AusweisApp2 (eID1).
+The server is also used to offer other local applications to use the
+AusweisApp2 via a websocket interface (SDK function, eID-SDK).
+Therefore local incoming network connections to TCP Port 24727 must be
+permitted.
+
+Broadcast on UDP port 24727 in the local subnet have to be receivable by the
+AusweisApp2 to use the "Smartphone as Card Reader" functionality.
+It may be necessary to deactive AP isolation on your router.
+
+.. _communicationmodel_en:
+.. figure:: CommunicationModel_en.pdf
+
+    Communication model of the AusweisApp2
+
+The installer of the AusweisApp2 provides an option to register all needed
+firewall rules in the Windows Firewall.
+If the rules are not registered, the user will be prompted by the Windows
+Firewall to allow the outgoing connections once the AusweisApp2 tries to
+connect to a server.
+These prompts are suppressed by registering the firewall rules during
+installation.
+No rules have to be added to the Windows Firewall for the local connections
+eID1 and eID-SDK  (when using the standard settings).
+
+In table :numref:`firewalltable_en` all firewall rules registered by the
+installer are listed.
+
+TLS connections
+'''''''''''''''
+
+Transmitted TLS certificates are solely validated via the interlacing with
+the authorization certificate issued by the german eID PKI.
+CA certificates in the Windows truststore are thus ignored.
+It is therefore generally not possible to use the AusweisApp2 behind a
+TLS termination proxy.
+
+.. raw:: latex
+
+    \begin{landscape}
+
+.. _porttable_en:
+.. csv-table:: Network connections of the AusweisApp2
+   :header: "Reference", "Protocol", "Port", "Direction", "Optional", "Purpose", "Note"
+   :widths: 8, 8, 8, 8, 8, 35, 25
+
+   "eID1",	TCP, 24727,  "incoming", "no",	"Online eID function, eID activation [#TR-03124]_",											    "Only accessible from localhost [#TR-03124]_"
+   "eID2",	TCP, 443,    "outgoing", "no",	"Online eID function, connection to the service provider, TLS-1-2 channel [#TR-03124]_",						    "TLS certificates interlaced with authorization certificate [#TR-03124]_"
+   "eID3",	TCP, 443,    "outgoing", "no",	"Online eID function, connection to eID-Server, TLS-2 channel [#TR-03124]_",								    "TLS certificates interlaced with authorization certificate [#TR-03124]_"
+   "eID-SDK",	TCP, 24727,  "incoming", "no",	"Usage of the SDK functionality",													    "Only accessible from localhost [#TR-03124]_"
+   "SaC1",	UDP, 24727,  "incoming", "yes",	"Smartphone as Card Reader, detection [#TR-03112]_",											    "Broadcasts"
+   "SaC2",	TCP, ,       "outgoing", "yes",	"Smartphone as Card Reader, usage [#TR-03112]_",											    "Connection in local subnet"
+   "Update",	TCP, 443,    "outgoing", "yes",	"Updates [#govurl]_ of service provider and card reader information as well as informations on new AusweisApp2 versions [#updatecheck]_ .", "TLS certificates will be validated against CA certificates included in the AusweisApp2. CA certificates provided by the OS are ignored."
+
+.. [#TR-03124] See TR-03124 specification from the BSI
+.. [#TR-03112] See TR-03112-6 specifiaction from the BSI
+.. [#govurl] All updates are based on the URL https://appl.governikus-asp.de/ausweisapp2/
+.. [#updatecheck] Automatic checks for new AusweisApp2 versions can be deactivated, see commandline parameter
+    UPDATECHECK.
+
+.. _firewalltable_en:
+.. csv-table:: Firewall rules of the AusweisApp2
+   :header: "Name", "Protocol", "Port", "Direction", "Connection reference"
+   :widths: 25, 15, 15, 15, 30
+   :align: left
+
+   "AusweisApp2-Firewall-Rule", TCP, \*, "outgoing", "eID2, eID3, SaC2, Update"
+   "AusweisApp2-Firewall-Rule-SaC-In", UDP, 24727, "incoming", "SaC1"
+
+.. raw:: latex
+
+    \end{landscape}

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HistoryWidget.h"
@@ -170,7 +170,7 @@ void HistoryWidget::updateTable()
 	}
 
 	mUi->historyTableWidget->resizeRowsToContents();
-	mUi->historyTableWidget->sortByColumn(dateColumn); // Sort by date
+	mUi->historyTableWidget->sortByColumn(dateColumn, Qt::AscendingOrder); // Sort by date
 }
 
 

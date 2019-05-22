@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/AuthController.h"
@@ -8,6 +8,7 @@
 #include "states/CompositeStatePace.h"
 #include "states/CompositeStateProcessCvcsAndSetRights.h"
 #include "states/FinalState.h"
+#include "states/StateActivateStoreFeedbackDialog.h"
 #include "states/StateCheckRefreshAddress.h"
 #include "states/StateCleanUpReaderManager.h"
 #include "states/StateClearPacePasswords.h"
@@ -67,6 +68,7 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 	auto sSendDisconnectResponse = addState<StateSendDisconnectResponse>();
 	auto sStartPaosResponse = addState<StateStartPaosResponse>();
 	auto sCheckRefreshAddress = addState<StateCheckRefreshAddress>();
+	auto sActivateStoreFeedbackDialog = addState<StateActivateStoreFeedbackDialog>();
 	auto sWriteHistory = addState<StateWriteHistory>();
 	auto sRedirectBrowser = addState<StateRedirectBrowser>();
 	auto sUpdateRetryCounterFinal = addState<StateUpdateRetryCounter>();
@@ -165,8 +167,11 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 	sCleanUpReaderManager->addTransition(sCleanUpReaderManager, &AbstractState::fireContinue, sCheckRefreshAddress);
 	sCleanUpReaderManager->addTransition(sCleanUpReaderManager, &AbstractState::fireAbort, sCheckRefreshAddress);
 
-	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireContinue, sWriteHistory);
+	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireContinue, sActivateStoreFeedbackDialog);
 	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireAbort, sRedirectBrowser);
+
+	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireContinue, sWriteHistory);
+	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireAbort, sWriteHistory);
 
 	sWriteHistory->addTransition(sWriteHistory, &AbstractState::fireContinue, sSendWhitelistSurvey);
 	sWriteHistory->addTransition(sWriteHistory, &AbstractState::fireAbort, sRedirectBrowser);

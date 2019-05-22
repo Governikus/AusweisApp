@@ -9,8 +9,9 @@ Rectangle {
 	property alias text: textItem.text
 	property color buttonColor : Constants.blue
 	property int maxWidth: 0
-	property int preferedWidth: parent.width - 4 * Constants.component_spacing
+	property int preferedWidth: Math.max(textItem.implicitWidth + (icon.visible ? (icon.width + icon.anchors.leftMargin) : 0) + (2 * Utils.dp(16)), Utils.dp(88))
 	property alias iconSource: icon.source
+	property bool animationsDisabled: false
 
 	signal clicked
 
@@ -31,11 +32,15 @@ Rectangle {
 
 	Text {
 		id: textItem
-		anchors.centerIn: parent
+		anchors.left: rect.left
+		anchors.right: rect.right
+		anchors.verticalCenter: rect.verticalCenter
 		color: enabled ? "white" : "#40000000"
+		horizontalAlignment: Text.AlignHCenter
 		opacity: mouseArea.containsMouse ? 0.5 : 1
 		anchors.leftMargin: icon.visible ? icon.width + icon.anchors.leftMargin : 0
 		font.pixelSize: Utils.dp(16)
+		font.bold: true
 	}
 
 	MouseArea{
@@ -50,7 +55,7 @@ Rectangle {
 		x: mouseArea.mouseX - width * 0.5
 		height: parent.height
 		width: height * 2
-		visible: mouseArea.pressed
+		visible: !rect.animationsDisabled && mouseArea.pressed
 		opacity: 1
 		gradient: Gradient {
 			GradientStop { position: 0.0; color: Qt.rgba(255,255,255,1) }

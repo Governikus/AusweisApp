@@ -6,7 +6,9 @@ Windows
 
 Der Installer der AusweisApp2 kann über die Kommandozeile gestartet werden, um
 den Installationsprozess zu konfigurieren und systemweite Standardeinstellungen
-vorzugeben. Neben den üblichen Parametern [1]_ enthält das folgende Kommando
+vorzugeben.
+Der Rückgabewert von msiexec informiert über das Ergebnis der Installation [#msiexecreturnvalues]_.
+Neben den üblichen Parametern [#standardarguments]_ enthält das folgende Kommando
 alle unterstützten Parameter, die im Anschluss erläutert werden.
 
 .. code-block:: winbatch
@@ -15,7 +17,7 @@ alle unterstützten Parameter, die im Anschluss erläutert werden.
 
 INSTALL_ROOT
   Gibt das Installationsverzeichnis an. Ohne Angabe wird der Ordner
-  "C:\\Programme (x86)\\AusweisApp2 X.YY.Z" genutzt.
+  "C:\\Programme (x86)\\AusweisApp2" genutzt.
 
 SYSTEMSETTINGS
   Betrifft die Erstellung von Firewall-Regeln der Windows Firewall. Ohne Angabe
@@ -69,7 +71,9 @@ UPDATECHECK
   false oder true kann diese Überprüfung deaktiviert bzw. aktiviert werden.
   Die Einstellung kann dann durch den Benutzer in der AusweisApp2 nicht geändert
   werden. Ohne Angabe ist die Überprüfung aktiviert, der Benutzer kann die
-  Einstellung jedoch ändern.
+  Einstellung jedoch ändern. Der UPDATECHECK Parameter beeinflusst weder die
+  Aktualisierung der Diensteanbieterliste noch die Aktualisierung der
+  Kartenleserinformationen.
 
 ONSCREENKEYBOARD
   Für die Eingabe von PIN, CAN und PUK kann eine Bildschirmtastatur verwendet
@@ -83,7 +87,7 @@ HISTORY
   von HISTORY auf false oder true kann der Verlauf deaktiviert bzw. aktiviert
   werden. Der Benutzer kann diese Einstellung anpassen.
 
-Alternativ kann mit Orca [2]_ eine MST-Datei erzeugt werden, die die oben
+Alternativ kann mit Orca [#orca]_ eine MST-Datei erzeugt werden, die die oben
 genannten Parameter definiert. Die Parameter sind in den Tabellen "Directory"
 und "Property" verfügbar. Übergeben lässt sich die MST-Datei mit dem folgenden
 Kommando:
@@ -143,5 +147,109 @@ common.keylessPassword ONSCREENKEYBOARD
 history.enable         HISTORY
 ====================== ====================
 
-.. [1] https://docs.microsoft.com/de-de/windows/desktop/msi/standard-installer-command-line-options
-.. [2] https://docs.microsoft.com/de-de/windows/desktop/Msi/orca-exe
+.. [#msiexecreturnvalues] https://docs.microsoft.com/de-de/windows/desktop/msi/error-codes
+.. [#standardarguments] https://docs.microsoft.com/de-de/windows/desktop/msi/standard-installer-command-line-options
+.. [#orca] https://docs.microsoft.com/de-de/windows/desktop/Msi/orca-exe
+
+
+
+Anforderungen an die Einsatzumgebung
+------------------------------------
+
+Rechte für Installation und Ausführung
+''''''''''''''''''''''''''''''''''''''
+
+Für die Installation der AusweisApp2 sind Administratorrechte erforderlich.
+
+Die Ausführung der AusweisApp2 erfordert keine Administratorrechte.
+
+
+Verwendete Netzwerk-Ports
+'''''''''''''''''''''''''
+
+In :numref:`porttable_de` werden alle von der AusweisApp2 genutzten Ports
+aufgelistet.
+Eine schematische Darstellung der einzelnen Verbindungen, die von der
+AusweisApp2 genutzt werden, ist in :numref:`communicationmodel_de` dargestellt.
+
+Die AusweisApp2 startet einen HTTP-Server, der über Port 24727 erreichbar
+ist.
+Der Server empfängt nur auf der localhost Netzwerkschnittstelle.
+Die Erreichbarkeit dieses lokalen Servers ist für die Onlineausweisfunktion
+notwendig, da Diensteanbieter mit einem HTTP-Redirect auf den lokalen Server
+umleiten um den Ausweisvorgang in der AusweisApp2 fortzuführen (eID1).
+Außerdem wird über den Server die Verwendung der AusweisApp2 von anderen
+Anwendungen über eine Websocket-Schnittstelle angeboten (SDK-Funktion, eID-SDK).
+Daher müssen eingehende lokale Netzwerkverbindungen auf dem TCP Port 24727
+ermöglicht werden.
+
+Für die Verwendung von der "Smartphone als Kartenleser"-Funktion über WLAN
+müssen außerdem Broadcasts auf UDP Port 24727 im lokalen Subnetz empfangen
+werden können.
+Hierzu muss eventuell die AP Isolation im Router deaktiviert werden.
+
+.. _communicationmodel_de:
+.. figure:: CommunicationModel_de.pdf
+
+    Kommunikationsmodell der AusweisApp2
+
+Der Installer der AusweisApp2 bietet die Option, für alle angebotenen
+Funktionen der AusweisApp2 die erforderlichen Firewall-Regeln in der
+Windows-Firewall zu registrieren.
+Erfolgt die Registrierung der Firewall-Regeln nicht, wird der Benutzer bei
+einem Verbindungsaufbau der AusweisApp2 mit einem Dialog der Windows-Firewall
+aufgefordert, die ausgehenden Datenverbindungen zuzulassen.
+Durch Registrierung der Firewall-Regeln während der Installation werden diese
+Aufforderungen unterbunden.
+
+Für die lokalen Verbindungen eID1 und eID-SDK müssen (unter den gängigen
+Standardeinstellungen der Windows-Firewall) keine Regeln in der
+Windows-Firewall eingetragen werden.
+
+Die durch den Installer angelegten Regeln werden in Tabelle :numref:`firewalltable_de`
+aufgelistet.
+
+
+TLS-Verbindungen
+''''''''''''''''
+
+Es ist generell nicht möglich, die AusweisApp2 mit einem TLS-Termination-Proxy
+zu verwenden, da die übertragenen TLS-Zertifikate über eine Verschränkung mit
+dem Berechtigungszertifikat aus der Personalausweis-PKI validiert werden.
+CA-Zertifikate im Windows-Truststore werden daher ignoriert.
+
+.. raw:: latex
+
+    \begin{landscape}
+
+.. _porttable_de:
+.. csv-table:: Netzwerkverbindungen der AusweisApp2
+   :header: "Referenz", "Protokoll", "Port", "Richtung", "Optional", "Zweck", "Anmerkungen"
+   :widths: 8, 8, 8, 8, 8, 35, 25
+
+   "eID1",	TCP, 24727,  "eingehend", "Nein", "Online-Ausweisvorgang, eID-Aktivierung [#TR-03124]_",										    "Nur erreichbar von localhost [#TR-03124]_"
+   "eID2",	TCP, 443,    "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum Dienstanbieter, TLS-1-2-Kanal [#TR-03124]_",							    "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
+   "eID3",      TCP, 443,    "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum eID-Server, TLS-2-Kanal [#TR-03124]_",								    "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
+   "eID-SDK",	TCP, 24727,  "eingehend", "Nein", "Verwendung der SDK-Schnittstelle",													    "Nur erreichbar von localhost [#TR-03124]_"
+   "SaK1",	UDP, 24727,  "eingehend", "Ja",   "Smartphone als Kartenleser, Erkennung [#TR-03112]_",											    "Broadcasts"
+   "SaK2",	TCP, ,       "ausgehend", "Ja",   "Smartphone als Kartenleser, Verwendung [#TR-03112]_",										    "Verbindung im lokalen Subnetz"
+   "Update",	TCP, 443,    "ausgehend", "Ja",   "Updates [#govurl]_ zu Dienstanbietern und Kartenlesegeräten sowie Informationen zu neuen AusweisApp2-Versionen [#updatecheck]_ .",	    "Die Zertifikate der TLS-Verbindung werden mit in der AusweisApp2 mitgelieferten CA-Zertifikaten validiert. Im Betriebssystem hinterlegte CA-Zertifikate werden ignoriert."
+
+.. [#TR-03124] Siehe TR-03124 des BSI
+.. [#TR-03112] Siehe TR-03112-6 des BSI
+.. [#govurl] Erreichbar unter dem URL https://appl.governikus-asp.de/ausweisapp2/
+.. [#updatecheck] Die Überprüfung auf neue AusweisApp2-Versionen kann deaktiviert werden, siehe
+    Kommandozeilenparameter UPDATECHECK
+
+.. _firewalltable_de:
+.. csv-table:: Firewallregeln der AusweisApp2
+   :header: "Name", "Protokoll", "Port", "Richtung", "Umgesetzte Verbindung"
+   :widths: 25, 15, 15, 15, 30
+   :align: left
+
+   "AusweisApp2-Firewall-Rule", TCP, \*, "ausgehend", "eID2, eID3, SaK2, Update"
+   "AusweisApp2-Firewall-Rule-SaC-In", UDP, 24727, "eingehend", "SaK1"
+
+.. raw:: latex
+
+    \end{landscape}

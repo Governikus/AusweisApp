@@ -1,7 +1,7 @@
 /*!
  * \brief Authentication context.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -55,6 +55,7 @@ class AuthContext
 
 		bool mTcTokenNotFound;
 		bool mErrorReportedToServer;
+		bool mSkipRedirect;
 
 		QSharedPointer<ActivationContext> mActivationContext;
 		QUrl mTcTokenUrl;
@@ -117,6 +118,18 @@ class AuthContext
 		void setTcTokenNotFound(bool pTcTokenNotFound)
 		{
 			mTcTokenNotFound = pTcTokenNotFound;
+		}
+
+
+		bool isSkipRedirect() const
+		{
+			return mSkipRedirect;
+		}
+
+
+		void setSkipRedirect(bool pSkipRedirect)
+		{
+			mSkipRedirect = pSkipRedirect;
 		}
 
 

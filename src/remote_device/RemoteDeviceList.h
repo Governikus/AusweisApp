@@ -1,7 +1,7 @@
 /*!
  * \brief Interface for RemoteDeviceList
  *
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -63,14 +63,14 @@ class RemoteDeviceListImpl
 
 	private:
 		QTimer mTimer;
-		const int mTimeout;
-		QVector<QSharedPointer<RemoteDeviceListEntry> > mList;
+		const int mReaderResponsiveTimeout;
+		QVector<QSharedPointer<RemoteDeviceListEntry> > mResponsiveList;
 
 	private Q_SLOTS:
-		void onRemoveUnresponsiveRemoteReaders();
+		void onProcessUnresponsiveRemoteReaders();
 
 	public:
-		RemoteDeviceListImpl(int pCheckInterval = 1000, int pTimeout = 5000);
+		RemoteDeviceListImpl(int pCheckInterval = 1000, int pReaderResponsiveTimeout = 5000);
 		virtual ~RemoteDeviceListImpl() override;
 
 		virtual void update(const RemoteDeviceDescriptor& pDescriptor) override;

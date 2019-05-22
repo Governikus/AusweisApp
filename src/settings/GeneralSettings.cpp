@@ -1,7 +1,7 @@
 /*!
  * \brief Contains the method definitions of the GeneralSettings class.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GeneralSettings.h"
@@ -78,6 +78,10 @@ GeneralSettings::GeneralSettings()
 		setAutoStart(GENERAL_SETTINGS_DEFAULT_AUTOSTART);
 		mStoreGeneral->sync();
 	}
+
+#if defined(QT_NO_DEBUG) && (defined(Q_OS_ANDROID) || defined(Q_OS_IOS))
+	setUseSelfauthenticationTestUri(false);
+#endif
 
 #ifdef QT_NO_DEBUG
 	// Iterate autostart entries in order to remove broken login items on macos.
@@ -275,7 +279,7 @@ void GeneralSettings::setLanguage(const QLocale::Language pLanguage)
 
 QString GeneralSettings::getSelectedUi() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_SELECTED_UI(), QStringLiteral(DEFAULT_UI)).toString();
+	return QStringLiteral(DEFAULT_UI);
 }
 
 
@@ -311,15 +315,28 @@ void GeneralSettings::setDeviceSurveyPending(bool pDeviceSurveyPending)
 }
 
 
+bool GeneralSettings::askForStoreFeedback() const
+{
+#if defined(Q_OS_IOS)
+	qCWarning(settings) << "STORE FEEDBACK NOT IMPLEMENTED ON IOS";
+	return false;
+
+#else
+	return !mStoreGeneral->contains(SETTINGS_NAME_REQUEST_STORE_FEEDBACK());
+
+#endif
+}
+
+
 bool GeneralSettings::isRequestStoreFeedback() const
 {
 #if defined(Q_OS_IOS)
-	qCWarning(settings) << "NOT IMPLEMENTED";
+	qCWarning(settings) << "STORE FEEDBACK NOT IMPLEMENTED ON IOS";
 	return false;
 
 #else
 
-	return mStoreGeneral->value(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), true).toBool();
+	return mStoreGeneral->value(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), false).toBool();
 
 #endif
 }
@@ -329,11 +346,11 @@ void GeneralSettings::setRequestStoreFeedback(bool pRequest)
 {
 #if defined(Q_OS_IOS)
 	Q_UNUSED(pRequest);
-	qCWarning(settings) << "NOT IMPLEMENTED";
+	qCWarning(settings) << "STORE FEEDBACK NOT IMPLEMENTED ON IOS";
 	return;
 
 #else
-	if (pRequest != isRequestStoreFeedback())
+	if (askForStoreFeedback() || pRequest != isRequestStoreFeedback())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), pRequest);
 		Q_EMIT fireSettingsChanged();

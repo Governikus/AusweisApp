@@ -1,6 +1,6 @@
 SET(REMOTE_CONFIG_URL_PROD https://appl.governikus-asp.de/ausweisapp2)
 IF(JENKINS_APPCAST)
-	SET(REMOTE_CONFIG_URL https://vtf-aajenkins.tf.bos-test.de/job/${JENKINS_APPCAST}/lastSuccessfulBuild/artifact CACHE STRING "Remote config download URL" FORCE)
+	SET(REMOTE_CONFIG_URL https://ausweisapp-ci.govkg.de/job/${JENKINS_APPCAST}/lastSuccessfulBuild/artifact CACHE STRING "Remote config download URL" FORCE)
 ELSE()
 	SET(REMOTE_CONFIG_URL ${REMOTE_CONFIG_URL_PROD} CACHE STRING "Remote config download URL" FORCE)
 ENDIF()

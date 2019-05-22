@@ -1,7 +1,7 @@
 /*!
  * \brief A Widget to display developer mode errors which occurred
  *
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

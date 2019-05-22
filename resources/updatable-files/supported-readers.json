@@ -4,7 +4,7 @@
 		{
 			"VendorId": "0x0000",
 			"ProductId": "0x0000",
-			"Name": "Smartphone als Kartenlesegerät",
+			"Name": "Smartphone als Kartenleser",
 			"Pattern": "^NFC.*",
 			"Icon": "img_RemoteReader.png",
 			"IconWithNPA": "img_RemoteReader_mit_ausweis.png",
@@ -181,7 +181,7 @@
 			"VendorId": "0x04E6",
 			"ProductId": "0x512B",
 			"Name": "SDI011 Contactless Reader",
-			"Pattern": "SDI011 (USB )?(Smart Card|Contactless) Reader",
+			"Pattern": "SDI011 Contactless Reader|SDI011 USB Smart Card Reader(\\(1\\)|\\(2\\))",
 			"Icon": "img_Identive_SDI011.png",
 			"IconWithNPA": "img_Identive_SDI011_mit_ausweis.png",
 			"Drivers":
@@ -199,21 +199,16 @@
 			[
 				{
 					"Platforms": [{"os": "win", "max": "6.1"}],
-					"DE": "Bitte beachten Sie, dass das Kartenlesegerät nur mit der SDI011-generic-version funktioniert. Nach der Installation ist ein Neustart erforderlich.",
+					"DE": "Bitte beachten Sie, dass der Kartenleser nur mit der SDI011-generic-version funktioniert. Nach der Installation ist ein Neustart erforderlich.",
 					"EN": "Please note that the card reader only works with the SDI011-generic-version. A reboot is required after the installation of the driver."
 				},
 				{
 					"Platforms":[{"os": "win", "min": "6.2"}],
-					"DE": "Bitte beachten Sie, dass das Kartenlesegerät nur mit der SDI011-nPA-version funktioniert. Nach der Installation ist ein Neustart erforderlich.",
+					"DE": "Bitte beachten Sie, dass der Kartenleser nur mit der SDI011-nPA-version funktioniert. Nach der Installation ist ein Neustart erforderlich.",
 					"EN": "Please note that the card reader only works with the SDI011-nPA-version. A reboot is required after the installation of the driver."
 				},
 				{
-					"Platforms": [{"os": "mac", "max": "10.12"}],
-					"DE": "Der Status des Kartenlesegeräts wird nach der Treiberinstallation und einem Neustart zwar als 'Treiber installiert' angezeigt, allerdings tritt bei der PIN-Eingabe ein Protokollfehler auf.",
-					"EN": "Once the driver is installed and the system is re-booted, the card reader state will be shown as 'Driver installed'. However, upon entering the PIN a protocol error occurs."
-				},
-				{
-					"Platforms": [{"os": "mac", "min":"10.13"}],
+					"Platforms": [{"os": "mac"}],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
@@ -242,15 +237,16 @@
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"DE": "Das Kartenlesegerät funktioniert nur mit der SCL011-nPA-version. Nach der Installation ist ein Neustart erforderlich.",
+					"DE": "Der Kartenleser funktioniert nur mit der SCL011-nPA-version. Nach der Installation ist ein Neustart erforderlich.",
 					"EN": "The cardreader works only with the SCL011-nPA-version. A reboot is required after the installation of the driver."
 				},
 				{
 					"Platforms": [{"os": "mac"}],
-					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
-			]
+			],
+			"Internal information": "Unter macOS funktioniert nur NFC A. Reader wird als unterstützt markiert, da zertifiziert."
 		},
 
 		{
@@ -313,7 +309,7 @@
 			"VendorId": "0x04E6",
 			"ProductId": "0x5720",
 			"Name": "Identiv Cloud 4700 F",
-			"Pattern": "(Identiv CLOUD 4700 F Contact(less)? Reader( 0| 1)|Identiv uTrust 4700 F Dual Interface Reader)",
+			"Pattern": "(Identive CLOUD 4700 F Contactless Reader( 0| 1)|Identiv uTrust 4700 F Dual Interface Reader\\(2\\))",
 			"Icon": "img_Identive_Cloud_4700_F.png",
 			"IconWithNPA": "img_Identive_Cloud_4700_F_mit_ausweis.png",
 			"Drivers":
@@ -335,7 +331,7 @@
 			[
 				{
 					"Platforms": [{"os": "win"}, {"os": "mac"}],
-					"DE":"Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"DE":"Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN":"The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
 			]
@@ -345,7 +341,7 @@
 			"VendorId": "0x04E6",
 			"ProductId": "0x5724",
 			"Name": "Identiv Cloud 4701 F",
-			"Pattern": "(Identiv CLOUD 4701 F Contact(less)? Reader( 0| 1)|Identiv uTrust 4701 F Dual Interface Reader)",
+			"Pattern": "(Identiv CLOUD 4701 F Contactless Reader( 0| 1)|Identiv uTrust 4701 F Dual Interface Reader)",
 			"Icon": "img_Identive_Cloud_4701_F.png",
 			"IconWithNPA": "img_Identive_Cloud_4701_F_mit_ausweis.png",
 			"Drivers":
@@ -367,7 +363,7 @@
 			[
 				{
 					"Platforms": [{"os": "win"}, {"os": "mac"}],
-					"DE":"Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"DE":"Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN":"The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
 			]
@@ -395,7 +391,7 @@
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"DE":"Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"DE":"Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN":"The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				},
 				{
@@ -410,7 +406,7 @@
 			"VendorId": "0x072F",
 			"ProductId": "0x223B",
 			"Name": "ACS ACR1252U",
-			"Pattern": "ACS ACR1252 1S CL Reader PICC 0|ACS ACR1252 Dual Reader(\\(1\\)|\\(2\\))",
+			"Pattern": "ACS ACR1252 1S CL Reader PICC 0|ACS ACR1252 Dual Reader\\(2\\)",
 			"Icon": "img_ACS_ACR1252U.png",
 			"IconWithNPA": "img_ACS_ACR1252U_mit_ausweis.png",
 			"Drivers":
@@ -428,7 +424,7 @@
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"DE":"Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"DE":"Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN":"The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				},
 				{
@@ -465,7 +461,12 @@
 			"Information":
 			[
 				{
-					"Platforms":[{"os": "win"}, {"os": "mac"}],
+					"Platforms":[{"os": "win"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Beachten Sie bei der Auswahl, dass nur der \"X-CHIP WINDOWS BU & RU driver\" funktioniert.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please note that only the driver named \"X-CHIP WINDOWS BU & RU driver\" works with this card reader."
+				},
+				{
+					"Platforms":[{"os": "mac"}],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
@@ -486,16 +487,26 @@
 					"URL": "https://www.hidglobal.de/drivers"
 				},
 				{
-					"Platforms": [{"os": "mac"}],
+					"Platforms": [{"os": "mac", "min": "10.12"}],
 					"URL": "https://www.hidglobal.de/drivers"
 				}
 			],
 			"Information":
 			[
 				{
-					"Platforms":[{"os": "win"}, {"os": "mac"}],
-					"DE":"Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
-					"EN":"The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
+					"Platforms":[{"os": "win"}],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
+				},
+				{
+					"Platforms":[{"os": "mac", "max": "10.11"}],
+					"DE": "Der Kartenleser funktioniert nicht mit dem installierten CCID Treiber des Systems. Es existiert kein Treiber vom Hersteller.",
+					"EN": "The card reader is not compatible with the installed CCID driver of the operating system. The manufacturer does not provide a driver."
+				},
+				{
+					"Platforms":[{"os": "mac", "min": "10.12"}],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
+					"EN": "The card reader is compatible with the installed system driver."
 				}
 			]
 		},
@@ -553,7 +564,12 @@
 			"Information":
 			[
 				{
-					"Platforms":[{"os": "win"}, {"os": "mac"}],
+					"Platforms":[{"os": "win"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Beachten Sie bei der Auswahl, dass nur der \"X-CHIP WINDOWS BU & RU driver\" funktioniert.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. Please note that only the driver named \"X-CHIP WINDOWS BU & RU driver\" works with this card reader."
+				},
+				{
+					"Platforms":[{"os": "mac"}],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
@@ -564,7 +580,7 @@
 			"VendorId": "0x076B",
 			"ProductId": "0x5422",
 			"Name": "OMNIKEY 5422",
-			"Pattern": "HID Global OMNIKEY 5422(CL)? Smartcard Reader 0|HID Global OMNIKEY Smartcard Reader (\\(1\\)|\\(2\\))",
+			"Pattern": "HID Global OMNIKEY 5422CL Smartcard Reader 0|HID Global OMNIKEY Smartcard Reader (\\(1\\)|\\(2\\))",
 			"Icon": "img_HID_Omnikey_542x.png",
 			"IconWithNPA": "img_HID_Omnikey_542x_mit_ausweis.png",
 			"Drivers":
@@ -578,12 +594,12 @@
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				},
 				{
 					"Platforms": [{"os": "mac"}, {"max": "10.12"}],
-					"DE": "Das Kartenlesegerät funktioniert nicht mit dem systemseitig installierten Treiber. Es existiert kein Treiber vom Hersteller",
+					"DE": "Der Kartenleser funktioniert nicht mit dem systemseitig installierten Treiber. Es existiert kein Treiber vom Hersteller",
 					"EN": "The card reader not operates with the driver automatically installed by the system. There is no driver from the manufacturer"
 				}
 			]
@@ -629,18 +645,18 @@
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#windows10"
+					"URL": "https://supportportal.gemalto.com/csm?id=kb_article_view&sys_kb_id=8f07753f37854fc0cc47261953990e04&sysparm_article=KB0016422"
 				},
 				{
 					"Platforms": [{"os": "mac"}],
-					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#macosxdrivers"
+					"URL": "https://supportportal.gemalto.com/csm?id=kb_article_view&sys_kb_id=43a9b1f337c54fc0cc47261953990e8c&sysparm_article=KB0016424"
 				}
 			],
 			"Information":
 			[
 				{
 					"Platforms":[{"os": "win"}, {"os":"mac"}],
-					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
 			]
@@ -657,18 +673,18 @@
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#windows10"
+					"URL": "https://supportportal.gemalto.com/csm?id=kb_article_view&sys_kb_id=8f07753f37854fc0cc47261953990e04&sysparm_article=KB0016422"
 				},
 				{
 					"Platforms": [{"os": "mac"}],
-					"URL": "http://support.gemalto.com/index.php?id=prox-du_prox-su#macosxdrivers"
+					"URL": "https://supportportal.gemalto.com/csm?id=kb_article_view&sys_kb_id=43a9b1f337c54fc0cc47261953990e8c&sysparm_article=KB0016424"
 				}
 			],
 			"Information":
 			[
 				{
 					"Platforms": [{"os": "win"}, {"os": "mac"}],
-					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
 			]
@@ -697,7 +713,7 @@
 				},
 				{
 					"Platforms": [{"os": "mac"}],
-					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
 			]
@@ -726,7 +742,7 @@
 				},
 				{
 					"Platforms": [{"os": "mac"}],
-					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
 			]
@@ -783,7 +799,7 @@
 			[
 				{
 					"Platforms": [{"os": "win"}, {"os": "mac"}],
-					"DE": "Das Kartenlesegerät funktioniert mit dem systemseitig installierten Treiber. Es ist kein Treiber vom Hersteller vorhanden.",
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Es ist kein Treiber vom Hersteller vorhanden.",
 					"EN": "The card reader operates with the driver automatically installed by the system. There is no driver from the manufacturer."
 				}
 			]

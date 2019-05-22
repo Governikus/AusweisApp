@@ -10,7 +10,6 @@ import Governikus.Type.NumberModel 1.0
 SectionPage
 {
 	id: baseItem
-	property string remoteDeviceId: ""
 	property alias enableTransportPinLink: transportPinLink.enableTransportPinLink
 	signal pinEntered()
 	signal changePinLength()
@@ -163,7 +162,7 @@ SectionPage
 						baseItem.pinEntered()
 						break
 					case "REMOTE_PIN":
-						RemoteServiceModel.connectToServer(remoteDeviceId, pinField.text)
+						RemoteServiceModel.connectToRememberedServer(pinField.text)
 						baseItem.pinEntered()
 						break
 				}

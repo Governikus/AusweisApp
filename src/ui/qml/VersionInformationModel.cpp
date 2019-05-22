@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for version information.
  *
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "VersionInformationModel.h"
@@ -24,28 +24,10 @@ using namespace governikus;
 void VersionInformationModel::init()
 {
 	mData.clear();
-	mData += QPair<QString, QString>(tr("Application Name"), QCoreApplication::applicationName());
-	mData += QPair<QString, QString>(tr("Application Version"), QCoreApplication::applicationVersion());
-	mData += QPair<QString, QString>(tr("Organization"), QCoreApplication::organizationName());
-	mData += QPair<QString, QString>(tr("Organization domain"), QCoreApplication::organizationDomain());
-#ifdef Q_OS_ANDROID
-	mData += QPair<QString, QString>(tr("VersionCode"), QString::number(BuildHelper::getVersionCode()));
-#endif
-	mData += QPair<QString, QString>(tr("System version"), QSysInfo::prettyProductName());
-	mData += QPair<QString, QString>(tr("Kernel"), QSysInfo::kernelVersion());
 
-	QString architecture = QSysInfo::currentCpuArchitecture();
-	if (architecture != QSysInfo::buildCpuArchitecture())
-	{
-		architecture += QStringLiteral(" (%1)").arg(QSysInfo::buildCpuArchitecture());
-	}
-	mData += QPair<QString, QString>(tr("Architecture"), architecture);
-
-#ifdef Q_OS_ANDROID
-	mData += QPair<QString, QString>(tr("Device"), DeviceInfo::getPrettyInfo());
-#endif
-	mData += QPair<QString, QString>(tr("Qt Version"), QString::fromLatin1(qVersion()));
-	mData += QPair<QString, QString>(tr("OpenSSL Version"), QSslSocket::sslLibraryVersionString());
+	BuildHelper::processInformationHeader([this](const QString& pKey, const QString& pValue){
+				mData += qMakePair(pKey, pValue);
+			});
 }
 
 

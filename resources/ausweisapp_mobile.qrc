@@ -29,6 +29,10 @@
         <file>images/tutorial/main_menu_where_caret.svg</file>
         <file>images/tutorial/main_menu_how_caret.svg</file>
         <file>images/tutorial/main_menu_important_caret.svg</file>
+        <file>images/tutorial/icon_box.svg</file>
+        <file>images/tutorial/icon_circle.svg</file>
+        <file>images/tutorial/icon_diamond.svg</file>
+        <file>images/tutorial/icon_star.svg</file>
         <file>images/tutorial/arrow_blue.svg</file>
         <file>images/tutorial/arrows.svg</file>
         <file>images/tutorial/button_de.png</file>
@@ -40,6 +44,7 @@
         <file>images/tutorial/thumb_up.svg</file>
         <file>images/tutorial/hand.svg</file>
         <file>images/tutorial/check.svg</file>
+        <file>images/tutorial/cross.svg</file>
         <file>images/tutorial/click.svg</file>
         <file>images/tutorial/save.svg</file>
         <file>images/tutorial/bva.svg</file>

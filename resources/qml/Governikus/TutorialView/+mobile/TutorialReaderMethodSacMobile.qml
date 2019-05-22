@@ -228,6 +228,7 @@ SectionPage {
 					buttonColor: "green"
 					anchors.horizontalCenter: parent.horizontalCenter
 					text: qsTr("Start remote service") + settingsModel.translationTrigger
+					animationsDisabled: true
 				}
 
 				Image {
@@ -252,6 +253,7 @@ SectionPage {
 					id: pairingButton
 					anchors.horizontalCenter: parent.horizontalCenter
 					text: qsTr("Start pairing") + settingsModel.translationTrigger
+					animationsDisabled: true
 				}
 
 				Image {
@@ -515,6 +517,7 @@ SectionPage {
 						id: identifyButton
 						iconSource: "qrc:///images/npa.svg"
 						text: qsTr("Identify now") + settingsModel.translationTrigger;
+						animationsDisabled: true
 					}
 				}
 			}

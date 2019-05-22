@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,6 +23,8 @@ class LogFileSaveDialog
 
 	public:
 		void saveLogFile(QWidget* pParent, const QString& pSource = QString());
+		bool saveLogFileToFilename(QWidget* pParent, const QString& pFilename, const QString& pSource = QString());
+		static QString generateLogFilename(const QString& pSource = QString());
 
 		void closeActiveDialogs();
 };

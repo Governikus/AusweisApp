@@ -29,6 +29,7 @@
 
 		<MajorUpgrade
 			Schedule="afterInstallInitialize"
+			AllowSameVersionUpgrades="yes"
 			DowngradeErrorMessage="!(loc.DowngradeErrorMessage)"/>
 
 		<Condition Message="!(loc.WindowsServerNotSupported)">

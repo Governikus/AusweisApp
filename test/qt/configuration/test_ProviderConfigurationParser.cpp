@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ProviderConfigurationParser
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfigurationParser.h"
@@ -250,12 +250,12 @@ class test_ProviderConfigurationParser
 		{
 			QTest::addColumn<int>("count");
 
-			const int desktop = 59;
+			const int desktop = 58;
 			QTest::newRow("win") << desktop;
 			QTest::newRow("mac") << desktop;
 			QTest::newRow("linux") << desktop;
-			QTest::newRow("android") << 54;
-			QTest::newRow("ios") << 14;
+			QTest::newRow("android") << desktop;
+			QTest::newRow("ios") << 15;
 		}
 
 

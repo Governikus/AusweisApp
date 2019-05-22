@@ -6,10 +6,31 @@ Rectangle {
 	id: baseItem
 	height: Math.max(backToMenu.height, quitTutorial.height)
 
+	property alias backRotation: leftArrow.rotation
 	property alias backText: menuText.text
+	property bool backToMenuActive: true
 
 	signal menuClicked()
 	signal quitTutorialClicked()
+
+	states: [
+		State { name: "showBothOptions"; when: baseItem.backToMenuActive
+			PropertyChanges { target: backToMenu; opacity: 1 }
+			AnchorChanges { target: quitTutorial; anchors.right: baseItem.right}
+			AnchorChanges { target: quitTutorial; anchors.horizontalCenter: undefined}
+		},
+		State { name: "showOnlyQuit"; when: !baseItem.backToMenuActive
+			AnchorChanges { target: quitTutorial; anchors.horizontalCenter: baseItem.horizontalCenter}
+			AnchorChanges { target: quitTutorial; anchors.right: undefined}
+			PropertyChanges { target: backToMenu; opacity: 0 }
+		}
+	]
+	transitions: [
+		Transition {
+			PropertyAnimation { target: backToMenu; property: "opacity"}
+			AnchorAnimation { duration: 500; easing.type: Easing.InOutQuad }
+		}
+	]
 
 	Item {
 		id: backToMenu
@@ -33,6 +54,7 @@ Rectangle {
 			spacing: Constants.component_spacing
 
 			Image {
+				id: leftArrow
 				source: "qrc:///images/tutorial/arrows.svg"
 				rotation: -90
 				anchors.verticalCenter: parent.verticalCenter
@@ -51,15 +73,12 @@ Rectangle {
 				color: Constants.white
 			}
 		}
-
-
 	}
 
 	Item {
 		id: quitTutorial
 		height: quitRow.height + 2 * Constants.component_spacing
 		width: quitRow.width
-		anchors.right: parent.right
 		anchors.verticalCenter: parent.verticalCenter
 
 		MouseArea {
@@ -74,7 +93,7 @@ Rectangle {
 			id: quitRow
 			height: quitText.height
 			anchors.verticalCenter: parent.verticalCenter
-			anchors.right: parent.right
+			anchors.horizontalCenter: parent.horizontalCenter
 			padding: Constants.component_spacing
 			spacing: Constants.component_spacing
 
@@ -89,7 +108,7 @@ Rectangle {
 
 			Image {
 				anchors.verticalCenter: parent.verticalCenter
-				source: "qrc:///images/tutorial/arrows.svg"
+				source: "qrc:///images/tutorial/cross.svg"
 
 				height: parent.height
 				width: height * (sourceSize.width / sourceSize.height)

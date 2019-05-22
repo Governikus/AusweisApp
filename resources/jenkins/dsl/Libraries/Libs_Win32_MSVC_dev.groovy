@@ -13,13 +13,13 @@ j.with
 	{
 		batchFile('''\
 			cd build
-			call vcvarsall.bat
+			call vcvarsall.bat x86
 			cmake ../source/libs -DPACKAGES_DIR=%PACKAGES_DIR% -G"NMake Makefiles" -DWIN_SIGN_KEYSTORE=%WIN_SIGN_KEYSTORE% -DWIN_SIGN_KEYSTORE_PSW=%WIN_SIGN_KEYSTORE_PSW% -DWIN_SIGN_SUBJECT_NAME=%WIN_SIGN_SUBJECT_NAME%
 			'''.stripIndent().trim())
 
 		batchFile('''\
 			cd build
-			call vcvarsall.bat
+			call vcvarsall.bat x86
 			nmake compress
 			'''.stripIndent().trim())
 	}

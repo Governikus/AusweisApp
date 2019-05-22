@@ -8,6 +8,6 @@
 	<String Id="CustomInstallDirDlg_Title" Overridable="yes">Installation options</String>
 	<String Id="CustomInstallDirDlg_Description" Overridable="yes"></String>
 	<String Id="CustomInstallDirDlg_DesktopShortcutCheckBox" Overridable="yes">Create link on desktop</String>
-	<String Id="CustomInstallDirDlg_SystemSettingsCheckBox" Overridable="yes">Register the [ProductName] in the system (Firewall and Browser settings)</String>
+	<String Id="CustomInstallDirDlg_SystemSettingsCheckBox" Overridable="yes">Add required rules to Windows Firewall</String>
 	<String Id="CustomExitDialog_LaunchCheckBox" Overridable="yes">Start AusweisApp</String>
 </WixLocalization>

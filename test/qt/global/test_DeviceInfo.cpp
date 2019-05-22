@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref DeviceInfo
  *
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QSysInfo>

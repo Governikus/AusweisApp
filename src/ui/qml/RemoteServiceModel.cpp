@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceModel.h"
@@ -7,6 +7,7 @@
 #include "AppSettings.h"
 #include "Env.h"
 #include "EstablishPaceChannelParser.h"
+#include "NumberModel.h"
 #include "RemoteClientImpl.h"
 #include "RemoteServiceSettings.h"
 #include "SingletonHelper.h"
@@ -29,6 +30,7 @@ RemoteServiceModel::RemoteServiceModel()
 	, mConnectedClientDeviceName()
 	, mConnectedServerDeviceNames()
 	, mIsSaCPinChangeWorkflow()
+	, mRememberedServerEntry()
 {
 	const auto readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::firePluginAdded, this, &RemoteServiceModel::onEnvironmentChanged);
@@ -143,15 +145,23 @@ bool RemoteServiceModel::detectRemoteDevices()
 }
 
 
-void RemoteServiceModel::connectToServer(const QString& pDeviceId, const QString& pServerPsk)
+void RemoteServiceModel::connectToRememberedServer(const QString& pServerPsk)
 {
-	if (!pServerPsk.isEmpty())
+	if (!pServerPsk.isEmpty() && !mRememberedServerEntry.isNull())
 	{
 		RemoteClient* const remoteClient = Env::getSingleton<RemoteClient>();
 		connect(remoteClient, &RemoteClient::fireEstablishConnectionDone, this, &RemoteServiceModel::onEstablishConnectionDone);
 
-		remoteClient->establishConnection(mAvailableRemoteDevices.getRemoteDeviceListEntry(pDeviceId), pServerPsk);
+		qDebug() << "Starting to pair.";
+		remoteClient->establishConnection(mRememberedServerEntry, pServerPsk);
 	}
+}
+
+
+bool RemoteServiceModel::rememberServer(const QString& pDeviceId)
+{
+	mRememberedServerEntry = mAvailableRemoteDevices.getRemoteDeviceListEntry(pDeviceId);
+	return !mRememberedServerEntry.isNull();
 }
 
 
@@ -160,6 +170,7 @@ void RemoteServiceModel::onEstablishConnectionDone(const QSharedPointer<RemoteDe
 	Q_UNUSED(pEntry);
 	RemoteClient* const remoteClient = Env::getSingleton<RemoteClient>();
 	disconnect(remoteClient, &RemoteClient::fireEstablishConnectionDone, this, &RemoteServiceModel::onEstablishConnectionDone);
+	qDebug() << "Pairing finished:" << pStatus;
 	if (pStatus.isError())
 	{
 		Q_EMIT firePairingFailed();
@@ -331,6 +342,8 @@ void RemoteServiceModel::onConnectedDevicesChanged()
 
 void RemoteServiceModel::onEstablishPaceChannelMessageUpdated(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage)
 {
+	Env::getSingleton<NumberModel>()->setRequestTransportPin(false);
+
 	if (pMessage.isNull() || pMessage->isIncomplete())
 	{
 		mIsSaCPinChangeWorkflow = false;

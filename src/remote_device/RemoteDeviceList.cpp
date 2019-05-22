@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceList.h"
@@ -89,13 +89,13 @@ QVector<QSharedPointer<RemoteDeviceListEntry> > RemoteDeviceList::getRemoteDevic
 }
 
 
-RemoteDeviceListImpl::RemoteDeviceListImpl(int pCheckInterval, int pTimeout)
-	: RemoteDeviceList(pCheckInterval, pTimeout)
+RemoteDeviceListImpl::RemoteDeviceListImpl(int pCheckInterval, int pReaderResponsiveTimeout)
+	: RemoteDeviceList(pCheckInterval, pReaderResponsiveTimeout)
 	, mTimer()
-	, mTimeout(pTimeout)
-	, mList()
+	, mReaderResponsiveTimeout(pReaderResponsiveTimeout)
+	, mResponsiveList()
 {
-	connect(&mTimer, &QTimer::timeout, this, &RemoteDeviceListImpl::onRemoveUnresponsiveRemoteReaders);
+	connect(&mTimer, &QTimer::timeout, this, &RemoteDeviceListImpl::onProcessUnresponsiveRemoteReaders);
 	mTimer.setInterval(pCheckInterval);
 }
 
@@ -108,7 +108,7 @@ RemoteDeviceListImpl::~RemoteDeviceListImpl()
 
 void RemoteDeviceListImpl::update(const RemoteDeviceDescriptor& pDescriptor)
 {
-	for (const QSharedPointer<RemoteDeviceListEntry>& entry : qAsConst(mList))
+	for (const QSharedPointer<RemoteDeviceListEntry>& entry : qAsConst(mResponsiveList))
 	{
 		if (entry->containsEquivalent(pDescriptor))
 		{
@@ -118,7 +118,7 @@ void RemoteDeviceListImpl::update(const RemoteDeviceDescriptor& pDescriptor)
 	}
 
 	const auto& newDevice = QSharedPointer<RemoteDeviceListEntry>::create(pDescriptor);
-	mList.append(newDevice);
+	mResponsiveList += newDevice;
 
 	if (!mTimer.isActive())
 	{
@@ -131,31 +131,31 @@ void RemoteDeviceListImpl::update(const RemoteDeviceDescriptor& pDescriptor)
 
 void RemoteDeviceListImpl::clear()
 {
-	mList.clear();
+	mResponsiveList.clear();
 }
 
 
 QVector<QSharedPointer<RemoteDeviceListEntry> > RemoteDeviceListImpl::getRemoteDevices() const
 {
-	return mList;
+	return mResponsiveList;
 }
 
 
-void RemoteDeviceListImpl::onRemoveUnresponsiveRemoteReaders()
+void RemoteDeviceListImpl::onProcessUnresponsiveRemoteReaders()
 {
-	const QTime threshold(QTime::currentTime().addMSecs(-mTimeout));
-	QMutableVectorIterator<QSharedPointer<RemoteDeviceListEntry> > i(mList);
+	const QTime threshold(QTime::currentTime().addMSecs(-mReaderResponsiveTimeout));
+	QMutableVectorIterator<QSharedPointer<RemoteDeviceListEntry> > i(mResponsiveList);
 	while (i.hasNext())
 	{
-		const QSharedPointer<RemoteDeviceListEntry>& pEntry = i.next();
-		if (pEntry->getLastSeen() < threshold)
+		const QSharedPointer<RemoteDeviceListEntry>& entry = i.next();
+		if (entry->getLastSeen() < threshold)
 		{
 			i.remove();
-			Q_EMIT fireDeviceVanished(pEntry);
+			Q_EMIT fireDeviceVanished(entry);
 		}
 	}
 
-	if (mList.isEmpty())
+	if (mResponsiveList.isEmpty())
 	{
 		mTimer.stop();
 	}

@@ -1,11 +1,10 @@
 /*
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/AppController.h"
 #include "CommandLineParser.h"
 #include "global/BuildHelper.h"
-#include "global/DeviceInfo.h"
 #include "global/LogHandler.h"
 #include "SignalHandler.h"
 
@@ -14,7 +13,6 @@
 #include <QLoggingCategory>
 #include <QScopedPointer>
 #include <QSslSocket>
-#include <QSysInfo>
 #include <QtPlugin>
 #include <QThread>
 
@@ -113,21 +111,11 @@ static inline void printInfo()
 	qCDebug(init) << "Logging to" << *Env::getSingleton<LogHandler>();
 
 	qCInfo(init) << "##################################################";
-	qCInfo(init) << "### ApplicationName:" << QCoreApplication::applicationName();
-	qCInfo(init) << "### ApplicationVersion:" << QCoreApplication::applicationVersion();
-	qCInfo(init) << "### OrganizationName:" << QCoreApplication::organizationName();
-	qCInfo(init) << "### OrganizationDomain:" << QCoreApplication::organizationDomain();
-	qCInfo(init) << "### System:" << QSysInfo::prettyProductName();
-	qCInfo(init) << "### Kernel:" << QSysInfo::kernelVersion();
-	qCInfo(init) << "### Architecture:" << QSysInfo::currentCpuArchitecture();
-#ifdef Q_OS_ANDROID
-	qCInfo(init) << "### Device:" << DeviceInfo::getPrettyInfo();
-	qCInfo(init) << "### VersionCode:" << BuildHelper::getVersionCode();
-#else
-	qCInfo(init) << "### Devicename:" << DeviceInfo::getName();
-#endif
-	qCInfo(init) << "### Qt Version:" << qVersion();
-	qCInfo(init) << "### OpenSSL Version:" << QSslSocket::sslLibraryVersionString();
+	const auto& info = BuildHelper::getInformationHeader();
+	for (const auto& entry : info)
+	{
+		qCInfo(init).noquote().nospace() << "### " << entry.first << ": " << entry.second;
+	}
 	qCInfo(init) << "##################################################";
 
 	#if OPENSSL_VERSION_NUMBER < 0x10100000L

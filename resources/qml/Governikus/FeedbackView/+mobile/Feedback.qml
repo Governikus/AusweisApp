@@ -71,7 +71,7 @@ SectionPage {
 				Loader {
 					readonly property string titleText: qsTr("FAQ") + settingsModel.translationTrigger
 					readonly property string descriptionText: qsTr("Do you have questions how to use AusweisApp2?") + settingsModel.translationTrigger
-					function onClickFunction() { Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/questions-and-answers/frequently-asked-questions/")) }
+					function onClickFunction() { Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/")) }
 					width: parent.width
 					sourceComponent: subMenu
 				}
@@ -79,7 +79,7 @@ SectionPage {
 				Loader {
 					readonly property string titleText: qsTr("Support") + settingsModel.translationTrigger
 					readonly property string descriptionText: qsTr("You need further help?") + settingsModel.translationTrigger
-					function onClickFunction() { Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/questions-and-answers/support/")) }
+					function onClickFunction() { Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/qa/support/")) }
 					width: parent.width
 					sourceComponent: subMenu
 				}

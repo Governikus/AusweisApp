@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GlobalStatus.h"
@@ -86,13 +86,15 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 {
 	if (pSimplifiedVersion && isMessageMasked())
 	{
+		const QString supportUrl = tr("https://www.ausweisapp.bund.de/en/qa/support/");
+		const QString hyperlink = QStringLiteral("<a href=\"%1\">").arg(supportUrl);
+
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-		return tr("An error occurred. Please contact our support at <a href=\"https://www.ausweisapp.bund.de/en/service/support/\">AusweisApp2 Support</a>.");
-
+		QString message = tr("An error occurred. Please contact our %1support%2.").arg(hyperlink, QStringLiteral("</a>"));
 #else
-		return tr("An error occurred. Please contact our support at <a href=\"https://www.ausweisapp.bund.de/en/service/support/\">AusweisApp2 Support</a> or feel free to send us an email at <a href=\"mailto:support@ausweisapp.de?subject=Log file&body=<Please describe the error>\">support@ausweisapp.de</a>.");
-
+		QString message = tr("An error occurred. Please contact our %1support%2 or feel free to send us an email.").arg(hyperlink, QStringLiteral("</a>"));
 #endif
+		return message;
 	}
 	return toErrorDescriptionInternal();
 }
@@ -255,7 +257,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Card_Unexpected_Transmit_Status:
 			return QStringLiteral("%1 <a href=\"%2\">%3</a>.").arg(
 					tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at"),
-					tr("https://www.ausweisapp.bund.de/en/service/support/"),
+					tr("https://www.ausweisapp.bund.de/en/qa/support/"),
 					tr("AusweisApp2 Support"));
 
 		case Code::Card_Invalid_Pin:

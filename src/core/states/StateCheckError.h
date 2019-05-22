@@ -2,7 +2,7 @@
  * \brief Helper state to decide whether an error has been occurred that should
  * be reported to the user.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

@@ -16,21 +16,3 @@ do
 	docker build -t alpine:$i .
 done
 
-
-
-################### Arch
-cd ../arch
-ls archlinux-bootstrap-*.tar.gz >/dev/null
-ls busybox* >/dev/null
-
-echo "Building base Arch ..."
-docker build -t arch:latest .
-cd ..
-
-images=(android)
-for i in "${images[@]}"
-do
-	echo "Building $i ..."
-	docker build -t arch:$i -f $i/Dockerfile .
-done
-

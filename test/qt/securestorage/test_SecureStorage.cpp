@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref SecureStorage
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QCoreApplication>
@@ -167,7 +167,7 @@ class test_SecureStorage
 			QTest::addColumn<QString>("expiryDate");
 
 			QTest::newRow("production") << 0 << "appl.governikus-asp.de" << "TeleSec ServerPass Class 2 CA" << "2020-12-06T23:59:59Z";
-			QTest::newRow("ci") << 1 << "*.tf.bos-test.de" << "govkgrootca" << "2018-12-29T09:59:02Z";
+			QTest::newRow("ci") << 1 << "*.govkg.de" << "TeleSec ServerPass Class 2 CA" << "2021-03-12T23:59:59Z";
 		}
 
 

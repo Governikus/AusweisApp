@@ -1,7 +1,7 @@
 /*!
  * \brief Provides information about the Wifi status
  *
- * \copyright Copyright (c) 2017-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
  */
 
 

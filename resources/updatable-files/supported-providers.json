@@ -1,5 +1,4 @@
 {
-	"issueDate": "2018-07-05T12:00:00+1:00",
 	"callcosts" : [
 		{
 			"prefixes" : ["1371", "1375"],
@@ -127,7 +126,7 @@
 			"subjectUrls": ["https://www.bstu-formulare.de/lip"]
 		},
 		{
-			"exclude": ["ios", "android"],
+			"exclude": ["ios"],
 			"shortName": {"" : "Allianz Maklerportal"},
 			"address": "https://makler.allianz.de",
 			"homepage": "https://makler.allianz.de",
@@ -154,6 +153,18 @@
 			"category": "citizen",
 			"tcTokenUrlInfo" : "",
 			"subjectUrls": []
+		},
+		{
+			"shortName": {"" : "AusweisIDent"},
+			"longName": {"" : "AusweisIDent Identifizierungsdienst"},
+			"shortDescription": {"": "AusweisIDent ist eine neue Lösung für Unternehmen zur schnellen und günstigen Online-Identifikation neuer Kunden mit der Online-Ausweisfunktion des Personalausweises oder des elektronischen Aufenthaltstitels."},
+			"longDescription": {"": "AusweisIDent ergänzt am Markt etablierte Verfahren um die medienbruchfreie und sichere Online-Identifizierung. Nutzer weisen sich mit der Applikation und der Online-Ausweisfunktion des Personalausweises oder des elektronischen Aufenthaltstitels online aus. Das Identifizierungsverfahren wurde von der Bundesdruckerei gemeinsam mit Governikus entwickelt. AusweisIDent eignet sich für die Identifizierung von Personen für eine Web-Anwendung. Über eine Zwei-Faktor-Authentisierung durch den Kunden werden höchste Sicherheitsanforderungen bei der Kundenregistrierung erfüllt. Die Identitätsprüfungen erfolgen gesetzeskonform nach demGesetz zur Förderung der elektronischen Verwaltung (eGovG), dem Gesetz über das Aufspüren von Gewinnen aus schweren Straftaten (GWG), dem Telekommunikationsgesetz (TKG) sowie nach Bundesdatenschutzgesetz (BDSG) und der EUDatenschutzgrundverordnung (EU-DSGVO)."},
+			"address": "https://www.ausweisident.de/",
+			"homepage": "https://www.ausweisident.de/",
+			"image": "ausweisident_image.jpg",
+			"icon": "ausweisident_icon.png",
+			"category": "other",
+			"subjectUrls": ["https://www.ausweisident.de"]
 		},
 		{
 			"exclude": ["ios"],
@@ -275,7 +286,7 @@
 			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Online Sachsen"},
 			"address": "https://fs.egov.sachsen.de/formserv/findform?shortname=bafoeg&formtecid=11&areashortname=SMWK_bafoeg",
-			"homepage": "http://www.studieren.sachsen.de/",
+			"homepage": "https://www.studieren.sachsen.de/",
 			"phone": "+49 351 564-1080",
 			"email": "info@sk.sachsen.de",
 			"postalAddress": "Sächsische Staatskanzlei<br/>Redaktion Amt24 / Bürgerbüro<br/>01095 Dresden",
@@ -292,17 +303,6 @@
 			"email": "bafoeg@sozmi.landsh.de",
 			"postalAddress": "Ministerium für Soziales, Gesundheit, Wissenschaft und Gleichstellung des Landes Schleswig-Holstein<br/>Abteilung VIII 5<br/>Düsternbrooker Weg 104<br/>24105 Kiel",
 			"category": "citizen"
-		},
-		{
-			"exclude": ["ios", "android"],
-			"shortName": {"" : "bahn.de"},
-			"address": "https://www.bahn.de/p/view/meinebahn/login.shtml",
-			"homepage": "https://www.bahn.de",
-			"phone": "+49 1806 - 996633",
-			"email": "reiseportal@bahn.de",
-			"postalAddress": "DB Vertrieb GmbH<br/>Stephensonstraße 1<br/>60326 Frankfurt am Main",
-			"category": "other",
-			"subjectUrls": ["https://www.bahn.de/"]
 		},
 		{
 			"shortName": {"" : "Beantragung Schwerbehindertenausweis Bayern"},
@@ -428,7 +428,7 @@
 			"shortDescription": {"": "Anträge an den Kreis Minden-Lübbecke online erfassen."},
 			"longDescription": {"": "In unserem Portal können Sie Ihren Antrag an den Kreis Minden-Lübbecke direkt online erfassen und elektronisch übermitteln."},
 			"address": "https://www.buergerserviceportal.nrw/krz/mindenluebbecke",
-			"homepage": "http://www.minden-luebbecke.de/",
+			"homepage": "https://www.minden-luebbecke.de/",
 			"phone": "+49 571 807-0",
 			"email": "info@minden-luebbecke.de",
 			"postalAddress": "Kreis Minden-Lübbecke<br/>Portastraße 13<br/>32423 Minden",
@@ -445,7 +445,7 @@
 			"shortDescription": {"": "Anträge online erfassen und an die Verwaltung weiterleiten."},
 			"longDescription": {"": "Das Bürgerservice-Portal bietet die Möglichkeit, Anträge an die Verwaltung der Stadt Lage online zu erfassen und elektronisch zur weiteren Bearbeitung weiterzuleiten."},
 			"address": "https://www.buergerserviceportal.nrw/krz/lage",
-			"homepage": "http://www.lage.de/",
+			"homepage": "https://www.lage.de/",
 			"phone": "+49 5232/601300",
 			"email": "Buergerbuero@lage.de",
 			"postalAddress": "Bürgerbüro Lage<br/>Bergstraße 21<br/>32791 Lage",
@@ -495,10 +495,10 @@
 			"subjectUrls": ["https://www.buergerserviceportal.de"]
 		},
 		{
-			"exclude": ["ios", "android"],
+			"exclude": ["ios"],
 			"shortName": {"" : "CosmosDirekt Kundenportal meinCosmosDirekt"},
 			"longDescription": {"": "Mit der Online-Ausweisfunktion des Personalausweises können Sie sich einfach und sicher am Kundenportal ,mein Cosmos-Direkt' registrieren und anmelden. Im Portal haben Sie die Möglichkeit Ihre Versicherungen zu verwalten. Sie können online einen Antrag für ein Tagesgeldkonto stellen oder auch schnell und einfach Ihre persönlichen Daten, z.B. Ihre Adresse, ändern."},
-			"address": "https://www.cosmosdirekt.de/services/mcd-info",
+			"address": "https://www.cosmosdirekt.de/meincosmosdirekt-registrierung/",
 			"homepage": "https://www.cosmosdirekt.de/",
 			"phone": "+49 681-9 66 68 00",
 			"email": "info@cosmosdirekt.de",
@@ -536,20 +536,6 @@
 			"subjectUrls": ["https://secure6.datev.de"]
 		},
 		{
-			"exclude": ["ios"],
-			"shortName": {"" : "Deutsche Post AG - POSTIDENT Verfahren"},
-			"longName": {"" : "Deutsche Post AG - POSTIDENT Verfahren"},
-			"shortDescription": {"": "Durch das Onlineverfahren POSTIDENT mit dem neuem Personalausweis, können Sie sich schnell und einfach online mit Ihrem neuen Personalausweis identifizieren."},
-			"longDescription": {"": "Durch das Onlineverfahren POSTIDENT mit dem neuem Personalausweis, können Sie sich schnell und einfach online mit Ihrem neuen Personalausweis z.B. zur Eröffnung eines Tagesgeldkontos identifizieren: Sie werden hierzu von Ihrer Bank automatisch auf das POSTIDENT Portal geleitet und können sich mithilfe Ihres neuen Personalausweises mit freigeschalteter Online-Ausweisfunktion, einem Kartenlesegerät sowie der AusweisApp2 in wenigen Minuten sicher identifizieren."},
-			"address": "https://www.deutschepost.de/de/p/postident/identifizierungsverfahren/postident-npa.html",
-			"homepage": "https://www.deutschepost.de/de/p/postident.html",
-			"email": "info@deutschepost.de",
-			"postalAddress": "Deutsche Post AG<br/>Charles-de-Gaulle-Str. 20<br/>53113 Bonn",
-			"image": "DeutschePost_image.jpg",
-			"icon": "DeutschePost_icon.png",
-			"category": "other"
-		},
-		{
 			"shortName": {"" : "Deutsche Rentenversicherung"},
 			"longDescription": {"": "Mit der Online-Ausweisfunktion im neuen Personalausweis können Sie ...<br/>- auf Informationen Ihres Rentenkontos im Kundenbereich ,eService' sicher zugreifen (z. B. Versicherungsverlauf und Beitragsrechnung),<br/>- Ihre Rentenauskunft online abrufen,<br/>- schnell und einfach Ihre persönlichen Daten ändern (z. B. Ihre Adresse und Bankverbindung)."},
 			"address": "https://www.eservice-drv.de/OnlineDiensteWeb/init.do?npa=true",
@@ -562,7 +548,7 @@
 			"subjectUrls": ["https://www.eservice-drv.de"]
 		},
 		{
-			"exclude": ["ios", "android"],
+			"exclude": ["ios"],
 			"shortName": {"" : "eAntrag der Investitionsbank Berlin (IBB)"},
 			"longDescription": {"": "Im Kundenportal der Investitionsbank Berlin können Sie verschiedene Förder-Produkte durchgängig elektronisch beantragen:<br/>- Berlin Kapital<br/>- IBB Familienbaudarlehen<br/>- IBB Wohnraum modernisieren<br/>- KMU-Fonds über 25.000 Euro<br/>- Liquiditätshilfen BERLIN<br/>- Mikrokredit aus dem KMU-Fonds<br/>- Pro FIT (Projektvorschlagsphase)<br/>- Pro FIT (Frühphasenfinanzierung)<br/>Für die rechtsverbindliche, fristwahrende Antragstellung der Produkte<br/>- GRW<br/>- Innovationsassistent<br/>- PFI - Gemeinschaft<br/>- PFI - KMU<br/>- PFI - Netzwerk<br/>- ProFIT (Projektantragsphase)<br/>gilt aus verwaltungsrechtlichen Anforderungen das Schriftformerfordernis: Die elektronische Antragstellung ist zwingend nachträglich schriftlich zu bestätigen.<br/>Mit der Online-Ausweisfunktion können Sie sich bequem und sicher elektronisch legitimieren und müssen dadurch Ihre Identität weder per Postident-Verfahren noch persönlich vor Ort nachweisen.<br/>Nach Ihrer Legitimierung können Sie über eine persönliche Dokumentenablage die rechtsverbindliche Kommunikation mit Ihrem IBB-Ansprechpartner online – und unabhängig von Öffnungszeiten oder Postwegen – über das Kundenportal erledigen."},
 			"address": "https://www.ibb.de/de/service/eantrag/eantrag.html",
@@ -616,9 +602,9 @@
 			"subjectUrls": []
 		},
 		{
-			"exclude": ["ios", "android"],
+			"exclude": ["ios"],
 			"shortName": {"" : "Führungszeugnis und Auskunft aus dem Gewerbezentralregister"},
-			"longDescription": {"": "Sie benötigen ein Führungszeugnis oder eine Auskunft aus dem Gewerbezentralregister? Mit dem Personalausweis im Scheckkartenformat können Sie einen Behördengang sparen. Weitere Voraussetzungen sind die freigeschaltete Online-Ausweisfunktion und ein passendes Kartenlesegerät für Ihren Computer. Auf diese Weise kann eindeutig identifiziert werden, wer den Antrag stellt. Ausländische Mitbürger, die keinen deutschen Personalausweis besitzen, können in gleicher Weise die entsprechende Funktion ihres elektronischen Aufenthaltstitels nutzen.<br/>Neben Führungszeugnissen können auch Auskünfte aus dem Gewerbezentralregister über das neue Online-Portal des BfJ beantragt werden. Solche Auskünfte benötigen Unternehmen, die sich in Ausschreibungsverfahren um öffentliche Aufträge bewerben, recht häufig. Auch hier kann das Online-Verfahren den Aufwand erheblich senken."},
+			"longDescription": {"": "Sie benötigen ein Führungszeugnis oder eine Auskunft aus dem Gewerbezentralregister? Mit dem Personalausweis im Scheckkartenformat können Sie einen Behördengang sparen. Weitere Voraussetzungen sind die freigeschaltete Online-Ausweisfunktion und ein passender Kartenleser für Ihren Computer. Auf diese Weise kann eindeutig identifiziert werden, wer den Antrag stellt. Ausländische Mitbürger, die keinen deutschen Personalausweis besitzen, können in gleicher Weise die entsprechende Funktion ihres elektronischen Aufenthaltstitels nutzen.<br/>Neben Führungszeugnissen können auch Auskünfte aus dem Gewerbezentralregister über das neue Online-Portal des BfJ beantragt werden. Solche Auskünfte benötigen Unternehmen, die sich in Ausschreibungsverfahren um öffentliche Aufträge bewerben, recht häufig. Auch hier kann das Online-Verfahren den Aufwand erheblich senken."},
 			"address": "https://www.fuehrungszeugnis.bund.de/",
 			"homepage": "https://www.bundesjustizamt.de",
 			"phone": "+49 228 99 410-40",
@@ -716,7 +702,7 @@
 		{
 			"exclude": ["ios"],
 			"shortName": {"" : "Login Meine VBL"},
-			"longDescription": {"": "Bei der VBL können Sie sich mit dem Personalausweis am Kundenportal ,Meine VBL' registrieren und anmelden. Dadurch entfällt der Postversand eines Freischaltcodes - Sie sparen Zeit. Im Kundenkonto können Sie Ihre Vertragsdaten und Ihre persönlichen Daten einsehen und weitere Online-Dienste nutzen, z. B.<br/>- Rentenantrag stellen,<br/>- Beitragserstattung beantragen,<br/>- Kontaktdaten ändern,<br/>- persönliche Mitteilungen von der VBL erhalten."},
+			"longDescription": {"": "Bei der VBL können Sie sich mit dem Personalausweis am Kundenportal ,Meine VBL' anmelden. Im Kundenkonto können Sie Ihre Vertragsdaten und Ihre persönlichen Daten einsehen und weitere Online-Dienste nutzen, z. B.<br/>- Rentenantrag stellen,<br/>- Beitragserstattung beantragen,<br/>- Kontaktdaten ändern,<br/>- persönliche Mitteilungen von der VBL erhalten."},
 			"address": "https://www.vbl.de/de/meine_vbl",
 			"homepage": "https://www.vbl.de/",
 			"phone": "+49 721 93 98 93 1",
@@ -767,10 +753,10 @@
 		},
 		{
 			"shortName": {"" : "Selbstauskunft - „Meine Daten einsehen“"},
-			"longDescription": {"": "Die AusweisApp2 verfügt über die Funktion \"Meine Daten einsehen\". Mit dieser Funktion können die auf dem Personalausweis bzw. dem elektronischen Aufenthaltstitel gespeicherten Daten ausgelesen und angezeigt werden. Hierbei sprechen wir auch von einer sogenannten Selbstauskunft.<br/><br/>Sobald Sie die AusweisApp2 gestartet und ein geeignetes Kartenlesegerät installiert bzw. ein Android-Smartphone verbunden haben, können Sie diese Funktion unter dem Menüpunkt \"Ausweisen\" aufrufen. (Auf Mobilgeräten finden Sie die Ausweis-Auskunft übrigens auch direkt auf der Startseite sowie im Menüeintrag „Ausweisen“.)<br/><br/>Nach Ihrer PIN-Eingabe und erfolgreicher Datenübertragung werden die Daten in der AusweisApp2 dargestellt.<br/><br/>Bei der Selbstauskunft handelt es sich um einen reinen Demonstrationsdienst. Die ausgelesenen Daten werden lediglich zur Anzeige gebracht und nicht weitergegeben.<br/><br/>Bitte beachten Sie, dass Sie auch für diesen Vorgang eine Internetverbindung benötigen. Dies hat folgenden Hintergrund: Der Zugriff auf die Daten des Personalausweises bzw. des elektronischen Aufenthaltstitels ist nur möglich, wenn derjenige, der auf die Daten zugreifen möchte sich selbst zunächst eindeutig identifiziert. Dies geschieht über das sog. Berechtigungszertifikat. Es wird Ihnen immer angezeigt, wer auf Ihre Daten zugreifen möchte. Die Erlaubnis, ein Berechtigungszertifikat zu erhalten, wird einen Diensteanbieter auf Antrag und nach Prüfung bei der Vergabestelle für Berechtigungszertifikate beim Bundesverwaltungsamt erteilt. Um das technische Berechtigungszertifikat anzuzeigen und darüber hinaus eine Gültigkeitsprüfung des Ausweisdokuments durchführen zu können, ist eine Internetverbindung zwingend erforderlich. Aus diesem Grund spricht man auch von der Online-Ausweisfunktion."},
+			"longDescription": {"": "Die AusweisApp2 verfügt über die Funktion \"Meine Daten einsehen\". Mit dieser Funktion können die auf dem Personalausweis bzw. dem elektronischen Aufenthaltstitel gespeicherten Daten ausgelesen und angezeigt werden. Hierbei sprechen wir auch von einer sogenannten Selbstauskunft.<br/><br/>Sobald Sie die AusweisApp2 gestartet und ein geeigneter Kartenleser installiert bzw. ein Android-Smartphone verbunden haben, können Sie diese Funktion unter dem Menüpunkt \"Ausweisen\" aufrufen. (Auf Mobilgeräten finden Sie die Ausweis-Auskunft übrigens auch direkt auf der Startseite sowie im Menüeintrag „Ausweisen“.)<br/><br/>Nach Ihrer PIN-Eingabe und erfolgreicher Datenübertragung werden die Daten in der AusweisApp2 dargestellt.<br/><br/>Bei der Selbstauskunft handelt es sich um einen reinen Demonstrationsdienst. Die ausgelesenen Daten werden lediglich zur Anzeige gebracht und nicht weitergegeben.<br/><br/>Bitte beachten Sie, dass Sie auch für diesen Vorgang eine Internetverbindung benötigen. Dies hat folgenden Hintergrund: Der Zugriff auf die Daten des Personalausweises bzw. des elektronischen Aufenthaltstitels ist nur möglich, wenn derjenige, der auf die Daten zugreifen möchte sich selbst zunächst eindeutig identifiziert. Dies geschieht über das sog. Berechtigungszertifikat. Es wird Ihnen immer angezeigt, wer auf Ihre Daten zugreifen möchte. Die Erlaubnis, ein Berechtigungszertifikat zu erhalten, wird einen Diensteanbieter auf Antrag und nach Prüfung bei der Vergabestelle für Berechtigungszertifikate beim Bundesverwaltungsamt erteilt. Um das technische Berechtigungszertifikat anzuzeigen und darüber hinaus eine Gültigkeitsprüfung des Ausweisdokuments durchführen zu können, ist eine Internetverbindung zwingend erforderlich. Aus diesem Grund spricht man auch von der Online-Ausweisfunktion."},
 			"address": "https://www.ausweisapp.bund.de/ausweisapp2/ausprobieren-meine-daten-einsehen/",
 			"homepage": "https://www.ausweisapp.bund.de/",
-			"phone": "+49 1805 - 348743",
+			"phone": "+49 421 - 204 95 995",
 			"email": "support@ausweisapp.de",
 			"postalAddress": "Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesministeriums des Innern, für Bau und Heimat -<br/>Hochschulring 4<br/>D-28359 Bremen",
 			"image": "Selbstauskunft.jpg",

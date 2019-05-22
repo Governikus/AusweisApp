@@ -1,7 +1,7 @@
 /*!
  * \brief Workflow context.
  *
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -50,6 +50,7 @@ class WorkflowContext
 		bool mWorkflowFinished;
 		bool mWorkflowCancelled;
 		bool mCanAllowedMode;
+		bool mNextWorkflowPending;
 
 	private Q_SLOTS:
 		void onWorkflowCancelled();
@@ -69,6 +70,8 @@ class WorkflowContext
 
 		void fireCancelWorkflow();
 		void fireAbortCardSelection();
+
+		void fireNextWorkflowPending();
 
 	public:
 		WorkflowContext();
@@ -143,6 +146,9 @@ class WorkflowContext
 
 		bool isCanAllowedMode() const;
 		void setCanAllowedMode(bool pCanAllowedMode);
+
+		bool hasNextWorkflowPending() const;
+		void setNextWorkflowPending(bool pNextWorkflowPending);
 };
 
 } // namespace governikus

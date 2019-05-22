@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManagerWorker.h"
@@ -127,6 +127,21 @@ void ReaderManagerWorker::stopScan(ReaderManagerPlugInType pType)
 			plugin->stopScan();
 		}
 	}
+}
+
+
+bool ReaderManagerWorker::isScanRunning() const
+{
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
+
+	for (const auto& plugin : qAsConst(mPlugIns))
+	{
+		if (plugin->isScanRunning())
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 

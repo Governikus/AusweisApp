@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CommandLineParser.h"
@@ -29,6 +29,7 @@ CommandLineParser::CommandLineParser()
 	: mParser()
 	, mOptionKeepLog(QStringLiteral("keep"), QStringLiteral("Keep log file."))
 	, mOptionNoLogFile(QStringLiteral("no-logfile"), QStringLiteral("Disable log file."))
+	, mOptionNoLogHandler(QStringLiteral("no-loghandler"), QStringLiteral("Disable default log handler."))
 	, mOptionShowWindow(QStringLiteral("show"), QStringLiteral("Show window on startup."))
 	, mOptionProxy(QStringLiteral("no-proxy"), QStringLiteral("Disable system proxy."))
 	, mOptionUi(QStringLiteral("ui"), QStringLiteral("Use given UI plugin."), UILoader::getInstance().getDefault().join(QLatin1Char(',')))
@@ -51,6 +52,7 @@ void CommandLineParser::addOptions()
 
 	mParser.addOption(mOptionKeepLog);
 	mParser.addOption(mOptionNoLogFile);
+	mParser.addOption(mOptionNoLogHandler);
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 	mParser.addOption(mOptionShowWindow);
@@ -81,6 +83,11 @@ void CommandLineParser::parse(QCoreApplication* pApp)
 	if (mParser.isSet(mOptionNoLogFile))
 	{
 		logHandler->setLogfile(false);
+	}
+
+	if (mParser.isSet(mOptionNoLogHandler))
+	{
+		logHandler->setUseHandler(false);
 	}
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)

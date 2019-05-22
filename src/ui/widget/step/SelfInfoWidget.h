@@ -1,7 +1,7 @@
 /*!
  * \brief A widget displaying the card data retrieved in the self info workflow.
  *
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

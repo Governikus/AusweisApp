@@ -48,9 +48,9 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-  - Firefox 64
+  - Firefox 66
 
-  - Chrome 71
+  - Chrome 74
 
   - Internet Explorer 11
 
@@ -116,9 +116,9 @@ folgenden Browser zu verwenden.
 
   - Firefox Klar 8
 
-  - Chrome 71
+  - Chrome 73
 
-  - Android System WebView 70
+  - Android System WebView 73
 
 
 

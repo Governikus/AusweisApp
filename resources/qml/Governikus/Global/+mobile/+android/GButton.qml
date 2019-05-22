@@ -8,10 +8,12 @@ import "Utils.js" as Utils
  * Android style guide for material design is adapted.
  */
 Item {
+	id: baseItem
 	property alias text: textItem.text
 	property color buttonColor: Constants.blue
 	property int maxWidth: 0
 	property alias iconSource: icon.source
+	property bool animationsDisabled: false
 
 	signal clicked
 
@@ -20,11 +22,11 @@ Item {
 
 	state: "normal"
 	states: [
-		State { name: "normal"; when: !mouseArea.pressed
+		State { name: "normal"; when: baseItem.animationsDisabled || !mouseArea.pressed
 			PropertyChanges { target: darkLayer; width: 0 }
 			PropertyChanges { target: shadow; verticalOffset: Utils.dp(2) }
 		},
-		State { name: "pressed"; when: mouseArea.pressed
+		State { name: "pressed"; when: !baseItem.animationsDisabled && mouseArea.pressed
 			PropertyChanges { target: darkLayer; width: 2 * rect.width }
 			PropertyChanges { target: shadow; verticalOffset: Utils.dp(8) }
 		}

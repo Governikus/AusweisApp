@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscReaderManagerPlugIn.h"
@@ -65,6 +65,7 @@ void PcscReaderManagerPlugIn::startScan(bool pAutoConnect)
 	{
 		mTimerId = startTimer(500);
 	}
+	ReaderManagerPlugIn::startScan(pAutoConnect);
 }
 
 
@@ -86,6 +87,7 @@ void PcscReaderManagerPlugIn::stopScan()
 		}
 	}
 	updateReaders();
+	ReaderManagerPlugIn::stopScan();
 }
 
 

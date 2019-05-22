@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisAntivirusDetection.h"
@@ -70,13 +70,40 @@ void DiagnosisAntivirusDetection::onFinished(int exitCode, QProcess::ExitStatus 
 		return;
 	}
 
-	QString output = QString::fromUtf8(mProcess->readAllStandardOutput());
+	const QString& output = QString::fromUtf8(mProcess->readAllStandardOutput());
+	parseAntivirInfos(output);
+}
+
+
+#endif
+
+
+#if defined(Q_OS_WIN)
+void DiagnosisAntivirusDetection::onError(QProcess::ProcessError pError)
+{
+	qDebug() << "Error calling process:" << pError;
+	Q_EMIT fireDetectionFailed();
+}
+
+
+#endif
+
+
+const QVector<QSharedPointer<AntivirInfo> >& DiagnosisAntivirusDetection::getAntivirusInformations() const
+{
+	return mAntivirInfos;
+}
+
+
+void DiagnosisAntivirusDetection::parseAntivirInfos(const QString& pAntivirInfos)
+{
+	mAntivirInfos.clear();
 
 	QString displayName;
 	QString lastUpdate;
 	QString exePath;
 
-	const auto& lines = output.split(QStringLiteral("\r\n"));
+	const auto& lines = pAntivirInfos.split(QStringLiteral("\n"));
 	for (const auto& line : lines)
 	{
 		const QString& trimmedLine = line.trimmed();
@@ -113,26 +140,6 @@ void DiagnosisAntivirusDetection::onFinished(int exitCode, QProcess::ExitStatus 
 	}
 
 	Q_EMIT fireAntivirusInformationChanged();
-}
-
-
-#endif
-
-
-#if defined(Q_OS_WIN)
-void DiagnosisAntivirusDetection::onError(QProcess::ProcessError pError)
-{
-	qDebug() << "Error calling process:" << pError;
-	Q_EMIT fireDetectionFailed();
-}
-
-
-#endif
-
-
-const QVector<QSharedPointer<AntivirInfo> >& DiagnosisAntivirusDetection::getAntivirusInformations() const
-{
-	return mAntivirInfos;
 }
 
 

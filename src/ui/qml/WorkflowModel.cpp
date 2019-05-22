@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowModel.h"
@@ -40,6 +40,7 @@ void WorkflowModel::resetContext(const QSharedPointer<WorkflowContext>& pContext
 		connect(mContext.data(), &WorkflowContext::fireResultChanged, this, &WorkflowModel::fireResultChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &WorkflowModel::fireReaderPlugInTypeChanged);
 		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &WorkflowModel::fireIsBasicReaderChanged);
+		connect(mContext.data(), &WorkflowContext::fireNextWorkflowPending, this, &WorkflowModel::fireNextWorkflowPendingChanged);
 	}
 
 	/*
@@ -151,6 +152,12 @@ bool WorkflowModel::isBasicReader()
 	}
 
 	return true;
+}
+
+
+bool WorkflowModel::getNextWorkflowPending() const
+{
+	return mContext->hasNextWorkflowPending();
 }
 
 

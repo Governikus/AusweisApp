@@ -1,17 +1,26 @@
 /*
- * \copyright Copyright (c) 2014-2018 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogHandler.h"
 
 #include "BreakPropertyBindingDiagnosticLogFilter.h"
+#include "ScopeGuard.h"
 #include "SingletonHelper.h"
 
+#include <QCoreApplication>
 #include <QDir>
+#include <QStringBuilder>
 
 using namespace governikus;
 
 defineSingleton(LogHandler)
+
+Q_DECLARE_LOGGING_CATEGORY(fileprovider)
+Q_DECLARE_LOGGING_CATEGORY(securestorage)
+Q_DECLARE_LOGGING_CATEGORY(configuration)
+
+#define LOGCAT(name) QString::fromLatin1(name().categoryName())
 
 
 #if !defined(Q_OS_ANDROID) && !defined(QT_USE_JOURNALD)
@@ -24,11 +33,14 @@ LogHandler::LogHandler()
 	, mEnvPattern(!qEnvironmentVariableIsEmpty("QT_MESSAGE_PATTERN"))
 	, mFunctionFilenameSize(74)
 	, mBacklogPosition(0)
-	, mMessagePattern(QStringLiteral("%{category} %{time yyyy.MM.dd hh:mm:ss.zzz} %{if-debug} %{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif} %{function}(%{file}:%{line}) %{message}"))
+	, mCriticalLog(false)
+	, mCriticalLogWindow(10)
+	, mCriticalLogIgnore({LOGCAT(fileprovider), LOGCAT(securestorage), LOGCAT(configuration)})
+	, mMessagePattern(QStringLiteral("%{category} %{time yyyy.MM.dd hh:mm:ss.zzz} %{threadid} %{if-debug} %{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}	 %{function}(%{file}:%{line}) %{message}"))
 	, mDefaultMessagePattern(QStringLiteral("%{if-category}%{category}: %{endif}%{message}")) // as defined in qlogging.cpp
-	, mLogFileTemplate(QDir::tempPath() + QStringLiteral("/AusweisApp2.XXXXXX.log")) // if you change value you need to adjust getOtherLogfiles()
-	, mLogFile(mLogFileTemplate)
+	, mLogFile(getLogFileTemplate())
 	, mHandler(nullptr)
+	, mUseHandler(true)
 	, mFilePrefix("/src/")
 	, mMutex()
 {
@@ -47,6 +59,13 @@ LogHandler::~LogHandler()
 LogHandler& LogHandler::getInstance()
 {
 	return *Instance;
+}
+
+
+QString LogHandler::getLogFileTemplate()
+{
+	// if you change value you need to adjust getOtherLogfiles()
+	return QDir::tempPath() % QLatin1Char('/') % QCoreApplication::applicationName() % QStringLiteral(".XXXXXX.log");
 }
 
 
@@ -71,6 +90,9 @@ void LogHandler::init()
 			mLogFile.open();
 		}
 		mHandler = qInstallMessageHandler(&LogHandler::messageHandler);
+
+		// Avoid deadlock with subsequent logging of this call.
+		QMetaObject::invokeMethod(this, &LogHandler::removeOldLogfiles, Qt::QueuedConnection);
 	}
 }
 
@@ -97,17 +119,17 @@ void LogHandler::logToFile(const QString& pOutput)
 }
 
 
-QByteArray LogHandler::getBacklog()
+QByteArray LogHandler::readLogFile(qint64 pStart, qint64 pLength)
 {
-	const QMutexLocker mutexLocker(&mMutex);
-
 	if (mLogFile.isOpen() && mLogFile.isReadable())
 	{
 		const auto currentPos = mLogFile.pos();
-		mLogFile.seek(mBacklogPosition);
-		const auto backlog = mLogFile.readAll();
-		mLogFile.seek(currentPos);
-		return backlog;
+		const ScopeGuard resetPosition([this, currentPos] {
+					mLogFile.seek(currentPos);
+				});
+
+		mLogFile.seek(pStart);
+		return pLength > 0 ? mLogFile.read(pLength) : mLogFile.readAll();
 	}
 
 	if (useLogfile())
@@ -116,6 +138,47 @@ QByteArray LogHandler::getBacklog()
 	}
 
 	return QByteArray();
+}
+
+
+QByteArray LogHandler::getBacklog(bool pAll)
+{
+	const QMutexLocker mutexLocker(&mMutex);
+	return readLogFile(pAll ? 0 : mBacklogPosition);
+}
+
+
+QByteArray LogHandler::getCriticalLogWindow()
+{
+	const QMutexLocker mutexLocker(&mMutex);
+
+	if (mCriticalLog)
+	{
+		const auto first = qAsConst(mCriticalLogWindow).first();
+		const auto last = qAsConst(mCriticalLogWindow).last();
+		return readLogFile(first.mPosition, last.mPosition - first.mPosition + last.mLength);
+	}
+
+	return QByteArray();
+}
+
+
+bool LogHandler::hasCriticalLog() const
+{
+	return mCriticalLog;
+}
+
+
+int LogHandler::getCriticalLogCapacity() const
+{
+	return mCriticalLogWindow.capacity();
+}
+
+
+void LogHandler::setCriticalLogCapacity(int pSize)
+{
+	const QMutexLocker mutexLocker(&mMutex);
+	mCriticalLogWindow.setCapacity(pSize);
 }
 
 
@@ -141,6 +204,8 @@ void LogHandler::resetBacklog()
 {
 	const QMutexLocker mutexLocker(&mMutex);
 	mBacklogPosition = mLogFile.pos();
+	mCriticalLog = false;
+	mCriticalLogWindow.clear();
 }
 
 
@@ -255,18 +320,42 @@ void LogHandler::handleMessage(QtMsgType pType, const QMessageLogContext& pConte
 	const QLatin1Char lineBreak('\n');
 #endif
 
-	QString logMsg = qFormatLogMessage(pType, ctx, message) + lineBreak;
+	const QString logMsg = qFormatLogMessage(pType, ctx, message) + lineBreak;
+	handleLogWindow(pType, pContext.category, logMsg);
 	logToFile(logMsg);
 
+	if (Q_LIKELY(mUseHandler))
+	{
 #ifdef ENABLE_MESSAGE_PATTERN
-	mHandler(pType, ctx, message);
+		mHandler(pType, ctx, message);
 #else
-	qSetMessagePattern(mDefaultMessagePattern);
-	mHandler(pType, ctx, pMsg);
+		qSetMessagePattern(mDefaultMessagePattern);
+		mHandler(pType, ctx, pMsg);
 #endif
+	}
 
 	Q_EMIT fireRawLog(pMsg, QString::fromLatin1(pContext.category));
 	Q_EMIT fireLog(logMsg);
+}
+
+
+void LogHandler::handleLogWindow(QtMsgType pType, const char* pCategory, const QString& pMsg)
+{
+	if (!useLogfile())
+	{
+		return;
+	}
+
+	if (mCriticalLog && mCriticalLogWindow.isFull())
+	{
+		return;
+	}
+	else if (pType == QtCriticalMsg && !mCriticalLogIgnore.contains(QLatin1String(pCategory)))
+	{
+		mCriticalLog = true;
+	}
+
+	mCriticalLogWindow.append({mLogFile.pos(), pMsg.size()});
 }
 
 
@@ -287,7 +376,7 @@ QFileInfoList LogHandler::getOtherLogfiles() const
 	QDir tmpPath = QDir::temp();
 	tmpPath.setSorting(QDir::Time);
 	tmpPath.setFilter(QDir::Files);
-	tmpPath.setNameFilters(QStringList({QStringLiteral("AusweisApp2.*.log")}));
+	tmpPath.setNameFilters(QStringList({QCoreApplication::applicationName() + QStringLiteral(".*.log")}));
 
 	QFileInfoList list = tmpPath.entryInfoList();
 	list.removeAll(mLogFile);
@@ -296,12 +385,28 @@ QFileInfoList LogHandler::getOtherLogfiles() const
 }
 
 
+void LogHandler::removeOldLogfiles()
+{
+	const auto& threshold = QDateTime::currentDateTime().addDays(-14);
+	const QFileInfoList& logfileInfos = getOtherLogfiles();
+	for (const QFileInfo& entry : logfileInfos)
+	{
+		if (entry.fileTime(QFileDevice::FileModificationTime) < threshold)
+		{
+			const auto result = QFile::remove(entry.absoluteFilePath());
+			qDebug() << "Auto-remove old log file:" << entry.absoluteFilePath() << '|' << result;
+		}
+	}
+}
+
+
 bool LogHandler::removeOtherLogfiles()
 {
 	const auto otherLogFiles = getOtherLogfiles();
 	for (const auto& entry : otherLogFiles)
 	{
-		qDebug() << "Remove old log file:" << entry.absoluteFilePath() << "|" << QFile::remove(entry.absoluteFilePath());
+		const auto result = QFile::remove(entry.absoluteFilePath());
+		qDebug() << "Remove old log file:" << entry.absoluteFilePath() << '|' << result;
 	}
 
 	return !otherLogFiles.isEmpty();
@@ -316,7 +421,7 @@ void LogHandler::setLogfile(bool pEnable)
 	{
 		if (!mLogFile.isOpen())
 		{
-			mLogFile.setFileTemplate(mLogFileTemplate);
+			mLogFile.setFileTemplate(getLogFileTemplate());
 			mLogFile.open();
 		}
 	}
@@ -327,6 +432,8 @@ void LogHandler::setLogfile(bool pEnable)
 			mLogFile.close();
 			mLogFile.remove();
 			mBacklogPosition = 0;
+			mCriticalLog = false;
+			mCriticalLogWindow.clear();
 		}
 		mLogFile.setFileTemplate(QString());
 	}
@@ -336,6 +443,18 @@ void LogHandler::setLogfile(bool pEnable)
 bool LogHandler::useLogfile() const
 {
 	return !mLogFile.fileTemplate().isNull();
+}
+
+
+void LogHandler::setUseHandler(bool pEnable)
+{
+	mUseHandler = pEnable;
+}
+
+
+bool LogHandler::useHandler() const
+{
+	return mUseHandler;
 }
 
 
