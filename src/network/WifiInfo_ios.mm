@@ -47,17 +47,8 @@ bool WifiInfo::getCurrentWifiEnabled()
 
 void WifiInfo::enableWifi()
 {
-	NSArray* urlStrings = @[@"prefs:root=WIFI", @"App-Prefs:root=WIFI"];
-	for (NSString* urlString in urlStrings)
-	{
-		NSURL* url = [NSURL URLWithString:urlString];
-		if ([[UIApplication sharedApplication] canOpenURL:url])
-		{
-			[[UIApplication sharedApplication] openURL:url options:@{}
-			completionHandler:nil];
-			break;
-		}
-	}
+	// While it is possible to do this programmatically using private APIs, Apple will reject apps that do this.
+	qCWarning(qml) << "NOT IMPLEMENTED";
 }
 
 

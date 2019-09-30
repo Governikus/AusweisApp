@@ -228,9 +228,9 @@ IF(CONVERT)
 		COMMAND ${CONVERT} -alpha off -background '${BACKGROUND_COLOR}' -resize 152x152 iOS/appIcons/npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon76@2x.png
 		COMMAND ${CONVERT} -alpha off -background '${BACKGROUND_COLOR}' -resize 167x167 iOS/appIcons/npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon83.5@2x.png
 		COMMAND ${CONVERT} -alpha off -background '${BACKGROUND_COLOR}' -resize 1024x1024 iOS/appIcons/npa_beta.svg iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon1024.png
-		COMMAND ${CONVERT} -background none -resize 256x256 npa_beta.svg iOS/appIcons/Images.xcassets/LaunchImage.imageset/launchImage.png
-		COMMAND ${CONVERT} -background none -resize 512x512 npa_beta.svg iOS/appIcons/Images.xcassets/LaunchImage.imageset/launchImage@2x.png
-		COMMAND ${CONVERT} -background none -resize 768x768 npa_beta.svg iOS/appIcons/Images.xcassets/LaunchImage.imageset/launchImage@3x.png
+		COMMAND ${CONVERT} -background none -resize 256x256 npa_beta.svg iOS/appIcons/beta/Images.xcassets/LaunchImage.imageset/launchImage.png
+		COMMAND ${CONVERT} -background none -resize 512x512 npa_beta.svg iOS/appIcons/beta/Images.xcassets/LaunchImage.imageset/launchImage@2x.png
+		COMMAND ${CONVERT} -background none -resize 768x768 npa_beta.svg iOS/appIcons/beta/Images.xcassets/LaunchImage.imageset/launchImage@3x.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	ADD_CUSTOM_TARGET(npaicons.ios
@@ -281,9 +281,9 @@ IF(PNGQUANT)
 		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon76@2x.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon76@2x.png
 		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon83.5@2x.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon83.5@2x.png
 		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon1024.png -- iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset/icon1024.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/LaunchImage.imageset/launchImage.png -- iOS/appIcons/Images.xcassets/LaunchImage.imageset/launchImage.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/LaunchImage.imageset/launchImage@2x.png -- iOS/appIcons/Images.xcassets/LaunchImage.imageset/launchImage@2x.png
-		COMMAND ${PNGQUANT_CMD} iOS/appIcons/Images.xcassets/LaunchImage.imageset/launchImage@3x.png -- iOS/appIcons/Images.xcassets/LaunchImage.imageset/launchImage@3x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/LaunchImage.imageset/launchImage.png -- iOS/appIcons/beta/Images.xcassets/LaunchImage.imageset/launchImage.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/LaunchImage.imageset/launchImage@2x.png -- iOS/appIcons/beta/Images.xcassets/LaunchImage.imageset/launchImage@2x.png
+		COMMAND ${PNGQUANT_CMD} iOS/appIcons/beta/Images.xcassets/LaunchImage.imageset/launchImage@3x.png -- iOS/appIcons/beta/Images.xcassets/LaunchImage.imageset/launchImage@3x.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	ADD_CUSTOM_TARGET(pngquant.ios

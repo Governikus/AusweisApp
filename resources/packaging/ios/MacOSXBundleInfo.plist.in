@@ -96,11 +96,6 @@
 	</array>
 	<key>NSHumanReadableCopyright</key>
 	<string>${MACOSX_BUNDLE_COPYRIGHT}</string>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>bluetooth-central</string>
-		<string>fetch</string>
-	</array>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>AusweisApp2 needs Bluetooth to enable the required card reader.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>

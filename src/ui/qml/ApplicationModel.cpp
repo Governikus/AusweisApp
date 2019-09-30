@@ -530,7 +530,11 @@ void ApplicationModel::onWifiEnabledChanged()
 
 void ApplicationModel::enableWifi()
 {
+#ifdef Q_OS_IOS
+	showFeedback(tr("Please enable Wi-Fi in your system settings."));
+#else
 	mWifiInfo.enableWifi();
+#endif
 }
 
 

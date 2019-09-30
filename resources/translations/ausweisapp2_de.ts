@@ -5082,6 +5082,13 @@ klicken.</translation>
     </message>
 </context>
 <context>
+    <name>governikus::ApplicationModel</name>
+    <message>
+        <source>Please enable Wi-Fi in your system settings.</source>
+        <translation>Bitte aktivieren Sie WLAN in Ihren Systemeinstellungen.</translation>
+    </message>
+</context>
+<context>
     <name>governikus::CardInfo</name>
     <message>
         <source>not inserted</source>
