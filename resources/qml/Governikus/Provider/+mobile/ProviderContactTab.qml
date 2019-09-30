@@ -1,62 +1,89 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Layouts 1.2
+import QtGraphicalEffects 1.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 Item {
 	id: baseItem
-	property alias contactModel: infoList.model
-	readonly property int contentHeight: infoList.contentHeight
 
+	property alias contactModel: infoList.model
+
+	implicitHeight: infoList.contentHeight + 2 * Constants.component_spacing
 
 	ListView {
 		id: infoList
+
 		anchors.fill: parent
+		anchors.margins: Constants.component_spacing
+
 		interactive: false
 
 		delegate: Item {
 			id: delegateItem
+
 			width: parent.width
-			height: Math.max(textItem.height, Utils.dp(50))
+			height: Math.max(textItem.height, 50)
+
+			Accessible.role: Accessible.ListItem
+			Accessible.name: ApplicationModel.stripHtmlTags(textItem.text)
 
 			Image {
 				id: imageItem
-				fillMode: Image.PreserveAspectFit
-				height: Utils.dp(24)
-				width: Utils.dp(24)
+
+
 				anchors.left: parent.left
-				anchors.leftMargin: Utils.dp(15)
 				anchors.verticalCenter: parent.verticalCenter
+				sourceSize.height: Style.dimens.small_icon_size
+				sourceSize.width: Style.dimens.small_icon_size
+
 				source: Qt.resolvedUrl(model.iconSource)
+				fillMode: Image.PreserveAspectFit
+
+				ColorOverlay {
+					anchors.fill: imageItem
+					source: imageItem
+					color: Style.color.accent
+				}
 			}
 
-			Text {
+			GText {
 				id: textItem
-				color: Constants.secondary_text
-				text: !!model.text ? model.text : qsTr("Unknown") + settingsModel.translationTrigger
-				verticalAlignment: Text.AlignVCenter
+
 				anchors.left: imageItem.right
-				anchors.leftMargin: Utils.dp(20)
+				anchors.leftMargin: Constants.component_spacing
 				anchors.right: parent.right
-				anchors.rightMargin: Utils.dp(10)
 				anchors.verticalCenter: parent.verticalCenter
-				font.pixelSize: Utils.dp(16)
-				wrapMode: Text.WordWrap
+
+				Accessible.ignored: true
+
 				textFormat: Text.RichText
+				text: !!model.text ? model.text : qsTr("Unknown") + SettingsModel.translationTrigger
+				verticalAlignment: Text.AlignVCenter
+				textStyle: Style.text.normal
 			}
 
 			MouseArea {
 				anchors.fill: delegateItem
+
 				enabled: !!model.link
+
 				onClicked: Qt.openUrlExternally(model.link)
 			}
 
-			Rectangle {
+			GSeparator {
+				visible: index !== infoList.count - 1
 				anchors.bottom: parent.bottom
 				anchors.left: parent.left
 				anchors.right: parent.right
-				height: 1
-				color: Constants.grey
 			}
 		}
 	}

@@ -89,6 +89,7 @@ QString SelfAuthenticationData::SelfData::getValue(SelfAuthData pData) const
 			return QStringLiteral("D");
 		}
 
+		//: INFO ALL_PLATFORMS The requested data is not stored on this chip's generation.
 		return tr("This data has not been stored in this chip generation.");
 	}
 
@@ -128,7 +129,7 @@ bool SelfAuthenticationData::SelfData::parsePersonalData(const QJsonObject& pObj
 	const auto& keys = pObject.keys();
 	for (const auto& entry : keys)
 	{
-		const auto subvalue = [&pObject, &entry](const char* pValue){
+		const auto subvalue = [&pObject, &entry](const char* const pValue){
 					return pObject.value(entry).toObject().value(QLatin1String(pValue));
 				};
 
@@ -220,38 +221,47 @@ SelfAuthenticationData::OrderedSelfData SelfAuthenticationData::SelfData::getOrd
 	//fill layout with new data, see 18 Personalausweisgesetz (PAuswG)
 	if (!getValue(SelfAuthData::FamilyNames).isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(tr("Family name"), getValue(SelfAuthData::FamilyNames));
 	}
 	if (!getValue(SelfAuthData::BirthName).isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(tr("Birth name"), getValue(SelfAuthData::BirthName));
 	}
 	if (!getValue(SelfAuthData::GivenNames).isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(tr("Given name(s)"), getValue(SelfAuthData::GivenNames));
 	}
 	if (!getValue(SelfAuthData::AcademicTitle).isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(tr("Doctoral degree"), getValue(SelfAuthData::AcademicTitle));
 	}
 	if (!getValue(SelfAuthData::DateOfBirth).isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(tr("Date of birth"), formatDate(getValue(SelfAuthData::DateOfBirth)));
 	}
 	if (!getValue(SelfAuthData::PlaceOfBirth).isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(tr("Place of birth"), getValue(SelfAuthData::PlaceOfBirth));
 	}
 	if (!getValue(SelfAuthData::PlaceOfResidenceNoPlaceInfo).isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(tr("Address"), getValue(SelfAuthData::PlaceOfResidenceNoPlaceInfo));
 	}
 	if (!getValue(SelfAuthData::PlaceOfResidenceStreet).isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(getValue(SelfAuthData::PlaceOfResidenceNoPlaceInfo).isNull() ? tr("Address") : QString(), getValue(SelfAuthData::PlaceOfResidenceStreet));
 	}
 	if (!getValue(SelfAuthData::PlaceOfResidenceZipCode).isNull() || !getValue(SelfAuthData::PlaceOfResidenceCity).isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(getValue(SelfAuthData::PlaceOfResidenceStreet).isNull() ? tr("Address") : QString(), getValue(SelfAuthData::PlaceOfResidenceZipCode) + QLatin1Char(' ') + getValue(SelfAuthData::PlaceOfResidenceCity));
 	}
 	if (!getValue(SelfAuthData::PlaceOfResidenceCountry).isNull())
@@ -262,18 +272,22 @@ SelfAuthenticationData::OrderedSelfData SelfAuthenticationData::SelfData::getOrd
 	const auto& documentType = getValue(SelfAuthData::DocumentType);
 	if (!documentType.isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(tr("Document type"), documentType);
 	}
 	if (!getValue(SelfAuthData::Nationality).isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(tr("Nationality"), getValue(SelfAuthData::Nationality));
 	}
 	if (!getValue(SelfAuthData::ArtisticName).isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(tr("Religious / artistic name"), getValue(SelfAuthData::ArtisticName));
 	}
 	if (!getValue(SelfAuthData::IssuingState).isNull())
 	{
+		//: LABEL ALL_PLATFORMS
 		add(tr("Issuing country"), getValue(SelfAuthData::IssuingState));
 	}
 
@@ -286,6 +300,7 @@ SelfAuthenticationData::OrderedSelfData SelfAuthenticationData::SelfData::getOrd
 				documentType == QLatin1String("AF") ||
 				documentType == QLatin1String("TA")))
 	{
+		//: LABEL ALL_PLATFORMS
 		add(tr("Residence permit I"), getValue(SelfAuthData::ResidencePermitI));
 	}
 

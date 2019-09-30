@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtTest 1.10
 
 TestCase {
@@ -12,10 +16,10 @@ TestCase {
 		item.destroy();
 	}
 
-	function test_load_Log() {
+	function test_load_StoreFeedbackPopup() {
 		var item = createTemporaryQmlObject("
 			import Governikus.FeedbackView 1.0;
-			Log {}
+			StoreFeedbackPopup {}
 			", parent);
 		item.destroy();
 	}

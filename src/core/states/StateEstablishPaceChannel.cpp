@@ -13,7 +13,8 @@ Q_DECLARE_LOGGING_CATEGORY(statemachine)
 using namespace governikus;
 
 StateEstablishPaceChannel::StateEstablishPaceChannel(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 	, mPasswordId(PacePasswordId::UNKNOWN)
 {
 }
@@ -32,7 +33,6 @@ void StateEstablishPaceChannel::run()
 	QByteArray certificateDescription, effectiveChat;
 	mPasswordId = getContext()->getEstablishPaceChannelType();
 	Q_ASSERT(mPasswordId != PacePasswordId::UNKNOWN);
-	getContext()->setEstablishPaceChannelType(PacePasswordId::UNKNOWN);
 
 	if (mPasswordId == PacePasswordId::PACE_PIN ||
 			(mPasswordId == PacePasswordId::PACE_CAN && getContext()->isCanAllowedMode()))
@@ -169,11 +169,6 @@ void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCar
 			else if (mPasswordId == PacePasswordId::PACE_PUK)
 			{
 				getContext()->setLastPaceResult(CardReturnCode::OK_PUK);
-
-				if (auto changePinContext = getContext().objectCast<ChangePinContext>())
-				{
-					changePinContext->setSuccessMessage(tr("PIN successfully unblocked"));
-				}
 
 				Q_EMIT firePacePukEstablished();
 				return;

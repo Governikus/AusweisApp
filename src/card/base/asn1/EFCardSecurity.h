@@ -89,7 +89,7 @@ class EFCardSecurity
 	friend class QSharedPointer<EFCardSecurity>;
 	const QSharedPointer<const SecurityInfos> mSecurityInfos;
 
-	EFCardSecurity(const QSharedPointer<const SecurityInfos>& pSecurityInfos);
+	explicit EFCardSecurity(const QSharedPointer<const SecurityInfos>& pSecurityInfos);
 	Q_DISABLE_COPY(EFCardSecurity)
 
 	public:

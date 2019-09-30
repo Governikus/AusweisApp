@@ -35,7 +35,6 @@ class StepErrorGui
 		QSharedPointer<WorkflowContext> mContext;
 		AppQtMainWidget* const mMainWidget;
 		QPointer<QMessageBox> mMessageBox;
-		QString generateMailBody(const GlobalStatus& pStatus) const;
 
 	Q_SIGNALS:
 		void switchedToPinSettings();

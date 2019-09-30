@@ -7,9 +7,13 @@
 #include "Initializer.h"
 #include "ReaderManagerWorker.h"
 
+#include <QLoggingCategory>
 #include <QThread>
 
+Q_DECLARE_LOGGING_CATEGORY(card)
+
 using namespace governikus;
+
 
 static Initializer::Entry X([] {
 			qRegisterMetaType<QSharedPointer<CreateCardConnectionCommand> >("QSharedPointer<CreateCardConnectionCommand>");
@@ -45,7 +49,7 @@ void CreateCardConnectionCommand::execute()
 	}
 	else
 	{
-		qCritical() << "Cannot invoke ReaderManagerWorker to create CardConnectionWorker";
+		qCCritical(card) << "Cannot invoke ReaderManagerWorker to create CardConnectionWorker";
 		QSharedPointer<CreateCardConnectionCommand> command(this, &QObject::deleteLater);
 		Q_EMIT fireCommandDone(command);
 	}

@@ -21,6 +21,7 @@ class GuiUtils
 	public:
 		static bool showPinCanPukErrorDialog(CardReturnCode pReturnCode, bool pCanAllowedMode, QWidget* pParent);
 		static bool showWrongPinBlockedDialog(QWidget* pParent);
+		static bool showPinUnlockedDialog(QWidget* pParent);
 };
 
 } // namespace governikus

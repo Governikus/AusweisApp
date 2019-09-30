@@ -88,7 +88,7 @@ void ConnectRequest::onConnected()
 	qCDebug(remote_device) << "Connected to remote device";
 
 	auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	const auto& pairingCiphers = SecureStorage::getInstance().getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
+	const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
 	if (pairingCiphers.contains(cfg.sessionCipher()))
 	{
 		qCDebug(remote_device) << "Pairing completed | Add certificate:" << cfg.peerCertificate();
@@ -142,7 +142,7 @@ void ConnectRequest::onSslErrors(const QList<QSslError>& pErrors)
 	};
 
 	const auto& config = mSocket->sslConfiguration();
-	const auto& pairingCiphers = SecureStorage::getInstance().getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
+	const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
 	if (pairingCiphers.contains(config.sessionCipher()))
 	{
 		allowedErrors << QSslError::SelfSignedCertificate;
@@ -187,13 +187,13 @@ ConnectRequest::ConnectRequest(const RemoteDeviceDescriptor& pRemoteDeviceDescri
 	QSslConfiguration config;
 	if (mPsk.isEmpty())
 	{
-		config = SecureStorage::getInstance().getTlsConfigRemote().getConfiguration();
+		config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote().getConfiguration();
 		config.setCaCertificates(remoteServiceSettings.getTrustedCertificates());
 		qCCritical(remote_device) << "Start reconnect to server";
 	}
 	else
 	{
-		config = SecureStorage::getInstance().getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
+		config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
 		qCCritical(remote_device) << "Start pairing to server";
 	}
 	config.setPrivateKey(remoteServiceSettings.getKey());

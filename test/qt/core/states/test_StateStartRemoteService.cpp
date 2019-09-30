@@ -6,8 +6,9 @@
 
 #include "MockCardConnectionWorker.h"
 #include "MockRemoteServer.h"
+#include "states/StateBuilder.h"
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 
 using namespace governikus;
@@ -29,12 +30,25 @@ class test_StateStartRemoteService
 		void test_Run()
 		{
 			const QSharedPointer<RemoteServiceContext> context(new RemoteServiceContext());
-			StateStartRemoteService state(context);
-			QSignalSpy spyContinue(&state, &StateStartRemoteService::fireContinue);
+			const QSharedPointer<StateStartRemoteService> state(StateBuilder::createState<StateStartRemoteService>(context));
+			QSignalSpy spyContinue(state.data(), &StateStartRemoteService::fireContinue);
 
-			state.run();
+			state->onEntry(nullptr);
+			context->setStateApproved();
 			QCOMPARE(spyContinue.count(), 1);
-			state.onMessageHandlerAdded(nullptr);
+
+			const auto& server = context->getRemoteServer();
+			const QSharedPointer<ServerMessageHandler> handler(new ServerMessageHandlerImpl(nullptr));
+			Q_EMIT server->fireMessageHandlerAdded(handler);
+			Q_EMIT handler->fireClosed();
+			QCOMPARE(context->getNewPin(), QString());
+			QCOMPARE(context->getPin(), QString());
+			QCOMPARE(context->getCan(), QString());
+			QCOMPARE(context->getPuk(), QString());
+			QCOMPARE(context->getCardConnection(), QSharedPointer<CardConnection>());
+			QCOMPARE(context->getLastPaceResult(), CardReturnCode::OK);
+			QCOMPARE(context->getEstablishPaceChannelMessage(), QSharedPointer<const IfdEstablishPaceChannel>());
+			QCOMPARE(context->getModifyPinMessage(), QSharedPointer<const IfdModifyPin>());
 		}
 
 

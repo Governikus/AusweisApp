@@ -28,7 +28,7 @@ class RemotePinInputDialog
 		void onOkClicked();
 
 	public:
-		RemotePinInputDialog(QWidget* pParent = 0);
+		RemotePinInputDialog(QWidget* pParent = nullptr);
 		virtual ~RemotePinInputDialog() override;
 
 		static const QString getPin(QWidget* pParent);

@@ -69,11 +69,11 @@ class AppQtGui
 		void onDiagnosisRequested();
 		void onAppUpdateReady(bool pSuccess, const GlobalStatus& pError);
 		void onUpdateScheduled();
-		void onCertificateRemoved(QString pDeviceName);
+		void onCertificateRemoved(const QString& pDeviceName);
+		void onSwitchUiRequested();
 
 	private:
 		AppQtMainWidget* mMainWidget;
-		QIcon mIcon;
 		TrayIcon mTrayIcon;
 		QSharedPointer<WorkflowGui> mActiveWorkflowUi;
 		SetupAssistantGui* mSetupAssistantGui;
@@ -81,6 +81,7 @@ class AppQtGui
 		QMessageBox* mUpdateInfo;
 		QMessageBox* mCertificateInfo;
 		QMessageBox* mLockedInfo;
+		QMessageBox* mSwitchUiInquiry;
 		UpdateWindow* mUpdateWindow;
 		bool mAggressiveToForeground;
 
@@ -90,6 +91,7 @@ class AppQtGui
 		void fireChangePinRequested();
 		void selfAuthenticationRequested();
 		void quitApplicationRequested();
+		void fireRestartApplicationRequested();
 		void fireCloseActiveDialogs();
 };
 

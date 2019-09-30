@@ -34,7 +34,7 @@ PcscReader::PcscReader(const QString& pReaderName)
 	memset(&mReaderState, 0, sizeof(SCARD_READERSTATE));
 
 #if defined(Q_OS_WIN) && defined(UNICODE)
-	wchar_t* name = new wchar_t[pReaderName.size() + 1]();
+	wchar_t* name = new wchar_t[static_cast<size_t>(pReaderName.size()) + 1]();
 	pReaderName.toWCharArray(name);
 	mReaderState.szReader = name;
 #else
@@ -211,14 +211,12 @@ Reader::CardEvent PcscReader::updateCard()
 				CardInfoFactory::create(cardConnection, mReaderInfo);
 				qCDebug(card_pcsc) << "Card detected:" << mReaderInfo.getCardInfo();
 
-				if (mReaderInfo.hasCard() && !mReaderInfo.hasEidCard())
-				{
-					qCDebug(card_pcsc) << "Unknown card detected, retrying.";
-				}
-				else
+				if (mReaderInfo.hasEidCard() || mReaderInfo.hasPassport())
 				{
 					break;
 				}
+
+				qCDebug(card_pcsc) << "Unknown card detected, retrying.";
 			}
 
 			return CardEvent::CARD_INSERTED;

@@ -3,13 +3,11 @@
  */
 
 #include "BluetoothMessageParameter.h"
-#include "messages/BluetoothUtils.h"
 
-#include <QLoggingCategory>
+#include "messages/BluetoothUtils.h"
 
 using namespace governikus;
 
-Q_DECLARE_LOGGING_CATEGORY(bluetooth)
 
 QDebug operator<<(QDebug pDbg, const BluetoothMessageParameter& pMsg)
 {

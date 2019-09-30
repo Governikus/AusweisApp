@@ -9,7 +9,7 @@
 #include "MockCardConnectionWorker.h"
 #include "MockRemoteServer.h"
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 
 using namespace governikus;
@@ -33,7 +33,7 @@ class test_StateProcessRemoteMessages
 			const QSharedPointer<RemoteServiceContext> context(new RemoteServiceContext());
 			StateProcessRemoteMessages state(context);
 			state.run();
-			QCOMPARE(state.mConnections.size(), 1);
+			QCOMPARE(state.mConnections.size(), 2);
 			QCOMPARE(state.mMessageConnections.size(), 4);
 		}
 

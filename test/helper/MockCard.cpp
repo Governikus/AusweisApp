@@ -34,7 +34,7 @@ CardReturnCode MockCard::disconnect()
 
 CardReturnCode MockCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 {
-	Q_UNUSED(pCmd);
+	Q_UNUSED(pCmd)
 	if (mCardConfig.mTransmits.isEmpty())
 	{
 		qFatal("No (more) response APDU configured, but a(nother) command transmitted");

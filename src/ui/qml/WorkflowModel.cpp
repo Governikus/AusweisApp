@@ -5,10 +5,13 @@
 #include "WorkflowModel.h"
 
 #include "AppSettings.h"
+#include "Email.h"
 #include "FuncUtils.h"
 #include "GeneralSettings.h"
 #include "ReaderConfiguration.h"
 #include "ReaderManager.h"
+
+#include <QDesktopServices>
 
 
 using namespace governikus;
@@ -161,8 +164,15 @@ bool WorkflowModel::getNextWorkflowPending() const
 }
 
 
+QString WorkflowModel::getReaderImage() const
+{
+	return mReaderImage;
+}
+
+
 void WorkflowModel::setInitialPluginType()
 {
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	const GeneralSettings& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 
 	const QString& lastReaderPluginTypeString = settings.getLastReaderPluginType();
@@ -170,16 +180,17 @@ void WorkflowModel::setInitialPluginType()
 
 	if (lastReaderPluginType == ReaderManagerPlugInType::UNKNOWN)
 	{
-#if defined(Q_OS_ANDROID)
 		setReaderPlugInType(ReaderManagerPlugInType::NFC);
-#elif defined(Q_OS_IOS)
-		setReaderPlugInType(ReaderManagerPlugInType::BLUETOOTH);
-#else
-		setReaderPlugInType(ReaderManagerPlugInType::PCSC);
-#endif
 		return;
 	}
 	setReaderPlugInType(lastReaderPluginType);
+#else
+	if (!mContext)
+	{
+		return;
+	}
+	mContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::REMOTE});
+#endif
 }
 
 
@@ -193,6 +204,41 @@ bool WorkflowModel::selectedReaderHasCard() const
 }
 
 
+bool WorkflowModel::shouldSkipResultView() const
+{
+	if (!mContext)
+	{
+		return false;
+	}
+	// We deliberately don't want to use GlobalStatus::isCancellationByUser(), because that would also skip the
+	// ResultView when the user pressed Cancel on his card reader.
+	return mContext->getStatus().getStatusCode() == GlobalStatus::Code::Workflow_Cancellation_By_User;
+}
+
+
+bool WorkflowModel::isCancellationByUser() const
+{
+	if (!mContext)
+	{
+		return false;
+	}
+	return mContext->getStatus().isCancellationByUser();
+}
+
+
+void WorkflowModel::sendResultMail() const
+{
+	Q_ASSERT(mContext);
+	const GlobalStatus status = mContext->getStatus();
+	//: Subject from error report mail
+	QString mailSubject = tr("AusweisApp2 error report - %1").arg(status.toErrorDescription());
+	QString mailBody = generateMailBody(status);
+	QString url = QStringLiteral("mailto:support@ausweisapp.de?subject=%1&body=%2").arg(mailSubject, mailBody);
+
+	QDesktopServices::openUrl(url);
+}
+
+
 void WorkflowModel::onReaderManagerSignal()
 {
 	QString newReaderImage;
@@ -200,11 +246,11 @@ void WorkflowModel::onReaderManagerSignal()
 	const auto& readersWithNPA = filter<ReaderInfo>([](const ReaderInfo& i){return i.hasEidCard();}, readerInfos);
 	if (readersWithNPA.size() == 1)
 	{
-		newReaderImage = readersWithNPA.at(0).getReaderConfigurationInfo().getIconWithNPA()->lookupPath();
+		newReaderImage = readersWithNPA.at(0).getReaderConfigurationInfo().getIconWithNPA()->lookupUrl().toString();
 	}
 	else if (readerInfos.size() == 1)
 	{
-		newReaderImage = readerInfos.at(0).getReaderConfigurationInfo().getIcon()->lookupPath();
+		newReaderImage = readerInfos.at(0).getReaderConfigurationInfo().getIcon()->lookupUrl().toString();
 	}
 	else if (readerInfos.size() > 1)
 	{

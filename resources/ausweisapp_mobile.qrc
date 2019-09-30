@@ -2,7 +2,7 @@
     <qresource prefix="/">
         <file>qtquickcontrols2.conf</file>
         <file>images/zahnraeder.svg</file>
-        <file>images/check.svg</file>
+        <file>images/arrowLeft.svg</file>
         <file>images/arrowRight.svg</file>
         <file>images/share.svg</file>
         <file>images/android/navigation/ausweisen.svg</file>
@@ -15,16 +15,19 @@
         <file>images/android/navigation/support.svg</file>
         <file>images/android/navigation/bewerten.svg</file>
         <file>images/android/navigation/tutorial.svg</file>
+        <file>images/android/search_icon.svg</file>
         <file>images/iOS/search_icon.svg</file>
         <file>images/iOS/search_cancel.svg</file>
+        <file>images/iOS/more/icon_mehr_npa.svg</file>
         <file>images/iOS/more/icon_mehr_favorit.svg</file>
         <file>images/iOS/more/icon_mehr_fragen.svg</file>
         <file>images/iOS/more/icon_mehr_info.svg</file>
         <file>images/iOS/more/icon_mehr_license.svg</file>
-        <file>images/iOS/more/icon_mehr_remotereader.svg</file>
+        <file>images/iOS/more/icon_mehr_verlauf.svg</file>
         <file>images/iOS/more/icon_mehr_upload.svg</file>
         <file>images/iOS/more/icon_mehr_log.svg</file>
         <file>images/iOS/more/icon_mehr_tutorial.svg</file>
+        <file>images/iOS/more/icon_mehr_report.svg</file>
         <file>images/tutorial/main_menu_what_caret.svg</file>
         <file>images/tutorial/main_menu_where_caret.svg</file>
         <file>images/tutorial/main_menu_how_caret.svg</file>
@@ -80,27 +83,37 @@
         <file>images/tutorial/user-tine@3x.png</file>
         <file>images/tutorial/providericons.png</file>
         <file>images/tutorial/play_movie.png</file>
-        <file>images/tutorial/screenshot_cert_de.png</file>
-        <file>images/tutorial/screenshot_cert_en.png</file>
-        <file>images/tutorial/screenshot_providerlist_de.png</file>
-        <file>images/tutorial/screenshot_providerlist_en.png</file>
-        <file>images/tutorial/screenshot_menu_providerlist_de.png</file>
-        <file>images/tutorial/screenshot_menu_providerlist_en.png</file>
+        <file>images/tutorial/screenshot_cert_android_de.png</file>
+        <file>images/tutorial/screenshot_cert_android_en.png</file>
+        <file>images/tutorial/screenshot_cert_ios_de.png</file>
+        <file>images/tutorial/screenshot_cert_ios_en.png</file>
+        <file>images/tutorial/screenshot_providerlist_android_de.png</file>
+        <file>images/tutorial/screenshot_providerlist_android_en.png</file>
+        <file>images/tutorial/screenshot_providerlist_ios_de.png</file>
+        <file>images/tutorial/screenshot_providerlist_ios_en.png</file>
+        <file>images/tutorial/screenshot_remoteservice_ios_en.png</file>
+        <file>images/tutorial/screenshot_remoteservice_ios_de.png</file>
+        <file>images/tutorial/screenshot_menu_providerlist_android_de.png</file>
+        <file>images/tutorial/screenshot_menu_providerlist_android_en.png</file>
         <file>images/tutorial/screenshot_pairing_de.png</file>
         <file>images/tutorial/screenshot_pairing_en.png</file>
-        <file>images/tutorial/screenshot_sac_menu_de.png</file>
-        <file>images/tutorial/screenshot_sac_menu_en.png</file>
-        <file>images/tutorial/screenshot_choose_reader_de.png</file>
-        <file>images/tutorial/screenshot_choose_reader_en.png</file>
-        <file>images/tutorial/screenshot_pin_management_menu_en.png</file>
-        <file>images/tutorial/screenshot_pin_management_menu_de.png</file>
+        <file>images/tutorial/screenshot_sac_menu_android_de.png</file>
+        <file>images/tutorial/screenshot_sac_menu_android_en.png</file>
+        <file>images/tutorial/screenshot_choose_reader_android_de.png</file>
+        <file>images/tutorial/screenshot_choose_reader_android_en.png</file>
+        <file>images/tutorial/screenshot_choose_reader_ios_de.png</file>
+        <file>images/tutorial/screenshot_choose_reader_ios_en.png</file>
+        <file>images/tutorial/screenshot_pin_management_menu_android_en.png</file>
+        <file>images/tutorial/screenshot_pin_management_menu_android_de.png</file>
+        <file>images/tutorial/screenshot_pin_management_menu_ios_en.png</file>
+        <file>images/tutorial/screenshot_pin_management_menu_ios_de.png</file>
         <file>images/tutorial/section_seperator_what.svg</file>
         <file>images/tutorial/section_seperator_where.svg</file>
         <file>images/tutorial/section_seperator_how.svg</file>
         <file>images/tutorial/section_seperator_important.svg</file>
         <file>images/tutorial/generated/where_overview_question.svg</file>
-        <file>images/tutorial/generated/where_providerlist_screenshot_de.svg</file>
-        <file>images/tutorial/generated/where_providerlist_screenshot_en.svg</file>
+        <file>images/tutorial/generated/where_providerlist_screenshot_android_de.svg</file>
+        <file>images/tutorial/generated/where_providerlist_screenshot_android_en.svg</file>
         <file>images/tutorial/generated/where_identify_now_de.svg</file>
         <file>images/tutorial/generated/where_identify_now_en.svg</file>
         <file>images/tutorial/generated/where_userdata_example_de.svg</file>
@@ -129,18 +142,14 @@
         <file>images/tutorial/generated/reader_sac_provider_on_laptop.svg</file>
         <file>images/tutorial/generated/reader_sac_npa_on_laptop.svg</file>
         <file>images/tutorial/generated/reader_sac_aa2_ok.svg</file>
-        <file>images/tutorial/generated/reader_sac_menu_de.svg</file>
-        <file>images/tutorial/generated/reader_sac_menu_en.svg</file>
+        <file>images/tutorial/generated/reader_sac_menu_android_de.svg</file>
+        <file>images/tutorial/generated/reader_sac_menu_android_en.svg</file>
+        <file>images/tutorial/generated/reader_sac_menu_ios_de.svg</file>
+        <file>images/tutorial/generated/reader_sac_menu_ios_en.svg</file>
         <file>images/tutorial/generated/reader_sac_no_nfc_devices.svg</file>
         <file>images/tutorial/generated/reader_sac_no_nfc_provider.svg</file>
         <file>images/tutorial/generated/reader_bluetooth_card_inserted.svg</file>
         <file>images/tutorial/generated/reader_bluetooth_connection.svg</file>
-        <file>images/provider/categoryIcons/general.svg</file>
-        <file>images/provider/categoryIcons/citizen.svg</file>
-        <file>images/provider/categoryIcons/finance.svg</file>
-        <file>images/provider/categoryIcons/insurance.svg</file>
-        <file>images/provider/categoryIcons/other.svg</file>
-        <file alias="images/provider/categoryIcons/general_bg.svg">images/provider/categoryIcons/+android/general_bg.svg</file>
         <file alias="images/provider/categoryIcons/general_button.svg">images/provider/categoryIcons/+android/general_button.svg</file>
         <file alias="images/provider/categoryIcons/citizen_bg.svg">images/provider/categoryIcons/+android/citizen_bg.svg</file>
         <file alias="images/provider/categoryIcons/citizen_button.svg">images/provider/categoryIcons/+android/citizen_button.svg</file>
@@ -150,10 +159,12 @@
         <file alias="images/provider/categoryIcons/insurance_button.svg">images/provider/categoryIcons/+android/insurance_button.svg</file>
         <file alias="images/provider/categoryIcons/other_bg.svg">images/provider/categoryIcons/+android/other_bg.svg</file>
         <file alias="images/provider/categoryIcons/other_button.svg">images/provider/categoryIcons/+android/other_button.svg</file>
-        <file>images/phone_to_pc.svg</file>
         <file>images/android/navigation/remotesettings.svg</file>
-        <file>images/trash_icon.svg</file>
         <file>images/trash_icon_all.svg</file>
-        <file>images/trash_icon_white.svg</file>
+        <file>images/iOS/tabBar/anbieter.svg</file>
+        <file>images/iOS/tabBar/ausweisen.svg</file>
+        <file>images/iOS/tabBar/more.svg</file>
+        <file>images/iOS/tabBar/pin.svg</file>
+        <file>images/iOS/tabBar/remoteleser.svg</file>
     </qresource>
 </RCC>

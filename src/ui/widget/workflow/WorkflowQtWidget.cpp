@@ -20,11 +20,11 @@ WorkflowQtWidget::WorkflowQtWidget(QWidget* pParent)
 	mMainLayout->addWidget(mStepWidgetArea);
 	mMainLayout->setMargin(0);
 
-	QHBoxLayout* buttonLayout = new QHBoxLayout();
+	auto* buttonLayout = new QHBoxLayout();
 	buttonLayout->setMargin(0);
 	mMainLayout->addLayout(buttonLayout);
 
-	QSpacerItem* horizontalSpacer = new QSpacerItem(40, 1, QSizePolicy::Expanding, QSizePolicy::Ignored);
+	auto* horizontalSpacer = new QSpacerItem(40, 1, QSizePolicy::Expanding, QSizePolicy::Ignored);
 
 	buttonLayout->addItem(horizontalSpacer);
 

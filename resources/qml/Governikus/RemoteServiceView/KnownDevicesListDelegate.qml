@@ -1,74 +1,105 @@
+/*
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Layouts 1.1
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
+
 
 Item {
 	id: root
-	height: Utils.dp(60)
 
-	Item {
-		id: textItem
-		height: childrenRect.height
-		width: parent.width * 0.8
-		anchors.verticalCenter: root.verticalCenter
+	height: textColumn.height + separator.height + (Constants.groupbox_spacing / 2)
 
-		Text {
+	Accessible.role: Accessible.ListItem
+	Accessible.name: qsTr("Device %1 has status %2").arg(nameText.text).arg(statusText.text) + SettingsModel.translationTrigger
+	Accessible.onPressAction: if (Qt.platform === "ios") iconClick.clicked(null)
+
+	LinkQuality {
+		id: linkQual
+
+		height: nameText.height
+		anchors.verticalCenter: textColumn.verticalCenter
+
+		percent: linkQualityInPercent
+		inactive: !isNetworkVisible
+	}
+
+	Column {
+		id: textColumn
+
+		width: parent.width - linkQual.width - iconClick.width - 2 * anchors.leftMargin
+		anchors.left: linkQual.right
+		anchors.right: deleteIcon.left
+		anchors.margins: Constants.component_spacing
+
+		spacing: 2
+		topPadding: spacing
+		bottomPadding: spacing
+
+		GText {
 			id: nameText
-			color: Constants.secondary_text
-			font.pixelSize: Utils.dp(16)
-			opacity: 0.87
+
+			width: parent.width
+
+			text: remoteDeviceName
+			textStyle: Style.text.normal_secondary
+		}
+
+		GText {
+			id: statusText
+
+			width: parent.width
+
 			text: {
-				settingsModel.translationTrigger
+				SettingsModel.translationTrigger
 
 				if (!isNetworkVisible) {
-					return remoteDeviceName;
+					//: LABEL ANDROID IOS
+					return qsTr("Not available");
 				}
-				if (isSupported) {
-					return remoteDeviceName + " (" + qsTr("Available") + ")"
-				}
-				return remoteDeviceName + " (" + qsTr("Available, but unsupported") + ")"
+				//: LABEL ANDROID IOS
+				return remoteDeviceStatus + ", " + (linkQualityInPercent >= 50 ? qsTr("Great quality") : qsTr("Bad quality")) + SettingsModel.translationTrigger
 			}
+			textStyle: Style.text.hint_secondary
 		}
 
-		Text {
-			id: dateText
-			color: Constants.secondary_text
-			anchors.top: nameText.bottom
-			anchors.topMargin: Utils.dp(2)
-			font.pixelSize: Utils.dp(14)
-			opacity: 0.38
-			text: qsTr("Last connection:") + " " + lastConnected + settingsModel.translationTrigger
+		GText {
+			width: parent.width
+
+			//: LABEL ANDROID IOS
+			text: qsTr("Last connection:") + " " + lastConnected + SettingsModel.translationTrigger
+			textStyle: Style.text.hint_secondary
 		}
 	}
 
-	MouseArea {
-		id: iconClick
-		width: Utils.dp(44)
-		height: width
+	Image {
+		id: deleteIcon
 
+		sourceSize.width: Style.dimens.small_icon_size
 		anchors.right: root.right
 		anchors.verticalCenter: root.verticalCenter
+		source: "qrc:///images/iOS/search_cancel.svg"
 
-		Image {
-			id: icon
-			width: Utils.dp(22)
-			height: width
-			anchors.centerIn: parent
-			source: "qrc:///images/iOS/search_cancel.svg"
-		}
+		MouseArea {
+			id: iconClick
 
-		onClicked: {
-			RemoteServiceModel.forgetDevice(deviceId)
+			anchors.fill: parent
+
+			onClicked: RemoteServiceModel.forgetDevice(deviceId)
 		}
 	}
 
-	Rectangle {
+	GSeparator {
+		id: separator
+
 		width: parent.width
-		height: Utils.dp(1)
-		color: "black"
-		opacity: 0.1
 		anchors.bottom: root.bottom
+		color: Style.color.border_dark
 	}
 }

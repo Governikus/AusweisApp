@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.2
@@ -5,21 +9,28 @@ import QtQml.Models 2.10
 import QtQml 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 SectionPage {
 	id: root
 
 	property int lastYPosition: 0
 	property var lastVisibleItem
-	property int contentWidth: Constants.is_tablet ? root.width * 0.5 : root.width
+	property int contentWidth: Math.min(Style.dimens.max_text_width, root.width)
 
-	leftTitleBarAction: TitleBarAction {
-		state: topLevelPage ? "" : "back";
+	titleBarVisible: false
+	automaticSafeAreaMarginHandling: false
+	navigationAction: NavigationAction {
+		// On iOS we want to go back to the MoreView even when a section is expanded.
+		state: topLevelPage ? root.state : "back";
 		onClicked: state == "back" ? leaveView() : root.state = ""
 	}
-	headerTitleBarAction: TitleBarAction { id: header; text: qsTr("Tutorial") + settingsModel.translationTrigger; font.bold: true }
+	//: LABEL ANDROID IOS
+	title: qsTr("Tutorial") + SettingsModel.translationTrigger
 
 	onVisibleChanged: {
 		if (visible) {
@@ -113,7 +124,8 @@ SectionPage {
 		state = ""
 		collapseAllAnimation.start()
 		navBar.lockedAndHidden = false
-		if (Constants.is_layout_ios){
+		SettingsModel.showSetupAssistantOnStart = false
+		if (navBar.state === "more") {
 			firePop()
 		} else {
 			navBar.state = "identify"
@@ -162,14 +174,16 @@ SectionPage {
 		color: Constants.white
 	}
 
-	Flickable {
+	GFlickable {
 		id: flickable
-		height: parent.height - footer.height
+
+		height: parent.height
 		width: root.width
+		topMargin: statusBar.height
+		scrollBarTopPadding: plugin.safeAreaMargins.top
+		scrollBarBottomPadding: footer.height
 		contentWidth: flickableContent.width
 		contentHeight: flickableContent.height
-		maximumFlickVelocity: Constants.scrolling_speed
-		flickableDirection: Flickable.VerticalFlick
 
 		Item {
 			width: root.width
@@ -183,10 +197,11 @@ SectionPage {
 				TutorialHeader {
 					id: whatHeader
 					width: root.width
-					height: (flickable.height / 13.0 ) * 3.0
+					height: ((flickable.height - flickable.topMargin - footer.height) / 13.0 ) * 3.0
 					headerImageSource: "qrc:///images/tutorial/main_menu_what_caret.svg"
 					categoryAbove: false
-					titleText: qsTr("What?") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					titleText: qsTr("What?") + SettingsModel.translationTrigger
 					initY: 0
 					z: 40
 
@@ -220,9 +235,10 @@ SectionPage {
 				TutorialHeader {
 					id: whereHeader
 					width: root.width
-					height: (flickable.height / 13.0 ) * 3.0
+					height: ((flickable.height - flickable.topMargin - footer.height) / 13.0 ) * 3.0
 					headerImageSource: "qrc:///images/tutorial/main_menu_where_caret.svg"
-					titleText: qsTr("Where?") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					titleText: qsTr("Where?") + SettingsModel.translationTrigger
 					initY: whatHeader.height
 					z: 30
 
@@ -256,9 +272,10 @@ SectionPage {
 				TutorialHeader {
 					id: howHeader
 					width: root.width
-					height: (flickable.height / 13.0 ) * 3.0
+					height: ((flickable.height - flickable.topMargin - footer.height) / 13.0 ) * 3.0
 					headerImageSource: "qrc:///images/tutorial/main_menu_how_caret.svg"
-					titleText: qsTr("How?") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					titleText: qsTr("How?") + SettingsModel.translationTrigger
 					initY: whatHeader.height + whereHeader.height
 					z: 20
 
@@ -297,10 +314,11 @@ SectionPage {
 				TutorialHeader {
 					id: importantHeader
 					width: root.width
-					height: (flickable.height / 13.0 ) * 4.0
+					height: ((flickable.height - flickable.topMargin - footer.height) / 13.0 ) * 4.0
 					overlapping: false
 					headerImageSource: "qrc:///images/tutorial/main_menu_important_caret.svg"
-					titleText: qsTr("Important!") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					titleText: qsTr("Important!") + SettingsModel.translationTrigger
 					initY: whatHeader.height + whereHeader.height + howHeader.height
 					z: 10
 
@@ -329,19 +347,37 @@ SectionPage {
 					id: importantContent
 					width: root.contentWidth
 					anchors.horizontalCenter: parent.horizontalCenter
+
+					onLetsGoClicked: leaveView()
+				}
+
+				// We could use a bottom margin instead of this rectangle, but that would result in the content suddenly
+				// disappearing below the TutorialFooter at the end of the collapse animation (because the section's
+				// content is NOT clipped between its two surrounding TutorialHeaders).
+				Rectangle {
+					color: Constants.white
+					width: root.width
+					height: footer.height
 				}
 			}
 		}
+	}
+
+	TutorialStatusBar {
+		id: statusBar
+
+		shaderSource: flickable
 	}
 
 	TutorialFooter {
 		id: footer
 		width: root.width
 		anchors.horizontalCenter: parent.horizontalCenter
-		color: importantContent.visible && flickable.contentY > importantHeader.y - 1? Constants.tutorial_red
-			 : howContent.visible && flickable.contentY > howHeader.y - 1? Constants.tutorial_blue
-			 : whereContent.visible && flickable.contentY > whereHeader.y - 1? Constants.tutorial_green
-			 : Constants.tutorial_orange
+		color: importantContent.visible && flickable.contentY > importantHeader.y - 1 ? Style.color.tutorial_important
+			 : howContent.visible && flickable.contentY > howHeader.y - 1 ? Style.color.tutorial_how
+			 : whereContent.visible && flickable.contentY > whereHeader.y - 1 ? Style.color.tutorial_where
+			 : Style.color.tutorial_what
+		shaderSource: flickable
 		anchors.bottom: parent.bottom
 		backToMenuActive: root.state !== ""
 

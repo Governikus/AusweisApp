@@ -24,7 +24,6 @@ class NfcReaderManagerPlugIn
 	Q_INTERFACES(governikus::ReaderManagerPlugIn)
 
 	private:
-		bool mEnabled;
 		QScopedPointer<NfcReader> mNfcReader;
 
 	private Q_SLOTS:

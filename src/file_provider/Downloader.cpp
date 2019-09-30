@@ -5,9 +5,14 @@
 #include "Downloader.h"
 
 #include "LogHandler.h"
-#include "ScopeGuard.h"
 #include "SingletonHelper.h"
 #include "TlsChecker.h"
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#include <QScopeGuard>
+#else
+#include "ScopeGuard.h"
+#endif
 
 #include <http_parser.h>
 #include <QFile>
@@ -103,7 +108,7 @@ void Downloader::onNetworkReplyFinished()
 {
 	qCDebug(fileprovider) << "Downloader finished:" << mCurrentReply->request().url().fileName();
 
-	const ScopeGuard guard([this] {
+	const auto guard = qScopeGuard([this] {
 				mCurrentReply->deleteLater();
 				mCurrentReply = nullptr;
 				startDownloadIfPending();

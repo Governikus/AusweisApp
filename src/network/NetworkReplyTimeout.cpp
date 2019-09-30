@@ -14,7 +14,7 @@ NetworkReplyTimeout::NetworkReplyTimeout(QNetworkReply* pReply, const int pTimeo
 	: QObject(pReply)
 {
 	Q_ASSERT(pReply);
-	if (!pReply)
+	if (pReply == nullptr)
 	{
 		return;
 	}
@@ -28,7 +28,7 @@ NetworkReplyTimeout::NetworkReplyTimeout(QNetworkReply* pReply, const int pTimeo
 
 void NetworkReplyTimeout::onTimeout()
 {
-	QNetworkReply* reply = static_cast<QNetworkReply*>(parent());
+	auto* reply = static_cast<QNetworkReply*>(parent());
 	if (reply != nullptr && reply->isRunning())
 	{
 		reply->abort();
@@ -46,6 +46,6 @@ void NetworkReplyTimeout::onShutdown()
 void NetworkReplyTimeout::setTimeout(QNetworkReply* pReply, const int pTimeout)
 {
 	// since the QNetworkReply is set as parent, we don't need to care about destruction
-	NetworkReplyTimeout* timeout = new NetworkReplyTimeout(pReply, pTimeout);
+	auto* timeout = new NetworkReplyTimeout(pReply, pTimeout);
 	connect(Env::getSingleton<NetworkManager>(), &NetworkManager::fireShutdown, timeout, &NetworkReplyTimeout::onShutdown);
 }

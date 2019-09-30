@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "DiagnosisModel.h"
+#include "DiagnosisTreeModel.h"
 
 #include <QDialog>
 #include <QScopedPointer>
@@ -30,7 +30,7 @@ class DiagnosisDialog
 
 	private:
 		QScopedPointer<Ui::DiagnosisDialog> mUi;
-		QScopedPointer<DiagnosisModel> mDiagnosisModel;
+		QScopedPointer<DiagnosisTreeModel> mDiagnosisModel;
 		QTreeView* mTreeView;
 
 	private Q_SLOTS:

@@ -7,8 +7,9 @@
 
 #pragma once
 
+#include "AbstractState.h"
 #include "context/AuthContext.h"
-#include "states/AbstractGenericState.h"
+#include "GenericContextContainer.h"
 
 #include <QNetworkReply>
 #include <QScopedPointer>
@@ -22,7 +23,8 @@ namespace governikus
 {
 
 class StateCheckRefreshAddress
-	: public AbstractGenericState<AuthContext>
+	: public AbstractState
+	, public GenericContextContainer<AuthContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
@@ -57,6 +59,7 @@ class StateCheckRefreshAddress
 
 	public:
 		virtual ~StateCheckRefreshAddress() override;
+		void onEntry(QEvent* pEvent) override;
 };
 
 } // namespace governikus

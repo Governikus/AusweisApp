@@ -8,8 +8,6 @@ der AusweisApp2 unterstützt.
 
 Betriebssysteme
 """""""""""""""
-  - OS X 10.11
-
   - macOS 10.12
 
   - macOS 10.13
@@ -60,9 +58,9 @@ getestet.
 
 
 
-Kartenlesegeräte
-~~~~~~~~~~~~~~~~
-Alle Kartenlesegeräte, die die Onlineausweisfunktionalität unterstützen und nach
+Kartenleser
+~~~~~~~~~~~
+Alle Kartenleser, die die Onlineausweisfunktionalität unterstützen und nach
 BSI TR-03119 zertifiziert sind. Details hierzu befinden sich auf der Homepage
 des BSI unter "Nach Technischen Richtlinien zertifizierte Produkte".
 
@@ -93,7 +91,7 @@ Aktuelle Informationen zu Kartenlesern finden Sie auf unserer Webseite:
 https://www.ausweisapp.bund.de/fragen-und-antworten/voraussetzungen/
 
 Alle NFC-fähigen Smartphones bzw. Tablets, die die Onlineausweisfunktionalität
-unterstützen, können als Kartenlesegerät verwendet werden.
+unterstützen, können als Kartenleser verwendet werden.
 Dabei ist es notwendig die mobile AusweisApp2 auf dem jeweiligen Smartphone
 zu installieren und zu starten.
 
@@ -122,17 +120,17 @@ folgenden Browser zu verwenden.
 
 
 
-Kartenlesegeräte
-~~~~~~~~~~~~~~~~
+Kartenleser
+~~~~~~~~~~~
 Alle NFC-fähigen Smartphones bzw. Tablets, die die Onlineausweisfunktionalität
 unterstützen. Details hierzu befinden sich auf der Homepage:
 https://www.ausweisapp.bund.de/mobile-geraete/
 
-Ebenfalls ist es möglich ein weiteres Smartphone als Kartenlesegerät zu
-verwenden. Dabei ist es notwendig die mobile AusweisApp2 auf dem jeweiligen
-Smartphone zu installieren und zu starten.
+Ebenfalls ist es möglich ein weiteres Smartphone als Kartenleser zu verwenden.
+Dabei ist es notwendig die mobile AusweisApp2 auf dem jeweiligen Smartphone zu
+installieren und zu starten.
 
-Darüber hinaus ist die Verwendung eines Bluetooth-Kartenlesegeräts möglich.
-Folgendes Bluetooth-Kartenlesegerät wird von der AusweiApp2 unterstützt:
+Darüber hinaus ist die Verwendung eines Bluetooth-Kartenlesers möglich.
+Folgender Bluetooth-Kartenleser wird von der AusweiApp2 unterstützt:
 
   - cyberJack wave

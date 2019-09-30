@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtTest 1.10
 
 import Governikus.Global 1.0

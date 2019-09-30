@@ -8,8 +8,8 @@
 #include "paos/retrieve/TransmitParser.h"
 #include "TestFileHelper.h"
 
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtCore>
+#include <QtTest>
 
 using namespace governikus;
 

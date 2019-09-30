@@ -26,7 +26,7 @@ class KeyDerivationFunction final
 		 * \param pPaceAlgorithm algorithm of PACE protocol. This will determine the key derivation algorithm to use. E.g. a
 		 *        PACE protocol of id_PACE::DH::GM_AES_CBC_CMAC_128 will result in SHA256 to be used internally to derive keys.
 		 */
-		KeyDerivationFunction(const QByteArray& pPaceAlgorithm);
+		explicit KeyDerivationFunction(const QByteArray& pPaceAlgorithm);
 		~KeyDerivationFunction() = default;
 
 		/*!

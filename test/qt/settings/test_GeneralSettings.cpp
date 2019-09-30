@@ -11,6 +11,8 @@
 
 #include "GeneralSettings.h"
 
+#include "AppSettings.h"
+#include "Env.h"
 
 using namespace governikus;
 
@@ -18,57 +20,58 @@ class test_GeneralSettings
 	: public QObject
 {
 	Q_OBJECT
-	QScopedPointer<GeneralSettings> mSettings;
 
 	private Q_SLOTS:
 		void init()
 		{
 			AbstractSettings::mTestDir.clear();
-			mSettings.reset(new GeneralSettings());
 		}
 
 
 		void testAutoCloseWindowAfterAuthentication()
 		{
-			bool initial = mSettings->isAutoCloseWindowAfterAuthentication();
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			bool initial = settings.isAutoCloseWindowAfterAuthentication();
 			bool newValue = !initial;
 
-			mSettings->setAutoCloseWindowAfterAuthentication(newValue);
-			QCOMPARE(mSettings->isAutoCloseWindowAfterAuthentication(), newValue);
-			mSettings->save();
+			settings.setAutoCloseWindowAfterAuthentication(newValue);
+			QCOMPARE(settings.isAutoCloseWindowAfterAuthentication(), newValue);
+			settings.save();
 
-			mSettings->setAutoCloseWindowAfterAuthentication(initial);
-			QCOMPARE(mSettings->isAutoCloseWindowAfterAuthentication(), initial);
-			mSettings->save();
+			settings.setAutoCloseWindowAfterAuthentication(initial);
+			QCOMPARE(settings.isAutoCloseWindowAfterAuthentication(), initial);
+			settings.save();
 		}
 
 
 		void testAutoCheck()
 		{
-			bool initial = mSettings->isAutoUpdateCheck();
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			bool initial = settings.isAutoUpdateCheck();
 
-			mSettings->setAutoUpdateCheck(!initial);
-			QCOMPARE(mSettings->isAutoUpdateCheck(), !initial);
-			mSettings->save();
+			settings.setAutoUpdateCheck(!initial);
+			QCOMPARE(settings.isAutoUpdateCheck(), !initial);
+			settings.save();
 
-			mSettings->setAutoUpdateCheck(initial);
-			QCOMPARE(mSettings->isAutoUpdateCheck(), initial);
-			mSettings->save();
+			settings.setAutoUpdateCheck(initial);
+			QCOMPARE(settings.isAutoUpdateCheck(), initial);
+			settings.save();
 		}
 
 
 		void testAutoStart()
 		{
 			#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
-			bool initial = mSettings->isAutoStart();
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			bool initial = settings.isAutoStart();
 
-			mSettings->setAutoStart(!initial);
-			QCOMPARE(mSettings->isAutoStart(), !initial);
-			mSettings->save();
+			settings.setAutoStart(!initial);
+			QCOMPARE(settings.isAutoStart(), !initial);
+			settings.save();
 
-			mSettings->setAutoStart(initial);
-			QCOMPARE(mSettings->isAutoStart(), initial);
-			mSettings->save();
+			settings.setAutoStart(initial);
+			QCOMPARE(settings.isAutoStart(), initial);
+			settings.save();
 
 			#else
 			QSKIP("Autostart currently only on windows and mac os");
@@ -78,142 +81,174 @@ class test_GeneralSettings
 
 		void testUseScreenKeyboard()
 		{
-			bool initial = mSettings->isUseScreenKeyboard();
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			bool initial = settings.isUseScreenKeyboard();
 
-			mSettings->setUseScreenKeyboard(!initial);
-			QCOMPARE(mSettings->isUseScreenKeyboard(), !initial);
-			mSettings->save();
+			settings.setUseScreenKeyboard(!initial);
+			QCOMPARE(settings.isUseScreenKeyboard(), !initial);
+			settings.save();
 
-			mSettings->setUseScreenKeyboard(initial);
-			QCOMPARE(mSettings->isUseScreenKeyboard(), initial);
-			mSettings->save();
+			settings.setUseScreenKeyboard(initial);
+			QCOMPARE(settings.isUseScreenKeyboard(), initial);
+			settings.save();
+		}
+
+
+		void testShuffleScreenKeyboard()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			bool initial = settings.isShuffleScreenKeyboard();
+
+			settings.setShuffleScreenKeyboard(!initial);
+			QCOMPARE(settings.isShuffleScreenKeyboard(), !initial);
+			settings.save();
+
+			settings.setShuffleScreenKeyboard(initial);
+			QCOMPARE(settings.isShuffleScreenKeyboard(), initial);
+			settings.save();
 		}
 
 
 		void testDefaultValues()
 		{
-			QCOMPARE(mSettings->isAutoCloseWindowAfterAuthentication(), true);
-			QCOMPARE(mSettings->isAutoStart(), GENERAL_SETTINGS_DEFAULT_AUTOSTART);
-			QCOMPARE(mSettings->isAutoUpdateCheck(), true);
-			QCOMPARE(mSettings->isUseScreenKeyboard(), false);
-			QCOMPARE(mSettings->isShowSetupAssistant(), true);
-			QCOMPARE(mSettings->isRemindUserToClose(), true);
-			QCOMPARE(mSettings->isTransportPinReminder(), true);
-			QCOMPARE(mSettings->getPersistentSettingsVersion(), QString());
-			QCOMPARE(mSettings->isDeveloperMode(), false);
-			QCOMPARE(mSettings->useSelfAuthTestUri(), false);
-			QCOMPARE(mSettings->getLastReaderPluginType(), QString());
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			QCOMPARE(settings.isAutoCloseWindowAfterAuthentication(), true);
+			QCOMPARE(settings.isAutoStart(), GENERAL_SETTINGS_DEFAULT_AUTOSTART);
+			QCOMPARE(settings.isAutoUpdateCheck(), true);
+			QCOMPARE(settings.isUseScreenKeyboard(), false);
+			QCOMPARE(settings.isShowSetupAssistant(), true);
+			QCOMPARE(settings.isRemindUserToClose(), true);
+			QCOMPARE(settings.isTransportPinReminder(), true);
+			QCOMPARE(settings.getPersistentSettingsVersion(), QString());
+			QCOMPARE(settings.isDeveloperMode(), false);
+			QCOMPARE(settings.useSelfAuthTestUri(), false);
+			QCOMPARE(settings.getLastReaderPluginType(), QString());
 		}
 
 
 		void testRemindStartupWizard()
 		{
-			bool initial = mSettings->isShowSetupAssistant();
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			bool initial = settings.isShowSetupAssistant();
 			bool newValue = !initial;
 
-			mSettings->setShowSetupAssistant(newValue);
-			QCOMPARE(mSettings->isShowSetupAssistant(), newValue);
-			mSettings->save();
+			settings.setShowSetupAssistant(newValue);
+			QCOMPARE(settings.isShowSetupAssistant(), newValue);
+			settings.save();
 
-			mSettings->setShowSetupAssistant(initial);
-			QCOMPARE(mSettings->isShowSetupAssistant(), initial);
-			mSettings->save();
+			settings.setShowSetupAssistant(initial);
+			QCOMPARE(settings.isShowSetupAssistant(), initial);
+			settings.save();
 		}
 
 
 		void testRemindUserToClose()
 		{
-			bool initial = mSettings->isRemindUserToClose();
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			bool initial = settings.isRemindUserToClose();
 			bool newValue = !initial;
 
-			mSettings->setRemindUserToClose(newValue);
-			QCOMPARE(mSettings->isRemindUserToClose(), newValue);
-			mSettings->save();
+			settings.setRemindUserToClose(newValue);
+			QCOMPARE(settings.isRemindUserToClose(), newValue);
+			settings.save();
 
-			mSettings->setRemindUserToClose(initial);
-			QCOMPARE(mSettings->isRemindUserToClose(), initial);
-			mSettings->save();
+			settings.setRemindUserToClose(initial);
+			QCOMPARE(settings.isRemindUserToClose(), initial);
+			settings.save();
 		}
 
 
 		void testPersistentSettingsVersion()
 		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
 			QCoreApplication::setApplicationVersion(QStringLiteral("X.Y.Z"));
 			// the persistent settings version contains the application version number
 			// last saving the settings --> in this test the settings have
 			// never been saved, so the empty string is expected
-			QCOMPARE(mSettings->getPersistentSettingsVersion(), QString());
+			QCOMPARE(settings.getPersistentSettingsVersion(), QString());
 
-			mSettings->save();
-			QCOMPARE(mSettings->getPersistentSettingsVersion(), QCoreApplication::applicationVersion());
+			settings.save();
+			QCOMPARE(settings.getPersistentSettingsVersion(), QCoreApplication::applicationVersion());
 		}
 
 
 		void testTransportPinReminder()
 		{
-			bool initialValue = mSettings->isTransportPinReminder();
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			bool initialValue = settings.isTransportPinReminder();
 			bool newValue = !initialValue;
 
-			mSettings->save();
-			mSettings->setTransportPinReminder(newValue);
-			QCOMPARE(mSettings->isTransportPinReminder(), newValue);
-			mSettings->save();
+			settings.save();
+			settings.setTransportPinReminder(newValue);
+			QCOMPARE(settings.isTransportPinReminder(), newValue);
+			settings.save();
 
-			mSettings->setTransportPinReminder(initialValue);
-			QCOMPARE(mSettings->isTransportPinReminder(), initialValue);
-			mSettings->save();
+			settings.setTransportPinReminder(initialValue);
+			QCOMPARE(settings.isTransportPinReminder(), initialValue);
+			settings.save();
 		}
 
 
 		void testLanguage()
 		{
-			const QLocale::Language initialValue = mSettings->getLanguage();
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			const QLocale::Language initialValue = settings.getLanguage();
 			const QLocale::Language newValue = QLocale::English;
 
-			mSettings->save();
-			mSettings->setLanguage(newValue);
-			QCOMPARE(mSettings->getLanguage(), newValue);
-			mSettings->save();
+			settings.save();
+			settings.setLanguage(newValue);
+			QCOMPARE(settings.getLanguage(), newValue);
+			settings.save();
 
-			mSettings->setLanguage(initialValue);
-			QCOMPARE(mSettings->getLanguage(), initialValue);
+			settings.setLanguage(initialValue);
+			QCOMPARE(settings.getLanguage(), initialValue);
 		}
 
 
 		void testLastReaderPluginType()
 		{
-			QString initial = mSettings->getLastReaderPluginType();
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			QString initial = settings.getLastReaderPluginType();
 			QCOMPARE(initial, QString());
-			QSignalSpy spy(mSettings.data(), &GeneralSettings::fireSettingsChanged);
+			QSignalSpy spy(&settings, &GeneralSettings::fireSettingsChanged);
 
 			QString newValue;
-			mSettings->setLastReaderPluginType(newValue);
+			settings.setLastReaderPluginType(newValue);
 
-			QCOMPARE(mSettings->getLastReaderPluginType(), newValue);
-			mSettings->save();
+			QCOMPARE(settings.getLastReaderPluginType(), newValue);
+			settings.save();
 			QCOMPARE(spy.count(), 0);
 			newValue = QStringLiteral("REMOTE");
-			mSettings->setLastReaderPluginType(newValue);
-			QCOMPARE(mSettings->getLastReaderPluginType(), newValue);
+			settings.setLastReaderPluginType(newValue);
+			QCOMPARE(settings.getLastReaderPluginType(), newValue);
 			QCOMPARE(spy.count(), 1);
-			mSettings->save();
+			settings.save();
 		}
 
 
 		void testStoreFeedbackRequested()
 		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
 #if defined(Q_OS_IOS)
-			QCOMPARE(mSettings->isRequestStoreFeedback(), false);
+			QCOMPARE(settings.isRequestStoreFeedback(), false);
 #else
-			QCOMPARE(mSettings->isRequestStoreFeedback(), false);
+			QCOMPARE(settings.isRequestStoreFeedback(), false);
 #endif
 
-			mSettings->setRequestStoreFeedback(true);
-			mSettings->save();
-			QCOMPARE(mSettings->isRequestStoreFeedback(), true);
-			mSettings->setRequestStoreFeedback(false);
-			mSettings->save();
-			QCOMPARE(mSettings->isRequestStoreFeedback(), false);
+			settings.setRequestStoreFeedback(true);
+			settings.save();
+			QCOMPARE(settings.isRequestStoreFeedback(), true);
+			settings.setRequestStoreFeedback(false);
+			settings.save();
+			QCOMPARE(settings.isRequestStoreFeedback(), false);
 		}
 
 

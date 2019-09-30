@@ -12,6 +12,7 @@
 
 #include <QCoreApplication>
 #include <QLoggingCategory>
+#include <QOperatingSystemVersion>
 #include <QtConcurrent/QtConcurrentRun>
 
 
@@ -33,14 +34,12 @@ SETTINGS_NAME(SETTINGS_NAME_LANGUAGE, "language")
 SETTINGS_NAME(SETTINGS_NAME_SELECTED_UI, "selectedUi")
 SETTINGS_NAME(SETTINGS_NAME_DEVICE_SURVEY_PENDING, "deviceSurveyPending")
 SETTINGS_NAME(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE, "lastTechnology")
-
-#if !defined(Q_OS_IOS)
+SETTINGS_NAME(SETTINGS_NAME_IN_APP_NOTIFICATIONS, "showInAppNotifications")
 SETTINGS_NAME(SETTINGS_NAME_REQUEST_STORE_FEEDBACK, "requestStoreFeedback")
-#endif
-
 SETTINGS_NAME(SETTINGS_GROUP_NAME_COMMON, "common")
 SETTINGS_NAME(SETTINGS_NAME_AUTO, "autoUpdateCheck")
 SETTINGS_NAME(SETTINGS_NAME_KEYLESS_PASSWORD, "keylessPassword")
+SETTINGS_NAME(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD, "shuffleScreenKeyboard")
 } // namespace
 
 GeneralSettings::GeneralSettings()
@@ -272,6 +271,7 @@ void GeneralSettings::setLanguage(const QLocale::Language pLanguage)
 	if (pLanguage != getLanguage())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_LANGUAGE(), pLanguage == QLocale::C ? QString() : QLocale(pLanguage).bcp47Name());
+		Q_EMIT fireLanguageChanged();
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -279,7 +279,7 @@ void GeneralSettings::setLanguage(const QLocale::Language pLanguage)
 
 QString GeneralSettings::getSelectedUi() const
 {
-	return QStringLiteral(DEFAULT_UI);
+	return mStoreGeneral->value(SETTINGS_NAME_SELECTED_UI(), QStringLiteral(DEFAULT_UI)).toString();
 }
 
 
@@ -317,45 +317,23 @@ void GeneralSettings::setDeviceSurveyPending(bool pDeviceSurveyPending)
 
 bool GeneralSettings::askForStoreFeedback() const
 {
-#if defined(Q_OS_IOS)
-	qCWarning(settings) << "STORE FEEDBACK NOT IMPLEMENTED ON IOS";
-	return false;
-
-#else
 	return !mStoreGeneral->contains(SETTINGS_NAME_REQUEST_STORE_FEEDBACK());
-
-#endif
 }
 
 
 bool GeneralSettings::isRequestStoreFeedback() const
 {
-#if defined(Q_OS_IOS)
-	qCWarning(settings) << "STORE FEEDBACK NOT IMPLEMENTED ON IOS";
-	return false;
-
-#else
-
 	return mStoreGeneral->value(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), false).toBool();
-
-#endif
 }
 
 
 void GeneralSettings::setRequestStoreFeedback(bool pRequest)
 {
-#if defined(Q_OS_IOS)
-	Q_UNUSED(pRequest);
-	qCWarning(settings) << "STORE FEEDBACK NOT IMPLEMENTED ON IOS";
-	return;
-
-#else
 	if (askForStoreFeedback() || pRequest != isRequestStoreFeedback())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), pRequest);
 		Q_EMIT fireSettingsChanged();
 	}
-#endif
 }
 
 
@@ -380,18 +358,30 @@ bool GeneralSettings::isAutoUpdateCheck() const
 	if (autoUpdateCheckIsSetByAdmin())
 	{
 		mStoreCommon->remove(SETTINGS_NAME_AUTO());
+		// Start writing the new path since 1.17, too, so that we can rely on it in a future version.
+		mStoreGeneral->remove(SETTINGS_NAME_AUTO());
 	}
 
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+	return mStoreCommon->value(SETTINGS_NAME_AUTO(), false).toBool();
+
+#else
 	return mStoreCommon->value(SETTINGS_NAME_AUTO(), true).toBool();
+
+#endif
 }
 
 
 bool GeneralSettings::autoUpdateCheckIsSetByAdmin() const
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+	QSettings settings(QSettings::Scope::SystemScope);
+#else
 #ifdef Q_OS_MACOS
 	QSettings settings(QSettings::Scope::SystemScope, QCoreApplication::organizationDomain(), QCoreApplication::applicationName());
 #else
 	QSettings settings(QSettings::Scope::SystemScope, QCoreApplication::organizationName(), QCoreApplication::applicationName());
+#endif
 #endif
 
 	settings.beginGroup(SETTINGS_GROUP_NAME_COMMON());
@@ -404,6 +394,8 @@ void GeneralSettings::setAutoUpdateCheck(bool pAutoUpdateCheck)
 	if (!autoUpdateCheckIsSetByAdmin() && pAutoUpdateCheck != isAutoUpdateCheck())
 	{
 		mStoreCommon->setValue(SETTINGS_NAME_AUTO(), pAutoUpdateCheck);
+		// Start writing the new path since 1.17, too, so that we can rely on it in a future version.
+		mStoreGeneral->setValue(SETTINGS_NAME_AUTO(), pAutoUpdateCheck);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -420,6 +412,49 @@ void GeneralSettings::setUseScreenKeyboard(bool pUseScreenKeyboard)
 	if (pUseScreenKeyboard != isUseScreenKeyboard())
 	{
 		mStoreCommon->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), pUseScreenKeyboard);
+		// Start writing the new path since 1.17, too, so that we can rely on it in a future version.
+		mStoreGeneral->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), pUseScreenKeyboard);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
+bool GeneralSettings::isShuffleScreenKeyboard() const
+{
+	return mStoreCommon->value(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), false).toBool();
+}
+
+
+void GeneralSettings::setShuffleScreenKeyboard(bool pShuffleScreenKeyboard)
+{
+	if (pShuffleScreenKeyboard != isShuffleScreenKeyboard())
+	{
+		mStoreCommon->setValue(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), pShuffleScreenKeyboard);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
+bool GeneralSettings::isShowInAppNotifications() const
+{
+#if defined(Q_OS_WIN)
+	return QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows10;
+
+#elif defined(Q_OS_MACOS)
+	return false;
+
+#else
+	return mStoreGeneral->value(SETTINGS_NAME_IN_APP_NOTIFICATIONS(), true).toBool();
+
+#endif
+}
+
+
+void GeneralSettings::setShowInAppNotifications(bool pShowInAppNotifications)
+{
+	if (pShowInAppNotifications != isShowInAppNotifications())
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_IN_APP_NOTIFICATIONS(), pShowInAppNotifications);
 		Q_EMIT fireSettingsChanged();
 	}
 }

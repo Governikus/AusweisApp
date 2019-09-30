@@ -10,7 +10,8 @@
 using namespace governikus;
 
 StateChangePin::StateChangePin(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 
@@ -32,6 +33,7 @@ void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 	switch (returnCode)
 	{
 		case CardReturnCode::OK:
+			//: INFO ALL_PLATFORMS The pin was changed successfully.
 			getContext()->setSuccessMessage(tr("You have successfully changed your PIN."));
 			Q_EMIT fireContinue();
 			break;

@@ -4,21 +4,19 @@
 
 #pragma once
 
-#include "AbstractGenericState.h"
-
+#include "AbstractState.h"
 #include "context/WorkflowContext.h"
-
-class test_StateSelectPasswordId;
+#include "GenericContextContainer.h"
 
 namespace governikus
 {
 
 class StateSelectPasswordId
-	: public AbstractGenericState<WorkflowContext>
+	: public AbstractState
+	, public GenericContextContainer<WorkflowContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
-	friend class ::test_StateSelectPasswordId;
 
 	explicit StateSelectPasswordId(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;

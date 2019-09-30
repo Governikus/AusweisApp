@@ -1,8 +1,13 @@
+/*
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.2
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
 Item {
 	id: baseItem
@@ -25,22 +30,46 @@ Item {
 
 		property var pendingSignals: []
 
-		function push(pSectionPage) {
+		function disconnectSectionPageSignals(pSectionPage) {
+			if (pSectionPage === null) {
+				console.warn("tried to disconnect signals from null")
+				return
+			}
+
+			pSectionPage.pushed = false
+			pSectionPage.firePush.disconnect(baseItem.push)
+			pSectionPage.firePushWithProperties.disconnect(baseItem.push)
+			pSectionPage.fireReplace.disconnect(baseItem.replace)
+			pSectionPage.firePop.disconnect(baseItem.pop)
+			pSectionPage.firePopAll.disconnect(baseItem.popAll)
+		}
+
+		function connectSectionPageSignals(pSectionPage) {
+			if (pSectionPage === null) {
+				console.warn("tried to connect signals to null")
+				return
+			}
+
+			pSectionPage.firePush.connect(baseItem.push)
+			pSectionPage.firePushWithProperties.connect(baseItem.push)
+			pSectionPage.fireReplace.connect(baseItem.replace)
+			pSectionPage.firePop.connect(baseItem.pop)
+			pSectionPage.firePopAll.connect(baseItem.popAll)
+			pSectionPage.pushed = true
+		}
+
+		function push(pSectionPage, pProperties) {
 			if (stack.currentItem === pSectionPage) {
 				return
 			}
 
 			if (baseItem.pushed) {
-				pSectionPage.firePush.connect(baseItem.push)
-				pSectionPage.fireReplace.connect(baseItem.replace)
-				pSectionPage.firePop.connect(baseItem.pop)
-				pSectionPage.firePopAll.connect(baseItem.popAll)
-				stack.push(pSectionPage)
-				pSectionPage.pushed = true
+				let item = stack.push(pSectionPage, pProperties)
+				connectSectionPageSignals(item)
 			}
 			// Main item has not been loaded yet, delay push.
 			else {
-				baseItem.pendingItems.push({ "item": pSectionPage })
+				baseItem.pendingItems.push({ "item": pSectionPage, "properties" : pProperties })
 			}
 		}
 
@@ -58,12 +87,14 @@ Item {
 			pSectionPage.pushed = false
 			var item = stack.currentItem
 			item.firePush.disconnect(baseItem.push)
+			item.firePushWithProperties.disconnect(baseItem.push)
 			item.fireReplace.disconnect(baseItem.replace)
 			item.firePop.disconnect(baseItem.pop)
 			item.firePopAll.disconnect(baseItem.popAll)
 
 			var page = stack.replace(pSectionPage)
 			page.firePush.connect(baseItem.push)
+			page.firePushWithProperties.connect(baseItem.push)
 			page.fireReplace.connect(baseItem.replace)
 			page.firePop.connect(baseItem.pop)
 			page.firePopAll.connect(baseItem.popAll)
@@ -72,18 +103,15 @@ Item {
 
 		function pop() {
 			var sectionPage = stack.pop()
-			sectionPage.pushed = false
-			sectionPage.firePush.disconnect(baseItem.push)
-			sectionPage.fireReplace.disconnect(baseItem.replace)
-			sectionPage.firePop.disconnect(baseItem.pop)
-			sectionPage.firePopAll.disconnect(baseItem.popAll)
+			disconnectSectionPageSignals(sectionPage)
 		}
 
-
 		function popAll() {
-			while (stack.depth > 1) {
-				d.pop()
+			for (let i = stack.depth - 1; i > 0; i--) {
+				disconnectSectionPageSignals(stack.get(i))
 			}
+
+			stack.pop(null)
 		}
 
 		// Workaround for QTBUG-57267
@@ -126,6 +154,46 @@ Item {
 		anchors.fill: parent
 	}
 
+	MouseArea {
+		id: iosBackGestureMouseArea
+
+		readonly property real minSwipeDistance: parent.width * 0.2
+		readonly property real minVelocity: 10
+		readonly property real touchStartAreaWidth: 10
+		property real startPosX: 0.0
+		property real previousPosX: 0.0
+		property real velocity: 0.0
+
+		anchors.fill: parent
+
+		enabled: Constants.is_layout_ios
+		preventStealing: true
+
+		onPressed: {
+			if (mouse.x < touchStartAreaWidth && currentSectionPage.navigationAction.state === "back") {
+				mouse.accepted = true
+				startPosX = mouse.x
+				previousPosX = startPosX
+				velocity = 0.0
+			} else {
+				mouse.accepted = false
+			}
+		}
+
+		onPositionChanged: {
+			let currentVelocity = mouse.x - previousPosX
+			velocity = (velocity + currentVelocity) / 2.0
+			previousPosX = mouse.x
+		}
+
+		onReleased: {
+			let swipeDistance = mouse.x - startPosX
+			if (swipeDistance > minSwipeDistance && velocity > minVelocity) {
+				currentSectionPage.navigationAction.clicked()
+			}
+		}
+	}
+
 	Timer {
 		id: pendingSignalsTimer
 		interval: 100
@@ -133,8 +201,8 @@ Item {
 		onTriggered: d.handlePendingSignals()
 	}
 
-	function push(pSectionPage) {
-		d.pendingSignals.push(function() {d.push(pSectionPage)})
+	function push(pSectionPage, pProperties) {
+		d.pendingSignals.push(function() {d.push(pSectionPage, pProperties)})
 		d.handlePendingSignals()
 	}
 
@@ -154,5 +222,17 @@ Item {
 	function popAll() {
 		d.pendingSignals.push(function() {d.popAll()})
 		d.handlePendingSignals()
+	}
+
+	onVisibleChanged: {
+		if (currentSectionPage) {
+			currentSectionPage.onActivated()
+		}
+	}
+
+	onCurrentSectionPageChanged: {
+		if (currentSectionPage) {
+			currentSectionPage.onActivated()
+		}
 	}
 }

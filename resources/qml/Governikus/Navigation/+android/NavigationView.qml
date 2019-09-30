@@ -1,13 +1,20 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 Rectangle {
 	id: content
-	height: appWindow.height - Constants.titlebar_height
-	width: Utils.dp(250)
-	color: Constants.background_color
+	height: appWindow.height - Style.dimens.titlebar_height
+	width: 250
+	color: Style.color.background
 
 	property var navigationController: null
 
@@ -70,7 +77,7 @@ Rectangle {
 	}
 
 
-	ListView {
+	GListView {
 		id: listView
 		anchors.fill: parent
 		boundsBehavior: Flickable.StopAtBounds
@@ -80,20 +87,24 @@ Rectangle {
 		highlight: Rectangle {
 			color: "black"
 			opacity: 0.1
-			height: Utils.dp(45)
+			height: 45
 			width: content.width
 			y: listView.currentItem.y
 		}
 		highlightFollowsCurrentItem: false
 
 		delegate: NavigationItem {
-			height: Utils.dp(45)
+			height: 45
 			width: content.width
 			source: image
-			text: qsTr(desc) + settingsModel.translationTrigger
+			text: qsTr(desc) + SettingsModel.translationTrigger
 			onClicked: {
-				navigationController.currentIndex = index
-				navigationController.state = condition
+				if (navigationController.state === condition) {
+					navigationController.reselectedState()
+				} else {
+					navigationController.currentIndex = index
+					navigationController.state = condition
+				}
 				navigationController.close()
 			}
 			// Hide developer options if we are not using developer build (debug build)
@@ -104,24 +115,30 @@ Rectangle {
 	LocationButton {
 		id: lang_de
 
+		anchors.margins: Constants.component_spacing
+		anchors.bottomMargin: plugin.safeAreaMargins.bottom + Constants.component_spacing
+		anchors.bottom: parent.bottom
+		anchors.right: lang_en.left
+
+		Accessible.name: qsTr("Set language to german") + SettingsModel.translationTrigger
+
 		language: "de"
 		name: "DE"
 		image: "qrc:///images/location_flag_de.svg"
-
-		anchors.margins: Constants.component_spacing
-		anchors.bottom: parent.bottom
-		anchors.right: lang_en.left
 	}
 
 	LocationButton {
 		id: lang_en
 
-		language: "en"
-		name: "EN"
-		image: "qrc:///images/location_flag_en.svg"
-
 		anchors.margins: Constants.component_spacing
 		anchors.bottom: parent.bottom
 		anchors.right: parent.right
+		anchors.bottomMargin: plugin.safeAreaMargins.bottom + Constants.component_spacing
+
+		Accessible.name: qsTr("Set language to english") + SettingsModel.translationTrigger
+
+		language: "en"
+		name: "EN"
+		image: "qrc:///images/location_flag_en.svg"
 	}
 }

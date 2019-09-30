@@ -1,0 +1,35 @@
+/*
+ * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ */
+
+import QtQuick 2.10
+
+import Governikus.Style 1.0
+
+Image {
+	id: img
+
+	property var percent
+	property bool inactive: false
+
+	fillMode: Image.PreserveAspectFit
+	sourceSize.width: Style.dimens.small_icon_size
+	source: {
+		if (inactive) {
+			return "qrc:///images/icon_remote_inactive.svg"
+		}
+		if (percent >= 80) {
+			return "qrc:///images/icon_remote_100.svg"
+		}
+		if (percent >= 60) {
+			return "qrc:///images/icon_remote_75.svg"
+		}
+		if (percent >= 40) {
+			return "qrc:///images/icon_remote_50.svg"
+		}
+		if (percent >= 20) {
+			return "qrc:///images/icon_remote_25.svg"
+		}
+		return "qrc:///images/icon_remote_0.svg"
+	}
+}

@@ -6,6 +6,7 @@
 
 #include "pace/PaceHandler.h"
 
+#include "MockCardConnectionWorker.h"
 #include "MockReader.h"
 #include "TestFileHelper.h"
 
@@ -212,6 +213,47 @@ class test_PaceHandler
 		}
 
 
+		void establishPaceChannel_RetryAllowed()
+		{
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
+			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
+
+			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
+
+			QCOMPARE(status, CardReturnCode::RETRY_ALLOWED);
+		}
+
+
+		void establishPaceChannel_KeyAgreementRetryAllowed()
+		{
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
+			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
+
+			worker->addResponse(CardReturnCode::UNKNOWN, QByteArray::fromHex("6A80"));
+
+			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
+
+			QCOMPARE(status, CardReturnCode::RETRY_ALLOWED);
+		}
+
+
+		void establishPaceChannel_KeyAgreementCommandFailed()
+		{
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
+			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
+
+			worker->addResponse(CardReturnCode::UNKNOWN, QByteArray::fromHex("6A80"));
+			worker->addResponse(CardReturnCode::UNKNOWN, QByteArray::fromHex("9000"));
+
+			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
+
+			QCOMPARE(status, CardReturnCode::COMMAND_FAILED);
+		}
+
+
 		// testcase TS_PACE_2.5.1c TR-03105
 		void failureOnMseSetAt()
 		{
@@ -224,6 +266,87 @@ class test_PaceHandler
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
 
 			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
+		}
+
+
+		void transmitMSESetAT_ErrorMseSetAT_UNKNOWN()
+		{
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
+			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
+
+			QTest::ignoreMessage(QtCriticalMsg, "Error on MSE:Set AT | UNKNOWN");
+			worker->addResponse(CardReturnCode::UNKNOWN, QByteArray::fromHex("6A80"));
+			CardReturnCode status = paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN);
+
+			QCOMPARE(status, CardReturnCode::UNKNOWN);
+		}
+
+
+		void transmitMSESetAT_OK()
+		{
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
+			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
+			QByteArray bytes = QByteArray::fromHex("30 0F"
+												   "            06 0A 04007F00070202040202"
+												   "            02 01 02");
+
+			auto paceInfo = PaceInfo::decode(bytes);
+			paceHandler->mPaceInfo = paceInfo;
+			QVERIFY(paceHandler->mPaceInfo != nullptr);
+
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("009000"));
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("009000"));
+			CardReturnCode status = paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN);
+
+			QCOMPARE(status, CardReturnCode::OK);
+			QCOMPARE(paceHandler->getStatusMseSetAt(), QByteArray::fromHex("0090"));
+		}
+
+
+		void transmitMSESetAT_ErrorMseSetAT_PROTOCOL_ERROR()
+		{
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
+			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
+			QByteArray bytes = QByteArray::fromHex("30 0F"
+												   "            06 0A 04007F00070202040202"
+												   "            02 01 02");
+
+			auto paceInfo = PaceInfo::decode(bytes);
+			paceHandler->mPaceInfo = paceInfo;
+
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("0090"));
+			worker->addResponse(CardReturnCode::CANCELLATION_BY_USER, QByteArray::fromHex("0090"));
+			QTest::ignoreMessage(QtCriticalMsg, "Error on MSE:Set AT");
+			QCOMPARE(paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN), CardReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(paceHandler->getStatusMseSetAt(), QByteArray::fromHex("0090"));
+
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("0090"));
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("006A80"));
+			QTest::ignoreMessage(QtCriticalMsg, "Error on MSE:Set AT");
+			QCOMPARE(paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN), CardReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(paceHandler->getStatusMseSetAt(), QByteArray::fromHex("006A"));
+		}
+
+
+		void transmitMSESetAT_ErrorMseSetAT_RETRY_ALLOWED()
+		{
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
+			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
+			QByteArray bytes = QByteArray::fromHex("30 0F"
+												   "            06 0A 04007F00070202040202"
+												   "            02 01 02");
+
+			auto paceInfo = PaceInfo::decode(bytes);
+			paceHandler->mPaceInfo = paceInfo;
+
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("0090"));
+			worker->addResponse(CardReturnCode::UNDEFINED);
+			QTest::ignoreMessage(QtCriticalMsg, "Error on MSE:Set AT");
+			QCOMPARE(paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN), CardReturnCode::RETRY_ALLOWED);
 		}
 
 

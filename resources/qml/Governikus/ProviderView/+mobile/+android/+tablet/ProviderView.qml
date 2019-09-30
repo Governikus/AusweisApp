@@ -1,16 +1,24 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.Provider 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
+import Governikus.Type.HistoryModel 1.0
+import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ProviderCategoryFilterModel 1.0
+
 
 SectionPage {
 	id: baseItem
 
-	leftTitleBarAction: TitleBarAction {}
-	headerTitleBarAction: TitleBarAction { text: qsTr("Provider") + settingsModel.translationTrigger; font.bold: true }
+	navigationAction: NavigationAction {}
+	title: qsTr("Provider") + SettingsModel.translationTrigger
 	rightTitleBarAction: SearchBar {
 		availableWidth: baseItem.width
 		onSearchTextChanged: ProviderCategoryFilterModel.searchString = searchText
@@ -22,8 +30,8 @@ SectionPage {
 	property bool wasVisible: false
 	onVisibleChanged: wasVisible = true
 
-	readonly property int headerHeight: Utils.dp(54)
-	readonly property int separatorHeight: Utils.dp(2)
+	readonly property int headerHeight: 54
+	readonly property int separatorHeight: 2
 
 	ProviderDetailView {
 		id: providerDetailView
@@ -31,7 +39,7 @@ SectionPage {
 	}
 
 	function pushProviderDetails(pModel) {
-		historyModel.nameFilter.setProviderAddress(pModel.providerAddress)
+		HistoryModel.nameFilter.setProviderAddress(pModel.providerAddress)
 		providerDetailView.providerModelItem = pModel
 		firePush(providerDetailView)
 	}
@@ -46,7 +54,7 @@ SectionPage {
 			height: baseItem.headerHeight
 			width: parent.width
 
-			color: "white"
+			color: Constants.white
 
 			Row {
 				id: checkBoxesItem
@@ -55,8 +63,8 @@ SectionPage {
 				anchors.horizontalCenter: parent.horizontalCenter
 				anchors.verticalCenter: parent.verticalCenter
 
-				padding: Utils.dp(30)
-				spacing: Utils.dp(30)
+				padding: 30
+				spacing: 30
 
 				transformOrigin: Item.Center
 				scale: Math.min(parent.width / width, 1)
@@ -66,7 +74,8 @@ SectionPage {
 
 					category: "citizen"
 					imageSource: Category.imageSource("citizen")
-					text: qsTr("Citizen services") + settingsModel.translationTrigger
+					//: LABEL ANDROID_TABLET
+					text: qsTr("Citizen services") + SettingsModel.translationTrigger
 				}
 
 				CategoryCheckbox {
@@ -74,7 +83,8 @@ SectionPage {
 
 					category: "finance"
 					imageSource: Category.imageSource("finance")
-					text: qsTr("Financials") + settingsModel.translationTrigger
+					//: LABEL ANDROID_TABLET
+					text: qsTr("Financials") + SettingsModel.translationTrigger
 				}
 
 				CategoryCheckbox {
@@ -82,7 +92,8 @@ SectionPage {
 
 					category: "insurance"
 					imageSource: Category.imageSource("insurance")
-					text: qsTr("Insurances") + settingsModel.translationTrigger
+					//: LABEL ANDROID_TABLET
+					text: qsTr("Insurances") + SettingsModel.translationTrigger
 				}
 
 				CategoryCheckbox {
@@ -90,7 +101,8 @@ SectionPage {
 
 					category: "other"
 					imageSource: Category.imageSource("other")
-					text: qsTr("Other services") + settingsModel.translationTrigger
+					//: LABEL ANDROID_TABLET
+					text: qsTr("Other services") + SettingsModel.translationTrigger
 				}
 			}
 		}
@@ -99,7 +111,7 @@ SectionPage {
 			height: baseItem.separatorHeight
 			width: parent.width
 
-			color: Constants.grey_border
+			color: Style.color.border
 		}
 
 		Rectangle {
@@ -108,25 +120,23 @@ SectionPage {
 			height: baseItem.height - (baseItem.headerHeight + baseItem.separatorHeight)
 			width: parent.width
 			anchors.horizontalCenter: parent.horizontalCenter
-			color: Constants.background_color
+			color: Style.color.background
 
-			Text {
+			GText {
 				id: noResultsText
-				color: Constants.secondary_text
 
 				anchors.centerIn: mainPane
-				text: qsTr("No match found") + settingsModel.translationTrigger
+				//: LABEL ANDROID_TABLET
+				text: qsTr("No match found") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal_secondary
 
-				wrapMode: Text.WordWrap
-				font.pixelSize: Constants.normal_font_size
 				visible: !flickable.visible
 			}
 
-			Flickable {
+			GFlickable {
 				id: flickable
 				anchors.fill: mainPane
 				clip: true
-				flickableDirection: Flickable.VerticalFlick
 				visible: grid.hasResults
 
 				contentHeight: grid.height
@@ -138,7 +148,7 @@ SectionPage {
 
 				Grid {
 					id: grid
-					columns: Math.floor((parent.width - Constants.component_spacing) / (Utils.dp(196) + Constants.component_spacing))
+					columns: Math.floor((parent.width - Constants.component_spacing) / (196 + Constants.component_spacing))
 					padding: Constants.component_spacing
 					spacing: Constants.component_spacing
 					width: parent.width
@@ -155,8 +165,8 @@ SectionPage {
 						ProviderCard {
 							width: grid.cardWidth
 							headerHeight: width / 1.80
-							textHeight: Utils.dp(64)
-							footerHeight: Utils.dp(30)
+							textHeight: 64
+							footerHeight: 30
 							pushFunction: baseItem.pushProviderDetails
 							providerModelItem: baseItem.wasVisible ? model : undefined
 						}
@@ -166,8 +176,8 @@ SectionPage {
 						id: additionalResults
 						width: grid.cardWidth
 						headerHeight: width / 1.80
-						textHeight: Utils.dp(64)
-						footerHeight: Utils.dp(30)
+						textHeight: 64
+						footerHeight: 30
 					}
 				}
 			}

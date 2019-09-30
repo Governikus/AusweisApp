@@ -1,12 +1,21 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import Governikus.Global 1.0
+import Governikus.Type.SettingsModel 1.0
 
 import QtQuick 2.10
 
 
 Item {
 	id: baseItem
-	width: height
+
+	implicitWidth: height
 	visible: state !== "hidden"
+
+	Accessible.role: Accessible.Button
+	Accessible.name: qsTr("Show navigation") + SettingsModel.translationTrigger
 
 	Item {
 		id: content
@@ -52,6 +61,13 @@ Item {
 
 	states: [
 		State {
+			// While creating this state seems unnecessary because it's also implicitly defined, it's needed to avoid a
+			// bug where the Animation hangs and overrides the "" state properties with those of the "back" state. This
+			// can be seen when selecting "Quit Tutorial" from "TutorialReaderMethodNfc" (or any other subview of the
+			// tutorial) on Android.
+			name: ""
+		},
+		State {
 			id: backState
 			name: "back"
 
@@ -81,6 +97,11 @@ Item {
 				x: content.width - backState.delta0 - backState.delta1
 				y: content.height / 2 + backState.delta0 - backState.delta1
 				width: backState.itemArrowWidth
+			}
+
+			PropertyChanges {
+				target: baseItem
+				Accessible.name: qsTr("Back") + SettingsModel.translationTrigger
 			}
 		},
 
@@ -113,6 +134,11 @@ Item {
 				x: 0
 				y: content.height - cancelState.delta0
 				width: cancelState.delta1
+			}
+
+			PropertyChanges {
+				target: baseItem
+				Accessible.name: qsTr("Cancel") + SettingsModel.translationTrigger
 			}
 		}
 	]

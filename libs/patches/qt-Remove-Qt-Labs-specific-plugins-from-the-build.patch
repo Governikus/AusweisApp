@@ -1,0 +1,25 @@
+From c69fef8cde15345cb53748456a2e7136258f42a4 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Mon, 16 Apr 2018 08:34:42 +0200
+Subject: Remove Qt Labs specific plugins from the build
+
+Change-Id: I8f1444d4be2806e983979ceff73223c7452da5c2
+---
+ src/imports/imports.pro | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git x/qtquickcontrols2/src/imports/imports.pro y/qtquickcontrols2/src/imports/imports.pro
+index e32bded7..2345616e 100644
+--- x/qtquickcontrols2/src/imports/imports.pro
++++ y/qtquickcontrols2/src/imports/imports.pro
+@@ -1,7 +1,6 @@
+ TEMPLATE = subdirs
+ SUBDIRS += \
+     controls \
+-    calendar \
+     platform \
+     templates
+ 
+-- 
+2.21.0
+

@@ -1,6 +1,11 @@
+/*
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
 
 
@@ -55,7 +60,7 @@ Item {
 		anchors.verticalCenter: parent.verticalCenter
 		width: d.stepWidth * 2
 		height: ApplicationModel.scaleFactor * 8
-		color: Constants.grey_light
+		color: Style.color.border
 	}
 
 	TextCircle {
@@ -84,7 +89,7 @@ Item {
 		height: circle1.height + ApplicationModel.scaleFactor * 40
 		width: height
 		anchors.centerIn: parent
-		color: "transparent"
+		color: Style.color.transparent
 		radius: height / 2
 		border.color: Constants.white
 		border.width: ApplicationModel.scaleFactor * 6

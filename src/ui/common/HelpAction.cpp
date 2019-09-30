@@ -33,7 +33,8 @@ const QMap<QString, QString> HelpAction::mHelpMapping = {
 	{QStringLiteral("generalTab"), QStringLiteral("settings-general.html")},
 	{QStringLiteral("pinTab"), QStringLiteral("settings-pin-management.html")},
 	{QStringLiteral("readerDeviceTab"), QStringLiteral("settings-reader-detection.html")},
-	{QStringLiteral("stepChooseCardGui"), QStringLiteral("settings-reader-detection.html")}
+	{QStringLiteral("stepChooseCardGui"), QStringLiteral("settings-reader-detection.html")},
+	{QStringLiteral("index"), QStringLiteral("index.html")}
 };
 
 

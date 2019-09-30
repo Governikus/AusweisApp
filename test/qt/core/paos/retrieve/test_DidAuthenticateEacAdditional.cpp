@@ -7,8 +7,8 @@
 #include "paos/retrieve/DidAuthenticateEacAdditional.h"
 #include "TestFileHelper.h"
 
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtCore>
+#include <QtTest>
 
 #include "paos/retrieve/DidAuthenticateEacAdditionalParser.h"
 

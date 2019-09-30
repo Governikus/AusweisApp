@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
@@ -6,7 +10,7 @@ import Governikus.Style 1.0
 
 Item {
 	property alias text: t.text
-	height: Utils.dp(50)
+	height: 50
 	width: height
 
 	BusyIndicator {
@@ -22,19 +26,19 @@ Item {
 		id: rec
 		border.width: 1
 		border.color: Constants.blue
-		color: parent.state === "active" ? Constants.blue : "white"
+		color: parent.state === "active" ? Style.color.accent : Constants.white
 		height: parent.state === "active" ? parent.height : parent.height / 2
 		width: height
 		radius: width * 0.5
 		anchors.centerIn: parent
 	}
 
-	Text {
+	GText {
 		id: t
 		anchors.centerIn: rec
 		font.bold: parent.state === "active"
-		font.pixelSize: rec.height / 3
-		color: parent.state === "active" ? "white" : Constants.blue
+		textStyle: Style.text.normal
+		color: parent.state === "active" ? Constants.white : Style.color.accent
 	}
 
 	state:"inactive"

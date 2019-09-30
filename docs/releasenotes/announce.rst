@@ -1,7 +1,7 @@
 Abkündigungen
 =============
 
-Mit der Version 1.18.0 der AusweisApp2 wird die Unterstützung
+Mit der Version 1.20.0 der AusweisApp2 wird die Unterstützung
 folgender Systeme eingestellt.
 
   - OS X 10.11

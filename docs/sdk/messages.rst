@@ -235,7 +235,7 @@ a result and an url parameter to indicate the end of an authentication.
               "minor": "http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#internalError",
               "language": "en",
               "description": "An internal error has occurred during processing.",
-              "message": "The ID card has been removed. The process is aborted."
+              "message": "The connection to the ID card has been lost. The process was aborted."
              },
     "url": "https://test.governikus-eid.de/gov_autent/async?refID=_abcdefgh"
   }

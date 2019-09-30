@@ -11,11 +11,9 @@
 #include <QRegularExpression>
 #include <QtEndian>
 
+Q_DECLARE_LOGGING_CATEGORY(card)
 
 using namespace governikus;
-
-
-Q_DECLARE_LOGGING_CATEGORY(card)
 
 
 namespace
@@ -55,8 +53,8 @@ IMPLEMENT_ASN1_OBJECT(ESTABLISHPACECHANNELOUTPUT)
 }  // namespace governikus
 
 
-EstablishPaceChannelOutput::EstablishPaceChannelOutput()
-	: mPaceReturnCode(CardReturnCode::UNKNOWN)
+EstablishPaceChannelOutput::EstablishPaceChannelOutput(CardReturnCode pPaceReturnCode)
+	: mPaceReturnCode(pPaceReturnCode)
 	, mEfCardAccess()
 	, mCarCurr()
 	, mCarPrev()
@@ -149,10 +147,10 @@ void EstablishPaceChannelOutput::parse(const QByteArray& pControlOutput, PacePas
 		qCWarning(card) << "Output of EstablishPaceChannel has wrong size";
 		return;
 	}
-	quint32 paceReturnCode = qFromLittleEndian<quint32>(pControlOutput.data());
+	auto paceReturnCode = qFromLittleEndian<quint32>(pControlOutput.data());
 	mPaceReturnCode = parseReturnCode(paceReturnCode, pPasswordId);
 
-	quint16 dataLength = qFromLittleEndian<quint16>(pControlOutput.data() + 4);
+	auto dataLength = qFromLittleEndian<quint16>(pControlOutput.data() + 4);
 	if (pControlOutput.size() < 6 + dataLength)
 	{
 		qCWarning(card) << "Output of EstablishPaceChannel has wrong size";
@@ -165,7 +163,7 @@ void EstablishPaceChannelOutput::parse(const QByteArray& pControlOutput, PacePas
 	}
 
 	// Response data according to PC/SC Part 10 amendment 1.1
-	quint16 status = qFromBigEndian<quint16>(pControlOutput.data() + 6);
+	auto status = qFromBigEndian<quint16>(pControlOutput.data() + 6);
 	if (status != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "PACE failed. Status code:" << status;
@@ -210,7 +208,7 @@ QByteArray EstablishPaceChannelOutput::toCcid() const
 		Asn1OctetStringUtil::setValue(mStatusMseSetAt, establishPaceChannelOutput->mStatusMSESetAt);
 	}
 
-	const uchar* unsignedCharPointer = reinterpret_cast<const uchar*>(mEfCardAccess.constData());
+	const auto* unsignedCharPointer = reinterpret_cast<const uchar*>(mEfCardAccess.constData());
 	decodeAsn1Object(&establishPaceChannelOutput->mEfCardAccess, &unsignedCharPointer, mEfCardAccess.size());
 
 	establishPaceChannelOutput->mIdPICC = ASN1_OCTET_STRING_new();
@@ -274,36 +272,36 @@ void EstablishPaceChannelOutput::parseFromCcid(const QByteArray& pOutput, PacePa
 	quint32 paceReturnCode;
 	QDataStream(paceReturnCodeBytes) >> paceReturnCode;
 	mPaceReturnCode = parseReturnCode(paceReturnCode, pPasswordId);
-	qDebug() << "mPaceReturnCode:" << mPaceReturnCode << paceReturnCodeBytes.toHex();
+	qCDebug(card) << "mPaceReturnCode:" << mPaceReturnCode << paceReturnCodeBytes.toHex();
 
 	if (channelOutput->mStatusMSESetAt)
 	{
 		mStatusMseSetAt = Asn1OctetStringUtil::getValue(channelOutput->mStatusMSESetAt);
-		qDebug() << "mStatusMseSetAt:" << mStatusMseSetAt.toHex();
+		qCDebug(card) << "mStatusMseSetAt:" << mStatusMseSetAt.toHex();
 	}
 
 	if (channelOutput->mEfCardAccess)
 	{
 		mEfCardAccess = encodeObject(channelOutput->mEfCardAccess);
-		qDebug() << "mEfCardAccess:" << mEfCardAccess.toHex();
+		qCDebug(card) << "mEfCardAccess:" << mEfCardAccess.toHex();
 	}
 
 	if (channelOutput->mIdPICC != nullptr)
 	{
 		mIdIcc = Asn1OctetStringUtil::getValue(channelOutput->mIdPICC);
-		qDebug() << "mIdIcc:" << mIdIcc.toHex();
+		qCDebug(card) << "mIdIcc:" << mIdIcc.toHex();
 	}
 
 	if (channelOutput->mCurCAR != nullptr)
 	{
 		mCarCurr = Asn1OctetStringUtil::getValue(channelOutput->mCurCAR);
-		qDebug() << "mCarCurr:" << mCarCurr;
+		qCDebug(card) << "mCarCurr:" << mCarCurr;
 	}
 
 	if (channelOutput->mPrevCAR != nullptr)
 	{
 		mCarPrev = Asn1OctetStringUtil::getValue(channelOutput->mPrevCAR);
-		qDebug() << "mCarPrev:" << mCarPrev;
+		qCDebug(card) << "mCarPrev:" << mCarPrev;
 	}
 }
 

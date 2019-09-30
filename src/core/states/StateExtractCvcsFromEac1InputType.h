@@ -6,19 +6,20 @@
 
 #pragma once
 
+#include "AbstractState.h"
 #include "context/AuthContext.h"
-#include "states/AbstractGenericState.h"
+#include "GenericContextContainer.h"
 
 
 namespace governikus
 {
 
 class StateExtractCvcsFromEac1InputType
-	: public AbstractGenericState<AuthContext>
+	: public AbstractState
+	, public GenericContextContainer<AuthContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
-	friend class ::test_StateExtractCvcsFromEac1InputType;
 
 	explicit StateExtractCvcsFromEac1InputType(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;

@@ -10,15 +10,11 @@
 
 #include <QXmlStreamWriter>
 
-class test_PaosCreator;
-
 namespace governikus
 {
 
 class PaosCreator
 {
-	friend class ::test_PaosCreator;
-
 	public:
 		enum class Namespace
 		{

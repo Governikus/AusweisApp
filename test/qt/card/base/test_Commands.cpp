@@ -4,9 +4,11 @@
  * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
  */
 
-#include "Commands.h"
+#include "EABuilder.h"
+#include "GABuilder.h"
+#include "PSOBuilder.h"
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 using namespace governikus;
 

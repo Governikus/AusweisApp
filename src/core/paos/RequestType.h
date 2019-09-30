@@ -16,7 +16,7 @@ class RequestType
 	: public PaosMessage
 {
 	public:
-		RequestType(PaosType pType);
+		explicit RequestType(PaosType pType);
 		virtual ~RequestType();
 };
 

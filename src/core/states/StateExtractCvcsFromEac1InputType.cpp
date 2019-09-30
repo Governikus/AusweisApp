@@ -9,7 +9,8 @@
 using namespace governikus;
 
 StateExtractCvcsFromEac1InputType::StateExtractCvcsFromEac1InputType(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 

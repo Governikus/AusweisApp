@@ -1,0 +1,9 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <color name="background_color">#dcebf6</color>
+    <style name="Theme.NoTitle" parent="@android:style/Theme.NoTitleBar">
+        <item name="android:windowBackground">@color/background_color</item>
+        <item name="android:background">@null</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>

@@ -124,24 +124,22 @@ void StepAuthenticationEac1Gui::onPinUpdated(const QString& pPin)
 {
 	if (mContext->isCanAllowedMode())
 	{
-		mCan = pPin;
+		mContext->setCan(pPin);
 	}
 	else
 	{
-		mPin = pPin;
+		mContext->setPin(pPin);
 	}
 }
 
 
 void StepAuthenticationEac1Gui::onCanUpdated(const QString& pCan)
 {
-	mCan = pCan;
+	mContext->setCan(pCan);
 }
 
 
 void StepAuthenticationEac1Gui::onUiFinished()
 {
-	mContext->setCan(mCan);
-	mContext->setPin(mPin);
 	mContext->setStateApproved();
 }

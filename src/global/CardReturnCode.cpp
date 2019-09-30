@@ -74,6 +74,7 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 	}
 
 	Q_UNREACHABLE();
+	return GlobalStatus::Code::Unknown_Error;
 }
 
 

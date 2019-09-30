@@ -1,14 +1,21 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
+import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.SelfAuthModel 1.0
+import Governikus.Type.ChangePinModel 1.0
 
 SectionPage {
 	id: sectionPage
 
-	KeyNavigation.tab: tileIdentify
-	Accessible.role: Accessible.Grouping
 	Accessible.name: qsTr("Main view")
 	Accessible.description: qsTr("This is the main view of the AusweisApp2.")
 
@@ -31,19 +38,20 @@ SectionPage {
 				height: parent.height
 				width: view.horizontalItemSpace
 
-				title: qsTr("Identify")
+				//: LABEL DESKTOP_QML
+				title: qsTr("Self-authentication") + SettingsModel.translationTrigger
 				image: "qrc:/images/desktop/main_identify.svg"
 
-				onClicked: selfAuthModel.startWorkflow()
+				onClicked: sectionPage.nextView(SectionPage.Views.SelfAuthentication)
 
-				KeyNavigation.tab: tileProvider
+				activeFocusOnTab: true
 			}
 
 			Rectangle {
 				height: view.verticalItemSpace * 2/3
 				width: view.separatorLineWidth
 				anchors.verticalCenter: parent.verticalCenter
-				color: Constants.grey_light
+				color: Style.color.border
 			}
 
 			Tile {
@@ -52,19 +60,20 @@ SectionPage {
 				height: view.verticalItemSpace
 				width: view.horizontalItemSpace
 
-				title: qsTr("Provider")
+				//: LABEL DESKTOP_QML
+				title: qsTr("Provider") + SettingsModel.translationTrigger
 				image: "qrc:/images/desktop/main_provider.svg"
 
 				onClicked: sectionPage.nextView(SectionPage.Views.Provider)
 
-				KeyNavigation.tab: tileHistory
+				activeFocusOnTab: true
 			}
 
 			Rectangle {
 				height: view.verticalItemSpace * 2/3
 				width: view.separatorLineWidth
 				anchors.verticalCenter: parent.verticalCenter
-				color: Constants.grey_light
+				color: Style.color.border
 			}
 
 			Tile {
@@ -73,10 +82,13 @@ SectionPage {
 				height: view.verticalItemSpace
 				width: view.horizontalItemSpace
 
-				title: qsTr("History")
+				//: LABEL DESKTOP_QML
+				title: qsTr("History") + SettingsModel.translationTrigger
 				image: "qrc:/images/desktop/main_history.svg"
 
-				KeyNavigation.tab: tileSettings
+				onClicked: sectionPage.nextView(SectionPage.Views.History)
+
+				activeFocusOnTab: true
 			}
 		}
 
@@ -85,7 +97,7 @@ SectionPage {
 			width: parent.width - view.horizontalItemSpace / 3
 			anchors.horizontalCenter: parent.horizontalCenter
 			anchors.verticalCenter: parent.verticalCenter
-			color: Constants.grey_light
+			color: Style.color.border
 		}
 
 		Row {
@@ -99,17 +111,20 @@ SectionPage {
 				height: view.verticalItemSpace
 				width: view.horizontalItemSpace
 
-				title: qsTr("Settings")
+				//: LABEL DESKTOP_QML
+				title: qsTr("Settings") + SettingsModel.translationTrigger
 				image: "qrc:/images/desktop/settings_icon.svg"
 
-				KeyNavigation.tab: tilePin
+				onClicked: sectionPage.nextView(SectionPage.Views.Settings)
+
+				activeFocusOnTab: true
 			}
 
 			Rectangle {
 				height: view.verticalItemSpace * 2/3
 				width: view.separatorLineWidth
 				anchors.verticalCenter: parent.verticalCenter
-				color: Constants.grey_light
+				color: Style.color.border
 			}
 
 			Tile {
@@ -118,17 +133,20 @@ SectionPage {
 				height: view.verticalItemSpace
 				width: view.horizontalItemSpace
 
-				title: qsTr("PIN management")
+				//: LABEL DESKTOP_QML
+				title: qsTr("PIN management") + SettingsModel.translationTrigger
 				image: "qrc:/images/desktop/main_pin.svg"
 
-				KeyNavigation.tab: tileHelp
+				onClicked: ChangePinModel.startWorkflow()
+
+				activeFocusOnTab: true
 			}
 
 			Rectangle {
 				height: view.verticalItemSpace * 2/3
 				width: view.separatorLineWidth
 				anchors.verticalCenter: parent.verticalCenter
-				color: Constants.grey_light
+				color: Style.color.border
 			}
 
 			Tile {
@@ -137,10 +155,13 @@ SectionPage {
 				height: view.verticalItemSpace
 				width: view.horizontalItemSpace
 
-				title: qsTr("Help")
+				//: LABEL DESKTOP_QML
+				title: qsTr("Help") + SettingsModel.translationTrigger
 				image: "qrc:/images/desktop/help_icon.svg"
 
-				KeyNavigation.tab: sectionPage.navSuccessor
+				activeFocusOnTab: true
+
+				onClicked: sectionPage.nextView(SectionPage.Views.Information)
 			}
 		}
 	}

@@ -55,7 +55,7 @@ class NetworkManager
 			ServiceUnavailable,
 			TimeOut,
 			ProxyError,
-			SslError,
+			SecurityError,
 			OtherError,
 		};
 		Q_ENUM(NetworkError)
@@ -85,7 +85,7 @@ class NetworkManager
 				const QByteArray& pSslSession = QByteArray(),
 				int pTimeoutInMilliSeconds = 30000);
 
-		QNetworkReply* post(QNetworkRequest& pRequest,
+		virtual QNetworkReply* post(QNetworkRequest& pRequest,
 				const QByteArray& pData,
 				int pTimeoutInMilliSeconds = 30000);
 

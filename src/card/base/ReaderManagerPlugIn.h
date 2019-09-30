@@ -28,7 +28,7 @@ class ReaderManagerPlugIn
 		bool mScanRunning;
 
 	protected:
-		void setReaderInfoEnabled(bool pEnabled)
+		void setPlugInEnabled(bool pEnabled)
 		{
 			if (mInfo.isEnabled() != pEnabled)
 			{
@@ -38,13 +38,13 @@ class ReaderManagerPlugIn
 		}
 
 
-		void setReaderInfoAvailable(bool pAvailable)
+		void setPlugInAvailable(bool pAvailable)
 		{
 			mInfo.setAvailable(pAvailable);
 		}
 
 
-		void setReaderInfoResponding(bool pResponding)
+		void setPlugInResponding(bool pResponding)
 		{
 			if (mInfo.isResponding() != pResponding)
 			{
@@ -54,7 +54,7 @@ class ReaderManagerPlugIn
 		}
 
 
-		void setReaderInfoValue(ReaderManagerPlugInInfo::Key pKey, const QVariant& pValue)
+		void setPlugInValue(ReaderManagerPlugInInfo::Key pKey, const QVariant& pValue)
 		{
 			mInfo.setValue(pKey, pValue);
 		}
@@ -93,7 +93,7 @@ class ReaderManagerPlugIn
 
 
 		virtual void startScan(bool pAutoConnect);
-		virtual void stopScan();
+		virtual void stopScan(const QString& pError = QString());
 
 	Q_SIGNALS:
 		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);

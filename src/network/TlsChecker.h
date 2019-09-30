@@ -25,7 +25,7 @@ class TlsChecker
 		static bool isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorithm, bool pIsEphemeral);
 
 	public:
-		static void logSslConfig(const QSslConfiguration pCfg, const QMessageLogger& pLogger);
+		static void logSslConfig(const QSslConfiguration& pCfg, const QMessageLogger& pLogger);
 		static QString toString(QSsl::SslProtocol pProtocol);
 		static QString toString(QSsl::KeyAlgorithm pKeyAlgorithm);
 

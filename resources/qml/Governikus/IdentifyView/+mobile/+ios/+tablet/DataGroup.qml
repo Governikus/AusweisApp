@@ -1,11 +1,21 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
 
 
 Rectangle {
 	id: root
+
+	signal scrollPageUp()
+	signal scrollPageDown()
+
 	property string title;
 	property int columns: 1
 	property var chat
@@ -28,22 +38,22 @@ Rectangle {
 
 		Rectangle {
 			width: parent.width
-			height: Utils.dp(40)
+			height: 40
 			visible: repeater.count < 1
-			Text {
-				color: Constants.secondary_text
+			GText {
 				id: emptyText
+
 				anchors.verticalCenter: parent.verticalCenter
 				width: parent.width
-				font.pixelSize: Constants.normal_font_size
-				text: qsTr("No data requested") + settingsModel.translationTrigger
+
+				//: LABEL IOS_TABLET
+				text: qsTr("No data requested") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal_secondary
 			}
-			Rectangle {
+			GSeparator {
 				anchors.top: parent.bottom
 				anchors.topMargin: -height
-				height: 1
 				width: parent.width
-				color: Constants.grey
 			}
 		}
 
@@ -61,26 +71,27 @@ Rectangle {
 
 				Rectangle {
 					width: (grid.width - ((grid.columns - 1) * grid.columnSpacing)) / grid.columns
-					height: Utils.dp(40)
-					color: "white"
+					height: 40
+					color: Constants.white
 
-					Text {
+					GText {
 						id: text
-						color: Constants.secondary_text
+
+						Accessible.onScrollDownAction: baseItem.scrollPageDown()
+						Accessible.onScrollUpAction: baseItem.scrollPageUp()
+
 						anchors.verticalCenter: parent.verticalCenter
 						anchors.left: parent.left
 						anchors.right: checkBox.left
-						font.pixelSize: Constants.normal_font_size
+
 						text: name
-						wrapMode: Text.WordWrap
+						textStyle: Style.text.normal_secondary
 					}
 
-					Rectangle {
+					GSeparator {
 						anchors.top: parent.bottom
 						anchors.topMargin: -height
-						height: 1
 						width: parent.width
-						color: Constants.grey
 					}
 
 					GCheckBox {
@@ -99,7 +110,7 @@ Rectangle {
 							anchors.centerIn: parent
 							width: root.width
 							height: parent.height
-							color: Constants.accent_color
+							color: Style.color.accent
 							opacity: parent.pressed ? 0.5 : 0
 							Behavior on opacity { NumberAnimation { duration: 100 } }
 						}

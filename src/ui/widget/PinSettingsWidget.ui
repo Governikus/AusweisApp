@@ -183,58 +183,6 @@ Please note that you can only use the PUK to unblock the eID function. If you ha
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="pinUnblockedHeaderPage">
-      <layout class="QVBoxLayout" name="verticalLayout_23">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
-         <property name="leftMargin">
-          <number>20</number>
-         </property>
-         <property name="rightMargin">
-          <number>20</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="label_8">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../../../resources/ausweisapp.qrc">:/images/Icon_Checked.svg</pixmap>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_4">
-           <property name="focusPolicy">
-            <enum>Qt::TabFocus</enum>
-           </property>
-           <property name="text">
-            <string>&lt;h4&gt;PUK entry successful&lt;/h4&gt;&lt;p&gt;Your ID card is unblocked. You now have three more tries to change your PIN.&lt;/p&gt;</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="pinSuccessHeaderPage">
       <layout class="QVBoxLayout" name="verticalLayout_13">
        <property name="spacing">

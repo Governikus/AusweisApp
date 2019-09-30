@@ -23,7 +23,7 @@ void DiagnosisFirewallDetection::checkIfAllInformationReady()
 
 void DiagnosisFirewallDetection::onFirstRuleDone(int exitCode, QProcess::ExitStatus exitStatus)
 {
-	Q_UNUSED(exitStatus);
+	Q_UNUSED(exitStatus)
 
 	if (exitCode != 0)
 	{
@@ -75,7 +75,7 @@ void DiagnosisFirewallDetection::onFirstRuleError(QProcess::ProcessError pError)
 
 void DiagnosisFirewallDetection::onSecondRuleDone(int exitCode, QProcess::ExitStatus exitStatus)
 {
-	Q_UNUSED(exitStatus);
+	Q_UNUSED(exitStatus)
 
 	if (exitCode != 0)
 	{
@@ -127,7 +127,7 @@ void DiagnosisFirewallDetection::onSecondRuleError(QProcess::ProcessError pError
 
 void DiagnosisFirewallDetection::onProfilesDone(int exitCode, QProcess::ExitStatus exitStatus)
 {
-	Q_UNUSED(exitStatus);
+	Q_UNUSED(exitStatus)
 	if (exitCode != 0)
 	{
 		qDebug() << "Error while getting firewall profiles, error code:" << exitCode;
@@ -183,7 +183,7 @@ void DiagnosisFirewallDetection::onProfilesError(QProcess::ProcessError pError)
 
 void DiagnosisFirewallDetection::onInstalledFirewallSoftwareDone(int exitCode, QProcess::ExitStatus exitStatus)
 {
-	Q_UNUSED(exitStatus);
+	Q_UNUSED(exitStatus)
 
 	if (exitCode != 0)
 	{
@@ -231,8 +231,8 @@ void DiagnosisFirewallDetection::onInstalledFirewallSoftwareDone(int exitCode, Q
 				QString hexString = QString::number(statusValue, 16);
 				if (hexString.length() >= 4)
 				{
-					enabled = hexString.right(4).left(2) == QStringLiteral("10");
-					uptodate = hexString.right(2) == QStringLiteral("00");
+					enabled = hexString.right(4).left(2) == QLatin1String("10");
+					uptodate = hexString.right(2) == QLatin1String("00");
 				}
 				else
 				{
@@ -370,7 +370,7 @@ void DiagnosisFirewallDetection::startDetection()
 }
 
 
-FirewallSoftware::FirewallSoftware(QString pName, bool pEnabled, bool pUpToDate)
+FirewallSoftware::FirewallSoftware(const QString& pName, bool pEnabled, bool pUpToDate)
 	: mName(pName)
 	, mEnabled(pEnabled)
 	, mUpToDate(pUpToDate)
@@ -378,7 +378,7 @@ FirewallSoftware::FirewallSoftware(QString pName, bool pEnabled, bool pUpToDate)
 }
 
 
-FirewallProfile::FirewallProfile(QString pName, bool pEnabled)
+FirewallProfile::FirewallProfile(const QString& pName, bool pEnabled)
 	: mName(pName)
 	, mEnabled(pEnabled)
 {

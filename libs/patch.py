@@ -368,7 +368,7 @@ class PatchSet(object):
             header.append(fe.line)
             fe.next()
         if fe.is_empty:
-            if p == None:
+            if p is None:
               debug("no patch data found")  # error is shown later
               self.errors += 1
             else:
@@ -956,7 +956,6 @@ class PatchSet(object):
         if exists(backupname):
           warning("can't backup original file to %s - aborting" % backupname)
         else:
-          import shutil
           shutil.move(filename, backupname)
           if self.write_hunks(backupname, filename, p.hunks):
             info("successfully patched %d/%d:\t %s" % (i+1, total, filename))
@@ -1020,7 +1019,6 @@ class PatchSet(object):
 
     lineno = 1
     line = fp.readline()
-    hno = None
     try:
       for hno, h in enumerate(hunks):
         # skip to first line of the hunk

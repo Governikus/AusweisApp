@@ -4,8 +4,8 @@
 
 #include <QByteArray>
 #include <QFile>
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtCore>
+#include <QtTest>
 
 #include "paos/PaosHandler.h"
 #include "TestFileHelper.h"

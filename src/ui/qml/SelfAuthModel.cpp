@@ -5,9 +5,12 @@
 #include "SelfAuthModel.h"
 
 #include "context/SelfAuthContext.h"
-#include "LanguageLoader.h"
+#include "SingletonHelper.h"
 
 using namespace governikus;
+
+
+defineSingleton(SelfAuthModel)
 
 
 void SelfAuthModel::onSelfAuthenticationDataChanged()
@@ -43,6 +46,12 @@ SelfAuthModel::SelfAuthModel(QObject* pParent)
 	, mSelfData()
 {
 	onSelfAuthenticationDataChanged();
+}
+
+
+SelfAuthModel& SelfAuthModel::getInstance()
+{
+	return *Instance;
 }
 
 

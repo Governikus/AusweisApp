@@ -31,7 +31,7 @@ class HttpServer
 	public:
 		static quint16 cPort;
 
-		HttpServer(quint16 pPort = HttpServer::cPort);
+		explicit HttpServer(quint16 pPort = HttpServer::cPort);
 		virtual ~HttpServer();
 
 		bool isListening() const;

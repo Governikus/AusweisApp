@@ -7,9 +7,9 @@
 #include "Chat.h"
 #include "KnownOIDs.h"
 
+#include <QLoggingCategory>
 
-#include <QDebug>
-
+Q_DECLARE_LOGGING_CATEGORY(card)
 
 using namespace governikus;
 
@@ -45,8 +45,8 @@ IMPLEMENT_ASN1_OBJECT(CHAT)
 
 int CHAT::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt, void* pExarg)
 {
-	Q_UNUSED(pIt);
-	Q_UNUSED(pExarg);
+	Q_UNUSED(pIt)
+	Q_UNUSED(pExarg)
 	if (pOperation == ASN1_OP_D2I_POST)
 	{
 		if (auto chat = reinterpret_cast<chat_st*>(*pVal))
@@ -54,7 +54,7 @@ int CHAT::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt
 			if (chat->getTemplate().size() != 5)
 			{
 				// per definition it's an OCTET STRING of fixed SIZE(5)
-				qDebug() << "CHAT Template has wrong size" << chat->getTemplate().size();
+				qCDebug(card) << "CHAT Template has wrong size" << chat->getTemplate().size();
 				CHAT_free(chat);
 				*pVal = nullptr;
 				return CB_ERROR;
@@ -62,7 +62,7 @@ int CHAT::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt
 			else if (chat->getType() != KnownOIDs::CHATType::ID_AT)
 			{
 				// currently we only support Authentication Terminals
-				qDebug() << "CHAT type is unsupported" << chat->getType();
+				qCDebug(card) << "CHAT type is unsupported" << chat->getType();
 				CHAT_free(chat);
 				*pVal = nullptr;
 				return CB_ERROR;
@@ -145,7 +145,7 @@ void CHAT::setAccessRole(AccessRole pRole)
 {
 	if (pRole == AccessRole::UNKNOWN)
 	{
-		qCritical() << "Cannot set" << pRole;
+		qCCritical(card) << "Cannot set" << pRole;
 		return;
 	}
 
@@ -230,7 +230,7 @@ void chat_st::setTemplateBit(uint pBitIndex, bool pOn)
 {
 	if (pBitIndex > 39)
 	{
-		qCritical() << "Setting template bit > 39 not supported";
+		qCCritical(card) << "Setting template bit > 39 not supported";
 		return;
 	}
 	if (mTemplate->length == 0)
@@ -242,7 +242,7 @@ void chat_st::setTemplateBit(uint pBitIndex, bool pOn)
 	}
 
 	// because pBitIndex < 40, it follows that pBitIndex / 8 <= 4, so byteNumber has no underflow
-	quint8 byteNumber = static_cast<quint8>(4 - (pBitIndex / 8));
+	auto byteNumber = static_cast<quint8>(4 - (pBitIndex / 8));
 	quint8 bitNumberInByte = pBitIndex % 8;
 	if (pOn)
 	{

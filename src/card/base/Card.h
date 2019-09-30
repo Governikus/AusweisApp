@@ -8,7 +8,6 @@
 
 #include "CardReturnCode.h"
 #include "CommandApdu.h"
-#include "Commands.h"
 #include "EstablishPaceChannelOutput.h"
 #include "ResponseApdu.h"
 #include "SmartCardDefinitions.h"
@@ -45,6 +44,12 @@ class Card
 		virtual bool isConnected() = 0;
 
 		/*!
+		 * Sets the current workflow progress message. This is necessary for platforms like iOS,
+		 * where interacting with a card leads to a dialog where the message needs to be updated.
+		 */
+		virtual void setProgressMessage(const QString& pMessage);
+
+		/*!
 		 * Performs a transmit to the smart card.
 		 * The command APDU buffer is transmitted to the card.
 		 * The response APDU buffer is filled with the data returned from the card.
@@ -54,7 +59,7 @@ class Card
 		/*!
 		 * Establishes a PACE channel, i.e. the corresponding reader is no basic reader.
 		 */
-		virtual CardReturnCode establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPaceChannelOutput& pChannelOutput, quint8 pTimeoutSeconds = 60);
+		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds = 60);
 
 		/*!
 		 * Destroys an existing  PACE channel, i.e. the corresponding reader is no basic reader.

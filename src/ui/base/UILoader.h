@@ -16,7 +16,7 @@
 namespace governikus
 {
 
-defineEnumType(UIPlugInName, UIPlugInQml, UIPlugInCli, UIPlugInWidgets, UIPlugInJsonApi, UIPlugInWebSocket, UIPlugInAidl)
+defineEnumType(UIPlugInName, UIPlugInQml, UIPlugInWidgets, UIPlugInJson, UIPlugInWebSocket, UIPlugInAidl)
 
 class UILoader
 	: public QObject

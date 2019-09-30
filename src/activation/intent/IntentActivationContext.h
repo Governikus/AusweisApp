@@ -19,10 +19,11 @@ class IntentActivationContext
 	Q_OBJECT
 
 	const QUrl mActivationUrl;
+	const QString mReferrer;
 	QUrl mRedirectAddress;
 
 	public:
-		IntentActivationContext(const QUrl& pActivationUrl);
+		explicit IntentActivationContext(const QUrl& pActivationUrl, const QString& pReferrer);
 		virtual ~IntentActivationContext() override;
 
 		QUrl getActivationURL() const override;

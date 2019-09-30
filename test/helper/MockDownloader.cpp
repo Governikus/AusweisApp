@@ -55,7 +55,7 @@ void MockDownloader::download(const QUrl& pUpdateUrl)
 void MockDownloader::downloadIfNew(const QUrl& pUpdateUrl,
 		const QDateTime& pCurrentTimestamp)
 {
-	Q_UNUSED(pCurrentTimestamp);
+	Q_UNUSED(pCurrentTimestamp)
 	download(pUpdateUrl);
 }
 

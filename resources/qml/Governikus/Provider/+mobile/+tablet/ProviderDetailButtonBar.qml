@@ -1,6 +1,12 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 Item {
 	id: baseItem
@@ -27,7 +33,8 @@ Item {
 
 	GButton {
 		id: button
-		text: qsTr("ONLINE APPLICATION") + settingsModel.translationTrigger
+		//: LABEL ANDROID_TABLET IOS_TABLET
+		text: qsTr("ONLINE APPLICATION") + SettingsModel.translationTrigger
 		buttonColor: baseItem.titleBarColor
 		maxWidth: parent.width - icon.width - 3 * Constants.component_spacing
 		anchors.left: icon.right

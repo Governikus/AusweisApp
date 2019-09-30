@@ -23,8 +23,8 @@ AboutDialog::AboutDialog(QWidget* pParent)
 	layout()->setSizeConstraint(QLayout::SetFixedSize); // For platform != Windows: Disable maximize button
 	setWindowModality(Qt::WindowModal); // For platform == macOS: Make dialog slide in from the top
 
-	const SecureStorage& storage = SecureStorage::getInstance();
-	const auto& url = VersionNumber::getApplicationVersion().isDeveloperVersion() ? storage.getAppcastBetaUpdateUrl() : storage.getAppcastUpdateUrl();
+	const auto* storage = Env::getSingleton<SecureStorage>();
+	const auto& url = VersionNumber::getApplicationVersion().isDeveloperVersion() ? storage->getAppcastBetaUpdateUrl() : storage->getAppcastUpdateUrl();
 	const auto& releaseNotes = url.adjusted(QUrl::RemoveFilename).toString() + QStringLiteral("ReleaseNotes.html");
 
 	setWindowTitle(tr("About %1 - %2").arg(QCoreApplication::applicationName(), QCoreApplication::organizationName()));

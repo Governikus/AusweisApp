@@ -4,15 +4,13 @@ Libraries
 Um die AusweisApp2 zu bauen ist eine Toolchain erforderlich, die die
 Abhängigkeiten und die Compilertools beinhaltet.
 
-Unterstützte Compiler:
+Unterstützte C++17 Compiler:
 
-- MinGW 32 / 64 >= 4.9
+- MinGW / GCC >= 7.3
 
-- GCC >= 4.9
+- Clang >= 5.0
 
-- Clang >= 3.4
-
-- MSVC >= 2015
+- MSVC >= 2017
 
 
 Notwendige Bibliotheken:
@@ -32,7 +30,7 @@ Notwendige Bibliotheken:
 
 Notwendige Tools:
 
-- CMake >= 3.5.0 (>= 3.7.1 für Android)
+- CMake >= 3.8.0 (3.14.0 >= für iOS)
 
   - http://www.cmake.org
 
@@ -102,7 +100,7 @@ MinGW
 - http://sourceforge.net/projects/mingw-w64/
 
   - Dabei wurde das folgende Paket getestet:
-    https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/5.3.0/threads-posix/dwarf/i686-5.3.0-release-posix-dwarf-rt_v4-rev0.7z/download
+    https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-posix/dwarf/i686-7.3.0-release-posix-dwarf-rt_v5-rev0.7z/download
 
 
 MSYS2
@@ -147,7 +145,7 @@ Vorbereitung
 
 ::
 
-   Für das Windows SDK 10.0.15063.0 und neuer:
+   Für das Windows SDK 10.0.15063.0 und neuer (getestet: 10.0.17763.0):
        WindowsSdkVerBinPath = C:\Program Files (x86)\Windows Kits\10\bin\%VERSION%
    Für alle älteren Versionen:
        WindowsSdkDir = C:\Program Files (x86)\Windows Kits\10

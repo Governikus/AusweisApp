@@ -4,16 +4,13 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppUiQml)
 
-TARGET_LINK_LIBRARIES(AusweisAppUiQml Qt5::Core Qt5::Svg Qt5::Qml Qt5::Quick Qt5::QuickControls2 AusweisAppGlobal AusweisAppCore AusweisAppUi AusweisAppRemoteDevice AusweisAppUiCommon)
+TARGET_LINK_LIBRARIES(AusweisAppUiQml Qt5::Core Qt5::Svg Qt5::Qml Qt5::Quick Qt5::QuickControls2)
+TARGET_LINK_LIBRARIES(AusweisAppUiQml AusweisAppGlobal AusweisAppCore AusweisAppUi AusweisAppRemoteDevice AusweisAppUiCommon AusweisAppExport)
 
 IF(ANDROID)
 	TARGET_LINK_LIBRARIES(AusweisAppUiQml AusweisAppWhitelistClient)
 ELSE()
 	TARGET_LINK_LIBRARIES(AusweisAppUiQml debug AusweisAppWhitelistClient)
-ENDIF()
-
-IF(DESKTOP)
-	TARGET_LINK_LIBRARIES(AusweisAppUiQml AusweisAppExport)
 ENDIF()
 
 IF(TARGET Qt5::Bluetooth)

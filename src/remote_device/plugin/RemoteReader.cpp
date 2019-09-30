@@ -33,7 +33,12 @@ RemoteReader::~RemoteReader()
 
 Card* RemoteReader::getCard() const
 {
-	return mCard.data();
+	if (mCard)
+	{
+		return mCard.data();
+	}
+
+	return nullptr;
 }
 
 
@@ -61,8 +66,8 @@ void RemoteReader::update(const IfdStatus& pIfdStatus)
 		if (!pIfdStatus.getCardAvailable())
 		{
 			qCDebug(card_remote) << "Card removed";
-			mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
 			mCard.reset();
+			mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
 			Q_EMIT fireCardRemoved(getName());
 		}
 		return;

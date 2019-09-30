@@ -1,0 +1,27 @@
+From c06988f6a5816e8ebbcebfcf7e9799cd5b90a91d Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Fri, 13 Apr 2018 08:22:18 +0200
+Subject: Add work-around for freebsd build
+
+Change-Id: I14e66e072f9667479815693e3dbbac71385797e7
+Task-number: QTBUG-65425
+---
+ qmake/Makefile.unix | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtbase/qmake/Makefile.unix y/qtbase/qmake/Makefile.unix
+index 0f69b6b487..26ac96c473 100644
+--- x/qtbase/qmake/Makefile.unix
++++ y/qtbase/qmake/Makefile.unix
+@@ -269,7 +269,7 @@ qlibraryinfo.o: $(SOURCE_PATH)/src/corelib/global/qlibraryinfo.cpp
+ 	$(CXX) -c -o $@ $(CXXFLAGS) -DQT_BUILD_QMAKE_BOOTSTRAP $<
+ 
+ qlibraryinfo_final.o: $(SOURCE_PATH)/src/corelib/global/qlibraryinfo.cpp $(BUILD_PATH)/src/corelib/global/qconfig.cpp
+-	$(CXX) -c -o $@ $(CXXFLAGS) $<
++	$(CXX) -c -o $@ $(CXXFLAGS) $(SOURCE_PATH)/src/corelib/global/qlibraryinfo.cpp
+ 
+ qnumeric.o: $(SOURCE_PATH)/src/corelib/global/qnumeric.cpp
+ 	$(CXX) -c -o $@ $(CXXFLAGS) $<
+-- 
+2.21.0
+

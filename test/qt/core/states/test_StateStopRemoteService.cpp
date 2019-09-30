@@ -5,11 +5,12 @@
 #include "states/remote_service/StateStopRemoteService.h"
 
 #include "context/RemoteServiceContext.h"
+#include "states/StateBuilder.h"
 
 #include "MockCardConnectionWorker.h"
 #include "MockRemoteServer.h"
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 
 using namespace governikus;
@@ -18,6 +19,8 @@ class test_StateStopRemoteService
 	: public QObject
 {
 	Q_OBJECT
+	QSharedPointer<StateStopRemoteService> mState;
+	QSharedPointer<RemoteServiceContext> mContext;
 
 	private Q_SLOTS:
 		void initTestCase()
@@ -28,25 +31,35 @@ class test_StateStopRemoteService
 		}
 
 
+		void init()
+		{
+			mContext.reset(new RemoteServiceContext());
+			mState.reset(StateBuilder::createState<StateStopRemoteService>(mContext));
+		}
+
+
+		void cleanup()
+		{
+			mContext.clear();
+			mState.clear();
+		}
+
+
 		void test_Run()
 		{
-			const QSharedPointer<RemoteServiceContext> context(new RemoteServiceContext());
-			StateStopRemoteService state(context);
-			QSignalSpy spyContinue(&state, &StateStopRemoteService::fireContinue);
-
-			state.run();
+			QSignalSpy spyContinue(mState.data(), &StateStopRemoteService::fireContinue);
+			mState->onEntry(nullptr);
+			mContext->setStateApproved();
 			QCOMPARE(spyContinue.count(), 1);
 		}
 
 
 		void test_OnExit()
 		{
-			const QSharedPointer<RemoteServiceContext> context(new RemoteServiceContext());
-			StateStopRemoteService state(context);
 			const QString name("name");
-			state.setStateName(name);
-			state.onExit(nullptr);
-			QVERIFY(!context->getRemoteServer()->isRunning());
+			mState->setStateName(name);
+			Q_EMIT mContext->fireCancelWorkflow();
+			QVERIFY(!mContext->getRemoteServer()->isRunning());
 		}
 
 

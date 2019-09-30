@@ -19,7 +19,7 @@ Q_LOGGING_CATEGORY(paos, "paos")
 Q_LOGGING_CATEGORY(gui, "gui")
 Q_LOGGING_CATEGORY(language, "language")
 Q_LOGGING_CATEGORY(qml, "qml")
-Q_LOGGING_CATEGORY(jsonapi, "jsonapi")
+Q_LOGGING_CATEGORY(json, "json")
 Q_LOGGING_CATEGORY(aidl, "aidl")
 Q_LOGGING_CATEGORY(websocket, "websocket")
 Q_LOGGING_CATEGORY(cli, "cli")
@@ -81,6 +81,11 @@ Q_LOGGING_CATEGORY(support, "support")
 Q_LOGGING_CATEGORY(developermode, "developermode")
 
 /*!
- * Loggin category for persistent settings
+ * Logging category for persistent settings
  */
 Q_LOGGING_CATEGORY(settings, "settings")
+
+/*!
+ * Logging category for ApplicationModel::showFeedback
+ */
+Q_LOGGING_CATEGORY(feedback, "feedback")

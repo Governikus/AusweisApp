@@ -1,8 +1,3 @@
-function noTest()
-{
-	return typeof(plugin) !== 'undefined'
-}
-
 function escapeHtml(str)
 {
 	return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -41,15 +36,30 @@ function getRandomInt(min, max)
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-var contentScaleFactor = noTest() ? screenDpiScale : 1
-
-function dp(value)
-{
-	return value * contentScaleFactor
-}
-
 function providerIconSource(baseName) {
 	var platform = plugin.platformStyle.indexOf("tablet") !== -1 ? "+tablet/" : ""
 
 	return "qrc:///images/provider/" + platform + baseName + ".png"
+}
+
+function scrollPageDown(pFlickable) {
+	if (pFlickable.height >= pFlickable.contentHeight) {
+		return
+	}
+
+	pFlickable.contentY += pFlickable.height
+	if (pFlickable.contentY + pFlickable.height > pFlickable.contentHeight) {
+		pFlickable.contentY = pFlickable.contentHeight - pFlickable.height
+	}
+}
+
+function scrollPageUp(pFlickable) {
+	if (pFlickable.height >= pFlickable.contentHeight) {
+		return
+	}
+
+	pFlickable.contentY -= pFlickable.height
+	if (pFlickable.contentY < 0) {
+		pFlickable.contentY =  0
+	}
 }

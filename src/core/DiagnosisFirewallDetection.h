@@ -23,7 +23,7 @@ class FirewallProfile
 		const bool mEnabled;
 
 	public:
-		FirewallProfile(QString pName, bool pEnabled);
+		FirewallProfile(const QString& pName, bool pEnabled);
 
 		const QString& getName() const
 		{
@@ -47,7 +47,7 @@ class FirewallSoftware
 		bool mUpToDate;
 
 	public:
-		FirewallSoftware(QString pName, bool pEnabled, bool pUpToDate);
+		FirewallSoftware(const QString& pName, bool pEnabled, bool pUpToDate);
 
 		const QString& getName() const
 		{

@@ -44,7 +44,10 @@ void SignalHandler::initUnix()
 
 void SignalHandler::sigHandler(int pSignal)
 {
-	::write(cSignalSocketPair[0], &pSignal, sizeof(pSignal));
+	if (::write(cSignalSocketPair[0], &pSignal, sizeof(pSignal)) != sizeof(pSignal))
+	{
+		qCWarning(system) << "Cannot bind signal:" << pSignal;
+	}
 }
 
 

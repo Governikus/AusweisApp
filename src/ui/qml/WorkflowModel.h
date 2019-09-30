@@ -28,7 +28,7 @@ class WorkflowModel
 	Q_PROPERTY(bool errorIsMasked READ isMaskedError NOTIFY fireResultChanged)
 	Q_PROPERTY(ReaderManagerPlugInType readerPlugInType READ getReaderPlugInType WRITE setReaderPlugInType NOTIFY fireReaderPlugInTypeChanged)
 	Q_PROPERTY(bool isBasicReader READ isBasicReader NOTIFY fireIsBasicReaderChanged)
-	Q_PROPERTY(QString readerImage MEMBER mReaderImage NOTIFY fireReaderImageChanged)
+	Q_PROPERTY(QString readerImage READ getReaderImage NOTIFY fireReaderImageChanged)
 	Q_PROPERTY(bool hasNextWorkflowPending READ getNextWorkflowPending NOTIFY fireNextWorkflowPendingChanged)
 
 	private:
@@ -55,6 +55,8 @@ class WorkflowModel
 
 		bool getNextWorkflowPending() const;
 
+		QString getReaderImage() const;
+
 		Q_INVOKABLE void startWorkflow();
 		Q_INVOKABLE void cancelWorkflow();
 		Q_INVOKABLE void cancelWorkflowOnPinBlocked();
@@ -62,6 +64,9 @@ class WorkflowModel
 		Q_INVOKABLE void continueWorkflow();
 		Q_INVOKABLE void setInitialPluginType();
 		Q_INVOKABLE bool selectedReaderHasCard() const;
+		Q_INVOKABLE bool shouldSkipResultView() const;
+		Q_INVOKABLE bool isCancellationByUser() const;
+		Q_INVOKABLE void sendResultMail() const;
 
 	public Q_SLOTS:
 		void onReaderManagerSignal();

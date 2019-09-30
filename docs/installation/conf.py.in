@@ -152,7 +152,7 @@ latex_documents = [
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-latex_logo = '@SPHINX_DOCS_DIR@/../../resources/images/android/xhdpi/npa.png'
+latex_logo = '@SPHINX_DOCS_DIR@/../../resources/images/npa_docs.png'
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.

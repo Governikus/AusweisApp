@@ -1,60 +1,27 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Layouts 1.2
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ProviderCategoryFilterModel 1.0
 
-Rectangle {
-	id: baseItem
-	height: Constants.provider_section_height
-
+ListItem {
 	property int totalHits: ProviderCategoryFilterModel.additionalResultCount
 
 	visible: totalHits > 0 && ProviderCategoryFilterModel.categories.length > 0 && ProviderCategoryFilterModel.categories.indexOf("all") === -1
 
-	Item {
-		anchors.fill: parent
-		anchors.topMargin: Utils.dp(5)
-		anchors.bottomMargin: Utils.dp(5)
+	Accessible.name: qsTr("%1 additional results in other categories").arg(totalHits) + SettingsModel.translationTrigger
+	Accessible.description: qsTr("Click to remove category filter and show additional results.") + SettingsModel.translationTrigger
 
-		Image {
-			id: allImage
-			source: Category.imageSource("all")
-			asynchronous: true
-			height: parent.height
-			width: parent.width * 0.15
-			fillMode: Image.PreserveAspectFit
-			anchors.left: parent.left
-			anchors.verticalCenter: parent.verticalCenter
-			anchors.leftMargin: ProviderStyle.leftIconMargin
-		}
+	icon: Category.imageSource("all")
+	text: qsTr("Additional results:") + ' '  + totalHits + SettingsModel.translationTrigger
+	showRightArrow: false
+	showSeparator: false
 
-		Text {
-			anchors.verticalCenter: parent.verticalCenter
-			anchors.left: allImage.right
-			anchors.leftMargin: ProviderStyle.leftProviderListMargin
-			color: ProviderStyle.categoryColor
-			font.pixelSize: ProviderStyle.categoryFontPixelSize
-			font.bold: ProviderStyle.categoryFontBold
-			elide: Text.ElideRight
-			text: '<html>' + qsTr("Additional results:") + "&nbsp;" + baseItem.totalHits + '</html>' + settingsModel.translationTrigger
-		}
-
-		Text {
-			anchors.right: parent.right
-			anchors.rightMargin: Utils.dp(5)
-			anchors.verticalCenter: parent.verticalCenter
-
-			text: ">"
-			color: Constants.grey
-			font.pixelSize: Constants.normal_font_size
-			visible: ProviderStyle.showCategoryRightArrow
-		}
-
-		MouseArea {
-			anchors.fill: parent
-			onClicked: ProviderCategoryFilterModel.setCategorySelection("")
-		}
-	}
+	onClicked: ProviderCategoryFilterModel.setCategorySelection("")
 }

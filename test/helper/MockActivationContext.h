@@ -52,8 +52,8 @@ class MockActivationContext
 
 		virtual bool sendErrorPage(http_status pStatusCode, const GlobalStatus& pStatus) override
 		{
-			Q_UNUSED(pStatusCode);
-			Q_UNUSED(pStatus);
+			Q_UNUSED(pStatusCode)
+			Q_UNUSED(pStatus)
 			mSendErroPageCalled = true;
 			mSendError = mErrorMessageOnSend;
 			return mErroPageValue;
@@ -62,8 +62,8 @@ class MockActivationContext
 
 		virtual bool sendRedirect(const QUrl& pRedirectAddress, const GlobalStatus& pStatus) override
 		{
-			Q_UNUSED(pRedirectAddress);
-			Q_UNUSED(pStatus);
+			Q_UNUSED(pRedirectAddress)
+			Q_UNUSED(pStatus)
 			mSendRedirectCalled = true;
 			mSendError = mErrorMessageOnSend;
 			return mRedirectValue;

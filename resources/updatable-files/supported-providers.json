@@ -274,13 +274,13 @@
 			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Online Nordrhein-Westfalen"},
 			"longDescription": {"": "In Nordrhein-Westfalen können Sie mit der Online-Ausweisfunktion Ihren Antrag auf BAföG für eine Ausbildung (Schulausbildung, Studium in Nordrhein-Westfalen sowie Studium in Belgien, den Niederlanden oder Luxemburg) oder Ihren Antrag auf Aufstiegsfortbildungsförderung (z. B. für die Meisterausbildung) in Nordrhein-Westfalen bequem und schnell im Internet stellen.<br/>Ihr Antrag muss dann nicht mehr ausgedruckt, unterschrieben und versandt werden, sondern gilt mit der Übermittlung Ihrer Daten als wirksam gestellt. Beizufügende und nachzureichende Unterlagen sowie Bescheinigungen können Sie über die Upload-Funktion ebenfalls elektronisch übermitteln.<br/>Nach Übermittlung der Daten wird Ihnen der Antrag als PDF-Dokument zum Download angeboten. Der Bescheid wird Ihnen per Post zugestellt."},
-			"address": "https://www.bafoeg-online.nrw.de",
-			"homepage": "https://www.bafoeg-online.nrw.de",
-			"phone": "+49 385-588 7145",
-			"email": "m.boehm@bm.mv-regierung.de",
-			"postalAddress": "Ministerium für Bildung, Wissenschaft und Kultur Mecklenburg-Vorpommern<br/>Abteilung 1<br/>Referat 140<br/>Werderstraße 124<br/>19055 Schwerin",
+			"address": "https://www.bafoeg-online.nrw.de/bafoeg/StartNutzung.html",
+			"homepage": "https://www.bafoeg-online.nrw.de/bafoeg/StartNutzung.html",
+			"phone": "+49 211 896-04",
+			"email": " poststelle@miwf.nrw.de",
+			"postalAddress": "Ministerium für Innovation, Wissenschaft und Forschung des Landes Nordrhein-Westfalen<br/>Besucher- und Lieferanschrift<br/>Völklinger Straße 49<br/>40221 Düsseldorf",
 			"category": "citizen",
-			"subjectUrls": []
+			"subjectUrls": ["https://www.bafoeg-online.nrw.de/bafoeg"]
 		},
 		{
 			"exclude": ["ios"],
@@ -380,7 +380,6 @@
 			"subjectUrls": []
 		},
 		{
-			"exclude": ["ios"],
 			"shortName": {"" : "Bürgerportal Baden-Württemberg"},
 			"longDescription": {"": "Das Bürgerportal ,mein service-bw' bietet Bürgerinnen und Bürgern mit dem Personalausweis praktische Anwendungen für die Online-Ausweisfunktion. Das Portal bietet seinen Nutzern unter anderem:<br/>- sicheres Registrieren und Anmelden, um Behördengänge im Internet zu erledigen<br/>- verschlüsselte Ablage persönlicher Daten und Dateien in einem Datenspeicher im Internet, dem sogenannten Dokumentensafe<br/>- orts- und zeitunabhängiger Zugang zu den Daten im Dokumentensafe sowie die Möglichkeit, diese elektronisch an Behörden weiterzuleiten (z. B. für eine Gewerbeanmeldung)."},
 			"address": "https://service-bw.de/zfinder-bw-web/welcome.do?showMsbwDetails=1",
@@ -573,7 +572,6 @@
 			"subjectUrls": ["https://easy-login.vdg-portal.de"]
 		},
 		{
-			"exclude": ["ios"],
 			"shortName": {"" : "ELSTER"},
 			"longName": {"" : "ELSTER - Die elektronische Steuererklärung"},
 			"shortDescription": {"": "Abwicklung der Steuererklärungen und -anmeldungen über das Internet."},
@@ -629,15 +627,18 @@
 		{
 			"exclude": ["ios"],
 			"shortName": {"" : "Hamburg Service Online-Bürgerdienste"},
-			"longDescription": {"": "Über das Portal ,HamburgService' finden Sie auf einen Blick alle Online-Dienste der Freien und Hansestadt Hamburg. Für die Dienste, die mit sensiblen Daten arbeiten (Dienste der Sicherheitsstufe 2), müssen Sie sich nach der Registrierung einmalig identifizieren. Sie können dazu die Online-Ausweisfunktion Ihres Personalausweises nutzen. Eine persönliche Identifizierung in einem Kundenzentrum der Stadt Hamburg ist dann nicht mehr nötig."},
-			"address": "https://gateway.hamburg.de/HamburgGateway/FVP/Application/Index.aspx",
-			"homepage": "https://www.hamburg.de/",
-			"phone": "",
+			"longName": {"" : "Hamburg Service Online-Bürgerdienste"},
+			"shortDescription": {"": "Digitales Dienstleistungsangebot der Freien und Hansestadt Hamburg (FHH)"},
+			"longDescription": {"": "Digitales Dienstleistungsangebot der Freien und Hansestadt Hamburg (FHH)"},
+			"address": "https://servicekonto.serviceportal.hamburg.de/Servicekonto/Registration/SelectServicekontotype/ShowMenu/",
+			"homepage": "https://serviceportal.hamburg.de",
+			"phone": "+49 40 42823-2420",
 			"email": "dataporthamburggateway-service@dataport.de",
-			"postalAddress": "Bürgermeister Olaf Scholz<br/>Rathausmarkt 1<br/>20095 Hamburg",
+			"postalAddress": "Freie und Hansestadt Hamburg<br/>Erster Bürgermeister Dr. Peter Tschentscher Rathausmarkt 1<br/>20095 Hamburg",
 			"category": "citizen",
-			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
-			"subjectUrls": ["https://gateway.hamburg.de"]
+			"tcTokenUrl": "https://idp.servicekonto.serviceportal.hamburg.de",
+			"subjectUrls": ["https://idp.servicekonto.serviceportal.hamburg.de"],
+			"icon": "hamburg_serviceportal_icon.png"
 		},
 		{
 			"exclude": ["ios"],
@@ -747,6 +748,8 @@
 			"phone": "+49 421 204 95-0",
 			"email": "kontakt@governikus.com",
 			"postalAddress": "Governikus GmbH & Co. KG<br/>Hochschulring 4<br/>28359 Bremen",
+			"image": "openpgp_image.jpg",
+			"icon": "openpgp_icon.svg",
 			"category": "other",
 			"tcTokenUrl" : "https://pgp.governikus.de/pgp/ausweis-app-2",
 			"subjectUrls": ["https://pgp.governikus-eid.de"]
@@ -754,13 +757,13 @@
 		{
 			"shortName": {"" : "Selbstauskunft - „Meine Daten einsehen“"},
 			"longDescription": {"": "Die AusweisApp2 verfügt über die Funktion \"Meine Daten einsehen\". Mit dieser Funktion können die auf dem Personalausweis bzw. dem elektronischen Aufenthaltstitel gespeicherten Daten ausgelesen und angezeigt werden. Hierbei sprechen wir auch von einer sogenannten Selbstauskunft.<br/><br/>Sobald Sie die AusweisApp2 gestartet und ein geeigneter Kartenleser installiert bzw. ein Android-Smartphone verbunden haben, können Sie diese Funktion unter dem Menüpunkt \"Ausweisen\" aufrufen. (Auf Mobilgeräten finden Sie die Ausweis-Auskunft übrigens auch direkt auf der Startseite sowie im Menüeintrag „Ausweisen“.)<br/><br/>Nach Ihrer PIN-Eingabe und erfolgreicher Datenübertragung werden die Daten in der AusweisApp2 dargestellt.<br/><br/>Bei der Selbstauskunft handelt es sich um einen reinen Demonstrationsdienst. Die ausgelesenen Daten werden lediglich zur Anzeige gebracht und nicht weitergegeben.<br/><br/>Bitte beachten Sie, dass Sie auch für diesen Vorgang eine Internetverbindung benötigen. Dies hat folgenden Hintergrund: Der Zugriff auf die Daten des Personalausweises bzw. des elektronischen Aufenthaltstitels ist nur möglich, wenn derjenige, der auf die Daten zugreifen möchte sich selbst zunächst eindeutig identifiziert. Dies geschieht über das sog. Berechtigungszertifikat. Es wird Ihnen immer angezeigt, wer auf Ihre Daten zugreifen möchte. Die Erlaubnis, ein Berechtigungszertifikat zu erhalten, wird einen Diensteanbieter auf Antrag und nach Prüfung bei der Vergabestelle für Berechtigungszertifikate beim Bundesverwaltungsamt erteilt. Um das technische Berechtigungszertifikat anzuzeigen und darüber hinaus eine Gültigkeitsprüfung des Ausweisdokuments durchführen zu können, ist eine Internetverbindung zwingend erforderlich. Aus diesem Grund spricht man auch von der Online-Ausweisfunktion."},
-			"address": "https://www.ausweisapp.bund.de/ausweisapp2/ausprobieren-meine-daten-einsehen/",
+			"address": "https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/",
 			"homepage": "https://www.ausweisapp.bund.de/",
 			"phone": "+49 421 - 204 95 995",
 			"email": "support@ausweisapp.de",
-			"postalAddress": "Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesministeriums des Innern, für Bau und Heimat -<br/>Hochschulring 4<br/>D-28359 Bremen",
-			"image": "Selbstauskunft.jpg",
-			"icon": "npa.svg",
+			"postalAddress": "Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesamtes für Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen",
+			"image": "selbstauskunft_image.jpg",
+			"icon": "selbstauskunft_icon.svg",
 			"category": "citizen",
 			"tcTokenUrlInfo" : "https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml",
 			"subjectUrls": ["https://www.autentapp.de"]

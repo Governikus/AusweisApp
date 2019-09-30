@@ -5,7 +5,6 @@
 #include "RemoteServiceModel.h"
 
 #include "AppSettings.h"
-#include "Env.h"
 #include "EstablishPaceChannelParser.h"
 #include "NumberModel.h"
 #include "RemoteClientImpl.h"
@@ -27,7 +26,8 @@ RemoteServiceModel::RemoteServiceModel()
 	, mPsk()
 	, mAvailableRemoteDevices(this, false, true)
 	, mKnownDevices(this, true, false)
-	, mConnectedClientDeviceName()
+	, mCombinedDevices(this, true, true)
+	, mConnectionInfo()
 	, mConnectedServerDeviceNames()
 	, mIsSaCPinChangeWorkflow()
 	, mRememberedServerEntry()
@@ -39,7 +39,7 @@ RemoteServiceModel::RemoteServiceModel()
 	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &RemoteServiceModel::onEnvironmentChanged);
 	connect(&mWifiInfo, &WifiInfo::fireWifiEnabledChanged, this, &RemoteServiceModel::onEnvironmentChanged);
 
-	RemoteClient* const remoteClient = Env::getSingleton<RemoteClient>();
+	auto* const remoteClient = Env::getSingleton<RemoteClient>();
 	connect(remoteClient, &RemoteClient::fireDetectionChanged, this, &RemoteServiceModel::fireDetectionChanged);
 	connect(remoteClient, &RemoteClient::fireNewRemoteDispatcher, this, &RemoteServiceModel::onConnectedDevicesChanged);
 	connect(remoteClient, &RemoteClient::fireDispatcherDestroyed, this, &RemoteServiceModel::onConnectedDevicesChanged);
@@ -64,7 +64,7 @@ void RemoteServiceModel::onEnvironmentChanged()
 		nfcPluginEnabled |= pluginInfo.isEnabled();
 	}
 
-	bool readerAvailable = (Env::getSingleton<ReaderManager>()->getReaderInfos().length() > 0);
+	bool readerAvailable = !(Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderManagerPlugInType::NFC).isEmpty());
 	const bool wifiEnabled = mWifiInfo.isWifiEnabled();
 
 	const bool runnable = readerAvailable && wifiEnabled;
@@ -124,17 +124,28 @@ RemoteDeviceModel* RemoteServiceModel::getKnownDevices()
 }
 
 
+RemoteDeviceModel* RemoteServiceModel::getCombinedDevices()
+{
+	return &mCombinedDevices;
+}
+
+
 void RemoteServiceModel::setDetectRemoteDevices(bool pNewStatus)
 {
+	if (pNewStatus == Env::getSingleton<RemoteClient>()->isDetecting())
+	{
+		return;
+	}
+
 	if (pNewStatus)
 	{
-		mAvailableRemoteDevices.onWidgetShown();
-		mKnownDevices.onWidgetShown();
+		mAvailableRemoteDevices.onUiShown();
+		mKnownDevices.onUiShown();
 	}
 	else
 	{
-		mAvailableRemoteDevices.onWidgetHidden();
-		mKnownDevices.onWidgetHidden();
+		mAvailableRemoteDevices.onUiHidden();
+		mKnownDevices.onUiHidden();
 	}
 }
 
@@ -149,7 +160,7 @@ void RemoteServiceModel::connectToRememberedServer(const QString& pServerPsk)
 {
 	if (!pServerPsk.isEmpty() && !mRememberedServerEntry.isNull())
 	{
-		RemoteClient* const remoteClient = Env::getSingleton<RemoteClient>();
+		auto* const remoteClient = Env::getSingleton<RemoteClient>();
 		connect(remoteClient, &RemoteClient::fireEstablishConnectionDone, this, &RemoteServiceModel::onEstablishConnectionDone);
 
 		qDebug() << "Starting to pair.";
@@ -167,8 +178,8 @@ bool RemoteServiceModel::rememberServer(const QString& pDeviceId)
 
 void RemoteServiceModel::onEstablishConnectionDone(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const GlobalStatus& pStatus)
 {
-	Q_UNUSED(pEntry);
-	RemoteClient* const remoteClient = Env::getSingleton<RemoteClient>();
+	Q_UNUSED(pEntry)
+	auto* const remoteClient = Env::getSingleton<RemoteClient>();
 	disconnect(remoteClient, &RemoteClient::fireEstablishConnectionDone, this, &RemoteServiceModel::onEstablishConnectionDone);
 	qDebug() << "Pairing finished:" << pStatus;
 	if (pStatus.isError())
@@ -178,13 +189,23 @@ void RemoteServiceModel::onEstablishConnectionDone(const QSharedPointer<RemoteDe
 }
 
 
-void RemoteServiceModel::onClientConnectedChanged(bool pConnected)
+void RemoteServiceModel::onConnectionInfoChanged(bool pConnected)
 {
-	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	const QString peerName = settings.getRemoteInfo(getCurrentFingerprint()).getName();
-	mConnectedClientDeviceName = peerName;
-	Q_EMIT fireConnectedClientDeviceNameChanged();
+	if (pConnected)
+	{
+		const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+		const QString peerName = settings.getRemoteInfo(getCurrentFingerprint()).getName();
+		//: INFO ANDROID IOS The smartphone is connected as card reader (SaK) and currently processing an authentication request. The user is asked to pay attention the its screen.
+		mConnectionInfo = tr("Please pay attention to the display on your other device \"%1\".").arg(peerName);
+		Q_EMIT fireConnectionInfoChanged();
+	}
 	Q_EMIT fireConnectedChanged(pConnected);
+}
+
+
+void RemoteServiceModel::onCardConnectionEstablished(const QSharedPointer<CardConnection>& pConnection)
+{
+	pConnection->setProgressMessage(mConnectionInfo);
 }
 
 
@@ -196,7 +217,6 @@ void RemoteServiceModel::resetContext(const QSharedPointer<RemoteServiceContext>
 	mPsk.clear();
 	onEstablishPaceChannelMessageUpdated(QSharedPointer<const IfdEstablishPaceChannel>());
 
-	mContext = pContext;
 	if (mContext)
 	{
 		connect(mContext.data(), &WorkflowContext::fireStateChanged, this, &RemoteServiceModel::fireIsRunningChanged);
@@ -204,7 +224,8 @@ void RemoteServiceModel::resetContext(const QSharedPointer<RemoteServiceContext>
 					mPsk = pPsk;
 				});
 		connect(mContext->getRemoteServer().data(), &RemoteServer::firePskChanged, this, &RemoteServiceModel::firePskChanged);
-		connect(mContext->getRemoteServer().data(), &RemoteServer::fireConnectedChanged, this, &RemoteServiceModel::onClientConnectedChanged);
+		connect(mContext->getRemoteServer().data(), &RemoteServer::fireConnectedChanged, this, &RemoteServiceModel::onConnectionInfoChanged);
+		connect(mContext.data(), &RemoteServiceContext::fireCardConnectionEstablished, this, &RemoteServiceModel::onCardConnectionEstablished);
 		connect(mContext.data(), &RemoteServiceContext::fireEstablishPaceChannelMessageUpdated, this, &RemoteServiceModel::onEstablishPaceChannelMessageUpdated);
 	}
 
@@ -249,13 +270,49 @@ bool RemoteServiceModel::isSaCPinChangeWorkflow() const
 }
 
 
+bool RemoteServiceModel::isRunnable() const
+{
+	return mRunnable;
+}
+
+
+bool RemoteServiceModel::isCanEnableNfc() const
+{
+	return mCanEnableNfc;
+}
+
+
+QString RemoteServiceModel::getErrorMessage() const
+{
+	return mErrorMessage;
+}
+
+
+QByteArray RemoteServiceModel::getPsk() const
+{
+	return mPsk;
+}
+
+
+QString RemoteServiceModel::getConnectionInfo() const
+{
+	return mConnectionInfo;
+}
+
+
+QString RemoteServiceModel::getConnectedServerDeviceNames() const
+{
+	return mConnectedServerDeviceNames;
+}
+
+
 bool RemoteServiceModel::pinPadModeOn()
 {
 	return Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
 }
 
 
-QString RemoteServiceModel::getPacePasswordId() const
+QString RemoteServiceModel::getPasswordType() const
 {
 	if (mContext.isNull())
 	{
@@ -290,14 +347,17 @@ QString RemoteServiceModel::getErrorMessage(bool pNfcPluginAvailable, bool pNfcP
 {
 	if (!pNfcPluginAvailable)
 	{
+		//: INFO ALL_PLATFORMS The device does not offer NFC.
 		return tr("NFC is not available on your device.");
 	}
 	if (!pNfcPluginEnabled)
 	{
+		//: INFO ALL_PLATFORMS NFC is available but not active.
 		return tr("Please enable NFC to use the remote service.");
 	}
 	if (!pWifiEnabled)
 	{
+		//: INFO ALL_PLATFORMS The wifi feature is not enabled but required to use the smartphone as a card reader (SaK).
 		return tr("Please connect your WiFi to use the remote service.");
 	}
 
@@ -328,7 +388,7 @@ RemoteServiceModel& RemoteServiceModel::getInstance()
 
 void RemoteServiceModel::onConnectedDevicesChanged()
 {
-	RemoteClient* const remoteClient = Env::getSingleton<RemoteClient>();
+	auto* const remoteClient = Env::getSingleton<RemoteClient>();
 	const auto deviceInfos = remoteClient->getConnectedDeviceInfos();
 	QStringList deviceNames;
 	for (const auto& info : deviceInfos)

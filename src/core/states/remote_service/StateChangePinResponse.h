@@ -8,13 +8,15 @@
 
 
 #include "context/RemoteServiceContext.h"
-#include "states/AbstractGenericState.h"
+#include "states/AbstractState.h"
+#include "states/GenericContextContainer.h"
 
 namespace governikus
 {
 
 class StateChangePinResponse
-	: public AbstractGenericState<RemoteServiceContext>
+	: public AbstractState
+	, public GenericContextContainer<RemoteServiceContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

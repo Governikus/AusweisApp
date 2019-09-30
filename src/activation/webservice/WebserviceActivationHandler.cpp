@@ -64,8 +64,13 @@ bool WebserviceActivationHandler::start()
 	{
 		qCCritical(activation) << "Cannot start application. Port on localhost is already bound by another program:" << serverAppName;
 
-		QString msg = serverAppName.isEmpty() ? tr("An unknown program uses the required port (%1). Please exit the other program and try again!").arg(port) :
-				tr("Another program (%1) uses the required port (%2). Please exit this other program and try again!").arg(serverAppName).arg(port);
+		//: ERROR ALL_PLATFORMS An unknown programme is using the local port on which the AA2 listens.
+		QString msg = tr("An unknown program uses the required port (%1). Please exit the other program and try again!").arg(port);
+		if (!serverAppName.isEmpty())
+		{
+			//: ERROR ALL_PLATFORMS A known programme is using the local port on which the AA2 listens.
+			msg = tr("Another program (%1) uses the required port (%2). Please exit this other program and try again!").arg(serverAppName).arg(port);
+		}
 		Q_EMIT fireShowUserInformation(msg);
 	}
 
@@ -116,13 +121,21 @@ void WebserviceActivationHandler::onNewRequest(const QSharedPointer<HttpRequest>
 	qCWarning(activation) << "Request type: unknown";
 
 	Template htmlTemplate = Template::fromFile(QStringLiteral(":/html_templates/error.html"));
+	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("TITLE"), tr("404 Not found"));
+	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER"), tr("Invalid request"));
+	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER_EXPLANATION"), tr("Your browser sent a request that couldn't be interpreted."));
+	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("ERROR_MESSAGE_LABEL"), tr("Error message"));
+	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("ERROR_MESSAGE"), tr("Unknown request: %1").arg(url.toString()));
+	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_HEADER"), tr("Would you like to report this error?"));
+	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_LINK"), tr("https://www.ausweisapp.bund.de/en/qa/report-an-error/"));
+	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_BUTTON"), tr("Report now"));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
@@ -146,12 +159,14 @@ void WebserviceActivationHandler::handleShowUiRequest(UiModule pUiModule, const 
 		if (callerVersion > VersionNumber::getApplicationVersion())
 		{
 			qCWarning(activation) << "Current version is lower than caller version";
+			//: ERROR ALL_PLATFORMS The external request to show the UI requested a newer version than the one currently installed.
 			Q_EMIT fireShowUserInformation(tr("You tried to start a newer version (%1) of currently running application. Please stop the current version (%2) and start again!").arg(version, QCoreApplication::applicationVersion()));
 			return;
 		}
 		else if (callerVersion < VersionNumber::getApplicationVersion())
 		{
 			qCWarning(activation) << "Current version is higher than caller version";
+			//: ERROR ALL_PLATFORMS The external request to show the UI requested an older version than the one currently installed.
 			Q_EMIT fireShowUserInformation(tr("You tried to start an older version (%1) of currently running application. Please open the currently running version (%2)!").arg(version, QCoreApplication::applicationVersion()));
 			return;
 		}

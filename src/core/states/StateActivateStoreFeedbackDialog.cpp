@@ -11,14 +11,15 @@ using namespace governikus;
 
 
 StateActivateStoreFeedbackDialog::StateActivateStoreFeedbackDialog(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 
 
 void StateActivateStoreFeedbackDialog::run()
 {
-#if defined(Q_OS_ANDROID)
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	if (getContext()->getStatus().isNoError() && settings.askForStoreFeedback())
 	{

@@ -16,7 +16,7 @@ class PaosParser
 	: public ElementParser
 {
 	public:
-		PaosParser(const QString& pMessageName);
+		explicit PaosParser(const QString& pMessageName);
 		virtual ~PaosParser();
 
 		PaosMessage* parse(const QByteArray& pXmlData);

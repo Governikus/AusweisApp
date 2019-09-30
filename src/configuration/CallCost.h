@@ -22,8 +22,8 @@ class CallCost
 	double mMobileCentsPerMinute, mMobileCentsPerCall;
 
 	public:
-		CallCost(int pFreeSeconds = 0, double pLandlineCentsPerMinute = 0.0, double pLandlineCentsPerCall = 0.0, double pMobileCentsPerMinute = 0.0, double pMobileCentsPerCall = 0.0);
-		CallCost(const QJsonValue& pJson);
+		explicit CallCost(int pFreeSeconds = 0, double pLandlineCentsPerMinute = 0.0, double pLandlineCentsPerCall = 0.0, double pMobileCentsPerMinute = 0.0, double pMobileCentsPerCall = 0.0);
+		explicit CallCost(const QJsonValue& pJson);
 
 		void load();
 		void save();

@@ -4,9 +4,10 @@
 
 #pragma once
 
+#include "AbstractState.h"
 #include "command/DidAuthenticateEAC1Command.h"
 #include "context/AuthContext.h"
-#include "states/AbstractGenericState.h"
+#include "GenericContextContainer.h"
 
 class test_StateDidAuthenticateEac1;
 
@@ -14,7 +15,8 @@ namespace governikus
 {
 
 class StateDidAuthenticateEac1
-	: public AbstractGenericState<AuthContext>
+	: public AbstractState
+	, public GenericContextContainer<AuthContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
@@ -25,6 +27,9 @@ class StateDidAuthenticateEac1
 
 	private Q_SLOTS:
 		void onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand);
+
+	public:
+		void onEntry(QEvent* pEvent) override;
 
 };
 

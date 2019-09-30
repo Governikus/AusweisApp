@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQml.Models 2.2
 import QtQuick 2.10
 

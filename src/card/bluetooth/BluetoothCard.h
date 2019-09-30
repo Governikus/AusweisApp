@@ -26,7 +26,7 @@ class BluetoothCard
 		CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes, quint8 pTimeoutSeconds);
 
 	public:
-		BluetoothCard(QSharedPointer<CyberJackWaveDevice> pDevice);
+		explicit BluetoothCard(QSharedPointer<CyberJackWaveDevice> pDevice);
 
 		CardReturnCode connect() override;
 		CardReturnCode disconnect() override;
@@ -34,7 +34,7 @@ class BluetoothCard
 
 		CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
 
-		CardReturnCode establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPaceChannelOutput& pChannelOutput, quint8 pTimeoutSeconds) override;
+		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds) override;
 
 		CardReturnCode destroyPaceChannel() override;
 

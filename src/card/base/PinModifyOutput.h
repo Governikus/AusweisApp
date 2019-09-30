@@ -22,7 +22,7 @@ class PinModifyOutput
 
 	public:
 		PinModifyOutput();
-		PinModifyOutput(const ResponseApdu& pResponseApdu);
+		explicit PinModifyOutput(const ResponseApdu& pResponseApdu);
 
 		CardReturnCode getReturnCode() const;
 		const ResponseApdu& getResponseApdu() const;

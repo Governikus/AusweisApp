@@ -66,7 +66,7 @@ void CommandLineParser::addOptions()
 
 void CommandLineParser::parse(QCoreApplication* pApp)
 {
-	if (!pApp)
+	if (pApp == nullptr)
 	{
 		return;
 	}

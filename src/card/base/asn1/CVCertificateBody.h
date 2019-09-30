@@ -21,7 +21,7 @@
 namespace governikus
 {
 
-typedef struct CERTIFICATEEXTENSION_st
+using CERTIFICATEEXTENSION = struct CERTIFICATEEXTENSION_st
 {
 	ASN1_OBJECT* mOid;
 	ASN1_OCTET_STRING* mObject1;
@@ -32,7 +32,7 @@ typedef struct CERTIFICATEEXTENSION_st
 	ASN1_OCTET_STRING* mObject6;
 	ASN1_OCTET_STRING* mObject7;
 	ASN1_OCTET_STRING* mObject8;
-} CERTIFICATEEXTENSION;
+};
 DECLARE_ASN1_FUNCTIONS(CERTIFICATEEXTENSION)
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
@@ -41,7 +41,7 @@ DECLARE_STACK_OF(CERTIFICATEEXTENSION)
 DEFINE_STACK_OF(CERTIFICATEEXTENSION)
 #endif
 
-typedef struct certificateprofilebody_st
+using CVCertificateBody = struct certificateprofilebody_st
 {
 	ASN1_OCTET_STRING* mCertificateProfileIdentifier;
 	ASN1_STRING* mCertificationAuthorityReference;
@@ -72,8 +72,7 @@ typedef struct certificateprofilebody_st
 
 	QCryptographicHash::Algorithm getHashAlgorithm() const;
 	QMap<QByteArray, QByteArray> getExtensions() const;
-
-} CVCertificateBody;
+};
 
 DECLARE_ASN1_FUNCTIONS(CVCertificateBody)
 DECLARE_ASN1_OBJECT(CVCertificateBody)

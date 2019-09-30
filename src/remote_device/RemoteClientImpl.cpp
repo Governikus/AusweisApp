@@ -28,6 +28,7 @@ RemoteClientImpl::RemoteClientImpl()
 	, mRemoteConnectorPending()
 {
 	connect(mRemoteDeviceList.data(), &RemoteDeviceList::fireDeviceAppeared, this, &RemoteClient::fireDeviceAppeared);
+	connect(mRemoteDeviceList.data(), &RemoteDeviceList::fireDeviceUpdated, this, &RemoteClient::fireDeviceUpdated);
 	connect(mRemoteDeviceList.data(), &RemoteDeviceList::fireDeviceVanished, this, &RemoteClient::fireDeviceVanished);
 
 	bootstrapRemoteConnectorThread();

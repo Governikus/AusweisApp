@@ -18,7 +18,7 @@ class InternalActivationContext
 		const QUrl mTcTokenUrl;
 
 	public:
-		InternalActivationContext(const QUrl& pUrl);
+		explicit InternalActivationContext(const QUrl& pUrl);
 		virtual ~InternalActivationContext() override = default;
 
 		QUrl getActivationURL() const override;

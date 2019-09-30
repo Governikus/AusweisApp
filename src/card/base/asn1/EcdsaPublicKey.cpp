@@ -22,14 +22,14 @@ namespace governikus
 
 int EcdsaPublicKey::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt, void* pExarg)
 {
-	Q_UNUSED(pIt);
-	Q_UNUSED(pExarg);
+	Q_UNUSED(pIt)
+	Q_UNUSED(pExarg)
 	if (pOperation == ASN1_OP_D2I_POST)
 	{
 		if (auto ecdsaPublicKey = reinterpret_cast<EcdsaPublicKey*>(*pVal))
 		{
 			// According to TR-03110-3, chapter D.3.3:
-			// CONDITIONAL domain parameters MUST be either all present, except the cofactor, or all	absent or all absent
+			// CONDITIONAL domain parameters MUST be either all present, except the cofactor, or all absent
 			if ((ecdsaPublicKey->mPrimeModulus && ecdsaPublicKey->mFirstCoefficient && ecdsaPublicKey->mSecondCoefficient && ecdsaPublicKey->mBasePoint && ecdsaPublicKey->mOrderOfTheBasePoint)
 					|| (!ecdsaPublicKey->mPrimeModulus && !ecdsaPublicKey->mFirstCoefficient && !ecdsaPublicKey->mSecondCoefficient && !ecdsaPublicKey->mBasePoint && !ecdsaPublicKey->mOrderOfTheBasePoint))
 			{
@@ -121,7 +121,7 @@ QSharedPointer<const EC_KEY> EcdsaPublicKey::getEcKey() const
 
 void EcdsaPublicKey::initEcKey()
 {
-	if (!mPrimeModulus)
+	if (mPrimeModulus == nullptr)
 	{
 		return;
 	}

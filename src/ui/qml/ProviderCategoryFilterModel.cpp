@@ -7,18 +7,6 @@
 
 using namespace governikus;
 
-namespace
-{
-const QStringList& getCategories()
-{
-	static QStringList cats({QStringLiteral("citizen"), QStringLiteral("insurance"), QStringLiteral("finance"), QStringLiteral("other")});
-	return cats;
-}
-
-
-} // namespace
-
-
 QString ProviderCategoryFilterModel::getSearchString() const
 {
 	return mSearchString;
@@ -45,35 +33,26 @@ QStringList ProviderCategoryFilterModel::getSelectedCategories() const
 
 int ProviderCategoryFilterModel::getAdditionalResultCount() const
 {
-	int results = 0;
-	for (const QString& p : getCategories())
-	{
-		results += matchesForExcludedCategory(p);
-	}
-	return results;
-}
-
-
-int ProviderCategoryFilterModel::matchesForExcludedCategory(const QString& pCategory) const
-{
-	if (mSearchString.isEmpty() || mSelectedCategories.isEmpty() || mSelectedCategories.contains(pCategory))
+	if (mSearchString.isEmpty())
 	{
 		return 0;
 	}
 
-	QAbstractItemModel* const model = sourceModel();
-	const int count = model->rowCount();
-	int matchCount = 0;
-	for (int sourceRow = 0; sourceRow < count; ++sourceRow)
-	{
-		const QModelIndex idx = model->index(sourceRow, 0, QModelIndex());
-		const QString dt = model->data(idx, Qt::DisplayRole).toString();
-		if (!dt.contains(mSearchString, Qt::CaseInsensitive))
-		{
-			continue;
-		}
+	auto excludedCategories = ProviderModel::getProviderCategories() - mSelectedCategories;
+	return resultCountForFilter(excludedCategories, mSearchString);
+}
 
-		if (pCategory.toLower() == model->data(idx, ProviderModel::CATEGORY).toString().toLower())
+
+int ProviderCategoryFilterModel::resultCountForFilter(const QSet<QString>& pCategories, const QString& pSearchString) const
+{
+	QAbstractItemModel* const model = sourceModel();
+	Q_ASSERT(model != nullptr);
+	const int rowCount = model->rowCount();
+
+	int matchCount = 0;
+	for (int sourceRow = 0; sourceRow < rowCount; ++sourceRow)
+	{
+		if (rowMatchesFilter(sourceRow, QModelIndex(), pCategories, pSearchString))
 		{
 			matchCount++;
 		}
@@ -85,21 +64,44 @@ int ProviderCategoryFilterModel::matchesForExcludedCategory(const QString& pCate
 
 bool ProviderCategoryFilterModel::filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const
 {
+	return rowMatchesFilter(pSourceRow, pSourceParent, mSelectedCategories, mSearchString);
+}
+
+
+bool ProviderCategoryFilterModel::rowMatchesFilter(int pSourceRow, const QModelIndex& pSourceParent, const QSet<QString>& pSelectedCategories, const QString& pSearchString) const
+{
 	QAbstractItemModel* const model = sourceModel();
 	Q_ASSERT(model != nullptr);
 	const QModelIndex idx = model->index(pSourceRow, 0, pSourceParent);
 
-	if (!mSearchString.isEmpty())
+	bool isRowInSelectedCategory = pSelectedCategories.isEmpty() ||
+			pSelectedCategories.contains(QLatin1String("all")) ||
+			pSelectedCategories.contains(model->data(idx, ProviderModel::CATEGORY).toString().toLower());
+
+	if (!isRowInSelectedCategory)
 	{
-		const QString dt = model->data(idx, Qt::DisplayRole).toString();
-		if (!dt.contains(mSearchString, Qt::CaseInsensitive))
-		{
-			return false;
-		}
+		return false;
+	}
+	else if (pSearchString.isEmpty())
+	{
+		return true;
 	}
 
-	return mSelectedCategories.isEmpty() || mSelectedCategories.contains(QStringLiteral("all")) ||
-		   mSelectedCategories.contains(model->data(idx, ProviderModel::CATEGORY).toString().toLower());
+	const QString display = model->data(idx, Qt::DisplayRole).toString();
+	const QString shortname = model->data(idx, ProviderModel::SHORTNAME).toString();
+	const QString longname = model->data(idx, ProviderModel::LONGNAME).toString();
+	const QString address = model->data(idx, ProviderModel::ADDRESS).toString();
+	const QString homepage = model->data(idx, ProviderModel::HOMEPAGE).toString();
+	const QString shortdescription = model->data(idx, ProviderModel::SHORTDESCRIPTION).toString();
+	const QString longdescription = model->data(idx, ProviderModel::LONGDESCRIPTION).toString();
+
+	return display.contains(pSearchString, Qt::CaseInsensitive) ||
+		   shortname.contains(pSearchString, Qt::CaseInsensitive) ||
+		   longname.contains(pSearchString, Qt::CaseInsensitive) ||
+		   address.contains(pSearchString, Qt::CaseInsensitive) ||
+		   homepage.contains(pSearchString, Qt::CaseInsensitive) ||
+		   shortdescription.contains(pSearchString, Qt::CaseInsensitive) ||
+		   longdescription.contains(pSearchString, Qt::CaseInsensitive);
 }
 
 
@@ -160,16 +162,18 @@ void ProviderCategoryFilterModel::updateCategorySelection(const QString& pCatego
 
 void ProviderCategoryFilterModel::addAdditionalResultCategories()
 {
-	bool needUpdate = false;
-	for (const QString& p : getCategories())
+	bool filterChanged = false;
+	const auto excludedCategories = ProviderModel::getProviderCategories() - mSelectedCategories;
+	for (const QString& category : excludedCategories)
 	{
-		if (matchesForExcludedCategory(p) > 0)
+		if (resultCountForFilter(QSet<QString>({category}), mSearchString) > 0)
 		{
-			needUpdate = true;
-			mSelectedCategories += p;
+			filterChanged = true;
+			mSelectedCategories += category;
 		}
 	}
-	if (needUpdate)
+
+	if (filterChanged)
 	{
 		invalidateFilter();
 		Q_EMIT fireCriteriaChanged();

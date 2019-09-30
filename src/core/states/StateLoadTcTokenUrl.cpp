@@ -10,7 +10,8 @@
 using namespace governikus;
 
 StateLoadTcTokenUrl::StateLoadTcTokenUrl(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 
@@ -19,8 +20,8 @@ void StateLoadTcTokenUrl::run()
 {
 	const bool useTestUri = Env::getSingleton<AppSettings>()->getGeneralSettings().useSelfAuthTestUri();
 
-	const QUrl& url = SecureStorage::getInstance().getSelfAuthenticationUrl(useTestUri);
-	qDebug() << "Loaded tcTokenUrl for self authentication from securestorage:" << url;
+	const QUrl& url = Env::getSingleton<SecureStorage>()->getSelfAuthenticationUrl(useTestUri);
+	qDebug() << "Loaded tcTokenUrl for self-authentication from securestorage:" << url;
 	getContext()->setTcTokenUrl(url);
 
 	Q_EMIT fireContinue();

@@ -85,7 +85,7 @@ QNetworkReply* NetworkManager::paos(QNetworkRequest& pRequest,
 
 	QNetworkReply* response;
 	SecureStorage::TlsSuite tlsSuite = pUsePsk ? SecureStorage::TlsSuite::PSK : SecureStorage::TlsSuite::DEFAULT;
-	auto cfg = SecureStorage::getInstance().getTlsConfig(tlsSuite).getConfiguration();
+	auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig(tlsSuite).getConfiguration();
 	cfg.setSessionTicket(pSslSession);
 	pRequest.setSslConfiguration(cfg);
 	response = mNetAccessManager->post(pRequest, pData);
@@ -105,7 +105,7 @@ QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest,
 	}
 
 	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
-	auto cfg = SecureStorage::getInstance().getTlsConfig().getConfiguration();
+	auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig().getConfiguration();
 	cfg.setSessionTicket(pSslSession);
 	pRequest.setSslConfiguration(cfg);
 	QNetworkReply* response = mNetAccessManager->get(pRequest);
@@ -126,7 +126,7 @@ QNetworkReply* NetworkManager::post(QNetworkRequest& pRequest,
 	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
 	pRequest.setHeader(QNetworkRequest::ContentLengthHeader, QString::number(pData.size()));
 
-	auto cfg = SecureStorage::getInstance().getTlsConfig(SecureStorage::TlsSuite::DEFAULT).getConfiguration();
+	auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig(SecureStorage::TlsSuite::DEFAULT).getConfiguration();
 	pRequest.setSslConfiguration(cfg);
 	QNetworkReply* response = mNetAccessManager->post(pRequest, pData);
 
@@ -137,7 +137,7 @@ QNetworkReply* NetworkManager::post(QNetworkRequest& pRequest,
 
 bool NetworkManager::checkUpdateServerCertificate(const QNetworkReply& pReply)
 {
-	const QVector<QSslCertificate>& trustedCertificates = SecureStorage::getInstance().getUpdateCertificates();
+	const QVector<QSslCertificate>& trustedCertificates = Env::getSingleton<SecureStorage>()->getUpdateCertificates();
 
 	const auto& cert = pReply.sslConfiguration().peerCertificate();
 	return !cert.isNull() && trustedCertificates.contains(cert);
@@ -179,7 +179,7 @@ NetworkManager::NetworkError NetworkManager::toNetworkError(const QNetworkReply*
 			return NetworkError::ProxyError;
 
 		case QNetworkReply::SslHandshakeFailedError:
-			return NetworkError::SslError;
+			return NetworkError::SecurityError;
 
 		default:
 			qCCritical(network) << "Network error opening URL" << pNetworkReply->request().url().toString();
@@ -202,8 +202,8 @@ GlobalStatus NetworkManager::toTrustedChannelStatus(const QNetworkReply* const p
 		case NetworkManager::NetworkError::ProxyError:
 			return GlobalStatus::Code::Workflow_TrustedChannel_Proxy_Error;
 
-		case NetworkManager::NetworkError::SslError:
-			return GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Establishment_Error;
+		case NetworkManager::NetworkError::SecurityError:
+			return GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error;
 
 		case NetworkManager::NetworkError::OtherError:
 			return GlobalStatus::Code::Workflow_TrustedChannel_Other_Network_Error;
@@ -226,7 +226,7 @@ GlobalStatus NetworkManager::toStatus(const QNetworkReply* const pNetworkReply)
 		case NetworkManager::NetworkError::ProxyError:
 			return GlobalStatus::Code::Network_Proxy_Error;
 
-		case NetworkManager::NetworkError::SslError:
+		case NetworkManager::NetworkError::SecurityError:
 			return GlobalStatus::Code::Network_Ssl_Establishment_Error;
 
 		case NetworkManager::NetworkError::OtherError:

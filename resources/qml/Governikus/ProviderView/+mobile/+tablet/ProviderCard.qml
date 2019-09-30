@@ -1,7 +1,12 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Layouts 1.2
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.Provider 1.0
 
 Rectangle {
@@ -15,6 +20,10 @@ Rectangle {
 
 	property alias providerModelItem: provider.modelItem
 	property var pushFunction: function(model) {}
+
+	Accessible.role: Accessible.ListItem
+	Accessible.name: nameRow.providerName
+	Accessible.onPressAction: if (Qt.platform.os === "ios") mouseArea.clicked(null)
 
 	ProviderModelItem {
 		id: provider
@@ -34,7 +43,10 @@ Rectangle {
 		}
 
 		ProviderCardNameRow {
+			id: nameRow
+
 			height: baseItem.textHeight
+
 			providerName: provider.longName !== "" ? provider.longName : provider.shortName
 			headerIcon: provider.icon
 			providerCategory: provider.category
@@ -45,26 +57,28 @@ Rectangle {
 			height: baseItem.footerHeight
 			width: parent.width
 
-			Text {
+			GText {
 				text: provider.homepageBase
 
 				anchors.centerIn: parent
+
+				Accessible.ignored: true
 
 				leftPadding: Constants.pane_padding
 				rightPadding: Constants.pane_padding
 				elide: Text.ElideRight
 				maximumLineCount: 1
 
-				font.pixelSize: Constants.normal_font_size
-				color: "white"
-
-				scale: Math.min(1, parent.width / (contentWidth + leftPadding + rightPadding))
+				textStyle: Style.text.normal_inverse
 			}
 		}
 	}
 
 	MouseArea {
+		id: mouseArea
+
 		anchors.fill: parent
+
 		onClicked: baseItem.pushFunction(providerModelItem)
 	}
 }

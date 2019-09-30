@@ -22,7 +22,7 @@ class IntentActivationHandler
 	Q_INTERFACES(governikus::ActivationHandler)
 
 	private:
-		void onIntent(const QUrl& pUrl);
+		void onIntent(const QUrl& pUrl, const QString& pReferrer);
 
 	public:
 		IntentActivationHandler() = default;

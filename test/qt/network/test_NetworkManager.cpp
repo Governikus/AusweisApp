@@ -50,7 +50,7 @@ class test_NetworkManager
 			QCOMPARE(reply->request(), request);
 			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 6);
 			QVERIFY(request.sslConfiguration().ellipticCurves().contains(QSslEllipticCurve::fromLongName("prime256v1")));
-			const int cipherCount = SecureStorage::getInstance().getTlsConfig().getCiphers().size();
+			const int cipherCount = Env::getSingleton<SecureStorage>()->getTlsConfig().getCiphers().size();
 			QCOMPARE(request.sslConfiguration().ciphers().size(), cipherCount);
 			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("ECDHE-RSA-AES256-GCM-SHA384")));
 		}
@@ -64,7 +64,7 @@ class test_NetworkManager
 			QCOMPARE(request.rawHeader("PAOS"), QByteArray("ver=\"paosNamespace\""));
 			QCOMPARE(reply->request(), request);
 			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 0);
-			const int cipherCount = SecureStorage::getInstance().getTlsConfig(SecureStorage::TlsSuite::PSK).getCiphers().size();
+			const int cipherCount = Env::getSingleton<SecureStorage>()->getTlsConfig(SecureStorage::TlsSuite::PSK).getCiphers().size();
 			QCOMPARE(request.sslConfiguration().ciphers().size(), cipherCount);
 			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES128-CBC-SHA256")));
 			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES128-GCM-SHA256")));

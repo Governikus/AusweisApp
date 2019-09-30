@@ -5,8 +5,6 @@
 #include "ReaderDeviceWidget.h"
 #include "ui_ReaderDeviceWidget.h"
 
-#include "HelpAction.h"
-#include "LanguageLoader.h"
 #include "ReaderConfiguration.h"
 #include "RemoteClient.h"
 #include "RemotePinInputDialog.h"
@@ -60,7 +58,7 @@ ReaderDeviceWidget::ReaderDeviceWidget(QWidget* pParent)
 	connect(mUi->forgetRemote, &QPushButton::clicked, this, &ReaderDeviceWidget::onForgetClicked);
 	connect(mUi->tableViewRemote, &QTableView::doubleClicked, this, &ReaderDeviceWidget::onRemoteDoubleClicked);
 
-	RemoteClient* const remoteClient = Env::getSingleton<RemoteClient>();
+	auto* const remoteClient = Env::getSingleton<RemoteClient>();
 	connect(remoteClient, &RemoteClient::fireDispatcherDestroyed, &mRemoteReaderDataModel, &RemoteDeviceModel::onDeviceDisconnected);
 }
 
@@ -113,15 +111,11 @@ void ReaderDeviceWidget::onUpdateInfo()
 
 void ReaderDeviceWidget::setDisplayText()
 {
-	const QString& url = HelpAction::getOnlineUrl(QStringLiteral("readerDeviceTab"));
-	//: Is embedded in a sentence.
-	const QString hyperlink = QStringLiteral("<a href=\"%1\">%2</a>").arg(url, tr("online help"));
-
-	const QString remoteEmptyListDescriptionString = tr("No smartphone with enabled remote service found. See %1 for details of use.").arg(hyperlink);
+	const QString& remoteEmptyListDescriptionString = mRemoteReaderDataModel.getEmptyListDescriptionString();
 	mUi->remoteEmptyListDescription->setText(remoteEmptyListDescriptionString);
 	mUi->remoteEmptyListDescription->setAccessibleName(remoteEmptyListDescriptionString);
 
-	const QString localEmptyListDescriptionString = tr("No connected card reader found. See %1 for installation of card readers.").arg(hyperlink);
+	const QString& localEmptyListDescriptionString = mLocalReaderDataModel.getEmptyListDescriptionString();
 	mUi->localEmptyListDescription->setText(localEmptyListDescriptionString);
 	mUi->localEmptyListDescription->setAccessibleDescription(localEmptyListDescriptionString);
 }
@@ -135,12 +129,12 @@ void ReaderDeviceWidget::updateInfoIcon()
 	QPixmap pixmap;
 	if (selectionList.isEmpty())
 	{
-		pixmap = QPixmap(ReaderConfiguration::getNoReaderFoundIconPath());
+		pixmap = QPixmap(mLocalReaderDataModel.getNoReaderFoundIconPath());
 	}
 	else
 	{
 		const QModelIndex& index = selectionList.at(0);
-		const QString& path = mLocalReaderDataModel.getReaderConfigurationInfo(index).getIcon()->lookupPath();
+		const QString& path = mLocalReaderDataModel.getReaderImagePath(index);
 		pixmap = QPixmap(path);
 		if (mLocalReaderDataModel.isInstalledSupportedReader(index))
 		{
@@ -167,7 +161,7 @@ void ReaderDeviceWidget::updateInfoText()
 	{
 		if (mLocalReaderDataModel.rowCount() == 0)
 		{
-			infoText = tr("Please connect suitable card reader.");
+			infoText = tr("Please connect a suitable card reader.");
 		}
 		else
 		{
@@ -194,10 +188,7 @@ void ReaderDeviceWidget::updateInfoText()
 
 void ReaderDeviceWidget::updateInfoUpdate()
 {
-	const auto& now = LanguageLoader::getInstance().getUsedLocale().toString(QTime::currentTime(), tr("hh:mm:ss AP"));
-	const QString& text = tr("The list of card readers was last updated at %1.");
-
-	mUi->updateTimeLabel->setText(text.arg(now));
+	mUi->updateTimeLabel->setText(mLocalReaderDataModel.getLastUpdatedInformation());
 }
 
 
@@ -310,7 +301,7 @@ void ReaderDeviceWidget::onConnectClicked()
 		const QString pin = RemotePinInputDialog::getPin(this);
 		if (!pin.isEmpty())
 		{
-			RemoteClient* const remoteClient = Env::getSingleton<RemoteClient>();
+			auto* const remoteClient = Env::getSingleton<RemoteClient>();
 			connect(remoteClient, &RemoteClient::fireEstablishConnectionDone, this, &ReaderDeviceWidget::onEstablishConnectionDone);
 			remoteClient->establishConnection(remoteDeviceListEntry, pin);
 		}
@@ -322,8 +313,8 @@ void ReaderDeviceWidget::onConnectClicked()
 
 void ReaderDeviceWidget::onEstablishConnectionDone(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const GlobalStatus& pStatus)
 {
-	Q_UNUSED(pEntry);
-	RemoteClient* const remoteClient = Env::getSingleton<RemoteClient>();
+	Q_UNUSED(pEntry)
+	auto* const remoteClient = Env::getSingleton<RemoteClient>();
 	disconnect(remoteClient, &RemoteClient::fireEstablishConnectionDone, this, &ReaderDeviceWidget::onEstablishConnectionDone);
 	if (pStatus.isError())
 	{

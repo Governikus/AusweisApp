@@ -16,6 +16,7 @@
 #include "states/StateProcessing.h"
 #include "states/StateSelectReader.h"
 #include "states/StateTransmit.h"
+#include "states/StateUnfortunateCardPosition.h"
 #include "states/StateWriteHistory.h"
 #include "step/AuthenticateStepsWidget.h"
 #include "step/StepAdviseUserToRemoveCardGui.h"
@@ -163,6 +164,11 @@ void WorkflowAuthenticateQtGui::onStateChanged(const QString& pNewState)
 				mParentWidget->switchToPinSettingsAfterWorkflow();
 			}
 		}
+	}
+	else if (AbstractState::isState<StateUnfortunateCardPosition>(pNewState))
+	{
+		approveNewState = false;
+		activateStepUi(mChooseCardGui);
 	}
 	else if (AbstractState::isState<StateDidAuthenticateEac1>(pNewState))
 	{

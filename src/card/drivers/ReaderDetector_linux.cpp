@@ -152,7 +152,7 @@ QVector<UsbId> ReaderDetector::attachedDevIds() const
 
 	/* Create the udev object */
 	udev = udev_new();
-	if (!udev)
+	if (udev == nullptr)
 	{
 		qCDebug(card_drivers) << "Can't create udev";
 		return result;
@@ -173,7 +173,7 @@ QVector<UsbId> ReaderDetector::attachedDevIds() const
 	{
 		/* Get the filename of the /sys entry for the device
 		   and create a udev_device object (dev) representing it */
-		const char* path = udev_list_entry_get_name(dev_list_entry);
+		const char* const path = udev_list_entry_get_name(dev_list_entry);
 		struct udev_device* dev = udev_device_new_from_syspath(udev, path);
 
 		/* The device pointed to by dev contains information about
@@ -183,7 +183,7 @@ QVector<UsbId> ReaderDetector::attachedDevIds() const
 		   be several levels up the tree, but the function will find
 		   it.*/
 		dev = udev_device_get_parent_with_subsystem_devtype(dev, "usb", "usb_device");
-		if (!dev)
+		if (dev == nullptr)
 		{
 			continue;
 		}

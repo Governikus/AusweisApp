@@ -233,13 +233,8 @@ PCSC_RETURNCODE PcscCard::transmit(const QByteArray& pSendBuffer, QByteArray& pR
 			return PcscUtils::Scard_E_Proto_Mismatch;
 	}
 
-	SCARD_IO_REQUEST recvPci;
-	recvPci.dwProtocol = mProtocol;
-	recvPci.cbPciLength = sizeof(SCARD_IO_REQUEST);
-
-	pReceiveBuffer.fill(0x00, 8192);
-	PCSC_INT bytesReceived = static_cast<PCSC_INT>(pReceiveBuffer.size());
-	PCSC_RETURNCODE returnCode = transmit(pSendBuffer, pReceiveBuffer, sendPci, recvPci, bytesReceived);
+	auto [returnCode, buffer] = transmit(pSendBuffer, sendPci);
+	pReceiveBuffer = buffer;
 
 	/*
 	 * Reconnecting makes only sense, when no secure messaging channel is active.
@@ -258,51 +253,62 @@ PCSC_RETURNCODE PcscCard::transmit(const QByteArray& pSendBuffer, QByteArray& pR
 
 		returnCode = SCardBeginTransaction(mCardHandle);
 		qCDebug(card_pcsc) << "SCardBeginTransaction:" << PcscUtils::toString(returnCode);
-		bytesReceived = static_cast<PCSC_INT>(pReceiveBuffer.size());
-		returnCode = transmit(pSendBuffer, pReceiveBuffer, sendPci, recvPci, bytesReceived);
+		auto [retryReturnCode, retryBuffer] = transmit(pSendBuffer, sendPci);
+		returnCode = retryReturnCode;
+		pReceiveBuffer = retryBuffer;
 	}
-
-	if (returnCode != PcscUtils::Scard_S_Success)
-	{
-		return returnCode;
-	}
-	if (bytesReceived > INT_MAX)
-	{
-		qCCritical(card_pcsc) << "Max allowed receive buffer size exceeded";
-		Q_ASSERT(bytesReceived <= INT_MAX);
-		return PcscUtils::Scard_F_Unknown_Error;
-	}
-	pReceiveBuffer.resize(static_cast<int>(bytesReceived));
-	qCDebug(card_pcsc) << "SCardTransmit resBuffer:" << pReceiveBuffer.toHex();
-	if (pReceiveBuffer.size() < 2)
-	{
-		qCCritical(card_pcsc) << "Response buffer smaller than 2";
-		return PcscUtils::Scard_F_Unknown_Error;
-	}
-	return PcscUtils::Scard_S_Success;
-}
-
-
-PCSC_RETURNCODE PcscCard::transmit(const QByteArray& pSendBuffer,
-		QByteArray& pReceiveBuffer,
-		const SCARD_IO_REQUEST* pSendPci,
-		SCARD_IO_REQUEST& pRecvPci,
-		PCSC_INT& pBytesReceived)
-{
-	qCDebug(card_pcsc) << "SCardTransmit cmdBuffer:" << pSendBuffer.toHex();
-	PCSC_RETURNCODE returnCode = SCardTransmit(mCardHandle, pSendPci, reinterpret_cast<PCSC_CUCHAR_PTR>(pSendBuffer.data()), static_cast<PCSC_INT>(pSendBuffer.size()), &pRecvPci, reinterpret_cast<PCSC_UCHAR_PTR>(pReceiveBuffer.data()), &pBytesReceived);
-	qCDebug(card_pcsc) << "SCardTransmit for" << mReader->getName() << ':' << PcscUtils::toString(returnCode);
 
 	return returnCode;
 }
 
 
-CardReturnCode PcscCard::establishPaceChannel(PacePasswordId pPasswordId,
+PcscCard::CardResult PcscCard::transmit(const QByteArray& pSendBuffer,
+		const SCARD_IO_REQUEST* pSendPci)
+{
+	SCARD_IO_REQUEST recvPci;
+	recvPci.dwProtocol = mProtocol;
+	recvPci.cbPciLength = sizeof(SCARD_IO_REQUEST);
+
+	QByteArray data(8192, '\0');
+	auto dataReceived = static_cast<PCSC_INT>(data.size());
+
+	qCDebug(card_pcsc) << "SCardTransmit cmdBuffer:" << pSendBuffer.toHex();
+	const PCSC_RETURNCODE returnCode = SCardTransmit(mCardHandle,
+			pSendPci,
+			reinterpret_cast<PCSC_CUCHAR_PTR>(pSendBuffer.data()),
+			static_cast<PCSC_INT>(pSendBuffer.size()),
+			&recvPci,
+			reinterpret_cast<PCSC_UCHAR_PTR>(data.data()),
+			&dataReceived);
+
+	qCDebug(card_pcsc) << "SCardTransmit for" << mReader->getName() << ':' << PcscUtils::toString(returnCode);
+
+	if (dataReceived > INT_MAX)
+	{
+		qCCritical(card_pcsc) << "Max allowed receive buffer size exceeded";
+		Q_ASSERT(dataReceived <= INT_MAX);
+		return {PcscUtils::Scard_F_Unknown_Error};
+	}
+
+	data.resize(static_cast<int>(dataReceived));
+	qCDebug(card_pcsc) << "SCardTransmit resBuffer:" << data.toHex();
+
+	if (data.size() < 2)
+	{
+		qCCritical(card_pcsc) << "Response buffer smaller than 2";
+		return {PcscUtils::Scard_F_Unknown_Error};
+	}
+
+	return {returnCode, data};
+}
+
+
+EstablishPaceChannelOutput PcscCard::establishPaceChannel(PacePasswordId pPasswordId,
 		const QByteArray& pChat,
 		const QByteArray& pCertificateDescription,
-		EstablishPaceChannelOutput& pChannelOutput, quint8 pTimeoutSeconds)
+		quint8 pTimeoutSeconds)
 {
-	Q_UNUSED(pTimeoutSeconds);
+	Q_UNUSED(pTimeoutSeconds)
 	if (!mReader->hasFeature(FeatureID::EXECUTE_PACE))
 	{
 		return CardReturnCode::COMMAND_FAILED;
@@ -314,16 +320,16 @@ CardReturnCode PcscCard::establishPaceChannel(PacePasswordId pPasswordId,
 	builder.setChat(pChat);
 	builder.setCertificateDescription(pCertificateDescription);
 
-	QByteArray controlRes;
-	PCSC_RETURNCODE returnCode = control(cmdID, builder.createCommandData(), controlRes);
+	auto [returnCode, controlRes] = control(cmdID, builder.createCommandData());
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Control to establish PACE channel failed";
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
-	pChannelOutput.parse(controlRes, pPasswordId);
-	return pChannelOutput.getPaceReturnCode();
+	EstablishPaceChannelOutput output;
+	output.parse(controlRes, pPasswordId);
+	return output;
 }
 
 
@@ -336,8 +342,7 @@ CardReturnCode PcscCard::destroyPaceChannel()
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::EXECUTE_PACE);
 
 	DestroyPaceChannelBuilder builder;
-	QByteArray controlRes;
-	PCSC_RETURNCODE returnCode = control(cmdID, builder.createCommandData(), controlRes);
+	auto [returnCode, controlRes] = control(cmdID, builder.createCommandData());
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Control to destroy PACE channel failed";
@@ -347,17 +352,17 @@ CardReturnCode PcscCard::destroyPaceChannel()
 }
 
 
-PCSC_RETURNCODE PcscCard::control(PCSC_INT pCntrCode, const QByteArray& pCntrInput, QByteArray& pCntrOutput)
+PcscCard::CardResult PcscCard::control(PCSC_INT pCntrCode, const QByteArray& pCntrInput)
 {
-	char buffer[2048];
+	QByteArray buffer(2048, '\0');
 	PCSC_INT len = 0;
 	qCDebug(card_pcsc) << "SCardControl cmdBuffer:" << pCntrInput.toHex();
 	PCSC_RETURNCODE returnCode = SCardControl(mCardHandle,
 			pCntrCode,
 			pCntrInput.constData(),
 			static_cast<PCSC_INT>(pCntrInput.size()),
-			buffer,
-			sizeof(buffer),
+			buffer.data(),
+			static_cast<PCSC_INT>(buffer.size()),
 			&len);
 
 	if (returnCode != PcscUtils::Scard_S_Success)
@@ -365,22 +370,16 @@ PCSC_RETURNCODE PcscCard::control(PCSC_INT pCntrCode, const QByteArray& pCntrInp
 		len = 0;
 	}
 
-	if (sizeof(buffer) < len)
+	if (buffer.size() < static_cast<int>(len))
 	{
 		qCCritical(card_pcsc) << "Buffer size smaller than read length";
-		Q_ASSERT(sizeof(buffer) >= len);
-		return PcscUtils::Scard_F_Unknown_Error;
+		Q_ASSERT(buffer.size() >= static_cast<int>(len));
+		return {PcscUtils::Scard_F_Unknown_Error};
 	}
-	if (len > INT_MAX)
-	{
-		qCCritical(card_pcsc) << "Read length bigger than INT_MAX";
-		Q_ASSERT(len <= INT_MAX);
-		return PcscUtils::Scard_F_Unknown_Error;
-	}
-	pCntrOutput.append(buffer, static_cast<int>(len));
 
-	qCDebug(card_pcsc) << "SCardControl for" << mReader->getName() << ':' << PcscUtils::toString(returnCode) << pCntrOutput.toHex();
-	return returnCode;
+	buffer.resize(static_cast<int>(len));
+	qCDebug(card_pcsc) << "SCardControl for" << mReader->getName() << ':' << PcscUtils::toString(returnCode) << buffer.toHex();
+	return {returnCode, buffer};
 }
 
 
@@ -393,9 +392,8 @@ CardReturnCode PcscCard::setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pRespon
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::MODIFY_PIN_DIRECT);
 
 	PinModify pinModify(pTimeoutSeconds);
-	QByteArray controlRes;
-	PCSC_RETURNCODE pcscReturnCode = control(cmdID, pinModify.createCcidForPcsc(), controlRes);
-	if (pcscReturnCode != PcscUtils::Scard_S_Success)
+	auto [returnCode, controlRes] = control(cmdID, pinModify.createCcidForPcsc());
+	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Modify PIN failed";
 		return CardReturnCode::COMMAND_FAILED;

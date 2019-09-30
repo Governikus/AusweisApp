@@ -57,3 +57,10 @@ qint64 MockSocket::writeData(const char* pData, qint64 pMaxSize)
 	mWriteBuffer += data;
 	return data.size();
 }
+
+
+qint64 MockSocket::write(const QByteArray& pByteArray)
+{
+	mWriteBuffer += pByteArray;
+	return QIODevice::write(pByteArray);
+}

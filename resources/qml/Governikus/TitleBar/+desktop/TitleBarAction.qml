@@ -1,6 +1,11 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.View 1.0
 
 FocusScope {
@@ -16,17 +21,18 @@ FocusScope {
 
 	property Item customSubAction: Item { visible: false }
 
-	property bool showSettings: true
+	property bool rootEnabled: true
+
+	property bool showSettings: false
 	property var customSettingsHandler
-	readonly property var settingsHandler: customSettingsHandler ? customSettingsHandler : function() {
-		// TODO open settings
-	}
+	readonly property var settingsHandler: customSettingsHandler ? customSettingsHandler : function() {}
 
 	property bool showHelp: true
 	property string helpTopic: "applicationPage"
 
 	Accessible.role: Accessible.Button
 	Accessible.name: text.text
+	activeFocusOnTab: true
 
 	Keys.onSpacePressed: scope.clicked()
 
@@ -34,7 +40,7 @@ FocusScope {
 		id: row
 
 		height: text.height
-		spacing: Constants.titlebar_spacing
+		spacing: Style.dimens.titlebar_padding
 
 		Image {
 			id: arrow
@@ -49,6 +55,8 @@ FocusScope {
 
 			Accessible.role: Accessible.Button
 			Accessible.name: text.text
+
+			color: scope.enabled ? Constants.white : Constants.lightgrey
 
 			FocusFrame {
 				scope: scope

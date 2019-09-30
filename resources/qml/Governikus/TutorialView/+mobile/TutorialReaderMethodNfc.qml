@@ -1,13 +1,24 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 SectionPage {
 	id: baseItem
-	leftTitleBarAction: TitleBarAction { state: "back"; onClicked: firePop() }
-	headerTitleBarAction: TitleBarAction { text: qsTr("Tutorial: NFC") + settingsModel.translationTrigger; font.bold: true }
+
+	titleBarVisible: false
+	automaticSafeAreaMarginHandling: false
+	navigationAction: NavigationAction { state: "back"; onClicked: firePop() }
+	//: LABEL ANDROID IOS
+	title: qsTr("Tutorial: NFC") + SettingsModel.translationTrigger
 
 	signal quitTutorialClicked()
 
@@ -28,19 +39,24 @@ SectionPage {
 			height: content.contentHeight
 			anchors.horizontalCenter: parent.horizontalCenter
 
+			Item {
+				id: statusBarSpacer
+				width: parent.width
+				height: statusBar.height
+			}
+
 			Column {
 				width: parent.width
 				spacing: Constants.component_spacing
 
-				Text {
+				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
-					text: qsTr("Direct connection via NFC chip") + settingsModel.translationTrigger
-					font.family: "Noto Serif"
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
+					//: LABEL ANDROID IOS
+					text: qsTr("Direct connection via NFC chip") + SettingsModel.translationTrigger
+					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
 					horizontalAlignment: Text.AlignHCenter
-					wrapMode: Text.WordWrap
 				}
 
 				Rectangle {
@@ -48,15 +64,14 @@ SectionPage {
 					height: radius * 2
 					width: radius * 2
 					radius: numberOne.height
-					border.width: Utils.dp(3)
-					border.color: Constants.tutorial_blue
+					border.width: 3
+					border.color: Style.color.tutorial_how
 
-					Text {
+					GText {
 						id: numberOne
 						anchors.centerIn: parent
 						text: "1"
-						font.family: "Noto Serif"
-						font.pixelSize: Constants.tutorial_content_header_h2_font_size
+						textStyle: Style.text.tutorial_header_secondary
 						font.bold: true
 						horizontalAlignment: Text.AlignHCenter
 					}
@@ -70,14 +85,15 @@ SectionPage {
 					fillMode: Image.PreserveAspectFit
 				}
 
-				Text {
+				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.6
-					text: qsTr("App on Android smartphone <b>with</b> NFC chip as card reader") + settingsModel.translationTrigger
-					font.family: "Noto Serif"
-					font.pixelSize: Constants.tutorial_content_font_size
+					//: LABEL ANDROID IOS
+					text: (Constants.is_layout_ios ? qsTr("App on iPhone <b>with</b> NFC chip as card reader")
+												: qsTr("App on Android smartphone <b>with</b> NFC chip as card reader"))
+												+ SettingsModel.translationTrigger
+					textStyle: Style.text.tutorial_content
 					horizontalAlignment: Text.AlignHCenter
-					wrapMode: Text.WordWrap
 				}
 			}
 
@@ -100,13 +116,12 @@ SectionPage {
 					width: parent.width
 				}
 
-				Text {
+				GText {
 					width: parent.width * 0.6
-					text: qsTr("Click link on the website of the service provider.") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("Click link on the website of the service provider.") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
-					font.family: "Noto Serif"
-					wrapMode: Text.WordWrap
+					textStyle: Style.text.tutorial_header_secondary
 
 					x: (parent.width * 0.5) - (width / 2)
 					y: (parent.height * 0.9) - (height / 2)
@@ -131,34 +146,32 @@ SectionPage {
 
 				TutorialImage {
 					id: userdataExample
-					source: qsTr("qrc:///images/tutorial/generated/reader_nfc_userdata_example_en.svg") + settingsModel.translationTrigger
+					source: qsTr("qrc:///images/tutorial/generated/reader_nfc_userdata_example_en.svg") + SettingsModel.translationTrigger
 					width: parent.width * 0.8
 
 					centerX: 0.5
 					centerY: 0.75
 				}
 
-				Text {
+				GText {
 					id: textOpenAutomatic
 					width: parent.width * 0.6
-					text: qsTr("The App opens automatically.") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("The App opens automatically.") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
-					font.pixelSize: Constants.tutorial_content_font_size
-					font.family: "Noto Serif"
-					wrapMode: Text.WordWrap
+					textStyle: Style.text.tutorial_content
 
 					x: (parent.width * 0.7) - (width / 2)
 					y: (parent.height * 0) - (height / 2)
 				}
 
-				Text {
+				GText {
 					id: textAccessWhoWhat
 					width: parent.width * 0.6
-					text: qsTr("The AusweisApp2 will display who wants to access which data.") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("The AusweisApp2 will display who wants to access which data.") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
-					font.family: "Noto Serif"
-					wrapMode: Text.WordWrap
+					textStyle: Style.text.tutorial_header_secondary
 
 					x: (parent.width * 0.7) - (width / 2)
 					y: (parent.height * 0.2) - (height / 2)
@@ -173,12 +186,12 @@ SectionPage {
 				width: parent.width
 				spacing: Constants.component_spacing
 
-				Text {
+				GText {
 					id: startProcessText
 					anchors.horizontalCenter: parent.horizontalCenter
-					font.family: "Noto Serif"
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
-					text: qsTr("Start the process with a click on:") + settingsModel.translationTrigger
+					textStyle: Style.text.tutorial_header_secondary
+					//: LABEL ANDROID IOS
+					text: qsTr("Start the process with a click on:") + SettingsModel.translationTrigger
 				}
 
 				Row {
@@ -197,7 +210,8 @@ SectionPage {
 					GButton {
 						id: identifyButton
 						iconSource: "qrc:///images/npa.svg"
-						text: qsTr("Identify now") + settingsModel.translationTrigger;
+						//: LABEL ANDROID IOS
+						text: qsTr("Proceed to PIN entry") + SettingsModel.translationTrigger;
 						animationsDisabled: true
 					}
 				}
@@ -220,14 +234,15 @@ SectionPage {
 					fillMode: Image.PreserveAspectFit
 				}
 
-				Text {
+				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
-					text: qsTr("... and place the id card flat onto the NFC interface.") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: (Constants.is_layout_ios ? qsTr("... and place the top of the iPhone onto the id card.")
+													: qsTr("... and place the id card flat onto the NFC interface."))
+													+ SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
-					font.family: "Noto Serif"
-					wrapMode: Text.WordWrap
+					textStyle: Style.text.tutorial_header_secondary
 				}
 
 				Item {
@@ -243,14 +258,13 @@ SectionPage {
 						centerX: 0.2
 					}
 
-					Text {
+					GText {
 						width: parent.width * 0.6
-						text: qsTr("Do not move device or id card!") + settingsModel.translationTrigger
-						font.family: "Noto Serif"
-						font.pixelSize: Constants.tutorial_content_font_size
+						//: LABEL ANDROID IOS
+						text: qsTr("Do not move device or id card!") + SettingsModel.translationTrigger
+						textStyle: Style.text.tutorial_content
 						font.bold: true
 						horizontalAlignment: Text.AlignLeft
-						wrapMode: Text.WordWrap
 
 						x: (parent.width * 0.65) - (width / 2)
 						y: (parent.height * 0.5) - (height / 2)
@@ -259,12 +273,14 @@ SectionPage {
 			}
 
 			TutorialSeperator {
+				visible: Constants.is_layout_android
 				source: "qrc:///images/tutorial/section_seperator_how.svg"
 			}
 
 			Item {
 				width: parent.width
 				height: nfcPosition.height + 2 * Constants.component_spacing
+				visible: Constants.is_layout_android
 
 				TutorialImage {
 					id: nfcPosition
@@ -275,28 +291,26 @@ SectionPage {
 					centerX: 0.35
 				}
 
-				Text {
+				GText {
 					width: parent.width * 0.5
-					text: qsTr("The correct position is specific for your device...") + settingsModel.translationTrigger
-					font.family: "Noto Serif"
-					font.pixelSize: Constants.tutorial_content_font_size
+					//: LABEL ANDROID IOS
+					text: qsTr("The correct position is specific for your device...") + SettingsModel.translationTrigger
+					textStyle: Style.text.tutorial_content
 					font.bold: true
 					horizontalAlignment: Text.AlignLeft
-					wrapMode: Text.WordWrap
 
 					x: (parent.width * 0.75) - (width / 2)
 					y: (parent.height * 0.4) - (height / 2)
 				}
 
-				Text {
+				GText {
 					width: parent.width * 0.5
-					text: "<a href=\"%1\">%2</a>".arg(qsTr("https://www.ausweisapp.bund.de/mobile-geraete/")).arg(qsTr("To mobile devices"))  + settingsModel.translationTrigger
-					font.family: "Noto Serif"
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
+					//: LABEL ANDROID IOS
+					text: "<a href=\"%1\">%2</a>".arg(qsTr("https://www.ausweisapp.bund.de/mobile-geraete/")).arg(qsTr("To mobile devices"))  + SettingsModel.translationTrigger
+					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
 					font.underline: true
 					horizontalAlignment: Text.AlignLeft
-					wrapMode: Text.WordWrap
 					onLinkActivated: Qt.openUrlExternally(link)
 
 					x: (parent.width * 0.75) - (width / 2)
@@ -316,13 +330,12 @@ SectionPage {
 					width: parent.width
 					height: pin6Image.height + Constants.component_spacing * 2
 
-					Text {
+					GText {
 						width: parent.width * 0.8
-						text: (settingsModel.language === "en" ? qsTr("Enter") : qsTr("Now")) + settingsModel.translationTrigger
-						font.family: "Noto Serif"
-						font.pixelSize: Constants.tutorial_content_header_h1_font_size
+						//: LABEL ANDROID IOS
+						text: (SettingsModel.language === "en" ? qsTr("Enter") : qsTr("Now")) + SettingsModel.translationTrigger
+						textStyle: Style.text.tutorial_header
 						horizontalAlignment: Text.AlignHCenter
-						wrapMode: Text.WordWrap
 
 						x: (parent.width * 0.5) - (width / 2)
 						y: (parent.height * 0.05) - (height / 2)
@@ -338,28 +351,26 @@ SectionPage {
 						centerX: 0.5
 					}
 
-					Text {
+					GText {
 						width: parent.width
-						text: qsTr("6 digits long PIN") + settingsModel.translationTrigger
-						font.family: "Noto Serif"
+						//: LABEL ANDROID IOS
+						text: qsTr("6 digits long PIN") + SettingsModel.translationTrigger
+						textStyle: Style.text.tutorial_header
 						font.bold: true
-						font.pixelSize: Constants.tutorial_content_header_h1_font_size
 						horizontalAlignment: Text.AlignHCenter
-						wrapMode: Text.WordWrap
 						z: 2
 
 						x: (parent.width * 0.5) - (width / 2)
 						y: (parent.height * 0.2) - (height / 2)
 					}
 
-					Text {
+					GText {
 						anchors.horizontalCenter: parent.horizontalCenter
 						width: parent.width * 0.8
-						text: (settingsModel.language === "en" ? qsTr("now!") : qsTr("enter!")) + settingsModel.translationTrigger
-						font.family: "Noto Serif"
-						font.pixelSize: Constants.tutorial_content_header_h1_font_size
+						//: LABEL ANDROID IOS
+						text: (SettingsModel.language === "en" ? qsTr("now!") : qsTr("enter!")) + SettingsModel.translationTrigger
+						textStyle: Style.text.tutorial_header
 						horizontalAlignment: Text.AlignHCenter
-						wrapMode: Text.WordWrap
 
 						x: (parent.width * 0.5) - (width / 2)
 						y: (parent.height * 0.9) - (height / 2)
@@ -379,15 +390,14 @@ SectionPage {
 						centerX: 0.2
 					}
 
-					Text {
+					GText {
 						id: noticeText2
 						width: parent.width * 0.6
-						text: qsTr("This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.") + settingsModel.translationTrigger
-						font.family: "Noto Serif"
-						font.pixelSize: Constants.tutorial_content_font_size
+						//: LABEL ANDROID IOS
+						text: qsTr("This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.") + SettingsModel.translationTrigger
+						textStyle: Style.text.tutorial_content
 						font.bold: true
 						horizontalAlignment: Text.AlignLeft
-						wrapMode: Text.WordWrap
 
 						x: (parent.width * 0.65) - (width / 2)
 						y: (parent.height * 0.5) - (height / 2)
@@ -423,10 +433,17 @@ SectionPage {
 		}
 	}
 
+	TutorialStatusBar {
+		id: statusBar
+
+		shaderSource: sectionPageFlickable
+	}
+
 	TutorialReaderMethodFooter {
 		id: footer
 		width: baseItem.width
 
+		shaderSource: sectionPageFlickable
 		onMenuClicked: firePop()
 		onQuitTutorialClicked: {
 			firePop()

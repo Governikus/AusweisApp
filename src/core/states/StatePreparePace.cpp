@@ -11,13 +11,15 @@ using namespace governikus;
 
 
 StatePreparePace::StatePreparePace(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 
 
 void StatePreparePace::run()
 {
+	getContext()->setEstablishPaceChannelType(PacePasswordId::UNKNOWN);
 	const QSharedPointer<CardConnection>& cardConnection = getContext()->getCardConnection();
 	if (!cardConnection)
 	{

@@ -10,6 +10,7 @@ using namespace governikus;
 
 
 ReaderConfigurationInfo::ReaderConfigurationInfo()
+//: LABEL ALL_PLATFORMS
 	: ReaderConfigurationInfo(tr("Unknown reader"))
 {
 }

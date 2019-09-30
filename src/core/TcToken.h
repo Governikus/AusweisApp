@@ -10,7 +10,6 @@
 #include <QXmlStreamReader>
 
 class test_TcToken;
-class test_StateGenericSendReceive;
 
 namespace governikus
 {
@@ -19,7 +18,6 @@ class TcToken
 {
 	private:
 		friend class ::test_TcToken;
-		friend class ::test_StateGenericSendReceive;
 		bool mSchemaConform;
 		QString mBinding;
 		QString mPathSecurityProtocol;
@@ -43,7 +41,7 @@ class TcToken
 		QString readElementValue(QXmlStreamReader& pReader);
 
 	public:
-		TcToken(const QByteArray& pData);
+		explicit TcToken(const QByteArray& pData);
 		virtual ~TcToken();
 
 		/**

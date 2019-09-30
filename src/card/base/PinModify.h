@@ -26,8 +26,8 @@ class PinModify
 		QByteArray createPinModificationDataStructure(ProtocolType pType) const;
 
 	public:
-		PinModify(quint8 pTimeoutSeconds);
-		PinModify(const QByteArray& pRemoteInputData);
+		explicit PinModify(quint8 pTimeoutSeconds);
+		explicit PinModify(const QByteArray& pRemoteInputData);
 
 		quint8 getTimeoutSeconds() const;
 

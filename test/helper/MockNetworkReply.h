@@ -12,6 +12,7 @@
 #include <QNetworkReply>
 
 class test_StateCheckRefreshAddress;
+class test_StateGetSelfAuthenticationData;
 
 namespace governikus
 {
@@ -23,6 +24,7 @@ class MockNetworkReply
 
 	private:
 		friend class ::test_StateCheckRefreshAddress;
+		friend class ::test_StateGetSelfAuthenticationData;
 		MockSocket mSocket;
 
 	public:
@@ -30,6 +32,7 @@ class MockNetworkReply
 		virtual ~MockNetworkReply() override;
 		virtual void abort() override
 		{
+			qDebug() << "Operation aborted";
 		}
 
 

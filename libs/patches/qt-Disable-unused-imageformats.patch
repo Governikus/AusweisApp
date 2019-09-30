@@ -1,0 +1,27 @@
+From 2674afcd19c8ce6a23a3c69bb9d41d82838adf86 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Tue, 18 Jun 2019 07:47:39 +0200
+Subject: Disable unused imageformats
+
+Change-Id: Iace4d751b615d1e54d94e9f8ab774ef39b111a79
+---
+ src/plugins/imageformats/imageformats.pro | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git x/qtimageformats/src/plugins/imageformats/imageformats.pro y/qtimageformats/src/plugins/imageformats/imageformats.pro
+index be1e20a..06feab3 100644
+--- x/qtimageformats/src/plugins/imageformats/imageformats.pro
++++ y/qtimageformats/src/plugins/imageformats/imageformats.pro
+@@ -22,8 +22,7 @@ qtConfig(jasper) {
+     SUBDIRS += macjp2
+ }
+ 
+-winrt {
+     SUBDIRS -= tiff \
+                tga \
++               wbmp \
+                webp
+-}
+-- 
+2.21.0
+

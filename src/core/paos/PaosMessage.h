@@ -28,7 +28,7 @@ class PaosMessage
 	public:
 		const PaosType mType;
 
-		PaosMessage(PaosType pType);
+		explicit PaosMessage(PaosType pType);
 		virtual ~PaosMessage();
 
 		const QString& getMessageId() const

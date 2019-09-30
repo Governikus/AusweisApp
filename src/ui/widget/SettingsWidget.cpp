@@ -28,6 +28,7 @@ SettingsWidget::SettingsWidget(QWidget* pParent)
 	connect(mUi->diagnosisButton, &QAbstractButton::clicked, this, &SettingsWidget::diagnosisRequested);
 
 	connect(mUi->generalTab, &GeneralSettingsWidget::settingsChanged, this, &SettingsWidget::onSettingsChanged);
+	connect(mUi->generalTab, &GeneralSettingsWidget::fireSwitchUiRequested, this, &SettingsWidget::fireSwitchUiRequested);
 	connect(mUi->pinTab, &PinSettingsWidget::fireButtonEnabledUpdated, this, &SettingsWidget::onUpdateButtonState);
 	connect(mUi->pinTab, &PinSettingsWidget::fireButtonEnabledUpdated, this, &SettingsWidget::onUpdateApplyButtonText);
 

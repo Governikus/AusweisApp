@@ -1,61 +1,61 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
 
 
-Rectangle {
+Item {
 	id: content
+
 	height: parent.height
 	width: parent.width
-	color: Constants.background_color
 
 	ListModel {
 		id: navModel
 
 		ListElement {
-			imageOn: "qrc:///images/iOS/tabBar/Ausweisen-on.png"
-			imageOff: "qrc:///images/iOS/tabBar/Ausweisen-off.png"
+			image: "qrc:///images/iOS/tabBar/ausweisen.svg"
 			desc: QT_TR_NOOP("Identify")
 			condition: "identify"
 		}
 
 		ListElement {
-			imageOn: "qrc:///images/iOS/tabBar/Anbieter-on.png"
-			imageOff: "qrc:///images/iOS/tabBar/Anbieter-off.png"
+			image: "qrc:///images/iOS/tabBar/anbieter.svg"
 			desc: QT_TR_NOOP("Provider")
 			condition: "provider"
 		}
 
 		ListElement {
-			imageOn: "qrc:///images/iOS/tabBar/Verlauf-on.png"
-			imageOff: "qrc:///images/iOS/tabBar/Verlauf-off.png"
-			desc: QT_TR_NOOP("History")
-			condition: "history"
+			image: "qrc:///images/iOS/tabBar/remoteleser.svg"
+			desc: QT_TR_NOOP("Remote")
+			condition: "remoteservice"
 		}
 
 		ListElement {
-			imageOn: "qrc:///images/iOS/tabBar/Pin-on.png"
-			imageOff: "qrc:///images/iOS/tabBar/Pin-off.png"
-			desc: QT_TR_NOOP("PIN Management")
+			image: "qrc:///images/iOS/tabBar/pin.svg"
+			desc: QT_TR_NOOP("PIN")
 			condition: "pin"
 		}
 
 		ListElement {
-			imageOn: "qrc:///images/iOS/tabBar/More-on.svg"
-			imageOff: "qrc:///images/iOS/tabBar/More-off.svg"
+			image: "qrc:///images/iOS/tabBar/more.svg"
 			desc: QT_TR_NOOP("More")
 			condition: "more"
 		}
 	}
 
-	Rectangle {
+	GSeparator {
 		id: topBorderLine
 		width: parent.width
-		height: Utils.dp(0.5)
-		color: Constants.grey
 	}
 
-	Row {
+	RowLayout {
 		anchors.left: parent.left
 		anchors.right: parent.right
 		anchors.bottom: parent.bottom
@@ -66,12 +66,21 @@ Rectangle {
 			model: navModel
 
 			delegate: NavigationItem {
-				height: parent.height
-				width: parent.width / navModel.count
-				source: baseItem.state === condition ? imageOn : imageOff
-				textColor: baseItem.state === condition ? Constants.blue : Constants.grey
-				text: qsTr(desc) + settingsModel.translationTrigger
-				onClicked: baseItem.state = condition
+				Layout.fillWidth: true
+				Layout.fillHeight: true
+
+				Accessible.ignored: content.Accessible.ignored
+
+				source: image
+				text: qsTr(desc) + SettingsModel.translationTrigger
+				selected: baseItem.state === condition
+				onClicked: {
+					if (baseItem.state === condition) {
+						baseItem.reselectedState()
+					} else {
+						baseItem.state = condition
+					}
+				}
 			}
 		}
 	}

@@ -40,7 +40,7 @@ bool ReaderDeviceDialog::eventFilter(QObject* pObject, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
-		QKeyEvent* const keyEvent = static_cast<QKeyEvent*>(pEvent);
+		auto* const keyEvent = static_cast<QKeyEvent*>(pEvent);
 		if (keyEvent->key() == Qt::Key_F1)
 		{
 			HelpAction::openContextHelp();

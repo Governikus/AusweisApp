@@ -35,12 +35,12 @@ class HttpRequest
 		static int onMessageBegin(http_parser* pParser);
 		static int onMessageComplete(http_parser* pParser);
 		static int onHeadersComplete(http_parser* pParser);
-		static int onHeaderField(http_parser* pParser, const char* pPos, size_t pLength);
-		static int onHeaderValue(http_parser* pParser, const char* pPos, size_t pLength);
-		static int onBody(http_parser* pParser, const char* pPos, size_t pLength);
-		static int onUrl(http_parser* pParser, const char* pPos, size_t pLength);
+		static int onHeaderField(http_parser* pParser, const char* const pPos, size_t pLength);
+		static int onHeaderValue(http_parser* pParser, const char* const pPos, size_t pLength);
+		static int onBody(http_parser* pParser, const char* const pPos, size_t pLength);
+		static int onUrl(http_parser* pParser, const char* const pPos, size_t pLength);
 
-		static inline void add(QByteArray& pDest, const char* pPos, size_t pLength)
+		static inline void add(QByteArray& pDest, const char* const pPos, size_t pLength)
 		{
 			pDest += QByteArray(pPos, static_cast<int>(pLength));
 		}

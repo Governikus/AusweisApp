@@ -10,9 +10,14 @@ def j = new Release
 
 j.with
 {
+	parameters
+	{
+		booleanParam("ENABLE_DVCS", true, "Include mercurial tag instead of CMake version number into docs.")
+	}
+
 	steps
 	{
-		shell('cd build; cmake ../source -DCMAKE_BUILD_TYPE=release -Dtools.only=true')
+		shell('cd build; cmake ../source -DCMAKE_BUILD_TYPE=release -Dtools.only=true -DENABLE_DVCS=\${ENABLE_DVCS}')
 
 		shell('cd build; make notes')
 		shell('cd build; make notes.latex.pdf')

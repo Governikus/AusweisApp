@@ -48,7 +48,7 @@ class test_KeyDerivationFunction
 		{
 			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
-			KeyDerivationFunction kdf = toByteArray(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC);
+			KeyDerivationFunction kdf(toByteArray(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC));
 
 			QCOMPARE(spyLog.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(spyLog, QLatin1String("3DES not supported")));
@@ -58,7 +58,7 @@ class test_KeyDerivationFunction
 
 		void aes128Key()
 		{
-			KeyDerivationFunction kdf = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
+			KeyDerivationFunction kdf(toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128));
 
 			QByteArray key = kdf.pi("123456");
 
@@ -69,7 +69,7 @@ class test_KeyDerivationFunction
 
 		void aes196Key()
 		{
-			KeyDerivationFunction kdf = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192);
+			KeyDerivationFunction kdf(toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192));
 
 			QByteArray key = kdf.pi("123456");
 
@@ -80,7 +80,7 @@ class test_KeyDerivationFunction
 
 		void aes256Key()
 		{
-			KeyDerivationFunction kdf = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
+			KeyDerivationFunction kdf(toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256));
 
 			QByteArray key = kdf.pi("123456");
 

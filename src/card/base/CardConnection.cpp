@@ -48,6 +48,14 @@ bool CardConnection::getPacePinSuccessful() const
 }
 
 
+void CardConnection::setProgressMessage(const QString& pMessage)
+{
+	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [ = ] {
+				mCardConnectionWorker->setProgressMessage(pMessage);
+			}, Qt::QueuedConnection);
+}
+
+
 bool CardConnection::stopSecureMessaging()
 {
 	bool result;

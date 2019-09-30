@@ -84,7 +84,7 @@ class test_AppUpdater
 		}
 
 
-		void setJsonItemField(QJsonDocument& pDocument, QString pField, QString pValue)
+		void setJsonItemField(QJsonDocument& pDocument, const QString& pField, const QString& pValue)
 		{
 			auto itemArray = pDocument.object()["items"].toArray();
 			int i = 0;
@@ -101,7 +101,7 @@ class test_AppUpdater
 		}
 
 
-		QJsonValue getJsonItemField(QJsonDocument& pDocument, QString pField)
+		QJsonValue getJsonItemField(QJsonDocument& pDocument, const QString& pField)
 		{
 			#ifdef Q_OS_WIN
 			QString platform = "win";
@@ -133,8 +133,8 @@ class test_AppUpdater
 		{
 			Env::set(Downloader::staticMetaObject, &mDownloader);
 
-			const SecureStorage& secureStorage = SecureStorage::getInstance();
-			mAppCastLocation = VersionNumber::getApplicationVersion().isDeveloperVersion() ? secureStorage.getAppcastBetaUpdateUrl() : secureStorage.getAppcastUpdateUrl();
+			const auto* secureStorage = Env::getSingleton<SecureStorage>();
+			mAppCastLocation = VersionNumber::getApplicationVersion().isDeveloperVersion() ? secureStorage->getAppcastBetaUpdateUrl() : secureStorage->getAppcastUpdateUrl();
 
 			mJsonDocument = QJsonDocument::fromJson(test_jsonData);
 			mReleaseNoteLocation = getJsonItemField(mJsonDocument, "notes").toString();

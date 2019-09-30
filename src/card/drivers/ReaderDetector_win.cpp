@@ -17,11 +17,9 @@
 #include <QStringList>
 
 
-using namespace governikus;
-
-
 Q_DECLARE_LOGGING_CATEGORY(card_drivers)
 
+using namespace governikus;
 
 bool ReaderDetector::initNativeEvents()
 {
@@ -131,7 +129,7 @@ QVector<UsbId> ReaderDetector::attachedDevIds() const
 
 bool ReaderDetector::nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult)
 {
-	Q_UNUSED(pResult);
+	Q_UNUSED(pResult)
 
 	if (pEventType == "windows_generic_MSG")
 	{
@@ -140,7 +138,7 @@ bool ReaderDetector::nativeEventFilter(const QByteArray& pEventType, void* pMess
 		{
 			if (msg->wParam == DBT_DEVNODES_CHANGED)
 			{
-				qDebug() << "System information: device changed";
+				qCDebug(card_drivers) << "System information: device changed";
 				Q_EMIT fireReaderChangeDetected();
 			}
 		}

@@ -50,8 +50,8 @@ IMPLEMENT_ASN1_OBJECT(CVCertificate)
 
 int CVCertificate::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt, void* pExarg)
 {
-	Q_UNUSED(pIt);
-	Q_UNUSED(pExarg);
+	Q_UNUSED(pIt)
+	Q_UNUSED(pExarg)
 	if (pOperation == ASN1_OP_D2I_POST)
 	{
 		if (auto cvc = reinterpret_cast<cvcertificate_st*>(*pVal))
@@ -59,11 +59,11 @@ int CVCertificate::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_
 			cvc->mEcdsaSignature = EcUtil::create(ECDSA_SIG_new());
 			QByteArray sigValue = Asn1OctetStringUtil::getValue(cvc->mSignature);
 
-			const unsigned char* sig = reinterpret_cast<const unsigned char*>(sigValue.data());
+			const auto* const sig = reinterpret_cast<const unsigned char*>(sigValue.data());
 			int siglen = sigValue.size();
 
-			BIGNUM* r = BN_bin2bn(sig, siglen / 2, 0);
-			BIGNUM* s = BN_bin2bn(sig + (siglen / 2), siglen / 2, 0);
+			BIGNUM* r = BN_bin2bn(sig, siglen / 2, nullptr);
+			BIGNUM* s = BN_bin2bn(sig + (siglen / 2), siglen / 2, nullptr);
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 			cvc->mEcdsaSignature.data()->r = r;

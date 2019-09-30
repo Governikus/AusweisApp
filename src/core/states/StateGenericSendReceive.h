@@ -4,11 +4,12 @@
 
 #pragma once
 
+#include "AbstractState.h"
 #include "context/AuthContext.h"
+#include "GenericContextContainer.h"
 #include "paos/invoke/PaosCreator.h"
 #include "paos/PaosMessage.h"
 #include "paos/PaosType.h"
-#include "states/AbstractGenericState.h"
 
 #include <QSharedPointer>
 #include <QSslPreSharedKeyAuthenticator>
@@ -20,7 +21,8 @@ namespace governikus
 {
 
 class StateGenericSendReceive
-	: public AbstractGenericState<AuthContext>
+	: public AbstractState
+	, public GenericContextContainer<AuthContext>
 {
 	Q_OBJECT
 
@@ -55,7 +57,7 @@ class StateSendStartPaos
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateSendStartPaos(const QSharedPointer<WorkflowContext>& pContext)
+	explicit StateSendStartPaos(const QSharedPointer<WorkflowContext>& pContext)
 		: StateGenericSendReceive(pContext, QVector<PaosType>
 				{
 					PaosType::INITIALIZE_FRAMEWORK, PaosType::DID_LIST,
@@ -115,7 +117,7 @@ class StateSendInitializeFrameworkResponse
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateSendInitializeFrameworkResponse(const QSharedPointer<WorkflowContext>& pContext)
+	explicit StateSendInitializeFrameworkResponse(const QSharedPointer<WorkflowContext>& pContext)
 		: StateGenericSendReceive(pContext, QVector<PaosType>
 				{
 					PaosType::DID_LIST, PaosType::DID_AUTHENTICATE_EAC1, PaosType::STARTPAOS_RESPONSE
@@ -169,7 +171,7 @@ class StateSendDIDListResponse
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateSendDIDListResponse(const QSharedPointer<WorkflowContext>& pContext)
+	explicit StateSendDIDListResponse(const QSharedPointer<WorkflowContext>& pContext)
 		: StateGenericSendReceive(pContext, QVector<PaosType>
 				{
 					PaosType::DID_AUTHENTICATE_EAC1, PaosType::DISCONNECT, PaosType::STARTPAOS_RESPONSE
@@ -222,7 +224,7 @@ class StateSendDIDAuthenticateResponseEAC1
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateSendDIDAuthenticateResponseEAC1(const QSharedPointer<WorkflowContext>& pContext)
+	explicit StateSendDIDAuthenticateResponseEAC1(const QSharedPointer<WorkflowContext>& pContext)
 		: StateGenericSendReceive(pContext, QVector<PaosType>
 				{
 					PaosType::DID_AUTHENTICATE_EAC2, PaosType::DISCONNECT, PaosType::STARTPAOS_RESPONSE
@@ -275,7 +277,7 @@ class StateSendDIDAuthenticateResponseEACAdditionalInputType
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateSendDIDAuthenticateResponseEACAdditionalInputType(const QSharedPointer<WorkflowContext>& pContext)
+	explicit StateSendDIDAuthenticateResponseEACAdditionalInputType(const QSharedPointer<WorkflowContext>& pContext)
 		: StateGenericSendReceive(pContext, QVector<PaosType>
 				{
 					PaosType::DID_AUTHENTICATE_EAC_ADDITIONAL_INPUT_TYPE, PaosType::STARTPAOS_RESPONSE
@@ -323,7 +325,7 @@ class StateSendDIDAuthenticateResponseEAC2
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateSendDIDAuthenticateResponseEAC2(const QSharedPointer<WorkflowContext>& pContext)
+	explicit StateSendDIDAuthenticateResponseEAC2(const QSharedPointer<WorkflowContext>& pContext)
 		: StateGenericSendReceive(pContext, QVector<PaosType>
 				{
 					PaosType::TRANSMIT, PaosType::DISCONNECT, PaosType::STARTPAOS_RESPONSE
@@ -376,7 +378,7 @@ class StateSendTransmitResponse
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateSendTransmitResponse(const QSharedPointer<WorkflowContext>& pContext)
+	explicit StateSendTransmitResponse(const QSharedPointer<WorkflowContext>& pContext)
 		: StateGenericSendReceive(pContext, QVector<PaosType>
 				{
 					PaosType::TRANSMIT, PaosType::DISCONNECT, PaosType::STARTPAOS_RESPONSE
@@ -430,7 +432,7 @@ class StateSendDisconnectResponse
 	Q_OBJECT
 	friend class StateBuilder;
 
-	StateSendDisconnectResponse(const QSharedPointer<WorkflowContext>& pContext)
+	explicit StateSendDisconnectResponse(const QSharedPointer<WorkflowContext>& pContext)
 		: StateGenericSendReceive(pContext, PaosType::STARTPAOS_RESPONSE)
 	{
 	}
@@ -457,7 +459,7 @@ class StateSendDisconnectResponse
 
 		virtual void emitStateMachineSignal(int pResult) override
 		{
-			Q_UNUSED(pResult);
+			Q_UNUSED(pResult)
 		}
 
 

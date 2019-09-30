@@ -32,18 +32,18 @@ QAtomicPointer<UIPlugInAidl> UIPlugInAidl::instance = nullptr;
 
 UIPlugInAidl::UIPlugInAidl()
 	: UIPlugIn()
-	, mJsonApi(nullptr)
+	, mJson(nullptr)
 	, mContext()
 	, mWorkflowIsActive()
 	, mInitializationSuccessfull(false)
 {
-	if (UILoader::getInstance().load(UIPlugInName::UIPlugInJsonApi))
+	if (UILoader::getInstance().load(UIPlugInName::UIPlugInJson))
 	{
-		mJsonApi = qobject_cast<UIPlugInJsonApi*>(UILoader::getInstance().getLoaded(UIPlugInName::UIPlugInJsonApi));
-		Q_ASSERT(mJsonApi);
-		connect(mJsonApi, &UIPlugInJsonApi::fireMessage, this, &UIPlugInAidl::onToSend, Qt::QueuedConnection);
+		mJson = qobject_cast<UIPlugInJson*>(UILoader::getInstance().getLoaded(UIPlugInName::UIPlugInJson));
+		Q_ASSERT(mJson);
+		connect(mJson, &UIPlugInJson::fireMessage, this, &UIPlugInAidl::onToSend, Qt::QueuedConnection);
 
-		mJsonApi->setEnabled();
+		mJson->setEnabled();
 		mInitializationSuccessfull = true;
 	}
 	else
@@ -92,17 +92,17 @@ void UIPlugInAidl::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 
 void UIPlugInAidl::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 {
-	Q_UNUSED(pContext);
+	Q_UNUSED(pContext)
 
 	mContext.clear();
-	mJsonApi->blockSignals(false);
+	mJson->blockSignals(false);
 	mWorkflowIsActive.unlock();
 }
 
 
 void UIPlugInAidl::onReceived(const QByteArray& pMessage)
 {
-	mJsonApi->doMessageProcessing(pMessage);
+	mJson->doMessageProcessing(pMessage);
 }
 
 
@@ -122,7 +122,7 @@ void UIPlugInAidl::reset()
 {
 	if (mContext)
 	{
-		mJsonApi->blockSignals(true);
+		mJson->blockSignals(true);
 		Q_EMIT mContext->fireCancelWorkflow();
 	}
 }
@@ -137,7 +137,7 @@ void UIPlugInAidl::onToSend(const QByteArray& pMessage)
 	QAndroidJniObject aidlBinder = QtAndroid::androidService().callObjectMethod("getAidlBinder", "()Lcom/governikus/ausweisapp2/AidlBinder;");
 	aidlBinder.callMethod<void>("aidlReceive", "(Ljava/lang/String;)V", jsonAndroidString.object<jstring>());
 #else
-	Q_UNUSED(pMessage);
+	Q_UNUSED(pMessage)
 #endif
 }
 
@@ -156,7 +156,7 @@ extern "C"
 
 JNIEXPORT jstring JNICALL Java_com_governikus_ausweisapp2_AidlBinder_resetValidSessionID(JNIEnv* pEnv, jobject pObj)
 {
-	Q_UNUSED(pObj);
+	Q_UNUSED(pObj)
 
 	UIPlugInAidl* plugin = UIPlugInAidl::getInstance();
 	if (!plugin->isSuccessfullInitialized())
@@ -178,8 +178,8 @@ JNIEXPORT jstring JNICALL Java_com_governikus_ausweisapp2_AidlBinder_resetValidS
 
 JNIEXPORT jboolean JNICALL Java_com_governikus_ausweisapp2_AidlBinder_isSecureRandomPsk(JNIEnv* pEnv, jobject pObj)
 {
-	Q_UNUSED(pEnv);
-	Q_UNUSED(pObj);
+	Q_UNUSED(pEnv)
+	Q_UNUSED(pObj)
 
 	return PskManager::getInstance().isSecureRandomPsk();
 }
@@ -192,9 +192,9 @@ extern "C"
 
 JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AidlBinder_aidlSend(JNIEnv* pEnv, jobject pObj, jstring pJson)
 {
-	Q_UNUSED(pObj);
+	Q_UNUSED(pObj)
 
-	const char* nativeString = pEnv->GetStringUTFChars(pJson, 0);
+	const char* const nativeString = pEnv->GetStringUTFChars(pJson, 0);
 	const QString json = QString::fromUtf8(nativeString);
 	pEnv->ReleaseStringUTFChars(pJson, nativeString);
 

@@ -9,6 +9,13 @@
 
 using namespace governikus;
 
+
+void RemoteServiceContext::onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler)
+{
+	connect(pHandler.data(), &ServerMessageHandler::fireCardConnectionEstablished, this, &RemoteServiceContext::fireCardConnectionEstablished);
+}
+
+
 RemoteServiceContext::RemoteServiceContext()
 	: mRemoteServer(Env::create<RemoteServer*>())
 	, mNewPin()
@@ -17,6 +24,18 @@ RemoteServiceContext::RemoteServiceContext()
 	, mModifyPinMessage()
 	, mModifyPinMessageResponseApdu()
 {
+	connect(mRemoteServer.data(), &RemoteServer::fireMessageHandlerAdded, this, &RemoteServiceContext::onMessageHandlerAdded);
+}
+
+
+RemoteServiceContext::~RemoteServiceContext()
+{
+#ifndef QT_NO_DEBUG
+	if (!QCoreApplication::applicationName().startsWith(QLatin1String("Test")))
+	{
+		Q_ASSERT(getNewPin().isEmpty() && "PACE passwords must be cleared as soon as possible.");
+	}
+#endif
 }
 
 
@@ -61,7 +80,7 @@ const QSharedPointer<const IfdEstablishPaceChannel>& RemoteServiceContext::getEs
 }
 
 
-void RemoteServiceContext::setEstablishPaceChannelOutput(EstablishPaceChannelOutput pEstablishPaceChannelOutput)
+void RemoteServiceContext::setEstablishPaceChannelOutput(const EstablishPaceChannelOutput& pEstablishPaceChannelOutput)
 {
 	mEstablishPaceChannelOutput = pEstablishPaceChannelOutput;
 }

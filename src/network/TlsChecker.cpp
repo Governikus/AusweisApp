@@ -10,11 +10,13 @@
 #include <QCryptographicHash>
 #include <QLoggingCategory>
 
-#include <openssl/dh.h>
-#include <openssl/dsa.h>
-#include <openssl/ec.h>
-#include <openssl/evp.h>
-#include <openssl/rsa.h>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
+	#include <openssl/dh.h>
+	#include <openssl/dsa.h>
+	#include <openssl/ec.h>
+	#include <openssl/evp.h>
+	#include <openssl/rsa.h>
+#endif
 
 Q_DECLARE_LOGGING_CATEGORY(developermode)
 Q_DECLARE_LOGGING_CATEGORY(network)
@@ -64,6 +66,9 @@ bool TlsChecker::hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey)
 
 	if (keyAlgorithm == QSsl::Opaque)
 	{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+		qWarning() << "Qt failed to determine algorithm";
+#else
 		qWarning() << "Qt failed to determine algorithm... fallback to internal handling";
 		// try do determine key algorithm and length
 		if (auto key = static_cast<EVP_PKEY*>(pEphemeralServerKey.handle()))
@@ -86,6 +91,7 @@ bool TlsChecker::hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey)
 					break;
 			}
 		}
+#endif
 	}
 
 	qDebug() << "Check ephemeral key of type" << TlsChecker::toString(keyAlgorithm) << "and key size" << keyLength;
@@ -106,8 +112,8 @@ QString TlsChecker::getCertificateIssuerName(const QSslCertificate& pCertificate
 
 bool TlsChecker::isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorithm, bool pIsEphemeral)
 {
-	const auto& secureStorage = SecureStorage::getInstance();
-	const int minKeySize = pIsEphemeral ? secureStorage.getMinimumEphemeralKeySize(pKeyAlgorithm) : secureStorage.getMinimumStaticKeySize(pKeyAlgorithm);
+	const auto* secureStorage = Env::getSingleton<SecureStorage>();
+	const int minKeySize = pIsEphemeral ? secureStorage->getMinimumEphemeralKeySize(pKeyAlgorithm) : secureStorage->getMinimumStaticKeySize(pKeyAlgorithm);
 
 	qDebug() << "Minimum requested key size" << minKeySize;
 
@@ -191,6 +197,7 @@ QString TlsChecker::toString(QSsl::SslProtocol pProtocol)
 	}
 
 	Q_UNREACHABLE();
+	return QString();
 }
 
 
@@ -284,7 +291,7 @@ bool TlsChecker::containsFatalError(QNetworkReply* pReply, const QList<QSslError
 }
 
 
-void TlsChecker::logSslConfig(const QSslConfiguration pCfg, const QMessageLogger& pLogger)
+void TlsChecker::logSslConfig(const QSslConfiguration& pCfg, const QMessageLogger& pLogger)
 {
 	pLogger.info() << "Used session cipher" << pCfg.sessionCipher();
 	pLogger.info() << "Used session protocol:" << toString(pCfg.sessionProtocol());

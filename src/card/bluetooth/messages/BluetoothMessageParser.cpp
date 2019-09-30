@@ -20,13 +20,8 @@
 #include "parameter/BluetoothMessageParameterResultCode.h"
 #include "parameter/BluetoothMessageParameterStatusChange.h"
 
-#include <QLoggingCategory>
-
 
 using namespace governikus;
-
-
-Q_DECLARE_LOGGING_CATEGORY(card)
 
 
 BluetoothMessageParser::BluetoothMessageParser(const QByteArray& pData)
@@ -46,7 +41,7 @@ void BluetoothMessageParser::parse()
 {
 	while (mRemainingBytes.size() >= 4)
 	{
-		BluetoothMsgId msgId = static_cast<BluetoothMsgId>(mRemainingBytes.at(0));
+		auto msgId = static_cast<BluetoothMsgId>(mRemainingBytes.at(0));
 		int parameterCount = mRemainingBytes.at(1);
 		auto message = createMessage(msgId);
 
@@ -70,7 +65,7 @@ bool BluetoothMessageParser::parseParameter(QSharedPointer<BluetoothMessage> pMe
 	{
 		if (data.size() >= 4)
 		{
-			BluetoothParamId paramId = static_cast<BluetoothParamId>(data.at(0));
+			auto paramId = static_cast<BluetoothParamId>(data.at(0));
 			ushort paramLength = getParamLength(static_cast<uchar>(data.at(2)), static_cast<uchar>(data.at(3)));
 			data = data.mid(4);
 

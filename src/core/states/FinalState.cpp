@@ -15,7 +15,7 @@ void FinalState::run()
 	// We need a separate QFinaleState since we do not want the controller to stop working until
 	// this state has been approved. We add the QFinalState at this point since we need to know
 	// the state machine and since we do not want to alter our ctor pattern.
-	QFinalState* sStopMachine = new QFinalState();
+	auto* sStopMachine = new QFinalState();
 	machine()->addState(sStopMachine);
 	addTransition(this, &AbstractState::fireContinue, sStopMachine);
 	addTransition(this, &AbstractState::fireAbort, sStopMachine);

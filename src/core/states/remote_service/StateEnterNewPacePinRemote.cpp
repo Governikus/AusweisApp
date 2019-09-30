@@ -9,7 +9,8 @@ using namespace governikus;
 
 
 StateEnterNewPacePinRemote::StateEnterNewPacePinRemote(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 
@@ -39,5 +40,5 @@ void StateEnterNewPacePinRemote::onEntry(QEvent* pEvent)
 	}
 
 	mConnections += connect(getContext().data(), &RemoteServiceContext::fireCancelPasswordRequest, this, &StateEnterNewPacePinRemote::onCancelChangePin);
-	AbstractGenericState::onEntry(pEvent);
+	AbstractState::onEntry(pEvent);
 }

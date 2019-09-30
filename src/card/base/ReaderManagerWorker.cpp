@@ -115,7 +115,7 @@ void ReaderManagerWorker::startScan(ReaderManagerPlugInType pType, bool pAutoCon
 }
 
 
-void ReaderManagerWorker::stopScan(ReaderManagerPlugInType pType)
+void ReaderManagerWorker::stopScan(ReaderManagerPlugInType pType, const QString& pError)
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
@@ -124,7 +124,7 @@ void ReaderManagerWorker::stopScan(ReaderManagerPlugInType pType)
 		if (plugin->getInfo().getPlugInType() == pType)
 		{
 			qCDebug(card) << "Stop scan on plugin:" << plugin->metaObject()->className();
-			plugin->stopScan();
+			plugin->stopScan(pError);
 		}
 	}
 }
@@ -145,13 +145,28 @@ bool ReaderManagerWorker::isScanRunning() const
 }
 
 
+bool ReaderManagerWorker::isScanRunning(ReaderManagerPlugInType pType) const
+{
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
+
+	for (const auto& plugin : qAsConst(mPlugIns))
+	{
+		if (plugin->getInfo().getPlugInType() == pType && plugin->isScanRunning())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
 QVector<ReaderManagerPlugInInfo> ReaderManagerWorker::getPlugInInfos() const
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	QVector<ReaderManagerPlugInInfo> infos;
 	infos.reserve(mPlugIns.size());
-	for (const ReaderManagerPlugIn* plugIn : mPlugIns)
+	for (const ReaderManagerPlugIn* const plugIn : qAsConst(mPlugIns))
 	{
 		infos += plugIn->getInfo();
 	}
@@ -169,7 +184,7 @@ QVector<ReaderInfo> ReaderManagerWorker::getReaderInfos(const ReaderFilter& pFil
 	for (const auto& plugIn : plugIns)
 	{
 		const auto& readerList = plugIn->getReaders();
-		for (const Reader* reader : readerList)
+		for (const Reader* const reader : readerList)
 		{
 			list += reader->getReaderInfo();
 		}
@@ -182,7 +197,7 @@ ReaderInfo ReaderManagerWorker::getReaderInfo(const QString& pReaderName) const
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	const Reader* reader = getReader(pReaderName);
+	const Reader* const reader = getReader(pReaderName);
 	return reader ? reader->getReaderInfo() : ReaderInfo(pReaderName);
 }
 
@@ -192,7 +207,7 @@ void ReaderManagerWorker::updateReaderInfo(const QString& pReaderName)
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	Reader* reader = getReader(pReaderName);
-	if (!reader)
+	if (reader == nullptr)
 	{
 		qCWarning(card) << "Requested reader does not exist:" << pReaderName;
 		return;
@@ -232,39 +247,6 @@ void ReaderManagerWorker::createCardConnectionWorker(const QString& pReaderName)
 		worker = reader->createCardConnectionWorker();
 	}
 	Q_EMIT fireCardConnectionWorkerCreated(worker);
-}
-
-
-void ReaderManagerWorker::connectReader(const QString& pReaderName)
-{
-	Q_ASSERT(QObject::thread() == QThread::currentThread());
-
-	if (ConnectableReader* reader = qobject_cast<ConnectableReader*>(getReader(pReaderName)))
-	{
-		reader->connectReader();
-	}
-}
-
-
-void ReaderManagerWorker::disconnectReader(const QString& pReaderName)
-{
-	Q_ASSERT(QObject::thread() == QThread::currentThread());
-
-	if (ConnectableReader* reader = qobject_cast<ConnectableReader*>(getReader(pReaderName)))
-	{
-		reader->disconnectReader();
-	}
-}
-
-
-void ReaderManagerWorker::disconnectAllReaders()
-{
-	Q_ASSERT(QObject::thread() == QThread::currentThread());
-
-	for (auto& info : getReaderInfos())
-	{
-		disconnectReader(info.getName());
-	}
 }
 
 

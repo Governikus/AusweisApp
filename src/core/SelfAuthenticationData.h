@@ -78,7 +78,7 @@ class SelfAuthenticationData
 				QMap<SelfAuthData, SelfAuthDataPermission> mOperationsAllowed;
 				QMap<SelfAuthData, QString> mSelfAuthData;
 
-				SelfData(const QByteArray& pData);
+				explicit SelfData(const QByteArray& pData);
 				QString getValue(SelfAuthData pData) const;
 				OrderedSelfData getOrderedSelfInfo() const;
 		};
@@ -86,7 +86,7 @@ class SelfAuthenticationData
 		QSharedDataPointer<SelfData> d;
 
 	public:
-		SelfAuthenticationData(const QByteArray& pData = QByteArray());
+		explicit SelfAuthenticationData(const QByteArray& pData = QByteArray());
 		~SelfAuthenticationData() = default;
 
 		/**

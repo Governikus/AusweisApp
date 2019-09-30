@@ -5,7 +5,7 @@
 #include "StepErrorGui.h"
 
 #include "AppQtMainWidget.h"
-#include "BuildHelper.h"
+#include "Email.h"
 #include "EnumHelper.h"
 #include "Env.h"
 #include "generic/GuiUtils.h"
@@ -131,42 +131,4 @@ void StepErrorGui::closeActiveDialogs()
 	{
 		mMessageBox->reject();
 	}
-}
-
-
-QString StepErrorGui::generateMailBody(const GlobalStatus& pStatus) const
-{
-	const auto& logHandler = Env::getSingleton<LogHandler>();
-	QStringList mailBody(tr("Please describe the error that occurred."));
-
-	if (logHandler->useLogfile())
-	{
-		mailBody << tr("You may want to attach the logfile which can be saved from the error dialog.");
-	}
-
-	const QString newLine = QStringLiteral("\n");
-	mailBody << newLine;
-
-	const auto& systemInfo = BuildHelper::getInformationHeader();
-	for (const auto& info : systemInfo)
-	{
-		QString first = info.first;
-		QString second = info.second;
-
-		first.replace(QStringLiteral("&"), QStringLiteral("%26"));
-		second.replace(QStringLiteral("&"), QStringLiteral("%26"));
-
-		mailBody << first + QStringLiteral(": ") + second;
-	}
-
-	mailBody << newLine + tr("Error code") + QLatin1Char(':');
-	mailBody << getEnumName(pStatus.getStatusCode());
-
-	if (logHandler->hasCriticalLog())
-	{
-		const QString criticalMessages = QString::fromUtf8(logHandler->getCriticalLogWindow());
-		mailBody << newLine + tr("Critical errors:") + newLine + criticalMessages;
-	}
-
-	return mailBody.join(newLine);
 }

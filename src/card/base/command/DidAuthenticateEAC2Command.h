@@ -10,6 +10,7 @@
 #include "BaseCardCommand.h"
 
 class test_CardConnection;
+class test_DidAuthenticateEAC2Command;
 
 namespace governikus
 {
@@ -21,6 +22,7 @@ class DidAuthenticateEAC2Command
 
 	private:
 		friend class ::test_CardConnection;
+		friend class ::test_DidAuthenticateEAC2Command;
 		CVCertificateChain mCvcChain;
 		QString mEphemeralPublicKeyAsHex;
 		QString mSignatureAsHex;
@@ -45,7 +47,7 @@ class DidAuthenticateEAC2Command
 		virtual ~DidAuthenticateEAC2Command() override = default;
 
 	public:
-		DidAuthenticateEAC2Command(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
+		explicit DidAuthenticateEAC2Command(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
 				const CVCertificateChain& pCvcChain, const QString& pEphemeralPublicKeyAsHex,
 				const QString& pSignatureAsHex, const QByteArray& pAuthenticatedAuxiliaryDataAsBinary);
 

@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtGraphicalEffects 1.0
 
@@ -10,7 +14,7 @@ Item {
 	SequentialAnimation {
 		id: shaking
 		loops: Animation.Infinite
-		readonly property int delta: Utils.dp(4)
+		readonly property int delta: 4
 		readonly property int deltaDuration: 300
 
 		ParallelAnimation {

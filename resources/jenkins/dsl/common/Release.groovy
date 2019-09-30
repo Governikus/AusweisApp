@@ -23,6 +23,11 @@ class Release extends Build
 			{
 				stringParam('changeset', 'release', 'Build given changeset (tag) as release')
 			}
+
+			wrappers
+			{
+				buildName('${changeset}')
+			}
 		}
 
 		return j

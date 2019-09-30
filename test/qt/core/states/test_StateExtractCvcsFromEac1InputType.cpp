@@ -6,6 +6,8 @@
 
 #include "states/StateExtractCvcsFromEac1InputType.h"
 
+#include "states/StateBuilder.h"
+
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
 
@@ -22,7 +24,7 @@ class test_StateExtractCvcsFromEac1InputType
 
 	QVector<QSharedPointer<const CVCertificate> > mTerminalCvcs, mDvCvcs, mLinkCvcs, mCvcas;
 	QScopedPointer<StateExtractCvcsFromEac1InputType> mState;
-	QSharedPointer<AuthContext> mAuthContext;
+	QSharedPointer<TestAuthContext> mAuthContext;
 
 	Q_SIGNALS:
 		void fireStateStart(QEvent* pEvent);
@@ -44,10 +46,10 @@ class test_StateExtractCvcsFromEac1InputType
 		{
 			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1_3.xml"));
 
-			mState.reset(new StateExtractCvcsFromEac1InputType(mAuthContext));
+			mState.reset(StateBuilder::createState<StateExtractCvcsFromEac1InputType>(mAuthContext));
 			mState->setStateName("StateExtractCvcsFromEac1InputType");
 
-			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.clear();
+			mAuthContext->clearCvCertificates();
 			connect(this, &test_StateExtractCvcsFromEac1InputType::fireStateStart, mState.data(), &AbstractState::onEntry, Qt::ConnectionType::DirectConnection);
 		}
 
@@ -61,7 +63,7 @@ class test_StateExtractCvcsFromEac1InputType
 
 		void testNoDvCvc()
 		{
-			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mTerminalCvcs.at(0));
+			mAuthContext->addCvCertificate(mTerminalCvcs.at(0));
 			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
@@ -73,9 +75,9 @@ class test_StateExtractCvcsFromEac1InputType
 
 		void testMoreThanOneDvCvc()
 		{
-			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mTerminalCvcs.at(0));
-			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mDvCvcs.at(0));
-			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mDvCvcs.at(1));
+			mAuthContext->addCvCertificate(mTerminalCvcs.at(0));
+			mAuthContext->addCvCertificate(mDvCvcs.at(0));
+			mAuthContext->addCvCertificate(mDvCvcs.at(1));
 			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
@@ -87,7 +89,7 @@ class test_StateExtractCvcsFromEac1InputType
 
 		void testNoTerminalCvc()
 		{
-			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mDvCvcs.at(0));
+			mAuthContext->addCvCertificate(mDvCvcs.at(0));
 			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
@@ -99,9 +101,9 @@ class test_StateExtractCvcsFromEac1InputType
 
 		void testMoreThanOneTerminalCvc()
 		{
-			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mDvCvcs.at(0));
-			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mTerminalCvcs.at(0));
-			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mTerminalCvcs.at(1));
+			mAuthContext->addCvCertificate(mDvCvcs.at(0));
+			mAuthContext->addCvCertificate(mTerminalCvcs.at(0));
+			mAuthContext->addCvCertificate(mTerminalCvcs.at(1));
 			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireAbort);
 
 			Q_EMIT fireStateStart(nullptr);
@@ -113,8 +115,8 @@ class test_StateExtractCvcsFromEac1InputType
 
 		void testSuccess()
 		{
-			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mDvCvcs.at(0));
-			mAuthContext->getDidAuthenticateEac1()->mEac1InputType.mCvCertificates.append(mTerminalCvcs.at(0));
+			mAuthContext->addCvCertificate(mDvCvcs.at(0));
+			mAuthContext->addCvCertificate(mTerminalCvcs.at(0));
 			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireContinue);
 
 			Q_EMIT fireStateStart(nullptr);

@@ -34,7 +34,7 @@ MulticastLock::~MulticastLock()
 }
 
 
-void MulticastLock::invokeJniMethod(const char* pMethodName)
+void MulticastLock::invokeJniMethod(const char* const pMethodName)
 {
 #if defined(Q_OS_ANDROID)
 	QAndroidJniEnvironment env;
@@ -57,6 +57,6 @@ void MulticastLock::invokeJniMethod(const char* pMethodName)
 		env->ExceptionClear();
 	}
 #else
-	Q_UNUSED(pMethodName);
+	Q_UNUSED(pMethodName)
 #endif
 }

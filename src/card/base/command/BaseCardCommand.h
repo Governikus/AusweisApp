@@ -11,7 +11,6 @@
 
 #include <QSharedPointer>
 
-class test_BaseCardCommand;
 class test_CardConnection;
 
 namespace governikus
@@ -23,7 +22,6 @@ class BaseCardCommand
 	Q_OBJECT
 
 	private:
-		friend class ::test_BaseCardCommand;
 		friend class ::test_CardConnection;
 		Q_INVOKABLE void execute();
 
@@ -31,7 +29,7 @@ class BaseCardCommand
 		QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
 		CardReturnCode mReturnCode;
 
-		BaseCardCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
+		explicit BaseCardCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
 		virtual void internalExecute() = 0;
 		virtual ~BaseCardCommand();

@@ -6,9 +6,10 @@
 
 #pragma once
 
+#include "AbstractState.h"
 #include "command/TransmitCommand.h"
 #include "context/AuthContext.h"
-#include "states/AbstractGenericState.h"
+#include "GenericContextContainer.h"
 
 class test_StateTransmit;
 
@@ -16,7 +17,8 @@ namespace governikus
 {
 
 class StateTransmit
-	: public AbstractGenericState<AuthContext>
+	: public AbstractState
+	, public GenericContextContainer<AuthContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
@@ -27,6 +29,9 @@ class StateTransmit
 	private Q_SLOTS:
 		friend class ::test_StateTransmit;
 		void onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand);
+
+	public:
+		void onEntry(QEvent* pEvent) override;
 };
 
 } // namespace governikus

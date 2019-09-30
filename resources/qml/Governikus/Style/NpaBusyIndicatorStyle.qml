@@ -1,8 +1,13 @@
+/*
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQml 2.2
 import QtGraphicalEffects 1.0
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
  Item {
 	property real factor: 1.1
@@ -44,7 +49,7 @@ import Governikus.Global 1.0
 		height: parent.height * factor
 		width: height
 		radius: width / 2
-		color: Constants.background_color
+		color: Style.color.background
 		opacity: 0
 
 		Behavior on opacity {
@@ -73,8 +78,8 @@ import Governikus.Global 1.0
 		{
 			GradientStop {color: Constants.green; position: 0.0}
 			GradientStop {color: Constants.green; position: 0.50}
-			GradientStop {color: "transparent"; position: 0.5000000000000001}
-			GradientStop {color: "transparent"; position: 1.0}
+			GradientStop {color: Style.color.transparent; position: 0.5000000000000001}
+			GradientStop {color: Style.color.transparent; position: 1.0}
 		}
 		Behavior on rotation {
 			NumberAnimation { duration: timer.interval; easing.type: Easing.InOutQuad }
@@ -89,8 +94,8 @@ import Governikus.Global 1.0
 		opacity: rect.opacity
 		gradient: Gradient
 		{
-			GradientStop {color: "transparent"; position: 0.0}
-			GradientStop {color: "transparent"; position: 0.50}
+			GradientStop {color: Style.color.transparent; position: 0.0}
+			GradientStop {color: Style.color.transparent; position: 0.50}
 			GradientStop {color: rect.color; position: 0.5000000000000001}
 			GradientStop {color: Constants.blue; position: 1.0}
 		}

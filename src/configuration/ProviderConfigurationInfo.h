@@ -122,6 +122,7 @@ class ProviderConfigurationInfo
 		void setTcTokenUrl(const QString& pTcTokenUrl);
 
 		bool operator ==(const ProviderConfigurationInfo& pOther) const;
+		bool matchWithSubjectUrl(const QString& pSubjectUrl) const;
 
 		const LanguageString& getShortName() const;
 		const LanguageString& getLongName() const;

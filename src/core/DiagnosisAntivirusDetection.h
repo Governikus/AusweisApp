@@ -11,6 +11,8 @@
 #include <QSharedPointer>
 
 class test_DiagnosisAntivirusDetection;
+class test_DiagnosisTreeModel;
+class test_DiagnosisModel;
 
 namespace governikus
 {
@@ -52,6 +54,8 @@ class DiagnosisAntivirusDetection
 
 	private:
 		friend class ::test_DiagnosisAntivirusDetection;
+		friend class ::test_DiagnosisTreeModel;
+		friend class ::test_DiagnosisModel;
 
 #if defined(Q_OS_WIN)
 		QSharedPointer<QProcess> mProcess;

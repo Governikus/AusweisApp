@@ -4,6 +4,8 @@
 
 #include "UnblockPinCommand.h"
 
+#include "ResetRetryCounterBuilder.h"
+
 using namespace governikus;
 
 
@@ -29,8 +31,7 @@ void UnblockPinCommand::internalExecute()
 		return;
 	}
 
-	EstablishPaceChannelOutput output;
-	mReturnCode = mCardConnectionWorker->establishPaceChannel(PacePasswordId::PACE_PUK, mPuk, output);
+	mReturnCode = mCardConnectionWorker->establishPaceChannel(PacePasswordId::PACE_PUK, mPuk).getPaceReturnCode();
 	if (mReturnCode != CardReturnCode::OK)
 	{
 		return;

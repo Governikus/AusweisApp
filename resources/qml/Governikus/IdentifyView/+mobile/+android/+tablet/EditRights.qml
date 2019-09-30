@@ -1,19 +1,28 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.Provider 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.AuthModel 1.0
+import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.NumberModel 1.0
+
 
 SectionPage {
 	id: root
 
-	leftTitleBarAction: TitleBarAction {
+	navigationAction: NavigationAction {
 			state: "cancel"
 			onClicked: AuthModel.cancelWorkflow()
 		}
-	headerTitleBarAction: TitleBarAction { text: qsTr("Identify") + settingsModel.translationTrigger; font.bold: true }
+	//: LABEL ANDROID_TABLET
+	title: qsTr("Identify") + SettingsModel.translationTrigger
 
 	content: Column {
 		width: baseItem.width
@@ -23,12 +32,11 @@ SectionPage {
 			width: parent.width - 2 * Constants.pane_padding
 			spacing: Constants.pane_spacing
 
-			Text {
-				color: Constants.secondary_text
-				font.pixelSize: Constants.normal_font_size
+			GText {
 				width: parent.width
-				wrapMode: Text.WordWrap
-				text: qsTr("You are about to identify yourself towards the following service provider:") + settingsModel.translationTrigger
+
+				//: LABEL ANDROID_TABLET
+				text: qsTr("You are about to identify yourself towards the following service provider:") + SettingsModel.translationTrigger
 			}
 
 			Pane {
@@ -51,12 +59,14 @@ SectionPage {
 
 							ProviderInfoSection {
 								imageSource: "qrc:///images/provider/information.svg"
-								title: qsTr("Service provider") + settingsModel.translationTrigger
+								//: LABEL ANDROID_TABLET
+								title: qsTr("Service provider") + SettingsModel.translationTrigger
 								name: certificateDescriptionModel.subjectName
 							}
 							ProviderInfoSection {
 								imageSource: "qrc:///images/provider/purpose.svg"
-								title: qsTr("Purpose for reading out requested data") + settingsModel.translationTrigger
+								//: LABEL ANDROID_TABLET
+								title: qsTr("Purpose for reading out requested data") + SettingsModel.translationTrigger
 								name: certificateDescriptionModel.purpose
 							}
 						}
@@ -83,7 +93,8 @@ SectionPage {
 							iconSource: "qrc:///images/npa.svg"
 							anchors.horizontalCenter: parent.horizontalCenter
 							anchors.verticalCenter: parent.verticalCenter
-							text: qsTr("Identify now") + settingsModel.translationTrigger
+							//: LABEL ANDROID_TABLET %1 can be CAN or PIN
+							text: qsTr("Proceed to %1 entry").arg(NumberModel.isCanAllowedMode ? "CAN" : "PIN") + SettingsModel.translationTrigger
 							onClicked: {
 								chatModel.transferAccessRights()
 								AuthModel.continueWorkflow()
@@ -93,19 +104,18 @@ SectionPage {
 				}
 			}
 
-			Text {
-				color: Constants.secondary_text
-				font.pixelSize: Constants.normal_font_size
+			GText {
 				width: parent.width
-				wrapMode: Text.WordWrap
-				text: qsTr("The following data will be transferred to the service provider when you enter the PIN:") + settingsModel.translationTrigger
+
+				//: LABEL ANDROID_TABLET
+				text: qsTr("The following data will be transferred to the service provider when you enter the PIN:") + SettingsModel.translationTrigger
 			}
 
 			Pane {
 				Column {
 					height: childrenRect.height
 					width: parent.width
-					spacing: Utils.dp(30)
+					spacing: 30
 
 					Column {
 						id: transactionInfo
@@ -116,17 +126,17 @@ SectionPage {
 						PaneTitle {
 							height: implicitHeight * 1.5
 							verticalAlignment: Text.AlignTop
-							text: qsTr("Transactional information") + settingsModel.translationTrigger
+							//: LABEL ANDROID_TABLET
+							text: qsTr("Transactional information") + SettingsModel.translationTrigger
 						}
 
-						Text {
+						GText {
 							id: transactionInfoText
-							color: Constants.secondary_text
 
 							width: parent.width
-							font.pixelSize: Constants.normal_font_size
+
 							text: AuthModel.transactionInfo
-							wrapMode: Text.WordWrap
+							textStyle: Style.text.normal_secondary
 						}
 					}
 
@@ -138,7 +148,8 @@ SectionPage {
 							id: requiredData
 							width: optionalData.visible ? parent.width * 0.63 : parent.width
 
-							title: qsTr("Required Data") + settingsModel.translationTrigger
+							//: LABEL ANDROID_TABLET
+							title: qsTr("Required Data") + SettingsModel.translationTrigger
 							columns: optionalData.visible ? 2 : 3
 							chat: chatModel.required
 						}
@@ -147,7 +158,8 @@ SectionPage {
 							id: optionalData
 							width: parent.width * 0.37 - Constants.pane_spacing
 
-							title: qsTr("Optional Data") + settingsModel.translationTrigger
+							//: LABEL ANDROID_TABLET
+							title: qsTr("Optional Data") + SettingsModel.translationTrigger
 							chat: chatModel.optional
 						}
 					}

@@ -44,6 +44,11 @@ namespace governikus
 	inline bool operator!=(std::underlying_type<enumName>::type pType, enumName pName)\
 	{\
 		return !(pType == pName);\
+	}\
+\
+	inline uint qHash(enumName pKey, uint pSeed)\
+	{\
+		return ::qHash(static_cast<std::underlying_type<enumName>::type>(pKey), pSeed);\
 	}
 
 
@@ -77,7 +82,7 @@ template<typename EnumTypeT> class Enum
 	using EnumBaseTypeT = typename std::underlying_type<EnumTypeT>::type;
 
 	private:
-		Enum();
+		Enum() = delete;
 		Q_DISABLE_COPY(Enum)
 
 	public:
@@ -96,7 +101,7 @@ template<typename EnumTypeT> class Enum
 		static QLatin1String getName(EnumTypeT pType)
 		{
 			const int value = static_cast<int>(pType);
-			const char* name = getQtEnumMetaEnum().valueToKey(value);
+			const char* const name = getQtEnumMetaEnum().valueToKey(value);
 			if (Q_UNLIKELY(name == nullptr))
 			{
 				qCritical().noquote().nospace() << "CRITICAL CONVERSION MISMATCH: UNKNOWN 0x" << QString::number(value, 16);
@@ -113,23 +118,22 @@ template<typename EnumTypeT> class Enum
 		}
 
 
-		static const QVector<EnumTypeT>& getList()
+		static QVector<EnumTypeT> getList()
 		{
-			static QVector<EnumTypeT> list;
-			if (list.isEmpty())
+			QVector<EnumTypeT> list;
+
+			const QMetaEnum metaEnum = getQtEnumMetaEnum();
+			list.reserve(metaEnum.keyCount());
+			for (int i = 0; i < metaEnum.keyCount(); ++i)
 			{
-				const QMetaEnum metaEnum = getQtEnumMetaEnum();
-				list.reserve(metaEnum.keyCount());
-				for (int i = 0; i < metaEnum.keyCount(); ++i)
-				{
-					list << static_cast<EnumTypeT>(metaEnum.value(i));
-				}
+				list << static_cast<EnumTypeT>(metaEnum.value(i));
 			}
+
 			return list;
 		}
 
 
-		static EnumTypeT fromString(const char* pValue, EnumTypeT pDefault)
+		static EnumTypeT fromString(const char* const pValue, EnumTypeT pDefault)
 		{
 			bool ok = false;
 			int key = getQtEnumMetaEnum().keyToValue(pValue, &ok);

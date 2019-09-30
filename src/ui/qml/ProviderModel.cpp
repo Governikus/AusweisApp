@@ -14,10 +14,12 @@ QString ProviderModel::createCostString(double pCostsPerMinute, double pCostsPer
 {
 	if (pCostsPerMinute > 0.0)
 	{
+		//: INFO ALL_PLATFORMS Unit for expenses for calling the hotline (per minute).
 		return tr("%1/min").arg(createAmountString(pCostsPerMinute));
 	}
 	if (pCostsPerCall > 0.0)
 	{
+		//: INFO ALL_PLATFORMS Unit for expenses for calling the hotline (per call).
 		return tr("%1/call").arg(createAmountString(pCostsPerCall));
 	}
 	return QString();
@@ -26,6 +28,7 @@ QString ProviderModel::createCostString(double pCostsPerMinute, double pCostsPer
 
 QString ProviderModel::createAmountString(double pCents)
 {
+	//: INFO ALL_PLATFORMS Currency unit for expenses for calling the hotline (Euro/Cent).
 	return pCents > 100 ? tr("%1 EUR").arg(pCents / 100.0) : tr("%1 ct").arg(pCents);
 }
 
@@ -192,6 +195,13 @@ QHash<int, QByteArray> ProviderModel::roleNames() const
 }
 
 
+const QSet<QString>& ProviderModel::getProviderCategories()
+{
+	static QSet<QString> cats({QStringLiteral("citizen"), QStringLiteral("insurance"), QStringLiteral("finance"), QStringLiteral("other")});
+	return cats;
+}
+
+
 QString ProviderModel::createCostString(const CallCost& pCosts)
 {
 	if (pCosts.isNull())
@@ -202,10 +212,13 @@ QString ProviderModel::createCostString(const CallCost& pCosts)
 	QString msg;
 	if (pCosts.getFreeSeconds() > 0)
 	{
+		//: INFO ALL_PLATFORMS Free of charge seconds when calling the hotline.
 		msg += tr("%1 seconds free, afterwards ").arg(pCosts.getFreeSeconds());
 	}
+	//: INFO ALL_PLATFORMS Land line charges when calling the hotline.
 	msg += tr("landline costs %1; ").arg(createCostString(pCosts.getLandlineCentsPerMinute(), pCosts.getLandlineCentsPerCall()));
 	const auto mobileCosts = createCostString(pCosts.getMobileCentsPerMinute(), pCosts.getMobileCentsPerCall());
+	//: INFO ALL_PLATFORMS Cell phone charges when calling the hotline.
 	msg += mobileCosts.isEmpty() ? tr("mobile costs may vary.") : tr("mobile costs %1").arg(mobileCosts);
 	return msg;
 }

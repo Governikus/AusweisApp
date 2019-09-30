@@ -1,17 +1,22 @@
+/*
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.AuthModel 1.0
+import Governikus.Type.NumberModel 1.0
+import Governikus.Type.CardReturnCode 1.0
 
-SectionPage {
+Controller {
 	enum WorkflowStates {
 		Initial,
 		Reader,
 		Card,
 		Update,
-		Can,
-		Pin,
+		Password,
 		Processing
 	}
 
@@ -20,7 +25,6 @@ SectionPage {
 
 	property bool connectedToCard: false
 	property int workflowState: 0
-	property int workflowProgressValue: 0
 	property bool workflowProgressVisible: false
 
 	states: [
@@ -47,22 +51,22 @@ SectionPage {
 		target: AuthModel
 		onFireCurrentStateChanged: processStateChange()
 		// This is necessary because onCurrentStateChanged is not
-		// working, when we need to process a state a second time
+		// working, when we need to process a state a second time.
 	}
 
 	function showRemoveCardFeedback() {
 		if (controller.connectedToCard) {
 			controller.connectedToCard = false
-			qmlExtension.showFeedback(qsTr("You may now remove your ID card from the device."))
+			//: INFO DESKTOP_QML The authentication process is completed, the id card may be removed from the card reader.
+			ApplicationModel.showFeedback(qsTr("You may now remove your ID card from the device."))
 		}
 	}
 
 	function processStateChange() {
 		switch (AuthModel.currentState) {
-			case "":
+			case "Initial":
 				break;
 			case "StateGetTcToken":
-				// enterPinView.state = "INITIAL"
 				controller.workflowState = IdentifyController.WorkflowStates.Initial
 				break
 			case "StateEditAccessRights":
@@ -77,57 +81,50 @@ SectionPage {
 				setIdentifyWorkflowStateAndContinue(IdentifyController.WorkflowStates.Card)
 				break
 			case "StateHandleRetryCounter":
-				controller.nextView(IdentifyView.SubViews.Progress)
 				setIdentifyWorkflowStateAndContinue(IdentifyController.WorkflowStates.Update)
 				break
-			case "StateEstablishPaceCan":
-				setIdentifyWorkflowStateAndRequestInput(IdentifyController.WorkflowStates.Can, "CAN")
+			case "StateEnterPacePassword":
+				controller.workflowState = IdentifyController.WorkflowStates.Password
+				if (AuthModel.isBasicReader) {
+					controller.nextView(IdentifyView.SubViews.Password)
+				} else {
+					AuthModel.continueWorkflow()
+				}
 				break
-			case "StateEstablishPacePin":
-				setIdentifyWorkflowStateAndRequestInput(IdentifyController.WorkflowStates.Pin, "PIN")
+			case "StateUnfortunateCardPosition":
+				controller.nextView(IdentifyView.SubViews.CardPosition)
 				break
-			case "StateDidAuthenticateEac1":
-				controller.workflowProgressVisible = true
-				controller.workflowProgressValue = 1
+			case "StateSendDIDAuthenticateResponseEAC1":
+				controller.nextView(IdentifyView.SubViews.Progress)
+				if (NumberModel.inputErrorCode == CardReturnCode.OK) {
+					controller.workflowProgressVisible = true
+				}
 				setIdentifyWorkflowStateAndContinue(IdentifyController.WorkflowStates.Processing)
-				break
-			case "StateEstablishPacePuk":
-				AuthModel.cancelWorkflowOnPinBlocked()
-				break
-			case "StateDidAuthenticateEac2":
-				controller.workflowProgressValue = 2
-				AuthModel.continueWorkflow()
-				break
-			case "StateTransmit":
-				controller.workflowProgressValue = 3
-				AuthModel.continueWorkflow()
 				break
 			case "StateCleanUpReaderManager":
 				controller.connectedToCard = AuthModel.selectedReaderHasCard() && !AuthModel.isError;
 				AuthModel.continueWorkflow()
 				break;
-			case "StateCheckRefreshAddress":
-				controller.workflowProgressValue = 4
-				AuthModel.continueWorkflow()
-				break
 			case "StateWriteHistory":
 				showRemoveCardFeedback()
-				controller.workflowProgressValue = 5
 				AuthModel.continueWorkflow()
-				break
-			case "StateShowSelfInfo":
-				controller.nextView(IdentifyView.SubViews.Data)
 				break
 			case "FinalState":
 				if (AuthModel.error) {
-					showRemoveCardFeedback()
-					controller.nextView(IdentifyView.SubViews.Result)
+					if (AuthModel.shouldSkipResultView()) {
+						controller.nextView(IdentifyView.SubViews.ReturnToMain)
+						AuthModel.continueWorkflow()
+					} else {
+						showRemoveCardFeedback()
+						controller.nextView(IdentifyView.SubViews.Result)
+					}
+				} else if (ApplicationModel.currentWorkflow === "selfauthentication") {
+					controller.nextView(IdentifyView.SubViews.Data)
 				} else {
-					AuthModel.continueWorkflow()
 					controller.nextView(IdentifyView.SubViews.ReturnToMain)
+					AuthModel.continueWorkflow()
 				}
 				controller.workflowProgressVisible = false
-				controller.workflowProgressValue = 0
 				break
 			default:
 				AuthModel.continueWorkflow()
@@ -137,15 +134,5 @@ SectionPage {
 	function setIdentifyWorkflowStateAndContinue(pState) {
 		controller.workflowState = pState
 		AuthModel.continueWorkflow()
-	}
-
-	function setIdentifyWorkflowStateAndRequestInput(pState, pInput) {
-		controller.workflowState = pState
-		if (AuthModel.isBasicReader) {
-			// enterPinView.state = pInput
-			controller.nextView(IdentifyView.SubViews.Password)
-		} else {
-			AuthModel.continueWorkflow()
-		}
 	}
 }

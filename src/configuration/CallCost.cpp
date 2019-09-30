@@ -12,7 +12,7 @@ using namespace governikus;
 
 namespace
 {
-inline double getValue(const QJsonValue& pJson, const char* pSection, const char* pSubSection)
+inline double getValue(const QJsonValue& pJson, const char* const pSection, const char* const pSubSection)
 {
 	return pJson.toObject()[QLatin1String(pSection)].toObject()[QLatin1String(pSubSection)].toDouble();
 }

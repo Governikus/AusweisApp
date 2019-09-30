@@ -5,14 +5,15 @@
 #include "CompositeStatePace.h"
 
 #include "context/WorkflowContext.h"
-#include "states/CompositeStateSelectCard.h"
 #include "states/StateBuilder.h"
 #include "states/StateClearPacePasswords.h"
+#include "states/StateConnectCard.h"
 #include "states/StateDestroyPace.h"
 #include "states/StateEnterPacePassword.h"
 #include "states/StateEstablishPaceChannel.h"
 #include "states/StateMaintainCardConnection.h"
 #include "states/StatePreparePace.h"
+#include "states/StateSelectReader.h"
 #include "states/StateUnfortunateCardPosition.h"
 #include "states/StateUpdateRetryCounter.h"
 #include "states/StateVerifyRetryCounter.h"
@@ -26,7 +27,8 @@ CompositeStatePace::CompositeStatePace(const QSharedPointer<WorkflowContext>& pC
 {
 	auto sMaintainCardConnection = StateBuilder::createState<StateMaintainCardConnection>(mContext);
 	auto sClearPacePasswordsOnError = StateBuilder::createState<StateClearPacePasswords>(mContext);
-	auto sSelectCard = new CompositeStateSelectCard(pContext);
+	auto sSelectReader = StateBuilder::createState<StateSelectReader>(mContext);
+	auto sConnectCard = StateBuilder::createState<StateConnectCard>(mContext);
 	auto sUpdateRetryCounter = StateBuilder::createState<StateUpdateRetryCounter>(mContext);
 	auto sVerifyRetryCounter = StateBuilder::createState<StateVerifyRetryCounter>(mContext);
 	auto sPreparePace = StateBuilder::createState<StatePreparePace>(mContext);
@@ -38,7 +40,8 @@ CompositeStatePace::CompositeStatePace(const QSharedPointer<WorkflowContext>& pC
 
 	sMaintainCardConnection->setParent(this);
 	sClearPacePasswordsOnError->setParent(this);
-	sSelectCard->setParent(this);
+	sSelectReader->setParent(this);
+	sConnectCard->setParent(this);
 	sUpdateRetryCounter->setParent(this);
 	sVerifyRetryCounter->setParent(this);
 	sPreparePace->setParent(this);
@@ -51,15 +54,20 @@ CompositeStatePace::CompositeStatePace(const QSharedPointer<WorkflowContext>& pC
 	setInitialState(sMaintainCardConnection);
 
 	sMaintainCardConnection->addTransition(sMaintainCardConnection, &StateMaintainCardConnection::fireContinue, sVerifyRetryCounter);
-	sMaintainCardConnection->addTransition(sMaintainCardConnection, &StateMaintainCardConnection::fireNoCardConnection, sSelectCard);
+	sMaintainCardConnection->addTransition(sMaintainCardConnection, &StateMaintainCardConnection::fireNoCardConnection, sSelectReader);
 	sMaintainCardConnection->addTransition(sMaintainCardConnection, &StateMaintainCardConnection::fireForceUpdateRetryCounter, sUpdateRetryCounter);
 	sMaintainCardConnection->addTransition(sMaintainCardConnection, &StateMaintainCardConnection::fireAbort, sClearPacePasswordsOnError);
 
 	connect(sClearPacePasswordsOnError, &AbstractState::fireContinue, this, &CompositeStatePace::fireAbort);
 	connect(sClearPacePasswordsOnError, &AbstractState::fireAbort, this, &CompositeStatePace::fireAbort);
 
-	sSelectCard->addTransition(sSelectCard, &CompositeStateSelectCard::fireContinue, sUpdateRetryCounter);
-	sSelectCard->addTransition(sSelectCard, &CompositeStateSelectCard::fireAbort, sMaintainCardConnection);
+	sSelectReader->addTransition(sSelectReader, &StateSelectReader::fireRetry, sSelectReader);
+	sSelectReader->addTransition(sSelectReader, &AbstractState::fireContinue, sConnectCard);
+	sSelectReader->addTransition(sSelectReader, &AbstractState::fireAbort, sMaintainCardConnection);
+
+	sConnectCard->addTransition(sConnectCard, &StateConnectCard::fireRetry, sSelectReader);
+	sConnectCard->addTransition(sConnectCard, &AbstractState::fireContinue, sUpdateRetryCounter);
+	sConnectCard->addTransition(sConnectCard, &AbstractState::fireAbort, sMaintainCardConnection);
 
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireContinue, sVerifyRetryCounter);
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireAbort, sMaintainCardConnection);

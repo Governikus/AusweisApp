@@ -1,46 +1,60 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtGraphicalEffects 1.0
 
 import "Utils.js" as Utils
 
+import Governikus.Style 1.0
+
 /* Custom implementation to be replaced with template specialization of Qt.labs.controls Button*/
 Rectangle {
 	id: rect
 	property alias text: textItem.text
-	property color buttonColor : Constants.blue
+	property var textStyle: enabled ? Style.text.button : Style.text.button_disabled
+	property color buttonColor : Style.color.accent
 	property int maxWidth: 0
-	property int preferedWidth: Math.max(textItem.implicitWidth + (icon.visible ? (icon.width + icon.anchors.leftMargin) : 0) + (2 * Utils.dp(16)), Utils.dp(88))
+	property int preferedWidth: Math.max(textItem.implicitWidth + (icon.visible ? (icon.width + icon.anchors.leftMargin) : 0) + (2 * 16), 88)
 	property alias iconSource: icon.source
 	property bool animationsDisabled: false
 
 	signal clicked
 
-	color: enabled ? buttonColor : "#10000000"
-	height: Constants.button_height
+	Accessible.role: Accessible.Button
+	Accessible.name: text
+	Accessible.onPressAction: clicked()
+
+	color: enabled ? buttonColor : Style.color.accent_disabled
+	height: Style.dimens.button_height
 	width: maxWidth > 0 ? Math.min(maxWidth, preferedWidth) : preferedWidth
 	clip: true
+	radius: Style.dimens.button_radius
 
 	Image {
 		id: icon
 		visible: source.toString().length > 0
-		height: rect.height - Utils.dp(10)
+		height: rect.height - 10
 		width: height
 		anchors.left: rect.left
-		anchors.leftMargin: Utils.dp(5)
+		anchors.leftMargin: 5
 		anchors.verticalCenter: rect.verticalCenter
 	}
 
-	Text {
+	GText {
 		id: textItem
+
 		anchors.left: rect.left
 		anchors.right: rect.right
 		anchors.verticalCenter: rect.verticalCenter
-		color: enabled ? "white" : "#40000000"
 		horizontalAlignment: Text.AlignHCenter
+
+		Accessible.ignored: true
+
 		opacity: mouseArea.containsMouse ? 0.5 : 1
 		anchors.leftMargin: icon.visible ? icon.width + icon.anchors.leftMargin : 0
-		font.pixelSize: Utils.dp(16)
-		font.bold: true
+		textStyle: rect.textStyle
 	}
 
 	MouseArea{

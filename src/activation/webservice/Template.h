@@ -31,7 +31,7 @@ class Template
 		/*!
 		 * \brief Construct the template \a pTemplate
 		 */
-		Template(const QString& pTemplate);
+		explicit Template(const QString& pTemplate);
 
 		/*!
 		 * \brief Get template context keys, i.e. the possible keys

@@ -1,10 +1,22 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
+import QtGraphicalEffects 1.0
 
-Rectangle {
+
+Item {
 	id: baseItem
-	height: Math.max(backToMenu.height, quitTutorial.height)
+
+	property alias color: colorOverlay.color
+	property alias shaderSource: effectSource.sourceItem
+
+	height: plugin.safeAreaMargins.bottom + Math.max(backToMenu.height, quitTutorial.height)
 
 	property alias backRotation: leftArrow.rotation
 	property alias backText: menuText.text
@@ -13,6 +25,7 @@ Rectangle {
 	signal menuClicked()
 	signal quitTutorialClicked()
 
+	state: "showOnlyQuit"
 	states: [
 		State { name: "showBothOptions"; when: baseItem.backToMenuActive
 			PropertyChanges { target: backToMenu; opacity: 1 }
@@ -31,13 +44,45 @@ Rectangle {
 			AnchorAnimation { duration: 500; easing.type: Easing.InOutQuad }
 		}
 	]
+	onVisibleChanged: if (visible) {
+		// When the user quits the tutorial on iOS while we're in the "showBothOptions" state, the
+		// animation will finish when the MoreView is already active. This results in quitTutorial
+		// being wrongly positioned the next time the users enters the tutorial. The following lines
+		// work around this issue:
+		if (state === "showOnlyQuit") {
+			quitTutorial.anchors.horizontalCenter = baseItem.horizontalCenter
+		}
+	}
+
+	ShaderEffectSource {
+		id: effectSource
+
+		anchors.fill: parent
+		sourceRect: Qt.rect(baseItem.x, baseItem.y, baseItem.width, baseItem.height)
+	}
+	FastBlur {
+		anchors.fill: effectSource
+		source: effectSource
+		radius: 32
+	}
+	ColorOverlay {
+		id: colorOverlay
+
+		anchors.fill: parent
+		color: footer.color
+		Behavior on color { ColorAnimation { duration: Constants.animation_duration } }
+		opacity: 0.7
+	}
 
 	Item {
 		id: backToMenu
 		anchors.left: parent.left
-		anchors.verticalCenter: parent.verticalCenter
+		anchors.top: parent.top
 		height: menuRow.height + 2 * Constants.component_spacing
 		width: menuRow.width
+
+		Accessible.name: menuText.text
+		Accessible.onPressAction: if (Qt.platform.os === "ios") baseItem.menuClicked()
 
 		MouseArea {
 			anchors.fill: parent
@@ -64,13 +109,16 @@ Rectangle {
 				fillMode: Image.PreserveAspectFit
 			}
 
-			Text {
+			GText {
 				id: menuText
+
 				anchors.verticalCenter: parent.verticalCenter
-				text: qsTr("Fold in") + settingsModel.translationTrigger
-				font.family: "Noto Serif"
-				font.pixelSize: Constants.tutorial_content_font_size
-				color: Constants.white
+
+				Accessible.ignored: true
+
+				//: LABEL ANDROID IOS
+				text: qsTr("Fold in") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal_inverse
 			}
 		}
 	}
@@ -79,7 +127,10 @@ Rectangle {
 		id: quitTutorial
 		height: quitRow.height + 2 * Constants.component_spacing
 		width: quitRow.width
-		anchors.verticalCenter: parent.verticalCenter
+		anchors.top: parent.top
+
+		Accessible.name: quitText.text
+		Accessible.onPressAction: if (Qt.platform.os === "ios") baseItem.quitTutorialClicked()
 
 		MouseArea {
 			anchors.fill: parent
@@ -97,13 +148,16 @@ Rectangle {
 			padding: Constants.component_spacing
 			spacing: Constants.component_spacing
 
-			Text {
+			GText {
 				id: quitText
+
 				anchors.verticalCenter: parent.verticalCenter
-				text: qsTr("Quit tutorial") + settingsModel.translationTrigger
-				font.family: "Noto Serif"
-				font.pixelSize: Constants.tutorial_content_font_size
-				color: Constants.white
+
+				Accessible.ignored: true
+
+				//: LABEL ANDROID IOS
+				text: qsTr("Quit tutorial") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal_inverse
 			}
 
 			Image {

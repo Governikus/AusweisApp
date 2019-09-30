@@ -38,7 +38,6 @@ Q_DECLARE_LOGGING_CATEGORY(gui)
 AppQtGui::AppQtGui()
 	: QObject()
 	, mMainWidget(new AppQtMainWidget())
-	, mIcon(QStringLiteral(":/images/npa.svg"))
 	, mTrayIcon()
 	, mActiveWorkflowUi()
 	, mSetupAssistantGui(nullptr)
@@ -46,13 +45,15 @@ AppQtGui::AppQtGui()
 	, mUpdateInfo(new QMessageBox(mMainWidget))
 	, mCertificateInfo(new QMessageBox(mMainWidget))
 	, mLockedInfo(new QMessageBox(mMainWidget))
+	, mSwitchUiInquiry(new QMessageBox(mMainWidget))
 	, mUpdateWindow(new UpdateWindow(mMainWidget))
 	, mAggressiveToForeground(false)
 {
 	loadStyleSheet();
 
-	mMainWidget->setWindowIcon(mIcon);
+	mMainWidget->setWindowIcon(mTrayIcon.getIcon());
 	connect(mMainWidget, &AppQtMainWidget::fireCloseActiveDialogs, this, &AppQtGui::onCloseActiveDialogs);
+	connect(mMainWidget, &AppQtMainWidget::fireSwitchUiRequested, this, &AppQtGui::onSwitchUiRequested);
 
 	connect(&mTrayIcon, &TrayIcon::fireShow, this, [this] {
 				AppQtGui::show();
@@ -60,7 +61,7 @@ AppQtGui::AppQtGui()
 	connect(&mTrayIcon, &TrayIcon::fireQuit, this, &AppQtGui::quitApplicationRequested);
 
 	mUpdateInfo->setWindowTitle(QApplication::applicationName() + QStringLiteral(" - ") + tr("Updates"));
-	mUpdateInfo->setWindowIcon(mIcon);
+	mUpdateInfo->setWindowIcon(mTrayIcon.getIcon());
 	mUpdateInfo->setWindowModality(Qt::WindowModal);
 	mUpdateInfo->setStandardButtons(QMessageBox::Ok);
 	mUpdateInfo->button(QMessageBox::Ok)->setFocus();
@@ -81,13 +82,19 @@ AppQtGui::AppQtGui()
 
 	mLockedInfo->setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("SDK"));
 	mLockedInfo->setWindowFlags(mLockedInfo->windowFlags() & ~Qt::WindowCloseButtonHint& ~Qt::WindowContextHelpButtonHint& ~Qt::WindowMinMaxButtonsHint);
-	mLockedInfo->setWindowIcon(mIcon);
+	mLockedInfo->setWindowIcon(mTrayIcon.getIcon());
 	mLockedInfo->setWindowModality(Qt::WindowModal);
 	mLockedInfo->setIcon(QMessageBox::Information);
 	mLockedInfo->setText(tr("Another application uses AusweisApp2."));
 	mLockedInfo->setStandardButtons(QMessageBox::NoButton);
 
-	Service* service = Env::getSingleton<Service>();
+	mSwitchUiInquiry->setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Switch UI"));
+	mSwitchUiInquiry->setIcon(QMessageBox::Information);
+	mSwitchUiInquiry->setText(tr("Do you want to switch to the new beta UI? You can switch back to the old UI in \"Settings\"."));
+	mSwitchUiInquiry->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	mSwitchUiInquiry->button(QMessageBox::Yes)->setFocus();
+
+	auto* service = Env::getSingleton<Service>();
 	connect(service, &Service::fireAppUpdateFinished, this, &AppQtGui::onAppUpdateReady);
 	connect(service, &Service::fireUpdateScheduled, this, &AppQtGui::onUpdateScheduled);
 }
@@ -222,7 +229,7 @@ void AppQtGui::onSetupAssistantWizardRequest()
 {
 	Env::getSingleton<Service>()->runUpdateIfNeeded();
 
-	if (!mSetupAssistantGui)
+	if (mSetupAssistantGui == nullptr)
 	{
 		mSetupAssistantGui = new SetupAssistantGui(mMainWidget);
 		connect(mSetupAssistantGui, &SetupAssistantGui::fireChangePinButtonClicked, mMainWidget, &AppQtMainWidget::onChangePinButtonClicked);
@@ -264,7 +271,7 @@ void AppQtGui::onDeveloperModeQuestion()
 
 void AppQtGui::onDiagnosisRequested()
 {
-	if (!mDiagnosisGui)
+	if (mDiagnosisGui == nullptr)
 	{
 		mDiagnosisGui = new DiagnosisGui(mMainWidget);
 	}
@@ -309,7 +316,7 @@ bool AppQtGui::eventFilter(QObject* /*pObject*/, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
-		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(pEvent);
+		auto* keyEvent = static_cast<QKeyEvent*>(pEvent);
 		if (keyEvent->key() == Qt::Key_F1)
 		{
 			HelpAction::openContextHelp();
@@ -365,6 +372,10 @@ void AppQtGui::closeDialogs()
 	{
 		mDiagnosisGui->deactivate();
 	}
+	if (mSwitchUiInquiry)
+	{
+		mSwitchUiInquiry->reject();
+	}
 }
 
 
@@ -407,6 +418,21 @@ void AppQtGui::onCloseWindowRequested(bool* pDoClose)
 	{
 		PlatformTools::hideFromTaskbar();
 	}
+}
+
+
+void AppQtGui::onSwitchUiRequested()
+{
+	if (mSwitchUiInquiry->exec() != QMessageBox::Yes)
+	{
+		return;
+	}
+
+	auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	generalSettings.setSelectedUi(QStringLiteral("qml"));
+	generalSettings.save();
+
+	Q_EMIT fireRestartApplicationRequested();
 }
 
 
@@ -571,7 +597,7 @@ void AppQtGui::onUpdateScheduled()
 }
 
 
-void AppQtGui::onCertificateRemoved(QString pDeviceName)
+void AppQtGui::onCertificateRemoved(const QString& pDeviceName)
 {
 	mCertificateInfo->setText(tr("The device \"%1\" was unpaired because it does not react to connection attempts. Retry the pairing process if you want to use this device to authenticate yourself.").arg(pDeviceName));
 	mCertificateInfo->show();

@@ -8,6 +8,7 @@
 
 #include "MockCardConnectionWorker.h"
 #include "MockReader.h"
+#include "TestFileHelper.h"
 
 #include <QtTest>
 
@@ -19,80 +20,106 @@ class test_Reader
 	: public QObject
 {
 	Q_OBJECT
+	QSharedPointer<MockReader> mReader;
+	QString mReaderName = QString("test reader");
+	QSharedPointer<MockCardConnectionWorker> mWorker;
 
 	private Q_SLOTS:
+		void init()
+		{
+			mReader.reset(new MockReader(mReaderName));
+			mWorker.reset(new MockCardConnectionWorker(mReader.data()));
+		}
+
+
+		void cleanup()
+		{
+			mReader.clear();
+			mWorker.clear();
+		}
+
+
 		void test_CreateCardConnectionWorkerNoCard()
 		{
-			const QString name = QStringLiteral("name");
-			MockReader reader(name);
-
 			QTest::ignoreMessage(QtWarningMsg, "No card available");
-			QCOMPARE(reader.createCardConnectionWorker(), QSharedPointer<CardConnectionWorker>());
+			QCOMPARE(mReader->createCardConnectionWorker(), QSharedPointer<CardConnectionWorker>());
 		}
 
 
 		void test_CreateCardConnectionWorkerConnected()
 		{
-			const QString name = QStringLiteral("name");
-			MockReader reader(name);
-			MockCard* card = reader.setCard(MockCardConfig(), QSharedPointer<EFCardAccess>());
+			MockCard* card = mReader->setCard(MockCardConfig(), QSharedPointer<EFCardAccess>());
 			card->setConnected(true);
 
 			QTest::ignoreMessage(QtWarningMsg, "Card is already connected");
-			QCOMPARE(reader.createCardConnectionWorker(), QSharedPointer<CardConnectionWorker>());
+			QCOMPARE(mReader->createCardConnectionWorker(), QSharedPointer<CardConnectionWorker>());
 		}
 
 
 		void test_UpdateRetryCounterCommandFailed()
 		{
-			const QString name = QStringLiteral("name");
-			MockReader reader(name);
 			CardInfo cInfo(CardType::UNKNOWN, QSharedPointer<const EFCardAccess>(), 3, false, false);
-			ReaderInfo rInfo(name, ReaderManagerPlugInType::UNKNOWN, cInfo);
-			reader.mReaderInfo = rInfo;
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-
-			QCOMPARE(reader.updateRetryCounter(worker), CardReturnCode::COMMAND_FAILED);
-		}
-
-
-		void test_GetRetryCounterNoEfCardAccess()
-		{
-			const QString name = QStringLiteral("name");
-			MockReader reader(name);
-			CardInfo cInfo(CardType::UNKNOWN, QSharedPointer<const EFCardAccess>(), 3, false, false);
-			ReaderInfo rInfo(name, ReaderManagerPlugInType::UNKNOWN, cInfo);
-			reader.mReaderInfo = rInfo;
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
+			mReader->setReaderInfo(rInfo);
 
 			QTest::ignoreMessage(QtCriticalMsg, "Cannot get EF.CardAccess");
-			int counter = 3;
-			bool deactivated = false;
-			QCOMPARE(reader.getRetryCounter(worker, counter, deactivated), CardReturnCode::COMMAND_FAILED);
+			QCOMPARE(mReader->updateRetryCounter(mWorker), CardReturnCode::COMMAND_FAILED);
 		}
 
 
-		void test_FireUpdateSignal()
+		void test_UpdateRetryCounterUnknown()
 		{
-			const QString name = QStringLiteral("name");
-			MockReader reader(name);
+			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"));
+			auto efCardAccess = EFCardAccess::decode(bytes);
+			CardInfo cInfo(CardType::UNKNOWN, efCardAccess, 3, false, false);
+			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
+			mReader->setReaderInfo(rInfo);
+			mWorker->addResponse(CardReturnCode::UNKNOWN);
+			QCOMPARE(mReader->updateRetryCounter(mWorker), CardReturnCode::UNKNOWN);
+		}
+
+
+		void test_UpdateRetryCounter_OK_RetryCounterChanged()
+		{
+			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"));
+			auto efCardAccess = EFCardAccess::decode(bytes);
+			CardInfo cInfo(CardType::UNKNOWN, efCardAccess, 2, true, false);
+			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
+			mReader->setReaderInfo(rInfo);
+			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			QSignalSpy spy(mReader.data(), &Reader::fireCardRetryCounterChanged);
+
+			QTest::ignoreMessage(QtDebugMsg, "StatusCode: SUCCESS");
+			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 2 , PIN deactivated: false");
+			QTest::ignoreMessage(QtDebugMsg, "fireCardRetryCounterChanged");
+			QCOMPARE(mReader->updateRetryCounter(mWorker), CardReturnCode::OK);
+			QCOMPARE(mReader->getReaderInfo().getRetryCounter(), 3);
+			QVERIFY(!mReader->getReaderInfo().isPinDeactivated());
+			QCOMPARE(spy.count(), 1);
+		}
+
+
+		void test_Update()
+		{
 			CardInfo cInfo(CardType::UNKNOWN, QSharedPointer<const EFCardAccess>(), 3, false, false);
-			ReaderInfo rInfo(name, ReaderManagerPlugInType::UNKNOWN, cInfo);
-			reader.mReaderInfo = rInfo;
+			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
+			mReader->setReaderInfo(rInfo);
 
-			QSignalSpy spyCardInserted(&reader, &Reader::fireCardInserted);
-			QSignalSpy spyCardRemoved(&reader, &Reader::fireCardRemoved);
+			QSignalSpy spyCardInserted(mReader.data(), &Reader::fireCardInserted);
+			QSignalSpy spyCardRemoved(mReader.data(), &Reader::fireCardRemoved);
 
-			reader.fireUpdateSignal(Reader::CardEvent::NONE);
+			mReader->update();
 			QCOMPARE(spyCardInserted.count(), 0);
 			QCOMPARE(spyCardRemoved.count(), 0);
 
+			mReader->setCardEvent(Reader::CardEvent::CARD_INSERTED);
 			QTest::ignoreMessage(QtInfoMsg, "Card inserted: {Type: UNKNOWN, Retry counter: 3, Pin deactivated: false}");
-			reader.fireUpdateSignal(Reader::CardEvent::CARD_INSERTED);
+			mReader->update();
 			QCOMPARE(spyCardInserted.count(), 1);
 
+			mReader->setCardEvent(Reader::CardEvent::CARD_REMOVED);
 			QTest::ignoreMessage(QtInfoMsg, "Card removed");
-			reader.fireUpdateSignal(Reader::CardEvent::CARD_REMOVED);
+			mReader->update();
 			QCOMPARE(spyCardRemoved.count(), 1);
 		}
 

@@ -27,7 +27,7 @@ CardReaderPage::CardReaderPage(const QString& pTitle, const QString& pAccessible
 	setTitle(pTitle);
 	mWidget->prependAccessibleName(pAccessibleName);
 
-	QVBoxLayout* cardReaderPageVLayout = new QVBoxLayout(this);
+	auto* cardReaderPageVLayout = new QVBoxLayout(this);
 	cardReaderPageVLayout->addWidget(mWidget);
 }
 
@@ -94,7 +94,7 @@ QString SetupAssistantWizard::createDescription(const QString& pTitle, const QSt
 
 QWizardPage* SetupAssistantWizard::createWizardInitialPinPage()
 {
-	QWizardPage* initialPinPage = new QWizardPage;
+	auto* initialPinPage = new QWizardPage;
 	const auto& introduction = tr("Introduction");
 	initialPinPage->setTitle(createTitle(introduction));
 
@@ -106,7 +106,7 @@ QWizardPage* SetupAssistantWizard::createWizardInitialPinPage()
 	label->setFocusPolicy(Qt::TabFocus);
 	label->setAccessibleName(createAccessibleName(introduction, welcome));
 
-	QVBoxLayout* initialPinPageLayout = new QVBoxLayout;
+	auto* initialPinPageLayout = new QVBoxLayout;
 	initialPinPageLayout->addWidget(label);
 
 	const auto& historyTitle = tr("History");
@@ -126,7 +126,7 @@ QWizardPage* SetupAssistantWizard::createWizardInitialPinPage()
 	saveHistorySizePolicy.setHeightForWidth(saveHistoryWidget->sizePolicy().hasHeightForWidth());
 	saveHistoryWidget->setSizePolicy(saveHistorySizePolicy);
 
-	QFormLayout* saveHistoryFormLayout = new QFormLayout(saveHistoryWidget);
+	auto* saveHistoryFormLayout = new QFormLayout(saveHistoryWidget);
 	saveHistoryFormLayout->setHorizontalSpacing(30);
 	saveHistoryFormLayout->setContentsMargins(11, 11, 11, 11);
 	saveHistoryFormLayout->setContentsMargins(0, 5, 0, 20);
@@ -161,11 +161,11 @@ QWizardPage* SetupAssistantWizard::createWizardCardReaderPage()
 
 QWizardPage* SetupAssistantWizard::createConclusionPage()
 {
-	QWizardPage* conclusionPage = new QWizardPage;
+	auto* conclusionPage = new QWizardPage;
 	const auto& almostDone = tr("Almost done!");
 	conclusionPage->setTitle(createTitle(almostDone));
 
-	QVBoxLayout* conclusionPageVLayout = new QVBoxLayout(conclusionPage);
+	auto* conclusionPageVLayout = new QVBoxLayout(conclusionPage);
 
 	const auto& title = tr("Personal 6 - digit PIN");
 	const auto& desc = tr("Prior to the first use of the online identification function, you have to replace the transport PIN by an individual 6-digit PIN. "
@@ -202,7 +202,7 @@ QWizardPage* SetupAssistantWizard::createConclusionPage()
 
 	conclusionPageVLayout->addWidget(conclusionDescLabel);
 
-	QSpacerItem* verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+	auto* verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 	conclusionPageVLayout->addItem(verticalSpacer);
 
 	return conclusionPage;
@@ -232,7 +232,7 @@ bool SetupAssistantWizard::eventFilter(QObject* pObject, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
-		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(pEvent);
+		auto* keyEvent = static_cast<QKeyEvent*>(pEvent);
 		if (keyEvent->key() == Qt::Key_F1)
 		{
 			HelpAction::openContextHelp(objectName());

@@ -14,6 +14,6 @@ using namespace governikus;
 void DiagnosisController::getPcscInfo(QVector<DiagnosisContext::ComponentInfo>& pComponents,
 		QVector<DiagnosisContext::ComponentInfo>& pDrivers)
 {
-	Q_UNUSED(pComponents);
-	Q_UNUSED(pDrivers);
+	Q_UNUSED(pComponents)
+	Q_UNUSED(pDrivers)
 }

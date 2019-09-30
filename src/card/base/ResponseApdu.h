@@ -86,9 +86,9 @@ class ResponseApdu
 		static const int RETURN_CODE_LENGTH = 2;
 
 	public:
-		ResponseApdu(StatusCode pStatusCode);
-		ResponseApdu(const QByteArray& pBuffer = QByteArray());
-		virtual ~ResponseApdu();
+		explicit ResponseApdu(StatusCode pStatusCode);
+		explicit ResponseApdu(const QByteArray& pBuffer = QByteArray());
+		virtual ~ResponseApdu() = default;
 
 		virtual void setBuffer(const QByteArray& pBuffer);
 		QByteArray getData() const;

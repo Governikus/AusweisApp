@@ -6,7 +6,7 @@
 
 #include "Initializer.h"
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 using namespace governikus;
 

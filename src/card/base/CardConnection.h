@@ -11,7 +11,6 @@
 #include "asn1/CVCertificateChain.h"
 #include "command/BaseCardCommand.h"
 #include "CardConnectionWorker.h"
-#include "Commands.h"
 #include "InputAPDUInfo.h"
 #include "ReaderInfo.h"
 #include "SmartCardDefinitions.h"
@@ -28,11 +27,8 @@
 
 #include <QByteArray>
 
-class test_WorkflowContext;
-class test_SelfAuthModel;
 class test_CardConnection;
-class test_StateEstablishPaceChannel;
-
+class test_StatePreparePace;
 
 namespace governikus
 {
@@ -44,10 +40,7 @@ class CardConnection
 	: public QObject
 {
 	private:
-		friend class ::test_WorkflowContext;
-		friend class ::test_SelfAuthModel;
 		friend class ::test_CardConnection;
-		friend class ::test_StateEstablishPaceChannel;
 
 		Q_OBJECT
 
@@ -87,7 +80,7 @@ class CardConnection
 			}
 			else
 			{
-				qCritical() << "Cannot invoke card command:" << pCommand->metaObject()->className();
+				qCCritical(card) << "Cannot invoke card command:" << pCommand->metaObject()->className();
 				pCommand->deleteLater();
 			}
 
@@ -102,7 +95,7 @@ class CardConnection
 		CardConnection();
 
 	public:
-		CardConnection(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
+		explicit CardConnection(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 		/*!
 		 * Destroys the CardConnection and disconnects from the card.
@@ -120,6 +113,7 @@ class CardConnection
 		bool getPaceCanSuccessful() const;
 		bool getPacePinSuccessful() const;
 
+		void setProgressMessage(const QString& pMessage);
 		bool stopSecureMessaging();
 
 		template<typename T>

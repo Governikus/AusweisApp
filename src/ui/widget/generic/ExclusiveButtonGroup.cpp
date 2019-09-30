@@ -51,7 +51,7 @@ void ExclusiveButtonGroup::removeButton(QAbstractButton* pButton)
 
 bool ExclusiveButtonGroup::eventFilter(QObject* pWatched, QEvent* pEvent)
 {
-	if (QAbstractButton* button = qobject_cast<QAbstractButton*>(pWatched))
+	if (auto* button = qobject_cast<QAbstractButton*>(pWatched))
 	{
 		if (pEvent->type() == QEvent::MouseButtonPress && button->isChecked())
 		{
@@ -60,7 +60,7 @@ bool ExclusiveButtonGroup::eventFilter(QObject* pWatched, QEvent* pEvent)
 
 		if (pEvent->type() == QEvent::KeyPress)
 		{
-			QKeyEvent* keyEvent = static_cast<QKeyEvent*>(pEvent);
+			auto* keyEvent = static_cast<QKeyEvent*>(pEvent);
 			if (keyEvent->key() == Qt::Key_Select || keyEvent->key() == Qt::Key_Space)
 			{
 				return true;
@@ -74,7 +74,7 @@ bool ExclusiveButtonGroup::eventFilter(QObject* pWatched, QEvent* pEvent)
 
 void ExclusiveButtonGroup::onButtonClicked(bool /*pChecked*/)
 {
-	if (QAbstractButton* button = qobject_cast<QAbstractButton*>(sender()))
+	if (auto* button = qobject_cast<QAbstractButton*>(sender()))
 	{
 		Q_EMIT buttonClicked(button);
 	}
@@ -83,7 +83,7 @@ void ExclusiveButtonGroup::onButtonClicked(bool /*pChecked*/)
 
 void ExclusiveButtonGroup::onButtonPressed()
 {
-	if (QAbstractButton* button = qobject_cast<QAbstractButton*>(sender()))
+	if (auto* button = qobject_cast<QAbstractButton*>(sender()))
 	{
 		Q_EMIT buttonPressed(button);
 	}
@@ -92,7 +92,7 @@ void ExclusiveButtonGroup::onButtonPressed()
 
 void ExclusiveButtonGroup::onButtonReleased()
 {
-	if (QAbstractButton* button = qobject_cast<QAbstractButton*>(sender()))
+	if (auto* button = qobject_cast<QAbstractButton*>(sender()))
 	{
 		Q_EMIT buttonReleased(button);
 	}
@@ -101,7 +101,7 @@ void ExclusiveButtonGroup::onButtonReleased()
 
 void ExclusiveButtonGroup::onButtonToggled(bool pChecked)
 {
-	if (QAbstractButton* button = qobject_cast<QAbstractButton*>(sender()))
+	if (auto* button = qobject_cast<QAbstractButton*>(sender()))
 	{
 		if (pChecked)
 		{

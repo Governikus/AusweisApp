@@ -6,13 +6,6 @@
 
 using namespace governikus;
 
-InputAPDUInfo::InputAPDUInfo()
-	: mInputApdu()
-	, mAcceptableStatusCodes()
-{
-}
-
-
 InputAPDUInfo::InputAPDUInfo(const QByteArray& pInputApdu)
 	: mInputApdu(pInputApdu)
 	, mAcceptableStatusCodes()

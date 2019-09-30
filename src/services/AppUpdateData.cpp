@@ -28,7 +28,7 @@ AppUpdateData::AppUpdateData()
 }
 
 
-AppUpdateData::AppUpdateData(GlobalStatus pParsingResult)
+AppUpdateData::AppUpdateData(const GlobalStatus& pParsingResult)
 	: mDate()
 	, mVersion()
 	, mUrl()
@@ -141,7 +141,7 @@ const QString& AppUpdateData::getNotes() const
 }
 
 
-const GlobalStatus& AppUpdateData::getParsingResult()
+const GlobalStatus& AppUpdateData::getParsingResult() const
 {
 	return mParsingResult;
 }

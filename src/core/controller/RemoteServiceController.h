@@ -19,7 +19,7 @@ class RemoteServiceController
 	Q_OBJECT
 
 	public:
-		RemoteServiceController(QSharedPointer<RemoteServiceContext> pContext);
+		explicit RemoteServiceController(QSharedPointer<RemoteServiceContext> pContext);
 		virtual ~RemoteServiceController();
 };
 

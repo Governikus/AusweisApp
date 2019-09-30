@@ -22,11 +22,14 @@ class RemoteDeviceListEntry
 	private:
 		const RemoteDeviceDescriptor mRemoteDeviceDescriptor;
 		QTime mLastSeen;
+		QVector<QTime> mLastSeenHistory;
 
 	public:
 		RemoteDeviceListEntry(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor);
 
 		void setLastSeenToNow();
+		bool cleanUpSeenTimestamps(int pReaderResponsiveTimeout);
+		int getPercentSeen(int pCheckInterval = 1000, int pTimeFrame = 5000) const;
 
 		bool containsEquivalent(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor) const;
 		bool isEqual(const RemoteDeviceListEntry* const pOther) const;
@@ -44,6 +47,7 @@ class RemoteDeviceList
 
 	Q_SIGNALS:
 		void fireDeviceAppeared(const QSharedPointer<RemoteDeviceListEntry>&);
+		void fireDeviceUpdated(const QSharedPointer<RemoteDeviceListEntry>&);
 		void fireDeviceVanished(const QSharedPointer<RemoteDeviceListEntry>&);
 
 	public:

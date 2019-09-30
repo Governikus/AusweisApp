@@ -135,7 +135,7 @@ QByteArrayList BuildHelper::getAppCertificates(const QString& pPackageName)
 		jbyteArray data = bytes.object<jbyteArray>();
 		const auto size = env->GetArrayLength(data);
 		jbyte* buffer = env->GetByteArrayElements(data, 0);
-		list << QByteArray(reinterpret_cast<const char*>(buffer), size).toHex();
+		list << QByteArray(reinterpret_cast<const char* const>(buffer), size).toHex();
 	}
 
 	if (env->ExceptionCheck())

@@ -4,7 +4,7 @@ import static common.Constants.strip
 
 
 // ----------------------------------------------------------------- APK
-for(ARCH in Constants.AndroidArchAPK)
+for(ARCH in Constants.AndroidArchAPKReview)
 {
 
 def j = new Review
@@ -41,7 +41,7 @@ j.with
 		androidLint('build/dist/build/outputs/lint-results-*.xml')
 		{
 			thresholds(
-				unstableTotal: [all: 14]
+				unstableTotal: [all: 1]
 			)
 		}
 	}
@@ -101,7 +101,7 @@ j.with
 		androidLint('build/dist/build/outputs/lint-results-*.xml')
 		{
 			thresholds(
-				unstableTotal: [all: 12]
+				unstableTotal: [all: 0]
 			)
 		}
 	}

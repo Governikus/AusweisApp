@@ -79,7 +79,7 @@ QString UpdatableFile::cachePath() const
 
 QUrl UpdatableFile::updateUrl(const QString& pSection, const QString& pName)
 {
-	const QUrl updateServerBaseUrl = SecureStorage::getInstance().getUpdateServerBaseUrl();
+	const QUrl updateServerBaseUrl = Env::getSingleton<SecureStorage>()->getUpdateServerBaseUrl();
 
 	const QString section = pSection.isEmpty() ? QString() : Sep + pSection;
 	return QUrl(updateServerBaseUrl.toString() + section + Sep + pName);
@@ -148,7 +148,7 @@ QString UpdatableFile::makeSectionCachePath(const QString& pSection)
 
 void UpdatableFile::cleanupAfterUpdate(const std::function<void()>& pCustomAction)
 {
-	Downloader* const downloader = Env::getSingleton<Downloader>();
+	auto* const downloader = Env::getSingleton<Downloader>();
 	disconnect(downloader, &Downloader::fireDownloadSuccess, this, &UpdatableFile::onDownloadSuccess);
 	disconnect(downloader, &Downloader::fireDownloadFailed, this, &UpdatableFile::onDownloadFailed);
 	disconnect(downloader, &Downloader::fireDownloadUnnecessary, this, &UpdatableFile::onDownloadUnnecessary);
@@ -255,7 +255,7 @@ QUrl UpdatableFile::lookupUrl()
 	}
 	else
 	{
-		return QStringLiteral("file://") + path;
+		return QStringLiteral("file:///") + path;
 	}
 }
 
@@ -310,7 +310,7 @@ void UpdatableFile::update()
 	{
 		mUpdateRunning = true;
 
-		Downloader* const downloader = Env::getSingleton<Downloader>();
+		auto* const downloader = Env::getSingleton<Downloader>();
 		connect(downloader, &Downloader::fireDownloadSuccess, this, &UpdatableFile::onDownloadSuccess);
 		connect(downloader, &Downloader::fireDownloadFailed, this, &UpdatableFile::onDownloadFailed);
 		connect(downloader, &Downloader::fireDownloadUnnecessary, this, &UpdatableFile::onDownloadUnnecessary);

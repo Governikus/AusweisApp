@@ -18,7 +18,7 @@ using namespace governikus;
 #ifndef Q_OS_WINRT
 static QString getWindowsDirectoryPath()
 {
-	UINT length = GetSystemWindowsDirectory(nullptr, 0);
+	const auto length = static_cast<int>(GetSystemWindowsDirectory(nullptr, 0));
 	if (length > 0)
 	{
 		QVector<wchar_t> path(length + 1);
@@ -49,7 +49,7 @@ static QString toAbsoluteWindowsDirectoryPath(const QString& pPath)
 }
 
 
-static QString getWindowsFileVersionString(QByteArray& pVersionData, const char* pInfoName, int pLanguage, int pCodePage)
+static QString getWindowsFileVersionString(QByteArray& pVersionData, const char* const pInfoName, int pLanguage, int pCodePage)
 {
 	QString key = QString().sprintf("\\StringFileInfo\\%04x%04x\\%s", pLanguage, pCodePage, pInfoName);
 
@@ -68,7 +68,7 @@ static void addWindowsComponentInfo(QVector<DiagnosisContext::ComponentInfo>& pC
 {
 	std::wstring fileName = pFileName.toStdWString();
 
-	DWORD infoSize = GetFileVersionInfoSize(fileName.data(), nullptr);
+	const auto infoSize = static_cast<int>(GetFileVersionInfoSize(fileName.data(), nullptr));
 	if (infoSize == 0)
 	{
 		return;
@@ -193,7 +193,7 @@ static QString getWindowsServiceDriverFileName(const QString& pServiceName)
 		QueryServiceConfig(service, nullptr, 0, &configSize);
 		if (configSize > 0)
 		{
-			QByteArray serviceConfigBuffer(configSize, 0);
+			QByteArray serviceConfigBuffer(static_cast<int>(configSize), 0);
 			QUERY_SERVICE_CONFIG* serviceConfig = reinterpret_cast<QUERY_SERVICE_CONFIG*>(serviceConfigBuffer.data());
 			if (QueryServiceConfig(service, serviceConfig, configSize, &configSize))
 			{

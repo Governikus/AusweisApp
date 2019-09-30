@@ -22,6 +22,12 @@ int Apdu::length() const
 }
 
 
+bool Apdu::isEmpty() const
+{
+	return mBuffer.isEmpty();
+}
+
+
 const QByteArray& Apdu::getBuffer() const
 {
 	return mBuffer;

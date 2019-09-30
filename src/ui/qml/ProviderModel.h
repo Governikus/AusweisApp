@@ -9,10 +9,8 @@
 #include "CallCost.h"
 
 #include <QAbstractListModel>
+#include <QSet>
 #include <QVector>
-
-
-class test_ProviderModel;
 
 
 namespace governikus
@@ -21,7 +19,6 @@ namespace governikus
 class ProviderModel
 	: public QAbstractListModel
 {
-	friend class ::test_ProviderModel;
 
 	Q_OBJECT
 
@@ -63,6 +60,8 @@ class ProviderModel
 		int rowCount(const QModelIndex&) const override;
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
 		QHash<int, QByteArray> roleNames() const override;
+
+		static const QSet<QString>& getProviderCategories();
 
 		static QString createCostString(const CallCost& pCosts);
 };

@@ -24,7 +24,7 @@ DiagnosisController::DiagnosisController(const QSharedPointer<DiagnosisContext>&
 	connect(&mWatcherPcscInfo, &QFutureWatcher<PcscInfo>::finished, this, &DiagnosisController::onPcscInfoRetrieved);
 
 	const auto& readerManager = Env::getSingleton<ReaderManager>();
-	connect(readerManager, &ReaderManager::fireReaderEvent, this, &DiagnosisController::onFireReaderEvent);
+	connect(readerManager, &ReaderManager::fireReaderEvent, this, &DiagnosisController::onReaderEvent);
 }
 
 
@@ -46,7 +46,7 @@ void DiagnosisController::run()
 	if (!readerManager->isScanRunning())
 	{
 		qCDebug(diagnosis) << "Scan not running, starting scan ourself and stop it afterwards.";
-		readerManager->startScanAll(true);
+		readerManager->startScanAll(false);
 		mScanHasToBeStopped = true;
 	}
 
@@ -59,16 +59,7 @@ void DiagnosisController::onPcscInfoRetrieved()
 {
 	auto info = mWatcherPcscInfo.future().result();
 	mContext->setPcscInfo(info.mPcscVersion, info.mPcscComponents, info.mPcscDrivers);
-	checkDone();
-}
-
-
-void DiagnosisController::checkDone()
-{
-	if (mWatcherPcscInfo.isFinished())
-	{
-		onFireReaderEvent();
-	}
+	onReaderEvent();
 }
 
 
@@ -113,7 +104,7 @@ DiagnosisController::PcscInfo DiagnosisController::retrievePcscInfo()
 }
 
 
-void DiagnosisController::onFireReaderEvent()
+void DiagnosisController::onReaderEvent()
 {
 	mContext->setReaderInfos(Env::getSingleton<ReaderManager>()->getReaderInfos());
 	mContext->setTimestamp(QDateTime::currentDateTime());

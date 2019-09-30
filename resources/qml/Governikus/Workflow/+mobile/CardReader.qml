@@ -1,6 +1,11 @@
+/*
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
 Item {
 	property bool pinFieldAnimation: true
@@ -53,7 +58,7 @@ Item {
 
 	Rectangle {
 		id: reader
-		color: "#92cef9"
+		color: Style.color.card_reader
 		radius: height * 0.05
 		anchors.bottom: parent.bottom
 		width: parent.width
@@ -61,7 +66,7 @@ Item {
 
 		Rectangle {
 			id: slot
-			color: "white"
+			color: Constants.white
 			radius: 10
 			height: reader.height * 0.05
 			anchors.top: parent.top
@@ -74,7 +79,7 @@ Item {
 
 		Rectangle {
 			id: card
-			color: Constants.blue
+			color: Style.color.id_card
 			radius: height * 0.05
 			anchors.horizontalCenter: parent.horizontalCenter
 			height: baseItem.height * 1.5 / 7
@@ -84,7 +89,7 @@ Item {
 
 			Rectangle {
 				id: cardStripe1
-				color: "white"
+				color: Constants.white
 				radius: 10
 				height: parent.height * 0.1
 				anchors.top: parent.top
@@ -97,7 +102,7 @@ Item {
 
 			Rectangle {
 				id: cardStripe2
-				color: "white"
+				color: Constants.white
 				radius: cardStripe1.radius
 				height: parent.height * 0.1
 				anchors.top: cardStripe1.top
@@ -134,7 +139,7 @@ Item {
 		Rectangle {
 			readonly property int margin: parent.width * 0.1
 			id: display
-			color: "white"
+			color: Constants.white
 			radius: height * 0.2
 			height: reader.height * 0.2
 			anchors.bottom: pinGrid.top
@@ -196,7 +201,7 @@ Item {
 						states: [
 							State {
 								name: "off"
-								PropertyChanges {target: pinButtonCircle; color: "white"}
+								PropertyChanges {target: pinButtonCircle; color: Constants.white}
 								PropertyChanges {target: pinButtonCircle; width: pinButton._size}
 							},
 							State {

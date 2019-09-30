@@ -12,8 +12,6 @@
 #include <QSharedPointer>
 #include <QStateMachine>
 
-class test_ChangePinController;
-
 namespace governikus
 {
 
@@ -27,7 +25,7 @@ class WorkflowController
 		const QSharedPointer<WorkflowContext> mContext;
 
 	public:
-		WorkflowController(const QSharedPointer<WorkflowContext>& pContext);
+		explicit WorkflowController(const QSharedPointer<WorkflowContext>& pContext);
 		virtual ~WorkflowController();
 
 		void run();

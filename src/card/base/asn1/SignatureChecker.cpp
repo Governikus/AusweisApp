@@ -66,7 +66,7 @@ bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>&
 	const QSharedPointer<EC_KEY> signingKey = EcUtil::create(EC_KEY_dup(pKey));
 
 	const QByteArray uncompPublicPoint = pSigningCert->getBody().getPublicKey().getUncompressedPublicPoint();
-	const unsigned char* uncompPublicPointData = reinterpret_cast<const unsigned char*>(uncompPublicPoint.constData());
+	const auto* const uncompPublicPointData = reinterpret_cast<const unsigned char*>(uncompPublicPoint.constData());
 	const auto uncompPublicPointLen = static_cast<size_t>(uncompPublicPoint.size());
 
 	EC_POINT* publicPoint = EC_POINT_new(EC_KEY_get0_group(signingKey.data()));
@@ -79,7 +79,7 @@ bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>&
 	EC_KEY_set_public_key(signingKey.data(), publicPoint);
 
 	const QByteArray bodyHash = QCryptographicHash::hash(pCert->getRawBody(), pSigningCert->getBody().getHashAlgorithm());
-	const unsigned char* dgst = reinterpret_cast<const unsigned char*>(bodyHash.constData());
+	const auto* const dgst = reinterpret_cast<const unsigned char*>(bodyHash.constData());
 	const int dgstlen = bodyHash.size();
 	const int result = ECDSA_do_verify(dgst, dgstlen, pCert->getEcdsaSignature().data(), signingKey.data());
 

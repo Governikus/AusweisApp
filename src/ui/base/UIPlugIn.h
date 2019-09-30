@@ -61,6 +61,7 @@ class UIPlugIn
 		void fireShowUserInformation(const QString& pInformationMessage);
 		void fireUiDominationRequest(const UIPlugIn* pUi, const QString& pInformation);
 		void fireUiDominationRelease();
+		void fireRestartApplicationRequested();
 };
 
 } // namespace governikus

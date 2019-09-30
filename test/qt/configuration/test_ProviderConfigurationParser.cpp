@@ -255,7 +255,7 @@ class test_ProviderConfigurationParser
 			QTest::newRow("mac") << desktop;
 			QTest::newRow("linux") << desktop;
 			QTest::newRow("android") << desktop;
-			QTest::newRow("ios") << 15;
+			QTest::newRow("ios") << 17;
 		}
 
 

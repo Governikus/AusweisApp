@@ -19,6 +19,10 @@ IF(TARGET Qt5::Nfc)
 	ADD_SUBDIRECTORY(nfc)
 ENDIF()
 
+IF(IOS)
+        ADD_SUBDIRECTORY(ios)
+ENDIF()
+
 IF(TARGET Qt5::Bluetooth)
 	ADD_SUBDIRECTORY(bluetooth)
 ENDIF()

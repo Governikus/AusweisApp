@@ -1,43 +1,61 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 
 
 Button {
 	id: control
-	padding: Constants.pane_padding / 3
 
-	contentItem: Row {
+	property var textStyle: enabled ? Style.text.button : Style.text.button_disabled
+	property color buttonColor: Style.color.accent
+	property alias cursorShape: mouseArea.cursorShape
+
+	padding: Constants.pane_padding / 2
+
+	contentItem: RowLayout {
 		spacing: Constants.groupbox_spacing
 
 		Image {
-			source: control.icon.source
 			visible: source.toString().length > 0
-			sourceSize.height: textContainer.height
+			sourceSize.height: ApplicationModel.scaleFactor * 40
+
+			source: control.icon.source
 		}
 
 		Item {
 			id: textContainer
-			height: originalSize.height
-			width: originalSize.width
 
-			Text {
+			Layout.fillWidth: true
+			implicitHeight: originalSize.implicitHeight
+			implicitWidth: originalSize.implicitWidth
+
+			GText {
 				id: originalSize
+
 				visible: false
+				anchors.fill: parent
+
 				text: control.text
-				font.bold: true
-				font.pixelSize: Constants.normal_font_size
+				textStyle: control.textStyle
 			}
 
-			Text {
+			GText {
+				anchors.fill: parent
+
 				text: control.text
-				color: Constants.white
-				font.bold: true
-				font.pixelSize: Constants.normal_font_size - ApplicationModel.scaleFactor * (control.down ? 1 : 0)
-				anchors.centerIn: parent
+				textStyle: control.textStyle
+				font.pixelSize: textStyle.textSize - ApplicationModel.scaleFactor * (control.down ? 1 : 0)
+				horizontalAlignment: Text.AlignHCenter
+				verticalAlignment: Text.AlignVCenter
 
 				FocusFrame {
 					scope: control
@@ -47,7 +65,16 @@ Button {
 	}
 
 	background: Rectangle {
-		color: Constants.blue
-		radius: ApplicationModel.scaleFactor * 4
+		color: enabled ? buttonColor : Style.color.accent_disabled
+		radius: Style.dimens.button_radius
+	}
+
+	MouseArea {
+		id: mouseArea
+
+		anchors.fill: parent
+
+		onPressed: mouse.accepted = false
+		cursorShape: Qt.PointingHandCursor
 	}
 }

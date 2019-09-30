@@ -1,4 +1,8 @@
 module InformationView
 
-Information 1.0 Information.qml
+internal DiagnosisView DiagnosisView.qml
+internal InformationViewIcon InformationViewIcon.qml
+
+InformationView 1.0 InformationView.qml
 VersionInformation 1.0 VersionInformation.qml
+

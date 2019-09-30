@@ -42,7 +42,7 @@ j.with
 		androidLint('build/dist/build/outputs/lint-results-*.xml')
 		{
 			thresholds(
-				unstableTotal: [all: 14]
+				unstableTotal: [all: 1]
 			)
 		}
 	}
@@ -95,7 +95,7 @@ j.with
 		androidLint('build/dist/build/outputs/lint-results-*.xml')
 		{
 			thresholds(
-				unstableTotal: [all: 12]
+				unstableTotal: [all: 0]
 			)
 		}
 	}

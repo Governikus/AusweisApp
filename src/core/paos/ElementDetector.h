@@ -27,7 +27,7 @@ class ElementDetector
 		virtual bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) = 0;
 
 	public:
-		ElementDetector(const QByteArray& pXmlData);
+		explicit ElementDetector(const QByteArray& pXmlData);
 		virtual ~ElementDetector();
 };
 

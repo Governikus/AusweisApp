@@ -1,8 +1,15 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Layouts 1.2
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ProviderCategoryFilterModel 1.0
+
 
 Rectangle {
 	id: baseItem
@@ -14,6 +21,11 @@ Rectangle {
 	property int totalHits: ProviderCategoryFilterModel.additionalResultCount
 
 	visible: totalHits > 0
+
+	Accessible.role: Accessible.Button
+	Accessible.name: qsTr("%1 additional results in other categories").arg(totalHits) + SettingsModel.translationTrigger
+	Accessible.description: qsTr("Click to remove category filter and show additional results.") + SettingsModel.translationTrigger
+	Accessible.onPressAction: if (Qt.platform.os === "ios") mouseArea.clicked(null)
 
 	Column {
 		id: column
@@ -37,7 +49,7 @@ Rectangle {
 				fillMode: Image.PreserveAspectFit
 				anchors.horizontalCenter: backgroundImage.horizontalCenter
 				anchors.bottom: backgroundImage.bottom
-				anchors.bottomMargin: Utils.dp(20)
+				anchors.bottomMargin: 20
 			}
 		}
 
@@ -46,14 +58,14 @@ Rectangle {
 			height: baseItem.textHeight
 			width: parent.width
 
-			Text {
-				text: '<html>' + qsTr("Additional results:") + "&nbsp;" + baseItem.totalHits + '</html>' + settingsModel.translationTrigger
-
+			GText {
 				anchors.centerIn: parent
 
-				font.bold: true
-				font.pixelSize: Constants.normal_font_size
-				color: Constants.secondary_text
+				Accessible.ignored: true
+
+				//: LABEL ANDROID_TABLET IOS_TABLET
+				text: '<html>' + qsTr("Additional results:") + "&nbsp;" + baseItem.totalHits + '</html>' + SettingsModel.translationTrigger
+				textStyle: Style.text.normal
 			}
 		}
 
@@ -65,7 +77,10 @@ Rectangle {
 	}
 
 	MouseArea {
+		id: mouseArea
+
 		anchors.fill: parent
+
 		onClicked: ProviderCategoryFilterModel.addAdditionalResultCategories()
 	}
 }

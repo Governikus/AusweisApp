@@ -12,6 +12,9 @@
 #include <QNetworkProxy>
 #include <QSharedPointer>
 #include <QtTest>
+#ifdef Q_OS_MACOS
+#include <QOperatingSystemVersion>
+#endif
 
 using namespace governikus;
 
@@ -61,6 +64,13 @@ class test_DatagramHandlerImpl
 		{
 			#ifdef Q_OS_WIN
 			QSKIP("Windows does not block privileged ports");
+			#endif
+
+			#ifdef Q_OS_MACOS
+			if (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::MacOS, 10, 14))
+			{
+				QSKIP("macOS >= 10.14 does not block privileged ports - https://news.ycombinator.com/item?id=18302380");
+			}
 			#endif
 
 			DatagramHandlerImpl::cPort = 80;
@@ -168,11 +178,11 @@ class test_DatagramHandlerImpl
 				#ifdef Q_OS_FREEBSD
 				QSKIP("FreeBSD does not like that");
 				#endif
-				QVERIFY(datagramHandlerImpl->send(doc.toJson(QJsonDocument::Compact), receiver.localPort()));
+				QVERIFY(datagramHandlerImpl->sendToAllAddressEntries(doc.toJson(QJsonDocument::Compact), receiver.localPort()));
 			}
 			else
 			{
-				QVERIFY(datagramHandlerImpl->send(doc.toJson(QJsonDocument::Compact), QHostAddress::LocalHost, receiver.localPort()));
+				QVERIFY(datagramHandlerImpl->sendToAddress(doc.toJson(QJsonDocument::Compact), QHostAddress::LocalHost, receiver.localPort()));
 			}
 
 			QTRY_COMPARE(spyReceiver.count(), 1);

@@ -123,19 +123,25 @@ class test_StateGenericSendReceive
 
 		void onPreSharedKeyAuthenticationRequired()
 		{
-			const QByteArray data("data");
-			const QByteArray psk("psk");
-			const QByteArray sessionIdentifier("session");
+			const QByteArray data("<?xml version=\"1.0\"?>"
+								  "<TCTokenType>"
+								  "  <ServerAddress>https://eid-server.example.de/entrypoint</ServerAddress>"
+								  "  <SessionIdentifier>1A2BB129</SessionIdentifier>"
+								  "  <RefreshAddress>https://service.example.de/loggedin?7eb39f62</RefreshAddress>"
+								  "  <Binding> urn:liberty:paos:2006-08 </Binding>"
+								  "  <PathSecurity-Protocol> urn:ietf:rfc:4279 </PathSecurity-Protocol>"
+								  "  <PathSecurity-Parameters>"
+								  "    <PSK> 4BC1A0B5 </PSK>"
+								  "  </PathSecurity-Parameters>"
+								  "</TCTokenType>");
 			const QSharedPointer<TcToken> token(new TcToken(data));
-			token->mPsk = psk;
-			token->mSessionIdentifier = sessionIdentifier;
 			mAuthContext->setTcToken(token);
 			auto* authenticator = new QSslPreSharedKeyAuthenticator();
 
 			QTest::ignoreMessage(QtDebugMsg, "pre-shared key authentication requested: \"\"");
 			mState->onPreSharedKeyAuthenticationRequired(authenticator);
-			QCOMPARE(authenticator->identity(), sessionIdentifier);
-			QCOMPARE(authenticator->preSharedKey(), QByteArray::fromHex(psk));
+			QCOMPARE(authenticator->identity(), QByteArray("1A2BB129"));
+			QCOMPARE(authenticator->preSharedKey(), QByteArray::fromHex("4BC1A0B5"));
 		}
 
 
@@ -215,7 +221,7 @@ class test_StateGenericSendReceive
 					<< GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length
 					<< GlobalStatus::Code::Workflow_TrustedChannel_TimeOut
 					<< GlobalStatus::Code::Workflow_TrustedChannel_Proxy_Error
-					<< GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Establishment_Error
+					<< GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error
 					<< GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error
 					<< GlobalStatus::Code::Workflow_TrustedChannel_Other_Network_Error;
 

@@ -5,8 +5,13 @@
 #include "LogHandler.h"
 
 #include "BreakPropertyBindingDiagnosticLogFilter.h"
-#include "ScopeGuard.h"
 #include "SingletonHelper.h"
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#include <QScopeGuard>
+#else
+#include "ScopeGuard.h"
+#endif
 
 #include <QCoreApplication>
 #include <QDir>
@@ -124,7 +129,7 @@ QByteArray LogHandler::readLogFile(qint64 pStart, qint64 pLength)
 	if (mLogFile.isOpen() && mLogFile.isReadable())
 	{
 		const auto currentPos = mLogFile.pos();
-		const ScopeGuard resetPosition([this, currentPos] {
+		const auto resetPosition = qScopeGuard([this, currentPos] {
 					mLogFile.seek(currentPos);
 				});
 
@@ -134,6 +139,7 @@ QByteArray LogHandler::readLogFile(qint64 pStart, qint64 pLength)
 
 	if (useLogfile())
 	{
+		//: LABEL ALL_PLATFORMS
 		return tr("An error occurred in log handling: %1").arg(mLogFile.errorString()).toUtf8();
 	}
 
@@ -220,7 +226,7 @@ void LogHandler::copyMessageLogContext(const QMessageLogContext& pSource, QMessa
 }
 
 
-QByteArray LogHandler::formatFilename(const char* pFilename) const
+QByteArray LogHandler::formatFilename(const char* const pFilename) const
 {
 	QByteArray filename(pFilename);
 
@@ -232,7 +238,7 @@ QByteArray LogHandler::formatFilename(const char* pFilename) const
 }
 
 
-QByteArray LogHandler::formatFunction(const char* pFunction, const QByteArray& pFilename, int pLine) const
+QByteArray LogHandler::formatFunction(const char* const pFunction, const QByteArray& pFilename, int pLine) const
 {
 	QByteArray function(pFunction);
 

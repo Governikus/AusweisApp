@@ -27,8 +27,6 @@ class StepAuthenticationEac1Gui
 		StepAuthenticationEac1Widget* mWidget;
 		StepAuthenticationEac1Widget::State mState;
 		QPointer<QMessageBox> mPayAttentionToReaderMsgBox;
-		QString mPin;
-		QString mCan;
 		bool mActive;
 
 	public:

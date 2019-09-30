@@ -1,7 +1,7 @@
 AusweisApp2 1.16.2
 ^^^^^^^^^^^^^^^^^^
 
-**Releasedatum:** 15. April 2019
+**Releasedatum:** 15. Mai 2019
 
 
 

@@ -1,9 +1,13 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
 GText {
-	color: Constants.white
-	font.weight: Font.Bold
-	font.pixelSize: Constants.titlebar_font_size
+	textStyle: Style.text.header
+	font.bold: true
 }

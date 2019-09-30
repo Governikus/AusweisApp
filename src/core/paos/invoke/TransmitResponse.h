@@ -9,8 +9,6 @@
 #include "paos/ResponseType.h"
 #include "PaosCreator.h"
 
-class test_TransmitResponse;
-
 namespace governikus
 {
 
@@ -18,8 +16,6 @@ class TransmitResponse
 	: public PaosCreator
 	, public ResponseType
 {
-	friend class ::test_TransmitResponse;
-
 	private:
 		QByteArrayList mOutputApdus;
 

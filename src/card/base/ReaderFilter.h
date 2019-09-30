@@ -29,13 +29,13 @@ class ReaderFilter
 		Q_DECLARE_FLAGS(FilterTypes, FilterType)
 
 	private:
-		ReaderFilter::FilterTypes mFilterType;
+		const ReaderFilter::FilterTypes mFilterType;
 		const QVector<ReaderManagerPlugInType> mPluginTypes;
 
 	public:
 		ReaderFilter();
-		ReaderFilter(const QVector<ReaderManagerPlugInType>& pPluginTypes);
 		ReaderFilter(const ReaderFilter::FilterType pFilterType);
+		explicit ReaderFilter(const QVector<ReaderManagerPlugInType>& pPluginTypes);
 
 		QVector<ReaderManagerPlugIn*> apply(const QVector<ReaderManagerPlugIn*>& pPluginType) const;
 		QVector<ReaderInfo> apply(const QVector<ReaderInfo>& pInputList) const;

@@ -76,7 +76,7 @@ class StepGui
 	Q_SIGNALS:
 		void fireUiFinished();
 		void fireCancelled();
-
+		void fireDeactivated();
 };
 
 } // namespace governikus

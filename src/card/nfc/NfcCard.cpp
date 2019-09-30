@@ -16,7 +16,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 
 void NfcCard::onError(QNearFieldTarget::Error pError, const QNearFieldTarget::RequestId& pId)
 {
-	Q_UNUSED(pId);
+	Q_UNUSED(pId)
 	qCWarning(card_nfc) << "Error:" << pError;
 }
 
@@ -75,7 +75,7 @@ CardReturnCode NfcCard::connect()
 
 CardReturnCode NfcCard::disconnect()
 {
-	if (!mIsValid || !mNearFieldTarget)
+	if (!mIsValid || mNearFieldTarget == nullptr)
 	{
 		qCWarning(card_nfc) << "NearFieldTarget is no longer valid";
 		return CardReturnCode::COMMAND_FAILED;
@@ -101,7 +101,7 @@ bool NfcCard::isConnected()
 
 CardReturnCode NfcCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 {
-	if (!mIsValid || !mNearFieldTarget)
+	if (!mIsValid || mNearFieldTarget == nullptr)
 	{
 		qCWarning(card_nfc) << "NearFieldTarget is no longer valid";
 		return CardReturnCode::COMMAND_FAILED;

@@ -48,7 +48,7 @@ class SecurityInfo
 	friend class QSharedPointer<SecurityInfo>;
 	const QSharedPointer<const securityinfo_st> mDelegate;
 
-	SecurityInfo(const QSharedPointer<const securityinfo_st>& pDelegate);
+	explicit SecurityInfo(const QSharedPointer<const securityinfo_st>& pDelegate);
 
 	/*
 	 * Sub classes must override this method to allow the base class to access

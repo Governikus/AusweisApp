@@ -44,21 +44,28 @@ void CertificateDescriptionModel::initModelData(const QSharedPointer<const Certi
 	const QString termsOfUsage = pCertDescription->getTermsOfUsage().remove(QLatin1Char('\r')).replace(QLatin1Char('\t'), QLatin1Char(' '));
 	const bool showDetailedProviderInfo = !(serviceProviderAddress.isEmpty() || purpose.isEmpty() || dataSecurityOfficer.isEmpty());
 
+	//: LABEL ALL_PLATFORMS
 	mData += QPair<QString, QString>(tr("Service provider"), getSubjectName() + QLatin1Char('\n') + getSubjectUrl());
+	//: LABEL ALL_PLATFORMS
 	mData += QPair<QString, QString>(tr("Certificate issuer"), pCertDescription->getIssuerName() + QLatin1Char('\n') + pCertDescription->getIssuerUrl());
 	if (showDetailedProviderInfo)
 	{
+		//: LABEL ALL_PLATFORMS
 		mData += QPair<QString, QString>(tr("Name, address and mail address of the service provider"), serviceProviderAddress);
+		//: LABEL ALL_PLATFORMS
 		mData += QPair<QString, QString>(tr("Purpose"), purpose);
+		//: LABEL ALL_PLATFORMS
 		mData += QPair<QString, QString>(tr("Indication of the bodies responsible for the service provider, "
 											"that verify the compliance with data security regulations"), dataSecurityOfficer);
 	}
 	else if (!termsOfUsage.isEmpty())
 	{
+		//: LABEL ALL_PLATFORMS
 		mData += QPair<QString, QString>(tr("Service provider information"), termsOfUsage);
 	}
 	if (!getValidity().isEmpty())
 	{
+		//: LABEL ALL_PLATFORMS
 		mData += QPair<QString, QString>(tr("Validity"), getValidity());
 	}
 }

@@ -6,14 +6,13 @@
 
 #pragma once
 
+#include "Env.h"
 #include "SelfAuthenticationData.h"
 
 #include <QAbstractListModel>
 #include <QEvent>
 #include <QSharedPointer>
 #include <QString>
-
-class test_SelfAuthModel;
 
 namespace governikus
 {
@@ -24,22 +23,25 @@ class SelfAuthModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
+	friend class Env;
 
 	QSharedPointer<SelfAuthContext> mContext;
 	SelfAuthenticationData::OrderedSelfData mSelfData;
 
-	enum DataRoles
-	{
-		NAME = Qt::UserRole + 1,
-		VALUE
-	};
-
 	private Q_SLOTS:
-		friend class ::test_SelfAuthModel;
 		void onSelfAuthenticationDataChanged();
 
-	public:
+	protected:
 		SelfAuthModel(QObject* pParent = nullptr);
+		static SelfAuthModel& getInstance();
+
+	public:
+		enum DataRoles
+		{
+			NAME = Qt::UserRole + 1,
+			VALUE
+		};
+
 		void resetContext(const QSharedPointer<SelfAuthContext>& pContext = QSharedPointer<SelfAuthContext>());
 
 		Q_INVOKABLE void startWorkflow();

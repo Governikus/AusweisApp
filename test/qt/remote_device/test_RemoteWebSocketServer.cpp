@@ -59,7 +59,7 @@ class PskHandler
 			};
 
 			const auto& config = mWebSocket->sslConfiguration();
-			const auto& pairingCiphers = SecureStorage::getInstance().getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
+			const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
 			if (pairingCiphers.contains(config.sessionCipher()))
 			{
 				allowedErrors << QSslError::SelfSignedCertificate;
@@ -164,7 +164,7 @@ class test_RemoteWebSocketServer
 			QCOMPARE(mServer->getCurrentCertificate(), QSslCertificate());
 			KeyPair pair = KeyPair::generate();
 			QWebSocket client;
-			auto config = SecureStorage::getInstance().getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
+			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
 			config.setPrivateKey(pair.getKey());
 			config.setLocalCertificate(pair.getCertificate());
 			client.setSslConfiguration(config);
@@ -191,7 +191,7 @@ class test_RemoteWebSocketServer
 			QVERIFY(mServer->listen(QStringLiteral("TestServer")));
 
 			QWebSocket client;
-			auto config = SecureStorage::getInstance().getTlsConfigRemote().getConfiguration();
+			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote().getConfiguration();
 			config.setPrivateKey(pair.getKey());
 			config.setLocalCertificate(pair.getCertificate());
 			config.setCaCertificates({settings.getCertificate()});
@@ -230,7 +230,7 @@ class test_RemoteWebSocketServer
 			QVERIFY(mServer->listen(QStringLiteral("TestServer")));
 
 			KeyPair pair = KeyPair::generate();
-			auto config = SecureStorage::getInstance().getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
+			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
 			config.setPrivateKey(pair.getKey());
 			config.setLocalCertificate(pair.getCertificate());
 
@@ -270,7 +270,7 @@ class test_RemoteWebSocketServer
 
 			KeyPair pair = KeyPair::generate();
 			QWebSocket client;
-			auto config = SecureStorage::getInstance().getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
+			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
 			config.setPrivateKey(pair.getKey());
 			config.setLocalCertificate(pair.getCertificate());
 			client.setSslConfiguration(config);

@@ -7,113 +7,28 @@
 #include "HistoryModel.h"
 
 #include "asn1/AccessRoleAndRight.h"
+#include "AppSettings.h"
+#include "Env.h"
+
+#include "PdfExporter.h"
 #include "ProviderConfiguration.h"
 #include "ProviderModel.h"
 
-#include <QDebug>
 #include <QQmlEngine>
-#include <QUrl>
 
 using namespace governikus;
 
 
-namespace
+auto& HistoryModel::getHistorySettings()
 {
-bool matchProviderWithSubjectUrl(const ProviderConfigurationInfo& pProvider, const QString& pSubjectUrl)
-{
-	const QString subjectUrlHost = QUrl(pSubjectUrl).host();
-
-	// Check provider address host.
-	if (QUrl(pProvider.getAddress()).host() == subjectUrlHost)
-	{
-		return true;
-	}
-
-	// Check subject urls.
-	for (const auto& subjectUrl : pProvider.getSubjectUrls())
-	{
-		if (QUrl(subjectUrl).host() == subjectUrlHost)
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return Env::getSingleton<AppSettings>()->getHistorySettings();
 }
 
 
-} // namespace
-
-
-HistoryProxyModel::HistoryProxyModel()
-{
-}
-
-
-HistoryProxyModel::~HistoryProxyModel()
-{
-}
-
-
-bool HistoryProxyModel::removeRows(int pRow, int pCount, const QModelIndex& pParent)
-{
-	return QSortFilterProxyModel::removeRows(pRow, pCount, pParent);
-}
-
-
-bool ProviderNameFilterModel::filterAcceptsRow(int pSourceRow, const QModelIndex& /* pSourceParent */) const
-{
-	HistoryModel* const dataSourceModel = qobject_cast<HistoryModel*>(sourceModel());
-	if (dataSourceModel == nullptr)
-	{
-		return false;
-	}
-
-	auto entry = mHistorySettings->getHistoryInfos()[pSourceRow];
-
-	return matchProviderWithSubjectUrl(mProvider, entry.getSubjectUrl());
-}
-
-
-ProviderNameFilterModel::ProviderNameFilterModel(HistorySettings* pHistorySettings)
-	: mHistorySettings(pHistorySettings)
-{
-}
-
-
-ProviderNameFilterModel::~ProviderNameFilterModel()
-{
-}
-
-
-void ProviderNameFilterModel::setProviderAddress(const QString& pProviderAddress)
-{
-	if (mProvider.getAddress() != pProviderAddress)
-	{
-		const auto& providers = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
-		for (const auto& provider : providers)
-		{
-			if (provider.getAddress() == pProviderAddress)
-			{
-				mProvider = provider;
-
-				invalidateFilter();
-
-				return;
-			}
-		}
-
-		// If we get here, no provider for pProviderAddress was found in the settings.
-		qWarning() << "Cannot select provider with address" << pProviderAddress;
-	}
-}
-
-
-HistoryModel::HistoryModel(HistorySettings* pHistorySettings, QObject* pParent)
+HistoryModel::HistoryModel(QObject* pParent)
 	: QAbstractListModel(pParent)
-	, mHistorySettings(pHistorySettings)
 	, mFilterModel()
-	, mNameFilterModel(pHistorySettings)
+	, mNameFilterModel()
 	, mHistoryModelSearchFilter()
 {
 	updateConnections();
@@ -121,8 +36,10 @@ HistoryModel::HistoryModel(HistorySettings* pHistorySettings, QObject* pParent)
 	mFilterModel.setFilterCaseSensitivity(Qt::CaseInsensitive);
 	mNameFilterModel.setSourceModel(this);
 	mHistoryModelSearchFilter.setSourceModel(this);
-	connect(mHistorySettings.data(), &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
-	connect(mHistorySettings.data(), &HistorySettings::fireEnabledChanged, this, &HistoryModel::fireEnabledChanged);
+
+	const auto& historySettings = getHistorySettings();
+	connect(&historySettings, &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
+	connect(&historySettings, &HistorySettings::fireEnabledChanged, this, &HistoryModel::fireEnabledChanged);
 	connect(Env::getSingleton<ProviderConfiguration>(), &ProviderConfiguration::fireUpdated, this, &HistoryModel::onProvidersChanged);
 
 	QQmlEngine::setObjectOwnership(&mFilterModel, QQmlEngine::CppOwnership);
@@ -144,7 +61,7 @@ void HistoryModel::updateConnections()
 	}
 	mConnections.clear();
 
-	const auto& historyEntries = mHistorySettings->getHistoryInfos();
+	const auto& historyEntries = getHistorySettings().getHistoryInfos();
 	mConnections.reserve(historyEntries.size() * 2);
 	for (int i = 0; i < historyEntries.size(); i++)
 	{
@@ -192,7 +109,7 @@ void HistoryModel::onProvidersChanged()
 
 int HistoryModel::rowCount(const QModelIndex&) const
 {
-	return mHistorySettings->getHistoryInfos().size();
+	return getHistorySettings().getHistoryInfos().size();
 }
 
 
@@ -200,7 +117,8 @@ QVariant HistoryModel::data(const QModelIndex& pIndex, int pRole) const
 {
 	if (pIndex.isValid() && pIndex.row() < rowCount())
 	{
-		auto entry = mHistorySettings->getHistoryInfos()[pIndex.row()];
+		const auto& infos = getHistorySettings().getHistoryInfos();
+		const auto& entry = infos[pIndex.row()];
 		if (pRole == Qt::DisplayRole || pRole == SUBJECT)
 		{
 			return entry.getSubjectName();
@@ -215,7 +133,8 @@ QVariant HistoryModel::data(const QModelIndex& pIndex, int pRole) const
 		}
 		if (pRole == TERMSOFUSAGE)
 		{
-			return entry.getTermOfUsage();
+			auto tos = entry.getTermOfUsage();
+			return tos.remove(QLatin1Char('\r')).replace(QLatin1Char('\t'), QLatin1Char(' '));
 		}
 		if (pRole == REQUESTEDDATA)
 		{
@@ -308,7 +227,7 @@ ProviderConfigurationInfo HistoryModel::determineProviderFor(const HistoryInfo& 
 	const auto& providers = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
 	for (const auto& provider : providers)
 	{
-		if (matchProviderWithSubjectUrl(provider, pHistoryInfo.getSubjectUrl()))
+		if (provider.matchWithSubjectUrl(pHistoryInfo.getSubjectUrl()))
 		{
 			matchingProviders += provider;
 		}
@@ -323,7 +242,7 @@ ProviderConfigurationInfo HistoryModel::determineProviderFor(const HistoryInfo& 
 
 bool HistoryModel::isEnabled() const
 {
-	return mHistorySettings->isEnabled();
+	return getHistorySettings().isEnabled();
 }
 
 
@@ -331,8 +250,9 @@ void HistoryModel::setEnabled(bool pEnabled)
 {
 	if (pEnabled != isEnabled())
 	{
-		mHistorySettings->setEnabled(pEnabled);
-		mHistorySettings->save();
+		auto& historySettings = getHistorySettings();
+		historySettings.setEnabled(pEnabled);
+		historySettings.save();
 	}
 }
 
@@ -366,17 +286,22 @@ QHash<int, QByteArray> HistoryModel::roleNames() const
 
 bool HistoryModel::removeRows(int pRow, int pCount, const QModelIndex& pParent)
 {
+	if (pCount <= 0)
+	{
+		return false;
+	}
 	beginRemoveRows(pParent, pRow, pRow + pCount - 1);
 
-	auto entries = mHistorySettings->getHistoryInfos();
+	auto& historySettings = getHistorySettings();
+	auto entries = historySettings.getHistoryInfos();
 	entries.remove(pRow, pCount);
 
 	// disconnect the signal, otherwise this model gets reset
-	disconnect(mHistorySettings.data(), &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
-	mHistorySettings->setHistoryInfos(entries);
-	connect(mHistorySettings.data(), &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
+	disconnect(&historySettings, &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
+	historySettings.setHistoryInfos(entries);
+	connect(&historySettings, &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
 
-	mHistorySettings->save();
+	historySettings.save();
 
 	endRemoveRows();
 	return true;
@@ -398,4 +323,11 @@ ProviderNameFilterModel* HistoryModel::getNameFilterModel()
 HistoryModelSearchFilter* HistoryModel::getHistoryModelSearchFilter()
 {
 	return &mHistoryModelSearchFilter;
+}
+
+
+void HistoryModel::exportHistory(const QUrl& pFilename) const
+{
+	PdfExporter exporter(pFilename.toLocalFile());
+	exporter.exportHistory();
 }

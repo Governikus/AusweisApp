@@ -32,6 +32,7 @@ MockReader* MockReader::createMockReader(const QVector<TransmitConfig>& pTransmi
 MockReader::MockReader(const QString& pReaderName)
 	: Reader(ReaderManagerPlugInType::UNKNOWN, pReaderName)
 	, mCard(nullptr)
+	, mEvent(CardEvent::NONE)
 {
 	mReaderInfo.setConnected(true);
 	mReaderInfo.setBasicReader(true);

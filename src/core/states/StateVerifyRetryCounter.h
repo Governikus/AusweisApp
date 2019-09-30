@@ -4,14 +4,17 @@
 
 #pragma once
 
+#include "AbstractState.h"
 #include "context/WorkflowContext.h"
-#include "states/AbstractGenericState.h"
+#include "GenericContextContainer.h"
+
 
 namespace governikus
 {
 
 class StateVerifyRetryCounter
-	: public AbstractGenericState<WorkflowContext>
+	: public AbstractState
+	, public GenericContextContainer<WorkflowContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

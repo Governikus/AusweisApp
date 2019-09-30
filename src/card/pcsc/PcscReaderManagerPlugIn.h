@@ -11,6 +11,7 @@
 #include "ReaderManagerPlugIn.h"
 
 #include <QMap>
+#include <QStringList>
 
 
 namespace governikus
@@ -35,6 +36,7 @@ class PcscReaderManagerPlugIn
 		void initReaderState();
 		inline QString extractReaderName(PCSC_CHAR_PTR pReaderPointer);
 		void removeReader(const QString& pReaderName);
+		void removeReaders(const QStringList& pReaderNames);
 
 	protected:
 		void timerEvent(QTimerEvent* pEvent) override;
@@ -46,7 +48,7 @@ class PcscReaderManagerPlugIn
 		QList<Reader*> getReaders() const override;
 
 		virtual void startScan(bool pAutoConnect) override;
-		virtual void stopScan() override;
+		virtual void stopScan(const QString& pError = QString()) override;
 };
 
 } // namespace governikus

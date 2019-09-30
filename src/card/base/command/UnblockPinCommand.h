@@ -27,7 +27,7 @@ class UnblockPinCommand
 		virtual ~UnblockPinCommand() override = default;
 
 	public:
-		UnblockPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, const QString& pPuk);
+		explicit UnblockPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, const QString& pPuk);
 
 };
 

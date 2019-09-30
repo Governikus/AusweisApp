@@ -9,7 +9,8 @@ using namespace governikus;
 
 
 StateSelectPasswordId::StateSelectPasswordId(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 

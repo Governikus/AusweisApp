@@ -23,6 +23,8 @@ struct FileRef
 	static FileRef efCardAccess();
 	static FileRef efCardSecurity();
 	static FileRef appESign();
+	static FileRef appEId();
+	static FileRef appPassport();
 };
 
 

@@ -51,7 +51,8 @@ void PdfCreator::createHeader(const QString& pTitle, const QString& pHeadline)
 										"</table>").arg(
 			pTitle,
 			QCoreApplication::applicationName(),
-			tr("AusweisApp2 is a product of Governikus GmbH & Co. KG - on behalf of the Federal Ministry of the Interior, Building and Community."),
+			//: LABEL ALL_PLATFORMS
+			tr("AusweisApp2 is a product of Governikus GmbH & Co. KG - on behalf of the Federal Office for Information Security."),
 			pHeadline);
 
 	QSvgRenderer renderer(QStringLiteral(":/images/npa.svg"));
@@ -74,6 +75,7 @@ void PdfCreator::createContent(const QString& pContent)
 void PdfCreator::createFooter()
 {
 	const auto& footer = QStringLiteral("<h3>%1</h3>").arg(
+			//: LABEL ALL_PLATFORMS
 			tr("For further information, please see <a href='https://www.ausweisapp.bund.de/'>https://www.ausweisapp.bund.de/</a>"));
 
 	mFooter.setHtml(footer);

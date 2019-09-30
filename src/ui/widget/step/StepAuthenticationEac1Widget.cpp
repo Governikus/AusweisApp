@@ -251,19 +251,19 @@ void StepAuthenticationEac1Widget::updateWidget()
 
 		case State::AUTHENTICATING_ESERVICE:
 			Q_EMIT setCancelButtonState(ButtonState::ENABLED);
-			updateProgressPanel(1, tr("Service provider is verified"));
+			updateProgressPanel();
 			break;
 
 		case State::AUTHENTICATING_CARD:
-			updateProgressPanel(2, tr("Card is being verified"));
+			updateProgressPanel();
 			break;
 
 		case State::READING_CARD_DATA:
-			updateProgressPanel(3, tr("Reading data"));
+			updateProgressPanel();
 			break;
 
 		case State::REDIRECTING_BROWSER:
-			updateProgressPanel(4, tr("Service provider is being verified"));
+			updateProgressPanel();
 			break;
 
 		case State::FINISHED:
@@ -345,7 +345,7 @@ void StepAuthenticationEac1Widget::addChatRightToGui(AccessRight pRight, bool pO
 	{
 		displayText += QStringLiteral(" (%1)").arg(mContext->getDidAuthenticateEac1()->getAuthenticatedAuxiliaryData()->getRequiredAge());
 	}
-	QCheckBox* cb = new QCheckBox(displayText);
+	auto* cb = new QCheckBox(displayText);
 	cb->setEnabled(pOptional);
 	cb->setChecked(mContext->getEffectiveAccessRights().contains(pRight));
 
@@ -353,7 +353,7 @@ void StepAuthenticationEac1Widget::addChatRightToGui(AccessRight pRight, bool pO
 
 	connect(cb, &QCheckBox::stateChanged, this, &StepAuthenticationEac1Widget::checkBoxChanged);
 
-	QListWidgetItem* item = new QListWidgetItem();
+	auto* item = new QListWidgetItem();
 	item->setSizeHint(QSize(0, 20));
 	item->setData(Qt::AccessibleTextRole, displayText);
 	if (mUi->listWidgetWest->count() < pListSize)
@@ -373,7 +373,7 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 {
 	QWidget* basicReaderWidget = new QWidget();
 
-	QHBoxLayout* basicReaderWidgetLayout = new QHBoxLayout(basicReaderWidget);
+	auto* basicReaderWidgetLayout = new QHBoxLayout(basicReaderWidget);
 
 	const auto& allowedDigitsMsg = tr("Only digits (0-9) are permitted.");
 	QRegularExpression onlyNumbersExpression(QStringLiteral("[0-9]*"));
@@ -393,7 +393,7 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 
 		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isUseScreenKeyboard())
 		{
-			QToolButton* button = new QToolButton();
+			auto* button = new QToolButton();
 			button->setObjectName(QStringLiteral("canRandomButton"));
 			button->setAccessibleName(tr("open on screen keyboard"));
 			button->setAutoRaise(true);
@@ -426,7 +426,7 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 
 	if (Env::getSingleton<AppSettings>()->getGeneralSettings().isUseScreenKeyboard())
 	{
-		QToolButton* button = new QToolButton();
+		auto* button = new QToolButton();
 		button->setObjectName(QStringLiteral("pinRandomButton"));
 		button->setAccessibleName(tr("open on screen keyboard"));
 		button->setAutoRaise(true);
@@ -443,21 +443,24 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 }
 
 
-void StepAuthenticationEac1Widget::updateProgressPanel(int pProgressValue, const QString& pProgressText)
+void StepAuthenticationEac1Widget::updateProgressPanel()
 {
-	if (pProgressValue > 0)
+	const int progressValue = mContext->getProgressValue();
+	const QString& progressText = mContext->getProgressMessage();
+
+	if (progressValue > 0)
 	{
 		if (mProgressBar == nullptr)
 		{
 			clearPinWidgetLayout();
 			QWidget* progressWidget = new QWidget();
-			QVBoxLayout* progressWidgetLayout = new QVBoxLayout(progressWidget);
+			auto* progressWidgetLayout = new QVBoxLayout(progressWidget);
 			progressWidgetLayout->setMargin(0);
 			mUi->pinWidgetLayout->addWidget(progressWidget);
 
 			mProgressBar = new QProgressBar();
 			mProgressBar->setTextVisible(false);
-			mProgressBar->setRange(0, 4);
+			mProgressBar->setRange(0, 100);
 			progressWidgetLayout->addWidget(mProgressBar);
 
 			mProgressBarLabel = new QLabel();
@@ -467,15 +470,15 @@ void StepAuthenticationEac1Widget::updateProgressPanel(int pProgressValue, const
 			mUi->pinGroupBox->setVisible(true);
 		}
 
-		mProgressBar->setValue(pProgressValue);
-		mProgressBarLabel->setText(pProgressText);
+		mProgressBar->setValue(progressValue);
+		mProgressBarLabel->setText(progressText);
 	}
 	else
 	{
 		const bool cancelled = mContext->getStatus().isCancellationByUser();
 		clearPinWidgetLayout();
 		QWidget* doneWidget = new QWidget();
-		QHBoxLayout* doneWidgetLayout = new QHBoxLayout(doneWidget);
+		auto* doneWidgetLayout = new QHBoxLayout(doneWidget);
 		doneWidgetLayout->setMargin(0);
 		mUi->pinWidgetLayout->addWidget(doneWidget);
 
@@ -494,7 +497,7 @@ void StepAuthenticationEac1Widget::updateProgressPanel(int pProgressValue, const
 	if (mTaskbarButton)
 	{
 		auto progress = mTaskbarButton->progress();
-		progress->setValue(pProgressValue == 0 ? progress->maximum() : pProgressValue);
+		progress->setValue(progressValue == 0 ? progress->maximum() : progressValue);
 	}
 #endif
 }
@@ -502,7 +505,7 @@ void StepAuthenticationEac1Widget::updateProgressPanel(int pProgressValue, const
 
 void StepAuthenticationEac1Widget::checkBoxChanged(int pCheckState)
 {
-	QCheckBox* cb = qobject_cast<QCheckBox*>(sender());
+	auto* cb = qobject_cast<QCheckBox*>(sender());
 	if (cb != nullptr)
 	{
 		if (pCheckState == Qt::Unchecked)
@@ -526,7 +529,7 @@ void StepAuthenticationEac1Widget::onRandomButtonClicked()
 	RandomPinDialog randomPinDialog(6, mContext->getReaderName(), this);
 	if (randomPinDialog.exec() == QDialog::Accepted && !randomPinDialog.getPin().isEmpty())
 	{
-		QToolButton* pinButton = qobject_cast<QToolButton*>(sender());
+		auto* pinButton = qobject_cast<QToolButton*>(sender());
 		if (pinButton == nullptr)
 		{
 			qCCritical(gui) << "sender == nullptr";

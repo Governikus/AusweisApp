@@ -121,10 +121,9 @@ CardReturnCode BluetoothCard::transmit(const CommandApdu& pCmd, ResponseApdu& pR
 }
 
 
-CardReturnCode BluetoothCard::establishPaceChannel(PacePasswordId pPasswordId,
+EstablishPaceChannelOutput BluetoothCard::establishPaceChannel(PacePasswordId pPasswordId,
 		const QByteArray& pChat,
 		const QByteArray& pCertificateDescription,
-		EstablishPaceChannelOutput& pChannelOutput,
 		quint8 pTimeoutSeconds)
 {
 	EstablishPaceChannel builder;
@@ -140,8 +139,9 @@ CardReturnCode BluetoothCard::establishPaceChannel(PacePasswordId pPasswordId,
 		return returnCode;
 	}
 
-	pChannelOutput.parseFromCcid(response.getBuffer(), pPasswordId);
-	return pChannelOutput.getPaceReturnCode();
+	EstablishPaceChannelOutput output;
+	output.parseFromCcid(response.getBuffer(), pPasswordId);
+	return output;
 }
 
 

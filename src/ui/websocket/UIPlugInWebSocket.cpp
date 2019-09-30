@@ -27,18 +27,18 @@ UIPlugInWebSocket::UIPlugInWebSocket()
 	, mServer(QCoreApplication::applicationName() + QLatin1Char('/') + QCoreApplication::applicationVersion(), QWebSocketServer::NonSecureMode)
 	, mConnection(nullptr)
 	, mRequest()
-	, mJsonApi(nullptr)
+	, mJson(nullptr)
 	, mContext()
 	, mUiDomination(false)
 {
-	if (!UILoader::getInstance().load(UIPlugInName::UIPlugInJsonApi))
+	if (!UILoader::getInstance().load(UIPlugInName::UIPlugInJson))
 	{
 		qCWarning(websocket) << "Cannot start WebSocket because JSON-API is missing";
 		return;
 	}
 
-	mJsonApi = qobject_cast<UIPlugInJsonApi*>(UILoader::getInstance().getLoaded(UIPlugInName::UIPlugInJsonApi));
-	Q_ASSERT(mJsonApi);
+	mJson = qobject_cast<UIPlugInJson*>(UILoader::getInstance().getLoaded(UIPlugInName::UIPlugInJson));
+	Q_ASSERT(mJson);
 
 	mHttpServer = Env::getShared<HttpServer>();
 	if (mHttpServer->isListening())
@@ -67,7 +67,7 @@ void UIPlugInWebSocket::onWorkflowStarted(QSharedPointer<WorkflowContext> pConte
 
 void UIPlugInWebSocket::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 {
-	Q_UNUSED(pContext);
+	Q_UNUSED(pContext)
 
 	mContext.clear();
 }
@@ -101,7 +101,7 @@ void UIPlugInWebSocket::onUiDomination(const UIPlugIn* pUi, const QString& pInfo
 void UIPlugInWebSocket::onUiDominationReleased()
 {
 	mUiDomination = false;
-	mJsonApi->setEnabled(false);
+	mJson->setEnabled(false);
 	Env::getSingleton<ReaderManager>()->stopScanAll();
 	Env::getSingleton<AppSettings>()->setUsedAsSDK(false);
 }
@@ -136,10 +136,10 @@ void UIPlugInWebSocket::onNewConnection()
 	if (mServer.hasPendingConnections())
 	{
 		mConnection.reset(mServer.nextPendingConnection());
-		connect(mJsonApi, &UIPlugInJsonApi::fireMessage, this, &UIPlugInWebSocket::onJsonApiMessage);
+		connect(mJson, &UIPlugInJson::fireMessage, this, &UIPlugInWebSocket::onJsonMessage);
 		connect(mConnection.data(), &QWebSocket::textMessageReceived, this, &UIPlugInWebSocket::onTextMessageReceived);
 		connect(mConnection.data(), &QWebSocket::disconnected, this, &UIPlugInWebSocket::onClientDisconnected);
-		mJsonApi->setEnabled();
+		mJson->setEnabled();
 	}
 	else
 	{
@@ -156,13 +156,13 @@ void UIPlugInWebSocket::onClientDisconnected()
 
 	if (mContext && mUiDomination)
 	{
-		const QSignalBlocker blocker(mJsonApi);
+		const QSignalBlocker blocker(mJson);
 		Q_EMIT mContext->fireCancelWorkflow();
 	}
 
 	mConnection.reset();
 	mRequest.reset();
-	disconnect(mJsonApi, &UIPlugInJsonApi::fireMessage, this, &UIPlugInWebSocket::onJsonApiMessage);
+	disconnect(mJson, &UIPlugInJson::fireMessage, this, &UIPlugInWebSocket::onJsonMessage);
 	Q_EMIT fireUiDominationRelease();
 }
 
@@ -171,12 +171,12 @@ void UIPlugInWebSocket::onTextMessageReceived(const QString& pMessage)
 {
 	if (mConnection)
 	{
-		mJsonApi->doMessageProcessing(pMessage.toUtf8());
+		mJson->doMessageProcessing(pMessage.toUtf8());
 	}
 }
 
 
-void UIPlugInWebSocket::onJsonApiMessage(const QByteArray& pMessage)
+void UIPlugInWebSocket::onJsonMessage(const QByteArray& pMessage)
 {
 	if (mConnection)
 	{

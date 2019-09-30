@@ -16,7 +16,8 @@ Q_DECLARE_LOGGING_CATEGORY(developermode)
 
 
 StateCertificateDescriptionCheck::StateCertificateDescriptionCheck(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 

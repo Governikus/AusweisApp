@@ -43,7 +43,8 @@ class test_CardReturnCode
 
 		void checkConsistency()
 		{
-			for (auto returnCode : Enum<CardReturnCode>::getList())
+			const auto list = Enum<CardReturnCode>::getList();
+			for (auto returnCode : list)
 			{
 				QVERIFY(!CardReturnCodeUtil::toGlobalStatus(returnCode).toErrorDescription().isEmpty());
 			}

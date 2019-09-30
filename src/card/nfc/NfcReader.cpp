@@ -25,7 +25,7 @@ Reader::CardEvent NfcReader::updateCard()
 
 void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 {
-	if (!pTarget)
+	if (pTarget == nullptr)
 	{
 		return;
 	}
@@ -55,8 +55,9 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 void NfcReader::targetLost(QNearFieldTarget* pTarget)
 {
 	qCDebug(card_nfc) << "targetLost";
-	if (pTarget && mCard && mCard->invalidateTarget(pTarget))
+	if (pTarget != nullptr && mCard && mCard->invalidateTarget(pTarget))
 	{
+		mCard.reset();
 		mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
 		Q_EMIT fireCardRemoved(getName());
 	}

@@ -39,7 +39,12 @@ BluetoothReader::BluetoothReader(const QSharedPointer<CyberJackWaveDevice>& pDev
 
 Card* BluetoothReader::getCard() const
 {
-	return mCard.data();
+	if (mCard)
+	{
+		return mCard.data();
+	}
+
+	return nullptr;
 }
 
 
@@ -83,8 +88,9 @@ void BluetoothReader::onInitialized(const QBluetoothDeviceInfo&)
 }
 
 
-void BluetoothReader::disconnectReader()
+void BluetoothReader::disconnectReader(const QString& pError)
 {
+	Q_UNUSED(pError);
 	mDevice->disconnectFromDevice();
 }
 
@@ -110,7 +116,7 @@ void BluetoothReader::onError(QLowEnergyController::Error pError)
 {
 	if (pError == QLowEnergyController::ConnectionError)
 	{
-		Q_EMIT fireReaderDeviceError(GlobalStatus::Code::Workflow_Reader_Device_Connection_Error);
+		Q_EMIT fireReaderDeviceError(GlobalStatus::Code::Workflow_Bluetooth_Reader_Connection_Error);
 	}
 }
 
@@ -128,14 +134,14 @@ void BluetoothReader::onStatusCharacteristicChanged(const QByteArray& pValue)
 	auto messages = BluetoothMessageParser(pValue).getMessages();
 	if (messages.size() != 1 || messages.at(0)->getBluetoothMsgId() != BluetoothMsgId::StatusInd)
 	{
-		qCCritical(card) << "Cannot handle Bluetooth message";
+		qCCritical(bluetooth) << "Cannot handle Bluetooth message";
 		return;
 	}
 
 	auto statusChange = messages.at(0).staticCast<const BluetoothMessageStatusInd>()->getStatusChange();
 	if (mCard.isNull() && (statusChange == BluetoothStatusChange::CardInserted || statusChange == BluetoothStatusChange::CardReset))
 	{
-		qCDebug(card) << "Card inserted" << getName();
+		qCDebug(bluetooth) << "Card inserted" << getName();
 		mCard.reset(new BluetoothCard(mDevice));
 		QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
 		CardInfoFactory::create(cardConnection, mReaderInfo);
@@ -147,15 +153,15 @@ void BluetoothReader::onStatusCharacteristicChanged(const QByteArray& pValue)
 	}
 	else
 	{
-		qCWarning(card) << "Got unhandled card reader status" << statusChange;
+		qCWarning(bluetooth) << "Got unhandled card reader status" << statusChange;
 	}
 }
 
 
 void BluetoothReader::onCardRemoved()
 {
-	qCDebug(card) << "Card removed" << getName();
+	qCDebug(bluetooth) << "Card removed" << getName();
 	mLastCardEvent = CardEvent::CARD_REMOVED;
-	mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
 	mCard.reset();
+	mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
 }

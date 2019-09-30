@@ -9,6 +9,7 @@
 #include "asn1/PaceInfo.h"
 #include "asn1/SecurityInfos.h"
 #include "CardConnectionWorker.h"
+#include "SelectBuilder.h"
 
 #include <QDebug>
 #include <QLoggingCategory>
@@ -39,16 +40,24 @@ QString CardInfo::getCardTypeString() const
 	switch (mCardType)
 	{
 		case CardType::NONE:
+			//: ERROR ALL_PLATFORMS No card is present/inserted. The text is only used in DiagnosisView.
 			return tr("not inserted", "Karte");
 
 		case CardType::UNKNOWN:
+			//: ERROR ALL_PLATFORMS An unknown card is present/inserted. The text is only used in DiagnosisView.
 			return tr("unknown type", "Karte");
 
+		case CardType::PASSPORT:
+			//: ERROR ALL_PLATFORMS A passport card is present/inserted. The text is only used in DiagnosisView.
+			return tr("Passport");
+
 		case CardType::EID_CARD:
+			//: ERROR ALL_PLATFORMS An id card is present/inserted. The text is only used in DiagnosisView.
 			return tr("ID card (PA/eAT)");
 	}
 
 	Q_UNREACHABLE();
+	return QString();
 }
 
 
@@ -64,15 +73,15 @@ bool CardInfo::isEid() const
 }
 
 
-QSharedPointer<const EFCardAccess> CardInfo::getEfCardAccess() const
+bool CardInfo::isPassport() const
 {
-	return mEfCardAccess;
+	return mCardType == CardType::PASSPORT;
 }
 
 
-QString CardInfo::getEidApplicationPath() const
+QSharedPointer<const EFCardAccess> CardInfo::getEfCardAccess() const
 {
-	return mCardType == CardType::EID_CARD ? QStringLiteral("e80704007f00070302") : QString();
+	return mEfCardAccess;
 }
 
 
@@ -102,35 +111,36 @@ bool CardInfo::isPukInoperative() const
 
 bool CardInfoFactory::create(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, ReaderInfo& pReaderInfo)
 {
+	pReaderInfo.setCardInfo(CardInfo(CardType::UNKNOWN));
+
 	if (pCardConnectionWorker == nullptr)
 	{
 		qCWarning(card) << "No connection to smart card";
-		pReaderInfo.setCardInfo(CardInfo(CardType::UNKNOWN));
 		return false;
 	}
 
-	if (!CardInfoFactory::isGermanEidCard(pCardConnectionWorker))
+	const CardType type = CardInfoFactory::detectCard(pCardConnectionWorker);
+
+	if (type != CardType::EID_CARD)
 	{
 		qCWarning(card) << "Not a German EID card";
-		pReaderInfo.setCardInfo(CardInfo(CardType::UNKNOWN));
 		return false;
 	}
 
-	QSharedPointer<EFCardAccess> efCardAccess = readEfCardAccess(pCardConnectionWorker);
-	if (efCardAccess == nullptr || !checkEfCardAccess(efCardAccess))
+	const auto& efCardAccess = readEfCardAccess(pCardConnectionWorker);
+	if (!checkEfCardAccess(efCardAccess))
 	{
-		qCWarning(card) << "EFCardAccess not found or invalid";
-		pReaderInfo.setCardInfo(CardInfo(CardType::UNKNOWN));
+		qCWarning(card) << "EFCardAccess not found or is invalid";
 		return false;
 	}
 
-	pReaderInfo.setCardInfo(CardInfo(CardType::EID_CARD, efCardAccess));
+	pReaderInfo.setCardInfo(CardInfo(type, efCardAccess));
 	pCardConnectionWorker->updateRetryCounter();
 	return true;
 }
 
 
-bool CardInfoFactory::isGermanEidCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
+CardType CardInfoFactory::detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 {
 	// This is actually not specified in the CIF, but we do it to make the PersoSim work
 	// 0. Select the master file
@@ -151,7 +161,7 @@ bool CardInfoFactory::isGermanEidCard(const QSharedPointer<CardConnectionWorker>
 			qCDebug(card) << "ResponseApdu return code" << response.getReturnCode();
 		}
 
-		return false;
+		return CardType::UNKNOWN;
 	}
 
 	// 1. CL=00, INS=A4=SELECT, P1= 02, P2=0C, Lc=02, Data=2F00 (FI of EF.DIR), Le=absent
@@ -160,7 +170,17 @@ bool CardInfoFactory::isGermanEidCard(const QSharedPointer<CardConnectionWorker>
 	if (returnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "Cannot select EF.DIR";
-		return false;
+
+		qCInfo(card) << "Check for passport...";
+		command = SelectBuilder(FileRef::appPassport()).build();
+		returnCode = pCardConnectionWorker->transmit(command, response);
+		if (returnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
+		{
+			qCWarning(card) << "Cannot select application identifier";
+			return CardType::UNKNOWN;
+		}
+
+		return CardType::PASSPORT;
 	}
 
 	// 2. CL=00, INS=B0=Read Binary, P1=00, P2=00 (no offset), Lc=00, Le=5A
@@ -169,7 +189,7 @@ bool CardInfoFactory::isGermanEidCard(const QSharedPointer<CardConnectionWorker>
 	if (returnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "Cannot read EF.DIR";
-		return false;
+		return CardType::UNKNOWN;
 	}
 
 	// matching value from CIF
@@ -179,10 +199,10 @@ bool CardInfoFactory::isGermanEidCard(const QSharedPointer<CardConnectionWorker>
 	{
 		qCWarning(card) << "expected EF.DIR(00,5A): " << matchingValue.toHex();
 		qCWarning(card) << "actual   EF.DIR(00,5A): " << response.getData().left(90).toHex();
-		return false;
+		return CardType::UNKNOWN;
 	}
 
-	return true;
+	return CardType::EID_CARD;
 }
 
 
@@ -206,6 +226,11 @@ QSharedPointer<EFCardAccess> CardInfoFactory::readEfCardAccess(const QSharedPoin
 
 bool CardInfoFactory::checkEfCardAccess(const QSharedPointer<EFCardAccess>& pEfCardAccess)
 {
+	if (!pEfCardAccess)
+	{
+		return false;
+	}
+
 	/*
 	 * At least one PACEInfo must have standardized domain parameters
 	 */

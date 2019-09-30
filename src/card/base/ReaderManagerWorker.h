@@ -34,18 +34,16 @@ class ReaderManagerWorker
 		~ReaderManagerWorker();
 
 		Q_INVOKABLE void startScan(ReaderManagerPlugInType pType, bool pAutoConnect);
-		Q_INVOKABLE void stopScan(ReaderManagerPlugInType pType);
+		Q_INVOKABLE void stopScan(ReaderManagerPlugInType pType, const QString& pError);
 		Q_INVOKABLE bool isScanRunning() const;
+		Q_INVOKABLE bool isScanRunning(ReaderManagerPlugInType pType) const;
 
 		Q_INVOKABLE QVector<ReaderManagerPlugInInfo> getPlugInInfos() const;
 		Q_INVOKABLE QVector<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const;
 		Q_INVOKABLE ReaderInfo getReaderInfo(const QString& pReaderName) const;
 		Q_INVOKABLE void updateReaderInfo(const QString& pReaderName);
 		Q_INVOKABLE void createCardConnectionWorker(const QString& pReaderName);
-		Q_INVOKABLE void connectReader(const QString& pReaderName);
-		Q_INVOKABLE void disconnectReader(const QString& pReaderName);
 		Q_INVOKABLE void updateRetryCounters();
-		Q_INVOKABLE void disconnectAllReaders();
 
 	Q_SIGNALS:
 		void firePluginAdded(const ReaderManagerPlugInInfo& pInfo);

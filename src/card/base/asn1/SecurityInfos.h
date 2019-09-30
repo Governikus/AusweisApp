@@ -17,7 +17,7 @@
 
 namespace governikus
 {
-typedef struct stack_st_securityinfo_st securityinfos_st;
+using securityinfos_st = struct stack_st_securityinfo_st;
 
 DECLARE_ASN1_FUNCTIONS(securityinfos_st)
 DECLARE_ASN1_OBJECT(securityinfos_st)
@@ -58,7 +58,7 @@ class SecurityInfos
  *
  * defined in TR 3110 Part 3
  */
-typedef SecurityInfos EFCardAccess;
+using EFCardAccess = SecurityInfos;
 
 
 } // namespace governikus

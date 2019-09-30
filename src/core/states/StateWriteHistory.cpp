@@ -12,7 +12,8 @@ using namespace governikus;
 
 
 StateWriteHistory::StateWriteHistory(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 
@@ -44,6 +45,7 @@ void StateWriteHistory::run()
 			CVCertificateBody body = getContext()->getDidAuthenticateEac1()->getCvCertificates().at(0)->getBody();
 			QString effectiveDate = body.getCertificateEffectiveDate().toString(Qt::DefaultLocaleShortDate);
 			QString expirationDate = body.getCertificateExpirationDate().toString(Qt::DefaultLocaleShortDate);
+			//: LABEL ALL_PLATFORMS
 			QString validity = tr("Validity:\n%1 - %2").arg(effectiveDate, expirationDate);
 
 			QStringList requestedData;
@@ -67,4 +69,13 @@ void StateWriteHistory::run()
 		}
 	}
 	Q_EMIT fireContinue();
+}
+
+
+void StateWriteHistory::onEntry(QEvent* pEvent)
+{
+	//: INFO ALL_PLATFORMS Status message after the authentication was completed, the results are prepared for the user, mainly relevant for the self authentication since it takes some more time.
+	const auto text = getContext()->getStatus().isNoError() ? tr("Preparing results") : QString(); // The empty string is set to not confuse users when they get redirected to the service provider
+	getContext()->setProgress(100, text);
+	AbstractState::onEntry(pEvent);
 }

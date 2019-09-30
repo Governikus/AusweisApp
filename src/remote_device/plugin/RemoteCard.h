@@ -39,7 +39,7 @@ class RemoteCard
 		bool sendMessage(const QSharedPointer<const RemoteMessage>& pMessage, RemoteCardMessageType pExpectedAnswer, unsigned long pTimeout);
 
 	private Q_SLOTS:
-		void onMessageReceived(RemoteCardMessageType pMessageTpe, const QJsonObject pJsonObject);
+		void onMessageReceived(RemoteCardMessageType pMessageTpe, const QJsonObject& pJsonObject);
 		void onDispatcherClosed(GlobalStatus::Code pCloseCode, const QString& pId);
 
 	Q_SIGNALS:
@@ -55,7 +55,7 @@ class RemoteCard
 
 		virtual CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
 
-		virtual CardReturnCode establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPaceChannelOutput& pChannelOutput, quint8 pTimeoutSeconds = 60) override;
+		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds = 60) override;
 
 		virtual CardReturnCode setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu) override;
 };

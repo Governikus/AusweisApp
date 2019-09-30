@@ -36,7 +36,7 @@ FUNCTION(ADD_QML_TEST _sourcefile)
 
 	EXTRACT_TESTNAME(TESTNAME ${_sourcefile})
 	GET_TEST_CMDLINE(CMD_PARAMS ${TESTNAME} SELECTORS ${_PARAM_SELECTORS})
-	SET(CMD $<TARGET_FILE:QmlTestRunner> ${CMD_PARAMS} -input ${sourcefile} -import "${_import_path}")
+	SET(CMD $<TARGET_FILE:QmlTestRunner> ${CMD_PARAMS} -input ${sourcefile} -import "qrc:///qml/")
 	SET(ENV_FAIL_ON_WARNING "QT_FATAL_WARNINGS=true")
 	# Emasculate ASAN since QtQuick causes problems
 	SET(ENV_EMASCULATE_ASAN "ASAN_OPTIONS=detect_leaks=0,new_delete_type_mismatch=0")
@@ -53,7 +53,7 @@ FUNCTION(ADD_QML_TEST _sourcefile)
 ENDFUNCTION()
 
 
-FUNCTION(ADD_QML_TEST_FILES _import_path)
+FUNCTION(ADD_QML_TEST_FILES)
 	cmake_parse_arguments(_PARAM "" "" "SELECTORS" ${ARGN})
 	IF(NOT BSD AND (NOT Qt5Core_VERSION VERSION_LESS 5.11.0 OR QT_VENDOR STREQUAL "Governikus"))
 		SET(HAS_FILE_SELECTOR_PATCH TRUE)
@@ -73,5 +73,7 @@ ENDFUNCTION()
 
 
 ADD_SUBDIRECTORY(helper)
-ADD_SUBDIRECTORY(qml)
+IF(TARGET Qt5::Qml)
+	ADD_SUBDIRECTORY(qml)
+ENDIF()
 ADD_SUBDIRECTORY(qt)

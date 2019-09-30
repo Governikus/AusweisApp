@@ -659,7 +659,7 @@ in the listing below.
 
 Implementation
 """"""""""""""
-As it is common on the Android platform, information is send to applications
+As it is common on the Android platform, information is sent to applications
 encapsulated in instances of the **Intent** class. In order to process newly
 discovered NFC tags, Intents which are given to the application need to be
 checked for the parcelable NFC extra as shown in the code listing below.

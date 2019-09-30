@@ -7,7 +7,7 @@
 #include "LogHandler.h"
 
 #include <QString>
-#include <QtTest/QtTest>
+#include <QtTest>
 
 using namespace governikus;
 
@@ -152,7 +152,7 @@ class test_ECardApiResult
 			const QMetaEnum& metaEnum = QMetaEnum::fromType<ECardApiResult::Minor>();
 			for (int i = 0; i < metaEnum.keyCount(); i++)
 			{
-				const ECardApiResult::Minor minor = static_cast<ECardApiResult::Minor>(i);
+				const auto minor = static_cast<ECardApiResult::Minor>(i);
 				const char* name = metaEnum.valueToKey(i);
 
 				if (minor == ECardApiResult::Minor::null)
@@ -180,7 +180,7 @@ class test_ECardApiResult
 			const QMetaEnum& metaEnum = QMetaEnum::fromType<ECardApiResult::Minor>();
 			for (int i = 0; i < metaEnum.keyCount(); i++)
 			{
-				const ECardApiResult::Minor minor = static_cast<ECardApiResult::Minor>(i);
+				const auto minor = static_cast<ECardApiResult::Minor>(i);
 				const char* name = metaEnum.valueToKey(i);
 
 				if (minor == ECardApiResult::Minor::null)
@@ -261,7 +261,7 @@ class test_ECardApiResult
 			const QMetaEnum& metaEnum = QMetaEnum::fromType<GlobalStatus::Code>();
 			for (int i = 0; i < metaEnum.keyCount(); i++)
 			{
-				const GlobalStatus::Code statusCode = static_cast<GlobalStatus::Code>(i);
+				const auto statusCode = static_cast<GlobalStatus::Code>(i);
 				const char* name = metaEnum.valueToKey(i);
 				QTest::newRow(name) << statusCode;
 			}

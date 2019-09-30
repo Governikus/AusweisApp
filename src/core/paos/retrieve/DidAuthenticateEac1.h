@@ -25,11 +25,6 @@ class DIDAuthenticateEAC1
 {
 	friend class DidAuthenticateEac1Parser;
 	friend class TestAuthContext;
-	friend class ::test_StatePreVerification;
-	friend class ::test_StateExtractCvcsFromEac1InputType;
-	friend class ::test_StateProcessCertificatesFromEac2;
-	friend class ::test_StateCertificateDescriptionCheck;
-	friend class ::test_AuthModel;
 
 	private:
 		ConnectionHandle mConnectionHandle;

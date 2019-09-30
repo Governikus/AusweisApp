@@ -13,6 +13,8 @@
 #include <QTcpSocket>
 
 class test_DiagnosisConnectionTest;
+class test_DiagnosisModel;
+class test_DiagnosisTreeModel;
 
 namespace governikus
 {
@@ -24,6 +26,8 @@ class DiagnosisConnectionTest
 
 	private:
 		friend class ::test_DiagnosisConnectionTest;
+		friend class ::test_DiagnosisModel;
+		friend class ::test_DiagnosisTreeModel;
 		bool mIsProxySet;
 		QString mProxyHostName;
 		QString mProxyPort;

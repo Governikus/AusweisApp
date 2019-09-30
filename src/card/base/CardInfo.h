@@ -12,7 +12,6 @@
 #include <QCoreApplication>
 #include <QSharedPointer>
 
-class test_CardInfo;
 
 namespace governikus
 {
@@ -30,7 +29,6 @@ class CardInfo
 	Q_DECLARE_TR_FUNCTIONS(governikus::CardInfo)
 
 	private:
-		friend class ::test_CardInfo;
 		CardType mCardType;
 		QSharedPointer<const EFCardAccess> mEfCardAccess;
 		int mRetryCounter;
@@ -47,10 +45,9 @@ class CardInfo
 		QString getCardTypeString() const;
 		bool isAvailable() const;
 		bool isEid() const;
+		bool isPassport() const;
 
 		QSharedPointer<const EFCardAccess> getEfCardAccess() const;
-
-		QString getEidApplicationPath() const;
 
 		int getRetryCounter() const;
 
@@ -84,9 +81,9 @@ class CardInfoFactory
 
 	private:
 		/*!
-		 * Checks, if the smart card is a german eID card, i.e. a NPA or an EAT.
+		 * Checks, if the smart card is a german eID card (i.e. a NPA or an EAT) or a passport.
 		 */
-		static bool isGermanEidCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
+		static CardType detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 		/*!
 		 * Reads the EF.CardAccess

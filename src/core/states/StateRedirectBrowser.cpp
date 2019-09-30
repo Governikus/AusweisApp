@@ -15,19 +15,24 @@ using namespace governikus;
 
 
 StateRedirectBrowser::StateRedirectBrowser(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 
 
 void StateRedirectBrowser::run()
 {
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+	// Only skip redirects on mobile platforms because it induces a forced focus change
 	if (getContext()->isSkipRedirect())
 	{
 		qDebug() << "Skipping redirect, Workflow pending";
 		Q_EMIT fireContinue();
 	}
-	else if (getContext()->isTcTokenNotFound())
+	else
+#endif
+	if (getContext()->isTcTokenNotFound())
 	{
 		sendErrorPage(HTTP_STATUS_NOT_FOUND);
 	}
@@ -38,13 +43,13 @@ void StateRedirectBrowser::run()
 	else
 	{
 		bool redirectSuccess;
-		if (!getContext()->getStartPaosResult().isOk())
+		if (getContext()->getStartPaosResult().isOk())
 		{
-			redirectSuccess = sendRedirect(getContext()->getRefreshUrl(), getContext()->getStartPaosResult());
+			redirectSuccess = sendRedirect(getContext()->getRefreshUrl(), getContext()->getStatus());
 		}
 		else
 		{
-			redirectSuccess = sendRedirect(getContext()->getRefreshUrl(), getContext()->getStatus());
+			redirectSuccess = sendRedirect(getContext()->getRefreshUrl(), getContext()->getStartPaosResult());
 		}
 
 		if (redirectSuccess)

@@ -33,7 +33,7 @@ class AppUpdateData
 
 	public:
 		AppUpdateData();
-		AppUpdateData(GlobalStatus pParsingResult);
+		explicit AppUpdateData(const GlobalStatus& pParsingResult);
 
 		bool isValid() const;
 
@@ -58,7 +58,7 @@ class AppUpdateData
 		const QString& getNotes() const;
 		void setNotes(const QString& pNotes);
 
-		const GlobalStatus& getParsingResult();
+		const GlobalStatus& getParsingResult() const;
 
 		static AppUpdateData parse(const QByteArray& pData);
 };

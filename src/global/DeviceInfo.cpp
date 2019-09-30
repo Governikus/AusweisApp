@@ -23,7 +23,7 @@ DeviceInfo::~DeviceInfo()
 
 
 #ifdef Q_OS_ANDROID
-QString DeviceInfo::getField(const char* pField)
+QString DeviceInfo::getField(const char* const pField)
 {
 	QAndroidJniObject field = QAndroidJniObject::getStaticObjectField("android/os/Build", pField, "Ljava/lang/String;");
 	if (field == nullptr || !field.isValid())

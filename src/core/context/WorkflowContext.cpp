@@ -21,7 +21,7 @@ WorkflowContext::WorkflowContext()
 	: QObject()
 	, mStateApproved(false)
 	, mWorkflowKilled(false)
-	, mCurrentState()
+	, mCurrentState(QLatin1String("Initial"))
 	, mReaderPlugInTypes()
 	, mReaderName()
 	, mCardConnection()
@@ -43,8 +43,22 @@ WorkflowContext::WorkflowContext()
 	, mWorkflowCancelled(false)
 	, mCanAllowedMode(false)
 	, mNextWorkflowPending(false)
+	, mCurrentReaderHasEidCardButInsufficientApduLength(false)
 {
 	connect(this, &WorkflowContext::fireCancelWorkflow, this, &WorkflowContext::onWorkflowCancelled);
+}
+
+
+WorkflowContext::~WorkflowContext()
+{
+#ifndef QT_NO_DEBUG
+	if (!QCoreApplication::applicationName().startsWith(QLatin1String("Test")))
+	{
+		Q_ASSERT(getPin().isEmpty() && "PACE passwords must be cleared as soon as possible.");
+		Q_ASSERT(getCan().isEmpty() && "PACE passwords must be cleared as soon as possible.");
+		Q_ASSERT(getPuk().isEmpty() && "PACE passwords must be cleared as soon as possible.");
+	}
+#endif
 }
 
 
@@ -283,6 +297,7 @@ PacePasswordId WorkflowContext::getEstablishPaceChannelType() const
 void WorkflowContext::setEstablishPaceChannelType(PacePasswordId pType)
 {
 	mEstablishPaceChannelType = pType;
+	Q_EMIT firePasswordTypeChanged();
 }
 
 
@@ -315,11 +330,8 @@ CardReturnCode WorkflowContext::getLastPaceResult() const
 void WorkflowContext::setLastPaceResult(CardReturnCode pLastPaceResult)
 {
 	mPaceResultReportedToUser = false;
-	if (mLastPaceResult != pLastPaceResult)
-	{
-		mLastPaceResult = pLastPaceResult;
-		Q_EMIT fireLastPaceResultChanged();
-	}
+	mLastPaceResult = pLastPaceResult;
+	Q_EMIT firePaceResultUpdated();
 }
 
 
@@ -422,5 +434,21 @@ void WorkflowContext::setNextWorkflowPending(bool pNextWorkflowPending)
 	{
 		mNextWorkflowPending = pNextWorkflowPending;
 		Q_EMIT fireNextWorkflowPending();
+	}
+}
+
+
+bool WorkflowContext::currentReaderHasEidCardButInsufficientApduLength() const
+{
+	return mCurrentReaderHasEidCardButInsufficientApduLength;
+}
+
+
+void WorkflowContext::setCurrentReaderHasEidCardButInsufficientApduLength(bool pState)
+{
+	if (pState != mCurrentReaderHasEidCardButInsufficientApduLength)
+	{
+		mCurrentReaderHasEidCardButInsufficientApduLength = pState;
+		Q_EMIT fireReaderInfoChanged();
 	}
 }

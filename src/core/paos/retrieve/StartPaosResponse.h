@@ -23,7 +23,7 @@ class StartPaosResponse
 		QString mResultMajor, mResultMinor, mResultMessage;
 
 	public:
-		StartPaosResponse(const QByteArray& pXmlData);
+		explicit StartPaosResponse(const QByteArray& pXmlData);
 
 	private:
 		void parse();

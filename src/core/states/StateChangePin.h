@@ -6,8 +6,9 @@
 
 #pragma once
 
-#include "AbstractGenericState.h"
+#include "AbstractState.h"
 #include "context/ChangePinContext.h"
+#include "GenericContextContainer.h"
 
 class test_StateChangePin;
 
@@ -15,7 +16,8 @@ namespace governikus
 {
 
 class StateChangePin
-	: public AbstractGenericState<ChangePinContext>
+	: public AbstractState
+	, public GenericContextContainer<ChangePinContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

@@ -17,7 +17,7 @@ j.with
 	{
 		shell('cd source; python resources/jenkins/import.py')
 
-		shell("cd build; cmake ../source/libs -DCMAKE_BUILD_TYPE=release -DCMAKE_TOOLCHAIN_FILE=../source/cmake/android.toolchain.cmake -DPACKAGES_DIR=\${PACKAGES_DIR} -DCMAKE_ANDROID_ARCH_ABI=${ARCH}")
+		shell("cd build; cmake ../source/libs -DCMAKE_BUILD_TYPE=release -DCMAKE_TOOLCHAIN_FILE=../source/cmake/android.toolchain.cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DPACKAGES_DIR=\${PACKAGES_DIR} -DCMAKE_ANDROID_ARCH_ABI=${ARCH}")
 
 		shell('cd build; make compress')
 	}

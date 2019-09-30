@@ -14,7 +14,7 @@ Q_DECLARE_LOGGING_CATEGORY(bluetooth)
 
 ushort BluetoothUtils::getPaddingLength(ushort pParamLen, ushort pPaddingLen)
 {
-	ushort needsPaddingLen = static_cast<ushort>(pPaddingLen - (pParamLen % pPaddingLen));
+	auto needsPaddingLen = static_cast<ushort>(pPaddingLen - (pParamLen % pPaddingLen));
 	return needsPaddingLen == pPaddingLen ? 0 : needsPaddingLen;
 }
 

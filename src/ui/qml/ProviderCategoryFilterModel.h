@@ -38,7 +38,8 @@ class ProviderCategoryFilterModel
 		void updateSearchString(const QString& pSearchString);
 		QStringList getSelectedCategories() const;
 		int getAdditionalResultCount() const;
-		int matchesForExcludedCategory(const QString& pCategory) const;
+		int resultCountForFilter(const QSet<QString>& pCategories, const QString& pSearchString) const;
+		bool rowMatchesFilter(int pSourceRow, const QModelIndex& pSourceParent, const QSet<QString>& pSelectedCategories, const QString& pSearchString) const;
 
 	protected:
 		bool filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const override;

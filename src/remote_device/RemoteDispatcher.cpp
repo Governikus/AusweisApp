@@ -50,7 +50,7 @@ void RemoteDispatcher::onReceived(const QByteArray& pDataBlock)
 
 	if (messageType == RemoteCardMessageType::UNDEFINED)
 	{
-		const auto& errorMessage = QSharedPointer<const IfdError>::create(QString(), ECardApiResult::Minor::AL_Unkown_API_Function);
+		const QSharedPointer<const IfdError>& errorMessage = QSharedPointer<IfdError>::create(QString(), ECardApiResult::Minor::AL_Unkown_API_Function);
 		send(errorMessage);
 		return;
 	}

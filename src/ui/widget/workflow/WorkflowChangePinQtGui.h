@@ -31,7 +31,8 @@ class WorkflowChangePinQtGui
 		virtual bool verifyAbortWorkflow() override;
 
 	private Q_SLOTS:
-		void onStateChanged(const QString& pNextState);
+		void onStateChanged(const QString& pNewState);
+		void onPaceResultUpdated();
 
 	private:
 		PinSettingsWidget* mPinSettingsWidget;

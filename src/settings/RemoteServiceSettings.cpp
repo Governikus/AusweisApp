@@ -66,6 +66,7 @@ QString RemoteServiceSettings::getDefaultServerName()
 	QString name = DeviceInfo::getName();
 	if (name.isEmpty())
 	{
+		//: LABEL ALL_PLATFORMS
 		return tr("Remote Reader");
 	}
 

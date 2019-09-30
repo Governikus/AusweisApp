@@ -84,6 +84,7 @@ class SettingsWidget
 		void diagnosisRequested();
 		void settingsDone();
 		void fireBackspacePressedOnApply();
+		void fireSwitchUiRequested();
 };
 
 } // namespace governikus

@@ -26,7 +26,7 @@ class UpdateRetryCounterCommand
 		virtual ~UpdateRetryCounterCommand() override = default;
 
 	public:
-		UpdateRetryCounterCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
+		explicit UpdateRetryCounterCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
 };
 

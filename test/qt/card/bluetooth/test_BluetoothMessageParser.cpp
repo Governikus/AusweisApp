@@ -8,8 +8,8 @@
 #include "messages/BluetoothMessageStatusInd.h"
 #include "messages/parameter/BluetoothMessageParameterApduResponse.h"
 #include "messages/parameter/BluetoothMessageParameterStatusChange.h"
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtCore>
+#include <QtTest>
 
 using namespace governikus;
 

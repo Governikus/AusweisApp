@@ -31,9 +31,6 @@ GlobalStatus RemoteConnector::errorToGlobalStatus(RemoteErrorCode pDeviceError)
 		case RemoteErrorCode::INVALID_REQUEST:
 			return GlobalStatus::Code::RemoteConnector_InvalidRequest;
 
-		case RemoteErrorCode::EMPTY_PASSWORD:
-			return GlobalStatus::Code::RemoteConnector_EmptyPassword;
-
 		case RemoteErrorCode::NO_SUPPORTED_API_LEVEL:
 			return GlobalStatus::Code::RemoteConnector_NoSupportedApiLevel;
 

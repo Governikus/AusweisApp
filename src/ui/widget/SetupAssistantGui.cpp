@@ -30,7 +30,7 @@ void SetupAssistantGui::activate()
 	if (!mWizard)
 	{
 		QWidget* dialogParent = qobject_cast<QWidget*>(parent());
-		if (!dialogParent)
+		if (dialogParent == nullptr)
 		{
 			return;
 		}

@@ -1,9 +1,15 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
 
 
 Button {
@@ -11,7 +17,7 @@ Button {
 	visible: ApplicationModel.currentWorkflow !== ""
 
 	Accessible.role: Accessible.Button
-	Accessible.name: qsTr("Cancel")
+	Accessible.name: qsTr("Cancel") + SettingsModel.translationTrigger
 
 	background: Row {
 		id: row
@@ -31,23 +37,30 @@ Button {
 			id: text
 			height: sizeBase.height
 			width: sizeBase.width
-			readonly property Text sizeBase: Text {
-				font.weight: Font.Bold
-				font.pixelSize: Constants.titlebar_font_size
-				text: qsTr("Cancel") + settingsModel.translationTrigger
+			readonly property GText sizeBase: GText {
+				text: qsTr("Cancel") + SettingsModel.translationTrigger
+				textStyle: Style.text.header
+				font.bold: true
 			}
 
 			FocusFrame {
 				scope: button
 			}
 
-			Text {
+			GText {
 				anchors.centerIn: parent
-				color: Constants.white
-				font.weight: Font.Bold
-				font.pixelSize: Constants.titlebar_font_size * (button.down ? 0.9 : 1)
+
 				text: text.sizeBase.text
+				textStyle: Style.text.header
+				font.bold: true
+				font.pixelSize: Style.text.header.textSize * (button.down ? 0.9 : 1)
 			}
 		}
+	}
+
+	MouseArea {
+		cursorShape: Qt.PointingHandCursor
+		anchors.fill: parent
+		onPressed: mouse.accepted = false
 	}
 }

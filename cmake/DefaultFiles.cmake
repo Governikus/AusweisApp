@@ -21,7 +21,4 @@ FUNCTION(CONFIGURE_DEFAULT_FILES _destination)
 
 	# Copy secure storage file, so that the AusweisApp2 can be started from the build directory.
 	CONFIGURE_FILE(${RESOURCES_DIR}/config.json.in ${_destination}/config.json @ONLY)
-
-	# Copy qtlogging.ini file
-	CONFIGURE_FILE(${RESOURCES_DIR}/qtlogging.ini ${_destination}/qtlogging.ini COPYONLY)
 ENDFUNCTION()

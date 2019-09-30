@@ -9,8 +9,8 @@ using namespace governikus;
 
 qint64 NetworkReplyError::readData(char* data, qint64 maxlen)
 {
-	Q_UNUSED(data);
-	Q_UNUSED(maxlen);
+	Q_UNUSED(data)
+	Q_UNUSED(maxlen)
 	return -1;
 }
 

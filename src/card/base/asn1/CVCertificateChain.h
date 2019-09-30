@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "Commands.h"
 #include "CVCertificate.h"
 
 #include <QVector>
@@ -25,9 +24,8 @@ class CVCertificateChain
 		bool mProductive;
 
 	public:
-		CVCertificateChain(bool pProductive = true);
-
-		CVCertificateChain(const QVector<QSharedPointer<const CVCertificate> >& pCvcs, bool pProductive);
+		explicit CVCertificateChain(bool pProductive = true);
+		explicit CVCertificateChain(const QVector<QSharedPointer<const CVCertificate> >& pCvcs, bool pProductive);
 
 		/*!
 		 * Return the document verifier certificate.

@@ -56,7 +56,7 @@ class RemoteReaderManagerPlugIn
 		virtual QList<Reader*> getReaders() const override;
 
 		virtual void startScan(bool pAutoConnect) override;
-		virtual void stopScan() override;
+		virtual void stopScan(const QString& pError = QString()) override;
 
 };
 

@@ -43,7 +43,7 @@ DeleteHistoryDialog::DeleteHistoryDialog(QWidget* pParent)
 	mComboBox->addItem(tr("Last four weeks"), static_cast<int>(TimePeriod::LAST_FOUR_WEEKS));
 	mComboBox->addItem(tr("All history"), static_cast<int>(TimePeriod::ALL_HISTORY));
 
-	QSpacerItem* verticalSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+	auto* verticalSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
 	layout()->addItem(verticalSpacer);
 
 	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
@@ -55,7 +55,7 @@ DeleteHistoryDialog::DeleteHistoryDialog(QWidget* pParent)
 
 QRadioButton* DeleteHistoryDialog::createRadioButtonAndAppendToGroup(const QString& pText, TimePeriod pTimePeriod)
 {
-	QRadioButton* button = new QRadioButton(this);
+	auto* button = new QRadioButton(this);
 	button->setText(pText);
 	button->setProperty("TimePeriod", Enum<TimePeriod>::getValue(pTimePeriod));
 	button->setObjectName(QStringLiteral("button%1").arg(QString::number(mRadioButtonGroup->buttons().count())));

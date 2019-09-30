@@ -7,6 +7,7 @@
 #include "HelpAction.h"
 #include "ReaderConfiguration.h"
 #include "RemoteClient.h"
+#include "states/StateUnfortunateCardPosition.h"
 #include "step/AuthenticateStepsWidget.h"
 
 #include <QLoggingCategory>
@@ -29,6 +30,7 @@ StepChooseCardGui::StepChooseCardGui(const QSharedPointer<WorkflowContext>& pCon
 	, mReaderDeviceGui(new ReaderDeviceGui(pParent))
 	, mCancelButton(nullptr)
 	, mDeviceButton(nullptr)
+	, mRetryButton(nullptr)
 	, mSubDialogOpen(false)
 {
 	const auto& widget = qobject_cast<AuthenticateStepsWidget*>(pParent);
@@ -43,8 +45,11 @@ StepChooseCardGui::StepChooseCardGui(const QSharedPointer<WorkflowContext>& pCon
 	mCancelButton = mInformationMessageBox->addButton(tr("Cancel"), QMessageBox::NoRole);
 	mDeviceButton = mInformationMessageBox->addButton(tr("Settings"), QMessageBox::YesRole);
 	mDeviceButton->setFocus();
+	mRetryButton = mInformationMessageBox->addButton(tr("Retry connection"), QMessageBox::YesRole);
+	mRetryButton->hide();
 
 	connect(mReaderDeviceGui.data(), &ReaderDeviceGui::fireFinished, this, &StepChooseCardGui::onSubDialogFinished);
+	connect(mContext.data(), &WorkflowContext::fireCancelWorkflow, mInformationMessageBox.data(), &QMessageBox::reject);
 }
 
 
@@ -101,16 +106,19 @@ QString StepChooseCardGui::formatErrorMessages(const QString& pMessage1, const Q
 }
 
 
-void StepChooseCardGui::updateErrorMessage(const QString& pTitle, const QString& pMessage1, const QString& pMessage2, bool closeErrorMessage)
+void StepChooseCardGui::updateErrorMessage(const QString& pTitle, const QString& pMessage1, const QString& pMessage2, bool pCloseErrorMessage, const QString& pIconPath)
 {
-	if (closeErrorMessage || mContext->getStatus().isError())
+	if (pCloseErrorMessage || mContext->getStatus().isError())
 	{
 		mReaderDeviceGui->deactivate();
 		mInformationMessageBox->done(QMessageBox::InvalidRole);
+		Q_EMIT fireDeactivated();
 		return;
 	}
 
 	QString iconPath = getCurrentReaderImage(Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter::UniqueReaderTypes));
+	iconPath = pIconPath.isEmpty() ? iconPath : pIconPath;
+
 	if (iconPath.isEmpty())
 	{
 		mInformationMessageBox->setIcon(QMessageBox::Information);
@@ -135,9 +143,16 @@ void StepChooseCardGui::updateErrorMessage(const QString& pTitle, const QString&
 			return;
 		}
 
-		mSubDialogOpen = true;
+		if (mInformationMessageBox->clickedButton() == mRetryButton)
+		{
+			mContext->setStateApproved(true);
+			Q_EMIT fireDeactivated();
+			return;
+		}
+
 		if (mInformationMessageBox->clickedButton() == mDeviceButton)
 		{
+			mSubDialogOpen = true;
 			mReaderDeviceGui->activate();
 		}
 	}
@@ -156,7 +171,7 @@ void StepChooseCardGui::onSubDialogFinished()
 
 const QString StepChooseCardGui::connectedRemoteReaderNames() const
 {
-	RemoteClient* remoteClient = Env::getSingleton<RemoteClient>();
+	auto* remoteClient = Env::getSingleton<RemoteClient>();
 	const auto deviceInfos = remoteClient->getConnectedDeviceInfos();
 	QStringList deviceNames;
 	for (const auto& info : deviceInfos)
@@ -178,19 +193,26 @@ void StepChooseCardGui::onReaderManagerSignal()
 	QVector<ReaderInfo> remoteReaders;
 	for (const auto& readerInfo : readers)
 	{
-		if (!readerInfo.sufficientApduLength())
-		{
-			readerWithInsufficientApduLength = true;
-		}
 		if (readerInfo.hasEidCard())
 		{
-			readersWithNpa << readerInfo;
+			if (!readerInfo.sufficientApduLength())
+			{
+				readerWithInsufficientApduLength = true;
+			}
+			else
+			{
+				readersWithNpa << readerInfo;
+			}
 		}
 		if (readerInfo.getPlugInType() == ReaderManagerPlugInType::REMOTE)
 		{
 			remoteReaders << readerInfo;
 		}
 	}
+
+	const bool askForRetry = AbstractState::isState<StateUnfortunateCardPosition>(mContext->getCurrentState());
+	mRetryButton->setVisible(askForRetry);
+	mDeviceButton->setVisible(!askForRetry);
 
 	if (readers.size() == 0)
 	{
@@ -203,6 +225,13 @@ void StepChooseCardGui::onReaderManagerSignal()
 				tr("Please choose \"Settings\" to install a card reader or configure your smartphone as a card reader."),
 				onlineHelpText,
 				false);
+		return;
+	}
+
+	if (askForRetry)
+	{
+		updateErrorMessage(tr("Retry?"), tr("Weak NFC signal. Please reposition your card."),
+				QString(), false, QStringLiteral(":/images/reader/default_card_position.png"));
 		return;
 	}
 

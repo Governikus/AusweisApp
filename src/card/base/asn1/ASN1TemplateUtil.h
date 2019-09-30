@@ -104,7 +104,7 @@ QSharedPointer<T> decodeObject(const QByteArray& pData, bool pLogging = true)
 {
 	ERR_clear_error();
 	const char* tmp = pData.constData();
-	const unsigned char** dataPointer = reinterpret_cast<unsigned const char**>(&tmp);
+	const auto** dataPointer = reinterpret_cast<unsigned const char**>(&tmp);
 
 	T* object = nullptr;
 	if (!decodeAsn1Object(&object, dataPointer, pData.length()) && pLogging)

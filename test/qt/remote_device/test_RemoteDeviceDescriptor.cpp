@@ -6,7 +6,7 @@
 
 #include "messages/Discovery.h"
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 
 using namespace governikus;

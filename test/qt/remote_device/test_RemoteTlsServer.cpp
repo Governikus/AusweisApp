@@ -49,7 +49,7 @@ class test_RemoteTlsServer
 			server.setPairing(serverPairing);
 			server.listen();
 
-			auto config = SecureStorage::getInstance().getTlsConfigRemote(clientConfig).getConfiguration();
+			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(clientConfig).getConfiguration();
 			config.setPrivateKey(pair.getKey());
 			config.setLocalCertificate(pair.getCertificate());
 
@@ -79,7 +79,7 @@ class test_RemoteTlsServer
 			server.setPairing();
 			server.listen();
 
-			auto config = SecureStorage::getInstance().getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
+			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
 			config.setPrivateKey(pair.getKey());
 			config.setLocalCertificate(pair.getCertificate());
 
@@ -136,7 +136,7 @@ class test_RemoteTlsServer
 			server.listen();
 			QSignalSpy newConnection(&server, &RemoteTlsServer::newConnection);
 
-			auto config = SecureStorage::getInstance().getTlsConfigRemote().getConfiguration();
+			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote().getConfiguration();
 			config.setPrivateKey(pair.getKey());
 			config.setLocalCertificate(pair.getCertificate());
 
@@ -184,7 +184,7 @@ class test_RemoteTlsServer
 			RemoteTlsServer server;
 			server.listen();
 
-			auto config = SecureStorage::getInstance().getTlsConfigRemote().getConfiguration();
+			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote().getConfiguration();
 			config.setPrivateKey(pair.getKey());
 			config.setLocalCertificate(pair.getCertificate());
 			config.setCaCertificates({settings.getCertificate()});

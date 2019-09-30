@@ -16,6 +16,17 @@ ChangePinContext::ChangePinContext(bool pRequestTransportPin)
 }
 
 
+ChangePinContext::~ChangePinContext()
+{
+#ifndef QT_NO_DEBUG
+	if (!QCoreApplication::applicationName().startsWith(QLatin1String("Test")))
+	{
+		Q_ASSERT(getNewPin().isEmpty() && "PACE passwords must be cleared as soon as possible.");
+	}
+#endif
+}
+
+
 const QString& ChangePinContext::getNewPin() const
 {
 	return mNewPin;

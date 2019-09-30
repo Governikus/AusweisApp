@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.8.0)
 
 IF(POLICY CMP0010)
 	CMAKE_POLICY(SET CMP0010 NEW)
@@ -82,12 +82,11 @@ ELSE()
 	SET(PATCH_CMD ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/patch.py --debug -v)
 	MESSAGE(STATUS "Cannot find 'patch' command... using patch.py")
 ENDIF()
+SET(PATCH_CMD ${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PROJECT_SOURCE_DIR}/patches)
 
 IF(NOT DESTINATION_DIR)
 	SET(DESTINATION_DIR ${PROJECT_BINARY_DIR}/dist)
 ENDIF()
-
-SET(PATCHES_DIR ${PROJECT_SOURCE_DIR}/../patches)
 
 IF(NOT PACKAGES_DIR)
 	SET(PACKAGES_DIR $ENV{PACKAGES_DIR})
@@ -103,11 +102,11 @@ INCLUDE(Messages)
 
 
 ################################## Versions
-SET(QT 5.11.2)
-SET(QT_HASH c6104b840b6caee596fa9a35bc5f57f67ed5a99d6a36497b6fe66f990a53ca81)
+SET(QT 5.12.4)
+SET(QT_HASH 85da5e0ee498759990180d5b8192efaa6060a313c5018b772f57d446bdd425e1)
 
-SET(OPENSSL 1.1.1)
-SET(OPENSSL_HASH 2836875a0f89c03d0fdf483941512613a50cfb421d6fd94b9f41d7279d586a3d)
+SET(OPENSSL 1.1.1c)
+SET(OPENSSL_HASH f6fb3079ad15076154eda9413fed42877d668e7069d9b87396d0804fdb3f4c90)
 
 ################################## Files
 SET(QT_FILE qt-everywhere-src-${QT}.tar.xz)
@@ -117,7 +116,7 @@ SET(OPENSSL_FILE openssl-${OPENSSL}.tar.gz)
 IF("${QT}" MATCHES "alpha|beta|rc")
 	SET(QT_DEST_DIR development_releases)
 ELSE()
-	SET(QT_DEST_DIR official_releases)
+	SET(QT_DEST_DIR archive) # official_releases
 ENDIF()
 STRING(SUBSTRING ${QT} 0 4 QT_SUBVERSION)
 
@@ -131,7 +130,8 @@ SET(ENABLED_TARGETS)
 #########################################################################
 LIST(APPEND ENABLED_TARGETS openssl)
 
-SET(OPENSSL_CONFIGURE_FLAGS no-camellia no-bf no-aria no-seed no-poly1305 no-srp no-gost no-ocsp no-idea no-mdc2 no-rc2 no-rc4 no-rc5 no-srtp no-hw no-sm2 no-sm3 no-sm4)
+SET(OPENSSL_CONFIGURE_FLAGS no-camellia no-bf no-aria no-seed no-poly1305 no-srp no-gost no-idea no-mdc2 no-rc2 no-rc4 no-rc5 no-srtp no-hw no-sm2 no-sm3 no-sm4)
+SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-ocsp no-ct no-dgram)
 SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-cast no-chacha no-blake2 no-rmd160 no-scrypt no-siphash no-whirlpool no-md4 no-des)
 SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-tls1 no-tls1-method no-tls1_1 no-tls1_1-method no-tls1_3 no-ssl3 no-ssl3-method no-dtls no-dtls1-method no-dtls1_2-method)
 SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-deprecated no-engine no-async no-dso no-comp no-ts no-makedepend no-tests shared)
@@ -139,6 +139,7 @@ SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-deprecated no-engine n
 IF(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
 	SET(OPENSSL_CONFIGURE_FLAGS --debug ${OPENSSL_CONFIGURE_FLAGS})
 ELSE()
+	SET(OPENSSL_CONFIGURE_FLAGS no-ui-console no-filenames ${OPENSSL_CONFIGURE_FLAGS})
 	ADD_FLAG(-Os NOQUOTES VAR OPENSSL_COMPILER_FLAGS)
 ENDIF()
 
@@ -146,14 +147,20 @@ ADD_FLAG(-fstack-protector-strong -fstack-protector NOQUOTES VAR OPENSSL_COMPILE
 
 IF(IOS)
 	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} ios64-cross)
-	SET(OPENSSL_ENV export CROSS_TOP=${CMAKE_IOS_DEVELOPER_ROOT} && export CROSS_SDK=iPhoneOS.sdk &&)
+	STRING(REGEX REPLACE "/SDKs/.*" "" CROSS_TOP_DEV_ROOT "${CMAKE_OSX_SYSROOT}")
+	SET(OPENSSL_ENV export CROSS_TOP=${CROSS_TOP_DEV_ROOT} && export CROSS_SDK=iPhoneOS.sdk &&)
 ELSEIF(APPLE)
 	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} darwin64-x86_64-cc)
-	SET(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mmacosx-version-min=10.11)
+	SET(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mmacosx-version-min=10.12)
 ELSEIF(MINGW)
 	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} mingw)
 ELSEIF(MSVC)
-	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-asm VC-WIN32)
+	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-asm)
+	IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
+		SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} VC-WIN64A)
+	ELSE()
+		SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} VC-WIN32)
+	ENDIF()
 ELSEIF(ANDROID)
 	IF(CMAKE_ANDROID_ARCH_ABI STREQUAL "armeabi-v7a")
 		SET(OPENSSL_ARCH android-arm)
@@ -180,10 +187,10 @@ ELSEIF(ANDROID)
 ELSEIF(BSD)
 	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} BSD-x86_64)
 ELSEIF(LINUX)
-	IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "i686")
-		SET(OPENSSL_ARCH linux-generic32)
-	ELSE()
+	IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		SET(OPENSSL_ARCH linux-x86_64)
+	ELSE()
+		SET(OPENSSL_ARCH linux-generic32)
 	ENDIF()
 	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} ${OPENSSL_ARCH})
 ELSE()
@@ -195,11 +202,8 @@ ExternalProject_Add(openssl
 	URL_HASH SHA256=${OPENSSL_HASH}
 	DOWNLOAD_DIR ${PACKAGES_DIR}
 
-	PATCH_COMMAND ${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-android-shlib_variant.patch &&
-				${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-Ignore-disabled-ciphers.patch &&
-				${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-DSA-mod-inverse-fix.patch &&
-				${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-Timing-vulnerability-in-DSA-signature-generation-CVE.patch &&
-				${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/openssl-Timing-vulnerability-in-ECDSA-signature-generation-C.patch
+	PATCH_COMMAND ${PATCH_CMD}/openssl-android-shlib_variant.patch &&
+				${PATCH_CMD}/openssl-Adjust-iOS-target.patch
 	CONFIGURE_COMMAND ${OPENSSL_ENV} ${PERL_EXECUTABLE} Configure --prefix=${DESTINATION_DIR} ${OPENSSL_CONFIGURE_FLAGS} "${OPENSSL_COMPILER_FLAGS}"
 	BUILD_COMMAND ${OPENSSL_ENV} ${MAKE} ${MAKE_JOBS}
 	BUILD_IN_SOURCE 1
@@ -235,32 +239,45 @@ LIST(APPEND ENABLED_TARGETS qt)
 
 IF(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
 	SET(QT_CONFIGURE_FLAGS -debug -qml-debug)
-	SET(QT_PATCH_COMMAND ${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Enable-debug-output-for-OpenSSL.patch &&)
+	SET(QT_PATCH_COMMAND ${PATCH_CMD}/qt-Enable-debug-output-for-OpenSSL.patch &&)
 ELSE()
 	SET(QT_CONFIGURE_FLAGS -release -optimize-size -no-qml-debug)
 	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-force-debug-info>)
 ENDIF()
 
-SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -prefix ${DESTINATION_DIR} -opensource -confirm-license -c++std c++11 -qt-zlib -no-mtdev -qt-libpng -qt-libjpeg -no-dbus -no-harfbuzz -qt-pcre -system-proxies -no-compile-examples -nomake examples -nomake tests -no-sql-sqlite -openssl-linked -I ${DESTINATION_DIR}/include -L ${DESTINATION_DIR}/lib)
+SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -prefix ${DESTINATION_DIR} -opensource -confirm-license)
+SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -nomake examples -nomake tests -no-mtdev -no-dbus -no-harfbuzz -no-compile-examples -no-sql-sqlite)
+SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -qt-zlib -qt-libpng -qt-libjpeg -qt-pcre)
+SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -system-proxies -openssl-linked -I ${DESTINATION_DIR}/include -L ${DESTINATION_DIR}/lib)
 
-IF(NOT ANDROID)
-	LIST(APPEND NO_FEATURES bearermanagement)
+IF(CMAKE_CXX_COMPILER_LAUNCHER STREQUAL "ccache")
+	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -ccache)
 ENDIF()
 
-LIST(APPEND NO_FEATURES ftp paint_debug lcdnumber mdiarea)
+
+LIST(APPEND NO_FEATURES dtls winrt_bt ftp paint_debug lcdnumber mdiarea)
 LIST(APPEND NO_FEATURES calendarwidget colordialog cups dial fontcombobox fontdialog)
 LIST(APPEND NO_FEATURES imageformat_bmp imageformat_ppm imageformat_xbm)
-LIST(APPEND NO_FEATURES sharedmemory textodfwriter filesystemwatcher)
+LIST(APPEND NO_FEATURES sharedmemory textodfwriter bearermanagement)
 LIST(APPEND NO_FEATURES undocommand undogroup undostack undoview)
 LIST(APPEND NO_FEATURES printer printdialog printpreviewdialog printpreviewwidget)
-LIST(APPEND NO_FEATURES splashscreen syntaxhighlighter dom sql)
+LIST(APPEND NO_FEATURES splashscreen syntaxhighlighter dom sql qdoc)
 FOREACH(feature ${NO_FEATURES})
 	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-feature-${feature})
 ENDFOREACH()
 
-SET(QT_CONFIGURE_FLAGS_OTHER -no-journald -no-directfb -no-linuxfb)
-SET(QT_CONFIGURE_FLAGS_SKIP_MODULES -skip qtwebglplugin -skip qtscxml -skip qtxmlpatterns -skip qtwebchannel -skip qtwebengine -skip qtscript -skip qtactiveqt -skip qtlocation -skip qtserialbus -skip qtserialport -skip qtgamepad -skip qtvirtualkeyboard -skip qtcanvas3d -skip qtcharts -skip qtdatavis3d -skip qt3d -skip qtpurchasing -skip qtwayland -skip qtremoteobjects -skip qtspeech -skip qtwebview -skip multimedia -skip qtquickcontrols)
 
+LIST(APPEND SKIP_MODULES qtwebglplugin qtscxml qtxmlpatterns qtwebchannel)
+LIST(APPEND SKIP_MODULES qtwebengine qtscript qtactiveqt qtlocation qtserialbus)
+LIST(APPEND SKIP_MODULES qtserialport qtgamepad qtvirtualkeyboard qtcanvas3d qtcharts)
+LIST(APPEND SKIP_MODULES qtdatavis3d qt3d qtpurchasing qtwayland qtremoteobjects)
+LIST(APPEND SKIP_MODULES qtspeech qtwebview multimedia qtquickcontrols)
+FOREACH(module ${SKIP_MODULES})
+	SET(QT_CONFIGURE_FLAGS_SKIP_MODULES ${QT_CONFIGURE_FLAGS_SKIP_MODULES} -skip ${module})
+ENDFOREACH()
+
+
+SET(QT_CONFIGURE_FLAGS_OTHER -no-journald -no-directfb -no-linuxfb)
 SET(QT_CONFIGURE ./configure)
 IF(IOS)
 	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -sdk iphoneos -xplatform macx-ios-clang)
@@ -282,6 +299,8 @@ ELSEIF(WIN32)
 			SET(QT_PLATFORM win32-msvc2015)
 		ELSEIF(MSVC_TOOLSET_VERSION STREQUAL "141")
 			SET(QT_PLATFORM win32-msvc2017)
+		ELSEIF(MSVC_TOOLSET_VERSION STREQUAL "142")
+			SET(QT_PLATFORM win32-msvc2019)
 		ELSE()
 			MESSAGE(FATAL_ERROR "Version of MSVC not supported")
 		ENDIF()
@@ -295,6 +314,8 @@ ELSEIF(WIN32)
 	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_OPENSSL} -opengl dynamic -no-icu -no-sql-odbc -platform ${QT_PLATFORM})
 	SET(QT_CONFIGURE configure.bat)
 ELSEIF(ANDROID)
+	FIND_PACKAGE(Java COMPONENTS Development REQUIRED)
+
 	IF(CMAKE_COMPILER_IS_GNUCXX)
 		SET(ANDROID_XPLATFORM android-g++)
 	ELSE()
@@ -310,8 +331,12 @@ ELSEIF(ANDROID)
 	ENDIF()
 
 	SET(QT_ENV export OPENSSL_LIBS=-lcrypto-gov\ -lssl-gov &&)
-ELSE()
+ELSEIF(BSD)
+	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER})
+ELSEIF(LINUX)
 	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -no-libproxy)
+ELSE()
+	MESSAGE(FATAL_ERROR "Unsupported system")
 ENDIF()
 
 IF(IOS OR ANDROID)
@@ -325,23 +350,18 @@ ExternalProject_Add(qt
 	DOWNLOAD_DIR ${PACKAGES_DIR}
 
 	PATCH_COMMAND ${QT_PATCH_COMMAND}
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Disable-unused-imageformats.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Add-IsoDep-to-the-techList-on-Android.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Introduce-reportError-to-fix-QMetaObject-invokeMethod.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Add-work-around-for-freebsd-build.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Remove-Qt-Labs-specific-plugins-from-the-build.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-configure-refactor-directx-checks.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-configure-detect-fxc.exe-more-thoroughly.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-disable-designer.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-fix-macOS-no-printer.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Use-QUrl-toString-when-forming-the-Host-header.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-QUrl-Support-IPv6-addresses-with-zone-id.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Android-fix-compile-with-NDK-r18.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Android-Fix-crash.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-QObject-Fix-isSignalConnected-when-signals-have-been.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Use-user-provided-session-data-if-available.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Work-Around-FreeBSD-v12-build.patch &&
-			${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PATCHES_DIR}/qt-Linux-Remove-our-use-of-syscall-for-statx-2-and-rena.patch &&
+			${PATCH_CMD}/qt-Disable-unused-imageformats.patch &&
+			${PATCH_CMD}/qt-Add-work-around-for-freebsd-build.patch &&
+			${PATCH_CMD}/qt-Remove-Qt-Labs-specific-plugins-from-the-build.patch &&
+			${PATCH_CMD}/qt-Remove-unused-plugins-from-the-build.patch &&
+			${PATCH_CMD}/qt-disable-designer.patch &&
+			${PATCH_CMD}/qt-Disable-qmltime-for-shared-build.patch &&
+			${PATCH_CMD}/qt-Add-Q_CORE_EXPORT-to-lcEventDispatcher.patch &&
+			${PATCH_CMD}/qt-Fix-build-with-no-feature-printer.patch &&
+			${PATCH_CMD}/qt-Fix-build-with-no-feature-printer-on-macOS.patch &&
+			${PATCH_CMD}/qt-Core-IO-Bluetooth-fix-ambiguous-conversions.patch &&
+			${PATCH_CMD}/qt-Core-IO-Bluetooth-fix-ambiguous-conversions-for-macO.patch &&
+			${PATCH_CMD}/qt-Adjust-iOS-target.patch &&
 			${CMAKE_COMMAND} -E touch qtbase/.gitignore
 	CONFIGURE_COMMAND ${QT_ENV} ${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SKIP_MODULES}
 	BUILD_COMMAND ${MAKE} ${MAKE_JOBS}
@@ -356,7 +376,11 @@ FOREACH(var ${ENABLED_TARGETS})
 	EXTERNALPROJECT_GET_PROPERTY(${var} INSTALL_DIR)
 	LIST(APPEND CLEAN_TARGETS ${INSTALL_DIR})
 ENDFOREACH()
-SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${DESTINATION_DIR};${CLEAN_TARGETS}")
+IF(CMAKE_VERSION VERSION_LESS "3.15")
+	SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${DESTINATION_DIR};${CLEAN_TARGETS}")
+ELSE()
+	SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_CLEAN_FILES "${DESTINATION_DIR};${CLEAN_TARGETS}")
+ENDIF()
 
 OPTION(COMPRESS_DEPENDS "Disable DEPENDS for compress target" ON)
 IF(COMPRESS_DEPENDS)
@@ -377,9 +401,7 @@ IF(DVCS_FOUND)
 	ENDIF()
 ENDIF()
 
-IF(IOS)
-	SET(SYSTEM_NAME iOS)
-ELSEIF(ANDROID)
+IF(ANDROID)
 	SET(SYSTEM_NAME ${CMAKE_SYSTEM_NAME}_${CMAKE_CXX_COMPILER_ID}_${CMAKE_ANDROID_ARCH_ABI})
 ELSE()
 	SET(SYSTEM_NAME ${CMAKE_SYSTEM_NAME}_${CMAKE_CXX_COMPILER_ID})
@@ -392,8 +414,14 @@ IF(WIN32)
 	ENDIF()
 ENDIF()
 
-SET(COMPRESSION cfJ)
-SET(COMPRESSION_FILENDING tar.xz)
+IF(CMAKE_VERSION VERSION_LESS "3.15")
+	SET(COMPRESSION cfJ)
+	SET(COMPRESSION_FILENDING tar.xz)
+ELSE()
+	SET(COMPRESSION cf)
+	SET(COMPRESSION_OPTION --zstd)
+	SET(COMPRESSION_FILENDING tar.zstd)
+ENDIF()
 ADD_CUSTOM_TARGET(compress.pre ${compressed_filename}
 		COMMAND ${CMAKE_COMMAND} -E remove_directory "${DESTINATION_DIR}/doc"
 		COMMAND ${CMAKE_COMMAND} -E remove_directory "${DESTINATION_DIR}/share"
@@ -403,6 +431,6 @@ ADD_CUSTOM_TARGET(compress.pre ${compressed_filename}
 
 SET(compressed_filename Toolchain_${SYSTEM_NAME}_${stamp}.${COMPRESSION_FILENDING})
 ADD_CUSTOM_COMMAND(OUTPUT ${compressed_filename}
-		COMMAND ${CMAKE_COMMAND} -E tar "${COMPRESSION}" "${compressed_filename}" "${DESTINATION_DIR}"
+		COMMAND ${CMAKE_COMMAND} -E tar "${COMPRESSION}" "${compressed_filename}" ${COMPRESSION_OPTION} "${DESTINATION_DIR}"
 		DEPENDS compress.pre)
 ADD_CUSTOM_TARGET(compress DEPENDS ${compressed_filename})

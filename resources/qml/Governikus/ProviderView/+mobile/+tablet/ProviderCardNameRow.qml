@@ -1,6 +1,11 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
 
 Rectangle {
@@ -28,21 +33,19 @@ Rectangle {
 		anchors.leftMargin: parent.padding
 	}
 
-	Text {
-		text: '<html>' + providerName + '</html>'
+	GText {
 		anchors.left: image.right
 		anchors.leftMargin: parent.padding
 		anchors.top: parent.top
 		anchors.topMargin: parent.height * 0.05
 		anchors.right: parent.right
 		anchors.rightMargin: parent.padding
+
+		Accessible.ignored: true
+
+		text: '<html>' + providerName + '</html>'
 		elide: Text.ElideRight
 		maximumLineCount: 4
-		wrapMode: Text.Wrap
-		lineHeightMode: Text.FixedHeight
-		lineHeight: parent.height * 0.90 / 4
-		font.bold: true
-		font.pixelSize: Constants.small_font_size
-		color: Constants.secondary_text
+		textStyle: Style.text.hint_secondary
 	}
 }

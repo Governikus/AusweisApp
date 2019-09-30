@@ -41,12 +41,6 @@ class FileDestination
 		}
 
 
-		static QString getPath(const char* pFilename)
-		{
-			return getPath() % QLatin1Char('/') % QString::fromUtf8(pFilename);
-		}
-
-
 };
 
 } // namespace governikus

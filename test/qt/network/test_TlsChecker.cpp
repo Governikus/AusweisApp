@@ -42,7 +42,7 @@ class test_TlsChecker
 		void initTestCase()
 		{
 			Env::getSingleton<LogHandler>()->init();
-			certs = SecureStorage::getInstance().getUpdateCertificates();
+			certs = Env::getSingleton<SecureStorage>()->getUpdateCertificates();
 			QVERIFY(certs.size() > 0);
 		}
 

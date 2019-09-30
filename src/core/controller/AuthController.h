@@ -19,7 +19,7 @@ class AuthController
 	Q_OBJECT
 
 	public:
-		AuthController(QSharedPointer<AuthContext> pContext);
+		explicit AuthController(QSharedPointer<AuthContext> pContext);
 		virtual ~AuthController() = default;
 };
 

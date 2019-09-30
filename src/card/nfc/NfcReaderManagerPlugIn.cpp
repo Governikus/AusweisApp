@@ -23,6 +23,12 @@ namespace
 bool isAvailable()
 {
 #ifdef Q_OS_ANDROID
+	#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+	QNearFieldManager manager;
+	return manager.isSupported();
+
+	#else
+
 	QAndroidJniObject context = QtAndroid::androidContext();
 	if (context == nullptr)
 	{
@@ -31,6 +37,8 @@ bool isAvailable()
 	}
 
 	return QAndroidJniObject::callStaticObjectMethod("android/nfc/NfcAdapter", "getDefaultAdapter", "(Landroid/content/Context;)Landroid/nfc/NfcAdapter;", context.object()) != nullptr;
+
+	#endif
 
 #else
 	QNearFieldManager manager;
@@ -45,14 +53,13 @@ bool isAvailable()
 
 void NfcReaderManagerPlugIn::onNfcAdapterStateChanged(bool pEnabled)
 {
-	if (mEnabled == pEnabled)
+	if (getInfo().isEnabled() == pEnabled)
 	{
 		return;
 	}
 
 	qCDebug(card_nfc) << "NfcAdapterStateChanged:" << pEnabled;
-	mEnabled = pEnabled;
-	setReaderInfoEnabled(pEnabled);
+	setPlugInEnabled(pEnabled);
 	if (pEnabled)
 	{
 		Q_EMIT fireReaderAdded(mNfcReader->getName());
@@ -66,7 +73,6 @@ void NfcReaderManagerPlugIn::onNfcAdapterStateChanged(bool pEnabled)
 
 NfcReaderManagerPlugIn::NfcReaderManagerPlugIn()
 	: ReaderManagerPlugIn(ReaderManagerPlugInType::NFC, isAvailable())
-	, mEnabled(false)
 	, mNfcReader(nullptr)
 {
 }
@@ -79,7 +85,7 @@ NfcReaderManagerPlugIn::~NfcReaderManagerPlugIn()
 
 QList<Reader*> NfcReaderManagerPlugIn::getReaders() const
 {
-	if (mEnabled)
+	if (getInfo().isEnabled())
 	{
 		return QList<Reader*>({mNfcReader.data()});
 	}
@@ -105,7 +111,7 @@ void NfcReaderManagerPlugIn::init()
 	connect(mNfcReader.data(), &NfcReader::fireNfcAdapterStateChanged, this, &NfcReaderManagerPlugIn::onNfcAdapterStateChanged);
 	qCDebug(card_nfc) << "Add reader" << mNfcReader->getName();
 
-	if (mEnabled)
+	if (getInfo().isEnabled())
 	{
 		Q_EMIT fireReaderAdded(mNfcReader->getName());
 	}

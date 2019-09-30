@@ -1,5 +1,15 @@
 module Style
 
-singleton ProviderStyle 1.0 ProviderStyle.qml
+internal BrandColors BrandColors.qml
+internal BrandDimensions BrandDimensions.qml
+internal Colors Colors.qml
+internal PlatformColors PlatformColors.qml
+internal TextStyles TextStyles.qml
+internal PlatformTextStyles PlatformTextStyles.qml
+internal Dimensions Dimensions.qml
+internal PlatformDimensions PlatformDimensions.qml
+
+singleton Style 1.0 Style.qml
 
 NpaBusyIndicatorStyle 1.0 NpaBusyIndicatorStyle.qml
+TextStyle 1.0 TextStyle.qml

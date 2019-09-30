@@ -118,6 +118,37 @@ class test_DiagnosisConnectionTest
 		}
 
 
+		void test_StartConnectionTest_NoProxy()
+		{
+			QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
+			mTest->startConnectionTest();
+			QVERIFY(mTest->mProxyPingDone);
+			QVERIFY(!mTest->mConnectionTestWithoutProxyDone);
+			QVERIFY(mTest->mConnectionTestWithProxyDone);
+			QVERIFY(!mTest->mIsProxySet);
+			QCOMPARE(mTest->mTcpSocketWithoutProxy.proxy(), QNetworkProxy::NoProxy);
+			QCOMPARE(mTest->mTcpSocketWithoutProxy.state(), QAbstractSocket::SocketState::HostLookupState);
+		}
+
+
+		void test_StartConnectionTest()
+		{
+			QNetworkProxy testProxy(QNetworkProxy::ProxyType::HttpProxy, QString("localhost"), 25000);
+			QNetworkProxy::setApplicationProxy(testProxy);
+
+			mTest->startConnectionTest();
+			QVERIFY(mTest->mIsProxySet);
+			QCOMPARE(mTest->mProxyHostName, QString("localhost"));
+			QCOMPARE(mTest->mProxyPort, QString("25000"));
+			QCOMPARE(mTest->mProxyType, QString("HttpProxy"));
+			QCOMPARE(mTest->mProxyType, QString("HttpProxy"));
+			QCOMPARE(mTest->mPingSocketToProxy.proxy(), QNetworkProxy::NoProxy);
+			QCOMPARE(mTest->mPingSocketToProxy.state(), QAbstractSocket::SocketState::HostLookupState);
+			QCOMPARE(mTest->mTcpSocketWithProxy.proxy(), testProxy);
+			QCOMPARE(mTest->mTcpSocketWithProxy.state(), QAbstractSocket::SocketState::ConnectingState);
+		}
+
+
 };
 
 QTEST_GUILESS_MAIN(test_DiagnosisConnectionTest)

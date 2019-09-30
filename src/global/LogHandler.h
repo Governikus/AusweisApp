@@ -57,8 +57,8 @@ class LogHandler
 
 		inline void copyMessageLogContext(const QMessageLogContext& pSource, QMessageLogContext& pDestination, const QByteArray& pFilename = QByteArray(), const QByteArray& pFunction = QByteArray(), const QByteArray& pCategory = QByteArray());
 		inline void logToFile(const QString& pOutput);
-		inline QByteArray formatFunction(const char* pFunction, const QByteArray& pFilename, int pLine) const;
-		inline QByteArray formatFilename(const char* pFilename) const;
+		inline QByteArray formatFunction(const char* const pFunction, const QByteArray& pFilename, int pLine) const;
+		inline QByteArray formatFilename(const char* const pFilename) const;
 		inline QByteArray formatCategory(const QByteArray& pCategory) const;
 
 		QString getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg);

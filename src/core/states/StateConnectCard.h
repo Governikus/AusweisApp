@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "AbstractGenericState.h"
+#include "AbstractState.h"
 #include "command/CreateCardConnectionCommand.h"
+#include "GenericContextContainer.h"
 
 class test_StateConnectCard;
 
@@ -13,7 +14,8 @@ namespace governikus
 {
 
 class StateConnectCard
-	: public AbstractGenericState<WorkflowContext>
+	: public AbstractState
+	, public GenericContextContainer<WorkflowContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
@@ -26,11 +28,12 @@ class StateConnectCard
 		void onCardInserted();
 		void onCommandDone(QSharedPointer<CreateCardConnectionCommand> pCommand);
 		void onReaderRemoved(const QString& pReaderName);
-		void onAbort();
+
+	public:
+		void onEntry(QEvent* pEvent) override;
 
 	Q_SIGNALS:
 		void fireRetry();
-		void fireReaderRemoved();
 
 };
 

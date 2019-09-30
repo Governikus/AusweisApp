@@ -2,16 +2,15 @@
  * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
+#include "pace/ec/EcdhKeyAgreement.h"
+
 #include "asn1/KnownOIDs.h"
 #include "asn1/PaceInfo.h"
-#include "Commands.h"
 #include "pace/ec/EcdhGenericMapping.h"
-#include "pace/ec/EcdhKeyAgreement.h"
 #include "pace/ec/EcUtil.h"
 #include "pace/ec/EllipticCurveFactory.h"
 
 #include <QLoggingCategory>
-
 
 using namespace governikus;
 
@@ -51,7 +50,7 @@ EcdhKeyAgreement::EcdhKeyAgreement(const QSharedPointer<const PaceInfo>& pPaceIn
 }
 
 
-QSharedPointer<KeyAgreement> EcdhKeyAgreement::create(const QSharedPointer<const PaceInfo>& pPaceInfo,
+QSharedPointer<EcdhKeyAgreement> EcdhKeyAgreement::create(const QSharedPointer<const PaceInfo>& pPaceInfo,
 		const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 {
 	QSharedPointer<EcdhKeyAgreement> keyAgreement(new EcdhKeyAgreement(pPaceInfo, pCardConnectionWorker));
@@ -74,93 +73,87 @@ QSharedPointer<KeyAgreement> EcdhKeyAgreement::create(const QSharedPointer<const
 }
 
 
-CardOperationResult<QByteArray> EcdhKeyAgreement::determineSharedSecret(const QByteArray& pNonce)
+KeyAgreement::CardResult EcdhKeyAgreement::determineSharedSecret(const QByteArray& pNonce)
 {
-	CardOperationResult<QSharedPointer<EC_GROUP> > ephemeralCurveResult = determineEphemeralDomainParameters(pNonce);
-	CardReturnCode ephemeralCurveResultCode = ephemeralCurveResult.getReturnCode();
-	mEphemeralCurve = ephemeralCurveResult.getPayload();
+	auto [ephemeralCurveResultCode, ephemeralCurve] = determineEphemeralDomainParameters(pNonce);
+	mEphemeralCurve = ephemeralCurve;
 	if (ephemeralCurveResultCode != CardReturnCode::OK)
 	{
-		return CardOperationResult<QByteArray>(ephemeralCurveResultCode, QByteArray());
+		return {ephemeralCurveResultCode};
 	}
 
-	CardOperationResult<QSharedPointer<EC_POINT> > mutualPointResult = performKeyExchange(mEphemeralCurve);
-	CardReturnCode mutualPointResultCode = mutualPointResult.getReturnCode();
-	QSharedPointer<EC_POINT> mutualPoint = mutualPointResult.getPayload();
+	auto [mutualPointResultCode, mutualPoint] = performKeyExchange(mEphemeralCurve);
 	if (mutualPointResultCode != CardReturnCode::OK)
 	{
-		return CardOperationResult<QByteArray>(mutualPointResultCode, QByteArray());
+		return {mutualPointResultCode};
 	}
 
 	QByteArray sharedSecret = EcUtil::point2oct(mEphemeralCurve, mutualPoint.data());
 	sharedSecret = sharedSecret.mid(1, (sharedSecret.size() - 1) / 2);
 
-	return CardOperationResult<QByteArray>(CardReturnCode::OK, sharedSecret);
+	return {CardReturnCode::OK, sharedSecret};
 }
 
 
-CardOperationResult<QSharedPointer<EC_GROUP> > EcdhKeyAgreement::determineEphemeralDomainParameters(const QByteArray& pNonce)
+QPair<CardReturnCode, QSharedPointer<EC_GROUP> > EcdhKeyAgreement::determineEphemeralDomainParameters(const QByteArray& pNonce)
 {
 	QByteArray terminalMappingData = mMapping->generateTerminalMappingData();
-	CardOperationResult<QByteArray> result = transmitGAMappingData(terminalMappingData);
-	CardReturnCode resultCode = result.getReturnCode();
+	auto [resultCode, cardMappingData] = transmitGAMappingData(terminalMappingData);
 	if (resultCode != CardReturnCode::OK)
 	{
-		return CardOperationResult<QSharedPointer<EC_GROUP> >(resultCode, QSharedPointer<EC_GROUP>());
+		return qMakePair(resultCode, QSharedPointer<EC_GROUP>());
 	}
 
-	QByteArray cardMappingData = result.getPayload();
-	return CardOperationResult<QSharedPointer<EC_GROUP> >(CardReturnCode::OK, mMapping->generateEphemeralDomainParameters(cardMappingData, pNonce));
+	return qMakePair(CardReturnCode::OK, mMapping->generateEphemeralDomainParameters(cardMappingData, pNonce));
 }
 
 
-CardOperationResult<QSharedPointer<EC_POINT> > EcdhKeyAgreement::performKeyExchange(const QSharedPointer<const EC_GROUP>& pCurve)
+QPair<CardReturnCode, QSharedPointer<EC_POINT> > EcdhKeyAgreement::performKeyExchange(const QSharedPointer<const EC_GROUP>& pCurve)
 {
 	QSharedPointer<EC_KEY> terminalEphemeralKey = EcUtil::create(EC_KEY_new());
 	if (!EC_KEY_set_group(terminalEphemeralKey.data(), pCurve.data()))
 	{
 		qCCritical(card) << "Error EC_KEY_set_group";
-		return CardOperationResult<QSharedPointer<EC_POINT> >(CardReturnCode::PROTOCOL_ERROR, QSharedPointer<EC_POINT>());
+		return qMakePair(CardReturnCode::PROTOCOL_ERROR, QSharedPointer<EC_POINT>());
 	}
 	if (!EC_KEY_generate_key(terminalEphemeralKey.data()))
 	{
 		qCCritical(card) << "Error EC_KEY_generate_key";
-		return CardOperationResult<QSharedPointer<EC_POINT> >(CardReturnCode::PROTOCOL_ERROR, QSharedPointer<EC_POINT>());
+		return qMakePair(CardReturnCode::PROTOCOL_ERROR, QSharedPointer<EC_POINT>());
 	}
 	// Make a copy of the terminal public key for later mutual authentication.
 	mTerminalPublicKey = EcUtil::create(EC_POINT_dup(EC_KEY_get0_public_key(terminalEphemeralKey.data()), pCurve.data()));
 	QByteArray terminalEphemeralPublicKeyBytes = EcUtil::point2oct(pCurve, mTerminalPublicKey.data());
-	const BIGNUM* terminalPrivateKey = EC_KEY_get0_private_key(terminalEphemeralKey.data());
+	const BIGNUM* const terminalPrivateKey = EC_KEY_get0_private_key(terminalEphemeralKey.data());
 
-	CardOperationResult<QByteArray> result = transmitGAEphemeralPublicKey(terminalEphemeralPublicKeyBytes);
-	CardReturnCode resultCode = result.getReturnCode();
+	auto [resultCode, cardEphemeralPublicKeyBytes] = transmitGAEphemeralPublicKey(terminalEphemeralPublicKeyBytes);
 	if (resultCode != CardReturnCode::OK)
 	{
-		return CardOperationResult<QSharedPointer<EC_POINT> >(resultCode, QSharedPointer<EC_POINT>());
+		return qMakePair(resultCode, QSharedPointer<EC_POINT>());
 	}
-	QByteArray cardEphemeralPublicKeyBytes = result.getPayload();
 	qCDebug(secure) << "uncompressedCardEphemeralPublicKey:" << cardEphemeralPublicKeyBytes.toHex();
 
 	mCardPublicKey = EcUtil::oct2point(pCurve, cardEphemeralPublicKeyBytes);
 	if (!mCardPublicKey)
 	{
 		qCCritical(card) << "Cannot encode card ephemeral public key";
-		return CardOperationResult<QSharedPointer<EC_POINT> >(CardReturnCode::PROTOCOL_ERROR, QSharedPointer<EC_POINT>());
+		return qMakePair(CardReturnCode::PROTOCOL_ERROR, QSharedPointer<EC_POINT>());
 	}
 
 	if (!EC_POINT_cmp(pCurve.data(), mTerminalPublicKey.data(), mCardPublicKey.data(), nullptr))
 	{
 		qCCritical(card) << "The exchanged public keys are equal";
-		return CardOperationResult<QSharedPointer<EC_POINT> >(CardReturnCode::PROTOCOL_ERROR, QSharedPointer<EC_POINT>());
+		return qMakePair(CardReturnCode::PROTOCOL_ERROR, QSharedPointer<EC_POINT>());
 	}
 
 	QSharedPointer<EC_POINT> mutualPoint = EcUtil::create(EC_POINT_new(pCurve.data()));
 	if (!EC_POINT_mul(pCurve.data(), mutualPoint.data(), nullptr, mCardPublicKey.data(), terminalPrivateKey, nullptr))
 	{
 		qCCritical(card) << "Calculation of elliptic curve point H failed";
-		return CardOperationResult<QSharedPointer<EC_POINT> >(CardReturnCode::PROTOCOL_ERROR, QSharedPointer<EC_POINT>());
+		return qMakePair(CardReturnCode::PROTOCOL_ERROR, QSharedPointer<EC_POINT>());
 	}
-	return CardOperationResult<QSharedPointer<EC_POINT> >(CardReturnCode::OK, mutualPoint);
+
+	return qMakePair(CardReturnCode::OK, mutualPoint);
 }
 
 

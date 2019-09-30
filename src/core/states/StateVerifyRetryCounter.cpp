@@ -11,7 +11,8 @@ using namespace governikus;
 
 
 StateVerifyRetryCounter::StateVerifyRetryCounter(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 

@@ -108,7 +108,7 @@ bool TabButtonGroup::eventFilter(QObject* pWatched, QEvent* pEvent)
 		return false;
 	}
 
-	QAbstractButton* button = qobject_cast<QAbstractButton*>(pWatched);
+	auto* button = qobject_cast<QAbstractButton*>(pWatched);
 	if (button == nullptr)
 	{
 		return false;
@@ -120,7 +120,7 @@ bool TabButtonGroup::eventFilter(QObject* pWatched, QEvent* pEvent)
 	bool cycle = false;
 	bool next = true;
 
-	QKeyEvent* keyEvent = static_cast<QKeyEvent*>(pEvent);
+	auto* keyEvent = static_cast<QKeyEvent*>(pEvent);
 	switch (keyEvent->key())
 	{
 		case Qt::Key_Up:

@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtCore>
+#include <QtTest>
 
 #include "LogHandler.h"
 #include "VersionInfo.h"

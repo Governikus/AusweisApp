@@ -1,8 +1,10 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 pragma Singleton
 
 import QtQuick 2.10
-
-import Governikus.Type.ApplicationModel 1.0
 
 PlatformConstants {
 	readonly property color green: "#a3cb7f"
@@ -13,4 +15,6 @@ PlatformConstants {
 	readonly property color black: "#000000"
 
 	readonly property double scrolling_speed: 7500.0
+
+	readonly property int animation_duration: 250
 }

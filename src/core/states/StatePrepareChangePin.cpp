@@ -12,7 +12,8 @@ Q_DECLARE_LOGGING_CATEGORY(statemachine)
 
 
 StatePrepareChangePin::StatePrepareChangePin(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 

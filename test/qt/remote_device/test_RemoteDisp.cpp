@@ -14,8 +14,8 @@
 #include "messages/IfdTransmit.h"
 #include "MockDataChannel.h"
 
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtCore>
+#include <QtTest>
 
 
 using namespace governikus;
@@ -53,7 +53,7 @@ class RemoteDispatcherSpy
 RemoteDispatcherSpy::RemoteDispatcherSpy(const QSharedPointer<RemoteDispatcher> pRemoteDispatcher)
 	: mRemoteDispatcher(pRemoteDispatcher)
 	, mClosed(false)
-	, mCloseCode(GlobalStatus::Code::RemoteReader_CloseCode_Undefined)
+	, mCloseCode(GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose)
 {
 	const auto client = mRemoteDispatcher.objectCast<RemoteDispatcherClient>();
 	if (client)
@@ -154,7 +154,7 @@ class test_RemoteDisp
 
 			channel->close();
 			QVERIFY(spy.isClosed());
-			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::RemoteReader_CloseCode_NormalClose);
+			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::No_Error);
 
 			const QVector<QString>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);
@@ -170,7 +170,7 @@ class test_RemoteDisp
 
 			channel->close();
 			QVERIFY(spy.isClosed());
-			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::RemoteReader_CloseCode_NormalClose);
+			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::No_Error);
 
 			const QVector<QString>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);
@@ -273,7 +273,7 @@ class test_RemoteDisp
 			// Destroying a remote dispatcher should close the underlying channel.
 			clientDispatcher.reset();
 			QVERIFY(spy.isClosed());
-			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::RemoteReader_CloseCode_NormalClose);
+			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::No_Error);
 
 			const QVector<QString>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);

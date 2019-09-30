@@ -32,6 +32,7 @@ class MockSocket
 		qint64 bytesAvailable() const override;
 		qint64 readData(char* pDestination, qint64 pMaxSize) override;
 		qint64 writeData(const char* pData, qint64 pMaxSize) override;
+		qint64 write(const QByteArray& pByteArray);
 };
 
 } // namespace governikus

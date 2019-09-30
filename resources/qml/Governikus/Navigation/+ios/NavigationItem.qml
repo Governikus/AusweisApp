@@ -1,34 +1,53 @@
+/*
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
+import QtGraphicalEffects 1.3
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
 Item {
 	property alias source: tabImage.source
 	property alias text: tabText.text
-	property alias textColor: tabText.color
+	property var selected: false
+	property var iconPadding: 4
 	signal clicked
+
+	Accessible.role: Accessible.Button
+	Accessible.name: text
+	Accessible.onPressAction: clicked()
 
 	Image {
 		id: tabImage
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.topMargin: 5
 		anchors.top: parent.top
 		anchors.bottom: tabText.top
+		anchors.left: parent.left
+		anchors.right: parent.right
+		anchors.margins: iconPadding
+
 		fillMode: Image.PreserveAspectFit
 	}
 
-	Text {
+	GText {
 		id: tabText
-		color: Constants.secondary_text
+
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.bottom: parent.bottom
-		anchors.bottomMargin: font.pixelSize / 10
-		font.pixelSize: Constants.small_font_size
-		renderType: Text.NativeRendering
+
+		Accessible.ignored: true
+
+		textStyle: Style.text.hint
 	}
 
 	MouseArea {
 		anchors.fill: parent
 		onClicked: parent.clicked()
+	}
+
+	layer.enabled: true
+	layer.effect: ColorOverlay {
+		color: selected ? Style.color.accent : Constants.grey
 	}
 }

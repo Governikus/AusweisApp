@@ -4,19 +4,20 @@
 
 #pragma once
 
+#include "AbstractState.h"
 #include "context/AuthContext.h"
-#include "states/AbstractGenericState.h"
+#include "GenericContextContainer.h"
 
 
 namespace governikus
 {
 
 class StateCertificateDescriptionCheck
-	: public AbstractGenericState<AuthContext>
+	: public AbstractState
+	, public GenericContextContainer<AuthContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
-	friend class ::test_StateCertificateDescriptionCheck;
 
 	explicit StateCertificateDescriptionCheck(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;

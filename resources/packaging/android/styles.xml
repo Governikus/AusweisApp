@@ -1,8 +1,0 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <color name="background_color">#dcebf6</color>
-    <style name="Theme.NoTitle" parent="@android:style/Theme.NoTitleBar">
-        <!--<item name="android:background">@color/background_color</item>-->
-        <item name="android:windowBackground">@color/background_color</item>
-        <item name="android:colorBackground">@color/background_color</item>
-    </style>
-</resources>

@@ -5,7 +5,11 @@
 
 #include "PasswordEdit.h"
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#include <QScopeGuard>
+#else
 #include "ScopeGuard.h"
+#endif
 
 #include <QKeyEvent>
 #include <QLoggingCategory>
@@ -40,7 +44,7 @@ class RegExValidator
 
 			if (state == State::Invalid && !mInvalidValueToolTip.isNull())
 			{
-				QWidget* parentWidget = static_cast<QWidget*>(parent());
+				auto* parentWidget = static_cast<QWidget*>(parent());
 				QToolTip::showText(parentWidget->mapToGlobal(QPoint(0, 0)), mInvalidValueToolTip, parentWidget, QRect(), 3000);
 			}
 
@@ -70,7 +74,7 @@ int PasswordEdit::determindeWidth(int pNumChars)
 	QLineEdit* const lineEdit = mUi->lineEdit;
 
 	const QString currentText = lineEdit->text();
-	const ScopeGuard resetText([lineEdit, currentText] {
+	const auto resetText = qScopeGuard([lineEdit, currentText] {
 				lineEdit->setText(currentText);
 			});
 

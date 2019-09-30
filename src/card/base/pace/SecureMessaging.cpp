@@ -91,7 +91,7 @@ CommandApdu SecureMessaging::encrypt(const CommandApdu& pCommandApdu)
 	if (!isInitialized())
 	{
 		qCCritical(card) << "SecureMessaging not successfully initialized";
-		return QByteArray();
+		return CommandApdu(QByteArray());
 	}
 
 	++mSendSequenceCounter;
@@ -199,12 +199,12 @@ QByteArray SecureMessaging::getEncryptedIv()
 }
 
 
-bool SecureMessaging::decrypt(const ResponseApdu& pEncryptedResponseApdu, ResponseApdu& pDecryptedResponseApdu)
+ResponseApdu SecureMessaging::decrypt(const ResponseApdu& pEncryptedResponseApdu)
 {
 	if (!isInitialized())
 	{
 		qCCritical(card) << "SecureMessaging not successfully initialized";
-		return false;
+		return ResponseApdu();
 	}
 
 	++mSendSequenceCounter;
@@ -212,12 +212,12 @@ bool SecureMessaging::decrypt(const ResponseApdu& pEncryptedResponseApdu, Respon
 	SecureMessagingResponse secureResponse(pEncryptedResponseApdu.getBuffer());
 	if (secureResponse.isInvalid())
 	{
-		return false;
+		return ResponseApdu();
 	}
 	if (secureResponse.getSecuredStatusCode() != secureResponse.getReturnCode())
 	{
 		qCCritical(card) << "SW1SW2 on secured ResponseApdu does not match";
-		return false;
+		return ResponseApdu();
 	}
 
 	QByteArray dataToMac;
@@ -231,7 +231,7 @@ bool SecureMessaging::decrypt(const ResponseApdu& pEncryptedResponseApdu, Respon
 	if (mCipherMac.generate(dataToMac) != secureResponse.getMac())
 	{
 		qCCritical(card) << "MAC on secured ResponseApdu does not match";
-		return false;
+		return ResponseApdu();
 	}
 
 	QByteArray decryptedData;
@@ -242,9 +242,7 @@ bool SecureMessaging::decrypt(const ResponseApdu& pEncryptedResponseApdu, Respon
 		decryptedData = unpadFromCipherBlockSize(paddedDecryptedData);
 	}
 
-	pDecryptedResponseApdu.setBuffer(decryptedData + secureResponse.getSecuredStatusCodeBytes());
-
-	qCDebug(secure) << "Plain ResponseApdu:" << pDecryptedResponseApdu.getBuffer().toHex();
-
-	return true;
+	const ResponseApdu response(decryptedData + secureResponse.getSecuredStatusCodeBytes());
+	qCDebug(secure) << "Plain ResponseApdu:" << response.getBuffer().toHex();
+	return response;
 }

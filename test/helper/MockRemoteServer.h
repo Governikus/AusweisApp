@@ -36,6 +36,7 @@ class MockRemoteServer
 		void setConnected(bool pConnected);
 		virtual QSslCertificate getCurrentCertificate() const override;
 		virtual const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;
+		void setMessageHandler(const QSharedPointer<ServerMessageHandler>& pHandler);
 };
 
 } // namespace governikus

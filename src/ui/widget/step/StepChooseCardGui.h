@@ -31,12 +31,12 @@ class StepChooseCardGui
 		StepAuthenticationEac1Widget* mAuthWidget;
 		QPointer<QMessageBox> mInformationMessageBox;
 		QPointer<ReaderDeviceGui> mReaderDeviceGui;
-		QPushButton* mCancelButton, * mDeviceButton;
+		QPushButton* mCancelButton, * mDeviceButton, * mRetryButton;
 		bool mSubDialogOpen;
 
 		QString getCurrentReaderImage(const QVector<ReaderInfo>& pReaderInfos);
 		static QString formatErrorMessages(const QString& pMessage1, const QString& pMessage2);
-		void updateErrorMessage(const QString& pTitle, const QString& pMessage1, const QString& pMessage2 = QString(), bool closeErrorMessage = false);
+		void updateErrorMessage(const QString& pTitle, const QString& pMessage1, const QString& pMessage2 = QString(), bool pCloseErrorMessage = false, const QString& pIconPath = QString());
 		const QString connectedRemoteReaderNames() const;
 
 	private Q_SLOTS:

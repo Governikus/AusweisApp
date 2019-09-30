@@ -712,20 +712,13 @@ void PinSettingsWidget::setupChangePinHeader(int pRetryCounter, bool pIsBasicRea
 			break;
 
 		default:
-			if (mMode == Mode::AfterPinUnblock)
+			if (pIsBasicReader)
 			{
-				mUi->headerStackedWidget->setCurrentWidget(mUi->pinUnblockedHeaderPage);
+				mUi->headerStackedWidget->setCurrentWidget(mUi->changePinBasicHeaderPage);
 			}
 			else
 			{
-				if (pIsBasicReader)
-				{
-					mUi->headerStackedWidget->setCurrentWidget(mUi->changePinBasicHeaderPage);
-				}
-				else
-				{
-					mUi->headerStackedWidget->setCurrentWidget(mUi->changePinComfortHeaderPage);
-				}
+				mUi->headerStackedWidget->setCurrentWidget(mUi->changePinComfortHeaderPage);
 			}
 			break;
 	}
@@ -751,7 +744,7 @@ void PinSettingsWidget::onRandomPinButtonClicked()
 	mRandomPinDialog = new RandomPinDialog(6, selectedReaderName, this);
 	if (mRandomPinDialog->exec() == QDialog::Accepted && !mRandomPinDialog->getPin().isEmpty())
 	{
-		QToolButton* pinButton = qobject_cast<QToolButton*>(sender());
+		auto* pinButton = qobject_cast<QToolButton*>(sender());
 		if (pinButton == nullptr)
 		{
 			qCCritical(gui) << "sender == nullptr";

@@ -33,7 +33,7 @@ class CreateCardConnectionCommand
 		Q_INVOKABLE void execute();
 
 	public:
-		CreateCardConnectionCommand(const QString& pReaderName, const QPointer<ReaderManagerWorker>& pReaderManagerWorker);
+		explicit CreateCardConnectionCommand(const QString& pReaderName, const QPointer<ReaderManagerWorker>& pReaderManagerWorker);
 
 		void run();
 		QSharedPointer<CardConnection> getCardConnection() const;

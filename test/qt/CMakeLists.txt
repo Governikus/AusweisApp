@@ -1,3 +1,59 @@
+FUNCTION(GET_CAPITALIZED _out string)
+	STRING(SUBSTRING "${string}" 0 1 _tmp1)
+	STRING(SUBSTRING "${string}" 1 -1 _tmp2)
+	STRING(TOUPPER "${_tmp1}" _tmp1)
+	SET(${_out} ${_tmp1}${_tmp2} PARENT_SCOPE)
+ENDFUNCTION()
+
+
+FUNCTION(GET_SNAKE_TO_CAMEL_CASE _out string)
+	STRING(REPLACE "_" ";" string "${string}")
+	FOREACH(entry ${string})
+		GET_CAPITALIZED(entry "${entry}")
+		SET(_tmp "${_tmp}${entry}")
+	ENDFOREACH()
+
+	SET(${_out} "${_tmp}" PARENT_SCOPE)
+ENDFUNCTION()
+
+
+FUNCTION(EXTRACT_MODULES _out_module _out_submodule filename)
+	GET_FILENAME_COMPONENT(dir "${filename}" DIRECTORY)
+
+	# make unit test directory to cmake list
+	STRING(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" dir "${dir}")
+	STRING(REPLACE "/" ";" dir "${dir}")
+
+	# extract first subdirectory as module
+	LIST(GET dir 0 MODULE)
+	GET_SNAKE_TO_CAMEL_CASE(MODULE "${MODULE}")
+
+	# extract second subdirectory as submodule if it exists
+	LIST(LENGTH dir dir_len)
+	IF(dir_len GREATER 1)
+		LIST(GET dir 1 SUBMODULE)
+		GET_CAPITALIZED(SUBMODULE "${SUBMODULE}")
+	ENDIF()
+
+	# return values: module is required, submodule optional
+	SET(${_out_module} ${MODULE} PARENT_SCOPE)
+	SET(${_out_submodule} ${SUBMODULE} PARENT_SCOPE)
+ENDFUNCTION()
+
+
+FUNCTION(GET_MODULE _out filename)
+	EXTRACT_MODULES(MODULE SUBMODULE "${filename}")
+
+	IF(TARGET "AusweisApp${MODULE}${SUBMODULE}")
+		SET(${_out} "AusweisApp${MODULE}${SUBMODULE}" PARENT_SCOPE)
+	ELSEIF(TARGET "AusweisApp${MODULE}")
+		SET(${_out} "AusweisApp${MODULE}" PARENT_SCOPE)
+	ELSE()
+		MESSAGE(FATAL_ERROR "Cannot detect module: ${filename}")
+	ENDIF()
+ENDFUNCTION()
+
+
 FUNCTION(ADD_TEST_EXECUTABLE testname)
 	IF(ANDROID)
 		ADD_LIBRARY(${testname} SHARED ${ARGN})
@@ -5,57 +61,44 @@ FUNCTION(ADD_TEST_EXECUTABLE testname)
 		ADD_EXECUTABLE(${testname} ${ARGN})
 	ENDIF()
 
-	TARGET_LINK_LIBRARIES(${testname} Qt5::Network Qt5::Test OpenSSL::Crypto)
-	TARGET_LINK_LIBRARIES(${testname} AusweisAppTestHelper AusweisAppCore AusweisAppCard AusweisAppGlobal AusweisAppCardDrivers AusweisAppServices AusweisAppSettings AusweisAppNetwork)
-	TARGET_LINK_LIBRARIES(${testname} AusweisAppActivationInternal AusweisAppUiJsonApi AusweisAppUiAidl AusweisAppUiQml)
-	TARGET_LINK_LIBRARIES(${testname} AusweisAppRemoteDevice AusweisAppExport)
-	TARGET_LINK_LIBRARIES(${testname} AusweisAppSecureStorage AusweisAppConfiguration AusweisAppFileProvider)
-	TARGET_LINK_LIBRARIES(${testname} QRC_FIXTURE_OBJ)
+	GET_MODULE(MODULE "${ARGN}")
+	TARGET_LINK_LIBRARIES(${testname} Qt5::Test AusweisAppTestHelper QRC_FIXTURE_OBJ ${MODULE})
+ENDFUNCTION()
 
-	IF(DESKTOP)
-		TARGET_LINK_LIBRARIES(${testname} Qt5::Widgets AusweisAppUiWidget AusweisAppCardPcsc AusweisAppActivationWebservice)
-	ENDIF()
 
-	IF(LINUX OR ANDROID OR IOS)
-		TARGET_LINK_LIBRARIES(${testname} AusweisAppCardBluetooth)
-	ENDIF()
+FUNCTION(SHOULD_SKIP_TEST _out filename)
+	SET(${_out} FALSE PARENT_SCOPE)
+	STRING(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" test "${sourcefile}")
 
-	TARGET_LINK_LIBRARIES(${testname} AusweisAppWhitelistClient)
+	IF(IOS OR ANDROID)
+		IF(ANDROID_BUILD_AAR AND test MATCHES "ui/qml")
+			SET(${_out} TRUE PARENT_SCOPE)
+			RETURN()
+		ENDIF()
 
-	IF(WIN32)
-		TARGET_LINK_LIBRARIES(${testname} ${WIN_DEFAULT_LIBS})
-	ELSEIF(MAC)
-		TARGET_LINK_LIBRARIES(${testname} ${OSX_APPKIT})
-	ELSEIF(ANDROID)
-		TARGET_LINK_LIBRARIES(${testname} Qt5::AndroidExtras)
+		IF(test MATCHES "ui/widget"
+			OR test MATCHES "card/pcsc")
+			SET(${_out} TRUE PARENT_SCOPE)
+			RETURN()
+		ENDIF()
 	ENDIF()
 ENDFUNCTION()
 
 
 FUNCTION(ADD_TEST_EXECUTABLE_SUBDIR)
-	SUBDIRLIST(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
-	IF(IOS OR ANDROID)
-		LIST(REMOVE_ITEM SUBDIRS widget)
-		LIST(REMOVE_ITEM SUBDIRS cli)
-		LIST(REMOVE_ITEM SUBDIRS pcsc)
-		LIST(REMOVE_ITEM SUBDIRS drivers)
-		LIST(REMOVE_ITEM SUBDIRS activation_webservice)
-	ENDIF()
+	FILE(GLOB_RECURSE TEST_FILES "*.cpp")
 
-	FOREACH(SUBDIR ${SUBDIRS})
-		FILE(GLOB_RECURSE TEST_SUBFILES "${SUBDIR}/*.cpp")
+	FOREACH(sourcefile ${TEST_FILES})
+		SHOULD_SKIP_TEST(SKIP "${sourcefile}")
+		IF(SKIP)
+			CONTINUE()
+		ENDIF()
 
-		FOREACH(sourcefile ${TEST_SUBFILES})
-			STRING(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" sourcefile_relative "${sourcefile}")
-			IF(NOT (((APPLE OR WIN32 OR BSD) AND "${sourcefile_relative}" MATCHES "card/bluetooth") OR
-				((IOS OR ANDROID) AND "${sourcefile_relative}" MATCHES "card/pcsc")))
-				EXTRACT_TESTNAME(TESTNAME ${sourcefile})
-				ADD_TEST_EXECUTABLE(${TESTNAME} ${sourcefile})
-				GET_TEST_CMDLINE(TEST_CMDLINE ${TESTNAME})
-				ADD_TEST(${TESTNAME} ${TESTNAME} ${TEST_CMDLINE})
-				SET_TESTS_PROPERTIES(${TESTNAME} PROPERTIES LABELS "ausweisapp")
-			ENDIF()
-		ENDFOREACH()
+		EXTRACT_TESTNAME(TESTNAME ${sourcefile})
+		ADD_TEST_EXECUTABLE(${TESTNAME} ${sourcefile})
+		GET_TEST_CMDLINE(TEST_CMDLINE ${TESTNAME})
+		ADD_TEST(${TESTNAME} ${TESTNAME} ${TEST_CMDLINE})
+		SET_TESTS_PROPERTIES(${TESTNAME} PROPERTIES LABELS "ausweisapp")
 	ENDFOREACH()
 ENDFUNCTION()
 

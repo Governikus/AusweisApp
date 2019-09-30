@@ -41,7 +41,7 @@ void MockCardConnectionWorker::addPaceCode(CardReturnCode pCode)
 
 CardReturnCode MockCardConnectionWorker::transmit(const CommandApdu& pCommandApdu, ResponseApdu& pResponseApdu)
 {
-	Q_UNUSED(pCommandApdu);
+	Q_UNUSED(pCommandApdu)
 	pResponseApdu.setBuffer(mResponseData.empty() ? QByteArray() : mResponseData.takeFirst());
 	return mResponseCodes.empty() ? CardReturnCode::UNDEFINED : mResponseCodes.takeFirst();
 }
@@ -57,17 +57,15 @@ CardReturnCode MockCardConnectionWorker::updateRetryCounter()
 }
 
 
-CardReturnCode MockCardConnectionWorker::establishPaceChannel(PacePasswordId pPasswordId,
+EstablishPaceChannelOutput MockCardConnectionWorker::establishPaceChannel(PacePasswordId pPasswordId,
 		const QString& pPasswordValue,
 		const QByteArray& pChat,
-		const QByteArray& pCertificateDescription,
-		EstablishPaceChannelOutput& pChannelOutput)
+		const QByteArray& pCertificateDescription)
 {
-	Q_UNUSED(pPasswordId);
-	Q_UNUSED(pPasswordValue);
-	Q_UNUSED(pChat);
-	Q_UNUSED(pCertificateDescription);
-	Q_UNUSED(pChannelOutput);
+	Q_UNUSED(pPasswordId)
+	Q_UNUSED(pPasswordValue)
+	Q_UNUSED(pChat)
+	Q_UNUSED(pCertificateDescription)
 	return mPaceCodes.empty() ? CardReturnCode::UNDEFINED : mPaceCodes.takeFirst();
 }
 
@@ -80,8 +78,8 @@ CardReturnCode MockCardConnectionWorker::destroyPaceChannel()
 
 CardReturnCode MockCardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu)
 {
-	Q_UNUSED(pNewPin);
-	Q_UNUSED(pTimeoutSeconds);
+	Q_UNUSED(pNewPin)
+	Q_UNUSED(pTimeoutSeconds)
 	pResponseApdu.setBuffer(mResponseData.empty() ? QByteArray() : mResponseData.takeFirst());
 	return mResponseCodes.empty() ? CardReturnCode::UNDEFINED : mResponseCodes.takeFirst();
 }

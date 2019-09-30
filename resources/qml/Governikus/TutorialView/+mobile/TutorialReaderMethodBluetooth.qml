@@ -1,13 +1,24 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 SectionPage {
 	id: baseItem
-	leftTitleBarAction: TitleBarAction { state: "back"; onClicked: firePop() }
-	headerTitleBarAction: TitleBarAction { text: qsTr("Tutorial: Bluetooth") + settingsModel.translationTrigger; font.bold: true }
+
+	titleBarVisible: false
+	automaticSafeAreaMarginHandling: false
+	navigationAction: NavigationAction { state: "back"; onClicked: firePop() }
+	//: LABEL ANDROID IOS
+	title: qsTr("Tutorial: Bluetooth") + SettingsModel.translationTrigger
 
 	signal quitTutorialClicked()
 
@@ -28,20 +39,24 @@ SectionPage {
 			height: content.contentHeight
 			anchors.horizontalCenter: parent.horizontalCenter
 
+			Item {
+				id: statusBarSpacer
+				width: parent.width
+				height: statusBar.height
+			}
 
 			Column {
 				width: parent.width
 				spacing: Constants.component_spacing
 
-				Text {
+				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
-					text: qsTr("Using a bluetooth card reader") + settingsModel.translationTrigger
-					font.family: "Noto Serif"
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
+					//: LABEL ANDROID IOS
+					text: qsTr("Using a bluetooth card reader") + SettingsModel.translationTrigger
+					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
 					horizontalAlignment: Text.AlignHCenter
-					wrapMode: Text.WordWrap
 				}
 
 				Rectangle {
@@ -49,15 +64,14 @@ SectionPage {
 					height: radius * 2
 					width: radius * 2
 					radius: numberFour.height
-					border.width: Utils.dp(3)
-					border.color: Constants.tutorial_blue
+					border.width: 3
+					border.color: Style.color.tutorial_how
 
-					Text {
+					GText {
 						id: numberFour
 						anchors.centerIn: parent
 						text: "4"
-						font.family: "Noto Serif"
-						font.pixelSize: Constants.tutorial_content_header_h2_font_size
+						textStyle: Style.text.tutorial_header_secondary
 						font.bold: true
 						horizontalAlignment: Text.AlignHCenter
 					}
@@ -72,8 +86,8 @@ SectionPage {
 						height: radius * 2
 						width: radius * 2
 						radius: parent.width * 0.06
-						border.width: Utils.dp(3)
-						border.color: Constants.tutorial_blue
+						border.width: 3
+						border.color: Style.color.tutorial_how
 
 						y: (parent.height * 0.4) - (height / 2)
 						x: (parent.width * 0.5) - (width / 2)
@@ -96,21 +110,23 @@ SectionPage {
 						centerY: 0.5
 					}
 
-					Text {
+					GText {
 						width: parent.width * 0.4
-						text: qsTr("App on smartphone or tablet") + settingsModel.translationTrigger
+						//: LABEL ANDROID IOS
+						text: qsTr("App on smartphone or tablet") + SettingsModel.translationTrigger
+						textStyle: Style.text.tutorial_content
 						horizontalAlignment: Text.AlignHCenter
-						wrapMode: Text.WordWrap
 
 						x: (parent.width * 0.25) - (width / 2)
 						y: (parent.height * 0.95) - (height / 2)
 					}
 
-					Text {
+					GText {
 						width: parent.width * 0.4
-						text: qsTr("Bluetooth card reader") + settingsModel.translationTrigger
+						//: LABEL ANDROID IOS
+						text: qsTr("Bluetooth card reader") + SettingsModel.translationTrigger
+						textStyle: Style.text.tutorial_content
 						horizontalAlignment: Text.AlignHCenter
-						wrapMode: Text.WordWrap
 
 						x: (parent.width * 0.75) - (width / 2)
 						y: (parent.height * 0.95) - (height / 2)
@@ -132,14 +148,13 @@ SectionPage {
 				width: parent.width
 				spacing: Constants.component_spacing
 
-				Text {
+				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.8
-					text: qsTr("You need a suitable card reader if you want to use the bluetooth connection.") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("You need a suitable card reader if you want to use the bluetooth connection.") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
-					font.pixelSize: Constants.tutorial_content_header_h1_font_size
-					font.family: "Noto Serif"
-					wrapMode: Text.WordWrap
+					textStyle: Style.text.tutorial_header
 				}
 
 				Image {
@@ -154,28 +169,26 @@ SectionPage {
 					width: parent.width
 					height: Math.max(leftText.height, rightText.height)
 
-					Text {
+					GText {
 						id: leftText
 						width: parent.width * 0.4
 						anchors.left: parent.left
-						leftPadding: Utils.dp(30)
-						text: qsTr("Set the card reader visible first...") + settingsModel.translationTrigger
+						leftPadding: 30
+						//: LABEL ANDROID IOS
+						text: qsTr("Set the card reader visible first...") + SettingsModel.translationTrigger
 						horizontalAlignment: Text.AlignHCenter
-						font.pixelSize: Constants.tutorial_content_header_h2_font_size
-						font.family: "Noto Serif"
-						wrapMode: Text.WordWrap
+						textStyle: Style.text.tutorial_header_secondary
 					}
 
-					Text {
+					GText {
 						id: rightText
 						width: parent.width * 0.4
 						anchors.right: parent.right
-						rightPadding: Utils.dp(30)
-						text: qsTr("... and then pair it with your device.") + settingsModel.translationTrigger
+						rightPadding: 30
+						//: LABEL ANDROID IOS
+						text: qsTr("... and then pair it with your device.") + SettingsModel.translationTrigger
 						horizontalAlignment: Text.AlignHCenter
-						font.pixelSize: Constants.tutorial_content_header_h2_font_size
-						font.family: "Noto Serif"
-						wrapMode: Text.WordWrap
+						textStyle: Style.text.tutorial_header_secondary
 					}
 				}
 			}
@@ -195,14 +208,13 @@ SectionPage {
 					fillMode: Image.PreserveAspectFit
 				}
 
-				Text {
+				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.6
-					text: qsTr("Click the link on the website of the service provider.") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("Click the link on the website of the service provider.") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
-					font.family: "Noto Serif"
-					wrapMode: Text.WordWrap
+					textStyle: Style.text.tutorial_header_secondary
 				}
 			}
 
@@ -224,34 +236,32 @@ SectionPage {
 
 				TutorialImage {
 					id: userdataExample
-					source: qsTr("qrc:///images/tutorial/generated/reader_nfc_userdata_example_en.svg") + settingsModel.translationTrigger
+					source: qsTr("qrc:///images/tutorial/generated/reader_nfc_userdata_example_en.svg") + SettingsModel.translationTrigger
 					width: parent.width * 0.8
 
 					centerX: 0.5
 					centerY: 0.75
 				}
 
-				Text {
+				GText {
 					id: textOpenAutomatic
 					width: parent.width * 0.6
-					text: qsTr("The App opens automatically.") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("The App opens automatically.") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
-					font.pixelSize: Constants.tutorial_content_font_size
-					font.family: "Noto Serif"
-					wrapMode: Text.WordWrap
+					textStyle: Style.text.tutorial_content
 
 					x: (parent.width * 0.7) - (width / 2)
 					y: (parent.height * 0) - (height / 2)
 				}
 
-				Text {
+				GText {
 					id: textAccessWhoWhat
 					width: parent.width * 0.6
-					text: qsTr("The AusweisApp2 will display who wants to access which data.") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("The AusweisApp2 will display who wants to access which data.") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
-					font.family: "Noto Serif"
-					wrapMode: Text.WordWrap
+					textStyle: Style.text.tutorial_header_secondary
 
 					x: (parent.width * 0.7) - (width / 2)
 					y: (parent.height * 0.2) - (height / 2)
@@ -266,12 +276,12 @@ SectionPage {
 				width: parent.width
 				spacing: Constants.component_spacing
 
-				Text {
+				GText {
 					id: startProcessText
 					anchors.horizontalCenter: parent.horizontalCenter
-					font.family: "Noto Serif"
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
-					text: qsTr("Start the process with a click on:") + settingsModel.translationTrigger
+					textStyle: Style.text.tutorial_header_secondary
+					//: LABEL ANDROID IOS
+					text: qsTr("Start the process with a click on:") + SettingsModel.translationTrigger
 				}
 
 				Row {
@@ -290,7 +300,8 @@ SectionPage {
 					GButton {
 						id: identifyButton
 						iconSource: "qrc:///images/npa.svg"
-						text: qsTr("Identify now") + settingsModel.translationTrigger;
+						//: LABEL ANDROID IOS
+						text: qsTr("Proceed to PIN entry") + SettingsModel.translationTrigger;
 						animationsDisabled: true
 					}
 				}
@@ -310,7 +321,7 @@ SectionPage {
 
 					TutorialImage {
 						id: screenshotIdentify
-						source: qsTr("qrc:///images/tutorial/screenshot_choose_reader_en.png") + settingsModel.translationTrigger
+						source: qsTr("qrc:///images/tutorial/screenshot_choose_reader_%1_en.png").arg(Constants.layout) + SettingsModel.translationTrigger
 						width: parent.width * 0.5
 
 						centerX: 0.5
@@ -326,14 +337,13 @@ SectionPage {
 					}
 				}
 
-				Text {
+				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
-					text: qsTr("Tap on Bluetooth") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("Tap on Bluetooth") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
-					font.pixelSize: Constants.tutorial_content_header_h1_font_size
-					font.family: "Noto Serif"
-					wrapMode: Text.WordWrap
+					textStyle: Style.text.tutorial_header
 				}
 			}
 
@@ -346,14 +356,13 @@ SectionPage {
 				width: parent.width
 				spacing: Constants.component_spacing
 
-				Text {
+				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
-					text: qsTr("Insert card into card reader") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("Insert card into card reader") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
-					font.pixelSize: Constants.tutorial_content_header_h1_font_size
-					font.family: "Noto Serif"
-					wrapMode: Text.WordWrap
+					textStyle: Style.text.tutorial_header
 				}
 
 				Image {
@@ -364,14 +373,13 @@ SectionPage {
 					fillMode: Image.PreserveAspectFit
 				}
 
-				Text {
+				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
-					text: qsTr("... and confirm the displayed information.") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("... and confirm the displayed information.") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
-					font.pixelSize: Constants.tutorial_content_header_h1_font_size
-					font.family: "Noto Serif"
-					wrapMode: Text.WordWrap
+					textStyle: Style.text.tutorial_header
 				}
 			}
 
@@ -387,13 +395,12 @@ SectionPage {
 					width: parent.width
 					height: pin6Image.height + Constants.component_spacing * 2
 
-					Text {
+					GText {
 						width: parent.width * 0.8
-						text: (settingsModel.language === "en" ? qsTr("Enter") : qsTr("Now")) + settingsModel.translationTrigger
-						font.family: "Noto Serif"
-						font.pixelSize: Constants.tutorial_content_header_h1_font_size
+						//: LABEL ANDROID IOS
+						text: (SettingsModel.language === "en" ? qsTr("Enter") : qsTr("Now")) + SettingsModel.translationTrigger
+						textStyle: Style.text.tutorial_header
 						horizontalAlignment: Text.AlignHCenter
-						wrapMode: Text.WordWrap
 
 						x: (parent.width * 0.5) - (width / 2)
 						y: (parent.height * 0.05) - (height / 2)
@@ -409,28 +416,26 @@ SectionPage {
 						centerX: 0.5
 					}
 
-					Text {
+					GText {
 						width: parent.width
-						text: qsTr("6 digits long PIN") + settingsModel.translationTrigger
-						font.family: "Noto Serif"
+						//: LABEL ANDROID IOS
+						text: qsTr("6 digits long PIN") + SettingsModel.translationTrigger
+						textStyle: Style.text.tutorial_header
 						font.bold: true
-						font.pixelSize: Constants.tutorial_content_header_h1_font_size
 						horizontalAlignment: Text.AlignHCenter
-						wrapMode: Text.WordWrap
 						z: 2
 
 						x: (parent.width * 0.5) - (width / 2)
 						y: (parent.height * 0.2) - (height / 2)
 					}
 
-					Text {
+					GText {
 						anchors.horizontalCenter: parent.horizontalCenter
 						width: parent.width * 0.8
-						text: (settingsModel.language === "en" ? qsTr("now on the card reader!") : qsTr("enter on the card reader!")) + settingsModel.translationTrigger
-						font.family: "Noto Serif"
-						font.pixelSize: Constants.tutorial_content_header_h1_font_size
+						//: LABEL ANDROID IOS
+						text: (SettingsModel.language === "en" ? qsTr("now on the card reader!") : qsTr("enter on the card reader!")) + SettingsModel.translationTrigger
+						textStyle: Style.text.tutorial_header
 						horizontalAlignment: Text.AlignHCenter
-						wrapMode: Text.WordWrap
 
 						x: (parent.width * 0.5) - (width / 2)
 						y: (parent.height * 0.9) - (height / 2)
@@ -450,15 +455,14 @@ SectionPage {
 						centerX: 0.2
 					}
 
-					Text {
+					GText {
 						id: noticeText
 						width: parent.width * 0.6
-						text: qsTr("This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.") + settingsModel.translationTrigger
-						font.family: "Noto Serif"
-						font.pixelSize: Constants.tutorial_content_font_size
+						//: LABEL ANDROID IOS
+						text: qsTr("This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.") + SettingsModel.translationTrigger
+						textStyle: Style.text.tutorial_content
 						font.bold: true
 						horizontalAlignment: Text.AlignLeft
-						wrapMode: Text.WordWrap
 
 						x: (parent.width * 0.65) - (width / 2)
 						y: (parent.height * 0.5) - (height / 2)
@@ -494,10 +498,17 @@ SectionPage {
 		}
 	}
 
+	TutorialStatusBar {
+		id: statusBar
+
+		shaderSource: sectionPageFlickable
+	}
+
 	TutorialReaderMethodFooter {
 		id: footer
 		width: baseItem.width
 
+		shaderSource: sectionPageFlickable
 		onMenuClicked: firePop()
 		onQuitTutorialClicked: {
 			firePop()

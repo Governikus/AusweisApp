@@ -108,25 +108,37 @@ bool PdfExporter::exportHistory()
 
 	const auto& locale = LanguageLoader::getInstance().getUsedLocale();
 
-	initTable(3, {180, 80}, {tr("Date"), tr("Details")});
+	initTable(3, {180, 80},
+			//: LABEL ALL_PLATFORMS
+			{tr("Date"),
+			 //: LABEL ALL_PLATFORMS
+			 tr("Details")});
+	//: LABEL ALL_PLATFORMS
 	const auto& dateTimeFormat = tr("dd.MM.yyyy hh:mm AP");
 	const auto& infos = Env::getSingleton<AppSettings>()->getHistorySettings().getHistoryInfos();
 	for (const auto& entry : infos)
 	{
 		toggleRowColor();
 		const QString& dateTimeEntry = locale.toString(entry.getDateTime(), dateTimeFormat);
+		//: LABEL ALL_PLATFORMS
 		addTableRow({dateTimeEntry, tr("Provider:"), entry.getSubjectName()});
+		//: LABEL ALL_PLATFORMS
 		addTableRow({QString(), tr("Purpose:"), entry.getPurpose()});
 		const auto& data = AccessRoleAndRightsUtil::joinFromTechnicalName(entry.getRequestedData());
+		//: LABEL ALL_PLATFORMS
 		addTableRow({QString(), tr("Data:"), data});
 	}
 	closeTable();
 
 	const auto& now = QDateTime::currentDateTime();
+	//: LABEL ALL_PLATFORMS
 	QString date = locale.toString(now, tr("dd.MM.yyyy"));
+	//: LABEL ALL_PLATFORMS
 	QString time = locale.toString(now, tr("hh:mm AP"));
+	//: LABEL ALL_PLATFORMS
 	const auto& headline = tr("At %1 %2 the following data were saved:").arg(date, time);
 
+	//: LABEL ALL_PLATFORMS
 	PdfCreator pdf(mFilename, tr("History"), headline, getContent());
 	const bool success = pdf.save();
 	checkOpenFile(success);
@@ -142,7 +154,11 @@ bool PdfExporter::exportSelfInfo(const QDateTime& pDate, const QVector<QPair<QSt
 	}
 	mContent.clear();
 
-	initTable(2, {180}, {tr("Entry"), tr("Content")});
+	initTable(2, {180},
+			//: LABEL ALL_PLATFORMS
+			{tr("Entry"),
+			 //: LABEL ALL_PLATFORMS
+			 tr("Content")});
 	for (const auto& entry : pInfoData)
 	{
 		if (!entry.first.isEmpty())
@@ -154,10 +170,14 @@ bool PdfExporter::exportSelfInfo(const QDateTime& pDate, const QVector<QPair<QSt
 	closeTable();
 
 	const auto& locale = LanguageLoader::getInstance().getUsedLocale();
+	//: LABEL ALL_PLATFORMS
 	QString date = locale.toString(pDate, tr("dd.MM.yyyy"));
+	//: LABEL ALL_PLATFORMS
 	QString time = locale.toString(pDate, tr("hh:mm AP"));
+	//: LABEL ALL_PLATFORMS
 	const auto& headline = tr("At %1 %2 the following data has been read out of your ID card:").arg(date, time);
 
+	//: LABEL ALL_PLATFORMS
 	PdfCreator pdf(mFilename, tr("Information"), headline, getContent());
 	const bool success = pdf.save();
 	checkOpenFile(success);

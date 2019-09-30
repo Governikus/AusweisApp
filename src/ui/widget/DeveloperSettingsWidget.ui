@@ -38,7 +38,7 @@
          <enum>Qt::TabFocus</enum>
         </property>
         <property name="text">
-         <string>Self authentication test URI:</string>
+         <string>Self-authentication test URI:</string>
         </property>
        </widget>
       </item>

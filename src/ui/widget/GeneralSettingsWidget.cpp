@@ -42,7 +42,8 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* pParent)
 	connect(mUi->regularlyUpdateCheckBox, &QCheckBox::stateChanged, this, &GeneralSettingsWidget::onCheckBoxStateChanged);
 	connect(mUi->closeWindowCheckBox, &QCheckBox::stateChanged, this, &GeneralSettingsWidget::onCheckBoxStateChanged);
 	connect(mUi->saveHistoryCheckBox, &QCheckBox::stateChanged, this, &GeneralSettingsWidget::onCheckBoxStateChanged);
-	connect(mUi->updateCheckButton, &QCheckBox::clicked, this, &GeneralSettingsWidget::onUpdateCheckButtonClicked);
+	connect(mUi->updateCheckButton, &QPushButton::clicked, this, &GeneralSettingsWidget::onUpdateCheckButtonClicked);
+	connect(mUi->switchToBetaUiButton, &QPushButton::clicked, this, &GeneralSettingsWidget::fireSwitchUiRequested);
 	connect(mUi->keylessPasswordCheckBox, &QCheckBox::stateChanged, this, &GeneralSettingsWidget::onCheckBoxStateChanged);
 }
 

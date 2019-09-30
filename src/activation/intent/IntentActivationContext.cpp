@@ -13,9 +13,10 @@
 using namespace governikus;
 
 
-IntentActivationContext::IntentActivationContext(const QUrl& pActivationUrl)
+IntentActivationContext::IntentActivationContext(const QUrl& pActivationUrl, const QString& pReferrer)
 	: ActivationContext()
 	, mActivationUrl(pActivationUrl)
+	, mReferrer(pReferrer)
 	, mRedirectAddress()
 {
 }

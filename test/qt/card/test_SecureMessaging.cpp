@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtCore>
+#include <QtTest>
 
 #include "asn1/KnownOIDs.h"
 #include "pace/SecureMessaging.h"
@@ -217,9 +217,8 @@ class test_SecureMessaging
 			quint32 ssc = 0;
 			auto result = encryptResponse(plainBuffer, ssc);
 			ResponseApdu encryptedResponse(concat({result[0], result[1], result[2], result[3]}));
-			ResponseApdu decryptedResponse;
 
-			QVERIFY(mSecureMessaging->decrypt(encryptedResponse, decryptedResponse));
+			ResponseApdu decryptedResponse = mSecureMessaging->decrypt(encryptedResponse);
 			QCOMPARE(decryptedResponse.getBuffer(), plainBuffer);
 		}
 
@@ -231,9 +230,8 @@ class test_SecureMessaging
 			quint32 ssc = 0;
 			auto result = encryptResponse(plainBuffer, ssc);
 			ResponseApdu encryptedResponse(concat({result[0], result[1], result[2], result[3]}));
-			ResponseApdu decryptedResponse;
 
-			QVERIFY(mSecureMessaging->decrypt(encryptedResponse, decryptedResponse));
+			ResponseApdu decryptedResponse = mSecureMessaging->decrypt(encryptedResponse);
 			QCOMPARE(decryptedResponse.getBuffer(), plainBuffer);
 		}
 
@@ -246,17 +244,16 @@ class test_SecureMessaging
 			quint32 ssc = 0;
 			auto result = encryptResponse(plainBuffer, ssc);
 			ResponseApdu encryptedResponse(concat({result[0], result[1], result[2], result[3]}));
-			ResponseApdu decryptedResponse;
 
 			QCOMPARE(ssc, 1u);
-			QVERIFY(mSecureMessaging->decrypt(encryptedResponse, decryptedResponse));
+			ResponseApdu decryptedResponse = mSecureMessaging->decrypt(encryptedResponse);
 			QCOMPARE(decryptedResponse.getBuffer(), plainBuffer);
 
 			auto result2 = encryptResponse(plainBuffer2, ssc);
 			ResponseApdu encryptedResponse2(concat({result2[0], result2[1], result2[2], result2[3]}));
-			ResponseApdu decryptedResponse2;
+
 			QCOMPARE(ssc, 2u);
-			QVERIFY(mSecureMessaging->decrypt(encryptedResponse2, decryptedResponse2));
+			ResponseApdu decryptedResponse2 = mSecureMessaging->decrypt(encryptedResponse2);
 			QCOMPARE(decryptedResponse2.getBuffer(), plainBuffer2);
 		}
 
@@ -268,9 +265,8 @@ class test_SecureMessaging
 			quint32 ssc = 0;
 			auto result = encryptResponse(plainBuffer, ssc);
 			ResponseApdu encryptedResponse(concat({result[0], result[1], result[2], QByteArray::fromHex("6B00")}));
-			ResponseApdu decryptedResponse;
 
-			QVERIFY(!mSecureMessaging->decrypt(encryptedResponse, decryptedResponse));
+			QVERIFY(mSecureMessaging->decrypt(encryptedResponse).isEmpty());
 		}
 
 
@@ -281,9 +277,8 @@ class test_SecureMessaging
 			quint32 ssc = 0;
 			auto result = encryptResponse(plainBuffer, ssc);
 			ResponseApdu encryptedResponse(concat({result[0], QByteArray::fromHex("99026B00"), result[2], result[3]}));
-			ResponseApdu decryptedResponse;
 
-			QVERIFY(!mSecureMessaging->decrypt(encryptedResponse, decryptedResponse));
+			QVERIFY(mSecureMessaging->decrypt(encryptedResponse).isEmpty());
 		}
 
 
@@ -294,9 +289,8 @@ class test_SecureMessaging
 			quint32 ssc = 0;
 			auto result = encryptResponse(plainBuffer, ssc);
 			ResponseApdu encryptedResponse(concat({result[0], result[1], QByteArray::fromHex("8E080102030404030201"), result[3]}));
-			ResponseApdu decryptedResponse;
 
-			QVERIFY(!mSecureMessaging->decrypt(encryptedResponse, decryptedResponse));
+			QVERIFY(mSecureMessaging->decrypt(encryptedResponse).isEmpty());
 		}
 
 

@@ -69,7 +69,7 @@ int DiagnosisItem::row() const
 }
 
 
-int DiagnosisItem::getIndexOf(const DiagnosisItem* pChild) const
+int DiagnosisItem::getIndexOf(const DiagnosisItem* const pChild) const
 {
 	for (int i = 0; i < mChildren.length(); ++i)
 	{

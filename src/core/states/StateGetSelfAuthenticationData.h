@@ -6,18 +6,23 @@
 
 #pragma once
 
+#include "AbstractState.h"
 #include "context/SelfAuthContext.h"
+#include "GenericContextContainer.h"
 #include "NetworkManager.h"
-#include "states/AbstractGenericState.h"
+
+class test_StateGetSelfAuthenticationData;
 
 namespace governikus
 {
 
 class StateGetSelfAuthenticationData
-	: public AbstractGenericState<SelfAuthContext>
+	: public AbstractState
+	, public GenericContextContainer<SelfAuthContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateGetSelfAuthenticationData;
 
 	QPointer<QNetworkReply> mReply;
 

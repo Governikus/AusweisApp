@@ -26,8 +26,8 @@ extern "C" {
 
 /* Also update SONAME in the Makefile whenever you change these. */
 #define HTTP_PARSER_VERSION_MAJOR 2
-#define HTTP_PARSER_VERSION_MINOR 8
-#define HTTP_PARSER_VERSION_PATCH 1
+#define HTTP_PARSER_VERSION_MINOR 9
+#define HTTP_PARSER_VERSION_PATCH 2
 
 #include <stddef.h>
 #if defined(_WIN32) && !defined(__MINGW32__) && \
@@ -407,6 +407,9 @@ int http_should_keep_alive(const http_parser *parser);
 /* Returns a string version of the HTTP method. */
 const char *http_method_str(enum http_method m);
 
+/* Returns a string version of the HTTP status code. */
+const char *http_status_str(enum http_status s);
+
 /* Return a string name of the given error */
 const char *http_errno_name(enum http_errno err);
 
@@ -426,6 +429,9 @@ void http_parser_pause(http_parser *parser, int paused);
 
 /* Checks if this is the final chunk of the body. */
 int http_body_is_final(const http_parser *parser);
+
+/* Change the maximum header size provided at compile time. */
+void http_parser_set_max_header_size(uint32_t size);
 
 #ifdef __cplusplus
 }

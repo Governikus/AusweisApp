@@ -28,7 +28,7 @@ class test_LogHandler
 	void fakeLastModifiedAndLastAccessTime(const QString& pPath)
 	{
 	#ifdef Q_OS_WIN
-		Q_UNUSED(pPath);
+		Q_UNUSED(pPath)
 	#else
 		struct timeval tv[2];
 
@@ -84,6 +84,10 @@ class test_LogHandler
 			Env::getSingleton<LogHandler>()->resetBacklog();
 			blog = Env::getSingleton<LogHandler>()->getBacklog();
 			QCOMPARE(blog.size(), 0);
+
+			blog = Env::getSingleton<LogHandler>()->getBacklog(true);
+			QVERIFY(blog.size() > 0);
+			QVERIFY(blog.contains(msg));
 		}
 
 

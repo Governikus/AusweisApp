@@ -7,7 +7,7 @@
 #include "CardInfo.h"
 
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 using namespace governikus;
 
@@ -39,19 +39,9 @@ class test_CardInfo
 		}
 
 
-		void test_GetEidApplicationPath()
-		{
-			const CardInfo info1(CardType::NONE, QSharedPointer<EFCardAccess>(), 3, false, false);
-			QCOMPARE(info1.getEidApplicationPath(), QString());
-
-			const CardInfo info2(CardType::EID_CARD, QSharedPointer<EFCardAccess>(), 3, false, false);
-			QCOMPARE(info2.getEidApplicationPath(), QStringLiteral("e80704007f00070302"));
-		}
-
-
 		void test_RetryCounterDeterminated()
 		{
-			const CardInfo info1(CardType::EID_CARD, QSharedPointer<EFCardAccess>(), CardInfo::UNDEFINED_RETRY_COUNTER, false, false);
+			const CardInfo info1(CardType::EID_CARD);
 			QVERIFY(!info1.isRetryCounterDetermined());
 
 			const CardInfo info2(CardType::EID_CARD, QSharedPointer<EFCardAccess>(), 3, false, false);

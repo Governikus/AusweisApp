@@ -24,7 +24,7 @@ class Disconnect
 		virtual bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
 
 	public:
-		Disconnect(const QByteArray& pXmlData);
+		explicit Disconnect(const QByteArray& pXmlData);
 		virtual ~Disconnect() override;
 
 		const QString& getSlotHandle() const;

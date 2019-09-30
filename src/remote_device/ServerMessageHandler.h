@@ -37,6 +37,7 @@ class ServerMessageHandler
 		virtual void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) = 0;
 
 	Q_SIGNALS:
+		void fireCardConnectionEstablished(const QSharedPointer<CardConnection>& pConnection);
 		void fireEstablishPaceChannel(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage, const QSharedPointer<CardConnection>& pConnection);
 		void fireModifyPin(const QSharedPointer<const IfdModifyPin>& pMessage, const QSharedPointer<CardConnection>& pConnection);
 		void fireClosed();
@@ -68,7 +69,7 @@ class ServerMessageHandlerImpl
 		void onCreateCardConnectionCommandDone(QSharedPointer<CreateCardConnectionCommand> pCommand);
 		void onTransmitCardCommandDone(QSharedPointer<BaseCardCommand> pCommand);
 		void onClosed();
-		void onRemoteMessage(RemoteCardMessageType pMessageType, const QJsonObject pJsonObject);
+		void onRemoteMessage(RemoteCardMessageType pMessageType, const QJsonObject& pJsonObject);
 		void onReaderChanged(const QString& pReaderName);
 		void onReaderRemoved(const QString& pReaderName);
 

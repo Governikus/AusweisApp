@@ -36,7 +36,6 @@ class GeneralSettings
 	Q_OBJECT
 
 	friend class AppSettings;
-	friend class ::test_GeneralSettings;
 	friend bool operator==(const GeneralSettings& pLeft, const GeneralSettings& pRight);
 
 	private:
@@ -100,6 +99,15 @@ class GeneralSettings
 
 		bool isUseScreenKeyboard() const;
 		void setUseScreenKeyboard(bool pUseScreenKeyboard);
+
+		bool isShuffleScreenKeyboard() const;
+		void setShuffleScreenKeyboard(bool pShuffleScreenKeyboard);
+
+		bool isShowInAppNotifications() const;
+		void setShowInAppNotifications(bool pShowInAppNotifications);
+
+	Q_SIGNALS:
+		void fireLanguageChanged();
 };
 
 

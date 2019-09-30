@@ -10,7 +10,11 @@ IF(MAC OR LINUX OR WIN32)
 		STRING(TIMESTAMP APPCAST_DATE "%Y-%m-%dT%H:%M:%S")
 
 		FOREACH(filePath ${_files})
-			FILE_SIZE(fileSize ${filePath})
+			IF(CMAKE_VERSION VERSION_LESS "3.14")
+				FILE_SIZE(fileSize ${filePath})
+			ELSE()
+				FILE(SIZE ${filePath} fileSize)
+			ENDIF()
 			GET_FILENAME_COMPONENT(file ${filePath} NAME)
 
 			IF(NOT DEFINED fileSize)

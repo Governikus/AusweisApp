@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
@@ -7,7 +11,7 @@ import Governikus.View 1.0
 
 SectionPage {
 	id: baseItem
-	readonly property TitleBarAction leftTitleBarAction: TitleBarAction {
+	navigationAction: NavigationAction {
 		state: "back"
 		onClicked: {
 			if (providerDetailsHistoryInfo.visible) {
@@ -18,12 +22,9 @@ SectionPage {
 			}
 		}
 	}
-	readonly property TitleBarAction headerTitleBarAction: TitleBarAction {
-		text: historyModelItem && historyModelItem.subject ? historyModelItem.subject : provider.shortName
-		font.bold: true
-	}
-	readonly property Item rightTitleBarAction: Item {}
-	readonly property color titleBarColor: Category.displayColor(provider.category)
+	title: historyModelItem && historyModelItem.subject ? historyModelItem.subject : provider.shortName
+	rightTitleBarAction: Item {}
+	titleBarColor: Category.displayColor(provider.category)
 	readonly property real titleBarOpacity: 1
 
 	property alias historyModelItem: provider.modelItem
@@ -116,10 +117,14 @@ SectionPage {
 
 				ProviderDetailDescription {
 					id: leftColumn
+
 					anchors.margins: 2 * Constants.pane_padding
 					anchors.top: buttonBar.bottom
 					anchors.left: parent.left
 					anchors.right: parent.right
+
+					onScrollDescriptionDown: baseItem.scrollPageDown()
+					onScrollDescriptionUp: baseItem.scrollPageUp()
 
 					description: provider.longDescription
 				}
@@ -138,12 +143,16 @@ SectionPage {
 
 				ProviderDetailHistory {
 					id: rightColumn
+
 					anchors.topMargin: 2 * Constants.pane_padding
 					anchors.leftMargin: Constants.pane_padding
 					anchors.rightMargin: Constants.pane_padding
 					anchors.top: parent.top
 					anchors.left: parent.left
 					anchors.right: parent.right
+
+					onScrollHistoryDown: baseItem.scrollPageDown()
+					onScrollHistoryUp: baseItem.scrollPageUp()
 
 					openHistoryInfoFunc: baseItem.openHistoryInfoFunc
 				}

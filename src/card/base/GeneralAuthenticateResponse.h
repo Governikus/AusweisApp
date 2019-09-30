@@ -14,16 +14,15 @@ namespace governikus
 {
 
 class GAResponseApdu
-	: public ResponseApdu
 {
-	private:
-		virtual void parseDynamicAuthenticationData(const QByteArray& pDynamicAuthenticationData) = 0;
+	protected:
+		ResponseApdu mResponseApdu;
+
+		bool isValid() const;
 
 	public:
-		GAResponseApdu();
-		virtual ~GAResponseApdu() override = default;
-		virtual void setBuffer(const QByteArray& pBuffer) override;
-
+		explicit GAResponseApdu(const ResponseApdu& pResponseApdu);
+		StatusCode getReturnCode() const;
 };
 
 
@@ -33,10 +32,10 @@ class GAResponseApdu
  *
  * EncryptedNonce ::= APPLICATION [0x00] IMPLICIT OCTET_STRING
  */
-typedef struct ga_encryptednoncedata_st
+using GA_ENCRYPTEDNONCEDATA = struct ga_encryptednoncedata_st
 {
 	ASN1_OCTET_STRING* mEncryptedNonce;
-} GA_ENCRYPTEDNONCEDATA;
+};
 DECLARE_ASN1_OBJECT(GA_ENCRYPTEDNONCEDATA)
 
 
@@ -44,14 +43,12 @@ class GAEncryptedNonceResponse
 	: public GAResponseApdu
 {
 	private:
-		virtual void parseDynamicAuthenticationData(const QByteArray& pDynamicAuthenticationData) override;
+		void parseDynamicAuthenticationData(const QByteArray& pDynamicAuthenticationData);
 		QByteArray mEncryptedNonce;
 
 	public:
-		GAEncryptedNonceResponse();
-		virtual ~GAEncryptedNonceResponse() override = default;
-		const QByteArray& getEncryptedNonce();
-
+		explicit GAEncryptedNonceResponse(const ResponseApdu& pResponseApdu);
+		const QByteArray& getEncryptedNonce() const;
 };
 
 
@@ -61,10 +58,10 @@ class GAEncryptedNonceResponse
  *
  * MappingData ::= APPLICATION [0x02] IMPLICIT OCTET_STRING
  */
-typedef struct ga_mapnoncedata_st
+using GA_MAPNONCEDATA = struct ga_mapnoncedata_st
 {
 	ASN1_OCTET_STRING* mMappingData;
-} GA_MAPNONCEDATA;
+};
 DECLARE_ASN1_OBJECT(GA_MAPNONCEDATA)
 
 
@@ -72,14 +69,12 @@ class GAMapNonceResponse
 	: public GAResponseApdu
 {
 	private:
-		virtual void parseDynamicAuthenticationData(const QByteArray& pDynamicAuthenticationData) override;
+		void parseDynamicAuthenticationData(const QByteArray& pDynamicAuthenticationData);
 		QByteArray mMappingData;
 
 	public:
-		GAMapNonceResponse();
-		virtual ~GAMapNonceResponse() override = default;
-		const QByteArray& getMappingData();
-
+		explicit GAMapNonceResponse(const ResponseApdu& pResponseApdu);
+		const QByteArray& getMappingData() const;
 };
 
 
@@ -89,10 +84,10 @@ class GAMapNonceResponse
  *
  * EphemeralPublicKey ::= APPLICATION [0x04] IMPLICIT OCTET_STRING
  */
-typedef struct ga_performkeyagreementdata_st
+using GA_PERFORMKEYAGREEMENTDATA = struct ga_performkeyagreementdata_st
 {
 	ASN1_OCTET_STRING* mEphemeralPublicKey;
-} GA_PERFORMKEYAGREEMENTDATA;
+};
 DECLARE_ASN1_OBJECT(GA_PERFORMKEYAGREEMENTDATA)
 
 
@@ -100,14 +95,12 @@ class GAPerformKeyAgreementResponse
 	: public GAResponseApdu
 {
 	private:
-		virtual void parseDynamicAuthenticationData(const QByteArray& pDynamicAuthenticationData) override;
+		void parseDynamicAuthenticationData(const QByteArray& pDynamicAuthenticationData);
 		QByteArray mEphemeralPublicKey;
 
 	public:
-		GAPerformKeyAgreementResponse();
-		virtual ~GAPerformKeyAgreementResponse() override = default;
-		const QByteArray& getEphemeralPublicKey();
-
+		explicit GAPerformKeyAgreementResponse(const ResponseApdu& pResponseApdu);
+		const QByteArray& getEphemeralPublicKey() const;
 };
 
 
@@ -119,12 +112,12 @@ class GAPerformKeyAgreementResponse
  * CarCurr             ::= APPLICATION [0x00] IMPLICIT OCTET_STRING OPTIONAL
  * CarPrev             ::= APPLICATION [0x00] IMPLICIT OCTET_STRING OPTIONAL
  */
-typedef struct ga_mutualauthenticationdata_st
+using GA_MUTUALAUTHENTICATIONDATA = struct ga_mutualauthenticationdata_st
 {
 	ASN1_OCTET_STRING* mAuthenticationToken;
 	ASN1_OCTET_STRING* mCarCurr;
 	ASN1_OCTET_STRING* mCarPrev;
-} GA_MUTUALAUTHENTICATIONDATA;
+};
 DECLARE_ASN1_OBJECT(GA_MUTUALAUTHENTICATIONDATA)
 
 
@@ -132,16 +125,14 @@ class GAMutualAuthenticationResponse
 	: public GAResponseApdu
 {
 	private:
-		virtual void parseDynamicAuthenticationData(const QByteArray& pDynamicAuthenticationData) override;
+		void parseDynamicAuthenticationData(const QByteArray& pDynamicAuthenticationData);
 		QByteArray mAuthenticationToken, mCarCurr, mCarPrev;
 
 	public:
-		GAMutualAuthenticationResponse();
-		virtual ~GAMutualAuthenticationResponse() override = default;
-		const QByteArray& getAuthenticationToken();
-		const QByteArray& getCarCurr();
-		const QByteArray& getCarPrev();
-
+		explicit GAMutualAuthenticationResponse(const ResponseApdu& pResponseApdu);
+		const QByteArray& getAuthenticationToken() const;
+		const QByteArray& getCarCurr() const;
+		const QByteArray& getCarPrev() const;
 };
 
 
@@ -152,11 +143,11 @@ class GAMutualAuthenticationResponse
  * Nonce               ::= APPLICATION [0x01] IMPLICIT OCTET_STRING
  * AuthenticationToken ::= APPLICATION [0x02] IMPLICIT OCTET_STRING
  */
-typedef struct ga_chipauthenticationdata_st
+using GA_CHIPAUTHENTICATIONDATA = struct ga_chipauthenticationdata_st
 {
 	ASN1_OCTET_STRING* mNonce;
 	ASN1_OCTET_STRING* mAuthenticationToken;
-} GA_CHIPAUTHENTICATIONDATA;
+};
 DECLARE_ASN1_OBJECT(GA_CHIPAUTHENTICATIONDATA)
 
 
@@ -164,15 +155,13 @@ class GAChipAuthenticationResponse
 	: public GAResponseApdu
 {
 	private:
-		virtual void parseDynamicAuthenticationData(const QByteArray& pDynamicAuthenticationData) override;
+		void parseDynamicAuthenticationData(const QByteArray& pDynamicAuthenticationData);
 		QByteArray mNonce, mAuthenticationToken;
 
 	public:
-		GAChipAuthenticationResponse();
-		virtual ~GAChipAuthenticationResponse() override = default;
-		const QByteArray& getNonce();
-		const QByteArray& getAuthenticationToken();
-
+		explicit GAChipAuthenticationResponse(const ResponseApdu& pResponseApdu);
+		const QByteArray& getNonce() const;
+		const QByteArray& getAuthenticationToken() const;
 };
 
 

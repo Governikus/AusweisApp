@@ -11,8 +11,6 @@
 #include <QSharedPointer>
 #include <QTimerEvent>
 
-class test_Reader;
-
 namespace governikus
 {
 
@@ -21,22 +19,28 @@ class Reader
 {
 	Q_OBJECT
 
-	protected:
+	public:
 		enum class CardEvent
 		{
 			NONE, CARD_INSERTED, CARD_REMOVED,
 		};
 
+	protected:
 		ReaderInfo mReaderInfo;
 		int mTimerId;
 
 		void timerEvent(QTimerEvent* pEvent) override;
 
 	private:
-		friend class ::test_Reader;
 		virtual CardEvent updateCard() = 0;
 
-		CardReturnCode getRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, int& pRetryCounter, bool& pPinDeactivated);
+		struct RetryCounterResult
+		{
+			CardReturnCode cardReturnCode = CardReturnCode::COMMAND_FAILED;
+			int retryCounter = -1;
+			bool pinDeactivated = false;
+		};
+		RetryCounterResult getRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
 		void fireUpdateSignal(CardEvent pCardEvent);
 
@@ -94,7 +98,10 @@ class ConnectableReader
 		virtual ~ConnectableReader() override = default;
 
 		virtual void connectReader() = 0;
-		virtual void disconnectReader() = 0;
+		virtual void disconnectReader(const QString& pError = QString()) = 0;
+
+	Q_SIGNALS:
+		void fireReaderDisconnected();
 };
 
 } // namespace governikus
