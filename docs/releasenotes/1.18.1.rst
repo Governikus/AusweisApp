@@ -1,0 +1,10 @@
+AusweisApp2 1.18.1
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 24. September 2019
+
+
+
+Entwickler
+""""""""""
+  - Anpassungen an der Info.plist.
