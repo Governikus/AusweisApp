@@ -18,9 +18,10 @@ using namespace governikus;
 
 
 StatePreVerification::StatePreVerification(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
-	, mTrustedCvcas(CVCertificate::fromHex(SecureStorage::getInstance().getCVRootCertificates(true))
-			+ CVCertificate::fromHex(SecureStorage::getInstance().getCVRootCertificates(false)))
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
+	, mTrustedCvcas(CVCertificate::fromHex(Env::getSingleton<SecureStorage>()->getCVRootCertificates(true))
+			+ CVCertificate::fromHex(Env::getSingleton<SecureStorage>()->getCVRootCertificates(false)))
 	, mValidationDateTime(QDateTime::currentDateTime())
 {
 }

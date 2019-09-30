@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.2
@@ -32,54 +36,47 @@ SectionPage
 		radius: width / 2
 		color: Constants.blue
 	}
-	Text {
+	GText {
 		id: text
 		anchors.top: circle.bottom
-		anchors.topMargin: Utils.dp(50)
+		anchors.topMargin: 50
 		anchors.horizontalCenter: parent.horizontalCenter
-		font.pixelSize: Constants.header_font_size
-		font.weight: Font.Bold
-		color: Constants.blue
 		horizontalAlignment: Text.AlignHCenter
-		wrapMode: Text.WordWrap
 		width: baseItem.width * 0.8
+		textStyle: Style.text.header_accent
 	}
-	Text {
+	GText {
 		id: subText
-		color: Constants.secondary_text
 		horizontalAlignment: Text.AlignHCenter
-		font.pixelSize: Constants.normal_font_size
 		anchors.top: text.bottom
-		anchors.topMargin: Utils.dp(10)
+		anchors.topMargin: 10
 		anchors.horizontalCenter: parent.horizontalCenter
 		width: baseItem.width * 0.8
-		wrapMode: Text.WordWrap
+		textStyle: Style.text.normal_secondary
 	}
-	Text {
+	GText {
 		id: progressText
 		horizontalAlignment: Text.AlignHCenter
-		font.pixelSize: Constants.normal_font_size
 		anchors.top: subText.bottom
-		anchors.topMargin: Utils.dp(20)
+		anchors.topMargin: 20
 		anchors.horizontalCenter: parent.horizontalCenter
 		width: baseItem.width * 0.8
-		wrapMode: Text.WordWrap
-		color: Constants.grey
+		textStyle: Style.text.normal_secondary
 	}
 	ProgressBar {
 		id: progressBar
 		anchors.top: progressText.bottom
 		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.topMargin: Utils.dp(10)
+		anchors.topMargin: 10
 		width: baseItem.width * 0.6
-		height: Utils.dp(24)
+		height: 24
 		from: 0
-		to: 5
+		to: 100
 		visible: false
 		value: progressValue
 
 		background: Rectangle {
-			radius: Utils.dp(2)
+			radius: 2
 			color: Constants.lightgrey
 		}
 
@@ -87,7 +84,7 @@ SectionPage
 			Rectangle {
 				width: progressBar.visualPosition * parent.width
 				height: parent.height
-				radius: Utils.dp(2)
+				radius: 2
 				color: Constants.green
 			}
 		}

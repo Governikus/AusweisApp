@@ -7,7 +7,6 @@
 #pragma once
 
 #include "CardConnectionWorker.h"
-#include "CardOperationResult.h"
 #include "GeneralAuthenticateResponse.h"
 #include "pace/KeyDerivationFunction.h"
 
@@ -27,11 +26,24 @@ enum class KeyAgreementStatus
 
 class KeyAgreement
 {
+	protected:
+		struct CardResult
+		{
+			CardReturnCode mReturnCode = CardReturnCode::UNDEFINED;
+			QByteArray mData = QByteArray();
+		};
+
 	private:
 		const QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
 		QByteArray mEncryptionKey;
 		QByteArray mMacKey;
 		QByteArray mCarCurr, mCarPrev;
+
+
+		CardResult createTransmitResult(CardReturnCode pReturnCode,
+				StatusCode pResponseReturnCode,
+				const QByteArray& pResultData,
+				const char* pLogMessage);
 
 		/*!
 		 * \brief Determine the card's nonce. The encrypted nonce will be decrypted using the supplied PIN.
@@ -39,7 +51,7 @@ class KeyAgreement
 		 * \param pPin PIN for decryption of the nonce
 		 * \return the decrypted nonce
 		 */
-		CardOperationResult<QByteArray> determineNonce(const QString& pPin);
+		CardResult determineNonce(const QString& pPin);
 
 		/*!
 		 * \brief Determines the shared secret by performing the key agreement.
@@ -47,7 +59,7 @@ class KeyAgreement
 		 * \param pNonce the nonce needed for key agreement.
 		 * \return the shared secret between terminal and card
 		 */
-		virtual CardOperationResult<QByteArray> determineSharedSecret(const QByteArray& pNonce) = 0;
+		virtual CardResult determineSharedSecret(const QByteArray& pNonce) = 0;
 
 		/*!
 		 * \brief Returns the uncompressed terminal's ephemeral public key calculated during key agreement.
@@ -60,7 +72,7 @@ class KeyAgreement
 		 * \brief Transmit the General Authenticate (Encrypted Nonce) command to the card.
 		 * \return the encrypted nonce
 		 */
-		CardOperationResult<QByteArray> transmitGAEncryptedNonce();
+		CardResult transmitGAEncryptedNonce();
 
 		/*!
 		 * \brief Performs the mutual authentication of terminal and card using the determined shared secret.
@@ -80,21 +92,21 @@ class KeyAgreement
 		 * \param pMappingData the terminal's mapping data.
 		 * \return the card's mapping data
 		 */
-		CardOperationResult<QByteArray> transmitGAMappingData(const QByteArray& pMappingData);
+		CardResult transmitGAMappingData(const QByteArray& pMappingData);
 
 		/*!
 		 * \brief Transmit the General Authenticate (Ephemeral Public Key) command to the card.
 		 * \param pEphemeralPublicKey the terminal's ephemeral public key
 		 * \return the card's ephemeral public key
 		 */
-		CardOperationResult<QByteArray> transmitGAEphemeralPublicKey(const QByteArray& pEphemeralPublicKey);
+		CardResult transmitGAEphemeralPublicKey(const QByteArray& pEphemeralPublicKey);
 
 		/*!
 		 * \brief Transmit the General Authenticate (Mutual Authentication) command to the card.
 		 * \param pMutualAuthenticationData the terminal's authentication token
 		 * \return the complete response APDU
 		 */
-		QSharedPointer<GAMutualAuthenticationResponse> transmitGAMutualAuthentication(const QByteArray& pMutualAuthenticationData);
+		GAMutualAuthenticationResponse transmitGAMutualAuthentication(const QByteArray& pMutualAuthenticationData);
 
 	public:
 		/*!

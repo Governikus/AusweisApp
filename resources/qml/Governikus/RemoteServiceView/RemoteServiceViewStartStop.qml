@@ -1,14 +1,21 @@
+/*
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
-import Governikus.EnterPinView 1.0
 import Governikus.Global 1.0
-import Governikus.Type.RemoteServiceModel 1.0
+import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
+import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.RemoteServiceModel 1.0
+
 
 Item {
 	id: baseItem
 
-	readonly property int maxWidth: Math.min(width - 2 * Constants.component_spacing, Utils.dp(500))
+	readonly property int maxWidth: Math.min(width - 2 * Constants.component_spacing, Style.dimens.max_text_width)
 
 	RemoteServicePairingPopup {
 		id: popup
@@ -30,57 +37,65 @@ Item {
 		anchors.top: parent.top
 		anchors.margins: Constants.component_spacing
 		anchors.horizontalCenter: parent.horizontalCenter
-		height: parent.height * 0.2
 		width: parent.maxWidth
 		fillMode: Image.PreserveAspectFit
 	}
 
-	Text {
+	GText {
 		id: text
-		color: Constants.secondary_text
+
+		Accessible.role: Accessible.StaticText
+		Accessible.name: text.text
 
 		width: parent.maxWidth
 		anchors.top: image.bottom
 		anchors.margins: Constants.component_spacing
 		anchors.horizontalCenter: parent.horizontalCenter
 
+		//: INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.
 		text: qsTr("Please start the remote service in order to use your smartphone as a card reader with AusweisApp2."
 				+ " Please note: Both your devices have to be connected to the same WiFi.")
-				+ settingsModel.translationTrigger
-		font.pixelSize: Constants.normal_font_size
-		wrapMode: Text.WordWrap
+				+ SettingsModel.translationTrigger
+		textStyle: Style.text.normal_secondary
 	}
 
 
 	GButton {
 		readonly property bool running: RemoteServiceModel.running
 		readonly property bool canEnableNfc: RemoteServiceModel.canEnableNfc
+		property bool serviceIsStarting: false
 		id: startButton
-		buttonColor: running ? "red" : "green"
+		buttonColor: running ? Constants.red : Constants.green
 		anchors.top: text.bottom
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.margins: Constants.component_spacing
-		enabled: canEnableNfc || RemoteServiceModel.runnable || running
+		enabled: (canEnableNfc || RemoteServiceModel.runnable || running) && !serviceIsStarting
 		onClicked: {
 			if (canEnableNfc) {
-				qmlExtension.showSettings("android.settings.NFC_SETTINGS")
+				ApplicationModel.showSettings(ApplicationModel.SETTING_NFC)
 			} else {
-				var newRunning = !running;
-				RemoteServiceModel.running = newRunning
+				if (!running) {
+					serviceIsStarting = true
+				}
+				RemoteServiceModel.running = !running
 			}
 		}
 		text: {
-			settingsModel.translationTrigger; // Bind this evaluation to the trigger.
+			SettingsModel.translationTrigger; // Bind this evaluation to the trigger.
 
 			if (canEnableNfc) {
+				//: LABEL ANDROID IOS
 				return qsTr("Enable NFC");
 			} else if (running) {
+				//: LABEL ANDROID IOS
 				return qsTr("Stop remote service");
 			} else {
+				//: LABEL ANDROID IOS
 				return qsTr("Start remote service");
 			}
 		}
 		onRunningChanged: {
+			serviceIsStarting = false
 			navBar.lockedAndHidden = running
 		}
 	}
@@ -90,7 +105,8 @@ Item {
 		anchors.top: startButton.bottom
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.margins: Constants.component_spacing
-		text: qsTr("Start pairing") + settingsModel.translationTrigger
+		//: LABEL ANDROID IOS
+		text: qsTr("Start pairing") + SettingsModel.translationTrigger
 		opacity: 0
 		enabled: opacity === 1
 		onClicked: popup.open()
@@ -106,20 +122,21 @@ Item {
 		anchors.margins: Constants.component_spacing
 		anchors.topMargin: Constants.component_spacing * 2
 
-		Text {
+		GText {
 			id: error
-			width: text.width
 
+			width: text.width
 			anchors.top: parent.top
 			anchors.bottom: parent.bottom
 			anchors.horizontalCenter: parent.horizontalCenter
+
+			Accessible.role: Accessible.StaticText
+			Accessible.name: error.text
+
 			horizontalAlignment: Text.AlignHCenter
-			font.pixelSize: Utils.dp(16)
-			font.bold: true
-			color: "red"
-			wrapMode: Text.WordWrap
 			visible: !RemoteServiceModel.runnable
-			text: RemoteServiceModel.errorMessage;
+			text: RemoteServiceModel.errorMessage
+			textStyle: Style.text.normal_warning
 		}
 
 		Item {
@@ -127,39 +144,46 @@ Item {
 			anchors.fill: parent
 			opacity: 0
 
-			Text {
+			GText {
 				id: headText
+
 				anchors.top: connectedText.top
 				anchors.horizontalCenter: parent.horizontalCenter
-				font.pixelSize: Constants.header_font_size
-				font.weight: Font.Bold
-				color: Constants.blue
 
-				text: qsTr("Card access in progress") + settingsModel.translationTrigger;
+				Accessible.role: Accessible.StaticText
+				Accessible.name: headText.text
+
+				//: LABEL ANDROID IOS
+				text: qsTr("Card access in progress") + SettingsModel.translationTrigger;
+				textStyle: Style.text.header_accent
 			}
-			Text {
+			GText {
 				id: subText
-				color: Constants.secondary_text
-				verticalAlignment: Text.AlignVCenter
-				horizontalAlignment: Text.AlignHCenter
-				font.pixelSize: Constants.normal_font_size
+
 				anchors.top: headText.bottom
-				anchors.topMargin: Utils.dp(10)
+				anchors.topMargin: 10
 				anchors.horizontalCenter: parent.horizontalCenter
 				width: connectedText.width * 0.8
-				wrapMode: Text.WordWrap
 
-				text: qsTr("Please pay attention to the display on your other device %1.").arg("\"" + RemoteServiceModel.connectedClientDeviceName + "\"") + settingsModel.translationTrigger;
+				Accessible.role: Accessible.StaticText
+				Accessible.name: subText.text
+
+				verticalAlignment: Text.AlignVCenter
+				horizontalAlignment: Text.AlignHCenter
+				text: RemoteServiceModel.connectionInfo
+				textStyle: Style.text.normal_secondary
 			}
 
 			states: [
 				State { name: "UNCONNECTED"; when: RemoteServiceModel.running && !RemoteServiceModel.connected
 					PropertyChanges { target: connectedText; opacity: 0 }
 					PropertyChanges { target: pairingButton; opacity: 1 }
+					PropertyChanges { target: ApplicationModel; nfcRunning: false; restoreEntryValues: false }
 				},
 				State { name: "CONNECTED"; when: RemoteServiceModel.running && RemoteServiceModel.connected
 					PropertyChanges { target: connectedText; opacity: 1 }
 					PropertyChanges { target: pairingButton; opacity: 0 }
+					PropertyChanges { target: ApplicationModel; nfcRunning: true; restoreEntryValues: false }
 				}
 			]
 			transitions: [

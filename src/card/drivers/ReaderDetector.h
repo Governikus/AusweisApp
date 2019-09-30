@@ -55,7 +55,7 @@ class ReaderDetector
 
 	protected:
 		ReaderDetector();
-		virtual ~ReaderDetector();
+		~ReaderDetector() override;
 		static ReaderDetector& getInstance();
 
 	public:

@@ -8,7 +8,8 @@
 using namespace governikus;
 
 StateTransmit::StateTransmit(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractState(pContext)
+	, GenericContextContainer(pContext)
 {
 }
 
@@ -48,4 +49,12 @@ void StateTransmit::onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 		updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 		Q_EMIT fireAbort();
 	}
+}
+
+
+void StateTransmit::onEntry(QEvent* pEvent)
+{
+	//: INFO ALL_PLATFORMS Status message after the PIN was entered, communication between eID server and card is running.
+	getContext()->setProgress(60, tr("Reading data"));
+	AbstractState::onEntry(pEvent);
 }

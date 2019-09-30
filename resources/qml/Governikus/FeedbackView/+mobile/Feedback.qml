@@ -1,24 +1,28 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
-import Governikus.Type.LogModel 1.0
-
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.LogModel 1.0
 
 
 SectionPage {
 	id: root
-	headerTitleBarAction: TitleBarAction { text: qsTr("Help & Feedback") + settingsModel.translationTrigger; font.bold: true }
+	//: LABEL ANDROID IOS
+	title: qsTr("Help & Feedback") + SettingsModel.translationTrigger
 
 	Component {
 		id: lineSeparator
-		Rectangle {
-			height: 1
-			color: Constants.grey
+		GSeparator {
 		}
 	}
 	Component {
@@ -30,18 +34,13 @@ SectionPage {
 				anchors.left: parent.left
 				anchors.right: parent.right
 				spacing: Constants.component_spacing
-				Text {
+				GText {
 					width: parent.width
-					font.pixelSize: Utils.dp(18)
-					color: Constants.blue
-					wrapMode: Text.WordWrap
 					text: titleText
+					textStyle: Style.text.normal_accent
 				}
-				Text {
-					color: Constants.secondary_text
+				GText {
 					width: parent.width
-					font.pixelSize: Constants.normal_font_size
-					wrapMode: Text.WordWrap
 					text: descriptionText
 				}
 			}
@@ -51,7 +50,7 @@ SectionPage {
 			}
 		}
 	}
-	Log {
+	LogView {
 		id: logPage
 		visible: false
 	}
@@ -69,40 +68,52 @@ SectionPage {
 
 			Pane {
 				Loader {
-					readonly property string titleText: qsTr("FAQ") + settingsModel.translationTrigger
-					readonly property string descriptionText: qsTr("Do you have questions how to use AusweisApp2?") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					readonly property string titleText: qsTr("FAQ") + SettingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					readonly property string descriptionText: qsTr("Do you have questions how to use AusweisApp2?") + SettingsModel.translationTrigger
+					//: LABEL ANDROID IOS
 					function onClickFunction() { Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/")) }
 					width: parent.width
 					sourceComponent: subMenu
 				}
 				Loader { width: parent.width; sourceComponent: lineSeparator }
 				Loader {
-					readonly property string titleText: qsTr("Support") + settingsModel.translationTrigger
-					readonly property string descriptionText: qsTr("You need further help?") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					readonly property string titleText: qsTr("Support") + SettingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					readonly property string descriptionText: qsTr("You need further help?") + SettingsModel.translationTrigger
+					//: LABEL ANDROID IOS
 					function onClickFunction() { Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/qa/support/")) }
 					width: parent.width
 					sourceComponent: subMenu
 				}
 				Loader { width: parent.width; sourceComponent: lineSeparator }
 				Loader {
-					readonly property string titleText: qsTr("Rate AusweisApp2") + settingsModel.translationTrigger
-					readonly property string descriptionText: qsTr("Please rate us in the Google Play Store.") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					readonly property string titleText: qsTr("Rate AusweisApp2") + SettingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					readonly property string descriptionText: qsTr("Please rate us in the Google Play Store.") + SettingsModel.translationTrigger
 					function onClickFunction() { Qt.openUrlExternally("market://details?id=" + ApplicationModel.packageName) }
 					width: parent.width
 					sourceComponent: subMenu
 				}
 				Loader { width: parent.width; sourceComponent: lineSeparator }
 				Loader {
-					readonly property string titleText: qsTr("Report error") + settingsModel.translationTrigger
-					readonly property string descriptionText: qsTr("You found a bug? Please tell us, so we can fix it.") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					readonly property string titleText: qsTr("Report error") + SettingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					readonly property string descriptionText: qsTr("You found a bug? Please tell us, so we can fix it.") + SettingsModel.translationTrigger
 					function onClickFunction() { LogModel.mailLog() }
 					width: parent.width
 					sourceComponent: subMenu
 				}
 				Loader { width: parent.width; sourceComponent: lineSeparator }
 				Loader {
-					readonly property string titleText: qsTr("Show log") + settingsModel.translationTrigger
-					readonly property string descriptionText: qsTr("You can view the logs of the AusweisApp2 here.") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					readonly property string titleText: qsTr("Show log") + SettingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					readonly property string descriptionText: qsTr("You can view the logs of the AusweisApp2 here.") + SettingsModel.translationTrigger
 					function onClickFunction() { firePush(logPage) }
 					width: parent.width
 					sourceComponent: subMenu

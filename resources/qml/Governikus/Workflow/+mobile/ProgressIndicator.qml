@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtGraphicalEffects 1.0
 
@@ -40,7 +44,7 @@ Item {
 			id: busyIcon
 			anchors.centerIn: parent
 			width: height
-			height: Math.min(parent.height - Utils.dp(40), 2 * pCircle.height)
+			height: Math.min(parent.height - 40, 2 * pCircle.height)
 			running: visible
 			visible: baseItem.state === "one"
 		}

@@ -24,51 +24,44 @@ class test_EcUtil
 
 		void createAndFreeEmptyCurve()
 		{
-			QSharedPointer<EC_GROUP> curve = EcUtil::create(static_cast<EC_GROUP*>(nullptr));
-			curve.clear();
+			EcUtil::create(static_cast<EC_GROUP*>(nullptr));
 		}
 
 
 		void createAndFreeCurve()
 		{
-			QSharedPointer<EC_GROUP> curve = EllipticCurveFactory::create(8);
-			curve.clear();
+			EllipticCurveFactory::create(8);
 		}
 
 
 		void createAndFreeEmptyKey()
 		{
-			QSharedPointer<EC_KEY> key = EcUtil::create(static_cast<EC_KEY*>(nullptr));
-			key.clear();
+			EcUtil::create(static_cast<EC_KEY*>(nullptr));
 		}
 
 
 		void createAndFreeKey()
 		{
-			QSharedPointer<EC_KEY> key = EcUtil::create(EC_KEY_new());
-			key.clear();
+			EcUtil::create(EC_KEY_new());
 		}
 
 
 		void createAndFreeEmptyPoint()
 		{
-			QSharedPointer<EC_POINT> key = EcUtil::create(static_cast<EC_POINT*>(nullptr));
-			key.clear();
+			EcUtil::create(static_cast<EC_POINT*>(nullptr));
 		}
 
 
 		void createAndFreePoint()
 		{
 			QSharedPointer<EC_GROUP> curve = EllipticCurveFactory::create(8);
-			QSharedPointer<EC_POINT> key = EcUtil::create(EC_POINT_new(curve.data()));
-			key.clear();
+			EcUtil::create(EC_POINT_new(curve.data()));
 		}
 
 
 		void createAndFreeEmptyBigNumber()
 		{
-			QSharedPointer<BIGNUM> key = EcUtil::create(static_cast<BIGNUM*>(nullptr));
-			key.clear();
+			EcUtil::create(static_cast<BIGNUM*>(nullptr));
 		}
 
 
@@ -76,8 +69,7 @@ class test_EcUtil
 		{
 			BIGNUM* bigNum = BN_new();
 			BN_bin2bn(reinterpret_cast<const uchar*>("k37"), 3, bigNum);
-			QSharedPointer<BIGNUM> key = EcUtil::create(bigNum);
-			key.clear();
+			EcUtil::create(bigNum);
 		}
 
 

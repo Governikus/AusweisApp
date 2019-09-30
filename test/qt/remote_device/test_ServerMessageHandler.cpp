@@ -17,10 +17,12 @@
 #include "messages/IfdEstablishContextResponse.h"
 #include "messages/IfdEstablishPaceChannel.h"
 #include "messages/IfdEstablishPaceChannelResponse.h"
+#include "messages/IfdModifyPinResponse.h"
 #include "messages/IfdStatus.h"
 #include "messages/IfdTransmit.h"
 #include "messages/IfdTransmitResponse.h"
 
+#include "MockCardConnectionWorker.h"
 #include "MockDataChannel.h"
 #include "MockReaderManagerPlugIn.h"
 #include "TestFileHelper.h"
@@ -30,9 +32,38 @@
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
-
 using namespace governikus;
 
+Q_DECLARE_METATYPE(StatusCode)
+Q_DECLARE_METATYPE(ECardApiResult::Minor)
+
+class MockRemoteDispatcherServer
+	: public RemoteDispatcherServer
+{
+	Q_OBJECT
+	QSharedPointer<const RemoteMessage> mMessage;
+
+	public:
+		explicit MockRemoteDispatcherServer(const QSharedPointer<DataChannel>& pDataChannel)
+			: RemoteDispatcherServer(pDataChannel)
+		{
+		}
+
+
+		Q_INVOKABLE void send(const QSharedPointer<const RemoteMessage>& pMessage) override
+		{
+			RemoteDispatcherServer::send(pMessage);
+			mMessage = pMessage;
+		}
+
+
+		QSharedPointer<const RemoteMessage> getMessage()
+		{
+			return mMessage;
+		}
+
+
+};
 
 class test_ServerMessageHandler
 	: public QObject
@@ -41,6 +72,7 @@ class test_ServerMessageHandler
 
 	private:
 		QSharedPointer<MockDataChannel> mDataChannel;
+		QPointer<MockRemoteDispatcherServer> mRemoteDispatcher;
 
 
 		void removeReaderAndConsumeMessages(const QString& pReaderName)
@@ -84,6 +116,11 @@ class test_ServerMessageHandler
 			const auto readerManager = Env::getSingleton<ReaderManager>();
 			readerManager->init();
 			readerManager->getPlugInInfos(); // just to wait until initialization finished
+
+			Env::setCreator<RemoteDispatcherServer*>(std::function<RemoteDispatcherServer*(const QSharedPointer<DataChannel>& pDataChannel)>([this](const QSharedPointer<DataChannel> ){
+						mRemoteDispatcher = new MockRemoteDispatcherServer(mDataChannel);
+						return mRemoteDispatcher.data();
+					}));
 		}
 
 
@@ -158,8 +195,15 @@ class test_ServerMessageHandler
 			// We have a context handle: send unexpected messages and verify that an error message is sent back.
 			sendSpy.clear();
 
+			ReaderInfo info(QStringLiteral("NFC Reader"));
+			info.setMaxApduLength(500);
+			info.setConnected(true);
+			info.setBasicReader(true);
+			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(false);
+			const IfdStatus status(info);
+
 			const QByteArrayList serverMessages({
-						IfdStatus("NFC Reader", PaceCapabilities(), 500, true).toByteArray(contextHandle),
+						status.toByteArray(contextHandle),
 						IfdConnectResponse("NFC Reader").toByteArray(contextHandle),
 						IfdDisconnectResponse("NFC Reader").toByteArray(contextHandle),
 						IfdTransmitResponse("NFC Reader", "9000").toByteArray(contextHandle),
@@ -597,6 +641,104 @@ class test_ServerMessageHandler
 
 			removeReaderAndConsumeMessages(QStringLiteral("test-reader"));
 			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(pinpadModeToSave);
+		}
+
+
+		void test_handleIfdModifyPin()
+		{
+			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			const QByteArray message("{\n"
+									 "    \"ContextHandle\": \"TestContext\",\n"
+									 "    \"InputData\": \"abcd1234\",\n"
+									 "    \"SlotHandle\": \"SlotHandle\",\n"
+									 "    \"msg\": \"IFDModifyPIN\"\n"
+									 "}\n");
+
+			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
+			ServerMessageHandlerImpl serverMsgHandler(mDataChannel);
+			QSignalSpy spyModifyPin(&serverMsgHandler, &ServerMessageHandler::fireModifyPin);
+			QString contextHandle;
+			ensureContext(contextHandle);
+
+			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(false);
+			Q_EMIT mRemoteDispatcher->fireReceived(RemoteCardMessageType::IFDModifyPIN, obj, QString());
+			QCOMPARE(mRemoteDispatcher->getMessage()->getType(), RemoteCardMessageType::IFDModifyPINResponse);
+			const auto& msg1 = mRemoteDispatcher->getMessage().staticCast<const IfdModifyPinResponse>();
+			QCOMPARE(msg1->getResultMinor(), ECardApiResult::Minor::AL_Unknown_Error);
+			QCOMPARE(msg1->getSlotHandle(), "SlotHandle");
+			QVERIFY(spyLog.at(3).at(0).toString().contains("ModifyPin is only available in pin pad mode."));
+
+			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(true);
+			Q_EMIT mRemoteDispatcher->fireReceived(RemoteCardMessageType::IFDModifyPIN, obj, QString());
+			const auto& msg2 = mRemoteDispatcher->getMessage().staticCast<const IfdModifyPinResponse>();
+			QCOMPARE(msg2->getResultMinor(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
+			QVERIFY(spyLog.at(5).at(0).toString().contains("Card is not connected"));
+		}
+
+
+		void test_SendModifyPinResponse_data()
+		{
+			QTest::addColumn<StatusCode>("statusCode");
+			QTest::addColumn<ECardApiResult::Minor>("minor");
+
+			QTest::newRow("success") << StatusCode::SUCCESS << ECardApiResult::Minor::null;
+			QTest::newRow("empty") << StatusCode::EMPTY << ECardApiResult::Minor::IFDL_Terminal_NoCard;
+			QTest::newRow("inputTimeout") << StatusCode::INPUT_TIMEOUT << ECardApiResult::Minor::IFDL_Timeout_Error;
+			QTest::newRow("inputCancelled") << StatusCode::INPUT_CANCELLED << ECardApiResult::Minor::IFDL_CancellationByUser;
+			QTest::newRow("passwordsDiffer") << StatusCode::PASSWORDS_DIFFER << ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch;
+			QTest::newRow("passwordOutOfRange") << StatusCode::PASSWORD_OUTOF_RANGE << ECardApiResult::Minor::IFDL_IO_UnknownPINFormat;
+			QTest::newRow("default") << StatusCode::INVALID << ECardApiResult::Minor::AL_Unknown_Error;
+		}
+
+
+		void test_SendModifyPinResponse()
+		{
+			QFETCH(StatusCode, statusCode);
+			QFETCH(ECardApiResult::Minor, minor);
+
+			ServerMessageHandlerImpl serverMsgHandler(mDataChannel);
+			const QString slotHandle("Slot Handle");
+			const ResponseApdu apdu(statusCode);
+
+			QString contextHandle;
+			ensureContext(contextHandle);
+			serverMsgHandler.sendModifyPinResponse(slotHandle, apdu);
+			QCOMPARE(mRemoteDispatcher->getMessage()->getType(), RemoteCardMessageType::IFDModifyPINResponse);
+			const auto& msg = mRemoteDispatcher->getMessage().staticCast<const IfdModifyPinResponse>();
+			QCOMPARE(msg->getResultMinor(), minor);
+			QCOMPARE(msg->getSlotHandle(), slotHandle);
+		}
+
+
+		void test_EstablishPaceChannelResponse_data()
+		{
+			QTest::addColumn<CardReturnCode>("returnCode");
+			QTest::addColumn<ECardApiResult::Minor>("minor");
+
+			QTest::newRow("unknown") << CardReturnCode::UNKNOWN << ECardApiResult::Minor::AL_Unknown_Error;
+			QTest::newRow("unknown") << CardReturnCode::CARD_NOT_FOUND << ECardApiResult::Minor::IFDL_Terminal_NoCard;
+			QTest::newRow("default") << CardReturnCode::OK << ECardApiResult::Minor::null;
+		}
+
+
+		void test_EstablishPaceChannelResponse()
+		{
+			QFETCH(CardReturnCode, returnCode);
+			QFETCH(ECardApiResult::Minor, minor);
+
+			const QString slotHandle("Slot Handle");
+			EstablishPaceChannelOutput output;
+			output.setPaceReturnCode(returnCode);
+
+			ServerMessageHandlerImpl serverMsgHandler(mDataChannel);
+			QString contextHandle;
+			ensureContext(contextHandle);
+
+			serverMsgHandler.sendEstablishPaceChannelResponse(slotHandle, output);
+			QCOMPARE(mRemoteDispatcher->getMessage()->getType(), RemoteCardMessageType::IFDEstablishPACEChannelResponse);
+			const auto& msg = mRemoteDispatcher->getMessage().staticCast<const IfdEstablishPaceChannelResponse>();
+			QCOMPARE(msg->getResultMinor(), minor);
+			QCOMPARE(msg->getSlotHandle(), slotHandle);
 		}
 
 

@@ -63,8 +63,7 @@ static QString getPublicLogFileName(QAndroidJniEnvironment& env, const QAndroidJ
 		return QString();
 	}
 
-	const auto& nowAsISO = pDateTime.toString(QStringLiteral("yyyy-MM-dd'T'HH:mm:ss-t"));
-	return QStringLiteral("%1/AusweisApp2-%2.txt").arg(jFilesDirPath.toString(), nowAsISO);
+	return QStringLiteral("%1/%2").arg(jFilesDirPath.toString(), LogModel::createLogFileName(pDateTime));
 }
 
 
@@ -83,6 +82,7 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 	const auto& jEmail = QAndroidJniObject::fromString(pEmail);
 	const auto& jSubject = QAndroidJniObject::fromString(pSubject);
 	const auto& jMsg = QAndroidJniObject::fromString(pMsg);
+	//: LABEL ANDROID
 	const auto& jChooserTitle = QAndroidJniObject::fromString(tr("Send application log per email..."));
 	const auto& publicLogFile = getPublicLogFileName(env, javaActivity, external);
 	const auto& jPublicLogFile = QAndroidJniObject::fromString(publicLogFile);
@@ -112,7 +112,7 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 }
 
 
-void LogModel::shareLog()
+void LogModel::shareLog(const QPoint /*popupPosition*/)
 {
 	QAndroidJniEnvironment env;
 	const QAndroidJniObject javaActivity(QtAndroid::androidActivity());
@@ -150,6 +150,7 @@ void LogModel::shareLog()
 		}
 	}
 
+	//: LABEL ANDROID
 	const auto& jChooserTitle = QAndroidJniObject::fromString(tr("Share application log..."));
 	const auto& jPublicLogFile = QAndroidJniObject::fromString(publicLogFile);
 

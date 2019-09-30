@@ -233,7 +233,7 @@ CA-Zertifikate im Windows-Truststore werden daher ignoriert.
    "eID-SDK",	TCP, 24727,  "eingehend", "Nein", "Verwendung der SDK-Schnittstelle",													    "Nur erreichbar von localhost [#TR-03124]_"
    "SaK1",	UDP, 24727,  "eingehend", "Ja",   "Smartphone als Kartenleser, Erkennung [#TR-03112]_",											    "Broadcasts"
    "SaK2",	TCP, ,       "ausgehend", "Ja",   "Smartphone als Kartenleser, Verwendung [#TR-03112]_",										    "Verbindung im lokalen Subnetz"
-   "Update",	TCP, 443,    "ausgehend", "Ja",   "Updates [#govurl]_ zu Dienstanbietern und Kartenlesegeräten sowie Informationen zu neuen AusweisApp2-Versionen [#updatecheck]_ .",	    "Die Zertifikate der TLS-Verbindung werden mit in der AusweisApp2 mitgelieferten CA-Zertifikaten validiert. Im Betriebssystem hinterlegte CA-Zertifikate werden ignoriert."
+   "Update",	TCP, 443,    "ausgehend", "Ja",   "Updates [#govurl]_ zu Dienstanbietern und Kartenlesern sowie Informationen zu neuen AusweisApp2-Versionen [#updatecheck]_ .",	    "Die Zertifikate der TLS-Verbindung werden mit in der AusweisApp2 mitgelieferten CA-Zertifikaten validiert. Im Betriebssystem hinterlegte CA-Zertifikate werden ignoriert."
 
 .. [#TR-03124] Siehe TR-03124 des BSI
 .. [#TR-03112] Siehe TR-03112-6 des BSI

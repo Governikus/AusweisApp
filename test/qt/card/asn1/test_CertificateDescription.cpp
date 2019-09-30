@@ -320,9 +320,9 @@ class test_CertificateDescription
 			}
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-			certDescr->mCommCertificates = SKM_sk_new(ASN1_OCTET_STRING, 0);
+			certDescr->mCommCertificates = SKM_sk_new(ASN1_OCTET_STRING, nullptr);
 #else
-			certDescr->mCommCertificates = sk_ASN1_OCTET_STRING_new(0);
+			certDescr->mCommCertificates = sk_ASN1_OCTET_STRING_new(nullptr);
 #endif
 			QByteArrayList commCertBytes;
 			commCertBytes.append(QByteArray::fromHex("94B0AA7E8114F3E6DFCD52DA9F43E8B13CCB0589B8957E364728198FB4971AE6"));

@@ -13,7 +13,7 @@
 #include "RemoteWebSocketServer.h"
 #include "SecureStorage.h"
 
-#include <QtTest/QtTest>
+#include <QtTest>
 #include <QWebSocket>
 #include <QWebSocketServer>
 
@@ -104,7 +104,7 @@ class test_RemoteConnector
 
 				const QVariant errorCodeVariant = arguments.at(1);
 				QVERIFY(errorCodeVariant.canConvert<RemoteErrorCode>());
-				const RemoteErrorCode errorCode = errorCodeVariant.value<RemoteErrorCode>();
+				const auto errorCode = errorCodeVariant.value<RemoteErrorCode>();
 
 				const QUrl remoteUrl = descr.getUrl();
 				const QString remoteAddress = remoteUrl.host();
@@ -274,13 +274,13 @@ class test_RemoteConnector
 			const KeyPair pair = KeyPair::generate();
 			QVERIFY(pair.isValid());
 
-			QSslConfiguration config = SecureStorage::getInstance().getTlsConfigRemote().getConfiguration();
+			QSslConfiguration config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote().getConfiguration();
 			config.setPrivateKey(pair.getKey());
 			config.setLocalCertificate(pair.getCertificate());
 			config.setCaCertificates({KeyPair::generate().getCertificate(), settings.getCertificate(), KeyPair::generate().getCertificate()});
 			QTest::newRow("paired") << QString() << config << QList<QSslCertificate>({KeyPair::generate().getCertificate(), pair.getCertificate(), KeyPair::generate().getCertificate()});
 
-			config = SecureStorage::getInstance().getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
+			config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration();
 			config.setPrivateKey(pair.getKey());
 			config.setLocalCertificate(pair.getCertificate());
 			QTest::newRow("unpaired") << QString("123456") << config << QList<QSslCertificate>();
@@ -363,7 +363,7 @@ class test_RemoteConnector
 			QSignalSpy spySocketError(&webSocketServer, &QWebSocketServer::serverError);
 			QSignalSpy spySocketSuccess(&webSocketServer, &QWebSocketServer::newConnection);
 
-			QSslConfiguration config = SecureStorage::getInstance().getTlsConfigRemote().getConfiguration();
+			QSslConfiguration config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote().getConfiguration();
 			const KeyPair pair = KeyPair::generate();
 			config.setPrivateKey(pair.getKey());
 			config.setLocalCertificate(pair.getCertificate());

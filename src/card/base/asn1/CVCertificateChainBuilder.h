@@ -28,12 +28,12 @@ class CVCertificateChainBuilder
 		CVCertificateChain getChainForCertificationAuthority(const QByteArray& pCar) const;
 
 	public:
-		CVCertificateChainBuilder(bool pProductive = true);
+		explicit CVCertificateChainBuilder(bool pProductive = true);
 
 		/*!
 		 * Creates a new instance. All chains are build using the CVCs passed in as parameter.
 		 */
-		CVCertificateChainBuilder(const QVector<QSharedPointer<const CVCertificate> >& pCvcPool, bool pProductive);
+		explicit CVCertificateChainBuilder(const QVector<QSharedPointer<const CVCertificate> >& pCvcPool, bool pProductive);
 
 
 		/*!

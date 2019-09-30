@@ -4,7 +4,6 @@
 
 #include "ReaderConfiguration.h"
 
-#include "FileDestination.h"
 #include "FileProvider.h"
 #include "FuncUtils.h"
 #include "ReaderConfigurationParser.h"

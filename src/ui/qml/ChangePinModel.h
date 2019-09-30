@@ -7,14 +7,13 @@
 #pragma once
 
 #include "context/ChangePinContext.h"
+#include "Env.h"
 #include "WorkflowModel.h"
 
 #include <QObject>
 #include <QQmlEngine>
 #include <QSharedPointer>
 #include <QString>
-
-class test_ChangePinModel;
 
 namespace governikus
 {
@@ -23,24 +22,27 @@ class ChangePinModel
 	: public WorkflowModel
 {
 	Q_OBJECT
+	friend class Env;
 
 	private:
-		friend class ::test_ChangePinModel;
 		QSharedPointer<ChangePinContext> mContext;
 
 	protected:
 		ChangePinModel() = default;
 		~ChangePinModel() override = default;
+		static ChangePinModel& getInstance();
 
 	public:
 		void resetContext(const QSharedPointer<ChangePinContext>& pContext = QSharedPointer<ChangePinContext>());
 
 		virtual QString getResultString() const override;
 
-		static ChangePinModel& getInstance();
+	private Q_SLOTS:
+		void onPaceResultUpdated();
 
 	Q_SIGNALS:
 		void fireNewContextSet();
+		void fireOnPinUnlocked();
 };
 
 

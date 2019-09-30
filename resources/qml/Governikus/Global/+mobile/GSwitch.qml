@@ -1,17 +1,30 @@
+/*
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import "Utils.js" as Utils
+
+import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
 
 MouseArea {
 	id: baseItem
 
 	property bool initialState: false
-	property color color: Constants.blue
+	property color color: Style.color.accent
 	readonly property alias isOn: toggleswitch.isOn
 	signal switched()
 
-	width: Utils.dp(60)
-	height: Utils.dp(48)
+	width: 60
+	height: 48
+
+	Accessible.role: Accessible.CheckBox
+	Accessible.name: qsTr("Switch") + SettingsModel.translationTrigger
+	Accessible.checkable: true
+	Accessible.checked: isOn
+	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
 
 	onClicked: toggleswitch.toggle()
 	Component.onCompleted: toggleswitch.isOn = baseItem.initialState
@@ -19,8 +32,8 @@ MouseArea {
 	Item {
 		id: toggleswitch
 		anchors.fill: parent
-		anchors.topMargin: Utils.dp(12)
-		anchors.bottomMargin: Utils.dp(12)
+		anchors.topMargin: 12
+		anchors.bottomMargin: 12
 
 		onIsOnChanged: updateState()
 		property bool isOn: false
@@ -49,7 +62,7 @@ MouseArea {
 			anchors.fill: parent
 			anchors.margins: parent.height / 4
 			radius: height / 2
-			color: isOn ? Qt.lighter(baseItem.color, 1.55) : "lightgray"
+			color: isOn ? Qt.lighter(baseItem.color, 1.4) : Qt.darker(Style.color.accent_disabled, 1.1)
 		}
 
 		Rectangle {
@@ -57,7 +70,7 @@ MouseArea {
 			height: parent.height
 			width: height
 			radius: width
-			color: isOn ? baseItem.color : "darkgray"
+			color: isOn ? baseItem.color : Style.color.accent_disabled
 
 			MouseArea {
 				anchors.fill: parent

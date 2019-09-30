@@ -7,7 +7,8 @@
 using namespace governikus;
 
 StateStartPaosResponse::StateStartPaosResponse(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractState(pContext)
+	, GenericContextContainer(pContext)
 {
 }
 

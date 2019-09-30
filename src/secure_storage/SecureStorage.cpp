@@ -351,6 +351,12 @@ QMap<QSsl::KeyAlgorithm, int> SecureStorage::readKeySizes(const QJsonObject& pCo
 			{
 				keySizes.insert(QSsl::KeyAlgorithm::Dsa, value);
 			}
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+			else if (key == QLatin1String("Dh"))
+			{
+				keySizes.insert(QSsl::KeyAlgorithm::Dh, value);
+			}
+#endif
 			else if (key == QLatin1String("Ec"))
 			{
 				keySizes.insert(QSsl::KeyAlgorithm::Ec, value);

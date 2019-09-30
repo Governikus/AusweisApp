@@ -6,7 +6,11 @@
 
 #include "states/StateConnectCard.h"
 
+#include "Env.h"
+#include "ReaderManager.h"
+
 #include "MockCardConnectionWorker.h"
+#include "MockReader.h"
 
 #include <QtTest>
 
@@ -16,27 +20,52 @@ class test_StateConnectCard
 	: public QObject
 {
 	Q_OBJECT
+	QSharedPointer<StateConnectCard> mState;
+	QSharedPointer<WorkflowContext> mContext;
+	ReaderInfo mReaderInfo;
 
 	private Q_SLOTS:
+		void init()
+		{
+			mReaderInfo = ReaderInfo(QString("test"), ReaderManagerPlugInType::UNKNOWN, CardInfo(CardType::EID_CARD));
+
+			mContext.reset(new WorkflowContext());
+			mState.reset(new StateConnectCard(mContext));
+		}
+
+
+		void cleanup()
+		{
+			mContext.clear();
+			mState.clear();
+		}
+
+
 		void test_OnCommandDone()
 		{
 			QThread workerThread;
 			workerThread.start();
 
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
-			StateConnectCard connectCard(context);
 			const QString rName("reader name");
 			const QSharedPointer<CreateCardConnectionCommand> command(new CreateCardConnectionCommand(rName, QPointer<ReaderManagerWorker>()));
 
-			QSignalSpy spyContinue(&connectCard, &StateConnectCard::fireContinue);
+			QSignalSpy spyContinue(mState.data(), &StateConnectCard::fireContinue);
+			QSignalSpy spyAbort(mState.data(), &StateConnectCard::fireAbort);
+
+			QTest::ignoreMessage(QtDebugMsg, "Card connection command completed");
+			QTest::ignoreMessage(QtDebugMsg, "Card connection failed");
+			mState->onCommandDone(command);
+			QCOMPARE(spyAbort.count(), 1);
 
 			QSharedPointer<MockCardConnectionWorker> connectionWorker(new MockCardConnectionWorker());
 			connectionWorker->moveToThread(&workerThread);
 			QSharedPointer<CardConnection> cardConnection(new CardConnection(connectionWorker));
 			command->mCardConnection = cardConnection;
+
+			QTest::ignoreMessage(QtDebugMsg, "Card connection command completed");
 			QTest::ignoreMessage(QtDebugMsg, "Card connection was successful");
-			connectCard.onCommandDone(command);
-			QCOMPARE(context->getCardConnection(), cardConnection);
+			mState->onCommandDone(command);
+			QCOMPARE(mContext->getCardConnection(), cardConnection);
 			QCOMPARE(spyContinue.count(), 1);
 
 			workerThread.quit();
@@ -47,26 +76,28 @@ class test_StateConnectCard
 		void test_OnReaderRemoved()
 		{
 			const QString readerName = QStringLiteral("name");
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
-			StateConnectCard connectCard(context);
 
-			QSignalSpy spy(&connectCard, &StateConnectCard::fireReaderRemoved);
+			QSignalSpy spy(mState.data(), &StateConnectCard::fireRetry);
 
-			connectCard.onReaderRemoved(readerName);
+			mState->onReaderRemoved(readerName);
 			QCOMPARE(spy.count(), 0);
 
-			context->setReaderName(readerName);
-			connectCard.onReaderRemoved(readerName);
+			mContext->setReaderName(readerName);
+			mState->onReaderRemoved(readerName);
 			QCOMPARE(spy.count(), 1);
 		}
 
 
-		void test_OnAbort()
+		void test_OnEntry()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
-			StateConnectCard connectCard(context);
-			QSignalSpy spyRetry(&connectCard, &StateConnectCard::fireRetry);
-			connectCard.onAbort();
+			const QString stateName("name");
+			mState->setStateName(stateName);
+
+			QSignalSpy spyRetry(mState.data(), &StateConnectCard::fireRetry);
+
+			mState->onEntry(nullptr);
+
+			Q_EMIT mContext->fireReaderPlugInTypesChanged();
 			QCOMPARE(spyRetry.count(), 1);
 		}
 

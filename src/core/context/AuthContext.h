@@ -37,6 +37,8 @@
 
 class test_StateRedirectBrowser;
 class test_ChatModel;
+class test_StatePreVerification;
+class test_StateCertificateDescriptionCheck;
 
 namespace governikus
 {
@@ -53,6 +55,8 @@ class AuthContext
 		friend class ::test_StateCertificateDescriptionCheck;
 		friend class ::test_ChatModel;
 
+		int mProgressValue;
+		QString mProgressMessage;
 		bool mTcTokenNotFound;
 		bool mErrorReportedToServer;
 		bool mSkipRedirect;
@@ -90,12 +94,13 @@ class AuthContext
 		bool removeForbiddenAccessRights(QSet<AccessRight>& pSet);
 
 	Q_SIGNALS:
+		void fireProgressChanged();
 		void fireDidAuthenticateEac1Changed();
 		void fireAuthenticationDataChanged();
 		void fireEffectiveChatChanged();
 
 	public:
-		AuthContext(const QSharedPointer<ActivationContext>& pActivationContext);
+		explicit AuthContext(const QSharedPointer<ActivationContext>& pActivationContext);
 
 		bool isErrorReportedToServer() const
 		{
@@ -107,6 +112,21 @@ class AuthContext
 		{
 			mErrorReportedToServer = pErrorReportedToServer;
 		}
+
+
+		int getProgressValue() const
+		{
+			return mProgressValue;
+		}
+
+
+		const QString getProgressMessage() const
+		{
+			return mProgressMessage;
+		}
+
+
+		void setProgress(int pValue, const QString& pMessage);
 
 
 		bool isTcTokenNotFound() const

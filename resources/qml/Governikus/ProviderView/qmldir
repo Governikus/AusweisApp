@@ -2,12 +2,13 @@ module ProviderView
 
 internal AdditionalResultsItem AdditionalResultsItem.qml
 internal CategoryCheckbox CategoryCheckbox.qml
-internal DimmableTextButton DimmableTextButton.qml
 internal ProviderCardNameRow ProviderCardNameRow.qml
 internal ProviderCard ProviderCard.qml
 internal ProviderContactInfoItem ProviderContactInfoItem.qml
 internal ProviderDelegateModel ProviderDelegateModel.qml
 internal ProviderSectionDelegate ProviderSectionDelegate.qml
-internal SearchBar SearchBar.qml
+internal ProviderListItemDelegate ProviderListItemDelegate.qml
+internal ProviderOverview ProviderOverview.qml
+internal BaseProviderView BaseProviderView.qml
 
 ProviderView 1.0 ProviderView.qml

@@ -7,31 +7,30 @@
 
 #include <QLoggingCategory>
 
+Q_DECLARE_LOGGING_CATEGORY(card)
 
 using namespace governikus;
 
 
-Q_DECLARE_LOGGING_CATEGORY(card)
-
-
-GAResponseApdu::GAResponseApdu()
-	: ResponseApdu()
+GAResponseApdu::GAResponseApdu(const ResponseApdu& pResponseApdu)
+	: mResponseApdu(pResponseApdu)
 {
+	if (!isValid())
+	{
+		qCCritical(card) << "General authentication data seems invalid because of StatusCode:" << pResponseApdu.getReturnCode();
+	}
 }
 
 
-void GAResponseApdu::setBuffer(const QByteArray& pBuffer)
+bool GAResponseApdu::isValid() const
 {
-	ResponseApdu::setBuffer(pBuffer);
+	return StatusCode::SUCCESS == getReturnCode();
+}
 
-	StatusCode statusCode = getReturnCode();
-	if (statusCode != StatusCode::SUCCESS)
-	{
-		qCCritical(card) << "Avoid parsing of the general authentication data because of StatusCode" << statusCode;
-		return;
-	}
 
-	parseDynamicAuthenticationData(getData());
+StatusCode GAResponseApdu::getReturnCode() const
+{
+	return mResponseApdu.getReturnCode();
 }
 
 
@@ -67,14 +66,18 @@ void GAEncryptedNonceResponse::parseDynamicAuthenticationData(const QByteArray& 
 }
 
 
-GAEncryptedNonceResponse::GAEncryptedNonceResponse()
-	: GAResponseApdu()
+GAEncryptedNonceResponse::GAEncryptedNonceResponse(const ResponseApdu& pResponseApdu)
+	: GAResponseApdu(pResponseApdu)
 	, mEncryptedNonce()
 {
+	if (isValid())
+	{
+		parseDynamicAuthenticationData(mResponseApdu.getData());
+	}
 }
 
 
-const QByteArray& GAEncryptedNonceResponse::getEncryptedNonce()
+const QByteArray& GAEncryptedNonceResponse::getEncryptedNonce() const
 {
 	return mEncryptedNonce;
 }
@@ -112,14 +115,18 @@ void GAMapNonceResponse::parseDynamicAuthenticationData(const QByteArray& pDynam
 }
 
 
-GAMapNonceResponse::GAMapNonceResponse()
-	: GAResponseApdu()
+GAMapNonceResponse::GAMapNonceResponse(const ResponseApdu& pResponseApdu)
+	: GAResponseApdu(pResponseApdu)
 	, mMappingData()
 {
+	if (isValid())
+	{
+		parseDynamicAuthenticationData(mResponseApdu.getData());
+	}
 }
 
 
-const QByteArray& GAMapNonceResponse::getMappingData()
+const QByteArray& GAMapNonceResponse::getMappingData() const
 {
 	return mMappingData;
 }
@@ -157,14 +164,18 @@ void GAPerformKeyAgreementResponse::parseDynamicAuthenticationData(const QByteAr
 }
 
 
-GAPerformKeyAgreementResponse::GAPerformKeyAgreementResponse()
-	: GAResponseApdu()
+GAPerformKeyAgreementResponse::GAPerformKeyAgreementResponse(const ResponseApdu& pResponseApdu)
+	: GAResponseApdu(pResponseApdu)
 	, mEphemeralPublicKey()
 {
+	if (isValid())
+	{
+		parseDynamicAuthenticationData(mResponseApdu.getData());
+	}
 }
 
 
-const QByteArray& GAPerformKeyAgreementResponse::getEphemeralPublicKey()
+const QByteArray& GAPerformKeyAgreementResponse::getEphemeralPublicKey() const
 {
 	return mEphemeralPublicKey;
 }
@@ -204,33 +215,37 @@ void GAMutualAuthenticationResponse::parseDynamicAuthenticationData(const QByteA
 	mCarCurr = Asn1OctetStringUtil::getValue(data->mCarCurr);
 	mCarPrev = Asn1OctetStringUtil::getValue(data->mCarPrev);
 
-	qDebug() << "mCarCurr" << mCarCurr;
-	qDebug() << "mCarPrev" << mCarPrev;
+	qCDebug(card) << "mCarCurr" << mCarCurr;
+	qCDebug(card) << "mCarPrev" << mCarPrev;
 }
 
 
-GAMutualAuthenticationResponse::GAMutualAuthenticationResponse()
-	: GAResponseApdu()
+GAMutualAuthenticationResponse::GAMutualAuthenticationResponse(const ResponseApdu& pResponseApdu)
+	: GAResponseApdu(pResponseApdu)
 	, mAuthenticationToken()
 	, mCarCurr()
 	, mCarPrev()
 {
+	if (isValid())
+	{
+		parseDynamicAuthenticationData(mResponseApdu.getData());
+	}
 }
 
 
-const QByteArray& GAMutualAuthenticationResponse::getAuthenticationToken()
+const QByteArray& GAMutualAuthenticationResponse::getAuthenticationToken() const
 {
 	return mAuthenticationToken;
 }
 
 
-const QByteArray& GAMutualAuthenticationResponse::getCarCurr()
+const QByteArray& GAMutualAuthenticationResponse::getCarCurr() const
 {
 	return mCarCurr;
 }
 
 
-const QByteArray& GAMutualAuthenticationResponse::getCarPrev()
+const QByteArray& GAMutualAuthenticationResponse::getCarPrev() const
 {
 	return mCarPrev;
 }
@@ -270,21 +285,25 @@ void GAChipAuthenticationResponse::parseDynamicAuthenticationData(const QByteArr
 }
 
 
-GAChipAuthenticationResponse::GAChipAuthenticationResponse()
-	: GAResponseApdu()
+GAChipAuthenticationResponse::GAChipAuthenticationResponse(const ResponseApdu& pResponseApdu)
+	: GAResponseApdu(pResponseApdu)
 	, mNonce()
 	, mAuthenticationToken()
 {
+	if (isValid())
+	{
+		parseDynamicAuthenticationData(mResponseApdu.getData());
+	}
 }
 
 
-const QByteArray& GAChipAuthenticationResponse::getNonce()
+const QByteArray& GAChipAuthenticationResponse::getNonce() const
 {
 	return mNonce;
 }
 
 
-const QByteArray& GAChipAuthenticationResponse::getAuthenticationToken()
+const QByteArray& GAChipAuthenticationResponse::getAuthenticationToken() const
 {
 	return mAuthenticationToken;
 }

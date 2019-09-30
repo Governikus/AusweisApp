@@ -7,7 +7,7 @@
 #pragma once
 
 #include "UIPlugIn.h"
-#include "UIPlugInJsonApi.h"
+#include "UIPlugInJson.h"
 
 #include <QAtomicPointer>
 #include <QMutex>
@@ -23,7 +23,7 @@ class UIPlugInAidl
 	Q_INTERFACES(governikus::UIPlugIn)
 
 	private:
-		UIPlugInJsonApi* mJsonApi;
+		UIPlugInJson* mJson;
 		QSharedPointer<WorkflowContext> mContext;
 		QMutex mWorkflowIsActive;
 

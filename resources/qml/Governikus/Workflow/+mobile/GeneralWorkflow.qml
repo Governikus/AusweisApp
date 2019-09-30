@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
@@ -21,12 +25,12 @@ SectionPage
 
 	property int waitingFor: 0
 
-	leftTitleBarAction: TitleBarAction {
+	navigationAction: NavigationAction {
 		enabled: baseItem.waitingFor !== Workflow.WaitingFor.Password
 		state: enabled ? "cancel" : "hidden"
 		onClicked: workflowModel.cancelWorkflow()
 	}
-	headerTitleBarAction: TitleBarAction { text: workflowTitle; font.bold: true }
+	title: workflowTitle
 
 	NfcWorkflow
 	{

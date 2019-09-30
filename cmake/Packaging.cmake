@@ -96,20 +96,28 @@ IF(WIN32)
 
 	IF(SIGNTOOL_CMD)
 		MESSAGE(STATUS "MSI can be signed with 'make package.sign'")
-		ADD_CUSTOM_TARGET(package.sign COMMAND ${SIGNTOOL_CMD} ${SIGNTOOL_PARAMS} ${PROJECT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.msi)
+		SET(MSI ${PROJECT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.msi)
+		ADD_CUSTOM_TARGET(package.sign COMMAND ${SIGNTOOL_CMD} ${SIGNTOOL_PARAMS} ${MSI}
+										COMMAND ${SIGNTOOL_CMD} verify /v /pa ${MSI})
 	ENDIF()
 
 ELSEIF(IOS)
 	FILE(WRITE ${PROJECT_BINARY_DIR}/ipa.cmake "
-		SET(BUNDLE_DIRS \"\${CONFIG}-iphoneos;\${CONFIG};UninstalledProducts;UninstalledProducts/iphoneos\")
+		FUNCTION(FIND_BUNDLE _name _out_bundle _out_parent_dir)
+			SET(BUNDLE_DIRS \"\${CONFIG}-iphoneos;\${CONFIG};UninstalledProducts;UninstalledProducts/iphoneos\")
 
-		FOREACH(dir \${BUNDLE_DIRS})
-			SET(tmpBundleDir ${PROJECT_BINARY_DIR}/src/\${dir}/${PROJECT_NAME}.app)
-			IF(EXISTS \"\${tmpBundleDir}\")
-				SET(BundleDir \"\${tmpBundleDir}\")
-				BREAK()
-			ENDIF()
-		ENDFOREACH()
+			FOREACH(dir \${BUNDLE_DIRS})
+				SET(tmpDir ${PROJECT_BINARY_DIR}/src/\${dir})
+				SET(tmpBundleDir \${tmpDir}/\${_name})
+				IF(EXISTS \"\${tmpBundleDir}\")
+					SET(\${_out_bundle} \"\${tmpBundleDir}\" PARENT_SCOPE)
+					SET(\${_out_parent_dir} \"\${tmpDir}\" PARENT_SCOPE)
+					BREAK()
+				ENDIF()
+			ENDFOREACH()
+		ENDFUNCTION()
+
+		FIND_BUNDLE(${PROJECT_NAME}.app BundleDir ParentDir)
 
 		IF(BundleDir)
 			MESSAGE(STATUS \"Use bundle: \${BundleDir}\")
@@ -117,9 +125,15 @@ ELSEIF(IOS)
 			MESSAGE(FATAL_ERROR \"Bundle directory does not exist\")
 		ENDIF()
 
-		EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy_directory \${BundleDir} Payload/AusweisApp2.app)
+		EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy_directory \${BundleDir} Payload/${PROJECT_NAME}.app)
 		EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar cf \"${CPACK_PACKAGE_FILE_NAME}.ipa\" --format=zip Payload)
 		EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E remove_directory Payload)
+
+		FIND_BUNDLE(${PROJECT_NAME}.app.dSYM dSYM ParentDir)
+		IF(dSYM)
+			MESSAGE(STATUS \"Use dSYM: \${dSYM}\")
+			EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar cf \"\${CMAKE_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.dSYM.zip\" --format=zip ${PROJECT_NAME}.app.dSYM WORKING_DIRECTORY \${ParentDir})
+		ENDIF()
 	")
 
 	ADD_CUSTOM_TARGET(ipa COMMAND ${CMAKE_COMMAND} -DCONFIG=$<CONFIGURATION> -P ${CMAKE_BINARY_DIR}/ipa.cmake)
@@ -164,26 +178,27 @@ ELSEIF(ANDROID)
 	ENDIF()
 	MESSAGE(STATUS "Using androiddeployqt: ${androiddeployqt}")
 
-	OPTION(ANDROID_USE_GRADLE "Use gradle for androiddeployqt" ON)
+	FILE(READ "${QT_HOST_PREFIX}/src/android/templates/build.gradle" BUILD_GRADLE)
 
-	IF(ANDROID_USE_GRADLE)
-		FILE(READ "${QT_HOST_PREFIX}/src/android/templates/build.gradle" BUILD_GRADLE)
+	IF(ANDROID_BUILD_AAR)
+		STRING(REPLACE "apply plugin: 'com.android.application'" "apply plugin: 'com.android.library'" BUILD_GRADLE "${BUILD_GRADLE}")
+	ENDIF()
 
-		IF(ANDROID_BUILD_AAR)
-			STRING(REPLACE "apply plugin: 'com.android.application'" "apply plugin: 'com.android.library'" BUILD_GRADLE "${BUILD_GRADLE}")
-		ENDIF()
-
-		FILE(WRITE "${CMAKE_INSTALL_PREFIX}/build.gradle" "${BUILD_GRADLE}")
-
-		FILE(READ "${PACKAGING_DIR}/android/build.gradle.append" BUILD_GRADLE)
-		FILE(APPEND "${CMAKE_INSTALL_PREFIX}/build.gradle" "${BUILD_GRADLE}")
+	FILE(WRITE "${CMAKE_INSTALL_PREFIX}/build.gradle" "${BUILD_GRADLE}")
+	FILE(READ "${PACKAGING_DIR}/android/build.gradle.append" BUILD_GRADLE)
+	FILE(APPEND "${CMAKE_INSTALL_PREFIX}/build.gradle" "${BUILD_GRADLE}")
+	OPTION(ANDROID_LINT "Lint Android package" ON)
+	IF(NOT ANDROID_LINT)
+		FILE(APPEND "${CMAKE_INSTALL_PREFIX}/build.gradle" "tasks.lint.enabled = false")
 	ENDIF()
 
 	IF(ANDROID_BUILD_AAR)
 		SET(ANDROID_FILE_EXT aar)
 		CONFIGURE_FILE(${PACKAGING_DIR}/android/pom.xml.in ${CMAKE_INSTALL_PREFIX}/${CPACK_PACKAGE_FILE_NAME}.pom @ONLY)
+		CONFIGURE_FILE("${PACKAGING_DIR}/android/lint.aar.xml" "${CMAKE_INSTALL_PREFIX}/lint.xml" COPYONLY)
 	ELSE()
 		SET(ANDROID_FILE_EXT apk)
+		CONFIGURE_FILE("${PACKAGING_DIR}/android/lint.apk.xml" "${CMAKE_INSTALL_PREFIX}/lint.xml" COPYONLY)
 	ENDIF()
 	MESSAGE(STATUS "Prepare ${ANDROID_FILE_EXT} file generation")
 
@@ -195,64 +210,40 @@ ELSEIF(ANDROID)
 		ELSEIF(APK_SIGN_KEYSTORE AND APK_SIGN_KEYSTORE_ALIAS AND APK_SIGN_KEYSTORE_PSW)
 			MESSAGE(STATUS "Release build will be signed using: ${APK_SIGN_KEYSTORE} | Alias: ${APK_SIGN_KEYSTORE_ALIAS}")
 			SET(DEPLOY_CMD_SIGN --sign ${APK_SIGN_KEYSTORE} ${APK_SIGN_KEYSTORE_ALIAS} --storepass ${APK_SIGN_KEYSTORE_PSW} --digestalg SHA-256 --sigalg SHA256WithRSA)
-			IF(ANDROID_USE_GRADLE)
-				SET(ANDROID_FILE dist-release-signed.apk)
-			ELSE()
-				SET(ANDROID_FILE QtApp-release-signed.apk)
-			ENDIF()
+			SET(ANDROID_FILE dist-release-signed.apk)
 		ELSE()
-			IF(ANDROID_USE_GRADLE)
-				SET(ANDROID_FILE dist-release-unsigned.apk)
-			ELSE()
-				SET(ANDROID_FILE QtApp-release-unsigned.apk)
-			ENDIF()
-
+			SET(ANDROID_FILE dist-release-unsigned.apk)
 			MESSAGE(WARNING "Cannot sign release build! Set APK_SIGN_KEYSTORE, APK_SIGN_KEYSTORE_ALIAS and APK_SIGN_KEYSTORE_PSW!")
 		ENDIF()
 
 	ELSE()
-		IF(ANDROID_USE_GRADLE)
-			SET(ANDROID_FILE dist-debug.${ANDROID_FILE_EXT})
+		SET(ANDROID_FILE dist-debug.${ANDROID_FILE_EXT})
+	ENDIF()
+
+	SET(DEPLOY_CMD ${androiddeployqt} --verbose --gradle --input ${ANDROID_DEPLOYMENT_SETTINGS} --output ${CMAKE_INSTALL_PREFIX} ${DEPLOY_CMD_SIGN})
+	SET(SOURCE_ANDROID_FILE ${CMAKE_INSTALL_PREFIX}/build/outputs/${ANDROID_FILE_EXT})
+
+	IF("${Qt5Core_VERSION}" VERSION_GREATER_EQUAL "5.12.0" AND NOT ANDROID_BUILD_AAR)
+		IF(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
+			SET(SOURCE_ANDROID_FILE ${SOURCE_ANDROID_FILE}/debug)
 		ELSE()
-			SET(ANDROID_FILE QtApp-debug.apk)
+			SET(SOURCE_ANDROID_FILE ${SOURCE_ANDROID_FILE}/release)
 		ENDIF()
 	ENDIF()
 
-	SET(DEPLOY_CMD ${androiddeployqt} --verbose --input ${ANDROID_DEPLOYMENT_SETTINGS} --output ${CMAKE_INSTALL_PREFIX} ${DEPLOY_CMD_SIGN})
-
-	IF(ANDROID_USE_GRADLE)
-		SET(DEPLOY_CMD ${DEPLOY_CMD} --gradle)
-		SET(SOURCE_ANDROID_FILE ${CMAKE_INSTALL_PREFIX}/build/outputs/${ANDROID_FILE_EXT})
-
-		IF("${Qt5Core_VERSION}" VERSION_GREATER_EQUAL "5.12.0" AND NOT ANDROID_BUILD_AAR)
-			IF(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
-				SET(SOURCE_ANDROID_FILE ${SOURCE_ANDROID_FILE}/debug)
-			ELSE()
-				SET(SOURCE_ANDROID_FILE ${SOURCE_ANDROID_FILE}/release)
-			ENDIF()
-		ENDIF()
-
-		SET(SOURCE_ANDROID_FILE ${SOURCE_ANDROID_FILE}/${ANDROID_FILE})
-	ELSE()
-		IF(ANDROID_BUILD_AAR)
-			MESSAGE(FATAL_ERROR "Use gradle to build an AAR")
-		ENDIF()
-		SET(SOURCE_ANDROID_FILE ${CMAKE_INSTALL_PREFIX}/bin/${ANDROID_FILE})
-	ENDIF()
+	SET(SOURCE_ANDROID_FILE ${SOURCE_ANDROID_FILE}/${ANDROID_FILE})
 
 	SET(DESTINATION_ANDROID_FILE ${CMAKE_INSTALL_PREFIX}/${CPACK_PACKAGE_FILE_NAME}.${ANDROID_FILE_EXT})
 	# Add DEPENDS install someday
-	# http://public.kitware.com/Bug/view.php?id=8438
+	# https://gitlab.kitware.com/cmake/cmake/issues/8438
 	ADD_CUSTOM_TARGET(${ANDROID_FILE_EXT}
 				COMMAND ${DEPLOY_CMD}
 				COMMAND ${CMAKE_COMMAND} -E copy ${SOURCE_ANDROID_FILE} ${DESTINATION_ANDROID_FILE})
 
-	IF(ANDROID_USE_GRADLE)
-		ADD_CUSTOM_COMMAND(TARGET ${ANDROID_FILE_EXT} POST_BUILD
+	ADD_CUSTOM_COMMAND(TARGET ${ANDROID_FILE_EXT} POST_BUILD
 				COMMAND ${CMAKE_INSTALL_PREFIX}/gradlew sourcesJar lint
 				COMMAND ${CMAKE_COMMAND} -E copy build/libs/dist-sources.jar ${CPACK_PACKAGE_FILE_NAME}-sources.jar
 				WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX})
-	ENDIF()
 
 	IF(NOT ANDROID_BUILD_AAR)
 		FIND_PROGRAM(apksigner apksigner HINTS ${ANDROID_SDK}/build-tools/${ANDROID_BUILD_TOOLS_REVISION} CMAKE_FIND_ROOT_PATH_BOTH)

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "Env.h"
 #include "TlsConfiguration.h"
 
 #include <QByteArrayList>
@@ -21,7 +22,7 @@
 
 
 class test_SecureStorage;
-
+class MockSecureStorage;
 
 namespace governikus
 {
@@ -30,7 +31,10 @@ using SignatureAlgorithmPair = QPair<QSsl::KeyAlgorithm, QCryptographicHash::Alg
 
 class SecureStorage
 {
-	friend class ::test_SecureStorage;
+	Q_GADGET
+
+	friend class Env;
+	friend class ::MockSecureStorage;
 
 	private:
 		QDateTime mLoadedTime;
@@ -61,10 +65,9 @@ class SecureStorage
 	protected:
 		SecureStorage();
 		virtual ~SecureStorage();
-
-	public:
 		static SecureStorage& getInstance();
 
+	public:
 		enum class TlsSuite
 		{
 			DEFAULT, PSK,

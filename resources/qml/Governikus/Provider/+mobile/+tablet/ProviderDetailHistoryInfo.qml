@@ -1,7 +1,14 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.Provider 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 Item {
 	id: baseItem
@@ -20,7 +27,7 @@ Item {
 		opacity: 0.4
 	}
 
-	Flickable {
+	GFlickable {
 		anchors.fill: baseItem
 		anchors.margins: Constants.component_spacing
 		contentHeight: infoRow.height
@@ -53,22 +60,24 @@ Item {
 
 					ProviderInfoSection {
 						imageSource: "qrc:///images/provider/information.svg"
-						title: qsTr("Service provider") + settingsModel.translationTrigger
+						//: LABEL ANDROID_TABLET IOS_TABLET
+						title: qsTr("Service provider") + SettingsModel.translationTrigger
 						name: baseItem.providerName
 					}
 
 					ProviderInfoSection {
 						imageSource: "qrc:///images/provider/purpose.svg"
-						title: qsTr("Purpose for reading out requested data") + settingsModel.translationTrigger
+						//: LABEL ANDROID_TABLET IOS_TABLET
+						title: qsTr("Purpose for reading out requested data") + SettingsModel.translationTrigger
 						name: baseItem.purposeText
 					}
 
-					Text {
+					GText {
 						id: readDataTitle
 						width: parent.width
-						font.pixelSize: Constants.header_font_size
-						color: Constants.blue
-						text: qsTr("Read data") + settingsModel.translationTrigger
+						//: LABEL ANDROID_TABLET IOS_TABLET
+						text: qsTr("Read data") + SettingsModel.translationTrigger
+						textStyle: Style.text.header_accent
 					}
 
 					Column {
@@ -83,20 +92,19 @@ Item {
 							Item {
 								id: textItem
 
-								height: Utils.dp(32)
+								height: 32
 								width: infoTable.width
 
 								Rectangle {
 									anchors.fill: textItem
-									color: "white"
+									color: Constants.white
 								}
 
-								Text {
-									color: Constants.secondary_text
-									text: modelData.trim()
-
+								GText {
 									anchors.verticalCenter: parent.verticalCenter
-									font.pixelSize: Constants.normal_font_size
+
+									text: modelData.trim()
+									textStyle: Style.text.normal_secondary
 								}
 							}
 						}
@@ -121,22 +129,20 @@ Item {
 					anchors.right: parent.right
 					spacing: Constants.pane_spacing
 
-					Text {
+					GText {
 						id: termsOfUsageTitle
-						text: qsTr("Terms of usage") + settingsModel.translationTrigger
-						font.pixelSize: Constants.header_font_size
-						color: Constants.blue
+						//: LABEL ANDROID_TABLET IOS_TABLET
+						text: qsTr("Terms of usage") + SettingsModel.translationTrigger
+						textStyle: Style.text.header_accent
 					}
 
-					Text {
+					GText {
 						id: termsOfUsageTextItem
-						color: Constants.secondary_text
+
+						width: parent.width
 
 						text: baseItem.termsOfUsageText
-						width: parent.width
-						elide: Text.ElideRight
-						wrapMode: Text.Wrap
-						font.pixelSize: Constants.normal_font_size
+						textStyle: Style.text.normal_secondary
 					}
 				}
 			}

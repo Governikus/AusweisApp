@@ -10,6 +10,7 @@
 #include "pace/KeyAgreement.h"
 
 #include <openssl/ec.h>
+#include <QPair>
 #include <QSharedPointer>
 
 class test_EcdhKeyAgreement;
@@ -28,13 +29,13 @@ class EcdhKeyAgreement
 		QSharedPointer<EC_POINT> mTerminalPublicKey;
 		QSharedPointer<EC_POINT> mCardPublicKey;
 
-		CardOperationResult<QSharedPointer<EC_GROUP> > determineEphemeralDomainParameters(const QByteArray& pNonce);
-		CardOperationResult<QSharedPointer<EC_POINT> > performKeyExchange(const QSharedPointer<const EC_GROUP>& pCurve);
+		QPair<CardReturnCode, QSharedPointer<EC_GROUP> > determineEphemeralDomainParameters(const QByteArray& pNonce);
+		QPair<CardReturnCode, QSharedPointer<EC_POINT> > performKeyExchange(const QSharedPointer<const EC_GROUP>& pCurve);
 
 		static QByteArray encodeUncompressedPublicKey(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint);
 		static QByteArray encodeCompressedPublicKey(const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint);
 
-		CardOperationResult<QByteArray> determineSharedSecret(const QByteArray& pNonce) override;
+		KeyAgreement::CardResult determineSharedSecret(const QByteArray& pNonce) override;
 		QByteArray getUncompressedTerminalPublicKey() override;
 		QByteArray getUncompressedCardPublicKey() override;
 		QByteArray getCompressedCardPublicKey() override;
@@ -42,7 +43,7 @@ class EcdhKeyAgreement
 		EcdhKeyAgreement(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 	public:
-		static QSharedPointer<KeyAgreement> create(const QSharedPointer<const PaceInfo>& pPaceInfo,
+		static QSharedPointer<EcdhKeyAgreement> create(const QSharedPointer<const PaceInfo>& pPaceInfo,
 				const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 		virtual ~EcdhKeyAgreement() override = default;

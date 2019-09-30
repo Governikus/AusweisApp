@@ -23,26 +23,26 @@
  * an abstraction layer for those data types.
  */
 #ifdef Q_OS_WIN
-typedef LONG PCSC_RETURNCODE;
-typedef DWORD PCSC_INT;
-typedef TCHAR PCSC_CHAR;
-typedef TCHAR* PCSC_CHAR_PTR;
-typedef LPBYTE PCSC_UCHAR_PTR;
-typedef LPCBYTE PCSC_CUCHAR_PTR;
+using PCSC_RETURNCODE = LONG;
+using PCSC_INT = DWORD;
+using PCSC_CHAR = TCHAR;
+using PCSC_CHAR_PTR = TCHAR *;
+using PCSC_UCHAR_PTR = LPBYTE;
+using PCSC_CUCHAR_PTR = LPCBYTE;
 #elif defined Q_OS_MACOS
-typedef int32_t PCSC_RETURNCODE;
-typedef uint32_t PCSC_INT;
-typedef char PCSC_CHAR;
-typedef char* PCSC_CHAR_PTR;
-typedef uchar* PCSC_UCHAR_PTR;
-typedef const uchar* PCSC_CUCHAR_PTR;
+using PCSC_RETURNCODE = int32_t;
+using PCSC_INT = uint32_t;
+using PCSC_CHAR = char;
+using PCSC_CHAR_PTR = char*;
+using PCSC_UCHAR_PTR = uchar *;
+using PCSC_CUCHAR_PTR = const uchar *;
 #elif defined Q_OS_UNIX
-typedef LONG PCSC_RETURNCODE;
-typedef DWORD PCSC_INT;
-typedef char PCSC_CHAR;
-typedef char* PCSC_CHAR_PTR;
-typedef uchar* PCSC_UCHAR_PTR;
-typedef const uchar* PCSC_CUCHAR_PTR;
+using PCSC_RETURNCODE = LONG;
+using PCSC_INT = DWORD;
+using PCSC_CHAR = char;
+using PCSC_CHAR_PTR = char*;
+using PCSC_UCHAR_PTR = uchar *;
+using PCSC_CUCHAR_PTR = const uchar *;
 #endif
 
 
@@ -128,7 +128,7 @@ class PcscUtils
 			Scard_W_Cancelled_By_User = static_cast<PCSC_RETURNCODE>(SCARD_W_CANCELLED_BY_USER), /**< The user pressed "Cancel" on a Smart Card Selection Dialog. */
 			Scard_W_Card_Not_Authenticated = static_cast<PCSC_RETURNCODE>(SCARD_W_CARD_NOT_AUTHENTICATED) /**< No PIN was presented to the smart card. */
 		};
-		Q_ENUM(PcscReturnCode);
+		Q_ENUM(PcscReturnCode)
 
 		static QString toString(PCSC_RETURNCODE pCode);
 };

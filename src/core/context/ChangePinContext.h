@@ -22,6 +22,7 @@ class ChangePinContext
 
 	public:
 		explicit ChangePinContext(bool pRequestTransportPin = false);
+		virtual ~ChangePinContext() override;
 
 		const QString& getNewPin() const;
 		void setNewPin(const QString& pNewPin);

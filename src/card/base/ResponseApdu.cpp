@@ -16,17 +16,12 @@ ResponseApdu::ResponseApdu(StatusCode pStatusCode)
 {
 	char buffer[2];
 	qToBigEndian<quint16>(Enum<StatusCode>::getValue(pStatusCode), buffer);
-	setBuffer(QByteArray(buffer, 2));
+	ResponseApdu::setBuffer(QByteArray(buffer, 2));
 }
 
 
 ResponseApdu::ResponseApdu(const QByteArray& pBuffer)
 	: Apdu(pBuffer)
-{
-}
-
-
-ResponseApdu::~ResponseApdu()
 {
 }
 
@@ -151,6 +146,7 @@ CardReturnCode ResponseApdu::getCardReturnCode() const
 	}
 
 	Q_UNREACHABLE();
+	return CardReturnCode::UNDEFINED;
 }
 
 

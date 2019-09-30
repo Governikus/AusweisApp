@@ -1,15 +1,22 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
+import Governikus.Type.SettingsModel 1.0
 
 
 SectionPage {
 	id: root
-	leftTitleBarAction: TitleBarAction { state: !topLevelPage ? "back" : ""; onClicked: firePop() }
-	headerTitleBarAction: TitleBarAction { text: qsTr("Developer options") + settingsModel.translationTrigger; font.bold: true }
+	navigationAction: NavigationAction { state: !topLevelPage ? "back" : ""; onClicked: firePop() }
+	//: LABEL ALL_PLATFORMS
+	title: qsTr("Developer options") + SettingsModel.translationTrigger
 
 	content: Column {
 		id: mainColumn
@@ -31,33 +38,35 @@ SectionPage {
 				anchors.right: testUriSwitch.left
 				anchors.rightMargin: Constants.component_spacing
 				anchors.verticalCenter: testUriContainer.verticalCenter
-				Text {
+
+				GText {
 					id: testUriNameText
-					anchors.bottomMargin: Utils.dp(2)
-					font.pixelSize: Utils.dp(16)
-					color: Constants.secondary_text
-					opacity: 0.87
-					text: qsTr("Test environment") + settingsModel.translationTrigger
+					anchors.bottomMargin: 2
+					//: LABEL ALL_PLATFORMS
+					text: qsTr("Test environment") + SettingsModel.translationTrigger
+					textStyle: Style.text.normal_accent
 				}
 
-				Text {
+				GText {
 					id: testUriDateText
 					width: parent.width
 					anchors.top: testUriNameText.bottom
-					font.pixelSize: Utils.dp(14)
-					color: Constants.secondary_text
-					opacity: 0.38
-					text: qsTr("Use the test environment during a selfauthentication") + settingsModel.translationTrigger
-					wrapMode: Text.WordWrap
+					//: LABEL ALL_PLATFORMS
+					text: qsTr("Use the test environment during a self-authentication") + SettingsModel.translationTrigger
+					textStyle: Style.text.normal_secondary
 				}
 			}
 
 			GSwitch {
 				id: testUriSwitch
+
 				anchors.right: testUriContainer.right
 				anchors.verticalCenter: testUriContainer.verticalCenter
-				initialState: settingsModel.useSelfauthenticationTestUri
-				onSwitched: settingsModel.useSelfauthenticationTestUri = testUriSwitch.isOn
+
+				Accessible.name: qsTr("Test environment") + SettingsModel.translationTrigger
+
+				initialState: SettingsModel.useSelfauthenticationTestUri
+				onSwitched: SettingsModel.useSelfauthenticationTestUri = testUriSwitch.isOn
 			}
 		}
 
@@ -73,57 +82,61 @@ SectionPage {
 				anchors.right: devModeSwitch.left
 				anchors.rightMargin: Constants.component_spacing
 				anchors.verticalCenter: devModeContainer.verticalCenter
-				Text {
+
+				GText {
 					id: devModeNameText
-					anchors.bottomMargin: Utils.dp(2)
-					font.pixelSize: Utils.dp(16)
-					color: Constants.secondary_text
-					opacity: 0.87
-					text: qsTr("Developer Mode") + settingsModel.translationTrigger
+					anchors.bottomMargin: 2
+					//: LABEL ALL_PLATFORMS
+					text: qsTr("Developer Mode") + SettingsModel.translationTrigger
+					textStyle: Style.text.normal_accent
 				}
 
-				Text {
+				GText {
 					id: devModeDateText
 					width: parent.width
 					anchors.top: devModeNameText.bottom
-					font.pixelSize: Utils.dp(14)
-					color: Constants.secondary_text
-					opacity: 0.38
-					text: qsTr("Use a more tolerant mode") + settingsModel.translationTrigger
-					wrapMode: Text.WordWrap
+					//: LABEL ALL_PLATFORMS
+					text: qsTr("Use a more tolerant mode") + SettingsModel.translationTrigger
+					textStyle: Style.text.normal_secondary
 				}
 			}
 
 			GSwitch {
 				id: devModeSwitch
+
 				anchors.right: devModeContainer.right
 				anchors.verticalCenter: devModeContainer.verticalCenter
-				initialState: settingsModel.developerMode
-				onSwitched: settingsModel.developerMode = devModeSwitch.isOn
+
+				Accessible.name: qsTr("Developer mode") + SettingsModel.translationTrigger
+
+				initialState: SettingsModel.developerMode
+				onSwitched: SettingsModel.developerMode = devModeSwitch.isOn
 			}
 		}
 
-		Text {
-			text: qsTr("Change the layout style") + settingsModel.translationTrigger
-			font.pixelSize: Constants.normal_font_size
-			font.bold: true
-			color: Constants.blue
+		GText {
+			//: LABEL ALL_PLATFORMS
+			text: qsTr("Change the layout style") + SettingsModel.translationTrigger
+			textStyle: Style.text.normal_accent
 		}
 
 		GRadioButton {
-			text: qsTr("iOS") + settingsModel.translationTrigger
+			//: LABEL ALL_PLATFORMS
+			text: qsTr("iOS") + SettingsModel.translationTrigger
 			checked: plugin.platformStyle === text.toLowerCase()
 			onCheckedChanged: if (checked) { plugin.applyPlatformStyle(text.toLowerCase()) }
 		}
 
 		GRadioButton {
-			text: qsTr("Android") + settingsModel.translationTrigger
+			//: LABEL ALL_PLATFORMS
+			text: qsTr("Android") + SettingsModel.translationTrigger
 			checked: plugin.platformStyle === text.toLowerCase()
 			onCheckedChanged: if (checked) { plugin.applyPlatformStyle(text.toLowerCase()) }
 		}
 
 		GRadioButton {
-			text: qsTr("Tablet, Android") + settingsModel.translationTrigger
+			//: LABEL ALL_PLATFORMS
+			text: qsTr("Tablet, Android") + SettingsModel.translationTrigger
 			checked: plugin.platformStyle === text.toLowerCase()
 			onCheckedChanged: if (checked) { plugin.applyPlatformStyle(text.toLowerCase()) }
 		}

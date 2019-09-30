@@ -25,6 +25,12 @@ class PcscCard
 	Q_OBJECT
 
 	private:
+		struct CardResult
+		{
+			PCSC_RETURNCODE mReturnCode;
+			QByteArray mResponse = QByteArray();
+		};
+
 		QPointer<PcscReader> mReader;
 		PCSC_INT mProtocol;
 		SCARDCONTEXT mContextHandle;
@@ -33,19 +39,15 @@ class PcscCard
 
 		PCSC_RETURNCODE transmit(const QByteArray& pSendBuffer, QByteArray& pReceiveBuffer);
 
-		PCSC_RETURNCODE transmit(const QByteArray& pSendBuffer,
-				QByteArray& pReceiveBuffer,
-				const SCARD_IO_REQUEST* pSendPci,
-				SCARD_IO_REQUEST& pRecvPci,
-				PCSC_INT& pBytesReceived);
+		CardResult transmit(const QByteArray& pSendBuffer, const SCARD_IO_REQUEST* pSendPci);
 
-		PCSC_RETURNCODE control(PCSC_INT pCntrCode, const QByteArray& pCntrInput, QByteArray& pCntrOutput);
+		CardResult control(PCSC_INT pCntrCode, const QByteArray& pCntrInput);
 
 	private Q_SLOTS:
 		void sendSCardStatus();
 
 	public:
-		PcscCard(PcscReader* pPcscReader);
+		explicit PcscCard(PcscReader* pPcscReader);
 		virtual ~PcscCard() override;
 
 		virtual CardReturnCode connect() override;
@@ -54,7 +56,7 @@ class PcscCard
 
 		virtual CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
 
-		virtual CardReturnCode establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPaceChannelOutput& pChannelOutput, quint8 pTimeoutSeconds) override;
+		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds) override;
 
 		virtual CardReturnCode destroyPaceChannel() override;
 

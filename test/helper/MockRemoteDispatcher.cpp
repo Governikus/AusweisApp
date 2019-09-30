@@ -101,7 +101,7 @@ void MockRemoteDispatcher::setState(DispatcherState pState)
 
 void MockRemoteDispatcher::onClosed()
 {
-	Q_EMIT fireClosed(GlobalStatus::Code::RemoteReader_CloseCode_NormalClose, mId);
+	Q_EMIT fireClosed(GlobalStatus::Code::No_Error, mId);
 }
 
 

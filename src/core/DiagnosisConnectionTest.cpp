@@ -113,7 +113,9 @@ QString DiagnosisConnectionTest::getProxyTypeAsQString(QNetworkProxy::ProxyType 
 		case QNetworkProxy::FtpCachingProxy:
 			return QStringLiteral("FtpCachingProxy");
 	}
+
 	Q_UNREACHABLE();
+	return QString();
 }
 
 
@@ -174,7 +176,7 @@ void DiagnosisConnectionTest::startConnectionTest()
 		mProxyCapabilities = getProxyCapabilitiesAsQString(proxy.capabilities());
 	}
 
-	const QUrl& testUrl = QUrl(SecureStorage::getInstance().getUpdateServerBaseUrl());
+	const QUrl& testUrl = QUrl(Env::getSingleton<SecureStorage>()->getUpdateServerBaseUrl());
 	if (mIsProxySet)
 	{
 		mPingSocketToProxy.reset();

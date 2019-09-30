@@ -6,14 +6,16 @@
 
 #pragma once
 
+#include "AbstractState.h"
 #include "context/SelfAuthContext.h"
-#include "states/AbstractGenericState.h"
+#include "GenericContextContainer.h"
 
 namespace governikus
 {
 
 class StateLoadTcTokenUrl
-	: public AbstractGenericState<SelfAuthContext>
+	: public AbstractState
+	, public GenericContextContainer<SelfAuthContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

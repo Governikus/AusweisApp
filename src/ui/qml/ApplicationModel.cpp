@@ -12,25 +12,34 @@
 #include "BuildHelper.h"
 #include "DpiCalculator.h"
 #include "Env.h"
+#include "HelpAction.h"
 #include "ReaderInfo.h"
 #include "ReaderManager.h"
 #include "RemoteClient.h"
 #include "SingletonHelper.h"
 
-#if !defined(QT_NO_DEBUG) || defined(Q_OS_ANDROID)
-#include "SurveyHandler.h"
+#if !defined(Q_OS_WINRT) && !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+#include "PdfExporter.h"
 #endif
+
+#include <QRegularExpression>
 
 #if (defined(Q_OS_LINUX) && !defined(QT_NO_DEBUG)) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 #include <QBluetoothLocalDevice>
 #endif
 
 #ifdef Q_OS_ANDROID
+#include <QAndroidJniEnvironment>
+#include <QAndroidJniObject>
+#include <QOperatingSystemVersion>
 #include <QtAndroid>
 #endif
 
 
 using namespace governikus;
+
+Q_DECLARE_LOGGING_CATEGORY(qml)
+Q_DECLARE_LOGGING_CATEGORY(feedback)
 
 defineSingleton(ApplicationModel)
 
@@ -45,6 +54,7 @@ void ApplicationModel::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
 	else if (pInfo.getPlugInType() == ReaderManagerPlugInType::NFC)
 	{
 		Q_EMIT fireNfcEnabledChanged();
+		Q_EMIT fireNfcRunningChanged();
 	}
 }
 
@@ -56,6 +66,12 @@ ApplicationModel::ApplicationModel()
 	, mWifiInfo()
 	, mWifiEnabled(false)
 	, mBluetoothResponding(true)
+	, mFeedback()
+	, mFeedbackTimer()
+	, mFeedbackDisplayLength(3500)
+#ifdef Q_OS_IOS
+	, mPrivate(new Private)
+#endif
 {
 	const auto readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::fireReaderAdded, this, &ApplicationModel::fireBluetoothReaderChanged);
@@ -69,8 +85,11 @@ ApplicationModel::ApplicationModel()
 
 	onWifiEnabledChanged();
 
-	RemoteClient* const remoteClient = Env::getSingleton<RemoteClient>();
+	auto* const remoteClient = Env::getSingleton<RemoteClient>();
 	connect(remoteClient, &RemoteClient::fireCertificateRemoved, this, &ApplicationModel::fireCertificateRemoved);
+
+	mFeedbackTimer.setSingleShot(true);
+	connect(&mFeedbackTimer, &QTimer::timeout, this, &ApplicationModel::onShowNextFeedback, Qt::QueuedConnection);
 }
 
 
@@ -84,6 +103,9 @@ void ApplicationModel::resetContext(const QSharedPointer<WorkflowContext>& pCont
 	if ((mContext = pContext))
 	{
 		connect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &ApplicationModel::fireSelectedReaderChanged);
+		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &ApplicationModel::fireSelectedReaderChanged);
+		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &ApplicationModel::fireReaderPropertiesUpdated);
+		connect(mContext.data(), &WorkflowContext::fireReaderInfoChanged, this, &ApplicationModel::fireReaderPropertiesUpdated);
 	}
 	Q_EMIT fireCurrentWorkflowChanged();
 }
@@ -139,14 +161,48 @@ bool ApplicationModel::isNfcEnabled() const
 }
 
 
+bool ApplicationModel::isNfcRunning() const
+{
+	return Env::getSingleton<ReaderManager>()->isScanRunning(ReaderManagerPlugInType::NFC);
+}
+
+
+void ApplicationModel::setNfcRunning(bool pRunning)
+{
+	const auto& readerManager = Env::getSingleton<ReaderManager>();
+	if (pRunning)
+	{
+		readerManager->startScan(ReaderManagerPlugInType::NFC);
+		return;
+	}
+
+	readerManager->stopScan(ReaderManagerPlugInType::NFC);
+}
+
+
 bool ApplicationModel::isExtendedLengthApdusUnsupported() const
 {
-	if (mContext && !mContext->getReaderName().isEmpty())
+
+	if (mContext)
 	{
-		ReaderInfo readerInfo = Env::getSingleton<ReaderManager>()->getReaderInfo(mContext->getReaderName());
-		return !readerInfo.sufficientApduLength();
+		if (mContext->currentReaderHasEidCardButInsufficientApduLength())
+		{
+			return true;
+		}
+		if (!mContext->getReaderName().isEmpty())
+		{
+			ReaderInfo readerInfo = Env::getSingleton<ReaderManager>()->getReaderInfo(mContext->getReaderName());
+			return !readerInfo.sufficientApduLength();
+		}
 	}
 	return false;
+}
+
+
+void ApplicationModel::stopNfcScanWithError(const QString& pError) const
+{
+	const auto readerManager = Env::getSingleton<ReaderManager>();
+	readerManager->stopScan(ReaderManagerPlugInType::NFC, pError);
 }
 
 
@@ -201,6 +257,18 @@ bool ApplicationModel::locationPermissionRequired() const
 }
 
 
+bool ApplicationModel::isWifiEnabled() const
+{
+	return mWifiEnabled;
+}
+
+
+qreal ApplicationModel::getDpiScale() const
+{
+	return mDpiScale;
+}
+
+
 qreal ApplicationModel::getScaleFactor() const
 {
 	return mScaleFactor;
@@ -244,33 +312,212 @@ bool ApplicationModel::foundSelectedReader() const
 		return false;
 	}
 
-	return Env::getSingleton<ReaderManager>()->getReaderInfos(mContext->getReaderPlugInTypes()).size() > 0;
+	return !Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(mContext->getReaderPlugInTypes())).isEmpty();
 }
 
 
-bool ApplicationModel::areStoreFeedbackDialogConditionsMet() const
+bool ApplicationModel::isReaderTypeAvailable(ReaderManagerPlugInType pPlugInType) const
 {
-	if (!getCurrentWorkflow().isEmpty())
+	if (!mContext)
 	{
 		return false;
 	}
 
-#ifdef Q_OS_ANDROID
-	const bool startedByAuth = QAndroidJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
-	if (startedByAuth)
+	if (!mContext->getReaderName().isEmpty())
 	{
-		return false;
+		return Env::getSingleton<ReaderManager>()->getReaderInfo(mContext->getReaderName()).getPlugInType() == pPlugInType;
 	}
+
+	return !Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({pPlugInType})).isEmpty();
+}
+
+
+void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction)
+{
+#ifdef Q_OS_ANDROID
+	const auto& androidQ = QOperatingSystemVersion(QOperatingSystemVersion::Android, 10);
+
+	switch (pAction)
+	{
+		case Settings::SETTING_NETWORK:
+			if (QOperatingSystemVersion::current() >= androidQ)
+			{
+				showSettings(QStringLiteral("android.settings.panel.action.INTERNET_CONNECTIVITY"));
+			}
+			else
+			{
+				showSettings(QStringLiteral("android.settings.WIRELESS_SETTINGS"));
+			}
+			break;
+
+		case Settings::SETTING_NFC:
+			if (QOperatingSystemVersion::current() >= androidQ)
+			{
+				showSettings(QStringLiteral("android.settings.panel.action.NFC"));
+			}
+			else
+			{
+				showSettings(QStringLiteral("android.settings.NFC_SETTINGS"));
+			}
+
+			break;
+
+		case Settings::SETTING_BLUETOOTH:
+			showSettings(QStringLiteral("android.settings.BLUETOOTH_SETTINGS"));
+			break;
+	}
+#else
+	qCWarning(qml) << "NOT IMPLEMENTED:" << pAction;
+#endif
+}
+
+
+void ApplicationModel::showSettings(const QString& pAction)
+{
+#ifdef Q_OS_ANDROID
+	QAndroidJniEnvironment env;
+
+	const QAndroidJniObject& jAction = QAndroidJniObject::fromString(pAction);
+	QAndroidJniObject intent("android/content/Intent", "(Ljava/lang/String;)V", jAction.object<jstring>());
+	const jint flag = QAndroidJniObject::getStaticField<jint>("android/content/Intent", "FLAG_ACTIVITY_NEW_TASK");
+	intent.callObjectMethod("setFlags", "(I)V", flag);
+
+	if (intent.isValid())
+	{
+		qCCritical(qml) << "Call action:" << pAction;
+		QtAndroid::startActivity(intent, 0);
+	}
+
+	if (env->ExceptionCheck())
+	{
+		qCCritical(qml) << "Cannot call an action as activity:" << pAction;
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+#else
+	qCWarning(qml) << "NOT IMPLEMENTED:" << pAction;
+#endif
+}
+
+
+#ifndef Q_OS_IOS
+bool ApplicationModel::isScreenReaderRunning() const
+{
+#ifdef Q_OS_ANDROID
+	const jboolean result = QtAndroid::androidActivity().callMethod<jboolean>("isScreenReaderRunning", "()Z");
+	return result != JNI_FALSE;
+
+#else
+	qCWarning(qml) << "NOT IMPLEMENTED";
+	return false;
+
+#endif
+}
+
+
 #endif
 
-	const auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	return settings.isRequestStoreFeedback();
+QString ApplicationModel::getFeedback() const
+{
+	return mFeedback.isEmpty() ? QString() : mFeedback.first();
 }
 
 
-void ApplicationModel::hideFutureStoreFeedbackDialogs()
+void ApplicationModel::onShowNextFeedback()
 {
-	Env::getSingleton<AppSettings>()->getGeneralSettings().setRequestStoreFeedback(false);
+	mFeedback.removeFirst();
+	if (!mFeedback.isEmpty() && !isScreenReaderRunning())
+	{
+		mFeedbackTimer.start(mFeedbackDisplayLength);
+	}
+
+	Q_EMIT fireFeedbackChanged();
+}
+
+
+void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisting)
+{
+	qCInfo(feedback).noquote() << pMessage;
+
+#if defined(Q_OS_ANDROID)
+	Q_UNUSED(pReplaceExisting)
+	// Wait for toast activation synchronously so that the app can not be deactivated
+	// in the meantime and all used Java objects are still alive when accessed.
+	QtAndroid::runOnAndroidThreadSync([pMessage](){
+				QAndroidJniEnvironment env;
+
+				const QAndroidJniObject& jMessage = QAndroidJniObject::fromString(pMessage);
+				const QAndroidJniObject& toast = QAndroidJniObject::callStaticObjectMethod(
+						"android/widget/Toast",
+						"makeText",
+						"(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;",
+						QtAndroid::androidActivity().object(),
+						jMessage.object(),
+						jint(1));
+				toast.callMethod<void>("show");
+
+				if (env->ExceptionCheck())
+				{
+					qCCritical(qml) << "Suppressing an unexpected exception.";
+					env->ExceptionDescribe();
+					env->ExceptionClear();
+				    // The toast was probably not displayed (e.g. DeadObjectException). We halt on error
+				    // since it is used to display information to the user as required by the TR.
+					Q_ASSERT(false);
+				}
+			});
+#else
+	if (pReplaceExisting)
+	{
+		mFeedbackTimer.stop();
+		mFeedback.clear();
+	}
+
+	const bool initial = mFeedback.isEmpty();
+	mFeedback << pMessage;
+	if (initial)
+	{
+		if (!isScreenReaderRunning())
+		{
+			mFeedbackTimer.start(mFeedbackDisplayLength);
+		}
+		Q_EMIT fireFeedbackChanged();
+	}
+#endif
+}
+
+
+#ifndef Q_OS_IOS
+void ApplicationModel::keepScreenOn(bool pActive)
+{
+#if defined(Q_OS_ANDROID)
+	QtAndroid::runOnAndroidThread([pActive](){
+				QtAndroid::androidActivity().callMethod<void>("keepScreenOn", "(Z)V", pActive);
+				QAndroidJniEnvironment env;
+				if (env->ExceptionCheck())
+				{
+					qCCritical(qml) << "Exception calling java native function.";
+					env->ExceptionDescribe();
+					env->ExceptionClear();
+				}
+			});
+
+#else
+	qCWarning(qml) << "NOT IMPLEMENTED:" << pActive;
+#endif
+}
+
+
+#endif
+
+
+void ApplicationModel::openOnlineHelp(const QString& pHelpSectionName)
+{
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+	qCWarning(qml) << "NOT IMPLEMENTED:" << pHelpSectionName;
+#else
+	HelpAction::openContextHelp(pHelpSectionName);
+#endif
 }
 
 
@@ -290,4 +537,10 @@ void ApplicationModel::enableWifi()
 ApplicationModel& ApplicationModel::getInstance()
 {
 	return *Instance;
+}
+
+
+QString ApplicationModel::stripHtmlTags(QString pString) const
+{
+	return pString.remove(QRegularExpression(QStringLiteral("<[^>]*>")));
 }

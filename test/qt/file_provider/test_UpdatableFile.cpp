@@ -8,7 +8,7 @@
 #include "Env.h"
 #include "MockDownloader.h"
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 using namespace governikus;
 

@@ -1,6 +1,13 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 TutorialContent {
 	id: baseItem
@@ -8,39 +15,51 @@ TutorialContent {
 	signal firePush(var pSectionPage)
 	signal quitTutorialClicked()
 
-	TutorialReaderMethodNfc {
-		id: readerMethodNfc
-		visible: false
-		onQuitTutorialClicked:  baseItem.quitTutorialClicked()
+	Item {
+		Component {
+			id: readerMethodNfc
+
+			TutorialReaderMethodNfc {
+				onQuitTutorialClicked:  baseItem.quitTutorialClicked()
+			}
+		}
+
+		Component {
+			id: readerMethodSacMobile
+
+			TutorialReaderMethodSacMobile {
+				onQuitTutorialClicked:  baseItem.quitTutorialClicked()
+			}
+		}
+
+		Component {
+			id: readerMethodSacDesktop
+
+			TutorialReaderMethodSacDesktop {
+				onQuitTutorialClicked:  baseItem.quitTutorialClicked()
+			}
+		}
+
+		Component {
+			id: readerMethodBluetooth
+
+			TutorialReaderMethodBluetooth {
+				onQuitTutorialClicked:  baseItem.quitTutorialClicked()
+			}
+		}
 	}
 
-	TutorialReaderMethodSacMobile {
-		id: readerMethodSacMobile
-		visible: false
-		onQuitTutorialClicked:  baseItem.quitTutorialClicked()
-	}
 
-	TutorialReaderMethodSacDesktop {
-		id: readerMethodSacDesktop
-		visible: false
-		onQuitTutorialClicked:  baseItem.quitTutorialClicked()
-	}
-
-	TutorialReaderMethodBluetooth {
-		id: readerMethodBluetooth
-		visible: false
-		onQuitTutorialClicked:  baseItem.quitTutorialClicked()
-	}
-
-	Text {
+	GText {
 		anchors.horizontalCenter: parent.horizontalCenter
 		width: parent.width * 0.9
-		text: qsTr("How can I use the AusweisApp2 on my smartphone?") + settingsModel.translationTrigger
-		font.family: "Noto Serif"
-		font.pixelSize: Constants.tutorial_content_header_h1_font_size
+		//: INFO ANDROID IOS
+		text: (Constants.is_layout_ios ? qsTr("How can I use the AusweisApp2 on my iPhone?")
+										: qsTr("How can I use the AusweisApp2 on my smartphone?"))
+										+ SettingsModel.translationTrigger
+		textStyle: Style.text.tutorial_header
 		font.italic: true
 		horizontalAlignment: Text.AlignHCenter
-		wrapMode: Text.WordWrap
 	}
 
 	TutorialSeperator {
@@ -76,38 +95,39 @@ TutorialContent {
 				centerX: 0.2
 			}
 
-			Text {
+			GText {
 				width: parent.width * 0.6
-				text: qsTr("Many Android devices can access the id card via the NFC interface.") + settingsModel.translationTrigger
-				font.family: "Noto Serif"
-				font.pixelSize: Constants.tutorial_content_font_size
+				//: INFO ANDROID IOS
+				text: (Constants.is_layout_ios ? qsTr("Many iPhones (iPhone 7 and newer) can access the id card via the built-in NFC interface.")
+												: qsTr("Many Android devices can access the id card via the built-in NFC interface."))
+												+ SettingsModel.translationTrigger
+				textStyle: Style.text.tutorial_content
 				font.bold: true
 				horizontalAlignment: Text.AlignLeft
-				wrapMode: Text.WordWrap
 
 				x: (parent.width * 0.65) - (width / 2)
 				y: (parent.height * 0.5) - (height / 2)
 			}
 		}
 
-		Text {
+		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
-			text: qsTr("You can find a list of compatible NFC-capable smartphones here:") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_header_h2_font_size
+			visible: Constants.is_layout_android
+			//: LABEL ANDROID IOS
+			text: qsTr("You can find a list of compatible NFC-capable smartphones here:") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 		}
 
-		Text {
+		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
-			text: "<a href=\"%1\">%1</a>".arg(qsTr("https://www.ausweisapp.bund.de/mobile-geraete/")) + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_font_size
+			visible: Constants.is_layout_android
+			//: LABEL ANDROID IOS
+			text: "<a href=\"%1\">%1</a>".arg(qsTr("https://www.ausweisapp.bund.de/mobile-geraete/")) + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_content
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 			onLinkActivated: Qt.openUrlExternally(link)
 		}
 
@@ -119,15 +139,14 @@ TutorialContent {
 			fillMode: Image.PreserveAspectFit
 		}
 
-		Text {
+		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
-			text: qsTr("The AusweisApp2 offers the following options to access your id card:") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_header_h1_font_size
+			//: LABEL ANDROID IOS
+			text: qsTr("The AusweisApp2 offers the following options to access your id card:") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_header
 			font.italic: true
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 		}
 	}
 
@@ -140,8 +159,8 @@ TutorialContent {
 		width: parent.width * 0.95
 		height: methodNfcSection.height
 		color: Constants.white
-		border.width: Utils.dp(3)
-		border.color: Constants.tutorial_blue
+		border.width: 3
+		border.color: Style.color.tutorial_how
 
 		MouseArea {
 			anchors.fill: parent
@@ -152,17 +171,16 @@ TutorialContent {
 			id: methodNfcSection
 			width: parent.width
 			spacing: Constants.component_spacing
-			padding: Utils.dp(10)
+			padding: 10
 
-			Text {
+			GText {
 				anchors.horizontalCenter: parent.horizontalCenter
 				width: parent.width * 0.9
-				text: qsTr("Direct connection via NFC chip") + settingsModel.translationTrigger
-				font.family: "Noto Serif"
-				font.pixelSize: Constants.tutorial_content_header_h2_font_size
+				//: LABEL ANDROID IOS
+				text: qsTr("Direct connection via NFC chip") + SettingsModel.translationTrigger
+				textStyle: Style.text.tutorial_header_secondary
 				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
-				wrapMode: Text.WordWrap
 			}
 
 			Rectangle {
@@ -170,15 +188,14 @@ TutorialContent {
 				height: radius * 2
 				width: radius * 2
 				radius: numberOne.height
-				border.width: Utils.dp(3)
-				border.color: Constants.tutorial_blue
+				border.width: 3
+				border.color: Style.color.tutorial_how
 
-				Text {
+				GText {
 					id: numberOne
 					anchors.centerIn: parent
 					text: "1"
-					font.family: "Noto Serif"
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
+					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
 					horizontalAlignment: Text.AlignHCenter
 				}
@@ -192,14 +209,15 @@ TutorialContent {
 				fillMode: Image.PreserveAspectFit
 			}
 
-			Text {
+			GText {
 				anchors.horizontalCenter: parent.horizontalCenter
 				width: parent.width * 0.6
-				text: qsTr("App on Android smartphone <b>with</b> NFC chip as card reader") + settingsModel.translationTrigger
-				font.family: "Noto Serif"
-				font.pixelSize: Constants.tutorial_content_font_size
+				//: LABEL ANDROID IOS
+				text: (Constants.is_layout_ios ? qsTr("App on iPhone <b>with</b> NFC chip as card reader")
+												: qsTr("App on Android smartphone <b>with</b> NFC chip as card reader"))
+												+ SettingsModel.translationTrigger
+				textStyle: Style.text.tutorial_content
 				horizontalAlignment: Text.AlignHCenter
-				wrapMode: Text.WordWrap
 			}
 
 			Image {
@@ -221,8 +239,8 @@ TutorialContent {
 		width: parent.width * 0.95
 		height: methodSacDesktopSection.height
 		color: Constants.white
-		border.width: Utils.dp(3)
-		border.color: Constants.tutorial_blue
+		border.width: 3
+		border.color: Style.color.tutorial_how
 
 		MouseArea {
 			anchors.fill: parent
@@ -233,17 +251,16 @@ TutorialContent {
 			id: methodSacDesktopSection
 			width: parent.width
 			spacing: Constants.component_spacing
-			padding: Utils.dp(10)
+			padding: 10
 
-			Text {
+			GText {
 				anchors.horizontalCenter: parent.horizontalCenter
 				width: parent.width * 0.9
-				text: qsTr("Smartphone as card reader") + settingsModel.translationTrigger
-				font.family: "Noto Serif"
-				font.pixelSize: Constants.tutorial_content_header_h2_font_size
+				//: LABEL ANDROID IOS
+				text: qsTr("Smartphone as card reader") + SettingsModel.translationTrigger
+				textStyle: Style.text.tutorial_header_secondary
 				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
-				wrapMode: Text.WordWrap
 			}
 
 			Rectangle {
@@ -251,15 +268,14 @@ TutorialContent {
 				height: radius * 2
 				width: radius * 2
 				radius: numberTwo.height
-				border.width: Utils.dp(3)
-				border.color: Constants.tutorial_blue
+				border.width: 3
+				border.color: Style.color.tutorial_how
 
-				Text {
+				GText {
 					id: numberTwo
 					anchors.centerIn: parent
 					text: "2"
-					font.family: "Noto Serif"
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
+					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
 					horizontalAlignment: Text.AlignHCenter
 				}
@@ -274,8 +290,8 @@ TutorialContent {
 					height: radius * 2
 					width: radius * 2
 					radius: parent.width * 0.06
-					border.width: Utils.dp(3)
-					border.color: Constants.tutorial_blue
+					border.width: 3
+					border.color: Style.color.tutorial_how
 
 					y: (parent.height * 0.4) - (height / 2)
 					x: (parent.width * 0.5) - (width / 2)
@@ -298,21 +314,23 @@ TutorialContent {
 					centerY: 0.5
 				}
 
-				Text {
+				GText {
 					width: parent.width * 0.4
-					text: qsTr("App on computer <b>without</b> NFC chip") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("App on computer <b>without</b> NFC chip") + SettingsModel.translationTrigger
+					textStyle: Style.text.tutorial_content
 					horizontalAlignment: Text.AlignHCenter
-					wrapMode: Text.WordWrap
 
 					x: (parent.width * 0.25) - (width / 2)
 					y: (parent.height * 0.95) - (height / 2)
 				}
 
-				Text {
+				GText {
 					width: parent.width * 0.4
-					text: qsTr("Android smartphone <b>with</b> NFC chip as card reader") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("Smartphone <b>with</b> NFC chip as card reader") + SettingsModel.translationTrigger
+					textStyle: Style.text.tutorial_content
 					horizontalAlignment: Text.AlignHCenter
-					wrapMode: Text.WordWrap
 
 					x: (parent.width * 0.75) - (width / 2)
 					y: (parent.height * 0.95) - (height / 2)
@@ -338,8 +356,8 @@ TutorialContent {
 		width: parent.width * 0.95
 		height: methodSacMobileSection.height
 		color: Constants.white
-		border.width: Utils.dp(3)
-		border.color: Constants.tutorial_blue
+		border.width: 3
+		border.color: Style.color.tutorial_how
 
 		MouseArea {
 			anchors.fill: parent
@@ -350,22 +368,21 @@ TutorialContent {
 			id: methodSacMobileSection
 			width: parent.width
 			spacing: Constants.component_spacing
-			padding: Utils.dp(10)
+			padding: 10
 
 			Rectangle {
 				anchors.horizontalCenter: parent.horizontalCenter
 				height: radius * 2
 				width: radius * 2
 				radius: numberTwo.height
-				border.width: Utils.dp(3)
-				border.color: Constants.tutorial_blue
+				border.width: 3
+				border.color: Style.color.tutorial_how
 
-				Text {
+				GText {
 					id: numberThree
 					anchors.centerIn: parent
 					text: "3"
-					font.family: "Noto Serif"
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
+					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
 					horizontalAlignment: Text.AlignHCenter
 				}
@@ -380,8 +397,8 @@ TutorialContent {
 					height: radius * 2
 					width: radius * 2
 					radius: parent.width * 0.06
-					border.width: Utils.dp(3)
-					border.color: Constants.tutorial_blue
+					border.width: 3
+					border.color: Style.color.tutorial_how
 
 					y: (parent.height * 0.4) - (height / 2)
 					x: (parent.width * 0.5) - (width / 2)
@@ -404,21 +421,23 @@ TutorialContent {
 					centerY: 0.5
 				}
 
-				Text {
+				GText {
 					width: parent.width * 0.4
-					text: qsTr("App on tablet or smartphone <b>without</b> NFC chip") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("App on tablet or smartphone <b>without</b> NFC chip") + SettingsModel.translationTrigger
+					textStyle: Style.text.tutorial_content
 					horizontalAlignment: Text.AlignHCenter
-					wrapMode: Text.WordWrap
 
 					x: (parent.width * 0.25) - (width / 2)
 					y: (parent.height * 0.95) - (height / 2)
 				}
 
-				Text {
+				GText {
 					width: parent.width * 0.4
-					text: qsTr("Android smartphone <b>with</b> NFC chip as card reader") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("Smartphone <b>with</b> NFC chip as card reader") + SettingsModel.translationTrigger
+					textStyle: Style.text.tutorial_content
 					horizontalAlignment: Text.AlignHCenter
-					wrapMode: Text.WordWrap
 
 					x: (parent.width * 0.75) - (width / 2)
 					y: (parent.height * 0.95) - (height / 2)
@@ -444,8 +463,8 @@ TutorialContent {
 		width: parent.width * 0.95
 		height: methodBluetoothSection.height
 		color: Constants.white
-		border.width: Utils.dp(3)
-		border.color: Constants.tutorial_blue
+		border.width: 3
+		border.color: Style.color.tutorial_how
 
 		MouseArea {
 			anchors.fill: parent
@@ -456,17 +475,16 @@ TutorialContent {
 			id: methodBluetoothSection
 			width: parent.width
 			spacing: Constants.component_spacing
-			padding: Utils.dp(10)
+			padding: 10
 
-			Text {
+			GText {
 				anchors.horizontalCenter: parent.horizontalCenter
 				width: parent.width * 0.9
-				text: qsTr("Using a bluetooth card reader") + settingsModel.translationTrigger
-				font.family: "Noto Serif"
-				font.pixelSize: Constants.tutorial_content_header_h2_font_size
+				//: LABEL ANDROID IOS
+				text: qsTr("Using a bluetooth card reader") + SettingsModel.translationTrigger
+				textStyle: Style.text.tutorial_header_secondary
 				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
-				wrapMode: Text.WordWrap
 			}
 
 			Rectangle {
@@ -474,15 +492,14 @@ TutorialContent {
 				height: radius * 2
 				width: radius * 2
 				radius: numberFour.height
-				border.width: Utils.dp(3)
-				border.color: Constants.tutorial_blue
+				border.width: 3
+				border.color: Style.color.tutorial_how
 
-				Text {
+				GText {
 					id: numberFour
 					anchors.centerIn: parent
 					text: "4"
-					font.family: "Noto Serif"
-					font.pixelSize: Constants.tutorial_content_header_h2_font_size
+					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
 					horizontalAlignment: Text.AlignHCenter
 				}
@@ -497,8 +514,8 @@ TutorialContent {
 					height: radius * 2
 					width: radius * 2
 					radius: parent.width * 0.06
-					border.width: Utils.dp(3)
-					border.color: Constants.tutorial_blue
+					border.width: 3
+					border.color: Style.color.tutorial_how
 
 					y: (parent.height * 0.4) - (height / 2)
 					x: (parent.width * 0.5) - (width / 2)
@@ -521,21 +538,23 @@ TutorialContent {
 					centerY: 0.5
 				}
 
-				Text {
+				GText {
 					width: parent.width * 0.4
-					text: qsTr("App on smartphone or tablet") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("App on smartphone or tablet") + SettingsModel.translationTrigger
+					textStyle: Style.text.tutorial_content
 					horizontalAlignment: Text.AlignHCenter
-					wrapMode: Text.WordWrap
 
 					x: (parent.width * 0.25) - (width / 2)
 					y: (parent.height * 0.95) - (height / 2)
 				}
 
-				Text {
+				GText {
 					width: parent.width * 0.4
-					text: qsTr("Bluetooth card reader") + settingsModel.translationTrigger
+					//: LABEL ANDROID IOS
+					text: qsTr("Bluetooth card reader") + SettingsModel.translationTrigger
+					textStyle: Style.text.tutorial_content
 					horizontalAlignment: Text.AlignHCenter
-					wrapMode: Text.WordWrap
 
 					x: (parent.width * 0.75) - (width / 2)
 					y: (parent.height * 0.95) - (height / 2)
@@ -556,18 +575,17 @@ TutorialContent {
 		property alias text: textContent.text
 		height: textContent.height + 2 * Constants.component_spacing
 		width: parent.width
-		color: Constants.tutorial_blue
+		color: Style.color.tutorial_how
 
-		Text {
+		GText {
 			id: textContent
 			anchors.centerIn: parent
 			color: Constants.white
 			width: parent.width * 0.8
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_header_h1_font_size
+			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
-			text: qsTr("Another tip") + settingsModel.translationTrigger
+			//: LABEL ANDROID IOS
+			text: qsTr("Another tip") + SettingsModel.translationTrigger
 		}
 	}
 
@@ -576,14 +594,13 @@ TutorialContent {
 		width: parent.width
 		spacing: Constants.component_spacing
 
-		Text {
+		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
-			text: qsTr("For lenghty forms, e.g. a BAf\u00F6G application, we recommend you to use the AusweisApp2 on a computer...") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_header_h2_font_size
+			//: LABEL ANDROID IOS
+			text: qsTr("For lenghty forms, e.g. a BAf\u00F6G application, we recommend you to use the AusweisApp2 on a computer...") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 		}
 
 		Item {
@@ -599,26 +616,26 @@ TutorialContent {
 				centerY: 0.5
 			}
 
-			Text {
+			GText {
 				width: parent.width * 0.5
-				text: qsTr("Filling long forms is no fun on a smartphone!") + settingsModel.translationTrigger
+				//: LABEL ANDROID IOS
+				text: qsTr("Filling long forms is no fun on a smartphone!") + SettingsModel.translationTrigger
+				textStyle: Style.text.tutorial_content
 				horizontalAlignment: Text.AlignLeft
-				wrapMode: Text.WordWrap
-				color: Constants.tutorial_blue
+				color: Style.color.accent
 
 				x: parent.width * 0.5
 				y: (parent.height * 0.5) - (height / 2)
 			}
 		}
 
-		Text {
+		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
-			text: qsTr("... and to use a smartphone to communicate with your ID card. A USB reader is of course also an alternative.") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_header_h2_font_size
+			//: LABEL ANDROID IOS
+			text: qsTr("... and to use a smartphone to communicate with your ID card. A USB reader is of course also an alternative.") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 		}
 	}
 

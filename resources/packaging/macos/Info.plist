@@ -34,7 +34,7 @@
 	<key>LSBackgroundOnly</key>
 	<string>0</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>10.11.0</string>
+	<string>10.12.0</string>
 	<key>LSUIElement</key>
 	<string>1</string>
 	<key>NSHighResolutionCapable</key>

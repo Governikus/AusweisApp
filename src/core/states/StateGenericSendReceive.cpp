@@ -22,7 +22,8 @@ using namespace governikus;
 
 
 StateGenericSendReceive::StateGenericSendReceive(const QSharedPointer<WorkflowContext>& pContext, const QVector<PaosType>& pTypesToReceive, bool pConnectOnCardRemoved)
-	: AbstractGenericState(pContext, pConnectOnCardRemoved)
+	: AbstractState(pContext, pConnectOnCardRemoved)
+	, GenericContextContainer(pContext)
 	, mTypesToReceive(pTypesToReceive)
 	, mReply()
 {
@@ -117,7 +118,7 @@ void StateGenericSendReceive::onSslHandshakeDone()
 		switch (statusCode)
 		{
 			case GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description:
-			case GlobalStatus::Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description:
+			case GlobalStatus::Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description:
 			case GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length:
 			case GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length:
 			{
@@ -148,7 +149,7 @@ void StateGenericSendReceive::onSslHandshakeDone()
 			else
 			{
 				qCCritical(network) << sessionFailedError;
-				updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Establishment_Error);
+				updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
 				abort = true;
 			}
 		}
@@ -311,7 +312,7 @@ void StateGenericSendReceive::onReplyFinished()
 		if (paosHandler.getDetectedPaosType() == PaosType::UNKNOWN)
 		{
 			qCCritical(network) << "The program received an unknown message from the server.";
-			updateStatus(GlobalStatus::Code::Workflow_Unknown_Paos_Form_EidServer);
+			updateStatus(GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer);
 			Q_EMIT fireAbort();
 		}
 		else

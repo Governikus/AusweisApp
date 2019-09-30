@@ -18,7 +18,7 @@ using namespace governikus;
 
 TransmitCommand::TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
 		const QVector<InputAPDUInfo>& pInputApduInfos,
-		const QString pSlotHandle)
+		const QString& pSlotHandle)
 	: BaseCardCommand(pCardConnectionWorker)
 	, mInputApduInfos(pInputApduInfos)
 	, mSlotHandle(pSlotHandle)

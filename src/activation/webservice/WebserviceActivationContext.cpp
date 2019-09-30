@@ -41,6 +41,7 @@ bool WebserviceActivationContext::sendProcessing()
 {
 	if (!mRequest->isConnected())
 	{
+		//: ERROR ALL_PLATFORMS No HTTP connection present.
 		mSendError = tr("The browser connection was lost.");
 		return false;
 	}
@@ -54,16 +55,22 @@ bool WebserviceActivationContext::sendOperationAlreadyActive()
 {
 	if (!mRequest->isConnected())
 	{
+		//: ERROR ALL_PLATFORMS No HTTP connection present.
 		mSendError = tr("The browser connection was lost.");
 		return false;
 	}
 
 	Template htmlTemplate = Template::fromFile(QStringLiteral(":/html_templates/alreadyactive.html"));
+	//: ERROR ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("TITLE"), tr("Cannot start authentication"));
+	//: ERROR ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER"), tr("Cannot start authentication"));
+	//: ERROR ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER_EXPLANATION"), tr("An operation is already in progress."));
+	//: ERROR ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_HEADER"), tr("Would you like to try again?"));
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_LINK"), mRequest->getUrl().toString());
+	//: ERROR ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("CONTENT_BUTTON"), tr("Try again"));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
@@ -79,6 +86,7 @@ bool WebserviceActivationContext::sendErrorPage(http_status pStatusCode, const G
 {
 	if (!mRequest->isConnected())
 	{
+		//: ERROR ALL_PLATFORMS No HTTP connection present.
 		mSendError = tr("The browser connection was lost.");
 		return false;
 	}
@@ -88,21 +96,29 @@ bool WebserviceActivationContext::sendErrorPage(http_status pStatusCode, const G
 	QString statusCodeString;
 	if (pStatusCode == HTTP_STATUS_BAD_REQUEST)
 	{
+		//: ERROR ALL_PLATFORMS HTTP error code 400, invalid request, part of an HTML error page.
 		statusCodeString = tr("400 Bad Request");
 	}
 	else if (pStatusCode == HTTP_STATUS_NOT_FOUND)
 	{
+		//: ERROR ALL_PLATFORMS HTTP error code 404, invalid request, part of an HTML error page.
 		statusCodeString = tr("404 Not found");
 	}
 
 	Template htmlTemplate = Template::fromFile(QStringLiteral(":/html_templates/error.html"));
 	htmlTemplate.setContextParameter(QStringLiteral("TITLE"), statusCodeString);
+	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER"), tr("Invalid request"));
+	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER_EXPLANATION"), tr("Your browser sent a request that couldn't be interpreted."));
+	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("ERROR_MESSAGE_LABEL"), tr("Error message"));
 	htmlTemplate.setContextParameter(QStringLiteral("ERROR_MESSAGE"), pStatus.toErrorDescription(true));
+	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_HEADER"), tr("Would you like to report this error?"));
+	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_LINK"), tr("https://www.ausweisapp.bund.de/en/qa/report-an-error/"));
+	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_BUTTON"), tr("Report now"));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
 
@@ -123,6 +139,7 @@ bool WebserviceActivationContext::sendRedirect(const QUrl& pRedirectAddress, con
 	if (!mRequest->isConnected())
 	{
 		const auto& url = QStringLiteral("<a href='%1'>%2</a>").arg(redirectAddressWithResult.toString(), redirectAddressWithResult.host());
+		//: ERROR ALL_PLATFORMS The connection to the browser was lost/timed out..
 		mSendError = tr("The connection to the browser was lost. No forwarding was executed. Please try to call the URL again manually: %1").arg(url);
 		return false;
 	}

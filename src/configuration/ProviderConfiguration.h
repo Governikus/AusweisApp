@@ -16,6 +16,7 @@
 #include <QString>
 #include <QVector>
 
+class test_HistoryModel;
 
 namespace governikus
 {
@@ -25,6 +26,7 @@ class ProviderConfiguration
 {
 	Q_OBJECT
 	friend class Env;
+	friend class ::test_HistoryModel;
 
 	private:
 		const QSharedPointer<UpdatableFile> mUpdatableFile;

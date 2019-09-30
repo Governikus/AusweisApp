@@ -60,11 +60,22 @@ QNetworkReply* MockNetworkManager::get(QNetworkRequest& pRequest,
 		const QByteArray& pSslSession,
 		int pTimeoutInMilliSeconds)
 {
-	Q_UNUSED(pRequest);
-	Q_UNUSED(pSslSession);
+	Q_UNUSED(pRequest)
+	Q_UNUSED(pSslSession)
+	Q_UNUSED(pTimeoutInMilliSeconds)
+
+	mLastRequest = &pRequest;
+
+	return getReply(pRequest);
+}
+
+
+QNetworkReply* MockNetworkManager::post(QNetworkRequest& pRequest, const QByteArray& pData, int pTimeoutInMilliSeconds)
+{
 	Q_UNUSED(pTimeoutInMilliSeconds);
 
 	mLastRequest = &pRequest;
+	mLastData = QByteArray(pData);
 
 	return getReply(pRequest);
 }
@@ -77,12 +88,12 @@ QNetworkReply* MockNetworkManager::paos(QNetworkRequest& pRequest,
 		const QByteArray& pSslSession,
 		int pTimeoutInMilliSeconds)
 {
-	Q_UNUSED(pRequest);
-	Q_UNUSED(pNamespace);
-	Q_UNUSED(pData);
-	Q_UNUSED(pUsePsk);
-	Q_UNUSED(pSslSession);
-	Q_UNUSED(pTimeoutInMilliSeconds);
+	Q_UNUSED(pRequest)
+	Q_UNUSED(pNamespace)
+	Q_UNUSED(pData)
+	Q_UNUSED(pUsePsk)
+	Q_UNUSED(pSslSession)
+	Q_UNUSED(pTimeoutInMilliSeconds)
 
 	return getReply(pRequest);
 }
@@ -90,7 +101,7 @@ QNetworkReply* MockNetworkManager::paos(QNetworkRequest& pRequest,
 
 bool MockNetworkManager::checkUpdateServerCertificate(const QNetworkReply& pReply)
 {
-	Q_UNUSED(pReply);
+	Q_UNUSED(pReply)
 
 	return true;
 }

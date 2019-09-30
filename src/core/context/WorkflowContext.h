@@ -15,8 +15,6 @@
 #include <QSharedPointer>
 #include <QString>
 
-class test_WorkflowContext;
-
 namespace governikus
 {
 
@@ -26,7 +24,6 @@ class WorkflowContext
 	Q_OBJECT
 
 	private:
-		friend class ::test_WorkflowContext;
 		bool mStateApproved;
 		bool mWorkflowKilled;
 		QString mCurrentState;
@@ -51,6 +48,7 @@ class WorkflowContext
 		bool mWorkflowCancelled;
 		bool mCanAllowedMode;
 		bool mNextWorkflowPending;
+		bool mCurrentReaderHasEidCardButInsufficientApduLength;
 
 	private Q_SLOTS:
 		void onWorkflowCancelled();
@@ -59,22 +57,24 @@ class WorkflowContext
 		void fireStateApprovedChanged();
 		void fireStateChanged(const QString& pNewState);
 		void fireReaderPlugInTypesChanged();
+		void fireReaderInfoChanged();
 		void fireReaderNameChanged();
 		void fireCardConnectionChanged();
 		void fireCanChanged();
 		void firePinChanged();
 		void firePukChanged();
-		void fireLastPaceResultChanged();
+		void firePaceResultUpdated();
 		void fireResultChanged();
 		void fireCanAllowedModeChanged();
+		void firePasswordTypeChanged();
 
 		void fireCancelWorkflow();
-		void fireAbortCardSelection();
 
 		void fireNextWorkflowPending();
 
 	public:
 		WorkflowContext();
+		virtual ~WorkflowContext();
 
 		bool isErrorReportedToUser() const;
 		void setErrorReportedToUser(bool pErrorReportedToUser = true);
@@ -149,6 +149,9 @@ class WorkflowContext
 
 		bool hasNextWorkflowPending() const;
 		void setNextWorkflowPending(bool pNextWorkflowPending);
+
+		bool currentReaderHasEidCardButInsufficientApduLength() const;
+		void setCurrentReaderHasEidCardButInsufficientApduLength(bool pState);
 };
 
 } // namespace governikus

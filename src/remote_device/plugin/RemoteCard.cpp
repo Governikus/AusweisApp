@@ -59,7 +59,7 @@ bool RemoteCard::sendMessage(const QSharedPointer<const RemoteMessage>& pMessage
 }
 
 
-void RemoteCard::onMessageReceived(RemoteCardMessageType pMessageTpe, const QJsonObject pJsonObject)
+void RemoteCard::onMessageReceived(RemoteCardMessageType pMessageTpe, const QJsonObject& pJsonObject)
 {
 	QMutexLocker locker(&mProcessResponse);
 
@@ -79,7 +79,7 @@ void RemoteCard::onMessageReceived(RemoteCardMessageType pMessageTpe, const QJso
 
 void RemoteCard::onDispatcherClosed(GlobalStatus::Code pCloseCode, const QString& pId)
 {
-	Q_UNUSED(pId);
+	Q_UNUSED(pId)
 	QMutexLocker locker(&mProcessResponse);
 
 	if (mWaitingForAnswer)
@@ -174,7 +174,7 @@ bool RemoteCard::isConnected()
 
 CardReturnCode RemoteCard::transmit(const CommandApdu& pCommand, ResponseApdu& pResponse)
 {
-	const auto& transmitCmd = QSharedPointer<const IfdTransmit>::create(mSlotHandle, pCommand.getBuffer());
+	const QSharedPointer<const IfdTransmit>& transmitCmd = QSharedPointer<IfdTransmit>::create(mSlotHandle, pCommand.getBuffer());
 	if (sendMessage(transmitCmd, RemoteCardMessageType::IFDTransmitResponse, 5000))
 	{
 		const IfdTransmitResponse response(mResponse);
@@ -195,7 +195,7 @@ CardReturnCode RemoteCard::transmit(const CommandApdu& pCommand, ResponseApdu& p
 }
 
 
-CardReturnCode RemoteCard::establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, EstablishPaceChannelOutput& pChannelOutput, quint8 pTimeoutSeconds)
+EstablishPaceChannelOutput RemoteCard::establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds)
 {
 	EstablishPaceChannel builder;
 	builder.setPasswordId(pPasswordId);
@@ -203,7 +203,7 @@ CardReturnCode RemoteCard::establishPaceChannel(PacePasswordId pPasswordId, cons
 	builder.setCertificateDescription(pCertificateDescription);
 	const QByteArray inputData = builder.createCommandDataCcid().getBuffer();
 
-	const auto& message = QSharedPointer<const IfdEstablishPaceChannel>::create(mSlotHandle, inputData);
+	const QSharedPointer<const IfdEstablishPaceChannel>& message = QSharedPointer<IfdEstablishPaceChannel>::create(mSlotHandle, inputData);
 	if (sendMessage(message, RemoteCardMessageType::IFDEstablishPACEChannelResponse, pTimeoutSeconds * 1000))
 	{
 		const IfdEstablishPaceChannelResponse response(mResponse);
@@ -216,8 +216,9 @@ CardReturnCode RemoteCard::establishPaceChannel(PacePasswordId pPasswordId, cons
 
 			if (!response.resultHasError())
 			{
-				pChannelOutput.parseFromCcid(response.getOutputData(), pPasswordId);
-				return pChannelOutput.getPaceReturnCode();
+				EstablishPaceChannelOutput output;
+				output.parseFromCcid(response.getOutputData(), pPasswordId);
+				return output;
 			}
 			qCWarning(card_remote) << response.getResultMinor();
 		}
@@ -234,7 +235,7 @@ CardReturnCode RemoteCard::setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResp
 	PinModify pinModify(pTimeoutSeconds);
 	const QByteArray inputData = pinModify.createCcidForRemote();
 
-	const auto& message = QSharedPointer<const IfdModifyPin>::create(mSlotHandle, inputData);
+	const QSharedPointer<const IfdModifyPin>& message = QSharedPointer<IfdModifyPin>::create(mSlotHandle, inputData);
 	if (sendMessage(message, RemoteCardMessageType::IFDModifyPINResponse, pTimeoutSeconds * 1000))
 	{
 		const IfdModifyPinResponse response(mResponse);
@@ -245,7 +246,7 @@ CardReturnCode RemoteCard::setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResp
 
 		if (!response.isIncomplete())
 		{
-			PinModifyOutput output(response.getOutputData());
+			PinModifyOutput output(ResponseApdu(response.getOutputData()));
 			pResponseApdu.setBuffer(output.getResponseApdu().getBuffer());
 			if (!response.resultHasError())
 			{

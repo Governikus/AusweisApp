@@ -47,8 +47,6 @@ class IfdStatus
 {
 	private:
 		friend MockRemoteDispatcher;
-		friend ::test_RemoteReaderManagerPlugIn;
-		friend ::test_ServerMessageHandler;
 		friend ::test_IfdStatus;
 
 		QString mSlotName;

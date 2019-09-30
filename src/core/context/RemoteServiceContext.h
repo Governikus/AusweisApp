@@ -33,12 +33,17 @@ class RemoteServiceContext
 		QSharedPointer<const IfdModifyPin> mModifyPinMessage;
 		ResponseApdu mModifyPinMessageResponseApdu;
 
+	public Q_SLOTS:
+		void onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler);
+
 	Q_SIGNALS:
+		void fireCardConnectionEstablished(const QSharedPointer<CardConnection>& pConnection);
 		void fireCancelPasswordRequest();
 		void fireEstablishPaceChannelMessageUpdated(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage);
 
 	public:
 		RemoteServiceContext();
+		virtual ~RemoteServiceContext() override;
 
 		const QSharedPointer<RemoteServer>& getRemoteServer() const;
 		bool isRunning() const;
@@ -49,7 +54,7 @@ class RemoteServiceContext
 		void setEstablishPaceChannelMessage(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage);
 		const QSharedPointer<const IfdEstablishPaceChannel>& getEstablishPaceChannelMessage() const;
 
-		void setEstablishPaceChannelOutput(EstablishPaceChannelOutput pEstablishPaceChannelOutput);
+		void setEstablishPaceChannelOutput(const EstablishPaceChannelOutput& pEstablishPaceChannelOutput);
 		const EstablishPaceChannelOutput& getEstablishPaceChannelOutput() const;
 
 		void setModifyPinMessage(const QSharedPointer<const IfdModifyPin>& pMessage);

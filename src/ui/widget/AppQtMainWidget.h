@@ -104,9 +104,11 @@ class AppQtMainWidget
 		void fireCloseWindowRequested(bool* pDoClose);
 		void fireSelfAuthenticationRequested();
 		void fireQuitApplicationRequested();
+		void fireRestartApplicationRequested();
 		void fireChangeHighContrast(bool* pHighContrastOn);
 		void fireAskUserToConfirmClosing();
 		void fireCloseActiveDialogs();
+		void fireSwitchUiRequested();
 
 	private:
 		QScopedPointer<Ui::AppQtMainWidget> mUi;

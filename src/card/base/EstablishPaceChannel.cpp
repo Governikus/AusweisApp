@@ -12,29 +12,9 @@
 #include <QRegularExpression>
 #include <QtEndian>
 
-
 using namespace governikus;
 
-
 Q_DECLARE_LOGGING_CATEGORY(card)
-
-
-namespace
-{
-template<typename T> QByteArray readByteArray(const QByteArray& pInput, int& pOffset)
-{
-	Q_ASSERT(sizeof(T) < INT_MAX);
-
-	T length = qFromLittleEndian<T>(pInput.data() + pOffset);
-	pOffset += static_cast<int>(sizeof(T));
-	QByteArray result = pInput.mid(pOffset, length);
-	pOffset += length;
-	return result;
-}
-
-
-} // namespace
-
 
 namespace governikus
 {
@@ -147,7 +127,7 @@ CommandApdu EstablishPaceChannel::createCommandDataCcid()
 	}
 	if (!mCertificateDescription.isEmpty())
 	{
-		const uchar* unsignedCharPointer = reinterpret_cast<const uchar*>(mCertificateDescription.constData());
+		const auto* unsignedCharPointer = reinterpret_cast<const uchar*>(mCertificateDescription.constData());
 		decodeAsn1Object(&channelInput->mCertificateDescription, &unsignedCharPointer, mCertificateDescription.size());
 	}
 

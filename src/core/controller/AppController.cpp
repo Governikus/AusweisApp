@@ -94,6 +94,7 @@ AppController::AppController()
 	, mActiveController()
 	, mShutdownRunning(false)
 	, mUiDomination(nullptr)
+	, mRestartApplication(false)
 {
 	setObjectName(QStringLiteral("AppController"));
 
@@ -101,8 +102,8 @@ AppController::AppController()
 	QCoreApplication::instance()->installNativeEventFilter(this);
 #endif
 
-	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, &AppController::onSettingsChanged, Qt::DirectConnection);
-	onSettingsChanged();
+	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireLanguageChanged, this, &AppController::onLanguageChanged, Qt::DirectConnection);
+	onLanguageChanged();
 
 	ResourceLoader::getInstance().init();
 
@@ -185,13 +186,19 @@ bool AppController::start()
 	connect(this, &AppController::fireStarted, this, [this] {
 				if (cShowUi)
 				{
-					Q_EMIT fireShowUi(UiModule::DEFAULT);
+					Q_EMIT fireShowUi(UiModule::CURRENT);
 				}
 			}, Qt::QueuedConnection);
 
 	QCoreApplication::instance()->installEventFilter(this);
 
 	return true;
+}
+
+
+bool AppController::shouldApplicationRestart() const
+{
+	return mRestartApplication;
 }
 
 
@@ -285,7 +292,7 @@ void AppController::onChangePinRequested()
 
 void AppController::onSelfAuthenticationRequested()
 {
-	qDebug() << "Self authentication requested";
+	qDebug() << "Self-authentication requested";
 	if (canStartNewAction())
 	{
 		const auto& context = QSharedPointer<SelfAuthContext>::create();
@@ -304,11 +311,11 @@ void AppController::onAuthenticationRequest(const QSharedPointer<ActivationConte
 		return;
 	}
 
-	if (mCurrentAction == Action::SELF)
+	if (mCurrentAction == Action::AUTH || mCurrentAction == Action::SELF || mCurrentAction == Action::PIN)
 	{
 		const QSharedPointer<WorkflowContext> activeContext = mActiveController->getContext();
 		Q_ASSERT(!activeContext.isNull());
-		if (activeContext->isWorkflowFinished() && activeContext->getStatus().isNoError())
+		if (activeContext->isWorkflowFinished())
 		{
 			qDebug() << "Auto-approving the current state";
 			if (mWaitingRequest.isNull())
@@ -341,7 +348,7 @@ void AppController::onRemoteServiceRequested()
 }
 
 
-void AppController::onSettingsChanged()
+void AppController::onLanguageChanged()
 {
 	LanguageLoader& languageLoader = LanguageLoader::getInstance();
 	const QLocale& newLocale = QLocale(Env::getSingleton<AppSettings>()->getGeneralSettings().getLanguage());
@@ -410,7 +417,7 @@ void AppController::completeShutdown()
 		handler->stop();
 	}
 
-	QTimer* timer = new QTimer();
+	auto* timer = new QTimer();
 	static const int TIMER_INTERVAL = 50;
 	timer->setInterval(TIMER_INTERVAL);
 	connect(timer, &QTimer::timeout, this, [ = ](){
@@ -448,13 +455,13 @@ void AppController::onUILoaderShutdownComplete()
 void AppController::onUiDominationRequested(const UIPlugIn* pUi, const QString& pInformation)
 {
 	bool accepted = false;
-	if (!mUiDomination && mCurrentAction == Action::NONE)
+	if (mUiDomination == nullptr && mCurrentAction == Action::NONE)
 	{
 		mUiDomination = pUi;
 		accepted = true;
 	}
 
-	qDebug() << pUi->metaObject()->className() << "requested ui domination:" << pInformation << "|" << accepted;
+	qDebug() << pUi->metaObject()->className() << "requested ui domination:" << pInformation << '|' << accepted;
 	Q_EMIT fireUiDomination(pUi, pInformation, accepted);
 }
 
@@ -466,6 +473,13 @@ void AppController::onUiDominationRelease()
 		mUiDomination = nullptr;
 		Q_EMIT fireUiDominationReleased();
 	}
+}
+
+
+void AppController::onRestartApplicationRequested()
+{
+	mRestartApplication = true;
+	doShutdown();
 }
 
 
@@ -491,6 +505,7 @@ void AppController::onUiPlugin(UIPlugIn* pPlugin)
 	connect(pPlugin, &UIPlugIn::fireChangePinRequest, this, &AppController::onChangePinRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireSelfAuthenticationRequested, this, &AppController::onSelfAuthenticationRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireRemoteServiceRequested, this, &AppController::onRemoteServiceRequested, Qt::QueuedConnection);
+	connect(pPlugin, &UIPlugIn::fireRestartApplicationRequested, this, &AppController::onRestartApplicationRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireQuitApplicationRequest, this, &AppController::doShutdown);
 	connect(pPlugin, &UIPlugIn::fireCloseReminderFinished, this, &AppController::onCloseReminderFinished);
 	connect(pPlugin, &UIPlugIn::fireUiDominationRequest, this, &AppController::onUiDominationRequested);
@@ -527,10 +542,10 @@ bool AppController::startNewWorkflow(Action pAction, const QSharedPointer<Contex
 
 bool AppController::nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult)
 {
-	Q_UNUSED(pResult);
+	Q_UNUSED(pResult)
 #if !defined(Q_OS_WIN)
-	Q_UNUSED(pEventType);
-	Q_UNUSED(pMessage);
+	Q_UNUSED(pEventType)
+	Q_UNUSED(pMessage)
 #else
 	if (pEventType == "windows_generic_MSG")
 	{

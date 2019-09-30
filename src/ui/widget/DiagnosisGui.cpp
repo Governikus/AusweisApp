@@ -38,7 +38,7 @@ void DiagnosisGui::activate()
 	}
 
 	QWidget* dialogParent = qobject_cast<QWidget*>(parent());
-	if (!dialogParent)
+	if (dialogParent == nullptr)
 	{
 		return;
 	}

@@ -8,7 +8,9 @@
 
 #include <openssl/x509v3.h>
 #include <QDate>
-#include <QDebug>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(card)
 
 using namespace governikus;
 
@@ -33,7 +35,7 @@ QByteArray Asn1ObjectUtil::convertTo(const ASN1_OBJECT* pAsn1Object)
 	char buf[80] = {};
 	if (OBJ_obj2txt(buf, sizeof(buf), pAsn1Object, 1) == sizeof(buf))
 	{
-		qCritical() << "The OID may not fit into the given array, just return an empty string";
+		qCCritical(card) << "The OID may not fit into the given array, just return an empty string";
 		return QByteArray();
 	}
 	return QByteArray(buf);
@@ -43,11 +45,11 @@ QByteArray Asn1ObjectUtil::convertTo(const ASN1_OBJECT* pAsn1Object)
 QByteArray Asn1ObjectUtil::getValue(const ASN1_OBJECT* pAsn1Object)
 {
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-	return QByteArray(reinterpret_cast<const char*>(pAsn1Object->data), pAsn1Object->length);
+	return QByteArray(reinterpret_cast<const char* const>(pAsn1Object->data), pAsn1Object->length);
 
 #else
 	const size_t len = OBJ_length(pAsn1Object);
-	const unsigned char* data = OBJ_get0_data(pAsn1Object);
+	const unsigned char* const data = OBJ_get0_data(pAsn1Object);
 	return QByteArray(reinterpret_cast<const char*>(data), static_cast<int>(len));
 
 #endif
@@ -136,7 +138,7 @@ QByteArray Asn1BCDDateUtil::convertFromQDateToUnpackedBCD(QDate pDate)
 
 	if (aBCD.length() != 6)
 	{
-		qCritical() << "Invalid date length.";
+		qCCritical(card) << "Invalid date length.";
 		return QByteArray();
 	}
 
@@ -154,13 +156,13 @@ QDate Asn1BCDDateUtil::convertFromUnpackedBCDToQDate(ASN1_OCTET_STRING* pDateBCD
 {
 	if (pDateBCD == nullptr)
 	{
-		qCritical() << "Date pointer null.";
+		qCCritical(card) << "Date pointer null.";
 		return QDate();
 	}
 
 	if (pDateBCD->length != 6)
 	{
-		qCritical() << "Invalid date length.";
+		qCCritical(card) << "Invalid date length.";
 		return QDate();
 	}
 

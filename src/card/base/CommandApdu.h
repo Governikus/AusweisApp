@@ -6,6 +6,8 @@
 
 #include "Apdu.h"
 
+#include <QByteArray>
+
 namespace governikus
 {
 
@@ -25,9 +27,9 @@ class CommandApdu final
 		static const char CLA_COMMAND_CHAINING = 0x10;
 		static const char CLA_SECURE_MESSAGING = 0x0c;
 
-		CommandApdu(const QByteArray& pBuffer);
-		CommandApdu(const QByteArray& pHeader, const QByteArray& pData, int pLe);
-		CommandApdu(char pCla, char pIns, char pP1, char pP2, const QByteArray& pData = QByteArray(), int pLe = NO_LE);
+		explicit CommandApdu(const QByteArray& pBuffer);
+		explicit CommandApdu(const QByteArray& pHeader, const QByteArray& pData, int pLe);
+		explicit CommandApdu(char pCla, char pIns, char pP1, char pP2, const QByteArray& pData = QByteArray(), int pLe = NO_LE);
 
 		char getCLA() const;
 		char getINS() const;

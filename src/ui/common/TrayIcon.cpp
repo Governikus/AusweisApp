@@ -60,6 +60,12 @@ TrayIcon::~TrayIcon()
 }
 
 
+const QIcon& TrayIcon::getIcon() const
+{
+	return mIcon;
+}
+
+
 void TrayIcon::create()
 {
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
@@ -71,12 +77,14 @@ void TrayIcon::create()
 	const auto trayIconMenu = new QMenu(nullptr);
 
 #if defined(Q_OS_MACOS)
+	//: LABEL DESKTOP
 	QAction* showApplicationAction = new QAction(tr("Open"), trayIconMenu);
 	connect(showApplicationAction, &QAction::triggered, this, &TrayIcon::fireShow);
 	trayIconMenu->addAction(showApplicationAction);
 	trayIconMenu->addSeparator();
 #endif
 
+	//: LABEL DESKTOP
 	const auto quitAction = new QAction(tr("Exit AusweisApp2"), trayIconMenu);
 	connect(quitAction, &QAction::triggered, this, &TrayIcon::fireQuit);
 	trayIconMenu->addAction(quitAction);
@@ -89,7 +97,8 @@ void TrayIcon::create()
 	mTrayIcon->setToolTip(QCoreApplication::applicationName());
 
 	mTrayIcon->show();
-	mTrayIcon->showMessage(QString(), tr("AusweisApp2 was started."), mIcon, 3000);
+	//: LABEL DESKTOP
+	showMessage(QString(), tr("AusweisApp2 was started."));
 #endif
 }
 
@@ -101,5 +110,16 @@ void TrayIcon::hide()
 	{
 		mTrayIcon->hide();
 	}
+#endif
+}
+
+
+void TrayIcon::showMessage(const QString& pTitle, const QString& pMessage)
+{
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+	mTrayIcon->showMessage(pTitle, pMessage, mIcon, 3000);
+#else
+	Q_UNUSED(pTitle);
+	Q_UNUSED(pMessage);
 #endif
 }

@@ -1,6 +1,13 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 TutorialContent {
 	id: baseItem
@@ -9,22 +16,20 @@ TutorialContent {
 		width: parent.width * 0.9
 		anchors.horizontalCenter: parent.horizontalCenter
 
-		Text {
+		GText {
 			width: parent.width
-			text: qsTr("What is the online ID function?") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_header_h1_font_size
+			//: LABEL ANDROID IOS
+			text: qsTr("What is the online ID function?") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_header
 			font.italic: true
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 		}
-		Text {
+		GText {
 			width: parent.width
-			text: qsTr("You can authenticate yourself in the internet") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_header_h1_font_size
+			//: LABEL ANDROID IOS
+			text: qsTr("You can use it to authenticate yourself in the internet") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 		}
 	}
 
@@ -45,7 +50,7 @@ TutorialContent {
 				width: parent.width * 0.6
 				height: width
 				radius: width * 0.5
-				color: Constants.tutorial_very_light_grey
+				color: Style.color.tutorial_box_background
 
 				x: (parent.width * 0.5) - (width / 2)
 			}
@@ -81,43 +86,41 @@ TutorialContent {
 			}
 		}
 
-		Text {
+		GText {
 			width: parent.width * 0.9
 			anchors.horizontalCenter: parent.horizontalCenter
-			text: qsTr("and use it to deal with administrative paperwork and business matters electronically!") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_font_size
+			//: LABEL ANDROID IOS
+			text: qsTr("and also to deal with administrative paperwork and business matters electronically!") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_content
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 		}
 	}
 
 	TutorialSpacer {
 		width: parent.width
-		text: qsTr("Alright, but is it secure?") + settingsModel.translationTrigger
-		color: Constants.tutorial_orange
+		//: LABEL ANDROID IOS
+		text: qsTr("Alright, but is it secure?") + SettingsModel.translationTrigger
+		color: Style.color.tutorial_what
 	}
 
 	Column {
 		width: parent.width * 0.9
 		anchors.horizontalCenter: parent.horizontalCenter
 
-		Text {
+		GText {
 			width: parent.width
-			text: qsTr("Of course, because we use a so called") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_font_size
+			//: LABEL ANDROID IOS
+			text: qsTr("Of course, because we use a so called") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_content
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 		}
-		Text {
+		GText {
 			width: parent.width
-			text: qsTr("Mutual authentication") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_header_h1_font_size
+			//: LABEL ANDROID IOS
+			text: qsTr("Mutual authentication") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_header
 			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 		}
 	}
 
@@ -188,14 +191,13 @@ TutorialContent {
 			}
 		}
 
-		Text {
+		GText {
 			width: parent.width * 0.9
 			anchors.horizontalCenter: parent.horizontalCenter
-			text: qsTr("... it establishes a secure connection between ID document and service provider.") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_header_h2_font_size
+			//: LABEL ANDROID IOS
+			text: qsTr("... it establishes a secure connection between ID document and service provider.") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 		}
 	}
 
@@ -212,13 +214,12 @@ TutorialContent {
 			height: parent.width * 0.6
 			width: parent.width
 
-			Text {
+			GText {
 				width: parent.width * 0.35
-				text: qsTr("On every authentication you get displayed <b>who</b> wants to access <b>which</b> data") + settingsModel.translationTrigger
-				font.family: "Noto Serif"
-				font.pixelSize: Constants.tutorial_content_font_size
+				//: LABEL ANDROID IOS
+				text: qsTr("On every authentication you get displayed <b>who</b> wants to access <b>which</b> data") + SettingsModel.translationTrigger
+				textStyle: Style.text.tutorial_content
 				horizontalAlignment: Text.AlignLeft
-				wrapMode: Text.WordWrap
 
 				x: (parent.width * 0.2) - (width / 2)
 				y: (parent.height * 0.5) - (height / 2)
@@ -226,7 +227,8 @@ TutorialContent {
 
 			TutorialImage {
 				id: screenshot
-				source: qsTr("qrc:///images/tutorial/screenshot_cert_en.png") + settingsModel.translationTrigger
+				//: LABEL ANDROID IOS
+				source: qsTr("qrc:///images/tutorial/screenshot_cert_%1_en.png").arg(Constants.layout) + SettingsModel.translationTrigger
 				z: 3
 
 				readonly property real rightX: x + width
@@ -259,14 +261,13 @@ TutorialContent {
 			}
 		}
 
-		Text {
+		GText {
 			width: parent.width * 0.95
 			anchors.horizontalCenter: parent.horizontalCenter
-			text: qsTr("and you consent to the request with your personal PIN.") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_font_size
+			//: LABEL ANDROID IOS
+			text: qsTr("and you consent to the request with your personal PIN.") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_content
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 		}
 
 		Item {
@@ -301,37 +302,35 @@ TutorialContent {
 				width: parent.width * 0.6
 				height: width
 				radius: width * 0.5
-				color: Constants.tutorial_very_light_grey
+				color: Style.color.tutorial_box_background
 				z: 1
 
 				x: (parent.width * 0.5) - (width / 2)
 			}
 
-			Text {
+			GText {
 				width: parent.width
-				text: qsTr("... is the provider authorized for this?") + settingsModel.translationTrigger
-				font.family: "Noto Serif"
-				font.pixelSize: Constants.tutorial_content_header_h1_font_size
+				//: LABEL ANDROID IOS
+				text: qsTr("... is the provider authorized for this?") + SettingsModel.translationTrigger
+				textStyle: Style.text.tutorial_header
 				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
-				wrapMode: Text.WordWrap
 				z: 2
 
 				x: (parent.width * 0.5) - (width / 2)
 				y: (parent.height * 0.3) - (height / 2)
 			}
 
-			Text {
-				width: parent.width
-				text: qsTr("The provider needs an authorization of the Federal Office of Administration.") + settingsModel.translationTrigger
-				font.family: "Noto Serif"
-				font.pixelSize: Constants.tutorial_content_font_size
+			GText {
+				width: parent.width - 2 * Constants.component_spacing
+				//: LABEL ANDROID IOS
+				text: qsTr("The provider needs an authorization of the Federal Office of Administration.") + SettingsModel.translationTrigger
+				textStyle: Style.text.tutorial_content
 				horizontalAlignment: Text.AlignHCenter
-				wrapMode: Text.WordWrap
 				z: 2
 
 				x: (parent.width * 0.5) - (width / 2)
-				y: (parent.height * 0.5) - (height / 2)
+				y: (parent.height * 0.5)
 			}
 		}
 
@@ -339,14 +338,13 @@ TutorialContent {
 			width: parent.width
 			height: parent.width * 0.3
 
-			Text {
+			GText {
 				width: parent.width
-				text: qsTr("Certificate") + settingsModel.translationTrigger
-				font.family: "Noto Serif"
-				font.pixelSize: Constants.tutorial_content_header_h1_font_size
+				//: LABEL ANDROID IOS
+				text: qsTr("Certificate") + SettingsModel.translationTrigger
+				textStyle: Style.text.tutorial_header
 				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
-				wrapMode: Text.WordWrap
 				z: 1
 
 				x: (parent.width * 0.2) - (width / 2)
@@ -422,37 +420,36 @@ TutorialContent {
 			}
 		}
 
-		Text {
+		GText {
 			width: parent.width * 0.9
 			anchors.horizontalCenter: parent.horizontalCenter
-			text: qsTr("Everytime both participants authenticate each other...") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_header_h1_font_size
+			//: LABEL ANDROID IOS
+			text: qsTr("Everytime both participants authenticate each other...") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_header
 			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 			z: 1
 		}
 	}
 
 	TutorialSpacer {
 		width: parent.width
-		text: qsTr("... and therefore your data is protected and securely transfered.") + settingsModel.translationTrigger
-		color: Constants.tutorial_orange
+		//: LABEL ANDROID IOS
+		text: qsTr("... and therefore your data is protected and securely transfered.") + SettingsModel.translationTrigger
+		color: Style.color.tutorial_what
 	}
 
 	Column {
 		width: parent.width
 		spacing: Constants.component_spacing
 
-		Text {
+		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.8
-			text: qsTr("You can also watch a video on YouTube on this topic") + settingsModel.translationTrigger
-			font.family: "Noto Serif"
-			font.pixelSize: Constants.tutorial_content_header_h2_font_size
+			//: LABEL ANDROID IOS
+			text: qsTr("You can also watch a video on YouTube on this topic") + SettingsModel.translationTrigger
+			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
-			wrapMode: Text.WordWrap
 			z: 2
 		}
 
@@ -466,6 +463,7 @@ TutorialContent {
 			MouseArea {
 				anchors.fill: parent
 
+				//: LABEL ANDROID IOS
 				onClicked: Qt.openUrlExternally(qsTr("https://www.youtube.com/watch?v=fzbUZmHaZp4&index=5&list=PLLB5ERhVkn25qQXgMHQr-1KgyZsJKoSAm"))
 			}
 		}

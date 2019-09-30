@@ -7,8 +7,12 @@
 #include "asn1/ChipAuthenticationInfo.h"
 #include "asn1/EFCardSecurity.h"
 #include "CardConnection.h"
+#include "EABuilder.h"
+#include "GABuilder.h"
 #include "GeneralAuthenticateResponse.h"
 #include "GlobalStatus.h"
+#include "MSEBuilder.h"
+#include "PSOBuilder.h"
 
 #include <QLoggingCategory>
 
@@ -223,21 +227,24 @@ CardReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPoin
 		return CardReturnCode::PROTOCOL_ERROR;
 	}
 
-	GAChipAuthenticationResponse gaResponse;
 	GABuilder gaBuilder;
 	gaBuilder.setCaEphemeralPublicKey(ephemeralPublicKey);
 
 	qCDebug(card) << "Performing CA General Authenticate";
-	returnCode = mCardConnectionWorker->transmit(gaBuilder.build(), gaResponse);
+	ResponseApdu responseApdu;
+	returnCode = mCardConnectionWorker->transmit(gaBuilder.build(), responseApdu);
 	if (returnCode != CardReturnCode::OK)
 	{
 		return returnCode;
 	}
-	if (gaResponse.getReturnCode() != StatusCode::SUCCESS)
+
+	if (responseApdu.getReturnCode() != StatusCode::SUCCESS)
 	{
-		qCWarning(card) << "CA General Authenticate failed:" << gaResponse.getReturnCode();
+		qCWarning(card) << "CA General Authenticate failed:" << responseApdu.getReturnCode();
 		return CardReturnCode::PROTOCOL_ERROR;
 	}
+
+	GAChipAuthenticationResponse gaResponse(responseApdu);
 	pNonceAsHex += gaResponse.getNonce().toHex();
 	pAuthTokenAsHex += gaResponse.getAuthenticationToken().toHex();
 

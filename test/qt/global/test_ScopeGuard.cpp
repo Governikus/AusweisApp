@@ -10,6 +10,8 @@
 
 #include <QtTest>
 
+QT_WARNING_DISABLE_DEPRECATED
+
 using namespace governikus;
 
 class test_ScopeGuard

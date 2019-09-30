@@ -11,7 +11,8 @@ using namespace governikus;
 
 
 StateStartRemoteService::StateStartRemoteService(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractState(pContext)
+	, GenericContextContainer(pContext)
 {
 }
 

@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtTest 1.10
 
 TestCase {
@@ -8,14 +12,6 @@ TestCase {
 		var item = createTemporaryQmlObject("
 			import Governikus.Provider 1.0;
 			ProviderContactTab {}
-			", parent);
-		item.destroy();
-	}
-
-	function test_load_ProviderDetailView() {
-		var item = createTemporaryQmlObject("
-			import Governikus.Provider 1.0;
-			ProviderDetailView {}
 			", parent);
 		item.destroy();
 	}
@@ -32,14 +28,6 @@ TestCase {
 		var item = createTemporaryQmlObject("
 			import Governikus.Provider 1.0;
 			ProviderModelItem {}
-			", parent);
-		item.destroy();
-	}
-
-	function test_load_ProviderViewDelegate() {
-		var item = createTemporaryQmlObject("
-			import Governikus.Provider 1.0;
-			ProviderViewDelegate {}
 			", parent);
 		item.destroy();
 	}

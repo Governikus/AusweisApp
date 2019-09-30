@@ -67,7 +67,7 @@ class test_AccessRoleAndRight
 		void checkFromTechnicalName()
 		{
 			QFETCH(AccessRight, value);
-			const AccessRight undefined = static_cast<AccessRight>(UINT_MAX);
+			const auto undefined = static_cast<AccessRight>(UINT_MAX);
 			AccessRight right = undefined;
 			const auto& func = [&](AccessRight pRight){
 						right = pRight;
@@ -87,7 +87,7 @@ class test_AccessRoleAndRight
 
 		void checkFromTechnicalNameInvalid()
 		{
-			const AccessRight undefined = static_cast<AccessRight>(UINT_MAX);
+			const auto undefined = static_cast<AccessRight>(UINT_MAX);
 			AccessRight right = undefined;
 			const auto& func = [&](AccessRight pRight){
 						right = pRight;

@@ -2,6 +2,9 @@ module View
 
 ContentArea 1.0 ContentArea.qml
 ContentAreaLoader 1.0 ContentAreaLoader.qml
+Controller 1.0 Controller.qml
 SectionPage 1.0 SectionPage.qml
 TabBarView 1.0 TabBarView.qml
 FocusFrame 1.0 FocusFrame.qml
+FocusPoint 1.0 FocusPoint.qml
+FramedImage 1.0 FramedImage.qml

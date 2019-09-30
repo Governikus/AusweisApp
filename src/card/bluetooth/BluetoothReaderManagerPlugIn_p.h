@@ -18,7 +18,7 @@ class BluetoothReaderManagerPlugInPrivate
 	Q_DECLARE_PUBLIC(BluetoothReaderManagerPlugIn)
 
 	BluetoothReaderManagerPlugIn* const q_ptr;
-	BluetoothReaderManagerPlugInPrivate(BluetoothReaderManagerPlugIn* pPublic);
+	explicit BluetoothReaderManagerPlugInPrivate(BluetoothReaderManagerPlugIn* pPublic);
 
 	public Q_SLOTS:
 		void onBluetoothStatusChanged(bool pEnabled);

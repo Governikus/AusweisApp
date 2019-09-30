@@ -107,3 +107,20 @@ bool GuiUtils::showWrongPinBlockedDialog(QWidget* pParent)
 
 	return messageBox.exec() == QMessageBox::Yes;
 }
+
+
+bool GuiUtils::showPinUnlockedDialog(QWidget* pParent)
+{
+	QMessageBox messageBox(pParent);
+
+	QString title = tr("PIN successfully unblocked");
+	QString text = tr("Your ID card is unblocked. You now have three more tries to change your PIN");
+	messageBox.setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + title);
+	messageBox.setWindowModality(Qt::WindowModal);
+	messageBox.setText(QStringLiteral("<h4>%1</h4><p>%2</p>").arg(title, text));
+	messageBox.setIconPixmap(QIcon(QStringLiteral(":/images/Icon_Checked.svg")).pixmap(32, 32));
+	messageBox.setStandardButtons(QMessageBox::Ok);
+	messageBox.button(QMessageBox::Ok)->setFocus();
+
+	return messageBox.exec() == QMessageBox::Yes;
+}

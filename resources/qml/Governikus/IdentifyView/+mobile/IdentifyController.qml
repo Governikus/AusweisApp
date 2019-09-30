@@ -1,10 +1,15 @@
+/*
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.AuthModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.ReaderPlugIn 1.0
-import Governikus.Type.PacePasswordId 1.0
+
 
 Item {
 	enum WorkflowStates {
@@ -28,7 +33,6 @@ Item {
 
 	property bool connectedToCard: false
 	property int workflowState: 0
-	property int workflowProgressValue: 0
 	property bool workflowProgressVisible: false
 
 	function sufficientBluetoothRights() {
@@ -80,13 +84,20 @@ Item {
 	function showRemoveCardFeedback() {
 		if (controller.connectedToCard) {
 			controller.connectedToCard = false
-			qmlExtension.showFeedback(qsTr("You may now remove your ID card from the device."))
+
+			// The feedback notification will crash Apple's VoiceOver if it happens at the same time the app is redirecting back to the browser. This
+			// happens with both the iOS toasts and our own toast-like replacement. To work around this, we'll only show the notification during a
+			// self-authentication on iOS with VoiceOver running:
+			if (Qt.platform.os !== "ios" || !ApplicationModel.isScreenReaderRunning() || ApplicationModel.currentWorkflow === "selfauthentication") {
+				//: INFO ANDROID IOS The authentication process is completed, the id card may (and should) be removed from the card reader.
+				ApplicationModel.showFeedback(qsTr("You may now remove your ID card from the device."))
+			}
 		}
 	}
 
 	function processStateChange() {
 		switch (AuthModel.currentState) {
-			case "":
+			case "Initial":
 				break;
 			case "StateGetTcToken":
 				enterPinView.state = "INITIAL"
@@ -118,54 +129,42 @@ Item {
 				setIdentifyWorkflowStateAndContinue(IdentifyController.WorkflowStates.Update)
 				break
 			case "StateEnterPacePassword":
-				if (NumberModel.establishPaceChannelType == PacePasswordId.PACE_PIN) {
+				if (NumberModel.passwordType === NumberModel.PASSWORD_PIN) {
 					setIdentifyWorkflowStateAndRequestInput(IdentifyController.WorkflowStates.Pin, "PIN")
 				}
-				else if (NumberModel.establishPaceChannelType == PacePasswordId.PACE_CAN) {
+				else if (NumberModel.passwordType === NumberModel.PASSWORD_CAN) {
 					setIdentifyWorkflowStateAndRequestInput(IdentifyController.WorkflowStates.Can, "CAN")
 				}
-				else if (NumberModel.establishPaceChannelType == PacePasswordId.PACE_PUK) {
+				else if (NumberModel.passwordType === NumberModel.PASSWORD_PUK) {
 					AuthModel.cancelWorkflowOnPinBlocked()
 				}
 				break
 			case "StateUnfortunateCardPosition":
+				//: INFO IOS The NFC signal is weak or unstable. The scan is stopped with this information in the iOS dialog.
+				ApplicationModel.stopNfcScanWithError(qsTr("Weak NFC signal") + SettingsModel.translationTrigger)
 				firePush(cardPositionView)
 				break
 			case "StateDidAuthenticateEac1":
 				controller.workflowProgressVisible = true
-				controller.workflowProgressValue = 1
 				setIdentifyWorkflowStateAndContinue(IdentifyController.WorkflowStates.Processing)
 				break
 			case "StateSendDIDAuthenticateResponseEAC1":
 				fireReplace(identifyProgressView)
 				AuthModel.continueWorkflow()
 				break
-			case "StateDidAuthenticateEac2":
-				controller.workflowProgressValue = 2
-				AuthModel.continueWorkflow()
-				break
-			case "StateTransmit":
-				controller.workflowProgressValue = 3
-				AuthModel.continueWorkflow()
-				break
 			case "StateCleanUpReaderManager":
 				controller.connectedToCard = AuthModel.selectedReaderHasCard() && !AuthModel.isError;
 				AuthModel.continueWorkflow()
 				break;
-			case "StateCheckRefreshAddress":
-				controller.workflowProgressValue = 4
-				AuthModel.continueWorkflow()
-				break
 			case "StateWriteHistory":
 				showRemoveCardFeedback()
-				controller.workflowProgressValue = 5
 				AuthModel.continueWorkflow()
 				break
 			case "StateShowSelfInfo":
 				firePush(selfAuthenticationData)
 				break
 			case "StateSendWhitelistSurvey":
-				if (settingsModel.askForDeviceSurvey() && !AuthModel.error && d.readerPlugInType === ReaderPlugIn.NFC) {
+				if (SettingsModel.askForDeviceSurvey() && !AuthModel.error && d.readerPlugInType === ReaderPlugIn.NFC) {
 					firePush(whiteListSurveyView)
 				} else {
 					AuthModel.continueWorkflow()
@@ -173,7 +172,7 @@ Item {
 				break
 			case "FinalState":
 				navBar.lockedAndHidden = true
-				if (AuthModel.error && !AuthModel.hasNextWorkflowPending) {
+				if (AuthModel.error && !AuthModel.hasNextWorkflowPending && !AuthModel.shouldSkipResultView()) {
 					showRemoveCardFeedback()
 					firePush(identifyResult)
 				} else {
@@ -182,7 +181,6 @@ Item {
 					navBar.lockedAndHidden = false
 				}
 				controller.workflowProgressVisible = false
-				controller.workflowProgressValue = 0
 				break
 			default:
 				AuthModel.continueWorkflow()
@@ -199,6 +197,7 @@ Item {
 		if (AuthModel.isBasicReader) {
 			enterPinView.state = pInput
 			firePush(enterPinView)
+			ApplicationModel.nfcRunning = false
 		} else {
 			AuthModel.continueWorkflow()
 		}

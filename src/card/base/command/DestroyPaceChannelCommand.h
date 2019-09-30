@@ -26,7 +26,7 @@ class DestroyPaceChannelCommand
 		virtual ~DestroyPaceChannelCommand() override = default;
 
 	public:
-		DestroyPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
+		explicit DestroyPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 };
 
 } // namespace governikus

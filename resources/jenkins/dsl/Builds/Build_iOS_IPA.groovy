@@ -6,7 +6,7 @@ def j = new Build
 		name: 'iOS_IPA',
 		libraries: ['iOS'],
 		label: 'iOS',
-		artifacts: 'build/*.ipa'
+		artifacts: 'build/*.ipa,build/*.zip'
 	).generate(this)
 
 
@@ -19,13 +19,13 @@ j.with
 		shell(strip('''\
 			cd build;
 			cmake ../source
-			-DCMAKE_BUILD_TYPE=release
+			-DCMAKE_BUILD_TYPE=MinSizeRel
 			-DCMAKE_PREFIX_PATH=\${WORKSPACE}/libs/build/dist
 			-DCMAKE_TOOLCHAIN_FILE=../source/cmake/iOS.toolchain.cmake
 			-GXcode
 			'''))
 
-		shell('cd build; xcodebuild -target install -configuration Release ARCHS=arm64')
-		shell('cd build; xcodebuild -target ipa -configuration Release')
+		shell('cd build; xcodebuild -configuration MinSizeRel ARCHS=arm64')
+		shell('cd build; xcodebuild -target ipa -configuration MinSizeRel')
 	}
 }

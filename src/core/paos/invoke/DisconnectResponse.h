@@ -9,8 +9,6 @@
 #include "paos/ResponseType.h"
 #include "PaosCreator.h"
 
-class test_DisconnectResponse;
-
 namespace governikus
 {
 
@@ -18,8 +16,6 @@ class DisconnectResponse
 	: public PaosCreator
 	, public ResponseType
 {
-	friend class ::test_DisconnectResponse;
-
 	private:
 		QString mSlotHandle;
 

@@ -1,35 +1,45 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
 Item {
 	property alias source: tabImage.source
 	property alias text: tabText.text
 	signal clicked
 
+	Accessible.role: Accessible.Button
+	Accessible.name: text
+
 	Item {
 		id: tabImageItem
 		height: parent.height
-		width: Constants.menubar_width
+		width: Style.dimens.menubar_width
 		anchors.left: parent.left
 
 		Image {
 			id: tabImage
-			height: Utils.dp(35)
+			height: 35
+			sourceSize.width: height
 			fillMode: Image.PreserveAspectFit
 			anchors.horizontalCenter: parent.horizontalCenter
 			anchors.verticalCenter: parent.verticalCenter
 		}
 	}
 
-	Text {
+	GText {
 		id: tabText
+
 		anchors.left: tabImageItem.right
-		anchors.leftMargin: Utils.dp(10)
 		anchors.verticalCenter: parent.verticalCenter
-		font.pixelSize: Constants.small_font_size
-		renderType: Text.NativeRendering
-		color: Constants.secondary_text
+
+		Accessible.ignored: true
+
+		textStyle: Style.text.hint_secondary
 	}
 
 	MouseArea {

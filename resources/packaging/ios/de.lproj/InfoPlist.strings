@@ -1,2 +1,2 @@
-NSBluetoothPeripheralUsageDescription = "Die AusweisApp2 nutzt Bluetooth, um auf das benötigte Kartenlesegerät zuzugreifen.";
+NSBluetoothPeripheralUsageDescription = "Die AusweisApp2 nutzt Bluetooth, um auf den benötigten Kartenleser zuzugreifen.";
 NFCReaderUsageDescription = "Die AusweisApp2 nutzt NFC, um auf den Personalausweis zuzugreifen.";

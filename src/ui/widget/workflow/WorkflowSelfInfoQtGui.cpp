@@ -7,6 +7,7 @@
 #include "AppSettings.h"
 #include "generic/GuiUtils.h"
 #include "states/FinalState.h"
+#include "states/StateCheckRefreshAddress.h"
 #include "states/StateDidAuthenticateEac1.h"
 #include "states/StateDidAuthenticateEac2.h"
 #include "states/StateEditAccessRights.h"
@@ -15,6 +16,7 @@
 #include "states/StateMaintainCardConnection.h"
 #include "states/StateSelectReader.h"
 #include "states/StateTransmit.h"
+#include "states/StateUnfortunateCardPosition.h"
 #include "states/StateWriteHistory.h"
 #include "step/AuthenticateStepsWidget.h"
 #include "step/StepAdviseUserToRemoveCardGui.h"
@@ -149,6 +151,11 @@ void WorkflowSelfInfoQtGui::onStateChanged(const QString& pNewState)
 			}
 		}
 	}
+	else if (AbstractState::isState<StateUnfortunateCardPosition>(pNewState))
+	{
+		approveNewState = false;
+		activateStepUi(mChooseCardGui);
+	}
 	else if (AbstractState::isState<StateDidAuthenticateEac1>(pNewState))
 	{
 		activateStepUi(mDidAuthenticateGui);
@@ -161,6 +168,10 @@ void WorkflowSelfInfoQtGui::onStateChanged(const QString& pNewState)
 	else if (AbstractState::isState<StateTransmit>(pNewState))
 	{
 		mDidAuthenticateGui->setState(StepAuthenticationEac1Widget::State::READING_CARD_DATA);
+	}
+	else if (AbstractState::isState<StateCheckRefreshAddress>(pNewState) && mDidAuthenticateGui->isActive())
+	{
+		mDidAuthenticateGui->setState(StepAuthenticationEac1Widget::State::REDIRECTING_BROWSER);
 	}
 	else if (AbstractState::isState<StateWriteHistory>(pNewState) && mDidAuthenticateGui->isActive())
 	{

@@ -248,7 +248,7 @@ QLowEnergyService::WriteMode CyberJackWaveDevice::determineWriteMode(int pBlockI
 	return (pBlockIndex % IOS_CONFIRMATION_BLOCK_NUMBER) ? QLowEnergyService::WriteWithoutResponse : QLowEnergyService::WriteWithResponse;
 
 #else
-	Q_UNUSED(pBlockIndex);
+	Q_UNUSED(pBlockIndex)
 
 	/*
 	 * According to Reiner SCT on Android the behaviour is too device specific,

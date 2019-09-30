@@ -38,7 +38,7 @@ class test_EnumHelper
 		{
 			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
-			TestEnum1 badEnumValue = static_cast<TestEnum1>(pValue);
+			auto badEnumValue = static_cast<TestEnum1>(pValue);
 			QCOMPARE(Enum<TestEnum1>::getName(badEnumValue), QLatin1String());
 
 			QCOMPARE(spy.count(), 1);
@@ -120,7 +120,6 @@ class test_EnumHelper
 			QCOMPARE(list2.size(), 3);
 
 			QCOMPARE(list1, list2);
-			QVERIFY(&list1 == &list2);
 
 			QCOMPARE(list1[0], TestEnum2::FIRST);
 			QCOMPARE(list1[1], TestEnum2::SECOND);

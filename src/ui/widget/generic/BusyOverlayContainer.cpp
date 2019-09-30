@@ -19,7 +19,7 @@ BusyOverlayContainer::BusyOverlayContainer(QWidget* pWidgetToOverlay, bool pStar
 	QBoxLayout* overlayContainerLayout = new QVBoxLayout(busyOverlayContainer);
 	overlayContainerLayout->addWidget(mOverlay, 0, Qt::AlignHCenter | Qt::AlignVCenter);
 
-	QStackedLayout* stackLayout = qobject_cast<QStackedLayout*>(layout());
+	auto* stackLayout = qobject_cast<QStackedLayout*>(layout());
 	stackLayout->setStackingMode(QStackedLayout::StackAll);
 
 	stackLayout->addWidget(pWidgetToOverlay);

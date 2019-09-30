@@ -11,8 +11,6 @@
 #include "ConnectivityManager.h"
 #include "HistoryModel.h"
 #include "NumberModel.h"
-#include "QmlExtension.h"
-#include "SelfAuthModel.h"
 #include "SettingsModel.h"
 #include "TrayIcon.h"
 #include "UIPlugIn.h"
@@ -20,6 +18,9 @@
 
 #include <QQmlApplicationEngine>
 #include <QScopedPointer>
+#if defined (Q_OS_MACOS)
+#include <QMenuBar>
+#endif
 
 namespace governikus
 {
@@ -32,23 +33,28 @@ class UIPlugInQml
 	Q_INTERFACES(governikus::UIPlugIn)
 	Q_PROPERTY(QString platformStyle READ getPlatformStyle CONSTANT)
 	Q_PROPERTY(bool developerBuild READ isDeveloperBuild CONSTANT)
+	Q_PROPERTY(QString dominator READ getDominator NOTIFY fireDominatorChanged)
+	Q_PROPERTY(bool dominated READ isDominated NOTIFY fireDominatorChanged)
+	Q_PROPERTY(QVariantMap safeAreaMargins READ getSafeAreaMargins NOTIFY fireSafeAreaMarginsChanged)
 
 	private:
 		QScopedPointer<QQmlApplicationEngine> mEngine;
-		HistoryModel mHistoryModel;
+		int mQmlEngineWarningCount;
 		VersionInformationModel mVersionInformationModel;
-		QmlExtension mQmlExtension;
-		SelfAuthModel mSelfAuthModel;
-		SettingsModel mSettingsModel;
 		CertificateDescriptionModel mCertificateDescriptionModel;
 		ChatModel mChatModel;
 		QString mExplicitPlatformStyle;
 		ConnectivityManager mConnectivityManager;
 		TrayIcon mTrayIcon;
+		QString mDominator;
+#if defined(Q_OS_MACOS)
+		QMenuBar mMenuBar;
+#endif
 
+		void logRenderingEnvironment() const;
 		QString getPlatformSelectors() const;
 		static QUrl getPath(const QString& pRelativePath, bool pQrc = true);
-		void createTrayIcon();
+		bool isTablet() const;
 
 	public:
 		UIPlugInQml();
@@ -56,15 +62,22 @@ class UIPlugInQml
 
 		static void registerQmlTypes();
 
-		Q_INVOKABLE bool useFlatStyleOnDesktop() const;
 		QString getPlatformStyle() const;
+		bool isDeveloperBuild() const;
+		QString getDominator() const;
+		bool isDominated() const;
+		QVariantMap getSafeAreaMargins() const;
+
 		Q_INVOKABLE void applyPlatformStyle(const QString& pPlatformStyle);
-		Q_INVOKABLE bool isDeveloperBuild() const;
 		Q_INVOKABLE void init();
 		Q_INVOKABLE void hide();
+		Q_INVOKABLE void switchUi();
 
 	Q_SIGNALS:
 		void fireShowRequest(UiModule pModule);
+		void fireHideRequest();
+		void fireDominatorChanged();
+		void fireSafeAreaMarginsChanged();
 
 	private Q_SLOTS:
 		void show();
@@ -73,7 +86,15 @@ class UIPlugInQml
 		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
 		virtual void onApplicationStarted() override;
 		virtual void onShowUi(UiModule pModule) override;
+		virtual void onHideUi() override;
+		virtual void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted) override;
+		virtual void onUiDominationReleased() override;
 		void onShowUserInformation(const QString& pMessage);
+
+		void onQmlWarnings(const QList<QQmlError>& pWarnings);
+		void onQmlObjectCreated(QObject* pObject);
+
+		void onRawLog(const QString& pMessage, const QString& pCategoryName);
 
 	public Q_SLOTS:
 		void doRefresh();

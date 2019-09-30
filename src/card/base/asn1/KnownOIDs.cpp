@@ -25,6 +25,7 @@ QByteArray governikus::toByteArray(Base pValue)
 	}
 
 	Q_UNREACHABLE();
+	return QByteArray();
 }
 
 
@@ -40,6 +41,7 @@ QByteArray governikus::toByteArray(CertificateExtensions pValue)
 	}
 
 	Q_UNREACHABLE();
+	return QByteArray();
 }
 
 
@@ -58,6 +60,7 @@ QByteArray governikus::toByteArray(TermsOfUsageType pValue)
 	}
 
 	Q_UNREACHABLE();
+	return QByteArray();
 }
 
 
@@ -79,6 +82,7 @@ QByteArray governikus::toByteArray(CHATType pValue)
 	}
 
 	Q_UNREACHABLE();
+	return QByteArray();
 }
 
 
@@ -97,6 +101,7 @@ QByteArray governikus::toByteArray(AuxilaryData pValue)
 	}
 
 	Q_UNREACHABLE();
+	return QByteArray();
 }
 
 
@@ -118,6 +123,7 @@ QByteArray governikus::toByteArray(SecurityProtocol pValue)
 	}
 
 	Q_UNREACHABLE();
+	return QByteArray();
 }
 
 
@@ -159,6 +165,7 @@ QByteArray governikus::toByteArray(id_ca pValue)
 	}
 
 	Q_UNREACHABLE();
+	return QByteArray();
 }
 
 
@@ -183,6 +190,7 @@ QByteArray governikus::toByteArray(id_ta pValue)
 	}
 
 	Q_UNREACHABLE();
+	return QByteArray();
 }
 
 
@@ -198,6 +206,7 @@ QByteArray governikus::toByteArray(id_pk pValue)
 	}
 
 	Q_UNREACHABLE();
+	return QByteArray();
 }
 
 
@@ -239,6 +248,7 @@ QByteArray governikus::toByteArray(id_PACE::DH pValue)
 	}
 
 	Q_UNREACHABLE();
+	return QByteArray();
 }
 
 
@@ -280,4 +290,5 @@ QByteArray governikus::toByteArray(id_PACE::ECDH pValue)
 	}
 
 	Q_UNREACHABLE();
+	return QByteArray();
 }

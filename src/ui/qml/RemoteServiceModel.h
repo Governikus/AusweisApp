@@ -7,6 +7,7 @@
 #pragma once
 
 #include "context/RemoteServiceContext.h"
+#include "Env.h"
 #include "ReaderManager.h"
 #include "RemoteDeviceModel.h"
 #include "WifiInfo.h"
@@ -15,8 +16,6 @@
 #include <QObject>
 #include <QQmlEngine>
 
-class test_RemoteServiceModel;
-
 namespace governikus
 {
 
@@ -24,24 +23,24 @@ class RemoteServiceModel
 	: public WorkflowModel
 {
 	Q_OBJECT
+	friend class Env;
 
 	Q_PROPERTY(bool running READ isRunning WRITE setRunning NOTIFY fireIsRunningChanged)
-	Q_PROPERTY(bool runnable MEMBER mRunnable NOTIFY fireEnvironmentChanged)
-	Q_PROPERTY(bool canEnableNfc MEMBER mCanEnableNfc NOTIFY fireEnvironmentChanged)
-	Q_PROPERTY(QString errorMessage MEMBER mErrorMessage NOTIFY fireEnvironmentChanged)
-	Q_PROPERTY(QByteArray psk MEMBER mPsk NOTIFY firePskChanged)
+	Q_PROPERTY(bool runnable READ isRunnable NOTIFY fireEnvironmentChanged)
+	Q_PROPERTY(bool canEnableNfc READ isCanEnableNfc NOTIFY fireEnvironmentChanged)
+	Q_PROPERTY(QString errorMessage READ getErrorMessage NOTIFY fireEnvironmentChanged)
+	Q_PROPERTY(QByteArray psk READ getPsk NOTIFY firePskChanged)
 	Q_PROPERTY(QString currentFingerprint READ getCurrentFingerprint NOTIFY fireConnectedChanged)
 	Q_PROPERTY(bool connected READ isConnected NOTIFY fireConnectedChanged)
-	Q_PROPERTY(QString connectedClientDeviceName MEMBER mConnectedClientDeviceName NOTIFY fireConnectedClientDeviceNameChanged)
-	Q_PROPERTY(QString connectedServerDeviceNames MEMBER mConnectedServerDeviceNames NOTIFY fireConnectedServerDeviceNamesChanged)
+	Q_PROPERTY(QString connectionInfo READ getConnectionInfo NOTIFY fireConnectionInfoChanged)
+	Q_PROPERTY(QString connectedServerDeviceNames READ getConnectedServerDeviceNames NOTIFY fireConnectedServerDeviceNamesChanged)
 	Q_PROPERTY(RemoteDeviceModel * availableRemoteDevices READ getAvailableRemoteDevices CONSTANT)
 	Q_PROPERTY(RemoteDeviceModel * knownDevices READ getKnownDevices CONSTANT)
+	Q_PROPERTY(RemoteDeviceModel * combinedDevices READ getCombinedDevices CONSTANT)
 	Q_PROPERTY(bool detectRemoteDevices READ detectRemoteDevices WRITE setDetectRemoteDevices NOTIFY fireDetectionChanged)
 	Q_PROPERTY(bool isSaCPinChangeWorkflow READ isSaCPinChangeWorkflow NOTIFY fireEstablishPaceChannelMessageUpdated)
 
 	private:
-		friend class ::test_RemoteServiceModel;
-
 		QSharedPointer<RemoteServiceContext> mContext;
 		WifiInfo mWifiInfo;
 		bool mRunnable;
@@ -50,7 +49,8 @@ class RemoteServiceModel
 		QByteArray mPsk;
 		RemoteDeviceModel mAvailableRemoteDevices;
 		RemoteDeviceModel mKnownDevices;
-		QString mConnectedClientDeviceName;
+		RemoteDeviceModel mCombinedDevices;
+		QString mConnectionInfo;
 		QString mConnectedServerDeviceNames;
 		bool mIsSaCPinChangeWorkflow;
 		QSharedPointer<RemoteDeviceListEntry> mRememberedServerEntry;
@@ -60,13 +60,15 @@ class RemoteServiceModel
 
 	private Q_SLOTS:
 		void onEstablishConnectionDone(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const GlobalStatus& pStatus);
-		void onClientConnectedChanged(bool pConnected);
+		void onConnectionInfoChanged(bool pConnected);
+		void onCardConnectionEstablished(const QSharedPointer<CardConnection>& pConnection);
 		void onConnectedDevicesChanged();
 		void onEstablishPaceChannelMessageUpdated(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage);
 
 	protected:
 		RemoteServiceModel();
 		~RemoteServiceModel() override = default;
+		static RemoteServiceModel& getInstance();
 
 	public:
 		bool isRunning() const;
@@ -74,6 +76,7 @@ class RemoteServiceModel
 
 		RemoteDeviceModel* getAvailableRemoteDevices();
 		RemoteDeviceModel* getKnownDevices();
+		RemoteDeviceModel* getCombinedDevices();
 		void setDetectRemoteDevices(bool pNewStatus);
 		bool detectRemoteDevices();
 		Q_INVOKABLE bool rememberServer(const QString& pDeviceId);
@@ -84,13 +87,17 @@ class RemoteServiceModel
 		QString getCurrentFingerprint() const;
 		bool isConnected() const;
 		bool isSaCPinChangeWorkflow() const;
+		bool isRunnable() const;
+		bool isCanEnableNfc() const;
+		QString getErrorMessage() const;
+		QByteArray getPsk() const;
+		QString getConnectionInfo() const;
+		QString getConnectedServerDeviceNames() const;
 
 		Q_INVOKABLE bool pinPadModeOn();
-		Q_INVOKABLE QString getPacePasswordId() const;
+		Q_INVOKABLE QString getPasswordType() const;
 		Q_INVOKABLE void forgetDevice(const QString& pId);
 		Q_INVOKABLE void cancelPasswordRequest();
-
-		static RemoteServiceModel& getInstance();
 
 	Q_SIGNALS:
 		void fireIsRunningChanged();
@@ -100,7 +107,7 @@ class RemoteServiceModel
 		void fireServerPskChanged();
 		void fireDetectionChanged();
 		void firePairingFailed();
-		void fireConnectedClientDeviceNameChanged();
+		void fireConnectionInfoChanged();
 		void fireConnectedServerDeviceNamesChanged();
 		void fireEstablishPaceChannelMessageUpdated();
 };

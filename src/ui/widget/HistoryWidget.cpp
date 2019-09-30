@@ -17,7 +17,12 @@
 #include "generic/ListItemTitle.h"
 #include "LanguageLoader.h"
 #include "PdfExporter.h"
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#include <QScopeGuard>
+#else
 #include "ScopeGuard.h"
+#endif
 
 #include <QDateTime>
 #include <QDebug>
@@ -100,7 +105,7 @@ void HistoryWidget::updateTable()
 {
 	const auto& items = Env::getSingleton<AppSettings>()->getHistorySettings().getHistoryInfos();
 
-	const ScopeGuard guard([this] {
+	const auto guard = qScopeGuard([this] {
 				mUi->historyTableWidget->setUpdatesEnabled(true);
 			});
 
@@ -129,7 +134,7 @@ void HistoryWidget::updateTable()
 		//details column with needed properties
 		QWidget* centralWidget = new QWidget();
 
-		QFormLayout* centralLayout = new QFormLayout(centralWidget);
+		auto* centralLayout = new QFormLayout(centralWidget);
 		centralLayout->setSpacing(6);
 		centralLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
@@ -178,7 +183,7 @@ bool HistoryWidget::eventFilter(QObject* pObject, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
-		QKeyEvent* pressed = static_cast<QKeyEvent*>(pEvent);
+		auto* pressed = static_cast<QKeyEvent*>(pEvent);
 		if ((pressed->key() == Qt::Key_Enter) || (pressed->key() == Qt::Key_Return) || (pressed->key() == Qt::Key_Space))
 		{
 			const auto selectedIndexes = mUi->historyTableWidget->selectionModel()->selectedIndexes();
@@ -199,7 +204,7 @@ bool HistoryWidget::eventFilter(QObject* pObject, QEvent* pEvent)
 
 void HistoryWidget::deleteHistory()
 {
-	DeleteHistoryDialog* deleteHistoryDialog = new DeleteHistoryDialog(this);
+	auto* deleteHistoryDialog = new DeleteHistoryDialog(this);
 	if (deleteHistoryDialog->exec() == QDialog::Rejected)
 	{
 		return;

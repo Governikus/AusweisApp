@@ -17,18 +17,11 @@ class test_FileDestination
 	Q_OBJECT
 
 	private Q_SLOTS:
-		void getPathCharPtr()
-		{
-			QString path = FileDestination::getPath("qtlogging.ini");
-			QVERIFY(path.endsWith("qtlogging.ini"));
-			QVERIFY(QFile::exists(path));
-		}
-
-
 		void getPath()
 		{
-			QString path = FileDestination::getPath(QStringLiteral("qtlogging.ini"));
-			QVERIFY(path.endsWith("qtlogging.ini"));
+			const auto filename = QStringLiteral("config.json");
+			QString path = FileDestination::getPath(filename);
+			QVERIFY(path.endsWith(filename));
 			QVERIFY(QFile::exists(path));
 		}
 

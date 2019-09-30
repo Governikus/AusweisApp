@@ -1,6 +1,11 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
 Rectangle {
 	id: contentBackground
@@ -19,6 +24,6 @@ Rectangle {
 		anchors.top: parent.top
 		topPadding: parent.width * 0.15
 		bottomPadding: Constants.component_spacing
-		spacing: Constants.tutorial_component_spacing
+		spacing: Style.dimens.tutorial_component_spacing
 	}
 }

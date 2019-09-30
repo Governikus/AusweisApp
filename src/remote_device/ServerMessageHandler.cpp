@@ -147,6 +147,8 @@ void ServerMessageHandlerImpl::onCreateCardConnectionCommandDone(QSharedPointer<
 
 	const auto& response = QSharedPointer<IfdConnectResponse>::create(slotHandle);
 	mRemoteDispatcher->send(response);
+
+	Q_EMIT fireCardConnectionEstablished(pCommand->getCardConnection());
 }
 
 
@@ -384,7 +386,7 @@ void ServerMessageHandlerImpl::onClosed()
 }
 
 
-void ServerMessageHandlerImpl::onRemoteMessage(RemoteCardMessageType pMessageType, const QJsonObject pJsonObject)
+void ServerMessageHandlerImpl::onRemoteMessage(RemoteCardMessageType pMessageType, const QJsonObject& pJsonObject)
 {
 	switch (pMessageType)
 	{
@@ -404,7 +406,7 @@ void ServerMessageHandlerImpl::onRemoteMessage(RemoteCardMessageType pMessageTyp
 			qCWarning(remote_device) << "Received an unexpected message of type:" << pMessageType;
 			const auto& localCopy = mRemoteDispatcher;
 			QMetaObject::invokeMethod(localCopy.data(), [localCopy] {
-						const auto& errorMessage = QSharedPointer<const IfdError>::create(QString(), ECardApiResult::Minor::AL_Unkown_API_Function);
+						const QSharedPointer<const IfdError>& errorMessage = QSharedPointer<IfdError>::create(QString(), ECardApiResult::Minor::AL_Unkown_API_Function);
 						localCopy->send(errorMessage);
 					}, Qt::QueuedConnection);
 			break;

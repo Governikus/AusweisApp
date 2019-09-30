@@ -18,7 +18,7 @@ class IfdTransmit
 		QString mSlotHandle;
 		QByteArray mInputApdu;
 
-		void parseCommandApdu(QJsonValue pEntry);
+		void parseCommandApdu(const QJsonValue& pEntry);
 
 	public:
 		IfdTransmit(const QString& pSlotHandle, const QByteArray& pInputApdu);

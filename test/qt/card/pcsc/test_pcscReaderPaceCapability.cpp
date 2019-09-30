@@ -9,8 +9,8 @@
 #include "LogHandler.h"
 #include "TestFileHelper.h"
 
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtCore>
+#include <QtTest>
 
 
 using namespace governikus;
@@ -25,7 +25,8 @@ class test_pcscReaderPaceCapability
 		int getCapabilityCount(const PcscReaderPaceCapability& pPcscReaderPaceCapability)
 		{
 			int count = 0;
-			for (PaceCapabilityId capability : Enum<PaceCapabilityId>::getList())
+			const auto list = Enum<PaceCapabilityId>::getList();
+			for (PaceCapabilityId capability : list)
 			{
 				if (pPcscReaderPaceCapability.contains(capability))
 				{

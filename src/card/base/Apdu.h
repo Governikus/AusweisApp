@@ -14,12 +14,13 @@ class Apdu
 	protected:
 		QByteArray mBuffer;
 
-		Apdu(const QByteArray& pBuffer);
+		explicit Apdu(const QByteArray& pBuffer);
 		~Apdu() = default;
 
 	public:
 		const QByteArray& getBuffer() const;
 		int length() const;
+		bool isEmpty() const;
 };
 
 

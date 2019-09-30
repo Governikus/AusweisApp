@@ -7,10 +7,11 @@
 #include "states/StateProcessCertificatesFromEac2.h"
 
 #include "asn1/CVCertificateChainBuilder.h"
-#include "Commands.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
 #include "paos/retrieve/DidAuthenticateEac2Parser.h"
+#include "states/StateBuilder.h"
+
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
 
@@ -25,7 +26,7 @@ class test_StateProcessCertificatesFromEac2
 {
 	Q_OBJECT
 	QScopedPointer<StateProcessCertificatesFromEac2> mState;
-	QSharedPointer<AuthContext> mAuthContext;
+	QSharedPointer<TestAuthContext> mAuthContext;
 
 	Q_SIGNALS:
 		void fireStateStart(QEvent* pEvent);
@@ -40,7 +41,7 @@ class test_StateProcessCertificatesFromEac2
 			paceOutput.parse(QByteArray::fromHex(TestFileHelper::readFile(":/card/EstablishPaceChannelOutput.hex")), PacePasswordId::PACE_PIN);
 			mAuthContext->setPaceOutputData(paceOutput);
 
-			mState.reset(new StateProcessCertificatesFromEac2(mAuthContext));
+			mState.reset(StateBuilder::createState<StateProcessCertificatesFromEac2>(mAuthContext));
 			mState->setStateName("StateProcessCertificatesFromEac2");
 			connect(this, &test_StateProcessCertificatesFromEac2::fireStateStart, mState.data(), &AbstractState::onEntry);
 		}
@@ -69,8 +70,8 @@ class test_StateProcessCertificatesFromEac2
 		void testDoNotTakeTerminalCvcFromEac2()
 		{
 			// move terminal cvc from eac1 to eac2
-			mAuthContext->mDIDAuthenticateEAC2->mEac2.mCvCertificates.append(mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.at(0));
-			mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.removeAt(0);
+			mAuthContext->mDIDAuthenticateEAC2->mEac2.mCvCertificates.append(mAuthContext->getDidAuthenticateEac1()->getCvCertificates().at(0));
+			mAuthContext->clearCvCertificates();
 			mAuthContext->initCvcChainBuilder();
 
 			QSignalSpy spy(mState.data(), &StateProcessCertificatesFromEac2::fireAbort);
@@ -85,10 +86,10 @@ class test_StateProcessCertificatesFromEac2
 		void testCvcFromEac2()
 		{
 			// move terminal dv from eac1 to eac2
-			mAuthContext->mDIDAuthenticateEAC2->mEac2.mCvCertificates.append(mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.at(1));
-			mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.removeAt(3);
-			mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.removeAt(2);
-			mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.removeAt(1);
+			mAuthContext->mDIDAuthenticateEAC2->mEac2.mCvCertificates.append(mAuthContext->getDidAuthenticateEac1()->getCvCertificates().at(1));
+			mAuthContext->removeCvCertAt(3);
+			mAuthContext->removeCvCertAt(2);
+			mAuthContext->removeCvCertAt(1);
 			mAuthContext->initCvcChainBuilder();
 
 			QSignalSpy spy(mState.data(), &StateProcessCertificatesFromEac2::fireContinue);

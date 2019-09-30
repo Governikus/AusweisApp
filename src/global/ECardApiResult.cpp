@@ -69,7 +69,7 @@ QMap<ECardApiResult::Minor, GlobalStatus::Code> ECardApiResult::cConversionMap2 
 
 ECardApiResult ECardApiResult::fromStatus(const GlobalStatus& pStatus)
 {
-	if (pStatus.getStatusCode() == GlobalStatus::Code::No_Error || pStatus.getStatusCode() == GlobalStatus::Code::RemoteReader_CloseCode_NormalClose)
+	if (pStatus.getStatusCode() == GlobalStatus::Code::No_Error)
 	{
 		return createOk();
 	}
@@ -101,7 +101,6 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Card_Unexpected_Transmit_Status, Minor::AL_Unknown_Error);
 
 	addConversionElement(GlobalStatus::Code::No_Error, Minor::null);
-	addConversionElement(GlobalStatus::Code::RemoteReader_CloseCode_NormalClose, Minor::null);
 
 	addConversionElement(GlobalStatus::Code::Workflow_Card_Removed, Minor::IFDL_CancellationByUser);
 
@@ -124,7 +123,7 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_TimeOut, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Proxy_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
-	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Establishment_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Other_Network_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
 
@@ -140,14 +139,13 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Workflow_Redirect_Transmission_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Processing_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Reader_Became_Inaccessible, Minor::AL_Communication_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Reader_Communication_Error, Minor::AL_Communication_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Reader_Device_Connection_Error, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Bluetooth_Reader_Connection_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Reader_Device_Scan_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Network_Ssl_Establishment_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length, Minor::AL_Communication_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Network_Expected_Redirect, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Network_Invalid_Scheme, Minor::AL_Communication_Error);
@@ -173,7 +171,7 @@ void ECardApiResult::initConversionMaps()
 
 	addConversionElement(GlobalStatus::Code::Paos_Error_AL_Internal_Error, Minor::AL_Internal_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity, Minor::AL_Internal_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Unknown_Paos_Form_EidServer, Minor::AL_Internal_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer, Minor::AL_Internal_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, Minor::AL_Internal_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Pin_Blocked_And_Puk_Objectionable, Minor::AL_Internal_Error);
 	addConversionElement(GlobalStatus::Code::Card_Protocol_Error, Minor::AL_Internal_Error);
@@ -207,9 +205,7 @@ void ECardApiResult::initConversionMaps()
 
 	addConversionElement(GlobalStatus::Code::Downloader_Data_Corrupted, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::RemoteReader_CloseCode_Undefined, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::RemoteConnector_InvalidRequest, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::RemoteConnector_EmptyPassword, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::RemoteConnector_NoSupportedApiLevel, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::RemoteConnector_ConnectionTimeout, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::RemoteConnector_ConnectionError, Minor::AL_Unknown_Error);
@@ -347,90 +343,119 @@ QString ECardApiResult::getMessage(Minor pMinor)
 	switch (pMinor)
 	{
 		case Minor::AL_Unknown_Error:
+			//: LABEL ALL_PLATFORMS
 			return tr("An unexpected error has occurred during processing.");
 
 		case Minor::AL_No_Permission:
+			//: LABEL ALL_PLATFORMS
 			return tr("Use of the function by the client application is not permitted.");
 
 		case Minor::AL_Internal_Error:
+			//: LABEL ALL_PLATFORMS
 			return tr("An internal error has occurred during processing.");
 
 		case Minor::AL_Parameter_Error:
+			//: LABEL ALL_PLATFORMS
 			return tr("There was some problem with a provided or omitted parameter.");
 
 		case Minor::AL_Unkown_API_Function:
+			//: LABEL ALL_PLATFORMS
 			return tr("The API function is unknown.");
 
 		case Minor::AL_Not_Initialized:
+			//: LABEL ALL_PLATFORMS
 			return tr("The framework or layer has not been initialized.");
 
 		case Minor::AL_Warning_Connection_Disconnected:
+			//: LABEL ALL_PLATFORMS
 			return tr("The active session has been terminated.");
 
 		case Minor::AL_Session_Terminated_Warning:
+			//: LABEL ALL_PLATFORMS
 			return tr("The active session has been terminated.");
 
 		case Minor::AL_Communication_Error:
+			//: LABEL ALL_PLATFORMS
 			return tr("A Communication error occurred during processing.");
 
 		case Minor::DP_Timeout_Error:
+			//: LABEL ALL_PLATFORMS
 			return tr("The operation was terminated as the set time was exceeded.");
 
 		case Minor::DP_Unknown_Channel_Handle:
+			//: LABEL ALL_PLATFORMS
 			return tr("The operation was aborted as an invalid channel handle was used.");
 
 		case Minor::DP_Communication_Error:
+			//: LABEL ALL_PLATFORMS
 			return tr("A Communication error occurred during processing.");
 
 		case Minor::DP_Trusted_Channel_Establishment_Failed:
+			//: LABEL ALL_PLATFORMS
 			return tr("A trusted channel could not be opened.");
 
 		case Minor::DP_Unknown_Protocol:
+			//: LABEL ALL_PLATFORMS
 			return tr("The operation was aborted as an unknown protocol was used.");
 
 		case Minor::DP_Unknown_Cipher_Suite:
+			//: LABEL ALL_PLATFORMS
 			return tr("The operation was aborted as an unknown cipher suite was used.");
 
 		case Minor::DP_Unknown_Webservice_Binding:
+			//: LABEL ALL_PLATFORMS
 			return tr("The operation was aborted as an unknown web service binding was used.");
 
 		case Minor::DP_Node_Not_Reachable:
+			//: LABEL ALL_PLATFORMS
 			return tr("A Communication error occurred during processing.");
 
 		case Minor::IFDL_Timeout_Error:
+			//: LABEL ALL_PLATFORMS
 			return tr("The operation was terminated as the set time was exceeded.");
 
 		case Minor::IFDL_Terminal_NoCard:
+			//: LABEL ALL_PLATFORMS
 			return tr("The card is missing or was removed.");
 
 		case Minor::IFDL_IO_RepeatedDataMismatch:
+			//: LABEL ALL_PLATFORMS
 			return tr("The new PIN and the confirmation do not match.");
 
 		case Minor::IFDL_IO_UnknownPINFormat:
+			//: LABEL ALL_PLATFORMS
 			return tr("The format of the PIN is wrong.");
 
 		case Minor::KEY_KeyGenerationNotPossible:
+			//: LABEL ALL_PLATFORMS
 			return tr("Signature certificate key generation is not possible.");
 
 		case Minor::SAL_Cancellation_by_User:
+			//: LABEL ALL_PLATFORMS
 			return tr("The process was cancelled by the user.");
 
 		case Minor::IL_Signature_InvalidCertificatePath:
+			//: LABEL ALL_PLATFORMS
 			return tr("One or more certificate checks failed. The operation will be aborted due to security reasons.");
 
 		case Minor::SAL_Invalid_Key:
+			//: LABEL ALL_PLATFORMS
 			return tr("This action cannot be performed. The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.");
 
 		case Minor::SAL_SecurityConditionNotSatisfied:
+			//: LABEL ALL_PLATFORMS
 			return tr("The authenticity of your ID card could not be verified. Please make sure that you are using a genuine ID card. Please note that test applications require the use of a test ID card.");
 
 		case Minor::SAL_MEAC_AgeVerificationFailedWarning:
+			//: LABEL ALL_PLATFORMS
 			return tr("The age verification failed.");
 
 		case Minor::SAL_MEAC_CommunityVerificationFailedWarning:
+			//: LABEL ALL_PLATFORMS
 			return tr("The community verification failed.");
 
 		case Minor::SAL_MEAC_DocumentValidityVerificationFailed:
+			//: LABEL ALL_PLATFORMS
 			return tr("The ID card is invalid or disabled.");
 
 		case Minor::null:

@@ -4,12 +4,11 @@
  * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
+#pragma once
+
 #include "CommandApdu.h"
 
 #include <QByteArrayList>
-#include <QList>
-
-#pragma once
 
 namespace governikus
 {
@@ -17,8 +16,7 @@ namespace governikus
 class InputAPDUInfo
 {
 	public:
-		InputAPDUInfo();
-		InputAPDUInfo(const QByteArray& pInputApdu);
+		explicit InputAPDUInfo(const QByteArray& pInputApdu = QByteArray());
 
 
 		bool isValid() const

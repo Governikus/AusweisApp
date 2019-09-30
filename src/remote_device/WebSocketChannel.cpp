@@ -115,7 +115,7 @@ void WebSocketChannel::onDisconnected()
 	if (mConnection)
 	{
 		Q_EMIT fireClosed(mConnection->closeCode() == QWebSocketProtocol::CloseCodeNormal ?
-				GlobalStatus::Code::RemoteReader_CloseCode_NormalClose :
+				GlobalStatus::Code::No_Error :
 				GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose);
 	}
 }

@@ -75,7 +75,7 @@ class test_StatePreVerification
 		void testSignatureInvalid()
 		{
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2013, 12, 1));
-			auto signature = mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.at(0)->getEcdsaSignature();
+			auto signature = mAuthContext->getDidAuthenticateEac1()->getCvCertificates().at(0)->getEcdsaSignature();
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 			BIGNUM* signaturePart = signature->r;
 #else
@@ -139,13 +139,13 @@ class test_StatePreVerification
 			}
 			settings.save();
 
-			const int expectedCvcaSize = 12;
+			const int expectedCvcaSize = 13;
 			QCOMPARE(mState->mTrustedCvcas.size(), expectedCvcaSize);
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2013, 12, 1));
 			auto& trustedCvcas = const_cast<QVector<QSharedPointer<const CVCertificate> >&>(mState->mTrustedCvcas);
 
-			remove(trustedCvcas, mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.at(3));
-			remove(trustedCvcas, mAuthContext->mDIDAuthenticateEAC1->mEac1InputType.mCvCertificates.at(2));
+			remove(trustedCvcas, mAuthContext->getDidAuthenticateEac1()->getCvCertificates().at(3));
+			remove(trustedCvcas, mAuthContext->getDidAuthenticateEac1()->getCvCertificates().at(2));
 
 			QCOMPARE(mState->mTrustedCvcas.size(), expectedCvcaSize - 2);
 

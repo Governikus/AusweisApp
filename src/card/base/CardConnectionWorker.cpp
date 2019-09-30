@@ -3,7 +3,12 @@
  */
 
 #include "CardConnectionWorker.h"
+
+#include "MSEBuilder.h"
 #include "pace/PaceHandler.h"
+#include "ReadBinaryBuilder.h"
+#include "ResetRetryCounterBuilder.h"
+#include "SelectBuilder.h"
 
 #include <QLoggingCategory>
 
@@ -26,9 +31,10 @@ CardConnectionWorker::CardConnectionWorker(Reader* pReader)
 
 CardConnectionWorker::~CardConnectionWorker()
 {
-	if (hasCard() && mReader->getCard()->isConnected())
+	const auto card = mReader ? mReader->getCard() : nullptr;
+	if (card && card->isConnected())
 	{
-		mReader->getCard()->disconnect();
+		card->disconnect();
 	}
 }
 
@@ -51,12 +57,6 @@ void CardConnectionWorker::setPukInoperative()
 }
 
 
-bool CardConnectionWorker::hasCard() const
-{
-	return !mReader.isNull() && mReader->getCard() != nullptr;
-}
-
-
 QSharedPointer<const EFCardAccess> CardConnectionWorker::getEfCardAccess() const
 {
 	return getReaderInfo().getCardInfo().getEfCardAccess();
@@ -72,7 +72,8 @@ void CardConnectionWorker::onReaderInfoChanged(const QString& pReaderName)
 
 CardReturnCode CardConnectionWorker::transmit(const CommandApdu& pCommandApdu, ResponseApdu& pResponseApdu)
 {
-	if (!hasCard())
+	const auto card = mReader ? mReader->getCard() : nullptr;
+	if (!card)
 	{
 		return CardReturnCode::CARD_NOT_FOUND;
 	}
@@ -88,15 +89,19 @@ CardReturnCode CardConnectionWorker::transmit(const CommandApdu& pCommandApdu, R
 		}
 
 		ResponseApdu securedResponseApdu;
-		returnCode = mReader->getCard()->transmit(securedCommandApdu, securedResponseApdu);
-		if (!mSecureMessaging->decrypt(securedResponseApdu, pResponseApdu))
+		returnCode = card->transmit(securedCommandApdu, securedResponseApdu);
+		pResponseApdu = mSecureMessaging->decrypt(securedResponseApdu);
+		if (pResponseApdu.isEmpty())
 		{
+			qCDebug(::card) << "Stopping Secure Messaging since it failed. The channel therefore must no be re-used.";
+			stopSecureMessaging();
+
 			return CardReturnCode::COMMAND_FAILED;
 		}
 	}
 	else
 	{
-		returnCode = mReader->getCard()->transmit(pCommandApdu, pResponseApdu);
+		returnCode = card->transmit(pCommandApdu, pResponseApdu);
 	}
 
 	return returnCode;
@@ -105,7 +110,7 @@ CardReturnCode CardConnectionWorker::transmit(const CommandApdu& pCommandApdu, R
 
 CardReturnCode CardConnectionWorker::readFile(const FileRef& pFileRef, QByteArray& pFileContent)
 {
-	if (!hasCard())
+	if (!mReader || !mReader->getCard())
 	{
 		return CardReturnCode::CARD_NOT_FOUND;
 	}
@@ -144,6 +149,16 @@ CardReturnCode CardConnectionWorker::readFile(const FileRef& pFileRef, QByteArra
 }
 
 
+void CardConnectionWorker::setProgressMessage(const QString& pMessage)
+{
+	const auto card = mReader ? mReader->getCard() : nullptr;
+	if (card)
+	{
+		card->setProgressMessage(pMessage);
+	}
+}
+
+
 bool CardConnectionWorker::stopSecureMessaging()
 {
 	if (mSecureMessaging.isNull())
@@ -156,26 +171,25 @@ bool CardConnectionWorker::stopSecureMessaging()
 }
 
 
-CardReturnCode CardConnectionWorker::establishPaceChannel(PacePasswordId pPasswordId,
-		const QString& pPasswordValue,
-		EstablishPaceChannelOutput& pChannelOutput)
+EstablishPaceChannelOutput CardConnectionWorker::establishPaceChannel(PacePasswordId pPasswordId,
+		const QString& pPasswordValue)
 {
-	return establishPaceChannel(pPasswordId, pPasswordValue, nullptr, nullptr, pChannelOutput);
+	return establishPaceChannel(pPasswordId, pPasswordValue, nullptr, nullptr);
 }
 
 
-CardReturnCode CardConnectionWorker::establishPaceChannel(PacePasswordId pPasswordId,
+EstablishPaceChannelOutput CardConnectionWorker::establishPaceChannel(PacePasswordId pPasswordId,
 		const QString& pPasswordValue,
 		const QByteArray& pChat,
-		const QByteArray& pCertificateDescription,
-		EstablishPaceChannelOutput& pChannelOutput)
+		const QByteArray& pCertificateDescription)
 {
-	if (!hasCard())
+	const auto card = mReader ? mReader->getCard() : nullptr;
+	if (!card)
 	{
-		pChannelOutput.setPaceReturnCode(CardReturnCode::CARD_NOT_FOUND);
 		return CardReturnCode::CARD_NOT_FOUND;
 	}
-	CardReturnCode returnCode;
+
+	EstablishPaceChannelOutput output;
 
 	qCInfo(support) << "Starting PACE for" << pPasswordId;
 	if (mReader->getReaderInfo().isBasicReader())
@@ -183,35 +197,35 @@ CardReturnCode CardConnectionWorker::establishPaceChannel(PacePasswordId pPasswo
 		Q_ASSERT(!pPasswordValue.isEmpty());
 		PaceHandler paceHandler(sharedFromThis());
 		paceHandler.setChat(pChat);
-		returnCode = paceHandler.establishPaceChannel(pPasswordId, pPasswordValue);
-		pChannelOutput.setPaceReturnCode(returnCode);
-		pChannelOutput.setStatusMseSetAt(paceHandler.getStatusMseSetAt());
+		const auto returnCode = paceHandler.establishPaceChannel(pPasswordId, pPasswordValue);
+		output.setPaceReturnCode(returnCode);
+		output.setStatusMseSetAt(paceHandler.getStatusMseSetAt());
 
 		if (returnCode == CardReturnCode::OK)
 		{
-			pChannelOutput.setCarCurr(paceHandler.getCarCurr());
-			pChannelOutput.setCarPrev(paceHandler.getCarPrev());
-			pChannelOutput.setIdIcc(paceHandler.getIdIcc());
-			pChannelOutput.setEfCardAccess(getEfCardAccess()->getContentBytes());
-			pChannelOutput.setPaceReturnCode(CardReturnCode::OK);
+			output.setCarCurr(paceHandler.getCarCurr());
+			output.setCarPrev(paceHandler.getCarPrev());
+			output.setIdIcc(paceHandler.getIdIcc());
+			output.setEfCardAccess(getEfCardAccess()->getContentBytes());
+			output.setPaceReturnCode(CardReturnCode::OK);
 			mSecureMessaging.reset(new SecureMessaging(paceHandler.getPaceProtocol(), paceHandler.getEncryptionKey(), paceHandler.getMacKey()));
 		}
 	}
 	else
 	{
 		Q_ASSERT(pPasswordValue.isNull());
-		returnCode = mReader->getCard()->establishPaceChannel(pPasswordId, pChat, pCertificateDescription, pChannelOutput);
-		pChannelOutput.setPaceReturnCode(returnCode);
+		output = card->establishPaceChannel(pPasswordId, pChat, pCertificateDescription);
 	}
 
-	qCInfo(support) << "Finished PACE for" << pPasswordId << "with result" << returnCode;
-	return returnCode;
+	qCInfo(support) << "Finished PACE for" << pPasswordId << "with result" << output.getPaceReturnCode();
+	return output;
 }
 
 
 CardReturnCode CardConnectionWorker::destroyPaceChannel()
 {
-	if (!hasCard())
+	const auto card = mReader ? mReader->getCard() : nullptr;
+	if (!card)
 	{
 		return CardReturnCode::CARD_NOT_FOUND;
 	}
@@ -222,20 +236,21 @@ CardReturnCode CardConnectionWorker::destroyPaceChannel()
 		stopSecureMessaging();
 		MSEBuilder builder(MSEBuilder::P1::ERASE, MSEBuilder::P2::DEFAULT_CHANNEL);
 		ResponseApdu response;
-		CardReturnCode cardReturnCode = mReader->getCard()->transmit(builder.build(), response);
-		qCDebug(card) << "Destroying PACE channel with invalid command causing 6700 as return code";
+		CardReturnCode cardReturnCode = card->transmit(builder.build(), response);
+		qCDebug(::card) << "Destroying PACE channel with invalid command causing 6700 as return code";
 		return cardReturnCode;
 	}
 	else
 	{
-		return mReader->getCard()->destroyPaceChannel();
+		return card->destroyPaceChannel();
 	}
 }
 
 
 CardReturnCode CardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu)
 {
-	if (!hasCard())
+	const auto card = mReader ? mReader->getCard() : nullptr;
+	if (!card)
 	{
 		return CardReturnCode::CARD_NOT_FOUND;
 	}
@@ -246,7 +261,7 @@ CardReturnCode CardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pT
 		ResetRetryCounterBuilder commandBuilder(pNewPin.toUtf8());
 		if (transmit(commandBuilder.build(), pResponseApdu) != CardReturnCode::OK || pResponseApdu.getReturnCode() != StatusCode::SUCCESS)
 		{
-			qCWarning(card) << "Modify PIN failed";
+			qCWarning(::card) << "Modify PIN failed";
 			return CardReturnCode::COMMAND_FAILED;
 		}
 		return CardReturnCode::OK;
@@ -254,14 +269,14 @@ CardReturnCode CardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pT
 	else
 	{
 		Q_ASSERT(pNewPin.isEmpty());
-		return mReader->getCard()->setEidPin(pTimeoutSeconds, pResponseApdu);
+		return card->setEidPin(pTimeoutSeconds, pResponseApdu);
 	}
 }
 
 
 CardReturnCode CardConnectionWorker::updateRetryCounter()
 {
-	if (!hasCard())
+	if (!mReader || !mReader->getCard())
 	{
 		return CardReturnCode::CARD_NOT_FOUND;
 	}

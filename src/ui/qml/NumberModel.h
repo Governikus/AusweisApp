@@ -13,8 +13,6 @@
 #include <QObject>
 #include <QSharedPointer>
 
-class test_NumberModel;
-
 namespace governikus
 {
 
@@ -23,14 +21,14 @@ class NumberModel
 {
 	Q_OBJECT
 	friend class Env;
-	friend class ::test_NumberModel;
 
-	Q_PROPERTY(governikus::PacePasswordId establishPaceChannelType READ getEstablishPaceChannelType)
+	Q_PROPERTY(QmlPasswordType passwordType READ getPasswordType NOTIFY firePasswordTypeChanged)
 	Q_PROPERTY(QString can READ getCan WRITE setCan NOTIFY fireCanChanged)
 	Q_PROPERTY(QString pin READ getPin WRITE setPin NOTIFY firePinChanged)
 	Q_PROPERTY(QString newPin READ getNewPin WRITE setNewPin NOTIFY fireNewPinChanged)
 	Q_PROPERTY(QString puk READ getPuk WRITE setPuk NOTIFY firePukChanged)
-	Q_PROPERTY(bool hasError READ hasError NOTIFY fireReaderInfoChanged)
+	Q_PROPERTY(bool hasError READ hasError NOTIFY fireInputErrorChanged)
+	Q_PROPERTY(bool hasPasswordError READ hasPasswordError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(CardReturnCode inputErrorCode READ getInputErrorCode NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(QString inputError READ getInputError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(int retryCounter READ getRetryCounter NOTIFY fireReaderInfoChanged)
@@ -41,6 +39,7 @@ class NumberModel
 	private:
 		QSharedPointer<WorkflowContext> mContext;
 		bool mRequestTransportPin;
+		bool mRequestNewPin;
 
 	private Q_SLOTS:
 		void onCardConnectionChanged();
@@ -51,9 +50,16 @@ class NumberModel
 		static NumberModel& getInstance();
 
 	public:
+		enum class QmlPasswordType
+		{
+			PASSWORD_PIN, PASSWORD_CAN, PASSWORD_PUK, PASSWORD_NEW_PIN, PASSWORD_REMOTE_PIN
+		};
+		Q_ENUM(QmlPasswordType)
+
 		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
-		PacePasswordId getEstablishPaceChannelType() const;
+		QmlPasswordType getPasswordType() const;
+		Q_INVOKABLE void requestNewPin();
 
 		QString getCan() const;
 		void setCan(const QString& pCan);
@@ -67,7 +73,8 @@ class NumberModel
 		QString getPuk() const;
 		void setPuk(const QString& pPuk);
 
-		bool hasError();
+		bool hasError() const;
+		bool hasPasswordError() const;
 		CardReturnCode getInputErrorCode() const;
 		QString getInputError() const;
 
@@ -90,6 +97,7 @@ class NumberModel
 		void fireReaderInfoChanged();
 		void fireCanAllowedModeChanged();
 		void fireRequestTransportPinChanged();
+		void firePasswordTypeChanged();
 };
 
 

@@ -3,5 +3,5 @@ module FeedbackView
 internal LogTitleBarControls LogTitleBarControls.qml
 
 Feedback 1.0 Feedback.qml
-Log 1.0 Log.qml
+LogView 1.0 LogView.qml
 StoreFeedbackPopup 1.0 StoreFeedbackPopup.qml

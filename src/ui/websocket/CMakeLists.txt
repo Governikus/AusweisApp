@@ -8,6 +8,6 @@
 IF(TARGET Qt5::WebSockets)
 	ADD_PLATFORM_LIBRARY(AusweisAppUiWebsocket)
 
-	TARGET_LINK_LIBRARIES(AusweisAppUiWebsocket Qt5::Core Qt5::WebSockets AusweisAppUi AusweisAppUiJsonApi AusweisAppNetwork AusweisAppGlobal)
+	TARGET_LINK_LIBRARIES(AusweisAppUiWebsocket Qt5::Core Qt5::WebSockets AusweisAppUi AusweisAppUiJson AusweisAppNetwork AusweisAppGlobal)
 	TARGET_COMPILE_DEFINITIONS(AusweisAppUiWebsocket PRIVATE QT_STATICPLUGIN)
 ENDIF()

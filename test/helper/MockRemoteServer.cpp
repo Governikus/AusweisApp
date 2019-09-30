@@ -24,7 +24,7 @@ bool MockRemoteServer::isRunning() const
 
 bool MockRemoteServer::start(const QString& pServerName)
 {
-	Q_UNUSED(pServerName);
+	Q_UNUSED(pServerName)
 	mRunning = true;
 	return true;
 }
@@ -69,4 +69,10 @@ QSslCertificate MockRemoteServer::getCurrentCertificate() const
 const QSharedPointer<ServerMessageHandler>& MockRemoteServer::getMessageHandler() const
 {
 	return mServerMessageHandler;
+}
+
+
+void MockRemoteServer::setMessageHandler(const QSharedPointer<ServerMessageHandler>& pHandler)
+{
+	mServerMessageHandler = pHandler;
 }

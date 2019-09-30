@@ -1,5 +1,11 @@
+/*
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
+
+import Governikus.Style 1.0
 
 import "Utils.js" as Utils
 
@@ -7,30 +13,36 @@ Item {
 	property alias text: field.text
 	property alias displayText: field.displayText
 	property alias echoMode: field.echoMode
+	property int enterKeyType: Qt.EnterKeyDefault
 	signal accepted
 
 	property bool valid: true
 
-	height: Utils.dp(24)
-	width: Utils.dp(240)
+	height: 24
+	width: 240
+
+	Accessible.role: Accessible.EditableText
+	Accessible.editable: true
+	Accessible.name: echoMode === TextInput.Normal ? displayText : ""
 
 	Rectangle {
-		radius: Utils.dp(6)
+		radius: 6
 		anchors.fill: parent
 		border.color: Constants.red
-		color: enabled ? "white" : Constants.grey
-		border.width: valid ? 0 : Utils.dp(2)
+		color: enabled ? Constants.white : Constants.grey
+		border.width: valid ? 0 : 2
 	}
 
 	TextField {
 		id: field
 		anchors.fill: parent
-		anchors.leftMargin: Utils.dp(6)
-		anchors.rightMargin: Utils.dp(6)
+		anchors.leftMargin: 6
+		anchors.rightMargin: 6
 		padding: 0
-		font.pixelSize: Constants.normal_font_size
+		font.pixelSize: Style.dimens.normal_font_size
 		onAccepted: parent.accepted()
 		background: Item {}
+		EnterKey.type: enterKeyType
 	}
 
 	onActiveFocusChanged: if (focus) field.forceActiveFocus()

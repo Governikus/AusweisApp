@@ -25,7 +25,7 @@ BusyOverlay::BusyOverlay(bool pStart, QWidget* pParent)
 
 	setStyleSheet(QStringLiteral("background-color: white;"));
 
-	QGraphicsOpacityEffect* opacity = new QGraphicsOpacityEffect(this);
+	auto* opacity = new QGraphicsOpacityEffect(this);
 	opacity->setOpacity(0.9);
 	setGraphicsEffect(opacity);
 

@@ -34,8 +34,11 @@ class TrayIcon
 		TrayIcon();
 		~TrayIcon();
 
+		const QIcon& getIcon() const;
 		void create();
 		void hide();
+
+		void showMessage(const QString& pTitle, const QString& pMessage);
 
 	Q_SIGNALS:
 		void fireShow();

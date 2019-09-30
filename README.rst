@@ -134,7 +134,7 @@ Für iOS wird die AusweisApp2 mittels XCode gebaut!
 
    $ cd build
    $ cmake -DCMAKE_PREFIX_PATH=/Users/governikus/Toolchain/dist -DCMAKE_TOOLCHAIN_FILE=../AusweisApp2/cmake/iOS.toolchain.cmake -DCMAKE_BUILD_TYPE=release ../AusweisApp2 -GXcode
-   $ xcodebuild -target install -configuration Release
+   $ xcodebuild -configuration Release
    $ xcodebuild -target ipa -configuration Release
 
 

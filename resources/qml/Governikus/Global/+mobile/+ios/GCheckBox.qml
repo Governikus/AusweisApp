@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
@@ -9,19 +13,25 @@ import "Utils.js" as Utils
 CheckBox {
 	id: control
 
+	Accessible.role: Accessible.CheckBox
+	Accessible.checkable: true
+	Accessible.checked: checked
+	Accessible.name: text
+	Accessible.onPressAction: toggle()
+
 	indicator: Rectangle {
-		implicitHeight: Utils.dp(26)
-		implicitWidth: Utils.dp(26)
+		implicitHeight: 26
+		implicitWidth: 26
 		anchors.centerIn: parent
 
 		color: Constants.white
 		border.color: Constants.black
-		border.width: Utils.dp(1)
+		border.width: 1
 
 		Image {
 			source: "qrc:///images/iOS/CheckedCheckbox.png"
 			anchors.fill: parent
-			anchors.margins: Utils.dp(2)
+			anchors.margins: 2
 			fillMode: Image.PreserveAspectFit
 			visible: control.checked
 		}

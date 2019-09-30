@@ -6,7 +6,7 @@
 
 #include "asn1/KnownOIDs.h"
 #include "asn1/PaceInfo.h"
-#include "Commands.h"
+#include "MSEBuilder.h"
 #include "pace/ec/EllipticCurveFactory.h"
 #include "pace/KeyAgreement.h"
 #include "PersoSimWorkaround.h"
@@ -105,7 +105,9 @@ CardReturnCode PaceHandler::establishPaceChannel(PacePasswordId pPasswordId, con
 			qCDebug(card) << "Pace channel established";
 			return CardReturnCode::OK;
 	}
+
 	Q_UNREACHABLE();
+	return CardReturnCode::UNDEFINED;
 }
 
 

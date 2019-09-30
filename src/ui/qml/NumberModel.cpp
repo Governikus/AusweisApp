@@ -21,6 +21,7 @@ NumberModel::NumberModel()
 	: QObject()
 	, mContext()
 	, mRequestTransportPin(false)
+	, mRequestNewPin(false)
 {
 	const auto readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &NumberModel::onReaderInfoChanged);
@@ -45,6 +46,7 @@ void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 		connect(mContext.data(), &WorkflowContext::fireCanChanged, this, &NumberModel::fireCanChanged);
 		connect(mContext.data(), &WorkflowContext::firePinChanged, this, &NumberModel::firePinChanged);
 		connect(mContext.data(), &WorkflowContext::fireCanAllowedModeChanged, this, &NumberModel::fireCanAllowedModeChanged);
+		connect(mContext.data(), &WorkflowContext::firePasswordTypeChanged, this, &NumberModel::firePasswordTypeChanged);
 
 		const auto changePinContext = mContext.objectCast<ChangePinContext>();
 		if (changePinContext)
@@ -55,7 +57,8 @@ void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 
 		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &NumberModel::onCardConnectionChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &NumberModel::fireReaderInfoChanged);
-		connect(mContext.data(), &WorkflowContext::fireLastPaceResultChanged, this, &NumberModel::fireInputErrorChanged);
+		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &NumberModel::fireInputErrorChanged);
+		connect(mContext.data(), &WorkflowContext::firePaceResultUpdated, this, &NumberModel::fireInputErrorChanged);
 
 		// The length of the pin doesn't matter for the core. Requesting
 		// a 5 or 6 digits PIN is only part of the gui. Therefore we handle
@@ -71,6 +74,7 @@ void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 	{
 		mRequestTransportPin = false;
 	}
+	mRequestNewPin = false;
 
 	Q_EMIT fireCanChanged();
 	Q_EMIT firePinChanged();
@@ -80,12 +84,48 @@ void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 	Q_EMIT fireReaderInfoChanged();
 	Q_EMIT fireCanAllowedModeChanged();
 	Q_EMIT fireRequestTransportPinChanged();
+	Q_EMIT firePasswordTypeChanged();
 }
 
 
-PacePasswordId NumberModel::getEstablishPaceChannelType() const
+NumberModel::QmlPasswordType NumberModel::getPasswordType() const
 {
-	return mContext ? mContext->getEstablishPaceChannelType() : PacePasswordId::UNKNOWN;
+	if (!mContext)
+	{
+		return QmlPasswordType::PASSWORD_PIN;
+	}
+
+	if (mRequestNewPin)
+	{
+		return QmlPasswordType::PASSWORD_NEW_PIN;
+	}
+
+	switch (mContext->getEstablishPaceChannelType())
+	{
+		case PacePasswordId::UNKNOWN:
+		case PacePasswordId::PACE_MRZ:
+		case PacePasswordId::PACE_PIN:
+			return QmlPasswordType::PASSWORD_PIN;
+
+		case PacePasswordId::PACE_CAN:
+			return QmlPasswordType::PASSWORD_CAN;
+
+		case PacePasswordId::PACE_PUK:
+			return QmlPasswordType::PASSWORD_PUK;
+	}
+
+	Q_UNREACHABLE();
+	return QmlPasswordType::PASSWORD_PIN;
+}
+
+
+void NumberModel::requestNewPin()
+{
+	if (!mRequestNewPin)
+	{
+		mRequestNewPin = true;
+		Q_EMIT firePasswordTypeChanged();
+	}
 }
 
 
@@ -140,6 +180,9 @@ void NumberModel::setNewPin(const QString& pNewPin)
 	{
 		remoteServiceContext->setNewPin(pNewPin);
 	}
+
+	mRequestNewPin = false;
+	Q_EMIT firePasswordTypeChanged();
 }
 
 
@@ -158,9 +201,15 @@ void NumberModel::setPuk(const QString& pPuk)
 }
 
 
-bool NumberModel::hasError()
+bool NumberModel::hasError() const
 {
 	return getInputErrorCode() != CardReturnCode::OK || Env::getSingleton<ApplicationModel>()->isExtendedLengthApdusUnsupported() || isPinDeactivated();
+}
+
+
+bool NumberModel::hasPasswordError() const
+{
+	return CardReturnCodeUtil::equalsWrongPacePassword(getInputErrorCode());
 }
 
 
@@ -187,22 +236,27 @@ QString NumberModel::getInputError() const
 			return QString();
 
 		case CardReturnCode::INVALID_PIN:
+			//: INFO ALL_PLATFORMS The wrong PIN was entered on the first attempt.
 			return tr("The given PIN is not correct. You have 2 tries to enter the correct PIN.");
 
 		case CardReturnCode::INVALID_PIN_2:
+			//: INFO ALL_PLATFORMS The wrong PIN was entered twice, the next attempt requires the CAN for additional verification.
 			return tr("You have entered the wrong PIN twice. "
 					  "Prior to a third attempt, you have to enter your six-digit card access number first. "
 					  "You can find your card access number on the front of your ID card.");
 
 		case CardReturnCode::INVALID_PIN_3:
+			//: INFO ALL_PLATFORMS The PIN was entered wrongfully three times, the id card needs to be unlocked using the PUK.
 			return tr("You have entered a wrong PIN three times. "
 					  "Your PIN is now blocked. "
 					  "You have to enter the PUK now for unblocking.");
 
 		case CardReturnCode::INVALID_CAN:
+			//: INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again.
 			return tr("You have entered a wrong CAN, please try again.");
 
 		case CardReturnCode::INVALID_PUK:
+			//: INFO ALL_PLATFORMS The PUK entered wrongfully and needs to be supplied again.
 			return tr("You have entered a wrong PUK. "
 					  "Please try again.");
 

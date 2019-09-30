@@ -36,7 +36,7 @@ namespace governikus
  * UnsignedInteger -- see TR-03110 D.2.1.1
  *
  */
-typedef struct ecdsapublickey_st
+using EcdsaPublicKey = struct ecdsapublickey_st
 {
 	ASN1_OBJECT* mObjectIdentifier;
 	ASN1_OCTET_STRING* mPrimeModulus;
@@ -66,8 +66,7 @@ typedef struct ecdsapublickey_st
 
 	public:
 		static int decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt, void* pExarg);
-
-} EcdsaPublicKey;
+};
 
 
 DECLARE_ASN1_FUNCTIONS(EcdsaPublicKey)

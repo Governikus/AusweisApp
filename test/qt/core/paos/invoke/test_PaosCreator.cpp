@@ -13,6 +13,8 @@
 
 using namespace governikus;
 
+Q_DECLARE_METATYPE(PaosCreator::Namespace)
+
 namespace
 {
 struct test_PaosCreatorDummy
@@ -98,20 +100,36 @@ class test_PaosCreator
 		}
 
 
+		void namespaces_data()
+		{
+			QTest::addColumn<PaosCreator::Namespace>("namespaceName");
+			QTest::addColumn<QString>("suffix");
+			QTest::addColumn<QString>("namespaceString");
+			QTest::addColumn<QString>("prefixString");
+			QTest::addColumn<QString>("type");
+
+			QTest::newRow("addressing") << PaosCreator::Namespace::ADDRESSING << QString("test") << QString("http://www.w3.org/2005/03/addressing") << QString("wsa:test") << QString("wsa:test");
+			QTest::newRow("dss") << PaosCreator::Namespace::DSS << QString() << QString("urn:oasis:names:tc:dss:1.0:core:schema") << QString("xmlns:dss") << QString("dss:");
+			QTest::newRow("ecard") << PaosCreator::Namespace::ECARD << QString("ecard") << QString("http://www.bsi.bund.de/ecard/api/1.1") << QString("ecard:ecard") << QString("ecard:ecard");
+			QTest::newRow("paos") << PaosCreator::Namespace::PAOS << QString("") << QString("urn:liberty:paos:2006-08") << QString("paos:") << QString("paos:");
+			QTest::newRow("techschema") << PaosCreator::Namespace::TECHSCHEMA << QString(" ") << QString("urn:iso:std:iso-iec:24727:tech:schema") << QString("iso: ") << QString("iso: ");
+			QTest::newRow("xsd") << PaosCreator::Namespace::XSD << QString() << QString("http://www.w3.org/2001/XMLSchema") << QString("xmlns:xsd") << QString("xsd:");
+			QTest::newRow("xsi") << PaosCreator::Namespace::XSI << QString() << QString("http://www.w3.org/2001/XMLSchema-instance") << QString("xmlns:xsi") << QString("xsi:");
+			QTest::newRow("soap") << PaosCreator::Namespace::SOAP << QString("test") << QString("http://schemas.xmlsoap.org/soap/envelope/") << QString("soap:test") << QString("soap:test");
+		}
+
+
 		void namespaces()
 		{
-			static int count = 8;
+			QFETCH(PaosCreator::Namespace, namespaceName);
+			QFETCH(QString, suffix);
+			QFETCH(QString, namespaceString);
+			QFETCH(QString, prefixString);
+			QFETCH(QString, type);
 
-			QCOMPARE(PaosCreator::mNamespace.count(), count);
-			QCOMPARE(PaosCreator::mNamespacePrefix.count(), count + 1); // + DEFAULT
-
-			QCOMPARE(PaosCreator::mNamespace.value(PaosCreator::Namespace::ADDRESSING), QString("http://www.w3.org/2005/03/addressing"));
-			QCOMPARE(PaosCreator::mNamespacePrefix.value(PaosCreator::Namespace::ADDRESSING), QString("wsa"));
-
-			QCOMPARE(PaosCreator::getNamespace(PaosCreator::Namespace::ADDRESSING), QString("http://www.w3.org/2005/03/addressing"));
-			QCOMPARE(PaosCreator::getNamespacePrefix(PaosCreator::Namespace::ADDRESSING, "suffix"), QString("wsa:suffix"));
-			QCOMPARE(PaosCreator::getNamespacePrefix(PaosCreator::Namespace::ADDRESSING), QString("xmlns:wsa"));
-			QCOMPARE(PaosCreator::getNamespaceType(PaosCreator::Namespace::ADDRESSING, "test"), QString("wsa:test"));
+			QCOMPARE(PaosCreator::getNamespace(namespaceName), namespaceString);
+			QCOMPARE(PaosCreator::getNamespacePrefix(namespaceName, suffix), prefixString);
+			QCOMPARE(PaosCreator::getNamespaceType(namespaceName, suffix), type);
 		}
 
 

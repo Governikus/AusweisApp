@@ -1,0 +1,12 @@
+module SettingsView
+
+internal CardReaderDelegate CardReaderDelegate.qml
+internal RemoteReaderDelegate RemoteReaderDelegate.qml
+internal GeneralSettings GeneralSettings.qml
+internal DeveloperSettings DeveloperSettings.qml
+internal SecurityAndPrivacySettings SecurityAndPrivacySettings.qml
+
+CardReaderView 1.0 CardReaderView.qml
+RemoteReaderView 1.0 RemoteReaderView.qml
+SettingsView 1.0 SettingsView.qml
+TabbedReaderView 1.0 TabbedReaderView.qml

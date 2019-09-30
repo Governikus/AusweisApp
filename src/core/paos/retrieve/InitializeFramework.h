@@ -21,7 +21,7 @@ class InitializeFramework
 		virtual bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
 
 	public:
-		InitializeFramework(const QByteArray& pXmlData);
+		explicit InitializeFramework(const QByteArray& pXmlData);
 };
 
 } // namespace governikus

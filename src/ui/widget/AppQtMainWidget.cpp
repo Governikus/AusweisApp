@@ -55,7 +55,7 @@ AppQtMainWidget::AppQtMainWidget()
 
 	mUi->appLogoWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
 
-	QStackedLayout* centralStackLayout = qobject_cast<QStackedLayout*>(mUi->centralWidget->layout());
+	auto* centralStackLayout = qobject_cast<QStackedLayout*>(mUi->centralWidget->layout());
 	centralStackLayout->setStackingMode(QStackedLayout::StackAll);
 	centralStackLayout->setCurrentIndex(1);
 
@@ -92,6 +92,7 @@ AppQtMainWidget::AppQtMainWidget()
 	connect(mUi->settingsPage, &SettingsWidget::changePinRequested, this, &AppQtMainWidget::fireChangePinRequested);
 	connect(mUi->settingsPage, &SettingsWidget::diagnosisRequested, this, &AppQtMainWidget::fireDiagnosisRequested);
 	connect(mUi->settingsPage, &SettingsWidget::settingsDone, this, &AppQtMainWidget::onSettingsDone);
+	connect(mUi->settingsPage, &SettingsWidget::fireSwitchUiRequested, this, &AppQtMainWidget::fireSwitchUiRequested);
 
 	connect(mUi->germanButton, &QPushButton::clicked, this, [&]()
 			{
@@ -168,7 +169,7 @@ AppQtMainWidget::~AppQtMainWidget()
 
 void AppQtMainWidget::showEvent(QShowEvent* pEvent)
 {
-	Q_UNUSED(pEvent);
+	Q_UNUSED(pEvent)
 	mCloseWithoutConfirmation = false;
 }
 
@@ -251,7 +252,7 @@ void AppQtMainWidget::workflowActivated(WorkflowWidgetParent pParent, const QStr
 	while (containingWidget != nullptr)
 	{
 		QWidget* containerParent = containingWidget->parentWidget();
-		if (QStackedWidget* stackedWidget = qobject_cast<QStackedWidget*>(containerParent))
+		if (auto* stackedWidget = qobject_cast<QStackedWidget*>(containerParent))
 		{
 			mSelectedPagesBeforeWorkflow += stackedWidget->currentWidget();
 			stackedWidget->setCurrentWidget(containingWidget);
@@ -275,7 +276,7 @@ void AppQtMainWidget::workflowDeactivated()
 
 	for (auto widget : qAsConst(mSelectedPagesBeforeWorkflow))
 	{
-		if (QStackedWidget* stackedWidget = qobject_cast<QStackedWidget*>(widget->parentWidget()))
+		if (auto* stackedWidget = qobject_cast<QStackedWidget*>(widget->parentWidget()))
 		{
 			stackedWidget->setCurrentWidget(widget);
 		}
@@ -492,7 +493,7 @@ void AppQtMainWidget::onTabButtonToggled(QAbstractButton* pButton, bool pChecked
 
 void AppQtMainWidget::onTabActionTriggered()
 {
-	if (QAction* action = qobject_cast<QAction*>(sender()))
+	if (auto* action = qobject_cast<QAction*>(sender()))
 	{
 		if (QAbstractButton* button = mTabAction2Button.value(action))
 		{
@@ -542,7 +543,7 @@ void AppQtMainWidget::onContentActionClicked()
 	QString name = mUi->stackedWidget->widget(mUi->stackedWidget->currentIndex())->objectName();
 	if (name.startsWith(QLatin1String("settingsPage")))
 	{
-		SettingsWidget* settingsWidget = static_cast<SettingsWidget*>(mUi->stackedWidget->widget(mUi->stackedWidget->currentIndex()));
+		auto* settingsWidget = static_cast<SettingsWidget*>(mUi->stackedWidget->widget(mUi->stackedWidget->currentIndex()));
 		HelpAction::openContextHelp(settingsWidget->getActiveTabObjectName());
 	}
 	else
@@ -554,7 +555,7 @@ void AppQtMainWidget::onContentActionClicked()
 
 void AppQtMainWidget::onAboutActionClicked()
 {
-	AboutDialog* dialog = new AboutDialog(this);
+	auto* dialog = new AboutDialog(this);
 	dialog->show();
 }
 

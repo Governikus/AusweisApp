@@ -7,14 +7,13 @@
 #include "AppSettings.h"
 #include "context/AuthContext.h"
 #include "Env.h"
-#include "MockNetworkManager.h"
+#include "paos/retrieve/DidAuthenticateEac1Parser.h"
 #include "states/StateBuilder.h"
 
-#include <QScopedPointer>
-#include <QSharedPointer>
-#include <QtCore>
+#include "MockNetworkManager.h"
+#include "TestFileHelper.h"
+
 #include <QtTest>
-#include <QThread>
 
 using namespace governikus;
 
@@ -29,6 +28,26 @@ class test_StateCheckRefreshAddress
 
 	Q_SIGNALS:
 		void fireStateStart(QEvent* pEvent);
+
+	private:
+		static QSharedPointer<TcToken> createTcToken(const QByteArray& redirectUrl)
+		{
+			QByteArray begin("<?xml version=\"1.0\"?>"
+							 "<TCTokenType>"
+							 "  <ServerAddress>https://eid-server.example.de/entrypoint</ServerAddress>"
+							 "  <SessionIdentifier>1A2BB129</SessionIdentifier>"
+							 "  <RefreshAddress>");
+			QByteArray end("</RefreshAddress>"
+						   "  <Binding> urn:liberty:paos:2006-08 </Binding>"
+						   "  <PathSecurity-Protocol> urn:ietf:rfc:4279 </PathSecurity-Protocol>"
+						   "  <PathSecurity-Parameters>"
+						   "    <PSK> 4BC1A0B5 </PSK>"
+						   "  </PathSecurity-Parameters>"
+						   "</TCTokenType>");
+			QByteArray data = begin.append(redirectUrl).append(end);
+			return QSharedPointer<TcToken>(new TcToken(data));
+		}
+
 
 	private Q_SLOTS:
 		void init()
@@ -50,6 +69,66 @@ class test_StateCheckRefreshAddress
 		}
 
 
+		void runNoTcToken()
+		{
+			QSignalSpy spyContinue(mState.data(), &StateCheckRefreshAddress::fireContinue);
+
+			QTest::ignoreMessage(QtDebugMsg, "Invalid TCToken");
+			mState->run();
+			QCOMPARE(spyContinue.count(), 1);
+		}
+
+
+		void run_data()
+		{
+			QTest::addColumn<QByteArray>("redirectUrl");
+			QTest::addColumn<QString>("tcTokenUrl");
+			QTest::addColumn<QStringList>("messages");
+
+			const QStringList msg1(QString("Invalid RefreshAddress: test"));
+			const QStringList msg2(QString("Invalid RefreshAddress: http://service.example.de/loggedin?7eb39f62"));
+			const QStringList msg3 = {QString("Subject URL from AT CVC (eService certificate) description: \"https://service.example.de\""), QString("Current redirect URL: \"https://service.example.de/loggedin?7eb39f62\""), QString("SOP-Check succeeded, abort process.")};
+			const QStringList msg4 = {QString("Subject URL from AT CVC (eService certificate) description: \"https://test.de\""), QString("Current redirect URL: \"https://service.example.de/loggedin?7eb39f62\""), QString("SOP-Check failed, start process.")};
+
+			QTest::newRow("urlInvalid") << QByteArray("test") << QString() << msg1;
+			QTest::newRow("notHttps") << QByteArray("http://service.example.de/loggedin?7eb39f62") << QString("http://service.example.de") << msg2;
+			QTest::newRow("matchingSameOriginPolicy") << QByteArray("https://service.example.de/loggedin?7eb39f62") << QString("https://service.example.de") << msg3;
+			QTest::newRow("notMatchingSameOriginPolicy") << QByteArray("https://service.example.de/loggedin?7eb39f62") << QString("https://test.de") << msg4;
+		}
+
+
+		void run()
+		{
+			QFETCH(QByteArray, redirectUrl);
+			QFETCH(QString, tcTokenUrl);
+			QFETCH(QStringList, messages);
+
+			QSignalSpy spyContinue(mState.data(), &StateCheckRefreshAddress::fireContinue);
+
+			const auto& tcToken = createTcToken(redirectUrl);
+			const QUrl url(tcTokenUrl);
+			QString urlAsString(QString::fromUtf8(redirectUrl));
+			QUrl redirectAddress(urlAsString);
+			mAuthContext->setTcToken(tcToken);
+			mAuthContext->setTcTokenUrl(url);
+
+			for (const auto& msg : messages)
+			{
+				QTest::ignoreMessage(QtDebugMsg, msg.toLocal8Bit().data());
+			}
+			mState->run();
+			QCOMPARE(mState->mUrl, redirectAddress);
+			if (redirectAddress.isValid() && redirectAddress.scheme() == QLatin1String("https"))
+			{
+				QCOMPARE(mState->mSubjectUrl, url);
+			}
+			else
+			{
+				QCOMPARE(spyContinue.count(), 1);
+			}
+		}
+
+
 		void mappingToCommunicationError()
 		{
 			const QVector<GlobalStatus::Code> states = QVector<GlobalStatus::Code>()
@@ -57,7 +136,7 @@ class test_StateCheckRefreshAddress
 					<< GlobalStatus::Code::Network_Ssl_Establishment_Error
 					<< GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length
 					<< GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length
-					<< GlobalStatus::Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description
+					<< GlobalStatus::Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description
 					<< GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url
 					<< GlobalStatus::Code::Workflow_Network_Expected_Redirect
 					<< GlobalStatus::Code::Workflow_Network_Invalid_Scheme
@@ -97,17 +176,8 @@ class test_StateCheckRefreshAddress
 
 		void abortIfRefreshAddressIsNotHttps()
 		{
-			QSharedPointer<TcToken> tcToken(new TcToken("<?xml version=\"1.0\"?>"
-														"<TCTokenType>"
-														"  <ServerAddress>https://eid-server.example.de/entrypoint</ServerAddress>"
-														"  <SessionIdentifier>1A2BB129</SessionIdentifier>"
-														"  <RefreshAddress>http://service.example.de/loggedin?7eb39f62</RefreshAddress>"
-														"  <Binding> urn:liberty:paos:2006-08 </Binding>"
-														"  <PathSecurity-Protocol> urn:ietf:rfc:4279 </PathSecurity-Protocol>"
-														"  <PathSecurity-Parameters>"
-														"    <PSK> 4BC1A0B5 </PSK>"
-														"  </PathSecurity-Parameters>"
-														"</TCTokenType>"));
+			const QByteArray& redirectAddress("http://service.example.de/loggedin?7eb39f62");
+			const auto& tcToken = createTcToken(redirectAddress);
 			mAuthContext->setTcToken(tcToken);
 
 			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireContinue);
@@ -146,9 +216,15 @@ class test_StateCheckRefreshAddress
 			const QUrl tcTokenUrl("http://test/");
 			mAuthContext->setTcTokenUrl(tcTokenUrl);
 
+			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml");
+			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(false);
 			QTest::ignoreMessage(QtWarningMsg, "No subjectURL/certificate description available, take the TcToken-URL instead");
 			QCOMPARE(mState->determineSubjectUrl(), tcTokenUrl);
+
+			mAuthContext->setDidAuthenticateEac1(eac1);
+			QCOMPARE(mState->determineSubjectUrl(), QUrl("https://dev-demo.governikus-eid.de:8443"));
 
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(true);
 			QCOMPARE(mState->determineSubjectUrl(), tcTokenUrl);

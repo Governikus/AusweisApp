@@ -7,9 +7,11 @@
 #pragma once
 
 #include "messages/BluetoothIDs.h"
+
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(card)
+Q_DECLARE_LOGGING_CATEGORY(bluetooth)
+
 
 namespace governikus
 {
@@ -36,13 +38,13 @@ class BluetoothMessageParameter
 				pDest = static_cast<T>(pValue.at(0));
 				if (!Enum<T>::isValue(pValue.at(0)))
 				{
-					qCWarning(card) << "Value is unknown:" << pDest;
+					qCWarning(bluetooth) << "Value is unknown:" << pDest;
 				}
 				return true;
 			}
 			else
 			{
-				qCWarning(card) << "Content has wrong size:" << pValue.toHex();
+				qCWarning(bluetooth) << "Content has wrong size:" << pValue.toHex();
 			}
 
 			return false;

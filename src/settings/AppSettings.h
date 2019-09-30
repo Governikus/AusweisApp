@@ -29,7 +29,6 @@ class AppSettings
 {
 	Q_OBJECT
 	friend class Env;
-	friend class ::test_AppSettings;
 
 	private:
 		bool mUsedAsSdk;

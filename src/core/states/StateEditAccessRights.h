@@ -7,20 +7,24 @@
 
 #pragma once
 
-#include "AbstractGenericState.h"
+#include "AbstractState.h"
 #include "context/AuthContext.h"
+#include "GenericContextContainer.h"
 
 namespace governikus
 {
 
 class StateEditAccessRights
-	: public AbstractGenericState<AuthContext>
+	: public AbstractState
+	, public GenericContextContainer<AuthContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
 
 	explicit StateEditAccessRights(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
+
+	void printRights(const QString& pTitle, const QSet<AccessRight>& pRights) const;
 };
 
 } // namespace governikus

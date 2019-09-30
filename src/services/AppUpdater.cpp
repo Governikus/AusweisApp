@@ -28,9 +28,9 @@ AppUpdater::AppUpdater()
 	, mAppUpdateJsonUrl()
 	, mAppUpdateData()
 {
-	const SecureStorage& secureStorage = SecureStorage::getInstance();
+	const auto* secureStorage = Env::getSingleton<SecureStorage>();
 
-	mAppUpdateJsonUrl = VersionNumber::getApplicationVersion().isDeveloperVersion() ? secureStorage.getAppcastBetaUpdateUrl() : secureStorage.getAppcastUpdateUrl();
+	mAppUpdateJsonUrl = VersionNumber::getApplicationVersion().isDeveloperVersion() ? secureStorage->getAppcastBetaUpdateUrl() : secureStorage->getAppcastUpdateUrl();
 }
 
 
@@ -45,7 +45,7 @@ void AppUpdater::checkAppUpdate(bool pIgnoreNextVersionskip)
 	mIgnoreNextVersionskip = pIgnoreNextVersionskip;
 	mAppUpdateData = AppUpdateData();
 
-	Downloader* downloader = Env::getSingleton<Downloader>();
+	auto* downloader = Env::getSingleton<Downloader>();
 	connect(downloader, &Downloader::fireDownloadSuccess, this, &AppUpdater::onUpdateDownloadFinished);
 	connect(downloader, &Downloader::fireDownloadFailed, this, &AppUpdater::onUpdateDownloadFailed);
 	connect(downloader, &Downloader::fireDownloadUnnecessary, this, &AppUpdater::onUpdateDownloadUnnecessary);
@@ -69,7 +69,7 @@ void AppUpdater::skipVersion(const QString& pVersion)
 
 void AppUpdater::onUpdateDownloadFinished(const QUrl& pUpdateUrl, const QDateTime& pNewTimestamp, const QByteArray& pData)
 {
-	Q_UNUSED(pNewTimestamp);
+	Q_UNUSED(pNewTimestamp)
 	if (pUpdateUrl == mAppUpdateJsonUrl)
 	{
 		AppUpdateData newData = AppUpdateData::parse(pData);
@@ -146,7 +146,7 @@ void AppUpdater::onUpdateDownloadUnnecessary(const QUrl& pUpdateUrl)
 
 void AppUpdater::clearDownloaderConnection()
 {
-	Downloader* const downloader = Env::getSingleton<Downloader>();
+	auto* const downloader = Env::getSingleton<Downloader>();
 	disconnect(downloader, &Downloader::fireDownloadSuccess, this, &AppUpdater::onUpdateDownloadFinished);
 	disconnect(downloader, &Downloader::fireDownloadFailed, this, &AppUpdater::onUpdateDownloadFailed);
 	disconnect(downloader, &Downloader::fireDownloadUnnecessary, this, &AppUpdater::onUpdateDownloadUnnecessary);

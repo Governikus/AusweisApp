@@ -6,7 +6,7 @@
 
 #include "VersionNumber.h"
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 using namespace governikus;
 
@@ -72,114 +72,115 @@ class test_VersionNumber
 		}
 
 
+		void distance_data()
+		{
+			QTest::addColumn<int>("distance");
+
+			QTest::newRow("1.99+432") << 432;
+			QTest::newRow("1.99+98-default-et43t") << 98;
+			QTest::newRow("1.99+1-stable") << 1;
+			QTest::newRow("1.91.2.2.2.2") << -1;
+			QTest::newRow("1.91.2.7+534533") << 534533;
+			QTest::newRow("1.91.2.7+12++4243+2+2-default") << -1;
+			QTest::newRow("1.91.2.7+12++4243+2+2default") << -1;
+		}
+
+
 		void distance()
 		{
-			VersionNumber number1("1.99+432");
-			QCOMPARE(number1.getDistance(), 432);
+			QFETCH(int, distance);
 
-			VersionNumber number2("1.99+98-default-et43t");
-			QCOMPARE(number2.getDistance(), 98);
+			const auto& version = QString::fromLatin1(QTest::currentDataTag());
+			QCOMPARE(VersionNumber(version).getDistance(), distance);
+		}
 
-			VersionNumber number3("1.99+1-stable");
-			QCOMPARE(number3.getDistance(), 1);
 
-			VersionNumber number4("1.91.2.2.2.2");
-			QCOMPARE(number4.getDistance(), -1);
+		void branch_data()
+		{
+			QTest::addColumn<QString>("branch");
 
-			VersionNumber number5("1.91.2.7+534533");
-			QCOMPARE(number5.getDistance(), 534533);
-
-			VersionNumber number6("1.91.2.7+12++4243+2+2-default");
-			QCOMPARE(number6.getDistance(), -1);
-
-			VersionNumber number7("1.91.2.7+12++4243+2+2default");
-			QCOMPARE(number7.getDistance(), -1);
+			QTest::newRow("1.99+432") << QString();
+			QTest::newRow("1.99+98-default-et43t") << QString("default");
+			QTest::newRow("1.99+1-stable") << QString("stable");
+			QTest::newRow("1.99+98-default-et43t+") << QString("default");
+			QTest::newRow("1.99+98-default-draft-et43t+") << QString("default");
 		}
 
 
 		void branch()
 		{
-			VersionNumber number1("1.99+432");
-			QCOMPARE(number1.getBranch(), QString());
+			QFETCH(QString, branch);
 
-			VersionNumber number2("1.99+98-default-et43t");
-			QCOMPARE(number2.getBranch(), QString("default"));
+			const auto& version = QString::fromLatin1(QTest::currentDataTag());
+			QCOMPARE(VersionNumber(version).getBranch(), branch);
+		}
 
-			VersionNumber number3("1.99+1-stable");
-			QCOMPARE(number3.getBranch(), QString("stable"));
 
-			VersionNumber number4("1.99+98-default-et43t+");
-			QCOMPARE(number4.getBranch(), QString("default"));
+		void revision_data()
+		{
+			QTest::addColumn<QString>("revision");
 
-			VersionNumber number5("1.99+98-default-draft-et43t+");
-			QCOMPARE(number5.getBranch(), QString("default"));
+			QTest::newRow("1.99+432") << QString();
+			QTest::newRow("1.99+98-default-et43t") << QString("et43t");
+			QTest::newRow("1.99+1-stable") << QString();
+			QTest::newRow("1.99+98-default-draft-et43t+") << QString("et43t+");
 		}
 
 
 		void revision()
 		{
-			VersionNumber number1("1.99+432");
-			QCOMPARE(number1.getRevision(), QString());
+			QFETCH(QString, revision);
 
-			VersionNumber number2("1.99+98-default-et43t");
-			QCOMPARE(number2.getRevision(), QString("et43t"));
+			const auto& version = QString::fromLatin1(QTest::currentDataTag());
+			QCOMPARE(VersionNumber(version).getRevision(), revision);
+		}
 
-			VersionNumber number3("1.99+1-stable");
-			QCOMPARE(number3.getRevision(), QString());
 
-			VersionNumber number4("1.99+98-default-draft-et43t+");
-			QCOMPARE(number4.getRevision(), QString("et43t+"));
+		void isDraft_data()
+		{
+			QTest::addColumn<bool>("draft");
+
+			QTest::newRow("1.5.0+16-default-secret") << true;
+			QTest::newRow("1.6.0+1-draft-t34t53+") << true;
+			QTest::newRow("1.6.0+12-stable-abc123") << false;
 		}
 
 
 		void isDraft()
 		{
-			VersionNumber number1("1.5.0+16-default-secret");
-			QVERIFY(number1.isDraft());
+			QFETCH(bool, draft);
 
-			VersionNumber number2("1.6.0+1-draft-t34t53+");
-			QVERIFY(number2.isDraft());
+			const auto& version = QString::fromLatin1(QTest::currentDataTag());
+			QCOMPARE(VersionNumber(version).isDraft(), draft);
+		}
 
-			VersionNumber number3("1.6.0+12-stable-abc123");
-			QVERIFY(!number3.isDraft());
+
+		void isDeveloper_data()
+		{
+			QTest::addColumn<bool>("developer");
+
+			QTest::newRow("") << true;
+			QTest::newRow("1.5.0+16-default-secret") << true;
+			QTest::newRow("1.6.0+1-draft-t34t53+") << true;
+			QTest::newRow("1.5.0") << true;
+			QTest::newRow("1.6.0") << false;
+			QTest::newRow("1.5.0+0") << true;
+			QTest::newRow("1.6.0+0") << true;
+			QTest::newRow("1.6.0+422312-stable-2143eg435") << true;
+			QTest::newRow("1.9.0+422312-stable-2143eg435") << true;
+			QTest::newRow("3.28.1") << false;
+			QTest::newRow("3.28.1+23-default") << true;
+			QTest::newRow("  3.28.1+23-default   ") << true;
+			QTest::newRow("    1.10.0      ") << false;
 		}
 
 
 		void isDeveloper()
 		{
-			QString empty;
-			VersionNumber number0(empty);
-			QVERIFY(number0.isDeveloperVersion());
+			QFETCH(bool, developer);
 
-			VersionNumber number1("1.5.0");
-			QVERIFY(number1.isDeveloperVersion());
-
-			VersionNumber number2("1.6.0");
-			QVERIFY(!number2.isDeveloperVersion());
-
-			VersionNumber number3("1.5.0+0");
-			QVERIFY(number3.isDeveloperVersion());
-
-			VersionNumber number4("1.6.0+0");
-			QVERIFY(number4.isDeveloperVersion());
-
-			VersionNumber number5("1.6.0+422312-stable-2143eg435");
-			QVERIFY(number5.isDeveloperVersion());
-
-			VersionNumber number6("1.9.0+422312-stable-2143eg435");
-			QVERIFY(number6.isDeveloperVersion());
-
-			VersionNumber number7("3.28.1");
-			QVERIFY(!number7.isDeveloperVersion());
-
-			VersionNumber number8("3.28.1+23-default");
-			QVERIFY(number8.isDeveloperVersion());
-
-			VersionNumber number9("  3.28.1+23-default   ");
-			QVERIFY(number9.isDeveloperVersion());
-
-			VersionNumber number10("    1.10.0      ");
-			QVERIFY(!number10.isDeveloperVersion());
+			const auto& version = QString::fromLatin1(QTest::currentDataTag());
+			QCOMPARE(VersionNumber(version).isDeveloperVersion(), developer);
 		}
 
 

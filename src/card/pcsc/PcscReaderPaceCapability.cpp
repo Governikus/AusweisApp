@@ -14,7 +14,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
 
 
-PcscReaderPaceCapability::PcscReaderPaceCapability(const char* pCapabilitiesTLV, PCSC_INT pLength)
+PcscReaderPaceCapability::PcscReaderPaceCapability(const char* const pCapabilitiesTLV, PCSC_INT pLength)
 	: mPaceCapabilities()
 {
 	if (pCapabilitiesTLV == nullptr || pLength != 7)
@@ -29,7 +29,8 @@ PcscReaderPaceCapability::PcscReaderPaceCapability(const char* pCapabilitiesTLV,
 	}
 
 	// in contrast to PCSC 10 Amendment 1: the output data of GetReaderPACECapabilities on Reiner SCT Konfort is of size 1!
-	for (PaceCapabilityId capability : Enum<PaceCapabilityId>::getList())
+	const auto list = Enum<PaceCapabilityId>::getList();
+	for (PaceCapabilityId capability : list)
 	{
 		if (pCapabilitiesTLV[6] & static_cast<char>(capability))
 		{

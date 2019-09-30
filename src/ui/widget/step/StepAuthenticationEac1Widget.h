@@ -46,8 +46,9 @@ class StepAuthenticationEac1Widget
 			REDIRECTING_BROWSER,
 			FINISHED,
 		};
-		Q_ENUM(State);
+		Q_ENUM(State)
 
+	public:
 		StepAuthenticationEac1Widget(QWidget* pParent = nullptr);
 		virtual ~StepAuthenticationEac1Widget() override;
 
@@ -84,7 +85,7 @@ class StepAuthenticationEac1Widget
 		void updateWidget();
 		void setupChatView();
 		void prepareChatsForGui();
-		void updateProgressPanel(int pProgressValue = 0, const QString& pProgressText = QString());
+		void updateProgressPanel();
 		void addChatRightToGui(AccessRight pRight, bool pOptional, int pListSize);
 		void clearPinWidgetLayout();
 		void createBasicReaderWidget();

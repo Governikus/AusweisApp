@@ -173,7 +173,7 @@ bool LogFilesDialog::eventFilter(QObject* pObject, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
-		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(pEvent);
+		auto* keyEvent = static_cast<QKeyEvent*>(pEvent);
 		if (keyEvent->key() == Qt::Key_F1)
 		{
 			HelpAction::openContextHelp();

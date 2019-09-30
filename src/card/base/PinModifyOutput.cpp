@@ -33,7 +33,7 @@ CardReturnCode PinModifyOutput::statusCodeToCardReturnCode(const QByteArray& pDa
 		return CardReturnCode::UNKNOWN;
 	}
 
-	const quint16 statusCode = qFromBigEndian<quint16>(pData.data());
+	const auto statusCode = qFromBigEndian<quint16>(pData.data());
 	const StatusCode errorCode = Enum<StatusCode>::isValue(statusCode) ? StatusCode(statusCode) : StatusCode::INVALID;
 	switch (errorCode)
 	{

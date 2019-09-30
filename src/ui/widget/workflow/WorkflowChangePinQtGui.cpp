@@ -15,6 +15,7 @@
 #include "states/StateEstablishPaceChannel.h"
 #include "states/StateMaintainCardConnection.h"
 #include "states/StateSelectReader.h"
+#include "states/StateUnfortunateCardPosition.h"
 #include "step/StepChooseCardGui.h"
 #include "step/StepErrorGui.h"
 
@@ -28,6 +29,7 @@ WorkflowChangePinQtGui::WorkflowChangePinQtGui(QSharedPointer<ChangePinContext> 
 {
 	Q_ASSERT(mPinSettingsWidget);
 	connect(mContext.data(), &WorkflowContext::fireStateChanged, this, &WorkflowChangePinQtGui::onStateChanged);
+	connect(mContext.data(), &ChangePinContext::firePaceResultUpdated, this, &WorkflowChangePinQtGui::onPaceResultUpdated);
 }
 
 
@@ -57,7 +59,7 @@ bool WorkflowChangePinQtGui::verifyAbortWorkflow()
 }
 
 
-void WorkflowChangePinQtGui::onStateChanged(const QString& pNextState)
+void WorkflowChangePinQtGui::onStateChanged(const QString& pNewState)
 {
 	if (mContext->getStatus().isError() && !mContext->isErrorReportedToUser())
 	{
@@ -69,25 +71,28 @@ void WorkflowChangePinQtGui::onStateChanged(const QString& pNextState)
 		mContext->setErrorReportedToUser();
 	}
 
-	if (AbstractState::isState<StateSelectReader>(pNextState))
+	if (AbstractState::isState<StateSelectReader>(pNewState))
 	{
 		activateStepUi(mChooseCardGui);
 	}
-	else if (AbstractState::isState<StateConnectCard>(pNextState))
+	else if (AbstractState::isState<StateConnectCard>(pNewState))
 	{
 		GenericWorkflowGui::deactivate();
 	}
-	else if (AbstractState::isState<StateEnterPacePassword>(pNextState))
+	else if (AbstractState::isState<StateEnterPacePassword>(pNewState))
 	{
 		const bool isBasicReader = mContext->getCardConnection()->getReaderInfo().isBasicReader();
+		bool stateAccepted;
 		if (mContext->getEstablishPaceChannelType() == PacePasswordId::PACE_PUK)
 		{
-			mPinSettingsWidget->updatePinButton(isBasicReader && mPinSettingsWidget->getPuk().isEmpty());
+			stateAccepted = !(isBasicReader && mPinSettingsWidget->getPuk().isEmpty());
 		}
 		else
 		{
-			mPinSettingsWidget->updatePinButton(isBasicReader && mPinSettingsWidget->getPin().isEmpty());
+			stateAccepted = !(isBasicReader && mPinSettingsWidget->getPin().isEmpty());
 		}
+
+		mPinSettingsWidget->updatePinButton(false);
 
 		if (CardReturnCodeUtil::equalsWrongPacePassword(mContext->getLastPaceResult()))
 		{
@@ -103,12 +108,22 @@ void WorkflowChangePinQtGui::onStateChanged(const QString& pNextState)
 			}
 		}
 
-		if (mPinSettingsWidget->getPinButtonEnabled())
+		if (!stateAccepted)
 		{
+			if (isBasicReader)
+			{
+				mPinSettingsWidget->updatePasswordFields();
+				mPinSettingsWidget->setPasswordFocus();
+			}
 			return;
 		}
 	}
-	else if (AbstractState::isState<StateEstablishPaceChannel>(pNextState))
+	else if (AbstractState::isState<StateUnfortunateCardPosition>(pNewState))
+	{
+		activateStepUi(mChooseCardGui);
+		return;
+	}
+	else if (AbstractState::isState<StateEstablishPaceChannel>(pNewState))
 	{
 		if (mContext->getCardConnection()->getReaderInfo().isBasicReader())
 		{
@@ -120,7 +135,7 @@ void WorkflowChangePinQtGui::onStateChanged(const QString& pNextState)
 			mContext->setPuk(mPinSettingsWidget->getPuk());
 		}
 	}
-	else if (AbstractState::isState<StateChangePin>(pNextState))
+	else if (AbstractState::isState<StateChangePin>(pNewState))
 	{
 		if (mContext->getCardConnection()->getReaderInfo().isBasicReader())
 		{
@@ -128,15 +143,18 @@ void WorkflowChangePinQtGui::onStateChanged(const QString& pNextState)
 			mContext->setNewPin(mPinSettingsWidget->getNewPin());
 		}
 	}
-	else if (AbstractState::isState<StateCleanUpReaderManager>(pNextState) && mContext->getStatus().isNoError())
+	else if (AbstractState::isState<StateCleanUpReaderManager>(pNewState) && mContext->getStatus().isNoError())
 	{
-		bool pinBlocked = false;
-		if (mContext->getCardConnection())
-		{
-			pinBlocked = (mContext->getCardConnection()->getReaderInfo().getRetryCounter() == 0);
-		}
-		mPinSettingsWidget->setMode(pinBlocked ? PinSettingsWidget::Mode::AfterPinUnblock : PinSettingsWidget::Mode::AfterPinChange);
+		mPinSettingsWidget->setMode(PinSettingsWidget::Mode::AfterPinChange);
 	}
-
 	mContext->setStateApproved();
+}
+
+
+void WorkflowChangePinQtGui::onPaceResultUpdated()
+{
+	if (mContext->getLastPaceResult() == CardReturnCode::OK_PUK)
+	{
+		GuiUtils::showPinUnlockedDialog(mPinSettingsWidget);
+	}
 }

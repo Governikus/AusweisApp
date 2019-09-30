@@ -7,52 +7,18 @@
 #pragma once
 
 #include "HistoryModelSearchFilter.h"
+#include "HistoryProxyModel.h"
 #include "HistorySettings.h"
 #include "ProviderConfigurationInfo.h"
+#include "ProviderNameFilterModel.h"
 
 #include <QAbstractListModel>
-#include <QPointer>
-#include <QSortFilterProxyModel>
+
+
+class test_HistoryModel;
 
 namespace governikus
 {
-
-class HistoryProxyModel
-	: public QSortFilterProxyModel
-{
-	Q_OBJECT
-
-	public:
-		Q_INVOKABLE bool removeRows(int pRow, int pCount, const QModelIndex& pParent = QModelIndex()) override;
-
-		HistoryProxyModel();
-
-		virtual ~HistoryProxyModel() override;
-};
-
-
-class ProviderNameFilterModel
-	: public QSortFilterProxyModel
-{
-	Q_OBJECT
-
-	private:
-		QPointer<HistorySettings> mHistorySettings;
-
-		ProviderConfigurationInfo mProvider;
-
-	protected:
-		bool filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const override;
-
-	public:
-		ProviderNameFilterModel(HistorySettings* pHistorySettings);
-
-		virtual ~ProviderNameFilterModel() override;
-
-		Q_INVOKABLE void setProviderAddress(const QString& pProviderAddress);
-
-};
-
 
 class HistoryModel
 	: public QAbstractListModel
@@ -63,15 +29,16 @@ class HistoryModel
 	Q_PROPERTY(HistoryModelSearchFilter * searchFilter READ getHistoryModelSearchFilter CONSTANT)
 	Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY fireEnabledChanged)
 
-	QPointer<HistorySettings> mHistorySettings;
 	HistoryProxyModel mFilterModel;
 	ProviderNameFilterModel mNameFilterModel;
 	HistoryModelSearchFilter mHistoryModelSearchFilter;
 
 	private:
+		friend class ::test_HistoryModel;
 		QVector<QMetaObject::Connection> mConnections;
 
 		ProviderConfigurationInfo determineProviderFor(const HistoryInfo& pHistoryInfo) const;
+		static auto& getHistorySettings();
 
 		bool isEnabled() const;
 		void setEnabled(bool pEnabled);
@@ -85,7 +52,7 @@ class HistoryModel
 		void fireEnabledChanged(bool pValue);
 
 	public:
-		HistoryModel(HistorySettings* pHistorySettings, QObject* pParent = nullptr);
+		explicit HistoryModel(QObject* pParent = nullptr);
 		virtual ~HistoryModel() override;
 
 		enum HistoryRoles
@@ -120,6 +87,8 @@ class HistoryModel
 		Q_INVOKABLE HistoryProxyModel* getFilterModel();
 		Q_INVOKABLE ProviderNameFilterModel* getNameFilterModel();
 		HistoryModelSearchFilter* getHistoryModelSearchFilter();
+
+		Q_INVOKABLE void exportHistory(const QUrl& pFilename) const;
 };
 
 } // namespace governikus

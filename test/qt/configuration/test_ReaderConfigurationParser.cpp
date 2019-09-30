@@ -124,7 +124,6 @@ class test_ReaderConfigurationParser
 		void validJsonDocumentWithOneValidEntry_parseOkAndOneCorrectDeviceInfo()
 		{
 			const QByteArray data = QByteArrayLiteral("{"
-													  "  \"IssueDate\": \"2015-11-03T12:00:00+1:00\","
 													  "  \"SupportedDevices\":\n"
 													  "  [\n"
 													  "    {\n"
@@ -224,7 +223,6 @@ class test_ReaderConfigurationParser
 		void parserAcceptsJSONWithMultipleEmptyPatternsInReadersWithDifferentNames()
 		{
 			const QByteArray data = QByteArrayLiteral("{"
-													  "  \"IssueDate\": \"2015-11-03T12:00:00+1:00\","
 													  "  \"SupportedDevices\":\n"
 													  "  [\n"
 													  "    {\n"
@@ -257,7 +255,6 @@ class test_ReaderConfigurationParser
 		void parserRejectsJSONDataWithRepeatedUSBId()
 		{
 			const QByteArray data = QByteArrayLiteral("{"
-													  "  \"IssueDate\": \"2015-11-03T12:00:00+1:00\","
 													  "  \"SupportedDevices\":\n"
 													  "  [\n"
 													  "    {\n"
@@ -290,7 +287,6 @@ class test_ReaderConfigurationParser
 		void parserRejectsJSONDataWithRepeatedReaderName()
 		{
 			const QByteArray data = QByteArrayLiteral("{"
-													  "  \"IssueDate\": \"2015-11-03T12:00:00+1:00\","
 													  "  \"SupportedDevices\":\n"
 													  "  [\n"
 													  "    {\n"
@@ -323,7 +319,6 @@ class test_ReaderConfigurationParser
 		void parserRejectsJSONDataWithRepeatedPattern()
 		{
 			const QByteArray data = QByteArrayLiteral("{"
-													  "  \"IssueDate\": \"2015-11-03T12:00:00+1:00\","
 													  "  \"SupportedDevices\":\n"
 													  "  [\n"
 													  "    {\n"

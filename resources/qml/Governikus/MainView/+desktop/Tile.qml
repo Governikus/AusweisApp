@@ -1,7 +1,13 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.View 1.0
+import Governikus.Type.ApplicationModel 1.0
 
 FocusScope {
 	id: tile
@@ -20,6 +26,7 @@ FocusScope {
 		anchors.fill: parent
 		onPressed: tile.focus = true
 		onClicked: tile.clicked()
+		cursorShape: Qt.PointingHandCursor
 	}
 
 	FocusFrame {
@@ -28,20 +35,23 @@ FocusScope {
 
 	Column {
 		anchors.centerIn: parent
-		spacing: text.height / 2
+
+		spacing: Constants.component_spacing
 
 		Image {
 			id: image
-			sourceSize.height: text.height * 4
+
+			sourceSize.height: ApplicationModel.scaleFactor * 200
 			anchors.horizontalCenter: parent.horizontalCenter
 		}
 
 		GText {
 			id: text
+
 			anchors.horizontalCenter: parent.horizontalCenter
-			color: Constants.white
-			font.pixelSize: Constants.header_font_size
-			font.weight: Font.Bold
+
+			textStyle: Style.text.title
+			font.bold: true
 		}
 	}
 }

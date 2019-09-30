@@ -1,4 +1,10 @@
+/*
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
+
+import Governikus.Style 1.0
 
 Rectangle {
 	id: splashScreen
@@ -16,6 +22,19 @@ Rectangle {
 		fillMode: Image.PreserveAspectFit
 		anchors.centerIn: parent
 		visible: parent.visible
+	}
+
+	Rectangle {
+		id: titleBar
+
+		anchors {
+			top: parent.top
+			left: parent.left
+			right: parent.right
+		}
+		height: plugin.safeAreaMargins.top
+
+		color: Style.color.accent
 	}
 
 	function hide() {

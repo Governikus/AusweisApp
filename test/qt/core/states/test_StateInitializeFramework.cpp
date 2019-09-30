@@ -6,8 +6,8 @@
 #include "states/StateInitializeFramework.h"
 #include "TestFileHelper.h"
 
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtCore>
+#include <QtTest>
 #include <QThread>
 
 

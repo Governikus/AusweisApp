@@ -1,0 +1,159 @@
+From fdb01d0c01261008f9055339db55c6e9693f18c8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
+Date: Tue, 23 Jul 2019 12:44:45 +0200
+Subject: [PATCH 2/2] Fix build with -no-feature-printer on macOS
+
+Fixes: QTBUG-62675
+Change-Id: I3bfcd6d78c3124769ff8662941472333c795fdbe
+---
+ src/plugins/platforms/cocoa/cocoa.pro         | 42 +++++++++++--------
+ .../platforms/cocoa/qcocoanativeinterface.mm  |  6 +--
+ .../platforms/cocoa/qpaintengine_mac.mm       |  4 ++
+ 3 files changed, 32 insertions(+), 20 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/cocoa/cocoa.pro y/qtbase/src/plugins/platforms/cocoa/cocoa.pro
+index 083b7c1655..4249bae2b1 100644
+--- x/qtbase/src/plugins/platforms/cocoa/cocoa.pro
++++ y/qtbase/src/plugins/platforms/cocoa/cocoa.pro
+@@ -20,8 +20,6 @@ SOURCES += main.mm \
+     qcocoamenuloader.mm \
+     qcocoahelpers.mm \
+     qmultitouch_mac.mm \
+-    qcocoaaccessibilityelement.mm \
+-    qcocoaaccessibility.mm \
+     qcocoacursor.mm \
+     qcocoaclipboard.mm \
+     qcocoadrag.mm \
+@@ -55,8 +53,6 @@ HEADERS += qcocoaintegration.h \
+     qcocoamenuloader.h \
+     qcocoahelpers.h \
+     qmultitouch_mac_p.h \
+-    qcocoaaccessibilityelement.h \
+-    qcocoaaccessibility.h \
+     qcocoacursor.h \
+     qcocoaclipboard.h \
+     qcocoadrag.h \
+@@ -81,15 +77,24 @@ qtConfig(vulkan) {
+     HEADERS += qcocoavulkaninstance.h
+ }
+ 
++qtConfig(accessibility) {
++    SOURCES += qcocoaaccessibilityelement.mm \
++        qcocoaaccessibility.mm
++    HEADERS += qcocoaaccessibilityelement.h \
++        qcocoaaccessibility.h
++}
++
+ RESOURCES += qcocoaresources.qrc
+ 
+ LIBS += -framework AppKit -framework CoreServices -framework Carbon -framework IOKit -framework QuartzCore -framework CoreVideo -framework Metal -framework IOSurface -lcups
+ 
+ QT += \
+     core-private gui-private \
+-    accessibility_support-private clipboard_support-private theme_support-private \
++    clipboard_support-private theme_support-private \
+     fontdatabase_support-private graphics_support-private
+ 
++qtConfig(accessibility): QT += accessibility_support-private
++
+ qtConfig(vulkan): QT += vulkan_support-private
+ 
+ CONFIG += no_app_extension_api_only
+@@ -97,17 +102,19 @@ CONFIG += no_app_extension_api_only
+ qtHaveModule(widgets) {
+     QT_FOR_CONFIG += widgets
+ 
+-    SOURCES += \
+-        qpaintengine_mac.mm \
+-        qprintengine_mac.mm \
+-        qcocoaprintersupport.mm \
+-        qcocoaprintdevice.mm \
+-
+-    HEADERS += \
+-        qpaintengine_mac_p.h \
+-        qprintengine_mac_p.h \
+-        qcocoaprintersupport.h \
+-        qcocoaprintdevice.h \
++    SOURCES += qpaintengine_mac.mm
++    HEADERS += qpaintengine_mac_p.h
++
++    qtHaveModule(printsupport) {
++        SOURCES += \
++            qprintengine_mac.mm \
++            qcocoaprintersupport.mm \
++            qcocoaprintdevice.mm
++        HEADERS += \
++            qcocoaprintersupport.h \
++            qcocoaprintdevice.h \
++            qprintengine_mac_p.h
++    }
+ 
+     qtConfig(colordialog) {
+         SOURCES += qcocoacolordialoghelper.mm
+@@ -124,7 +131,8 @@ qtHaveModule(widgets) {
+         HEADERS += qcocoafontdialoghelper.h
+     }
+ 
+-    QT += widgets-private printsupport-private
++    QT += widgets-private
++    qtHaveModule(printsupport): QT += printsupport-private
+ }
+ 
+ OTHER_FILES += cocoa.json
+diff --git x/qtbase/src/plugins/platforms/cocoa/qcocoanativeinterface.mm y/qtbase/src/plugins/platforms/cocoa/qcocoanativeinterface.mm
+index 7979e430ac..8c0bd1d158 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qcocoanativeinterface.mm
++++ y/qtbase/src/plugins/platforms/cocoa/qcocoanativeinterface.mm
+@@ -59,7 +59,7 @@
+ #include "qguiapplication.h"
+ #include <qdebug.h>
+ 
+-#ifndef QT_NO_WIDGETS
++#if !defined(QT_NO_WIDGETS) && defined(QT_PRINTSUPPORT_LIB)
+ #include "qcocoaprintersupport.h"
+ #include "qprintengine_mac_p.h"
+ #include <qpa/qplatformprintersupport.h>
+@@ -153,7 +153,7 @@ QPlatformNativeInterface::NativeResourceForIntegrationFunction QCocoaNativeInter
+ 
+ QPlatformPrinterSupport *QCocoaNativeInterface::createPlatformPrinterSupport()
+ {
+-#if !defined(QT_NO_WIDGETS) && !defined(QT_NO_PRINTER)
++#if !defined(QT_NO_WIDGETS) && !defined(QT_NO_PRINTER) && defined(QT_PRINTSUPPORT_LIB)
+     return new QCocoaPrinterSupport();
+ #else
+     qFatal("Printing is not supported when Qt is configured with -no-widgets");
+@@ -163,7 +163,7 @@ QPlatformPrinterSupport *QCocoaNativeInterface::createPlatformPrinterSupport()
+ 
+ void *QCocoaNativeInterface::NSPrintInfoForPrintEngine(QPrintEngine *printEngine)
+ {
+-#if !defined(QT_NO_WIDGETS) && !defined(QT_NO_PRINTER)
++#if !defined(QT_NO_WIDGETS) && !defined(QT_NO_PRINTER) && defined(QT_PRINTSUPPORT_LIB)
+     QMacPrintEnginePrivate *macPrintEnginePriv = static_cast<QMacPrintEngine *>(printEngine)->d_func();
+     if (macPrintEnginePriv->state == QPrinter::Idle && !macPrintEnginePriv->isPrintSessionInitialized())
+         macPrintEnginePriv->initialize();
+diff --git x/qtbase/src/plugins/platforms/cocoa/qpaintengine_mac.mm y/qtbase/src/plugins/platforms/cocoa/qpaintengine_mac.mm
+index 3677877538..00b2267f0d 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qpaintengine_mac.mm
++++ y/qtbase/src/plugins/platforms/cocoa/qpaintengine_mac.mm
+@@ -38,14 +38,18 @@
+ ****************************************************************************/
+ 
+ #include "qpaintengine_mac_p.h"
++#if defined(QT_PRINTSUPPORT_LIB)
+ #include "qprintengine_mac_p.h"
++#endif
+ 
+ #include <qbitmap.h>
+ #include <qpaintdevice.h>
+ #include <qpainterpath.h>
+ #include <qpixmapcache.h>
+ #include <private/qpaintengine_raster_p.h>
++#if defined(QT_PRINTSUPPORT_LIB)
+ #include <qprinter.h>
++#endif
+ #include <qstack.h>
+ #include <qwidget.h>
+ #include <qvarlengtharray.h>
+-- 
+2.22.0
+

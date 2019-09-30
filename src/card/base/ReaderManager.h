@@ -58,14 +58,19 @@ class ReaderManager
 		/*!
 		 * Queries if any plugin is currently scanning
 		 */
-		bool isScanRunning();
+		bool isScanRunning() const;
+
+		/*!
+		 * Queries if a plugin with the requested type is currently scanning
+		 */
+		bool isScanRunning(ReaderManagerPlugInType pType) const;
 
 		/*!
 		 * Stops started scan for devices.
 		 * Be aware that some plugins don't finish the whole scan if you
 		 * abort it with stopScan!
 		 */
-		void stopScan(ReaderManagerPlugInType pType);
+		void stopScan(ReaderManagerPlugInType pType, const QString& pError = QString());
 
 		QVector<ReaderManagerPlugInInfo> getPlugInInfos() const;
 		QVector<ReaderInfo> getReaderInfos(ReaderManagerPlugInType pType) const;
@@ -82,7 +87,7 @@ class ReaderManager
 		template<typename T>
 		QMetaObject::Connection callCreateCardConnectionCommand(const QString& pReaderName, const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pSlot)
 		{
-			CreateCardConnectionCommand* command = new CreateCardConnectionCommand(pReaderName, mWorker);
+			auto* command = new CreateCardConnectionCommand(pReaderName, mWorker);
 			QMetaObject::Connection connection = connect(command, &CreateCardConnectionCommand::fireCommandDone, pReceiver, pSlot, Qt::UniqueConnection);
 			if (connection)
 			{
@@ -90,7 +95,7 @@ class ReaderManager
 			}
 			else
 			{
-				qCritical() << "Cannot invoke CreateCardConnectionCommand command";
+				qCCritical(card) << "Cannot invoke CreateCardConnectionCommand command";
 				command->deleteLater();
 			}
 
@@ -98,9 +103,6 @@ class ReaderManager
 		}
 
 
-		void connectReader(const QString& pReaderName);
-		void disconnectReader(const QString& pReaderName);
-		void disconnectAllReaders();
 		void updateRetryCounters();
 
 	Q_SIGNALS:

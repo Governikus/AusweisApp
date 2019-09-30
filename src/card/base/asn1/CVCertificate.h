@@ -43,7 +43,7 @@ struct SIGNATURE
 };
 
 
-typedef struct cvcertificate_st
+using CVCertificate = struct cvcertificate_st
 {
 	CVCertificateBody* mBody;
 	SIGNATURE* mSignature;
@@ -62,8 +62,7 @@ typedef struct cvcertificate_st
 	bool isIssuedBy(const cvcertificate_st& pIssuer) const;
 
 	static int decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt, void* pExarg);
-
-} CVCertificate;
+};
 
 
 DECLARE_ASN1_FUNCTIONS(CVCertificate)

@@ -39,7 +39,7 @@ ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pConte
 	mStateMachine.setInitialState(sStatePace);
 
 	sStatePace->addTransition(sStatePace, &CompositeStatePace::firePaceChannelEstablished, sPrepareChangePin);
-	sStatePace->addTransition(sStatePace, &CompositeStatePace::firePacePukEstablished, sClearPacePasswords);
+	sStatePace->addTransition(sStatePace, &CompositeStatePace::firePacePukEstablished, sStatePace);
 	sStatePace->addTransition(sStatePace, &CompositeStatePace::fireAbort, sClearPacePasswords);
 
 	sPrepareChangePin->addTransition(sPrepareChangePin, &StatePrepareChangePin::fireContinue, sChangePin);

@@ -10,7 +10,8 @@ using namespace governikus;
 
 
 StateStopRemoteService::StateStopRemoteService(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractState(pContext)
+	, GenericContextContainer(pContext)
 {
 }
 

@@ -22,6 +22,7 @@ class MockNetworkManager
 		MockNetworkReply* mNextReply;
 		MockNetworkReply* mLastReply;
 		QNetworkRequest* mLastRequest;
+		QByteArray mLastData;
 
 		MockNetworkReply* getReply(const QNetworkRequest& pRequest);
 
@@ -37,6 +38,10 @@ class MockNetworkManager
 		virtual QNetworkReply* get(QNetworkRequest& pRequest,
 				const QByteArray& pSslSession = QByteArray(),
 				int pTimeoutInMilliSeconds = 30000) override;
+		virtual QNetworkReply* post(QNetworkRequest& pRequest,
+				const QByteArray& pData,
+				int pTimeoutInMilliSeconds = 30000) override;
+
 		virtual bool checkUpdateServerCertificate(const QNetworkReply& pReply) override;
 
 		void setFilename(const QString& pFilename)
@@ -62,6 +67,12 @@ class MockNetworkManager
 		QNetworkRequest* getLastRequest() const
 		{
 			return mLastRequest;
+		}
+
+
+		const QByteArray getLastData() const
+		{
+			return mLastData;
 		}
 
 

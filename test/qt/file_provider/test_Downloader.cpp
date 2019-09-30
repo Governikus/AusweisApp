@@ -93,11 +93,11 @@ class test_Downloader
 		{
 			const QByteArray fileContent("Some icon data");
 			const QDateTime timestampOnServer(QDate(2017, 6, 1), QTime(12, 00, 0, 0));
-			MockNetworkReply* const reply = new MockNetworkReply(fileContent, HTTP_STATUS_OK);
+			auto* const reply = new MockNetworkReply(fileContent, HTTP_STATUS_OK);
 			reply->setFileModificationTimestamp(timestampOnServer);
 			mMockNetworkManager.setNextReply(reply);
 
-			Downloader* const downloader = Env::getSingleton<Downloader>();
+			auto* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadSuccess);
 
 			const QUrl url("http://server/reader/icons/icon.png");
@@ -114,7 +114,7 @@ class test_Downloader
 			MockNetworkReply* const reply = new MockNetworkReply(QByteArray(), HTTP_STATUS_NOT_FOUND);
 			mMockNetworkManager.setNextReply(reply);
 
-			Downloader* const downloader = Env::getSingleton<Downloader>();
+			auto* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadFailed);
 
 			const QUrl url("http://server/reader/icons/icon.png");
@@ -129,12 +129,12 @@ class test_Downloader
 		void conditionalDownloadOfNewerFile()
 		{
 			const QByteArray fileContent("Some icon data");
-			MockNetworkReply* const reply = new MockNetworkReply(fileContent, HTTP_STATUS_OK);
+			auto* const reply = new MockNetworkReply(fileContent, HTTP_STATUS_OK);
 			const QDateTime timestampOnServer(QDate(2017, 7, 1), QTime(12, 00, 0, 0));
 			reply->setFileModificationTimestamp(timestampOnServer);
 			mMockNetworkManager.setNextReply(reply);
 
-			Downloader* const downloader = Env::getSingleton<Downloader>();
+			auto* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadSuccess);
 
 			const QUrl url("http://server/reader/icons/icon.png");
@@ -159,7 +159,7 @@ class test_Downloader
 			reply->setFileModificationTimestamp(timestampOnServer);
 			mMockNetworkManager.setNextReply(reply);
 
-			Downloader* const downloader = Env::getSingleton<Downloader>();
+			auto* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadUnnecessary);
 
 			const QUrl url("http://server/reader/icons/icon.png");

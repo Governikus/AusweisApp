@@ -6,7 +6,7 @@
 
 #include "AppSettings.h"
 #include "ReaderManager.h"
-#include "SurveyHandler.h"
+#include "SurveyModel.h"
 
 Q_DECLARE_LOGGING_CATEGORY(statemachine)
 
@@ -14,7 +14,8 @@ using namespace governikus;
 
 
 StateSendWhitelistSurvey::StateSendWhitelistSurvey(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 
@@ -48,17 +49,7 @@ void StateSendWhitelistSurvey::run()
 		return;
 	}
 
-	const QString& readerName = authContext->getReaderName();
-	if (readerName.isEmpty())
-	{
-		qWarning() << "No reader information available, cannot send survey to whitelist server.";
-		Q_ASSERT(false);
-		Q_EMIT fireAbort();
-		return;
-	}
-
-	const ReaderInfo& readerInfo = Env::getSingleton<ReaderManager>()->getReaderInfo(readerName);
-	SurveyHandler().sendSurvey(readerInfo.getMaxApduLength());
+	Env::getSingleton<SurveyModel>()->transmitSurvey();
 #endif
 
 	Q_EMIT fireContinue();

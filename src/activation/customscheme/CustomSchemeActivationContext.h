@@ -19,7 +19,7 @@ class CustomSchemeActivationContext
 		QUrl mRedirectAddress;
 
 	public:
-		CustomSchemeActivationContext(const QUrl& pActivationUrl);
+		explicit CustomSchemeActivationContext(const QUrl& pActivationUrl);
 		virtual ~CustomSchemeActivationContext() override;
 
 		QUrl getActivationURL() const override;

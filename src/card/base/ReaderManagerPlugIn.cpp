@@ -18,11 +18,21 @@ ReaderManagerPlugIn::ReaderManagerPlugIn(ReaderManagerPlugInType pPlugInType,
 
 void ReaderManagerPlugIn::startScan(bool /*pAutoConnect*/)
 {
-	mScanRunning = true;
+	if (!mScanRunning)
+	{
+		mScanRunning = true;
+		Q_EMIT fireStatusChanged(mInfo);
+	}
 }
 
 
-void ReaderManagerPlugIn::stopScan()
+void ReaderManagerPlugIn::stopScan(const QString& pError)
 {
-	mScanRunning = false;
+	Q_UNUSED(pError);
+
+	if (mScanRunning)
+	{
+		mScanRunning = false;
+		Q_EMIT fireStatusChanged(mInfo);
+	}
 }

@@ -2,10 +2,11 @@
  * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
+#include "Reader.h"
 
 #include "asn1/PaceInfo.h"
 #include "CardConnectionWorker.h"
-#include "Reader.h"
+#include "MSEBuilder.h"
 
 #include <QLoggingCategory>
 
@@ -74,10 +75,7 @@ void Reader::update()
 
 CardReturnCode Reader::updateRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
 {
-	int newRetryCounter = -1;
-	bool newPinDeactivated = false;
-
-	CardReturnCode returnCode = getRetryCounter(pCardConnectionWorker, newRetryCounter, newPinDeactivated);
+	auto [returnCode, newRetryCounter, newPinDeactivated] = getRetryCounter(pCardConnectionWorker);
 	if (returnCode == CardReturnCode::OK)
 	{
 		bool emitSignal = mReaderInfo.isRetryCounterDetermined() && ((newRetryCounter != mReaderInfo.getRetryCounter()) || (newPinDeactivated != mReaderInfo.isPinDeactivated()));
@@ -96,12 +94,12 @@ CardReturnCode Reader::updateRetryCounter(QSharedPointer<CardConnectionWorker> p
 }
 
 
-CardReturnCode Reader::getRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, int& pRetryCounter, bool& pPinDeactivated)
+Reader::RetryCounterResult Reader::getRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
 {
 	if (!mReaderInfo.getCardInfo().getEfCardAccess())
 	{
 		qCCritical(card) << "Cannot get EF.CardAccess";
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
 	// we don't need to establish PACE with this protocol (i.e. we don't need to support it), so we just take the fist one
@@ -119,20 +117,19 @@ CardReturnCode Reader::getRetryCounter(QSharedPointer<CardConnectionWorker> pCar
 	CardReturnCode returnCode = pCardConnectionWorker->transmit(mseBuilder.build(), mseSetAtResponse);
 	if (returnCode != CardReturnCode::OK)
 	{
-		return returnCode;
+		return {returnCode};
 	}
 
 	const StatusCode statusCode = mseSetAtResponse.getReturnCode();
 	qCDebug(card) << "StatusCode:" << statusCode;
 	if (statusCode == StatusCode::INVALID)
 	{
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	pRetryCounter = mseSetAtResponse.getRetryCounter();
-	pPinDeactivated = statusCode == StatusCode::PIN_DEACTIVATED;
-
-	return CardReturnCode::OK;
+	const int retryCounter = mseSetAtResponse.getRetryCounter();
+	const bool pinDeactivated = statusCode == StatusCode::PIN_DEACTIVATED;
+	return {CardReturnCode::OK, retryCounter, pinDeactivated};
 }
 
 

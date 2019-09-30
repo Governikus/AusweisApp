@@ -27,7 +27,7 @@ class NfcCard
 		void onError(QNearFieldTarget::Error pError, const QNearFieldTarget::RequestId& pId);
 
 	public:
-		NfcCard(QNearFieldTarget* pNearFieldTarget);
+		explicit NfcCard(QNearFieldTarget* pNearFieldTarget);
 		virtual ~NfcCard() override;
 
 		bool isValid() const;

@@ -4,8 +4,8 @@
  */
 
 #include "messages/parameter/BluetoothMessageParameterMaxMsgSize.h"
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtCore>
+#include <QtTest>
 
 using namespace governikus;
 

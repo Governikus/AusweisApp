@@ -1,7 +1,14 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ProviderCategoryFilterModel 1.0
+
 
 Rectangle {
 	id: baseItem
@@ -12,6 +19,7 @@ Rectangle {
 
 	// This is interpreted by the SectionPage component
 	readonly property real titleBarOpacity: shadow.opacity === 1 ? 1 : (customProviderImage ? Math.max(0, 0.5 - shadow.opacity) : 0)
+	readonly property real titleBarTopBounce: sectionPageFlickable.verticalOvershoot < 0.0 ? -sectionPageFlickable.verticalOvershoot : 0.0
 
 	// Internal vars
 	readonly property color shadowColor: Category.displayColor(selectedCategory)
@@ -19,9 +27,13 @@ Rectangle {
 	readonly property string backgroundImage: customProviderImage ? selectedProvider.image : Category.backgroundImageSource(selectedCategory)
 	readonly property string categoryIcon: selectedProvider || selectedCategory !== "all" ? "" : Category.imageSource(selectedCategory)
 	readonly property bool withButtons: selectedCategory === "" && !selectedProvider
+	readonly property real shadowOpacity: Math.min(1, headerOffsetY / (backgroundImage.height - Style.dimens.titlebar_height))
 
 	readonly property double iconHeightRatio: 0.3
 	readonly property double iconVerticalMarginRatio: 0.2
+
+	// For some reason contentY is sometimes set to undefined.
+	readonly property real headerOffsetY: typeof(sectionPageFlickable.contentY) === "undefined" ? 0 : sectionPageFlickable.contentY
 
 	property int maxContentY: if (withButtons && parent != null) {
 		return parent.height * (iconHeightRatio + iconVerticalMarginRatio)
@@ -29,38 +41,20 @@ Rectangle {
 		return height / 2
 	}
 
-	height: backgroundImage.height + providerInfo.height
+	height: backgroundImage.height + providerInfo.height - titleBarTopBounce
 
-	function definedContentY() {
-		// For some reason contentY is sometimes set to undefined.
-		return typeof(contentY) === "undefined" ? 0 : contentY
-	}
-
-	function currentMargin() {
-		// Height of button icons.
-		var H = height * iconHeightRatio
-
-		// Initial inferior margin for button icons.
-		var M = height * iconVerticalMarginRatio
-
-		var y = definedContentY()
-
-		return -2 * y * (M + H) / (3 * M  + 2 * H) + M
-	}
+	color: providerInfo.color // Some provider images have transparent backgrounds, so we need to fill the background
 
 	Image {
 		id: backgroundImage
 
 		source: baseItem.backgroundImage
-		height: width / 1.80
+		height: width / 1.80 + titleBarTopBounce
 		width: parent.width
 		anchors.left: parent.left
 		anchors.top: parent.top
+		anchors.topMargin: -titleBarTopBounce // When flicking over the top, scale the image (similar to native iOS apps)
 		fillMode: Image.PreserveAspectCrop
-
-		function transition() {
-			return Math.min(1, contentY / (height - Constants.titlebar_height))
-		}
 
 		Image {
 			id: categoryIcon
@@ -75,7 +69,7 @@ Rectangle {
 
 			visible: baseItem.categoryIcon !== ""
 
-			opacity: baseItem.definedContentY() <= maxContentY ? 1 : 0
+			opacity: baseItem.headerOffsetY <= maxContentY ? 1 : 0
 			Behavior on opacity {
 				NumberAnimation {}
 			}
@@ -84,20 +78,13 @@ Rectangle {
 		Image {
 			source: selectedProvider ? selectedProvider.icon : ""
 			asynchronous: true
-			height: Utils.dp(70)
+			height: 70
 			width: height
 			fillMode: Image.PreserveAspectFit
 			anchors.margins: Constants.component_spacing
 			anchors.left: parent.left
 			anchors.bottom: parent.bottom
 			visible: !!selectedProvider
-		}
-
-		Rectangle {
-			id: shadow
-			anchors.fill: parent
-			color: baseItem.shadowColor
-			opacity: parent.transition()
 		}
 	}
 
@@ -111,15 +98,14 @@ Rectangle {
 
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.bottom: backgroundImage.bottom
-		anchors.bottomMargin: baseItem.currentMargin()
+		anchors.bottomMargin: backgroundImage.height / 2 - iconsRow.height - titleBarTopBounce - headerOffsetY / (headerOffsetY < 0.0 ? 1.0 : 2.0)
 
 		Repeater {
 			model: ["citizen", "finance", "insurance", "other"]
 
-			Rectangle {
+			Item {
 				height: parent.height
 				width: parent.width * 0.25
-				color: "transparent"
 
 				Image {
 					source: Category.buttonImageSource(modelData)
@@ -134,6 +120,15 @@ Rectangle {
 				}
 			}
 		}
+	}
+
+	Rectangle {
+		id: shadow
+
+		anchors.fill: backgroundImage
+
+		color: baseItem.shadowColor
+		opacity: shadowOpacity
 	}
 
 	Rectangle {
@@ -153,13 +148,11 @@ Rectangle {
 			anchors.right: parent.right
 			spacing: Constants.pane_spacing
 
-			Text {
+			GText {
 				id: providerText
-				color: Constants.secondary_text
 				width: parent.width
 				text: selectedProvider ? selectedProvider.shortDescription : ""
-				font.pixelSize: Constants.normal_font_size
-				wrapMode: Text.WordWrap
+				textStyle: Style.text.normal
 				visible: text.length > 0
 			}
 
@@ -167,7 +160,8 @@ Rectangle {
 				id: providerButton
 				anchors.right: parent.right
 				buttonColor: shadowColor
-				text: qsTr("To service provider") + settingsModel.translationTrigger
+				//: LABEL ANDROID IOS
+				text: qsTr("To service provider") + SettingsModel.translationTrigger
 				onClicked: {
 					Qt.openUrlExternally(selectedProvider ? selectedProvider.address : "")
 				}

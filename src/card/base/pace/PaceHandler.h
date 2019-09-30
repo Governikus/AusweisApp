@@ -55,7 +55,7 @@ class PaceHandler final
 		Q_DISABLE_COPY(PaceHandler)
 
 	public:
-		PaceHandler(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
+		explicit PaceHandler(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 		/*!
 		 * \brief Performs the PACE protocol and establishes a PACE channel.

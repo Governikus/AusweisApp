@@ -6,8 +6,11 @@
 
 #include "LanguageLoader.h"
 #include "LogHandler.h"
+#include "PlatformHelper.h"
+#include "SettingsModel.h"
 #include "SingletonHelper.h"
 
+#include <QFileInfo>
 #include <QtMath>
 
 
@@ -15,42 +18,6 @@ using namespace governikus;
 
 
 defineSingleton(LogModel)
-
-
-double LogModel::getSizeRatio() const
-{
-	if (mLogEntries.isEmpty())
-	{
-		return 1.0;
-	}
-
-	return mCount / static_cast<double>(mLogEntries.size());
-}
-
-
-double LogModel::getPosition() const
-{
-	if (mLogEntries.isEmpty())
-	{
-		return 0.0;
-	}
-
-	return mIndex / static_cast<double>(mLogEntries.size());
-}
-
-
-void LogModel::setPosition(double pPosition)
-{
-	beginResetModel();
-
-	const int newIndex = qFloor(mLogEntries.size() * pPosition);
-	const int maxIndex = mLogEntries.size() - mCount;
-	mIndex = newIndex < maxIndex ? newIndex : maxIndex;
-
-	endResetModel();
-
-	Q_EMIT fireVisibleAreaChanged();
-}
 
 
 void LogModel::addLogEntry(const QString& mEntry)
@@ -79,12 +46,7 @@ void LogModel::setLogEntries(QTextStream& pTextStream)
 		addLogEntry(pTextStream.readLine());
 	}
 
-	mIndex = 0;
-	mCount = mLogEntries.size() < 80 ? mLogEntries.size() : 80;
-
 	endResetModel();
-
-	Q_EMIT fireVisibleAreaChanged();
 }
 
 
@@ -93,28 +55,21 @@ void LogModel::onNewLogMsg(const QString& pMsg)
 	if (mSelectedLogFile == 0)
 	{
 		const int oldSize = mLogEntries.size();
-		const bool flickDown = (mIndex + mCount == oldSize);
 		addLogEntry(pMsg);
-		Q_EMIT fireVisibleAreaChanged();
-
-		if (flickDown && mAutoFlick)
-		{
-			moveView(mLogEntries.size() - oldSize);
-			Q_EMIT fireNewLogMsg();
-		}
+		beginInsertRows(QModelIndex(), oldSize, mLogEntries.size() - 1);
+		endInsertRows();
+		Q_EMIT fireNewLogMsg();
 	}
 }
 
 
 LogModel::LogModel()
 	: QAbstractListModel()
-	, mIndex(0)
-	, mCount(0)
 	, mLogFiles()
 	, mSelectedLogFile(0)
 	, mLogEntries()
-	, mAutoFlick(false)
 {
+	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireLanguageChanged, this, &LogModel::fireLogFilesChanged); // needed to translate the "Current log" entry on language change
 }
 
 
@@ -131,6 +86,7 @@ QStringList LogModel::getLogfiles()
 	const auto& logHandler = Env::getSingleton<LogHandler>();
 
 	QStringList logFileNames;
+	//: LABEL ALL_PLATFORMS
 	logFileNames += tr("Current log");
 	const auto& logFiles = logHandler->getOtherLogfiles();
 	for (const auto& entry : logFiles)
@@ -141,6 +97,17 @@ QStringList LogModel::getLogfiles()
 
 	setLogfile(0);
 	return logFileNames;
+}
+
+
+QDateTime LogModel::getCurrentLogfileDate() const
+{
+	if (mSelectedLogFile == 0)
+	{
+		return Env::getSingleton<LogHandler>()->getCurrentLogfileDate();
+	}
+
+	return LogHandler::getFileDate(QFileInfo(mLogFiles.at(mSelectedLogFile)));
 }
 
 
@@ -186,72 +153,39 @@ void LogModel::setLogfile(int pIndex)
 }
 
 
-void LogModel::moveView(int pDistance)
+void LogModel::saveCurrentLogfile(const QUrl& pFilename) const
 {
-	if (pDistance == 0)
+	const QString logfilePath = mLogFiles.at(mSelectedLogFile);
+
+	if (logfilePath.isEmpty())
 	{
-		return;
+		const auto& logHandler = Env::getSingleton<LogHandler>();
+		logHandler->copy(pFilename.toLocalFile());
 	}
-
-	int newIndex = mIndex + pDistance;
-	if (newIndex < 0)
+	else
 	{
-		newIndex = 0;
-	}
-
-	const int maxIndex = mLogEntries.size() - mCount;
-	if (newIndex > maxIndex)
-	{
-		newIndex = maxIndex;
-	}
-
-	if (newIndex != mIndex)
-	{
-		pDistance = newIndex - mIndex;
-
-		if (pDistance < 0)
-		{
-			if (mCount + pDistance >= 0)
-			{
-				beginRemoveRows(QModelIndex(), mCount + pDistance, mCount - 1);
-				mCount += pDistance;
-				endRemoveRows();
-			}
-
-			beginInsertRows(QModelIndex(), 0, -pDistance - 1);
-			mCount -= pDistance;
-			mIndex += pDistance;
-			endInsertRows();
-		}
-		else
-		{
-			if (mCount - pDistance >= 0)
-			{
-				beginRemoveRows(QModelIndex(), 0, pDistance - 1);
-				mCount -= pDistance;
-				mIndex += pDistance;
-				endRemoveRows();
-			}
-
-			beginInsertRows(QModelIndex(), mCount, mCount + pDistance - 1);
-			mCount += pDistance;
-			endInsertRows();
-		}
-
-		Q_EMIT fireVisibleAreaChanged();
+		QFile::copy(logfilePath, pFilename.toLocalFile());
 	}
 }
 
 
 int LogModel::rowCount(const QModelIndex& pIndex) const
 {
-	Q_UNUSED(pIndex);
-	return mCount;
+	Q_UNUSED(pIndex)
+	return mLogEntries.size();
 }
 
 
 QVariant LogModel::data(const QModelIndex& pIndex, int pRole) const
 {
-	Q_UNUSED(pRole);
-	return mLogEntries.at(mIndex + pIndex.row());
+	Q_UNUSED(pRole)
+	return mLogEntries.at(pIndex.row());
+}
+
+
+QString LogModel::createLogFileName(const QDateTime& pDateTime)
+{
+	QString dateFormat = QStringLiteral("yyyy-MM-dd_HH-mm");
+	QString logFileDate = pDateTime.toString(dateFormat);
+	return QStringLiteral("%1-%2.log").arg(QCoreApplication::applicationName(), logFileDate);
 }

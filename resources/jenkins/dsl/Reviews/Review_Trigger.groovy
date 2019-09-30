@@ -7,7 +7,7 @@ import static common.Constants.createReviewMessage
 def getJobs()
 {
 	def list = ['Formatting', 'Source', 'Docs', 'MacOS_DMG', 'Win32_GNU_MSI', 'Win32_MSVC_MSI', 'iOS_IPA', 'Android_AAR']
-	for(ARCH in Constants.AndroidArchAPK)
+	for(ARCH in Constants.AndroidArchAPKReview)
 	{
 		list << 'Android_APK_' + ARCH
 	}
@@ -64,7 +64,7 @@ j.with
 		{
 			phaseJob(getName('Android_AAR'))
 
-			for(ARCH in Constants.AndroidArchAPK)
+			for(ARCH in Constants.AndroidArchAPKReview)
 			{
 				phaseJob(getName('Android_APK_' + ARCH))
 			}

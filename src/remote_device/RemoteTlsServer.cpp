@@ -68,7 +68,7 @@ void RemoteTlsServer::incomingConnection(qintptr pSocketDescriptor)
 		mSocket = new QSslSocket();
 
 		const auto cipherCfg = mPsk.isEmpty() ? SecureStorage::TlsSuite::DEFAULT : SecureStorage::TlsSuite::PSK;
-		QSslConfiguration config = SecureStorage::getInstance().getTlsConfigRemote(cipherCfg).getConfiguration();
+		QSslConfiguration config = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(cipherCfg).getConfiguration();
 		const auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 		config.setPrivateKey(settings.getKey());
 		config.setLocalCertificate(settings.getCertificate());
@@ -83,15 +83,11 @@ void RemoteTlsServer::incomingConnection(qintptr pSocketDescriptor)
 		{
 			connect(mSocket.data(), QOverload<const QList<QSslError>&>::of(&QSslSocket::sslErrors),
 					this, &RemoteTlsServer::onSslErrors);
-
 			connect(mSocket.data(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
 					this, &RemoteTlsServer::onError);
-
 			connect(mSocket.data(), &QSslSocket::preSharedKeyAuthenticationRequired,
 					this, &RemoteTlsServer::onPreSharedKeyAuthenticationRequired);
-
-			connect(mSocket.data(), &QSslSocket::encrypted,
-					this, &RemoteTlsServer::onEncrypted);
+			connect(mSocket.data(), &QSslSocket::encrypted, this, &RemoteTlsServer::onEncrypted);
 
 			mSocket->startServerEncryption();
 		}
@@ -128,7 +124,7 @@ void RemoteTlsServer::onSslErrors(const QList<QSslError>& pErrors)
 {
 	if (pErrors.size() == 1 && pErrors.first().error() == QSslError::SelfSignedCertificate)
 	{
-		const auto& pairingCiphers = SecureStorage::getInstance().getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
+		const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
 		if (pairingCiphers.contains(mSocket->sessionCipher()))
 		{
 			qCDebug(remote_device) << "Client requests pairing | cipher:" << mSocket->sessionCipher() << "| certificate:" << mSocket->peerCertificate();
@@ -157,7 +153,7 @@ void RemoteTlsServer::onEncrypted()
 	qCDebug(remote_device) << "Client connected";
 
 	auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	const auto& pairingCiphers = SecureStorage::getInstance().getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
+	const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
 	if (pairingCiphers.contains(cfg.sessionCipher()))
 	{
 		qCDebug(remote_device) << "Pairing completed | Add certificate:" << cfg.peerCertificate();

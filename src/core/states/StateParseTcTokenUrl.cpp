@@ -11,7 +11,8 @@
 using namespace governikus;
 
 StateParseTcTokenUrl::StateParseTcTokenUrl(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractState(pContext)
+	, GenericContextContainer(pContext)
 {
 }
 

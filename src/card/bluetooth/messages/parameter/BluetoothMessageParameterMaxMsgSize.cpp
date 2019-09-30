@@ -12,7 +12,7 @@ BluetoothMessageParameterMaxMsgSize::BluetoothMessageParameterMaxMsgSize(const Q
 {
 	if (pValue.size() != 2)
 	{
-		qCWarning(card) << "Content has wrong length";
+		qCWarning(bluetooth) << "Content has wrong length";
 		mValue.clear();
 		mValid = false;
 		return;
@@ -27,7 +27,7 @@ BluetoothMessageParameterMaxMsgSize::BluetoothMessageParameterMaxMsgSize(uint pM
 {
 	if (pMaxMsgSize >> 16)
 	{
-		qCWarning(card) << "MaxMsgSize has wrong length";
+		qCWarning(bluetooth) << "MaxMsgSize has wrong length";
 		mValid = false;
 		return;
 	}

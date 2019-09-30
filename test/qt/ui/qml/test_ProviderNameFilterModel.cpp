@@ -1,0 +1,79 @@
+/*!
+ * \brief Unit tests for \ref ProviderNameFilterModel
+ *
+ * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ */
+#include "ProviderNameFilterModel.h"
+
+#include "AppSettings.h"
+#include "HistoryModel.h"
+#include "ProviderConfiguration.h"
+#include "ResourceLoader.h"
+
+#include <QtTest>
+
+
+using namespace governikus;
+
+
+class test_ProviderNameFilterModel
+	: public QObject
+{
+	Q_OBJECT
+	QSharedPointer<ProviderNameFilterModel> mModel;
+
+	private Q_SLOTS:
+		void initTestCase()
+		{
+			ResourceLoader::getInstance().init();
+		}
+
+
+		void init()
+		{
+			mModel.reset(new ProviderNameFilterModel());
+		}
+
+
+		void cleanup()
+		{
+			mModel.clear();
+		}
+
+
+		void test_FilterAcceptsRow()
+		{
+			QVERIFY(!mModel->filterAcceptsRow(0, QModelIndex()));
+
+			HistoryModel model;
+			mModel->setSourceModel(&model);
+
+			HistoryInfo historyInfo1("SubjectName", QString("https://makler.allianz.de"), "Usage", QDateTime::currentDateTime(), "TermOfUsage", {"RequestedData"});
+			HistoryInfo historyInfo2("SubjectName", QString("https://test.de"), "Usage", QDateTime::currentDateTime(), "TermOfUsage", {"RequestedData"});
+			Env::getSingleton<AppSettings>()->getHistorySettings().addHistoryInfo(historyInfo1);
+			Env::getSingleton<AppSettings>()->getHistorySettings().addHistoryInfo(historyInfo2);
+			const QString providerAddress("https://makler.allianz.de");
+			mModel->setProviderAddress(providerAddress);
+
+			QVERIFY(!mModel->filterAcceptsRow(0, QModelIndex()));
+			QVERIFY(mModel->filterAcceptsRow(1, QModelIndex()));
+		}
+
+
+		void test_SetProviderAddress()
+		{
+			const QString invalidProviderAddress("https://test.de/");
+			QTest::ignoreMessage(QtWarningMsg, "Cannot select provider with address \"https://test.de/\"");
+			mModel->setProviderAddress(invalidProviderAddress);
+			QCOMPARE(mModel->mProvider.getAddress(), QString());
+
+			const QString validProviderAddress("https://makler.allianz.de");
+			mModel->setProviderAddress(validProviderAddress);
+			QCOMPARE(mModel->mProvider.getAddress(), validProviderAddress);
+		}
+
+
+};
+
+QTEST_GUILESS_MAIN(test_ProviderNameFilterModel)
+#include "test_ProviderNameFilterModel.moc"

@@ -1,35 +1,45 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
+import QtGraphicalEffects 1.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.Provider 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.AuthModel 1.0
+import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.NumberModel 1.0
+
 
 SectionPage {
 	id: baseItem
 
-	leftTitleBarAction: TitleBarAction {
+	navigationAction: NavigationAction {
 		state: "cancel"
 		onClicked: AuthModel.cancelWorkflow()
 	}
-	headerTitleBarAction: TitleBarAction { text: qsTr("Identify") + settingsModel.translationTrigger; font.bold: true }
+	//: LABEL IOS_PHONE
+	title: qsTr("Identify") + SettingsModel.translationTrigger
 
 	content: Column {
-			width: baseItem.width
-			padding: Constants.pane_padding
+		width: baseItem.width
+		padding: Constants.pane_padding
 
-			Column {
-				width: parent.width - 2 * Constants.pane_padding
+		Column {
+			width: parent.width - 2 * Constants.pane_padding
 
 			spacing: Constants.component_spacing
 
-			Text {
-				color: Constants.secondary_text
-				font.pixelSize: Constants.normal_font_size
+			GText {
 				width: parent.width
-				wrapMode: Text.WordWrap
-				text: qsTr("You are about to identify yourself towards the following service provider:") + settingsModel.translationTrigger
+
+				//: LABEL IOS_PHONE
+				text: qsTr("You are about to identify yourself towards the following service provider:") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal_secondary
 			}
 
 			Pane {
@@ -37,6 +47,9 @@ SectionPage {
 				Item {
 					width: parent.width
 					height: providerEntries.height
+
+					Accessible.description: qsTr("Click for more information about the service provider") + SettingsModel.translationTrigger
+					Accessible.onPressAction: mouseArea.clicked(null)
 
 					Column {
 						id: providerEntries
@@ -47,28 +60,39 @@ SectionPage {
 
 						ProviderInfoSection {
 							imageSource: "qrc:///images/provider/information.svg"
-							title: qsTr("Service provider") + settingsModel.translationTrigger
+							//: LABEL IOS_PHONE
+							title: qsTr("Service provider") + SettingsModel.translationTrigger
 							name: certificateDescriptionModel.subjectName
 						}
 						ProviderInfoSection {
 							imageSource: "qrc:///images/provider/purpose.svg"
-							title: qsTr("Purpose for reading out requested data") + settingsModel.translationTrigger
+							//: LABEL IOS_PHONE
+							title: qsTr("Purpose for reading out requested data") + SettingsModel.translationTrigger
 							name: certificateDescriptionModel.purpose
 						}
 					}
 
-					Text {
+					Image {
 						id: forwardAction
 						anchors.right: parent.right
 						anchors.verticalCenter: providerEntries.verticalCenter
 
-						text: ">"
-						font.pixelSize: Utils.dp(22)
-						color: Constants.grey
+						sourceSize.height: Style.dimens.small_icon_size
+						fillMode: Image.PreserveAspectFit
+						source: "qrc:///images/arrowRight.svg"
+
+						ColorOverlay {
+							anchors.fill: forwardAction
+							source: forwardAction
+							color: Style.color.secondary_text
+						}
 					}
 
 					MouseArea {
+						id: mouseArea
+
 						anchors.fill: parent
+
 						onClicked: firePush(certificateDescriptionPage)
 					}
 
@@ -83,44 +107,53 @@ SectionPage {
 			GButton {
 				iconSource: "qrc:///images/npa.svg"
 				anchors.horizontalCenter: parent.horizontalCenter
-				text: qsTr("Identify now") + settingsModel.translationTrigger;
+				//: LABEL IOS_PHONE %1 can be CAN or PIN
+				text: qsTr("Proceed to %1 entry").arg(NumberModel.isCanAllowedMode ? "CAN" : "PIN") + SettingsModel.translationTrigger
 				onClicked: {
 					chatModel.transferAccessRights()
 					AuthModel.continueWorkflow()
 				}
 			}
 
-			Text {
-				color: Constants.secondary_text
-				font.pixelSize: Constants.normal_font_size
+			GText {
 				width: parent.width
-				wrapMode: Text.WordWrap
-				text: qsTr("The following data will be transferred to the service provider when you enter the PIN:") + settingsModel.translationTrigger
+
+				//: LABEL IOS_PHONE
+				text: qsTr("The following data will be transferred to the service provider when you enter the PIN:") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal_secondary
 			}
 
 			Pane {
 				id: transactionInfo
-				title: qsTr("Transactional information") + settingsModel.translationTrigger
+				//: LABEL IOS_PHONE
+				title: qsTr("Transactional information") + SettingsModel.translationTrigger
 				visible: !!transactionInfoText.text
 
-				Text {
+				GText {
 					id: transactionInfoText
-					color: Constants.secondary_text
 
 					width: parent.width
-					font.pixelSize: Constants.normal_font_size
+
 					text: AuthModel.transactionInfo
-					wrapMode: Text.WordWrap
+					textStyle: Style.text.normal_secondary
 				}
 			}
 
 			DataGroup {
-				title: qsTr("Required Data") + settingsModel.translationTrigger
+				onScrollPageDown: baseItem.scrollPageDown()
+				onScrollPageUp: baseItem.scrollPageUp()
+
+				//: LABEL IOS_PHONE
+				title: qsTr("Required Data") + SettingsModel.translationTrigger
 				chat: chatModel.required
 			}
 
 			DataGroup {
-				title: qsTr("Optional Data") + settingsModel.translationTrigger
+				onScrollPageDown: baseItem.scrollPageDown()
+				onScrollPageUp: baseItem.scrollPageUp()
+
+				//: LABEL IOS_PHONE
+				title: qsTr("Optional Data") + SettingsModel.translationTrigger
 				chat: chatModel.optional
 			}
 		}

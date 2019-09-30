@@ -9,6 +9,9 @@
 
 #include "HistorySettings.h"
 
+#include "AppSettings.h"
+#include "Env.h"
+
 #include "TestFileHelper.h"
 
 #include <QtCore>
@@ -20,64 +23,66 @@ class test_HistorySettings
 	: public QObject
 {
 	Q_OBJECT
-	QScopedPointer<HistorySettings> settings;
 
 	private Q_SLOTS:
 		void init()
 		{
 			QCoreApplication::setOrganizationName(QStringLiteral("dummy"));
-			AbstractSettings::mTestDir.clear();
-			settings.reset(new HistorySettings());
+			Env::getSingleton<AppSettings>()->getHistorySettings().deleteSettings();
 		}
 
 
 		void testEnabled()
 		{
-			bool initial = settings->isEnabled();
+			auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
+			bool initial = settings.isEnabled();
 
-			settings->setEnabled(!initial);
-			QCOMPARE(settings->isEnabled(), !initial);
-			settings->save();
+			settings.setEnabled(!initial);
+			QCOMPARE(settings.isEnabled(), !initial);
+			settings.save();
 
-			settings->setEnabled(initial);
-			QCOMPARE(settings->isEnabled(), initial);
+			settings.setEnabled(initial);
+			QCOMPARE(settings.isEnabled(), initial);
 		}
 
 
 		void testHistoryEntries()
 		{
-			QVector<HistoryInfo> initial = settings->getHistoryInfos();
+			auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
+			QVector<HistoryInfo> initial = settings.getHistoryInfos();
 			HistoryInfo info("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", {"pRequestedData"});
 			QVector<HistoryInfo> newValue(initial);
 			newValue.prepend(info); // new values will be prepended, so that it appears on top
 
-			settings->addHistoryInfo(info);
-			QCOMPARE(settings->getHistoryInfos(), newValue);
+			settings.addHistoryInfo(info);
+			QCOMPARE(settings.getHistoryInfos(), newValue);
 		}
 
 
 		void testDeleteHistory()
 		{
+			auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
 			HistoryInfo info("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", {"pRequestedData"});
-			settings->addHistoryInfo(info);
+			settings.addHistoryInfo(info);
 
-			QCOMPARE(settings->getHistoryInfos().size(), 1);
+			QCOMPARE(settings.getHistoryInfos().size(), 1);
 
-			settings->deleteSettings();
+			settings.deleteSettings();
 
-			QCOMPARE(settings->getHistoryInfos().size(), 0);
+			QCOMPARE(settings.getHistoryInfos().size(), 0);
 		}
 
 
 		void testDeleteHistoryFromFile()
 		{
+			auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
 			const auto file = AbstractSettings::mTestDir->path() + QStringLiteral("/dummy/Test_settings_HistorySettings.ini");
 
 			HistoryInfo info("pSubjectXYZ", "pSubjectUrlXYZ", "pUsageXYZ", QDateTime(), "pTermOfUsageXYZ", {"pRequestedDataXYZ"});
-			settings->addHistoryInfo(info);
-			settings->addHistoryInfo(info);
-			settings->addHistoryInfo(info);
-			settings->save();
+			settings.addHistoryInfo(info);
+			settings.addHistoryInfo(info);
+			settings.addHistoryInfo(info);
+			settings.save();
 			QVERIFY(QFile::exists(file));
 
 			auto content = TestFileHelper::readFile(file);
@@ -87,8 +92,8 @@ class test_HistorySettings
 			QVERIFY(content.contains("pTermOfUsageXYZ"));
 			QVERIFY(content.contains("pRequestedDataXYZ"));
 
-			settings->deleteSettings();
-			settings->save();
+			settings.deleteSettings();
+			settings.save();
 
 			content = TestFileHelper::readFile(file);
 			QVERIFY(!content.contains("pSubjectXYZ"));

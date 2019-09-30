@@ -19,7 +19,7 @@ using namespace governikus;
 DiagnosisDialog::DiagnosisDialog(const QSharedPointer<DiagnosisContext>& pContext, QWidget* pParent)
 	: QDialog(pParent)
 	, mUi(new Ui::DiagnosisDialog)
-	, mDiagnosisModel(new DiagnosisModel(pContext))
+	, mDiagnosisModel(new DiagnosisTreeModel(pContext))
 	, mTreeView(new QTreeView(this))
 {
 	mUi->setupUi(this);
@@ -84,7 +84,7 @@ bool DiagnosisDialog::eventFilter(QObject* pObject, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::KeyPress)
 	{
-		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(pEvent);
+		auto* keyEvent = static_cast<QKeyEvent*>(pEvent);
 		if (keyEvent->key() == Qt::Key_F1)
 		{
 			HelpAction::openContextHelp();

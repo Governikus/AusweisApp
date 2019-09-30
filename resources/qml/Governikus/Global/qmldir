@@ -1,6 +1,7 @@
 module Global
 
 singleton Constants 1.0 Constants.qml
+internal BaseConfirmationPopup BaseConfirmationPopup.qml
 internal PlatformConstants PlatformConstants.qml
 internal BrandConstants BrandConstants.qml
 internal DeviceConstants DeviceConstants.qml
@@ -9,16 +10,32 @@ Utils 1.0 Utils.js
 Category 1.0 Category.js
 
 ConfirmationPopup 1.0 ConfirmationPopup.qml
-ContinueButton 1.0 ContinueButton.qml
 GButton 1.0 GButton.qml
 GCheckBox 1.0 GCheckBox.qml
 GComboBox 1.0 GComboBox.qml
 GRadioButton 1.0 GRadioButton.qml
+GSeparator 1.0 GSeparator.qml
 GSwitch 1.0 GSwitch.qml
 GText 1.0 GText.qml
 GTextField 1.0 GTextField.qml
+GFlickable 1.0 GFlickable.qml
+GGridView 1.0 GGridView.qml
+GListView 1.0 GListView.qml
+GScrollBar 1.0 GScrollBar.qml
 LabeledText 1.0 LabeledText.qml
+ListItem 1.0 ListItem.qml
 LocationButton 1.0 LocationButton.qml
+NavigationButton 1.0 NavigationButton.qml
 Pane 1.0 Pane.qml
+RoundedRectangle 1.0 RoundedRectangle.qml
+ScrollablePane 1.0 ScrollablePane.qml
+ScrollGradients 1.0 ScrollGradients.qml
 PaneTitle 1.0 PaneTitle.qml
+SearchBar 1.0 SearchBar.qml
 StatusIcon 1.0 StatusIcon.qml
+SwipeActionDelegate 1.0 SwipeActionDelegate.qml
+TabbedPane 1.0 TabbedPane.qml
+TabbedPaneDelegateIconAndText 1.0 TabbedPaneDelegateIconAndText.qml
+TabbedPaneDelegateIconAndThreeLineText 1.0 TabbedPaneDelegateIconAndThreeLineText.qml
+TabbedPaneDelegateOneLineText 1.0 TabbedPaneDelegateOneLineText.qml
+ToggleableOption 1.0 ToggleableOption.qml

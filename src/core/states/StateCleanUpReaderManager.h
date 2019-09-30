@@ -7,13 +7,15 @@
 
 #pragma once
 
-#include "AbstractGenericState.h"
+#include "AbstractState.h"
+#include "GenericContextContainer.h"
 
 namespace governikus
 {
 
 class StateCleanUpReaderManager
-	: public AbstractGenericState<WorkflowContext>
+	: public AbstractState
+	, public GenericContextContainer<WorkflowContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

@@ -63,6 +63,33 @@ bool ProviderConfigurationInfo::operator ==(const ProviderConfigurationInfo& pOt
 }
 
 
+bool ProviderConfigurationInfo::matchWithSubjectUrl(const QString& pSubjectUrl) const
+{
+	if (pSubjectUrl.isEmpty())
+	{
+		return false;
+	}
+	const QString subjectUrlHost = QUrl(pSubjectUrl).host();
+
+	// Check provider address host.
+	if (!getAddress().isEmpty() && QUrl(getAddress()).host() == subjectUrlHost)
+	{
+		return true;
+	}
+
+	// Check subject urls.
+	for (const auto& subjectUrl : getSubjectUrls())
+	{
+		if (!subjectUrl.isEmpty() && QUrl(subjectUrl).host() == subjectUrlHost)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
 const LanguageString& ProviderConfigurationInfo::getShortName() const
 {
 	return d->mShortName;

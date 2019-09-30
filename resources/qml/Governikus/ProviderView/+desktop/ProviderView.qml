@@ -1,51 +1,83 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
+import QtQuick.Controls 2.3
 
-import Governikus.View 1.0
-import Governikus.TitleBar 1.0
+import Governikus.Global 1.0
 import Governikus.Provider 1.0
+import Governikus.TitleBar 1.0
+import Governikus.View 1.0
+import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.ProviderCategoryFilterModel 1.0
 import Governikus.Type.ApplicationModel 1.0
-
+import Governikus.Type.HistoryModel 1.0
 
 SectionPage {
-	id: sectionPage
+	id: baseItem
 
-	KeyNavigation.tab: navSuccessor
-	Accessible.role: Accessible.Grouping
-	Accessible.name: qsTr("Provider view")
-	Accessible.description: qsTr("This is the provider view of the AusweisApp2.")
-
-	titleBarAction: TitleBarAction {
-		text: qsTr("Provider")
-		onClicked: {
-			rect.visible = true
-			detailView.visible = false
-		}
-		customSubAction: SearchBar {
-			availableWidth: ApplicationModel.scaleFactor * 768
-		}
-		showHelp: false
+	enum SubViews {
+		None = 0,
+		Detail
 	}
 
-	Rectangle {
-		id: rect
-
-		anchors.fill: parent
-		color: "red"
-		opacity: 0.5
-		visible: true
-
-		MouseArea {
-			anchors.fill: parent
-			onClicked: {
-				rect.visible = false
-				detailView.visible = true
-			}
+	Keys.onEscapePressed: {
+		if (d.activeView === ProviderView.SubViews.None) {
+			event.accepted = false
+			return
 		}
+
+		d.activeView = ProviderView.SubViews.None
+	}
+
+	isAbstract: true
+
+	titleBarAction: TitleBarAction {
+		//: LABEL DESKTOP_QML
+		text: qsTr("Provider") + SettingsModel.translationTrigger
+		helpTopic: "providerPage"
+
+		onClicked: {
+			d.activeView = ProviderView.SubViews.None
+		}
+
+		customSubAction: SearchBar {
+			onDisplayTextChanged: ProviderCategoryFilterModel.searchString = displayText
+		}
+	}
+
+	QtObject {
+		id: d
+
+		property int activeView: ProviderView.SubViews.None
 	}
 
 	ProviderDetailView {
 		id: detailView
-		visible: false
-		onNextView: sectionPage.nextView(pName)
+
+		visible: d.activeView === ProviderView.SubViews.Detail
+
+		activeFocusOnTab: true
+
+		onNextView: {
+			d.activeView = ProviderView.SubViews.None
+			baseItem.nextView(pName)
+		}
+	}
+
+	ProviderOverview {
+		id: overviewView
+
+		visible: d.activeView === ProviderView.SubViews.None
+
+		activeFocusOnTab: true
+
+		onNextView: baseItem.nextView(pName)
+		onShowDetailView: {
+			HistoryModel.nameFilter.setProviderAddress(pModelItem.providerAddress)
+			detailView.providerModelItem = pModelItem
+			d.activeView = ProviderView.SubViews.Detail
+		}
 	}
 }

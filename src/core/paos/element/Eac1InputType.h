@@ -16,12 +16,6 @@
 #include <QString>
 #include <QVector>
 
-class test_StatePrepareChat;
-class test_StateExtractCvcsFromEac1InputType;
-class test_StatePreVerification;
-class test_StateCertificateDescriptionCheck;
-class test_StateProcessCertificatesFromEac2;
-class test_AuthModel;
 
 namespace governikus
 {
@@ -31,11 +25,6 @@ class Eac1InputType
 {
 	friend class DidAuthenticateEac1Parser;
 	friend class TestAuthContext;
-	friend class ::test_StateExtractCvcsFromEac1InputType;
-	friend class ::test_StatePreVerification;
-	friend class ::test_StateCertificateDescriptionCheck;
-	friend class ::test_StateProcessCertificatesFromEac2;
-	friend class ::test_AuthModel;
 
 	private:
 		QVector<QSharedPointer<const CVCertificate> > mCvCertificates;

@@ -4,7 +4,7 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppUiCommon)
 
-TARGET_LINK_LIBRARIES(AusweisAppUiCommon Qt5::Core Qt5::Gui AusweisAppGlobal)
+TARGET_LINK_LIBRARIES(AusweisAppUiCommon Qt5::Core Qt5::Gui AusweisAppGlobal AusweisAppCard AusweisAppRemoteDevice)
 
 IF(DESKTOP)
 	TARGET_LINK_LIBRARIES(AusweisAppUiCommon Qt5::Widgets)

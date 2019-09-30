@@ -25,7 +25,7 @@ ConnectivityManager::ConnectivityManager(QObject* pParent)
 
 ConnectivityManager::~ConnectivityManager()
 {
-	if (mTimerId)
+	if (mTimerId != 0)
 	{
 		killTimer(mTimerId);
 	}
@@ -105,7 +105,7 @@ bool ConnectivityManager::isNetworkInterfaceActive() const
 
 void ConnectivityManager::startWatching()
 {
-	if (mTimerId)
+	if (mTimerId != 0)
 	{
 		qCWarning(network) << "Already started, skip";
 		return;
@@ -117,7 +117,7 @@ void ConnectivityManager::startWatching()
 
 void ConnectivityManager::stopWatching()
 {
-	if (!mTimerId)
+	if (mTimerId == 0)
 	{
 		qCWarning(network) << "Already stopped, skip";
 		return;

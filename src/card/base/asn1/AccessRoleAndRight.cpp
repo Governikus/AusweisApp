@@ -4,7 +4,10 @@
 
 #include "AccessRoleAndRight.h"
 
-#include <QDebug>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(card)
+
 
 using namespace governikus;
 
@@ -99,116 +102,152 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 	switch (pRight)
 	{
 		case AccessRight::WRITE_DG17:
+			//: LABEL ALL_PLATFORMS
 			return tr("WRITE_DG17");
 
 		case AccessRight::WRITE_DG18:
+			//: LABEL ALL_PLATFORMS
 			return tr("WRITE_DG18");
 
 		case AccessRight::WRITE_DG19:
+			//: LABEL ALL_PLATFORMS
 			return tr("WRITE_DG19");
 
 		case AccessRight::WRITE_DG20:
+			//: LABEL ALL_PLATFORMS
 			return tr("WRITE_DG20");
 
 		case AccessRight::WRITE_DG21:
+			//: LABEL ALL_PLATFORMS
 			return tr("WRITE_DG21");
 
 		/* 32-29: reserved for future use */
 		case AccessRight::READ_DG21:
+			//: LABEL ALL_PLATFORMS
 			return tr("Optional data");
 
 		case AccessRight::READ_DG20:
+			//: LABEL ALL_PLATFORMS
 			return tr("Residence permit II");
 
 		case AccessRight::READ_DG19:
 			// "Auxiliary conditions" are replaced with "Residence permit I" in agreement with the BMI
+			//: LABEL ALL_PLATFORMS
 			return tr("Residence permit I");
 
 		case AccessRight::READ_DG18:
+			//: LABEL ALL_PLATFORMS
 			return tr("Community-ID");
 
 		case AccessRight::READ_DG17:
+			//: LABEL ALL_PLATFORMS
 			return tr("Address");
 
 		case AccessRight::READ_DG16:
+			//: LABEL ALL_PLATFORMS
 			return tr("RFU");
 
 		case AccessRight::READ_DG15:
+			//: LABEL ALL_PLATFORMS
 			return tr("RFU");
 
 		case AccessRight::READ_DG14:
+			//: LABEL ALL_PLATFORMS
 			return tr("RFU");
 
 		case AccessRight::READ_DG13:
+			//: LABEL ALL_PLATFORMS
 			return tr("Birth name");
 
 		case AccessRight::READ_DG12:
+			//: LABEL ALL_PLATFORMS
 			return tr("Optional data");
 
 		case AccessRight::READ_DG11:
+			//: LABEL ALL_PLATFORMS
 			return tr("Gender");
 
 		case AccessRight::READ_DG10:
+			//: LABEL ALL_PLATFORMS
 			return tr("Nationality");
 
 		case AccessRight::READ_DG09:
+			//: LABEL ALL_PLATFORMS
 			return tr("Place of birth");
 
 		case AccessRight::READ_DG08:
+			//: LABEL ALL_PLATFORMS
 			return tr("Date of birth");
 
 		case AccessRight::READ_DG07:
+			//: LABEL ALL_PLATFORMS
 			return tr("Doctoral degree");
 
 		case AccessRight::READ_DG06:
+			//: LABEL ALL_PLATFORMS
 			return tr("Religious / artistic name");
 
 		case AccessRight::READ_DG05:
+			//: LABEL ALL_PLATFORMS
 			return tr("Family name");
 
 		case AccessRight::READ_DG04:
+			//: LABEL ALL_PLATFORMS
 			return tr("Given name(s)");
 
 		case AccessRight::READ_DG03:
+			//: LABEL ALL_PLATFORMS
 			return tr("Valid until");
 
 		case AccessRight::READ_DG02:
+			//: LABEL ALL_PLATFORMS
 			return tr("Issuing country");
 
 		case AccessRight::READ_DG01:
+			//: LABEL ALL_PLATFORMS
 			return tr("Document type");
 
 		case AccessRight::INSTALL_QUAL_CERT:
+			//: LABEL ALL_PLATFORMS
 			return tr("Installation of qualified signature certificates");
 
 		case AccessRight::INSTALL_CERT:
+			//: LABEL ALL_PLATFORMS
 			return tr("Installation of signature certificates");
 
 		case AccessRight::PIN_MANAGEMENT:
+			//: LABEL ALL_PLATFORMS
 			return tr("PIN Management");
 
 		case AccessRight::CAN_ALLOWED:
+			//: LABEL ALL_PLATFORMS
 			return tr("CAN allowed");
 
 		case AccessRight::PRIVILEGED_TERMINAL:
+			//: LABEL ALL_PLATFORMS
 			return tr("Privileged terminal");
 
 		case AccessRight::RESTRICTED_IDENTIFICATION:
+			//: LABEL ALL_PLATFORMS
 			return tr("Pseudonym");
 
 		case AccessRight::COMMUNITY_ID_VERIFICATION:
+			//: LABEL ALL_PLATFORMS
 			return tr("Address verification");
 
 		case AccessRight::AGE_VERIFICATION:
+			//: LABEL ALL_PLATFORMS
 			return tr("Age verification");
 
 		case AccessRight::RFU_29:
 		case AccessRight::RFU_30:
 		case AccessRight::RFU_31:
 		case AccessRight::RFU_32:
+			//: LABEL ALL_PLATFORMS
 			return tr("Unknown (reserved)");
 	}
 
+	//: LABEL ALL_PLATFORMS
 	return tr("Unknown");
 }
 
@@ -218,7 +257,7 @@ QLatin1String AccessRoleAndRightsUtil::toTechnicalName(AccessRight pRight)
 	const auto name = getEnumName(static_cast<AccessRightNames>(pRight));
 	if (name.isEmpty())
 	{
-		qCritical() << "Requested AccessRight without mapping:" << pRight;
+		qCCritical(card) << "Requested AccessRight without mapping:" << pRight;
 	}
 	return name;
 }
@@ -250,9 +289,9 @@ bool AccessRoleAndRightsUtil::fromTechnicalName(const QString& pStr, const std::
 }
 
 
-bool AccessRoleAndRightsUtil::fromTechnicalName(const char* pStr, const std::function<void(AccessRight)>& pFunc)
+bool AccessRoleAndRightsUtil::fromTechnicalName(const char* const pStr, const std::function<void(AccessRight)>& pFunc)
 {
-	const AccessRightNames undefined = static_cast<AccessRightNames>(UINT_MAX);
+	const auto undefined = static_cast<AccessRightNames>(UINT_MAX);
 
 	auto entry = Enum<AccessRightNames>::fromString(pStr, undefined);
 	if (entry != undefined)

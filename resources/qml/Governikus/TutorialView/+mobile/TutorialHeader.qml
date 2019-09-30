@@ -1,7 +1,12 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtGraphicalEffects 1.0
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
 Item {
 	id: baseItem
@@ -16,6 +21,9 @@ Item {
 	property bool categoryAbove: true
 	property real initY
 	signal clicked()
+
+	Accessible.name: title.text
+	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked()
 
 	Image{
 		id: headerImage
@@ -39,18 +47,22 @@ Item {
 			}
 		}
 
-		Text {
+		GText {
 			id: title
+
 			anchors.horizontalCenter: parent.horizontalCenter
 			y: ((categoryAbove ? 0.575 : 0.5) * parent.height) - (0.5 * height)
+
+			Accessible.ignored: true
+
 			font.bold: true
-			font.pixelSize: Constants.tutorial_header_font_size
+			textStyle: Style.text.tutorial_title
 			layer.enabled: true
 			layer.effect: DropShadow {
-				verticalOffset: Utils.dp(3)
-				horizontalOffset: Utils.dp(3)
+				verticalOffset: 3
+				horizontalOffset: 3
 				color: Constants.white
-				radius: Utils.dp(1)
+				radius: 1
 				samples: 3
 			}
 		}

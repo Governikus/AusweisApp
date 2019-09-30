@@ -21,7 +21,7 @@ class ConnectionHandleParser
 	: public ElementParser
 {
 	public:
-		ConnectionHandleParser(QSharedPointer<QXmlStreamReader> pXmlReader);
+		explicit ConnectionHandleParser(QSharedPointer<QXmlStreamReader> pXmlReader);
 		virtual ~ConnectionHandleParser();
 
 		ConnectionHandle parse();

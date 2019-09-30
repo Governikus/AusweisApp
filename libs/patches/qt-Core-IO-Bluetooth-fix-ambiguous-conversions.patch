@@ -1,0 +1,97 @@
+From cd287186955f1c654a1f35197f0515ffc222e734 Mon Sep 17 00:00:00 2001
+From: Timur Pocheptsov <timur.pocheptsov@qt.io>
+Date: Wed, 3 Jul 2019 15:26:31 +0200
+Subject: [PATCH] Core/IO/Bluetooth - fix ambiguous conversions
+
+... somewhat prospective fix (I do not have the new iOS yet), so far build
+never failed with my current SDK.
+
+Fixes: QTBUG-76847
+Change-Id: Iab75c3cd47144cd83b679b1dbf82339e29c07bd1
+---
+ src/bluetooth/osx/osxbtperipheralmanager.mm         | 4 ++--
+ src/bluetooth/qbluetoothdevicediscoveryagent_ios.mm | 6 +++---
+ src/bluetooth/qlowenergycontroller_osx.mm           | 6 +++---
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git x/qtconnectivity/src/bluetooth/osx/osxbtperipheralmanager.mm y/qtconnectivity/src/bluetooth/osx/osxbtperipheralmanager.mm
+index 1998340a..39f9808c 100644
+--- x/qtconnectivity/src/bluetooth/osx/osxbtperipheralmanager.mm
++++ y/qtconnectivity/src/bluetooth/osx/osxbtperipheralmanager.mm
+@@ -340,7 +340,7 @@ bool qt_validate_value_range(const QLowEnergyCharacteristicData &data)
+ - (void)startAdvertising
+ {
+     state = PeripheralState::waitingForPowerOn;
+-    if (manager)
++    if (manager.data())
+         [manager setDelegate:nil];
+     manager.reset([[CBPeripheralManager alloc] initWithDelegate:self
+                    queue:OSXBluetooth::qt_LE_queue()]);
+@@ -405,7 +405,7 @@ bool qt_validate_value_range(const QLowEnergyCharacteristicData &data)
+ 
+ - (void) addServicesToPeripheral
+ {
+-    Q_ASSERT(manager);
++    Q_ASSERT(manager.data());
+ 
+     if (nextServiceToAdd < services.size())
+         [manager addService:services[nextServiceToAdd++]];
+diff --git x/qtconnectivity/src/bluetooth/qbluetoothdevicediscoveryagent_ios.mm y/qtconnectivity/src/bluetooth/qbluetoothdevicediscoveryagent_ios.mm
+index c50d546d..557785b4 100644
+--- x/qtconnectivity/src/bluetooth/qbluetoothdevicediscoveryagent_ios.mm
++++ y/qtconnectivity/src/bluetooth/qbluetoothdevicediscoveryagent_ios.mm
+@@ -132,7 +132,7 @@ QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate(con
+ 
+ QBluetoothDeviceDiscoveryAgentPrivate::~QBluetoothDeviceDiscoveryAgentPrivate()
+ {
+-    if (inquiryLE) {
++    if (inquiryLE.data()) {
+         // We want the LE scan to stop as soon as possible.
+         if (dispatch_queue_t leQueue = OSXBluetooth::qt_LE_queue()) {
+             // Local variable to be retained ...
+@@ -151,7 +151,7 @@ bool QBluetoothDeviceDiscoveryAgentPrivate::isActive() const
+     if (stopPending)
+         return false;
+ 
+-    return inquiryLE;
++    return !!inquiryLE.data();
+ }
+ 
+ void QBluetoothDeviceDiscoveryAgentPrivate::start(QBluetoothDeviceDiscoveryAgent::DiscoveryMethods /*methods*/)
+@@ -178,7 +178,7 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start(QBluetoothDeviceDiscoveryAgent
+                       this, &QBluetoothDeviceDiscoveryAgentPrivate::LEdeviceFound);
+ 
+     inquiryLE.reset([[LEDeviceInquiryObjC alloc] initWithNotifier:notifier.data()]);
+-    if (inquiryLE)
++    if (inquiryLE.data())
+         notifier.take(); // Whatever happens next, inquiryLE is already the owner ...
+ 
+     dispatch_queue_t leQueue(qt_LE_queue());
+diff --git x/qtconnectivity/src/bluetooth/qlowenergycontroller_osx.mm y/qtconnectivity/src/bluetooth/qlowenergycontroller_osx.mm
+index 8bcdc22e..9aaee855 100644
+--- x/qtconnectivity/src/bluetooth/qlowenergycontroller_osx.mm
++++ y/qtconnectivity/src/bluetooth/qlowenergycontroller_osx.mm
+@@ -165,7 +165,7 @@ QLowEnergyControllerPrivateOSX::QLowEnergyControllerPrivateOSX(QLowEnergyControl
+ #endif
+     } else {
+         centralManager.reset([[ObjCCentralManager alloc] initWith:notifier.data()]);
+-        if (!centralManager) {
++        if (!centralManager.data()) {
+             qCWarning(QT_BT_OSX) << "failed to initialize central manager";
+             return;
+         }
+@@ -200,9 +200,9 @@ QLowEnergyControllerPrivateOSX::~QLowEnergyControllerPrivateOSX()
+ bool QLowEnergyControllerPrivateOSX::isValid() const
+ {
+ #ifdef Q_OS_TVOS
+-    return centralManager;
++    return centralManager.data();
+ #else
+-    return centralManager || peripheralManager;
++    return centralManager.data() || peripheralManager.data();
+ #endif
+ }
+ 
+-- 
+2.22.0
+

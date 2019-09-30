@@ -4,14 +4,16 @@
 
 #pragma once
 
+#include "AbstractState.h"
 #include "context/ChangePinContext.h"
-#include "states/AbstractGenericState.h"
+#include "GenericContextContainer.h"
 
 namespace governikus
 {
 
 class StateEnterNewPacePin
-	: public AbstractGenericState<ChangePinContext>
+	: public AbstractState
+	, public GenericContextContainer<ChangePinContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

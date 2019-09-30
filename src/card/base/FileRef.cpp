@@ -2,8 +2,9 @@
  * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
  */
 
-#include "Commands.h"
 #include "FileRef.h"
+
+#include "SelectBuilder.h"
 
 using namespace governikus;
 
@@ -40,6 +41,18 @@ FileRef FileRef::efCardSecurity()
 FileRef FileRef::appESign()
 {
 	return FileRef(static_cast<char>(SelectBuilder::P1::APPLICATION_ID), QByteArray::fromHex("a000000167455349474e"));
+}
+
+
+FileRef FileRef::appEId()
+{
+	return FileRef(static_cast<char>(SelectBuilder::P1::APPLICATION_ID), QByteArray::fromHex("e80704007f00070302"));
+}
+
+
+FileRef FileRef::appPassport()
+{
+	return FileRef(static_cast<char>(SelectBuilder::P1::APPLICATION_ID), QByteArray::fromHex("a0000002471001"));
 }
 
 

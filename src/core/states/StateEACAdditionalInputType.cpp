@@ -7,7 +7,8 @@
 using namespace governikus;
 
 StateEACAdditionalInputType::StateEACAdditionalInputType(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractState(pContext)
+	, GenericContextContainer(pContext)
 {
 }
 

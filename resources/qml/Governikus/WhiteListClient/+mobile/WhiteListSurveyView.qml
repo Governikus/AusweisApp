@@ -1,152 +1,240 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.AuthModel 1.0
+import Governikus.Type.SurveyModel 1.0
+
 
 SectionPage {
 	id: root
-	leftTitleBarAction: TitleBarAction { state: "cancel"; onClicked: root.done(false) }
-	headerTitleBarAction: TitleBarAction { text: qsTr("Feedback") + settingsModel.translationTrigger; font.bold: true }
 
 	signal done(bool pUserAccepted)
 
+	navigationAction: NavigationAction { state: "cancel"; onClicked: root.done(false) }
+	//: LABEL ANDROID IOS
+	title: qsTr("Feedback") + SettingsModel.translationTrigger
+
+	QtObject {
+		id: d
+
+		property bool dataHidden: true
+	}
+
 	content: Column {
 		width: root.width
+
 		padding: Constants.pane_padding
 		spacing: Constants.pane_spacing
 
 		Pane {
 			id: whitePane
+
 			anchors.margins: Constants.pane_padding
-			title: qsTr("Send device data?") + settingsModel.translationTrigger
+			//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Header
+			title: qsTr("Send device data?") + SettingsModel.translationTrigger
 
-			Text {
+			GText {
 				anchors.left: parent.left
 				anchors.right: parent.right
-				text: qsTr("Would you like to help us to improve the AusweisApp2?") + settingsModel.translationTrigger
-				font.pixelSize: Constants.normal_font_size
-				color: Constants.secondary_text
-				wrapMode: Text.WordWrap
-			}
-			Text {
-				anchors.left: parent.left
-				anchors.right: parent.right
-				text: qsTr("Supplying your device characteristics helps us to gather reliable information about the compatibility of your device.") + settingsModel.translationTrigger
-				font.pixelSize: Constants.normal_font_size
-				color: Constants.secondary_text
-				wrapMode: Text.WordWrap
-			}
-			Text {
-				anchors.left: parent.left
-				anchors.right: parent.right
-				text: qsTr("The transmission is anonymous. No personal data is collected or transmitted!") + settingsModel.translationTrigger
-				font.pixelSize: Constants.normal_font_size
-				color: Constants.secondary_text
-				wrapMode: Text.WordWrap
-			}
-			Text {
-				anchors.left: parent.left
-				anchors.right: parent.right
-				text: qsTr("The following information will be transmitted, if you decide so:") + settingsModel.translationTrigger
-				font.pixelSize: Constants.normal_font_size
-				color: Constants.secondary_text
-				wrapMode: Text.WordWrap
+				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text
+				text: qsTr("Would you like to help us to improve the AusweisApp2?") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal
 			}
 
-			Item {
+			GText {
 				anchors.left: parent.left
 				anchors.right: parent.right
-				height: Math.max(column1.height, column2.height)
+				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text
+				text: qsTr("Supplying your device characteristics helps us to gather reliable information about the compatibility of your device.") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal
+			}
 
-				ListModel {
-					id: leftInformationModel
-					ListElement {
-						entry: QT_TR_NOOP("Vendor")
-					}
-					ListElement {
-						entry: QT_TR_NOOP("Model number")
-					}
-					ListElement {
-						entry: QT_TR_NOOP("Model name")
-					}
-					ListElement {
-						entry: QT_TR_NOOP("Collection date")
-					}
-					ListElement {
-						entry: QT_TR_NOOP("AusweisApp2 version")
-					}
-				}
+			GText {
+				anchors.left: parent.left
+				anchors.right: parent.right
+				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text
+				text: qsTr("The transmission is anonymous. No personal data is collected or transmitted!") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal
+			}
 
-				ListModel {
-					id: rightInformationModel
-					ListElement {
-						entry: QT_TR_NOOP("ROM build number")
-					}
-					ListElement {
-						entry: QT_TR_NOOP("Android version")
-					}
-					ListElement {
-						entry: QT_TR_NOOP("Kernel version")
-					}
-					ListElement {
-						entry: QT_TR_NOOP("Max. NFC packet length")
-					}
-				}
+			Column {
+				anchors.left: parent.left
+				anchors.right: parent.right
 
-				Column {
-					id: column1
-					width: parent.width / 2
+				spacing: 2
+
+				GSeparator {
 					anchors.left: parent.left
-
-					Repeater {
-						model: leftInformationModel
-						delegate: BulletPointDelegate {
-							text: qsTr(entry) + settingsModel.translationTrigger
-						}
-					}
+					anchors.right: parent.right
 				}
 
-				Column {
-					id: column2
-					width: parent.width / 2
+				Button {
+					id: collapsableCollectedData
+
+					height: showDataButton.height + Constants.pane_spacing
+					anchors.left: parent.left
 					anchors.right: parent.right
 
-					Repeater {
-						model: rightInformationModel
-						delegate: BulletPointDelegate {
-							text: qsTr(entry) + settingsModel.translationTrigger
+					states: [
+						State {
+							name: "open";
+							when: !d.dataHidden
+
+							PropertyChanges {
+								target: collapsableCollectedData;
+								height: collectedData.openHeight + showDataButton.height + Constants.pane_spacing
+							}
+							PropertyChanges {
+								target: collectedData;
+								height: collectedData.openHeight
+							}
+							PropertyChanges {
+								target: collectedData;
+								opacity: 1.0
+							}
+						}
+					]
+					transitions: [
+						Transition {
+							PropertyAnimation {
+								target: collectedData
+								property: "height"
+								easing.type: Easing.InOutQuad
+								duration: 500
+							}
+							PropertyAnimation {
+								target: collectedData
+								property: "opacity"
+								easing.type: Easing.InOutQuad
+								duration: 500
+							}
+							PropertyAnimation {
+								target: collapsableCollectedData
+								property: "height"
+								easing.type: Easing.InOutQuad
+								duration: 500
+							}
+						}
+					]
+
+					background: Rectangle {
+						color: collapsableCollectedData.down ? Style.color.tutorial_box_background : Style.color.background_pane
+					}
+
+					onClicked: {
+						d.dataHidden = !d.dataHidden
+					}
+
+					contentItem: Item {
+						Item {
+							id: showDataButton
+
+							height: showDataText.height
+							anchors.left: parent.left
+							anchors.right: parent.right
+							anchors.top: parent.top
+
+							GText {
+								id: showDataTriangle
+
+								anchors.top: parent.top
+								anchors.right: parent.right
+
+								rightPadding: Constants.groupbox_spacing
+								text: d.dataHidden ? "\u25BC" : "\u25B2"
+								textStyle: Style.text.normal
+								horizontalAlignment: Text.AlignRight
+							}
+
+							GText {
+								id: showDataText
+
+								anchors.right: showDataTriangle.left
+								anchors.bottom: showDataTriangle.bottom
+								anchors.bottomMargin: showDataText.height / 8
+
+								rightPadding: Constants.groupbox_spacing
+								text: qsTr("Collected data") + SettingsModel.translationTrigger
+								textStyle: Style.text.normal
+							}
+						}
+
+						Item {
+							id: collectedData
+
+							property real openHeight: dataColumn.implicitHeight
+
+							height: openHeight
+							width: parent.width
+							anchors.top: showDataButton.bottom
+
+							opacity: 0
+							clip: true
+
+							Column {
+								id: dataColumn
+
+								width: parent.width
+								anchors.left: parent.left
+
+								topPadding: Constants.groupbox_spacing
+
+								Repeater {
+									id: repeater
+
+									model: SurveyModel
+									delegate: LabeledText {
+										width: dataColumn.width
+										label: title
+										text: value
+									}
+								}
+							}
 						}
 					}
 				}
+
+				GSeparator {
+					anchors.left: parent.left
+					anchors.right: parent.right
+				}
 			}
 
-			Text {
+			GText {
 				anchors.left: parent.left
 				anchors.right: parent.right
-				text: qsTr("Thank you for your assistance!") + settingsModel.translationTrigger
-				font.pixelSize: Constants.normal_font_size
-				font.bold: true
-				color: Constants.secondary_text
-				wrapMode: Text.WordWrap
+				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Thank you message
+				text: qsTr("Thank you for your assistance!") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal
 			}
 		}
 
 
 		Row {
-			spacing: Constants.component_spacing
 			height: childrenRect.height
 			anchors.horizontalCenter: parent.horizontalCenter
 
+			spacing: Constants.component_spacing
+
 			GButton {
-				text: qsTr("Cancel") + settingsModel.translationTrigger
+				//: LABEL ANDROID IOS
+				text: qsTr("Cancel") + SettingsModel.translationTrigger
 				onClicked: root.done(false)
 			}
 
 			GButton {
-				text: qsTr("Transmit") + settingsModel.translationTrigger
+				//: LABEL ANDROID IOS
+				text: qsTr("Transmit") + SettingsModel.translationTrigger
 				onClicked: root.done(true)
 			}
 		}

@@ -27,11 +27,12 @@ class AbstractState
 		const QSharedPointer<WorkflowContext> mContext;
 		const bool mConnectOnCardRemoved;
 
-		explicit AbstractState(const QSharedPointer<WorkflowContext>& pContext, bool pConnectOnCardRemoved);
 		virtual void run() = 0;
 
 	protected:
 		QVector<QMetaObject::Connection> mConnections;
+
+		explicit AbstractState(const QSharedPointer<WorkflowContext>& pContext, bool pConnectOnCardRemoved = true);
 
 		void onExit(QEvent* pEvent) override;
 
@@ -41,7 +42,7 @@ class AbstractState
 		void updateStartPaosResult(const ECardApiResult& pStartPaosResult);
 
 	public:
-		static QString getClassName(const char* pName);
+		static QString getClassName(const char* const pName);
 
 		template<typename T>
 		static bool isState(const QString& pState)

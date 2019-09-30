@@ -27,7 +27,8 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 
 
 StateCheckRefreshAddress::StateCheckRefreshAddress(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 	, mReply(nullptr)
 	, mUrl()
 	, mSubjectUrl()
@@ -101,7 +102,7 @@ void StateCheckRefreshAddress::run()
 	auto refreshAddrError = QStringLiteral("Invalid RefreshAddress: %1").arg(mUrl.toString());
 	if (!mUrl.isValid())
 	{
-		qDebug() << refreshAddrError;
+		qDebug().noquote() << refreshAddrError;
 		Q_EMIT fireContinue();
 		return;
 	}
@@ -113,7 +114,7 @@ void StateCheckRefreshAddress::run()
 		}
 		else
 		{
-			qDebug() << refreshAddrError;
+			qDebug().noquote() << refreshAddrError;
 			Q_EMIT fireContinue();
 			return;
 		}
@@ -234,7 +235,7 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 			return false;
 
 		case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
-			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description, issuerName));
+			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description, issuerName));
 			return false;
 	}
 
@@ -269,7 +270,7 @@ void StateCheckRefreshAddress::onNetworkReply()
 				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Proxy_Error));
 				break;
 
-			case NetworkManager::NetworkError::SslError:
+			case NetworkManager::NetworkError::SecurityError:
 				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Ssl_Establishment_Error));
 				break;
 
@@ -407,4 +408,12 @@ void StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate(QNetworkR
 	}
 	qCritical() << "An error occured fetching the server certificate:" << mReply->errorString();
 	reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url));
+}
+
+
+void StateCheckRefreshAddress::onEntry(QEvent* pEvent)
+{
+	//: INFO ALL_PLATFORMS Status message after the communication between card and server is completed, the result is being forwarded to the provider.
+	getContext()->setProgress(80, tr("Sending data to service provider"));
+	AbstractState::onEntry(pEvent);
 }

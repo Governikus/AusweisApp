@@ -11,6 +11,7 @@
 #include <openssl/crypto.h> // version API
 
 #include <QLoggingCategory>
+#include <QProcess>
 #include <QScopedPointer>
 #include <QSslSocket>
 #include <QtPlugin>
@@ -58,6 +59,10 @@ Q_IMPORT_PLUGIN(IntentActivationHandler)
 
 
 #if defined(Q_OS_IOS)
+Q_IMPORT_PLUGIN(QIOSIntegrationPlugin)
+
+Q_IMPORT_PLUGIN(IosReaderManagerPlugIn)
+
 Q_IMPORT_PLUGIN(CustomSchemeActivationHandler)
 
 Q_IMPORT_PLUGIN(QJpegPlugin)
@@ -85,7 +90,6 @@ Q_IMPORT_PLUGIN(BluetoothReaderManagerPlugIn)
 
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
-Q_IMPORT_PLUGIN(UIPlugInCli)
 Q_IMPORT_PLUGIN(UIPlugInWidgets)
 #endif
 
@@ -93,11 +97,11 @@ Q_IMPORT_PLUGIN(UIPlugInWidgets)
 Q_IMPORT_PLUGIN(UIPlugInAidl)
 #endif
 
-#if (defined(Q_OS_ANDROID) && !defined(ANDROID_BUILD_AAR)) || defined(Q_OS_IOS) || (!defined(QT_NO_DEBUG) && !defined(ANDROID_BUILD_AAR))
+#ifndef ANDROID_BUILD_AAR
 Q_IMPORT_PLUGIN(UIPlugInQml)
 #endif
 
-Q_IMPORT_PLUGIN(UIPlugInJsonApi)
+Q_IMPORT_PLUGIN(UIPlugInJson)
 Q_IMPORT_PLUGIN(UIPlugInWebSocket)
 
 
@@ -141,6 +145,9 @@ static inline QCoreApplication* initQt(int& argc, char** argv)
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 	QCoreApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 #endif
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
 
 	QCoreApplication::setOrganizationName(QStringLiteral(VENDOR));
 	QCoreApplication::setOrganizationDomain(QStringLiteral(VENDOR_DOMAIN));
@@ -149,6 +156,10 @@ static inline QCoreApplication* initQt(int& argc, char** argv)
 
 #ifndef ANDROID_BUILD_AAR
 	QGuiApplication::setQuitOnLastWindowClosed(false);
+#endif
+
+#if defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)
+	QGuiApplication::setDesktopSettingsAware(false);
 #endif
 
 #if defined(Q_OS_ANDROID) && !defined(ANDROID_BUILD_AAR)
@@ -161,6 +172,31 @@ static inline QCoreApplication* initQt(int& argc, char** argv)
 	return new QAPP(argc, argv);
 }
 
+
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
+void restartApp(const QString& pApplicationFilePath, QStringList pArgumentList, int pArgc)
+{
+	if (pArgumentList.size() == pArgc)
+	{
+		pArgumentList.removeFirst();
+	}
+
+	qCInfo(init) << "Attempting to start new process:" << pApplicationFilePath << ", args:" << pArgumentList;
+	qint64 pid = -1;
+	const bool restartSuccessful = QProcess::startDetached(pApplicationFilePath, pArgumentList, QString(), &pid);
+
+	if (restartSuccessful)
+	{
+		qCInfo(init) << "New process successfully launched, PID:" << pid;
+	}
+	else
+	{
+		qCCritical(init) << "Could not launch new process.";
+	}
+}
+
+
+#endif
 
 Q_DECL_EXPORT int main(int argc, char** argv)
 {
@@ -180,5 +216,19 @@ Q_DECL_EXPORT int main(int argc, char** argv)
 	}
 
 	SignalHandler::getInstance().setController(controller);
-	return SignalHandler::getInstance().shouldQuit() ? EXIT_SUCCESS : app->exec();
+	if (SignalHandler::getInstance().shouldQuit())
+	{
+		return EXIT_SUCCESS;
+	}
+
+	const int returnCode = app->exec();
+
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
+	if (controller.shouldApplicationRestart())
+	{
+		restartApp(app->applicationFilePath(), app->arguments(), argc);
+	}
+#endif
+
+	return returnCode;
 }

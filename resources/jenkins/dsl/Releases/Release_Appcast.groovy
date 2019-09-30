@@ -13,4 +13,9 @@ j.with
 	{
 		stringParam('changeset', 'release', 'Build given changeset (tag) as release')
 	}
+
+	wrappers
+	{
+		buildName('${changeset}')
+	}
 }

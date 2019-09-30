@@ -1,7 +1,14 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Layouts 1.2
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 Rectangle {
 	id: baseItem
@@ -31,11 +38,11 @@ Rectangle {
 		onVisibleChanged: { info.resetSize(); info.approximateSize() }
 		onChildrenRectChanged: info.approximateSize()
 
-		Text {
-			text: qsTr("Contact") + settingsModel.translationTrigger
+		GText {
+			//: LABEL ANDROID_TABLET IOS_TABLET
+			text: qsTr("Contact") + SettingsModel.translationTrigger
+			textStyle: Style.text.header_inverse
 			padding: Constants.component_spacing
-			font.pixelSize: Constants.header_font_size
-			color: "white"
 		}
 		Rectangle {
 			// The delegates have space in between which is
@@ -43,7 +50,7 @@ Rectangle {
 			anchors.left: parent.left
 			anchors.right: parent.right
 			height: contactListView.height
-			color: "white"
+			color: Constants.white
 
 			ListView {
 				id: contactListView
@@ -56,7 +63,8 @@ Rectangle {
 					width: contactListView.width
 					color: baseItem.color
 					imageSource: Qt.resolvedUrl(model.iconSource)
-					itemText: (!!model.text ? model.text : qsTr("Unknown")) + settingsModel.translationTrigger
+					//: LABEL ANDROID_TABLET IOS_TABLET
+					itemText: (!!model.text ? model.text : qsTr("Unknown")) + SettingsModel.translationTrigger
 					link: model.link
 					sizeRecudctor: info.sizeRecudctor
 				}

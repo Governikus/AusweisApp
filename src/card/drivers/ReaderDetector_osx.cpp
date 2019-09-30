@@ -11,11 +11,10 @@
 
 #include <QLoggingCategory>
 
+Q_DECLARE_LOGGING_CATEGORY(card_drivers)
 
 using namespace governikus;
 
-
-Q_DECLARE_LOGGING_CATEGORY(card_drivers)
 
 #define VENDOR_ID "idVendor"
 #define PRODUCT_ID "idProduct"
@@ -28,7 +27,7 @@ static void deviceChanged(void* refCon, io_iterator_t iterator)
 		// Clear the recognized changes
 	}
 
-	qDebug() << "System information: device changed";
+	qCDebug(card_drivers) << "System information: device changed";
 
 	ReaderDetector* readerDetector = static_cast<ReaderDetector*>(refCon);
 	Q_EMIT readerDetector->fireReaderChangeDetected();
@@ -53,7 +52,7 @@ static bool listenTo(const io_name_t notificationType, ReaderDetector* readerDet
 
 	if (kr != KERN_SUCCESS)
 	{
-		qDebug() << "IOServiceAddMatchingNotification returned" << kr;
+		qCDebug(card_drivers) << "IOServiceAddMatchingNotification returned" << kr;
 		return false;
 	}
 

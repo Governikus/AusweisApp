@@ -20,7 +20,7 @@ class ChangePinController
 	Q_OBJECT
 
 	public:
-		ChangePinController(QSharedPointer<ChangePinContext> pContext);
+		explicit ChangePinController(QSharedPointer<ChangePinContext> pContext);
 		virtual ~ChangePinController();
 };
 

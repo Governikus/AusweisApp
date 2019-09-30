@@ -1,14 +1,25 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
 import "Utils.js" as Utils
 
+import Governikus.Style 1.0
+
 RadioButton {
 	id: control
+
+	property var textStyle: Style.text.normal
+
+	Accessible.name: text
+
 	spacing: Constants.groupbox_spacing
 
 	indicator: Rectangle {
-		implicitWidth:  Utils.dp(26)
+		implicitWidth: 26
 		implicitHeight:  implicitWidth
 		x: control.leftPadding
 		y: parent.height / 2 - height / 2
@@ -16,7 +27,7 @@ RadioButton {
 		border.color: Qt.darker(Constants.blue, control.down ? 1.5 : 1)
 
 		Rectangle {
-			width: Utils.dp(14)
+			width: 14
 			height: width
 			x: (parent.width - width) / 2
 			y: x
@@ -26,10 +37,11 @@ RadioButton {
 		}
 	}
 
-	contentItem: Text {
+	contentItem: GText {
+		Accessible.ignored: true
+
 		text: control.text
-		font.pixelSize: Constants.label_font_size
-		color: Constants.secondary_text
+		textStyle: control.textStyle
 		verticalAlignment: Text.AlignVCenter
 		leftPadding: control.indicator.width + control.spacing
 	}

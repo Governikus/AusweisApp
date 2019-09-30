@@ -7,7 +7,7 @@
 #pragma once
 
 #include "CardConnectionWorker.h"
-#include "Commands.h"
+#include "SelectBuilder.h"
 
 #include <QDataStream>
 

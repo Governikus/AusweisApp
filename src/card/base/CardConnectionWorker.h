@@ -9,7 +9,6 @@
 #include "asn1/SecurityInfos.h"
 #include "CardReturnCode.h"
 #include "CommandApdu.h"
-#include "Commands.h"
 #include "EstablishPaceChannel.h"
 #include "FileRef.h"
 #include "pace/SecureMessaging.h"
@@ -42,7 +41,6 @@ class CardConnectionWorker
 		 */
 		QScopedPointer<SecureMessaging> mSecureMessaging;
 
-		bool hasCard() const;
 		inline QSharedPointer<const EFCardAccess> getEfCardAccess() const;
 
 	private Q_SLOTS:
@@ -53,7 +51,7 @@ class CardConnectionWorker
 		 * The Card hold by the Reader is expected to be connected.
 		 * The connection is closed, when the CardConnection is destroyed.
 		 */
-		CardConnectionWorker(Reader* pReader);
+		explicit CardConnectionWorker(Reader* pReader);
 
 		/*!
 		 * Destroys the CardConnection and disconnects from the card.
@@ -78,25 +76,29 @@ class CardConnectionWorker
 		 * If the Reader is a basic reader and the PACE channel is successfully established, the subsequent transmits will be secured using, secure messaging.
 		 * I. e., a secure messaging channel is established.
 		 */
-		virtual CardReturnCode establishPaceChannel(PacePasswordId pPasswordId,
-				const QString& pPasswordValue,
-				EstablishPaceChannelOutput& pChannelOutput);
+		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId,
+				const QString& pPasswordValue);
 
 		/*!
 		 * Performs PACE and establishes a PACE channel for later terminal authentication.
 		 * If the Reader is a basic reader and the PACE channel is successfully established, the subsequent transmits will be secured using, secure messaging.
 		 * I. e., a secure messaging channel is established.
 		 */
-		virtual CardReturnCode establishPaceChannel(PacePasswordId pPasswordId,
+		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId,
 				const QString& pPasswordValue,
 				const QByteArray& pChat,
-				const QByteArray& pCertificateDescription,
-				EstablishPaceChannelOutput& pChannelOutput);
+				const QByteArray& pCertificateDescription);
 
 		/*!
 		 * Destroys a previously established PACE channel.
 		 */
 		virtual CardReturnCode destroyPaceChannel();
+
+		/*!
+		 * Sets the current workflow progress message. This is necessary for platforms like iOS,
+		 * where interacting with a card leads to a dialog where the message needs to be updated.
+		 */
+		virtual void setProgressMessage(const QString& pMessage);
 
 		/*!
 		 * Destroys an established secure messaging channel, if there is one.

@@ -44,6 +44,7 @@ class GeneralSettingsWidget
 
 	Q_SIGNALS:
 		void settingsChanged();
+		void fireSwitchUiRequested();
 };
 
 } // namespace governikus

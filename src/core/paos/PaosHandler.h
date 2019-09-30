@@ -30,7 +30,7 @@ class PaosHandler
 		virtual bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
 
 	public:
-		PaosHandler(const QByteArray& pXmlData);
+		explicit PaosHandler(const QByteArray& pXmlData);
 
 		PaosType getDetectedPaosType() const;
 		QSharedPointer<PaosMessage> getPaosMessage() const;

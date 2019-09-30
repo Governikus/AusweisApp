@@ -7,8 +7,7 @@
 #pragma once
 
 #include "asn1/ASN1TemplateUtil.h"
-#include "Commands.h"
-
+#include "ResponseApdu.h"
 
 namespace governikus
 {
@@ -56,7 +55,7 @@ class SecureMessagingResponse
 		Q_DISABLE_COPY(SecureMessagingResponse)
 
 	public:
-		SecureMessagingResponse(const QByteArray& pBuffer);
+		explicit SecureMessagingResponse(const QByteArray& pBuffer);
 		virtual ~SecureMessagingResponse();
 
 		/*!

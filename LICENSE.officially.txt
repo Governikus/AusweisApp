@@ -1,50 +1,7 @@
 Nutzungsbedingungen
 
-Allgemeines zur Installation
+Bitte lesen Sie zunächst die Lizenzbestimmungen und deren Ergänzungen für die Überlassung und Nutzung der AusweisApp2 durch. Nachdem Sie diesen zugestimmt haben, können Sie die Installation fortsetzen. Datenschutzrechtliche Hinweise sind unter https://www.ausweisapp.bund.de/datenschutz/ abrufbar.
 
-Bitte lesen Sie zunächst die Allgemeinen Geschäftsbedingungen so wie die Lizenzbedingungen für die Überlassung und Nutzung der AusweisApp2 durch. Nachdem Sie zugestimmt haben, können Sie die Installation fortsetzen.
-
-
-                                     Allgemeine Geschäftsbedingungen
-
-§ 1 Nutzungsbedingungen und Datenschutzhinweis
-(1) Diese Allgemeine Geschäftsbedingungen (AGB) des Bundes, vertreten durch das Bundesministerium des Innern, für Bau und Heimat (nachfolgend "Bund") und dem Nutzer gelten für die Überlassung und Nutzung der Software AusweisApp2 (nachfolgend AusweisApp2) und deren neue Versionen, die auf der Grundlage dieser Bedingungen überlassen werden.
-(2) "Nutzer" im Sinne dieses Vertrages sind natürliche Personen.
-
-§ 2 Vertragsgegenstand und Unentgeltlichkeit
-(1) Die AusweisApp2 wird regelmäßig hinsichtlich ihrer Konformität zu den Technischen Richtlinien des Bundesamtes für Sicherheit in der Informationstechnik [TR-03124-2] zertifiziert sowie hinsichtlich ihrer Nutzerfreundlichkeit [EN ISO 9241 Teil 110 Ergonomie Mensch-System-Integration zur Prüfung der Benutzbarkeit und Funktionalität und Trusted Design Guidelines zur Prüfung der Vertrauenswürdigkeit] und auf Barrierefreiheit [BITV 2.0] überprüft.
-(2) Die AusweisApp2 wird in maschinenlesbarer Form unentgeltlich überlassen. Der Quellcode der AusweisApp2 wird ebenfalls unentgeltlich veröffentlicht. Eine Auflistung der verwendeten Open Source-Bestandteile der AusweisApp2 findet sich im Anhang.
-(3) Die AusweisApp2 wird von der Governikus GmbH & Co. KG (Governikus) als Erfüllungsgehilfe des Bundes überlassen.
-
-§ 3 Verwendungszweck
-Die AusweisApp2 und alle ihre Bestandteile dienen ausschließlich dazu, im Zusammenhang mit der Nutzung der Online-Ausweisfunktion des Personalausweises bzw. des elektronischen Aufenthaltstitels und der Übermittlung der damit verbundenen Daten gemäß den gesetzlichen Vorgaben verwendet zu werden.
-
-§ 4 Pflichten und Obliegenheiten des Nutzers
-(1) Der Nutzer verpflichtet sich, die AusweisApp2 entsprechend des in § 3 genannten Verwendungszweckes zu nutzen. Es liegt in seinem Interesse, dass in Verbindung mit der AusweisApp2 genutzte Hard- und Software des Nutzers immer auf dem neuesten Stand der Sicherheitstechnik (System- und Firmware Update, Virenscanner,  Firewall usw.) sind.
-(2) Es liegt im eigenen Interesse des Nutzers aber auch des Bundes, dass stets nur die neueste Version der AusweisApp2 (siehe § 5) verwendet wird.
-
-§ 5 Pflege und Support
-(1) Der Bund bietet nach eigenem Ermessen und ohne hierzu verpflichtet zu sein für Teile der AusweisApp2 zusätzliche kostenfreie Supportleistungen in Form von Dokumentationen und online Hilfen auf dem AusweisApp2-Portal im Internet unter der Adresse www.ausweisapp.bund.de an, sowie über die Hotline des Herstellers Governikus  unter der E-Mail-Adresse: support@ausweisapp.de und der Tel.-Nr.: +49 421 204 95-995. Auch stellt er verfügbare neue Versionen der AusweisApp2 zur Verfügung. Hieraus erwächst jedoch kein zusätzlicher Anspruch auf Mängelbeseitigung, auf Zertifizierung, auf Beibehaltung der Supportleistungen oder der Hotline und auf Überlassung neuer Versionen.
-(2) Verfügbare neue Versionen der AusweisApp2 können im Internet kostenfrei auf dem AusweisApp2-Portal unter der Adresse www.ausweisapp.bund.de sowie über allgemein zugängliche AppStore heruntergeladen werden.
-(3) Eventuelle Mängel der AusweisApp2 werden grundsätzlich dadurch behoben, dass der Bund jeweils eine neue Version der AusweisApp2 zum Herunterladen zur Verfügung stellt (siehe § 5 Absatz 1). Eine Pflicht zur Bereitstellung von neuen Versionen ergibt sich daraus grundsätzlich nicht.
-
-§ 6 Hinweis auf gewerbliche und urheberrechtliche Schutzrechte
-Die Zeichen AusweisApp2 und die entsprechenden Grafiken sowie das Signet zur Online-Ausweisfunktion sind für den Bund als Marken geschützt.
-
-§ 7 Datenschutzhinweis
-(1) Mit dieser Software werden personenbezogene Daten im Sinne des § 3 Absatz 1 des Bundesdatenschutzgesetzes (BDSG) zum Zwecke der Verarbeitung grundsätzlich nicht erhoben.
-(2) Personenbezogene Daten aus dem Ausweischip werden ausschließlich zum Zweck des elektronischen Identitätsnachweises im Umfang der erteilten Berechtigung nach Einwilligung des Nutzers mit seiner Ausweis-PIN-Eingabe und auf dem Transportweg zwischen dem Ausweischip und dem Diensteanbieter sicher verschlüsselt und auch für Governikus nicht lesbar übertragen.
-(3) Neben den reinen Daten, die zur Identifizierung/ Authentisierung benötigt werden, erhebt die Software nur mit Einverständnis des Nutzers Daten über die Art und Version der Anwendungsumgebung (Betriebssystem, Lesegeräte usw.) des Nutzers. Diese Daten kann der Nutzer bei Bedarf  an Governikus übermitteln, um die ordnungsgemäße Verarbeitung prüfen zu lassen und Fehlern im Verarbeitungsprozess vorzubeugen. Die Nutzung der Daten erfolgt dann im Rahmen des § 14 BDSG durch Governikus im Auftrag des Bundes und nur für den genannten Zweck.
-(4) Die in der AusweisApp2 enthaltene Selbstauskunft über die im Chip gespeicherten Daten, ist ein Dienst der durch Governikus über das Internet erbracht wird. Die Ausweisdaten werden dabei nur zur Anzeige des Nutzers gebracht und nicht dauerhaft bei Governikus gespeichert oder für andere Zwecke verwendet.
-
-§ 8 Deutsches Recht
-Auf diese Nutzungsbedingungen ist ausschließlich deutsches Recht unter Ausschluss des Übereinkommens der Vereinten Nationen über Verträge über den internationalen Warenkauf (CISG) anwendbar.
-
-
-Anhang
-
-Eingearbeitete Open Source-Komponenten
-Qt, OpenSSL und http_parser.
 
 
 
@@ -344,6 +301,68 @@ Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
 
 
 
+                                     Lizenzergänzungen
+
+§ 1 Nutzungsbedingungen
+(1) Diese Allgemeine Geschäftsbedingungen (AGB) des Bundes, vertreten durch das Bundesamt für Sicherheit in der Informationstechnik (nachfolgend "Bund") und dem Nutzer gelten für die Überlassung und Nutzung der Software AusweisApp2 (nachfolgend AusweisApp2) und deren neue Versionen, die auf der Grundlage dieser Bedingungen überlassen werden.
+(2) "Nutzer" im Sinne dieses Vertrages sind natürliche Personen.
+
+§ 2 Vertragsgegenstand und Unentgeltlichkeit
+(1) Die AusweisApp2 wird regelmäßig hinsichtlich ihrer Konformität zu den Technischen Richtlinien des Bundesamtes für Sicherheit in der Informationstechnik [TR-03124-2] zertifiziert sowie hinsichtlich ihrer Nutzerfreundlichkeit [EN ISO 9241 Teil 110 Ergonomie Mensch-System-Integration zur Prüfung der Benutzbarkeit und Funktionalität und Trusted Design Guidelines zur Prüfung der Vertrauenswürdigkeit] und auf Barrierefreiheit [BITV 2.0] überprüft.
+(2) Die AusweisApp2 wird in maschinenlesbarer Form unentgeltlich überlassen. Der Quellcode der AusweisApp2 wird ebenfalls unentgeltlich veröffentlicht. Eine Auflistung der verwendeten Open Source-Bestandteile der AusweisApp2 findet sich im Anhang.
+(3) Die AusweisApp2 wird von der Governikus GmbH & Co. KG (Governikus) als Erfüllungsgehilfe des Bundes überlassen.
+
+§ 3 Verwendungszweck
+Die AusweisApp2 und alle ihre Bestandteile dienen ausschließlich dazu, im Zusammenhang mit der Nutzung der Online-Ausweisfunktion des Personalausweises bzw. des elektronischen Aufenthaltstitels und der Übermittlung der damit verbundenen Daten gemäß den gesetzlichen Vorgaben verwendet zu werden.
+
+§ 4 Pflichten und Obliegenheiten des Nutzers
+(1) Der Nutzer verpflichtet sich, die AusweisApp2 entsprechend des in § 3 genannten Verwendungszweckes zu nutzen. Es liegt in seinem Interesse, dass in Verbindung mit der AusweisApp2 genutzte Hard- und Software des Nutzers immer auf dem neuesten Stand der Sicherheitstechnik (System- und Firmware Update, Virenscanner,  Firewall usw.) sind.
+(2) Es liegt im eigenen Interesse des Nutzers aber auch des Bundes, dass stets nur die neueste Version der AusweisApp2 (siehe § 5) verwendet wird.
+
+§ 5 Pflege und Support
+(1) Der Bund bietet nach eigenem Ermessen und ohne hierzu verpflichtet zu sein für Teile der AusweisApp2 zusätzliche kostenfreie Supportleistungen in Form von Dokumentationen und online Hilfen auf dem AusweisApp2-Portal im Internet unter der Adresse www.ausweisapp.bund.de an, sowie über die Hotline des Herstellers Governikus  unter der E-Mail-Adresse: support@ausweisapp.de und der Tel.-Nr.: +49 421 204 95-995. Auch stellt er verfügbare neue Versionen der AusweisApp2 zur Verfügung. Hieraus erwächst jedoch kein Anspruch auf Mängelbeseitigung, auf Zertifizierung, auf Beibehaltung der Supportleistungen oder der Hotline und auf Überlassung neuer Versionen.
+(2) Verfügbare neue Versionen der AusweisApp2 können im Internet kostenfrei auf dem AusweisApp2-Portal unter der Adresse www.ausweisapp.bund.de sowie über allgemein zugängliche AppStore heruntergeladen werden.
+(3) Eventuelle Mängel der AusweisApp2 werden grundsätzlich dadurch behoben, dass der Bund jeweils eine neue Version der AusweisApp2 zum Herunterladen zur Verfügung stellt (siehe § 5 Absatz 1). Eine Pflicht zur Bereitstellung von neuen Versionen ergibt sich daraus nicht.
+
+§ 6 Hinweis auf gewerbliche und urheberrechtliche Schutzrechte
+Die Zeichen AusweisApp2 und die entsprechenden Grafiken sowie das Signet zur Online-Ausweisfunktion sind für den Bund als Marken geschützt.
+
+§ 7 Deutsches Recht
+Auf diese Nutzungsbedingungen ist ausschließlich deutsches Recht unter Ausschluss des Übereinkommens der Vereinten Nationen über Verträge über den internationalen Warenkauf (CISG) anwendbar.
+
+
+Anhang
+
+                     Ergänzende Lizenzhinweise
+
+Die verwendeten Open-Source-Bibliotheken unterliegen den folgenden Nutzungsbedingungen:
+
+OpenSSL
+  Lizenz: OpenSSL license & SSLeay license
+  Version: 1.1.1c
+  Adresse: https://www.openssl.org/
+
+Qt
+  Lizenz: LGPL v3
+  Version: 5.12.4
+  Adresse: https://www.qt.io/
+
+http_parser
+  Lizenz: MIT
+  Version: 2.9.2
+  Adresse: https://github.com/nodejs/http-parser/
+
+Android Support Library V4
+  Lizenz: Apache 2.0
+  Version: 21.0.3
+  Adresse: https://developer.android.com/topic/libraries/support-library/
+
+
+Die Lizenztexte lauten in ihrer originalen Fassung wie folgt:
+
+
+
+
 
 Copyright (c) 1998-2017 The OpenSSL Project.  All rights reserved.
 
@@ -454,33 +473,6 @@ The licence and distribution terms for any publically available version or
 derivative of this code cannot be changed.  i.e. this code cannot simply be
 copied and put under another distribution licence
 [including the GNU Public Licence.]
-
-
-
-
-
-
-                     Ergänzende Linzenzhinweise
-
-Die verwendeten OpenSource-Bibliotheken unterliegen den folgenden Nutzungsbedingungen:
-
-Qt
-  Lizenz: LGPL v3
-  Version: 5.11.2
-  Adresse: https://www.qt.io/
-
-http_parser
-  Lizenz: MIT
-  Version: 2.8.1
-  Adresse: https://github.com/nodejs/http-parser/
-
-Android Support Library V4
-  Lizenz: Apache 2.0
-  Version: 21.0.3
-  Adresse: https://developer.android.com/topic/libraries/support-library/
-
-
-Die Lizenztexte lauten in ihrer originalen Fassung wie folgt:
 
 
 
@@ -867,28 +859,3 @@ IN THE SOFTWARE.
       of your accepting any such warranty or additional liability.
 
    END OF TERMS AND CONDITIONS
-
-   APPENDIX: How to apply the Apache License to your work.
-
-      To apply the Apache License to your work, attach the following
-      boilerplate notice, with the fields enclosed by brackets "[]"
-      replaced with your own identifying information. (Don't include
-      the brackets!)  The text should be enclosed in the appropriate
-      comment syntax for the file format. We also recommend that a
-      file or class name and description of purpose be included on the
-      same "printed page" as the copyright notice for easier
-      identification within third-party archives.
-
-   Copyright [yyyy] [name of copyright owner]
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.

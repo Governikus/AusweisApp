@@ -22,7 +22,7 @@ class ResponseType
 		ECardApiResult mResult;
 
 	public:
-		ResponseType(PaosType pType);
+		explicit ResponseType(PaosType pType);
 		virtual ~ResponseType();
 
 		const ECardApiResult& getResult() const;

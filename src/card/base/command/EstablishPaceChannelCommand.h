@@ -9,6 +9,7 @@
 #include "BaseCardCommand.h"
 
 class test_EstablishPaceChannelCommand;
+class MockEstablishPaceChannelCommand;
 
 namespace governikus
 {
@@ -20,6 +21,7 @@ class EstablishPaceChannelCommand
 
 	private:
 		friend class ::test_EstablishPaceChannelCommand;
+		friend class ::MockEstablishPaceChannelCommand;
 
 		const PacePasswordId mPacePasswordId;
 		const QString mPacePassword;
@@ -32,7 +34,7 @@ class EstablishPaceChannelCommand
 		virtual ~EstablishPaceChannelCommand() override = default;
 
 	public:
-		EstablishPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
+		explicit EstablishPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
 				PacePasswordId pPacePasswordId, const QString& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription);
 
 		const EstablishPaceChannelOutput& getPaceOutput() const;

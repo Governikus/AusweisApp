@@ -15,7 +15,7 @@
 namespace governikus
 {
 
-typedef QPair<CardReturnCode, QByteArray> TransmitConfig;
+using TransmitConfig = QPair<CardReturnCode, QByteArray>;
 
 
 class MockCardConfig

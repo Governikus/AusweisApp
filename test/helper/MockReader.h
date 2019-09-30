@@ -21,6 +21,7 @@ class MockReader
 	Q_OBJECT
 
 	QScopedPointer<MockCard> mCard;
+	CardEvent mEvent;
 
 	public:
 		static MockReader* createMockReader(const QVector<TransmitConfig>& pTransmitConfig = QVector<TransmitConfig>(), const QByteArray& pEfCardAccess = QByteArray());
@@ -58,10 +59,16 @@ class MockReader
 		}
 
 
+		void setCardEvent(const CardEvent pEvent)
+		{
+			mEvent = pEvent;
+		}
+
+
 	private:
 		virtual Reader::CardEvent updateCard() override
 		{
-			return Reader::CardEvent::NONE;
+			return mEvent;
 		}
 
 

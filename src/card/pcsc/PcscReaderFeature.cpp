@@ -14,7 +14,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
 
 
-PcscReaderFeature::PcscReaderFeature(const char* pFeaturesTLV, PCSC_INT pLength)
+PcscReaderFeature::PcscReaderFeature(const char* const pFeaturesTLV, PCSC_INT pLength)
 	: mFeatures()
 {
 	if (pFeaturesTLV == nullptr)
@@ -23,8 +23,8 @@ PcscReaderFeature::PcscReaderFeature(const char* pFeaturesTLV, PCSC_INT pLength)
 		return;
 	}
 
-	const uchar* runner = reinterpret_cast<const uchar*>(pFeaturesTLV);
-	const uchar* end = reinterpret_cast<const uchar*>(pFeaturesTLV + pLength);
+	const auto* runner = reinterpret_cast<const uchar*>(pFeaturesTLV);
+	const auto* const end = reinterpret_cast<const uchar*>(pFeaturesTLV + pLength);
 	for (; runner + 6 <= end;)
 	{
 		if (!Enum<FeatureID>::isValue(*runner))
@@ -33,7 +33,7 @@ PcscReaderFeature::PcscReaderFeature(const char* pFeaturesTLV, PCSC_INT pLength)
 			continue;
 		}
 
-		FeatureID fid = static_cast<FeatureID>(*runner);
+		auto fid = static_cast<FeatureID>(*runner);
 		++runner;
 
 		// skip length byte (always 1 byte : 0x04)

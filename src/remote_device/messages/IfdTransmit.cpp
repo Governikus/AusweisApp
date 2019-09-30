@@ -25,7 +25,7 @@ VALUE_NAME(ACCEPTABLE_STATUS_CODES, "AcceptableStatusCodes")
 } // namespace
 
 
-void IfdTransmit::parseCommandApdu(QJsonValue pEntry)
+void IfdTransmit::parseCommandApdu(const QJsonValue& pEntry)
 {
 	if (!pEntry.isObject())
 	{

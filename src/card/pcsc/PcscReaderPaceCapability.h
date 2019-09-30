@@ -25,7 +25,7 @@ class PcscReaderPaceCapability
 		friend QDebug operator<<(QDebug, const PcscReaderPaceCapability&);
 
 	public:
-		PcscReaderPaceCapability(const char* pCapabilitiesTLV, PCSC_INT pLength = 0);
+		PcscReaderPaceCapability(const char* const pCapabilitiesTLV, PCSC_INT pLength = 0);
 
 		bool contains(PaceCapabilityId pPaceCapabilityId) const;
 };

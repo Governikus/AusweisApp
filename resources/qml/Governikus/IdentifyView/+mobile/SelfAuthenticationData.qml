@@ -1,14 +1,24 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.AuthModel 1.0
+import Governikus.Type.SelfAuthModel 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 SectionPage {
 	id: root
-	leftTitleBarAction: TitleBarAction { state: "cancel"; onClicked: root.done() }
-	headerTitleBarAction: TitleBarAction { text: qsTr("Identify") + settingsModel.translationTrigger; font.bold: true }
+
+	navigationAction: NavigationAction { state: "cancel"; onClicked: root.done() }
+	//: LABEL ANDROID IOS
+	title: qsTr("Identify") + SettingsModel.translationTrigger
 
 	signal done()
 
@@ -24,7 +34,7 @@ SectionPage {
 
 			Item {
 				id: message
-				height: Utils.dp(60)
+				height: 60
 				width: resultIcon.width + Constants.component_spacing + successText.width
 				anchors.horizontalCenter: parent.horizontalCenter
 
@@ -36,14 +46,14 @@ SectionPage {
 					source: "qrc:///images/status_ok.svg"
 				}
 
-				Text {
+				GText {
 					id: successText
 					anchors.left: resultIcon.right
 					anchors.leftMargin: Constants.component_spacing
 					anchors.verticalCenter: resultIcon.verticalCenter
-					text: qsTr("Successfull reading data") + settingsModel.translationTrigger
-					font.pixelSize: Constants.is_tablet ? Constants.header_font_size : Constants.normal_font_size
-					color: Constants.blue
+					//: INFO ANDROID IOS The self authentication was successfully completed.
+					text: qsTr("Read data successfully") + SettingsModel.translationTrigger
+					textStyle: Constants.is_tablet ? Style.text.header_accent : Style.text.normal_accent
 				}
 			}
 
@@ -56,15 +66,19 @@ SectionPage {
 					id: grid
 					width: parent.width
 					columns: Constants.is_tablet ? 3 : 1
-					spacing: Utils.dp(15)
+					spacing: 15
 					verticalItemAlignment: Grid.AlignBottom
 					Repeater {
-						model: selfAuthModel
+						model: SelfAuthModel
 
 						LabeledText {
+							width: (pane.width - 2 * Constants.pane_padding - (grid.columns - 1) * grid.spacing) / grid.columns
+
+							Accessible.onScrollDownAction: root.scrollPageDown()
+							Accessible.onScrollUpAction: root.scrollPageUp()
+
 							label: name
 							text: value === "" ? "---" : value
-							width: (pane.width - 2 * Constants.pane_padding - (grid.columns - 1) * grid.spacing) / grid.columns
 						}
 					}
 				}
@@ -77,7 +91,8 @@ SectionPage {
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.bottom: parent.bottom
 		anchors.bottomMargin: Constants.component_spacing
-		text: qsTr("OK") + settingsModel.translationTrigger
+		//: LABEL ANDROID IOS
+		text: qsTr("OK") + SettingsModel.translationTrigger
 		onClicked: root.done()
 	}
 }

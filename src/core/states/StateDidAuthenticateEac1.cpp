@@ -13,7 +13,8 @@ using namespace governikus;
 
 
 StateDidAuthenticateEac1::StateDidAuthenticateEac1(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractState(pContext)
+	, GenericContextContainer(pContext)
 {
 }
 
@@ -62,4 +63,12 @@ void StateDidAuthenticateEac1::onCardCommandDone(QSharedPointer<BaseCardCommand>
 		updateStatus(CardReturnCodeUtil::toGlobalStatus(result));
 		Q_EMIT fireAbort();
 	}
+}
+
+
+void StateDidAuthenticateEac1::onEntry(QEvent* pEvent)
+{
+	//: INFO ALL_PLATFORMS Status message after the PIN was entered, Terminal Authentication.
+	getContext()->setProgress(20, tr("Service provider is being verified"));
+	AbstractState::onEntry(pEvent);
 }

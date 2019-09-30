@@ -11,6 +11,7 @@ namespace governikus
 defineEnumType(CardType,
 		NONE,
 		UNKNOWN,
+		PASSPORT,
 		EID_CARD)
 
 defineTypedEnumType(PacePasswordId, char,

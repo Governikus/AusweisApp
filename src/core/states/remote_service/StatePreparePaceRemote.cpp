@@ -16,7 +16,8 @@ using namespace governikus;
 
 
 StatePreparePaceRemote::StatePreparePaceRemote(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 
@@ -56,8 +57,10 @@ void StatePreparePaceRemote::run()
 				}
 				break;
 
-			default:
-				Q_UNREACHABLE();
+			case PacePasswordId::PACE_MRZ:
+			case PacePasswordId::UNKNOWN:
+				qCritical() << "Cannot handle PacePasswordId:" << parser.getPasswordId();
+				break;
 		}
 	}
 

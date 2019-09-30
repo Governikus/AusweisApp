@@ -47,7 +47,7 @@ int VersionNumber::getDistance() const
 {
 	const int indexStart = mSuffix.indexOf(QLatin1Char('+')) + 1;
 	const int indexEnd = mSuffix.indexOf(QLatin1Char('-'), indexStart);
-	if (indexStart && indexEnd)
+	if (indexStart != 0 && indexEnd != 0)
 	{
 		bool ok;
 		int value = mSuffix.mid(indexStart, indexEnd - indexStart).toInt(&ok);
@@ -65,7 +65,7 @@ QString VersionNumber::getBranch() const
 {
 	const int indexStart = mSuffix.indexOf(QLatin1Char('-')) + 1;
 	const int indexEnd = mSuffix.indexOf(QLatin1Char('-'), indexStart);
-	if (indexStart && indexEnd)
+	if (indexStart != 0 && indexEnd != 0)
 	{
 		return mSuffix.mid(indexStart, indexEnd - indexStart);
 	}
@@ -79,7 +79,7 @@ QString VersionNumber::getRevision() const
 	if (mSuffix.count(QLatin1Char('-')) > 1)
 	{
 		const int index = mSuffix.lastIndexOf(QLatin1Char('-')) + 1;
-		if (index)
+		if (index != 0)
 		{
 			return mSuffix.mid(index);
 		}

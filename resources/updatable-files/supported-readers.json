@@ -238,7 +238,7 @@
 				{
 					"Platforms": [{"os": "win"}],
 					"DE": "Der Kartenleser funktioniert nur mit der SCL011-nPA-version. Nach der Installation ist ein Neustart erforderlich.",
-					"EN": "The cardreader works only with the SCL011-nPA-version. A reboot is required after the installation of the driver."
+					"EN": "The card reader works only with the SCL011-nPA-version. A reboot is required after the installation of the driver."
 				},
 				{
 					"Platforms": [{"os": "mac"}],
@@ -499,11 +499,6 @@
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				},
 				{
-					"Platforms":[{"os": "mac", "max": "10.11"}],
-					"DE": "Der Kartenleser funktioniert nicht mit dem installierten CCID Treiber des Systems. Es existiert kein Treiber vom Hersteller.",
-					"EN": "The card reader is not compatible with the installed CCID driver of the operating system. The manufacturer does not provide a driver."
-				},
-				{
 					"Platforms":[{"os": "mac", "min": "10.12"}],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
 					"EN": "The card reader is compatible with the installed system driver."
@@ -543,7 +538,7 @@
 			"VendorId": "0x076B",
 			"ProductId": "0x5421",
 			"Name": "OMNIKEY 5421",
-			"Pattern": "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5421\\) 5421(\\(1\\)|\\(2\\))",
+			"Pattern": "OMNIKEY CardMan 5x21-CL 0|OMNIKEY Smart Card Reader USB 0|OMNIKEY CardMan \\(076B:5421\\) 5421(\\(1\\)|\\(2\\))",
 			"Icon": "img_HID_Omnikey_542x.png",
 			"IconWithNPA": "img_HID_Omnikey_542x_mit_ausweis.png",
 			"Drivers":
@@ -645,11 +640,15 @@
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"URL": "https://supportportal.gemalto.com/csm?id=kb_article_view&sys_kb_id=8f07753f37854fc0cc47261953990e04&sysparm_article=KB0016422"
+					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016422"
 				},
 				{
 					"Platforms": [{"os": "mac"}],
-					"URL": "https://supportportal.gemalto.com/csm?id=kb_article_view&sys_kb_id=43a9b1f337c54fc0cc47261953990e8c&sysparm_article=KB0016424"
+					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016424"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016423"
 				}
 			],
 			"Information":
@@ -666,18 +665,22 @@
 			"VendorId": "0x08E6",
 			"ProductId": "0x5503",
 			"Name": "Prox-DU HID",
-			"Pattern": "Gemalto Prox(-DU| Dual)( Contactless_| USB PC Link(Reader| Reader)(\\(2\\)|\\(1\\)))",
+			"Pattern": "Gemalto .*Prox(-DU| Dual)( Contactless_| USB PC Link(Reader| Reader)(\\(2\\)|\\(1\\)))",
 			"Icon": "img_Gemalto_Prox_DU.png",
 			"IconWithNPA": "img_Gemalto_Prox_DU_mit_ausweis.png",
 			"Drivers":
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"URL": "https://supportportal.gemalto.com/csm?id=kb_article_view&sys_kb_id=8f07753f37854fc0cc47261953990e04&sysparm_article=KB0016422"
+					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016422"
 				},
 				{
 					"Platforms": [{"os": "mac"}],
-					"URL": "https://supportportal.gemalto.com/csm?id=kb_article_view&sys_kb_id=43a9b1f337c54fc0cc47261953990e8c&sysparm_article=KB0016424"
+					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016424"
+				},
+				{
+					"Platforms": [{"os": "unknown"}],
+					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016423"
 				}
 			],
 			"Information":
@@ -758,7 +761,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}, {"os": "unknown"}],
+					"Platforms": [{"os": "unknown"}],
 					"URL": "https://cherry.de/download/de/download.php"
 				}
 			],
@@ -774,7 +777,8 @@
 					"DE": "Es ist kein Treiber vom Hersteller vorhanden.",
 					"EN": "There is no driver from the manufacturer."
 				}
-			]
+			],
+			"Internal information": "Unter Windows funktioniert nur NFC A. Reader wird nicht als unterstützt markiert, da er nicht zertifiziert ist."
 		},
 
 		{

@@ -54,7 +54,13 @@ class SecureMessaging final
 		bool isInitialized();
 
 		CommandApdu encrypt(const CommandApdu& pCommandApdu);
-		bool decrypt(const ResponseApdu& pEncryptedResponseApdu, ResponseApdu& pDecryptedResponseApdu);
+
+		/*!
+		 * \brief Decrypt given ResponseApdu.
+		 *
+		 * \return Decrypted ResponseApdu or an empty ResponseApdu if decryption fails.
+		 */
+		ResponseApdu decrypt(const ResponseApdu& pEncryptedResponseApdu);
 };
 
 } // namespace governikus

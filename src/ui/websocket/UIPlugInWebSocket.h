@@ -9,7 +9,7 @@
 #include "HttpRequest.h"
 #include "HttpServer.h"
 #include "UIPlugIn.h"
-#include "UIPlugInJsonApi.h"
+#include "UIPlugInJson.h"
 
 #include <QDir>
 #include <QMap>
@@ -32,7 +32,7 @@ class UIPlugInWebSocket
 		QWebSocketServer mServer;
 		QScopedPointer<QWebSocket, QScopedPointerDeleteLater> mConnection;
 		QSharedPointer<HttpRequest> mRequest;
-		UIPlugInJsonApi* mJsonApi;
+		UIPlugInJson* mJson;
 		QSharedPointer<WorkflowContext> mContext;
 		bool mUiDomination;
 
@@ -46,7 +46,7 @@ class UIPlugInWebSocket
 		void onNewConnection();
 		void onClientDisconnected();
 		void onTextMessageReceived(const QString& pMessage);
-		void onJsonApiMessage(const QByteArray& pMessage);
+		void onJsonMessage(const QByteArray& pMessage);
 
 	public:
 		UIPlugInWebSocket();

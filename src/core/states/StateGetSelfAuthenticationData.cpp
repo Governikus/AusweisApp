@@ -18,7 +18,8 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 using namespace governikus;
 
 StateGetSelfAuthenticationData::StateGetSelfAuthenticationData(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 	, mReply(nullptr)
 {
 }
@@ -90,7 +91,7 @@ bool StateGetSelfAuthenticationData::checkSslConnectionAndSaveCertificate(const 
 			return false;
 
 		case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
-			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Nerwork_Ssl_Hash_Not_In_Certificate_Description, issuerName));
+			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description, issuerName));
 			return false;
 	}
 
@@ -126,14 +127,14 @@ void StateGetSelfAuthenticationData::onNetworkReply()
 		}
 		else
 		{
-			qDebug() << "No valid data of self authentication.";
+			qDebug() << "No valid data of self-authentication.";
 			updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
 			Q_EMIT fireAbort();
 		}
 	}
 	else
 	{
-		qDebug() << "Could not read data for self authentication.";
+		qDebug() << "Could not read data for self-authentication.";
 		updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
 		Q_EMIT fireAbort();
 	}

@@ -17,7 +17,6 @@ namespace governikus
 {
 defineEnumType(RemoteErrorCode,
 		INVALID_REQUEST,
-		EMPTY_PASSWORD,
 		NO_SUPPORTED_API_LEVEL,
 		CONNECTION_TIMEOUT,
 		CONNECTION_ERROR,

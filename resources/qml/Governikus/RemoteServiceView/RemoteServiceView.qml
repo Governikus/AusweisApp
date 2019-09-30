@@ -1,28 +1,38 @@
+/*
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
+import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
+import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
+
 
 SectionPage {
 	id: baseItem
-	leftTitleBarAction: Constants.is_layout_ios ? iosTitleBarAction : androidTitleBarAction
-	headerTitleBarAction: TitleBarAction {
-		text: sectionSwitch.selectedSection === "LOCAL" ? qsTr("Configure local settings") + settingsModel.translationTrigger
-			: sectionSwitch.selectedSection === "REMOTE" ? qsTr("Pair remote devices")+ settingsModel.translationTrigger
-			: qsTr("Remote service") + settingsModel.translationTrigger
-		font.bold: true }
 
-	property var iosTitleBarAction: TitleBarAction { state: "back"; onClicked: firePop() }
-	property var androidTitleBarAction: TitleBarAction {
+	navigationAction: NavigationAction {
 		state: RemoteServiceModel.running ? "cancel" : ""
-		onClicked: RemoteServiceModel.running = !RemoteServiceModel.running
+		onClicked: RemoteServiceModel.running = false
 	}
+
+			//: LABEL ANDROID IOS
+	title: sectionSwitch.selectedSection === "LOCAL" ? qsTr("Configure local settings") + SettingsModel.translationTrigger
+			//: LABEL ANDROID IOS
+			: sectionSwitch.selectedSection === "REMOTE" ? qsTr("Pair remote devices")+ SettingsModel.translationTrigger
+			//: LABEL ANDROID IOS
+			: qsTr("Remote service") + SettingsModel.translationTrigger
 
 	Connections {
 		target: RemoteServiceModel
-		onFirePairingFailed: qmlExtension.showFeedback(qsTr("Pairing failed. Please try again to activate pairing on your other device and enter the shown pairing code."))
+		//: ERROR ANDROID IOS An error occurred while pairing the device.
+		onFirePairingFailed: ApplicationModel.showFeedback(qsTr("Pairing failed. Please try again to activate pairing on your other device and enter the shown pairing code."))
 	}
 
 	onVisibleChanged: {
@@ -34,44 +44,47 @@ SectionPage {
 		}
 	}
 
-	content: Column {
-		width: baseItem.width
+	content: ColumnLayout {
+		height: baseItem.height
 
-		RemoteServiceViewLocal
-		{
-			width: parent.width
-			visible: sectionSwitch.selectedSection === "LOCAL"
+		RemoteServiceViewStartStop {
+			visible: sectionSwitch.selectedSection == SectionSwitch.Section.STARTSTOP
+			width: baseItem.width
+			Layout.fillHeight: true
+		}
+		GFlickable {
+			id: flickable
+
+			visible: sectionSwitch.selectedSection == SectionSwitch.Section.REMOTE
+			width: baseItem.width
+			Layout.fillHeight: true
+
+			contentHeight: remoteSettingsView.height
+			RemoteServiceViewRemote {
+				id: remoteSettingsView
+				width: baseItem.width
+				parentSectionPage: baseItem
+			}
+		}
+		RemoteServiceViewLocal {
+			visible: sectionSwitch.selectedSection == SectionSwitch.Section.LOCAL
+			width: baseItem.width
+			Layout.fillHeight: true
 		}
 
-		RemoteServiceViewRemote
-		{
-			id: remoteSettingsView
-			width: parent.width
-			visible: sectionSwitch.selectedSection === "REMOTE"
-			parentSectionPage: baseItem
-		}
+		SectionSwitch {
+			id: sectionSwitch
 
-		RemoteServiceViewStartStop
-		{
-			width: parent.width
-			height: baseItem.height
-			visible: Constants.is_layout_android && sectionSwitch.selectedSection === "STARTSTOP"
-		}
-	}
+			visible: !RemoteServiceModel.running
+			Layout.fillWidth: true
 
-	SectionSwitch {
-		id: sectionSwitch
-		visible: !RemoteServiceModel.running
-		showStartStopButton: Constants.is_layout_android
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.bottom: parent.bottom
-
-		onSelectedSectionChanged: {
-			if (selectedSection === "REMOTE" && !RemoteServiceModel.detectRemoteDevices){
-				RemoteServiceModel.detectRemoteDevices = true
-			} else {
-				RemoteServiceModel.detectRemoteDevices = false
+			onSelectedSectionChanged: {
+				if (selectedSection == SectionSwitch.Section.REMOTE) {
+					RemoteServiceModel.detectRemoteDevices = true
+					flickable.highlightScrollbar()
+				} else {
+					RemoteServiceModel.detectRemoteDevices = false
+				}
 			}
 		}
 	}

@@ -19,7 +19,7 @@ class SelfAuthController
 	Q_OBJECT
 
 	public:
-		SelfAuthController(QSharedPointer<SelfAuthContext> pContext);
+		explicit SelfAuthController(QSharedPointer<SelfAuthContext> pContext);
 		virtual ~SelfAuthController() = default;
 };
 

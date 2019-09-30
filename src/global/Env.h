@@ -75,13 +75,8 @@ class Env
 				const std::function<T(Args ...)> mFunc;
 
 			public:
-				FuncWrapper(const std::function<T(Args ...)>& pFunc)
-					: mFunc(pFunc)
-				{
-				}
-
-
-				virtual ~FuncWrapper()
+				FuncWrapper(std::function<T(Args ...)> pFunc)
+					: mFunc(std::move(pFunc))
 				{
 				}
 
@@ -107,17 +102,17 @@ class Env
 		static Env& getInstance();
 
 		template<typename T>
-		typename std::enable_if<std::is_abstract<T>::value && std::is_destructible<T>::value, T*>::type fetchRealSingleton()
+		inline T* fetchRealSingleton()
 		{
-			static_assert(std::has_virtual_destructor<T>::value, "Destructor must be virtual");
-			return singleton<T>();
-		}
-
-
-		template<typename T>
-		typename std::enable_if<!std::is_abstract<T>::value || !std::is_destructible<T>::value, T*>::type fetchRealSingleton()
-		{
-			return &T::getInstance();
+			if constexpr (std::is_abstract<T>::value && std::is_destructible<T>::value)
+			{
+				static_assert(std::has_virtual_destructor<T>::value, "Destructor must be virtual");
+				return singleton<T>();
+			}
+			else
+			{
+				return &T::getInstance();
+			}
 		}
 
 
@@ -129,7 +124,7 @@ class Env
 		inline typename std::enable_if<QtPrivate::IsGadgetHelper<T>::Value, T*>::type checkObjectInfo(Identifier pId, T* pObject) const
 		#endif
 		{
-			Q_UNUSED(pId);
+			Q_UNUSED(pId)
 			return pObject;
 		}
 
@@ -174,34 +169,27 @@ class Env
 
 
 		template<typename T, typename ... Args>
-		inline typename std::enable_if<!std::is_constructible<typename std::remove_pointer<T>::type, Args ...>::value, T>::type newObject(Args&& ... pArgs) const
+		inline T newObject(Args&& ... pArgs) const
 		{
-			static_assert(std::is_pointer<T>::value, "It is impossible to return implementation of interface by value. Use pointer or add constructor!");
-			auto obj = createNewObject<T>(std::forward<Args>(pArgs) ...);
-			Q_ASSERT(obj);
-			return obj;
-		}
-
-
-		template<typename T, typename ... Args>
-		inline typename std::enable_if<std::is_pointer<T>::value, T>::type internalNewObject(Args&& ... pArgs) const
-		{
-			using t = typename std::remove_pointer<T>::type;
-			return new t(std::forward<Args>(pArgs) ...);
-		}
-
-
-		template<typename T, typename ... Args>
-		inline typename std::enable_if<!std::is_pointer<T>::value, T>::type internalNewObject(Args&& ... pArgs) const
-		{
-			return T(std::forward<Args>(pArgs) ...);
-		}
-
-
-		template<typename T, typename ... Args>
-		inline typename std::enable_if<std::is_constructible<typename std::remove_pointer<T>::type, Args ...>::value, T>::type newObject(Args&& ... pArgs) const
-		{
-			return internalNewObject<T>(std::forward<Args>(pArgs) ...);
+			if constexpr (std::is_constructible<typename std::remove_pointer<T>::type, Args ...>::value)
+			{
+				if constexpr (std::is_pointer<T>::value)
+				{
+					using t = typename std::remove_pointer<T>::type;
+					return new t(std::forward<Args>(pArgs) ...);
+				}
+				else
+				{
+					return T(std::forward<Args>(pArgs) ...);
+				}
+			}
+			else
+			{
+				static_assert(std::is_pointer<T>::value, "It is impossible to return implementation of interface by value. Use pointer or add constructor!");
+				auto obj = createNewObject<T>(std::forward<Args>(pArgs) ...);
+				Q_ASSERT(obj);
+				return obj;
+			}
 		}
 
 
@@ -307,11 +295,11 @@ class Env
 
 
 		template<typename T, typename ... Args>
-		static void setCreator(const std::function<T(Args ...)>& pFunc)
+		static void setCreator(std::function<T(Args ...)> pFunc)
 		{
 			Q_ASSERT(pFunc);
 
-			const auto& value = QSharedPointer<FuncWrapper<T, Args ...> >::create(pFunc);
+			const auto& value = QSharedPointer<FuncWrapper<T, Args ...> >::create(std::move(pFunc));
 
 			auto& holder = getInstance();
 			const QWriteLocker locker(&holder.mLock);

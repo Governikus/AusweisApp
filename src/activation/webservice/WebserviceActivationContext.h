@@ -9,7 +9,6 @@
 
 #include <QSharedPointer>
 
-class test_WebserviceActivationContext;
 
 namespace governikus
 {
@@ -18,14 +17,13 @@ class WebserviceActivationContext
 	: public ActivationContext
 {
 	Q_OBJECT
-	friend class ::test_WebserviceActivationContext;
 
 	const QSharedPointer<HttpRequest> mRequest;
 
 	void setCommonHeaders(HttpResponse& pResponse);
 
 	public:
-		WebserviceActivationContext(const QSharedPointer<HttpRequest>& pRequest);
+		explicit WebserviceActivationContext(const QSharedPointer<HttpRequest>& pRequest);
 
 		virtual ~WebserviceActivationContext() override = default;
 

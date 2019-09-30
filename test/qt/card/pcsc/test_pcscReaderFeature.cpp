@@ -9,8 +9,8 @@
 #include "LogHandler.h"
 #include "TestFileHelper.h"
 
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtCore>
+#include <QtTest>
 
 
 using namespace governikus;
@@ -25,7 +25,8 @@ class test_pcscReaderFeature
 		int getFeatureCount(const PcscReaderFeature& pPcscReaderFeature)
 		{
 			int count = 0;
-			for (FeatureID feature : Enum<FeatureID>::getList())
+			const auto list = Enum<FeatureID>::getList();
+			for (FeatureID feature : list)
 			{
 				if (pPcscReaderFeature.contains(feature))
 				{

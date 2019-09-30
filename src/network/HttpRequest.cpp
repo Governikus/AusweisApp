@@ -145,7 +145,7 @@ void HttpRequest::onReadyRead()
 		const auto errorCode = static_cast<http_errno>(mParser.http_errno);
 		if (errorCode != HPE_OK)
 		{
-			qCWarning(network) << "Http request not well-formed:" << http_errno_name(errorCode) << "|" << http_errno_description(errorCode);
+			qCWarning(network) << "Http request not well-formed:" << http_errno_name(errorCode) << '|' << http_errno_description(errorCode);
 		}
 	}
 
@@ -184,7 +184,7 @@ int HttpRequest::onHeadersComplete(http_parser* pParser)
 }
 
 
-int HttpRequest::onHeaderField(http_parser* pParser, const char* pPos, size_t pLength)
+int HttpRequest::onHeaderField(http_parser* pParser, const char* const pPos, size_t pLength)
 {
 	CAST_OBJ(pParser)
 	obj->insertHeader();
@@ -193,7 +193,7 @@ int HttpRequest::onHeaderField(http_parser* pParser, const char* pPos, size_t pL
 }
 
 
-int HttpRequest::onHeaderValue(http_parser* pParser, const char* pPos, size_t pLength)
+int HttpRequest::onHeaderValue(http_parser* pParser, const char* const pPos, size_t pLength)
 {
 	CAST_OBJ(pParser)
 	add(obj->mCurrentHeaderValue, pPos, pLength);
@@ -201,7 +201,7 @@ int HttpRequest::onHeaderValue(http_parser* pParser, const char* pPos, size_t pL
 }
 
 
-int HttpRequest::onBody(http_parser* pParser, const char* pPos, size_t pLength)
+int HttpRequest::onBody(http_parser* pParser, const char* const pPos, size_t pLength)
 {
 	CAST_OBJ(pParser)
 	add(obj->mBody, pPos, pLength);
@@ -209,7 +209,7 @@ int HttpRequest::onBody(http_parser* pParser, const char* pPos, size_t pLength)
 }
 
 
-int HttpRequest::onUrl(http_parser* pParser, const char* pPos, size_t pLength)
+int HttpRequest::onUrl(http_parser* pParser, const char* const pPos, size_t pLength)
 {
 	CAST_OBJ(pParser)
 	add(obj->mUrl, pPos, pLength);

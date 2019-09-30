@@ -8,7 +8,7 @@
 
 #include "MockCardConnectionWorker.h"
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 using namespace governikus;
 

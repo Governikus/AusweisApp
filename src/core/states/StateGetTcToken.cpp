@@ -22,7 +22,8 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 
 
 StateGetTcToken::StateGetTcToken(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 	, mReply()
 {
 }
@@ -118,7 +119,7 @@ void StateGetTcToken::onSslHandshakeDone()
 	{
 		mReply->abort();
 		qCritical() << "Error while connecting to the service provider. The server's SSL certificate uses an unsupported key algorithm or length.";
-		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Establishment_Error);
+		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
 		Q_EMIT fireAbort();
 		return;
 	}
@@ -127,7 +128,7 @@ void StateGetTcToken::onSslHandshakeDone()
 	{
 		mReply->abort();
 		qCritical() << "Error while connecting to the service provider. The SSL connection uses an unsupported key algorithm or length.";
-		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Establishment_Error);
+		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
 		Q_EMIT fireAbort();
 		return;
 	}
@@ -187,7 +188,7 @@ void StateGetTcToken::parseTcToken()
 		Q_EMIT fireAbort();
 		return;
 	}
-	const auto& tcToken = QSharedPointer<const TcToken>::create(data);
+	const QSharedPointer<const TcToken>& tcToken = QSharedPointer<TcToken>::create(data);
 	getContext()->setTcToken(tcToken);
 	getContext()->setTcTokenNotFound(!tcToken->isSchemaConform());
 

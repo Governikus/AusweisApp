@@ -12,20 +12,34 @@
 #define VERSION_PATCH @PROJECT_VERSION_PATCH@
 #define VERSION_TWEAK @PROJECT_VERSION_TWEAK@
 
-#ifdef __BASE_FILE__
-	constexpr inline bool isComparableSep(char pFirst, char pSecond)
-	{
-		return (pFirst == '\\' && pSecond == '/') || (pFirst == '/' && pSecond == '\\');
-	}
+#ifndef RC_INVOKED
+#if defined(__BASE_FILE__) && __has_include(<string_view>)
+#include <string_view>
 
-	constexpr inline bool isEqual(const char* pFirst, const char* pSecond)
-	{
-		return (*pFirst && *pSecond) ? ((*pFirst == *pSecond || isComparableSep(*pFirst, *pSecond)) && isEqual(pFirst + 1, pSecond + 1)) : (!*pFirst && !*pSecond);
-	}
+constexpr bool isPathSeparator(char pChar)
+{
+	return pChar == '/' || pChar == '\\';
+}
 
-	static_assert(isEqual("@CMAKE_CURRENT_SOURCE_DIR@/main.cpp", __BASE_FILE__), "config.h include is allowed in main.cpp only! Provided: " __BASE_FILE__);
+
+constexpr const char* stripPath(const char* pPath)
+{
+	auto result = pPath;
+	for (auto iter = pPath; *iter; ++iter)
+	{
+		if (isPathSeparator(*iter) && *(iter + 1))
+		{
+			result = iter + 1;
+		}
+	}
+	return result;
+}
+
+
+static_assert(std::string_view(stripPath(__BASE_FILE__)) == "main.cpp", "config.h include is allowed in main.cpp only!");
 #endif
+#endif // RC_INVOKED
 
-/*         DO NOT INCLUDE THIS
-   Use QCoreApplication or VersionNumber!
-*/
+
+//         DO NOT INCLUDE THIS
+//   Use QCoreApplication or VersionNumber!

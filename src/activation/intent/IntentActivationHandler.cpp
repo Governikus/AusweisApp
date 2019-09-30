@@ -18,11 +18,11 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(activation)
 
 
-void IntentActivationHandler::onIntent(const QUrl& pUrl)
+void IntentActivationHandler::onIntent(const QUrl& pUrl, const QString& pReferrer)
 {
-	qCDebug(activation) << "Got new authentication request";
+	qCDebug(activation) << "Got new authentication request by:" << pReferrer;
 	qCDebug(activation) << "Request URL:" << pUrl;
-	const auto& context = QSharedPointer<IntentActivationContext>::create(pUrl);
+	const auto& context = QSharedPointer<IntentActivationContext>::create(pUrl, pReferrer);
 	connect(context.data(), &IntentActivationContext::fireShowUserInformation, this, &ActivationHandler::fireShowUserInformation);
 	Q_EMIT fireAuthenticationRequest(context);
 }
@@ -50,9 +50,10 @@ void IntentActivationHandler::onApplicationActivated()
 {
 #ifdef Q_OS_ANDROID
 	const QString& intent = QAndroidJniObject::callStaticObjectMethod<jstring>("com/governikus/ausweisapp2/MainActivity", "fetchStoredIntent").toString();
+	const QString& referrer = QAndroidJniObject::callStaticObjectMethod<jstring>("com/governikus/ausweisapp2/MainActivity", "fetchStoredReferrer").toString();
 	if (!intent.isNull())
 	{
-		onIntent(intent);
+		onIntent(intent, referrer);
 	}
 #endif
 }

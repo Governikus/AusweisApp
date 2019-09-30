@@ -4,7 +4,6 @@
 
 #include "AuthModel.h"
 
-#include "Env.h"
 #include "ReaderManagerPlugInInfo.h"
 #include "SingletonHelper.h"
 
@@ -29,6 +28,7 @@ void AuthModel::resetContext(const QSharedPointer<AuthContext>& pContext)
 	if (mContext)
 	{
 		connect(mContext.data(), &AuthContext::fireDidAuthenticateEac1Changed, this, &AuthModel::onDidAuthenticateEac1Changed);
+		connect(mContext.data(), &AuthContext::fireProgressChanged, this, &AuthModel::fireProgressChanged);
 	}
 
 	if (!mTransactionInfo.isEmpty())
@@ -37,12 +37,36 @@ void AuthModel::resetContext(const QSharedPointer<AuthContext>& pContext)
 
 		Q_EMIT fireTransactionInfoChanged();
 	}
+
+	Q_EMIT fireProgressChanged();
 }
 
 
 const QString& AuthModel::getTransactionInfo() const
 {
 	return mTransactionInfo;
+}
+
+
+int AuthModel::getProgressValue() const
+{
+	if (mContext)
+	{
+		return mContext->getProgressValue();
+	}
+
+	return 0;
+}
+
+
+const QString AuthModel::getProgressMessage() const
+{
+	if (mContext)
+	{
+		return mContext->getProgressMessage();
+	}
+
+	return QString();
 }
 
 

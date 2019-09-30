@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtTest 1.10
 
 TestCase {
@@ -12,7 +16,7 @@ TestCase {
 		item.destroy();
 	}
 
-	function test_load_ProviderStyle() {
+	function test_load_Style() {
 		var item = createTemporaryQmlObject("
 			import QtQuick 2.0;
 			import Governikus.Style 1.0;

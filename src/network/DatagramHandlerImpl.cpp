@@ -94,11 +94,11 @@ bool DatagramHandlerImpl::isBound() const
 
 bool DatagramHandlerImpl::send(const QByteArray& pData)
 {
-	return send(pData, 0);
+	return sendToAllAddressEntries(pData, 0);
 }
 
 
-bool DatagramHandlerImpl::send(const QByteArray& pData, quint16 pPort)
+bool DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint16 pPort)
 {
 	QVector<QHostAddress> broadcastAddresses;
 
@@ -164,7 +164,7 @@ bool DatagramHandlerImpl::send(const QByteArray& pData, quint16 pPort)
 
 	for (const QHostAddress& broadcastAddr : qAsConst(broadcastAddresses))
 	{
-		if (!send(pData, broadcastAddr, pPort))
+		if (!sendToAddress(pData, broadcastAddr, pPort))
 		{
 			qCDebug(network) << "Broadcasting to" << broadcastAddr << "failed";
 			return false;
@@ -175,7 +175,7 @@ bool DatagramHandlerImpl::send(const QByteArray& pData, quint16 pPort)
 }
 
 
-bool DatagramHandlerImpl::send(const QByteArray& pData, const QHostAddress& pAddress, quint16 pPort)
+bool DatagramHandlerImpl::sendToAddress(const QByteArray& pData, const QHostAddress& pAddress, quint16 pPort)
 {
 	// If port is 0 we should take our own listening port as destination as other instances
 	// should use the same port to receive broadcasts.

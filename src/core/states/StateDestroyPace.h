@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "AbstractGenericState.h"
-
+#include "AbstractState.h"
 #include "context/ChangePinContext.h"
+#include "GenericContextContainer.h"
 
 class test_StateDestroyPace;
 
@@ -16,7 +16,8 @@ namespace governikus
 {
 
 class StateDestroyPace
-	: public AbstractGenericState<WorkflowContext>
+	: public AbstractState
+	, public GenericContextContainer<WorkflowContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

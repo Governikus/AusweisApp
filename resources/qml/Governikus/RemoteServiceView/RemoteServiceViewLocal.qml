@@ -1,7 +1,14 @@
+/*
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
+
 
 Item {
 	id: baseItem
@@ -15,39 +22,47 @@ Item {
 
 		readonly property int usableWidth: width - 2 * padding
 
-		Text {
+		GText {
 			id: errorMsg
-			width: parent.usableWidth
-			text: ""
-			color: Constants.red
-			font.pixelSize: Constants.normal_font_size
-			wrapMode: Text.WordWrap
-			verticalAlignment: Text.AlignVCenter
+
 			visible: text !== ""
+			width: parent.usableWidth
+
+			Accessible.role: Accessible.StaticText
+			Accessible.name: text
+
+			verticalAlignment: Text.AlignVCenter
+			text: ""
+			textStyle: Style.text.normal_warning
 		}
 
 		Column {
 			id: nameContainer
 			width: parent.usableWidth
 
-			Text {
-				text: qsTr("Device name") + settingsModel.translationTrigger
-				font.pixelSize: Constants.normal_font_size
-				font.bold: true
-				color: Constants.blue
+			GText {
+				Accessible.role: Accessible.StaticText
+				Accessible.name: text
+
+				//: LABEL ANDROID IOS
+				text: qsTr("Device name") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal_accent
 			}
 
-			Text {
-				color: Constants.secondary_text
-				text: qsTr("Set device name:") + settingsModel.translationTrigger
+			GText {
 				width: parent.width
-				font.pixelSize: Constants.normal_font_size
-				wrapMode: Text.WordWrap
+
+				Accessible.role: Accessible.StaticText
+				Accessible.name: text
+
+				//: LABEL ANDROID IOS
+				text: qsTr("Set device name:") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal_secondary
 			}
 
 			Item {
 				id: spacing
-				height: Utils.dp(5)
+				height: 5
 				width: height
 			}
 
@@ -55,47 +70,56 @@ Item {
 				id: serverName
 				width: parent.width
 				onAccepted: {
-					settingsModel.serverName = text
-					text = settingsModel.serverName
+					SettingsModel.serverName = text
+					text = SettingsModel.serverName
 					nameContainer.forceActiveFocus(Qt.MouseFocusReason)
 				}
 				onVisibleChanged: {
 					nameContainer.forceActiveFocus(Qt.MouseFocusReason)
-					if (visible) text = settingsModel.serverName
+					if (visible) text = SettingsModel.serverName
 				}
 			}
 		}
 
 		Item {
 			id: pinPadModeContainer
-			visible: Qt.platform.os !== "ios"
+
 			width: parent.usableWidth
 			height: Math.max(pinPadModeText.height, pinPadModeSwitch.height)
 
 			Item {
 				id: pinPadModeText
+
 				height: nameText.height + dateText.height
 				anchors.left: pinPadModeContainer.left
 				anchors.right: pinPadModeSwitch.left
 				anchors.rightMargin: Constants.component_spacing
 				anchors.verticalCenter: pinPadModeContainer.verticalCenter
-				Text {
+				GText {
 					id: nameText
-					anchors.bottomMargin: Utils.dp(2)
-					font.pixelSize: Constants.normal_font_size
-					color: Constants.blue
-					font.bold: true
-					text: qsTr("PIN pad mode") + settingsModel.translationTrigger
+
+					anchors.bottomMargin: 2
+
+					Accessible.role: Accessible.StaticText
+					Accessible.name: text
+
+					//: LABEL ANDROID IOS
+					text: qsTr("PIN pad mode") + SettingsModel.translationTrigger
+					textStyle: Style.text.normal_accent
 				}
 
-				Text {
+				GText {
 					id: dateText
+
 					width: parent.width
 					anchors.top: nameText.bottom
-					font.pixelSize: Constants.normal_font_size
-					color: Constants.secondary_text
-					text: qsTr("Enter PIN on this device") + settingsModel.translationTrigger
-					wrapMode: Text.WordWrap
+
+					Accessible.role: Accessible.StaticText
+					Accessible.name: text
+
+					//: LABEL ANDROID IOS
+					text: qsTr("Enter PIN on this device") + SettingsModel.translationTrigger
+					textStyle: Style.text.normal_secondary
 				}
 			}
 
@@ -103,8 +127,8 @@ Item {
 				id: pinPadModeSwitch
 				anchors.right: pinPadModeContainer.right
 				anchors.verticalCenter: pinPadModeContainer.verticalCenter
-				initialState: settingsModel.pinPadMode
-				onSwitched: settingsModel.pinPadMode = pinPadModeSwitch.isOn
+				initialState: SettingsModel.pinPadMode
+				onSwitched: SettingsModel.pinPadMode = pinPadModeSwitch.isOn
 			}
 		}
 	}

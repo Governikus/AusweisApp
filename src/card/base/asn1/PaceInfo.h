@@ -63,7 +63,7 @@ class PaceInfo
 	friend class QSharedPointer<PaceInfo>;
 	const QSharedPointer<const paceinfo_st> mDelegate;
 
-	PaceInfo(const QSharedPointer<const paceinfo_st>& pDelegate);
+	explicit PaceInfo(const QSharedPointer<const paceinfo_st>& pDelegate);
 	ASN1_OBJECT* getProtocolObjectIdentifier() const override;
 	static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
 

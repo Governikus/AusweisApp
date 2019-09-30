@@ -25,7 +25,7 @@ class test_CertificateChecker
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			certs = SecureStorage::getInstance().getUpdateCertificates();
+			certs = Env::getSingleton<SecureStorage>()->getUpdateCertificates();
 			QVERIFY(certs.size() > 0);
 		}
 

@@ -9,10 +9,34 @@
 #include "MockCardConnectionWorker.h"
 #include "MockRemoteServer.h"
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 
 using namespace governikus;
+
+class MockSetEidPinCommand
+	: public SetEidPinCommand
+{
+	Q_OBJECT
+
+	public:
+		MockSetEidPinCommand(const QSharedPointer<MockCardConnectionWorker>& pWorker,
+				const QString& pNewPin)
+			: SetEidPinCommand(pWorker, pNewPin, '0')
+		{
+			mResponseApdu = ResponseApdu(StatusCode::SUCCESS);
+		}
+
+
+		~MockSetEidPinCommand() override = default;
+
+		void internalExecute() override
+		{
+		}
+
+
+};
+
 
 class test_StateChangePinRemote
 	: public QObject
@@ -34,24 +58,42 @@ class test_StateChangePinRemote
 			workerThread.start();
 
 			const QSharedPointer<RemoteServiceContext> context(new RemoteServiceContext());
-			const QString pin = QStringLiteral("103050");
-			context->setPin(pin);
+			StateChangePinRemote state(context);
 			const QString slotHandle = QStringLiteral("slot");
 			const QByteArray input("input");
 			const QSharedPointer<const IfdModifyPin> message(new IfdModifyPin(slotHandle, input));
+			context->setModifyPinMessage(message);
+
+			QSignalSpy spyContinue(&state, &StateChangePinRemote::fireContinue);
+			state.run();
+			QCOMPARE(context->getModifyPinMessageResponseApdu().getReturnCode(), StatusCode::EMPTY);
+			QCOMPARE(spyContinue.count(), 1);
+
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			context->setCardConnection(connection);
-			StateChangePinRemote state(context);
-			context->setModifyPinMessage(message);
-
 			state.run();
 			QCOMPARE(state.mConnections.size(), 1);
-			QCOMPARE(context->getPin(), QString("103050"));
 
 			workerThread.quit();
 			workerThread.wait();
+		}
+
+
+		void test_OnChangePinDone()
+		{
+			const QSharedPointer<RemoteServiceContext> context(new RemoteServiceContext());
+			StateChangePinRemote state(context);
+
+			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const QString pin("000000");
+			const QSharedPointer<MockSetEidPinCommand> setEidCommand(new MockSetEidPinCommand(worker, pin));
+			QSignalSpy spyContinue(&state, &StateChangePinRemote::fireContinue);
+
+			state.onChangePinDone(setEidCommand);
+			QCOMPARE(context->getModifyPinMessageResponseApdu().getReturnCode(), StatusCode::SUCCESS);
+			QCOMPARE(spyContinue.count(), 1);
 		}
 
 

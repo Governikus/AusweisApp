@@ -1,10 +1,17 @@
+/*
+ * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
-import Governikus.EnterPinView 1.0
+import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
+import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
+
 
 Item {
 	id: baseItem
@@ -24,26 +31,33 @@ Item {
 		Column {
 			width: parent.usableWidth
 
-			Text {
-				text: qsTr("Paired devices") + settingsModel.translationTrigger
-				font.pixelSize: Constants.normal_font_size
-				font.bold: true
-				color: Constants.blue
+			GText {
+				Accessible.role: Accessible.StaticText
+				Accessible.name: text
+
+				//: LABEL ANDROID IOS
+				text: qsTr("Paired devices") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal_accent
+				bottomPadding: Constants.groupbox_spacing
 			}
 
-			Text {
-				color: Constants.secondary_text
-				text: qsTr("No device is paired.") + settingsModel.translationTrigger
+			GText {
 				width: parent.width
 				visible: !knownDeviceList.visible
-				font.pixelSize: Constants.normal_font_size
-				wrapMode: Text.WordWrap
+
+				Accessible.role: Accessible.StaticText
+				Accessible.name: text
+
+				//: LABEL ANDROID IOS
+				text: qsTr("No device is paired.") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal_secondary
 			}
 
 			ListView {
 				id: knownDeviceList
 				width: parent.width
 				height: childrenRect.height
+				spacing: Constants.groupbox_spacing / 2
 				model: RemoteServiceModel.knownDevices
 				delegate: KnownDevicesListDelegate {
 					width: knownDeviceList.width
@@ -56,20 +70,26 @@ Item {
 		Column {
 			width: parent.usableWidth
 
-			Text {
-				text: qsTr("Available devices") + settingsModel.translationTrigger
-				font.pixelSize: Constants.normal_font_size
-				font.bold: true
-				color: Constants.blue
+			GText {
+				Accessible.role: Accessible.StaticText
+				Accessible.name: text
+
+				//: LABEL ANDROID IOS
+				text: qsTr("Available devices") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal_accent
+				bottomPadding: Constants.groupbox_spacing
 			}
 
-			Text {
-				color: Constants.secondary_text
-				text: qsTr("No new remote reader was found on your network. Make sure that the remote reader functionality in AusweisApp2 on your other device is activated and that your devices are connected to the same network.") + settingsModel.translationTrigger
+			GText {
 				width: parent.width
 				visible: !searchDeviceList.visible
-				font.pixelSize: Constants.normal_font_size
-				wrapMode: Text.WordWrap
+
+				Accessible.role: Accessible.StaticText
+				Accessible.name: text
+
+				//: INFO ANDROID IOS No remote reader was found on the network, both devices need to be connected to the same wifi network.
+				text: qsTr("No new remote reader was found on your network. Make sure that the remote reader functionality in AusweisApp2 on your other device is activated and that your devices are connected to the same network.") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal_secondary
 			}
 
 			ListView {
@@ -77,6 +97,7 @@ Item {
 				width: parent.width
 				height: childrenRect.height
 				model: RemoteServiceModel.availableRemoteDevices
+				spacing: Constants.groupbox_spacing / 2
 				delegate: AvailableDevicesListDelegate {
 					width: searchDeviceList.width
 					onRequestPairing: {
@@ -92,52 +113,30 @@ Item {
 		}
 	}
 
-	Popup {
+	ConfirmationPopup {
 		id: informationPairingPopup
-		x: (parentSectionPage.width - width) / 2
-		y: (parentSectionPage.height - height) / 2
-		width: Utils.dp(250)
-		height: contentColumn.height + 2 * Constants.pane_padding
-		modal: true
-		focus: true
-		padding: Constants.pane_padding
-		closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
 
-		Column {
-			id: contentColumn
-			width: parent.width
-			spacing: Constants.pane_spacing
+		style: ConfirmationPopup.PopupStyle.OkButton
+		//: INFO ANDROID IOS
+		title: qsTr("Pairing mode") + SettingsModel.translationTrigger
+		//: INFO ANDROID IOS Information dialog that requests the user to start the pairing mode on the smarthpone.
+		text: qsTr("Please start pairing mode first.") + SettingsModel.translationTrigger
 
-			Text {
-				id: info
-				color: Constants.secondary_text
-				width: parent.width
-				wrapMode: Text.WordWrap
-				font.pixelSize: Constants.normal_font_size
-				text: qsTr("Please start pairing mode first.") + settingsModel.translationTrigger
-			}
-
-			GButton {
-				text: qsTr("OK") + settingsModel.translationTrigger
-				width: parent.width
-
-				onClicked: {
-					informationPairingPopup.close()
-					pinEntryInProgress = true
-					firePush(enterPinView)
-				}
-			}
+		onConfirmed: {
+			pinEntryInProgress = true
+			firePush(enterPinView)
 		}
 	}
 
-	EnterPinView {
+	EnterPasswordView {
 		id: enterPinView
 		state: "REMOTE_PIN"
-		leftTitleBarAction: TitleBarAction { state: "cancel"; onClicked: { firePop(); pinEntryInProgress = false } }
-		headerTitleBarAction: TitleBarAction { text: qsTr("Pairing code") + settingsModel.translationTrigger }
+		navigationAction: NavigationAction { state: "cancel"; onClicked: { firePop(); pinEntryInProgress = false } }
+		//: LABEL ANDROID IOS
+		title: qsTr("Pairing code") + SettingsModel.translationTrigger
 		visible: false
 
-		onPinEntered: {
+		onPasswordEntered: {
 			firePop()
 			pinEntryInProgress = false
 		}

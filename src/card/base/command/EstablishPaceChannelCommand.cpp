@@ -30,5 +30,6 @@ const EstablishPaceChannelOutput& EstablishPaceChannelCommand::getPaceOutput() c
 
 void EstablishPaceChannelCommand::internalExecute()
 {
-	mReturnCode = mCardConnectionWorker->establishPaceChannel(mPacePasswordId, mPacePassword, mEffectiveChat, mCertificateDescription, mPaceOutput);
+	mPaceOutput = mCardConnectionWorker->establishPaceChannel(mPacePasswordId, mPacePassword, mEffectiveChat, mCertificateDescription);
+	mReturnCode = mPaceOutput.getPaceReturnCode();
 }

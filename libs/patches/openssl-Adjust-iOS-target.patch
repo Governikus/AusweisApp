@@ -1,0 +1,25 @@
+From 0628b87d65feb0209303e91bf7529628c4dd80f4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
+Date: Fri, 1 Feb 2019 13:27:04 +0100
+Subject: [PATCH] Adjust iOS target
+
+---
+ Configurations/15-ios.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/Configurations/15-ios.conf y/Configurations/15-ios.conf
+index 1bb9f48d06..fb0ece9aff 100644
+--- x/Configurations/15-ios.conf
++++ y/Configurations/15-ios.conf
+@@ -24,7 +24,7 @@ my %targets = (
+     "ios64-xcrun" => {
+         inherit_from     => [ "ios-common", asm("aarch64_asm") ],
+         CC               => "xcrun -sdk iphoneos cc",
+-        cflags           => add("-arch arm64 -mios-version-min=7.0.0 -fno-common"),
++        cflags           => add("-arch arm64 -mios-version-min=13.0 -fno-common -fembed-bitcode"),
+         bn_ops           => "SIXTY_FOUR_BIT_LONG RC4_CHAR",
+         perlasm_scheme   => "ios64",
+     },
+-- 
+2.20.1
+

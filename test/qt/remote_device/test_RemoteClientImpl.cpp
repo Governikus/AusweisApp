@@ -11,7 +11,7 @@
 #include "messages/IfdEstablishContext.h"
 
 #include <QPointer>
-#include <QtTest/QtTest>
+#include <QtTest>
 
 using namespace governikus;
 

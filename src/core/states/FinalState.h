@@ -6,14 +6,15 @@
 
 #pragma once
 
-#include "states/AbstractGenericState.h"
-
+#include "AbstractState.h"
+#include "GenericContextContainer.h"
 
 namespace governikus
 {
 
 class FinalState
-	: public AbstractGenericState<WorkflowContext>
+	: public AbstractState
+	, public GenericContextContainer<WorkflowContext>
 {
 	Q_OBJECT
 
@@ -23,14 +24,15 @@ class FinalState
 	protected:
 		void onEntry(QEvent* pEvent) override
 		{
-			AbstractGenericState::onEntry(pEvent);
+			AbstractState::onEntry(pEvent);
 			getContext()->setWorkflowFinished(true);
 		}
 
 
 	public:
 		explicit FinalState(const QSharedPointer<WorkflowContext>& pContext)
-			: AbstractGenericState(pContext, false)
+			: AbstractState(pContext, false)
+			, GenericContextContainer(pContext)
 		{
 		}
 

@@ -12,6 +12,7 @@
 #include <QAbstractNativeEventFilter>
 #include <QSharedPointer>
 
+class test_AppController;
 
 namespace governikus
 {
@@ -36,6 +37,7 @@ class AppController final
 	Q_OBJECT
 
 	private:
+		friend class ::test_AppController;
 		Q_DISABLE_COPY(AppController)
 
 		friend class SignalHandler;
@@ -47,6 +49,7 @@ class AppController final
 		QScopedPointer<WorkflowController> mActiveController;
 		bool mShutdownRunning;
 		const UIPlugIn* mUiDomination;
+		bool mRestartApplication;
 
 		bool canStartNewAction();
 		void completeShutdown();
@@ -59,6 +62,8 @@ class AppController final
 		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult) override;
 
 		bool start();
+
+		bool shouldApplicationRestart() const;
 
 	Q_SIGNALS:
 		void fireStarted();
@@ -85,10 +90,11 @@ class AppController final
 		void onSelfAuthenticationRequested();
 		void onAuthenticationRequest(const QSharedPointer<ActivationContext>& pActivationContext);
 		void onRemoteServiceRequested();
-		void onSettingsChanged();
+		void onLanguageChanged();
 		void onUILoaderShutdownComplete();
 		void onUiDominationRequested(const UIPlugIn* pUi, const QString& pInformation);
 		void onUiDominationRelease();
+		void onRestartApplicationRequested();
 
 	private:
 		template<typename Controller, typename Context> bool startNewWorkflow(Action pAction, const QSharedPointer<Context>& pContext);

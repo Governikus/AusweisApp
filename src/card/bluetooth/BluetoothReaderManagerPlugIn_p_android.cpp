@@ -67,7 +67,7 @@ void BluetoothReaderManagerPlugInPrivate::init()
 {
 	Q_Q(BluetoothReaderManagerPlugIn);
 	const auto& adapter = AndroidBluetoothAdapter::getDefaultAdapter();
-	q->setReaderInfoAvailable(adapter.isAvailable());
+	q->setPlugInAvailable(adapter.isAvailable());
 	q->setBluetoothStatus(adapter.isStateOn());
 }
 

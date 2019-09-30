@@ -33,8 +33,7 @@ class PinSettingsWidget
 		enum class Mode
 		{
 			Normal,
-			AfterPinChange,
-			AfterPinUnblock,
+			AfterPinChange
 		};
 
 	public:

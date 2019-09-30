@@ -107,7 +107,7 @@ class AccessRoleAndRightsUtil
 		static QList<AccessRight> mAllRights;
 		static QList<AccessRight> mAllDisplayedOrderedRights;
 		AccessRoleAndRightsUtil() = delete;
-		static bool fromTechnicalName(const char* pStr, const std::function<void(AccessRight)>& pFunc);
+		static bool fromTechnicalName(const char* const pStr, const std::function<void(AccessRight)>& pFunc);
 		static QStringList fromTechnicalName(const QStringList& pStr);
 
 	public:

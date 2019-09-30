@@ -19,6 +19,46 @@ class test_DiagnosisModel
 	QSharedPointer<DiagnosisContext> mContext;
 	QSharedPointer<DiagnosisModel> mModel;
 
+	private:
+		QString getTestData(const QString& pFilename)
+		{
+			QString filePath = QStringLiteral(":/core/diagnosis/") + pFilename;
+			QByteArray rawData = TestFileHelper::readFile(filePath);
+			return QString::fromUtf8(rawData);
+		}
+
+
+		bool verifyOrder(const QSharedPointer<SectionModel>& pSection,
+			const QVector<QSharedPointer<SectionModel> >& pSectionOrder)
+		{
+			QVector<QVector<QSharedPointer<ContentItem> > > contentOrder;
+			for (const auto& section : pSectionOrder)
+			{
+				contentOrder.append(section->mContentItems);
+			}
+
+			return verifyOrder(pSection->mContentItems, contentOrder);
+		}
+
+
+		bool verifyOrder(const QVector<QSharedPointer<ContentItem> >& pSection,
+			const QVector<QVector<QSharedPointer<ContentItem> > >& pOrder)
+		{
+			int offset = 0;
+			for (const auto& subsection : pOrder)
+			{
+				const auto& slice = pSection.mid(offset, subsection.size());
+				if (slice != subsection)
+				{
+					return false;
+				}
+				offset += subsection.size();
+			}
+
+			return offset == pSection.size();
+		}
+
+
 	private Q_SLOTS:
 		void init()
 		{
@@ -37,44 +77,42 @@ class test_DiagnosisModel
 		void test_newDiagnosisModel()
 		{
 			QCOMPARE(mModel->mContext, mContext);
-			QCOMPARE(mModel->mRootItem->getText(), QString("Diagnosis data"));
-			QCOMPARE(mModel->mOperatingSystemItem->getText(), QString("Operating system"));
-			QCOMPARE(mModel->mReaderItem->getText(), QString("Card reader"));
-			QCOMPARE(mModel->mPcScItem->getText(), QString("PC/SC"));
-			QCOMPARE(mModel->mPairedDevices->getText(), QString("Paired devices"));
-			QCOMPARE(mModel->mNetworkInterfaces->getText(), QString("Network interfaces"));
-			QCOMPARE(mModel->mNetworkConnectionTest->getText(), QString("Network connection test"));
-			QCOMPARE(mModel->mInstalledAntivirus->getText(), QString("Installed antivirus software"));
-			QCOMPARE(mModel->mWindowsFirewall->getText(), QString("Firewall"));
-			QCOMPARE(mModel->mTimestampItem->getText(), QString("Time of diagnosis"));
+			QCOMPARE(mModel->mSections.size(), 4);
 
-			QCOMPARE(mModel->mRootItem->childCount(), 10);
-			QCOMPARE(mModel->mRootItem->getChild(0), mModel->mAppVersionItem);
-			QCOMPARE(mModel->mRootItem->getChild(1), mModel->mOperatingSystemItem);
-			QCOMPARE(mModel->mRootItem->getChild(2), mModel->mReaderItem);
-			QCOMPARE(mModel->mRootItem->getChild(3), mModel->mPcScItem);
-			QCOMPARE(mModel->mRootItem->getChild(4), mModel->mPairedDevices);
-			QCOMPARE(mModel->mRootItem->getChild(5), mModel->mNetworkInterfaces);
-			QCOMPARE(mModel->mRootItem->getChild(6), mModel->mNetworkConnectionTest);
-			QCOMPARE(mModel->mRootItem->getChild(7), mModel->mInstalledAntivirus);
-			QCOMPARE(mModel->mRootItem->getChild(8), mModel->mWindowsFirewall);
-			QCOMPARE(mModel->mRootItem->getChild(9), mModel->mTimestampItem);
+			QCOMPARE(mModel->mSections.at(0).first, QCoreApplication::applicationName());
+			QCOMPARE(mModel->mSections.at(1).first, QString("Card reader"));
+			QCOMPARE(mModel->mSections.at(2).first, QString("Network"));
+			QCOMPARE(mModel->mSections.at(3).first, QString("Antivirus and firewall"));
 
-			QCOMPARE(mModel->mOperatingSystemItem->childCount(), 3);
+			QCOMPARE(mModel->mSections.at(0).second->mContentItems.last(), mModel->mTimestampItem);
 
-			QCOMPARE(mModel->mReaderItem->childCount(), 1);
-			QCOMPARE(mModel->mReaderItem->getChild(0)->getText(), QString("Diagnosis is running..."));
+			QCOMPARE(mModel->mSections.at(1).second, mModel->mCombinedReaderSection);
+			QCOMPARE(mModel->mSections.at(2).second, mModel->mCombinedNetworkSection);
+			QCOMPARE(mModel->mSections.at(3).second, mModel->mCombinedAntivirusFirewallSection);
 
-			QCOMPARE(mModel->mNetworkConnectionTest->childCount(), 1);
-			QCOMPARE(mModel->mNetworkConnectionTest->getChild(0)->getText(), QString("Diagnosis is running..."));
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(0)->mTitle, QString("Card reader"));
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(1)->mContent, QString("Diagnosis is running..."));
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(2)->mTitle, QString("Paired remote devices"));
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(4)->mTitle, QString("PC/SC information"));
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(5)->mContent, QString("Diagnosis is running..."));
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.mid(0, 2), mModel->mCardReaderSection->mContentItems);
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.mid(2, 2), mModel->mRemoteDeviceSection->mContentItems);
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.mid(4, 2), mModel->mPcscSection->mContentItems);
+
+			QCOMPARE(true, verifyOrder(mModel->mSections.at(1).second,
+					{mModel->mCardReaderSection, mModel->mRemoteDeviceSection, mModel->mPcscSection}));
+			QCOMPARE(true, verifyOrder(mModel->mSections.at(2).second,
+					{mModel->mNetworkConnectionSection, mModel->mNetworkInterfaceSection}));
+			QCOMPARE(true, verifyOrder(mModel->mSections.at(3).second,
+					{mModel->mAntivirusSection, mModel->mFirewallSection}));
 		}
 
 
 		void test_OnReaderInfosChanged()
 		{
 			mModel->onReaderInfosChanged();
-			QCOMPARE(mModel->mReaderItem->childCount(), 1);
-			QCOMPARE(mModel->mReaderItem->getChild(0)->getText(), QString("Not recognised"));
+			QCOMPARE(mModel->mCardReaderSection->mContentItems.size(), 2);
+			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(1)->mContent, QString("No supported reader found."));
 
 			ReaderInfo defaultInfo;
 			ReaderInfo infoEidCard(QString("testInfo"), ReaderManagerPlugInType::PCSC, CardInfo(CardType::EID_CARD));
@@ -84,45 +122,62 @@ class test_DiagnosisModel
 			mContext->setReaderInfos(readerInfos);
 			mModel->onReaderInfosChanged();
 
-			QCOMPARE(mModel->mReaderItem->childCount(), 3);
-			QCOMPARE(mModel->mReaderItem->getChild(0)->getText(), QString());
-			QCOMPARE(mModel->mReaderItem->getChild(1)->getText(), QString("testInfo"));
-			QCOMPARE(mModel->mReaderItem->getChild(2)->getText(), QString("name"));
+			QCOMPARE(mModel->mCardReaderSection->mContentItems.size(), 4);
 
-			auto child1 = mModel->mReaderItem->getChild(0);
-			QCOMPARE(child1->childCount(), 2);
-			QCOMPARE(child1->getChild(0)->getText(), QString("Type: Basic card reader"));
-			QCOMPARE(child1->getChild(1)->getText(), QString("Card: not inserted"));
+			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(0)->mTitle, QString("Connected Card reader"));
+			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(1)->mTitle, QString());
+			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(2)->mTitle, QString("testInfo"));
+			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(3)->mTitle, QString("name"));
 
-			auto child2 = mModel->mReaderItem->getChild(1);
-			QCOMPARE(child2->childCount(), 3);
-			QCOMPARE(child2->getChild(0)->getText(), QString("Type: Basic card reader"));
-			QCOMPARE(child2->getChild(1)->getText(), QString("Card: ID card (PA/eAT)"));
-			QCOMPARE(child2->getChild(2)->getText(), QString("Retry counter: 4"));
+			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(0)->mContent, QString());
+			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(1)->mContent, QString("Type: Basic card reader\nCard: not inserted"));
+			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(2)->mContent, QString("Type: Basic card reader\nCard: ID card (PA/eAT)\nRetry counter: -1"));
+			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(3)->mContent, QString("Type: Standard / comfort card reader\nCard: unknown type"));
 
-			auto child3 = mModel->mReaderItem->getChild(2);
-			QCOMPARE(child3->childCount(), 2);
-			QCOMPARE(child3->getChild(0)->getText(), QString("Type: Standard / comfort card reader"));
-			QCOMPARE(child3->getChild(1)->getText(), QString("Card: unknown type"));
+			QCOMPARE(true, verifyOrder(mModel->mCombinedReaderSection->mContentItems, {
+						mModel->mCardReaderSection->mContentItems,
+						mModel->mRemoteDeviceSection->mContentItems,
+						mModel->mPcscSection->mContentItems}));
 		}
 
 
-		void test_onPcscInfoChanged()
+		void test_OnRemoteInfosChanged()
+		{
+			mModel->onRemoteInfosChanged();
+			QCOMPARE(mModel->mRemoteDeviceSection->mContentItems.size(), 2);
+			QCOMPARE(mModel->mRemoteDeviceSection->mContentItems.at(0)->mTitle, QString("Paired remote devices"));
+			QCOMPARE(mModel->mRemoteDeviceSection->mContentItems.at(1)->mContent, QString("No devices paired."));
+			QCOMPARE(true, verifyOrder(mModel->mCombinedReaderSection->mContentItems, {
+						mModel->mCardReaderSection->mContentItems,
+						mModel->mRemoteDeviceSection->mContentItems,
+						mModel->mPcscSection->mContentItems}));
+		}
+
+
+		void test_OnPcscInfoChanged()
 		{
 			const QString version("version");
-			const DiagnosisContext::ComponentInfo component1;
-			const DiagnosisContext::ComponentInfo component2;
-			const DiagnosisContext::ComponentInfo driver1;
-			const DiagnosisContext::ComponentInfo driver2;
+			const DiagnosisContext::ComponentInfo component1(QString("/path/to/component1"), QString("description1"), QString("version1"), QString("vendor1"));
+			const DiagnosisContext::ComponentInfo component2(QString("/path/to/component2"), QString("description2"), QString("version2"), QString("vendor2"));
+			const DiagnosisContext::ComponentInfo driver1(QString("/path/to/driver1"), QString("description1"), QString("version1"), QString("vendor1"));
+			const DiagnosisContext::ComponentInfo driver2(QString("/path/to/driver2"), QString("description2"), QString("version2"), QString("vendor2"));
 			QVector<DiagnosisContext::ComponentInfo> components = {component1, component2};
 			QVector<DiagnosisContext::ComponentInfo> drivers = {driver1, driver2};
 			mContext->setPcscInfo(version, components, drivers);
-
 			mModel->onPcscInfoChanged();
-			QCOMPARE(mModel->mPcScItem->childCount(), 3);
-			QCOMPARE(mModel->mPcScItem->getChild(0)->getText(), QString("Version: version"));
-			QCOMPARE(mModel->mPcScItem->getChild(1)->getText(), QString("Components"));
-			QCOMPARE(mModel->mPcScItem->getChild(2)->getText(), QString("Driver"));
+
+			QCOMPARE(mModel->mPcscSection->mContentItems.size(), 4);
+
+			QCOMPARE(mModel->mPcscSection->mContentItems.at(0)->mTitle, QString("PC/SC information"));
+			QCOMPARE(mModel->mPcscSection->mContentItems.at(1)->mContent, QString("Version: version"));
+			QCOMPARE(mModel->mPcscSection->mContentItems.at(2)->mTitle, QString("Components"));
+			QCOMPARE(mModel->mPcscSection->mContentItems.at(2)->mContent, QString("description1\nVendor: vendor1\nVersion: version1\nFile path: /path/to/component1\ndescription2\nVendor: vendor2\nVersion: version2\nFile path: /path/to/component2"));
+			QCOMPARE(mModel->mPcscSection->mContentItems.at(3)->mTitle, QString("Driver"));
+			QCOMPARE(mModel->mPcscSection->mContentItems.at(3)->mContent, QString("description1\nVendor: vendor1\nVersion: version1\nFile path: /path/to/driver1\ndescription2\nVendor: vendor2\nVersion: version2\nFile path: /path/to/driver2"));
+			QCOMPARE(true, verifyOrder(mModel->mCombinedReaderSection->mContentItems, {
+						mModel->mCardReaderSection->mContentItems,
+						mModel->mRemoteDeviceSection->mContentItems,
+						mModel->mPcscSection->mContentItems}));
 		}
 
 
@@ -135,13 +190,13 @@ class test_DiagnosisModel
 
 			mContext->setTimestamp(invalid);
 			mModel->onTimestampChanged();
-			QCOMPARE(mModel->mTimestampItem->childCount(), 1);
-			QCOMPARE(mModel->mTimestampItem->getChild(0)->getText(), QString("Initial diagnosis running, please wait."));
+			QCOMPARE(mModel->mTimestampItem->mTitle, QString("Time of diagnosis"));
+			QCOMPARE(mModel->mTimestampItem->mContent, QString("Failed to retrieve date & time"));
 
 			mContext->setTimestamp(valid);
 			mModel->onTimestampChanged();
-			QCOMPARE(mModel->mTimestampItem->childCount(), 1);
-			QCOMPARE(mModel->mTimestampItem->getChild(0)->getText(), QString("12. October 2018, 12:00:00 PM"));
+			QCOMPARE(mModel->mTimestampItem->mTitle, QString("Time of diagnosis"));
+			QCOMPARE(mModel->mTimestampItem->mContent, QString("12. October 2018, 12:00:00 PM"));
 		}
 
 
@@ -151,31 +206,110 @@ class test_DiagnosisModel
 			const QNetworkInterface interface2;
 			const QNetworkInterface interface3;
 			QList<QNetworkInterface> interfaces = {interface1, interface2, interface3};
-
 			mContext->setNetworkInterfaces(interfaces);
 			mModel->onNetworkInfoChanged();
-			QCOMPARE(mModel->mNetworkInterfaces->childCount(), 3);
-			for (int i = 0; i < mModel->mNetworkInterfaces->childCount(); i++)
+
+			QCOMPARE(mModel->mNetworkInterfaceSection->mContentItems.size(), 3);
+			for (const auto& item : qAsConst(mModel->mNetworkInterfaceSection->mContentItems))
 			{
-				const auto& interface = mModel->mNetworkInterfaces->getChild(i);
-				QCOMPARE(interface->childCount(), 2);
+				QCOMPARE(item->mTitle, QString("Interface: \"\""));
+				QCOMPARE(item->mContent, QString("Hardware address: <Not set>\nNo IP addresses assigned"));
 			}
+
+			QCOMPARE(true, verifyOrder(mModel->mCombinedNetworkSection, {mModel->mNetworkConnectionSection, mModel->mNetworkInterfaceSection}));
 		}
 
 
 		void test_OnAntivirusDetectionFailed()
 		{
 			mModel->onAntivirusDetectionFailed();
-			QCOMPARE(mModel->mInstalledAntivirus->childCount(), 1);
-			QCOMPARE(mModel->mInstalledAntivirus->getChild(0)->getText(), QString("Antivirus detection failed."));
+			QCOMPARE(mModel->mAntivirusSection->mContentItems.size(), 1);
+			QCOMPARE(mModel->mAntivirusSection->mContentItems.at(0)->mTitle, QString("Antivirus information"));
+			QCOMPARE(mModel->mAntivirusSection->mContentItems.at(0)->mContent, QString("Antivirus detection failed."));
+			QCOMPARE(true, verifyOrder(mModel->mCombinedAntivirusFirewallSection, {mModel->mAntivirusSection, mModel->mFirewallSection}));
+		}
+
+
+		void test_OnAntivirusInformationChanged()
+		{
+			mModel->onAntivirusInformationChanged();
+			QCOMPARE(mModel->mAntivirusSection->mContentItems.size(), 1);
+			QCOMPARE(mModel->mAntivirusSection->mContentItems.at(0)->mTitle, QString("Antivirus information"));
+			QCOMPARE(mModel->mAntivirusSection->mContentItems.at(0)->mContent, QString("No Antivirus software detected."));
+			QCOMPARE(true, verifyOrder(mModel->mCombinedAntivirusFirewallSection, {mModel->mAntivirusSection, mModel->mFirewallSection}));
+
+			const QString& fileContent = getTestData(QStringLiteral("antivir_two_antivirus.txt"));
+			mModel->mAntivirusDetection.parseAntivirInfos(fileContent);
+			mModel->onAntivirusInformationChanged();
+
+			QCOMPARE(mModel->mAntivirusSection->mContentItems.size(), 3);
+			QCOMPARE(mModel->mAntivirusSection->mContentItems.at(0)->mTitle, QString("Antivirus information"));
+			QCOMPARE(mModel->mAntivirusSection->mContentItems.at(1)->mTitle, QString("BullGuard Antivirus"));
+			QCOMPARE(mModel->mAntivirusSection->mContentItems.at(1)->mContent, QString("Last updated: Fri, 30 Nov 2018 15:04:13 GMT\nExecutable path: C:\\Program Files\\BullGuard Ltd\\BullGuard\\BullGuard.exe"));
+			QCOMPARE(mModel->mAntivirusSection->mContentItems.at(2)->mTitle, QString("Windows Defender"));
+			QCOMPARE(mModel->mAntivirusSection->mContentItems.at(2)->mContent, QString("Last updated: Mon, 26 Nov 2018 10:34:23 GMT\nExecutable path: windowsdefender://"));
+			QCOMPARE(true, verifyOrder(mModel->mCombinedAntivirusFirewallSection, {mModel->mAntivirusSection, mModel->mFirewallSection}));
 		}
 
 
 		void test_OnFirewallInformationFailed()
 		{
 			mModel->onFirewallInformationFailed();
-			QCOMPARE(mModel->mWindowsFirewall->childCount(), 1);
-			QCOMPARE(mModel->mWindowsFirewall->getChild(0)->getText(), QString("An error occurred while trying to gather firewall information. Please check the log for more information."));
+			QCOMPARE(mModel->mFirewallSection->mContentItems.size(), 1);
+			QCOMPARE(mModel->mFirewallSection->mContentItems.at(0)->mTitle, QString("Firewall information"));
+			QCOMPARE(mModel->mFirewallSection->mContentItems.at(0)->mContent, QString("An error occurred while trying to gather firewall information. Please check the log for more information."));
+			QCOMPARE(true, verifyOrder(mModel->mCombinedAntivirusFirewallSection, {mModel->mAntivirusSection, mModel->mFirewallSection}));
+		}
+
+
+		void test_OnConnectionTestDone_data()
+		{
+			QTest::addColumn<bool>("proxySet");
+			QTest::addColumn<bool>("pingTestOnProxy");
+			QTest::addColumn<bool>("connectionTestOnProxy");
+			QTest::addColumn<bool>("connectionTestWithoutProxy");
+
+			QTest::newRow("proxyConnectionSuccessful") << true << true << true << false;
+			QTest::newRow("connectionWithoutProxySuccessful") << false << false << false << true;
+			QTest::newRow("proxyConnectionNotSuccessful") << true << false << false << false;
+			QTest::newRow("noConnection") << false << false << false << false;
+		}
+
+
+		void test_OnConnectionTestDone()
+		{
+			QFETCH(bool, proxySet);
+			QFETCH(bool, pingTestOnProxy);
+			QFETCH(bool, connectionTestOnProxy);
+			QFETCH(bool, connectionTestWithoutProxy);
+
+			mModel->mConnectionTest.mIsProxySet = proxySet;
+			mModel->mConnectionTest.mPingTestOnProxySuccessful = pingTestOnProxy;
+			mModel->mConnectionTest.mConnectionTestWithProxySuccessful = connectionTestOnProxy;
+			mModel->mConnectionTest.mConnectionTestWithoutProxySuccessful = connectionTestWithoutProxy;
+
+			mModel->onConnectionTestDone();
+			QCOMPARE(mModel->mNetworkConnectionSection->mContentItems.size(), 1);
+			QCOMPARE(mModel->mNetworkConnectionSection->mContentItems.at(0)->mTitle, QString("Proxy information"));
+
+			QString contentString;
+			if (proxySet)
+			{
+				contentString = QString("Hostname: \nPort: \nType: \nCapabilities: \nPing test to proxy: ");
+				contentString += pingTestOnProxy ? QString("Successful") : QString("Failed");
+				contentString += QString("\nConnection test with proxy: ");
+				contentString += connectionTestOnProxy ? QString("Successful") : QString("Failed");
+			}
+			else
+			{
+				contentString = QString("No proxy found");
+			}
+
+			contentString += QString("\nConnection test without proxy: ");
+			contentString += connectionTestWithoutProxy ? QString("Successful") : QString("Failed");
+
+			QCOMPARE(mModel->mNetworkConnectionSection->mContentItems.at(0)->mContent, contentString);
+			QCOMPARE(true, verifyOrder(mModel->mCombinedNetworkSection, {mModel->mNetworkConnectionSection, mModel->mNetworkInterfaceSection}));
 		}
 
 

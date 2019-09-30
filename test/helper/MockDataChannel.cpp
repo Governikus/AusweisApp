@@ -24,7 +24,7 @@ MockDataChannel::~MockDataChannel()
 
 void MockDataChannel::close()
 {
-	Q_EMIT fireClosed(GlobalStatus::Code::RemoteReader_CloseCode_NormalClose);
+	Q_EMIT fireClosed(GlobalStatus::Code::No_Error);
 }
 
 

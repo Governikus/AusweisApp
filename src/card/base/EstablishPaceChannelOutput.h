@@ -55,7 +55,7 @@ class EstablishPaceChannelOutput
 		QByteArray mStatusMseSetAt;
 
 	public:
-		EstablishPaceChannelOutput();
+		EstablishPaceChannelOutput(CardReturnCode pPaceReturnCode = CardReturnCode::UNKNOWN);
 
 		/**
 		 * Defined in pcsc10_v2.02.08_amd1.1

@@ -1,0 +1,54 @@
+From d8ac3ad8e4dfc26c6b2f4bb696d4ec8cc23d8cbf Mon Sep 17 00:00:00 2001
+From: Kai Koehne <kai.koehne@qt.io>
+Date: Tue, 9 Jul 2019 17:19:26 +0200
+Subject: [PATCH 1/2] Fix build with -no-feature-printer
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Skip printsupport subdirectory if printer feature is disabled. Also
+removed android-embedded condition for the plugin: Such a
+configuration should just disable the printer feature.
+
+Fixes: QTBUG-76941
+Change-Id: Ifca7d2311a575c1589ad6a87a775bd016591ee2c
+Reviewed-by: Jörg Bornemann <joerg.bornemann@qt.io>
+---
+ src/src.pro | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git x/qtbase/src/src.pro y/qtbase/src/src.pro
+index 1c76a2e46f..b704ccd7ab 100644
+--- x/qtbase/src/src.pro
++++ y/qtbase/src/src.pro
+@@ -1,8 +1,10 @@
+ TEMPLATE = subdirs
+ 
+-QT_FOR_CONFIG += core-private gui-private
++QT_FOR_CONFIG += core-private gui-private printsupport
++
+ include($$OUT_PWD/corelib/qtcore-config.pri)
+ include($$OUT_PWD/gui/qtgui-config.pri)
++include($$OUT_PWD/printsupport/qtprintsupport-config.pri)
+ 
+ force_bootstrap|!qtConfig(commandlineparser): \
+     CONFIG += force_dbus_bootstrap
+@@ -221,11 +223,13 @@ qtConfig(gui) {
+     src_testlib.depends += src_gui      # if QtGui is enabled, QtTest requires QtGui's headers
+     qtConfig(widgets) {
+         SUBDIRS += src_tools_uic src_widgets
+-        !android-embedded: SUBDIRS += src_printsupport
+         TOOLS += src_tools_uic
+         src_plugins.depends += src_widgets
+-        !android-embedded: src_plugins.depends += src_printsupport
+         src_testlib.depends += src_widgets        # if QtWidgets is enabled, QtTest requires QtWidgets's headers
++        qtConfig(printer) {
++            SUBDIRS += src_printsupport
++            src_plugins.depends += src_printsupport
++        }
+         qtConfig(opengl) {
+             SUBDIRS += src_opengl
+             src_plugins.depends += src_opengl
+-- 
+2.22.0
+

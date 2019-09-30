@@ -22,7 +22,7 @@ class Transmit
 
 	public:
 		Transmit();
-		Transmit(const QByteArray& pXmlData);
+		explicit Transmit(const QByteArray& pXmlData);
 		virtual ~Transmit();
 
 		const QString& getSlotHandle() const

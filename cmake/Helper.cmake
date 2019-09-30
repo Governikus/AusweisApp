@@ -3,7 +3,9 @@ INCLUDE(CheckCXXCompilerFlag)
 # Check if a compiler flag is supported by current compiler.
 #
 # Options
-#   NOQUOTES: Do not add quotes to the variable (not used if it is a TARGET)
+#   NOQUOTES:            Do not add quotes to the variable (not used if it is a TARGET).
+#   USE_SAME_FOR_LINKER: Use flag value for linker, too.
+#   USE_LINKER_ONLY:     Use flag for linker only. Only recognized for USE_SAME_FOR_LINKER.
 #
 # Parameter
 #   NAME: Add a human readable name. This is for configure output only to
@@ -15,7 +17,7 @@ INCLUDE(CheckCXXCompilerFlag)
 #         If VAR parameter is a cmake TARGET the compiler flag will be added
 #         to the COMPILE_FLAGS property of this TARGET only.
 FUNCTION(ADD_FLAG)
-	SET(options NOQUOTES)
+	SET(options NOQUOTES USE_SAME_FOR_LINKER USE_LINKER_ONLY)
 	SET(oneValueArgs NAME)
 	SET(multiValueArgs LINK VAR)
 	cmake_parse_arguments(_PARAM "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -36,7 +38,30 @@ FUNCTION(ADD_FLAG)
 		STRING(REPLACE "-" "_" flagname ${flagname})
 		STRING(REPLACE " " "_" flagname ${flagname})
 
-		CHECK_CXX_COMPILER_FLAG(${flag} ${flagname})
+		# GCC will ignore unknown warning options when used in the -Wno- form. It will complain
+		# about it though, if something else goes wrong. To check if this is a warning which can be
+		# disabled, we remove the negation for the test only:
+		STRING(REPLACE "-Wno-" "-W" flagtest ${flag})
+
+		# This enforces warnings like "-Wunused-command-line-argument" to fail
+		# the check.
+		SET(errorflag "")
+		IF(NOT MSVC)
+			SET(errorflag "-Werror")
+		ENDIF()
+
+		IF(_PARAM_USE_SAME_FOR_LINKER)
+			IF(CMAKE_VERSION VERSION_LESS "3.14")
+				SET(CMAKE_REQUIRED_LIBRARIES ${_PARAM_LINK} ${flagtest})
+			ELSE()
+				SET(CMAKE_REQUIRED_LINK_OPTIONS ${_PARAM_LINK} ${flagtest})
+			ENDIF()
+			IF(_PARAM_USE_LINKER_ONLY)
+				SET(flagtest "")
+			ENDIF()
+		ENDIF()
+
+		CHECK_CXX_COMPILER_FLAG("${flagtest} ${errorflag}" ${flagname})
 		IF(${flagname})
 			FOREACH(var ${_PARAM_VAR})
 				IF (${var} MATCHES "^AusweisApp")
@@ -267,25 +292,27 @@ IF((WIN32 AND NOT WINDOWS_STORE) OR LINUX OR MAC OR CYGWIN OR BSD)
 ENDIF()
 
 
-FUNCTION(FILE_SIZE _outSize _file)
-	IF(LINUX)
-		SET(SIZE_COMMAND stat -c "%s" "${_file}")
-	ELSEIF(MAC)
-		SET(SIZE_COMMAND stat -f "%z" "${_file}")
-	ELSE()
-		RETURN()
-	ENDIF()
+IF(CMAKE_VERSION VERSION_LESS "3.14") # Use FILE(SIZE)
+	FUNCTION(FILE_SIZE _outSize _file)
+		IF(LINUX)
+			SET(SIZE_COMMAND stat -c "%s" "${_file}")
+		ELSEIF(MAC)
+			SET(SIZE_COMMAND stat -f "%z" "${_file}")
+		ELSE()
+			RETURN()
+		ENDIF()
 
-	EXECUTE_PROCESS(COMMAND ${SIZE_COMMAND}
-			OUTPUT_VARIABLE SIZE_OUTPUT
-			RESULT_VARIABLE SIZE_RESULT
-			ERROR_QUIET
-			OUTPUT_STRIP_TRAILING_WHITESPACE)
+		EXECUTE_PROCESS(COMMAND ${SIZE_COMMAND}
+				OUTPUT_VARIABLE SIZE_OUTPUT
+				RESULT_VARIABLE SIZE_RESULT
+				ERROR_QUIET
+				OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-	IF(${SIZE_RESULT} EQUAL 0)
-		SET(${_outSize} ${SIZE_OUTPUT} PARENT_SCOPE)
-	ENDIF()
-ENDFUNCTION()
+		IF(${SIZE_RESULT} EQUAL 0)
+			SET(${_outSize} ${SIZE_OUTPUT} PARENT_SCOPE)
+		ENDIF()
+	ENDFUNCTION()
+ENDIF()
 
 IF(NOT COMMAND FIND_HOST_PACKAGE)
 	MACRO(FIND_HOST_PACKAGE)
@@ -350,6 +377,7 @@ IF(WIN32)
 
 			IF(WIN_TIMESTAMP)
 				IF(NOT WIN_TIMESTAMP_URL)
+					# http://rfc3161timestamp.globalsign.com/advanced
 					SET(WIN_TIMESTAMP_URL http://timestamp.digicert.com)
 				ENDIF()
 				SET(SIGNTOOL_PARAMS ${SIGNTOOL_PARAMS} /tr ${WIN_TIMESTAMP_URL} /td ${WIN_SIGN_HASHALGO})

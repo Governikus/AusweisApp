@@ -20,7 +20,7 @@ class DeviceInfo
 		Q_DISABLE_COPY(DeviceInfo)
 
 #ifdef Q_OS_ANDROID
-		static QString getField(const char* pField);
+		static QString getField(const char* const pField);
 #endif
 
 	public:

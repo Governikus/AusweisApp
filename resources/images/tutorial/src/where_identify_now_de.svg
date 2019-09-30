@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600px" height="500px" viewBox="0 0 600 500">
   <image x="290" y="160" width="292px" height="311px" xlink:href="../../../images/tutorial/phone_screen_de.jpg"/>
-  <image x="120" y="30" width="240px" height="41px" xlink:href="../../../images/tutorial/button_de.png"/>
+  <image x="90" y="30" width="300px" height="41px" xlink:href="../../../images/tutorial/button_de.png"/>
   <image x="475" y="500" width="204px" height="82px" transform="scale(-1,1) translate(-900, 0) rotate(-55, 300, 300)" xlink:href="../../../images/tutorial/circle-2.svg"/>
 </svg>

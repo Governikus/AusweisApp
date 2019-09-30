@@ -1,42 +1,62 @@
+/*
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
 
 Pane {
+	id: pane
+
+	signal scrollPageUp()
+	signal scrollPageDown()
+
 	property alias chat: repeater.model
 
-	id: pane
-	spacing: 0
 	visible: repeater.count > 0
+
+	contentSpacing: 0
 
 	Repeater {
 		id: repeater
 
 		Rectangle {
 			width: parent.width
-			height: Utils.dp(40)
+			height: 40
+
+			Accessible.role: Accessible.ListItem
+			Accessible.name: name
+			Accessible.checkable: true
+			Accessible.checked: checkBox.checked
+			Accessible.onPressAction: if (optional) selected = !selected
+			Accessible.onScrollDownAction: baseItem.scrollPageDown()
+			Accessible.onScrollUpAction: baseItem.scrollPageUp()
+
 			radius: 3
-			color: "white"
-			Text {
+			color: Constants.white
+
+			GText {
 				id: dataGroup
-				color: Constants.secondary_text
+
 				anchors.left: parent.left
 				anchors.verticalCenter: parent.verticalCenter
 				anchors.right: checkBox.left
 				width: parent.width
-				font.pixelSize: Constants.normal_font_size
-				wrapMode: Text.WordWrap
+
+				Accessible.ignored: true
+
 				text: name
+				textStyle: Style.text.normal_secondary
 			}
-			Rectangle {
+			GSeparator {
 				anchors.top: parent.bottom
 				anchors.topMargin: -height
-				height: 1
 				anchors.left: dataGroup.left
 				anchors.right: dataGroup.right
-				color: Constants.grey
 			}
 			GCheckBox {
 				id: checkBox

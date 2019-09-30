@@ -25,7 +25,7 @@ class DIDList
 		bool handleFoundElementConnectionHandle(const QString& pElementName, const QString& pValue);
 
 	public:
-		DIDList(const QByteArray& pXmlData);
+		explicit DIDList(const QByteArray& pXmlData);
 		const ConnectionHandle& getConnectionHandle() const;
 };
 

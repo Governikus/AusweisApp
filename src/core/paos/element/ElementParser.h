@@ -21,7 +21,7 @@ namespace governikus
 class ElementParser
 {
 	public:
-		ElementParser(QSharedPointer<QXmlStreamReader> pXmlReader);
+		explicit ElementParser(QSharedPointer<QXmlStreamReader> pXmlReader);
 		virtual ~ElementParser();
 
 	protected:
@@ -44,7 +44,7 @@ class ElementParser
 		 * \param pValue the elements value to check.
 		 * \param pElementName the elements name used to generate the log message.
 		 */
-		void assertMandatoryElement(const QString& pValue, const char* pElementName);
+		void assertMandatoryElement(const QString& pValue, const char* const pElementName);
 
 		/*!
 		 * \brief Issues a log warning and sets the error when the list is empty.
@@ -52,7 +52,7 @@ class ElementParser
 		 * \param pElementName the elements name used to generate the log message.
 		 * \return \c true, if the assertion holds, \c false otherwise.
 		 */
-		template<typename T> bool assertMandatoryList(const QVector<T>& pList, const char* pElementName);
+		template<typename T> bool assertMandatoryList(const QVector<T>& pList, const char* const pElementName);
 
 		/*!
 		 * \brief Issues a log warning and sets the error when a duplicate element has been encountered.
@@ -78,7 +78,7 @@ class ElementParser
 };
 
 
-template<typename T> bool ElementParser::assertMandatoryList(const QVector<T>& pList, const char* pElementName)
+template<typename T> bool ElementParser::assertMandatoryList(const QVector<T>& pList, const char* const pElementName)
 {
 	if (pList.isEmpty())
 	{

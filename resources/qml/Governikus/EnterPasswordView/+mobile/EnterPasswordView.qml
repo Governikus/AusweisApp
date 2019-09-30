@@ -1,0 +1,186 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
+import QtQuick 2.10
+import QtQuick.Layouts 1.1
+
+import Governikus.Global 1.0
+import Governikus.Style 1.0
+import Governikus.View 1.0
+import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.RemoteServiceModel 1.0
+import Governikus.Type.NumberModel 1.0
+
+
+SectionPage
+{
+	id: baseItem
+	property alias enableTransportPinLink: transportPinLink.enableTransportPinLink
+	signal passwordEntered()
+	signal changePinLength()
+
+	onVisibleChanged: {
+		pinField.text = ""
+		if (state !== "PIN_NEW_AGAIN") {
+			pinField.inputConfirmation = ""
+		}
+	}
+
+	ColumnLayout
+	{
+		anchors.fill: parent
+		Item {/*spacer*/ Layout.fillHeight: true; width: parent.width }
+
+		RowLayout {
+			spacing: Constants.component_spacing
+			width: parent.width
+
+			Item {/*spacer*/ Layout.fillWidth: true; height: parent.height}
+			Image {
+				Layout.alignment: Qt.AlignVCenter
+				width: 58
+				height: width
+				// because RowLayout uses implicitHeight that is based on sourceSize we have to explicitly set the sourceSize
+				sourceSize.height: baseItem.state === "REMOTE_PIN" ? 58 : 143
+				Layout.maximumWidth: width
+				source: baseItem.state === "REMOTE_PIN" ? "qrc:///images/icon_remote.svg" : "qrc:///images/NFCPhoneCard.png"
+				fillMode: Image.PreserveAspectFit
+			}
+
+			GText {
+				Layout.alignment: Qt.AlignVCenter
+				Layout.fillWidth: true
+				Layout.maximumWidth: Math.ceil(implicitWidth)
+
+				textStyle: {
+					if (!pinField.confirmedInput || !!NumberModel.inputError || baseItem.state === "CAN" || baseItem.state === "PUK") {
+						Style.text.normal_warning
+					} else {
+						Style.text.normal_accent
+					}
+				}
+				text: {
+					SettingsModel.translationTrigger
+
+					if (!pinField.confirmedInput) {
+						//: INFO ANDROID IOS The changed PIN was entered wrongfully during confirmation.
+						return qsTr("The entered PIN does not match the new PIN. Please correct your input.")
+					}
+					if (!!NumberModel.inputError) {
+						return NumberModel.inputError
+					}
+					if (baseItem.state === "CAN") {
+						if (NumberModel.isCanAllowedMode) {
+							//: INFO ANDROID IOS The CAN needs to be entered in CAN-allowed mode, hint where the CAN can be found.
+							return qsTr("Please enter the six-digit card access number. You can find the card access number on the front of the ID card.")
+						}
+						//: INFO ANDROID IOS The wrong PIN was entered twice, the third attempt requires the CAN for additional verification, hint where the CAN is found.
+						return qsTr("You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.")
+					}
+					if (baseItem.state === "PUK") {
+						//: INFO ANDROID IOS The PUK is required to unlock the id card since the wrong PIN entered three times.
+						return qsTr("You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.")
+					}
+					if (baseItem.state === "PIN_NEW") {
+						//: INFO ANDROID IOS A new 6-digit PIN needs to be supplied.
+						return qsTr("Please enter a new 6-digit PIN of your choice.")
+					}
+					if (baseItem.state === "PIN_NEW_AGAIN") {
+						//: INFO ANDROID IOS The new PIN needs to be confirmed.
+						return qsTr("Please enter your new 6-digit PIN again.")
+					}
+					if (baseItem.state === "PIN" && NumberModel.requestTransportPin) {
+						//: INFO ANDROID IOS The transport PIN is required by AA2, it needs to be change to an actual PIN.
+						return qsTr("Please enter your transport PIN.")
+					}
+					if (baseItem.state === "REMOTE_PIN") {
+						//: INFO ANDROID IOS The pairing code for the smartphone is required.
+						return qsTr("Enter the pairing code shown on your other device to use it as a card reader.")
+					}
+					//: LABEL ANDROID IOS
+					return qsTr("Please enter your PIN.")
+				}
+			}
+			Item {/*spacer*/ Layout.fillWidth: true; height: parent.height}
+		}
+
+		Item {/*spacer*/ Layout.fillHeight: true; width: parent.width }
+
+		NumberField {
+			id: pinField
+			Layout.alignment: Qt.AlignHCenter
+			passwordLength: baseItem.state === "REMOTE_PIN" ? 4
+						  : baseItem.state === "PIN" && NumberModel.requestTransportPin ? 5
+						  : baseItem.state === "PUK" ? 10
+						  : 6
+			Layout.preferredHeight: height
+			Layout.preferredWidth: width
+		}
+
+		GText {
+			id: transportPinLink
+			property alias enableTransportPinLink: myMouse.enabled
+
+			visible: baseItem.state === "PIN" && enableTransportPinLink
+			//: LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung starten kann.
+			text: (NumberModel.requestTransportPin ? qsTr("Your PIN has 6 digits?") : qsTr("Your PIN has 5 digits?")) + SettingsModel.translationTrigger
+			Layout.alignment: Qt.AlignHCenter
+			textStyle: Style.text.hint_accent
+			font.underline: true
+
+			MouseArea {
+				id: myMouse
+				enabled: true
+				anchors.fill: parent
+				anchors.margins: -12
+				onClicked: baseItem.changePinLength()
+			}
+		}
+
+		Item {/*spacer*/ height: Constants.component_spacing; width: parent.width }
+
+		NumberPad {
+			state: baseItem.state
+			Layout.alignment: Qt.AlignHCenter
+			Layout.preferredWidth: width
+			Layout.preferredHeight: height
+
+			submitEnabled: pinField.validInput
+			deleteEnabled: pinField.text.length > 0
+			onDigitPressed: pinField.append(digit)
+			onDeletePressed: pinField.removeLast()
+			onSubmitPressed: {
+				switch(baseItem.state) {
+					case "PIN":
+						NumberModel.pin = pinField.text
+						baseItem.passwordEntered()
+						break
+					case "PIN_NEW":
+						pinField.inputConfirmation = pinField.text
+						pinField.text = ""
+						baseItem.state = "PIN_NEW_AGAIN"
+						break
+					case "PIN_NEW_AGAIN":
+						NumberModel.newPin = pinField.text
+						baseItem.passwordEntered()
+						break
+					case "CAN":
+						NumberModel.can = pinField.text
+						baseItem.passwordEntered()
+						break
+					case "PUK":
+						NumberModel.puk = pinField.text
+						baseItem.passwordEntered()
+						break
+					case "REMOTE_PIN":
+						RemoteServiceModel.connectToRememberedServer(pinField.text)
+						baseItem.passwordEntered()
+						break
+				}
+			}
+		}
+
+		Item {/*spacer*/ Layout.fillHeight: true; width: parent.width }
+	}
+}

@@ -14,7 +14,8 @@ using namespace governikus;
 
 
 StateProcessRemoteMessages::StateProcessRemoteMessages(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 	, mMessageConnections()
 {
 }
@@ -31,6 +32,7 @@ void StateProcessRemoteMessages::run()
 	const QSharedPointer<RemoteServer> server = context->getRemoteServer();
 	Q_ASSERT(server);
 
+	mConnections += connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireStatusChanged, this, &StateProcessRemoteMessages::onReaderStatusChanged);
 	mConnections += connect(server.data(), &RemoteServer::fireMessageHandlerAdded, this, &StateProcessRemoteMessages::onMessageHandlerAdded);
 
 	const auto messageHandler = server->getMessageHandler();
@@ -70,6 +72,26 @@ void StateProcessRemoteMessages::onClosed()
 
 	qCDebug(statemachine) << "Reseting all PACE passwords and further relevant context information.";
 	getContext()->onResetMessageHandler();
+}
+
+
+void StateProcessRemoteMessages::onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo)
+{
+	if (pInfo.getPlugInType() != ReaderManagerPlugInType::NFC)
+	{
+		return;
+	}
+
+	if (Env::getSingleton<ReaderManager>()->isScanRunning(ReaderManagerPlugInType::NFC))
+	{
+		return;
+	}
+
+	const auto& context = getContext();
+	if (context->getRemoteServer()->isConnected())
+	{
+		Q_EMIT fireAbort();
+	}
 }
 
 

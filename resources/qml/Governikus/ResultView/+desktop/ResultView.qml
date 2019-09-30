@@ -1,52 +1,107 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
+import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 SectionPage {
 	id: baseItem
 
-	property alias text: resultText.text
-	property bool isError: false
+	enum Type {
+		IsSuccess,
+		IsError,
+		IsInfo
+	}
 
-	KeyNavigation.tab: button
-	Accessible.role: Accessible.Grouping
-	Accessible.name: qsTr("Result view") + settingsModel.translationTrigger
-	Accessible.description: qsTr("This is the result of an authentication.") + settingsModel.translationTrigger
+	signal emailButtonPressed()
+	property alias emailButtonVisible: emailButton.visible
+	property alias text: resultText.text
+	property int resultType: Type.IsSuccess
+
+	Accessible.name: qsTr("Result view") + SettingsModel.translationTrigger
+	Accessible.description: qsTr("This is the result of an authentication.") + SettingsModel.translationTrigger
+	Keys.onReturnPressed: button.onClicked()
+	Keys.onEnterPressed: button.onClicked()
+	Keys.onEscapePressed: button.onClicked()
 
 	StatusIcon {
-		height: ApplicationModel.scaleFactor * 400
+		height: Style.dimens.status_icon_large
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.verticalCenter: parent.top
 		anchors.verticalCenterOffset: baseItem.height / 4
-		source: isError ? "qrc:///images/status_error.svg" : "qrc:///images/status_ok.svg"
+
+		source: {
+			switch (resultType) {
+				case ResultView.Type.IsSuccess:
+					return "qrc:///images/status_ok.svg"
+				case ResultView.Type.IsInfo:
+					return "qrc:///images/status_info.svg"
+				case ResultView.Type.IsError:
+					return "qrc:///images/status_error.svg"
+			}
+		}
 	}
 
-	Text {
+	GText {
 		id: resultText
+
+		visible: text !== ""
+		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.top: parent.verticalCenter
-		width: parent.width - (2 * Constants.pane_padding)
 
-		font.pixelSize: Constants.header_font_size
+		activeFocusOnTab: true
+		Accessible.role: Accessible.Heading
+		Accessible.name: resultText.text
+
 		horizontalAlignment: Text.AlignHCenter
 		verticalAlignment: Text.AlignVCenter
-		wrapMode: Text.WordWrap
-		color: Constants.white
+		textStyle: Style.text.title
+
 		onLinkActivated: Qt.openUrlExternally(link)
+
+		FocusFrame {
+			dynamic: false
+		}
 	}
 
-	ContinueButton {
-		id: button
-		height: ApplicationModel.scaleFactor * 160
-		anchors.verticalCenter: parent.bottom
-		anchors.verticalCenterOffset: -baseItem.height / 6
-		anchors.horizontalCenter: parent.horizontalCenter
-		onClicked: baseItem.nextView(SectionPage.Views.Main)
+	GButton {
+		id: emailButton
 
-		KeyNavigation.tab: baseItem.navSuccessor
+		visible: false
+
+		icon.source: "qrc:///images/provider/mail.svg"
+		//: LABEL DESKTOP_QML
+		text: qsTr("Send email") + SettingsModel.translationTrigger
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			verticalCenter: parent.top
+			verticalCenterOffset: baseItem.height * 3 / 4
+		}
+		onClicked: baseItem.emailButtonPressed()
+	}
+
+	NavigationButton {
+		id: button
+
+		anchors {
+			margins: Constants.component_spacing
+			bottom: parent.bottom
+			horizontalCenter: parent.horizontalCenter
+		}
+
+		activeFocusOnTab: true
+
+		buttonType: Qt.ForwardButton
+		onClicked: baseItem.nextView(SectionPage.Views.Main)
 	}
 }

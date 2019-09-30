@@ -10,7 +10,8 @@
 using namespace governikus;
 
 StateDidAuthenticateEac2::StateDidAuthenticateEac2(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractState(pContext)
+	, GenericContextContainer(pContext)
 {
 }
 
@@ -63,4 +64,12 @@ void StateDidAuthenticateEac2::onCardCommandDone(QSharedPointer<BaseCardCommand>
 	response->setNonce(eac2Command->getNonceAsHex());
 
 	Q_EMIT fireContinue();
+}
+
+
+void StateDidAuthenticateEac2::onEntry(QEvent* pEvent)
+{
+	//: INFO ALL_PLATFORMS Status message after the PIN was entered, Card Authentication.
+	getContext()->setProgress(40, tr("Card is being verified"));
+	AbstractState::onEntry(pEvent);
 }

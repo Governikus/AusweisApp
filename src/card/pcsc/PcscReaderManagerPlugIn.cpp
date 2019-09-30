@@ -5,6 +5,7 @@
 #include "PcscReaderManagerPlugIn.h"
 
 #include "PcscReader.h"
+
 #include <QLoggingCategory>
 
 
@@ -24,7 +25,7 @@ PcscReaderManagerPlugIn::PcscReaderManagerPlugIn()
 	setObjectName(QStringLiteral("PcscReaderManager"));
 
 #ifdef PCSCLITE_VERSION_NUMBER
-	setReaderInfoValue(ReaderManagerPlugInInfo::Key::PCSC_LITE_VERSION, QStringLiteral(PCSCLITE_VERSION_NUMBER));
+	setPlugInValue(ReaderManagerPlugInInfo::Key::PCSC_LITE_VERSION, QStringLiteral(PCSCLITE_VERSION_NUMBER));
 #endif
 
 	initReaderState();
@@ -51,17 +52,17 @@ QList<Reader*> PcscReaderManagerPlugIn::getReaders() const
 
 void PcscReaderManagerPlugIn::startScan(bool pAutoConnect)
 {
-	Q_UNUSED(pAutoConnect);
+	Q_UNUSED(pAutoConnect)
 
 	PCSC_RETURNCODE returnCode = SCardEstablishContext(SCARD_SCOPE_USER, nullptr, nullptr, &mContextHandle);
-	setReaderInfoEnabled(returnCode == PcscUtils::Scard_S_Success);
+	setPlugInEnabled(returnCode == PcscUtils::Scard_S_Success);
 	qCDebug(card_pcsc) << "SCardEstablishContext:" << PcscUtils::toString(returnCode);
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Not started: Cannot establish context";
 	}
 
-	if (!mTimerId)
+	if (mTimerId == 0)
 	{
 		mTimerId = startTimer(500);
 	}
@@ -69,7 +70,7 @@ void PcscReaderManagerPlugIn::startScan(bool pAutoConnect)
 }
 
 
-void PcscReaderManagerPlugIn::stopScan()
+void PcscReaderManagerPlugIn::stopScan(const QString& pError)
 {
 	if (mTimerId)
 	{
@@ -86,8 +87,8 @@ void PcscReaderManagerPlugIn::stopScan()
 			qCWarning(card_pcsc) << "Error releasing context";
 		}
 	}
-	updateReaders();
-	ReaderManagerPlugIn::stopScan();
+	removeReaders(mReaders.keys());
+	ReaderManagerPlugIn::stopScan(pError);
 }
 
 
@@ -113,13 +114,11 @@ void PcscReaderManagerPlugIn::initReaderState()
 
 void PcscReaderManagerPlugIn::updateReaders()
 {
-	QStringList readersToRemove(mReaders.keys());
 	QStringList readersToAdd;
-
 	PCSC_RETURNCODE returnCode = readReaderNames(readersToAdd);
 	if (returnCode != PcscUtils::Scard_S_Success && returnCode != PcscUtils::Scard_E_No_Readers_Available)
 	{
-		qCWarning(card_pcsc) << "Cannot update readers";
+		qCWarning(card_pcsc) << "Cannot update readers, returnCode:" << returnCode;
 
 		if (returnCode == PcscUtils::Scard_E_No_Service && mTimerId != 0)
 		{
@@ -151,6 +150,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 		}
 	}
 
+	QStringList readersToRemove(mReaders.keys());
 	for (QMutableListIterator<QString> it(readersToAdd); it.hasNext();)
 	{
 		QString readerName = it.next();
@@ -161,10 +161,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 		}
 	}
 
-	for (const auto& readerName : qAsConst(readersToRemove))
-	{
-		removeReader(readerName);
-	}
+	removeReaders(readersToRemove);
 
 	for (QMutableListIterator<QString> iterator(readersToAdd); iterator.hasNext();)
 	{
@@ -176,7 +173,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 		connect(reader, &Reader::fireCardRemoved, this, &PcscReaderManagerPlugIn::fireCardRemoved);
 		connect(reader, &Reader::fireCardRetryCounterChanged, this, &PcscReaderManagerPlugIn::fireCardRetryCounterChanged);
 
-		qCDebug(card_pcsc) << "fireReaderAdded:" << readerName;
+		qCDebug(card_pcsc) << "fireReaderAdded:" << readerName << "(" << mReaders.size() << "reader in total )";
 		Q_EMIT fireReaderAdded(readerName);
 	}
 }
@@ -196,7 +193,12 @@ QString PcscReaderManagerPlugIn::extractReaderName(PCSC_CHAR_PTR pReaderPointer)
 
 void PcscReaderManagerPlugIn::removeReader(const QString& pReaderName)
 {
-	Q_ASSERT(mReaders.contains(pReaderName));
+	if (!mReaders.contains(pReaderName))
+	{
+		qCDebug(card_pcsc) << "Reader not present:" << pReaderName;
+		Q_ASSERT(false);
+	}
+
 	delete mReaders.take(pReaderName);
 
 	qCDebug(card_pcsc) << "fireReaderRemoved:" << pReaderName;
@@ -204,15 +206,24 @@ void PcscReaderManagerPlugIn::removeReader(const QString& pReaderName)
 }
 
 
+void PcscReaderManagerPlugIn::removeReaders(const QStringList& pReaderNames)
+{
+	for (const auto& readerName : pReaderNames)
+	{
+		removeReader(readerName);
+	}
+}
+
+
 PCSC_RETURNCODE PcscReaderManagerPlugIn::readReaderNames(QStringList& pReaderNames)
 {
-	if (!mContextHandle)
+	if (mContextHandle == 0)
 	{
 		return PcscUtils::Scard_E_Invalid_Handle;
 	}
 
 	QVarLengthArray<PCSC_CHAR, 8192> readers;
-	PCSC_INT maxReadersSize = static_cast<PCSC_INT>(readers.capacity());
+	auto maxReadersSize = static_cast<PCSC_INT>(readers.capacity());
 	PCSC_RETURNCODE returnCode = SCardListReaders(mContextHandle, nullptr, readers.data(), &maxReadersSize);
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{

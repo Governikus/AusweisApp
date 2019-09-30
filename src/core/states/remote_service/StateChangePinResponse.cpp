@@ -11,7 +11,8 @@ using namespace governikus;
 
 
 StateChangePinResponse::StateChangePinResponse(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 

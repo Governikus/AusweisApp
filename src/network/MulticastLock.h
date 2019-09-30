@@ -10,7 +10,7 @@ namespace governikus
 class MulticastLock
 {
 	private:
-		void invokeJniMethod(const char* pMethodName);
+		void invokeJniMethod(const char* const pMethodName);
 
 	public:
 		MulticastLock();

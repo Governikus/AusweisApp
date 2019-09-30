@@ -21,7 +21,7 @@ class VersionNumber
 
 	public:
 		static const VersionNumber& getApplicationVersion();
-		VersionNumber(const QString& pVersion);
+		explicit VersionNumber(const QString& pVersion);
 
 		const QVersionNumber& getVersionNumber() const;
 		bool isDeveloperVersion() const;

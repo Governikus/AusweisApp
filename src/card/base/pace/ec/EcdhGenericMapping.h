@@ -28,7 +28,7 @@ class EcdhGenericMapping
 		void setGenerator(const QSharedPointer<const EC_POINT>& pNewGenerator);
 
 	public:
-		EcdhGenericMapping(const QSharedPointer<EC_GROUP>& pCurve);
+		explicit EcdhGenericMapping(const QSharedPointer<EC_GROUP>& pCurve);
 		virtual ~EcdhGenericMapping() override = default;
 
 		QByteArray generateTerminalMappingData() override;

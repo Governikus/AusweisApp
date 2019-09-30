@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "AbstractGenericState.h"
-
+#include "AbstractState.h"
 #include "context/ChangePinContext.h"
+#include "GenericContextContainer.h"
 
 class test_StateUpdateRetryCounter;
 
@@ -17,7 +17,8 @@ namespace governikus
 {
 
 class StateUpdateRetryCounter
-	: public AbstractGenericState<WorkflowContext>
+	: public AbstractState
+	, public GenericContextContainer<WorkflowContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

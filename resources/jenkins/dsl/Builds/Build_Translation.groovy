@@ -4,6 +4,7 @@ import static common.Constants.strip
 def j = new Build
 	(
 		name: 'Translation',
+		excludePattern: '',
 		libraries: ['Linux'],
 		label: 'Linux',
 		artifacts: 'source/resources/translations/*.ts'

@@ -77,7 +77,11 @@ QString DidAuthenticateEacAdditionalParser::parseEacAdditionalInputType()
 		qCDebug(paos) << mXmlReader->name();
 		if (mXmlReader->name() == QLatin1String("Signature"))
 		{
-			Q_UNUSED(readUniqueElementText(signature))
+			if (!readUniqueElementText(signature))
+			{
+				qCWarning(paos) << "Abort parsing of Signature";
+				mParseError = true;
+			}
 		}
 		else
 		{

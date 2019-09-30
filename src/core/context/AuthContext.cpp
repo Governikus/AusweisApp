@@ -6,6 +6,7 @@
 
 #include "asn1/Chat.h"
 #include "AppSettings.h"
+#include "GeneralSettings.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
 #include "SecureStorage.h"
 
@@ -15,6 +16,8 @@ using namespace governikus;
 
 AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationContext)
 	: WorkflowContext()
+	, mProgressValue(0)
+	, mProgressMessage()
 	, mTcTokenNotFound(true)
 	, mErrorReportedToServer(false)
 	, mSkipRedirect(false)
@@ -48,6 +51,35 @@ AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationCon
 	, mCvcChainBuilderTest()
 	, mSslSession()
 {
+	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	connect(&generalSettings, &GeneralSettings::fireLanguageChanged, this, &AuthContext::fireProgressChanged);
+}
+
+
+void AuthContext::setProgress(int pValue, const QString& pMessage)
+{
+	if (pValue != mProgressValue || pMessage != mProgressMessage)
+	{
+		mProgressValue = pValue;
+		mProgressMessage = pMessage;
+
+		const auto& connection = getCardConnection();
+		if (connection)
+		{
+			// Card interaction makes up about 80 % of the entire workflow's duration,
+			// "correct" the relative progress value accordingly.
+			if (pMessage.isEmpty())
+			{
+				connection->setProgressMessage(QStringLiteral("%1 %").arg(1.25 * pValue));
+			}
+			else
+			{
+				connection->setProgressMessage(QStringLiteral("%1\n%2 %").arg(pMessage).arg(1.25 * pValue));
+			}
+		}
+
+		Q_EMIT fireProgressChanged();
+	}
 }
 
 
@@ -292,9 +324,9 @@ void AuthContext::initCvcChainBuilder(const QVector<QSharedPointer<const CVCerti
 	cvcs += getDidAuthenticateEac1()->getCvCertificates();
 	cvcs += pAdditionalCertificates;
 
-	const SecureStorage& secureStorage = SecureStorage::getInstance();
-	mCvcChainBuilderProd = CVCertificateChainBuilder(cvcs + CVCertificate::fromHex(secureStorage.getCVRootCertificates(true)), true);
-	mCvcChainBuilderTest = CVCertificateChainBuilder(cvcs + CVCertificate::fromHex(secureStorage.getCVRootCertificates(false)), false);
+	const auto* secureStorage = Env::getSingleton<SecureStorage>();
+	mCvcChainBuilderProd = CVCertificateChainBuilder(cvcs + CVCertificate::fromHex(secureStorage->getCVRootCertificates(true)), true);
+	mCvcChainBuilderTest = CVCertificateChainBuilder(cvcs + CVCertificate::fromHex(secureStorage->getCVRootCertificates(false)), false);
 }
 
 

@@ -7,8 +7,9 @@
 
 #pragma once
 
-#include "AbstractGenericState.h"
+#include "AbstractState.h"
 #include "context/WorkflowContext.h"
+#include "GenericContextContainer.h"
 
 class test_StateEstablishPaceChannel;
 
@@ -16,7 +17,8 @@ namespace governikus
 {
 
 class StateEstablishPaceChannel
-	: public AbstractGenericState<WorkflowContext>
+	: public AbstractState
+	, public GenericContextContainer<WorkflowContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

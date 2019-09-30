@@ -24,10 +24,10 @@ ReaderDeviceGui::~ReaderDeviceGui()
 
 void ReaderDeviceGui::activate()
 {
-	if (!mDialog)
+	if (mDialog == nullptr)
 	{
 		QWidget* dialogParent = qobject_cast<QWidget*>(parent());
-		if (!dialogParent)
+		if (dialogParent == nullptr)
 		{
 			return;
 		}
@@ -42,7 +42,7 @@ void ReaderDeviceGui::activate()
 
 void ReaderDeviceGui::deactivate()
 {
-	if (mDialog)
+	if (mDialog != nullptr)
 	{
 		mDialog->close();
 	}
@@ -51,7 +51,7 @@ void ReaderDeviceGui::deactivate()
 
 void ReaderDeviceGui::reactToReaderCount(int pReaderCount)
 {
-	if (mDialog && pReaderCount > 0)
+	if (mDialog != nullptr && pReaderCount > 0)
 	{
 		mDialog->close();
 	}
@@ -75,7 +75,7 @@ void ReaderDeviceGui::reactivate()
 
 void ReaderDeviceGui::onFinished(int result)
 {
-	Q_UNUSED(result);
+	Q_UNUSED(result)
 
 	mDialog = nullptr;
 }

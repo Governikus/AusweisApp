@@ -16,7 +16,8 @@ using namespace governikus;
 
 
 StateSelectReader::StateSelectReader(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 
@@ -41,10 +42,16 @@ void StateSelectReader::run()
 
 	if (!Env::getSingleton<AppSettings>()->isUsedAsSDK())
 	{
-		const auto& readerPlugInTypes = getContext()->getReaderPlugInTypes();
+		const auto& readerPlugInTypes = Enum<ReaderManagerPlugInType>::getList();
+		const auto& enabledPlugInTypes = getContext()->getReaderPlugInTypes();
 		for (const auto t : readerPlugInTypes)
 		{
-			readerManager->startScan(t);
+			if (enabledPlugInTypes.contains(t))
+			{
+				readerManager->startScan(t);
+				continue;
+			}
+			readerManager->stopScan(t);
 		}
 	}
 }
@@ -54,13 +61,28 @@ void StateSelectReader::onReaderInfoChanged()
 {
 	const QSharedPointer<WorkflowContext> context = getContext();
 	Q_ASSERT(context);
+	bool currentReaderHasEidCardButInsufficientApduLength = false;
 
 	const QVector<ReaderManagerPlugInType>& plugInTypes = context->getReaderPlugInTypes();
-	const auto allReaders = Env::getSingleton<ReaderManager>()->getReaderInfos(plugInTypes);
-	const QVector<ReaderInfo> selectableReaders = filter<ReaderInfo>([](const ReaderInfo& info)
+	const auto allReaders = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(plugInTypes));
+	QVector<ReaderInfo> selectableReaders;
+
+	for (const auto& info : allReaders)
+	{
+		if (info.isConnected() && (!requiresCard(info.getPlugInType()) || info.hasEidCard()))
+		{
+			if (info.sufficientApduLength())
 			{
-				return info.isConnected() && (!requiresCard(info.getPlugInType()) || info.hasEidCard());
-			}, allReaders);
+				selectableReaders.append(info);
+			}
+			else
+			{
+				currentReaderHasEidCardButInsufficientApduLength = true;
+			}
+		}
+	}
+
+	context->setCurrentReaderHasEidCardButInsufficientApduLength(currentReaderHasEidCardButInsufficientApduLength);
 
 	if (selectableReaders.isEmpty())
 	{
@@ -79,26 +101,7 @@ void StateSelectReader::onReaderInfoChanged()
 }
 
 
-void StateSelectReader::onAbort()
-{
-	const QSharedPointer<WorkflowContext> context = getContext();
-	Q_ASSERT(context);
-
-	const auto& readerName = context->getReaderName();
-	if (!readerName.isEmpty())
-	{
-		const auto readerManager = Env::getSingleton<ReaderManager>();
-		const ReaderInfo readerInfo = readerManager->getReaderInfo(readerName);
-		if (readerInfo.isConnected())
-		{
-			readerManager->disconnectReader(readerName);
-		}
-	}
-	Q_EMIT fireRetry();
-}
-
-
-void StateSelectReader::onReaderDeviceError(const GlobalStatus pErrorCode)
+void StateSelectReader::onReaderDeviceError(const GlobalStatus& pErrorCode)
 {
 	if (pErrorCode.isError() && !pErrorCode.is(GlobalStatus::Code::Workflow_Reader_Device_Scan_Error))
 	{
@@ -113,13 +116,11 @@ void StateSelectReader::onEntry(QEvent* pEvent)
 	const WorkflowContext* const context = getContext().data();
 	Q_ASSERT(context);
 
-	mConnections += connect(context, &WorkflowContext::fireAbortCardSelection, this, &StateSelectReader::onAbort);
-
 	/*
 	 * Note: the plugin types to be used in this state must be already set in the workflow context before this state is entered.
 	 * Changing the plugin types in the context, e.g. from {NFC} to {BLUETOOTH}, causes the state to be left with a fireRetry signal.
 	 */
 	mConnections += connect(context, &WorkflowContext::fireReaderPlugInTypesChanged, this, &StateSelectReader::fireRetry);
 
-	AbstractGenericState::onEntry(pEvent);
+	AbstractState::onEntry(pEvent);
 }

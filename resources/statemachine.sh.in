@@ -5,7 +5,7 @@ s/[[:alnum:]]+\.setInitialState\(s([[:alnum:]]+)\)\;/[*] --> \1/p
 s/setInitialState\(s([[:alnum:]]+)\)\;/[*] --> \1/p
 s/auto[[:space:]]sFinal[[:space:]]=[[:space:]]addState<FinalState>\(\)\;/state Final #DarkSeaGreen/p
 s/[[:alnum:]]+\-.addTransition\(s([[:alnum:]]+)\,[[:space:]]+\&[[:alnum:]]+\:\:fire([[:alnum:]]+)\,[[:space:]]+s([[:alnum:]]+)\)\;/\1 --> \3 : \2/p
-s/connect\(s([[:alnum:]]+)\,[[:space:]]+\&[[:alnum:]]+\:\:fire([[:alnum:]]+)\,[[:space:]]+this\,[[:space:]]+\&[[:alnum:]]+\:\:fire([[:alnum:]]+)\)\;/state \3 #DarkSeaGreen\n	\1 --> \3 : \2/p
+s/connect\(s([[:alnum:]]+)\,[[:space:]]+\&[[:alnum:]]+\:\:fire([[:alnum:]]+)\,[[:space:]]+this\,[[:space:]]+\&[[:alnum:]]+\:\:fire([[:alnum:]]+)\)\;/state \3 #DarkSeaGreen\'$'\n''	\1 --> \3 : \2/p
 s/auto[[:space:]]+([[:alnum:]]+)[[:space:]]+=\s+addAndConnectState<FinalState>\(\);/\1 --> [*]/p
 '
 
@@ -19,9 +19,9 @@ function createImage {
 	rm $2.uml
 }
 
-createImage @PROJECT_SOURCE_DIR@/src/core/states/CompositeStateSelectCard.cpp @PROJECT_BINARY_DIR@/uml_CompositeStateSelectCard
 createImage @PROJECT_SOURCE_DIR@/src/core/states/CompositeStatePace.cpp @PROJECT_BINARY_DIR@/uml_CompositeStatePace
 createImage @PROJECT_SOURCE_DIR@/src/core/states/CompositeStateProcessCvcsAndSetRights.cpp @PROJECT_BINARY_DIR@/uml_CompositeStateProcessCvcsAndSetRights
+createImage @PROJECT_SOURCE_DIR@/src/core/states/CompositeStateTrustedChannel.cpp @PROJECT_BINARY_DIR@/uml_CompositeStateTrustedChannel
 createImage @PROJECT_SOURCE_DIR@/src/core/controller/ChangePinController.cpp @PROJECT_BINARY_DIR@/uml_ChangePinController
 createImage @PROJECT_SOURCE_DIR@/src/core/controller/SelfAuthController.cpp @PROJECT_BINARY_DIR@/uml_SelfAuthController
 createImage @PROJECT_SOURCE_DIR@/src/core/controller/AuthController.cpp @PROJECT_BINARY_DIR@/uml_AuthController

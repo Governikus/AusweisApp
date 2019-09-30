@@ -8,15 +8,15 @@
 
 
 #include "context/RemoteServiceContext.h"
-#include "states/AbstractGenericState.h"
-
-class test_StateEstablishPaceChannelRemote;
+#include "states/AbstractState.h"
+#include "states/GenericContextContainer.h"
 
 namespace governikus
 {
 
 class StateEstablishPaceChannelResponse
-	: public AbstractGenericState<RemoteServiceContext>
+	: public AbstractState
+	, public GenericContextContainer<RemoteServiceContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

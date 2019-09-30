@@ -38,7 +38,7 @@ class StartPaos
 		Q_DISABLE_COPY(StartPaos)
 
 	public:
-		StartPaos(const QByteArray& pSessionId);
+		explicit StartPaos(const QByteArray& pSessionId);
 };
 
 } // namespace governikus

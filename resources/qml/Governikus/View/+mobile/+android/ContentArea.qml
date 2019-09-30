@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
@@ -11,10 +15,12 @@ import Governikus.IdentifyView 1.0
 import Governikus.ProviderView 1.0
 import Governikus.HistoryView 1.0
 import Governikus.View 1.0
+import Governikus.Type.SettingsModel 1.0
+
 
 Item {
 	id: baseItem
-	property bool ready: settingsModel.showTutorialOnStart ? tutorialView.ready : identifyView.ready
+	property bool ready: SettingsModel.showSetupAssistantOnStart ? tutorialView.ready : identifyView.ready
 	readonly property var visibleItem: visibleChildren[0]
 	readonly property var currentSectionPage: if (visibleItem) visibleItem.currentSectionPage
 
@@ -52,7 +58,10 @@ Item {
 		anchors.fill: parent
 		visible: baseItem.state === "remoteservice"
 		prefetch: baseItem.ready
-		sourceComponent: RemoteServiceView {}
+		sourceComponent: RemoteServiceView {
+			width: baseItem.width
+			height: baseItem.height
+		}
 	}
 
 	TabBarView {
@@ -74,7 +83,7 @@ Item {
 		anchors.fill: parent
 		visible: baseItem.state === "information"
 		prefetch: baseItem.ready
-		sourceComponent: Information {}
+		sourceComponent: InformationView {}
 	}
 
 	TabBarView {

@@ -210,7 +210,8 @@ class test_EcdsaPublicKey
 			BN_clear_free(b);
 
 			EC_GROUP_get_cofactor(ecGroup, cofactor, nullptr);
-			QCOMPARE(convert(cofactor).toHex().toUpper(), QByteArray(""));
+			const auto parsedCofactor = convert(cofactor).toHex().toUpper();
+			QVERIFY(parsedCofactor == QByteArray("") || parsedCofactor == QByteArray("01")); // https://github.com/openssl/openssl/commit/a6186f39802f94937a46f7a41ef0c86b6334b592
 			BN_clear_free(cofactor);
 
 			EC_GROUP_get_order(ecGroup, order, nullptr);

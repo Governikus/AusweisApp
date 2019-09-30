@@ -1,22 +1,28 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
 TabButton {
 	id: button
 
-	contentItem: Text {
+	Accessible.role: Accessible.PageTab
+	Accessible.name: text
+
+	contentItem: GText {
 		text: button.text
-		font.pixelSize: Constants.small_font_size
-		elide: Text.ElideRight
-		color: button.checked ? Constants.white : Constants.blue
+		textStyle: button.checked ? Style.text.hint_inverse : Style.text.hint_accent
 		horizontalAlignment: Text.AlignHCenter
 		verticalAlignment: Text.AlignVCenter
 	}
 
 	background: Rectangle {
-		color: Constants.background_color
+		color: Style.color.background
 		clip: true
 
 		Rectangle {
@@ -25,10 +31,10 @@ TabButton {
 			anchors.left: parent.left
 			anchors.leftMargin: button.TabBar.index === 0 ? 0 : -radius
 
-			radius: Utils.dp(3)
-			color: button.checked ? Constants.blue : button.pressed ? Constants.blue_light : Constants.white
+			radius: 3
+			color: button.checked ? Style.color.accent : (button.pressed ? Constants.lightgrey : Constants.white)
 			border.color: Constants.blue
-			border.width: Utils.dp(1)
+			border.width: 1
 		}
 	}
 }

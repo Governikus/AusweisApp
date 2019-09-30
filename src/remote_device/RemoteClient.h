@@ -27,14 +27,15 @@ class RemoteClient
 
 	Q_SIGNALS:
 		void fireDeviceAppeared(const QSharedPointer<RemoteDeviceListEntry>& pEntry);
+		void fireDeviceUpdated(const QSharedPointer<RemoteDeviceListEntry>& pEntry);
 		void fireDeviceVanished(const QSharedPointer<RemoteDeviceListEntry>& pEntry);
-		void fireEstablishConnectionDone(const QSharedPointer<RemoteDeviceListEntry>& pEntry, GlobalStatus pStatus);
+		void fireEstablishConnectionDone(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const GlobalStatus& pStatus);
 
 		void fireNewRemoteDispatcher(const QSharedPointer<RemoteDispatcherClient>& pRemoteDispatcher);
 		void fireRemoteDevicesInfo(const QVector<QSharedPointer<RemoteDeviceListEntry> >& pRemoteDevices);
 		void fireDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QString& pId);
 		void fireDetectionChanged();
-		void fireCertificateRemoved(QString pDeviceName);
+		void fireCertificateRemoved(const QString& pDeviceName);
 
 	public:
 		RemoteClient() = default;

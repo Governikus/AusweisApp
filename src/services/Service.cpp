@@ -46,11 +46,15 @@ void Service::updateConfigurations()
 
 void Service::updateApp(bool pIgnoreNextVersionskip)
 {
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
 	mExplicitSuccessMessage = pIgnoreNextVersionskip;
 	mTimer.start(mOneDayInMs);
 	QMetaObject::invokeMethod(this, [ = ] {
 				doAppUpdate(pIgnoreNextVersionskip);
 			}, Qt::QueuedConnection);
+#else
+	Q_UNUSED(pIgnoreNextVersionskip)
+#endif
 }
 
 

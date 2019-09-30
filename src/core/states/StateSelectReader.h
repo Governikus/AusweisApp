@@ -4,19 +4,19 @@
 
 #pragma once
 
-#include "AbstractGenericState.h"
+#include "AbstractState.h"
+#include "GenericContextContainer.h"
 
-class test_StateSelectReader;
 
 namespace governikus
 {
 
 class StateSelectReader
-	: public AbstractGenericState<WorkflowContext>
+	: public AbstractState
+	, public GenericContextContainer<WorkflowContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;
-	friend class ::test_StateSelectReader;
 
 	private:
 		explicit StateSelectReader(const QSharedPointer<WorkflowContext>& pContext);
@@ -26,8 +26,7 @@ class StateSelectReader
 
 	private Q_SLOTS:
 		void onReaderInfoChanged();
-		void onAbort();
-		void onReaderDeviceError(const GlobalStatus pError);
+		void onReaderDeviceError(const GlobalStatus& pError);
 
 	public:
 		void onEntry(QEvent* pEvent) override;

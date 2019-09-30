@@ -2,10 +2,10 @@
  * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
  */
 
-#include "Commands.h"
+#include "MSEBuilder.h"
 
-#include <QtCore/QtCore>
-#include <QtTest/QtTest>
+#include <QtCore>
+#include <QtTest>
 
 using namespace governikus;
 

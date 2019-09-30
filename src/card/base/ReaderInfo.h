@@ -62,6 +62,12 @@ class ReaderInfo
 		}
 
 
+		bool hasPassport() const
+		{
+			return mCardInfo.isPassport();
+		}
+
+
 		int getRetryCounter() const
 		{
 			return mCardInfo.getRetryCounter();

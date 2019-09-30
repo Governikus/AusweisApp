@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 
@@ -76,28 +80,28 @@ Item {
 		}
 
 		ListElement {
-			iconSource: "qrc:///images/provider/url.png"
+			iconSource: "qrc:///images/provider/url.svg"
 			label: QT_TR_NOOP("Homepage")
 			text: ""
 			link: ""
 		}
 
 		ListElement {
-			iconSource: "qrc:///images/provider/mail.png"
+			iconSource: "qrc:///images/provider/mail.svg"
 			label: QT_TR_NOOP("E-Mail")
 			text: ""
 			link: ""
 		}
 
 		ListElement {
-			iconSource: "qrc:///images/provider/telefon.png"
+			iconSource: "qrc:///images/provider/telefon.svg"
 			label: QT_TR_NOOP("Phone")
 			text: ""
 			link: ""
 		}
 
 		ListElement {
-			iconSource: "qrc:///images/provider/adresse.png"
+			iconSource: "qrc:///images/provider/adresse.svg"
 			label: QT_TR_NOOP("Contact")
 			text: ""
 			link: ""

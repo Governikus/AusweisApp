@@ -58,7 +58,7 @@ bool ElementParser::assertNoDuplicateElement(bool pNotYetSeen)
 }
 
 
-void ElementParser::assertMandatoryElement(const QString& pValue, const char* pElementName)
+void ElementParser::assertMandatoryElement(const QString& pValue, const char* const pElementName)
 {
 	if (pValue.isNull())
 	{

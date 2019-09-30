@@ -13,16 +13,33 @@
         <file>images/start_nPA_eAT.png</file>
         <file>images/busy_animation.gif</file>
         <file>images/html_message_section.jpg</file>
-        <file>images/desktop/background.png</file>
+        <file>images/search_icon.svg</file>
+        <file>images/search_cancel.svg</file>
+        <file>images/desktop/bell_white.svg</file>
+        <file>images/desktop/bell_green.svg</file>
+        <file>images/desktop/bell_red.svg</file>
+        <file>images/desktop/id_card.png</file>
+        <file>images/desktop/pin-letter-page1.png</file>
+        <file>images/desktop/pin-letter-page2.png</file>
         <file>images/desktop/help_icon.svg</file>
         <file>images/desktop/main_history.svg</file>
         <file>images/desktop/main_identify.svg</file>
+        <file>images/desktop/main_info.svg</file>
         <file>images/desktop/main_pin.svg</file>
         <file>images/desktop/main_provider.svg</file>
         <file>images/desktop/sandglass.svg</file>
         <file>images/desktop/settings_icon.svg</file>
         <file>images/desktop/titlebar_arrow.svg</file>
         <file>images/desktop/continue_arrow.svg</file>
+        <file>images/desktop/info_questions.svg</file>
+        <file>images/desktop/info_application_log.svg</file>
+        <file>images/desktop/info_diagnosis.svg</file>
+        <file>images/desktop/info_license.svg</file>
+        <file>images/desktop/info_manual.svg</file>
+        <file>images/desktop/info_rate_application.svg</file>
+        <file>images/desktop/info_report_error.svg</file>
+        <file>images/desktop/info_setup.svg</file>
+        <file>images/desktop/info_version.svg</file>
         <file>images/randompin/btn_normal_0.png</file>
         <file>images/randompin/btn_normal_1.png</file>
         <file>images/randompin/btn_normal_2.png</file>
@@ -37,6 +54,7 @@
         <file>images/randompin/btn_ok.png</file>
         <file>images/randompin/btn_cancel.png</file>
         <file>images/randompin/btn_clear.png</file>
+        <file>images/reader/default_card_position.png</file>
         <file>images/reader/default_more_reader.png</file>
         <file>images/reader/default_no_card.png</file>
         <file>images/reader/default_no_reader.png</file>

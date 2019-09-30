@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Class is not registered in the manifest.
+
+        Activities, services and content providers should be registered in the
+        AndroidManifest.xml file using <activity>, <service> and <provider> tags.
+
+        If your activity is simply a parent class intended to be subclassed
+        by other "real" activities, make it an abstract class.
+
+        We can not make the classes abstract, because Qt provides
+        it and it should be possible to use it without subclassing.
+    -->
+    <issue id="Registered">
+        <ignore path="**/dist/src/android/java/src/org/qtproject/qt5/android/bindings/QtActivity.java" />
+        <ignore path="**/dist/src/android/java/src/org/qtproject/qt5/android/bindings/QtService.java" />
+    </issue>
+
+
+    <!-- Unused resources.
+
+        Unused resources make applications larger and slow down builds.
+
+        https://bugreports.qt.io/browse/QTBUG-72976
+    -->
+    <issue id="UnusedResources">
+        <ignore path="**/dist/src/android/java/res/layout/splash.xml" />
+    </issue>
+</lint>

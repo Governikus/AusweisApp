@@ -51,6 +51,7 @@ QString IfdVersion::toString() const
 	}
 
 	Q_UNREACHABLE();
+	return QString();
 }
 
 

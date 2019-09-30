@@ -40,8 +40,7 @@ RemotePinInputDialog::~RemotePinInputDialog()
 const QString RemotePinInputDialog::getPin(QWidget* pParent)
 {
 	RemotePinInputDialog dialog(pParent);
-	int result = dialog.exec();
-	if (!result)
+	if (dialog.exec() == QDialog::Rejected)
 	{
 		return QString();
 	}

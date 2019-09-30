@@ -6,9 +6,10 @@
 
 #pragma once
 
+#include "AbstractState.h"
 #include "context/AuthContext.h"
 #include "ECardApiResult.h"
-#include "states/AbstractGenericState.h"
+#include "GenericContextContainer.h"
 
 #include <http_parser.h>
 
@@ -16,7 +17,8 @@ namespace governikus
 {
 
 class StateRedirectBrowser
-	: public AbstractGenericState<AuthContext>
+	: public AbstractState
+	, public GenericContextContainer<AuthContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

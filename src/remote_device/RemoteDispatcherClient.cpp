@@ -67,6 +67,6 @@ void RemoteDispatcherClient::sendEstablishContext()
 	qCDebug(remote_device) << "Try to establish context with version" << mVersion;
 
 	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	const auto& establishContext = QSharedPointer<const IfdEstablishContext>::create(mVersion, settings.getServerName());
+	const QSharedPointer<const IfdEstablishContext>& establishContext = QSharedPointer<IfdEstablishContext>::create(mVersion, settings.getServerName());
 	send(establishContext);
 }

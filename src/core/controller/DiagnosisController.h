@@ -32,8 +32,6 @@ class DiagnosisController
 		QFutureWatcher<PcscInfo> mWatcherPcscInfo;
 		bool mScanHasToBeStopped;
 
-		void checkDone();
-
 		void collectInterfaceInformation();
 
 		static PcscInfo retrievePcscInfo();
@@ -48,7 +46,7 @@ class DiagnosisController
 
 	private Q_SLOTS:
 		void onPcscInfoRetrieved();
-		void onFireReaderEvent();
+		void onReaderEvent();
 
 
 };

@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtTest 1.10
 
 TestCase {

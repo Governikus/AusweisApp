@@ -42,12 +42,11 @@ namespace governikus
  */
 
 
-typedef struct auxdatatemplate_st
+using AuxDataTemplate = struct auxdatatemplate_st
 {
 	ASN1_OBJECT* mAuxId;
 	ASN1_TYPE* mExtInfo;
-
-} AuxDataTemplate;
+};
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 DECLARE_STACK_OF(AuxDataTemplate)
@@ -63,7 +62,7 @@ class AuthenticatedAuxiliaryData
 	friend class QSharedPointer<AuthenticatedAuxiliaryData>;
 	QSharedPointer<AuthenticatedAuxiliaryDataInternal> mData;
 
-	AuthenticatedAuxiliaryData(const QSharedPointer<AuthenticatedAuxiliaryDataInternal>& pData);
+	explicit AuthenticatedAuxiliaryData(const QSharedPointer<AuthenticatedAuxiliaryDataInternal>& pData);
 	AuxDataTemplate* getAuxDataTemplateFor(KnownOIDs::AuxilaryData pData) const;
 
 	QString getRequiredAge(const QDate& pEffectiveDate) const;

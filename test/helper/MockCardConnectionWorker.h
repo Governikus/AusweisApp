@@ -35,11 +35,10 @@ class MockCardConnectionWorker
 
 		virtual CardReturnCode transmit(const CommandApdu& pCommandApdu, ResponseApdu& pResponseApdu) override;
 		virtual CardReturnCode updateRetryCounter() override;
-		virtual CardReturnCode establishPaceChannel(PacePasswordId pPasswordId,
+		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId,
 				const QString& pPasswordValue,
 				const QByteArray& pChat,
-				const QByteArray& pCertificateDescription,
-				EstablishPaceChannelOutput& pChannelOutput) override;
+				const QByteArray& pCertificateDescription) override;
 		virtual CardReturnCode destroyPaceChannel() override;
 		virtual CardReturnCode setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu) override;
 };

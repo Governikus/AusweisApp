@@ -24,7 +24,7 @@ class DiagnosisItem
 		QVector<QSharedPointer<DiagnosisItem> > mChildren;
 		QSharedPointer<DiagnosisItem> mParent;
 
-		int getIndexOf(const DiagnosisItem* pChild) const;
+		int getIndexOf(const DiagnosisItem* const pChild) const;
 		void setParent(const QSharedPointer<DiagnosisItem>& pParent);
 
 	public:

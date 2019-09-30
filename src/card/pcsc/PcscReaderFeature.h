@@ -41,7 +41,7 @@ class PcscReaderFeature
 		friend QDebug operator<<(QDebug, const PcscReaderFeature&);
 
 	public:
-		PcscReaderFeature(const char* pFeaturesTLV, PCSC_INT pLength = 0);
+		PcscReaderFeature(const char* const pFeaturesTLV, PCSC_INT pLength = 0);
 
 		bool contains(FeatureID pFeatureID) const;
 

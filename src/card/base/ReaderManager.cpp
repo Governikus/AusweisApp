@@ -119,14 +119,15 @@ void ReaderManager::startScan(ReaderManagerPlugInType pType, bool pAutoConnect)
 
 void ReaderManager::startScanAll(bool pAutoConnect)
 {
-	for (const auto& plugInType : Enum<ReaderManagerPlugInType>::getList())
+	const auto list = Enum<ReaderManagerPlugInType>::getList();
+	for (const auto& plugInType : list)
 	{
 		startScan(plugInType, pAutoConnect);
 	}
 }
 
 
-void ReaderManager::stopScan(ReaderManagerPlugInType pType)
+void ReaderManager::stopScan(ReaderManagerPlugInType pType, const QString& pError)
 {
 	const QMutexLocker mutexLocker(&mMutex);
 
@@ -137,24 +138,35 @@ void ReaderManager::stopScan(ReaderManagerPlugInType pType)
 	}
 
 	QMetaObject::invokeMethod(mWorker.data(), [ = ] {
-				mWorker->stopScan(pType);
+				mWorker->stopScan(pType, pError);
 			}, Qt::QueuedConnection);
 }
 
 
 void ReaderManager::stopScanAll()
 {
-	for (const auto& plugInType : Enum<ReaderManagerPlugInType>::getList())
+	const auto list = Enum<ReaderManagerPlugInType>::getList();
+	for (const auto& plugInType : list)
 	{
 		stopScan(plugInType);
 	}
 }
 
 
-bool ReaderManager::isScanRunning()
+bool ReaderManager::isScanRunning() const
 {
 	bool running = false;
-	QMetaObject::invokeMethod(mWorker.data(), &ReaderManagerWorker::isScanRunning, Qt::BlockingQueuedConnection, &running);
+	QMetaObject::invokeMethod(mWorker.data(), qOverload<>(&ReaderManagerWorker::isScanRunning), Qt::BlockingQueuedConnection, &running);
+	return running;
+}
+
+
+bool ReaderManager::isScanRunning(ReaderManagerPlugInType pType) const
+{
+	bool running = false;
+	QMetaObject::invokeMethod(mWorker.data(), [ = ] {
+				return mWorker->isScanRunning(pType);
+			}, Qt::BlockingQueuedConnection, &running);
 	return running;
 }
 
@@ -171,7 +183,7 @@ QVector<ReaderManagerPlugInInfo> ReaderManager::getPlugInInfos() const
 
 QVector<ReaderInfo> ReaderManager::getReaderInfos(ReaderManagerPlugInType pType) const
 {
-	return getReaderInfos(QVector<ReaderManagerPlugInType> {pType});
+	return getReaderInfos(ReaderFilter({pType}));
 }
 
 
@@ -204,34 +216,6 @@ void ReaderManager::updateReaderInfo(const QString& pReaderName)
 	QMetaObject::invokeMethod(mWorker.data(), [ = ] {
 				mWorker->updateReaderInfo(pReaderName);
 			}, Qt::BlockingQueuedConnection); // needed to force the ReaderInfo update, else StateMachine loops based on stale state can occur
-}
-
-
-void ReaderManager::connectReader(const QString& pReaderName)
-{
-	const QMutexLocker mutexLocker(&mMutex);
-
-	QMetaObject::invokeMethod(mWorker.data(), [ = ] {
-				mWorker->connectReader(pReaderName);
-			}, Qt::QueuedConnection);
-}
-
-
-void ReaderManager::disconnectReader(const QString& pReaderName)
-{
-	const QMutexLocker mutexLocker(&mMutex);
-
-	QMetaObject::invokeMethod(mWorker.data(), [ = ] {
-				mWorker->disconnectReader(pReaderName);
-			}, Qt::QueuedConnection);
-}
-
-
-void ReaderManager::disconnectAllReaders()
-{
-	const QMutexLocker mutexLocker(&mMutex);
-
-	QMetaObject::invokeMethod(mWorker.data(), &ReaderManagerWorker::disconnectAllReaders, Qt::QueuedConnection);
 }
 
 

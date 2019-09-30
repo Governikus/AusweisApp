@@ -18,7 +18,7 @@ class VersionInfo
 {
 	QMap<QString, QString> mInfo;
 
-	VersionInfo(const QMap<QString, QString>& pInfo);
+	explicit VersionInfo(const QMap<QString, QString>& pInfo);
 
 	public:
 		VersionInfo();

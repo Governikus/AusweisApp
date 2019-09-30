@@ -20,6 +20,7 @@ class TestAuthContext
 
 	private:
 		QSharedPointer<DIDAuthenticateEAC1> mDidAuthenticateEac1;
+		QSharedPointer<DIDAuthenticateEAC2> mDidAuthenticateEac2;
 
 	public:
 		TestAuthContext(ActivationContext* pActivationContext, const QString& pFileName);
@@ -27,6 +28,9 @@ class TestAuthContext
 
 		void setRequiredAccessRights(const QSet<AccessRight>& pAccessRights);
 		void setOptionalAccessRights(const QSet<AccessRight>& pAccessRights);
+		void addCvCertificate(const QSharedPointer<const CVCertificate>& pCvCertificate);
+		void clearCvCertificates();
+		void removeCvCertAt(int pPosition);
 };
 
 } // namespace governikus

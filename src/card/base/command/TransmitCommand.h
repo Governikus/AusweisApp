@@ -35,9 +35,9 @@ class TransmitCommand
 		virtual ~TransmitCommand() override = default;
 
 	public:
-		TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
+		explicit TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
 				const QVector<InputAPDUInfo>& pInputApduInfos,
-				const QString pSlotHandle);
+				const QString& pSlotHandle);
 
 		const QByteArrayList& getOutputApduAsHex() const
 		{

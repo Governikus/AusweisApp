@@ -1,3 +1,7 @@
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 
@@ -8,13 +12,12 @@ Rectangle {
 	property alias busy: busyIndicator.visible
 	property alias source: image.source
 	property alias text: text.text
-	property alias font: text.font
 
 	width: height
 	radius: height / 2
 	border.width: height / 40;
 	border.color: Constants.white
-	color: "transparent"
+	color: Style.color.transparent
 
 	BusyIndicator {
 		id: busyIndicator
@@ -39,12 +42,10 @@ Rectangle {
 			visible: source.toString().length > 0
 		}
 
-		Text {
+		GText {
 			id: text
 			anchors.centerIn: parent
-			color: Constants.blue
-			font.bold: true
-			font.pixelSize: Constants.header_font_size
+			textStyle: Style.text.title_accent
 			visible: text !== ""
 		}
 	}

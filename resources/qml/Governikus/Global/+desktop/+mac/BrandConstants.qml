@@ -1,6 +1,8 @@
-import QtQuick 2.10
+/*
+ * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ */
 
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick 2.10
 
 Item {
 }

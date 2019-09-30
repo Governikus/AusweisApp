@@ -1,18 +1,23 @@
+/*
+ * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
 Item {
 	id: baseItem
-	height: Utils.dp(70)
-	readonly property int _stepWidth: Utils.dp(60)
+	height: 70
+	readonly property int _stepWidth: 60
 
 	Rectangle {
 		id: rec1
 		anchors.left: baseItem.horizontalCenter
 		anchors.verticalCenter: parent.verticalCenter
 		width: _stepWidth
-		height: Utils.dp(2)
+		height: 2
 		color: Constants.blue
 	}
 
@@ -20,20 +25,20 @@ Item {
 		id: tCircle1
 		anchors.verticalCenter: rec1.verticalCenter
 		anchors.horizontalCenter: rec1.left
-		width: state === "active" ? Utils.dp(70) : Utils.dp(25) + border.width
+		width: state === "active" ? 70 : 25 + border.width
 		height: width
 		radius: width / 2
-		color: Constants.background_color
-		border.color: "white"
+		color: Style.color.background
+		border.color: Constants.white
 		border.width: state === "active" ? 2 : 0
 
 		state: "inactive"
 		states: [
 			State { name: "active"
-				PropertyChanges { target: innerDisc; width: Utils.dp(50) }
+				PropertyChanges { target: innerDisc; width: 50 }
 			},
 			State { name: "inactive"
-				PropertyChanges { target: innerDisc; width: Utils.dp(25) }
+				PropertyChanges { target: innerDisc; width: 25 }
 			}
 		]
 
@@ -46,7 +51,7 @@ Item {
 		Rectangle {
 			id: innerDisc
 			anchors.centerIn: parent
-			color: tCircle1.state === "active" ? Constants.blue : "white"
+			color: tCircle1.state === "active" ? Style.color.accent : Constants.white
 			radius: width / 2
 			height: width
 			border.color: Constants.blue
@@ -56,7 +61,7 @@ Item {
 				text: "1"
 				font.bold: true
 				font.pixelSize: parent.height / 3
-				color: tCircle1.state === "active" ? "white" : Constants.blue
+				color: tCircle1.state === "active" ? Constants.white : Style.color.accent
 			}
 		}
 	}

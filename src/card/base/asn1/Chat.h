@@ -62,7 +62,7 @@ namespace governikus
  */
 
 
-typedef struct chat_st
+using CHAT = struct chat_st
 {
 	ASN1_OBJECT* mType;
 	ASN1_OCTET_STRING* mTemplate;
@@ -96,9 +96,7 @@ typedef struct chat_st
 
 	public:
 		static int decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt, void* pExarg);
-
-
-} CHAT;
+};
 
 DECLARE_ASN1_FUNCTIONS(CHAT)
 DECLARE_ASN1_OBJECT(CHAT)

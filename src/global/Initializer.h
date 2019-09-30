@@ -29,7 +29,7 @@ class Initializer
 
 		struct Entry final
 		{
-			Entry(const std::function<void()>& pRegister)
+			explicit Entry(const std::function<void()>& pRegister)
 			{
 				Initializer::getInstance().add(pRegister);
 			}

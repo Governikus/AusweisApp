@@ -1,0 +1,37 @@
+From 0aa601d4cfdded1bd1c9924244795c4bb3d1b227 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Mon, 16 Apr 2018 08:53:54 +0200
+Subject: Remove unused plugins from the build
+
+Change-Id: I780168aa4481c4bc6c9570effd80d34ce097d08a
+---
+ src/imports/imports.pro | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git x/qtdeclarative/src/imports/imports.pro y/qtdeclarative/src/imports/imports.pro
+index 24e93fec1..aced2e417 100644
+--- x/qtdeclarative/src/imports/imports.pro
++++ y/qtdeclarative/src/imports/imports.pro
+@@ -3,10 +3,8 @@ TEMPLATE = subdirs
+ SUBDIRS += \
+     builtins \
+     qtqml \
+-    models \
+-    labsmodels
++    models
+ 
+-qtConfig(thread): SUBDIRS += folderlistmodel
+ qtHaveModule(sql): SUBDIRS += localstorage
+ qtConfig(settings): SUBDIRS += settings
+ qtConfig(statemachine): SUBDIRS += statemachine
+@@ -21,7 +19,6 @@ qtHaveModule(quick) {
+         wavefrontmesh
+ 
+     qtHaveModule(testlib): SUBDIRS += testlib
+-    qtConfig(systemsemaphore): SUBDIRS += sharedimage
+     qtConfig(quick-particles): \
+         SUBDIRS += particles
+ 
+-- 
+2.21.0
+

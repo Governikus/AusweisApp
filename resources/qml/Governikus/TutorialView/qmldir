@@ -10,6 +10,7 @@ internal TutorialImage TutorialImage.qml
 internal TutorialFooter TutorialFooter.qml
 internal TutorialSeperator TutorialSeperator.qml
 internal TutorialSpacer TutorialSpacer.qml
+internal TutorialStatusBar TutorialStatusBar.qml
 internal TutorialReaderMethodNfc TutorialReaderMethodNfc.qml
 internal TutorialReaderMethodSacMobile TutorialReaderMethodSacMobile.qml
 internal TutorialReaderMethodSacDesktop TutorialReaderMethodSacDesktop.qml
@@ -17,4 +18,9 @@ internal TutorialReaderMethodBluetooth TutorialReaderMethodBluetooth.qml
 internal TutorialReaderMethodFooter TutorialReaderMethodFooter.qml
 internal TutorialExpandAnimation TutorialExpandAnimation.qml
 internal TutorialCollapseAnimation TutorialCollapseAnimation.qml
+internal SetupAssistantBinaryDecisionView SetupAssistantBinaryDecisionView.qml
+internal SetupAssistantCardReaderView SetupAssistantCardReaderView.qml
+internal SetupAssistantButton SetupAssistantButton.qml
+
+SetupAssistantView 1.0 SetupAssistantView.qml
 TutorialView 1.0 TutorialView.qml

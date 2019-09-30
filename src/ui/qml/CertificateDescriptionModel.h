@@ -28,13 +28,6 @@ class CertificateDescriptionModel
 	QVector<QPair<QString, QString> > mData;
 	QSharedPointer<AuthContext> mContext;
 
-	enum UserRoles
-	{
-		LABEL = Qt::UserRole + 1,
-		TEXT
-	};
-
-
 	inline QSharedPointer<const CertificateDescription> getCertificateDescription() const;
 	inline QString getValidity() const;
 	void initModelData(const QSharedPointer<const CertificateDescription>& pCertDescription);
@@ -43,6 +36,12 @@ class CertificateDescriptionModel
 		void onDidAuthenticateEac1Changed();
 
 	public:
+		enum UserRoles
+		{
+			LABEL = Qt::UserRole + 1,
+			TEXT
+		};
+
 		CertificateDescriptionModel(QObject* pParent = nullptr);
 
 		void resetContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());

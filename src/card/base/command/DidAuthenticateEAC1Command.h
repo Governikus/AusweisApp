@@ -8,7 +8,6 @@
 
 #include "asn1/Chat.h"
 #include "BaseCardCommand.h"
-#include "Commands.h"
 
 class test_DidAuthenticateEAC1Command;
 class test_StateDidAuthenticateEac1;
@@ -31,7 +30,7 @@ class DidAuthenticateEAC1Command
 		virtual ~DidAuthenticateEAC1Command() override = default;
 
 	public:
-		DidAuthenticateEAC1Command(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
+		explicit DidAuthenticateEAC1Command(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
 		const QByteArray& getChallenge() const
 		{

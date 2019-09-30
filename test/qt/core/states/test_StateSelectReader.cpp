@@ -6,6 +6,10 @@
 
 #include "states/StateSelectReader.h"
 
+#include "Env.h"
+#include "ReaderManager.h"
+#include "states/StateBuilder.h"
+
 #include <QtTest>
 
 using namespace governikus;
@@ -15,65 +19,63 @@ class test_StateSelectReader
 	: public QObject
 {
 	Q_OBJECT
+	QScopedPointer<StateSelectReader> mState;
+	QSharedPointer<WorkflowContext> mContext;
 
 	private Q_SLOTS:
-		void test_RequiresCard()
+		void init()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
-			StateSelectReader state(context);
+			mContext.reset(new WorkflowContext());
+			mState.reset(StateBuilder::createState<StateSelectReader>(mContext));
+		}
 
-			QVERIFY(state.requiresCard(ReaderManagerPlugInType::PCSC));
-			QVERIFY(state.requiresCard(ReaderManagerPlugInType::REMOTE));
-			QVERIFY(!state.requiresCard(ReaderManagerPlugInType::UNKNOWN));
-			QVERIFY(!state.requiresCard(ReaderManagerPlugInType::BLUETOOTH));
+
+		void cleanup()
+		{
+			mState.reset();
+			mContext.clear();
 		}
 
 
 		void test_OnReaderInfoChangedNoSelectableReaders()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
-			context->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::UNKNOWN, ReaderManagerPlugInType::REMOTE});
-			StateSelectReader state(context);
+			mContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::UNKNOWN, ReaderManagerPlugInType::REMOTE});
+			mContext->setStateApproved();
+			mState->onStateApprovedChanged();
+			const auto readerManager = Env::getSingleton<ReaderManager>();
 
 			QTest::ignoreMessage(QtDebugMsg, "No selectable reader detected");
-			state.onReaderInfoChanged();
+			Q_EMIT readerManager->fireReaderAdded(QString());
 		}
 
 
 		void test_OnReaderDeviceError()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
-			StateSelectReader state(context);
-			QSignalSpy spyAbort(&state, &StateSelectReader::fireAbort);
+			QSignalSpy spyAbort(mState.data(), &StateSelectReader::fireAbort);
+			mContext->setStateApproved();
+			mState->onStateApprovedChanged();
+			const auto readerManager = Env::getSingleton<ReaderManager>();
 
-			state.onReaderDeviceError(GlobalStatus::Code::No_Error);
+			Q_EMIT readerManager->fireReaderDeviceError(GlobalStatus::Code::No_Error);
 			QCOMPARE(spyAbort.count(), 0);
 
-			state.onReaderDeviceError(GlobalStatus::Code::Workflow_Reader_Device_Scan_Error);
+			Q_EMIT readerManager->fireReaderDeviceError(GlobalStatus::Code::Workflow_Reader_Device_Scan_Error);
 			QCOMPARE(spyAbort.count(), 0);
 
-			state.onReaderDeviceError(GlobalStatus::Code::Card_Communication_Error);
+			Q_EMIT readerManager->fireReaderDeviceError(GlobalStatus::Code::Card_Communication_Error);
 			QCOMPARE(spyAbort.count(), 1);
-			QCOMPARE(context->getStatus().getStatusCode(), GlobalStatus::Code::Card_Communication_Error);
+			QCOMPARE(mContext->getStatus().getStatusCode(), GlobalStatus::Code::Card_Communication_Error);
 		}
 
 
 		void test_OnEntry()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
-			StateSelectReader state(context);
-			const QString stateName("name");
-			state.setStateName(stateName);
+			QSignalSpy spyRetry(mState.data(), &StateSelectReader::fireRetry);
 
-			QSignalSpy spyRetry(&state, &StateSelectReader::fireRetry);
+			mState->onEntry(nullptr);
 
-			state.onEntry(nullptr);
-
-			Q_EMIT context->fireAbortCardSelection();
+			Q_EMIT mContext->fireReaderPlugInTypesChanged();
 			QCOMPARE(spyRetry.count(), 1);
-
-			Q_EMIT context->fireReaderPlugInTypesChanged();
-			QCOMPARE(spyRetry.count(), 2);
 		}
 
 

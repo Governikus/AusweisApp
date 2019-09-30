@@ -41,12 +41,12 @@ class BluetoothReader
 		void fireReaderConnectionFailed(const QString& pReaderName);
 
 	public:
-		BluetoothReader(const QSharedPointer<CyberJackWaveDevice>& pDevice);
+		explicit BluetoothReader(const QSharedPointer<CyberJackWaveDevice>& pDevice);
 
 		Card* getCard() const override;
 
 		void connectReader() override;
-		void disconnectReader() override;
+		void disconnectReader(const QString& pError = QString()) override;
 };
 
 } // namespace governikus

@@ -22,7 +22,7 @@ BluetoothReaderManagerPlugInPrivate::BluetoothReaderManagerPlugInPrivate(Bluetoo
 void BluetoothReaderManagerPlugInPrivate::init()
 {
 	Q_Q(BluetoothReaderManagerPlugIn);
-	q->setReaderInfoAvailable(true);
+	q->setPlugInAvailable(true);
 	q->setBluetoothStatus(true);
 }
 
@@ -35,7 +35,7 @@ void BluetoothReaderManagerPlugInPrivate::onBluetoothStatusChanged(bool)
 void BluetoothReaderManagerPlugInPrivate::onScanStart()
 {
 	NSMutableDictionary* options = [[[NSMutableDictionary alloc] init] autorelease];
-	[options setObject:[NSNumber numberWithBool:YES] forKey:CBCentralManagerOptionShowPowerAlertKey];
+	options[CBCentralManagerOptionShowPowerAlertKey] = @YES; // Display a dialog to the user if Bluetooth is off
 	[[[CBCentralManager alloc] initWithDelegate:nil queue:nil options:options] autorelease];
 }
 

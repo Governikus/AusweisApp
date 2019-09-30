@@ -8,7 +8,8 @@ using namespace governikus;
 
 
 StateShowSelfInfo::StateShowSelfInfo(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext, false)
+	: AbstractState(pContext, false)
+	, GenericContextContainer(pContext)
 {
 }
 

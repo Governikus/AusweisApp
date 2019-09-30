@@ -42,7 +42,7 @@ void AbstractState::setStateName(const QString& pName)
 }
 
 
-QString AbstractState::getClassName(const char* pName)
+QString AbstractState::getClassName(const char* const pName)
 {
 	QString className = QString::fromLatin1(pName);
 	if (className.contains(QLatin1Char(':')))
@@ -65,7 +65,7 @@ void AbstractState::onStateApprovedChanged()
 
 void AbstractState::onEntry(QEvent* pEvent)
 {
-	Q_UNUSED(pEvent);
+	Q_UNUSED(pEvent)
 	if (mConnectOnCardRemoved)
 	{
 		const auto readerManager = Env::getSingleton<ReaderManager>();

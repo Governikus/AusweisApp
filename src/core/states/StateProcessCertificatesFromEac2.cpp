@@ -13,7 +13,8 @@ using namespace governikus;
 
 
 StateProcessCertificatesFromEac2::StateProcessCertificatesFromEac2(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractGenericState(pContext)
+	: AbstractState(pContext)
+	, GenericContextContainer(pContext)
 {
 }
 

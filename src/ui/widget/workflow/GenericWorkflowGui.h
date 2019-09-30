@@ -63,6 +63,9 @@ class GenericWorkflowGui
 			{
 				QObject::connect(mStepGui->getStepGuiDelegate(), &StepGuiDelegate::setForwardButtonState, mWidget, &WorkflowQtWidget::setForwardButtonState);
 				QObject::connect(mStepGui->getStepGuiDelegate(), &StepGuiDelegate::setCancelButtonState, mWidget, &WorkflowQtWidget::setCancelButtonState);
+				QObject::connect(mStepGui.data(), &StepGui::fireDeactivated, this, [this](){
+							deactivateCurrentStepUi();
+						});
 			}
 			pStepUi->activate();
 		}
