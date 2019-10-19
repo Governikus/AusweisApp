@@ -280,7 +280,7 @@ ELSEIF(UNIX)
 
 	CONFIGURE_FILE(${PACKAGING_DIR}/linux/AusweisApp2.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/AusweisApp2.desktop @ONLY)
 	INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/AusweisApp2.desktop DESTINATION share/applications COMPONENT Application)
-	#INSTALL(FILES ${RESOURCES_DIR}/images/AusweisApp2.svg DESTINATION share/icons/hicolor/scalable/apps COMPONENT Application)
+	INSTALL(FILES ${RESOURCES_DIR}/images/npa.svg DESTINATION share/icons/hicolor/scalable/apps COMPONENT Application)
 ENDIF()
 
 

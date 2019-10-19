@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Exec=@CMAKE_INSTALL_PREFIX@/bin/AusweisApp2
-Icon=AusweisApp2
+Icon=npa
 StartupNotify=true
 Terminal=false
 Categories=Utility;Accessibility;
