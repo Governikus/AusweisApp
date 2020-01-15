@@ -1,8 +1,9 @@
 /*
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
+import QtQuick.Controls 2.10
 
 import Governikus.Type.RemoteServiceModel 1.0
 import Governikus.EnterPasswordView 1.0
@@ -55,33 +56,41 @@ Item {
 	function setWorkflowStateAndRequestInput(pState, pEnterPinState) {
 		setWorkflowState(pState)
 		if (RemoteServiceModel.isBasicReader && RemoteServiceModel.pinPadModeOn()) {
-			enterPinView.state = pEnterPinState
-			firePush(enterPinView)
+			firePushWithProperties(enterPinView, {state: pEnterPinState})
 			ApplicationModel.nfcRunning = false
 		} else {
 			RemoteServiceModel.continueWorkflow()
 		}
 	}
 
-	EnterPasswordView {
+	Component {
 		id: enterPinView
-		visible: false
-		enableTransportPinLink: RemoteServiceModel.isSaCPinChangeWorkflow
 
-		navigationAction: NavigationAction {
-			state: "cancel"
-			onClicked: {
+		EnterPasswordView {
+			id: passwordView
+
+			enableTransportPinLink: RemoteServiceModel.isSaCPinChangeWorkflow
+
+			navigationAction: NavigationAction {
+				state: "cancel"
+				onClicked: {
+					firePop()
+					RemoteServiceModel.cancelPasswordRequest()
+				}
+			}
+
+			onPasswordEntered: {
 				firePop()
-				RemoteServiceModel.cancelPasswordRequest()
+				RemoteServiceModel.continueWorkflow()
+				ApplicationModel.nfcRunning = true
+			}
+
+			onChangePinLength: NumberModel.requestTransportPin = !NumberModel.requestTransportPin
+
+			Connections {
+				target: RemoteServiceModel
+				onFireConnectedChanged: if (!pConnected && passwordView.StackView.visible) firePop()
 			}
 		}
-
-		onPasswordEntered: {
-			firePop()
-			RemoteServiceModel.continueWorkflow()
-			ApplicationModel.nfcRunning = true
-		}
-
-		onChangePinLength: NumberModel.requestTransportPin = !NumberModel.requestTransportPin
 	}
 }

@@ -1,9 +1,9 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
-import QtGraphicalEffects 1.10
+import QtGraphicalEffects 1.0
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -38,7 +38,7 @@ SectionPage {
 				width: parent.width
 
 				//: LABEL IOS_PHONE
-				text: qsTr("You are about to identify yourself towards the following service provider:") + SettingsModel.translationTrigger
+				text: qsTr("You are about to identify yourself towards the following provider:") + SettingsModel.translationTrigger
 				textStyle: Style.text.normal_secondary
 			}
 
@@ -48,7 +48,7 @@ SectionPage {
 					width: parent.width
 					height: providerEntries.height
 
-					Accessible.description: qsTr("Click for more information about the service provider") + SettingsModel.translationTrigger
+					Accessible.description: qsTr("Click for more information about the provider") + SettingsModel.translationTrigger
 					Accessible.onPressAction: mouseArea.clicked(null)
 
 					Column {
@@ -61,7 +61,7 @@ SectionPage {
 						ProviderInfoSection {
 							imageSource: "qrc:///images/provider/information.svg"
 							//: LABEL IOS_PHONE
-							title: qsTr("Service provider") + SettingsModel.translationTrigger
+							title: qsTr("Provider") + SettingsModel.translationTrigger
 							name: certificateDescriptionModel.subjectName
 						}
 						ProviderInfoSection {
@@ -105,10 +105,16 @@ SectionPage {
 			}
 
 			GButton {
-				iconSource: "qrc:///images/npa.svg"
+				icon.source: "qrc:///images/npa.svg"
 				anchors.horizontalCenter: parent.horizontalCenter
-				//: LABEL IOS_PHONE %1 can be CAN or PIN
-				text: qsTr("Proceed to %1 entry").arg(NumberModel.isCanAllowedMode ? "CAN" : "PIN") + SettingsModel.translationTrigger
+				//: LABEL IOS_PHONE %1 can be "card access number (CAN)" or "PIN"
+				text: qsTr("Proceed to %1 entry").arg(
+														NumberModel.isCanAllowedMode ?
+														//: LABEL IOS_PHONE Inserted into "Proceed to %1 entry"
+														qsTr("card access number (CAN)") :
+														//: LABEL IOS_PHONE Inserted into "Proceed to %1 entry"
+														qsTr("PIN")
+													) + SettingsModel.translationTrigger
 				onClicked: {
 					chatModel.transferAccessRights()
 					AuthModel.continueWorkflow()
@@ -119,7 +125,7 @@ SectionPage {
 				width: parent.width
 
 				//: LABEL IOS_PHONE
-				text: qsTr("The following data will be transferred to the service provider when you enter the PIN:") + SettingsModel.translationTrigger
+				text: qsTr("The following data will be transferred to the provider when you enter the PIN:") + SettingsModel.translationTrigger
 				textStyle: Style.text.normal_secondary
 			}
 

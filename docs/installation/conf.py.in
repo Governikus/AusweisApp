@@ -42,7 +42,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'AusweisApp2 Installation'
-copyright = '2018-2019, Governikus GmbH & Co. KG'
+copyright = '2018-2020, Governikus GmbH & Co. KG'
 author = 'Governikus GmbH & Co. KG'
 
 # The version info for the project you're documenting, acts as replacement for

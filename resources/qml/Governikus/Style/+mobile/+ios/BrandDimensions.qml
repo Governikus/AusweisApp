@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -7,10 +7,8 @@ import QtQuick.Window 2.2
 import Governikus.Global 1.0
 
 QtObject {
-	readonly property int corner_radius: 10
 	readonly property int corner_radius_popup: corner_radius
 
-	readonly property int button_height: 40
 	readonly property int tabbar_height: 49
 	readonly property int searchbar_height: 48
 

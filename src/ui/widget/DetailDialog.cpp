@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DetailDialog.h"
@@ -21,7 +21,7 @@ DetailDialog::DetailDialog(QWidget* pParent)
 	mUi->setupUi(this);
 
 	setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
-	setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Service provider data"));
+	setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Provider data"));
 
 	installEventFilter(this);
 

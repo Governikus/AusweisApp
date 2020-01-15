@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowModel.h"
@@ -122,16 +122,6 @@ void WorkflowModel::cancelWorkflow()
 {
 	if (mContext)
 	{
-		Q_EMIT mContext->fireCancelWorkflow();
-	}
-}
-
-
-void WorkflowModel::cancelWorkflowOnPinBlocked()
-{
-	if (mContext)
-	{
-		mContext->setStatus(GlobalStatus::Code::Workflow_Pin_Blocked_And_Puk_Objectionable);
 		Q_EMIT mContext->fireCancelWorkflow();
 	}
 }

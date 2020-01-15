@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -26,7 +26,7 @@ Item {
 		}
 
 		ListElement {
-			image: "qrc:///images/iOS/tabBar/anbieter.svg"
+			image: "qrc:///images/main_provider.svg"
 			desc: QT_TR_NOOP("Provider")
 			condition: "provider"
 		}
@@ -38,7 +38,7 @@ Item {
 		}
 
 		ListElement {
-			image: "qrc:///images/iOS/tabBar/pin.svg"
+			image: "qrc:///images/main_pin.svg"
 			desc: QT_TR_NOOP("PIN")
 			condition: "pin"
 		}

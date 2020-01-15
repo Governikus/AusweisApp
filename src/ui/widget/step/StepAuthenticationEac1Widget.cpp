@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StepAuthenticationEac1Widget.h"
@@ -123,15 +123,15 @@ void StepAuthenticationEac1Widget::updateButtonsAndPinWidget()
 	{
 		if (mContext->isCanAllowedMode())
 		{
-			mUi->pinGroupBox->setTitle(tr("Please enter the six-digit card access number (CAN) for identification."));
+			mUi->pinGroupBox->setTitle(tr("Please enter the 6-digit card access number (CAN) for identification."));
 		}
 		else if (cardConnection->getReaderInfo().getRetryCounter() == 1)
 		{
-			mUi->pinGroupBox->setTitle(tr("Please enter your six-digit card access number (CAN) and your PIN for identification."));
+			mUi->pinGroupBox->setTitle(tr("Please enter your 6-digit card access number (CAN) and your PIN for identification."));
 		}
 		else
 		{
-			mUi->pinGroupBox->setTitle(tr("Please enter your six digit PIN for identification"));
+			mUi->pinGroupBox->setTitle(tr("Please enter your 6-digit PIN for identification"));
 		}
 
 		if (cardConnection->getReaderInfo().isBasicReader())
@@ -193,7 +193,7 @@ void StepAuthenticationEac1Widget::onDetailsButtonClicked()
 	auto certificateDescription = eac1->getCertificateDescription();
 
 	QString details;
-	details += tr("Service provider:") + QLatin1Char('\n');
+	details += tr("Provider:") + QLatin1Char('\n');
 	details += certificateDescription->getSubjectName();
 	details += QLatin1Char('\n');
 	details += certificateDescription->getSubjectUrl();
@@ -221,10 +221,10 @@ void StepAuthenticationEac1Widget::setToolTip()
 {
 	const auto& align = QStringLiteral("<p align=\"justify\">%1</p>");
 
-	const auto& certDesc = tr("Information on the service provider who wants to read out data from your ID card is given here. For further information press the button \"more...\".");
+	const auto& certDesc = tr("Information on the provider who wants to read out data from your ID card is given here. For further information press the button \"more...\".");
 	mUi->certificateDescriptionGroupBox->setToolTip(align.arg(certDesc));
 
-	const auto& fieldDesc = tr("Here you can select or deselect data fields to be read out. Mandatory data fields required by the service provider cannot be deselected.");
+	const auto& fieldDesc = tr("Here you can select or deselect data fields to be read out. Mandatory data fields required by the provider cannot be deselected.");
 	mUi->groupBox->setToolTip(align.arg(fieldDesc));
 }
 
@@ -348,6 +348,12 @@ void StepAuthenticationEac1Widget::addChatRightToGui(AccessRight pRight, bool pO
 	auto* cb = new QCheckBox(displayText);
 	cb->setEnabled(pOptional);
 	cb->setChecked(mContext->getEffectiveAccessRights().contains(pRight));
+	if (AccessRoleAndRightsUtil::isWriteAccessRight(pRight))
+	{
+		QPalette palette = cb->palette();
+		palette.setColor(QPalette::WindowText, Qt::red);
+		cb->setPalette(palette);
+	}
 
 	mMap.insert(cb, pRight);
 
@@ -418,7 +424,7 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 		mPINField->setEnabled(false);
 	}
 
-	const QString labelLabel = mContext->isCanAllowedMode() == false ? tr("PIN:") : tr("CAN:");
+	const QString labelLabel = mContext->isCanAllowedMode() == false ? tr("PIN:") : tr("Card access number (CAN):");
 	QLabel* pinLabel = new QLabel(labelLabel);
 	pinLabel->setFocusPolicy(Qt::TabFocus);
 	basicReaderWidgetLayout->addWidget(pinLabel);
@@ -484,7 +490,7 @@ void StepAuthenticationEac1Widget::updateProgressPanel()
 
 		doneWidgetLayout->addStretch();
 		QLabel* doneIcon = new QLabel;
-		QLabel* doneText = new QLabel(cancelled ? tr("The process was cancelled by the user") : tr("Identification successful"));
+		QLabel* doneText = new QLabel(cancelled ? tr("The process has been cancelled") : tr("Identification successful"));
 		doneIcon->setPixmap(QPixmap(cancelled ? QStringLiteral(":/images/icon_cancelled.png") : QStringLiteral(":/images/icon_ok.png")));
 		doneWidgetLayout->addWidget(doneIcon);
 		doneWidgetLayout->addWidget(doneText);

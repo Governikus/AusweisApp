@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref AccessRoleAndRight
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/AccessRoleAndRight.h"
@@ -37,6 +37,10 @@ class test_AccessRoleAndRight
 		QTest::newRow("Pseudonym") << AccessRight::RESTRICTED_IDENTIFICATION;
 		QTest::newRow("AddressVerification") << AccessRight::COMMUNITY_ID_VERIFICATION;
 		QTest::newRow("AgeVerification") << AccessRight::AGE_VERIFICATION;
+		QTest::newRow("WriteAddress") << AccessRight::WRITE_DG17;
+		QTest::newRow("WriteCommunityID") << AccessRight::WRITE_DG18;
+		QTest::newRow("WriteResidencePermitI") << AccessRight::WRITE_DG19;
+		QTest::newRow("WriteResidencePermitII") << AccessRight::WRITE_DG20;
 	}
 
 
@@ -44,7 +48,7 @@ class test_AccessRoleAndRight
 		void checkAccessRightNames_data()
 		{
 			fillTestData();
-			QTest::newRow("") << AccessRight::WRITE_DG17;
+			QTest::newRow("") << AccessRight::WRITE_DG21;
 			QTest::newRow("") << AccessRight::RFU_32;
 			QTest::newRow("") << AccessRight::CAN_ALLOWED;
 			QTest::newRow("") << AccessRight::PRIVILEGED_TERMINAL;
@@ -148,10 +152,10 @@ class test_AccessRoleAndRight
 			QTest::newRow("RFU_31") << AccessRight::RFU_31 << reserved;
 			QTest::newRow("RFU_32") << AccessRight::RFU_32 << reserved;
 
-			QTest::newRow("writeDG17") << AccessRight::WRITE_DG17 << QString("WRITE_DG17");
-			QTest::newRow("writeDG18") << AccessRight::WRITE_DG18 << QString("WRITE_DG18");
-			QTest::newRow("writeDG19") << AccessRight::WRITE_DG19 << QString("WRITE_DG19");
-			QTest::newRow("writeDG20") << AccessRight::WRITE_DG20 << QString("WRITE_DG20");
+			QTest::newRow("writeDG17") << AccessRight::WRITE_DG17 << QString("Write address");
+			QTest::newRow("writeDG18") << AccessRight::WRITE_DG18 << QString("Write community-ID");
+			QTest::newRow("writeDG19") << AccessRight::WRITE_DG19 << QString("Write residence permit I");
+			QTest::newRow("writeDG20") << AccessRight::WRITE_DG20 << QString("Write residence permit II");
 			QTest::newRow("writeDG21") << AccessRight::WRITE_DG21 << QString("WRITE_DG21");
 			QTest::newRow("readDG21") << AccessRight::READ_DG21 << QString("Optional data");
 			QTest::newRow("readDG20") << AccessRight::READ_DG20 << QString("Residence permit II");

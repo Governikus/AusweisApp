@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SettingsModel.h"
@@ -25,14 +25,17 @@ defineSingleton(SettingsModel)
 SettingsModel::SettingsModel()
 	: QObject()
 	, mIsStartedByAuth(false)
+	, mShowBetaTesting(true)
 {
 	const HistorySettings& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
 	connect(&settings, &HistorySettings::fireEnabledChanged, this, &SettingsModel::fireHistoryEnabledChanged);
 
-	const auto* service = Env::getSingleton<Service>();
-	const auto* dataModel = Env::getSingleton<AppUpdateDataModel>();
-	connect(service, &Service::fireAppUpdateFinished, dataModel, &AppUpdateDataModel::onAppUpdateFinished);
-	connect(service, &Service::fireAppUpdateFinished, this, &SettingsModel::fireAppUpdateDataChanged);
+	connect(Env::getSingleton<AppUpdateDataModel>(), &AppUpdateDataModel::fireAppUpdateDataChanged, this, &SettingsModel::fireAppUpdateDataChanged);
+
+	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+	connect(&generalSettings, &GeneralSettings::fireShowInAppNotificationsChanged, this, &SettingsModel::fireShowInAppNotificationsChanged);
+	connect(&generalSettings, &GeneralSettings::fireDeveloperOptionsChanged, this, &SettingsModel::fireDeveloperOptionsChanged);
 
 #ifdef Q_OS_ANDROID
 	mIsStartedByAuth = QAndroidJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
@@ -70,6 +73,23 @@ void SettingsModel::setLanguage(const QString& pLanguage)
 }
 
 
+bool SettingsModel::isDeveloperOptions() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperOptions();
+}
+
+
+void SettingsModel::setDeveloperOptions(bool pEnable)
+{
+	if (isDeveloperOptions() != pEnable)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		settings.setDeveloperOptions(pEnable);
+		settings.save();
+	}
+}
+
+
 bool SettingsModel::isDeveloperMode() const
 {
 	return Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode();
@@ -83,7 +103,6 @@ void SettingsModel::setDeveloperMode(bool pEnable)
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setDeveloperMode(pEnable);
 		settings.save();
-		Q_EMIT fireDeveloperModeChanged();
 	}
 }
 
@@ -101,7 +120,6 @@ void SettingsModel::setUseSelfauthenticationTestUri(bool pUse)
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setUseSelfauthenticationTestUri(pUse);
 		settings.save();
-		Q_EMIT fireUseSelfauthenticationTestUriChanged();
 	}
 }
 
@@ -109,12 +127,6 @@ void SettingsModel::setUseSelfauthenticationTestUri(bool pUse)
 QString SettingsModel::getServerName() const
 {
 	return Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getServerName();
-}
-
-
-bool SettingsModel::isValidServerName(const QString& name) const
-{
-	return !name.isEmpty();
 }
 
 
@@ -198,6 +210,24 @@ void SettingsModel::setUseScreenKeyboard(bool pUseScreenKeyboard)
 }
 
 
+bool SettingsModel::isVisualPrivacy() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isVisualPrivacy();
+}
+
+
+void SettingsModel::setVisualPrivacy(bool pVisualPrivacy)
+{
+	if (isVisualPrivacy() != pVisualPrivacy)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		settings.setVisualPrivacy(pVisualPrivacy);
+		settings.save();
+		Q_EMIT fireScreenKeyboardChanged();
+	}
+}
+
+
 bool SettingsModel::isShuffleScreenKeyboard() const
 {
 	return Env::getSingleton<AppSettings>()->getGeneralSettings().isShuffleScreenKeyboard();
@@ -232,6 +262,12 @@ void SettingsModel::setShowSetupAssistantOnStart(bool pShowSetupAssistantOnStart
 		settings.save();
 		Q_EMIT fireShowSetupAssistantOnStartChanged();
 	}
+}
+
+
+bool SettingsModel::isAutoStartAvailable() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoStartAvailable();
 }
 
 
@@ -313,6 +349,12 @@ void SettingsModel::setAutoCloseWindowAfterAuthentication(bool pEnabled)
 }
 
 
+bool SettingsModel::isAutoUpdateAvailable() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoUpdateAvailable();
+}
+
+
 bool SettingsModel::isAutoUpdateCheck() const
 {
 	return Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoUpdateCheck();
@@ -355,6 +397,24 @@ void SettingsModel::setRemindUserToClose(bool pRemindUser)
 }
 
 
+bool SettingsModel::isTransportPinReminder() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isTransportPinReminder();
+}
+
+
+void SettingsModel::setTransportPinReminder(bool pTransportPinReminder)
+{
+	if (isTransportPinReminder() != pTransportPinReminder)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		settings.setTransportPinReminder(pTransportPinReminder);
+		settings.save();
+		Q_EMIT fireTransportPinReminderChanged();
+	}
+}
+
+
 bool SettingsModel::isShowInAppNotifications() const
 {
 
@@ -366,11 +426,26 @@ void SettingsModel::setShowInAppNotifications(bool pShowInAppNotifications)
 {
 	if (isShowInAppNotifications() != pShowInAppNotifications)
 	{
-
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setShowInAppNotifications(pShowInAppNotifications);
 		settings.save();
-		Q_EMIT fireShowInAppNotificationsChanged();
+	}
+}
+
+
+bool SettingsModel::isShowNewUiHint() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isShowNewUiHint();
+}
+
+
+void SettingsModel::setShowNewUiHint(bool pShowNewUiHint)
+{
+	if (pShowNewUiHint != isShowNewUiHint())
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		settings.setShowNewUiHint(pShowNewUiHint);
+		Q_EMIT fireShowNewUiHintChanged();
 	}
 }
 

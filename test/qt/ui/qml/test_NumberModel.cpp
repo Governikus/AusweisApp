@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref NumberModel
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -249,23 +249,22 @@ class test_NumberModel
 			QVERIFY(mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
-			QCOMPARE(mModel->getInputError(), tr("You have entered the wrong PIN twice. "
-												 "Prior to a third attempt, you have to enter your six-digit card access number first. "
-												 "You can find your card access number on the front of your ID card."));
+			QCOMPARE(mModel->getInputError(), tr("A wrong PIN has been entered twice on your ID card. "
+												 "Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. "
+												 "You can find your card access number (CAN) on the front of your ID card."));
 			QVERIFY(mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
-			QCOMPARE(mModel->getInputError(), tr("You have entered a wrong PIN three times. "
+			QCOMPARE(mModel->getInputError(), tr("A wrong PIN has been entered three times on your ID card. "
 												 "Your PIN is now blocked. "
-												 "You have to enter the PUK now for unblocking."));
+												 "To unblock your PIN you have to enter the PUK."));
 			QVERIFY(mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::INVALID_CAN);
-			QCOMPARE(mModel->getInputError(), tr("You have entered a wrong CAN, please try again."));
+			QCOMPARE(mModel->getInputError(), tr("The entered card access number (CAN) is incorrect. Please try again."));
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PUK);
-			QCOMPARE(mModel->getInputError(), tr("You have entered a wrong PUK. "
-												 "Please try again."));
+			QCOMPARE(mModel->getInputError(), tr("The entered PUK is incorrect. Please try again."));
 			QVERIFY(mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::UNKNOWN);

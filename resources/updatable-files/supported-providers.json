@@ -126,19 +126,6 @@
 			"subjectUrls": ["https://www.bstu-formulare.de/lip"]
 		},
 		{
-			"exclude": ["ios"],
-			"shortName": {"" : "Allianz Maklerportal"},
-			"address": "https://makler.allianz.de",
-			"homepage": "https://makler.allianz.de",
-			"phone": "+49 800/22 23 557 ",
-			"email": "zviss.makler@allianz.de",
-			"postalAddress": "Königinstraße 28<br/>80802 München",
-			"category": "insurance",
-			"tcTokenUrl": "https://npa.allianz.de/azsecurity-npa-service/NpaEIDService/nparef/-wnfwSFGamtJotxe6_BKiLj",
-			"tcTokenUrlInfo" : "TcToken URL contains dynamic request id but is accepted anyway.",
-			"subjectUrls": ["https://npa.allianz.de"]
-		},
-		{
 			"shortName": {"": "eID-Mahnantrag"},
 			"longName": {"": "Anträge im Mahnverfahren"},
 			"shortDescription": {"": "Antragstellung im Mahnverfahren nach der ZPO"},
@@ -199,7 +186,6 @@
 			"subjectUrls": ["https://www.bafoeg-hessen.de"]
 		},
 		{
-			"exclude": ["ios"],
 			"shortName": {"" : "BAföG Online"},
 			"address": "https://www.bafoegonline.bva.bund.de/",
 			"homepage": "https://www.bva.bund.de/DE/Themen/Bildung/BAfoeG/bafoeg_node.html",
@@ -438,6 +424,22 @@
 			"subjectUrls": ["https://www.buergerserviceportal.nrw"]
 		},
 		{
+			"shortName": {"" : "Service-Portal Kreis Soest"},
+			"longName": {"" : "Onlinedienste der Kreisverwaltung Soest"},
+			"shortDescription": {"": "Anträge an die Kreisverwaltung Soest online erfassen."},
+			"longDescription": {"": "In unserem Service-Portal können Sie Anträge an die Kreisverwaltung Soest online erfassen und direkt zur weiteren Bearbeitung an die zuständigen Stellen übermitteln."},
+			"address": "https://serviceportal.kreis-soest.de",
+			"homepage": "https://www.kreis-soest.de/start",
+			"phone": "+49 2921 30-0",
+			"email": "service-portal@kreis-soest.de",
+			"postalAddress": "Kreisverwaltung Soest<br/>Hoher Weg 1-3<br/>59494 Soest",
+			"image": "KreisSoest_image.png",
+			"icon": "KreisSoest_icon.png",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "TcToken URL requires valid dynamic request id.",
+			"subjectUrls": []
+		},
+		{
 			"exclude": ["ios"],
 			"shortName": {"" : "Bürgerservice-Portal Stadt Lage"},
 			"longName": {"" : "Bürgerservice-Portal Stadt Lage"},
@@ -495,21 +497,6 @@
 		},
 		{
 			"exclude": ["ios"],
-			"shortName": {"" : "CosmosDirekt Kundenportal meinCosmosDirekt"},
-			"longDescription": {"": "Mit der Online-Ausweisfunktion des Personalausweises können Sie sich einfach und sicher am Kundenportal ,mein Cosmos-Direkt' registrieren und anmelden. Im Portal haben Sie die Möglichkeit Ihre Versicherungen zu verwalten. Sie können online einen Antrag für ein Tagesgeldkonto stellen oder auch schnell und einfach Ihre persönlichen Daten, z.B. Ihre Adresse, ändern."},
-			"address": "https://www.cosmosdirekt.de/meincosmosdirekt-registrierung/",
-			"homepage": "https://www.cosmosdirekt.de/",
-			"phone": "+49 681-9 66 68 00",
-			"email": "info@cosmosdirekt.de",
-			"postalAddress": "CosmosDirekt<br/>66101 Saarbrücken",
-			"image": "CosmosDirekt_image.jpg",
-			"icon": "CosmosDirekt_icon.png",
-			"category": "insurance",
-			"tcTokenUrl" : "https://www.cosmosdirekt.de/nPa/IdentifizierenNPA?back_url=https://www.cosmosdirekt.de/meincosmosdirekt-registrierung/*ident=1",
-			"subjectUrls": ["https://www.cosmosdirekt.de"]
-		},
-		{
-			"exclude": ["ios"],
 			"shortName": {"" : "d.velop – foxdox.de: Dokumente sicher ablegen"},
 			"longDescription": {"": "Dokumente, Verträge, Reiseunterlagen, Bilder und vieles mehr können Sie einfach in Ihren persönlichen foxdox-Account hochladen. <br/>Sie melden sich mit der Online-Ausweisfunktion an und können von überall und jederzeit auf Ihre Dokumentenablage zugreifen, z. B. um sie innerhalb der Familie, Ihren Kollegen oder auch Ihrem Steuerberater zur Verfügung zu stellen. <br/>Quittungen und Belege können Sie einfach fotografieren oder scannen, hochladen und sicher in Ihrem foxdox-Account mit übersichtlichem Ordner-System speichern. Eine separate Ablage oder Kopien sind nicht mehr notwendig. Alle Daten liegen sicher und verschlüsselt in einem Rechenzentrum in Deutschland.<br/>Ein Standard-Account ist kostenfrei erhältlich."},
 			"address": "https://mein.foxdox.de/",
@@ -522,9 +509,8 @@
 			"subjectUrls": ["https://mein.foxdox.de"]
 		},
 		{
-			"exclude": ["ios"],
 			"shortName": {"" : "Datev - Arbeitnehmer online / Lohn- und Gehaltsabrechnung"},
-			"longDescription": {"": "Nach einmaliger Freischaltung durch den Arbeitgeber erhalten Sie Ihren persönlichen Aktivierungscode per Post. Mit dem Aktivierungscode registrieren Sie sich an dem Portal „DATEV Arbeitnehmer online“, dazu können Sie u.a. die Online-Ausweisfunktion nutzen. Danach können Sie jederzeit Ihre Brutto/Netto-Abrechnungen, Sozialversicherungsnachweise und Lohnsteuerbescheinigungen online abrufen. Sie haben dadurch jederzeit und überall einen schnellen Überblick über Ihre gesamten Lohn- und Gehaltsdokumente. "},
+			"longDescription": {"": "Nach einmaliger Freischaltung durch den Arbeitgeber erhalten Sie Ihren persönlichen Aktivierungscode per Post. Mit dem Aktivierungscode registrieren Sie sich an dem Portal \"DATEV Arbeitnehmer online\", dazu können Sie u.a. die Online-Ausweisfunktion nutzen. Danach können Sie jederzeit Ihre Brutto/Netto-Abrechnungen, Sozialversicherungsnachweise und Lohnsteuerbescheinigungen online abrufen. Sie haben dadurch jederzeit und überall einen schnellen Überblick über Ihre gesamten Lohn- und Gehaltsdokumente. "},
 			"address": "https://www.datev.de/ano/",
 			"homepage": "https://www.datev.de",
 			"phone": "+49 800 3283825",
@@ -625,7 +611,6 @@
 			"subjectUrls": []
 		},
 		{
-			"exclude": ["ios"],
 			"shortName": {"" : "Hamburg Service Online-Bürgerdienste"},
 			"longName": {"" : "Hamburg Service Online-Bürgerdienste"},
 			"shortDescription": {"": "Digitales Dienstleistungsangebot der Freien und Hansestadt Hamburg (FHH)"},
@@ -641,7 +626,6 @@
 			"icon": "hamburg_serviceportal_icon.png"
 		},
 		{
-			"exclude": ["ios"],
 			"shortName": {"" : "Identitätsprüfungen nach der eIDAS und dem Geldwäschegesetz"},
 			"longDescription": {"": "Die identity Trust Management AG bietet Unternehmen die Möglichkeit, ihre Kunden schnell und sicher mit der Online-Ausweisfunktion zu identifizieren. <br/>Kunden der Kooperationspartner der identity Trust Management AG können die Identitätsprüfung nach dem Signaturgesetz und dem Geldwäschegesetz auch direkt über die Internetseite der identity Trust Management AG vornehmen."},
 			"address": "https://www.identity.tm",
@@ -667,11 +651,10 @@
 			"subjectUrls": ["https://www.sixform.com"]
 		},
 		{
-			"exclude": ["ios"],
 			"shortName": {"" : "Online-Registerauskunft"},
 			"longName": {"" : "Auskunft aus den Zentralen Registern des Kraftfahrt-Bundesamtes"},
-			"shortDescription": {"": "Mit der Anwendung können Privatpersonen eine Auskunft aus dem Fahreignungsregister -(Punkteauskunft) und aus dem Zentralen Fahrzeugregister (Fahrzeugzulassungen) des Kraftfahrt-Bundesamtes erhalten. Diese umfasst ausgewählte Daten, die zu der jeweiligen Person gespeichert sind."},
-			"longDescription": {"": "Die Online-Auskunft aus dem Zentralen Fahrzeugregister umfasst Informationen zur Fahrzeugbeschreibung, den Halterdaten, der Haftpflichtversicherung, der Fahrzeughistorie und den zulassungsrechtlich relevanten Ereignissen. Daten von vormaligen Haltern und interne Verwaltungsdaten sind von der Auskunft ausgenommen.<br/>Die Online-Auskunft aus dem Fahreignungsregister umfasst Informationen zu den eingetragenen Verkehrsverstößen, deren Punktbewertung und  Löschungsdatum."},
+			"shortDescription": {"": "Mit der Anwendung können Privatpersonen eine Auskunft aus dem Fahreignungsregister (Punkteauskunft), aus dem Zentralen Fahrzeugregister (Fahrzeugzulassungen) sowie aus dem Zentralen Fahrerlaubnisregister (Führerschein) des Kraftfahrt-Bundesamtes erhalten. Diese umfasst ausgewählte Daten, die zu der jeweiligen Person gespeichert sind."},
+			"longDescription": {"": "Die Online-Auskunft aus dem Zentralen Fahrzeugregister umfasst Informationen zur Fahrzeugbeschreibung, den Halterdaten, der Haftpflichtversicherung, der letzten Haupt- bzw. Sicherheitsüberprüfung, der Fahrzeughistorie und den zulassungsrechtlich relevanten Ereignissen. Daten von vormaligen Haltern und interne Verwaltungsdaten sind von der Auskunft ausgenommen.<br/>Die Online-Auskunft aus dem Fahreignungsregister umfasst Informationen zu den eingetragenen Verkehrsverstößen, deren Punktbewertung und Löschungsdatum.<br/>Die Online-Auskunft aus dem Zentralen Fahrerlaubnisregister umfasst Informationen zu Fahrerlaubnissen, die seit dem 01.01.1999 erteilt, erweitert oder umgeschrieben wurden. Über die anderen vor dem 01.01.1999 ausgestellten Führerscheine führt nur die jeweils ausstellende Fahrerlaubnisbehörde eine Kartei/Datei."},
 			"address": "https://www.kba-online.de/registerauskunft/app/registeranfrage.html",
 			"homepage": "https://www.kba.de",
 			"phone": "+49 461 316-1717",
@@ -701,7 +684,19 @@
 			"subjectUrls": []
 		},
 		{
-			"exclude": ["ios"],
+			"shortName": {"" : "Kreis Lippe Portal"},
+			"longName": {"" :"Kreis Lippe Portal"},
+			"longDescription": {"": "Mit der Online-Ausweisfunktion können Sie sich am Bürgerportal des Kreises Lippe registrieren, anmelden und den Online-Service 'Elternbeiträge' nutzen. Als Eltern können Sie nach der einmaligen Registrierung<br/><br/> - Ihre Selbsteinschätzung für den Elternbeitrag online einreichen,<br/> - den Bearbeitungsstand nachverfolgen,<br/> - Bescheide elektronisch im Dokumentenbereich empfangen."},
+			"address": "https://portal.kreis-lippe.de",
+			"homepage": "https://portal.kreis-lippe.de",
+			"phone": "+49 5231 - 62-0",
+			"email": "",
+			"postalAddress": "Kreis Lippe<br/>Felix-Fechenbach-Str. 5<br/>32756 Detmold",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "",
+			"subjectUrls": []
+		},
+		{
 			"shortName": {"" : "Login Meine VBL"},
 			"longDescription": {"": "Bei der VBL können Sie sich mit dem Personalausweis am Kundenportal ,Meine VBL' anmelden. Im Kundenkonto können Sie Ihre Vertragsdaten und Ihre persönlichen Daten einsehen und weitere Online-Dienste nutzen, z. B.<br/>- Rentenantrag stellen,<br/>- Beitragserstattung beantragen,<br/>- Kontaktdaten ändern,<br/>- persönliche Mitteilungen von der VBL erhalten."},
 			"address": "https://www.vbl.de/de/meine_vbl",
@@ -714,7 +709,6 @@
 			"subjectUrls": ["https://www.vbl.de"]
 		},
 		{
-			"exclude": ["ios"],
 			"shortName": {"" : "LVM Versicherung - Kundenportal Meine LVM"},
 			"longDescription": {"": "Mit der Online-Ausweisfunktion im Personalausweis können Sie sich nach der Registrierung durch Ihre LVM-Agentur sicher am Kundenportal ,Meine LVM' anmelden. Ihre Versicherung können Sie nun selbst verwalten und beispielsweise sämtliche Vertragsdaten online einsehen. Darüber hinaus ist es möglich über das Portal Versicherungsbescheinigungen anzufordern sowie schnell und einfach Ihre persönlichen Daten wie Adresse oder Bankverbindung zu ändern."},
 			"address": "https://www.lvm.de/personalausweis",
@@ -755,8 +749,21 @@
 			"subjectUrls": ["https://pgp.governikus-eid.de"]
 		},
 		{
-			"shortName": {"" : "Selbstauskunft - „Meine Daten einsehen“"},
-			"longDescription": {"": "Die AusweisApp2 verfügt über die Funktion \"Meine Daten einsehen\". Mit dieser Funktion können die auf dem Personalausweis bzw. dem elektronischen Aufenthaltstitel gespeicherten Daten ausgelesen und angezeigt werden. Hierbei sprechen wir auch von einer sogenannten Selbstauskunft.<br/><br/>Sobald Sie die AusweisApp2 gestartet und ein geeigneter Kartenleser installiert bzw. ein Android-Smartphone verbunden haben, können Sie diese Funktion unter dem Menüpunkt \"Ausweisen\" aufrufen. (Auf Mobilgeräten finden Sie die Ausweis-Auskunft übrigens auch direkt auf der Startseite sowie im Menüeintrag „Ausweisen“.)<br/><br/>Nach Ihrer PIN-Eingabe und erfolgreicher Datenübertragung werden die Daten in der AusweisApp2 dargestellt.<br/><br/>Bei der Selbstauskunft handelt es sich um einen reinen Demonstrationsdienst. Die ausgelesenen Daten werden lediglich zur Anzeige gebracht und nicht weitergegeben.<br/><br/>Bitte beachten Sie, dass Sie auch für diesen Vorgang eine Internetverbindung benötigen. Dies hat folgenden Hintergrund: Der Zugriff auf die Daten des Personalausweises bzw. des elektronischen Aufenthaltstitels ist nur möglich, wenn derjenige, der auf die Daten zugreifen möchte sich selbst zunächst eindeutig identifiziert. Dies geschieht über das sog. Berechtigungszertifikat. Es wird Ihnen immer angezeigt, wer auf Ihre Daten zugreifen möchte. Die Erlaubnis, ein Berechtigungszertifikat zu erhalten, wird einen Diensteanbieter auf Antrag und nach Prüfung bei der Vergabestelle für Berechtigungszertifikate beim Bundesverwaltungsamt erteilt. Um das technische Berechtigungszertifikat anzuzeigen und darüber hinaus eine Gültigkeitsprüfung des Ausweisdokuments durchführen zu können, ist eine Internetverbindung zwingend erforderlich. Aus diesem Grund spricht man auch von der Online-Ausweisfunktion."},
+			"shortName": {"" : "Rhein-Neckar-Kreis - Kfz-Online"},
+			"longName": {"" :"Rhein-Neckar-Kreis - Kfz-Online"},
+			"longDescription": {"": "Beim Landratsamt Rhein-Neckar-Kreis können Sie sich mit der Online-Ausweisfunktion identifizieren und verschiedene Kfz-Dienstleistungen nutzen:<br/><br/> - ein Neufahrzeug zulassen,<br/> - ein Fahrzeug wiederzulassen oder ummelden,<br/> - ein Fahrzeug abmelden,<br/> - Halterdaten ändern,<br/> - eine Ersatzzulassungsbescheinigung Teil 1 beantragen"},
+			"address": "https://www.rhein-neckar-kreis.de/,Lde/start/service/neuzulassung.html",
+			"homepage": "https://www.rhein-neckar-kreis.de/start.html",
+			"phone": "+49 6221 522-0",
+			"email": "post@rhein-neckar-kreis.de",
+			"postalAddress": "Landratsamt Rhein-Neckar-Kreis<br/>Kurfürsten-Anlage 38 - 40<br/>69115 Heidelberg",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "",
+			"subjectUrls": []
+		},
+		{
+			"shortName": {"" : "Selbstauskunft - \"Meine Daten einsehen\""},
+			"longDescription": {"": "Die AusweisApp2 verfügt über die Funktion \"Meine Daten einsehen\". Mit dieser Funktion können die auf dem Personalausweis bzw. dem elektronischen Aufenthaltstitel gespeicherten Daten ausgelesen und angezeigt werden. Hierbei sprechen wir auch von einer sogenannten Selbstauskunft.<br/><br/>Sobald Sie die AusweisApp2 gestartet und ein geeigneter Kartenleser installiert bzw. ein Android-Smartphone verbunden haben, können Sie diese Funktion unter dem Menüpunkt \"Ausweisen\" aufrufen. (Auf Mobilgeräten finden Sie die Ausweis-Auskunft übrigens auch direkt auf der Startseite sowie im Menüeintrag \"Ausweisen\".)<br/><br/>Nach Ihrer PIN-Eingabe und erfolgreicher Datenübertragung werden die Daten in der AusweisApp2 dargestellt.<br/><br/>Bei der Selbstauskunft handelt es sich um einen reinen Demonstrationsdienst. Die ausgelesenen Daten werden lediglich zur Anzeige gebracht und nicht weitergegeben.<br/><br/>Bitte beachten Sie, dass Sie auch für diesen Vorgang eine Internetverbindung benötigen. Dies hat folgenden Hintergrund: Der Zugriff auf die Daten des Personalausweises bzw. des elektronischen Aufenthaltstitels ist nur möglich, wenn derjenige, der auf die Daten zugreifen möchte sich selbst zunächst eindeutig identifiziert. Dies geschieht über das sog. Berechtigungszertifikat. Es wird Ihnen immer angezeigt, wer auf Ihre Daten zugreifen möchte. Die Erlaubnis, ein Berechtigungszertifikat zu erhalten, wird einen Anbieter auf Antrag und nach Prüfung bei der Vergabestelle für Berechtigungszertifikate beim Bundesverwaltungsamt erteilt. Um das technische Berechtigungszertifikat anzuzeigen und darüber hinaus eine Gültigkeitsprüfung des Ausweisdokuments durchführen zu können, ist eine Internetverbindung zwingend erforderlich. Aus diesem Grund spricht man auch von der Online-Ausweisfunktion."},
 			"address": "https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/",
 			"homepage": "https://www.ausweisapp.bund.de/",
 			"phone": "+49 421 - 204 95 995",
@@ -767,6 +774,19 @@
 			"category": "citizen",
 			"tcTokenUrlInfo" : "https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml",
 			"subjectUrls": ["https://www.autentapp.de"]
+		},
+		{
+			"shortName": {"" : "Servicekonto Nordrhein-Westfalen"},
+			"longName": {"" :"Servicekonto Nordrhein-Westfalen"},
+			"longDescription": {"": "Einmal online registrieren und dann die gespeicherten Daten vielfach nutzen: Dies ist die Idee des Servicekonto.NRW.<br/>Als Bürgerinnen und Bürger können Sie Ihre einmal erfassten Daten in allen angeschlossenen Portalen und Online-Angeboten in Nordrhein-Westfalen nutzen: Dazu gehören Online-Angebote von Städten, Gemeinden und Kreisen genauso wie die von Ministerien und Behörden der Landesverwaltung NRW.<br/>Um das Servicekonto.NRW zu nutzen, müssen Sie sich einmal registrieren und Ihre Daten erfassen.<br/>Mit der Online-Ausweisfunktion können Sie Ihre Daten einfach elektronisch in das Servicekonto.NRW übertragen und sofort alle Funktionen nutzen. Bei manueller Eingabe der Daten stehen Ihnen unter Umständen nicht alle Funktionen zur Verfügung."},
+			"address": "https://servicekonto.nrw/serviceaccount/",
+			"homepage": "https://servicekonto.nrw/serviceaccount/",
+			"phone": "",
+			"email": "servicekonto@kdn.de",
+			"postalAddress": "KDN – Dachverband kommunaler IT-Dienstleister<br/>Enggasse 2<br/>D-50668 Köln",
+			"category": "citizen",
+			"tcTokenUrlInfo" : "",
+			"subjectUrls": []
 		},
 		{
 			"exclude": ["ios"],
@@ -786,9 +806,22 @@
 			"subjectUrls": ["https://www.buergerserviceportal.nrw"]
 		},
 		{
+			"shortName": {"" : "Serviceportal des Ennepe-Ruhr-Kreises"},
+			"longName": {"" : "Serviceportal des Ennepe-Ruhr-Kreises"},
+			"longDescription": {"": "Herzlich willkommen auf der Startseite des Service-Portals des Ennepe-Ruhr-Kreises.<br/>Über dieses Serviceportal haben Sie rund um die Uhr online Zugriff auf Dienstleistungen des Kreises, des Landes und der Bundesbehörden. Ihr Vorteil: Das Angebot ist immer und überall abrufbar."},
+			"address": "https://portal.enkreis.de/",
+			"homepage": "https://www.en-kreis.de",
+			"phone": "+49 2336 930",
+			"email": "serviceportal@en-kreis.de",
+			"postalAddress": "Ennepe-Ruhr-Kreis<br/>Hauptstr. 92<br/>58332 Schwelm",
+			"category": "citizen",
+			"icon": "ennepe_icon.png",
+			"subjectUrls": []
+		},
+		{
 			"shortName": {"" : "SkIDentity Service"},
 			"longName": {"" : "SkIDentity Service"},
-			"longDescription": {"": "SkIDentity unterstützt die Umsetzung der Cyber-Sicherheitsstrategie der Bundesregierung und macht den elektronischen Personalausweis im Internet sehr leicht und mobil nutzbar. Der SkIDentity-Dienst bietet „Mobile eID as a Service“ und leitet bei Bedarf aus elektronischen Ausweisdokumenten kryptographisch geschützte „Cloud Identitäten“ ab, die auf beliebige Smartphones übertragen und dort sicher mobil genutzt werden können. Darüber hinaus kann auch die bislang aufwändige eID-Integration in einem komfortablen Portal erfolgen und die vertrauenswürdigen Identitäten kommen nun selbst aus einer vom Bundesamt für Sicherheit in der Informationstechnik (BSI) zertifizierten „Secure Cloud Infrastructure“."},
+			"longDescription": {"": "SkIDentity unterstützt die Umsetzung der Cyber-Sicherheitsstrategie der Bundesregierung und macht den elektronischen Personalausweis im Internet sehr leicht und mobil nutzbar. Der SkIDentity-Dienst bietet \"Mobile eID as a Service\" und leitet bei Bedarf aus elektronischen Ausweisdokumenten kryptographisch geschützte \"Cloud Identitäten\" ab, die auf beliebige Smartphones übertragen und dort sicher mobil genutzt werden können. Darüber hinaus kann auch die bislang aufwändige eID-Integration in einem komfortablen Portal erfolgen und die vertrauenswürdigen Identitäten kommen nun selbst aus einer vom Bundesamt für Sicherheit in der Informationstechnik (BSI) zertifizierten \"Secure Cloud Infrastructure\"."},
 			"address": "https://skidentity.de/service",
 			"homepage": "https://www.skidentity.de",
 			"phone": "+49 9571 604 8014",
@@ -873,6 +906,21 @@
 			"category": "citizen",
 			"tcTokenUrlInfo" : "Registration required.",
 			"subjectUrls": ["https://www.vollstreckungsportal.de"]
+		},
+		{
+			"shortName": {"" : "Service-Portal Hochsauerlandkreis"},
+			"longName": {"": "Antragstellung an die Kreisverwaltung im Hochsauerlandkreis"},
+			"shortDescription": {"": "Übersicht über die verschiedenen Online-Anträge"},
+			"longDescription": {"": "Stellen Sie hier Ihre Anträge an die Kreisverwaltung. Das Angebot wird laufend erweitert."},
+			"address": "https://portal.citkomm.de/hsk/services",
+			"homepage": "https://portal.citkomm.de/hsk/services",
+			"phone": "+49 291 / 94-0",
+			"email": "post@hochsauerlandkreis.de",
+			"postalAddress": "Steinstraße 27<br/>59872 Meschede",
+			"image": "HSK_image.jpg",
+			"icon": "HSK_icon.png",
+			"category": "citizen",
+			"subjectUrls": []
 		}
 	]
 }

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ServerMessageHandlerImpl
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ServerMessageHandler.h"
@@ -117,7 +117,7 @@ class test_ServerMessageHandler
 			readerManager->init();
 			readerManager->getPlugInInfos(); // just to wait until initialization finished
 
-			Env::setCreator<RemoteDispatcherServer*>(std::function<RemoteDispatcherServer*(const QSharedPointer<DataChannel>& pDataChannel)>([this](const QSharedPointer<DataChannel> ){
+			Env::setCreator<RemoteDispatcherServer*>(std::function<RemoteDispatcherServer* (const QSharedPointer<DataChannel>& pDataChannel)>([this](const QSharedPointer<DataChannel>){
 						mRemoteDispatcher = new MockRemoteDispatcherServer(mDataChannel);
 						return mRemoteDispatcher.data();
 					}));

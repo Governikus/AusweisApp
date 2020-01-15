@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -23,7 +23,6 @@ Item {
 		anchors.leftMargin: margin
 		anchors.right: parent.right
 		anchors.rightMargin: margin
-		textStyle: Style.text.normal
 		onLinkActivated: parent.linkActivated(link)
 	}
 

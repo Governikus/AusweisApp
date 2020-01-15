@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -18,7 +18,11 @@ SectionPage {
 	id: root
 
 	property alias rootEnabled: titleBarAction.rootEnabled
-	property bool showPairingInfoPopup: false
+
+	property alias paneAnchors: tabbedPane.anchors
+
+	readonly property int currentView: d.view
+
 	signal closeView()
 
 	enum SubView {
@@ -31,6 +35,7 @@ SectionPage {
 		id: d
 
 		property int view
+		property int precedingView
 	}
 
 	onVisibleChanged: d.view = TabbedReaderView.SubView.None
@@ -40,7 +45,7 @@ SectionPage {
 
 		//: LABEL DESKTOP_QML
 		text: qsTr("Card Readers") + SettingsModel.translationTrigger
-		helpTopic: "readerDeviceTab"
+		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "settings")
 		rootEnabled: false
 		customSubAction: CancelAction {
 			visible: d.view  === TabbedReaderView.SubView.EnterPassword
@@ -54,8 +59,13 @@ SectionPage {
 
 		visible: d.view === TabbedReaderView.SubView.None
 
-		anchors.fill: parent
-		anchors.margins: Constants.pane_padding
+		anchors {
+			top: parent.top
+			left: parent.left
+			right: parent.right
+			bottom: parent.bottom
+			margins: Constants.pane_padding
+		}
 
 		sectionsModel: [
 			qsTr("Smartphone as card reader") + SettingsModel.translationTrigger,
@@ -68,16 +78,16 @@ SectionPage {
 					height: Math.max(implicitHeight, tabbedPane.availableHeight)
 					onPairDevice: {
 						if (RemoteServiceModel.rememberServer(pDeviceId)) {
-							if (showPairingInfoPopup) {
-								pairingInfo.open()
-							}
-							else {
-								d.view = TabbedReaderView.SubView.EnterPassword
-								appWindow.menuBar.updateActions()
-							}
+							d.view = TabbedReaderView.SubView.EnterPassword
+							appWindow.menuBar.updateActions()
 						}
 					}
 					onUnpairDevice: RemoteServiceModel.forgetDevice(pDeviceId)
+					onMoreInformation: {
+						d.precedingView = d.view
+						d.view = TabbedReaderView.SubView.PairingInfo
+						appWindow.menuBar.updateActions()
+					}
 				}
 			}
 
@@ -88,25 +98,19 @@ SectionPage {
 				}
 			}
 		}
-		footerItem: Item {
-			height: childrenRect.height
-
-			NavigationButton {
-				buttonType: Qt.BackButton
-				onClicked: root.closeView()
-			}
-		}
 	}
 
-	ConfirmationPopup {
-		id: pairingInfo
+	NavigationButton {
+		visible: tabbedPane.visible
 
-		//: LABEL DESKTOP_QML
-		text: qsTr("Please start pairing mode first.") + SettingsModel.translationTrigger
-		onConfirmed: {
-			d.view = TabbedReaderView.SubView.EnterPassword
-			appWindow.menuBar.updateActions()
+		anchors {
+			left: parent.left
+			bottom: parent.bottom
+			margins: Constants.pane_padding
 		}
+
+		buttonType: NavigationButton.Type.Back
+		onClicked: root.closeView()
 	}
 
 	EnterPasswordView {
@@ -120,6 +124,7 @@ SectionPage {
 		onPasswordEntered: d.view = TabbedReaderView.SubView.None
 
 		onRequestPasswordInfo: {
+			d.precedingView = d.view
 			d.view = TabbedReaderView.SubView.PairingInfo
 			appWindow.menuBar.updateActions()
 		}
@@ -133,7 +138,7 @@ SectionPage {
 		passwordType: NumberModel.PASSWORD_REMOTE_PIN
 
 		onClose: {
-			d.view = TabbedReaderView.SubView.EnterPassword
+			d.view = d.precedingView
 			appWindow.menuBar.updateActions()
 		}
 	}

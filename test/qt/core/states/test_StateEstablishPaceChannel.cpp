@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateEstablishPaceChannel.h"
@@ -107,6 +107,30 @@ class test_StateEstablishPaceChannel
 		}
 
 
+		void test_OnContextError()
+		{
+			mAuthContext->setStatus(GlobalStatus::Code::Card_Cancellation_By_User);
+			QSignalSpy spyAbort(mState.data(), &AbstractState::fireAbort);
+
+			mState->run();
+
+			QCOMPARE(spyAbort.count(), 1);
+		}
+
+
+		void test_OnKillWorkflow()
+		{
+			QSignalSpy spyAbort(mState.data(), &AbstractState::fireAbort);
+			mState->setStateName("StateEstablishPaceChannel");
+			mState->onEntry(nullptr);
+			QCOMPARE(spyAbort.count(), 0);
+
+			mAuthContext->killWorkflow();
+
+			QCOMPARE(spyAbort.count(), 2);
+		}
+
+
 		void test_OnUserCancelled()
 		{
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
@@ -158,7 +182,7 @@ class test_StateEstablishPaceChannel
 			QFETCH(bool, canAllowed);
 
 			QSignalSpy spyPaceChannelEstablished(mState.data(), &StateEstablishPaceChannel::firePaceChannelEstablished);
-			QSignalSpy spyPacePukEstablished(mState.data(), &StateEstablishPaceChannel::firePacePukEstablished);
+			QSignalSpy spyPaceChannelInoperative(mState.data(), &StateEstablishPaceChannel::firePaceChannelInoperative);
 			QSignalSpy spyAbort(mState.data(), &StateEstablishPaceChannel::fireAbort);
 			QSignalSpy spyContinue(mState.data(), &StateEstablishPaceChannel::fireContinue);
 
@@ -177,7 +201,7 @@ class test_StateEstablishPaceChannel
 
 			if (code == CardReturnCode::OK && password == PacePasswordId::PACE_PIN)
 			{
-				QTest::ignoreMessage(QtDebugMsg, "PACE PIN succeeded. Setting expected retry counter to: 3");
+				QTest::ignoreMessage(QtDebugMsg, "PACE_PIN succeeded. Setting expected retry counter to: 3");
 				mState->onEstablishConnectionDone(command);
 				QCOMPARE(mAuthContext->getLastPaceResult(), result);
 				QCOMPARE(mAuthContext->getExpectedRetryCounter(), 3);
@@ -201,11 +225,11 @@ class test_StateEstablishPaceChannel
 
 			if (code == CardReturnCode::OK && password == PacePasswordId::PACE_PUK)
 			{
-				QTest::ignoreMessage(QtDebugMsg, "PACE PUK succeeded. Resetting PACE passwords and setting expected retry counter to: -1");
+				QTest::ignoreMessage(QtDebugMsg, "PACE_PUK succeeded. Resetting PACE passwords and setting expected retry counter to: -1");
 				mState->onEstablishConnectionDone(command);
 				QCOMPARE(mAuthContext->getLastPaceResult(), result);
 				QCOMPARE(mAuthContext->getExpectedRetryCounter(), -1);
-				QCOMPARE(spyPacePukEstablished.count(), 1);
+				QCOMPARE(spyPaceChannelInoperative.count(), 1);
 				return;
 			}
 
@@ -222,7 +246,19 @@ class test_StateEstablishPaceChannel
 			}
 
 			QCOMPARE(mAuthContext->getLastPaceResult(), result);
-			QCOMPARE(spyAbort.count(), 1);
+			if (password == PacePasswordId::PACE_PUK
+					|| mAuthContext->getLastPaceResult() == CardReturnCode::INVALID_PIN
+					|| mAuthContext->getLastPaceResult() == CardReturnCode::INVALID_PIN_2
+					|| mAuthContext->getLastPaceResult() == CardReturnCode::INVALID_PIN_3)
+			{
+				QCOMPARE(spyAbort.count(), 0);
+				QCOMPARE(spyPaceChannelInoperative.count(), 1);
+
+			}
+			else
+			{
+				QCOMPARE(spyAbort.count(), 1);
+			}
 		}
 
 

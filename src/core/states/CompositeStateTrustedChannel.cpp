@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CompositeStateTrustedChannel.h"
@@ -112,7 +112,6 @@ CompositeStateTrustedChannel::CompositeStateTrustedChannel(const QSharedPointer<
 	sProcessCvcsAndSetRights->addTransition(sProcessCvcsAndSetRights, &CompositeStateProcessCvcsAndSetRights::fireAbort, sSendDidAuthenticateResponseEac1);
 
 	sStatePace->addTransition(sStatePace, &CompositeStatePace::firePaceChannelEstablished, sClearPacePasswords);
-	sStatePace->addTransition(sStatePace, &CompositeStatePace::firePacePukEstablished, sStatePace);
 	sStatePace->addTransition(sStatePace, &CompositeStatePace::fireAbort, sSendDidAuthenticateResponseEac1);
 
 	sClearPacePasswords->addTransition(sClearPacePasswords, &AbstractState::fireContinue, sDidAuthenticateEac1);

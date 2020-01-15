@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEnterPacePassword.h"
@@ -17,5 +17,12 @@ StateEnterPacePassword::StateEnterPacePassword(const QSharedPointer<WorkflowCont
 
 void StateEnterPacePassword::run()
 {
-	Q_EMIT fireContinue();
+	if (getContext()->getStatus().isError())
+	{
+		Q_EMIT fireAbort();
+	}
+	else
+	{
+		Q_EMIT fireContinue();
+	}
 }

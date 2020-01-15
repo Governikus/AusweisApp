@@ -1,7 +1,7 @@
 /*!
  * \brief A global mapping for errors
  *
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -42,7 +42,6 @@ class GlobalStatus
 			Workflow_Cannot_Confirm_IdCard_Authenticity,
 			Workflow_Unknown_Paos_From_EidServer,
 			Workflow_Unexpected_Message_From_EidServer,
-			Workflow_Pin_Blocked_And_Puk_Objectionable,
 			Workflow_Preverification_Developermode_Error,
 			Workflow_Preverification_Error,
 			Workflow_No_Unique_AtCvc,

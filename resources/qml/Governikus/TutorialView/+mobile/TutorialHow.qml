@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -53,6 +53,10 @@ TutorialContent {
 	GText {
 		anchors.horizontalCenter: parent.horizontalCenter
 		width: parent.width * 0.9
+
+		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 		//: INFO ANDROID IOS
 		text: (Constants.is_layout_ios ? qsTr("How can I use the AusweisApp2 on my iPhone?")
 										: qsTr("How can I use the AusweisApp2 on my smartphone?"))
@@ -84,7 +88,7 @@ TutorialContent {
 
 		Item {
 			width: parent.width
-			height: noticeImage.height
+			height: Math.max(noticeText.height, noticeImage.height)
 
 			TutorialImage {
 				id: noticeImage
@@ -96,10 +100,15 @@ TutorialContent {
 			}
 
 			GText {
+				id: noticeText
 				width: parent.width * 0.6
+
+				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 				//: INFO ANDROID IOS
-				text: (Constants.is_layout_ios ? qsTr("Many iPhones (iPhone 7 and newer) can access the id card via the built-in NFC interface.")
-												: qsTr("Many Android devices can access the id card via the built-in NFC interface."))
+				text: (Constants.is_layout_ios ? qsTr("Many iPhones (iPhone 7 and newer) can access the ID card via the built-in NFC interface.")
+												: qsTr("Many Android devices can access the ID card via the built-in NFC interface."))
 												+ SettingsModel.translationTrigger
 				textStyle: Style.text.tutorial_content
 				font.bold: true
@@ -125,10 +134,9 @@ TutorialContent {
 			width: parent.width * 0.9
 			visible: Constants.is_layout_android
 			//: LABEL ANDROID IOS
-			text: "<a href=\"%1\">%1</a>".arg(qsTr("https://www.ausweisapp.bund.de/mobile-geraete/")) + SettingsModel.translationTrigger
+			text: "<a href=\"%1\">%1</a>".arg(qsTr("https://www.ausweisapp.bund.de/en/compatible-devices/mobile-phones-and-tablets/")) + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_content
 			horizontalAlignment: Text.AlignHCenter
-			onLinkActivated: Qt.openUrlExternally(link)
 		}
 
 		Image {
@@ -142,8 +150,12 @@ TutorialContent {
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			//: LABEL ANDROID IOS
-			text: qsTr("The AusweisApp2 offers the following options to access your id card:") + SettingsModel.translationTrigger
+			text: qsTr("The AusweisApp2 offers the following options to access your ID card:") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header
 			font.italic: true
 			horizontalAlignment: Text.AlignHCenter
@@ -165,6 +177,10 @@ TutorialContent {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: firePush(readerMethodNfc)
+
+			//: LABEL ANDROID IOS
+			Accessible.name: qsTr("Direct connection via NFC chip tutorial") + SettingsModel.translationTrigger
+			Accessible.role: Accessible.Button
 		}
 
 		Column {
@@ -176,6 +192,10 @@ TutorialContent {
 			GText {
 				anchors.horizontalCenter: parent.horizontalCenter
 				width: parent.width * 0.9
+
+				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 				//: LABEL ANDROID IOS
 				text: qsTr("Direct connection via NFC chip") + SettingsModel.translationTrigger
 				textStyle: Style.text.tutorial_header_secondary
@@ -194,6 +214,10 @@ TutorialContent {
 				GText {
 					id: numberOne
 					anchors.centerIn: parent
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					text: "1"
 					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
@@ -212,6 +236,10 @@ TutorialContent {
 			GText {
 				anchors.horizontalCenter: parent.horizontalCenter
 				width: parent.width * 0.6
+
+				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 				//: LABEL ANDROID IOS
 				text: (Constants.is_layout_ios ? qsTr("App on iPhone <b>with</b> NFC chip as card reader")
 												: qsTr("App on Android smartphone <b>with</b> NFC chip as card reader"))
@@ -245,6 +273,10 @@ TutorialContent {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: firePush(readerMethodSacDesktop)
+
+			//: LABEL ANDROID IOS
+			Accessible.name: qsTr("Smartphone as card reader tutorial") + SettingsModel.translationTrigger
+			Accessible.role: Accessible.Button
 		}
 
 		Column {
@@ -256,6 +288,10 @@ TutorialContent {
 			GText {
 				anchors.horizontalCenter: parent.horizontalCenter
 				width: parent.width * 0.9
+
+				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 				//: LABEL ANDROID IOS
 				text: qsTr("Smartphone as card reader") + SettingsModel.translationTrigger
 				textStyle: Style.text.tutorial_header_secondary
@@ -274,6 +310,10 @@ TutorialContent {
 				GText {
 					id: numberTwo
 					anchors.centerIn: parent
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					text: "2"
 					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
@@ -316,6 +356,10 @@ TutorialContent {
 
 				GText {
 					width: parent.width * 0.4
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("App on computer <b>without</b> NFC chip") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_content
@@ -327,6 +371,10 @@ TutorialContent {
 
 				GText {
 					width: parent.width * 0.4
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("Smartphone <b>with</b> NFC chip as card reader") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_content
@@ -362,6 +410,10 @@ TutorialContent {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: firePush(readerMethodSacMobile)
+
+			//: LABEL ANDROID IOS
+			Accessible.name: qsTr("Smartphone as card reader mobile tutorial") + SettingsModel.translationTrigger
+			Accessible.role: Accessible.Button
 		}
 
 		Column {
@@ -381,6 +433,10 @@ TutorialContent {
 				GText {
 					id: numberThree
 					anchors.centerIn: parent
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					text: "3"
 					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
@@ -423,6 +479,10 @@ TutorialContent {
 
 				GText {
 					width: parent.width * 0.4
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("App on tablet or smartphone <b>without</b> NFC chip") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_content
@@ -434,6 +494,10 @@ TutorialContent {
 
 				GText {
 					width: parent.width * 0.4
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("Smartphone <b>with</b> NFC chip as card reader") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_content
@@ -469,6 +533,10 @@ TutorialContent {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: firePush(readerMethodBluetooth)
+
+			//: LABEL ANDROID IOS
+			Accessible.name: qsTr("Using a bluetooth card reader tutorial") + SettingsModel.translationTrigger
+			Accessible.role: Accessible.Button
 		}
 
 		Column {
@@ -480,6 +548,10 @@ TutorialContent {
 			GText {
 				anchors.horizontalCenter: parent.horizontalCenter
 				width: parent.width * 0.9
+
+				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 				//: LABEL ANDROID IOS
 				text: qsTr("Using a bluetooth card reader") + SettingsModel.translationTrigger
 				textStyle: Style.text.tutorial_header_secondary
@@ -498,6 +570,10 @@ TutorialContent {
 				GText {
 					id: numberFour
 					anchors.centerIn: parent
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					text: "4"
 					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
@@ -540,6 +616,10 @@ TutorialContent {
 
 				GText {
 					width: parent.width * 0.4
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("App on smartphone or tablet") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_content
@@ -551,6 +631,10 @@ TutorialContent {
 
 				GText {
 					width: parent.width * 0.4
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("Bluetooth card reader") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_content
@@ -580,6 +664,10 @@ TutorialContent {
 		GText {
 			id: textContent
 			anchors.centerIn: parent
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			color: Constants.white
 			width: parent.width * 0.8
 			textStyle: Style.text.tutorial_header
@@ -597,6 +685,10 @@ TutorialContent {
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			//: LABEL ANDROID IOS
 			text: qsTr("For lenghty forms, e.g. a BAf\u00F6G application, we recommend you to use the AusweisApp2 on a computer...") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header_secondary
@@ -618,6 +710,11 @@ TutorialContent {
 
 			GText {
 				width: parent.width * 0.5
+				rightPadding: Constants.component_spacing
+
+				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 				//: LABEL ANDROID IOS
 				text: qsTr("Filling long forms is no fun on a smartphone!") + SettingsModel.translationTrigger
 				textStyle: Style.text.tutorial_content
@@ -632,6 +729,10 @@ TutorialContent {
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			//: LABEL ANDROID IOS
 			text: qsTr("... and to use a smartphone to communicate with your ID card. A USB reader is of course also an alternative.") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header_secondary

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -15,7 +15,8 @@ Rectangle {
 	property Item framee: parent
 	property Item scope: parent
 	property real marginFactor: 1
-	property bool dynamic: true
+	property bool dynamic: false
+	property color borderColor: Style.color.focus_indicator_inverse
 
 	readonly property real staticSize: Math.max(ApplicationModel.scaleFactor * 4, 1)
 	readonly property real dynamicSize: Math.max(Math.min(framee.width, framee.height) / 32, 1)
@@ -25,7 +26,7 @@ Rectangle {
 	anchors.margins: marginFactor * -size * 2
 	radius: size * 2
 	border.width: scope.activeFocus ? size : 0;
-	border.color: Constants.white
+	border.color: borderColor
 	opacity: 0.5
 	color: Style.color.transparent
 }

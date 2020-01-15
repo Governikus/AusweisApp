@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateMaintainCardConnection.h"
@@ -100,7 +100,7 @@ class test_StateMaintainCardConnection
 			mContext->setPuk(password);
 			mContext->setLastPaceResult(code);
 
-			QTest::ignoreMessage(QtDebugMsg, "Reseting all PACE passwords.");
+			QTest::ignoreMessage(QtDebugMsg, "Resetting all PACE passwords.");
 			QTest::ignoreMessage(QtDebugMsg, "No card connection available.");
 			mState->run();
 			QCOMPARE(spyNoCardConnection.count(), 1);
@@ -110,7 +110,7 @@ class test_StateMaintainCardConnection
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			mContext->setCardConnection(connection);
 
-			QTest::ignoreMessage(QtDebugMsg, "Reseting all PACE passwords.");
+			QTest::ignoreMessage(QtDebugMsg, "Resetting all PACE passwords.");
 			QTest::ignoreMessage(QtDebugMsg, "Trigger retry counter update.");
 			mState->run();
 			QCOMPARE(spyUpdateRetryCounter.count(), 1);

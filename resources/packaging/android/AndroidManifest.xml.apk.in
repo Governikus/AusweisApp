@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <manifest package="@ANDROID_PACKAGE_NAME@" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="@ANDROID_VERSION_NAME@" android:versionCode="@ANDROID_VERSION_CODE@" android:installLocation="auto">
-    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="28" />
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="29" />
 
     <!-- Normal Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -28,6 +28,7 @@
 				 android:name="org.qtproject.qt5.android.bindings.QtApplication"
 				 android:label="@string/app_name"
 				 android:icon="@mipmap/npa"
+				 android:theme="@style/AppTheme"
 				 android:allowBackup="true"
 				 android:fullBackupContent="@xml/backup_rules">
         <meta-data android:name="android.max_aspect" android:value="2.1" />
@@ -38,7 +39,7 @@
             </intent-filter>
         </receiver>
 
-        <provider android:name="android.support.v4.content.FileProvider"
+        <provider android:name="androidx.core.content.FileProvider"
                   android:authorities="${applicationId}"
                   android:exported="false"
                   android:grantUriPermissions="true">
@@ -50,7 +51,6 @@
                   android:name="com.governikus.ausweisapp2.MainActivity"
                   android:label="@string/app_name"
                   android:launchMode="singleTask"
-                  android:theme="@style/Theme.NoTitle"
                   android:resizeableActivity="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

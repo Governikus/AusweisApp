@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -18,15 +18,17 @@ Controller {
 		Identify,
 		ChangePin,
 		Provider,
-		Information,
+		MoreView,
 		Settings,
 		History,
-		SetupAssistant
+		SetupAssistant,
+		AppUpdateInfo
 	}
 
 	property bool isAbstract: false
 	property TitleBarAction titleBarAction: null
 	readonly property bool sectionPageTypeMarker: true
+
 	function setActive() {
 		if (visible && !isAbstract) {
 			forceActiveFocus()

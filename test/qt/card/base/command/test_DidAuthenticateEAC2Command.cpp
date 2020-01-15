@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/DidAuthenticateEAC2Command.h"
@@ -57,31 +57,31 @@ class test_DidAuthenticateEAC2Command
 
 			auto chipAuthenticationInfo = ChipAuthenticationInfo::decode(bytes);
 			QTest::ignoreMessage(QtDebugMsg, "Performing CA MSE:Set AT");
-			QCOMPARE(command.performChipAuthentication(chipAuthenticationInfo, input, input, input), CardReturnCode::COMMAND_FAILED);
+			QCOMPARE(command.performChipAuthentication(chipAuthenticationInfo, input), CardReturnCode::COMMAND_FAILED);
 
 			mWorker->addResponse(CardReturnCode::OK);
 			QTest::ignoreMessage(QtDebugMsg, "Performing CA MSE:Set AT");
 			QTest::ignoreMessage(QtWarningMsg, "CA MSE:Set AT failed: EMPTY");
-			QCOMPARE(command.performChipAuthentication(chipAuthenticationInfo, input, input, input), CardReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(command.performChipAuthentication(chipAuthenticationInfo, input), CardReturnCode::PROTOCOL_ERROR);
 
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
 			mWorker->addResponse(CardReturnCode::CANCELLATION_BY_USER);
 			QTest::ignoreMessage(QtDebugMsg, "Performing CA MSE:Set AT");
 			QTest::ignoreMessage(QtDebugMsg, "Performing CA General Authenticate");
-			QCOMPARE(command.performChipAuthentication(chipAuthenticationInfo, input, input, input), CardReturnCode::CANCELLATION_BY_USER);
+			QCOMPARE(command.performChipAuthentication(chipAuthenticationInfo, input), CardReturnCode::CANCELLATION_BY_USER);
 
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
 			mWorker->addResponse(CardReturnCode::OK);
 			QTest::ignoreMessage(QtDebugMsg, "Performing CA MSE:Set AT");
 			QTest::ignoreMessage(QtDebugMsg, "Performing CA General Authenticate");
 			QTest::ignoreMessage(QtWarningMsg, "CA General Authenticate failed: EMPTY");
-			QCOMPARE(command.performChipAuthentication(chipAuthenticationInfo, input, input, input), CardReturnCode::PROTOCOL_ERROR);
+			QCOMPARE(command.performChipAuthentication(chipAuthenticationInfo, input), CardReturnCode::PROTOCOL_ERROR);
 
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
 			QTest::ignoreMessage(QtDebugMsg, "Performing CA MSE:Set AT");
 			QTest::ignoreMessage(QtDebugMsg, "Performing CA General Authenticate");
-			QCOMPARE(command.performChipAuthentication(chipAuthenticationInfo, input, input, input), CardReturnCode::OK);
+			QCOMPARE(command.performChipAuthentication(chipAuthenticationInfo, input), CardReturnCode::OK);
 		}
 
 

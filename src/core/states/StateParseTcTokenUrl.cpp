@@ -1,7 +1,7 @@
 /*!
  * \brief Parse tcTokenURL from GET query.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateParseTcTokenUrl.h"

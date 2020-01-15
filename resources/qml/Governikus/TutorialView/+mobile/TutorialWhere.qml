@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -15,6 +15,10 @@ TutorialContent {
 	GText {
 		anchors.horizontalCenter: parent.horizontalCenter
 		width: parent.width * 0.9
+
+		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 		//: LABEL ANDROID IOS
 		text: qsTr("Where can I use the online ID function?") + SettingsModel.translationTrigger
 		textStyle: Style.text.tutorial_header
@@ -41,8 +45,12 @@ TutorialContent {
 	GText {
 		width: parent.width * 0.9
 		anchors.horizontalCenter: parent.horizontalCenter
+
+		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 		//: LABEL ANDROID IOS
-		text: qsTr("On every website of a service provider where you see this icon:") + SettingsModel.translationTrigger
+		text: qsTr("On every website of a provider where you see this icon:") + SettingsModel.translationTrigger
 		textStyle: Style.text.tutorial_header_secondary
 		horizontalAlignment: Text.AlignHCenter
 	}
@@ -60,6 +68,10 @@ TutorialContent {
 	GText {
 		width: parent.width * 0.8
 		anchors.horizontalCenter: parent.horizontalCenter
+
+		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 		//: LABEL ANDROID IOS
 		text: qsTr("By the way, you can find many services directly in the AusweisApp2 <b>provider list</b>.") + SettingsModel.translationTrigger
 		textStyle: Style.text.tutorial_content
@@ -96,6 +108,10 @@ TutorialContent {
 	GText {
 		anchors.horizontalCenter: parent.horizontalCenter
 		width: parent.width * 0.9
+
+		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 		//: LABEL ANDROID IOS
 		text: qsTr("The <b>integrated self-disclosure</b> is a special service to view the data saved on your ID card.") + SettingsModel.translationTrigger
 		textStyle: Style.text.tutorial_header
@@ -109,6 +125,10 @@ TutorialContent {
 	GText {
 		width: parent.width * 0.8
 		anchors.horizontalCenter: parent.horizontalCenter
+
+		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 		//: LABEL ANDROID IOS
 		text: qsTr("You can access the self-disclosure by clicking \"See my personal data\" on the AusweisApp2 start page, followed by \"Proceed to PIN entry\"") + SettingsModel.translationTrigger
 		textStyle: Style.text.tutorial_header_secondary
@@ -126,6 +146,10 @@ TutorialContent {
 
 	TutorialSpacer {
 		width: parent.width
+
+		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 		//: LABEL ANDROID IOS
 		text: qsTr("And this is how it works") + SettingsModel.translationTrigger
 		color: Style.color.tutorial_where
@@ -134,6 +158,10 @@ TutorialContent {
 	GText {
 		width: parent.width * 0.9
 		anchors.horizontalCenter: parent.horizontalCenter
+
+		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 		//: LABEL ANDROID IOS
 		text: qsTr("The AusweisApp2 will always display <b>who</b> wants to access <b>which</b> of your data.") + SettingsModel.translationTrigger
 		textStyle: Style.text.tutorial_header
@@ -164,10 +192,16 @@ TutorialContent {
 	GText {
 		width: parent.width * 0.8
 		anchors.horizontalCenter: parent.horizontalCenter
-		//: LABEL ANDROID IOS
-		text: (Constants.is_layout_ios ? qsTr("Now lay down your ID card and hold the top of your iPhone to the ID card.")
-									 : qsTr("Now lay down your ID card and place your device on the ID card."))
-									 + SettingsModel.translationTrigger
+
+		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+		text: (Constants.is_layout_ios ?
+			   //: LABEL IOS
+			   qsTr("Now lay down your ID card and hold the top of your iPhone to the ID card.") :
+			   //: LABEL ANDROID
+			   qsTr("Now lay down your ID card and place your device on the ID card.")
+			  ) + SettingsModel.translationTrigger
 		textStyle: Style.text.tutorial_header
 		horizontalAlignment: Text.AlignHCenter
 	}
@@ -187,10 +221,17 @@ TutorialContent {
 
 		GText {
 			width: parent.width * 0.5
-		//: LABEL ANDROID IOS
-			text: (Constants.is_layout_ios ? qsTr("Don't move your iPhone during the procedure!")
-										 : qsTr("Don't move your device during the procedure!"))
-										 + SettingsModel.translationTrigger
+			rightPadding: Constants.component_spacing
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+			text: (Constants.is_layout_ios ?
+				   //: LABEL IOS
+				   qsTr("Don't move your iPhone during the procedure!") :
+				   //: LABEL ANDROID
+				   qsTr("Don't move your device during the procedure!")
+				  ) + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_content
 			horizontalAlignment: Text.AlignLeft
 
@@ -209,8 +250,16 @@ TutorialContent {
 
 		GText {
 			width: parent.width * 0.8
-			//: LABEL ANDROID IOS
-			text: (SettingsModel.language === "en" ? qsTr("Enter") : qsTr("Now")) + SettingsModel.translationTrigger
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+			text: (SettingsModel.language === "en" ?
+				   //: LABEL ANDROID IOS
+				   qsTr("Enter") :
+				   //: LABEL ANDROID IOS
+				   qsTr("Now")
+				  ) + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 
@@ -230,6 +279,10 @@ TutorialContent {
 
 		GText {
 			width: parent.width
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			//: LABEL ANDROID IOS
 			text: qsTr("6 digits long PIN") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header
@@ -244,8 +297,16 @@ TutorialContent {
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.8
-			//: LABEL ANDROID IOS
-			text: (SettingsModel.language === "en" ? qsTr("now!") : qsTr("enter!")) + SettingsModel.translationTrigger
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+			text: (SettingsModel.language === "en" ?
+				   //: LABEL ANDROID IOS
+				   qsTr("now!") :
+				   //: LABEL ANDROID IOS
+				   qsTr("enter!")
+				  ) + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 

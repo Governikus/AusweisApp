@@ -1,16 +1,13 @@
 <RCC>
     <qresource prefix="/">
         <file>qtquickcontrols2.conf</file>
-        <file>images/zahnraeder.svg</file>
         <file>images/arrowLeft.svg</file>
         <file>images/arrowRight.svg</file>
         <file>images/share.svg</file>
         <file>images/android/navigation/ausweisen.svg</file>
-        <file>images/android/navigation/anbieter.svg</file>
         <file>images/android/navigation/balloon.svg</file>
         <file>images/android/navigation/remoteleser.svg</file>
         <file>images/android/navigation/verlauf.svg</file>
-        <file>images/android/navigation/pin.svg</file>
         <file>images/android/navigation/faq.svg</file>
         <file>images/android/navigation/support.svg</file>
         <file>images/android/navigation/bewerten.svg</file>
@@ -18,6 +15,7 @@
         <file>images/android/search_icon.svg</file>
         <file>images/iOS/search_icon.svg</file>
         <file>images/iOS/search_cancel.svg</file>
+        <file>images/iOS/more/icon_mehr_settings.svg</file>
         <file>images/iOS/more/icon_mehr_npa.svg</file>
         <file>images/iOS/more/icon_mehr_favorit.svg</file>
         <file>images/iOS/more/icon_mehr_fragen.svg</file>
@@ -40,7 +38,6 @@
         <file>images/tutorial/arrows.svg</file>
         <file>images/tutorial/button_de.png</file>
         <file>images/tutorial/button_en.png</file>
-        <file>images/tutorial/idcard.svg</file>
         <file>images/tutorial/identify.svg</file>
         <file>images/tutorial/questionmark.svg</file>
         <file>images/tutorial/hint.svg</file>
@@ -160,11 +157,8 @@
         <file alias="images/provider/categoryIcons/other_bg.svg">images/provider/categoryIcons/+android/other_bg.svg</file>
         <file alias="images/provider/categoryIcons/other_button.svg">images/provider/categoryIcons/+android/other_button.svg</file>
         <file>images/android/navigation/remotesettings.svg</file>
-        <file>images/trash_icon_all.svg</file>
-        <file>images/iOS/tabBar/anbieter.svg</file>
         <file>images/iOS/tabBar/ausweisen.svg</file>
         <file>images/iOS/tabBar/more.svg</file>
-        <file>images/iOS/tabBar/pin.svg</file>
         <file>images/iOS/tabBar/remoteleser.svg</file>
     </qresource>
 </RCC>

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEstablishPaceChannelRemote.h"
@@ -123,7 +123,7 @@ void StateEstablishPaceChannelRemote::onEstablishConnectionDone(QSharedPointer<B
 	else if (unblockPinCommand)
 	{
 		const CardReturnCode returnCode = unblockPinCommand->getReturnCode();
-		qCDebug(statemachine) << "PACE PUK finished with:" << returnCode;
+		qCDebug(statemachine) << "PACE_PUK finished with:" << returnCode;
 
 		if (returnCode == CardReturnCode::OK || CardReturnCodeUtil::equalsWrongPacePassword(returnCode))
 		{

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -45,7 +45,7 @@ QByteArray Asn1ObjectUtil::convertTo(const ASN1_OBJECT* pAsn1Object)
 QByteArray Asn1ObjectUtil::getValue(const ASN1_OBJECT* pAsn1Object)
 {
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-	return QByteArray(reinterpret_cast<const char* const>(pAsn1Object->data), pAsn1Object->length);
+	return QByteArray(reinterpret_cast<const char*>(pAsn1Object->data), pAsn1Object->length);
 
 #else
 	const size_t len = OBJ_length(pAsn1Object);

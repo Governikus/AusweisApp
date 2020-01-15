@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGenericSendReceive.h"
@@ -290,6 +290,14 @@ void StateGenericSendReceive::onReplyFinished()
 	{
 		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server);
 		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server);
+		Q_EMIT fireAbort();
+		return;
+	}
+
+	if (statusCode >= 400)
+	{
+		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer);
+		updateStatus(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer);
 		Q_EMIT fireAbort();
 		return;
 	}

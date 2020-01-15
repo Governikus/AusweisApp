@@ -1,8 +1,8 @@
 /*!
- * \brief Remote server service to offer remote readers.
+ * \brief Remote server service to offer smartphones as card readers (SaCs).
  * This class controls the advertising over UDP as well as the Websocket connection management.
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,6 +33,7 @@ class RemoteServerImpl
 		virtual void stop() override;
 		virtual void setPairing(bool pEnable = true) override;
 		virtual bool isConnected() const override;
+		virtual bool isPairingConnection() const override;
 		virtual QSslCertificate getCurrentCertificate() const override;
 		virtual const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;
 };

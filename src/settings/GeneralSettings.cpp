@@ -1,7 +1,7 @@
 /*!
  * \brief Contains the method definitions of the GeneralSettings class.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GeneralSettings.h"
@@ -26,8 +26,10 @@ SETTINGS_NAME(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION, "persistentSettingsVers
 SETTINGS_NAME(SETTINGS_NAME_SKIP_VERSION, "skipVersion")
 SETTINGS_NAME(SETTINGS_NAME_AUTO_CLOSE_WINDOW, "autoCloseWindow")
 SETTINGS_NAME(SETTINGS_NAME_SHOW_SETUP_ASSISTANT, "showSetupAssistant")
+SETTINGS_NAME(SETTINGS_NAME_SHOW_NEW_UI_HINT, "showNewUiHint")
 SETTINGS_NAME(SETTINGS_NAME_REMIND_USER_TO_CLOSE, "remindToClose")
 SETTINGS_NAME(SETTINGS_NAME_TRANSPORT_PIN_REMINDER, "transportPinReminder")
+SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_OPTIONS, "developerOptions")
 SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_MODE, "developerMode")
 SETTINGS_NAME(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI, "selfauthTestUri")
 SETTINGS_NAME(SETTINGS_NAME_LANGUAGE, "language")
@@ -39,6 +41,7 @@ SETTINGS_NAME(SETTINGS_NAME_REQUEST_STORE_FEEDBACK, "requestStoreFeedback")
 SETTINGS_NAME(SETTINGS_GROUP_NAME_COMMON, "common")
 SETTINGS_NAME(SETTINGS_NAME_AUTO, "autoUpdateCheck")
 SETTINGS_NAME(SETTINGS_NAME_KEYLESS_PASSWORD, "keylessPassword")
+SETTINGS_NAME(SETTINGS_NAME_VISUAL_PRIVACY, "visualPrivacy")
 SETTINGS_NAME(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD, "shuffleScreenKeyboard")
 } // namespace
 
@@ -76,6 +79,7 @@ GeneralSettings::GeneralSettings()
 		mStoreGeneral->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QCoreApplication::applicationVersion());
 		setAutoStart(GENERAL_SETTINGS_DEFAULT_AUTOSTART);
 		mStoreGeneral->sync();
+		setShowNewUiHint(false);
 	}
 
 #if defined(QT_NO_DEBUG) && (defined(Q_OS_ANDROID) || defined(Q_OS_IOS))
@@ -96,12 +100,40 @@ GeneralSettings::~GeneralSettings()
 }
 
 
+bool GeneralSettings::isShowNotificationsOsDefault() const
+{
+#if defined(Q_OS_WIN)
+	return QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows10;
+
+#elif defined(Q_OS_MACOS)
+	return false;
+
+#else
+	return true;
+
+#endif
+}
+
+
 void GeneralSettings::save()
 {
 	mStoreGeneral->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QCoreApplication::applicationVersion());
 
 	mStoreGeneral->sync();
 	mStoreCommon->sync();
+}
+
+
+bool GeneralSettings::isAutoStartAvailable() const
+{
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+	return true;
+
+#else
+	// Linux: maybe XDG_CONFIG_HOME/autostart or XDG_CONFIG_DIRS/autostart can be added
+	return false;
+
+#endif
 }
 
 
@@ -183,6 +215,22 @@ void GeneralSettings::setShowSetupAssistant(bool pShowSetupAssistant)
 }
 
 
+bool GeneralSettings::isShowNewUiHint() const
+{
+	return mStoreGeneral->value(SETTINGS_NAME_SHOW_NEW_UI_HINT(), true).toBool();
+}
+
+
+void GeneralSettings::setShowNewUiHint(bool pShowNewUiHint)
+{
+	if (pShowNewUiHint != isShowNewUiHint())
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_SHOW_NEW_UI_HINT(), pShowNewUiHint);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
 bool GeneralSettings::isRemindUserToClose() const
 {
 	return mStoreGeneral->value(SETTINGS_NAME_REMIND_USER_TO_CLOSE(), true).toBool();
@@ -215,6 +263,22 @@ void GeneralSettings::setTransportPinReminder(bool pTransportPinReminder)
 }
 
 
+bool GeneralSettings::isDeveloperOptions() const
+{
+	return mStoreGeneral->value(SETTINGS_NAME_DEVELOPER_OPTIONS(), false).toBool();
+}
+
+
+void GeneralSettings::setDeveloperOptions(bool pEnabled)
+{
+	if (pEnabled != isDeveloperOptions())
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_DEVELOPER_OPTIONS(), pEnabled);
+		Q_EMIT fireDeveloperOptionsChanged();
+	}
+}
+
+
 bool GeneralSettings::isDeveloperMode() const
 {
 	const bool developerMode = mStoreGeneral->value(SETTINGS_NAME_DEVELOPER_MODE(), false).toBool();
@@ -223,6 +287,13 @@ bool GeneralSettings::isDeveloperMode() const
 		qCDebug(settings) << "Running as SDK. Developer mode is disallowed.";
 		return false;
 	}
+
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+	if (!isDeveloperOptions())
+	{
+		return false;
+	}
+#endif
 
 	return developerMode;
 }
@@ -233,13 +304,21 @@ void GeneralSettings::setDeveloperMode(bool pEnabled)
 	if (pEnabled != isDeveloperMode())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_DEVELOPER_MODE(), pEnabled);
-		Q_EMIT fireSettingsChanged();
+		Q_EMIT fireDeveloperOptionsChanged();
+		Q_EMIT fireShowInAppNotificationsChanged();
 	}
 }
 
 
 bool GeneralSettings::useSelfAuthTestUri() const
 {
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+	if (!isDeveloperOptions())
+	{
+		return false;
+	}
+#endif
+
 	return mStoreGeneral->value(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI(), false).toBool();
 }
 
@@ -249,7 +328,7 @@ void GeneralSettings::setUseSelfauthenticationTestUri(bool pUse)
 	if (pUse != useSelfAuthTestUri())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI(), pUse);
-		Q_EMIT fireSettingsChanged();
+		Q_EMIT fireDeveloperOptionsChanged();
 	}
 }
 
@@ -279,7 +358,7 @@ void GeneralSettings::setLanguage(const QLocale::Language pLanguage)
 
 QString GeneralSettings::getSelectedUi() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_SELECTED_UI(), QStringLiteral(DEFAULT_UI)).toString();
+	return mStoreGeneral->value(SETTINGS_NAME_SELECTED_UI(), QStringLiteral("qml")).toString();
 }
 
 
@@ -353,6 +432,18 @@ void GeneralSettings::setLastReaderPluginType(const QString& pLastReaderPluginTy
 }
 
 
+bool GeneralSettings::isAutoUpdateAvailable() const
+{
+#if !defined(QT_NO_DEBUG) || defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+	return true;
+
+#else
+	return false;
+
+#endif
+}
+
+
 bool GeneralSettings::isAutoUpdateCheck() const
 {
 	if (autoUpdateCheckIsSetByAdmin())
@@ -362,11 +453,11 @@ bool GeneralSettings::isAutoUpdateCheck() const
 		mStoreGeneral->remove(SETTINGS_NAME_AUTO());
 	}
 
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-	return mStoreCommon->value(SETTINGS_NAME_AUTO(), false).toBool();
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+	return mStoreCommon->value(SETTINGS_NAME_AUTO(), true).toBool();
 
 #else
-	return mStoreCommon->value(SETTINGS_NAME_AUTO(), true).toBool();
+	return mStoreCommon->value(SETTINGS_NAME_AUTO(), false).toBool();
 
 #endif
 }
@@ -419,6 +510,22 @@ void GeneralSettings::setUseScreenKeyboard(bool pUseScreenKeyboard)
 }
 
 
+bool GeneralSettings::isVisualPrivacy() const
+{
+	return mStoreGeneral->value(SETTINGS_NAME_VISUAL_PRIVACY(), false).toBool();
+}
+
+
+void GeneralSettings::setVisualPrivacy(bool pVisualPrivacy)
+{
+	if (pVisualPrivacy != isVisualPrivacy())
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_VISUAL_PRIVACY(), pVisualPrivacy);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
 bool GeneralSettings::isShuffleScreenKeyboard() const
 {
 	return mStoreCommon->value(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), false).toBool();
@@ -437,16 +544,12 @@ void GeneralSettings::setShuffleScreenKeyboard(bool pShuffleScreenKeyboard)
 
 bool GeneralSettings::isShowInAppNotifications() const
 {
-#if defined(Q_OS_WIN)
-	return QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows10;
+	if (isDeveloperMode())
+	{
+		return true;
+	}
 
-#elif defined(Q_OS_MACOS)
-	return false;
-
-#else
-	return mStoreGeneral->value(SETTINGS_NAME_IN_APP_NOTIFICATIONS(), true).toBool();
-
-#endif
+	return mStoreGeneral->value(SETTINGS_NAME_IN_APP_NOTIFICATIONS(), isShowNotificationsOsDefault()).toBool();
 }
 
 
@@ -455,6 +558,6 @@ void GeneralSettings::setShowInAppNotifications(bool pShowInAppNotifications)
 	if (pShowInAppNotifications != isShowInAppNotifications())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_IN_APP_NOTIFICATIONS(), pShowInAppNotifications);
-		Q_EMIT fireSettingsChanged();
+		Q_EMIT fireShowInAppNotificationsChanged();
 	}
 }

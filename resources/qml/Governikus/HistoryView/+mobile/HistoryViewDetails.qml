@@ -1,10 +1,10 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.2
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
@@ -73,7 +73,7 @@ SectionPage {
 					Accessible.onScrollUpAction: scrollPageUp()
 
 					//: LABEL ANDROID IOS
-					label: qsTr("Requested data") + SettingsModel.translationTrigger
+					label: qsTr("Submitted data") + SettingsModel.translationTrigger
 					text: historyModelItem ? historyModelItem.requestedData : ""
 					width: parent.width
 				}

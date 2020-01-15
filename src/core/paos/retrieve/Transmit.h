@@ -1,7 +1,7 @@
 /*!
  * \brief  Transmit objects hold a transmit request and provide access to the transmitted data via member functions.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref Card for iOS.
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -39,7 +39,7 @@ class IosCard
 		virtual bool isConnected() override;
 		virtual void setProgressMessage(const QString& pMessage) override;
 
-		virtual CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
+		virtual ResponseApduResult transmit(const CommandApdu& pCmd) override;
 
 	Q_SIGNALS:
 		void fireConnectFailed();

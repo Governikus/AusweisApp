@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockRemoteDispatcher.h"
@@ -63,7 +63,7 @@ void MockRemoteDispatcher::send(const QSharedPointer<const RemoteMessage>& pMess
 
 	if (pMessage->getType() == RemoteCardMessageType::IFDConnect)
 	{
-		const QSharedPointer<const IfdConnect> request = pMessage.dynamicCast<const IfdConnect>();
+		const QSharedPointer<const IfdConnect> request = pMessage.staticCast<const IfdConnect>();
 		const QString readerName = request->getSlotName();
 		const QSharedPointer<RemoteMessage> message(new IfdConnectResponse(readerName, resultMinor));
 		Q_EMIT fireReceived(message->getType(), QJsonDocument::fromJson(message->toByteArray(mContextHandle)).object(), mId);
@@ -71,7 +71,7 @@ void MockRemoteDispatcher::send(const QSharedPointer<const RemoteMessage>& pMess
 
 	if (pMessage->getType() == RemoteCardMessageType::IFDTransmit)
 	{
-		const QSharedPointer<const IfdTransmit> request = pMessage.dynamicCast<const IfdTransmit>();
+		const QSharedPointer<const IfdTransmit> request = pMessage.staticCast<const IfdTransmit>();
 		const QString readerName = request->getSlotHandle();
 		const QSharedPointer<RemoteMessage> message(new IfdTransmitResponse(readerName, resultMinor == ECardApiResult::Minor::null ? QByteArray("pong") : QByteArray(), resultMinor));
 		Q_EMIT fireReceived(message->getType(), QJsonDocument::fromJson(message->toByteArray(mContextHandle)).object(), mId);
@@ -79,7 +79,7 @@ void MockRemoteDispatcher::send(const QSharedPointer<const RemoteMessage>& pMess
 
 	if (pMessage->getType() == RemoteCardMessageType::IFDDisconnect)
 	{
-		const QSharedPointer<const IfdDisconnect> request = pMessage.dynamicCast<const IfdDisconnect>();
+		const QSharedPointer<const IfdDisconnect> request = pMessage.staticCast<const IfdDisconnect>();
 		const QString readerName = request->getSlotHandle();
 		const QSharedPointer<RemoteMessage> message(new IfdDisconnectResponse(readerName, resultMinor));
 		Q_EMIT fireReceived(message->getType(), QJsonDocument::fromJson(message->toByteArray(mContextHandle)).object(), mId);

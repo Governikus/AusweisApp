@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ChatModel
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChatModel.h"
@@ -62,7 +62,13 @@ class test_ChatModel
 			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG06));
 			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG02));
 			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG19));
-			QCOMPARE(mModel->mSelectedRights, mModel->mAllRights.toSet());
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+			auto uniqueRights = QSet<AccessRight>(mModel->mAllRights.constBegin(), mModel->mAllRights.constEnd());
+#else
+			auto uniqueRights = mModel->mAllRights.toSet();
+#endif
+			QCOMPARE(mModel->mSelectedRights, uniqueRights);
 
 			mModel->resetContext(selfAuthContext);
 			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG05));
@@ -77,7 +83,13 @@ class test_ChatModel
 			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG06));
 			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG02));
 			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG19));
-			QCOMPARE(mModel->mSelectedRights, mModel->mAllRights.toSet());
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+			uniqueRights = QSet<AccessRight>(mModel->mAllRights.constBegin(), mModel->mAllRights.constEnd());
+#else
+			uniqueRights = mModel->mAllRights.toSet();
+#endif
+			QCOMPARE(mModel->mSelectedRights, uniqueRights);
 
 			mModel->resetContext(mAuthContext);
 			QVERIFY(mModel->mAllRights.isEmpty());

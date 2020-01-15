@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteReaderManagerPlugIn
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "plugin/RemoteReaderManagerPlugIn.h"
@@ -30,7 +30,7 @@
 using namespace governikus;
 
 
-Q_DECLARE_METATYPE(QSharedPointer<const RemoteMessage> )
+Q_DECLARE_METATYPE(QSharedPointer<const RemoteMessage>)
 
 
 class MockRemoteClient
@@ -450,14 +450,14 @@ class test_RemoteReaderManagerPlugIn
 			QCOMPARE(static_cast<const IfdDisconnect*>(result.data())->getSlotHandle(), QStringLiteral("NFC Reader"));
 
 			CommandApdu cmd(QByteArray("ping"));
-			ResponseApdu res;
-			QCOMPARE(card->transmit(cmd, res), CardReturnCode::OK);
+			ResponseApduResult res = card->transmit(cmd);
+			QCOMPARE(res.mReturnCode, CardReturnCode::OK);
 			QTRY_COMPARE(spySend.count(), 1);
 			result = qvariant_cast<QSharedPointer<const RemoteMessage> >(spySend.takeFirst().at(0));
 			QCOMPARE(result->getType(), RemoteCardMessageType::IFDTransmit);
 			QCOMPARE(static_cast<const IfdTransmit*>(result.data())->getSlotHandle(), QStringLiteral("NFC Reader"));
 			QCOMPARE(static_cast<const IfdTransmit*>(result.data())->getInputApdu(), QByteArray("ping"));
-			QCOMPARE(res.getBuffer(), QByteArray("pong"));
+			QCOMPARE(res.mResponseApdu.getBuffer(), QByteArray("pong"));
 
 			mDispatcher1->setState(MockRemoteDispatcher::DispatcherState::ReaderWithCardError);
 
@@ -473,14 +473,14 @@ class test_RemoteReaderManagerPlugIn
 			QCOMPARE(result->getType(), RemoteCardMessageType::IFDDisconnect);
 			QCOMPARE(static_cast<const IfdDisconnect*>(result.data())->getSlotHandle(), QStringLiteral("NFC Reader"));
 
-			res.setBuffer(QByteArray());
-			QCOMPARE(card->transmit(cmd, res), CardReturnCode::COMMAND_FAILED);
+			res = card->transmit(cmd);
+			QCOMPARE(res.mReturnCode, CardReturnCode::COMMAND_FAILED);
 			QTRY_COMPARE(spySend.count(), 1);
 			result = qvariant_cast<QSharedPointer<const RemoteMessage> >(spySend.takeFirst().at(0));
 			QCOMPARE(result->getType(), RemoteCardMessageType::IFDTransmit);
 			QCOMPARE(static_cast<const IfdTransmit*>(result.data())->getSlotHandle(), QStringLiteral("NFC Reader"));
 			QCOMPARE(static_cast<const IfdTransmit*>(result.data())->getInputApdu(), QByteArray("ping"));
-			QCOMPARE(res.getBuffer(), QByteArray());
+			QCOMPARE(res.mResponseApdu.getBuffer(), QByteArray());
 		}
 
 
@@ -513,7 +513,7 @@ class test_RemoteReaderManagerPlugIn
 				const QVariant remoteMessageVariant = arguments.at(0);
 				QVERIFY(remoteMessageVariant.canConvert<QSharedPointer<const RemoteMessage> >());
 				const QSharedPointer<const RemoteMessage> message = remoteMessageVariant.value<QSharedPointer<const RemoteMessage> >();
-				const QSharedPointer<const IfdError> errorMessage = message.dynamicCast<const IfdError>();
+				const QSharedPointer<const IfdError> errorMessage = message.staticCast<const IfdError>();
 
 				QVERIFY(!errorMessage.isNull());
 				QCOMPARE(errorMessage->getType(), RemoteCardMessageType::IFDError);

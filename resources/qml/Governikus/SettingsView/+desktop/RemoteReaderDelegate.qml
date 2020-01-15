@@ -1,9 +1,10 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
-import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -20,11 +21,22 @@ Item {
 	property int iconHeight: ApplicationModel.scaleFactor * 80
 
 	implicitHeight: rowLayout.implicitHeight
+
 	activeFocusOnTab: true
+	Accessible.role: Accessible.Button
+	Accessible.name: {
+		SettingsModel.translationTrigger
+
+		var msg = qsTr("Smartphone named \"%1\"").arg(remoteDeviceName) + subtext.text
+		if (isPaired) {
+			return msg + qsTr("Press space to unpair the smartphone \"%1\".").arg(remoteDeviceName)
+		}
+		return msg + qsTr("Press space to pair the smartphone \"%1\".").arg(remoteDeviceName)
+	}
+	Keys.onSpacePressed: isPaired ? unpairDevice(deviceId) : pairDevice(deviceId)
 
 	FocusFrame {
-		dynamic: false
-		border.color: Constants.black
+		borderColor: Style.color.focus_indicator
 	}
 
 	RowLayout {
@@ -32,20 +44,26 @@ Item {
 
 		width: parent.width
 
-		spacing: 0
+		spacing: Constants.component_spacing
 
-		ColumnLayout {
-			Layout.fillHeight: true
+		Column {
+			Layout.fillWidth: true
 
 			GText {
-				Layout.preferredWidth: implicitWidth
-				textStyle: Style.text.header_inverse
+				width: parent.width
+
+				textStyle: Style.text.header
 				text: remoteDeviceName
+				elide: Text.ElideRight
+				maximumLineCount: 1
 			}
 
 			GText {
-				Layout.preferredWidth: implicitWidth
-				textStyle: Style.text.normal_inverse
+				id: subtext
+
+				width: parent.width
+
+				textStyle: Style.text.normal
 				text: {
 					if (!isPaired) {
 						return qsTr("Click to pair") + SettingsModel.translationTrigger
@@ -58,7 +76,6 @@ Item {
 
 		Row {
 			Layout.preferredHeight: iconHeight
-			Layout.alignment: Qt.AlignRight
 
 			spacing: Constants.component_spacing
 
@@ -98,9 +115,17 @@ Item {
 				fillMode: Image.PreserveAspectFit
 
 				MouseArea {
+					id: trashMouse
+
 					anchors.fill: parent
-					onClicked: unpairDevice(deviceId)
+
+					hoverEnabled: true
 					cursorShape: Qt.PointingHandCursor
+					onClicked: unpairDevice(deviceId)
+
+					ToolTip.delay: 500
+					ToolTip.visible: trashMouse.containsMouse
+					ToolTip.text: qsTr("Remove remote device") + SettingsModel.translationTrigger
 				}
 			}
 

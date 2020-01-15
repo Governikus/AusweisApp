@@ -4,7 +4,7 @@
  * Bug in Qt 5.2.1: Buttons in a QButtonGroup cannot be navigated via the Tab key. This
  * class provides a work-around for simple cases.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

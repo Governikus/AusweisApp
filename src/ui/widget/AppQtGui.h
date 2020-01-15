@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -81,7 +81,6 @@ class AppQtGui
 		QMessageBox* mUpdateInfo;
 		QMessageBox* mCertificateInfo;
 		QMessageBox* mLockedInfo;
-		QMessageBox* mSwitchUiInquiry;
 		UpdateWindow* mUpdateWindow;
 		bool mAggressiveToForeground;
 

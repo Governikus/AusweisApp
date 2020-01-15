@@ -2,20 +2,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600px" height="800px" viewBox="0 0 600 800">
   <defs>
     <g id="readerWithCard">
-      <image xlink:href="../../../images/tutorial/idcard.svg" transform="rotate(80)" height="145" width="145" y="-130" x="10" />
+      <image xlink:href="../../../images/ausweis.svg" transform="rotate(80)" height="145" width="145" y="-130" x="10" />
       <image xlink:href="../../../images/tutorial/reader.svg" height="150" width="130" y="90" x="10" />
     </g>
     <g id="smartphoneWithCard">
-      <image xlink:href="../../../images/tutorial/idcard.svg" height="215" width="215" y="0" x="0" />
+      <image xlink:href="../../../images/ausweis.svg" height="215" width="215" y="0" x="0" />
       <image xlink:href="../../../images/tutorial/phone.svg" height="225" width="150" y="10" x="114" />
       <image xlink:href="../../../images/tutorial/nfc.svg" height="100" width="100" y="67" x="138" />
     </g>
     <g id="wifi">
-      <circle cx="40" cy="40" r="40" fill="#fff" stroke="#659bcd" stroke-width="3" />
+      <circle cx="40" cy="40" r="40" fill="#fff" stroke="#4d7aa4" stroke-width="3" />
       <image xlink:href="../../../images/tutorial/wifi.svg" height="70" width="70" x="5" y="5"  />
     </g>
     <g id="usb">
-      <circle cx="40" cy="40" r="40" fill="#fff" stroke="#659bcd" stroke-width="3" />
+      <circle cx="40" cy="40" r="40" fill="#fff" stroke="#4d7aa4" stroke-width="3" />
       <image xlink:href="../../../images/tutorial/usb.svg" height="70" width="70" x="5" y="5"  />
     </g>
   </defs>

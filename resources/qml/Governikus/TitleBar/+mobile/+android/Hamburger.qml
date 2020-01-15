@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import Governikus.Global 1.0
@@ -60,13 +60,6 @@ Item {
 	}
 
 	states: [
-		State {
-			// While creating this state seems unnecessary because it's also implicitly defined, it's needed to avoid a
-			// bug where the Animation hangs and overrides the "" state properties with those of the "back" state. This
-			// can be seen when selecting "Quit Tutorial" from "TutorialReaderMethodNfc" (or any other subview of the
-			// tutorial) on Android.
-			name: ""
-		},
 		State {
 			id: backState
 			name: "back"

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -33,6 +33,8 @@ Column {
 	}
 
 	Repeater {
+		id: historyItemRepeater
+
 		model: HistoryModel.nameFilter
 
 		ProviderDetailHistoryItem {
@@ -52,5 +54,15 @@ Column {
 
 			openInfoFunction: baseItem.openHistoryInfoFunc
 		}
+	}
+
+	GText {
+		visible: historyItemRepeater.count === 0
+		width: parent.width
+
+		activeFocusOnTab: true
+
+		//: INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.
+		text: qsTr("Currently there are no history entries.") + SettingsModel.translationTrigger
 	}
 }

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -36,6 +36,7 @@ class TrayIcon
 
 		const QIcon& getIcon() const;
 		void create();
+		void shutdown();
 		void hide();
 
 		void showMessage(const QString& pTitle, const QString& pMessage);

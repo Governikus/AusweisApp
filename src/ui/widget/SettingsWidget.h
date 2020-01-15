@@ -1,7 +1,7 @@
 /*!
  * \brief Widget for the settings.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,10 +30,7 @@ class SettingsWidget
 		bool mScanRunning;
 		bool mWorkflowRunning;
 		bool mSettingsChanged;
-
-#ifndef QT_NO_DEBUG
 		QScopedPointer<DeveloperSettingsWidget> mDeveloperTab;
-#endif
 
 		void resetSettings();
 		void setSettingsChanged(bool pChanged);
@@ -50,6 +47,7 @@ class SettingsWidget
 		void onUpdateButtonState();
 		void onUpdateApplyButtonText();
 		void onSettingsChanged();
+		void onDeveloperOptionsChanged();
 
 	protected:
 		virtual void paintEvent(QPaintEvent*) override;

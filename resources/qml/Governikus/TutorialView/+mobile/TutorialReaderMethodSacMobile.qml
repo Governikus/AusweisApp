@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -60,6 +60,10 @@ SectionPage {
 					GText {
 						id: numberThree
 						anchors.centerIn: parent
+
+						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 						text: "3"
 						textStyle: Style.text.tutorial_header_secondary
 						font.bold: true
@@ -102,6 +106,10 @@ SectionPage {
 
 					GText {
 						width: parent.width * 0.4
+
+						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 						//: LABEL ANDROID IOS
 						text: qsTr("App on tablet or smartphone <b>without</b> NFC chip") + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_content
@@ -113,6 +121,10 @@ SectionPage {
 
 					GText {
 						width: parent.width * 0.4
+
+						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 						//: LABEL ANDROID IOS
 						text: qsTr("Smartphone <b>with</b> NFC chip as card reader") + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_content
@@ -140,6 +152,10 @@ SectionPage {
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("Install AusweisApp2 on both your device without NFC <b>and</b> your smartphone with NFC capability.") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_header
@@ -174,6 +190,10 @@ SectionPage {
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("Both devices have to be connected to the same wifi network") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_header
@@ -206,10 +226,16 @@ SectionPage {
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
-					//: LABEL ANDROID IOS
-					text: (Constants.is_layout_ios ? qsTr("Now choose \"Remote\" in the AusweisApp2 on your smartphone...")
-													: qsTr("Now choose \"Smartphone as card reader\" in the AusweisApp2 on your smartphone..."))
-													+ SettingsModel.translationTrigger
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+					text: (Constants.is_layout_ios ?
+						   //: LABEL IOS
+						   qsTr("Now choose \"Remote\" in the AusweisApp2 on your smartphone...") :
+						   //: LABEL ANDROID
+						   qsTr("Now choose \"Smartphone as card reader\" in the AusweisApp2 on your smartphone...")
+						  ) + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_header
 					horizontalAlignment: Text.AlignHCenter
 				}
@@ -234,6 +260,10 @@ SectionPage {
 
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("Now") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_header
@@ -242,8 +272,12 @@ SectionPage {
 
 				GButton {
 					id: remoteButton
-					buttonColor: Constants.green
+					buttonColor: Constants.darkgreen
 					anchors.horizontalCenter: parent.horizontalCenter
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("Start remote service") + SettingsModel.translationTrigger
 					animationsDisabled: true
@@ -260,6 +294,10 @@ SectionPage {
 
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("Next") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_header
@@ -269,6 +307,10 @@ SectionPage {
 				GButton {
 					id: pairingButton
 					anchors.horizontalCenter: parent.horizontalCenter
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("Start pairing") + SettingsModel.translationTrigger
 					animationsDisabled: true
@@ -301,6 +343,10 @@ SectionPage {
 						anchors.horizontalCenter: parent.horizontalCenter
 						anchors.top: greyBackgroundRect.top
 						topPadding: 30
+
+						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 						//: LABEL ANDROID IOS
 						text: qsTr("Pairing code") + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_header
@@ -313,6 +359,10 @@ SectionPage {
 						anchors.bottom: greyBackgroundRect.bottom
 						bottomPadding: 30
 						anchors.horizontalCenter: parent.horizontalCenter
+
+						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 						//: LABEL ANDROID IOS
 						text: qsTr("appears!") + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_header
@@ -345,10 +395,16 @@ SectionPage {
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
-					//: LABEL ANDROID IOS
-					text: (Constants.is_layout_ios ? qsTr("Now open the AusweisApp2 on your device <b>without</b> NFC and select <b>Configure remote service</b>.")
-													: qsTr("Now open the AusweisApp2 on your device <b>without</b> NFC and select <b>Smartphone as card reader</b>."))
-													+ SettingsModel.translationTrigger
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+					text: (Constants.is_layout_ios ?
+						   //: LABEL IOS
+						   qsTr("Now open the AusweisApp2 on your device <b>without</b> NFC and select <b>Configure remote service</b>.") :
+						   //: LABEL ANDROID
+						   qsTr("Now open the AusweisApp2 on your device <b>without</b> NFC and select <b>Smartphone as card reader</b>.")
+						  ) + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_header
 					horizontalAlignment: Text.AlignHCenter
 				}
@@ -356,6 +412,10 @@ SectionPage {
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("Now select <b>Settings</b>.") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_header
@@ -382,6 +442,10 @@ SectionPage {
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.7
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("Choose smartphone from list") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_header
@@ -403,6 +467,10 @@ SectionPage {
 
 					GText {
 						width: parent.width * 0.6
+
+						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 						//: LABEL ANDROID IOS
 						text: qsTr("Enter pairing code next.") + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_content
@@ -438,8 +506,12 @@ SectionPage {
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.6
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
-					text: qsTr("Click link on the website of the service provider on the device <b>without</b> NFC.") + SettingsModel.translationTrigger
+					text: qsTr("Click link on the website of the provider on the device <b>without</b> NFC.") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
 					textStyle: Style.text.tutorial_header_secondary
 				}
@@ -474,6 +546,11 @@ SectionPage {
 				GText {
 					id: textOpenAutomatic
 					width: parent.width * 0.6
+					rightPadding: Constants.component_spacing
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("The App opens automatically.") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
@@ -486,6 +563,11 @@ SectionPage {
 				GText {
 					id: textAccessWhoWhat
 					width: parent.width * 0.6
+					rightPadding: Constants.component_spacing
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("The AusweisApp2 will display who wants to access which data.") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
@@ -507,6 +589,10 @@ SectionPage {
 				GText {
 					id: startProcessText
 					anchors.horizontalCenter: parent.horizontalCenter
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					textStyle: Style.text.tutorial_header_secondary
 					//: LABEL ANDROID IOS
 					text: qsTr("Start the process with a click on:") + SettingsModel.translationTrigger
@@ -527,7 +613,11 @@ SectionPage {
 
 					GButton {
 						id: identifyButton
-						iconSource: "qrc:///images/npa.svg"
+						icon.source: "qrc:///images/npa.svg"
+
+						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 						//: LABEL ANDROID IOS
 						text: qsTr("Proceed to PIN entry") + SettingsModel.translationTrigger;
 						animationsDisabled: true
@@ -569,6 +659,10 @@ SectionPage {
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("Tap on Wifi") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
@@ -596,8 +690,12 @@ SectionPage {
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
-					text: qsTr("... and place the id card onto the NFC interface.") + SettingsModel.translationTrigger
+					text: qsTr("... and place the ID card onto the NFC interface.") + SettingsModel.translationTrigger
 
 					horizontalAlignment: Text.AlignHCenter
 					textStyle: Style.text.tutorial_header_secondary
@@ -618,8 +716,12 @@ SectionPage {
 
 					GText {
 						width: parent.width * 0.6
+
+						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 						//: LABEL ANDROID IOS
-						text: qsTr("Do not move device or id card!") + SettingsModel.translationTrigger
+						text: qsTr("Do not move device or ID card!") + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_content
 						font.bold: true
 						horizontalAlignment: Text.AlignLeft
@@ -649,6 +751,11 @@ SectionPage {
 
 				GText {
 					width: parent.width * 0.5
+					rightPadding: Constants.component_spacing
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 					//: LABEL ANDROID IOS
 					text: qsTr("The correct position is specific for your device...") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_content
@@ -661,13 +768,22 @@ SectionPage {
 
 				GText {
 					width: parent.width * 0.5
-					//: LABEL ANDROID IOS
-					text: "<a href=\"%1\">%2</a>".arg(qsTr("https://www.ausweisapp.bund.de/mobile-geraete/")).arg(qsTr("To mobile devices"))  + SettingsModel.translationTrigger
+					rightPadding: Constants.component_spacing
+
+					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+					text: "<a href=\"%1\">%2</a>".arg(
+							  //: LABEL ANDROID IOS
+							  qsTr("https://www.ausweisapp.bund.de/en/compatible-devices/mobile-phones-and-tablets/")
+						  ).arg(
+							  //: LABEL ANDROID IOS
+							  qsTr("To mobile devices")
+						  ) + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
 					font.underline: true
 					horizontalAlignment: Text.AlignLeft
-					onLinkActivated: Qt.openUrlExternally(link)
 
 					x: (parent.width * 0.75) - (width / 2)
 					y: (parent.height * 0.7) - (height / 2)
@@ -688,8 +804,16 @@ SectionPage {
 
 					GText {
 						width: parent.width * 0.8
-						//: LABEL ANDROID IOS
-						text: (SettingsModel.language === "en" ? qsTr("Enter") : qsTr("Now")) + SettingsModel.translationTrigger
+
+						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+						text: (SettingsModel.language === "en" ?
+							   //: LABEL ANDROID IOS
+							   qsTr("Enter") :
+							   //: LABEL ANDROID IOS
+							   qsTr("Now")
+							  ) + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_header
 						horizontalAlignment: Text.AlignHCenter
 
@@ -709,6 +833,10 @@ SectionPage {
 
 					GText {
 						width: parent.width
+
+						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 						//: LABEL ANDROID IOS
 						text: qsTr("6 digits long PIN") + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_header
@@ -723,8 +851,16 @@ SectionPage {
 					GText {
 						anchors.horizontalCenter: parent.horizontalCenter
 						width: parent.width * 0.8
-						//: LABEL ANDROID IOS
-						text: (SettingsModel.language === "en" ? qsTr("now!") : qsTr("enter!")) + SettingsModel.translationTrigger
+
+						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+						text: (SettingsModel.language === "en" ?
+							   //: LABEL ANDROID IOS
+							   qsTr("now!") :
+							   //: LABEL ANDROID IOS
+							   qsTr("enter!")
+							  ) + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_header
 						horizontalAlignment: Text.AlignHCenter
 
@@ -749,6 +885,10 @@ SectionPage {
 					GText {
 						id: noticeText2
 						width: parent.width * 0.6
+
+						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 						//: LABEL ANDROID IOS
 						text: qsTr("This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.") + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_content

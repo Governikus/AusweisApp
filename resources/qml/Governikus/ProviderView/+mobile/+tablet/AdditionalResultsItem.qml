@@ -1,9 +1,9 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
-import QtQuick.Layouts 1.2
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -39,18 +39,6 @@ Rectangle {
 			width: parent.width
 			fillMode: Image.PreserveAspectCrop
 			anchors.horizontalCenter: parent.horizontalCenter
-
-			Image {
-				id: icon
-				source: Category.imageSource("all")
-				asynchronous: true
-				height: backgroundImage.height * 0.5
-				width: height
-				fillMode: Image.PreserveAspectFit
-				anchors.horizontalCenter: backgroundImage.horizontalCenter
-				anchors.bottom: backgroundImage.bottom
-				anchors.bottomMargin: 20
-			}
 		}
 
 		Rectangle {
@@ -65,7 +53,6 @@ Rectangle {
 
 				//: LABEL ANDROID_TABLET IOS_TABLET
 				text: '<html>' + qsTr("Additional results:") + "&nbsp;" + baseItem.totalHits + '</html>' + SettingsModel.translationTrigger
-				textStyle: Style.text.normal
 			}
 		}
 

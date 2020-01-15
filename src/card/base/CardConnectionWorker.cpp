@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnectionWorker.h"
@@ -70,41 +70,35 @@ void CardConnectionWorker::onReaderInfoChanged(const QString& pReaderName)
 }
 
 
-CardReturnCode CardConnectionWorker::transmit(const CommandApdu& pCommandApdu, ResponseApdu& pResponseApdu)
+ResponseApduResult CardConnectionWorker::transmit(const CommandApdu& pCommandApdu)
 {
 	const auto card = mReader ? mReader->getCard() : nullptr;
 	if (!card)
 	{
-		return CardReturnCode::CARD_NOT_FOUND;
+		return {CardReturnCode::CARD_NOT_FOUND};
 	}
-
-	CardReturnCode returnCode;
 
 	if (mSecureMessaging)
 	{
 		const CommandApdu securedCommandApdu = mSecureMessaging->encrypt(pCommandApdu);
 		if (securedCommandApdu.getBuffer().isEmpty())
 		{
-			return CardReturnCode::COMMAND_FAILED;
+			return {CardReturnCode::COMMAND_FAILED};
 		}
 
-		ResponseApdu securedResponseApdu;
-		returnCode = card->transmit(securedCommandApdu, securedResponseApdu);
-		pResponseApdu = mSecureMessaging->decrypt(securedResponseApdu);
-		if (pResponseApdu.isEmpty())
+		ResponseApduResult result = card->transmit(securedCommandApdu);
+		result.mResponseApdu = mSecureMessaging->decrypt(result.mResponseApdu);
+		if (result.mResponseApdu.isEmpty())
 		{
 			qCDebug(::card) << "Stopping Secure Messaging since it failed. The channel therefore must no be re-used.";
 			stopSecureMessaging();
 
-			return CardReturnCode::COMMAND_FAILED;
+			return {CardReturnCode::COMMAND_FAILED};
 		}
-	}
-	else
-	{
-		returnCode = card->transmit(pCommandApdu, pResponseApdu);
+		return result;
 	}
 
-	return returnCode;
+	return card->transmit(pCommandApdu);
 }
 
 
@@ -115,19 +109,17 @@ CardReturnCode CardConnectionWorker::readFile(const FileRef& pFileRef, QByteArra
 		return CardReturnCode::CARD_NOT_FOUND;
 	}
 
-	ResponseApdu selectRes;
 	CommandApdu select = SelectBuilder(pFileRef).build();
-	CardReturnCode returnCode = transmit(select, selectRes);
-	if (returnCode != CardReturnCode::OK || selectRes.getReturnCode() != StatusCode::SUCCESS)
+	auto [selectReturnCode, selectRes] = transmit(select);
+	if (selectReturnCode != CardReturnCode::OK || selectRes.getReturnCode() != StatusCode::SUCCESS)
 	{
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
 	while (true)
 	{
-		ResponseApdu res;
 		ReadBinaryBuilder rb(static_cast<uint>(pFileContent.count()), 0xff);
-		returnCode = transmit(rb.build(), res);
+		auto [returnCode, res] = transmit(rb.build());
 		if (returnCode != CardReturnCode::OK)
 		{
 			break;
@@ -233,12 +225,10 @@ CardReturnCode CardConnectionWorker::destroyPaceChannel()
 	qCInfo(support) << "Destroying PACE channel";
 	if (mReader->getReaderInfo().isBasicReader())
 	{
+		qCDebug(::card) << "Destroying PACE channel with invalid command causing 6700 as return code";
 		stopSecureMessaging();
 		MSEBuilder builder(MSEBuilder::P1::ERASE, MSEBuilder::P2::DEFAULT_CHANNEL);
-		ResponseApdu response;
-		CardReturnCode cardReturnCode = card->transmit(builder.build(), response);
-		qCDebug(::card) << "Destroying PACE channel with invalid command causing 6700 as return code";
-		return cardReturnCode;
+		return card->transmit(builder.build()).mReturnCode;
 	}
 	else
 	{
@@ -247,29 +237,30 @@ CardReturnCode CardConnectionWorker::destroyPaceChannel()
 }
 
 
-CardReturnCode CardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu)
+ResponseApduResult CardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds)
 {
 	const auto card = mReader ? mReader->getCard() : nullptr;
 	if (!card)
 	{
-		return CardReturnCode::CARD_NOT_FOUND;
+		return {CardReturnCode::CARD_NOT_FOUND};
 	}
 
 	if (mReader->getReaderInfo().isBasicReader())
 	{
 		Q_ASSERT(!pNewPin.isEmpty());
 		ResetRetryCounterBuilder commandBuilder(pNewPin.toUtf8());
-		if (transmit(commandBuilder.build(), pResponseApdu) != CardReturnCode::OK || pResponseApdu.getReturnCode() != StatusCode::SUCCESS)
+		auto [returnCode, response] = transmit(commandBuilder.build());
+		if (returnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 		{
 			qCWarning(::card) << "Modify PIN failed";
-			return CardReturnCode::COMMAND_FAILED;
+			return {CardReturnCode::COMMAND_FAILED};
 		}
-		return CardReturnCode::OK;
+		return {CardReturnCode::OK, response};
 	}
 	else
 	{
 		Q_ASSERT(pNewPin.isEmpty());
-		return card->setEidPin(pTimeoutSeconds, pResponseApdu);
+		return card->setEidPin(pTimeoutSeconds);
 	}
 }
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Worker for \ref CardConnection that will do the job in \ref ReaderManagerWorker
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -69,7 +69,7 @@ class CardConnectionWorker
 
 		virtual CardReturnCode readFile(const FileRef& pFileRef, QByteArray& pFileContent);
 
-		virtual CardReturnCode transmit(const CommandApdu& pCommandApdu, ResponseApdu& pResponseApdu);
+		virtual ResponseApduResult transmit(const CommandApdu& pCommandApdu);
 
 		/*!
 		 * Performs PACE and establishes a PACE channel.
@@ -105,7 +105,7 @@ class CardConnectionWorker
 		 */
 		Q_INVOKABLE virtual bool stopSecureMessaging();
 
-		virtual CardReturnCode setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu);
+		virtual ResponseApduResult setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds);
 
 	Q_SIGNALS:
 		void fireReaderInfoChanged(const ReaderInfo& pReaderInfo);

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -12,55 +12,28 @@ import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 
 
-Button {
-	id: button
+GButton {
+	readonly property color pressColor: Qt.darker(textStyle.textColor, Constants.highlightDarkerFactor)
+
 	visible: ApplicationModel.currentWorkflow !== ""
 
-	Accessible.role: Accessible.Button
-	Accessible.name: qsTr("Cancel") + SettingsModel.translationTrigger
+	text: qsTr("Cancel") + SettingsModel.translationTrigger
+	textStyle: Style.text.header_inverse
+	buttonColor: Style.color.transparent
+	icon.source: "qrc:///images/cancel.svg"
+	font.bold: true
+	tintIcon: true
+	padding: 0
+	leftPadding: Constants.component_spacing
+	rightPadding: Constants.component_spacing
+	textHighlightColor: pressed ? pressColor : textStyle.textColor
 
-	background: Row {
-		id: row
-		spacing: ApplicationModel.scaleFactor * 20
+	GSeparator {
+		visible: !Style.currentTheme.highContrast
 
-		Rectangle {
-			height: text.height
-			width: Math.max(ApplicationModel.scaleFactor * 2, 1)
-		}
+		height: parent.height
 
-		Image {
-			sourceSize.height: text.height
-			source: "qrc:///images/cancel.svg"
-		}
-
-		Item {
-			id: text
-			height: sizeBase.height
-			width: sizeBase.width
-			readonly property GText sizeBase: GText {
-				text: qsTr("Cancel") + SettingsModel.translationTrigger
-				textStyle: Style.text.header
-				font.bold: true
-			}
-
-			FocusFrame {
-				scope: button
-			}
-
-			GText {
-				anchors.centerIn: parent
-
-				text: text.sizeBase.text
-				textStyle: Style.text.header
-				font.bold: true
-				font.pixelSize: Style.text.header.textSize * (button.down ? 0.9 : 1)
-			}
-		}
-	}
-
-	MouseArea {
-		cursorShape: Qt.PointingHandCursor
-		anchors.fill: parent
-		onPressed: mouse.accepted = false
+		orientation: Qt.Vertical
+		color: Style.text.header_inverse.textColor
 	}
 }

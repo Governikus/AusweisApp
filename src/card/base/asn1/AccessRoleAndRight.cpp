@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AccessRoleAndRight.h"
@@ -39,6 +39,10 @@ const QList<AccessRight>& AccessRoleAndRightsUtil::allDisplayedOrderedRights()
 		mAllDisplayedOrderedRights += AccessRight::READ_DG19;
 		mAllDisplayedOrderedRights += AccessRight::INSTALL_QUAL_CERT;
 		mAllDisplayedOrderedRights += AccessRight::INSTALL_CERT;
+		mAllDisplayedOrderedRights += AccessRight::WRITE_DG17;
+		mAllDisplayedOrderedRights += AccessRight::WRITE_DG18;
+		mAllDisplayedOrderedRights += AccessRight::WRITE_DG19;
+		mAllDisplayedOrderedRights += AccessRight::WRITE_DG20;
 	}
 	return mAllDisplayedOrderedRights;
 }
@@ -96,27 +100,28 @@ const QList<AccessRight>& AccessRoleAndRightsUtil::allRights()
 }
 
 
+bool AccessRoleAndRightsUtil::isWriteAccessRight(AccessRight pRight)
+{
+	switch (pRight)
+	{
+		case AccessRight::WRITE_DG17:
+		case AccessRight::WRITE_DG18:
+		case AccessRight::WRITE_DG19:
+		case AccessRight::WRITE_DG20:
+		case AccessRight::WRITE_DG21:
+			return true;
+
+		default:
+			return false;
+	}
+}
+
+
 // TR-03127, Annex C
 QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 {
 	switch (pRight)
 	{
-		case AccessRight::WRITE_DG17:
-			//: LABEL ALL_PLATFORMS
-			return tr("WRITE_DG17");
-
-		case AccessRight::WRITE_DG18:
-			//: LABEL ALL_PLATFORMS
-			return tr("WRITE_DG18");
-
-		case AccessRight::WRITE_DG19:
-			//: LABEL ALL_PLATFORMS
-			return tr("WRITE_DG19");
-
-		case AccessRight::WRITE_DG20:
-			//: LABEL ALL_PLATFORMS
-			return tr("WRITE_DG20");
-
 		case AccessRight::WRITE_DG21:
 			//: LABEL ALL_PLATFORMS
 			return tr("WRITE_DG21");
@@ -130,18 +135,34 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 			//: LABEL ALL_PLATFORMS
 			return tr("Residence permit II");
 
+		case AccessRight::WRITE_DG20:
+			//: LABEL ALL_PLATFORMS
+			return tr("Write residence permit II");
+
 		case AccessRight::READ_DG19:
 			// "Auxiliary conditions" are replaced with "Residence permit I" in agreement with the BMI
 			//: LABEL ALL_PLATFORMS
 			return tr("Residence permit I");
 
+		case AccessRight::WRITE_DG19:
+			//: LABEL ALL_PLATFORMS
+			return tr("Write residence permit I");
+
 		case AccessRight::READ_DG18:
 			//: LABEL ALL_PLATFORMS
 			return tr("Community-ID");
 
+		case AccessRight::WRITE_DG18:
+			//: LABEL ALL_PLATFORMS
+			return tr("Write community-ID");
+
 		case AccessRight::READ_DG17:
 			//: LABEL ALL_PLATFORMS
 			return tr("Address");
+
+		case AccessRight::WRITE_DG17:
+			//: LABEL ALL_PLATFORMS
+			return tr("Write address");
 
 		case AccessRight::READ_DG16:
 			//: LABEL ALL_PLATFORMS

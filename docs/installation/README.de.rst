@@ -72,7 +72,7 @@ UPDATECHECK
   Die Einstellung kann dann durch den Benutzer in der AusweisApp2 nicht geändert
   werden. Ohne Angabe ist die Überprüfung aktiviert, der Benutzer kann die
   Einstellung jedoch ändern. Der UPDATECHECK Parameter beeinflusst weder die
-  Aktualisierung der Diensteanbieterliste noch die Aktualisierung der
+  Aktualisierung der Anbieterliste noch die Aktualisierung der
   Kartenleserinformationen.
 
 ONSCREENKEYBOARD
@@ -83,7 +83,7 @@ ONSCREENKEYBOARD
 HISTORY
   Jede Selbstauskunft oder Authentisierung wird im Verlauf gespeichert. Dabei
   werden jedoch keine persönlichen Daten gespeichert, sondern nur der Zeitpunkt,
-  der Diensteanbieter und die ausgelesenen Datenfelder (ohne Inhalt). Durch Setzen
+  der Anbieter und die ausgelesenen Datenfelder (ohne Inhalt). Durch Setzen
   von HISTORY auf false oder true kann der Verlauf deaktiviert bzw. aktiviert
   werden. Der Benutzer kann diese Einstellung anpassen.
 
@@ -95,6 +95,12 @@ Kommando:
 .. code-block:: winbatch
 
   msiexec /i AusweisApp2-X.YY.Z.msi /quiet TRANSFORMS=file.mst
+
+Um den Start der AusweisApp2 auf Systemen mit fehlender Grafikbeschleunigung
+zu optimieren, kann die Systemvariable "QT_QUICK_BACKEND" auf den Wert
+"software" gesetzt werden. In diesem Fall verzichtet die AusweisApp2 auf den
+Versuch die Grafikbeschleunigung zu nutzen und startet direkt mit dem
+alternativen Softwarerenderer.
 
 macOS
 -----
@@ -176,7 +182,7 @@ Die AusweisApp2 startet einen HTTP-Server, der über Port 24727 erreichbar
 ist.
 Der Server empfängt nur auf der localhost Netzwerkschnittstelle.
 Die Erreichbarkeit dieses lokalen Servers ist für die Onlineausweisfunktion
-notwendig, da Diensteanbieter mit einem HTTP-Redirect auf den lokalen Server
+notwendig, da Anbieter mit einem HTTP-Redirect auf den lokalen Server
 umleiten um den Ausweisvorgang in der AusweisApp2 fortzuführen (eID1).
 Außerdem wird über den Server die Verwendung der AusweisApp2 von anderen
 Anwendungen über eine Websocket-Schnittstelle angeboten (SDK-Funktion, eID-SDK).
@@ -228,12 +234,12 @@ CA-Zertifikate im Windows-Truststore werden daher ignoriert.
    :widths: 8, 8, 8, 8, 8, 35, 25
 
    "eID1",	TCP, 24727,  "eingehend", "Nein", "Online-Ausweisvorgang, eID-Aktivierung [#TR-03124]_",										    "Nur erreichbar von localhost [#TR-03124]_"
-   "eID2",	TCP, 443,    "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum Dienstanbieter, TLS-1-2-Kanal [#TR-03124]_",							    "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
+   "eID2",	TCP, 443,    "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum Anbieter, TLS-1-2-Kanal [#TR-03124]_",							    "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
    "eID3",      TCP, 443,    "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum eID-Server, TLS-2-Kanal [#TR-03124]_",								    "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
    "eID-SDK",	TCP, 24727,  "eingehend", "Nein", "Verwendung der SDK-Schnittstelle",													    "Nur erreichbar von localhost [#TR-03124]_"
    "SaK1",	UDP, 24727,  "eingehend", "Ja",   "Smartphone als Kartenleser, Erkennung [#TR-03112]_",											    "Broadcasts"
    "SaK2",	TCP, ,       "ausgehend", "Ja",   "Smartphone als Kartenleser, Verwendung [#TR-03112]_",										    "Verbindung im lokalen Subnetz"
-   "Update",	TCP, 443,    "ausgehend", "Ja",   "Updates [#govurl]_ zu Dienstanbietern und Kartenlesern sowie Informationen zu neuen AusweisApp2-Versionen [#updatecheck]_ .",	    "Die Zertifikate der TLS-Verbindung werden mit in der AusweisApp2 mitgelieferten CA-Zertifikaten validiert. Im Betriebssystem hinterlegte CA-Zertifikate werden ignoriert."
+   "Update",	TCP, 443,    "ausgehend", "Ja",   "Updates [#govurl]_ zu Anbietern und Kartenlesern sowie Informationen zu neuen AusweisApp2-Versionen [#updatecheck]_ .",	    "Die Zertifikate der TLS-Verbindung werden mit in der AusweisApp2 mitgelieferten CA-Zertifikaten validiert. Im Betriebssystem hinterlegte CA-Zertifikate werden ignoriert."
 
 .. [#TR-03124] Siehe TR-03124 des BSI
 .. [#TR-03112] Siehe TR-03112-6 des BSI

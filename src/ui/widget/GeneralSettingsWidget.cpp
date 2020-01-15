@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GeneralSettingsWidget.h"
@@ -34,6 +34,15 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* pParent)
 	{
 		qCInfo(settings) << "Auto update check is configured system wide";
 		mUi->regularlyUpdateCheckBox->setEnabled(false);
+	}
+	if (!generalSettings.isAutoStartAvailable())
+	{
+		mUi->autostartCheckBox->setEnabled(false);
+	}
+	if (!generalSettings.isAutoUpdateAvailable())
+	{
+		mUi->regularlyUpdateCheckBox->setEnabled(false);
+		mUi->updateCheckButton->setEnabled(false);
 	}
 
 	reset();

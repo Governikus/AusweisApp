@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -8,7 +8,7 @@ import Governikus.Global 1.0
 import Governikus.Type.SettingsModel 1.0
 
 
-Rectangle {
+Item {
 
 	property string imageSource;
 	property string title;
@@ -17,7 +17,6 @@ Rectangle {
 	width: parent.width
 	height: Math.max(image.height, providerTitle.height)
 
-	color: Constants.white
 	clip: true
 
 	Image {

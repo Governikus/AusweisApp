@@ -3,7 +3,6 @@
         <file>html_templates/alreadyactive.html</file>
         <file>html_templates/error.html</file>
         <file>stylesheets/desktop.qss</file>
-        <file>images/beta.svg</file>
         <file>images/MenuSelected.png</file>
         <file>images/MenuUnselected.png</file>
         <file>images/MenuUnselectedDisabled.png</file>
@@ -15,20 +14,15 @@
         <file>images/html_message_section.jpg</file>
         <file>images/search_icon.svg</file>
         <file>images/search_cancel.svg</file>
-        <file>images/desktop/bell_white.svg</file>
-        <file>images/desktop/bell_green.svg</file>
-        <file>images/desktop/bell_red.svg</file>
+        <file>images/desktop/bell.svg</file>
         <file>images/desktop/id_card.png</file>
-        <file>images/desktop/pin-letter-page1.png</file>
-        <file>images/desktop/pin-letter-page2.png</file>
+        <file>images/desktop/pin_letter_pinpuk_different_page.svg</file>
+        <file>images/desktop/pin_letter_pinpuk_same_page.svg</file>
         <file>images/desktop/help_icon.svg</file>
         <file>images/desktop/main_history.svg</file>
         <file>images/desktop/main_identify.svg</file>
         <file>images/desktop/main_info.svg</file>
-        <file>images/desktop/main_pin.svg</file>
-        <file>images/desktop/main_provider.svg</file>
         <file>images/desktop/sandglass.svg</file>
-        <file>images/desktop/settings_icon.svg</file>
         <file>images/desktop/titlebar_arrow.svg</file>
         <file>images/desktop/continue_arrow.svg</file>
         <file>images/desktop/info_questions.svg</file>
@@ -103,6 +97,8 @@
         <file>updatable-files/reader/img_Identive_SDI011_mit_ausweis.png</file>
         <file>updatable-files/reader/img_KOBIL_ID_Token.png</file>
         <file>updatable-files/reader/img_KOBIL_ID_Token_mit_ausweis.png</file>
+        <file>updatable-files/reader/img_PersoSim.png</file>
+        <file>updatable-files/reader/img_PersoSim_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Reiner_SCT_cyberjack_RFID_basis.png</file>
         <file>updatable-files/reader/img_Reiner_SCT_cyberjack_RFID_basis_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Reiner_SCT_cyberjack_RFID_komfort.png</file>

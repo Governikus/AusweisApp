@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceModel.h"
@@ -21,6 +21,7 @@ RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceName, const
 	, mId(pId)
 	, mPaired(false)
 	, mNetworkVisible(false)
+	, mConnected(false)
 	, mSupported(pRemoteDeviceListEntry->getRemoteDeviceDescriptor().isSupported())
 	, mLastConnected()
 	, mRemoteDeviceListEntry(pRemoteDeviceListEntry)
@@ -28,11 +29,12 @@ RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceName, const
 }
 
 
-RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceName, const QString& pId, bool pPaired, bool pNetworkVisible, bool pSupported, const QDateTime& pLastConnected, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry)
+RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceName, const QString& pId, bool pNetworkVisible, bool pConnected, bool pSupported, const QDateTime& pLastConnected, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry)
 	: mDeviceName(pDeviceName)
 	, mId(pId)
-	, mPaired(pPaired)
+	, mPaired(true)
 	, mNetworkVisible(pNetworkVisible)
+	, mConnected(pConnected)
 	, mSupported(pSupported)
 	, mLastConnected(pLastConnected)
 	, mRemoteDeviceListEntry(pRemoteDeviceListEntry)
@@ -45,6 +47,7 @@ RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceName)
 	, mId()
 	, mPaired(false)
 	, mNetworkVisible(false)
+	, mConnected(false)
 	, mSupported(false)
 	, mLastConnected()
 	, mRemoteDeviceListEntry(nullptr)
@@ -96,10 +99,16 @@ bool RemoteDeviceModelEntry::isNetworkVisible() const
 
 int RemoteDeviceModelEntry::getLinkQuality() const
 {
+	if (mConnected)
+	{
+		return 100;
+	}
+
 	if (mRemoteDeviceListEntry.isNull())
 	{
 		return 0;
 	}
+
 	return mRemoteDeviceListEntry->getPercentSeen();
 }
 
@@ -128,6 +137,12 @@ void RemoteDeviceModelEntry::setLastConnected(const QDateTime& pLastConnected)
 }
 
 
+bool RemoteDeviceModelEntry::operator==(const RemoteDeviceModelEntry& pOther) const
+{
+	return getId() == pOther.getId();
+}
+
+
 RemoteDeviceModel::RemoteDeviceModel(QObject* pParent, bool pShowPairedReaders, bool pShowUnpairedReaders)
 	: QAbstractTableModel(pParent)
 	, mPairedReaders()
@@ -147,9 +162,10 @@ RemoteDeviceModel::RemoteDeviceModel(QObject* pParent, bool pShowPairedReaders, 
 	onKnownRemoteReadersChanged();
 
 	const auto& remoteClient = Env::getSingleton<RemoteClient>();
-	connect(remoteClient, &RemoteClient::fireDeviceAppeared, this, &RemoteDeviceModel::onConstructReaderList);
-	connect(remoteClient, &RemoteClient::fireDeviceUpdated, this, &RemoteDeviceModel::onConstructReaderList);
-	connect(remoteClient, &RemoteClient::fireDeviceVanished, this, &RemoteDeviceModel::onConstructReaderList);
+	connect(remoteClient, &RemoteClient::fireDeviceAppeared, this, &RemoteDeviceModel::onUpdateReaderList);
+	connect(remoteClient, &RemoteClient::fireDeviceUpdated, this, &RemoteDeviceModel::onUpdateReaderList);
+	connect(remoteClient, &RemoteClient::fireDeviceVanished, this, &RemoteDeviceModel::onUpdateReaderList);
+	connect(remoteClient, &RemoteClient::fireDispatcherDestroyed, this, &RemoteDeviceModel::onUpdateReaderList);
 }
 
 
@@ -218,6 +234,123 @@ QString RemoteDeviceModel::getStatus(const RemoteDeviceModelEntry& pRemoteDevice
 
 	//: LABEL ALL_PLATFORMS
 	return tr("Not paired");
+}
+
+
+void RemoteDeviceModel::updatePairedReaders()
+{
+	const auto& availableReaders = presentReaders();
+	const auto& connectedDeviceIDs = Env::getSingleton<RemoteClient>()->getConnectedDeviceIDs();
+
+	for (const auto& pairedReader : qAsConst(mPairedReaders))
+	{
+		bool visible = false;
+		bool connected = false;
+		bool supported = true;
+		QSharedPointer<RemoteDeviceListEntry> deviceListEntry;
+		for (const auto& availableReader : availableReaders)
+		{
+			if (pairedReader.getFingerprint() == availableReader.getId())
+			{
+				visible = true;
+				connected = connectedDeviceIDs.contains(availableReader.getId());
+				supported = availableReader.isSupported();
+				deviceListEntry = availableReader.getRemoteDeviceListEntry();
+				break;
+			}
+		}
+
+		if (!visible && connectedDeviceIDs.contains(pairedReader.getFingerprint()))
+		{
+			visible = true;
+			connected = true;
+			supported = true;
+		}
+		auto modelEntry = RemoteDeviceModelEntry(
+				pairedReader.getName(),
+				pairedReader.getFingerprint(),
+				visible,
+				connected,
+				supported,
+				pairedReader.getLastConnected(),
+				deviceListEntry);
+		addOrUpdateReader(modelEntry);
+	}
+}
+
+
+void RemoteDeviceModel::updateUnpairedReaders()
+{
+	const auto availableReaders = presentReaders();
+	for (auto modelEntry : availableReaders)
+	{
+		if (mPairedReaders.contains(modelEntry.getId()))
+		{
+			continue;
+		}
+
+		addOrUpdateReader(modelEntry);
+	}
+}
+
+
+void RemoteDeviceModel::removeVanishedReaders()
+{
+	const auto availableReaders = presentReaders();
+	for (int i = mAllRemoteReaders.size() - 1; i >= 0; --i)
+	{
+		const auto& reader = mAllRemoteReaders[i];
+		const bool readerIsPaired = mPairedReaders.contains(reader.getId());
+		if (mShowPairedReaders && readerIsPaired)
+		{
+			continue;
+		}
+
+		const bool readerIsAvailable = availableReaders.contains(reader);
+		const bool showOnlyPairedReader = mShowPairedReaders && !mShowUnpairedReaders;
+		const bool showOnlyUnpairedReader = mShowUnpairedReaders && !mShowPairedReaders;
+		if (!readerIsAvailable || (showOnlyPairedReader && !readerIsPaired) || (showOnlyUnpairedReader && readerIsPaired))
+		{
+			beginRemoveRows(QModelIndex(), i, i);
+			mAllRemoteReaders.remove(i);
+			endRemoveRows();
+		}
+	}
+}
+
+
+QVector<RemoteDeviceModelEntry> RemoteDeviceModel::presentReaders() const
+{
+	const auto& announcingRemoteDevices = Env::getSingleton<RemoteClient>()->getAnnouncingRemoteDevices();
+	QVector<RemoteDeviceModelEntry> presentReaders;
+
+	for (auto deviceListEntry : announcingRemoteDevices)
+	{
+		const auto& deviceDescriptor = deviceListEntry->getRemoteDeviceDescriptor();
+		auto modelEntry = RemoteDeviceModelEntry(deviceDescriptor.getIfdName(), deviceDescriptor.getIfdId(), deviceListEntry);
+		presentReaders.append(modelEntry);
+	}
+
+	return presentReaders;
+}
+
+
+bool RemoteDeviceModel::addOrUpdateReader(const RemoteDeviceModelEntry& pModelEntry)
+{
+	if (!mAllRemoteReaders.contains(pModelEntry))
+	{
+		const int readerCount = mAllRemoteReaders.size();
+		beginInsertRows(index(readerCount, 0), readerCount, readerCount);
+		mAllRemoteReaders.append(pModelEntry);
+		endInsertRows();
+		return true;
+	}
+
+	const int readerIndex = mAllRemoteReaders.indexOf(pModelEntry);
+	mAllRemoteReaders[readerIndex] = pModelEntry;
+	const auto modelIndex = index(readerIndex, 0);
+	dataChanged(modelIndex, modelIndex);
+	return false;
 }
 
 
@@ -364,7 +497,7 @@ void RemoteDeviceModel::onUiShown()
 
 	qDebug() << "Starting Remote Device Detection";
 	Env::getSingleton<RemoteClient>()->startDetection();
-	onConstructReaderList();
+	onUpdateReaderList();
 }
 
 
@@ -377,7 +510,7 @@ void RemoteDeviceModel::onUiHidden()
 
 	qDebug() << "Stopping Remote Device Detection";
 	Env::getSingleton<RemoteClient>()->stopDetection();
-	onConstructReaderList();
+	onUpdateReaderList();
 }
 
 
@@ -392,84 +525,24 @@ void RemoteDeviceModel::onKnownRemoteReadersChanged()
 		mPairedReaders[reader.getFingerprint()] = reader;
 	}
 
-	onConstructReaderList();
+	onUpdateReaderList();
 }
 
 
-void RemoteDeviceModel::onConstructReaderList()
+void RemoteDeviceModel::onUpdateReaderList()
 {
-	beginResetModel();
-	mAllRemoteReaders.clear();
-
-	auto* const remoteClient = Env::getSingleton<RemoteClient>();
-
 	if (mShowPairedReaders)
 	{
-		const QVector<QSharedPointer<RemoteDeviceListEntry> >& announcingDevices = remoteClient->getAnnouncingRemoteDevices();
-
-		for (const auto& pairedReader : qAsConst(mPairedReaders))
-		{
-			bool networkVisible = false;
-			bool supported = true;
-			QSharedPointer<RemoteDeviceListEntry> deviceListEntry;
-
-			for (const auto& announcingDevice : announcingDevices)
-			{
-				if (announcingDevice && announcingDevice->getRemoteDeviceDescriptor().getIfdId() == pairedReader.getFingerprint())
-				{
-					networkVisible = true;
-					supported = announcingDevice->getRemoteDeviceDescriptor().isSupported();
-					deviceListEntry = announcingDevice;
-
-					break;
-				}
-			}
-
-			if (!networkVisible)
-			{
-				const QStringList& connectedDeviceIDs = remoteClient->getConnectedDeviceIDs();
-				for (const auto& id : connectedDeviceIDs)
-				{
-					if (id == pairedReader.getFingerprint())
-					{
-						networkVisible = true;
-						supported = true;
-
-						break;
-					}
-				}
-			}
-
-			auto newEntry = RemoteDeviceModelEntry(pairedReader.getName()
-					, pairedReader.getFingerprint()
-					, true
-					, networkVisible
-					, supported
-					, pairedReader.getLastConnected()
-					, deviceListEntry);
-			mAllRemoteReaders.append(newEntry);
-		}
+		updatePairedReaders();
 	}
 
 	if (mShowUnpairedReaders)
 	{
-		const QVector<QSharedPointer<RemoteDeviceListEntry> >& announcingRemoteDevices = remoteClient->getAnnouncingRemoteDevices();
-
-		for (auto deviceListEntry : announcingRemoteDevices)
-		{
-			if (!mPairedReaders.contains(deviceListEntry->getRemoteDeviceDescriptor().getIfdId()))
-			{
-				const RemoteDeviceDescriptor& descriptor = deviceListEntry->getRemoteDeviceDescriptor();
-				mAllRemoteReaders.append(RemoteDeviceModelEntry(descriptor.getIfdName(), descriptor.getIfdId(), deviceListEntry));
-			}
-		}
+		updateUnpairedReaders();
 	}
 
-	std::sort(mAllRemoteReaders.begin(), mAllRemoteReaders.end(), [](const RemoteDeviceModelEntry& pFirst, const RemoteDeviceModelEntry& pSecond){
-				return pFirst.getDeviceName() < pSecond.getDeviceName();
-			});
+	removeVanishedReaders();
 
-	endResetModel();
 	Q_EMIT fireModelChanged();
 }
 
@@ -492,6 +565,7 @@ void RemoteDeviceModel::forgetDevice(const QString& pDeviceId)
 {
 	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	settings.removeTrustedCertificate(pDeviceId);
+	onKnownRemoteReadersChanged();
 }
 
 
@@ -501,7 +575,7 @@ QString RemoteDeviceModel::getEmptyListDescriptionString() const
 	//: Is embedded in a sentence.
 	const QString& hyperlink = QStringLiteral("<a href=\"%1\">%2</a>").arg(url, tr("online help"));
 	//: INFO ALL_PLATFORMS No smartphone with enabled remote service was found on the same network.
-	return tr("No smartphone with enabled remote service found. See %1 for details of use.").arg(hyperlink);
+	return tr("No smartphone as card reader (Sac) available. Please make sure to activate the \"remote service\" on your smartphone and to connect both devices to the same WiFi. See %1 for details of use.").arg(hyperlink);
 }
 
 
@@ -509,5 +583,5 @@ void RemoteDeviceModel::onDeviceDisconnected(GlobalStatus::Code pCloseCode, cons
 {
 	Q_UNUSED(pCloseCode)
 	Q_UNUSED(pId)
-	onConstructReaderList();
+	onUpdateReaderList();
 }

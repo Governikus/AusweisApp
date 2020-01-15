@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DidAuthenticateEAC2Command.h"
@@ -102,7 +102,7 @@ void DidAuthenticateEAC2Command::internalExecute()
 	const auto& chipAuthenticationInfo = chipAuthenticationInfoList.at(0);
 	qCDebug(card) << "Chose ChipAuthenticationInfo(0): protocol" << chipAuthenticationInfo->getProtocol() << ", keyId" << chipAuthenticationInfo->getKeyId().toHex();
 
-	mReturnCode = performChipAuthentication(chipAuthenticationInfo, ephemeralPublicKey, mNonceAsHex, mAuthTokenAsHex);
+	mReturnCode = performChipAuthentication(chipAuthenticationInfo, ephemeralPublicKey);
 	if (CardReturnCode::OK == mReturnCode)
 	{
 		mCardConnectionWorker->stopSecureMessaging();
@@ -118,14 +118,13 @@ CardReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertifica
 		MSEBuilder mseBuilder(MSEBuilder::P1::SET_DST, MSEBuilder::P2::COMPUTE_DIGITAL_SIGNATURE);
 		mseBuilder.setPublicKey(car);
 
-		ResponseApdu mseResult;
 		qCDebug(card) << "Performing TA MSE:Set DST";
 		qCDebug(card) << "Sending CAR" << car;
-		CardReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), mseResult);
-		if (returnCode != CardReturnCode::OK)
+		auto [mseReturnCode, mseResult] = mCardConnectionWorker->transmit(mseBuilder.build());
+		if (mseReturnCode != CardReturnCode::OK)
 		{
 			qCWarning(card) << "TA MSE:Set DST failed.";
-			return returnCode;
+			return mseReturnCode;
 		}
 
 		if (mseResult.getReturnCode() != StatusCode::SUCCESS)
@@ -140,11 +139,10 @@ CardReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertifica
 
 		qCDebug(card) << "Performing TA PSO:Verify Certificate";
 		qCDebug(card) << "Sending certificate" << *cvCertificate;
-		ResponseApdu psoResult;
-		returnCode = mCardConnectionWorker->transmit(psoBuilder.build(), psoResult);
-		if (returnCode != CardReturnCode::OK)
+		auto [psoReturnCode, psoResult] = mCardConnectionWorker->transmit(psoBuilder.build());
+		if (psoReturnCode != CardReturnCode::OK)
 		{
-			return returnCode;
+			return psoReturnCode;
 		}
 
 		if (psoResult.getReturnCode() != StatusCode::SUCCESS)
@@ -171,30 +169,30 @@ CardReturnCode DidAuthenticateEAC2Command::performTerminalAuthentication(const Q
 	mseBuilder.setAuxiliaryData(auxiliaryData);
 	mseBuilder.setEphemeralPublicKey(compressedEphemeralPublicKey);
 
-	ResponseApdu mseResult;
 	qCDebug(card) << "Performing TA MSE:Set AT";
-	CardReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), mseResult);
-	if (returnCode != CardReturnCode::OK)
+	auto[mseReturnCode, mseResult] = mCardConnectionWorker->transmit(mseBuilder.build());
+	if (mseReturnCode != CardReturnCode::OK)
 	{
-		qCWarning(card) << "TA MSE:Set AT failed:" << CardReturnCodeUtil::toGlobalStatus(returnCode);
-		return returnCode;
+		qCWarning(card) << "TA MSE:Set AT failed:" << CardReturnCodeUtil::toGlobalStatus(mseReturnCode);
+		return mseReturnCode;
 	}
+
 	if (mseResult.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "TA MSE:Set AT failed:" << mseResult.getReturnCode();
 		return CardReturnCode::PROTOCOL_ERROR;
 	}
 
-	ResponseApdu eaResult;
 	EABuilder eaBuilder;
 	eaBuilder.setSignature(signature);
 	qCDebug(card) << "Performing TA External Authenticate";
-	returnCode = mCardConnectionWorker->transmit(eaBuilder.build(), eaResult);
-	if (returnCode != CardReturnCode::OK)
+	auto [eaReturnCode, eaResult] = mCardConnectionWorker->transmit(eaBuilder.build());
+	if (eaReturnCode != CardReturnCode::OK)
 	{
-		qCWarning(card) << "TA External Authenticate failed:" << CardReturnCodeUtil::toGlobalStatus(returnCode);
-		return returnCode;
+		qCWarning(card) << "TA External Authenticate failed:" << CardReturnCodeUtil::toGlobalStatus(eaReturnCode);
+		return eaReturnCode;
 	}
+
 	if (eaResult.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "TA External Authenticate failed:" << eaResult.getReturnCode();
@@ -206,21 +204,19 @@ CardReturnCode DidAuthenticateEAC2Command::performTerminalAuthentication(const Q
 
 
 CardReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPointer<const ChipAuthenticationInfo> pChipAuthInfo,
-		const QByteArray& ephemeralPublicKey,
-		QByteArray& pNonceAsHex,
-		QByteArray& pAuthTokenAsHex)
+		const QByteArray& ephemeralPublicKey)
 {
-	ResponseApdu mseResult;
 	MSEBuilder mseBuilder(MSEBuilder::P1::COMPUTE_DIGITAL_SIGNATURE, MSEBuilder::P2::SET_AT);
 	mseBuilder.setOid(pChipAuthInfo->getProtocolValueBytes());
 	mseBuilder.setPrivateKey(pChipAuthInfo->getKeyId());
 
 	qCDebug(card) << "Performing CA MSE:Set AT";
-	CardReturnCode returnCode = mCardConnectionWorker->transmit(mseBuilder.build(), mseResult);
-	if (returnCode != CardReturnCode::OK)
+	auto [mseReturnCode, mseResult] = mCardConnectionWorker->transmit(mseBuilder.build());
+	if (mseReturnCode != CardReturnCode::OK)
 	{
-		return returnCode;
+		return mseReturnCode;
 	}
+
 	if (mseResult.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "CA MSE:Set AT failed:" << mseResult.getReturnCode();
@@ -231,22 +227,21 @@ CardReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPoin
 	gaBuilder.setCaEphemeralPublicKey(ephemeralPublicKey);
 
 	qCDebug(card) << "Performing CA General Authenticate";
-	ResponseApdu responseApdu;
-	returnCode = mCardConnectionWorker->transmit(gaBuilder.build(), responseApdu);
-	if (returnCode != CardReturnCode::OK)
+	auto [gaReturnCode, gaGenericResponse] = mCardConnectionWorker->transmit(gaBuilder.build());
+	if (gaReturnCode != CardReturnCode::OK)
 	{
-		return returnCode;
+		return gaReturnCode;
 	}
 
-	if (responseApdu.getReturnCode() != StatusCode::SUCCESS)
+	if (gaGenericResponse.getReturnCode() != StatusCode::SUCCESS)
 	{
-		qCWarning(card) << "CA General Authenticate failed:" << responseApdu.getReturnCode();
+		qCWarning(card) << "CA General Authenticate failed:" << gaGenericResponse.getReturnCode();
 		return CardReturnCode::PROTOCOL_ERROR;
 	}
 
-	GAChipAuthenticationResponse gaResponse(responseApdu);
-	pNonceAsHex += gaResponse.getNonce().toHex();
-	pAuthTokenAsHex += gaResponse.getAuthenticationToken().toHex();
+	const GAChipAuthenticationResponse gaResponse(gaGenericResponse);
+	mNonceAsHex += gaResponse.getNonce().toHex();
+	mAuthTokenAsHex += gaResponse.getAuthenticationToken().toHex();
 
 	return CardReturnCode::OK;
 }

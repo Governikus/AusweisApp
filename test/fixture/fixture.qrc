@@ -86,9 +86,6 @@
         <file>paos/DIDAuthenticateResponse2.xml</file>
         <file>logfiles/empty.txt</file>
         <file>logfiles/size1.txt</file>
-        <file>logfiles/size78.txt</file>
-        <file>logfiles/size80.txt</file>
-        <file>logfiles/size82.txt</file>
-        <file>logfiles/size160.txt</file>
+        <file>logfiles/size42.txt</file>
         </qresource>
 </RCC>

@@ -6,9 +6,9 @@
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Fragment>
-		<!-- ######################################################## -->
-		<!-- Create registry entry and add 127.0.0.1 to trusted sites -->
-		<!-- ######################################################## -->
+		<!-- ########################################################## -->
+		<!-- Add/remove rule for outgoing data to/from Windows Firewall -->
+		<!-- ########################################################## -->
 		<Property Id="SYSTEMSETTINGS" Value="true"/>
 		<DirectoryRef Id="TARGETDIR">
 			<Component Id="OutgoingRuleWindowsFirewall" Guid="*">
@@ -28,7 +28,7 @@
 				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall add rule name=AusweisApp2-Firewall-Rule-SaC-In [FirewallSacParams]"
 				Execute="commit"
 				Impersonate="no"
-				Return="asyncWait" />
+				Return="ignore" />
 
 		<InstallExecuteSequence>
 			<Custom Action="AddListeningPortWindowsFirewallSaC" Before="InstallFinalize">(SYSTEMSETTINGS = "true") AND NOT Installed</Custom>
@@ -39,10 +39,10 @@
 				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall delete rule name=AusweisApp2-Firewall-Rule-SaC-In"
 				Execute="commit"
 				Impersonate="no"
-				Return="asyncWait" />
+				Return="ignore" />
 
 		<InstallExecuteSequence>
-			<Custom Action="DeleteListeningPortWindowsFirewallSaC" Before="InstallFinalize">Installed AND NOT REINSTALL</Custom>
+			<Custom Action="DeleteListeningPortWindowsFirewallSaC" Before="InstallFinalize">REMOVE</Custom>
 		</InstallExecuteSequence>
 
 		<!-- ####################### -->

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppUpdater.h"
@@ -126,7 +126,7 @@ void AppUpdater::onUpdateDownloadFailed(const QUrl& pUpdateUrl, GlobalStatus::Co
 	}
 	if (mAppUpdateData.isValid() && pUpdateUrl == mAppUpdateData.getNotesUrl())
 	{
-		qCDebug(appupdate) << "Release Notes Download failed:" << GlobalStatus(pErrorCode).toErrorDescription();
+		qCDebug(appupdate) << "Release notes download failed:" << GlobalStatus(pErrorCode).toErrorDescription();
 		Q_EMIT fireAppUpdateCheckFinished(true, GlobalStatus::Code::No_Error);
 		clearDownloaderConnection();
 	}

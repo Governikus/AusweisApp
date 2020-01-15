@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -36,12 +36,12 @@ Item {
 
 		spacing: Constants.groupbox_spacing
 
-		Image {
+		TintableIcon {
 			id: image
 
 			sourceSize.height: ApplicationModel.scaleFactor * 40
 			sourceSize.width: ApplicationModel.scaleFactor * 40
-			fillMode: Image.PreserveAspectFit
+			tintColor: text.textStyle.textColor
 		}
 
 		GText {
@@ -50,13 +50,10 @@ Item {
 			Layout.fillWidth: true
 
 			linkColor: color
-
-			onLinkActivated: Qt.openUrlExternally(link)
 		}
 	}
 
 	FocusFrame {
-		dynamic: false
 		framee: layout
 	}
 }

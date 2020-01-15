@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref DiagnosisModel
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisModel.h"
@@ -90,17 +90,18 @@ class test_DiagnosisModel
 			QCOMPARE(mModel->mSections.at(2).second, mModel->mCombinedNetworkSection);
 			QCOMPARE(mModel->mSections.at(3).second, mModel->mCombinedAntivirusFirewallSection);
 
-			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(0)->mTitle, QString("Card reader"));
-			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(1)->mContent, QString("Diagnosis is running..."));
-			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(2)->mTitle, QString("Paired remote devices"));
-			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(4)->mTitle, QString("PC/SC information"));
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(0)->mTitle, QString("Paired smartphones"));
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(1)->mContent, QString("No devices paired."));
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(2)->mTitle, QString("Card reader"));
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(3)->mContent, QString("Diagnosis is running..."));
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(4)->mTitle, QString("PC/SC driver information"));
 			QCOMPARE(mModel->mSections.at(1).second->mContentItems.at(5)->mContent, QString("Diagnosis is running..."));
-			QCOMPARE(mModel->mSections.at(1).second->mContentItems.mid(0, 2), mModel->mCardReaderSection->mContentItems);
-			QCOMPARE(mModel->mSections.at(1).second->mContentItems.mid(2, 2), mModel->mRemoteDeviceSection->mContentItems);
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.mid(0, 2), mModel->mRemoteDeviceSection->mContentItems);
+			QCOMPARE(mModel->mSections.at(1).second->mContentItems.mid(2, 2), mModel->mCardReaderSection->mContentItems);
 			QCOMPARE(mModel->mSections.at(1).second->mContentItems.mid(4, 2), mModel->mPcscSection->mContentItems);
 
 			QCOMPARE(true, verifyOrder(mModel->mSections.at(1).second,
-					{mModel->mCardReaderSection, mModel->mRemoteDeviceSection, mModel->mPcscSection}));
+					{mModel->mRemoteDeviceSection, mModel->mCardReaderSection, mModel->mPcscSection}));
 			QCOMPARE(true, verifyOrder(mModel->mSections.at(2).second,
 					{mModel->mNetworkConnectionSection, mModel->mNetworkInterfaceSection}));
 			QCOMPARE(true, verifyOrder(mModel->mSections.at(3).second,
@@ -135,8 +136,8 @@ class test_DiagnosisModel
 			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(3)->mContent, QString("Type: Standard / comfort card reader\nCard: unknown type"));
 
 			QCOMPARE(true, verifyOrder(mModel->mCombinedReaderSection->mContentItems, {
-						mModel->mCardReaderSection->mContentItems,
 						mModel->mRemoteDeviceSection->mContentItems,
+						mModel->mCardReaderSection->mContentItems,
 						mModel->mPcscSection->mContentItems}));
 		}
 
@@ -145,18 +146,18 @@ class test_DiagnosisModel
 		{
 			mModel->onRemoteInfosChanged();
 			QCOMPARE(mModel->mRemoteDeviceSection->mContentItems.size(), 2);
-			QCOMPARE(mModel->mRemoteDeviceSection->mContentItems.at(0)->mTitle, QString("Paired remote devices"));
+			QCOMPARE(mModel->mRemoteDeviceSection->mContentItems.at(0)->mTitle, QString("Paired smartphones"));
 			QCOMPARE(mModel->mRemoteDeviceSection->mContentItems.at(1)->mContent, QString("No devices paired."));
 			QCOMPARE(true, verifyOrder(mModel->mCombinedReaderSection->mContentItems, {
-						mModel->mCardReaderSection->mContentItems,
 						mModel->mRemoteDeviceSection->mContentItems,
+						mModel->mCardReaderSection->mContentItems,
 						mModel->mPcscSection->mContentItems}));
 		}
 
 
 		void test_OnPcscInfoChanged()
 		{
-			const QString version("version");
+			const QString version("Version");
 			const DiagnosisContext::ComponentInfo component1(QString("/path/to/component1"), QString("description1"), QString("version1"), QString("vendor1"));
 			const DiagnosisContext::ComponentInfo component2(QString("/path/to/component2"), QString("description2"), QString("version2"), QString("vendor2"));
 			const DiagnosisContext::ComponentInfo driver1(QString("/path/to/driver1"), QString("description1"), QString("version1"), QString("vendor1"));
@@ -169,14 +170,14 @@ class test_DiagnosisModel
 			QCOMPARE(mModel->mPcscSection->mContentItems.size(), 4);
 
 			QCOMPARE(mModel->mPcscSection->mContentItems.at(0)->mTitle, QString("PC/SC information"));
-			QCOMPARE(mModel->mPcscSection->mContentItems.at(1)->mContent, QString("Version: version"));
+			QCOMPARE(mModel->mPcscSection->mContentItems.at(1)->mContent, QString("Version"));
 			QCOMPARE(mModel->mPcscSection->mContentItems.at(2)->mTitle, QString("Components"));
 			QCOMPARE(mModel->mPcscSection->mContentItems.at(2)->mContent, QString("description1\nVendor: vendor1\nVersion: version1\nFile path: /path/to/component1\ndescription2\nVendor: vendor2\nVersion: version2\nFile path: /path/to/component2"));
 			QCOMPARE(mModel->mPcscSection->mContentItems.at(3)->mTitle, QString("Driver"));
 			QCOMPARE(mModel->mPcscSection->mContentItems.at(3)->mContent, QString("description1\nVendor: vendor1\nVersion: version1\nFile path: /path/to/driver1\ndescription2\nVendor: vendor2\nVersion: version2\nFile path: /path/to/driver2"));
 			QCOMPARE(true, verifyOrder(mModel->mCombinedReaderSection->mContentItems, {
-						mModel->mCardReaderSection->mContentItems,
 						mModel->mRemoteDeviceSection->mContentItems,
+						mModel->mCardReaderSection->mContentItems,
 						mModel->mPcscSection->mContentItems}));
 		}
 
@@ -212,7 +213,7 @@ class test_DiagnosisModel
 			QCOMPARE(mModel->mNetworkInterfaceSection->mContentItems.size(), 3);
 			for (const auto& item : qAsConst(mModel->mNetworkInterfaceSection->mContentItems))
 			{
-				QCOMPARE(item->mTitle, QString("Interface: \"\""));
+				QCOMPARE(item->mTitle, QString(""));
 				QCOMPARE(item->mContent, QString("Hardware address: <Not set>\nNo IP addresses assigned"));
 			}
 

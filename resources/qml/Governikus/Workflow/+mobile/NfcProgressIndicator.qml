@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -51,7 +51,12 @@ Item {
 		State {
 			name: "on"
 			PropertyChanges { target: grayLevel; visible: false }
-			PropertyChanges { target: card; x: (baseItem.width + phone.width - card.width)/2; y: baseItem.height / 4; rotation: 0 }
+			PropertyChanges {
+				target: card
+				x: (baseItem.width + (Constants.is_layout_ios ? 0 : phone.width) - card.width) / 2
+				y: (Constants.is_layout_ios ? 0 : baseItem.height / 4)
+				rotation: (Constants.is_layout_ios ? 0 : 62)
+			}
 			PropertyChanges { target: shaking; running: true }
 		}
 	]
@@ -70,7 +75,7 @@ Item {
 
 	Image {
 		id: card
-		source: "qrc:///images/ausweis.png"
+		source: "qrc:///images/ausweis.svg"
 		height: phone.height
 		width: height
 		fillMode: Image.PreserveAspectFit

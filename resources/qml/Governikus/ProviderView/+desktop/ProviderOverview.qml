@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -84,7 +84,7 @@ SectionPage {
 				height: tabbedPane.availableHeight
 				width: parent.width
 
-				GridView {
+				GGridView {
 					id: gridView
 
 					property int columns: Math.floor(width / (ApplicationModel.scaleFactor * 400))
@@ -108,13 +108,10 @@ SectionPage {
 					highlightFollowsCurrentItem: true
 					highlight: null
 					activeFocusOnTab: true
+					scrollBarTopPadding: spacing / 2
+					scrollBarBottomPadding: spacing / 2
 
 					model: ProviderCategoryFilterModel
-
-					boundsBehavior: Flickable.StopAtBounds
-					ScrollBar.vertical: ScrollBar {
-						policy: size === 1.0 ? ScrollBar.AlwaysOff : ScrollBar.AlwaysOn
-					}
 
 					delegate: Item {
 						width: gridView.cellWidth
@@ -124,7 +121,7 @@ SectionPage {
 							anchors.fill: parent
 							anchors.margins: Math.floor(gridView.spacing / 2)
 
-							focus: gridView.currentIndex === index
+							focus: gridView.activeFocus && gridView.currentIndex === index
 							providerModelItem: model
 
 							onShowDetailView: baseItem.showDetailView(pModelItem)
@@ -133,7 +130,10 @@ SectionPage {
 
 					Connections {
 						target: ProviderCategoryFilterModel
-						onFireCriteriaChanged: gridView.contentY = gridView.originY
+						onFireCriteriaChanged: {
+							gridView.currentIndex = 0
+							gridView.contentY = gridView.originY
+						}
 					}
 				}
 
@@ -155,16 +155,19 @@ SectionPage {
 
 					activeFocusOnTab: true
 
-					onActiveFocusChanged: {
-						if (activeFocus) {
-							gridView.positionViewAtIndex(index, GridView.Center)
-						}
-					}
-
 					onClicked: {
 						ProviderCategoryFilterModel.setCategorySelection("all")
 						tabbedPane.currentIndex = 0
 					}
+				}
+
+				GText {
+					visible: ProviderCategoryFilterModel.rowCount === 0 && !additionalResults.visible
+
+					anchors.centerIn: parent
+					//: LABEL DESKTOP_QML The text entered into the provider search field results in no matches
+					text: qsTr("No results matching your search query found") + SettingsModel.translationTrigger
+					textStyle: Style.text.normal
 				}
 			}
 		}

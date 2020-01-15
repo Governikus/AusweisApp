@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,7 +27,7 @@ class EcdhKeyAgreement
 		QSharedPointer<DomainParameterMapping<EC_GROUP> > mMapping;
 		QSharedPointer<EC_GROUP> mEphemeralCurve;
 		QSharedPointer<EC_POINT> mTerminalPublicKey;
-		QSharedPointer<EC_POINT> mCardPublicKey;
+		QSharedPointer<const EC_POINT> mCardPublicKey;
 
 		QPair<CardReturnCode, QSharedPointer<EC_GROUP> > determineEphemeralDomainParameters(const QByteArray& pNonce);
 		QPair<CardReturnCode, QSharedPointer<EC_POINT> > performKeyExchange(const QSharedPointer<const EC_GROUP>& pCurve);

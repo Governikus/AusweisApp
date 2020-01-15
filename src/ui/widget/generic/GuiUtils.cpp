@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GuiUtils.h"
@@ -29,8 +29,7 @@ bool GuiUtils::showPinCanPukErrorDialog(CardReturnCode pReturnCode, bool pCanAll
 			else
 			{
 				text = tr("The given card access number (CAN) is not correct. You have one more try to enter the correct PIN."
-						  " Please mind that you have to acknowledge this last try with your card access"
-						  " number (CAN).");
+						  " Please mind that you have to acknowledge this last try with your card access number (CAN).");
 			}
 			break;
 
@@ -113,7 +112,7 @@ bool GuiUtils::showPinUnlockedDialog(QWidget* pParent)
 {
 	QMessageBox messageBox(pParent);
 
-	QString title = tr("PIN successfully unblocked");
+	QString title = tr("You have successfully unblocked your PIN");
 	QString text = tr("Your ID card is unblocked. You now have three more tries to change your PIN");
 	messageBox.setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + title);
 	messageBox.setWindowModality(Qt::WindowModal);

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -23,16 +23,16 @@ Column {
 	visible: count > 0
 	spacing: Constants.pane_spacing
 
-	PaneTitle {
+	GText {
 		id: dataTitle
 
 		activeFocusOnTab: true
-		Accessible.role: Accessible.Heading
 		Accessible.name: dataTitle.text
 
+		textStyle: Style.text.header_accent
+
 		FocusFrame {
-			dynamic: false
-			border.color: Constants.black
+			borderColor: Style.color.focus_indicator
 		}
 	}
 
@@ -48,20 +48,16 @@ Column {
 			anchors.verticalCenter: parent.verticalCenter
 
 			activeFocusOnTab: true
-			Accessible.role: Accessible.Paragraph
 			Accessible.name: noDataText.text
 
 			//: LABEL DESKTOP_QML
 			text: qsTr("No data requested") + SettingsModel.translationTrigger
-			textStyle: Style.text.normal_inverse
+			textStyle: Style.text.normal
 		}
 
-		Rectangle {
-			height: Math.max(ApplicationModel.scaleFactor * 1, 1)
+		GSeparator {
 			width: parent.width
 			anchors.bottom: parent.bottom
-
-			color: Constants.grey
 		}
 	}
 
@@ -87,8 +83,12 @@ Column {
 				height: dataText.height * 1.5
 
 				activeFocusOnTab: true
-				Accessible.role: optional ? Accessible.CheckBox : Accessible.Paragraph
-				Accessible.name: dataText.text + (optional ? ": " + (selected ? qsTr("selected") : qsTr("not selected")) : "") + SettingsModel.translationTrigger
+				Accessible.role: optional ? Accessible.CheckBox : Accessible.StaticText
+				Accessible.name: dataText.text + (optional ? ": " + (
+										 selected ?
+										 qsTr("selected") :
+										 qsTr("not selected")
+								 ) : "") + SettingsModel.translationTrigger
 
 				Keys.onSpacePressed: if (optional) selected = !selected
 
@@ -101,22 +101,18 @@ Column {
 					anchors.rightMargin: checkBox.visible ? checkBox.width + Constants.pane_spacing : 0
 
 					text: name
-					textStyle: Style.text.normal_inverse
+					textStyle: writeRight ? Style.text.normal_warning : Style.text.normal
 
 					FocusFrame {
 						scope: rightItem
 						marginFactor: 0.7
-						border.color: Constants.black
-						dynamic: false
+						borderColor: Style.color.focus_indicator
 					}
 				}
 
-				Rectangle {
-					height: Math.max(ApplicationModel.scaleFactor * 1, 1)
+				GSeparator {
 					width: parent.width
 					anchors.bottom: parent.bottom
-
-					color: Constants.grey
 				}
 
 				GCheckBox {

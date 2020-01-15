@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the history entries.
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HistoryModel.h"
@@ -83,6 +83,7 @@ void HistoryModel::onHistoryEntriesChanged()
 	beginResetModel();
 	updateConnections();
 	endResetModel();
+	Q_EMIT fireEmptyChanged(isEmpty());
 }
 
 
@@ -257,6 +258,13 @@ void HistoryModel::setEnabled(bool pEnabled)
 }
 
 
+bool HistoryModel::isEmpty() const
+{
+	const auto& historyEntries = getHistorySettings().getHistoryInfos();
+	return historyEntries.isEmpty();
+}
+
+
 QHash<int, QByteArray> HistoryModel::roleNames() const
 {
 	QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
@@ -286,7 +294,7 @@ QHash<int, QByteArray> HistoryModel::roleNames() const
 
 bool HistoryModel::removeRows(int pRow, int pCount, const QModelIndex& pParent)
 {
-	if (pCount <= 0)
+	if (pCount <= 0 || pRow < 0)
 	{
 		return false;
 	}
@@ -331,3 +339,16 @@ void HistoryModel::exportHistory(const QUrl& pFilename) const
 	PdfExporter exporter(pFilename.toLocalFile());
 	exporter.exportHistory();
 }
+
+
+#ifndef QT_NO_DEBUG
+void HistoryModel::createDummyEntry()
+{
+	getHistorySettings().addHistoryInfo(HistoryInfo(
+			QStringLiteral("Dummy Subject"), QStringLiteral("Dummy Subject URL"), QStringLiteral("Dummy Usage"),
+			QDateTime::currentDateTime(), QStringLiteral("Dummy Term Of Usage"),
+			{QStringLiteral("Dummy Data 1"), QStringLiteral("Dummy Data 2")}));
+}
+
+
+#endif

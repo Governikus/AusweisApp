@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IosReaderDelegateImpl.h"
@@ -25,7 +25,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 }
 
 
-- (id) init {
+- (instancetype) init {
 	self = [super init];
 	return self;
 }
@@ -43,7 +43,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 		self.mSession = [[NFCTagReaderSession alloc] initWithPollingOption: NFCPollingISO14443 delegate: self queue: nil];
 		if (self.mSession)
 		{
-			[self.mSession setAlertMessage: pMessage.toNSString()];
+			self.mSession.alertMessage = pMessage.toNSString();
 			[self.mSession beginSession];
 		}
 	}
@@ -61,7 +61,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 		}
 		else
 		{
-			[self.mSession setAlertMessage: pMessage.toNSString()];
+			self.mSession.alertMessage = pMessage.toNSString();
 			[self.mSession invalidateSession];
 		}
 		self.mSession = nil;

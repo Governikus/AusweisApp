@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -22,6 +22,12 @@ StateEstablishPaceChannel::StateEstablishPaceChannel(const QSharedPointer<Workfl
 
 void StateEstablishPaceChannel::run()
 {
+	if (getContext()->getStatus().isError())
+	{
+		Q_EMIT fireAbort();
+		return;
+	}
+
 	auto cardConnection = getContext()->getCardConnection();
 	if (!cardConnection)
 	{
@@ -45,9 +51,9 @@ void StateEstablishPaceChannel::run()
 			// in other scenarios, e.g. for changing the PIN, the data
 			// is not needed
 			Q_ASSERT(authContext->getDidAuthenticateEac1());
-			Q_ASSERT(!authContext->encodeEffectiveChat().isEmpty());
 			certificateDescription = authContext->getDidAuthenticateEac1()->getCertificateDescriptionAsBinary();
 			effectiveChat = authContext->encodeEffectiveChat();
+			Q_ASSERT(!effectiveChat.isEmpty());
 		}
 	}
 
@@ -77,7 +83,7 @@ void StateEstablishPaceChannel::run()
 		qCCritical(statemachine) << "We hit an invalid state! PACE password is empty for basic reader.";
 		Q_ASSERT(false);
 
-		qCDebug(statemachine) << "Reseting all PACE passwords.";
+		qCDebug(statemachine) << "Resetting all PACE passwords.";
 		getContext()->resetPacePasswords();
 
 		abort();
@@ -147,12 +153,12 @@ void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCar
 
 	if (mPasswordId == PacePasswordId::PACE_PIN && returnCode == CardReturnCode::OK)
 	{
-		qCDebug(statemachine) << "PACE PIN succeeded. Setting expected retry counter to:" << 3;
+		qCDebug(statemachine) << "PACE_PIN succeeded. Setting expected retry counter to:" << 3;
 		getContext()->setExpectedRetryCounter(3);
 	}
 	else if (mPasswordId == PacePasswordId::PACE_PUK && returnCode == CardReturnCode::OK)
 	{
-		qCDebug(statemachine) << "PACE PUK succeeded. Resetting PACE passwords and setting expected retry counter to:" << -1;
+		qCDebug(statemachine) << "PACE_PUK succeeded. Resetting PACE passwords and setting expected retry counter to:" << -1;
 		getContext()->resetPacePasswords();
 		getContext()->setExpectedRetryCounter(-1);
 	}
@@ -170,7 +176,7 @@ void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCar
 			{
 				getContext()->setLastPaceResult(CardReturnCode::OK_PUK);
 
-				Q_EMIT firePacePukEstablished();
+				Q_EMIT firePaceChannelInoperative();
 				return;
 			}
 
@@ -202,7 +208,7 @@ void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCar
 					paceResult = CardReturnCode::INVALID_PIN;
 			}
 			getContext()->setLastPaceResult(paceResult);
-			Q_EMIT fireAbort();
+			Q_EMIT firePaceChannelInoperative();
 			return;
 		}
 

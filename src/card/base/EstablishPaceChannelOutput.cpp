@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EstablishPaceChannelOutput.h"
@@ -343,18 +343,18 @@ CardReturnCode EstablishPaceChannelOutput::parseReturnCode(quint32 pPaceReturnCo
 
 	// Error codes wrapping error codes from the card. The format is 0xXXXXYYZZ, where XXXX identifies
 	// the command/step, and YY and ZZ encode the SW1 and SW2 from the response APDU from the card.
-	switch (pPaceReturnCode & 0xffff0000)
+	switch (pPaceReturnCode & 0xffff0000U)
 	{
-		case 0xf0000000: // Select EF.CardAccess
-		case 0xf0010000: // Read Binary EF.CardAccess
-		case 0xf0020000: // MSE: Set AT
+		case 0xf0000000U: // Select EF.CardAccess
+		case 0xf0010000U: // Read Binary EF.CardAccess
+		case 0xf0020000U: // MSE: Set AT
 			break;
 
-		case 0xf0030000: // General Authenticate Step 1
-		case 0xf0040000: // General Authenticate Step 2
-		case 0xf0050000: // General Authenticate Step 3
-		case 0xf0060000: // General Authenticate Step 4
-			if ((pPaceReturnCode & 0xff00) == 0x6300)
+		case 0xf0030000U: // General Authenticate Step 1
+		case 0xf0040000U: // General Authenticate Step 2
+		case 0xf0050000U: // General Authenticate Step 3
+		case 0xf0060000U: // General Authenticate Step 4
+			if ((pPaceReturnCode & 0xff00U) == 0x6300U)
 			{
 				// SW1 == 0x63 is a warning, which includes incorrectly entered CAN/PIN. For the PIN
 				// we get SW2 == 0xcX, with X being the number of remaining retries.

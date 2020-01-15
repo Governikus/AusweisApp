@@ -132,7 +132,7 @@
        <item>
         <widget class="QLabel" name="lblReleaseNotes">
          <property name="text">
-          <string notr="true">$Release Notes</string>
+          <string notr="true">$Release notes</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -163,12 +163,12 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Developer mode:</string>
+            <string>Developer options:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="chkbDeveloperMode">
+          <widget class="QCheckBox" name="chkbDeveloperOptions">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -176,21 +176,11 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>use</string>
+            <string>show in the settings</string>
            </property>
           </widget>
          </item>
         </layout>
-       </item>
-       <item>
-        <widget class="QLabel" name="lblDeveloperModeWarning">
-         <property name="text">
-          <string notr="true">$developerWarning</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
        </item>
       </layout>
      </item>

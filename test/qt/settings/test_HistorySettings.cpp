@@ -4,7 +4,7 @@
  * All tests end with _QTEST to be able to identify them later.
  * All original history entry from AusweisApp2 do not have this.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HistorySettings.h"

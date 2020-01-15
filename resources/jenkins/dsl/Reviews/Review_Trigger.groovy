@@ -60,7 +60,7 @@ j.with
 			phaseJob(getName('Docs'))
 		}
 
-		phase('Packages')
+		phase('Packages', 'UNSTABLE')
 		{
 			phaseJob(getName('Android_AAR'))
 

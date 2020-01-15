@@ -2,7 +2,7 @@
  * \brief Helper class for mapping object name from f1 widget to help file.
  * \see AppQtMainWidget::onContentActionClicked()
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,14 +21,16 @@ class HelpAction
 	private:
 		friend class ::test_HelpAction;
 
-		static const QMap<QString, QString> mHelpMapping;
+		static const QMap<QString, QString> mWidgetHelpMapping;
+		static const QMap<QString, QString> mQmlHelpMapping;
+		static const QString mBaseUrl;
 
 		Q_DISABLE_COPY(HelpAction)
 
 		QLocale::Language getExistingHelpLanguage() const;
-		QString getContextMapping(const QString& pObjectName) const;
+		QString getContextMapping(const QString& pObjectName, bool pWidgetUiHelp = true) const;
 		QString getHelpPath(QLocale::Language pLang) const;
-		QString getHelpUrl(const QString& pObjectName) const;
+		QString getHelpUrl(const QString& pObjectName, bool pWidgetUiHelp = true) const;
 
 	protected:
 		static HelpAction& getInstance();
@@ -36,8 +38,8 @@ class HelpAction
 		~HelpAction() = default;
 
 	public:
-		static QString getOnlineUrl(const QString& pObjectName = QString());
-		static void openContextHelp(const QString& pObjectName = QStringLiteral("applicationPage"));
+		static QString getOnlineUrl(const QString& pObjectName = QString(), bool pWidgetUiHelp = true);
+		static void openContextHelp(const QString& pObjectName = QStringLiteral("applicationPage"), bool pWidgetUiHelp = true);
 };
 
 } // namespace governikus

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogFilesDialog.h"
@@ -139,11 +139,11 @@ void LogFilesDialog::onCurrentIndexChanged(int pIndex)
 void LogFilesDialog::onDeleteButtonClicked()
 {
 	QMessageBox box(this);
-	box.setWindowTitle(tr("Delete log files"));
+	box.setWindowTitle(tr("Delete logfiles"));
 	box.setWindowModality(Qt::ApplicationModal);
 	box.setIcon(QMessageBox::Question);
 	box.setWindowFlags(box.windowFlags() & ~Qt::WindowContextHelpButtonHint);
-	box.setText(tr("Do you really want to delete all old log files?"));
+	box.setText(tr("Do you really want to delete all old logfiles?"));
 	box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 	box.button(QMessageBox::Yes)->setFocus();
 

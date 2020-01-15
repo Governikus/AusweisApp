@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -12,9 +12,6 @@ Row {
 
 	property string sectionName
 	property string iconPath
-
-	Accessible.role: Accessible.PageTab
-	Accessible.name: sectionName
 
 	spacing: Constants.groupbox_spacing
 
@@ -34,7 +31,7 @@ Row {
 		anchors.verticalCenter: parent.verticalCenter
 
 		text: sectionName
-		textStyle: Style.text.header_inverse
+		textStyle: Style.text.header
 		maximumLineCount: 1
 		elide: Text.ElideRight
 	}

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/remote_service/StateStartRemoteService.h"
@@ -21,7 +21,7 @@ class test_StateStartRemoteService
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			Env::setCreator<RemoteServer*>(std::function<RemoteServer*()>([&] {
+			Env::setCreator<RemoteServer*>(std::function<RemoteServer* ()>([&] {
 						return new MockRemoteServer();
 					}));
 		}

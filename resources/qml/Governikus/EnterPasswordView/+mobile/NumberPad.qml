@@ -1,9 +1,9 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.Type.SettingsModel 1.0
@@ -18,6 +18,18 @@ GridLayout {
 	signal deletePressed()
 	signal submitPressed()
 
+	QtObject {
+		id: d
+
+		readonly property var numbers: {
+			var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+			if (visible && SettingsModel.shuffleScreenKeyboard) {
+				Utils.shuffle(numbers)
+			}
+			return numbers
+		}
+	}
+
 	columns: 3
 	columnSpacing: 10
 	rowSpacing: columnSpacing
@@ -26,44 +38,43 @@ GridLayout {
 	Layout.fillHeight: false
 	Layout.fillWidth: false
 
-	NumberPadButton { text: "1"; onClicked: baseItem.digitPressed("1"); Layout.fillHeight: true; Layout.fillWidth: true }
-	NumberPadButton { text: "2"; onClicked: baseItem.digitPressed("2"); Layout.fillHeight: true; Layout.fillWidth: true }
-	NumberPadButton { text: "3"; onClicked: baseItem.digitPressed("3"); Layout.fillHeight: true; Layout.fillWidth: true }
-	NumberPadButton { text: "4"; onClicked: baseItem.digitPressed("4"); Layout.fillHeight: true; Layout.fillWidth: true }
-	NumberPadButton { text: "5"; onClicked: baseItem.digitPressed("5"); Layout.fillHeight: true; Layout.fillWidth: true }
-	NumberPadButton { text: "6"; onClicked: baseItem.digitPressed("6"); Layout.fillHeight: true; Layout.fillWidth: true }
-	NumberPadButton { text: "7"; onClicked: baseItem.digitPressed("7"); Layout.fillHeight: true; Layout.fillWidth: true }
-	NumberPadButton { text: "8"; onClicked: baseItem.digitPressed("8"); Layout.fillHeight: true; Layout.fillWidth: true }
-	NumberPadButton { text: "9"; onClicked: baseItem.digitPressed("9"); Layout.fillHeight: true; Layout.fillWidth: true }
+	Repeater {
+		id: numberRepeater
+
+		model: 9
+
+		NumberPadButton {
+			text: d.numbers[index];
+			visualPrivacy: SettingsModel.visualPrivacy
+
+			onClicked: baseItem.digitPressed(text)
+		}
+	}
+
 	NumberPadButton {
-		visible: baseItem.deleteEnabled
-		Layout.fillHeight: true
-		Layout.fillWidth: true
+		enabled: baseItem.deleteEnabled
 
-		Accessible.name: qsTr("Delete last digit") + SettingsModel.translationTrigger
-
-		source: "qrc:///images/delete.svg"
+		text: qsTr("Delete last digit") + SettingsModel.translationTrigger
+		icon.source: "qrc:///images/delete.svg"
 
 		onClicked: baseItem.deletePressed()
 	}
+
 	NumberPadButton {
-		Layout.fillHeight: true
-		Layout.fillWidth: true
 		Layout.column: 1
 		Layout.row: 3
 
-		text: "0"
+		text: d.numbers[9]
+		visualPrivacy: SettingsModel.visualPrivacy
 
-		onClicked: baseItem.digitPressed("0")
+		onClicked: baseItem.digitPressed(text)
 	}
+
 	NumberPadButton {
-		visible: baseItem.submitEnabled
-		Layout.fillHeight: true
-		Layout.fillWidth: true
+		enabled: baseItem.submitEnabled
 
-		Accessible.name: qsTr("Submit") + SettingsModel.translationTrigger
-
-		source: "qrc:///images/submit.svg"
+		text: qsTr("Submit") + SettingsModel.translationTrigger
+		icon.source: "qrc:///images/submit.svg"
 
 		onClicked: baseItem.submitPressed()
 	}

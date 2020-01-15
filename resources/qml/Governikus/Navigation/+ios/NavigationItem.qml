@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -15,7 +15,7 @@ Item {
 	property var iconPadding: 4
 	signal clicked
 
-	Accessible.role: Accessible.Button
+	Accessible.role: Accessible.PageTab
 	Accessible.name: text
 	Accessible.onPressAction: clicked()
 
@@ -46,8 +46,8 @@ Item {
 		onClicked: parent.clicked()
 	}
 
-	layer.enabled: true
+	layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
 	layer.effect: ColorOverlay {
-		color: selected ? Style.color.accent : Constants.grey
+		color: selected ? Style.text.hint_accent.textColor : Style.text.hint_secondary.textColor
 	}
 }

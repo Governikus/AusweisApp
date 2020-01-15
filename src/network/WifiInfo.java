@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -17,7 +17,7 @@ public final class WifiInfo
 	public static boolean wifiEnabled(Context pContext)
 	{
 		WifiManager wifi;
-		wifi = (WifiManager) pContext.getSystemService(Context.WIFI_SERVICE);
+		wifi = (WifiManager) pContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
 		switch (wifi.getWifiState())
 		{
@@ -28,16 +28,6 @@ public final class WifiInfo
 			default:
 				return false;
 		}
-	}
-
-
-	public static boolean enableWifi(Context pContext)
-	{
-		WifiManager wifi;
-		wifi = (WifiManager) pContext.getSystemService(Context.WIFI_SERVICE);
-
-		wifi.setWifiEnabled(true);
-		return true;
 	}
 
 

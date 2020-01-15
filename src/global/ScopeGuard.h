@@ -1,7 +1,7 @@
 /*!
  * \brief Calls a lambda once the object is destroyed
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,12 +21,12 @@ class [[deprecated ("Use qScopeGuard")]] ScopeGuard
 {
 	private:
 		friend class ::test_ScopeGuard;
-		friend ScopeGuard qScopeGuard(const std::function<void()> &pFunc);
+		friend ScopeGuard qScopeGuard(const std::function<void()>& pFunc);
 
 		const std::function<void()> mFunction;
 		bool mEnabled;
 
-		ScopeGuard(const std::function<void()> &pFunc, bool pEnabled = true);
+		ScopeGuard(const std::function<void()>& pFunc, bool pEnabled = true);
 
 		bool isEnabled() const;
 		void setEnabled(bool pEnabled = true);

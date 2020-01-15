@@ -1,12 +1,11 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 
+import Governikus.Global 1.0
 import Governikus.Style 1.0
-
-import "Utils.js" as Utils
 
 Column {
 	id: root
@@ -30,6 +29,8 @@ Column {
 		width: parent.width
 		height: paneContent.height + 2 * Constants.pane_padding
 		radius: Style.dimens.corner_radius
+		border.width: Style.dimens.high_contrast_item_border
+		border.color: Style.color.high_contrast_item_border
 
 		Column {
 			id: paneContent

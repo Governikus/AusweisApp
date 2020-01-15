@@ -1,7 +1,7 @@
 /*!
  * \brief Widget for starting the self information workflow.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -39,7 +39,8 @@ class SelfInformationWidget
 		virtual void paintEvent(QPaintEvent*) override;
 
 	private Q_SLOTS:
-		void onSettingsChanged();
+		void onLanguageChanged();
+		void onDeveloperOptionsChanged();
 };
 
 } // namespace governikus

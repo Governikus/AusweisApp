@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WebserviceActivationHandler.h"
@@ -69,7 +69,7 @@ bool WebserviceActivationHandler::start()
 		if (!serverAppName.isEmpty())
 		{
 			//: ERROR ALL_PLATFORMS A known programme is using the local port on which the AA2 listens.
-			msg = tr("Another program (%1) uses the required port (%2). Please exit this other program and try again!").arg(serverAppName).arg(port);
+			msg = tr("The program (%1) uses the required port (%2). Please close %1 and try again!").arg(serverAppName).arg(port);
 		}
 		Q_EMIT fireShowUserInformation(msg);
 	}
@@ -160,14 +160,14 @@ void WebserviceActivationHandler::handleShowUiRequest(UiModule pUiModule, const 
 		{
 			qCWarning(activation) << "Current version is lower than caller version";
 			//: ERROR ALL_PLATFORMS The external request to show the UI requested a newer version than the one currently installed.
-			Q_EMIT fireShowUserInformation(tr("You tried to start a newer version (%1) of currently running application. Please stop the current version (%2) and start again!").arg(version, QCoreApplication::applicationVersion()));
+			Q_EMIT fireShowUserInformation(tr("You tried to start a newer version (%1) of currently running AusweisApp2. Please stop the current version (%2) and start again!").arg(version, QCoreApplication::applicationVersion()));
 			return;
 		}
 		else if (callerVersion < VersionNumber::getApplicationVersion())
 		{
 			qCWarning(activation) << "Current version is higher than caller version";
 			//: ERROR ALL_PLATFORMS The external request to show the UI requested an older version than the one currently installed.
-			Q_EMIT fireShowUserInformation(tr("You tried to start an older version (%1) of currently running application. Please open the currently running version (%2)!").arg(version, QCoreApplication::applicationVersion()));
+			Q_EMIT fireShowUserInformation(tr("You tried to start an older version (%1) of currently running AusweisApp2. Please open the currently running version (%2)!").arg(version, QCoreApplication::applicationVersion()));
 			return;
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -8,8 +8,9 @@ import QtGraphicalEffects 1.0
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
+import Governikus.Type.Random 1.0
 
- Item {
+Item {
 	property real factor: 1.1
 
 	id: busyIndicator
@@ -61,8 +62,8 @@ import Governikus.Style 1.0
 		id: timer
 		interval: 1000; repeat: true
 		onTriggered: {
-			green.rotation = green.rotation + Utils.getRandomInt(0, 135)
-			blue.rotation = blue.rotation + Utils.getRandomInt(0, 195)
+			green.rotation = green.rotation + Random.randomInt(0, 134)
+			blue.rotation = blue.rotation + Random.randomInt(0, 194)
 			busyIndicator.rotation = busyIndicator.rotation + 100
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogModel.h"
@@ -87,10 +87,10 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 	const auto& publicLogFile = getPublicLogFileName(env, javaActivity, external);
 	const auto& jPublicLogFile = QAndroidJniObject::fromString(publicLogFile);
 
-	qCDebug(qml) << "Copy log file to" << publicLogFile;
+	qCDebug(qml) << "Copy logfile to" << publicLogFile;
 	if (!Env::getSingleton<LogHandler>()->copy(publicLogFile))
 	{
-		qCCritical(qml) << "Cannot copy log file to" << publicLogFile;
+		qCCritical(qml) << "Cannot copy logfile to" << publicLogFile;
 		return;
 	}
 
@@ -130,7 +130,7 @@ void LogModel::shareLog(const QPoint /*popupPosition*/)
 		publicLogFile = getPublicLogFileName(env, javaActivity, false);
 		if (!logHandler->copy(publicLogFile))
 		{
-			qCCritical(qml) << "Cannot copy log file to" << publicLogFile;
+			qCCritical(qml) << "Cannot copy logfile to" << publicLogFile;
 			return;
 		}
 	}
@@ -145,7 +145,7 @@ void LogModel::shareLog(const QPoint /*popupPosition*/)
 		}
 		if (!QFile::copy(source, publicLogFile))
 		{
-			qCCritical(qml) << "Cannot copy log file to" << publicLogFile;
+			qCCritical(qml) << "Cannot copy logfile to" << publicLogFile;
 			return;
 		}
 	}

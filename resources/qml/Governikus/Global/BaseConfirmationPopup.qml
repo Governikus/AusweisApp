@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -26,6 +26,7 @@ Popup {
 	default property alias children: customContent.children
 	property string title
 	property string text
+	property TextStyle headerTextStyle
 	//: LABEL ALL_PLATFORMS
 	property string okButtonText: qsTr("Ok") + SettingsModel.translationTrigger
 	//: LABEL ALL_PLATFORMS
@@ -57,6 +58,7 @@ Popup {
 
 	modal: true
 	closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
+	focus: true
 
 	background: Rectangle {
 		color: Style.color.background_popup
@@ -78,13 +80,11 @@ Popup {
 			activeFocusOnTab: true
 
 			text: root.title
-			textStyle: Style.text.header
+			textStyle: root.headerTextStyle
 			font.bold: true
 			horizontalAlignment: root.horizontalTextAlignment
 
-			FocusFrame {
-				dynamic: false
-			}
+			FocusFrame {}
 		}
 
 		GText {
@@ -96,12 +96,9 @@ Popup {
 			activeFocusOnTab: true
 
 			text: root.text
-			textStyle: Style.text.normal
 			horizontalAlignment: root.horizontalTextAlignment
 
-			FocusFrame {
-				dynamic: false
-			}
+			FocusFrame {}
 		}
 
 		Column {

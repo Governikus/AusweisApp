@@ -28,5 +28,7 @@ j.with
 		shell('cd build/docs/sdk/html; cmake -E tar cfJ ../AusweisApp2_SDK.tar.xz .')
 
 		shell('cd build; make inst.latex.pdf')
+
+		shell('cd build; make inte.latex.pdf')
 	}
 }

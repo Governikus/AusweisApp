@@ -1,9 +1,9 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
-import QtQuick.Layouts 1.2
+import QtQuick.Layouts 1.3
 
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
@@ -11,13 +11,10 @@ import Governikus.Type.ApplicationModel 1.0
 RowLayout {
 	id: root
 
-	property string mainText
+	property string sectionName
 	property string headerText
 	property string footerText
 	property string iconPath
-
-	Accessible.role: Accessible.PageTab
-	Accessible.name: headerText + " " + mainText + " " + footerText
 
 	width: parent.width
 
@@ -43,15 +40,15 @@ RowLayout {
 			width: parent.width
 
 			text: headerText
-			textStyle: Style.text.normal_inverse
+			textStyle: Style.text.normal
 			maximumLineCount: 1
 		}
 
 		GText {
 			width: parent.width
 
-			text: mainText
-			textStyle: Style.text.header_inverse
+			text: sectionName
+			textStyle: Style.text.header
 			maximumLineCount: 1
 			elide: Text.ElideRight
 		}
@@ -60,7 +57,7 @@ RowLayout {
 			width: parent.width
 
 			text: footerText
-			textStyle: Style.text.normal_inverse
+			textStyle: Style.text.normal
 			maximumLineCount: 1
 			elide: Text.ElideRight
 		}

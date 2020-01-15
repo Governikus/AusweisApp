@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CertificateDescriptionModel.h"
@@ -45,23 +45,23 @@ void CertificateDescriptionModel::initModelData(const QSharedPointer<const Certi
 	const bool showDetailedProviderInfo = !(serviceProviderAddress.isEmpty() || purpose.isEmpty() || dataSecurityOfficer.isEmpty());
 
 	//: LABEL ALL_PLATFORMS
-	mData += QPair<QString, QString>(tr("Service provider"), getSubjectName() + QLatin1Char('\n') + getSubjectUrl());
+	mData += QPair<QString, QString>(tr("Provider"), getSubjectName() + QLatin1Char('\n') + getSubjectUrl());
 	//: LABEL ALL_PLATFORMS
 	mData += QPair<QString, QString>(tr("Certificate issuer"), pCertDescription->getIssuerName() + QLatin1Char('\n') + pCertDescription->getIssuerUrl());
 	if (showDetailedProviderInfo)
 	{
 		//: LABEL ALL_PLATFORMS
-		mData += QPair<QString, QString>(tr("Name, address and mail address of the service provider"), serviceProviderAddress);
+		mData += QPair<QString, QString>(tr("Name, address and mail address of the provider"), serviceProviderAddress);
 		//: LABEL ALL_PLATFORMS
 		mData += QPair<QString, QString>(tr("Purpose"), purpose);
 		//: LABEL ALL_PLATFORMS
-		mData += QPair<QString, QString>(tr("Indication of the bodies responsible for the service provider, "
+		mData += QPair<QString, QString>(tr("Indication of the bodies responsible for the provider, "
 											"that verify the compliance with data security regulations"), dataSecurityOfficer);
 	}
 	else if (!termsOfUsage.isEmpty())
 	{
 		//: LABEL ALL_PLATFORMS
-		mData += QPair<QString, QString>(tr("Service provider information"), termsOfUsage);
+		mData += QPair<QString, QString>(tr("Provider information"), termsOfUsage);
 	}
 	if (!getValidity().isEmpty())
 	{

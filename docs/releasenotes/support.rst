@@ -14,6 +14,8 @@ Betriebssysteme
 
   - macOS 10.14
 
+  - macOS 10.15
+
   - Windows 7 SP1 (32bit / 64bit)
 
   - Windows 8.1 (64bit)
@@ -22,6 +24,7 @@ Betriebssysteme
 
   - Android 5.0 und höher (x86, armeabi-v7a)
 
+  - iOS 13 und höher
 
 
 Karten
@@ -46,15 +49,15 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-  - Firefox 66
+  - Firefox 70
 
-  - Chrome 74
+  - Chrome 78
 
   - Internet Explorer 11
 
-  - Safari 12
+  - Safari 13
 
-  - Edge 44
+  - Edge 44.5
 
 
 
@@ -109,12 +112,12 @@ der unabhängig vom verwendeten Browser ist. Durch die strikte
 Einhaltung der Vorgaben aus den entsprechenden Technischen Richtlinie
 des BSI (BSI TR-03124) ist die AusweisApp2 generell browserunabhängig.
 Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
-Diensteanbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
+Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
   - Firefox Klar 8
 
-  - Chrome 73
+  - Chrome 78
 
   - Android System WebView 73
 

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -13,7 +13,7 @@ Image {
 	property bool inactive: false
 
 	fillMode: Image.PreserveAspectFit
-	sourceSize.width: Style.dimens.small_icon_size
+	sourceSize.width: Style.dimens.icon_size
 	source: {
 		if (inactive) {
 			return "qrc:///images/icon_remote_inactive.svg"

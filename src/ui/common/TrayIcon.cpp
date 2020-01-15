@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TrayIcon.h"
@@ -43,20 +43,7 @@ TrayIcon::TrayIcon()
 
 TrayIcon::~TrayIcon()
 {
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-	if (mTrayIcon != nullptr)
-	{
-		QMenu* menu = mTrayIcon->contextMenu();
-		if (menu != nullptr)
-		{
-			qDeleteAll(menu->actions());
-			delete menu;
-		}
-
-		delete mTrayIcon;
-		mTrayIcon = nullptr;
-	}
-#endif
+	shutdown();
 }
 
 
@@ -98,7 +85,26 @@ void TrayIcon::create()
 
 	mTrayIcon->show();
 	//: LABEL DESKTOP
-	showMessage(QString(), tr("AusweisApp2 was started."));
+	showMessage(QCoreApplication::applicationName(), tr("Application was started."));
+#endif
+}
+
+
+void TrayIcon::shutdown()
+{
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+	if (mTrayIcon != nullptr)
+	{
+		QMenu* menu = mTrayIcon->contextMenu();
+		if (menu != nullptr)
+		{
+			qDeleteAll(menu->actions());
+			delete menu;
+		}
+
+		delete mTrayIcon;
+		mTrayIcon = nullptr;
+	}
 #endif
 }
 
@@ -117,7 +123,10 @@ void TrayIcon::hide()
 void TrayIcon::showMessage(const QString& pTitle, const QString& pMessage)
 {
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-	mTrayIcon->showMessage(pTitle, pMessage, mIcon, 3000);
+	if (mTrayIcon)
+	{
+		mTrayIcon->showMessage(pTitle, pMessage, mIcon, 3000);
+	}
 #else
 	Q_UNUSED(pTitle);
 	Q_UNUSED(pMessage);

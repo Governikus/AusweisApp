@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteReaderAdvertiserImpl
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReaderAdvertiser.h"
@@ -53,7 +53,7 @@ class test_RemoteReaderAdvertiser
 		void init()
 		{
 			mMock = new DatagramHandlerMock;
-			std::function<DatagramHandler*(bool pListen)> creator = [this](bool){
+			std::function<DatagramHandler* (bool pListen)> creator = [this](bool){
 						return mMock.data();
 					};
 			Env::setCreator<DatagramHandler*>(creator);

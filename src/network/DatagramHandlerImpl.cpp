@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandlerImpl.h"
@@ -107,6 +107,15 @@ bool DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint
 	{
 		bool skipFurtherIPv6AddressesOnThisInterface = false;
 
+#ifdef Q_OS_MACOS
+		// Excluding not documented interface of the T2 Coprocessor on macOS,  which does not accept broadcasts.
+		// https://duo.com/labs/research/apple-t2-xpc
+		if (interface.hardwareAddress().toLower() == QLatin1String("ac:de:48:00:11:22"))
+		{
+			continue;
+		}
+#endif
+
 		const auto& entries = interface.addressEntries();
 		for (const QNetworkAddressEntry& addressEntry : entries)
 		{
@@ -162,16 +171,17 @@ bool DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint
 		return false;
 	}
 
+	bool broadcastedSuccessfully = true;
 	for (const QHostAddress& broadcastAddr : qAsConst(broadcastAddresses))
 	{
 		if (!sendToAddress(pData, broadcastAddr, pPort))
 		{
 			qCDebug(network) << "Broadcasting to" << broadcastAddr << "failed";
-			return false;
+			broadcastedSuccessfully = false;
 		}
 	}
 
-	return true;
+	return broadcastedSuccessfully;
 }
 
 

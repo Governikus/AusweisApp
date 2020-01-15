@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCheckRefreshAddress.h"
@@ -191,6 +191,8 @@ class test_StateCheckRefreshAddress
 
 		void isMatchingSameOriginPolicyInDevMode()
 		{
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperOptions(true);
+
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(false);
 			QVERIFY(!mState->isMatchingSameOriginPolicyInDevMode());
 
@@ -242,7 +244,7 @@ class test_StateCheckRefreshAddress
 
 			mAuthContext->setStatus(GlobalStatus::Code::No_Error);
 
-			QTest::ignoreMessage(QtCriticalMsg, "Network_Other_Error | \"An unknown network error occurred.\"");
+			QTest::ignoreMessage(QtCriticalMsg, "Network_Other_Error | \"An unknown network error occurred. Check your network connection and try to restart the app.\"");
 			mState->reportCommunicationError(GlobalStatus::Code::Network_Other_Error);
 			QCOMPARE(mAuthContext->getStatus().getStatusCode(), GlobalStatus::Code::Network_Other_Error);
 			QCOMPARE(spy.count(), 2);

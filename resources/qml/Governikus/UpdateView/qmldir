@@ -1,0 +1,8 @@
+module UpdateView
+
+internal UpdateViewButtonRow UpdateViewButtonRow.qml
+internal UpdateViewInformation UpdateViewInformation.qml
+internal UpdateViewReleaseNotes UpdateViewReleaseNotes.qml
+
+UpdateView 1.0 UpdateView.qml
+

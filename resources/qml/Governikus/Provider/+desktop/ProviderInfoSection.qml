@@ -1,21 +1,24 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 
 
 Item {
+	id: baseItem
+
 	property alias image: icon.source
 	property alias title: text.label
 	property string name: ""
 
-	Accessible.role: Accessible.Section
+	Accessible.role: Accessible.StaticText
 	Accessible.name: text.Accessible.name
 
 	height: contentRow.height
@@ -34,13 +37,15 @@ Item {
 
 		LabeledText {
 			id: text
+			width: baseItem.width - icon.width - Constants.groupbox_spacing
 			//: LABEL DESKTOP_QML
 			text: name.length > 0 ? name : qsTr("See details under \"more...\"") + SettingsModel.translationTrigger
+			maximumBodyLineCount: 1
+			bodyElide: Text.ElideRight
 		}
 	}
 
 	FocusFrame {
-		border.color: Constants.black
-		dynamic: false
+		borderColor: Style.color.focus_indicator
 	}
 }

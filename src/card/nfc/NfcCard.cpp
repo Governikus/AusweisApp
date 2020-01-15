@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NfcCard.h"
@@ -99,12 +99,12 @@ bool NfcCard::isConnected()
 }
 
 
-CardReturnCode NfcCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
+ResponseApduResult NfcCard::transmit(const CommandApdu& pCmd)
 {
 	if (!mIsValid || mNearFieldTarget == nullptr)
 	{
 		qCWarning(card_nfc) << "NearFieldTarget is no longer valid";
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
 	qCDebug(card_nfc) << "Transmit command APDU:" << pCmd.getBuffer().toHex();
@@ -112,31 +112,30 @@ CardReturnCode NfcCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 	if (!mNearFieldTarget->accessMethods().testFlag(QNearFieldTarget::AccessMethod::TagTypeSpecificAccess))
 	{
 		qCWarning(card_nfc) << "No TagTypeSpecificAccess supported";
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
 	QNearFieldTarget::RequestId id = mNearFieldTarget->sendCommand(pCmd.getBuffer());
 	if (!id.isValid())
 	{
 		qCWarning(card_nfc) << "Cannot write messages";
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
 	if (!mNearFieldTarget->waitForRequestCompleted(id, 1500))
 	{
 		qCWarning(card_nfc) << "Transmit timeout reached";
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
 	QVariant response = mNearFieldTarget->requestResponse(id);
 	if (!response.isValid())
 	{
 		qCWarning(card_nfc) << "Invalid response received";
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	QByteArray recvBuffer = response.toByteArray();
+	const QByteArray recvBuffer = response.toByteArray();
 	qCDebug(card_nfc) << "Transmit response APDU:" << recvBuffer.toHex();
-	pRes.setBuffer(recvBuffer);
-	return CardReturnCode::OK;
+	return {CardReturnCode::OK, ResponseApdu(recvBuffer)};
 }

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -16,12 +16,14 @@ Rectangle {
 	width: height
 	enabled: false
 	radius: width * 0.5
-	color: enabled ? Style.color.accent : Constants.white
+	color: enabled ? Style.color.accent : Style.color.background_pane
+	border.width: Style.dimens.high_contrast_item_border
+	border.color: Style.color.high_contrast_item_border
 
 	GText {
 		id: number
 		anchors.centerIn: parent
 		font.bold: true
-		textStyle: parent.enabled ? Style.text.header : Style.text.header_accent
+		textStyle: parent.enabled ? Style.text.header_inverse : Style.text.header_accent
 	}
 }

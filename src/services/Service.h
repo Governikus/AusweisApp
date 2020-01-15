@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -38,7 +38,7 @@ class Service
 		void updateConfigurations();
 		void updateApp(bool pIgnoreNextVersionskip = false);
 		bool isUpdateScheduled();
-		void runUpdateIfNeeded();
+		Q_INVOKABLE void runUpdateIfNeeded();
 		const AppUpdateData& getUpdateData() const;
 
 	Q_SIGNALS:

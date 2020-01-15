@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -37,7 +37,6 @@ Item {
 		id: t
 		anchors.centerIn: rec
 		font.bold: parent.state === "active"
-		textStyle: Style.text.normal
 		color: parent.state === "active" ? Constants.white : Style.color.accent
 	}
 

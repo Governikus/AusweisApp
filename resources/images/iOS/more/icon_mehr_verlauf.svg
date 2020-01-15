@@ -5,7 +5,7 @@
      id="defs19" />
   <linearGradient id="verlauf" gradientUnits="userSpaceOnUse" x1="298" y1="-108" x2="298" y2="292" gradientTransform="matrix(1,0,0,-1,-42,348)">
     <stop offset="0" style="stop-color:#98C8E8" id="stop2" />
-    <stop offset="1" style="stop-color:#659CCD" id="stop4" />
+    <stop offset="1" style="stop-color:#4d7aa4" id="stop4" />
   </linearGradient>
   <rect width="400" height="400" rx="90" ry="90" id="rect7" fill="url(#verlauf)" />
     <g transform="translate(-56, -56)" fill="#ffffff">

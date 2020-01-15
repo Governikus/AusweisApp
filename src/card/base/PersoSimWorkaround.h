@@ -1,7 +1,7 @@
 /*!
  * \brief This class is only to mark it as a workaround for working with the PersoSim.
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,8 +32,7 @@ class PersoSimWorkaround
 		 */
 		static CardReturnCode sendingMseSetAt(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 		{
-			ResponseApdu response;
-			const CardReturnCode returnCode = pCardConnectionWorker->transmit(SelectBuilder(FileRef::efCardAccess()).build(), response);
+			auto [returnCode, response] = pCardConnectionWorker->transmit(SelectBuilder(FileRef::efCardAccess()).build());
 
 			if (response.getReturnCode() == StatusCode::EMPTY)
 			{

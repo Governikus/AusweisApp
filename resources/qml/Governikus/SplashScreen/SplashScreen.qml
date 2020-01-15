@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -8,8 +8,11 @@ import Governikus.Style 1.0
 
 Rectangle {
 	id: splashScreen
+
 	visible: true
 	anchors.fill: parent
+
+	color: Style.color.background
 
 	signal fireHiding()
 

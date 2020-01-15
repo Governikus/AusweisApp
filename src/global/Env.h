@@ -1,7 +1,7 @@
 /*
  * \brief Runtime environment to create (mockable) objects.
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -319,7 +319,7 @@ class Env
 		}
 
 
-		static void setShared(const QMetaObject& pMetaObject, QSharedPointer<QObject> pObject = QSharedPointer<QObject>());
+		static void setShared(const QMetaObject& pMetaObject, const QSharedPointer<QObject>& pObject);
 #endif
 
 };

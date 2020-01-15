@@ -1,7 +1,7 @@
 /*!
- * \brief Implementation of \ref Card for remote reader.
+ * \brief Implementation of \ref Card for smartphone as card reader (SaC).
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -53,11 +53,11 @@ class RemoteCard
 		virtual CardReturnCode disconnect() override;
 		virtual bool isConnected() override;
 
-		virtual CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
+		virtual ResponseApduResult transmit(const CommandApdu& pCmd) override;
 
 		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds = 60) override;
 
-		virtual CardReturnCode setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu) override;
+		virtual ResponseApduResult setEidPin(quint8 pTimeoutSeconds) override;
 };
 
 } // namespace governikus

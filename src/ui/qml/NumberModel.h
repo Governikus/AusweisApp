@@ -2,7 +2,7 @@
  * \brief Model for accessing PIN, CAN, PUK, according to the
  * currently active workflow.
  *
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,7 +29,6 @@ class NumberModel
 	Q_PROPERTY(QString puk READ getPuk WRITE setPuk NOTIFY firePukChanged)
 	Q_PROPERTY(bool hasError READ hasError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(bool hasPasswordError READ hasPasswordError NOTIFY fireInputErrorChanged)
-	Q_PROPERTY(CardReturnCode inputErrorCode READ getInputErrorCode NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(QString inputError READ getInputError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(int retryCounter READ getRetryCounter NOTIFY fireReaderInfoChanged)
 	Q_PROPERTY(bool pinDeactivated READ isPinDeactivated NOTIFY fireReaderInfoChanged)
@@ -40,6 +39,8 @@ class NumberModel
 		QSharedPointer<WorkflowContext> mContext;
 		bool mRequestTransportPin;
 		bool mRequestNewPin;
+
+		CardReturnCode getInputErrorCode() const;
 
 	private Q_SLOTS:
 		void onCardConnectionChanged();
@@ -75,7 +76,6 @@ class NumberModel
 
 		bool hasError() const;
 		bool hasPasswordError() const;
-		CardReturnCode getInputErrorCode() const;
 		QString getInputError() const;
 
 		int getRetryCounter() const;

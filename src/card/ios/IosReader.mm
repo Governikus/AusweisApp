@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnectionWorker.h"
@@ -7,7 +7,6 @@
 
 #include <QDateTime>
 #include <QLoggingCategory>
-#include <QSignalBlocker>
 #include <QTimer>
 
 
@@ -151,16 +150,12 @@ void IosReader::onDidInvalidateWithError(const QString& pError, bool pDoRestart)
 void IosReader::onConnectFailed()
 {
 	//: ERROR IOS The connection to the card could not be established.
-	stopSession(tr("The connection could not be established. The process was aborted."));
-	mConnected = false;
-	Q_EMIT fireReaderDisconnected();
+	onDidInvalidateWithError(tr("The connection could not be established. The process was aborted."), true);
 }
 
 
 void IosReader::onTransmitFailed()
 {
 	//: ERROR IOS The card was removed during the communication.
-	stopSession(tr("The connection to the ID card has been lost. The process was aborted."));
-	mConnected = false;
-	Q_EMIT fireReaderDisconnected();
+	onDidInvalidateWithError(tr("The connection to the ID card has been lost. The process was aborted."), true);
 }

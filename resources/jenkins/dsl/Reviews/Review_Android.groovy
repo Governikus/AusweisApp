@@ -38,7 +38,7 @@ j.with
 	}
 
 	publishers {
-		androidLint('build/dist/build/outputs/lint-results-*.xml')
+		androidLint('build/dist/build/reports/lint-results.xml')
 		{
 			thresholds(
 				unstableTotal: [all: 1]
@@ -84,7 +84,7 @@ j.with
 			mkdir -p build/${ARCH};
 			cd build/${ARCH};
 			cmake -Werror=dev ../../source
-			-DANDROID_BUILD_AAR=ON
+			-DINTEGRATED_SDK=ON
 			-DCMAKE_BUILD_TYPE=debug
 			-DCMAKE_INSTALL_PREFIX=\${WORKSPACE}/build/dist
 			-DCMAKE_PREFIX_PATH="\${WORKSPACE}/libs/${ARCH}/build/dist;\${WORKSPACE}/libs/build/dist"
@@ -98,7 +98,7 @@ j.with
 	}
 
 	publishers {
-		androidLint('build/dist/build/outputs/lint-results-*.xml')
+		androidLint('build/dist/build/reports/lint-results.xml')
 		{
 			thresholds(
 				unstableTotal: [all: 0]

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -85,12 +85,14 @@ class ResponseApdu
 	private:
 		static const int RETURN_CODE_LENGTH = 2;
 
+	protected:
+		virtual void setBuffer(const QByteArray& pBuffer);
+
 	public:
 		explicit ResponseApdu(StatusCode pStatusCode);
 		explicit ResponseApdu(const QByteArray& pBuffer = QByteArray());
 		virtual ~ResponseApdu() = default;
 
-		virtual void setBuffer(const QByteArray& pBuffer);
 		QByteArray getData() const;
 		int getDataLength() const;
 		StatusCode getReturnCode() const;
@@ -100,5 +102,20 @@ class ResponseApdu
 		char getSW2() const;
 		CardReturnCode getCardReturnCode() const;
 };
+
+struct ResponseApduResult
+{
+	CardReturnCode mReturnCode = CardReturnCode::UNDEFINED;
+	ResponseApdu mResponseApdu = ResponseApdu();
+};
+
+#ifndef QT_NO_DEBUG
+inline bool operator ==(const ResponseApduResult& pLeft, const ResponseApduResult& pRight)
+{
+	return pLeft.mReturnCode == pRight.mReturnCode && pLeft.mResponseApdu.getBuffer() == pRight.mResponseApdu.getBuffer();
+}
+
+
+#endif
 
 } // namespace governikus

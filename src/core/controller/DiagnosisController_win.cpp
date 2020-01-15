@@ -1,7 +1,7 @@
 /*!
  * \brief Windows specific implementation of the controller for retrieving and presenting diagnosis info.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -51,7 +51,10 @@ static QString toAbsoluteWindowsDirectoryPath(const QString& pPath)
 
 static QString getWindowsFileVersionString(QByteArray& pVersionData, const char* const pInfoName, int pLanguage, int pCodePage)
 {
-	QString key = QString().sprintf("\\StringFileInfo\\%04x%04x\\%s", pLanguage, pCodePage, pInfoName);
+	const auto key = QStringLiteral("\\StringFileInfo\\%1%2\\%3")
+			.arg(pLanguage, 4, 16, QLatin1Char('0'))
+			.arg(pCodePage, 4, 16, QLatin1Char('0'))
+			.arg(QString::fromLatin1(pInfoName));
 
 	LPVOID version;
 	UINT versionLength;

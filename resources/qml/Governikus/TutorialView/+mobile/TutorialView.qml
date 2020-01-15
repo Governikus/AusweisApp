@@ -1,10 +1,10 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.2
+import QtQuick.Layouts 1.3
 import QtQml.Models 2.10
 import QtQml 2.10
 
@@ -25,9 +25,12 @@ SectionPage {
 	titleBarVisible: false
 	automaticSafeAreaMarginHandling: false
 	navigationAction: NavigationAction {
-		// On iOS we want to go back to the MoreView even when a section is expanded.
-		state: topLevelPage ? root.state : "back";
-		onClicked: state == "back" ? leaveView() : root.state = ""
+		state: (topLevelPage && root.state === "")
+			? "" // this way the user can then exit the app with the back button when the Tutorial is shown on the first run.
+			: "hidden" // otherwise there would be a useless animation of the Hamburger on Android when leaving the Tutorial
+		onClicked: root.state !== ""
+			? root.state = "" // collapse sections
+			: leaveView()
 	}
 	//: LABEL ANDROID IOS
 	title: qsTr("Tutorial") + SettingsModel.translationTrigger
@@ -125,7 +128,7 @@ SectionPage {
 		collapseAllAnimation.start()
 		navBar.lockedAndHidden = false
 		SettingsModel.showSetupAssistantOnStart = false
-		if (navBar.state === "more") {
+		if (navBar.state === "more" || navBar.state === "feedback") {
 			firePop()
 		} else {
 			navBar.state = "identify"
@@ -198,6 +201,10 @@ SectionPage {
 					id: whatHeader
 					width: root.width
 					height: ((flickable.height - flickable.topMargin - footer.height) / 13.0 ) * 3.0
+
+					Accessible.onScrollDownAction: flickable.scrollPageDown()
+					Accessible.onScrollUpAction: flickable.scrollPageUp()
+
 					headerImageSource: "qrc:///images/tutorial/main_menu_what_caret.svg"
 					categoryAbove: false
 					//: LABEL ANDROID IOS
@@ -230,12 +237,19 @@ SectionPage {
 					id: whatContent
 					width: root.contentWidth
 					anchors.horizontalCenter: parent.horizontalCenter
+
+					Accessible.onScrollDownAction: flickable.scrollPageDown()
+					Accessible.onScrollUpAction: flickable.scrollPageUp()
 				}
 
 				TutorialHeader {
 					id: whereHeader
 					width: root.width
 					height: ((flickable.height - flickable.topMargin - footer.height) / 13.0 ) * 3.0
+
+					Accessible.onScrollDownAction: flickable.scrollPageDown()
+					Accessible.onScrollUpAction: flickable.scrollPageUp()
+
 					headerImageSource: "qrc:///images/tutorial/main_menu_where_caret.svg"
 					//: LABEL ANDROID IOS
 					titleText: qsTr("Where?") + SettingsModel.translationTrigger
@@ -267,12 +281,19 @@ SectionPage {
 					id: whereContent
 					width: root.contentWidth
 					anchors.horizontalCenter: parent.horizontalCenter
+
+					Accessible.onScrollDownAction: flickable.scrollPageDown()
+					Accessible.onScrollUpAction: flickable.scrollPageUp()
 				}
 
 				TutorialHeader {
 					id: howHeader
 					width: root.width
 					height: ((flickable.height - flickable.topMargin - footer.height) / 13.0 ) * 3.0
+
+					Accessible.onScrollDownAction: flickable.scrollPageDown()
+					Accessible.onScrollUpAction: flickable.scrollPageUp()
+
 					headerImageSource: "qrc:///images/tutorial/main_menu_how_caret.svg"
 					//: LABEL ANDROID IOS
 					titleText: qsTr("How?") + SettingsModel.translationTrigger
@@ -305,6 +326,9 @@ SectionPage {
 					width: root.contentWidth
 					anchors.horizontalCenter: parent.horizontalCenter
 
+					Accessible.onScrollDownAction: flickable.scrollPageDown()
+					Accessible.onScrollUpAction: flickable.scrollPageUp()
+
 					onFirePush: {
 						root.firePush(pSectionPage)
 					}
@@ -315,6 +339,10 @@ SectionPage {
 					id: importantHeader
 					width: root.width
 					height: ((flickable.height - flickable.topMargin - footer.height) / 13.0 ) * 4.0
+
+					Accessible.onScrollDownAction: flickable.scrollPageDown()
+					Accessible.onScrollUpAction: flickable.scrollPageUp()
+
 					overlapping: false
 					headerImageSource: "qrc:///images/tutorial/main_menu_important_caret.svg"
 					//: LABEL ANDROID IOS
@@ -347,6 +375,9 @@ SectionPage {
 					id: importantContent
 					width: root.contentWidth
 					anchors.horizontalCenter: parent.horizontalCenter
+
+					Accessible.onScrollDownAction: flickable.scrollPageDown()
+					Accessible.onScrollUpAction: flickable.scrollPageUp()
 
 					onLetsGoClicked: leaveView()
 				}

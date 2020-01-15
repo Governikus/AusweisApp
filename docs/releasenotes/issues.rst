@@ -11,21 +11,16 @@ Bekannte Fehler
 
 Die nachfolgende Liste bezieht sich auf die aktuelle Version der AusweisApp2.
 
-  - Mit der NFC-Schnittstelle des iPhone 7 und iPhone 7 Plus werden viele
-    Ausweise nicht erkannt (hauptsächlich NFC-A) und es kommt zu Abbrüchen der
-    Authentisierung.
+  - Mit der NFC-Schnittstelle des iPhone 7 (Plus) unter iOS 13.0 und 13.1 werden
+    viele Ausweise nicht erkannt (hauptsächlich NFC-A) und es kommt zu
+    Abbrüchen der Authentisierung. Aktualisieren Sie auf iOS 13.2 oder höher.
 
   - Auf Windows 10 Plattformen mit aktivierter Benutzerkontensteuerung kann
     es bei Benutzern mit eingeschränkten Berechtigungen zu Problemen mit der
     Online-Ausweisfunktion kommen.
 
-  - Bei Erhöhung der Schriftgröße über 175% kommt es zur Nutzungseinschränkung.
-
   - Derzeit kommt es noch zu leichten Schwierigkeiten bei der Bedienbarkeit
     mit der Tastatur.
-
-  - Bei aktivierter Kontrasteinstellung ist unter Windows u. U.
-    die Darstellung der Farben nicht optimal.
 
   - Bei Verwendung des Screenreaders JAWS unter Windows, kann es zu
     leichten Irritationen bei der angegebenen Bedienung kommen.
@@ -35,7 +30,7 @@ Die nachfolgende Liste bezieht sich auf die aktuelle Version der AusweisApp2.
     unter Windows und macOS zu einem Absturz kommen.
 
   - Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle
-    auf Android.
+    auf Android und iOS.
 
   - Längere Texte können unter Android u.U. bei kleinen Bildschirmgrößen
     abgeschnitten sein.
@@ -57,3 +52,17 @@ Die nachfolgende Liste bezieht sich auf die aktuelle Version der AusweisApp2.
     das Verhalten von macOS geändert werden, sodass auch alle anderen
     Komponenten in der App fokussiert werden können.
 
+  - Bei einigen Links werden die Steuerzeichen vom Bildschirmleser vorgelesen.
+
+  - Wird der Screenreader aktiviert, während die AusweisApp2 bereits läuft,
+    kann es zu Fehlverhalten kommen.
+
+  - Die Online-Hilfe für die neue grafische Oberfläche ist noch nicht verfügbar.
+
+
+Die nachfolgende Liste bezieht sich auf die alte grafische Oberfläche.
+
+  - Bei Erhöhung der Schriftgröße über 175% kommt es zur Nutzungseinschränkung.
+
+  - Bei aktivierter Kontrasteinstellung ist unter Windows u. U.
+    die Darstellung der Farben nicht optimal.

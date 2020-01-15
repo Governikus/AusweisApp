@@ -1,9 +1,9 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.TechnologyInfo 1.0
@@ -47,26 +47,39 @@ Item {
 		clip: true
 
 		enableButtonVisible: ApplicationModel.nfcAvailable && (!ApplicationModel.nfcEnabled || !ApplicationModel.nfcRunning)
-		//: LABEL DESKTOP_QML
-		enableButtonText: (!ApplicationModel.nfcEnabled ? qsTr("Go to NFC settings") : qsTr("Start NFC scan")) + SettingsModel.translationTrigger
+		enableButtonText: (!ApplicationModel.nfcEnabled ?
+						   //: LABEL ANDROID IOS
+						   qsTr("Go to NFC settings") :
+						   //: LABEL ANDROID IOS
+						   qsTr("Start NFC scan")
+						  ) + SettingsModel.translationTrigger
 		onEnableClicked: !ApplicationModel.nfcEnabled ? ApplicationModel.showSettings(ApplicationModel.SETTING_NFC) : ApplicationModel.nfcRunning = true
 		enableText: (!visible ? "" :
+					!ApplicationModel.nfcAvailable ?
 					//: INFO ANDROID IOS AA2 can't use NFC on this device, suggest to use bluetooth instead.
-					!ApplicationModel.nfcAvailable ? qsTr("NFC is not supported by your device.") + "<br/>" + qsTr("You require an additional 'Bluetooth card reader' or an additional 'smartphone as card reader' to use the online identification function with this device.") :
+					qsTr("Unfortunately, this functionality is not available on your device.") + "<br/>" +
+					//: INFO ANDROID IOS AA2 can't use NFC on this device, suggest to use bluetooth instead.
+					qsTr("However you can use a seperate 'Bluetooth card reader' or a seperate 'smartphone as card reader' to utilize the online identification function.") :
+					!ApplicationModel.nfcEnabled ?
 					//: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
-					!ApplicationModel.nfcEnabled ? qsTr("NFC is switched off.") + "<br/>" + qsTr("Please enable NFC in your system settings.") :
-					 //: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
-					 !ApplicationModel.nfcRunning ? qsTr("NFC scan is not running.") + "<br/>" + qsTr("Please start the NFC scan.") : ""
+					qsTr("NFC is switched off.") + "<br/>" +
+					//: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
+					qsTr("Please enable NFC in your system settings.") :
+					!ApplicationModel.nfcRunning ?
+					//: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
+					qsTr("NFC scan is not running.") + "<br/>" +
+					//: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
+					qsTr("Please start the NFC scan.") : ""
 					) + SettingsModel.translationTrigger
 
 		titleText: qsTr("Establish connection") + SettingsModel.translationTrigger
 
 		subTitleText: (!visible ? "" :
 					//: INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a bluetooth reader or a differnt smarthpone is suggested.
-					  ApplicationModel.extendedLengthApdusUnsupported ? qsTr("Your device does not meet the technical requirements (Extended Length not supported). You require an additional 'Bluetooth card reader' or an additional 'smartphone as card reader' to use the online identification function with this device.") :
+					  ApplicationModel.extendedLengthApdusUnsupported ? qsTr("Your device does not meet the technical requirements (Extended Length not supported). However you can use a seperate 'Bluetooth card reader' or a seperate 'smartphone as card reader' to utilize the online identification function.") :
 					//: INFO ANDROID IOS The online authentication feature is disabled and needs to be activated by the authorities.
-					  NumberModel.pinDeactivated ? qsTr("The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.") :
-					//: INFO ANDROID IOS The id card may be inserted, the authentication process may be started.
+					  NumberModel.pinDeactivated ? qsTr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.") :
+					//: INFO ANDROID IOS The ID card may be inserted, the authentication process may be started.
 					  qsTr("Please place your device<br/>on your ID card.")
 					  ) + SettingsModel.translationTrigger
 	}

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IosCard.h"
@@ -42,7 +42,7 @@ IosCard::~IosCard()
 
 bool IosCard::isValid() const
 {
-	return mCard->mNfcTag && (!mConnected || [mCard->mNfcTag isAvailable]);
+	return mCard->mNfcTag && (!mConnected || mCard->mNfcTag.available);
 }
 
 
@@ -73,7 +73,7 @@ CardReturnCode IosCard::connect()
 		return CardReturnCode::OK;
 	}
 
-	NFCTagReaderSession* session = [mCard->mNfcTag session];
+	NFCTagReaderSession* session = mCard->mNfcTag.session;
 	[session connectToTag: mCard->mNfcTag completionHandler: ^(NSError* error){
 		if (error != nil)
 		{
@@ -125,17 +125,17 @@ bool IosCard::isConnected()
 
 void IosCard::setProgressMessage(const QString& pMessage)
 {
-	NFCTagReaderSession* session = [mCard->mNfcTag session];
-	[session setAlertMessage: pMessage.toNSString()];
+	NFCTagReaderSession* session = mCard->mNfcTag.session;
+	session.alertMessage = pMessage.toNSString();
 }
 
 
-CardReturnCode IosCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
+ResponseApduResult IosCard::transmit(const CommandApdu& pCmd)
 {
 	if (!isValid())
 	{
 		qCWarning(card_nfc) << "NearFieldTarget is no longer valid";
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
 	qCDebug(card_nfc) << "Transmit command APDU:" << pCmd.getBuffer().toHex();
@@ -174,9 +174,8 @@ CardReturnCode IosCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 	if (resultBuffer->isEmpty())
 	{
 		Q_EMIT fireTransmitFailed();
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	pRes.setBuffer(std::move(*resultBuffer));
-	return CardReturnCode::OK;
+	return {CardReturnCode::OK, ResponseApdu(*resultBuffer)};
 }

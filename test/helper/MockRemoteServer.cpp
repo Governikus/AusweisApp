@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockRemoteServer.h"
@@ -51,6 +51,12 @@ bool MockRemoteServer::getPairing()
 bool MockRemoteServer::isConnected() const
 {
 	return mConnected;
+}
+
+
+bool MockRemoteServer::isPairingConnection() const
+{
+	return false;
 }
 
 

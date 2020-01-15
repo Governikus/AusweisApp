@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -19,12 +19,17 @@ SectionPage
 {
 	id: root
 
+	signal keyPressed(int key)
+
 	Accessible.name: qsTr("Logfile viewer") + SettingsModel.translationTrigger
 	Accessible.description: qsTr("This is the logfile viewer of the AusweisApp2.") + SettingsModel.translationTrigger
+
+	Keys.onPressed: keyPressed(event.key)
 
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
 		text: qsTr("Application log") + SettingsModel.translationTrigger
+		helpTopic: "applicationLog"
 	}
 
 	TabbedPane {
@@ -37,6 +42,7 @@ SectionPage
 		onCurrentIndexChanged: LogModel.setLogfile(currentIndex)
 
 		contentDelegate: logSectionDelegate
+		contentPadding: 0
 
 		footerItem: Item {
 			height: buttonLayout.implicitHeight
@@ -44,23 +50,25 @@ SectionPage
 			ColumnLayout {
 				id: buttonLayout
 
-				anchors.fill: parent
-				anchors.rightMargin: Constants.groupbox_spacing
+				anchors {
+					left: parent.left
+					right: parent.right
+					rightMargin: Constants.groupbox_spacing
+				}
 				spacing: Constants.groupbox_spacing
 
 				GButton {
 					id: saveLog
 
 					Layout.fillWidth: true
-					activeFocusOnTab: true
 
 					icon.source: "qrc:///images/icon_save.svg"
 					//: LABEL DESKTOP_QML
 					text: qsTr("Save logfile") + SettingsModel.translationTrigger
 					enabled: tabbedPane.sectionsModel.length > 0
+					tintIcon: true
 					onClicked: {
-						var creationDate = LogModel.getCurrentLogfileDate().toLocaleString(Qt.locale(), "yyyy-MM-dd_HH-mm")
-						var filenameSuggestion = "%1.%2.log".arg(Qt.application.name).arg(creationDate)
+						let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogfileDate())
 						appWindow.openSaveFileDialog(LogModel.saveCurrentLogfile, filenameSuggestion, "log")
 					}
 				}
@@ -69,12 +77,14 @@ SectionPage
 					id: removeLog
 
 					Layout.fillWidth: true
-					activeFocusOnTab: true
 
 					icon.source: "qrc:///images/trash_icon_white.svg"
 					//: LABEL DESKTOP_QML
 					text: qsTr("Delete logfile") + SettingsModel.translationTrigger
-					enabled: tabbedPane.currentIndex > 0
+					enableButton: tabbedPane.currentIndex > 0
+					disabledTooltipText: qsTr("The current logfile will be automatically deleted at exit.") + SettingsModel.translationTrigger
+
+					tintIcon: true
 					onClicked: {
 						confirmationPopup.deleteAll = false
 						confirmationPopup.open()
@@ -85,16 +95,28 @@ SectionPage
 					id: removeAllLogs
 
 					Layout.fillWidth: true
-					activeFocusOnTab: true
 
 					icon.source: "qrc:///images/trash_icon_all.svg"
 					//: LABEL DESKTOP_QML
 					text: qsTr("Delete old logfiles") + SettingsModel.translationTrigger
 					enabled: tabbedPane.sectionsModel.length > 1
+					tintIcon: true
 					onClicked: {
 						confirmationPopup.deleteAll = true
 						confirmationPopup.open()
 					}
+				}
+
+				GButton {
+					property QtObject detachedLogViewItem: null
+
+					Layout.fillWidth: true
+
+					icon.source: "qrc:///images/link_external.svg"
+					text: qsTr("Detach log viewer") + SettingsModel.translationTrigger
+					tintIcon: true
+
+					onClicked: appWindow.showDetachedLogView()
 				}
 			}
 		}
@@ -107,60 +129,44 @@ SectionPage
 			height: tabbedPane.availableHeight
 			width: parent.width
 
-			ListView {
+			GListView {
 				id: logView
 
-				anchors.fill: parent
+				anchors {
+					fill: parent
+					topMargin: Constants.component_spacing
+					leftMargin: Constants.component_spacing
+					bottomMargin: Constants.component_spacing
+				}
 
 				activeFocusOnTab: true
 
 				displayMarginBeginning: Constants.pane_padding
 				displayMarginEnd: Constants.pane_padding
-				boundsBehavior: Flickable.StopAtBounds
+
 				model: LogModel
-				delegate: GText {
+				spacing: Constants.text_spacing
+				delegate: LogViewDelegate {
 					width: parent.width - 2 * Constants.pane_padding
-					bottomPadding: index % 2 ? Constants.groupbox_spacing : 0
-
-					textStyle: index % 2 ? Style.text.hint_inverse : Style.text.hint_secondary_inverse
-					text: display
-				}
-				ScrollBar.vertical: ScrollBar {
-					id: verticalScrollbar
-
-					width: ApplicationModel.scaleFactor * 18
-					anchors.horizontalCenter: parent.right
-					anchors.horizontalCenterOffset: Constants.pane_padding / 2
-
-					policy: ScrollBar.AlwaysOn
-					minimumSize: Style.dimens.minimumScrollBarSize
-					stepSize: logView.height / logView.contentHeight
 				}
 
 				Connections {
 					target: LogModel
 					onFireNewLogMsg: if (logView.atYEnd) logView.positionViewAtEnd()
 				}
+
+				Connections {
+					target: root
+					onKeyPressed: logView.handleKeyPress(key)
+				}
 			}
 
 			FocusFrame {
 				scope: logView
 				framee: logView
-				dynamic: false
-				border.color: Constants.black
+				borderColor: Style.color.focus_indicator
 			}
 		}
-	}
-
-	Keys.onPressed: {
-		if (event.key === Qt.Key_PageDown)
-			verticalScrollbar.increase()
-		else if (event.key === Qt.Key_PageUp)
-			verticalScrollbar.decrease()
-		else if (event.key === Qt.Key_End)
-			logView.positionViewAtEnd()
-		else if (event.key === Qt.Key_Home)
-			logView.positionViewAtBeginning()
 	}
 
 	ConfirmationPopup {
@@ -168,11 +174,16 @@ SectionPage
 
 		property bool deleteAll: true
 
-		//: LABEL DESKTOP_QML
-		title: (deleteAll ? qsTr("Delete old logfiles") : qsTr("Delete selected logfile")) + SettingsModel.translationTrigger
-		//: INFO DESKTOP_QML The current/all logfile(s) are about to be removed, user confirmation required.
-		text: (deleteAll ? qsTr("Please confirm that you want to delete your old logfiles.")
-						 : qsTr("Please confirm that you want to delete the logfile.")
+		title: (deleteAll ?
+				//: LABEL DESKTOP_QML
+				qsTr("Delete old logfiles") :
+				//: LABEL DESKTOP_QML
+				qsTr("Delete selected logfile")
+			   ) + SettingsModel.translationTrigger
+		//: INFO DESKTOP_QML All logfiles are about to be removed, user confirmation required.
+		text: (deleteAll ? qsTr("All old logfiles will be deleted.")
+						 //: INFO DESKTOP_QML The current logfile is about to be removed, user confirmation required.
+						 : qsTr("The logfile will be deleted.")
 			   ) + SettingsModel.translationTrigger
 		onConfirmed: deleteAll ? LogModel.removeOtherLogfiles() : LogModel.removeCurrentLogfile()
 	}

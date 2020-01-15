@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IosReaderDelegate.h"
@@ -39,7 +39,7 @@ IosReaderDelegate::~IosReaderDelegate()
 
 void IosReaderDelegate::startSession()
 {
-	//: INFO IOS The id card may be inserted, the authentication process may be started.
+	//: INFO IOS The ID card may be inserted, the authentication process may be started.
 	[mPrivate->mIosReaderDelegateImpl startSession: tr("Please place your device on your ID card.")];
 }
 

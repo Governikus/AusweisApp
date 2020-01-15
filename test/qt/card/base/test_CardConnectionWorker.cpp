@@ -1,7 +1,7 @@
 /*!
  * \brief Tests for the class CardConnectionWorker.
  *
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnectionWorker.h"
@@ -48,16 +48,16 @@ class test_CardConnectionWorker
 
 		void test_Transmit()
 		{
-			CommandApdu emptyCommandApdu(QByteArray(""));
-			ResponseApdu emptyApdu;
+			const CommandApdu emptyCommandApdu(QByteArray(""));
 
 			//no card
-			QCOMPARE(mWorker->transmit(emptyCommandApdu, emptyApdu), CardReturnCode::CARD_NOT_FOUND);
+			QCOMPARE(mWorker->transmit(emptyCommandApdu), ResponseApduResult({CardReturnCode::CARD_NOT_FOUND}));
 
 			setCard();
 
 			//no secure messaging
-			QCOMPARE(mWorker->transmit(emptyCommandApdu, emptyApdu), CardReturnCode::OK);
+			ResponseApdu apdu(QByteArray::fromHex("6982"));
+			QCOMPARE(mWorker->transmit(emptyCommandApdu), ResponseApduResult({CardReturnCode::OK, apdu}));
 		}
 
 
@@ -114,23 +114,20 @@ class test_CardConnectionWorker
 		void test_SetEidPin()
 		{
 			const QString newPin("111111");
-			ResponseApdu emptyApdu;
-			ResponseApdu apduSuccess(StatusCode::SUCCESS);
 
 			//no card
-			QCOMPARE(mWorker->setEidPin(newPin, 5, emptyApdu), CardReturnCode::CARD_NOT_FOUND);
+			QCOMPARE(mWorker->setEidPin(newPin, 5), ResponseApduResult({CardReturnCode::CARD_NOT_FOUND}));
 
 			setCard();
 
 			//basic reader
 			QTest::ignoreMessage(QtWarningMsg, "Modify PIN failed");
-			QCOMPARE(mWorker->setEidPin(newPin, 5, emptyApdu), CardReturnCode::COMMAND_FAILED);
-			QCOMPARE(mWorker->setEidPin(newPin, 5, apduSuccess), CardReturnCode::OK);
+			QCOMPARE(mWorker->setEidPin(newPin, 5), ResponseApduResult({CardReturnCode::COMMAND_FAILED}));
 
 			//comfort reader
 			mReader->getReaderInfo().setBasicReader(false);
 			QTest::ignoreMessage(QtWarningMsg, "Setting eID PIN is not supported");
-			QCOMPARE(mWorker->setEidPin(QString(), 5, apduSuccess), CardReturnCode::COMMAND_FAILED);
+			QCOMPARE(mWorker->setEidPin(QString(), 5), ResponseApduResult({CardReturnCode::COMMAND_FAILED}));
 		}
 
 

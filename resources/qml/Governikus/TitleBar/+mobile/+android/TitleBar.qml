@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -32,7 +32,7 @@ Item {
 
 		leftAction: Hamburger {
 			id: burger
-			height: parent.height
+			height: titleBar.contentHeight
 			state: navBar.isOpen ? "back" : (baseItem.navigationAction ? baseItem.navigationAction.state : "")
 			enabled: baseItem.navigationAction ? baseItem.navigationAction.enabled : true
 

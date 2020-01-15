@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -19,11 +19,12 @@ Button {
 	padding: 0
 
 	property real fontScale: 1
+	property bool visualPrivacy: false
 	property alias color: circle.color
 
 	contentItem: GText {
 		text: control.text
-		textStyle: Style.text.header_inverse
+		textStyle: Style.text.header
 		horizontalAlignment: Text.AlignHCenter
 		verticalAlignment: Text.AlignVCenter
 		font.pixelSize: fontScale * ApplicationModel.scaleFactor * 50
@@ -33,10 +34,10 @@ Button {
 	background: Rectangle {
 		id: circle
 
-		border.color: Constants.black
-		border.width: control.focus ? Math.max(1, ApplicationModel.scaleFactor * 2) : 0
+		border.color: Style.text.header.textColor
+		border.width: !visualPrivacy && control.focus ? Math.max(1, ApplicationModel.scaleFactor * 2) : 0
 		radius: control.height / 2
-		color: Constants.white
+		color: Style.color.background_pane
 		visible: control.enabled
 
 		Rectangle {
@@ -46,7 +47,7 @@ Button {
 			opacity: 0.1
 
 			SequentialAnimation on height {
-				running: control.pressed
+				running: !visualPrivacy && control.pressed
 				alwaysRunToEnd: true
 
 				NumberAnimation { from: 0; to: background.height }
@@ -55,7 +56,7 @@ Button {
 			}
 
 			SequentialAnimation on width {
-				running: control.pressed
+				running: !visualPrivacy && control.pressed
 				alwaysRunToEnd: true
 
 				NumberAnimation { from: 0; to: background.width }

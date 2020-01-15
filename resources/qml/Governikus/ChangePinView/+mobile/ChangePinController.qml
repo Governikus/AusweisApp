@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -104,7 +104,7 @@ Item {
 				break
 			case "StateUnfortunateCardPosition":
 				//: INFO IOS The NFC signal is weak or unstable. The scan is stopped with this information in the iOS dialog.
-				ApplicationModel.stopNfcScanWithError(qsTr("Weak NFC signal") + SettingsModel.translationTrigger)
+				ApplicationModel.stopNfcScanWithError(qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable"))
 				baseItem.firePush(cardPositionView)
 				break
 			case "StateEnterNewPacePin":
@@ -117,7 +117,7 @@ Item {
 			case "FinalState":
 				if (controller.showRemoveCardFeedback) {
 					controller.showRemoveCardFeedback = false
-					//: INFO ANDROID IOS Hint that the id card may be removed from the card reader since the PIN was changed successfully.
+					//: INFO ANDROID IOS Hint that the ID card may be removed from the card reader since the PIN was changed successfully.
 					ApplicationModel.showFeedback(qsTr("You may now remove your ID card from the device."))
 				}
 				if (ChangePinModel.shouldSkipResultView()) {

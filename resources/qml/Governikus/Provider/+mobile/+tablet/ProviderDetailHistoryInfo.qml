@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -61,7 +61,7 @@ Item {
 					ProviderInfoSection {
 						imageSource: "qrc:///images/provider/information.svg"
 						//: LABEL ANDROID_TABLET IOS_TABLET
-						title: qsTr("Service provider") + SettingsModel.translationTrigger
+						title: qsTr("Provider") + SettingsModel.translationTrigger
 						name: baseItem.providerName
 					}
 

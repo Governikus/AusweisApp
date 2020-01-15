@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Reader.h"
@@ -113,8 +113,7 @@ Reader::RetryCounterResult Reader::getRetryCounter(QSharedPointer<CardConnection
 	mseBuilder.setPublicKey(PacePasswordId::PACE_PIN);
 	mseBuilder.setPrivateKey(referencePrivateKey);
 
-	ResponseApdu mseSetAtResponse;
-	CardReturnCode returnCode = pCardConnectionWorker->transmit(mseBuilder.build(), mseSetAtResponse);
+	auto [returnCode, mseSetAtResponse] = pCardConnectionWorker->transmit(mseBuilder.build());
 	if (returnCode != CardReturnCode::OK)
 	{
 		return {returnCode};

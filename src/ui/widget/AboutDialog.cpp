@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AboutDialog.h"
@@ -37,13 +37,6 @@ AboutDialog::AboutDialog(QWidget* pParent)
 
 	mUi->lblVersion->setText(QStringLiteral("<b>%1:</b> %2").arg(tr("Version"), QApplication::applicationVersion()));
 
-	mUi->lblDeveloperModeWarning->setText(QStringLiteral("<html><head/><body><p><span style='color:red;'>%1</span></p></body></html>")
-			.arg(tr("The developer mode is aimed at integrators / developers for new service applications."
-					" For this reason, the developer mode works only in the test PKI."
-					" By activating the developer mode, some safety tests are deactivated."
-					" This means that the authentication process continues although the AusweisApp2 would usually abort the process with an error message when used in normal operation mode."
-					" Information on the disregarded error in the developer mode is displayed in the attached window below the AusweisApp2.")));
-
 	const QIcon icon = windowIcon();
 	const QSize size = icon.actualSize(QSize(64, 64));
 	mUi->imgAusweisApp2->setPixmap(icon.pixmap(size));
@@ -51,10 +44,8 @@ AboutDialog::AboutDialog(QWidget* pParent)
 	connect(mUi->btnOkay, &QPushButton::clicked, this, &QDialog::accept);
 	connect(this, &QDialog::accepted, this, &AboutDialog::onAccept);
 
-	mUi->chkbDeveloperMode->setCheckState(Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode() ? Qt::Checked : Qt::Unchecked);
-
-	connect(mUi->chkbDeveloperMode, &QCheckBox::stateChanged, this, &AboutDialog::onCheckboxStateChanged);
-	onCheckboxStateChanged();
+	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireDeveloperOptionsChanged, this, &AboutDialog::onDeveloperOptionsChanged);
+	onDeveloperOptionsChanged();
 }
 
 
@@ -63,24 +54,17 @@ AboutDialog::~AboutDialog()
 }
 
 
-void AboutDialog::onCheckboxStateChanged()
+void AboutDialog::onDeveloperOptionsChanged()
 {
-	const bool developerModeActivated = mUi->chkbDeveloperMode->checkState() == Qt::Checked;
-	mUi->lblDeveloperModeWarning->setVisible(developerModeActivated);
-	resize(minimumSize());
-	adjustSize();
+	mUi->chkbDeveloperOptions->setCheckState(Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperOptions() ? Qt::Checked : Qt::Unchecked);
 }
 
 
 void AboutDialog::onAccept()
 {
-	const bool developerModeActivated = mUi->chkbDeveloperMode->checkState() == Qt::Checked;
+	const bool developerOptionsActivated = mUi->chkbDeveloperOptions->checkState() == Qt::Checked;
 	GeneralSettings& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	if (generalSettings.isDeveloperMode() != developerModeActivated)
-	{
-		generalSettings.setDeveloperMode(developerModeActivated);
-		generalSettings.save();
-	}
+	generalSettings.setDeveloperOptions(developerOptionsActivated);
 }
 
 

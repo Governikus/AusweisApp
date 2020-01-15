@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -27,7 +27,7 @@ Rectangle {
 	visible: !lockedAndHidden
 	height: lockedAndHidden ?  0 : (Style.dimens.tabbar_height + bottomSafeAreaMargin)
 
-	color: Constants.white
+	color: Style.color.background_pane
 
 	Component.onCompleted: {
 		state = SettingsModel.showSetupAssistantOnStart ? "tutorial" : "identify"

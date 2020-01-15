@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref StateVerifyRetryCounter
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateVerifyRetryCounter.h"

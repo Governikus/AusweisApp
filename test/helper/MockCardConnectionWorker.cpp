@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockCardConnectionWorker.h"
@@ -39,11 +39,21 @@ void MockCardConnectionWorker::addPaceCode(CardReturnCode pCode)
 }
 
 
-CardReturnCode MockCardConnectionWorker::transmit(const CommandApdu& pCommandApdu, ResponseApdu& pResponseApdu)
+ResponseApduResult MockCardConnectionWorker::getMockedResponse()
+{
+	if (mResponseData.empty())
+	{
+		return {CardReturnCode::UNDEFINED};
+	}
+
+	return {mResponseCodes.takeFirst(), ResponseApdu(mResponseData.takeFirst())};
+}
+
+
+ResponseApduResult MockCardConnectionWorker::transmit(const CommandApdu& pCommandApdu)
 {
 	Q_UNUSED(pCommandApdu)
-	pResponseApdu.setBuffer(mResponseData.empty() ? QByteArray() : mResponseData.takeFirst());
-	return mResponseCodes.empty() ? CardReturnCode::UNDEFINED : mResponseCodes.takeFirst();
+	return getMockedResponse();
 }
 
 
@@ -76,10 +86,9 @@ CardReturnCode MockCardConnectionWorker::destroyPaceChannel()
 }
 
 
-CardReturnCode MockCardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu)
+ResponseApduResult MockCardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds)
 {
 	Q_UNUSED(pNewPin)
 	Q_UNUSED(pTimeoutSeconds)
-	pResponseApdu.setBuffer(mResponseData.empty() ? QByteArray() : mResponseData.takeFirst());
-	return mResponseCodes.empty() ? CardReturnCode::UNDEFINED : mResponseCodes.takeFirst();
+	return getMockedResponse();
 }

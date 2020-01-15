@@ -1,9 +1,10 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PdfCreator.h"
 
+#include <QAbstractTextDocumentLayout>
 #include <QDebug>
 #include <QPagedPaintDevice>
 #include <QPainter>
@@ -82,6 +83,26 @@ void PdfCreator::createFooter()
 }
 
 
+// inspired by void QTextDocument::drawContents(QPainter *p, const QRectF &rect)
+void drawContents(QTextDocument& pTextDocument, QPainter& pPainter, const QRectF& pClipRect = QRectF())
+{
+	QAbstractTextDocumentLayout::PaintContext paintContext;
+	paintContext.palette.setColor(QPalette::Text, Qt::black);
+
+	pPainter.save();
+
+	if (pClipRect.isValid())
+	{
+		pPainter.setClipRect(pClipRect);
+		paintContext.clip = pClipRect;
+	}
+
+	pTextDocument.documentLayout()->draw(&pPainter, paintContext);
+
+	pPainter.restore();
+}
+
+
 int qt_defaultDpi();
 bool PdfCreator::save()
 {
@@ -107,16 +128,16 @@ bool PdfCreator::save()
 	{
 		painter.resetTransform();
 
-		mHeader.drawContents(&painter);
+		drawContents(mHeader, painter);
 		painter.translate(0, headerHeight);
 
 		painter.save();
 		painter.translate(0, -currentRect.y());
-		mContent.drawContents(&painter, currentRect);
+		drawContents(mContent, painter, currentRect);
 		painter.restore();
 		painter.translate(0, currentRect.height());
 
-		mFooter.drawContents(&painter);
+		drawContents(mFooter, painter);
 
 		currentRect.translate(0, currentRect.height());
 		if (currentRect.intersects(contentRect))

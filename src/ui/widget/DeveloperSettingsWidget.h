@@ -1,7 +1,7 @@
 /*!
  * \brief Widget for the developer settings.
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -38,6 +38,8 @@ class DeveloperSettingsWidget
 		virtual ~DeveloperSettingsWidget() override;
 
 		void apply();
+
+	public Q_SLOTS:
 		void reset();
 
 	Q_SIGNALS:

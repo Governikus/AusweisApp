@@ -1,9 +1,9 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -30,20 +30,24 @@ SectionPage
 	ColumnLayout
 	{
 		anchors.fill: parent
-		Item {/*spacer*/ Layout.fillHeight: true; width: parent.width }
+		anchors.margins: 0
+
+		spacing: 0
 
 		RowLayout {
-			spacing: Constants.component_spacing
-			width: parent.width
+			Layout.fillWidth: true
+			Layout.margins: Constants.pane_padding
 
-			Item {/*spacer*/ Layout.fillWidth: true; height: parent.height}
+			spacing: 0
+
+			Item {/*spacer*/ Layout.fillWidth: true; }
+
 			Image {
 				Layout.alignment: Qt.AlignVCenter
-				width: 58
-				height: width
-				// because RowLayout uses implicitHeight that is based on sourceSize we have to explicitly set the sourceSize
-				sourceSize.height: baseItem.state === "REMOTE_PIN" ? 58 : 143
-				Layout.maximumWidth: width
+				Layout.preferredHeight: 58
+				Layout.preferredWidth: 58
+				Layout.rightMargin: Constants.component_spacing
+
 				source: baseItem.state === "REMOTE_PIN" ? "qrc:///images/icon_remote.svg" : "qrc:///images/NFCPhoneCard.png"
 				fillMode: Image.PreserveAspectFit
 			}
@@ -65,7 +69,7 @@ SectionPage
 
 					if (!pinField.confirmedInput) {
 						//: INFO ANDROID IOS The changed PIN was entered wrongfully during confirmation.
-						return qsTr("The entered PIN does not match the new PIN. Please correct your input.")
+						return qsTr("The new PIN and the confirmation do not match. Please correct your input.")
 					}
 					if (!!NumberModel.inputError) {
 						return NumberModel.inputError
@@ -73,75 +77,103 @@ SectionPage
 					if (baseItem.state === "CAN") {
 						if (NumberModel.isCanAllowedMode) {
 							//: INFO ANDROID IOS The CAN needs to be entered in CAN-allowed mode, hint where the CAN can be found.
-							return qsTr("Please enter the six-digit card access number. You can find the card access number on the front of the ID card.")
+							return qsTr("Please enter the 6-digit card access number (CAN). You can find it on the front of the ID card.")
 						}
 						//: INFO ANDROID IOS The wrong PIN was entered twice, the third attempt requires the CAN for additional verification, hint where the CAN is found.
-						return qsTr("You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.")
+						return qsTr("A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.")
 					}
 					if (baseItem.state === "PUK") {
-						//: INFO ANDROID IOS The PUK is required to unlock the id card since the wrong PIN entered three times.
-						return qsTr("You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.")
+						//: INFO ANDROID IOS The PUK is required to unlock the ID card since the wrong PIN entered three times.
+						return qsTr("A wrong PIN has been entered three times on your ID card. Your PIN is now blocked. To unblock your PIN you have to enter the PUK.")
 					}
 					if (baseItem.state === "PIN_NEW") {
 						//: INFO ANDROID IOS A new 6-digit PIN needs to be supplied.
-						return qsTr("Please enter a new 6-digit PIN of your choice.")
+						return qsTr("Please enter a new 6-digit PIN now.")
 					}
 					if (baseItem.state === "PIN_NEW_AGAIN") {
 						//: INFO ANDROID IOS The new PIN needs to be confirmed.
-						return qsTr("Please enter your new 6-digit PIN again.")
+						return qsTr("Please confirm your new 6-digit PIN.")
 					}
 					if (baseItem.state === "PIN" && NumberModel.requestTransportPin) {
 						//: INFO ANDROID IOS The transport PIN is required by AA2, it needs to be change to an actual PIN.
-						return qsTr("Please enter your transport PIN.")
+						return qsTr("Please enter the transport PIN from your PIN letter.")
 					}
 					if (baseItem.state === "REMOTE_PIN") {
 						//: INFO ANDROID IOS The pairing code for the smartphone is required.
-						return qsTr("Enter the pairing code shown on your other device to use it as a card reader.")
+						return qsTr("Enter the pairing code shown on the device you want to pair.")
 					}
 					//: LABEL ANDROID IOS
 					return qsTr("Please enter your PIN.")
 				}
 			}
-			Item {/*spacer*/ Layout.fillWidth: true; height: parent.height}
+
+			Item {/*spacer*/ Layout.fillWidth: true; }
 		}
 
-		Item {/*spacer*/ Layout.fillHeight: true; width: parent.width }
+		Item {/*spacer*/ Layout.fillHeight: true }
 
-		NumberField {
-			id: pinField
+		Rectangle {
 			Layout.alignment: Qt.AlignHCenter
-			passwordLength: baseItem.state === "REMOTE_PIN" ? 4
-						  : baseItem.state === "PIN" && NumberModel.requestTransportPin ? 5
-						  : baseItem.state === "PUK" ? 10
-						  : 6
-			Layout.preferredHeight: height
-			Layout.preferredWidth: width
+			Layout.preferredHeight: pinField.height + Constants.component_spacing
+			Layout.preferredWidth: pinField.width + Constants.component_spacing
+
+			radius: Style.dimens.button_radius
+			border.color: Style.color.border
+			border.width: Style.dimens.separator_size
+
+			NumberField {
+				id: pinField
+
+				anchors.centerIn: parent
+
+				passwordLength: baseItem.state === "REMOTE_PIN" ? 4
+							  : baseItem.state === "PIN" && NumberModel.requestTransportPin ? 5
+							  : baseItem.state === "PUK" ? 10
+							  : 6
+
+				onPasswordLengthChanged: pinField.text = ""
+			}
 		}
 
 		GText {
 			id: transportPinLink
+
 			property alias enableTransportPinLink: myMouse.enabled
 
 			visible: baseItem.state === "PIN" && enableTransportPinLink
-			//: LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung starten kann.
-			text: (NumberModel.requestTransportPin ? qsTr("Your PIN has 6 digits?") : qsTr("Your PIN has 5 digits?")) + SettingsModel.translationTrigger
 			Layout.alignment: Qt.AlignHCenter
+			Layout.topMargin: Constants.text_spacing
+			Layout.margins: Constants.pane_padding
+
+			Accessible.role: Accessible.Button
+			Accessible.onPressAction: if (Qt.platform.os === "ios") myMouse.clicked(null)
+
+			text: (NumberModel.requestTransportPin ?
+				   //: LABEL ANDROID IOS Button to switch to a 6-digit PIN.
+				   qsTr("Does your PIN have 6 digits?") :
+				   //: LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the transport PIN.
+				   qsTr("Does your PIN have 5 digits?")
+				  ) + SettingsModel.translationTrigger
 			textStyle: Style.text.hint_accent
 			font.underline: true
 
 			MouseArea {
 				id: myMouse
-				enabled: true
+
 				anchors.fill: parent
 				anchors.margins: -12
+
+				enabled: true
+
 				onClicked: baseItem.changePinLength()
 			}
 		}
 
-		Item {/*spacer*/ height: Constants.component_spacing; width: parent.width }
+		Item {/*spacer*/ Layout.fillHeight: true }
 
 		NumberPad {
 			state: baseItem.state
+
 			Layout.alignment: Qt.AlignHCenter
 			Layout.preferredWidth: width
 			Layout.preferredHeight: height
@@ -180,7 +212,5 @@ SectionPage
 				}
 			}
 		}
-
-		Item {/*spacer*/ Layout.fillHeight: true; width: parent.width }
 	}
 }

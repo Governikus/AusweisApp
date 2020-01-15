@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of PACEInfo
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -61,6 +61,7 @@ class PaceInfo
 	: public SecurityInfo
 {
 	friend class QSharedPointer<PaceInfo>;
+
 	const QSharedPointer<const paceinfo_st> mDelegate;
 
 	explicit PaceInfo(const QSharedPointer<const paceinfo_st>& pDelegate);

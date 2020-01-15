@@ -18,9 +18,6 @@ internal TutorialReaderMethodBluetooth TutorialReaderMethodBluetooth.qml
 internal TutorialReaderMethodFooter TutorialReaderMethodFooter.qml
 internal TutorialExpandAnimation TutorialExpandAnimation.qml
 internal TutorialCollapseAnimation TutorialCollapseAnimation.qml
-internal SetupAssistantBinaryDecisionView SetupAssistantBinaryDecisionView.qml
-internal SetupAssistantCardReaderView SetupAssistantCardReaderView.qml
-internal SetupAssistantButton SetupAssistantButton.qml
 
 SetupAssistantView 1.0 SetupAssistantView.qml
 TutorialView 1.0 TutorialView.qml

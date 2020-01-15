@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -10,13 +10,13 @@ import Governikus.Style 1.0
 import Governikus.Type.SettingsModel 1.0
 
 
-Rectangle {
+Item {
 	id: content
-	height: appWindow.height - Style.dimens.titlebar_height
-	width: 250
-	color: Style.color.background
 
 	property var navigationController: null
+
+	height: appWindow.height - Style.dimens.titlebar_height
+	width: 250
 
 	ListModel {
 		id: navModel
@@ -28,7 +28,7 @@ Rectangle {
 		}
 
 		ListElement {
-			image: "qrc:///images/android/navigation/anbieter.svg"
+			image: "qrc:///images/main_provider.svg"
 			desc: QT_TR_NOOP("Provider")
 			condition: "provider"
 		}
@@ -40,7 +40,7 @@ Rectangle {
 		}
 
 		ListElement {
-			image: "qrc:///images/android/navigation/pin.svg"
+			image: "qrc:///images/main_pin.svg"
 			desc: QT_TR_NOOP("PIN Management")
 			condition: "pin"
 		}
@@ -52,50 +52,75 @@ Rectangle {
 		}
 
 		ListElement {
-			image: "qrc:///images/android/navigation/tutorial.svg"
-			desc: QT_TR_NOOP("Tutorial")
-			condition: "tutorial"
+			image: "qrc:///images/settings_icon.svg"
+			desc: QT_TR_NOOP("Settings")
+			condition: "settings"
+			section: "settings"
 		}
 
 		ListElement {
 			image: "qrc:///images/android/navigation/support.svg"
 			desc: QT_TR_NOOP("Help & Feedback")
 			condition: "feedback"
+			section: "settings"
 		}
 
 		ListElement {
-			image: "qrc:///images/android/navigation/faq.svg"
-			desc: QT_TR_NOOP("Information")
-			condition: "information"
-		}
-
-		ListElement {
-			image: "qrc:///images/zahnraeder.svg"
 			desc: QT_TR_NOOP("Developer options")
+			image: "qrc:///images/settings_icon.svg"
 			condition: "developeroptions"
+			section: "settings"
 		}
 	}
 
-
 	GListView {
 		id: listView
+
 		anchors.fill: parent
+
 		boundsBehavior: Flickable.StopAtBounds
 		model: navModel
 		currentIndex: navigationController.currentIndex
+		section.property: "section"
+		section.delegate: Item {
+			height: Constants.component_spacing
+			width: parent.width
 
+			GSeparator {
+				width: parent.width
+				anchors.verticalCenter: parent.verticalCenter
+			}
+		}
 		highlight: Rectangle {
-			color: "black"
-			opacity: 0.1
+			y: listView.currentItem.y
 			height: 45
 			width: content.width
-			y: listView.currentItem.y
+
+			color: "#1A000000" //10% transparent black
+
+			GSeparator {
+				anchors {
+					top: parent.top
+					left: parent.left
+					right: parent.right
+				}
+			}
+
+			GSeparator {
+				anchors {
+					bottom: parent.bottom
+					left: parent.left
+					right: parent.right
+				}
+			}
 		}
 		highlightFollowsCurrentItem: false
-
 		delegate: NavigationItem {
+			// Hide developer options if we are not using developer build (debug build)
+			visible: condition !== "developeroptions" || plugin.debugBuild
 			height: 45
 			width: content.width
+
 			source: image
 			text: qsTr(desc) + SettingsModel.translationTrigger
 			onClicked: {
@@ -107,38 +132,6 @@ Rectangle {
 				}
 				navigationController.close()
 			}
-			// Hide developer options if we are not using developer build (debug build)
-			visible: condition !== "developeroptions" || plugin.developerBuild
 		}
-	}
-
-	LocationButton {
-		id: lang_de
-
-		anchors.margins: Constants.component_spacing
-		anchors.bottomMargin: plugin.safeAreaMargins.bottom + Constants.component_spacing
-		anchors.bottom: parent.bottom
-		anchors.right: lang_en.left
-
-		Accessible.name: qsTr("Set language to german") + SettingsModel.translationTrigger
-
-		language: "de"
-		name: "DE"
-		image: "qrc:///images/location_flag_de.svg"
-	}
-
-	LocationButton {
-		id: lang_en
-
-		anchors.margins: Constants.component_spacing
-		anchors.bottom: parent.bottom
-		anchors.right: parent.right
-		anchors.bottomMargin: plugin.safeAreaMargins.bottom + Constants.component_spacing
-
-		Accessible.name: qsTr("Set language to english") + SettingsModel.translationTrigger
-
-		language: "en"
-		name: "EN"
-		image: "qrc:///images/location_flag_en.svg"
 	}
 }

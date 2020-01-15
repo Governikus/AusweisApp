@@ -31,5 +31,7 @@ j.with
 			'''.stripIndent().trim())
 
 		shell('cd build/_CPack_Packages/Darwin/Bundle/; codesign -vvvv **/*.app; spctl -a -vv **/*.app')
+
+		shell('cd build/; cmake -P ../source/cmake/Notarization.cmake')
 	}
 }

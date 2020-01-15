@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WebSocketHelper.h"
@@ -48,8 +48,8 @@ WebSocketHelper::WebSocketHelper(int pPort, int pConnectionTimeout)
 		connectWebsocket(pPort);
 	}
 	while (mWebSocket.state() != QAbstractSocket::SocketState::ConnectedState
-			&& mWebSocket.error() == QAbstractSocket::SocketError::ConnectionRefusedError
-			&& QDateTime::currentMSecsSinceEpoch() - start < mConnectionTiemout);
+	&& mWebSocket.error() == QAbstractSocket::SocketError::ConnectionRefusedError
+	&& QDateTime::currentMSecsSinceEpoch() - start < mConnectionTiemout);
 }
 
 

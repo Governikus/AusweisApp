@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscCard.h"
@@ -91,7 +91,7 @@ PCSC_INT PcscReader::getFeatureValue(FeatureID pFeatureID)
 
 static QString SCARD_STATE_toString(DWORD i)
 {
-	QStringList sb(QString().sprintf("(%#lx)", static_cast<ulong>(i)));
+	QStringList sb(QStringLiteral("(%1)").arg(static_cast<ulong>(i)));
 
 	if (i == SCARD_STATE_UNAWARE)
 	{

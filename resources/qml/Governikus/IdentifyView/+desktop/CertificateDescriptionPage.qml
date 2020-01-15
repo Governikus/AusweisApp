@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -15,7 +15,7 @@ SectionPage
 {
 	signal exit()
 
-	Accessible.name: qsTr("Self-authentication data view") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Self-Authentication data view") + SettingsModel.translationTrigger
 	Accessible.description: qsTr("This is the self-authentication data view of the AusweisApp2.") + SettingsModel.translationTrigger
 
 	titleBarAction: TitleBarAction {
@@ -25,12 +25,10 @@ SectionPage
 		showHelp: false
 	}
 
-	Pane {
+	ScrollablePane {
 		id: pane
 
-		anchors.top: parent.top
-		anchors.left: parent.left
-		anchors.right: parent.right
+		anchors.fill: parent
 		anchors.margins: Constants.pane_padding
 
 		//: LABEL DESKTOP_QML
@@ -59,9 +57,6 @@ SectionPage
 		anchors.right: pane.right
 		anchors.bottom: pane.bottom
 		anchors.margins: Constants.pane_padding
-
-		activeFocusOnTab: true
-		Accessible.name: button.text
 
 		//: LABEL DESKTOP_QML
 		text: qsTr("Close") + SettingsModel.translationTrigger

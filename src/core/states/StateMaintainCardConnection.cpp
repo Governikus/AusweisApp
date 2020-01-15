@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateMaintainCardConnection.h"
@@ -62,7 +62,7 @@ void StateMaintainCardConnection::run()
 		{
 			Q_ASSERT(CardReturnCodeUtil::equalsWrongPacePassword(lastPaceResult));
 
-			qCDebug(statemachine) << "Reseting all PACE passwords.";
+			qCDebug(statemachine) << "Resetting all PACE passwords.";
 			context->resetPacePasswords();
 
 			if (context->getCardConnection())

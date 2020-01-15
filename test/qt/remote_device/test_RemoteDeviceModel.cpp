@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceModel.h"
@@ -221,7 +221,7 @@ class test_RemoteDeviceModel
 
 			QVector<RemoteDeviceModelEntry> readers;
 			QSharedPointer<RemoteDeviceListEntry> listEntry(new RemoteDeviceListEntry(RemoteDeviceDescriptor()));
-			const RemoteDeviceModelEntry entry1(QString("reader 1"), QString("test id"), true, true, true, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), listEntry);
+			const RemoteDeviceModelEntry entry1(QString("reader 1"), QString("test id"), true, false, true, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), listEntry);
 			const RemoteDeviceModelEntry entry2(QString("reader 2"));
 			readers << entry1 << entry2;
 			mModel->mAllRemoteReaders = readers;

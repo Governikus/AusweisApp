@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDetector.h"
@@ -61,7 +61,7 @@ QVector<ReaderConfigurationInfo> ReaderDetector::getAttachedSupportedDevices() c
 ReaderConfigurationInfo ReaderDetector::getReaderConfigurationInfo(const QString& pReaderName)
 {
 	QVector<ReaderConfigurationInfo> attachedSupportedDevices = getAttachedSupportedDevices();
-	attachedSupportedDevices += Env::getSingleton<ReaderConfiguration>()->getRemoteReaderConfigurationInfo();
+	attachedSupportedDevices += Env::getSingleton<ReaderConfiguration>()->getVirtualReaderConfigurationInfos();
 
 	for (const auto& info : qAsConst(attachedSupportedDevices))
 	{

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref Apdu
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ResponseApdu.h"
@@ -33,34 +33,30 @@ class test_ResponceApdu
 		}
 
 
-		void testRetryCounter0()
+		void testRetryCounter_data()
 		{
-			ResponseApdu apdu(QByteArray::fromHex("9000"));
-			QCOMPARE(apdu.getRetryCounter(), 3);
+			QTest::addColumn<QByteArray>("apdu");
+			QTest::addColumn<int>("retryCounter");
 
-			apdu.setBuffer(QByteArray::fromHex("63c2"));
-			QCOMPARE(apdu.getRetryCounter(), 2);
+			QTest::newRow("9000") << QByteArray::fromHex("9000") << 3;
+			QTest::newRow("63c2") << QByteArray::fromHex("63c2") << 2;
+			QTest::newRow("63c1") << QByteArray::fromHex("63c1") << 1;
+			QTest::newRow("63c0") << QByteArray::fromHex("63c0") << 0;
+			QTest::newRow("63c3") << QByteArray::fromHex("63c3") << -1;
+			QTest::newRow("6400") << QByteArray::fromHex("6400") << -1;
+			QTest::newRow("1234") << QByteArray::fromHex("1234") << -1;
+			QTest::newRow("12") << QByteArray::fromHex("12") << -1;
+			QTest::newRow("6283") << QByteArray::fromHex("6283") << 0;
+			QTest::newRow("empty") << QByteArray() << -1;
+		}
 
-			apdu.setBuffer(QByteArray::fromHex("63c1"));
-			QCOMPARE(apdu.getRetryCounter(), 1);
 
-			apdu.setBuffer(QByteArray::fromHex("63c0"));
-			QCOMPARE(apdu.getRetryCounter(), 0);
+		void testRetryCounter()
+		{
+			QFETCH(QByteArray, apdu);
+			QFETCH(int, retryCounter);
 
-			apdu.setBuffer(QByteArray::fromHex("6400"));
-			QCOMPARE(apdu.getRetryCounter(), -1);
-
-			apdu.setBuffer(QByteArray::fromHex("1234"));
-			QCOMPARE(apdu.getRetryCounter(), -1);
-
-			apdu.setBuffer(QByteArray::fromHex("12"));
-			QCOMPARE(apdu.getRetryCounter(), -1);
-
-			apdu.setBuffer(QByteArray::fromHex("6283"));
-			QCOMPARE(apdu.getRetryCounter(), 0);
-
-			apdu.setBuffer(QByteArray());
-			QCOMPARE(apdu.getRetryCounter(), -1);
+			QCOMPARE(ResponseApdu(apdu).getRetryCounter(), retryCounter);
 		}
 
 
@@ -88,7 +84,7 @@ class test_ResponceApdu
 			QCOMPARE(apdu.getReturnCode(), statusCode);
 			QCOMPARE(apdu.getBuffer(), bufferOut);
 
-			apdu.setBuffer(bufferIn);
+			apdu = ResponseApdu(bufferIn);
 			QCOMPARE(apdu.getReturnCode(), statusCode);
 			QCOMPARE(apdu.getBuffer(), bufferIn);
 		}

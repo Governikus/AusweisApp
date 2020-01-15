@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -83,7 +83,7 @@ Item {
 				Accessible.ignored: true
 
 				//: LABEL IOS
-				text: qsTr("Search") + SettingsModel.translationTrigger
+				text: qsTr("Search providers") + SettingsModel.translationTrigger
 				color: Constants.grey
 				font.pixelSize: Style.dimens.normal_font_size
 			}
@@ -119,8 +119,9 @@ Item {
 			anchors.right: parent.right
 			anchors.rightMargin: visible ? 8 : 0
 			anchors.verticalCenter: parent.verticalCenter
+			width: visible ? implicitWidth : 0
 
-			width: visible ? preferedWidth : 0
+			buttonColor: Style.color.transparent
 			//: LABEL IOS
 			text: qsTr("Cancel") + SettingsModel.translationTrigger
 			onClicked: {

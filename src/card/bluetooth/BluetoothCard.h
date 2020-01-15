@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of Card object for Bluetooth
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,7 +23,7 @@ class BluetoothCard
 		bool mConnected;
 		QSharedPointer<CyberJackWaveDevice> mDevice;
 
-		CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes, quint8 pTimeoutSeconds);
+		ResponseApduResult transmit(const CommandApdu& pCmd, quint8 pTimeoutSeconds);
 
 	public:
 		explicit BluetoothCard(QSharedPointer<CyberJackWaveDevice> pDevice);
@@ -32,13 +32,13 @@ class BluetoothCard
 		CardReturnCode disconnect() override;
 		bool isConnected() override;
 
-		CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
+		ResponseApduResult transmit(const CommandApdu& pCmd) override;
 
 		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds) override;
 
 		CardReturnCode destroyPaceChannel() override;
 
-		CardReturnCode setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu) override;
+		ResponseApduResult setEidPin(quint8 pTimeoutSeconds) override;
 };
 
 } // namespace governikus

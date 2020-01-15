@@ -24,6 +24,8 @@ j.with
 
 		shell('cd build; make inst.latex.pdf')
 
+		shell('cd build; make inte.latex.pdf')
+
 		shell('cd build; make doc8')
 	}
 }

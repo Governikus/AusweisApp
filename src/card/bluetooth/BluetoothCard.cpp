@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BluetoothCard.h"
@@ -86,18 +86,18 @@ bool BluetoothCard::isConnected()
 }
 
 
-CardReturnCode BluetoothCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
+ResponseApduResult BluetoothCard::transmit(const CommandApdu& pCmd)
 {
-	return transmit(pCmd, pRes, 30);
+	return transmit(pCmd, 30);
 }
 
 
-CardReturnCode BluetoothCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes, quint8 pTimeoutSeconds)
+ResponseApduResult BluetoothCard::transmit(const CommandApdu& pCmd, quint8 pTimeoutSeconds)
 {
 	if (!isConnected())
 	{
 		qCCritical(bluetooth) << "Card is not connected, abort transmit";
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
 	qCDebug(bluetooth) << "Transmit command APDU:" << pCmd.getBuffer().toHex();
@@ -106,18 +106,19 @@ CardReturnCode BluetoothCard::transmit(const CommandApdu& pCmd, ResponseApdu& pR
 	if (response.isNull())
 	{
 		qCCritical(bluetooth) << "Response is empty";
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
 	auto apduResponse = response.staticCast<const BluetoothMessageTransferApduResponse>();
 	if (apduResponse->getResultCode() != BluetoothResultCode::Ok)
 	{
 		qCCritical(bluetooth) << "TransferApduResponse failed:" << apduResponse->getResultCode();
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
-	pRes.setBuffer(apduResponse->getResponseAPDU());
-	qCDebug(bluetooth) << "Transmit response APDU:" << pRes.getBuffer().toHex();
-	return CardReturnCode::OK;
+
+	const ResponseApdu resp(apduResponse->getResponseAPDU());
+	qCDebug(bluetooth) << "Transmit response APDU:" << resp.getBuffer().toHex();
+	return {CardReturnCode::OK, resp};
 }
 
 
@@ -131,9 +132,7 @@ EstablishPaceChannelOutput BluetoothCard::establishPaceChannel(PacePasswordId pP
 	builder.setChat(pChat);
 	builder.setCertificateDescription(pCertificateDescription);
 
-	ResponseApdu response;
-
-	CardReturnCode returnCode = transmit(builder.createCommandDataCcid(), response, pTimeoutSeconds);
+	auto [returnCode, response] = transmit(builder.createCommandDataCcid(), pTimeoutSeconds);
 	if (returnCode != CardReturnCode::OK)
 	{
 		return returnCode;
@@ -148,22 +147,21 @@ EstablishPaceChannelOutput BluetoothCard::establishPaceChannel(PacePasswordId pP
 CardReturnCode BluetoothCard::destroyPaceChannel()
 {
 	DestroyPaceChannelBuilder builder;
-	ResponseApdu response;
-	return transmit(builder.createCommandDataCcid(), response);
+	return transmit(builder.createCommandDataCcid()).mReturnCode;
 }
 
 
-CardReturnCode BluetoothCard::setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu)
+ResponseApduResult BluetoothCard::setEidPin(quint8 pTimeoutSeconds)
 {
 	PinModify pinModify(pTimeoutSeconds);
 	CommandApdu command = pinModify.createCcidForBluetooth();
 
-	CardReturnCode returnCode = transmit(command, pResponseApdu, pTimeoutSeconds);
+	auto [returnCode, response] = transmit(command, pTimeoutSeconds);
 	if (returnCode != CardReturnCode::OK)
 	{
-		return returnCode;
+		return {returnCode, response};
 	}
 
-	PinModifyOutput output(pResponseApdu);
-	return output.getReturnCode();
+	const PinModifyOutput output(response);
+	return {output.getReturnCode(), response};
 }

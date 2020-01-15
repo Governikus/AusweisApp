@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppQtGui.h"
@@ -45,7 +45,6 @@ AppQtGui::AppQtGui()
 	, mUpdateInfo(new QMessageBox(mMainWidget))
 	, mCertificateInfo(new QMessageBox(mMainWidget))
 	, mLockedInfo(new QMessageBox(mMainWidget))
-	, mSwitchUiInquiry(new QMessageBox(mMainWidget))
 	, mUpdateWindow(new UpdateWindow(mMainWidget))
 	, mAggressiveToForeground(false)
 {
@@ -62,7 +61,7 @@ AppQtGui::AppQtGui()
 
 	mUpdateInfo->setWindowTitle(QApplication::applicationName() + QStringLiteral(" - ") + tr("Updates"));
 	mUpdateInfo->setWindowIcon(mTrayIcon.getIcon());
-	mUpdateInfo->setWindowModality(Qt::WindowModal);
+	mUpdateInfo->setWindowModality(Qt::ApplicationModal);
 	mUpdateInfo->setStandardButtons(QMessageBox::Ok);
 	mUpdateInfo->button(QMessageBox::Ok)->setFocus();
 	connect(mUpdateWindow, &UpdateWindow::fireShowUpdateDialog, this,
@@ -87,12 +86,6 @@ AppQtGui::AppQtGui()
 	mLockedInfo->setIcon(QMessageBox::Information);
 	mLockedInfo->setText(tr("Another application uses AusweisApp2."));
 	mLockedInfo->setStandardButtons(QMessageBox::NoButton);
-
-	mSwitchUiInquiry->setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Switch UI"));
-	mSwitchUiInquiry->setIcon(QMessageBox::Information);
-	mSwitchUiInquiry->setText(tr("Do you want to switch to the new beta UI? You can switch back to the old UI in \"Settings\"."));
-	mSwitchUiInquiry->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-	mSwitchUiInquiry->button(QMessageBox::Yes)->setFocus();
 
 	auto* service = Env::getSingleton<Service>();
 	connect(service, &Service::fireAppUpdateFinished, this, &AppQtGui::onAppUpdateReady);
@@ -217,6 +210,7 @@ void AppQtGui::onShowUserInformation(const QString& pInformationMessage)
 {
 	QMessageBox msgBox(mMainWidget);
 	msgBox.setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Information"));
+	msgBox.setWindowModality(Qt::ApplicationModal);
 	msgBox.setIcon(QMessageBox::Information);
 	msgBox.setText(pInformationMessage);
 	msgBox.setStandardButtons(QMessageBox::Ok);
@@ -372,10 +366,6 @@ void AppQtGui::closeDialogs()
 	{
 		mDiagnosisGui->deactivate();
 	}
-	if (mSwitchUiInquiry)
-	{
-		mSwitchUiInquiry->reject();
-	}
 }
 
 
@@ -423,11 +413,6 @@ void AppQtGui::onCloseWindowRequested(bool* pDoClose)
 
 void AppQtGui::onSwitchUiRequested()
 {
-	if (mSwitchUiInquiry->exec() != QMessageBox::Yes)
-	{
-		return;
-	}
-
 	auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	generalSettings.setSelectedUi(QStringLiteral("qml"));
 	generalSettings.save();
@@ -489,8 +474,12 @@ void AppQtGui::show(UiModule pModule)
 			mMainWidget->switchToGuiModule(GuiModule::START_PAGE);
 			break;
 
+		// Don't switch the module, just show the current one,
+		// the Widgets UI does not feature a distinct view for update information.
+		case UiModule::UPDATEINFORMATION:
+			Q_FALLTHROUGH();
+
 		case UiModule::CURRENT:
-			// don't switch the module, just show the current one
 			break;
 	}
 

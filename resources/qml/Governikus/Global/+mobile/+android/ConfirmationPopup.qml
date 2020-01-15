@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -11,6 +11,8 @@ import Governikus.Style 1.0
 
 BaseConfirmationPopup {
 	id: root
+
+	headerTextStyle: Style.text.header
 
 	buttons: Row {
 		width: parent.width

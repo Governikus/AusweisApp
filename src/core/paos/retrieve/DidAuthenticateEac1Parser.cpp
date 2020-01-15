@@ -1,7 +1,7 @@
 /*!
  * \brief Parser for the PAOS DidAuthenticateEac1 element.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -101,6 +101,10 @@ Eac1InputType DidAuthenticateEac1Parser::parseEac1InputType()
 					qCCritical(paos) << "Cannot parse required CHAT";
 					mParseError = true;
 				}
+				else
+				{
+					qCDebug(paos) << "Access rights:" << eac1.getRequiredChat()->getAccessRights();
+				}
 			}
 		}
 		else if (mXmlReader->name() == QLatin1String("OptionalCHAT"))
@@ -112,6 +116,10 @@ Eac1InputType DidAuthenticateEac1Parser::parseEac1InputType()
 				{
 					qCCritical(paos) << "Cannot parse optional CHAT";
 					mParseError = true;
+				}
+				else
+				{
+					qCDebug(paos) << "Access rights:" << eac1.getOptionalChat()->getAccessRights();
 				}
 			}
 		}
@@ -140,6 +148,8 @@ Eac1InputType DidAuthenticateEac1Parser::parseEac1InputType()
 		{
 			if (auto cvc = CVCertificate::fromHex(readElementText().toLatin1()))
 			{
+				qCDebug(paos) << "Linked Certificate (Authority):" << cvc->getBody().getCertificationAuthorityReference();
+				qCDebug(paos) << "Certificate Name (Holder):" << cvc->getBody().getCertificateHolderReference();
 				eac1.appendCvcerts(cvc);
 			}
 			else

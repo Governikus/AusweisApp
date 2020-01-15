@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -36,13 +36,19 @@ SectionPage {
 		ReaderSettings
 	}
 
+	function showSettings() {
+		readerView.precedingView = d.activeView
+		d.view = ChangePinView.SubViews.ReaderSettings
+		ApplicationWindow.menuBar.updateActions()
+	}
+
 	Keys.onEscapePressed: if (d.cancelAllowed) ChangePinModel.cancelWorkflow()
 
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
 		text: qsTr("PIN Management") + SettingsModel.translationTrigger
 		rootEnabled: false
-		helpTopic: "pinTab"
+		helpTopic: "pinManagement"
 		showSettings: (changePinController.workflowState === ChangePinController.WorkflowStates.Initial ||
 		               changePinController.workflowState === ChangePinController.WorkflowStates.Reader ||
 		               changePinController.workflowState === ChangePinController.WorkflowStates.Card)
@@ -54,7 +60,7 @@ SectionPage {
 				ApplicationWindow.menuBar.updateActions()
 			}
 			else if (d.activeView === ChangePinView.SubViews.ReaderSettings) {
-				d.view = readerView.preceedingView
+				d.view = readerView.precedingView
 				ApplicationWindow.menuBar.updateActions()
 			}
 		}
@@ -72,11 +78,7 @@ SectionPage {
 			}
 		}
 
-		customSettingsHandler: function(){
-			readerView.preceedingView = d.activeView
-			d.view = ChangePinView.SubViews.ReaderSettings
-			ApplicationWindow.menuBar.updateActions()
-		}
+		customSettingsHandler: baseItem.showSettings
 	}
 
 	QtObject {
@@ -90,11 +92,11 @@ SectionPage {
 	TabbedReaderView {
 		id: readerView
 
-		property int preceedingView: ChangePinView.SubViews.Undefined
+		property int precedingView: ChangePinView.SubViews.Undefined
 
 		visible: d.activeView === ChangePinView.SubViews.ReaderSettings
 		onCloseView: {
-			d.view = preceedingView
+			d.view = precedingView
 			ApplicationWindow.menuBar.updateActions()
 		}
 	}
@@ -128,6 +130,7 @@ SectionPage {
 						default:
 							return Workflow.WaitingFor.None
 		}
+		onSettingsRequested: baseItem.showSettings()
 	}
 
 	EnterPasswordView {
@@ -169,7 +172,7 @@ SectionPage {
 		//: LABEL DESKTOP_QML
 		text: qsTr("Change PIN") + SettingsModel.translationTrigger
 		//: INFO DESKTOP_QML Processing screen text while the card communication is running after the PIN has been entered during PIN change process.
-		subText: qsTr("Please wait a moment...") + SettingsModel.translationTrigger
+		subText: qsTr("Please don't move the ID card...") + SettingsModel.translationTrigger
 	}
 
 	ResultView {
@@ -214,7 +217,7 @@ SectionPage {
 
 		resultType: ResultView.Type.IsInfo
 		//: INFO DESKTOP_QML The NFC signal is weak or unstable, the user is asked to change the card's position to (hopefully) reduce the distance to the NFC chip.
-		text: qsTr("Weak NFC signal.\nPlease reposition your card.") + SettingsModel.translationTrigger
+		text: qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable") + SettingsModel.translationTrigger
 		onNextView: ChangePinModel.continueWorkflow()
 	}
 

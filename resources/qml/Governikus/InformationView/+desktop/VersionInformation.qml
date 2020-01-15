@@ -1,58 +1,66 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
-import Governikus.TitleBar 1.0
 import Governikus.View 1.0
+import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 
+Item {
+	id: baseItem
 
-SectionPage {
-	id: root
+	implicitWidth: column.implicitWidth
+	implicitHeight: column.implicitHeight
 
-	Accessible.name: qsTr("Version information") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This is the version information section of the AusweisApp2.") + SettingsModel.translationTrigger
+	readonly property string helpTopic: "helpVersioninformation"
 
-	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML
-		text: qsTr("Version information") + SettingsModel.translationTrigger
+	ColumnLayout {
+		id: column
+
+		anchors.fill: parent
+
+		spacing: Constants.component_spacing
+
+		Repeater {
+			id: repeater
+
+			model: versionInformationModel
+			delegate: LabeledText {
+				id: delegate
+
+				width: baseItem.width
+
+				Accessible.name: model.label + ": " + model.text
+				activeFocusOnTab: true
+
+				label: model.label
+				text: model.text
+			}
+		}
 	}
 
-	ScrollablePane {
-		id: pane
+	MouseArea {
+		property int counter: 0
 
-		anchors.fill: root
-		anchors.margins: Constants.pane_padding
+		anchors.fill: parent
 
-		//: LABEL DESKTOP_QML
-		title: qsTr("Version information") + SettingsModel.translationTrigger
-
-		activeFocusOnTab: true
-
-		Column {
-			id: column
-
-			spacing: Constants.component_spacing
-
-			Repeater {
-				id: repeater
-
-				model: versionInformationModel
-				delegate: LabeledText {
-					id: delegate
-
-					width: root.width
-
-					Accessible.name: model.label + ": " + model.text
-					activeFocusOnTab: true
-
-					label: model.label
-					text: model.text
-				}
+		onClicked: {
+			counter += 1
+			if (counter === 10) {
+				SettingsModel.developerOptions = !SettingsModel.developerOptions
+				ApplicationModel.showFeedback(
+					SettingsModel.developerOptions ?
+					//: LABEL DESKTOP_QML
+					qsTr("Developer options activated.") :
+					//: LABEL DESKTOP_QML
+					qsTr("Developer options deactivated.")
+				)
+				counter = 0
 			}
 		}
 	}

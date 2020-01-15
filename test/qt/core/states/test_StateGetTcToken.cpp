@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref StateGetTcToken
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateGetTcToken.h"
@@ -46,7 +46,7 @@ class test_StateGetTcToken
 			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
 			StateGetTcToken state(context);
 
-			QTest::ignoreMessage(QtCriticalMsg, "Error while connecting to the service provider. The server returns an invalid or empty redirect URL.");
+			QTest::ignoreMessage(QtCriticalMsg, "Error while connecting to the provider. The server returns an invalid or empty redirect URL.");
 			const QUrl emptyUrl;
 			QVERIFY(!state.isValidRedirectUrl(emptyUrl));
 

@@ -1,9 +1,9 @@
 /*!
- * \brief Component advertising the remote reader functionality
- * on the server side. According to the concept this is done by
- * sending the message REMOTE_READER_OFFER as a UDP broadcast.
+ * \brief Component advertising the smartphone as card reader (SaC)
+ * functionality on the server side. According to the concept this
+ * is done by sending the message REMOTE_READER_OFFER as a UDP broadcast.
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

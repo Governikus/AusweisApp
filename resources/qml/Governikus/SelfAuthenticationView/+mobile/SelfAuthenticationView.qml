@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -25,14 +25,17 @@ Item {
 				case 7:
 				case 8:
 				case 9:
-					ApplicationModel.showFeedback(qsTr("%1 more presses to toggle test PKI.").arg(10 - d.testPkiCounter) + SettingsModel.translationTrigger, true)
+					//: INFO ANDROID IOS Used in notifications when the user taps the magnifying glass
+					ApplicationModel.showFeedback(qsTr("%1 more presses to toggle the testmode for the self-authentication.").arg(10 - d.testPkiCounter) + SettingsModel.translationTrigger, true)
 					break;
 				case 10:
 					SettingsModel.useSelfauthenticationTestUri = !SettingsModel.useSelfauthenticationTestUri
-					if(SettingsModel.useSelfauthenticationTestUri) {
-						ApplicationModel.showFeedback(qsTr("Test PKI activated.") + SettingsModel.translationTrigger, true)
+					if (SettingsModel.useSelfauthenticationTestUri) {
+						//: INFO ANDROID IOS Used in notifications when the user taps the magnifying glass
+						ApplicationModel.showFeedback(qsTr("Testmode for the self-authentication activated.") + SettingsModel.translationTrigger, true)
 					} else {
-						ApplicationModel.showFeedback(qsTr("Test PKI deactivated.") + SettingsModel.translationTrigger, true)
+						//: INFO ANDROID IOS Used in notifications when the user taps the magnifying glass
+						ApplicationModel.showFeedback(qsTr("Testmode for the self-authentication deactivated.") + SettingsModel.translationTrigger, true)
 					}
 					d.testPkiCounter = 0;
 					break;
@@ -95,7 +98,7 @@ Item {
 				Accessible.role: Accessible.Link
 				Accessible.name: ApplicationModel.stripHtmlTags(text)
 				Accessible.description: qsTr("Click to open link to data privacy statement in browser: %1").arg(htmlLink) + SettingsModel.translationTrigger
-				Accessible.onPressAction: if (Qt.platform.os === "ios") Qt.openUrlExternally(htmlLink)
+				Accessible.onPressAction: Qt.openUrlExternally(htmlLink)
 
 				wrapMode: Text.WordWrap
 				//: LABEL ANDROID IOS
@@ -107,14 +110,13 @@ Item {
 								.arg('<a href="' + htmlLink + '">' + qsTr("data privacy statement") + '</a>')
 							+ "</b>"
 							+ SettingsModel.translationTrigger
-				onLinkActivated: Qt.openUrlExternally(link)
 			}
 		}
 	}
 
 	GButton {
 		id: selfAuthButton
-		iconSource: "qrc:///images/npa.svg"
+		icon.source: "qrc:///images/npa.svg"
 		anchors.bottom: baseItem.bottom
 		anchors.bottomMargin: Constants.pane_padding
 		anchors.horizontalCenter: parent.horizontalCenter

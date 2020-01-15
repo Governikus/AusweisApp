@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogModel.h"
@@ -65,7 +65,7 @@ static std::optional<QString> getTemporaryLogFile(std::optional<QString> pSource
 	{
 		if (!QFile::copy(pSourceFile.value(), destinationFilePath))
 		{
-			qCCritical(qml) << "Cannot copy log file to" << destinationFilePath;
+			qCCritical(qml) << "Cannot copy logfile to" << destinationFilePath;
 			return std::nullopt;
 		}
 	}
@@ -96,7 +96,7 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 
 	NSData* fileContent = [NSData dataWithContentsOfFile: logFile.value().toNSString()];
 
-	UIViewController* rootController = [[UIApplication sharedApplication].windows[0] rootViewController];
+	UIViewController* rootController = [UIApplication sharedApplication].windows[0].rootViewController;
 
 	auto* mailComposeController = [[MailComposeController alloc] init];
 	mailComposeController.mailComposeDelegate = mailComposeController;
@@ -132,7 +132,7 @@ void LogModel::shareLog(const QPoint popupPosition)
 
 	UIActivityViewController* shareController = [[UIActivityViewController alloc]initWithActivityItems: shareItems applicationActivities:nil];
 
-	UIViewController* rootController = [[UIApplication sharedApplication].windows[0] rootViewController];
+	UIViewController* rootController = [UIApplication sharedApplication].windows[0].rootViewController;
 
 	shareController.popoverPresentationController.sourceView = rootController.view;
 	shareController.popoverPresentationController.sourceRect = CGRectMake(popupPosition.x(), popupPosition.y(), 0, 0);

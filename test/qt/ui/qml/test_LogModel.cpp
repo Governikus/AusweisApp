@@ -1,12 +1,10 @@
 /*!
  * \brief Unit tests for \ref LogModel
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogModel.h"
-
-#include "LogHandler.h"
 
 #include <QDebug>
 #include <QtTest>
@@ -24,6 +22,9 @@ class test_LogModel
 		void init()
 		{
 			mModel.reset(new LogModel());
+			// The test only covers the LogModel functionality, LogHandler will return an
+			// error message to the LogModel if not properly initialised; discard that.
+			mModel->mLogEntries.clear();
 		}
 
 
@@ -36,8 +37,8 @@ class test_LogModel
 		void test_AddLogEntry_data()
 		{
 			QTest::addColumn<QString>("input");
-			QTest::addColumn<QString>("entry1");
-			QTest::addColumn<QString>("entry2");
+			QTest::addColumn<QString>("origin");
+			QTest::addColumn<QString>("message");
 
 			QTest::newRow("validEntry") << QString("input : test") << QString("input") << QString("test");
 			QTest::newRow("empty") << QString(" : ") << QString() << QString();
@@ -56,12 +57,15 @@ class test_LogModel
 		void test_AddLogEntry()
 		{
 			QFETCH(QString, input);
-			QFETCH(QString, entry1);
-			QFETCH(QString, entry2);
+			QFETCH(QString, origin);
+			QFETCH(QString, message);
 
 			mModel->addLogEntry(input);
-			QCOMPARE(mModel->mLogEntries.at(0), entry1);
-			QCOMPARE(mModel->mLogEntries.at(1), entry2);
+			QCOMPARE(mModel->mLogEntries.at(0), input);
+			const QModelIndex index = mModel->index(0);
+			QCOMPARE(mModel->data(index, LogModel::OriginRole), origin);
+			QCOMPARE(mModel->data(index, LogModel::MessageRole), message);
+			QCOMPARE(mModel->data(index, Qt::DisplayRole), input);
 		}
 
 
@@ -69,13 +73,10 @@ class test_LogModel
 		{
 			QTest::addColumn<QString>("fileName");
 			QTest::addColumn<int>("logEntriesSize");
-			QTest::addColumn<int>("count");
 
-			QTest::newRow("empty") << QString(":/logfiles/empty.txt") << 0 << 0;
-			QTest::newRow("size78") << QString(":/logfiles/size78.txt") << 78 << 78;
-			QTest::newRow("size80") << QString(":/logfiles/size80.txt") << 80 << 80;
-			QTest::newRow("size82") << QString(":/logfiles/size82.txt") << 82 << 80;
-			QTest::newRow("size160") << QString(":/logfiles/size160.txt") << 160 << 80;
+			QTest::newRow("empty") << QString(":/logfiles/empty.txt") << 0;
+			QTest::newRow("size1") << QString(":/logfiles/size1.txt") << 1;
+			QTest::newRow("size42") << QString(":/logfiles/size42.txt") << 42;
 		}
 
 
@@ -101,21 +102,11 @@ class test_LogModel
 			QTest::addColumn<int>("newLogMsgCounter");
 			QTest::addColumn<int>("logEntriesSizeChange");
 
-			QTest::newRow("emptyFile_MsgAdded") << QString(" : ") << QString(":/logfiles/empty.txt") << 0 << 1 << 2;
+			QTest::newRow("emptyFile_MsgAdded") << QString("test : input") << QString(":/logfiles/empty.txt") << 0 << 1 << 1;
 			QTest::newRow("emptyFile_MsgNotAdded") << QString(" : ") << QString(":/logfiles/empty.txt") << 1 << 0 << 0;
-			QTest::newRow("emptyFile_MsgAdded_ViewChanged") << QString("test : input") << QString(":/logfiles/empty.txt") << 0 << 1 << 2;
 
-			QTest::newRow("MsgAdded_Size78") << QString() << QString(":/logfiles/size78.txt") << 0 << 1 << 2;
-			QTest::newRow("MsgAdded_ViewChanged_Size78") << QString("test : input") << QString(":/logfiles/size78.txt") << 0 << 1 << 2;
-			QTest::newRow("MsgNotAdded_Size78") << QString("test : input") << QString(":/logfiles/size78.txt") << 2 << 0 << 0;
-
-			QTest::newRow("MsgAdded_Size80") << QString() << QString(":/logfiles/size80.txt") << 0 << 1 << 2;
-			QTest::newRow("MsgNotAdded_Size80") << QString("test : input") << QString(":/logfiles/size80.txt") << 1 << 0 << 0;
-			QTest::newRow("MsgAdded_ViewChanged_Size80") << QString("test : input") << QString(":/logfiles/size80.txt") << 0 << 1 << 2;
-
-			QTest::newRow("MsgAdded_Size82") << QString("test : input") << QString(":/logfiles/size82.txt") << 0 << 1 << 2;
-			QTest::newRow("MsgNotAdded_Size82") << QString(" : ") << QString(":/logfiles/size82.txt") << 3 << 0 << 0;
-			QTest::newRow("MsgAdded_ViewChanged_Size82") << QString("test : input") << QString(":/logfiles/size82.txt") << 0 << 1 << 2;
+			QTest::newRow("size1_MsgAdded") << QString("test : input") << QString(":/logfiles/size1.txt") << 0 << 1 << 1;
+			QTest::newRow("size1_MsgNotAdded") << QString(" : ") << QString(":/logfiles/size1.txt") << 1 << 0 << 0;
 		}
 
 

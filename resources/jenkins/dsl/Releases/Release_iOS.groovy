@@ -6,7 +6,7 @@ def j = new Release
 		name: 'iOS_IPA',
 		libraries: ['iOS'],
 		label: 'iOS',
-		artifacts: 'build/*.ipa,build/*.zip'
+		artifacts: 'build/*.ipa,build/*.zip,build/*.bcsymbolmap'
 	).generate(this)
 
 
@@ -33,8 +33,9 @@ j.with
 			-GXcode
 			'''))
 
-		shell('cd build; xcodebuild -configuration MinSizeRel ARCHS=arm64')
-		shell('cd build; xcodebuild -target ipa -configuration MinSizeRel')
+		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -scheme AusweisApp archive')
+		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .')
+		shell('cd build; xcodebuild -configuration MinSizeRel -target ipa')
 
 		conditionalSteps
 		{

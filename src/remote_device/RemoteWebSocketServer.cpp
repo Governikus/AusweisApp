@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteWebSocketServer.h"
@@ -50,6 +50,10 @@ void RemoteWebSocketServerImpl::onWebsocketConnection()
 		return;
 	}
 
+	const auto& cfg = connection->sslConfiguration();
+	const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
+	mPairingConnection = pairingCiphers.contains(cfg.sessionCipher());
+
 	QSharedPointer<DataChannel> channel(new WebSocketChannel(connection), &QObject::deleteLater);
 	mServerMessageHandler.reset(Env::create<ServerMessageHandler*>(channel));
 	connect(mServerMessageHandler.data(), &ServerMessageHandler::fireClosed, this, &RemoteWebSocketServerImpl::onConnectionClosed);
@@ -75,6 +79,7 @@ RemoteWebSocketServerImpl::RemoteWebSocketServerImpl()
 	: mTlsServer(new RemoteTlsServer)
 	, mServer(QString(), QWebSocketServer::NonSecureMode)
 	, mServerMessageHandler()
+	, mPairingConnection(false)
 {
 	connect(mTlsServer.data(), &RemoteTlsServer::newConnection, &mServer, &QWebSocketServer::handleConnection);
 	connect(mTlsServer.data(), &RemoteTlsServer::firePskChanged, this, &RemoteWebSocketServer::firePskChanged);
@@ -101,6 +106,12 @@ bool RemoteWebSocketServerImpl::isListening() const
 bool RemoteWebSocketServerImpl::isConnected() const
 {
 	return !mServerMessageHandler.isNull();
+}
+
+
+bool RemoteWebSocketServerImpl::isPairingConnection() const
+{
+	return mPairingConnection;
 }
 
 

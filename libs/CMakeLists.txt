@@ -70,9 +70,6 @@ ELSE()
 ENDIF()
 
 FIND_HOST_PACKAGE(PythonInterp 2.7 REQUIRED)
-IF(NOT "${PYTHON_VERSION_MAJOR}" STREQUAL "2")
-	MESSAGE(FATAL_ERROR "Cannot find 'python v2' command")
-ENDIF()
 
 FIND_PROGRAM(PATCH_CMD patch CMAKE_FIND_ROOT_PATH_BOTH)
 IF(PATCH_CMD)
@@ -102,11 +99,11 @@ INCLUDE(Messages)
 
 
 ################################## Versions
-SET(QT 5.12.4)
-SET(QT_HASH 85da5e0ee498759990180d5b8192efaa6060a313c5018b772f57d446bdd425e1)
+SET(QT 5.12.5)
+SET(QT_HASH a2299e21db7767caf98242767bffb18a2a88a42fee2d6a393bedd234f8c91298)
 
-SET(OPENSSL 1.1.1c)
-SET(OPENSSL_HASH f6fb3079ad15076154eda9413fed42877d668e7069d9b87396d0804fdb3f4c90)
+SET(OPENSSL 1.1.1d)
+SET(OPENSSL_HASH 1e3a91bc1f9dfce01af26026f856e064eab4c8ee0a8f457b5ae30b40b8b711f2)
 
 ################################## Files
 SET(QT_FILE qt-everywhere-src-${QT}.tar.xz)
@@ -203,6 +200,7 @@ ExternalProject_Add(openssl
 	DOWNLOAD_DIR ${PACKAGES_DIR}
 
 	PATCH_COMMAND ${PATCH_CMD}/openssl-android-shlib_variant.patch &&
+				${PATCH_CMD}/openssl-Fix-an-overflow-bug-in-rsaz_512_sqr.patch &&
 				${PATCH_CMD}/openssl-Adjust-iOS-target.patch
 	CONFIGURE_COMMAND ${OPENSSL_ENV} ${PERL_EXECUTABLE} Configure --prefix=${DESTINATION_DIR} ${OPENSSL_CONFIGURE_FLAGS} "${OPENSSL_COMPILER_FLAGS}"
 	BUILD_COMMAND ${OPENSSL_ENV} ${MAKE} ${MAKE_JOBS}
@@ -238,7 +236,12 @@ ENDIF()
 LIST(APPEND ENABLED_TARGETS qt)
 
 IF(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
-	SET(QT_CONFIGURE_FLAGS -debug -qml-debug)
+	IF(MAC)
+		SET(QT_CONFIGURE_FLAGS -debug-and-release) # debug-only framework builds are not supported on macOS
+	ELSE()
+		SET(QT_CONFIGURE_FLAGS -debug)
+	ENDIF()
+	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -qml-debug)
 	SET(QT_PATCH_COMMAND ${PATCH_CMD}/qt-Enable-debug-output-for-OpenSSL.patch &&)
 ELSE()
 	SET(QT_CONFIGURE_FLAGS -release -optimize-size -no-qml-debug)
@@ -357,11 +360,10 @@ ExternalProject_Add(qt
 			${PATCH_CMD}/qt-disable-designer.patch &&
 			${PATCH_CMD}/qt-Disable-qmltime-for-shared-build.patch &&
 			${PATCH_CMD}/qt-Add-Q_CORE_EXPORT-to-lcEventDispatcher.patch &&
-			${PATCH_CMD}/qt-Fix-build-with-no-feature-printer.patch &&
-			${PATCH_CMD}/qt-Fix-build-with-no-feature-printer-on-macOS.patch &&
-			${PATCH_CMD}/qt-Core-IO-Bluetooth-fix-ambiguous-conversions.patch &&
-			${PATCH_CMD}/qt-Core-IO-Bluetooth-fix-ambiguous-conversions-for-macO.patch &&
 			${PATCH_CMD}/qt-Adjust-iOS-target.patch &&
+			${PATCH_CMD}/qt-Filesystem-avoid-crashes-on-exit-in-case-the-locale-.patch &&
+			${PATCH_CMD}/qt-Revert-Android-Stick-with-buildToolsVersion-28.0.3.patch &&
+			${PATCH_CMD}/qt-Remove-dead-code-to-fix-a-lint-warning.patch &&
 			${CMAKE_COMMAND} -E touch qtbase/.gitignore
 	CONFIGURE_COMMAND ${QT_ENV} ${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SKIP_MODULES}
 	BUILD_COMMAND ${MAKE} ${MAKE_JOBS}
@@ -414,7 +416,7 @@ IF(WIN32)
 	ENDIF()
 ENDIF()
 
-IF(CMAKE_VERSION VERSION_LESS "3.15")
+IF(CMAKE_VERSION VERSION_LESS "3.15" OR BSD)
 	SET(COMPRESSION cfJ)
 	SET(COMPRESSION_FILENDING tar.xz)
 ELSE()

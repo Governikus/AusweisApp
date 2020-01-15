@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateWriteHistory.h"
@@ -39,7 +39,7 @@ void StateWriteHistory::run()
 		if (auto certDesc = getContext()->getDidAuthenticateEac1()->getCertificateDescription())
 		{
 			auto subjectName = certDesc->getSubjectName();
-			auto termOfUsage = certDesc->getTermsOfUsage();
+			auto termsOfUsage = certDesc->getTermsOfUsage();
 			auto subjectUrl = certDesc->getSubjectUrl();
 
 			CVCertificateBody body = getContext()->getDidAuthenticateEac1()->getCvCertificates().at(0)->getBody();
@@ -49,7 +49,7 @@ void StateWriteHistory::run()
 			QString validity = tr("Validity:\n%1 - %2").arg(effectiveDate, expirationDate);
 
 			QStringList requestedData;
-			QList<AccessRight> rights = getContext()->getEffectiveAccessRights().toList();
+			QList<AccessRight> rights = getContext()->getEffectiveAccessRights().values();
 			std::sort(rights.begin(), rights.end());
 			for (const auto& entry : qAsConst(rights))
 			{
@@ -60,9 +60,10 @@ void StateWriteHistory::run()
 				}
 			}
 
-			if (!subjectName.isNull() && !termOfUsage.isNull())
+			if (!subjectName.isNull())
 			{
-				HistoryInfo info(subjectName, subjectUrl, certDesc->getPurpose(), QDateTime::currentDateTime(), termOfUsage + QStringLiteral("\n\n") + validity, requestedData);
+				termsOfUsage = termsOfUsage.isEmpty() ? validity : termsOfUsage + QStringLiteral("\n\n") + validity;
+				HistoryInfo info(subjectName, subjectUrl, certDesc->getPurpose(), QDateTime::currentDateTime(), termsOfUsage, requestedData);
 				Env::getSingleton<AppSettings>()->getHistorySettings().addHistoryInfo(info);
 				Env::getSingleton<AppSettings>()->getHistorySettings().save();
 			}
@@ -75,7 +76,7 @@ void StateWriteHistory::run()
 void StateWriteHistory::onEntry(QEvent* pEvent)
 {
 	//: INFO ALL_PLATFORMS Status message after the authentication was completed, the results are prepared for the user, mainly relevant for the self authentication since it takes some more time.
-	const auto text = getContext()->getStatus().isNoError() ? tr("Preparing results") : QString(); // The empty string is set to not confuse users when they get redirected to the service provider
+	const auto text = getContext()->getStatus().isNoError() ? tr("Preparing results") : QString(); // The empty string is set to not confuse users when they get redirected to the provider
 	getContext()->setProgress(100, text);
 	AbstractState::onEntry(pEvent);
 }

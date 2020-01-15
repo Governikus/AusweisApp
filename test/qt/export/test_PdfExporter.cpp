@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref PdfExporter
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PdfExporter.h"
@@ -14,9 +14,9 @@
 
 using namespace governikus;
 
-Q_DECLARE_METATYPE(QVector<HistoryInfo> )
+Q_DECLARE_METATYPE(QVector<HistoryInfo>)
 using Pair = QPair<QString, QString>;
-Q_DECLARE_METATYPE(QVector<Pair> )
+Q_DECLARE_METATYPE(QVector<Pair>)
 
 class test_PdfExporter
 	: public QObject

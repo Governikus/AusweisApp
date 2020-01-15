@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of SecurityInfo
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -46,6 +46,7 @@ class SecurityInfo
 {
 	Q_DISABLE_COPY(SecurityInfo)
 	friend class QSharedPointer<SecurityInfo>;
+
 	const QSharedPointer<const securityinfo_st> mDelegate;
 
 	explicit SecurityInfo(const QSharedPointer<const securityinfo_st>& pDelegate);

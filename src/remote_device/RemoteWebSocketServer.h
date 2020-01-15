@@ -1,7 +1,7 @@
 /*!
- * \brief WebSocketServer on the server side of a remote reader scenario.
+ * \brief WebSocketServer on the server side of a smartphone as card reader (SaC) scenario.
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -34,6 +34,7 @@ class RemoteWebSocketServer
 
 		virtual bool isListening() const = 0;
 		virtual bool isConnected() const = 0;
+		virtual bool isPairingConnection() const = 0;
 		virtual bool listen(const QString& pServerName) = 0;
 		virtual void close() = 0;
 		virtual QString getServerName() const = 0;
@@ -57,6 +58,7 @@ class RemoteWebSocketServerImpl
 	QScopedPointer<RemoteTlsServer, QScopedPointerDeleteLater> mTlsServer;
 	QWebSocketServer mServer;
 	QSharedPointer<ServerMessageHandler> mServerMessageHandler;
+	bool mPairingConnection;
 
 	private Q_SLOTS:
 		void onWebsocketConnection();
@@ -69,6 +71,7 @@ class RemoteWebSocketServerImpl
 
 		virtual bool isListening() const override;
 		virtual bool isConnected() const override;
+		virtual bool isPairingConnection() const override;
 		virtual bool listen(const QString& pServerName) override;
 		virtual void close() override;
 		virtual QString getServerName() const override;

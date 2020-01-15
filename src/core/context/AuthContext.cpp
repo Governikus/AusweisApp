@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthContext.h"
@@ -130,7 +130,14 @@ bool AuthContext::removeForbiddenAccessRights(QSet<AccessRight>& pAccessRights)
 	}
 
 	const auto& allowedCvcAccessRights = mTerminalCvc->getBody().getCHAT().getAccessRights();
-	const auto& allDisplayedOrderedRights = AccessRoleAndRightsUtil::allDisplayedOrderedRights().toSet();
+
+	const auto rights = AccessRoleAndRightsUtil::allDisplayedOrderedRights();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+	const auto& allDisplayedOrderedRights = QSet<AccessRight>(rights.constBegin(), rights.constEnd());
+#else
+	const auto& allDisplayedOrderedRights = rights.toSet();
+#endif
+
 	const auto& allowedAccessRights = allowedCvcAccessRights & allDisplayedOrderedRights;
 
 	const auto rightsToCheck = pAccessRights;
@@ -272,7 +279,8 @@ QByteArray AuthContext::encodeEffectiveChat()
 		effectiveChat.setAccessRight(AccessRight::CAN_ALLOWED);
 	}
 
-	qDebug() << "Using effective CHAT:" << effectiveChat.encode().toHex();
+	qDebug() << "Using effective CHAT:" << effectiveChat.encode().toHex() << "with access rights:" << effectiveChat.getAccessRights();
+
 	return effectiveChat.encode();
 }
 

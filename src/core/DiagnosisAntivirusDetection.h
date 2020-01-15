@@ -1,7 +1,7 @@
 /*!
  * \brief Class for retrieving informations about installed antivirus software on windows.
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

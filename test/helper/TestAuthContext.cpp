@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 #include "TestAuthContext.h"
 
@@ -22,7 +22,7 @@ TestAuthContext::TestAuthContext(ActivationContext* pActivationContext, const QS
 	setTerminalCvc(mDidAuthenticateEac1->getCvCertificates().at(0));
 	setDvCvc(mDidAuthenticateEac1->getCvCertificates().at(1));
 
-	mDidAuthenticateEac2.reset(dynamic_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"))));
+	mDidAuthenticateEac2.reset(static_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"))));
 	setDidAuthenticateEac2(mDidAuthenticateEac2);
 }
 

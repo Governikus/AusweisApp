@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DidAuthenticateEAC1Command.h"
@@ -26,8 +26,8 @@ DidAuthenticateEAC1Command::DidAuthenticateEAC1Command(QSharedPointer<CardConnec
 
 void DidAuthenticateEAC1Command::internalExecute()
 {
-	ResponseApdu response;
-	mReturnCode = mCardConnectionWorker->transmit(GetChallengeBuilder().build(), response);
+	auto [returnCode, response] = mCardConnectionWorker->transmit(GetChallengeBuilder().build());
+	mReturnCode = returnCode;
 	if (mReturnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "GetChallenge failed";

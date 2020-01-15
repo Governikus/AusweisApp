@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref GeneralSettings
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QCoreApplication>
@@ -20,6 +20,22 @@ class test_GeneralSettings
 	: public QObject
 {
 	Q_OBJECT
+
+	private:
+		bool getNotificationsOsDefault()
+		{
+#if defined(Q_OS_WIN)
+			return QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows10;
+
+#elif defined(Q_OS_MACOS)
+			return false;
+
+#else
+			return true;
+
+#endif
+		}
+
 
 	private Q_SLOTS:
 		void init()
@@ -94,6 +110,21 @@ class test_GeneralSettings
 		}
 
 
+		void testVisualPrivacy()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			bool initial = settings.isVisualPrivacy();
+
+			settings.setVisualPrivacy(!initial);
+			QCOMPARE(settings.isVisualPrivacy(), !initial);
+			settings.save();
+
+			settings.setVisualPrivacy(initial);
+			QCOMPARE(settings.isVisualPrivacy(), initial);
+			settings.save();
+		}
+
+
 		void testShuffleScreenKeyboard()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
@@ -113,16 +144,24 @@ class test_GeneralSettings
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+			QCOMPARE(settings.isAutoUpdateCheck(), true);
+#else
+			QCOMPARE(settings.isAutoUpdateCheck(), false);
+#endif
+
 			QCOMPARE(settings.isAutoCloseWindowAfterAuthentication(), true);
 			QCOMPARE(settings.isAutoStart(), GENERAL_SETTINGS_DEFAULT_AUTOSTART);
-			QCOMPARE(settings.isAutoUpdateCheck(), true);
+			QCOMPARE(settings.isDeveloperOptions(), false);
+			QCOMPARE(settings.isDeveloperMode(), false);
+			QCOMPARE(settings.useSelfAuthTestUri(), false);
 			QCOMPARE(settings.isUseScreenKeyboard(), false);
 			QCOMPARE(settings.isShowSetupAssistant(), true);
+			QCOMPARE(settings.isShowNewUiHint(), true);
+			QCOMPARE(settings.isShowInAppNotifications(), getNotificationsOsDefault());
 			QCOMPARE(settings.isRemindUserToClose(), true);
 			QCOMPARE(settings.isTransportPinReminder(), true);
 			QCOMPARE(settings.getPersistentSettingsVersion(), QString());
-			QCOMPARE(settings.isDeveloperMode(), false);
-			QCOMPARE(settings.useSelfAuthTestUri(), false);
 			QCOMPARE(settings.getLastReaderPluginType(), QString());
 		}
 
@@ -140,6 +179,126 @@ class test_GeneralSettings
 
 			settings.setShowSetupAssistant(initial);
 			QCOMPARE(settings.isShowSetupAssistant(), initial);
+			settings.save();
+		}
+
+
+		void testShowNewUiHint()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			bool initial = settings.isShowNewUiHint();
+			bool newValue = !initial;
+
+			settings.setShowNewUiHint(newValue);
+			QCOMPARE(settings.isShowNewUiHint(), newValue);
+			settings.save();
+
+			settings.setShowNewUiHint(initial);
+			QCOMPARE(settings.isShowNewUiHint(), initial);
+			settings.save();
+		}
+
+
+		void testDeveloperOptions()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			bool initial = settings.isDeveloperOptions();
+			bool newValue = !initial;
+
+			settings.setDeveloperOptions(newValue);
+			QCOMPARE(settings.isDeveloperOptions(), newValue);
+			settings.save();
+
+			settings.setDeveloperOptions(initial);
+			QCOMPARE(settings.isDeveloperOptions(), initial);
+			settings.save();
+		}
+
+
+		void testEnableDeveloperMode()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			bool initial = settings.isDeveloperMode();
+			bool newValue = !initial;
+
+			settings.setDeveloperMode(newValue);
+			QCOMPARE(settings.isDeveloperMode(), initial);
+			settings.save();
+
+			settings.setDeveloperMode(initial);
+			QCOMPARE(settings.isDeveloperMode(), initial);
+			settings.save();
+
+			settings.setDeveloperOptions(true);
+
+			settings.setDeveloperMode(newValue);
+			QCOMPARE(settings.isDeveloperMode(), newValue);
+			settings.save();
+
+			settings.setDeveloperMode(initial);
+			QCOMPARE(settings.isDeveloperMode(), initial);
+			settings.save();
+
+			settings.setDeveloperOptions(false);
+			settings.save();
+		}
+
+
+		void testUseSelfAuthTestUri()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			bool initial = settings.useSelfAuthTestUri();
+			bool newValue = !initial;
+
+			settings.setUseSelfauthenticationTestUri(newValue);
+			QCOMPARE(settings.useSelfAuthTestUri(), initial);
+			settings.save();
+
+			settings.setUseSelfauthenticationTestUri(initial);
+			QCOMPARE(settings.useSelfAuthTestUri(), initial);
+			settings.save();
+
+			settings.setDeveloperOptions(true);
+
+			settings.setUseSelfauthenticationTestUri(newValue);
+			QCOMPARE(settings.useSelfAuthTestUri(), newValue);
+			settings.save();
+
+			settings.setUseSelfauthenticationTestUri(initial);
+			QCOMPARE(settings.useSelfAuthTestUri(), initial);
+			settings.save();
+
+			settings.setDeveloperOptions(false);
+			settings.save();
+		}
+
+
+		void testEnableNotificationsOnDeveloperMode()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			settings.setDeveloperOptions(true);
+			settings.setDeveloperMode(false);
+
+			QSignalSpy spyShowInAppNotifications(&settings, &GeneralSettings::fireShowInAppNotificationsChanged);
+
+			const bool osDefaultNotifications = getNotificationsOsDefault();
+
+			QCOMPARE(settings.isShowInAppNotifications(), osDefaultNotifications);
+
+			settings.setDeveloperMode(true);
+			QCOMPARE(settings.isDeveloperMode(), true);
+			QCOMPARE(settings.isShowInAppNotifications(), true);
+			QCOMPARE(spyShowInAppNotifications.count(), 1);
+			settings.save();
+
+			settings.setDeveloperMode(false);
+			QCOMPARE(settings.isDeveloperMode(), false);
+			QCOMPARE(settings.isShowInAppNotifications(), osDefaultNotifications);
+			QCOMPARE(spyShowInAppNotifications.count(), 2);
 			settings.save();
 		}
 

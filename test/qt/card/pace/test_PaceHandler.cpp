@@ -1,7 +1,7 @@
 /*!
  * \brief Tests for the PaceHandler
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/PaceHandler.h"

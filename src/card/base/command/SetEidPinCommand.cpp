@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SetEidPinCommand.h"
@@ -19,7 +19,9 @@ SetEidPinCommand::SetEidPinCommand(QSharedPointer<CardConnectionWorker> pCardCon
 
 void SetEidPinCommand::internalExecute()
 {
-	mReturnCode = mCardConnectionWorker->setEidPin(mNewPin, mTimeoutSeconds, mResponseApdu);
+	auto [returnCode, responseApdu] = mCardConnectionWorker->setEidPin(mNewPin, mTimeoutSeconds);
+	mReturnCode = returnCode;
+	mResponseApdu = responseApdu;
 }
 
 

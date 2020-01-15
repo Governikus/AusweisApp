@@ -19,8 +19,24 @@
 			[
 				{
 					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
-					"DE": "Erfordert ein Android-Gerät mit aktiviertem Fernzugriff.",
-					"EN": "Requires an Android device with enabled remote access."
+					"DE": "Erfordert ein Smartphone mit aktiviertem Fernzugriff.",
+					"EN": "Requires a smartphone with enabled remote access."
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x0000",
+			"ProductId": "0x0001",
+			"Name": "PersoSim",
+			"Pattern": "^PersoSim.*",
+			"Icon": "img_PersoSim.png",
+			"IconWithNPA": "img_PersoSim_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
+					"URL": "https://persosim.secunet.com"
 				}
 			]
 		},
@@ -103,7 +119,7 @@
 					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304856&q=driver#choice5"
 				},
 				{
-					"Platforms": [{"os": "mac"}],
+					"Platforms": [{"os": "mac", "max": "10.14"}],
 					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304856&q=driver#choice5"
 				},
 				{
@@ -164,15 +180,7 @@
 			[
 				{
 					"Platforms": [{"os": "win"}],
-					"URL": "https://www.kobil.com/de/support_de/#drivers_de"
-				},
-				{
-					"Platforms": [{"os": "mac"}],
-					"URL": "https://www.kobil.com/de/support_de/#drivers_de"
-				},
-				{
-					"Platforms": [{"os": "unknown"}],
-					"URL": "https://www.kobil.com/de/support_de/#drivers_de"
+					"URL": "https://security.kobil.de/idtoken/"
 				}
 			]
 		},
@@ -191,7 +199,7 @@
 					"URL": "http://www.scm-pc-card.de/index.php?page=download&function=show_downloads&lang=de&product_id=738"
 				},
 				{
-					"Platforms": [{"os": "mac", "min":"10.13"}, {"os": "unknown"}],
+					"Platforms": [{"os": "mac", "min":"10.13", "max":"10.14"}, {"os": "unknown"}],
 					"URL": "https://support.identiv.com/sdi010-011/"
 				}
 			],
@@ -259,15 +267,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}],
-					"URL": "https://support.identiv.com/3700f/"
-				},
-				{
-					"Platforms": [{"os": "mac"}],
-					"URL": "https://support.identiv.com/3700f/"
-				},
-				{
-					"Platforms": [{"os": "unknown"}],
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
 					"URL": "https://support.identiv.com/3700f/"
 				}
 			]
@@ -283,15 +283,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}],
-					"URL": "https://support.identiv.com/scl3711/"
-				},
-				{
-					"Platforms": [{"os": "mac"}],
-					"URL": "https://support.identiv.com/scl3711/"
-				},
-				{
-					"Platforms": [{"os": "unknown"}],
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
 					"URL": "https://support.identiv.com/scl3711/"
 				}
 			],
@@ -315,15 +307,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}],
-					"URL": "http://www.scm-pc-card.de/index.php?lang=en&page=download&function=show_downloads&product_id=832"
-				},
-				{
-					"Platforms": [{"os": "mac"}],
-					"URL": "http://www.scm-pc-card.de/index.php?lang=en&page=download&function=show_downloads&product_id=832"
-				},
-				{
-					"Platforms": [{"os": "unknown"}],
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
 					"URL": "http://www.scm-pc-card.de/index.php?lang=en&page=download&function=show_downloads&product_id=832"
 				}
 			],
@@ -347,15 +331,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}],
-					"URL": "http://www.scm-pc-card.de/index.php?page=download&function=show_downloads&lang=de&product_id=921"
-				},
-				{
-					"Platforms": [{"os": "mac"}],
-					"URL": "http://www.scm-pc-card.de/index.php?page=download&function=show_downloads&lang=de&product_id=921"
-				},
-				{
-					"Platforms": [{"os": "unknown"}],
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
 					"URL": "http://www.scm-pc-card.de/index.php?page=download&function=show_downloads&lang=de&product_id=921"
 				}
 			],
@@ -379,11 +355,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}],
-					"URL": "http://www.acs.com.hk/en/driver/151/acr1281u-npa-contactless-reader/"
-				},
-				{
-					"Platforms": [{"os": "mac"}],
+					"Platforms": [{"os": "win"}, {"os": "mac"}],
 					"URL": "http://www.acs.com.hk/en/driver/151/acr1281u-npa-contactless-reader/"
 				}
 			],
@@ -412,11 +384,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}],
-					"URL": "http://www.acs.com.hk/en/products/342/acr1252u-usb-nfc-reader-iii-nfc-forum-certified-reader/#tab_downloads"
-				},
-				{
-					"Platforms": [{"os": "mac"}],
+					"Platforms": [{"os": "win"}, {"os": "mac"}],
 					"URL": "http://www.acs.com.hk/en/products/342/acr1252u-usb-nfc-reader-iii-nfc-forum-certified-reader/#tab_downloads"
 				}
 			],
@@ -446,15 +414,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}],
-					"URL": "https://www.hidglobal.de/drivers"
-				},
-				{
-					"Platforms": [{"os": "mac"}],
-					"URL": "https://www.hidglobal.de/drivers"
-				},
-				{
-					"Platforms": [{"os": "unknown"}],
+					"Platforms": [{"os": "win"}, {"os": "unknown"}],
 					"URL": "https://www.hidglobal.de/drivers"
 				}
 			],
@@ -464,11 +424,6 @@
 					"Platforms":[{"os": "win"}],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Beachten Sie bei der Auswahl, dass nur der \"X-CHIP WINDOWS BU & RU driver\" funktioniert.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please note that only the driver named \"X-CHIP WINDOWS BU & RU driver\" works with this card reader."
-				},
-				{
-					"Platforms":[{"os": "mac"}],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -483,11 +438,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}],
-					"URL": "https://www.hidglobal.de/drivers"
-				},
-				{
-					"Platforms": [{"os": "mac", "min": "10.12"}],
+					"Platforms": [{"os": "win"}, {"os": "mac", "min": "10.12"}],
 					"URL": "https://www.hidglobal.de/drivers"
 				}
 			],
@@ -518,16 +469,12 @@
 				{
 					"Platforms": [{"os": "win"}],
 					"URL": "https://www.hidglobal.de/drivers"
-				},
-				{
-					"Platforms": [{"os": "mac"}],
-					"URL": "https://www.hidglobal.de/drivers"
 				}
 			],
 			"Information":
 			[
 				{
-					"Platforms":[{"os": "win"}, {"os": "mac"}],
+					"Platforms":[{"os": "win"}],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
@@ -544,15 +491,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}],
-					"URL": "https://www.hidglobal.com/drivers"
-				},
-				{
-					"Platforms": [{"os": "mac"}],
-					"URL": "https://www.hidglobal.com/drivers"
-				},
-				{
-					"Platforms": [{"os": "unknown"}],
+					"Platforms": [{"os": "win"}, {"os": "unknown"}],
 					"URL": "https://www.hidglobal.com/drivers"
 				}
 			],
@@ -562,11 +501,6 @@
 					"Platforms":[{"os": "win"}],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Beachten Sie bei der Auswahl, dass nur der \"X-CHIP WINDOWS BU & RU driver\" funktioniert.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. Please note that only the driver named \"X-CHIP WINDOWS BU & RU driver\" works with this card reader."
-				},
-				{
-					"Platforms":[{"os": "mac"}],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -581,7 +515,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}, {"os":"mac", "min": "10.13"}],
+					"Platforms": [{"os": "win"}],
 					"URL": "https://www.hidglobal.com/drivers"
 				}
 			],
@@ -591,11 +525,6 @@
 					"Platforms": [{"os": "win"}],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
-				},
-				{
-					"Platforms": [{"os": "mac"}, {"max": "10.12"}],
-					"DE": "Der Kartenleser funktioniert nicht mit dem systemseitig installierten Treiber. Es existiert kein Treiber vom Hersteller",
-					"EN": "The card reader not operates with the driver automatically installed by the system. There is no driver from the manufacturer"
 				}
 			]
 		},
@@ -639,16 +568,8 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}],
+					"Platforms": [{"os": "win"}, {"os": "mac"},{"os": "unknown"}],
 					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016422"
-				},
-				{
-					"Platforms": [{"os": "mac"}],
-					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016424"
-				},
-				{
-					"Platforms": [{"os": "unknown"}],
-					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016423"
 				}
 			],
 			"Information":
@@ -703,7 +624,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
+					"Platforms": [{"os": "win"}, {"os": "mac", "max":"10.13"}, {"os": "unknown"}],
 					"URL": "https://cherry.de/download/de/download.php"
 				}
 			],
@@ -715,7 +636,7 @@
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				},
 				{
-					"Platforms": [{"os": "mac"}],
+					"Platforms": [{"os": "mac", "max":"10.13"}],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
@@ -732,7 +653,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
+					"Platforms": [{"os": "win"}, {"os": "mac", "max":"10.13"}, {"os": "unknown"}],
 					"URL": "https://cherry.de/download/de/download.php"
 				}
 			],
@@ -744,7 +665,7 @@
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				},
 				{
-					"Platforms": [{"os": "mac"}],
+					"Platforms": [{"os": "mac", "max": "10.14"}],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				}
@@ -791,12 +712,8 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}, {"os": "mac"}],
-					"URL": "https://www.signotec.com/download/treiber/"
-				},
-				{
-					"Platforms": [{"os": "unknown"}],
-					"URL": "https://www.signotec.com/download/treiber/"
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
+					"URL": "https://www.signotec.com/software/tools-und-treiber/treiber/"
 				}
 			],
 			"Information":

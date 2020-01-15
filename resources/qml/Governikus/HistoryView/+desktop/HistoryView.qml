@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
 */
 
 import QtQml 2.10
@@ -24,21 +24,24 @@ SectionPage {
 	ConfirmationPopup {
 		id: deleteHistoryConfirmationPopup
 
+		width: ApplicationModel.scaleFactor * 600
+
 		//: INFO DESKTOP_QML Header of the confirmation dialog to clear the entire authentication history.
 		title: qsTr("Delete history?") + SettingsModel.translationTrigger
 		//: INFO DESKTOP_QML Content of the confirmation dialog to clear the entire authentication history.
-		text: qsTr("Please confirm that you want to delete your history entries.") + SettingsModel.translationTrigger
+		text: qsTr("All history entries will be deleted.") + SettingsModel.translationTrigger
 
 		onConfirmed: {
 			var timePeriod = removalPeriod.period
 			var removedItemCount = SettingsModel.removeHistory(timePeriod)
-			tabbedPane.currentIndex = tabbedPane.count > 0 ? 0 : -1
+			tabbedPane.currentIndex = tabbedPane.sectionCount > 0 ? 0 : -1
 			//: INFO DESKTOP_QML Feedback how many history entries were removed.
-			ApplicationModel.showFeedback(qsTr("Removed %1 entries from the history.").arg(removedItemCount))
+			ApplicationModel.showFeedback(qsTr("Deleted %1 entries from the history.").arg(removedItemCount))
 		}
 
 		HistoryRemovalTimePeriodControl {
 			id: removalPeriod
+
 			width: parent.width
 		}
 	}
@@ -46,10 +49,16 @@ SectionPage {
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
 		text: qsTr("History") + SettingsModel.translationTrigger
+		helpTopic: "history"
 		customSubAction: SearchBar {
 			id: searchBar
 
+			anchors.verticalCenter: parent ? parent.verticalCenter : undefined
+
 			onDisplayTextChanged: HistoryModel.searchFilter.setFilterString(displayText)
+
+			//: LABEL DESKTOP_QML
+			placeholderText: qsTr("Search in history") + SettingsModel.translationTrigger
 		}
 	}
 
@@ -69,7 +78,7 @@ SectionPage {
 				Utils.isYesterday(model.dateTime) ? qsTr("yesterday") :
 					Utils.isThisWeek(model.dateTime) ? model.dateTime.toLocaleString(Qt.locale(), qsTr("dddd")) :
 						model.dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy")) ) : "") + SettingsModel.translationTrigger
-			mainText: model ? model.subject : ""
+			sectionName: model ? model.subject : ""
 			footerText: model ? model.purpose : ""
 			iconPath: model ? model.providerIcon : ""
 		}
@@ -81,67 +90,54 @@ SectionPage {
 		}
 
 		footerItem: Item {
-			height: Math.max(clearHistoryButton.implicitHeight, saveHistoryToPdf.implicitHeight)
+			height: buttonLayout.implicitHeight
 
-			GButton {
-				id: clearHistoryButton
+			ColumnLayout {
+				id: buttonLayout
 
-				anchors {
-					top: parent.top
-					bottom: parent.bottom
-					left: parent.left
-					right: parent.horizontalCenter
-					rightMargin: (Constants.groupbox_spacing / 2)
+				anchors.fill: parent
+				anchors.rightMargin: Constants.groupbox_spacing
+				spacing: Constants.groupbox_spacing
+
+				GButton {
+					id: clearHistoryButton
+
+					Layout.fillWidth: true
+
+					icon.source: "qrc:///images/trash_icon_white.svg"
+					//: LABEL DESKTOP_QML
+					text: qsTr("Clear history") + SettingsModel.translationTrigger
+					tintIcon: true
+					onClicked: deleteHistoryConfirmationPopup.open()
 				}
 
-				Accessible.name: text
-				activeFocusOnTab: true
+				GButton {
+					id: saveHistoryToPdf
 
-				icon.source: "qrc:///images/trash_icon_white.svg"
-				//: LABEL DESKTOP_QML
-				text: qsTr("Clear history") + SettingsModel.translationTrigger
-				onClicked: deleteHistoryConfirmationPopup.open()
-			}
+					Layout.fillWidth: true
 
-			GButton {
-				id: saveHistoryToPdf
-
-				anchors {
-					top: parent.top
-					bottom: parent.bottom
-					left: parent.horizontalCenter
-					right: parent.right
-					rightMargin: Constants.groupbox_spacing
-					leftMargin: Math.floor(Constants.groupbox_spacing / 2)
-				}
-
-				Accessible.name: text
-				activeFocusOnTab: true
-
-				icon.source: "qrc:///images/icon_save.svg"
-				//: LABEL DESKTOP_QML
-				text: qsTr("Save to pdf") + SettingsModel.translationTrigger
-				onClicked: {
-					var now = new Date().toLocaleDateString(Qt.locale(), "yyyy-MM-dd")
-					var filenameSuggestion = "%1.%2.%3.pdf".arg(Qt.application.name).arg(qsTr("History")).arg(now)
-					console.log("filenameSuggestion", filenameSuggestion)
-					appWindow.openSaveFileDialog(HistoryModel.exportHistory, filenameSuggestion, "pdf")
+					icon.source: "qrc:///images/icon_save.svg"
+					//: LABEL DESKTOP_QML
+					text: qsTr("Save as PDF...") + SettingsModel.translationTrigger
+					tintIcon: true
+					onClicked: {
+						let now = new Date().toLocaleDateString(Qt.locale(), "yyyy-MM-dd")
+						let filenameSuggestion = "%1.%2.%3.pdf".arg(Qt.application.name).arg(qsTr("History")).arg(now)
+						appWindow.openSaveFileDialog(HistoryModel.exportHistory, filenameSuggestion, "pdf")
+					}
 				}
 			}
 		}
 	}
 
 	GText {
-		id: textNoHistoryEntries
-
 		visible: tabbedPane.sectionCount === 0
 		anchors.centerIn: parent
 
-		Accessible.name: text
 		activeFocusOnTab: true
 
 		//: INFO DESKTOP_QML No authentication history, placeholder text.
 		text: qsTr("Currently there are no history entries.") + SettingsModel.translationTrigger
-		textStyle: Style.text.header
+		textStyle: Style.text.header_inverse
 	}
 }

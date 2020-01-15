@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the application.
  *
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,6 +32,7 @@ class ApplicationModel
 	friend class Env;
 
 	Q_PROPERTY(QString packageName READ getPackageName CONSTANT)
+	Q_PROPERTY(QUrl releaseNotesUrl READ getReleaseNotesUrl CONSTANT)
 
 	Q_PROPERTY(bool nfcEnabled READ isNfcEnabled NOTIFY fireNfcEnabledChanged)
 	Q_PROPERTY(bool nfcAvailable READ isNfcAvailable CONSTANT)
@@ -87,6 +88,7 @@ class ApplicationModel
 	public:
 		enum class Settings
 		{
+			SETTING_WIFI,
 			SETTING_NETWORK,
 			SETTING_NFC,
 			SETTING_BLUETOOTH
@@ -96,6 +98,7 @@ class ApplicationModel
 		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
 		QString getPackageName() const;
+		QUrl getReleaseNotesUrl() const;
 
 		bool isNfcAvailable() const;
 		bool isNfcEnabled() const;

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"
@@ -67,7 +67,7 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 	}
 	else if (readerInfo.isPinDeactivated() && !getContext()->isCanAllowedMode())
 	{
-		getContext()->getCardConnection()->setProgressMessage(tr("The online identification function is disabled."));
+		getContext()->getCardConnection()->setProgressMessage(tr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function."));
 	}
 }
 

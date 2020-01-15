@@ -20,7 +20,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Service provider data</string>
+   <string>Provider data</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QDialog{background-image: url(:/images/bg_da.png); background-repeat: repeat-y; border: none}</string>

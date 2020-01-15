@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogModel.h"
@@ -7,9 +7,11 @@
 #include "LanguageLoader.h"
 #include "LogHandler.h"
 #include "PlatformHelper.h"
+#include "Randomizer.h"
 #include "SettingsModel.h"
 #include "SingletonHelper.h"
 
+#include <QDir>
 #include <QFileInfo>
 #include <QtMath>
 
@@ -20,19 +22,9 @@ using namespace governikus;
 defineSingleton(LogModel)
 
 
-void LogModel::addLogEntry(const QString& mEntry)
+void LogModel::addLogEntry(const QString& pEntry)
 {
-	const int cutIndex = mEntry.indexOf(QLatin1String(" : "));
-	if (cutIndex >= 0)
-	{
-		mLogEntries += mEntry.mid(0, cutIndex).trimmed();
-		mLogEntries += mEntry.mid(cutIndex + 3).trimmed();
-	}
-	else
-	{
-		mLogEntries += mEntry;
-		mLogEntries += QString();
-	}
+	mLogEntries.append(pEntry);
 }
 
 
@@ -66,9 +58,10 @@ void LogModel::onNewLogMsg(const QString& pMsg)
 LogModel::LogModel()
 	: QAbstractListModel()
 	, mLogFiles()
-	, mSelectedLogFile(0)
+	, mSelectedLogFile(-1)
 	, mLogEntries()
 {
+	setLogfile(0);
 	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireLanguageChanged, this, &LogModel::fireLogFilesChanged); // needed to translate the "Current log" entry on language change
 }
 
@@ -129,6 +122,11 @@ void LogModel::removeCurrentLogfile()
 
 void LogModel::setLogfile(int pIndex)
 {
+	if (pIndex == mSelectedLogFile)
+	{
+		return;
+	}
+
 	mSelectedLogFile = pIndex;
 	const auto& logHandler = Env::getSingleton<LogHandler>();
 
@@ -169,6 +167,19 @@ void LogModel::saveCurrentLogfile(const QUrl& pFilename) const
 }
 
 
+#ifndef QT_NO_DEBUG
+void LogModel::saveDummyLogfile() const
+{
+	auto& generator = Randomizer::getInstance().getGenerator();
+	std::uniform_int_distribution<uint32_t> dist;
+	const auto logHandler = Env::getSingleton<LogHandler>();
+	logHandler->copy(QDir::temp().filePath(QStringLiteral("%1.%2.log").arg(QCoreApplication::applicationName()).arg(dist(generator))));
+}
+
+
+#endif
+
+
 int LogModel::rowCount(const QModelIndex& pIndex) const
 {
 	Q_UNUSED(pIndex)
@@ -176,10 +187,43 @@ int LogModel::rowCount(const QModelIndex& pIndex) const
 }
 
 
+QHash<int, QByteArray> LogModel::roleNames() const
+{
+	QHash<int, QByteArray> roles;
+	roles.insert(Qt::DisplayRole, QByteArrayLiteral("display"));
+	roles.insert(OriginRole, QByteArrayLiteral("origin"));
+	roles.insert(MessageRole, QByteArrayLiteral("message"));
+	return roles;
+}
+
+
 QVariant LogModel::data(const QModelIndex& pIndex, int pRole) const
 {
-	Q_UNUSED(pRole)
-	return mLogEntries.at(pIndex.row());
+	static const auto splitToken = QLatin1String(" : ");
+
+	if (!pIndex.isValid())
+	{
+		return QVariant();
+	}
+
+	const auto& logMessage = mLogEntries.at(pIndex.row());
+
+	switch (pRole)
+	{
+		case Qt::DisplayRole:
+			return logMessage;
+
+		case OriginRole:
+			return logMessage.section(splitToken, 0, 0).trimmed();
+
+		case MessageRole:
+			return logMessage.section(splitToken, 1, -1).trimmed();
+
+		default:
+			return QVariant();
+	}
+
+	Q_UNREACHABLE();
 }
 
 

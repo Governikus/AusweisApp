@@ -3,7 +3,7 @@
 
 SET(FILENAME ${PROJECT_NAME}-${PROJECT_VERSION})
 
-IF(ANDROID_BUILD_AAR)
+IF(ANDROID AND INTEGRATED_SDK)
 	STRING(TOLOWER "${FILENAME}" FILENAME)
 	STRING(REGEX REPLACE "[0-9]*-" "-" FILENAME "${FILENAME}")
 ELSEIF(ANDROID)
@@ -103,36 +103,55 @@ IF(WIN32)
 
 ELSEIF(IOS)
 	FILE(WRITE ${PROJECT_BINARY_DIR}/ipa.cmake "
-		FUNCTION(FIND_BUNDLE _name _out_bundle _out_parent_dir)
-			SET(BUNDLE_DIRS \"\${CONFIG}-iphoneos;\${CONFIG};UninstalledProducts;UninstalledProducts/iphoneos\")
+		FUNCTION(SELF_GENERATED)
+			FUNCTION(FIND_BUNDLE _name _out_bundle _out_parent_dir)
+				SET(BUNDLE_DIRS \"\${CONFIG}-iphoneos;\${CONFIG};UninstalledProducts;UninstalledProducts/iphoneos\")
 
-			FOREACH(dir \${BUNDLE_DIRS})
-				SET(tmpDir ${PROJECT_BINARY_DIR}/src/\${dir})
-				SET(tmpBundleDir \${tmpDir}/\${_name})
-				IF(EXISTS \"\${tmpBundleDir}\")
-					SET(\${_out_bundle} \"\${tmpBundleDir}\" PARENT_SCOPE)
-					SET(\${_out_parent_dir} \"\${tmpDir}\" PARENT_SCOPE)
-					BREAK()
-				ENDIF()
-			ENDFOREACH()
+				FOREACH(dir \${BUNDLE_DIRS})
+					SET(tmpDir ${PROJECT_BINARY_DIR}/src/\${dir})
+					SET(tmpBundleDir \${tmpDir}/\${_name})
+					IF(EXISTS \"\${tmpBundleDir}\")
+						SET(\${_out_bundle} \"\${tmpBundleDir}\" PARENT_SCOPE)
+						SET(\${_out_parent_dir} \"\${tmpDir}\" PARENT_SCOPE)
+						BREAK()
+					ENDIF()
+				ENDFOREACH()
+			ENDFUNCTION()
+
+			FIND_BUNDLE(${PROJECT_NAME}.app BundleDir ParentDir)
+
+			IF(BundleDir)
+				MESSAGE(STATUS \"Use bundle: \${BundleDir}\")
+			ELSE()
+				MESSAGE(FATAL_ERROR \"Bundle directory does not exist\")
+			ENDIF()
+
+			EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy_directory \${BundleDir} Payload/${PROJECT_NAME}.app)
+			EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar cf \"${CPACK_PACKAGE_FILE_NAME}.ipa\" --format=zip Payload)
+			EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E remove_directory Payload)
+
+			FIND_BUNDLE(${PROJECT_NAME}.app.dSYM dSYM ParentDir)
+			IF(dSYM)
+				MESSAGE(STATUS \"Use dSYM: \${dSYM}\")
+				EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar cf \"\${CMAKE_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.dSYM.zip\" --format=zip ${PROJECT_NAME}.app.dSYM WORKING_DIRECTORY \${ParentDir})
+			ENDIF()
+
+			IF(ParentDir)
+				FILE(GLOB SymbolMap \${ParentDir}/*.bcsymbolmap)
+				MESSAGE(STATUS \"Use bcsymbolmap: \${SymbolMap}\")
+				EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy \${SymbolMap} ${CPACK_PACKAGE_FILE_NAME}.bcsymbolmap)
+			ENDIF()
 		ENDFUNCTION()
 
-		FIND_BUNDLE(${PROJECT_NAME}.app BundleDir ParentDir)
+		FUNCTION(XCODE_GENERATED)
+			EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar cf \"\${CMAKE_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.xcarchive.zip\" --format=zip ${PROJECT_NAME}.xcarchive)
+			EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E rename AusweisApp.ipa ${CPACK_PACKAGE_FILE_NAME}.ipa)
+		ENDFUNCTION()
 
-		IF(BundleDir)
-			MESSAGE(STATUS \"Use bundle: \${BundleDir}\")
+		IF(EXISTS \"\${CMAKE_BINARY_DIR}/${PROJECT_NAME}.xcarchive\")
+			XCODE_GENERATED()
 		ELSE()
-			MESSAGE(FATAL_ERROR \"Bundle directory does not exist\")
-		ENDIF()
-
-		EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy_directory \${BundleDir} Payload/${PROJECT_NAME}.app)
-		EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar cf \"${CPACK_PACKAGE_FILE_NAME}.ipa\" --format=zip Payload)
-		EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E remove_directory Payload)
-
-		FIND_BUNDLE(${PROJECT_NAME}.app.dSYM dSYM ParentDir)
-		IF(dSYM)
-			MESSAGE(STATUS \"Use dSYM: \${dSYM}\")
-			EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar cf \"\${CMAKE_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.dSYM.zip\" --format=zip ${PROJECT_NAME}.app.dSYM WORKING_DIRECTORY \${ParentDir})
+			SELF_GENERATED()
 		ENDIF()
 	")
 
@@ -148,15 +167,15 @@ ELSEIF(APPLE)
 	SET(CPACK_BUNDLE_APPLE_CERT_APP "Developer ID Application: Governikus GmbH & Co. KG (G7EQCJU4BR)")
 
 	SET(CPACK_BUNDLE_APPLE_CODESIGN_FILES ${ADDITIONAL_BUNDLE_FILES_TO_SIGN})
-	SET(CPACK_APPLE_BUNDLE_ID "com.governikus.AusweisApp2")
-	SET(CPACK_BUNDLE_APPLE_CODESIGN_PARAMETER "--force")
+	SET(CPACK_APPLE_BUNDLE_ID "${BUNDLE_IDENTIFIER}")
+	SET(CPACK_BUNDLE_APPLE_CODESIGN_PARAMETER "-o runtime --force")
 	OPTION(OSX_TIMESTAMP "Timestamp the application bundle" ON)
 	IF(OSX_TIMESTAMP)
 		SET(CPACK_BUNDLE_APPLE_CODESIGN_PARAMETER "${CPACK_BUNDLE_APPLE_CODESIGN_PARAMETER} --timestamp")
 	ELSE()
 		SET(CPACK_BUNDLE_APPLE_CODESIGN_PARAMETER "${CPACK_BUNDLE_APPLE_CODESIGN_PARAMETER} --timestamp=none")
 	ENDIF()
-	SET(CPACK_PACKAGE_ICON ${RESOURCES_DIR}/images/dmg_icons.icns)
+	#SET(CPACK_PACKAGE_ICON ${RESOURCES_DIR}/images/dmg_icons.icns) https://gitlab.kitware.com/cmake/cmake/issues/19517
 	SET(CPACK_DMG_VOLUME_NAME ${CPACK_PACKAGE_NAME})
 	SET(CPACK_DMG_FORMAT UDBZ)
 	SET(CPACK_DMG_BACKGROUND_IMAGE ${RESOURCES_DIR}/images/dmg_background.png)
@@ -168,7 +187,7 @@ ELSEIF(APPLE)
 	SET(CPACK_DMG_DS_STORE ${MACOS_PACKAGING_DIR}/DS_STORE)
 
 	SET(INFO_PLIST_FILE_NAME Info.plist)
-	CONFIGURE_FILE(${MACOS_PACKAGING_DIR}/${INFO_PLIST_FILE_NAME} ${INFO_PLIST_FILE_NAME} @ONLY)
+	CONFIGURE_FILE(${MACOS_PACKAGING_DIR}/${INFO_PLIST_FILE_NAME}.in ${INFO_PLIST_FILE_NAME} @ONLY)
 	SET(CPACK_BUNDLE_PLIST ${INFO_PLIST_FILE_NAME})
 
 ELSEIF(ANDROID)
@@ -180,7 +199,7 @@ ELSEIF(ANDROID)
 
 	FILE(READ "${QT_HOST_PREFIX}/src/android/templates/build.gradle" BUILD_GRADLE)
 
-	IF(ANDROID_BUILD_AAR)
+	IF(INTEGRATED_SDK)
 		STRING(REPLACE "apply plugin: 'com.android.application'" "apply plugin: 'com.android.library'" BUILD_GRADLE "${BUILD_GRADLE}")
 	ENDIF()
 
@@ -192,7 +211,7 @@ ELSEIF(ANDROID)
 		FILE(APPEND "${CMAKE_INSTALL_PREFIX}/build.gradle" "tasks.lint.enabled = false")
 	ENDIF()
 
-	IF(ANDROID_BUILD_AAR)
+	IF(INTEGRATED_SDK)
 		SET(ANDROID_FILE_EXT aar)
 		CONFIGURE_FILE(${PACKAGING_DIR}/android/pom.xml.in ${CMAKE_INSTALL_PREFIX}/${CPACK_PACKAGE_FILE_NAME}.pom @ONLY)
 		CONFIGURE_FILE("${PACKAGING_DIR}/android/lint.aar.xml" "${CMAKE_INSTALL_PREFIX}/lint.xml" COPYONLY)
@@ -205,7 +224,7 @@ ELSEIF(ANDROID)
 	IF(${CMAKE_BUILD_TYPE} STREQUAL "RELEASE" OR ${CMAKE_BUILD_TYPE} STREQUAL "RELWITHDEBINFO" OR ${CMAKE_BUILD_TYPE} STREQUAL "MINSIZEREL")
 		SET(DEPLOY_CMD_SIGN --release)
 
-		IF(ANDROID_BUILD_AAR)
+		IF(INTEGRATED_SDK)
 			SET(ANDROID_FILE dist-release.aar)
 		ELSEIF(APK_SIGN_KEYSTORE AND APK_SIGN_KEYSTORE_ALIAS AND APK_SIGN_KEYSTORE_PSW)
 			MESSAGE(STATUS "Release build will be signed using: ${APK_SIGN_KEYSTORE} | Alias: ${APK_SIGN_KEYSTORE_ALIAS}")
@@ -223,7 +242,7 @@ ELSEIF(ANDROID)
 	SET(DEPLOY_CMD ${androiddeployqt} --verbose --gradle --input ${ANDROID_DEPLOYMENT_SETTINGS} --output ${CMAKE_INSTALL_PREFIX} ${DEPLOY_CMD_SIGN})
 	SET(SOURCE_ANDROID_FILE ${CMAKE_INSTALL_PREFIX}/build/outputs/${ANDROID_FILE_EXT})
 
-	IF("${Qt5Core_VERSION}" VERSION_GREATER_EQUAL "5.12.0" AND NOT ANDROID_BUILD_AAR)
+	IF("${Qt5Core_VERSION}" VERSION_GREATER_EQUAL "5.12.0" AND NOT INTEGRATED_SDK)
 		IF(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
 			SET(SOURCE_ANDROID_FILE ${SOURCE_ANDROID_FILE}/debug)
 		ELSE()
@@ -238,14 +257,15 @@ ELSEIF(ANDROID)
 	# https://gitlab.kitware.com/cmake/cmake/issues/8438
 	ADD_CUSTOM_TARGET(${ANDROID_FILE_EXT}
 				COMMAND ${DEPLOY_CMD}
-				COMMAND ${CMAKE_COMMAND} -E copy ${SOURCE_ANDROID_FILE} ${DESTINATION_ANDROID_FILE})
+				COMMAND ${CMAKE_COMMAND} -E copy ${SOURCE_ANDROID_FILE} ${DESTINATION_ANDROID_FILE}
+				USES_TERMINAL)
 
 	ADD_CUSTOM_COMMAND(TARGET ${ANDROID_FILE_EXT} POST_BUILD
 				COMMAND ${CMAKE_INSTALL_PREFIX}/gradlew sourcesJar lint
 				COMMAND ${CMAKE_COMMAND} -E copy build/libs/dist-sources.jar ${CPACK_PACKAGE_FILE_NAME}-sources.jar
 				WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX})
 
-	IF(NOT ANDROID_BUILD_AAR)
+	IF(NOT INTEGRATED_SDK)
 		FIND_PROGRAM(apksigner apksigner HINTS ${ANDROID_SDK}/build-tools/${ANDROID_BUILD_TOOLS_REVISION} CMAKE_FIND_ROOT_PATH_BOTH)
 		IF(apksigner)
 			ADD_CUSTOM_TARGET(verify.signature COMMAND ${apksigner} verify --verbose --print-certs -Werr ${DESTINATION_ANDROID_FILE})

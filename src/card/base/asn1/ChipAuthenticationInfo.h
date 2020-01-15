@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of ChipAuthenticationInfo
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -40,6 +40,7 @@ class ChipAuthenticationInfo
 	: public SecurityInfo
 {
 	friend class QSharedPointer<ChipAuthenticationInfo>;
+
 	const QSharedPointer<const chipauthenticationinfo_st> mDelegate;
 
 	ChipAuthenticationInfo(const QSharedPointer<const chipauthenticationinfo_st>& pDelegate);

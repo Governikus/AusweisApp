@@ -1,14 +1,13 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.ApplicationModel 1.0
 
 BrandConstants {
-	readonly property color blue: "#5481ab"
-
 	readonly property int component_spacing: ApplicationModel.scaleFactor * 30
 	readonly property int pane_padding: ApplicationModel.scaleFactor * 30
 	readonly property int pane_spacing: ApplicationModel.scaleFactor * 30

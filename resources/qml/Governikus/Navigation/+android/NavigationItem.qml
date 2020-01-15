@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -12,7 +12,7 @@ Item {
 	property alias text: tabText.text
 	signal clicked
 
-	Accessible.role: Accessible.Button
+	Accessible.role: Accessible.MenuItem
 	Accessible.name: text
 
 	Item {
@@ -21,13 +21,14 @@ Item {
 		width: Style.dimens.menubar_width
 		anchors.left: parent.left
 
-		Image {
+		TintableIcon {
 			id: tabImage
 			height: 35
 			sourceSize.width: height
 			fillMode: Image.PreserveAspectFit
 			anchors.horizontalCenter: parent.horizontalCenter
 			anchors.verticalCenter: parent.verticalCenter
+			tintColor: Style.color.menu_icon_tint_color
 		}
 	}
 
@@ -39,7 +40,7 @@ Item {
 
 		Accessible.ignored: true
 
-		textStyle: Style.text.hint_secondary
+		textStyle: Style.text.hint
 	}
 
 	MouseArea {

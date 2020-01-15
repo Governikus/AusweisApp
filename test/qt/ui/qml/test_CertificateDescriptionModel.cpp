@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref CertificateDescriptionModel
  *
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CertificateDescriptionModel.h"
@@ -45,11 +45,11 @@ class test_CertificateDescriptionModel
 			QCOMPARE(mModel->rowCount(), 4);
 
 			const QString termsOfUsage = QStringLiteral("Anschrift:\nbremen online services GmbH & Co. KG\nAm Fallturm 9\n28359 Bremen\n\nE-Mail-Adresse:\nhb@bos-bremen.de\n\nZweck des Auslesevorgangs:\nDemonstration des eID-Service\n\nZust\u00E4ndige Datenschutzaufsicht:\nDie Landesbeauftragte f\u00FCr Datenschutz und Informationsfreiheit der Freien Hansestadt Bremen\nArndtstra\u00DFe 1\n27570 Bremerhaven");
-			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::LABEL), QString("Service provider"));
+			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::LABEL), QString("Provider"));
 			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("bos KG\nhttps://dev-demo.governikus-eid.de:8443"));
 			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::LABEL), QString("Certificate issuer"));
 			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("Deutsche Post Com, Gesch\u00E4ftsfeld Signtrust\nhttp://www.signtrust.de"));
-			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::LABEL), QString("Service provider information"));
+			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::LABEL), QString("Provider information"));
 			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::TEXT), termsOfUsage);
 			QCOMPARE(mModel->data(mModel->index(3), CertificateDescriptionModel::UserRoles::LABEL), QString("Validity"));
 			QCOMPARE(spy.count(), 1);

@@ -1,0 +1,52 @@
+/* DO NOT TOUCH THIS MANUALLY */
+
+#cmakedefine INTEGRATED_SDK
+
+#define PRODUCT "@PRODUCT@"
+#define VENDOR "@VENDOR@"
+#define VENDOR_DOMAIN "@VENDOR_DOMAIN@"
+#define COPYRIGHT_TEXT "@COPYRIGHT_TEXT@"
+
+#define VERSION "@VERSION@"
+#define VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define VERSION_PATCH @PROJECT_VERSION_PATCH@
+#define VERSION_TWEAK @PROJECT_VERSION_TWEAK@
+
+#ifndef RC_INVOKED
+#if defined(__BASE_FILE__) && __has_include(<string_view>)
+#include <string_view>
+
+constexpr bool isPathSeparator(char pChar)
+{
+	return pChar == '/' || pChar == '\\';
+}
+
+
+constexpr const char* stripPath(const char* pPath)
+{
+	auto result = pPath;
+	for (auto iter = pPath; *iter; ++iter)
+	{
+		if (isPathSeparator(*iter) && *(iter + 1))
+		{
+			result = iter + 1;
+		}
+	}
+	return result;
+}
+
+
+constexpr std::string_view currentFile()
+{
+	return std::string_view(stripPath(__BASE_FILE__));
+}
+
+
+static_assert(currentFile() == "Bootstrap.cpp" || currentFile() == "main.cpp", "config.h include is allowed in Bootstrap.cpp and main.cpp only!");
+#endif
+#endif // RC_INVOKED
+
+
+//         DO NOT INCLUDE THIS
+//   Use QCoreApplication or VersionNumber!

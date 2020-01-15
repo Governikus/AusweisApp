@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref HelpAction
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestFileHelper.h"
@@ -41,7 +41,7 @@ class test_HelpAction
 		const QString sys = "Windows";
 		#endif
 
-		return QStringLiteral("https://www.ausweisapp.bund.de/ausweisapp2/handbuch/1.9/%1/%2/index.html").arg(pLang, sys);
+		return QStringLiteral("https://www.ausweisapp.bund.de/ausweisapp2/handbuch/1.16/%1/%2/index.html").arg(pLang, sys);
 	}
 
 
@@ -54,7 +54,7 @@ class test_HelpAction
 	private Q_SLOTS:
 		void init()
 		{
-			QCoreApplication::setApplicationVersion(QStringLiteral("1.9"));
+			QCoreApplication::setApplicationVersion(QStringLiteral("1.16"));
 			QVERIFY(!helpDir.exists());
 		}
 

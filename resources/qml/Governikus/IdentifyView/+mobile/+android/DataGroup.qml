@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -10,7 +10,7 @@ import Governikus.Style 1.0
 import Governikus.Type.SettingsModel 1.0
 
 
-Rectangle {
+Item {
 	id: root
 	property string title;
 	property int columns: 1
@@ -32,7 +32,7 @@ Rectangle {
 			text: title
 		}
 
-		Rectangle {
+		Item {
 			width: parent.width
 			height: 40
 			visible: repeater.count < 1
@@ -65,10 +65,9 @@ Rectangle {
 				model: chat
 				visible: repeater.count > 0
 
-				Rectangle {
+				Item {
 					width: (grid.width - ((grid.columns - 1) * grid.columnSpacing)) / grid.columns
 					height: 40
-					color: Constants.white
 
 					GText {
 						id: text
@@ -78,7 +77,7 @@ Rectangle {
 						anchors.right: checkBox.left
 
 						text: name
-						textStyle: Style.text.normal_secondary
+						textStyle: writeRight ? Style.text.normal_warning : Style.text.normal_secondary
 					}
 
 					GSeparator {

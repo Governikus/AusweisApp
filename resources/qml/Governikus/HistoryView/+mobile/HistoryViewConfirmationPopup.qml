@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -14,7 +14,7 @@ ConfirmationPopup {
 	//: LABEL ANDROID IOS
 	title: qsTr("Delete history") + SettingsModel.translationTrigger
 	//: LABEL ANDROID IOS Confirmaton popup to clear all history entries.
-	text: qsTr("Please confirm that you want to delete your complete history.") + SettingsModel.translationTrigger
+	text: qsTr("All history entries will be deleted.") + SettingsModel.translationTrigger
 	//: LABEL ANDROID IOS
 	okButtonText: qsTr("Delete") + SettingsModel.translationTrigger
 

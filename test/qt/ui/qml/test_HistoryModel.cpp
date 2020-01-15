@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref HistoryModel
  *
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HistoryModel.h"
@@ -43,7 +43,7 @@ class test_HistoryModel
 				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 				/* icon */ QString(),
 				/* image */ QString(),
-				/* tcTokenUrl */ QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf"),
+				/* tcTokenUrl */ QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml"),
 				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
 				/* subjectUrls */ subjectUrls);
 	}
@@ -54,7 +54,7 @@ class test_HistoryModel
 
 		QStringList subjectUrls1({QStringLiteral("https://test.test/"), QStringLiteral("https://abc.abc/"), QStringLiteral("abc.abc")});
 		QStringList subjectUrls2({QStringLiteral("abc.abc")});
-		QStringList subjectUrls3({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla1")});
+		QStringList subjectUrls3({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")});
 
 		auto& infos = Env::getSingleton<ProviderConfiguration>()->mProviderConfigurationInfos;
 		infos.clear();
@@ -209,7 +209,7 @@ class test_HistoryModel
 			QFETCH(int, count);
 			QFETCH(int, newSize);
 
-			HistoryInfo historyInfo("SubjectName", "https://npa.allianz.de/bla1", "Usage", QDateTime::currentDateTime(), "TermOfUsage", {"RequestedData"});
+			HistoryInfo historyInfo("SubjectName", "https://www.autentapp.de/bla1", "Usage", QDateTime::currentDateTime(), "TermOfUsage", {"RequestedData"});
 			QVector<HistoryInfo> infos(oldSize, historyInfo);
 
 			QSignalSpy spyRemove(mModel.data(), &HistoryModel::rowsAboutToBeRemoved);

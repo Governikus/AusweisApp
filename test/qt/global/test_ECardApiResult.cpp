@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardReturnCode.h"
@@ -97,7 +97,7 @@ class test_ECardApiResult
 			qDebug() << ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
 			QCOMPARE(spy.count(), 1);
 			param = spy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser | The process was cancelled by the user.\""));
+			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser | The process has been cancelled.\""));
 
 			spy.clear();
 
@@ -122,9 +122,9 @@ class test_ECardApiResult
 			expected = "{\"major\":\"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok\"}";
 			QCOMPARE(bytes(ECardApiResult::createOk().toJson()), expected);
 
-			expected = "{\"description\":\"The process was cancelled by the user.\","
+			expected = "{\"description\":\"The process has been cancelled.\","
 					   "\"language\":\"en\",\"major\":\"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error\","
-					   "\"message\":\"The process was cancelled by the user.\","
+					   "\"message\":\"The process has been cancelled.\","
 					   "\"minor\":\"http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser\"}";
 			QCOMPARE(bytes(ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER)).toJson()), expected);
 
@@ -303,9 +303,9 @@ class test_ECardApiResult
 			QTest::newRow("repeatedDataMismatch") << ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch << tr("The new PIN and the confirmation do not match.");
 			QTest::newRow("unknownPinFormat") << ECardApiResult::Minor::IFDL_IO_UnknownPINFormat << tr("The format of the PIN is wrong.");
 			QTest::newRow("keyGenerationNotPossible") << ECardApiResult::Minor::KEY_KeyGenerationNotPossible << tr("Signature certificate key generation is not possible.");
-			QTest::newRow("cancellationByUser") << ECardApiResult::Minor::SAL_Cancellation_by_User << tr("The process was cancelled by the user.");
+			QTest::newRow("cancellationByUser") << ECardApiResult::Minor::SAL_Cancellation_by_User << tr("The process has been cancelled.");
 			QTest::newRow("invalidCertificatePath") << ECardApiResult::Minor::IL_Signature_InvalidCertificatePath << tr("One or more certificate checks failed. The operation will be aborted due to security reasons.");
-			QTest::newRow("invalidKey") << ECardApiResult::Minor::SAL_Invalid_Key << tr("This action cannot be performed. The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.");
+			QTest::newRow("invalidKey") << ECardApiResult::Minor::SAL_Invalid_Key << tr("This action cannot be performed. The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.");
 			QTest::newRow("securityConditionNotSatisfied") << ECardApiResult::Minor::SAL_SecurityConditionNotSatisfied << tr("The authenticity of your ID card could not be verified. Please make sure that you are using a genuine ID card. Please note that test applications require the use of a test ID card.");
 			QTest::newRow("ageVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_AgeVerificationFailedWarning << tr("The age verification failed.");
 			QTest::newRow("comunityVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_CommunityVerificationFailedWarning << tr("The community verification failed.");

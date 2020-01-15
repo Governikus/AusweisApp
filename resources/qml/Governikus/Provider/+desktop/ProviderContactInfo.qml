@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -20,8 +20,8 @@ Item {
 	height: columnLayout.height
 
 	Accessible.name: qsTr("Provider contact information") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("Contact information of the selected service provider.") + SettingsModel.translationTrigger
-	Accessible.role: Accessible.Heading
+	Accessible.description: qsTr("Contact information of the selected provider.") + SettingsModel.translationTrigger
+	Accessible.role: Accessible.Grouping
 
 	ColumnLayout {
 		id: columnLayout
@@ -37,7 +37,7 @@ Item {
 
 			//: LABEL DESKTOP_QML
 			text: qsTr("Contact") + SettingsModel.translationTrigger
-			textStyle: Style.text.title
+			textStyle: Style.text.title_inverse
 		}
 
 		Repeater {

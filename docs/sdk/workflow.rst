@@ -104,7 +104,7 @@ We assume that the user did not connect the card reader.
 
   {"cmd": "CANCEL"}
 
-  {"msg": "AUTH", "result": {"description":"The process was cancelled by the user.","language":"en","major":"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error","message":"The process was cancelled by the user.","minor":"http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser"},"url":"https://test.governikus-eid.de/DEMO/?errID=123456"}
+  {"msg": "AUTH", "result": {"description":"The process has been cancelled.","language":"en","major":"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error","message":"The process has been cancelled.","minor":"http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser"},"url":"https://test.governikus-eid.de/DEMO/?errID=123456"}
 
 
 
@@ -134,5 +134,5 @@ We assume that the user did not connect the card reader.
 
   {"cmd": "CANCEL"}
 
-  {"msg": "AUTH", "result": {"description":"The process was cancelled by the user.","language":"en","major":"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error","message":"The process was cancelled by the user.","minor":"http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser"},"url":"https://test.governikus-eid.de/DEMO/?errID=123456"}
+  {"msg": "AUTH", "result": {"description":"The process has been cancelled.","language":"en","major":"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error","message":"The process has been cancelled.","minor":"http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser"},"url":"https://test.governikus-eid.de/DEMO/?errID=123456"}
 

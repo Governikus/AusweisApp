@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerAccessRights.h"
@@ -90,7 +90,7 @@ QJsonArray MsgHandlerAccessRights::getAccessRights(const QSet<AccessRight>& pRig
 {
 	QJsonArray array;
 
-	QList<AccessRight> accessRights = pRights.toList();
+	QList<AccessRight> accessRights = pRights.values();
 	std::sort(accessRights.rbegin(), accessRights.rend());
 	for (auto entry : qAsConst(accessRights))
 	{

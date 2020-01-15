@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref Card for NFC.
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,7 +37,7 @@ class NfcCard
 		virtual CardReturnCode disconnect() override;
 		virtual bool isConnected() override;
 
-		virtual CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
+		virtual ResponseApduResult transmit(const CommandApdu& pCmd) override;
 };
 
 } // namespace governikus

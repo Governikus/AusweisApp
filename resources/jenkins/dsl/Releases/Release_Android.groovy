@@ -89,7 +89,7 @@ j.with
 			mkdir -p build/${ARCH};
 			cd build/${ARCH};
 			cmake ../../source
-			-DANDROID_BUILD_AAR=ON
+			-DINTEGRATED_SDK=ON
 			-DCMAKE_INSTALL_PREFIX=\${WORKSPACE}/build/dist
 			-DCMAKE_PREFIX_PATH="\${WORKSPACE}/libs/${ARCH}/build/dist;\${WORKSPACE}/libs/build/dist"
 			-DCMAKE_TOOLCHAIN_FILE=../source/cmake/android.toolchain.cmake

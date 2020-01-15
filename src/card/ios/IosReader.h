@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref Reader for iOS.
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,7 +31,7 @@ class IosReader
 		virtual CardEvent updateCard() override;
 
 		void removeCard();
-		void stopSession(const QString& pError = QString());
+		void stopSession(const QString& pError);
 
 	public:
 		IosReader();

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -61,8 +61,6 @@ SectionPage {
 		horizontalAlignment: Text.AlignHCenter
 		verticalAlignment: Text.AlignVCenter
 		textStyle: resultType !== ResultView.Type.IsError ? Style.text.header_accent : Style.text.header_warning
-
-		onLinkActivated: Qt.openUrlExternally(link)
 	}
 
 	Row {
@@ -86,7 +84,7 @@ SectionPage {
 			visible: false
 
 			//: LABEL ANDROID IOS
-			text: qsTr("Send log file") + SettingsModel.translationTrigger
+			text: qsTr("Send logfile") + SettingsModel.translationTrigger
 			onClicked: LogModel.mailLog()
 		}
 	}

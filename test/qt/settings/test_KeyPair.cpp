@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref CertificateGenerator
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "KeyPair.h"

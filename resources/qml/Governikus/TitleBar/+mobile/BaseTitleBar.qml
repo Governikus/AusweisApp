@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -16,6 +16,7 @@ Item {
 		Left
 	}
 
+	property alias contentHeight: contentLayout.height
 	property alias titleBarOpacity: background.opacity
 
 	property alias title: titleText.text
@@ -28,6 +29,8 @@ Item {
 	property var topSafeAreaMargin: plugin.safeAreaMargins.top
 
 	height: contentLayout.height + topSafeAreaMargin
+
+	Accessible.role: Accessible.TitleBar
 
 	function updateLeftAction() {
 		if (leftActionStack.activeActionItem && typeof leftActionStack.activeActionItem.iconOnly !== "undefined") {

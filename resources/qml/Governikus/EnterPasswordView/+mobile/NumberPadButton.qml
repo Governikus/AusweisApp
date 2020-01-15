@@ -1,54 +1,73 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
+import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
+import Governikus.Type.SettingsModel 1.0
 
-MouseArea {
-	id: baseItem
+Button {
+	id: numberPadButton
 
-	property alias text: textItem.text
-	property alias source: imageItem.source
+	property bool visualPrivacy: false
 
-	Accessible.role: Accessible.Button
-	Accessible.name: text
-	Accessible.onPressAction: if (Qt.platform.os === "ios" && enabled) clicked(null)
+	implicitHeight: 36
+	implicitWidth: 36
+	Layout.fillHeight: true
+	Layout.fillWidth: true
 
-	GText {
-		id: textItem
+	Accessible.name: numberPadButton.text
+	Accessible.description: numberPadButton.enabled ? "": qsTr("Disabled") + SettingsModel.translationTrigger
+	Accessible.ignored: Qt.platform.os === "ios" ? false : !numberPadButton.enabled
+	Accessible.onPressAction: if (Qt.platform.os === "ios" && numberPadButton.enabled) clicked(null)
 
-		anchors.centerIn: parent
+	contentItem: GText {
+		visible: numberPadButton.icon.source == "" && numberPadButton.enabled
 
 		Accessible.ignored: true
 
+		text: numberPadButton.text
 		textStyle: Style.text.title
+		horizontalAlignment: Text.AlignHCenter
+		verticalAlignment: Text.AlignVCenter
 	}
 
-	Image {
-		id: imageItem
-		anchors.centerIn: parent
-		height: 36
-		width: height
+	background: Image {
+		visible: numberPadButton.icon.source != "" && numberPadButton.enabled
+		anchors.centerIn: numberPadButton
+
+		height: parent.implicitHeight
+		width: parent.implicitWidth
 		fillMode: Image.PreserveAspectFit
+		source: numberPadButton.icon.source
 	}
 
 	Rectangle {
 		id: darkLayer
-		anchors.centerIn: parent
+
 		height: width
-		radius: width /2
+		radius: width / 2
+		anchors.centerIn: parent
+
 		color: Constants.black
 		opacity: 0.1
+
 		SequentialAnimation on width {
-			running: baseItem.pressed
+			running: !visualPrivacy && numberPadButton.down
 			alwaysRunToEnd: true
-			NumberAnimation { from: 0; to: Math.SQRT2 * baseItem.width }
-			PauseAnimation { duration: 100 }
-			PropertyAction { value: 0 }
+			PropertyAction { target: darkLayer; property: "opacity"; value: 0.1 }
+			NumberAnimation { from: 0; to: Math.SQRT2 * numberPadButton.width }
+		}
+
+		NumberAnimation on opacity {
+			running: !visualPrivacy && !numberPadButton.down
+			from: 0.1
+			to: 0.0
 		}
 	}
 }

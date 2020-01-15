@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -24,6 +24,6 @@ Text {
 
 	text: "✱"
 	opacity: 0.5
-	color: Style.text.hint.textColor
-	font.pixelSize: Style.text.hint.textSize
+	color: Style.color.focus_indicator_inverse
+	font.pixelSize: Style.dimens.hint_font_size
 }

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -25,7 +25,7 @@ public final class MulticastLockJniBridgeUtil
 	{
 		if (cLock == null)
 		{
-			WifiManager wifi = (WifiManager) pContext.getSystemService(Context.WIFI_SERVICE);
+			WifiManager wifi = (WifiManager) pContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 			cLock = wifi.createMulticastLock("AusweisApp2");
 			cLock.setReferenceCounted(true);
 		}

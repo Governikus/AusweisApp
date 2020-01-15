@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -7,6 +7,7 @@ import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
+import Governikus.Style 1.0
 import Governikus.Type.NotificationModel 1.0
 
 
@@ -14,25 +15,36 @@ Button {
 	id: button
 
 	property alias source: image.source
+	property color iconColor: Style.text.header_inverse.textColor
 	function notify() {
 		blinkerAnimation.start()
 	}
 
 	width: height
 
-	Accessible.role: Accessible.Button
-
 	enabled: visible
-	background: Image {
-		id: image
 
-		height: button.height * (button.down ? 0.9 : 1)
+	padding: 0
+	background: Item {}
+	contentItem: Item {
+
+		height: button.height
 		width: height
 
 		anchors.centerIn: parent
 
-		sourceSize.height: height
-		sourceSize.width: width
+		TintableIcon {
+			id: image
+
+			readonly property color pressColor: Qt.darker(iconColor, Constants.highlightDarkerFactor)
+
+			anchors.fill: parent
+
+			sourceSize.height: height
+			sourceSize.width: width
+
+			tintColor: button.pressed ? pressColor : iconColor
+		}
 
 		Rectangle {
 			id: blinker
@@ -69,7 +81,7 @@ Button {
 	ToolTip {
 		visible: mouseArea.containsMouse
 
-		text: parent.Accessible.name
+		text: button.text
 		delay: 500
 	}
 }

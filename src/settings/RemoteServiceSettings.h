@@ -1,7 +1,7 @@
 /*!
  * \brief RemoteService settings
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -52,6 +52,9 @@ class RemoteServiceSettings
 
 			public:
 				RemoteInfo() = default;
+
+				static RemoteInfo fromJson(const QJsonObject&);
+				QJsonObject toJson() const;
 
 				const QString& getFingerprint() const;
 

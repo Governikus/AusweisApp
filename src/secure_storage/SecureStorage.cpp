@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -61,7 +61,7 @@ defineSingleton(SecureStorage)
 
 
 SecureStorage::SecureStorage()
-	: mLoadedTime()
+	: mLoaded(false)
 	, mCvcas()
 	, mCvcasTest()
 	, mUpdateCertificates()
@@ -93,23 +93,24 @@ SecureStorage& SecureStorage::getInstance()
 }
 
 
+bool SecureStorage::isLoaded() const
+{
+	return mLoaded;
+}
+
+
 void SecureStorage::load()
 {
 	const auto& path = FileDestination::getPath(QStringLiteral("config.json"));
+	qCDebug(securestorage) << "Load SecureStorage:" << path;
 
-	if (!QFile::exists(path))
+	QFile configFile(path);
+	if (!configFile.exists())
 	{
 		qCCritical(securestorage) << "SecureStorage not found";
 		return;
 	}
 
-	const auto& lastModified = QFileInfo(path).lastModified();
-	if (lastModified.isValid() && lastModified <= mLoadedTime)
-	{
-		return;
-	}
-
-	QFile configFile(path);
 	if (!configFile.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		qCCritical(securestorage) << "Wasn't able to open SecureStorage";
@@ -182,7 +183,7 @@ void SecureStorage::load()
 	mAppcastUpdateUrl = readGroup(config, CONFIGURATION_GROUP_NAME_UPDATES(), CONFIGURATION_NAME_APPCAST_UPDATE_URL());
 	mAppcastBetaUpdateUrl = readGroup(config, CONFIGURATION_GROUP_NAME_UPDATES(), CONFIGURATION_NAME_APPCAST_BETA_UPDATE_URL());
 
-	mLoadedTime = lastModified;
+	mLoaded = true;
 	qCInfo(securestorage) << "SecureStorage successfully loaded";
 }
 

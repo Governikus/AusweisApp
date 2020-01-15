@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -61,7 +61,7 @@ void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 		connect(mContext.data(), &WorkflowContext::firePaceResultUpdated, this, &NumberModel::fireInputErrorChanged);
 
 		// The length of the pin doesn't matter for the core. Requesting
-		// a 5 or 6 digits PIN is only part of the gui. Therefore we handle
+		// a 5- or 6-digit PIN is only part of the gui. Therefore we handle
 		// this state in the NumberModel. The only case where the core need
 		// to know if the transport PIN should be requested is, when we
 		// are in an authentication workflow and want to start a pin change.
@@ -241,23 +241,23 @@ QString NumberModel::getInputError() const
 
 		case CardReturnCode::INVALID_PIN_2:
 			//: INFO ALL_PLATFORMS The wrong PIN was entered twice, the next attempt requires the CAN for additional verification.
-			return tr("You have entered the wrong PIN twice. "
-					  "Prior to a third attempt, you have to enter your six-digit card access number first. "
-					  "You can find your card access number on the front of your ID card.");
+			return tr("A wrong PIN has been entered twice on your ID card. "
+					  "Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. "
+					  "You can find your card access number (CAN) on the front of your ID card.");
 
 		case CardReturnCode::INVALID_PIN_3:
-			//: INFO ALL_PLATFORMS The PIN was entered wrongfully three times, the id card needs to be unlocked using the PUK.
-			return tr("You have entered a wrong PIN three times. "
+			//: INFO ALL_PLATFORMS The PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.
+			return tr("A wrong PIN has been entered three times on your ID card. "
 					  "Your PIN is now blocked. "
-					  "You have to enter the PUK now for unblocking.");
+					  "To unblock your PIN you have to enter the PUK.");
 
 		case CardReturnCode::INVALID_CAN:
 			//: INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again.
-			return tr("You have entered a wrong CAN, please try again.");
+			return tr("The entered card access number (CAN) is incorrect. Please try again.");
 
 		case CardReturnCode::INVALID_PUK:
 			//: INFO ALL_PLATFORMS The PUK entered wrongfully and needs to be supplied again.
-			return tr("You have entered a wrong PUK. "
+			return tr("The entered PUK is incorrect. "
 					  "Please try again.");
 
 		default:
