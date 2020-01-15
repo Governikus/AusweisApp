@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ProviderConfigurationParser
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfigurationParser.h"
@@ -52,16 +52,16 @@ class test_ProviderConfigurationParser
 										 "         \"category\": \"other\""
 										 "      },"
 										 "      {"
-										 "         \"shortName\": {\"\" : \"Allianz Kundenportal\"},"
-										 "         \"longName\": {\"\" : \"Allianz Kundenportal - Meine Allianz\"},"
-										 "         \"shortDescription\": {\"\" : \"Kundenportal von Allianz\"},"
-										 "         \"longDescription\": {\"\" : \"Kundenportal von Allianz - Meine Allianz\"},"
-										 "         \"address\": \"https://meine.allianz.de/form\","
-										 "         \"homepage\": \"https://meine.allianz.de\","
-										 "         \"phone\": \"0421 123456\","
-										 "         \"email\": \"abc@def.de\","
-										 "         \"postalAddress\": \"Am Fallturm 9,\n28359 Bremen\","
-										 "         \"category\": \"insurance\""
+										 "         \"shortName\": {\"\" : \"Selbstauskunft\"},"
+										 "         \"longName\": {\"\" : \"Selbstauskunft - \\\"Meine Daten einsehen\\\"\"},"
+										 "         \"shortDescription\": {\"\" : \"Funktion der AusweisApp2\"},"
+										 "         \"longDescription\": {\"\" : \"Die AusweisApp2 verfuegt ueber die Funktion \\\"Meine Daten einsehen\\\"\"},"
+										 "         \"address\": \"https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/\","
+										 "         \"homepage\": \"https://www.ausweisapp.bund.de/\","
+										 "         \"phone\": \"+49 421 - 204 95 995\","
+										 "         \"email\": \"support@ausweisapp.de\","
+										 "         \"postalAddress\": \"Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesamtes fuer Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen\","
+										 "         \"category\": \"citizen\""
 										 "      }"
 										 "   ]"
 										 "}");
@@ -98,18 +98,18 @@ class test_ProviderConfigurationParser
 			QVERIFY(provider.getImage()->lookupPath().endsWith("/other_bg.svg"));
 
 			provider = providers[1];
-			QCOMPARE(provider.getShortName().toString(), QStringLiteral("Allianz Kundenportal"));
-			QCOMPARE(provider.getLongName().toString(), QStringLiteral("Allianz Kundenportal - Meine Allianz"));
-			QCOMPARE(provider.getShortDescription().toString(), QStringLiteral("Kundenportal von Allianz"));
-			QCOMPARE(provider.getLongDescription().toString(), QStringLiteral("Kundenportal von Allianz - Meine Allianz"));
-			QCOMPARE(provider.getAddress(), QStringLiteral("https://meine.allianz.de/form"));
-			QCOMPARE(provider.getHomepage(), QStringLiteral("https://meine.allianz.de"));
-			QCOMPARE(provider.getPhone(), QStringLiteral("0421 123456"));
-			QCOMPARE(provider.getEMail(), QStringLiteral("abc@def.de"));
-			QCOMPARE(provider.getPostalAddress(), QStringLiteral("Am Fallturm 9,\n28359 Bremen"));
-			QCOMPARE(provider.getCategory(), QStringLiteral("insurance"));
-			QVERIFY(provider.getIcon()->lookupPath().endsWith("/insurance_button.svg"));
-			QVERIFY(provider.getImage()->lookupPath().endsWith("/insurance_bg.svg"));
+			QCOMPARE(provider.getShortName().toString(), QStringLiteral("Selbstauskunft"));
+			QCOMPARE(provider.getLongName().toString(), QStringLiteral("Selbstauskunft - \"Meine Daten einsehen\""));
+			QCOMPARE(provider.getShortDescription().toString(), QStringLiteral("Funktion der AusweisApp2"));
+			QCOMPARE(provider.getLongDescription().toString(), QStringLiteral("Die AusweisApp2 verfuegt ueber die Funktion \"Meine Daten einsehen\""));
+			QCOMPARE(provider.getAddress(), QStringLiteral("https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/"));
+			QCOMPARE(provider.getHomepage(), QStringLiteral("https://www.ausweisapp.bund.de/"));
+			QCOMPARE(provider.getPhone(), QStringLiteral("+49 421 - 204 95 995"));
+			QCOMPARE(provider.getEMail(), QStringLiteral("support@ausweisapp.de"));
+			QCOMPARE(provider.getPostalAddress(), QStringLiteral("Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesamtes fuer Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen"));
+			QCOMPARE(provider.getCategory(), QStringLiteral("citizen"));
+			QVERIFY(provider.getIcon()->lookupPath().endsWith("/citizen_button.svg"));
+			QVERIFY(provider.getImage()->lookupPath().endsWith("/citizen_bg.svg"));
 		}
 
 
@@ -149,7 +149,7 @@ class test_ProviderConfigurationParser
 										 "      {"
 										 "      },"
 										 "      {"
-										 "         \"tcTokenUrl\": \"https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf\""
+										 "         \"tcTokenUrl\": \"https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml\""
 										 "      }"
 										 "   ]"
 										 "}");
@@ -162,7 +162,7 @@ class test_ProviderConfigurationParser
 			QCOMPARE(provider.getTcTokenUrl(), QUrl());
 
 			provider = providers[1];
-			QCOMPARE(provider.getTcTokenUrl(), QUrl(QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf")));
+			QCOMPARE(provider.getTcTokenUrl(), QUrl(QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml")));
 		}
 
 
@@ -200,10 +200,10 @@ class test_ProviderConfigurationParser
 										 "         \"subjectUrls\": []"
 										 "      },"
 										 "      {"
-										 "         \"subjectUrls\": [\"https://npa.allianz.de/bla1\"]"
+										 "         \"subjectUrls\": [\"https://www.autentapp.de/bla1\"]"
 										 "      },"
 										 "      {"
-										 "         \"subjectUrls\": [\"https://npa.allianz.de/bla1\", \"https://npa.allianz.de/bla2\"]"
+										 "         \"subjectUrls\": [\"https://www.autentapp.de/bla1\", \"https://www.autentapp.de/bla2\"]"
 										 "      }"
 										 "   ]"
 										 "}");
@@ -219,10 +219,10 @@ class test_ProviderConfigurationParser
 			QCOMPARE(provider.getSubjectUrls(), QStringList());
 
 			provider = providers[2];
-			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://npa.allianz.de/bla1")}));
+			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://www.autentapp.de/bla1")}));
 
 			provider = providers[3];
-			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla2")}));
+			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla2")}));
 		}
 
 
@@ -250,12 +250,12 @@ class test_ProviderConfigurationParser
 		{
 			QTest::addColumn<int>("count");
 
-			const int desktop = 58;
+			const int desktop = 62;
 			QTest::newRow("win") << desktop;
 			QTest::newRow("mac") << desktop;
 			QTest::newRow("linux") << desktop;
 			QTest::newRow("android") << desktop;
-			QTest::newRow("ios") << 17;
+			QTest::newRow("ios") << 30;
 		}
 
 

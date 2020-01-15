@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -24,7 +24,7 @@ Pane {
 	Repeater {
 		id: repeater
 
-		Rectangle {
+		Item {
 			width: parent.width
 			height: 40
 
@@ -35,9 +35,6 @@ Pane {
 			Accessible.onPressAction: if (optional) selected = !selected
 			Accessible.onScrollDownAction: baseItem.scrollPageDown()
 			Accessible.onScrollUpAction: baseItem.scrollPageUp()
-
-			radius: 3
-			color: Constants.white
 
 			GText {
 				id: dataGroup
@@ -50,7 +47,7 @@ Pane {
 				Accessible.ignored: true
 
 				text: name
-				textStyle: Style.text.normal_secondary
+				textStyle: writeRight ? Style.text.normal_warning : Style.text.normal_secondary
 			}
 			GSeparator {
 				anchors.top: parent.bottom

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -12,13 +12,13 @@ import Governikus.Type.SettingsModel 1.0
 
 ConfirmationPopup {
 	//: INFO ANDROID Header of the app rating popup.
-	title: qsTr("Would you like to rate this app?") + SettingsModel.translationTrigger
+	title: qsTr("Are you satisfied with AusweisApp2?") + SettingsModel.translationTrigger
 	//: INFO ANDROID Content of the app rating popup.
 	text: qsTr("We would be very grateful if you could leave a rating on the Google Play Store!") + SettingsModel.translationTrigger
 	//: LABEL ANDROID
-	cancelButtonText: qsTr("No, thanks") + SettingsModel.translationTrigger
+	cancelButtonText: qsTr("Don't ask again") + SettingsModel.translationTrigger
 	//: LABEL ANDROID
-	okButtonText: qsTr("Rate") + SettingsModel.translationTrigger
+	okButtonText: qsTr("Rate app") + SettingsModel.translationTrigger
 
 	onConfirmed: Qt.openUrlExternally("market://details?id=" + ApplicationModel.packageName)
 }

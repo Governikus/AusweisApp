@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -15,8 +15,8 @@ import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
+import androidx.core.content.FileProvider;
 
 
 public final class ShareUtil
@@ -79,7 +79,7 @@ public final class ShareUtil
 		}
 		catch (Exception e)
 		{
-			Log.e(LOG_TAG, "Error sharing log file", e);
+			Log.e(LOG_TAG, "Error sharing logfile", e);
 		}
 	}
 
@@ -96,7 +96,7 @@ public final class ShareUtil
 		}
 		catch (Exception e)
 		{
-			Log.e(LOG_TAG, "Error sharing log file", e);
+			Log.e(LOG_TAG, "Error sharing logfile", e);
 		}
 	}
 

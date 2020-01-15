@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInQml.h"
@@ -10,7 +10,6 @@
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
 #include "context/SelfAuthContext.h"
-#include "CardReturnCode.h"
 #include "ChangePinModel.h"
 #include "Env.h"
 #include "FileDestination.h"
@@ -20,6 +19,7 @@
 #include "NotificationModel.h"
 #include "PlatformTools.h"
 #include "ProviderCategoryFilterModel.h"
+#include "Random.h"
 #include "ReaderScanEnabler.h"
 #include "RemoteServiceModel.h"
 #include "SelfAuthModel.h"
@@ -27,6 +27,7 @@
 #include "Service.h"
 #include "SingletonHelper.h"
 #include "SurveyModel.h"
+#include "VersionNumber.h"
 
 #if defined(Q_OS_WIN) || (defined(Q_OS_BSD4) && !defined(Q_OS_IOS)) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
 #include "ReaderDriverModel.h"
@@ -38,13 +39,20 @@
 	#include <QtAndroidExtras/QtAndroid>
 #endif
 
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+#include <QAbstractButton>
+#include <QMessageBox>
+#endif
+
 #include <QFile>
+#include <QFontDatabase>
+#include <QFontInfo>
+#include <QFontMetrics>
 #include <QGuiApplication>
 #include <QLoggingCategory>
 #include <QOpenGLContext>
 #include <QOperatingSystemVersion>
 #include <QQmlContext>
-#include <QQuickWindow>
 #include <QScreen>
 #include <QtPlugin>
 #include <QtQml>
@@ -114,13 +122,24 @@ UIPlugInQml::UIPlugInQml()
 	, mChatModel()
 	, mExplicitPlatformStyle(getPlatformSelectors())
 	, mConnectivityManager()
+	, mUpdateInformationPending(false)
 	, mTrayIcon()
+	, mHighContrastEnabled(false)
 #if defined(Q_OS_MACOS)
 	, mMenuBar()
 #endif
 {
 #if defined(Q_OS_ANDROID)
 	QGuiApplication::setFont(QFont(QStringLiteral("Roboto")));
+#elif defined(Q_OS_LINUX) && QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+	if (auto font = QGuiApplication::font(); QFontMetrics(font.family()).horizontalAdvance(QLatin1Char('m')) > 15)
+	{
+		// Fonts like "DejaVu Sans" (used on some Linux distributions) are unusually wide when compared to Windows' and macOS' default font. This will break some layouts where this wasn't taken into account.
+		const auto oldFamily = QFontInfo(font).family();
+		font.setFamily(QStringLiteral("Arial")); // will usually resolve to "Liberation Sans" or "Arimo"
+		qCDebug(qml) << "Changing font family from" << oldFamily << "to" << QFontInfo(font).family();
+		QGuiApplication::setFont(font);
+	}
 #endif
 
 #ifdef Q_OS_WIN
@@ -137,6 +156,13 @@ UIPlugInQml::UIPlugInQml()
 	connect(Env::getSingleton<RemoteServiceModel>(), &RemoteServiceModel::fireStartWorkflow, this, &UIPlugIn::fireRemoteServiceRequested);
 	connect(Env::getSingleton<LogHandler>(), &LogHandler::fireRawLog, this, &UIPlugInQml::onRawLog, Qt::QueuedConnection);
 	connect(this, &UIPlugIn::fireShowUserInformation, this, &UIPlugInQml::onShowUserInformation);
+	connect(qGuiApp, &QGuiApplication::paletteChanged, this, &UIPlugInQml::onWindowPaletteChanged);
+
+	auto* service = Env::getSingleton<Service>();
+	connect(service, &Service::fireAppUpdateFinished, this, &UIPlugInQml::onUpdateAvailable);
+	connect(service, &Service::fireUpdateScheduled, this, &UIPlugInQml::onUpdateScheduled);
+	service->runUpdateIfNeeded();
+
 	init();
 }
 
@@ -145,27 +171,28 @@ void UIPlugInQml::registerQmlTypes()
 {
 	qmlRegisterUncreatableType<EnumUiModule>("Governikus.Type.UiModule", 1, 0, "UiModule", QStringLiteral("Not creatable as it is an enum type"));
 	qmlRegisterUncreatableType<EnumReaderManagerPlugInType>("Governikus.Type.ReaderPlugIn", 1, 0, "ReaderPlugIn", QStringLiteral("Not creatable as it is an enum type"));
-	qmlRegisterUncreatableType<EnumCardReturnCode>("Governikus.Type.CardReturnCode", 1, 0, "CardReturnCode", QStringLiteral("Not creatable as it is an enum type"));
 
 	registerQmlType<ReaderScanEnabler>();
 
-	registerQmlSingletonType<ProviderCategoryFilterModel>(&provideQmlType<ProviderCategoryFilterModel> );
-	registerQmlSingletonType<HistoryModel>(&provideQmlType<HistoryModel> );
+	registerQmlSingletonType<ProviderCategoryFilterModel>(&provideQmlType<ProviderCategoryFilterModel>);
+	registerQmlSingletonType<HistoryModel>(&provideQmlType<HistoryModel>);
 #if defined(Q_OS_WIN) || (defined(Q_OS_BSD4) && !defined(Q_OS_IOS)) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
-	registerQmlSingletonType<ReaderDriverModel>(&provideQmlType<ReaderDriverModel> );
+	registerQmlSingletonType<ReaderDriverModel>(&provideQmlType<ReaderDriverModel>);
 #endif
 
-	registerQmlSingletonType<ApplicationModel>(&provideSingletonQmlType<ApplicationModel> );
-	registerQmlSingletonType<SettingsModel>(&provideSingletonQmlType<SettingsModel> );
-	registerQmlSingletonType<AuthModel>(&provideSingletonQmlType<AuthModel> );
-	registerQmlSingletonType<SelfAuthModel>(&provideSingletonQmlType<SelfAuthModel> );
-	registerQmlSingletonType<SelfDiagnosisModel>(&provideSingletonQmlType<SelfDiagnosisModel> );
-	registerQmlSingletonType<ChangePinModel>(&provideSingletonQmlType<ChangePinModel> );
-	registerQmlSingletonType<NumberModel>(&provideSingletonQmlType<NumberModel> );
-	registerQmlSingletonType<RemoteServiceModel>(&provideSingletonQmlType<RemoteServiceModel> );
-	registerQmlSingletonType<LogModel>(&provideSingletonQmlType<LogModel> );
-	registerQmlSingletonType<NotificationModel>(&provideSingletonQmlType<NotificationModel> );
-	registerQmlSingletonType<SurveyModel>(&provideSingletonQmlType<SurveyModel> );
+	registerQmlSingletonType<ApplicationModel>(&provideSingletonQmlType<ApplicationModel>);
+	registerQmlSingletonType<SettingsModel>(&provideSingletonQmlType<SettingsModel>);
+	registerQmlSingletonType<AuthModel>(&provideSingletonQmlType<AuthModel>);
+	registerQmlSingletonType<SelfAuthModel>(&provideSingletonQmlType<SelfAuthModel>);
+	registerQmlSingletonType<SelfDiagnosisModel>(&provideSingletonQmlType<SelfDiagnosisModel>);
+	registerQmlSingletonType<ChangePinModel>(&provideSingletonQmlType<ChangePinModel>);
+	registerQmlSingletonType<NumberModel>(&provideSingletonQmlType<NumberModel>);
+	registerQmlSingletonType<RemoteServiceModel>(&provideSingletonQmlType<RemoteServiceModel>);
+	registerQmlSingletonType<LogModel>(&provideSingletonQmlType<LogModel>);
+	registerQmlSingletonType<NotificationModel>(&provideSingletonQmlType<NotificationModel>);
+	registerQmlSingletonType<SurveyModel>(&provideSingletonQmlType<SurveyModel>);
+	registerQmlSingletonType<Service>(&provideSingletonQmlType<Service>);
+	registerQmlSingletonType<Random>(&provideSingletonQmlType<Random>);
 }
 
 
@@ -175,7 +202,8 @@ void UIPlugInQml::init()
 	qputenv("QML_DISABLE_DISK_CACHE", "true");
 #endif
 
-	logRenderingEnvironment();
+	// Activate logging of Qt scenegraph information on startup, e.g. GL_RENDERER, GL_VERSION, ...
+	qputenv("QSG_INFO", "1");
 
 	mEngine.reset(new QQmlApplicationEngine());
 
@@ -192,11 +220,30 @@ void UIPlugInQml::init()
 
 	UIPlugInQml::registerQmlTypes();
 
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	mEngine->addImportPath(getPath(QStringLiteral("qml/"), false).toString());
+#endif
 	mEngine->addImportPath(getPath(QStringLiteral("qml/")).toString());
 	mEngine->load(getPath(QStringLiteral("qml/main.qml")));
 
+	if (!mEngine->rootObjects().isEmpty())
+	{
+		QQuickWindow* rootWindow = qobject_cast<QQuickWindow*>(mEngine->rootObjects().first());
+		if (rootWindow != nullptr)
+		{
+#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(5, 14, 1)
+			// we need to call create() explicitly because Windows needs a handle to fire WM_ENDSESSION!
+			// Since we start as a systemtray only we don't have a correct handle until we call show()
+			rootWindow->create();
+#endif
+			connect(rootWindow, &QQuickWindow::sceneGraphError, this, &UIPlugInQml::onSceneGraphError);
+			qCDebug(qml) << "Using renderer interface:" << rootWindow->rendererInterface()->graphicsApi();
+		}
+	}
+
 	Env::getSingleton<Service>()->updateConfigurations();
+
+	onWindowPaletteChanged();
 }
 
 
@@ -213,26 +260,6 @@ void UIPlugInQml::switchUi()
 	generalSettings.save();
 
 	Q_EMIT fireRestartApplicationRequested();
-}
-
-
-void UIPlugInQml::logRenderingEnvironment() const
-{
-	QString openGLContext = QStringLiteral("Unknown");
-	switch (QOpenGLContext::openGLModuleType())
-	{
-		case QOpenGLContext::LibGL:
-			openGLContext = QStringLiteral("OpenGL");
-			break;
-
-		case QOpenGLContext::LibGLES:
-			openGLContext = QStringLiteral("OpenGL ES 2.0 or higher");
-			break;
-	}
-	qCDebug(qml).noquote() << "QOpenGLContext:" << openGLContext;
-
-	// Activate logging of Qt scenegraph information on startup, e.g. GL_RENDERER, GL_VERSION, ...
-	qputenv("QSG_INFO", "1");
 }
 
 
@@ -323,7 +350,11 @@ void UIPlugInQml::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 		mChatModel.resetContext();
 
 		const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-		if (!pContext.objectCast<SelfAuthContext>() && generalSettings.isAutoCloseWindowAfterAuthentication())
+
+		// Only hide the UI if we don't need to show the update information view. This behaviour ensures that
+		// the user is (aggressively) notified about a pending update if the AA2 is only shown for authentication
+		// workflows and never manually brought to foreground in between.
+		if (!pContext.objectCast<SelfAuthContext>() && !pContext->hasNextWorkflowPending() && generalSettings.isAutoCloseWindowAfterAuthentication() && !showUpdateInformationIfPending())
 		{
 			Q_EMIT fireHideRequest();
 		}
@@ -398,40 +429,70 @@ void UIPlugInQml::onUiDominationReleased()
 
 void UIPlugInQml::onShowUserInformation(const QString& pMessage)
 {
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	Env::getSingleton<ApplicationModel>()->showFeedback(pMessage);
+#else
+	QMessageBox msgBox;
+	msgBox.setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Information"));
+	msgBox.setIcon(QMessageBox::Information);
+	msgBox.setText(pMessage);
+	msgBox.setStandardButtons(QMessageBox::Ok);
+	msgBox.button(QMessageBox::Ok)->setFocus();
+	msgBox.exec();
+#endif
+}
+
+
+void UIPlugInQml::onUpdateScheduled()
+{
+	Env::getSingleton<Service>()->runUpdateIfNeeded();
+}
+
+
+void UIPlugInQml::onUpdateAvailable(bool pUpdateAvailable, const GlobalStatus& pStatus)
+{
+	Q_UNUSED(pStatus)
+	mUpdateInformationPending = pUpdateAvailable;
 }
 
 
 void UIPlugInQml::show()
 {
-	onShowUi(UiModule::CURRENT);
-	Env::getSingleton<Service>()->runUpdateIfNeeded();
+	if (!showUpdateInformationIfPending())
+	{
+		onShowUi(UiModule::CURRENT);
+	}
+}
+
+
+bool UIPlugInQml::showUpdateInformationIfPending()
+{
+	if (!mUpdateInformationPending)
+	{
+		return false;
+	}
+
+	mUpdateInformationPending = false;
+	onShowUi(UiModule::UPDATEINFORMATION);
+
+	return true;
 }
 
 
 void UIPlugInQml::doShutdown()
 {
+	mTrayIcon.shutdown();
 }
 
 
 QUrl UIPlugInQml::getPath(const QString& pRelativePath, bool pQrc)
 {
-#if !defined(QT_NO_DEBUG) && !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID) && !defined(Q_OS_WINRT)
-	const QString ressourceFolderPath(QStringLiteral(RES_DIR) + QLatin1Char('/') + pRelativePath);
-	if (QFile::exists(ressourceFolderPath))
-	{
-		return QUrl::fromLocalFile(ressourceFolderPath);
-	}
-
-#endif
-
 	if (pQrc)
 	{
 		return QStringLiteral("qrc:///") + pRelativePath;
 	}
 
-	const QString path = FileDestination::getPath(pRelativePath);
-	return QUrl::fromLocalFile(path);
+	return QUrl::fromLocalFile(FileDestination::getPath(pRelativePath, QStandardPaths::LocateDirectory));
 }
 
 
@@ -466,6 +527,21 @@ void UIPlugInQml::onQmlObjectCreated(QObject* pObject)
 }
 
 
+void UIPlugInQml::onSceneGraphError(QQuickWindow::SceneGraphError pError, const QString& pMessage)
+{
+	qCDebug(qml) << "Cannot initialize UI rendering:" << pError << '|' << pMessage;
+
+	const char* envKey = "QT_QUICK_BACKEND";
+	const auto envValue = QByteArrayLiteral("software");
+	if (qgetenv(envKey) != envValue)
+	{
+		qputenv(envKey, envValue);
+		qCDebug(qml) << "Restart application with" << envKey << envValue;
+		Q_EMIT fireRestartApplicationRequested();
+	}
+}
+
+
 void UIPlugInQml::onRawLog(const QString& pMessage, const QString& pCategoryName)
 {
 	if (pCategoryName == QLatin1String("developermode") || pCategoryName == QLatin1String("feedback"))
@@ -488,7 +564,7 @@ QString UIPlugInQml::getPlatformStyle() const
 }
 
 
-bool UIPlugInQml::isDeveloperBuild() const
+bool UIPlugInQml::isDebugBuild() const
 {
 #ifndef QT_NO_DEBUG
 	return true;
@@ -497,6 +573,12 @@ bool UIPlugInQml::isDeveloperBuild() const
 	return false;
 
 #endif
+}
+
+
+bool UIPlugInQml::isDeveloperVersion() const
+{
+	return VersionNumber::getApplicationVersion().isDeveloperVersion();
 }
 
 
@@ -518,11 +600,14 @@ QVariantMap UIPlugInQml::getSafeAreaMargins() const
 	QVariantMap marginMap;
 
 #ifdef Q_OS_ANDROID
+
 	auto screen = QGuiApplication::primaryScreen();
-	marginMap[QStringLiteral("top")] = QtAndroid::androidActivity().callMethod<jint>("getStatusBarHeight", "()I") / screen->devicePixelRatio();
-	marginMap[QStringLiteral("right")] = 0;
-	marginMap[QStringLiteral("bottom")] = 0;
-	marginMap[QStringLiteral("left")] = 0;
+	auto windowInsets = QtAndroid::androidActivity().callObjectMethod("getWindowInsets", "()Landroid/view/ViewGroup$MarginLayoutParams;");
+
+	marginMap[QStringLiteral("top")] = windowInsets.getField<jint>("topMargin") / screen->devicePixelRatio();
+	marginMap[QStringLiteral("left")] = windowInsets.getField<jint>("leftMargin") / screen->devicePixelRatio();
+	marginMap[QStringLiteral("right")] = windowInsets.getField<jint>("rightMargin") / screen->devicePixelRatio();
+	marginMap[QStringLiteral("bottom")] = windowInsets.getField<jint>("bottomMargin") / screen->devicePixelRatio();
 #else
 	marginMap[QStringLiteral("top")] = 0;
 	marginMap[QStringLiteral("right")] = 0;
@@ -535,6 +620,39 @@ QVariantMap UIPlugInQml::getSafeAreaMargins() const
 
 
 #endif
+
+#ifndef Q_OS_MACOS
+bool UIPlugInQml::isHighContrastEnabled() const
+{
+#ifdef Q_OS_WIN
+	HIGHCONTRAST hc;
+	hc.cbSize = sizeof(hc);
+	return SystemParametersInfo(SPI_GETHIGHCONTRAST, sizeof(hc), &hc, FALSE) && (hc.dwFlags & HCF_HIGHCONTRASTON);
+
+#else
+	return false;
+
+#endif
+}
+
+
+#endif
+
+QString UIPlugInQml::getFixedFontFamily() const
+{
+	return QFontDatabase::systemFont(QFontDatabase::FixedFont).family();
+}
+
+
+void UIPlugInQml::onWindowPaletteChanged()
+{
+	const bool highContrast = isHighContrastEnabled();
+	if (mHighContrastEnabled != highContrast)
+	{
+		mHighContrastEnabled = highContrast;
+		Q_EMIT fireHighContrastEnabledChanged();
+	}
+}
 
 
 void UIPlugInQml::applyPlatformStyle(const QString& pPlatformStyle)

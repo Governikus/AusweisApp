@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInAidl.h"
@@ -13,7 +13,6 @@
 #include <QCoreApplication>
 #include <QLoggingCategory>
 #include <QPluginLoader>
-#include <QSignalBlocker>
 #include <QThread>
 
 #ifdef Q_OS_ANDROID
@@ -66,13 +65,23 @@ UIPlugInAidl* UIPlugInAidl::getInstance(bool pBlock)
 	// Hence we delay access to the UIPlugInAidl.
 	if (pBlock)
 	{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+		while (instance.loadRelaxed() == nullptr)
+#else
 		while (instance.load() == nullptr)
+#endif
 		{
 			QThread::msleep(100);
 		}
 	}
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+	return instance.loadRelaxed();
+
+#else
 	return instance.load();
+
+#endif
 }
 
 

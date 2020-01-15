@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the self authentication workflow.
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -47,6 +47,7 @@ class SelfAuthModel
 		Q_INVOKABLE void startWorkflow();
 		Q_INVOKABLE void cancelWorkflow();
 		Q_INVOKABLE bool isBasicReader();
+		Q_INVOKABLE void exportData(const QUrl& pFilename) const;
 
 		int rowCount(const QModelIndex& = QModelIndex()) const override;
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;

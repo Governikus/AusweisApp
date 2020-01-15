@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -31,42 +31,77 @@ Rectangle {
 		}
 	}
 
-	Accessible.name: qsTr("Link to service provider") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("Clicking this link will open the website of the service provider in your web browser. The URL of the provider is") + " " + address + SettingsModel.translationTrigger
-	Accessible.role: Accessible.Button
-	activeFocusOnTab: true
-
 	Keys.onSpacePressed: clickButton()
 
-	color: Constants.white
+	color: Style.color.background_pane
 
-	Image {
-		id: icon
+	GSeparator {
+		anchors {
+			top: parent.top
+			left: parent.left
+			right: parent.right
+		}
+
+		height: Style.dimens.high_contrast_item_border
+		color: Style.color.high_contrast_item_border
+	}
+
+	GSeparator {
+		anchors {
+			bottom: parent.bottom
+			left: parent.left
+			right: parent.right
+		}
+
+		height: Style.dimens.high_contrast_item_border
+		color: Style.color.high_contrast_item_border
+	}
+
+	Rectangle {
+		id: iconContainer
+
+		height: ApplicationModel.scaleFactor * 135
+		width: height
 
 		anchors.left: parent.left
 		anchors.leftMargin: Constants.component_spacing
 		anchors.verticalCenter: baseItem.top
 
-		height: ApplicationModel.scaleFactor * 135
-		width: height
+		radius: Style.dimens.corner_radius
+		color: Constants.white
+		border.color: Style.color.border
+		border.width: Style.dimens.separator_size
 
-		source: baseItem.providerIcon
-		asynchronous: true
-		fillMode: Image.PreserveAspectFit
+		Image {
+			id: icon
+
+			anchors.fill: parent
+			anchors.margins: iconContainer.radius / 2
+
+			source: baseItem.providerIcon
+			asynchronous: true
+			fillMode: Image.PreserveAspectFit
+		}
 	}
 
 	GText {
 		width: parent.width / 2
-		anchors.left: icon.right
+		anchors.left: iconContainer.right
 		anchors.right: button.left
 		anchors.leftMargin: Constants.component_spacing
 		anchors.rightMargin: Constants.component_spacing
 		anchors.verticalCenter: parent.verticalCenter
 
-		textStyle: Style.text.header_inverse
+		activeFocusOnTab: true
+
+		textStyle: Style.text.header
 		text: shortDescription !== "" ? shortDescription : shortName
 		elide: Text.ElideRight
 		maximumLineCount: 2
+
+		FocusFrame {
+			borderColor: Style.color.focus_indicator
+		}
 	}
 
 	GButton {

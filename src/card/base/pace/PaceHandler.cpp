@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/PaceHandler.h"
@@ -166,11 +166,11 @@ bool PaceHandler::isSupportedProtocol(const QSharedPointer<const PaceInfo>& pPac
 
 CardReturnCode PaceHandler::transmitMSESetAT(PacePasswordId pPasswordId)
 {
-	CardReturnCode cardReturnCode = PersoSimWorkaround::sendingMseSetAt(mCardConnectionWorker);
-	if (cardReturnCode != CardReturnCode::OK)
+	CardReturnCode simCardReturnCode = PersoSimWorkaround::sendingMseSetAt(mCardConnectionWorker);
+	if (simCardReturnCode != CardReturnCode::OK)
 	{
-		qCCritical(card) << "Error on MSE:Set AT |" << cardReturnCode;
-		return cardReturnCode;
+		qCCritical(card) << "Error on MSE:Set AT |" << simCardReturnCode;
+		return simCardReturnCode;
 	}
 
 	MSEBuilder mseBuilder(MSEBuilder::P1::PERFORM_SECURITY_OPERATION, MSEBuilder::P2::SET_AT);
@@ -182,8 +182,7 @@ CardReturnCode PaceHandler::transmitMSESetAT(PacePasswordId pPasswordId)
 		mseBuilder.setChat(mChat);
 	}
 
-	ResponseApdu response;
-	cardReturnCode = mCardConnectionWorker->transmit(mseBuilder.build(), response);
+	auto [cardReturnCode, response] = mCardConnectionWorker->transmit(mseBuilder.build());
 	mStatusMseSetAt = response.getBuffer().left(2);
 
 	const StatusCode responseReturnCode = response.getReturnCode();

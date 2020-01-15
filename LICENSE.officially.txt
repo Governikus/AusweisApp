@@ -339,12 +339,12 @@ Die verwendeten Open-Source-Bibliotheken unterliegen den folgenden Nutzungsbedin
 
 OpenSSL
   Lizenz: OpenSSL license & SSLeay license
-  Version: 1.1.1c
+  Version: 1.1.1d
   Adresse: https://www.openssl.org/
 
 Qt
   Lizenz: LGPL v3
-  Version: 5.12.4
+  Version: 5.12.5
   Adresse: https://www.qt.io/
 
 http_parser
@@ -352,10 +352,10 @@ http_parser
   Version: 2.9.2
   Adresse: https://github.com/nodejs/http-parser/
 
-Android Support Library V4
+AndroidX Support Library
   Lizenz: Apache 2.0
-  Version: 21.0.3
-  Adresse: https://developer.android.com/topic/libraries/support-library/
+  Version: 1.1.0
+  Adresse: https://developer.android.com/jetpack/androidx
 
 
 Die Lizenztexte lauten in ihrer originalen Fassung wie folgt:

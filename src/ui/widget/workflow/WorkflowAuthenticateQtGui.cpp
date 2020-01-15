@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowAuthenticateQtGui.h"
@@ -73,7 +73,7 @@ bool WorkflowAuthenticateQtGui::verifyAbortWorkflow()
 	msgBox.setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Cancel"));
 	msgBox.setWindowModality(Qt::WindowModal);
 	msgBox.setText(tr("<b>Do you really want to cancel?</b>"));
-	msgBox.setInformativeText(tr("You can as well identity later by calling the service provider's Internet page"
+	msgBox.setInformativeText(tr("You can as well identity later by calling the provider's Internet page"
 								 " again."));
 	msgBox.setIconPixmap(QIcon(QStringLiteral(":/images/npa.svg")).pixmap(32, 32));
 	msgBox.setWindowFlags(msgBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StepChooseCardGui.h"
@@ -230,7 +230,7 @@ void StepChooseCardGui::onReaderManagerSignal()
 
 	if (askForRetry)
 	{
-		updateErrorMessage(tr("Retry?"), tr("Weak NFC signal. Please reposition your card."),
+		updateErrorMessage(tr("Retry?"), tr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable"),
 				QString(), false, QStringLiteral(":/images/reader/default_card_position.png"));
 		return;
 	}
@@ -242,7 +242,7 @@ void StepChooseCardGui::onReaderManagerSignal()
 			if (readers.size() == 1)
 			{
 				updateErrorMessage(tr("Extended Length is not supported."),
-						tr("Your remote reader does not meet the technical requirements (Extended Length not supported)."),
+						tr("Your smartphone as card reader (SaC) does not meet the technical requirements (Extended Length not supported)."),
 						QString(),
 						false);
 				return;
@@ -260,7 +260,7 @@ void StepChooseCardGui::onReaderManagerSignal()
 			QString remoteReaderInfo;
 			if (remoteReaders.size() > 0)
 			{
-				remoteReaderInfo = tr("Connected to following remote readers: %1.").arg(connectedRemoteReaderNames());
+				remoteReaderInfo = tr("Connected to the following smartphones as card readers (SaCs): %1.").arg(connectedRemoteReaderNames());
 			}
 			const QString onlineHelpUrl = HelpAction::getOnlineUrl(QStringLiteral("stepChooseCardGui"));
 			const QString onlineHelpText = tr("If you have already placed an ID card on your card reader, "
@@ -285,8 +285,8 @@ void StepChooseCardGui::onReaderManagerSignal()
 		if (readersWithNpa[0].isPinDeactivated() && !mContext->isCanAllowedMode())
 		{
 			updateErrorMessage(tr("Online identification function is disabled."),
-					tr("This action cannot be performed. The online identification function of your ID card is deactivated."
-					   " Please contact the authority responsible for issuing your identification document to activate the online identification function."),
+					tr("This action cannot be performed. The online identification function of your ID card is not activated."
+					   " Please contact the authority responsible for issuing your identification card to activate the online identification function."),
 					QString(),
 					false);
 		}

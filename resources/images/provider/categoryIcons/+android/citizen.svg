@@ -6,7 +6,7 @@
       <path d="M 990 1370 a 70 70 0 0 1 -70 70 h -130 a 70 70 0 0 1 -70 -70 v -310 h -10 a 70 70 0 0 1 -70 -70 v -400 a 70 70 0 0 1 70 -70 h 320 a 100 100 0 0 0 -50 90 v 450 a 100 100 0 0 0 10 40 z" />
     </g>
   </defs>
-  <circle cx="850" cy="850" r="850" fill="#b62d7c" />
+  <circle cx="850" cy="850" r="850" fill="#851e6b" />
   <g fill="#ffffff" transform="translate(170,170) scale(0.8,0.8)">
     <circle cx="855" cy="330" r="140" />
     <rect x="640" y="520" rx="70" ry="70" width="430" height="540" />

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerAccessRights
  *
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerAccessRights.h"
@@ -61,7 +61,7 @@ class test_MsgHandlerAccessRights
 			dispatcher.init(context);
 
 			QCOMPARE(dispatcher.processStateChange("StateEditAccessRights"),
-					QByteArray(R"({"chat":{"effective":["ResidencePermitI","Address","BirthName","Nationality","PlaceOfBirth","DateOfBirth","DoctoralDegree","ArtisticName","FamilyName","GivenNames","ValidUntil","IssuingCountry","DocumentType","Pseudonym"],"optional":["ResidencePermitI","Address","BirthName","Nationality","PlaceOfBirth","DateOfBirth","DoctoralDegree","ArtisticName","FamilyName","GivenNames","ValidUntil","IssuingCountry","DocumentType","Pseudonym"],"required":[]},"msg":"ACCESS_RIGHTS"})"));
+					QByteArray(R"({"chat":{"effective":["WriteAddress","WriteCommunityID","WriteResidencePermitI","WriteResidencePermitII","ResidencePermitI","Address","BirthName","Nationality","PlaceOfBirth","DateOfBirth","DoctoralDegree","ArtisticName","FamilyName","GivenNames","ValidUntil","IssuingCountry","DocumentType","Pseudonym"],"optional":["WriteAddress","WriteCommunityID","WriteResidencePermitI","WriteResidencePermitII","ResidencePermitI","Address","BirthName","Nationality","PlaceOfBirth","DateOfBirth","DoctoralDegree","ArtisticName","FamilyName","GivenNames","ValidUntil","IssuingCountry","DocumentType","Pseudonym"],"required":[]},"msg":"ACCESS_RIGHTS"})"));
 		}
 
 

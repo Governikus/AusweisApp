@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -14,7 +14,10 @@ import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.UiModule 1.0
 import Governikus.Type.RemoteServiceModel 1.0
 import Governikus.EnterPasswordView 1.0
-import Governikus.Type.NumberModel  1.0
+import Governikus.Type.NumberModel 1.0
+import Governikus.ProgressView 1.0
+import Governikus.ResultView 1.0
+import Governikus.UpdateView 1.0
 
 
 SectionPage {
@@ -23,7 +26,10 @@ SectionPage {
 	enum SubView {
 		None,
 		EnterPassword,
-		PairingInfo
+		PairingInfo,
+		WaitForPairing,
+		PairingFailed,
+		AppUpdateView
 	}
 
 	Accessible.name: qsTr("Settings view") + SettingsModel.translationTrigger
@@ -37,21 +43,26 @@ SectionPage {
 		d.view = SettingsView.SubView.None
 	}
 
-	isAbstract: d.view !== SettingsView.SubView.None
-
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
 		text: qsTr("Settings") + SettingsModel.translationTrigger
+		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "settings")
 
 		onClicked: {
 			d.view = SettingsView.SubView.None
 		}
 	}
 
+	Connections {
+		target: SettingsModel
+		onFireAppUpdateDataChanged: d.view = SettingsView.SubView.AppUpdateView
+	}
+
 	QtObject {
 		id: d
 
 		property int view: SettingsView.SubView.None
+		property int precedingView
 	}
 
 	TabbedPane {
@@ -73,7 +84,14 @@ SectionPage {
 				qsTr("Security and privacy") + SettingsModel.translationTrigger
 			]
 
-			if (plugin.developerBuild) {
+			if (plugin.debugBuild) {
+				model.push(
+					//: LABEL DESKTOP_QML
+					qsTr("Debug options") + SettingsModel.translationTrigger
+				)
+			}
+
+			if (SettingsModel.developerOptions) {
 				model.push(
 					//: LABEL DESKTOP_QML
 					qsTr("Developer options") + SettingsModel.translationTrigger
@@ -100,6 +118,11 @@ SectionPage {
 						}
 					}
 					onUnpairDevice: RemoteServiceModel.forgetDevice(pDeviceId)
+					onMoreInformation: {
+						d.precedingView = d.view
+						d.view = TabbedReaderView.SubView.PairingInfo
+						appWindow.menuBar.updateActions()
+					}
 				}
 			}
 			Component {
@@ -109,8 +132,33 @@ SectionPage {
 				}
 			}
 			Component { SecurityAndPrivacySettings {} }
-			Component { DeveloperSettings {} }
 		}
+
+		Component {
+			id: debugSettings
+			DebugSettings {}
+		}
+
+		Component {
+			id: developerSettings
+			DeveloperSettings {}
+		}
+
+		Component.onCompleted: {
+			if (plugin.debugBuild) {
+				contentObjectModel.append(debugSettings)
+			}
+			if (SettingsModel.developerOptions) {
+				contentObjectModel.append(developerSettings)
+			}
+		}
+	}
+
+	UpdateView {
+		visible: d.view === SettingsView.SubView.AppUpdateView
+		anchors.fill: parent
+
+		onLeaveView: d.view = SettingsView.SubView.None
 	}
 
 	EnterPasswordView {
@@ -121,9 +169,10 @@ SectionPage {
 		statusIcon: "qrc:///images/phone_to_pc.svg"
 		passwordType: NumberModel.PASSWORD_REMOTE_PIN
 
-		onPasswordEntered: d.view = SettingsView.SubView.None
+		onPasswordEntered: d.view = SettingsView.SubView.WaitForPairing
 
 		onRequestPasswordInfo: {
+			d.precedingView = d.view
 			d.view = SettingsView.SubView.PairingInfo
 			appWindow.menuBar.updateActions()
 		}
@@ -137,8 +186,45 @@ SectionPage {
 		passwordType: NumberModel.PASSWORD_REMOTE_PIN
 
 		onClose: {
-			d.view = SettingsView.SubView.EnterPassword
+			d.view = d.precedingView
 			appWindow.menuBar.updateActions()
 		}
+	}
+
+	ProgressView {
+		visible: d.view === SettingsView.SubView.WaitForPairing
+
+		//: LABEL DESKTOP_QML
+		text: qsTr("Pairing the device ...") + SettingsModel.translationTrigger
+
+		Connections {
+			enabled: visible
+			target: RemoteServiceModel
+
+			onFirePairingFailed: {
+				pairingFailedView.deviceName = pDeviceName
+				pairingFailedView.errorMessage = pErrorMessage
+				d.view = SettingsView.SubView.PairingFailed
+			}
+
+			onFirePairingSuccess: {
+				ApplicationModel.showFeedback(qsTr("The device \"%1\" has been paired.").arg(pDeviceName))
+				d.view = SettingsView.SubView.None
+			}
+		}
+	}
+
+	ResultView {
+		id: pairingFailedView
+
+		property string deviceName
+		property string errorMessage
+
+		visible: d.view === SettingsView.SubView.PairingFailed
+
+		//: ERROR DESKTOP_QML An error occurred while pairing the device.
+		text: qsTr("Pairing to \"%1\" failed:").arg(deviceName) + "<br/>\"%2\"".arg(errorMessage) + SettingsModel.translationTrigger
+		resultType: ResultView.Type.IsError
+		onNextView: d.view = SettingsView.SubView.None
 	}
 }

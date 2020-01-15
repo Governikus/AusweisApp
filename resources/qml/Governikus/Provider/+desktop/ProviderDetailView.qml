@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.0
@@ -15,18 +15,17 @@ import Governikus.Type.SettingsModel 1.0
 SectionPage {
 	id: baseItem
 
-	readonly property color titleBarColor: Category.displayColor(provider.category)
-	readonly property real titleBarOpacity: 1
+	readonly property color titleBarColor: Style.currentTheme.highContrast ? Style.color.background_pane : Category.displayColor(provider.category)
 	signal showDetailView(var pModel)
 	property alias historyModelItem: provider.modelItem
 	property alias providerModelItem: provider.modelItem
 
 	Accessible.name: qsTr("Provider detail view") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This view shows a detailed description of a service provider.") + SettingsModel.translationTrigger
+	Accessible.description: qsTr("This view shows a detailed description of a provider.") + SettingsModel.translationTrigger
 
 	titleBarAction: TitleBarAction {
 		text: provider.shortName
-		helpTopic: "providerPage"
+		helpTopic: "providerDetails"
 	}
 
 	ProviderModelItem {
@@ -124,23 +123,26 @@ SectionPage {
 					//: LABEL DESKTOP_QML
 					title: qsTr("Description") + SettingsModel.translationTrigger
 
+					onVisibleChanged: scrollYPositionIntoView(0)
+
 					GText {
 						id: leftColumn
 
 						width: parent.width
 
-						Accessible.name: qsTr("Description of the service provider.") + SettingsModel.translationTrigger
+						Accessible.name: qsTr("Description of the provider.") + SettingsModel.translationTrigger
 						Accessible.description: text
 						Accessible.role: Accessible.StaticText
 						activeFocusOnTab: true
 
 						//: LABEL DESKTOP_QML
-						text: !!provider.longDescription ? provider.longDescription : qsTr("The service provider did not provide a description.") + SettingsModel.translationTrigger
-						textStyle: Style.text.normal_inverse
+						text: !!provider.longDescription ? provider.longDescription : qsTr("The provider did not provide a description.") + SettingsModel.translationTrigger
+						textStyle: Style.text.normal
 					}
 				}
 
 				FocusFrame {
+					marginFactor: 2
 					framee: leftPane
 					scope: leftColumn
 				}
@@ -159,6 +161,8 @@ SectionPage {
 					//: LABEL DESKTOP_QML
 					title: qsTr("History") + SettingsModel.translationTrigger
 
+					onVisibleChanged: scrollYPositionIntoView(0)
+
 					ProviderDetailHistory {
 						id: rightColumn
 
@@ -169,6 +173,7 @@ SectionPage {
 				}
 
 				FocusFrame {
+					marginFactor: 2
 					framee: rightPane
 					scope: rightColumn
 				}
@@ -177,6 +182,6 @@ SectionPage {
 	}
 
 	FocusPoint {
-		color: Constants.black
+		color: Style.color.focus_indicator
 	}
 }

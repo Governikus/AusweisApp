@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -11,12 +11,9 @@ GText {
 
 	property string sectionName
 
-	Accessible.role: Accessible.PageTab
-	Accessible.name: sectionName
-
 	width: parent.width
 
-	textStyle: Style.text.header_inverse
+	textStyle: Style.text.header
 	text: sectionName
 	maximumLineCount: 1
 	elide: Text.ElideRight

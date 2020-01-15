@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DeviceInfo.h"
@@ -44,6 +44,7 @@ QString DeviceInfo::getPrettyInfo()
 }
 
 
+#ifndef Q_OS_IOS
 QString DeviceInfo::getName()
 {
 #ifdef Q_OS_ANDROID
@@ -54,6 +55,9 @@ QString DeviceInfo::getName()
 
 #endif
 }
+
+
+#endif
 
 
 QString DeviceInfo::getFingerprint()

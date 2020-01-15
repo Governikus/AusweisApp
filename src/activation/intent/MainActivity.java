@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -20,8 +20,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.accessibility.AccessibilityManager;
+import android.view.View;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import java.util.List;
 
 import org.qtproject.qt5.android.bindings.QtActivity;
@@ -33,6 +38,8 @@ public class MainActivity extends QtActivity
 	private static Intent cIntent;
 	private static Uri cReferrer;
 	private static boolean cStartedByAuth;
+
+	private final MarginLayoutParams windowInsets = new MarginLayoutParams(0, 0);
 
 	private NfcForegroundDispatcher mNfcForegroundDispatcher;
 	private static class NfcForegroundDispatcher
@@ -115,6 +122,15 @@ public class MainActivity extends QtActivity
 	}
 
 
+	public MainActivity()
+	{
+		QT_ANDROID_THEMES = new String[] {
+			"AppTheme"
+		};
+		QT_ANDROID_DEFAULT_THEME = "AppTheme";
+	}
+
+
 	public static boolean isStartedByAuth()
 	{
 		return cStartedByAuth;
@@ -126,12 +142,6 @@ public class MainActivity extends QtActivity
 	{
 		Log.d(LOG_TAG, "onCreate: " + getIntent());
 		super.onCreate(savedInstanceState);
-
-		// Make statusbar transparent
-		Window window = getWindow();
-		window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-		window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-		window.setStatusBarColor(Color.TRANSPARENT);
 
 		onNewIntent(getIntent());
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) // API 22
@@ -145,6 +155,29 @@ public class MainActivity extends QtActivity
 		mNfcForegroundDispatcher = new NfcForegroundDispatcher(this);
 
 		setRequestedOrientation(isTablet() ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+		// Set statusBar/navigationBar color and handle systemWindowInsets
+		Window window = getWindow();
+		View rootView = window.getDecorView().findViewById(android.R.id.content);
+		if (Build.VERSION.SDK_INT >= 29) // Android 10
+		{
+			rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+			window.setNavigationBarColor(Color.TRANSPARENT);
+		}
+		else
+		{
+			rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+		}
+		window.setStatusBarColor(Color.TRANSPARENT);
+		ViewCompat.setOnApplyWindowInsetsListener(rootView, new OnApplyWindowInsetsListener() {
+					public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets){
+						windowInsets.topMargin = insets.getSystemWindowInsetTop();
+						windowInsets.leftMargin = insets.getSystemWindowInsetLeft();
+						windowInsets.rightMargin = insets.getSystemWindowInsetRight();
+						windowInsets.bottomMargin = insets.getSystemWindowInsetBottom();
+						return insets;
+					}
+				});
 	}
 
 
@@ -221,27 +254,9 @@ public class MainActivity extends QtActivity
 	}
 
 
-	public int getStatusBarHeight()
+	public MarginLayoutParams getWindowInsets()
 	{
-		return getDimension("status_bar_height");
-	}
-
-
-	public int getNavigationBarHeight()
-	{
-		return getDimension("navigation_bar_height");
-	}
-
-
-	private int getDimension(String dimensionName)
-	{
-		int result = 0;
-		int resourceId = getResources().getIdentifier(dimensionName, "dimen", "android");
-		if (resourceId > 0)
-		{
-			result = getResources().getDimensionPixelSize(resourceId);
-		}
-		return result;
+		return windowInsets;
 	}
 
 

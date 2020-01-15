@@ -2,7 +2,7 @@
  * \brief Interface modelling a component that can send and receive data blocks in the form
  * of QByteArray objects.
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

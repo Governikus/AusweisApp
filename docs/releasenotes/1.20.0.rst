@@ -1,0 +1,37 @@
+AusweisApp2 1.20.0
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 15. Januar 2020
+
+
+
+Anwender
+""""""""
+  - Einführung der neuen grafischen Oberfläche für
+    Windows und macOS.
+
+  - Das DMG für macOS ist nun notarisiert.
+
+  - Unterstützung von Bildschirmlesern unter Android
+    und iOS.
+
+  - Anpassungen der Farbkontraste zur besseren Lesbarkeit.
+
+  - Optimierung des Menüs und Einführung eines
+    Einstellungsbereichs unter iOS und Android.
+
+  - Optimierung der "Smartphone als Kartenleser"-Kopplung.
+
+  - Unterstützung von OS X 10.11 wurde eingestellt.
+
+  - Unterstützung von der x86-Architektur unter Android
+    wurde eingestellt.
+
+  - Kleinere Fehlerbehebungen.
+
+
+Entwickler
+""""""""""
+  - Aktualisierung von OpenSSL auf die Version 1.1.1d.
+
+  - Aktualisierung von Qt auf die Version 5.12.5.

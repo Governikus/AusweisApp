@@ -2,7 +2,7 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" >
   <linearGradient id="verlauf" gradientUnits="userSpaceOnUse" x1="298" y1="-108" x2="298" y2="292" gradientTransform="matrix(1,0,0,-1,-42,348)">
     <stop offset="0" style="stop-color:#98C8E8" id="stop3659" />
-    <stop offset="1" style="stop-color:#659CCD" id="stop3661" />
+    <stop offset="1" style="stop-color:#4d7aa4" id="stop3661" />
   </linearGradient>
   <rect width="400" height="400" rx="90" ry="90" fill="url(#verlauf)" />
   <g fill="#ffffff">

@@ -1,10 +1,10 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.2
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -47,14 +47,11 @@ SectionPage
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.top: parent.verticalCenter
 
-		Accessible.role: Accessible.Paragraph
 		activeFocusOnTab: true
 		Accessible.name: text.text
 
 		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.header
-
-		onLinkActivated: Qt.openUrlExternally(link)
+		textStyle: Style.text.header_inverse
 
 		FocusFrame {}
 	}
@@ -68,14 +65,11 @@ SectionPage
 		anchors.top: text.bottom
 		anchors.topMargin: Constants.text_spacing
 
-		Accessible.role: Accessible.Paragraph
 		activeFocusOnTab: true
 		Accessible.name: subText.text
 
 		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.header_secondary
-
-		onLinkActivated: Qt.openUrlExternally(link)
+		textStyle: Style.text.header_secondary_inverse
 
 		FocusFrame {}
 	}
@@ -89,12 +83,10 @@ SectionPage
 		anchors.bottomMargin: ApplicationModel.scaleFactor * 20
 		anchors.horizontalCenter: parent.horizontalCenter
 
-		Accessible.role: Accessible.Paragraph
 		activeFocusOnTab: true
 		Accessible.name: progressText.text
 
 		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.normal
 
 		FocusFrame {}
 	}
@@ -111,7 +103,7 @@ SectionPage
 
 		Accessible.role: Accessible.ProgressBar
 		activeFocusOnTab: true
-		Accessible.name: qsTr("Step %1 of %2").arg(value).arg(to) + SettingsModel.translationTrigger
+		Accessible.name: qsTr("%1 percent done").arg(value) + SettingsModel.translationTrigger
 
 		from: 0
 		to: 100

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TransmitCommand.h"
@@ -54,8 +54,8 @@ void TransmitCommand::internalExecute()
 
 	for (const auto& inputApduInfo : mInputApduInfos)
 	{
-		ResponseApdu response;
-		mReturnCode = mCardConnectionWorker->transmit(inputApduInfo.getInputApdu(), response);
+		auto [returnCode, response] = mCardConnectionWorker->transmit(inputApduInfo.getInputApdu());
+		mReturnCode = returnCode;
 		if (mReturnCode != CardReturnCode::OK)
 		{
 			qCWarning(card) << "Transmit unsuccessful. Return code:" << CardReturnCodeUtil::toGlobalStatus(mReturnCode);

@@ -2,7 +2,7 @@
  * \brief An interface for RemoteClientImpl, meant to omit the
  * dependency between card_base and remote_device.
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

@@ -5,8 +5,8 @@ set -eu
 
 readonly CLONE_DIR="${CLONE_DIR:-$(pwd)}"
 
-MINIROOTFS_VERSION="3.10.0"
-MINIROOTFS_SHA="ec3da7fb5f709a1ce912e6e31fccc5588420c5f1dcecc362c72c989532c1917a"
+MINIROOTFS_VERSION="3.11.2"
+MINIROOTFS_SHA="e9d9ea8c59fc4e836f733d51bea78a30cf41e6a2a774ca2406427a29249684ab"
 
 MINIROOTFS="alpine-minirootfs-${MINIROOTFS_VERSION}-x86_64.tar.gz"
 MINIROOTFS_URI="http://dl-cdn.alpinelinux.org/alpine/v${MINIROOTFS_VERSION%.*}/releases/x86_64/$MINIROOTFS"
@@ -34,7 +34,7 @@ for arg in "$CHECK"
 do
   case "$arg" in
     format) PACKAGES="$PACKAGES uncrustify";;
-    docs)   PACKAGES="$PACKAGES py2-sphinx py2-setuptools";;
+    docs)   PACKAGES="$PACKAGES py3-sphinx py3-setuptools";;
     build)  PACKAGES="$PACKAGES clang g++ ccache binutils-gold eudev-dev pcsc-lite-dev http-parser-dev openssl-dev qt5-qtsvg-dev qt5-qtquickcontrols2-dev qt5-qtwebsockets-dev qt5-qtconnectivity-dev qt5-qtbase-dev qt5-qttools-dev";;
     *)      echo "Unknown command: $1" && exit 1
   esac

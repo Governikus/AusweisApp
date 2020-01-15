@@ -1,9 +1,10 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -90,16 +91,42 @@ SectionPage
 			displayMarginEnd: Constants.pane_padding
 
 			model: LogModel
-
-			delegate: GText {
+			spacing: Constants.text_spacing
+			delegate: Item {
+				height: layout.height
 				width: logView.width - Constants.pane_padding
 
+				Accessible.role: Accessible.StaticText
+				Accessible.name: display
 				Accessible.onScrollDownAction: logView.scrollPageDown()
 				Accessible.onScrollUpAction: logView.scrollPageUp()
 
-				bottomPadding: index % 2 ? Constants.groupbox_spacing : 0
-				text: model.display
-				textStyle: index % 2 ? Style.text.hint : Style.text.hint_secondary
+				ColumnLayout {
+					id: layout
+
+					width: parent.width
+
+					spacing: 0
+
+					GText {
+						Layout.fillWidth: true
+
+						Accessible.ignored: true
+
+						text: origin
+						textStyle: Style.text.hint
+						font.bold: true
+					}
+
+					GText {
+						Layout.fillWidth: true
+
+						Accessible.ignored: true
+
+						text: message
+						textStyle: Style.text.hint
+					}
+				}
 			}
 
 			Connections {
@@ -114,11 +141,16 @@ SectionPage
 
 		property bool deleteAll: true
 
-		//: LABEL ANDROID IOS
-		title: (deleteAll ? qsTr("Delete all") : qsTr("Delete")) + SettingsModel.translationTrigger
-		//: INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confirmation required.
-		text: (deleteAll ? qsTr("Please confirm that you want to delete your old logfiles.")
-						 : qsTr("Please confirm that you want to delete the logfile.")
+		title: (deleteAll ?
+				//: LABEL ANDROID IOS
+				qsTr("Delete all") :
+				//: LABEL ANDROID IOS
+				qsTr("Delete")
+			   ) + SettingsModel.translationTrigger
+		//: INFO ANDROID IOS All logfiles are about to be removed, user confirmation required.
+		text: (deleteAll ? qsTr("All old logfiles will be deleted.")
+						 //: INFO ANDROID IOS The current logfile is about to be removed, user confirmation required.
+						 : qsTr("The logfile will be deleted.")
 			   ) + SettingsModel.translationTrigger
 		//: LABEL ANDROID IOS
 		okButtonText: qsTr("Delete") + SettingsModel.translationTrigger

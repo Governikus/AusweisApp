@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -8,14 +8,12 @@ import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 
-
 RowLayout {
-	id: historyControls
+	id: baseItem
 
-	property bool showDeleteAll: true
+	property alias showDeleteAll: deleteEntriesButtonImage.visible
 
 	height: Style.dimens.titlebar_height
 
@@ -25,22 +23,8 @@ RowLayout {
 		id: deleteHistoryConfirmationPopup
 	}
 
-	GSwitch {
-		id: enableHistorySwitch
-
-		color: Constants.green
-		initialState: SettingsModel.historyEnabled
-		onSwitched: {
-			SettingsModel.historyEnabled = enableHistorySwitch.isOn
-			//: LABEL ANDROID IOS
-			ApplicationModel.showFeedback((SettingsModel.historyEnabled ? qsTr("History enabled") : qsTr("History disabled")) + SettingsModel.translationTrigger)
-		}
-	}
-
 	Image {
 		id: deleteEntriesButtonImage
-
-		visible: historyControls.showDeleteAll
 
 		sourceSize.height: 36
 		sourceSize.width: 36
@@ -49,10 +33,11 @@ RowLayout {
 		source: "qrc:///images/trash_icon_white.svg"
 
 		MouseArea {
-			id: deleteEntriesButton
-
 			anchors.fill: parent
 
+			//: LABEL ANDROID
+			Accessible.name: qsTr("Delete all entries") + SettingsModel.translationTrigger
+			Accessible.role: Accessible.Button
 			onClicked: deleteHistoryConfirmationPopup.open()
 		}
 	}

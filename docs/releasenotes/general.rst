@@ -6,7 +6,7 @@ Ihrem Personalausweis bzw. Ihrem elektronischen Aufenthaltstitel online auszuwei
 
 Für die Nutzung der Online-Ausweisfunktion benötigen die Nutzerinnen und Nutzer eine
 Software, mit deren Hilfe eine sichere Verbindung zwischen Kartenleser oder Smartphone,
-Personalausweis und eID-Diensteanbieter hergestellt werden kann. Sie ermöglicht den
+Personalausweis und eID-Anbieter hergestellt werden kann. Sie ermöglicht den
 verschlüsselten Datenaustausch zwischen Personalausweis und eID-Dienst.
 
 Die im Auftrag des Bundesinnenministeriums von der Governikus KG entwickelte

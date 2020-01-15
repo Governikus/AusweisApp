@@ -1,11 +1,12 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
+import Governikus.Type.Random 1.0
 
 Item {
 	property bool pinFieldAnimation: true
@@ -26,7 +27,7 @@ Item {
 			onTimer.triggeredOnStart = false
 			if (pinFieldAnimation)
 			{
-				onTimer.index = Utils.getRandomInt(0, 9)
+				onTimer.index = Random.randomInt(0, 8)
 				repeater.itemAt(onTimer.index).state = "on"
 			}
 
@@ -79,7 +80,7 @@ Item {
 
 		Rectangle {
 			id: card
-			color: Style.color.id_card
+			color: Style.color.accent
 			radius: height * 0.05
 			anchors.horizontalCenter: parent.horizontalCenter
 			height: baseItem.height * 1.5 / 7

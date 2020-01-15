@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Card.h"
@@ -40,11 +40,10 @@ CardReturnCode Card::destroyPaceChannel()
 }
 
 
-CardReturnCode Card::setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu)
+ResponseApduResult Card::setEidPin(quint8 pTimeoutSeconds)
 {
 	Q_UNUSED(pTimeoutSeconds)
-	Q_UNUSED(pResponseApdu)
 	qCWarning(card) << "Setting eID PIN is not supported";
 
-	return CardReturnCode::COMMAND_FAILED;
+	return {CardReturnCode::COMMAND_FAILED};
 }

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteSertviceSettings
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceSettings.h"
@@ -38,9 +38,26 @@ class test_RemoteServiceSettings
 		{
 			RemoteServiceSettings settings;
 			QCOMPARE(settings.getServerName(), DeviceInfo::getName());
+
 			settings.save();
 			QCOMPARE(settings.getServerName(), DeviceInfo::getName());
+
+			settings.setServerName(QLatin1String("   "));
+			QCOMPARE(settings.getServerName(), DeviceInfo::getName());
+
+			settings.setServerName(QLatin1String("  \n "));
+			QCOMPARE(settings.getServerName(), DeviceInfo::getName());
+
 			settings.setServerName(QLatin1String("Google Pixel"));
+			QCOMPARE(settings.getServerName(), QLatin1String("Google Pixel"));
+
+			settings.setServerName(QLatin1String("   Google Pixel"));
+			QCOMPARE(settings.getServerName(), QLatin1String("Google Pixel"));
+
+			settings.setServerName(QLatin1String("Google Pixel   "));
+			QCOMPARE(settings.getServerName(), QLatin1String("Google Pixel"));
+
+			settings.setServerName(QLatin1String("Google Pixel  \n "));
 			QCOMPARE(settings.getServerName(), QLatin1String("Google Pixel"));
 		}
 

@@ -1,7 +1,7 @@
 /*!
- * \brief Implementation of \ref ReaderManagerPlugIn for remote reader.
+ * \brief Implementation of \ref ReaderManagerPlugIn for smartphone as card reader (SaC).
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

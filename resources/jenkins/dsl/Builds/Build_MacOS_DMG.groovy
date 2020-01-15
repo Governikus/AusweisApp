@@ -22,7 +22,6 @@ j.with
 			-DCMAKE_PREFIX_PATH=\${WORKSPACE}/libs/build/dist
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 			-DCMAKE_BUILD_TYPE=MinSizeRel
-			-DOSX_TIMESTAMP=OFF
 			-DJENKINS_APPCAST=${MERCURIAL_REVISION_BRANCH}_Appcast
 			"""))
 
@@ -33,5 +32,7 @@ j.with
 			'''.stripIndent().trim())
 
 		shell('cd build/_CPack_Packages/Darwin/Bundle/; codesign -vvvv **/*.app; spctl -a -vv **/*.app')
+
+		shell('cd build/; cmake -P ../source/cmake/Notarization.cmake')
 	}
 }

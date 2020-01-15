@@ -26,7 +26,7 @@
       <enum>Qt::TabFocus</enum>
      </property>
      <property name="title">
-      <string>Service provider</string>
+      <string>Provider</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
@@ -148,7 +148,7 @@
       <enum>Qt::TabFocus</enum>
      </property>
      <property name="text">
-      <string>The following data is required by the service provider. You can deselect the non-mandatory data fields if you do not want this data to be transmitted.</string>
+      <string>The following data is required by the provider. You can deselect the non-mandatory data fields if you do not want this data to be transmitted.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

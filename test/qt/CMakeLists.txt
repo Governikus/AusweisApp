@@ -70,12 +70,13 @@ FUNCTION(SHOULD_SKIP_TEST _out filename)
 	SET(${_out} FALSE PARENT_SCOPE)
 	STRING(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" test "${sourcefile}")
 
-	IF(IOS OR ANDROID)
-		IF(ANDROID_BUILD_AAR AND test MATCHES "ui/qml")
-			SET(${_out} TRUE PARENT_SCOPE)
-			RETURN()
-		ENDIF()
+	IF(INTEGRATED_SDK AND (test MATCHES "ui/qml"
+		OR test MATCHES "ui/widget"))
+		SET(${_out} TRUE PARENT_SCOPE)
+		RETURN()
+	ENDIF()
 
+	IF(IOS OR ANDROID)
 		IF(test MATCHES "ui/widget"
 			OR test MATCHES "card/pcsc")
 			SET(${_out} TRUE PARENT_SCOPE)

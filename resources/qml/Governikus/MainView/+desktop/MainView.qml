@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -39,7 +39,7 @@ SectionPage {
 				width: view.horizontalItemSpace
 
 				//: LABEL DESKTOP_QML
-				title: qsTr("Self-authentication") + SettingsModel.translationTrigger
+				title: qsTr("Self-Authentication") + SettingsModel.translationTrigger
 				image: "qrc:/images/desktop/main_identify.svg"
 
 				onClicked: sectionPage.nextView(SectionPage.Views.SelfAuthentication)
@@ -62,7 +62,7 @@ SectionPage {
 
 				//: LABEL DESKTOP_QML
 				title: qsTr("Provider") + SettingsModel.translationTrigger
-				image: "qrc:/images/desktop/main_provider.svg"
+				image: "qrc:/images/main_provider.svg"
 
 				onClicked: sectionPage.nextView(SectionPage.Views.Provider)
 
@@ -113,7 +113,7 @@ SectionPage {
 
 				//: LABEL DESKTOP_QML
 				title: qsTr("Settings") + SettingsModel.translationTrigger
-				image: "qrc:/images/desktop/settings_icon.svg"
+				image: "qrc:/images/settings_icon.svg"
 
 				onClicked: sectionPage.nextView(SectionPage.Views.Settings)
 
@@ -134,8 +134,8 @@ SectionPage {
 				width: view.horizontalItemSpace
 
 				//: LABEL DESKTOP_QML
-				title: qsTr("PIN management") + SettingsModel.translationTrigger
-				image: "qrc:/images/desktop/main_pin.svg"
+				title: qsTr("PIN-Management") + SettingsModel.translationTrigger
+				image: "qrc:/images/main_pin.svg"
 
 				onClicked: ChangePinModel.startWorkflow()
 
@@ -161,7 +161,7 @@ SectionPage {
 
 				activeFocusOnTab: true
 
-				onClicked: sectionPage.nextView(SectionPage.Views.Information)
+				onClicked: sectionPage.nextView(SectionPage.Views.MoreView)
 			}
 		}
 	}

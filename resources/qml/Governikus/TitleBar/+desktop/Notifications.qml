@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -10,6 +10,7 @@ import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.NotificationModel 1.0
 import Governikus.Type.SettingsModel 1.0
+import Governikus.View 1.0
 
 
 Item {
@@ -17,20 +18,21 @@ Item {
 
 	visible: SettingsModel.showInAppNotifications
 
-	readonly property string icon: {
+	readonly property color iconColor: {
 		if (d.unreadMsg) {
-			if (NotificationModel.lastType === "developermode") return "qrc:///images/desktop/bell_red.svg"
-			if (NotificationModel.lastType === "feedback") return "qrc:///images/desktop/bell_green.svg"
+			if (NotificationModel.lastType === "developermode") return Constants.red
+			if (NotificationModel.lastType === "feedback") return Constants.green
 		}
-		return "qrc:///images/desktop/bell_white.svg"
+		return Style.text.header_inverse.textColor
 	}
 	signal newNotification()
 	function toggle() {
 		if (!fadingAnimation.running) d.fadeIn = !d.fadeIn
 		if (d.fadeIn) {
 			logEntryList.positionViewAtEnd()
-			d.unreadMsg = false
 		}
+		d.unreadMsg = false
+		fadeOutTimer.stop()
 	}
 
 	QtObject {
@@ -40,12 +42,10 @@ Item {
 		property bool unreadMsg: false
 	}
 
-	Connections {
-		target: NotificationModel
-		onRowsInserted: {
-			if (!d.fadeIn) d.unreadMsg = true
-			baseItem.newNotification()
-		}
+	Timer {
+		id: fadeOutTimer
+		interval: 1800 // The notification button blinks 3 times for 600ms
+		onTriggered: d.fadeIn = false
 	}
 
 	Rectangle {
@@ -62,7 +62,7 @@ Item {
 		radius: logEntryList.spacing
 		border.color: Constants.blue
 		border.width: Math.max(1, ApplicationModel.scaleFactor * 3)
-		color: Qt.lighter(Constants.blue, 1.15)
+		color: Style.color.background
 
 		Behavior on anchors.bottomMargin {
 			PropertyAnimation {
@@ -76,37 +76,71 @@ Item {
 			anchors.fill: parent
 		}
 
-		ListView {
+		GListView {
 			id: logEntryList
 
 			anchors.fill: parent
-			anchors.margins: spacing
-			anchors.rightMargin: 2 * spacing
+			anchors.topMargin: logList.radius
+			anchors.rightMargin: spacing
+			anchors.bottomMargin: logList.border.width
 
 			clip: true
-			spacing: ApplicationModel.scaleFactor * 10
+			spacing: Constants.text_spacing
+			topMargin: spacing
+			bottomMargin: spacing
+			leftMargin: spacing
+			scrollBarTopPadding: spacing
+			scrollBarBottomPadding: spacing
 			model: NotificationModel
-			delegate: Row {
-				spacing: logEntryList.spacing
+			delegate: Item {
+				width: row.width
+				height: row.height
 
-				GText {
-					id: notificationTime
+				activeFocusOnTab: d.fadeIn && !fadeOutTimer.running
+				Accessible.name: notificationTime.text + " " + notificationBody.text
 
-					text: model.time
+				Row {
+					id: row
+
+					spacing: logEntryList.spacing
+
+					Component.onCompleted: {
+						d.unreadMsg = true
+						if (!d.fadeIn) {
+							d.fadeIn = true
+							fadeOutTimer.restart()
+						}
+						if (fadeOutTimer.running) {
+							// Calling logEntryList.positionViewAtEnd() only works unreliably.
+							// Delay it so that the ListView has *really* completed adding the Row:
+							positionViewAtEndTimer.restart()
+						}
+						baseItem.newNotification()
+					}
+
+					GText {
+						id: notificationTime
+
+						text: model.time
+					}
+
+					GText {
+						id: notificationBody
+
+						width: logEntryList.width - notificationTime.width - 3 * logEntryList.spacing
+
+						text: model.text
+						textStyle: model.type === "developermode" ? Style.text.normal_warning : Style.text.normal_inverse
+
+					}
 				}
-
-				GText {
-					width: logEntryList.width - notificationTime.width - spacing
-
-					text: model.text
-					textStyle: model.type === "developermode" ? Style.text.normal_warning : Style.text.normal
-
-					onLinkActivated: Qt.openUrlExternally(link)
-				}
+				FocusFrame {}
 			}
 
-			ScrollBar.vertical: ScrollBar {
-				policy: ScrollBar.AlwaysOn
+			Timer {
+				id: positionViewAtEndTimer
+				interval: 1
+				onTriggered: logEntryList.positionViewAtEnd()
 			}
 		}
 	}

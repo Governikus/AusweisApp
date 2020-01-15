@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -20,7 +20,7 @@ Item {
 	height: columnLayout.height
 
 	Accessible.name: qsTr("List of your past interactions with this provider") + SettingsModel.translationTrigger
-	Accessible.description: HistoryModel.nameFilter.count === 0 ? qsTr("The list is empty, no recorded interaction with this service provider.") + SettingsModel.translationTrigger : ""
+	Accessible.description: HistoryModel.nameFilter.count === 0 ? qsTr("The list is empty, no recorded interaction with this provider.") + SettingsModel.translationTrigger : ""
 	Accessible.role: Accessible.List
 
 	ColumnLayout {
@@ -62,17 +62,14 @@ Item {
 		}
 
 		GText {
-			id: textNoHistoryEntries
-
 			visible: repeater.count === 0
 			width: parent.width
 
-			Accessible.name: text
 			activeFocusOnTab: true
 
-			textStyle: Style.text.normal_secondary_inverse
 			//: INFO DESKTOP_QML No authentication history, placeholder text.
 			text: qsTr("Currently there are no history entries.") + SettingsModel.translationTrigger
+			textStyle: Style.text.normal
 		}
 	}
 }

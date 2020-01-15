@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref GlobalStatus.
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GlobalStatus.h"
@@ -45,11 +45,10 @@ class test_GlobalStatus
 			QTest::addColumn<GlobalStatus::Code>("code");
 			QTest::addColumn<QString>("message");
 
-			QTest::newRow("inProgress") << GlobalStatus::Code::Workflow_AlreadyInProgress_Error << tr("Cannot start authentication. An operation is already in progress.");
+			QTest::newRow("inProgress") << GlobalStatus::Code::Workflow_AlreadyInProgress_Error << tr("Cannot start authentication. An operation is already active.");
 			QTest::newRow("cardRemoved") << GlobalStatus::Code::Workflow_Card_Removed << tr("The connection to the ID card has been lost. The process was aborted.");
 			QTest::newRow("unknownPaos") << GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer << tr("The program received an unknown message from the server.");
 			QTest::newRow("unexpectedMessage") << GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer << tr("The program received an unexpected message from the server.");
-			QTest::newRow("pinBlocked") << GlobalStatus::Code::Workflow_Pin_Blocked_And_Puk_Objectionable << tr("After three wrong entries your PIN is blocked. Please use the PIN management in this app to unblock it with the help of your PUK.");
 			QTest::newRow("preverificationDevelopermode") << GlobalStatus::Code::Workflow_Preverification_Developermode_Error << tr("Using the developer mode is only allowed in a test environment.");
 			QTest::newRow("noUniqueAtCvc") << GlobalStatus::Code::Workflow_No_Unique_AtCvc << tr("No unique AT CVC");
 			QTest::newRow("noUniqueDvCvc") << GlobalStatus::Code::Workflow_No_Unique_DvCvc << tr("No unique DV CVC");
@@ -60,14 +59,14 @@ class test_GlobalStatus
 			QTest::newRow("certificateSop") << GlobalStatus::Code::Workflow_Certificate_Sop_Error << tr("The subject URL in the certificate description and the TCToken URL don't satisfy the same origin policy.");
 			QTest::newRow("wrongParameter") << GlobalStatus::Code::Workflow_Wrong_Parameter_Invocation << tr("Application was invoked with wrong parameters.");
 			QTest::newRow("incompleteInformation") << GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided << tr("The server provided no or incomplete information. Your personal data could not be read out.");
-			QTest::newRow("deviceConnection") << GlobalStatus::Code::Workflow_Bluetooth_Reader_Connection_Error << tr("An error occurred while connecting to a reader device.");
-			QTest::newRow("deviceScan") << GlobalStatus::Code::Workflow_Reader_Device_Scan_Error << tr("An error occurred while scanning for reader devices.");
-			QTest::newRow("abnormalClose") << GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose << tr("The remote card reader connection was not closed properly.");
-			QTest::newRow("invalidRequest") << GlobalStatus::Code::RemoteConnector_InvalidRequest << tr("Remote reader connection request contains invalid parameters.");
-			QTest::newRow("noSupportedApiLevel") << GlobalStatus::Code::RemoteConnector_NoSupportedApiLevel << tr("Your remote reader version is incompatible with the local version. Please install the latest AusweisApp2 version on both your smartphone and your computer.");
-			QTest::newRow("connectionTimeout") << GlobalStatus::Code::RemoteConnector_ConnectionTimeout << tr("A timeout occurred while trying to establish a connection to a remote reader.");
-			QTest::newRow("connectionError") << GlobalStatus::Code::RemoteConnector_ConnectionError << tr("An error occurred while trying to establish a connection to a remote reader.");
-			QTest::newRow("hostRefused") << GlobalStatus::Code::RemoteConnector_RemoteHostRefusedConnection << tr("Remote device has rejected the connection. Please check the pairing code.");
+			QTest::newRow("deviceConnection") << GlobalStatus::Code::Workflow_Bluetooth_Reader_Connection_Error << tr("An error occurred while connecting to a bluetooth card reader.");
+			QTest::newRow("deviceScan") << GlobalStatus::Code::Workflow_Reader_Device_Scan_Error << tr("An error occurred while scanning for a bluetooth card reader.");
+			QTest::newRow("abnormalClose") << GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose << tr("The smartphone as card reader (SaC) connection was aborted.");
+			QTest::newRow("invalidRequest") << GlobalStatus::Code::RemoteConnector_InvalidRequest << tr("Smartphone as card reader (SaC) connection request was invalid.");
+			QTest::newRow("noSupportedApiLevel") << GlobalStatus::Code::RemoteConnector_NoSupportedApiLevel << tr("Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest AusweisApp2 version on both your smartphone and your computer.");
+			QTest::newRow("connectionTimeout") << GlobalStatus::Code::RemoteConnector_ConnectionTimeout << tr("A timeout occurred while trying to establish a connection to the smartphone as card reader (SaC).");
+			QTest::newRow("connectionError") << GlobalStatus::Code::RemoteConnector_ConnectionError << tr("An error occurred while trying to establish a connection to the smartphone as card reader (SaC).");
+			QTest::newRow("hostRefused") << GlobalStatus::Code::RemoteConnector_RemoteHostRefusedConnection << tr("The smartphone to be paired has rejected the connection. Please check the pairing code. If no pairing code is shown activate the pairing mode.");
 			QTest::newRow("cannotSaveFile") << GlobalStatus::Code::Downloader_Cannot_Save_File << tr("Cannot save file.");
 			QTest::newRow("dataCorrupted") << GlobalStatus::Code::Downloader_Data_Corrupted << tr("Received data were corrupted.");
 		}

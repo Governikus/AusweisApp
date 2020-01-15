@@ -1,7 +1,7 @@
 /*!
  * \brief Card mock for tests
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -55,7 +55,7 @@ class MockCard
 		}
 
 
-		CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
+		ResponseApduResult transmit(const CommandApdu& pCmd) override;
 
 		void setConnected(bool pConnected);
 };

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteServerImpl
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 #include "RemoteServerImpl.h"
 
@@ -37,6 +37,12 @@ class RemoteWebSocketServerMock
 		bool isConnected() const override
 		{
 			return mConnected;
+		}
+
+
+		bool isPairingConnection() const override
+		{
+			return false;
 		}
 
 
@@ -143,12 +149,12 @@ class test_RemoteServerImpl
 	private Q_SLOTS:
 		void init()
 		{
-			std::function<RemoteReaderAdvertiser*(const QString&, const QString&, quint16&)> creator = [this](const QString& pIfdName, const QString& pIfdId, quint16& pPort){
+			std::function<RemoteReaderAdvertiser* (const QString&, const QString&, quint16&)> creator = [this](const QString& pIfdName, const QString& pIfdId, quint16& pPort){
 						mAdvertiserMock = new RemoteReaderAdvertiserMock(pIfdName, pIfdId, pPort);
 						return mAdvertiserMock;
 					};
 			Env::setCreator<RemoteReaderAdvertiser*, const QString&, const QString&, quint16&>(creator);
-			std::function<RemoteWebSocketServer*()> creator2 = [this](){
+			std::function<RemoteWebSocketServer* ()> creator2 = [this](){
 						mWebSocketMock = new RemoteWebSocketServerMock;
 						return mWebSocketMock;
 					};

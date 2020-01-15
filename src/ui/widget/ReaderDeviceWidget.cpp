@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDeviceWidget.h"
@@ -226,6 +226,14 @@ void ReaderDeviceWidget::onUpdateRemoteTableSelection()
 			selectionModel->select(mRemoteReaderDataModel.index(0, RemoteDeviceModel::ColumnId::ReaderName), QItemSelectionModel::Select);
 			selectionModel->select(mRemoteReaderDataModel.index(0, RemoteDeviceModel::ColumnId::ReaderStatus), QItemSelectionModel::Select);
 		}
+		else
+		{
+			Q_ASSERT(selectionModel->selectedRows().size() == 1);
+			const auto currentIndex = selectionModel->selectedRows().at(0);
+			const auto model = selectionModel->model();
+			mUi->tableViewRemote->update(model->index(currentIndex.row(), RemoteDeviceModel::ColumnId::ReaderName));
+			mUi->tableViewRemote->update(model->index(currentIndex.row(), RemoteDeviceModel::ColumnId::ReaderStatus));
+		}
 	}
 	else
 	{
@@ -284,7 +292,7 @@ void ReaderDeviceWidget::onConnectClicked()
 		setEnabled(false);
 
 		QMessageBox pairingInfoBox(this);
-		pairingInfoBox.setText(tr("Please start pairing mode first."));
+		pairingInfoBox.setText(tr("Start the pairing mode on your smartphone if you haven't done it already."));
 		pairingInfoBox.setWindowModality(Qt::WindowModal);
 		pairingInfoBox.setWindowFlags(pairingInfoBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 		pairingInfoBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ReaderConfiguration
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfiguration.h"
@@ -74,6 +74,9 @@ class test_ReaderConfiguration
 
 			QTest::newRow("Remote card reader") << UsbId(0x0000, 0x0000) << "NFC-abcdef1234567890" << QStringLiteral("Smartphone als Kartenleser") << "img_RemoteReader" << "^NFC.*";
 
+			QTest::newRow("PersoSim SaC") << UsbId(0x0000, 0x0001) << "PersoSimHandshake 00 00" << QStringLiteral("PersoSim") << "img_PersoSim" << "^PersoSim.*";
+			QTest::newRow("PersoSim native") << UsbId(0x0000, 0x0001) << "PersoSim Virtual Card Reader 0" << QStringLiteral("PersoSim") << "img_PersoSim" << "^PersoSim.*";
+
 			QTest::newRow("REINER SCT cyberJack RFID komfort") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort" << "REINER SCT cyberJack RFID komfort" << "img_Reiner_SCT_cyberjack_RFID_komfort" << "REINER SCT cyberJack RFID komfort";
 			QTest::newRow("REINER SCT cyberJack RFID standard") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard" << "REINER SCT cyberJack RFID standard" << "img_Reiner_SCT_cyberjack_RFID_standard" << "REINER SCT cyberJack RFID standard";
 			QTest::newRow("REINER SCT cyberJack RFID basis") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis" << "REINER SCT cyberJack RFID basis" << "img_Reiner_SCT_cyberjack_RFID_basis" << "REINER SCT cyberJack RFID basis";
@@ -139,6 +142,9 @@ class test_ReaderConfiguration
 			QTest::newRow("UU") << UsbId(0xFFFF, 0xFFFF) << "crap" << "crap";
 
 			QTest::newRow("Remote card reader") << UsbId(0x0000, 0x0000) << "NFC-abcdef1234567890" << QStringLiteral("Smartphone als Kartenleser");
+
+			QTest::newRow("PersoSim SaC") << UsbId(0x0000, 0x0001) << "PersoSimHandshake 00 00" << QStringLiteral("PersoSim");
+			QTest::newRow("PersoSim native") << UsbId(0x0000, 0x0001) << "PersoSim Virtual Card Reader 0" << QStringLiteral("PersoSim");
 
 			QTest::newRow("REINER SCT cyberJack RFID komfort-windows-7-10") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort USB 1" << "REINER SCT cyberJack RFID komfort";
 			QTest::newRow("REINER SCT cyberJack RFID komfort-macosx-10.11-10.14") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort" << "REINER SCT cyberJack RFID komfort";
@@ -284,7 +290,7 @@ class test_ReaderConfiguration
 };
 
 
-const int test_ReaderConfiguration::cCardReadersInConfigurationFile = 26;
+const int test_ReaderConfiguration::cCardReadersInConfigurationFile = 27;
 
 QTEST_GUILESS_MAIN(test_ReaderConfiguration)
 #include "test_ReaderConfiguration.moc"

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteCard.h"
@@ -172,7 +172,7 @@ bool RemoteCard::isConnected()
 }
 
 
-CardReturnCode RemoteCard::transmit(const CommandApdu& pCommand, ResponseApdu& pResponse)
+ResponseApduResult RemoteCard::transmit(const CommandApdu& pCommand)
 {
 	const QSharedPointer<const IfdTransmit>& transmitCmd = QSharedPointer<IfdTransmit>::create(mSlotHandle, pCommand.getBuffer());
 	if (sendMessage(transmitCmd, RemoteCardMessageType::IFDTransmitResponse, 5000))
@@ -182,16 +182,15 @@ CardReturnCode RemoteCard::transmit(const CommandApdu& pCommand, ResponseApdu& p
 		{
 			if (!response.resultHasError())
 			{
-				pResponse.setBuffer(response.getResponseApdu());
-				return CardReturnCode::OK;
+				return {CardReturnCode::OK, ResponseApdu(response.getResponseApdu())};
 			}
 			qCWarning(card_remote) << response.getResultMinor();
 		}
 
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	return CardReturnCode::INPUT_TIME_OUT;
+	return {CardReturnCode::INPUT_TIME_OUT};
 }
 
 
@@ -230,7 +229,7 @@ EstablishPaceChannelOutput RemoteCard::establishPaceChannel(PacePasswordId pPass
 }
 
 
-CardReturnCode RemoteCard::setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu)
+ResponseApduResult RemoteCard::setEidPin(quint8 pTimeoutSeconds)
 {
 	PinModify pinModify(pTimeoutSeconds);
 	const QByteArray inputData = pinModify.createCcidForRemote();
@@ -241,21 +240,20 @@ CardReturnCode RemoteCard::setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResp
 		const IfdModifyPinResponse response(mResponse);
 		if (response.resultHasError())
 		{
-			return response.getReturnCode();
+			return {response.getReturnCode()};
 		}
 
 		if (!response.isIncomplete())
 		{
-			PinModifyOutput output(ResponseApdu(response.getOutputData()));
-			pResponseApdu.setBuffer(output.getResponseApdu().getBuffer());
+			const PinModifyOutput output(ResponseApdu(response.getOutputData()));
 			if (!response.resultHasError())
 			{
-				return output.getReturnCode();
+				return {output.getReturnCode(), output.getResponseApdu()};
 			}
 		}
 
-		return CardReturnCode::COMMAND_FAILED;
+		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	return CardReturnCode::INPUT_TIME_OUT;
+	return {CardReturnCode::INPUT_TIME_OUT};
 }

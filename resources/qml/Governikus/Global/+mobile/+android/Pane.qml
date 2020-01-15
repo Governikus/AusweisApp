@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -16,7 +16,9 @@ Rectangle {
 	anchors.right: parent.right
 	height: childrenRect.height
 	color: Style.color.background_pane
-	radius: 16
+	radius: Style.dimens.corner_radius
+	border.width: Style.dimens.high_contrast_item_border
+	border.color: Style.color.high_contrast_item_border
 
 	Column {
 		anchors.left: parent.left
@@ -38,12 +40,12 @@ Rectangle {
 		}
 	}
 
-	layer.enabled: true
+	layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
 	layer.effect: DropShadow {
 					radius: 8
 					samples: 8
 					source: root
-					color: Constants.grey
+					color: Style.color.shadow
 					verticalOffset: 2
 				}
 }

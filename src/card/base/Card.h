@@ -1,7 +1,7 @@
 /*!
  * \brief Class representing a smart card
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -54,7 +54,7 @@ class Card
 		 * The command APDU buffer is transmitted to the card.
 		 * The response APDU buffer is filled with the data returned from the card.
 		 */
-		virtual CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) = 0;
+		virtual ResponseApduResult transmit(const CommandApdu& pCmd) = 0;
 
 		/*!
 		 * Establishes a PACE channel, i.e. the corresponding reader is no basic reader.
@@ -69,7 +69,7 @@ class Card
 		/*!
 		 * Sets a new eID PIN, i.e. the corresponding reader is no basic reader.
 		 */
-		virtual CardReturnCode setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu);
+		virtual ResponseApduResult setEidPin(quint8 pTimeoutSeconds);
 
 };
 

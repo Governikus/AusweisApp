@@ -1,9 +1,9 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
-import QtGraphicalEffects 1.10
+import QtGraphicalEffects 1.0
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -36,7 +36,7 @@ SectionPage {
 			GText {
 				width: parent.width
 				//: LABEL ANDROID_PHONE
-				text: qsTr("You are about to identify yourself towards the following service provider:") + SettingsModel.translationTrigger
+				text: qsTr("You are about to identify yourself towards the following provider:") + SettingsModel.translationTrigger
 			}
 
 			Pane {
@@ -55,7 +55,7 @@ SectionPage {
 						ProviderInfoSection {
 							imageSource: "qrc:///images/provider/information.svg"
 							//: LABEL ANDROID_PHONE
-							title: qsTr("Service provider") + SettingsModel.translationTrigger
+							title: qsTr("Provider") + SettingsModel.translationTrigger
 							name: certificateDescriptionModel.subjectName
 						}
 						ProviderInfoSection {
@@ -96,10 +96,16 @@ SectionPage {
 			}
 
 			GButton {
-				iconSource: "qrc:///images/npa.svg"
+				icon.source: "qrc:///images/npa.svg"
 				anchors.horizontalCenter: parent.horizontalCenter
-				//: LABEL ANDROID_PHONE %1 can be CAN or PIN
-				text: qsTr("Proceed to %1 entry").arg(NumberModel.isCanAllowedMode ? "CAN" : "PIN") + SettingsModel.translationTrigger
+				//: LABEL ANDROID_PHONE %1 can be "card access number (CAN)" or "PIN"
+				text: qsTr("Proceed to %1 entry").arg(
+														NumberModel.isCanAllowedMode ?
+														//: LABEL ANDROID_PHONE Inserted into "Proceed to %1 entry"
+														qsTr("card access number (CAN)") :
+														//: LABEL ANDROID_PHONE Inserted into "Proceed to %1 entry"
+														qsTr("PIN")
+													) + SettingsModel.translationTrigger
 				onClicked: {
 					chatModel.transferAccessRights()
 					AuthModel.continueWorkflow()
@@ -110,7 +116,7 @@ SectionPage {
 				width: parent.width
 
 				//: LABEL ANDROID_PHONE
-				text: qsTr("The following data will be transferred to the service provider when you enter the PIN:") + SettingsModel.translationTrigger
+				text: qsTr("The following data will be transferred to the provider when you enter the PIN:") + SettingsModel.translationTrigger
 			}
 
 			Pane {
@@ -135,7 +141,6 @@ SectionPage {
 						width: parent.width
 
 						text: AuthModel.transactionInfo
-						textStyle: Style.text.normal
 					}
 				}
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the chat.
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -38,7 +38,8 @@ class ChatModel
 	{
 		NAME_ROLE = Qt::UserRole + 1,
 		OPTIONAL_ROLE,
-		SELECTED_ROLE
+		SELECTED_ROLE,
+		WRITE_RIGHT,
 	};
 
 	private:

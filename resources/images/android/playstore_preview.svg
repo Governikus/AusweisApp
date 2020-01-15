@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 37 37">
+  <image xlink:href="./playstore_background.svg" width="37" height="37" />
+  <image xlink:href="../npa_circle.svg" width="37" height="37" />
+  <image xlink:href="../npa_bar.svg" width="37" height="37" />
+  <text style="font-weight:bold; font-size:160px; font-family:sans-serif; fill:#FFFFFF;" x="35" y="520" transform="rotate(-9) translate(0.5,5) scale(0.035,0.035)">PREVIEW</text>
+</svg>

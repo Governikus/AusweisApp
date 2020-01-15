@@ -2,7 +2,7 @@
  * \brief toString method for PCSC_RETURNCODE and platform dependent
  * typedefs for PCSC types.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,7 +26,7 @@
 using PCSC_RETURNCODE = LONG;
 using PCSC_INT = DWORD;
 using PCSC_CHAR = TCHAR;
-using PCSC_CHAR_PTR = TCHAR *;
+using PCSC_CHAR_PTR = TCHAR*;
 using PCSC_UCHAR_PTR = LPBYTE;
 using PCSC_CUCHAR_PTR = LPCBYTE;
 #elif defined Q_OS_MACOS
@@ -34,15 +34,15 @@ using PCSC_RETURNCODE = int32_t;
 using PCSC_INT = uint32_t;
 using PCSC_CHAR = char;
 using PCSC_CHAR_PTR = char*;
-using PCSC_UCHAR_PTR = uchar *;
-using PCSC_CUCHAR_PTR = const uchar *;
+using PCSC_UCHAR_PTR = uchar*;
+using PCSC_CUCHAR_PTR = const uchar*;
 #elif defined Q_OS_UNIX
 using PCSC_RETURNCODE = LONG;
 using PCSC_INT = DWORD;
 using PCSC_CHAR = char;
 using PCSC_CHAR_PTR = char*;
-using PCSC_UCHAR_PTR = uchar *;
-using PCSC_CUCHAR_PTR = const uchar *;
+using PCSC_UCHAR_PTR = uchar*;
+using PCSC_CUCHAR_PTR = const uchar*;
 #endif
 
 

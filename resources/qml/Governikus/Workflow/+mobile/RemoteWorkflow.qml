@@ -1,9 +1,9 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.RemoteServiceView 1.0
@@ -27,7 +27,7 @@ Item {
 		target: ApplicationModel
 		onFireCertificateRemoved: {
 			//: INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.
-			ApplicationModel.showFeedback(qsTr("The device %1 was unpaired because it does not react to connection attempts. Retry the pairing process if you want to use this device to authenticate yourself.").arg(pDeviceName))
+			ApplicationModel.showFeedback(qsTr("The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(pDeviceName))
 		}
 	}
 
@@ -88,7 +88,7 @@ Item {
 				return qsTr("To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.");
 			} else if (!foundSelectedReader) {
 				//: INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.
-				return qsTr("No paired and activated remote device was detected. Make sure that you have started the remote service on your remote device.");
+				return qsTr("No paired smartphone as cardreader (SaC) with activated \"remote service\" available.");
 			} else {
 				return "";
 			}
@@ -110,13 +110,13 @@ Item {
 				return NumberModel.inputError;
 			} else if (ApplicationModel.extendedLengthApdusUnsupported) {
 				//: INFO ANDROID IOS The device does not support Extended Length and can not be used as card reader.
-				qsTr("Your remote device does not meet the technical requirements (Extended Length not supported).");
+				qsTr("The connected smartphone as card reader (SaC) unfortunately does not meet the technical requirements (Extended Length not supported).");
 			} else if (NumberModel.pinDeactivated) {
 				//: INFO ANDROID IOS The online authentication is disabled and needs to be enabled by the authorities.
-				return qsTr("The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.");
+				return qsTr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.");
 			} else {
-				//: INFO ANDROID IOS The connection to the smartphone was established, the id card may be inserted.
-				return qsTr("Connected to %1. Please insert your ID card.").arg(RemoteServiceModel.connectedServerDeviceNames);
+				//: INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.
+				return qsTr("Connected to %1. Please place the NFC interface of the smartphone on your ID card.").arg(RemoteServiceModel.connectedServerDeviceNames);
 			}
 		}
 	}

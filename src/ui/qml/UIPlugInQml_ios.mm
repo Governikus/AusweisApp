@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInQml.h"
@@ -11,15 +11,15 @@ using namespace governikus;
 
 bool UIPlugInQml::isTablet() const
 {
-	return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
+	return [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad;
 }
 
 
 QVariantMap UIPlugInQml::getSafeAreaMargins() const
 {
-	UIViewController* rootController = [[UIApplication sharedApplication].windows[0] rootViewController];
+	UIViewController* rootController = [UIApplication sharedApplication].windows[0].rootViewController;
 
-	UIEdgeInsets safeAreaInsets = [rootController view].safeAreaInsets;
+	UIEdgeInsets safeAreaInsets = rootController.view.safeAreaInsets;
 
 	QVariantMap insetMap;
 

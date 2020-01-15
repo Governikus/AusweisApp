@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref WorkflowModel
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowModel.h"
@@ -59,17 +59,6 @@ class test_WorkflowModel
 			QSignalSpy spy(&model, &WorkflowModel::fireStartWorkflow);
 			model.startWorkflow();
 			QCOMPARE(spy.count(), 1);
-		}
-
-
-		void test_CancelWorkflowOnPinBlocked()
-		{
-			WorkflowModel model;
-			QSharedPointer<WorkflowContext> context(new WorkflowContext());
-			model.mContext = context;
-
-			model.cancelWorkflowOnPinBlocked();
-			QCOMPARE(context->getStatus().getStatusCode(), GlobalStatus::Code::Workflow_Pin_Blocked_And_Puk_Objectionable);
 		}
 
 

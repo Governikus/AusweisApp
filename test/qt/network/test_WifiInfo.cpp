@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref WifiInfo
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WifiInfo.h"
@@ -45,7 +45,7 @@ class test_WifiInfo
 			QTest::newRow("governikus") << QHostAddress("194.31.70.66") << false;
 			QTest::newRow("telekom") << QHostAddress("91.39.48.2") << false;
 			QTest::newRow("vodafone mobile") << QHostAddress("100.90.174.1") << false;
-			QTest::newRow("service provider") << QHostAddress("100.64.0.0") << false;
+			QTest::newRow("provider") << QHostAddress("100.64.0.0") << false;
 		}
 
 

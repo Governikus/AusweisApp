@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -9,7 +9,9 @@ import Governikus.Style 1.0
 
 
 Item {
-	property alias border: frame.border
+	id: baseItem
+
+	property alias tintColor: image.tintColor
 	property alias source: image.source
 	property bool circularFrame: true
 
@@ -18,18 +20,16 @@ Item {
 
 		color: Style.color.transparent
 		border.width: height/20
-		border.color: Constants.white
+		border.color: baseItem.tintColor
 		anchors.fill: parent
 		anchors.centerIn: parent
 		radius: circularFrame ? width/2 : 0
 	}
 
-	Image {
+	TintableIcon {
 		id: image
 
-		fillMode: Image.PreserveAspectFit
 		anchors.margins: frame.border.width * 2
-		anchors.centerIn: frame
 		anchors.fill: frame
 		sourceSize.height: frame.height
 		sourceSize.width: frame.width

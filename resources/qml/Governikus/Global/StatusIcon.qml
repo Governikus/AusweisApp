@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -16,7 +16,7 @@ Rectangle {
 	width: height
 	radius: height / 2
 	border.width: height / 40;
-	border.color: Constants.white
+	border.color: Style.color.primary_text_inverse
 	color: Style.color.transparent
 
 	BusyIndicator {
@@ -31,7 +31,9 @@ Rectangle {
 		radius: height / 2
 		anchors.fill: parent
 		anchors.margins: parent.height / 8;
-		color: Constants.white
+		color: Style.color.background_pane
+		border.width: Style.dimens.high_contrast_item_border
+		border.color: Style.color.high_contrast_item_border
 
 		Image {
 			id: image

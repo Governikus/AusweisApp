@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -55,9 +55,9 @@ SectionPage {
 
 			GText {
 				anchors.centerIn: parent
-				//: LABEL IOS_PHONE ANDROID_PHONE Der in das Suchfeld eingegebene String erzielte kein Ergebnis
-				text: qsTr("No match found") + SettingsModel.translationTrigger
-				textStyle: Style.text.normal_secondary
+				//: LABEL IOS_PHONE ANDROID_PHONE The text entered into the provider search field results in no matches
+				text: qsTr("No results matching your search query found") + SettingsModel.translationTrigger
+				textStyle: Style.text.normal
 			}
 		}
 

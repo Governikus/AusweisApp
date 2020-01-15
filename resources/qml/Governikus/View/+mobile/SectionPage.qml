@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -34,7 +34,7 @@ Item {
 	property bool topLevelPage: false
 
 	property var navigationAction: null
-	property string title: null
+	property string title: ""
 	property var rightTitleBarAction: null
 	property var subTitleBarAction: null
 
@@ -54,6 +54,9 @@ Item {
 	// Default header/content of flickable
 	property QtObject header
 	property QtObject content
+
+	Accessible.onScrollDownAction: flickable.scrollPageDown()
+	Accessible.onScrollUpAction: flickable.scrollPageUp()
 
 	GFlickable {
 		id: flickable

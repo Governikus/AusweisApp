@@ -1,7 +1,7 @@
 /*!
  * \brief Show a dialog to fill in proxy credentials.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

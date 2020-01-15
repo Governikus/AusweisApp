@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppController.h"
@@ -22,6 +22,7 @@
 #include "ReaderManager.h"
 #include "RemoteClient.h"
 #include "ResourceLoader.h"
+#include "SecureStorage.h"
 #include "UILoader.h"
 #include "UIPlugIn.h"
 
@@ -152,13 +153,14 @@ bool AppController::eventFilter(QObject* pObj, QEvent* pEvent)
 
 bool AppController::start()
 {
+	if (!Env::getSingleton<SecureStorage>()->isLoaded())
+	{
+		qCritical() << "SecureStorage not loaded";
+		return false;
+	}
+
 	// Force construction of RemoteClient in the MainThread
 	Env::getSingleton<RemoteClient>();
-
-	const auto readerManager = Env::getSingleton<ReaderManager>();
-	readerManager->init();
-	connect(this, &AppController::fireShutdown, readerManager, &ReaderManager::shutdown, Qt::QueuedConnection);
-	connect(readerManager, &ReaderManager::fireInitialized, this, &AppController::fireStarted, Qt::QueuedConnection);
 
 	connect(&UILoader::getInstance(), &UILoader::fireLoadedPlugin, this, &AppController::onUiPlugin);
 	if (!UILoader::getInstance().load())
@@ -182,6 +184,13 @@ bool AppController::start()
 		}
 		qDebug() << "Successfully started activation handler:" << handler;
 	}
+
+	// Start the ReaderManager *after* initializing the ActivationHandlers. Otherwise the TrayIcon
+	// will be created even when we're just showing an error message and shutdown after that.
+	const auto readerManager = Env::getSingleton<ReaderManager>();
+	readerManager->init();
+	connect(this, &AppController::fireShutdown, readerManager, &ReaderManager::shutdown, Qt::QueuedConnection);
+	connect(readerManager, &ReaderManager::fireInitialized, this, &AppController::fireStarted, Qt::QueuedConnection);
 
 	connect(this, &AppController::fireStarted, this, [this] {
 				if (cShowUi)

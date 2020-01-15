@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -8,7 +8,7 @@ import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.AuthModel 1.0
 import Governikus.Type.NumberModel 1.0
-import Governikus.Type.CardReturnCode 1.0
+import Governikus.Type.SettingsModel 1.0
 
 Controller {
 	enum WorkflowStates {
@@ -29,13 +29,21 @@ Controller {
 
 	states: [
 		State {
-			when: AuthModel.currentState === "StateGetTcToken" && !connectivityManager.networkInterfaceActive
+			when: AuthModel.currentState === "StateGetTcToken" && SettingsModel.transportPinReminder
+			StateChangeScript {
+				script: controller.nextView(IdentifyView.SubViews.TransportPinReminder)
+			}
+		},
+		State {
+			// "State when" seems weired with Qt 5.14, so add !SettingsModel.transportPinReminder
+			when: AuthModel.currentState === "StateGetTcToken" && !connectivityManager.networkInterfaceActive && !SettingsModel.transportPinReminder
 			StateChangeScript {
 				script: controller.nextView(IdentifyView.SubViews.Connectivity)
 			}
 		},
 		State {
-			when: AuthModel.currentState === "StateGetTcToken" && connectivityManager.networkInterfaceActive
+			// "State when" seems weired with Qt 5.14, so add !SettingsModel.transportPinReminder
+			when: AuthModel.currentState === "StateGetTcToken" && connectivityManager.networkInterfaceActive && !SettingsModel.transportPinReminder
 			StateChangeScript {
 				script: {
 					controller.nextView(IdentifyView.SubViews.Progress)
@@ -54,11 +62,16 @@ Controller {
 		// working, when we need to process a state a second time.
 	}
 
-	function showRemoveCardFeedback() {
+	function showRemoveCardFeedback(success) {
 		if (controller.connectedToCard) {
 			controller.connectedToCard = false
-			//: INFO DESKTOP_QML The authentication process is completed, the id card may be removed from the card reader.
-			ApplicationModel.showFeedback(qsTr("You may now remove your ID card from the device."))
+			if (success) {
+				//: INFO DESKTOP_QML The authentication process finished successfully, the ID card may be removed from the card reader.
+				ApplicationModel.showFeedback(qsTr("Process finished successfully. You may now remove your ID card from the device."))
+			} else {
+				//: INFO DESKTOP_QML The authentication process is completed, the ID card may be removed from the card reader.
+				ApplicationModel.showFeedback(qsTr("You may now remove your ID card from the device."))
+			}
 		}
 	}
 
@@ -95,9 +108,12 @@ Controller {
 				controller.nextView(IdentifyView.SubViews.CardPosition)
 				break
 			case "StateSendDIDAuthenticateResponseEAC1":
-				controller.nextView(IdentifyView.SubViews.Progress)
-				if (NumberModel.inputErrorCode == CardReturnCode.OK) {
+				if (AuthModel.isCancellationByUser()) {
+					controller.nextView(IdentifyView.SubViews.Aborting)
+				}
+				else {
 					controller.workflowProgressVisible = true
+					controller.nextView(IdentifyView.SubViews.Progress)
 				}
 				setIdentifyWorkflowStateAndContinue(IdentifyController.WorkflowStates.Processing)
 				break
@@ -106,7 +122,7 @@ Controller {
 				AuthModel.continueWorkflow()
 				break;
 			case "StateWriteHistory":
-				showRemoveCardFeedback()
+				showRemoveCardFeedback(true)
 				AuthModel.continueWorkflow()
 				break
 			case "FinalState":
@@ -115,7 +131,7 @@ Controller {
 						controller.nextView(IdentifyView.SubViews.ReturnToMain)
 						AuthModel.continueWorkflow()
 					} else {
-						showRemoveCardFeedback()
+						showRemoveCardFeedback(false)
 						controller.nextView(IdentifyView.SubViews.Result)
 					}
 				} else if (ApplicationModel.currentWorkflow === "selfauthentication") {

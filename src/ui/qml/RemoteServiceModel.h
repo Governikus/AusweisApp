@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the remote service component
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,8 +30,7 @@ class RemoteServiceModel
 	Q_PROPERTY(bool canEnableNfc READ isCanEnableNfc NOTIFY fireEnvironmentChanged)
 	Q_PROPERTY(QString errorMessage READ getErrorMessage NOTIFY fireEnvironmentChanged)
 	Q_PROPERTY(QByteArray psk READ getPsk NOTIFY firePskChanged)
-	Q_PROPERTY(QString currentFingerprint READ getCurrentFingerprint NOTIFY fireConnectedChanged)
-	Q_PROPERTY(bool connected READ isConnected NOTIFY fireConnectedChanged)
+	Q_PROPERTY(bool connectedToPairedDevice READ isConnectedToPairedDevice NOTIFY fireConnectedChanged)
 	Q_PROPERTY(QString connectionInfo READ getConnectionInfo NOTIFY fireConnectionInfoChanged)
 	Q_PROPERTY(QString connectedServerDeviceNames READ getConnectedServerDeviceNames NOTIFY fireConnectedServerDeviceNamesChanged)
 	Q_PROPERTY(RemoteDeviceModel * availableRemoteDevices READ getAvailableRemoteDevices CONSTANT)
@@ -84,8 +83,7 @@ class RemoteServiceModel
 
 		void resetContext(const QSharedPointer<RemoteServiceContext>& pContext = QSharedPointer<RemoteServiceContext>());
 		Q_INVOKABLE void setPairing(bool pEnabled = true);
-		QString getCurrentFingerprint() const;
-		bool isConnected() const;
+		bool isConnectedToPairedDevice() const;
 		bool isSaCPinChangeWorkflow() const;
 		bool isRunnable() const;
 		bool isCanEnableNfc() const;
@@ -103,10 +101,11 @@ class RemoteServiceModel
 		void fireIsRunningChanged();
 		void fireEnvironmentChanged();
 		void firePskChanged(const QByteArray& pPsk);
-		void fireConnectedChanged(bool pConnected);
+		void fireConnectedChanged();
 		void fireServerPskChanged();
 		void fireDetectionChanged();
-		void firePairingFailed();
+		void firePairingFailed(QString pDeviceName, QString pErrorMessage);
+		void firePairingSuccess(QString pDeviceName);
 		void fireConnectionInfoChanged();
 		void fireConnectedServerDeviceNamesChanged();
 		void fireEstablishPaceChannelMessageUpdated();

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ProviderModel
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceModel.h"
@@ -46,7 +46,7 @@ class test_RemoteServiceModel
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			Env::setCreator<RemoteServer*>(std::function<RemoteServer*()>([&] {
+			Env::setCreator<RemoteServer*>(std::function<RemoteServer* ()>([&] {
 						return new MockRemoteServer();
 					}));
 			mModel = Env::getSingleton<RemoteServiceModel>();

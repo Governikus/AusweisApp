@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -16,7 +16,9 @@
 #include "ReaderInfo.h"
 #include "ReaderManager.h"
 #include "RemoteClient.h"
+#include "SecureStorage.h"
 #include "SingletonHelper.h"
+#include "VersionNumber.h"
 
 #if !defined(Q_OS_WINRT) && !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 #include "PdfExporter.h"
@@ -120,6 +122,14 @@ QString ApplicationModel::getPackageName() const
 	return QString();
 
 #endif
+}
+
+
+QUrl ApplicationModel::getReleaseNotesUrl() const
+{
+	const auto storage = Env::getSingleton<SecureStorage>();
+	const auto& url = VersionNumber::getApplicationVersion().isDeveloperVersion() ? storage->getAppcastBetaUpdateUrl() : storage->getAppcastUpdateUrl();
+	return url.adjusted(QUrl::RemoveFilename).toString() + QStringLiteral("ReleaseNotes.html");
 }
 
 
@@ -339,6 +349,17 @@ void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction)
 
 	switch (pAction)
 	{
+		case Settings::SETTING_WIFI:
+			if (QOperatingSystemVersion::current() >= androidQ)
+			{
+				showSettings(QStringLiteral("android.settings.panel.action.WIFI"));
+			}
+			else
+			{
+				showSettings(QStringLiteral("android.settings.WIRELESS_SETTINGS"));
+			}
+			break;
+
 		case Settings::SETTING_NETWORK:
 			if (QOperatingSystemVersion::current() >= androidQ)
 			{
@@ -516,7 +537,7 @@ void ApplicationModel::openOnlineHelp(const QString& pHelpSectionName)
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	qCWarning(qml) << "NOT IMPLEMENTED:" << pHelpSectionName;
 #else
-	HelpAction::openContextHelp(pHelpSectionName);
+	HelpAction::openContextHelp(pHelpSectionName, false);
 #endif
 }
 
@@ -532,8 +553,8 @@ void ApplicationModel::enableWifi()
 {
 #ifdef Q_OS_IOS
 	showFeedback(tr("Please enable Wi-Fi in your system settings."));
-#else
-	mWifiInfo.enableWifi();
+#elif defined(Q_OS_ANDROID)
+	showSettings(Settings::SETTING_WIFI);
 #endif
 }
 

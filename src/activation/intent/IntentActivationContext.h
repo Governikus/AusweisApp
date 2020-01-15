@@ -2,7 +2,7 @@
  * \brief Implementation of ActivationContext for Intent
  * based activation on Android systems.
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

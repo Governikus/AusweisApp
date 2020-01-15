@@ -1,10 +1,9 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.10
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -14,6 +13,7 @@ Rectangle {
 	id: baseItem
 
 	property alias icon: imageItem.source
+	property alias tintIcon: imageItem.tintEnabled
 	property alias headerText: headerItem.text
 	property alias text: textItem.text
 	property alias footerText: footerItem.text
@@ -21,7 +21,8 @@ Rectangle {
 	property real contentMarginLeft: Constants.groupbox_spacing
 	property real contentMarginRight: Constants.groupbox_spacing
 
-	property bool showRightArrow: Constants.is_layout_ios
+	property bool showLinkIcon: Constants.is_layout_ios
+	property string linkIconSource: "qrc:///images/arrowRight.svg"
 	property bool showSeparator: true
 	property bool pressed: mouseArea.pressed
 	property alias mouseAreaEnabled: mouseArea.enabled
@@ -35,7 +36,7 @@ Rectangle {
 	Accessible.name: headerText + ". " + text + ". " + footerText
 	Accessible.onPressAction: if (Qt.platform.os === "ios") mouseArea.clicked(null)
 
-	color: pressed ? Constants.lightgrey : Style.color.background_pane
+	color: pressed ? Style.color.background_pane_active : Style.color.background_pane
 
 	GSeparator {
 		visible: showSeparator
@@ -55,14 +56,14 @@ Rectangle {
 
 		spacing: Constants.groupbox_spacing
 
-		Image {
+		TintableIcon {
 			id: imageItem
 
 			visible: baseItem.icon !== ""
 			sourceSize.height: parent.height - 2 * Constants.groupbox_spacing
 
-			asynchronous: true
-			fillMode: Image.PreserveAspectFit
+			tintEnabled: false
+			tintColor: Style.color.secondary_text
 		}
 
 		ColumnLayout {
@@ -94,7 +95,6 @@ Rectangle {
 				Accessible.ignored: true
 
 				elide: Text.ElideRight
-				textStyle: Style.text.normal
 				maximumLineCount: 2
 			}
 
@@ -108,24 +108,16 @@ Rectangle {
 
 				elide: Text.ElideRight
 				textStyle: Style.text.hint_secondary
-				maximumLineCount: 1
+				maximumLineCount: headerText === "" ? 2 : 1
 			}
 		}
 
-		Image {
-			id: arrowRight
-
-			visible: showRightArrow
+		TintableIcon {
+			visible: showLinkIcon
 
 			sourceSize.height: Style.dimens.small_icon_size
-			fillMode: Image.PreserveAspectFit
-			source: "qrc:///images/arrowRight.svg"
-
-			ColorOverlay {
-				anchors.fill: arrowRight
-				source: arrowRight
-				color: Style.color.secondary_text
-			}
+			source: linkIconSource
+			tintColor: Style.color.secondary_text
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDriverModel.h"
@@ -137,10 +137,10 @@ class test_ReaderDriverModel
 		void test_04_usbId_readerManager_equal()
 		{
 #if defined(Q_OS_FREEBSD)
-			QSKIP("No driver available for UsbId(0x0D46, 0x301D) on FreeBSD");
+			QSKIP("No driver available for UsbId(0x04E6, 0x5790) on FreeBSD");
 #endif
-			mUsbIds += UsbId(0x0D46, 0x301D);    // KOBIL Systems IDToken
-			mReaderInfos += ReaderInfo("KOBIL Systems IDToken (NS1252PT188E1) 00 00", ReaderManagerPlugInType::PCSC);
+			mUsbIds += UsbId(0x04E6, 0x5790);    // Identiv Cloud 3700 F
+			mReaderInfos += ReaderInfo("Identiv CLOUD 3700 F Contactless Reader 0", ReaderManagerPlugInType::PCSC);
 
 			ReaderDriverModel readerDriverModel;
 			QCOMPARE(readerDriverModel.rowCount(), 1);
@@ -152,11 +152,11 @@ class test_ReaderDriverModel
 		void test_05_usbId_readerManager_different()
 		{
 #if defined(Q_OS_FREEBSD)
-			QSKIP("No driver available for UsbId(0x0C4B, 0x0501) on FreeBSD");
+			QSKIP("No driver available for UsbId(0x04E6, 0x5790) on FreeBSD");
 #endif
 			mUsbIds += UsbId(0x0C4B, 0x0501);    // REINER SCT cyberJack RFID komfort
-			mUsbIds += UsbId(0x0D46, 0x301D);    // KOBIL Systems IDToken
-			mReaderInfos += ReaderInfo("KOBIL Systems IDToken (NS1252PT188E1) 00 00", ReaderManagerPlugInType::PCSC);
+			mUsbIds += UsbId(0x04E6, 0x5790);    // Identiv Cloud 3700 F
+			mReaderInfos += ReaderInfo("Identiv CLOUD 3700 F Contactless Reader 0", ReaderManagerPlugInType::PCSC);
 
 			QModelIndex index;
 			ReaderDriverModel readerDriverModel;

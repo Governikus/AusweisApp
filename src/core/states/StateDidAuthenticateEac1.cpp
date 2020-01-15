@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/CVCertificateChainBuilder.h"
@@ -28,7 +28,6 @@ void StateDidAuthenticateEac1::run()
 	Q_ASSERT(!getContext()->getDidAuthenticateEac1().isNull());
 	Q_ASSERT(getContext()->getPaceOutputData() != nullptr);
 	Q_ASSERT(getContext()->getCardConnection());
-	Q_ASSERT(!getContext()->encodeEffectiveChat().isEmpty());
 	auto cardConnection = getContext()->getCardConnection();
 	Q_ASSERT(cardConnection);
 
@@ -69,6 +68,6 @@ void StateDidAuthenticateEac1::onCardCommandDone(QSharedPointer<BaseCardCommand>
 void StateDidAuthenticateEac1::onEntry(QEvent* pEvent)
 {
 	//: INFO ALL_PLATFORMS Status message after the PIN was entered, Terminal Authentication.
-	getContext()->setProgress(20, tr("Service provider is being verified"));
+	getContext()->setProgress(20, tr("Provider is being verified"));
 	AbstractState::onEntry(pEvent);
 }

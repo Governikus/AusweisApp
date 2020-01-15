@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -19,11 +19,17 @@ ApplicationWindow {
 	id: appWindow
 
 	visible: true
-	width: 750 / 2 //Screen.desktopAvailableWidth
-	height: 1334 / 2
 
-	title: "Governikus AusweisApp2"
-	color: Style.color.background
+	// This is only relevant when running the mobile UI on the desktop. Use 4:3 in landscape mode for tablets and 16:9 in portrait for phones:
+	width: Constants.is_tablet ? 1024 : 432
+	height: 768
+
+	// Workaround for qt 5.12 not calculating the highdpi scaling factor correctly. On some devices (like the pixel 3)
+	// this leads to a small light stripe above the dark statusbar. By setting the background to black and filling the
+	// rest of the window with the background color, it's still there but not noticeable.
+	color: "#000000"
+	Rectangle { anchors.fill: parent; color: Style.color.background }
+
 	Component.onCompleted: {
 		flags |= Qt.MaximizeUsingFullscreenGeometryHint
 	}
@@ -72,7 +78,7 @@ ApplicationWindow {
 				if (navBar.isOpen) {
 					navBar.close()
 				}
-				else if (navigationAction.state !== "hidden") {
+				else {
 					navigationAction.clicked(undefined)
 				}
 			}
@@ -89,7 +95,7 @@ ApplicationWindow {
 
 	Action {
 		shortcut: "Ctrl+Alt+R"
-		onTriggered: plugin.developerBuild ? plugin.doRefresh() : ""
+		onTriggered: plugin.debugBuild ? plugin.doRefresh() : ""
 	}
 
 	Action {
@@ -134,8 +140,6 @@ ApplicationWindow {
 
 	SplashScreen {
 		id: splashScreen
-
-		color: appWindow.color
 	}
 
 	Navigation {

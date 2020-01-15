@@ -1,10 +1,10 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.10
+import QtGraphicalEffects 1.0
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -30,12 +30,12 @@ Item {
 
 		anchors.fill: parent
 
-		layer.enabled: true
+		layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
 		layer.effect: DropShadow {
 			radius: 4
 			samples: 8
 			source: background
-			color: Qt.darker(Constants.grey, 1.2)
+			color: Style.color.shadow
 		}
 	}
 
@@ -77,8 +77,6 @@ Item {
 
 			//: LABEL DESKTOP_QML
 			text: qsTr("Additional results in other categories:") + " " + baseItem.totalHits + SettingsModel.translationTrigger
-
-			textStyle: Style.text.normal
 		}
 
 		GButton {
@@ -97,5 +95,7 @@ Item {
 		onClicked: baseItem.clicked()
 	}
 
-	FocusFrame {}
+	FocusFrame {
+		borderColor: Style.color.focus_indicator
+	}
 }

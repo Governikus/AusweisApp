@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -10,6 +10,12 @@ PlatformTextStyles {
 		textSize: Style.dimens.title_font_size
 	}
 
+	readonly property var title_inverse: TextStyle {
+		textSize: Style.dimens.title_font_size
+		textColor: Style.color.primary_text_inverse
+		linkColor: Style.color.accent_text_inverse
+	}
+
 	readonly property var title_secondary: TextStyle {
 		textSize: Style.dimens.title_font_size
 		textColor: Style.color.secondary_text
@@ -17,7 +23,7 @@ PlatformTextStyles {
 
 	readonly property var title_accent: TextStyle {
 		textSize: Style.dimens.title_font_size
-		textColor: Style.color.accent
+		textColor: Style.color.accent_text
 	}
 
 	readonly property var title_warning: TextStyle {
@@ -32,6 +38,7 @@ PlatformTextStyles {
 	readonly property var header_inverse: TextStyle {
 		textSize: Style.dimens.header_font_size
 		textColor: Style.color.primary_text_inverse
+		linkColor: Style.color.accent_text_inverse
 	}
 
 	readonly property var header_secondary: TextStyle {
@@ -42,11 +49,12 @@ PlatformTextStyles {
 	readonly property var header_secondary_inverse: TextStyle {
 		textSize: Style.dimens.header_font_size
 		textColor: Style.color.secondary_text_inverse
+		linkColor: Style.color.accent_text_inverse
 	}
 
 	readonly property var header_accent: TextStyle {
 		textSize: Style.dimens.header_font_size
-		textColor: Style.color.accent
+		textColor: Style.color.accent_text
 	}
 
 	readonly property var header_warning: TextStyle {
@@ -58,6 +66,7 @@ PlatformTextStyles {
 
 	readonly property var normal_inverse: TextStyle {
 		textColor: Style.color.primary_text_inverse
+		linkColor: Style.color.accent_text_inverse
 	}
 
 	readonly property var normal_secondary: TextStyle {
@@ -66,10 +75,11 @@ PlatformTextStyles {
 
 	readonly property var normal_secondary_inverse: TextStyle {
 		textColor: Style.color.secondary_text_inverse
+		linkColor: Style.color.accent_text_inverse
 	}
 
 	readonly property var normal_accent: TextStyle {
-		textColor: Style.color.accent
+		textColor: Style.color.accent_text
 	}
 
 	readonly property var normal_warning: TextStyle {
@@ -83,6 +93,7 @@ PlatformTextStyles {
 	readonly property var hint_inverse: TextStyle {
 		textSize: Style.dimens.hint_font_size
 		textColor: Style.color.primary_text_inverse
+		linkColor: Style.color.accent_text_inverse
 	}
 
 	readonly property var hint_secondary: TextStyle {
@@ -93,11 +104,12 @@ PlatformTextStyles {
 	readonly property var hint_secondary_inverse: TextStyle {
 		textSize: Style.dimens.hint_font_size
 		textColor: Style.color.secondary_text_inverse
+		linkColor: Style.color.accent_text_inverse
 	}
 
 	readonly property var hint_accent: TextStyle {
 		textSize: Style.dimens.hint_font_size
-		textColor: Style.color.accent
+		textColor: Style.color.accent_text
 	}
 
 	readonly property var hint_warning: TextStyle {
@@ -110,6 +122,6 @@ PlatformTextStyles {
 	}
 
 	readonly property var button_disabled: TextStyle {
-		textColor: Style.color.secondary_text_inverse
+		textColor: Style.color.button_text_disabled
 	}
 }

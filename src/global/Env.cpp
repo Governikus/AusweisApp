@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -69,7 +69,7 @@ void Env::set(const QMetaObject& pMetaObject, void* pObject)
 }
 
 
-void Env::setShared(const QMetaObject& pMetaObject, QSharedPointer<QObject> pObject)
+void Env::setShared(const QMetaObject& pMetaObject, const QSharedPointer<QObject>& pObject)
 {
 	const Identifier className = pMetaObject.className();
 	auto& holder = getInstance();

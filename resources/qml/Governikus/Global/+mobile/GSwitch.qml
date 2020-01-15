@@ -1,102 +1,51 @@
 /*
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
-
-import "Utils.js" as Utils
+import QtQuick.Controls 2.10
 
 import Governikus.Style 1.0
 import Governikus.Type.SettingsModel 1.0
 
-MouseArea {
-	id: baseItem
+Switch {
+	id: control
 
-	property bool initialState: false
 	property color color: Style.color.accent
-	readonly property alias isOn: toggleswitch.isOn
-	signal switched()
 
-	width: 60
-	height: 48
+	Accessible.onPressAction: if (Qt.platform.os === "ios") toggle()
 
-	Accessible.role: Accessible.CheckBox
-	Accessible.name: qsTr("Switch") + SettingsModel.translationTrigger
-	Accessible.checkable: true
-	Accessible.checked: isOn
-	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
+	implicitWidth: indicator.implicitWidth
+	implicitHeight: indicator.implicitHeight
+	padding: 0
 
-	onClicked: toggleswitch.toggle()
-	Component.onCompleted: toggleswitch.isOn = baseItem.initialState
+	// Empty item since we don't want the text
+	contentItem: Item {}
 
-	Item {
-		id: toggleswitch
-		anchors.fill: parent
-		anchors.topMargin: 12
-		anchors.bottomMargin: 12
-
-		onIsOnChanged: updateState()
-		property bool isOn: false
-		readonly property int dragMax: width - height
-
-		function updateState() {
-			state = (isOn ? "on" : "off")
-		}
-
-		function toggle() {
-			isOn = !isOn
-			switched()
-		}
-
-		function captureSwitch() {
-			state = "moving"
-		}
-
-		function releaseSwitch() {
-			if (isOn !== (button.x > dragMax / 2)) toggle()
-			updateState()
-		}
+	indicator: Item {
+		implicitWidth: 48
+		implicitHeight: 24
 
 		Rectangle {
-			id: background
-			anchors.fill: parent
-			anchors.margins: parent.height / 4
+			width: parent.width
+			height: parent.height / 2
+			y: parent.height / 2 - height / 2
 			radius: height / 2
-			color: isOn ? Qt.lighter(baseItem.color, 1.4) : Qt.darker(Style.color.accent_disabled, 1.1)
+
+			color: control.checked ? Qt.lighter(control.color, 1.4) : Qt.darker(Style.color.accent_disabled, 1.1)
 		}
 
 		Rectangle {
-			id: button
+			width: parent.height
 			height: parent.height
-			width: height
-			radius: width
-			color: isOn ? baseItem.color : Style.color.accent_disabled
+			x: control.checked ? parent.width - width : 0
+			radius: height / 2
 
-			MouseArea {
-				anchors.fill: parent
-				drag.target: button
-				drag.axis: Drag.XAxis
-				drag.minimumX: 0
-				drag.maximumX: toggleswitch.dragMax
-				onClicked: toggleswitch.toggle()
-				onPressed: toggleswitch.captureSwitch()
-				onReleased: toggleswitch.releaseSwitch()
+			color: control.checked ? control.color : Style.color.accent_disabled
+
+			Behavior on x {
+				NumberAnimation {easing.type: Easing.InOutQuad; duration: 200}
 			}
-		}
-
-		states: [
-			State {
-				name: "on"
-				PropertyChanges { target: button; x: toggleswitch.dragMax }
-			},
-			State {
-				name: "off"
-				PropertyChanges { target: button; x: 0 }
-			}
-		]
-
-		transitions: Transition {
-			NumberAnimation { properties: "x"; easing.type: Easing.InOutQuad; duration: 200 }
 		}
 	}
 }

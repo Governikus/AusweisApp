@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -22,12 +22,14 @@ GTextField {
 
 	width: 400 * ApplicationModel.scaleFactor
 
-	Accessible.name: qsTr("Search") + SettingsModel.translationTrigger
+	Accessible.name: placeholderText
 
-	textAnchors.leftMargin: glassIcon.width + Constants.groupbox_spacing
-	textAnchors.rightMargin: iconItem.width + Constants.groupbox_spacing
+	leftPadding: glassIcon.width + Constants.groupbox_spacing
+	rightPadding: iconItem.width + Constants.groupbox_spacing
 
-	textStyle: Style.text.normal_inverse
+	textStyle: Style.text.normal
+	//: LABEL DESKTOP_QML
+	placeholderText: qsTr("Search") + SettingsModel.translationTrigger
 
 	Image {
 		id: glassIcon
@@ -39,15 +41,6 @@ GTextField {
 		anchors.verticalCenter: parent.verticalCenter
 
 		source: "qrc:///images/search_icon.svg"
-	}
-
-	GText {
-		visible: searchField.text === ""
-		anchors.centerIn: searchField
-
-		//: LABEL DESKTOP_QML
-		text: qsTr("Search") + SettingsModel.translationTrigger
-		textStyle: Style.text.normal_secondary_inverse
 	}
 
 	Image {
@@ -70,11 +63,13 @@ GTextField {
 		MouseArea {
 			anchors.fill: parent
 
+			cursorShape: Qt.PointingHandCursor
+
 			onClicked: searchField.clear()
 		}
 
 		FocusFrame {
-			border.color: Constants.black
+			borderColor: Style.color.focus_indicator
 		}
 	}
 }

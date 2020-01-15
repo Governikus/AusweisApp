@@ -30,7 +30,7 @@ the whole workflow.
   - **error**: This optional parameter indicates an error of a :ref:`set_access_rights` call
     if the command contained invalid data.
 
-  - **aux**: Optional auxiliary data of the service provider.
+  - **aux**: Optional auxiliary data of the provider.
 
     - **ageVerificationDate**: Optional required date of birth for AgeVerification as ISO 8601.
 
@@ -41,7 +41,7 @@ the whole workflow.
 
     - **communityId**: Optional id of community.
 
-  - **chat**: Access rights of the service provider.
+  - **chat**: Access rights of the provider.
 
     - **effective**: Indicates the enabled access rights of **optional** and **required**.
 
@@ -86,6 +86,17 @@ the whole workflow.
  }
 
 
+Values
+""""""
+.. versionadded:: 1.20.0
+   The following write access rights are possible now:
+
+    - WriteAddress
+    - WriteCommunityID
+    - WriteResidencePermitI
+    - WriteResidencePermitII
+
+
 The following access rights are possible:
 
   - Address
@@ -106,6 +117,10 @@ The following access rights are possible:
   - CommunityID
   - AddressVerification
   - AgeVerification
+  - WriteAddress
+  - WriteCommunityID
+  - WriteResidencePermitI
+  - WriteResidencePermitII
 
 
 .. seealso::
@@ -463,8 +478,8 @@ again but without an error parameter.
 If AusweisApp2 sends :ref:`enter_puk` with field "inoperative" of embedded
 :ref:`reader` message set true it is not possible to unblock the PIN.
 You will have to show a message to the user that the card is inoperative
-and the user should contact the authority responsible for issueing the
-identification document to unblock the PIN.
+and the user should contact the authority responsible for issuing the
+identification card to unblock the PIN.
 You need to send a :ref:`cancel` to abort the workflow if card is operative.
 Please see the note for more information.
 

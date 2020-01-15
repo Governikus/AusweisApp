@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfiguration.h"
@@ -98,22 +98,24 @@ void ReaderConfiguration::update()
 }
 
 
-const ReaderConfigurationInfo ReaderConfiguration::getRemoteReaderConfigurationInfo() const
-{
-	return getReaderConfigurationInfoById(UsbId());
-}
-
-
 const QVector<ReaderConfigurationInfo>& ReaderConfiguration::getReaderConfigurationInfos() const
 {
 	return mReaderConfigurationInfos;
 }
 
 
-const QVector<ReaderConfigurationInfo> ReaderConfiguration::getSupportedReaderConfigurationInfos() const
+QVector<ReaderConfigurationInfo> ReaderConfiguration::getSupportedReaderConfigurationInfos() const
 {
 	return filter<ReaderConfigurationInfo>([](const ReaderConfigurationInfo& i){
 				return !i.getUrl().isEmpty();
+			}, qAsConst(mReaderConfigurationInfos));
+}
+
+
+QVector<ReaderConfigurationInfo> ReaderConfiguration::getVirtualReaderConfigurationInfos() const
+{
+	return filter<ReaderConfigurationInfo>([](const ReaderConfigurationInfo& i){
+				return i.getVendorId() == 0x0;
 			}, qAsConst(mReaderConfigurationInfos));
 }
 

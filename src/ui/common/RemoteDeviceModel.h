@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the remote device table
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,13 +31,14 @@ class RemoteDeviceModelEntry
 		QString mId;
 		bool mPaired;
 		bool mNetworkVisible;
+		bool mConnected;
 		bool mSupported;
 		QDateTime mLastConnected;
 		QSharedPointer<RemoteDeviceListEntry> mRemoteDeviceListEntry;
 
 	public:
 		RemoteDeviceModelEntry(const QString& pDeviceName, const QString& mId, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry);
-		RemoteDeviceModelEntry(const QString& pDeviceName, const QString& mId, bool pPaired, bool pNetworkVisible, bool pSupported, const QDateTime& pLastConnected, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry);
+		RemoteDeviceModelEntry(const QString& pDeviceName, const QString& mId, bool pNetworkVisible, bool pConnected, bool pSupported, const QDateTime& pLastConnected, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry);
 		RemoteDeviceModelEntry(const QString& pDeviceName = QStringLiteral("UnknownReader"));
 
 		bool isPaired() const;
@@ -50,6 +51,7 @@ class RemoteDeviceModelEntry
 		void setNetworkVisible(bool pNetworkVisible);
 		const QDateTime& getLastConnected() const;
 		void setLastConnected(const QDateTime& pLastConnected);
+		bool operator==(const RemoteDeviceModelEntry& pOther) const;
 
 		const QSharedPointer<RemoteDeviceListEntry> getRemoteDeviceListEntry() const;
 		QString getDeviceName() const;
@@ -75,11 +77,15 @@ class RemoteDeviceModel
 		QTimer mTimer;
 
 		bool indexIsValid(const QModelIndex& pIndex) const;
-
 		QString getStatus(const RemoteDeviceModelEntry& pRemoteDeviceModelEntry) const;
+		void updatePairedReaders();
+		void updateUnpairedReaders();
+		void removeVanishedReaders();
+		QVector<RemoteDeviceModelEntry> presentReaders() const;
+		bool addOrUpdateReader(const RemoteDeviceModelEntry& pModelEntry);
 
 	private Q_SLOTS:
-		void onConstructReaderList();
+		void onUpdateReaderList();
 
 	public:
 		enum SettingsRemoteRoles

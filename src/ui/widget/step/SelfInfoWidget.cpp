@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfInfoWidget.h"
@@ -70,7 +70,7 @@ void SelfInfoWidget::fillLayout()
 	}
 
 	QPushButton* exportButton = new QPushButton(tr("Save as PDF..."));
-	exportButton->setAccessibleName(tr("save id card data as pdf"));
+	exportButton->setAccessibleName(tr("save ID card data as pdf"));
 
 	connect(exportButton, &QPushButton::clicked, this, &SelfInfoWidget::onPrintButtonClicked);
 

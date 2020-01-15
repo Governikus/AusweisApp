@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -18,6 +18,8 @@ Rectangle {
 	height: content.implicitHeight + 2 * Constants.pane_padding
 	color: Style.color.background_pane
 	radius: Style.dimens.corner_radius
+	border.width: Style.dimens.high_contrast_item_border
+	border.color: Style.color.high_contrast_item_border
 
 	Column {
 		id: content

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CompositeStatePace.h"
@@ -85,7 +85,7 @@ CompositeStatePace::CompositeStatePace(const QSharedPointer<WorkflowContext>& pC
 
 	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &AbstractState::fireContinue, sMaintainCardConnection);
 	connect(sEstablishPaceChannel, &StateEstablishPaceChannel::firePaceChannelEstablished, this, &CompositeStatePace::firePaceChannelEstablished);
-	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &StateEstablishPaceChannel::firePacePukEstablished, sClearPacePasswordsBeforeDestroy);
+	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &StateEstablishPaceChannel::firePaceChannelInoperative, sClearPacePasswordsBeforeDestroy);
 	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &StateEstablishPaceChannel::fireAbortAndUnfortunateCardPosition, sUnfortunateCardPosition);
 	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &AbstractState::fireAbort, sMaintainCardConnection);
 
@@ -95,6 +95,6 @@ CompositeStatePace::CompositeStatePace(const QSharedPointer<WorkflowContext>& pC
 	sClearPacePasswordsBeforeDestroy->addTransition(sClearPacePasswordsBeforeDestroy, &AbstractState::fireContinue, sDestroyPace);
 	sClearPacePasswordsBeforeDestroy->addTransition(sClearPacePasswordsBeforeDestroy, &AbstractState::fireAbort, sDestroyPace);
 
-	connect(sDestroyPace, &AbstractState::fireContinue, this, &CompositeStatePace::firePacePukEstablished);
+	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireContinue, sMaintainCardConnection);
 	connect(sDestroyPace, &AbstractState::fireAbort, this, &CompositeStatePace::fireAbort);
 }

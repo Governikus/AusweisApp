@@ -1,13 +1,8 @@
 module RemoteServiceView
 
-internal AvailableDevicesListDelegate AvailableDevicesListDelegate.qml
-internal KnownDevicesListDelegate KnownDevicesListDelegate.qml
+internal DevicesListDelegate DevicesListDelegate.qml
 internal RemoteServiceController RemoteServiceController.qml
-internal RemoteServicePairingPopup RemoteServicePairingPopup.qml
-internal RemoteServiceViewLocal RemoteServiceViewLocal.qml
 internal RemoteServiceViewRemote RemoteServiceViewRemote.qml
-internal RemoteServiceViewStartStop RemoteServiceViewStartStop.qml
-internal SectionSwitch SectionSwitch.qml
 
 RemoteServiceSettings 1.0 RemoteServiceSettings.qml
 RemoteServiceView 1.0 RemoteServiceView.qml

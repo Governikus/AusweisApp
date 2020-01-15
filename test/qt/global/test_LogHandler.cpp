@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref LogHandler
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogHandler.h"
@@ -229,6 +229,23 @@ class test_LogHandler
 			logger->removeOldLogfiles();
 			QCOMPARE(logger->getOtherLogfiles().size(), initialFiles.size());
 			QVERIFY(!tmp.exists());
+		}
+
+
+		void handleMessage()
+		{
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			const auto& logger = Env::getSingleton<LogHandler>();
+
+			QMessageLogContext logContext1("/src/ui/qml/ApplicationModel.cpp", 411, "bool ApplicationModel::isScreenReaderRunning()", "ui");
+			logger->handleMessage(QtMsgType::QtDebugMsg, logContext1, "testMessage");
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("ApplicationModel::isScreenReaderRunning(ui/qml/ApplicationModel.cpp:411)   : testMessage"));
+
+			QMessageLogContext logContext2("/src/ui/qml/ApplicationModel.cpp", 411, "bool ApplicationModel::isScreenReaderRunning() const", "ui");
+			logger->handleMessage(QtMsgType::QtDebugMsg, logContext2, "testMessage2");
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("ApplicationModel::isScreenReaderRunning(ui/qml/ApplicationModel.cpp:411)   : testMessage2"));
 		}
 
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StatePreparePace.h"
@@ -33,7 +33,7 @@ void StatePreparePace::run()
 		qCDebug(statemachine) << "CAN allowed required";
 		if (!requestPaceCanIfStillRequired())
 		{
-			Q_ASSERT(false && "This state must not be invoked any more if PACE CAN was successful in CAN allowed mode.");
+			Q_ASSERT(false && "This state must not be invoked any more if PACE_CAN was successful in CAN allowed mode.");
 			Q_EMIT fireContinue();
 		}
 		return;
@@ -74,7 +74,7 @@ void StatePreparePace::run()
 			getContext()->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
 
 			const bool pacePinDone = cardConnection->getPacePinSuccessful();
-			qCDebug(statemachine) << "PACE PIN done:" << pacePinDone;
+			qCDebug(statemachine) << "PACE_PIN done:" << pacePinDone;
 			if (!pacePinDone)
 			{
 				if (getContext()->getPin().isEmpty())
@@ -102,7 +102,7 @@ bool StatePreparePace::requestPaceCanIfStillRequired()
 
 	const QSharedPointer<CardConnection>& cardConnection = getContext()->getCardConnection();
 	const bool paceCanDone = cardConnection->getPaceCanSuccessful();
-	qCDebug(statemachine) << "PACE CAN done:" << paceCanDone;
+	qCDebug(statemachine) << "PACE_CAN done:" << paceCanDone;
 	if (!paceCanDone)
 	{
 		if (getContext()->getCan().isEmpty())

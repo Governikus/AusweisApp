@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -185,11 +185,10 @@ KeyAgreementStatus KeyAgreement::performMutualAuthenticate()
 
 KeyAgreement::CardResult KeyAgreement::transmitGAEncryptedNonce()
 {
-	GABuilder builder(CommandApdu::CLA_COMMAND_CHAINING);
-	ResponseApdu responseApdu;
+	GABuilder commandBuilder(CommandApdu::CLA_COMMAND_CHAINING);
 
-	const CardReturnCode returnCode = mCardConnectionWorker->transmit(builder.build(), responseApdu);
-	GAEncryptedNonceResponse response(responseApdu);
+	auto [returnCode, responseApdu] = mCardConnectionWorker->transmit(commandBuilder.build());
+	const GAEncryptedNonceResponse response(responseApdu);
 	return createTransmitResult(returnCode, response.getReturnCode(), response.getEncryptedNonce(), "Error on GA (Encrypted Nonce):");
 }
 
@@ -198,9 +197,8 @@ KeyAgreement::CardResult KeyAgreement::transmitGAEphemeralPublicKey(const QByteA
 {
 	GABuilder commandBuilder(CommandApdu::CLA_COMMAND_CHAINING);
 	commandBuilder.setPaceEphemeralPublicKey(pEphemeralPublicKey);
-	ResponseApdu responseApdu;
 
-	const CardReturnCode returnCode = mCardConnectionWorker->transmit(commandBuilder.build(), responseApdu);
+	auto [returnCode, responseApdu] = mCardConnectionWorker->transmit(commandBuilder.build());
 	const GAPerformKeyAgreementResponse response(responseApdu);
 	return createTransmitResult(returnCode, response.getReturnCode(), response.getEphemeralPublicKey(), "Error on GA(Perform Key Agreement):");
 }
@@ -211,9 +209,8 @@ KeyAgreement::CardResult KeyAgreement::transmitGAMappingData(const QByteArray& p
 	// sende den PublicKey (D.3.4.)
 	GABuilder commandBuilder(CommandApdu::CLA_COMMAND_CHAINING);
 	commandBuilder.setPaceMappingData(pMappingData);
-	ResponseApdu responseApdu;
 
-	const CardReturnCode returnCode = mCardConnectionWorker->transmit(commandBuilder.build(), responseApdu);
+	auto [returnCode, responseApdu] = mCardConnectionWorker->transmit(commandBuilder.build());
 	const GAMapNonceResponse response(responseApdu);
 	return createTransmitResult(returnCode, response.getReturnCode(), response.getMappingData(), "Error on GA(Mapping Data):");
 }
@@ -223,14 +220,13 @@ GAMutualAuthenticationResponse KeyAgreement::transmitGAMutualAuthentication(cons
 {
 	GABuilder commandBuilder(CommandApdu::CLA);
 	commandBuilder.setPaceAuthenticationToken(pMutualAuthenticationData);
-	ResponseApdu response;
 
-	const CardReturnCode returnCode = mCardConnectionWorker->transmit(commandBuilder.build(), response);
-	if (returnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
+	auto [returnCode, responseApdu] = mCardConnectionWorker->transmit(commandBuilder.build());
+	if (returnCode != CardReturnCode::OK || responseApdu.getReturnCode() != StatusCode::SUCCESS)
 	{
-		qCCritical(card) << "Error on GA(Mutual Authentication):" << getResponseErrorString(returnCode, response.getReturnCode());
+		qCCritical(card) << "Error on GA(Mutual Authentication):" << getResponseErrorString(returnCode, responseApdu.getReturnCode());
 	}
-	return GAMutualAuthenticationResponse(response);
+	return GAMutualAuthenticationResponse(responseApdu);
 }
 
 

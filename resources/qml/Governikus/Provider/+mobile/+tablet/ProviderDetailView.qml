@@ -1,10 +1,12 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
+import QtGraphicalEffects 1.0
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.Provider 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
@@ -58,13 +60,21 @@ SectionPage {
 					anchors.verticalCenter: parent.verticalCenter
 				}
 
-				Image {
+				Item {
 					height: parent.height
-					width: height / 2
+					width: image.width / 4
 					anchors.right: image.right
 					anchors.top: parent.top
-					fillMode: Image.Stretch
-					source: Category.gradientImageSource(provider.category)
+
+					LinearGradient {
+						anchors.fill: parent
+						start: Qt.point(0, 0)
+						end: Qt.point(parent.width, 0)
+						gradient: Gradient {
+							GradientStop { position: 0.0; color: Style.color.transparent }
+							GradientStop { position: 0.95; color: Category.displayColor(provider.category) }
+						}
+					}
 				}
 
 				Rectangle {

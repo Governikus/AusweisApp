@@ -75,7 +75,7 @@ ONSCREENKEYBOARD
 
 HISTORY
   Each authentication is saved in the history. No personal data is saved, only the
-  time of authentication, the service provider and the selected fields (without
+  time of authentication, the provider and the selected fields (without
   content). Indicating HISTORY as false or true, the history function is
   deactivated or activated. Users are able to adjust the settings.
 
@@ -86,6 +86,11 @@ tables. The MST file can be transferred with the following command:
 .. code-block:: winbatch
 
   msiexec /i AusweisApp2-X.YY.Z.msi /quiet TRANSFORMS=file.mst
+
+In order to optimize the start of the AusweisApp2 on systems with no graphics
+acceleration, the system variable "QT_QUICK_BACKEND" can be set to the value
+"software". In this case, the AusweisApp2 does not attempt to use graphics
+acceleration and starts directly with the alternative software renderer.
 
 macOS
 -----
@@ -160,7 +165,7 @@ individual connections made by the AusweisApp2.
 The AusweisApp2 starts a HTTP-Server on port 24727.
 The server binds only to the localhost network interface.
 The availability of the local server is necessary for the online eID function,
-because service providers will redirect the user with a HTTP redirect to the
+because providers will redirect the user with a HTTP redirect to the
 local server to continue the authentication process in the AusweisApp2 (eID1).
 The server is also used to offer other local applications to use the
 AusweisApp2 via a websocket interface (SDK function, eID-SDK).
@@ -208,12 +213,12 @@ TLS termination proxy.
    :widths: 8, 8, 8, 8, 8, 35, 25
 
    "eID1",	TCP, 24727,  "incoming", "no",	"Online eID function, eID activation [#TR-03124]_",											    "Only accessible from localhost [#TR-03124]_"
-   "eID2",	TCP, 443,    "outgoing", "no",	"Online eID function, connection to the service provider, TLS-1-2 channel [#TR-03124]_",						    "TLS certificates interlaced with authorization certificate [#TR-03124]_"
+   "eID2",	TCP, 443,    "outgoing", "no",	"Online eID function, connection to the provider, TLS-1-2 channel [#TR-03124]_",						    "TLS certificates interlaced with authorization certificate [#TR-03124]_"
    "eID3",	TCP, 443,    "outgoing", "no",	"Online eID function, connection to eID-Server, TLS-2 channel [#TR-03124]_",								    "TLS certificates interlaced with authorization certificate [#TR-03124]_"
    "eID-SDK",	TCP, 24727,  "incoming", "no",	"Usage of the SDK functionality",													    "Only accessible from localhost [#TR-03124]_"
    "SaC1",	UDP, 24727,  "incoming", "yes",	"Smartphone as Card Reader, detection [#TR-03112]_",											    "Broadcasts"
    "SaC2",	TCP, ,       "outgoing", "yes",	"Smartphone as Card Reader, usage [#TR-03112]_",											    "Connection in local subnet"
-   "Update",	TCP, 443,    "outgoing", "yes",	"Updates [#govurl]_ of service provider and card reader information as well as informations on new AusweisApp2 versions [#updatecheck]_ .", "TLS certificates will be validated against CA certificates included in the AusweisApp2. CA certificates provided by the OS are ignored."
+   "Update",	TCP, 443,    "outgoing", "yes",	"Updates [#govurl]_ of provider and card reader information as well as informations on new AusweisApp2 versions [#updatecheck]_ .", "TLS certificates will be validated against CA certificates included in the AusweisApp2. CA certificates provided by the OS are ignored."
 
 .. [#TR-03124] See TR-03124 specification from the BSI
 .. [#TR-03112] See TR-03112-6 specifiaction from the BSI

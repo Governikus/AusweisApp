@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WifiInfo.h"
@@ -16,7 +16,8 @@ bool WifiInfo::isPrivateIp(const QHostAddress& pAddress)
 		   (
 		pAddress.isInSubnet(QHostAddress::parseSubnet(QStringLiteral("10.0.0.0/8"))) ||
 		pAddress.isInSubnet(QHostAddress::parseSubnet(QStringLiteral("172.16.0.0/12"))) ||
-		pAddress.isInSubnet(QHostAddress::parseSubnet(QStringLiteral("192.168.0.0/16")))
+		pAddress.isInSubnet(QHostAddress::parseSubnet(QStringLiteral("192.168.0.0/16"))) ||
+		pAddress.isInSubnet(QHostAddress::parseSubnet(QStringLiteral("fd00::/8")))
 		   );
 }
 

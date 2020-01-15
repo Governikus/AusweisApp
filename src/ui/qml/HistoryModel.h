@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the history entries.
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,6 +28,7 @@ class HistoryModel
 	Q_PROPERTY(ProviderNameFilterModel * nameFilter READ getNameFilterModel CONSTANT)
 	Q_PROPERTY(HistoryModelSearchFilter * searchFilter READ getHistoryModelSearchFilter CONSTANT)
 	Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY fireEnabledChanged)
+	Q_PROPERTY(bool empty READ isEmpty NOTIFY fireEmptyChanged)
 
 	HistoryProxyModel mFilterModel;
 	ProviderNameFilterModel mNameFilterModel;
@@ -42,6 +43,7 @@ class HistoryModel
 
 		bool isEnabled() const;
 		void setEnabled(bool pEnabled);
+		bool isEmpty() const;
 		void updateConnections();
 
 	private Q_SLOTS:
@@ -50,6 +52,7 @@ class HistoryModel
 
 	Q_SIGNALS:
 		void fireEnabledChanged(bool pValue);
+		void fireEmptyChanged(bool pValue);
 
 	public:
 		explicit HistoryModel(QObject* pParent = nullptr);
@@ -89,6 +92,10 @@ class HistoryModel
 		HistoryModelSearchFilter* getHistoryModelSearchFilter();
 
 		Q_INVOKABLE void exportHistory(const QUrl& pFilename) const;
+
+#ifndef QT_NO_DEBUG
+		Q_INVOKABLE void createDummyEntry();
+#endif
 };
 
 } // namespace governikus

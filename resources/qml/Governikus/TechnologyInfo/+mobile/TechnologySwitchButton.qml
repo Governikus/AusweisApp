@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -25,8 +25,8 @@ MouseArea {
 	GSeparator {
 		width: parent.width * 1.5
 		anchors.horizontalCenter: parent.horizontalCenter
-		color: Style.color.border_dark
 	}
+
 	Image {
 		id: img
 		anchors.top: parent.top
@@ -36,6 +36,7 @@ MouseArea {
 		fillMode: Image.PreserveAspectFit
 		smooth: true
 	}
+
 	GText {
 		id: infoText
 
@@ -45,25 +46,16 @@ MouseArea {
 
 		Accessible.ignored: true
 
-		textStyle: Style.text.normal_accent
+		textStyle: (!parent.enabled || buttonActive) ? Style.text.normal_secondary : Style.text.normal_accent
 	}
+
 	Colorize {
 		id: grayLevel
 		source: img
 		anchors.fill: img
 		saturation: 0
 		hue: 0
-		lightness: 0.3
-		cached: true
-		visible: !parent.enabled || buttonActive
-	}
-	Colorize {
-		id: grayLevel2
-		source: infoText
-		anchors.fill: infoText
-		saturation: 0
-		hue: 0
-		lightness: 0.3
+		lightness: 0.0
 		cached: true
 		visible: !parent.enabled || buttonActive
 	}

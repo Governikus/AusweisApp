@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -19,6 +19,7 @@ Item {
 		Update,
 		Can,
 		Pin,
+		Puk,
 		Processing
 	}
 
@@ -89,7 +90,7 @@ Item {
 			// happens with both the iOS toasts and our own toast-like replacement. To work around this, we'll only show the notification during a
 			// self-authentication on iOS with VoiceOver running:
 			if (Qt.platform.os !== "ios" || !ApplicationModel.isScreenReaderRunning() || ApplicationModel.currentWorkflow === "selfauthentication") {
-				//: INFO ANDROID IOS The authentication process is completed, the id card may (and should) be removed from the card reader.
+				//: INFO ANDROID IOS The authentication process is completed, the ID card may (and should) be removed from the card reader.
 				ApplicationModel.showFeedback(qsTr("You may now remove your ID card from the device."))
 			}
 		}
@@ -98,6 +99,7 @@ Item {
 	function processStateChange() {
 		switch (AuthModel.currentState) {
 			case "Initial":
+				firePopAll()
 				break;
 			case "StateGetTcToken":
 				enterPinView.state = "INITIAL"
@@ -136,12 +138,12 @@ Item {
 					setIdentifyWorkflowStateAndRequestInput(IdentifyController.WorkflowStates.Can, "CAN")
 				}
 				else if (NumberModel.passwordType === NumberModel.PASSWORD_PUK) {
-					AuthModel.cancelWorkflowOnPinBlocked()
+					setIdentifyWorkflowStateAndRequestInput(IdentifyController.WorkflowStates.Puk, "PUK")
 				}
 				break
 			case "StateUnfortunateCardPosition":
 				//: INFO IOS The NFC signal is weak or unstable. The scan is stopped with this information in the iOS dialog.
-				ApplicationModel.stopNfcScanWithError(qsTr("Weak NFC signal") + SettingsModel.translationTrigger)
+				ApplicationModel.stopNfcScanWithError(qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable") + SettingsModel.translationTrigger)
 				firePush(cardPositionView)
 				break
 			case "StateDidAuthenticateEac1":
@@ -149,7 +151,12 @@ Item {
 				setIdentifyWorkflowStateAndContinue(IdentifyController.WorkflowStates.Processing)
 				break
 			case "StateSendDIDAuthenticateResponseEAC1":
-				fireReplace(identifyProgressView)
+				if (AuthModel.isCancellationByUser()) {
+					fireReplace(identifyAbortedProgressView)
+				}
+				else {
+					fireReplace(identifyProgressView)
+				}
 				AuthModel.continueWorkflow()
 				break
 			case "StateCleanUpReaderManager":

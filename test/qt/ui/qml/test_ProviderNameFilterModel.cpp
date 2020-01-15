@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ProviderNameFilterModel
  *
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 #include "ProviderNameFilterModel.h"
 
@@ -48,11 +48,11 @@ class test_ProviderNameFilterModel
 			HistoryModel model;
 			mModel->setSourceModel(&model);
 
-			HistoryInfo historyInfo1("SubjectName", QString("https://makler.allianz.de"), "Usage", QDateTime::currentDateTime(), "TermOfUsage", {"RequestedData"});
+			HistoryInfo historyInfo1("SubjectName", QString("https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/"), "Usage", QDateTime::currentDateTime(), "TermOfUsage", {"RequestedData"});
 			HistoryInfo historyInfo2("SubjectName", QString("https://test.de"), "Usage", QDateTime::currentDateTime(), "TermOfUsage", {"RequestedData"});
 			Env::getSingleton<AppSettings>()->getHistorySettings().addHistoryInfo(historyInfo1);
 			Env::getSingleton<AppSettings>()->getHistorySettings().addHistoryInfo(historyInfo2);
-			const QString providerAddress("https://makler.allianz.de");
+			const QString providerAddress("https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/");
 			mModel->setProviderAddress(providerAddress);
 
 			QVERIFY(!mModel->filterAcceptsRow(0, QModelIndex()));
@@ -67,7 +67,7 @@ class test_ProviderNameFilterModel
 			mModel->setProviderAddress(invalidProviderAddress);
 			QCOMPARE(mModel->mProvider.getAddress(), QString());
 
-			const QString validProviderAddress("https://makler.allianz.de");
+			const QString validProviderAddress("https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/");
 			mModel->setProviderAddress(validProviderAddress);
 			QCOMPARE(mModel->mProvider.getAddress(), validProviderAddress);
 		}

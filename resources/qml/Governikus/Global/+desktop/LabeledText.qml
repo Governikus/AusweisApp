@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -14,10 +14,12 @@ Item {
 	signal linkActivated(string link)
 
 	property alias label: label.text
+	property alias labelStyle: label.textStyle
 	property alias text: body.text
 	property alias textFormat: body.textFormat
 	property alias textUppercase: body.font.capitalization
-	property alias underlineLabel: label.font.underline
+	property alias maximumBodyLineCount: body.maximumLineCount
+	property alias bodyElide: body.elide
 	readonly property double focusFrameMargins: focusFrame.anchors.margins
 
 	implicitHeight: column.implicitHeight
@@ -28,8 +30,7 @@ Item {
 
 	FocusFrame {
 		id: focusFrame
-		dynamic: false
-		border.color: Constants.black
+		border.color: Style.color.focus_indicator
 	}
 
 	Column {
@@ -54,8 +55,7 @@ Item {
 
 			width: parent.width
 
-			textStyle: Style.text.normal_inverse
-			onLinkActivated: baseItem.linkActivated(link)
+			textStyle: Style.text.normal
 		}
 	}
 }

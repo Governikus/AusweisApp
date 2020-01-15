@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -21,8 +21,8 @@ Rectangle {
 	Image {
 		id: image
 		source: parent.headerIcon !== "" ?
-				parent.headerIcon :
-				Category.buttonImageSource(parent.providerCategory)
+				parent.headerIcon : (parent.providerCategory !== "" ?
+				Category.buttonImageSource(parent.providerCategory) : Category.buttonImageSource("all"))
 		asynchronous: true
 		height: parent.height
 		width: height

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -25,7 +25,6 @@ Rectangle {
 	readonly property color shadowColor: Category.displayColor(selectedCategory)
 	readonly property bool customProviderImage: !!selectedProvider && !!selectedProvider.image
 	readonly property string backgroundImage: customProviderImage ? selectedProvider.image : Category.backgroundImageSource(selectedCategory)
-	readonly property string categoryIcon: selectedProvider || selectedCategory !== "all" ? "" : Category.imageSource(selectedCategory)
 	readonly property bool withButtons: selectedCategory === "" && !selectedProvider
 	readonly property real shadowOpacity: Math.min(1, headerOffsetY / (backgroundImage.height - Style.dimens.titlebar_height))
 
@@ -56,35 +55,32 @@ Rectangle {
 		anchors.topMargin: -titleBarTopBounce // When flicking over the top, scale the image (similar to native iOS apps)
 		fillMode: Image.PreserveAspectCrop
 
-		Image {
-			id: categoryIcon
-			source: baseItem.categoryIcon
-			asynchronous: true
-			height: parent.height * 0.5
-			width: height
-			fillMode: Image.PreserveAspectFit
-			anchors.horizontalCenter: backgroundImage.horizontalCenter
-			anchors.bottom: backgroundImage.bottom
-			anchors.bottomMargin: Constants.component_spacing
+		Rectangle {
+			id: iconContainer
 
-			visible: baseItem.categoryIcon !== ""
-
-			opacity: baseItem.headerOffsetY <= maxContentY ? 1 : 0
-			Behavior on opacity {
-				NumberAnimation {}
-			}
-		}
-
-		Image {
-			source: selectedProvider ? selectedProvider.icon : ""
-			asynchronous: true
+			visible: !!selectedProvider
 			height: 70
 			width: height
-			fillMode: Image.PreserveAspectFit
+
 			anchors.margins: Constants.component_spacing
 			anchors.left: parent.left
 			anchors.bottom: parent.bottom
-			visible: !!selectedProvider
+
+			radius: Style.dimens.corner_radius
+			color: Constants.white
+			border.color: Style.color.border
+			border.width: Style.dimens.separator_size
+
+			Image {
+				id: icon
+
+				anchors.fill: parent
+				anchors.margins: iconContainer.radius / 2
+
+				source: selectedProvider ? selectedProvider.icon : ""
+				asynchronous: true
+				fillMode: Image.PreserveAspectFit
+			}
 		}
 	}
 
@@ -112,6 +108,9 @@ Rectangle {
 					asynchronous: true
 					anchors.fill: parent
 					fillMode: Image.PreserveAspectFit
+
+					Accessible.name: Category.displayString(modelData) + SettingsModel.translationTrigger
+					Accessible.role: Accessible.Button
 				}
 
 				MouseArea {
@@ -140,6 +139,8 @@ Rectangle {
 
 		visible: !!selectedProvider
 
+		color: Style.color.background_pane
+
 		Column {
 			id: column
 			anchors.margins: Constants.pane_padding
@@ -152,7 +153,6 @@ Rectangle {
 				id: providerText
 				width: parent.width
 				text: selectedProvider ? selectedProvider.shortDescription : ""
-				textStyle: Style.text.normal
 				visible: text.length > 0
 			}
 
@@ -161,7 +161,7 @@ Rectangle {
 				anchors.right: parent.right
 				buttonColor: shadowColor
 				//: LABEL ANDROID IOS
-				text: qsTr("To service provider") + SettingsModel.translationTrigger
+				text: qsTr("To provider") + SettingsModel.translationTrigger
 				onClicked: {
 					Qt.openUrlExternally(selectedProvider ? selectedProvider.address : "")
 				}

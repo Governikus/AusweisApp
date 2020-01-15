@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref StatePreparePace
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreparePace.h"
@@ -106,7 +106,7 @@ class test_StatePreparePace
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 
 			QTest::ignoreMessage(QtDebugMsg, "CAN required");
-			QTest::ignoreMessage(QtDebugMsg, "PACE CAN done: false");
+			QTest::ignoreMessage(QtDebugMsg, "PACE_CAN done: false");
 			mContext->setStateApproved();
 
 			mContext->setStateApproved(false);
@@ -114,7 +114,7 @@ class test_StatePreparePace
 			const QString can("000000");
 			mContext->setCan(can);
 			QTest::ignoreMessage(QtDebugMsg, "CAN required");
-			QTest::ignoreMessage(QtDebugMsg, "PACE CAN done: false");
+			QTest::ignoreMessage(QtDebugMsg, "PACE_CAN done: false");
 			mContext->setStateApproved();
 			QCOMPARE(spyEstablishPaceChannel.count(), 1);
 		}
@@ -133,7 +133,7 @@ class test_StatePreparePace
 			QSignalSpy spyEstablishPaceChannel(mState.data(), &StatePreparePace::fireEstablishPaceChannel);
 
 			QTest::ignoreMessage(QtDebugMsg, "PIN allowed");
-			QTest::ignoreMessage(QtDebugMsg, "PACE PIN done: false");
+			QTest::ignoreMessage(QtDebugMsg, "PACE_PIN done: false");
 			mContext->setStateApproved();
 			QCOMPARE(spyEnterPacePassword.count(), 1);
 			QCOMPARE(spyEstablishPaceChannel.count(), 0);

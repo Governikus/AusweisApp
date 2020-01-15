@@ -1,7 +1,7 @@
 /*!
  * \brief Abstract layer to UI implementations.
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,7 +24,8 @@ defineEnumType(UiModule,
 		DEFAULT,
 		IDENTIFY,
 		SETTINGS,
-		PINMANAGEMENT
+		PINMANAGEMENT,
+		UPDATEINFORMATION
 		)
 
 class UIPlugIn

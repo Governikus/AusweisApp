@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import Governikus.Global 1.0
@@ -16,7 +16,14 @@ SectionPage {
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
 		text: qsTr("Identify") + SettingsModel.translationTrigger
+		helpTopic: "selfauthentication"
 	}
+
+	//: LABEL DESKTOP_QML
+	Accessible.name: qsTr("Self-Authentication.") + SettingsModel.translationTrigger
+	Accessible.description: qsTr("This is the self-authentication view of the AusweisApp2.") + SettingsModel.translationTrigger
+	Keys.onReturnPressed: startWorkflowButton.onClicked()
+	Keys.onEnterPressed: startWorkflowButton.onClicked()
 
 	Column {
 		width: Style.dimens.max_text_width
@@ -45,10 +52,14 @@ SectionPage {
 				anchors.left: useNpa.right
 				anchors.right: parent.right
 
-				textStyle: Style.text.header
+				activeFocusOnTab: true
+
+				textStyle: Style.text.header_inverse
 
 				//: LABEL DESKTOP_QML
 				text: qsTr("You can use your ID card anywhere you see this logo.") + SettingsModel.translationTrigger
+
+				FocusFrame {}
 			}
 		}
 		Pane {
@@ -64,24 +75,35 @@ SectionPage {
 
 				width: parent.width
 
-				textStyle: Style.text.normal_inverse
+				activeFocusOnTab: true
+
+				textStyle: Style.text.normal
 				//: LABEL DESKTOP_QML
 				text: qsTr("Use the button 'See my personal data' to display the data stored on your ID card."
 							+ " An Internet connection is required to display the data.")
 							+ "<br><br><b>"
+							//: LABEL DESKTOP_QML
 							+ qsTr("Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.")
-								.arg('<a href="' + qsTr("https://www.ausweisapp.bund.de/en/privacy/") + '">' + qsTr("data privacy statement") + '</a>')
+								.arg('<a href="' +
+								//: LABEL DESKTOP_QML
+								qsTr("https://www.ausweisapp.bund.de/en/privacy/") + '">' +
+								//: LABEL DESKTOP_QML
+								qsTr("data privacy statement") + '</a>')
 							+ "</b>"
 							+ SettingsModel.translationTrigger
 
-				onLinkActivated: Qt.openUrlExternally(link)
+				FocusFrame {
+					borderColor: Style.color.focus_indicator
+				}
 			}
 
 			GButton {
+				id: startWorkflowButton
+
 				anchors.right: parent.right
 
 				icon.source: "qrc:///images/npa.svg"
-				buttonColor: SettingsModel.useSelfauthenticationTestUri ? Constants.red : Style.color.accent
+				buttonColor: SettingsModel.useSelfauthenticationTestUri ? Constants.red : Style.color.button
 				//: LABEL DESKTOP_QML
 				text: qsTr("See my personal data") + SettingsModel.translationTrigger
 				onClicked: SelfAuthModel.startWorkflow()

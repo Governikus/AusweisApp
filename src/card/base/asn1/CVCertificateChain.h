@@ -5,7 +5,7 @@
  * (The holder is equivalent to the Subject-DN, the authority reference
  * is equivalent to the Issuer-DN.)
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

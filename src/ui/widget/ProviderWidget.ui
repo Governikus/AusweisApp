@@ -31,10 +31,10 @@
         <enum>Qt::TabFocus</enum>
        </property>
        <property name="accessibleDescription">
-        <string>This section lists offers of service providers that support online identification. Click on an entry to go to the provider's web site. This section will be continuously updated with further applications for the online identification function.</string>
+        <string>This section lists offers of providers that support online identification. Click on an entry to go to the provider's web site. This section will be continuously updated with further applications for the online identification function.</string>
        </property>
        <property name="text">
-        <string>This section lists offers of service providers that support online identification. Click on an entry to go to the provider's web site. This section will be continuously updated with further applications for the online identification function.</string>
+        <string>This section lists offers of providers that support online identification. Click on an entry to go to the provider's web site. This section will be continuously updated with further applications for the online identification function.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>

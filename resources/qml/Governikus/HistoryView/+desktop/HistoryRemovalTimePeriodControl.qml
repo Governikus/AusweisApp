@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
 */
 
 import QtQuick 2.10
@@ -19,7 +19,7 @@ RowLayout {
 	property alias description: description
 	property alias removalPeriod: removalPeriod
 
-	Accessible.role: Accessible.Heading
+	Accessible.role: Accessible.Grouping
 	Accessible.name: description.text
 
 	spacing: Constants.groupbox_spacing
@@ -31,10 +31,9 @@ RowLayout {
 
 		//: LABEL DESKTOP_QML
 		text: qsTr("Time period") + SettingsModel.translationTrigger
+		textStyle: Style.text.normal_inverse
 
-		FocusFrame {
-			dynamic: false
-		}
+		FocusFrame {}
 	}
 
 	GComboBox {

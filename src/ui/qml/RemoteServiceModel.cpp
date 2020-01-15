@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceModel.h"
@@ -178,28 +178,32 @@ bool RemoteServiceModel::rememberServer(const QString& pDeviceId)
 
 void RemoteServiceModel::onEstablishConnectionDone(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const GlobalStatus& pStatus)
 {
-	Q_UNUSED(pEntry)
 	auto* const remoteClient = Env::getSingleton<RemoteClient>();
 	disconnect(remoteClient, &RemoteClient::fireEstablishConnectionDone, this, &RemoteServiceModel::onEstablishConnectionDone);
 	qDebug() << "Pairing finished:" << pStatus;
+	const auto deviceName = pEntry->getRemoteDeviceDescriptor().getIfdName();
 	if (pStatus.isError())
 	{
-		Q_EMIT firePairingFailed();
+		Q_EMIT firePairingFailed(deviceName, pStatus.toErrorDescription());
+	}
+	else
+	{
+		Q_EMIT firePairingSuccess(deviceName);
 	}
 }
 
 
 void RemoteServiceModel::onConnectionInfoChanged(bool pConnected)
 {
-	if (pConnected)
+	if (mContext && pConnected)
 	{
 		const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-		const QString peerName = settings.getRemoteInfo(getCurrentFingerprint()).getName();
+		const QString peerName = settings.getRemoteInfo(mContext->getRemoteServer()->getCurrentCertificate()).getName();
 		//: INFO ANDROID IOS The smartphone is connected as card reader (SaK) and currently processing an authentication request. The user is asked to pay attention the its screen.
 		mConnectionInfo = tr("Please pay attention to the display on your other device \"%1\".").arg(peerName);
 		Q_EMIT fireConnectionInfoChanged();
 	}
-	Q_EMIT fireConnectedChanged(pConnected);
+	Q_EMIT fireConnectedChanged();
 }
 
 
@@ -229,7 +233,7 @@ void RemoteServiceModel::resetContext(const QSharedPointer<RemoteServiceContext>
 		connect(mContext.data(), &RemoteServiceContext::fireEstablishPaceChannelMessageUpdated, this, &RemoteServiceModel::onEstablishPaceChannelMessageUpdated);
 	}
 
-	Q_EMIT fireConnectedChanged(isConnected());
+	Q_EMIT fireConnectedChanged();
 }
 
 
@@ -242,22 +246,11 @@ void RemoteServiceModel::setPairing(bool pEnabled)
 }
 
 
-QString RemoteServiceModel::getCurrentFingerprint() const
-{
-	if (mContext && mContext->getRemoteServer()->isConnected())
-	{
-		return RemoteServiceSettings::generateFingerprint(mContext->getRemoteServer()->getCurrentCertificate());
-	}
-
-	return QString();
-}
-
-
-bool RemoteServiceModel::isConnected() const
+bool RemoteServiceModel::isConnectedToPairedDevice() const
 {
 	if (mContext)
 	{
-		return mContext->getRemoteServer()->isConnected();
+		return mContext->getRemoteServer()->isConnected() && !mContext->getRemoteServer()->isPairingConnection();
 	}
 
 	return false;

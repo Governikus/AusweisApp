@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref NetworkManager
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NetworkManager.h"
@@ -21,7 +21,7 @@
 
 using namespace governikus;
 
-Q_DECLARE_METATYPE(QSharedPointer<GlobalStatus> )
+Q_DECLARE_METATYPE(QSharedPointer<GlobalStatus>)
 
 class test_NetworkManager
 	: public QObject

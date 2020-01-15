@@ -1,8 +1,9 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
+import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
@@ -25,7 +26,8 @@ SectionPage {
 	signal emailButtonPressed()
 	property alias emailButtonVisible: emailButton.visible
 	property alias text: resultText.text
-	property int resultType: Type.IsSuccess
+	property int resultType: ResultView.Type.IsSuccess
+	property alias buttonType: button.buttonType
 
 	Accessible.name: qsTr("Result view") + SettingsModel.translationTrigger
 	Accessible.description: qsTr("This is the result of an authentication.") + SettingsModel.translationTrigger
@@ -33,75 +35,66 @@ SectionPage {
 	Keys.onEnterPressed: button.onClicked()
 	Keys.onEscapePressed: button.onClicked()
 
-	StatusIcon {
-		height: Style.dimens.status_icon_large
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.verticalCenter: parent.top
-		anchors.verticalCenterOffset: baseItem.height / 4
+	ColumnLayout {
+		anchors.fill: parent
 
-		source: {
-			switch (resultType) {
-				case ResultView.Type.IsSuccess:
-					return "qrc:///images/status_ok.svg"
-				case ResultView.Type.IsInfo:
-					return "qrc:///images/status_info.svg"
-				case ResultView.Type.IsError:
-					return "qrc:///images/status_error.svg"
+		StatusIcon {
+			Layout.alignment: Qt.AlignHCenter
+			Layout.preferredWidth: Style.dimens.status_icon_large
+			Layout.preferredHeight: Style.dimens.status_icon_large
+
+			source: {
+				switch (resultType) {
+					case ResultView.Type.IsSuccess:
+						return "qrc:///images/status_ok.svg"
+					case ResultView.Type.IsInfo:
+						return "qrc:///images/status_info.svg"
+					case ResultView.Type.IsError:
+						return "qrc:///images/status_error.svg"
+				}
 			}
 		}
-	}
 
-	GText {
-		id: resultText
+		GText {
+			id: resultText
 
-		visible: text !== ""
-		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: parent.verticalCenter
+			visible: text !== ""
+			Layout.alignment: Qt.AlignHCenter
+			Layout.maximumWidth: Style.dimens.max_text_width
 
-		activeFocusOnTab: true
-		Accessible.role: Accessible.Heading
-		Accessible.name: resultText.text
+			activeFocusOnTab: true
+			Accessible.name: resultText.text
 
-		horizontalAlignment: Text.AlignHCenter
-		verticalAlignment: Text.AlignVCenter
-		textStyle: Style.text.title
+			horizontalAlignment: Text.AlignHCenter
+			verticalAlignment: Text.AlignVCenter
+			textStyle: Style.text.title_inverse
 
-		onLinkActivated: Qt.openUrlExternally(link)
-
-		FocusFrame {
-			dynamic: false
-		}
-	}
-
-	GButton {
-		id: emailButton
-
-		visible: false
-
-		icon.source: "qrc:///images/provider/mail.svg"
-		//: LABEL DESKTOP_QML
-		text: qsTr("Send email") + SettingsModel.translationTrigger
-		anchors {
-			horizontalCenter: parent.horizontalCenter
-			verticalCenter: parent.top
-			verticalCenterOffset: baseItem.height * 3 / 4
-		}
-		onClicked: baseItem.emailButtonPressed()
-	}
-
-	NavigationButton {
-		id: button
-
-		anchors {
-			margins: Constants.component_spacing
-			bottom: parent.bottom
-			horizontalCenter: parent.horizontalCenter
+			FocusFrame {}
 		}
 
-		activeFocusOnTab: true
+		GButton {
+			id: emailButton
 
-		buttonType: Qt.ForwardButton
-		onClicked: baseItem.nextView(SectionPage.Views.Main)
+			visible: false
+			Layout.alignment: Qt.AlignHCenter
+
+			icon.source: "qrc:///images/provider/mail.svg"
+			//: LABEL DESKTOP_QML
+			text: qsTr("Send email") + SettingsModel.translationTrigger
+			onClicked: baseItem.emailButtonPressed()
+		}
+
+		NavigationButton {
+			id: button
+
+			Layout.alignment: Qt.AlignHCenter
+			Layout.preferredWidth: width
+			Layout.preferredHeight: height
+
+			activeFocusOnTab: true
+
+			buttonType: NavigationButton.Type.Forward
+			onClicked: baseItem.nextView(SectionPage.Views.Main)
+		}
 	}
 }

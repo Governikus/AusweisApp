@@ -1,5 +1,8 @@
 module MoreView
 
 internal MoreViewMenuItem MoreViewMenuItem.qml
+internal MoreViewLinkMenuItem MoreViewLinkMenuItem.qml
+internal MoreViewGeneral MoreViewGeneral.qml
+internal MoreViewDiagnosis MoreViewDiagnosis.qml
 
 MoreView 1.0 MoreView.qml

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LanguageLoader.h"
@@ -23,7 +23,7 @@ const QLocale::Language LanguageLoader::mFallbackLanguage = QLocale::Language::E
 QLocale LanguageLoader::mDefaultLanguage = QLocale::system();
 
 LanguageLoader::LanguageLoader()
-	: mPath(FileDestination::getPath(QStringLiteral("translations")))
+	: mPath(FileDestination::getPath(QStringLiteral("translations"), QStandardPaths::LocateDirectory))
 	, mTranslatorList()
 	, mComponentList(
 		{

@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of card object for PC/SC
  *  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,10 +37,8 @@ class PcscCard
 		SCARDHANDLE mCardHandle;
 		QTimer mTimer;
 
-		PCSC_RETURNCODE transmit(const QByteArray& pSendBuffer, QByteArray& pReceiveBuffer);
-
+		CardResult transmit(const QByteArray& pSendBuffer);
 		CardResult transmit(const QByteArray& pSendBuffer, const SCARD_IO_REQUEST* pSendPci);
-
 		CardResult control(PCSC_INT pCntrCode, const QByteArray& pCntrInput);
 
 	private Q_SLOTS:
@@ -54,13 +52,13 @@ class PcscCard
 		virtual CardReturnCode disconnect() override;
 		virtual bool isConnected() override;
 
-		virtual CardReturnCode transmit(const CommandApdu& pCmd, ResponseApdu& pRes) override;
+		virtual ResponseApduResult transmit(const CommandApdu& pCmd) override;
 
 		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds) override;
 
 		virtual CardReturnCode destroyPaceChannel() override;
 
-		virtual CardReturnCode setEidPin(quint8 pTimeoutSeconds, ResponseApdu& pResponseApdu) override;
+		virtual ResponseApduResult setEidPin(quint8 pTimeoutSeconds) override;
 };
 
 } // namespace governikus

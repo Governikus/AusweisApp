@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WifiInfo.h"
@@ -18,7 +18,6 @@ WifiInfo::WifiInfo()
 	: QObject()
 	, mWifiEnabled(getCurrentWifiEnabled())
 	, mWifiCheckTimerId(0)
-	, mWifiEnableWaitCounter(0)
 {
 }
 
@@ -26,18 +25,6 @@ WifiInfo::WifiInfo()
 bool WifiInfo::getCurrentWifiEnabled()
 {
 	return true;
-}
-
-
-void WifiInfo::enableWifi()
-{
-#ifndef QT_NO_DEBUG
-	if (!QCoreApplication::applicationName().startsWith(QLatin1String("QmlTest")))
-
-#endif
-	{
-		qCWarning(qml) << "NOT IMPLEMENTED";
-	}
 }
 
 

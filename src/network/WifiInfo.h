@@ -1,7 +1,7 @@
 /*!
  * \brief Provides information about the Wifi status
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -24,13 +24,11 @@ class WifiInfo
 		friend class ::test_WifiInfo;
 		bool mWifiEnabled;
 		int mWifiCheckTimerId;
-		int mWifiEnableWaitCounter;
 
 		static bool isPrivateIp(const QHostAddress& pAddress);
 		static bool hasPrivateIpAddress();
 
 		bool getCurrentWifiEnabled();
-		bool shouldWifiEnabledBeCalled();
 
 	protected:
 		void timerEvent(QTimerEvent* pEvent) override;
@@ -40,11 +38,9 @@ class WifiInfo
 		virtual ~WifiInfo() override = default;
 
 		bool isWifiEnabled();
-		void enableWifi();
 
 	Q_SIGNALS:
 		void fireWifiEnabledChanged(bool pEnabled);
-
 };
 
 

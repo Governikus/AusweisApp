@@ -21,9 +21,15 @@ ENDIF()
 
 IF(NOT ANDROID_BUILD_TOOLS_REVISION)
 	SET(_android_build_tools_dir "${ANDROID_SDK}/build-tools")
-	FILE(GLOB build_tools ${_android_build_tools_dir}/*)
-	LIST(LENGTH build_tools build_tools_len)
-	IF(NOT build_tools_len EQUAL 1)
+
+	FILE(GLOB build_tools_list ${_android_build_tools_dir}/*)
+	LIST(LENGTH build_tools_list build_tools_len)
+	IF(build_tools_len GREATER 0)
+		LIST(SORT build_tools_list)
+		LIST(GET build_tools_list -1 build_tools)
+	ENDIF()
+
+	IF(NOT build_tools)
 		MESSAGE(FATAL_ERROR "Cannot determine ANDROID_BUILD_TOOLS_REVISION: ${_android_build_tools_dir}")
 	ENDIF()
 
@@ -51,8 +57,6 @@ IF(NOT CMAKE_ANDROID_ARCH_ABI)
 	SET(CMAKE_ANDROID_ARCH_ABI armeabi-v7a)
 ENDIF()
 
-
-OPTION(ANDROID_BUILD_AAR "Build AAR file instead of APK" OFF)
 
 SET(CMAKE_FIND_ROOT_PATH ${CMAKE_PREFIX_PATH} CACHE STRING "android find search path root")
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)

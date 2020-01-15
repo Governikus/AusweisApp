@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -48,7 +48,6 @@ SectionPage {
 				anchors.right: parent.right
 				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text
 				text: qsTr("Would you like to help us to improve the AusweisApp2?") + SettingsModel.translationTrigger
-				textStyle: Style.text.normal
 			}
 
 			GText {
@@ -56,7 +55,6 @@ SectionPage {
 				anchors.right: parent.right
 				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text
 				text: qsTr("Supplying your device characteristics helps us to gather reliable information about the compatibility of your device.") + SettingsModel.translationTrigger
-				textStyle: Style.text.normal
 			}
 
 			GText {
@@ -64,7 +62,6 @@ SectionPage {
 				anchors.right: parent.right
 				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text
 				text: qsTr("The transmission is anonymous. No personal data is collected or transmitted!") + SettingsModel.translationTrigger
-				textStyle: Style.text.normal
 			}
 
 			Column {
@@ -152,7 +149,6 @@ SectionPage {
 
 								rightPadding: Constants.groupbox_spacing
 								text: d.dataHidden ? "\u25BC" : "\u25B2"
-								textStyle: Style.text.normal
 								horizontalAlignment: Text.AlignRight
 							}
 
@@ -165,7 +161,6 @@ SectionPage {
 
 								rightPadding: Constants.groupbox_spacing
 								text: qsTr("Collected data") + SettingsModel.translationTrigger
-								textStyle: Style.text.normal
 							}
 						}
 
@@ -215,7 +210,6 @@ SectionPage {
 				anchors.right: parent.right
 				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Thank you message
 				text: qsTr("Thank you for your assistance!") + SettingsModel.translationTrigger
-				textStyle: Style.text.normal
 			}
 		}
 

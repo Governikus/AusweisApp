@@ -1,10 +1,10 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.2
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -56,7 +56,15 @@ SectionPage {
 			Accessible.onScrollDownAction: historyListView.positionViewAtIndex(index, ListView.Beginning)
 			Accessible.onScrollUpAction: historyListView.positionViewAtIndex(index, ListView.End)
 
+			showSeparator: index < listView.count - 1
+
 			onClicked: firePushWithProperties(detailsHistoryView, {historyModelItem: historyModelItem})
+		}
+
+		footer: Component {
+			GSeparator {
+				width: parent.width
+			}
 		}
 	}
 

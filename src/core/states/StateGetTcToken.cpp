@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetTcToken.h"
@@ -60,7 +60,7 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 {
 	if (pUrl.isEmpty())
 	{
-		qCritical() << "Error while connecting to the service provider. The server returns an invalid or empty redirect URL.";
+		qCritical() << "Error while connecting to the provider. The server returns an invalid or empty redirect URL.";
 		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
 		return false;
 	}
@@ -68,7 +68,7 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 	{
 		// according to TR-03124-1 in case of a non-HTTPS URL a createTrustedChannelEstablishmentError error must be sent
 		// in contrast a HTTP error 404 must be sent, if the TCToken could not be determined
-		const auto httpsError1 = QStringLiteral("Error while connecting to the service provider. A secure connection could not be established.");
+		const auto httpsError1 = QStringLiteral("Error while connecting to the provider. A secure connection could not be established.");
 		const auto httpsError2 = QStringLiteral("  The used URL is not of type HTTPS: %1").arg(pUrl.toString());
 		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 		{
@@ -118,7 +118,7 @@ void StateGetTcToken::onSslHandshakeDone()
 	if (!TlsChecker::hasValidCertificateKeyLength(cfg.peerCertificate()))
 	{
 		mReply->abort();
-		qCritical() << "Error while connecting to the service provider. The server's SSL certificate uses an unsupported key algorithm or length.";
+		qCritical() << "Error while connecting to the provider. The server's SSL certificate uses an unsupported key algorithm or length.";
 		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
 		Q_EMIT fireAbort();
 		return;
@@ -127,7 +127,7 @@ void StateGetTcToken::onSslHandshakeDone()
 	if (!TlsChecker::hasValidEphemeralKeyLength(cfg.ephemeralServerKey()))
 	{
 		mReply->abort();
-		qCritical() << "Error while connecting to the service provider. The SSL connection uses an unsupported key algorithm or length.";
+		qCritical() << "Error while connecting to the provider. The SSL connection uses an unsupported key algorithm or length.";
 		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
 		Q_EMIT fireAbort();
 		return;
@@ -166,7 +166,7 @@ void StateGetTcToken::onNetworkReply()
 
 	if (statusCode != HTTP_STATUS_SEE_OTHER && statusCode != HTTP_STATUS_FOUND && statusCode != HTTP_STATUS_TEMPORARY_REDIRECT)
 	{
-		qCritical() << "Error while connecting to the service provider. The server returns an unexpected status code:" << statusCode;
+		qCritical() << "Error while connecting to the provider. The server returns an unexpected status code:" << statusCode;
 		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
 		Q_EMIT fireAbort();
 		return;

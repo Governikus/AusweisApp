@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -70,6 +70,8 @@ SectionPage {
 			anchors.topMargin: tabBarSpacing
 			anchors.horizontalCenter: swipeBar.horizontalCenter
 
+			color: Style.color.background_pane
+
 			SwipeView {
 				id: swipeView
 
@@ -90,7 +92,6 @@ SectionPage {
 					padding: Constants.component_spacing
 					//: LABEL ANDROID_PHONE IOS_PHONE
 					text: (!!provider.longDescription ? provider.longDescription : qsTr("Description not available")) + SettingsModel.translationTrigger
-					textStyle: Style.text.normal
 					horizontalAlignment: Text.AlignLeft
 				}
 

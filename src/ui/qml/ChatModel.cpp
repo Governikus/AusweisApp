@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the chat.
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChatModel.h"
@@ -87,7 +87,12 @@ void ChatModel::resetContext(const QSharedPointer<AuthContext>& pContext)
 		mAllRights += AccessRight::READ_DG19;
 
 		mOptionalRights.clear();
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+		mSelectedRights = QSet<AccessRight>(mAllRights.constBegin(), mAllRights.constEnd());
+#else
 		mSelectedRights = mAllRights.toSet();
+#endif
 
 		endResetModel();
 	}
@@ -159,6 +164,10 @@ QVariant ChatModel::data(const QModelIndex& pIndex, int pRole) const
 		{
 			return mSelectedRights.contains(right);
 		}
+		if (pRole == WRITE_RIGHT)
+		{
+			return AccessRoleAndRightsUtil::isWriteAccessRight(right);
+		}
 	}
 	return QVariant();
 }
@@ -170,6 +179,7 @@ QHash<int, QByteArray> ChatModel::roleNames() const
 	roles.insert(NAME_ROLE, "name");
 	roles.insert(OPTIONAL_ROLE, "optional");
 	roles.insert(SELECTED_ROLE, "selected");
+	roles.insert(WRITE_RIGHT, "writeRight");
 	return roles;
 }
 

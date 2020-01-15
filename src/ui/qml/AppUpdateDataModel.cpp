@@ -1,11 +1,11 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include  "AppUpdateDataModel.h"
 
+#include "AppUpdater.h"
 #include "Env.h"
-#include "Service.h"
 #include "SingletonHelper.h"
 
 using namespace governikus;
@@ -14,8 +14,9 @@ defineSingleton(AppUpdateDataModel)
 
 AppUpdateDataModel::AppUpdateDataModel()
 	: QObject()
-	, mAppUpdateData(Env::getSingleton<Service>()->getUpdateData())
+	, mUpdateAvailable(false)
 {
+	connect(Env::getSingleton<AppUpdater>(), &AppUpdater::fireAppUpdateCheckFinished, this, &AppUpdateDataModel::onAppUpdateCheckFinished);
 }
 
 
@@ -25,55 +26,72 @@ AppUpdateDataModel& AppUpdateDataModel::getInstance()
 }
 
 
-bool AppUpdateDataModel::isValid() const
+void AppUpdateDataModel::onAppUpdateCheckFinished(bool pUpdateAvailable, const GlobalStatus& pStatus)
 {
-	return mAppUpdateData.isValid();
+	Q_UNUSED(pStatus)
+	mUpdateAvailable = pUpdateAvailable;
+	Q_EMIT fireAppUpdateDataChanged();
 }
 
 
-const QDateTime AppUpdateDataModel::getDate() const
+bool AppUpdateDataModel::isUpdateAvailable() const
 {
-	return mAppUpdateData.getDate();
+	return mUpdateAvailable;
+}
+
+
+bool AppUpdateDataModel::isValid() const
+{
+	return Env::getSingleton<AppUpdater>()->getUpdateData().isValid();
+}
+
+
+const QDateTime& AppUpdateDataModel::getDate() const
+{
+	return Env::getSingleton<AppUpdater>()->getUpdateData().getDate();
 }
 
 
 const QString& AppUpdateDataModel::getVersion() const
 {
-	return mAppUpdateData.getVersion();
+	return Env::getSingleton<AppUpdater>()->getUpdateData().getVersion();
 }
 
 
 const QUrl& AppUpdateDataModel::getUrl() const
 {
-	return mAppUpdateData.getUrl();
+	return Env::getSingleton<AppUpdater>()->getUpdateData().getUrl();
 }
 
 
 int AppUpdateDataModel::getSize() const
 {
-	return mAppUpdateData.getSize();
+	return Env::getSingleton<AppUpdater>()->getUpdateData().getSize();
 }
 
 
 const QUrl& AppUpdateDataModel::getChecksumUrl() const
 {
-	return mAppUpdateData.getChecksumUrl();
+	return Env::getSingleton<AppUpdater>()->getUpdateData().getChecksumUrl();
 }
 
 
 const QUrl& AppUpdateDataModel::getNotesUrl() const
 {
-	return mAppUpdateData.getNotesUrl();
+	return Env::getSingleton<AppUpdater>()->getUpdateData().getNotesUrl();
 }
 
 
 const QString& AppUpdateDataModel::getNotes() const
 {
-	return mAppUpdateData.getNotes();
+	return Env::getSingleton<AppUpdater>()->getUpdateData().getNotes();
 }
 
 
-void AppUpdateDataModel::onAppUpdateFinished(bool, const GlobalStatus&)
+void AppUpdateDataModel::skipUpdate() const
 {
-	mAppUpdateData = Env::getSingleton<Service>()->getUpdateData();
+	if (isValid())
+	{
+		Env::getSingleton<AppUpdater>()->skipVersion(getVersion());
+	}
 }

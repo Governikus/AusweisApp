@@ -1,7 +1,7 @@
 /*!
  * \brief Implements the parsing of TcTokenUrl in header of browser request.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick.Layouts 1.3
@@ -7,23 +7,33 @@ import QtQuick.Layouts 1.3
 import Governikus.Global 1.0
 import Governikus.View 1.0
 import Governikus.Style 1.0
+import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.HistoryModel 1.0
+import Governikus.Type.LogModel 1.0
 import Governikus.Type.SettingsModel 1.0
 
 ColumnLayout {
+	readonly property string helpTopic: "settingsDeveloper"
 
 	spacing: Constants.component_spacing
 
 	GText {
+		activeFocusOnTab: true
+
 		//: LABEL DESKTOP_QML
 		text: qsTr("Developer options") + SettingsModel.translationTrigger
 		textStyle: Style.text.header_accent
+
+		FocusFrame {
+			borderColor: Style.color.focus_indicator
+		}
 	}
 
 	ToggleableOption {
 		activeFocusOnTab: true
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Test PKI") + SettingsModel.translationTrigger
+		text: qsTr("Testmode for the self-authentication") + SettingsModel.translationTrigger
 		checked: SettingsModel.useSelfauthenticationTestUri
 		onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
 	}
@@ -42,13 +52,12 @@ ColumnLayout {
 
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML Only visible when the user activates the developer mode in the settings.
+		//: LABEL DESKTOP_QML
 		text: qsTr("The developer mode is aimed at integrators / developers for new service applications. For this reason, the developer mode works only in the test PKI. By activating the developer mode, some safety tests are deactivated. This means that the authentication process continues although the AusweisApp2 would usually abort the process with an error message when used in normal operation mode. Information on the disregarded error in the developer mode is displayed in the attached window below the AusweisApp2.") + SettingsModel.translationTrigger
 		textStyle: Style.text.hint_warning
 
 		FocusFrame {
-			dynamic: false
-			border.color: Constants.black
+			borderColor: Style.color.focus_indicator
 		}
 	}
 }

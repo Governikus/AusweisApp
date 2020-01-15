@@ -1,9 +1,10 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.3
 
 import Governikus.Style 1.0
 import Governikus.View 1.0
@@ -14,47 +15,75 @@ import Governikus.Type.ApplicationModel 1.0
 Button {
 	id: control
 
-	property int buttonType // Qt.ForwardButton || Qt.BackButton
-
-	width: ApplicationModel.scaleFactor * 160
-	height: ApplicationModel.scaleFactor * 160
-
-	Accessible.role: Accessible.Button
-	//: LABEL DESKTOP_QML
-	Accessible.name: {
-		if (buttonType === Qt.ForwardButton) {
-			return qsTr("Continue") + SettingsModel.translationTrigger
-		}
-		console.assert(buttonType === Qt.BackButton, "Use either Qt.ForwardButton or Qt.BackButton")
-		return qsTr("Back") + SettingsModel.translationTrigger
+	enum Type {
+		Forward,
+		Back,
+		Check,
+		Cancel
 	}
 
-	background: Rectangle {
-		anchors.fill: parent
-		anchors.margins: control.down ? control.height / 32 : 0
+	property int buttonType
+	property string subText
 
-		radius: height / 2
-		border.width: height / 40;
-		border.color: enabled ? Constants.white : Constants.red
-		color: Style.color.transparent
+	width: column.width
+	height: column.height
+
+	Accessible.role: Accessible.Button
+	text: subText !== "" ? subText : ((buttonType === NavigationButton.Type.Check   ? qsTr("Yes") :
+									   buttonType === NavigationButton.Type.Cancel  ? qsTr("No") :
+									   buttonType === NavigationButton.Type.Forward ? qsTr("Continue") :
+									   qsTr("Back")) + SettingsModel.translationTrigger)
+
+	background: Item {}
+	contentItem: Item {}
+
+	Column {
+		id: column
+
+		spacing: Constants.component_spacing
 
 		Rectangle {
-			anchors.fill: parent
-			anchors.margins: parent.height / 8;
+			id: icon
+
+			width: ApplicationModel.scaleFactor * 160
+			height: width
+			anchors.horizontalCenter: parent.horizontalCenter
 
 			radius: height / 2
-			color: Qt.lighter(Constants.blue, 1.1)
+			border.width: height / 40;
+			border.color: enabled ? Style.color.primary_text_inverse : Constants.red
+			color: Style.color.button
 
-			Image {
+			TintableIcon {
 				anchors.centerIn: parent
 
-				source: "qrc:///images/desktop/continue_arrow.svg"
-				sourceSize.height: parent.height / 2;
+				source: buttonType == NavigationButton.Type.Check  ? "qrc:///images/check.svg" :
+						buttonType == NavigationButton.Type.Cancel ? "qrc:///images/cancel.svg" :
+																	 "qrc:///images/desktop/continue_arrow.svg"
+				sourceSize.height: Style.dimens.large_icon_size
 				transformOrigin: Item.Center
-				rotation: buttonType === Qt.BackButton ? 180 : 0
+				rotation: buttonType == NavigationButton.Type.Back ? 180 : 0
+				tintColor: Style.color.button_text
 			}
+		}
+
+		GText {
+			id: buttonText
+
+			visible: control.subText !== ""
+			anchors.horizontalCenter: parent.horizontalCenter
+
+			text: control.subText
+			textStyle: Style.text.header_inverse
 		}
 	}
 
 	FocusFrame {}
+
+	MouseArea {
+		anchors.fill: parent
+
+		onPressed: mouse.accepted = false
+		cursorShape: Qt.PointingHandCursor
+	}
 }

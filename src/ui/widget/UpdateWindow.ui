@@ -84,7 +84,7 @@
         <enum>Qt::TabFocus</enum>
        </property>
        <property name="title">
-        <string>Release Notes:</string>
+        <string>Release notes:</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>

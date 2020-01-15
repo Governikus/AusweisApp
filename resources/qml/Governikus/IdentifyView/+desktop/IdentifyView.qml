@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -19,7 +19,6 @@ import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.AuthModel 1.0
 import Governikus.Type.NumberModel 1.0
-import Governikus.Type.CardReturnCode 1.0
 
 
 SectionPage
@@ -28,6 +27,7 @@ SectionPage
 
 	enum SubViews {
 		Undefined,
+		TransportPinReminder,
 		Connectivity,
 		Progress,
 		AccessRights,
@@ -40,7 +40,14 @@ SectionPage
 		Data,
 		Result,
 		ReturnToMain,
-		ReaderSettings
+		ReaderSettings,
+		Aborting
+	}
+
+	function showSettings() {
+		readerView.precedingView = d.activeView
+		d.view = IdentifyView.SubViews.ReaderSettings
+		ApplicationWindow.menuBar.updateActions()
 	}
 
 	activeFocusOnTab: true
@@ -50,7 +57,7 @@ SectionPage
 		//: LABEL DESKTOP_QML
 		text: qsTr("Identify") + SettingsModel.translationTrigger
 		rootEnabled: false
-		helpTopic: "ausweisenPage"
+		helpTopic: "authentication"
 		showSettings: (identifyController.workflowState === IdentifyController.WorkflowStates.Initial ||
 		               identifyController.workflowState === IdentifyController.WorkflowStates.Reader ||
 		               identifyController.workflowState === IdentifyController.WorkflowStates.Card)
@@ -63,7 +70,7 @@ SectionPage
 				ApplicationWindow.menuBar.updateActions()
 			}
 			else if (d.activeView === IdentifyView.SubViews.ReaderSettings) {
-				d.view = readerView.preceedingView
+				d.view = readerView.precedingView
 				ApplicationWindow.menuBar.updateActions()
 			}
 		}
@@ -81,11 +88,7 @@ SectionPage
 			}
 		}
 
-		customSettingsHandler: function(){
-			readerView.preceedingView = d.activeView
-			d.view = IdentifyView.SubViews.ReaderSettings
-			ApplicationWindow.menuBar.updateActions()
-		}
+		customSettingsHandler: identifyView.showSettings
 	}
 
 	QtObject {
@@ -99,11 +102,11 @@ SectionPage
 	TabbedReaderView {
 		id: readerView
 
-		property int preceedingView: IdentifyView.SubViews.Undefined
+		property int precedingView: IdentifyView.SubViews.Undefined
 
 		visible: d.activeView === IdentifyView.SubViews.ReaderSettings
 		onCloseView: {
-			d.view = preceedingView
+			d.view = precedingView
 			ApplicationWindow.menuBar.updateActions()
 		}
 	}
@@ -121,6 +124,22 @@ SectionPage
 		}
 	}
 
+	BinaryDecisionView {
+		visible: d.activeView === IdentifyView.SubViews.TransportPinReminder
+
+		questionText: qsTr("Did you change the transport PIN already?") + SettingsModel.translationTrigger
+		questionSubText: qsTr("Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. Online identification with transport PIN is not possible.") + SettingsModel.translationTrigger
+		disagreeText: qsTr("No, change transport PIN now") + SettingsModel.translationTrigger
+
+		onDisagree: {
+			SettingsModel.transportPinReminder = false
+			NumberModel.requestTransportPin = true
+			ChangePinModel.startWorkflow()
+			AuthModel.cancelWorkflowToChangePin()
+		}
+		onAgree: SettingsModel.transportPinReminder = false // causes fall-through to next state in IdentifyController
+	}
+
 	ProgressView {
 		id: checkConnectivityView
 
@@ -129,7 +148,7 @@ SectionPage
 		//: INFO DESKTOP_QML Header of the message that no network connection is present during the authentication procedure.
 		text: qsTr("No network connectivity") + SettingsModel.translationTrigger
 		//: INFO DESKTOP_QML Content of the message that no network connection is present during the authentication procedure.
-		subText: qsTr("Please enable the network interface or cancel the workflow.") + SettingsModel.translationTrigger
+		subText: qsTr("Please establish an internet connection.") + SettingsModel.translationTrigger
 		subTextColor: Constants.red
 	}
 
@@ -155,6 +174,7 @@ SectionPage
 						default:
 							return Workflow.WaitingFor.None
 		}
+		onSettingsRequested: identifyView.showSettings()
 	}
 
 	EnterPasswordView {
@@ -198,7 +218,7 @@ SectionPage
 			//: LABEL DESKTOP_QML
 			text: qsTr("Transport PIN") + SettingsModel.translationTrigger
 			rootEnabled: false
-			helpTopic: "pinTab"
+			helpTopic: "pinEntry"
 			customSubAction: CancelAction {
 				onClicked:  {
 					d.view = IdentifyView.SubViews.Password
@@ -208,7 +228,7 @@ SectionPage
 		}
 		resultType: ResultView.Type.IsInfo
 		//: INFO DESKTOP_QML The user clicked that the current PIN has 5 digits (transport PIN) which needs to be changed to a 6-digit PIN. The current process will be aborted and needs to be restarted *manually* by the user.
-		text: qsTr("You have to change your transport PIN into a personal PIN to use the online ID function. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.") + SettingsModel.translationTrigger
+		text: qsTr("First you have to change your 5-digit transport PIN you received in your in PIN letter into a 6-digit PIN. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.") + SettingsModel.translationTrigger
 		onNextView: {
 			ChangePinModel.startWorkflow()
 			AuthModel.cancelWorkflowToChangePin()
@@ -239,8 +259,26 @@ SectionPage
 
 		resultType: ResultView.Type.IsInfo
 		//: INFO DESKTOP_QML A weak NFC signal was detected since the card communication was aborted. The card's position needs to be adjusted to hopefully achieve better signal strength.
-		text: qsTr("Weak NFC signal.\nPlease reposition your card.") + SettingsModel.translationTrigger
+		text: qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable") + SettingsModel.translationTrigger
 		onNextView: AuthModel.continueWorkflow()
+	}
+
+	ProgressView {
+		visible: d.activeView === IdentifyView.SubViews.Aborting
+
+		//: INFO DESKTOP_QML The user aborted the authentication process, according to TR we need to inform the service provider
+		text: qsTr("Aborting process and informing the service provider") + SettingsModel.translationTrigger
+		subText: {
+			SettingsModel.translationTrigger
+			if (connectivityManager.networkInterfaceActive) {
+				//: INFO DESKTOP_QML Information message about cancellation process with present network connectivity
+				return qsTr("Please wait a moment...")
+			}
+			//: INFO DESKTOP_QML Information message about cancellation process without working network connectivity
+			return qsTr("Network problemes detected, trying to reach server within 30 seconds.")
+		}
+		progressBarVisible: false
+		subTextColor: !connectivityManager.networkInterfaceActive ? Style.color.warning_text : Style.color.secondary_text_inverse
 	}
 
 	ProgressView {
@@ -250,28 +288,36 @@ SectionPage
 
 		visible: d.activeView === IdentifyView.SubViews.Progress
 
-		//: INFO DESKTOP_QML Header of the progress information during the authentication process.
-		text: (inProgress ? qsTr("Authentication in progress") : qsTr("Acquiring provider certificate")) + SettingsModel.translationTrigger
+		text: (inProgress ?
+			   //: INFO DESKTOP_QML Header of the progress information during the authentication process.
+			   qsTr("Authentication in progress") :
+			   //: INFO DESKTOP_QML Header of the progress information during the authentication process.
+			   qsTr("Acquiring provider certificate")
+			  ) + SettingsModel.translationTrigger
 		subText: {
 			SettingsModel.translationTrigger;
 			if (!visible) {
 				return ""
 			}
+			if (!inProgress || AuthModel.error) {
+				//: INFO DESKTOP_QML Generic progress status message while no card communication is active.
+				return qsTr("Please wait a moment...")
+			}
 			if (AuthModel.isBasicReader) {
 				//: INFO DESKTOP_QML Second line text if a basic card reader is used and data is exchanged with the card/server in the background. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
-				return qsTr("Please wait a moment...")
+				return qsTr("Please don't move the ID card...")
 			}
 			if (!!NumberModel.inputError) {
 				return NumberModel.inputError
 			}
 			if (NumberModel.pinDeactivated) {
-				//: INFO DESKTOP_QML The online authentication feature of the id card is deactivated and needs to be activated by the local authorities.
-				return qsTr("The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.")
+				//: INFO DESKTOP_QML The online authentication feature of the ID card is deactivated and needs to be activated by the local authorities.
+				return qsTr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.")
 			}
 			//: INFO DESKTOP_QML Generic progress status message during authentication.
 			return qsTr("Please wait a moment...")
 		}
-		subTextColor: !AuthModel.isBasicReader && (NumberModel.inputError || NumberModel.pinDeactivated) ? Style.color.warning_text : Style.color.secondary_text
+		subTextColor: !AuthModel.isBasicReader && (NumberModel.inputError || NumberModel.pinDeactivated) ? Style.color.warning_text : Style.color.secondary_text_inverse
 		progressValue: AuthModel.progressValue
 		progressText: AuthModel.progressMessage
 		progressBarVisible: identifyController.workflowProgressVisible
@@ -298,7 +344,7 @@ SectionPage
 			identifyView.nextView(pName)
 			AuthModel.continueWorkflow()
 		}
-		emailButtonVisible: AuthModel.resultString
+		emailButtonVisible: AuthModel.error && !AuthModel.isCancellationByUser()
 		onEmailButtonPressed: AuthModel.sendResultMail()
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -7,7 +7,7 @@ import QtQuick.Controls 2.3
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-
+import Governikus.Type.SettingsModel 1.0
 
 Row {
 	id: root
@@ -32,6 +32,10 @@ Row {
 
 		enterKeyType: Qt.EnterKeySearch
 
+		Accessible.role: Accessible.EditableText
+		//: LABEL ANDROID
+		Accessible.name: qsTr("Type provider to search for") + SettingsModel.translationTrigger
+
 		onAccepted: {
 			iconItem.forceActiveFocus(Qt.MouseFocusReason)
 		}
@@ -51,8 +55,17 @@ Row {
 		fillMode: Image.PreserveAspectFit
 		source: "qrc:///images/android/search_icon.svg"
 
+		Accessible.role: Accessible.Button
+		//: LABEL ANDROID
+		Accessible.name: qsTr("Search") + SettingsModel.translationTrigger
+		//: LABEL ANDROID
+		Accessible.description: qsTr("Search provider list") + SettingsModel.translationTrigger
+
 		MouseArea {
 			anchors.fill: parent
+
+			Accessible.ignored: true
+
 			onClicked: {
 				// Storage of the new value is needed because the query
 				// of searchField.visible still delivers the old value.

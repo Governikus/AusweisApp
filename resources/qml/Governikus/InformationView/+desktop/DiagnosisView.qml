@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -7,6 +7,7 @@ import QtQuick.Controls 2.3
 
 import Governikus.View 1.0
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SelfDiagnosisModel 1.0
@@ -24,6 +25,7 @@ SectionPage {
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
 		text: qsTr("Diagnosis") + SettingsModel.translationTrigger
+		helpTopic: "diagnosis"
 	}
 
 	TabbedPane {
@@ -57,7 +59,7 @@ SectionPage {
 
 					label: title
 					text: content
-					underlineLabel: title !== "" && content === ""
+					labelStyle: (title !== "" && content === "") ? Style.text.header_accent : Style.text.normal_accent
 
 					onActiveFocusChanged: {
 						if (activeFocus) {
@@ -81,12 +83,12 @@ SectionPage {
 			GButton {
 				id: saveToFile
 
-				Accessible.name: saveToFile.text
 				Accessible.description: qsTr("Save diagnosis to textfile") + SettingsModel.translationTrigger
 
 				icon.source: "qrc:///images/icon_save.svg"
 				//: LABEL DESKTOP_QML
 				text: qsTr("Save to file") + SettingsModel.translationTrigger
+				tintIcon: true
 				onClicked: {
 					var filenameSuggestion = "%1.%2.%3.txt".arg(Qt.application.name).arg(qsTr("Diagnosis")).arg(SelfDiagnosisModel.getCreationTimeString())
 					appWindow.openSaveFileDialog(SelfDiagnosisModel.saveToFile, filenameSuggestion, "txt")

@@ -31,7 +31,7 @@
         <enum>Qt::TabFocus</enum>
        </property>
        <property name="text">
-        <string>This page displays the history of your successful authentications. Double-click on a service provider for more information. You can delete parts or the entire history. You can also save the history as a PDF file.</string>
+        <string>This page displays the history of your successful authentications. Double-click on a provider for more information. You can delete parts or the entire history. You can also save the history as a PDF file.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>

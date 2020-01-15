@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockCard.h"
@@ -32,7 +32,7 @@ CardReturnCode MockCard::disconnect()
 }
 
 
-CardReturnCode MockCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
+ResponseApduResult MockCard::transmit(const CommandApdu& pCmd)
 {
 	Q_UNUSED(pCmd)
 	if (mCardConfig.mTransmits.isEmpty())
@@ -40,8 +40,7 @@ CardReturnCode MockCard::transmit(const CommandApdu& pCmd, ResponseApdu& pRes)
 		qFatal("No (more) response APDU configured, but a(nother) command transmitted");
 	}
 	QPair<CardReturnCode, QByteArray> config = mCardConfig.mTransmits.takeFirst();
-	pRes.setBuffer(config.second);
-	return config.first;
+	return {config.first, ResponseApdu(config.second)};
 }
 
 

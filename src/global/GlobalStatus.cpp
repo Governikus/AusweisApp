@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GlobalStatus.h"
@@ -48,8 +48,6 @@ bool GlobalStatus::isMessageMasked() const
 		case Code::Workflow_TrustedChannel_Server_Format_Error:
 		case Code::Network_Ssl_Establishment_Error:
 		case Code::Workflow_Wrong_Parameter_Invocation:
-		case Code::Network_Other_Error:
-		case Code::Workflow_TrustedChannel_Other_Network_Error:
 		case Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length:
 		case Code::Workflow_Network_Empty_Redirect_Url:
 		case Code::Workflow_Network_Expected_Redirect:
@@ -98,10 +96,10 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 		//: ERROR ANDROID IOS Error message which is used for "masked" errors. Generic message with link to support section of the homepage.
-		QString message = tr("An error occurred. Please contact our %1support%2.").arg(hyperlink, QStringLiteral("</a>"));
+		QString message = tr("A secure connection to the provider could not be established. Please contact our %1support%2.").arg(hyperlink, QStringLiteral("</a>"));
 #else
 		//: ERROR DESKTOP Error message which is used for "masked" errors. Generic message with link to support section of the homepage.
-		QString message = tr("An error occurred. Please contact our %1support%2 or feel free to send us an email.").arg(hyperlink, QStringLiteral("</a>"));
+		QString message = tr("A secure connection to the provider could not be established. Please contact our %1support%2 or feel free to send us an email.").arg(hyperlink, QStringLiteral("</a>"));
 #endif
 		return message;
 	}
@@ -126,7 +124,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Workflow_AlreadyInProgress_Error:
 			//: ERROR ALL_PLATFORMS An ActivationHandler is requested even though an operation is currently still running.
-			return tr("Cannot start authentication. An operation is already in progress.");
+			return tr("Cannot start authentication. An operation is already active.");
 
 		case Code::Workflow_Card_Removed:
 			//: ERROR ALL_PLATFORMS The card was removed after the PACE channel was established.
@@ -143,10 +141,6 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Workflow_Unexpected_Message_From_EidServer:
 			//: ERROR_MASKED ALL_PLATFORMS The server sent a valid PAOS message but its type was unexpected.
 			return tr("The program received an unexpected message from the server.");
-
-		case Code::Workflow_Pin_Blocked_And_Puk_Objectionable:
-			//: ERROR ALL_PLATFORMS The id card was blocked after three wrongfully entered PINs, the PUK is required to unlock the card. Hint to do so in the PIN management section of the app.
-			return tr("After three wrong entries your PIN is blocked. Please use the PIN management in this app to unblock it with the help of your PUK.");
 
 		case Code::Workflow_Preverification_Developermode_Error:
 			//: ERROR ALL_PLATFORMS The developer mode is enabled but a productive environment was detected.
@@ -165,7 +159,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			return tr("No unique DV CVC");
 
 		case Code::Workflow_No_Permission_Error:
-			//: ERROR ALL_PLATFORMS DidAuthenticateEAC2, AA2 or the id card declined the certificates.
+			//: ERROR ALL_PLATFORMS DidAuthenticateEAC2, AA2 or the ID card declined the certificates.
 			return tr("Authentication failed.");
 
 		case Code::Workflow_Certificate_No_Description:
@@ -196,11 +190,11 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Workflow_TrustedChannel_Hash_Not_In_Description:
 		case Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description:
 			//: ERROR ALL_PLATFORMS The TLS certificate was not folded with the Authorization Certificate, thus violating the security requirements. Might also be caused by a firewall and/or the antivirus software.
-			return tr("Hash of certificate not in certificate description (issuer: %1). This indicates a misconfiguration or manipulation of the certificate. Please check that your antivirus-software and firewalls are not interfering with SSL traffic.").arg(getExternalInfo());
+			return tr("Hash of TLS certificate not in certificate description (issuer: %1). This indicates a misconfiguration or manipulation of the certificate. Please check that your antivirus-software and firewalls are not interfering with TLS traffic.").arg(getExternalInfo());
 
 		case Code::Workflow_TrustedChannel_No_Data_Received:
 			//: ERROR_MASKED ALL_PLATFORMS Received an empty TC token.
-			return tr("Received no data.");
+			return tr("The TCToken contained no data.");
 
 		case Code::Workflow_TrustedChannel_ServiceUnavailable:
 		case Code::Network_ServiceUnavailable:
@@ -232,8 +226,8 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Network_Other_Error:
 		case Code::Workflow_TrustedChannel_Other_Network_Error:
-			//: ERROR_MASKED ALL_PLATFORMS Other critial network error by Qt.
-			return tr("An unknown network error occurred.");
+			//: ERROR ALL_PLATFORMS Other critial network error by Qt.
+			return tr("An unknown network error occurred. Check your network connection and try to restart the app.");
 
 		case Code::Workflow_Reader_Became_Inaccessible:
 			//: ERROR ALL_PLATFORMS The card reader was removed after the PACE channel was established.
@@ -245,12 +239,12 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length:
 			//: ERROR_MASKED ALL_PLATFORMS
-			return tr("Error while connecting to the service provider. The SSL connection uses an unsupported key algorithm or length.");
+			return tr("Error while connecting to the provider. The TLS connection uses an unsupported key algorithm or length.");
 
 		case Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length:
 		case Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length:
 			//: ERROR ALL_PLATFORMS Received a TLS certificate that uses an invalid algorithm or key length.
-			return tr("Error while connecting to the server. The SSL certificate uses an unsupported key algorithm or length. Certificate issuer: %1").arg(getExternalInfo());
+			return tr("Error while connecting to the server. The TLS certificate uses an unsupported key algorithm or length. Certificate issuer: %1").arg(getExternalInfo());
 
 		case Code::Workflow_Network_Empty_Redirect_Url:
 			//: ERROR_MASKED ALL_PLATFORMS The redirect URL could not be determined because the server sent an empty response.
@@ -271,7 +265,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Workflow_Cancellation_By_User:
 		case Code::Card_Cancellation_By_User:
 			//: ERROR ALL_PLATFORMS The user cancelled the authentication in either the UI or the card reader.
-			return tr("The process was cancelled by the user.");
+			return tr("The process has been cancelled.");
 
 		case Code::Paos_Generic_Server_Error:
 		case Code::Paos_Unexpected_Warning:
@@ -288,7 +282,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			return tr("The maximum time was exceeded during input process.");
 
 		case Code::Card_Not_Found:
-			//: ERROR ALL_PLATFORMS Internal error, either PCSC, SaK or card reader could not find the id card.
+			//: ERROR ALL_PLATFORMS Internal error, either PCSC, SaK or card reader could not find the ID card.
 			return tr("Card does not exist");
 
 		case Code::Card_Communication_Error:
@@ -304,28 +298,28 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 					tr("AusweisApp2 Support"));
 
 		case Code::Card_Invalid_Pin:
-			//: ERROR ALL_PLATFORMS The id card declined the PIN.
-			return tr("The given PIN is invalid.");
+			//: ERROR ALL_PLATFORMS The ID card declined the PIN.
+			return tr("The given PIN is not correct.");
 
 		case Code::Card_Invalid_Can:
-			//: ERROR ALL_PLATFORMS The id card declined the CAN.
-			return tr("The given card access number (CAN) is invalid.");
+			//: ERROR ALL_PLATFORMS The ID card declined the CAN.
+			return tr("The given card access number (CAN) is not correct.");
 
 		case Code::Card_Invalid_Puk:
-			//: ERROR ALL_PLATFORMS The id card declined the PUK.
-			return tr("The given PUK is invalid.");
+			//: ERROR ALL_PLATFORMS The ID card declined the PUK.
+			return tr("The given PUK is not correct.");
 
 		case Code::Card_Pin_Blocked:
-			//: ERROR ALL_PLATFORMS The id card refused the PIN since the PIN feature is blocked after too many wrong attemps.
+			//: ERROR ALL_PLATFORMS The ID card refused the PIN since the PIN feature is blocked after too many wrong attemps.
 			return tr("The PIN was blocked after too many unsuccessful attempts.");
 
 		case Code::Card_Pin_Not_Blocked:
-			//: ERROR ALL_PLATFORMS It was attempted to unlock the id card via PUK even though it was not locked in the first place. This scenario is avoided in the UI by hiding the respective UI elements.
+			//: ERROR ALL_PLATFORMS It was attempted to unlock the ID card via PUK even though it was not locked in the first place. This scenario is avoided in the UI by hiding the respective UI elements.
 			return tr("The PIN is not blocked.");
 
 		case Code::Card_Puk_Blocked:
-			//: ERROR ALL_PLATFORMS The card declined the PUK since it was entered wrongfully 10 times, the local authorities have to be contacted to unlock the id card.
-			return tr("The PUK was used ten times and is set inoperative. Please contact the competent authority that issued your ID document to unlock the PIN.");
+			//: ERROR ALL_PLATFORMS The card declined the PUK since it was entered wrongfully 10 times, the local authorities have to be contacted to unlock the ID card.
+			return tr("The PUK was used ten times and can not be used anymore to unblock the PIN. Please contact the competent authority that issued your ID card to unblock the PIN.");
 
 		case Code::Card_NewPin_Mismatch:
 			//: ERROR ALL_PLATFORMS The card reader signalled that the new PIN was not confirmed correctly.
@@ -337,35 +331,35 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Workflow_Bluetooth_Reader_Connection_Error:
 			//: ERROR ALL_PLATFORMS Error while connecting to a bluetooth card reader.
-			return tr("An error occurred while connecting to a reader device.");
+			return tr("An error occurred while connecting to a bluetooth card reader.");
 
 		case Code::Workflow_Reader_Device_Scan_Error:
 			//: ERROR ALL_PLATFORMS Error while searching for bluetooth card reader.
-			return tr("An error occurred while scanning for reader devices.");
+			return tr("An error occurred while scanning for a bluetooth card reader.");
 
 		case Code::RemoteReader_CloseCode_AbnormalClose:
 			//: ERROR ALL_PLATFORMS The connection to the smartphone card reader (SaK) was lost.
-			return tr("The remote card reader connection was not closed properly.");
+			return tr("The smartphone as card reader (SaC) connection was aborted.");
 
 		case Code::RemoteConnector_InvalidRequest:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was invalid (missing device ID).
-			return tr("Remote reader connection request contains invalid parameters.");
+			return tr("Smartphone as card reader (SaC) connection request was invalid.");
 
 		case Code::RemoteConnector_NoSupportedApiLevel:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was invalid (API mismatch).
-			return tr("Your remote reader version is incompatible with the local version. Please install the latest AusweisApp2 version on both your smartphone and your computer.");
+			return tr("Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest AusweisApp2 version on both your smartphone and your computer.");
 
 		case Code::RemoteConnector_ConnectionTimeout:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) timed out.
-			return tr("A timeout occurred while trying to establish a connection to a remote reader.");
+			return tr("A timeout occurred while trying to establish a connection to the smartphone as card reader (SaC).");
 
 		case Code::RemoteConnector_ConnectionError:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) failed due to network errors (Host not found, OS error, ...)
-			return tr("An error occurred while trying to establish a connection to a remote reader.");
+			return tr("An error occurred while trying to establish a connection to the smartphone as card reader (SaC).");
 
 		case Code::RemoteConnector_RemoteHostRefusedConnection:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was rejected by the device.
-			return tr("Remote device has rejected the connection. Please check the pairing code.");
+			return tr("The smartphone to be paired has rejected the connection. Please check the pairing code. If no pairing code is shown activate the pairing mode.");
 
 		case Code::Downloader_File_Not_Found:
 			//: ERROR ALL_PLATFORMS Download of the file failed with HTTP error code 404.

@@ -4,20 +4,20 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <source>Developer mode:</source>
-        <translation>Entwicklermodus:</translation>
-    </message>
-    <message>
-        <source>use</source>
-        <translation>verwenden</translation>
-    </message>
-    <message>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
         <source>AusweisApp2 is a product of Governikus GmbH &amp; Co. KG - on behalf of the Federal Office for Information Security.</source>
         <translation>Die AusweisApp2 ist ein Produkt der Governikus GmbH &amp; Co. KG - im Auftrag des Bundesamtes für Sicherheit in der Informationstechnik.</translation>
+    </message>
+    <message>
+        <source>Developer options:</source>
+        <translation>Entwickleroptionen:</translation>
+    </message>
+    <message>
+        <source>show in the settings</source>
+        <translation>in den Einstellungen anzeigen</translation>
     </message>
 </context>
 <context>
@@ -181,22 +181,6 @@
     </message>
 </context>
 <context>
-    <name>AvailableDevicesListDelegate</name>
-    <message>
-        <source>Great quality</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Gute Qualität</translation>
-    </message>
-    <message>
-        <source>Bad quality</source>
-        <translation>Schlechte Qualität</translation>
-    </message>
-    <message>
-        <source>Device %1 is available for pairing</source>
-        <translation>Gerät %1 kann gekoppelt werden</translation>
-    </message>
-</context>
-<context>
     <name>BaseConfirmationPopup</name>
     <message>
         <source>Ok</source>
@@ -225,9 +209,20 @@
 <context>
     <name>BaseProviderView</name>
     <message>
-        <source>No match found</source>
-        <extracomment>LABEL IOS_PHONE ANDROID_PHONE Der in das Suchfeld eingegebene String erzielte kein Ergebnis</extracomment>
-        <translation>Keine Übereinstimmung gefunden</translation>
+        <source>No results matching your search query found</source>
+        <extracomment>LABEL IOS_PHONE ANDROID_PHONE The text entered into the provider search field results in no matches</extracomment>
+        <translation>Keine Ergebnisse zu Ihrer Suche gefunden</translation>
+    </message>
+</context>
+<context>
+    <name>BinaryDecisionView</name>
+    <message>
+        <source>Yes</source>
+        <translation>Ja</translation>
+    </message>
+    <message>
+        <source>No, later</source>
+        <translation>Nein, später</translation>
     </message>
 </context>
 <context>
@@ -239,6 +234,7 @@
     </message>
     <message>
         <source>Continue</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Fortsetzen</translation>
     </message>
     <message>
@@ -248,6 +244,7 @@
     </message>
     <message>
         <source>Please try NFC.</source>
+        <extracomment>INFO ANDROID IOS Bluetooth is not available to AA2, the user is requested to use NFC instead.</extracomment>
         <translation>Bitte versuchen Sie NFC.</translation>
     </message>
     <message>
@@ -257,37 +254,46 @@
     </message>
     <message>
         <source>Please enable Bluetooth.</source>
+        <extracomment>INFO ANDROID IOS Bluetooth is available but not active.</extracomment>
         <translation>Bitte aktivieren Sie Bluetooth.</translation>
     </message>
     <message>
-        <source>No paired and activated Bluetooth device was detected. The AusweisApp2 needs access to your location in order to discover available devices. You can grant this permission after clicking the continue button.</source>
+        <source>No paired and activated Bluetooth device has been detected. To discover available devices the location permission has to be granted to the AusweisApp2. You can grant this permission after clicking the continue button.</source>
         <extracomment>INFO ANDROID IOS Bluetooth is active but the AA2 does not have the location permission which is required to find the bluetooth reader. The user is asked to give the permission to the AA2 after pressing the &quot;ok&quot; button.</extracomment>
-        <translation>Es konnte kein gekoppelter, eingeschalteter Bluetooth-Kartenleser erkannt werden. Zur Erkennung benötigt die AusweisApp2 Zugriff auf Ihren Standort. Nach Klicken auf den Fortsetzen-Knopf können Sie die benötigte Freigabe erteilen.</translation>
+        <translation>Es konnte kein gekoppeltes, eingeschaltetes Bluetooth Kartenlesegerät erkannt werden. Zur Erkennung benötigt die AusweisApp2 das Recht für Standortzugriff. Nach Klicken auf den Fortsetzen-Knopf können Sie die benötigte Freigabe erteilen.</translation>
     </message>
     <message>
-        <source>An error occured while connecting to your bluetooth device. Try to pair your device in the system settings and restart the app.</source>
+        <source>An error occured while connecting to your bluetooth card reader. Please pair your card reader in the system settings and restart the app.</source>
         <extracomment>INFO ANDROID IOS The connection to the bluetooth reader failed.</extracomment>
-        <translation>Beim Verbindungsaufbau zum Bluetooth-Kartenleser ist ein Fehler aufgetreten. Bitte koppeln Sie das Gerät über die Einstellungen des Systems und starten Sie die App erneut.</translation>
+        <translation>Beim Verbindungsaufbau zum Bluetooth-Kartenleser ist ein Fehler aufgetreten. Bitte koppeln Sie den Kartenleser über die Einstellungen des Systems und starten Sie die App erneut.</translation>
     </message>
     <message>
-        <source>Establish connection</source>
+        <source>Establishing connection...</source>
         <extracomment>INFO ANDROID IOS Status message while connecting to the bluetooth reader - Header</extracomment>
-        <translation>Verbindung wird hergestellt</translation>
+        <translation>Verbindung wird hergestellt...</translation>
     </message>
     <message>
-        <source>Determine card</source>
-        <extracomment>INFO ANDROID IOS Status message while the connection to the bluetooth has been established and an id card needs to be inserted - Header</extracomment>
-        <translation>Ermittle Ausweis</translation>
+        <source>Determining card...</source>
+        <extracomment>INFO ANDROID IOS Status message while the connection to the bluetooth has been established and an ID card needs to be inserted - Header</extracomment>
+        <translation>Ermittle Ausweis...</translation>
     </message>
     <message>
-        <source>Search card reader...</source>
+        <source>Please insert your ID card into your card reader.</source>
+        <extracomment>INFO ANDROID IOS Status message after the connection to the bluetooth reader is established and an ID card needs to be inserted.</extracomment>
+        <translation>Bitte stecken Sie Ihren Ausweis in den Kartenleser.</translation>
+    </message>
+    <message>
+        <source>Searching for card reader...</source>
         <extracomment>LABEL ANDROID IOS INFO ANDROID IOS Status message while the connection to the bluetooth reader is being established.</extracomment>
-        <translation>Suche Kartenleser...</translation>
+        <translation>Suche nach Kartenleser...</translation>
     </message>
     <message>
-        <source>Please insert your ID card.</source>
-        <extracomment>INFO ANDROID IOS Status message after the connection to the bluetooth reader is established and an id card needs to be inserted.</extracomment>
-        <translation>Bitte legen Sie Ihren Ausweis ein.</translation>
+        <source>Deprecation warning</source>
+        <translation>Abkündigungshinweis</translation>
+    </message>
+    <message>
+        <source>Bluetooth support will be removed in the next version of %1!</source>
+        <translation>Die Bluetooth-Unterstützung wird in der nächsten Version der %1 entfernt!</translation>
     </message>
 </context>
 <context>
@@ -352,10 +358,21 @@
     </message>
 </context>
 <context>
+    <name>CardReaderDelegate</name>
+    <message>
+        <source>Press space to open the link in your browser</source>
+        <translation>Drücken Sie die Leertaste um den Link im Browser zu öffnen</translation>
+    </message>
+</context>
+<context>
     <name>CardReaderView</name>
     <message>
         <source>After connecting a new card reader it may take a few seconds to recognize the driver. It may be necessary to restart your system after installing the driver. Only supported and connected card reader are shown here. %1</source>
         <translation>Nachdem ein neuer Kartenleser angeschlossen worden ist, kann es einige Sekunden dauern bis der Treiber erkannt wird. Unter Umständen kann ein Neustart Ihres Betriebssystems notwendig sein. Es werden hier nur unterstützte und angeschlossene Kartenleser angezeigt. %1</translation>
+    </message>
+    <message>
+        <source>Connected USB card reader</source>
+        <translation>Verbundene USB-Kartenleser</translation>
     </message>
 </context>
 <context>
@@ -400,7 +417,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>Schließen</translation>
     </message>
     <message>
-        <source>Self-authentication data view</source>
+        <source>Self-Authentication data view</source>
         <translation>Datenansicht der Selbstauskunft</translation>
     </message>
     <message>
@@ -412,15 +429,21 @@ LABEL ANDROID IOS</extracomment>
     <name>ChangePinController</name>
     <message>
         <source>You may now remove your ID card from the device.</source>
-        <extracomment>INFO DESKTOP_QML Changing the PIN was successful; hint that the id card may now be removed from the card reader.
+        <extracomment>INFO DESKTOP_QML Changing the PIN was successful; hint that the ID card may now be removed from the card reader.
 ----------
-INFO ANDROID IOS Hint that the id card may be removed from the card reader since the PIN was changed successfully.</extracomment>
-        <translation>Sie können nun Ihr Ausweisdokument vom Gerät entfernen.</translation>
+INFO ANDROID IOS Hint that the ID card may be removed from the card reader since the PIN was changed successfully.</extracomment>
+        <translation>Sie können nun Ihren Ausweis vom Gerät entfernen.</translation>
     </message>
     <message>
-        <source>Weak NFC signal</source>
+        <source>Weak NFC signal. Please
+- change the card position
+- remove the mobile phone case (if present)
+- connect the smartphone with a charging cable</source>
         <extracomment>INFO IOS The NFC signal is weak or unstable. The scan is stopped with this information in the iOS dialog.</extracomment>
-        <translation>Schwacher NFC-Empfang</translation>
+        <translation>Schwacher NFC-Empfang. Bitte
+- ändern Sie die Position des Ausweises
+- entfernen Sie Handyhüllen o.Ä.
+- verbinden Sie das Smartphone mit dem Ladegerät</translation>
     </message>
 </context>
 <context>
@@ -440,18 +463,18 @@ LABEL ANDROID IOS</extracomment>
         <translation>PIN ändern</translation>
     </message>
     <message>
-        <source>Please wait a moment...</source>
+        <source>Please don&apos;t move the ID card...</source>
         <extracomment>INFO DESKTOP_QML Processing screen text while the card communication is running after the PIN has been entered during PIN change process.
 ----------
 INFO ANDROID IOS Loading screen during PIN change process, data communcation is currently ongoing. Message is usually not visible since the password handling with basic reader is handled by EnterPasswordView.
 ----------
 INFO ANDROID IOS Generic progress message during PIN change process.</extracomment>
-        <translation>Bitte warten Sie einen Moment...</translation>
+        <translation>Bitte den Ausweis nicht bewegen...</translation>
     </message>
     <message>
-        <source>The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.</source>
+        <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
         <extracomment>INFO ANDROID IOS The card communcation was aborted, the online identification functionality is deactivated and needs to be actived by the authorities.</extracomment>
-        <translation>Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
         <source>Please observe the display of your card reader.</source>
@@ -459,19 +482,14 @@ INFO ANDROID IOS Generic progress message during PIN change process.</extracomme
         <translation>Bitte beachten Sie die Anzeige Ihres Kartenlesers.</translation>
     </message>
     <message>
-        <source>You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.</source>
+        <source>A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.</source>
         <extracomment>INFO ANDROID IOS The wrong PIN was entered twice, the next attempt requires additional verifcation via CAN.</extracomment>
-        <translation>Sie haben Ihre PIN zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher Ihre 6-stellige Zugangsnummer eingeben. Sie finden Ihre Zugangsnummer auf der Vorderseite Ihres Ausweises.</translation>
+        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher die sechsstellige Zugangsnummer (CAN) eingeben. Diese finden Sie auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
-        <source>You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.</source>
-        <extracomment>INFO ANDROID IOS The PIN (including the CAN) was entered wrongfully three times, the PUK is required to unlock the id card.</extracomment>
-        <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Ihre PIN ist jetzt gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
-    </message>
-    <message>
-        <source>Weak NFC signal. Please reposition your card.</source>
-        <extracomment>INFO ANDROID IOS The NFC signal is weak or unstable, the user is asked to change the card&apos;s position to (hopefully) reduce the distance to the NFC chip.</extracomment>
-        <translation>Schwacher NFC-Empfang. Bitte korrigieren Sie die Position Ihres Ausweisdokuments.</translation>
+        <source>A wrong PIN has been entered three times on your ID card. Your PIN is now blocked. To unblock your PIN you have to enter the PUK.</source>
+        <extracomment>INFO ANDROID IOS The PIN (including the CAN) was entered wrongfully three times, the PUK is required to unlock the ID card.</extracomment>
+        <translation>Die PIN Ihres Ausweises wurde dreimal falsch eingegeben. Ihre PIN ist gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
     </message>
     <message>
         <source>Retry</source>
@@ -479,18 +497,24 @@ INFO ANDROID IOS Generic progress message during PIN change process.</extracomme
         <translation>Erneut versuchen</translation>
     </message>
     <message>
-        <source>Weak NFC signal.
-Please reposition your card.</source>
-        <extracomment>INFO DESKTOP_QML The NFC signal is weak or unstable, the user is asked to change the card&apos;s position to (hopefully) reduce the distance to the NFC chip.</extracomment>
-        <translation>Schwacher NFC-Empfang.
-Bitte korrigieren Sie die Position Ihres Ausweises.</translation>
+        <source>Weak NFC signal. Please
+- change the card position
+- remove the mobile phone case (if present)
+- connect the smartphone with a charging cable</source>
+        <extracomment>INFO DESKTOP_QML The NFC signal is weak or unstable, the user is asked to change the card&apos;s position to (hopefully) reduce the distance to the NFC chip.
+----------
+INFO ANDROID IOS The NFC signal is weak or unstable, the user is asked to change the card&apos;s position to (hopefully) reduce the distance to the NFC chip.</extracomment>
+        <translation>Schwacher NFC-Empfang. Bitte
+- ändern Sie die Position des Ausweises
+- entfernen Sie Handyhüllen o.Ä.
+- verbinden Sie das Smartphone mit dem Ladegerät</translation>
     </message>
     <message>
         <source>Your ID card is unblocked. You now have three more tries to change your PIN</source>
         <extracomment>INFO DESKTOP_QML The ID card has just been unblocked and the user can now continue with their PIN change.
 ----------
 INFO ANDROID IOS The ID card has just been unblocked and the user can now continue with their PIN change.</extracomment>
-        <translation>Ihr Ausweisdokument wurde entsperrt. Sie haben nun drei weitere Versuche um Ihre PIN zu ändern</translation>
+        <translation>Ihr Ausweis wurde entsperrt. Sie haben nun drei weitere Versuche um Ihre PIN zu ändern</translation>
     </message>
 </context>
 <context>
@@ -503,7 +527,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
     <message>
         <source>You have the opportunity to change your transport PIN into a personal PIN. You can also change the PIN at any time or unblock the PIN using the personal unblocking key (PUK). The transport PIN and the PUK can be found in the letter sent to you by your competent authority.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Hier haben Sie die Möglichkeit, Ihre Transport-PIN in eine persönliche PIN zu ändern. Zudem können Sie jederzeit Ihre persönliche PIN ändern oder eine Blockierung mit Hilfe der Entsperrnummer (PUK) aufheben. Sie finden Ihre Transport-PIN und die PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweisdokuments von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde erhalten haben.</translation>
+        <translation>Hier haben Sie die Möglichkeit, Ihre Transport-PIN in eine persönliche PIN zu ändern. Zudem können Sie jederzeit Ihre persönliche PIN ändern oder eine Blockierung mit Hilfe der Entsperrnummer (PUK) aufheben. Sie finden Ihre Transport-PIN und die PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweises von der für die Ausgabe Ihres Ausweises zuständigen Behörde erhalten haben.</translation>
     </message>
     <message>
         <source>Change PIN now</source>
@@ -559,10 +583,49 @@ LABEL IOS_TABLET</extracomment>
     </message>
 </context>
 <context>
+    <name>DebugSettings</name>
+    <message>
+        <source>Create dummy entries</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Erstelle Scheindaten</translation>
+    </message>
+    <message>
+        <source>Logfile</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Protokolldatei</translation>
+    </message>
+    <message>
+        <source>History</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Verlauf</translation>
+    </message>
+    <message>
+        <source>Show beta testing image</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Zeige Beta-Test-Symbol</translation>
+    </message>
+</context>
+<context>
+    <name>DetachedLogView</name>
+    <message>
+        <source>Select logfile:</source>
+        <translation>Wähle Protokolldatei aus:</translation>
+    </message>
+    <message>
+        <source>Font size:</source>
+        <translation>Schriftgröße:</translation>
+    </message>
+    <message>
+        <source>Save logfile</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Protokolldatei speichern</translation>
+    </message>
+</context>
+<context>
     <name>DetailDialog</name>
     <message>
-        <source>Service provider data</source>
-        <translation>Angaben zum Diensteanbieter</translation>
+        <source>Provider data</source>
+        <translation>Angaben zum Anbieter</translation>
     </message>
     <message>
         <source>close dialog</source>
@@ -588,9 +651,9 @@ LABEL IOS_TABLET</extracomment>
         <translation>Entwickleroptionen</translation>
     </message>
     <message>
-        <source>Test PKI</source>
+        <source>Testmode for the self-authentication</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Test-PKI</translation>
+        <translation>Testmodus für die Selbstauskunft</translation>
     </message>
     <message>
         <source>Developer mode</source>
@@ -599,7 +662,7 @@ LABEL IOS_TABLET</extracomment>
     </message>
     <message>
         <source>The developer mode is aimed at integrators / developers for new service applications. For this reason, the developer mode works only in the test PKI. By activating the developer mode, some safety tests are deactivated. This means that the authentication process continues although the AusweisApp2 would usually abort the process with an error message when used in normal operation mode. Information on the disregarded error in the developer mode is displayed in the attached window below the AusweisApp2.</source>
-        <extracomment>LABEL DESKTOP_QML Only visible when the user activates the developer mode in the settings.</extracomment>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Der Entwicklermodus richtet sich an Integratoren / Entwickler für neue Dienste. Aus diesem Grund funktioniert der Entwicklermodus lediglich in der Test-PKI. Durch Aktivierung des Entwicklermodus werden einige Sicherheitsprüfungen abgestellt. Die Authentisierung wird auch dann weitergeführt, wenn die AusweisApp2 im Normalbetrieb die Authentisierung mit einer Fehlermeldung abbrechen würde. Der übergangene Fehler im Entwicklermodus wird im angehängten Fenster unterhalb der AusweisApp2 angezeigt.</translation>
     </message>
 </context>
@@ -610,8 +673,12 @@ LABEL IOS_TABLET</extracomment>
         <translation>verwenden</translation>
     </message>
     <message>
-        <source>Self-authentication test URI:</source>
-        <translation>Test URI für die Selbstauskunft:</translation>
+        <source>Testmode for the self-authentication:</source>
+        <translation>Testmodus für die Selbstauskunft:</translation>
+    </message>
+    <message>
+        <source>Developer mode:</source>
+        <translation>Entwicklermodus:</translation>
     </message>
 </context>
 <context>
@@ -622,18 +689,18 @@ LABEL IOS_TABLET</extracomment>
         <translation>Entwickleroptionen</translation>
     </message>
     <message>
-        <source>Test environment</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Testumgebung</translation>
+        <source>Testmode for the self-authentication</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Testmodus für die Selbstauskunft</translation>
     </message>
     <message>
         <source>Developer Mode</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Entwicklermodus</translation>
     </message>
     <message>
         <source>Use a more tolerant mode</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Benutze einen toleranten Modus</translation>
     </message>
     <message>
@@ -658,12 +725,30 @@ LABEL IOS_TABLET</extracomment>
     </message>
     <message>
         <source>Use the test environment during a self-authentication</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Benutze die Test-Umgebung während der Selbstauskunft</translation>
     </message>
     <message>
-        <source>Developer mode</source>
-        <translation>Entwicklermodus</translation>
+        <source>Create dummy entries</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Erstelle Scheindaten</translation>
+    </message>
+    <message>
+        <source>Logfile</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Protokolldatei</translation>
+    </message>
+    <message>
+        <source>History</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Verlauf</translation>
+    </message>
+</context>
+<context>
+    <name>DevicesListDelegate</name>
+    <message>
+        <source>Device %1</source>
+        <translation>Gerät %1</translation>
     </message>
 </context>
 <context>
@@ -709,17 +794,15 @@ LABEL IOS_TABLET</extracomment>
 <context>
     <name>EditRights</name>
     <message>
-        <source>You are about to identify yourself towards the following service provider:</source>
-        <extracomment>LABEL DESKTOP_QML
-----------
-LABEL ANDROID_PHONE
+        <source>You are about to identify yourself towards the following provider:</source>
+        <extracomment>LABEL ANDROID_PHONE
 ----------
 LABEL ANDROID_TABLET
 ----------
 LABEL IOS_PHONE
 ----------
 LABEL IOS_TABLET</extracomment>
-        <translation>Sie möchten sich bei folgendem Diensteanbieter ausweisen:</translation>
+        <translation>Sie möchten sich bei folgendem Anbieter ausweisen:</translation>
     </message>
     <message>
         <source>Purpose for reading out requested data</source>
@@ -735,17 +818,15 @@ LABEL IOS_TABLET</extracomment>
         <translation>Zweck des Auslesevorgangs</translation>
     </message>
     <message>
-        <source>Service provider</source>
-        <extracomment>LABEL DESKTOP_QML
-----------
-LABEL ANDROID_PHONE
+        <source>Provider</source>
+        <extracomment>LABEL ANDROID_PHONE
 ----------
 LABEL ANDROID_TABLET
 ----------
 LABEL IOS_PHONE
 ----------
 LABEL IOS_TABLET</extracomment>
-        <translation>Diensteanbieter</translation>
+        <translation>Anbieter</translation>
     </message>
     <message>
         <source>more...</source>
@@ -753,7 +834,7 @@ LABEL IOS_TABLET</extracomment>
         <translation>mehr...</translation>
     </message>
     <message>
-        <source>The following data will be transferred to the service provider when you enter the PIN:</source>
+        <source>The following data will be transferred to the provider when you enter the PIN:</source>
         <extracomment>LABEL DESKTOP_QML
 ----------
 LABEL ANDROID_PHONE
@@ -763,7 +844,7 @@ LABEL ANDROID_TABLET
 LABEL IOS_PHONE
 ----------
 LABEL IOS_TABLET</extracomment>
-        <translation>Folgende Daten Ihres Ausweises werden nach Eingabe der PIN ausgelesen und an den Diensteanbieter übermittelt:</translation>
+        <translation>Folgende Daten Ihres Ausweises werden nach Eingabe der PIN ausgelesen und an den Anbieter übermittelt:</translation>
     </message>
     <message>
         <source>Transactional information</source>
@@ -824,29 +905,60 @@ LABEL IOS_TABLET</extracomment>
         <translation>Dies ist die Anzeige zum Ändern der Berechtigungen der AusweisApp2.</translation>
     </message>
     <message>
-        <source>Click for more information about the service provider</source>
-        <translation>Klicke hier für mehr Informationen zum Diensteanbieter</translation>
+        <source>Click for more information about the provider</source>
+        <translation>Klicke hier für mehr Informationen zum Anbieter</translation>
     </message>
     <message>
         <source>Proceed to %1 entry</source>
-        <extracomment>LABEL DESKTOP_QML %1 can be CAN or PIN
+        <extracomment>LABEL DESKTOP_QML %1 can be &quot;card access number (CAN)&quot; or &quot;PIN&quot;
 ----------
-LABEL ANDROID_PHONE %1 can be CAN or PIN
+LABEL ANDROID_PHONE %1 can be &quot;card access number (CAN)&quot; or &quot;PIN&quot;
 ----------
-LABEL ANDROID_TABLET %1 can be CAN or PIN
+LABEL ANDROID_TABLET %1 can be &quot;card access number (CAN)&quot; or &quot;PIN&quot;
 ----------
-LABEL IOS_PHONE %1 can be CAN or PIN
+LABEL IOS_PHONE %1 can be &quot;card access number (CAN)&quot; or &quot;PIN&quot;
 ----------
-LABEL IOS_TABLET %1 can be CAN or PIN</extracomment>
+LABEL IOS_TABLET %1 can be &quot;card access number (CAN)&quot; or &quot;PIN&quot;</extracomment>
         <translation>Weiter zur %1-Eingabe</translation>
+    </message>
+    <message>
+        <source>You are about to identify yourself towards the following provider</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Sie möchten sich bei folgendem Anbieter ausweisen</translation>
+    </message>
+    <message>
+        <source>Show more information about the service provider</source>
+        <translation>Zeige mehr Informationen über den Anbieter</translation>
+    </message>
+    <message>
+        <source>card access number (CAN)</source>
+        <extracomment>LABEL DESKTOP_QML Inserted into &quot;Proceed to %1 entry&quot;
+----------
+LABEL ANDROID_PHONE Inserted into &quot;Proceed to %1 entry&quot;
+----------
+LABEL ANDROID_TABLET Inserted into &quot;Proceed to %1 entry&quot;
+----------
+LABEL IOS_PHONE Inserted into &quot;Proceed to %1 entry&quot;
+----------
+LABEL IOS_TABLET Inserted into &quot;Proceed to %1 entry&quot;</extracomment>
+        <translation>Zugangsnummer (CAN)</translation>
+    </message>
+    <message>
+        <source>PIN</source>
+        <extracomment>LABEL DESKTOP_QML Inserted into &quot;Proceed to %1 entry&quot;
+----------
+LABEL ANDROID_PHONE Inserted into &quot;Proceed to %1 entry&quot;
+----------
+LABEL ANDROID_TABLET Inserted into &quot;Proceed to %1 entry&quot;
+----------
+LABEL IOS_PHONE Inserted into &quot;Proceed to %1 entry&quot;
+----------
+LABEL IOS_TABLET Inserted into &quot;Proceed to %1 entry&quot;</extracomment>
+        <translation>PIN</translation>
     </message>
 </context>
 <context>
     <name>EnterPasswordView</name>
-    <message>
-        <source>Enter %1 view. You can start to enter the number.</source>
-        <translation>Anzeige der %1-Eingabe. Sie können nun Ihre Ziffern eingeben.</translation>
-    </message>
     <message>
         <source>This is the enter password view of the AusweisApp2.</source>
         <translation>Dies ist die Anzeige der Passworteingabe der AusweisApp2.</translation>
@@ -862,56 +974,52 @@ LABEL IOS_TABLET %1 can be CAN or PIN</extracomment>
         <translation>Verbleibende Versuche: %1</translation>
     </message>
     <message>
-        <source>%1-Entry</source>
-        <extracomment>LABEL DESKTOP_QML %1 can be &quot;PIN, CAN, PUK or UNKNOWN&quot;</extracomment>
-        <translation>%1-Eingabe</translation>
-    </message>
-    <message>
-        <source>The entered PIN does not match the new PIN. Please correct your input.</source>
+        <source>The new PIN and the confirmation do not match. Please correct your input.</source>
         <extracomment>INFO DESKTOP_QML The changed PIN was entered wrongfully during the confirmation process.
 ----------
 INFO ANDROID IOS The changed PIN was entered wrongfully during confirmation.</extracomment>
-        <translation>Die eingegebene PIN stimmt nicht mit Ihrer neuen PIN überein. Bitte korrigieren Sie Ihre PIN-Eingabe.</translation>
+        <translation>Die neue PIN und ihre Wiederholung stimmen nicht überein. Bitte korrigieren Sie Ihre Eingabe.</translation>
     </message>
     <message>
         <source>Please enter your 6-digit PIN. Use the keyboard or numpad.</source>
-        <extracomment>INFO DESKTOP_QML The AA2 expects a PIN with 6 digit which can be entered via the physical or onscreen keyboard.</extracomment>
-        <translation>Bitte geben Sie Ihre 6-stellige PIN ein. Benutzen Sie dazu die Tastatur oder den Ziffernblock.</translation>
+        <extracomment>INFO DESKTOP_QML The AA2 expects a PIN with 6 digits which can be entered via the physical or onscreen keyboard.</extracomment>
+        <translation>Bitte geben Sie Ihre sechsstellige PIN ein. Benutzen Sie dazu die Tastatur oder die Bildschirmtastatur.</translation>
     </message>
     <message>
         <source>More information</source>
+        <extracomment>INFO DESKTOP_QML Link text</extracomment>
         <translation>Mehr Informationen</translation>
     </message>
     <message>
-        <source>Please enter the 6-digit CAN you can find on the front of your ID card.</source>
-        <extracomment>INFO DESKTOP_QML The user is required to enter the 6 digit CAN.</extracomment>
-        <translation>Bitte geben Sie Ihre 6-stellige CAN ein. Diese befindet sich auf der Vorderseite Ihres Ausweises.</translation>
+        <source>Please enter the 6-digit card access number (CAN).</source>
+        <extracomment>INFO DESKTOP_QML The operator is required to enter the 6-digit CAN in CAN-allowed authentication.</extracomment>
+        <translation>Bitte geben Sie Ihre sechsstellige Zugangsnummer (CAN) ein.</translation>
     </message>
     <message>
-        <source>You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.</source>
+        <source>A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.</source>
         <extracomment>INFO DESKTOP_QML The PIN was entered wrongfully twice, this may have happened during an earlier session of the AA2, too. The user needs to enter the CAN for additional verification.
 ----------
 INFO ANDROID IOS The wrong PIN was entered twice, the third attempt requires the CAN for additional verification, hint where the CAN is found.</extracomment>
-        <translation>Sie haben Ihre PIN zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher Ihre 6-stellige Zugangsnummer eingeben. Sie finden Ihre Zugangsnummer auf der Vorderseite Ihres Ausweises.</translation>
+        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher die sechsstellige Zugangsnummer (CAN) eingeben. Diese finden Sie auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
-        <source>The online identification function is blocked. Please use your personal unblocking key (PUK) to unblock your ID card.</source>
-        <extracomment>INFO DESKTOP_QML The PUK is required to unlock the id card.</extracomment>
-        <translation>Die Online-Ausweisfunktion ist blockiert. Die Blockierung können Sie mit Ihrer Entsperrnummer (PUK) aufheben.</translation>
+        <source>The PIN of your ID card is blocked after three incorrect tries. The block can be lifted by entering your personal unblocking key (PUK).</source>
+        <extracomment>INFO DESKTOP_QML The PUK is required to unlock the ID card.</extracomment>
+        <translation>Die PIN Ihres Ausweises ist nach dreimaliger Fehleingabe gesperrt. Die Sperrung können Sie mit der Entsperrnummer (PUK) aufheben.</translation>
     </message>
     <message>
-        <source>Please enter a new 6-digit PIN of your choice.</source>
+        <source>Please enter a new 6-digit PIN now.</source>
         <extracomment>INFO DESKTOP_QML A new 6-digit PIN needs to be supplied.
 ----------
 INFO ANDROID IOS A new 6-digit PIN needs to be supplied.</extracomment>
-        <translation>Geben Sie nun bitte eine neue 6-stellige PIN Ihrer Wahl ein.</translation>
+        <translation>Vergeben Sie bitte nun eine neue sechsstellige PIN.</translation>
     </message>
     <message>
-        <source>Please enter your new 6-digit PIN again.</source>
+        <source>Please confirm your new 6-digit PIN.</source>
         <extracomment>INFO DESKTOP_QML The new PIN needs to be entered again for verification.
 ----------
 INFO ANDROID IOS The new PIN needs to be confirmed.</extracomment>
-        <translation>Wiederholen Sie bitte Ihre neue 6-stellige PIN.</translation>
+        <translation>Wiederholen Sie bitte Ihre neue sechsstellige PIN.</translation>
     </message>
     <message>
         <source>Unknown password type:</source>
@@ -919,35 +1027,38 @@ INFO ANDROID IOS The new PIN needs to be confirmed.</extracomment>
         <translation>Unbekannter Passwort-Typ:</translation>
     </message>
     <message>
-        <source>Your PIN has 6 digits?</source>
-        <extracomment>LABEL DESKTOP_QML Button, mit dem der Benutzer eine TransportPIN-Änderung starten kann.
+        <source>Does your PIN have 6 digits?</source>
+        <extracomment>LABEL DESKTOP_QML Button to switch to a 6-digit PIN.
 ----------
-LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung starten kann.</extracomment>
-        <translation>Ist Ihre PIN 6-stellig?</translation>
+LABEL ANDROID IOS Button to switch to a 6-digit PIN.</extracomment>
+        <translation>Ist Ihre PIN sechsstellig?</translation>
     </message>
     <message>
-        <source>Your PIN has 5 digits?</source>
-        <translation>Ist Ihre PIN 5-stellig?</translation>
+        <source>Does your PIN have 5 digits?</source>
+        <extracomment>LABEL DESKTOP_QML Button to switch to a transport PIN or start a change of the transport PIN.
+----------
+LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the transport PIN.</extracomment>
+        <translation>Ist Ihre PIN fünfstellig?</translation>
     </message>
     <message>
-        <source>Please enter the six-digit card access number. You can find the card access number on the front of the ID card.</source>
+        <source>Please enter the 6-digit card access number (CAN). You can find it on the front of the ID card.</source>
         <extracomment>INFO ANDROID IOS The CAN needs to be entered in CAN-allowed mode, hint where the CAN can be found.</extracomment>
-        <translation>Bitte geben Sie Ihre 6-stellige Zugangsnummer ein. Sie finden Ihre Zugangsnummer auf der Vorderseite Ihres Ausweises.</translation>
+        <translation>Bitte geben Sie die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie auf der Vorderseite des Ausweises.</translation>
     </message>
     <message>
-        <source>You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.</source>
-        <extracomment>INFO ANDROID IOS The PUK is required to unlock the id card since the wrong PIN entered three times.</extracomment>
-        <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Ihre PIN ist jetzt gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
+        <source>A wrong PIN has been entered three times on your ID card. Your PIN is now blocked. To unblock your PIN you have to enter the PUK.</source>
+        <extracomment>INFO ANDROID IOS The PUK is required to unlock the ID card since the wrong PIN entered three times.</extracomment>
+        <translation>Die PIN Ihres Ausweises wurde dreimal falsch eingegeben. Ihre PIN ist gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
     </message>
     <message>
-        <source>Please enter your transport PIN.</source>
+        <source>Please enter the transport PIN from your PIN letter.</source>
         <extracomment>INFO ANDROID IOS The transport PIN is required by AA2, it needs to be change to an actual PIN.</extracomment>
-        <translation>Geben Sie bitte Ihre Transport-PIN ein.</translation>
+        <translation>Geben Sie bitte die Transport-PIN aus dem PIN-Brief ein.</translation>
     </message>
     <message>
-        <source>Enter the pairing code shown on your other device to use it as a card reader.</source>
+        <source>Enter the pairing code shown on the device you want to pair.</source>
         <extracomment>INFO ANDROID IOS The pairing code for the smartphone is required.</extracomment>
-        <translation>Geben Sie den Kopplungscode, der auf Ihrem anderen Gerät angezeigt wird, ein, um dieses als Kartenleser verwenden zu können.</translation>
+        <translation>Geben Sie den Kopplungscode ein, der auf dem zu koppelnden Smartphone angezeigt wird.</translation>
     </message>
     <message>
         <source>Please enter your PIN.</source>
@@ -955,88 +1066,46 @@ LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung start
         <translation>Geben Sie bitte Ihre PIN ein.</translation>
     </message>
     <message>
-        <source>Please start the remote service in order to use your smartphone as a card reader with AusweisApp2.</source>
-        <translation>Bitte starten sie den Fernzugriff um Ihr Smartphone als Kartenleser in der AusweisApp2 zu nutzen.</translation>
-    </message>
-    <message>
         <source>Please enter your 5-digit Transport PIN. Use the keyboard or numpad.</source>
-        <extracomment>INFO DESKTOP_QML The AA2 expects a PIN with 5 digit which can be entered via the physical or onscreen keyboard.</extracomment>
-        <translation>Bitte geben Sie Ihre 5-stellige Transport-PIN ein. Benutzen Sie dazu die Tastatur oder den Ziffernblock.</translation>
+        <extracomment>INFO DESKTOP_QML The AA2 expects a PIN with 5 digits which can be entered via the physical or onscreen keyboard</extracomment>
+        <translation>Bitte geben Sie Ihre fünfstellige Transport-PIN ein. Benutzen Sie dazu die Tastatur oder den Ziffernblock.</translation>
+    </message>
+    <message>
+        <source>%1. You can start to enter the number.</source>
+        <extracomment>LABEL DESKTOP_QML %1 is the title, e.g. &quot;PIN entry&quot;</extracomment>
+        <translation>%1. Sie können nun Ihre Nummer eingeben.</translation>
+    </message>
+    <message>
+        <source>PIN entry</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>PIN-Eingabe</translation>
+    </message>
+    <message>
+        <source>CAN entry</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>CAN-Eingabe</translation>
+    </message>
+    <message>
+        <source>PUK entry</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>PUK-Eingabe</translation>
+    </message>
+    <message>
+        <source>Pairing code</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Kopplungscode</translation>
+    </message>
+    <message>
+        <source>Start the pairing on your smartphone and enter the shown pairing code in order to use your smartphone as a card reader (SaC).</source>
+        <extracomment>INFO DESKTOP_QML The pairing code needs to be supplied.</extracomment>
+        <translation>Starten Sie die Kopplung auf Ihrem Smartphone und geben Sie den angezeigten Kopplungscode ein um Ihr Smartphone als Kartenleser (SaK) zu verwenden.</translation>
     </message>
 </context>
 <context>
-    <name>Feedback</name>
+    <name>GTextField</name>
     <message>
-        <source>Rate AusweisApp2</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Bewerten Sie die AusweisApp2</translation>
-    </message>
-    <message>
-        <source>Help &amp; Feedback</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Hilfe &amp; Feedback</translation>
-    </message>
-    <message>
-        <source>FAQ</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>FAQ</translation>
-    </message>
-    <message>
-        <source>Do you have questions how to use AusweisApp2?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Haben Sie Fragen zur Nutzung der AusweisApp2?</translation>
-    </message>
-    <message>
-        <source>Support</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Support</translation>
-    </message>
-    <message>
-        <source>You need further help?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Benötigen Sie weitere Hilfe?</translation>
-    </message>
-    <message>
-        <source>Please rate us in the Google Play Store.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Bewerten Sie die AusweisApp2.</translation>
-    </message>
-    <message>
-        <source>Report error</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Melden Sie einen Fehler</translation>
-    </message>
-    <message>
-        <source>You found a bug? Please tell us, so we can fix it.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sie haben einen Fehler gefunden? Teilen Sie ihn uns mit, damit wir ihn beheben können.</translation>
-    </message>
-    <message>
-        <source>Show log</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Protokoll anzeigen</translation>
-    </message>
-    <message>
-        <source>You can view the logs of the AusweisApp2 here.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Hier können Sie das Protokoll der AusweisApp2 einsehen.</translation>
-    </message>
-    <message>
-        <source>https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/haeufig-gestellte-fragen/</translation>
-    </message>
-    <message>
-        <source>https://www.ausweisapp.bund.de/en/qa/support/</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/support/</translation>
-    </message>
-</context>
-<context>
-    <name>GSwitch</name>
-    <message>
-        <source>Switch</source>
-        <translation>Wechseln</translation>
+        <source>Maximum allowed length reached.</source>
+        <translation>Maximal zulässige Länge erreicht.</translation>
     </message>
 </context>
 <context>
@@ -1086,6 +1155,20 @@ LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung start
         <source>Close after authentication</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Nach Authentisierung schließen</translation>
+    </message>
+    <message>
+        <source>Use internal notifications</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Interne Benachrichtigungen aktivieren</translation>
+    </message>
+    <message>
+        <source>Using the developer mode forces the notifications to be enabled.</source>
+        <extracomment>LABEL DESKTOP_QML Only visible when the user activates the developer mode in the settings.</extracomment>
+        <translation>Im Entwicklermodus werden die internen Benachrichtigungen erzwungen.</translation>
+    </message>
+    <message>
+        <source>Please note that the old UI will be removed in the next version of %1!</source>
+        <translation>Bitte beachten Sie, dass die alte grafische Nutzeroberfläche in der nächsten Version der %1 entfernt wird!</translation>
     </message>
 </context>
 <context>
@@ -1180,12 +1263,13 @@ LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung start
     </message>
     <message>
         <source>Identify</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Ausweisen</translation>
     </message>
     <message>
-        <source>The device %1 was unpaired because it does not react to connection attempts. Retry the pairing process if you want to use this device to authenticate yourself.</source>
+        <source>The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
         <extracomment>INFO DESKTOP_QML The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.</extracomment>
-        <translation>Das Gerät %1 wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Versuchen Sie das Gerät erneut zu koppeln, wenn Sie es zur Authentisierung verwenden möchten.</translation>
+        <translation>Das Gerät %1 wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Koppeln Sie das Gerät erneut, um es wieder als Kartenleser zu verwenden.</translation>
     </message>
     <message>
         <source>Attempts</source>
@@ -1201,9 +1285,9 @@ LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung start
         <translation>Schritt %1 von 3</translation>
     </message>
     <message>
-        <source>Establish connection</source>
+        <source>Searching for card reader</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Verbindung wird hergestellt</translation>
+        <translation>Suche nach Kartenleser</translation>
     </message>
     <message>
         <source>Information</source>
@@ -1211,19 +1295,14 @@ LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung start
         <translation>Information</translation>
     </message>
     <message>
-        <source>Please insert the card into the device</source>
-        <extracomment>INFO DESKTOP_QML The AA2 is waiting for an id card to be inserted into the card reader.</extracomment>
-        <translation>Bitte legen Sie die Karte auf den Kartenleser</translation>
+        <source>No card reader detected. Please make sure that a card reader is connected. Open the %1reader settings%2 to configure reader and get more information about supported readers.</source>
+        <extracomment>INFO DESKTOP_QML AA2 is waiting for the card reader or the ID card.</extracomment>
+        <translation>Es wurde kein Kartenleser gefunden. Bitte stellen Sie sicher, dass ein Kartenleser angeschlossen ist. Öffnen Sie die %1Einstellungen%2 um Kartenleser zu konfigurieren und mehr Informationen zu unterstützten Kartenlesern zu erhalten.</translation>
     </message>
     <message>
-        <source>Searching for card reader</source>
-        <extracomment>INFO DESKTOP_QML AA2 is waiting for the card reader or the id card.</extracomment>
-        <translation>Suche nach Kartenleser</translation>
-    </message>
-    <message>
-        <source>The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.</source>
+        <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
         <extracomment>INFO DESKTOP_QML The online authentication feature of the card is disabled and needs to be activated by the authorities.</extracomment>
-        <translation>Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
         <source>Please observe the display of your card reader.</source>
@@ -1231,19 +1310,24 @@ LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung start
         <translation>Bitte beachten Sie die Anzeige Ihres Kartenlesers.</translation>
     </message>
     <message>
-        <source>Please place the smartphone on the card</source>
+        <source>Connected to %1. Please place the NFC interface of the smartphone on your ID card.</source>
         <extracomment>INFO DESKTOP_QML The AA2 is waiting for the smartphone to be placed on the id.</extracomment>
-        <translation>Bitte platzieren Sie das Smartphone auf der Karte</translation>
+        <translation>Verbunden mit %1. Bitte platzieren Sie das Smartphone mit der NFC-Schnittstelle auf Ihrem Ausweis.</translation>
     </message>
     <message>
-        <source>Please place the smartphone on the card or insert the card into the device</source>
-        <extracomment>INFO DESKTOP_QML The AA2 is waiting for an id card to be inserted into the card reader (or smartphone for that matter).</extracomment>
-        <translation>Bitte platzieren Sie das Smartphone auf der Karte oder legen Sie die Karte in den Kartenleser ein</translation>
+        <source>Please place the smartphone (connected to %1) on your ID card or put the ID card on the card reader.</source>
+        <extracomment>INFO DESKTOP_QML The AA2 is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).</extracomment>
+        <translation>Bitte platzieren Sie das Smartphone (verbunden mit %1) auf Ihrem Ausweis oder legen den Ausweis auf den Kartenleser.</translation>
     </message>
     <message>
         <source>The used card reader does not meet the technical requirements (Extended Length not supported).</source>
         <extracomment>ERROR DESKTOP_QML</extracomment>
         <translation>Der verwendete Kartenleser erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).</translation>
+    </message>
+    <message>
+        <source>Please put the ID card on the card reader.</source>
+        <extracomment>INFO DESKTOP_QML The AA2 is waiting for an ID card to be inserted into the card reader.</extracomment>
+        <translation>Bitte legen Sie den Ausweis auf das Kartenlesegerät.</translation>
     </message>
 </context>
 <context>
@@ -1297,6 +1381,11 @@ LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung start
         <extracomment>INFO IOS Accessible name for the trash icon of a history entry.</extracomment>
         <translation>Lösche Verlaufseintrag: %1</translation>
     </message>
+    <message>
+        <source>Delete entry</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Lösche Eintrag</translation>
+    </message>
 </context>
 <context>
     <name>HistoryRemovalTimePeriodControl</name>
@@ -1339,6 +1428,11 @@ LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung start
         <translation>Verlauf</translation>
     </message>
     <message>
+        <source>Search in history</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Im Verlauf suchen</translation>
+    </message>
+    <message>
         <source>Currently there are no history entries.</source>
         <extracomment>INFO DESKTOP_QML No authentication history, placeholder text.</extracomment>
         <translation>Derzeit gibt es keine Einträge im Verlauf.</translation>
@@ -1362,24 +1456,19 @@ LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung start
         <translation>Verlauf löschen?</translation>
     </message>
     <message>
-        <source>Please confirm that you want to delete your history entries.</source>
+        <source>All history entries will be deleted.</source>
         <extracomment>INFO DESKTOP_QML Content of the confirmation dialog to clear the entire authentication history.</extracomment>
-        <translation>Bitte bestätigen Sie das Löschen der Verlaufseinträge.</translation>
+        <translation>Alle im Verlauf gespeicherten Informationen werden gelöscht.</translation>
     </message>
     <message>
-        <source>Removed %1 entries from the history.</source>
+        <source>Deleted %1 entries from the history.</source>
         <extracomment>INFO DESKTOP_QML Feedback how many history entries were removed.</extracomment>
-        <translation>Es wurden %1 Einträge aus dem Verlauf entfernt.</translation>
+        <translation>Es wurden %1 Einträge aus dem Verlauf gelöscht.</translation>
     </message>
     <message>
         <source>Clear history</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Lösche Verlauf</translation>
-    </message>
-    <message>
-        <source>Save to pdf</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Speichern als PDF</translation>
     </message>
     <message>
         <source>today</source>
@@ -1397,6 +1486,11 @@ LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung start
         <source>dd.MM.yyyy</source>
         <translation>dd.MM.yyyy</translation>
     </message>
+    <message>
+        <source>Save as PDF...</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Als PDF speichern...</translation>
+    </message>
 </context>
 <context>
     <name>HistoryViewConfirmationPopup</name>
@@ -1411,9 +1505,9 @@ LABEL ANDROID IOS Button, mit dem der Benutzer eine TransportPIN-Änderung start
         <translation>Löschen</translation>
     </message>
     <message>
-        <source>Please confirm that you want to delete your complete history.</source>
+        <source>All history entries will be deleted.</source>
         <extracomment>LABEL ANDROID IOS Confirmaton popup to clear all history entries.</extracomment>
-        <translation>Bitte bestätigen Sie, dass der komplette Verlauf gelöscht werden soll.</translation>
+        <translation>Alle im Verlauf gespeicherten Informationen werden gelöscht.</translation>
     </message>
 </context>
 <context>
@@ -1449,11 +1543,11 @@ LABEL ANDROID IOS</extracomment>
         <translation>dd.MM.yyyy</translation>
     </message>
     <message>
-        <source>Requested data</source>
+        <source>Submitted data</source>
         <extracomment>LABEL DESKTOP_QML
 ----------
 LABEL ANDROID IOS</extracomment>
-        <translation>Angeforderte Daten</translation>
+        <translation>Übermittelte Daten</translation>
     </message>
     <message>
         <source>Terms of usage</source>
@@ -1470,20 +1564,16 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>HistoryViewTitleBarControls</name>
     <message>
-        <source>History enabled</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Verlauf aktiviert</translation>
-    </message>
-    <message>
-        <source>History disabled</source>
-        <translation>Verlauf deaktiviert</translation>
+        <source>Delete all entries</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Lösche alle Einträge</translation>
     </message>
 </context>
 <context>
     <name>HistoryWidget</name>
     <message>
-        <source>This page displays the history of your successful authentications. Double-click on a service provider for more information. You can delete parts or the entire history. You can also save the history as a PDF file.</source>
-        <translation>Auf dieser Seite sehen Sie den Verlauf Ihrer erfolgreichen Authentisierungen. Mit einem Doppelklick erhalten Sie weitere Informationen zum ausgewählten Diensteanbieter. Es ist darüber hinaus auch möglich, den Verlauf zu speichern.</translation>
+        <source>This page displays the history of your successful authentications. Double-click on a provider for more information. You can delete parts or the entire history. You can also save the history as a PDF file.</source>
+        <translation>Auf dieser Seite sehen Sie den Verlauf Ihrer erfolgreichen Authentisierungen. Mit einem Doppelklick erhalten Sie weitere Informationen zum ausgewählten Anbieter. Es ist darüber hinaus auch möglich, den Verlauf zu speichern.</translation>
     </message>
     <message>
         <source>No matching history entries were found. Please modify your search criteria.</source>
@@ -1530,15 +1620,26 @@ LABEL ANDROID IOS</extracomment>
     <name>IdentifyController</name>
     <message>
         <source>You may now remove your ID card from the device.</source>
-        <extracomment>INFO DESKTOP_QML The authentication process is completed, the id card may be removed from the card reader.
+        <extracomment>INFO DESKTOP_QML The authentication process is completed, the ID card may be removed from the card reader.
 ----------
-INFO ANDROID IOS The authentication process is completed, the id card may (and should) be removed from the card reader.</extracomment>
-        <translation>Sie können nun Ihr Ausweisdokument vom Gerät entfernen.</translation>
+INFO ANDROID IOS The authentication process is completed, the ID card may (and should) be removed from the card reader.</extracomment>
+        <translation>Sie können nun Ihren Ausweis vom Gerät entfernen.</translation>
     </message>
     <message>
-        <source>Weak NFC signal</source>
+        <source>Process finished successfully. You may now remove your ID card from the device.</source>
+        <extracomment>INFO DESKTOP_QML The authentication process finished successfully, the ID card may be removed from the card reader.</extracomment>
+        <translation>Der Vorgang war erfolgreich. Sie können nun Ihren Ausweis vom Gerät entfernen.</translation>
+    </message>
+    <message>
+        <source>Weak NFC signal. Please
+- change the card position
+- remove the mobile phone case (if present)
+- connect the smartphone with a charging cable</source>
         <extracomment>INFO IOS The NFC signal is weak or unstable. The scan is stopped with this information in the iOS dialog.</extracomment>
-        <translation>Schwacher NFC-Empfang</translation>
+        <translation>Schwacher NFC-Empfang. Bitte
+- ändern Sie die Position des Ausweises
+- entfernen Sie Handyhüllen o.Ä.
+- verbinden Sie das Smartphone mit dem Ladegerät</translation>
     </message>
 </context>
 <context>
@@ -1555,30 +1656,32 @@ LABEL ANDROID IOS</extracomment>
         <extracomment>INFO DESKTOP_QML Header of the progress information during the authentication process.
 ----------
 INFO ANDROID IOS Header of the progress status message during the authentication process.</extracomment>
-        <translation>Authentisierung wird durchgeführt</translation>
+        <translation>Ausweisvorgang wird durchgeführt</translation>
     </message>
     <message>
         <source>Acquiring provider certificate</source>
-        <extracomment>INFO ANDROID IOS Header of the progress status message during the authentication process.</extracomment>
-        <translation>Lade Berechtigungszertifikat herunter</translation>
+        <extracomment>INFO DESKTOP_QML Header of the progress information during the authentication process.
+----------
+INFO ANDROID IOS Header of the progress status message during the authentication process.</extracomment>
+        <translation>Berechtigungszertifikat wird heruntergeladen</translation>
     </message>
     <message>
         <source>Please wait a moment...</source>
-        <extracomment>INFO DESKTOP_QML Second line text if a basic card reader is used and data is exchanged with the card/server in the background. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
+        <extracomment>INFO DESKTOP_QML Information message about cancellation process with present network connectivity
+----------
+INFO DESKTOP_QML Generic progress status message while no card communication is active.
 ----------
 INFO DESKTOP_QML Generic progress status message during authentication.
-----------
-INFO ANDROID IOS Second line text if a basic card reader is used and background communication with the card/server is running. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
 ----------
 INFO ANDROID IOS Generic status message during the authentication process.</extracomment>
         <translation>Bitte warten Sie einen Moment...</translation>
     </message>
     <message>
-        <source>The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.</source>
-        <extracomment>INFO DESKTOP_QML The online authentication feature of the id card is deactivated and needs to be activated by the local authorities.
+        <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
+        <extracomment>INFO DESKTOP_QML The online authentication feature of the ID card is deactivated and needs to be activated by the local authorities.
 ----------
-INFO ANDROID IOS The online authentication feature of the id card is disabled and needs to be actived the be authorities.</extracomment>
-        <translation>Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+INFO ANDROID IOS The online authentication feature of the ID card is disabled and needs to be actived the be authorities.</extracomment>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
         <source>Please observe the display of your card reader.</source>
@@ -1586,28 +1689,18 @@ INFO ANDROID IOS The online authentication feature of the id card is disabled an
         <translation>Bitte beachten Sie die Anzeige Ihres Kartenlesers.</translation>
     </message>
     <message>
-        <source>You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.</source>
-        <extracomment>INFO ANDROID IOS The PIN was entered wrongfully two times, the third attempts requires additional CAN verification, hint where the CAN is found.</extracomment>
-        <translation>Sie haben Ihre PIN zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher Ihre 6-stellige Zugangsnummer eingeben. Sie finden Ihre Zugangsnummer auf der Vorderseite Ihres Ausweises.</translation>
-    </message>
-    <message>
         <source>No network connectivity</source>
         <extracomment>INFO DESKTOP_QML Header of the message that no network connection is present during the authentication procedure.
 ----------
 LABEL ANDROID IOS</extracomment>
-        <translation>Keine Netzwerkverbindung</translation>
+        <translation>Keine Verbindung möglich</translation>
     </message>
     <message>
-        <source>Please enable the network interface or cancel the workflow.</source>
+        <source>Please establish an internet connection.</source>
         <extracomment>INFO DESKTOP_QML Content of the message that no network connection is present during the authentication procedure.
 ----------
 INFO ANDROID IOS No network connection, the user needs to active the network interface or abort the procedure.</extracomment>
-        <translation>Bitte stellen Sie eine Internetverbindung her oder beenden Sie den Vorgang.</translation>
-    </message>
-    <message>
-        <source>Weak NFC signal. Please reposition your card.</source>
-        <extracomment>INFO ANDROID IOS The NFC signal is weak, by repositioning the card the signal might improve.</extracomment>
-        <translation>Schwacher NFC-Empfang. Bitte korrigieren Sie die Position Ihres Ausweises.</translation>
+        <translation>Bitte stellen Sie eine Internetverbindung her.</translation>
     </message>
     <message>
         <source>Change transport PIN</source>
@@ -1630,186 +1723,94 @@ INFO ANDROID IOS No network connection, the user needs to active the network int
         <translation>Beende Ausweisvorgang</translation>
     </message>
     <message>
-        <source>You have to change your transport PIN into a personal PIN to use the online ID function. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.</source>
-        <extracomment>INFO DESKTOP_QML The user clicked that the current PIN has 5 digits (transport PIN) which needs to be changed to a 6-digit PIN. The current process will be aborted and needs to be restarted *manually* by the user.
-----------
-INFO ANDROID IOS The user clicked that the current PIN has 5 digits (transport PIN), it needs to be changed to an ordinary 6 digit PIN. The current process needs to be restarted *manually* by the user.</extracomment>
-        <translation>Sie müssen Ihre fünfstellige Transport-PIN zunächst in eine persönliche PIN ändern. Sie sind dabei den aktuell laufenden Vorgang zu verlassen und zur PIN-Verwaltung weitergeleitet zu werden. Starten Sie den gewünschten Vorgang bitte nach der PIN-Änderung erneut.</translation>
-    </message>
-    <message>
         <source>Transport PIN</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Transport PIN</translation>
     </message>
     <message>
-        <source>Weak NFC signal.
-Please reposition your card.</source>
-        <extracomment>INFO DESKTOP_QML A weak NFC signal was detected since the card communication was aborted. The card&apos;s position needs to be adjusted to hopefully achieve better signal strength.</extracomment>
-        <translation>Schwacher NFC-Empfang.
-Bitte korrigieren Sie die Position Ihres Ausweises.</translation>
-    </message>
-</context>
-<context>
-    <name>InformationView</name>
-    <message>
-        <source>Help section</source>
-        <translation>Hilfe</translation>
-    </message>
-    <message>
-        <source>This is the help section of the AusweisApp2.</source>
-        <translation>Dies ist die Hilfe der AusweisApp2.</translation>
-    </message>
-    <message>
-        <source>Help</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Hilfe</translation>
-    </message>
-    <message>
-        <source>Questions, feedback, and rating</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Fragen, Rückmeldungen und Bewertungen</translation>
-    </message>
-    <message>
-        <source>Questions</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Fragen</translation>
-    </message>
-    <message>
-        <source>https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/</source>
-        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/haeufig-gestellte-fragen/</translation>
-    </message>
-    <message>
-        <source>Report error</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Melden Sie einen Fehler</translation>
-    </message>
-    <message>
-        <source>https://www.ausweisapp.bund.de/en/qa/report-an-error/</source>
-        <translation>https://www.ausweisapp.bund.de/feedback/melden-sie-einen-fehler/</translation>
-    </message>
-    <message>
-        <source>Rate application</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Anwendung bewerten</translation>
-    </message>
-    <message>
-        <source>https://www.ausweisapp.bund.de/en/qa/evaluate-us/</source>
-        <translation>https://www.ausweisapp.bund.de/feedback/bewerten-sie-uns/</translation>
-    </message>
-    <message>
-        <source>Setup and manual</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Einrichtung und Handbuch</translation>
-    </message>
-    <message>
-        <source>Setup</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Einrichtung</translation>
-    </message>
-    <message>
-        <source>Online help</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Online-Hilfe</translation>
-    </message>
-    <message>
-        <source>Diagnosis and application log</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Diagnose- und Anwendungsprotokoll</translation>
-    </message>
-    <message>
-        <source>Diagnosis</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Diagnose</translation>
-    </message>
-    <message>
-        <source>Application log</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Anwendungsprotokoll</translation>
-    </message>
-    <message>
-        <source>Version and license information</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Version und Lizenzinformationen</translation>
-    </message>
-    <message>
-        <source>Version information</source>
-        <extracomment>LABEL DESKTOP_QML
+        <source>Weak NFC signal. Please
+- change the card position
+- remove the mobile phone case (if present)
+- connect the smartphone with a charging cable</source>
+        <extracomment>INFO DESKTOP_QML A weak NFC signal was detected since the card communication was aborted. The card&apos;s position needs to be adjusted to hopefully achieve better signal strength.
 ----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Versionsinformationen</translation>
+INFO ANDROID IOS The NFC signal is weak, by repositioning the card the signal might improve.</extracomment>
+        <translation>Schwacher NFC-Empfang. Bitte
+- ändern Sie die Position des Ausweises
+- entfernen Sie Handyhüllen o.Ä.
+- verbinden Sie das Smartphone mit dem Ladegerät</translation>
     </message>
     <message>
-        <source>Software licenses</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Softwarelizenzen</translation>
+        <source>Did you change the transport PIN already?</source>
+        <translation>Haben Sie Ihre Transport-PIN bereits geändert?</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/download/windows-and-mac/</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>https://www.ausweisapp.bund.de/download/windows-und-mac/</translation>
+        <source>Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. Online identification with transport PIN is not possible.</source>
+        <translation>Vor der ersten Nutzung der Online-Ausweisfunktion müssen Sie die Transport-PIN durch eine persönliche sechsstellige PIN ersetzen. Die Online-Indentifikation ist mit der Transport-PIN nicht möglich.</translation>
     </message>
     <message>
-        <source>Information</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Information</translation>
+        <source>No, change transport PIN now</source>
+        <translation>Nein, PIN jetzt ändern</translation>
     </message>
     <message>
-        <source>Here you can see detailed information about AusweisApp2.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Hier finden Sie detaillierte Informationen zur AusweisApp2.</translation>
+        <source>A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.</source>
+        <extracomment>INFO ANDROID IOS The PIN was entered wrongfully two times, the third attempts requires additional CAN verification, hint where the CAN is found.</extracomment>
+        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher die sechsstellige Zugangsnummer (CAN) eingeben. Diese finden Sie auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
-        <source>Software license</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Softwarelizenz</translation>
+        <source>First you have to change your 5-digit transport PIN you received in your in PIN letter into a 6-digit PIN. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.</source>
+        <extracomment>INFO DESKTOP_QML The user clicked that the current PIN has 5 digits (transport PIN) which needs to be changed to a 6-digit PIN. The current process will be aborted and needs to be restarted *manually* by the user.
+----------
+INFO ANDROID IOS The user clicked that the current PIN has 5 digits (transport PIN), it needs to be changed to an ordinary 6-digit PIN. The current process needs to be restarted *manually* by the user.</extracomment>
+        <translation>Sie müssen die fünfstellige Transport-PIN aus dem PIN-Brief zunächst in eine sechsstellige PIN ändern. Sie verlassen den laufenden Vorgang und werden zur PIN-Verwaltung weitergeleitet. Starten Sie den gewünschten Vorgang bitte nach der PIN-Änderung erneut.</translation>
     </message>
     <message>
-        <source>Read the software license text on the application homepage.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Lesen Sie die Softwarelizenz auf der Internetseite der Anwendung.</translation>
+        <source>Please don&apos;t move the ID card...</source>
+        <extracomment>INFO DESKTOP_QML Second line text if a basic card reader is used and data is exchanged with the card/server in the background. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
+----------
+INFO ANDROID IOS Second line text if a basic card reader is used and background communication with the card/server is running. Is not actually visible since the basic reader password handling is done by EnterPasswordView.</extracomment>
+        <translation>Bitte den Ausweis nicht bewegen...</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/download/android/</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>https://www.ausweisapp.bund.de/download/android/</translation>
+        <source>Aborting process and informing the service provider</source>
+        <extracomment>INFO DESKTOP_QML The user aborted the authentication process, according to TR we need to inform the service provider</extracomment>
+        <translation>Der Vorgang wird beendet und der Anbieter informiert</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/en/download/ios/</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>https://www.ausweisapp.bund.de/download/ios/</translation>
+        <source>Network problemes detected, trying to reach server within 30 seconds.</source>
+        <extracomment>INFO DESKTOP_QML Information message about cancellation process without working network connectivity</extracomment>
+        <translation>Es wurden Netzwerkprobleme erkannt. Die Verbindung wird weiterhin für 30 Sekunden versucht.</translation>
     </message>
 </context>
 <context>
-    <name>KnownDevicesListDelegate</name>
+    <name>LanguageSelectionPopup</name>
     <message>
-        <source>Last connection:</source>
+        <source>Select language</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Letzte Verbindung:</translation>
+        <translation>Sprache auswählen</translation>
     </message>
     <message>
-        <source>Not available</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Nicht verfügbar</translation>
+        <source>German</source>
+        <translation>Deutsch</translation>
     </message>
     <message>
-        <source>Great quality</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Gute Qualität</translation>
+        <source>Set language to german</source>
+        <translation>Verwende deutsche Sprache</translation>
     </message>
     <message>
-        <source>Bad quality</source>
-        <translation>Schlechte Qualität</translation>
+        <source>English</source>
+        <translation>Englisch</translation>
     </message>
     <message>
-        <source>Device %1 has status %2</source>
-        <translation>Gerät %1 hat den Status %2</translation>
+        <source>Set language to english</source>
+        <translation>Verwende englische Sprache</translation>
     </message>
 </context>
 <context>
     <name>LogFilesDialog</name>
     <message>
-        <source>Log files</source>
-        <translation>Protokolle</translation>
+        <source>Logfiles</source>
+        <translation>Protokolldateien</translation>
     </message>
     <message>
         <source>File:</source>
@@ -1880,18 +1881,22 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Delete selected logfile</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Lösche ausgewählte Protokolldateien</translation>
     </message>
     <message>
-        <source>Please confirm that you want to delete your old logfiles.</source>
-        <extracomment>INFO DESKTOP_QML The current/all logfile(s) are about to be removed, user confirmation required.
+        <source>All old logfiles will be deleted.</source>
+        <extracomment>INFO DESKTOP_QML All logfiles are about to be removed, user confirmation required.
 ----------
-INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confirmation required.</extracomment>
-        <translation>Bitte bestätigen Sie, dass alle alten Protokolle gelöscht werden sollen.</translation>
+INFO ANDROID IOS All logfiles are about to be removed, user confirmation required.</extracomment>
+        <translation>Alle alten Protokolle werden gelöscht.</translation>
     </message>
     <message>
-        <source>Please confirm that you want to delete the logfile.</source>
-        <translation>Bitte bestätigen Sie, dass das Protokoll gelöscht werden soll.</translation>
+        <source>The logfile will be deleted.</source>
+        <extracomment>INFO DESKTOP_QML The current logfile is about to be removed, user confirmation required.
+----------
+INFO ANDROID IOS The current logfile is about to be removed, user confirmation required.</extracomment>
+        <translation>Das Protokoll wird gelöscht.</translation>
     </message>
     <message>
         <source>Log</source>
@@ -1911,6 +1916,14 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
     <message>
         <source>Select logfile from list.</source>
         <translation>Wähle Protokolldatei aus.</translation>
+    </message>
+    <message>
+        <source>The current logfile will be automatically deleted at exit.</source>
+        <translation>Die aktuelle Protokolldatei wird beim Schließen automatisch gelöscht.</translation>
+    </message>
+    <message>
+        <source>Detach log viewer</source>
+        <translation>Protokoll separat anzeigen</translation>
     </message>
 </context>
 <context>
@@ -1934,7 +1947,7 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
         <translation>Verlauf</translation>
     </message>
     <message>
-        <source>PIN management</source>
+        <source>PIN-Management</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>PIN-Verwaltung</translation>
     </message>
@@ -1949,7 +1962,7 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
         <translation>Hilfe</translation>
     </message>
     <message>
-        <source>Self-authentication</source>
+        <source>Self-Authentication</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Selbstauskunft</translation>
     </message>
@@ -1963,17 +1976,25 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
     </message>
     <message>
         <source>Version information</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL DESKTOP_QML
+----------
+LABEL ANDROID
+----------
+LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <translation>Versionsinformationen</translation>
     </message>
     <message>
         <source>FAQ</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL ANDROID
+----------
+LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <translation>FAQ</translation>
     </message>
     <message>
         <source>Support</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL ANDROID
+----------
+LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <translation>Support</translation>
     </message>
     <message>
@@ -1983,7 +2004,9 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
     </message>
     <message>
         <source>Software license</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL ANDROID
+----------
+LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <translation>Softwarelizenz</translation>
     </message>
     <message>
@@ -2013,12 +2036,16 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
     </message>
     <message>
         <source>Show log</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL ANDROID
+----------
+LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <translation>Protokoll anzeigen</translation>
     </message>
     <message>
         <source>Tutorial</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL ANDROID
+----------
+LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <translation>Tutorial</translation>
     </message>
     <message>
@@ -2032,29 +2059,273 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/support/</translation>
     </message>
     <message>
-        <source>Set language to german</source>
-        <translation>Verwende deutsche Sprache</translation>
+        <source>Report error</source>
+        <extracomment>LABEL ANDROID
+----------
+LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <translation>Melden Sie einen Fehler</translation>
     </message>
     <message>
-        <source>Set language to english</source>
-        <translation>Verwende englische Sprache</translation>
+        <source>Help section</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Hilfe</translation>
+    </message>
+    <message>
+        <source>This is the help section of the AusweisApp2.</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Dies ist die Hilfe der AusweisApp2.</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Hilfe</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Allgemein</translation>
+    </message>
+    <message>
+        <source>Diagnosis and log</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Diagnose und Protokoll</translation>
+    </message>
+    <message>
+        <source>Help &amp; Feedback</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Hilfe &amp; Feedback</translation>
+    </message>
+    <message>
+        <source>Rate AusweisApp2</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Bewerten Sie die AusweisApp2</translation>
+    </message>
+    <message>
+        <source>Release notes</source>
+        <extracomment>LABEL ANDROID
+----------
+LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <translation>Release Notes</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <translation>Einstellungen</translation>
+    </message>
+    <message>
+        <source>Do you want to know how to use %1?</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Möchten Sie wissen, wie die %1 verwendet wird?</translation>
+    </message>
+    <message>
+        <source>Do you have further questions about %1?</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Haben Sie weitere Fragen zur %1?</translation>
+    </message>
+    <message>
+        <source>Do you need further support?</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Benötigen Sie weitergehende Unterstützung?</translation>
+    </message>
+    <message>
+        <source>Do you want to rate us in the Google Play Store?</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Möchten Sie uns im Google Play Store bewerten?</translation>
+    </message>
+    <message>
+        <source>Do you want to view the release notes of %1?</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Möchten Sie die Release Note der %1 sehen?</translation>
+    </message>
+    <message>
+        <source>Did you find a bug? Please tell us, so we can fix it.</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Haben Sie einen Fehler entdeckt? Bitte melden Sie sich bei uns, damit wir ihn beseitigen können.</translation>
+    </message>
+    <message>
+        <source>Do you want to view the logs of %1?</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Möchten Sie die Protokolldatei der %1 einsehen?</translation>
+    </message>
+    <message>
+        <source>Do you want to see detailed information about %1?</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Möchten Sie detaillierte Informationen über die %1 ansehen?</translation>
+    </message>
+    <message>
+        <source>Do you want to read the software licenses?</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Möchten Sie die Software-Lizenzen lesen?</translation>
+    </message>
+</context>
+<context>
+    <name>MoreViewDiagnosis</name>
+    <message>
+        <source>Diagnosis</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Diagnose</translation>
+    </message>
+    <message>
+        <source>You can view and save the diagnosis information of the AusweisApp2 and your system here.</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Sie können die Diagnose-Informationen der AusweisApp2 und Ihres System hier einsehen und speichern.</translation>
+    </message>
+    <message>
+        <source>Show diagnosis</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Zeige Diagnose</translation>
+    </message>
+    <message>
+        <source>Application log</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Anwendungsprotokoll</translation>
+    </message>
+    <message>
+        <source>You can view the logs of the AusweisApp2 here.</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Hier können Sie das Protokoll der AusweisApp2 einsehen.</translation>
+    </message>
+    <message>
+        <source>Show logs</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Zeige Protokoll</translation>
+    </message>
+</context>
+<context>
+    <name>MoreViewGeneral</name>
+    <message>
+        <source>FAQ</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>FAQ</translation>
+    </message>
+    <message>
+        <source>Open website</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Öffne Webseite</translation>
+    </message>
+    <message>
+        <source>https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/haeufig-gestellte-fragen/</translation>
+    </message>
+    <message>
+        <source>Support</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Support</translation>
+    </message>
+    <message>
+        <source>https://www.ausweisapp.bund.de/en/qa/support/</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/support/</translation>
     </message>
     <message>
         <source>Report error</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Melden Sie einen Fehler</translation>
+    </message>
+    <message>
+        <source>https://www.ausweisapp.bund.de/en/qa/report-an-error/</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/melden-sie-einen-fehler/</translation>
+    </message>
+    <message>
+        <source>https://www.ausweisapp.bund.de/en/qa/evaluate-us/</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/bewerten-sie-uns/</translation>
+    </message>
+    <message>
+        <source>Online help</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Online-Hilfe</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Hilfe</translation>
+    </message>
+    <message>
+        <source>Software licenses</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Softwarelizenzen</translation>
+    </message>
+    <message>
+        <source>https://www.ausweisapp.bund.de/en/download/windows-and-mac/</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>https://www.ausweisapp.bund.de/download/windows-und-mac/</translation>
+    </message>
+    <message>
+        <source>Setup assistant</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Einrichtungsassistent</translation>
+    </message>
+    <message>
+        <source>Start setup assistant</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Starte Einrichtungsassistenten</translation>
+    </message>
+    <message>
+        <source>Do you have questions how to use %1?</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Möchten Sie wissen, wie die %1 verwendet wird?</translation>
+    </message>
+    <message>
+        <source>Do you need further help?</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Benötigen Sie weitergehende Unterstützung?</translation>
+    </message>
+    <message>
+        <source>Did you find a bug? Please tell us, so we can fix it.</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Haben Sie einen Fehler entdeckt? Bitte melden Sie sich bei uns, damit wir ihn beseitigen können.</translation>
+    </message>
+    <message>
+        <source>Rate %1</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>%1 bewerten</translation>
+    </message>
+    <message>
+        <source>Do you want to rate the %1?</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Möchten Sie die %1 bewerten?</translation>
+    </message>
+    <message>
+        <source>Do you want to read about the software licenses?</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Möchten Sie die Softwarelizenzen lesen?</translation>
+    </message>
+    <message>
+        <source>Do you want to run the setup assistant again?</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Möchten Sie den Einrichtungsassistenten erneut durchführen?</translation>
+    </message>
+    <message>
+        <source>Release notes</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Release Notes</translation>
+    </message>
+    <message>
+        <source>Do you want to read the release notes?</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Möchten Sie die Release Notes lesen?</translation>
     </message>
 </context>
 <context>
     <name>NavigationButton</name>
     <message>
         <source>Continue</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Fortsetzen</translation>
     </message>
     <message>
         <source>Back</source>
         <translation>Zurück</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Ja</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Nein</translation>
     </message>
 </context>
 <context>
@@ -2084,10 +2355,6 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
         <translation>Hilfe &amp; Feedback</translation>
     </message>
     <message>
-        <source>Information</source>
-        <translation>Information</translation>
-    </message>
-    <message>
         <source>Smartphone as card reader</source>
         <translation>Smartphone als Kartenleser</translation>
     </message>
@@ -2100,32 +2367,25 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
         <translation>Mehr</translation>
     </message>
     <message>
-        <source>Tutorial</source>
-        <translation>Tutorial</translation>
-    </message>
-    <message>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <source>Set language to german</source>
-        <translation>Verwende deutsche Sprache</translation>
-    </message>
-    <message>
-        <source>Set language to english</source>
-        <translation>Verwende englische Sprache</translation>
+        <source>Settings</source>
+        <translation>Einstellungen</translation>
     </message>
 </context>
 <context>
     <name>NfcWorkflow</name>
     <message>
-        <source>NFC is not supported by your device.</source>
+        <source>Unfortunately, this functionality is not available on your device.</source>
         <extracomment>INFO ANDROID IOS AA2 can&apos;t use NFC on this device, suggest to use bluetooth instead.</extracomment>
-        <translation>Ihr Gerät unterstützt kein NFC.</translation>
+        <translation>Diese Funktion steht auf Ihrem Gerät leider nicht zur Verfügung.</translation>
     </message>
     <message>
-        <source>You require an additional &apos;Bluetooth card reader&apos; or an additional &apos;smartphone as card reader&apos; to use the online identification function with this device.</source>
-        <translation>Sie können die Online-Ausweisfunktion aber mit einem separaten Bluetooth-Leser oder einem anderen Smartphone als Kartenleser nutzen.</translation>
+        <source>However you can use a seperate &apos;Bluetooth card reader&apos; or a seperate &apos;smartphone as card reader&apos; to utilize the online identification function.</source>
+        <extracomment>INFO ANDROID IOS AA2 can&apos;t use NFC on this device, suggest to use bluetooth instead.</extracomment>
+        <translation>Sie können die Online-Ausweisfunktion aber mit einen separaten Bluetooth-Leser oder einem anderen Smartphone als Kartenleser nutzen.</translation>
     </message>
     <message>
         <source>NFC is switched off.</source>
@@ -2134,11 +2394,12 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
     </message>
     <message>
         <source>Go to NFC settings</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Zu den NFC Einstellungen</translation>
     </message>
     <message>
         <source>Please enable NFC in your system settings.</source>
+        <extracomment>INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.</extracomment>
         <translation>Bitte aktivieren Sie NFC in Ihren Systemeinstellungen.</translation>
     </message>
     <message>
@@ -2146,22 +2407,23 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
         <translation>Verbindung wird hergestellt</translation>
     </message>
     <message>
-        <source>Your device does not meet the technical requirements (Extended Length not supported). You require an additional &apos;Bluetooth card reader&apos; or an additional &apos;smartphone as card reader&apos; to use the online identification function with this device.</source>
+        <source>Your device does not meet the technical requirements (Extended Length not supported). However you can use a seperate &apos;Bluetooth card reader&apos; or a seperate &apos;smartphone as card reader&apos; to utilize the online identification function.</source>
         <extracomment>INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a bluetooth reader or a differnt smarthpone is suggested.</extracomment>
-        <translation>Ihr Gerät erfüllt leider nicht die technischen Voraussetzungen (Extended Length). Sie können die Online-Ausweisfunktion daher mit diesem Gerät nur über einen separaten Bluetooth-Leser oder mit einem separaten Smartphone als Kartenleser nutzen.</translation>
+        <translation>Ihr Gerät erfüllt leider nicht die technischen Voraussetzungen (Extended Length). Sie können die Online-Ausweisfunktion aber mit einen separaten Bluetooth-Leser oder einem anderen Smartphone als Kartenleser nutzen.</translation>
     </message>
     <message>
-        <source>The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.</source>
+        <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
         <extracomment>INFO ANDROID IOS The online authentication feature is disabled and needs to be activated by the authorities.</extracomment>
-        <translation>Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
         <source>Please place your device&lt;br/&gt;on your ID card.</source>
-        <extracomment>INFO ANDROID IOS The id card may be inserted, the authentication process may be started.</extracomment>
+        <extracomment>INFO ANDROID IOS The ID card may be inserted, the authentication process may be started.</extracomment>
         <translation>Bitte platzieren Sie Ihr Gerät&lt;br/&gt;über Ihrem Personalausweis.</translation>
     </message>
     <message>
         <source>Start NFC scan</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>NFC-Scan starten</translation>
     </message>
     <message>
@@ -2171,15 +2433,40 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
     </message>
     <message>
         <source>Please start the NFC scan.</source>
+        <extracomment>INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.</extracomment>
         <translation>Bitte starten Sie den NFC-Scan.</translation>
     </message>
 </context>
 <context>
-    <name>NumberPad</name>
+    <name>NumberField</name>
     <message>
-        <source>Numberpad to enter the password</source>
-        <translation>Ziffernblock Passworteingabe</translation>
+        <source>The password is visible.</source>
+        <extracomment>LABEL DESKTOP_QML Screenreader text for the password field</extracomment>
+        <translation>Das Passwort ist sichtbar.</translation>
     </message>
+    <message>
+        <source>The password is hidden.</source>
+        <extracomment>LABEL DESKTOP_QML Screenreader text for the password field</extracomment>
+        <translation>Das Passwort ist ausgeblendet.</translation>
+    </message>
+    <message>
+        <source>You entered %1 of %2 digits.</source>
+        <extracomment>LABEL DESKTOP_QML Screenreader text for the password field</extracomment>
+        <translation>Sie haben %1 von %2 Ziffern eingegeben.</translation>
+    </message>
+    <message>
+        <source>Press to hide the password</source>
+        <extracomment>LABEL DESKTOP_QML Screenreader text for the eye icon to change the password visibility</extracomment>
+        <translation>Drücken Sie die Taste um das Passwort auszublenden</translation>
+    </message>
+    <message>
+        <source>Press to show the password</source>
+        <extracomment>LABEL DESKTOP_QML Screenreader text for the eye icon to change the password visibility</extracomment>
+        <translation>Drücken Sie die Taste um das Passwort einzublenden</translation>
+    </message>
+</context>
+<context>
+    <name>NumberPad</name>
     <message>
         <source>Delete last digit</source>
         <translation>Lösche letzte Ziffer</translation>
@@ -2187,6 +2474,13 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
     <message>
         <source>Submit</source>
         <translation>Absenden</translation>
+    </message>
+</context>
+<context>
+    <name>NumberPadButton</name>
+    <message>
+        <source>Disabled</source>
+        <translation>Deaktiviert</translation>
     </message>
 </context>
 <context>
@@ -2200,37 +2494,59 @@ INFO ANDROID IOS The current/all logfile(s) are about to be removed, user confir
         <translation>Dies ist die Informationsansicht zu Passwörtern der AusweisApp2.</translation>
     </message>
     <message>
-        <source>%1 information</source>
-        <extracomment>%1 can be &quot;PIN, CAN, PUK or UNKNOWN&quot;</extracomment>
-        <translation>Informationen zur %1</translation>
-    </message>
-    <message>
-        <source>The card access number (CAN) is only required if you have already entered the PIN incorrectly twice. In order to prevent a third incorrect entry and thus the blocking of the ID card without your consent, the CAN is also requested at this point. The CAN is a six-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).</source>
-        <extracomment>INFO DESKTOP_QML Description text of CAN</extracomment>
-        <translation>Die Zugangsnummer (CAN) wird nur dann verlangt, wenn Sie die PIN bereits zwei Mal falsch eingegeben haben. Um zu verhindern, dass ohne Ihre Zustimmung eine dritte Fehleingabe und somit die Sperrung des Ausweises erfolgen kann, wird an dieser Stelle zusätzlich die CAN abgefragt. Die CAN ist eine sechsstellige Zahl, die auf der Vorderseite des Personalausweises zu finden ist. Sie steht rechts unten neben dem Gültigkeitsdatum (rot markiert).</translation>
-    </message>
-    <message>
-        <source>The personal unblocking key (PUK) is only required if you entered the the wrong PIN three times. The online eID function is blocked at this time. The PUK is a ten-digit number you received with the letter sent to you by your competent authority (marked in red). Please note that you can only use the PUK to unblock the PIN entry. If you have forgotten your PIN, you can have a new PIN set at your competent authority.</source>
-        <extracomment>INFO DESKTOP_QML Description text of PUK</extracomment>
-        <translation>Die Entsperrnummer (PUK) wird nur dann verlangt, wenn Sie die PIN bereits drei Mal falsch eingegeben haben. Zu diesem Zeitpunkt ist die Online-Ausweisfunktion gesperrt. Die PUK ist eine zehnstellige Zahl die Sie mit dem Schreiben bekommen haben, das Sie nach Beantragung Ihres Ausweisdokuments von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde erhalten haben (rot markiert). Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihre PIN-Eingabe entsperren können. Sollten Sie Ihre PIN vergessen haben, können Sie von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde eine neue PIN setzen lassen.</translation>
-    </message>
-    <message>
-        <source>The personal identification number (PIN) is required for every use of the online eID function. You can change it anytime and indefinitely if you know your valid PIN. For your 6-digit PIN choose a combination of numbers, that is not easy to guess, neither &quot;123456&quot; nor your birth date, or any other numbers printed on the ID card. If you are no longer aware of your valid PIN, you will need to contact the authority responsible for issuing your identification document to renew your PIN.
-
-When changing the PIN for the first time, please use your 5-digit transport PIN. You will find the transport PIN in the letter you received from the authority responsible for issuing your identification document (marked in red) after you have applied for your identity card.
-
-Please note that you can not use the online eID function with your 5-digit transport PIN. A change to a 6-digit PIN is mandatory.</source>
+        <source>The personal identification number (PIN) is chosen by you and is required for every use of the online eID function. You can change it anytime and indefinitely if you know your valid PIN. For your 6-digit PIN choose a combination of numbers, that is not easy to guess, neither &quot;123456&quot; nor your birth date, or any other numbers printed on the ID card. If you are no longer aware of your valid PIN, you will need to contact the authority responsible for issuing your identification card to renew your PIN.&lt;br&gt;&lt;br&gt;When changing the PIN for the first time, please use your 5-digit transport PIN. You will find the transport PIN in the letter you received from the authority responsible for issuing your identification card (marked in red) after you have applied for your identity card.&lt;br&gt;&lt;br&gt;Please note that you can not use the online eID function with your 5-digit transport PIN. A change to a 6-digit PIN is mandatory.</source>
         <extracomment>INFO DESKTOP_QML Description text of PIN</extracomment>
-        <translation>Die Geheimnummer (PIN) benötigen Sie bei jeder Nutzung der Online-Ausweisfunktion. Sie können diese jederzeit und unbegrenzt oft ändern, wenn Ihnen Ihre gültige PIN bekannt ist. Wählen Sie für Ihre 6-stellige PIN eine Zahlenkombination, die nicht leicht zu erraten ist, also weder &quot;123456&quot;, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweisdokument aufgedruckt sind. Soweit Ihnen Ihre gültige PIN nicht mehr bekannt ist, müssen Sie zur Neuvergabe einer persönlichen PIN die für die Ausgabe Ihres Ausweisdokuments zuständige Behörde aufsuchen.
-
-Bei der erstmaligen PIN-Änderung verwenden Sie bitte Ihre 5-stellige Transport-PIN. Sie finden die Transport-PIN in dem Schreiben, das Sie nach Beantragung Ihres Ausweisdokuments von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde erhalten haben (rot markiert).
-
-Bitte beachten Sie, dass Sie die Online-Ausweisfunktion mit Ihrer 5-stellige Transport-PIN nicht nutzen können. Eine Änderung in eine 6-stellige PIN ist zwingend erforderlich.</translation>
+        <translation>Die Geheimnummer (PIN) vergeben Sie selbst und benötigen Sie bei jeder Nutzung der Online-Ausweisfunktion. Sie können diese jederzeit und unbegrenzt oft ändern, solange Ihnen Ihre gültige PIN bekannt ist. Wählen Sie für Ihre sechsstellige PIN eine Zahlenkombination, die nicht leicht zu erraten ist, also weder &quot;123456&quot;, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweis aufgedruckt sind.  Sollten Sie Ihre PIN vergessen haben, können Sie in der für die Ausgabe Ihres Ausweises zuständigen Behörde eine neue PIN setzen.&lt;br&gt;&lt;br&gt;Zum erstmaligen Setzen Ihrer PIN verwenden Sie bitte die fünfstellige Transport-PIN. Sie finden diese in dem Schreiben, welches Sie nach Beantragung Ihres Ausweises von der zuständigen Behörde erhalten haben (rot markiert).&lt;br&gt;&lt;br&gt;Bitte beachten Sie, dass die Online-Ausweisfunktion erst nach Änderung der fünfstelligen Transport-PIN in eine sechsstellige PIN genutzt werden kann.</translation>
     </message>
     <message>
-        <source>You may use your smartphone as a card reader with AusweisApp2. The smartphone needs to feature a supported NFC chipset and both devices, your smartphone and this machine, need to be connected to the same WiFi network.&lt;br&gt;&lt;br&gt;Please make sure that the remote service is running on your smartphone. Start the pairing process by clicking the &quot;Start pairing&quot; button and enter the shown 4-digit PIN.</source>
+        <source>The card access number (CAN) is required if the PIN has already been entered incorrectly twice. In order to prevent a third incorrect entry and thus the blocking of the PIN without your consent, the CAN is also requested at this point. The CAN is a 6-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).</source>
+        <extracomment>INFO DESKTOP_QML Description text of CAN if required for third PIN attempt</extracomment>
+        <translation>Die Zugangsnummer (CAN) wird verlangt, wenn die PIN bereits zwei Mal falsch eingegeben wurde. Um zu verhindern, dass ohne Ihre Zustimmung eine dritte Fehleingabe und somit die Sperrung der PIN erfolgen kann, wird an dieser Stelle zusätzlich die CAN abgefragt. Die CAN ist eine sechsstellige Zahl, die auf der Vorderseite des Ausweises unten rechts zu finden ist (rot markiert).</translation>
+    </message>
+    <message>
+        <source>The personal unblocking key (PUK) is required if the PIN has been entered three times. At this point the PIN is blocked. The PUK is a 10-digit number you received with the letter sent to you by your competent authority (marked in red). Please note that you can only use the PUK to unblock the PIN entry. If you have forgotten your PIN, you can have a new PIN set at your competent authority.</source>
+        <extracomment>INFO DESKTOP_QML Description text of PUK</extracomment>
+        <translation>Die Entsperrnummer (PUK) wird verlangt, wenn die PIN drei Mal hintereinander falsch eingegeben wurde. Zu diesem Zeitpunkt ist die PIN gesperrt. Die PUK ist eine zehnstellige Zahl, die Sie mit dem Schreiben bekommen haben, welches Sie nach Beantragung Ihres Ausweises von der zuständigen Behörde erhalten haben (rot markiert). Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich die PIN-Eingabe wieder entsperren können. Sollten Sie Ihre PIN vergessen haben, können Sie in der für die Ausgabe Ihres Ausweises zuständigen Behörde eine neue PIN setzen.</translation>
+    </message>
+    <message>
+        <source>PIN/PUK on different pages</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>PIN/PUK auf unterschiedlichen Seiten</translation>
+    </message>
+    <message>
+        <source>PIN/PUK on the same page</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>PIN/PUK auf der selben Seite</translation>
+    </message>
+    <message>
+        <source>PIN information</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>PIN-Information</translation>
+    </message>
+    <message>
+        <source>CAN information</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>CAN-Information</translation>
+    </message>
+    <message>
+        <source>PUK information</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>PUK-Information</translation>
+    </message>
+    <message>
+        <source>Smartphone as card reader information</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Smartphone als Kartenleser-Information</translation>
+    </message>
+    <message>
+        <source>The card access number (CAN) allows to access the imprinted data of the ID card. In order to allow on-site reading of the personal data the service provider needs to acquire governmental authorization to do so. On-site reading is usually employed to automatically fill forms and prevent spelling mistakes when transfering the personal data.</source>
+        <extracomment>INFO DESKTOP_QML Description text of CAN-allowed authentication</extracomment>
+        <translation>Die Kartenzugriffsnummer (CAN) ermöglicht den Zugriff auf die auf dem Ausweis gespeicherten Daten. Um das Vor-Ort-Auslesen der persönlichen Daten zu Nutzen muss ein Diensteanbieter eine Zulassung durch eine staatliche Behörde erhalten. Die Vor-Ort-Auslesefunktion wird typischerweise zum automatischen Füllen von Formularen und insbesondere dem Verhindern von Fehlern beim Übertragen der persönlichen Daten eingesetzt.</translation>
+    </message>
+    <message>
+        <source>You may use your smartphone as a card reader with AusweisApp2. The smartphone needs to feature a supported NFC chipset and both devices, your smartphone and this machine, need to be connected to the same WiFi network.&lt;br&gt;&lt;br&gt;To use your smartphone as a card reader you&apos;ll always need to activate the remote service in the AusweisApp2 on the smartphone. For the first time you&apos;ll also need to start the pairing mode on your smartphone, select the device from the list of available devices on this machine and then enter the pairing code shown on the phone.</source>
         <extracomment>INFO DESKTOP_QML Description text of SaC pairing</extracomment>
-        <translation>Sie können Ihr Smartphone als Kartenleser in der AusweisApp2 verwenden. Das Smartphone muss einen unterstützen NFC-Chip verbaut haben und beide Geräte, sowohl das Smartphone als auch dieser Computer, müssen mit dem selben WLAN-Netz verbunden sein.&lt;br&gt;&lt;br&gt;Bitte stellen Sie sicher, dass der Fernzugriff in der App des Smartphones aktiviert ist. Starten sie den Kopplungsprozess indem Sie den &quot;Koppeln&quot;-Knopf anklicken und die vom Smartphone dargestellte 4-stellige PIN eingeben.</translation>
+        <translation>Es besteht die Möglichkeit Ihr Smartphone als Kartenleser mit der AusweisApp2 zu verwenden. Das Smartphone muss einen unterstützten NFC-Chip verwenden und beide Geräte, sowohl das Smartphone als auch Ihr Rechner, müssen mit dem selben WLAN-Netz verbunden sein.&lt;br&gt;&lt;br&gt;Um Ihr Smartphone als Kartenleser zu verwenden muss stets der Fernzugriff in der AusweisApp2 auf Ihrem Smartphone aktiviert sein. Für eine intiale Verbindung der Geräte muss zusätzlich der Kopplungsmodus auf dem Smartphone aktiviert werden, wählen Sie danach das Gerät aus der Liste der verfügbaren Geräte auf Ihrem Rechner und geben Sie den von Ihrem Smartphone dargestellten Kopplungscode ein.</translation>
     </message>
 </context>
 <context>
@@ -2249,7 +2565,7 @@ Bitte beachten Sie, dass Sie die Online-Ausweisfunktion mit Ihrer 5-stellige Tra
 If not, you can now remove your ID card form the card reader.</source>
         <translation>Klicken Sie auf &quot;PIN ändern&quot;, wenn Sie noch einmal Ihre PIN neu setzen wollen.
 
-Anderenfalls können Sie nun Ihr Ausweisdokument vom Kartenleser entfernen.</translation>
+Anderenfalls können Sie nun Ihren Ausweis vom Kartenleser entfernen.</translation>
     </message>
     <message>
         <source>&lt;html&gt;
@@ -2268,8 +2584,8 @@ Anderenfalls können Sie nun Ihr Ausweisdokument vom Kartenleser entfernen.</tra
 &lt;p&gt;If you have already placed an ID card on the card reader but it is not displayed here, please click on &quot;Diagnosis&quot;.&lt;/p&gt;
 &lt;/html&gt;</source>
         <translation>&lt;html&gt;
-&lt;h4&gt;Bitte legen Sie Ihr Ausweisdokument auf.&lt;/h4&gt;
-&lt;p&gt;Haben Sie bereits Ihr Ausweisdokument aufgelegt, aber es wird nicht angezeigt, klicken Sie bitte auf &quot;Diagnose&quot;.&lt;/p&gt;
+&lt;h4&gt;Bitte legen Sie Ihren Ausweis auf.&lt;/h4&gt;
+&lt;p&gt;Haben Sie bereits Ihren Ausweis aufgelegt, aber er wird nicht angezeigt, klicken Sie bitte auf &quot;Diagnose&quot;.&lt;/p&gt;
 &lt;/html&gt;</translation>
     </message>
     <message>
@@ -2278,22 +2594,22 @@ Anderenfalls können Sie nun Ihr Ausweisdokument vom Kartenleser entfernen.</tra
 &lt;p&gt;Please place just one ID card on the card reader.&lt;/p&gt;
 &lt;/html&gt;</source>
         <translation>&lt;html&gt;
-&lt;h4&gt;Mehrere Ausweisdokumente erkannt&lt;/h4&gt;
-&lt;p&gt;Bitte legen Sie nur ein Ausweisdokument auf.&lt;/p&gt;
+&lt;h4&gt;Mehrere Ausweise erkannt&lt;/h4&gt;
+&lt;p&gt;Bitte legen Sie nur einen Ausweis auf.&lt;/p&gt;
 &lt;/html&gt;</translation>
     </message>
     <message>
         <source>Please make sure that only one card reader with an ID card on it is connected to your computer.</source>
-        <translation>Bitte stellen Sie sicher, dass an Ihrem Computer nur ein Kartenleser mit aufliegendem Ausweisdokument angeschlossen ist.</translation>
+        <translation>Bitte stellen Sie sicher, dass an Ihrem Computer nur ein Kartenleser mit aufliegendem Ausweis angeschlossen ist.</translation>
     </message>
     <message>
         <source>&lt;html&gt;
 &lt;h4&gt;eID feature deactivated&lt;/h4&gt;
-&lt;p&gt;The eID function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the eID function.&lt;/p&gt;
+&lt;p&gt;The eID function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the eID function.&lt;/p&gt;
 &lt;/html&gt;</source>
         <translation>&lt;html&gt;
 &lt;h4&gt;Online-Ausweisfunktion deaktiviert&lt;/h4&gt;
-&lt;p&gt;Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.&lt;/p&gt;
+&lt;p&gt;Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.&lt;/p&gt;
 &lt;/html&gt;</translation>
     </message>
     <message>
@@ -2302,13 +2618,13 @@ Anderenfalls können Sie nun Ihr Ausweisdokument vom Kartenleser entfernen.</tra
 When you change your PIN for the first time, please enter your five-digit transport PIN in the field &quot;Current PIN / Transport PIN&quot;. You received your transport PIN with the letter sent to you by your competent authority.
 
 Please note that the PIN may only consist of digits (0-9).</source>
-        <translation>Wählen Sie für Ihre 6-stellige PIN eine Zahlenkombination, die nicht leicht zu erraten ist, also weder &quot;123456&quot;, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweisdokument aufgedruckt sind.
+        <translation>Wählen Sie für Ihre sechsstellige PIN eine Zahlenkombination, die nicht leicht zu erraten ist, also weder &quot;123456&quot;, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweis aufgedruckt sind.
 
-Bei der erstmaligen PIN-Änderung geben Sie bitte in das Feld &quot;Aktuelle PIN / Transport-PIN&quot; Ihre 5-stellige Transport-PIN ein. Sie finden die Transport-PIN in dem Schreiben, das Sie nach Beantragung Ihres Ausweisdokuments von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde erhalten haben.</translation>
+Bei der erstmaligen PIN-Änderung geben Sie bitte in das Feld &quot;Aktuelle PIN / Transport-PIN&quot; Ihre fünfstellige Transport-PIN ein. Sie finden die Transport-PIN in dem Schreiben, das Sie nach Beantragung Ihres Ausweises von der für die Ausgabe Ihres Ausweises zuständigen Behörde erhalten haben.</translation>
     </message>
     <message>
-        <source>You have entered the wrong PIN two times. For a third attempt you first have to enter your six-digit card access number. You can find your card access number on the front side of your ID card next to the date of expiry. On the electronic residence permit the card access number is printed above your signature.</source>
-        <translation>Sie haben Ihre PIN zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie zunächst Ihre 6-stellige Zugangsnummer eingeben. Die Zugangsnummer finden Sie beim Personalausweis auf der Vorderseite rechts neben dem letzten Tag der Gültigkeitsdauer. Beim elektronischen Aufenthaltstitel finden Sie die Zugangsnummer über Ihrer Unterschrift.</translation>
+        <source>A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.</source>
+        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher die sechsstellige Zugangsnummer (CAN) eingeben. Diese finden Sie auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
         <source>Current PIN / Transport PIN:</source>
@@ -2343,12 +2659,8 @@ Bei der erstmaligen PIN-Änderung geben Sie bitte in das Feld &quot;Aktuelle PIN
         <translation>deactivatedReaderImageLabel</translation>
     </message>
     <message>
-        <source>Click on &quot;Change PIN&quot; to enter your card access number and then set a new PIN. You can find your card access number on the front side of your ID card next to the date of expiry. On the electronic residence permit the card access number is printed above your signature.</source>
-        <translation>&quot;Klicken Sie auf &quot;PIN ändern&quot;, um zunächst Ihre Zugangsnummer einzugeben und anschließend eine neue PIN zu setzen. Die Zugangsnummer finden Sie beim Personalausweis auf der Vorderseite rechts neben dem letzten Tag der Gültigkeitsdauer. Beim elektronischen Aufenthaltstitel finden Sie die Zugangsnummer über Ihrer Unterschrift.</translation>
-    </message>
-    <message>
-        <source>CAN on nPA icon</source>
-        <translation>Zugangsnummer auf nPA Icon</translation>
+        <source>Click on &quot;Change PIN&quot; to enter your card access number (CAN) and then set a new PIN. You can find your card access number (CAN) on the front side of your ID card next to the date of expiry. On the electronic residence permit the card access number (CAN) is printed above your signature.</source>
+        <translation>&quot;Klicken Sie auf &quot;PIN ändern&quot;, um zunächst Ihre Zugangsnummer (CAN) einzugeben und anschließend eine neue PIN zu setzen. Die Zugangsnummer (CAN) finden Sie beim Personalausweis auf der Vorderseite rechts neben dem letzten Tag der Gültigkeitsdauer. Beim elektronischen Aufenthaltstitel finden Sie die Zugangsnummer (CAN) über Ihrer Unterschrift.</translation>
     </message>
     <message>
         <source>card reader icon</source>
@@ -2371,27 +2683,31 @@ Bei der erstmaligen PIN-Änderung geben Sie bitte in das Feld &quot;Aktuelle PIN
         <translation>PIN änderung erfolgreich icon</translation>
     </message>
     <message>
-        <source>no id card icon</source>
-        <translation>Kein Ausweisdokument icon</translation>
-    </message>
-    <message>
-        <source>You have entered the wrong PIN three times. The online identification function is now blocked. Please use your personal unblocking key (PUK) to unblock your ID card. You received the PUK with the letter sent to you by your competent authority.
-
-Please note that you can only use the PUK to unblock the eID function. If you have forgotten your PIN, you can have a new PIN set at your competent authority.</source>
-        <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Die Online-Ausweisfunktion wurde blockiert. Benutzen Sie bitte Ihre Entsperrnummer (PUK) um die Blockierung aufzuheben. Sie finden Ihre PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweisdokuments von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde erhalten haben.
-
-Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entsperren können. Sollten Sie Ihre PIN vergessen haben, können Sie von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde eine neue PIN setzen lassen.</translation>
+        <source>no ID card icon</source>
+        <translation>Kein Ausweis icon</translation>
     </message>
     <message>
         <source>&lt;html&gt;
 &lt;h4&gt;Extended Length is not supported.&lt;/h4&gt;
-&lt;p&gt;Your remote reader does not meet the technical requirements (Extended Length not supported).&lt;/p&gt;
+&lt;p&gt;Your smartphone as card reader (SaC) does not meet the technical requirements (Extended Length not supported).&lt;/p&gt;
 &lt;/html&gt;</source>
-        <translation>Ihr entfernter Kartenleser erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).&lt;</translation>
+        <translation>Ihr Smartphone als Kartenleser (SaK) erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).&lt;</translation>
     </message>
     <message>
         <source>open on screen keyboard</source>
         <translation>öffne bildschirmtastatur</translation>
+    </message>
+    <message>
+        <source>A wrong PIN has been entered three times on your ID card. Your PIN is now blocked. To unblock your PIN you have to enter the PUK. You received the PUK with the letter sent to you by your competent authority.
+
+Please note that you can only use the PUK to unblock the eID function. If you have forgotten your PIN, you can have a new PIN set at your competent authority.</source>
+        <translation>Die PIN Ihres Ausweises wurde dreimal falsch eingegeben. Ihre PIN ist gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein. Sie finden Ihre PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweises von der für die Ausgabe Ihres Ausweis zuständigen Behörde erhalten haben.
+
+Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entsperren können. Sollten Sie Ihre PIN vergessen haben, können Sie von der für die Ausgabe Ihres Ausweises zuständigen Behörde eine neue PIN setzen lassen.</translation>
+    </message>
+    <message>
+        <source>Display of the card access number (CAN) in the lower right corner of the id card</source>
+        <translation>Darstellung der Kartenzugangsnummer (CAN) in der unteren rechten Ecke des Ausweises</translation>
     </message>
 </context>
 <context>
@@ -2405,8 +2721,8 @@ Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entspe
         <translation>This ist die Fortschrittsanzeige der AusweisApp2.</translation>
     </message>
     <message>
-        <source>Step %1 of %2</source>
-        <translation>Schritt %1 von %2</translation>
+        <source>%1 percent done</source>
+        <translation>%1 Prozent abgeschlossen</translation>
     </message>
 </context>
 <context>
@@ -2442,11 +2758,11 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
     </message>
     <message>
         <source>Provider contact information</source>
-        <translation>Kontaktinformationen des Diensteanbieters</translation>
+        <translation>Kontaktinformationen des Anbieters</translation>
     </message>
     <message>
-        <source>Contact information of the selected service provider.</source>
-        <translation>Kontaktinformationen des ausgewählten Diensteanbieters.</translation>
+        <source>Contact information of the selected provider.</source>
+        <translation>Kontaktinformationen des ausgewählten Anbieters.</translation>
     </message>
 </context>
 <context>
@@ -2462,14 +2778,6 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
         <source>ONLINE APPLICATION</source>
         <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
         <translation>Online-Anwendung</translation>
-    </message>
-    <message>
-        <source>Link to service provider</source>
-        <translation>Link zum Diensteanbieter</translation>
-    </message>
-    <message>
-        <source>Clicking this link will open the website of the service provider in your web browser. The URL of the provider is</source>
-        <translation>Durch einen Klick auf diesen Link öffnen Sie die Webseite des Diensteanbieters. Die URL des Anbieters lautet</translation>
     </message>
     <message>
         <source>To online application</source>
@@ -2499,24 +2807,26 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
     </message>
     <message>
         <source>List of your past interactions with this provider</source>
-        <translation>Ihre vergangenen Interaktionen mit diesem Diensteanbieter</translation>
+        <translation>Ihre vergangenen Interaktionen mit diesem Anbieter</translation>
     </message>
     <message>
-        <source>The list is empty, no recorded interaction with this service provider.</source>
-        <translation>Die Liste ist leer, keine Interaktion mit diesem Diensteanbieter aufgezeichnet.</translation>
+        <source>The list is empty, no recorded interaction with this provider.</source>
+        <translation>Die Liste ist leer, keine Interaktion mit diesem Anbieter aufgezeichnet.</translation>
     </message>
     <message>
         <source>Currently there are no history entries.</source>
-        <extracomment>INFO DESKTOP_QML No authentication history, placeholder text.</extracomment>
+        <extracomment>INFO DESKTOP_QML No authentication history, placeholder text.
+----------
+INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.</extracomment>
         <translation>Derzeit gibt es keine Einträge im Verlauf.</translation>
     </message>
 </context>
 <context>
     <name>ProviderDetailHistoryInfo</name>
     <message>
-        <source>Service provider</source>
+        <source>Provider</source>
         <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Diensteanbieter</translation>
+        <translation>Anbieter</translation>
     </message>
     <message>
         <source>Purpose for reading out requested data</source>
@@ -2526,7 +2836,7 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
     <message>
         <source>Read data</source>
         <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Daten auslesen</translation>
+        <translation>Ausgelesene Daten</translation>
     </message>
     <message>
         <source>Terms of usage</source>
@@ -2592,11 +2902,11 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
     </message>
     <message>
         <source>Provider detail view</source>
-        <translation>Detailansicht des Diensteanbieters</translation>
+        <translation>Detailansicht des Anbieters</translation>
     </message>
     <message>
-        <source>This view shows a detailed description of a service provider.</source>
-        <translation>Diese Ansicht zeigt eine detaillierte Beschreibung eines Diensteanbieters.</translation>
+        <source>This view shows a detailed description of a provider.</source>
+        <translation>Diese Ansicht zeigt eine detaillierte Beschreibung eines Anbieters.</translation>
     </message>
     <message>
         <source>Description</source>
@@ -2604,13 +2914,13 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <source>Description of the service provider.</source>
-        <translation>Beschreibung des Diensteanbieters.</translation>
+        <source>Description of the provider.</source>
+        <translation>Beschreibung des Anbieters.</translation>
     </message>
     <message>
-        <source>The service provider did not provide a description.</source>
+        <source>The provider did not provide a description.</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Der Diensteanbieter hat keine Beschreibung zur Verfügung gestellt.</translation>
+        <translation>Der Anbieter hat keine Beschreibung zur Verfügung gestellt.</translation>
     </message>
     <message>
         <source>History</source>
@@ -2621,7 +2931,7 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
 <context>
     <name>ProviderHeader</name>
     <message>
-        <source>To service provider</source>
+        <source>To provider</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Zum Anbieter</translation>
     </message>
@@ -2643,7 +2953,7 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
     <name>ProviderListItemDelegate</name>
     <message>
         <source>Open provider details for</source>
-        <translation>Öffne Details vom Diensteanbieter</translation>
+        <translation>Öffne Details vom Anbieter</translation>
     </message>
 </context>
 <context>
@@ -2683,7 +2993,7 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
     <message>
         <source>All provider</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Alle Diensteanbieter</translation>
+        <translation>Alle Anbieter</translation>
     </message>
     <message>
         <source>Citizen services</source>
@@ -2705,6 +3015,11 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Weitere Dienste</translation>
     </message>
+    <message>
+        <source>No results matching your search query found</source>
+        <extracomment>LABEL DESKTOP_QML The text entered into the provider search field results in no matches</extracomment>
+        <translation>Keine Ergebnisse zu Ihrer Suche gefunden</translation>
+    </message>
 </context>
 <context>
     <name>ProviderSectionDelegate</name>
@@ -2720,7 +3035,7 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
         <extracomment>LABEL DESKTOP_QML
 ----------
 LABEL IOS_TABLET</extracomment>
-        <translation>Diensteanbieter</translation>
+        <translation>Anbieter</translation>
     </message>
     <message>
         <source>Citizen services</source>
@@ -2751,11 +3066,16 @@ LABEL IOS_TABLET</extracomment>
         <translation>Weitere Services</translation>
     </message>
     <message>
-        <source>No match found</source>
-        <extracomment>LABEL ANDROID_TABLET
+        <source>No results matching your search query found</source>
+        <extracomment>LABEL ANDROID_TABLET The text entered into the provider search field results in no matches
 ----------
-LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</extracomment>
-        <translation>Keine Übereinstimmung gefunden</translation>
+LABEL IOS_TABLET The text entered into the provider search field results in no matches</extracomment>
+        <translation>Keine Ergebnisse zu Ihrer Suche gefunden</translation>
+    </message>
+    <message>
+        <source>Search providers</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Anbieter suchen</translation>
     </message>
 </context>
 <context>
@@ -2765,8 +3085,8 @@ LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</
         <translation>Es wurden keine Anbieter gefunden. Bitte ändern Sie Ihr Suchkriterium.</translation>
     </message>
     <message>
-        <source>This section lists offers of service providers that support online identification. Click on an entry to go to the provider&apos;s web site. This section will be continuously updated with further applications for the online identification function.</source>
-        <translation>Diese Dialogseite listet die Angebote von Diensteanbietern auf, die die Online-Ausweisfunktion unterstützen. Klicken Sie auf einen Eintrag, um auf die Webseite des Diensteanbieters zu gelangen. Diese Dialogseite wird kontinuierlich mit weiteren Angeboten zur Online-Ausweisfunktion aktualisiert.</translation>
+        <source>This section lists offers of providers that support online identification. Click on an entry to go to the provider&apos;s web site. This section will be continuously updated with further applications for the online identification function.</source>
+        <translation>Diese Dialogseite listet die Angebote von Anbietern auf, die die Online-Ausweisfunktion unterstützen. Klicken Sie auf einen Eintrag, um auf die Webseite des Anbieters zu gelangen. Diese Dialogseite wird kontinuierlich mit weiteren Angeboten zur Online-Ausweisfunktion aktualisiert.</translation>
     </message>
     <message>
         <source>Search:</source>
@@ -2877,7 +3197,7 @@ LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</
     </message>
     <message>
         <source>Enter the 4-digit pairing code shown on your other device.</source>
-        <translation>Geben Sie den 4-stelligen Kopplungscode ein, der auf Ihrem anderen Gerät angezeigt wird.</translation>
+        <translation>Geben Sie den vierstelligen Kopplungscode ein, der auf dem anderen Gerät angezeigt wird.</translation>
     </message>
 </context>
 <context>
@@ -2885,6 +3205,22 @@ LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</
     <message>
         <source>Click to pair</source>
         <translation>Klicken zum Koppeln</translation>
+    </message>
+    <message>
+        <source>Smartphone named &quot;%1&quot;</source>
+        <translation>Smartphone namens &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <source>Press space to unpair the smartphone &quot;%1&quot;.</source>
+        <translation>Drücken Sie die Leertaste um das Smartphone &quot;%1&quot; zu entkoppeln.</translation>
+    </message>
+    <message>
+        <source>Press space to pair the smartphone &quot;%1&quot;.</source>
+        <translation>Drücken Sie die Leertaste um das Smartphone &quot;%1&quot; zu koppeln.</translation>
+    </message>
+    <message>
+        <source>Remove remote device</source>
+        <translation>Entferne das Gerät</translation>
     </message>
 </context>
 <context>
@@ -2898,29 +3234,13 @@ LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</
         <translation>Verfügbare Netzwerkgeräte</translation>
     </message>
     <message>
-        <source>No devices with enabled remote service were found on the current WiFi network</source>
-        <translation>Im WLAN-Netz wurden keine Geräte mit aktiviertem Fernzugriff gefunden</translation>
-    </message>
-    <message>
         <source>Only devices that are already paired or are connected to the same WiFi network and have the remote service enabled are shown here.</source>
         <translation>Nur Geräte die bereits gekoppelt wurden, oder sich mit aktiviertem Fernzugriff im selben WLAN-Netz befinden, werden hier angezeigt.</translation>
     </message>
-</context>
-<context>
-    <name>RemoteServicePairingPopup</name>
     <message>
-        <source>Pairing code</source>
-        <extracomment>INFO ANDROID IOS Header of the pairing dialog when using the smartphone as card reader</extracomment>
-        <translation>Kopplungscode</translation>
-    </message>
-    <message>
-        <source>Enter this code on your other device to use this device as a card reader</source>
-        <extracomment>INFO ANDROID IOS Main text of the pairing dialog when using the smartphone as card reader.</extracomment>
-        <translation>Geben Sie diesen Code auf Ihrem anderen Gerät ein, um dieses Gerät als Kartenleser zu verwenden</translation>
-    </message>
-    <message>
-        <source>Click to close dialog</source>
-        <translation>Schließe hiermit den Dialog</translation>
+        <source>More information</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Mehr Informationen</translation>
     </message>
 </context>
 <context>
@@ -2934,47 +3254,74 @@ LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</
 <context>
     <name>RemoteServiceView</name>
     <message>
-        <source>Configure local settings</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Konfiguriere lokale Einstellungen</translation>
-    </message>
-    <message>
-        <source>Pair remote devices</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kopple entfernten Kartenleser</translation>
-    </message>
-    <message>
         <source>Remote service</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Fernzugriff</translation>
     </message>
     <message>
-        <source>Pairing failed. Please try again to activate pairing on your other device and enter the shown pairing code.</source>
+        <source>Pairing failed. Please start a new pairing process on your other device and enter the shown pairing code.</source>
         <extracomment>ERROR ANDROID IOS An error occurred while pairing the device.</extracomment>
         <translation>Die Kopplung ist fehlgeschlagen. Bitte starten Sie eine neue Kopplung an Ihrem anderen Gerät und geben den angezeigten Kopplungscode ein.</translation>
     </message>
-</context>
-<context>
-    <name>RemoteServiceViewLocal</name>
     <message>
-        <source>Device name</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Gerätename</translation>
+        <source>Both of your devices have to be connected to the same WiFi.</source>
+        <extracomment>INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.</extracomment>
+        <translation>Ihre beiden Geräte müssen mit dem selben WLAN-Netz verbunden sein.</translation>
     </message>
     <message>
-        <source>Set device name:</source>
+        <source>Enable NFC</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Wählen Sie einen Gerätenamen:</translation>
+        <translation>NFC aktivieren</translation>
     </message>
     <message>
-        <source>PIN pad mode</source>
+        <source>Stop remote service</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Tastaturmodus</translation>
+        <translation>Fernzugriff stoppen</translation>
     </message>
     <message>
-        <source>Enter PIN on this device</source>
+        <source>Start remote service</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>PIN-Eingabe auf diesem Gerät</translation>
+        <translation>Fernzugriff starten</translation>
+    </message>
+    <message>
+        <source>Stop pairing</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kopplung stoppen</translation>
+    </message>
+    <message>
+        <source>Start pairing</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kopplung starten</translation>
+    </message>
+    <message>
+        <source>Pairing code: &lt;b&gt;%1&lt;/b&gt;</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kopplungscode: &lt;b&gt;%1&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>Card access in progress</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kartenzugriff</translation>
+    </message>
+    <message>
+        <source>Waiting for connection from a paired device...</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Warte auf eine Verbindung eines gekoppelten Gerätes...</translation>
+    </message>
+    <message>
+        <source>Start the remote access, in order to make this smartphone visible and to use it as a card reader (SaC)</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Starten Sie den Fernzugriff um dieses Smartphone sichtbar und damit als Kartenleser (SaK) nutzbar zu machen</translation>
+    </message>
+    <message>
+        <source>Enter this code on your other device to use your smartphone as a card reader (SaC)</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Geben Sie diesen Code auf Ihrem anderen Gerät ein um Ihr Smartphone als Kartenleser (SaK) zu verwenden</translation>
+    </message>
+    <message>
+        <source>Pairing code: %1</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kopplungscode: %1</translation>
     </message>
 </context>
 <context>
@@ -2995,12 +3342,12 @@ LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</
         <translation>Verfügbare Geräte</translation>
     </message>
     <message>
-        <source>No new remote reader was found on your network. Make sure that the remote reader functionality in AusweisApp2 on your other device is activated and that your devices are connected to the same network.</source>
-        <extracomment>INFO ANDROID IOS No remote reader was found on the network, both devices need to be connected to the same wifi network.</extracomment>
-        <translation>Kein entfernter Kartenleser in Ihrem Netzwerk verfügbar. Bitte stellen Sie sicher, dass die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem anderen Gerät aktiviert ist. Beide Geräte müssen sich im selben Netzwerk befinden.</translation>
+        <source>No unpaired smartphone as card reader (SaC) available. Please make sure that the smartphone as card reader (SaC) functionality in AusweisApp2 on your other device is activated an that both devices are connected to the same WiFi.</source>
+        <extracomment>INFO ANDROID IOS No SaC was found on the network, both devices need to be connected to the same wifi network.</extracomment>
+        <translation>Kein ungekoppeltes Smartphone als  Kartenleser verfügbar. Bitte stellen Sie sicher, dass die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem Smartphone aktiviert ist und beide Geräte mit demselben WLAN verbunden sind.</translation>
     </message>
     <message>
-        <source>Please start pairing mode first.</source>
+        <source>Start the pairing mode on your smartphone if you haven&apos;t done it already.</source>
         <extracomment>INFO ANDROID IOS Information dialog that requests the user to start the pairing mode on the smarthpone.</extracomment>
         <translation>Starten Sie den Kopplungsmodus auf Ihrem Smartphone, falls noch nicht geschehen.</translation>
     </message>
@@ -3014,38 +3361,30 @@ LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</
         <extracomment>INFO ANDROID IOS</extracomment>
         <translation>Kopplungsmodus</translation>
     </message>
-</context>
-<context>
-    <name>RemoteServiceViewStartStop</name>
     <message>
-        <source>Please start the remote service in order to use your smartphone as a card reader with AusweisApp2. Please note: Both your devices have to be connected to the same WiFi.</source>
-        <extracomment>INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.</extracomment>
-        <translation>Bitte starten Sie den Fernzugriff, damit Sie Ihr Smartphone als Kartenleser für die AusweisApp2 nutzen können. Bitte beachten Sie: dies ist nur möglich, wenn beide Geräte mit demselben WLAN verbunden sind.</translation>
+        <source>Remove pairing</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Kopplung entfernen</translation>
     </message>
     <message>
-        <source>Enable NFC</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>NFC aktivieren</translation>
+        <source>Remove</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Entfernen</translation>
     </message>
     <message>
-        <source>Stop remote service</source>
+        <source>Click to pair</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Fernzugriff stoppen</translation>
+        <translation>Klicken zum Koppeln</translation>
     </message>
     <message>
-        <source>Start remote service</source>
+        <source>Click to remove device</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Fernzugriff starten</translation>
+        <translation>Klicken um das Gerät zu entfernen</translation>
     </message>
     <message>
-        <source>Start pairing</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kopplung starten</translation>
-    </message>
-    <message>
-        <source>Card access in progress</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kartenzugriff</translation>
+        <source>Do you want to remove the pairing of the device &quot;%1&quot;?</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Wollen Sie die Kopplung mit dem Gerät &quot;%1&quot; aufheben?</translation>
     </message>
 </context>
 <context>
@@ -3071,19 +3410,19 @@ LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</
         <translation>Verbindung wird hergestellt</translation>
     </message>
     <message>
-        <source>Your remote device does not meet the technical requirements (Extended Length not supported).</source>
+        <source>The connected smartphone as card reader (SaC) unfortunately does not meet the technical requirements (Extended Length not supported).</source>
         <extracomment>INFO ANDROID IOS The device does not support Extended Length and can not be used as card reader.</extracomment>
-        <translation>Ihr entfernter Kartenleser erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).</translation>
+        <translation>Das verbundene Smartphone als Kartenleser erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).</translation>
     </message>
     <message>
-        <source>The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.</source>
+        <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
         <extracomment>INFO ANDROID IOS The online authentication is disabled and needs to be enabled by the authorities.</extracomment>
-        <translation>Die Online-Ausweisfunktion Ihres Ausweisdokumentes ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
-        <source>Connected to %1. Please insert your ID card.</source>
-        <extracomment>INFO ANDROID IOS The connection to the smartphone was established, the id card may be inserted.</extracomment>
-        <translation>Verbunden mit %1. Bitte legen Sie Ihr Ausweisdokument auf.</translation>
+        <source>Connected to %1. Please place the NFC interface of the smartphone on your ID card.</source>
+        <extracomment>INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.</extracomment>
+        <translation>Verbunden mit %1. Bitte platzieren Sie das Smartphone mit der NFC-Schnittstelle auf Ihrem Ausweis.</translation>
     </message>
     <message>
         <source>Determine card</source>
@@ -3091,9 +3430,9 @@ LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</
         <translation>Ermittle Ausweis</translation>
     </message>
     <message>
-        <source>The device %1 was unpaired because it does not react to connection attempts. Retry the pairing process if you want to use this device to authenticate yourself.</source>
+        <source>The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
         <extracomment>INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.</extracomment>
-        <translation>Das Gerät %1 wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Versuchen Sie das Gerät erneut zu koppeln, wenn Sie es zur Authentisierung verwenden möchten.</translation>
+        <translation>Das Gerät %1 wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Koppeln Sie das Gerät erneut, um es wieder als Kartenleser zu verwenden.</translation>
     </message>
     <message>
         <source>To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.</source>
@@ -3101,9 +3440,9 @@ LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</
         <translation>Um den Fernzugriff zu nutzen, muss WLAN aktiviert werden. Bitte aktivieren Sie WLAN in Ihren Einstellungen.</translation>
     </message>
     <message>
-        <source>No paired and activated remote device was detected. Make sure that you have started the remote service on your remote device.</source>
+        <source>No paired smartphone as cardreader (SaC) with activated &quot;remote service&quot; available.</source>
         <extracomment>INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.</extracomment>
-        <translation>Kein gekoppeltes und aktiviertes Gerät gefunden. Stellen Sie sicher, dass der Fernzugriff auf Ihrem Gerät gestartet wurde.</translation>
+        <translation>Kein gekoppeltes Smartphone als Kartenleser mit aktiviertem &quot;Fernzugriff&quot; verfügbar.</translation>
     </message>
 </context>
 <context>
@@ -3122,9 +3461,9 @@ LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</
         <translation>Dies ist das Ergebnis einer Authentisierung.</translation>
     </message>
     <message>
-        <source>Send log file</source>
+        <source>Send logfile</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sende Protokoll</translation>
+        <translation>Protokoll versenden</translation>
     </message>
     <message>
         <source>Send email</source>
@@ -3138,8 +3477,13 @@ LABEL IOS_TABLET Der in das Suchfeld eingegebene String erzielte kein Ergebnis</
         <source>Search</source>
         <extracomment>LABEL DESKTOP_QML
 ----------
-LABEL IOS</extracomment>
+LABEL ANDROID</extracomment>
         <translation>Suchen</translation>
+    </message>
+    <message>
+        <source>Search providers</source>
+        <extracomment>LABEL IOS</extracomment>
+        <translation>Anbieter suchen</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -3158,23 +3502,15 @@ LABEL IOS</extracomment>
         <source>Clear search string</source>
         <translation>Lösche Sucheingabe</translation>
     </message>
-</context>
-<context>
-    <name>SectionSwitch</name>
     <message>
-        <source>Service</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Dienst</translation>
+        <source>Type provider to search for</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Tippen Sie den Namen des Anbieters ein, nach dem Sie suchen möchten</translation>
     </message>
     <message>
-        <source>Pairing</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kopplung</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Einstellungen</translation>
+        <source>Search provider list</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Durchsuchen der Anbieterliste</translation>
     </message>
 </context>
 <context>
@@ -3224,6 +3560,50 @@ LABEL IOS</extracomment>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Jetzt überprüfen</translation>
     </message>
+    <message>
+        <source>History is empty</source>
+        <translation>Es gibt keine Einträge im Verlauf</translation>
+    </message>
+    <message>
+        <source>Avoid visual feedback in the on screen keypad</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Deaktiviere die Animation der Tasten auf der Bildschirmtastatur</translation>
+    </message>
+    <message>
+        <source>Delete history</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Verlauf löschen</translation>
+    </message>
+    <message>
+        <source>All history entries will be deleted.</source>
+        <extracomment>INFO DESKTOP_QML The current history is about to be removed, user confirmation required.</extracomment>
+        <translation>Alle im Verlauf gespeicherten Informationen werden gelöscht.</translation>
+    </message>
+    <message>
+        <source>Show update</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Aktualisierung anzeigen</translation>
+    </message>
+    <message>
+        <source>An update is available (version %1)!</source>
+        <extracomment>LABEL DESKTOP_QML An update is available, the new version is supplied to the user.</extracomment>
+        <translation>Eine Aktualisierung ist verfügbar (Version %1)!</translation>
+    </message>
+    <message>
+        <source>An update is available but retrieving the information failed.</source>
+        <extracomment>LABEL DESKTOP_QML The updater found an update but not all required update information are valid, this should be a very rare case.</extracomment>
+        <translation>Eine Aktualisierung ist verfügbar, das Herunterladen der Informationen ist jedoch fehlgeschlagen.</translation>
+    </message>
+    <message>
+        <source>Your version %1 of %2 is up to date.</source>
+        <extracomment>LABEL DESKTOP_QML The current version is up to date, no user action is required.</extracomment>
+        <translation>Ihre Version %1 der %2 ist aktuell.</translation>
+    </message>
+    <message>
+        <source>No update information available, please check for update manually.</source>
+        <extracomment>LABEL DESKTOP_QML The automatic update check is disabled (or no network connection was present during app start), a manual check for update is required.</extracomment>
+        <translation>Keine Aktualisierungsinformationen vorhanden, bitte prüfen Sie manuell auf verfügbare Aktualisierungen.</translation>
+    </message>
 </context>
 <context>
     <name>SelfAuthenticationData</name>
@@ -3240,19 +3620,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>OK</translation>
     </message>
     <message>
-        <source>Read data</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Daten auslesen</translation>
-    </message>
-    <message>
-        <source>Self-authentication data view</source>
-        <translation>Anzeige der Selbstauskunft</translation>
-    </message>
-    <message>
-        <source>This is the self-authentication data view of the AusweisApp2.</source>
-        <translation>Dies ist die Anzeige der Selbstauskunft der AusweisApp2.</translation>
-    </message>
-    <message>
         <source>Successfully read data</source>
         <extracomment>INFO DESKTOP_QML Status message that the self authentication successfully completed.</extracomment>
         <translation>Lesevorgang erfolgreich</translation>
@@ -3261,6 +3628,33 @@ LABEL ANDROID IOS</extracomment>
         <source>Read data successfully</source>
         <extracomment>INFO ANDROID IOS The self authentication was successfully completed.</extracomment>
         <translation>Daten erfolgreich ausgelesen</translation>
+    </message>
+    <message>
+        <source>Save as PDF...</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Als PDF speichern...</translation>
+    </message>
+    <message>
+        <source>Information</source>
+        <translation>Information</translation>
+    </message>
+    <message>
+        <source>This is the self-authentication result data view of the AusweisApp2.</source>
+        <translation>Dies ist die Darstellung der Ergebnisse der Selbstauskunft der AusweisApp2.</translation>
+    </message>
+    <message>
+        <source>Read data</source>
+        <extracomment>LABEL DESKTOP_QML Title of the self authentication result data view</extracomment>
+        <translation>Ausgelesene Daten</translation>
+    </message>
+    <message>
+        <source>Self-Authentication result data view</source>
+        <translation>Darstellung der Ergebnisse der Selbstauskunft</translation>
+    </message>
+    <message>
+        <source>Read self-authentication data</source>
+        <extracomment>LABEL DESKTOP_QML Title of the self authentication result data view</extracomment>
+        <translation>Ausgelesene Daten der Selbstauskunft</translation>
     </message>
 </context>
 <context>
@@ -3275,26 +3669,30 @@ LABEL ANDROID IOS</extracomment>
         <extracomment>LABEL DESKTOP_QML
 ----------
 LABEL ANDROID IOS</extracomment>
-        <translation>Überall wo Sie dieses Logo sehen, können Sie Ihr Ausweisdokument einsetzen.</translation>
+        <translation>Überall wo Sie dieses Logo sehen, können Sie Ihren Ausweis einsetzen.</translation>
     </message>
     <message>
         <source>Use the button &apos;See my personal data&apos; to display the data stored on your ID card. An Internet connection is required to display the data.</source>
         <extracomment>LABEL DESKTOP_QML
 ----------
 LABEL ANDROID IOS</extracomment>
-        <translation>Über die Schaltfläche &apos;Meine Daten einsehen&apos; können Sie sich die im Chip Ihres Ausweisdokuments gespeicherten Daten anzeigen lassen. Um die Daten anzeigen zu können, benötigt diese Anwendung eine Internetverbindung.</translation>
+        <translation>Über die Schaltfläche &apos;Meine Daten einsehen&apos; können Sie sich die im Chip Ihres Ausweises gespeicherten Daten anzeigen lassen. Um die Daten anzeigen zu können, benötigt diese Anwendung eine Internetverbindung.</translation>
     </message>
     <message>
         <source>Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP_QML
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Es erfolgt keine Speicherung oder Weiterverarbeitung Ihrer persönlichen Daten. Näheres dazu erfahren Sie in unserer %1.</translation>
     </message>
     <message>
         <source>https://www.ausweisapp.bund.de/en/privacy/</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>https://www.ausweisapp.bund.de/datenschutz/</translation>
     </message>
     <message>
         <source>data privacy statement</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Datenschutzerklärung</translation>
     </message>
     <message>
@@ -3305,16 +3703,19 @@ LABEL ANDROID IOS</extracomment>
         <translation>Meine Daten einsehen</translation>
     </message>
     <message>
-        <source>%1 more presses to toggle test PKI.</source>
-        <translation>%1 weitere Klicks um die Test-PKI umzuschalten.</translation>
+        <source>%1 more presses to toggle the testmode for the self-authentication.</source>
+        <extracomment>INFO ANDROID IOS Used in notifications when the user taps the magnifying glass</extracomment>
+        <translation>%1 weitere Klicks um den Testmodus für die Selbstauskunft umzuschalten.</translation>
     </message>
     <message>
-        <source>Test PKI activated.</source>
-        <translation>Test-PKI aktiviert.</translation>
+        <source>Testmode for the self-authentication activated.</source>
+        <extracomment>INFO ANDROID IOS Used in notifications when the user taps the magnifying glass</extracomment>
+        <translation>Testmodus für die Selbstauskunft aktiviert.</translation>
     </message>
     <message>
-        <source>Test PKI deactivated.</source>
-        <translation>Test-PKI deaktiviert.</translation>
+        <source>Testmode for the self-authentication deactivated.</source>
+        <extracomment>INFO ANDROID IOS Used in notifications when the user taps the magnifying glass</extracomment>
+        <translation>Testmodus für die Selbstauskunft deaktiviert.</translation>
     </message>
     <message>
         <source>https://www.ausweisapp.bund.de/datenschutz/</source>
@@ -3324,19 +3725,28 @@ LABEL ANDROID IOS</extracomment>
         <source>Click to open link to data privacy statement in browser: %1</source>
         <translation>Öffne den Link der Datenschutzerklärung im Browser: %1</translation>
     </message>
+    <message>
+        <source>This is the self-authentication view of the AusweisApp2.</source>
+        <translation>Dies ist die Darstellung der Selbstauskunft der AusweisApp2.</translation>
+    </message>
+    <message>
+        <source>Self-Authentication.</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Selbstauskunft.</translation>
+    </message>
 </context>
 <context>
     <name>SelfInfoWidget</name>
     <message>
         <source>The following data has been read out from your ID card:</source>
-        <translation>Folgende Daten wurden aus Ihrem Ausweisdokument ausgelesen:</translation>
+        <translation>Folgende Daten wurden aus Ihrem Ausweis ausgelesen:</translation>
     </message>
 </context>
 <context>
     <name>SelfInformationWidget</name>
     <message>
         <source>You can use your ID card anywhere you see this logo.</source>
-        <translation>Überall wo Sie dieses Logo sehen, können Sie Ihr Ausweisdokument einsetzen.</translation>
+        <translation>Überall wo Sie dieses Logo sehen, können Sie Ihren Ausweis einsetzen.</translation>
     </message>
     <message>
         <source>See my personal data</source>
@@ -3363,7 +3773,9 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Settings</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <extracomment>LABEL DESKTOP_QML
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Einstellungen</translation>
     </message>
     <message>
@@ -3373,12 +3785,16 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>General</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <extracomment>LABEL DESKTOP_QML
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Allgemein</translation>
     </message>
     <message>
         <source>Smartphone as card reader</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <extracomment>LABEL DESKTOP_QML
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Smartphone als Kartenleser</translation>
     </message>
     <message>
@@ -3388,8 +3804,89 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Security and privacy</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <extracomment>LABEL DESKTOP_QML
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Sicherheit und Datenschutz</translation>
+    </message>
+    <message>
+        <source>Debug options</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Debugoptionen</translation>
+    </message>
+    <message>
+        <source>Pairing the device ...</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Das Gerät wird gekoppelt ...</translation>
+    </message>
+    <message>
+        <source>The device &quot;%1&quot; has been paired.</source>
+        <translation>Das Gerät &quot;%1&quot; wurde gekoppelt.</translation>
+    </message>
+    <message>
+        <source>Pairing to &quot;%1&quot; failed:</source>
+        <extracomment>ERROR DESKTOP_QML An error occurred while pairing the device.</extracomment>
+        <translation>Die Kopplung mit &quot;%1&quot; ist fehlgeschlagen:</translation>
+    </message>
+    <message>
+        <source>Device name</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Gerätename</translation>
+    </message>
+    <message>
+        <source>PIN pad mode</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Tastaturmodus</translation>
+    </message>
+    <message>
+        <source>Enter PIN on this device</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>PIN-Eingabe auf diesem Gerät</translation>
+    </message>
+    <message>
+        <source>Shuffle keypad buttons</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Zufällige Anordnung der Ziffern</translation>
+    </message>
+    <message>
+        <source>Avoid visual feedback in the on screen keypad</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Deaktiviere die Animation der Tasten auf der Bildschirmtastatur</translation>
+    </message>
+    <message>
+        <source>History</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Verlauf</translation>
+    </message>
+    <message>
+        <source>Save authentification history</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Verlauf der Ausweisvorgänge speichern</translation>
+    </message>
+    <message>
+        <source>Change language</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Sprache wechseln</translation>
+    </message>
+    <message>
+        <source>Remote card reader</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Smartphone als Kartenleser</translation>
+    </message>
+    <message>
+        <source>Click here to use another smartphone as a card reader</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Klicken Sie hier um ein anderes Smartphone als Kartenleser zu verwenden</translation>
+    </message>
+    <message>
+        <source>Randomize the order of the on screen keypad buttons</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Ziffern der Bildschirmtastatur zufällig anordnen</translation>
+    </message>
+    <message>
+        <source>Privacy keypad</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Vertrauliche Bildschirmtastatur</translation>
     </message>
 </context>
 <context>
@@ -3420,27 +3917,6 @@ LABEL ANDROID IOS</extracomment>
     </message>
 </context>
 <context>
-    <name>SetupAssistantBinaryDecisionView</name>
-    <message>
-        <source>No</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Nein</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Ja</translation>
-    </message>
-</context>
-<context>
-    <name>SetupAssistantCardReaderView</name>
-    <message>
-        <source>Advance</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Fortfahren</translation>
-    </message>
-</context>
-<context>
     <name>SetupAssistantView</name>
     <message>
         <source>Setup Assistant</source>
@@ -3453,34 +3929,19 @@ LABEL ANDROID IOS</extracomment>
         <translation>Willkommen in der AusweisApp2. Bitte nehmen Sie sich einen Moment Zeit, um die App nach Ihren Wünschen anzupassen. Jede Einstellung kann später wieder im Einstellungsmenü geändert werden.</translation>
     </message>
     <message>
-        <source>Do you want to save a history of performed authentications?</source>
-        <extracomment>INFO DESKTOP_QML Question if the authentication history shall be stored.</extracomment>
-        <translation>Möchten Sie den Verlauf durchgeführter Authentifizierungen speichern?</translation>
-    </message>
-    <message>
-        <source>The following data is saved: authentication date, service provider contact data, read data.</source>
-        <extracomment>INFO DESKTOP_QML Information text which data is stored in the history record.</extracomment>
-        <translation>Folgende Daten werden gespeichert: Authentisierungsdatum, Kontaktdaten des Diensteanbieters, Art der ausgelesenen Daten.</translation>
-    </message>
-    <message>
         <source>History Setting</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Verlaufseinstellungen</translation>
     </message>
     <message>
-        <source>Continue</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Fortsetzen</translation>
+        <source>Do you want to set your PIN now?</source>
+        <extracomment>INFO DESKTOP_QML Inquiry message if the 5-digit transport PIN should be changed to an ordinary PIN (now).</extracomment>
+        <translation>Möchten Sie jetzt Ihre PIN setzen?</translation>
     </message>
     <message>
-        <source>Do you want to change your transport PIN to a personal PIN now?</source>
-        <extracomment>INFO DESKTOP_QML Inquiry message if the 5 digit transport PIN should be changed to an ordinary PIN (now).</extracomment>
-        <translation>Möchten Sie jetzt Ihre Transport PIN in eine persönliche PIN ändern?</translation>
-    </message>
-    <message>
-        <source>This process can always be started from the main menu. The online-ID function is only usable with a personal PIN.</source>
-        <extracomment>INFO DESKTOP_QML Hint that this change may be carried out form the main menu as well and that it is required to use the online authentication feature of the id card.</extracomment>
-        <translation>Dieser Prozess kann jederzeit aus dem Hauptmenü heraus gestartet werden. Die Online-Ausweisfunktion ist nur mit einer persönlichen PIN nutzbar.</translation>
+        <source>If you have not already done so you have to change your 5-digit transport PIN to a 6-digit PIN before you can use the online-ID function.</source>
+        <extracomment>INFO DESKTOP_QML Hint that this change may be carried out form the main menu as well and that it is required to use the online authentication feature of the ID card.</extracomment>
+        <translation>Falls noch nicht geschehen, müssen Sie vor der erstmaligen Nutzung der Online-Ausweisfunktion die fünfstellige Transport-PIN in eine sechsstellige PIN ändern.</translation>
     </message>
     <message>
         <source>Transport PIN</source>
@@ -3492,6 +3953,40 @@ LABEL ANDROID IOS</extracomment>
         <extracomment>INFO DESKTOP_QML Success message after completing the setup assistant.</extracomment>
         <translation>Sie haben die Einrichtung der AusweisApp2 erfolgreich abgeschlossen.</translation>
     </message>
+    <message>
+        <source>Do you want to save a history of performed authentications on your device?</source>
+        <extracomment>INFO DESKTOP_QML Question if the authentication history shall be stored.</extracomment>
+        <translation>Möchten Sie einen Verlauf durchgeführter Authentisierungen auf diesem Gerät speichern?</translation>
+    </message>
+    <message>
+        <source>The history is only saved locally. You can use it to see on what date you transmitted which data to which party. After enabling the history you can view and delete the entries anytime.</source>
+        <extracomment>INFO DESKTOP_QML Information text which data is stored in the history record.</extracomment>
+        <translation>Der Verlauf wird nur lokal angelegt. Dort können Sie jederzeit nachschauen, wann Sie wem welche Daten übermittelt haben. Sie können nach aktivieren der Funktion jederzeit Verlaufseinträge einsehen und löschen.</translation>
+    </message>
+    <message>
+        <source>Setup assistant view</source>
+        <translation>Ansicht des Einstellungsassistenten</translation>
+    </message>
+    <message>
+        <source>This is the setup assistant view which will guide you through the basic setup of %1</source>
+        <translation>Dieser Einstellungsassistent wird Sie durch die grundlegende Einrichtung der %1 führen</translation>
+    </message>
+    <message>
+        <source>History setup step</source>
+        <translation>Einrichtungsschritt zum Verlauf</translation>
+    </message>
+    <message>
+        <source>Change transport PIN setup step</source>
+        <translation>Einrichtungsschritt zur Änderung der Transport PIN</translation>
+    </message>
+    <message>
+        <source>Setup assistant done</source>
+        <translation>Einstellungsassistent beendet</translation>
+    </message>
+    <message>
+        <source>Card reader setup step</source>
+        <translation>Einrichtungsschritt zu Kartenlesern</translation>
+    </message>
 </context>
 <context>
     <name>StepAuthenticationEac1Widget</name>
@@ -3500,8 +3995,8 @@ LABEL ANDROID IOS</extracomment>
         <translation>AusweisApp2</translation>
     </message>
     <message>
-        <source>Service provider</source>
-        <translation>Diensteanbieter</translation>
+        <source>Provider</source>
+        <translation>Anbieter</translation>
     </message>
     <message>
         <source>Purpose for reading out requested data:</source>
@@ -3524,8 +4019,8 @@ LABEL ANDROID IOS</extracomment>
         <translation>Wichtige Transaktionsinformationen</translation>
     </message>
     <message>
-        <source>The following data is required by the service provider. You can deselect the non-mandatory data fields if you do not want this data to be transmitted.</source>
-        <translation>Folgende Daten werden von dem Diensteanbieter benötigt. Bei Datenfeldern, die als &quot;abwählbar&quot; gekennzeichnet sind, können Sie entscheiden, ob Sie diese Daten übermitteln möchten.</translation>
+        <source>The following data is required by the provider. You can deselect the non-mandatory data fields if you do not want this data to be transmitted.</source>
+        <translation>Folgende Daten werden von dem Anbieter benötigt. Bei Datenfeldern, die als &quot;abwählbar&quot; gekennzeichnet sind, können Sie entscheiden, ob Sie diese Daten übermitteln möchten.</translation>
     </message>
     <message>
         <source>details</source>
@@ -3535,14 +4030,9 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>StoreFeedbackPopup</name>
     <message>
-        <source>Would you like to rate this app?</source>
+        <source>Are you satisfied with AusweisApp2?</source>
         <extracomment>INFO ANDROID Header of the app rating popup.</extracomment>
-        <translation>Möchten Sie diese App bewerten?</translation>
-    </message>
-    <message>
-        <source>Rate</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Bewerten</translation>
+        <translation>Zufrieden mit der AusweisApp2?</translation>
     </message>
     <message>
         <source>We would be very grateful if you could leave a rating on the Google Play Store!</source>
@@ -3550,9 +4040,14 @@ LABEL ANDROID IOS</extracomment>
         <translation>Wir würden uns sehr über eine Bewertung im Google Play Store freuen!</translation>
     </message>
     <message>
-        <source>No, thanks</source>
+        <source>Don&apos;t ask again</source>
         <extracomment>LABEL ANDROID</extracomment>
-        <translation>Nein, danke</translation>
+        <translation>Ignorieren</translation>
+    </message>
+    <message>
+        <source>Rate app</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>App bewerten</translation>
     </message>
 </context>
 <context>
@@ -3569,11 +4064,6 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>USB card reader</source>
         <translation>USB Kartenleser</translation>
-    </message>
-    <message>
-        <source>Please start pairing mode first.</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Starten Sie den Kopplungsmodus auf Ihrem Smartphone, falls noch nicht geschehen.</translation>
     </message>
 </context>
 <context>
@@ -3621,6 +4111,18 @@ LABEL ANDROID IOS</extracomment>
         <source>Notifications</source>
         <translation>Benachrichtungen</translation>
     </message>
+    <message>
+        <source>Open settings view of %1</source>
+        <translation>Öffne die %1 Einstellungen</translation>
+    </message>
+    <message>
+        <source>Open the online help of %1</source>
+        <translation>Öffne die %1 Online-Hilfe</translation>
+    </message>
+    <message>
+        <source>Show the in-app notifications of %1</source>
+        <translation>Zeige den interne Benachrichtigungsdialog der %1</translation>
+    </message>
 </context>
 <context>
     <name>TitleBarNavigation</name>
@@ -3638,17 +4140,6 @@ LABEL ANDROID IOS</extracomment>
         <source>Back</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Zurück</translation>
-    </message>
-</context>
-<context>
-    <name>ToggleableOption</name>
-    <message>
-        <source>is enabled</source>
-        <translation>ist aktiviert</translation>
-    </message>
-    <message>
-        <source>is disabled</source>
-        <translation>ist deaktiviert</translation>
     </message>
 </context>
 <context>
@@ -3731,7 +4222,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>... und zum Lesen des Ausweises das Smartphone als Kartenleser zu nutzen. Alternativ geht natürlich auch ein USB-Lesegerät.</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/mobile-geraete/</source>
+        <source>https://www.ausweisapp.bund.de/en/compatible-devices/mobile-phones-and-tablets/</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>https://www.ausweisapp.bund.de/mobile-geraete/</translation>
     </message>
@@ -3740,7 +4231,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>Wie kann ich die AusweisApp2 auf meinem Smartphone nutzen?</translation>
     </message>
     <message>
-        <source>The AusweisApp2 offers the following options to access your id card:</source>
+        <source>The AusweisApp2 offers the following options to access your ID card:</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Die AusweisApp2 bietet zum Auslesen die folgenden Möglichkeiten:</translation>
     </message>
@@ -3750,12 +4241,12 @@ LABEL ANDROID IOS</extracomment>
         <translation>Wie kann ich die AusweisApp2 auf meinem iPhone nutzen?</translation>
     </message>
     <message>
-        <source>Many iPhones (iPhone 7 and newer) can access the id card via the built-in NFC interface.</source>
+        <source>Many iPhones (iPhone 7 and newer) can access the ID card via the built-in NFC interface.</source>
         <extracomment>INFO ANDROID IOS</extracomment>
         <translation>Viele iPhones (iPhone 7 und neuer) können direkt über die im Gerät verbaute NFC-Schnittstelle auf die Online-Ausweisfunktion des Ausweises zugreifen.</translation>
     </message>
     <message>
-        <source>Many Android devices can access the id card via the built-in NFC interface.</source>
+        <source>Many Android devices can access the ID card via the built-in NFC interface.</source>
         <translation>Viele Android-Geräte können direkt über die im Gerät verbaute NFC-Schnittstelle auf die Online-Ausweisfunktion des Ausweises zugreifen.</translation>
     </message>
     <message>
@@ -3768,6 +4259,26 @@ LABEL ANDROID IOS</extracomment>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Smartphone &lt;b&gt;mit&lt;/b&gt; NFC-Chip als Kartenleser</translation>
     </message>
+    <message>
+        <source>Direct connection via NFC chip tutorial</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Tutorial zum direkten Auslesen über NFC</translation>
+    </message>
+    <message>
+        <source>Smartphone as card reader tutorial</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Tutorial zum Smartphone als Kartenleser</translation>
+    </message>
+    <message>
+        <source>Smartphone as card reader mobile tutorial</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Mobilgeräte-Tutorial zum Smartphone als Kartenleser</translation>
+    </message>
+    <message>
+        <source>Using a bluetooth card reader tutorial</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Tutorial zur Verwendung eines Bluetooth-Lesers</translation>
+    </message>
 </context>
 <context>
     <name>TutorialImportant</name>
@@ -3778,12 +4289,13 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Before you use the online ID function please change the</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Vor der erstmaligen Nutzung der Online-Ausweisfunktion bitte die</translation>
     </message>
     <message>
         <source>5 digits long</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>5-stellige</translation>
+        <translation>fünfstellige</translation>
     </message>
     <message>
         <source>transport PIN</source>
@@ -3798,7 +4310,7 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>6 digits long PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>6-stellige PIN</translation>
+        <translation>sechsstellige PIN</translation>
     </message>
     <message>
         <source>before you use the online ID function!</source>
@@ -3807,6 +4319,7 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>change!</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>ersetzen!</translation>
     </message>
     <message>
@@ -3836,10 +4349,12 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>or</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>oder</translation>
     </message>
     <message>
         <source>www.personalausweisportal.de</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>www.personalausweisportal.de</translation>
     </message>
     <message>
@@ -3859,6 +4374,7 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>https://www.youtube.com/watch?v=wZglRda5Y60&amp;index=4&amp;list=PLLB5ERhVkn25qQXgMHQr-1KgyZsJKoSAm</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>https://www.youtube.com/watch?v=wZglRda5Y60&amp;index=4&amp;list=PLLB5ERhVkn25qQXgMHQr-1KgyZsJKoSAm</translation>
     </message>
     <message>
@@ -3867,8 +4383,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Sie können mehr dazu im YouTube-Video erfahren</translation>
     </message>
     <message>
-        <source>You can always access this tutorial again from the side bar.</source>
-        <translation>Sie können dieses Tutorial jederzeit wieder von der Seitenleiste aus aufrufen.</translation>
+        <source>You can always access this tutorial again from the &quot;Help &amp; Feedback&quot; section in the side bar.</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Sie können dieses Tutorial jederzeit wieder über den Bereich &quot;Hilfe &amp; Feedback&quot; aufrufen.</translation>
     </message>
     <message>
         <source>The transport PIN is sent to you by the Bundesdruckerei via mail.</source>
@@ -3882,8 +4399,18 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>You can always access this tutorial again from the &quot;More&quot; section in the menu bar.</source>
+        <extracomment>LABEL IOS</extracomment>
+        <translation>Sie können dieses Tutorial jederzeit wieder über den Bereich &quot;Mehr&quot; aufrufen.</translation>
+    </message>
+    <message>
+        <source>Please note: The transport PIN can only be used for your first PIN change. If you have already set your personal PIN (e.g. while picking up your ID card) only the set PIN is valid.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sie können dieses Tutorial jederzeit wieder über den Bereich &quot;Mehr&quot; aus aufrufen.</translation>
+        <translation>Hinweis: Die Transport-PIN kann nur für die erstmalige PIN-Änderung verwendet werden. Sollten Sie (z.B. bei der Abholung Ihres Ausweises) bereits eine persönliche PIN gesetzt haben, ist nur noch diese gültig.</translation>
+    </message>
+    <message>
+        <source>You can always set a new PIN at the issuing authority if the (transport) PIN is not known.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Ist Ihnen die (Transport-)PIN nicht bekannt, können Sie in der zuständigen Behörde jederzeit eine neue PIN setzen.</translation>
     </message>
 </context>
 <context>
@@ -3924,9 +4451,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>...und mit dem Gerät koppeln.</translation>
     </message>
     <message>
-        <source>Click the link on the website of the service provider.</source>
+        <source>Click the link on the website of the provider.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Link auf Webseite des Diensteanbieters
+        <translation>Link auf Webseite des Anbieters
 klicken.</translation>
     </message>
     <message>
@@ -3975,12 +4502,13 @@ klicken.</translation>
     </message>
     <message>
         <source>Now</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Jetzt</translation>
     </message>
     <message>
         <source>6 digits long PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>6-stellige PIN</translation>
+        <translation>sechsstellige PIN</translation>
     </message>
     <message>
         <source>now on the card reader!</source>
@@ -3989,12 +4517,13 @@ klicken.</translation>
     </message>
     <message>
         <source>enter on the card reader!</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>am Kartenleser eingeben!</translation>
     </message>
     <message>
         <source>This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Funktioniert nur, wenn Sie Ihre 5-stellige Transport-PIN bereits in Ihre persönliche 6-stellige PIN geändert haben.</translation>
+        <translation>Funktioniert nur, wenn Sie Ihre fünfstellige Transport-PIN bereits in Ihre persönliche sechsstellige PIN geändert haben.</translation>
     </message>
     <message>
         <source>qrc:///images/tutorial/screenshot_choose_reader_%1_en.png</source>
@@ -4023,12 +4552,13 @@ klicken.</translation>
     </message>
     <message>
         <source>App on Android smartphone &lt;b&gt;with&lt;/b&gt; NFC chip as card reader</source>
+        <extracomment>LABEL ANDROID</extracomment>
         <translation>App auf Android-Telefon &lt;b&gt;mit&lt;/b&gt; NFC-Chip als Kartenleser</translation>
     </message>
     <message>
-        <source>Click link on the website of the service provider.</source>
+        <source>Click link on the website of the provider.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Link auf Webseite des Diensteanbieters klicken.</translation>
+        <translation>Link auf Webseite des Anbieters klicken.</translation>
     </message>
     <message>
         <source>qrc:///images/tutorial/generated/reader_nfc_userdata_example_en.svg</source>
@@ -4055,11 +4585,12 @@ klicken.</translation>
         <translation>Weiter zur PIN-Eingabe</translation>
     </message>
     <message>
-        <source>... and place the id card flat onto the NFC interface.</source>
+        <source>... and place the ID card flat onto the NFC interface.</source>
+        <extracomment>LABEL ANDROID</extracomment>
         <translation>...und platzieren Sie den Ausweis flach an der NFC-Schnittstelle.</translation>
     </message>
     <message>
-        <source>Do not move device or id card!</source>
+        <source>Do not move device or ID card!</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Gerät und Ausweis nicht bewegen!</translation>
     </message>
@@ -4069,12 +4600,13 @@ klicken.</translation>
         <translation>Die genaue Position hängt von Ihrem Gerät ab...</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/mobile-geraete/</source>
+        <source>https://www.ausweisapp.bund.de/en/compatible-devices/mobile-phones-and-tablets/</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>https://www.ausweisapp.bund.de/mobile-geraete/</translation>
     </message>
     <message>
         <source>To mobile devices</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Zu den mobilen Geräten</translation>
     </message>
     <message>
@@ -4084,12 +4616,13 @@ klicken.</translation>
     </message>
     <message>
         <source>Now</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Jetzt</translation>
     </message>
     <message>
         <source>6 digits long PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>6-stellige PIN</translation>
+        <translation>sechsstellige PIN</translation>
     </message>
     <message>
         <source>now!</source>
@@ -4098,22 +4631,28 @@ klicken.</translation>
     </message>
     <message>
         <source>enter!</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>eingeben!</translation>
     </message>
     <message>
         <source>This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Funktioniert nur, wenn Sie Ihre 5-stellige Transport-PIN bereits in Ihre persönliche 6-stellige PIN geändert haben.</translation>
+        <translation>Funktioniert nur, wenn Sie Ihre fünfstellige Transport-PIN bereits in Ihre persönliche sechsstellige PIN geändert haben.</translation>
     </message>
     <message>
         <source>App on iPhone &lt;b&gt;with&lt;/b&gt; NFC chip as card reader</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>App auf iPhone &lt;b&gt;mit&lt;/b&gt; NFC-Chip als Kartenleser</translation>
     </message>
     <message>
-        <source>... and place the top of the iPhone onto the id card.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <source>... and place the top of the iPhone onto the ID card.</source>
+        <extracomment>LABEL IOS</extracomment>
         <translation>...und platzieren Sie die Oberkante des iPhones auf dem Ausweis.</translation>
+    </message>
+    <message>
+        <source>You can also watch this YouTube video explaining the process.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Sie können sich auch dieses YouTube-Video ansehen das den Prozess erläutert.</translation>
     </message>
 </context>
 <context>
@@ -4174,9 +4713,9 @@ klicken.</translation>
         <translation>Öffnen Sie nun die App auf dem Computer und gehen auf Einstellungen.</translation>
     </message>
     <message>
-        <source>Select the &lt;b&gt;Card Readers&lt;/b&gt; tab.</source>
+        <source>Select the &lt;b&gt;Smartphone as card reader&lt;/b&gt; tab.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Den Reiter &lt;b&gt;Kartenleser&lt;/b&gt; auswählen.</translation>
+        <translation>Den Reiter &lt;b&gt;Smartphone als Kartenleser&lt;/b&gt; auswählen.</translation>
     </message>
     <message>
         <source>qrc:///images/tutorial/screenshot_pairing_en.png</source>
@@ -4184,9 +4723,9 @@ klicken.</translation>
         <translation>qrc:///images/tutorial/screenshot_pairing_de.png</translation>
     </message>
     <message>
-        <source>Select smartphone from list and click &quot;pair&quot;</source>
+        <source>Select smartphone from list</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smartphone in der Liste wählen und auf „koppeln“ klicken</translation>
+        <translation>Smartphone in der Liste auswählen</translation>
     </message>
     <message>
         <source>Enter pairing code next.</source>
@@ -4194,9 +4733,9 @@ klicken.</translation>
         <translation>Dann Kopplungscode eingeben.</translation>
     </message>
     <message>
-        <source>Click link on the website of the service provider.</source>
+        <source>Click link on the website of the provider.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Link auf Webseite des Diensteanbieters klicken.</translation>
+        <translation>Link auf Webseite des Anbieters klicken.</translation>
     </message>
     <message>
         <source>qrc:///images/tutorial/generated/reader_nfc_userdata_example_en.svg</source>
@@ -4229,7 +4768,7 @@ klicken.</translation>
         <translation>qrc:///images/tutorial/generated/where_lay_down_id.svg</translation>
     </message>
     <message>
-        <source>Do not move device or id card!</source>
+        <source>Do not move device or ID card!</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Gerät und Ausweis nicht bewegen!</translation>
     </message>
@@ -4239,12 +4778,13 @@ klicken.</translation>
         <translation>Die genaue Position hängt von Ihrem Gerät ab...</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/mobile-geraete/</source>
+        <source>https://www.ausweisapp.bund.de/en/compatible-devices/mobile-phones-and-tablets/</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>https://www.ausweisapp.bund.de/mobile-geraete/</translation>
     </message>
     <message>
         <source>To mobile devices</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Zu den mobilen Geräten</translation>
     </message>
     <message>
@@ -4255,7 +4795,7 @@ klicken.</translation>
     <message>
         <source>6 digits long PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>6-stellige PIN</translation>
+        <translation>sechsstellige PIN</translation>
     </message>
     <message>
         <source>now!</source>
@@ -4264,12 +4804,13 @@ klicken.</translation>
     </message>
     <message>
         <source>enter!</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>eingeben!</translation>
     </message>
     <message>
         <source>This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Funktioniert nur, wenn Sie Ihre 5-stellige Transport-PIN bereits in Ihre persönliche 6-stellige PIN geändert haben.</translation>
+        <translation>Funktioniert nur, wenn Sie Ihre fünfstellige Transport-PIN bereits in Ihre persönliche sechsstellige PIN geändert haben.</translation>
     </message>
     <message>
         <source>qrc:///images/tutorial/generated/reader_sac_menu_%1_en.svg</source>
@@ -4288,17 +4829,23 @@ klicken.</translation>
     </message>
     <message>
         <source>Now choose &quot;Remote&quot; in the AusweisApp2 on your smartphone...</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>Öffnen Sie nun in der AusweisApp2 auf dem Smartphone die Ansicht &quot;Fernzugriff&quot;...</translation>
     </message>
     <message>
         <source>Now choose &quot;Smartphone as card reader&quot; in the AusweisApp2 on your smartphone...</source>
+        <extracomment>LABEL ANDROID</extracomment>
         <translation>Öffnen Sie nun in der AusweisApp2 auf dem Smartphone den Bereich &quot;Smartphone als Kartenleser&quot;...</translation>
     </message>
     <message>
-        <source>... and place the id card onto the NFC interface.</source>
+        <source>... and place the ID card onto the NFC interface.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>...und platzieren Sie den Ausweis auf die NFC-Schnittstelle.</translation>
+    </message>
+    <message>
+        <source>You can also watch this YouTube video explaining the process.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Sie können sich auch dieses YouTube-Video ansehen das den Prozess erläutert.</translation>
     </message>
 </context>
 <context>
@@ -4350,6 +4897,7 @@ klicken.</translation>
     </message>
     <message>
         <source>Now open the AusweisApp2 on your device &lt;b&gt;without&lt;/b&gt; NFC and select &lt;b&gt;Smartphone as card reader&lt;/b&gt;.</source>
+        <extracomment>LABEL ANDROID</extracomment>
         <translation>Öffnen Sie nun die AusweisApp2 auf dem Gerät &lt;b&gt;ohne&lt;/b&gt; NFC und wählen &lt;b&gt;Smartphone als Kartenleser&lt;/b&gt; aus.</translation>
     </message>
     <message>
@@ -4368,9 +4916,9 @@ klicken.</translation>
         <translation>Dann Kopplungscode eingeben.</translation>
     </message>
     <message>
-        <source>Click link on the website of the service provider on the device &lt;b&gt;without&lt;/b&gt; NFC.</source>
+        <source>Click link on the website of the provider on the device &lt;b&gt;without&lt;/b&gt; NFC.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Auf dem Gerät &lt;b&gt;ohne&lt;/b&gt; NFC Link auf Webseite des Diensteanbieters klicken.</translation>
+        <translation>Auf dem Gerät &lt;b&gt;ohne&lt;/b&gt; NFC Link auf Webseite des Anbieters klicken.</translation>
     </message>
     <message>
         <source>qrc:///images/tutorial/generated/reader_nfc_userdata_example_en.svg</source>
@@ -4408,7 +4956,7 @@ klicken.</translation>
         <translation>qrc:///images/tutorial/generated/where_lay_down_id.svg</translation>
     </message>
     <message>
-        <source>Do not move device or id card!</source>
+        <source>Do not move device or ID card!</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Gerät und Ausweis nicht bewegen!</translation>
     </message>
@@ -4418,12 +4966,13 @@ klicken.</translation>
         <translation>Die genaue Position hängt von Ihrem Gerät ab...</translation>
     </message>
     <message>
-        <source>https://www.ausweisapp.bund.de/mobile-geraete/</source>
+        <source>https://www.ausweisapp.bund.de/en/compatible-devices/mobile-phones-and-tablets/</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>https://www.ausweisapp.bund.de/mobile-geraete/</translation>
     </message>
     <message>
         <source>To mobile devices</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Zu den mobilen Geräten</translation>
     </message>
     <message>
@@ -4434,7 +4983,7 @@ klicken.</translation>
     <message>
         <source>6 digits long PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>6-stellige PIN</translation>
+        <translation>sechsstellige PIN</translation>
     </message>
     <message>
         <source>now!</source>
@@ -4443,12 +4992,13 @@ klicken.</translation>
     </message>
     <message>
         <source>enter!</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>eingeben!</translation>
     </message>
     <message>
         <source>This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Funktioniert nur, wenn Sie Ihre 5-stellige Transport-PIN bereits in Ihre persönliche 6-stellige PIN geändert haben.</translation>
+        <translation>Funktioniert nur, wenn Sie Ihre fünfstellige Transport-PIN bereits in Ihre persönliche sechsstellige PIN geändert haben.</translation>
     </message>
     <message>
         <source>qrc:///images/tutorial/generated/reader_sac_menu_%1_en.svg</source>
@@ -4457,7 +5007,7 @@ klicken.</translation>
     </message>
     <message>
         <source>Now open the AusweisApp2 on your device &lt;b&gt;without&lt;/b&gt; NFC and select &lt;b&gt;Configure remote service&lt;/b&gt;.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>Öffnen Sie nun die AusweisApp2 auf dem Gerät &lt;b&gt;ohne&lt;/b&gt; NFC und wählen Sie &lt;b&gt;Fernzugriff konfigurieren&lt;/b&gt; aus.</translation>
     </message>
     <message>
@@ -4477,15 +5027,16 @@ klicken.</translation>
     </message>
     <message>
         <source>Now choose &quot;Remote&quot; in the AusweisApp2 on your smartphone...</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>Öffnen Sie nun in der AusweisApp2 auf dem Smartphone den Bereich &quot;Fernzugriff&quot;...</translation>
     </message>
     <message>
         <source>Now choose &quot;Smartphone as card reader&quot; in the AusweisApp2 on your smartphone...</source>
+        <extracomment>LABEL ANDROID</extracomment>
         <translation>Öffnen Sie nun in der AusweisApp2 auf dem Smartphone den Bereich &quot;Smartphone als Kartenleser&quot;...</translation>
     </message>
     <message>
-        <source>... and place the id card onto the NFC interface.</source>
+        <source>... and place the ID card onto the NFC interface.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>...und platzieren Sie den Ausweis auf die NFC-Schnittstelle.</translation>
     </message>
@@ -4541,9 +5092,9 @@ klicken.</translation>
         <translation>gegenseitige Authentifizierung</translation>
     </message>
     <message>
-        <source>... it establishes a secure connection between ID document and service provider.</source>
+        <source>... it establishes a secure connection between ID card and provider.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>...sie stellt eine sichere Verbindung zwischen Ausweisdokument und Diensteanbieter her.</translation>
+        <translation>...sie stellt eine sichere Verbindung zwischen Ausweis und Anbieter her.</translation>
     </message>
     <message>
         <source>On every authentication you get displayed &lt;b&gt;who&lt;/b&gt; wants to access &lt;b&gt;which&lt;/b&gt; data</source>
@@ -4609,7 +5160,7 @@ klicken.</translation>
 <context>
     <name>TutorialWhere</name>
     <message>
-        <source>On every website of a service provider where you see this icon:</source>
+        <source>On every website of a provider where you see this icon:</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Überall, wo Sie auf der Webseite eines Online-Dienstes folgendes Logo sehen:</translation>
     </message>
@@ -4640,10 +5191,12 @@ klicken.</translation>
     </message>
     <message>
         <source>Now lay down your ID card and place your device on the ID card.</source>
+        <extracomment>LABEL ANDROID</extracomment>
         <translation>Bitte legen Sie nun Ihren Ausweis hin und Ihr Gerät auf Ihren Ausweis.</translation>
     </message>
     <message>
         <source>Don&apos;t move your device during the procedure!</source>
+        <extracomment>LABEL ANDROID</extracomment>
         <translation>Gerät während des gesamten Vorgangs nicht bewegen!</translation>
     </message>
     <message>
@@ -4653,12 +5206,13 @@ klicken.</translation>
     </message>
     <message>
         <source>Now</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Jetzt</translation>
     </message>
     <message>
         <source>6 digits long PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>6-stellige PIN</translation>
+        <translation>sechsstellige PIN</translation>
     </message>
     <message>
         <source>now!</source>
@@ -4667,6 +5221,7 @@ klicken.</translation>
     </message>
     <message>
         <source>enter!</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>eingeben!</translation>
     </message>
     <message>
@@ -4696,13 +5251,89 @@ klicken.</translation>
     </message>
     <message>
         <source>Now lay down your ID card and hold the top of your iPhone to the ID card.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>Legen Sie nun Ihren Ausweis vor sich hin und halten Sie die Oberkante des iPhones an den Ausweis.</translation>
     </message>
     <message>
         <source>Don&apos;t move your iPhone during the procedure!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>iPhone während des gesamten Vorgangs nicht bewegen!</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateView</name>
+    <message>
+        <source>Application update view</source>
+        <translation>Ansicht der Anwendungsaktualisierung</translation>
+    </message>
+    <message>
+        <source>This is the application update panel of the AusweisApp2.</source>
+        <translation>Dies ist die Ansicht zu Aktualisierungen der AusweisApp2.</translation>
+    </message>
+    <message>
+        <source>Application update</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Anwendungsaktualisierung</translation>
+    </message>
+    <message>
+        <source>The update information could not be retrieved. Please check your network connection.</source>
+        <extracomment>LABEL DESKTOP_QML Placext if the update information are invalid, might be caused by network issues.</extracomment>
+        <translation>Die Aktualisierungeninformationen konnten nicht heruntergeladen werden. Bitte überprüfen Sie die Netzwerkverbindung.</translation>
+    </message>
+    <message>
+        <source>Your version %1 of %2 is up to date!</source>
+        <extracomment>LABEL DESKTOP_QML The currently installed version is the most recent one, no action is required.</extracomment>
+        <translation>Ihre Version %1 der %2 ist auf dem aktuellen Stand!</translation>
+    </message>
+    <message>
+        <source>An update is available (installed version %1)</source>
+        <translation>Eine Aktualisierung ist verfügbar (installierte Version %1)</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateViewButtonRow</name>
+    <message>
+        <source>Skip update</source>
+        <extracomment>LABEL DESKTOP_QML User choice to skip this update, the automatic update check will *not* inform about this update again.</extracomment>
+        <translation>Aktualisierung überspringen</translation>
+    </message>
+    <message>
+        <source>Remind me later</source>
+        <extracomment>LABEL DESKTOP_QML The available update is shown again after next automatic update check.</extracomment>
+        <translation>Später erinnern</translation>
+    </message>
+    <message>
+        <source>Download update</source>
+        <extracomment>LABEL DESKTOP_QML Download the update, opens the download link in the user&apos;s default browser.</extracomment>
+        <translation>Aktualisierung herunterladen</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateViewInformation</name>
+    <message>
+        <source>New version:</source>
+        <extracomment>LABEL DESKTOP_QML Information about the available, new version number.</extracomment>
+        <translation>Neue Version:</translation>
+    </message>
+    <message>
+        <source>Release date:</source>
+        <extracomment>LABEL DESKTOP_QML Date when the available update was released.</extracomment>
+        <translation>Erscheinungsdatum:</translation>
+    </message>
+    <message>
+        <source>Download size:</source>
+        <extracomment>LABEL DESKTOP_QML Download size of the available update in megabyte.</extracomment>
+        <translation>Größe der Aktualisierung:</translation>
+    </message>
+    <message>
+        <source>Download link:</source>
+        <extracomment>LABEL DESKTOP_QML Plaintext link to the update download.</extracomment>
+        <translation>Link zum Download:</translation>
+    </message>
+    <message>
+        <source>Checksum link:</source>
+        <extracomment>LABEL DESKTOP_QML Link to download checksum to verify the downloaded update file.</extracomment>
+        <translation>Link zur Prüfsumme:</translation>
     </message>
 </context>
 <context>
@@ -4720,8 +5351,8 @@ klicken.</translation>
         <translation>Die Aktualisierungsdatei finden Sie hier:</translation>
     </message>
     <message>
-        <source>Release Notes:</source>
-        <translation>Aktualisierungshinweise:</translation>
+        <source>Release notes:</source>
+        <translation>Release Notes:</translation>
     </message>
     <message>
         <source>Download this update and close current &quot;AusweisApp2&quot;. Install the update and start &quot;AusweisApp2&quot; again.</source>
@@ -4733,7 +5364,7 @@ klicken.</translation>
     </message>
     <message>
         <source>Skip update</source>
-        <translation>Aktualisierung auslassen</translation>
+        <translation>Aktualisierung überspringen</translation>
     </message>
     <message>
         <source>Remind me later</source>
@@ -4752,13 +5383,14 @@ klicken.</translation>
         <translation>Versionsinformationen</translation>
     </message>
     <message>
-        <source>Version information</source>
+        <source>Developer options activated.</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Versionsinformationen</translation>
+        <translation>Entwickleroptionen aktiviert.</translation>
     </message>
     <message>
-        <source>This is the version information section of the AusweisApp2.</source>
-        <translation>Dies ist die Anzeige der Versionsinformationen der AusweisApp2..</translation>
+        <source>Developer options deactivated.</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Entwickleroptionen deaktiviert.</translation>
     </message>
 </context>
 <context>
@@ -4820,39 +5452,15 @@ klicken.</translation>
     </message>
     <message>
         <source>The current release notes can be found %1 here.%2</source>
-        <translation>Die aktuellen Release-Notes finden Sie %1 hier.%2</translation>
+        <translation>Die aktuellen Release Notes finden Sie %1 hier.%2</translation>
     </message>
     <message>
         <source>About %1 - %2</source>
         <translation>Über %1 - %2</translation>
     </message>
-    <message>
-        <source>The developer mode is aimed at integrators / developers for new service applications. For this reason, the developer mode works only in the test PKI. By activating the developer mode, some safety tests are deactivated. This means that the authentication process continues although the AusweisApp2 would usually abort the process with an error message when used in normal operation mode. Information on the disregarded error in the developer mode is displayed in the attached window below the AusweisApp2.</source>
-        <translation>Der Entwicklermodus richtet sich an Integratoren / Entwickler für neue Dienste. Aus diesem Grund funktioniert der Entwicklermodus lediglich in der Test-PKI. Durch Aktivierung des Entwicklermodus werden einige Sicherheitsprüfungen abgestellt. Die Authentisierung wird auch dann weitergeführt, wenn die AusweisApp2 im Normalbetrieb die Authentisierung mit einer Fehlermeldung abbrechen würde. Der übergangene Fehler im Entwicklermodus wird im angehängten Fenster unterhalb der AusweisApp2 angezeigt.</translation>
-    </message>
 </context>
 <context>
     <name>governikus::AccessRoleAndRightsUtil</name>
-    <message>
-        <source>WRITE_DG17</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>WRITE_DG17</translation>
-    </message>
-    <message>
-        <source>WRITE_DG18</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>WRITE_DG18</translation>
-    </message>
-    <message>
-        <source>WRITE_DG19</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>WRITE_DG19</translation>
-    </message>
-    <message>
-        <source>WRITE_DG20</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>WRITE_DG20</translation>
-    </message>
     <message>
         <source>WRITE_DG21</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
@@ -4998,6 +5606,26 @@ klicken.</translation>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Unbekannt</translation>
     </message>
+    <message>
+        <source>Write residence permit II</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Schreibrecht Wohnort II</translation>
+    </message>
+    <message>
+        <source>Write residence permit I</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Schreibrecht Wohnort I</translation>
+    </message>
+    <message>
+        <source>Write community-ID</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Schreibrecht Gemeinde-ID</translation>
+    </message>
+    <message>
+        <source>Write address</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Schreibrecht Adresse</translation>
+    </message>
 </context>
 <context>
     <name>governikus::AppQtGui</name>
@@ -5055,15 +5683,7 @@ klicken.</translation>
     </message>
     <message>
         <source>Did you change the transport PIN already?&lt;br&gt;&lt;br&gt;Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. Online identification with transport PIN is not possible.</source>
-        <translation>Haben Sie Ihre Transport-PIN schon geändert? &lt;br&gt;&lt;br&gt;Bevor Sie das erste Mal die Online-Ausweisfunktion nutzen können, müssen Sie Ihre Transport-PIN durch eine persönliche, 6-stellige PIN ersetzen. Die Benutzung der Online-Ausweisfunktion ist mit der Transport-PIN nicht möglich.</translation>
-    </message>
-    <message>
-        <source>Switch UI</source>
-        <translation>Grafische Oberfläche wechseln</translation>
-    </message>
-    <message>
-        <source>Do you want to switch to the new beta UI? You can switch back to the old UI in &quot;Settings&quot;.</source>
-        <translation>Möchten Sie die neue grafische Oberfläche ausprobieren? Sie können in den Einstellungen zur alten Oberfläche zurückwechseln.</translation>
+        <translation>Haben Sie Ihre Transport-PIN schon geändert? &lt;br&gt;&lt;br&gt;Bevor Sie das erste Mal die Online-Ausweisfunktion nutzen können, müssen Sie Ihre Transport-PIN durch eine persönliche, sechsstellige PIN ersetzen. Die Benutzung der Online-Ausweisfunktion ist mit der Transport-PIN nicht möglich.</translation>
     </message>
 </context>
 <context>
@@ -5104,8 +5724,8 @@ klicken.</translation>
     </message>
     <message>
         <source>ID card (PA/eAT)</source>
-        <extracomment>ERROR ALL_PLATFORMS An id card is present/inserted. The text is only used in DiagnosisView.</extracomment>
-        <translation>Ausweisdokument (PA/eAT)</translation>
+        <extracomment>ERROR ALL_PLATFORMS An ID card is present/inserted. The text is only used in DiagnosisView.</extracomment>
+        <translation>Ausweis (PA/eAT)</translation>
     </message>
     <message>
         <source>Passport</source>
@@ -5116,9 +5736,9 @@ klicken.</translation>
 <context>
     <name>governikus::CertificateDescriptionModel</name>
     <message>
-        <source>Service provider</source>
+        <source>Provider</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Diensteanbieter</translation>
+        <translation>Anbieter</translation>
     </message>
     <message>
         <source>Certificate issuer</source>
@@ -5126,9 +5746,9 @@ klicken.</translation>
         <translation>Aussteller des Berechtigungszertifikats</translation>
     </message>
     <message>
-        <source>Name, address and mail address of the service provider</source>
+        <source>Name, address and mail address of the provider</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Name, Adresse und E-Mail vom Diensteanbieter</translation>
+        <translation>Name, Adresse und E-Mail vom Anbieter</translation>
     </message>
     <message>
         <source>Purpose</source>
@@ -5136,14 +5756,14 @@ klicken.</translation>
         <translation>Zweck</translation>
     </message>
     <message>
-        <source>Indication of the bodies responsible for the service provider, that verify the compliance with data security regulations</source>
+        <source>Indication of the bodies responsible for the provider, that verify the compliance with data security regulations</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Angabe der für den Diensteanbieter zuständigen Datenschutzaufsicht</translation>
+        <translation>Angabe der für den Anbieter zuständigen Datenschutzaufsicht</translation>
     </message>
     <message>
-        <source>Service provider information</source>
+        <source>Provider information</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Diensteanbieterinformationen</translation>
+        <translation>Anbieterinformationen</translation>
     </message>
     <message>
         <source>Validity</source>
@@ -5192,15 +5812,22 @@ klicken.</translation>
 <context>
     <name>governikus::DetailDialog</name>
     <message>
-        <source>Service provider data</source>
-        <translation>Angaben zum Diensteanbieter</translation>
+        <source>Provider data</source>
+        <translation>Angaben zum Anbieter</translation>
     </message>
 </context>
 <context>
     <name>governikus::DetailWidget</name>
     <message>
-        <source>Service provider details dialog</source>
-        <translation>Dialog mit Details des Diensteanbieters</translation>
+        <source>Provider details dialog</source>
+        <translation>Dialog mit Details des Anbieters</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::DeveloperSettingsWidget</name>
+    <message>
+        <source>The developer mode is aimed at integrators / developers for new service applications. For this reason, the developer mode works only in the test PKI. By activating the developer mode, some safety tests are deactivated. This means that the authentication process continues although the AusweisApp2 would usually abort the process with an error message when used in normal operation mode. Information on the disregarded error in the developer mode is displayed in the attached window below the AusweisApp2.</source>
+        <translation>Der Entwicklermodus richtet sich an Integratoren / Entwickler für neue Dienste. Aus diesem Grund funktioniert der Entwicklermodus lediglich in der Test-PKI. Durch Aktivierung des Entwicklermodus werden einige Sicherheitsprüfungen abgestellt. Die Authentisierung wird auch dann weitergeführt, wenn die AusweisApp2 im Normalbetrieb die Authentisierung mit einer Fehlermeldung abbrechen würde. Der übergangene Fehler im Entwicklermodus wird im angehängten Fenster unterhalb der AusweisApp2 angezeigt.</translation>
     </message>
 </context>
 <context>
@@ -5257,7 +5884,7 @@ klicken.</translation>
     </message>
     <message>
         <source>No Firewall information available on this platform.</source>
-        <translation>Auf dieser Platform sind keine Firewallinformationen verfügbar.</translation>
+        <translation>Auf dieser Plattform sind keine Firewall-Informationen verfügbar.</translation>
     </message>
     <message>
         <source>Vendor: %1</source>
@@ -5313,7 +5940,7 @@ klicken.</translation>
     </message>
     <message>
         <source>No Antivirus information available on this platform.</source>
-        <translation>Keine Antivirus-Informationen auf dieser Platform verfügbar.</translation>
+        <translation>Auf dieser Plattform sind keine Antivirus-Informationen verfügbar.</translation>
     </message>
     <message>
         <source>dd.MM.yyyy, hh:mm:ss</source>
@@ -5377,7 +6004,7 @@ klicken.</translation>
     </message>
     <message>
         <source>No third party firewalls detected</source>
-        <translation>Keine Drittanbieterfirewall erkannt</translation>
+        <translation>Keine Drittanbieter-Firewall erkannt</translation>
     </message>
     <message>
         <source>Firewalls from third party vendors</source>
@@ -5393,7 +6020,7 @@ klicken.</translation>
     </message>
     <message>
         <source>Windows firewall rules</source>
-        <translation>Windows-Firewallregeln</translation>
+        <translation>Windows-Firewall-Regeln</translation>
     </message>
     <message>
         <source>Outgoing AusweisApp2 rule</source>
@@ -5406,10 +6033,6 @@ klicken.</translation>
     <message>
         <source>Incoming AusweisApp2 rule</source>
         <translation>Eingehende AusweisApp2-Regel</translation>
-    </message>
-    <message>
-        <source>Certificate fingerprint: %1</source>
-        <translation>Zertifikats-Fingerabdruck: %1</translation>
     </message>
     <message>
         <source>Last connection: %1</source>
@@ -5425,11 +6048,11 @@ klicken.</translation>
     </message>
     <message>
         <source>Warning: The current firewall status can be obscured by additional Group Policies on your system, often set by system administrators.</source>
-        <translation>Warnung: Der aktuelle Firewallstatus kann durch zusätzliche Gruppenregeln, die oftmals von Administratoren gesetzt werden, auf Ihrem System verschleiert sein.</translation>
+        <translation>Warnung: Der aktuelle Firewall-Status kann durch zusätzliche Gruppenregeln, die oftmals von Administratoren gesetzt werden, auf Ihrem System verschleiert sein.</translation>
     </message>
     <message>
         <source>An error occurred while trying to gather firewall information. Please check the log for more information.</source>
-        <translation>Beim Sammeln von Firewallinformationen ist ein Fehler aufgetreten. Bitte konsultieren Sie das Protokoll für weitere Informationen.</translation>
+        <translation>Beim Sammeln von Firewall-Informationen ist ein Fehler aufgetreten. Bitte konsultieren Sie das Protokoll für weitere Informationen.</translation>
     </message>
     <message>
         <source>No Antivirus software detected.</source>
@@ -5444,12 +6067,8 @@ klicken.</translation>
         <translation>PC/SC Informationen</translation>
     </message>
     <message>
-        <source>Paired remote devices</source>
-        <translation>Gekoppelte Netzwerkgeräte</translation>
-    </message>
-    <message>
         <source>Antivirus information</source>
-        <translation>Antivirusinformationen</translation>
+        <translation>Antivirus-Informationen</translation>
     </message>
     <message>
         <source>Firewall information</source>
@@ -5470,10 +6089,6 @@ klicken.</translation>
     <message>
         <source>Unknown address: %1</source>
         <translation>Unbekannte Adresse: %1</translation>
-    </message>
-    <message>
-        <source>Interface: &quot;%1&quot;</source>
-        <translation>Schnittstelle: %1</translation>
     </message>
     <message>
         <source>No proxy found</source>
@@ -5510,6 +6125,18 @@ klicken.</translation>
     <message>
         <source>Antivirus and firewall</source>
         <translation>Antivirus und Firewall</translation>
+    </message>
+    <message>
+        <source>PC/SC driver information</source>
+        <translation>PC/SC Treiber-Informationen</translation>
+    </message>
+    <message>
+        <source>Paired smartphones</source>
+        <translation>Gekoppelte Smartphones</translation>
+    </message>
+    <message>
+        <source>Version</source>
+        <translation>Version</translation>
     </message>
 </context>
 <context>
@@ -5560,11 +6187,11 @@ klicken.</translation>
     </message>
     <message>
         <source>No Antivirus information available on this platform.</source>
-        <translation>Keine Antivirus-Informationen auf dieser Platform verfügbar.</translation>
+        <translation>Auf dieser Plattform sind keine Antivirus-Informationen verfügbar.</translation>
     </message>
     <message>
         <source>No Firewall information available on this platform.</source>
-        <translation>Auf dieser Platform sind keine Firewallinformationen verfügbar.</translation>
+        <translation>Auf dieser Plattform sind keine Firewall-Informationen verfügbar.</translation>
     </message>
     <message>
         <source>Vendor: %1</source>
@@ -5728,7 +6355,7 @@ klicken.</translation>
     </message>
     <message>
         <source>No third party firewalls detected</source>
-        <translation>Keine Drittanbieterfirewall erkannt</translation>
+        <translation>Keine Drittanbieter-Firewall erkannt</translation>
     </message>
     <message>
         <source>Firewalls from third party vendors</source>
@@ -5744,7 +6371,7 @@ klicken.</translation>
     </message>
     <message>
         <source>Windows firewall rules</source>
-        <translation>Windows-Firewallregeln</translation>
+        <translation>Windows-Firewall-Regeln</translation>
     </message>
     <message>
         <source>Outgoing AusweisApp2 rule</source>
@@ -5764,11 +6391,11 @@ klicken.</translation>
     </message>
     <message>
         <source>Warning: The current firewall status can be obscured by additional Group Policies on your system, often set by system administrators.</source>
-        <translation>Warnung: Der aktuelle Firewallstatus kann durch zusätzliche Gruppenregeln, die oftmals von Administratoren gesetzt werden, auf Ihrem System verschleiert sein.</translation>
+        <translation>Warnung: Der aktuelle Firewall-Status kann durch zusätzliche Gruppenregeln, die oftmals von Administratoren gesetzt werden, auf Ihrem System verschleiert sein.</translation>
     </message>
     <message>
         <source>An error occurred while trying to gather firewall information. Please check the log for more information.</source>
-        <translation>Beim Sammeln von Firewallinformationen ist ein Fehler aufgetreten. Bitte konsultieren Sie das Protokoll für weitere Informationen.</translation>
+        <translation>Beim Sammeln von Firewall-Informationen ist ein Fehler aufgetreten. Bitte konsultieren Sie das Protokoll für weitere Informationen.</translation>
     </message>
 </context>
 <context>
@@ -5864,9 +6491,9 @@ klicken.</translation>
         <translation>Die Erzeugung eines Schlüssels für das Signaturzertifikat war nicht möglich.</translation>
     </message>
     <message>
-        <source>The process was cancelled by the user.</source>
+        <source>The process has been cancelled.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Der Benutzer hat den Vorgang abgebrochen.</translation>
+        <translation>Der Vorgang wurde abgebrochen.</translation>
     </message>
     <message>
         <source>One or more certificate checks failed. The operation will be aborted due to security reasons.</source>
@@ -5874,14 +6501,14 @@ klicken.</translation>
         <translation>Eine oder mehrere Zertifikatsprüfungen schlugen fehl. Der Vorgang wird aus Sicherheitsgründen abgebrochen.</translation>
     </message>
     <message>
-        <source>This action cannot be performed. The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.</source>
+        <source>This action cannot be performed. The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Diese Aktion kann leider nicht durchgeführt werden. Die Online-Ausweisfunktion Ihres Ausweisdokuments ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <translation>Diese Aktion kann leider nicht durchgeführt werden. Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
         <source>The authenticity of your ID card could not be verified. Please make sure that you are using a genuine ID card. Please note that test applications require the use of a test ID card.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Die Echtheit Ihres Ausweisdokuments konnte nicht überprüft werden. Bitte stellen Sie sicher, dass Sie ein echtes Ausweisdokument verwenden. Bitte beachten Sie, dass Sie bei Testanwendungen einen Testausweis verwenden müssen.</translation>
+        <translation>Die Echtheit Ihres Ausweises konnte nicht überprüft werden. Bitte stellen Sie sicher, dass Sie einen echten Ausweis verwenden. Bitte beachten Sie, dass Sie bei Testanwendungen einen Testausweis verwenden müssen.</translation>
     </message>
     <message>
         <source>The age verification failed.</source>
@@ -5896,7 +6523,7 @@ klicken.</translation>
     <message>
         <source>The ID card is invalid or disabled.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Das Ausweisdokument ist ungültig oder gesperrt.</translation>
+        <translation>Der Ausweis ist ungültig oder gesperrt.</translation>
     </message>
 </context>
 <context>
@@ -5914,12 +6541,12 @@ klicken.</translation>
     <message>
         <source>The connection to the ID card has been lost. The process was aborted.</source>
         <extracomment>ERROR ALL_PLATFORMS The card was removed after the PACE channel was established.</extracomment>
-        <translation>Die Verbindung zum Ausweisdokument wurde unterbrochen. Der Vorgang wird abgebrochen.</translation>
+        <translation>Die Verbindung zum Ausweis wurde unterbrochen. Der Vorgang wird abgebrochen.</translation>
     </message>
     <message>
         <source>The authenticity of your ID card could not be confirmed.</source>
         <extracomment>ERROR ALL_PLATFORMS The certificates supplied by the card did not pass the authenticity check, further operation is not allowed.</extracomment>
-        <translation>Die Echtheit Ihres Ausweisdokuments konnte nicht bestätigt werden.</translation>
+        <translation>Die Echtheit Ihres Ausweises konnte nicht bestätigt werden.</translation>
     </message>
     <message>
         <source>The program received an unknown message from the server.</source>
@@ -5948,7 +6575,7 @@ klicken.</translation>
     </message>
     <message>
         <source>Authentication failed.</source>
-        <extracomment>ERROR ALL_PLATFORMS DidAuthenticateEAC2, AA2 or the id card declined the certificates.</extracomment>
+        <extracomment>ERROR ALL_PLATFORMS DidAuthenticateEAC2, AA2 or the ID card declined the certificates.</extracomment>
         <translation>Die Authentisierung ist fehlgeschlagen.</translation>
     </message>
     <message>
@@ -5977,19 +6604,14 @@ klicken.</translation>
         <translation>Die Anwendung hat einen Fehler vom Server erhalten.</translation>
     </message>
     <message>
-        <source>Received no data.</source>
+        <source>The TCToken contained no data.</source>
         <extracomment>ERROR_MASKED ALL_PLATFORMS Received an empty TC token.</extracomment>
-        <translation>Keine Daten erhalten.</translation>
+        <translation>Das TCToken enthielt keine Daten.</translation>
     </message>
     <message>
-        <source>Cannot start authentication. An operation is already in progress.</source>
+        <source>Cannot start authentication. An operation is already active.</source>
         <extracomment>ERROR ALL_PLATFORMS An ActivationHandler is requested even though an operation is currently still running.</extracomment>
-        <translation>Die Authentisierung kann nicht gestartet werden. Es läuft bereits eine Operation.</translation>
-    </message>
-    <message>
-        <source>After three wrong entries your PIN is blocked. Please use the PIN management in this app to unblock it with the help of your PUK.</source>
-        <extracomment>ERROR ALL_PLATFORMS The id card was blocked after three wrongfully entered PINs, the PUK is required to unlock the card. Hint to do so in the PIN management section of the app.</extracomment>
-        <translation>Ihre PIN ist nach dreimaliger Fehleingabe gesperrt. Verwenden Sie die PIN-Verwaltung dieser App, um diese mit Ihrer PUK zu entsperren.</translation>
+        <translation>Der Ausweisvorgang kann nicht gestartet werden. Ein anderer Vorgang ist bereits aktiv.</translation>
     </message>
     <message>
         <source>Using the developer mode is only allowed in a test environment.</source>
@@ -6027,9 +6649,9 @@ klicken.</translation>
         <translation>Die Anwendung wurde mit den falschen Parametern aufgerufen.</translation>
     </message>
     <message>
-        <source>An unknown network error occurred.</source>
-        <extracomment>ERROR_MASKED ALL_PLATFORMS Other critial network error by Qt.</extracomment>
-        <translation>Ein unbekannter Netzwerkfehler ist aufgetreten.</translation>
+        <source>An unknown network error occurred. Check your network connection and try to restart the app.</source>
+        <extracomment>ERROR ALL_PLATFORMS Other critial network error by Qt.</extracomment>
+        <translation>Ein unbekannter Netzwerkfehler ist aufgetreten. Überprüfen Sie Ihre Netwerkverbindung und versuchen Sie die App neu zu starten.</translation>
     </message>
     <message>
         <source>The selected card reader cannot be accessed anymore.</source>
@@ -6042,9 +6664,9 @@ klicken.</translation>
         <translation>Der Server lieferte keine oder nur unvollständige Informationen. Ihre persönlichen Daten konnten nicht ausgelesen werden.</translation>
     </message>
     <message>
-        <source>Error while connecting to the service provider. The SSL connection uses an unsupported key algorithm or length.</source>
+        <source>Error while connecting to the provider. The TLS connection uses an unsupported key algorithm or length.</source>
         <extracomment>ERROR_MASKED ALL_PLATFORMS</extracomment>
-        <translation>Fehler bei der Verbindung mit dem Diensteanbieter. Der Verschlüsselungsalgorithmus oder die Länge des Schlüssels der SSL-Verbindung wird nicht unterstützt.</translation>
+        <translation>Fehler bei der Verbindung mit dem Anbieter. Der Verschlüsselungsalgorithmus oder die Länge des Schlüssels der TLS-Verbindung wird nicht unterstützt.</translation>
     </message>
     <message>
         <source>Empty redirect URL</source>
@@ -6067,9 +6689,9 @@ klicken.</translation>
         <translation>Nicht wohlgeformte Redirect-URL: %1</translation>
     </message>
     <message>
-        <source>The process was cancelled by the user.</source>
+        <source>The process has been cancelled.</source>
         <extracomment>ERROR ALL_PLATFORMS The user cancelled the authentication in either the UI or the card reader.</extracomment>
-        <translation>Der Benutzer hat den Vorgang abgebrochen.</translation>
+        <translation>Der Vorgang wurde abgebrochen.</translation>
     </message>
     <message>
         <source>The maximum time was exceeded during input process.</source>
@@ -6078,52 +6700,52 @@ klicken.</translation>
     </message>
     <message>
         <source>Card does not exist</source>
-        <extracomment>ERROR ALL_PLATFORMS Internal error, either PCSC, SaK or card reader could not find the id card.</extracomment>
+        <extracomment>ERROR ALL_PLATFORMS Internal error, either PCSC, SaK or card reader could not find the ID card.</extracomment>
         <translation>Karte nicht vorhanden</translation>
     </message>
     <message>
         <source>An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.</source>
         <extracomment>ERROR ALL_PLATFORMS Communication with the card failed due to the specification of the TR (Technische Richtlinie),</extracomment>
-        <translation>Bei der Kommunikation mit dem Ausweisdokument ist ein Fehler aufgetreten. Bitte überprüfen Sie, dass das Ausweisdokument korrekt aufgelegt ist und versuchen Sie es erneut.</translation>
+        <translation>Bei der Kommunikation mit dem Ausweis ist ein Fehler aufgetreten. Bitte überprüfen Sie, dass der Ausweis korrekt aufgelegt ist und versuchen Sie es erneut.</translation>
     </message>
     <message>
         <source>A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at</source>
         <extracomment>ERROR ALL_PLATFORMS Communication with the card failed due to the specification of the TR (Technische Richtlinie). The protocol was faulty or invalid values were requested/received,</extracomment>
-        <translation>Ein Protokollfehler ist aufgetreten. Bitte überprüfen Sie, dass das Ausweisdokument korrekt aufgelegt ist und versuchen Sie es erneut. Wenn das Problem wieder auftritt kontaktieren Sie bitte unseren Support unter</translation>
+        <translation>Ein Protokollfehler ist aufgetreten. Bitte überprüfen Sie, dass der Ausweis korrekt aufgelegt ist und versuchen Sie es erneut. Wenn das Problem wieder auftritt kontaktieren Sie bitte unseren Support unter</translation>
     </message>
     <message>
         <source>AusweisApp2 Support</source>
         <translation>AusweisApp2 Support</translation>
     </message>
     <message>
-        <source>The given PIN is invalid.</source>
-        <extracomment>ERROR ALL_PLATFORMS The id card declined the PIN.</extracomment>
-        <translation>Die eingegebene PIN ist ungültig.</translation>
+        <source>The given PIN is not correct.</source>
+        <extracomment>ERROR ALL_PLATFORMS The ID card declined the PIN.</extracomment>
+        <translation>Die eingegebene PIN ist nicht korrekt.</translation>
     </message>
     <message>
-        <source>The given card access number (CAN) is invalid.</source>
-        <extracomment>ERROR ALL_PLATFORMS The id card declined the CAN.</extracomment>
-        <translation>Die eingegebene Zugangsnummer (CAN) ist ungültig.</translation>
+        <source>The given card access number (CAN) is not correct.</source>
+        <extracomment>ERROR ALL_PLATFORMS The ID card declined the CAN.</extracomment>
+        <translation>Die eingegebene Zugangsnummer (CAN) ist nicht korrekt.</translation>
     </message>
     <message>
-        <source>The given PUK is invalid.</source>
-        <extracomment>ERROR ALL_PLATFORMS The id card declined the PUK.</extracomment>
-        <translation>Die eingegebene PUK ist ungültig.</translation>
+        <source>The given PUK is not correct.</source>
+        <extracomment>ERROR ALL_PLATFORMS The ID card declined the PUK.</extracomment>
+        <translation>Die eingegebene PUK ist nicht korrekt.</translation>
     </message>
     <message>
         <source>The PIN was blocked after too many unsuccessful attempts.</source>
-        <extracomment>ERROR ALL_PLATFORMS The id card refused the PIN since the PIN feature is blocked after too many wrong attemps.</extracomment>
+        <extracomment>ERROR ALL_PLATFORMS The ID card refused the PIN since the PIN feature is blocked after too many wrong attemps.</extracomment>
         <translation>Die PIN ist nach zu vielen Fehlversuchen gesperrt.</translation>
     </message>
     <message>
         <source>The PIN is not blocked.</source>
-        <extracomment>ERROR ALL_PLATFORMS It was attempted to unlock the id card via PUK even though it was not locked in the first place. This scenario is avoided in the UI by hiding the respective UI elements.</extracomment>
+        <extracomment>ERROR ALL_PLATFORMS It was attempted to unlock the ID card via PUK even though it was not locked in the first place. This scenario is avoided in the UI by hiding the respective UI elements.</extracomment>
         <translation>Die PIN ist nicht gesperrt.</translation>
     </message>
     <message>
-        <source>The PUK was used ten times and is set inoperative. Please contact the competent authority that issued your ID document to unlock the PIN.</source>
-        <extracomment>ERROR ALL_PLATFORMS The card declined the PUK since it was entered wrongfully 10 times, the local authorities have to be contacted to unlock the id card.</extracomment>
-        <translation>Die eingegebene PUK wurde zehn Mal verwendet und ist außer Betrieb. Bitte kontaktieren Sie die für die Ausgabe Ihres Ausweisdokuments zuständige Behörde um Ihre PIN zu entsperren.</translation>
+        <source>The PUK was used ten times and can not be used anymore to unblock the PIN. Please contact the competent authority that issued your ID card to unblock the PIN.</source>
+        <extracomment>ERROR ALL_PLATFORMS The card declined the PUK since it was entered wrongfully 10 times, the local authorities have to be contacted to unlock the ID card.</extracomment>
+        <translation>Die eingegebene PUK wurde zehn Mal verwendet und kann nicht mehr verwendet werden, um die PIN zu entsperren. Bitte kontaktieren Sie die für die Ausgabe Ihres Ausweises zuständige Behörde um Ihre PIN zu entsperren.</translation>
     </message>
     <message>
         <source>The new PIN and the confirmation do not match.</source>
@@ -6136,44 +6758,44 @@ klicken.</translation>
         <translation>Die neue PIN hat eine ungültige Länge.</translation>
     </message>
     <message>
-        <source>An error occurred while connecting to a reader device.</source>
+        <source>An error occurred while connecting to a bluetooth card reader.</source>
         <extracomment>ERROR ALL_PLATFORMS Error while connecting to a bluetooth card reader.</extracomment>
-        <translation>Es ist ein Fehler während des Verbindungsaufbaus zu einem Kartenleser aufgetreten.</translation>
+        <translation>Es ist ein Fehler während des Verbindungsaufbaus zu einem Bluetooth-Kartenleser aufgetreten.</translation>
     </message>
     <message>
-        <source>An error occurred while scanning for reader devices.</source>
+        <source>An error occurred while scanning for a bluetooth card reader.</source>
         <extracomment>ERROR ALL_PLATFORMS Error while searching for bluetooth card reader.</extracomment>
-        <translation>Es ist ein Fehler während der Suche nach einem Kartenleser aufgetreten.</translation>
+        <translation>Es ist ein Fehler während der Suche nach einem Bluetooth-Kartenleser aufgetreten.</translation>
     </message>
     <message>
-        <source>The remote card reader connection was not closed properly.</source>
+        <source>The smartphone as card reader (SaC) connection was aborted.</source>
         <extracomment>ERROR ALL_PLATFORMS The connection to the smartphone card reader (SaK) was lost.</extracomment>
-        <translation>Die Verbindung zum Remote-Lesegerät wurde abgebrochen.</translation>
+        <translation>Die Verbindung zum Smartphone als Kartenleser wurde abgebrochen.</translation>
     </message>
     <message>
-        <source>Remote reader connection request contains invalid parameters.</source>
+        <source>Smartphone as card reader (SaC) connection request was invalid.</source>
         <extracomment>ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was invalid (missing device ID).</extracomment>
-        <translation>Die Verbindungsanforderung zum entfernten Kartenleser enthält einen ungültigen Parameter.</translation>
+        <translation>Die Verbindungsanforderung zum Smartphone als Kartenleser (SaK) war fehlerhaft.</translation>
     </message>
     <message>
-        <source>Your remote reader version is incompatible with the local version. Please install the latest AusweisApp2 version on both your smartphone and your computer.</source>
+        <source>Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest AusweisApp2 version on both your smartphone and your computer.</source>
         <extracomment>ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was invalid (API mismatch).</extracomment>
-        <translation>Die Version Ihres Smartphones als Kartenleser ist inkompatibel. Bitte aktualisieren Sie Ihre Installation.</translation>
+        <translation>Die Version Ihres Smartphones als Kartenleser (SaK) ist inkompatibel. Bitte aktualisieren Sie Ihre Installation.</translation>
     </message>
     <message>
-        <source>A timeout occurred while trying to establish a connection to a remote reader.</source>
+        <source>A timeout occurred while trying to establish a connection to the smartphone as card reader (SaC).</source>
         <extracomment>ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) timed out.</extracomment>
-        <translation>Bei der Verbindung zum entfernten Kartenleser kam es zu einer Zeitüberschreitung.</translation>
+        <translation>Bei der Verbindung zum Smartphone als Kartenleser (SaK) kam es zu einer Zeitüberschreitung.</translation>
     </message>
     <message>
-        <source>An error occurred while trying to establish a connection to a remote reader.</source>
+        <source>An error occurred while trying to establish a connection to the smartphone as card reader (SaC).</source>
         <extracomment>ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) failed due to network errors (Host not found, OS error, ...)</extracomment>
-        <translation>Bei der Verbindung zum entfernten Kartenleser ist ein Fehler aufgetreten.</translation>
+        <translation>Bei der Verbindung zum Smartphone als Kartenleser (SaK) ist ein Fehler aufgetreten.</translation>
     </message>
     <message>
-        <source>Remote device has rejected the connection. Please check the pairing code.</source>
+        <source>The smartphone to be paired has rejected the connection. Please check the pairing code. If no pairing code is shown activate the pairing mode.</source>
         <extracomment>ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was rejected by the device.</extracomment>
-        <translation>Das zu koppelnde Gerät hat die Verbindung verweigert. Überprüfen Sie bitte den Kopplungscode.</translation>
+        <translation>Das zu koppelnde Smartphone hat die Verbindung verweigert. Überprüfen Sie bitte den Kopplungscode. Sollte kein Kopplungscode angezeigt werden aktivierten Sie bitte den Kopplungsmodus.</translation>
     </message>
     <message>
         <source>File not found.</source>
@@ -6191,24 +6813,24 @@ klicken.</translation>
         <translation>Die empfangenen Daten waren beschädigt.</translation>
     </message>
     <message>
-        <source>Hash of certificate not in certificate description (issuer: %1). This indicates a misconfiguration or manipulation of the certificate. Please check that your antivirus-software and firewalls are not interfering with SSL traffic.</source>
+        <source>Hash of TLS certificate not in certificate description (issuer: %1). This indicates a misconfiguration or manipulation of the certificate. Please check that your antivirus-software and firewalls are not interfering with TLS traffic.</source>
         <extracomment>ERROR ALL_PLATFORMS The TLS certificate was not folded with the Authorization Certificate, thus violating the security requirements. Might also be caused by a firewall and/or the antivirus software.</extracomment>
-        <translation>Der Hashwert des Zertifikats ist nicht in der Zertifikatsbeschreibung vorhanden (Aussteller: %1). Dies deutet auf eine Fehlkonfiguration oder Manipulation des Zertifikats hin. Bitte überprüfen Sie, dass weder eine Antivirus-Software noch eine Firewall in den SSL-Verkehr eingreifen.</translation>
+        <translation>Der Hashwert des TLS-Zertifikats ist nicht in der Zertifikatsbeschreibung vorhanden (Aussteller: %1). Dies deutet auf eine Fehlkonfiguration oder Manipulation des Zertifikats hin. Bitte überprüfen Sie, dass weder eine Antivirus-Software noch eine Firewall in den TLS-Verkehr eingreifen.</translation>
     </message>
     <message>
-        <source>Error while connecting to the server. The SSL certificate uses an unsupported key algorithm or length. Certificate issuer: %1</source>
+        <source>Error while connecting to the server. The TLS certificate uses an unsupported key algorithm or length. Certificate issuer: %1</source>
         <extracomment>ERROR ALL_PLATFORMS Received a TLS certificate that uses an invalid algorithm or key length.</extracomment>
-        <translation>Fehler bei der Verbindung zum Server. Der Verschlüsselungsalgorithmus oder die Länge des Schlüssels im SSL-Zertifikat des Servers wird nicht unterstützt. Zertifikatsaussteller: %1</translation>
+        <translation>Fehler bei der Verbindung zum Server. Der Verschlüsselungsalgorithmus oder die Länge des Schlüssels im TLS-Zertifikat des Servers wird nicht unterstützt. Zertifikatsaussteller: %1</translation>
     </message>
     <message>
-        <source>An error occurred. Please contact our %1support%2.</source>
+        <source>A secure connection to the provider could not be established. Please contact our %1support%2.</source>
         <extracomment>ERROR ANDROID IOS Error message which is used for &quot;masked&quot; errors. Generic message with link to support section of the homepage.</extracomment>
-        <translation>Ein Fehler ist aufgetreten. Bitte kontaktieren Sie unseren %1Support%2.</translation>
+        <translation>Eine sichere Verbindung zum Anbieter konnte nicht aufgebaut werden. Bitte kontaktieren Sie unseren %1Support%2.</translation>
     </message>
     <message>
-        <source>An error occurred. Please contact our %1support%2 or feel free to send us an email.</source>
+        <source>A secure connection to the provider could not be established. Please contact our %1support%2 or feel free to send us an email.</source>
         <extracomment>ERROR DESKTOP Error message which is used for &quot;masked&quot; errors. Generic message with link to support section of the homepage.</extracomment>
-        <translation>Ein Fehler ist aufgetreten. Bitte kontaktieren Sie unseren %1Support%2 oder senden Sie uns eine E-Mail.</translation>
+        <translation>Eine sichere Verbindung zum Anbieter konnte nicht aufgebaut werden. Bitte kontaktieren Sie unseren %1Support%2 oder senden Sie uns eine E-Mail.</translation>
     </message>
     <message>
         <source>https://www.ausweisapp.bund.de/en/qa/support/</source>
@@ -6244,7 +6866,7 @@ klicken.</translation>
     </message>
     <message>
         <source>You have correctly entered the PUK ten times and have thus reached the maximum count. The PUK is now inoperative and can no longer be used for unblocking the PIN. Please address your competent authority that has issued your ID card for unblocking your PIN.</source>
-        <translation>Sie haben die PUK zehn Mal korrekt eingegeben und damit die maximale Anzahl erreicht. Die PUK ist daher außer Betrieb und kann nicht mehr zum Entsperren der PIN verwendet werden. Bitte wenden Sie sich zum Entsperren der PIN an die zuständige Behörde, die Ihr Ausweisdokument ausgegeben hat.</translation>
+        <translation>Sie haben die PUK zehn Mal korrekt eingegeben und damit die maximale Anzahl erreicht. Die PUK ist daher außer Betrieb und kann nicht mehr zum Entsperren der PIN verwendet werden. Bitte wenden Sie sich zum Entsperren der PIN an die zuständige Behörde, die Ihren Ausweis ausgegeben hat.</translation>
     </message>
     <message>
         <source>Wrong PIN</source>
@@ -6264,19 +6886,19 @@ klicken.</translation>
     </message>
     <message>
         <source>After three wrong entries your PIN is blocked. Using the online identification function is no longer possible. &lt;br/&gt;You can unblock the PIN as follows:&lt;ol&gt;&lt;li&gt; Select the &quot;Settings&quot; function.&lt;/li&gt;&lt;li&gt;Select the &quot;PIN Management&quot; tab. &lt;/li&gt;&lt;li&gt;Follow the instructions on the screen.&lt;/li&gt;&lt;/ol&gt;Note: You will find the PUK in the letter you received during the application for the ID card in the &quot;Unblocking key PUK&quot; section. Further information is available on the site &lt;a href=&quot;http://www.personalausweisportal.de&quot;&gt;http://www.personalausweisportal.de&lt;/a&gt;.&lt;br&gt;Do you want to unblock the PIN now?</source>
-        <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Die Online-Ausweisfunktion ist jetzt blockiert. Die Blockierung können Sie mit Ihrer Entsperrnummer (PUK) aufheben. Sie finden Ihre PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweisdokuments von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde erhalten haben. Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis entsperren. Sollten Sie Ihre PIN vergessen haben, können Sie von der für die Ausgabe Ihres Ausweisdokuments zuständigen Behörde eine neue PIN setzen lassen.&lt;br&gt;Wollen Sie die Blockierung nun aufheben?</translation>
+        <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Die Online-Ausweisfunktion ist jetzt blockiert. Die Blockierung können Sie mit Ihrer Entsperrnummer (PUK) aufheben. Sie finden Ihre PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweises von der für die Ausgabe Ihres Ausweises zuständigen Behörde erhalten haben. Bitte beachten Sie: Sie können mit Ihrer PUK lediglich Ihren Online-Ausweis entsperren. Sollten Sie Ihre PIN vergessen haben, können Sie von der für die Ausgabe Ihres Ausweises zuständigen Behörde eine neue PIN setzen lassen.&lt;br&gt;Wollen Sie die Blockierung nun aufheben?</translation>
     </message>
     <message>
         <source>The given PIN is not correct. You have 2 remaining tries to enter the correct PIN.</source>
         <translation>Die eingegebene PIN ist nicht korrekt. Sie haben noch 2 weitere Versuche die korrekte PIN einzugeben.</translation>
     </message>
     <message>
-        <source>PIN successfully unblocked</source>
-        <translation>PIN erfolgreich entsperrt</translation>
+        <source>You have successfully unblocked your PIN</source>
+        <translation>Sie haben Ihre PIN erfolgreich entsperrt</translation>
     </message>
     <message>
         <source>Your ID card is unblocked. You now have three more tries to change your PIN</source>
-        <translation>Ihr Ausweisdokument wurde entsperrt. Sie haben nun drei weitere Versuche um Ihre PIN zu ändern</translation>
+        <translation>Ihr Ausweis wurde entsperrt. Sie haben nun drei weitere Versuche um Ihre PIN zu ändern</translation>
     </message>
 </context>
 <context>
@@ -6306,7 +6928,7 @@ klicken.</translation>
     </message>
     <message>
         <source>Provider</source>
-        <translation>Diensteanbieter</translation>
+        <translation>Anbieter</translation>
     </message>
     <message>
         <source>Purpose</source>
@@ -6339,19 +6961,19 @@ klicken.</translation>
     <message>
         <source>The connection to the ID card has been lost. The process was aborted.</source>
         <extracomment>ERROR IOS The card was removed during the communication.</extracomment>
-        <translation>Die Verbindung zum Ausweisdokument wurde unterbrochen. Der Vorgang wird abgebrochen.</translation>
+        <translation>Die Verbindung zum Ausweis wurde unterbrochen. Der Vorgang wird abgebrochen.</translation>
     </message>
     <message>
         <source>The connection could not be established. The process was aborted.</source>
         <extracomment>ERROR IOS The connection to the card could not be established.</extracomment>
-        <translation>Die Verbindung zum Ausweisdokument konnte nicht hergestellt werden. Der Vorgang wird abgebrochen.</translation>
+        <translation>Die Verbindung zum Ausweis konnte nicht hergestellt werden. Der Vorgang wird abgebrochen.</translation>
     </message>
 </context>
 <context>
     <name>governikus::IosReaderDelegate</name>
     <message>
         <source>Please place your device on your ID card.</source>
-        <extracomment>INFO IOS The id card may be inserted, the authentication process may be started.</extracomment>
+        <extracomment>INFO IOS The ID card may be inserted, the authentication process may be started.</extracomment>
         <translation>Bitte platzieren Sie Ihr Gerät über Ihrem Personalausweis.</translation>
     </message>
 </context>
@@ -6393,12 +7015,12 @@ klicken.</translation>
         <translation>Die Datei ist größer als 3MB und kann nicht angezeigt werden: </translation>
     </message>
     <message>
-        <source>Delete log files</source>
-        <translation>Protokolle löschen</translation>
+        <source>Delete logfiles</source>
+        <translation>Prokolldateien löschen</translation>
     </message>
     <message>
-        <source>Do you really want to delete all old log files?</source>
-        <translation>Wolle Sie wirklich alle alten Protokolle löschen?</translation>
+        <source>Do you really want to delete all old logfiles?</source>
+        <translation>Wollen Sie wirklich alle alten Protokolle löschen?</translation>
     </message>
 </context>
 <context>
@@ -6439,7 +7061,7 @@ klicken.</translation>
         <translation>&lt;Bitte beschreiben Sie den Fehler&gt;</translation>
     </message>
     <message>
-        <source>Mobile log file</source>
+        <source>Mobile logfile</source>
         <translation>Mobile Protokolldatei</translation>
     </message>
     <message>
@@ -6462,24 +7084,24 @@ klicken.</translation>
         <translation>Die eingegebene PIN ist nicht korrekt. Sie haben noch 2 weitere Versuche die korrekte PIN einzugeben.</translation>
     </message>
     <message>
-        <source>You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.</source>
+        <source>A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.</source>
         <extracomment>INFO ALL_PLATFORMS The wrong PIN was entered twice, the next attempt requires the CAN for additional verification.</extracomment>
-        <translation>Sie haben Ihre PIN zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher Ihre 6-stellige Zugangsnummer eingeben. Sie finden Ihre Zugangsnummer auf der Vorderseite Ihres Ausweises.</translation>
+        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher die sechsstellige Zugangsnummer (CAN) eingeben. Diese finden Sie auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
-        <source>You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.</source>
-        <extracomment>INFO ALL_PLATFORMS The PIN was entered wrongfully three times, the id card needs to be unlocked using the PUK.</extracomment>
-        <translation>Sie haben Ihre PIN dreimal falsch eingegeben. Ihre PIN ist jetzt gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
+        <source>A wrong PIN has been entered three times on your ID card. Your PIN is now blocked. To unblock your PIN you have to enter the PUK.</source>
+        <extracomment>INFO ALL_PLATFORMS The PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.</extracomment>
+        <translation>Die PIN Ihres Ausweises wurde dreimal falsch eingegeben. Ihre PIN ist gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
     </message>
     <message>
-        <source>You have entered a wrong CAN, please try again.</source>
+        <source>The entered card access number (CAN) is incorrect. Please try again.</source>
         <extracomment>INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again.</extracomment>
-        <translation>Sie haben eine falsche CAN eingegeben. Bitte versuchen Sie es erneut.</translation>
+        <translation>Die eingegebene Zugangsnummer (CAN) ist nicht korrekt. Bitte versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <source>You have entered a wrong PUK. Please try again.</source>
+        <source>The entered PUK is incorrect. Please try again.</source>
         <extracomment>INFO ALL_PLATFORMS The PUK entered wrongfully and needs to be supplied again.</extracomment>
-        <translation>Sie haben eine falsche PUK eingegeben. Bitte versuchen Sie es erneut.</translation>
+        <translation>Die eingegebene PUK ist nicht korrekt. Bitte versuchen Sie es erneut.</translation>
     </message>
 </context>
 <context>
@@ -6515,7 +7137,7 @@ klicken.</translation>
     <message>
         <source>Provider:</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Diensteanbieter:</translation>
+        <translation>Anbieter:</translation>
     </message>
     <message>
         <source>Purpose:</source>
@@ -6560,7 +7182,7 @@ klicken.</translation>
     <message>
         <source>At %1 %2 the following data has been read out of your ID card:</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Die folgenden Daten wurden hier %1 %2 aus Ihrem Ausweisdokument ausgelesen:</translation>
+        <translation>Die folgenden Daten wurden hier %1 %2 aus Ihrem Ausweis ausgelesen:</translation>
     </message>
     <message>
         <source>Information</source>
@@ -6676,7 +7298,7 @@ klicken.</translation>
         <translation>Wählen Sie einen Kartenleser aus, um mehr Informationen zu erhalten</translation>
     </message>
     <message>
-        <source>Please start pairing mode first.</source>
+        <source>Start the pairing mode on your smartphone if you haven&apos;t done it already.</source>
         <translation>Starten Sie den Kopplungsmodus auf Ihrem Smartphone, falls noch nicht geschehen.</translation>
     </message>
     <message>
@@ -6793,9 +7415,9 @@ klicken.</translation>
         <translation>Online-Hilfe</translation>
     </message>
     <message>
-        <source>No smartphone with enabled remote service found. See %1 for details of use.</source>
+        <source>No smartphone as card reader (Sac) available. Please make sure to activate the &quot;remote service&quot; on your smartphone and to connect both devices to the same WiFi. See %1 for details of use.</source>
         <extracomment>INFO ALL_PLATFORMS No smartphone with enabled remote service was found on the same network.</extracomment>
-        <translation>Kein Smartphone mit aktiviertem Fernzugriff gefunden. Informationen zur Verwendung befinden sich unter %1.</translation>
+        <translation>Kein Smartphone als  Kartenleser verfügbar. Bitte stellen Sie sicher, dass die die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem Smartphone aktiviert ist und beide Geräte mit demselben WLAN verbunden sind. Informationen zur Verwendung befinden sich unter %1.</translation>
     </message>
 </context>
 <context>
@@ -6835,9 +7457,9 @@ klicken.</translation>
 <context>
     <name>governikus::RemoteServiceSettings</name>
     <message>
-        <source>Remote Reader</source>
+        <source>Smartphone as card reader (SaC)</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Entfernter Kartenleser</translation>
+        <translation>Smartphone als Kartenleser (SaK)</translation>
     </message>
 </context>
 <context>
@@ -6919,8 +7541,8 @@ klicken.</translation>
         <translation>Als PDF speichern...</translation>
     </message>
     <message>
-        <source>save id card data as pdf</source>
-        <translation>Daten des Ausweisdokuments als PDF speichern</translation>
+        <source>save ID card data as pdf</source>
+        <translation>Daten des Ausweises als PDF speichern</translation>
     </message>
     <message>
         <source>AusweisApp2.Information.%1.pdf</source>
@@ -6939,7 +7561,7 @@ klicken.</translation>
     <name>governikus::SelfInformationWidget</name>
     <message>
         <source>Use the button &apos;See my personal data now...&apos; to display the data stored on your ID card. An Internet connection is required to display the data.</source>
-        <translation>Über die Schaltfläche &apos;Meine Daten einsehen&apos; können Sie sich die im Chip Ihres Ausweisdokuments gespeicherten Daten anzeigen lassen. Um die Daten anzeigen zu können, benötigt diese Anwendung eine Internetverbindung.</translation>
+        <translation>Über die Schaltfläche &apos;Meine Daten einsehen&apos; können Sie sich die im Chip Ihres Ausweises gespeicherten Daten anzeigen lassen. Um die Daten anzeigen zu können, benötigt diese Anwendung eine Internetverbindung.</translation>
     </message>
     <message>
         <source>https://www.ausweisapp.bund.de/datenschutz/</source>
@@ -6965,10 +7587,6 @@ klicken.</translation>
         <translation>Übernehmen</translation>
     </message>
     <message>
-        <source>Developer Settings</source>
-        <translation>Entwicklereinstellungen</translation>
-    </message>
-    <message>
         <source>Apply settings?</source>
         <translation>Einstellungen übernehmen?</translation>
     </message>
@@ -6979,6 +7597,10 @@ klicken.</translation>
     <message>
         <source>OK</source>
         <translation>OK</translation>
+    </message>
+    <message>
+        <source>Developer options</source>
+        <translation>Entwickleroptionen</translation>
     </message>
 </context>
 <context>
@@ -7028,16 +7650,16 @@ klicken.</translation>
         <translation>Fast fertig!</translation>
     </message>
     <message>
-        <source>Personal 6 - digit PIN</source>
-        <translation>Persönliche 6-stellige PIN</translation>
-    </message>
-    <message>
         <source>Prior to the first use of the online identification function, you have to replace the transport PIN by an individual 6-digit PIN. The transport PIN was sent to you by postal mail.</source>
-        <translation>Vor der ersten Nutzung der Online-Ausweisfunktion müssen Sie die Transport-PIN durch eine persönliche 6-stellige PIN ersetzen. Sie finden Ihre Transport-PIN in dem PIN-Brief, welcher Ihnen postalisch zugesandt wurde.</translation>
+        <translation>Vor der ersten Nutzung der Online-Ausweisfunktion müssen Sie die Transport-PIN durch eine persönliche sechsstellige PIN ersetzen. Sie finden Ihre Transport-PIN in dem PIN-Brief, welcher Ihnen postalisch zugesandt wurde.</translation>
     </message>
     <message>
         <source>AusweisApp2 is now ready for use. For more information on the software or the online identification function, visit the %1online help%2.</source>
         <translation>Sie können die AusweisApp2 nun verwenden. Weitere Informationen zur Software und der Online-Ausweisfunktion erhalten Sie in der %1Online-Hilfe%2.</translation>
+    </message>
+    <message>
+        <source>Personal 6-digit PIN</source>
+        <translation>Persönliche sechsstellige PIN</translation>
     </message>
 </context>
 <context>
@@ -7051,24 +7673,24 @@ klicken.</translation>
 <context>
     <name>governikus::StateCheckRefreshAddress</name>
     <message>
-        <source>Sending data to service provider</source>
+        <source>Sending data to provider</source>
         <extracomment>INFO ALL_PLATFORMS Status message after the communication between card and server is completed, the result is being forwarded to the provider.</extracomment>
-        <translation>Sende Daten an den Diensteanbieter</translation>
+        <translation>Daten werden an den Anbieter gesendet</translation>
     </message>
 </context>
 <context>
     <name>governikus::StateConnectCard</name>
     <message>
-        <source>The online identification function is disabled.</source>
-        <translation>Die Online-Ausweisfunktion ist deaktiviert.</translation>
+        <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
 </context>
 <context>
     <name>governikus::StateDidAuthenticateEac1</name>
     <message>
-        <source>Service provider is being verified</source>
+        <source>Provider is being verified</source>
         <extracomment>INFO ALL_PLATFORMS Status message after the PIN was entered, Terminal Authentication.</extracomment>
-        <translation>Diensteanbieter wird geprüft</translation>
+        <translation>Anbieter wird geprüft</translation>
     </message>
 </context>
 <context>
@@ -7099,7 +7721,7 @@ klicken.</translation>
     <message>
         <source>Preparing results</source>
         <extracomment>INFO ALL_PLATFORMS Status message after the authentication was completed, the results are prepared for the user, mainly relevant for the self authentication since it takes some more time.</extracomment>
-        <translation>Bereite Ergebnisse auf</translation>
+        <translation>Ergebnisse werden vorbereitet</translation>
     </message>
 </context>
 <context>
@@ -7110,7 +7732,7 @@ klicken.</translation>
     </message>
     <message>
         <source>You may now remove your ID card from the card reader.</source>
-        <translation>Sie können nun Ihr Ausweisdokument vom Kartenleser entfernen.</translation>
+        <translation>Sie können nun Ihren Ausweis vom Kartenleser entfernen.</translation>
     </message>
 </context>
 <context>
@@ -7149,20 +7771,12 @@ klicken.</translation>
         <translation>bitte geben sie ihre pin ein</translation>
     </message>
     <message>
-        <source>CAN:</source>
-        <translation>CAN:</translation>
-    </message>
-    <message>
         <source>Identify</source>
         <translation>Ausweisen</translation>
     </message>
     <message>
         <source>Identification successful</source>
         <translation>Ausweisen erfolgreich</translation>
-    </message>
-    <message>
-        <source>The process was cancelled by the user</source>
-        <translation>Der Benutzer hat den Vorgang abgebrochen</translation>
     </message>
     <message>
         <source>Result</source>
@@ -7173,32 +7787,20 @@ klicken.</translation>
         <translation>Bitte beachten Sie die Anzeige auf Ihrem Kartenleser.</translation>
     </message>
     <message>
-        <source>Please enter the six-digit card access number (CAN) for identification.</source>
-        <translation>Bitte geben Sie Ihre 6-stellige Zugangsnummer (CAN) ein.</translation>
-    </message>
-    <message>
-        <source>Please enter your six-digit card access number (CAN) and your PIN for identification.</source>
-        <translation>Bitte geben Sie Ihre 6-stellige Zugangsnummer (CAN) und Ihre PIN ein, um sich auszuweisen.</translation>
-    </message>
-    <message>
-        <source>Please enter your six digit PIN for identification</source>
-        <translation>Bitte geben Sie Ihre 6-stellige PIN ein, um sich auszuweisen</translation>
-    </message>
-    <message>
-        <source>Service provider:</source>
-        <translation>Diensteanbieter:</translation>
+        <source>Provider:</source>
+        <translation>Anbieter:</translation>
     </message>
     <message>
         <source>Certificate issuer:</source>
         <translation>Aussteller des Berechtigungszertifikats:</translation>
     </message>
     <message>
-        <source>Information on the service provider who wants to read out data from your ID card is given here. For further information press the button &quot;more...&quot;.</source>
-        <translation>Hier erhalten Sie Informationen über den Diensteanbieter, der die Daten aus Ihrem Personalausweis auslesen möchte. Für weitere Informationen drücken Sie bitte die Schaltfläche &quot;mehr...&quot;.</translation>
+        <source>Information on the provider who wants to read out data from your ID card is given here. For further information press the button &quot;more...&quot;.</source>
+        <translation>Hier erhalten Sie Informationen über den Anbieter, der die Daten aus Ihrem Personalausweis auslesen möchte. Für weitere Informationen drücken Sie bitte die Schaltfläche &quot;mehr...&quot;.</translation>
     </message>
     <message>
-        <source>Here you can select or deselect data fields to be read out. Mandatory data fields required by the service provider cannot be deselected.</source>
-        <translation>Hier können Sie die Datenfelder an/abwählen, die ausgelesen werden sollen. Felder, die Sie nicht abwählen können, sind durch den Diensteanbieter als Pflichtfelder festgelegt worden. Diese Felder sind daher nicht abwählbar.</translation>
+        <source>Here you can select or deselect data fields to be read out. Mandatory data fields required by the provider cannot be deselected.</source>
+        <translation>Hier können Sie die Datenfelder an/abwählen, die ausgelesen werden sollen. Felder, die Sie nicht abwählen können, sind durch den Anbieter als Pflichtfelder festgelegt worden. Diese Felder sind daher nicht abwählbar.</translation>
     </message>
     <message>
         <source>Close</source>
@@ -7219,6 +7821,22 @@ klicken.</translation>
     <message>
         <source>Identify now</source>
         <translation>Jetzt ausweisen</translation>
+    </message>
+    <message>
+        <source>Please enter the 6-digit card access number (CAN) for identification.</source>
+        <translation>Bitte geben Sie Ihre sechsstellige Zugangsnummer (CAN) ein.</translation>
+    </message>
+    <message>
+        <source>Please enter your 6-digit card access number (CAN) and your PIN for identification.</source>
+        <translation>Bitte geben Sie Ihre sechstellige Zugangsnummer (CAN) und Ihre PIN ein, um sich auszuweisen.</translation>
+    </message>
+    <message>
+        <source>Please enter your 6-digit PIN for identification</source>
+        <translation>Bitte geben Sie Ihre sechsstellige PIN ein, um sich auszuweisen</translation>
+    </message>
+    <message>
+        <source>The process has been cancelled</source>
+        <translation>Der Vorgang wurde abgebrochen</translation>
     </message>
 </context>
 <context>
@@ -7252,40 +7870,40 @@ klicken.</translation>
         <translation>Extended Length wird nicht überstützt.</translation>
     </message>
     <message>
-        <source>Your remote reader does not meet the technical requirements (Extended Length not supported).</source>
-        <translation>Ihr entfernter Kartenleser erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).</translation>
+        <source>Your smartphone as card reader (SaC) does not meet the technical requirements (Extended Length not supported).</source>
+        <translation>Ihr Smartphone als Kartenleser (SaK) erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).</translation>
     </message>
     <message>
         <source>At least one of your card readers does not meet the technical requirements (Extended Length not supported). Please place the ID card on a different card reader.</source>
         <translation>Mindestens einer Ihrer Kartenleser erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt). Bitte platzieren Sie Ihren Ausweis auf einem anderen Kartenleser.</translation>
     </message>
     <message>
-        <source>Connected to following remote readers: %1.</source>
-        <translation>Verbunden mit den folgenden entfernten Lesegeräten: %1.</translation>
+        <source>Connected to the following smartphones as card readers (SaCs): %1.</source>
+        <translation>Verbunden mit den folgenden Smartphones als Kartenlesegeräten (SaKs): %1.</translation>
     </message>
     <message>
         <source>Please place an ID card on the card reader.</source>
-        <translation>Bitte legen Sie ein Ausweisdokument auf.</translation>
+        <translation>Bitte legen Sie einen Ausweis auf.</translation>
     </message>
     <message>
         <source>If you have already placed an ID card on your card reader, you can consult the %1online help%2 for futher information.</source>
-        <translation>Sollten Sie bereits Ihr Ausweisdokument aufgelegt haben, können Sie für weitere Informationen die %1Online-Hilfe%2 öffnen.</translation>
+        <translation>Sollten Sie bereits Ihren Ausweis aufgelegt haben, können Sie für weitere Informationen die %1Online-Hilfe%2 öffnen.</translation>
     </message>
     <message>
         <source>Please place only one ID card on the card reader.</source>
-        <translation>Bitte legen Sie nur ein Ausweisdokument auf.</translation>
+        <translation>Bitte legen Sie nur einen Ausweis auf.</translation>
     </message>
     <message>
         <source>Please make sure that only one card reader with an ID card on it is connected to your computer. If you have already placed an ID card on your card reader, you can consult the %1online help%2 for futher information.</source>
-        <translation>Bitte stellen Sie sicher, dass an Ihrem Computer nur ein Kartenleser mit aufliegendem Ausweisdokument angeschlossen ist. Sollten Sie bereits ein Ausweisdokument aufgelegt haben, können Sie für weitere Informationen die %1Online-Hilfe%2 öffnen.</translation>
+        <translation>Bitte stellen Sie sicher, dass an Ihrem Computer nur ein Kartenleser mit aufliegendem Ausweis angeschlossen ist. Sollten Sie bereits einen Ausweis aufgelegt haben, können Sie für weitere Informationen die %1Online-Hilfe%2 öffnen.</translation>
     </message>
     <message>
         <source>Online identification function is disabled.</source>
         <translation>Die Online-Ausweisfunktion ist deaktiviert.</translation>
     </message>
     <message>
-        <source>This action cannot be performed. The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.</source>
-        <translation>Diese Aktion kann leider nicht durchgeführt werden. Die Online-Ausweisfunktion Ihres Ausweisdokuments ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <source>This action cannot be performed. The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
+        <translation>Diese Aktion kann leider nicht durchgeführt werden. Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
         <source>Retry connection</source>
@@ -7296,8 +7914,14 @@ klicken.</translation>
         <translation>Erneut versuchen?</translation>
     </message>
     <message>
-        <source>Weak NFC signal. Please reposition your card.</source>
-        <translation>Schwacher NFC-Empfang. Bitte korrigieren Sie die Position Ihres Ausweises.</translation>
+        <source>Weak NFC signal. Please
+- change the card position
+- remove the mobile phone case (if present)
+- connect the smartphone with a charging cable</source>
+        <translation>Schwacher NFC-Empfang. Bitte
+- ändern Sie die Position des Ausweises
+- entfernen Sie Handyhüllen o.Ä.
+- verbinden Sie das Smartphone mit dem Ladegerät</translation>
     </message>
 </context>
 <context>
@@ -7379,9 +8003,16 @@ klicken.</translation>
         <translation>AusweisApp2 beenden</translation>
     </message>
     <message>
-        <source>AusweisApp2 was started.</source>
+        <source>Application was started.</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>AusweisApp2 wurde gestartet.</translation>
+        <translation>Die Anwendung wurde gestartet.</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::UIPlugInQml</name>
+    <message>
+        <source>Information</source>
+        <translation>Information</translation>
     </message>
 </context>
 <context>
@@ -7392,7 +8023,7 @@ klicken.</translation>
     </message>
     <message>
         <source>&lt;h4&gt;Download of release notes failed&lt;/h4&gt;</source>
-        <translation>&lt;h4&gt;Herunterladen der Versionshinweise schlug fehl&lt;/h4&gt;</translation>
+        <translation>&lt;h4&gt;Herunterladen der Release Notes schlug fehl&lt;/h4&gt;</translation>
     </message>
     <message>
         <source>AusweisApp2 %1 is now available - you have %2. Would you like to download it now?</source>
@@ -7409,7 +8040,7 @@ klicken.</translation>
     <message>
         <source>Cannot start authentication</source>
         <extracomment>ERROR ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.</extracomment>
-        <translation>Authentisierungsvorgang kann nicht gestartet werden</translation>
+        <translation>Ausweisvorgang kann nicht gestartet werden</translation>
     </message>
     <message>
         <source>An operation is already in progress.</source>
@@ -7480,9 +8111,9 @@ klicken.</translation>
         <translation>Eine unbekannte Anwendung verwendet den benötigten Port (%1) bereits. Bitte beenden Sie zuerst die andere Anwendung und versuchen Sie es anschließend erneut!</translation>
     </message>
     <message>
-        <source>Another program (%1) uses the required port (%2). Please exit this other program and try again!</source>
+        <source>The program (%1) uses the required port (%2). Please close %1 and try again!</source>
         <extracomment>ERROR ALL_PLATFORMS A known programme is using the local port on which the AA2 listens.</extracomment>
-        <translation>Eine andere Anwendung (%1) verwendet den benötigten Port (%2) bereits. Bitte beenden Sie zuerst die andere Anwendung und versuchen Sie es anschließend erneut!</translation>
+        <translation>Die Anwendung &quot;%1&quot; verwendet den benötigten Port (%2) bereits. Bitte beenden Sie &quot;%1&quot; und versuchen Sie es anschließend erneut!</translation>
     </message>
     <message>
         <source>404 Not found</source>
@@ -7520,14 +8151,14 @@ klicken.</translation>
         <translation>Jetzt melden</translation>
     </message>
     <message>
-        <source>You tried to start a newer version (%1) of currently running application. Please stop the current version (%2) and start again!</source>
+        <source>You tried to start a newer version (%1) of currently running AusweisApp2. Please stop the current version (%2) and start again!</source>
         <extracomment>ERROR ALL_PLATFORMS The external request to show the UI requested a newer version than the one currently installed.</extracomment>
-        <translation>Sie versuchen eine neuere Version (%1) der aktuell laufenden Anwendung zu starten. Bitte beenden Sie zuerst die andere Version (%2) und versuchen Sie es anschließend erneut!</translation>
+        <translation>Sie versuchen eine neuere Version (%1) der aktuell laufenden AusweisApp2 zu starten. Bitte beenden Sie zuerst die andere Version (%2) und versuchen Sie es anschließend erneut!</translation>
     </message>
     <message>
-        <source>You tried to start an older version (%1) of currently running application. Please open the currently running version (%2)!</source>
+        <source>You tried to start an older version (%1) of currently running AusweisApp2. Please open the currently running version (%2)!</source>
         <extracomment>ERROR ALL_PLATFORMS The external request to show the UI requested an older version than the one currently installed.</extracomment>
-        <translation>Sie versuchen eine ältere Version (%1) der aktuell laufenden Anwendung zu starten. Bitte öffnen Sie die aktuell laufende Version (%2)!</translation>
+        <translation>Sie versuchen eine ältere Version (%1) der aktuell laufenden AusweisApp2 zu starten. Bitte öffnen Sie die aktuell laufende Version (%2)!</translation>
     </message>
     <message>
         <source>https://www.ausweisapp.bund.de/en/qa/report-an-error/</source>
@@ -7550,8 +8181,8 @@ klicken.</translation>
         <translation>&lt;b&gt;Wollen Sie wirklich abbrechen?&lt;/b&gt;</translation>
     </message>
     <message>
-        <source>You can as well identity later by calling the service provider&apos;s Internet page again.</source>
-        <translation>Sie können sich auch später ausweisen, indem Sie erneut auf die Internetseite des Diensteanbieters gehen.</translation>
+        <source>You can as well identity later by calling the provider&apos;s Internet page again.</source>
+        <translation>Sie können sich auch später ausweisen, indem Sie erneut auf die Internetseite des Anbieters gehen.</translation>
     </message>
 </context>
 <context>
@@ -7613,31 +8244,6 @@ klicken.</translation>
         <translation>Diesen Hinweis nicht mehr anzeigen.</translation>
     </message>
     <message>
-        <source>Unsupported version of %1.</source>
-        <extracomment>INFO DESKTOP_QML Message that the update data is invalid and can&apos;t be used.</extracomment>
-        <translation>Nicht unterstützte Version von %1.</translation>
-    </message>
-    <message>
-        <source>An update is available (Version: %1).</source>
-        <extracomment>INFO DESKTOP_QML An update was found which matches the current platform, the new version number is shown in the message.</extracomment>
-        <translation>Eine Aktualisierung ist verfügbar (Version: %1).</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <extracomment>INFO DESKTOP_QML An update was found. This is the caption of the download button, clicking it opens the link in the browser.</extracomment>
-        <translation>Download</translation>
-    </message>
-    <message>
-        <source>Release notes</source>
-        <extracomment>INFO DESKTOP_QML An update was found. This is the caption of the release note button, clicking it opens the note in the browser.</extracomment>
-        <translation>Aktualisierungshinweise</translation>
-    </message>
-    <message>
-        <source>Current version %1 is up to date.</source>
-        <extracomment>INFO DESKTOP_QML The AA2 is up-to-date, this message is only shown if the update check is started by the user and not via the auto-update functionality.</extracomment>
-        <translation>Version %1 ist aktuell.</translation>
-    </message>
-    <message>
         <source>Developer Mode: Enabled!</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Entwicklermodus: Aktiviert!</translation>
@@ -7646,6 +8252,36 @@ klicken.</translation>
         <source>Disable</source>
         <extracomment>LABEL DESKTOP_QML Global button to disable developer mode.</extracomment>
         <translation>Deaktivieren</translation>
+    </message>
+    <message>
+        <source>Failed to retrieve update information.</source>
+        <extracomment>INFO DESKTOP_QML Message that the update data is invalid and can&apos;t be used.</extracomment>
+        <translation>Das Herunterladen der Aktualisierungsinformationen ist fehlgeschlagen.</translation>
+    </message>
+    <message>
+        <source>An update is available (version %1).</source>
+        <extracomment>INFO DESKTOP_QML An update was found which matches the current platform, the new version number is shown in the message.</extracomment>
+        <translation>Eine Aktualisierung ist verfügbar (Version %1).</translation>
+    </message>
+    <message>
+        <source>New user interface released!</source>
+        <translation>Neue grafische Benutzeroberfläche veröffentlicht!</translation>
+    </message>
+    <message>
+        <source>This release features a new and modern user interface. For this version of %1 (and this version only!) you may decide to switch back to the previous user interface. To do so click the Button &quot;%2&quot;. It is highly recommend to use the new user interface as the old one will be removed with the next release of %3.</source>
+        <translation>Diese Veröffentlichung beinhaltet eine neue und moderne grafische Benutzeroberfläche. In dieser Version der %1 (und nur in dieser!) können Sie sich dazu entscheiden, die vorherige Nutzeroberfläche weiterhin zu verwenden. Hierfür klicken Sie den Button &quot;%2&quot;. Es wird jedoch ausdrücklich empfohlen, die neue Benutzeroberfläche zu aktivieren, da die vorherige bei der nächsten Veröffentlichung der %3 entfernt wird.</translation>
+    </message>
+    <message>
+        <source>Stick with new interface</source>
+        <translation>Neue Oberfläche beibehalten</translation>
+    </message>
+    <message>
+        <source>Use old interface</source>
+        <translation>Alte Oberfläche verwenden</translation>
+    </message>
+    <message>
+        <source>%1 - Detached log viewer</source>
+        <translation>%1 - Protokolldateianzeige</translation>
     </message>
 </context>
 </TS>

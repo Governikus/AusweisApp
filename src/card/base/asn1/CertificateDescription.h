@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of ASN.1 type CertificateDescription with OpenSSL
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -81,7 +81,7 @@ struct CertificateDescription
 	QSet<QString> getCommCertificates() const;
 
 	/*!
-	 * \brief Returns the address of service provider.
+	 * \brief Returns the address of provider.
 	 *
 	 * \return The address.
 	 */

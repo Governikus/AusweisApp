@@ -4,6 +4,6 @@
     <path fill="#fff" d="M300 100 L 500 250 450 500 150 500 100 250Z"/>
   </g>
   <image x="25" y="275" width="200px" height="200px" xlink:href="../../../images/npa.svg"/>
-  <image x="320" y="225" width="300px" height="300px" xlink:href="../../../images/tutorial/idcard.svg"/>
+  <image x="320" y="225" width="300px" height="300px" xlink:href="../../../images/ausweis.svg"/>
   <image x="230" y="25" width="133px" height="200px" xlink:href="../../../images/tutorial/questionmark.svg"/>
 </svg>

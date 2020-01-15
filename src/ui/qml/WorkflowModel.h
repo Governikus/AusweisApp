@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the authentication action.
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -59,7 +59,6 @@ class WorkflowModel
 
 		Q_INVOKABLE void startWorkflow();
 		Q_INVOKABLE void cancelWorkflow();
-		Q_INVOKABLE void cancelWorkflowOnPinBlocked();
 		Q_INVOKABLE void cancelWorkflowToChangePin();
 		Q_INVOKABLE void continueWorkflow();
 		Q_INVOKABLE void setInitialPluginType();

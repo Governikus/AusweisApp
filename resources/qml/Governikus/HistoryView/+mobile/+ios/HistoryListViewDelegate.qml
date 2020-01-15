@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -14,6 +14,7 @@ SwipeActionDelegate {
 	id: swipeComponent
 
 	property var historyModelItem
+	property bool showSeparator: true
 
 	actionColor: Constants.red
 	actionIcon: "qrc:///images/trash_icon_white.svg"
@@ -24,6 +25,7 @@ SwipeActionDelegate {
 		historyModelItem: swipeComponent.historyModelItem
 		mouseAreaEnabled: false
 		pressed: swipeComponent.pressed
+		showSeparator: swipeComponent.showSeparator
 	}
 
 	onActionClicked: HistoryModel.removeRows(index, 1)

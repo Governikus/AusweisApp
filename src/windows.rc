@@ -1,9 +1,8 @@
 // http://msdn.microsoft.com/en-us/library/aa381058(VS.85).aspx
 #include <windows.h>
-#include "config.h"
+#include "init/config.h"
 
 #define EXECUTABLE   PRODUCT ".exe"
-#define COPYRIGHT    "2014-2017 " VENDOR
 
 IDR_MAINFRAME ICON "..\\resources\\images\\npa.ico"
 IDI_ICON1 ICON DISCARDABLE "..\\resources\\images\\npa.ico"
@@ -24,7 +23,7 @@ BEGIN
       VALUE "FileDescription",  PRODUCT
       VALUE "FileVersion",      VERSION
       VALUE "InternalName",     PRODUCT
-      VALUE "LegalCopyright",   COPYRIGHT
+      VALUE "LegalCopyright",   COPYRIGHT_TEXT
       VALUE "OriginalFilename", EXECUTABLE
       VALUE "ProductName",      PRODUCT
       VALUE "ProductVersion",   VERSION
@@ -36,7 +35,7 @@ BEGIN
       VALUE "FileDescription",  PRODUCT
       VALUE "FileVersion",      VERSION
       VALUE "InternalName",     PRODUCT
-      VALUE "LegalCopyright",   COPYRIGHT
+      VALUE "LegalCopyright",   COPYRIGHT_TEXT
       VALUE "OriginalFilename", EXECUTABLE
       VALUE "ProductName",      PRODUCT
       VALUE "ProductVersion",   VERSION

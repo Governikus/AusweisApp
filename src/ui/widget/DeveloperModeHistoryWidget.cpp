@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DeveloperModeHistoryWidget.h"
@@ -21,12 +21,14 @@ DeveloperModeHistoryWidget::DeveloperModeHistoryWidget(QWidget* pParent)
 {
 	mUi->setupUi(this);
 
-	connect(Env::getSingleton<AppSettings>(), &AppSettings::fireSettingsChanged, this, &DeveloperModeHistoryWidget::onSettingsChanged);
+
+	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	connect(&generalSettings, &GeneralSettings::fireDeveloperOptionsChanged, this, &DeveloperModeHistoryWidget::onDeveloperOptionsChanged);
 	connect(Env::getSingleton<LogHandler>(), &LogHandler::fireRawLog, this, &DeveloperModeHistoryWidget::onRawLog);
 	connect(mUi->btnDisableDeveloperMode, &QPushButton::clicked, this, &DeveloperModeHistoryWidget::onDisableDeveloperMode);
 
 	// initialize visibility state
-	onSettingsChanged();
+	onDeveloperOptionsChanged();
 }
 
 
@@ -60,7 +62,7 @@ void DeveloperModeHistoryWidget::onRawLog(const QString& pMsg, const QString& pC
 }
 
 
-void DeveloperModeHistoryWidget::onSettingsChanged()
+void DeveloperModeHistoryWidget::onDeveloperOptionsChanged()
 {
 	QWidget::setVisible(Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode());
 }

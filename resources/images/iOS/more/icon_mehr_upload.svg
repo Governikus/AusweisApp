@@ -2,12 +2,12 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
   <linearGradient id="verlauf1" gradientUnits="userSpaceOnUse" x1="298" y1="-108" x2="298" y2="292" gradientTransform="matrix(1,0,0,-1,-42,348)">
     <stop offset="0" style="stop-color:#98C8E8" />
-    <stop offset="1" style="stop-color:#659CCD" />
+    <stop offset="1" style="stop-color:#4d7aa4" />
   </linearGradient>
   <rect width="400" height="400" rx="90" ry="90" fill="url(#verlauf1)" />
   <linearGradient id="verlauf2" gradientUnits="userSpaceOnUse" x1="298" y1="95" x2="298" y2="142" gradientTransform="matrix(1,0,0,-1,-42,348)">
     <stop offset="0" style="stop-color:#98C8E8" />
-    <stop offset="1" style="stop-color:#659CCD" />
+    <stop offset="1" style="stop-color:#4d7aa4" />
   </linearGradient>
   <g transform="translate(-56, -56)">
     <polyline points="248.688,206.004 248.688,152.611 230.669,170.643 221.234,161.208 255.405,127.036 290.766,162.384 281.346,171.818 262.016,152.489 262.016,206.004" fill="#ffffff" />

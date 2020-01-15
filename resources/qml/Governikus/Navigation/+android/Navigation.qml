@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -66,7 +66,6 @@ Item {
 			anchors.top: parent.top
 			anchors.bottom: parent.bottom
 			orientation: Qt.Vertical
-			color: Style.color.border_dark
 		}
 	}
 
@@ -95,6 +94,19 @@ Item {
 				enabled: Constants.is_tablet
 				anchors.fill: parent
 				onClicked: drawer.close()
+			}
+		}
+
+		background: Rectangle {
+			anchors.fill: parent
+			color: Style.color.background
+			GSeparator {
+				anchors {
+					top: parent.top
+					bottom: parent.bottom
+					right: parent.right
+				}
+				orientation: Qt.Vertical
 			}
 		}
 	}

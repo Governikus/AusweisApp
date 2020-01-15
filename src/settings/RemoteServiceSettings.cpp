@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceSettings.h"
@@ -67,7 +67,7 @@ QString RemoteServiceSettings::getDefaultServerName()
 	if (name.isEmpty())
 	{
 		//: LABEL ALL_PLATFORMS
-		return tr("Remote Reader");
+		return tr("Smartphone as card reader (SaC)");
 	}
 
 	return name;
@@ -82,13 +82,14 @@ QString RemoteServiceSettings::getServerName() const
 
 void RemoteServiceSettings::setServerName(const QString& pName)
 {
-	if (pName.isEmpty())
+	const QString serverName = pName.trimmed();
+	if (serverName.isEmpty())
 	{
 		mStore->setValue(SETTINGS_NAME_DEVICE_NAME(), getDefaultServerName());
 		return;
 	}
 
-	mStore->setValue(SETTINGS_NAME_DEVICE_NAME(), pName);
+	mStore->setValue(SETTINGS_NAME_DEVICE_NAME(), serverName);
 }
 
 
@@ -144,7 +145,14 @@ void RemoteServiceSettings::setUniqueTrustedCertificates(const QSet<QSslCertific
 
 void RemoteServiceSettings::setTrustedCertificates(const QList<QSslCertificate>& pCertificates)
 {
-	setUniqueTrustedCertificates(pCertificates.toSet()); // remove duplicates
+	// remove duplicates
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+	const auto set = QSet<QSslCertificate>(pCertificates.constBegin(), pCertificates.constEnd());
+#else
+	const auto set = pCertificates.toSet();
+#endif
+
+	setUniqueTrustedCertificates(set);
 }
 
 
@@ -260,11 +268,7 @@ QVector<RemoteServiceSettings::RemoteInfo> RemoteServiceSettings::getRemoteInfos
 	const auto& array = QJsonDocument::fromJson(data).array();
 	for (const auto& item : array)
 	{
-		const auto& obj = item.toObject();
-		auto fingerprint = obj[QLatin1String("fingerprint")].toString();
-		auto name = obj[QLatin1String("name")].toString();
-		auto lastConnected = QDateTime::fromString(obj[QLatin1String("lastConnected")].toString(), Qt::ISODateWithMs);
-		infos << RemoteInfo(fingerprint, lastConnected, name);
+		infos << RemoteInfo::fromJson(item.toObject());
 	}
 
 	return infos;
@@ -276,11 +280,7 @@ void RemoteServiceSettings::setRemoteInfos(const QVector<RemoteInfo>& pInfos)
 	QJsonArray array;
 	for (const auto& item : pInfos)
 	{
-		QJsonObject obj;
-		obj[QLatin1String("fingerprint")] = item.getFingerprint();
-		obj[QLatin1String("name")] = item.getName();
-		obj[QLatin1String("lastConnected")] = item.getLastConnected().toString(Qt::ISODateWithMs);
-		array << obj;
+		array << item.toJson();
 	}
 
 	mStore->setValue(SETTINGS_NAME_TRUSTED_REMOTE_INFO(), QJsonDocument(array).toJson(QJsonDocument::Compact));
@@ -350,6 +350,26 @@ RemoteServiceSettings::RemoteInfo::RemoteInfo(const QString& pFingerprint,
 	, mName(pName)
 	, mLastConnected(pLastConnected)
 {
+}
+
+
+RemoteServiceSettings::RemoteInfo RemoteServiceSettings::RemoteInfo::fromJson(const QJsonObject& obj)
+{
+	RemoteInfo remoteInfo(
+		obj[QLatin1String("fingerprint")].toString(),
+		QDateTime::fromString(obj[QLatin1String("lastConnected")].toString(), Qt::ISODateWithMs));
+	remoteInfo.mName = obj[QLatin1String("name")].toString();
+	return remoteInfo;
+}
+
+
+QJsonObject RemoteServiceSettings::RemoteInfo::toJson() const
+{
+	QJsonObject obj;
+	obj[QLatin1String("fingerprint")] = mFingerprint;
+	obj[QLatin1String("name")] = mName;
+	obj[QLatin1String("lastConnected")] = mLastConnected.toString(Qt::ISODateWithMs);
+	return obj;
 }
 
 

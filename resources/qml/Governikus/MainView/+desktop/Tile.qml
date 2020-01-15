@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -31,6 +31,7 @@ FocusScope {
 
 	FocusFrame {
 		marginFactor: -2
+		dynamic: true
 	}
 
 	Column {
@@ -38,11 +39,13 @@ FocusScope {
 
 		spacing: Constants.component_spacing
 
-		Image {
+		TintableIcon {
 			id: image
 
 			sourceSize.height: ApplicationModel.scaleFactor * 200
 			anchors.horizontalCenter: parent.horizontalCenter
+
+			tintColor: text.textStyle.textColor
 		}
 
 		GText {
@@ -50,7 +53,7 @@ FocusScope {
 
 			anchors.horizontalCenter: parent.horizontalCenter
 
-			textStyle: Style.text.title
+			textStyle: Style.text.title_inverse
 			font.bold: true
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -71,7 +71,7 @@ SectionPage {
 		//: LABEL ANDROID IOS
 		buttonText: qsTr("Retry") + SettingsModel.translationTrigger
 		//: INFO ANDROID IOS The NFC signal is weak or unstable, the user is asked to change the card's position to (hopefully) reduce the distance to the NFC chip.
-		text: qsTr("Weak NFC signal. Please reposition your card.") + SettingsModel.translationTrigger
+		text: qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable") + SettingsModel.translationTrigger
 		onClicked: {
 			firePop()
 			ChangePinModel.continueWorkflow()
@@ -110,7 +110,10 @@ SectionPage {
 
 	ProgressView {
 		id: pinProgressView
-		navigationAction: NavigationAction { state: ChangePinModel.isBasicReader ? "cancel" : "hidden"; onClicked: ChangePinModel.cancelWorkflow() }
+		navigationAction: NavigationAction {
+			state: ChangePinModel.isBasicReader ? "cancel" : "hidden";
+			onClicked: if (state !== "hidden") ChangePinModel.cancelWorkflow()
+		}
 		//: LABEL ANDROID IOS
 		title: qsTr("PIN Management") + SettingsModel.translationTrigger
 		visible: false
@@ -118,20 +121,20 @@ SectionPage {
 		text: qsTr("Change PIN") + SettingsModel.translationTrigger
 		subText: (!visible ? ""
 				 //: INFO ANDROID IOS Loading screen during PIN change process, data communcation is currently ongoing. Message is usually not visible since the password handling with basic reader is handled by EnterPasswordView.
-			   : ChangePinModel.isBasicReader ? qsTr("Please wait a moment...")
+			   : ChangePinModel.isBasicReader ? qsTr("Please don't move the ID card...")
 			   : !!NumberModel.inputError ? NumberModel.inputError
 				 //: INFO ANDROID IOS The card communcation was aborted, the online identification functionality is deactivated and needs to be actived by the authorities.
-			   : NumberModel.pinDeactivated ? qsTr("The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.")
+			   : NumberModel.pinDeactivated ? qsTr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.")
 			   : changePinController.workflowState === ChangePinController.WorkflowStates.Update
 				 || changePinController.workflowState === ChangePinController.WorkflowStates.Pin
 				 //: INFO ANDROID IOS Either an comfort card reader or smartphone-as-card-reader is used, the user needs to react to request on that device.
 				 || changePinController.workflowState === ChangePinController.WorkflowStates.NewPin ? qsTr("Please observe the display of your card reader.")
 				 //: INFO ANDROID IOS The wrong PIN was entered twice, the next attempt requires additional verifcation via CAN.
-			   : changePinController.workflowState === ChangePinController.WorkflowStates.Can ? qsTr("You have entered the wrong PIN twice. Prior to a third attempt, you have to enter your six-digit card access number first. You can find your card access number on the front of your ID card.")
-				 //: INFO ANDROID IOS The PIN (including the CAN) was entered wrongfully three times, the PUK is required to unlock the id card.
-			   : changePinController.workflowState === ChangePinController.WorkflowStates.Puk ? qsTr("You have entered a wrong PIN three times. Your PIN is now blocked. You have to enter the PUK now for unblocking.")
+			   : changePinController.workflowState === ChangePinController.WorkflowStates.Can ? qsTr("A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.")
+				 //: INFO ANDROID IOS The PIN (including the CAN) was entered wrongfully three times, the PUK is required to unlock the ID card.
+			   : changePinController.workflowState === ChangePinController.WorkflowStates.Puk ? qsTr("A wrong PIN has been entered three times on your ID card. Your PIN is now blocked. To unblock your PIN you have to enter the PUK.")
 				 //: INFO ANDROID IOS Generic progress message during PIN change process.
-			   : qsTr("Please wait a moment...")) + SettingsModel.translationTrigger
+			   : qsTr("Please don't move the ID card...")) + SettingsModel.translationTrigger
 		subTextColor: !ChangePinModel.isBasicReader && (NumberModel.inputError
 														|| NumberModel.pinDeactivated
 														|| changePinController.workflowState === ChangePinController.WorkflowStates.Can

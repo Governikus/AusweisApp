@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -85,7 +85,7 @@ Item {
 			activeFocusOnTab: true
 
 			//: LABEL DESKTOP_QML
-			label: qsTr("Requested data") + SettingsModel.translationTrigger
+			label: qsTr("Submitted data") + SettingsModel.translationTrigger
 			text: historyModelItem ? historyModelItem.requestedData : ""
 		}
 

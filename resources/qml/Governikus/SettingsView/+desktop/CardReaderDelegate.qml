@@ -1,13 +1,14 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
-import QtQuick.Layouts 1.12
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
 import Governikus.View 1.0
 
 
@@ -17,9 +18,11 @@ Item {
 	implicitHeight: rowLayout.implicitHeight
 	activeFocusOnTab: true
 
+	Accessible.role: Accessible.Button
+	Accessible.name: readerName + ". " + readerStatus
+
 	FocusFrame {
-		dynamic: false
-		border.color: Constants.black
+		borderColor: Style.color.focus_indicator
 	}
 
 	RowLayout {
@@ -49,14 +52,14 @@ Item {
 			GText {
 				Layout.fillWidth: true
 
-				textStyle: Style.text.header_inverse
+				textStyle: Style.text.header
 				text: readerName
 			}
 
 			GText {
 				Layout.fillWidth: true
 
-				textStyle: Style.text.normal_inverse
+				textStyle: Style.text.normal
 				text: readerStatus
 			}
 
@@ -65,8 +68,15 @@ Item {
 
 				Layout.fillWidth: true
 
-				textStyle: Style.text.normal_inverse
+				activeFocusOnTab: true
+				Accessible.description: qsTr("Press space to open the link in your browser") + SettingsModel.translationTrigger
+
+				textStyle: Style.text.normal
 				text: readerHTMLDescription
+
+				FocusFrame {
+					borderColor: Style.color.focus_indicator
+				}
 			}
 		}
 

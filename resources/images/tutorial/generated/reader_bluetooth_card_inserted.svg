@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="150px" height="220px" viewBox="0 0 150 220">
-  <image xlink:href=":/images/tutorial/idcard.svg" transform="rotate(80)" height="145" width="145" y="-140" x="0" />
+  <image xlink:href=":/images/ausweis.svg" transform="rotate(80)" height="145" width="145" y="-140" x="0" />
   <image xlink:href=":/images/tutorial/reader.svg" height="130" width="112" y="80" x="20" />
 </svg>

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -18,6 +18,10 @@ TutorialContent {
 
 		GText {
 			width: parent.width
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			//: LABEL ANDROID IOS
 			text: qsTr("What is the online ID function?") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header
@@ -26,6 +30,10 @@ TutorialContent {
 		}
 		GText {
 			width: parent.width
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			//: LABEL ANDROID IOS
 			text: qsTr("You can use it to authenticate yourself in the internet") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header
@@ -57,12 +65,13 @@ TutorialContent {
 
 			TutorialImage {
 				id: stylisedEpa
-				source: "qrc:///images/tutorial/idcard.svg"
+				source: "qrc:///images/ausweis.svg"
 				z: 2
 
 				width: parent.height * 0.6
 				centerY: 0.5
 				centerX: 0.8
+				rotation: 12
 			}
 
 			TutorialImage {
@@ -89,6 +98,10 @@ TutorialContent {
 		GText {
 			width: parent.width * 0.9
 			anchors.horizontalCenter: parent.horizontalCenter
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			//: LABEL ANDROID IOS
 			text: qsTr("and also to deal with administrative paperwork and business matters electronically!") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_content
@@ -98,6 +111,10 @@ TutorialContent {
 
 	TutorialSpacer {
 		width: parent.width
+
+		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 		//: LABEL ANDROID IOS
 		text: qsTr("Alright, but is it secure?") + SettingsModel.translationTrigger
 		color: Style.color.tutorial_what
@@ -109,6 +126,10 @@ TutorialContent {
 
 		GText {
 			width: parent.width
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			//: LABEL ANDROID IOS
 			text: qsTr("Of course, because we use a so called") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_content
@@ -116,6 +137,10 @@ TutorialContent {
 		}
 		GText {
 			width: parent.width
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			//: LABEL ANDROID IOS
 			text: qsTr("Mutual authentication") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header
@@ -194,8 +219,12 @@ TutorialContent {
 		GText {
 			width: parent.width * 0.9
 			anchors.horizontalCenter: parent.horizontalCenter
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			//: LABEL ANDROID IOS
-			text: qsTr("... it establishes a secure connection between ID document and service provider.") + SettingsModel.translationTrigger
+			text: qsTr("... it establishes a secure connection between ID card and provider.") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -216,6 +245,10 @@ TutorialContent {
 
 			GText {
 				width: parent.width * 0.35
+
+				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 				//: LABEL ANDROID IOS
 				text: qsTr("On every authentication you get displayed <b>who</b> wants to access <b>which</b> data") + SettingsModel.translationTrigger
 				textStyle: Style.text.tutorial_content
@@ -263,6 +296,10 @@ TutorialContent {
 
 		GText {
 			width: parent.width * 0.95
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			anchors.horizontalCenter: parent.horizontalCenter
 			//: LABEL ANDROID IOS
 			text: qsTr("and you consent to the request with your personal PIN.") + SettingsModel.translationTrigger
@@ -309,7 +346,11 @@ TutorialContent {
 			}
 
 			GText {
-				width: parent.width
+				width: parent.width - 2 * Constants.component_spacing
+
+				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 				//: LABEL ANDROID IOS
 				text: qsTr("... is the provider authorized for this?") + SettingsModel.translationTrigger
 				textStyle: Style.text.tutorial_header
@@ -323,6 +364,10 @@ TutorialContent {
 
 			GText {
 				width: parent.width - 2 * Constants.component_spacing
+
+				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 				//: LABEL ANDROID IOS
 				text: qsTr("The provider needs an authorization of the Federal Office of Administration.") + SettingsModel.translationTrigger
 				textStyle: Style.text.tutorial_content
@@ -340,6 +385,10 @@ TutorialContent {
 
 			GText {
 				width: parent.width
+
+				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 				//: LABEL ANDROID IOS
 				text: qsTr("Certificate") + SettingsModel.translationTrigger
 				textStyle: Style.text.tutorial_header
@@ -422,6 +471,10 @@ TutorialContent {
 
 		GText {
 			width: parent.width * 0.9
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			anchors.horizontalCenter: parent.horizontalCenter
 			//: LABEL ANDROID IOS
 			text: qsTr("Everytime both participants authenticate each other...") + SettingsModel.translationTrigger
@@ -434,6 +487,10 @@ TutorialContent {
 
 	TutorialSpacer {
 		width: parent.width
+
+		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 		//: LABEL ANDROID IOS
 		text: qsTr("... and therefore your data is protected and securely transfered.") + SettingsModel.translationTrigger
 		color: Style.color.tutorial_what
@@ -446,6 +503,10 @@ TutorialContent {
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.8
+
+			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
 			//: LABEL ANDROID IOS
 			text: qsTr("You can also watch a video on YouTube on this topic") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header_secondary

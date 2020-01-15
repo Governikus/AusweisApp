@@ -12,7 +12,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
-    <number>0</number>
+    <number>20</number>
    </property>
    <item>
     <widget class="QWidget" name="widget" native="true">
@@ -38,7 +38,7 @@
          <enum>Qt::TabFocus</enum>
         </property>
         <property name="text">
-         <string>Self-authentication test URI:</string>
+         <string>Testmode for the self-authentication:</string>
         </property>
        </widget>
       </item>
@@ -52,7 +52,43 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="devmodeLabel">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::TabFocus</enum>
+        </property>
+        <property name="text">
+         <string>Developer mode:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="chkbDeveloperMode">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>use</string>
+        </property>
+       </widget>
+      </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="lblDeveloperModeWarning">
+     <property name="text">
+      <string notr="true">$developerWarning</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::TabFocus</enum>
+     </property>
     </widget>
    </item>
    <item>

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UnblockPinCommand.h"
@@ -38,8 +38,8 @@ void UnblockPinCommand::internalExecute()
 	}
 
 	// unblock PIN (reset retry counter)
-	ResponseApdu response;
-	mReturnCode = mCardConnectionWorker->transmit(ResetRetryCounterBuilder().build(), response);
+	auto [returnCode, response] = mCardConnectionWorker->transmit(ResetRetryCounterBuilder().build());
+	mReturnCode = returnCode;
 	if (mReturnCode == CardReturnCode::OK && response.getSW1() == SW1::ERROR_COMMAND_NOT_ALLOWED)
 	{
 		mCardConnectionWorker->setPukInoperative();

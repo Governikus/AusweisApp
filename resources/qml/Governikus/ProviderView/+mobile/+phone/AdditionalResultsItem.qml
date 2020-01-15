@@ -1,9 +1,9 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
-import QtQuick.Layouts 1.2
+import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -20,7 +20,7 @@ ListItem {
 
 	icon: Category.imageSource("all")
 	text: qsTr("Additional results:") + ' '  + totalHits + SettingsModel.translationTrigger
-	showRightArrow: false
+	showLinkIcon: false
 	showSeparator: false
 
 	onClicked: ProviderCategoryFilterModel.setCategorySelection("")

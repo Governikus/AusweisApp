@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ECardApiResult.h"
@@ -173,7 +173,6 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity, Minor::AL_Internal_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer, Minor::AL_Internal_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, Minor::AL_Internal_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Pin_Blocked_And_Puk_Objectionable, Minor::AL_Internal_Error);
 	addConversionElement(GlobalStatus::Code::Card_Protocol_Error, Minor::AL_Internal_Error);
 
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::AL_Unkown_API_Function);
@@ -367,9 +366,6 @@ QString ECardApiResult::getMessage(Minor pMinor)
 			return tr("The framework or layer has not been initialized.");
 
 		case Minor::AL_Warning_Connection_Disconnected:
-			//: LABEL ALL_PLATFORMS
-			return tr("The active session has been terminated.");
-
 		case Minor::AL_Session_Terminated_Warning:
 			//: LABEL ALL_PLATFORMS
 			return tr("The active session has been terminated.");
@@ -432,7 +428,7 @@ QString ECardApiResult::getMessage(Minor pMinor)
 
 		case Minor::SAL_Cancellation_by_User:
 			//: LABEL ALL_PLATFORMS
-			return tr("The process was cancelled by the user.");
+			return tr("The process has been cancelled.");
 
 		case Minor::IL_Signature_InvalidCertificatePath:
 			//: LABEL ALL_PLATFORMS
@@ -440,7 +436,7 @@ QString ECardApiResult::getMessage(Minor pMinor)
 
 		case Minor::SAL_Invalid_Key:
 			//: LABEL ALL_PLATFORMS
-			return tr("This action cannot be performed. The online identification function of your ID card is deactivated. Please contact the authority responsible for issuing your identification document to activate the online identification function.");
+			return tr("This action cannot be performed. The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.");
 
 		case Minor::SAL_SecurityConditionNotSatisfied:
 			//: LABEL ALL_PLATFORMS

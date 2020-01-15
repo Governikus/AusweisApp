@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SettingsWidget.h"
@@ -37,20 +37,18 @@ SettingsWidget::SettingsWidget(QWidget* pParent)
 
 	connect(mUi->settingsTabWidget, &QTabWidget::currentChanged, this, &SettingsWidget::onTabChanged);
 
-	mUi->pinTab->setUseScreenKeyboard(Env::getSingleton<AppSettings>()->getGeneralSettings().isUseScreenKeyboard());
+	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	mUi->pinTab->setUseScreenKeyboard(generalSettings.isUseScreenKeyboard());
 	connect(this, &SettingsWidget::fireBackspacePressedOnApply, mUi->pinTab, &PinSettingsWidget::onBackspacePressedOnApply);
 
-#ifndef QT_NO_DEBUG
 	mDeveloperTab.reset(new DeveloperSettingsWidget());
 	mDeveloperTab->setObjectName(QStringLiteral("developerTab"));
-	mUi->settingsTabWidget->addTab(mDeveloperTab.data(), QString());
-	setDeveloperTabName();
-
 	connect(mDeveloperTab.data(), &DeveloperSettingsWidget::fireSettingsChanged, this, &SettingsWidget::onSettingsChanged);
-#endif
+	connect(&generalSettings, &GeneralSettings::fireDeveloperOptionsChanged, this, &SettingsWidget::onDeveloperOptionsChanged);
 
 	setSettingsChanged(false);
 	onUpdateApplyButtonText();
+	onDeveloperOptionsChanged();
 }
 
 
@@ -155,7 +153,7 @@ void SettingsWidget::showEvent(QShowEvent* pEvent)
 void SettingsWidget::onTabChanged(int pIndex)
 {
 	QWidget* const currentWidget = mUi->settingsTabWidget->widget(pIndex);
-	if (currentWidget != mUi->generalTab)
+	if (currentWidget != mUi->generalTab && currentWidget != mDeveloperTab.data())
 	{
 		if (mSettingsChanged)
 		{
@@ -224,11 +222,7 @@ void SettingsWidget::onApplyButtonClicked()
 			Q_EMIT changePinRequested();
 		}
 	}
-	else if (currentWidget == mUi->generalTab
-#ifndef QT_NO_DEBUG
-			|| currentWidget == mDeveloperTab.data()
-#endif
-			)
+	else if (currentWidget == mUi->generalTab || currentWidget == mDeveloperTab.data())
 	{
 		applyAppSettings();
 	}
@@ -247,12 +241,8 @@ bool SettingsWidget::isSettingsChanged()
 
 void SettingsWidget::applyAppSettings()
 {
-	// apply button clicked
 	mUi->generalTab->apply();
-#ifndef QT_NO_DEBUG
 	mDeveloperTab->apply();
-#endif
-
 	setSettingsChanged(false);
 }
 
@@ -275,12 +265,33 @@ void SettingsWidget::onSettingsChanged()
 }
 
 
+void SettingsWidget::onDeveloperOptionsChanged()
+{
+	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	const int index = mUi->settingsTabWidget->indexOf(mDeveloperTab.data());
+
+	if (generalSettings.isDeveloperOptions() && index == -1)
+	{
+		mUi->settingsTabWidget->addTab(mDeveloperTab.data(), QString());
+		setDeveloperTabName();
+		return;
+	}
+
+	if (!generalSettings.isDeveloperOptions() && index > -1)
+	{
+		if (index == mUi->settingsTabWidget->currentIndex())
+		{
+			mSettingsChanged = false;
+		}
+		mUi->settingsTabWidget->removeTab(index);
+	}
+}
+
+
 void SettingsWidget::resetSettings()
 {
 	mUi->generalTab->reset();
-#ifndef QT_NO_DEBUG
 	mDeveloperTab->reset();
-#endif
 	setSettingsChanged(false);
 }
 
@@ -312,20 +323,18 @@ void SettingsWidget::changeEvent(QEvent* pEvent)
 
 void SettingsWidget::setDeveloperTabName()
 {
-#ifndef QT_NO_DEBUG
-	mUi->settingsTabWidget->setTabText(mUi->settingsTabWidget->indexOf(mDeveloperTab.data()), tr("Developer Settings"));
-#endif
+	const int index = mUi->settingsTabWidget->indexOf(mDeveloperTab.data());
+	if (index > -1)
+	{
+		mUi->settingsTabWidget->setTabText(index, tr("Developer options"));
+	}
 }
 
 
 void SettingsWidget::onUpdateApplyButtonText()
 {
 	const QWidget* const currentWidget = mUi->settingsTabWidget->currentWidget();
-	if (currentWidget == mUi->generalTab
-#ifndef QT_NO_DEBUG
-			|| currentWidget == mDeveloperTab.data()
-#endif
-			)
+	if (currentWidget == mUi->generalTab || currentWidget == mDeveloperTab.data())
 	{
 		mUi->applyButton->setText(tr("Apply"));
 	}
@@ -348,11 +357,7 @@ void SettingsWidget::onUpdateButtonState()
 	cancelButton->setEnabled(true);
 
 	const QWidget* const currentWidget = mUi->settingsTabWidget->currentWidget();
-	if (currentWidget == mUi->generalTab
-#ifndef QT_NO_DEBUG
-			|| currentWidget == mDeveloperTab.data()
-#endif
-			)
+	if (currentWidget == mUi->generalTab || currentWidget == mDeveloperTab.data())
 	{
 		applyButton->setEnabled(mSettingsChanged);
 	}

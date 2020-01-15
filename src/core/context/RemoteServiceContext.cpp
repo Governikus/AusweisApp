@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceContext.h"
@@ -13,6 +13,7 @@ using namespace governikus;
 void RemoteServiceContext::onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler)
 {
 	connect(pHandler.data(), &ServerMessageHandler::fireCardConnectionEstablished, this, &RemoteServiceContext::fireCardConnectionEstablished);
+	connect(getRemoteServer().data(), &RemoteServer::fireConnectedChanged, this, &RemoteServiceContext::onResetMessageHandler);
 }
 
 

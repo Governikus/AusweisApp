@@ -1,24 +1,25 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
+import Governikus.FeedbackView 1.0
 import Governikus.MainView 1.0
 import Governikus.HistoryView 1.0
 import Governikus.SelfAuthenticationView 1.0
 import Governikus.IdentifyView 1.0
 import Governikus.ChangePinView 1.0
 import Governikus.ProviderView 1.0
-import Governikus.InformationView 1.0
+import Governikus.MoreView 1.0
 import Governikus.SettingsView 1.0
 import Governikus.TutorialView 1.0
+import Governikus.UpdateView 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.UiModule 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.SelfAuthModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Style 1.0
 
@@ -49,7 +50,7 @@ ApplicationWindow {
 	minimumWidth: 480
 	minimumHeight: 360
 
-	title: Qt.application.name
+	title: Qt.application.name + (plugin.developerVersion ? " - Beta - " + Qt.application.version : "")
 	color: Style.color.background
 	menuBar: TitleBar {
 		id: titleBar
@@ -57,7 +58,14 @@ ApplicationWindow {
 		onRootClicked: d.activeView = SectionPage.Views.Main
 	}
 
-	Component.onCompleted: menuBar.forceActiveFocus()
+	Component.onCompleted: {
+		if (SettingsModel.showNewUiHint) {
+			useWidgetsPopup.open()
+		}
+		else {
+			menuBar.forceActiveFocus()
+		}
+	}
 
 	onWidthChanged: d.setScaleFactor()
 	onHeightChanged: d.setScaleFactor()
@@ -73,6 +81,15 @@ ApplicationWindow {
 	}
 	onVisibilityChanged: if (visibility !== ApplicationWindow.Minimized) d.lastVisibility = visibility
 
+	function showDetachedLogView() {
+		if (d.detachedLogView === null) {
+			d.detachedLogView = detachedLogViewWindow.createObject(appWindow)
+		}
+		else {
+			d.detachedLogView.raise()
+		}
+	}
+
 	QtObject {
 		id: d
 
@@ -80,6 +97,7 @@ ApplicationWindow {
 		property int lastVisibility: ApplicationWindow.Windowed
 		readonly property int initialWidth: ApplicationModel.dpiScale * 1600
 		readonly property int initialHeight: ApplicationModel.dpiScale * 1200
+		property ApplicationWindow detachedLogView: null
 
 		function closeOpenDialogs() {
 			saveFileDialog.reject()
@@ -87,10 +105,14 @@ ApplicationWindow {
 		}
 
 		function showMainWindow() {
+			if (active) {
+				return
+			}
+
 			var currentFlags = flags
-			// Force the window to the foreground if it was minimized (not closed to tray)
+			// Force the window to the foreground if it was minimized or is behind other windows (not closed to tray)
 			if (Qt.platform.os === "windows") {
-				flags = currentFlags | Qt.WindowStaysOnTopHint
+				flags = currentFlags | Qt.WindowStaysOnTopHint | Qt.WindowTitleHint
 			}
 
 			if (d.lastVisibility === ApplicationWindow.Maximized) {
@@ -149,7 +171,7 @@ ApplicationWindow {
 		ToggleableOption {
 			//: LABEL DESKTOP_QML
 			text: qsTr("Do not show this dialog again.") + SettingsModel.translationTrigger
-			textStyle: Style.text.normal
+			textStyle: Style.text.normal_inverse
 
 			checked: !SettingsModel.remindUserToClose
 
@@ -194,6 +216,11 @@ ApplicationWindow {
 						d.activeView = SectionPage.Views.SetupAssistant
 					}
 					break
+				case UiModule.UPDATEINFORMATION:
+					if (ApplicationModel.currentWorkflow === "" && d.activeView === SectionPage.Views.Main) {
+						d.activeView = SectionPage.Views.AppUpdateInfo
+					}
+					break
 			}
 		}
 		onFireHideRequest: {
@@ -204,37 +231,31 @@ ApplicationWindow {
 	Connections {
 		target: SettingsModel
 		onFireAppUpdateDataChanged: {
-			var updateData = SettingsModel.appUpdateData
-
-			if (!updateData.valid) {
+			if (!SettingsModel.appUpdateData.valid) {
 				//: INFO DESKTOP_QML Message that the update data is invalid and can't be used.
-				ApplicationModel.showFeedback(qsTr("Unsupported version of %1.").arg(Qt.application.name))
+				ApplicationModel.showFeedback(qsTr("Failed to retrieve update information."))
 			}
-			else {
-				if (pUpdateAvailable) {
-					//: INFO DESKTOP_QML An update was found which matches the current platform, the new version number is shown in the message.
-					ApplicationModel.showFeedback(qsTr("An update is available (Version: %1).").arg(updateData.version))
-					//: INFO DESKTOP_QML An update was found. This is the caption of the download button, clicking it opens the link in the browser.
-					ApplicationModel.showFeedback("<a href=\"%1\">".arg(updateData.url) + qsTr("Download") + "</a>")
-					//: INFO DESKTOP_QML An update was found. This is the caption of the release note button, clicking it opens the note in the browser.
-					ApplicationModel.showFeedback("<a href=\"%1\">".arg(updateData.notesUrl) + qsTr("Release notes") + "</a>")
-				}
-				else {
-					//: INFO DESKTOP_QML The AA2 is up-to-date, this message is only shown if the update check is started by the user and not via the auto-update functionality.
-					ApplicationModel.showFeedback(qsTr("Current version %1 is up to date.").arg(updateData.currentVersion))
-				}
+			else if (SettingsModel.appUpdateData.updateAvailable) {
+				//: INFO DESKTOP_QML An update was found which matches the current platform, the new version number is shown in the message.
+				ApplicationModel.showFeedback(qsTr("An update is available (version %1).").arg(SettingsModel.appUpdateData.version))
 			}
 		}
-	}
-
-	Action {
-		shortcut: "Ctrl+Alt+R"
-		onTriggered: plugin.developerBuild ? plugin.doRefresh() : ""
 	}
 
 	Shortcut {
 		sequence: StandardKey.HelpContents
 		onActivated: ApplicationModel.openOnlineHelp("index")
+	}
+
+	Image {
+		visible: plugin.developerVersion && SettingsModel.showBetaTesting
+		height: 0.8 * parent.height
+		width: 0.8 * parent.width
+		anchors.centerIn: parent
+
+		opacity: 0.2
+		source: "qrc:///images/beta.svg"
+		fillMode: Image.PreserveAspectFit
 	}
 
 	Loader {
@@ -247,10 +268,11 @@ ApplicationWindow {
 			Component {IdentifyView {}}
 			Component {ChangePinView {}}
 			Component {ProviderView {}}
-			Component {InformationView {}}
+			Component {MoreView {}}
 			Component {SettingsView {}}
 			Component {HistoryView {}}
 			Component {SetupAssistantView {}}
+			Component {UpdateView { onLeaveView: d.activeView = SectionPage.Views.Main }}
 		}
 
 		Keys.onEscapePressed: {
@@ -267,7 +289,10 @@ ApplicationWindow {
 
 		anchors.fill: parent
 
-		onItemChanged: titleBar.updateActions()
+		onItemChanged: {
+			titleBar.updateActions()
+			item.setActive()
+		}
 		sourceComponent: sectionPages.get(d.activeView)
 	}
 
@@ -317,5 +342,41 @@ ApplicationWindow {
 		rotation: -Math.atan(contentLoader.height / contentLoader.width) * 180 / Math.PI
 		transformOrigin: Item.Left
 		antialiasing: true
+	}
+
+	ConfirmationPopup {
+		id: useWidgetsPopup
+
+		title: qsTr("New user interface released!") + SettingsModel.translationTrigger
+		text: qsTr("This release features a new and modern user interface. For this version of %1 (and this version only!) you may decide to switch back to the previous user interface. To do so click the Button \"%2\". It is highly recommend to use the new user interface as the old one will be removed with the next release of %3.").arg(Qt.application.name).arg(cancelButtonText).arg(Qt.application.name) + SettingsModel.translationTrigger
+		okButtonText: qsTr("Stick with new interface") + SettingsModel.translationTrigger
+		cancelButtonText: qsTr("Use old interface") + SettingsModel.translationTrigger
+
+		onClosed: SettingsModel.showNewUiHint = false
+		onCancelled: plugin.switchUi()
+	}
+
+	Component {
+		id: detachedLogViewWindow
+
+		ApplicationWindow {
+			visible: true
+			width: d.initialWidth
+			height: d.initialHeight
+			minimumHeight: appWindow.minimumHeight
+			minimumWidth: appWindow.minimumWidth
+
+			title: qsTr("%1 - Detached log viewer").arg(appWindow.title) + SettingsModel.translationTrigger
+
+			DetachedLogView {
+				anchors.fill: parent
+				focus: true
+			}
+
+			onClosing: {
+				d.detachedLogView.destroy()
+				d.detachedLogView = null
+			}
+		}
 	}
 }

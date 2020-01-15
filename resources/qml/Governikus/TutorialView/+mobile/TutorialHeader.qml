@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -57,7 +57,7 @@ Item {
 
 			font.bold: true
 			textStyle: Style.text.tutorial_title
-			layer.enabled: true
+			layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
 			layer.effect: DropShadow {
 				verticalOffset: 3
 				horizontalOffset: 3

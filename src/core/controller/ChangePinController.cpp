@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChangePinController.h"
@@ -39,7 +39,6 @@ ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pConte
 	mStateMachine.setInitialState(sStatePace);
 
 	sStatePace->addTransition(sStatePace, &CompositeStatePace::firePaceChannelEstablished, sPrepareChangePin);
-	sStatePace->addTransition(sStatePace, &CompositeStatePace::firePacePukEstablished, sStatePace);
 	sStatePace->addTransition(sStatePace, &CompositeStatePace::fireAbort, sClearPacePasswords);
 
 	sPrepareChangePin->addTransition(sPrepareChangePin, &StatePrepareChangePin::fireContinue, sChangePin);

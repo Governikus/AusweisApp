@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -58,7 +58,7 @@ SectionPage {
 		anchors.right: parent.right
 
 		spacing: Constants.pane_spacing
-		topPadding: providerRect.height
+		topPadding: (providerImage.height / 2) + (Constants.pane_padding * 2)
 
 		Rectangle {
 			id: providerRect
@@ -67,12 +67,25 @@ SectionPage {
 			anchors.left: parent.left
 			anchors.right: parent.right
 
-			color: Constants.white
+			color: Style.color.background_pane
+			border.width: Style.dimens.high_contrast_item_border
+			border.color: Style.color.high_contrast_item_border
+
+			Image {
+				id: providerImage
+
+				anchors.left: parent.left
+				anchors.leftMargin: Constants.pane_padding
+				anchors.verticalCenter: parent.top
+
+				source: "qrc:///images/npa.svg"
+				sourceSize.height: providerColumn.height
+			}
 
 			Column {
 				id: providerColumn
 
-				anchors.left: parent.left
+				anchors.left: providerImage.right
 				anchors.right: parent.right
 				anchors.margins: Constants.pane_padding
 
@@ -81,84 +94,82 @@ SectionPage {
 				spacing: Constants.pane_spacing
 
 				Item {
-					height: providerText.height
-					width: parent.width
+					height: moreButton.height
+					anchors.left: parent.left
+					anchors.right: parent.right
 
-					Image {
-						id: providerImage
+					ProviderInfoSection {
+						id: providerInfo1
 
 						anchors.left: parent.left
-						anchors.bottom: parent.bottom
-
-						source: "qrc:///images/npa.svg"
-						sourceSize.height: providerText.height * 4
-					}
-
-					GText {
-						id: providerText
-
-						anchors.left: providerImage.right
-						anchors.leftMargin: Constants.pane_spacing
-						anchors.right: parent.right
+						anchors.right: moreButton.left
+						anchors.rightMargin: Constants.component_spacing
+						anchors.top: parent.top
 
 						activeFocusOnTab: true
-						Accessible.role: Accessible.Heading
-						Accessible.name: providerText.text
 
+						image: "qrc:///images/provider/information.svg"
 						//: LABEL DESKTOP_QML
-						text: qsTr("You are about to identify yourself towards the following service provider:") + SettingsModel.translationTrigger
-						textStyle: Style.text.normal_inverse
-
-						FocusFrame {
-							border.color: Constants.black
-							dynamic: false
-						}
-					}
-				}
-
-				Item {
-					height: providerRow.height
-					width: parent.width
-
-					Row {
-						id: providerRow
-
-						spacing: Constants.component_spacing
-
-						ProviderInfoSection {
-							id: purposeInfo
-
-							activeFocusOnTab: true
-
-							image: "qrc:///images/provider/purpose.svg"
-							//: LABEL DESKTOP_QML
-							title: qsTr("Purpose for reading out requested data") + SettingsModel.translationTrigger
-							name: certificateDescriptionModel.purpose
-						}
-
-						ProviderInfoSection {
-							id: providerInfo
-
-							activeFocusOnTab: true
-
-							image: "qrc:///images/provider/information.svg"
-							//: LABEL DESKTOP_QML
-							title: qsTr("Service provider") + SettingsModel.translationTrigger
-							name: certificateDescriptionModel.subjectName
-						}
+						title: qsTr("You are about to identify yourself towards the following provider") + SettingsModel.translationTrigger
+						name: certificateDescriptionModel.subjectName
 					}
 
 					GButton {
 						id: moreButton
 
 						anchors.right: parent.right
-						anchors.bottom: parent.bottom
+						anchors.top: parent.top
 
 						activeFocusOnTab: true
+						Accessible.description: qsTr("Show more information about the service provider") + SettingsModel.translationTrigger
 
 						//: LABEL DESKTOP_QML
 						text: qsTr("more...") + SettingsModel.translationTrigger
 						onClicked: showProviderInformation(true)
+					}
+				}
+
+				Item {
+					height: purposeInfo.height
+					anchors.left: parent.left
+					anchors.right: parent.right
+
+					ProviderInfoSection {
+						id: purposeInfo
+
+						anchors.left: parent.left
+						anchors.right: confirmButton.left
+						anchors.rightMargin: Constants.component_spacing
+						activeFocusOnTab: true
+
+						image: "qrc:///images/provider/purpose.svg"
+						//: LABEL DESKTOP_QML
+						title: qsTr("Purpose for reading out requested data") + SettingsModel.translationTrigger
+						name: certificateDescriptionModel.purpose
+					}
+
+					GButton {
+						id: confirmButton
+
+						anchors.right: parent.right
+						anchors.bottom: parent.bottom
+
+						activeFocusOnTab: true
+						Accessible.name: confirmButton.text
+
+						icon.source: "qrc:///images/npa.svg"
+						//: LABEL DESKTOP_QML %1 can be "card access number (CAN)" or "PIN"
+						text: qsTr("Proceed to %1 entry").arg(
+																NumberModel.isCanAllowedMode ?
+																//: LABEL DESKTOP_QML Inserted into "Proceed to %1 entry"
+																qsTr("card access number (CAN)") :
+																//: LABEL DESKTOP_QML Inserted into "Proceed to %1 entry"
+																qsTr("PIN")
+															) + SettingsModel.translationTrigger
+						onClicked: {
+							chatModel.transferAccessRights()
+							AuthModel.continueWorkflow()
+						}
 					}
 				}
 			}
@@ -172,16 +183,13 @@ SectionPage {
 			anchors.margins: Constants.pane_padding
 
 			activeFocusOnTab: true
-			Accessible.role: Accessible.Heading
 			Accessible.name: dataIntroduction.text
 
 			//: LABEL DESKTOP_QML
-			text: qsTr("The following data will be transferred to the service provider when you enter the PIN:") + SettingsModel.translationTrigger
+			text: qsTr("The following data will be transferred to the provider when you enter the PIN:") + SettingsModel.translationTrigger
 			textStyle: Style.text.normal_inverse
 
-			FocusFrame {
-				dynamic: false
-			}
+			FocusFrame {}
 		}
 
 		Pane {
@@ -203,7 +211,6 @@ SectionPage {
 					width: parent.width
 
 					activeFocusOnTab: true
-					Accessible.role: Accessible.Section
 					Accessible.name: transactionHeading.text
 
 					//: LABEL DESKTOP_QML
@@ -211,8 +218,7 @@ SectionPage {
 					textStyle: Style.text.header_accent
 
 					FocusFrame {
-						border.color: Constants.black
-						dynamic: false
+						borderColor: Style.color.focus_indicator
 					}
 				}
 
@@ -222,15 +228,13 @@ SectionPage {
 					width: parent.width
 
 					activeFocusOnTab: true
-					Accessible.role: Accessible.Paragraph
 					Accessible.name: transactionText.text
 
 					text: AuthModel.transactionInfo
-					textStyle: Style.text.normal_inverse
+					textStyle: Style.text.normal
 
 					FocusFrame {
-						border.color: Constants.black
-						dynamic: false
+						borderColor: Style.color.focus_indicator
 					}
 				}
 			}
@@ -262,23 +266,6 @@ SectionPage {
 					title: qsTr("Optional Data") + SettingsModel.translationTrigger
 					columns: 3 - (requiredData.visible ? requiredData.columns : 0)
 					chat: chatModel.optional
-				}
-			}
-
-			GButton {
-				id: confirmButton
-
-				anchors.right: parent.right
-
-				activeFocusOnTab: true
-				Accessible.name: confirmButton.text
-
-				icon.source: "qrc:///images/npa.svg"
-				//: LABEL DESKTOP_QML %1 can be CAN or PIN
-				text: qsTr("Proceed to %1 entry").arg(NumberModel.isCanAllowedMode ? "CAN" : "PIN") + SettingsModel.translationTrigger
-				onClicked: {
-					chatModel.transferAccessRights()
-					AuthModel.continueWorkflow()
 				}
 			}
 		}

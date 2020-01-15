@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>images/npa.svg</file>
+        <file>images/beta.svg</file>
         <file>images/bg_da.png</file>
         <file>images/bt_1.svg</file>
         <file>images/bt_1b.svg</file>
@@ -25,28 +26,31 @@
         <file>images/delete.svg</file>
         <file>images/NFCPhoneCard.png</file>
         <file>images/submit.svg</file>
-        <file>images/ausweis.png</file>
+        <file>images/ausweis.svg</file>
+        <file>images/visibility.svg</file>
+        <file>images/visibility_off.svg</file>
+        <file>images/settings_icon.svg</file>
+        <file>images/main_pin.svg</file>
+        <file>images/main_provider.svg</file>
         <file>images/provider/information.svg</file>
         <file>images/provider/purpose.svg</file>
         <file>images/provider/adresse.svg</file>
         <file>images/provider/mail.svg</file>
         <file>images/provider/telefon.svg</file>
         <file>images/provider/url.svg</file>
-        <file>images/provider/gradient-citizen.png</file>
-        <file>images/provider/gradient-insurance.png</file>
-        <file>images/provider/gradient-finance.png</file>
-        <file>images/provider/gradient-other.png</file>
         <file>images/provider/categoryIcons/general.svg</file>
         <file>images/provider/categoryIcons/citizen.svg</file>
         <file>images/provider/categoryIcons/finance.svg</file>
         <file>images/provider/categoryIcons/insurance.svg</file>
         <file>images/provider/categoryIcons/other.svg</file>
+        <file alias="images/provider/categoryIcons/default_bg.svg">images/provider/categoryIcons/+android/default_bg.svg</file>
         <file alias="images/provider/categoryIcons/general_bg.svg">images/provider/categoryIcons/+android/general_bg.svg</file>
         <file>images/provider/categoryIcons/+android/general.svg</file>
         <file>images/provider/categoryIcons/+android/citizen.svg</file>
         <file>images/provider/categoryIcons/+android/finance.svg</file>
         <file>images/provider/categoryIcons/+android/insurance.svg</file>
         <file>images/provider/categoryIcons/+android/other.svg</file>
+        <file>images/provider/categoryIcons/+android/default_bg.svg</file>
         <file>images/provider/categoryIcons/+android/general_bg.svg</file>
         <file>images/provider/categoryIcons/+android/general_button.svg</file>
         <file>images/provider/categoryIcons/+android/citizen_bg.svg</file>
@@ -57,11 +61,6 @@
         <file>images/provider/categoryIcons/+android/insurance_button.svg</file>
         <file>images/provider/categoryIcons/+android/other_bg.svg</file>
         <file>images/provider/categoryIcons/+android/other_button.svg</file>
-        <file>images/provider/categoryIcons/+android/general_section.svg</file>
-        <file>images/provider/categoryIcons/+android/citizen_section.svg</file>
-        <file>images/provider/categoryIcons/+android/finance_section.svg</file>
-        <file>images/provider/categoryIcons/+android/insurance_section.svg</file>
-        <file>images/provider/categoryIcons/+android/other_section.svg</file>
         <file>updatable-files/supported-providers.json</file>
         <file>images/icon_nfc.svg</file>
         <file>images/icon_remote.svg</file>
@@ -78,9 +77,9 @@
         <file>images/phone_bluetooth.svg</file>
         <file>images/location_flag_de.svg</file>
         <file>images/location_flag_en.svg</file>
+        <file>images/link_external.svg</file>
         <file>images/siteWithLogo.png</file>
-        <file>images/icon_pair.svg</file>
-        <file>images/icon_settings.svg</file>
+        <file>images/trash_icon_all.svg</file>
         <file>images/trash_icon_white.svg</file>
         <file>images/trash_icon.svg</file>
         <file>images/icon_save.svg</file>

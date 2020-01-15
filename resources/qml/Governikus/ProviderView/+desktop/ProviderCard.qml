@@ -1,17 +1,18 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 import QtQuick.Window 2.10
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.10
+import QtGraphicalEffects 1.0
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Provider 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.View 1.0
+import Governikus.Type.ApplicationModel 1.0
 
 Item {
 	id: baseItem
@@ -23,8 +24,10 @@ Item {
 
 	Keys.onSpacePressed: mouseArea.clicked(undefined)
 	Accessible.role: Accessible.Button
-	Accessible.name: qsTr("Provider:") + " " + (!!providerModelItem ? provider.shortName : qsTr("Unknown error")) + SettingsModel.translationTrigger
-	Accessible.description: qsTr("Provider description:") + " " + (!!providerModelItem ? provider.shortDescription : qsTr("Unknown error")) + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Provider:") + " " + (!!providerModelItem ? provider.shortName :
+					 qsTr("Unknown error")) + SettingsModel.translationTrigger
+	Accessible.description: qsTr("Provider description:") + " " + (!!providerModelItem ? provider.shortDescription :
+							qsTr("Unknown error")) + SettingsModel.translationTrigger
 
 	ProviderModelItem {
 		id: provider
@@ -48,7 +51,7 @@ Item {
 			asynchronous: true
 			fillMode: Image.PreserveAspectCrop
 
-			layer.enabled: true
+			layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
 			layer.effect: OpacityMask {
 				maskSource: Item {
 					width: image.width
@@ -69,7 +72,7 @@ Item {
 			width: baseItem.width
 			height: Math.floor(baseItem.width * 0.2)
 
-			color: Constants.white
+			color: Style.color.background_pane
 
 			GText {
 				id: nameText
@@ -85,7 +88,7 @@ Item {
 
 				elide: Text.ElideRight
 				maximumLineCount: 2
-				textStyle: Style.text.normal_inverse
+				textStyle: Style.text.normal
 			}
 		}
 
@@ -94,9 +97,20 @@ Item {
 			height: Math.floor(baseItem.width * 0.08)
 
 			radius: Style.dimens.corner_radius
-			color: Category.displayColor(provider.category)
+			color: Style.currentTheme.highContrast ? Style.color.background_pane : Category.displayColor(provider.category)
 			topLeftCorner: false
 			topRightCorner: false
+
+			GSeparator {
+				anchors {
+					top: parent.top
+					left: parent.left
+					right: parent.right
+				}
+
+				height: Style.dimens.high_contrast_item_border
+				color: Style.color.high_contrast_item_border
+			}
 
 			GText {
 				id: providerText
@@ -112,9 +126,17 @@ Item {
 
 				elide: Text.ElideRight
 				maximumLineCount: 1
-				textStyle: Style.text.hint
+				textStyle: Style.text.hint_inverse
 			}
 		}
+	}
+
+	RoundedRectangle {
+		anchors.fill: column
+
+		color: Style.color.transparent
+		borderColor: Style.color.border
+		borderWidth: ApplicationModel.scaleFactor * 1
 	}
 
 	MouseArea {
@@ -127,9 +149,8 @@ Item {
 	}
 
 	FocusFrame {
-		dynamic: false
 		marginFactor: 2
 		radius: Style.dimens.corner_radius
-		border.color: Constants.black
+		borderColor: Style.color.focus_indicator
 	}
 }

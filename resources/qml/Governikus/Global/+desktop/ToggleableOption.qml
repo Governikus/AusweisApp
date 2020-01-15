@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -19,15 +19,14 @@ Item {
 	property alias text: optionText.text
 	property alias checked: optionState.checked
 
-	property TextStyle textStyle: enabled ? Style.text.normal_inverse : Style.text.normal_secondary_inverse
+	property TextStyle textStyle: enabled ? Style.text.normal : Style.text.normal_secondary
 
 	implicitHeight: layout.implicitHeight
 	implicitWidth: layout.implicitWidth
 
 	activeFocusOnTab: true
 
-	Accessible.name: root.text + " " + (checked ? qsTr("is enabled") : qsTr("is disabled")) + SettingsModel.translationTrigger
-	Accessible.description: root.text
+	Accessible.name: root.text
 	Accessible.role: Accessible.CheckBox
 
 	Keys.onSpacePressed: optionState.toggle()
@@ -59,7 +58,6 @@ Item {
 
 	FocusFrame {
 		border.color: optionText.color
-		dynamic: false
 	}
 
 	MouseArea {

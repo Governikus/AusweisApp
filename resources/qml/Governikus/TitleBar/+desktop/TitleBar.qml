@@ -1,8 +1,9 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
+import QtGraphicalEffects 1.0
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -42,47 +43,76 @@ Item {
 		}
 	}
 
-	Notifications {
-		id: notifications
-
-		anchors.right: parent.right
-		anchors.top: parent.bottom
-
-		onNewNotification: notifyButton.notify()
-	}
-
 	Rectangle
 	{
 		anchors.fill: parent
-		color: Constants.blue
+		color: Style.color.navigation
+
+		GSeparator {
+			anchors {
+				bottom: parent.bottom
+				left: parent.left
+				right: parent.right
+			}
+
+			height: Style.dimens.high_contrast_item_border
+			color: Style.color.high_contrast_item_border
+		}
 
 		FocusPoint {
 			scope: titleBar
 		}
 
-		Row {
-			id: actionRow
-
-			height: rootAction.height
+		Item {
+			height: parent.height
 			anchors.left: parent.left
-			anchors.leftMargin: Style.dimens.titlebar_padding
-			anchors.verticalCenter: parent.verticalCenter
+			anchors.right: rightTitleBarActions.left
+			anchors.rightMargin: Style.dimens.titlebar_padding
 
-			spacing: Style.dimens.titlebar_padding
+			clip: true
 
-			readonly property Item lastAction: children && children.length > 0 ? children[children.length - 1] : rootAction
+			Row {
+				id: actionRow
 
-			TitleBarAction {
-				id: rootAction
+				height: rootAction.height
+				anchors.leftMargin: Style.dimens.titlebar_padding
+				anchors.verticalCenter: parent.verticalCenter
+				anchors.left: parent.left
+				anchors.right: parent.right
 
-				activeFocusOnTab: true
+				spacing: Style.dimens.titlebar_padding
 
-				showArrow: false
-				//: LABEL DESKTOP_QML
-				text: qsTr("Start") + SettingsModel.translationTrigger
-				enabled: rightMostAction.rootEnabled
+				readonly property bool childrenFitSpace: childrenRect.width <= width
+				readonly property Item lastAction: children && children.length > 0 ? children[children.length - 1] : rootAction
 
-				onClicked: titleBar.rootClicked()
+				TitleBarAction {
+					id: rootAction
+
+					activeFocusOnTab: true
+
+					showArrow: false
+					//: LABEL DESKTOP_QML
+					text: qsTr("Start") + SettingsModel.translationTrigger
+					enabled: rightMostAction.rootEnabled
+					helpTopic: "applicationOverview"
+
+					onClicked: titleBar.rootClicked()
+				}
+			}
+		}
+
+		LinearGradient {
+			visible: !actionRow.childrenFitSpace
+			height: parent.height
+			width: Constants.pane_padding
+			anchors.right: rightTitleBarActions.left
+			anchors.rightMargin: Style.dimens.titlebar_padding
+
+			start: Qt.point(0, 0)
+			end: Qt.point(Constants.pane_padding, 0)
+			gradient: Gradient {
+				GradientStop { position: 0.0; color: Style.color.transparent }
+				GradientStop { position: 1.0; color: Constants.blue }
 			}
 		}
 
@@ -95,22 +125,22 @@ Item {
 			anchors.margins: Style.dimens.titlebar_padding
 			spacing: Style.dimens.titlebar_padding
 
-			children: [
-				rightMostAction.customSubAction,
-				settingsButton,
-				helpButton,
-				notifyButton
-			]
+			Item {
+				height: parent.height
+				width: childrenRect.width
+
+				data: rightMostAction.customSubAction
+			}
 
 			TitleBarButton {
 				id: settingsButton
 
 				height: rightTitleBarActions.height
-				source: "qrc:///images/desktop/settings_icon.svg"
+				source: "qrc:///images/settings_icon.svg"
 				visible: rightMostAction.showSettings
 
-				activeFocusOnTab: true
-				Accessible.name: qsTr("Settings") + SettingsModel.translationTrigger
+				text: qsTr("Settings") + SettingsModel.translationTrigger
+				Accessible.description: qsTr("Open settings view of %1").arg(Qt.application.name) + SettingsModel.translationTrigger
 
 				onClicked: rightMostAction.settingsHandler()
 			}
@@ -122,8 +152,8 @@ Item {
 				source: "qrc:///images/desktop/info_manual.svg"
 				visible: rightMostAction.showHelp
 
-				activeFocusOnTab: true
-				Accessible.name: qsTr("Help") + SettingsModel.translationTrigger
+				text: qsTr("Help") + SettingsModel.translationTrigger
+				Accessible.description: qsTr("Open the online help of %1").arg(Qt.application.name) + SettingsModel.translationTrigger
 
 				onClicked: ApplicationModel.openOnlineHelp(rightMostAction.helpTopic)
 			}
@@ -132,14 +162,25 @@ Item {
 				id: notifyButton
 
 				height: rightTitleBarActions.height
-				source: notifications.icon
+				source: "qrc:///images/desktop/bell.svg"
+				iconColor: notifications.iconColor
 				visible: SettingsModel.showInAppNotifications
 
-				activeFocusOnTab: true
-				Accessible.name: qsTr("Notifications") + SettingsModel.translationTrigger
+				text: qsTr("Notifications") + SettingsModel.translationTrigger
+				Accessible.description: qsTr("Show the in-app notifications of %1").arg(Qt.application.name) + SettingsModel.translationTrigger
 
 				onClicked: notifications.toggle()
 			}
 		}
+	}
+
+	Notifications {
+		id: notifications
+
+		z: -1 // Draw below the title bar, but place Notifications after the notifyButton, so that the tab order makes sense
+		anchors.right: parent.right
+		anchors.top: parent.bottom
+
+		onNewNotification: notifyButton.notify()
 	}
 }

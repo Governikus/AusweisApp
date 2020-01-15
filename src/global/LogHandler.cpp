@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogHandler.h"
@@ -41,7 +41,7 @@ LogHandler::LogHandler()
 	, mCriticalLog(false)
 	, mCriticalLogWindow(10)
 	, mCriticalLogIgnore({LOGCAT(fileprovider), LOGCAT(securestorage), LOGCAT(configuration)})
-	, mMessagePattern(QStringLiteral("%{category} %{time yyyy.MM.dd hh:mm:ss.zzz} %{threadid} %{if-debug} %{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}	 %{function}(%{file}:%{line}) %{message}"))
+	, mMessagePattern(QStringLiteral("%{category} %{time yyyy.MM.dd hh:mm:ss.zzz} %{threadid} %{if-debug} %{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif} %{function}(%{file}:%{line}) %{message}"))
 	, mDefaultMessagePattern(QStringLiteral("%{if-category}%{category}: %{endif}%{message}")) // as defined in qlogging.cpp
 	, mLogFile(getLogFileTemplate())
 	, mHandler(nullptr)
@@ -250,6 +250,11 @@ QByteArray LogHandler::formatFunction(const char* const pFunction, const QByteAr
 	const auto end = function.indexOf(')');
 	function = function.left(start) + function.mid(end + 1);
 
+	if (function.endsWith(" const"))
+	{
+		function = function.left(function.size() - 6);
+	}
+
 	// Remove the return type (if any)
 	if (function.indexOf(' ') != -1)
 	{
@@ -400,7 +405,7 @@ void LogHandler::removeOldLogfiles()
 		if (entry.fileTime(QFileDevice::FileModificationTime) < threshold)
 		{
 			const auto result = QFile::remove(entry.absoluteFilePath());
-			qDebug() << "Auto-remove old log file:" << entry.absoluteFilePath() << '|' << result;
+			qDebug() << "Auto-remove old logfile:" << entry.absoluteFilePath() << '|' << result;
 		}
 	}
 }
@@ -412,7 +417,7 @@ bool LogHandler::removeOtherLogfiles()
 	for (const auto& entry : otherLogFiles)
 	{
 		const auto result = QFile::remove(entry.absoluteFilePath());
-		qDebug() << "Remove old log file:" << entry.absoluteFilePath() << '|' << result;
+		qDebug() << "Remove old logfile:" << entry.absoluteFilePath() << '|' << result;
 	}
 
 	return !otherLogFiles.isEmpty();

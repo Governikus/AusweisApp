@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -36,14 +36,19 @@ SectionPage {
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
 		text: qsTr("Provider") + SettingsModel.translationTrigger
-		helpTopic: "providerPage"
+		helpTopic: "provider"
 
 		onClicked: {
 			d.activeView = ProviderView.SubViews.None
 		}
 
 		customSubAction: SearchBar {
+			anchors.verticalCenter: parent ? parent.verticalCenter : undefined
+
 			onDisplayTextChanged: ProviderCategoryFilterModel.searchString = displayText
+
+			//: LABEL DESKTOP_QML
+			placeholderText: qsTr("Search providers") + SettingsModel.translationTrigger
 		}
 	}
 
@@ -70,6 +75,8 @@ SectionPage {
 		id: overviewView
 
 		visible: d.activeView === ProviderView.SubViews.None
+
+		Component.onCompleted: setActive()
 
 		activeFocusOnTab: true
 

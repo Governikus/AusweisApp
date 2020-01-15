@@ -1,7 +1,7 @@
 /*!
  * \brief Provide a RemoteServer for tests
  *
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,6 +33,7 @@ class MockRemoteServer
 		virtual void setPairing(bool pEnable) override;
 		bool getPairing();
 		virtual bool isConnected() const override;
+		virtual bool isPairingConnection() const override;
 		void setConnected(bool pConnected);
 		virtual QSslCertificate getCurrentCertificate() const override;
 		virtual const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for return codes.
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardReturnCode.h"
@@ -23,7 +23,7 @@ class test_CardReturnCode
 		void check_errorCodeToMessage()
 		{
 			QCOMPARE(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER).toErrorDescription(),
-					QString("The process was cancelled by the user."));
+					QString("The process has been cancelled."));
 		}
 
 
@@ -37,7 +37,7 @@ class test_CardReturnCode
 		{
 			const ECardApiResult& result = ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
 			QCOMPARE(result.getMinor(), ECardApiResult::Minor::SAL_Cancellation_by_User);
-			QCOMPARE(result.getMessage(), QString("The process was cancelled by the user."));
+			QCOMPARE(result.getMessage(), QString("The process has been cancelled."));
 		}
 
 

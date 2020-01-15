@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ProviderConfiguration
  *
- * \copyright Copyright (c) 2014-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfiguration.h"
@@ -83,9 +83,9 @@ class test_ProviderConfiguration
 				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 				/* icon */ QString(),
 				/* image */ QString(),
-				/* tcTokenUrl */ QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf"),
+				/* tcTokenUrl */ QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml"),
 				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
-				/* subjectUrls */ QStringList({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla1")})
+				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")})
 				);
 
 			QCOMPARE(provider.getShortName().toString(), QStringLiteral("Provider 1"));
@@ -100,9 +100,9 @@ class test_ProviderConfiguration
 			QCOMPARE(provider.getPostalAddress(), QStringLiteral("Am Fallturm 9\n28359 Bremen"));
 			QVERIFY(provider.getIcon()->lookupPath().endsWith("/CategoryA_button.svg"));
 			QVERIFY(provider.getImage()->lookupPath().endsWith("/CategoryA_bg.svg"));
-			QCOMPARE(provider.getTcTokenUrl(), QUrl(QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf")));
+			QCOMPARE(provider.getTcTokenUrl(), QUrl(QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml")));
 			QCOMPARE(provider.getClientUrl(), QUrl(QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld")));
-			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla1")}));
+			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}));
 		}
 
 
@@ -231,9 +231,9 @@ class test_ProviderConfiguration
 				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 				/* icon */ QString(),
 				/* image */ QString(),
-				/* tcTokenUrl */ QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf"),
+				/* tcTokenUrl */ QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml"),
 				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
-				/* subjectUrls */ QStringList({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla1")})
+				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")})
 				);
 
 			const ProviderConfigurationInfo provider2(
@@ -249,9 +249,9 @@ class test_ProviderConfiguration
 				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 				/* icon */ QString(),
 				/* image */ QString(),
-				/* tcTokenUrl */ QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf"),
+				/* tcTokenUrl */ QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml"),
 				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
-				/* subjectUrls */ QStringList({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla1")})
+				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")})
 				);
 
 			const ProviderConfigurationInfo provider3(
@@ -267,9 +267,9 @@ class test_ProviderConfiguration
 				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 				/* icon */ QString(),
 				/* image */ QString(),
-				/* tcTokenUrl */ QStringLiteral("https://npa.allianz.de/azservice/NpaEIDService/nparef/-wnf"),
+				/* tcTokenUrl */ QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml"),
 				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
-				/* subjectUrls */ QStringList({QStringLiteral("https://npa.allianz.de/bla1"), QStringLiteral("https://npa.allianz.de/bla1")})
+				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")})
 				);
 
 			QVERIFY(provider1 == provider1);

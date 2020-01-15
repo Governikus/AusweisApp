@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisModel.h"
@@ -57,13 +57,13 @@ void DiagnosisModel::createCardReaderSection()
 {
 	mCombinedReaderSection = QSharedPointer<SectionModel>::create();
 	mPcscSection = QSharedPointer<SectionModel>::create();
-	mPcscSection->addTitleWithoutContent(tr("PC/SC information"));
+	mPcscSection->addTitleWithoutContent(tr("PC/SC driver information"));
 	mPcscSection->addItemWithoutTitle(tr("Diagnosis is running..."));
 	mCardReaderSection = QSharedPointer<SectionModel>::create();
 	mCardReaderSection->addTitleWithoutContent(tr("Card reader"));
 	mCardReaderSection->addItemWithoutTitle(tr("Diagnosis is running..."));
 	mRemoteDeviceSection = QSharedPointer<SectionModel>::create();
-	mRemoteDeviceSection->addTitleWithoutContent(tr("Paired remote devices"));
+	mRemoteDeviceSection->addTitleWithoutContent(tr("Paired smartphones"));
 	mRemoteDeviceSection->addItemWithoutTitle(tr("Diagnosis is running..."));
 }
 
@@ -207,7 +207,7 @@ QString DiagnosisModel::getAsPlaintext() const
 	for (const auto& sectionPair : qAsConst(mSections))
 	{
 		modelPlaintext << sectionPair.first;
-		modelPlaintext << sectionPair.second->getAsPlaintext(QStringLiteral("\t"));
+		modelPlaintext << sectionPair.second->getAsPlaintext();
 		modelPlaintext << endl;
 	}
 
@@ -274,7 +274,7 @@ void DiagnosisModel::onNetworkInfoChanged()
 			}
 		}
 
-		mNetworkInterfaceSection->addItem(tr("Interface: \"%1\"").arg(iface.humanReadableName()), interfaceInfos.join(QStringLiteral("\n")));
+		mNetworkInterfaceSection->addItem(iface.humanReadableName(), interfaceInfos.join(QStringLiteral("\n")));
 	}
 
 	mCombinedNetworkSection->replaceWithSections({mNetworkConnectionSection, mNetworkInterfaceSection});
@@ -448,7 +448,7 @@ void DiagnosisModel::onPcscInfoChanged()
 	mPcscSection->removeAllItems();
 
 	mPcscSection->addTitleWithoutContent(tr("PC/SC information"));
-	mPcscSection->addItemWithoutTitle(tr("Version: %1").arg(mContext->getPcscVersion()));
+	mPcscSection->addItem(tr("Version"), mContext->getPcscVersion());
 
 	QStringList pcscInfo;
 	for (const auto& info : mContext->getPcscComponents())
@@ -476,7 +476,7 @@ void DiagnosisModel::onPcscInfoChanged()
 		mPcscSection->addItem(tr("Driver"), pcscInfo.join(QStringLiteral("\n")));
 	}
 
-	mCombinedReaderSection->replaceWithSections({mCardReaderSection, mRemoteDeviceSection, mPcscSection});
+	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
 }
 
 
@@ -487,7 +487,7 @@ void DiagnosisModel::onRemoteInfosChanged()
 	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	const auto& trustedCertificates = settings.getTrustedCertificates();
 
-	mRemoteDeviceSection->addTitleWithoutContent(tr("Paired remote devices"));
+	mRemoteDeviceSection->addTitleWithoutContent(tr("Paired smartphones"));
 
 	if (trustedCertificates.isEmpty())
 	{
@@ -501,11 +501,8 @@ void DiagnosisModel::onRemoteInfosChanged()
 
 		if (!info.getFingerprint().isEmpty())
 		{
-			certInfo << tr("Certificate fingerprint: %1").arg(info.getFingerprint());
 			const QString& timestamp = LanguageLoader::getInstance().getUsedLocale().toString(info.getLastConnected(), tr("dd.MM.yyyy, hh:mm:ss"));
-			certInfo << tr("Last connection: %1").arg(timestamp);
-
-			mRemoteDeviceSection->addItem(info.getName(), certInfo.join(QStringLiteral("\n")));
+			mRemoteDeviceSection->addItem(info.getName(), tr("Last connection: %1").arg(timestamp));
 		}
 		else
 		{
@@ -513,7 +510,7 @@ void DiagnosisModel::onRemoteInfosChanged()
 		}
 	}
 
-	mCombinedReaderSection->replaceWithSections({mCardReaderSection, mRemoteDeviceSection, mPcscSection});
+	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
 }
 
 
@@ -545,7 +542,7 @@ void DiagnosisModel::onReaderInfosChanged()
 		mCardReaderSection->addItem(info.getName(), infoList.join(QStringLiteral("\n")));
 	}
 
-	mCombinedReaderSection->replaceWithSections({mCardReaderSection, mRemoteDeviceSection, mPcscSection});
+	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
 }
 
 
@@ -559,7 +556,7 @@ void DiagnosisModel::reloadContent()
 	mSections.append(qMakePair(QCoreApplication::applicationName(), createAusweisApp2Section()));
 
 	createCardReaderSection();
-	mCombinedReaderSection->replaceWithSections({mCardReaderSection, mRemoteDeviceSection, mPcscSection});
+	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
 	mSections.append(qMakePair(tr("Card reader"), mCombinedReaderSection));
 
 	createNetworkSection();

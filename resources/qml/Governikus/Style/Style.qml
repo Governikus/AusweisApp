@@ -1,13 +1,36 @@
 /*
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 pragma Singleton
 
-import QtQml 2.10
+import QtQuick 2.10
 
-QtObject {
-	property var text: TextStyles {}
-	property var color: Colors {}
-	property var dimens: Dimensions {}
+Item {
+	id: style
+
+	QtObject {
+		id: highContrastTheme
+
+		readonly property var text: TextStyles {}
+		readonly property var color: HighContrastColors {}
+		readonly property var dimens: HighContrastDimensions {}
+
+		property bool highContrast: true
+	}
+
+	QtObject {
+		id: defaultTheme
+
+		readonly property var text: TextStyles {}
+		readonly property var color: Colors {}
+		readonly property var dimens: Dimensions {}
+
+		readonly property bool highContrast: false
+	}
+
+	readonly property var currentTheme: plugin.highContrastEnabled ? highContrastTheme : defaultTheme
+	readonly property var text: currentTheme.text
+	readonly property var color: currentTheme.color
+	readonly property var dimens: currentTheme.dimens
 }

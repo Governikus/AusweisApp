@@ -1,7 +1,7 @@
 /*!
  * \brief Update data implementation for application version.
  *
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,7 +37,7 @@ class AppUpdateData
 
 		bool isValid() const;
 
-		const QDateTime getDate() const;
+		const QDateTime& getDate() const;
 		void setDate(const QDateTime& pDate);
 
 		const QString& getVersion() const;

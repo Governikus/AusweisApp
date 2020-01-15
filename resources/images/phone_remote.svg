@@ -7,7 +7,7 @@
     </g>
   </defs>
   <rect x="0" y="0" width="320" height="500" rx="20" ry="20" fill="#444445" />
-  <circle cx="160" cy="220" r="80" fill="#659ccd" />
+  <circle cx="160" cy="220" r="80" fill="#4d7aa4" />
   <path d="m40 40 h240 v360 h-240 v-360 m40,180 a80,80,0 0 0 160,0 a80,80,0 0 0 -160,0 Z" fill="#eef5fb" />
   <use xlink:href="#air" x="160" y="270" />
 </svg>

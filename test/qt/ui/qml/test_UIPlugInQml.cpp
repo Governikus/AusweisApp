@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -7,7 +7,9 @@
 #include "WebSocketHelper.h"
 
 #include <QFile>
+#include <QNetworkAccessManager>
 #include <QProcess>
+#include <QRegularExpression>
 #include <QtTest>
 
 using namespace governikus;
@@ -30,8 +32,10 @@ class test_UIPlugInQml
 
 			bool initContainedInLog = false;
 			bool initContainedAndSuccess = false;
+			bool showUiReceived = false;
+			bool noQmlWarning = true;
 			QString logData;
-			mHelper->waitForMessage([&initContainedInLog, &initContainedAndSuccess, &logData](const QJsonObject& pMessage){
+			mHelper->waitForMessage([&initContainedInLog, &initContainedAndSuccess, &showUiReceived, &noQmlWarning, &logData](const QJsonObject& pMessage){
 						if (pMessage[QLatin1String("data")].isNull())
 						{
 							return false;
@@ -41,12 +45,15 @@ class test_UIPlugInQml
 						logData = data;
 						initContainedInLog = data.contains(QLatin1String("QML engine initialization finished"));
 						initContainedAndSuccess = data.contains(QLatin1String("QML engine initialization finished with 0 warnings."));
+						showUiReceived = (data.count(QStringLiteral("/eID-Client?showui=")) == 3);
+						noQmlWarning = !data.contains(QRegularExpression(" W .*\\.qml:"));
+
 						return true;
 					});
 
 			if (pCheckDoneAndSuccessful)
 			{
-				if (initContainedAndSuccess)
+				if (initContainedAndSuccess && showUiReceived && noQmlWarning)
 				{
 					return true;
 				}
@@ -63,6 +70,7 @@ class test_UIPlugInQml
 		void initTestCase()
 		{
 			qRegisterMetaType<QProcess::ProcessState>("QProcess::ProcessState");
+			qRegisterMetaType<QNetworkReply*>("QNetworkReply*");
 		}
 
 
@@ -94,7 +102,7 @@ class test_UIPlugInQml
 			args << "--ui" << "qml";
 			args << "--ui" << "websocket";
 			args << "--port" << "0";
-			args << "-platform" << "minimal";
+			args << "-platform" << "offscreen";
 
 			mApp2.reset(new QProcess());
 			mApp2->setProgram(app);
@@ -112,11 +120,21 @@ class test_UIPlugInQml
 			QTRY_COMPARE_WITH_TIMEOUT(portInfoFile.exists(), true, PROCESS_TIMEOUT);
 			QVERIFY(portInfoFile.open(QIODevice::ReadOnly));
 
-			quint16 webSocketPort = 0;
-			QTextStream(&portInfoFile) >> webSocketPort;
-			QVERIFY(webSocketPort > 0);
+			quint16 applicationPort = 0;
+			QTextStream(&portInfoFile) >> applicationPort;
+			QVERIFY(applicationPort > 0);
 
-			mHelper.reset(new WebSocketHelper(webSocketPort));
+			const QString showUiUri = QStringLiteral("http://localhost:%1/eID-Client?showui=%2").arg(applicationPort);
+			QNetworkAccessManager accessManager;
+			QSignalSpy logSpy(&accessManager, &QNetworkAccessManager::finished);
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("IDENTIFY"))));
+			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 1, PROCESS_TIMEOUT);
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("SETTINGS"))));
+			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 2, PROCESS_TIMEOUT);
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("UPDATEINFORMATION"))));
+			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 3, PROCESS_TIMEOUT);
+
+			mHelper.reset(new WebSocketHelper(applicationPort));
 			QCOMPARE(mHelper->getState(), QAbstractSocket::SocketState::ConnectedState);
 
 			QTRY_VERIFY_WITH_TIMEOUT(isQmlEngineInitDone(false), PROCESS_TIMEOUT);

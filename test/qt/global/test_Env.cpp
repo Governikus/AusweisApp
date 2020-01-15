@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref Env
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -222,7 +222,7 @@ class TestSingleInCtor
 
 } // namespace
 
-Q_DECLARE_METATYPE(std::function<TestEmptyTmp()> )
+Q_DECLARE_METATYPE(std::function<TestEmptyTmp()>)
 
 namespace governikus
 {
@@ -312,7 +312,7 @@ class test_Env
 			QScopedPointer<AbstractTestInstance> obj(Env::create<AbstractTestInstance*>());
 			QVERIFY(obj);
 
-			const std::function<AbstractTestInstance*()> func = [](){
+			const std::function<AbstractTestInstance* ()> func = [](){
 						return nullptr;
 					};
 			Env::setCreator<AbstractTestInstance*>(func);
@@ -381,7 +381,7 @@ class test_Env
 			QVERIFY(mock == mocked);
 			QVERIFY(orig != mocked);
 
-			Env::setShared(TestSharedInstance::staticMetaObject);
+			Env::setShared(TestSharedInstance::staticMetaObject, {});
 			auto orig3 = Env::getShared<TestSharedInstance>();
 			QVERIFY(orig != orig3);
 			QCOMPARE(orig3->something(), QLatin1String("orig"));
@@ -407,7 +407,7 @@ class test_Env
 			QCOMPARE(implOrig->dummy(), QLatin1String("impl"));
 			implOrig.reset();
 
-			std::function<AbstractTestInstance*()> func = [](){
+			std::function<AbstractTestInstance* ()> func = [](){
 						class tmp
 							: public AbstractTestInstanceImpl
 						{
@@ -441,7 +441,7 @@ class test_Env
 			QCOMPARE(impl->dummy(), QLatin1String("flupp"));
 			impl.reset();
 
-			std::function<AbstractTestPodInstance*(QString)> funcString = [](const QString& pStr){
+			std::function<AbstractTestPodInstance* (QString)> funcString = [](const QString& pStr){
 						class tmp
 							: public AbstractTestPodInstance
 						{
@@ -463,7 +463,7 @@ class test_Env
 						return new tmp(pStr);
 					};
 
-			std::function<AbstractTestPodInstance*()> funcDefault = [](){
+			std::function<AbstractTestPodInstance* ()> funcDefault = [](){
 						class tmp
 							: public AbstractTestPodInstance
 						{

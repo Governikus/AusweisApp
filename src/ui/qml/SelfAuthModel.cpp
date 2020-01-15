@@ -1,10 +1,11 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfAuthModel.h"
 
 #include "context/SelfAuthContext.h"
+#include "PdfExporter.h"
 #include "SingletonHelper.h"
 
 using namespace governikus;
@@ -89,6 +90,20 @@ bool SelfAuthModel::isBasicReader()
 	}
 
 	return true;
+}
+
+
+void SelfAuthModel::exportData(const QUrl& pFilename) const
+{
+	const auto& selfdata = mContext->getSelfAuthenticationData();
+	const auto& orderedSelfData = selfdata.getOrderedSelfData();
+	if (!orderedSelfData.isEmpty())
+	{
+		const auto& dataTime = selfdata.getDateTime();
+
+		PdfExporter exporter(pFilename.toLocalFile());
+		exporter.exportSelfInfo(dataTime, orderedSelfData);
+	}
 }
 
 

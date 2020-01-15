@@ -32,6 +32,8 @@ Anwender
   - Unter Windows 10 kommt es nicht mehr zu einem Absturz
     bei Proxies mit Passwort-Authentisierung.
 
+  - Unterstützung von OS X 10.9 wurde eingestellt.
+
 
 Entwickler
 """"""""""

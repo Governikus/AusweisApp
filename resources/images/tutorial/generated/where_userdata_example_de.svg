@@ -12,7 +12,7 @@
   <use x="315" y="60" xlink:href="#descline"/>
   <use x="315" y="85" xlink:href="#descline"/>
   <use x="315" y="110" xlink:href="#descline"/>
-  <image x="150" y="50" width="196px" height="185px" xlink:href=":/images/tutorial/idcard.svg"/>
+  <image x="150" y="50" width="196px" height="185px" xlink:href=":/images/ausweis.svg"/>
   <image x="20" y="5" width="141px" height="108px" xlink:href=":/images/tutorial/identify.svg"/>
   <text x="380" y="20" class="header">Zum Beispiel</text>
   <text x="380" y="55" class="category">Name?</text>

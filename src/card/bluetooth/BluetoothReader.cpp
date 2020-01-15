@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BluetoothCard.h"
@@ -13,7 +13,6 @@
 
 #include <QDebug>
 #include <QLoggingCategory>
-#include <QSignalBlocker>
 
 Q_DECLARE_LOGGING_CATEGORY(bluetooth)
 

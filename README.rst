@@ -133,12 +133,12 @@ Für iOS wird die AusweisApp2 mittels XCode gebaut!
 ::
 
    $ cd build
-   $ cmake -DCMAKE_PREFIX_PATH=/Users/governikus/Toolchain/dist -DCMAKE_TOOLCHAIN_FILE=../AusweisApp2/cmake/iOS.toolchain.cmake -DCMAKE_BUILD_TYPE=release ../AusweisApp2 -GXcode
-   $ xcodebuild -configuration Release
-   $ xcodebuild -target ipa -configuration Release
+   $ cmake -DCMAKE_PREFIX_PATH=/Users/governikus/Toolchain/dist -DCMAKE_TOOLCHAIN_FILE=../AusweisApp2/cmake/iOS.toolchain.cmake -DCMAKE_BUILD_TYPE=MinSizeRel ../AusweisApp2 -GXcode
+   $ xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -scheme AusweisApp archive
+   $ xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .
 
 
-Im Build-Ordner befindet sich nun eine "AusweisApp2-x.y.z.ipa" Datei, welches das
+Im Build-Ordner befindet sich nun ein *.ipa und ein *.xcarchive, welches jeweils das
 signierte Bundle enthält!
 
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Class to store configuration data about available card readers.
  *
- * \copyright Copyright (c) 2015-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -49,9 +49,9 @@ class ReaderConfiguration
 		static QString getMultipleReaderIconPath();
 
 		void update();
-		const ReaderConfigurationInfo getRemoteReaderConfigurationInfo() const;
 		const QVector<ReaderConfigurationInfo>& getReaderConfigurationInfos() const;
-		const QVector<ReaderConfigurationInfo> getSupportedReaderConfigurationInfos() const;
+		QVector<ReaderConfigurationInfo> getSupportedReaderConfigurationInfos() const;
+		QVector<ReaderConfigurationInfo> getVirtualReaderConfigurationInfos() const;
 
 		ReaderConfigurationInfo getReaderConfigurationInfoById(const UsbId& pId) const;
 

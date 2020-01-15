@@ -2,20 +2,17 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="90px" height="90px" viewBox="0 0 1700 1700">
   <defs>
     <radialGradient id="verlauf">
-      <stop offset="0%" stop-color="white" />
-      <stop offset="100%" stop-color="#659bcd" />
+      <stop offset="0%" stop-color="#c5d9ec" />
+      <stop offset="100%" stop-color="#4d7aa4" />
     </radialGradient>
   </defs>
   <rect x="0" y="0" rx="350" ry="350" width="1700" height="1700" fill="url(#verlauf)" />
-  <path d="M 0 1350 a 350 350 0 0 0 350 350 h 1000 a 350 350 0 0 0 350 -350 v -600 c 0 0 -850 300 -1700 0 z" fill="#3383cd" />
-  <g transform="translate(85,85) scale(0.9,0.9)">
-    <circle cx="375" cy="337.5" r="100" fill="#1c8d94" />
-    <rect x="600" y="302.5" width="800" height="75" fill="#1c8d94" />
-    <circle cx="375" cy="667.5" r="100" fill="#5455a0" />
-    <rect x="600" y="642.5" width="800" height="75" fill="#5455a0" />
-    <circle cx="375" cy="1007.5" r="100" fill="#eac75a" />
-    <rect x="600" y="982.5" width="800" height="75" fill="#eac75a" />
-    <circle cx="375" cy="1347.5" r="100" fill="#b62d7c" />
-    <rect x="600" y="1322.5" width="800" height="75" fill="#b62d7c" />
+  <path d="M 0 1350 a 350 350 0 0 0 350 350 h 1000 a 350 350 0 0 0 350 -350 v -600 c 0 0 -850 300 -1700 0 z" fill="#4d7aa4" />
+  <g transform="translate(-120,-220) scale(1.8,1.8)" fill="#ffffff">
+    <path d="M 210 432 c0 -11 8 -26 18 -34 22 -18 293 -128 317 -128 24 0 295 110 318 128 9 8 17 23 17 34 0 17 -16 18 -335 18 -319 0 -335 -1 -335 -18 Z
+           M 320 445 H 770 V 840 a 50 50 0 0 1 -50 50 L 370 890 a 50 50 0 0 1 -50 -50 Z
+           M 546.5 505 a 168.33 168.33 0 0 0 0 336.66 a 168.33 168.33 0 0 0 0 -336.66 z
+           M 546.5 564.58 a 108.75 108.75 0 0 1 0 217.5 a 108.75 108.75 0 0 1 0 -217.5 z
+           M 530.875 470 h 31.25 v 410 h -31.25 z" />
   </g>
 </svg>

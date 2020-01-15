@@ -1,7 +1,7 @@
 /*!
- * \brief Handler for messages on the server side of a remote reader scenario.
+ * \brief Handler for messages on the server side of a smartphone as card reader (SaC) scenario.
  *
- * \copyright Copyright (c) 2017-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

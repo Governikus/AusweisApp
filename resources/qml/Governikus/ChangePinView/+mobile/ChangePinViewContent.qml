@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
@@ -50,7 +50,6 @@ Item {
 
 		//: LABEL ANDROID IOS
 		text: qsTr("You have the opportunity to change your transport PIN into a personal PIN. You can also change the PIN at any time or unblock the PIN using the personal unblocking key (PUK). The transport PIN and the PUK can be found in the letter sent to you by your competent authority.") + SettingsModel.translationTrigger
-		textStyle: Style.text.normal
 
 		horizontalAlignment: Text.AlignHCenter
 		width: Math.min(parent.width - 2 * Constants.pane_padding, Style.dimens.max_text_width)

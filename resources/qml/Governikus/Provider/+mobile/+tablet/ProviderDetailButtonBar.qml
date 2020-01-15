@@ -1,10 +1,11 @@
 /*
- * \copyright Copyright (c) 2016-2019 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.10
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.Type.SettingsModel 1.0
 
 
@@ -19,16 +20,31 @@ Item {
 	property string address: ""
 	property color titleBarColor
 
-	Image {
-		id: icon
-		source: baseItem.providerIcon
-		asynchronous: true
+	Rectangle {
+		id: iconContainer
+
 		height: 2 * baseItem.height
 		width: height
-		fillMode: Image.PreserveAspectFit
+
 		anchors.left: parent.left
 		anchors.leftMargin: Constants.component_spacing
 		anchors.verticalCenter: baseItem.top
+
+		radius: Style.dimens.corner_radius
+		color: Constants.white
+		border.color: Style.color.border
+		border.width: Style.dimens.separator_size
+
+		Image {
+			id: icon
+
+			anchors.fill: parent
+			anchors.margins: iconContainer.radius / 2
+
+			source: baseItem.providerIcon
+			asynchronous: true
+			fillMode: Image.PreserveAspectFit
+		}
 	}
 
 	GButton {
@@ -36,10 +52,9 @@ Item {
 		//: LABEL ANDROID_TABLET IOS_TABLET
 		text: qsTr("ONLINE APPLICATION") + SettingsModel.translationTrigger
 		buttonColor: baseItem.titleBarColor
-		maxWidth: parent.width - icon.width - 3 * Constants.component_spacing
-		anchors.left: icon.right
+		anchors.left: iconContainer.right
 		anchors.leftMargin: Constants.component_spacing
-		anchors.bottom: icon.bottom
+		anchors.bottom: iconContainer.bottom
 		enabled: baseItem.address !== ""
 
 		onClicked: {
