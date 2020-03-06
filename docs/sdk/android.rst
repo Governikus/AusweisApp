@@ -41,12 +41,12 @@ The following listing shows the required **jcenter** in **build.gradle**.
 The integrated AusweisApp2 will be fetched automatically as a dependency by
 your **app/build.gradle** file.
 It is recommended to always use the latest version by **1.+** of AusweisApp2.
-But you are free to add a concrete version like **1.16.0**.
+But you are free to add a concrete version like **1.20.0**.
 
 .. code-block:: groovy
 
   dependencies {
-      implementation 'com.governikus:ausweisapp:1.16.+'
+      implementation 'com.governikus:ausweisapp:1.20.+'
   }
 
 
