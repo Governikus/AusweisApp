@@ -269,6 +269,13 @@ ELSEIF(ANDROID)
 ELSEIF(UNIX)
 	IF(BUILD_SHARED_LIBS)
 		SET(CMAKE_INSTALL_RPATH "\$ORIGIN")
+		INSTALL(TARGETS AusweisAppActivation AusweisAppActivationCustomScheme AusweisAppActivationIntent
+			AusweisAppActivationInternal AusweisAppActivationWebservice AusweisAppCard AusweisAppCardDrivers
+        	AusweisAppCardPcsc AusweisAppConfiguration AusweisAppCore AusweisAppExport AusweisAppFileProvider
+        	AusweisAppGlobal AusweisAppInit AusweisAppNetwork AusweisAppRemoteDevice AusweisAppSecureStorage
+        	AusweisAppServices AusweisAppSettings AusweisAppUi AusweisAppUiAidl AusweisAppUiCommon
+        	AusweisAppUiJson AusweisAppUiQml AusweisAppUiWebsocket AusweisAppUiWidget AusweisAppWhitelistClient
+        	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} OPTIONAL)
 	ENDIF()
 
 	SET(DEFAULT_FILE_DESTINATION ${CMAKE_INSTALL_DATADIR}/${VENDOR}/AusweisApp2)
