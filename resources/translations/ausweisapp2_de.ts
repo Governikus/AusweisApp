@@ -472,9 +472,9 @@ INFO ANDROID IOS Generic progress message during PIN change process.</extracomme
         <translation>Bitte den Ausweis nicht bewegen...</translation>
     </message>
     <message>
-        <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
+        <source>The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.</source>
         <extracomment>INFO ANDROID IOS The card communcation was aborted, the online identification functionality is deactivated and needs to be actived by the authorities.</extracomment>
-        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an Ihre zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
         <source>Please observe the display of your card reader.</source>
