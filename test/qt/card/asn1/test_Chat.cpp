@@ -26,7 +26,6 @@ class test_CHAT
 		return chat->encode().toHex().toUpper();
 	}
 
-
 	private Q_SLOTS:
 		void createEmpty()
 		{

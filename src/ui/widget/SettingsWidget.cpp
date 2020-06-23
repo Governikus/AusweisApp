@@ -208,7 +208,7 @@ void SettingsWidget::onApplyButtonClicked()
 	const QWidget* const currentWidget = mUi->settingsTabWidget->currentWidget();
 	if (currentWidget == mUi->pinTab)
 	{
-		if (mWorkflowRunning == true)
+		if (mWorkflowRunning)
 		{
 			mUi->pinTab->continueWorkflow();
 		}
@@ -249,7 +249,7 @@ void SettingsWidget::applyAppSettings()
 
 void SettingsWidget::onCancelButtonClicked()
 {
-	if (mWorkflowRunning == true)
+	if (mWorkflowRunning)
 	{
 		mUi->pinTab->cancelWorkflow();
 	}

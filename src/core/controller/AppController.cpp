@@ -108,10 +108,8 @@ AppController::AppController()
 
 	ResourceLoader::getInstance().init();
 
-#ifndef QT_NO_NETWORKPROXY
 	NetworkManager::setApplicationProxyFactory();
 	connect(Env::getSingleton<NetworkManager>(), &NetworkManager::fireProxyAuthenticationRequired, this, &AppController::fireProxyAuthenticationRequired);
-#endif
 
 	connect(this, &AppController::fireShutdown, Env::getSingleton<NetworkManager>(), &NetworkManager::onShutdown, Qt::QueuedConnection);
 }
@@ -506,10 +504,7 @@ void AppController::onUiPlugin(UIPlugIn* pPlugin)
 	connect(this, &AppController::fireApplicationActivated, pPlugin, &UIPlugIn::fireApplicationActivated);
 	connect(this, &AppController::fireUiDomination, pPlugin, &UIPlugIn::onUiDomination);
 	connect(this, &AppController::fireUiDominationReleased, pPlugin, &UIPlugIn::onUiDominationReleased);
-
-#ifndef QT_NO_NETWORKPROXY
 	connect(this, &AppController::fireProxyAuthenticationRequired, pPlugin, &UIPlugIn::onProxyAuthenticationRequired);
-#endif
 
 	connect(pPlugin, &UIPlugIn::fireChangePinRequest, this, &AppController::onChangePinRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireSelfAuthenticationRequested, this, &AppController::onSelfAuthenticationRequested, Qt::QueuedConnection);

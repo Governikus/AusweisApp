@@ -48,7 +48,6 @@ class InputAPDUInfo
 			mAcceptableStatusCodes += pStatusCodeAsHex;
 		}
 
-
 	private:
 		QByteArray mInputApdu;
 		QByteArrayList mAcceptableStatusCodes;

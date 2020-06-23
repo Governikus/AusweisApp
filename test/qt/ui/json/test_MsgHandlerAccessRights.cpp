@@ -52,7 +52,6 @@ class test_MsgHandlerAccessRights
 		return aux;
 	}
 
-
 	private Q_SLOTS:
 		void nonExistingTransactionInfo()
 		{

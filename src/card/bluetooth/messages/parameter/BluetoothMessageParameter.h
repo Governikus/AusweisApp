@@ -50,7 +50,6 @@ class BluetoothMessageParameter
 			return false;
 		}
 
-
 	public:
 		BluetoothMessageParameter(BluetoothParamId pParamId, const QByteArray& pValue);
 		virtual ~BluetoothMessageParameter();

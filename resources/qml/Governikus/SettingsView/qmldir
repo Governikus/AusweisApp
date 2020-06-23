@@ -8,6 +8,8 @@ internal DebugSettings DebugSettings.qml
 internal SecurityAndPrivacySettings SecurityAndPrivacySettings.qml
 internal SettingsEntry SettingsEntry.qml
 internal LanguageSelectionPopup LanguageSelectionPopup.qml
+internal ScreenOrientationSelectionPopup ScreenOrientationSelectionPopup.qml
+internal ConnectSacView ConnectSacView.qml
 
 CardReaderView 1.0 CardReaderView.qml
 RemoteReaderView 1.0 RemoteReaderView.qml

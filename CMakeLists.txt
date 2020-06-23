@@ -40,7 +40,7 @@ IF(APPLE AND NOT IOS)
 	SET(CMAKE_OSX_DEPLOYMENT_TARGET 10.12 CACHE STRING "Required macOS version")
 ENDIF()
 
-PROJECT(AusweisApp2 VERSION 1.20.0 LANGUAGES ${LANGUAGES})
+PROJECT(AusweisApp2 VERSION 1.20.1 LANGUAGES ${LANGUAGES})
 
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it
@@ -67,6 +67,8 @@ IF(NOT VENDOR)
 	IF(EXISTS "${VENDOR_FILE}")
 		FILE(READ "${VENDOR_FILE}" VENDOR)
 		STRING(STRIP "${VENDOR}" VENDOR)
+	ELSEIF(LINUX OR BSD)
+		SET(VENDOR "") # Qt uses Organization for pathes
 	ELSE()
 		SET(VENDOR AusweisApp2_CE) # CommunityEdition
 	ENDIF()
@@ -136,7 +138,7 @@ IF(tools.only)
 	RETURN()
 ENDIF()
 
-IF("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
+IF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 	INCLUDE(CTest)
 	CONFIGURE_FILE("${CMAKE_DIR}/CTestCustom.cmake.in" "${CMAKE_BINARY_DIR}/CTestCustom.cmake" @ONLY)
 	CONFIGURE_FILE("${RESOURCES_DIR}/sonar-project.properties.in" "${CMAKE_BINARY_DIR}/sonar-project.properties" @ONLY)

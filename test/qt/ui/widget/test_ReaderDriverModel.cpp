@@ -61,7 +61,6 @@ class test_ReaderDriverModel
 			Env::set(ReaderManager::staticMetaObject, &mMockReaderManager);
 		}
 
-
 	private:
 		QScopedPointer<MockReaderConfiguration> mMockReaderConfiguration;
 

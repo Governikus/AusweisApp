@@ -57,6 +57,7 @@ Item {
 		target: ChangePinModel
 
 		onFireNewContextSet: {
+			pinProgressView.wasNewPin = false
 			navBar.lockedAndHidden = true
 			navBar.state = "pin"
 			navBar.currentIndex = 3

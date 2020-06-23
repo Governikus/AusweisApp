@@ -21,7 +21,7 @@ Item {
 
 	property bool settingsPushed: remoteServiceSettings.visible
 	property bool wifiEnabled: ApplicationModel.wifiEnabled
-	property bool foundSelectedReader: ApplicationModel.foundSelectedReader
+	property bool foundSelectedReader: ApplicationModel.availableReader > 0
 
 	Connections {
 		target: ApplicationModel
@@ -62,13 +62,13 @@ Item {
 			SettingsModel.translationTrigger
 
 			if (!wifiEnabled) {
-				//: LABEL DESKTOP_QML
-				return qsTr("Enable Wifi");
+				//: LABEL ANDROID IOS
+				return qsTr("Enable WiFi");
 			} else if (!foundSelectedReader) {
-				//: LABEL DESKTOP_QML
+				//: LABEL ANDROID IOS
 				return qsTr("Pair device");
 			} else {
-				//: LABEL DESKTOP_QML
+				//: LABEL ANDROID IOS
 				return qsTr("Continue")
 			}
 		}
@@ -84,7 +84,7 @@ Item {
 			SettingsModel.translationTrigger
 
 			if (!wifiEnabled) {
-				//: INFO ANDROID IOS The wifi module needs to be enabled in the system settings to use the remote service.
+				//: INFO ANDROID IOS The WiFi module needs to be enabled in the system settings to use the remote service.
 				return qsTr("To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.");
 			} else if (!foundSelectedReader) {
 				//: INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.
@@ -95,9 +95,9 @@ Item {
 		}
 
 		titleText: (foundSelectedReader ?
-			//: LABEL DESKTOP_QML
+			//: LABEL ANDROID IOS
 			qsTr("Determine card") :
-			//: LABEL DESKTOP_QML
+			//: LABEL ANDROID IOS
 			qsTr("Establish connection")
 		) + SettingsModel.translationTrigger
 

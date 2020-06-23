@@ -25,7 +25,7 @@ class CertificateDescriptionModel
 	Q_PROPERTY(QString subjectName READ getSubjectName NOTIFY fireChanged)
 	Q_PROPERTY(QString purpose READ getPurpose NOTIFY fireChanged)
 
-	QVector<QPair<QString, QString> > mData;
+	QVector<QPair<QString, QString>> mData;
 	QSharedPointer<AuthContext> mContext;
 
 	inline QSharedPointer<const CertificateDescription> getCertificateDescription() const;

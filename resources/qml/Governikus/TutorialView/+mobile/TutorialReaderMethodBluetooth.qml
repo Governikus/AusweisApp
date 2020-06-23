@@ -49,6 +49,47 @@ SectionPage {
 				width: parent.width
 				spacing: Constants.component_spacing
 
+				Rectangle {
+					width: parent.width * 0.95
+					height: deprecationWarning.height
+					anchors.horizontalCenter: parent.horizontalCenter
+
+					border.width: 3
+					border.color: Constants.red
+
+					Column {
+						id: deprecationWarning
+
+						width: parent.width
+
+						padding: Constants.pane_padding
+						spacing: Constants.pane_spacing
+
+						GText {
+							width: parent.width - 2 * parent.padding
+
+							Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+							Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+							color: Constants.red
+							text: qsTr("Deprecation warning") + SettingsModel.translationTrigger
+							textStyle: Style.text.tutorial_header_secondary
+							font.bold: true
+						}
+
+						GText {
+							width: parent.width - 2 * parent.padding
+
+							Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+							Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+							color: Constants.red
+							text: qsTr("Bluetooth support will be removed in the next version of %1!").arg(Qt.application.name) + SettingsModel.translationTrigger
+							textStyle: Style.text.tutorial_content // Style.text.tutorial_header_secondary
+						}
+					}
+				}
+
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.9
@@ -493,7 +534,7 @@ SectionPage {
 						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 						//: LABEL ANDROID IOS
-						text: qsTr("6 digits long PIN") + SettingsModel.translationTrigger
+						text: qsTr("six digits long PIN") + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_header
 						font.bold: true
 						horizontalAlignment: Text.AlignHCenter
@@ -545,7 +586,7 @@ SectionPage {
 						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 						//: LABEL ANDROID IOS
-						text: qsTr("This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.") + SettingsModel.translationTrigger
+						text: qsTr("This is only possible if you have exchanged the five digits long Transport PIN with a six digits long personal PIN beforehand.") + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_content
 						font.bold: true
 						horizontalAlignment: Text.AlignLeft

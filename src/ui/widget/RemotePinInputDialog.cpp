@@ -75,6 +75,6 @@ void RemotePinInputDialog::onOkClicked()
 	}
 	else
 	{
-		QToolTip::showText(mUi->pinEntryLine->mapToGlobal(QPoint(0, 0)), tr("A pairing code has to be 4 digits long."), mUi->pinEntryLine, QRect(), 3000);
+		QToolTip::showText(mUi->pinEntryLine->mapToGlobal(QPoint(0, 0)), tr("A pairing code has to be four digits long."), mUi->pinEntryLine, QRect(), 3000);
 	}
 }

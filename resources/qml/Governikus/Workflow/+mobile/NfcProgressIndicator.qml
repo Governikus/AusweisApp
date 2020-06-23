@@ -53,11 +53,11 @@ Item {
 			PropertyChanges { target: grayLevel; visible: false }
 			PropertyChanges {
 				target: card
-				x: (baseItem.width + (Constants.is_layout_ios ? 0 : phone.width) - card.width) / 2
+				x: (baseItem.width - (Constants.is_layout_ios ? card.width : card.height)) / 2
 				y: (Constants.is_layout_ios ? 0 : baseItem.height / 4)
-				rotation: (Constants.is_layout_ios ? 0 : 62)
+				rotation: (Constants.is_layout_ios ? 0 : 90)
 			}
-			PropertyChanges { target: shaking; running: true }
+			PropertyChanges { target: shaking; running: false }
 		}
 	]
 
@@ -67,7 +67,7 @@ Item {
 			SequentialAnimation
 			{
 				PauseAnimation { duration: 500 }
-				PropertyAnimation{ targets: card; properties: "x,y,rotation"; duration: 500; easing.type: Easing.OutQuad }
+				PropertyAnimation{ targets: card; properties: "x,y,rotation"; duration: Constants.is_layout_ios ? 500 : 2000; easing.type: Easing.OutQuad }
 				PropertyAnimation{ targets: phone; property: "x"; duration: 500; easing.type: Easing.OutQuart }
 				PropertyAction { target: shaking; property: "running" }
 			}

@@ -51,11 +51,11 @@ class test_transmit
 
 			QCOMPARE(inputApdusInfos[0].getAcceptableStatusCodes(), QByteArrayList());
 			QCOMPARE(inputApdusInfos[1].getAcceptableStatusCodes(), QByteArrayList());
-			QCOMPARE(inputApdusInfos[2].getAcceptableStatusCodes(), QByteArrayList {"9000"});
-			QCOMPARE(inputApdusInfos[3].getAcceptableStatusCodes(), QByteArrayList {"9001"});
+			QCOMPARE(inputApdusInfos[2].getAcceptableStatusCodes(), QByteArrayList{"9000"});
+			QCOMPARE(inputApdusInfos[3].getAcceptableStatusCodes(), QByteArrayList{"9001"});
 			QCOMPARE(inputApdusInfos[4].getAcceptableStatusCodes(), QByteArrayList());
-			QCOMPARE(inputApdusInfos[5].getAcceptableStatusCodes(), QByteArrayList {"9002"});
-			QCOMPARE(inputApdusInfos[6].getAcceptableStatusCodes(), QByteArrayList {"9003"});
+			QCOMPARE(inputApdusInfos[5].getAcceptableStatusCodes(), QByteArrayList{"9002"});
+			QCOMPARE(inputApdusInfos[6].getAcceptableStatusCodes(), QByteArrayList{"9003"});
 		}
 
 
@@ -88,11 +88,11 @@ class test_transmit
 
 			QCOMPARE(inputApdusInfos[0].getAcceptableStatusCodes(), QByteArrayList());
 			QCOMPARE(inputApdusInfos[1].getAcceptableStatusCodes(), QByteArrayList());
-			QCOMPARE(inputApdusInfos[2].getAcceptableStatusCodes(), QByteArrayList {"9000"});
-			QCOMPARE(inputApdusInfos[3].getAcceptableStatusCodes(), QByteArrayList {"9001"});
+			QCOMPARE(inputApdusInfos[2].getAcceptableStatusCodes(), QByteArrayList{"9000"});
+			QCOMPARE(inputApdusInfos[3].getAcceptableStatusCodes(), QByteArrayList{"9001"});
 			QCOMPARE(inputApdusInfos[4].getAcceptableStatusCodes(), QByteArrayList());
-			QCOMPARE(inputApdusInfos[5].getAcceptableStatusCodes(), QByteArrayList {"9002"});
-			QCOMPARE(inputApdusInfos[6].getAcceptableStatusCodes(), QByteArrayList {"9003"});
+			QCOMPARE(inputApdusInfos[5].getAcceptableStatusCodes(), QByteArrayList{"9002"});
+			QCOMPARE(inputApdusInfos[6].getAcceptableStatusCodes(), QByteArrayList{"9003"});
 		}
 
 

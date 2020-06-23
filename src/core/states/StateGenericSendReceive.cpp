@@ -98,7 +98,8 @@ void StateGenericSendReceive::onSslErrors(const QList<QSslError>& pErrors)
 	if (TlsChecker::containsFatalError(mReply, pErrors))
 	{
 		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
-		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
+		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+				});
 		Q_EMIT fireAbort();
 	}
 }
@@ -122,13 +123,17 @@ void StateGenericSendReceive::onSslHandshakeDone()
 			case GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length:
 			case GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length:
 			{
-				const auto& issuerName = TlsChecker::getCertificateIssuerName(cfg.peerCertificate());
-				updateStatus(GlobalStatus(statusCode, issuerName));
+				const GlobalStatus::ExternalInfoMap infoMap {
+					{GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(cfg.peerCertificate())},
+					{GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+				};
+				updateStatus({statusCode, infoMap});
 				break;
 			}
 
 			default:
-				updateStatus(statusCode);
+				updateStatus({statusCode, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+						});
 				break;
 		}
 		abort = true;
@@ -149,7 +154,8 @@ void StateGenericSendReceive::onSslHandshakeDone()
 			else
 			{
 				qCCritical(network) << sessionFailedError;
-				updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
+				updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+						});
 				abort = true;
 			}
 		}
@@ -289,7 +295,8 @@ void StateGenericSendReceive::onReplyFinished()
 	if (statusCode >= 500)
 	{
 		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server);
-		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server);
+		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}
+				});
 		Q_EMIT fireAbort();
 		return;
 	}
@@ -297,7 +304,8 @@ void StateGenericSendReceive::onReplyFinished()
 	if (statusCode >= 400)
 	{
 		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer);
-		updateStatus(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer);
+		updateStatus({GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}
+				});
 		Q_EMIT fireAbort();
 		return;
 	}
@@ -320,13 +328,15 @@ void StateGenericSendReceive::onReplyFinished()
 		if (paosHandler.getDetectedPaosType() == PaosType::UNKNOWN)
 		{
 			qCCritical(network) << "The program received an unknown message from the server.";
-			updateStatus(GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer);
+			updateStatus({GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}
+					});
 			Q_EMIT fireAbort();
 		}
 		else
 		{
 			qCCritical(network) << "The program received an unexpected message from the server.";
-			updateStatus(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer);
+			updateStatus({GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}
+					});
 			Q_EMIT fireAbort();
 		}
 		return;

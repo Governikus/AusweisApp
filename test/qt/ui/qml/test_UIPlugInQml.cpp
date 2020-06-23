@@ -21,50 +21,59 @@ class test_UIPlugInQml
 	Q_OBJECT
 
 	private:
-		static const int PROCESS_TIMEOUT = 75000;
+		static const int PROCESS_TIMEOUT = 15000;
 
 		QScopedPointer<QProcess> mApp2;
 		QScopedPointer<WebSocketHelper> mHelper;
 
-		bool isQmlEngineInitDone(const bool pCheckDoneAndSuccessful)
+		QString getLogData()
 		{
-			mHelper->sendMessage(QStringLiteral("{\"cmd\": \"GET_LOG\"}"));
-
-			bool initContainedInLog = false;
-			bool initContainedAndSuccess = false;
-			bool showUiReceived = false;
-			bool noQmlWarning = true;
 			QString logData;
-			mHelper->waitForMessage([&initContainedInLog, &initContainedAndSuccess, &showUiReceived, &noQmlWarning, &logData](const QJsonObject& pMessage){
-						if (pMessage[QLatin1String("data")].isNull())
+			mHelper->sendMessage(QStringLiteral("{\"cmd\": \"GET_LOG\"}"));
+			mHelper->waitForMessage([&logData](const QJsonObject& pMessage){
+						if (pMessage["msg"] != "LOG")
 						{
 							return false;
 						}
 
-						const QString& data = pMessage[QLatin1String("data")].toString();
-						logData = data;
-						initContainedInLog = data.contains(QLatin1String("QML engine initialization finished"));
-						initContainedAndSuccess = data.contains(QLatin1String("QML engine initialization finished with 0 warnings."));
-						showUiReceived = (data.count(QStringLiteral("/eID-Client?showui=")) == 3);
-						noQmlWarning = !data.contains(QRegularExpression(" W .*\\.qml:"));
+						auto jsonData = pMessage[QLatin1String("data")];
+						if (!jsonData.isNull())
+						{
+							logData = jsonData.toString();
+						}
 
 						return true;
 					});
-
-			if (pCheckDoneAndSuccessful)
-			{
-				if (initContainedAndSuccess && showUiReceived && noQmlWarning)
-				{
-					return true;
-				}
-
-				qDebug().noquote() << "Error output from AusweisApp2 process:\n" << logData;
-				return false;
-			}
-
-			return initContainedInLog;
+			return logData;
 		}
 
+
+		bool isQmlEngineInitDone()
+		{
+			return getLogData().contains(QStringLiteral("QML engine initialization finished"));
+		}
+
+
+		bool isQmlEngineInitSuccess()
+		{
+			const QString logData = getLogData();
+
+			bool initContainedAndSuccess = logData.contains(QLatin1String("QML engine initialization finished with 0 warnings."));
+			bool noQmlWarning = !logData.contains(QRegularExpression(" W .*\\.qml:"));
+
+			bool success = initContainedAndSuccess && noQmlWarning;
+			if (!success)
+			{
+				qDebug().noquote() << "Error output from AusweisApp2 process:\n" << logData;
+			}
+			return success;
+		}
+
+
+		bool isShowUiInLog(const QString& showUi)
+		{
+			return getLogData().contains(QStringLiteral(" \"GET\" | QUrl(\"/eID-Client?showui=%1\")").arg(showUi));
+		}
 
 	private Q_SLOTS:
 		void initTestCase()
@@ -82,8 +91,11 @@ class test_UIPlugInQml
 			QTest::newRow("Android Tablet") << QString("mobile,android,tablet");
 			QTest::newRow("iOS") << QString("mobile,ios,phone");
 			QTest::newRow("iOS Tablet") << QString("mobile,ios,tablet");
-			QTest::newRow("macOS") << QString("desktop,mac");
+#ifdef Q_OS_WIN
 			QTest::newRow("Windows") << QString("desktop,win");
+#else
+			QTest::newRow("macOS") << QString("desktop,nowin");
+#endif
 		}
 
 
@@ -124,21 +136,30 @@ class test_UIPlugInQml
 			QTextStream(&portInfoFile) >> applicationPort;
 			QVERIFY(applicationPort > 0);
 
+			mHelper.reset(new WebSocketHelper(applicationPort));
+			QTRY_VERIFY_WITH_TIMEOUT(mHelper->isConnected(), PROCESS_TIMEOUT);
+
+			QTRY_VERIFY_WITH_TIMEOUT(!getLogData().isEmpty(), PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(isQmlEngineInitDone(), PROCESS_TIMEOUT);
+			QVERIFY(isQmlEngineInitSuccess());
+
 			const QString showUiUri = QStringLiteral("http://localhost:%1/eID-Client?showui=%2").arg(applicationPort);
 			QNetworkAccessManager accessManager;
 			QSignalSpy logSpy(&accessManager, &QNetworkAccessManager::finished);
+
 			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("IDENTIFY"))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 1, PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("IDENTIFY")), PROCESS_TIMEOUT);
+
 			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("SETTINGS"))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 2, PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("SETTINGS")), PROCESS_TIMEOUT);
+
 			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("UPDATEINFORMATION"))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 3, PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("UPDATEINFORMATION")), PROCESS_TIMEOUT);
 
-			mHelper.reset(new WebSocketHelper(applicationPort));
-			QCOMPARE(mHelper->getState(), QAbstractSocket::SocketState::ConnectedState);
-
-			QTRY_VERIFY_WITH_TIMEOUT(isQmlEngineInitDone(false), PROCESS_TIMEOUT);
-			QVERIFY(isQmlEngineInitDone(true));
+			QVERIFY(isQmlEngineInitSuccess());
 		}
 
 

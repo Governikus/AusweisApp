@@ -15,4 +15,20 @@ TestCase {
 			", parent);
 		item.destroy();
 	}
+
+	function test_load_FocusFrame() {
+		var item = createTemporaryQmlObject("
+			import Governikus.View 1.0;
+			FocusFrame {}
+			", parent);
+		item.destroy();
+	}
+
+	function test_load_FocusPoint() {
+		var item = createTemporaryQmlObject("
+			import Governikus.View 1.0;
+			FocusPoint {}
+			", parent);
+		item.destroy();
+	}
 }

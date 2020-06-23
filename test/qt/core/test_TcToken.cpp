@@ -25,7 +25,6 @@ class test_TcToken
 			QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
 		}
 
-
 	public:
 		test_TcToken()
 			: tokenXmlOk(":/tctoken/ok.xml")
@@ -34,7 +33,6 @@ class test_TcToken
 			checkAndOpenFile(tokenXmlOk);
 			checkAndOpenFile(tokenXmlBroken);
 		}
-
 
 	private Q_SLOTS:
 		void parsedValues()

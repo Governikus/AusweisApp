@@ -8,8 +8,8 @@
 
 #include "parameter/BluetoothMessageParameter.h"
 
+#include <QMultiMap>
 #include <QSharedPointer>
-#include <QVector>
 
 class test_BluetoothMessageParser;
 
@@ -21,7 +21,7 @@ class BluetoothMessage
 	private:
 		friend class ::test_BluetoothMessageParser;
 		BluetoothMsgId mMsgId;
-		QMap<BluetoothParamId, QSharedPointer<const BluetoothMessageParameter> > mMessageParameter;
+		QMultiMap<BluetoothParamId, QSharedPointer<const BluetoothMessageParameter>> mMessageParameter;
 
 	protected:
 		QSharedPointer<const BluetoothMessageParameter> getParameter(BluetoothParamId pId) const;

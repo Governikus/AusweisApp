@@ -24,13 +24,13 @@ class EcdhKeyAgreement
 	private:
 		friend class ::test_EcdhKeyAgreement;
 
-		QSharedPointer<DomainParameterMapping<EC_GROUP> > mMapping;
+		QSharedPointer<DomainParameterMapping<EC_GROUP>> mMapping;
 		QSharedPointer<EC_GROUP> mEphemeralCurve;
 		QSharedPointer<EC_POINT> mTerminalPublicKey;
 		QSharedPointer<const EC_POINT> mCardPublicKey;
 
-		QPair<CardReturnCode, QSharedPointer<EC_GROUP> > determineEphemeralDomainParameters(const QByteArray& pNonce);
-		QPair<CardReturnCode, QSharedPointer<EC_POINT> > performKeyExchange(const QSharedPointer<const EC_GROUP>& pCurve);
+		QPair<CardReturnCode, QSharedPointer<EC_GROUP>> determineEphemeralDomainParameters(const QByteArray& pNonce);
+		QPair<CardReturnCode, QSharedPointer<EC_POINT>> performKeyExchange(const QSharedPointer<const EC_GROUP>& pCurve);
 
 		static QByteArray encodeUncompressedPublicKey(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint);
 		static QByteArray encodeCompressedPublicKey(const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint);

@@ -114,18 +114,10 @@ void DIDAuthenticateResponseEAC1::createAuthenticationProtocolDataElement()
 	{
 		writeTextElement(QStringLiteral("CertificationAuthorityReference"), reference);
 	}
-	if (!mEfCardAccess.isNull())
-	{
-		writeTextElement(QStringLiteral("EFCardAccess"), mEfCardAccess);
-	}
-	if (!mIdPICC.isNull())
-	{
-		writeTextElement(QStringLiteral("IDPICC"), mIdPICC);
-	}
-	if (!mChallenge.isNull())
-	{
-		writeTextElement(QStringLiteral("Challenge"), mChallenge);
-	}
+
+	writeTextElement(QStringLiteral("EFCardAccess"), mEfCardAccess);
+	writeTextElement(QStringLiteral("IDPICC"), mIdPICC);
+	writeTextElement(QStringLiteral("Challenge"), mChallenge);
 
 	mWriter.writeEndElement(); // AuthenticationProtocolData
 }

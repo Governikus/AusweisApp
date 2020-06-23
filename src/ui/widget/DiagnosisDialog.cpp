@@ -51,7 +51,7 @@ void DiagnosisDialog::onSaveButtonClicked()
 	filename = QFileDialog::getSaveFileName(this,
 			QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Save"),
 			QDir::homePath() + QLatin1Char('/') + filename,
-			tr("Text files") + QStringLiteral(" (*.txt)"));
+			tr("Textfiles") + QStringLiteral(" (*.txt)"));
 
 	if (filename.isEmpty())
 	{

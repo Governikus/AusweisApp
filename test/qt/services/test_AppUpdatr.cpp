@@ -127,7 +127,6 @@ class test_AppUpdater
 			return QString("NO_INFO");
 		}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{

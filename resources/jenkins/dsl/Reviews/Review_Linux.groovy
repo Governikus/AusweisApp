@@ -31,7 +31,7 @@ j.with
 
 	steps
 	{
-		shell('cd source; python resources/jenkins/import.py')
+		shell('cd source; cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
 
 		shell(strip('''\
 			cd build;

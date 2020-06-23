@@ -74,13 +74,8 @@ bool LogFileSaveDialog::saveLogFileToFilename(QWidget* pParent, const QString& p
 
 	qCDebug(gui) << "File location:" << filename;
 
-	if (QFile::exists(filename))
-	{
-		const bool deleted = QFile::remove(filename);
-		qCDebug(gui) << "Delete file location:" << deleted;
-	}
-
-	const bool copied = pSource.isEmpty() ? Env::getSingleton<LogHandler>()->copy(filename) : QFile::copy(pSource, filename);
+	const auto logHandler = Env::getSingleton<LogHandler>();
+	const bool copied = pSource.isEmpty() ? logHandler->copy(filename) : logHandler->copyOther(pSource, filename);
 	qCDebug(gui) << "Copy log to file location:" << copied;
 	if (!copied)
 	{

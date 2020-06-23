@@ -49,12 +49,16 @@ Item {
 
 	GButton {
 		id: button
-		//: LABEL ANDROID_TABLET IOS_TABLET
-		text: qsTr("ONLINE APPLICATION") + SettingsModel.translationTrigger
-		buttonColor: baseItem.titleBarColor
+
 		anchors.left: iconContainer.right
 		anchors.leftMargin: Constants.component_spacing
 		anchors.bottom: iconContainer.bottom
+
+		//: LABEL ANDROID_TABLET IOS_TABLET
+		text: qsTr("To provider") + SettingsModel.translationTrigger
+		tintIcon: true
+		icon.source: "qrc:///images/link_external.svg"
+		buttonColor: baseItem.titleBarColor
 		enabled: baseItem.address !== ""
 
 		onClicked: {

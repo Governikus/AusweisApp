@@ -15,7 +15,7 @@ import Governikus.Type.NumberModel 1.0
 
 
 SectionPage {
-	id: root
+	id: baseItem
 
 	navigationAction: NavigationAction {
 			state: "cancel"
@@ -93,11 +93,11 @@ SectionPage {
 							icon.source: "qrc:///images/npa.svg"
 							anchors.horizontalCenter: parent.horizontalCenter
 							anchors.verticalCenter: parent.verticalCenter
-							//: LABEL ANDROID_TABLET %1 can be "card access number (CAN)" or "PIN"
+							//: LABEL ANDROID_TABLET %1 can be "CAN" or "PIN"
 							text: qsTr("Proceed to %1 entry").arg(
 																	NumberModel.isCanAllowedMode ?
 																	//: LABEL ANDROID_TABLET Inserted into "Proceed to %1 entry"
-																	qsTr("card access number (CAN)") :
+																	qsTr("CAN") :
 																	//: LABEL ANDROID_TABLET Inserted into "Proceed to %1 entry"
 																	qsTr("PIN")
 																) + SettingsModel.translationTrigger
@@ -113,8 +113,12 @@ SectionPage {
 			GText {
 				width: parent.width
 
-				//: LABEL ANDROID_TABLET
-				text: qsTr("The following data will be transferred to the provider when you enter the PIN:") + SettingsModel.translationTrigger
+				text: NumberModel.isCanAllowedMode
+					  //: LABEL ANDROID_TABLET
+					  ? qsTr("The following data of the ID card will be transferred to the provider when you enter the CAN:")
+					  //: LABEL ANDROID_TABLET
+					  : qsTr("The following data of your ID card will be transferred to the provider when you enter the PIN:")
+					  + SettingsModel.translationTrigger
 			}
 
 			Pane {

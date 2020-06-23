@@ -37,9 +37,9 @@ class RemoteDeviceModelEntry
 		QSharedPointer<RemoteDeviceListEntry> mRemoteDeviceListEntry;
 
 	public:
-		RemoteDeviceModelEntry(const QString& pDeviceName, const QString& mId, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry);
-		RemoteDeviceModelEntry(const QString& pDeviceName, const QString& mId, bool pNetworkVisible, bool pConnected, bool pSupported, const QDateTime& pLastConnected, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry);
-		RemoteDeviceModelEntry(const QString& pDeviceName = QStringLiteral("UnknownReader"));
+		RemoteDeviceModelEntry(const QString& pDeviceNameEscaped, const QString& mId, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry);
+		RemoteDeviceModelEntry(const QString& pDeviceNameEscaped, const QString& mId, bool pNetworkVisible, bool pConnected, bool pSupported, const QDateTime& pLastConnected, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry);
+		RemoteDeviceModelEntry(const QString& pDeviceNameEscaped = QStringLiteral("UnknownReader"));
 
 		bool isPaired() const;
 		void setPaired(bool pPaired);
@@ -54,7 +54,7 @@ class RemoteDeviceModelEntry
 		bool operator==(const RemoteDeviceModelEntry& pOther) const;
 
 		const QSharedPointer<RemoteDeviceListEntry> getRemoteDeviceListEntry() const;
-		QString getDeviceName() const;
+		QString getDeviceNameEscaped() const;
 
 };
 
@@ -63,7 +63,7 @@ class RemoteDeviceModel
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QString emptyListDescriptionString READ getEmptyListDescriptionString NOTIFY fireLanguageChanged)
+	Q_PROPERTY(QString emptyListDescriptionString READ getEmptyListDescriptionStringQml NOTIFY fireLanguageChanged)
 
 	private:
 		friend class ::test_RemoteDeviceModel;
@@ -121,7 +121,8 @@ class RemoteDeviceModel
 		void forgetDevice(const QModelIndex& pIndex);
 		void forgetDevice(const QString& pDeviceId);
 
-		QString getEmptyListDescriptionString() const;
+		QString getEmptyListDescriptionStringQml() const;
+		QString getEmptyListDescriptionString(bool pWidgetUiHelp = true) const;
 
 	public Q_SLOTS:
 		void onUiShown();

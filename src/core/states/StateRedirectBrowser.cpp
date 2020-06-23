@@ -70,7 +70,8 @@ void StateRedirectBrowser::sendErrorPage(http_status pStatus)
 	else
 	{
 		qCritical() << "Cannot send error page to caller:" << activationContext->getSendError();
-		updateStatus(GlobalStatus(GlobalStatus::Code::Workflow_Error_Page_Transmission_Error, activationContext->getSendError()));
+		updateStatus({GlobalStatus::Code::Workflow_Error_Page_Transmission_Error, {GlobalStatus::ExternalInformation::ACTIVATION_ERROR, activationContext->getSendError()}
+				});
 		Q_EMIT fireAbort();
 	}
 }
@@ -99,7 +100,8 @@ bool StateRedirectBrowser::sendRedirect(const QUrl& pRedirectAddress, const ECar
 	if (!activationContext->sendRedirect(pRedirectAddress, GlobalStatus(pResult)))
 	{
 		qCritical() << "Cannot send redirect to caller:" << activationContext->getSendError();
-		updateStatus(GlobalStatus(GlobalStatus::Code::Workflow_Redirect_Transmission_Error, activationContext->getSendError()));
+		updateStatus({GlobalStatus::Code::Workflow_Redirect_Transmission_Error, {GlobalStatus::ExternalInformation::ACTIVATION_ERROR, activationContext->getSendError()}
+				});
 		Q_EMIT fireAbort();
 		return false;
 	}

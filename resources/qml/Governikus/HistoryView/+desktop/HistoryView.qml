@@ -123,7 +123,7 @@ SectionPage {
 					onClicked: {
 						let now = new Date().toLocaleDateString(Qt.locale(), "yyyy-MM-dd")
 						let filenameSuggestion = "%1.%2.%3.pdf".arg(Qt.application.name).arg(qsTr("History")).arg(now)
-						appWindow.openSaveFileDialog(HistoryModel.exportHistory, filenameSuggestion, "pdf")
+						appWindow.openSaveFileDialog(HistoryModel.exportHistory, filenameSuggestion, qsTr("Portable Document Format"), "pdf")
 					}
 				}
 			}

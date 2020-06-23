@@ -128,13 +128,13 @@ SectionPage {
 	BinaryDecisionView {
 		visible: d.activeView === SetupAssistantView.SubViews.TransportPin
 
-		Accessible.name: qsTr("Change transport PIN setup step") + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Change Transport PIN setup step") + SettingsModel.translationTrigger
 
 		mainIconSource: "qrc:///images/reader/default_reader.png"
-		//: INFO DESKTOP_QML Inquiry message if the 5-digit transport PIN should be changed to an ordinary PIN (now).
+		//: INFO DESKTOP_QML Inquiry message if the five-digit Transport PIN should be changed to an ordinary PIN (now).
 		questionText: qsTr("Do you want to set your PIN now?") + SettingsModel.translationTrigger
 		//: INFO DESKTOP_QML Hint that this change may be carried out form the main menu as well and that it is required to use the online authentication feature of the ID card.
-		questionSubText: qsTr("If you have not already done so you have to change your 5-digit transport PIN to a 6-digit PIN before you can use the online-ID function.") + SettingsModel.translationTrigger
+		questionSubText: qsTr("If you have not already done so you have to change the five-digit Transport PIN to a six-digit PIN before you can use the online-ID function.") + SettingsModel.translationTrigger
 
 		titleBarAction: TitleBarAction {
 			//: LABEL DESKTOP_QML

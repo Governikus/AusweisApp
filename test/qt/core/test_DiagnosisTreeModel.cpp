@@ -27,7 +27,6 @@ class test_DiagnosisTreeModel
 			return QString::fromUtf8(rawData);
 		}
 
-
 	private Q_SLOTS:
 		void init()
 		{

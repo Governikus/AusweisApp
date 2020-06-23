@@ -44,6 +44,8 @@ SectionPage {
 				}
 
 				LabeledText {
+					visible: text !== ""
+
 					Accessible.onScrollDownAction: scrollPageDown()
 					Accessible.onScrollUpAction: scrollPageUp()
 

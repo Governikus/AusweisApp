@@ -56,21 +56,6 @@ Rectangle {
 			color: Category.displayColor(provider.category)
 			height: baseItem.footerHeight
 			width: parent.width
-
-			GText {
-				text: provider.homepageBase
-
-				anchors.centerIn: parent
-
-				Accessible.ignored: true
-
-				leftPadding: Constants.pane_padding
-				rightPadding: Constants.pane_padding
-				elide: Text.ElideRight
-				maximumLineCount: 1
-
-				textStyle: Style.text.normal_inverse
-			}
 		}
 	}
 

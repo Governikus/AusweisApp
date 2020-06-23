@@ -29,7 +29,6 @@ class test_StatePreparePaceRemote
 		return QSharedPointer<const IfdEstablishPaceChannel>(new IfdEstablishPaceChannel("slot", buffer));
 	}
 
-
 	private Q_SLOTS:
 		void init()
 		{

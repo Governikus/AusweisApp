@@ -15,6 +15,7 @@
 #include "workflow/WorkflowGui.h"
 
 #include <QApplication>
+#include <QAuthenticator>
 #include <QCloseEvent>
 #include <QDesktopWidget>
 #include <QFile>
@@ -22,11 +23,7 @@
 #include <QLoggingCategory>
 #include <QMenu>
 #include <QMessageBox>
-
-#ifndef QT_NO_NETWORKPROXY
-	#include <QAuthenticator>
-	#include <QNetworkProxy>
-#endif
+#include <QNetworkProxy>
 
 
 using namespace governikus;
@@ -290,10 +287,10 @@ bool AppQtGui::askChangeTransportPinNow()
 	messageBox.setWindowTitle(QCoreApplication::applicationName() + QStringLiteral(" - ") + tr("Information"));
 	messageBox.setWindowModality(Qt::WindowModal);
 	messageBox.setWindowFlags(messageBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
-	messageBox.setText(tr("Did you change the transport PIN already?<br><br>Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. Online identification with transport PIN is not possible."));
+	messageBox.setText(tr("Did you change the Transport PIN already?<br><br>Prior to the first use of the online identification function you have to replace the Transport PIN by an individual six-digit PIN. Online identification with Transport PIN is not possible."));
 	messageBox.setStandardButtons(QMessageBox::Yes);
 	messageBox.button(QMessageBox::Yes)->setFocus();
-	auto changePinButton = messageBox.addButton(tr("No, change transport PIN now"), QMessageBox::NoRole);
+	auto changePinButton = messageBox.addButton(tr("No, change Transport PIN now"), QMessageBox::NoRole);
 	messageBox.exec();
 
 	if (messageBox.clickedButton() != changePinButton)
@@ -432,7 +429,6 @@ void AppQtGui::onCloseActiveDialogs()
 }
 
 
-#ifndef QT_NO_NETWORKPROXY
 void AppQtGui::onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator)
 {
 	CredentialDialog dialog(mMainWidget);
@@ -444,9 +440,6 @@ void AppQtGui::onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthe
 		pAuthenticator->setPassword(dialog.getPassword());
 	}
 }
-
-
-#endif
 
 
 void AppQtGui::show(UiModule pModule)

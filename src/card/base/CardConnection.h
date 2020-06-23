@@ -87,7 +87,6 @@ class CardConnection
 			return resultConnection;
 		}
 
-
 	private Q_SLOTS:
 		void onReaderInfoChanged(const ReaderInfo& pReaderInfo);
 
@@ -205,7 +204,6 @@ class CardConnection
 			auto command = createUpdateRetryCounterCommand();
 			return call(command, pReceiver, pFunc);
 		}
-
 
 	Q_SIGNALS:
 		void fireReaderInfoChanged(const ReaderInfo& pReaderInfo);

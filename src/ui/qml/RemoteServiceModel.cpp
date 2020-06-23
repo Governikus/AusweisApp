@@ -181,7 +181,7 @@ void RemoteServiceModel::onEstablishConnectionDone(const QSharedPointer<RemoteDe
 	auto* const remoteClient = Env::getSingleton<RemoteClient>();
 	disconnect(remoteClient, &RemoteClient::fireEstablishConnectionDone, this, &RemoteServiceModel::onEstablishConnectionDone);
 	qDebug() << "Pairing finished:" << pStatus;
-	const auto deviceName = pEntry->getRemoteDeviceDescriptor().getIfdName();
+	const auto deviceName = RemoteServiceSettings::escapeDeviceName(pEntry->getRemoteDeviceDescriptor().getIfdName());
 	if (pStatus.isError())
 	{
 		Q_EMIT firePairingFailed(deviceName, pStatus.toErrorDescription());
@@ -198,7 +198,7 @@ void RemoteServiceModel::onConnectionInfoChanged(bool pConnected)
 	if (mContext && pConnected)
 	{
 		const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-		const QString peerName = settings.getRemoteInfo(mContext->getRemoteServer()->getCurrentCertificate()).getName();
+		const QString peerName = settings.getRemoteInfo(mContext->getRemoteServer()->getCurrentCertificate()).getNameEscaped();
 		//: INFO ANDROID IOS The smartphone is connected as card reader (SaK) and currently processing an authentication request. The user is asked to pay attention the its screen.
 		mConnectionInfo = tr("Please pay attention to the display on your other device \"%1\".").arg(peerName);
 		Q_EMIT fireConnectionInfoChanged();
@@ -350,7 +350,7 @@ QString RemoteServiceModel::getErrorMessage(bool pNfcPluginAvailable, bool pNfcP
 	}
 	if (!pWifiEnabled)
 	{
-		//: INFO ALL_PLATFORMS The wifi feature is not enabled but required to use the smartphone as a card reader (SaK).
+		//: INFO ALL_PLATFORMS The WiFi feature is not enabled but required to use the smartphone as a card reader (SaK).
 		return tr("Please connect your WiFi to use the remote service.");
 	}
 
@@ -386,7 +386,7 @@ void RemoteServiceModel::onConnectedDevicesChanged()
 	QStringList deviceNames;
 	for (const auto& info : deviceInfos)
 	{
-		deviceNames.append(QLatin1Char('"') + info.getName() + QLatin1Char('"'));
+		deviceNames.append(QLatin1Char('"') + info.getNameEscaped() + QLatin1Char('"'));
 	}
 	mConnectedServerDeviceNames = deviceNames.join(QLatin1String(", "));
 	Q_EMIT fireConnectedServerDeviceNamesChanged();

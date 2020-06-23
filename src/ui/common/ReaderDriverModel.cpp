@@ -261,9 +261,16 @@ QString ReaderDriverModel::getHTMLDescription(const QModelIndex& pIndex) const
 }
 
 
-QString ReaderDriverModel::getEmptyListDescriptionString() const
+QString ReaderDriverModel::getEmptyListDescriptionStringQml() const
 {
-	const QString& url = HelpAction::getOnlineUrl(QStringLiteral("readerDeviceTab"));
+	return getEmptyListDescriptionString(false);
+}
+
+
+QString ReaderDriverModel::getEmptyListDescriptionString(bool pWidgetUiHelp) const
+{
+	const QString& onlineHelpSection = pWidgetUiHelp ? QStringLiteral("readerDeviceTab") : QStringLiteral("settingsPcscReader");
+	const QString& url = HelpAction::getOnlineUrl(onlineHelpSection, pWidgetUiHelp);
 	//: Is embedded in a sentence.
 	const QString& hyperlink = QStringLiteral("<a href=\"%1\">%2</a>").arg(url, tr("online help"));
 	//: INFO ALL_PLATFORMS No card reader was found, the message contains a link to the installation section of the manual.

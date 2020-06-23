@@ -343,11 +343,16 @@ bool RemoteServiceSettings::updateRemoteInfo(const RemoteInfo& pInfo)
 }
 
 
+QString RemoteServiceSettings::escapeDeviceName(const QString& pDeviceNameUnescaped)
+{
+	return pDeviceNameUnescaped.left(33).toHtmlEscaped();
+}
+
+
 RemoteServiceSettings::RemoteInfo::RemoteInfo(const QString& pFingerprint,
-		const QDateTime& pLastConnected,
-		const QString& pName)
+		const QDateTime& pLastConnected)
 	: mFingerprint(pFingerprint)
-	, mName(pName)
+	, mName()
 	, mLastConnected(pLastConnected)
 {
 }
@@ -379,13 +384,13 @@ const QString& RemoteServiceSettings::RemoteInfo::getFingerprint() const
 }
 
 
-const QString& RemoteServiceSettings::RemoteInfo::getName() const
+QString RemoteServiceSettings::RemoteInfo::getNameEscaped() const
 {
-	return mName;
+	return RemoteServiceSettings::escapeDeviceName(mName);
 }
 
 
-void RemoteServiceSettings::RemoteInfo::setName(const QString& pName)
+void RemoteServiceSettings::RemoteInfo::setNameUnescaped(const QString& pName)
 {
 	mName = pName;
 }

@@ -33,9 +33,7 @@ class UIPlugInWidgets
 		virtual void onApplicationStarted() override;
 		virtual void onShowUi(UiModule pModule) override;
 		virtual void onHideUi() override;
-#ifndef QT_NO_NETWORKPROXY
 		virtual void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator) override;
-#endif
 		virtual void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted) override;
 		virtual void onUiDominationReleased() override;
 };

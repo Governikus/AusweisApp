@@ -30,18 +30,10 @@ SectionPage
 	QtObject {
 		id: d
 
-		readonly property bool foundSelectedReader: ApplicationModel.foundSelectedReader
-		readonly property bool foundPCSCReader: ApplicationModel.foundSelectedReader && ApplicationModel.isReaderTypeAvailable(ReaderPlugIn.PCSC)
-		readonly property bool foundRemoteReader: ApplicationModel.foundSelectedReader && ApplicationModel.isReaderTypeAvailable(ReaderPlugIn.REMOTE)
-		readonly property string purpose: (isPinChange ?
-										   //: LABEL DESKTOP_QML
-										   qsTr("Change PIN") :
-										   //: LABEL DESKTOP_QML
-										   qsTr("Identify")
-										  ) + SettingsModel.translationTrigger
+		readonly property bool foundSelectedReader: ApplicationModel.availableReader > 0
+		readonly property bool foundPCSCReader: ApplicationModel.availableReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderPlugIn.PCSC)
+		readonly property bool foundRemoteReader: ApplicationModel.availableReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderPlugIn.REMOTE)
 	}
-
-
 
 	Connections {
 		target: ApplicationModel
@@ -135,17 +127,21 @@ SectionPage
 						//: ERROR DESKTOP_QML
 						return qsTr("The used card reader does not meet the technical requirements (Extended Length not supported).")
 					}
-					//: LABEL DESKTOP_QML
-					return d.foundSelectedReader ? d.purpose : qsTr("Searching for card reader")
+					return d.foundSelectedReader
+						   //: LABEL DESKTOP_QML
+						   ? qsTr("Place ID card")
+						   //: LABEL DESKTOP_QML
+						   : qsTr("Connect USB card reader or smartphone")
 				case Workflow.WaitingFor.Card:
 					if (NumberModel.pinDeactivated) {
 						//: LABEL DESKTOP_QML
-						return qsTr("Information") + SettingsModel.translationTrigger
+						return qsTr("Information")
 					}
-					return d.purpose
+					//: LABEL DESKTOP_QML
+					return qsTr("Place ID card")
 				case Workflow.WaitingFor.Password:
 					//: LABEL DESKTOP_QML
-					return qsTr("Information") + SettingsModel.translationTrigger
+					return qsTr("Information")
 				default:
 					return ""
 			}
@@ -162,10 +158,10 @@ SectionPage
 		readonly property string requestCardText: {
 			if (d.foundPCSCReader && !d.foundRemoteReader) {
 				//: INFO DESKTOP_QML The AA2 is waiting for an ID card to be inserted into the card reader.
-				return qsTr("Please put the ID card on the card reader.")
+				return qsTr("No ID card detected. Please ensure that your ID card is placed on the card reader.")
 			} else if (!d.foundPCSCReader && d.foundRemoteReader) {
 				//: INFO DESKTOP_QML The AA2 is waiting for the smartphone to be placed on the id.
-				return qsTr("Connected to %1. Please place the NFC interface of the smartphone on your ID card.").arg(RemoteServiceModel.connectedServerDeviceNames)
+				return qsTr("No ID card detected. Please make sure that the NFC interface of the smartphone (connected to %1) is correctly placed on your ID card.").arg(RemoteServiceModel.connectedServerDeviceNames)
 			}
 
 			//: INFO DESKTOP_QML The AA2 is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).
@@ -187,7 +183,7 @@ SectionPage
 			switch (waitingFor) {
 				case Workflow.WaitingFor.Reader:
 					//: INFO DESKTOP_QML AA2 is waiting for the card reader or the ID card.
-					return d.foundSelectedReader ? requestCardText : qsTr("No card reader detected. Please make sure that a card reader is connected. Open the %1reader settings%2 to configure reader and get more information about supported readers.").arg("<a href=\"#\">").arg("</a>")
+					return d.foundSelectedReader ? requestCardText : qsTr("No card reader detected. Please make sure that a USB card reader is connected or a smartphone as cardreader is paired and available. Open the %1reader settings%2 to configure readers and get more information about supported readers.").arg("<a href=\"#\">").arg("</a>")
 				case Workflow.WaitingFor.Card:
 					if (NumberModel.pinDeactivated) {
 						//: INFO DESKTOP_QML The online authentication feature of the card is disabled and needs to be activated by the authorities.

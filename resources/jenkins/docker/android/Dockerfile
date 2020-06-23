@@ -2,18 +2,23 @@ FROM ubuntu:swarm
 MAINTAINER Governikus KG <ausweisapp2@governikus.com>
 
 ARG ANDROID_SDK_TOOLS=4333796
-ARG ANDROID_NDK_VERSION=r18b
+ARG ANDROID_NDK_VERSION=r21d
+ARG CMAKE=3.17.3
 ENV NAME=Android LABELS="Android" PACKAGES_DIR=/home/governikus/packages
 
 RUN apt-get update && \
-    apt-get -y install g++ cmake make ccache ninja-build perl unzip gradle maven patch openjdk-8-jdk-headless && \
+    apt-get -y install g++ make ccache ninja-build perl unzip gradle maven patch openjdk-8-jdk-headless && \
     ln -s /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/java-8-openjdk && \
     rm -rf /var/lib/apt/lists/*
+
+# CMake 3.16 is required for NDK r19+
+RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE/cmake-$CMAKE-Linux-x86_64.sh -O /tmp/cmake.sh && \
+    sh /tmp/cmake.sh --prefix=/usr --skip-license --exclude-subdir && rm /tmp/cmake.sh
 
 ENV ANDROID_HOME /opt/android-sdk
 RUN mkdir -p /tmp/dl/sdk && cd /tmp/dl/sdk && wget -O sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_SDK_TOOLS.zip && \
     unzip sdk.zip && mkdir -p $ANDROID_HOME && mv tools/ $ANDROID_HOME
-RUN yes | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;29.0.2" "platform-tools" "platforms;android-29"
+RUN yes | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;29.0.3" "platform-tools" "platforms;android-29"
 
 ENV ANDROID_NDK_HOME /opt/android-ndk
 ENV ANDROID_NDK=${ANDROID_NDK_HOME}

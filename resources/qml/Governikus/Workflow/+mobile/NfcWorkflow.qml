@@ -59,7 +59,7 @@ Item {
 					//: INFO ANDROID IOS AA2 can't use NFC on this device, suggest to use bluetooth instead.
 					qsTr("Unfortunately, this functionality is not available on your device.") + "<br/>" +
 					//: INFO ANDROID IOS AA2 can't use NFC on this device, suggest to use bluetooth instead.
-					qsTr("However you can use a seperate 'Bluetooth card reader' or a seperate 'smartphone as card reader' to utilize the online identification function.") :
+					qsTr("However, you can use a separate 'smartphone as card reader' to utilize the online identification function.") :
 					!ApplicationModel.nfcEnabled ?
 					//: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
 					qsTr("NFC is switched off.") + "<br/>" +
@@ -76,7 +76,7 @@ Item {
 
 		subTitleText: (!visible ? "" :
 					//: INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a bluetooth reader or a differnt smarthpone is suggested.
-					  ApplicationModel.extendedLengthApdusUnsupported ? qsTr("Your device does not meet the technical requirements (Extended Length not supported). However you can use a seperate 'Bluetooth card reader' or a seperate 'smartphone as card reader' to utilize the online identification function.") :
+					  ApplicationModel.extendedLengthApdusUnsupported ? qsTr("Your device does not meet the technical requirements (Extended Length not supported). However you can use a separate 'smartphone as card reader' to utilize the online identification function.") :
 					//: INFO ANDROID IOS The online authentication feature is disabled and needs to be activated by the authorities.
 					  NumberModel.pinDeactivated ? qsTr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.") :
 					//: INFO ANDROID IOS The ID card may be inserted, the authentication process may be started.

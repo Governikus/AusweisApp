@@ -36,7 +36,6 @@ class test_GeneralSettings
 #endif
 		}
 
-
 	private Q_SLOTS:
 		void init()
 		{
@@ -140,6 +139,33 @@ class test_GeneralSettings
 		}
 
 
+		void testCanAllowed()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			settings.setEnableCanAllowed(true);
+			QVERIFY(settings.isEnableCanAllowed());
+			QVERIFY(!settings.isSkipRightsOnCanAllowed());
+
+			settings.setSkipRightsOnCanAllowed(true);
+			QVERIFY(settings.isSkipRightsOnCanAllowed());
+
+			settings.setEnableCanAllowed(false);
+			QVERIFY(!settings.isEnableCanAllowed());
+			QVERIFY(!settings.isSkipRightsOnCanAllowed());
+
+			settings.setEnableCanAllowed(true);
+			QVERIFY(settings.isEnableCanAllowed());
+			QVERIFY(settings.isSkipRightsOnCanAllowed());
+
+			settings.setEnableCanAllowed(false);
+			settings.setSkipRightsOnCanAllowed(false);
+			QVERIFY(!settings.isEnableCanAllowed());
+			QVERIFY(!settings.isSkipRightsOnCanAllowed());
+			settings.save();
+		}
+
+
 		void testDefaultValues()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
@@ -156,6 +182,8 @@ class test_GeneralSettings
 			QCOMPARE(settings.isDeveloperMode(), false);
 			QCOMPARE(settings.useSelfAuthTestUri(), false);
 			QCOMPARE(settings.isUseScreenKeyboard(), false);
+			QCOMPARE(settings.isEnableCanAllowed(), false);
+			QCOMPARE(settings.isSkipRightsOnCanAllowed(), false);
 			QCOMPARE(settings.isShowSetupAssistant(), true);
 			QCOMPARE(settings.isShowNewUiHint(), true);
 			QCOMPARE(settings.isShowInAppNotifications(), getNotificationsOsDefault());

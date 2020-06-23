@@ -95,7 +95,6 @@ class test_ReaderConfigurationParser
 			return QStringLiteral("{ %1\n}").arg(pDevices);
 		}
 
-
 	private Q_SLOTS:
 		void invalidJsonDocument_parseReturnsNullDeviceInfo()
 		{

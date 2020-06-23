@@ -7,6 +7,7 @@
 #include "asn1/AccessRoleAndRight.h"
 
 #include "AppSettings.h"
+#include "LanguageLoader.h"
 
 using namespace governikus;
 
@@ -43,8 +44,9 @@ void StateWriteHistory::run()
 			auto subjectUrl = certDesc->getSubjectUrl();
 
 			CVCertificateBody body = getContext()->getDidAuthenticateEac1()->getCvCertificates().at(0)->getBody();
-			QString effectiveDate = body.getCertificateEffectiveDate().toString(Qt::DefaultLocaleShortDate);
-			QString expirationDate = body.getCertificateExpirationDate().toString(Qt::DefaultLocaleShortDate);
+			const auto locale = LanguageLoader::getInstance().getUsedLocale();
+			const auto effectiveDate = locale.toString(body.getCertificateEffectiveDate(), QLocale::ShortFormat);
+			const auto expirationDate = locale.toString(body.getCertificateExpirationDate(), QLocale::ShortFormat);
 			//: LABEL ALL_PLATFORMS
 			QString validity = tr("Validity:\n%1 - %2").arg(effectiveDate, expirationDate);
 

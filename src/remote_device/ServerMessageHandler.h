@@ -53,7 +53,7 @@ class ServerMessageHandlerImpl
 	private:
 		QPointer<ReaderManager> mReaderManager;
 		const QSharedPointer<RemoteDispatcherServer> mRemoteDispatcher;
-		QMap<QString, QSharedPointer<CardConnection> > mCardConnections;
+		QMap<QString, QSharedPointer<CardConnection>> mCardConnections;
 
 		QString slotHandleForReaderName(const QString& pReaderName) const;
 		QString convertSlotHandleBackwardsCompatibility(const QString& pReaderName);

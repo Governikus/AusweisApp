@@ -525,6 +525,11 @@ TutorialContent {
 				anchors.fill: parent
 
 				//: LABEL ANDROID IOS
+				Accessible.name: qsTr("Open YouTube video") + SettingsModel.translationTrigger
+				Accessible.role: Accessible.Button
+				Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
+
+				//: LABEL ANDROID IOS
 				onClicked: Qt.openUrlExternally(qsTr("https://www.youtube.com/watch?v=fzbUZmHaZp4&index=5&list=PLLB5ERhVkn25qQXgMHQr-1KgyZsJKoSAm"))
 			}
 		}

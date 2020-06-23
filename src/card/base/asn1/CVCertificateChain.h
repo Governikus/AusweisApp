@@ -18,14 +18,14 @@ namespace governikus
 {
 
 class CVCertificateChain
-	: public QVector<QSharedPointer<const CVCertificate> >
+	: public QVector<QSharedPointer<const CVCertificate>>
 {
 	private:
 		bool mProductive;
 
 	public:
 		explicit CVCertificateChain(bool pProductive = true);
-		explicit CVCertificateChain(const QVector<QSharedPointer<const CVCertificate> >& pCvcs, bool pProductive);
+		explicit CVCertificateChain(const QVector<QSharedPointer<const CVCertificate>>& pCvcs, bool pProductive);
 
 		/*!
 		 * Return the document verifier certificate.

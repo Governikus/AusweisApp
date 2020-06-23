@@ -19,7 +19,7 @@ class DatagramHandler
 	Q_OBJECT
 
 	public:
-		explicit DatagramHandler(bool pListen = true);
+		explicit DatagramHandler(bool pEnableListening = true);
 		virtual ~DatagramHandler();
 		virtual bool isBound() const = 0;
 		virtual bool send(const QByteArray& pData) = 0;

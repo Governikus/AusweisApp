@@ -27,7 +27,7 @@ class Eac1InputType
 	friend class TestAuthContext;
 
 	private:
-		QVector<QSharedPointer<const CVCertificate> > mCvCertificates;
+		QVector<QSharedPointer<const CVCertificate>> mCvCertificates;
 		QByteArray mCertificateDescriptionAsBinary;
 		QSharedPointer<const CertificateDescription> mCertificateDescription;
 		QSharedPointer<const CHAT> mRequiredChat, mOptionalChat;
@@ -82,7 +82,6 @@ class Eac1InputType
 			mTransactionInfo = pTransactionInfo;
 		}
 
-
 	public:
 		Eac1InputType();
 		~Eac1InputType();
@@ -111,7 +110,7 @@ class Eac1InputType
 		}
 
 
-		const QVector<QSharedPointer<const CVCertificate> >& getCvCertificates() const
+		const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const
 		{
 			return mCvCertificates;
 		}

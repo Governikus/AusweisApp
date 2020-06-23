@@ -60,7 +60,7 @@ class DiagnosisAntivirusDetection
 #if defined(Q_OS_WIN)
 		QSharedPointer<QProcess> mProcess;
 #endif
-		QVector<QSharedPointer<AntivirInfo> > mAntivirInfos;
+		QVector<QSharedPointer<AntivirInfo>> mAntivirInfos;
 		void parseAntivirInfos(const QString& pAntivirInfos);
 
 	private Q_SLOTS:
@@ -76,7 +76,7 @@ class DiagnosisAntivirusDetection
 	public:
 		DiagnosisAntivirusDetection();
 		void startInformationProcess();
-		const QVector<QSharedPointer<AntivirInfo> >& getAntivirusInformations() const;
+		const QVector<QSharedPointer<AntivirInfo>>& getAntivirusInformations() const;
 };
 
 } // namespace governikus

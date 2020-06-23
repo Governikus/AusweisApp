@@ -10,6 +10,12 @@
 #include <openssl/evp.h>
 #include <QLoggingCategory>
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#include <QScopeGuard>
+#else
+#include "ScopeGuard.h"
+#endif
+
 
 using namespace governikus;
 
@@ -45,6 +51,14 @@ int EcdsaPublicKey::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1
 			}
 		}
 	}
+	else if (pOperation == ASN1_OP_FREE_POST)
+	{
+		if (auto ecdsaPublicKey = reinterpret_cast<EcdsaPublicKey*>(*pVal))
+		{
+			EC_KEY_free(ecdsaPublicKey->mEcKey);
+		}
+	}
+
 	return CB_SUCCESS;
 }
 
@@ -113,7 +127,7 @@ QByteArray EcdsaPublicKey::getUncompressedPublicPoint() const
 }
 
 
-QSharedPointer<const EC_KEY> EcdsaPublicKey::getEcKey() const
+const EC_KEY* EcdsaPublicKey::getEcKey() const
 {
 	return mEcKey;
 }
@@ -185,8 +199,12 @@ void EcdsaPublicKey::initEcKey()
 		return;
 	}
 
-	QSharedPointer<EC_KEY> ecKey = EcUtil::create(EC_KEY_new());
-	if (!EC_KEY_set_group(ecKey.data(), group.data()))
+	EC_KEY* ecKey = EC_KEY_new();
+	auto guard = qScopeGuard([ecKey] {
+				EC_KEY_free(ecKey);
+			});
+
+	if (!EC_KEY_set_group(ecKey, group.data()))
 	{
 		qCCritical(card) << "Cannot set group";
 		return;
@@ -198,10 +216,12 @@ void EcdsaPublicKey::initEcKey()
 		qCCritical(card) << "Cannot convert public point";
 		return;
 	}
-	if (!EC_KEY_set_public_key(ecKey.data(), publicPoint.data()))
+	if (!EC_KEY_set_public_key(ecKey, publicPoint.data()))
 	{
 		qCCritical(card) << "Cannot set public key";
 		return;
 	}
+
+	guard.dismiss();
 	mEcKey = ecKey;
 }

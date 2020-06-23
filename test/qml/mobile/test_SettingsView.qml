@@ -8,10 +8,10 @@ TestCase {
 	name: "ModuleImportTest"
 	id: parent
 
-	function test_load_DeveloperView() {
+	function test_load_SettingsView() {
 		var item = createTemporaryQmlObject("
-			import Governikus.DeveloperView 1.0;
-			DeveloperView {}
+			import Governikus.SettingsView 1.0;
+			SettingsView {}
 			", parent);
 		item.destroy();
 	}

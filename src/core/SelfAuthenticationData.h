@@ -58,7 +58,7 @@ defineEnumType(SelfAuthData,
 class SelfAuthenticationData
 {
 	public:
-		using OrderedSelfData = QVector<QPair<QString, QString> >;
+		using OrderedSelfData = QVector<QPair<QString, QString>>;
 
 	private:
 		class SelfData

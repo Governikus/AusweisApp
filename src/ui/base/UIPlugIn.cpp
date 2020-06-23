@@ -37,7 +37,6 @@ void UIPlugIn::onShowReaderSettings()
 }
 
 
-#ifndef QT_NO_NETWORKPROXY
 void UIPlugIn::onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator)
 {
 	Q_UNUSED(pProxy)
@@ -56,6 +55,3 @@ void UIPlugIn::onUiDomination(const UIPlugIn* pUi, const QString& pInformation, 
 void UIPlugIn::onUiDominationReleased()
 {
 }
-
-
-#endif

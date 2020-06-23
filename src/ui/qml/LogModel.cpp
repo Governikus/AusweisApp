@@ -4,6 +4,7 @@
 
 #include "LogModel.h"
 
+#include "ApplicationModel.h"
 #include "LanguageLoader.h"
 #include "LogHandler.h"
 #include "PlatformHelper.h"
@@ -12,6 +13,7 @@
 #include "SingletonHelper.h"
 
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QtMath>
 
@@ -61,7 +63,15 @@ LogModel::LogModel()
 	, mSelectedLogFile(-1)
 	, mLogEntries()
 {
+	mLogFiles += QString(); // dummy entry for "current logfile"
+	const auto logHandler = Env::getSingleton<LogHandler>();
+	for (const auto& entry : logHandler->getOtherLogfiles())
+	{
+		mLogFiles += entry.absoluteFilePath();
+	}
+
 	setLogfile(0);
+
 	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireLanguageChanged, this, &LogModel::fireLogFilesChanged); // needed to translate the "Current log" entry on language change
 }
 
@@ -72,23 +82,20 @@ LogModel& LogModel::getInstance()
 }
 
 
-QStringList LogModel::getLogfiles()
+QStringList LogModel::getLogfiles() const
 {
-	mLogFiles.clear();
-	mLogFiles += QString();
-	const auto& logHandler = Env::getSingleton<LogHandler>();
-
+	const auto logHandler = Env::getSingleton<LogHandler>();
 	QStringList logFileNames;
 	//: LABEL ALL_PLATFORMS
 	logFileNames += tr("Current log");
-	const auto& logFiles = logHandler->getOtherLogfiles();
-	for (const auto& entry : logFiles)
+	for (const auto& entry : qAsConst(mLogFiles))
 	{
-		mLogFiles += entry.absoluteFilePath();
-		logFileNames += LanguageLoader::getInstance().getUsedLocale().toString(logHandler->getFileDate(entry), tr("dd.MM.yyyy hh:mm:ss"));
+		if (!entry.isEmpty())
+		{
+			logFileNames += LanguageLoader::getInstance().getUsedLocale().toString(logHandler->getFileDate(entry), tr("dd.MM.yyyy hh:mm:ss"));
+		}
 	}
 
-	setLogfile(0);
 	return logFileNames;
 }
 
@@ -115,25 +122,43 @@ void LogModel::removeOtherLogfiles()
 
 void LogModel::removeCurrentLogfile()
 {
-	QFile::remove(mLogFiles[mSelectedLogFile]);
+	if (mSelectedLogFile == 0)
+	{
+		return;
+	}
+
+	if (!QFile::remove(mLogFiles[mSelectedLogFile]))
+	{
+		qDebug() << mLogFiles[mSelectedLogFile] << "could not be removed";
+		return;
+	}
+
+	mLogFiles.removeAt(mSelectedLogFile);
 	Q_EMIT fireLogFilesChanged();
 }
 
 
 void LogModel::setLogfile(int pIndex)
 {
+	if (pIndex < 0 || pIndex >= mLogFiles.size())
+	{
+		qDebug() << "Called with invalid index:" << pIndex;
+		return;
+	}
+
 	if (pIndex == mSelectedLogFile)
 	{
 		return;
 	}
 
 	mSelectedLogFile = pIndex;
-	const auto& logHandler = Env::getSingleton<LogHandler>();
+	const auto logHandler = Env::getSingleton<LogHandler>();
 
 	if (pIndex == 0)
 	{
-		const auto& backLog = logHandler->getBacklog();
-		QTextStream in(backLog);
+		QTextStream in(logHandler->useLogfile() ? logHandler->getBacklog() : tr("The logfile is disabled.").toUtf8());
+		in.setCodec("UTF-8");
+
 		setLogEntries(in);
 		connect(logHandler, &LogHandler::fireLog, this, &LogModel::onNewLogMsg);
 	}
@@ -144,6 +169,7 @@ void LogModel::setLogfile(int pIndex)
 		if (inputFile.open(QIODevice::ReadOnly))
 		{
 			QTextStream in(&inputFile);
+			in.setCodec("UTF-8");
 			setLogEntries(in);
 			inputFile.close();
 		}
@@ -153,17 +179,21 @@ void LogModel::setLogfile(int pIndex)
 
 void LogModel::saveCurrentLogfile(const QUrl& pFilename) const
 {
+	bool success = false;
+	const auto logHandler = Env::getSingleton<LogHandler>();
 	const QString logfilePath = mLogFiles.at(mSelectedLogFile);
 
 	if (logfilePath.isEmpty())
 	{
-		const auto& logHandler = Env::getSingleton<LogHandler>();
-		logHandler->copy(pFilename.toLocalFile());
+		success = logHandler->copy(pFilename.toLocalFile());
 	}
 	else
 	{
-		QFile::copy(logfilePath, pFilename.toLocalFile());
+		success = logHandler->copyOther(logfilePath, pFilename.toLocalFile());
 	}
+
+	const auto applicationModel = Env::getSingleton<ApplicationModel>();
+	applicationModel->showFeedback((success ? tr("Successfully saved logfile to \"%1\"") : tr("Error while saving logfile to \"%1\"")).arg(pFilename.toLocalFile()));
 }
 
 

@@ -5,6 +5,7 @@
 #include "WorkflowModel.h"
 
 #include "AppSettings.h"
+#include "context/AuthContext.h"
 #include "Email.h"
 #include "FuncUtils.h"
 #include "GeneralSettings.h"
@@ -219,10 +220,11 @@ bool WorkflowModel::isCancellationByUser() const
 void WorkflowModel::sendResultMail() const
 {
 	Q_ASSERT(mContext);
-	const GlobalStatus status = mContext->getStatus();
+	const auto& status = mContext->getStatus();
 	//: Subject from error report mail
 	QString mailSubject = tr("AusweisApp2 error report - %1").arg(status.toErrorDescription());
-	QString mailBody = generateMailBody(status);
+	const auto& authContext = qobject_cast<AuthContext*>(mContext);
+	QString mailBody = generateMailBody(status, authContext.isNull() ? QUrl() : authContext->getTcTokenUrl());
 	QString url = QStringLiteral("mailto:support@ausweisapp.de?subject=%1&body=%2").arg(mailSubject, mailBody);
 
 	QDesktopServices::openUrl(url);

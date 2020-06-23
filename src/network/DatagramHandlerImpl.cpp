@@ -27,9 +27,9 @@ template<> DatagramHandler* createNewObject<DatagramHandler*>()
 }
 
 
-template<> DatagramHandler* createNewObject<DatagramHandler*, bool>(bool&& pListen)
+template<> DatagramHandler* createNewObject<DatagramHandler*, bool>(bool&& pEnableListening)
 {
-	return new DatagramHandlerImpl(pListen);
+	return new DatagramHandlerImpl(pEnableListening);
 }
 
 
@@ -37,20 +37,26 @@ template<> DatagramHandler* createNewObject<DatagramHandler*, bool>(bool&& pList
 
 quint16 DatagramHandlerImpl::cPort = PortFile::cDefaultPort;
 
-DatagramHandlerImpl::DatagramHandlerImpl(bool pListen, quint16 pPort)
+DatagramHandlerImpl::DatagramHandlerImpl(bool pEnableListening, quint16 pPort)
 	: DatagramHandler()
-	, mSocket(new QUdpSocket)
+	, mSocket()
 	, mMulticastLock()
 	, mUsedPort(pPort)
 	, mPortFile(QStringLiteral("udp"))
+	, mEnableListening(pEnableListening)
 {
-#ifndef QT_NO_NETWORKPROXY
+	resetSocket();
+}
+
+
+void DatagramHandlerImpl::resetSocket()
+{
+	mSocket.reset(new QUdpSocket);
 	mSocket->setProxy(QNetworkProxy::NoProxy);
-#endif
 
 	connect(mSocket.data(), &QUdpSocket::readyRead, this, &DatagramHandlerImpl::onReadyRead);
 
-	if (!pListen)
+	if (!mEnableListening)
 	{
 		qCDebug(network) << "Skipping binding";
 
@@ -94,7 +100,13 @@ bool DatagramHandlerImpl::isBound() const
 
 bool DatagramHandlerImpl::send(const QByteArray& pData)
 {
-	return sendToAllAddressEntries(pData, 0);
+	if (!sendToAllAddressEntries(pData, 0))
+	{
+		qCDebug(network) << "Socket error, resetting broadcasting socket.";
+		resetSocket();
+		return false;
+	}
+	return true;
 }
 
 
@@ -119,16 +131,22 @@ bool DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint
 		const auto& entries = interface.addressEntries();
 		for (const QNetworkAddressEntry& addressEntry : entries)
 		{
-			switch (addressEntry.ip().protocol())
+			const auto ipAddr = addressEntry.ip();
+			if (ipAddr.isLoopback())
+			{
+				continue;
+			}
+
+			switch (ipAddr.protocol())
 			{
 				case QAbstractSocket::NetworkLayerProtocol::IPv4Protocol:
 				{
 					const QHostAddress& broadcastAddr = addressEntry.broadcast();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+					if (broadcastAddr.isNull() || !ipAddr.isGlobal())
+#else
 					if (broadcastAddr.isNull())
-					{
-						continue;
-					}
-					if (addressEntry.ip().isEqual(QHostAddress::LocalHost, QHostAddress::TolerantConversion))
+#endif
 					{
 						continue;
 					}
@@ -144,8 +162,12 @@ bool DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint
 						continue;
 					}
 
-					const QString& scopeId = addressEntry.ip().scopeId();
+					const QString& scopeId = ipAddr.scopeId();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+					if (scopeId.isEmpty() || !(ipAddr.isLinkLocal() || ipAddr.isUniqueLocalUnicast()))
+#else
 					if (scopeId.isEmpty())
+#endif
 					{
 						continue;
 					}
@@ -160,7 +182,7 @@ bool DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint
 
 				default:
 				{
-					qCDebug(network) << "Skipping unknown protocol type:" << addressEntry.ip().protocol();
+					qCDebug(network) << "Skipping unknown protocol type:" << ipAddr.protocol();
 				}
 			}
 		}

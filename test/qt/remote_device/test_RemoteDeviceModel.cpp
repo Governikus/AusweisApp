@@ -21,9 +21,9 @@ class test_RemoteDeviceModel
 	private Q_SLOTS:
 		void init()
 		{
-			mName = QStringLiteral("name");
+			mName = QStringLiteral("name&lt;");
 			mModel.reset(new RemoteDeviceModel());
-			mEntry.reset(new RemoteDeviceModelEntry(mName));
+			mEntry = QSharedPointer<RemoteDeviceModelEntry>::create(mName);
 		}
 
 
@@ -42,9 +42,9 @@ class test_RemoteDeviceModel
 		}
 
 
-		void test_DeviceName()
+		void test_DeviceNameEscaped()
 		{
-			QCOMPARE(mEntry->getDeviceName(), mName);
+			QCOMPARE(mEntry->getDeviceNameEscaped(), mName);
 		}
 
 
@@ -182,7 +182,7 @@ class test_RemoteDeviceModel
 		void test_GetRemoteDeviceListEntryModelIndex()
 		{
 			QSharedPointer<RemoteDeviceListEntry> listEntry(new RemoteDeviceListEntry(RemoteDeviceDescriptor()));
-			RemoteDeviceModelEntry entry1(QString("entry 1"), QString("01"), listEntry);
+			RemoteDeviceModelEntry entry1(QString("entry 1"), QStringLiteral("01"), listEntry);
 			RemoteDeviceModelEntry entry2(QString("entry 2"));
 			mModel->mAllRemoteReaders << entry1 << entry2;
 

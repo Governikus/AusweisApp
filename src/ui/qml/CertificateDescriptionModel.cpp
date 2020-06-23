@@ -5,6 +5,7 @@
 #include "CertificateDescriptionModel.h"
 
 #include "AppSettings.h"
+#include "LanguageLoader.h"
 #include "SecureStorage.h"
 
 
@@ -125,8 +126,9 @@ QString CertificateDescriptionModel::getValidity() const
 	if (mContext && mContext->getDidAuthenticateEac1() && !mContext->getDidAuthenticateEac1()->getCvCertificates().isEmpty())
 	{
 		const CVCertificateBody body = mContext->getDidAuthenticateEac1()->getCvCertificates().at(0)->getBody();
-		const QString effectiveDate = body.getCertificateEffectiveDate().toString(Qt::DefaultLocaleShortDate);
-		const QString expirationDate = body.getCertificateExpirationDate().toString(Qt::DefaultLocaleShortDate);
+		const auto locale = LanguageLoader::getInstance().getUsedLocale();
+		const auto effectiveDate = locale.toString(body.getCertificateEffectiveDate(), QLocale::ShortFormat);
+		const auto expirationDate = locale.toString(body.getCertificateExpirationDate(), QLocale::ShortFormat);
 
 		return QStringLiteral("%1 - %2").arg(effectiveDate, expirationDate);
 	}

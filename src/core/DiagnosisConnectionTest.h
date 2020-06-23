@@ -110,7 +110,6 @@ class DiagnosisConnectionTest
 			return mPingTestOnProxySuccessful;
 		}
 
-
 	Q_SIGNALS:
 		void fireConnectionTestDone();
 };

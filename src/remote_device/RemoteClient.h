@@ -32,7 +32,7 @@ class RemoteClient
 		void fireEstablishConnectionDone(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const GlobalStatus& pStatus);
 
 		void fireNewRemoteDispatcher(const QSharedPointer<RemoteDispatcherClient>& pRemoteDispatcher);
-		void fireRemoteDevicesInfo(const QVector<QSharedPointer<RemoteDeviceListEntry> >& pRemoteDevices);
+		void fireRemoteDevicesInfo(const QVector<QSharedPointer<RemoteDeviceListEntry>>& pRemoteDevices);
 		void fireDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QString& pId);
 		void fireDetectionChanged();
 		void fireCertificateRemoved(const QString& pDeviceName);
@@ -47,7 +47,7 @@ class RemoteClient
 
 		Q_INVOKABLE virtual void establishConnection(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const QString& pPsk) = 0;
 
-		virtual QVector<QSharedPointer<RemoteDeviceListEntry> > getAnnouncingRemoteDevices() const;
+		virtual QVector<QSharedPointer<RemoteDeviceListEntry>> getAnnouncingRemoteDevices() const;
 		Q_INVOKABLE virtual void requestRemoteDevices();
 		virtual QStringList getConnectedDeviceIDs() const;
 		virtual QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() = 0;

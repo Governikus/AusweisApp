@@ -23,7 +23,7 @@ class VersionInformationModel
 			LABEL = Qt::UserRole + 1,
 			TEXT
 		};
-		QVector<QPair<QString, QString> > mData;
+		QVector<QPair<QString, QString>> mData;
 
 		void init();
 

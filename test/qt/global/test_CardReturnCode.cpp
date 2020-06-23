@@ -23,7 +23,7 @@ class test_CardReturnCode
 		void check_errorCodeToMessage()
 		{
 			QCOMPARE(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER).toErrorDescription(),
-					QString("The process has been cancelled."));
+					QString("The process has been cancelled by the card reader."));
 		}
 
 
@@ -37,7 +37,7 @@ class test_CardReturnCode
 		{
 			const ECardApiResult& result = ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
 			QCOMPARE(result.getMinor(), ECardApiResult::Minor::SAL_Cancellation_by_User);
-			QCOMPARE(result.getMessage(), QString("The process has been cancelled."));
+			QCOMPARE(result.getMessage(), QString("The process has been cancelled by the card reader."));
 		}
 
 

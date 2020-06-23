@@ -62,6 +62,8 @@ Item {
 
 			width: Math.min(parent.width, implicitWidth)
 
+			elide: Text.ElideRight
+			maximumLineCount: 1
 			textStyle: Style.text.header_accent
 
 			FocusFrame {

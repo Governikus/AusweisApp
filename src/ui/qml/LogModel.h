@@ -51,7 +51,7 @@ class LogModel
 		static LogModel& getInstance();
 
 	public:
-		QStringList getLogfiles();
+		QStringList getLogfiles() const;
 		Q_INVOKABLE QDateTime getCurrentLogfileDate() const;
 		Q_INVOKABLE void removeOtherLogfiles();
 		Q_INVOKABLE void removeCurrentLogfile();

@@ -186,7 +186,8 @@ void StateCheckRefreshAddress::onSslErrors(const QList<QSslError>& pErrors)
 {
 	if (TlsChecker::containsFatalError(mReply, pErrors))
 	{
-		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Ssl_Establishment_Error));
+		reportCommunicationError({GlobalStatus::Code::Network_Ssl_Establishment_Error, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+				});
 	}
 }
 
@@ -224,24 +225,28 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 				context->addCertificateData(pUrl, pCertificate);
 			};
 
-	const auto& issuerName = TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate());
+	const GlobalStatus::ExternalInfoMap infoMap {
+		{GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate())},
+		{GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
+	};
 	switch (CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), mUrl, context->getDidAuthenticateEac1(), context->getDvCvc(), saveCertificateFunc))
 	{
 		case CertificateChecker::CertificateStatus::Good:
 			break;
 
 		case CertificateChecker::CertificateStatus::Unsupported_Algorithm_Or_Length:
-			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length, issuerName));
+			reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length, infoMap});
 			return false;
 
 		case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
-			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description, issuerName));
+			reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description, infoMap});
 			return false;
 	}
 
 	if (!TlsChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
-		reportCommunicationError(GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length);
+		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
+				});
 		return false;
 	}
 
@@ -252,30 +257,34 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 void StateCheckRefreshAddress::onNetworkReply()
 {
 	const auto statusCode = NetworkManager::getLoggedStatusCode(mReply, spawnMessageLogger(network));
-
 	if (mReply->error() != QNetworkReply::NoError)
 	{
 		qCritical() << "An error occured:" << mReply->errorString();
 		switch (NetworkManager::toNetworkError(mReply.data()))
 		{
 			case NetworkManager::NetworkError::ServiceUnavailable:
-				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_ServiceUnavailable));
+				reportCommunicationError({GlobalStatus::Code::Network_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
+						});
 				break;
 
 			case NetworkManager::NetworkError::TimeOut:
-				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_TimeOut));
+				reportCommunicationError({GlobalStatus::Code::Network_TimeOut, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
+						});
 				break;
 
 			case NetworkManager::NetworkError::ProxyError:
-				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Proxy_Error));
+				reportCommunicationError({GlobalStatus::Code::Network_Proxy_Error, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
+						});
 				break;
 
 			case NetworkManager::NetworkError::SecurityError:
-				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Ssl_Establishment_Error));
+				reportCommunicationError({GlobalStatus::Code::Network_Ssl_Establishment_Error, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
+						});
 				break;
 
 			case NetworkManager::NetworkError::OtherError:
-				reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Other_Error));
+				reportCommunicationError({GlobalStatus::Code::Network_Other_Error, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
+						});
 				break;
 		}
 		return;
@@ -284,7 +293,11 @@ void StateCheckRefreshAddress::onNetworkReply()
 	if (statusCode != HTTP_STATUS_FOUND && statusCode != HTTP_STATUS_SEE_OTHER && statusCode != HTTP_STATUS_TEMPORARY_REDIRECT)
 	{
 		qCritical() << "Got unexpected status code:" << statusCode;
-		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Expected_Redirect, QString::number(statusCode)));
+		const GlobalStatus::ExternalInfoMap infoMap {
+			{GlobalStatus::ExternalInformation::HTTP_STATUS_CODE, QString::number(statusCode)},
+			{GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
+		};
+		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Expected_Redirect, infoMap});
 		return;
 	}
 
@@ -292,14 +305,19 @@ void StateCheckRefreshAddress::onNetworkReply()
 	if (redirectUrl.isEmpty())
 	{
 		qCritical() << "Got empty redirect URL";
-		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url));
+		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
+				});
 		return;
 	}
 
 	if (!redirectUrl.isValid())
 	{
 		qCritical() << "Got malformed redirect URL:" << redirectUrl;
-		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url, QString::fromLatin1(redirectUrl.toEncoded())));
+		const GlobalStatus::ExternalInfoMap infoMap {
+			{GlobalStatus::ExternalInformation::REDIRECT_URL, redirectUrl.toString()},
+			{GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
+		};
+		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url, infoMap});
 		return;
 	}
 
@@ -314,7 +332,11 @@ void StateCheckRefreshAddress::onNetworkReply()
 		else
 		{
 			qCritical() << httpsError;
-			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Invalid_Scheme, redirectUrl.scheme()));
+			const QMap<GlobalStatus::ExternalInformation, QString> infoMap {
+				{GlobalStatus::ExternalInformation::URL_SCHEME, redirectUrl.scheme()},
+				{GlobalStatus::ExternalInformation::LAST_URL, redirectUrl.toString()}
+			};
+			reportCommunicationError({GlobalStatus::Code::Workflow_Network_Invalid_Scheme, infoMap});
 			return;
 		}
 	}
@@ -369,7 +391,11 @@ void StateCheckRefreshAddress::fetchServerCertificate()
 
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDoneFetchingServerCertificate);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+	mConnections += connect(mReply.data(), &QNetworkReply::errorOccurred, this, &StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate);
+#else
 	mConnections += connect(mReply.data(), QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this, &StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate);
+#endif
 }
 
 
@@ -407,7 +433,8 @@ void StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate(QNetworkR
 		return;
 	}
 	qCritical() << "An error occured fetching the server certificate:" << mReply->errorString();
-	reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url));
+	reportCommunicationError({GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+			});
 }
 
 

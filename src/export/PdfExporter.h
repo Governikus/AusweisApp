@@ -37,7 +37,7 @@ class PdfExporter
 	public:
 		PdfExporter(const QString& pFilename, bool pOpenFile = true, bool pFixFilename = true);
 		bool exportHistory();
-		bool exportSelfInfo(const QDateTime& pDate, const QVector<QPair<QString, QString> >& pInfoData);
+		bool exportSelfInfo(const QDateTime& pDate, const QVector<QPair<QString, QString>>& pInfoData);
 };
 
 } // namespace governikus

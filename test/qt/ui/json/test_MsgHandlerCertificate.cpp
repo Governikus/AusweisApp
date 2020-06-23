@@ -27,7 +27,6 @@ class test_MsgHandlerCertificate
 		return context;
 	}
 
-
 	private Q_SLOTS:
 		void getCertificateBadState()
 		{

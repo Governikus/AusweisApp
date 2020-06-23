@@ -19,7 +19,7 @@ SectionPage
 {
 	id: baseItem
 
-	signal passwordEntered()
+	signal passwordEntered(bool pWasNewPin)
 	signal changePinLength()
 	signal requestPasswordInfo()
 
@@ -47,6 +47,7 @@ SectionPage
 				return
 			}
 
+			let wasNewPin = false;
 			if (passwordType === NumberModel.PASSWORD_PIN) {
 				NumberModel.pin = numberField.text
 			}
@@ -62,6 +63,7 @@ SectionPage
 				} else {
 					NumberModel.newPin = numberField.text
 					numberField.inputConfirmation = ""
+					wasNewPin = true
 				}
 			}
 			else if (passwordType === NumberModel.PASSWORD_REMOTE_PIN) {
@@ -70,7 +72,7 @@ SectionPage
 
 			numberField.text = ""
 			if (numberField.inputConfirmation === "") {
-				baseItem.passwordEntered()
+				baseItem.passwordEntered(wasNewPin)
 			}
 		}
 	}
@@ -129,16 +131,15 @@ SectionPage
 		Accessible.name: mainText.text
 
 		//: LABEL DESKTOP_QML
-		text: (passwordType === NumberModel.PASSWORD_PIN ? qsTr("PIN entry")
-			   //: LABEL DESKTOP_QML
-		     : passwordType === NumberModel.PASSWORD_NEW_PIN ? qsTr("PIN entry")
-			   //: LABEL DESKTOP_QML
-		     : passwordType === NumberModel.PASSWORD_CAN ? qsTr("CAN entry")
-			   //: LABEL DESKTOP_QML
-		     : passwordType === NumberModel.PASSWORD_PUK ? qsTr("PUK entry")
-			   //: LABEL DESKTOP_QML
-		     : passwordType === NumberModel.PASSWORD_REMOTE_PIN ? qsTr("Pairing code")
-		     : console.error("Unknown type")) + SettingsModel.translationTrigger
+		text: (passwordType === NumberModel.PASSWORD_CAN ? qsTr("Enter CAN")
+			 //: LABEL DESKTOP_QML
+			 : passwordType === NumberModel.PASSWORD_PUK ? qsTr("Enter PUK")
+			 //: LABEL DESKTOP_QML
+			 : passwordType === NumberModel.PASSWORD_REMOTE_PIN ? qsTr("Enter pairing code")
+			 //: LABEL DESKTOP_QML
+			 : NumberModel.requestTransportPin ? qsTr("Enter Transport PIN")
+			 //: LABEL DESKTOP_QML
+			 : qsTr("Enter PIN")) + SettingsModel.translationTrigger
 		textStyle: Style.text.header_inverse
 		horizontalAlignment: Text.AlignHCenter
 
@@ -169,16 +170,19 @@ SectionPage
 			if (passwordType === NumberModel.PASSWORD_PIN) {
 				if (NumberModel.requestTransportPin) {
 					return ("%1<br><a href=\"#\">%2</a>").arg(
-							   //: INFO DESKTOP_QML The AA2 expects a PIN with 5 digits which can be entered via the physical or onscreen keyboard
-							   qsTr("Please enter your 5-digit Transport PIN. Use the keyboard or numpad.")
+							   //: INFO DESKTOP_QML The AA2 expects the Transport PIN with five digits.
+							   qsTr("Please enter the five-digit Transport PIN.")
 						   ).arg(
 							   //: INFO DESKTOP_QML Link text
 							   qsTr("More information")
 						   )
 				} else {
 					return ("%1<br><a href=\"#\">%2</a>").arg(
-							   //: INFO DESKTOP_QML The AA2 expects a PIN with 6 digits which can be entered via the physical or onscreen keyboard.
-							   qsTr("Please enter your 6-digit PIN. Use the keyboard or numpad.")
+							   ApplicationModel.currentWorkflow === "changepin"
+							   //: INFO DESKTOP_QML The AA2 expects the current PIN with six digits in a PIN change.
+							   ? qsTr("Please enter your current six-digit PIN.")
+							   //: INFO DESKTOP_QML The AA2 expects a PIN with six digits in an authentication.
+							   : qsTr("Please enter your six-digit PIN.")
 						   ).arg(
 							   //: INFO DESKTOP_QML Link text
 							   qsTr("More information")
@@ -186,27 +190,18 @@ SectionPage
 				}
 			}
 			if (passwordType === NumberModel.PASSWORD_CAN) {
-				if (NumberModel.isCanAllowedMode) {
-					return ("%1<br><a href=\"#\">%2</a>").arg(
-							   //: INFO DESKTOP_QML The operator is required to enter the 6-digit CAN in CAN-allowed authentication.
-							   qsTr("Please enter the 6-digit card access number (CAN).")
-						   ).arg(
-							   //: INFO DESKTOP_QML Link text
-							   qsTr("More information")
-						   )
-				}
 				return ("%1<br><a href=\"#\">%2</a>").arg(
-						   //: INFO DESKTOP_QML The PIN was entered wrongfully twice, this may have happened during an earlier session of the AA2, too. The user needs to enter the CAN for additional verification.
-						   qsTr("A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.")
-					   ).arg(
-						   //: INFO DESKTOP_QML Link text
-						   qsTr("More information")
-					   )
+							//: INFO DESKTOP_QML The user is required to enter the six-digit CAN in CAN-allowed authentication.
+							qsTr("Please enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of the ID card.")
+						).arg(
+							//: INFO DESKTOP_QML Link text
+							qsTr("More information")
+						)
 			}
 			if (passwordType === NumberModel.PASSWORD_PUK) {
 				return ("%1<br><a href=\"#\">%2</a>").arg(
 						   //: INFO DESKTOP_QML The PUK is required to unlock the ID card.
-						   qsTr("The PIN of your ID card is blocked after three incorrect tries. The block can be lifted by entering your personal unblocking key (PUK).")
+						   qsTr("The PIN of your ID card is blocked after three incorrect attempts. Please enter the Personal Unblocking Key (PUK) to lift the block. You can find the key in your PIN letter.")
 					   ).arg(
 						   //: INFO DESKTOP_QML Link text
 						   qsTr("More information")
@@ -214,17 +209,17 @@ SectionPage
 			}
 			if (passwordType === NumberModel.PASSWORD_NEW_PIN) {
 				if (numberField.inputConfirmation === "") {
-					//: INFO DESKTOP_QML A new 6-digit PIN needs to be supplied.
-					return qsTr("Please enter a new 6-digit PIN now.")
+					//: INFO DESKTOP_QML A new six-digit PIN needs to be supplied.
+					return qsTr("Please enter a new six-digit PIN now.")
 				} else {
 					//: INFO DESKTOP_QML The new PIN needs to be entered again for verification.
-					return qsTr("Please confirm your new 6-digit PIN.")
+					return qsTr("Please confirm your new six-digit PIN.")
 				}
 			}
 			if (passwordType === NumberModel.PASSWORD_REMOTE_PIN) {
 				return ("%1<br><a href=\"#\">%2</a>").arg(
 						   //: INFO DESKTOP_QML The pairing code needs to be supplied.
-						   qsTr("Start the pairing on your smartphone and enter the shown pairing code in order to use your smartphone as a card reader (SaC).")
+						   qsTr("Start the pairing on your smartphone and enter the pairing code shown there in order to use your smartphone as a card reader (SaC).")
 					   ).arg(
 						   //: INFO DESKTOP_QML Link text
 						   qsTr("More information")
@@ -285,10 +280,10 @@ SectionPage
 			textStyle: Style.text.hint_inverse
 			textFormat: Text.StyledText
 			text: "<a href=\"#\">" + (NumberModel.requestTransportPin ?
-									  //: LABEL DESKTOP_QML Button to switch to a 6-digit PIN.
-									  qsTr("Does your PIN have 6 digits?") :
-									  //: LABEL DESKTOP_QML Button to switch to a transport PIN or start a change of the transport PIN.
-									  qsTr("Does your PIN have 5 digits?")
+									  //: LABEL DESKTOP_QML Button to switch to a six-digit PIN.
+									  qsTr("Does your PIN have six digits?") :
+									  //: LABEL DESKTOP_QML Button to switch to a Transport PIN or start a change of the Transport PIN.
+									  qsTr("Does your PIN have five digits?")
 									 ) + "</a>" + SettingsModel.translationTrigger
 			linkColor: textStyle.textColor
 			onLinkActivated: baseItem.changePinLength()

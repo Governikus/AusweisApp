@@ -10,6 +10,7 @@ import Governikus.HistoryView 1.0
 import Governikus.SelfAuthenticationView 1.0
 import Governikus.IdentifyView 1.0
 import Governikus.ChangePinView 1.0
+import Governikus.ProgressView 1.0
 import Governikus.ProviderView 1.0
 import Governikus.MoreView 1.0
 import Governikus.SettingsView 1.0
@@ -17,6 +18,7 @@ import Governikus.TutorialView 1.0
 import Governikus.UpdateView 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.AuthModel 1.0
 import Governikus.Type.UiModule 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.SelfAuthModel 1.0
@@ -28,15 +30,14 @@ import QtQml.Models 2.10
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
-import Qt.labs.platform 1.1
+import Qt.labs.platform 1.1 as Labs
 
 
 ApplicationWindow {
 	id: appWindow
 
-	function openSaveFileDialog(pOnAcceptedCallback, pDefaultFilename, pSuffix) {
-		//: LABEL DESKTOP_QML
-		saveFileDialog.nameFilters = [qsTr("Text files") + " (*." + pSuffix + ")"]
+	function openSaveFileDialog(pOnAcceptedCallback, pDefaultFilename, pFileType, pSuffix) {
+		saveFileDialog.nameFilters = "%1 (*.%2)".arg(pFileType).arg(pSuffix)
 		saveFileDialog.defaultSuffix = pSuffix
 		saveFileDialog.currentFile = saveFileDialog.folder + "/" + pDefaultFilename
 		saveFileDialog.acceptedCallback = pOnAcceptedCallback
@@ -71,12 +72,17 @@ ApplicationWindow {
 	onHeightChanged: d.setScaleFactor()
 
 	onClosing: {
+		if (ApplicationModel.currentWorkflow !== "") {
+			abortWorkflowWarning.open()
+			close.accepted = false
+			return
+		}
+
 		if (SettingsModel.remindUserToClose) {
 			closeWarning.open()
 			close.accepted = false
 		} else {
-			hide()
-			plugin.hide()
+			d.hideUiAndTaskbarEntry()
 		}
 	}
 	onVisibilityChanged: if (visibility !== ApplicationWindow.Minimized) d.lastVisibility = visibility
@@ -95,13 +101,31 @@ ApplicationWindow {
 
 		property int activeView: SectionPage.Views.Main
 		property int lastVisibility: ApplicationWindow.Windowed
-		readonly property int initialWidth: ApplicationModel.dpiScale * 1600
-		readonly property int initialHeight: ApplicationModel.dpiScale * 1200
+		readonly property int initialWidth: 960
+		readonly property int initialHeight: 720
 		property ApplicationWindow detachedLogView: null
+
+		function abortCurrentWorkflow() {
+			if (ApplicationModel.currentWorkflow === "authentication") {
+				AuthModel.cancelWorkflow()
+			}
+			else if (ApplicationModel.currentWorkflow === "selfauthentication") {
+				SelfAuthModel.cancelWorkflow()
+			}
+			else if (ApplicationModel.currentWorkflow === "changepin") {
+				ChangePinModel.cancelWorkflow()
+			}
+		}
+
+		function hideUiAndTaskbarEntry() {
+			hide()
+			plugin.hideFromTaskbar()
+		}
 
 		function closeOpenDialogs() {
 			saveFileDialog.reject()
 			closeWarning.close()
+			abortWorkflowWarning.close()
 		}
 
 		function showMainWindow() {
@@ -132,13 +156,15 @@ ApplicationWindow {
 
 	}
 
-	FileDialog {
+	TaskbarProgress {}
+
+	Labs.FileDialog {
 		id: saveFileDialog
 
 		property var acceptedCallback
 
-		fileMode: FileDialog.SaveFile
-		folder: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
+		fileMode: Labs.FileDialog.SaveFile
+		folder: Labs.StandardPaths.writableLocation(Labs.StandardPaths.DocumentsLocation)
 		onAccepted: acceptedCallback(file)
 	}
 
@@ -163,10 +189,7 @@ ApplicationWindow {
 		title: qsTr("The user interface of the %1 is closed.").arg(Qt.application.name) + SettingsModel.translationTrigger
 		//: INFO DESKTOP_QML Content of the popup that is shown when the AA2 is closed for the first time.
 		text: qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name) + SettingsModel.translationTrigger
-		onConfirmed: {
-			hide()
-			plugin.hide()
-		}
+		onConfirmed: d.hideUiAndTaskbarEntry()
 
 		ToggleableOption {
 			//: LABEL DESKTOP_QML
@@ -177,6 +200,26 @@ ApplicationWindow {
 
 			onCheckedChanged: SettingsModel.remindUserToClose = !checked
 		}
+	}
+
+	ConfirmationPopup {
+		id: abortWorkflowWarning
+
+		//: INFO DESKTOP_QML Content of the popup that is shown when the AA2 is closed and a workflow is still active.
+		readonly property string abortText: qsTr("This will cancel the current operation and hide the UI of %1. You can restart the operation at any time.").arg(Qt.application.name) + SettingsModel.translationTrigger
+		//: INFO DESKTOP_QML Content of the popup that is shown when the AA2 is closed and a workflow is still active and the close/minimize info was not disabled.
+		readonly property string hideToTrayText: qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name) + SettingsModel.translationTrigger
+
+		closePolicy: Popup.NoAutoClose
+		//: INFO DESKTOP_QML Header of the popup that is shown when the AA2 is closed and a workflow is still active
+		title: qsTr("Abort operation") + SettingsModel.translationTrigger
+		text: "%1%2".arg(abortText).arg(SettingsModel.remindUserToClose ? "<br/><br/>%1".arg(hideToTrayText) : "")
+
+		onConfirmed: {
+			d.abortCurrentWorkflow()
+			d.hideUiAndTaskbarEntry()
+		}
+		onCancelled: close()
 	}
 
 	Connections {
@@ -223,9 +266,7 @@ ApplicationWindow {
 					break
 			}
 		}
-		onFireHideRequest: {
-			hide()
-		}
+		onFireHideRequest: hide()
 	}
 
 	Connections {
@@ -244,7 +285,7 @@ ApplicationWindow {
 
 	Shortcut {
 		sequence: StandardKey.HelpContents
-		onActivated: ApplicationModel.openOnlineHelp("index")
+		onActivated: ApplicationModel.openOnlineHelp(titleBar.rightMostAction.helpTopic)
 	}
 
 	Image {
@@ -354,6 +395,18 @@ ApplicationWindow {
 
 		onClosed: SettingsModel.showNewUiHint = false
 		onCancelled: plugin.switchUi()
+	}
+
+	Connections {
+		target: plugin
+		onFireProxyAuthenticationRequired: {
+			proxyCredentials.credentials = pProxyCredentials
+			proxyCredentials.open()
+		}
+	}
+
+	ProxyCredentialsPopup {
+		id: proxyCredentials
 	}
 
 	Component {

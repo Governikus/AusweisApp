@@ -24,7 +24,7 @@ defineSingleton(AppUpdater)
 Q_DECLARE_LOGGING_CATEGORY(appupdate)
 
 AppUpdater::AppUpdater()
-	: mIgnoreNextVersionskip(false)
+	: mForceUpdate(false)
 	, mAppUpdateJsonUrl()
 	, mAppUpdateData()
 {
@@ -40,9 +40,9 @@ AppUpdater& AppUpdater::getInstance()
 }
 
 
-void AppUpdater::checkAppUpdate(bool pIgnoreNextVersionskip)
+void AppUpdater::checkAppUpdate(bool pForceUpdate)
 {
-	mIgnoreNextVersionskip = pIgnoreNextVersionskip;
+	mForceUpdate = pForceUpdate;
 	mAppUpdateData = AppUpdateData();
 
 	auto* downloader = Env::getSingleton<Downloader>();
@@ -80,14 +80,14 @@ void AppUpdater::onUpdateDownloadFinished(const QUrl& pUpdateUrl, const QDateTim
 
 			if (VersionNumber(version) > VersionNumber::getApplicationVersion())
 			{
-				if (!mIgnoreNextVersionskip && version == Env::getSingleton<AppSettings>()->getGeneralSettings().getSkipVersion())
+				if (!mForceUpdate && version == Env::getSingleton<AppSettings>()->getGeneralSettings().getSkipVersion())
 				{
 					qCInfo(appupdate) << "Version will be skipped:" << version;
 					Q_EMIT fireAppUpdateCheckFinished(false, GlobalStatus::Code::No_Error);
 				}
 				else
 				{
-					mIgnoreNextVersionskip = false;
+					mForceUpdate = false;
 					qCInfo(appupdate) << "Found new version:" << version << ", greater than old version" << QCoreApplication::applicationVersion();
 					Env::getSingleton<Downloader>()->download(mAppUpdateData.getNotesUrl());
 					return;

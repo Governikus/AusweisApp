@@ -31,7 +31,7 @@ SectionPage {
 	Connections {
 		target: ChangePinModel
 		//: INFO ANDROID IOS The ID card has just been unblocked and the user can now continue with their PIN change.
-		onFireOnPinUnlocked: ApplicationModel.showFeedback(qsTr("Your ID card is unblocked. You now have three more tries to change your PIN"))
+		onFireOnPinUnlocked: ApplicationModel.showFeedback(qsTr("Your ID card is unblocked. You now have three more attempts to change your PIN"))
 	}
 
 	ChangePinViewContent {
@@ -45,8 +45,7 @@ SectionPage {
 
 		controller: changePinController
 		workflowModel: ChangePinModel
-		//: LABEL ANDROID IOS
-		workflowTitle: qsTr("PIN Management") + SettingsModel.translationTrigger
+		workflowTitle: baseItem.title
 
 		waitingFor: switch (changePinController.workflowState) {
 						case ChangePinController.WorkflowStates.Reader:
@@ -65,8 +64,8 @@ SectionPage {
 
 	ResultView {
 		id: cardPositionView
-		//: LABEL ANDROID IOS
-		title: qsTr("PIN Management") + SettingsModel.translationTrigger
+		navigationAction: NavigationAction { state: "cancel"; onClicked: ChangePinModel.cancelWorkflow() }
+		title: baseItem.title
 		resultType: ResultView.Type.IsInfo
 		//: LABEL ANDROID IOS
 		buttonText: qsTr("Retry") + SettingsModel.translationTrigger
@@ -81,8 +80,7 @@ SectionPage {
 
 	ResultView {
 		id: pinResult
-		//: LABEL ANDROID IOS
-		title: qsTr("PIN Management") + SettingsModel.translationTrigger
+		title: baseItem.title
 		resultType: ChangePinModel.error ? ResultView.Type.IsError : ResultView.Type.IsSuccess
 		text: ChangePinModel.resultString
 		onClicked: {
@@ -101,6 +99,7 @@ SectionPage {
 		visible: false
 
 		onPasswordEntered: {
+			pinProgressView.wasNewPin = pWasNewPin
 			firePop()
 			ChangePinModel.continueWorkflow()
 		}
@@ -110,18 +109,23 @@ SectionPage {
 
 	ProgressView {
 		id: pinProgressView
+
+		property bool wasNewPin
+
 		navigationAction: NavigationAction {
 			state: ChangePinModel.isBasicReader ? "cancel" : "hidden";
 			onClicked: if (state !== "hidden") ChangePinModel.cancelWorkflow()
 		}
-		//: LABEL ANDROID IOS
-		title: qsTr("PIN Management") + SettingsModel.translationTrigger
+		title: baseItem.title
 		visible: false
-		//: LABEL ANDROID IOS
-		text: qsTr("Change PIN") + SettingsModel.translationTrigger
+		text: (wasNewPin
+			//: LABEL ANDROID IOS Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.
+			? qsTr("Setting new PIN")
+			//: LABEL ANDROID IOS Processing screen label while the card communication is running before the new PIN has been entered during PIN change process.
+			: qsTr("Change PIN")) + SettingsModel.translationTrigger
 		subText: (!visible ? ""
 				 //: INFO ANDROID IOS Loading screen during PIN change process, data communcation is currently ongoing. Message is usually not visible since the password handling with basic reader is handled by EnterPasswordView.
-			   : ChangePinModel.isBasicReader ? qsTr("Please don't move the ID card...")
+			   : ChangePinModel.isBasicReader ? qsTr("Please don't move the ID card.")
 			   : !!NumberModel.inputError ? NumberModel.inputError
 				 //: INFO ANDROID IOS The card communcation was aborted, the online identification functionality is deactivated and needs to be actived by the authorities.
 			   : NumberModel.pinDeactivated ? qsTr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.")
@@ -130,11 +134,11 @@ SectionPage {
 				 //: INFO ANDROID IOS Either an comfort card reader or smartphone-as-card-reader is used, the user needs to react to request on that device.
 				 || changePinController.workflowState === ChangePinController.WorkflowStates.NewPin ? qsTr("Please observe the display of your card reader.")
 				 //: INFO ANDROID IOS The wrong PIN was entered twice, the next attempt requires additional verifcation via CAN.
-			   : changePinController.workflowState === ChangePinController.WorkflowStates.Can ? qsTr("A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.")
+			   : changePinController.workflowState === ChangePinController.WorkflowStates.Can ? qsTr("A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.")
 				 //: INFO ANDROID IOS The PIN (including the CAN) was entered wrongfully three times, the PUK is required to unlock the ID card.
 			   : changePinController.workflowState === ChangePinController.WorkflowStates.Puk ? qsTr("A wrong PIN has been entered three times on your ID card. Your PIN is now blocked. To unblock your PIN you have to enter the PUK.")
 				 //: INFO ANDROID IOS Generic progress message during PIN change process.
-			   : qsTr("Please don't move the ID card...")) + SettingsModel.translationTrigger
+			   : qsTr("Please don't move the ID card.")) + SettingsModel.translationTrigger
 		subTextColor: !ChangePinModel.isBasicReader && (NumberModel.inputError
 														|| NumberModel.pinDeactivated
 														|| changePinController.workflowState === ChangePinController.WorkflowStates.Can

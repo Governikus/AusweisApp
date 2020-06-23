@@ -37,7 +37,6 @@ class PackageInfo
 			mInstallTime = getField(pData, QStringLiteral("install-time"));
 		}
 
-
 	private:
 		QString getField(const QString& pData, const QString& pFieldName)
 		{
@@ -90,7 +89,6 @@ class DriverInfo
 		{
 			return !mIfdManufacturer.isEmpty();
 		}
-
 
 	private:
 		QString getField(const QSettings& pSettings, const QString& pFieldName)

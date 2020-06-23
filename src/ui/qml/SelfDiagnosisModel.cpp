@@ -18,6 +18,12 @@ using namespace governikus;
 defineSingleton(SelfDiagnosisModel)
 
 
+bool SelfDiagnosisModel::isRunning() const
+{
+	return mDiagnosisModel.isRunning();
+}
+
+
 SelfDiagnosisModel::SelfDiagnosisModel(QObject* pParent)
 	: QObject(pParent)
 	, mDiagnosisContext(new DiagnosisContext)
@@ -25,6 +31,7 @@ SelfDiagnosisModel::SelfDiagnosisModel(QObject* pParent)
 {
 	const GeneralSettings& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	connect(&generalSettings, &GeneralSettings::fireLanguageChanged, this, &SelfDiagnosisModel::fireSectionContentModelChanged);
+	connect(&mDiagnosisModel, &DiagnosisModel::fireRunningChanged, this, &SelfDiagnosisModel::fireRunningChanged);
 }
 
 

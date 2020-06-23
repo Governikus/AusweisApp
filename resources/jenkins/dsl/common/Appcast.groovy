@@ -9,7 +9,7 @@ class Appcast extends Build
 {
 	String name = 'Appcast'
 	String label= 'Common'
-	String artifacts = 'build/*.msi,build/*.dmg,build/*.tar.gz,build/*.sha256,build/Appcast.*,build/ReleaseNotes.html,build/docs/**/*.pdf,build/docs/**/*.tar.xz,source/resources/default-*'
+	String artifacts = 'build/*.msi,build/*.dmg,build/*.tar.gz,build/*.sha256,build/Appcast.*,build/ReleaseNotes.html,build/*.pdf,build/docs/**/*.pdf,build/docs/**/*.tar.xz'
 	String trigger = null
 	List oldBuilds = [-1, 5]
 	boolean sendMail = false

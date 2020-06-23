@@ -68,7 +68,7 @@ class test_UIPlugInWebSocket
 			QVERIFY(webSocketPort > 0);
 
 			mHelper.reset(new WebSocketHelper(webSocketPort));
-			QCOMPARE(mHelper->getState(), QAbstractSocket::SocketState::ConnectedState);
+			QTRY_VERIFY_WITH_TIMEOUT(mHelper->isConnected(), PROCESS_TIMEOUT);
 		}
 
 

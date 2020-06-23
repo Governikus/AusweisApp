@@ -6,6 +6,7 @@
 
 #include <QCoreApplication>
 #include <QFile>
+#include <QSslKey>
 #include <QtTest>
 
 #include "FileDestination.h"
@@ -17,6 +18,7 @@ using namespace governikus;
 
 Q_DECLARE_METATYPE(SecureStorage::TlsSuite)
 Q_DECLARE_METATYPE(QSsl::SslProtocol)
+Q_DECLARE_METATYPE(QSsl::KeyAlgorithm)
 
 class test_SecureStorage
 	: public QObject
@@ -73,7 +75,6 @@ class test_SecureStorage
 
 			return comments;
 		}
-
 
 	private Q_SLOTS:
 		void testGetCVRootCertificatesUnique()
@@ -167,9 +168,12 @@ class test_SecureStorage
 			QTest::addColumn<QString>("subjectInfo");
 			QTest::addColumn<QString>("issuerInfo");
 			QTest::addColumn<QString>("expiryDate");
+			QTest::addColumn<int>("length");
+			QTest::addColumn<QSsl::KeyAlgorithm>("algorithm");
 
-			QTest::newRow("production") << 0 << "appl.governikus-asp.de" << "TeleSec ServerPass Class 2 CA" << "2020-12-06T23:59:59Z";
-			QTest::newRow("ci") << 1 << "*.govkg.de" << "TeleSec ServerPass Class 2 CA" << "2021-03-12T23:59:59Z";
+			QTest::newRow("production") << 0 << "appl.governikus-asp.de" << "TeleSec ServerPass Class 2 CA" << "2020-12-06T23:59:59Z" << 4096 << QSsl::Rsa;
+			QTest::newRow("production_next") << 1 << "appl.governikus-asp.de" << "TeleSec ServerPass Class 2 CA" << "2022-06-22T23:59:59Z" << 4096 << QSsl::Rsa;
+			QTest::newRow("ci") << 2 << "*.govkg.de" << "TeleSec ServerPass Class 2 CA" << "2021-03-12T23:59:59Z" << 4096 << QSsl::Rsa;
 		}
 
 
@@ -177,12 +181,14 @@ class test_SecureStorage
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 			const auto& certificates = secureStorage->getUpdateCertificates();
-			QCOMPARE(certificates.count(), 2);
+			QCOMPARE(certificates.count(), 3);
 
 			QFETCH(int, index);
 			QFETCH(QString, subjectInfo);
 			QFETCH(QString, issuerInfo);
 			QFETCH(QString, expiryDate);
+			QFETCH(int, length);
+			QFETCH(QSsl::KeyAlgorithm, algorithm);
 
 			QVERIFY(certificates.count() - index > 0);
 
@@ -190,6 +196,8 @@ class test_SecureStorage
 			QCOMPARE(cert.subjectInfo(QSslCertificate::CommonName).at(0), subjectInfo);
 			QCOMPARE(cert.issuerInfo(QSslCertificate::CommonName).at(0), issuerInfo);
 			QCOMPARE(cert.expiryDate(), QDateTime::fromString(expiryDate, Qt::ISODate));
+			QCOMPARE(cert.publicKey().length(), length);
+			QCOMPARE(cert.publicKey().algorithm(), algorithm);
 		}
 
 

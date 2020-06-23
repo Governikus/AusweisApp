@@ -69,7 +69,7 @@ SectionPage
 					tintIcon: true
 					onClicked: {
 						let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogfileDate())
-						appWindow.openSaveFileDialog(LogModel.saveCurrentLogfile, filenameSuggestion, "log")
+						appWindow.openSaveFileDialog(LogModel.saveCurrentLogfile, filenameSuggestion, qsTr("Logfiles"), "log")
 					}
 				}
 
@@ -147,7 +147,7 @@ SectionPage
 				model: LogModel
 				spacing: Constants.text_spacing
 				delegate: LogViewDelegate {
-					width: parent.width - 2 * Constants.pane_padding
+					width: logView.width - 2 * Constants.pane_padding
 				}
 
 				Connections {
@@ -173,6 +173,8 @@ SectionPage
 		id: confirmationPopup
 
 		property bool deleteAll: true
+
+		width: ApplicationModel.scaleFactor * 600
 
 		title: (deleteAll ?
 				//: LABEL DESKTOP_QML

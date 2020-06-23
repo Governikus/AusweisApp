@@ -11,6 +11,12 @@
 #include <openssl/err.h>
 #include <QLoggingCategory>
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#include <QScopeGuard>
+#else
+#include "ScopeGuard.h"
+#endif
+
 using namespace governikus;
 
 
@@ -32,7 +38,7 @@ bool SignatureChecker::check()
 	}
 
 	auto signingCert = mCertificateChain.at(0);
-	QSharedPointer<const EC_KEY> key = signingCert->getBody().getPublicKey().getEcKey();
+	const EC_KEY* key = signingCert->getBody().getPublicKey().getEcKey();
 	if (!key)
 	{
 		qCCritical(card) << "No elliptic curve parameters";
@@ -41,7 +47,7 @@ bool SignatureChecker::check()
 
 	for (const auto& cert : mCertificateChain)
 	{
-		if (!checkSignature(cert, signingCert, key.data()))
+		if (!checkSignature(cert, signingCert, key))
 		{
 			qCCritical(card) << "Certificate verification failed:" << cert->getBody().getCertificateHolderReference();
 			return false;
@@ -70,6 +76,10 @@ bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>&
 	const auto uncompPublicPointLen = static_cast<size_t>(uncompPublicPoint.size());
 
 	EC_POINT* publicPoint = EC_POINT_new(EC_KEY_get0_group(signingKey.data()));
+	const auto guard = qScopeGuard([publicPoint] {
+				EC_POINT_free(publicPoint);
+			});
+
 	const EC_GROUP* ecGroup = EC_KEY_get0_group(signingKey.data());
 	if (!EC_POINT_oct2point(ecGroup, publicPoint, uncompPublicPointData, uncompPublicPointLen, nullptr))
 	{
@@ -81,7 +91,7 @@ bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>&
 	const QByteArray bodyHash = QCryptographicHash::hash(pCert->getRawBody(), pSigningCert->getBody().getHashAlgorithm());
 	const auto* const dgst = reinterpret_cast<const unsigned char*>(bodyHash.constData());
 	const int dgstlen = bodyHash.size();
-	const int result = ECDSA_do_verify(dgst, dgstlen, pCert->getEcdsaSignature().data(), signingKey.data());
+	const int result = ECDSA_do_verify(dgst, dgstlen, pCert->getEcdsaSignature(), signingKey.data());
 
 	if (result == -1)
 	{

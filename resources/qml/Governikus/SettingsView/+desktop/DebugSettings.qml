@@ -47,4 +47,19 @@ ColumnLayout {
 		checked: SettingsModel.showBetaTesting
 		onCheckedChanged: SettingsModel.showBetaTesting = checked
 	}
+
+	ToggleableOption {
+		//: LABEL DESKTOP_QML
+		text: qsTr("Support CAN allowed mode") + SettingsModel.translationTrigger
+		checked: SettingsModel.enableCanAllowed
+		onCheckedChanged: SettingsModel.enableCanAllowed = checked
+	}
+
+	ToggleableOption {
+		//: LABEL DESKTOP_QML
+		text: qsTr("Skip rights page in CAN allowed mode") + SettingsModel.translationTrigger
+		enabled: SettingsModel.enableCanAllowed
+		checked: SettingsModel.skipRightsOnCanAllowed
+		onCheckedChanged: SettingsModel.skipRightsOnCanAllowed = checked
+	}
 }

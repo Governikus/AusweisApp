@@ -30,7 +30,6 @@ class DatagramHandlerMock
 			return true;
 		}
 
-
 	Q_SIGNALS:
 		void fireSend(const QByteArray& pData);
 };

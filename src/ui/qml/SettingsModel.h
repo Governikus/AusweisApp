@@ -10,6 +10,7 @@
 #include "Env.h"
 
 #include <QObject>
+#include <QUrl>
 
 namespace governikus
 {
@@ -22,6 +23,7 @@ class SettingsModel
 
 	Q_PROPERTY(QString translationTrigger READ getEmptyString NOTIFY fireLanguageChanged)
 	Q_PROPERTY(QString language READ getLanguage WRITE setLanguage NOTIFY fireLanguageChanged)
+	Q_PROPERTY(bool advancedSettings READ isAdvancedSettings WRITE setAdvancedSettings NOTIFY fireAdvancedSettingsChanged)
 	Q_PROPERTY(bool developerOptions READ isDeveloperOptions WRITE setDeveloperOptions NOTIFY fireDeveloperOptionsChanged)
 	Q_PROPERTY(bool developerMode READ isDeveloperMode WRITE setDeveloperMode NOTIFY fireDeveloperOptionsChanged)
 	Q_PROPERTY(bool showBetaTesting MEMBER mShowBetaTesting NOTIFY fireDeveloperOptionsChanged)
@@ -32,6 +34,8 @@ class SettingsModel
 	Q_PROPERTY(bool useScreenKeyboard READ isUseScreenKeyboard WRITE setUseScreenKeyboard NOTIFY fireScreenKeyboardChanged)
 	Q_PROPERTY(bool visualPrivacy READ isVisualPrivacy WRITE setVisualPrivacy NOTIFY fireScreenKeyboardChanged)
 	Q_PROPERTY(bool shuffleScreenKeyboard READ isShuffleScreenKeyboard WRITE setShuffleScreenKeyboard NOTIFY fireScreenKeyboardChanged)
+	Q_PROPERTY(bool enableCanAllowed READ isEnableCanAllowed WRITE setEnableCanAllowed NOTIFY fireCanAllowedChanged)
+	Q_PROPERTY(bool skipRightsOnCanAllowed READ isSkipRightsOnCanAllowed WRITE setSkipRightsOnCanAllowed NOTIFY fireCanAllowedChanged)
 	Q_PROPERTY(bool showSetupAssistantOnStart READ isShowSetupAssistantOnStart WRITE setShowSetupAssistantOnStart NOTIFY fireShowSetupAssistantOnStartChanged)
 	Q_PROPERTY(bool autoStartAvailable READ isAutoStartAvailable CONSTANT)
 	Q_PROPERTY(bool autoStartApp READ isAutoStart WRITE setAutoStart NOTIFY fireAutoStartChanged)
@@ -45,8 +49,12 @@ class SettingsModel
 	Q_PROPERTY(bool showInAppNotifications READ isShowInAppNotifications WRITE setShowInAppNotifications NOTIFY fireShowInAppNotificationsChanged)
 	Q_PROPERTY(AppUpdateDataModel * appUpdateData READ getAppUpdateData NOTIFY fireAppUpdateDataChanged)
 	Q_PROPERTY(bool showNewUiHint READ isShowNewUiHint WRITE setShowNewUiHint NOTIFY fireShowNewUiHintChanged)
+	Q_PROPERTY(QUrl customProxyUrl READ getCustomProxyUrl CONSTANT)
+	Q_PROPERTY(bool customProxyAttributesPresent READ isCustomProxyAttributesPresent CONSTANT)
+	Q_PROPERTY(bool useCustomProxy READ isUseCustomProxy WRITE setUseCustomProxy)
 
 	private:
+		bool mAdvancedSettings;
 		bool mIsStartedByAuth;
 		bool mShowBetaTesting;
 
@@ -59,6 +67,9 @@ class SettingsModel
 		QString getEmptyString();
 		QString getLanguage() const;
 		void setLanguage(const QString& pLanguage);
+
+		bool isAdvancedSettings() const;
+		void setAdvancedSettings(bool pEnabled);
 
 		bool isDeveloperOptions() const;
 		void setDeveloperOptions(bool pEnabled);
@@ -91,6 +102,12 @@ class SettingsModel
 		bool isShuffleScreenKeyboard() const;
 		void setShuffleScreenKeyboard(bool pShuffleScreenKeyboard);
 
+		bool isEnableCanAllowed() const;
+		void setEnableCanAllowed(bool pEnableCanAllowed);
+
+		bool isSkipRightsOnCanAllowed() const;
+		void setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed);
+
 		bool isShowSetupAssistantOnStart() const;
 		void setShowSetupAssistantOnStart(bool pShowSetupAssistantOnStart);
 
@@ -119,6 +136,11 @@ class SettingsModel
 		bool isShowNewUiHint() const;
 		void setShowNewUiHint(bool pShowNewUiHint);
 
+		QUrl getCustomProxyUrl() const;
+		bool isCustomProxyAttributesPresent() const;
+		bool isUseCustomProxy();
+		void setUseCustomProxy(bool pUseCustomProxy);
+
 		Q_INVOKABLE bool requestStoreFeedback() const;
 		Q_INVOKABLE void hideFutureStoreFeedbackDialogs();
 
@@ -131,11 +153,13 @@ class SettingsModel
 
 	Q_SIGNALS:
 		void fireLanguageChanged();
+		void fireAdvancedSettingsChanged();
 		void fireDeveloperOptionsChanged();
 		void fireDeviceNameChanged();
 		void firePinPadModeChanged();
 		void fireHistoryEnabledChanged();
 		void fireScreenKeyboardChanged();
+		void fireCanAllowedChanged();
 		void fireShowSetupAssistantOnStartChanged();
 		void fireAutoStartChanged();
 		void fireAutoCloseWindowAfterAuthenticationChanged();

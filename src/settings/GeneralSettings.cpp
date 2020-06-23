@@ -34,15 +34,21 @@ SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_MODE, "developerMode")
 SETTINGS_NAME(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI, "selfauthTestUri")
 SETTINGS_NAME(SETTINGS_NAME_LANGUAGE, "language")
 SETTINGS_NAME(SETTINGS_NAME_SELECTED_UI, "selectedUi")
+SETTINGS_NAME(SETTINGS_NAME_SCREEN_ORIENTATION, "screenOrientation")
 SETTINGS_NAME(SETTINGS_NAME_DEVICE_SURVEY_PENDING, "deviceSurveyPending")
 SETTINGS_NAME(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE, "lastTechnology")
 SETTINGS_NAME(SETTINGS_NAME_IN_APP_NOTIFICATIONS, "showInAppNotifications")
 SETTINGS_NAME(SETTINGS_NAME_REQUEST_STORE_FEEDBACK, "requestStoreFeedback")
-SETTINGS_NAME(SETTINGS_GROUP_NAME_COMMON, "common")
 SETTINGS_NAME(SETTINGS_NAME_AUTO, "autoUpdateCheck")
 SETTINGS_NAME(SETTINGS_NAME_KEYLESS_PASSWORD, "keylessPassword")
 SETTINGS_NAME(SETTINGS_NAME_VISUAL_PRIVACY, "visualPrivacy")
 SETTINGS_NAME(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD, "shuffleScreenKeyboard")
+SETTINGS_NAME(SETTINGS_NAME_CUSTOM_PROXY_HOST, "customProxyHost")
+SETTINGS_NAME(SETTINGS_NAME_CUSTOM_PROXY_PORT, "customProxyPort")
+SETTINGS_NAME(SETTINGS_NAME_CUSTOM_PROXY_TYPE, "customProxyType")
+SETTINGS_NAME(SETTINGS_NAME_USE_CUSTOM_PROXY, "useCustomProxy")
+SETTINGS_NAME(SETTINGS_NAME_ENABLE_CAN_ALLOWED, "enableCanAllowed")
+SETTINGS_NAME(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED, "skipRightsOnCanAllowed")
 } // namespace
 
 GeneralSettings::GeneralSettings()
@@ -60,9 +66,25 @@ GeneralSettings::GeneralSettings()
 		mStoreCommon->beginGroup(QStringLiteral("providers"));
 		mStoreCommon->remove(QString()); // remove the whole group
 		mStoreCommon->endGroup();
-	}
 
-	mStoreCommon->beginGroup(SETTINGS_GROUP_NAME_COMMON());
+		// With 1.20.1 the common values are moved to the general values
+
+		mStoreCommon->beginGroup(QStringLiteral("common"));
+		if (!autoUpdateCheckIsSetByAdmin() && mStoreCommon->contains(SETTINGS_NAME_AUTO()))
+		{
+			mStoreGeneral->setValue(SETTINGS_NAME_AUTO(), mStoreCommon->value(SETTINGS_NAME_AUTO()).toBool());
+		}
+		if (mStoreCommon->contains(SETTINGS_NAME_KEYLESS_PASSWORD()))
+		{
+			mStoreGeneral->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), mStoreCommon->value(SETTINGS_NAME_KEYLESS_PASSWORD()).toBool());
+		}
+		if (mStoreCommon->contains(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD()))
+		{
+			mStoreGeneral->setValue(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), mStoreCommon->value(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD()).toBool());
+		}
+		mStoreCommon->remove(QString()); // remove the whole group
+		mStoreCommon->endGroup();
+	}
 
 	// QFuture.result() crashes under linux and win if uninitalized
 	mAutoStart = QtConcurrent::run([] {
@@ -372,6 +394,22 @@ void GeneralSettings::setSelectedUi(const QString& pSelectedUi)
 }
 
 
+QString GeneralSettings::getScreenOrientation() const
+{
+	return mStoreGeneral->value(SETTINGS_NAME_SCREEN_ORIENTATION(), QStringLiteral("auto")).toString();
+}
+
+
+void GeneralSettings::setScreenOrientation(const QString& pScreenOrientation)
+{
+	if (pScreenOrientation != getScreenOrientation())
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_SCREEN_ORIENTATION(), pScreenOrientation);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
 bool GeneralSettings::askForDeviceSurvey() const
 {
 	return !mStoreGeneral->contains(SETTINGS_NAME_DEVICE_SURVEY_PENDING());
@@ -448,16 +486,14 @@ bool GeneralSettings::isAutoUpdateCheck() const
 {
 	if (autoUpdateCheckIsSetByAdmin())
 	{
-		mStoreCommon->remove(SETTINGS_NAME_AUTO());
-		// Start writing the new path since 1.17, too, so that we can rely on it in a future version.
 		mStoreGeneral->remove(SETTINGS_NAME_AUTO());
 	}
 
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
-	return mStoreCommon->value(SETTINGS_NAME_AUTO(), true).toBool();
+	return mStoreGeneral->value(SETTINGS_NAME_AUTO(), true).toBool();
 
 #else
-	return mStoreCommon->value(SETTINGS_NAME_AUTO(), false).toBool();
+	return mStoreGeneral->value(SETTINGS_NAME_AUTO(), false).toBool();
 
 #endif
 }
@@ -475,7 +511,6 @@ bool GeneralSettings::autoUpdateCheckIsSetByAdmin() const
 #endif
 #endif
 
-	settings.beginGroup(SETTINGS_GROUP_NAME_COMMON());
 	return settings.contains(SETTINGS_NAME_AUTO());
 }
 
@@ -484,8 +519,6 @@ void GeneralSettings::setAutoUpdateCheck(bool pAutoUpdateCheck)
 {
 	if (!autoUpdateCheckIsSetByAdmin() && pAutoUpdateCheck != isAutoUpdateCheck())
 	{
-		mStoreCommon->setValue(SETTINGS_NAME_AUTO(), pAutoUpdateCheck);
-		// Start writing the new path since 1.17, too, so that we can rely on it in a future version.
 		mStoreGeneral->setValue(SETTINGS_NAME_AUTO(), pAutoUpdateCheck);
 		Q_EMIT fireSettingsChanged();
 	}
@@ -494,7 +527,7 @@ void GeneralSettings::setAutoUpdateCheck(bool pAutoUpdateCheck)
 
 bool GeneralSettings::isUseScreenKeyboard() const
 {
-	return mStoreCommon->value(SETTINGS_NAME_KEYLESS_PASSWORD(), false).toBool();
+	return mStoreGeneral->value(SETTINGS_NAME_KEYLESS_PASSWORD(), false).toBool();
 }
 
 
@@ -502,8 +535,6 @@ void GeneralSettings::setUseScreenKeyboard(bool pUseScreenKeyboard)
 {
 	if (pUseScreenKeyboard != isUseScreenKeyboard())
 	{
-		mStoreCommon->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), pUseScreenKeyboard);
-		// Start writing the new path since 1.17, too, so that we can rely on it in a future version.
 		mStoreGeneral->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), pUseScreenKeyboard);
 		Q_EMIT fireSettingsChanged();
 	}
@@ -528,7 +559,7 @@ void GeneralSettings::setVisualPrivacy(bool pVisualPrivacy)
 
 bool GeneralSettings::isShuffleScreenKeyboard() const
 {
-	return mStoreCommon->value(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), false).toBool();
+	return mStoreGeneral->value(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), false).toBool();
 }
 
 
@@ -536,7 +567,43 @@ void GeneralSettings::setShuffleScreenKeyboard(bool pShuffleScreenKeyboard)
 {
 	if (pShuffleScreenKeyboard != isShuffleScreenKeyboard())
 	{
-		mStoreCommon->setValue(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), pShuffleScreenKeyboard);
+		mStoreGeneral->setValue(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), pShuffleScreenKeyboard);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
+bool GeneralSettings::isEnableCanAllowed() const
+{
+	return mStoreGeneral->value(SETTINGS_NAME_ENABLE_CAN_ALLOWED(), false).toBool();
+}
+
+
+void GeneralSettings::setEnableCanAllowed(bool pEnableCanAllowed)
+{
+	if (pEnableCanAllowed != isEnableCanAllowed())
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_ENABLE_CAN_ALLOWED(), pEnableCanAllowed);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
+bool GeneralSettings::isSkipRightsOnCanAllowed() const
+{
+	if (!isEnableCanAllowed())
+	{
+		return false;
+	}
+	return mStoreGeneral->value(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED(), false).toBool();
+}
+
+
+void GeneralSettings::setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed)
+{
+	if (pSkipRightsOnCanAllowed != isSkipRightsOnCanAllowed())
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED(), pSkipRightsOnCanAllowed);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -559,5 +626,78 @@ void GeneralSettings::setShowInAppNotifications(bool pShowInAppNotifications)
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_IN_APP_NOTIFICATIONS(), pShowInAppNotifications);
 		Q_EMIT fireShowInAppNotificationsChanged();
+	}
+}
+
+
+bool GeneralSettings::isCustomProxyHost() const
+{
+	return !getCustomProxyHost().isEmpty();
+}
+
+
+QString GeneralSettings::getCustomProxyHost() const
+{
+	return mStoreGeneral->value(SETTINGS_NAME_CUSTOM_PROXY_HOST(), QString()).toString();
+}
+
+
+bool GeneralSettings::isCustomProxyType() const
+{
+	return getCustomProxyType() != QNetworkProxy::ProxyType::NoProxy;
+}
+
+
+QNetworkProxy::ProxyType GeneralSettings::getCustomProxyType() const
+{
+	QNetworkProxy::ProxyType result;
+	auto value = mStoreGeneral->value(SETTINGS_NAME_CUSTOM_PROXY_TYPE(), QString()).toString().toLower();
+	if (value == QLatin1String("socks5"))
+	{
+		result = QNetworkProxy::ProxyType::Socks5Proxy;
+	}
+	else if (value == QLatin1String("http"))
+	{
+		result = QNetworkProxy::ProxyType::HttpProxy;
+	}
+	else
+	{
+		result = QNetworkProxy::ProxyType::NoProxy;
+	}
+	return result;
+}
+
+
+bool GeneralSettings::isCustomProxyPort() const
+{
+	return getCustomProxyPort() != 0;
+}
+
+
+quint16 GeneralSettings::getCustomProxyPort() const
+{
+	return static_cast<quint16>(mStoreGeneral->value(SETTINGS_NAME_CUSTOM_PROXY_PORT(), 0).toInt());
+}
+
+
+bool GeneralSettings::customProxyAttributesPresent() const
+{
+	return isCustomProxyHost() && isCustomProxyType() && isCustomProxyPort();
+}
+
+
+bool GeneralSettings::useCustomProxy() const
+{
+	bool useCustomProxy = mStoreGeneral->value(SETTINGS_NAME_USE_CUSTOM_PROXY(), true).toBool();
+	return useCustomProxy && customProxyAttributesPresent();
+}
+
+
+void GeneralSettings::setUseCustomProxy(bool pUseCustomProxy)
+{
+	if (useCustomProxy() != pUseCustomProxy)
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_USE_CUSTOM_PROXY(), pUseCustomProxy);
+		Q_EMIT fireProxyChanged();
 	}
 }

@@ -24,11 +24,16 @@ Item {
 	signal unpairDevice(string pDeviceId)
 	signal moreInformation()
 
+	implicitWidth: column.implicitWidth
+	implicitHeight: column.implicitHeight
+
 	ReaderScanEnabler {
 		plugInType: ReaderPlugIn.REMOTE
 	}
 
 	Column {
+		id: column
+
 		anchors.fill: parent
 		spacing: Constants.component_spacing
 
@@ -90,7 +95,7 @@ Item {
 
 			model: RemoteServiceModel.availableRemoteDevices
 			delegate: RemoteReaderDelegate {
-				width: parent.width
+				width: availableDevices.width
 				height: implicitHeight + Constants.pane_padding
 				onPairDevice: root.pairDevice(pDeviceId)
 			}

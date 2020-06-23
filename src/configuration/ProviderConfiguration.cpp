@@ -12,6 +12,8 @@
 #include <QLoggingCategory>
 #include <QRegularExpression>
 
+#include <algorithm>
+
 
 using namespace governikus;
 
@@ -55,6 +57,7 @@ bool ProviderConfiguration::parseProviderConfiguration()
 
 	mCallCosts = callCosts;
 	mProviderConfigurationInfos = providerConfigurationInfos;
+	std::sort(mProviderConfigurationInfos.begin(), mProviderConfigurationInfos.end());
 	return true;
 }
 
@@ -80,6 +83,7 @@ ProviderConfiguration::ProviderConfiguration()
 	, mCallCosts()
 {
 	connect(mUpdatableFile.data(), &UpdatableFile::fireUpdated, this, &ProviderConfiguration::onFileUpdated);
+	connect(mUpdatableFile.data(), &UpdatableFile::fireNoUpdateAvailable, this, &ProviderConfiguration::fireNoUpdateAvailable);
 	parseProviderConfiguration();
 }
 

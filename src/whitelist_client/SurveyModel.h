@@ -29,7 +29,7 @@ class SurveyModel
 		const QString mModelName;
 		const QString mAusweisAppVersionNumber;
 
-		QVector<QPair<QString, QString> > mData;
+		QVector<QPair<QString, QString>> mData;
 
 		enum UserRoles
 		{

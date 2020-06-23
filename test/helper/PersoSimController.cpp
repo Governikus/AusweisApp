@@ -19,7 +19,7 @@ using namespace governikus;
 
 PersoSimController::PersoSimController()
 	: QObject()
-	, mProcess(nullptr)
+	, mProcess()
 	, mSocket(new QTcpSocket)
 {
 }
@@ -64,7 +64,7 @@ bool PersoSimController::write(const QByteArray& pData)
 
 bool PersoSimController::shutdown()
 {
-	if (mProcess != nullptr)
+	if (!mProcess.isNull())
 	{
 		write("shutdown\n");
 		mSocket->close();
@@ -81,17 +81,17 @@ bool PersoSimController::shutdown()
 
 bool PersoSimController::startProcess()
 {
-	if (mProcess != nullptr)
+	if (!mProcess.isNull())
 	{
 		return false;
 	}
 
-	mProcess = new QProcess;
+	mProcess.reset(new QProcess);
 	mProcess->setProcessChannelMode(QProcess::ForwardedErrorChannel);
 
 	connect(mSocket.data(), &QTcpSocket::readyRead, this, &PersoSimController::newData);
 
-	mProcess->start(QStringLiteral(PERSOSIM_EXECUTABLE));
+	mProcess->start(QStringLiteral(PERSOSIM_EXECUTABLE), QStringList());
 	if (!mProcess->waitForStarted(-1))
 	{
 		qDebug() << PERSOSIM_EXECUTABLE;

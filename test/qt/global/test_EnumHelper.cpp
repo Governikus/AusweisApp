@@ -46,7 +46,6 @@ class test_EnumHelper
 			QVERIFY(result.at(0).toString().endsWith(pExpectedOutput));
 		}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{

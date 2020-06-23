@@ -79,8 +79,8 @@ class test_NetworkManager
 			reply.setNetworkError(QNetworkReply::ServiceUnavailableError, "dummy error msg");
 
 			QCOMPARE(NetworkManager::toNetworkError(&reply), NetworkManager::NetworkError::ServiceUnavailable);
-			QCOMPARE(NetworkManager::toTrustedChannelStatus(&reply), GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable));
-			QCOMPARE(NetworkManager::toStatus(&reply), GlobalStatus(GlobalStatus::Code::Network_ServiceUnavailable));
+			QCOMPARE(NetworkManager::toTrustedChannelStatus(&reply), GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, reply.url().toString()}));
+			QCOMPARE(NetworkManager::toStatus(&reply), GlobalStatus(GlobalStatus::Code::Network_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, reply.url().toString()}));
 		}
 
 
@@ -135,7 +135,7 @@ class test_NetworkManager
 			controller.run();
 
 			QTRY_COMPARE(spy.count(), 1);
-			QCOMPARE(context->getStatus(), GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable));
+			QCOMPARE(context->getStatus(), GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}));
 		}
 
 

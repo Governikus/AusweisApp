@@ -177,7 +177,12 @@ void RemoteDeviceListImpl::update(const RemoteDeviceDescriptor& pDescriptor)
 
 void RemoteDeviceListImpl::clear()
 {
-	mResponsiveList.clear();
+	decltype(mResponsiveList) removedDevices;
+	mResponsiveList.swap(removedDevices);
+	for (const auto& entry : removedDevices)
+	{
+		Q_EMIT fireDeviceVanished(entry);
+	}
 }
 
 

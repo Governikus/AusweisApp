@@ -192,6 +192,10 @@
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Abbrechen</translation>
     </message>
+    <message>
+        <source>Dialog</source>
+        <translation>Dialog</translation>
+    </message>
 </context>
 <context>
     <name>BaseHistoryView</name>
@@ -450,26 +454,28 @@ INFO ANDROID IOS Hint that the ID card may be removed from the card reader since
     <name>ChangePinView</name>
     <message>
         <source>PIN Management</source>
-        <extracomment>LABEL DESKTOP_QML
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>PIN-Verwaltung</translation>
     </message>
     <message>
         <source>Change PIN</source>
         <extracomment>LABEL DESKTOP_QML
 ----------
-LABEL ANDROID IOS</extracomment>
+LABEL DESKTOP_QML Processing screen label while the card communication is running after the old PIN has been entered during PIN change process.
+----------
+LABEL ANDROID IOS
+----------
+LABEL ANDROID IOS Processing screen label while the card communication is running before the new PIN has been entered during PIN change process.</extracomment>
         <translation>PIN ändern</translation>
     </message>
     <message>
-        <source>Please don&apos;t move the ID card...</source>
+        <source>Please don&apos;t move the ID card.</source>
         <extracomment>INFO DESKTOP_QML Processing screen text while the card communication is running after the PIN has been entered during PIN change process.
 ----------
 INFO ANDROID IOS Loading screen during PIN change process, data communcation is currently ongoing. Message is usually not visible since the password handling with basic reader is handled by EnterPasswordView.
 ----------
 INFO ANDROID IOS Generic progress message during PIN change process.</extracomment>
-        <translation>Bitte den Ausweis nicht bewegen...</translation>
+        <translation>Bitte den Ausweis nicht bewegen.</translation>
     </message>
     <message>
         <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
@@ -482,9 +488,9 @@ INFO ANDROID IOS Generic progress message during PIN change process.</extracomme
         <translation>Bitte beachten Sie die Anzeige Ihres Kartenlesers.</translation>
     </message>
     <message>
-        <source>A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.</source>
+        <source>A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.</source>
         <extracomment>INFO ANDROID IOS The wrong PIN was entered twice, the next attempt requires additional verifcation via CAN.</extracomment>
-        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher die sechsstellige Zugangsnummer (CAN) eingeben. Diese finden Sie auf der Vorderseite Ihres Ausweises.</translation>
+        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch geben Sie bitte zunächst die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie unten rechts auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
         <source>A wrong PIN has been entered three times on your ID card. Your PIN is now blocked. To unblock your PIN you have to enter the PUK.</source>
@@ -510,11 +516,18 @@ INFO ANDROID IOS The NFC signal is weak or unstable, the user is asked to change
 - verbinden Sie das Smartphone mit dem Ladegerät</translation>
     </message>
     <message>
-        <source>Your ID card is unblocked. You now have three more tries to change your PIN</source>
+        <source>Your ID card is unblocked. You now have three more attempts to change your PIN</source>
         <extracomment>INFO DESKTOP_QML The ID card has just been unblocked and the user can now continue with their PIN change.
 ----------
 INFO ANDROID IOS The ID card has just been unblocked and the user can now continue with their PIN change.</extracomment>
         <translation>Ihr Ausweis wurde entsperrt. Sie haben nun drei weitere Versuche um Ihre PIN zu ändern</translation>
+    </message>
+    <message>
+        <source>Setting new PIN</source>
+        <extracomment>LABEL DESKTOP_QML Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.
+----------
+LABEL ANDROID IOS Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.</extracomment>
+        <translation>Neue PIN wird gesetzt</translation>
     </message>
 </context>
 <context>
@@ -525,7 +538,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>PIN-Verwaltung</translation>
     </message>
     <message>
-        <source>You have the opportunity to change your transport PIN into a personal PIN. You can also change the PIN at any time or unblock the PIN using the personal unblocking key (PUK). The transport PIN and the PUK can be found in the letter sent to you by your competent authority.</source>
+        <source>You have the opportunity to change your Transport PIN into a personal PIN. You can also change the PIN at any time or unblock the PIN using the Personal Unblocking Key (PUK). The Transport PIN and the PUK can be found in the letter sent to you by your competent authority.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Hier haben Sie die Möglichkeit, Ihre Transport-PIN in eine persönliche PIN zu ändern. Zudem können Sie jederzeit Ihre persönliche PIN ändern oder eine Blockierung mit Hilfe der Entsperrnummer (PUK) aufheben. Sie finden Ihre Transport-PIN und die PUK in dem Schreiben, das Sie nach Beantragung Ihres Ausweises von der für die Ausgabe Ihres Ausweises zuständigen Behörde erhalten haben.</translation>
     </message>
@@ -533,6 +546,28 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <source>Change PIN now</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Jetzt PIN ändern</translation>
+    </message>
+</context>
+<context>
+    <name>ConnectSacView</name>
+    <message>
+        <source>Pairing</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Kopplung</translation>
+    </message>
+    <message>
+        <source>Pairing the device ...</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Das Gerät wird gekoppelt ...</translation>
+    </message>
+    <message>
+        <source>The device &quot;%1&quot; has been paired.</source>
+        <translation>Das Gerät &quot;%1&quot; wurde gekoppelt.</translation>
+    </message>
+    <message>
+        <source>Pairing to &quot;%1&quot; failed:</source>
+        <extracomment>ERROR DESKTOP_QML An error occurred while pairing the device.</extracomment>
+        <translation>Die Kopplung mit &quot;%1&quot; ist fehlgeschlagen:</translation>
     </message>
 </context>
 <context>
@@ -604,6 +639,16 @@ LABEL IOS_TABLET</extracomment>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Zeige Beta-Test-Symbol</translation>
     </message>
+    <message>
+        <source>Support CAN allowed mode</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>CAN-erlaubt-Modus unterstützen</translation>
+    </message>
+    <message>
+        <source>Skip rights page in CAN allowed mode</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Überspringe Berechtigungen-Seite im CAN-erlaubt-Modus</translation>
+    </message>
 </context>
 <context>
     <name>DetachedLogView</name>
@@ -619,6 +664,10 @@ LABEL IOS_TABLET</extracomment>
         <source>Save logfile</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Protokolldatei speichern</translation>
+    </message>
+    <message>
+        <source>Logfiles</source>
+        <translation>Protokolldateien</translation>
     </message>
 </context>
 <context>
@@ -682,69 +731,6 @@ LABEL IOS_TABLET</extracomment>
     </message>
 </context>
 <context>
-    <name>DeveloperView</name>
-    <message>
-        <source>Developer options</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Entwickleroptionen</translation>
-    </message>
-    <message>
-        <source>Testmode for the self-authentication</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Testmodus für die Selbstauskunft</translation>
-    </message>
-    <message>
-        <source>Developer Mode</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Entwicklermodus</translation>
-    </message>
-    <message>
-        <source>Use a more tolerant mode</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Benutze einen toleranten Modus</translation>
-    </message>
-    <message>
-        <source>Change the layout style</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Ändere den Style des Layouts</translation>
-    </message>
-    <message>
-        <source>iOS</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>iOS</translation>
-    </message>
-    <message>
-        <source>Android</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Android</translation>
-    </message>
-    <message>
-        <source>Tablet, Android</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Tablet, Android</translation>
-    </message>
-    <message>
-        <source>Use the test environment during a self-authentication</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Benutze die Test-Umgebung während der Selbstauskunft</translation>
-    </message>
-    <message>
-        <source>Create dummy entries</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Erstelle Scheindaten</translation>
-    </message>
-    <message>
-        <source>Logfile</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Protokolldatei</translation>
-    </message>
-    <message>
-        <source>History</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Verlauf</translation>
-    </message>
-</context>
-<context>
     <name>DevicesListDelegate</name>
     <message>
         <source>Device %1</source>
@@ -790,6 +776,20 @@ LABEL IOS_TABLET</extracomment>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Speichern unter</translation>
     </message>
+    <message>
+        <source>Textfiles</source>
+        <translation>Textdateien</translation>
+    </message>
+    <message>
+        <source>Diagnosis is still running</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Die Diagnose läuft noch</translation>
+    </message>
+    <message>
+        <source>Diagnosis may be incomplete</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Die Diagnose könnte unvollständig sein</translation>
+    </message>
 </context>
 <context>
     <name>EditRights</name>
@@ -832,19 +832,6 @@ LABEL IOS_TABLET</extracomment>
         <source>more...</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>mehr...</translation>
-    </message>
-    <message>
-        <source>The following data will be transferred to the provider when you enter the PIN:</source>
-        <extracomment>LABEL DESKTOP_QML
-----------
-LABEL ANDROID_PHONE
-----------
-LABEL ANDROID_TABLET
-----------
-LABEL IOS_PHONE
-----------
-LABEL IOS_TABLET</extracomment>
-        <translation>Folgende Daten Ihres Ausweises werden nach Eingabe der PIN ausgelesen und an den Anbieter übermittelt:</translation>
     </message>
     <message>
         <source>Transactional information</source>
@@ -910,15 +897,15 @@ LABEL IOS_TABLET</extracomment>
     </message>
     <message>
         <source>Proceed to %1 entry</source>
-        <extracomment>LABEL DESKTOP_QML %1 can be &quot;card access number (CAN)&quot; or &quot;PIN&quot;
+        <extracomment>LABEL DESKTOP_QML %1 can be &quot;CAN&quot; or &quot;PIN&quot;
 ----------
-LABEL ANDROID_PHONE %1 can be &quot;card access number (CAN)&quot; or &quot;PIN&quot;
+LABEL ANDROID_PHONE %1 can be &quot;CAN&quot; or &quot;PIN&quot;
 ----------
-LABEL ANDROID_TABLET %1 can be &quot;card access number (CAN)&quot; or &quot;PIN&quot;
+LABEL ANDROID_TABLET %1 can be &quot;CAN&quot; or &quot;PIN&quot;
 ----------
-LABEL IOS_PHONE %1 can be &quot;card access number (CAN)&quot; or &quot;PIN&quot;
+LABEL IOS_PHONE %1 can be &quot;CAN&quot; or &quot;PIN&quot;
 ----------
-LABEL IOS_TABLET %1 can be &quot;card access number (CAN)&quot; or &quot;PIN&quot;</extracomment>
+LABEL IOS_TABLET %1 can be &quot;CAN&quot; or &quot;PIN&quot;</extracomment>
         <translation>Weiter zur %1-Eingabe</translation>
     </message>
     <message>
@@ -931,7 +918,7 @@ LABEL IOS_TABLET %1 can be &quot;card access number (CAN)&quot; or &quot;PIN&quo
         <translation>Zeige mehr Informationen über den Anbieter</translation>
     </message>
     <message>
-        <source>card access number (CAN)</source>
+        <source>CAN</source>
         <extracomment>LABEL DESKTOP_QML Inserted into &quot;Proceed to %1 entry&quot;
 ----------
 LABEL ANDROID_PHONE Inserted into &quot;Proceed to %1 entry&quot;
@@ -941,7 +928,7 @@ LABEL ANDROID_TABLET Inserted into &quot;Proceed to %1 entry&quot;
 LABEL IOS_PHONE Inserted into &quot;Proceed to %1 entry&quot;
 ----------
 LABEL IOS_TABLET Inserted into &quot;Proceed to %1 entry&quot;</extracomment>
-        <translation>Zugangsnummer (CAN)</translation>
+        <translation>CAN</translation>
     </message>
     <message>
         <source>PIN</source>
@@ -955,6 +942,32 @@ LABEL IOS_PHONE Inserted into &quot;Proceed to %1 entry&quot;
 ----------
 LABEL IOS_TABLET Inserted into &quot;Proceed to %1 entry&quot;</extracomment>
         <translation>PIN</translation>
+    </message>
+    <message>
+        <source>The following data of the ID card will be transferred to the provider when you enter the CAN:</source>
+        <extracomment>LABEL DESKTOP_QML
+----------
+LABEL ANDROID_PHONE
+----------
+LABEL ANDROID_TABLET
+----------
+LABEL IOS_PHONE
+----------
+LABEL IOS_TABLET</extracomment>
+        <translation>Folgende Daten des Ausweises werden nach Eingabe der CAN ausgelesen und an den Anbieter übermittelt:</translation>
+    </message>
+    <message>
+        <source>The following data of your ID card will be transferred to the provider when you enter the PIN:</source>
+        <extracomment>LABEL DESKTOP_QML
+----------
+LABEL ANDROID_PHONE
+----------
+LABEL ANDROID_TABLET
+----------
+LABEL IOS_PHONE
+----------
+LABEL IOS_TABLET</extracomment>
+        <translation>Folgende Daten Ihres Ausweises werden nach Eingabe der PIN ausgelesen und an den Anbieter übermittelt:</translation>
     </message>
 </context>
 <context>
@@ -981,9 +994,9 @@ INFO ANDROID IOS The changed PIN was entered wrongfully during confirmation.</ex
         <translation>Die neue PIN und ihre Wiederholung stimmen nicht überein. Bitte korrigieren Sie Ihre Eingabe.</translation>
     </message>
     <message>
-        <source>Please enter your 6-digit PIN. Use the keyboard or numpad.</source>
-        <extracomment>INFO DESKTOP_QML The AA2 expects a PIN with 6 digits which can be entered via the physical or onscreen keyboard.</extracomment>
-        <translation>Bitte geben Sie Ihre sechsstellige PIN ein. Benutzen Sie dazu die Tastatur oder die Bildschirmtastatur.</translation>
+        <source>Please enter your six-digit PIN.</source>
+        <extracomment>INFO DESKTOP_QML The AA2 expects a PIN with six digits in an authentication.</extracomment>
+        <translation>Bitte geben Sie Ihre sechsstellige PIN ein.</translation>
     </message>
     <message>
         <source>More information</source>
@@ -991,35 +1004,33 @@ INFO ANDROID IOS The changed PIN was entered wrongfully during confirmation.</ex
         <translation>Mehr Informationen</translation>
     </message>
     <message>
-        <source>Please enter the 6-digit card access number (CAN).</source>
-        <extracomment>INFO DESKTOP_QML The operator is required to enter the 6-digit CAN in CAN-allowed authentication.</extracomment>
-        <translation>Bitte geben Sie Ihre sechsstellige Zugangsnummer (CAN) ein.</translation>
+        <source>Please enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of the ID card.</source>
+        <extracomment>INFO DESKTOP_QML The user is required to enter the six-digit CAN in CAN-allowed authentication.</extracomment>
+        <translation>Bitte geben Sie die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie unten rechts auf der Vorderseite des Ausweises.</translation>
     </message>
     <message>
-        <source>A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.</source>
-        <extracomment>INFO DESKTOP_QML The PIN was entered wrongfully twice, this may have happened during an earlier session of the AA2, too. The user needs to enter the CAN for additional verification.
-----------
-INFO ANDROID IOS The wrong PIN was entered twice, the third attempt requires the CAN for additional verification, hint where the CAN is found.</extracomment>
-        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher die sechsstellige Zugangsnummer (CAN) eingeben. Diese finden Sie auf der Vorderseite Ihres Ausweises.</translation>
+        <source>A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.</source>
+        <extracomment>INFO ANDROID IOS The wrong PIN was entered twice, the third attempt requires the CAN for additional verification, hint where the CAN is found.</extracomment>
+        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch geben Sie bitte zunächst die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie rechts unten auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
-        <source>The PIN of your ID card is blocked after three incorrect tries. The block can be lifted by entering your personal unblocking key (PUK).</source>
+        <source>The PIN of your ID card is blocked after three incorrect attempts. Please enter the Personal Unblocking Key (PUK) to lift the block. You can find the key in your PIN letter.</source>
         <extracomment>INFO DESKTOP_QML The PUK is required to unlock the ID card.</extracomment>
-        <translation>Die PIN Ihres Ausweises ist nach dreimaliger Fehleingabe gesperrt. Die Sperrung können Sie mit der Entsperrnummer (PUK) aufheben.</translation>
+        <translation>Die PIN Ihres Ausweises ist nach dreimaliger Fehleingabe gesperrt. Bitte geben Sie zur Aufhebung der Sperrung die zehnstellige Entsperrnummer (PUK) ein. Diese finden Sie in Ihrem PIN-Brief.</translation>
     </message>
     <message>
-        <source>Please enter a new 6-digit PIN now.</source>
-        <extracomment>INFO DESKTOP_QML A new 6-digit PIN needs to be supplied.
+        <source>Please enter a new six-digit PIN now.</source>
+        <extracomment>INFO DESKTOP_QML A new six-digit PIN needs to be supplied.
 ----------
-INFO ANDROID IOS A new 6-digit PIN needs to be supplied.</extracomment>
-        <translation>Vergeben Sie bitte nun eine neue sechsstellige PIN.</translation>
+INFO ANDROID IOS A new six-digit PIN needs to be supplied.</extracomment>
+        <translation>Bitte geben Sie nun eine neue sechsstellige PIN ein.</translation>
     </message>
     <message>
-        <source>Please confirm your new 6-digit PIN.</source>
+        <source>Please confirm your new six-digit PIN.</source>
         <extracomment>INFO DESKTOP_QML The new PIN needs to be entered again for verification.
 ----------
 INFO ANDROID IOS The new PIN needs to be confirmed.</extracomment>
-        <translation>Wiederholen Sie bitte Ihre neue sechsstellige PIN.</translation>
+        <translation>Bitte wiederholen Sie die Eingabe Ihrer neuen sechsstelligen PIN.</translation>
     </message>
     <message>
         <source>Unknown password type:</source>
@@ -1027,23 +1038,23 @@ INFO ANDROID IOS The new PIN needs to be confirmed.</extracomment>
         <translation>Unbekannter Passwort-Typ:</translation>
     </message>
     <message>
-        <source>Does your PIN have 6 digits?</source>
-        <extracomment>LABEL DESKTOP_QML Button to switch to a 6-digit PIN.
+        <source>Does your PIN have six digits?</source>
+        <extracomment>LABEL DESKTOP_QML Button to switch to a six-digit PIN.
 ----------
-LABEL ANDROID IOS Button to switch to a 6-digit PIN.</extracomment>
+LABEL ANDROID IOS Button to switch to a six-digit PIN.</extracomment>
         <translation>Ist Ihre PIN sechsstellig?</translation>
     </message>
     <message>
-        <source>Does your PIN have 5 digits?</source>
-        <extracomment>LABEL DESKTOP_QML Button to switch to a transport PIN or start a change of the transport PIN.
+        <source>Does your PIN have five digits?</source>
+        <extracomment>LABEL DESKTOP_QML Button to switch to a Transport PIN or start a change of the Transport PIN.
 ----------
-LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the transport PIN.</extracomment>
+LABEL ANDROID IOS Button to switch to a Transport PIN or start a change of the Transport PIN.</extracomment>
         <translation>Ist Ihre PIN fünfstellig?</translation>
     </message>
     <message>
-        <source>Please enter the 6-digit card access number (CAN). You can find it on the front of the ID card.</source>
+        <source>Please enter the six-digit Card Access Number (CAN). You can find it in the bottom right on the front of the ID card.</source>
         <extracomment>INFO ANDROID IOS The CAN needs to be entered in CAN-allowed mode, hint where the CAN can be found.</extracomment>
-        <translation>Bitte geben Sie die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie auf der Vorderseite des Ausweises.</translation>
+        <translation>Bitte geben Sie die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie unten rechts auf der Vorderseite des Ausweises.</translation>
     </message>
     <message>
         <source>A wrong PIN has been entered three times on your ID card. Your PIN is now blocked. To unblock your PIN you have to enter the PUK.</source>
@@ -1051,8 +1062,8 @@ LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the t
         <translation>Die PIN Ihres Ausweises wurde dreimal falsch eingegeben. Ihre PIN ist gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
     </message>
     <message>
-        <source>Please enter the transport PIN from your PIN letter.</source>
-        <extracomment>INFO ANDROID IOS The transport PIN is required by AA2, it needs to be change to an actual PIN.</extracomment>
+        <source>Please enter the Transport PIN from your PIN letter.</source>
+        <extracomment>INFO ANDROID IOS The Transport PIN is required by AA2, it needs to be change to an actual PIN.</extracomment>
         <translation>Geben Sie bitte die Transport-PIN aus dem PIN-Brief ein.</translation>
     </message>
     <message>
@@ -1066,9 +1077,9 @@ LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the t
         <translation>Geben Sie bitte Ihre PIN ein.</translation>
     </message>
     <message>
-        <source>Please enter your 5-digit Transport PIN. Use the keyboard or numpad.</source>
-        <extracomment>INFO DESKTOP_QML The AA2 expects a PIN with 5 digits which can be entered via the physical or onscreen keyboard</extracomment>
-        <translation>Bitte geben Sie Ihre fünfstellige Transport-PIN ein. Benutzen Sie dazu die Tastatur oder den Ziffernblock.</translation>
+        <source>Please enter the five-digit Transport PIN.</source>
+        <extracomment>INFO DESKTOP_QML The AA2 expects the Transport PIN with five digits.</extracomment>
+        <translation>Bitte geben Sie die fünfstellige Transport-PIN ein.</translation>
     </message>
     <message>
         <source>%1. You can start to enter the number.</source>
@@ -1076,29 +1087,44 @@ LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the t
         <translation>%1. Sie können nun Ihre Nummer eingeben.</translation>
     </message>
     <message>
-        <source>PIN entry</source>
+        <source>Enter PIN</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>PIN-Eingabe</translation>
+        <translation>PIN eingeben</translation>
     </message>
     <message>
-        <source>CAN entry</source>
+        <source>Enter CAN</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>CAN-Eingabe</translation>
+        <translation>CAN eingeben</translation>
     </message>
     <message>
-        <source>PUK entry</source>
+        <source>Enter PUK</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>PUK-Eingabe</translation>
+        <translation>PUK eingeben</translation>
     </message>
     <message>
-        <source>Pairing code</source>
+        <source>Enter pairing code</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Kopplungscode</translation>
+        <translation>Kopplungscode eingeben</translation>
     </message>
     <message>
-        <source>Start the pairing on your smartphone and enter the shown pairing code in order to use your smartphone as a card reader (SaC).</source>
+        <source>Start the pairing on your smartphone and enter the pairing code shown there in order to use your smartphone as a card reader (SaC).</source>
         <extracomment>INFO DESKTOP_QML The pairing code needs to be supplied.</extracomment>
-        <translation>Starten Sie die Kopplung auf Ihrem Smartphone und geben Sie den angezeigten Kopplungscode ein um Ihr Smartphone als Kartenleser (SaK) zu verwenden.</translation>
+        <translation>Starten Sie die Kopplung auf Ihrem Smartphone und geben Sie den dort angezeigten Kopplungscode ein um Ihr Smartphone als Kartenleser (SaK) zu verwenden.</translation>
+    </message>
+    <message>
+        <source>Please enter your current six-digit PIN.</source>
+        <extracomment>INFO DESKTOP_QML The AA2 expects the current PIN with six digits in a PIN change.</extracomment>
+        <translation>Bitte geben Sie Ihre aktuelle sechsstellige PIN ein.</translation>
+    </message>
+    <message>
+        <source>Please enter your current PIN.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Geben Sie bitte Ihre aktuelle PIN ein.</translation>
+    </message>
+    <message>
+        <source>Enter Transport PIN</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Transport-PIN eingeben</translation>
     </message>
 </context>
 <context>
@@ -1169,6 +1195,16 @@ LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the t
     <message>
         <source>Please note that the old UI will be removed in the next version of %1!</source>
         <translation>Bitte beachten Sie, dass die alte grafische Nutzeroberfläche in der nächsten Version der %1 entfernt wird!</translation>
+    </message>
+    <message>
+        <source>Network</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Netzwerk</translation>
+    </message>
+    <message>
+        <source>Use the proxy (%1) specified during the installation.</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Benutze den bei der Installation angegebenen Proxy (%1).</translation>
     </message>
 </context>
 <context>
@@ -1257,14 +1293,9 @@ LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the t
         <translation>Dies ist die allgemeine Fortschrittsansicht der AusweisApp2.</translation>
     </message>
     <message>
-        <source>Change PIN</source>
+        <source>Place ID card</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>PIN ändern</translation>
-    </message>
-    <message>
-        <source>Identify</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Ausweisen</translation>
+        <translation>Ausweis auflegen</translation>
     </message>
     <message>
         <source>The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
@@ -1285,9 +1316,9 @@ LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the t
         <translation>Schritt %1 von 3</translation>
     </message>
     <message>
-        <source>Searching for card reader</source>
+        <source>Connect USB card reader or smartphone</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Suche nach Kartenleser</translation>
+        <translation>USB-Kartenleser oder Smartphone verbinden</translation>
     </message>
     <message>
         <source>Information</source>
@@ -1295,9 +1326,9 @@ LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the t
         <translation>Information</translation>
     </message>
     <message>
-        <source>No card reader detected. Please make sure that a card reader is connected. Open the %1reader settings%2 to configure reader and get more information about supported readers.</source>
+        <source>No card reader detected. Please make sure that a USB card reader is connected or a smartphone as cardreader is paired and available. Open the %1reader settings%2 to configure readers and get more information about supported readers.</source>
         <extracomment>INFO DESKTOP_QML AA2 is waiting for the card reader or the ID card.</extracomment>
-        <translation>Es wurde kein Kartenleser gefunden. Bitte stellen Sie sicher, dass ein Kartenleser angeschlossen ist. Öffnen Sie die %1Einstellungen%2 um Kartenleser zu konfigurieren und mehr Informationen zu unterstützten Kartenlesern zu erhalten.</translation>
+        <translation>Es wurde kein Kartenleser gefunden. Bitte überprüfen Sie, ob ein USB-Kartenleser angeschlossen bzw. ein Smartphone als Kartenleser gekoppelt und verfügbar ist. Öffnen Sie die %1Einstellungen%2, um Kartenleser zu konfigurieren und weitere Hinweise zu erhalten.</translation>
     </message>
     <message>
         <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
@@ -1310,14 +1341,9 @@ LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the t
         <translation>Bitte beachten Sie die Anzeige Ihres Kartenlesers.</translation>
     </message>
     <message>
-        <source>Connected to %1. Please place the NFC interface of the smartphone on your ID card.</source>
+        <source>No ID card detected. Please make sure that the NFC interface of the smartphone (connected to %1) is correctly placed on your ID card.</source>
         <extracomment>INFO DESKTOP_QML The AA2 is waiting for the smartphone to be placed on the id.</extracomment>
-        <translation>Verbunden mit %1. Bitte platzieren Sie das Smartphone mit der NFC-Schnittstelle auf Ihrem Ausweis.</translation>
-    </message>
-    <message>
-        <source>Please place the smartphone (connected to %1) on your ID card or put the ID card on the card reader.</source>
-        <extracomment>INFO DESKTOP_QML The AA2 is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).</extracomment>
-        <translation>Bitte platzieren Sie das Smartphone (verbunden mit %1) auf Ihrem Ausweis oder legen den Ausweis auf den Kartenleser.</translation>
+        <translation>Es wurde kein Ausweis erkannt. Bitte stellen Sie sicher, dass die NFC-Schnittstelle des Smartphones (verbunden mit %1) korrekt auf Ihrem Ausweis platziert ist.</translation>
     </message>
     <message>
         <source>The used card reader does not meet the technical requirements (Extended Length not supported).</source>
@@ -1325,9 +1351,14 @@ LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the t
         <translation>Der verwendete Kartenleser erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).</translation>
     </message>
     <message>
-        <source>Please put the ID card on the card reader.</source>
+        <source>No ID card detected. Please ensure that your ID card is placed on the card reader.</source>
         <extracomment>INFO DESKTOP_QML The AA2 is waiting for an ID card to be inserted into the card reader.</extracomment>
-        <translation>Bitte legen Sie den Ausweis auf das Kartenlesegerät.</translation>
+        <translation>Es wurde kein Ausweis erkannt. Bitte stellen Sie sicher, dass Ihr Ausweis auf dem Kartenleser aufliegt.</translation>
+    </message>
+    <message>
+        <source>Please place the smartphone (connected to %1) on your ID card or put the ID card on the card reader.</source>
+        <extracomment>INFO DESKTOP_QML The AA2 is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).</extracomment>
+        <translation>Bitte platzieren Sie das Smartphone (verbunden mit %1) auf Ihrem Ausweis oder legen Sie den Ausweis auf den Kartenleser.</translation>
     </message>
 </context>
 <context>
@@ -1490,6 +1521,10 @@ LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the t
         <source>Save as PDF...</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Als PDF speichern...</translation>
+    </message>
+    <message>
+        <source>Portable Document Format</source>
+        <translation>Portable Document Format</translation>
     </message>
 </context>
 <context>
@@ -1666,7 +1701,7 @@ INFO ANDROID IOS Header of the progress status message during the authentication
         <translation>Berechtigungszertifikat wird heruntergeladen</translation>
     </message>
     <message>
-        <source>Please wait a moment...</source>
+        <source>Please wait a moment.</source>
         <extracomment>INFO DESKTOP_QML Information message about cancellation process with present network connectivity
 ----------
 INFO DESKTOP_QML Generic progress status message while no card communication is active.
@@ -1674,7 +1709,7 @@ INFO DESKTOP_QML Generic progress status message while no card communication is 
 INFO DESKTOP_QML Generic progress status message during authentication.
 ----------
 INFO ANDROID IOS Generic status message during the authentication process.</extracomment>
-        <translation>Bitte warten Sie einen Moment...</translation>
+        <translation>Bitte warten Sie einen Moment.</translation>
     </message>
     <message>
         <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
@@ -1703,7 +1738,7 @@ INFO ANDROID IOS No network connection, the user needs to active the network int
         <translation>Bitte stellen Sie eine Internetverbindung her.</translation>
     </message>
     <message>
-        <source>Change transport PIN</source>
+        <source>Change Transport PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Transport-PIN ändern</translation>
     </message>
@@ -1741,35 +1776,35 @@ INFO ANDROID IOS The NFC signal is weak, by repositioning the card the signal mi
 - verbinden Sie das Smartphone mit dem Ladegerät</translation>
     </message>
     <message>
-        <source>Did you change the transport PIN already?</source>
+        <source>Did you change the Transport PIN already?</source>
         <translation>Haben Sie Ihre Transport-PIN bereits geändert?</translation>
     </message>
     <message>
-        <source>Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. Online identification with transport PIN is not possible.</source>
-        <translation>Vor der ersten Nutzung der Online-Ausweisfunktion müssen Sie die Transport-PIN durch eine persönliche sechsstellige PIN ersetzen. Die Online-Indentifikation ist mit der Transport-PIN nicht möglich.</translation>
+        <source>Prior to the first use of the online identification function you have to replace the Transport PIN by an individual six-digit PIN. Online identification with Transport PIN is not possible.</source>
+        <translation>Vor der ersten Nutzung der Online-Ausweisfunktion müssen Sie die Transport-PIN durch eine persönliche sechsstellige PIN ersetzen. Die Online-Identifikation ist mit der Transport-PIN nicht möglich.</translation>
     </message>
     <message>
-        <source>No, change transport PIN now</source>
+        <source>No, change Transport PIN now</source>
         <translation>Nein, PIN jetzt ändern</translation>
     </message>
     <message>
-        <source>A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.</source>
+        <source>A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.</source>
         <extracomment>INFO ANDROID IOS The PIN was entered wrongfully two times, the third attempts requires additional CAN verification, hint where the CAN is found.</extracomment>
-        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher die sechsstellige Zugangsnummer (CAN) eingeben. Diese finden Sie auf der Vorderseite Ihres Ausweises.</translation>
+        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch geben Sie bitte zunächst die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie unten rechts auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
-        <source>First you have to change your 5-digit transport PIN you received in your in PIN letter into a 6-digit PIN. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.</source>
-        <extracomment>INFO DESKTOP_QML The user clicked that the current PIN has 5 digits (transport PIN) which needs to be changed to a 6-digit PIN. The current process will be aborted and needs to be restarted *manually* by the user.
+        <source>First you have to change your five-digit Transport PIN you received in your in PIN letter into a six-digit PIN. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.</source>
+        <extracomment>INFO DESKTOP_QML The user clicked that the current PIN has five digits (Transport PIN) which needs to be changed to a six-digit PIN. The current process will be aborted and needs to be restarted *manually* by the user.
 ----------
-INFO ANDROID IOS The user clicked that the current PIN has 5 digits (transport PIN), it needs to be changed to an ordinary 6-digit PIN. The current process needs to be restarted *manually* by the user.</extracomment>
+INFO ANDROID IOS The user clicked that the current PIN has five digits (Transport PIN), it needs to be changed to an ordinary six-digit PIN. The current process needs to be restarted *manually* by the user.</extracomment>
         <translation>Sie müssen die fünfstellige Transport-PIN aus dem PIN-Brief zunächst in eine sechsstellige PIN ändern. Sie verlassen den laufenden Vorgang und werden zur PIN-Verwaltung weitergeleitet. Starten Sie den gewünschten Vorgang bitte nach der PIN-Änderung erneut.</translation>
     </message>
     <message>
-        <source>Please don&apos;t move the ID card...</source>
+        <source>Please don&apos;t move the ID card.</source>
         <extracomment>INFO DESKTOP_QML Second line text if a basic card reader is used and data is exchanged with the card/server in the background. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
 ----------
 INFO ANDROID IOS Second line text if a basic card reader is used and background communication with the card/server is running. Is not actually visible since the basic reader password handling is done by EnterPasswordView.</extracomment>
-        <translation>Bitte den Ausweis nicht bewegen...</translation>
+        <translation>Bitte den Ausweis nicht bewegen.</translation>
     </message>
     <message>
         <source>Aborting process and informing the service provider</source>
@@ -1780,6 +1815,11 @@ INFO ANDROID IOS Second line text if a basic card reader is used and background 
         <source>Network problemes detected, trying to reach server within 30 seconds.</source>
         <extracomment>INFO DESKTOP_QML Information message about cancellation process without working network connectivity</extracomment>
         <translation>Es wurden Netzwerkprobleme erkannt. Die Verbindung wird weiterhin für 30 Sekunden versucht.</translation>
+    </message>
+    <message>
+        <source>Error code: %1</source>
+        <extracomment>INFO DESKTOP_QML Error code (string) of current GlobalStatus code, shown as header of popup.</extracomment>
+        <translation>Fehlercode: %1</translation>
     </message>
 </context>
 <context>
@@ -1925,6 +1965,10 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
         <source>Detach log viewer</source>
         <translation>Protokoll separat anzeigen</translation>
     </message>
+    <message>
+        <source>Logfiles</source>
+        <translation>Logdateien</translation>
+    </message>
 </context>
 <context>
     <name>MainView</name>
@@ -1947,9 +1991,9 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
         <translation>Verlauf</translation>
     </message>
     <message>
-        <source>PIN-Management</source>
+        <source>Change PIN</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>PIN-Verwaltung</translation>
+        <translation>PIN ändern</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -1962,16 +2006,16 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
         <translation>Hilfe</translation>
     </message>
     <message>
-        <source>Self-Authentication</source>
+        <source>See my personal data</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Selbstauskunft</translation>
+        <translation>Meine Daten einsehen</translation>
     </message>
 </context>
 <context>
     <name>MoreView</name>
     <message>
         <source>More</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>Mehr</translation>
     </message>
     <message>
@@ -1980,89 +2024,84 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
 ----------
 LABEL ANDROID
 ----------
-LABEL ANDROID IOS DESKTOP_QML</extracomment>
+LABEL IOS</extracomment>
         <translation>Versionsinformationen</translation>
     </message>
     <message>
         <source>FAQ</source>
         <extracomment>LABEL ANDROID
 ----------
-LABEL ANDROID IOS DESKTOP_QML</extracomment>
+LABEL IOS</extracomment>
         <translation>FAQ</translation>
     </message>
     <message>
         <source>Support</source>
         <extracomment>LABEL ANDROID
 ----------
-LABEL ANDROID IOS DESKTOP_QML</extracomment>
+LABEL IOS</extracomment>
         <translation>Support</translation>
     </message>
     <message>
         <source>Rate app</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>Bewerten</translation>
     </message>
     <message>
         <source>Software license</source>
         <extracomment>LABEL ANDROID
 ----------
-LABEL ANDROID IOS DESKTOP_QML</extracomment>
+LABEL IOS</extracomment>
         <translation>Softwarelizenz</translation>
     </message>
     <message>
         <source>https://www.ausweisapp.bund.de/en/download/android/</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>https://www.ausweisapp.bund.de/download/android/</translation>
     </message>
     <message>
         <source>https://www.ausweisapp.bund.de/en/download/ios/</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>https://www.ausweisapp.bund.de/download/ios/</translation>
     </message>
     <message>
         <source>https://www.ausweisapp.bund.de/en/download/windows-and-mac/</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>https://www.ausweisapp.bund.de/download/windows-und-mac/</translation>
     </message>
     <message>
         <source>History</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>Verlauf</translation>
-    </message>
-    <message>
-        <source>Developer options</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
-        <translation>Entwickleroptionen</translation>
     </message>
     <message>
         <source>Show log</source>
         <extracomment>LABEL ANDROID
 ----------
-LABEL ANDROID IOS DESKTOP_QML</extracomment>
+LABEL IOS</extracomment>
         <translation>Protokoll anzeigen</translation>
     </message>
     <message>
         <source>Tutorial</source>
         <extracomment>LABEL ANDROID
 ----------
-LABEL ANDROID IOS DESKTOP_QML</extracomment>
+LABEL IOS</extracomment>
         <translation>Tutorial</translation>
     </message>
     <message>
         <source>https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/haeufig-gestellte-fragen/</translation>
     </message>
     <message>
         <source>https://www.ausweisapp.bund.de/en/qa/support/</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/support/</translation>
     </message>
     <message>
         <source>Report error</source>
         <extracomment>LABEL ANDROID
 ----------
-LABEL ANDROID IOS DESKTOP_QML</extracomment>
+LABEL IOS</extracomment>
         <translation>Melden Sie einen Fehler</translation>
     </message>
     <message>
@@ -2104,12 +2143,12 @@ LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <source>Release notes</source>
         <extracomment>LABEL ANDROID
 ----------
-LABEL ANDROID IOS DESKTOP_QML</extracomment>
+LABEL IOS</extracomment>
         <translation>Release Notes</translation>
     </message>
     <message>
         <source>Settings</source>
-        <extracomment>LABEL ANDROID IOS DESKTOP_QML</extracomment>
+        <extracomment>LABEL IOS</extracomment>
         <translation>Einstellungen</translation>
     </message>
     <message>
@@ -2239,11 +2278,6 @@ LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <translation>Online-Hilfe</translation>
     </message>
     <message>
-        <source>Help</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Hilfe</translation>
-    </message>
-    <message>
         <source>Software licenses</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Softwarelizenzen</translation>
@@ -2355,12 +2389,8 @@ LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <translation>Hilfe &amp; Feedback</translation>
     </message>
     <message>
-        <source>Smartphone as card reader</source>
-        <translation>Smartphone als Kartenleser</translation>
-    </message>
-    <message>
-        <source>Developer options</source>
-        <translation>Entwickleroptionen</translation>
+        <source>Remote service</source>
+        <translation>Fernzugriff</translation>
     </message>
     <message>
         <source>More</source>
@@ -2383,9 +2413,9 @@ LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <translation>Diese Funktion steht auf Ihrem Gerät leider nicht zur Verfügung.</translation>
     </message>
     <message>
-        <source>However you can use a seperate &apos;Bluetooth card reader&apos; or a seperate &apos;smartphone as card reader&apos; to utilize the online identification function.</source>
+        <source>However, you can use a separate &apos;smartphone as card reader&apos; to utilize the online identification function.</source>
         <extracomment>INFO ANDROID IOS AA2 can&apos;t use NFC on this device, suggest to use bluetooth instead.</extracomment>
-        <translation>Sie können die Online-Ausweisfunktion aber mit einen separaten Bluetooth-Leser oder einem anderen Smartphone als Kartenleser nutzen.</translation>
+        <translation>Sie können die Online-Ausweisfunktion aber mit einem anderen Smartphone als Kartenleser nutzen.</translation>
     </message>
     <message>
         <source>NFC is switched off.</source>
@@ -2407,9 +2437,9 @@ LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <translation>Verbindung wird hergestellt</translation>
     </message>
     <message>
-        <source>Your device does not meet the technical requirements (Extended Length not supported). However you can use a seperate &apos;Bluetooth card reader&apos; or a seperate &apos;smartphone as card reader&apos; to utilize the online identification function.</source>
+        <source>Your device does not meet the technical requirements (Extended Length not supported). However you can use a separate &apos;smartphone as card reader&apos; to utilize the online identification function.</source>
         <extracomment>INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a bluetooth reader or a differnt smarthpone is suggested.</extracomment>
-        <translation>Ihr Gerät erfüllt leider nicht die technischen Voraussetzungen (Extended Length). Sie können die Online-Ausweisfunktion aber mit einen separaten Bluetooth-Leser oder einem anderen Smartphone als Kartenleser nutzen.</translation>
+        <translation>Ihr Gerät erfüllt leider nicht die technischen Voraussetzungen (Extended Length). Sie können die Online-Ausweisfunktion aber mit einem anderen Smartphone als Kartenleser nutzen.</translation>
     </message>
     <message>
         <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
@@ -2494,17 +2524,12 @@ LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <translation>Dies ist die Informationsansicht zu Passwörtern der AusweisApp2.</translation>
     </message>
     <message>
-        <source>The personal identification number (PIN) is chosen by you and is required for every use of the online eID function. You can change it anytime and indefinitely if you know your valid PIN. For your 6-digit PIN choose a combination of numbers, that is not easy to guess, neither &quot;123456&quot; nor your birth date, or any other numbers printed on the ID card. If you are no longer aware of your valid PIN, you will need to contact the authority responsible for issuing your identification card to renew your PIN.&lt;br&gt;&lt;br&gt;When changing the PIN for the first time, please use your 5-digit transport PIN. You will find the transport PIN in the letter you received from the authority responsible for issuing your identification card (marked in red) after you have applied for your identity card.&lt;br&gt;&lt;br&gt;Please note that you can not use the online eID function with your 5-digit transport PIN. A change to a 6-digit PIN is mandatory.</source>
-        <extracomment>INFO DESKTOP_QML Description text of PIN</extracomment>
-        <translation>Die Geheimnummer (PIN) vergeben Sie selbst und benötigen Sie bei jeder Nutzung der Online-Ausweisfunktion. Sie können diese jederzeit und unbegrenzt oft ändern, solange Ihnen Ihre gültige PIN bekannt ist. Wählen Sie für Ihre sechsstellige PIN eine Zahlenkombination, die nicht leicht zu erraten ist, also weder &quot;123456&quot;, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweis aufgedruckt sind.  Sollten Sie Ihre PIN vergessen haben, können Sie in der für die Ausgabe Ihres Ausweises zuständigen Behörde eine neue PIN setzen.&lt;br&gt;&lt;br&gt;Zum erstmaligen Setzen Ihrer PIN verwenden Sie bitte die fünfstellige Transport-PIN. Sie finden diese in dem Schreiben, welches Sie nach Beantragung Ihres Ausweises von der zuständigen Behörde erhalten haben (rot markiert).&lt;br&gt;&lt;br&gt;Bitte beachten Sie, dass die Online-Ausweisfunktion erst nach Änderung der fünfstelligen Transport-PIN in eine sechsstellige PIN genutzt werden kann.</translation>
-    </message>
-    <message>
-        <source>The card access number (CAN) is required if the PIN has already been entered incorrectly twice. In order to prevent a third incorrect entry and thus the blocking of the PIN without your consent, the CAN is also requested at this point. The CAN is a 6-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).</source>
+        <source>The Card Access Number (CAN) is required if the PIN has already been entered incorrectly twice. In order to prevent a third incorrect entry and thus the blocking of the PIN without your consent, the CAN is also requested at this point. The CAN is a six-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).</source>
         <extracomment>INFO DESKTOP_QML Description text of CAN if required for third PIN attempt</extracomment>
         <translation>Die Zugangsnummer (CAN) wird verlangt, wenn die PIN bereits zwei Mal falsch eingegeben wurde. Um zu verhindern, dass ohne Ihre Zustimmung eine dritte Fehleingabe und somit die Sperrung der PIN erfolgen kann, wird an dieser Stelle zusätzlich die CAN abgefragt. Die CAN ist eine sechsstellige Zahl, die auf der Vorderseite des Ausweises unten rechts zu finden ist (rot markiert).</translation>
     </message>
     <message>
-        <source>The personal unblocking key (PUK) is required if the PIN has been entered three times. At this point the PIN is blocked. The PUK is a 10-digit number you received with the letter sent to you by your competent authority (marked in red). Please note that you can only use the PUK to unblock the PIN entry. If you have forgotten your PIN, you can have a new PIN set at your competent authority.</source>
+        <source>The Personal Unblocking Key (PUK) is required if the PIN has been entered three times. At this point the PIN is blocked. The PUK is a ten-digit number you received with the letter sent to you by your competent authority (marked in red). Please note that you can only use the PUK to unblock the PIN entry. If you have forgotten your PIN, you can have a new PIN set at your competent authority.</source>
         <extracomment>INFO DESKTOP_QML Description text of PUK</extracomment>
         <translation>Die Entsperrnummer (PUK) wird verlangt, wenn die PIN drei Mal hintereinander falsch eingegeben wurde. Zu diesem Zeitpunkt ist die PIN gesperrt. Die PUK ist eine zehnstellige Zahl, die Sie mit dem Schreiben bekommen haben, welches Sie nach Beantragung Ihres Ausweises von der zuständigen Behörde erhalten haben (rot markiert). Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich die PIN-Eingabe wieder entsperren können. Sollten Sie Ihre PIN vergessen haben, können Sie in der für die Ausgabe Ihres Ausweises zuständigen Behörde eine neue PIN setzen.</translation>
     </message>
@@ -2539,7 +2564,7 @@ LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <translation>Smartphone als Kartenleser-Information</translation>
     </message>
     <message>
-        <source>The card access number (CAN) allows to access the imprinted data of the ID card. In order to allow on-site reading of the personal data the service provider needs to acquire governmental authorization to do so. On-site reading is usually employed to automatically fill forms and prevent spelling mistakes when transfering the personal data.</source>
+        <source>The Card Access Number (CAN) allows to access the imprinted data of the ID card. In order to allow on-site reading of the personal data the service provider needs to acquire governmental authorization to do so. On-site reading is usually employed to automatically fill forms and prevent spelling mistakes when transfering the personal data.</source>
         <extracomment>INFO DESKTOP_QML Description text of CAN-allowed authentication</extracomment>
         <translation>Die Kartenzugriffsnummer (CAN) ermöglicht den Zugriff auf die auf dem Ausweis gespeicherten Daten. Um das Vor-Ort-Auslesen der persönlichen Daten zu Nutzen muss ein Diensteanbieter eine Zulassung durch eine staatliche Behörde erhalten. Die Vor-Ort-Auslesefunktion wird typischerweise zum automatischen Füllen von Formularen und insbesondere dem Verhindern von Fehlern beim Übertragen der persönlichen Daten eingesetzt.</translation>
     </message>
@@ -2547,6 +2572,11 @@ LABEL ANDROID IOS DESKTOP_QML</extracomment>
         <source>You may use your smartphone as a card reader with AusweisApp2. The smartphone needs to feature a supported NFC chipset and both devices, your smartphone and this machine, need to be connected to the same WiFi network.&lt;br&gt;&lt;br&gt;To use your smartphone as a card reader you&apos;ll always need to activate the remote service in the AusweisApp2 on the smartphone. For the first time you&apos;ll also need to start the pairing mode on your smartphone, select the device from the list of available devices on this machine and then enter the pairing code shown on the phone.</source>
         <extracomment>INFO DESKTOP_QML Description text of SaC pairing</extracomment>
         <translation>Es besteht die Möglichkeit Ihr Smartphone als Kartenleser mit der AusweisApp2 zu verwenden. Das Smartphone muss einen unterstützten NFC-Chip verwenden und beide Geräte, sowohl das Smartphone als auch Ihr Rechner, müssen mit dem selben WLAN-Netz verbunden sein.&lt;br&gt;&lt;br&gt;Um Ihr Smartphone als Kartenleser zu verwenden muss stets der Fernzugriff in der AusweisApp2 auf Ihrem Smartphone aktiviert sein. Für eine intiale Verbindung der Geräte muss zusätzlich der Kopplungsmodus auf dem Smartphone aktiviert werden, wählen Sie danach das Gerät aus der Liste der verfügbaren Geräte auf Ihrem Rechner und geben Sie den von Ihrem Smartphone dargestellten Kopplungscode ein.</translation>
+    </message>
+    <message>
+        <source>The Personal Identification Number (PIN) is chosen by you and is required for every use of the online eID function. You can change it anytime and indefinitely if you know your valid PIN. For your six-digit PIN choose a combination of numbers, that is not easy to guess, neither &quot;123456&quot; nor your birth date, or any other numbers printed on the ID card. If you are no longer aware of your valid PIN, you will need to contact the authority responsible for issuing your identification card to renew your PIN.&lt;br&gt;&lt;br&gt;When changing the PIN for the first time, please use the five-digit Transport PIN. You will find the Transport PIN in the letter you received from the authority responsible for issuing your identification card (marked in red) after you have applied for your identity card.&lt;br&gt;&lt;br&gt;Please note that you can not use the online eID function with the five-digit Transport PIN. A change to a six-digit PIN is mandatory.</source>
+        <extracomment>INFO DESKTOP_QML Description text of PIN</extracomment>
+        <translation>Die Persönliche Identifikationsnummer (PIN) vergeben Sie selbst und benötigen Sie bei jeder Nutzung der Online-Ausweisfunktion. Sie können diese jederzeit und unbegrenzt oft ändern, solange Ihnen Ihre gültige PIN bekannt ist. Wählen Sie für Ihre sechsstellige PIN eine Zahlenkombination, die nicht leicht zu erraten ist, also weder &amp;quot;123456&amp;quot;, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweis aufgedruckt sind.  Sollten Sie Ihre PIN vergessen haben, können Sie in der für die Ausgabe Ihres Ausweises zuständigen Behörde eine neue PIN setzen.&lt;br&gt;&lt;br&gt;Zum erstmaligen Setzen Ihrer PIN verwenden Sie bitte die fünfstellige Transport-PIN. Sie finden diese in dem Schreiben, welches Sie nach Beantragung Ihres Ausweises von der zuständigen Behörde erhalten haben (rot markiert).&lt;br&gt;&lt;br&gt;Bitte beachten Sie, dass die Online-Ausweisfunktion erst nach Änderung der fünfstelligen Transport-PIN in eine sechsstellige PIN genutzt werden kann.</translation>
     </message>
 </context>
 <context>
@@ -2615,16 +2645,16 @@ Anderenfalls können Sie nun Ihren Ausweis vom Kartenleser entfernen.</translati
     <message>
         <source>Select a secure PIN that consists of six digits. Do not select a number that can be guessed easily, such as &quot;123456&quot;, your date of birth or any other number that is printed on your ID card.
 
-When you change your PIN for the first time, please enter your five-digit transport PIN in the field &quot;Current PIN / Transport PIN&quot;. You received your transport PIN with the letter sent to you by your competent authority.
+When you change your PIN for the first time, please enter the five-digit Transport PIN in the field &quot;Current PIN / Transport PIN&quot;. You received your Transport PIN with the letter sent to you by your competent authority.
 
 Please note that the PIN may only consist of digits (0-9).</source>
         <translation>Wählen Sie für Ihre sechsstellige PIN eine Zahlenkombination, die nicht leicht zu erraten ist, also weder &quot;123456&quot;, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweis aufgedruckt sind.
 
-Bei der erstmaligen PIN-Änderung geben Sie bitte in das Feld &quot;Aktuelle PIN / Transport-PIN&quot; Ihre fünfstellige Transport-PIN ein. Sie finden die Transport-PIN in dem Schreiben, das Sie nach Beantragung Ihres Ausweises von der für die Ausgabe Ihres Ausweises zuständigen Behörde erhalten haben.</translation>
+Bei der erstmaligen PIN-Änderung geben Sie bitte in das Feld &quot;Aktuelle PIN / Transport-PIN&quot; die fünfstellige Transport-PIN ein. Sie finden die Transport-PIN in dem Schreiben, das Sie nach Beantragung Ihres Ausweises von der für die Ausgabe Ihres Ausweises zuständigen Behörde erhalten haben.</translation>
     </message>
     <message>
-        <source>A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.</source>
-        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher die sechsstellige Zugangsnummer (CAN) eingeben. Diese finden Sie auf der Vorderseite Ihres Ausweises.</translation>
+        <source>A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.</source>
+        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch geben Sie bitte zunächst die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie unten rechts auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
         <source>Current PIN / Transport PIN:</source>
@@ -2639,7 +2669,7 @@ Bei der erstmaligen PIN-Änderung geben Sie bitte in das Feld &quot;Aktuelle PIN
         <translation>Bestätigen:</translation>
     </message>
     <message>
-        <source>Card access number (CAN):</source>
+        <source>Card Access Number (CAN):</source>
         <translation>Zugangsnummer (CAN):</translation>
     </message>
     <message>
@@ -2659,7 +2689,7 @@ Bei der erstmaligen PIN-Änderung geben Sie bitte in das Feld &quot;Aktuelle PIN
         <translation>deactivatedReaderImageLabel</translation>
     </message>
     <message>
-        <source>Click on &quot;Change PIN&quot; to enter your card access number (CAN) and then set a new PIN. You can find your card access number (CAN) on the front side of your ID card next to the date of expiry. On the electronic residence permit the card access number (CAN) is printed above your signature.</source>
+        <source>Click on &quot;Change PIN&quot; to enter your Card Access Number (CAN) and then set a new PIN. You can find your Card Access Number (CAN) on the front side of your ID card next to the date of expiry. On the electronic residence permit the Card Access Number (CAN) is printed above your signature.</source>
         <translation>&quot;Klicken Sie auf &quot;PIN ändern&quot;, um zunächst Ihre Zugangsnummer (CAN) einzugeben und anschließend eine neue PIN zu setzen. Die Zugangsnummer (CAN) finden Sie beim Personalausweis auf der Vorderseite rechts neben dem letzten Tag der Gültigkeitsdauer. Beim elektronischen Aufenthaltstitel finden Sie die Zugangsnummer (CAN) über Ihrer Unterschrift.</translation>
     </message>
     <message>
@@ -2706,7 +2736,7 @@ Please note that you can only use the PUK to unblock the eID function. If you ha
 Bitte beachten Sie, dass Sie mit Ihrer PUK lediglich Ihren Online-Ausweis entsperren können. Sollten Sie Ihre PIN vergessen haben, können Sie von der für die Ausgabe Ihres Ausweises zuständigen Behörde eine neue PIN setzen lassen.</translation>
     </message>
     <message>
-        <source>Display of the card access number (CAN) in the lower right corner of the id card</source>
+        <source>Display of the Card Access Number (CAN) in the lower right corner of the id card</source>
         <translation>Darstellung der Kartenzugangsnummer (CAN) in der unteren rechten Ecke des Ausweises</translation>
     </message>
 </context>
@@ -2775,14 +2805,11 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
 <context>
     <name>ProviderDetailButtonBar</name>
     <message>
-        <source>ONLINE APPLICATION</source>
-        <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Online-Anwendung</translation>
-    </message>
-    <message>
-        <source>To online application</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Zur Online-Anwendung</translation>
+        <source>To provider</source>
+        <extracomment>LABEL DESKTOP_QML
+----------
+LABEL ANDROID_TABLET IOS_TABLET</extracomment>
+        <translation>Zum Anbieter</translation>
     </message>
 </context>
 <context>
@@ -3098,6 +3125,41 @@ LABEL IOS_TABLET The text entered into the provider search field results in no m
     </message>
 </context>
 <context>
+    <name>ProxyCredentialsPopup</name>
+    <message>
+        <source>Proxy credential username</source>
+        <extracomment>LABEL DESKTOP Accessible name.</extracomment>
+        <translation>Benutzername für den Proxy</translation>
+    </message>
+    <message>
+        <source>Proxy credential password</source>
+        <extracomment>LABEL DESKTOP Accessible name.</extracomment>
+        <translation>Passwort für den Proxy</translation>
+    </message>
+    <message>
+        <source>Sign in</source>
+        <extracomment>LABEL DESKTOP Title of the proxy credentials popup.
+----------
+LABEL DESKTOP Text of the button in the proxy credentials popup.</extracomment>
+        <translation>Anmelden</translation>
+    </message>
+    <message>
+        <source>The proxy %1 requires username and password.</source>
+        <extracomment>LABEL DESKTOP Text of the proxy credentials popup. An example for %1 is http://proxy.example.com:1337.</extracomment>
+        <translation>Für den Proxy %1 sind ein Nutzername und ein Passwort erforderlich.</translation>
+    </message>
+    <message>
+        <source>Username</source>
+        <extracomment>LABEL DESKTOP Label of the textfield for the username.</extracomment>
+        <translation>Nutzername</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <extracomment>LABEL DESKTOP Label of the textfield for the password.</extracomment>
+        <translation>Passwort</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>Please describe the error that occurred.</source>
@@ -3114,6 +3176,14 @@ LABEL IOS_TABLET The text entered into the provider search field results in no m
     <message>
         <source>Critical errors:</source>
         <translation>Kritische Fehler:</translation>
+    </message>
+    <message>
+        <source>Service URL</source>
+        <translation>Service URL</translation>
+    </message>
+    <message>
+        <source>Parameter of occurred error:</source>
+        <translation>Parameter des aufgetretenen Fehlers:</translation>
     </message>
 </context>
 <context>
@@ -3196,7 +3266,7 @@ LABEL IOS_TABLET The text entered into the provider search field results in no m
         <translation>Eingabe des Kopplungscodes</translation>
     </message>
     <message>
-        <source>Enter the 4-digit pairing code shown on your other device.</source>
+        <source>Enter the four-digit pairing code shown on your other device.</source>
         <translation>Geben Sie den vierstelligen Kopplungscode ein, der auf dem anderen Gerät angezeigt wird.</translation>
     </message>
 </context>
@@ -3323,6 +3393,11 @@ LABEL IOS_TABLET The text entered into the provider search field results in no m
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Kopplungscode: %1</translation>
     </message>
+    <message>
+        <source>Enable WiFi</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>WLAN aktivieren</translation>
+    </message>
 </context>
 <context>
     <name>RemoteServiceViewRemote</name>
@@ -3343,8 +3418,8 @@ LABEL IOS_TABLET The text entered into the provider search field results in no m
     </message>
     <message>
         <source>No unpaired smartphone as card reader (SaC) available. Please make sure that the smartphone as card reader (SaC) functionality in AusweisApp2 on your other device is activated an that both devices are connected to the same WiFi.</source>
-        <extracomment>INFO ANDROID IOS No SaC was found on the network, both devices need to be connected to the same wifi network.</extracomment>
-        <translation>Kein ungekoppeltes Smartphone als  Kartenleser verfügbar. Bitte stellen Sie sicher, dass die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem Smartphone aktiviert ist und beide Geräte mit demselben WLAN verbunden sind.</translation>
+        <extracomment>INFO ANDROID IOS No SaC was found on the network, both devices need to be connected to the same WiFi network.</extracomment>
+        <translation>Kein ungekoppeltes Smartphone als Kartenleser verfügbar. Bitte stellen Sie sicher, dass die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem Smartphone aktiviert ist und beide Geräte mit demselben WLAN verbunden sind.</translation>
     </message>
     <message>
         <source>Start the pairing mode on your smartphone if you haven&apos;t done it already.</source>
@@ -3391,22 +3466,22 @@ LABEL IOS_TABLET The text entered into the provider search field results in no m
     <name>RemoteWorkflow</name>
     <message>
         <source>Continue</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Fortsetzen</translation>
     </message>
     <message>
         <source>Pair device</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Gerät koppeln</translation>
     </message>
     <message>
-        <source>Enable Wifi</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <source>Enable WiFi</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>WLAN aktivieren</translation>
     </message>
     <message>
         <source>Establish connection</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Verbindung wird hergestellt</translation>
     </message>
     <message>
@@ -3420,13 +3495,8 @@ LABEL IOS_TABLET The text entered into the provider search field results in no m
         <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
-        <source>Connected to %1. Please place the NFC interface of the smartphone on your ID card.</source>
-        <extracomment>INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.</extracomment>
-        <translation>Verbunden mit %1. Bitte platzieren Sie das Smartphone mit der NFC-Schnittstelle auf Ihrem Ausweis.</translation>
-    </message>
-    <message>
         <source>Determine card</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Ermittle Ausweis</translation>
     </message>
     <message>
@@ -3436,13 +3506,18 @@ LABEL IOS_TABLET The text entered into the provider search field results in no m
     </message>
     <message>
         <source>To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.</source>
-        <extracomment>INFO ANDROID IOS The wifi module needs to be enabled in the system settings to use the remote service.</extracomment>
+        <extracomment>INFO ANDROID IOS The WiFi module needs to be enabled in the system settings to use the remote service.</extracomment>
         <translation>Um den Fernzugriff zu nutzen, muss WLAN aktiviert werden. Bitte aktivieren Sie WLAN in Ihren Einstellungen.</translation>
     </message>
     <message>
         <source>No paired smartphone as cardreader (SaC) with activated &quot;remote service&quot; available.</source>
         <extracomment>INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.</extracomment>
         <translation>Kein gekoppeltes Smartphone als Kartenleser mit aktiviertem &quot;Fernzugriff&quot; verfügbar.</translation>
+    </message>
+    <message>
+        <source>Connected to %1. Please place the NFC interface of the smartphone on your ID card.</source>
+        <extracomment>INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.</extracomment>
+        <translation>Verbunden mit %1. Bitte platzieren Sie das Smartphone mit der NFC-Schnittstelle auf Ihrem Ausweis.</translation>
     </message>
 </context>
 <context>
@@ -3469,6 +3544,57 @@ LABEL IOS_TABLET The text entered into the provider search field results in no m
         <source>Send email</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>E-Mail senden</translation>
+    </message>
+    <message>
+        <source>Save logfile</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Protokolldatei speichern</translation>
+    </message>
+    <message>
+        <source>See details</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Details anzeigen</translation>
+    </message>
+    <message>
+        <source>Logfiles</source>
+        <translation>Logdateien</translation>
+    </message>
+</context>
+<context>
+    <name>ScreenOrientationSelectionPopup</name>
+    <message>
+        <source>Select screen orientation</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Bildschirmausrichtung wählen</translation>
+    </message>
+    <message>
+        <source>Set screen orientation to portrait</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Bildschirmausrichtung auf Hochformat setzen</translation>
+    </message>
+    <message>
+        <source>Portrait</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Hochformat</translation>
+    </message>
+    <message>
+        <source>recommended</source>
+        <translation>empfohlen</translation>
+    </message>
+    <message>
+        <source>Set screen orientation to landscape</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Bildschirmausrichtung auf Querformat setzen</translation>
+    </message>
+    <message>
+        <source>Landscape</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Querformat</translation>
+    </message>
+    <message>
+        <source>Using a screen orientation unfit for your device may result in display errors.</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Die Ver­wen­dung ei­ner, für Ihr Ge­rät nicht ge­eig­ne­ten Bild­schirm­aus­rich­tung kann zu An­zei­ge­feh­lern füh­ren.</translation>
     </message>
 </context>
 <context>
@@ -3521,7 +3647,7 @@ LABEL ANDROID</extracomment>
         <translation>Verlauf</translation>
     </message>
     <message>
-        <source>Save authentification history</source>
+        <source>Save authentication history</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Verlauf der Ausweisvorgänge speichern</translation>
     </message>
@@ -3565,11 +3691,6 @@ LABEL ANDROID</extracomment>
         <translation>Es gibt keine Einträge im Verlauf</translation>
     </message>
     <message>
-        <source>Avoid visual feedback in the on screen keypad</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Deaktiviere die Animation der Tasten auf der Bildschirmtastatur</translation>
-    </message>
-    <message>
         <source>Delete history</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Verlauf löschen</translation>
@@ -3603,6 +3724,16 @@ LABEL ANDROID</extracomment>
         <source>No update information available, please check for update manually.</source>
         <extracomment>LABEL DESKTOP_QML The automatic update check is disabled (or no network connection was present during app start), a manual check for update is required.</extracomment>
         <translation>Keine Aktualisierungsinformationen vorhanden, bitte prüfen Sie manuell auf verfügbare Aktualisierungen.</translation>
+    </message>
+    <message>
+        <source>Deleted %1 entries from the history.</source>
+        <extracomment>INFO DESKTOP_QML Feedback how many history entries were removed.</extracomment>
+        <translation>Es wurden %1 Einträge aus dem Verlauf gelöscht.</translation>
+    </message>
+    <message>
+        <source>Visual feedback when pressing keypad buttons</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Animation der Tasten auf der Bildschirmtastatur</translation>
     </message>
 </context>
 <context>
@@ -3656,6 +3787,10 @@ LABEL ANDROID IOS</extracomment>
         <extracomment>LABEL DESKTOP_QML Title of the self authentication result data view</extracomment>
         <translation>Ausgelesene Daten der Selbstauskunft</translation>
     </message>
+    <message>
+        <source>Portable Document Format</source>
+        <translation>Portable Document Format</translation>
+    </message>
 </context>
 <context>
     <name>SelfAuthenticationView</name>
@@ -3703,21 +3838,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Meine Daten einsehen</translation>
     </message>
     <message>
-        <source>%1 more presses to toggle the testmode for the self-authentication.</source>
-        <extracomment>INFO ANDROID IOS Used in notifications when the user taps the magnifying glass</extracomment>
-        <translation>%1 weitere Klicks um den Testmodus für die Selbstauskunft umzuschalten.</translation>
-    </message>
-    <message>
-        <source>Testmode for the self-authentication activated.</source>
-        <extracomment>INFO ANDROID IOS Used in notifications when the user taps the magnifying glass</extracomment>
-        <translation>Testmodus für die Selbstauskunft aktiviert.</translation>
-    </message>
-    <message>
-        <source>Testmode for the self-authentication deactivated.</source>
-        <extracomment>INFO ANDROID IOS Used in notifications when the user taps the magnifying glass</extracomment>
-        <translation>Testmodus für die Selbstauskunft deaktiviert.</translation>
-    </message>
-    <message>
         <source>https://www.ausweisapp.bund.de/datenschutz/</source>
         <translation>https://www.ausweisapp.bund.de/datenschutz/</translation>
     </message>
@@ -3733,6 +3853,21 @@ LABEL ANDROID IOS</extracomment>
         <source>Self-Authentication.</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Selbstauskunft.</translation>
+    </message>
+    <message>
+        <source>%1 more presses to toggle the testmode for the self-authentication.</source>
+        <extracomment>INFO ANDROID IOS Used in notifications when the user taps the magnifying glass</extracomment>
+        <translation>%1 weitere Klicks um den Testmodus für die Selbstauskunft umzuschalten.</translation>
+    </message>
+    <message>
+        <source>Testmode for the self-authentication activated.</source>
+        <extracomment>INFO ANDROID IOS Used in notifications when the user taps the magnifying glass</extracomment>
+        <translation>Testmodus für die Selbstauskunft aktiviert.</translation>
+    </message>
+    <message>
+        <source>Testmode for the self-authentication deactivated.</source>
+        <extracomment>INFO ANDROID IOS Used in notifications when the user taps the magnifying glass</extracomment>
+        <translation>Testmodus für die Selbstauskunft deaktiviert.</translation>
     </message>
 </context>
 <context>
@@ -3815,20 +3950,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Debugoptionen</translation>
     </message>
     <message>
-        <source>Pairing the device ...</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Das Gerät wird gekoppelt ...</translation>
-    </message>
-    <message>
-        <source>The device &quot;%1&quot; has been paired.</source>
-        <translation>Das Gerät &quot;%1&quot; wurde gekoppelt.</translation>
-    </message>
-    <message>
-        <source>Pairing to &quot;%1&quot; failed:</source>
-        <extracomment>ERROR DESKTOP_QML An error occurred while pairing the device.</extracomment>
-        <translation>Die Kopplung mit &quot;%1&quot; ist fehlgeschlagen:</translation>
-    </message>
-    <message>
         <source>Device name</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Gerätename</translation>
@@ -3849,17 +3970,14 @@ LABEL ANDROID IOS</extracomment>
         <translation>Zufällige Anordnung der Ziffern</translation>
     </message>
     <message>
-        <source>Avoid visual feedback in the on screen keypad</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Deaktiviere die Animation der Tasten auf der Bildschirmtastatur</translation>
-    </message>
-    <message>
         <source>History</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS
+----------
+LABEL ALL_PLATFORMS</extracomment>
         <translation>Verlauf</translation>
     </message>
     <message>
-        <source>Save authentification history</source>
+        <source>Save authentication history</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Verlauf der Ausweisvorgänge speichern</translation>
     </message>
@@ -3874,9 +3992,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Smartphone als Kartenleser</translation>
     </message>
     <message>
-        <source>Click here to use another smartphone as a card reader</source>
+        <source>Configure remote service for another device</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Klicken Sie hier um ein anderes Smartphone als Kartenleser zu verwenden</translation>
+        <translation>Ein anderes Gerät für den Fernzugriff konfigurieren</translation>
     </message>
     <message>
         <source>Randomize the order of the on screen keypad buttons</source>
@@ -3884,9 +4002,109 @@ LABEL ANDROID IOS</extracomment>
         <translation>Ziffern der Bildschirmtastatur zufällig anordnen</translation>
     </message>
     <message>
-        <source>Privacy keypad</source>
+        <source>Screen orientation</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Bildschirmausrichtung</translation>
+    </message>
+    <message>
+        <source>Landscape</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Querformat</translation>
+    </message>
+    <message>
+        <source>Portrait</source>
+        <extracomment>LABEL ANDROID</extracomment>
+        <translation>Hochformat</translation>
+    </message>
+    <message>
+        <source>Keypad animations</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Vertrauliche Bildschirmtastatur</translation>
+        <translation>Tasten-Animationen</translation>
+    </message>
+    <message>
+        <source>Visual feedback when pressing keypad buttons</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Animation der Tasten auf der Bildschirmtastatur</translation>
+    </message>
+    <message>
+        <source>CAN allowed mode</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>CAN-allowed-Modus</translation>
+    </message>
+    <message>
+        <source>Support CAN allowed mode</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>CAN-allowed-Modus unterstützen</translation>
+    </message>
+    <message>
+        <source>Allow the id card to be used with only the CAN</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Unterstütze die Verwendung des Ausweis nur mit der CAN</translation>
+    </message>
+    <message>
+        <source>Skip rights page</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Anzeige der Bereichtigungen überspringen</translation>
+    </message>
+    <message>
+        <source>Do not show the rights page, when in can allowed mode</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Überspringe die Anzeige der Berechtigungen im CAN-allowed-Modus</translation>
+    </message>
+    <message>
+        <source>Developer Mode</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Entwicklermodus</translation>
+    </message>
+    <message>
+        <source>Use a more tolerant mode</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Benutze einen toleranten Modus</translation>
+    </message>
+    <message>
+        <source>Layout style</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Layout-Stil</translation>
+    </message>
+    <message>
+        <source>iOS</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>iOS</translation>
+    </message>
+    <message>
+        <source>Android</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Android</translation>
+    </message>
+    <message>
+        <source>Tablet, Android</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Tablet, Android</translation>
+    </message>
+    <message>
+        <source>Create dummy entries</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Erstelle Scheindaten</translation>
+    </message>
+    <message>
+        <source>Logfile</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Protokolldatei</translation>
+    </message>
+    <message>
+        <source>Developer Options</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Entwickleroptionen</translation>
+    </message>
+    <message>
+        <source>Testmode for the self-authentication</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Testmodus für die Selbstauskunft</translation>
+    </message>
+    <message>
+        <source>Use the test environment during a self-authentication</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Benutze die Test-Umgebung während der Selbstauskunft</translation>
     </message>
 </context>
 <context>
@@ -3935,11 +4153,11 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Do you want to set your PIN now?</source>
-        <extracomment>INFO DESKTOP_QML Inquiry message if the 5-digit transport PIN should be changed to an ordinary PIN (now).</extracomment>
+        <extracomment>INFO DESKTOP_QML Inquiry message if the five-digit Transport PIN should be changed to an ordinary PIN (now).</extracomment>
         <translation>Möchten Sie jetzt Ihre PIN setzen?</translation>
     </message>
     <message>
-        <source>If you have not already done so you have to change your 5-digit transport PIN to a 6-digit PIN before you can use the online-ID function.</source>
+        <source>If you have not already done so you have to change the five-digit Transport PIN to a six-digit PIN before you can use the online-ID function.</source>
         <extracomment>INFO DESKTOP_QML Hint that this change may be carried out form the main menu as well and that it is required to use the online authentication feature of the ID card.</extracomment>
         <translation>Falls noch nicht geschehen, müssen Sie vor der erstmaligen Nutzung der Online-Ausweisfunktion die fünfstellige Transport-PIN in eine sechsstellige PIN ändern.</translation>
     </message>
@@ -3976,7 +4194,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>Einrichtungsschritt zum Verlauf</translation>
     </message>
     <message>
-        <source>Change transport PIN setup step</source>
+        <source>Change Transport PIN setup step</source>
         <translation>Einrichtungsschritt zur Änderung der Transport PIN</translation>
     </message>
     <message>
@@ -4293,12 +4511,12 @@ LABEL ANDROID IOS</extracomment>
         <translation>Vor der erstmaligen Nutzung der Online-Ausweisfunktion bitte die</translation>
     </message>
     <message>
-        <source>5 digits long</source>
+        <source>five digits long</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>fünfstellige</translation>
     </message>
     <message>
-        <source>transport PIN</source>
+        <source>Transport PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Transport-PIN</translation>
     </message>
@@ -4308,7 +4526,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>durch eine persönliche</translation>
     </message>
     <message>
-        <source>6 digits long PIN</source>
+        <source>six digits long PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>sechsstellige PIN</translation>
     </message>
@@ -4388,7 +4606,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>Sie können dieses Tutorial jederzeit wieder über den Bereich &quot;Hilfe &amp; Feedback&quot; aufrufen.</translation>
     </message>
     <message>
-        <source>The transport PIN is sent to you by the Bundesdruckerei via mail.</source>
+        <source>The Transport PIN is sent to you by the Bundesdruckerei via mail.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Die Transport-PIN wird Ihnen von der Bundesdruckerei per Brief zugesandt.</translation>
     </message>
@@ -4403,14 +4621,19 @@ LABEL ANDROID IOS</extracomment>
         <translation>Sie können dieses Tutorial jederzeit wieder über den Bereich &quot;Mehr&quot; aufrufen.</translation>
     </message>
     <message>
-        <source>Please note: The transport PIN can only be used for your first PIN change. If you have already set your personal PIN (e.g. while picking up your ID card) only the set PIN is valid.</source>
+        <source>Please note: The Transport PIN can only be used for your first PIN change. If you have already set your personal PIN (e.g. while picking up your ID card) only the set PIN is valid.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Hinweis: Die Transport-PIN kann nur für die erstmalige PIN-Änderung verwendet werden. Sollten Sie (z.B. bei der Abholung Ihres Ausweises) bereits eine persönliche PIN gesetzt haben, ist nur noch diese gültig.</translation>
     </message>
     <message>
-        <source>You can always set a new PIN at the issuing authority if the (transport) PIN is not known.</source>
+        <source>You can always set a new PIN at the issuing authority if the (Transport) PIN is not known.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Ist Ihnen die (Transport-)PIN nicht bekannt, können Sie in der zuständigen Behörde jederzeit eine neue PIN setzen.</translation>
+    </message>
+    <message>
+        <source>Open YouTube video</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Öffne das YouTube-Video</translation>
     </message>
 </context>
 <context>
@@ -4506,7 +4729,7 @@ klicken.</translation>
         <translation>Jetzt</translation>
     </message>
     <message>
-        <source>6 digits long PIN</source>
+        <source>six digits long PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>sechsstellige PIN</translation>
     </message>
@@ -4521,13 +4744,21 @@ klicken.</translation>
         <translation>am Kartenleser eingeben!</translation>
     </message>
     <message>
-        <source>This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.</source>
+        <source>This is only possible if you have exchanged the five digits long Transport PIN with a six digits long personal PIN beforehand.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Funktioniert nur, wenn Sie Ihre fünfstellige Transport-PIN bereits in Ihre persönliche sechsstellige PIN geändert haben.</translation>
+        <translation>Funktioniert nur, wenn Sie die fünfstellige Transport-PIN bereits in Ihre persönliche sechsstellige PIN geändert haben.</translation>
     </message>
     <message>
         <source>qrc:///images/tutorial/screenshot_choose_reader_%1_en.png</source>
         <translation>qrc:///images/tutorial/screenshot_choose_reader_%1_de.png</translation>
+    </message>
+    <message>
+        <source>Deprecation warning</source>
+        <translation>Abkündigungshinweis</translation>
+    </message>
+    <message>
+        <source>Bluetooth support will be removed in the next version of %1!</source>
+        <translation>Die Bluetooth-Unterstützung wird in der nächsten Version der %1 entfernt!</translation>
     </message>
 </context>
 <context>
@@ -4620,7 +4851,7 @@ klicken.</translation>
         <translation>Jetzt</translation>
     </message>
     <message>
-        <source>6 digits long PIN</source>
+        <source>six digits long PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>sechsstellige PIN</translation>
     </message>
@@ -4635,9 +4866,9 @@ klicken.</translation>
         <translation>eingeben!</translation>
     </message>
     <message>
-        <source>This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.</source>
+        <source>This is only possible if you have exchanged the five digits long Transport PIN with a six digits long personal PIN beforehand.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Funktioniert nur, wenn Sie Ihre fünfstellige Transport-PIN bereits in Ihre persönliche sechsstellige PIN geändert haben.</translation>
+        <translation>Funktioniert nur, wenn Sie die fünfstellige Transport-PIN bereits in Ihre persönliche sechsstellige PIN geändert haben.</translation>
     </message>
     <message>
         <source>App on iPhone &lt;b&gt;with&lt;/b&gt; NFC chip as card reader</source>
@@ -4653,6 +4884,11 @@ klicken.</translation>
         <source>You can also watch this YouTube video explaining the process.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Sie können sich auch dieses YouTube-Video ansehen das den Prozess erläutert.</translation>
+    </message>
+    <message>
+        <source>Open YouTube video</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Öffne das YouTube-Video</translation>
     </message>
 </context>
 <context>
@@ -4673,7 +4909,7 @@ klicken.</translation>
         <translation>App auf Computer &lt;b&gt;ohne&lt;/b&gt; NFC-Chip</translation>
     </message>
     <message>
-        <source>Both devices have to be connected to the same wifi network</source>
+        <source>Both devices have to be connected to the same WiFi network</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Beide Geräte müssen im selben WLAN sein</translation>
     </message>
@@ -4793,7 +5029,7 @@ klicken.</translation>
         <translation>Eingeben</translation>
     </message>
     <message>
-        <source>6 digits long PIN</source>
+        <source>six digits long PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>sechsstellige PIN</translation>
     </message>
@@ -4808,9 +5044,9 @@ klicken.</translation>
         <translation>eingeben!</translation>
     </message>
     <message>
-        <source>This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.</source>
+        <source>This is only possible if you have exchanged the five digits long Transport PIN with a six digits long personal PIN beforehand.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Funktioniert nur, wenn Sie Ihre fünfstellige Transport-PIN bereits in Ihre persönliche sechsstellige PIN geändert haben.</translation>
+        <translation>Funktioniert nur, wenn Sie die fünfstellige Transport-PIN bereits in Ihre persönliche sechsstellige PIN geändert haben.</translation>
     </message>
     <message>
         <source>qrc:///images/tutorial/generated/reader_sac_menu_%1_en.svg</source>
@@ -4847,6 +5083,11 @@ klicken.</translation>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Sie können sich auch dieses YouTube-Video ansehen das den Prozess erläutert.</translation>
     </message>
+    <message>
+        <source>Open YouTube video</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Öffne das YouTube-Video</translation>
+    </message>
 </context>
 <context>
     <name>TutorialReaderMethodSacMobile</name>
@@ -4861,7 +5102,7 @@ klicken.</translation>
         <translation>App auf Tablet oder Telefon &lt;b&gt;ohne&lt;/b&gt; NFC-Chip</translation>
     </message>
     <message>
-        <source>Both devices have to be connected to the same wifi network</source>
+        <source>Both devices have to be connected to the same WiFi network</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Beide Geräte müssen im selben WLAN sein</translation>
     </message>
@@ -4946,7 +5187,7 @@ klicken.</translation>
         <translation>Weiter zur PIN-Eingabe</translation>
     </message>
     <message>
-        <source>Tap on Wifi</source>
+        <source>Tap on WiFi</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Tap auf WLAN</translation>
     </message>
@@ -4981,7 +5222,7 @@ klicken.</translation>
         <translation>Eingeben</translation>
     </message>
     <message>
-        <source>6 digits long PIN</source>
+        <source>six digits long PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>sechsstellige PIN</translation>
     </message>
@@ -4996,9 +5237,9 @@ klicken.</translation>
         <translation>eingeben!</translation>
     </message>
     <message>
-        <source>This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.</source>
+        <source>This is only possible if you have exchanged the five digits long Transport PIN with a six digits long personal PIN beforehand.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Funktioniert nur, wenn Sie Ihre fünfstellige Transport-PIN bereits in Ihre persönliche sechsstellige PIN geändert haben.</translation>
+        <translation>Funktioniert nur, wenn Sie die fünfstellige Transport-PIN bereits in Ihre persönliche sechsstellige PIN geändert haben.</translation>
     </message>
     <message>
         <source>qrc:///images/tutorial/generated/reader_sac_menu_%1_en.svg</source>
@@ -5156,6 +5397,11 @@ klicken.</translation>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>qrc:///images/tutorial/screenshot_cert_%1_de.png</translation>
     </message>
+    <message>
+        <source>Open YouTube video</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Öffne das YouTube-Video</translation>
+    </message>
 </context>
 <context>
     <name>TutorialWhere</name>
@@ -5210,7 +5456,7 @@ klicken.</translation>
         <translation>Jetzt</translation>
     </message>
     <message>
-        <source>6 digits long PIN</source>
+        <source>six digits long PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>sechsstellige PIN</translation>
     </message>
@@ -5392,6 +5638,21 @@ klicken.</translation>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Entwickleroptionen deaktiviert.</translation>
     </message>
+    <message>
+        <source>%1 more presses to toggle the advanced settings.</source>
+        <extracomment>INFO ANDROID IOS Used in notifications when the user taps the version information</extracomment>
+        <translation>%1 weitere Klicks um die erweiterten Einstellungen umzuschalten.</translation>
+    </message>
+    <message>
+        <source>Advanced settings activated.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Erweiterte Einstellungen aktiviert.</translation>
+    </message>
+    <message>
+        <source>Advanced settings deactivated.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Erweiterte Einstellungen deaktiviert.</translation>
+    </message>
 </context>
 <context>
     <name>WhiteListSurveyView</name>
@@ -5421,12 +5682,12 @@ klicken.</translation>
         <translation>Vielen Dank für Ihre Mithilfe!</translation>
     </message>
     <message>
-        <source>Cancel</source>
+        <source>Do not send</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Abbrechen</translation>
+        <translation>Nicht senden</translation>
     </message>
     <message>
-        <source>Transmit</source>
+        <source>Send</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Senden</translation>
     </message>
@@ -5650,7 +5911,7 @@ klicken.</translation>
         <translation>Möchten Sie den Entwicklermodus deaktivieren?</translation>
     </message>
     <message>
-        <source>No, change transport PIN now</source>
+        <source>No, change Transport PIN now</source>
         <translation>Nein, PIN jetzt ändern</translation>
     </message>
     <message>
@@ -5682,8 +5943,8 @@ klicken.</translation>
         <translation>Anwendung: %1</translation>
     </message>
     <message>
-        <source>Did you change the transport PIN already?&lt;br&gt;&lt;br&gt;Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. Online identification with transport PIN is not possible.</source>
-        <translation>Haben Sie Ihre Transport-PIN schon geändert? &lt;br&gt;&lt;br&gt;Bevor Sie das erste Mal die Online-Ausweisfunktion nutzen können, müssen Sie Ihre Transport-PIN durch eine persönliche, sechsstellige PIN ersetzen. Die Benutzung der Online-Ausweisfunktion ist mit der Transport-PIN nicht möglich.</translation>
+        <source>Did you change the Transport PIN already?&lt;br&gt;&lt;br&gt;Prior to the first use of the online identification function you have to replace the Transport PIN by an individual six-digit PIN. Online identification with Transport PIN is not possible.</source>
+        <translation>Haben Sie Ihre Transport-PIN schon geändert?&lt;br&gt;&lt;br&gt;Bevor Sie das erste Mal die Online-Ausweisfunktion nutzen können, müssen Sie Ihre Transport-PIN durch eine persönliche, sechsstellige PIN ersetzen. Die Benutzung der Online-Ausweisfunktion ist mit der Transport-PIN nicht möglich.</translation>
     </message>
 </context>
 <context>
@@ -5856,7 +6117,7 @@ klicken.</translation>
         <translation>Speichern</translation>
     </message>
     <message>
-        <source>Text files</source>
+        <source>Textfiles</source>
         <translation>Textdateien</translation>
     </message>
     <message>
@@ -6045,10 +6306,6 @@ klicken.</translation>
     <message>
         <source>No IP addresses assigned</source>
         <translation>Keine IP-Adressen zugewiesen</translation>
-    </message>
-    <message>
-        <source>Warning: The current firewall status can be obscured by additional Group Policies on your system, often set by system administrators.</source>
-        <translation>Warnung: Der aktuelle Firewall-Status kann durch zusätzliche Gruppenregeln, die oftmals von Administratoren gesetzt werden, auf Ihrem System verschleiert sein.</translation>
     </message>
     <message>
         <source>An error occurred while trying to gather firewall information. Please check the log for more information.</source>
@@ -6651,7 +6908,7 @@ klicken.</translation>
     <message>
         <source>An unknown network error occurred. Check your network connection and try to restart the app.</source>
         <extracomment>ERROR ALL_PLATFORMS Other critial network error by Qt.</extracomment>
-        <translation>Ein unbekannter Netzwerkfehler ist aufgetreten. Überprüfen Sie Ihre Netwerkverbindung und versuchen Sie die App neu zu starten.</translation>
+        <translation>Ein unbekannter Netzwerkfehler ist aufgetreten. Überprüfen Sie Ihre Netzwerkverbindung und versuchen Sie, die App neu zu starten.</translation>
     </message>
     <message>
         <source>The selected card reader cannot be accessed anymore.</source>
@@ -6690,7 +6947,7 @@ klicken.</translation>
     </message>
     <message>
         <source>The process has been cancelled.</source>
-        <extracomment>ERROR ALL_PLATFORMS The user cancelled the authentication in either the UI or the card reader.</extracomment>
+        <extracomment>ERROR ALL_PLATFORMS The user cancelled the authentication in the UI.</extracomment>
         <translation>Der Vorgang wurde abgebrochen.</translation>
     </message>
     <message>
@@ -6723,7 +6980,7 @@ klicken.</translation>
         <translation>Die eingegebene PIN ist nicht korrekt.</translation>
     </message>
     <message>
-        <source>The given card access number (CAN) is not correct.</source>
+        <source>The given Card Access Number (CAN) is not correct.</source>
         <extracomment>ERROR ALL_PLATFORMS The ID card declined the CAN.</extracomment>
         <translation>Die eingegebene Zugangsnummer (CAN) ist nicht korrekt.</translation>
     </message>
@@ -6837,15 +7094,20 @@ klicken.</translation>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>https://www.ausweisapp.bund.de/fragen-und-antworten/support/</translation>
     </message>
+    <message>
+        <source>The process has been cancelled by the card reader.</source>
+        <extracomment>ERROR ALL_PLATFORMS The user cancelled the authentication on his card reader.</extracomment>
+        <translation>Der Vorgang wurde durch den Kartenleser abgebrochen.</translation>
+    </message>
 </context>
 <context>
     <name>governikus::GuiUtils</name>
     <message>
-        <source>Wrong card access number (CAN)</source>
+        <source>Wrong Card Access Number (CAN)</source>
         <translation>Falsche Zugangsnummer (CAN)</translation>
     </message>
     <message>
-        <source>The given card access number (CAN) is not correct. You have one more try to enter the correct PIN. Please mind that you have to acknowledge this last try with your card access number (CAN).</source>
+        <source>The given Card Access Number (CAN) is not correct. You have one more try to enter the correct PIN. Please mind that you have to acknowledge this last try with your Card Access Number (CAN).</source>
         <translation>Die eingegebene Zugangsnummer (CAN) ist nicht korrekt. Sie haben noch einen weiteren Versuch die korrekte PIN einzugeben. Beachten Sie, dass Sie diesen letzten Versuch mit der Zugangsnummer (CAN) bestätigen müssen.</translation>
     </message>
     <message>
@@ -6861,7 +7123,7 @@ klicken.</translation>
         <translation>Bitte geben Sie Ihre PUK erneut ein.</translation>
     </message>
     <message>
-        <source>The given card access number (CAN) is not correct.</source>
+        <source>The given Card Access Number (CAN) is not correct.</source>
         <translation>Die eingegebene Zugangsnummer (CAN) ist ungültig.</translation>
     </message>
     <message>
@@ -6877,7 +7139,7 @@ klicken.</translation>
         <translation>Ihre PIN ist nach dreimaliger Fehleingabe gesperrt. Die Nutzung der Online-Ausweisfunktion ist in diesem Zustand nicht mehr möglich.&lt;/p&gt;&lt;p&gt;Sie können die PIN im folgenden Dialog entsperren. Die Anwendung unterstützt Sie in den nun notwendigen Schritten.</translation>
     </message>
     <message>
-        <source>The given PIN is not correct. You have one more try to enter the correct PIN. Please mind that you have to acknowledge this last try with your card access number (CAN).</source>
+        <source>The given PIN is not correct. You have one more try to enter the correct PIN. Please mind that you have to acknowledge this last try with your Card Access Number (CAN).</source>
         <translation>Die eingegebene PIN ist nicht korrekt. Sie haben noch einen weiteren Versuch die korrekte PIN einzugeben. Beachten Sie, dass Sie diesen letzten Versuch mit der Zugangsnummer (CAN) bestätigen müssen.</translation>
     </message>
     <message>
@@ -7068,6 +7330,18 @@ klicken.</translation>
         <source>Could not send log! Please configure your mail client first.</source>
         <translation>Konnte das Protokoll nicht senden! Bitte konfigurieren Sie Ihr E-Mail-Programm.</translation>
     </message>
+    <message>
+        <source>Successfully saved logfile to &quot;%1&quot;</source>
+        <translation>Protokolldatei erfolgreich gespeichert unter &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <source>Error while saving logfile to &quot;%1&quot;</source>
+        <translation>Fehler beim Speichern der Protokolldatei unter &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <source>The logfile is disabled.</source>
+        <translation>Die Protokolldatei ist deaktiviert.</translation>
+    </message>
 </context>
 <context>
     <name>governikus::NotificationModel</name>
@@ -7079,22 +7353,7 @@ klicken.</translation>
 <context>
     <name>governikus::NumberModel</name>
     <message>
-        <source>The given PIN is not correct. You have 2 tries to enter the correct PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong PIN was entered on the first attempt.</extracomment>
-        <translation>Die eingegebene PIN ist nicht korrekt. Sie haben noch 2 weitere Versuche die korrekte PIN einzugeben.</translation>
-    </message>
-    <message>
-        <source>A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong PIN was entered twice, the next attempt requires the CAN for additional verification.</extracomment>
-        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch müssen Sie vorher die sechsstellige Zugangsnummer (CAN) eingeben. Diese finden Sie auf der Vorderseite Ihres Ausweises.</translation>
-    </message>
-    <message>
-        <source>A wrong PIN has been entered three times on your ID card. Your PIN is now blocked. To unblock your PIN you have to enter the PUK.</source>
-        <extracomment>INFO ALL_PLATFORMS The PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.</extracomment>
-        <translation>Die PIN Ihres Ausweises wurde dreimal falsch eingegeben. Ihre PIN ist gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
-    </message>
-    <message>
-        <source>The entered card access number (CAN) is incorrect. Please try again.</source>
+        <source>The entered Card Access Number (CAN) is incorrect. Please try again.</source>
         <extracomment>INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again.</extracomment>
         <translation>Die eingegebene Zugangsnummer (CAN) ist nicht korrekt. Bitte versuchen Sie es erneut.</translation>
     </message>
@@ -7102,6 +7361,29 @@ klicken.</translation>
         <source>The entered PUK is incorrect. Please try again.</source>
         <extracomment>INFO ALL_PLATFORMS The PUK entered wrongfully and needs to be supplied again.</extracomment>
         <translation>Die eingegebene PUK ist nicht korrekt. Bitte versuchen Sie es erneut.</translation>
+    </message>
+    <message>
+        <source>Transport PIN</source>
+        <translation>Transport PIN</translation>
+    </message>
+    <message>
+        <source>PIN</source>
+        <translation>PIN</translation>
+    </message>
+    <message>
+        <source>A wrong %1 has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong (Transport) PIN was entered twice, the next attempt requires the CAN for additional verification.</extracomment>
+        <translation>Die %1 Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch geben Sie bitte zunächst die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie unten rechts auf der Vorderseite Ihres Ausweises.</translation>
+    </message>
+    <message>
+        <source>The given %1 is not correct. You have two attempts to enter the correct %1.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong (Transport) PIN was entered on the first attempt.</extracomment>
+        <translation>Die eingegebene %1 ist nicht korrekt. Sie haben noch zwei weitere Versuche die korrekte %1 einzugeben.</translation>
+    </message>
+    <message>
+        <source>A wrong %1 has been entered three times on your ID card. Your %1 is now blocked. You have to enter the PUK to remove the block.</source>
+        <extracomment>INFO ALL_PLATFORMS The (Transport) PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.</extracomment>
+        <translation>Die %1 Ihres Ausweises wurde dreimal falsch eingegeben. Ihre %1 ist gesperrt. Zum Entsperren geben Sie bitte Ihre PUK ein.</translation>
     </message>
 </context>
 <context>
@@ -7417,7 +7699,7 @@ klicken.</translation>
     <message>
         <source>No smartphone as card reader (Sac) available. Please make sure to activate the &quot;remote service&quot; on your smartphone and to connect both devices to the same WiFi. See %1 for details of use.</source>
         <extracomment>INFO ALL_PLATFORMS No smartphone with enabled remote service was found on the same network.</extracomment>
-        <translation>Kein Smartphone als  Kartenleser verfügbar. Bitte stellen Sie sicher, dass die die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem Smartphone aktiviert ist und beide Geräte mit demselben WLAN verbunden sind. Informationen zur Verwendung befinden sich unter %1.</translation>
+        <translation>Kein Smartphone als  Kartenleser verfügbar. Bitte stellen Sie sicher, dass die die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem Smartphone aktiviert ist und beide Geräte mit demselben WLAN verbunden sind. Informationen zur Verwendung finden Sie in der %1.</translation>
     </message>
 </context>
 <context>
@@ -7427,8 +7709,8 @@ klicken.</translation>
         <translation>Es sind nur Ziffern (0-9) erlaubt.</translation>
     </message>
     <message>
-        <source>A pairing code has to be 4 digits long.</source>
-        <translation>Ein Kopplungscode besteht aus 4 Ziffern.</translation>
+        <source>A pairing code has to be four digits long.</source>
+        <translation>Ein Kopplungscode besteht aus vier Ziffern.</translation>
     </message>
 </context>
 <context>
@@ -7445,7 +7727,7 @@ klicken.</translation>
     </message>
     <message>
         <source>Please connect your WiFi to use the remote service.</source>
-        <extracomment>INFO ALL_PLATFORMS The wifi feature is not enabled but required to use the smartphone as a card reader (SaK).</extracomment>
+        <extracomment>INFO ALL_PLATFORMS The WiFi feature is not enabled but required to use the smartphone as a card reader (SaK).</extracomment>
         <translation>Bitte verbinden Sie sich mit Ihrem WLAN, um den Fernzugriff zu benutzen.</translation>
     </message>
     <message>
@@ -7650,7 +7932,7 @@ klicken.</translation>
         <translation>Fast fertig!</translation>
     </message>
     <message>
-        <source>Prior to the first use of the online identification function, you have to replace the transport PIN by an individual 6-digit PIN. The transport PIN was sent to you by postal mail.</source>
+        <source>Prior to the first use of the online identification function, you have to replace the Transport PIN by an individual six-digit PIN. The Transport PIN was sent to you by postal mail.</source>
         <translation>Vor der ersten Nutzung der Online-Ausweisfunktion müssen Sie die Transport-PIN durch eine persönliche sechsstellige PIN ersetzen. Sie finden Ihre Transport-PIN in dem PIN-Brief, welcher Ihnen postalisch zugesandt wurde.</translation>
     </message>
     <message>
@@ -7658,7 +7940,7 @@ klicken.</translation>
         <translation>Sie können die AusweisApp2 nun verwenden. Weitere Informationen zur Software und der Online-Ausweisfunktion erhalten Sie in der %1Online-Hilfe%2.</translation>
     </message>
     <message>
-        <source>Personal 6-digit PIN</source>
+        <source>Personal six-digit PIN</source>
         <translation>Persönliche sechsstellige PIN</translation>
     </message>
 </context>
@@ -7811,7 +8093,7 @@ klicken.</translation>
         <translation>bitte geben sie ihre zugangsnummer (can) ein</translation>
     </message>
     <message>
-        <source>Card access number (CAN):</source>
+        <source>Card Access Number (CAN):</source>
         <translation>Zugangsnummer (CAN):</translation>
     </message>
     <message>
@@ -7823,15 +8105,15 @@ klicken.</translation>
         <translation>Jetzt ausweisen</translation>
     </message>
     <message>
-        <source>Please enter the 6-digit card access number (CAN) for identification.</source>
+        <source>Please enter the six-digit Card Access Number (CAN) for identification.</source>
         <translation>Bitte geben Sie Ihre sechsstellige Zugangsnummer (CAN) ein.</translation>
     </message>
     <message>
-        <source>Please enter your 6-digit card access number (CAN) and your PIN for identification.</source>
-        <translation>Bitte geben Sie Ihre sechstellige Zugangsnummer (CAN) und Ihre PIN ein, um sich auszuweisen.</translation>
+        <source>Please enter your six-digit Card Access Number (CAN) and your PIN for identification.</source>
+        <translation>Bitte geben Sie Ihre sechsstellige Zugangsnummer (CAN) und Ihre PIN ein, um sich auszuweisen.</translation>
     </message>
     <message>
-        <source>Please enter your 6-digit PIN for identification</source>
+        <source>Please enter your six-digit PIN for identification</source>
         <translation>Bitte geben Sie Ihre sechsstellige PIN ein, um sich auszuweisen</translation>
     </message>
     <message>
@@ -8095,7 +8377,7 @@ klicken.</translation>
     <message>
         <source>The connection to the browser was lost. No forwarding was executed. Please try to call the URL again manually: %1</source>
         <extracomment>ERROR ALL_PLATFORMS The connection to the browser was lost/timed out..</extracomment>
-        <translation>Die Verbindung zum Browser ging verloren. Es konnte keine Weiterleitung durchgeführt werden. Bitte versuchen Sie die URL manuell aufzurufen: %1</translation>
+        <translation>Die Verbindung zum Browser ging verloren. Es konnte keine Weiterleitung durchgeführt werden. Bitte versuchen Sie, die URL manuell aufzurufen: %1</translation>
     </message>
     <message>
         <source>https://www.ausweisapp.bund.de/en/qa/report-an-error/</source>
@@ -8219,11 +8501,6 @@ klicken.</translation>
         <translation>Um die Anwendung zu schließen, drücken Sie zweimal schnell die Zurück-Taste.</translation>
     </message>
     <message>
-        <source>Text files</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Textdateien</translation>
-    </message>
-    <message>
         <source>Another application uses %1</source>
         <extracomment>INFO DESKTOP_QML The AA2 is currently remote controlled via the SDK interface, concurrent usage of the AA2 is not possible.</extracomment>
         <translation>Eine andere Anwendung verwendet %1</translation>
@@ -8235,7 +8512,9 @@ klicken.</translation>
     </message>
     <message>
         <source>The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.</source>
-        <extracomment>INFO DESKTOP_QML Content of the popup that is shown when the AA2 is closed for the first time.</extracomment>
+        <extracomment>INFO DESKTOP_QML Content of the popup that is shown when the AA2 is closed for the first time.
+----------
+INFO DESKTOP_QML Content of the popup that is shown when the AA2 is closed and a workflow is still active and the close/minimize info was not disabled.</extracomment>
         <translation>Das Programm steht weiterhin im Infobereich zur Verfügung. Klicken Sie auf das Symbol der %1, um die Anwendung wieder zu öffnen.</translation>
     </message>
     <message>
@@ -8282,6 +8561,16 @@ klicken.</translation>
     <message>
         <source>%1 - Detached log viewer</source>
         <translation>%1 - Protokolldateianzeige</translation>
+    </message>
+    <message>
+        <source>This will cancel the current operation and hide the UI of %1. You can restart the operation at any time.</source>
+        <extracomment>INFO DESKTOP_QML Content of the popup that is shown when the AA2 is closed and a workflow is still active.</extracomment>
+        <translation>Hiermit wird der aktuelle Vorgang abgebrochen und die Benutzeroberfläche der %1 geschlossen. Sie können den Vorgang jederzeit erneut starten.</translation>
+    </message>
+    <message>
+        <source>Abort operation</source>
+        <extracomment>INFO DESKTOP_QML Header of the popup that is shown when the AA2 is closed and a workflow is still active</extracomment>
+        <translation>Vorgang abbrechen</translation>
     </message>
 </context>
 </TS>

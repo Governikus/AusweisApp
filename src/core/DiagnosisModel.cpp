@@ -19,6 +19,11 @@ using namespace governikus;
 
 DiagnosisModel::DiagnosisModel(const QSharedPointer<DiagnosisContext>& pContext)
 	: mContext(pContext)
+	, mAntivirusSectionRunning(false)
+	, mFirewallSectionRunning(false)
+	, mCardReaderSectionRunning(false)
+	, mPcscSectionRunning(false)
+	, mRemoteDeviceSectionRunning(false)
 {
 	reloadContent();
 }
@@ -59,12 +64,16 @@ void DiagnosisModel::createCardReaderSection()
 	mPcscSection = QSharedPointer<SectionModel>::create();
 	mPcscSection->addTitleWithoutContent(tr("PC/SC driver information"));
 	mPcscSection->addItemWithoutTitle(tr("Diagnosis is running..."));
+	mPcscSectionRunning = true;
 	mCardReaderSection = QSharedPointer<SectionModel>::create();
 	mCardReaderSection->addTitleWithoutContent(tr("Card reader"));
 	mCardReaderSection->addItemWithoutTitle(tr("Diagnosis is running..."));
+	mCardReaderSectionRunning = true;
 	mRemoteDeviceSection = QSharedPointer<SectionModel>::create();
 	mRemoteDeviceSection->addTitleWithoutContent(tr("Paired smartphones"));
 	mRemoteDeviceSection->addItemWithoutTitle(tr("Diagnosis is running..."));
+	mRemoteDeviceSectionRunning = true;
+	Q_EMIT fireRunningChanged();
 }
 
 
@@ -77,9 +86,12 @@ void DiagnosisModel::createAntiVirusAndFirewallSection()
 #ifdef Q_OS_WIN
 	mAntivirusSection->addTitleWithoutContent(tr("Antivirus information"));
 	mAntivirusSection->addItemWithoutTitle(tr("Diagnosis is running..."));
+	mAntivirusSectionRunning = true;
 
 	mFirewallSection->addTitleWithoutContent(tr("Firewall information"));
 	mFirewallSection->addItemWithoutTitle(tr("Diagnosis is running..."));
+	mFirewallSectionRunning = true;
+	Q_EMIT fireRunningChanged();
 #else
 	mAntivirusSection->addItemWithoutTitle(tr("No Antivirus information available on this platform."));
 	mFirewallSection->addItemWithoutTitle(tr("No Firewall information available on this platform."));
@@ -221,6 +233,12 @@ QString DiagnosisModel::boolToString(bool pBoolean)
 }
 
 
+bool DiagnosisModel::isRunning() const
+{
+	return mAntivirusSectionRunning || mFirewallSectionRunning || mCardReaderSectionRunning || mPcscSectionRunning || mRemoteDeviceSectionRunning;
+}
+
+
 void DiagnosisModel::onTimestampChanged()
 {
 	QDateTime timestampValue = mContext->getTimestamp();
@@ -333,6 +351,7 @@ void DiagnosisModel::onConnectionTestDone()
 void DiagnosisModel::onAntivirusInformationChanged()
 {
 	mAntivirusSection->removeAllItems();
+	mAntivirusSectionRunning = false;
 
 	const auto& antivirusInfos = mAntivirusDetection.getAntivirusInformations();
 	if (antivirusInfos.isEmpty())
@@ -357,6 +376,7 @@ void DiagnosisModel::onAntivirusInformationChanged()
 	}
 
 	mCombinedAntivirusFirewallSection->replaceWithSections({mAntivirusSection, mFirewallSection});
+	Q_EMIT fireRunningChanged();
 }
 
 
@@ -371,6 +391,7 @@ void DiagnosisModel::onAntivirusDetectionFailed()
 void DiagnosisModel::onFirewallInformationReady()
 {
 	mFirewallSection->removeAllItems();
+	mFirewallSectionRunning = false;
 
 	mFirewallSection->addTitleWithoutContent(tr("Firewall information"));
 	auto installedFirewalls = mFirewallDetection.getDetectedFirewalls();
@@ -429,9 +450,9 @@ void DiagnosisModel::onFirewallInformationReady()
 	}
 
 	mFirewallSection->addItem(tr("Windows firewall profiles"), windowsFirewallProfiles.join(QStringLiteral("\n")));
-	mFirewallSection->addItemWithoutTitle(tr("Warning: The current firewall status can be obscured by additional Group Policies on your system, often set by system administrators."));
 
 	mCombinedAntivirusFirewallSection->replaceWithSections({mAntivirusSection, mFirewallSection});
+	Q_EMIT fireRunningChanged();
 }
 
 
@@ -446,6 +467,7 @@ void DiagnosisModel::onFirewallInformationFailed()
 void DiagnosisModel::onPcscInfoChanged()
 {
 	mPcscSection->removeAllItems();
+	mPcscSectionRunning = false;
 
 	mPcscSection->addTitleWithoutContent(tr("PC/SC information"));
 	mPcscSection->addItem(tr("Version"), mContext->getPcscVersion());
@@ -477,12 +499,14 @@ void DiagnosisModel::onPcscInfoChanged()
 	}
 
 	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
+	Q_EMIT fireRunningChanged();
 }
 
 
 void DiagnosisModel::onRemoteInfosChanged()
 {
 	mRemoteDeviceSection->removeAllItems();
+	mRemoteDeviceSectionRunning = false;
 
 	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	const auto& trustedCertificates = settings.getTrustedCertificates();
@@ -502,7 +526,7 @@ void DiagnosisModel::onRemoteInfosChanged()
 		if (!info.getFingerprint().isEmpty())
 		{
 			const QString& timestamp = LanguageLoader::getInstance().getUsedLocale().toString(info.getLastConnected(), tr("dd.MM.yyyy, hh:mm:ss"));
-			mRemoteDeviceSection->addItem(info.getName(), tr("Last connection: %1").arg(timestamp));
+			mRemoteDeviceSection->addItem(info.getNameEscaped(), tr("Last connection: %1").arg(timestamp));
 		}
 		else
 		{
@@ -511,12 +535,14 @@ void DiagnosisModel::onRemoteInfosChanged()
 	}
 
 	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
+	Q_EMIT fireRunningChanged();
 }
 
 
 void DiagnosisModel::onReaderInfosChanged()
 {
 	mCardReaderSection->removeAllItems();
+	mCardReaderSectionRunning = false;
 
 	mCardReaderSection->addTitleWithoutContent(tr("Connected Card reader"));
 
@@ -543,6 +569,7 @@ void DiagnosisModel::onReaderInfosChanged()
 	}
 
 	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
+	Q_EMIT fireRunningChanged();
 }
 
 

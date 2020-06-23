@@ -1,3 +1,4 @@
 module ProgressView
 
 ProgressView 1.0 ProgressView.qml
+TaskbarProgress 1.0 TaskbarProgress.qml

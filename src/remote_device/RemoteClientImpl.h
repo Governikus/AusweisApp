@@ -38,7 +38,7 @@ class RemoteClientImpl
 
 		QThread mRemoteConnectorThread;
 		QPointer<RemoteConnector> mRemoteConnector;
-		QVector<QSharedPointer<RemoteDeviceListEntry> > mRemoteConnectorPending;
+		QVector<QSharedPointer<RemoteDeviceListEntry>> mRemoteConnectorPending;
 		QStringList mConnectedDeviceIds;
 
 		void bootstrapRemoteConnectorThread();
@@ -62,7 +62,7 @@ class RemoteClientImpl
 
 		Q_INVOKABLE virtual void establishConnection(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const QString& pPsk) override;
 
-		virtual QVector<QSharedPointer<RemoteDeviceListEntry> > getAnnouncingRemoteDevices() const override;
+		virtual QVector<QSharedPointer<RemoteDeviceListEntry>> getAnnouncingRemoteDevices() const override;
 		Q_INVOKABLE virtual void requestRemoteDevices()  override;
 		virtual QStringList getConnectedDeviceIDs() const override;
 		virtual QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;

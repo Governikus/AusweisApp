@@ -112,8 +112,9 @@ Rectangle {
 		anchors.rightMargin: Constants.pane_padding
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("To online application") + SettingsModel.translationTrigger
-		icon.source: providerIcon
+		text: qsTr("To provider") + SettingsModel.translationTrigger
+		tintIcon: true
+		icon.source: "qrc:///images/link_external.svg"
 		buttonColor: categoryColor
 		enabled: baseItem.address !== ""
 		onClicked: baseItem.clickButton()

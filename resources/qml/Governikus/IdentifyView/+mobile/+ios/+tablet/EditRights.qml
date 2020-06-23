@@ -105,11 +105,11 @@ SectionPage {
 			GButton {
 				icon.source: "qrc:///images/npa.svg"
 				anchors.horizontalCenter: parent.horizontalCenter
-				//: LABEL IOS_TABLET %1 can be "card access number (CAN)" or "PIN"
+				//: LABEL IOS_TABLET %1 can be "CAN" or "PIN"
 				text: qsTr("Proceed to %1 entry").arg(
 														NumberModel.isCanAllowedMode ?
 														//: LABEL IOS_TABLET Inserted into "Proceed to %1 entry"
-														qsTr("card access number (CAN)") :
+														qsTr("CAN") :
 														//: LABEL IOS_TABLET Inserted into "Proceed to %1 entry"
 														qsTr("PIN")
 													) + SettingsModel.translationTrigger
@@ -122,8 +122,12 @@ SectionPage {
 			GText {
 				width: parent.width
 
-				//: LABEL IOS_TABLET
-				text: qsTr("The following data will be transferred to the provider when you enter the PIN:") + SettingsModel.translationTrigger
+				text: NumberModel.isCanAllowedMode
+					  //: LABEL IOS_TABLET
+					  ? qsTr("The following data of the ID card will be transferred to the provider when you enter the CAN:")
+					  //: LABEL IOS_TABLET
+					  : qsTr("The following data of your ID card will be transferred to the provider when you enter the PIN:")
+					  + SettingsModel.translationTrigger
 			}
 
 			Pane {

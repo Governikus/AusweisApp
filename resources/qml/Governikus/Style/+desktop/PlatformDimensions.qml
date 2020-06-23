@@ -14,6 +14,7 @@ QtObject {
 	readonly property int corner_radius: ApplicationModel.scaleFactor * 20
 	readonly property int corner_radius_popup: corner_radius
 	readonly property int button_radius: ApplicationModel.scaleFactor * 15
+	readonly property int popup_border: Math.max(ApplicationModel.scaleFactor * 2, 1)
 	readonly property int separator_size: Math.max(ApplicationModel.scaleFactor * 2, 1)
 	readonly property int tabbed_pane_separator_size: Math.max(ApplicationModel.scaleFactor * 4, 1)
 	readonly property real max_text_width: ApplicationModel.scaleFactor * 1000

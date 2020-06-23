@@ -118,7 +118,6 @@ class test_RemoteMessage
 			QVERIFY(logSpy.at(0).at(0).toString().contains(QString("Invalid messageType received: \"")));
 		}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{

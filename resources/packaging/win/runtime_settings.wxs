@@ -6,14 +6,22 @@
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Fragment>
-		<Property Id="AUTOSTART" Value="undefined" />
-		<Property Id="AUTOHIDE" Value="undefined" />
-		<Property Id="REMINDTOCLOSE" Value="undefined" />
-		<Property Id="ASSISTANT" Value="undefined" />
-		<Property Id="TRANSPORTPINREMINDER" Value="undefined"/>
-		<Property Id="UPDATECHECK" Value="undefined"/>
-		<Property Id="ONSCREENKEYBOARD" Value="undefined"/>
-		<Property Id="HISTORY" Value="undefined"/>
+		<Property Id="AUTOSTART" Secure="yes"/>
+		<Property Id="AUTOHIDE" Secure="yes"/>
+		<Property Id="REMINDTOCLOSE" Secure="yes"/>
+		<Property Id="ASSISTANT" Secure="yes"/>
+		<Property Id="TRANSPORTPINREMINDER" Secure="yes"/>
+		<Property Id="CUSTOMPROXYTYPE" Secure="yes"/>
+		<Property Id="CUSTOMPROXYHOST" Secure="yes"/>
+		<Property Id="CUSTOMPROXYPORT" Secure="yes"/>
+		<Property Id="UPDATECHECK" Secure="yes"/>
+		<Property Id="ONSCREENKEYBOARD" Secure="yes"/>
+		<Property Id="SHUFFLESCREENKEYBOARD" Secure="yes"/>
+		<Property Id="ENABLECANALLOWED" Secure="yes"/>
+		<Property Id="SKIPRIGHTSONCANALLOWED" Secure="yes"/>
+		<Property Id="HISTORY" Secure="yes"/>
+
+		<WixVariable Id="CompanyRootKey" Value="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)"/>
 
 		<DirectoryRef Id="TARGETDIR">
 			<Component Id="AutoStart" Guid="*">
@@ -24,50 +32,92 @@
 			</Component>
 
 			<Component Id="AutoHide" Guid="*">
-				<Condition>AUTOHIDE = "true" OR AUTOHIDE = "false"</Condition>
-				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)">
+				<Condition>AUTOHIDE</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
 					<RegistryValue Name="autoCloseWindow" Type="string" Value="[AUTOHIDE]" KeyPath="yes"/>
 				</RegistryKey>
 			</Component>
 
 			<Component Id="RemindToClose" Guid="*">
-				<Condition>REMINDTOCLOSE = "true" OR REMINDTOCLOSE = "false"</Condition>
-				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)">
+				<Condition>REMINDTOCLOSE</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
 					<RegistryValue Name="remindToClose" Type="string" Value="[REMINDTOCLOSE]" KeyPath="yes"/>
 				</RegistryKey>
 			</Component>
 
 			<Component Id="Assistant" Guid="*">
-				<Condition>ASSISTANT = "true" OR ASSISTANT = "false"</Condition>
-				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)">
+				<Condition>ASSISTANT</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
 					<RegistryValue Name="showSetupAssistant" Type="string" Value="[ASSISTANT]" KeyPath="yes"/>
 				</RegistryKey>
 			</Component>
 
 			<Component Id="TransportPinReminder" Guid="*">
-				<Condition>TRANSPORTPINREMINDER = "true" OR TRANSPORTPINREMINDER = "false"</Condition>
-				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)">
+				<Condition>TRANSPORTPINREMINDER</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
 					<RegistryValue Name="transportPinReminder" Type="string" Value="[TRANSPORTPINREMINDER]" KeyPath="yes"/>
 				</RegistryKey>
 			</Component>
 
+			<Component Id="CustomProxyType" Guid="*">
+				<Condition>CUSTOMPROXYTYPE</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+					<RegistryValue Name="customProxyType" Type="string" Value="[CUSTOMPROXYTYPE]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+
+			<Component Id="CustomProxyHost" Guid="*">
+				<Condition>CUSTOMPROXYHOST</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+					<RegistryValue Name="customProxyHost" Type="string" Value="[CUSTOMPROXYHOST]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+
+			<Component Id="CustomProxyPort" Guid="*">
+				<Condition>CUSTOMPROXYPORT</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+					<RegistryValue Name="customProxyPort" Type="string" Value="[CUSTOMPROXYPORT]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+
 			<Component Id="UpdateCheck" Guid="*">
-				<Condition>UPDATECHECK = "true" OR UPDATECHECK = "false"</Condition>
-				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)\common">
+				<Condition>UPDATECHECK</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
 					<RegistryValue Name="autoUpdateCheck" Type="string" Value="[UPDATECHECK]" KeyPath="yes"/>
 				</RegistryKey>
 			</Component>
 
 			<Component Id="OnScreenKeyboard" Guid="*">
-				<Condition>ONSCREENKEYBOARD = "true" OR ONSCREENKEYBOARD = "false"</Condition>
-				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)\common">
+				<Condition>ONSCREENKEYBOARD</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
 					<RegistryValue Name="keylessPassword" Type="string" Value="[ONSCREENKEYBOARD]" KeyPath="yes"/>
 				</RegistryKey>
 			</Component>
 
+			<Component Id="ShuffleScreenKeyboard" Guid="*">
+				<Condition>SHUFFLESCREENKEYBOARD</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+					<RegistryValue Name="shuffleScreenKeyboard" Type="string" Value="[SHUFFLESCREENKEYBOARD]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+
+			<Component Id="EnableCanAllowed" Guid="*">
+				<Condition>ENABLECANALLOWED</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+					<RegistryValue Name="enableCanAllowed" Type="string" Value="[ENABLECANALLOWED]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+
+			<Component Id="SkipRightsOnCanAllowed" Guid="*">
+				<Condition>SKIPRIGHTSONCANALLOWED</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+					<RegistryValue Name="skipRightsOnCanAllowed" Type="string" Value="[SKIPRIGHTSONCANALLOWED]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+
 			<Component Id="History" Guid="*">
-				<Condition>HISTORY = "true" OR HISTORY = "false"</Condition>
-				<RegistryKey Root="HKLM" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)\history">
+				<Condition>HISTORY</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)\history">
 					<RegistryValue Name="enable" Type="string" Value="[HISTORY]" KeyPath="yes"/>
 				</RegistryKey>
 			</Component>

@@ -70,6 +70,44 @@ const QString AuthModel::getProgressMessage() const
 }
 
 
+QString AuthModel::getErrorHeader() const
+{
+	if (!mContext || mContext->getTcTokenUrl().isEmpty())
+	{
+		return QString();
+	}
+
+	const auto& tcTokenUrl = mContext->getTcTokenUrl();
+	return tcTokenUrl.scheme() + QStringLiteral("://") + tcTokenUrl.authority();
+}
+
+
+QString AuthModel::getErrorText() const
+{
+	if (!mContext)
+	{
+		return QString();
+	}
+
+	const auto& status = mContext->getStatus();
+	const auto& externalInfo = status.getExternalInfo();
+	const auto& errorDescription = status.toErrorDescription(false);
+	if (externalInfo.isEmpty() || errorDescription == externalInfo)
+	{
+		return errorDescription;
+	}
+
+	return errorDescription + QStringLiteral("\n(%1)").arg(externalInfo);
+}
+
+
+QString AuthModel::getStatusCode() const
+{
+	const auto statusCode = mContext ? mContext->getStatus().getStatusCode() : GlobalStatus::Code::Unknown_Error;
+	return getEnumName(statusCode);
+}
+
+
 AuthModel& AuthModel::getInstance()
 {
 	return *Instance;

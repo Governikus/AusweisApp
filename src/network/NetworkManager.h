@@ -43,6 +43,7 @@ class NetworkManager
 
 	public Q_SLOTS:
 		void onShutdown();
+		void onProxyChanged();
 
 	protected:
 		NetworkManager();

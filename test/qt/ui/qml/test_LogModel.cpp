@@ -6,6 +6,8 @@
 
 #include "LogModel.h"
 
+#include "LogHandler.h"
+
 #include <QDebug>
 #include <QtTest>
 
@@ -129,6 +131,28 @@ class test_LogModel
 			mModel->onNewLogMsg(msg);
 			QCOMPARE(spyNewLogMsg.count(), newLogMsgCounter);
 			QCOMPARE(mModel->mLogEntries.size(), oldSize + logEntriesSizeChange);
+		}
+
+
+		void test_RemoveOldLogfile()
+		{
+			{
+				QTemporaryFile oldLogfile(LogHandler::getLogFileTemplate());
+				oldLogfile.setAutoRemove(false);
+				QVERIFY(oldLogfile.open());
+				QVERIFY(!oldLogfile.fileName().isNull());
+			}
+
+			// We need to reset() the model since the list of "old" logfiles
+			// is only populated in the ctor of LogModel.
+			mModel.reset(new LogModel());
+
+			QCOMPARE(mModel->getLogfiles().size(), 2);
+			mModel->removeCurrentLogfile();
+			QCOMPARE(mModel->getLogfiles().size(), 2);
+			mModel->setLogfile(1);
+			mModel->removeCurrentLogfile();
+			QCOMPARE(mModel->getLogfiles().size(), 1);
 		}
 
 

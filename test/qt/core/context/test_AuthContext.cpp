@@ -60,7 +60,6 @@ class test_AuthContext
 			clearSignals();
 		}
 
-
 	private Q_SLOTS:
 		void init()
 		{
@@ -354,6 +353,18 @@ class test_AuthContext
 
 			context.setSslSession(session);
 			QCOMPARE(context.getSslSession(), session);
+		}
+
+
+		void test_MultiCertificatesUrl()
+		{
+			AuthContext context(nullptr);
+
+			QCOMPARE(context.getCertificateList().size(), 0);
+			context.addCertificateData(QUrl("https://governikus.de"), QSslCertificate());
+			QCOMPARE(context.getCertificateList().size(), 1);
+			context.addCertificateData(QUrl("https://governikus.de"), QSslCertificate());
+			QCOMPARE(context.getCertificateList().size(), 2);
 		}
 
 

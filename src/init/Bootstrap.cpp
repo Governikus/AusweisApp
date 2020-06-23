@@ -84,9 +84,7 @@ static inline QCoreApplication* initQt(int& argc, char** argv)
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 	QCoreApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 #endif
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
 
 	QCoreApplication::setOrganizationName(QStringLiteral(VENDOR));
 	QCoreApplication::setOrganizationDomain(QStringLiteral(VENDOR_DOMAIN));

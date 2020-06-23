@@ -77,6 +77,7 @@ Item {
 				scrollBarTopPadding: Constants.text_spacing
 				scrollBarBottomPadding: Constants.text_spacing
 				scrollBarAutohide: true
+				onCurrentIndexChanged: flickable.positionViewAtBeginning()
 			}
 
 			Loader {
@@ -170,7 +171,7 @@ Item {
 
 			activeFocusOnTab: false
 			Accessible.role: Accessible.PageTab
-			Accessible.name: delegateLoader.item.sectionName
+			Accessible.name: delegateLoader.item ? delegateLoader.item.sectionName : ""
 
 			width: parent.width
 			height: delegateLoader.height + 2 * Constants.pane_padding

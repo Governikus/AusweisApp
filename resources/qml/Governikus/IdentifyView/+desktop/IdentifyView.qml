@@ -47,7 +47,7 @@ SectionPage
 	function showSettings() {
 		readerView.precedingView = d.activeView
 		d.view = IdentifyView.SubViews.ReaderSettings
-		ApplicationWindow.menuBar.updateActions()
+		appWindow.menuBar.updateActions()
 	}
 
 	activeFocusOnTab: true
@@ -67,11 +67,11 @@ SectionPage
 			editRights.showProviderInformation(false)
 			if (d.activeView === IdentifyView.SubViews.PasswordInfo || d.activeView === IdentifyView.SubViews.PasswordLength) {
 				d.view = IdentifyView.SubViews.Password
-				ApplicationWindow.menuBar.updateActions()
+				appWindow.menuBar.updateActions()
 			}
 			else if (d.activeView === IdentifyView.SubViews.ReaderSettings) {
 				d.view = readerView.precedingView
-				ApplicationWindow.menuBar.updateActions()
+				appWindow.menuBar.updateActions()
 			}
 		}
 
@@ -107,7 +107,7 @@ SectionPage
 		visible: d.activeView === IdentifyView.SubViews.ReaderSettings
 		onCloseView: {
 			d.view = precedingView
-			ApplicationWindow.menuBar.updateActions()
+			appWindow.menuBar.updateActions()
 		}
 	}
 
@@ -127,9 +127,9 @@ SectionPage
 	BinaryDecisionView {
 		visible: d.activeView === IdentifyView.SubViews.TransportPinReminder
 
-		questionText: qsTr("Did you change the transport PIN already?") + SettingsModel.translationTrigger
-		questionSubText: qsTr("Prior to the first use of the online identification function you have to replace the transport PIN by an individual 6-digit PIN. Online identification with transport PIN is not possible.") + SettingsModel.translationTrigger
-		disagreeText: qsTr("No, change transport PIN now") + SettingsModel.translationTrigger
+		questionText: qsTr("Did you change the Transport PIN already?") + SettingsModel.translationTrigger
+		questionSubText: qsTr("Prior to the first use of the online identification function you have to replace the Transport PIN by an individual six-digit PIN. Online identification with Transport PIN is not possible.") + SettingsModel.translationTrigger
+		disagreeText: qsTr("No, change Transport PIN now") + SettingsModel.translationTrigger
 
 		onDisagree: {
 			SettingsModel.transportPinReminder = false
@@ -189,12 +189,12 @@ SectionPage
 
 		onChangePinLength: {
 			d.view = IdentifyView.SubViews.PasswordLength
-			ApplicationWindow.menuBar.updateActions()
+			appWindow.menuBar.updateActions()
 		}
 
 		onRequestPasswordInfo: {
 			d.view = IdentifyView.SubViews.PasswordInfo
-			ApplicationWindow.menuBar.updateActions()
+			appWindow.menuBar.updateActions()
 		}
 	}
 
@@ -205,7 +205,7 @@ SectionPage
 
 		onClose: {
 			d.view = IdentifyView.SubViews.Password
-			ApplicationWindow.menuBar.updateActions()
+			appWindow.menuBar.updateActions()
 		}
 	}
 
@@ -222,13 +222,13 @@ SectionPage
 			customSubAction: CancelAction {
 				onClicked:  {
 					d.view = IdentifyView.SubViews.Password
-					ApplicationWindow.menuBar.updateActions()
+					appWindow.menuBar.updateActions()
 				}
 			}
 		}
 		resultType: ResultView.Type.IsInfo
-		//: INFO DESKTOP_QML The user clicked that the current PIN has 5 digits (transport PIN) which needs to be changed to a 6-digit PIN. The current process will be aborted and needs to be restarted *manually* by the user.
-		text: qsTr("First you have to change your 5-digit transport PIN you received in your in PIN letter into a 6-digit PIN. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.") + SettingsModel.translationTrigger
+		//: INFO DESKTOP_QML The user clicked that the current PIN has five digits (Transport PIN) which needs to be changed to a six-digit PIN. The current process will be aborted and needs to be restarted *manually* by the user.
+		text: qsTr("First you have to change your five-digit Transport PIN you received in your in PIN letter into a six-digit PIN. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.") + SettingsModel.translationTrigger
 		onNextView: {
 			ChangePinModel.startWorkflow()
 			AuthModel.cancelWorkflowToChangePin()
@@ -272,7 +272,7 @@ SectionPage
 			SettingsModel.translationTrigger
 			if (connectivityManager.networkInterfaceActive) {
 				//: INFO DESKTOP_QML Information message about cancellation process with present network connectivity
-				return qsTr("Please wait a moment...")
+				return qsTr("Please wait a moment.")
 			}
 			//: INFO DESKTOP_QML Information message about cancellation process without working network connectivity
 			return qsTr("Network problemes detected, trying to reach server within 30 seconds.")
@@ -301,11 +301,11 @@ SectionPage
 			}
 			if (!inProgress || AuthModel.error) {
 				//: INFO DESKTOP_QML Generic progress status message while no card communication is active.
-				return qsTr("Please wait a moment...")
+				return qsTr("Please wait a moment.")
 			}
 			if (AuthModel.isBasicReader) {
 				//: INFO DESKTOP_QML Second line text if a basic card reader is used and data is exchanged with the card/server in the background. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
-				return qsTr("Please don't move the ID card...")
+				return qsTr("Please don't move the ID card.")
 			}
 			if (!!NumberModel.inputError) {
 				return NumberModel.inputError
@@ -315,7 +315,7 @@ SectionPage
 				return qsTr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.")
 			}
 			//: INFO DESKTOP_QML Generic progress status message during authentication.
-			return qsTr("Please wait a moment...")
+			return qsTr("Please wait a moment.")
 		}
 		subTextColor: !AuthModel.isBasicReader && (NumberModel.inputError || NumberModel.pinDeactivated) ? Style.color.warning_text : Style.color.secondary_text_inverse
 		progressValue: AuthModel.progressValue
@@ -326,7 +326,7 @@ SectionPage
 	SelfAuthenticationData {
 		visible: d.activeView === IdentifyView.SubViews.Data
 
-		onVisibleChanged: ApplicationWindow.menuBar.updateActions()
+		onVisibleChanged: appWindow.menuBar.updateActions()
 		onNextView: {
 			identifyView.nextView(pName)
 			AuthModel.continueWorkflow()
@@ -340,11 +340,16 @@ SectionPage
 
 		resultType: AuthModel.resultString ? ResultView.Type.IsError : ResultView.Type.IsSuccess
 		text: AuthModel.resultString
+		header: AuthModel.errorHeader
+		//: INFO DESKTOP_QML Error code (string) of current GlobalStatus code, shown as header of popup.
+		popupTitle: qsTr("Error code: %1").arg(AuthModel.statusCode) + SettingsModel.translationTrigger
+		popupText: AuthModel.errorText
+		supportButtonsVisible: AuthModel.error && !AuthModel.isCancellationByUser()
+
 		onNextView: {
 			identifyView.nextView(pName)
 			AuthModel.continueWorkflow()
 		}
-		emailButtonVisible: AuthModel.error && !AuthModel.isCancellationByUser()
 		onEmailButtonPressed: AuthModel.sendResultMail()
 	}
 }

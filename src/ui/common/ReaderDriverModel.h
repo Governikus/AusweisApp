@@ -24,7 +24,7 @@ class ReaderDriverModel
 	Q_OBJECT
 
 	Q_PROPERTY(QString noReaderFoundIconPath READ getNoReaderFoundIconPath CONSTANT)
-	Q_PROPERTY(QString emptyListDescriptionString READ getEmptyListDescriptionString NOTIFY fireLanguageChanged)
+	Q_PROPERTY(QString emptyListDescriptionString READ getEmptyListDescriptionStringQml NOTIFY fireLanguageChanged)
 	Q_PROPERTY(QString lastUpdatedInformation READ getLastUpdatedInformation NOTIFY fireModelChanged)
 
 	private:
@@ -67,7 +67,8 @@ class ReaderDriverModel
 		QString getReaderImagePath(const QModelIndex& pIndex) const;
 		QString getNoReaderFoundIconPath() const;
 		QString getHTMLDescription(const QModelIndex& pIndex) const;
-		QString getEmptyListDescriptionString() const;
+		QString getEmptyListDescriptionStringQml() const;
+		QString getEmptyListDescriptionString(bool pWidgetUiHelp = true) const;
 		bool isInstalledSupportedReader(const QModelIndex& pIndex) const;
 		QString getLastUpdatedInformation() const;
 

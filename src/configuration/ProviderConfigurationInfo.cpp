@@ -38,9 +38,10 @@ ProviderConfigurationInfo::ProviderConfigurationInfo(const LanguageString& pShor
 		const QString& pImage,
 		const QString& pTcTokenUrl,
 		const QString& pClientUrl,
-		const QStringList& pSubjectUrls)
+		const QStringList& pSubjectUrls,
+		const QString& pSubjectUrlInfo)
 	: d(new InternalInfo(pShortName, pLongName, pShortDescription, pLongDescription, pAddress, pHomepage,
-			pCategory, pPhone, pEmail, pPostalAddress, pIcon, pImage, pTcTokenUrl, pClientUrl, pSubjectUrls))
+			pCategory, pPhone, pEmail, pPostalAddress, pIcon, pImage, pTcTokenUrl, pClientUrl, pSubjectUrls, pSubjectUrlInfo))
 {
 }
 
@@ -53,13 +54,21 @@ ProviderConfigurationInfo::~ProviderConfigurationInfo()
 void ProviderConfigurationInfo::setTcTokenUrl(const QString& pTcTokenUrl)
 {
 	d = new InternalInfo(d->mShortName, d->mLongName, d->mShortDescription, d->mLongDescription, d->mAddress, d->mHomepage,
-			d->mCategory, d->mPhone, d->mEmail, d->mPostalAddress, d->mIcon, d->mImage, pTcTokenUrl, d->mClientUrl, d->mSubjectUrls);
+			d->mCategory, d->mPhone, d->mEmail, d->mPostalAddress, d->mIcon, d->mImage, pTcTokenUrl, d->mClientUrl, d->mSubjectUrls, d->mSubjectUrlInfo);
 }
 
 
 bool ProviderConfigurationInfo::operator ==(const ProviderConfigurationInfo& pOther) const
 {
 	return *d == *pOther.d;
+}
+
+
+bool ProviderConfigurationInfo::operator <(const ProviderConfigurationInfo& pOther) const
+{
+	const QString myName = getLongName().isEmpty() ? getShortName() : getLongName();
+	const QString otherName = pOther.getLongName().isEmpty() ? pOther.getShortName() : pOther.getLongName();
+	return myName.compare(otherName, Qt::CaseInsensitive) < 0;
 }
 
 
@@ -191,4 +200,10 @@ QUrl ProviderConfigurationInfo::getClientUrl() const
 const QStringList& ProviderConfigurationInfo::getSubjectUrls() const
 {
 	return d->mSubjectUrls;
+}
+
+
+const QString& ProviderConfigurationInfo::getSubjectUrlInfo() const
+{
+	return d->mSubjectUrlInfo;
 }

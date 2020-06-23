@@ -50,7 +50,6 @@ class test_HelpAction
 		return QUrl::fromLocalFile(helpDir.path()).toString() + QString::fromLatin1(pStr);
 	}
 
-
 	private Q_SLOTS:
 		void init()
 		{

@@ -50,6 +50,7 @@ Item {
 		LabeledText {
 			id: purpose
 
+			visible: text !== ""
 			Layout.fillWidth: true
 
 			activeFocusOnTab: true

@@ -27,7 +27,7 @@ Item {
 
 	activeFocusOnTab: true
 
-	RowLayout {
+	Row {
 		id: layout
 
 		anchors.left: parent.left
@@ -47,7 +47,7 @@ Item {
 		GText {
 			id: text
 
-			Layout.fillWidth: true
+			width: parent.width - image.width
 
 			linkColor: color
 		}

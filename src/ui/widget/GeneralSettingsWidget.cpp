@@ -108,7 +108,7 @@ void GeneralSettingsWidget::onCheckBoxStateChanged(int)
 
 void GeneralSettingsWidget::onUpdateCheckButtonClicked()
 {
-	Env::getSingleton<Service>()->updateApp(true);
+	Env::getSingleton<Service>()->updateApp();
 }
 
 

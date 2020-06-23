@@ -47,7 +47,7 @@ Item {
 
 		ListElement {
 			image: "qrc:///images/android/navigation/remoteleser.svg"
-			desc: QT_TR_NOOP("Smartphone as card reader")
+			desc: QT_TR_NOOP("Remote service")
 			condition: "remoteservice"
 		}
 
@@ -62,13 +62,6 @@ Item {
 			image: "qrc:///images/android/navigation/support.svg"
 			desc: QT_TR_NOOP("Help & Feedback")
 			condition: "feedback"
-			section: "settings"
-		}
-
-		ListElement {
-			desc: QT_TR_NOOP("Developer options")
-			image: "qrc:///images/settings_icon.svg"
-			condition: "developeroptions"
 			section: "settings"
 		}
 	}
@@ -116,8 +109,6 @@ Item {
 		}
 		highlightFollowsCurrentItem: false
 		delegate: NavigationItem {
-			// Hide developer options if we are not using developer build (debug build)
-			visible: condition !== "developeroptions" || plugin.debugBuild
 			height: 45
 			width: content.width
 

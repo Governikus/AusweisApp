@@ -23,7 +23,7 @@ class AppUpdater
 	private:
 		friend class Env;
 		friend class ::test_AppUpdater;
-		bool mIgnoreNextVersionskip;
+		bool mForceUpdate;
 		QUrl mAppUpdateJsonUrl;
 		AppUpdateData mAppUpdateData;
 
@@ -35,7 +35,7 @@ class AppUpdater
 		static AppUpdater& getInstance();
 
 	public:
-		void checkAppUpdate(bool pIgnoreNextVersionskip = false);
+		void checkAppUpdate(bool pForceUpdate = false);
 		const AppUpdateData& getUpdateData() const;
 		void skipVersion(const QString& pVersion);
 

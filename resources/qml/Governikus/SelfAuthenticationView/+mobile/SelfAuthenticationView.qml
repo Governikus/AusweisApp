@@ -26,16 +26,16 @@ Item {
 				case 8:
 				case 9:
 					//: INFO ANDROID IOS Used in notifications when the user taps the magnifying glass
-					ApplicationModel.showFeedback(qsTr("%1 more presses to toggle the testmode for the self-authentication.").arg(10 - d.testPkiCounter) + SettingsModel.translationTrigger, true)
+					ApplicationModel.showFeedback(qsTr("%1 more presses to toggle the testmode for the self-authentication.").arg(10 - d.testPkiCounter), true)
 					break;
 				case 10:
 					SettingsModel.useSelfauthenticationTestUri = !SettingsModel.useSelfauthenticationTestUri
 					if (SettingsModel.useSelfauthenticationTestUri) {
 						//: INFO ANDROID IOS Used in notifications when the user taps the magnifying glass
-						ApplicationModel.showFeedback(qsTr("Testmode for the self-authentication activated.") + SettingsModel.translationTrigger, true)
+						ApplicationModel.showFeedback(qsTr("Testmode for the self-authentication activated."), true)
 					} else {
 						//: INFO ANDROID IOS Used in notifications when the user taps the magnifying glass
-						ApplicationModel.showFeedback(qsTr("Testmode for the self-authentication deactivated.") + SettingsModel.translationTrigger, true)
+						ApplicationModel.showFeedback(qsTr("Testmode for the self-authentication deactivated."), true)
 					}
 					d.testPkiCounter = 0;
 					break;
@@ -67,9 +67,7 @@ Item {
 
 				MouseArea {
 					anchors.fill: parent
-					onClicked: {
-						d.toggleTestPki()
-					}
+					onClicked: d.toggleTestPki()
 				}
 			}
 
@@ -125,8 +123,6 @@ Item {
 		text: qsTr("See my personal data") + SettingsModel.translationTrigger
 
 		enabled: ApplicationModel.currentWorkflow !== "authentication"
-		onClicked: {
-			SelfAuthModel.startWorkflow()
-		}
+		onClicked: SelfAuthModel.startWorkflow()
 	}
 }

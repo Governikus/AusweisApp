@@ -42,7 +42,6 @@ class test_RemoteServiceModel
 		return command.getBuffer();
 	}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{

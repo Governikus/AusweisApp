@@ -59,7 +59,11 @@ class test_RemoteTlsServer
 			qRegisterMetaType<QSslPreSharedKeyAuthenticator>("QSslPreSharedKeyAuthenticator*");
 			QSignalSpy clientPsk(&client, &QSslSocket::preSharedKeyAuthenticationRequired);
 			QSignalSpy clientEncrypted(&client, &QSslSocket::encrypted);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+			QSignalSpy clientErrors(&client, &QAbstractSocket::errorOccurred);
+#else
 			QSignalSpy clientErrors(&client, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error));
+#endif
 			client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
 
 			QTRY_COMPARE(clientErrors.count(), 1);

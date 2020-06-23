@@ -138,13 +138,13 @@ SectionPage
 			SettingsModel.translationTrigger
 			if (connectivityManager.networkInterfaceActive) {
 				//: INFO DESKTOP_QML Information message about cancellation process with present network connectivity
-				return qsTr("Please wait a moment...")
+				return qsTr("Please wait a moment.")
 			}
 			//: INFO DESKTOP_QML Information message about cancellation process without working network connectivity
 			return qsTr("Network problemes detected, trying to reach server within 30 seconds.")
 		}
 		progressBarVisible: false
-		subTextColor: !connectivityManager.networkInterfaceActive ? Style.color.warning_text : Style.color.secondary_text_inverse
+		subTextColor: !connectivityManager.networkInterfaceActive ? Style.color.warning_text : Style.color.secondary_text
 	}
 
 	ProgressView {
@@ -172,11 +172,11 @@ SectionPage
 			}
 			//: INFO DESKTOP_QML Generic progress status message while no card communication is active.
 			if (!inProgress || AuthModel.error) {
-				return qsTr("Please wait a moment...")
+				return qsTr("Please wait a moment.")
 			}
 			if (AuthModel.isBasicReader) {
 				//: INFO ANDROID IOS Second line text if a basic card reader is used and background communication with the card/server is running. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
-				return qsTr("Please don't move the ID card...")
+				return qsTr("Please don't move the ID card.")
 			}
 			if (!!NumberModel.inputError) {
 				return NumberModel.inputError
@@ -191,11 +191,11 @@ SectionPage
 			}
 			if (identifyController.workflowState === IdentifyController.WorkflowStates.Can) {
 				//: INFO ANDROID IOS The PIN was entered wrongfully two times, the third attempts requires additional CAN verification, hint where the CAN is found.
-				return qsTr("A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.")
+				return qsTr("A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.")
 			}
 
 			//: INFO ANDROID IOS Generic status message during the authentication process.
-			return qsTr("Please wait a moment...")
+			return qsTr("Please wait a moment.")
 		}
 		subTextColor: !AuthModel.isBasicReader && (NumberModel.inputError
 												   || NumberModel.pinDeactivated
@@ -223,12 +223,12 @@ SectionPage
 		id: changeToTransportPinView
 		navigationAction: NavigationAction { state: "back"; onClicked: fireReplace(enterPinView) }
 		//: LABEL ANDROID IOS
-		title: qsTr("Change transport PIN") + SettingsModel.translationTrigger
+		title: qsTr("Change Transport PIN") + SettingsModel.translationTrigger
 		resultType: ResultView.Type.IsInfo
 		//: LABEL ANDROID IOS
 		buttonText: qsTr("Change PIN") + SettingsModel.translationTrigger
-		//: INFO ANDROID IOS The user clicked that the current PIN has 5 digits (transport PIN), it needs to be changed to an ordinary 6-digit PIN. The current process needs to be restarted *manually* by the user.
-		text: qsTr("First you have to change your 5-digit transport PIN you received in your in PIN letter into a 6-digit PIN. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.") + SettingsModel.translationTrigger
+		//: INFO ANDROID IOS The user clicked that the current PIN has five digits (Transport PIN), it needs to be changed to an ordinary six-digit PIN. The current process needs to be restarted *manually* by the user.
+		text: qsTr("First you have to change your five-digit Transport PIN you received in your in PIN letter into a six-digit PIN. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.") + SettingsModel.translationTrigger
 		onClicked: {
 			firePop()
 			AuthModel.setSkipRedirect(true)
@@ -240,6 +240,7 @@ SectionPage
 
 	ResultView {
 		id: cardPositionView
+		navigationAction: NavigationAction { state: "cancel"; onClicked: AuthModel.cancelWorkflow() }
 		//: LABEL ANDROID IOS
 		title: qsTr("Identify") + SettingsModel.translationTrigger
 		resultType: ResultView.Type.IsInfo

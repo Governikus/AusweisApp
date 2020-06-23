@@ -4,7 +4,7 @@ def j = new Build
 	(
 		name: 'Docs',
 		label: 'Docs',
-		artifacts: 'build/docs/**/*.pdf,build/docs/**/*.tar.xz,build/docs/notes/singlehtml/**/appcast.html'
+		artifacts: 'build/*.pdf,build/docs/**/*.pdf,build/docs/**/*.tar.xz,build/docs/notes/singlehtml/**/appcast.html'
 	).generate(this)
 
 
@@ -27,5 +27,7 @@ j.with
 		shell('cd build; make inte.latex.pdf')
 
 		shell('cd build; make doc8')
+
+		shell('cd build; make license')
 	}
 }

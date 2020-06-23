@@ -10,7 +10,6 @@
 
 #include "AppSettings.h"
 #include "BuildHelper.h"
-#include "DpiCalculator.h"
 #include "Env.h"
 #include "HelpAction.h"
 #include "ReaderInfo.h"
@@ -63,8 +62,7 @@ void ApplicationModel::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
 
 ApplicationModel::ApplicationModel()
 	: mContext()
-	, mDpiScale(DpiCalculator::getDpiScale())
-	, mScaleFactor(mDpiScale)
+	, mScaleFactor(DEFAULT_SCALE_FACTOR)
 	, mWifiInfo()
 	, mWifiEnabled(false)
 	, mBluetoothResponding(true)
@@ -81,8 +79,8 @@ ApplicationModel::ApplicationModel()
 	connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &ApplicationModel::fireReaderPropertiesUpdated);
 	connect(readerManager, &ReaderManager::fireStatusChanged, this, &ApplicationModel::onStatusChanged);
 	connect(readerManager, &ReaderManager::fireStatusChanged, this, &ApplicationModel::fireBluetoothReaderChanged);
-	connect(readerManager, &ReaderManager::fireReaderAdded, this, &ApplicationModel::fireSelectedReaderChanged);
-	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &ApplicationModel::fireSelectedReaderChanged);
+	connect(readerManager, &ReaderManager::fireReaderAdded, this, &ApplicationModel::fireAvailableReaderChanged);
+	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &ApplicationModel::fireAvailableReaderChanged);
 	connect(&mWifiInfo, &WifiInfo::fireWifiEnabledChanged, this, &ApplicationModel::onWifiEnabledChanged);
 
 	onWifiEnabledChanged();
@@ -99,13 +97,13 @@ void ApplicationModel::resetContext(const QSharedPointer<WorkflowContext>& pCont
 {
 	if (mContext)
 	{
-		disconnect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &ApplicationModel::fireSelectedReaderChanged);
+		disconnect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &ApplicationModel::fireAvailableReaderChanged);
 	}
 
 	if ((mContext = pContext))
 	{
-		connect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &ApplicationModel::fireSelectedReaderChanged);
-		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &ApplicationModel::fireSelectedReaderChanged);
+		connect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &ApplicationModel::fireAvailableReaderChanged);
+		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &ApplicationModel::fireAvailableReaderChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &ApplicationModel::fireReaderPropertiesUpdated);
 		connect(mContext.data(), &WorkflowContext::fireReaderInfoChanged, this, &ApplicationModel::fireReaderPropertiesUpdated);
 	}
@@ -273,12 +271,6 @@ bool ApplicationModel::isWifiEnabled() const
 }
 
 
-qreal ApplicationModel::getDpiScale() const
-{
-	return mDpiScale;
-}
-
-
 qreal ApplicationModel::getScaleFactor() const
 {
 	return mScaleFactor;
@@ -287,7 +279,7 @@ qreal ApplicationModel::getScaleFactor() const
 
 void ApplicationModel::setScaleFactor(qreal pScaleFactor)
 {
-	pScaleFactor *= mDpiScale;
+	pScaleFactor *= DEFAULT_SCALE_FACTOR;
 
 	if (qAbs(pScaleFactor - mScaleFactor) > 0)
 	{
@@ -315,14 +307,14 @@ QString ApplicationModel::getCurrentWorkflow() const
 }
 
 
-bool ApplicationModel::foundSelectedReader() const
+int ApplicationModel::getAvailableReader() const
 {
 	if (!mContext)
 	{
-		return false;
+		return 0;
 	}
 
-	return !Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(mContext->getReaderPlugInTypes())).isEmpty();
+	return Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(mContext->getReaderPlugInTypes())).size();
 }
 
 
@@ -482,8 +474,8 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 					qCCritical(qml) << "Suppressing an unexpected exception.";
 					env->ExceptionDescribe();
 					env->ExceptionClear();
-				    // The toast was probably not displayed (e.g. DeadObjectException). We halt on error
-				    // since it is used to display information to the user as required by the TR.
+					// The toast was probably not displayed (e.g. DeadObjectException). We halt on error
+					// since it is used to display information to the user as required by the TR.
 					Q_ASSERT(false);
 				}
 			});
@@ -532,14 +524,20 @@ void ApplicationModel::keepScreenOn(bool pActive)
 #endif
 
 
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+QString ApplicationModel::onlineHelpUrl(const QString& pHelpSectionName)
+{
+	return HelpAction::getOnlineUrl(pHelpSectionName, false);
+}
+
+
 void ApplicationModel::openOnlineHelp(const QString& pHelpSectionName)
 {
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-	qCWarning(qml) << "NOT IMPLEMENTED:" << pHelpSectionName;
-#else
 	HelpAction::openContextHelp(pHelpSectionName, false);
-#endif
 }
+
+
+#endif
 
 
 void ApplicationModel::onWifiEnabledChanged()

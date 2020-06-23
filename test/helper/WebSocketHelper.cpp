@@ -13,21 +13,8 @@ using namespace governikus;
 
 void WebSocketHelper::connectWebsocket(int pPort)
 {
-	QEventLoop eventLoop;
-
-	connect(&mWebSocket, &QWebSocket::connected, &eventLoop, &QEventLoop::quit);
-	connect(&mWebSocket, &QWebSocket::disconnected, &eventLoop, &QEventLoop::quit);
-	connect(&mWebSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), &eventLoop, &QEventLoop::quit);
-
 	const QString address = QStringLiteral("ws://localhost:%1/eID-Kernel").arg(pPort);
 	mWebSocket.open(QUrl(address));
-
-	QTimer timer;
-	timer.setSingleShot(true);
-	timer.setInterval(mConnectionTiemout);
-	connect(&timer, &QTimer::timeout, &eventLoop, &QEventLoop::quit);
-
-	eventLoop.exec();
 }
 
 
@@ -41,15 +28,13 @@ WebSocketHelper::WebSocketHelper(int pPort, int pConnectionTimeout)
 	: mConnectionTiemout(pConnectionTimeout)
 {
 	connect(&mWebSocket, &QWebSocket::textMessageReceived, this, &WebSocketHelper::onTextMessageReceived);
+	connectWebsocket(pPort);
+}
 
-	const qint64 start = QDateTime::currentMSecsSinceEpoch();
-	do
-	{
-		connectWebsocket(pPort);
-	}
-	while (mWebSocket.state() != QAbstractSocket::SocketState::ConnectedState
-	&& mWebSocket.error() == QAbstractSocket::SocketError::ConnectionRefusedError
-	&& QDateTime::currentMSecsSinceEpoch() - start < mConnectionTiemout);
+
+bool WebSocketHelper::isConnected() const
+{
+	return mWebSocket.state() == QAbstractSocket::SocketState::ConnectedState;
 }
 
 
@@ -79,10 +64,7 @@ bool WebSocketHelper::waitForMessage(const std::function<bool(const QJsonObject&
 		QEventLoop eventLoop;
 		connect(&mWebSocket, &QWebSocket::textMessageReceived, &eventLoop, &QEventLoop::quit);
 
-		QTimer timer;
-		timer.setSingleShot(true);
-		timer.setInterval(mConnectionTiemout);
-		connect(&timer, &QTimer::timeout, &eventLoop, &QEventLoop::quit);
+		QTimer::singleShot(mConnectionTiemout, &eventLoop, &QEventLoop::quit);
 
 		eventLoop.exec();
 	}

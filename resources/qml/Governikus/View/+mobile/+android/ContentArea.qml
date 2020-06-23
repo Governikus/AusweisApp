@@ -9,7 +9,6 @@ import Governikus.ChangePinView 1.0
 import Governikus.RemoteServiceView 1.0
 import Governikus.TutorialView 1.0
 import Governikus.MoreView 1.0
-import Governikus.DeveloperView 1.0
 import Governikus.IdentifyView 1.0
 import Governikus.ProviderView 1.0
 import Governikus.HistoryView 1.0
@@ -94,13 +93,5 @@ Item {
 		visible: baseItem.state === "settings"
 		prefetch: baseItem.ready
 		sourceComponent: SettingsView {}
-	}
-
-	TabBarView {
-		visible: baseItem.state === "developeroptions"
-		anchors.fill: parent
-
-		prefetch: baseItem.ready
-		sourceComponent: DeveloperView {}
 	}
 }

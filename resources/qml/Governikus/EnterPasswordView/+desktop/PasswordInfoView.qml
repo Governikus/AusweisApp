@@ -29,7 +29,7 @@ SectionPage {
 	Keys.onEscapePressed: close()
 
 	titleBarAction: TitleBarAction {
-		rootEnabled: false
+		rootEnabled: ApplicationModel.currentWorkflow === ""
 		showSettings: false
 		text: headline.text
 		showHelp: false
@@ -48,14 +48,13 @@ SectionPage {
 
 		wrapMode: Text.WordWrap
 		//: LABEL DESKTOP_QML
-		text: (passwordType === NumberModel.PASSWORD_PIN ? qsTr("PIN information")
-			 //: LABEL DESKTOP_QML
-		     : passwordType === NumberModel.PASSWORD_CAN ? qsTr("CAN information")
+		text: (passwordType === NumberModel.PASSWORD_CAN ? qsTr("CAN information")
 			 //: LABEL DESKTOP_QML
 		     : passwordType === NumberModel.PASSWORD_PUK ? qsTr("PUK information")
 			 //: LABEL DESKTOP_QML
 		     : passwordType === NumberModel.PASSWORD_REMOTE_PIN ? qsTr("Smartphone as card reader information")
-		     : console.error("Unknown type")) + SettingsModel.translationTrigger
+			 //: LABEL DESKTOP_QML
+			 : qsTr("PIN information")) + SettingsModel.translationTrigger
 		textStyle: Style.text.header_inverse
 		FocusFrame {}
 	}
@@ -76,15 +75,15 @@ SectionPage {
 
 			if (passwordType === NumberModel.PASSWORD_CAN && NumberModel.isCanAllowedMode) {
 				//: INFO DESKTOP_QML Description text of CAN-allowed authentication
-				return qsTr("The card access number (CAN) allows to access the imprinted data of the ID card. In order to allow on-site reading of the personal data the service provider needs to acquire governmental authorization to do so. On-site reading is usually employed to automatically fill forms and prevent spelling mistakes when transfering the personal data.")
+				return qsTr("The Card Access Number (CAN) allows to access the imprinted data of the ID card. In order to allow on-site reading of the personal data the service provider needs to acquire governmental authorization to do so. On-site reading is usually employed to automatically fill forms and prevent spelling mistakes when transfering the personal data.")
 			}
 			if (passwordType === NumberModel.PASSWORD_CAN && !NumberModel.isCanAllowedMode) {
 				//: INFO DESKTOP_QML Description text of CAN if required for third PIN attempt
-				return qsTr("The card access number (CAN) is required if the PIN has already been entered incorrectly twice. In order to prevent a third incorrect entry and thus the blocking of the PIN without your consent, the CAN is also requested at this point. The CAN is a 6-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).")
+				return qsTr("The Card Access Number (CAN) is required if the PIN has already been entered incorrectly twice. In order to prevent a third incorrect entry and thus the blocking of the PIN without your consent, the CAN is also requested at this point. The CAN is a six-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).")
 			}
 			if (passwordType === NumberModel.PASSWORD_PUK) {
 				//: INFO DESKTOP_QML Description text of PUK
-				return qsTr("The personal unblocking key (PUK) is required if the PIN has been entered three times. At this point the PIN is blocked. The PUK is a 10-digit number you received with the letter sent to you by your competent authority (marked in red). Please note that you can only use the PUK to unblock the PIN entry. If you have forgotten your PIN, you can have a new PIN set at your competent authority.")
+				return qsTr("The Personal Unblocking Key (PUK) is required if the PIN has been entered three times. At this point the PIN is blocked. The PUK is a ten-digit number you received with the letter sent to you by your competent authority (marked in red). Please note that you can only use the PUK to unblock the PIN entry. If you have forgotten your PIN, you can have a new PIN set at your competent authority.")
 			}
 			if (passwordType === NumberModel.PASSWORD_REMOTE_PIN) {
 				//: INFO DESKTOP_QML Description text of SaC pairing
@@ -92,7 +91,7 @@ SectionPage {
 			}
 
 			//: INFO DESKTOP_QML Description text of PIN
-			return qsTr("The personal identification number (PIN) is chosen by you and is required for every use of the online eID function. You can change it anytime and indefinitely if you know your valid PIN. For your 6-digit PIN choose a combination of numbers, that is not easy to guess, neither \"123456\" nor your birth date, or any other numbers printed on the ID card. If you are no longer aware of your valid PIN, you will need to contact the authority responsible for issuing your identification card to renew your PIN.<br><br>When changing the PIN for the first time, please use your 5-digit transport PIN. You will find the transport PIN in the letter you received from the authority responsible for issuing your identification card (marked in red) after you have applied for your identity card.<br><br>Please note that you can not use the online eID function with your 5-digit transport PIN. A change to a 6-digit PIN is mandatory.")
+			return qsTr("The Personal Identification Number (PIN) is chosen by you and is required for every use of the online eID function. You can change it anytime and indefinitely if you know your valid PIN. For your six-digit PIN choose a combination of numbers, that is not easy to guess, neither \"123456\" nor your birth date, or any other numbers printed on the ID card. If you are no longer aware of your valid PIN, you will need to contact the authority responsible for issuing your identification card to renew your PIN.<br><br>When changing the PIN for the first time, please use the five-digit Transport PIN. You will find the Transport PIN in the letter you received from the authority responsible for issuing your identification card (marked in red) after you have applied for your identity card.<br><br>Please note that you can not use the online eID function with the five-digit Transport PIN. A change to a six-digit PIN is mandatory.")
 		}
 		textStyle: Style.text.header_inverse
 		horizontalAlignment: Text.AlignJustify

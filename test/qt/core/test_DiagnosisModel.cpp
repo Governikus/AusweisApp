@@ -58,7 +58,6 @@ class test_DiagnosisModel
 			return offset == pSection.size();
 		}
 
-
 	private Q_SLOTS:
 		void init()
 		{

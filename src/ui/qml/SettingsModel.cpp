@@ -7,6 +7,7 @@
 #include "AppSettings.h"
 #include "HistorySettings.h"
 #include "LanguageLoader.h"
+#include "NetworkManager.h"
 #include "PlatformHelper.h"
 #include "Service.h"
 #include "SingletonHelper.h"
@@ -24,6 +25,7 @@ defineSingleton(SettingsModel)
 
 SettingsModel::SettingsModel()
 	: QObject()
+	, mAdvancedSettings(false)
 	, mIsStartedByAuth(false)
 	, mShowBetaTesting(true)
 {
@@ -69,6 +71,22 @@ void SettingsModel::setLanguage(const QString& pLanguage)
 		settings.setLanguage(QLocale(pLanguage).language());
 		settings.save();
 		Q_EMIT fireLanguageChanged();
+	}
+}
+
+
+bool SettingsModel::isAdvancedSettings() const
+{
+	return mAdvancedSettings;
+}
+
+
+void SettingsModel::setAdvancedSettings(bool pEnabled)
+{
+	if (mAdvancedSettings != pEnabled)
+	{
+		mAdvancedSettings = pEnabled;
+		Q_EMIT fireAdvancedSettingsChanged();
 	}
 }
 
@@ -242,6 +260,42 @@ void SettingsModel::setShuffleScreenKeyboard(bool pShuffleScreenKeyboard)
 		settings.setShuffleScreenKeyboard(pShuffleScreenKeyboard);
 		settings.save();
 		Q_EMIT fireScreenKeyboardChanged();
+	}
+}
+
+
+bool SettingsModel::isEnableCanAllowed() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isEnableCanAllowed();
+}
+
+
+void SettingsModel::setEnableCanAllowed(bool pEnableCanAllowed)
+{
+	if (isEnableCanAllowed() != pEnableCanAllowed)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		settings.setEnableCanAllowed(pEnableCanAllowed);
+		settings.save();
+		Q_EMIT fireCanAllowedChanged();
+	}
+}
+
+
+bool SettingsModel::isSkipRightsOnCanAllowed() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isSkipRightsOnCanAllowed();
+}
+
+
+void SettingsModel::setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed)
+{
+	if (isSkipRightsOnCanAllowed() != pSkipRightsOnCanAllowed)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		settings.setSkipRightsOnCanAllowed(pSkipRightsOnCanAllowed);
+		settings.save();
+		Q_EMIT fireCanAllowedChanged();
 	}
 }
 
@@ -452,7 +506,7 @@ void SettingsModel::setShowNewUiHint(bool pShowNewUiHint)
 
 void SettingsModel::updateApp()
 {
-	Env::getSingleton<Service>()->updateApp(true);
+	Env::getSingleton<Service>()->updateApp();
 }
 
 
@@ -460,4 +514,46 @@ AppUpdateDataModel* SettingsModel::getAppUpdateData() const
 {
 	auto* dataModel = Env::getSingleton<AppUpdateDataModel>();
 	return dataModel;
+}
+
+
+QUrl SettingsModel::getCustomProxyUrl() const
+{
+	auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	QUrl url;
+	switch (settings.getCustomProxyType())
+	{
+		case QNetworkProxy::Socks5Proxy:
+			url.setScheme(QLatin1String("socks5"));
+			break;
+
+		case QNetworkProxy::HttpProxy:
+			url.setScheme(QLatin1String("http"));
+			break;
+
+		default:
+			url.setScheme(QLatin1String("unknown"));
+			break;
+	}
+	url.setHost(settings.getCustomProxyHost());
+	url.setPort(settings.getCustomProxyPort());
+	return url.toString();
+}
+
+
+bool SettingsModel::isCustomProxyAttributesPresent() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().customProxyAttributesPresent();
+}
+
+
+bool SettingsModel::isUseCustomProxy()
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().useCustomProxy();
+}
+
+
+void SettingsModel::setUseCustomProxy(bool pUseCustomProxy)
+{
+	Env::getSingleton<AppSettings>()->getGeneralSettings().setUseCustomProxy(pUseCustomProxy);
 }

@@ -15,9 +15,68 @@
 
 #include <QMetaObject>
 
+
 using namespace governikus;
 
+
 defineSingleton(Service)
+
+
+void Service::doAppUpdate(UpdateType pType, bool pForceUpdate)
+{
+	switch (pType)
+	{
+		case UpdateType::APP:
+			mExplicitSuccessMessage = pForceUpdate;
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
+			mTimer.start(mOneDayInMs);
+			if (pForceUpdate || Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoUpdateCheck())
+			{
+				Env::getSingleton<AppUpdater>()->checkAppUpdate(pForceUpdate);
+				break;
+			}
+#endif
+			Q_FALLTHROUGH();
+
+		case UpdateType::PROVIDER:
+			Env::getSingleton<ProviderConfiguration>()->update();
+			break;
+
+		case UpdateType::READER:
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
+			Env::getSingleton<ReaderConfiguration>()->update();
+#endif
+			break;
+	}
+}
+
+
+void Service::onTimedUpdateTriggered()
+{
+	mUpdateScheduled = true;
+	Q_EMIT fireUpdateScheduled();
+}
+
+
+void Service::onProviderUpdateFinished()
+{
+	doAppUpdate(UpdateType::READER);
+}
+
+
+void Service::onAppUpdateFinished(bool pUpdateAvailable, const GlobalStatus& pError)
+{
+	if (pUpdateAvailable || pError.isError() || mExplicitSuccessMessage)
+	{
+		Q_EMIT fireAppUpdateFinished(pUpdateAvailable, pError);
+	}
+
+	if (pError.isNoError())
+	{
+		doAppUpdate(UpdateType::PROVIDER);
+	}
+}
+
 
 Service::Service()
 	: mTimer(this)
@@ -25,6 +84,8 @@ Service::Service()
 	, mExplicitSuccessMessage(true)
 {
 	connect(&mTimer, &QTimer::timeout, this, &Service::onTimedUpdateTriggered);
+	connect(Env::getSingleton<ProviderConfiguration>(), &ProviderConfiguration::fireUpdated, this, &Service::onProviderUpdateFinished);
+	connect(Env::getSingleton<ProviderConfiguration>(), &ProviderConfiguration::fireNoUpdateAvailable, this, &Service::onProviderUpdateFinished);
 	connect(Env::getSingleton<AppUpdater>(), &AppUpdater::fireAppUpdateCheckFinished, this, &Service::onAppUpdateFinished);
 
 	mTimer.setSingleShot(true);
@@ -38,46 +99,9 @@ Service& Service::getInstance()
 }
 
 
-void Service::updateConfigurations()
+void Service::updateApp()
 {
-	QMetaObject::invokeMethod(this, &Service::doConfigurationsUpdate, Qt::QueuedConnection);
-}
-
-
-void Service::updateApp(bool pIgnoreNextVersionskip)
-{
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
-	mExplicitSuccessMessage = pIgnoreNextVersionskip;
-	mTimer.start(mOneDayInMs);
-	QMetaObject::invokeMethod(this, [ = ] {
-				doAppUpdate(pIgnoreNextVersionskip);
-			}, Qt::QueuedConnection);
-#else
-	Q_UNUSED(pIgnoreNextVersionskip)
-#endif
-}
-
-
-void Service::doConfigurationsUpdate()
-{
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
-	Env::getSingleton<ReaderConfiguration>()->update();
-#endif
-
-	Env::getSingleton<ProviderConfiguration>()->update();
-}
-
-
-void Service::doAppUpdate(bool pIgnoreNextVersionskip)
-{
-	Env::getSingleton<AppUpdater>()->checkAppUpdate(pIgnoreNextVersionskip);
-}
-
-
-void Service::onTimedUpdateTriggered()
-{
-	mUpdateScheduled = true;
-	Q_EMIT fireUpdateScheduled();
+	doAppUpdate(UpdateType::APP, true);
 }
 
 
@@ -92,11 +116,7 @@ void Service::runUpdateIfNeeded()
 	if (mUpdateScheduled)
 	{
 		mUpdateScheduled = false;
-		updateConfigurations();
-		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoUpdateCheck())
-		{
-			updateApp();
-		}
+		doAppUpdate(UpdateType::APP);
 	}
 }
 
@@ -104,13 +124,4 @@ void Service::runUpdateIfNeeded()
 const AppUpdateData& Service::getUpdateData() const
 {
 	return Env::getSingleton<AppUpdater>()->getUpdateData();
-}
-
-
-void Service::onAppUpdateFinished(bool pUpdateAvailable, const GlobalStatus& pError)
-{
-	if (pUpdateAvailable || pError.isError() || mExplicitSuccessMessage)
-	{
-		Q_EMIT fireAppUpdateFinished(pUpdateAvailable, pError);
-	}
 }

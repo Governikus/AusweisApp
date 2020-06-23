@@ -27,7 +27,6 @@ class test_DiagnosisAntivirusDetection
 			return QString::fromUtf8(rawData);
 		}
 
-
 	private Q_SLOTS:
 		void init()
 		{

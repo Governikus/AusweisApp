@@ -7,7 +7,7 @@ import QtQuick 2.10
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.ApplicationModel 1.0
 
-BrandConstants {
+Item {
 	readonly property int component_spacing: ApplicationModel.scaleFactor * 30
 	readonly property int pane_padding: ApplicationModel.scaleFactor * 30
 	readonly property int pane_spacing: ApplicationModel.scaleFactor * 30

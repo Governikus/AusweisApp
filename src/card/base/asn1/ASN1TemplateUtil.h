@@ -13,6 +13,12 @@
 #include <QLoggingCategory>
 #include <QSharedPointer>
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#include <QScopeGuard>
+#else
+#include "ScopeGuard.h"
+#endif
+
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 namespace governikus
@@ -65,6 +71,9 @@ QByteArray encodeObject(T* pObject)
 	ERR_clear_error();
 	unsigned char* encoded = nullptr;
 	const int length = encodeAsn1Object(pObject, &encoded);
+	const auto guard = qScopeGuard([encoded] {
+				OPENSSL_free(encoded);
+			});
 	if (length < 0)
 	{
 		qCWarning(card) << "Cannot encode ASN.1 object:" << getOpenSslError();

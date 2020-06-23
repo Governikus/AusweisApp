@@ -10,7 +10,7 @@
 #include <QtAndroid>
 #include <QTimerEvent>
 
-Q_DECLARE_LOGGING_CATEGORY(qml)
+Q_DECLARE_LOGGING_CATEGORY(network)
 
 
 using namespace governikus;
@@ -31,7 +31,7 @@ bool WifiInfo::getCurrentWifiEnabled()
 	const QAndroidJniObject context(QtAndroid::androidContext());
 	if (!context.isValid())
 	{
-		qCCritical(qml) << "Cannot determine android context.";
+		qCCritical(network) << "Cannot determine android context.";
 		return false;
 	}
 
@@ -42,7 +42,7 @@ bool WifiInfo::getCurrentWifiEnabled()
 
 	if (env->ExceptionCheck())
 	{
-		qCCritical(qml) << "Cannot call WifiInfo.wifiEnabled()";
+		qCCritical(network) << "Cannot call WifiInfo.wifiEnabled()";
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 		return false;

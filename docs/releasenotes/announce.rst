@@ -2,8 +2,9 @@ Abkündigungen
 =============
 
 Mit der Version 1.22.0 der AusweisApp2 wird die Unterstützung
-folgender Funktionen eingestellt.
+folgender Systeme und Funktionen eingestellt.
 
+  - macOS Sierra 10.12
   - Vorherige grafische Oberfläche
   - Bluetooth (Reiner SCT cyberJack Wave)
 

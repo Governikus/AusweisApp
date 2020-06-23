@@ -107,7 +107,7 @@ Item {
 				Accessible.role: Accessible.StaticText
 				Accessible.name: text
 
-				//: INFO ANDROID IOS No SaC was found on the network, both devices need to be connected to the same wifi network.
+				//: INFO ANDROID IOS No SaC was found on the network, both devices need to be connected to the same WiFi network.
 				text: qsTr("No unpaired smartphone as card reader (SaC) available. Please make sure that the smartphone as card reader (SaC) functionality in AusweisApp2 on your other device is activated an that both devices are connected to the same WiFi.") + SettingsModel.translationTrigger
 				textStyle: Style.text.normal_secondary
 			}

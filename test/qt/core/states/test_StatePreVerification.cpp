@@ -80,7 +80,7 @@ class test_StatePreVerification
 			BIGNUM* signaturePart = signature->r;
 #else
 			const BIGNUM* signaturePart = nullptr;
-			ECDSA_SIG_get0(signature.data(), &signaturePart, nullptr);
+			ECDSA_SIG_get0(signature, &signaturePart, nullptr);
 #endif
 			BN_pseudo_rand(const_cast<BIGNUM*>(signaturePart), BN_num_bits(signaturePart), 0, 0);
 

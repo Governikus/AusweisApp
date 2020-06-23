@@ -12,7 +12,7 @@ def j = new Release
 		name: 'Android_APK_' + ARCH,
 		libraries: ['Android_' + ARCH],
 		label: 'Android',
-		artifacts: 'build/dist/**/AusweisApp2-*.apk,build/debug.symbols/**/libAusweisApp2.so'
+		artifacts: 'build/dist/**/AusweisApp2-*.apk,build/debug.symbols/libAusweisApp2-*.so'
 	).generate(this)
 
 
@@ -62,7 +62,7 @@ def j = new Release
 		name: 'Android_AAR',
 		libraries: neededLibraries,
 		label: 'Android',
-		artifacts: 'build/**/dist/**/ausweisapp-*.aar,build/**/dist/**/ausweisapp-*.pom,build/**/dist/**/ausweisapp-*.jar,build/dist/libs/**/debug.symbols/libAusweisApp2.so'
+		artifacts: 'build/**/dist/**/ausweisapp-*.aar,build/**/dist/**/ausweisapp-*.pom,build/**/dist/**/ausweisapp-*.jar,build/**/debug.symbols/libAusweisApp2-*.so'
 	).generate(this)
 
 j.with

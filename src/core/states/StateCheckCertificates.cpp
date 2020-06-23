@@ -39,7 +39,8 @@ void StateCheckCertificates::run()
 			{
 				qCritical() << certificateDescError;
 				const auto& issuerName = TlsChecker::getCertificateIssuerName(certificate);
-				updateStatus(GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description, issuerName));
+				updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description, {GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, issuerName}
+						});
 				Q_EMIT fireAbort();
 				return;
 			}

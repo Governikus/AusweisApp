@@ -32,7 +32,7 @@ class BluetoothReaderManagerPlugIn
 		BluetoothReaderManagerPlugInPrivate* const d_ptr;
 
 		QBluetoothDeviceDiscoveryAgent mDeviceDiscoveryAgent;
-		QMap<QString, QSharedPointer<CyberJackWaveDevice> > mInitializingDevices;
+		QMap<QString, QSharedPointer<CyberJackWaveDevice>> mInitializingDevices;
 		QMap<QString, BluetoothReader*> mReaders;
 		QMap<QString, int> mPendingConnections;
 		QStringList mReadersDiscoveredInCurrentScan;

@@ -69,7 +69,6 @@ class test_Downloader
 			QCOMPARE(url, pUrl);
 		}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{
@@ -106,6 +105,26 @@ class test_Downloader
 			mMockNetworkManager.fireFinished();
 
 			verifySuccessReply(spy, url, timestampOnServer, fileContent);
+		}
+
+
+		void downloadEmptyFile()
+		{
+			const QByteArray fileContent;
+			const QDateTime timestampOnServer(QDate(2017, 6, 1), QTime(12, 00, 0, 0));
+			auto* const reply = new MockNetworkReply(fileContent, HTTP_STATUS_OK);
+			reply->setFileModificationTimestamp(timestampOnServer);
+			mMockNetworkManager.setNextReply(reply);
+
+			auto* const downloader = Env::getSingleton<Downloader>();
+			QSignalSpy spy(downloader, &Downloader::fireDownloadFailed);
+
+			const QUrl url("http://server/reader/icons/icon.png");
+			downloader->download(url);
+
+			mMockNetworkManager.fireFinished();
+
+			verifyFailedReply(spy, url, GlobalStatus::Code::Network_Other_Error);
 		}
 
 

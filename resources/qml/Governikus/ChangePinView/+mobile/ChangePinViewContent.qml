@@ -49,7 +49,7 @@ Item {
 		anchors.horizontalCenter: parent.horizontalCenter
 
 		//: LABEL ANDROID IOS
-		text: qsTr("You have the opportunity to change your transport PIN into a personal PIN. You can also change the PIN at any time or unblock the PIN using the personal unblocking key (PUK). The transport PIN and the PUK can be found in the letter sent to you by your competent authority.") + SettingsModel.translationTrigger
+		text: qsTr("You have the opportunity to change your Transport PIN into a personal PIN. You can also change the PIN at any time or unblock the PIN using the Personal Unblocking Key (PUK). The Transport PIN and the PUK can be found in the letter sent to you by your competent authority.") + SettingsModel.translationTrigger
 
 		horizontalAlignment: Text.AlignHCenter
 		width: Math.min(parent.width - 2 * Constants.pane_padding, Style.dimens.max_text_width)

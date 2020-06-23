@@ -15,7 +15,7 @@ namespace governikus
 {
 
 QT_WARNING_PUSH
-QT_WARNING_DISABLE_DEPRECATED
+		QT_WARNING_DISABLE_DEPRECATED
 
 class [[deprecated ("Use qScopeGuard")]] ScopeGuard
 {
@@ -33,11 +33,18 @@ class [[deprecated ("Use qScopeGuard")]] ScopeGuard
 
 	public:
 		ScopeGuard(const ScopeGuard& pCopy) = delete;
-		ScopeGuard(const ScopeGuard && pCopy) = delete;
+		ScopeGuard(const ScopeGuard&& pCopy) = delete;
 		ScopeGuard& operator=(const ScopeGuard& pCopy) = delete;
 		ScopeGuard& operator=(const ScopeGuard&& pCopy) = delete;
 
 		~ScopeGuard();
+
+		void dismiss()
+		{
+			setEnabled(false);
+		}
+
+
 };
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))

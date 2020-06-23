@@ -27,6 +27,7 @@ SectionPage {
 		Password,
 		PasswordInfo,
 		Progress,
+		ProgressNewPin,
 		CardPosition,
 		InputError,
 		Data,
@@ -46,13 +47,13 @@ SectionPage {
 
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
-		text: qsTr("PIN Management") + SettingsModel.translationTrigger
+		text: qsTr("Change PIN") + SettingsModel.translationTrigger
 		rootEnabled: false
 		helpTopic: "pinManagement"
 		showSettings: (changePinController.workflowState === ChangePinController.WorkflowStates.Initial ||
 		               changePinController.workflowState === ChangePinController.WorkflowStates.Reader ||
 		               changePinController.workflowState === ChangePinController.WorkflowStates.Card)
-		              && d.activeView !== ChangePinView.SubViews.Progress
+		              && d.activeView !== ChangePinView.SubViews.Progress && d.activeView !== ChangePinView.SubViews.ProgressNewPin
 
 		onClicked: {
 			if (d.activeView === ChangePinView.SubViews.PasswordInfo) {
@@ -139,7 +140,7 @@ SectionPage {
 		visible: d.activeView === ChangePinView.SubViews.Password
 
 		onPasswordEntered: {
-			d.view = ChangePinView.SubViews.Progress
+			d.view = pWasNewPin ? ChangePinView.SubViews.ProgressNewPin : ChangePinView.SubViews.Progress
 			ChangePinModel.continueWorkflow()
 		}
 
@@ -167,12 +168,15 @@ SectionPage {
 	ProgressView {
 		id: pinProgressView
 
-		visible: d.activeView === ChangePinView.SubViews.Progress
+		visible: d.activeView === ChangePinView.SubViews.Progress || d.activeView === ChangePinView.SubViews.ProgressNewPin
 
-		//: LABEL DESKTOP_QML
-		text: qsTr("Change PIN") + SettingsModel.translationTrigger
+		text: d.activeView === ChangePinView.SubViews.ProgressNewPin
+			//: LABEL DESKTOP_QML Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.
+			? qsTr("Setting new PIN") + SettingsModel.translationTrigger
+			//: LABEL DESKTOP_QML Processing screen label while the card communication is running after the old PIN has been entered during PIN change process.
+			: qsTr("Change PIN") + SettingsModel.translationTrigger
 		//: INFO DESKTOP_QML Processing screen text while the card communication is running after the PIN has been entered during PIN change process.
-		subText: qsTr("Please don't move the ID card...") + SettingsModel.translationTrigger
+		subText: qsTr("Please don't move the ID card.") + SettingsModel.translationTrigger
 	}
 
 	ResultView {
@@ -201,7 +205,7 @@ SectionPage {
 
 		resultType: ResultView.Type.IsSuccess
 		//: INFO DESKTOP_QML The ID card has just been unblocked and the user can now continue with their PIN change.
-		text: qsTr("Your ID card is unblocked. You now have three more tries to change your PIN") + SettingsModel.translationTrigger
+		text: qsTr("Your ID card is unblocked. You now have three more attempts to change your PIN") + SettingsModel.translationTrigger
 		onNextView: confirmed = true
 
 		Connections {
@@ -232,7 +236,7 @@ SectionPage {
 			ChangePinModel.continueWorkflow()
 			baseItem.nextView(pName)
 		}
-		emailButtonVisible: ChangePinModel.error && !ChangePinModel.isCancellationByUser()
+		supportButtonsVisible: ChangePinModel.error && !ChangePinModel.isCancellationByUser()
 		onEmailButtonPressed: ChangePinModel.sendResultMail()
 	}
 }

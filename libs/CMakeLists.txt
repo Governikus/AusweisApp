@@ -69,15 +69,21 @@ ELSE()
 	SET(PERL_EXECUTABLE perl)
 ENDIF()
 
-FIND_HOST_PACKAGE(PythonInterp 2.7 REQUIRED)
-
 FIND_PROGRAM(PATCH_CMD patch CMAKE_FIND_ROOT_PATH_BOTH)
 IF(PATCH_CMD)
 	SET(PATCH_OPTIONS -i)
 	MESSAGE(STATUS "Using 'patch' command... ${PATCH_CMD}")
 ELSE()
-	SET(PATCH_CMD ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/patch.py --debug -v)
 	MESSAGE(STATUS "Cannot find 'patch' command... using patch.py")
+
+	IF(CMAKE_VERSION VERSION_LESS "3.12")
+		FIND_HOST_PACKAGE(PythonInterp REQUIRED)
+		SET(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
+	ELSE()
+		FIND_HOST_PACKAGE(Python REQUIRED)
+	ENDIF()
+
+	SET(PATCH_CMD ${Python_EXECUTABLE} ${PROJECT_SOURCE_DIR}/patch.py --debug -v)
 ENDIF()
 SET(PATCH_CMD ${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PROJECT_SOURCE_DIR}/patches)
 
@@ -116,12 +122,16 @@ ELSE()
 	SET(QT_DEST_DIR archive) # official_releases
 ENDIF()
 STRING(SUBSTRING ${QT} 0 4 QT_SUBVERSION)
+SET(QT_URL https://download.qt.io/${QT_DEST_DIR}/qt/${QT_SUBVERSION}/${QT}/single/${QT_FILE})
 
-SET(QT_URL https://download.qt.io/${QT_DEST_DIR}/qt/${QT_SUBVERSION}/${QT}/single)
-SET(OPENSSL_URL https://www.openssl.org/source)
+STRING(SUBSTRING ${OPENSSL} 0 5 OPENSSL_SUBVERSION)
+SET(OPENSSL_SOURCE https://www.openssl.org/source)
+SET(OPENSSL_URL ${OPENSSL_SOURCE}/${OPENSSL_FILE})
+SET(OPENSSL_URL_OLD ${OPENSSL_SOURCE}/old/${OPENSSL_SUBVERSION}/${OPENSSL_FILE})
+
+
 
 SET(ENABLED_TARGETS)
-
 
 ################################## OpenSSL
 #########################################################################
@@ -195,7 +205,7 @@ ELSE()
 ENDIF()
 
 ExternalProject_Add(openssl
-	URL ${OPENSSL_URL}/${OPENSSL_FILE}
+	URL ${OPENSSL_URL} ${OPENSSL_URL_OLD}
 	URL_HASH SHA256=${OPENSSL_HASH}
 	DOWNLOAD_DIR ${PACKAGES_DIR}
 
@@ -326,8 +336,7 @@ ELSEIF(ANDROID)
 	ENDIF()
 	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER}
 		-android-sdk ${ANDROID_SDK} -android-ndk ${CMAKE_ANDROID_NDK} -android-ndk-platform android-${CMAKE_SYSTEM_VERSION} -android-ndk-host ${CMAKE_ANDROID_NDK_TOOLCHAIN_HOST_TAG}
-		-android-arch ${CMAKE_ANDROID_ARCH_ABI} -android-toolchain-version ${ANDROID_NDK_TOOLCHAIN_VERSION}
-		-xplatform ${ANDROID_XPLATFORM})
+		-android-arch ${CMAKE_ANDROID_ARCH_ABI} -xplatform ${ANDROID_XPLATFORM})
 
 	IF(CMAKE_ANDROID_ARCH_ABI STREQUAL "arm64-v8a")
 		SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-use-gold-linker)
@@ -348,11 +357,12 @@ ENDIF()
 
 ExternalProject_Add(qt
 	DEPENDS openssl
-	URL ${QT_URL}/${QT_FILE}
+	URL ${QT_URL}
 	URL_HASH SHA256=${QT_HASH}
 	DOWNLOAD_DIR ${PACKAGES_DIR}
 
 	PATCH_COMMAND ${QT_PATCH_COMMAND}
+			${PATCH_CMD}/qt-Port-python-check-to-configure-system.patch &&
 			${PATCH_CMD}/qt-Disable-unused-imageformats.patch &&
 			${PATCH_CMD}/qt-Add-work-around-for-freebsd-build.patch &&
 			${PATCH_CMD}/qt-Remove-Qt-Labs-specific-plugins-from-the-build.patch &&
@@ -364,6 +374,10 @@ ExternalProject_Add(qt
 			${PATCH_CMD}/qt-Filesystem-avoid-crashes-on-exit-in-case-the-locale-.patch &&
 			${PATCH_CMD}/qt-Revert-Android-Stick-with-buildToolsVersion-28.0.3.patch &&
 			${PATCH_CMD}/qt-Remove-dead-code-to-fix-a-lint-warning.patch &&
+			${PATCH_CMD}/qt-Fix-llvm-strip.patch &&
+			${PATCH_CMD}/qt-Handle-exceptions-when-accessing-android-clipboard.patch &&
+			${PATCH_CMD}/qt-Fix-build-with-macOS-10.15-and-deployment-10.12.patch &&
+			${PATCH_CMD}/qt-Pass-SDK-root-to-the-linker-as-isysroot-not-Wl-sysli.patch &&
 			${CMAKE_COMMAND} -E touch qtbase/.gitignore
 	CONFIGURE_COMMAND ${QT_ENV} ${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SKIP_MODULES}
 	BUILD_COMMAND ${MAKE} ${MAKE_JOBS}

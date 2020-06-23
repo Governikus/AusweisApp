@@ -66,7 +66,6 @@ class test_ChangePinController
 			mChangePinContext->setStateApproved();
 		}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{
@@ -150,7 +149,6 @@ class test_ChangePinController
 
 			QCOMPARE(mChangePinContext->getStatus().getStatusCode(), GlobalStatus::Code::Workflow_Cancellation_By_User);
 		}
-
 
 	Q_SIGNALS:
 		void fireEidCardInserted();

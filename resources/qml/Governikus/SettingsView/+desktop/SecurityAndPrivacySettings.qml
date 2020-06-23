@@ -8,6 +8,7 @@ import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
+import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.HistoryModel 1.0
 import Governikus.View 1.0
@@ -33,7 +34,7 @@ ColumnLayout {
 		activeFocusOnTab: true
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Save authentification history") + SettingsModel.translationTrigger
+		text: qsTr("Save authentication history") + SettingsModel.translationTrigger
 		checked: SettingsModel.historyEnabled
 		onCheckedChanged: SettingsModel.historyEnabled = checked
 	}
@@ -75,20 +76,20 @@ ColumnLayout {
 		activeFocusOnTab: true
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Avoid visual feedback in the on screen keypad") + SettingsModel.translationTrigger
-		checked: SettingsModel.visualPrivacy
+		text: qsTr("Shuffle keypad buttons") + SettingsModel.translationTrigger
+		checked: SettingsModel.shuffleScreenKeyboard
 		enabled: SettingsModel.useScreenKeyboard
-		onCheckedChanged: SettingsModel.visualPrivacy = checked
+		onCheckedChanged: SettingsModel.shuffleScreenKeyboard = checked
 	}
 
 	ToggleableOption {
 		activeFocusOnTab: true
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Shuffle keypad buttons") + SettingsModel.translationTrigger
-		checked: SettingsModel.shuffleScreenKeyboard
+		text: qsTr("Visual feedback when pressing keypad buttons") + SettingsModel.translationTrigger
+		checked: !SettingsModel.visualPrivacy
 		enabled: SettingsModel.useScreenKeyboard
-		onCheckedChanged: SettingsModel.shuffleScreenKeyboard = checked
+		onCheckedChanged: SettingsModel.visualPrivacy = !checked
 	}
 
 	GSeparator {
@@ -175,6 +176,10 @@ ColumnLayout {
 		title: qsTr("Delete history")+ SettingsModel.translationTrigger
 		//: INFO DESKTOP_QML The current history is about to be removed, user confirmation required.
 		text: qsTr("All history entries will be deleted.") + SettingsModel.translationTrigger
-		onConfirmed: SettingsModel.removeEntireHistory()
+		onConfirmed: {
+			let removedItemCount = SettingsModel.removeEntireHistory()
+			//: INFO DESKTOP_QML Feedback how many history entries were removed.
+			ApplicationModel.showFeedback(qsTr("Deleted %1 entries from the history.").arg(removedItemCount))
+		}
 	}
 }

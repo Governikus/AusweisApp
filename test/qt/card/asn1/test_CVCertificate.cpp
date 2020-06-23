@@ -34,7 +34,6 @@ class test_CVCertificate
 		return QByteArray(reinterpret_cast<char*>(buf.data()), bufLen);
 	}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{
@@ -140,7 +139,7 @@ class test_CVCertificate
 #else
 			const BIGNUM* r = nullptr;
 			const BIGNUM* s = nullptr;
-			ECDSA_SIG_get0(ecdsaSignature.data(), &r, &s);
+			ECDSA_SIG_get0(ecdsaSignature, &r, &s);
 #endif
 
 			QCOMPARE(valueOf(r).toHex(), QByteArray("9f25ebfaf4b91e4c60a1683754c5dc076a3179753ef97d9f8cb01fe1dcd3b8c8"));

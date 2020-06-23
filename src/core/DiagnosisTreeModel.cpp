@@ -216,7 +216,7 @@ void DiagnosisTreeModel::onRemoteInfosChanged()
 
 		if (!info.getFingerprint().isEmpty())
 		{
-			const auto& deviceName = QSharedPointer<DiagnosisItem>::create(info.getName());
+			const auto& deviceName = QSharedPointer<DiagnosisItem>::create(info.getNameEscaped());
 			mPairedDevices->addChild(deviceName);
 
 			const auto& deviceFingerprint = QSharedPointer<DiagnosisItem>::create((tr("Certificate fingerprint: %1").arg(info.getFingerprint())));

@@ -46,7 +46,7 @@ using EcdsaPublicKey = struct ecdsapublickey_st
 	ASN1_OCTET_STRING* mOrderOfTheBasePoint;
 	ASN1_OCTET_STRING* mPublicPoint;
 	ASN1_OCTET_STRING* mCofactor;
-	QSharedPointer<EC_KEY> mEcKey;
+	EC_KEY* mEcKey;
 
 	static QSharedPointer<ecdsapublickey_st> fromHex(const QByteArray& pHexValue);
 	static QSharedPointer<ecdsapublickey_st> decode(const QByteArray& pBytes);
@@ -59,7 +59,7 @@ using EcdsaPublicKey = struct ecdsapublickey_st
 	 */
 	QByteArray getPublicKeyOidValueBytes() const;
 	QByteArray getUncompressedPublicPoint() const;
-	QSharedPointer<const EC_KEY> getEcKey() const;
+	const EC_KEY* getEcKey() const;
 
 	private:
 		void initEcKey();

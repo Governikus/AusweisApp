@@ -41,7 +41,7 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("5 digits long") + SettingsModel.translationTrigger
+			text: qsTr("five digits long") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -50,7 +50,7 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("transport PIN") + SettingsModel.translationTrigger
+			text: qsTr("Transport PIN") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header
 			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
@@ -83,7 +83,7 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("6 digits long PIN") + SettingsModel.translationTrigger
+			text: qsTr("six digits long PIN") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header
 			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
@@ -111,7 +111,7 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("The transport PIN is sent to you by the Bundesdruckerei via mail.") + SettingsModel.translationTrigger
+			text: qsTr("The Transport PIN is sent to you by the Bundesdruckerei via mail.") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -211,7 +211,7 @@ TutorialContent {
 		anchors.horizontalCenter: parent.horizontalCenter
 
 		//: LABEL ANDROID IOS
-		text: qsTr("Please note: The transport PIN can only be used for your first PIN change. If you have already set your personal PIN (e.g. while picking up your ID card) only the set PIN is valid.") + SettingsModel.translationTrigger
+		text: qsTr("Please note: The Transport PIN can only be used for your first PIN change. If you have already set your personal PIN (e.g. while picking up your ID card) only the set PIN is valid.") + SettingsModel.translationTrigger
 		textStyle: Style.text.tutorial_header_secondary
 		horizontalAlignment: Text.AlignHCenter
 	}
@@ -221,7 +221,7 @@ TutorialContent {
 		anchors.horizontalCenter: parent.horizontalCenter
 
 		//: LABEL ANDROID IOS
-		text: qsTr("You can always set a new PIN at the issuing authority if the (transport) PIN is not known.") + SettingsModel.translationTrigger
+		text: qsTr("You can always set a new PIN at the issuing authority if the (Transport) PIN is not known.") + SettingsModel.translationTrigger
 		textStyle: Style.text.tutorial_header_secondary
 		horizontalAlignment: Text.AlignHCenter
 	}
@@ -244,6 +244,11 @@ TutorialContent {
 
 			MouseArea {
 				anchors.fill: parent
+
+				//: LABEL ANDROID IOS
+				Accessible.name: qsTr("Open YouTube video") + SettingsModel.translationTrigger
+				Accessible.role: Accessible.Button
+				Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
 
 				//: LABEL ANDROID IOS
 				onClicked: Qt.openUrlExternally(qsTr("https://www.youtube.com/watch?v=wZglRda5Y60&index=4&list=PLLB5ERhVkn25qQXgMHQr-1KgyZsJKoSAm"))

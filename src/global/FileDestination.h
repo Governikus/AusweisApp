@@ -35,13 +35,12 @@ class FileDestination
 			#endif
 		}
 
-
 	public:
 		static QString getPath(const QString& pFilename,
 			QStandardPaths::LocateOption pOption = QStandardPaths::LocateFile,
 			QStandardPaths::StandardLocation pStandard = QStandardPaths::AppDataLocation)
 		{
-			#if defined(Q_OS_LINUX) || (defined(Q_OS_BSD4) && !defined(Q_OS_MACOS) && !defined(Q_OS_IOS))
+			#if (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || (defined(Q_OS_BSD4) && !defined(Q_OS_MACOS) && !defined(Q_OS_IOS))
 			const auto match = QStandardPaths::locate(pStandard, pFilename, pOption);
 			if (!match.isNull())
 			{

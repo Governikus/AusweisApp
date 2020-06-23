@@ -79,7 +79,6 @@ class test_SecureMessaging
 			return result;
 		}
 
-
 	private Q_SLOTS:
 		void init()
 		{

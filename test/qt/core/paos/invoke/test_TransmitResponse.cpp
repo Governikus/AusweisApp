@@ -37,7 +37,7 @@ class test_TransmitResponse
 
 			TransmitResponse responseWithApdu;
 			responseWithApdu.setMessageId("dummy");
-			responseWithApdu.setOutputApdus(QByteArrayList {"bla"});
+			responseWithApdu.setOutputApdus(QByteArrayList{"bla"});
 			elem = responseWithApdu.marshall();
 
 			QVERIFY(elem.contains("<OutputAPDU>bla</OutputAPDU>"));

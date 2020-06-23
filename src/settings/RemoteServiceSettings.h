@@ -47,8 +47,7 @@ class RemoteServiceSettings
 				QDateTime mLastConnected;
 
 				RemoteInfo(const QString& pFingerprint,
-						const QDateTime& pLastConnected = QDateTime(),
-						const QString& pName = QString());
+						const QDateTime& pLastConnected);
 
 			public:
 				RemoteInfo() = default;
@@ -58,8 +57,8 @@ class RemoteServiceSettings
 
 				const QString& getFingerprint() const;
 
-				const QString& getName() const;
-				void setName(const QString& pName);
+				QString getNameEscaped() const;
+				void setNameUnescaped(const QString& pName);
 
 				const QDateTime& getLastConnected() const;
 				void setLastConnected(const QDateTime& pLastConnected);
@@ -107,6 +106,8 @@ class RemoteServiceSettings
 		RemoteInfo getRemoteInfo(const QString& pFingerprint) const;
 		QVector<RemoteInfo> getRemoteInfos() const;
 		bool updateRemoteInfo(const RemoteInfo& pInfo);
+
+		static QString escapeDeviceName(const QString& pDeviceNameUnescaped);
 
 	Q_SIGNALS:
 		void fireTrustedCertificatesChanged();

@@ -16,7 +16,7 @@ namespace governikus
 {
 
 class CVCertificateChainBuilder
-	: private ChainBuilder<QSharedPointer<const CVCertificate> >
+	: private ChainBuilder<QSharedPointer<const CVCertificate>>
 {
 	private:
 		bool mProductive;
@@ -33,7 +33,7 @@ class CVCertificateChainBuilder
 		/*!
 		 * Creates a new instance. All chains are build using the CVCs passed in as parameter.
 		 */
-		explicit CVCertificateChainBuilder(const QVector<QSharedPointer<const CVCertificate> >& pCvcPool, bool pProductive);
+		explicit CVCertificateChainBuilder(const QVector<QSharedPointer<const CVCertificate>>& pCvcPool, bool pProductive);
 
 
 		/*!
