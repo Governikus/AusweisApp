@@ -158,11 +158,11 @@ SectionPage {
 						Accessible.name: confirmButton.text
 
 						icon.source: "qrc:///images/npa.svg"
-						//: LABEL DESKTOP_QML %1 can be "card access number (CAN)" or "PIN"
+						//: LABEL DESKTOP_QML %1 can be "CAN" or "PIN"
 						text: qsTr("Proceed to %1 entry").arg(
 																NumberModel.isCanAllowedMode ?
 																//: LABEL DESKTOP_QML Inserted into "Proceed to %1 entry"
-																qsTr("card access number (CAN)") :
+																qsTr("CAN") :
 																//: LABEL DESKTOP_QML Inserted into "Proceed to %1 entry"
 																qsTr("PIN")
 															) + SettingsModel.translationTrigger
@@ -185,8 +185,12 @@ SectionPage {
 			activeFocusOnTab: true
 			Accessible.name: dataIntroduction.text
 
-			//: LABEL DESKTOP_QML
-			text: qsTr("The following data will be transferred to the provider when you enter the PIN:") + SettingsModel.translationTrigger
+			text: NumberModel.isCanAllowedMode
+				  //: LABEL DESKTOP_QML
+				  ? qsTr("The following data of the ID card will be transferred to the provider when you enter the CAN:")
+				  //: LABEL DESKTOP_QML
+				  : qsTr("The following data of your ID card will be transferred to the provider when you enter the PIN:")
+				  + SettingsModel.translationTrigger
 			textStyle: Style.text.normal_inverse
 
 			FocusFrame {}

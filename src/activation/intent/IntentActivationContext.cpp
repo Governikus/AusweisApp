@@ -9,6 +9,10 @@
 
 #include <QDesktopServices>
 
+#ifdef Q_OS_ANDROID
+	#include <QtAndroidExtras/QAndroidJniObject>
+	#include <QtAndroidExtras/QtAndroid>
+#endif
 
 using namespace governikus;
 
@@ -34,6 +38,13 @@ IntentActivationContext::~IntentActivationContext()
 		 * has finished and the AuthMdel is deleted.
 		 */
 		qDebug() << "Perform redirect to URL" << mRedirectAddress;
+#ifdef Q_OS_ANDROID
+		if (QtAndroid::androidActivity().callMethod<jboolean>("openUrl", "(Ljava/lang/String;Ljava/lang/String;)Z", QAndroidJniObject::fromString(mRedirectAddress.url()).object<jstring>(), QAndroidJniObject::fromString(mReferrer).object<jstring>()))
+		{
+			return;
+		}
+#endif
+
 		QDesktopServices::openUrl(mRedirectAddress);
 	}
 }

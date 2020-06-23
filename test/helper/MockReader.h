@@ -64,7 +64,6 @@ class MockReader
 			mEvent = pEvent;
 		}
 
-
 	private:
 		virtual Reader::CardEvent updateCard() override
 		{

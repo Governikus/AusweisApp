@@ -222,13 +222,13 @@ SectionPage {
 
 			GButton {
 				//: LABEL ANDROID IOS
-				text: qsTr("Cancel") + SettingsModel.translationTrigger
+				text: qsTr("Do not send") + SettingsModel.translationTrigger
 				onClicked: root.done(false)
 			}
 
 			GButton {
 				//: LABEL ANDROID IOS
-				text: qsTr("Transmit") + SettingsModel.translationTrigger
+				text: qsTr("Send") + SettingsModel.translationTrigger
 				onClicked: root.done(true)
 			}
 		}

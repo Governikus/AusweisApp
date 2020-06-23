@@ -167,9 +167,9 @@ QWizardPage* SetupAssistantWizard::createConclusionPage()
 
 	auto* conclusionPageVLayout = new QVBoxLayout(conclusionPage);
 
-	const auto& title = tr("Personal 6-digit PIN");
-	const auto& desc = tr("Prior to the first use of the online identification function, you have to replace the transport PIN by an individual 6-digit PIN. "
-						  "The transport PIN was sent to you by postal mail.");
+	const auto& title = tr("Personal six-digit PIN");
+	const auto& desc = tr("Prior to the first use of the online identification function, you have to replace the Transport PIN by an individual six-digit PIN. "
+						  "The Transport PIN was sent to you by postal mail.");
 	QLabel* transportPinLabel = new QLabel(createDescription(title, desc));
 	transportPinLabel->setWordWrap(true);
 	transportPinLabel->setFocusPolicy(Qt::TabFocus);

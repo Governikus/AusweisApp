@@ -53,7 +53,6 @@ class test_UpdatableFile
 			QVERIFY(!file.exists());
 		}
 
-
 	private Q_SLOTS:
 		void cleanup()
 		{
@@ -275,7 +274,6 @@ class test_UpdatableFile
 			QFile testfile(filePath);
 			QVERIFY(!testfile.exists());
 		}
-
 
 	public:
 		test_UpdatableFile()

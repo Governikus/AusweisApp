@@ -6,6 +6,8 @@
 
 #include "LogHandler.h"
 
+#include <QDir>
+#include <QFile>
 #include <QtTest>
 
 #ifndef Q_OS_WIN
@@ -45,6 +47,14 @@ class test_LogHandler
 	}
 
 
+	QString randomLogFileName(bool pAutoRemove = true)
+	{
+		QTemporaryFile tmp(LogHandler::getLogFileTemplate());
+		tmp.open();
+		tmp.setAutoRemove(pAutoRemove);
+		return tmp.fileName();
+	}
+
 	private Q_SLOTS:
 		void initTestCase()
 		{
@@ -62,7 +72,7 @@ class test_LogHandler
 
 		void benchmark()
 		{
-			QBENCHMARK {
+			QBENCHMARK{
 				qDebug() << "Add some dummy" << "messages" << "in different" << "strings";
 			}
 		}
@@ -115,8 +125,14 @@ class test_LogHandler
 
 		void otherLogFilesWithoutCurrent()
 		{
+			Env::getSingleton<LogHandler>()->setLogfile(true);
+
 			auto list = Env::getSingleton<LogHandler>()->getOtherLogfiles();
 			QVERIFY(!list.contains(Env::getSingleton<LogHandler>()->mLogFile));
+
+			Env::getSingleton<LogHandler>()->setLogfile(false);
+			auto nextList = Env::getSingleton<LogHandler>()->getOtherLogfiles();
+			QCOMPARE(list, nextList);
 		}
 
 
@@ -131,11 +147,53 @@ class test_LogHandler
 		}
 
 
-		void copyFile()
+		void copyFileFail()
 		{
 			qDebug() << "dummy";
 			QVERIFY(!Env::getSingleton<LogHandler>()->copy(QString()));
 			QVERIFY(!Env::getSingleton<LogHandler>()->copy(QStringLiteral("                     ")));
+		}
+
+
+		void copyFileOverwrite()
+		{
+			qDebug() << "dummy";
+			const QString fileName = randomLogFileName();
+			QVERIFY(Env::getSingleton<LogHandler>()->copy(fileName));
+			QVERIFY(QFile::exists(fileName));
+			QVERIFY(Env::getSingleton<LogHandler>()->copy(fileName));
+			QVERIFY(QFile::exists(fileName));
+
+			Env::getSingleton<LogHandler>()->setLogfile(false);
+			QVERIFY(!Env::getSingleton<LogHandler>()->copy(fileName));
+			QVERIFY(QFile::exists(fileName));
+		}
+
+
+		void copyOther_data()
+		{
+			QTest::addColumn<bool>("withLogFile");
+
+			QTest::newRow("true") << true;
+			QTest::newRow("false") << false;
+		}
+
+
+		void copyOther()
+		{
+			QFETCH(bool, withLogFile);
+
+			Env::getSingleton<LogHandler>()->setLogfile(withLogFile);
+
+			const QString logFileName = randomLogFileName(false);
+			QVERIFY(QFile::exists(logFileName));
+			const QString targetFileName = randomLogFileName();
+			QVERIFY(Env::getSingleton<LogHandler>()->copyOther(logFileName, targetFileName));
+			QVERIFY(QFile::exists(targetFileName));
+			QVERIFY(QFile::remove(targetFileName));
+			QVERIFY(QFile::remove(logFileName));
+			QVERIFY(!Env::getSingleton<LogHandler>()->copyOther(QStringLiteral("foo.log"), targetFileName));
+			QVERIFY(!QFile::exists(targetFileName));
 		}
 
 

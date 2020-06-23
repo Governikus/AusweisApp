@@ -59,8 +59,8 @@ class test_CVCertificateBody
 		{
 			auto cvc = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDPST00035.hex"));
 
-			QVERIFY(cvc->getBody().getPublicKey().getUncompressedPublicPoint().isNull() == false);
-			QVERIFY(cvc->getBody().getPublicKey().getEcKey().isNull());
+			QVERIFY(!cvc->getBody().getPublicKey().getUncompressedPublicPoint().isNull());
+			QVERIFY(!cvc->getBody().getPublicKey().getEcKey());
 		}
 
 
@@ -68,8 +68,8 @@ class test_CVCertificateBody
 		{
 			auto cvc = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00002_DETESTeID00001.hex"));
 
-			QVERIFY(cvc->getBody().getPublicKey().getUncompressedPublicPoint().isNull() == false);
-			QVERIFY(cvc->getBody().getPublicKey().getEcKey().isNull() == false);
+			QVERIFY(!cvc->getBody().getPublicKey().getUncompressedPublicPoint().isNull());
+			QVERIFY(cvc->getBody().getPublicKey().getEcKey());
 		}
 
 

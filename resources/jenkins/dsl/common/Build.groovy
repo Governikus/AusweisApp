@@ -127,7 +127,7 @@ class Build
 					if(getReleaseJob())
 						tag('${changeset}')
 					else
-						branch(dslFactory.MERCURIAL_REVISION_BRANCH)
+						tag(dslFactory.MERCURIAL_REVISION_BRANCH)
 
 					subdirectory('source')
 					if(getDisableChangelog())

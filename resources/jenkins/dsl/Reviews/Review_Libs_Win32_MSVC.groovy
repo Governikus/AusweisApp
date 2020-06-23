@@ -11,7 +11,7 @@ j.with
 {
 	steps
 	{
-		batchFile('cd source & python resources/jenkins/import.py')
+		batchFile('cd source & cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
 
 		batchFile('''\
 			cd build

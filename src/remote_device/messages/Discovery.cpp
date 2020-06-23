@@ -6,6 +6,7 @@
 #include "Discovery.h"
 
 #include "Initializer.h"
+#include "RemoteServiceSettings.h"
 
 #include <QJsonArray>
 #include <QJsonObject>
@@ -57,6 +58,15 @@ Discovery::Discovery(const QJsonObject& pMessageObject)
 
 	mIfdName = getStringValue(pMessageObject, IFD_NAME());
 	mIfdId = getStringValue(pMessageObject, IFD_ID());
+	if (!mIfdId.isEmpty() && mIfdId.size() != 64)
+	{
+		const QSslCertificate ifdCertificate(mIfdId.toLatin1());
+		qCDebug(remote_device) << "Received ifdId is not a fingerprint. Interpretion as a certificate to create our own fingerprint" << (ifdCertificate.isNull() ? "failed" : "succeeded");
+		if (!ifdCertificate.isNull())
+		{
+			mIfdId = RemoteServiceSettings::generateFingerprint(ifdCertificate);
+		}
+	}
 	mPort = static_cast<quint16>(getIntValue(pMessageObject, PORT()));
 
 	if (!pMessageObject.contains(SUPPORTED_API()))

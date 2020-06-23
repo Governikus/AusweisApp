@@ -95,7 +95,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 }
 
 
-- (void) tagReaderSession: (NFCTagReaderSession*)session didDetectTags:(NSArray<__kindof id<NFCTag> >*)tags {
+- (void) tagReaderSession: (NFCTagReaderSession*)session didDetectTags:(NSArray<__kindof id<NFCTag>>*)tags {
 	qCDebug(card_nfc) << "New tag detected";
 
 	if (session != self.mSession)
@@ -118,7 +118,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 		return;
 	}
 
-	self.mDelegate->onTagDiscovered(new governikus::IosCard(new governikus::IosCardPointer {tags[0]}));
+	self.mDelegate->onTagDiscovered(new governikus::IosCard(new governikus::IosCardPointer{tags[0]}));
 }
 
 

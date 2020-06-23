@@ -25,8 +25,11 @@ class SelfDiagnosisModel
 	friend class Env;
 
 	Q_PROPERTY(QAbstractListModel * sectionsModel READ getSectionsModel CONSTANT)
+	Q_PROPERTY(bool running READ isRunning NOTIFY fireRunningChanged)
 
 	private:
+		bool isRunning() const;
+
 		QSharedPointer<DiagnosisContext> mDiagnosisContext;
 		DiagnosisModel mDiagnosisModel;
 		QScopedPointer<DiagnosisController> mDiagnosisController;
@@ -46,6 +49,7 @@ class SelfDiagnosisModel
 	Q_SIGNALS:
 		void fireSectionContentModelChanged();
 		void fireCurrentSectionChanged();
+		void fireRunningChanged();
 };
 
 } // namespace governikus

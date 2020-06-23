@@ -17,7 +17,6 @@
     <category>Utility</category>
   </categories>
   <url type="homepage">https://www.ausweisapp.bund.de/</url>
-  <url type="contact">mailto:support@ausweisapp.de</url>
   <launchable type="desktop-id">com.governikus.ausweisapp2.desktop</launchable>
   <provides>
     <binary>AusweisApp2</binary>

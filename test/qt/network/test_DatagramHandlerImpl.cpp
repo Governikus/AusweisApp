@@ -93,9 +93,7 @@ class test_DatagramHandlerImpl
 
 			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			QUdpSocket clientSocket;
-			#ifndef QT_NO_NETWORKPROXY
 			clientSocket.setProxy(QNetworkProxy::NoProxy);
-			#endif
 
 			auto written = clientSocket.writeDatagram("dummy", QHostAddress::LocalHost, socket.staticCast<DatagramHandlerImpl>()->mSocket->localPort());
 			QTRY_COMPARE(spySocket.count(), 1);
@@ -131,9 +129,7 @@ class test_DatagramHandlerImpl
 			QSignalSpy spySocket(socket.data(), &DatagramHandler::fireNewMessage);
 
 			QUdpSocket clientSocket;
-			#ifndef QT_NO_NETWORKPROXY
 			clientSocket.setProxy(QNetworkProxy::NoProxy);
-			#endif
 
 			QByteArray data("{\"key\":\"value\"}");
 			auto written = clientSocket.writeDatagram(data, broadcast ? QHostAddress::Broadcast : QHostAddress::LocalHost, socket.staticCast<DatagramHandlerImpl>()->mSocket->localPort());
@@ -159,9 +155,7 @@ class test_DatagramHandlerImpl
 			QFETCH(bool, broadcast);
 
 			QUdpSocket receiver;
-			#ifndef QT_NO_NETWORKPROXY
 			receiver.setProxy(QNetworkProxy::NoProxy);
-			#endif
 
 			QVERIFY(receiver.bind());
 			QSignalSpy spyReceiver(&receiver, &QUdpSocket::readyRead);

@@ -9,6 +9,7 @@
 #include <QByteArray>
 #include <QObject>
 #include <QProcess>
+#include <QScopedPointer>
 #include <QTcpSocket>
 
 namespace governikus
@@ -29,7 +30,7 @@ class PersoSimController
 		bool shutdown();
 
 	private:
-		QProcess* mProcess;
+		QScopedPointer<QProcess> mProcess;
 		const QSharedPointer<QTcpSocket> mSocket;
 
 		bool startProcess();

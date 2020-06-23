@@ -41,7 +41,6 @@ class test_ReaderDetector
 			QCOMPARE(info.getUrl(), KOMFORT_DRIVER_URL);
 		}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{

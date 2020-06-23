@@ -83,16 +83,32 @@ SectionPage {
 			GButton {
 				id: saveToFile
 
+				anchors.fill: parent
+				anchors.rightMargin: Constants.groupbox_spacing
+
 				Accessible.description: qsTr("Save diagnosis to textfile") + SettingsModel.translationTrigger
 
 				icon.source: "qrc:///images/icon_save.svg"
 				//: LABEL DESKTOP_QML
 				text: qsTr("Save to file") + SettingsModel.translationTrigger
 				tintIcon: true
+				enableButton: !SelfDiagnosisModel.running || !timeout.running
+				//: LABEL DESKTOP_QML
+				disabledTooltipText: qsTr("Diagnosis is still running") + SettingsModel.translationTrigger
+				//: LABEL DESKTOP_QML
+				enabledTooltipText: SelfDiagnosisModel.running ? (qsTr("Diagnosis may be incomplete") + SettingsModel.translationTrigger) : ""
 				onClicked: {
 					var filenameSuggestion = "%1.%2.%3.txt".arg(Qt.application.name).arg(qsTr("Diagnosis")).arg(SelfDiagnosisModel.getCreationTimeString())
-					appWindow.openSaveFileDialog(SelfDiagnosisModel.saveToFile, filenameSuggestion, "txt")
+					appWindow.openSaveFileDialog(SelfDiagnosisModel.saveToFile, filenameSuggestion, qsTr("Textfiles"), "txt")
 				}
+			}
+
+			Timer {
+				id: timeout
+
+				interval: 10000
+				running: true
+				repeat: false
 			}
 		}
 	}

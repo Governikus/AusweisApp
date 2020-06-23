@@ -122,7 +122,7 @@ SectionPage
 						onClicked: {
 							let now = new Date().toLocaleDateString(Qt.locale(), "yyyy-MM-dd")
 							let filenameSuggestion = "%1.%2.%3.pdf".arg(Qt.application.name).arg(qsTr("Information")).arg(now)
-							appWindow.openSaveFileDialog(SelfAuthModel.exportData, filenameSuggestion, "pdf")
+							appWindow.openSaveFileDialog(SelfAuthModel.exportData, filenameSuggestion, qsTr("Portable Document Format"), "pdf")
 						}
 					}
 

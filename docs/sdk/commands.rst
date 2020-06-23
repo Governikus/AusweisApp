@@ -299,7 +299,7 @@ is decreased to **0**.
    keypad.
 
 
-- **value**: The personal identification number (PIN) of the card.
+- **value**: The Personal Identification Number (PIN) of the card.
   This must be 6 digits if the :ref:`reader` has no keypad, otherwise
   this parameter must be omitted.
 
@@ -335,7 +335,7 @@ Otherwise the workflow will continue with :ref:`enter_pin`.
    keypad.
 
 
-- **value**: The card access number (CAN) of the card.
+- **value**: The Card Access Number (CAN) of the card.
   This must be 6 digits if the :ref:`reader` has no keypad, otherwise
   this parameter must be omitted.
 
@@ -373,7 +373,7 @@ For detailed information see message :ref:`enter_puk`.
    keypad.
 
 
-- **value**: The personal unblocking key (PUK) of the card.
+- **value**: The Personal Unblocking Key (PUK) of the card.
   This must be 10 digits if the :ref:`reader` has no keypad, otherwise
   this parameter must be omitted.
 

@@ -41,6 +41,7 @@ class ProviderConfigurationInfo
 				const QString mTcTokenUrl;
 				const QString mClientUrl;
 				const QStringList mSubjectUrls;
+				const QString mSubjectUrlInfo;
 
 				InternalInfo(const LanguageString& pShortName,
 						const LanguageString& pLongName,
@@ -56,7 +57,8 @@ class ProviderConfigurationInfo
 						const QString& pImage,
 						const QString& pTcTokenUrl,
 						const QString& pClientUrl,
-						const QStringList& pSubjectUrls = QStringList())
+						const QStringList& pSubjectUrls,
+						const QString& pSubjectUrlInfo)
 					: mShortName(pShortName)
 					, mLongName(pLongName)
 					, mShortDescription(pShortDescription)
@@ -72,6 +74,7 @@ class ProviderConfigurationInfo
 					, mTcTokenUrl(pTcTokenUrl)
 					, mClientUrl(pClientUrl)
 					, mSubjectUrls(pSubjectUrls)
+					, mSubjectUrlInfo(pSubjectUrlInfo)
 				{
 				}
 
@@ -91,7 +94,9 @@ class ProviderConfigurationInfo
 						   mIcon == pOther.mIcon &&
 						   mImage == pOther.mImage &&
 						   mTcTokenUrl == pOther.mTcTokenUrl &&
-						   mClientUrl == pOther.mClientUrl;
+						   mClientUrl == pOther.mClientUrl &&
+						   mSubjectUrls == pOther.mSubjectUrls &&
+						   mSubjectUrlInfo == pOther.mSubjectUrlInfo;
 				}
 
 
@@ -116,12 +121,14 @@ class ProviderConfigurationInfo
 				const QString& pImage = QString(),
 				const QString& pTcTokenUrl = QString(),
 				const QString& pClientUrl = QString(),
-				const QStringList& pSubjectUrls = QStringList());
+				const QStringList& pSubjectUrls = QStringList(),
+				const QString& pSubjectUrlInfo = QString());
 		virtual ~ProviderConfigurationInfo();
 
 		void setTcTokenUrl(const QString& pTcTokenUrl);
 
 		bool operator ==(const ProviderConfigurationInfo& pOther) const;
+		bool operator <(const ProviderConfigurationInfo& pOther) const;
 		bool matchWithSubjectUrl(const QString& pSubjectUrl) const;
 
 		const LanguageString& getShortName() const;
@@ -141,6 +148,7 @@ class ProviderConfigurationInfo
 		QUrl getTcTokenUrl() const;
 		QUrl getClientUrl() const;
 		const QStringList& getSubjectUrls() const;
+		const QString& getSubjectUrlInfo() const;
 };
 
 

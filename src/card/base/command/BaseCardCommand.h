@@ -42,7 +42,6 @@ class BaseCardCommand
 			return mReturnCode;
 		}
 
-
 	Q_SIGNALS:
 		void commandDone(QSharedPointer<BaseCardCommand> pCommand);
 };

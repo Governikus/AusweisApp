@@ -59,7 +59,6 @@ class ReaderManagerPlugIn
 			mInfo.setValue(pKey, pValue);
 		}
 
-
 	public:
 		ReaderManagerPlugIn(ReaderManagerPlugInType pPlugInType,
 				bool pAvailable = false,

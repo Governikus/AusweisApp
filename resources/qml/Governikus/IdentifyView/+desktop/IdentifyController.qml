@@ -83,7 +83,12 @@ Controller {
 				controller.workflowState = IdentifyController.WorkflowStates.Initial
 				break
 			case "StateEditAccessRights":
-				controller.nextView(IdentifyView.SubViews.AccessRights)
+				if (NumberModel.isCanAllowedMode && SettingsModel.skipRightsOnCanAllowed) {
+					chatModel.transferAccessRights()
+					AuthModel.continueWorkflow()
+				} else {
+					controller.nextView(IdentifyView.SubViews.AccessRights)
+				}
 				AuthModel.setInitialPluginType()
 				break
 			case "StateSelectReader":

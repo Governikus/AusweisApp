@@ -24,6 +24,10 @@ Flickable {
 		Utils.scrollPageUp(baseItem)
 	}
 
+	function positionViewAtBeginning() {
+		contentY = originY
+	}
+
 	function highlightScrollbar() {
 		if (ScrollBar.vertical) ScrollBar.vertical.highlight()
 	}

@@ -9,6 +9,7 @@
 #include "AbstractSettings.h"
 
 #include <QFuture>
+#include <QNetworkProxy>
 #include <QUuid>
 
 class test_GeneralSettings;
@@ -84,6 +85,9 @@ class GeneralSettings
 		QString getSelectedUi() const;
 		void setSelectedUi(const QString& pSelectedUi);
 
+		QString getScreenOrientation() const;
+		void setScreenOrientation(const QString& pScreenOrientation);
+
 		bool askForDeviceSurvey() const;
 		bool isDeviceSurveyPending() const;
 		void setDeviceSurveyPending(bool pDeviceSurveyPending);
@@ -109,13 +113,33 @@ class GeneralSettings
 		bool isShuffleScreenKeyboard() const;
 		void setShuffleScreenKeyboard(bool pShuffleScreenKeyboard);
 
+		bool isEnableCanAllowed() const;
+		void setEnableCanAllowed(bool pEnableCanAllowed);
+
+		bool isSkipRightsOnCanAllowed() const;
+		void setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed);
+
 		bool isShowInAppNotifications() const;
 		void setShowInAppNotifications(bool pShowInAppNotifications);
+
+		bool isCustomProxyType() const;
+		QNetworkProxy::ProxyType getCustomProxyType() const;
+
+		bool isCustomProxyHost() const;
+		QString getCustomProxyHost() const;
+
+		bool isCustomProxyPort() const;
+		quint16 getCustomProxyPort() const;
+
+		bool customProxyAttributesPresent() const;
+		bool useCustomProxy() const;
+		void setUseCustomProxy(bool pUseCustomProxy);
 
 	Q_SIGNALS:
 		void fireLanguageChanged();
 		void fireDeveloperOptionsChanged();
 		void fireShowInAppNotificationsChanged();
+		void fireProxyChanged();
 };
 
 

@@ -1,7 +1,3 @@
-qt5_add_resources(QRC_FIXTURE "fixture/fixture.qrc")
-ADD_OBJECT_LIBRARY(QRC_FIXTURE_OBJ ${QRC_FIXTURE} Qt5::Core)
-
-
 FUNCTION(EXTRACT_TESTNAME result filepath)
 	STRING(REPLACE ".cpp" "" testname ${filepath})
 	STRING(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" testname ${testname})
@@ -72,9 +68,13 @@ FUNCTION(ADD_QML_TEST_FILES)
 ENDFUNCTION()
 
 IF(TARGET Qt5::Test)
+	qt5_add_resources(QRC_FIXTURE "fixture/fixture.qrc")
+	ADD_OBJECT_LIBRARY(QRC_FIXTURE_OBJ ${QRC_FIXTURE} Qt5::Core)
+
 	ADD_SUBDIRECTORY(helper)
 	IF(TARGET Qt5::Qml AND TARGET Qt5::QuickTest)
 		ADD_SUBDIRECTORY(qml)
 	ENDIF()
 	ADD_SUBDIRECTORY(qt)
+	ADD_SUBDIRECTORY(json)
 ENDIF()

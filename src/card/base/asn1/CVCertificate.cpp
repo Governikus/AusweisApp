@@ -56,7 +56,7 @@ int CVCertificate::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_
 	{
 		if (auto cvc = reinterpret_cast<cvcertificate_st*>(*pVal))
 		{
-			cvc->mEcdsaSignature = EcUtil::create(ECDSA_SIG_new());
+			cvc->mEcdsaSignature = ECDSA_SIG_new();
 			QByteArray sigValue = Asn1OctetStringUtil::getValue(cvc->mSignature);
 
 			const auto* const sig = reinterpret_cast<const unsigned char*>(sigValue.data());
@@ -66,13 +66,21 @@ int CVCertificate::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_
 			BIGNUM* s = BN_bin2bn(sig + (siglen / 2), siglen / 2, nullptr);
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-			cvc->mEcdsaSignature.data()->r = r;
-			cvc->mEcdsaSignature.data()->s = s;
+			cvc->mEcdsaSignature->r = r;
+			cvc->mEcdsaSignature->s = s;
 #else
-			ECDSA_SIG_set0(cvc->mEcdsaSignature.data(), r, s);
+			ECDSA_SIG_set0(cvc->mEcdsaSignature, r, s);
 #endif
 		}
 	}
+	else if (pOperation == ASN1_OP_FREE_POST)
+	{
+		if (auto cvc = reinterpret_cast<cvcertificate_st*>(*pVal))
+		{
+			ECDSA_SIG_free(cvc->mEcdsaSignature);
+		}
+	}
+
 	return CB_SUCCESS;
 }
 
@@ -117,7 +125,7 @@ QByteArray CVCertificate::getRawBody() const
 }
 
 
-QSharedPointer<const ECDSA_SIG> CVCertificate::getEcdsaSignature() const
+const ECDSA_SIG* CVCertificate::getEcdsaSignature() const
 {
 	return mEcdsaSignature;
 }

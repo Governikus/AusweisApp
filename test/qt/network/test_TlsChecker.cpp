@@ -37,7 +37,6 @@ class test_TlsChecker
 		return key;
 	}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{

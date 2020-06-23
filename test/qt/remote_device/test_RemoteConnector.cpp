@@ -123,7 +123,6 @@ class test_RemoteConnector
 			QVERIFY(signalFound);
 		}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{
@@ -304,10 +303,8 @@ class test_RemoteConnector
 			settings.setTrustedCertificates(trustedCertificates);
 			webSocketServer.setSslConfiguration(sslConfigServer);
 
-#ifndef QT_NO_NETWORKPROXY
 			// Listening with proxy leads to socket error QNativeSocketEnginePrivate::InvalidProxyTypeString
 			webSocketServer.setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
-#endif
 			webSocketServer.listen(QHostAddress(QHostAddress::LocalHost));
 			const quint16 serverPort = webSocketServer.serverPort();
 
@@ -369,10 +366,8 @@ class test_RemoteConnector
 			config.setLocalCertificate(pair.getCertificate());
 			webSocketServer.setSslConfiguration(config);
 
-#ifndef QT_NO_NETWORKPROXY
 			// Listening with proxy leads to socket error QNativeSocketEnginePrivate::InvalidProxyTypeString
 			webSocketServer.setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
-#endif
 			webSocketServer.listen(QHostAddress(QHostAddress::LocalHost));
 			const quint16 serverPort = webSocketServer.serverPort();
 

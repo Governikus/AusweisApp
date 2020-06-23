@@ -104,8 +104,7 @@ ColumnLayout {
 		iconSource: "qrc:/images/desktop/info_manual.svg"
 		//: LABEL DESKTOP_QML
 		buttonText: qsTr("Open website") + SettingsModel.translationTrigger
-		//: LABEL DESKTOP_QML
-		buttonTooltip: qsTr("Help") + SettingsModel.translationTrigger
+		buttonTooltip: ApplicationModel.onlineHelpUrl("index")
 		buttonIconSource: "qrc:///images/link_external.svg"
 		onClicked: ApplicationModel.openOnlineHelp("index")
 	}

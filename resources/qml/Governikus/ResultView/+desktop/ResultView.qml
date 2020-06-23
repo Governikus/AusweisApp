@@ -11,6 +11,7 @@ import Governikus.TitleBar 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.LogModel 1.0
 import Governikus.Type.SettingsModel 1.0
 
 
@@ -24,10 +25,13 @@ SectionPage {
 	}
 
 	signal emailButtonPressed()
-	property alias emailButtonVisible: emailButton.visible
+	property alias supportButtonsVisible: supportButtonsLayout.visible
 	property alias text: resultText.text
+	property alias header: resultHeader.text
 	property int resultType: ResultView.Type.IsSuccess
 	property alias buttonType: button.buttonType
+	property alias popupText: detailedResultPopup.text
+	property alias popupTitle: detailedResultPopup.title
 
 	Accessible.name: qsTr("Result view") + SettingsModel.translationTrigger
 	Accessible.description: qsTr("This is the result of an authentication.") + SettingsModel.translationTrigger
@@ -56,6 +60,22 @@ SectionPage {
 		}
 
 		GText {
+			id: resultHeader
+
+			visible: text !== ""
+			Layout.alignment: Qt.AlignHCenter
+			Layout.maximumWidth: Style.dimens.max_text_width
+
+			activeFocusOnTab: true
+
+			horizontalAlignment: Text.AlignHCenter
+			verticalAlignment: Text.AlignVCenter
+			textStyle: Style.text.header_inverse
+
+			FocusFrame {}
+		}
+
+		GText {
 			id: resultText
 
 			visible: text !== ""
@@ -63,26 +83,49 @@ SectionPage {
 			Layout.maximumWidth: Style.dimens.max_text_width
 
 			activeFocusOnTab: true
-			Accessible.name: resultText.text
 
 			horizontalAlignment: Text.AlignHCenter
 			verticalAlignment: Text.AlignVCenter
-			textStyle: Style.text.title_inverse
+			textStyle: resultHeader.visible ? Style.text.header_secondary_inverse : Style.text.header_inverse
 
 			FocusFrame {}
 		}
 
-		GButton {
-			id: emailButton
+		RowLayout {
+			id: supportButtonsLayout
 
 			visible: false
+			Layout.fillWidth: true
 			Layout.alignment: Qt.AlignHCenter
 
-			icon.source: "qrc:///images/provider/mail.svg"
-			//: LABEL DESKTOP_QML
-			text: qsTr("Send email") + SettingsModel.translationTrigger
-			onClicked: baseItem.emailButtonPressed()
+			GButton {
+				icon.source: "qrc:///images/provider/mail.svg"
+				//: LABEL DESKTOP_QML
+				text: qsTr("Send email") + SettingsModel.translationTrigger
+				onClicked: baseItem.emailButtonPressed()
+			}
+
+			GButton {
+				icon.source: "qrc:/images/desktop/info_application_log.svg"
+				//: LABEL DESKTOP_QML
+				text: qsTr("Save logfile") + SettingsModel.translationTrigger
+				onClicked: {
+					LogModel.setLogfile(0)
+					let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogfileDate())
+					appWindow.openSaveFileDialog(LogModel.saveCurrentLogfile, filenameSuggestion, qsTr("Logfiles"), "log")
+				}
+			}
+
+			GButton {
+				visible: popupTitle !== "" || popupText !== ""
+
+				icon.source: "qrc:/images/desktop/main_info.svg"
+				//: LABEL DESKTOP_QML
+				text: qsTr("See details") + SettingsModel.translationTrigger
+				onClicked: detailedResultPopup.open()
+			}
 		}
+
 
 		NavigationButton {
 			id: button
@@ -96,5 +139,11 @@ SectionPage {
 			buttonType: NavigationButton.Type.Forward
 			onClicked: baseItem.nextView(SectionPage.Views.Main)
 		}
+	}
+
+	ConfirmationPopup {
+		id: detailedResultPopup
+
+		style: ConfirmationPopup.PopupStyle.OkButton
 	}
 }

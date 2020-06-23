@@ -144,7 +144,7 @@ ResponseApduResult IosCard::transmit(const CommandApdu& pCmd)
 	const QWeakPointer<QByteArray> weakBuffer = resultBuffer;
 
 	Q_ASSERT([mCard->mNfcTag conformsToProtocol:@protocol(NFCISO7816Tag)]);
-	const auto tag = static_cast<id<NFCISO7816Tag> >(mCard->mNfcTag);
+	const auto tag = static_cast<id<NFCISO7816Tag>>(mCard->mNfcTag);
 	auto* apdu = [[NFCISO7816APDU alloc] initWithData: pCmd.getBuffer().toNSData()];
 	[tag sendCommandAPDU: apdu completionHandler: ^(NSData* responseData, uint8_t sw1, uint8_t sw2, NSError* error){
 	    // By referencing weakBuffer here, it will be copied into the Block. If the handler outlives the caller, resultBuffer won't exist anymore.

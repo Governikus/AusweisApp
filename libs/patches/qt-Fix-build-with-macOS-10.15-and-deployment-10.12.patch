@@ -1,0 +1,37 @@
+From 4df28b1a8bc64ddbc3eaeb921c31a48bd6ce13a0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
+Date: Thu, 26 Mar 2020 12:52:22 +0100
+Subject: [PATCH] Fix build with macOS 10.15 and deployment 10.12
+
+io/qfilesystemengine_unix.cpp:1420:9: error: 'futimens' is only available on macOS 10.13 or newer [-Werror,-Wunguarded-availability-new]
+     if (futimens(fd, ts) == -1) {
+         ^~~~~~~~
+ /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/stat.h:396:9: note: 'futimens' has been marked as being introduced in macOS 10.13 here, but the deployment target is macOS 10.12.0
+ int     futimens(int __fd, const struct timespec __times[2]) __API_AVAILABLE(macosx(10.13), ios(11.0), tvos(11.0), watchos(4.0));
+         ^
+ io/qfilesystemengine_unix.cpp:1420:9: note: enclose 'futimens' in a __builtin_available check to silence this warning
+     if (futimens(fd, ts) == -1) {
+         ^~~~~~~~
+
+Change-Id: Ib52adf7b1ec4f1057d8cb260a00da509429cfaed
+---
+ src/corelib/configure.json | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git x/qtbase/src/corelib/configure.json y/qtbase/src/corelib/configure.json
+index de8d26a12b..4de6cc19f3 100644
+--- x/qtbase/src/corelib/configure.json
++++ y/qtbase/src/corelib/configure.json
+@@ -343,7 +343,8 @@
+                     "# Block futimens() on Apple platforms unless it's available on ALL",
+                     "# deployment targets. This simplifies the logic at the call site",
+                     "# dramatically, as it isn't strictly needed compared to futimes().",
+-                    "darwin: QMAKE_CXXFLAGS += -Werror=unguarded-availability"
++                    "darwin: QMAKE_CXXFLAGS += -Werror=unguarded-availability -Werror=unguarded-availability-new",
++                    "CONFIG += warn_on"
+                 ]
+             }
+         },
+-- 
+2.26.0
+

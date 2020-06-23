@@ -5,6 +5,7 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
+import QtQuick.Window 2.3
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -58,6 +59,27 @@ SectionPage {
 
 			LanguageSelectionPopup {
 				id: popup
+			}
+		}
+
+		SettingsEntry {
+			visible: Constants.is_layout_android
+			width: parent.usableWidth
+			//: LABEL ANDROID
+			title: qsTr("Screen orientation") + SettingsModel.translationTrigger
+			description: (Screen.primaryOrientation === Qt.LandscapeOrientation
+				//: LABEL ANDROID
+				? qsTr("Landscape")
+				//: LABEL ANDROID
+				: qsTr("Portrait")
+			) + SettingsModel.translationTrigger
+			icon: Screen.primaryOrientation === Qt.LandscapeOrientation ? "qrc:///images/android/stay_primary_landscape-24px.svg" : "qrc:///images/android/stay_primary_portrait-24px.svg"
+			tintIcon: true
+
+			onClicked: orientationPopup.open()
+
+			ScreenOrientationSelectionPopup {
+				id: orientationPopup
 			}
 		}
 
@@ -122,7 +144,7 @@ SectionPage {
 			//: LABEL ANDROID IOS
 			title: qsTr("Remote card reader") + SettingsModel.translationTrigger
 			//: LABEL ANDROID IOS
-			description: qsTr("Click here to use another smartphone as a card reader") + SettingsModel.translationTrigger
+			description: qsTr("Configure remote service for another device") + SettingsModel.translationTrigger
 			onClicked: baseItem.firePush(remoteServiceSettings)
 
 			Component {
@@ -145,6 +167,17 @@ SectionPage {
 			width: parent.usableWidth
 
 			//: LABEL ANDROID IOS
+			title: qsTr("History") + SettingsModel.translationTrigger
+			//: LABEL ANDROID IOS
+			description: qsTr("Save authentication history") + SettingsModel.translationTrigger
+			checked: SettingsModel.historyEnabled
+			onCheckedChanged: SettingsModel.historyEnabled = checked
+		}
+
+		LabeledSwitch {
+			width: parent.usableWidth
+
+			//: LABEL ANDROID IOS
 			title: qsTr("Shuffle keypad buttons") + SettingsModel.translationTrigger
 			//: LABEL ANDROID IOS
 			description: qsTr("Randomize the order of the on screen keypad buttons") + SettingsModel.translationTrigger
@@ -157,22 +190,138 @@ SectionPage {
 			width: parent.usableWidth
 
 			//: LABEL ANDROID IOS
-			title: qsTr("Privacy keypad") + SettingsModel.translationTrigger
+			title: qsTr("Keypad animations") + SettingsModel.translationTrigger
 			//: LABEL ANDROID IOS
-			description: qsTr("Avoid visual feedback in the on screen keypad") + SettingsModel.translationTrigger
-			checked: SettingsModel.visualPrivacy
-			onCheckedChanged: SettingsModel.visualPrivacy = checked
+			description: qsTr("Visual feedback when pressing keypad buttons") + SettingsModel.translationTrigger
+			checked: !SettingsModel.visualPrivacy
+			onCheckedChanged: SettingsModel.visualPrivacy = !checked
 		}
 
-		LabeledSwitch {
+		Column {
+			visible: SettingsModel.advancedSettings
 			width: parent.usableWidth
 
-			//: LABEL ANDROID IOS
-			title: qsTr("History") + SettingsModel.translationTrigger
-			//: LABEL ANDROID IOS
-			description: qsTr("Save authentification history") + SettingsModel.translationTrigger
-			checked: SettingsModel.historyEnabled
-			onCheckedChanged: SettingsModel.historyEnabled = checked
+			spacing: parent.spacing
+
+			TitledSeparator {
+				width: parent.width
+
+				//: LABEL ANDROID IOS
+				title: qsTr("CAN allowed mode") + SettingsModel.translationTrigger
+			}
+
+			LabeledSwitch {
+				width: parent.width
+
+				//: LABEL ANDROID IOS
+				title: qsTr("Support CAN allowed mode") + SettingsModel.translationTrigger
+				//: LABEL ANDROID IOS
+				description: qsTr("Allow the id card to be used with only the CAN") + SettingsModel.translationTrigger
+				checked: SettingsModel.enableCanAllowed
+				onCheckedChanged: SettingsModel.enableCanAllowed = checked
+			}
+
+			LabeledSwitch {
+				width: parent.width
+
+				//: LABEL ANDROID IOS
+				title: qsTr("Skip rights page") + SettingsModel.translationTrigger
+				//: LABEL ANDROID IOS
+				description: qsTr("Do not show the rights page, when in can allowed mode") + SettingsModel.translationTrigger
+				enabled: SettingsModel.enableCanAllowed
+				checked: SettingsModel.skipRightsOnCanAllowed
+				onCheckedChanged: SettingsModel.skipRightsOnCanAllowed = checked
+			}
+		}
+
+		Column {
+			visible: plugin.debugBuild
+			width: parent.usableWidth
+
+			spacing: parent.spacing
+
+			TitledSeparator {
+				width: parent.width
+
+				//: LABEL ANDROID IOS
+				title: qsTr("Developer Options") + SettingsModel.translationTrigger
+			}
+
+			LabeledSwitch {
+				width: parent.width
+
+				//: LABEL ANDROID IOS
+				title: qsTr("Testmode for the self-authentication") + SettingsModel.translationTrigger
+				//: LABEL ANDROID IOS
+				description: qsTr("Use the test environment during a self-authentication") + SettingsModel.translationTrigger
+
+				checked: SettingsModel.useSelfauthenticationTestUri
+				onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
+			}
+
+			LabeledSwitch {
+				width: parent.width
+
+				//: LABEL ANDROID IOS
+				title: qsTr("Developer Mode") + SettingsModel.translationTrigger
+				//: LABEL ANDROID IOS
+				description: qsTr("Use a more tolerant mode") + SettingsModel.translationTrigger
+				checked: SettingsModel.developerMode
+				onCheckedChanged: SettingsModel.developerMode = checked
+			}
+
+			TitledSeparator {
+				width: parent.width
+
+				//: LABEL ANDROID IOS
+				title: qsTr("Layout style") + SettingsModel.translationTrigger
+			}
+
+			GRadioButton {
+				//: LABEL ALL_PLATFORMS
+				text: qsTr("iOS") + SettingsModel.translationTrigger
+				checked: plugin.platformStyle === text.toLowerCase()
+				onCheckedChanged: if (checked) { plugin.applyPlatformStyle(text.toLowerCase()) }
+			}
+
+			GRadioButton {
+				//: LABEL ALL_PLATFORMS
+				text: qsTr("Android") + SettingsModel.translationTrigger
+				checked: plugin.platformStyle === text.toLowerCase()
+				onCheckedChanged: if (checked) { plugin.applyPlatformStyle(text.toLowerCase()) }
+			}
+
+			GRadioButton {
+				//: LABEL ALL_PLATFORMS
+				text: qsTr("Tablet, Android") + SettingsModel.translationTrigger
+				checked: plugin.platformStyle === text.toLowerCase()
+				onCheckedChanged: if (checked) { plugin.applyPlatformStyle(text.toLowerCase()) }
+			}
+
+			TitledSeparator {
+				width: parent.width
+
+				//: LABEL ANDROID IOS
+				title: qsTr("Create dummy entries") + SettingsModel.translationTrigger
+			}
+
+			GButton {
+				//: LABEL ALL_PLATFORMS
+				text: qsTr("Logfile") + SettingsModel.translationTrigger
+				onClicked: {
+					LogModel.saveDummyLogfile()
+					ApplicationModel.showFeedback("Created new logfile.")
+				}
+			}
+
+			GButton {
+				//: LABEL ALL_PLATFORMS
+				text: qsTr("History") + SettingsModel.translationTrigger
+				onClicked: {
+					HistoryModel.createDummyEntry()
+					ApplicationModel.showFeedback("Created new history entry.")
+				}
+			}
 		}
 	}
 }

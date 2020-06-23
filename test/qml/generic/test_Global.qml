@@ -180,4 +180,12 @@ TestCase {
 			", parent);
 		item.destroy();
 	}
+
+	function test_load_ProxyCredentialsPopup() {
+		var item = createTemporaryQmlObject("
+			import Governikus.Global 1.0;
+			ProxyCredentialsPopup {}
+			", parent);
+		item.destroy();
+	}
 }

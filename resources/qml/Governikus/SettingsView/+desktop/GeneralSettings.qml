@@ -148,4 +148,37 @@ ColumnLayout {
 			borderColor: Style.color.focus_indicator
 		}
 	}
+
+	GSeparator {
+		visible: customProxySetting.visible
+
+		Layout.fillWidth: true
+	}
+
+	GText {
+		visible: customProxySetting.visible
+
+		activeFocusOnTab: true
+
+		//: LABEL DESKTOP_QML
+		text: qsTr("Network") + SettingsModel.translationTrigger
+		textStyle: Style.text.header_accent
+
+		FocusFrame {
+			borderColor: Style.color.focus_indicator
+		}
+	}
+
+	ToggleableOption {
+		id: customProxySetting
+
+		visible: SettingsModel.customProxyAttributesPresent
+
+		activeFocusOnTab: true
+
+		//: LABEL DESKTOP_QML
+		text: qsTr("Use the proxy (%1) specified during the installation.").arg(SettingsModel.customProxyUrl) + SettingsModel.translationTrigger
+		checked: SettingsModel.useCustomProxy
+		onCheckedChanged: SettingsModel.useCustomProxy = checked
+	}
 }

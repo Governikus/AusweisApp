@@ -111,23 +111,6 @@ Item {
 				height: Style.dimens.high_contrast_item_border
 				color: Style.color.high_contrast_item_border
 			}
-
-			GText {
-				id: providerText
-
-				anchors.fill: parent
-				anchors.leftMargin: Constants.text_spacing
-				anchors.rightMargin: Constants.text_spacing
-
-				horizontalAlignment: Text.AlignHCenter
-				verticalAlignment: Text.AlignVCenter
-
-				text: provider.homepageBase
-
-				elide: Text.ElideRight
-				maximumLineCount: 1
-				textStyle: Style.text.hint_inverse
-			}
 		}
 	}
 

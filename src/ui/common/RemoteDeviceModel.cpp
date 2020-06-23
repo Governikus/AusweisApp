@@ -16,8 +16,8 @@
 
 using namespace governikus;
 
-RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceName, const QString& pId, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry)
-	: mDeviceName(pDeviceName)
+RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceNameEscaped, const QString& pId, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry)
+	: mDeviceName(pDeviceNameEscaped)
 	, mId(pId)
 	, mPaired(false)
 	, mNetworkVisible(false)
@@ -26,11 +26,12 @@ RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceName, const
 	, mLastConnected()
 	, mRemoteDeviceListEntry(pRemoteDeviceListEntry)
 {
+	Q_ASSERT(!mDeviceName.contains(QLatin1Char('<')));
 }
 
 
-RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceName, const QString& pId, bool pNetworkVisible, bool pConnected, bool pSupported, const QDateTime& pLastConnected, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry)
-	: mDeviceName(pDeviceName)
+RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceNameEscaped, const QString& pId, bool pNetworkVisible, bool pConnected, bool pSupported, const QDateTime& pLastConnected, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry)
+	: mDeviceName(pDeviceNameEscaped)
 	, mId(pId)
 	, mPaired(true)
 	, mNetworkVisible(pNetworkVisible)
@@ -39,11 +40,12 @@ RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceName, const
 	, mLastConnected(pLastConnected)
 	, mRemoteDeviceListEntry(pRemoteDeviceListEntry)
 {
+	Q_ASSERT(!mDeviceName.contains(QLatin1Char('<')));
 }
 
 
-RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceName)
-	: mDeviceName(pDeviceName)
+RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceNameEscaped)
+	: mDeviceName(pDeviceNameEscaped)
 	, mId()
 	, mPaired(false)
 	, mNetworkVisible(false)
@@ -52,6 +54,7 @@ RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceName)
 	, mLastConnected()
 	, mRemoteDeviceListEntry(nullptr)
 {
+	Q_ASSERT(!mDeviceName.contains(QLatin1Char('<')));
 }
 
 
@@ -61,7 +64,7 @@ const QSharedPointer<RemoteDeviceListEntry> RemoteDeviceModelEntry::getRemoteDev
 }
 
 
-QString RemoteDeviceModelEntry::getDeviceName() const
+QString RemoteDeviceModelEntry::getDeviceNameEscaped() const
 {
 	return mDeviceName;
 }
@@ -267,7 +270,7 @@ void RemoteDeviceModel::updatePairedReaders()
 			supported = true;
 		}
 		auto modelEntry = RemoteDeviceModelEntry(
-				pairedReader.getName(),
+				pairedReader.getNameEscaped(),
 				pairedReader.getFingerprint(),
 				visible,
 				connected,
@@ -327,7 +330,7 @@ QVector<RemoteDeviceModelEntry> RemoteDeviceModel::presentReaders() const
 	for (auto deviceListEntry : announcingRemoteDevices)
 	{
 		const auto& deviceDescriptor = deviceListEntry->getRemoteDeviceDescriptor();
-		auto modelEntry = RemoteDeviceModelEntry(deviceDescriptor.getIfdName(), deviceDescriptor.getIfdId(), deviceListEntry);
+		auto modelEntry = RemoteDeviceModelEntry(RemoteServiceSettings::escapeDeviceName(deviceDescriptor.getIfdName()), deviceDescriptor.getIfdId(), deviceListEntry);
 		presentReaders.append(modelEntry);
 	}
 
@@ -405,11 +408,11 @@ QVariant RemoteDeviceModel::data(const QModelIndex& pIndex, int pRole) const
 			}
 			else
 			{
-				return reader.getDeviceName();
+				return reader.getDeviceNameEscaped();
 			}
 
 		case REMOTE_DEVICE_NAME:
-			return reader.getDeviceName();
+			return reader.getDeviceNameEscaped();
 
 		case REMOTE_DEVICE_STATUS:
 			return getStatus(reader);
@@ -569,9 +572,16 @@ void RemoteDeviceModel::forgetDevice(const QString& pDeviceId)
 }
 
 
-QString RemoteDeviceModel::getEmptyListDescriptionString() const
+QString RemoteDeviceModel::getEmptyListDescriptionStringQml() const
 {
-	const QString& url = HelpAction::getOnlineUrl(QStringLiteral("readerDeviceTab"));
+	return getEmptyListDescriptionString(false);
+}
+
+
+QString RemoteDeviceModel::getEmptyListDescriptionString(bool pWidgetUiHelp) const
+{
+	const QString& onlineHelpSection = pWidgetUiHelp ? QStringLiteral("readerDeviceTab") : QStringLiteral("settingsRemoteReader");
+	const QString& url = HelpAction::getOnlineUrl(onlineHelpSection, pWidgetUiHelp);
 	//: Is embedded in a sentence.
 	const QString& hyperlink = QStringLiteral("<a href=\"%1\">%2</a>").arg(url, tr("online help"));
 	//: INFO ALL_PLATFORMS No smartphone with enabled remote service was found on the same network.

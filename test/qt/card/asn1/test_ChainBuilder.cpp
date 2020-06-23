@@ -39,7 +39,6 @@ class test_ChainBuilder
 		return pChild.at(0) == pParent.at(1);
 	}
 
-
 	private Q_SLOTS:
 		void testEmpty()
 		{

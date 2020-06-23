@@ -44,12 +44,11 @@ class ApplicationModel
 	Q_PROPERTY(bool bluetoothAvailable READ isBluetoothAvailable CONSTANT)
 	Q_PROPERTY(bool locationPermissionRequired READ locationPermissionRequired NOTIFY fireBluetoothReaderChanged)
 
-	Q_PROPERTY(qreal dpiScale READ getDpiScale CONSTANT)
 	Q_PROPERTY(qreal scaleFactor READ getScaleFactor WRITE setScaleFactor NOTIFY fireScaleFactorChanged)
 	Q_PROPERTY(bool wifiEnabled READ isWifiEnabled NOTIFY fireWifiEnabledChanged)
 
 	Q_PROPERTY(QString currentWorkflow READ getCurrentWorkflow NOTIFY fireCurrentWorkflowChanged)
-	Q_PROPERTY(bool foundSelectedReader READ foundSelectedReader NOTIFY fireSelectedReaderChanged)
+	Q_PROPERTY(int availableReader READ getAvailableReader NOTIFY fireAvailableReaderChanged)
 
 	Q_PROPERTY(QString feedback READ getFeedback NOTIFY fireFeedbackChanged)
 
@@ -59,7 +58,7 @@ class ApplicationModel
 	ReaderManagerPlugInInfo getFirstPlugInInfo(ReaderManagerPlugInType pType) const;
 
 	private:
-		qreal mDpiScale;
+		constexpr static qreal DEFAULT_SCALE_FACTOR = 0.6;
 		qreal mScaleFactor;
 		WifiInfo mWifiInfo;
 		bool mWifiEnabled;
@@ -113,12 +112,11 @@ class ApplicationModel
 		bool locationPermissionRequired() const;
 
 		bool isWifiEnabled() const;
-		qreal getDpiScale() const;
 		qreal getScaleFactor() const;
 		void setScaleFactor(qreal pScaleFactor);
 
 		QString getCurrentWorkflow() const;
-		bool foundSelectedReader() const;
+		int getAvailableReader() const;
 
 		QString getFeedback() const;
 
@@ -134,7 +132,10 @@ class ApplicationModel
 		Q_INVOKABLE void showSettings(const QString& pAction);
 		Q_INVOKABLE void showFeedback(const QString& pMessage, bool pReplaceExisting = false);
 		Q_INVOKABLE void keepScreenOn(bool pActive);
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+		Q_INVOKABLE QString onlineHelpUrl(const QString& pHelpSectionName);
 		Q_INVOKABLE void openOnlineHelp(const QString& pHelpSectionName);
+#endif
 		Q_INVOKABLE QString stripHtmlTags(QString pString) const;
 #ifdef Q_OS_IOS
 		Q_INVOKABLE void showAppStoreRatingDialog();
@@ -153,7 +154,7 @@ class ApplicationModel
 		void fireBluetoothReaderChanged();
 
 		void fireCurrentWorkflowChanged();
-		void fireSelectedReaderChanged();
+		void fireAvailableReaderChanged();
 
 		void fireScaleFactorChanged();
 		void fireWifiEnabledChanged();

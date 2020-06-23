@@ -2,22 +2,27 @@ categorizedJobsView('Review')
 {
 	jobs
 	{
-		regex('(.)*_Review_(.)*')
+		regex(/.*_Review_.*/)
 	}
 
 	categorizationCriteria
 	{
-		regexGroupingRule('([a-z|0-9|.])+_Review_(.)*', 'Branches')
+		regexGroupingRule(/^[a-z0-9.]+_Review_/, 'Branches')
 	}
 
 	categorizationCriteria
 	{
-		regexGroupingRule('Review_Libs', 'Libraries')
+		regexGroupingRule(/Review_Libs/, 'Libraries')
 	}
 
 	categorizationCriteria
 	{
-		regexGroupingRule('(.)*__Review_Trigger', 'Sub-Trigger')
+		regexGroupingRule(/__Review_Trigger/, 'Sub-Trigger')
+	}
+
+	categorizationCriteria
+	{
+		regexGroupingRule(/^[A-Z]\w*_Review_/, 'Tools')
 	}
 
 	columns

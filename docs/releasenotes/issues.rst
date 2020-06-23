@@ -1,6 +1,17 @@
 Bekannte Fehler
 ===============
 
+  - Bei der Nutzung eines Smartphones als Kartenleser mit aktiviertem
+    Tastaturmodus kann bei einer Authentisierung nicht in die PIN-Änderung
+    gewechselt werden, wenn nur eine fünfstellige PIN vorhanden ist.
+
+  - Wird der Screenreader aktiviert, während die AusweisApp2 bereits läuft,
+    kann es zu Fehlverhalten kommen.
+
+
+Windows / macOS
+---------------
+
 .. important::
     Auf Windows wird beim Update einer Version der AusweisApp2 älter
     als Version 1.16.0 auf eine aktuelle Version der AusweisApp2 die
@@ -9,11 +20,13 @@ Bekannte Fehler
     die ältere Version manuell. Danach kann die bereits installierte,
     aktuelle Version aufgerufen werden.
 
-Die nachfolgende Liste bezieht sich auf die aktuelle Version der AusweisApp2.
-
-  - Mit der NFC-Schnittstelle des iPhone 7 (Plus) unter iOS 13.0 und 13.1 werden
-    viele Ausweise nicht erkannt (hauptsächlich NFC-A) und es kommt zu
-    Abbrüchen der Authentisierung. Aktualisieren Sie auf iOS 13.2 oder höher.
+.. important::
+    Auf Windows kann es beim Update einer Version der AusweisApp2 älter
+    als Version 1.20.0 auf eine aktuelle Version der AusweisApp2 dazu kommen,
+    dass die Einstellung der Firewall verloren geht und dadurch ein "Smartphone
+    als Kartenleser" nicht mehr erkannt wird. Bitte gehen Sie in die
+    Systemsteuerung Ihres Endgeräts und deinstallieren Sie die AusweisApp2
+    um danach eine Neuinstallation durchzuführen.
 
   - Auf Windows 10 Plattformen mit aktivierter Benutzerkontensteuerung kann
     es bei Benutzern mit eingeschränkten Berechtigungen zu Problemen mit der
@@ -29,18 +42,8 @@ Die nachfolgende Liste bezieht sich auf die aktuelle Version der AusweisApp2.
     oder eine PIN-Änderung mit Komfort-Kartenleser durchgeführt wird, kann es
     unter Windows und macOS zu einem Absturz kommen.
 
-  - Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle
-    auf Android und iOS.
-
-  - Längere Texte können unter Android u.U. bei kleinen Bildschirmgrößen
-    abgeschnitten sein.
-
   - Unter macOS wird der Hinweis bei falscher PIN-Bestätigung während der
     PIN-Änderung nur sehr kurz angezeigt.
-
-  - Bei der Nutzung eines entfernten Kartenlesers mit aktiviertem Tastaturmodus
-    kann bei einer Authentisierung nicht in die PIN-Änderung gewechselt werden,
-    wenn nur eine 5-stellige PIN vorhanden ist.
 
   - Unter Windows wird bei der neuen grafischen Oberfläche der
     "Datei speichern unter"-Dialog nicht automatisch bei Beginn einer
@@ -54,13 +57,23 @@ Die nachfolgende Liste bezieht sich auf die aktuelle Version der AusweisApp2.
 
   - Bei einigen Links werden die Steuerzeichen vom Bildschirmleser vorgelesen.
 
-  - Wird der Screenreader aktiviert, während die AusweisApp2 bereits läuft,
-    kann es zu Fehlverhalten kommen.
 
-  - Die Online-Hilfe für die neue grafische Oberfläche ist noch nicht verfügbar.
+Android / iOS
+-------------
+
+  - Mit der NFC-Schnittstelle des iPhone 7 (Plus) unter iOS 13.0 und 13.1 werden
+    viele Ausweise nicht erkannt (hauptsächlich NFC-A) und es kommt zu
+    Abbrüchen der Authentisierung. Aktualisieren Sie auf iOS 13.2 oder höher.
+
+  - Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle
+    auf Android und iOS.
+
+  - Längere Texte können unter Android u.U. bei kleinen Bildschirmgrößen
+    abgeschnitten sein.
 
 
-Die nachfolgende Liste bezieht sich auf die alte grafische Oberfläche.
+Alte grafische Oberfläche
+-------------------------
 
   - Bei Erhöhung der Schriftgröße über 175% kommt es zur Nutzungseinschränkung.
 

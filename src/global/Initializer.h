@@ -18,7 +18,7 @@ class Initializer
 {
 	private:
 		friend class ::test_Initializer;
-		std::list<std::function<void()> > mRegisteredFunctions;
+		std::list<std::function<void()>> mRegisteredFunctions;
 
 	protected:
 		Initializer() = default;

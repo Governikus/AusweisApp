@@ -158,11 +158,11 @@ void RemoteReaderManagerPlugIn::onContextEstablished(const QString& pIfdName, co
 	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	auto info = settings.getRemoteInfo(pId);
 	bool initialPairing = false;
-	if (info.getName().isEmpty())
+	if (info.getNameEscaped().isEmpty())
 	{
 		initialPairing = true;
 	}
-	info.setName(pIfdName);
+	info.setNameUnescaped(pIfdName);
 	settings.updateRemoteInfo(info);
 
 	const auto& remoteDispatcher = mDispatcherList[pId];

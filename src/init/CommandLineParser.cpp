@@ -31,7 +31,7 @@ CommandLineParser::CommandLineParser()
 	, mOptionNoLogFile(QStringLiteral("no-logfile"), QStringLiteral("Disable logfile."))
 	, mOptionNoLogHandler(QStringLiteral("no-loghandler"), QStringLiteral("Disable default log handler."))
 	, mOptionShowWindow(QStringLiteral("show"), QStringLiteral("Show window on startup."))
-	, mOptionProxy(QStringLiteral("no-proxy"), QStringLiteral("Disable system proxy."))
+	, mOptionProxy(QStringLiteral("no-proxy"), QStringLiteral("Ignore proxy settings."))
 	, mOptionUi(QStringLiteral("ui"), QStringLiteral("Use given UI plugin."), UILoader::getInstance().getDefault().join(QLatin1Char(',')))
 	, mOptionPort(QStringLiteral("port"), QStringLiteral("Use listening port."), QString::number(PortFile::cDefaultPort))
 {

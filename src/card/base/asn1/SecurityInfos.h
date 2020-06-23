@@ -33,23 +33,23 @@ class SecurityInfos
 	friend class QSharedPointer<SecurityInfos>;
 
 	const QByteArray mContentBytes;
-	const QVector<QSharedPointer<const SecurityInfo> > mSecurityInfos;
-	const QVector<QSharedPointer<const PaceInfo> > mPaceInfos;
-	const QVector<QSharedPointer<const ChipAuthenticationInfo> > mChipAuthenticationInfos;
+	const QVector<QSharedPointer<const SecurityInfo>> mSecurityInfos;
+	const QVector<QSharedPointer<const PaceInfo>> mPaceInfos;
+	const QVector<QSharedPointer<const ChipAuthenticationInfo>> mChipAuthenticationInfos;
 
 	SecurityInfos(const QByteArray& pBytes,
-			const QVector<QSharedPointer<const SecurityInfo> >& pSecurityInfos,
-			const QVector<QSharedPointer<const PaceInfo> >& pPaceInfos,
-			const QVector<QSharedPointer<const ChipAuthenticationInfo> >& pChipAuthenticationInfos);
+			const QVector<QSharedPointer<const SecurityInfo>>& pSecurityInfos,
+			const QVector<QSharedPointer<const PaceInfo>>& pPaceInfos,
+			const QVector<QSharedPointer<const ChipAuthenticationInfo>>& pChipAuthenticationInfos);
 
 	public:
 		static QSharedPointer<SecurityInfos> fromHex(const QByteArray& pHexString);
 		static QSharedPointer<SecurityInfos> decode(const QByteArray& pBytes);
 
 		const QByteArray& getContentBytes() const;
-		const QVector<QSharedPointer<const SecurityInfo> >& getSecurityInfos() const;
-		const QVector<QSharedPointer<const PaceInfo> >& getPaceInfos() const;
-		const QVector<QSharedPointer<const ChipAuthenticationInfo> >& getChipAuthenticationInfos() const;
+		const QVector<QSharedPointer<const SecurityInfo>>& getSecurityInfos() const;
+		const QVector<QSharedPointer<const PaceInfo>>& getPaceInfos() const;
+		const QVector<QSharedPointer<const ChipAuthenticationInfo>>& getChipAuthenticationInfos() const;
 };
 
 

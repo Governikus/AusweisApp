@@ -22,7 +22,7 @@ Betriebssysteme
 
   - Windows 10 (64bit)
 
-  - Android 5.0 und höher (x86, armeabi-v7a)
+  - Android 5.0 und höher (armeabi-v7a, arm64-v8a)
 
   - iOS 13 und höher
 
@@ -49,15 +49,15 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-  - Firefox 70
+  - Firefox 75
 
-  - Chrome 78
+  - Chrome 81
 
   - Internet Explorer 11
 
-  - Safari 13
+  - Safari 13.1
 
-  - Edge 44.5
+  - Edge 80
 
 
 
@@ -102,8 +102,8 @@ Details hierzu befinden sich auf der Homepage:
 https://www.ausweisapp.bund.de/mobile-geraete/
 
 
-Android
-"""""""
+Android / iOS
+"""""""""""""
 
 Browser
 ~~~~~~~
@@ -115,12 +115,11 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-  - Firefox Klar 8
+  - Chrome 81 (Android)
 
-  - Chrome 78
+  - Firefox 68 (Android)
 
-  - Android System WebView 73
-
+  - Safari 13.1 (iOS)
 
 
 Kartenleser

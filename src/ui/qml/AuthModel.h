@@ -27,6 +27,9 @@ class AuthModel
 	Q_PROPERTY(QString transactionInfo READ getTransactionInfo NOTIFY fireTransactionInfoChanged)
 	Q_PROPERTY(int progressValue READ getProgressValue NOTIFY fireProgressChanged)
 	Q_PROPERTY(QString progressMessage READ getProgressMessage NOTIFY fireProgressChanged)
+	Q_PROPERTY(QString errorHeader READ getErrorHeader NOTIFY fireResultChanged)
+	Q_PROPERTY(QString errorText READ getErrorText NOTIFY fireResultChanged)
+	Q_PROPERTY(QString statusCode READ getStatusCode NOTIFY fireResultChanged)
 
 	private:
 		QSharedPointer<AuthContext> mContext;
@@ -43,6 +46,9 @@ class AuthModel
 		const QString& getTransactionInfo() const;
 		int getProgressValue() const;
 		const QString getProgressMessage() const;
+		QString getErrorHeader() const;
+		QString getErrorText() const;
+		QString getStatusCode() const;
 
 		Q_INVOKABLE void setSkipRedirect(bool pSkipRedirect);
 

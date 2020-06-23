@@ -16,7 +16,7 @@ class ListItem
 	Q_OBJECT
 
 	public:
-		ListItem(QWidget* pParent = nullptr, Qt::WindowFlags pWindowFlags = 0);
+		ListItem(QWidget* pParent = nullptr);
 		virtual ~ListItem() override;
 
 		void paintEvent(QPaintEvent*) override;

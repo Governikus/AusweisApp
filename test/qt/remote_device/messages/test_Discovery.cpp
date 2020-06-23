@@ -156,8 +156,9 @@ class test_Discovery
 			QVERIFY(discovery.isIncomplete());
 			QCOMPARE(discovery.getType(), RemoteCardMessageType::UNDEFINED);
 
-			QCOMPARE(logSpy.count(), 1);
+			QCOMPARE(logSpy.count(), 2);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be REMOTE_IFD"));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Received ifdId is not a fingerprint. Interpretion as a certificate to create our own fingerprint failed"));
 		}
 
 
@@ -182,7 +183,8 @@ class test_Discovery
 			QVERIFY(!discovery.isIncomplete());
 			QCOMPARE(discovery.getContextHandle(), QString());
 
-			QCOMPARE(logSpy.count(), 0);
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Received ifdId is not a fingerprint. Interpretion as a certificate to create our own fingerprint failed"));
 		}
 
 
@@ -235,8 +237,57 @@ class test_Discovery
 			QVERIFY(discovery.isIncomplete());
 			QCOMPARE(discovery.getSupportedApis(), QVector<IfdVersion::Version>({IfdVersion::Version::v_test}));
 
+			QCOMPARE(logSpy.count(), 2);
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Received ifdId is not a fingerprint. Interpretion as a certificate to create our own fingerprint failed"));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of \"SupportedAPI\" should be of type \"string array\""));
+		}
+
+
+		void sameIfdId()
+		{
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+
+			const QByteArray messageHash(R"({
+											"IFDID": "0575e99867361c26442ece18bed6f955ab7dd269ae8f42d3a21af0e734c3d8d9",
+											"IFDName": "Sony Xperia Z5 compact",
+											"SupportedAPI": ["IFDInterface_WebSocket_v0", "IFDInterface_WebSocket_v_test"],
+											"msg": "REMOTE_IFD",
+											"port": 24728
+										 })");
+			const QJsonObject& objHash = QJsonDocument::fromJson(messageHash).object();
+			const Discovery discoveryHash(objHash);
+			QCOMPARE(logSpy.count(), 0);
+
+			const QByteArray messageCert(R"({
+											"IFDID": "-----BEGIN CERTIFICATE-----
+												MIIC4zCCAcsCBEQvMpowDQYJKoZIhvcNAQELBQAwNDEUMBIGA1UEAwwLQXVzd2Vp
+												c0FwcDIxHDAaBgNVBAUTEzY0MTgwMjY3MTE5MTA5MjY2MzQwIhgPMTk3MDAxMDEw
+												MDAwMDBaGA85OTk5MTIzMTIzNTk1OVowNDEUMBIGA1UEAwwLQXVzd2Vpc0FwcDIx
+												HDAaBgNVBAUTEzY0MTgwMjY3MTE5MTA5MjY2MzQwggEiMA0GCSqGSIb3DQEBAQUA
+												A4IBDwAwggEKAoIBAQDGJ9C76Cb8iHuaZJxcFY0NpNllcAK5JKcrigKBki7EvF9z
+												5Q/MNek2pxwTMp5SilUDJOkwgcTdm7liC/Zx+lPX8MZjhWxV73DGt9DDyJh91ypl
+												6B8vZbpJlL83Vo4C4BLBG6ZaElPpyTitWWKQ4BFUoH0h2utsNFV7FHz+1oZcvhv0
+												gQuzd7gQaVV6mzCePRn+4qgxYSXSJ8Ix21udgT3LoHDOBrOWSIt0g/Q1mkzJcnaC
+												EnS2s6Ib0xPY5PsL1YN/dZn88/gs9Za4rZSBGIIDrpCt5WCkYbkg45LwXLmaPUrg
+												uuFIFIR0HH4pxgajLHpMgYaszxkg4SkdxwJ8vIytAgMBAAEwDQYJKoZIhvcNAQEL
+												BQADggEBAB4grwHZ8NMrs3vRInJQc3ftYDCAjDPjjTg/G4BVz07DmlQZpFyPfInb
+												UaKfpMlaEd1EoRuNIxC796+rZhy+j97DoLkT1qnPP30GLwlZaVZeOCKIIQ+tGjUU
+												cWhhIC6kRCPIQAKxKDNGIUwBAkwludieGa7Ytl7qmnnJDMNe+Ox7Sf+UOa12bJKH
+												d27MYoWMfecJdTmF8xXQ7EEYjMwWHd5t5tJG9AVgzhO8zC+iJTqc9I34sIa8+9WE
+												oQu+/VZgDkJaSdDJ4LqVFIvUy3CFGh6ahDVsHGC5kTDm5EQWh3puWR0AkIjUWMPi
+												xU/nr0Jsab99VgX4/nnCW92v/DIRc1c=
+												-----END CERTIFICATE-----",
+											"IFDName": "Sony Xperia Z5 compact",
+											"SupportedAPI": ["IFDInterface_WebSocket_v0", "IFDInterface_WebSocket_v_test"],
+											"msg": "REMOTE_IFD",
+											"port": 24728
+										 })");
+			const QJsonObject& objCert = QJsonDocument::fromJson(messageCert).object();
+			const Discovery discoveryCert(objCert);
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"SupportedAPI\" should be of type \"string array\""));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Received ifdId is not a fingerprint. Interpretion as a certificate to create our own fingerprint succeeded"));
+
+			QCOMPARE(discoveryHash.getIfdId(), discoveryCert.getIfdId());
 		}
 
 

@@ -80,24 +80,31 @@ bool StateGetSelfAuthenticationData::checkSslConnectionAndSaveCertificate(const 
 				context->addCertificateData(pUrl, pCertificate);
 			};
 
-	const auto& issuerName = TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate());
+	GlobalStatus::ExternalInfoMap infoMap {
+		{GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate())}
+	};
+	if (!mReply.isNull())
+	{
+		infoMap.insert(GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString());
+	}
+
 	switch (CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), getContext()->getRefreshUrl(), context->getDidAuthenticateEac1(), context->getDvCvc(), saveCertificateFunc))
 	{
 		case CertificateChecker::CertificateStatus::Good:
 			break;
 
 		case CertificateChecker::CertificateStatus::Unsupported_Algorithm_Or_Length:
-			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length, issuerName));
+			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length, infoMap));
 			return false;
 
 		case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
-			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description, issuerName));
+			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description, infoMap));
 			return false;
 	}
 
 	if (!TlsChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
-		reportCommunicationError(GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length);
+		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, infoMap});
 		return false;
 	}
 
@@ -109,7 +116,13 @@ void StateGetSelfAuthenticationData::onSslErrors(const QList<QSslError>& pErrors
 {
 	if (TlsChecker::containsFatalError(mReply, pErrors))
 	{
-		reportCommunicationError(GlobalStatus(GlobalStatus::Code::Network_Ssl_Establishment_Error));
+		GlobalStatus::ExternalInfoMap infoMap;
+		if (!mReply.isNull())
+		{
+			infoMap.insert(GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString());
+		}
+
+		reportCommunicationError({GlobalStatus::Code::Network_Ssl_Establishment_Error, infoMap});
 	}
 }
 

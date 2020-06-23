@@ -73,7 +73,6 @@ class test_HistoryModel
 		return infos;
 	}
 
-
 	private Q_SLOTS:
 		void init()
 		{

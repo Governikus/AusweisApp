@@ -100,7 +100,7 @@ void RemoteDispatcher::saveRemoteNameInSettings(const QString& pName)
 {
 	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	auto info = settings.getRemoteInfo(getId());
-	info.setName(pName);
+	info.setNameUnescaped(pName);
 	settings.updateRemoteInfo(info);
 }
 

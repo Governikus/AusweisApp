@@ -1,0 +1,26 @@
+From 8b04c8961fd3b93416674fe03b341b53da974d90 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
+Date: Tue, 4 Feb 2020 09:37:39 +0100
+Subject: [PATCH] Fix llvm strip
+
+Change-Id: If5c5a961757255c4e233b0935887adb6faa3564d
+---
+ src/tools/androiddeployqt/main.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtbase/src/tools/androiddeployqt/main.cpp y/qtbase/src/tools/androiddeployqt/main.cpp
+index 6a6f8034e3..332975bca9 100644
+--- x/qtbase/src/tools/androiddeployqt/main.cpp
++++ y/qtbase/src/tools/androiddeployqt/main.cpp
+@@ -1915,7 +1915,7 @@ bool stripFile(const Options &options, const QString &fileName)
+     }
+ 
+     if (options.useLLVM)
+-        strip = QString::fromLatin1("%1 -strip-all %2").arg(shellQuote(strip), shellQuote(fileName));
++        strip = QString::fromLatin1("%1 --strip-all %2").arg(shellQuote(strip), shellQuote(fileName));
+     else
+         strip = QString::fromLatin1("%1 %2").arg(shellQuote(strip), shellQuote(fileName));
+ 
+-- 
+2.25.0
+

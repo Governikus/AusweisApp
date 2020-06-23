@@ -82,7 +82,7 @@ class test_RemoteServiceSettings
 			RemoteServiceSettings settings;
 			QVERIFY(settings.getTrustedCertificates().isEmpty());
 
-			const QList<QSslCertificate> certs{
+			const QList<QSslCertificate> certs {
 				pair1.getCertificate(), pair1.getCertificate(), pair2.getCertificate()
 			};
 			settings.setTrustedCertificates(certs);
@@ -222,8 +222,10 @@ class test_RemoteServiceSettings
 			QCOMPARE(settings.getRemoteInfos().size(), 0);
 
 			const auto& current = QDateTime::currentDateTime();
-			RemoteServiceSettings::RemoteInfo a(QString("a"), current, QString("dummy for A"));
-			RemoteServiceSettings::RemoteInfo b(QString("b"), current, QString("dummy for B"));
+			RemoteServiceSettings::RemoteInfo a(QStringLiteral("a"), current);
+			a.setNameUnescaped(QStringLiteral("dummy for A"));
+			RemoteServiceSettings::RemoteInfo b(QStringLiteral("b"), current);
+			b.setNameUnescaped(QStringLiteral("dummy for B"));
 
 			QVERIFY(a == a);
 			QVERIFY(b == b);
@@ -236,10 +238,10 @@ class test_RemoteServiceSettings
 			QCOMPARE(first, a);
 			QCOMPARE(second, b);
 			QCOMPARE(first.getFingerprint(), QString("a"));
-			QCOMPARE(first.getName(), QString("dummy for A"));
+			QCOMPARE(first.getNameEscaped(), QStringLiteral("dummy for A"));
 			QCOMPARE(first.getLastConnected(), current);
 			QCOMPARE(second.getFingerprint(), QString("b"));
-			QCOMPARE(second.getName(), QString("dummy for B"));
+			QCOMPARE(second.getNameEscaped(), QStringLiteral("dummy for B"));
 			QCOMPARE(second.getLastConnected(), current);
 
 			settings.setRemoteInfos({});
@@ -261,12 +263,12 @@ class test_RemoteServiceSettings
 			settings.addTrustedCertificate(a);
 			settings.addTrustedCertificate(b);
 			QCOMPARE(settings.getRemoteInfos().size(), 2);
-			QCOMPARE(settings.getRemoteInfos().at(0).getName(), QString());
+			QCOMPARE(settings.getRemoteInfos().at(0).getNameEscaped(), QString());
 
 			auto aInfo = settings.getRemoteInfo(a);
-			aInfo.setName(QString("dummy"));
+			aInfo.setNameUnescaped(QString("dummy"));
 			QVERIFY(settings.updateRemoteInfo(aInfo));
-			QCOMPARE(settings.getRemoteInfos().at(0).getName(), QString("dummy"));
+			QCOMPARE(settings.getRemoteInfos().at(0).getNameEscaped(), QString("dummy"));
 			QCOMPARE(settings.getRemoteInfos().size(), 2);
 
 			auto c = KeyPair::generate().getCertificate();
@@ -276,12 +278,12 @@ class test_RemoteServiceSettings
 
 			settings.addTrustedCertificate(c);
 			cInfo = settings.getRemoteInfo(c);
-			cInfo.setName("c");
+			cInfo.setNameUnescaped("c");
 			settings.updateRemoteInfo(cInfo);
 			QCOMPARE(settings.getRemoteInfos().size(), 3);
-			QCOMPARE(settings.getRemoteInfos().at(0).getName(), QString("dummy"));
-			QCOMPARE(settings.getRemoteInfos().at(1).getName(), QString());
-			QCOMPARE(settings.getRemoteInfos().at(2).getName(), QString("c"));
+			QCOMPARE(settings.getRemoteInfos().at(0).getNameEscaped(), QString("dummy"));
+			QCOMPARE(settings.getRemoteInfos().at(1).getNameEscaped(), QString());
+			QCOMPARE(settings.getRemoteInfos().at(2).getNameEscaped(), QString("c"));
 			QCOMPARE(settings.getRemoteInfos().at(2).getFingerprint(),
 					QString::fromLatin1(c.digest(QCryptographicHash::Sha256).toHex()));
 		}
@@ -297,11 +299,11 @@ class test_RemoteServiceSettings
 			settings.addTrustedCertificate(a);
 
 			auto aInfo = settings.getRemoteInfo(a);
-			aInfo.setName("hallo");
+			aInfo.setNameUnescaped("<b>hallo</b>");
 			QVERIFY(settings.updateRemoteInfo(aInfo));
 
 			QCOMPARE(settings.getRemoteInfos().size(), 1);
-			QCOMPARE(settings.getRemoteInfos().at(0).getName(), QString("hallo"));
+			QCOMPARE(settings.getRemoteInfos().at(0).getNameEscaped(), QStringLiteral("&lt;b&gt;hallo&lt;/b&gt;"));
 		}
 
 

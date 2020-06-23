@@ -1,12 +1,11 @@
-FROM alpine:3.11
+FROM alpine:3.12
 MAINTAINER Governikus KG <ausweisapp2@governikus.com>
 
-ARG JENKINS_SWARM_VERSION=3.17
+ARG JENKINS_SWARM_VERSION=3.21
 ENV EXECUTOR=3 LABELS= NAME= PASSWORD=
 
 RUN adduser governikus -s /bin/sh -D
-RUN apk --no-cache add openjdk8-jre tini mercurial py3-hglib wget && \
-    ln -s /usr/bin/python3 /usr/bin/python
+RUN apk --no-cache add openjdk8-jre tini mercurial py3-hglib wget
 RUN wget -O /swarm-client.jar https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/$JENKINS_SWARM_VERSION/swarm-client-$JENKINS_SWARM_VERSION.jar
 
 ADD swarm.sh /

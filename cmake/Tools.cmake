@@ -81,7 +81,7 @@ IF(UNCRUSTIFY)
 	STRING(REPLACE "uncrustify " "" UNCRUSTIFY_VERSION ${UNCRUSTIFY_VERSION})
 	STRING(REPLACE "Uncrustify-" "" UNCRUSTIFY_VERSION ${UNCRUSTIFY_VERSION})
 
-	SET(UNCRUSTIFY_NEEDED_VERSION "0.70.1")
+	SET(UNCRUSTIFY_NEEDED_VERSION "0.71.0")
 	IF("${UNCRUSTIFY_VERSION}" STRLESS "${UNCRUSTIFY_NEEDED_VERSION}")
 		MESSAGE(WARNING "Uncrustify seems to be too old. Use at least ${UNCRUSTIFY_NEEDED_VERSION}... you are using: ${UNCRUSTIFY_VERSION}")
 	ELSE()
@@ -135,8 +135,8 @@ FIND_PROGRAM(CONVERT convert CMAKE_FIND_ROOT_PATH_BOTH)
 IF(CONVERT)
 	SET(BACKGROUND_COLOR "#dcebf6")
 
-	ADD_CUSTOM_TARGET(npaicons.docs
-		COMMAND ${CONVERT} -background transparent -units PixelsPerInch -resample 320 -resize 96x96 npa.svg npa_docs.png
+	ADD_CUSTOM_TARGET(npaicons.general
+		COMMAND ${CONVERT} -background transparent -units PixelsPerInch -resample 320 -resize 96x96 npa.svg npa.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	ADD_CUSTOM_TARGET(npaicons.win
@@ -259,7 +259,7 @@ IF(CONVERT)
 		COMMAND ${CONVERT} -alpha off -background '${BACKGROUND_COLOR}' -resize 1024x1024 npa_beta.svg beta/Images.xcassets/AppIcon.appiconset/icon1024.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/iOS/appIcons)
 
-	ADD_CUSTOM_TARGET(npaicons DEPENDS npaicons.docs npaicons.win npaicons.android.playstore npaicons.android.legacy npaicons.android.legacy.beta npaicons.android.legacy.preview npaicons.android.adaptive.background npaicons.android.adaptive.foreground npaicons.android.adaptive.foreground.beta npaicons.android.adaptive.foreground.preview npaicons.ios.launchimage npaicons.ios.launchimage.beta npaicons.ios npaicons.ios.beta)
+	ADD_CUSTOM_TARGET(npaicons DEPENDS npaicons.general npaicons.win npaicons.android.playstore npaicons.android.legacy npaicons.android.legacy.beta npaicons.android.legacy.preview npaicons.android.adaptive.background npaicons.android.adaptive.foreground npaicons.android.adaptive.foreground.beta npaicons.android.adaptive.foreground.preview npaicons.ios.launchimage npaicons.ios.launchimage.beta npaicons.ios npaicons.ios.beta)
 
 	ADD_CUSTOM_TARGET(readerimages
 		COMMAND ${CONVERT} -background none -resize 512x512 img_RemoteReader.svg ${RESOURCES_DIR}/updatable-files/reader/img_RemoteReader.png
@@ -273,8 +273,8 @@ FIND_PROGRAM(PNGQUANT pngquant CMAKE_FIND_ROOT_PATH_BOTH)
 IF(PNGQUANT)
 	SET(PNGQUANT_CMD pngquant -f -o)
 
-	ADD_CUSTOM_TARGET(pngquant.docs
-		COMMAND ${PNGQUANT_CMD} npa_docs.png -- npa_docs.png
+	ADD_CUSTOM_TARGET(pngquant.general
+		COMMAND ${PNGQUANT_CMD} npa.png -- npa.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	ADD_CUSTOM_TARGET(pngquant.android.legacy
@@ -388,7 +388,7 @@ IF(PNGQUANT)
 		COMMAND ${PNGQUANT_CMD} icon1024.png -- icon1024.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/iOS/appIcons/beta/Images.xcassets/AppIcon.appiconset)
 
-	ADD_CUSTOM_TARGET(pngquant DEPENDS pngquant.docs pngquant.android.legacy pngquant.android.legacy.beta pngquant.android.legacy.preview pngquant.android.adaptive.background pngquant.android.adaptive.foreground pngquant.android.adaptive.foreground.beta pngquant.android.adaptive.foreground.preview pngquant.ios.launchimage pngquant.ios.launchimage.beta pngquant.ios pngquant.ios.beta)
+	ADD_CUSTOM_TARGET(pngquant DEPENDS pngquant.general pngquant.android.legacy pngquant.android.legacy.beta pngquant.android.legacy.preview pngquant.android.adaptive.background pngquant.android.adaptive.foreground pngquant.android.adaptive.foreground.beta pngquant.android.adaptive.foreground.preview pngquant.ios.launchimage pngquant.ios.launchimage.beta pngquant.ios pngquant.ios.beta)
 
 	ADD_CUSTOM_TARGET(pngquant.readerimages
 		COMMAND ${PNGQUANT_CMD} img_RemoteReader.png -- img_RemoteReader.png
@@ -462,6 +462,30 @@ IF(SED)
 		COMMAND ${SED} -E 's/xlink:href=\\"[\\.\\/]+/xlink:href=\\":\\//' ${SRC} > ${TARGET_DIR}/${SRC_NAME})
 	ENDFOREACH(SRC)
 
+ENDIF()
+
+IF(APPLE AND NOT IOS AND CONVERT)
+	FIND_PROGRAM(ICONUTIL iconutil)
+	IF(ICONUTIL)
+
+		SET(BUNDLE_ICON_SET_DIR ${CMAKE_CURRENT_BINARY_DIR}/bundle_icons.iconset)
+
+		ADD_CUSTOM_TARGET(npaicons.macos.bundle_icons
+				COMMAND ${CMAKE_COMMAND} -E make_directory ${BUNDLE_ICON_SET_DIR}
+				COMMAND ${CONVERT} -background transparent -resize 16x16 appIcon.svg ${BUNDLE_ICON_SET_DIR}/icon_16x16.png
+				COMMAND ${CONVERT} -background transparent -resize 32x32 appIcon.svg ${BUNDLE_ICON_SET_DIR}/icon_16x16@2x.png
+				COMMAND ${CONVERT} -background transparent -resize 32x32 appIcon.svg ${BUNDLE_ICON_SET_DIR}/icon_32x32.png
+				COMMAND ${CONVERT} -background transparent -resize 64x64 appIcon.svg ${BUNDLE_ICON_SET_DIR}/icon_32x32@2x.png
+				COMMAND ${CONVERT} -background transparent -resize 128x128 appIcon.svg ${BUNDLE_ICON_SET_DIR}/icon_128x128.png
+				COMMAND ${CONVERT} -background transparent -resize 256x256 appIcon.svg ${BUNDLE_ICON_SET_DIR}/icon_128x128@2x.png
+				COMMAND ${CONVERT} -background transparent -resize 256x256 appIcon.svg ${BUNDLE_ICON_SET_DIR}/icon_256x256.png
+				COMMAND ${CONVERT} -background transparent -resize 512x512 appIcon.svg ${BUNDLE_ICON_SET_DIR}/icon_256x256@2x.png
+				COMMAND ${CONVERT} -background transparent -resize 512x512 appIcon.svg ${BUNDLE_ICON_SET_DIR}/icon_512x512.png
+				COMMAND ${CONVERT} -background transparent -resize 1024x1024 appIcon.svg ${BUNDLE_ICON_SET_DIR}/icon_512x512@2x.png
+				COMMAND ${ICONUTIL} -c icns --output bundle_icons.icns ${BUNDLE_ICON_SET_DIR}
+				COMMAND ${CMAKE_COMMAND} -E remove_directory ${BUNDLE_ICON_SET_DIR}
+				WORKING_DIRECTORY ${RESOURCES_DIR}/images/macos)
+	ENDIF()
 ENDIF()
 
 INCLUDE(Sphinx)

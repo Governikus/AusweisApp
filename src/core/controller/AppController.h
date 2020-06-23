@@ -74,9 +74,7 @@ class AppController final
 		void fireHideUi();
 		void fireShowUserInformation(const QString& pInformationMessage);
 		void fireShowReaderSettings();
-#ifndef QT_NO_NETWORKPROXY
 		void fireProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
-#endif
 		void fireApplicationActivated();
 		void fireUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted);
 		void fireUiDominationReleased();

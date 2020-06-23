@@ -195,7 +195,7 @@ SectionPage {
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID IOS
-					text: qsTr("Both devices have to be connected to the same wifi network") + SettingsModel.translationTrigger
+					text: qsTr("Both devices have to be connected to the same WiFi network") + SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_header
 					font.bold: true
 					horizontalAlignment: Text.AlignHCenter
@@ -664,7 +664,7 @@ SectionPage {
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID IOS
-					text: qsTr("Tap on Wifi") + SettingsModel.translationTrigger
+					text: qsTr("Tap on WiFi") + SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
 					textStyle: Style.text.tutorial_header
 				}
@@ -838,7 +838,7 @@ SectionPage {
 						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 						//: LABEL ANDROID IOS
-						text: qsTr("6 digits long PIN") + SettingsModel.translationTrigger
+						text: qsTr("six digits long PIN") + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_header
 						font.bold: true
 						horizontalAlignment: Text.AlignHCenter
@@ -890,7 +890,7 @@ SectionPage {
 						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 						//: LABEL ANDROID IOS
-						text: qsTr("This is only possible if you have exchanged the 5 digits long transport PIN with a 6 digits long personal PIN beforehand.") + SettingsModel.translationTrigger
+						text: qsTr("This is only possible if you have exchanged the five digits long Transport PIN with a six digits long personal PIN beforehand.") + SettingsModel.translationTrigger
 						textStyle: Style.text.tutorial_content
 						font.bold: true
 						horizontalAlignment: Text.AlignLeft

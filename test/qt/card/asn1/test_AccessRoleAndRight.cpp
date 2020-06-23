@@ -43,7 +43,6 @@ class test_AccessRoleAndRight
 		QTest::newRow("WriteResidencePermitII") << AccessRight::WRITE_DG20;
 	}
 
-
 	private Q_SLOTS:
 		void checkAccessRightNames_data()
 		{

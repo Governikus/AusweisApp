@@ -2,7 +2,7 @@ listView('Releases')
 {
 	jobs
 	{
-		regex('Release(.)*')
+		regex(/Release.*/)
 	}
 
 	columns

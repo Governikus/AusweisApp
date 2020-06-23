@@ -37,7 +37,6 @@ class test_SignatureChecker
 		return CVCertificate::fromHex(bytes);
 	}
 
-
 	private Q_SLOTS:
 		void init()
 		{

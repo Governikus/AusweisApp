@@ -23,7 +23,7 @@ class RemoteConnectorImpl
 
 	private:
 		const int mConnectTimeoutMs;
-		QVector<QSharedPointer<ConnectRequest> > mPendingRequests;
+		QVector<QSharedPointer<ConnectRequest>> mPendingRequests;
 
 		void removeRequest(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor);
 

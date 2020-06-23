@@ -23,7 +23,7 @@ class Eac2InputType
 
 	private:
 		QByteArrayList mCvCertificatesAsBinary;
-		QVector<QSharedPointer<const CVCertificate> > mCvCertificates;
+		QVector<QSharedPointer<const CVCertificate>> mCvCertificates;
 		QString mSignature;
 		QString mEphemeralPublicKey;
 		void appendCvcert(const QSharedPointer<const CVCertificate>& pCert);
@@ -37,7 +37,7 @@ class Eac2InputType
 
 		const QString& getSignature() const;
 		const QString& getEphemeralPublicKey() const;
-		const QVector<QSharedPointer<const CVCertificate> >& getCvCertificates() const;
+		const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
 		const QByteArrayList& getCvCertificatesAsBinary() const;
 };
 

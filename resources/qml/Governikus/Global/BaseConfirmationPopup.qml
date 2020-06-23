@@ -52,6 +52,7 @@ Popup {
 	}
 
 	anchors.centerIn: Overlay.overlay
+	contentWidth: Overlay.overlay ? Math.min(0.75 * Overlay.overlay.width, Style.dimens.max_text_width) : 0
 	margins: Constants.pane_padding
 	padding: 0
 	topPadding: Constants.pane_padding
@@ -63,59 +64,80 @@ Popup {
 	background: Rectangle {
 		color: Style.color.background_popup
 		radius: Style.dimens.corner_radius_popup
+		border.color: Style.color.border
+		border.width: Style.dimens.popup_border
+
+		FocusPoint {
+			anchors.margins: 4 * ApplicationModel.scaleFactor
+
+			scope: contentItem
+		}
 	}
 
-	ColumnLayout {
-		id: contentLayout
+	Item {
+		id: contentItem
 
-		width: root.availableWidth
-		spacing: Constants.pane_padding
+		implicitWidth: root.availableWidth
+		implicitHeight: contentLayout.height
 
-		GText {
-			visible: text !== ""
-			Layout.fillWidth: true
-			Layout.rightMargin: Constants.pane_padding
-			Layout.leftMargin: Constants.pane_padding
+		focus: true
+		activeFocusOnTab: true
+		Accessible.role: Accessible.Grouping
+		Accessible.name: qsTr("Dialog") + SettingsModel.translationTrigger
+		Keys.onEnterPressed: if (style & ConfirmationPopup.PopupStyle.OkButton) root.accept()
+		Keys.onReturnPressed: if (style & ConfirmationPopup.PopupStyle.OkButton) root.accept()
 
-			activeFocusOnTab: true
+		ColumnLayout {
+			id: contentLayout
 
-			text: root.title
-			textStyle: root.headerTextStyle
-			font.bold: true
-			horizontalAlignment: root.horizontalTextAlignment
+			width: parent.width
+			spacing: Constants.pane_padding
 
-			FocusFrame {}
-		}
+			GText {
+				visible: text !== ""
+				Layout.fillWidth: true
+				Layout.rightMargin: Constants.pane_padding
+				Layout.leftMargin: Constants.pane_padding
 
-		GText {
-			visible: text !== ""
-			Layout.fillWidth: true
-			Layout.rightMargin: Constants.pane_padding
-			Layout.leftMargin: Constants.pane_padding
+				activeFocusOnTab: true
 
-			activeFocusOnTab: true
+				text: root.title
+				textStyle: root.headerTextStyle
+				font.bold: true
+				horizontalAlignment: root.horizontalTextAlignment
 
-			text: root.text
-			horizontalAlignment: root.horizontalTextAlignment
+				FocusFrame {}
+			}
 
-			FocusFrame {}
-		}
+			GText {
+				visible: text !== ""
+				Layout.fillWidth: true
+				Layout.rightMargin: Constants.pane_padding
+				Layout.leftMargin: Constants.pane_padding
 
-		Column {
-			id: customContent
-			visible: children.length > 0
+				activeFocusOnTab: true
 
-			Layout.fillWidth: true
-			Layout.rightMargin: Constants.pane_padding
-			Layout.leftMargin: Constants.pane_padding
-		}
+				text: root.text
+				horizontalAlignment: root.horizontalTextAlignment
 
-		Item {
-			id: buttonContainer
+				FocusFrame {}
+			}
 
-			Layout.fillWidth: true
-			height: childrenRect.height
+			Column {
+				id: customContent
+				visible: children.length > 0
+
+				Layout.fillWidth: true
+				Layout.rightMargin: Constants.pane_padding
+				Layout.leftMargin: Constants.pane_padding
+			}
+
+			Item {
+				id: buttonContainer
+
+				Layout.fillWidth: true
+				height: childrenRect.height
+			}
 		}
 	}
 }
-

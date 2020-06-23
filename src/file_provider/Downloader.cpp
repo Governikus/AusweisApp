@@ -132,6 +132,7 @@ void Downloader::onNetworkReplyFinished()
 		return;
 	}
 
+	const auto hasError = mCurrentReply->error() != QNetworkReply::NoError;
 	const auto statusCode = NetworkManager::getLoggedStatusCode(mCurrentReply, spawnMessageLogger(network));
 	switch (statusCode)
 	{
@@ -144,7 +145,16 @@ void Downloader::onNetworkReplyFinished()
 				lastModified = QDateTime::currentDateTime();
 			}
 
-			Q_EMIT fireDownloadSuccess(mCurrentRequest->url(), lastModified, mCurrentReply->readAll());
+			const auto readData = mCurrentReply->readAll();
+			if (!hasError && readData.size() > 0)
+			{
+				Q_EMIT fireDownloadSuccess(mCurrentRequest->url(), lastModified, readData);
+			}
+			else
+			{
+				qCCritical(fileprovider).nospace() << "Received no data." << mCurrentReply->errorString() << " [" << textForLog << "]";
+				Q_EMIT fireDownloadFailed(url, NetworkManager::toStatus(mCurrentReply).getStatusCode());
+			}
 			break;
 		}
 
@@ -157,7 +167,7 @@ void Downloader::onNetworkReplyFinished()
 			break;
 
 		default:
-			if (mCurrentReply->error() != QNetworkReply::NoError)
+			if (hasError)
 			{
 				qCCritical(fileprovider).nospace() << mCurrentReply->errorString() << " [" << textForLog << "]";
 				Q_EMIT fireDownloadFailed(url, NetworkManager::toStatus(mCurrentReply).getStatusCode());

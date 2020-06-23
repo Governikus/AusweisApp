@@ -11,6 +11,8 @@
 
 #include <QtTest>
 
+#include <algorithm>
+
 
 using namespace governikus;
 
@@ -250,12 +252,12 @@ class test_ProviderConfigurationParser
 		{
 			QTest::addColumn<int>("count");
 
-			const int desktop = 62;
+			const int desktop = 80;
 			QTest::newRow("win") << desktop;
 			QTest::newRow("mac") << desktop;
 			QTest::newRow("linux") << desktop;
 			QTest::newRow("android") << desktop;
-			QTest::newRow("ios") << 30;
+			QTest::newRow("ios") << 41;
 		}
 
 
@@ -264,10 +266,12 @@ class test_ProviderConfigurationParser
 			QFETCH(int, count);
 
 			QByteArray data = TestFileHelper::readFile(QStringLiteral(":/updatable-files/supported-providers.json"));
-
 			const auto providers = ProviderConfigurationParser::parseProvider(data, QLatin1String(QTest::currentDataTag()));
-
 			QCOMPARE(providers.size(), count);
+
+			auto sortedProviders = providers;
+			std::sort(sortedProviders.begin(), sortedProviders.end());
+			QCOMPARE(providers, sortedProviders);
 		}
 
 

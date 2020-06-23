@@ -12,7 +12,7 @@ contains all supported arguments, which are explained below.
 
 .. code-block:: winbatch
 
-  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALL_ROOT="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false UPDATECHECK=false ONSCREENKEYBOARD=true HISTORY=false
+  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALL_ROOT="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true HISTORY=false ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true
 
 INSTALL_ROOT
   States the installation directory. If not specified, the folder
@@ -55,8 +55,25 @@ ASSISTANT
 
 TRANSPORTPINREMINDER
   Prior to the first authentication, the user is asked once whether they have
-  changed their transport PIN. Setting TRANSPORTPINREMINDER=false deactivates this
+  changed their Transport PIN. Setting TRANSPORTPINREMINDER=false deactivates this
   reminder. Not specified, the reminder is activated (true).
+
+CUSTOMPROXYTYPE
+  Part of a proxy configuration. Valid values are SOCKS5 and HTTP.
+  All proxy parameters have to be set to use the proxy (see
+  CUSTOMPROXYHOST and CUSTOMPROXYPORT). You can disable the proxy after installation
+  with a checkbox in the settings.
+
+CUSTOMPROXYHOST
+  Part of a proxy configuration. Sets the Host of the proxy. All proxy parameters have
+  to be set to use the proxy (see CUSTOMPROXYTYPE and CUSTOMPROXYPORT).
+  You can disable the proxy after installation with a checkbox in the settings.
+
+CUSTOMPROXYPORT
+  Part of a proxy configuration. Sets the port of the proxy. Only values between
+  1 and 65536 are valid. All proxy parameters have to be set to use the proxy (see
+  CUSTOMPROXYTYPE and CUSTOMPROXYHOST). You can disable the proxy after installation
+  with a checkbox in the settings.
 
 UPDATECHECK
   Upon opening the user interface of the AusweisApp2, an update check is started,
@@ -71,13 +88,26 @@ UPDATECHECK
 ONSCREENKEYBOARD
   An on-screen keyboard is available to enter PIN, CAN or PUK. It is deactivated or
   activated by setting ONSCREENKEYBOARD to false or true. Users are able to adjust
-  the settings.
+  the setting.
+
+SHUFFLESCREENKEYBOARD
+  If the on-screen keyboard is activated, the number keys can be arranged at random.
+  By setting SHUFFLESCREENKEYBOARD to false or true, the random arrangement can be
+  deactivated or activated. Users are able to adjust the setting.
 
 HISTORY
   Each authentication is saved in the history. No personal data is saved, only the
   time of authentication, the provider and the selected fields (without
   content). Indicating HISTORY as false or true, the history function is
   deactivated or activated. Users are able to adjust the settings.
+
+ENABLECANALLOWED
+  Enables support for the CAN allowed mode. If the provider got issued a corresponding authorization
+  certificate the ID card can be read by entering the CAN instead of the PIN.
+
+SKIPRIGHTSONCANALLOWED
+  Skips the page with the authorization certificate in the CAN allowed mode and asks directly for
+  the CAN.
 
 Alternatively, Orca [#orca]_ can be used to create an MST file that defines the
 above arguments. The arguments are available in the "Directory" and "Property"
@@ -116,29 +146,50 @@ the file must be "com.governikus.AusweisApp2.plist". The content is shown below:
     <false/>
     <key>transportPinReminder</key>
     <false/>
-    <key>common.autoUpdateCheck</key>
+    <key>customProxyType</key>
+    <string>HTTP</string>
+    <key>customProxyHost</key>
+    <string>proxy.example.org</string>
+    <key>customProxyPort</key>
+    <integer>1337</integer>
+    <key>autoUpdateCheck</key>
     <false/>
-    <key>common.keylessPassword</key>
+    <key>keylessPassword</key>
+    <true/>
+    <key>shuffleScreenKeyboard</key>
     <true/>
     <key>history.enable</key>
     <false/>
+    <key>enableCanAllowed</key>
+    <true/>
+    <key>skipRightsOnCanAllowed</key>
+    <true/>
   </dict>
   </plist>
 
 The description for each value is applicable for both Windows and macOS,
 although the naming of the attributes differs, as shown in the following table:
 
-====================== ====================
-macOS                  Windows
-====================== ====================
-autoCloseWindow        AUTOHIDE
-remindToClose          REMINDTOCLOSE
-showSetupAssistant     ASSISTANT
-transportPinReminder   TRANSPORTPINREMINDER
-common.autoUpdateCheck UPDATECHECK
-common.keylessPassword ONSCREENKEYBOARD
-history.enable         HISTORY
-====================== ====================
+======================= =======================
+macOS                   Windows
+======================= =======================
+autoCloseWindow         AUTOHIDE
+remindToClose           REMINDTOCLOSE
+showSetupAssistant      ASSISTANT
+transportPinReminder    TRANSPORTPINREMINDER
+customProxyType         CUSTOMPROXYTYPE
+customProxyPort         CUSTOMPROXYPORT
+customProxyHost         CUSTOMPROXYHOST
+autoUpdateCheck         UPDATECHECK
+keylessPassword         ONSCREENKEYBOARD
+shuffleScreenKeyboard   SHUFFLESCREENKEYBOARD
+history.enable          HISTORY
+enableCanAllowed        ENABLECANALLOWED
+skipRightsOnCanAllowed  SKIPRIGHTSONCANALLOWED
+======================= =======================
+
+It might be necessary to force a reload of the data cached by the operating
+system: :code:`killall -u $USER cfprefsd`
 
 .. [#msiexecreturnvalues] https://docs.microsoft.com/en-us/windows/desktop/msi/error-codes
 .. [#standardarguments] https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options

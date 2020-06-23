@@ -108,7 +108,6 @@ class test_ServerMessageHandler
 			QVERIFY(!pContextHandle.isEmpty());
 		}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{

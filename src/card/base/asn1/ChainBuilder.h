@@ -23,7 +23,7 @@ template<typename T>
 class ChainBuilder
 {
 	protected:
-		QVector<QVector<T> > mChains;
+		QVector<QVector<T>> mChains;
 
 	private:
 		std::function<bool(const T& pChild, const T& pParent)> mIsChildFunc;
@@ -74,7 +74,6 @@ class ChainBuilder
 			return false;
 		}
 
-
 	public:
 		ChainBuilder(const QVector<T>& pAllElements, const std::function<bool(const T& pChild, const T& pParent)>& pIsChildFunc)
 			: mChains()
@@ -91,7 +90,7 @@ class ChainBuilder
 		}
 
 
-		const QVector<QVector<T> >& getChains() const
+		const QVector<QVector<T>>& getChains() const
 		{
 			return mChains;
 		}

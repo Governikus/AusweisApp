@@ -31,7 +31,6 @@ class test_UIPlugInJson
 			return QJsonObject();
 		}
 
-
 	private Q_SLOTS:
 		void cleanup()
 		{

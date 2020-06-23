@@ -55,7 +55,6 @@ class test_CVCertificateChainBuilder
 		return output;
 	}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{

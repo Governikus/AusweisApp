@@ -1,0 +1,204 @@
+{
+	"$schema": "https://json-schema.org/draft/2019-09/schema",
+	"title": "JSON schema for AusweisApp2's supported-providers.json file",
+	"type": "object",
+	"properties": {
+		"$schema": {
+			"type": "string"
+		},
+		"callcosts": {
+			"description": "Costs for calling telefon numbers",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"prefixes": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"pattern": "^[0-9]+$"
+						}
+					},
+					"free-seconds": {
+						"type": "integer"
+					},
+					"landline": {
+						"type": "object",
+						"properties": {
+							"per-call": {
+								"type": "number"
+							},
+							"per-minute": {
+								"type": "number"
+							}
+						},
+						"additionalProperties": false
+					},
+					"mobile": {
+						"type": "object",
+						"properties": {
+							"per-call": {
+								"type": "number"
+							},
+							"per-minute": {
+								"type": "number"
+							}
+						},
+						"additionalProperties": false
+					}
+				},
+				"required": [
+					"prefixes"
+				],
+				"additionalProperties": false
+			}
+		},
+		"provider": {
+			"description": "List of providers",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"shortName": {
+						"description": "Name of the provider displayed in the provider list for example",
+						"type": "object",
+						"properties": {
+							"": {
+								"type": "string"
+							}
+						},
+						"required": [
+							""
+						],
+						"additionalProperties": false
+					},
+					"longName": {
+						"description": "Complete name of the provider",
+						"type": "object",
+						"properties": {
+							"": {
+								"type": "string"
+							}
+						},
+						"required": [
+							""
+						],
+						"additionalProperties": false
+					},
+					"shortDescription": {
+						"type": "object",
+						"properties": {
+							"": {
+								"type": "string"
+							}
+						},
+						"required": [
+							""
+						],
+						"additionalProperties": false
+					},
+					"longDescription": {
+						"type": "object",
+						"properties": {
+							"": {
+								"type": "string"
+							}
+						},
+						"required": [
+							""
+						],
+						"additionalProperties": false
+					},
+					"subjectUrls": {
+						"description": "Foo",
+						"type": "array",
+						"items": {
+							"type": "string",
+							"format": "uri",
+							"pattern": "^https://"
+						}
+					},
+					"phone": {
+						"type": "string",
+						"pattern": "^\\+49 [0-9 ]{6,}$"
+					},
+					"mobileDesign": {
+						"type": "boolean"
+					},
+					"address": {
+						"type": "string",
+						"format": "uri",
+						"pattern": "^https://"
+					},
+					"homepage": {
+						"type": "string",
+						"format": "uri",
+						"pattern": "^https://"
+					},
+					"email": {
+						"type": "string",
+						"format": "email"
+					},
+					"postalAddress": {
+						"type": "string",
+						"pattern": "^([\\w\\. \\(\\)äöüÄÖÜß\\-\\/,:&–]|(<br\\/>))+$"
+					},
+					"category": {
+						"type": "string",
+						"enum": [
+							"citizen",
+							"finance",
+							"insurance",
+							"other"
+						]
+					},
+					"image": {
+						"type": "string",
+						"pattern": "\\.(jpg|png|svg)$"
+					},
+					"icon": {
+						"type": "string",
+						"pattern": "\\.(jpg|png|svg)$"
+					},
+					"subjectUrlInfo": {
+						"type": "string",
+						"minLength": 1
+					},
+					"exclude": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"enum": [
+								"ios"
+							]
+						}
+					}
+				},
+				"required": [
+					"shortName",
+					"address",
+					"homepage",
+					"category"
+				],
+				"oneOf": [
+					{
+						"required": [
+							"subjectUrls"
+						]
+					},
+					{
+						"required": [
+							"subjectUrlInfo"
+						]
+					}
+				],
+				"additionalProperties": false
+			}
+		}
+	},
+	"required": [
+		"callcosts",
+		"provider"
+	],
+	"additionalProperties": false
+}

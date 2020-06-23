@@ -4,7 +4,7 @@ def j = new Review
 	(
 		name: 'Docs',
 		label: 'Docs',
-		artifacts: 'build/docs/**/*.pdf,build/docs/**/*.tar.xz,build/docs/notes/singlehtml/**/appcast.html'
+		artifacts: 'build/*.pdf,build/docs/**/*.pdf,build/docs/**/*.tar.xz,build/docs/notes/singlehtml/**/appcast.html'
 	).generate(this)
 
 
@@ -14,7 +14,7 @@ j.with
 
 	steps
 	{
-		shell('cd source; python resources/jenkins/import.py')
+		shell('cd source; cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
 
 		shell('cd build; cmake -Werror=dev ../source -DCMAKE_BUILD_TYPE=release -Dtools.only=true')
 
@@ -31,5 +31,7 @@ j.with
 		shell('cd build; make inte.latex.pdf')
 
 		shell('cd build; make doc8')
+
+		shell('cd build; make license')
 	}
 }

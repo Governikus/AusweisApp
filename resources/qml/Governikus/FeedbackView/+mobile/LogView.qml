@@ -65,7 +65,7 @@ SectionPage
 			Accessible.description: qsTr("Select logfile from list.") + SettingsModel.translationTrigger
 
 			model: LogModel.logFiles
-			onActivated: LogModel.setLogfile(comboBox.currentIndex)
+			onCurrentIndexChanged: LogModel.setLogfile(currentIndex)
 		}
 	}
 

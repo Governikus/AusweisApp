@@ -24,6 +24,8 @@ Anwender
 
   - Unterstützung von OS X 10.11 wurde eingestellt.
 
+  - Unterstützung von macOS 10.15.
+
   - Unterstützung von der x86-Architektur unter Android
     wurde eingestellt.
 

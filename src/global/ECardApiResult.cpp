@@ -594,7 +594,8 @@ GlobalStatus ECardApiResult::toStatus() const
 	switch (getMajor())
 	{
 		case Major::Unknown:
-			return GlobalStatus(GlobalStatus::Code::Unknown_Error, message);
+			return {GlobalStatus::Code::Unknown_Error, {GlobalStatus::ExternalInformation::ECARDAPI_ERROR, message}
+			};
 
 		case Major::Ok:
 			if (isOk())
@@ -604,10 +605,11 @@ GlobalStatus ECardApiResult::toStatus() const
 			Q_FALLTHROUGH();
 
 		case Major::Error:
-			return GlobalStatus(toStatus(getMinor()), message, toStatus(d->mOrigin));
+			return {toStatus(getMinor()), {GlobalStatus::ExternalInformation::ECARDAPI_ERROR, message}, toStatus(d->mOrigin)};
 
 		case Major::Warning:
-			return GlobalStatus(GlobalStatus::Code::Paos_Unexpected_Warning, message);
+			return {GlobalStatus::Code::Paos_Unexpected_Warning, {GlobalStatus::ExternalInformation::ECARDAPI_ERROR, message}
+			};
 	}
 
 	Q_UNREACHABLE();

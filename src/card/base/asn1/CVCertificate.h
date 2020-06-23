@@ -47,15 +47,15 @@ using CVCertificate = struct cvcertificate_st
 {
 	CVCertificateBody* mBody;
 	SIGNATURE* mSignature;
-	QSharedPointer<ECDSA_SIG> mEcdsaSignature;
+	ECDSA_SIG* mEcdsaSignature;
 
-	static QVector<QSharedPointer<const cvcertificate_st> > fromHex(const QByteArrayList& pHexByteList);
+	static QVector<QSharedPointer<const cvcertificate_st>> fromHex(const QByteArrayList& pHexByteList);
 	static QSharedPointer<const cvcertificate_st> fromHex(const QByteArray& pHexBytes);
 	QByteArray encode() const;
 
 	const CVCertificateBody& getBody() const;
 	QByteArray getRawBody() const;
-	QSharedPointer<const ECDSA_SIG> getEcdsaSignature() const;
+	const ECDSA_SIG* getEcdsaSignature() const;
 	QByteArray getRawSignature() const;
 
 	bool isValidOn(const QDateTime& pValidationDate) const;
@@ -86,4 +86,4 @@ inline bool operator!=(const CVCertificate& pLeft, const CVCertificate& pRight)
 QDebug operator<<(QDebug pDbg, const governikus::CVCertificate& pCvc);
 QDebug operator<<(QDebug pDbg, const QSharedPointer<const governikus::CVCertificate>& pCvc);
 QDebug operator<<(QDebug pDbg, QSharedPointer<governikus::CVCertificate>& pCvc);
-QDebug operator<<(QDebug pDbg, const QVector<QSharedPointer<governikus::CVCertificate> >& pCvcs);
+QDebug operator<<(QDebug pDbg, const QVector<QSharedPointer<governikus::CVCertificate>>& pCvcs);

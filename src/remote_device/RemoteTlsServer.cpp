@@ -24,10 +24,8 @@ RemoteTlsServer::RemoteTlsServer()
 	: QTcpServer()
 	, mPsk()
 {
-#ifndef QT_NO_NETWORKPROXY
 	//listening with proxy leads to socket error QNativeSocketEnginePrivate::InvalidProxyTypeString
 	setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
-#endif
 }
 
 
@@ -81,10 +79,15 @@ void RemoteTlsServer::incomingConnection(qintptr pSocketDescriptor)
 
 		if (Q_LIKELY(mSocket->setSocketDescriptor(pSocketDescriptor)))
 		{
-			connect(mSocket.data(), QOverload<const QList<QSslError>&>::of(&QSslSocket::sslErrors),
-					this, &RemoteTlsServer::onSslErrors);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+			connect(mSocket.data(), &QAbstractSocket::errorOccurred, this, &RemoteTlsServer::onError);
+#else
 			connect(mSocket.data(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
 					this, &RemoteTlsServer::onError);
+#endif
+
+			connect(mSocket.data(), QOverload<const QList<QSslError>&>::of(&QSslSocket::sslErrors),
+					this, &RemoteTlsServer::onSslErrors);
 			connect(mSocket.data(), &QSslSocket::preSharedKeyAuthenticationRequired,
 					this, &RemoteTlsServer::onPreSharedKeyAuthenticationRequired);
 			connect(mSocket.data(), &QSslSocket::encrypted, this, &RemoteTlsServer::onEncrypted);

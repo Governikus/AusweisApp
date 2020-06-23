@@ -28,7 +28,6 @@ class FinalState
 			getContext()->setWorkflowFinished(true);
 		}
 
-
 	public:
 		explicit FinalState(const QSharedPointer<WorkflowContext>& pContext)
 			: AbstractState(pContext, false)

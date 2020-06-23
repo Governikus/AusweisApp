@@ -1,0 +1,65 @@
+From 682242433d10462b58c53f473eec3f9c0574aee8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tor=20Arne=20Vestb=C3=B8?= <torarnv@gmail.com>
+Date: Fri, 27 Mar 2020 11:53:35 +0100
+Subject: Pass SDK root to the linker as -isysroot, not -Wl,-syslibroot
+
+The former option to clang will result in more options to the linker,
+such as the newly introduced -platform_version, which writes the
+SDK version to the resulting binary. By using the syslibroot flag
+directly we were missing the platform version, and binaries were
+left without an SDK version set, resulting in failed validation
+of the binary. Going with the clang driver gives us the right
+behavior for free.
+
+Fixes: QTBUG-83100
+Change-Id: I98bc9ba644dae4bcc7a6a88481556bae185ce5fa
+Reviewed-by: Simon Hausmann <simon.hausmann@qt.io>
+Reviewed-by: Timur Pocheptsov <timur.pocheptsov@qt.io>
+---
+ configure                             | 5 +----
+ mkspecs/features/mac/default_post.prf | 4 ++--
+ 2 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git x/qtbase/configure y/qtbase/configure
+index ef7bad1bfc..f9407ef587 100755
+--- x/qtbase/configure
++++ y/qtbase/configure
+@@ -271,12 +271,9 @@ macSDKify()
+                 val=$(echo $sdk_val $(echo $val | cut -s -d ' ' -f 2-))
+                 echo "$var=$val"
+             ;;
+-            QMAKE_CFLAGS=*|QMAKE_CXXFLAGS=*)
++            QMAKE_CFLAGS=*|QMAKE_CXXFLAGS=*|QMAKE_LFLAGS=*)
+                 echo "$line -isysroot $sysroot $version_min_flag"
+             ;;
+-            QMAKE_LFLAGS=*)
+-                echo "$line -Wl,-syslibroot,$sysroot $version_min_flag"
+-            ;;
+             *)
+                 echo "$line"
+             ;;
+diff --git x/qtbase/mkspecs/features/mac/default_post.prf y/qtbase/mkspecs/features/mac/default_post.prf
+index 26bd3e2e98..a2eaf447d2 100644
+--- x/qtbase/mkspecs/features/mac/default_post.prf
++++ y/qtbase/mkspecs/features/mac/default_post.prf
+@@ -196,7 +196,7 @@ macx-xcode {
+                 -isysroot$$xcodeSDKInfo(Path, $$sdk)
+             QMAKE_XARCH_LFLAGS_$${arch} = $$version_min_flags \
+                 -Xarch_$${arch} \
+-                -Wl,-syslibroot,$$xcodeSDKInfo(Path, $$sdk)
++                -isysroot$$xcodeSDKInfo(Path, $$sdk)
+ 
+             QMAKE_XARCH_CFLAGS += $(EXPORT_QMAKE_XARCH_CFLAGS_$${arch})
+             QMAKE_XARCH_LFLAGS += $(EXPORT_QMAKE_XARCH_LFLAGS_$${arch})
+@@ -217,7 +217,7 @@ macx-xcode {
+         version_min_flag = -m$${version_identifier}-version-min=$$deployment_target
+         QMAKE_CFLAGS += -isysroot $$QMAKE_MAC_SDK_PATH $$version_min_flag
+         QMAKE_CXXFLAGS += -isysroot $$QMAKE_MAC_SDK_PATH $$version_min_flag
+-        QMAKE_LFLAGS += -Wl,-syslibroot,$$QMAKE_MAC_SDK_PATH $$version_min_flag
++        QMAKE_LFLAGS += -isysroot $$QMAKE_MAC_SDK_PATH $$version_min_flag
+     }
+ 
+     # Enable precompiled headers for multiple architectures
+-- 
+2.26.0
+

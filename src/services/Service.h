@@ -18,25 +18,30 @@ class Service
 	friend class Env;
 
 	private:
+		enum class UpdateType
+		{
+			APP, PROVIDER, READER
+		};
+
 		QTimer mTimer;
 		bool mUpdateScheduled;
 		bool mExplicitSuccessMessage;
 		const int mOneDayInMs = 1000 * 60 * 60 * 24;
+
+		void doAppUpdate(UpdateType pType, bool pForceUpdate = false);
+
+	private Q_SLOTS:
+		void onTimedUpdateTriggered();
+		void onProviderUpdateFinished();
+		void onAppUpdateFinished(bool pUpdateAvailable, const GlobalStatus& pError);
 
 	protected:
 		Service();
 		virtual ~Service() = default;
 		static Service& getInstance();
 
-	private Q_SLOTS:
-		void doConfigurationsUpdate();
-		void doAppUpdate(bool pIgnoreNextVersionskip);
-		void onTimedUpdateTriggered();
-		void onAppUpdateFinished(bool pUpdateAvailable, const GlobalStatus& pError);
-
 	public:
-		void updateConfigurations();
-		void updateApp(bool pIgnoreNextVersionskip = false);
+		void updateApp();
 		bool isUpdateScheduled();
 		Q_INVOKABLE void runUpdateIfNeeded();
 		const AppUpdateData& getUpdateData() const;

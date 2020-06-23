@@ -5,7 +5,6 @@
 import QtQuick 2.10
 import QtQml.Models 2.10
 
-import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.ApplicationModel 1.0
@@ -17,18 +16,17 @@ import Governikus.View 1.0
 SectionPage {
 	id: root
 
-	property alias rootEnabled: titleBarAction.rootEnabled
-
-	property alias paneAnchors: tabbedPane.anchors
-
-	readonly property int currentView: d.view
-
 	signal closeView()
+
+	property alias rootEnabled: titleBarAction.rootEnabled
+	property alias paneAnchors: tabbedPane.anchors
+	property int lastReaderCount: 0
+	readonly property int currentView: d.view
+	readonly property int availableReader: ApplicationModel.availableReader
 
 	enum SubView {
 		None,
-		EnterPassword,
-		PairingInfo
+		ConnectSacView
 	}
 
 	QtObject {
@@ -40,19 +38,28 @@ SectionPage {
 
 	onVisibleChanged: d.view = TabbedReaderView.SubView.None
 
+	onAvailableReaderChanged: {
+		if (visible && availableReader > lastReaderCount) {
+			root.closeView();
+		}
+		lastReaderCount = availableReader;
+	}
+
 	titleBarAction: TitleBarAction {
-		id:titleBarAction
+		id: titleBarAction
 
 		//: LABEL DESKTOP_QML
 		text: qsTr("Card Readers") + SettingsModel.translationTrigger
 		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "settings")
 		rootEnabled: false
 		customSubAction: CancelAction {
-			visible: d.view  === TabbedReaderView.SubView.EnterPassword
-
-			onClicked: d.view = TabbedReaderView.SubView.None
+			onClicked: closeView()
 		}
+
+		onClicked: d.view = TabbedReaderView.SubView.None
 	}
+
+	Component.onCompleted: lastReaderCount = availableReader
 
 	TabbedPane {
 		id: tabbedPane
@@ -78,14 +85,15 @@ SectionPage {
 					height: Math.max(implicitHeight, tabbedPane.availableHeight)
 					onPairDevice: {
 						if (RemoteServiceModel.rememberServer(pDeviceId)) {
-							d.view = TabbedReaderView.SubView.EnterPassword
+							d.view = TabbedReaderView.SubView.ConnectSacView
 							appWindow.menuBar.updateActions()
 						}
 					}
 					onUnpairDevice: RemoteServiceModel.forgetDevice(pDeviceId)
 					onMoreInformation: {
 						d.precedingView = d.view
-						d.view = TabbedReaderView.SubView.PairingInfo
+						d.view = TabbedReaderView.SubView.ConnectSacView
+						connectSacView.showPairingInformation();
 						appWindow.menuBar.updateActions()
 					}
 				}
@@ -113,31 +121,12 @@ SectionPage {
 		onClicked: root.closeView()
 	}
 
-	EnterPasswordView {
-		id: enterPassword
+	ConnectSacView {
+		id: connectSacView
 
-		visible: d.view === TabbedReaderView.SubView.EnterPassword
+		visible: d.view === TabbedReaderView.SubView.ConnectSacView
 
-		statusIcon: "qrc:///images/phone_to_pc.svg"
-		passwordType: NumberModel.PASSWORD_REMOTE_PIN
-
-		onPasswordEntered: d.view = TabbedReaderView.SubView.None
-
-		onRequestPasswordInfo: {
-			d.precedingView = d.view
-			d.view = TabbedReaderView.SubView.PairingInfo
-			appWindow.menuBar.updateActions()
-		}
-	}
-
-	PasswordInfoView {
-		id: passwordInfoView
-
-		visible: d.view === TabbedReaderView.SubView.PairingInfo
-
-		passwordType: NumberModel.PASSWORD_REMOTE_PIN
-
-		onClose: {
+		onCloseView: {
 			d.view = d.precedingView
 			appWindow.menuBar.updateActions()
 		}

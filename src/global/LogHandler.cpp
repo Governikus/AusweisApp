@@ -372,13 +372,35 @@ void LogHandler::handleLogWindow(QtMsgType pType, const char* pCategory, const Q
 
 bool LogHandler::copy(const QString& pDest)
 {
+	const QMutexLocker mutexLocker(&mMutex);
+
+	if (useLogfile())
+	{
+		return copyOther(mLogFile.fileName(), pDest);
+	}
+
+	return false;
+}
+
+
+bool LogHandler::copyOther(const QString& pSource, const QString& pDest) const
+{
 	if (pDest.trimmed().isEmpty())
 	{
 		return false;
 	}
 
-	const QMutexLocker mutexLocker(&mMutex);
-	return QFile::copy(mLogFile.fileName(), pDest);
+	if (pSource != mLogFile.fileName() && !getOtherLogfiles().contains(pSource))
+	{
+		return false;
+	}
+
+	if (QFile::exists(pDest) && !QFile::remove(pDest))
+	{
+		return false;
+	}
+
+	return QFile::copy(pSource, pDest);
 }
 
 

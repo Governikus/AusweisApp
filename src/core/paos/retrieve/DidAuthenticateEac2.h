@@ -37,7 +37,7 @@ class DIDAuthenticateEAC2
 		const QString& getDidName() const;
 		const QString& getSignature() const;
 		const QString& getEphemeralPublicKey() const;
-		const QVector<QSharedPointer<const CVCertificate> >& getCvCertificates() const;
+		const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
 		const QByteArrayList& getCvCertificatesAsBinary() const;
 };
 

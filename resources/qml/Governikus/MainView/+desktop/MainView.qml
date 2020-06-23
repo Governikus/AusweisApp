@@ -39,7 +39,7 @@ SectionPage {
 				width: view.horizontalItemSpace
 
 				//: LABEL DESKTOP_QML
-				title: qsTr("Self-Authentication") + SettingsModel.translationTrigger
+				title: qsTr("See my personal data") + SettingsModel.translationTrigger
 				image: "qrc:/images/desktop/main_identify.svg"
 
 				onClicked: sectionPage.nextView(SectionPage.Views.SelfAuthentication)
@@ -134,7 +134,7 @@ SectionPage {
 				width: view.horizontalItemSpace
 
 				//: LABEL DESKTOP_QML
-				title: qsTr("PIN-Management") + SettingsModel.translationTrigger
+				title: qsTr("Change PIN") + SettingsModel.translationTrigger
 				image: "qrc:/images/main_pin.svg"
 
 				onClicked: ChangePinModel.startWorkflow()

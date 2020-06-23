@@ -31,7 +31,7 @@
 				 android:theme="@style/AppTheme"
 				 android:allowBackup="true"
 				 android:fullBackupContent="@xml/backup_rules">
-        <meta-data android:name="android.max_aspect" android:value="2.1" />
+        <meta-data android:name="android.max_aspect" android:value="2.4" />
 
         <receiver android:name="com.governikus.ausweisapp2.UpdateReceiver" >
             <intent-filter>

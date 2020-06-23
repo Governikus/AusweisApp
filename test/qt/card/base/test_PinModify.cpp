@@ -22,7 +22,6 @@ class test_PinModify
 		{
 		}
 
-
 	private:
 		const quint8 mTimeoutSeconds;
 

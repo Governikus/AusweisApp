@@ -41,7 +41,7 @@ class test_LanguageLoader
 
 		void benchmark()
 		{
-			QBENCHMARK {
+			QBENCHMARK{
 				QCOMPARE(LanguageLoader::getInstance().getAvailableLocales().size(), 6);
 			}
 		}

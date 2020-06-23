@@ -8,6 +8,7 @@ import QtQuick.Layouts 1.3
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
+import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
 import Governikus.Type.NumberModel 1.0
@@ -17,7 +18,7 @@ SectionPage
 {
 	id: baseItem
 	property alias enableTransportPinLink: transportPinLink.enableTransportPinLink
-	signal passwordEntered()
+	signal passwordEntered(bool pWasNewPin)
 	signal changePinLength()
 
 	onVisibleChanged: {
@@ -77,33 +78,36 @@ SectionPage
 					if (baseItem.state === "CAN") {
 						if (NumberModel.isCanAllowedMode) {
 							//: INFO ANDROID IOS The CAN needs to be entered in CAN-allowed mode, hint where the CAN can be found.
-							return qsTr("Please enter the 6-digit card access number (CAN). You can find it on the front of the ID card.")
+							return qsTr("Please enter the six-digit Card Access Number (CAN). You can find it in the bottom right on the front of the ID card.")
 						}
 						//: INFO ANDROID IOS The wrong PIN was entered twice, the third attempt requires the CAN for additional verification, hint where the CAN is found.
-						return qsTr("A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.")
+						return qsTr("A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.")
 					}
 					if (baseItem.state === "PUK") {
 						//: INFO ANDROID IOS The PUK is required to unlock the ID card since the wrong PIN entered three times.
 						return qsTr("A wrong PIN has been entered three times on your ID card. Your PIN is now blocked. To unblock your PIN you have to enter the PUK.")
 					}
 					if (baseItem.state === "PIN_NEW") {
-						//: INFO ANDROID IOS A new 6-digit PIN needs to be supplied.
-						return qsTr("Please enter a new 6-digit PIN now.")
+						//: INFO ANDROID IOS A new six-digit PIN needs to be supplied.
+						return qsTr("Please enter a new six-digit PIN now.")
 					}
 					if (baseItem.state === "PIN_NEW_AGAIN") {
 						//: INFO ANDROID IOS The new PIN needs to be confirmed.
-						return qsTr("Please confirm your new 6-digit PIN.")
+						return qsTr("Please confirm your new six-digit PIN.")
 					}
 					if (baseItem.state === "PIN" && NumberModel.requestTransportPin) {
-						//: INFO ANDROID IOS The transport PIN is required by AA2, it needs to be change to an actual PIN.
-						return qsTr("Please enter the transport PIN from your PIN letter.")
+						//: INFO ANDROID IOS The Transport PIN is required by AA2, it needs to be change to an actual PIN.
+						return qsTr("Please enter the Transport PIN from your PIN letter.")
 					}
 					if (baseItem.state === "REMOTE_PIN") {
 						//: INFO ANDROID IOS The pairing code for the smartphone is required.
 						return qsTr("Enter the pairing code shown on the device you want to pair.")
 					}
-					//: LABEL ANDROID IOS
-					return qsTr("Please enter your PIN.")
+					return ApplicationModel.currentWorkflow === "changepin"
+						   //: LABEL ANDROID IOS
+						   ? qsTr("Please enter your current PIN.")
+						   //: LABEL ANDROID IOS
+						   : qsTr("Please enter your PIN.")
 				}
 			}
 
@@ -149,10 +153,10 @@ SectionPage
 			Accessible.onPressAction: if (Qt.platform.os === "ios") myMouse.clicked(null)
 
 			text: (NumberModel.requestTransportPin ?
-				   //: LABEL ANDROID IOS Button to switch to a 6-digit PIN.
-				   qsTr("Does your PIN have 6 digits?") :
-				   //: LABEL ANDROID IOS Button to switch to a transport PIN or start a change of the transport PIN.
-				   qsTr("Does your PIN have 5 digits?")
+				   //: LABEL ANDROID IOS Button to switch to a six-digit PIN.
+				   qsTr("Does your PIN have six digits?") :
+				   //: LABEL ANDROID IOS Button to switch to a Transport PIN or start a change of the Transport PIN.
+				   qsTr("Does your PIN have five digits?")
 				  ) + SettingsModel.translationTrigger
 			textStyle: Style.text.hint_accent
 			font.underline: true
@@ -186,7 +190,7 @@ SectionPage
 				switch(baseItem.state) {
 					case "PIN":
 						NumberModel.pin = pinField.text
-						baseItem.passwordEntered()
+						baseItem.passwordEntered(false)
 						break
 					case "PIN_NEW":
 						pinField.inputConfirmation = pinField.text
@@ -195,19 +199,19 @@ SectionPage
 						break
 					case "PIN_NEW_AGAIN":
 						NumberModel.newPin = pinField.text
-						baseItem.passwordEntered()
+						baseItem.passwordEntered(true)
 						break
 					case "CAN":
 						NumberModel.can = pinField.text
-						baseItem.passwordEntered()
+						baseItem.passwordEntered(false)
 						break
 					case "PUK":
 						NumberModel.puk = pinField.text
-						baseItem.passwordEntered()
+						baseItem.passwordEntered(false)
 						break
 					case "REMOTE_PIN":
 						RemoteServiceModel.connectToRememberedServer(pinField.text)
-						baseItem.passwordEntered()
+						baseItem.passwordEntered(false)
 						break
 				}
 			}

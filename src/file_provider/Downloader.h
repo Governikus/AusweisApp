@@ -29,7 +29,7 @@ class Downloader
 	private:
 		QSharedPointer<QNetworkRequest> mCurrentRequest;
 		QNetworkReply* mCurrentReply;
-		QQueue<QSharedPointer<QNetworkRequest> > mPendingRequests;
+		QQueue<QSharedPointer<QNetworkRequest>> mPendingRequests;
 
 		void scheduleDownload(QSharedPointer<QNetworkRequest> pDownloadRequest);
 		void startDownloadIfPending();

@@ -21,15 +21,15 @@ bool GuiUtils::showPinCanPukErrorDialog(CardReturnCode pReturnCode, bool pCanAll
 	switch (pReturnCode)
 	{
 		case CardReturnCode::INVALID_CAN:
-			title = tr("Wrong card access number (CAN)");
+			title = tr("Wrong Card Access Number (CAN)");
 			if (pCanAllowedMode)
 			{
-				text = tr("The given card access number (CAN) is not correct.");
+				text = tr("The given Card Access Number (CAN) is not correct.");
 			}
 			else
 			{
-				text = tr("The given card access number (CAN) is not correct. You have one more try to enter the correct PIN."
-						  " Please mind that you have to acknowledge this last try with your card access number (CAN).");
+				text = tr("The given Card Access Number (CAN) is not correct. You have one more try to enter the correct PIN."
+						  " Please mind that you have to acknowledge this last try with your Card Access Number (CAN).");
 			}
 			break;
 
@@ -53,8 +53,8 @@ bool GuiUtils::showPinCanPukErrorDialog(CardReturnCode pReturnCode, bool pCanAll
 		case CardReturnCode::INVALID_PIN_2:
 			title = tr("Wrong PIN");
 			text = tr("The given PIN is not correct. You have one more try to enter the correct PIN."
-					  " Please mind that you have to acknowledge this last try with your card access"
-					  " number (CAN).");
+					  " Please mind that you have to acknowledge this last try with your Card Access"
+					  " Number (CAN).");
 			break;
 
 		case CardReturnCode::INVALID_PIN_3:

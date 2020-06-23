@@ -33,7 +33,6 @@ SectionPage {
 
 		buttonType: NavigationButton.Type.Back
 		resultType: ResultView.Type.IsError
-		emailButtonVisible: false
 		//: LABEL DESKTOP_QML Placext if the update information are invalid, might be caused by network issues.
 		text: qsTr("The update information could not be retrieved. Please check your network connection.") + SettingsModel.translationTrigger
 
@@ -45,7 +44,6 @@ SectionPage {
 
 		buttonType: NavigationButton.Type.Back
 		resultType: ResultView.Type.IsSuccess
-		emailButtonVisible: false
 		//: LABEL DESKTOP_QML The currently installed version is the most recent one, no action is required.
 		text: qsTr("Your version %1 of %2 is up to date!").arg(Qt.application.version).arg(Qt.application.name) + SettingsModel.translationTrigger
 

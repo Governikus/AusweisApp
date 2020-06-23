@@ -57,7 +57,6 @@ class WorkflowGui
 		{
 		}
 
-
 	public Q_SLOTS:
 		virtual void onCloseActiveDialogs();
 

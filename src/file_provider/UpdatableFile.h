@@ -72,6 +72,7 @@ class UpdatableFile
 
 	Q_SIGNALS:
 		void fireUpdated();
+		void fireNoUpdateAvailable();
 
 };
 

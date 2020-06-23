@@ -43,7 +43,6 @@ class PskHandler
 			}
 		}
 
-
 	private Q_SLOTS:
 		void onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator)
 		{

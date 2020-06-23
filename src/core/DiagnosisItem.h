@@ -21,7 +21,7 @@ class DiagnosisItem
 
 	private:
 		QString mText;
-		QVector<QSharedPointer<DiagnosisItem> > mChildren;
+		QVector<QSharedPointer<DiagnosisItem>> mChildren;
 		QSharedPointer<DiagnosisItem> mParent;
 
 		int getIndexOf(const DiagnosisItem* const pChild) const;

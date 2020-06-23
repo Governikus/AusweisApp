@@ -11,6 +11,7 @@ singleton Category 1.0 Category.qml
 
 BinaryDecisionView 1.0 BinaryDecisionView.qml
 ConfirmationPopup 1.0 ConfirmationPopup.qml
+ProxyCredentialsPopup 1.0 ProxyCredentialsPopup.qml
 GButton 1.0 GButton.qml
 GCheckBox 1.0 GCheckBox.qml
 GComboBox 1.0 GComboBox.qml

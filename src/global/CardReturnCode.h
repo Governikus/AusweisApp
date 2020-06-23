@@ -43,7 +43,6 @@ class CardReturnCodeUtil
 		{
 		}
 
-
 	public:
 		static GlobalStatus toGlobalStatus(CardReturnCode pCode);
 		static bool equalsWrongPacePassword(CardReturnCode pCode);

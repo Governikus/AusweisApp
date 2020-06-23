@@ -8,6 +8,7 @@ import Governikus.Global 1.0
 BrandDimensions {
 	readonly property int button_radius: 6
 	readonly property int corner_radius: 10
+	readonly property int popup_border: 0
 	readonly property int separator_size: 1
 	readonly property int list_item_height: 64
 	readonly property int scrollbar_padding_vertical: 5

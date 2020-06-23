@@ -19,4 +19,7 @@ BrandColors {
 	readonly property color tutorial_box_background: "#f2f2f2"
 
 	readonly property color card_reader: "#444445"
+
+	readonly property color switch_checked: accent
+	readonly property color switch_unchecked: "#ffffff"
 }

@@ -153,20 +153,20 @@ void RemoteClientImpl::onRemoteDispatcherError(const RemoteDeviceDescriptor& pRe
 		{
 			qCCritical(remote_device) << "Remote device refused connection seven times, removing certificate with fingerprint:" << pRemoteDeviceDescriptor.getIfdId();
 			RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-			QString deviceName;
+			QString deviceNameEscaped;
 			const auto& infos = settings.getRemoteInfos();
 			for (const auto& remoteInfo : infos)
 			{
 				if (remoteInfo.getFingerprint() == pRemoteDeviceDescriptor.getIfdId())
 				{
-					deviceName = remoteInfo.getName();
+					deviceNameEscaped = remoteInfo.getNameEscaped();
 				}
 			}
 			settings.removeTrustedCertificate(pRemoteDeviceDescriptor.getIfdId());
 			mErrorCounter[pRemoteDeviceDescriptor.getIfdId()] = 0;
-			if (!deviceName.isEmpty())
+			if (!deviceNameEscaped.isEmpty())
 			{
-				Q_EMIT fireCertificateRemoved(deviceName);
+				Q_EMIT fireCertificateRemoved(deviceNameEscaped);
 			}
 		}
 	}

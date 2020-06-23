@@ -182,19 +182,31 @@ void DiagnosisConnectionTest::startConnectionTest()
 		mPingSocketToProxy.reset();
 		mPingSocketToProxy.setProxy(QNetworkProxy::NoProxy);
 		connect(&mPingSocketToProxy, &QTcpSocket::connected, this, &DiagnosisConnectionTest::onProxyPingTestDone);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+		connect(&mPingSocketToProxy, &QTcpSocket::errorOccurred, this, &DiagnosisConnectionTest::onProxyPingTestError);
+#else
 		connect(&mPingSocketToProxy, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error), this, &DiagnosisConnectionTest::onProxyPingTestError);
+#endif
 		mPingSocketToProxy.connectToHost(proxy.hostName(), proxy.port());
 
 		mTcpSocketWithProxy.reset();
 		mTcpSocketWithProxy.setProxy(proxy);
 		connect(&mTcpSocketWithProxy, &QTcpSocket::connected, this, &DiagnosisConnectionTest::onSocketConnectionTestWithProxyDone);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+		connect(&mTcpSocketWithProxy, &QTcpSocket::errorOccurred, this, &DiagnosisConnectionTest::onSocketConnectionTestWithProxyError);
+#else
 		connect(&mTcpSocketWithProxy, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error), this, &DiagnosisConnectionTest::onSocketConnectionTestWithProxyError);
+#endif
 		mTcpSocketWithProxy.connectToHost(testUrl.host(), 443);
 	}
 
 	mTcpSocketWithoutProxy.reset();
 	mTcpSocketWithoutProxy.setProxy(QNetworkProxy::NoProxy);
 	connect(&mTcpSocketWithoutProxy, &QTcpSocket::connected, this, &DiagnosisConnectionTest::onSocketConnectionTestWithoutProxyDone);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+	connect(&mTcpSocketWithoutProxy, &QTcpSocket::errorOccurred, this, &DiagnosisConnectionTest::onSocketConnectionTestWithoutProxyError);
+#else
 	connect(&mTcpSocketWithoutProxy, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error), this, &DiagnosisConnectionTest::onSocketConnectionTestWithoutProxyError);
+#endif
 	mTcpSocketWithoutProxy.connectToHost(testUrl.host(), 443);
 }

@@ -66,7 +66,6 @@ class StateSendStartPaos
 	{
 	}
 
-
 	protected:
 		virtual QSharedPointer<PaosMessage> getAsMessage() override
 		{
@@ -102,7 +101,6 @@ class StateSendStartPaos
 			}
 		}
 
-
 	Q_SIGNALS:
 		void fireReceivedDidList();
 		void fireReceivedExtractCvcsFromEac1InputType();
@@ -124,7 +122,6 @@ class StateSendInitializeFrameworkResponse
 				}, false)
 	{
 	}
-
 
 	protected:
 		virtual QSharedPointer<PaosMessage> getAsMessage() override
@@ -157,7 +154,6 @@ class StateSendInitializeFrameworkResponse
 			}
 		}
 
-
 	Q_SIGNALS:
 		void fireReceivedExtractCvcsFromEac1InputType();
 		void fireReceivedStartPaosResponse();
@@ -179,7 +175,6 @@ class StateSendDIDListResponse
 	{
 	}
 
-
 	protected:
 		virtual QSharedPointer<PaosMessage> getAsMessage() override
 		{
@@ -210,7 +205,6 @@ class StateSendDIDListResponse
 				Q_EMIT fireReceivedStartPaosResponse();
 			}
 		}
-
 
 	Q_SIGNALS:
 		void fireReceivedDisconnect();
@@ -232,7 +226,6 @@ class StateSendDIDAuthenticateResponseEAC1
 	{
 	}
 
-
 	protected:
 		virtual QSharedPointer<PaosMessage> getAsMessage() override
 		{
@@ -263,7 +256,6 @@ class StateSendDIDAuthenticateResponseEAC1
 				Q_EMIT fireReceivedStartPaosResponse();
 			}
 		}
-
 
 	Q_SIGNALS:
 		void fireReceivedDisconnect();
@@ -285,7 +277,6 @@ class StateSendDIDAuthenticateResponseEACAdditionalInputType
 	{
 	}
 
-
 	protected:
 		virtual QSharedPointer<PaosMessage> getAsMessage() override
 		{
@@ -313,7 +304,6 @@ class StateSendDIDAuthenticateResponseEACAdditionalInputType
 			}
 		}
 
-
 	Q_SIGNALS:
 		void fireReceivedStartPaosResponse();
 
@@ -332,7 +322,6 @@ class StateSendDIDAuthenticateResponseEAC2
 				})
 	{
 	}
-
 
 	protected:
 		virtual QSharedPointer<PaosMessage> getAsMessage() override
@@ -364,7 +353,6 @@ class StateSendDIDAuthenticateResponseEAC2
 				Q_EMIT fireReceivedStartPaosResponse();
 			}
 		}
-
 
 	Q_SIGNALS:
 		void fireReceivedDisconnect();
@@ -386,7 +374,6 @@ class StateSendTransmitResponse
 	{
 	}
 
-
 	protected:
 		virtual QSharedPointer<PaosMessage> getAsMessage() override
 		{
@@ -418,7 +405,6 @@ class StateSendTransmitResponse
 			}
 		}
 
-
 	Q_SIGNALS:
 		void fireReceivedDisconnect();
 		void fireReceivedStartPaosResponse();
@@ -436,7 +422,6 @@ class StateSendDisconnectResponse
 		: StateGenericSendReceive(pContext, PaosType::STARTPAOS_RESPONSE)
 	{
 	}
-
 
 	protected:
 		virtual QSharedPointer<PaosMessage> getAsMessage() override

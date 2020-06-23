@@ -29,7 +29,6 @@ class test_DidAuthenticateEAC2Command
 		return builder.getChainStartingWith(certificate);
 	}
 
-
 	private Q_SLOTS:
 		void init()
 		{

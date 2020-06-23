@@ -82,7 +82,6 @@ class TestInstance
 		{
 		}
 
-
 	public:
 		static TestInstance& getInstance()
 		{

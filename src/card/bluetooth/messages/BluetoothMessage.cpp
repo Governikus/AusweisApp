@@ -51,7 +51,7 @@ void BluetoothMessage::addParameter(const QSharedPointer<const BluetoothMessageP
 		qCWarning(bluetooth) << "Parameter ID is already added:" << pMessageParameter->getParameterId();
 	}
 
-	mMessageParameter.insertMulti(pMessageParameter->getParameterId(), pMessageParameter);
+	mMessageParameter.insert(pMessageParameter->getParameterId(), pMessageParameter);
 }
 
 

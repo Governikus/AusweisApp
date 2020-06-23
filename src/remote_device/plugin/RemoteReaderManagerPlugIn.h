@@ -30,7 +30,7 @@ class RemoteReaderManagerPlugIn
 	private:
 		QTimer mScanTimer;
 		QMultiMap<QString, QString> mReadersForDispatcher;
-		QMap<QString, QSharedPointer<RemoteDispatcherClient> > mDispatcherList;
+		QMap<QString, QSharedPointer<RemoteDispatcherClient>> mDispatcherList;
 		QMap<QString, Reader*> mReaderList;
 		bool mConnectToPairedReaders;
 		bool mConnectionCheckInProgress;
@@ -46,7 +46,7 @@ class RemoteReaderManagerPlugIn
 		void onDispatcherClosed(GlobalStatus::Code pCloseCode, const QString& pId);
 		void addRemoteDispatcher(const QSharedPointer<RemoteDispatcherClient>& pRemoteDispatcher);
 		void connectToPairedReaders();
-		void continueConnectToPairedReaders(const QVector<QSharedPointer<RemoteDeviceListEntry> >& pRemoteDevices);
+		void continueConnectToPairedReaders(const QVector<QSharedPointer<RemoteDeviceListEntry>>& pRemoteDevices);
 
 	public:
 		RemoteReaderManagerPlugIn();

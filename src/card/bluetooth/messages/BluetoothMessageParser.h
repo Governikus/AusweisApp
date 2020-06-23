@@ -14,7 +14,7 @@ namespace governikus
 class BluetoothMessageParser
 {
 	private:
-		QVector<QSharedPointer<const BluetoothMessage> > mMessages;
+		QVector<QSharedPointer<const BluetoothMessage>> mMessages;
 		QByteArray mRemainingBytes;
 
 		inline ushort getParamLength(uchar pHigh, uchar pLow) const;
@@ -28,7 +28,7 @@ class BluetoothMessageParser
 		BluetoothMessageParser(const QByteArray& pData);
 		virtual ~BluetoothMessageParser();
 
-		const QVector<QSharedPointer<const BluetoothMessage> >& getMessages() const;
+		const QVector<QSharedPointer<const BluetoothMessage>>& getMessages() const;
 		const QByteArray& getRemainingBytes() const;
 };
 

@@ -31,14 +31,16 @@ class DatagramHandlerImpl
 		QScopedPointer<MulticastLock> mMulticastLock;
 		quint16 mUsedPort;
 		PortFile mPortFile;
+		bool mEnableListening;
 
+		void resetSocket();
 		bool sendToAddress(const QByteArray& pData, const QHostAddress& pAddress, quint16 pPort = 0);
 		bool sendToAllAddressEntries(const QByteArray& pData, quint16 pPort);
 
 	public:
 		static quint16 cPort;
 
-		DatagramHandlerImpl(bool pListen = true, quint16 pPort = DatagramHandlerImpl::cPort);
+		DatagramHandlerImpl(bool pEnableListening = true, quint16 pPort = DatagramHandlerImpl::cPort);
 		virtual ~DatagramHandlerImpl() override;
 
 		virtual bool isBound() const override;

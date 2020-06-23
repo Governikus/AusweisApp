@@ -9,6 +9,7 @@
 #include "CardConnection.h"
 #include "DetailDialog.h"
 #include "generic/PasswordEdit.h"
+#include "LanguageLoader.h"
 #include "RandomPinDialog.h"
 
 #include <QApplication>
@@ -123,15 +124,15 @@ void StepAuthenticationEac1Widget::updateButtonsAndPinWidget()
 	{
 		if (mContext->isCanAllowedMode())
 		{
-			mUi->pinGroupBox->setTitle(tr("Please enter the 6-digit card access number (CAN) for identification."));
+			mUi->pinGroupBox->setTitle(tr("Please enter the six-digit Card Access Number (CAN) for identification."));
 		}
 		else if (cardConnection->getReaderInfo().getRetryCounter() == 1)
 		{
-			mUi->pinGroupBox->setTitle(tr("Please enter your 6-digit card access number (CAN) and your PIN for identification."));
+			mUi->pinGroupBox->setTitle(tr("Please enter your six-digit Card Access Number (CAN) and your PIN for identification."));
 		}
 		else
 		{
-			mUi->pinGroupBox->setTitle(tr("Please enter your 6-digit PIN for identification"));
+			mUi->pinGroupBox->setTitle(tr("Please enter your six-digit PIN for identification"));
 		}
 
 		if (cardConnection->getReaderInfo().isBasicReader())
@@ -188,8 +189,9 @@ void StepAuthenticationEac1Widget::onDetailsButtonClicked()
 
 	auto eac1 = mContext->getDidAuthenticateEac1();
 	CVCertificateBody body = eac1->getCvCertificates().at(0)->getBody();
-	QString effectiveDate = body.getCertificateEffectiveDate().toString(Qt::DefaultLocaleShortDate);
-	QString expirationDate = body.getCertificateExpirationDate().toString(Qt::DefaultLocaleShortDate);
+	const auto locale = LanguageLoader::getInstance().getUsedLocale();
+	const auto effectiveDate = locale.toString(body.getCertificateEffectiveDate(), QLocale::ShortFormat);
+	const auto expirationDate = locale.toString(body.getCertificateExpirationDate(), QLocale::ShortFormat);
 	auto certificateDescription = eac1->getCertificateDescription();
 
 	QString details;
@@ -392,7 +394,7 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 		mCANField->configureValidation(onlyNumbersExpression, allowedDigitsMsg);
 		connect(mCANField, &PasswordEdit::textEdited, this, &StepAuthenticationEac1Widget::canTextEdited);
 
-		QLabel* canLabel = new QLabel(tr("Card access number (CAN):"));
+		QLabel* canLabel = new QLabel(tr("Card Access Number (CAN):"));
 		canLabel->setFocusPolicy(Qt::TabFocus);
 		basicReaderWidgetLayout->addWidget(canLabel);
 		basicReaderWidgetLayout->addWidget(mCANField);
@@ -424,7 +426,7 @@ void StepAuthenticationEac1Widget::createBasicReaderWidget()
 		mPINField->setEnabled(false);
 	}
 
-	const QString labelLabel = mContext->isCanAllowedMode() == false ? tr("PIN:") : tr("Card access number (CAN):");
+	const QString labelLabel = mContext->isCanAllowedMode() ? tr("Card Access Number (CAN):") : tr("PIN:");
 	QLabel* pinLabel = new QLabel(labelLabel);
 	pinLabel->setFocusPolicy(Qt::TabFocus);
 	basicReaderWidgetLayout->addWidget(pinLabel);

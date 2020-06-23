@@ -11,7 +11,7 @@ import Governikus.Type.SettingsModel 1.0
 Switch {
 	id: control
 
-	property color color: Style.color.accent
+	property color color: Style.color.switch_checked
 
 	Accessible.onPressAction: if (Qt.platform.os === "ios") toggle()
 
@@ -32,7 +32,7 @@ Switch {
 			y: parent.height / 2 - height / 2
 			radius: height / 2
 
-			color: control.checked ? Qt.lighter(control.color, 1.4) : Qt.darker(Style.color.accent_disabled, 1.1)
+			color: control.enabled ? (control.checked ? Qt.lighter(control.color, 1.3) : Qt.darker(Style.color.accent_disabled, 1.4)) : Qt.darker(Style.color.accent_disabled, 1.1)
 		}
 
 		Rectangle {
@@ -40,8 +40,10 @@ Switch {
 			height: parent.height
 			x: control.checked ? parent.width - width : 0
 			radius: height / 2
+			border.width: control.enabled && !control.checked ? Style.dimens.separator_size : 0
+			border.color: Style.color.border
 
-			color: control.checked ? control.color : Style.color.accent_disabled
+			color: control.enabled ? (control.checked ? control.color : Style.color.switch_unchecked) : Style.color.accent_disabled
 
 			Behavior on x {
 				NumberAnimation {easing.type: Easing.InOutQuad; duration: 200}

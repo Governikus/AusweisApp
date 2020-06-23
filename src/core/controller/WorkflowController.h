@@ -44,7 +44,6 @@ class WorkflowController
 			return state;
 		}
 
-
 	Q_SIGNALS:
 		void fireComplete();
 

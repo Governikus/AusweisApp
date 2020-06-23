@@ -33,12 +33,17 @@ QStringList ProviderCategoryFilterModel::getSelectedCategories() const
 
 int ProviderCategoryFilterModel::getAdditionalResultCount() const
 {
-	if (mSearchString.isEmpty())
+	if (mSearchString.isEmpty() || mSelectedCategories.isEmpty())
 	{
 		return 0;
 	}
 
 	auto excludedCategories = ProviderModel::getProviderCategories() - mSelectedCategories;
+	if (excludedCategories.isEmpty())
+	{
+		return 0;
+	}
+
 	return resultCountForFilter(excludedCategories, mSearchString);
 }
 

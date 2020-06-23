@@ -81,7 +81,6 @@ class DeviceListener
 			}
 		}
 
-
 	public:
 		DeviceListener()
 		{
@@ -107,6 +106,7 @@ class DeviceListener
 #endif
 
 	public:
+
 	Q_SIGNALS:
 		void fireDeviceChangeDetected();
 };

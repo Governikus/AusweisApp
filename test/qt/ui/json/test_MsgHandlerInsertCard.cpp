@@ -28,7 +28,6 @@ class test_MsgHandlerInsertCard
 		pDispatcher.init(context);
 	}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{

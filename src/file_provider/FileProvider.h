@@ -22,7 +22,7 @@ class FileProvider
 	friend class Env;
 
 	private:
-		QHash<QString, QSharedPointer<UpdatableFile> > mUpdatableFiles;
+		QHash<QString, QSharedPointer<UpdatableFile>> mUpdatableFiles;
 		QMutex mGetFileMutex;
 
 	protected:

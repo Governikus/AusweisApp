@@ -24,7 +24,6 @@ class test_DidAuthenticateResponseEAC1
 		return TestFileHelper::readFile(QString(":/card/").append(pFileName));
 	}
 
-
 	private Q_SLOTS:
 		void type()
 		{

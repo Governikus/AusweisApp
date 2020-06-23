@@ -204,9 +204,7 @@ ConnectRequest::ConnectRequest(const RemoteDeviceDescriptor& pRemoteDeviceDescri
 	connect(mSocket.data(), &QWebSocket::preSharedKeyAuthenticationRequired, this, &ConnectRequest::onPreSharedKeyAuthenticationRequired);
 	connect(mSocket.data(), &QWebSocket::sslErrors, this, &ConnectRequest::onSslErrors);
 
-#ifndef QT_NO_NETWORKPROXY
 	mSocket->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
-#endif
 	connect(mSocket.data(), &QWebSocket::connected, this, &ConnectRequest::onConnected);
 	connect(mSocket.data(), QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &ConnectRequest::onError);
 

@@ -29,7 +29,7 @@ class BuildHelper
 		~BuildHelper() = delete;
 
 	public:
-		static QVector<QPair<QLatin1String, QString> > getInformationHeader();
+		static QVector<QPair<QLatin1String, QString>> getInformationHeader();
 		static void processInformationHeader(const std::function<void(const QString&, const QString&)>& pFunc, bool pTranslate = true);
 
 

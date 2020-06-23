@@ -20,6 +20,7 @@ SectionPage {
 
 	readonly property string currentPin: RemoteServiceModel.psk.toString()
 	readonly property bool isPairing: RemoteServiceModel.running && currentPin !== ""
+	readonly property bool wifiEnabled: ApplicationModel.wifiEnabled
 
 	navigationAction: NavigationAction {
 		state: RemoteServiceModel.running ? "cancel" : ""
@@ -91,12 +92,15 @@ SectionPage {
 				Layout.preferredWidth: Math.max(pairingButton.implicitWidth, startButton.implicitWidth)
 				Layout.alignment: Qt.AlignHCenter
 
-				buttonColor: running ? Constants.red : Constants.darkgreen
-				enabled: (canEnableNfc || RemoteServiceModel.runnable || running) && !serviceIsStarting
+				buttonColor: wifiEnabled ? (running ? Constants.red : Constants.darkgreen) : Style.color.button
+				enabled: (canEnableNfc || RemoteServiceModel.runnable || running || !wifiEnabled) && !serviceIsStarting
 				text: {
 					SettingsModel.translationTrigger; // Bind this evaluation to the trigger.
 
-					if (canEnableNfc) {
+					if (!wifiEnabled) {
+						//: LABEL ANDROID IOS
+						return qsTr("Enable WiFi");
+					} else if (canEnableNfc) {
 						//: LABEL ANDROID IOS
 						return qsTr("Enable NFC");
 					} else if (running) {
@@ -108,7 +112,9 @@ SectionPage {
 					}
 				}
 				onClicked: {
-					if (canEnableNfc) {
+					if (!wifiEnabled) {
+						ApplicationModel.enableWifi()
+					} else if (canEnableNfc) {
 						ApplicationModel.showSettings(ApplicationModel.SETTING_NFC)
 					} else {
 						if (!running) {

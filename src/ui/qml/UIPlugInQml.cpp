@@ -161,7 +161,6 @@ UIPlugInQml::UIPlugInQml()
 	auto* service = Env::getSingleton<Service>();
 	connect(service, &Service::fireAppUpdateFinished, this, &UIPlugInQml::onUpdateAvailable);
 	connect(service, &Service::fireUpdateScheduled, this, &UIPlugInQml::onUpdateScheduled);
-	service->runUpdateIfNeeded();
 
 	init();
 }
@@ -205,6 +204,13 @@ void UIPlugInQml::init()
 	// Activate logging of Qt scenegraph information on startup, e.g. GL_RENDERER, GL_VERSION, ...
 	qputenv("QSG_INFO", "1");
 
+#ifdef Q_OS_ANDROID
+	const auto orientation = isTabletLayout()
+		? "SCREEN_ORIENTATION_SENSOR_LANDSCAPE"
+		: "SCREEN_ORIENTATION_PORTRAIT";
+	QtAndroid::androidActivity().callMethod<void>("setRequestedOrientation", "(I)V", QAndroidJniObject::getStaticField<jint>("android/content/pm/ActivityInfo", orientation));
+#endif
+
 	mEngine.reset(new QQmlApplicationEngine());
 
 	connect(mEngine.data(), &QQmlApplicationEngine::warnings, this, &UIPlugInQml::onQmlWarnings, Qt::QueuedConnection);
@@ -226,28 +232,23 @@ void UIPlugInQml::init()
 	mEngine->addImportPath(getPath(QStringLiteral("qml/")).toString());
 	mEngine->load(getPath(QStringLiteral("qml/main.qml")));
 
-	if (!mEngine->rootObjects().isEmpty())
+	QQuickWindow* rootWindow = getRootWindow();
+	if (rootWindow != nullptr)
 	{
-		QQuickWindow* rootWindow = qobject_cast<QQuickWindow*>(mEngine->rootObjects().first());
-		if (rootWindow != nullptr)
-		{
 #if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(5, 14, 1)
-			// we need to call create() explicitly because Windows needs a handle to fire WM_ENDSESSION!
-			// Since we start as a systemtray only we don't have a correct handle until we call show()
-			rootWindow->create();
+		// we need to call create() explicitly because Windows needs a handle to fire WM_ENDSESSION!
+		// Since we start as a systemtray only we don't have a correct handle until we call show()
+		rootWindow->create();
 #endif
-			connect(rootWindow, &QQuickWindow::sceneGraphError, this, &UIPlugInQml::onSceneGraphError);
-			qCDebug(qml) << "Using renderer interface:" << rootWindow->rendererInterface()->graphicsApi();
-		}
+		connect(rootWindow, &QQuickWindow::sceneGraphError, this, &UIPlugInQml::onSceneGraphError);
+		qCDebug(qml) << "Using renderer interface:" << rootWindow->rendererInterface()->graphicsApi();
 	}
-
-	Env::getSingleton<Service>()->updateConfigurations();
 
 	onWindowPaletteChanged();
 }
 
 
-void UIPlugInQml::hide()
+void UIPlugInQml::hideFromTaskbar()
 {
 	PlatformTools::hideFromTaskbar();
 }
@@ -281,15 +282,15 @@ QString UIPlugInQml::getPlatformSelectors() const
 
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	const QString platform = QStringLiteral("mobile,");
-	const QString tablet = (isTablet() ? QStringLiteral("tablet,") : QStringLiteral("phone,"));
+	const QString tablet = (isTabletLayout() ? QStringLiteral("tablet,") : QStringLiteral("phone,"));
 	const QString brand = QGuiApplication::platformName();
 #else
 	const QString platform = QStringLiteral("desktop,");
 	const QString tablet;
-#if defined(Q_OS_MAC)
-	const QString brand = QStringLiteral("mac");
-#else
+#if defined(Q_OS_WIN)
 	const QString brand = QStringLiteral("win");
+#else
+	const QString brand = QStringLiteral("nowin");
 #endif
 #endif
 
@@ -299,6 +300,11 @@ QString UIPlugInQml::getPlatformSelectors() const
 
 void UIPlugInQml::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 {
+	if (isDominated())
+	{
+		return;
+	}
+
 	Env::getSingleton<ApplicationModel>()->keepScreenOn(true);
 	Env::getSingleton<ApplicationModel>()->resetContext(pContext);
 	Env::getSingleton<NumberModel>()->resetContext(pContext);
@@ -356,7 +362,7 @@ void UIPlugInQml::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 		// workflows and never manually brought to foreground in between.
 		if (!pContext.objectCast<SelfAuthContext>() && !pContext->hasNextWorkflowPending() && generalSettings.isAutoCloseWindowAfterAuthentication() && !showUpdateInformationIfPending())
 		{
-			Q_EMIT fireHideRequest();
+			onHideUi();
 		}
 	}
 
@@ -392,13 +398,28 @@ void UIPlugInQml::onApplicationStarted()
 void UIPlugInQml::onShowUi(UiModule pModule)
 {
 	PlatformTools::restoreToTaskbar();
+	if (isDominated())
+	{
+		pModule = UiModule::CURRENT;
+	}
 	Q_EMIT fireShowRequest(pModule);
+
+	Env::getSingleton<Service>()->runUpdateIfNeeded();
 }
 
 
 void UIPlugInQml::onHideUi()
 {
 	Q_EMIT fireHideRequest();
+}
+
+
+void UIPlugInQml::onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator)
+{
+	ProxyCredentials proxyCredentials(pProxy, pAuthenticator);
+
+	Q_EMIT fireProxyAuthenticationRequired(&proxyCredentials);
+	proxyCredentials.waitForConfirmation();
 }
 
 
@@ -445,7 +466,10 @@ void UIPlugInQml::onShowUserInformation(const QString& pMessage)
 
 void UIPlugInQml::onUpdateScheduled()
 {
-	Env::getSingleton<Service>()->runUpdateIfNeeded();
+	if (!isHidden())
+	{
+		Env::getSingleton<Service>()->runUpdateIfNeeded();
+	}
 }
 
 
@@ -462,6 +486,21 @@ void UIPlugInQml::show()
 	{
 		onShowUi(UiModule::CURRENT);
 	}
+}
+
+
+bool UIPlugInQml::isTabletLayout() const
+{
+	const auto screenOrientationSetting = Env::getSingleton<AppSettings>()->getGeneralSettings().getScreenOrientation();
+	if (screenOrientationSetting == QLatin1String("landscape"))
+	{
+		return true;
+	}
+	if (screenOrientationSetting == QLatin1String("portrait"))
+	{
+		return false;
+	}
+	return isTablet();
 }
 
 
@@ -493,6 +532,24 @@ QUrl UIPlugInQml::getPath(const QString& pRelativePath, bool pQrc)
 	}
 
 	return QUrl::fromLocalFile(FileDestination::getPath(pRelativePath, QStandardPaths::LocateDirectory));
+}
+
+
+QQuickWindow* UIPlugInQml::getRootWindow() const
+{
+	if (mEngine->rootObjects().isEmpty())
+	{
+		return nullptr;
+	}
+
+	return qobject_cast<QQuickWindow*>(mEngine->rootObjects().first());
+}
+
+
+bool UIPlugInQml::isHidden() const
+{
+	QQuickWindow* rootWindow = getRootWindow();
+	return !rootWindow || rootWindow->visibility() == QWindow::Hidden;
 }
 
 
@@ -660,6 +717,7 @@ void UIPlugInQml::applyPlatformStyle(const QString& pPlatformStyle)
 	if (mExplicitPlatformStyle != pPlatformStyle)
 	{
 		mExplicitPlatformStyle = pPlatformStyle;
+		Env::getSingleton<AppSettings>()->getGeneralSettings().setScreenOrientation(pPlatformStyle.indexOf(QLatin1String("tablet")) == -1 ? QStringLiteral("portrait") : QStringLiteral("landscape"));
 		doRefresh();
 	}
 }

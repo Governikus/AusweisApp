@@ -98,11 +98,11 @@ SectionPage {
 			GButton {
 				icon.source: "qrc:///images/npa.svg"
 				anchors.horizontalCenter: parent.horizontalCenter
-				//: LABEL ANDROID_PHONE %1 can be "card access number (CAN)" or "PIN"
+				//: LABEL ANDROID_PHONE %1 can be "CAN" or "PIN"
 				text: qsTr("Proceed to %1 entry").arg(
 														NumberModel.isCanAllowedMode ?
 														//: LABEL ANDROID_PHONE Inserted into "Proceed to %1 entry"
-														qsTr("card access number (CAN)") :
+														qsTr("CAN") :
 														//: LABEL ANDROID_PHONE Inserted into "Proceed to %1 entry"
 														qsTr("PIN")
 													) + SettingsModel.translationTrigger
@@ -115,8 +115,12 @@ SectionPage {
 			GText {
 				width: parent.width
 
-				//: LABEL ANDROID_PHONE
-				text: qsTr("The following data will be transferred to the provider when you enter the PIN:") + SettingsModel.translationTrigger
+				text: NumberModel.isCanAllowedMode
+					  //: LABEL ANDROID_PHONE
+					  ? qsTr("The following data of the ID card will be transferred to the provider when you enter the CAN:")
+					  //: LABEL ANDROID_PHONE
+					  : qsTr("The following data of your ID card will be transferred to the provider when you enter the PIN:")
+					  + SettingsModel.translationTrigger
 			}
 
 			Pane {

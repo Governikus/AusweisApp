@@ -56,7 +56,7 @@ class RemoteDeviceList
 
 		virtual void update(const RemoteDeviceDescriptor& pDescriptor) = 0;
 		virtual void clear() = 0;
-		virtual QVector<QSharedPointer<RemoteDeviceListEntry> > getRemoteDevices() const;
+		virtual QVector<QSharedPointer<RemoteDeviceListEntry>> getRemoteDevices() const;
 };
 
 
@@ -68,7 +68,7 @@ class RemoteDeviceListImpl
 	private:
 		QTimer mTimer;
 		const int mReaderResponsiveTimeout;
-		QVector<QSharedPointer<RemoteDeviceListEntry> > mResponsiveList;
+		QVector<QSharedPointer<RemoteDeviceListEntry>> mResponsiveList;
 
 	private Q_SLOTS:
 		void onProcessUnresponsiveRemoteReaders();
@@ -79,7 +79,7 @@ class RemoteDeviceListImpl
 
 		virtual void update(const RemoteDeviceDescriptor& pDescriptor) override;
 		virtual void clear() override;
-		virtual QVector<QSharedPointer<RemoteDeviceListEntry> > getRemoteDevices() const override;
+		virtual QVector<QSharedPointer<RemoteDeviceListEntry>> getRemoteDevices() const override;
 };
 
 

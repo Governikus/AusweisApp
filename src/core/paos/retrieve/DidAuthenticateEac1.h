@@ -45,7 +45,7 @@ class DIDAuthenticateEAC1
 		const QSharedPointer<const CertificateDescription>& getCertificateDescription() const;
 		const QByteArray& getCertificateDescriptionAsBinary() const;
 		const ConnectionHandle& getConnectionHandle() const;
-		const QVector<QSharedPointer<const CVCertificate> >& getCvCertificates() const;
+		const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
 		const QString& getDidName() const;
 		const QSharedPointer<const CHAT>& getOptionalChat() const;
 		const QSharedPointer<const CHAT>& getRequiredChat() const;

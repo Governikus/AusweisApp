@@ -197,6 +197,8 @@ void UpdatableFile::onDownloadUnnecessary(const QUrl& pUpdateUrl)
 {
 	if (pUpdateUrl == mUpdateUrl)
 	{
+		Q_EMIT fireNoUpdateAvailable();
+
 		cleanupAfterUpdate([&](){
 					clearDirty();
 				});
@@ -221,6 +223,7 @@ bool UpdatableFile::writeDataToFile(const QByteArray& pData, const QString& pFil
 	{
 		qCCritical(fileprovider) << "Not all data could not be written to file:" << pFilePath;
 		file.close();
+		file.remove();
 		return false;
 	}
 

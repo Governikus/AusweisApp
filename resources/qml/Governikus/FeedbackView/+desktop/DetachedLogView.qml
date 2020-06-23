@@ -68,7 +68,7 @@ Item {
 
 				onClicked: {
 					let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogfileDate())
-					appWindow.openSaveFileDialog(LogModel.saveCurrentLogfile, filenameSuggestion, "log")
+					appWindow.openSaveFileDialog(LogModel.saveCurrentLogfile, filenameSuggestion, qsTr("Logfiles"), "log")
 				}
 			}
 		}

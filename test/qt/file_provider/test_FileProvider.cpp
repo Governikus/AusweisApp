@@ -48,7 +48,6 @@ class test_FileProvider
 			QVERIFY(updatableFile11.data() != updatableFile2.data());
 		}
 
-
 	public:
 		test_FileProvider()
 			: mSection("reader")

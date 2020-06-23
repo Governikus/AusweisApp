@@ -75,7 +75,6 @@ class MockNetworkManager
 			return mLastData;
 		}
 
-
 	Q_SIGNALS:
 		void fireReply();
 };

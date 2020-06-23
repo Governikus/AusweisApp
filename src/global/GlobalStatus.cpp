@@ -16,9 +16,9 @@ static Initializer::Entry E([] {
 		});
 
 
-const QString GlobalStatus::getExternalInfo(int pIndex) const
+QString GlobalStatus::getExternalInfo(ExternalInformation pType) const
 {
-	return d->mExternalInformation.value(pIndex);
+	return d->mExternalInformation.value(pType);
 }
 
 
@@ -37,7 +37,6 @@ bool GlobalStatus::isMessageMasked() const
 		case Code::Workflow_Certificate_Sop_Error:
 		case Code::Workflow_Error_Page_Transmission_Error:
 		case Code::Workflow_Processing_Error:
-		case Code::Workflow_Redirect_Transmission_Error:
 		case Code::Workflow_TrustedChannel_Establishment_Error:
 		case Code::Workflow_TrustedChannel_Error_From_Server:
 		case Code::Workflow_TrustedChannel_No_Data_Received:
@@ -190,7 +189,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Workflow_TrustedChannel_Hash_Not_In_Description:
 		case Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description:
 			//: ERROR ALL_PLATFORMS The TLS certificate was not folded with the Authorization Certificate, thus violating the security requirements. Might also be caused by a firewall and/or the antivirus software.
-			return tr("Hash of TLS certificate not in certificate description (issuer: %1). This indicates a misconfiguration or manipulation of the certificate. Please check that your antivirus-software and firewalls are not interfering with TLS traffic.").arg(getExternalInfo());
+			return tr("Hash of TLS certificate not in certificate description (issuer: %1). This indicates a misconfiguration or manipulation of the certificate. Please check that your antivirus-software and firewalls are not interfering with TLS traffic.").arg(getExternalInfo(ExternalInformation::CERTIFICATE_ISSUER_NAME));
 
 		case Code::Workflow_TrustedChannel_No_Data_Received:
 			//: ERROR_MASKED ALL_PLATFORMS Received an empty TC token.
@@ -244,7 +243,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length:
 		case Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length:
 			//: ERROR ALL_PLATFORMS Received a TLS certificate that uses an invalid algorithm or key length.
-			return tr("Error while connecting to the server. The TLS certificate uses an unsupported key algorithm or length. Certificate issuer: %1").arg(getExternalInfo());
+			return tr("Error while connecting to the server. The TLS certificate uses an unsupported key algorithm or length. Certificate issuer: %1").arg(getExternalInfo(ExternalInformation::CERTIFICATE_ISSUER_NAME));
 
 		case Code::Workflow_Network_Empty_Redirect_Url:
 			//: ERROR_MASKED ALL_PLATFORMS The redirect URL could not be determined because the server sent an empty response.
@@ -252,20 +251,23 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Workflow_Network_Expected_Redirect:
 			//: ERROR_MASKED ALL_PLATFORMS The redirect URL could not be determined due to an erroneous HTTP code.
-			return tr("Expected redirect, got %1").arg(getExternalInfo());
+			return tr("Expected redirect, got %1").arg(getExternalInfo(ExternalInformation::HTTP_STATUS_CODE));
 
 		case Code::Workflow_Network_Invalid_Scheme:
 			//: ERROR_MASKED ALL_PLATFORMS The redirect URL could not be determined because the redirect URL did not adhere to the HTTPS scheme.
-			return tr("Invalid scheme: %1").arg(getExternalInfo());
+			return tr("Invalid scheme: %1").arg(getExternalInfo(ExternalInformation::URL_SCHEME));
 
 		case Code::Workflow_Network_Malformed_Redirect_Url:
 			//: ERROR_MASKED ALL_PLATFORMS The redirect URL could not be determined because the redirect URL was invalid.
-			return tr("Malformed redirect URL: %1").arg(getExternalInfo());
+			return tr("Malformed redirect URL: %1").arg(getExternalInfo(ExternalInformation::REDIRECT_URL));
 
 		case Code::Workflow_Cancellation_By_User:
-		case Code::Card_Cancellation_By_User:
-			//: ERROR ALL_PLATFORMS The user cancelled the authentication in either the UI or the card reader.
+			//: ERROR ALL_PLATFORMS The user cancelled the authentication in the UI.
 			return tr("The process has been cancelled.");
+
+		case Code::Card_Cancellation_By_User:
+			//: ERROR ALL_PLATFORMS The user cancelled the authentication on his card reader.
+			return tr("The process has been cancelled by the card reader.");
 
 		case Code::Paos_Generic_Server_Error:
 		case Code::Paos_Unexpected_Warning:
@@ -303,7 +305,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Card_Invalid_Can:
 			//: ERROR ALL_PLATFORMS The ID card declined the CAN.
-			return tr("The given card access number (CAN) is not correct.");
+			return tr("The given Card Access Number (CAN) is not correct.");
 
 		case Code::Card_Invalid_Puk:
 			//: ERROR ALL_PLATFORMS The ID card declined the PUK.
@@ -376,6 +378,29 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 	Q_UNREACHABLE();
 	return QString();
+}
+
+
+QString GlobalStatus::getExternalInfo(const QString& pToken) const
+{
+	if (d->mExternalInformation.empty())
+	{
+		return {};
+	}
+
+	if (d->mExternalInformation.size() == 1)
+	{
+		return d->mExternalInformation.first();
+	}
+
+	QStringList keyValue;
+	const auto& keys = d->mExternalInformation.keys();
+	for (const auto key : keys)
+	{
+		keyValue << QStringLiteral("%1: %2").arg(Enum<ExternalInformation>::getName(key), d->mExternalInformation[key]);
+	}
+
+	return keyValue.join(pToken);
 }
 
 

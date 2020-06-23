@@ -29,7 +29,7 @@ class WebSocketHelper
 
 	public:
 		WebSocketHelper(int pPort, int pConnectionTimeout = 15000);
-
+		bool isConnected() const;
 		QAbstractSocket::SocketState getState() const;
 		bool waitForMessage(const std::function<bool(const QJsonObject&)>& pMessageMatcher);
 		void sendMessage(const QString& pMessage);

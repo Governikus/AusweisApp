@@ -50,7 +50,7 @@ class SectionModel
 
 	private:
 		friend class ::test_DiagnosisModel;
-		QVector<QSharedPointer<ContentItem> > mContentItems;
+		QVector<QSharedPointer<ContentItem>> mContentItems;
 
 	public:
 		explicit SectionModel(QObject* pParent = nullptr);
@@ -65,7 +65,7 @@ class SectionModel
 		void addTitleWithoutContent(const QString& pTitle);
 		void removeAllItems();
 		void emitDataChangedForItem(const QSharedPointer<ContentItem>& pItem);
-		void replaceWithSections(QVector<QSharedPointer<SectionModel> > pSections);
+		void replaceWithSections(QVector<QSharedPointer<SectionModel>> pSections);
 		QStringList getAsPlaintext(const QString& pPrependString = QString()) const;
 };
 
@@ -77,7 +77,7 @@ class DiagnosisModel
 
 	private:
 		friend class ::test_DiagnosisModel;
-		QVector<QPair<QString, QSharedPointer<SectionModel> > > mSections;
+		QVector<QPair<QString, QSharedPointer<SectionModel>>> mSections;
 		QSharedPointer<DiagnosisContext> mContext;
 		DiagnosisAntivirusDetection mAntivirusDetection;
 		DiagnosisFirewallDetection mFirewallDetection;
@@ -88,11 +88,16 @@ class DiagnosisModel
 		QSharedPointer<SectionModel> mCombinedNetworkSection;
 		QSharedPointer<SectionModel> mCombinedAntivirusFirewallSection;
 		QSharedPointer<SectionModel> mAntivirusSection;
+		bool mAntivirusSectionRunning;
 		QSharedPointer<SectionModel> mFirewallSection;
+		bool mFirewallSectionRunning;
 		QSharedPointer<SectionModel> mCombinedReaderSection;
 		QSharedPointer<SectionModel> mCardReaderSection;
+		bool mCardReaderSectionRunning;
 		QSharedPointer<SectionModel> mPcscSection;
+		bool mPcscSectionRunning;
 		QSharedPointer<SectionModel> mRemoteDeviceSection;
+		bool mRemoteDeviceSectionRunning;
 
 		QSharedPointer<SectionModel> createAusweisApp2Section();
 		void createNetworkSection();
@@ -115,6 +120,10 @@ class DiagnosisModel
 		Q_INVOKABLE QString getCreationTimeString() const;
 		QString getAsPlaintext() const;
 		QString boolToString(bool pBoolean);
+		bool isRunning() const;
+
+	Q_SIGNALS:
+		void fireRunningChanged();
 
 	private Q_SLOTS:
 		void onTimestampChanged();

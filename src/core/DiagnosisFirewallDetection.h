@@ -79,8 +79,8 @@ class DiagnosisFirewallDetection
 		bool mFirstFirewallRuleEnabled;
 		bool mSecondFirewallRuleExists;
 		bool mSecondFirewallRuleEnabled;
-		QVector<QSharedPointer<FirewallSoftware> > mDetectedFirewalls;
-		QVector<QSharedPointer<FirewallProfile> > mFirewallProfiles;
+		QVector<QSharedPointer<FirewallSoftware>> mDetectedFirewalls;
+		QVector<QSharedPointer<FirewallProfile>> mFirewallProfiles;
 
 		bool mFirstRuleDone;
 		bool mSecondRuleDone;
@@ -134,17 +134,16 @@ class DiagnosisFirewallDetection
 		}
 
 
-		const QVector<QSharedPointer<FirewallProfile> >& getFirewallProfiles() const
+		const QVector<QSharedPointer<FirewallProfile>>& getFirewallProfiles() const
 		{
 			return mFirewallProfiles;
 		}
 
 
-		const QVector<QSharedPointer<FirewallSoftware> >& getDetectedFirewalls() const
+		const QVector<QSharedPointer<FirewallSoftware>>& getDetectedFirewalls() const
 		{
 			return mDetectedFirewalls;
 		}
-
 
 	Q_SIGNALS:
 		void fireFirewallInformationReady();

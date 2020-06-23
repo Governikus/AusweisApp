@@ -46,7 +46,6 @@ template<typename T> QList<T> Randomizer::getEntropy()
 
 	entropy += static_cast<T>(std::chrono::system_clock::now().time_since_epoch().count());
 	entropy += std::random_device()();
-	entropy += static_cast<T>(qrand());
 	entropy += QRandomGenerator::securelySeeded().generate();
 
 	UniversalBuffer<T> buffer;
@@ -157,7 +156,7 @@ Randomizer::Randomizer()
 	buffer.number = mGenerator();
 	RAND_seed(buffer.data, sizeof(std::mt19937::result_type));
 
-	static const int MINIMUM_ENTROPY_SOURCES = 5;
+	static const int MINIMUM_ENTROPY_SOURCES = 4;
 	mSecureRandom = seed.size() >= MINIMUM_ENTROPY_SOURCES;
 }
 

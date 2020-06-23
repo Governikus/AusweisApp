@@ -21,7 +21,6 @@ class test_ECardApiResult
 		return QJsonDocument(pObj).toJson(QJsonDocument::Compact);
 	}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{
@@ -97,7 +96,7 @@ class test_ECardApiResult
 			qDebug() << ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
 			QCOMPARE(spy.count(), 1);
 			param = spy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser | The process has been cancelled.\""));
+			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser | The process has been cancelled by the card reader.\""));
 
 			spy.clear();
 
@@ -124,7 +123,7 @@ class test_ECardApiResult
 
 			expected = "{\"description\":\"The process has been cancelled.\","
 					   "\"language\":\"en\",\"major\":\"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error\","
-					   "\"message\":\"The process has been cancelled.\","
+					   "\"message\":\"The process has been cancelled by the card reader.\","
 					   "\"minor\":\"http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser\"}";
 			QCOMPARE(bytes(ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER)).toJson()), expected);
 

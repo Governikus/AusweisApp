@@ -30,7 +30,6 @@ class test_CardConnectionWorker
 		mReader->setCard(cardConfig);
 	}
 
-
 	private Q_SLOTS:
 		void init()
 		{

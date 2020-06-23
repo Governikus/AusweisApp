@@ -12,6 +12,7 @@
 #include "GlobalStatus.h"
 #include "HistoryModel.h"
 #include "NumberModel.h"
+#include "ProxyCredentials.h"
 #include "SettingsModel.h"
 #include "TrayIcon.h"
 #include "UIPlugIn.h"
@@ -41,6 +42,7 @@ class UIPlugInQml
 	Q_PROPERTY(QVariantMap safeAreaMargins READ getSafeAreaMargins NOTIFY fireSafeAreaMarginsChanged)
 	Q_PROPERTY(bool highContrastEnabled READ isHighContrastEnabled NOTIFY fireHighContrastEnabledChanged)
 	Q_PROPERTY(QString fixedFontFamily READ getFixedFontFamily CONSTANT)
+	Q_PROPERTY(bool tablet READ isTablet CONSTANT)
 
 	private:
 		QScopedPointer<QQmlApplicationEngine> mEngine;
@@ -60,7 +62,10 @@ class UIPlugInQml
 
 		QString getPlatformSelectors() const;
 		static QUrl getPath(const QString& pRelativePath, bool pQrc = true);
+		QQuickWindow* getRootWindow() const;
+		bool isHidden() const;
 		bool isTablet() const;
+		bool isTabletLayout() const;
 		bool showUpdateInformationIfPending();
 
 	public:
@@ -80,7 +85,7 @@ class UIPlugInQml
 
 		Q_INVOKABLE void applyPlatformStyle(const QString& pPlatformStyle);
 		Q_INVOKABLE void init();
-		Q_INVOKABLE void hide();
+		Q_INVOKABLE void hideFromTaskbar();
 		Q_INVOKABLE void switchUi();
 
 	Q_SIGNALS:
@@ -89,6 +94,7 @@ class UIPlugInQml
 		void fireDominatorChanged();
 		void fireSafeAreaMarginsChanged();
 		void fireHighContrastEnabledChanged();
+		void fireProxyAuthenticationRequired(ProxyCredentials* pProxyCredentials);
 
 	private Q_SLOTS:
 		void show();
@@ -98,6 +104,7 @@ class UIPlugInQml
 		virtual void onApplicationStarted() override;
 		virtual void onShowUi(UiModule pModule) override;
 		virtual void onHideUi() override;
+		virtual void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator) override;
 		virtual void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted) override;
 		virtual void onUiDominationReleased() override;
 		void onShowUserInformation(const QString& pMessage);

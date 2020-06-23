@@ -158,10 +158,15 @@ Rectangle {
 
 			GButton {
 				id: providerButton
+
 				anchors.right: parent.right
+
 				buttonColor: shadowColor
 				//: LABEL ANDROID IOS
 				text: qsTr("To provider") + SettingsModel.translationTrigger
+				tintIcon: true
+				icon.source: "qrc:///images/link_external.svg"
+
 				onClicked: {
 					Qt.openUrlExternally(selectedProvider ? selectedProvider.address : "")
 				}

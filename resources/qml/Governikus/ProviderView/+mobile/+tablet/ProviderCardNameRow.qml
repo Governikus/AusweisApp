@@ -45,7 +45,7 @@ Rectangle {
 
 		text: '<html>' + providerName + '</html>'
 		elide: Text.ElideRight
-		maximumLineCount: 4
+		maximumLineCount: 3
 		textStyle: Style.text.hint_secondary
 	}
 }

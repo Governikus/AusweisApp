@@ -70,7 +70,6 @@ class GenericWorkflowGui
 			pStepUi->activate();
 		}
 
-
 	private:
 		void deactivateCurrentStepUi()
 		{

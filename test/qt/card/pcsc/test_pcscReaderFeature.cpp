@@ -36,7 +36,6 @@ class test_pcscReaderFeature
 			return count;
 		}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{

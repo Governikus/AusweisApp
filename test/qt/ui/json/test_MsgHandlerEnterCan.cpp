@@ -33,7 +33,6 @@ class test_MsgHandlerEnterCan
 		setValidState(pDispatcher, pSelectReader, pBasicReader, pPasswordID);
 	}
 
-
 	private Q_SLOTS:
 		void initTestCase()
 		{

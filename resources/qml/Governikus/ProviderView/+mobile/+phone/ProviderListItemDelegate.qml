@@ -16,7 +16,6 @@ ListItem {
 	Accessible.description: qsTr("Open provider details for") + ' ' + display + SettingsModel.translationTrigger
 
 	text: display
-	footerText: providerAddressDomain
 
 	onClicked: firePushWithProperties(providerDetailView, {providerModelItem: model})
 }

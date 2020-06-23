@@ -9,8 +9,8 @@
 
 using namespace governikus;
 
-ListItem::ListItem(QWidget* pParent, Qt::WindowFlags pWindowFlags)
-	: QWidget(pParent, pWindowFlags)
+ListItem::ListItem(QWidget* pParent)
+	: QWidget(pParent)
 {
 }
 

@@ -4,6 +4,7 @@
 
 #include "NetworkManager.h"
 
+#include "AppSettings.h"
 #include "NetworkReplyError.h"
 #include "NetworkReplyTimeout.h"
 #include "SecureStorage.h"
@@ -33,9 +34,9 @@ NetworkManager::NetworkManager()
 	, mTrackedConnections()
 	, mNetAccessManager(new QNetworkAccessManager())
 {
-#ifndef QT_NO_NETWORKPROXY
 	connect(mNetAccessManager.data(), &QNetworkAccessManager::proxyAuthenticationRequired, this, &NetworkManager::fireProxyAuthenticationRequired);
-#endif
+
+	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireProxyChanged, this, &NetworkManager::onProxyChanged);
 }
 
 
@@ -159,6 +160,12 @@ void NetworkManager::onShutdown()
 }
 
 
+void NetworkManager::onProxyChanged()
+{
+	setApplicationProxyFactory();
+}
+
+
 NetworkManager::NetworkError NetworkManager::toNetworkError(const QNetworkReply* const pNetworkReply)
 {
 	qCDebug(network) << "Select error message for:" << pNetworkReply->error();
@@ -191,49 +198,55 @@ NetworkManager::NetworkError NetworkManager::toNetworkError(const QNetworkReply*
 
 GlobalStatus NetworkManager::toTrustedChannelStatus(const QNetworkReply* const pNetworkReply)
 {
+	const GlobalStatus::ExternalInfoMap infoMap {
+		{GlobalStatus::ExternalInformation::LAST_URL, pNetworkReply->url().toString()}
+	};
 	switch (toNetworkError(pNetworkReply))
 	{
 		case NetworkManager::NetworkError::ServiceUnavailable:
-			return GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable;
+			return {GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, infoMap};
 
 		case NetworkManager::NetworkError::TimeOut:
-			return GlobalStatus::Code::Workflow_TrustedChannel_TimeOut;
+			return {GlobalStatus::Code::Workflow_TrustedChannel_TimeOut, infoMap};
 
 		case NetworkManager::NetworkError::ProxyError:
-			return GlobalStatus::Code::Workflow_TrustedChannel_Proxy_Error;
+			return {GlobalStatus::Code::Workflow_TrustedChannel_Proxy_Error, infoMap};
 
 		case NetworkManager::NetworkError::SecurityError:
-			return GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error;
+			return {GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error, infoMap};
 
 		case NetworkManager::NetworkError::OtherError:
-			return GlobalStatus::Code::Workflow_TrustedChannel_Other_Network_Error;
+			return {GlobalStatus::Code::Workflow_TrustedChannel_Other_Network_Error, infoMap};
 	}
 
-	return GlobalStatus::Code::Unknown_Error;
+	return {GlobalStatus::Code::Unknown_Error, infoMap};
 }
 
 
 GlobalStatus NetworkManager::toStatus(const QNetworkReply* const pNetworkReply)
 {
+	const GlobalStatus::ExternalInfoMap infoMap {
+		{GlobalStatus::ExternalInformation::LAST_URL, pNetworkReply->url().toString()}
+	};
 	switch (toNetworkError(pNetworkReply))
 	{
 		case NetworkManager::NetworkError::ServiceUnavailable:
-			return GlobalStatus::Code::Network_ServiceUnavailable;
+			return {GlobalStatus::Code::Network_ServiceUnavailable, infoMap};
 
 		case NetworkManager::NetworkError::TimeOut:
-			return GlobalStatus::Code::Network_TimeOut;
+			return {GlobalStatus::Code::Network_TimeOut, infoMap};
 
 		case NetworkManager::NetworkError::ProxyError:
-			return GlobalStatus::Code::Network_Proxy_Error;
+			return {GlobalStatus::Code::Network_Proxy_Error, infoMap};
 
 		case NetworkManager::NetworkError::SecurityError:
-			return GlobalStatus::Code::Network_Ssl_Establishment_Error;
+			return {GlobalStatus::Code::Network_Ssl_Establishment_Error, infoMap};
 
 		case NetworkManager::NetworkError::OtherError:
-			return GlobalStatus::Code::Network_Other_Error;
+			return {GlobalStatus::Code::Network_Other_Error, infoMap};
 	}
 
-	return GlobalStatus::Code::Unknown_Error;
+	return {GlobalStatus::Code::Unknown_Error, infoMap};
 }
 
 
@@ -294,7 +307,6 @@ int NetworkManager::getLoggedStatusCode(const QNetworkReply* const pReply, const
 }
 
 
-#ifndef QT_NO_NETWORKPROXY
 namespace
 {
 class NoProxyFactory
@@ -344,15 +356,44 @@ class SystemProxyFactory
 
 };
 
+class CustomProxyFactory
+	: public QNetworkProxyFactory
+{
+	public:
+		CustomProxyFactory()
+			: QNetworkProxyFactory()
+		{
+		}
+
+
+		virtual QList<QNetworkProxy> queryProxy(const QNetworkProxyQuery& pInputQuery = QNetworkProxyQuery()) override
+		{
+			qCDebug(network) << pInputQuery;
+			const auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			auto proxy = QNetworkProxy(settings.getCustomProxyType(), settings.getCustomProxyHost(), settings.getCustomProxyPort());
+			auto proxies = QList<QNetworkProxy>({proxy});
+			qCDebug(network) << "Found proxies" << proxies;
+			return proxies;
+		}
+
+
+};
+
 } // namespace
 
 void NetworkManager::setApplicationProxyFactory()
 {
+	const auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	if (Q_UNLIKELY(mLockProxy))
 	{
-		qCWarning(network) << "Won't use system proxy because user locked it!";
+		qCWarning(network) << "Won't use any proxy because user locked it!";
 		qCDebug(network) << "proxy -> none";
 		QNetworkProxyFactory::setApplicationProxyFactory(new NoProxyFactory());
+	}
+	else if (settings.useCustomProxy())
+	{
+		qCDebug(network) << "proxy -> custom";
+		QNetworkProxyFactory::setApplicationProxyFactory(new CustomProxyFactory());
 	}
 	else
 	{
@@ -360,6 +401,3 @@ void NetworkManager::setApplicationProxyFactory()
 		QNetworkProxyFactory::setApplicationProxyFactory(new SystemProxyFactory());
 	}
 }
-
-
-#endif

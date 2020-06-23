@@ -72,8 +72,14 @@
 			<ComponentRef Id="RemindToClose"/>
 			<ComponentRef Id="Assistant"/>
 			<ComponentRef Id="TransportPinReminder"/>
+			<ComponentRef Id="CustomProxyType"/>
+			<ComponentRef Id="CustomProxyHost" />
+			<ComponentRef Id="CustomProxyPort"/>
 			<ComponentRef Id="UpdateCheck"/>
 			<ComponentRef Id="OnScreenKeyboard"/>
+			<ComponentRef Id="ShuffleScreenKeyboard"/>
+			<ComponentRef Id="EnableCanAllowed"/>
+			<ComponentRef Id="SkipRightsOnCanAllowed"/>
 			<ComponentRef Id="History"/>
 		</FeatureRef>
 

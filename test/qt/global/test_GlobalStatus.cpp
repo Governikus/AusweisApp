@@ -29,9 +29,9 @@ class test_GlobalStatus
 		void test_IsCancellationByUser()
 		{
 			GlobalStatus status1;
-			GlobalStatus status2(GlobalStatus::Code::Workflow_Cancellation_By_User, QStringList(), Origin::Client);
-			GlobalStatus status3(GlobalStatus::Code::Card_Cancellation_By_User, QStringList(), Origin::Client);
-			GlobalStatus status4(GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User, QStringList(), Origin::Client);
+			GlobalStatus status2(GlobalStatus::Code::Workflow_Cancellation_By_User, Origin::Client);
+			GlobalStatus status3(GlobalStatus::Code::Card_Cancellation_By_User, Origin::Client);
+			GlobalStatus status4(GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User, Origin::Client);
 
 			QVERIFY(!status1.isCancellationByUser());
 			QVERIFY(status2.isCancellationByUser());
@@ -77,7 +77,7 @@ class test_GlobalStatus
 			QFETCH(GlobalStatus::Code, code);
 			QFETCH(QString, message);
 
-			GlobalStatus status(code, QStringList(), Origin::Client);
+			GlobalStatus status(code, Origin::Client);
 
 			QCOMPARE(status.toErrorDescription(false), message);
 		}

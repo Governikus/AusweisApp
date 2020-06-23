@@ -36,7 +36,6 @@ class test_EcdsaPublicKey
 		return QByteArray(reinterpret_cast<const char*>(buf.data()), buf.size());
 	}
 
-
 	private Q_SLOTS:
 		void parseCrap()
 		{
@@ -196,7 +195,7 @@ class test_EcdsaPublicKey
 			QVERIFY(ecdsaPublicKey != nullptr);
 			QVERIFY(ecdsaPublicKey->getEcKey() != nullptr);
 
-			const EC_GROUP* ecGroup = EC_KEY_get0_group(ecdsaPublicKey->getEcKey().data());
+			const EC_GROUP* ecGroup = EC_KEY_get0_group(ecdsaPublicKey->getEcKey());
 			BIGNUM* a = BN_new(), * b = BN_new(), * p = BN_new(), * cofactor = BN_new(), * order = BN_new();
 			EC_GROUP_get_curve_GFp(ecGroup, p, a, b, nullptr);
 
@@ -249,7 +248,7 @@ class test_EcdsaPublicKey
 			QVERIFY(ecdsaPublicKey != nullptr);
 			QVERIFY(ecdsaPublicKey->getEcKey() != nullptr);
 
-			const EC_GROUP* ecGroup = EC_KEY_get0_group(ecdsaPublicKey->getEcKey().data());
+			const EC_GROUP* ecGroup = EC_KEY_get0_group(ecdsaPublicKey->getEcKey());
 			BIGNUM* a = BN_new(), * b = BN_new(), * p = BN_new(), * cofactor = BN_new(), * order = BN_new();
 			EC_GROUP_get_curve_GFp(ecGroup, p, a, b, nullptr);
 

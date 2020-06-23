@@ -13,7 +13,7 @@ alle unterstützten Parameter, die im Anschluss erläutert werden.
 
 .. code-block:: winbatch
 
-  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALL_ROOT="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false UPDATECHECK=false ONSCREENKEYBOARD=true HISTORY=false
+  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALL_ROOT="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true HISTORY=false ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true
 
 INSTALL_ROOT
   Gibt das Installationsverzeichnis an. Ohne Angabe wird der Ordner
@@ -63,6 +63,24 @@ TRANSPORTPINREMINDER
   TRANSPORTPINREMINDER=false kann diese Abfrage deaktiviert werden. Ohne Angabe
   ist die Abfrage aktiviert (true).
 
+CUSTOMPROXYTYPE
+  Teil der Konfiguration eines Proxys. Gültige Typen sind SOCKS5 und HTTP.
+  Um einen Proxy zu nutzen müssen alle Parameter gesetzt sein (siehe
+  CUSTOMPROXYHOST und CUSTOMPROXYPORT). Der Proxy kann nach der Installation
+  über eine Checkbox in den Einstellungen deaktiviert werden.
+
+CUSTOMPROXYHOST
+  Teil der Konfiguration eines Proxys. Angabe des Hosts, unter dem der Proxy zu
+  erreichen ist. Um einen Proxy zu nutzen müssen alle Parameter gesetzt sein
+  (siehe CUSTOMPROXYTYPE und CUSTOMPROXYPORT). Der Proxy kann nach der
+  Installation über eine Checkbox in den Einstellungen deaktiviert werden.
+
+CUSTOMPROXYPORT
+  Teil der Konfiguration eines Proxys. Angabe des Proxyports. Nur Werte von
+  1 bis 65536 sind gültig. Um einen Proxy zu nutzen müssen alle Parameter
+  gesetzt sein (siehe CUSTOMPROXYTYPE und CUSTOMPROXYHOST). Der Proxy kann nach
+  der Installation über eine Checkbox in den Einstellungen deaktiviert werden.
+
 UPDATECHECK
   Wird die Benutzeroberfläche der AusweisApp2 geöffnet, wird eine Überprüfung auf
   eine neue Version der AusweisApp2 gestartet, falls seit der letzten Überprüfung
@@ -80,12 +98,25 @@ ONSCREENKEYBOARD
   werden. Durch Setzen von ONSCREENKEYBOARD auf false oder true kann diese
   deaktiviert bzw. aktiviert werden. Der Benutzer kann diese Einstellung anpassen.
 
+SHUFFLESCREENKEYBOARD
+  Ist die Bildschirmtastatur aktiviert, können die Zifferntasten zufällig angeordnet werden.
+  Durch Setzen von SHUFFLESCREENKEYBOARD auf false oder true kann die zufällige Anordnung
+  deaktiviert bzw. aktiviert werden. Der Benutzer kann diese Einstellung anpassen.
+
 HISTORY
   Jede Selbstauskunft oder Authentisierung wird im Verlauf gespeichert. Dabei
   werden jedoch keine persönlichen Daten gespeichert, sondern nur der Zeitpunkt,
   der Anbieter und die ausgelesenen Datenfelder (ohne Inhalt). Durch Setzen
   von HISTORY auf false oder true kann der Verlauf deaktiviert bzw. aktiviert
   werden. Der Benutzer kann diese Einstellung anpassen.
+
+ENABLECANALLOWED
+  Aktiviert die Unterstützung für den CAN-Allowed-Modus (Vor-Ort-Auslesen). Wenn ein entsprechendes
+  Berechtigungszertifikat vorliegt, muss zum Auslesen die CAN anstelle der PIN eingegeben werden.
+
+SKIPRIGHTSONCANALLOWED
+  Überspringt die Anzeige des Berechtigungszertifikat im CAN-Allowed-Modus und wechselt direkt zur
+  CAN-Eingabe.
 
 Alternativ kann mit Orca [#orca]_ eine MST-Datei erzeugt werden, die die oben
 genannten Parameter definiert. Die Parameter sind in den Tabellen "Directory"
@@ -128,12 +159,24 @@ dargestellt:
     <false/>
     <key>transportPinReminder</key>
     <false/>
-    <key>common.autoUpdateCheck</key>
+    <key>customProxyType</key>
+    <string>HTTP</string>
+    <key>customProxyHost</key>
+    <string>proxy.example.org</string>
+    <key>customProxyPort</key>
+    <integer>1337</integer>
+    <key>autoUpdateCheck</key>
     <false/>
-    <key>common.keylessPassword</key>
+    <key>keylessPassword</key>
+    <true/>
+    <key>shuffleScreenKeyboard</key>
     <true/>
     <key>history.enable</key>
     <false/>
+    <key>enableCanAllowed</key>
+    <true/>
+    <key>skipRightsOnCanAllowed</key>
+    <true/>
   </dict>
   </plist>
 
@@ -141,17 +184,26 @@ Für die einzelnen Werte gelten die gleichen Beschreibungen wie für die
 Windows-Version wobei die Bennennung der Attribute der folgenden Tabelle zu
 entnehmen ist.
 
-====================== ====================
-macOS                  Windows
-====================== ====================
-autoCloseWindow        AUTOHIDE
-remindToClose          REMINDTOCLOSE
-showSetupAssistant     ASSISTANT
-transportPinReminder   TRANSPORTPINREMINDER
-common.autoUpdateCheck UPDATECHECK
-common.keylessPassword ONSCREENKEYBOARD
-history.enable         HISTORY
-====================== ====================
+======================= =======================
+macOS                   Windows
+======================= =======================
+autoCloseWindow         AUTOHIDE
+remindToClose           REMINDTOCLOSE
+showSetupAssistant      ASSISTANT
+transportPinReminder    TRANSPORTPINREMINDER
+customProxyType         CUSTOMPROXYTYPE
+customProxyPort         CUSTOMPROXYPORT
+customProxyHost         CUSTOMPROXYHOST
+autoUpdateCheck         UPDATECHECK
+keylessPassword         ONSCREENKEYBOARD
+shuffleScreenKeyboard   SHUFFLESCREENKEYBOARD
+history.enable          HISTORY
+enableCanAllowed        ENABLECANALLOWED
+skipRightsOnCanAllowed  SKIPRIGHTSONCANALLOWED
+======================= =======================
+
+Nach Änderung der Datei kann es notwending sein, ein erneutes Laden der vom
+Betriebssystem gecachten Daten zu erzwingen: :code:`killall -u $USER cfprefsd`
 
 .. [#msiexecreturnvalues] https://docs.microsoft.com/de-de/windows/desktop/msi/error-codes
 .. [#standardarguments] https://docs.microsoft.com/de-de/windows/desktop/msi/standard-installer-command-line-options

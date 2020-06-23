@@ -77,8 +77,8 @@ class AuthContext
 		QSharedPointer<DIDAuthenticateResponseEAC2> mDIDAuthenticateResponseEACAdditionalInputType;
 		QSharedPointer<DIDAuthenticateEACAdditional> mDIDAuthenticateEACAdditionalInputType;
 		QSharedPointer<DIDAuthenticateResponseEAC2> mDIDAuthenticateResponseEAC2;
-		QVector<QSharedPointer<Transmit> > mTransmits;
-		QVector<QSharedPointer<TransmitResponse> > mTransmitResponses;
+		QVector<QSharedPointer<Transmit>> mTransmits;
+		QVector<QSharedPointer<TransmitResponse>> mTransmitResponses;
 		QSharedPointer<Disconnect> mDisconnect;
 		QSharedPointer<DisconnectResponse> mDisconnectResponse;
 		QSharedPointer<StartPaosResponse> mStartPaosResponse;
@@ -169,7 +169,7 @@ class AuthContext
 		{
 			QUrl originUrl = UrlUtil::getUrlOrigin(pUrl);
 			qDebug() << "Adding certificate CN=" << pCert.subjectInfo(QSslCertificate::CommonName) << "SN=" << pCert.serialNumber() << "for URL origin" << originUrl;
-			mCertificates.insertMulti(originUrl, pCert);
+			mCertificates.insert(originUrl, pCert);
 		}
 
 
@@ -384,7 +384,7 @@ class AuthContext
 		}
 
 
-		const QVector<QSharedPointer<TransmitResponse> >& getTransmitResponses()
+		const QVector<QSharedPointer<TransmitResponse>>& getTransmitResponses()
 		{
 			return mTransmitResponses;
 		}
@@ -397,7 +397,7 @@ class AuthContext
 		}
 
 
-		const QVector<QSharedPointer<Transmit> >& getTransmits()
+		const QVector<QSharedPointer<Transmit>>& getTransmits()
 		{
 			return mTransmits;
 		}
@@ -473,7 +473,7 @@ class AuthContext
 		CVCertificateChain getChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const;
 
 
-		void initCvcChainBuilder(const QVector<QSharedPointer<const CVCertificate> >& pAdditionalCertificates = QVector<QSharedPointer<const CVCertificate> >());
+		void initCvcChainBuilder(const QVector<QSharedPointer<const CVCertificate>>& pAdditionalCertificates = QVector<QSharedPointer<const CVCertificate>>());
 
 
 		const QSharedPointer<const CVCertificate>& getDvCvc() const

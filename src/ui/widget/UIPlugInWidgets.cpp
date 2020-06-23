@@ -108,14 +108,10 @@ void UIPlugInWidgets::onHideUi()
 }
 
 
-#ifndef QT_NO_NETWORKPROXY
 void UIPlugInWidgets::onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator)
 {
 	mGui.onProxyAuthenticationRequired(pProxy, pAuthenticator);
 }
-
-
-#endif
 
 
 void UIPlugInWidgets::onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted)

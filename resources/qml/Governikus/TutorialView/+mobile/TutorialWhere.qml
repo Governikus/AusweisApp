@@ -284,7 +284,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("6 digits long PIN") + SettingsModel.translationTrigger
+			text: qsTr("six digits long PIN") + SettingsModel.translationTrigger
 			textStyle: Style.text.tutorial_header
 			font.bold: true
 			horizontalAlignment: Text.AlignHCenter

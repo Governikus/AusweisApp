@@ -40,6 +40,8 @@ MouseArea {
 
 				Layout.fillWidth: true
 
+				elide: Text.ElideRight
+				maximumLineCount: 1
 				textStyle: Style.text.normal_accent
 			}
 
@@ -48,6 +50,8 @@ MouseArea {
 
 				Layout.fillWidth: true
 
+				elide: Text.ElideRight
+				maximumLineCount: 1
 				textStyle: Style.text.hint_secondary
 			}
 		}

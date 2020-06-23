@@ -96,7 +96,7 @@ class Env
 		mutable QReadWriteLock mLock;
 #endif
 
-		QMap<Identifier, QWeakPointer<QObject> > mSharedInstances;
+		QMap<Identifier, QWeakPointer<QObject>> mSharedInstances;
 		mutable QReadWriteLock mSharedInstancesLock;
 
 		static Env& getInstance();
@@ -204,7 +204,7 @@ class Env
 				// unlock would allow to delete the wrapper.
 				for (auto mock : qAsConst(mInstancesCreator)) // clazy:exclude=range-loop
 				{
-					auto creator = mock.dynamicCast<FuncWrapper<T, Args ...> >();
+					auto creator = mock.dynamicCast<FuncWrapper<T, Args ...>>();
 					if (creator)
 					{
 						locker.unlock();
@@ -216,7 +216,6 @@ class Env
 
 			return newObject<T>(std::forward<Args>(pArgs) ...);
 		}
-
 
 	protected:
 		Env();
@@ -284,7 +283,7 @@ class Env
 
 			for (const auto& mock : qAsConst(holder.mInstancesCreator))
 			{
-				if (mock.dynamicCast<FuncWrapper<T, Args ...> >())
+				if (mock.dynamicCast<FuncWrapper<T, Args ...>>())
 				{
 					return mock->getCounter();
 				}
@@ -299,7 +298,7 @@ class Env
 		{
 			Q_ASSERT(pFunc);
 
-			const auto& value = QSharedPointer<FuncWrapper<T, Args ...> >::create(std::move(pFunc));
+			const auto& value = QSharedPointer<FuncWrapper<T, Args ...>>::create(std::move(pFunc));
 
 			auto& holder = getInstance();
 			const QWriteLocker locker(&holder.mLock);
@@ -308,7 +307,7 @@ class Env
 			while (iter.hasNext())
 			{
 				iter.next();
-				if (iter.value().dynamicCast<FuncWrapper<T, Args ...> >())
+				if (iter.value().dynamicCast<FuncWrapper<T, Args ...>>())
 				{
 					iter.setValue(value);
 					return;

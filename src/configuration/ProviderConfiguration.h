@@ -50,6 +50,7 @@ class ProviderConfiguration
 
 	Q_SIGNALS:
 		void fireUpdated();
+		void fireNoUpdateAvailable();
 };
 
 

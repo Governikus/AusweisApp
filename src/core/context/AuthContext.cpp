@@ -245,7 +245,8 @@ void AuthContext::setTerminalCvc(const QSharedPointer<const CVCertificate>& pTer
 	mTerminalCvc = pTerminalCvc;
 
 	const CHAT& terminalChat = mTerminalCvc->getBody().getCHAT();
-	bool canAllowed = terminalChat.getAccessRights().contains(AccessRight::CAN_ALLOWED);
+	bool canAllowed = terminalChat.getAccessRights().contains(AccessRight::CAN_ALLOWED) &&
+			(Env::getSingleton<AppSettings>()->isUsedAsSDK() || Env::getSingleton<AppSettings>()->getGeneralSettings().isEnableCanAllowed());
 	setCanAllowedMode(canAllowed);
 	qDebug() << "CAN allowed mode:" << canAllowed;
 

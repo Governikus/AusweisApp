@@ -24,14 +24,14 @@ class StatePreVerification
 	friend class StateBuilder;
 	friend class ::test_StatePreVerification;
 
-	const QVector<QSharedPointer<const CVCertificate> > mTrustedCvcas;
+	const QVector<QSharedPointer<const CVCertificate>> mTrustedCvcas;
 	const QDateTime mValidationDateTime;
 
 	explicit StatePreVerification(const QSharedPointer<WorkflowContext>& pContext);
 	virtual void run() override;
 
-	bool isValid(const QVector<QSharedPointer<const CVCertificate> >& pCertificates);
-	void saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate> >& pCertificates);
+	bool isValid(const QVector<QSharedPointer<const CVCertificate>>& pCertificates);
+	void saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate>>& pCertificates);
 };
 
 } // namespace governikus

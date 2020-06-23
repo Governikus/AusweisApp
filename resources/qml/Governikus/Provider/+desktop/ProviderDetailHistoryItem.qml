@@ -54,6 +54,7 @@ Item {
 				//: LABEL DESKTOP_QML
 				text: qsTr("Service:") + SettingsModel.translationTrigger
 				font.weight: Font.Bold
+				maximumLineCount: 1
 			}
 
 			GText {
@@ -70,6 +71,7 @@ Item {
 				//: LABEL DESKTOP_QML
 				text: qsTr("Provider:") + SettingsModel.translationTrigger
 				font.weight: Font.Bold
+				maximumLineCount: 1
 			}
 
 			GText {

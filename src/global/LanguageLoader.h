@@ -28,7 +28,7 @@ class LanguageLoader
 		static QLocale mDefaultLanguage;
 
 		QString mPath;
-		QVector<QSharedPointer<QTranslator> > mTranslatorList;
+		QVector<QSharedPointer<QTranslator>> mTranslatorList;
 		const QStringList mComponentList;
 		QLocale mUsedLocale;
 

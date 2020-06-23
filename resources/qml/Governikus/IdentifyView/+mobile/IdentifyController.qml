@@ -109,7 +109,12 @@ Item {
 				navBar.currentIndex = 0
 				break
 			case "StateEditAccessRights":
-				fireReplace(editRights)
+				if (NumberModel.isCanAllowedMode && SettingsModel.skipRightsOnCanAllowed) {
+					chatModel.transferAccessRights()
+					AuthModel.continueWorkflow()
+				} else {
+					fireReplace(editRights)
+				}
 				AuthModel.setInitialPluginType()
 				break
 			case "StateSelectReader":

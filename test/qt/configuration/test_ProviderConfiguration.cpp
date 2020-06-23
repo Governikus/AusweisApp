@@ -278,6 +278,75 @@ class test_ProviderConfiguration
 		}
 
 
+		void testCheckAttachedEidServices()
+		{
+			uint attachedEidCounter = 0;
+
+			const auto& providers = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
+			for (const auto& provider : providers)
+			{
+				const auto& urls = provider.getSubjectUrls();
+				for (const auto& urlString : urls)
+				{
+					const auto& subjectHost = QUrl(urlString).host();
+					if (subjectHost == provider.getAddressDomain() || subjectHost == provider.getHomepageBase())
+					{
+						attachedEidCounter++;
+					}
+				}
+			}
+
+			QCOMPARE(attachedEidCounter, 18);
+		}
+
+
+		void testCheckServicesWithoutAnOwnEidServer()
+		{
+			const auto& providers = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
+			for (const auto& provider : providers)
+			{
+				QVERIFY2(!provider.getSubjectUrls().isEmpty() || !provider.getSubjectUrlInfo().isEmpty(), provider.getShortName().toString().toStdString().c_str());
+			}
+		}
+
+
+		void testCheckUniqueSubjectUrls()
+		{
+			QSet<QString> subjectUrls;
+			uint subjectUrlCounter = 0;
+
+			const auto& providers = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
+			for (const auto& provider : providers)
+			{
+				const auto& urls = provider.getSubjectUrls();
+				for (const auto& urlString : urls)
+				{
+					QUrl url(urlString);
+					QVERIFY(url.isValid());
+					QCOMPARE(urlString, QString("https://%1").arg(url.host()));
+
+					subjectUrls += urlString;
+					subjectUrlCounter++;
+				}
+			}
+
+			QCOMPARE(subjectUrls.size(), subjectUrlCounter);
+		}
+
+
+		void testCheckUrlFormat()
+		{
+			const auto& providers = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
+			for (const auto& provider : providers)
+			{
+				QVERIFY(QUrl(provider.getAddress()).isValid());
+				QVERIFY(!provider.getAddress().endsWith('/'));
+				QVERIFY(QUrl(provider.getHomepage()).isValid());
+				QVERIFY(!provider.getHomepage().endsWith('/'));
+			}
+		}
+
+
 };
 
 QTEST_GUILESS_MAIN(test_ProviderConfiguration)

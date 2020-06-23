@@ -96,7 +96,6 @@ class ReaderManagerPlugInInfo
 			mResponding = pResponding;
 		}
 
-
 	private:
 		ReaderManagerPlugInType mType;
 		QMap<Key, QVariant> mValues;

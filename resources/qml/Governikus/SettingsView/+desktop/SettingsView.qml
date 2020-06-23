@@ -3,7 +3,6 @@
  */
 
 import QtQuick 2.10
-import QtQuick.Controls 2.3
 import QtQml.Models 2.3
 
 import Governikus.Global 1.0
@@ -13,10 +12,6 @@ import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.UiModule 1.0
 import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.EnterPasswordView 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.ProgressView 1.0
-import Governikus.ResultView 1.0
 import Governikus.UpdateView 1.0
 
 
@@ -25,10 +20,7 @@ SectionPage {
 
 	enum SubView {
 		None,
-		EnterPassword,
-		PairingInfo,
-		WaitForPairing,
-		PairingFailed,
+		ConnectSacView,
 		AppUpdateView
 	}
 
@@ -50,6 +42,12 @@ SectionPage {
 
 		onClicked: {
 			d.view = SettingsView.SubView.None
+		}
+
+		customSubAction: CancelAction {
+			visible: d.view === SettingsView.SubView.EnterPassword || d.view === SettingsView.SubView.WaitForPairing
+
+			onClicked: d.view = SettingsView.SubView.None
 		}
 	}
 
@@ -113,14 +111,15 @@ SectionPage {
 					height: Math.max(implicitHeight, tabbedPane.availableHeight)
 					onPairDevice: {
 						if (RemoteServiceModel.rememberServer(pDeviceId)) {
-							d.view = TabbedReaderView.SubView.EnterPassword
+							d.view = SettingsView.SubView.ConnectSacView
 							appWindow.menuBar.updateActions()
 						}
 					}
 					onUnpairDevice: RemoteServiceModel.forgetDevice(pDeviceId)
 					onMoreInformation: {
 						d.precedingView = d.view
-						d.view = TabbedReaderView.SubView.PairingInfo
+						d.view = TabbedReaderView.SubView.ConnectSacView
+						connectSacView.showPairingInformation()
 						appWindow.menuBar.updateActions()
 					}
 				}
@@ -161,70 +160,11 @@ SectionPage {
 		onLeaveView: d.view = SettingsView.SubView.None
 	}
 
-	EnterPasswordView {
-		id: enterPassword
+	ConnectSacView {
+		id: connectSacView
 
-		visible: d.view === SettingsView.SubView.EnterPassword
+		visible: d.view === SettingsView.SubView.ConnectSacView
 
-		statusIcon: "qrc:///images/phone_to_pc.svg"
-		passwordType: NumberModel.PASSWORD_REMOTE_PIN
-
-		onPasswordEntered: d.view = SettingsView.SubView.WaitForPairing
-
-		onRequestPasswordInfo: {
-			d.precedingView = d.view
-			d.view = SettingsView.SubView.PairingInfo
-			appWindow.menuBar.updateActions()
-		}
-	}
-
-	PasswordInfoView {
-		id: passwordInfoView
-
-		visible: d.view === SettingsView.SubView.PairingInfo
-
-		passwordType: NumberModel.PASSWORD_REMOTE_PIN
-
-		onClose: {
-			d.view = d.precedingView
-			appWindow.menuBar.updateActions()
-		}
-	}
-
-	ProgressView {
-		visible: d.view === SettingsView.SubView.WaitForPairing
-
-		//: LABEL DESKTOP_QML
-		text: qsTr("Pairing the device ...") + SettingsModel.translationTrigger
-
-		Connections {
-			enabled: visible
-			target: RemoteServiceModel
-
-			onFirePairingFailed: {
-				pairingFailedView.deviceName = pDeviceName
-				pairingFailedView.errorMessage = pErrorMessage
-				d.view = SettingsView.SubView.PairingFailed
-			}
-
-			onFirePairingSuccess: {
-				ApplicationModel.showFeedback(qsTr("The device \"%1\" has been paired.").arg(pDeviceName))
-				d.view = SettingsView.SubView.None
-			}
-		}
-	}
-
-	ResultView {
-		id: pairingFailedView
-
-		property string deviceName
-		property string errorMessage
-
-		visible: d.view === SettingsView.SubView.PairingFailed
-
-		//: ERROR DESKTOP_QML An error occurred while pairing the device.
-		text: qsTr("Pairing to \"%1\" failed:").arg(deviceName) + "<br/>\"%2\"".arg(errorMessage) + SettingsModel.translationTrigger
-		resultType: ResultView.Type.IsError
-		onNextView: d.view = SettingsView.SubView.None
+		onCloseView: d.view = SettingsView.SubView.None
 	}
 }

@@ -176,7 +176,7 @@ const QString StepChooseCardGui::connectedRemoteReaderNames() const
 	QStringList deviceNames;
 	for (const auto& info : deviceInfos)
 	{
-		deviceNames.append(QLatin1Char('"') + info.getName() + QLatin1Char('"'));
+		deviceNames.append(QLatin1Char('"') + info.getNameEscaped() + QLatin1Char('"'));
 	}
 	return deviceNames.join(QLatin1String(", "));
 }

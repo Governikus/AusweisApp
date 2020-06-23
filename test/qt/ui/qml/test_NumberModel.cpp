@@ -245,23 +245,23 @@ class test_NumberModel
 			context->setCardConnection(connection);
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
-			QCOMPARE(mModel->getInputError(), tr("The given PIN is not correct. You have 2 tries to enter the correct PIN."));
+			QCOMPARE(mModel->getInputError(), tr("The given PIN is not correct. You have two attempts to enter the correct PIN."));
 			QVERIFY(mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
 			QCOMPARE(mModel->getInputError(), tr("A wrong PIN has been entered twice on your ID card. "
-												 "Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. "
-												 "You can find your card access number (CAN) on the front of your ID card."));
+												 "For a third attempt, please first enter the six-digit Card Access Number (CAN). "
+												 "You can find your Card Access Number (CAN) in the bottom right on the front of your ID card."));
 			QVERIFY(mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
 			QCOMPARE(mModel->getInputError(), tr("A wrong PIN has been entered three times on your ID card. "
 												 "Your PIN is now blocked. "
-												 "To unblock your PIN you have to enter the PUK."));
+												 "You have to enter the PUK to remove the block."));
 			QVERIFY(mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::INVALID_CAN);
-			QCOMPARE(mModel->getInputError(), tr("The entered card access number (CAN) is incorrect. Please try again."));
+			QCOMPARE(mModel->getInputError(), tr("The entered Card Access Number (CAN) is incorrect. Please try again."));
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PUK);
 			QCOMPARE(mModel->getInputError(), tr("The entered PUK is incorrect. Please try again."));
@@ -276,6 +276,18 @@ class test_NumberModel
 					tr("https://www.ausweisapp.bund.de/en/qa/support/"),
 					tr("AusweisApp2 Support")));
 			QVERIFY(mModel->hasError());
+
+			mModel->setRequestTransportPin(true);
+			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
+			QCOMPARE(mModel->getInputError(), tr("The given Transport PIN is not correct. You have two attempts to enter the correct Transport PIN."));
+			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
+			QCOMPARE(mModel->getInputError(), tr("A wrong Transport PIN has been entered twice on your ID card. "
+												 "For a third attempt, please first enter the six-digit Card Access Number (CAN). "
+												 "You can find your Card Access Number (CAN) in the bottom right on the front of your ID card."));
+			context->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
+			QCOMPARE(mModel->getInputError(), tr("A wrong Transport PIN has been entered three times on your ID card. "
+												 "Your Transport PIN is now blocked. "
+												 "You have to enter the PUK to remove the block."));
 
 			connectionThread.quit();
 			connectionThread.wait();

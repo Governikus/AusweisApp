@@ -12,6 +12,7 @@ import Governikus.SplashScreen 1.0
 import Governikus.View 1.0
 import Governikus.FeedbackView 1.0
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.RemoteServiceModel 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Style 1.0
 
@@ -173,7 +174,7 @@ ApplicationWindow {
 		id: feedback
 
 		function showIfNecessary() {
-			if (!ApplicationModel.currentWorkflow && SettingsModel.requestStoreFeedback()) {
+			if (!ApplicationModel.currentWorkflow && !RemoteServiceModel.running && SettingsModel.requestStoreFeedback()) {
 				SettingsModel.hideFutureStoreFeedbackDialogs()
 				feedback.open()
 			}

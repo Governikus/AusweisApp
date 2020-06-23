@@ -80,7 +80,11 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 			qCritical() << httpsError1;
 			qCritical() << httpsError2;
 			getContext()->setTcTokenNotFound(false);
-			updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
+			const GlobalStatus::ExternalInfoMap& infoMap {
+				{GlobalStatus::ExternalInformation::LAST_URL, pUrl.toString()},
+				{GlobalStatus::ExternalInformation::URL_SCHEME, pUrl.scheme()}
+			};
+			updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error, infoMap});
 			return false;
 		}
 	}
@@ -114,12 +118,14 @@ void StateGetTcToken::onSslHandshakeDone()
 	const auto& cfg = mReply->sslConfiguration();
 	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
 
+	const GlobalStatus status {GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+	};
 	// At this point we can only check the certificate key's length.
 	if (!TlsChecker::hasValidCertificateKeyLength(cfg.peerCertificate()))
 	{
 		mReply->abort();
 		qCritical() << "Error while connecting to the provider. The server's SSL certificate uses an unsupported key algorithm or length.";
-		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
+		updateStatus(status);
 		Q_EMIT fireAbort();
 		return;
 	}
@@ -128,7 +134,7 @@ void StateGetTcToken::onSslHandshakeDone()
 	{
 		mReply->abort();
 		qCritical() << "Error while connecting to the provider. The SSL connection uses an unsupported key algorithm or length.";
-		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
+		updateStatus(status);
 		Q_EMIT fireAbort();
 		return;
 	}
@@ -167,7 +173,11 @@ void StateGetTcToken::onNetworkReply()
 	if (statusCode != HTTP_STATUS_SEE_OTHER && statusCode != HTTP_STATUS_FOUND && statusCode != HTTP_STATUS_TEMPORARY_REDIRECT)
 	{
 		qCritical() << "Error while connecting to the provider. The server returns an unexpected status code:" << statusCode;
-		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
+		const GlobalStatus::ExternalInfoMap infoMap {
+			{GlobalStatus::ExternalInformation::HTTP_STATUS_CODE, QString::number(statusCode)},
+			{GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+		};
+		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error, infoMap});
 		Q_EMIT fireAbort();
 		return;
 	}
@@ -184,7 +194,8 @@ void StateGetTcToken::parseTcToken()
 	if (data.isEmpty())
 	{
 		qDebug() << "Received no data.";
-		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_No_Data_Received);
+		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_No_Data_Received, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+				});
 		Q_EMIT fireAbort();
 		return;
 	}
@@ -205,6 +216,7 @@ void StateGetTcToken::parseTcToken()
 	}
 
 	qCritical() << "TCToken invalid";
-	updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
+	updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+			});
 	Q_EMIT fireAbort();
 }

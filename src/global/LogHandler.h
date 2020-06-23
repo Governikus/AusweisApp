@@ -22,6 +22,7 @@
 	QMessageLogger(QT_MESSAGELOG_FILE, QT_MESSAGELOG_LINE, QT_MESSAGELOG_FUNC, category().categoryName())
 
 class test_LogHandler;
+class test_LogModel;
 
 namespace governikus
 {
@@ -32,6 +33,7 @@ class LogHandler
 	Q_OBJECT
 	friend class Env;
 	friend class ::test_LogHandler;
+	friend class ::test_LogModel;
 
 	struct LogWindowEntry
 	{
@@ -87,6 +89,7 @@ class LogHandler
 
 		void setAutoRemove(bool pRemove);
 		bool copy(const QString& pDest);
+		bool copyOther(const QString& pSource, const QString& pDest) const;
 		void resetBacklog();
 		QByteArray getBacklog(bool pAll = false);
 		QByteArray getCriticalLogWindow();

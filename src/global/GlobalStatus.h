@@ -9,6 +9,8 @@
 #include "EnumHelper.h"
 
 #include <QCoreApplication>
+#include <QMap>
+#include <QPair>
 #include <QSharedData>
 
 namespace governikus
@@ -118,8 +120,22 @@ class GlobalStatus
 			Server, Client
 		};
 
+		enum class ExternalInformation
+		{
+			ECARDAPI_ERROR,
+			LAST_URL,
+			HTTP_STATUS_CODE,
+			REDIRECT_URL,
+			CERTIFICATE_ISSUER_NAME,
+			URL_SCHEME,
+			ACTIVATION_ERROR
+		};
+
+		using ExternalInfoMap = QMap<ExternalInformation, QString>;
+
 		Q_ENUM(Code)
 		Q_ENUM(Origin)
+		Q_ENUM(ExternalInformation)
 
 	private:
 		class InternalStatus
@@ -127,12 +143,22 @@ class GlobalStatus
 		{
 			public:
 				const Code mStatusCode;
-				const QStringList mExternalInformation;
+				const ExternalInfoMap mExternalInformation;
 				const Origin mOrigin;
 
-				InternalStatus(Code pStatusCode, const QStringList& pExternalInformation, const Origin pOrigin)
+				InternalStatus(Code pStatusCode, const ExternalInfoMap& pExternalInformation, const Origin pOrigin)
 					: mStatusCode(pStatusCode)
 					, mExternalInformation(pExternalInformation)
+					, mOrigin(pOrigin)
+				{
+				}
+
+
+				InternalStatus(Code pStatusCode, const QPair<ExternalInformation, QString>& pExternalInformation, const Origin pOrigin)
+					: mStatusCode(pStatusCode)
+					, mExternalInformation({
+								{pExternalInformation.first, pExternalInformation.second}
+							})
 					, mOrigin(pOrigin)
 				{
 				}
@@ -149,19 +175,25 @@ class GlobalStatus
 		};
 
 		QSharedDataPointer<InternalStatus> d;
-		const QString getExternalInfo(int pIndex = 0) const;
+		QString getExternalInfo(ExternalInformation pType) const;
 
 		QString toErrorDescriptionInternal() const;
 
 	public:
-		GlobalStatus(Code pStatusCode = Code::Unknown_Error, const QStringList& pExternalInformation = QStringList(), const Origin pOrigin = Origin::Client)
+		GlobalStatus(Code pStatusCode, const ExternalInfoMap& pExternalInformation, const Origin pOrigin = Origin::Client)
 			: d(new InternalStatus(pStatusCode, pExternalInformation, pOrigin))
 		{
 		}
 
 
-		GlobalStatus(Code pStatusCode, const QString& pExternalInformation, const Origin pOrigin = Origin::Client)
-			: GlobalStatus(pStatusCode, QStringList(pExternalInformation), pOrigin)
+		GlobalStatus(Code pStatusCode, const QPair<ExternalInformation, QString>& pExternalInformation, const Origin pOrigin = Origin::Client)
+			: d(new InternalStatus(pStatusCode, pExternalInformation, pOrigin))
+		{
+		}
+
+
+		GlobalStatus(Code pStatusCode = Code::Unknown_Error, const Origin pOrigin = Origin::Client)
+			: d(new InternalStatus(pStatusCode, ExternalInfoMap(), pOrigin))
 		{
 		}
 
@@ -172,6 +204,7 @@ class GlobalStatus
 		Code getStatusCode() const;
 
 		QString toErrorDescription(const bool pSimplifiedVersion = false) const;
+		QString getExternalInfo(const QString& pToken = QStringLiteral("; ")) const;
 
 		Origin getOrigin() const;
 		bool isOriginServer() const;

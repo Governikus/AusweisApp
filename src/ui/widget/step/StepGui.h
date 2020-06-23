@@ -69,7 +69,6 @@ class StepGui
 			Q_EMIT mDelegate->setCancelButtonState(pState);
 		}
 
-
 	protected:
 		QScopedPointer<StepGuiDelegate> mDelegate;
 

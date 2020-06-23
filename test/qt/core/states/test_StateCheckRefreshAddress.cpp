@@ -48,7 +48,6 @@ class test_StateCheckRefreshAddress
 			return QSharedPointer<TcToken>(new TcToken(data));
 		}
 
-
 	private Q_SLOTS:
 		void init()
 		{

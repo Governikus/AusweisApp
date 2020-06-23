@@ -21,7 +21,6 @@ class test_MSEBuilder
 		QCOMPARE(mMseBuilder->build().getData(), pExpectedContent);
 	}
 
-
 	private Q_SLOTS:
 		void init()
 		{

@@ -7,6 +7,7 @@
    "toolchain-prefix": "@ANDROID_TOOLCHAIN_PREFIX@",
    "tool-prefix": "@ANDROID_TOOLCHAIN_MACHINE_NAME@",
    "toolchain-version": "@ANDROID_NDK_TOOLCHAIN_VERSION@",
+   "useLLVM": @ANDROID_USE_LLVM@,
    "ndk-host": "@CMAKE_ANDROID_NDK_TOOLCHAIN_HOST_TAG@",
    "target-architecture": "@CMAKE_ANDROID_ARCH_ABI@",
    "android-package-source-directory": "@ANDROID_PACKAGE_SRC_DIR@",

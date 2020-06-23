@@ -44,7 +44,7 @@
          <property name="text">
           <string>Select a secure PIN that consists of six digits. Do not select a number that can be guessed easily, such as &quot;123456&quot;, your date of birth or any other number that is printed on your ID card.
 
-When you change your PIN for the first time, please enter your five-digit transport PIN in the field &quot;Current PIN / Transport PIN&quot;. You received your transport PIN with the letter sent to you by your competent authority.
+When you change your PIN for the first time, please enter the five-digit Transport PIN in the field &quot;Current PIN / Transport PIN&quot;. You received your Transport PIN with the letter sent to you by your competent authority.
 
 Please note that the PIN may only consist of digits (0-9).</string>
          </property>
@@ -80,7 +80,7 @@ Please note that the PIN may only consist of digits (0-9).</string>
          <property name="text">
           <string>Select a secure PIN that consists of six digits. Do not select a number that can be guessed easily, such as &quot;123456&quot;, your date of birth or any other number that is printed on your ID card.
 
-When you change your PIN for the first time, please enter your five-digit transport PIN in the field &quot;Current PIN / Transport PIN&quot;. You received your transport PIN with the letter sent to you by your competent authority.
+When you change your PIN for the first time, please enter the five-digit Transport PIN in the field &quot;Current PIN / Transport PIN&quot;. You received your Transport PIN with the letter sent to you by your competent authority.
 
 Please note that the PIN may only consist of digits (0-9).</string>
          </property>
@@ -156,7 +156,7 @@ Please note that you can only use the PUK to unblock the eID function. If you ha
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="accessibleName">
-            <string>Display of the card access number (CAN) in the lower right corner of the id card</string>
+            <string>Display of the Card Access Number (CAN) in the lower right corner of the id card</string>
            </property>
            <property name="pixmap">
             <pixmap resource="../../../resources/ausweisapp.qrc">:/images/canHint.png</pixmap>
@@ -172,7 +172,7 @@ Please note that you can only use the PUK to unblock the eID function. If you ha
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="text">
-            <string>A wrong PIN has been entered twice on your ID card. Prior to a third attempt, you have to enter your 6-digit card access number (CAN) first. You can find your card access number (CAN) on the front of your ID card.</string>
+            <string>A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -602,7 +602,7 @@ Please note that you can only use the PUK to unblock the eID function. If you ha
                     <enum>Qt::TabFocus</enum>
                    </property>
                    <property name="text">
-                    <string>Card access number (CAN):</string>
+                    <string>Card Access Number (CAN):</string>
                    </property>
                   </widget>
                  </item>
@@ -1007,7 +1007,7 @@ Please note that you can only use the PUK to unblock the eID function. If you ha
               <item>
                <widget class="QLabel" name="label_7">
                 <property name="text">
-                 <string>Click on &quot;Change PIN&quot; to enter your card access number (CAN) and then set a new PIN. You can find your card access number (CAN) on the front side of your ID card next to the date of expiry. On the electronic residence permit the card access number (CAN) is printed above your signature.</string>
+                 <string>Click on &quot;Change PIN&quot; to enter your Card Access Number (CAN) and then set a new PIN. You can find your Card Access Number (CAN) on the front side of your ID card next to the date of expiry. On the electronic residence permit the Card Access Number (CAN) is printed above your signature.</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>

@@ -45,9 +45,7 @@ class UIPlugIn
 		virtual void onShowUi(UiModule pModule);
 		virtual void onHideUi();
 		virtual void onShowReaderSettings();
-#ifndef QT_NO_NETWORKPROXY
 		virtual void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
-#endif
 		virtual void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted);
 		virtual void onUiDominationReleased();
 

@@ -33,7 +33,11 @@ void TrayIcon::onActivated(QSystemTrayIcon::ActivationReason pReason)
 
 TrayIcon::TrayIcon()
 	: QObject()
+#ifdef Q_OS_MACOS
+	, mIcon(QStringLiteral(":/images/macos/appIcon.svg"))
+#else
 	, mIcon(QStringLiteral(":/images/npa.svg"))
+#endif
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 	, mTrayIcon(nullptr)
 #endif
