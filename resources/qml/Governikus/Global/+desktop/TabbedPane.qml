@@ -173,7 +173,7 @@ Item {
 			Accessible.role: Accessible.PageTab
 			Accessible.name: delegateLoader.item ? delegateLoader.item.sectionName : ""
 
-			width: parent.width
+			width: sectionNameList.width
 			height: delegateLoader.height + 2 * Constants.pane_padding
 
 			RoundedRectangle {

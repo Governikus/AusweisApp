@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
-<manifest package="@ANDROID_PACKAGE_NAME@" xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto">
+<manifest package="@ANDROID_PACKAGE_NAME@"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          android:installLocation="auto">
     <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="29" />
 
     <!-- Normal Permissions -->
@@ -16,10 +19,12 @@
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 
     <application android:hardwareAccelerated="true"
-				 android:name="org.qtproject.qt5.android.bindings.QtApplication"
-				 android:label="@string/app_name"
-				 android:allowBackup="true"
-				 android:fullBackupContent="@xml/backup_rules">
+                 android:name="org.qtproject.qt5.android.bindings.QtApplication"
+                 android:label="@string/app_name"
+                 android:allowBackup="true"
+                 android:fullBackupContent="@xml/backup_rules"
+                 android:extractNativeLibs="true"
+                 tools:targetApi="23">
 
         <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
 

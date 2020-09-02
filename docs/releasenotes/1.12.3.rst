@@ -6,17 +6,17 @@ AusweisApp2 1.12.3
 
 Anwender
 """"""""
-  - Anzeige des Verwendungszwecks korrigiert.
+- Anzeige des Verwendungszwecks korrigiert.
 
-  - Anbieterliste beinhaltet nur noch die Anbieter
-    der aktuellen Plattform.
+- Anbieterliste beinhaltet nur noch die Anbieter
+  der aktuellen Plattform.
 
-  - Unterstützung von arm64-v8a.
+- Unterstützung von arm64-v8a.
 
 
 Entwickler
 """"""""""
-  - Finale API des eingebetteten SDKs.
+- Finale API des eingebetteten SDKs.
 
-  - Anpassung der verschiedenen README-Dateien um
-    die AusweisApp2 selbst zu bauen.
+- Anpassung der verschiedenen README-Dateien um
+  die AusweisApp2 selbst zu bauen.

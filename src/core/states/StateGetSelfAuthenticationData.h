@@ -21,18 +21,17 @@ class StateGetSelfAuthenticationData
 	, public GenericContextContainer<SelfAuthContext>
 {
 	Q_OBJECT
+
 	friend class StateBuilder;
 	friend class ::test_StateGetSelfAuthenticationData;
 
-	QPointer<QNetworkReply> mReply;
+	private:
+		QSharedPointer<QNetworkReply> mReply;
 
-	explicit StateGetSelfAuthenticationData(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
-	void reportCommunicationError(const GlobalStatus& pStatus);
-	bool checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
-
-	public:
-		virtual ~StateGetSelfAuthenticationData() override;
+		explicit StateGetSelfAuthenticationData(const QSharedPointer<WorkflowContext>& pContext);
+		virtual void run() override;
+		void reportCommunicationError(const GlobalStatus& pStatus);
+		bool checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
 
 	private Q_SLOTS:
 		void onNetworkReply();

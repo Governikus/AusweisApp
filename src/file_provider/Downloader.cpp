@@ -47,24 +47,22 @@ void Downloader::startDownloadIfPending()
 	if (mCurrentReply)
 	{
 		qCDebug(fileprovider) << "A download is already in progress... delaying.";
-
 		return;
 	}
 
 	if (mPendingRequests.isEmpty())
 	{
 		qCDebug(fileprovider) << "No pending requests to be started.";
-
 		return;
 	}
 
 	mCurrentRequest = mPendingRequests.dequeue();
-	mCurrentReply = Env::getSingleton<NetworkManager>()->get(*mCurrentRequest);
+	mCurrentReply.reset(Env::getSingleton<NetworkManager>()->get(*mCurrentRequest), &QObject::deleteLater);
 
-	connect(mCurrentReply, &QNetworkReply::sslErrors, this, &Downloader::onSslErrors);
-	connect(mCurrentReply, &QNetworkReply::encrypted, this, &Downloader::onSslHandshakeDone);
-	connect(mCurrentReply, &QNetworkReply::metaDataChanged, this, &Downloader::onMetadataChanged);
-	connect(mCurrentReply, &QNetworkReply::finished, this, &Downloader::onNetworkReplyFinished);
+	connect(mCurrentReply.data(), &QNetworkReply::sslErrors, this, &Downloader::onSslErrors);
+	connect(mCurrentReply.data(), &QNetworkReply::encrypted, this, &Downloader::onSslHandshakeDone);
+	connect(mCurrentReply.data(), &QNetworkReply::metaDataChanged, this, &Downloader::onMetadataChanged);
+	connect(mCurrentReply.data(), &QNetworkReply::finished, this, &Downloader::onNetworkReplyFinished);
 }
 
 
@@ -79,7 +77,7 @@ void Downloader::onSslHandshakeDone()
 	const auto& cfg = mCurrentReply->sslConfiguration();
 	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
 
-	if (!Env::getSingleton<NetworkManager>()->checkUpdateServerCertificate(*mCurrentReply))
+	if (!Env::getSingleton<NetworkManager>()->checkUpdateServerCertificate(mCurrentReply))
 	{
 		const QString& textForLog = mCurrentRequest->url().fileName();
 		qCCritical(fileprovider).nospace() << "Untrusted certificate found [" << textForLog << "]: " << cfg.peerCertificate();
@@ -109,8 +107,7 @@ void Downloader::onNetworkReplyFinished()
 	qCDebug(fileprovider) << "Downloader finished:" << mCurrentReply->request().url().fileName();
 
 	const auto guard = qScopeGuard([this] {
-				mCurrentReply->deleteLater();
-				mCurrentReply = nullptr;
+				mCurrentReply.reset();
 				startDownloadIfPending();
 			});
 
@@ -124,7 +121,7 @@ void Downloader::onNetworkReplyFinished()
 
 	const QUrl url = mCurrentRequest->url();
 	const QString& textForLog = mCurrentRequest->url().fileName();
-	if (!Env::getSingleton<NetworkManager>()->checkUpdateServerCertificate(*mCurrentReply))
+	if (!Env::getSingleton<NetworkManager>()->checkUpdateServerCertificate(mCurrentReply))
 	{
 		qCCritical(fileprovider).nospace() << "Connection not secure [" << textForLog << "]";
 		Q_EMIT fireDownloadFailed(url, GlobalStatus::Code::Network_Ssl_Establishment_Error);
@@ -191,15 +188,10 @@ Downloader::Downloader()
 
 Downloader::~Downloader()
 {
-	if (mCurrentReply != nullptr)
+	if (!mCurrentReply.isNull() && mCurrentReply->isRunning() && !mCurrentRequest.isNull())
 	{
-		if (mCurrentReply->isRunning() && !mCurrentRequest.isNull())
-		{
-			const QString& textForLog = mCurrentRequest->url().fileName();
-			qCDebug(fileprovider).nospace() << "Scheduling pending update request [" << textForLog << "] for deletion";
-		}
-		mCurrentReply->deleteLater();
-		mCurrentReply = nullptr;
+		const QString& textForLog = mCurrentRequest->url().fileName();
+		qCDebug(fileprovider).nospace() << "Scheduling pending update request [" << textForLog << "] for deletion";
 	}
 }
 

@@ -29,7 +29,7 @@ class StateGenericSendReceive
 	private:
 		friend class ::test_StateGenericSendReceive;
 		const QVector<PaosType> mTypesToReceive;
-		QPointer<QNetworkReply> mReply;
+		QSharedPointer<QNetworkReply> mReply;
 
 		void setReceivedMessage(const QSharedPointer<PaosMessage>& pMessage);
 		GlobalStatus::Code checkAndSaveCertificate(const QSslCertificate& pCertificate);

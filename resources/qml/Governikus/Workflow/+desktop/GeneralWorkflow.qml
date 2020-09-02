@@ -183,11 +183,11 @@ SectionPage
 			switch (waitingFor) {
 				case Workflow.WaitingFor.Reader:
 					//: INFO DESKTOP_QML AA2 is waiting for the card reader or the ID card.
-					return d.foundSelectedReader ? requestCardText : qsTr("No card reader detected. Please make sure that a USB card reader is connected or a smartphone as cardreader is paired and available. Open the %1reader settings%2 to configure readers and get more information about supported readers.").arg("<a href=\"#\">").arg("</a>")
+					return d.foundSelectedReader ? requestCardText : qsTr("No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and available. Open the %1reader settings%2 to configure readers and get more information about supported readers.").arg("<a href=\"#\">").arg("</a>")
 				case Workflow.WaitingFor.Card:
 					if (NumberModel.pinDeactivated) {
 						//: INFO DESKTOP_QML The online authentication feature of the card is disabled and needs to be activated by the authorities.
-						return qsTr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.")
+						return qsTr("The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.")
 					}
 					return requestCardText
 				case Workflow.WaitingFor.Password:

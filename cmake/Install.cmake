@@ -122,7 +122,7 @@ ELSEIF(APPLE AND NOT IOS)
 			FILE(GLOB_RECURSE DYLIB "${_dir}/${entry}/*.dylib")
 			FOREACH(_lib ${DYLIB})
 				FILE(RELATIVE_PATH _lib_dest "${_dir}" "${_lib}")
-				IF(NOT _lib_dest MATCHES "XmlListModel|Particles.2|LocalStorage") # blacklist not needed stuff
+				IF(NOT _lib_dest MATCHES "XmlListModel|Particles.2|LocalStorage") # not needed stuff
 					GET_FILENAME_COMPONENT(_lib_dest_dir ${_lib_dest} DIRECTORY)
 					INSTALL(FILES ${_lib} DESTINATION ${MACOS_BUNDLE_RESOURCES_DIR}/qml/${_lib_dest_dir} COMPONENT Runtime)
 					LIST(APPEND ADDITIONAL_BUNDLE_FILES_TO_SIGN "/Contents/Resources/qml/${_lib_dest}")

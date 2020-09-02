@@ -6,8 +6,9 @@ Versionszweig 1.20
 .. toctree::
    :maxdepth: 1
 
-   1.20.0
+   1.20.2
    1.20.1
+   1.20.0
 
 
 Versionszweig 1.18

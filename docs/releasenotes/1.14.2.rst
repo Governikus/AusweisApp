@@ -7,15 +7,15 @@ AusweisApp2 1.14.2
 
 Anwender
 """"""""
-  - Optimierungen in der Benutzerfreundlichkeit.
+- Optimierungen in der Benutzerfreundlichkeit.
 
-  - Ein leerer Zweck im Berechtigungszertifikat wird nun
-    korrekt dargestellt.
+- Ein leerer Zweck im Berechtigungszertifikat wird nun
+  korrekt dargestellt.
 
 
 Entwickler
 """"""""""
-  - Unterstützung von Vor-Ort-Auslesen von Ausweisdaten unter
-    Anwesenden (gem. §18a PAuswG).
+- Unterstützung von Vor-Ort-Auslesen von Ausweisdaten unter
+  Anwesenden (gem. §18a PAuswG).
 
-  - Aktualisierung von OpenSSL auf die Version 1.0.2o.
+- Aktualisierung von OpenSSL auf die Version 1.0.2o.

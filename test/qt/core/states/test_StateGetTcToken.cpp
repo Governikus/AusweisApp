@@ -70,10 +70,9 @@ class test_StateGetTcToken
 
 		void test_ParseTcTokenNoData()
 		{
-			MockNetworkReply reply;
 			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
 			StateGetTcToken state(context);
-			state.mReply = QPointer<QNetworkReply>(&reply);
+			state.mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
 			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);
 
 			QTest::ignoreMessage(QtDebugMsg, "Received no data.");
@@ -96,10 +95,10 @@ class test_StateGetTcToken
 								  "    <PSK> 4BC1A0B5 </PSK>"
 								  "  </PathSecurity-Parameters>"
 								  "</TCTokenType>");
-			MockNetworkReply reply(data);
+
 			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
 			StateGetTcToken state(context);
-			state.mReply = QPointer<QNetworkReply>(&reply);
+			state.mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
 			QSignalSpy spyContinue(&state, &StateGetTcToken::fireContinue);
 
 			QVERIFY(!context->getTcToken());
@@ -113,10 +112,9 @@ class test_StateGetTcToken
 		void test_ParseTcTokenWithDataNoPsk()
 		{
 			const QByteArray data("invalid data");
-			MockNetworkReply reply(data);
 			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
 			StateGetTcToken state(context);
-			state.mReply = QPointer<QNetworkReply>(&reply);
+			state.mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
 			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);
 
 			QTest::ignoreMessage(QtCriticalMsg, "TCToken invalid");

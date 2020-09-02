@@ -51,11 +51,12 @@ SectionPage {
 		}
 
 		delegate: HistoryListViewDelegate {
-			historyModelItem: model
+			width: listView.width
 
 			Accessible.onScrollDownAction: historyListView.positionViewAtIndex(index, ListView.Beginning)
 			Accessible.onScrollUpAction: historyListView.positionViewAtIndex(index, ListView.End)
 
+			historyModelItem: model
 			showSeparator: index < listView.count - 1
 
 			onClicked: firePushWithProperties(detailsHistoryView, {historyModelItem: historyModelItem})

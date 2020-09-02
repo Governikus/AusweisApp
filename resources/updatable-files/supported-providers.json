@@ -134,7 +134,7 @@
 			"phone": "+49 291 94 0",
 			"email": "post@hochsauerlandkreis.de",
 			"postalAddress": "Steinstraße 27<br/>59872 Meschede",
-			"image": "HSK_image.jpg",
+			"image": "HSK_image.png",
 			"icon": "HSK_icon.png",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
@@ -343,10 +343,9 @@
 			"email": "stadt@braunschweig.de",
 			"postalAddress": "Stadt Braunschweig<br/>Platz der Deutschen Einheit 1<br/>38100 Braunschweig",
 			"category": "citizen",
-			"subjectUrls": ["https://e-id.niedersachsen.de"]
+			"subjectUrlInfo": "Using service from Niedersächsisches Ministerium für Inneres und Sport (https://e-id.niedersachsen.de)."
 		},
 		{
-			"exclude": ["ios"],
 			"shortName": {"" : "Bundesagentur für Arbeit"},
 			"longDescription": {"": "Mit der Online-Ausweisfunktion des Personalausweises können Sie sich bei der Bundesagentur für Arbeit einfach und zuverlässig über Ihr Kindergeld informieren. Die Anwendung bietet u.a. die Möglichkeit:<br/>- sich über den Antragstatus und die Berechnungsgrundlage für den eigenen Kindergeldbezug zu informieren<br/>- Ihre persönlichen Daten online zu ändern, z. B. Ihre Adresse<br/>- für Kunden der Familienkasse Änderungen vollständig papierlos zu übermitteln."},
 			"address": "https://www.arbeitsagentur.de/npa",
@@ -581,7 +580,7 @@
 			"phone": "+49 89 9991 0",
 			"email": "info@elster.de",
 			"postalAddress": "Bayerisches Landesamt für Steuern - Dienststelle München<br/>80284 München",
-			"image": "elster_image.png",
+			"image": "elster_image.jpg",
 			"icon": "elster_icon.png",
 			"category": "citizen",
 			"subjectUrls": ["https://www.elster.de"]
@@ -633,6 +632,17 @@
 			"postalAddress": "identity Trust Management AG<br/>Lierenfelder Straße 51<br/>40231 Düsseldorf",
 			"category": "other",
 			"subjectUrlInfo": "Generic service provider. Order number required to start authentication."
+		},
+		{
+			"shortName": {"" : "iKFZ Zulassungsstelle Lüneburg"},
+			"longDescription": {"": "Seit dem 01.10.2019 können Sie viele Zulassungsvorgänge online und damit bequem von zu Hause erledigen. Nachdem im Jahr 2015 bzw. 2017 die Online-Außerbetriebsetzung bzw. Online-Wiederzulassung möglich wurden, sind nun weitere Standard-Zulassungsvorgänge dazugekommen. Mit „I-KFZ Stufe 3“ haben Sie jetzt die Möglichkeit, unter bestimmten Voraussetzungen Fahrzeuge online an-, um- oder abzumelden – ohne Wege- und Wartezeiten, unabhängig von unseren Öffnungszeiten."},
+			"address": "https://www.landkreis-lueneburg.de/Home-Landkreis-Lueneburg/Verkehr-Sicherheit-und-Ordnung/Verkehr-Landkreis/Kfz-Zulassungsstelle.aspx",
+			"homepage": "https://www.landkreis-lueneburg.de",
+			"phone": "+49 4131 26 0",
+			"email": "info@landkreis-lueneburg.de",
+			"postalAddress": "Landkreis Lüneburg<br/>Auf dem Michaeliskloster 4<br/>21335 Lüneburg",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Niedersächsisches Ministerium für Inneres und Sport (https://e-id.niedersachsen.de)."
 		},
 		{
 			"exclude": ["ios"],
@@ -803,6 +813,16 @@
 			"postalAddress": "Mentana-Claimsoft GmbH<br/>Trebuser-Str. 47 Haus 1<br/>D-15517 Fürstenwalde",
 			"category": "other",
 			"subjectUrls": ["https://www.fp-demail.de"]
+		},
+		{
+			"shortName": {"" : "Niedersächsisches Ministerium für Inneres und Sport"},
+			"homepage": "https://www.mi.niedersachsen.de",
+			"address": "https://www.mi.niedersachsen.de",
+			"phone": "+49 511 120 45 00",
+			"email": "poststelle@mi.niedersachsen.de",
+			"postalAddress": "Niedersächsisches Ministerium für Inneres und Sport<br/>Lavesallee 6<br/>30169 Hannover",
+			"category": "citizen",
+			"subjectUrls": ["https://e-id.niedersachsen.de"]
 		},
 		{
 			"shortName": {"" : "Siegburg Online"},

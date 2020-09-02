@@ -50,7 +50,7 @@ class UIPlugIn
 		virtual void onUiDominationReleased();
 
 	Q_SIGNALS:
-		void fireChangePinRequest();
+		void fireChangePinRequested();
 		void fireSelfAuthenticationRequested();
 		void fireRemoteServiceRequested();
 		void fireQuitApplicationRequest();

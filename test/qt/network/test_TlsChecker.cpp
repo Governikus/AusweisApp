@@ -243,16 +243,16 @@ class test_TlsChecker
 
 		void containsFatalError()
 		{
-			MockNetworkReply reply;
+			const auto reply = QSharedPointer<MockNetworkReply>::create();
 			QList<QSslError> errors;
 
-			QVERIFY(!TlsChecker::containsFatalError(&reply, errors));
+			QVERIFY(!TlsChecker::containsFatalError(reply, errors));
 
 			errors.append(QSslError(QSslError::SslError::SelfSignedCertificate));
-			QVERIFY(!TlsChecker::containsFatalError(&reply, errors));
+			QVERIFY(!TlsChecker::containsFatalError(reply, errors));
 
 			errors.append(QSslError(QSslError::SslError::SubjectIssuerMismatch));
-			QVERIFY(TlsChecker::containsFatalError(&reply, errors));
+			QVERIFY(TlsChecker::containsFatalError(reply, errors));
 		}
 
 

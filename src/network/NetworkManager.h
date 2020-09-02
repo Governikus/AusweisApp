@@ -68,10 +68,10 @@ class NetworkManager
 		}
 
 
-		static int getLoggedStatusCode(const QNetworkReply* const pReply, const QMessageLogger& pLogger);
-		static NetworkError toNetworkError(const QNetworkReply* const pNetworkReply);
-		static GlobalStatus toTrustedChannelStatus(const QNetworkReply* const pNetworkReply);
-		static GlobalStatus toStatus(const QNetworkReply* const pNetworkReply);
+		static int getLoggedStatusCode(const QSharedPointer<const QNetworkReply>& pReply, const QMessageLogger& pLogger);
+		static NetworkError toNetworkError(const QSharedPointer<const QNetworkReply>& pNetworkReply);
+		static GlobalStatus toTrustedChannelStatus(const QSharedPointer<const QNetworkReply>& pNetworkReply);
+		static GlobalStatus toStatus(const QSharedPointer<const QNetworkReply>& pNetworkReply);
 		static QString getTlsVersionString(QSsl::SslProtocol pProtocol);
 		static QByteArray getStatusMessage(int pStatus);
 
@@ -90,7 +90,7 @@ class NetworkManager
 				const QByteArray& pData,
 				int pTimeoutInMilliSeconds = 30000);
 
-		virtual bool checkUpdateServerCertificate(const QNetworkReply& pReply);
+		virtual bool checkUpdateServerCertificate(const QSharedPointer<const QNetworkReply>& pReply);
 
 		int getOpenConnectionCount();
 

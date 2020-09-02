@@ -7,29 +7,33 @@ AusweisApp2 1.20.1
 
 Anwender
 """"""""
-  - Die Nutzung von passwortgeschützten Proxys ist nun
-    auch in der neuen grafischen Oberfläche möglich.
+- Die Nutzung von passwortgeschützten Proxys ist nun
+  auch in der neuen grafischen Oberfläche möglich.
 
-  - Auf mobilen Geräten wurde eine Option ergänzt,
-    um zwischen Hoch- und Querformat zu wechseln.
+- Auf mobilen Geräten wurde eine Option ergänzt,
+  um zwischen Hoch- und Querformat zu wechseln.
 
-  - Auf Android wurde das Abbrechen einer Authentisierung
-    beschleunigt und ein dabei auftretender Absturz beseitigt.
+- Auf Android wurde das Abbrechen einer Authentisierung
+  beschleunigt und ein dabei auftretender Absturz beseitigt.
 
-  - Unter Windows wird bei einer Authentisierung nun auch mit
-    der neuen grafischen Oberfläche ein Fortschritt in der
-    Taskleiste angezeigt.
+- Unter Windows wird bei einer Authentisierung nun auch mit
+  der neuen grafischen Oberfläche ein Fortschritt in der
+  Taskleiste angezeigt.
 
-  - Kleinere Fehlerbehebungen.
+- Kleinere Fehlerbehebungen.
 
 
 Entwickler
 """"""""""
-  - Erweiterung der firmenweiten Installationen des MSI-Paketes
-    um die Möglichkeit das Vor-Ort-Auslesen zu aktivieren und
-    eine Proxy-Konfiguration zu hinterlegen.
+- Erweiterung der firmenweiten Installationen des MSI-Paketes
+  um die Möglichkeit das Vor-Ort-Auslesen zu aktivieren und
+  eine Proxy-Konfiguration zu hinterlegen.
 
-  - In der mobilen Version führt ein zehnmaliges Anklicken der Lupe
-    auf der Startseite dazu, dass weitere Optionen in den Einstellungen
-    sichtbar werden. Dort kann der Testmodus für die Selbstauskunft
-    oder das Vor-Ort-Auslesen aktiviert werden.
+- In der mobilen Version führt ein zehnmaliges Anklicken der Lupe
+  auf der Startseite dazu, dass der Testmodus für die Selbstauskunft
+  aktiviert bzw. deaktiviert wird.
+
+- In der mobilen Version führt ein zehnmaliges Anklicken der
+  Versionsnummer in den Versionsinformationen dazu, dass die erweiterten
+  Einstellungen freigeschaltet werden, die es ermöglichen das
+  Vor-Ort-Auslesen zu aktivieren.

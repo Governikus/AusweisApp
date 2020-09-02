@@ -69,23 +69,8 @@ ELSE()
 	SET(PERL_EXECUTABLE perl)
 ENDIF()
 
-FIND_PROGRAM(PATCH_CMD patch CMAKE_FIND_ROOT_PATH_BOTH)
-IF(PATCH_CMD)
-	SET(PATCH_OPTIONS -i)
-	MESSAGE(STATUS "Using 'patch' command... ${PATCH_CMD}")
-ELSE()
-	MESSAGE(STATUS "Cannot find 'patch' command... using patch.py")
-
-	IF(CMAKE_VERSION VERSION_LESS "3.12")
-		FIND_HOST_PACKAGE(PythonInterp REQUIRED)
-		SET(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
-	ELSE()
-		FIND_HOST_PACKAGE(Python REQUIRED)
-	ENDIF()
-
-	SET(PATCH_CMD ${Python_EXECUTABLE} ${PROJECT_SOURCE_DIR}/patch.py --debug -v)
-ENDIF()
-SET(PATCH_CMD ${PATCH_CMD} -p1 ${PATCH_OPTIONS} ${PROJECT_SOURCE_DIR}/patches)
+SET(PATCH_CMAKE ${CMAKE_CURRENT_BINARY_DIR}/patch.cmake)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/patch.cmake.in ${PATCH_CMAKE} @ONLY)
 
 IF(NOT DESTINATION_DIR)
 	SET(DESTINATION_DIR ${PROJECT_BINARY_DIR}/dist)
@@ -103,6 +88,10 @@ STRING(REPLACE "\\" "/" PACKAGES_DIR ${PACKAGES_DIR})
 SET_DIRECTORY_PROPERTIES(PROPERTIES EP_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/b)
 INCLUDE(Messages)
 
+IF(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL CMAKE_SYSTEM_NAME)
+	GET_FILENAME_COMPONENT(compiler "${CMAKE_CXX_COMPILER}" NAME)
+	STRING(REGEX REPLACE "[a-z|+]+$" "" CROSS_PREFIX "${compiler}")
+ENDIF()
 
 ################################## Versions
 SET(QT 5.12.5)
@@ -161,6 +150,10 @@ ELSEIF(APPLE)
 	SET(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mmacosx-version-min=10.12)
 ELSEIF(MINGW)
 	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} mingw)
+
+	IF(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+		SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} --cross-compile-prefix=${CROSS_PREFIX})
+	ENDIF()
 ELSEIF(MSVC)
 	SET(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-asm)
 	IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -209,9 +202,7 @@ ExternalProject_Add(openssl
 	URL_HASH SHA256=${OPENSSL_HASH}
 	DOWNLOAD_DIR ${PACKAGES_DIR}
 
-	PATCH_COMMAND ${PATCH_CMD}/openssl-android-shlib_variant.patch &&
-				${PATCH_CMD}/openssl-Fix-an-overflow-bug-in-rsaz_512_sqr.patch &&
-				${PATCH_CMD}/openssl-Adjust-iOS-target.patch
+	PATCH_COMMAND ${CMAKE_COMMAND} -DCOMPONENT=openssl -P ${PATCH_CMAKE}
 	CONFIGURE_COMMAND ${OPENSSL_ENV} ${PERL_EXECUTABLE} Configure --prefix=${DESTINATION_DIR} ${OPENSSL_CONFIGURE_FLAGS} "${OPENSSL_COMPILER_FLAGS}"
 	BUILD_COMMAND ${OPENSSL_ENV} ${MAKE} ${MAKE_JOBS}
 	BUILD_IN_SOURCE 1
@@ -252,7 +243,6 @@ IF(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
 		SET(QT_CONFIGURE_FLAGS -debug)
 	ENDIF()
 	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -qml-debug)
-	SET(QT_PATCH_COMMAND ${PATCH_CMD}/qt-Enable-debug-output-for-OpenSSL.patch &&)
 ELSE()
 	SET(QT_CONFIGURE_FLAGS -release -optimize-size -no-qml-debug)
 	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-force-debug-info>)
@@ -324,8 +314,16 @@ ELSEIF(WIN32)
 		SET(QT_OPENSSL OPENSSL_LIBS=-lcrypto\ -lssl)
 	ENDIF()
 
-	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_OPENSSL} -opengl dynamic -no-icu -no-sql-odbc -platform ${QT_PLATFORM})
-	SET(QT_CONFIGURE configure.bat)
+	SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_OPENSSL} -no-icu -no-sql-odbc)
+
+	IF(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+		SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -opengl dynamic -platform ${QT_PLATFORM})
+		SET(QT_CONFIGURE configure.bat)
+	ELSEIF(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+		SET(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -opengl desktop -xplatform ${QT_PLATFORM} -device-option CROSS_COMPILE=${CROSS_PREFIX})
+	ELSE()
+		MESSAGE(FATAL_ERROR "Cross-Compiling not supported: ${CMAKE_HOST_SYSTEM_NAME}")
+	ENDIF()
 ELSEIF(ANDROID)
 	FIND_PACKAGE(Java COMPONENTS Development REQUIRED)
 
@@ -361,23 +359,7 @@ ExternalProject_Add(qt
 	URL_HASH SHA256=${QT_HASH}
 	DOWNLOAD_DIR ${PACKAGES_DIR}
 
-	PATCH_COMMAND ${QT_PATCH_COMMAND}
-			${PATCH_CMD}/qt-Port-python-check-to-configure-system.patch &&
-			${PATCH_CMD}/qt-Disable-unused-imageformats.patch &&
-			${PATCH_CMD}/qt-Add-work-around-for-freebsd-build.patch &&
-			${PATCH_CMD}/qt-Remove-Qt-Labs-specific-plugins-from-the-build.patch &&
-			${PATCH_CMD}/qt-Remove-unused-plugins-from-the-build.patch &&
-			${PATCH_CMD}/qt-disable-designer.patch &&
-			${PATCH_CMD}/qt-Disable-qmltime-for-shared-build.patch &&
-			${PATCH_CMD}/qt-Add-Q_CORE_EXPORT-to-lcEventDispatcher.patch &&
-			${PATCH_CMD}/qt-Adjust-iOS-target.patch &&
-			${PATCH_CMD}/qt-Filesystem-avoid-crashes-on-exit-in-case-the-locale-.patch &&
-			${PATCH_CMD}/qt-Revert-Android-Stick-with-buildToolsVersion-28.0.3.patch &&
-			${PATCH_CMD}/qt-Remove-dead-code-to-fix-a-lint-warning.patch &&
-			${PATCH_CMD}/qt-Fix-llvm-strip.patch &&
-			${PATCH_CMD}/qt-Handle-exceptions-when-accessing-android-clipboard.patch &&
-			${PATCH_CMD}/qt-Fix-build-with-macOS-10.15-and-deployment-10.12.patch &&
-			${PATCH_CMD}/qt-Pass-SDK-root-to-the-linker-as-isysroot-not-Wl-sysli.patch &&
+	PATCH_COMMAND ${CMAKE_COMMAND} -DCOMPONENT=qt -P ${PATCH_CMAKE} &&
 			${CMAKE_COMMAND} -E touch qtbase/.gitignore
 	CONFIGURE_COMMAND ${QT_ENV} ${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SKIP_MODULES}
 	BUILD_COMMAND ${MAKE} ${MAKE_JOBS}

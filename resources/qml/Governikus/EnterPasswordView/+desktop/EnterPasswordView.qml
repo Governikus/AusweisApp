@@ -29,12 +29,7 @@ SectionPage
 	//: LABEL DESKTOP_QML %1 is the title, e.g. "PIN entry"
 	Accessible.name: qsTr("%1. You can start to enter the number.").arg(mainText.text) + SettingsModel.translationTrigger
 	Accessible.description: qsTr("This is the enter password view of the AusweisApp2.") + SettingsModel.translationTrigger
-	Keys.onPressed: {
-		if (focus && event.key >= Qt.Key_0 && event.key <= Qt.Key_9) {
-			numberField.append(event.key - Qt.Key_0)
-			numberField.forceActiveFocus()
-		}
-	}
+	Keys.onPressed: event.accepted = numberField.handleKeyEvent(event.key, event.modifiers)
 
 	onPasswordTypeChanged: numberField.inputConfirmation = ""
 	onVisibleChanged: if (!visible) numberField.text = ""
@@ -136,6 +131,10 @@ SectionPage
 			 : passwordType === NumberModel.PASSWORD_PUK ? qsTr("Enter PUK")
 			 //: LABEL DESKTOP_QML
 			 : passwordType === NumberModel.PASSWORD_REMOTE_PIN ? qsTr("Enter pairing code")
+			 //: LABEL DESKTOP_QML
+			 : passwordType === NumberModel.PASSWORD_NEW_PIN && numberField.inputConfirmation === "" ? qsTr("Enter new PIN")
+			 //: LABEL DESKTOP_QML
+			 : passwordType === NumberModel.PASSWORD_NEW_PIN ? qsTr("Confirm new PIN")
 			 //: LABEL DESKTOP_QML
 			 : NumberModel.requestTransportPin ? qsTr("Enter Transport PIN")
 			 //: LABEL DESKTOP_QML
@@ -299,7 +298,11 @@ SectionPage
 		submitEnabled: numberField.validInput
 		deleteEnabled: numberField.text.length > 0
 		onDigitPressed: numberField.append(digit)
-		onDeletePressed: numberField.removeLast()
+		onDeletePressed: {
+			numberField.removeLast()
+			if (numberField.text.length === 0)
+				numberField.forceActiveFocus()
+		}
 		onSubmitPressed: d.setPassword()
 	}
 

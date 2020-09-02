@@ -312,7 +312,7 @@ SectionPage
 			}
 			if (NumberModel.pinDeactivated) {
 				//: INFO DESKTOP_QML The online authentication feature of the ID card is deactivated and needs to be activated by the local authorities.
-				return qsTr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.")
+				return qsTr("The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.")
 			}
 			//: INFO DESKTOP_QML Generic progress status message during authentication.
 			return qsTr("Please wait a moment.")

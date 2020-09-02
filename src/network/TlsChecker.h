@@ -30,7 +30,7 @@ class TlsChecker
 		static QString toString(QSsl::KeyAlgorithm pKeyAlgorithm);
 
 		static QStringList getFatalErrors(const QList<QSslError>& pErrors);
-		static bool containsFatalError(QNetworkReply* pReply, const QList<QSslError>& pErrors);
+		static bool containsFatalError(const QSharedPointer<QNetworkReply>& pReply, const QList<QSslError>& pErrors);
 
 		/*!
 		 * Checks, whether the certificate's hash is contained in a set of accepted certificate hashes.

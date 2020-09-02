@@ -18,21 +18,22 @@ Rectangle {
 	signal actionClicked
 
 	height: content.childrenRect.height
-	width: parent.width
+	width: content.childrenRect.width
 
 	Image {
-		Accessible.role: Accessible.Button
-		Accessible.name: actionAccessibleName
-		Accessible.onPressAction: baseItem.actionClicked()
-
 		id: actionImage
+
 		anchors {
 			top: parent.top
 			bottom: parent.bottom
 			right: parent.right
 			margins: 20
 		}
+
 		width: Math.abs(mouseArea.actionOpenOffset) - anchors.margins * 2
+		Accessible.role: Accessible.Button
+		Accessible.name: actionAccessibleName
+		Accessible.onPressAction: baseItem.actionClicked()
 		fillMode: Image.PreserveAspectFit
 	}
 

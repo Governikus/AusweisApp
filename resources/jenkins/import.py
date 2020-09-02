@@ -53,7 +53,6 @@ try:
     patchy = PatchHelper()
 except Exception:
     print('Cannot import rbtools')
-    pass
 
 
 def main():

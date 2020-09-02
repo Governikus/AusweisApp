@@ -7,33 +7,33 @@ AusweisApp2 1.10.0
 
 Anwender
 """"""""
-  - Unterstützung von Dualstack (IPv4 / IPv6).
+- Unterstützung von Dualstack (IPv4 / IPv6).
 
-  - Das Problem, dass die AusweisApp2 nicht wie gewünscht in den Vordergrund
-    kommt, wurde behoben.
+- Das Problem, dass die AusweisApp2 nicht wie gewünscht in den Vordergrund
+  kommt, wurde behoben.
 
-  - Die kontextsensitive Hilfe wurde vollständig überarbeitet.
+- Die kontextsensitive Hilfe wurde vollständig überarbeitet.
 
-  - Fehler der Diagnosefunktion unter Windows 8, Windows 8.1 und Windows 10
-    wurden behoben.
+- Fehler der Diagnosefunktion unter Windows 8, Windows 8.1 und Windows 10
+  wurden behoben.
 
-  - Im Log-Dialog werden nun auch alte Logs angezeigt. Diese Logs
-    entstehen nur wenn die AusweisApp2 nicht korrekt beendet werden konnte.
+- Im Log-Dialog werden nun auch alte Logs angezeigt. Diese Logs
+  entstehen nur wenn die AusweisApp2 nicht korrekt beendet werden konnte.
 
-  - Bei der Erzeugung des PDFs in der Selbstauskunft wird nun das Datum bzw. die
-    Uhrzeit der Authentisierung gespeichert und nicht die der Erzeugung.
+- Bei der Erzeugung des PDFs in der Selbstauskunft wird nun das Datum bzw. die
+  Uhrzeit der Authentisierung gespeichert und nicht die der Erzeugung.
 
-  - Es wurden einige Probleme mit der Proxy-Authentisierung behoben.
+- Es wurden einige Probleme mit der Proxy-Authentisierung behoben.
 
 
 
 Entwickler
 """"""""""
-  - Aktualisierung von OpenSSL auf die Version 1.0.2j.
+- Aktualisierung von OpenSSL auf die Version 1.0.2j.
 
-  - Aktualisierung von Qt auf die Version 5.7.0.
+- Aktualisierung von Qt auf die Version 5.7.0.
 
-  - Die TLS Parameter sind nun in der config.json konfigurierbar.
+- Die TLS Parameter sind nun in der config.json konfigurierbar.
 
-  - Bei der Verwendung von TLS 1.2 sind nur noch Signaturalgorithmen
-    mit SHA224, SHA256, SHA384 und SHA512 erlaubt.
+- Bei der Verwendung von TLS 1.2 sind nur noch Signaturalgorithmen
+  mit SHA224, SHA256, SHA384 und SHA512 erlaubt.

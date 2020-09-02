@@ -7,4 +7,4 @@ AusweisApp2 1.18.1
 
 Entwickler
 """"""""""
-  - Anpassungen an der Info.plist.
+- Anpassungen an der Info.plist.

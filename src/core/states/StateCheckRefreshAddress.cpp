@@ -29,20 +29,11 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 StateCheckRefreshAddress::StateCheckRefreshAddress(const QSharedPointer<WorkflowContext>& pContext)
 	: AbstractState(pContext, false)
 	, GenericContextContainer(pContext)
-	, mReply(nullptr)
+	, mReply()
 	, mUrl()
 	, mSubjectUrl()
 	, mCertificateFetched(false)
 {
-}
-
-
-StateCheckRefreshAddress::~StateCheckRefreshAddress()
-{
-	if (!mReply.isNull())
-	{
-		mReply->deleteLater();
-	}
 }
 
 
@@ -168,14 +159,9 @@ QUrl StateCheckRefreshAddress::determineSubjectUrl()
 
 void StateCheckRefreshAddress::sendGetRequest()
 {
-	if (!mReply.isNull())
-	{
-		mReply->deleteLater();
-	}
-
 	qDebug() << "Send GET request to URL:" << mUrl.toString();
 	QNetworkRequest request(mUrl);
-	mReply = Env::getSingleton<NetworkManager>()->get(request);
+	mReply.reset(Env::getSingleton<NetworkManager>()->get(request), &QObject::deleteLater);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDone);
 	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateCheckRefreshAddress::onNetworkReply);
@@ -260,7 +246,7 @@ void StateCheckRefreshAddress::onNetworkReply()
 	if (mReply->error() != QNetworkReply::NoError)
 	{
 		qCritical() << "An error occured:" << mReply->errorString();
-		switch (NetworkManager::toNetworkError(mReply.data()))
+		switch (NetworkManager::toNetworkError(mReply))
 		{
 			case NetworkManager::NetworkError::ServiceUnavailable:
 				reportCommunicationError({GlobalStatus::Code::Network_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
@@ -387,7 +373,7 @@ void StateCheckRefreshAddress::fetchServerCertificate()
 	//
 	// "...This means that you are only guaranteed to receive this signal for the first connection to a site in the lifespan of the QNetworkAccessManager."
 	Env::getSingleton<NetworkManager>()->clearConnections();
-	mReply = Env::getSingleton<NetworkManager>()->get(request);
+	mReply.reset(Env::getSingleton<NetworkManager>()->get(request), &QObject::deleteLater);
 
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDoneFetchingServerCertificate);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);

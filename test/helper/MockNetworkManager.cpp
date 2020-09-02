@@ -99,7 +99,7 @@ QNetworkReply* MockNetworkManager::paos(QNetworkRequest& pRequest,
 }
 
 
-bool MockNetworkManager::checkUpdateServerCertificate(const QNetworkReply& pReply)
+bool MockNetworkManager::checkUpdateServerCertificate(const QSharedPointer<const QNetworkReply>& pReply)
 {
 	Q_UNUSED(pReply)
 

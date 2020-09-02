@@ -3,6 +3,7 @@
  */
 
 import QtQuick 2.10
+import QtQuick.Controls 2.10
 import QtQuick.Layouts 1.3
 
 import Governikus.Global 1.0
@@ -54,9 +55,15 @@ SectionPage
 			}
 
 			GText {
+				id: infoText
+
 				Layout.alignment: Qt.AlignVCenter
 				Layout.fillWidth: true
 				Layout.maximumWidth: Math.ceil(implicitWidth)
+				Layout.fillHeight: true
+
+				elide: Text.ElideRight
+				verticalAlignment: Text.AlignVCenter
 
 				textStyle: {
 					if (!pinField.confirmedInput || !!NumberModel.inputError || baseItem.state === "CAN" || baseItem.state === "PUK") {
@@ -109,12 +116,19 @@ SectionPage
 						   //: LABEL ANDROID IOS
 						   : qsTr("Please enter your PIN.")
 				}
+
+				MouseArea {
+					enabled: infoText.truncated
+
+					anchors.fill: parent
+					anchors.margins: -12
+
+					onClicked: completeTextPopup.open()
+				}
 			}
 
 			Item {/*spacer*/ Layout.fillWidth: true; }
 		}
-
-		Item {/*spacer*/ Layout.fillHeight: true }
 
 		Rectangle {
 			Layout.alignment: Qt.AlignHCenter
@@ -173,8 +187,6 @@ SectionPage
 			}
 		}
 
-		Item {/*spacer*/ Layout.fillHeight: true }
-
 		NumberPad {
 			state: baseItem.state
 
@@ -185,7 +197,11 @@ SectionPage
 			submitEnabled: pinField.validInput
 			deleteEnabled: pinField.text.length > 0
 			onDigitPressed: pinField.append(digit)
-			onDeletePressed: pinField.removeLast()
+			onDeletePressed: {
+				pinField.removeLast()
+				if (pinField.text.length === 0)
+					pinField.forceActiveFocus()
+			}
 			onSubmitPressed: {
 				switch(baseItem.state) {
 					case "PIN":
@@ -216,5 +232,12 @@ SectionPage
 				}
 			}
 		}
+	}
+
+	ConfirmationPopup {
+		id: completeTextPopup
+
+		style: ConfirmationPopup.PopupStyle.OkButton
+		text: infoText.text
 	}
 }

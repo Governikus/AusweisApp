@@ -271,9 +271,9 @@ QStringList TlsChecker::getFatalErrors(const QList<QSslError>& pErrors)
 }
 
 
-bool TlsChecker::containsFatalError(QNetworkReply* pReply, const QList<QSslError>& pErrors)
+bool TlsChecker::containsFatalError(const QSharedPointer<QNetworkReply>& pReply, const QList<QSslError>& pErrors)
 {
-	if (pReply == nullptr)
+	if (pReply.isNull())
 	{
 		qCCritical(network) << "Reply should not be nullptr";
 		Q_ASSERT(pReply);

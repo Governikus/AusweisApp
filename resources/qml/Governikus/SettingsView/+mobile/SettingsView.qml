@@ -15,6 +15,8 @@ import Governikus.RemoteServiceView 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
+import Governikus.Type.HistoryModel 1.0
+import Governikus.Type.LogModel 1.0
 
 SectionPage {
 	id: baseItem

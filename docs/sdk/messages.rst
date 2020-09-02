@@ -584,8 +584,10 @@ this message will be send as a notification.
 If your application receives this message it should
 show a hint to the user.
 
-After the user inserted a card the workflow will automatically
-continue, unless the eID functionality is disabled.
+After the user inserted a card, the workflow will continue automatically,
+unless both the eID functionality and CAN allowed mode are disabled.
+CAN allowed mode is enabled if the AusweisApp2 is used as SDK and the
+certificate contains the CAN allowed right.
 In this case, the workflow will be paused until another card is inserted.
 If the user already inserted a card this message will not be sent at all.
 

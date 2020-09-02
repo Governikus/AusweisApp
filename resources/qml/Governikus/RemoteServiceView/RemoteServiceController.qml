@@ -89,7 +89,7 @@ Item {
 
 			Connections {
 				target: RemoteServiceModel
-				onFireConnectedChanged: if (!pConnected && passwordView.StackView.visible) firePop()
+				onFireConnectedChanged: if (!RemoteServiceModel.connectedToPairedDevice && passwordView.StackView.visible) firePop()
 			}
 		}
 	}

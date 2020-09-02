@@ -54,7 +54,7 @@ PaosMessage* DidAuthenticateEac2Parser::parseMessage()
 		{
 			QString ns = PaosCreator::getNamespace(PaosCreator::Namespace::XSI);
 			QStringRef value = mXmlReader->attributes().value(ns, QStringLiteral("type"));
-			if (value.endsWith(QStringLiteral("EAC2InputType")))
+			if (value.endsWith(QLatin1String("EAC2InputType")))
 			{
 				mDidAuthenticateEac2->setEac2InputType(parseEac2InputType());
 			}

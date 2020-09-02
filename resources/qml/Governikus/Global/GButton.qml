@@ -44,7 +44,7 @@ Button {
 	contentItem: RowLayout {
 		z: 1
 
-		spacing: root.icon.source != "" ? Constants.text_spacing : 0
+		spacing: root.icon.source != "" && root.text != "" ? Constants.text_spacing : 0
 
 		TintableIcon {
 			readonly property color iconColor: root.textStyle.textColor
@@ -69,6 +69,8 @@ Button {
 			color: !animationsDisabled && root.pressed ? root.textHighlightColor : root.textStyle.textColor
 			text: root.text
 			horizontalAlignment: root.icon.source == "" ? Text.AlignHCenter : Text.AlignLeft
+			maximumLineCount: 1
+			elide: Text.ElideRight
 
 			FocusFrame {
 				scope: root

@@ -62,6 +62,36 @@ FUNCTION(IMPORT_PATCH)
 ENDFUNCTION()
 
 
+FUNCTION(DEPLOY_NEXUS)
+	IF(NOT DEFINED ENV{NEXUS_USERNAME} OR NOT DEFINED ENV{NEXUS_PSW})
+		MESSAGE(FATAL_ERROR "Please provide environment variable NEXUS_USERNAME and NEXUS_PSW")
+	ENDIF()
+
+	FIND_PROGRAM(MVN_BIN mvn)
+	IF(NOT MVN_BIN)
+		MESSAGE(FATAL_ERROR "Cannot find mvn")
+	ENDIF()
+
+	SET(SETTINGS_XML "<settings><servers><server>
+					<id>nexus</id>
+					<username>\${env.NEXUS_USERNAME}</username>
+					<password>\${env.NEXUS_PSW}</password>
+				</server></servers></settings>")
+	FILE(WRITE settings.xml "${SETTINGS_XML}")
+
+	FILE(GLOB FILE_AAR RELATIVE ${CMAKE_BINARY_DIR} *.aar)
+	FILE(GLOB FILE_POM RELATIVE ${CMAKE_BINARY_DIR} *.pom)
+	FILE(GLOB FILE_JAR RELATIVE ${CMAKE_BINARY_DIR} *-sources.jar)
+
+	FILE(STRINGS "${FILE_POM}" is_snapshot REGEX "<version>.+-SNAPSHOT</version>")
+	IF(is_snapshot)
+		SET(NEXUS_URL https://repo.govkg.de/repository/ausweisapp-snapshots)
+	ELSE()
+		SET(NEXUS_URL https://repo.govkg.de/repository/ausweisapp-releases)
+	ENDIF()
+
+	EXECUTE_PROCESS(COMMAND ${MVN_BIN} deploy:deploy-file -Dfile=${FILE_AAR} -DpomFile=${FILE_POM} -Dsources=${FILE_JAR} -DrepositoryId=nexus -Durl=${NEXUS_URL} --settings settings.xml)
+ENDFUNCTION()
 
 
 
@@ -75,6 +105,8 @@ ELSEIF(CMD STREQUAL "CHECK_WIX_WARNING")
 	CHECK_WIX_WARNING()
 ELSEIF(CMD STREQUAL "IMPORT_PATCH")
 	IMPORT_PATCH()
+ELSEIF(CMD STREQUAL "DEPLOY_NEXUS")
+	DEPLOY_NEXUS()
 ELSE()
 	MESSAGE(FATAL_ERROR "Unknown CMD: ${CMD}")
 ENDIF()

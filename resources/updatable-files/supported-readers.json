@@ -130,6 +130,11 @@
 			"Information":
 			[
 				{
+					"Platforms":[{"os": "mac"}, {"os": "win", "max": "6.3"}],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
+					"EN": "The card reader is compatible with the installed system driver."
+				},
+				{
 					"Platforms":[{"os": "win", "min": "10.0"}],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
@@ -179,7 +184,7 @@
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}, {"os": "mac", "max": "10.14"}],
+					"Platforms": [{"os": "win"}, {"os": "mac", "max": "10.14"}, {"os": "unknown"}],
 					"URL": "https://security.kobil.de/idtoken/"
 				}
 			],

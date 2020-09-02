@@ -7,15 +7,15 @@ AusweisApp2 1.6.0
 
 Anwender
 """"""""
-  - Optimierungen im Bereich der Barrierefreiheit und Usability vorgenommen.
+- Optimierungen im Bereich der Barrierefreiheit und Usability vorgenommen.
 
-  - Fehlerkorrekturen und Verbesserungen bei den angezeigten Meldungen, dem Fehlerhandling,
-    den Eingabe- und Suchfeldern und im Bereich der angezeigten Texte.
+- Fehlerkorrekturen und Verbesserungen bei den angezeigten Meldungen, dem Fehlerhandling,
+  den Eingabe- und Suchfeldern und im Bereich der angezeigten Texte.
 
-  - Der Einrichtungsassistent wurde überarbeitet und erweitert.
+- Der Einrichtungsassistent wurde überarbeitet und erweitert.
 
 
 
 Entwickler
 """"""""""
-  - Aktualisierung der Drittanbieterbibliotheken.
+- Aktualisierung der Drittanbieterbibliotheken.

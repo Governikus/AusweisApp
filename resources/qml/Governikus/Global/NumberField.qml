@@ -38,13 +38,29 @@ Item {
 					  //: LABEL DESKTOP_QML Screenreader text for the password field
 					  ) + " " + qsTr("You entered %1 of %2 digits.").arg(text.length).arg(passwordLength)
 					  + SettingsModel.translationTrigger
-	Keys.onPressed: {
-		if (event.key >= Qt.Key_0 && event.key <= Qt.Key_9) {
-			numberField.append(event.key - Qt.Key_0)
+	Keys.onPressed: event.accepted = root.handleKeyEvent(event.key, event.modifiers)
+
+	function handleKeyEvent(eventKey, eventModifiers = Qt.NoModifier) {
+		if (eventKey >= Qt.Key_0 && eventKey <= Qt.Key_9) {
+			root.append(eventKey - Qt.Key_0)
 		}
-		else if (event.key === Qt.Key_Backspace) {
-			numberField.removeLast()
+		else if (eventKey === Qt.Key_Backspace) {
+			root.removeLast()
 		}
+		else if (eventKey === Qt.Key_Delete) {
+			echoField.clear()
+		}
+		else if (eventKey === Qt.Key_Paste || (eventKey === Qt.Key_V) && (eventModifiers & Qt.ControlModifier)) {
+			echoField.paste()
+		}
+		else {
+			return false
+		}
+
+		// Otherwise focus is lost if last clicked button gets invisible
+		// like 'C' in NumberPad.
+		root.forceActiveFocus()
+		return true
 	}
 
 	FontMetrics {
@@ -67,6 +83,21 @@ Item {
 
 	FocusFrame {
 		framee: layout
+
+		MouseArea {
+			anchors.fill: parent
+
+			cursorShape: Qt.PointingHandCursor
+			acceptedButtons: Qt.AllButtons
+
+			onPressAndHold: root.handleKeyEvent(Qt.Key_Paste)
+			onClicked: {
+				root.forceActiveFocus()
+				if (mouse.button == Qt.RightButton || mouse.button == Qt.MiddleButton) {
+					echoField.paste()
+				}
+			}
+		}
 	}
 
 	RowLayout {

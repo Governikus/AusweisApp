@@ -6,7 +6,7 @@ def j = new Release
 		name: 'iOS_IPA',
 		libraries: ['iOS'],
 		label: 'iOS',
-		artifacts: 'build/*.ipa,build/*.zip,build/*.bcsymbolmap'
+		artifacts: 'build/*.ipa,build/*.zip,build/*.bcsymbolmap,*.tar.zstd'
 	).generate(this)
 
 
@@ -35,6 +35,7 @@ j.with
 
 		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -scheme AusweisApp archive')
 		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .')
+		shell('cmake -E tar cf AusweisApp2_BuildDir.tar.zstd --zstd build')
 		shell('cd build; xcodebuild -configuration MinSizeRel -target ipa')
 
 		conditionalSteps

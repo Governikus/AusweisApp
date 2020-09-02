@@ -7,11 +7,11 @@ AusweisApp2 1.14.3
 
 Anwender
 """"""""
-  - Hinweis zur Datenschutzerklärung hinzugefügt.
+- Hinweis zur Datenschutzerklärung hinzugefügt.
 
 
 Entwickler
 """"""""""
-  - Das Vor-Ort-Auslesen von Ausweisdaten unter Anwesenden (gem. §18a PAuswG)
-    funktioniert jetzt, wenn ein Smartphone als Kartenlesegerät genutzt wird
-    und der Tastaturmodus "PIN-Eingabe auf diesem Gerät" aktiviert ist.
+- Das Vor-Ort-Auslesen von Ausweisdaten unter Anwesenden (gem. §18a PAuswG)
+  funktioniert jetzt, wenn ein Smartphone als Kartenlesegerät genutzt wird
+  und der Tastaturmodus "PIN-Eingabe auf diesem Gerät" aktiviert ist.

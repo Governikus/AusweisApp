@@ -41,7 +41,7 @@ The following listing shows the required **jcenter** in **build.gradle**.
 The integrated AusweisApp2 will be fetched automatically as a dependency by
 your **app/build.gradle** file.
 It is recommended to always use the latest version by **1.+** of AusweisApp2.
-But you are free to add a concrete version like **1.20.1**.
+But you are free to add a concrete version like **1.20.2**.
 
 .. code-block:: groovy
 
@@ -59,6 +59,42 @@ But you are free to add a concrete version like **1.20.1**.
 
   https://developer.android.com/studio/build/manifest-merge.html
 
+
+App Bundle
+^^^^^^^^^^
+
+The integrated AusweisApp2 uses native libraries which need to be extracted when
+used in an App Bundle, otherwise the SDK will not work correctly.
+
+Add the following statement to your app's gradle.properties file:
+
+.. code-block:: groovy
+
+    android.bundle.enableUncompressedNativeLibs=false
+
+
+Logging
+^^^^^^^
+
+The AusweisApp2 uses default logging of Android and has its own log file.
+It is **recommended** to collect that log file if an error occurs in
+your application to receive better support.
+
+The log file is in your application path:
+
+.. code-block:: text
+
+    /data/data/your.application.name/files/AusweisApp2.XXXXXX.log
+
+The *XXXXXX* characters will be replaced by an automatically generated
+portion of the filename to avoid conflicts with previous instances.
+
+A new log file will be created for each new instance of the AusweisApp2 and
+will be deleted after a correct shutdown.
+In case of old or multiple log files, it is highly probable that the
+previous instance crashed.
+
+The AusweisApp2 deletes any log files that are older than 14 days.
 
 
 External

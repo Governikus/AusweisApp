@@ -10,4 +10,6 @@ Item {
 	property real marginFactor
 	property bool dynamic
 	property color borderColor
+
+	anchors.fill: framee
 }

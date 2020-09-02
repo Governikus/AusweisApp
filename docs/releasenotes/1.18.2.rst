@@ -7,9 +7,9 @@ AusweisApp2 1.18.2
 
 Anwender
 """"""""
-  - Kleinere Fehlerbehebungen.
+- Kleinere Fehlerbehebungen.
 
 
 Entwickler
 """"""""""
-  - Anpassungen an der Info.plist.
+- Anpassungen an der Info.plist.

@@ -128,7 +128,7 @@ SectionPage {
 			   : ChangePinModel.isBasicReader ? qsTr("Please don't move the ID card.")
 			   : !!NumberModel.inputError ? NumberModel.inputError
 				 //: INFO ANDROID IOS The card communcation was aborted, the online identification functionality is deactivated and needs to be actived by the authorities.
-			   : NumberModel.pinDeactivated ? qsTr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.")
+			   : NumberModel.pinDeactivated ? qsTr("The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.")
 			   : changePinController.workflowState === ChangePinController.WorkflowStates.Update
 				 || changePinController.workflowState === ChangePinController.WorkflowStates.Pin
 				 //: INFO ANDROID IOS Either an comfort card reader or smartphone-as-card-reader is used, the user needs to react to request on that device.

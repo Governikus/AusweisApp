@@ -19,7 +19,6 @@ HttpServerRequestor::HttpServerRequestor()
 	: QObject()
 	, mEventLoop()
 	, mTimer()
-	, mReply(nullptr)
 {
 	connect(&mTimer, &QTimer::timeout, &mEventLoop, &QEventLoop::quit);
 	mTimer.setSingleShot(true);
@@ -43,17 +42,31 @@ QUrl HttpServerRequestor::createUrl(const QString& pQuery, quint16 pPort, const 
 }
 
 
-QPointer<QNetworkReply> HttpServerRequestor::request(const QUrl& pUrl, int pTimeOut)
+QSharedPointer<QNetworkReply> HttpServerRequestor::request(const QUrl& pUrl, int pTimeOut)
 {
+	if (mEventLoop.isRunning())
+	{
+		qCWarning(network) << "Requestor already active...";
+		return nullptr;
+	}
+
 	qCDebug(network) << "Request URL:" << pUrl;
 
 	QNetworkRequest getRequest(pUrl);
 	mTimer.start(pTimeOut);
-	mReply.reset(Env::getSingleton<NetworkManager>()->get(getRequest));
-	connect(mReply.data(), &QNetworkReply::finished, this, &HttpServerRequestor::finished);
+	auto* reply = Env::getSingleton<NetworkManager>()->get(getRequest);
+	const auto connection = connect(reply, &QNetworkReply::finished, this, &HttpServerRequestor::finished);
 	mEventLoop.exec();
 
-	return mReply->isFinished() ? mReply.data() : nullptr;
+	if (reply->isFinished())
+	{
+		return QSharedPointer<QNetworkReply>(reply, &QObject::deleteLater);
+	}
+
+	disconnect(connection);
+	reply->abort();
+	reply->deleteLater();
+	return nullptr;
 }
 
 

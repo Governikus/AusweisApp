@@ -3,7 +3,7 @@
  */
 
 import QtQuick 2.10
-import QtGraphicalEffects 1.3
+import QtGraphicalEffects 1.0
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0

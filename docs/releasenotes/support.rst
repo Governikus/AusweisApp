@@ -8,23 +8,23 @@ der AusweisApp2 unterstützt.
 
 Betriebssysteme
 """""""""""""""
-  - macOS 10.12
+- macOS 10.12
 
-  - macOS 10.13
+- macOS 10.13
 
-  - macOS 10.14
+- macOS 10.14
 
-  - macOS 10.15
+- macOS 10.15
 
-  - Windows 7 SP1 (32bit / 64bit)
+- Windows 7 SP1 (32bit / 64bit)
 
-  - Windows 8.1 (64bit)
+- Windows 8.1 (64bit)
 
-  - Windows 10 (64bit)
+- Windows 10 (64bit)
 
-  - Android 5.0 und höher (armeabi-v7a, arm64-v8a)
+- Android 5.0 und höher (armeabi-v7a, arm64-v8a)
 
-  - iOS 13 und höher
+- iOS 13 und höher
 
 
 Karten

@@ -7,4 +7,4 @@ AusweisApp2 1.0.1
 
 Anwender
 """"""""
-  - Korrekturen bei der Verwendung von Basislesern.
+- Korrekturen bei der Verwendung von Basislesern.

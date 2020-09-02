@@ -183,7 +183,7 @@ SectionPage
 			}
 			if (NumberModel.pinDeactivated) {
 				//: INFO ANDROID IOS The online authentication feature of the ID card is disabled and needs to be actived the be authorities.
-				return qsTr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.")
+				return qsTr("The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.")
 			}
 			if (identifyController.workflowState === IdentifyController.WorkflowStates.Update || identifyController.workflowState === IdentifyController.WorkflowStates.Pin) {
 				//: INFO ANDROID IOS The card reader requests the user's attention.

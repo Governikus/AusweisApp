@@ -20,17 +20,8 @@ using namespace governikus;
 StateGetSelfAuthenticationData::StateGetSelfAuthenticationData(const QSharedPointer<WorkflowContext>& pContext)
 	: AbstractState(pContext, false)
 	, GenericContextContainer(pContext)
-	, mReply(nullptr)
+	, mReply()
 {
-}
-
-
-StateGetSelfAuthenticationData::~StateGetSelfAuthenticationData()
-{
-	if (!mReply.isNull())
-	{
-		mReply->deleteLater();
-	}
 }
 
 
@@ -40,7 +31,7 @@ void StateGetSelfAuthenticationData::run()
 	qDebug() << address;
 
 	QNetworkRequest request(address);
-	mReply = Env::getSingleton<NetworkManager>()->get(request);
+	mReply.reset(Env::getSingleton<NetworkManager>()->get(request), &QObject::deleteLater);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGetSelfAuthenticationData::onSslErrors);
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGetSelfAuthenticationData::onSslHandshakeDone);
 	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateGetSelfAuthenticationData::onNetworkReply);

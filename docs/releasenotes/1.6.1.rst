@@ -7,8 +7,8 @@ AusweisApp2 1.6.1
 
 Anwender
 """"""""
-  - Offizielle Unterstützung von Windows 10 und OS X 10.11.
+- Offizielle Unterstützung von Windows 10 und OS X 10.11.
 
-  - Das DMG für OS X ist nun in deutscher und englischer Sprache verfügbar.
+- Das DMG für OS X ist nun in deutscher und englischer Sprache verfügbar.
 
-  - Kleinere Fehlerkorrekturen.
+- Kleinere Fehlerkorrekturen.

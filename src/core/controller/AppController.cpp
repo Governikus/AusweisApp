@@ -506,7 +506,7 @@ void AppController::onUiPlugin(UIPlugIn* pPlugin)
 	connect(this, &AppController::fireUiDominationReleased, pPlugin, &UIPlugIn::onUiDominationReleased);
 	connect(this, &AppController::fireProxyAuthenticationRequired, pPlugin, &UIPlugIn::onProxyAuthenticationRequired);
 
-	connect(pPlugin, &UIPlugIn::fireChangePinRequest, this, &AppController::onChangePinRequested, Qt::QueuedConnection);
+	connect(pPlugin, &UIPlugIn::fireChangePinRequested, this, &AppController::onChangePinRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireSelfAuthenticationRequested, this, &AppController::onSelfAuthenticationRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireRemoteServiceRequested, this, &AppController::onRemoteServiceRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireRestartApplicationRequested, this, &AppController::onRestartApplicationRequested, Qt::QueuedConnection);

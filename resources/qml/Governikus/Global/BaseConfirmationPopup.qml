@@ -51,7 +51,9 @@ Popup {
 		}
 	}
 
-	anchors.centerIn: Overlay.overlay
+	parent: Overlay.overlay
+	x: Math.round((parent.width - width) / 2)
+	y: Math.round((parent.height - height) / 2)
 	contentWidth: Overlay.overlay ? Math.min(0.75 * Overlay.overlay.width, Style.dimens.max_text_width) : 0
 	margins: Constants.pane_padding
 	padding: 0
@@ -103,24 +105,50 @@ Popup {
 
 				text: root.title
 				textStyle: root.headerTextStyle
+				maximumLineCount: 5
+				elide: Text.ElideRight
 				font.bold: true
 				horizontalAlignment: root.horizontalTextAlignment
 
 				FocusFrame {}
 			}
 
-			GText {
-				visible: text !== ""
+			Item {
+				visible: infoText.text !== ""
+
 				Layout.fillWidth: true
-				Layout.rightMargin: Constants.pane_padding
-				Layout.leftMargin: Constants.pane_padding
+				implicitHeight: infoTextFlickable.implicitHeight
 
-				activeFocusOnTab: true
+				GFlickable {
+					id: infoTextFlickable
 
-				text: root.text
-				horizontalAlignment: root.horizontalTextAlignment
+					anchors.fill: parent
+					anchors.leftMargin: Constants.pane_padding
+					anchors.rightMargin: Constants.pane_padding
+					implicitHeight: root.Overlay.overlay ? Math.min(infoText.height, 0.5 * root.Overlay.overlay.height) : 0
 
-				FocusFrame {}
+					contentHeight: infoText.implicitHeight
+					contentWidth: width
+					clip: true
+
+					GText {
+						id: infoText
+
+						width: parent.width
+						height: implicitHeight
+						rightPadding: Constants.pane_padding
+
+						activeFocusOnTab: true
+
+						text: root.text
+						horizontalAlignment: root.horizontalTextAlignment
+					}
+				}
+
+				FocusFrame {
+					scope: infoText
+					framee: infoTextFlickable
+				}
 			}
 
 			Column {

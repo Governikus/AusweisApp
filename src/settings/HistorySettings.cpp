@@ -29,8 +29,10 @@ Q_DECLARE_LOGGING_CATEGORY(settings)
 HistorySettings::HistorySettings()
 	: AbstractSettings()
 	, mStore(getStore())
+	, mHistoryInfos()
 {
 	mStore->beginGroup(SETTINGS_GROUP_NAME_CHRONIC());
+	mHistoryInfos = getHistoryInfosFromStore();
 }
 
 
@@ -61,7 +63,13 @@ void HistorySettings::setEnabled(bool pEnabled)
 }
 
 
-QVector<HistoryInfo> HistorySettings::getHistoryInfos() const
+const QVector<HistoryInfo>& HistorySettings::getHistoryInfos() const
+{
+	return mHistoryInfos;
+}
+
+
+QVector<HistoryInfo> HistorySettings::getHistoryInfosFromStore() const
 {
 	const int itemCount = mStore->beginReadArray(SETTINGS_NAME_HISTORY_ITEMS());
 
@@ -104,6 +112,8 @@ void HistorySettings::setHistoryInfos(const QVector<HistoryInfo>& pHistoryInfos)
 		mStore->setValue(SETTINGS_NAME_CHRONIC_REQUESTED_DATA(), item.getRequestedData());
 	}
 	mStore->endArray();
+
+	mHistoryInfos = pHistoryInfos;
 
 	Q_EMIT fireHistoryInfosChanged();
 }

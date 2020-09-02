@@ -7,15 +7,15 @@ AusweisApp2 1.18.0
 
 Anwender
 """"""""
-  - Aktivierung der NFC-Funktion für iOS 13.
+- Aktivierung der NFC-Funktion für iOS 13.
 
-  - Kleinere Fehlerbehebungen.
+- Kleinere Fehlerbehebungen.
 
 
 Entwickler
 """"""""""
-  - Aktualisierung von OpenSSL auf die Version 1.1.1c.
+- Aktualisierung von OpenSSL auf die Version 1.1.1c.
 
-  - Aktualisierung von Qt auf die Version 5.12.4.
+- Aktualisierung von Qt auf die Version 5.12.4.
 
-  - Ein Compiler mit C++17-Support ist erforderlich.
+- Ein Compiler mit C++17-Support ist erforderlich.
