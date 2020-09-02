@@ -281,7 +281,7 @@ class test_StateCheckRefreshAddress
 
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(developerMode);
 
-			QPointer<MockNetworkReply> reply(new MockNetworkReply());
+			auto reply = QSharedPointer<MockNetworkReply>::create();
 			mState->mReply = reply;
 
 			const QByteArray headerName("name");

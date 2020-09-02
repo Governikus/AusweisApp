@@ -12,7 +12,7 @@
 #include "GenericContextContainer.h"
 
 #include <QNetworkReply>
-#include <QScopedPointer>
+#include <QSharedPointer>
 #include <QSslCertificate>
 #include <QSslError>
 #include <QSslSocket>
@@ -31,7 +31,7 @@ class StateCheckRefreshAddress
 	friend class ::test_StateCheckRefreshAddress;
 
 	private:
-		QPointer<QNetworkReply> mReply;
+		QSharedPointer<QNetworkReply> mReply;
 		QUrl mUrl;
 		QUrl mSubjectUrl;
 		bool mCertificateFetched;
@@ -58,7 +58,6 @@ class StateCheckRefreshAddress
 		void onNetworkErrorFetchingServerCertificate(QNetworkReply::NetworkError pError);
 
 	public:
-		virtual ~StateCheckRefreshAddress() override;
 		void onEntry(QEvent* pEvent) override;
 };
 

@@ -62,7 +62,7 @@ class WorkflowGui
 
 	Q_SIGNALS:
 		void fireUserCancelled();
-		void fireChangePinRequest();
+		void fireChangePinRequested();
 		void fireCloseActiveDialogs();
 
 };

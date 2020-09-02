@@ -1,0 +1,53 @@
+AusweisApp2 1.20.2
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 31. August 2020
+
+
+
+Anwender
+""""""""
+- Es ist nun möglich die PIN/CAN/PUK mit den gewohnten
+  "Copy+Paste"-Methoden des verwendeten Betriebssystems
+  einzufügen (Unterstützung von Passwort-Safes).
+
+- Bei einigen Geräten wurde unter Android 9 und älter
+  nicht in die korrekten WiFi-Einstellungen gesprungen.
+
+- Einige Fehlertexte wurden verbessert.
+
+- Ein Hinweistext (Tooltip) wurde zu den Firewall-Einstellungen
+  im Windows-Installer hinzugefügt.
+
+- Performance der Suche im Anbieterverlauf wurde verbessert.
+
+- Unter Android wurde in der Technologieauswahl fälschlicherweise
+  kurz eine rote Fehlermeldung angezeigt, wenn der Ausweis vor
+  Beginn einer Authentisierung oder PIN-Änderung aufgelegt wurde.
+
+- Die Schriftart bei OnePlus Geräten wurde optimiert.
+
+- Unter macOS wird nun, wenn möglich, die integrierte Grafikkarte
+  verwendet.
+
+- Kleinere Fehlerbehebungen.
+
+
+Entwickler
+""""""""""
+- Unterstützung von Android NDK 21.3 und SDK cmdline-tools 2.1.
+
+- Inkompatibilität mit Qt 5.10 korrigiert.
+
+- Bei Verwendung des Smartphones als Kartenlesegerät wurde im
+  Komfort-Modus ein falscher Text bei der CAN-Allowed-Funktion
+  angezeigt.
+
+- Der Feedback-Dialog wurde unter Android nach der Verwendung des
+  externen SDKs fälschlicherweise angezeigt.
+
+- Die Dokumentation für das integrierte SDK unter Android wurde um
+  Logging und App Bundle erweitert.
+
+- Unterstützung von inklusiver Terminologie.
+  "Blacklist" und "Suppressions" entfernt und umbenannt.

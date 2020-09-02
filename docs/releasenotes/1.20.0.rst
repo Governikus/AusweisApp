@@ -7,33 +7,33 @@ AusweisApp2 1.20.0
 
 Anwender
 """"""""
-  - Einführung der neuen grafischen Oberfläche für
-    Windows und macOS.
+- Einführung der neuen grafischen Oberfläche für
+  Windows und macOS.
 
-  - Das DMG für macOS ist nun notarisiert.
+- Das DMG für macOS ist nun notarisiert.
 
-  - Unterstützung von Bildschirmlesern unter Android
-    und iOS.
+- Unterstützung von Bildschirmlesern unter Android
+  und iOS.
 
-  - Anpassungen der Farbkontraste zur besseren Lesbarkeit.
+- Anpassungen der Farbkontraste zur besseren Lesbarkeit.
 
-  - Optimierung des Menüs und Einführung eines
-    Einstellungsbereichs unter iOS und Android.
+- Optimierung des Menüs und Einführung eines
+  Einstellungsbereichs unter iOS und Android.
 
-  - Optimierung der "Smartphone als Kartenleser"-Kopplung.
+- Optimierung der "Smartphone als Kartenleser"-Kopplung.
 
-  - Unterstützung von OS X 10.11 wurde eingestellt.
+- Unterstützung von OS X 10.11 wurde eingestellt.
 
-  - Unterstützung von macOS 10.15.
+- Unterstützung von macOS 10.15.
 
-  - Unterstützung von der x86-Architektur unter Android
-    wurde eingestellt.
+- Unterstützung von der x86-Architektur unter Android
+  wurde eingestellt.
 
-  - Kleinere Fehlerbehebungen.
+- Kleinere Fehlerbehebungen.
 
 
 Entwickler
 """"""""""
-  - Aktualisierung von OpenSSL auf die Version 1.1.1d.
+- Aktualisierung von OpenSSL auf die Version 1.1.1d.
 
-  - Aktualisierung von Qt auf die Version 5.12.5.
+- Aktualisierung von Qt auf die Version 5.12.5.

@@ -7,17 +7,17 @@ AusweisApp2 1.12.1
 
 Anmerkung
 """""""""
-  - Version wurde auf Grund der EUPL v1.2 ausgesetzt.
+- Version wurde auf Grund der EUPL v1.2 ausgesetzt.
 
 
 
 Anwender
 """"""""
-  - Veröffentlichung der AusweisApp2 unter geänderten
-    Nutzungsbedingungen (EUPL v1.1).
+- Veröffentlichung der AusweisApp2 unter geänderten
+  Nutzungsbedingungen (EUPL v1.1).
 
 
 
 Entwickler
 """"""""""
-  - Bereitstellung des Sourcecode der AusweisApp2 auf GitHub.
+- Bereitstellung des Sourcecode der AusweisApp2 auf GitHub.

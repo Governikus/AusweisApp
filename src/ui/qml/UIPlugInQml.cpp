@@ -34,6 +34,8 @@
 #endif
 
 #if defined(Q_OS_ANDROID)
+	#include "DeviceInfo.h"
+
 	#include <QFont>
 	#include <QtAndroidExtras/QAndroidJniEnvironment>
 	#include <QtAndroidExtras/QtAndroid>
@@ -44,6 +46,7 @@
 #include <QMessageBox>
 #endif
 
+#include <QDir>
 #include <QFile>
 #include <QFontDatabase>
 #include <QFontInfo>
@@ -130,6 +133,23 @@ UIPlugInQml::UIPlugInQml()
 #endif
 {
 #if defined(Q_OS_ANDROID)
+	// see QTBUG-69494
+	if (DeviceInfo::getFingerprint().contains(QLatin1String("OnePlus")))
+	{
+		const QDir dir(QStringLiteral("/system/fonts"));
+		const auto entries = dir.entryInfoList({QStringLiteral("Roboto-*.ttf")}, QDir::Files);
+		for (const auto& file : entries)
+		{
+			if (file.fileName().contains(QLatin1String("_subset")))
+			{
+				qCDebug(qml) << "Ignore font" << file;
+				continue;
+			}
+			qCDebug(qml) << "Add font" << file;
+			QFontDatabase::addApplicationFont(file.absoluteFilePath());
+		}
+	}
+
 	QGuiApplication::setFont(QFont(QStringLiteral("Roboto")));
 #elif defined(Q_OS_LINUX) && QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
 	if (auto font = QGuiApplication::font(); QFontMetrics(font.family()).horizontalAdvance(QLatin1Char('m')) > 15)
@@ -151,7 +171,7 @@ UIPlugInQml::UIPlugInQml()
 	connect(&mTrayIcon, &TrayIcon::fireShow, this, &UIPlugInQml::show);
 	connect(&mTrayIcon, &TrayIcon::fireQuit, this, &UIPlugInQml::fireQuitApplicationRequest);
 
-	connect(Env::getSingleton<ChangePinModel>(), &ChangePinModel::fireStartWorkflow, this, &UIPlugIn::fireChangePinRequest);
+	connect(Env::getSingleton<ChangePinModel>(), &ChangePinModel::fireStartWorkflow, this, &UIPlugIn::fireChangePinRequested);
 	connect(Env::getSingleton<SelfAuthModel>(), &SelfAuthModel::fireStartWorkflow, this, &UIPlugIn::fireSelfAuthenticationRequested);
 	connect(Env::getSingleton<RemoteServiceModel>(), &RemoteServiceModel::fireStartWorkflow, this, &UIPlugIn::fireRemoteServiceRequested);
 	connect(Env::getSingleton<LogHandler>(), &LogHandler::fireRawLog, this, &UIPlugInQml::onRawLog, Qt::QueuedConnection);

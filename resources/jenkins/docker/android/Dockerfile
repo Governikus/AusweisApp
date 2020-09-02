@@ -1,10 +1,16 @@
 FROM ubuntu:swarm
 MAINTAINER Governikus KG <ausweisapp2@governikus.com>
 
-ARG ANDROID_SDK_TOOLS=4333796
-ARG ANDROID_NDK_VERSION=r21d
+ARG ANDROID_CMDLINE_TOOLS=6609375
+ARG ANDROID_NDK_VERSION=21.3.6528147
 ARG CMAKE=3.17.3
 ENV NAME=Android LABELS="Android" PACKAGES_DIR=/home/governikus/packages
+
+ENV ANDROID_SDK_ROOT /opt/android-sdk
+ENV ANDROID_NDK_ROOT $ANDROID_SDK_ROOT/ndk/$ANDROID_NDK_VERSION
+
+# Remove this later: https://github.com/openssl/openssl/pull/11206
+ENV ANDROID_NDK $ANDROID_NDK_ROOT
 
 RUN apt-get update && \
     apt-get -y install g++ make ccache ninja-build perl unzip gradle maven patch openjdk-8-jdk-headless && \
@@ -15,18 +21,9 @@ RUN apt-get update && \
 RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE/cmake-$CMAKE-Linux-x86_64.sh -O /tmp/cmake.sh && \
     sh /tmp/cmake.sh --prefix=/usr --skip-license --exclude-subdir && rm /tmp/cmake.sh
 
-ENV ANDROID_HOME /opt/android-sdk
-RUN mkdir -p /tmp/dl/sdk && cd /tmp/dl/sdk && wget -O sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_SDK_TOOLS.zip && \
-    unzip sdk.zip && mkdir -p $ANDROID_HOME && mv tools/ $ANDROID_HOME
-RUN yes | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;29.0.3" "platform-tools" "platforms;android-29"
-
-ENV ANDROID_NDK_HOME /opt/android-ndk
-ENV ANDROID_NDK=${ANDROID_NDK_HOME}
-
-RUN mkdir -p /tmp/dl/ndk && \
-    cd /tmp/dl/ndk && \
-    wget -O ndk.zip https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip && \
-    unzip ndk.zip && mv android-ndk-${ANDROID_NDK_VERSION} ${ANDROID_NDK} && \
+RUN mkdir -p /tmp/dl && cd /tmp/dl && wget -O sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_CMDLINE_TOOLS}_latest.zip && \
+    unzip sdk.zip && \
+    yes | /tmp/dl/tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "cmdline-tools;2.1" "build-tools;29.0.3" "platform-tools" "platforms;android-29" "ndk;${ANDROID_NDK_VERSION}" && \
     rm -rf /tmp/dl
 
 USER governikus

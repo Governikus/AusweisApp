@@ -9,8 +9,10 @@
 #include "EnumHelper.h"
 #include "HttpServerRequestor.h"
 #include "VersionInfo.h"
+
 #include <QHostAddress>
 #include <QNetworkReply>
+#include <QSharedPointer>
 #include <QUrl>
 
 namespace governikus
@@ -27,7 +29,7 @@ class HttpServerStatusParser
 		VersionInfo mVersionInfo;
 		HttpServerRequestor mRequestor;
 
-		bool parseReply(const QPointer<QNetworkReply>& pReply);
+		bool parseReply(const QSharedPointer<QNetworkReply>& pReply);
 
 	public:
 		HttpServerStatusParser(quint16 pPort, const QHostAddress& pHost = QHostAddress::LocalHost);

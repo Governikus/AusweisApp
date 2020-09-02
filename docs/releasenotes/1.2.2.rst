@@ -7,4 +7,4 @@ AusweisApp2 1.2.2
 
 Anwender
 """"""""
-  - Umgehung für den von Microsoft ab Windows 8 eingeführten PC/SC Card Reset (5 Sekunden Timeout).
+- Umgehung für den von Microsoft ab Windows 8 eingeführten PC/SC Card Reset (5 Sekunden Timeout).

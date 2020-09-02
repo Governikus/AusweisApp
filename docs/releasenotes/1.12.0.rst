@@ -7,16 +7,16 @@ AusweisApp2 1.12.0
 
 Anwender
 """"""""
-  - Veröffentlichung betrifft nur die Plattform "Android".
+- Veröffentlichung betrifft nur die Plattform "Android".
 
-  - Unterstützung von Android 4.3 und höher.
+- Unterstützung von Android 4.3 und höher.
 
-  - Zertifiziert vom Bundesamt für Sicherheit in der Informationstechnik (BSI).
+- Zertifiziert vom Bundesamt für Sicherheit in der Informationstechnik (BSI).
 
 
 
 Entwickler
 """"""""""
-  - Aktualisierung von OpenSSL auf die Version 1.0.2k.
+- Aktualisierung von OpenSSL auf die Version 1.0.2k.
 
-  - Aktualisierung von Qt auf die Version 5.8.0.
+- Aktualisierung von Qt auf die Version 5.8.0.

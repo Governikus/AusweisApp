@@ -264,7 +264,7 @@ void AppQtGui::onDiagnosisRequested()
 {
 	if (mDiagnosisGui == nullptr)
 	{
-		mDiagnosisGui = new DiagnosisGui(mMainWidget);
+		mDiagnosisGui = new DiagnosisGui(mMainWidget); // lgtm [cpp/resource-not-released-in-destructor]
 	}
 	mDiagnosisGui->activate();
 }

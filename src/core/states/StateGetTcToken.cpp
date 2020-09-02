@@ -29,15 +29,6 @@ StateGetTcToken::StateGetTcToken(const QSharedPointer<WorkflowContext>& pContext
 }
 
 
-StateGetTcToken::~StateGetTcToken()
-{
-	if (!mReply.isNull())
-	{
-		mReply->deleteLater();
-	}
-}
-
-
 void StateGetTcToken::run()
 {
 	auto url = getContext()->getTcTokenUrl();
@@ -94,13 +85,8 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 
 void StateGetTcToken::sendRequest(const QUrl& pUrl)
 {
-	if (!mReply.isNull())
-	{
-		mReply->deleteLater();
-	}
-
 	QNetworkRequest request(pUrl);
-	mReply = Env::getSingleton<NetworkManager>()->get(request);
+	mReply.reset(Env::getSingleton<NetworkManager>()->get(request), &QObject::deleteLater);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGetTcToken::onSslErrors);
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGetTcToken::onSslHandshakeDone);
 	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateGetTcToken::onNetworkReply);
@@ -151,8 +137,8 @@ void StateGetTcToken::onNetworkReply()
 
 	if (mReply->error() != QNetworkReply::NoError)
 	{
-		qCritical() << NetworkManager::toStatus(mReply.data());
-		updateStatus(NetworkManager::toTrustedChannelStatus(mReply.data()));
+		qCritical() << NetworkManager::toStatus(mReply);
+		updateStatus(NetworkManager::toTrustedChannelStatus(mReply));
 		Q_EMIT fireAbort();
 		return;
 	}

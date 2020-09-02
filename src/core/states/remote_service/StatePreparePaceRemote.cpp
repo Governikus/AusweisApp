@@ -33,6 +33,7 @@ void StatePreparePaceRemote::run()
 		switch (parser.getPasswordId())
 		{
 			case PacePasswordId::PACE_CAN:
+				getContext()->setCanAllowedMode(!parser.getChat().isEmpty() && !parser.getCertificateDescription().isEmpty());
 				if (getContext()->getCan().isEmpty())
 				{
 					Q_EMIT fireEnterPacePassword();

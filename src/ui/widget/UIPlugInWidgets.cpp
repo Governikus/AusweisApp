@@ -15,7 +15,7 @@ UIPlugInWidgets::UIPlugInWidgets()
 	, mGui()
 {
 	connect(&mGui, &AppQtGui::quitApplicationRequested, this, &UIPlugIn::fireQuitApplicationRequest);
-	connect(&mGui, &AppQtGui::fireChangePinRequested, this, &UIPlugIn::fireChangePinRequest);
+	connect(&mGui, &AppQtGui::fireChangePinRequested, this, &UIPlugIn::fireChangePinRequested);
 	connect(&mGui, &AppQtGui::selfAuthenticationRequested, this, &UIPlugIn::fireSelfAuthenticationRequested);
 	connect(&mGui, &AppQtGui::fireCloseReminderFinished, this, &UIPlugInWidgets::fireCloseReminderFinished);
 	connect(&mGui, &AppQtGui::fireRestartApplicationRequested, this, &UIPlugIn::fireRestartApplicationRequested);

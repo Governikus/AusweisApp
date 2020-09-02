@@ -37,8 +37,10 @@ class HistorySettings
 
 	private:
 		QSharedPointer<QSettings> mStore;
+		QVector<HistoryInfo> mHistoryInfos;
 
 		HistorySettings();
+		QVector<HistoryInfo> getHistoryInfosFromStore() const;
 
 	public:
 		virtual ~HistorySettings() override;
@@ -47,7 +49,7 @@ class HistorySettings
 		bool isEnabled() const;
 		void setEnabled(bool pEnabled);
 
-		QVector<HistoryInfo> getHistoryInfos() const;
+		const QVector<HistoryInfo>& getHistoryInfos() const;
 		void setHistoryInfos(const QVector<HistoryInfo>& pHistoryInfos);
 		void addHistoryInfo(const HistoryInfo& pHistoryInfo);
 		int deleteSettings(const QDateTime& pLatestToKeep = QDateTime());

@@ -266,7 +266,7 @@ void StateGenericSendReceive::run()
 	qCDebug(network).noquote() << "Try to send raw data:\n" << data;
 	const QByteArray& paosNamespace = PaosCreator::getNamespace(PaosCreator::Namespace::PAOS).toUtf8();
 	const auto& session = token->usePsk() ? QByteArray() : getContext()->getSslSession();
-	mReply = Env::getSingleton<NetworkManager>()->paos(request, paosNamespace, data, token->usePsk(), session);
+	mReply.reset(Env::getSingleton<NetworkManager>()->paos(request, paosNamespace, data, token->usePsk(), session), &QObject::deleteLater);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGenericSendReceive::onSslErrors);
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGenericSendReceive::onSslHandshakeDone);
 	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateGenericSendReceive::onReplyFinished);
@@ -277,15 +277,16 @@ void StateGenericSendReceive::run()
 void StateGenericSendReceive::onReplyFinished()
 {
 	qCDebug(network) << "Received message from eID-Server";
-	QNetworkReply* reply = mReply.data();
-	mReply.clear();
-	reply->deleteLater();
 
-	const auto statusCode = NetworkManager::getLoggedStatusCode(reply, spawnMessageLogger(network));
+	const auto guard = qScopeGuard([this] {
+				mReply.reset();
+			});
 
-	if (reply->error() != QNetworkReply::NoError)
+	const auto statusCode = NetworkManager::getLoggedStatusCode(mReply, spawnMessageLogger(network));
+
+	if (mReply->error() != QNetworkReply::NoError)
 	{
-		const auto& channelStatus = NetworkManager::toTrustedChannelStatus(reply);
+		const auto& channelStatus = NetworkManager::toTrustedChannelStatus(mReply);
 		qCCritical(network) << GlobalStatus(channelStatus);
 		updateStatus(channelStatus);
 		Q_EMIT fireAbort();
@@ -295,7 +296,7 @@ void StateGenericSendReceive::onReplyFinished()
 	if (statusCode >= 500)
 	{
 		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server);
-		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}
+		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 				});
 		Q_EMIT fireAbort();
 		return;
@@ -304,13 +305,13 @@ void StateGenericSendReceive::onReplyFinished()
 	if (statusCode >= 400)
 	{
 		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer);
-		updateStatus({GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}
+		updateStatus({GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 				});
 		Q_EMIT fireAbort();
 		return;
 	}
 
-	QByteArray message = reply->readAll();
+	QByteArray message = mReply->readAll();
 	qCDebug(network).noquote() << "Received raw data:\n" << message;
 	PaosHandler paosHandler(message);
 	qCDebug(network) << "Received PAOS message of type:" << paosHandler.getDetectedPaosType();
@@ -328,14 +329,14 @@ void StateGenericSendReceive::onReplyFinished()
 		if (paosHandler.getDetectedPaosType() == PaosType::UNKNOWN)
 		{
 			qCCritical(network) << "The program received an unknown message from the server.";
-			updateStatus({GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}
+			updateStatus({GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 					});
 			Q_EMIT fireAbort();
 		}
 		else
 		{
 			qCCritical(network) << "The program received an unexpected message from the server.";
-			updateStatus({GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}
+			updateStatus({GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 					});
 			Q_EMIT fireAbort();
 		}

@@ -81,6 +81,7 @@ void RemoteServiceModel::onEnvironmentChanged()
 
 	if (!runnable && isRunning())
 	{
+		setPairing(false);
 		setRunning(false);
 	}
 }

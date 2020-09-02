@@ -37,7 +37,7 @@ bool HttpServerStatusParser::request()
 	mVersionInfo = VersionInfo();
 	mServerHeader.clear();
 
-	QPointer<QNetworkReply> reply = mRequestor.request(mUrl);
+	const auto reply = mRequestor.request(mUrl);
 	if (!reply.isNull())
 	{
 		return parseReply(reply);
@@ -59,7 +59,7 @@ const VersionInfo& HttpServerStatusParser::getVersionInfo() const
 }
 
 
-bool HttpServerStatusParser::parseReply(const QPointer<QNetworkReply>& pReply)
+bool HttpServerStatusParser::parseReply(const QSharedPointer<QNetworkReply>& pReply)
 {
 	mServerHeader = pReply->header(QNetworkRequest::KnownHeaders::ServerHeader).toString();
 	if (mServerHeader.isEmpty())
@@ -79,10 +79,7 @@ bool HttpServerStatusParser::parseReply(const QPointer<QNetworkReply>& pReply)
 		qCDebug(network) << "Found version info" << mVersionInfo;
 		return !mVersionInfo.isNull();
 	}
-	else
-	{
-		qCDebug(network) << "Cannot get status information! Got bad http status code.";
-	}
 
+	qCDebug(network) << "Cannot get status information! Got bad http status code.";
 	return false;
 }

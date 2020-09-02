@@ -28,7 +28,6 @@ TextField {
 	selectByMouse: true
 	selectedTextColor: Style.color.primary_text_inverse
 	selectionColor: Style.color.accent
-	placeholderTextColor: Style.color.secondary_text
 	ToolTip.visible: text.length === maximumLength && focus
 	ToolTip.text: qsTr("Maximum allowed length reached.") + SettingsModel.translationTrigger
 

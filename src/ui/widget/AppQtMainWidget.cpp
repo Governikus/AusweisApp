@@ -26,7 +26,7 @@
 #include <QTimer>
 
 #ifdef Q_OS_WIN
-#include <Windows.h>
+#include <windows.h>
 #endif
 
 using namespace governikus;

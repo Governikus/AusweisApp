@@ -231,29 +231,29 @@ Android
 Die Toolchain für Android wird derzeit nur unter Linux unterstützt. Dabei müssen folgende
 Komponenten vorhanden sein:
 
-- Android NDK mit gesetztem ANDROID_NDK
+- Android NDK mit gesetztem ANDROID_NDK_ROOT
 
   - https://developer.android.com/tools/sdk/ndk/index.html
 
-  - Getestet: r18 (https://wiki.qt.io/Qt_for_Android_known_issues)
+  - Getestet: r21d (https://wiki.qt.io/Qt_for_Android_known_issues)
 
-- Android SDK mit gesetztem ANDROID_HOME
+- Android SDK (cmdline) mit gesetztem ANDROID_SDK_ROOT
 
-  - https://developer.android.com/studio/releases/sdk-tools.html
+  - https://developer.android.com/studio#cmdline-tools
 
-  - Getestet: 26.1.1
+  - Getestet: 26.1.1 / 2.1
 
 - SDK build tools
 
   - https://developer.android.com/studio/releases/build-tools
 
-  - Getestet: 28.0.3
+  - Getestet: 29.0.3
 
 - SDK platform tools
 
   - https://developer.android.com/studio/releases/platform-tools
 
-  - Getestet: 28.0.1
+  - Getestet: 30.0.3
 
 - Um Qt erfolgreich zu bauen, ist mindestens ein API-Levelpaket von Android notwendig.
   Dieses sollte mindestens Level 21 sein. Nähere Informationen dazu

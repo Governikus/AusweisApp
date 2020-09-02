@@ -175,7 +175,7 @@
 				<Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
 				<Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
 
-				<Control Id="SystemSettingsCheckBox" Type="CheckBox" X="20" Y="70" Width="290" Height="17" Property="SYSTEMSETTINGS" CheckBoxValue="true" Text="!(loc.CustomInstallDirDlg_SystemSettingsCheckBox)" />
+				<Control Id="SystemSettingsCheckBox" Type="CheckBox" X="20" Y="70" Width="290" Height="17" Property="SYSTEMSETTINGS" CheckBoxValue="true" Text="!(loc.CustomInstallDirDlg_SystemSettingsCheckBox)" ToolTip="!(loc.CustomInstallDirDlg_SystemSettingsTooltip)" />
 				<Control Id="DesktopShortcutCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="DESKTOPSHORTCUT" CheckBoxValue="true" Text="!(loc.CustomInstallDirDlg_DesktopShortcutCheckBox)" />
 
 				<Control Id="FolderLabel" Type="Text" X="22" Y="175" Width="290" Height="30" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)" Transparent="yes" />

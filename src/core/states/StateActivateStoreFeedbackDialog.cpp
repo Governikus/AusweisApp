@@ -21,7 +21,7 @@ void StateActivateStoreFeedbackDialog::run()
 {
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	if (getContext()->getStatus().isNoError() && settings.askForStoreFeedback())
+	if (getContext()->getStatus().isNoError() && settings.askForStoreFeedback() && !Env::getSingleton<AppSettings>()->isUsedAsSDK())
 	{
 		settings.setRequestStoreFeedback(true);
 	}

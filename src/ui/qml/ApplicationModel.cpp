@@ -177,6 +177,7 @@ bool ApplicationModel::isNfcRunning() const
 
 void ApplicationModel::setNfcRunning(bool pRunning)
 {
+#if defined(Q_OS_IOS)
 	const auto& readerManager = Env::getSingleton<ReaderManager>();
 	if (pRunning)
 	{
@@ -185,6 +186,9 @@ void ApplicationModel::setNfcRunning(bool pRunning)
 	}
 
 	readerManager->stopScan(ReaderManagerPlugInType::NFC);
+#else
+	Q_UNUSED(pRunning);
+#endif
 }
 
 
@@ -348,7 +352,7 @@ void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction)
 			}
 			else
 			{
-				showSettings(QStringLiteral("android.settings.WIRELESS_SETTINGS"));
+				showSettings(QStringLiteral("android.settings.WIFI_SETTINGS"));
 			}
 			break;
 
@@ -359,7 +363,7 @@ void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction)
 			}
 			else
 			{
-				showSettings(QStringLiteral("android.settings.WIRELESS_SETTINGS"));
+				showSettings(QStringLiteral("android.settings.WIFI_SETTINGS"));
 			}
 			break;
 

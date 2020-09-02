@@ -9,5 +9,6 @@
 	<String Id="CustomInstallDirDlg_Description" Overridable="yes"></String>
 	<String Id="CustomInstallDirDlg_DesktopShortcutCheckBox" Overridable="yes">Create link on desktop</String>
 	<String Id="CustomInstallDirDlg_SystemSettingsCheckBox" Overridable="yes">Add required rules to Windows Firewall</String>
-	<String Id="CustomExitDialog_LaunchCheckBox" Overridable="yes">Start AusweisApp</String>
+	<String Id="CustomInstallDirDlg_SystemSettingsTooltip" Overridable="yes">Firewall rules are required, among others, by the function smartphone as card reader.</String>
+	<String Id="CustomExitDialog_LaunchCheckBox" Overridable="yes">Start AusweisApp2</String>
 </WixLocalization>

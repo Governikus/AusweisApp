@@ -42,8 +42,7 @@ class test_StateGetSelfAuthenticationData
 
 		void test_ReportCommunicationError()
 		{
-			MockNetworkReply reply;
-			mState->mReply = QPointer<QNetworkReply>(&reply);
+			mState->mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
 
 			QSignalSpy spy(mState.data(), &StateGetSelfAuthenticationData::fireAbort);
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
@@ -66,15 +65,14 @@ class test_StateGetSelfAuthenticationData
 
 		void test_OnSslHandshakeDone()
 		{
-			MockNetworkReply reply;
-			mState->mReply = QPointer<QNetworkReply>(&reply);
+			mState->mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 
 			mState->onSslHandshakeDone();
 			QVERIFY(logSpy.takeLast().at(0).toString().contains("Operation aborted"));
 
-			reply.setSslConfiguration(QSslConfiguration());
+			mState->mReply->setSslConfiguration(QSslConfiguration());
 			mState->onSslHandshakeDone();
 			const QString logMsg(logSpy.at(0).at(0).toString());
 			QVERIFY(logMsg.contains("Used session cipher"));
@@ -83,8 +81,7 @@ class test_StateGetSelfAuthenticationData
 
 		void test_OnSslErrors()
 		{
-			MockNetworkReply reply;
-			mState->mReply = QPointer<QNetworkReply>(&reply);
+			mState->mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
 			QSignalSpy spy(mState.data(), &StateGetSelfAuthenticationData::fireAbort);
 
 			mState->onSslErrors(QList<QSslError>());
@@ -98,8 +95,7 @@ class test_StateGetSelfAuthenticationData
 
 		void test_OnNetworkReplyNoValidData()
 		{
-			MockNetworkReply emptyReply;
-			mState->mReply = QPointer<QNetworkReply>(&emptyReply);
+			mState->mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			QSignalSpy spyAbort(mState.data(), &StateGetSelfAuthenticationData::fireAbort);
@@ -115,8 +111,7 @@ class test_StateGetSelfAuthenticationData
 		void test_OnNetworkReplyValidData()
 		{
 			const auto& data = TestFileHelper::readFile(":/self/SelfAuthenticationData.json");
-			MockNetworkReply reply(data);
-			mState->mReply = QPointer<QNetworkReply>(&reply);
+			mState->mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
 			QSignalSpy spyContinue(mState.data(), &StateGetSelfAuthenticationData::fireContinue);
 
 			mState->onNetworkReply();
@@ -126,9 +121,9 @@ class test_StateGetSelfAuthenticationData
 
 		void test_OnNetworkReplyWrongHttpStatus()
 		{
-			MockNetworkReply reply;
-			reply.setAttribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute, 500);
-			mState->mReply = QPointer<QNetworkReply>(&reply);
+			auto reply = new MockNetworkReply();
+			mState->mReply.reset(reply, &QObject::deleteLater);
+			reply->setAttribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute, 500);
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
 			QSignalSpy spyAbort(mState.data(), &StateGetSelfAuthenticationData::fireAbort);

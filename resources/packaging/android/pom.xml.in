@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.governikus</groupId>
   <artifactId>ausweisapp</artifactId>
-  <version>@PROJECT_VERSION@</version>
+  <version>@PROJECT_VERSION@@POM_SNAPSHOT@</version>
   <packaging>aar</packaging>
   <name>Governikus AusweisApp2</name>
   <url>https://github.com/Governikus/AusweisApp2/</url>

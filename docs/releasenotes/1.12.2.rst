@@ -6,10 +6,10 @@ AusweisApp2 1.12.2
 
 Anwender
 """"""""
-  - Veröffentlichung der AusweisApp2 unter geänderten
-    Nutzungsbedingungen (EUPL v1.2).
+- Veröffentlichung der AusweisApp2 unter geänderten
+  Nutzungsbedingungen (EUPL v1.2).
 
 
 Entwickler
 """"""""""
-  - Bereitstellung des Sourcecode der AusweisApp2 auf GitHub.
+- Bereitstellung des Sourcecode der AusweisApp2 auf GitHub.

@@ -47,50 +47,30 @@ class test_ChatModel
 
 		void test_ResetContext()
 		{
+			QVERIFY(mModel->mAllRights.isEmpty());
+			QVERIFY(mModel->mOptionalRights.isEmpty());
+			QVERIFY(mModel->mSelectedRights.isEmpty());
 			QSharedPointer<SelfAuthContext> selfAuthContext(new SelfAuthContext());
 
+			mModel->mAllRights = {AccessRight::READ_DG01, AccessRight::READ_DG02};
+			mModel->mOptionalRights = {AccessRight::READ_DG02};
+			mModel->mSelectedRights = {AccessRight::READ_DG01};
 			mModel->resetContext(nullptr);
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG05));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG13));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG04));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG07));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG08));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG09));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG17));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG01));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG10));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG06));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG02));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG19));
+			QVERIFY(mModel->mAllRights.isEmpty());
+			QVERIFY(mModel->mOptionalRights.isEmpty());
+			QVERIFY(mModel->mSelectedRights.isEmpty());
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-			auto uniqueRights = QSet<AccessRight>(mModel->mAllRights.constBegin(), mModel->mAllRights.constEnd());
-#else
-			auto uniqueRights = mModel->mAllRights.toSet();
-#endif
-			QCOMPARE(mModel->mSelectedRights, uniqueRights);
-
+			mModel->mAllRights = {AccessRight::READ_DG01, AccessRight::READ_DG02};
+			mModel->mOptionalRights = {AccessRight::READ_DG02};
+			mModel->mSelectedRights = {AccessRight::READ_DG01};
 			mModel->resetContext(selfAuthContext);
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG05));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG13));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG04));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG07));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG08));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG09));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG17));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG01));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG10));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG06));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG02));
-			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG19));
+			QVERIFY(mModel->mAllRights.isEmpty());
+			QVERIFY(mModel->mOptionalRights.isEmpty());
+			QVERIFY(mModel->mSelectedRights.isEmpty());
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-			uniqueRights = QSet<AccessRight>(mModel->mAllRights.constBegin(), mModel->mAllRights.constEnd());
-#else
-			uniqueRights = mModel->mAllRights.toSet();
-#endif
-			QCOMPARE(mModel->mSelectedRights, uniqueRights);
-
+			mModel->mAllRights = {AccessRight::READ_DG01, AccessRight::READ_DG02};
+			mModel->mOptionalRights = {AccessRight::READ_DG02};
+			mModel->mSelectedRights = {AccessRight::READ_DG01};
 			mModel->resetContext(mAuthContext);
 			QVERIFY(mModel->mAllRights.isEmpty());
 			QVERIFY(mModel->mOptionalRights.isEmpty());
@@ -100,27 +80,39 @@ class test_ChatModel
 
 		void test_OnAuthenticationDataChanged()
 		{
-			mModel->mAuthContext = mAuthContext;
+			mModel->resetContext(mAuthContext);
 
-			mModel->onAuthenticationDataChanged();
+			Q_EMIT mAuthContext->fireAuthenticationDataChanged();
 			QVERIFY(mModel->mAllRights.isEmpty());
 			QVERIFY(mModel->mOptionalRights.isEmpty());
 			QVERIFY(mModel->mSelectedRights.isEmpty());
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+			auto uniqueRights = QSet<AccessRight>(mModel->mAllRights.constBegin(), mModel->mAllRights.constEnd());
+#else
+			auto uniqueRights = mModel->mAllRights.toSet();
+#endif
+			QCOMPARE(mModel->mSelectedRights, uniqueRights);
 
 			mAuthContext->mRequiredAccessRights += AccessRight::READ_DG01;
 			mAuthContext->mRequiredAccessRights += AccessRight::READ_DG04;
 
-			mModel->onAuthenticationDataChanged();
+			Q_EMIT mAuthContext->fireAuthenticationDataChanged();
 			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG01));
 			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG04));
 			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG01));
 			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG04));
 			QVERIFY(mModel->mOptionalRights.isEmpty());
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+			uniqueRights = QSet<AccessRight>(mModel->mAllRights.constBegin(), mModel->mAllRights.constEnd());
+#else
+			uniqueRights = mModel->mAllRights.toSet();
+#endif
+			QCOMPARE(mModel->mSelectedRights, uniqueRights);
 
 			mAuthContext->mOptionalAccessRights += AccessRight::READ_DG10;
 			mAuthContext->mOptionalAccessRights += AccessRight::READ_DG17;
 
-			mModel->onAuthenticationDataChanged();
+			Q_EMIT mAuthContext->fireAuthenticationDataChanged();
 			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG01));
 			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG04));
 			QVERIFY(mModel->mAllRights.contains(AccessRight::READ_DG10));
@@ -129,8 +121,12 @@ class test_ChatModel
 			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG04));
 			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG10));
 			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG17));
-			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG10));
-			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG17));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+			uniqueRights = QSet<AccessRight>(mModel->mAllRights.constBegin(), mModel->mAllRights.constEnd());
+#else
+			uniqueRights = mModel->mAllRights.toSet();
+#endif
+			QCOMPARE(mModel->mSelectedRights, uniqueRights);
 		}
 
 

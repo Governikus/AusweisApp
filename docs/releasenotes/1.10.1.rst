@@ -7,5 +7,5 @@ AusweisApp2 1.10.1
 
 Anwender
 """"""""
-  - Unter Windows wurde u.U. fälschlicherweise das
-    Beta-Symbol angezeigt.
+- Unter Windows wurde u.U. fälschlicherweise das
+  Beta-Symbol angezeigt.

@@ -49,52 +49,17 @@ void ChatModel::resetContext(const QSharedPointer<AuthContext>& pContext)
 {
 	mAuthContext = pContext;
 
-	if (pContext.objectCast<SelfAuthContext>())
+	beginResetModel();
+
+	mAllRights.clear();
+	mOptionalRights.clear();
+	mSelectedRights.clear();
+
+	endResetModel();
+
+	if (!pContext.isNull())
 	{
-		/* nothing to do, access rights are static */
-	}
-	else if (!pContext.isNull() /* it's an AuthContext */)
-	{
-		beginResetModel();
-
-		mAllRights.clear();
-		mOptionalRights.clear();
-		mSelectedRights.clear();
-
-		endResetModel();
-
-		connect(mAuthContext.data(), &AuthContext::fireAuthenticationDataChanged, this, &ChatModel::onAuthenticationDataChanged);
-	}
-	else
-	{
-		/* set static access rights according to selfAuthentication*/
-		Q_ASSERT(pContext.isNull());
-
-		beginResetModel();
-
-		mAllRights.clear();
-		mAllRights += AccessRight::READ_DG05;
-		mAllRights += AccessRight::READ_DG13;
-		mAllRights += AccessRight::READ_DG04;
-		mAllRights += AccessRight::READ_DG07;
-		mAllRights += AccessRight::READ_DG08;
-		mAllRights += AccessRight::READ_DG09;
-		mAllRights += AccessRight::READ_DG17;
-		mAllRights += AccessRight::READ_DG01;
-		mAllRights += AccessRight::READ_DG10;
-		mAllRights += AccessRight::READ_DG06;
-		mAllRights += AccessRight::READ_DG02;
-		mAllRights += AccessRight::READ_DG19;
-
-		mOptionalRights.clear();
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-		mSelectedRights = QSet<AccessRight>(mAllRights.constBegin(), mAllRights.constEnd());
-#else
-		mSelectedRights = mAllRights.toSet();
-#endif
-
-		endResetModel();
+		connect(pContext.data(), &AuthContext::fireAuthenticationDataChanged, this, &ChatModel::onAuthenticationDataChanged);
 	}
 }
 

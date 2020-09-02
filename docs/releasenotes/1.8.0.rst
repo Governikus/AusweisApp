@@ -7,50 +7,50 @@ AusweisApp2 1.8.0
 
 Anwender
 """"""""
-  - Updateprüfung wird erst durchgeführt, wenn der Benutzer das
-    Fenster öffnet  und nicht beim Anwendungsstart. Behebt
-    Fehlermeldung beim Autostart, wenn keine Internetverbindung
-    besteht.
+- Updateprüfung wird erst durchgeführt, wenn der Benutzer das
+  Fenster öffnet  und nicht beim Anwendungsstart. Behebt
+  Fehlermeldung beim Autostart, wenn keine Internetverbindung
+  besteht.
 
-  - Absturz bei VoiceOver unter OS X und PIN-Eingabe behoben.
+- Absturz bei VoiceOver unter OS X und PIN-Eingabe behoben.
 
-  - Verbesserung der Anbieterliste: Behebt einen Aktualisierungsfehler
-    in der Darstellung, wenn eine neue Anbieterliste vorhanden ist.
+- Verbesserung der Anbieterliste: Behebt einen Aktualisierungsfehler
+  in der Darstellung, wenn eine neue Anbieterliste vorhanden ist.
 
-  - Überlagerung von zwei Darstellungen beim Wechsel von den Einstellungen
-    zu der Verlaufsansicht wurde behoben.
+- Überlagerung von zwei Darstellungen beim Wechsel von den Einstellungen
+  zu der Verlaufsansicht wurde behoben.
 
-  - Die Bildschirmtastatur wird geschlossen, wenn die Karte vom Lesegerät
-    entfernt wird.
+- Die Bildschirmtastatur wird geschlossen, wenn die Karte vom Lesegerät
+  entfernt wird.
 
-  - Hinweis auf die notwendige Freischaltung der Karte beim ersten
-    Ausweisen. Dies betrifft nur neue Installationen.
+- Hinweis auf die notwendige Freischaltung der Karte beim ersten
+  Ausweisen. Dies betrifft nur neue Installationen.
 
-  - Fehlerbehebung für die automatische Proxy-Erkennung unter Windows.
+- Fehlerbehebung für die automatische Proxy-Erkennung unter Windows.
 
-  - Deinstallationsoption für die AusweisApp1 aus dem Einrichtungsassistenten
-    entfernt.
+- Deinstallationsoption für die AusweisApp1 aus dem Einrichtungsassistenten
+  entfernt.
 
-  - Menüleiste unter OS X wird nun bei jedem Start angezeigt.
+- Menüleiste unter OS X wird nun bei jedem Start angezeigt.
 
-  - Fehlermeldungen verbessert.
+- Fehlermeldungen verbessert.
 
-  - Überarbeitung der Darstellung der Release Notes.
+- Überarbeitung der Darstellung der Release Notes.
 
 
 
 Entwickler
 """"""""""
-  - Aktualisierung von OpenSSL auf die Version 1.0.2h.
+- Aktualisierung von OpenSSL auf die Version 1.0.2h.
 
-  - Einführung einer Update-URL für den Betakanal.
+- Einführung einer Update-URL für den Betakanal.
 
-  - Verbesserung bei der Entschlüsselung der Response APDUs
-    im Secure Messaging.
+- Verbesserung bei der Entschlüsselung der Response APDUs
+  im Secure Messaging.
 
-  - Einführung von Signatur und Zeitstempel auf .dll und .exe
-    unter Windows.
+- Einführung von Signatur und Zeitstempel auf .dll und .exe
+  unter Windows.
 
-  - Link-CVCA DECVCAeID00103_DECVCAeID00104 im TrustStore abgelegt.
+- Link-CVCA DECVCAeID00103_DECVCAeID00104 im TrustStore abgelegt.
 
-  - SHA256 and SHA384 ist nun für die Verbindung mittels RSA-PSK erlaubt.
+- SHA256 and SHA384 ist nun für die Verbindung mittels RSA-PSK erlaubt.

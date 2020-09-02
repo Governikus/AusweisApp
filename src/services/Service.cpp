@@ -116,7 +116,9 @@ void Service::runUpdateIfNeeded()
 	if (mUpdateScheduled)
 	{
 		mUpdateScheduled = false;
-		doAppUpdate(UpdateType::APP);
+		QMetaObject::invokeMethod(this, [this] {
+					doAppUpdate(UpdateType::APP);
+				}, Qt::QueuedConnection);
 	}
 }
 

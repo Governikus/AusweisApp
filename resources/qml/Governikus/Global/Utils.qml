@@ -74,7 +74,7 @@ QtObject {
 	}
 
 	function shuffle(pArray) {
-		for (let i = pArray.length - 1; i > 0; i--) {
+		for (var i = pArray.length - 1; i > 0; i--) {
 			let j = Random.randomInt(0, i);
 			let x = pArray[i];
 			pArray[i] = pArray[j];

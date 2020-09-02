@@ -7,13 +7,13 @@ AusweisApp2 1.10.4
 
 Anwender
 """"""""
-  - Anzeige des Verwendungszwecks korrigiert.
+- Anzeige des Verwendungszwecks korrigiert.
 
-  - Links zu den Treibern von Kartenlesegeräten
-    wurden aktualisiert.
+- Links zu den Treibern von Kartenlesegeräten
+  wurden aktualisiert.
 
 
 Entwickler
 """"""""""
-  - Der XML-ConnectionHandleType ist nun korrigiert und
-    schemakonform.
+- Der XML-ConnectionHandleType ist nun korrigiert und
+  schemakonform.

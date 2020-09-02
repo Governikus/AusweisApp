@@ -7,8 +7,8 @@ AusweisApp2 1.16.1
 
 Anwender
 """"""""
-  - Deaktivieren der automatischen Bereinigung von alten Log-Dateien, da
-    diese in 1.16.0 zu einem Programmabsturz führen kann.
+- Deaktivieren der automatischen Bereinigung von alten Log-Dateien, da
+  diese in 1.16.0 zu einem Programmabsturz führen kann.
 
 
 Entwickler

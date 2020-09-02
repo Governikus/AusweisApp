@@ -30,7 +30,7 @@ import QtQml.Models 2.10
 import QtQuick 2.10
 import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
-import Qt.labs.platform 1.1 as Labs
+import Qt.labs.platform 1.0 as Labs
 
 
 ApplicationWindow {

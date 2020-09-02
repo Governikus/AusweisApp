@@ -7,4 +7,4 @@ AusweisApp2 1.6.3
 
 Anwender
 """"""""
-  - Fehlermeldung bei der Installation auf Windows behoben.
+- Fehlermeldung bei der Installation auf Windows behoben.

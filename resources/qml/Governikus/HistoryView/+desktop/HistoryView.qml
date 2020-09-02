@@ -53,6 +53,8 @@ SectionPage {
 		customSubAction: SearchBar {
 			id: searchBar
 
+			visible: HistoryModel.rowCount() > 0
+
 			anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
 			onDisplayTextChanged: HistoryModel.searchFilter.setFilterString(displayText)
@@ -136,8 +138,11 @@ SectionPage {
 
 		activeFocusOnTab: true
 
-		//: INFO DESKTOP_QML No authentication history, placeholder text.
-		text: qsTr("Currently there are no history entries.") + SettingsModel.translationTrigger
+		text: (HistoryModel.rowCount() === 0
+			   //: INFO DESKTOP_QML No authentication history, placeholder text.
+			   ? qsTr("Currently there are no history entries.")
+			   //: INFO DESKTOP_QML No authentication history entries match the search, placeholder text.
+			   : qsTr("No history entries match your search term.")) + SettingsModel.translationTrigger
 		textStyle: Style.text.header_inverse
 	}
 }

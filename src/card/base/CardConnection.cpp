@@ -52,7 +52,7 @@ void CardConnection::setProgressMessage(const QString& pMessage)
 {
 	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [ = ] {
 				mCardConnectionWorker->setProgressMessage(pMessage);
-			}, Qt::QueuedConnection);
+			}, Qt::BlockingQueuedConnection);
 }
 
 

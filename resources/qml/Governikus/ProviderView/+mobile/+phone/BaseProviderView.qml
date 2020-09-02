@@ -83,6 +83,7 @@ SectionPage {
 			interactive: false
 			model: ProviderCategoryFilterModel
 			delegate: ProviderListItemDelegate {
+				width: visible ? providerListMain.width : 0
 				height: visible ? Style.dimens.list_item_height : 0
 				visible: ProviderCategoryFilterModel.searchString !== ""
 			}
@@ -109,6 +110,8 @@ SectionPage {
 			model: ProviderCategoryFilterModel
 
 			delegate: ProviderListItemDelegate {
+				width: providerListSection.width
+
 				Accessible.onScrollDownAction: baseItem.scrollPageDown()
 				Accessible.onScrollUpAction: baseItem.scrollPageUp()
 			}

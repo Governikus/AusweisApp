@@ -42,7 +42,7 @@ class MockNetworkManager
 				const QByteArray& pData,
 				int pTimeoutInMilliSeconds = 30000) override;
 
-		virtual bool checkUpdateServerCertificate(const QNetworkReply& pReply) override;
+		virtual bool checkUpdateServerCertificate(const QSharedPointer<const QNetworkReply>& pReply) override;
 
 		void setFilename(const QString& pFilename)
 		{

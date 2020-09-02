@@ -88,7 +88,7 @@ Item {
 				return qsTr("To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.");
 			} else if (!foundSelectedReader) {
 				//: INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.
-				return qsTr("No paired smartphone as cardreader (SaC) with activated \"remote service\" available.");
+				return qsTr("No paired smartphone as card reader (SaC) with activated \"remote service\" available.");
 			} else {
 				return "";
 			}
@@ -113,7 +113,7 @@ Item {
 				qsTr("The connected smartphone as card reader (SaC) unfortunately does not meet the technical requirements (Extended Length not supported).");
 			} else if (NumberModel.pinDeactivated) {
 				//: INFO ANDROID IOS The online authentication is disabled and needs to be enabled by the authorities.
-				return qsTr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.");
+				return qsTr("The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.");
 			} else {
 				//: INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.
 				return qsTr("Connected to %1. Please place the NFC interface of the smartphone on your ID card.").arg(RemoteServiceModel.connectedServerDeviceNames);

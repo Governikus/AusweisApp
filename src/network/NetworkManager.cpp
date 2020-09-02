@@ -136,11 +136,11 @@ QNetworkReply* NetworkManager::post(QNetworkRequest& pRequest,
 }
 
 
-bool NetworkManager::checkUpdateServerCertificate(const QNetworkReply& pReply)
+bool NetworkManager::checkUpdateServerCertificate(const QSharedPointer<const QNetworkReply>& pReply)
 {
 	const QVector<QSslCertificate>& trustedCertificates = Env::getSingleton<SecureStorage>()->getUpdateCertificates();
 
-	const auto& cert = pReply.sslConfiguration().peerCertificate();
+	const auto& cert = pReply->sslConfiguration().peerCertificate();
 	return !cert.isNull() && trustedCertificates.contains(cert);
 }
 
@@ -166,7 +166,7 @@ void NetworkManager::onProxyChanged()
 }
 
 
-NetworkManager::NetworkError NetworkManager::toNetworkError(const QNetworkReply* const pNetworkReply)
+NetworkManager::NetworkError NetworkManager::toNetworkError(const QSharedPointer<const QNetworkReply>& pNetworkReply)
 {
 	qCDebug(network) << "Select error message for:" << pNetworkReply->error();
 	switch (pNetworkReply->error())
@@ -196,7 +196,7 @@ NetworkManager::NetworkError NetworkManager::toNetworkError(const QNetworkReply*
 }
 
 
-GlobalStatus NetworkManager::toTrustedChannelStatus(const QNetworkReply* const pNetworkReply)
+GlobalStatus NetworkManager::toTrustedChannelStatus(const QSharedPointer<const QNetworkReply>& pNetworkReply)
 {
 	const GlobalStatus::ExternalInfoMap infoMap {
 		{GlobalStatus::ExternalInformation::LAST_URL, pNetworkReply->url().toString()}
@@ -223,7 +223,7 @@ GlobalStatus NetworkManager::toTrustedChannelStatus(const QNetworkReply* const p
 }
 
 
-GlobalStatus NetworkManager::toStatus(const QNetworkReply* const pNetworkReply)
+GlobalStatus NetworkManager::toStatus(const QSharedPointer<const QNetworkReply>& pNetworkReply)
 {
 	const GlobalStatus::ExternalInfoMap infoMap {
 		{GlobalStatus::ExternalInformation::LAST_URL, pNetworkReply->url().toString()}
@@ -295,7 +295,7 @@ QByteArray NetworkManager::getStatusMessage(int pStatus)
 }
 
 
-int NetworkManager::getLoggedStatusCode(const QNetworkReply* const pReply, const QMessageLogger& pLogger)
+int NetworkManager::getLoggedStatusCode(const QSharedPointer<const QNetworkReply>& pReply, const QMessageLogger& pLogger)
 {
 	const int statusCode = pReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 	pLogger.debug() << "Status Code:" << statusCode << getStatusMessage(statusCode);

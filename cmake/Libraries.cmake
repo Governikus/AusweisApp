@@ -75,10 +75,10 @@ ENDIF()
 
 IF(MINGW)
 	SET(PCSC_LIBRARIES -lwinscard)
-	SET(WIN_DEFAULT_LIBS "-lAdvapi32" "-lKernel32" "-lOle32" "-lSetupapi" "-lVersion" "-lws2_32")
+	SET(WIN_DEFAULT_LIBS "-ladvapi32" "-lkernel32" "-lole32" "-lsetupapi" "-lversion")
 ELSEIF(MSVC OR CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
 	SET(PCSC_LIBRARIES winscard.lib)
-	SET(WIN_DEFAULT_LIBS setupapi.lib version.lib Ws2_32.lib)
+	SET(WIN_DEFAULT_LIBS setupapi.lib version.lib)
 ELSEIF(ANDROID)
 
 ELSEIF(IOS)

@@ -7,13 +7,13 @@ AusweisApp2 1.10.3
 
 Anwender
 """"""""
-  - Veröffentlichung der AusweisApp2 unter geänderten
-    Nutzungsbedingungen (EUPL v1.2).
+- Veröffentlichung der AusweisApp2 unter geänderten
+  Nutzungsbedingungen (EUPL v1.2).
 
 
 
 Entwickler
 """"""""""
-  - Umsetzung des Entwicklermodus gemäß TR-03124.
+- Umsetzung des Entwicklermodus gemäß TR-03124.
 
-  - Bereitstellung des Sourcecode der AusweisApp2 auf GitHub.
+- Bereitstellung des Sourcecode der AusweisApp2 auf GitHub.

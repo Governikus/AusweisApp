@@ -40,6 +40,8 @@ bool GlobalStatus::isMessageMasked() const
 		case Code::Workflow_TrustedChannel_Establishment_Error:
 		case Code::Workflow_TrustedChannel_Error_From_Server:
 		case Code::Workflow_TrustedChannel_No_Data_Received:
+		case Code::Workflow_TrustedChannel_Other_Network_Error:
+		case Code::Network_Other_Error:
 		case Code::Network_TimeOut:
 		case Code::Workflow_TrustedChannel_TimeOut:
 		case Code::Network_Proxy_Error:
@@ -95,10 +97,10 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 		//: ERROR ANDROID IOS Error message which is used for "masked" errors. Generic message with link to support section of the homepage.
-		QString message = tr("A secure connection to the provider could not be established. Please contact our %1support%2.").arg(hyperlink, QStringLiteral("</a>"));
+		QString message = tr("An unknown network error has occurred during the connection to the provider. Check the network connection and try restarting the app. If this does not help contact our %1support%2.").arg(hyperlink, QStringLiteral("</a>"));
 #else
 		//: ERROR DESKTOP Error message which is used for "masked" errors. Generic message with link to support section of the homepage.
-		QString message = tr("A secure connection to the provider could not be established. Please contact our %1support%2 or feel free to send us an email.").arg(hyperlink, QStringLiteral("</a>"));
+		QString message = tr("An unknown network error has occurred during the connection to the provider. Check the network connection and try restarting the app. If this does not help contact our %1support%2 or send us an email.").arg(hyperlink, QStringLiteral("</a>"));
 #endif
 		return message;
 	}

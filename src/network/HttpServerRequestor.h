@@ -9,8 +9,7 @@
 #include <QEventLoop>
 #include <QHostAddress>
 #include <QNetworkReply>
-#include <QPointer>
-#include <QScopedPointer>
+#include <QSharedPointer>
 #include <QTimer>
 
 namespace governikus
@@ -24,13 +23,12 @@ class HttpServerRequestor
 	private:
 		QEventLoop mEventLoop;
 		QTimer mTimer;
-		QScopedPointer<QNetworkReply> mReply;
 
 	public:
 		HttpServerRequestor();
 		virtual ~HttpServerRequestor();
 
-		QPointer<QNetworkReply> request(const QUrl& pUrl, int pTimeOut = 2000);
+		QSharedPointer<QNetworkReply> request(const QUrl& pUrl, int pTimeOut = 2000);
 		static QUrl createUrl(const QString& pQuery, quint16 pPort, const QHostAddress& pHost = QHostAddress::LocalHost, const QString& pPath = QStringLiteral("/eID-Client"));
 
 	private Q_SLOTS:

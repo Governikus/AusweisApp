@@ -11,7 +11,7 @@
 #include "GenericContextContainer.h"
 
 #include <QNetworkReply>
-#include <QPointer>
+#include <QSharedPointer>
 
 class test_StateGetTcToken;
 
@@ -26,7 +26,7 @@ class StateGetTcToken
 	friend class StateBuilder;
 	friend class ::test_StateGetTcToken;
 
-	QPointer<QNetworkReply> mReply;
+	QSharedPointer<QNetworkReply> mReply;
 
 	void parseTcToken();
 	void sendRequest(const QUrl& pUrl);
@@ -34,9 +34,6 @@ class StateGetTcToken
 	virtual void run() override;
 
 	explicit StateGetTcToken(const QSharedPointer<WorkflowContext>& pContext);
-
-	public:
-		virtual ~StateGetTcToken() override;
 
 	private Q_SLOTS:
 		void onNetworkReply();

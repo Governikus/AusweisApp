@@ -478,9 +478,9 @@ INFO ANDROID IOS Generic progress message during PIN change process.</extracomme
         <translation>Bitte den Ausweis nicht bewegen.</translation>
     </message>
     <message>
-        <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
+        <source>The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.</source>
         <extracomment>INFO ANDROID IOS The card communcation was aborted, the online identification functionality is deactivated and needs to be actived by the authorities.</extracomment>
-        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an Ihre zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
         <source>Please observe the display of your card reader.</source>
@@ -1092,6 +1092,16 @@ LABEL ANDROID IOS Button to switch to a Transport PIN or start a change of the T
         <translation>PIN eingeben</translation>
     </message>
     <message>
+        <source>Enter new PIN</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Neue PIN eingeben</translation>
+    </message>
+    <message>
+        <source>Confirm new PIN</source>
+        <extracomment>LABEL DESKTOP_QML</extracomment>
+        <translation>Neue PIN bestätigen</translation>
+    </message>
+    <message>
         <source>Enter CAN</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>CAN eingeben</translation>
@@ -1326,14 +1336,14 @@ LABEL ANDROID IOS Button to switch to a Transport PIN or start a change of the T
         <translation>Information</translation>
     </message>
     <message>
-        <source>No card reader detected. Please make sure that a USB card reader is connected or a smartphone as cardreader is paired and available. Open the %1reader settings%2 to configure readers and get more information about supported readers.</source>
+        <source>No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and available. Open the %1reader settings%2 to configure readers and get more information about supported readers.</source>
         <extracomment>INFO DESKTOP_QML AA2 is waiting for the card reader or the ID card.</extracomment>
         <translation>Es wurde kein Kartenleser gefunden. Bitte überprüfen Sie, ob ein USB-Kartenleser angeschlossen bzw. ein Smartphone als Kartenleser gekoppelt und verfügbar ist. Öffnen Sie die %1Einstellungen%2, um Kartenleser zu konfigurieren und weitere Hinweise zu erhalten.</translation>
     </message>
     <message>
-        <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
+        <source>The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.</source>
         <extracomment>INFO DESKTOP_QML The online authentication feature of the card is disabled and needs to be activated by the authorities.</extracomment>
-        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an Ihre zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
         <source>Please observe the display of your card reader.</source>
@@ -1526,6 +1536,11 @@ LABEL ANDROID IOS Button to switch to a Transport PIN or start a change of the T
         <source>Portable Document Format</source>
         <translation>Portable Document Format</translation>
     </message>
+    <message>
+        <source>No history entries match your search term.</source>
+        <extracomment>INFO DESKTOP_QML No authentication history entries match the search, placeholder text.</extracomment>
+        <translation>Es wurden keine Verlaufseinträge zu Ihrer Suche gefunden.</translation>
+    </message>
 </context>
 <context>
     <name>HistoryViewConfirmationPopup</name>
@@ -1712,11 +1727,11 @@ INFO ANDROID IOS Generic status message during the authentication process.</extr
         <translation>Bitte warten Sie einen Moment.</translation>
     </message>
     <message>
-        <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
+        <source>The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.</source>
         <extracomment>INFO DESKTOP_QML The online authentication feature of the ID card is deactivated and needs to be activated by the local authorities.
 ----------
 INFO ANDROID IOS The online authentication feature of the ID card is disabled and needs to be actived the be authorities.</extracomment>
-        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an Ihre zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
         <source>Please observe the display of your card reader.</source>
@@ -2442,9 +2457,9 @@ LABEL IOS</extracomment>
         <translation>Ihr Gerät erfüllt leider nicht die technischen Voraussetzungen (Extended Length). Sie können die Online-Ausweisfunktion aber mit einem anderen Smartphone als Kartenleser nutzen.</translation>
     </message>
     <message>
-        <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
+        <source>The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.</source>
         <extracomment>INFO ANDROID IOS The online authentication feature is disabled and needs to be activated by the authorities.</extracomment>
-        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an Ihre zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
         <source>Please place your device&lt;br/&gt;on your ID card.</source>
@@ -2574,9 +2589,9 @@ LABEL IOS</extracomment>
         <translation>Es besteht die Möglichkeit Ihr Smartphone als Kartenleser mit der AusweisApp2 zu verwenden. Das Smartphone muss einen unterstützten NFC-Chip verwenden und beide Geräte, sowohl das Smartphone als auch Ihr Rechner, müssen mit dem selben WLAN-Netz verbunden sein.&lt;br&gt;&lt;br&gt;Um Ihr Smartphone als Kartenleser zu verwenden muss stets der Fernzugriff in der AusweisApp2 auf Ihrem Smartphone aktiviert sein. Für eine intiale Verbindung der Geräte muss zusätzlich der Kopplungsmodus auf dem Smartphone aktiviert werden, wählen Sie danach das Gerät aus der Liste der verfügbaren Geräte auf Ihrem Rechner und geben Sie den von Ihrem Smartphone dargestellten Kopplungscode ein.</translation>
     </message>
     <message>
-        <source>The Personal Identification Number (PIN) is chosen by you and is required for every use of the online eID function. You can change it anytime and indefinitely if you know your valid PIN. For your six-digit PIN choose a combination of numbers, that is not easy to guess, neither &quot;123456&quot; nor your birth date, or any other numbers printed on the ID card. If you are no longer aware of your valid PIN, you will need to contact the authority responsible for issuing your identification card to renew your PIN.&lt;br&gt;&lt;br&gt;When changing the PIN for the first time, please use the five-digit Transport PIN. You will find the Transport PIN in the letter you received from the authority responsible for issuing your identification card (marked in red) after you have applied for your identity card.&lt;br&gt;&lt;br&gt;Please note that you can not use the online eID function with the five-digit Transport PIN. A change to a six-digit PIN is mandatory.</source>
+        <source>The Personal Identification Number (PIN) is chosen by you and is required for every use of the online eID function. You can change it anytime and indefinitely if you know your valid PIN. For your six-digit PIN choose a combination of numbers, that is not easy to guess, neither &quot;123456&quot; nor your birth date, or any other numbers printed on the ID card. If you are no longer aware of your valid PIN, you will need to contact your responsible authority to renew your PIN.&lt;br&gt;&lt;br&gt;When changing the PIN for the first time, please use the five-digit Transport PIN. You will find the Transport PIN in the letter you received from your responsible authority (marked in red) after you have applied for your identity card.&lt;br&gt;&lt;br&gt;Please note that you can not use the online eID function with the five-digit Transport PIN. A change to a six-digit PIN is mandatory.</source>
         <extracomment>INFO DESKTOP_QML Description text of PIN</extracomment>
-        <translation>Die Persönliche Identifikationsnummer (PIN) vergeben Sie selbst und benötigen Sie bei jeder Nutzung der Online-Ausweisfunktion. Sie können diese jederzeit und unbegrenzt oft ändern, solange Ihnen Ihre gültige PIN bekannt ist. Wählen Sie für Ihre sechsstellige PIN eine Zahlenkombination, die nicht leicht zu erraten ist, also weder &amp;quot;123456&amp;quot;, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweis aufgedruckt sind.  Sollten Sie Ihre PIN vergessen haben, können Sie in der für die Ausgabe Ihres Ausweises zuständigen Behörde eine neue PIN setzen.&lt;br&gt;&lt;br&gt;Zum erstmaligen Setzen Ihrer PIN verwenden Sie bitte die fünfstellige Transport-PIN. Sie finden diese in dem Schreiben, welches Sie nach Beantragung Ihres Ausweises von der zuständigen Behörde erhalten haben (rot markiert).&lt;br&gt;&lt;br&gt;Bitte beachten Sie, dass die Online-Ausweisfunktion erst nach Änderung der fünfstelligen Transport-PIN in eine sechsstellige PIN genutzt werden kann.</translation>
+        <translation>Die Persönliche Identifikationsnummer (PIN) vergeben Sie selbst und benötigen Sie bei jeder Nutzung der Online-Ausweisfunktion. Sie können diese jederzeit und unbegrenzt oft ändern, solange Ihnen Ihre gültige PIN bekannt ist. Wählen Sie für Ihre sechsstellige PIN eine Zahlenkombination, die nicht leicht zu erraten ist, also weder &quot;123456&quot;, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweis aufgedruckt sind.  Sollten Sie Ihre PIN vergessen haben, können Sie in Ihrer zuständigen Behörde eine neue PIN setzen.&lt;br&gt;&lt;br&gt;Zum erstmaligen Setzen Ihrer PIN verwenden Sie bitte die fünfstellige Transport-PIN. Sie finden diese in dem Schreiben, welches Sie nach Beantragung Ihres Ausweises von Ihrer zuständigen Behörde erhalten haben (rot markiert).&lt;br&gt;&lt;br&gt;Bitte beachten Sie, dass die Online-Ausweisfunktion erst nach Änderung der fünfstelligen Transport-PIN in eine sechsstellige PIN genutzt werden kann.</translation>
     </message>
 </context>
 <context>
@@ -2639,7 +2654,7 @@ Anderenfalls können Sie nun Ihren Ausweis vom Kartenleser entfernen.</translati
 &lt;/html&gt;</source>
         <translation>&lt;html&gt;
 &lt;h4&gt;Online-Ausweisfunktion deaktiviert&lt;/h4&gt;
-&lt;p&gt;Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.&lt;/p&gt;
+&lt;p&gt;Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an Ihre zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.&lt;/p&gt;
 &lt;/html&gt;</translation>
     </message>
     <message>
@@ -3490,9 +3505,9 @@ LABEL DESKTOP Text of the button in the proxy credentials popup.</extracomment>
         <translation>Das verbundene Smartphone als Kartenleser erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).</translation>
     </message>
     <message>
-        <source>The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
+        <source>The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.</source>
         <extracomment>INFO ANDROID IOS The online authentication is disabled and needs to be enabled by the authorities.</extracomment>
-        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
+        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an Ihre zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
     <message>
         <source>Determine card</source>
@@ -3510,7 +3525,7 @@ LABEL DESKTOP Text of the button in the proxy credentials popup.</extracomment>
         <translation>Um den Fernzugriff zu nutzen, muss WLAN aktiviert werden. Bitte aktivieren Sie WLAN in Ihren Einstellungen.</translation>
     </message>
     <message>
-        <source>No paired smartphone as cardreader (SaC) with activated &quot;remote service&quot; available.</source>
+        <source>No paired smartphone as card reader (SaC) with activated &quot;remote service&quot; available.</source>
         <extracomment>INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.</extracomment>
         <translation>Kein gekoppeltes Smartphone als Kartenleser mit aktiviertem &quot;Fernzugriff&quot; verfügbar.</translation>
     </message>
@@ -4044,7 +4059,7 @@ LABEL ALL_PLATFORMS</extracomment>
     <message>
         <source>Skip rights page</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Anzeige der Bereichtigungen überspringen</translation>
+        <translation>Anzeige der Berechtigungen überspringen</translation>
     </message>
     <message>
         <source>Do not show the rights page, when in can allowed mode</source>
@@ -6758,11 +6773,6 @@ klicken.</translation>
         <translation>Eine oder mehrere Zertifikatsprüfungen schlugen fehl. Der Vorgang wird aus Sicherheitsgründen abgebrochen.</translation>
     </message>
     <message>
-        <source>This action cannot be performed. The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Diese Aktion kann leider nicht durchgeführt werden. Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
-    </message>
-    <message>
         <source>The authenticity of your ID card could not be verified. Please make sure that you are using a genuine ID card. Please note that test applications require the use of a test ID card.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Die Echtheit Ihres Ausweises konnte nicht überprüft werden. Bitte stellen Sie sicher, dass Sie einen echten Ausweis verwenden. Bitte beachten Sie, dass Sie bei Testanwendungen einen Testausweis verwenden müssen.</translation>
@@ -6781,6 +6791,11 @@ klicken.</translation>
         <source>The ID card is invalid or disabled.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Der Ausweis ist ungültig oder gesperrt.</translation>
+    </message>
+    <message>
+        <source>This action cannot be performed. The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Diese Aktion kann leider nicht durchgeführt werden. Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihren Ausweis ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
 </context>
 <context>
@@ -7080,14 +7095,14 @@ klicken.</translation>
         <translation>Fehler bei der Verbindung zum Server. Der Verschlüsselungsalgorithmus oder die Länge des Schlüssels im TLS-Zertifikat des Servers wird nicht unterstützt. Zertifikatsaussteller: %1</translation>
     </message>
     <message>
-        <source>A secure connection to the provider could not be established. Please contact our %1support%2.</source>
+        <source>An unknown network error has occurred during the connection to the provider. Check the network connection and try restarting the app. If this does not help contact our %1support%2.</source>
         <extracomment>ERROR ANDROID IOS Error message which is used for &quot;masked&quot; errors. Generic message with link to support section of the homepage.</extracomment>
-        <translation>Eine sichere Verbindung zum Anbieter konnte nicht aufgebaut werden. Bitte kontaktieren Sie unseren %1Support%2.</translation>
+        <translation>Bei der Verbindung zum Anbieter ist ein unbekannter Netzwerkfehler aufgetreten. Überprüfen Sie die Netzwerkverbindung und versuchen Sie, die App neu zu starten. Wenn dies nicht hilft kontaktieren Sie unseren %1Support%2.</translation>
     </message>
     <message>
-        <source>A secure connection to the provider could not be established. Please contact our %1support%2 or feel free to send us an email.</source>
+        <source>An unknown network error has occurred during the connection to the provider. Check the network connection and try restarting the app. If this does not help contact our %1support%2 or send us an email.</source>
         <extracomment>ERROR DESKTOP Error message which is used for &quot;masked&quot; errors. Generic message with link to support section of the homepage.</extracomment>
-        <translation>Eine sichere Verbindung zum Anbieter konnte nicht aufgebaut werden. Bitte kontaktieren Sie unseren %1Support%2 oder senden Sie uns eine E-Mail.</translation>
+        <translation>Bei der Verbindung zum Anbieter ist ein unbekannter Netzwerkfehler aufgetreten. Überprüfen Sie die Netzwerkverbindung und versuchen Sie, die App neu zu starten. Wenn dies nicht hilft kontaktieren Sie unseren %1Support%2 oder senden Sie uns eine E-Mail.</translation>
     </message>
     <message>
         <source>https://www.ausweisapp.bund.de/en/qa/support/</source>
@@ -7699,7 +7714,7 @@ klicken.</translation>
     <message>
         <source>No smartphone as card reader (Sac) available. Please make sure to activate the &quot;remote service&quot; on your smartphone and to connect both devices to the same WiFi. See %1 for details of use.</source>
         <extracomment>INFO ALL_PLATFORMS No smartphone with enabled remote service was found on the same network.</extracomment>
-        <translation>Kein Smartphone als  Kartenleser verfügbar. Bitte stellen Sie sicher, dass die die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem Smartphone aktiviert ist und beide Geräte mit demselben WLAN verbunden sind. Informationen zur Verwendung finden Sie in der %1.</translation>
+        <translation>Kein Smartphone als Kartenleser verfügbar. Bitte stellen Sie sicher, dass die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem Smartphone aktiviert ist und beide Geräte mit demselben WLAN verbunden sind. Informationen zur Verwendung finden Sie in der %1.</translation>
     </message>
 </context>
 <context>
@@ -8184,10 +8199,6 @@ klicken.</translation>
         <translation>Die Online-Ausweisfunktion ist deaktiviert.</translation>
     </message>
     <message>
-        <source>This action cannot be performed. The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
-        <translation>Diese Aktion kann leider nicht durchgeführt werden. Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
-    </message>
-    <message>
         <source>Retry connection</source>
         <translation>Verbindungsversuch wiederholen</translation>
     </message>
@@ -8204,6 +8215,10 @@ klicken.</translation>
 - ändern Sie die Position des Ausweises
 - entfernen Sie Handyhüllen o.Ä.
 - verbinden Sie das Smartphone mit dem Ladegerät</translation>
+    </message>
+    <message>
+        <source>This action cannot be performed. The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.</source>
+        <translation>Diese Aktion kann leider nicht durchgeführt werden. Die Online-Ausweisfunktion Ihres Ausweises ist nicht aktiviert. Bitte wenden Sie sich an die Behörde, die Ihr Ausweisdokument ausgegeben hat, um die Online-Ausweisfunktion zu aktivieren.</translation>
     </message>
 </context>
 <context>
