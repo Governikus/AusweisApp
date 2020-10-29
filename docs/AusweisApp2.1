@@ -1,0 +1,113 @@
+.TH AusweisApp2 1
+.SH NAME
+AusweisApp2 \- Official authentication app for German ID cards and residence permits
+.SH SYNOPSIS
+
+AusweisApp2 [-h|--help]
+.br
+AusweisApp2 [-v|--version]
+.br
+AusweisApp2 [--show]
+.br
+AusweisApp2
+[--keep]
+[--no-logfile]
+[--no-loghandler]
+[--show]
+[--no-proxy]
+[--ui { Qml|WebSocket }]
+[-p \fI\,PORT\/\fR]
+
+.SH DESCRIPTION
+AusweisApp2 allows you to authenticate yourself against websites via your German
+ID card and residence permits.
+
+You will need:
+.br
+* an ID card that is enabled for online authentication
+.br
+* A compatible NFC device (most NFC readers should work, NFC-enabled phones can
+* also be used)
+.br
+* AusweisApp2
+.br
+* A browser
+.br
+* A website that supports authentication via German ID card
+
+When you visit such a website, AusweisApp2 will be triggered and will ask you if
+you want to authenticate against the website.
+
+This program will provide a websocket for your browser to interface against.
+
+.SH OPTIONS
+
+.TP
+.B -h, --help
+Displays a short help message.
+
+.TP
+.B -v, --version
+Displays version information.
+
+.TP
+.B --keep
+.br
+By default, AusweisApp2 writes a the log to a file matching
+/tmp/AusweisApp2.*.log. When the program terminates, it will be deleted. This
+setting prevents deletion.
+
+.TP
+.B --no-logfile
+Suppress writing a log file to /tmp/AusweisApp2.*.log. Logs will still be
+written to STDOUT.
+
+.TP
+.B --no-loghandler
+Disable default log handler. This disables logging to STDOUT.
+
+.TP
+.B --show
+Show window on startup.
+
+.TP
+.B --no-proxy
+Disable system proxy.
+
+.TP
+.B --ui { Qml|WebSocket }
+Use given UI plugin. "Qml" will start the program with a visible UI, "WebSocket"
+will let it start in the background. This is only useful when integrating
+AusweisApp2 into other programs. Default is "Qml,Websocket".
+
+.TP
+.B --port \fI\,PORT\/\fR
+Change the listening port for the WebSocket. Default is 24727. Selecting "0" is
+a special case. AusweisApp2 will then select a random port and write the port
+number to a file in ${TMP}/AusweisApp2.<PID>.port.
+
+.SH "RETURN VALUE"
+AusweisApp2 will return 0 when sucessfully terminated.
+.SH ENVIRONMENT
+.TP
+.B QT_QPA_PLATFORM={ wayland|X11 }
+You may force the session type to wayland or X11. This is only needed for
+debugging purposes. XDG_SESSION_TYPE will be ignored on gnome.
+
+.SH FILES
+
+\fI~/.config/AusweisApp2_CE/AusweisApp2.conf\fR
+File path where the user config is saved.
+
+.SH CAVEATS
+Currently there is no way to terminate the program on gnome other than switching
+to the old user interface and then calling File -> Exit.
+
+.SH AUTHOR
+This man page was written by Lee Garrett (debian@rocketjump.eu) for Debian (but
+may be used by others).
+
+.SH "SEE ALSO"
+https://www.ausweisapp.bund.de/
+.br
+https://www.ausweisapp.bund.de/sdk/
