@@ -5,6 +5,8 @@ AusweisApp2 \- Official authentication app for German ID cards and residence per
 
 AusweisApp2 [-h|--help]
 .br
+AusweisApp2 [--help-all]
+.br
 AusweisApp2 [-v|--version]
 .br
 AusweisApp2 [--show]
@@ -38,7 +40,7 @@ You will need:
 When you visit such a website, AusweisApp2 will be triggered and will ask you if
 you want to authenticate against the website.
 
-This program will provide a websocket for your browser to interface against.
+This program will provide a local webserver for your browser to interface against.
 
 .SH OPTIONS
 
@@ -47,19 +49,23 @@ This program will provide a websocket for your browser to interface against.
 Displays a short help message.
 
 .TP
+.B --help-all
+Displays help including Qt specific options.
+
+.TP
 .B -v, --version
 Displays version information.
 
 .TP
 .B --keep
 .br
-By default, AusweisApp2 writes a the log to a file matching
-/tmp/AusweisApp2.*.log. When the program terminates, it will be deleted. This
+By default, AusweisApp2 writes a log to a file matching
+${TMP}/AusweisApp2.*.log. When the program terminates, it will be deleted. This
 setting prevents deletion.
 
 .TP
 .B --no-logfile
-Suppress writing a log file to /tmp/AusweisApp2.*.log. Logs will still be
+Suppress writing a log file to ${TMP}/AusweisApp2.*.log. Logs will still be
 written to STDOUT.
 
 .TP
@@ -77,7 +83,7 @@ Disable system proxy.
 .TP
 .B --ui { Qml|WebSocket }
 Use given UI plugin. "Qml" will start the program with a visible UI, "WebSocket"
-will let it start in the background. This is only useful when integrating
+will let it start in the background as an SDK. This is only useful when integrating
 AusweisApp2 into other programs. Default is "Qml,Websocket".
 
 .TP
@@ -100,8 +106,8 @@ debugging purposes. XDG_SESSION_TYPE will be ignored on gnome.
 File path where the user config is saved.
 
 .SH CAVEATS
-Currently there is no way to terminate the program on gnome other than switching
-to the old user interface and then calling File -> Exit.
+Currently there is no way to terminate the program on gnome as the TrayIcon
+is mandatory.
 
 .SH AUTHOR
 This man page was written by Lee Garrett (debian@rocketjump.eu) for Debian (but
