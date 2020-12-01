@@ -20,7 +20,7 @@ class IfdTransmitResponse
 
 	public:
 		IfdTransmitResponse(const QString& pSlotHandle, const QByteArray& pResponseApdu = QByteArray(), ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
-		IfdTransmitResponse(const QJsonObject& pMessageObject);
+		explicit IfdTransmitResponse(const QJsonObject& pMessageObject);
 		virtual ~IfdTransmitResponse() override = default;
 
 		const QString& getSlotHandle() const;

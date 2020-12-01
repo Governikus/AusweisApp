@@ -4,6 +4,8 @@
 # Supported: PDF
 #####################################################################
 
-ADD_PLATFORM_LIBRARY(AusweisAppExport)
+if(TARGET ${Qt}::Svg)
+	ADD_PLATFORM_LIBRARY(AusweisAppExport)
 
-TARGET_LINK_LIBRARIES(AusweisAppExport Qt5::Core Qt5::Svg AusweisAppCard AusweisAppSettings)
+	target_link_libraries(AusweisAppExport ${Qt}::Core ${Qt}::Svg AusweisAppCard AusweisAppSettings)
+endif()

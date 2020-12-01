@@ -15,6 +15,8 @@
 #include <QMetaObject>
 #include <QMetaType>
 #include <QObject>
+#include <QObjectCleanupHandler>
+#include <QPointer>
 #include <QReadLocker>
 #include <QReadWriteLock>
 #include <QSharedPointer>
@@ -23,7 +25,10 @@
 #include <QWriteLocker>
 
 #ifndef QT_NO_DEBUG
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 #include <QMutableVectorIterator>
+#endif
+
 #include <QVector>
 #endif
 
@@ -75,7 +80,7 @@ class Env
 				const std::function<T(Args ...)> mFunc;
 
 			public:
-				FuncWrapper(std::function<T(Args ...)> pFunc)
+				explicit FuncWrapper(std::function<T(Args ...)> pFunc)
 					: mFunc(std::move(pFunc))
 				{
 				}
@@ -84,7 +89,7 @@ class Env
 				T operator()(Args&& ... pArgs)
 				{
 					++mCounter;
-					return mFunc(std::forward<Args>(pArgs) ...);
+					return mFunc(pArgs ...);
 				}
 
 
@@ -96,33 +101,87 @@ class Env
 		mutable QReadWriteLock mLock;
 #endif
 
+		QPointer<QObjectCleanupHandler> mSingletonHandler;
+		QVector<std::function<void* (bool)>> mSingletonCreator;
+
 		QMap<Identifier, QWeakPointer<QObject>> mSharedInstances;
 		mutable QReadWriteLock mSharedInstancesLock;
 
 		static Env& getInstance();
 
 		template<typename T>
-		inline T* fetchRealSingleton()
+		T* createSingleton()
 		{
+			Q_ASSERT(!mSingletonHandler.isNull());
+#ifndef QT_NO_DEBUG
+			if (!QCoreApplication::startingUp() && !QCoreApplication::applicationName().startsWith(QLatin1String("Test_")))
+			{
+				Q_ASSERT(QThread::currentThread()->objectName() == QLatin1String("MainThread"));
+			}
+#endif
+
+			qDebug() << "Create singleton:" << T::staticMetaObject.className();
+
+			T* ptr = nullptr;
 			if constexpr (std::is_abstract<T>::value && std::is_destructible<T>::value)
 			{
-				static_assert(std::has_virtual_destructor<T>::value, "Destructor must be virtual");
-				return singleton<T>();
+				ptr = createNewObject<T*>();
 			}
 			else
 			{
-				return &T::getInstance();
+				ptr = new T();
+			}
+
+			QObject::connect(ptr, &QObject::destroyed, ptr, [] {
+						qDebug() << "Destroy singleton:" << T::staticMetaObject.className();
+					});
+			mSingletonHandler->add(ptr);
+			mSingletonCreator << std::bind(&Env::getOrCreateSingleton<T>, this, std::placeholders::_1);
+
+			return ptr;
+		}
+
+
+		template<typename T>
+		T* getOrCreateSingleton(bool pCreate = false)
+		{
+			static QPointer<T> instance = createSingleton<T>();
+
+			if (Q_UNLIKELY(pCreate))
+			{
+				// It's not thread-safe! So Env::init() should be the only one!
+				Q_ASSERT(instance.isNull());
+				instance = createSingleton<T>();
+			}
+
+			return instance;
+		}
+
+
+		template<typename T>
+		inline T* fetchRealSingleton()
+		{
+			if constexpr (QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value)
+			{
+				return getOrCreateSingleton<T>();
+			}
+			else
+			{
+				if constexpr (std::is_abstract<T>::value && std::is_destructible<T>::value)
+				{
+					static_assert(std::has_virtual_destructor<T>::value, "Destructor must be virtual");
+					return singleton<T>();
+				}
+				else
+				{
+					return &T::getInstance();
+				}
 			}
 		}
 
 
 		template<typename T>
-		#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
 		inline typename std::enable_if<QtPrivate::IsGadgetHelper<T>::IsRealGadget, T*>::type checkObjectInfo(Identifier pId, T* pObject) const
-
-		#else
-		inline typename std::enable_if<QtPrivate::IsGadgetHelper<T>::Value, T*>::type checkObjectInfo(Identifier pId, T* pObject) const
-		#endif
 		{
 			Q_UNUSED(pId)
 			return pObject;
@@ -147,13 +206,8 @@ class Env
 		template<typename T>
 		inline T* fetchSingleton()
 		{
-			#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
 			static_assert(QtPrivate::IsGadgetHelper<T>::IsRealGadget || QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value,
 					"Singletons needs to be a Q_GADGET or an QObject/Q_OBJECT");
-			#else
-			static_assert(QtPrivate::IsGadgetHelper<T>::Value || QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value,
-					"Singletons needs to be a Q_GADGET or an QObject/Q_OBJECT");
-			#endif
 
 			const Identifier id = T::staticMetaObject.className();
 			void* obj = nullptr;
@@ -217,11 +271,32 @@ class Env
 			return newObject<T>(std::forward<Args>(pArgs) ...);
 		}
 
+
+		void initialize()
+		{
+			Q_ASSERT(mSingletonHandler.isNull());
+			mSingletonHandler = new QObjectCleanupHandler();
+			QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, mSingletonHandler.data(), &QObject::deleteLater);
+
+			const auto copy = mSingletonCreator;
+			mSingletonCreator.clear();
+			for (const auto& func : copy)
+			{
+				func(true);
+			}
+		}
+
 	protected:
 		Env();
 		~Env() = default;
 
 	public:
+		static void init()
+		{
+			getInstance().initialize();
+		}
+
+
 		template<typename T>
 		static T* getSingleton()
 		{
@@ -239,13 +314,8 @@ class Env
 		template<typename T>
 		static QSharedPointer<T> getShared()
 		{
-			#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
 			static_assert(QtPrivate::IsGadgetHelper<T>::IsRealGadget || QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value,
 					"Shared class needs to be a Q_GADGET or an QObject/Q_OBJECT");
-			#else
-			static_assert(QtPrivate::IsGadgetHelper<T>::Value || QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value,
-					"Shared class needs to be a Q_GADGET or an QObject/Q_OBJECT");
-			#endif
 
 			const Identifier className = T::staticMetaObject.className();
 

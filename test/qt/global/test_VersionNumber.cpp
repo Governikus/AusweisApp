@@ -79,7 +79,11 @@ class test_VersionNumber
 			QTest::newRow("1.99+432") << 432;
 			QTest::newRow("1.99+98-default-et43t") << 98;
 			QTest::newRow("1.99+1-stable") << 1;
+			QTest::newRow("1.99broken+77-stable") << 77;
 			QTest::newRow("1.91.2.2.2.2") << -1;
+			QTest::newRow("1.91.2.2.2.2-5") << -1;
+			QTest::newRow("1.0+-stable") << -1;
+			QTest::newRow("1.0+5stable") << -1;
 			QTest::newRow("1.91.2.7+534533") << 534533;
 			QTest::newRow("1.91.2.7+12++4243+2+2-default") << -1;
 			QTest::newRow("1.91.2.7+12++4243+2+2default") << -1;

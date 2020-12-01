@@ -2,10 +2,10 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
 */
 
-import QtQml 2.10
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQml 2.12
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -18,8 +18,8 @@ import Governikus.View 1.0
 SectionPage {
 	id: root
 
-	Accessible.name: qsTr("History view") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This is the history view of the AusweisApp2.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("History view")
+	Accessible.description: qsTr("This is the history view of the AusweisApp2.")
 
 	ConfirmationPopup {
 		id: deleteHistoryConfirmationPopup
@@ -27,9 +27,9 @@ SectionPage {
 		width: ApplicationModel.scaleFactor * 600
 
 		//: INFO DESKTOP_QML Header of the confirmation dialog to clear the entire authentication history.
-		title: qsTr("Delete history?") + SettingsModel.translationTrigger
+		title: qsTr("Delete history?")
 		//: INFO DESKTOP_QML Content of the confirmation dialog to clear the entire authentication history.
-		text: qsTr("All history entries will be deleted.") + SettingsModel.translationTrigger
+		text: qsTr("All history entries will be deleted.")
 
 		onConfirmed: {
 			var timePeriod = removalPeriod.period
@@ -48,7 +48,7 @@ SectionPage {
 
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
-		text: qsTr("History") + SettingsModel.translationTrigger
+		text: qsTr("History")
 		helpTopic: "history"
 		customSubAction: SearchBar {
 			id: searchBar
@@ -60,7 +60,7 @@ SectionPage {
 			onDisplayTextChanged: HistoryModel.searchFilter.setFilterString(displayText)
 
 			//: LABEL DESKTOP_QML
-			placeholderText: qsTr("Search in history") + SettingsModel.translationTrigger
+			placeholderText: qsTr("Search in history")
 		}
 	}
 
@@ -79,7 +79,7 @@ SectionPage {
 			headerText: (model ? ( Utils.isToday(model.dateTime) ? qsTr("today") :
 				Utils.isYesterday(model.dateTime) ? qsTr("yesterday") :
 					Utils.isThisWeek(model.dateTime) ? model.dateTime.toLocaleString(Qt.locale(), qsTr("dddd")) :
-						model.dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy")) ) : "") + SettingsModel.translationTrigger
+						model.dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy")) ) : "")
 			sectionName: model ? model.subject : ""
 			footerText: model ? model.purpose : ""
 			iconPath: model ? model.providerIcon : ""
@@ -106,9 +106,9 @@ SectionPage {
 
 					Layout.fillWidth: true
 
-					icon.source: "qrc:///images/trash_icon_white.svg"
+					icon.source: "qrc:///images/material_delete.svg"
 					//: LABEL DESKTOP_QML
-					text: qsTr("Clear history") + SettingsModel.translationTrigger
+					text: qsTr("Clear history")
 					tintIcon: true
 					onClicked: deleteHistoryConfirmationPopup.open()
 				}
@@ -118,9 +118,9 @@ SectionPage {
 
 					Layout.fillWidth: true
 
-					icon.source: "qrc:///images/icon_save.svg"
+					icon.source: "qrc:///images/desktop/material_save.svg"
 					//: LABEL DESKTOP_QML
-					text: qsTr("Save as PDF...") + SettingsModel.translationTrigger
+					text: qsTr("Save as PDF...")
 					tintIcon: true
 					onClicked: {
 						let now = new Date().toLocaleDateString(Qt.locale(), "yyyy-MM-dd")
@@ -138,11 +138,11 @@ SectionPage {
 
 		activeFocusOnTab: true
 
-		text: (HistoryModel.rowCount() === 0
+		text: HistoryModel.rowCount() === 0
 			   //: INFO DESKTOP_QML No authentication history, placeholder text.
 			   ? qsTr("Currently there are no history entries.")
 			   //: INFO DESKTOP_QML No authentication history entries match the search, placeholder text.
-			   : qsTr("No history entries match your search term.")) + SettingsModel.translationTrigger
+			   : qsTr("No history entries match your search term.")
 		textStyle: Style.text.header_inverse
 	}
 }

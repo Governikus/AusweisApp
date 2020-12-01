@@ -13,6 +13,14 @@ sonar.c.file.suffixes=.c
 sonar.cpp.file.suffixes=.cpp,.h
 sonar.objc.file.suffixes=.m,.mm
 
+sonar.cfamily.threads=4
+sonar.cfamily.cache.enabled=true
+sonar.cfamily.cache.path=@SONAR_CACHE_DIR@
+
 sonar.cfamily.build-wrapper-output=@PROJECT_BINARY_DIR@
-sonar.cfamily.gcov.reportsPath=@PROJECT_BINARY_DIR@/Testing/CoverageInfo
+#sonar.cfamily.gcov.reportsPath=@PROJECT_BINARY_DIR@/Testing/CoverageInfo
+sonar.coverageReportPaths=@PROJECT_BINARY_DIR@/gcovr_sonarqube.xml
 sonar.exclusions=src/external/**,utils/**,**/CMakeFiles/*,**/*.java
+
+sonar.dependencyCheck.jsonReportPath=@PROJECT_BINARY_DIR@/dependency-check-report.json
+sonar.dependencyCheck.htmlReportPath=@PROJECT_BINARY_DIR@/dependency-check-report.html

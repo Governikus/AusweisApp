@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQml.Models 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQml.Models 2.12
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
@@ -12,8 +12,6 @@ import Governikus.TitleBar 1.0
 import Governikus.FeedbackView 1.0
 import Governikus.InformationView 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 SectionPage {
 	id: sectionPage
@@ -27,9 +25,9 @@ SectionPage {
 	property int activeSubView
 
 	//: LABEL DESKTOP_QML
-	Accessible.name: qsTr("Help section") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Help section")
 	//: LABEL DESKTOP_QML
-	Accessible.description: qsTr("This is the help section of the AusweisApp2.") + SettingsModel.translationTrigger
+	Accessible.description: qsTr("This is the help section of the AusweisApp2.")
 	Keys.onEscapePressed: {
 		if (activeSubView === MoreView.SubViews.None) {
 			event.accepted = false
@@ -41,7 +39,7 @@ SectionPage {
 
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
-		text: qsTr("Help") + SettingsModel.translationTrigger
+		text: qsTr("Help")
 		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "helpSection")
 		onClicked: activeSubView = MoreView.SubViews.None
 	}
@@ -55,11 +53,13 @@ SectionPage {
 
 		sectionsModel: [
 			//: LABEL DESKTOP_QML
-			qsTr("General") + SettingsModel.translationTrigger,
+			qsTr("General"),
 			//: LABEL DESKTOP_QML
-			qsTr("Diagnosis and log") + SettingsModel.translationTrigger,
+			qsTr("Diagnosis and logs"),
 			//: LABEL DESKTOP_QML
-			qsTr("Version information") + SettingsModel.translationTrigger
+			qsTr("Version information"),
+			//: LABEL DESKTOP_QML
+			qsTr("Software license")
 		]
 
 		sectionDelegate: TabbedPaneDelegateOneLineText {
@@ -70,6 +70,7 @@ SectionPage {
 			Component { MoreViewGeneral {} }
 			Component { MoreViewDiagnosis {} }
 			Component { VersionInformation {} }
+			Component { LicenseInformation {} }
 		}
 	}
 

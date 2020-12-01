@@ -26,14 +26,11 @@ class ChangePinModel
 
 	private:
 		QSharedPointer<ChangePinContext> mContext;
-
-	protected:
 		ChangePinModel() = default;
-		~ChangePinModel() override = default;
-		static ChangePinModel& getInstance();
+		virtual ~ChangePinModel() override = default;
 
 	public:
-		void resetContext(const QSharedPointer<ChangePinContext>& pContext = QSharedPointer<ChangePinContext>());
+		void resetChangePinContext(const QSharedPointer<ChangePinContext>& pContext = QSharedPointer<ChangePinContext>());
 
 		virtual QString getResultString() const override;
 

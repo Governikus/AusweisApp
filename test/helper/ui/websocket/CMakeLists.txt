@@ -1,0 +1,3 @@
+ADD_PLATFORM_LIBRARY(AusweisAppTestHelperUiWebsocket)
+
+target_link_libraries(AusweisAppTestHelperUiWebsocket AusweisAppUiWebsocket)

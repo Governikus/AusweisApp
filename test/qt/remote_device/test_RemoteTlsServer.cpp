@@ -66,7 +66,7 @@ class test_RemoteTlsServer
 #endif
 			client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
 
-			QTRY_COMPARE(clientErrors.count(), 1);
+			QTRY_COMPARE(clientErrors.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(clientErrors.takeFirst().at(0).value<QAbstractSocket::SocketError>(), QAbstractSocket::SocketError::RemoteHostClosedError);
 			QCOMPARE(clientEncrypted.count(), 0);
 			QCOMPARE(clientPsk.count(), 0);
@@ -118,15 +118,15 @@ class test_RemoteTlsServer
 
 			client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
 
-			QTRY_COMPARE(newConnection.count(), 1);
+			QTRY_COMPARE(newConnection.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(pskSignalFired);
-			QTRY_COMPARE(clientEncrypted.count(), 1);
+			QTRY_COMPARE(clientEncrypted.count(), 1); // clazy:exclude=qstring-allocations
 
 			QVERIFY(remoteSocket);
 			const QByteArray sendData("hello world");
 			QSignalSpy spyRead(remoteSocket, &QIODevice::readyRead);
 			client.write(sendData);
-			QTRY_COMPARE(spyRead.count(), 1);
+			QTRY_COMPARE(spyRead.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(remoteSocket->readAll(), sendData);
 			QCOMPARE(server.getCurrentCertificate(), pair.getCertificate());
 		}
@@ -147,11 +147,12 @@ class test_RemoteTlsServer
 			{
 				QSslSocket client;
 				client.setSslConfiguration(config);
-				client.ignoreSslErrors({QSslError::SelfSignedCertificate, QSslError::HostNameMismatch});
+				const QList<QSslError> errors({QSslError(QSslError::SelfSignedCertificate), QSslError(QSslError::HostNameMismatch)});
+				client.ignoreSslErrors(errors);
 
 				QSignalSpy clientFailed(&client, &QAbstractSocket::disconnected);
 				client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
-				QTRY_COMPARE(clientFailed.count(), 1);
+				QTRY_COMPARE(clientFailed.count(), 1); // clazy:exclude=qstring-allocations
 				QCOMPARE(newConnection.count(), 0);
 			}
 
@@ -173,8 +174,8 @@ class test_RemoteTlsServer
 
 			QSignalSpy clientPairedEncrypted(&clientPaired, &QSslSocket::encrypted);
 			clientPaired.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
-			QTRY_COMPARE(newConnection.count(), 1);
-			QTRY_COMPARE(clientPairedEncrypted.count(), 1);
+			QTRY_COMPARE(newConnection.count(), 1); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(clientPairedEncrypted.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -211,8 +212,8 @@ class test_RemoteTlsServer
 			QSignalSpy newConnection(&server, &RemoteTlsServer::newConnection);
 
 			client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
-			QTRY_COMPARE(newConnection.count(), 1);
-			QTRY_COMPARE(clientEncrypted.count(), 1);
+			QTRY_COMPARE(newConnection.count(), 1); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(clientEncrypted.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -222,19 +223,19 @@ class test_RemoteTlsServer
 			QSignalSpy pskChanged(&server, &RemoteTlsServer::firePskChanged);
 
 			server.setPairing(false);
-			QTRY_COMPARE(pskChanged.count(), 0);
+			QTRY_COMPARE(pskChanged.count(), 0); // clazy:exclude=qstring-allocations
 
 			server.setPairing();
-			QTRY_COMPARE(pskChanged.count(), 1);
+			QTRY_COMPARE(pskChanged.count(), 1); // clazy:exclude=qstring-allocations
 
 			server.setPairing();
-			QTRY_COMPARE(pskChanged.count(), 2);
+			QTRY_COMPARE(pskChanged.count(), 2); // clazy:exclude=qstring-allocations
 
 			server.setPairing(false);
-			QTRY_COMPARE(pskChanged.count(), 3);
+			QTRY_COMPARE(pskChanged.count(), 3); // clazy:exclude=qstring-allocations
 
 			server.setPairing(false);
-			QTRY_COMPARE(pskChanged.count(), 3);
+			QTRY_COMPARE(pskChanged.count(), 3); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -245,7 +246,7 @@ class test_RemoteTlsServer
 			for (int i = 0; i < 100; ++i)
 			{
 				server.setPairing();
-				QTRY_COMPARE(pskChanged.count(), 1);
+				QTRY_COMPARE(pskChanged.count(), 1); // clazy:exclude=qstring-allocations
 				const auto& pin = pskChanged.takeFirst().at(0).toByteArray();
 				QCOMPARE(pin.size(), 4);
 			}

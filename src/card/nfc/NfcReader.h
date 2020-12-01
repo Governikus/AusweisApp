@@ -16,7 +16,7 @@ namespace governikus
 {
 
 class NfcReader
-	: public Reader
+	: public ConnectableReader
 {
 	Q_OBJECT
 
@@ -24,20 +24,26 @@ class NfcReader
 		QNearFieldManager mNfManager;
 		QScopedPointer<NfcCard, QScopedPointerDeleteLater> mCard;
 
-		virtual CardEvent updateCard() override;
+		CardEvent updateCard() override;
 
 	Q_SIGNALS:
 		void fireNfcAdapterStateChanged(bool pEnabled);
 
 	private Q_SLOTS:
+		void adapterStateChanged(QNearFieldManager::AdapterState pState);
 		void targetDetected(QNearFieldTarget* pTarget);
 		void targetLost(QNearFieldTarget* pTarget);
+		void setProgressMessage(const QString& pMessage);
 
 	public:
 		NfcReader();
-		virtual ~NfcReader() override;
+		~NfcReader() override;
 
-		virtual Card* getCard() const override;
+		bool isEnabled() const;
+		Card* getCard() const override;
+
+		void connectReader() override;
+		void disconnectReader(const QString& pError = QString()) override;
 };
 
 } // namespace governikus

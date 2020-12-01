@@ -9,9 +9,9 @@
 
 using namespace governikus;
 
-static Initializer::Entry X([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<ReaderInfo>("ReaderInfo");
-		});
+		})
 
 ReaderInfo::ReaderInfo(const QString& pName,
 		ReaderManagerPlugInType pPlugInType,
@@ -21,8 +21,14 @@ ReaderInfo::ReaderInfo(const QString& pName,
 	, mBasicReader(true)
 	, mCardInfo(pCardInfo)
 	, mConnected(false)
-	, mMaxApduLength(pPlugInType == ReaderManagerPlugInType::NFC ? 0 : 500)
+	, mMaxApduLength(500)
 {
+#ifdef Q_OS_ANDROID
+	if (pPlugInType == ReaderManagerPlugInType::NFC)
+	{
+		mMaxApduLength = -1;
+	}
+#endif
 }
 
 

@@ -32,15 +32,19 @@ void RemoteReaderManagerPlugIn::removeDispatcher(const QString& pId)
 		{
 			continue;
 		}
-		Q_EMIT fireReaderRemoved(readerName);
-		delete mReaderList.take(readerName);
+
+		auto* reader = mReaderList.take(readerName);
+		auto info = reader->getReaderInfo();
+		info.setCardInfo(CardInfo(CardType::NONE));
+		Q_EMIT fireReaderRemoved(info);
+		delete reader;
 		mReadersForDispatcher.remove(pId, readerName);
 	}
 
-	const auto remoteDispatcher = mDispatcherList[pId].data();
+	const auto* remoteDispatcher = mDispatcherList.value(pId).data();
 	disconnect(remoteDispatcher, &RemoteDispatcherClient::fireContextEstablished, this, &RemoteReaderManagerPlugIn::onContextEstablished);
-	disconnect(remoteDispatcher, &RemoteDispatcherClient::fireReceived, this, &RemoteReaderManagerPlugIn::onRemoteMessage);
-	disconnect(remoteDispatcher, &RemoteDispatcherClient::fireClosed, this, &RemoteReaderManagerPlugIn::onDispatcherClosed);
+	disconnect(remoteDispatcher, &RemoteDispatcher::fireReceived, this, &RemoteReaderManagerPlugIn::onRemoteMessage);
+	disconnect(remoteDispatcher, &RemoteDispatcher::fireClosed, this, &RemoteReaderManagerPlugIn::onDispatcherClosed);
 
 	mDispatcherList.remove(pId);
 }
@@ -50,7 +54,7 @@ void RemoteReaderManagerPlugIn::removeAllDispatchers()
 {
 	for (const auto& dispatcher : qAsConst(mDispatcherList))
 	{
-		QMetaObject::invokeMethod(dispatcher.data(), &RemoteDispatcherClient::close, Qt::QueuedConnection);
+		QMetaObject::invokeMethod(dispatcher.data(), &RemoteDispatcher::close, Qt::QueuedConnection);
 	}
 }
 
@@ -71,8 +75,8 @@ void RemoteReaderManagerPlugIn::connectToPairedReaders()
 
 void RemoteReaderManagerPlugIn::handleIFDStatus(const QJsonObject& pJsonObject, const QString& pId)
 {
-	const auto it = mDispatcherList.find(pId);
-	if (it == mDispatcherList.end())
+	const auto it = mDispatcherList.constFind(pId);
+	if (it == mDispatcherList.constEnd())
 	{
 		return;
 	}
@@ -86,13 +90,17 @@ void RemoteReaderManagerPlugIn::handleIFDStatus(const QJsonObject& pJsonObject, 
 	{
 		if (ifdStatus.getConnectedReader())
 		{
-			static_cast<RemoteReader*>(mReaderList[readerName])->update(ifdStatus);
+			static_cast<RemoteReader*>(mReaderList.value(readerName))->updateStatus(ifdStatus);
 		}
 		else
 		{
 			qCDebug(card_remote) << "Removed reader" << readerName;
-			Q_EMIT fireReaderRemoved(readerName);
-			delete mReaderList.take(readerName);
+
+			auto* reader = mReaderList.take(readerName);
+			auto info = reader->getReaderInfo();
+			info.setCardInfo(CardInfo(CardType::NONE));
+			Q_EMIT fireReaderRemoved(info);
+			delete reader;
 			mReadersForDispatcher.remove(pId, readerName);
 		}
 		return;
@@ -110,10 +118,10 @@ void RemoteReaderManagerPlugIn::handleIFDStatus(const QJsonObject& pJsonObject, 
 		mReaderList.insert(readerName, reader);
 		mReadersForDispatcher.insert(pId, readerName);
 		qCDebug(card_remote) << "Add reader" << readerName;
-		Q_EMIT fireReaderAdded(readerName);
+		Q_EMIT fireReaderAdded(reader->getReaderInfo());
 
 		// Also update card
-		reader->update(ifdStatus);
+		reader->updateStatus(ifdStatus);
 	}
 }
 
@@ -165,10 +173,10 @@ void RemoteReaderManagerPlugIn::onContextEstablished(const QString& pIfdName, co
 	info.setNameUnescaped(pIfdName);
 	settings.updateRemoteInfo(info);
 
-	const auto& remoteDispatcher = mDispatcherList[pId];
+	const auto& remoteDispatcher = mDispatcherList.value(pId);
 	if (initialPairing)
 	{
-		QMetaObject::invokeMethod(remoteDispatcher.data(), &RemoteDispatcherClient::close, Qt::QueuedConnection);
+		QMetaObject::invokeMethod(remoteDispatcher.data(), &RemoteDispatcher::close, Qt::QueuedConnection);
 	}
 	else
 	{
@@ -203,7 +211,7 @@ void RemoteReaderManagerPlugIn::onRemoteMessage(RemoteCardMessageType pMessageTy
 		case RemoteCardMessageType::IFDModifyPIN:
 		{
 			qCWarning(card_remote) << "Received an unexpected message of type:" << pMessageType;
-			const auto& dispatcher = mDispatcherList[pId];
+			const auto& dispatcher = mDispatcherList.value(pId);
 			QMetaObject::invokeMethod(dispatcher.data(), [dispatcher] {
 						const QSharedPointer<const IfdError>& errorMessage = QSharedPointer<IfdError>::create(QString(), ECardApiResult::Minor::AL_Unkown_API_Function);
 						dispatcher->send(errorMessage);
@@ -240,7 +248,14 @@ RemoteReaderManagerPlugIn::RemoteReaderManagerPlugIn()
 RemoteReaderManagerPlugIn::~RemoteReaderManagerPlugIn()
 {
 	mScanTimer.stop();
-	removeAllDispatchers();
+
+	// can't wait for removeAllDispatchers answer because were are in dtor
+	// and must delete Reader* of mReaderList.
+	const auto list = mDispatcherList.keys();
+	for (const auto& id : list)
+	{
+		removeDispatcher(id);
+	}
 }
 
 

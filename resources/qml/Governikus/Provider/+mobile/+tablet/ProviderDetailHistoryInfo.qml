@@ -2,13 +2,11 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Provider 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 Item {
 	id: baseItem
@@ -45,9 +43,14 @@ Item {
 				height: 1
 				width: baseItem.width / 3
 
-				Pane {
+				GPane {
 					id: leftPane
+
 					height: infoRow.height
+					anchors {
+						left: parent.left
+						right: parent.right
+					}
 				}
 
 				Column {
@@ -61,14 +64,14 @@ Item {
 					ProviderInfoSection {
 						imageSource: "qrc:///images/provider/information.svg"
 						//: LABEL ANDROID_TABLET IOS_TABLET
-						title: qsTr("Provider") + SettingsModel.translationTrigger
+						title: qsTr("Provider")
 						name: baseItem.providerName
 					}
 
 					ProviderInfoSection {
 						imageSource: "qrc:///images/provider/purpose.svg"
 						//: LABEL ANDROID_TABLET IOS_TABLET
-						title: qsTr("Purpose for reading out requested data") + SettingsModel.translationTrigger
+						title: qsTr("Purpose for reading out requested data")
 						name: baseItem.purposeText
 					}
 
@@ -76,7 +79,7 @@ Item {
 						id: readDataTitle
 						width: parent.width
 						//: LABEL ANDROID_TABLET IOS_TABLET
-						text: qsTr("Read data") + SettingsModel.translationTrigger
+						text: qsTr("Read data")
 						textStyle: Style.text.header_accent
 					}
 
@@ -116,9 +119,14 @@ Item {
 				height: 1
 				width: baseItem.width / 3 * 2 - 3 * Constants.component_spacing
 
-				Pane {
+				GPane {
 					id: rightPane
+
 					height: infoRow.height
+					anchors {
+						left: parent.left
+						right: parent.right
+					}
 				}
 
 				Column {
@@ -132,7 +140,7 @@ Item {
 					GText {
 						id: termsOfUsageTitle
 						//: LABEL ANDROID_TABLET IOS_TABLET
-						text: qsTr("Terms of usage") + SettingsModel.translationTrigger
+						text: qsTr("Terms of usage")
 						textStyle: Style.text.header_accent
 					}
 

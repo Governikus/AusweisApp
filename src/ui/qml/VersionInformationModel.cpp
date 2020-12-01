@@ -17,22 +17,11 @@
 
 #include <openssl/crypto.h>
 
-
 using namespace governikus;
 
 
-void VersionInformationModel::init()
-{
-	mData.clear();
-
-	BuildHelper::processInformationHeader([this](const QString& pKey, const QString& pValue){
-				mData += qMakePair(pKey, pValue);
-			});
-}
-
-
-VersionInformationModel::VersionInformationModel(QObject* pParent)
-	: QAbstractListModel(pParent)
+VersionInformationModel::VersionInformationModel()
+	: QAbstractListModel()
 	, mData()
 {
 	init();
@@ -42,6 +31,16 @@ VersionInformationModel::VersionInformationModel(QObject* pParent)
 				beginResetModel();
 				init();
 				endResetModel();
+			});
+}
+
+
+void VersionInformationModel::init()
+{
+	mData.clear();
+
+	BuildHelper::processInformationHeader([this](const QString& pKey, const QString& pValue){
+				mData += qMakePair(pKey, pValue);
 			});
 }
 

@@ -40,15 +40,13 @@ class NumberModel
 		bool mRequestTransportPin;
 		bool mRequestNewPin;
 
+		NumberModel();
+		~NumberModel() override = default;
+
 		CardReturnCode getInputErrorCode() const;
 
 	private Q_SLOTS:
 		void onCardConnectionChanged();
-
-	protected:
-		NumberModel();
-		~NumberModel() override = default;
-		static NumberModel& getInstance();
 
 	public:
 		enum class QmlPasswordType
@@ -80,13 +78,13 @@ class NumberModel
 
 		int getRetryCounter() const;
 		bool isPinDeactivated() const;
-		bool isCanAllowedMode();
+		bool isCanAllowedMode() const;
 
 		bool isRequestTransportPin() const;
 		void setRequestTransportPin(bool pEnabled);
 
 	private Q_SLOTS:
-		void onReaderInfoChanged(const QString& pReaderName);
+		void onReaderInfoChanged(const ReaderInfo& pInfo);
 
 	Q_SIGNALS:
 		void fireCanChanged();

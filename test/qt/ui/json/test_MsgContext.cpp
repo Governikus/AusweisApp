@@ -6,6 +6,7 @@
 
 #include "messages/MsgContext.h"
 
+#include "context/AuthContext.h"
 #include "InternalActivationContext.h"
 #include "messages/MsgHandler.h"
 
@@ -52,32 +53,32 @@ class test_MsgContext
 			const MsgContext& readOnly = ctx;
 
 			QVERIFY(!readOnly.isActiveWorkflow());
-			QVERIFY(!readOnly.getAuthContext());
-			QVERIFY(!ctx.getAuthContext());
-			QVERIFY(!readOnly.getWorkflowContext());
+			QVERIFY(!readOnly.getContext<AuthContext>());
+			QVERIFY(!ctx.getContext<AuthContext>());
+			QVERIFY(!readOnly.getContext());
 
-			ctx.setWorkflowContext(QSharedPointer<WorkflowContext>(new WorkflowContext));
+			ctx.setWorkflowContext(QSharedPointer<WorkflowContext>(new WorkflowContext()));
 			QVERIFY(readOnly.isActiveWorkflow());
-			QVERIFY(!readOnly.getAuthContext());
-			QVERIFY(!ctx.getAuthContext());
-			QVERIFY(readOnly.getWorkflowContext());
+			QVERIFY(!readOnly.getContext<AuthContext>());
+			QVERIFY(!ctx.getContext<AuthContext>());
+			QVERIFY(readOnly.getContext());
 
 			ctx.clear();
 			QVERIFY(!readOnly.isActiveWorkflow());
-			QVERIFY(!readOnly.getAuthContext());
-			QVERIFY(!ctx.getAuthContext());
-			QVERIFY(!readOnly.getWorkflowContext());
+			QVERIFY(!readOnly.getContext<AuthContext>());
+			QVERIFY(!ctx.getContext<AuthContext>());
+			QVERIFY(!readOnly.getContext());
 
 			ctx.setWorkflowContext(QSharedPointer<AuthContext>(new AuthContext(QSharedPointer<InternalActivationContext>::create(QUrl("http://www.bla.de")))));
 			QVERIFY(readOnly.isActiveWorkflow());
-			QVERIFY(readOnly.getAuthContext());
-			QVERIFY(ctx.getAuthContext());
-			QVERIFY(readOnly.getWorkflowContext());
+			QVERIFY(readOnly.getContext<AuthContext>());
+			QVERIFY(ctx.getContext<AuthContext>());
+			QVERIFY(readOnly.getContext());
 
 			QVERIFY(ctx.isActiveWorkflow());
-			QVERIFY(ctx.getAuthContext());
-			QVERIFY(ctx.getAuthContext());
-			QVERIFY(ctx.getWorkflowContext());
+			QVERIFY(ctx.getContext<AuthContext>());
+			QVERIFY(ctx.getContext<AuthContext>());
+			QVERIFY(ctx.getContext());
 		}
 
 

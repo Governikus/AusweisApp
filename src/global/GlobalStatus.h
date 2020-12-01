@@ -36,6 +36,10 @@ class GlobalStatus
 			Downloader_File_Not_Found,
 			Downloader_Cannot_Save_File,
 			Downloader_Data_Corrupted,
+			Downloader_Missing_Platform,
+			Downloader_Aborted,
+
+			Update_Execution_Failed,
 
 			Workflow_AlreadyInProgress_Error,
 			Workflow_Communication_Missing_Redirect_Url,
@@ -87,9 +91,6 @@ class GlobalStatus
 			Paos_Error_DP_Trusted_Channel_Establishment_Failed,
 			Paos_Error_SAL_Cancellation_by_User,
 			Paos_Error_SAL_Invalid_Key,
-
-			Workflow_Bluetooth_Reader_Connection_Error,
-			Workflow_Reader_Device_Scan_Error,
 
 			Card_Not_Found,
 			Card_Communication_Error,

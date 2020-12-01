@@ -53,9 +53,9 @@ class test_pcscReaderFeature
 		{
 			PcscReaderFeature readerFeature(nullptr);
 
-			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << readerFeature;
-			QVERIFY(TestFileHelper::containsLog(spyLog, QLatin1String("()")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("()")));
 
 			QCOMPARE(getFeatureCount(readerFeature), 0);
 		}
@@ -66,9 +66,9 @@ class test_pcscReaderFeature
 			QByteArray featuresTLV = QByteArray::fromHex("120442330012");
 			PcscReaderFeature readerFeature(featuresTLV.constData(), static_cast<PCSC_INT>(featuresTLV.length()));
 
-			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << readerFeature;
-			QVERIFY(TestFileHelper::containsLog(spyLog, QLatin1String("(TLV_PROPERTIES)")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("(TLV_PROPERTIES)")));
 
 			QCOMPARE(getFeatureCount(readerFeature), 1);
 			QVERIFY(readerFeature.contains(FeatureID::TLV_PROPERTIES));
@@ -81,9 +81,9 @@ class test_pcscReaderFeature
 			QByteArray featuresTLV = QByteArray::fromHex("060442000db2070442000db3080442000db4090442000db5200442000dcc");
 			PcscReaderFeature readerFeature(featuresTLV.constData(), static_cast<PCSC_INT>(featuresTLV.length()));
 
-			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << readerFeature;
-			QVERIFY(TestFileHelper::containsLog(spyLog, QLatin1String("(VERIFY_PIN_DIRECT, MODIFY_PIN_DIRECT, MCT_READERDIRECT, MCT_UNIVERSAL, EXECUTE_PACE)")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("(VERIFY_PIN_DIRECT, MODIFY_PIN_DIRECT, MCT_READERDIRECT, MCT_UNIVERSAL, EXECUTE_PACE)")));
 
 			QCOMPARE(getFeatureCount(readerFeature), 5);
 			QVERIFY(readerFeature.contains(FeatureID::VERIFY_PIN_DIRECT));

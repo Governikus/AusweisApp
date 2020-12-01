@@ -119,12 +119,12 @@ class ECardApiResult
 		static QMap<Minor, GlobalStatus::Code> cConversionMap2;
 
 		static void initConversionMaps();
-		static void addConversionElement(const GlobalStatus::Code pCode, const Minor pMinor);
-		static GlobalStatus::Code toStatus(const Minor pMinor);
-		static Minor fromStatus(const GlobalStatus::Code pCode);
+		static void addConversionElement(GlobalStatus::Code pCode, Minor pMinor);
+		static GlobalStatus::Code toStatus(Minor pMinor);
+		static Minor fromStatus(GlobalStatus::Code pCode);
 
-		static GlobalStatus::Origin toStatus(const governikus::ECardApiResult::Origin pSelf);
-		static ECardApiResult::Origin fromStatus(const GlobalStatus::Origin pSelf);
+		static GlobalStatus::Origin toStatus(governikus::ECardApiResult::Origin pSelf);
+		static ECardApiResult::Origin fromStatus(GlobalStatus::Origin pSelf);
 
 		static ECardApiResult fromStatus(const GlobalStatus& pStatus);
 
@@ -134,10 +134,10 @@ class ECardApiResult
 		QSharedDataPointer<ResultData> d;
 
 		ECardApiResult(Major pMajor, Minor pMinor, const QString& pMessage = QString(), Origin pOrigin = Origin::Client);
-		ECardApiResult(const QString& pMajor, const QString& pMinor = QString(), const QString& pMessage = QString(), Origin pOrigin = Origin::Client);
+		explicit ECardApiResult(const QString& pMajor, const QString& pMinor = QString(), const QString& pMessage = QString(), Origin pOrigin = Origin::Client);
 
 	public:
-		ECardApiResult(const GlobalStatus& pStatus);
+		explicit ECardApiResult(const GlobalStatus& pStatus);
 
 		bool operator ==(const ECardApiResult& pResult) const;
 

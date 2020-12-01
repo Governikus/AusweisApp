@@ -4,17 +4,11 @@
 
 #include "LogHandler.h"
 
-#include "BreakPropertyBindingDiagnosticLogFilter.h"
 #include "SingletonHelper.h"
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-#include <QScopeGuard>
-#else
-#include "ScopeGuard.h"
-#endif
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QScopeGuard>
 #include <QStringBuilder>
 
 using namespace governikus;
@@ -34,7 +28,7 @@ Q_DECLARE_LOGGING_CATEGORY(configuration)
 
 
 LogHandler::LogHandler()
-	: QObject()
+	: mEventHandler()
 	, mEnvPattern(!qEnvironmentVariableIsEmpty("QT_MESSAGE_PATTERN"))
 	, mFunctionFilenameSize(74)
 	, mBacklogPosition(0)
@@ -43,27 +37,18 @@ LogHandler::LogHandler()
 	, mCriticalLogIgnore({LOGCAT(fileprovider), LOGCAT(securestorage), LOGCAT(configuration)})
 	, mMessagePattern(QStringLiteral("%{category} %{time yyyy.MM.dd hh:mm:ss.zzz} %{threadid} %{if-debug} %{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif} %{function}(%{file}:%{line}) %{message}"))
 	, mDefaultMessagePattern(QStringLiteral("%{if-category}%{category}: %{endif}%{message}")) // as defined in qlogging.cpp
-	, mLogFile(getLogFileTemplate())
+	, mLogFile()
 	, mHandler(nullptr)
 	, mUseHandler(true)
 	, mFilePrefix("/src/")
 	, mMutex()
 {
-#ifndef QT_NO_DEBUG
-	new BreakPropertyBindingDiagnosticLogFilter(this);
-#endif
 }
 
 
 LogHandler::~LogHandler()
 {
 	reset();
-}
-
-
-LogHandler& LogHandler::getInstance()
-{
-	return *Instance;
 }
 
 
@@ -77,7 +62,7 @@ QString LogHandler::getLogFileTemplate()
 void LogHandler::reset()
 {
 	const QMutexLocker mutexLocker(&mMutex);
-	if (isInitialized())
+	if (isInstalled())
 	{
 		qInstallMessageHandler(nullptr);
 		mHandler = nullptr;
@@ -88,59 +73,101 @@ void LogHandler::reset()
 void LogHandler::init()
 {
 	const QMutexLocker mutexLocker(&mMutex);
-	if (!isInitialized())
+
+	QStringList rules;
+
+	// Enable this warning again when our minimum Qt version is 5.14
+	rules << QStringLiteral("qt.qml.connections.warning=false");
+
+#ifndef QT_NO_DEBUG
+	rules << QStringLiteral("qt.qml.binding.removal.info=true");
+#endif
+
+	QLoggingCategory::setFilterRules(rules.join(QLatin1Char('\n')));
+
+	if (mEventHandler.isNull())
 	{
+		mEventHandler = new LogEventHandler();
+		QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, mEventHandler.data(), &QObject::deleteLater);
+		QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, mEventHandler.data(), [this] {
+					mEventHandler.clear(); // clear immediately, otherwise logging in &QObject::destroyed is dangerous!
+				});
+	}
+
+	if (mLogFile.isNull())
+	{
+		mLogFile = new QTemporaryFile(getLogFileTemplate());
+		QObject::connect(QCoreApplication::instance(), &QCoreApplication::destroyed, mLogFile.data(), [this] {
+					delete this->mLogFile.data();
+				});
+
 		if (useLogfile())
 		{
-			mLogFile.open();
+			mLogFile->open();
 		}
-		mHandler = qInstallMessageHandler(&LogHandler::messageHandler);
 
 		// Avoid deadlock with subsequent logging of this call.
-		QMetaObject::invokeMethod(this, &LogHandler::removeOldLogfiles, Qt::QueuedConnection);
+		QMetaObject::invokeMethod(mLogFile.data(), [this] {removeOldLogfiles();}, Qt::QueuedConnection);
+	}
+
+	if (!isInstalled())
+	{
+		mHandler = qInstallMessageHandler(&LogHandler::messageHandler);
 	}
 }
 
 
-bool LogHandler::isInitialized() const
+const LogEventHandler* LogHandler::getEventHandler() const
+{
+	return mEventHandler;
+}
+
+
+bool LogHandler::isInstalled() const
 {
 	return mHandler;
 }
 
 
-void LogHandler::setAutoRemove(bool pRemove)
+bool LogHandler::setAutoRemove(bool pRemove)
 {
-	mLogFile.setAutoRemove(pRemove);
+	if (mLogFile)
+	{
+		mLogFile->setAutoRemove(pRemove);
+		return true;
+	}
+
+	return false;
 }
 
 
 void LogHandler::logToFile(const QString& pOutput)
 {
-	if (mLogFile.isOpen() && mLogFile.isWritable())
+	if (mLogFile && mLogFile->isOpen() && mLogFile->isWritable())
 	{
-		mLogFile.write(pOutput.toUtf8());
-		mLogFile.flush();
+		mLogFile->write(pOutput.toUtf8());
+		mLogFile->flush();
 	}
 }
 
 
 QByteArray LogHandler::readLogFile(qint64 pStart, qint64 pLength)
 {
-	if (mLogFile.isOpen() && mLogFile.isReadable())
+	if (mLogFile && mLogFile->isOpen() && mLogFile->isReadable())
 	{
-		const auto currentPos = mLogFile.pos();
+		const auto currentPos = mLogFile->pos();
 		const auto resetPosition = qScopeGuard([this, currentPos] {
-					mLogFile.seek(currentPos);
+					mLogFile->seek(currentPos);
 				});
 
-		mLogFile.seek(pStart);
-		return pLength > 0 ? mLogFile.read(pLength) : mLogFile.readAll();
+		mLogFile->seek(pStart);
+		return pLength > 0 ? mLogFile->read(pLength) : mLogFile->readAll();
 	}
 
 	if (useLogfile())
 	{
 		//: LABEL ALL_PLATFORMS
-		return tr("An error occurred in log handling: %1").arg(mLogFile.errorString()).toUtf8();
+		return QObject::tr("An error occurred in log handling: %1").arg(mLogFile->errorString()).toUtf8();
 	}
 
 	return QByteArray();
@@ -202,20 +229,28 @@ QDateTime LogHandler::getFileDate(const QFileInfo& pInfo)
 
 QDateTime LogHandler::getCurrentLogfileDate() const
 {
-	return getFileDate(mLogFile);
+	return useLogfile() ? getFileDate(QFileInfo(*mLogFile)) : QDateTime();
 }
 
 
 void LogHandler::resetBacklog()
 {
 	const QMutexLocker mutexLocker(&mMutex);
-	mBacklogPosition = mLogFile.pos();
-	mCriticalLog = false;
-	mCriticalLogWindow.clear();
+
+	if (useLogfile())
+	{
+		mBacklogPosition = mLogFile->pos();
+		mCriticalLog = false;
+		mCriticalLogWindow.clear();
+	}
 }
 
 
-void LogHandler::copyMessageLogContext(const QMessageLogContext& pSource, QMessageLogContext& pDestination, const QByteArray& pFilename, const QByteArray& pFunction, const QByteArray& pCategory)
+void LogHandler::copyMessageLogContext(const QMessageLogContext& pSource,
+		QMessageLogContext& pDestination,
+		const QByteArray& pFilename,
+		const QByteArray& pFunction,
+		const QByteArray& pCategory) const
 {
 	pDestination.file = pFilename.isNull() ? pSource.file : pFilename.constData();
 	pDestination.function = pFunction.isNull() ? pSource.function : pFunction.constData();
@@ -262,7 +297,7 @@ QByteArray LogHandler::formatFunction(const char* const pFunction, const QByteAr
 	}
 
 	// Trim function name
-	const int size = mFunctionFilenameSize - 3 - pFilename.size() - QString::number(pLine).size();
+	const auto size = mFunctionFilenameSize - 3 - pFilename.size() - QString::number(pLine).size();
 
 	if (size >= function.size())
 	{
@@ -295,9 +330,9 @@ QByteArray LogHandler::formatCategory(const QByteArray& pCategory) const
 }
 
 
-QString LogHandler::getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg)
+QString LogHandler::getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg) const
 {
-	const int paddingSize = (pContext.function == nullptr && pContext.file == nullptr && pContext.line == 0) ?
+	const auto paddingSize = (pContext.function == nullptr && pContext.file == nullptr && pContext.line == 0) ?
 			mFunctionFilenameSize - 18 : // padding for nullptr == "unknown(unknown:0)"
 			mFunctionFilenameSize - 3 - static_cast<int>(qstrlen(pContext.function)) - static_cast<int>(qstrlen(pContext.file)) - QString::number(pContext.line).size();
 
@@ -345,8 +380,11 @@ void LogHandler::handleMessage(QtMsgType pType, const QMessageLogContext& pConte
 #endif
 	}
 
-	Q_EMIT fireRawLog(pMsg, QString::fromLatin1(pContext.category));
-	Q_EMIT fireLog(logMsg);
+	if (mEventHandler)
+	{
+		Q_EMIT mEventHandler->fireRawLog(pMsg, QString::fromLatin1(pContext.category));
+		Q_EMIT mEventHandler->fireLog(logMsg);
+	}
 }
 
 
@@ -366,7 +404,7 @@ void LogHandler::handleLogWindow(QtMsgType pType, const char* pCategory, const Q
 		mCriticalLog = true;
 	}
 
-	mCriticalLogWindow.append({mLogFile.pos(), pMsg.size()});
+	mCriticalLogWindow.append({mLogFile->pos(), pMsg.size()});
 }
 
 
@@ -376,7 +414,7 @@ bool LogHandler::copy(const QString& pDest)
 
 	if (useLogfile())
 	{
-		return copyOther(mLogFile.fileName(), pDest);
+		return copyOther(mLogFile->fileName(), pDest);
 	}
 
 	return false;
@@ -390,7 +428,8 @@ bool LogHandler::copyOther(const QString& pSource, const QString& pDest) const
 		return false;
 	}
 
-	if (pSource != mLogFile.fileName() && !getOtherLogfiles().contains(pSource))
+	Q_ASSERT(mLogFile);
+	if (pSource != mLogFile->fileName() && !getOtherLogfiles().contains(QFileInfo(pSource)))
 	{
 		return false;
 	}
@@ -412,7 +451,11 @@ QFileInfoList LogHandler::getOtherLogfiles() const
 	tmpPath.setNameFilters(QStringList({QCoreApplication::applicationName() + QStringLiteral(".*.log")}));
 
 	QFileInfoList list = tmpPath.entryInfoList();
-	list.removeAll(mLogFile);
+
+	if (useLogfile())
+	{
+		list.removeAll(QFileInfo(*mLogFile));
+	}
 
 	return list;
 }
@@ -449,33 +492,34 @@ bool LogHandler::removeOtherLogfiles()
 void LogHandler::setLogfile(bool pEnable)
 {
 	const QMutexLocker mutexLocker(&mMutex);
+	Q_ASSERT(mLogFile);
 
 	if (pEnable)
 	{
-		if (!mLogFile.isOpen())
+		if (!mLogFile->isOpen())
 		{
-			mLogFile.setFileTemplate(getLogFileTemplate());
-			mLogFile.open();
+			mLogFile->setFileTemplate(getLogFileTemplate());
+			mLogFile->open();
 		}
 	}
 	else
 	{
-		if (mLogFile.isOpen())
+		if (mLogFile->isOpen())
 		{
-			mLogFile.close();
-			mLogFile.remove();
+			mLogFile->close();
+			mLogFile->remove();
 			mBacklogPosition = 0;
 			mCriticalLog = false;
 			mCriticalLogWindow.clear();
 		}
-		mLogFile.setFileTemplate(QString());
+		mLogFile->setFileTemplate(QString());
 	}
 }
 
 
 bool LogHandler::useLogfile() const
 {
-	return !mLogFile.fileTemplate().isNull();
+	return mLogFile && !mLogFile->fileTemplate().isNull();
 }
 
 
@@ -495,3 +539,7 @@ void LogHandler::messageHandler(QtMsgType pType, const QMessageLogContext& pCont
 {
 	getInstance().handleMessage(pType, pContext, pMsg);
 }
+
+
+static_assert(!std::is_base_of<QObject, LogHandler>::value,
+		"LogHandler cannot be a QObject because it is a Singleton that should not be destroyed at all!");

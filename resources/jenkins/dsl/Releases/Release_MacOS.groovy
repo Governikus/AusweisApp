@@ -3,10 +3,10 @@ import static common.Constants.strip
 
 def j = new Release
 	(
-		name: 'MacOS_DMG',
+		name: 'MacOS_DMG_PKG',
 		libraries: ['MacOS'],
 		label: 'MacOS',
-		artifacts: 'build/*.dmg'
+		artifacts: 'libs/build/Toolchain_*,build/*.dmg,build/*.pkg'
 	).generate(this)
 
 
@@ -30,8 +30,11 @@ j.with
 			cd build; make ${MAKE_FLAGS} package
 			'''.stripIndent().trim())
 
-		shell('cd build/_CPack_Packages/Darwin/Bundle/; codesign -vvvv **/*.app; spctl -a -vv **/*.app')
+		shell('cd build/_CPack_Packages/Darwin/; codesign -vvvv **/**/*.app')
+		shell('cd build/_CPack_Packages/Darwin/DragNDrop; spctl -a -vv **/*.app')
 
 		shell('cd build/; cmake -P ../source/cmake/Notarization.cmake')
+
+		shell('cd build/; xcrun altool -t osx --upload-app -u "ausweisapp@governikus.com" -p @env:PASSWORD -f *.pkg')
 	}
 }

@@ -2,10 +2,9 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtGraphicalEffects 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -34,46 +33,61 @@ Button {
 	Accessible.name: text
 	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
 
-	padding: Constants.text_spacing
-
-	font.pixelSize: textStyle.textSize
-
+	ToolTip.delay: Constants.toolTipDelay
 	ToolTip.visible: hovered && ToolTip.text !== ""
 	ToolTip.text: enableButton ? enabledTooltipText : disabledTooltipText
 
-	contentItem: RowLayout {
+	font.pixelSize: textStyle.textSize
+
+	contentItem: Item {
 		z: 1
 
-		spacing: root.icon.source != "" && root.text != "" ? Constants.text_spacing : 0
+		// The icon's width is already included in the text's margins
+		implicitWidth: buttonText.visible ? Math.max(buttonText.effectiveWidth, Style.dimens.large_icon_size) : buttonIcon.width
+		implicitHeight: root.textStyle.textSize + 2 * verticalPadding
 
 		TintableIcon {
+			id: buttonIcon
+
 			readonly property color iconColor: root.textStyle.textColor
 			readonly property color pressColor: Qt.darker(iconColor, Constants.highlightDarkerFactor)
 
-			Layout.preferredHeight: sourceSize.height
+			visible: source != ""
+			anchors.left: parent.left
+			anchors.verticalCenter: parent.verticalCenter
 
 			source: root.icon.source
-			sourceSize.height: root.textStyle.textSize + root.horizontalPadding
+			sourceSize.height: parent.height
 
 			tintEnabled: tintIcon
 			tintColor: !animationsDisabled && root.pressed ? pressColor : iconColor
 		}
 
 		GText {
-			Accessible.ignored: true
+			id: buttonText
 
-			Layout.fillWidth: true
+			readonly property real effectiveWidth: implicitWidth + anchors.leftMargin + anchors.rightMargin
+
+			visible: text !== ""
+			anchors.left: parent.left
+			anchors.leftMargin: buttonIcon.visible ? buttonIcon.width + Constants.text_spacing : 0
+			anchors.right: parent.right
+			anchors.verticalCenter: parent.verticalCenter
+
+			Accessible.ignored: true
 
 			font: root.font
 			textStyle: root.textStyle
 			color: !animationsDisabled && root.pressed ? root.textHighlightColor : root.textStyle.textColor
 			text: root.text
-			horizontalAlignment: root.icon.source == "" ? Text.AlignHCenter : Text.AlignLeft
+			horizontalAlignment: buttonIcon.visible ? Text.AlignLeft : Text.AlignHCenter
+			verticalAlignment: Text.AlignVCenter
 			maximumLineCount: 1
 			elide: Text.ElideRight
 
 			FocusFrame {
 				scope: root
+				marginFactor: 0.7
 			}
 		}
 	}

@@ -1,5 +1,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="background_color">#dcebf6</color>
+
+    <style name="AppTheme.Launcher">
+        <item name="android:windowBackground">@drawable/bg_splash_screen</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <style name="AppTheme" parent="android:Theme.Material.NoActionBar">
         <item name="android:windowBackground">@color/background_color</item>
         <item name="android:background">@null</item>

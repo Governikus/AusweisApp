@@ -8,10 +8,10 @@
 
 using namespace governikus;
 
-static Initializer::Entry X([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<ReaderManagerPlugInInfo>("ReaderManagerPlugInInfo");
 			qRegisterMetaType<ReaderManagerPlugInType>("ReaderManagerPlugInType");
-		});
+		})
 
 
 ReaderManagerPlugInInfo::ReaderManagerPlugInInfo(ReaderManagerPlugInType pType, bool pEnabled, bool pAvailable)
@@ -19,7 +19,6 @@ ReaderManagerPlugInInfo::ReaderManagerPlugInInfo(ReaderManagerPlugInType pType, 
 	, mValues()
 	, mEnabled(pEnabled)
 	, mAvailable(pAvailable)
-	, mResponding(true)
 {
 }
 

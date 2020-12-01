@@ -21,7 +21,6 @@ class SettingsModel
 	Q_OBJECT
 	friend class Env;
 
-	Q_PROPERTY(QString translationTrigger READ getEmptyString NOTIFY fireLanguageChanged)
 	Q_PROPERTY(QString language READ getLanguage WRITE setLanguage NOTIFY fireLanguageChanged)
 	Q_PROPERTY(bool advancedSettings READ isAdvancedSettings WRITE setAdvancedSettings NOTIFY fireAdvancedSettingsChanged)
 	Q_PROPERTY(bool developerOptions READ isDeveloperOptions WRITE setDeveloperOptions NOTIFY fireDeveloperOptionsChanged)
@@ -48,23 +47,19 @@ class SettingsModel
 	Q_PROPERTY(bool transportPinReminder READ isTransportPinReminder WRITE setTransportPinReminder NOTIFY fireTransportPinReminderChanged)
 	Q_PROPERTY(bool showInAppNotifications READ isShowInAppNotifications WRITE setShowInAppNotifications NOTIFY fireShowInAppNotificationsChanged)
 	Q_PROPERTY(AppUpdateDataModel * appUpdateData READ getAppUpdateData NOTIFY fireAppUpdateDataChanged)
-	Q_PROPERTY(bool showNewUiHint READ isShowNewUiHint WRITE setShowNewUiHint NOTIFY fireShowNewUiHintChanged)
 	Q_PROPERTY(QUrl customProxyUrl READ getCustomProxyUrl CONSTANT)
 	Q_PROPERTY(bool customProxyAttributesPresent READ isCustomProxyAttributesPresent CONSTANT)
-	Q_PROPERTY(bool useCustomProxy READ isUseCustomProxy WRITE setUseCustomProxy)
+	Q_PROPERTY(bool useCustomProxy READ isUseCustomProxy WRITE setUseCustomProxy NOTIFY fireUseCustomProxyChanged)
 
 	private:
 		bool mAdvancedSettings;
 		bool mIsStartedByAuth;
 		bool mShowBetaTesting;
 
-	protected:
 		SettingsModel();
 		~SettingsModel() override = default;
-		static SettingsModel& getInstance();
 
 	public:
-		QString getEmptyString();
 		QString getLanguage() const;
 		void setLanguage(const QString& pLanguage);
 
@@ -133,12 +128,9 @@ class SettingsModel
 		bool isShowInAppNotifications() const;
 		void setShowInAppNotifications(bool pShowInAppNotifications);
 
-		bool isShowNewUiHint() const;
-		void setShowNewUiHint(bool pShowNewUiHint);
-
 		QUrl getCustomProxyUrl() const;
 		bool isCustomProxyAttributesPresent() const;
-		bool isUseCustomProxy();
+		bool isUseCustomProxy() const;
 		void setUseCustomProxy(bool pUseCustomProxy);
 
 		Q_INVOKABLE bool requestStoreFeedback() const;
@@ -147,7 +139,7 @@ class SettingsModel
 		Q_INVOKABLE bool askForDeviceSurvey() const;
 		Q_INVOKABLE void setDeviceSurveyPending(bool pDeviceSurveyPending);
 
-		Q_INVOKABLE void updateApp();
+		Q_INVOKABLE void updateAppcast();
 
 		AppUpdateDataModel* getAppUpdateData() const;
 
@@ -168,7 +160,7 @@ class SettingsModel
 		void fireTransportPinReminderChanged();
 		void fireAppUpdateDataChanged();
 		void fireShowInAppNotificationsChanged();
-		void fireShowNewUiHintChanged();
+		void fireUseCustomProxyChanged();
 
 };
 

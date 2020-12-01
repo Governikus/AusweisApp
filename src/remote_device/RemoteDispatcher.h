@@ -39,7 +39,7 @@ class RemoteDispatcher
 		QString mContextHandle;
 
 	public:
-		explicit RemoteDispatcher(IfdVersion::Version pVersion, const QSharedPointer<DataChannel>& pDataChannel = QSharedPointer<DataChannel>());
+		explicit RemoteDispatcher(IfdVersion::Version pVersion, const QSharedPointer<DataChannel>& pDataChannel);
 		~RemoteDispatcher();
 
 		virtual QString getId() const;

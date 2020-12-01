@@ -35,6 +35,7 @@ class UIPlugInWebSocket
 		UIPlugInJson* mJson;
 		QSharedPointer<WorkflowContext> mContext;
 		bool mUiDomination;
+		bool mUiDominationPrevUsedAsSDK;
 
 	private Q_SLOTS:
 		virtual void doShutdown() override;

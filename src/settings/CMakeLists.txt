@@ -8,12 +8,12 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppSettings)
 
-TARGET_LINK_LIBRARIES(AusweisAppSettings Qt5::Core Qt5::Network Qt5::Concurrent OpenSSL::Crypto AusweisAppGlobal)
+target_link_libraries(AusweisAppSettings ${Qt}::Core ${Qt}::Network ${Qt}::Concurrent OpenSSL::Crypto AusweisAppGlobal)
 
-IF(MAC)
-	TARGET_LINK_LIBRARIES(AusweisAppSettings ${OSX_APPKIT} ${OSX_SERVICEMANAGEMENT})
-ENDIF()
+if(MAC)
+	target_link_libraries(AusweisAppSettings ${OSX_APPKIT} ${OSX_SERVICEMANAGEMENT})
+endif()
 
-IF(ANDROID)
-	TARGET_LINK_LIBRARIES(AusweisAppSettings Qt5::AndroidExtras)
-ENDIF()
+if(ANDROID)
+	target_link_libraries(AusweisAppSettings ${Qt}::AndroidExtras)
+endif()

@@ -184,7 +184,7 @@
 		},
 		{
 			"shortName": {"" : "BAföG Online"},
-			"address": "https://www.bafoegonline.bva.bund.de/bafoeg-bo/Bafoeg/flow/anmeldenMitIdPreFlow?anmeldenAuswahl=PA_MIT_ONLINE_AUSWEISFUNKTION",
+			"address": "https://www.bafoegonline.bva.bund.de",
 			"homepage": "https://www.bafoegonline.bva.bund.de",
 			"longDescription": {"": "Mit Ihrer Online-Ausweisfunktion können Sie sich beim Bundesverwaltungsamt für das BAföG-Rückzahlungsverfahren anmelden und sowohl Ihre persönlichen Daten als auch die erforderlichen Nachweise sicher und schnell elektronisch übermitteln. Sie müssen die Nachweise nicht mehr per Post senden.<br/>Die Online-Ausweisfunktion vereinfacht und beschleunigt das BAföG-Rückzahlungsverfahren."},
 			"phone": "+49 22899358 4500",
@@ -296,7 +296,7 @@
 			"email": "bafoeg@sozmi.landsh.de",
 			"postalAddress": "Ministerium für Soziales, Gesundheit, Wissenschaft und Gleichstellung des Landes Schleswig-Holstein<br/>Abteilung VIII 5<br/>Düsternbrooker Weg 104<br/>24105 Kiel",
 			"category": "citizen",
-			"subjectUrls": ["https://idp.serviceportal.schleswig-holstein.de"]
+			"subjectUrlInfo": "Using service from Serviceportal Schleswig-Holstein (https://idp.serviceportal.schleswig-holstein.de)."
 		},
 		{
 			"exclude": ["ios"],
@@ -840,6 +840,20 @@
 			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
+			"shortName": {"" : "Online-Service der Stadt Bonn"},
+			"shortDescription": {"": "Hier finden Sie unsere Online-Services."},
+			"longDescription": {"": "Bitte beachten Sie, dass noch nicht alle Online-Dienste mit der neuen eID-Funktion zur Verfügung stehen. Wählen Sie die mit 'nPA' ausgewiesenen Online-Services, um die eID-Funktion nutzen zu können.<br/>Die Stadt Bonn arbeitet zurzeit verstärkt an dem Ausbau der Online-Services mit eID-Funktion."},
+			"address": "https://www.bonn.de/service-bieten/stadtverwaltung-a-bis-z/online-service.php",
+			"homepage": "https://www.bonn.de",
+			"phone": "+49 228 770",
+			"email": "ozg@bonn.de",
+			"postalAddress": "Bundesstadt Bonn<br/>Berliner Platz 2<br/>53103 Bonn (Postanschrift)<br/>53111 Bonn (Hausanschrift)",
+			"image": "StadtBonn_image.jpg",
+			"icon": "StadtBonn_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+		},
+		{
 			"shortName": {"" : "Service-Portal Kreis Soest"},
 			"longName": {"" : "Onlinedienste der Kreisverwaltung Soest"},
 			"shortDescription": {"": "Anträge an die Kreisverwaltung Soest online erfassen."},
@@ -972,6 +986,17 @@
 			"homepage": "https://serviceportal.sachsen-anhalt.de",
 			"category": "citizen",
 			"subjectUrls": ["https://st.buergerserviceportal.de", "https://bk.sachsen-anhalt-connect.de"]
+		},
+		{
+			"shortName": {"": "Serviceportal Schleswig-Holstein"},
+			"shortDescription": {"": "Digitale Verwaltungsleistungen von Land und Kommunen in Schleswig-Holstein"},
+			"address": "https://serviceportal.schleswig-holstein.de/Verwaltungsportal",
+			"homepage": "https://serviceportal.schleswig-holstein.de",
+			"phone": "+49 431 988 0",
+			"email": "dataportdigitaleplattformens-hsupport@dataport.de",
+			"postalAddress": "Ministerium für Energiewende, Landwirtschaft, Umwelt, Natur und Digitalisierung des Landes Schleswig-Holstein<br/>Digitalisierung und Zentrales IT-Management der Landesregierung<br/>Niemannsweg 220<br/>24106 Kiel",
+			"category": "citizen",
+			"subjectUrls": ["https://idp.serviceportal.schleswig-holstein.de"]
 		},
 		{
 			"shortName": {"" : "sign-me"},

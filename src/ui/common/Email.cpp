@@ -21,7 +21,7 @@ QString generateMailBody(const GlobalStatus& pStatus, const QUrl& pServiceUrl)
 		mailBody << QObject::tr("You may want to attach the logfile which can be saved from the error dialog.");
 	}
 
-	const QString newLine = QLatin1String("\n");
+	const QLatin1String newLine = QLatin1String("\n");
 	mailBody << newLine;
 
 	const auto& systemInfo = BuildHelper::getInformationHeader();

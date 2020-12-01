@@ -10,21 +10,29 @@
 #import <CoreNFC/NFCReaderSession.h>
 #import <CoreNFC/NFCTagReaderSession.h>
 
-
 using namespace governikus;
-
 
 Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 
 
-void IosReaderManagerPlugIn::onReaderDisconncted()
+namespace
 {
-	ReaderManagerPlugIn::stopScan();
+bool isAvailable()
+{
+	if (@available(iOS 13, *))
+	{
+		return NFCTagReaderSession.readingAvailable;
+	}
+
+	return false;
 }
 
 
+} // namespace
+
+
 IosReaderManagerPlugIn::IosReaderManagerPlugIn()
-	: ReaderManagerPlugIn(ReaderManagerPlugInType::NFC, NFCTagReaderSession.readingAvailable, NFCTagReaderSession.readingAvailable)
+	: ReaderManagerPlugIn(ReaderManagerPlugInType::NFC, isAvailable(), isAvailable())
 	, mIosReader(nullptr)
 {
 }
@@ -32,6 +40,12 @@ IosReaderManagerPlugIn::IosReaderManagerPlugIn()
 
 IosReaderManagerPlugIn::~IosReaderManagerPlugIn()
 {
+}
+
+
+void IosReaderManagerPlugIn::onReaderDisconnected()
+{
+	ReaderManagerPlugIn::stopScan();
 }
 
 
@@ -60,12 +74,12 @@ void IosReaderManagerPlugIn::init()
 	connect(mIosReader.data(), &IosReader::fireCardRemoved, this, &IosReaderManagerPlugIn::fireCardRemoved);
 	connect(mIosReader.data(), &IosReader::fireCardRetryCounterChanged, this, &IosReaderManagerPlugIn::fireCardRetryCounterChanged);
 	connect(mIosReader.data(), &IosReader::fireReaderPropertiesUpdated, this, &IosReaderManagerPlugIn::fireReaderPropertiesUpdated);
-	connect(mIosReader.data(), &IosReader::fireReaderDisconnected, this, &IosReaderManagerPlugIn::onReaderDisconncted);
+	connect(mIosReader.data(), &IosReader::fireReaderDisconnected, this, &IosReaderManagerPlugIn::onReaderDisconnected);
 	qCDebug(card_nfc) << "Add reader" << mIosReader->getName();
 
 	if (getInfo().isEnabled())
 	{
-		Q_EMIT fireReaderAdded(mIosReader->getName());
+		Q_EMIT fireReaderAdded(mIosReader->getReaderInfo());
 	}
 }
 

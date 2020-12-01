@@ -42,9 +42,7 @@ void ReaderDriverModel::collectReaderData()
 	mConnectedReaders.clear();
 
 	const QVector<ReaderInfo> installedReaders = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({
-				ReaderManagerPlugInType::PCSC
-				, ReaderManagerPlugInType::BLUETOOTH
-				, ReaderManagerPlugInType::NFC
+				ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::NFC
 			}));
 
 	for (const auto& installedReader : installedReaders)
@@ -261,16 +259,10 @@ QString ReaderDriverModel::getHTMLDescription(const QModelIndex& pIndex) const
 }
 
 
-QString ReaderDriverModel::getEmptyListDescriptionStringQml() const
+QString ReaderDriverModel::getEmptyListDescriptionString() const
 {
-	return getEmptyListDescriptionString(false);
-}
-
-
-QString ReaderDriverModel::getEmptyListDescriptionString(bool pWidgetUiHelp) const
-{
-	const QString& onlineHelpSection = pWidgetUiHelp ? QStringLiteral("readerDeviceTab") : QStringLiteral("settingsPcscReader");
-	const QString& url = HelpAction::getOnlineUrl(onlineHelpSection, pWidgetUiHelp);
+	const QString& onlineHelpSection = QStringLiteral("settingsPcscReader");
+	const QString& url = HelpAction::getOnlineUrl(onlineHelpSection);
 	//: Is embedded in a sentence.
 	const QString& hyperlink = QStringLiteral("<a href=\"%1\">%2</a>").arg(url, tr("online help"));
 	//: INFO ALL_PLATFORMS No card reader was found, the message contains a link to the installation section of the manual.

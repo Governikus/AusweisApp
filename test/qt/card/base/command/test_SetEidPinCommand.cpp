@@ -38,7 +38,7 @@ class test_SetEidPinCommand
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex(("9000")));
 			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, QByteArray::fromHex("1919"));
 			worker->addResponse(CardReturnCode::PIN_BLOCKED, QByteArray::fromHex("63c0"));
-			const QString pin = QStringLiteral("111111");
+			const QByteArray pin = QByteArrayLiteral("111111");
 			SetEidPinCommand command(worker, pin, 8);
 
 			ResponseApdu apdu1(QByteArray("apdu"));

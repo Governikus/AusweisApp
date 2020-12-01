@@ -28,15 +28,14 @@ class SelfDiagnosisModel
 	Q_PROPERTY(bool running READ isRunning NOTIFY fireRunningChanged)
 
 	private:
-		bool isRunning() const;
-
 		QSharedPointer<DiagnosisContext> mDiagnosisContext;
 		DiagnosisModel mDiagnosisModel;
 		QScopedPointer<DiagnosisController> mDiagnosisController;
 
-	protected:
-		explicit SelfDiagnosisModel(QObject* pParent = nullptr);
-		static SelfDiagnosisModel& getInstance();
+		SelfDiagnosisModel();
+		virtual ~SelfDiagnosisModel() override = default;
+
+		bool isRunning() const;
 
 	public:
 		QAbstractListModel* getSectionsModel();

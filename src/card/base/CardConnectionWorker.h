@@ -43,9 +43,6 @@ class CardConnectionWorker
 
 		inline QSharedPointer<const EFCardAccess> getEfCardAccess() const;
 
-	private Q_SLOTS:
-		void onReaderInfoChanged(const QString& pReaderName);
-
 	protected:
 		/*!
 		 * The Card hold by the Reader is expected to be connected.
@@ -77,7 +74,7 @@ class CardConnectionWorker
 		 * I. e., a secure messaging channel is established.
 		 */
 		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId,
-				const QString& pPasswordValue);
+				const QByteArray& pPasswordValue);
 
 		/*!
 		 * Performs PACE and establishes a PACE channel for later terminal authentication.
@@ -85,7 +82,7 @@ class CardConnectionWorker
 		 * I. e., a secure messaging channel is established.
 		 */
 		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId,
-				const QString& pPasswordValue,
+				const QByteArray& pPasswordValue,
 				const QByteArray& pChat,
 				const QByteArray& pCertificateDescription);
 
@@ -98,14 +95,14 @@ class CardConnectionWorker
 		 * Sets the current workflow progress message. This is necessary for platforms like iOS,
 		 * where interacting with a card leads to a dialog where the message needs to be updated.
 		 */
-		virtual void setProgressMessage(const QString& pMessage);
+		virtual void setProgressMessage(const QString& pMessage, int pProgress = -1);
 
 		/*!
 		 * Destroys an established secure messaging channel, if there is one.
 		 */
 		Q_INVOKABLE virtual bool stopSecureMessaging();
 
-		virtual ResponseApduResult setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds);
+		virtual ResponseApduResult setEidPin(const QByteArray& pNewPin, quint8 pTimeoutSeconds);
 
 	Q_SIGNALS:
 		void fireReaderInfoChanged(const ReaderInfo& pReaderInfo);

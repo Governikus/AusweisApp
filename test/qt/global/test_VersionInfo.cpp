@@ -42,7 +42,7 @@ class test_VersionInfo
 		void toJson()
 		{
 			auto json = VersionInfo::getInstance().toJson();
-			QSharedPointer<QJsonParseError> parseError(new QJsonParseError);
+			QSharedPointer<QJsonParseError> parseError(new QJsonParseError());
 			auto obj = QJsonDocument::fromJson(json, parseError.data()).object();
 
 			QCOMPARE(parseError->error, QJsonParseError::ParseError::NoError);
@@ -111,12 +111,12 @@ class test_VersionInfo
 		void logging()
 		{
 			auto versionInfo = VersionInfo::getInstance();
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			qDebug() << versionInfo;
 
-			QCOMPARE(spy.count(), 1);
-			QVERIFY(spy.takeFirst().at(0).toByteArray().contains(versionInfo.toJson(QJsonDocument::JsonFormat::Compact)));
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.takeFirst().at(0).toByteArray().contains(versionInfo.toJson(QJsonDocument::JsonFormat::Compact)));
 		}
 
 

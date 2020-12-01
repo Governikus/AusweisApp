@@ -2,7 +2,8 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.EnterPasswordView 1.0
 import Governikus.ProgressView 1.0
@@ -11,11 +12,12 @@ import Governikus.TitleBar 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.NumberModel  1.0
 import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.View 1.0
 
 SectionPage {
 	id: root
+
+	property alias rootEnabled: mainTitleBarAction.rootEnabled
 
 	signal closeView()
 
@@ -50,9 +52,11 @@ SectionPage {
 	}
 
 	titleBarAction: TitleBarAction {
+		id: mainTitleBarAction
+
 		visible: d.view !== ConnectSacView.SubView.PairingInfo || !d.externalMoreInformation
 		//: LABEL DESKTOP_QML
-		text: qsTr("Pairing") + SettingsModel.translationTrigger
+		text: qsTr("Pairing")
 		helpTopic: "readerDeviceTab"
 		rootEnabled: false
 		customSubAction: CancelAction {
@@ -85,7 +89,7 @@ SectionPage {
 		visible: d.view === ConnectSacView.SubView.PairingInfo
 
 		passwordType: NumberModel.PASSWORD_REMOTE_PIN
-		titleBarAction.rootEnabled: ApplicationModel.currentWorkflow === "" && d.externalMoreInformation
+		rootEnabled: mainTitleBarAction.rootEnabled
 
 		onClose: {
 			if (d.externalMoreInformation) {
@@ -102,7 +106,7 @@ SectionPage {
 		visible: d.view === ConnectSacView.SubView.WaitForPairing
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Pairing the device ...") + SettingsModel.translationTrigger
+		text: qsTr("Pairing the device ...")
 
 		Connections {
 			enabled: visible
@@ -130,7 +134,7 @@ SectionPage {
 		visible: d.view === ConnectSacView.SubView.PairingFailed
 
 		//: ERROR DESKTOP_QML An error occurred while pairing the device.
-		text: qsTr("Pairing to \"%1\" failed:").arg(deviceName) + "<br/>\"%2\"".arg(errorMessage) + SettingsModel.translationTrigger
+		text: qsTr("Pairing to \"%1\" failed:").arg(deviceName) + "<br/>\"%2\"".arg(errorMessage)
 		resultType: ResultView.Type.IsError
 		onNextView: root.closeView()
 	}

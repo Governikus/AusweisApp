@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
@@ -17,12 +17,12 @@ ColumnLayout {
 		Layout.fillWidth: true
 
 		//: LABEL DESKTOP_QML
-		title: qsTr("Diagnosis") + SettingsModel.translationTrigger
+		title: qsTr("Diagnosis")
 		//: LABEL DESKTOP_QML
-		description: qsTr("You can view and save the diagnosis information of the AusweisApp2 and your system here.") + SettingsModel.translationTrigger
-		iconSource: "qrc:/images/desktop/info_diagnosis.svg"
+		description: qsTr("You can view and save the diagnosis information of the AusweisApp2 and your system here.")
+		iconSource: "qrc:/images/desktop/material_highlight.svg"
 		//: LABEL DESKTOP_QML
-		buttonText: qsTr("Show diagnosis") + SettingsModel.translationTrigger
+		buttonText: qsTr("Show diagnosis")
 		onClicked: sectionPage.activeSubView = MoreView.SubViews.Diagnosis
 	}
 
@@ -34,13 +34,32 @@ ColumnLayout {
 		Layout.fillWidth: true
 
 		//: LABEL DESKTOP_QML
-		title: qsTr("Application log") + SettingsModel.translationTrigger
+		title: qsTr("Logs")
 		//: LABEL DESKTOP_QML
-		description: qsTr("You can view the logs of the AusweisApp2 here.") + SettingsModel.translationTrigger
-		iconSource: "qrc:/images/desktop/info_application_log.svg"
+		description: qsTr("Do you want to view the logs of %1?").arg(Qt.application.name)
+		iconSource: "qrc:/images/desktop/material_view_list.svg"
 		//: LABEL DESKTOP_QML
-		buttonText: qsTr("Show logs") + SettingsModel.translationTrigger
+		buttonText: qsTr("Show logs")
 		onClicked: sectionPage.activeSubView = MoreView.SubViews.ApplicationLog
+	}
+
+	GSeparator {
+		Layout.fillWidth: true
+	}
+
+	MoreViewMenuItem {
+		Layout.fillWidth: true
+
+		//: LABEL DESKTOP_QML
+		title: qsTr("Report error")
+		//: LABEL DESKTOP_QML
+		description: qsTr("Did you find a bug? Please help us by sending us the log file together with a description of the error.")
+		iconSource: "qrc:/images/desktop/material_bug_report.svg"
+		//: LABEL DESKTOP_QML
+		buttonText: qsTr("Open website")
+		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/report".arg(SettingsModel.language)
+		buttonIconSource: "qrc:///images/material_open_in_new.svg"
+		onClicked: Qt.openUrlExternally(buttonTooltip)
 	}
 
 }

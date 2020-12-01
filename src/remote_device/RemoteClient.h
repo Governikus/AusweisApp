@@ -48,6 +48,7 @@ class RemoteClient
 		Q_INVOKABLE virtual void establishConnection(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const QString& pPsk) = 0;
 
 		virtual QVector<QSharedPointer<RemoteDeviceListEntry>> getAnnouncingRemoteDevices() const;
+		bool hasAnnouncingRemoteDevices() const;
 		Q_INVOKABLE virtual void requestRemoteDevices();
 		virtual QStringList getConnectedDeviceIDs() const;
 		virtual QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() = 0;

@@ -2,13 +2,12 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.SettingsModel 1.0
 
 RowLayout {
 	id: baseItem
@@ -23,20 +22,20 @@ RowLayout {
 		id: deleteHistoryConfirmationPopup
 	}
 
-	Image {
+	TintableIcon {
 		id: deleteEntriesButtonImage
 
-		sourceSize.height: 36
-		sourceSize.width: 36
+		sourceSize.height: Style.dimens.small_icon_size
+		sourceSize.width: Style.dimens.small_icon_size
 
-		fillMode: Image.PreserveAspectFit
-		source: "qrc:///images/trash_icon_white.svg"
+		source: "qrc:///images/material_delete.svg"
+		tintColor: Style.color.button_text
 
 		MouseArea {
 			anchors.fill: parent
 
 			//: LABEL ANDROID
-			Accessible.name: qsTr("Delete all entries") + SettingsModel.translationTrigger
+			Accessible.name: qsTr("Delete all entries")
 			Accessible.role: Accessible.Button
 			onClicked: deleteHistoryConfirmationPopup.open()
 		}

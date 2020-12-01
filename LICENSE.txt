@@ -1,4 +1,4 @@
-                                     Lizenzbedingungen
+Lizenzbedingungen
 
 Der Quellcode der AusweisApp2 wird unter der EUPL v1.2 bereitgestellt, mit Ausnahme der Bibliothek OpenSSL, die unter der OpenSSL License / SSLeay License lizensiert ist.
 
@@ -7,8 +7,8 @@ Der Quellcode der AusweisApp2 wird unter der EUPL v1.2 bereitgestellt, mit Ausna
 
 
 
-      OPEN-SOURCE-LIZENZ FÜR DIE EUROPÄISCHE UNION v. 1.2
-                 EUPL © Europäische Union 2007, 2016
+OPEN-SOURCE-LIZENZ FÜR DIE EUROPÄISCHE UNION v. 1.2
+EUPL © Europäische Union 2007, 2016
 
 
 Diese Open-Source-Lizenz für die Europäische Union (»EUPL«) gilt für Werke (im Sinne der nachfolgenden Begriffsbestimmung),
@@ -24,7 +24,7 @@ Lizenziert unter der EUPL
 oder in einer anderen Form zum Ausdruck bringt, dass er es unter der EUPL lizenzieren möchte.
 
 
-                                 1. Begriffsbestimmungen
+1. Begriffsbestimmungen
 
 Für diese Lizenz gelten folgende Begriffsbestimmungen:
 
@@ -59,7 +59,7 @@ Für diese Lizenz gelten folgende Begriffsbestimmungen:
   oder Zugänglichmachung seiner wesentlichen Funktionen für dritte natürliche oder juristische Personen.
 
 
-                                 2. Umfang der Lizenzrechte
+2. Umfang der Lizenzrechte
 
 Der Lizenzgeber erteilt Ihnen hiermit für die Gültigkeitsdauer der am Originalwerk bestehenden Urheberrechte eine
 weltweite, unentgeltliche, nicht ausschließliche, unterlizenzierbare Lizenz, die Sie berechtigt:
@@ -90,7 +90,7 @@ Der Lizenzgeber erteilt dem Lizenznehmer ein nicht ausschließliches, unentgeltl
 sofern dies zur Ausübung der durch die Lizenz erteilten Nutzungsrechte am Werk notwendig ist.
 
 
-                                 3. Zugänglichmachung des Quellcodes
+3. Zugänglichmachung des Quellcodes
 
 
 Der Lizenzgeber kann das Werk entweder als Quellcode oder als ausführbaren Code zur Verfügung stellen. Stellt er es als
@@ -100,7 +100,7 @@ dem Werk beigefügten Urheberrechtshinweis auf einen Speicherort, an dem problem
 Quellcode zugegriffen werden kann, solange der Lizenzgeber das Werk verbreitet oder zugänglich macht.
 
 
-                                 4. Einschränkungen des Urheberrechts
+4. Einschränkungen des Urheberrechts
 
 
 Es ist nicht Zweck dieser Lizenz, Ausnahmen oder Schranken der ausschließlichen Rechte des Urhebers am Werk, die
@@ -108,7 +108,7 @@ dem Lizenznehmer zugutekommen, einzuschränken. Auch die Erschöpfung dieser Rec
 unberührt.
 
 
-                                 5. Pflichten des Lizenznehmers
+5. Pflichten des Lizenznehmers
 
 
 Die Einräumung der oben genannten Rechte ist an mehrere Beschränkungen und Pflichten für den Lizenznehmer
@@ -143,7 +143,7 @@ Lizenzgebers, soweit dies nicht für die angemessene und übliche Beschreibung d
 inhaltlichen Wiedergabe des Urheberrechtshinweises erforderlich ist.
 
 
-                                 6. Urheber und Bearbeiter
+6. Urheber und Bearbeiter
 
 Der ursprüngliche Lizenzgeber gewährleistet, dass er das Urheberrecht am Originalwerk innehat oder dieses an ihn
 lizenziert wurde und dass er befugt ist, diese Lizenz zu erteilen.
@@ -155,7 +155,7 @@ Jedes Mal, wenn Sie die Lizenz annehmen, erteilen Ihnen der ursprüngliche Lizen
 eine Befugnis zur Nutzung ihrer Beiträge zum Werk unter den Bedingungen dieser Lizenz.
 
 
-                                 7. Gewährleistungsausschluss
+7. Gewährleistungsausschluss
 
 Die Arbeit an diesem Werk wird laufend fortgeführt; es wird durch unzählige Bearbeiter ständig verbessert. Das Werk ist
 nicht vollendet und kann daher Fehler (»bugs«) enthalten, die dieser Art der Entwicklung inhärent sind.
@@ -169,7 +169,7 @@ Dieser Gewährleistungsausschluss ist wesentlicher Bestandteil der Lizenz und Be
 Rechten an dem Werk.
 
 
-                                 8. Haftungsausschluss/Haftungsbeschränkung
+8. Haftungsausschluss/Haftungsbeschränkung
 
 Außer in Fällen von Vorsatz oder der Verursachung von Personenschäden haftet der Lizenzgeber nicht für direkte oder
 indirekte, materielle oder immaterielle Schäden irgendwelcher Art, die aus der Lizenz oder der Benutzung des Werks
@@ -179,7 +179,7 @@ Möglichkeit solcher Schäden hingewiesen wurde. Unabhängig davon haftet der Li
 Produkthaftung, soweit die entsprechenden Regelungen auf das Werk anwendbar sind.
 
 
-                                 9. Zusatzvereinbarungen
+9. Zusatzvereinbarungen
 
 Wenn Sie das Werk verbreiten, können Sie Zusatzvereinbarungen schließen, in denen Verpflichtungen oder
 Dienstleistungen festgelegt werden, die mit dieser Lizenz vereinbar sind. Sie dürfen Verpflichtungen indessen nur in
@@ -190,7 +190,7 @@ Gewährleistungsverpflichtung oder Haftungsübernahme Forderungen gegen sie gelt
 Haftungsverpflichtung entsteht.
 
 
-                                 10. Annahme der Lizenz
+10. Annahme der Lizenz
 
 Sie können den Bestimmungen dieser Lizenz zustimmen, indem Sie das Symbol »Lizenz annehmen« unter dem Fenster
 mit dem Lizenztext anklicken oder indem Sie Ihre Zustimmung auf vergleichbare Weise in einer nach anwendbarem
@@ -202,7 +202,7 @@ Artikel 2 dieser Lizenz angeführt ist, wie das Erstellen einer Bearbeitung oder
 des Werks oder dessen Vervielfältigungen.
 
 
-                                 11. Informationspflichten
+11. Informationspflichten
 
 Wenn Sie das Werk verbreiten oder zugänglich machen (beispielsweise, indem Sie es zum Herunterladen von einer
 Website anbieten), müssen Sie über den Vertriebskanal oder das benutzte Verbreitungsmedium der Öffentlichkeit
@@ -211,7 +211,7 @@ ihrer Zugänglichkeit, des Abschlusses des Lizenzvertrags sowie darüber, wie di
 gespeichert und vervielfältigt werden kann, erforderlich sind.
 
 
-                                 12. Beendigung der Lizenz
+12. Beendigung der Lizenz
 
 Die Lizenz und die damit eingeräumten Rechte erlöschen automatisch, wenn der Lizenznehmer gegen die Lizenzbedingungen
 verstößt.
@@ -220,7 +220,7 @@ Ein solches Erlöschen der Lizenz führt nicht zum Erlöschen der Lizenzen von P
 Lizenznehmer unter dieser Lizenz zur Verfügung gestellt worden ist, solange diese Personen die Lizenzbedingungen
 erfüllen.
 
-                                 13. Sonstiges
+13. Sonstiges
 
 Unbeschadet des Artikels 9 stellt die Lizenz die vollständige Vereinbarung der Parteien über das Werk dar.
 
@@ -236,7 +236,7 @@ Alle von der Europäischen Kommission anerkannten Sprachfassungen dieser Lizenz 
 können sich auf die Sprachfassung ihrer Wahl berufen.
 
 
-                                 14. Gerichtsstand
+14. Gerichtsstand
 
 Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
 
@@ -248,7 +248,7 @@ Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
   dem der Lizenzgeber seinen Wohnsitz oder den wirtschaftlichen Mittelpunkt seiner Tätigkeit hat.
 
 
-                                 15. Anwendbares Recht
+15. Anwendbares Recht
 
 Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
 
@@ -259,7 +259,7 @@ Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
   einem Mitgliedstaat der Europäischen Union hat.
 
 
-                                 Anlage
+Anlage
 
 »Kompatible Lizenzen« nach Artikel 5 der EUPL sind:
 
@@ -296,23 +296,23 @@ Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
 
 Anhang
 
-                     Ergänzende Lizenzhinweise
+Ergänzende Lizenzhinweise
 
 Die verwendeten Open-Source-Bibliotheken unterliegen den folgenden Nutzungsbedingungen:
 
 OpenSSL
   Lizenz: OpenSSL license & SSLeay license
-  Version: 1.1.1d
+  Version: 1.1.1h
   Adresse: https://www.openssl.org/
 
 Qt
   Lizenz: LGPL v3
-  Version: 5.12.5
+  Version: 5.15.2
   Adresse: https://www.qt.io/
 
 http_parser
   Lizenz: MIT
-  Version: 2.9.2
+  Version: 2.9.4
   Adresse: https://github.com/nodejs/http-parser/
 
 AndroidX Support Library
@@ -441,7 +441,7 @@ copied and put under another distribution licence
 
 
 
-            GNU LESSER GENERAL PUBLIC LICENSE
+GNU LESSER GENERAL PUBLIC LICENSE
 
 The Qt Toolkit is Copyright (C) 2016 The Qt Company Ltd.
 Contact: http://www.qt.io/licensing/
@@ -453,8 +453,8 @@ Public License, which you can find in the LICENSE.GPLv3 file.
 
 -------------------------------------------------------------------------
 
-            GNU LESSER GENERAL PUBLIC LICENSE
-                Version 3, 29 June 2007
+GNU LESSER GENERAL PUBLIC LICENSE
+Version 3, 29 June 2007
 
 Copyright © 2007 Free Software Foundation, Inc. <http://fsf.org/>
 Everyone is permitted to copy and distribute verbatim copies of this
@@ -646,9 +646,9 @@ IN THE SOFTWARE.
 
 
 
-                                 Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/
+Apache License
+Version 2.0, January 2004
+http://www.apache.org/licenses/
 
    TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 

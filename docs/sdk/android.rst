@@ -20,6 +20,15 @@ external variant.
    The integrated variant is available in jcenter for free.
    If you need enterprise support feel free to contact us.
 
+.. important::
+   Please note that only Android devices that feature Extended Length
+   NFC communication are supported by the SDK.
+   This can be checked via the Android API methods **getMaxTransceiveLength()**
+   and **isExtendedLengthApduSupported()**.
+
+   https://developer.android.com/reference/android/nfc/tech/NfcA
+   https://developer.android.com/reference/android/nfc/tech/IsoDep
+
 
 
 Integrated
@@ -700,7 +709,7 @@ encapsulated in instances of the **Intent** class. In order to process newly
 discovered NFC tags, Intents which are given to the application need to be
 checked for the parcelable NFC extra as shown in the code listing below.
 Subsequently the client is required to send them to the AusweisApp2 SDK by
-calling the **updateNfcTag** method (of) the previously acquired **IAusweisApp2Sdk**
+calling the **updateNfcTag** method of the previously acquired **IAusweisApp2Sdk**
 instance.
 The listing below shows an example for the described process.
 
@@ -740,57 +749,61 @@ As already mentioned under :ref:`android_nfc_tags`, an App Chooser is displayed
 for discovered NFC tags by Android if multiple applications which are able to
 dispatch NFC tags are installed. An application can suppress this App Chooser
 if it registers itself for **foreground dispatching** at runtime. This way NFC
-tags are send directly to the registered application without a chooser being
-displayed. An example implementation of the required steps in order to register
-are shown in code listing below.
+tags are handled directly by the application without a chooser being displayed.
+Subsequently the client is required to send them to the AusweisApp2 SDK by
+calling the **updateNfcTag** method of the previously acquired **IAusweisApp2Sdk**
+instance.
+The required steps to handle NFC tags directly are shown in the code listing below
+by way of example.
 
 
 .. code-block:: java
 
   import android.app.Activity;
   import android.nfc.NfcAdapter;
-  import android.content.Intent;
-  import android.app.PendingIntent;
-  import android.content.IntentFilter;
   import android.nfc.tech.IsoDep;
+  import java.util.Arrays;
+
+  import com.governikus.ausweisapp2.IAusweisApp2Sdk;
 
   class ForegroundDispatcher
   {
     private final Activity mActivity;
     private final NfcAdapter mAdapter;
-    private final PendingIntent mPendingIntent;
-    private final IntentFilter[] mFilters;
-    private final String[][] mTechLists;
+    private final int mFlags;
+    private final NfcAdapter.ReaderCallback mReaderCallback;
 
-    ForegroundDispatcher(Activity pActivity)
+    ForegroundDispatcher(Activity pActivity, final IAusweisApp2Sdk pSdk, final String pSdkSessionID)
     {
       mActivity = pActivity;
       mAdapter = NfcAdapter.getDefaultAdapter(mActivity);
-      Intent intent = new Intent(mActivity, mActivity.getClass()).
-        addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-      mPendingIntent = PendingIntent.getActivity(mActivity, 0, intent, 0);
-
-      mFilters = new IntentFilter[] {
-              new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED)
+      mFlags = NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_NFC_B | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
+      mReaderCallback = new NfcAdapter.ReaderCallback()
+      {
+        public void onTagDiscovered(Tag pTag)
+        {
+          if (Arrays.asList(pTag.getTechList()).contains(IsoDep.class.getName()))
+          {
+            pSdk.updateNfcTag(pSdkSessionID, pTag);
+          }
+        }
       };
-      mTechLists = new String[][] { new String[] {
-              IsoDep.class.getName()
-      } };
     }
 
     void enable()
     {
       if (mAdapter != null)
-        mAdapter.enableForegroundDispatch(mActivity,
-                                          mPendingIntent,
-                                          mFilters,
-                                          mTechLists);
+      {
+        mAdapter.enableReaderMode(mActivity, mReaderCallback, mFlags, null);
+      }
     }
 
     void disable()
     {
       if (mAdapter != null)
-        mAdapter.disableForegroundDispatch(mActivity);
+      {
+        mAdapter.disableReaderMode(mActivity);
+      }
     }
   }
 

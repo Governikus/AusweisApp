@@ -67,7 +67,7 @@ void DiagnosisConnectionTest::onSocketConnectionTestWithProxyError(QAbstractSock
 void DiagnosisConnectionTest::onSocketConnectionTestWithoutProxyDone()
 {
 	mConnectionTestWithoutProxySuccessful = true;
-	mTcpSocketWithProxy.disconnectFromHost();
+	mTcpSocketWithoutProxy.disconnectFromHost();
 	mConnectionTestWithoutProxyDone = true;
 	checkIfAllProcessesDone();
 }

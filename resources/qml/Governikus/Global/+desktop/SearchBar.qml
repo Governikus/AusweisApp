@@ -2,14 +2,13 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 
 
 GTextField {
@@ -29,9 +28,9 @@ GTextField {
 
 	textStyle: Style.text.normal
 	//: LABEL DESKTOP_QML
-	placeholderText: qsTr("Search") + SettingsModel.translationTrigger
+	placeholderText: qsTr("Search")
 
-	Image {
+	TintableIcon {
 		id: glassIcon
 
 		sourceSize.height: parent.height - 2 * anchors.leftMargin
@@ -40,24 +39,26 @@ GTextField {
 		anchors.leftMargin: parent.height / 8
 		anchors.verticalCenter: parent.verticalCenter
 
-		source: "qrc:///images/search_icon.svg"
+		tintColor: Style.color.primary_text
+		source: "qrc:///images/material_search.svg"
 	}
 
-	Image {
+	TintableIcon {
 		id: iconItem
 
 		visible: parent.displayText !== ""
-		height: parent.height - 2 * anchors.rightMargin
-		width: height
+		sourceSize.height: parent.height - 2 * anchors.rightMargin
+		sourceSize.width: height
 		anchors.right: parent.right
 		anchors.rightMargin: parent.height / 8
 		anchors.verticalCenter: parent.verticalCenter
 
 		activeFocusOnTab: true
 		Accessible.role: Accessible.Button
-		Accessible.name: qsTr("Clear") + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Clear")
 
-		source: "qrc:///images/search_cancel.svg"
+		tintColor: Style.color.accent
+		source: "qrc:///images/material_close.svg"
 		Keys.onSpacePressed: searchField.clear()
 
 		MouseArea {

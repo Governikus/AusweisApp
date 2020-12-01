@@ -27,7 +27,7 @@ class ResourceLoader
 		static ResourceLoader& getInstance();
 		void init();
 		void shutdown();
-		bool isLoaded();
+		bool isLoaded() const;
 };
 
 } // namespace governikus

@@ -2,13 +2,12 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ReaderDriverModel 1.0
 import Governikus.Type.ReaderScanEnabler 1.0
 import Governikus.Type.ReaderPlugIn 1.0
@@ -32,7 +31,7 @@ Column {
 		activeFocusOnTab: true
 
 		textStyle: Style.text.header_accent
-		text: qsTr("Connected USB card reader") + SettingsModel.translationTrigger
+		text: qsTr("Connected USB card reader")
 
 		FocusFrame {
 			borderColor: Style.color.focus_indicator
@@ -90,7 +89,7 @@ Column {
 		spacing: Constants.text_spacing
 
 		TintableIcon {
-			source: "qrc:/images/info_filled.svg"
+			source: "qrc:/images/info.svg"
 			sourceSize.height: Style.dimens.icon_size
 			tintColor: Style.color.accent
 		}
@@ -105,7 +104,7 @@ Column {
 
 			verticalAlignment: Text.AlignBottom
 			textStyle: Style.text.hint
-			text: qsTr("After connecting a new card reader it may take a few seconds to recognize the driver. It may be necessary to restart your system after installing the driver. Only supported and connected card reader are shown here. %1").arg(ReaderDriverModel.lastUpdatedInformation) + SettingsModel.translationTrigger
+			text: qsTr("After connecting a new card reader it may take a few seconds to recognize the driver. It may be necessary to restart your system after installing the driver. Only supported and connected card reader are shown here. %1").arg(ReaderDriverModel.lastUpdatedInformation)
 
 			FocusFrame {
 				borderColor: Style.color.focus_indicator

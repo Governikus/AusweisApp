@@ -8,7 +8,6 @@
 #include "Randomizer.h"
 
 #include <openssl/bio.h>
-#include <openssl/bn.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
@@ -31,15 +30,9 @@ struct OpenSslCustomDeleter
 	}
 
 
-	static inline void cleanup(BIGNUM* pData)
+	static inline void cleanup(EVP_PKEY_CTX* pData)
 	{
-		BN_free(pData);
-	}
-
-
-	static inline void cleanup(RSA* pData)
-	{
-		RSA_free(pData);
+		EVP_PKEY_CTX_free(pData);
 	}
 
 
@@ -105,31 +98,34 @@ const QSslCertificate& KeyPair::getCertificate() const
 
 EVP_PKEY* KeyPair::createKey()
 {
-	QScopedPointer<EVP_PKEY, OpenSslCustomDeleter> pkey(EVP_PKEY_new());
-	QScopedPointer<RSA, OpenSslCustomDeleter> rsa(RSA_new());
-	QScopedPointer<BIGNUM, OpenSslCustomDeleter> exponent(BN_new());
+	QScopedPointer<EVP_PKEY_CTX, OpenSslCustomDeleter> pkeyCtx(EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, nullptr));
 
-	if (pkey.isNull() || rsa.isNull() || exponent.isNull())
+	if (pkeyCtx.isNull())
 	{
-		qCCritical(settings) << "Cannot create EVP_PKEY/RSA/BIGNUM structure";
+		qCCritical(settings) << "Cannot create EVP_PKEY_CTX";
 		return nullptr;
 	}
 
-	BN_set_word(exponent.data(), RSA_F4);
-	if (!RSA_generate_key_ex(rsa.data(), 2048, exponent.data(), nullptr))
+	if (!EVP_PKEY_keygen_init(pkeyCtx.data()))
+	{
+		qCCritical(settings) << "Cannot init rsa key ctx";
+		return nullptr;
+	}
+
+	if (!EVP_PKEY_CTX_set_rsa_keygen_bits(pkeyCtx.data(), 2048))
+	{
+		qCCritical(settings) << "Cannot generate rsa key bits";
+		return nullptr;
+	}
+
+	EVP_PKEY* pkey = nullptr;
+	if (!EVP_PKEY_keygen(pkeyCtx.data(), &pkey))
 	{
 		qCCritical(settings) << "Cannot generate rsa key";
 		return nullptr;
 	}
 
-	if (!EVP_PKEY_assign(pkey.data(), EVP_PKEY_RSA, rsa.data()))
-	{
-		qCCritical(settings) << "Cannot assign rsa key";
-		return nullptr;
-	}
-
-	rsa.take(); // rsa will be managed by pkey!
-	return pkey.take();
+	return pkey;
 }
 
 

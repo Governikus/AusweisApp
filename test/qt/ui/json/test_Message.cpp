@@ -7,6 +7,7 @@
 #include "MessageDispatcher.h"
 
 #include "InternalActivationContext.h"
+#include "ReaderManager.h"
 #include "VersionInfo.h"
 
 #include <QSignalSpy>
@@ -20,6 +21,18 @@ class test_Message
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			Env::getSingleton<ReaderManager>()->init();
+		}
+
+
+		void cleanupTestCase()
+		{
+			Env::getSingleton<ReaderManager>()->shutdown();
+		}
+
+
 		void invalidCrap()
 		{
 			QByteArray msg("crap");
@@ -94,7 +107,7 @@ class test_Message
 		void createMsgHandlerReader()
 		{
 			MessageDispatcher dispatcher;
-			const auto& msg = dispatcher.createMsgReader("dummy reader");
+			const auto& msg = dispatcher.createMsgReader(ReaderInfo("dummy reader"));
 			QCOMPARE(msg, QByteArray("{\"attached\":false,\"msg\":\"READER\",\"name\":\"dummy reader\"}"));
 		}
 
@@ -104,7 +117,7 @@ class test_Message
 			MessageDispatcher dispatcher;
 			dispatcher.init(QSharedPointer<WorkflowContext>(new WorkflowContext()));
 
-			dispatcher.mContext.getWorkflowContext()->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
+			dispatcher.mContext.getContext()->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
 			const auto& msg = dispatcher.processStateChange(QStringLiteral("StateEnterPacePassword"));
 			QCOMPARE(msg, QByteArray("{\"msg\":\"ENTER_PIN\"}"));
 		}
@@ -138,7 +151,7 @@ class test_Message
 			auto expectedBadState = QByteArray("{\"error\":\"SET_CAN\",\"msg\":\"BAD_STATE\"}");
 			QCOMPARE(dispatcher.processCommand(msg), expectedBadState);
 
-			dispatcher.mContext.getWorkflowContext()->setEstablishPaceChannelType(PacePasswordId::PACE_CAN);
+			dispatcher.mContext.getContext()->setEstablishPaceChannelType(PacePasswordId::PACE_CAN);
 			QVERIFY(!dispatcher.processStateChange(QStringLiteral("StateEnterPacePassword")).isEmpty());
 			QVERIFY(!context->isStateApproved());
 

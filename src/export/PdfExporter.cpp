@@ -124,9 +124,20 @@ bool PdfExporter::exportHistory()
 		addTableRow({dateTimeEntry, tr("Provider:"), entry.getSubjectName()});
 		//: LABEL ALL_PLATFORMS
 		addTableRow({QString(), tr("Purpose:"), entry.getPurpose()});
-		const auto& data = AccessRoleAndRightsUtil::joinFromTechnicalName(entry.getRequestedData());
-		//: LABEL ALL_PLATFORMS
-		addTableRow({QString(), tr("Data:"), data});
+
+		const auto& readData = AccessRoleAndRightsUtil::joinFromTechnicalName(entry.getRequestedData(), AccessRoleAndRightsUtil::READ);
+		if (!readData.isEmpty())
+		{
+			//: LABEL ALL_PLATFORMS
+			addTableRow({QString(), tr("Read access:"), readData});
+		}
+
+		const auto& writtenData = AccessRoleAndRightsUtil::joinFromTechnicalName(entry.getRequestedData(), AccessRoleAndRightsUtil::WRITE);
+		if (!writtenData.isEmpty())
+		{
+			//: LABEL ALL_PLATFORMS
+			addTableRow({QString(), tr("Write access (update):"), writtenData});
+		}
 	}
 	closeTable();
 

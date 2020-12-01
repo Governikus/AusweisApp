@@ -1,63 +1,126 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.1.0)
 
-FUNCTION(IS_SIGNED _result _file)
-	EXECUTE_PROCESS(COMMAND "@SIGNTOOL_CMD@" verify /pa ${file}
-					OUTPUT_VARIABLE _output
-					ERROR_QUIET
-					WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+if(APPLE AND NOT IOS)
+	string(FIND "${CMAKE_BINARY_DIR}" "DragNDrop" IS_DMG)
+	if(IS_DMG EQUAL -1)
+		message("Using AppStore certificate")
+		set(SIGNTOOL_PARAMS -s "3rd Party Mac Developer Application: Governikus GmbH & Co. KG (G7EQCJU4BR)" @SIGNTOOL_PARAMS@)
+	else()
+		message("Using Distribution certificate")
+		set(SIGNTOOL_PARAMS -s "Developer ID Application: Governikus GmbH & Co. KG (G7EQCJU4BR)" @SIGNTOOL_PARAMS@)
+	endif()
+else()
+	set(SIGNTOOL_PARAMS @SIGNTOOL_PARAMS@)
+endif()
 
-	IF("${_output}" MATCHES "Successfully verified: ")
-		SET(${_result} TRUE PARENT_SCOPE)
-	ELSE()
-		SET(${_result} FALSE PARENT_SCOPE)
-	ENDIF()
-ENDFUNCTION()
+function(IS_SIGNED _result _file)
+	if(APPLE)
+		execute_process(COMMAND "@SIGNTOOL_CMD@" ${SIGNTOOL_PARAMS} --dryrun ${_file}
+						ERROR_VARIABLE _output
+						OUTPUT_QUIET
+						WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+		set(_success "is already signed")
+
+	elseif(WIN32)
+		execute_process(COMMAND "@SIGNTOOL_CMD@" verify /pa ${file}
+						OUTPUT_VARIABLE _output
+						ERROR_QUIET
+						WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+		set(_success "Successfully verified: ")
+
+	else()
+		message(FATAL_ERROR "Platform not supported")
+	endif()
+
+	if("${_output}" MATCHES "${_success}")
+		set(${_result} TRUE PARENT_SCOPE)
+	else()
+		set(${_result} FALSE PARENT_SCOPE)
+	endif()
+endfunction()
 
 
-FUNCTION(CREATE_PARAMETER _output_param _output_remain _input)
-	SET(param)
-	SET(remain)
+function(CREATE_PARAMETER _output_param _output_remain _input)
+	set(param)
+	set(remain)
 
-	FOREACH(file ${_input})
-		UNSET(signed)
+	foreach(file ${_input})
+		unset(signed)
 		IS_SIGNED(signed "${file}")
-		IF(signed)
-			MESSAGE(STATUS "File is already signed: ${file}")
-			CONTINUE()
-		ENDIF()
+		if(signed)
+			message(STATUS "File is already signed: ${file}")
+			continue()
+		endif()
 
 		# Avoid max parameter length
 		# Windows has a limit of 8191
-		STRING(LENGTH "${param} ${file}" len)
-		IF(len LESS 7500)
-			LIST(APPEND param ${file})
-		ELSE()
-			LIST(APPEND remain ${file})
-		ENDIF()
-	ENDFOREACH()
+		string(LENGTH "${param} ${file}" len)
+		if(len LESS 7500)
+			list(APPEND param ${file})
+		else()
+			list(APPEND remain ${file})
+		endif()
+	endforeach()
 
-	SET(${_output_param} ${param} PARENT_SCOPE)
-	SET(${_output_remain} ${remain} PARENT_SCOPE)
-ENDFUNCTION()
-
-
-SET(FILE_EXTENSIONS *.dll ${SIGN_EXT})
-MESSAGE(STATUS "Sign files in directory: ${CMAKE_BINARY_DIR}")
-MESSAGE(STATUS "Sign file extensions: ${FILE_EXTENSIONS}")
-FILE(GLOB_RECURSE FILES RELATIVE "${CMAKE_BINARY_DIR}" ${FILE_EXTENSIONS})
-MESSAGE(STATUS "Sign files: ${FILES}")
+	set(${_output_param} ${param} PARENT_SCOPE)
+	set(${_output_remain} ${remain} PARENT_SCOPE)
+endfunction()
 
 
-WHILE(FILES)
+
+if(APPLE)
+	set(FILE_EXTENSIONS *.dylib ${SIGN_EXT})
+elseif(WIN32)
+	set(FILE_EXTENSIONS *.dll ${SIGN_EXT})
+else()
+	message(FATAL_ERROR "Platform not supported")
+endif()
+
+message(STATUS "Sign in directory: ${CMAKE_BINARY_DIR}")
+message(STATUS "Sign extensions: ${FILE_EXTENSIONS}")
+file(GLOB_RECURSE FILES RELATIVE "${CMAKE_BINARY_DIR}" ${FILE_EXTENSIONS})
+if(APPLE)
+	file(GLOB_RECURSE DIRECTORIES LIST_DIRECTORIES true RELATIVE "${CMAKE_BINARY_DIR}" *)
+	foreach(entry ${DIRECTORIES})
+		if(${entry} MATCHES ".framework$")
+			list(APPEND FILES ${entry})
+		endif()
+	endforeach()
+endif()
+
+message(STATUS "Sign: ${FILES}")
+
+
+while(FILES)
 	CREATE_PARAMETER(param remain "${FILES}")
 
-	IF(param)
-		MESSAGE(STATUS "Call signtool with files: ${param}")
-		EXECUTE_PROCESS(COMMAND "@SIGNTOOL_CMD@" @SIGNTOOL_PARAMS@ ${param} WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
-	ELSE()
-		MESSAGE(WARNING "Every file is already signed")
-		BREAK()
-	ENDIF()
+	if(param)
+		message(STATUS "Call signtool with files: ${param}")
+		execute_process(COMMAND "@SIGNTOOL_CMD@" ${SIGNTOOL_PARAMS} ${param} RESULT_VARIABLE _result  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+		if(NOT ${_result} EQUAL 0)
+			message(FATAL_ERROR "Cannot sign: ${param}")
+		endif()
+	else()
+		message(WARNING "Every file is already signed")
+		break()
+	endif()
 
-	SET(FILES ${remain})
-ENDWHILE()
+	set(FILES ${remain})
+endwhile()
+
+if(APPLE AND NOT IOS)
+	set(BUNDLE_APPLE_CODESIGN_PARAMETER -o runtime --force ${SIGNTOOL_PARAMS})
+	if(OSX_TIMESTAMP)
+		set(BUNDLE_APPLE_CODESIGN_PARAMETER ${BUNDLE_APPLE_CODESIGN_PARAMETER} --timestamp)
+	else()
+		set(BUNDLE_APPLE_CODESIGN_PARAMETER ${BUNDLE_APPLE_CODESIGN_PARAMETER} --timestamp=none)
+	endif()
+
+	file(GLOB_RECURSE AUTOSTART_HELPER_BINARY ${CMAKE_BINARY_DIR}/*/@AUTOSTART_HELPER_FULL_NAME@)
+	message("Signing autostart helper bundle: ${AUTOSTART_HELPER_BINARY}")
+	execute_process(COMMAND @SIGNTOOL_CMD@ ${BUNDLE_APPLE_CODESIGN_PARAMETER} --entitlements @PACKAGING_DIR@/macos/autostart_helper/@AUTOSTART_HELPER_NAME@.entitlements -i @AUTOSTART_HELPER_BUNDLE_ID@ ${AUTOSTART_HELPER_BINARY})
+
+	file(GLOB_RECURSE APP_BINARY ${CMAKE_BINARY_DIR}/*/@PROJECT_NAME@)
+	message("Signing app bundle: ${APP_BINARY}")
+	execute_process(COMMAND @SIGNTOOL_CMD@ ${BUNDLE_APPLE_CODESIGN_PARAMETER} --entitlements @PACKAGING_DIR@/macos/@PROJECT_NAME@.entitlements -i @BUNDLE_IDENTIFIER@ ${APP_BINARY})
+endif()

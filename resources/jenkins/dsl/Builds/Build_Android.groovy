@@ -42,7 +42,7 @@ j.with
 		androidLint('build/dist/build/reports/lint-results.xml')
 		{
 			thresholds(
-				unstableTotal: [all: 1]
+				unstableTotal: [all: 0]
 			)
 		}
 	}
@@ -89,6 +89,7 @@ j.with
 
 		shell("cd build/${ARCH}; make \${MAKE_FLAGS} install")
 		shell("cd build/${ARCH}; make aar")
+		shell("cd build/dist; cmake -DCMD=DEPLOY_NEXUS -P \$WORKSPACE/source/cmake/cmd.cmake")
 	}
 
 	publishers {

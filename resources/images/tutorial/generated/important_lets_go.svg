@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="550px" height="400px" viewBox="0 0 550 400">
-  <g fill="#fb7a59">
-    <path d="M275 0 L 475 200 275 400 75 200Z"/>
-  </g>
-  <rect x="0" y="110" width="550" height="180" fill="#fb7a59" />
-  <image x="180" y="60" width="173px" height="149px" xlink:href=":/images/tutorial/check.svg"/>
-</svg>

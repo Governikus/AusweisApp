@@ -37,7 +37,7 @@ DiagnosisModel::~DiagnosisModel()
 
 QSharedPointer<SectionModel> DiagnosisModel::createAusweisApp2Section()
 {
-	QSharedPointer<SectionModel> aa2Section(new SectionModel);
+	QSharedPointer<SectionModel> aa2Section(new SectionModel());
 
 	BuildHelper::processInformationHeader([aa2Section](const QString& pKey, const QString& pValue){
 				aa2Section->addItem(pKey, pValue);
@@ -83,29 +83,25 @@ void DiagnosisModel::createAntiVirusAndFirewallSection()
 	mFirewallSection = QSharedPointer<SectionModel>::create();
 	mCombinedAntivirusFirewallSection = QSharedPointer<SectionModel>::create();
 
-#ifdef Q_OS_WIN
 	mAntivirusSection->addTitleWithoutContent(tr("Antivirus information"));
+#ifdef Q_OS_WIN
 	mAntivirusSection->addItemWithoutTitle(tr("Diagnosis is running..."));
 	mAntivirusSectionRunning = true;
-
-	mFirewallSection->addTitleWithoutContent(tr("Firewall information"));
-	mFirewallSection->addItemWithoutTitle(tr("Diagnosis is running..."));
-	mFirewallSectionRunning = true;
-	Q_EMIT fireRunningChanged();
 #else
 	mAntivirusSection->addItemWithoutTitle(tr("No Antivirus information available on this platform."));
+#endif
+
+	mFirewallSection->addTitleWithoutContent(tr("Firewall information"));
+#ifdef Q_OS_WIN
+	mFirewallSection->addItemWithoutTitle(tr("Diagnosis is running..."));
+	mFirewallSectionRunning = true;
+#else
 	mFirewallSection->addItemWithoutTitle(tr("No Firewall information available on this platform."));
 #endif
-}
 
-
-void DiagnosisModel::emitDataChangedForSection(const QSharedPointer<ContentItem>& pItem) const
-{
-	QSharedPointer<SectionModel> sectionModel = pItem->mSection;
-	if (sectionModel)
-	{
-		sectionModel->emitDataChangedForItem(pItem);
-	}
+#ifdef Q_OS_WIN
+	Q_EMIT fireRunningChanged();
+#endif
 }
 
 
@@ -117,7 +113,7 @@ void DiagnosisModel::connectSignals()
 	connect(mContext.data(), &DiagnosisContext::fireNetworkInfoChanged, this, &DiagnosisModel::onNetworkInfoChanged);
 	connect(&mConnectionTest, &DiagnosisConnectionTest::fireConnectionTestDone, this, &DiagnosisModel::onConnectionTestDone);
 	connect(mContext.data(), &DiagnosisContext::pcscInfoChanged, this, &DiagnosisModel::onPcscInfoChanged);
-	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	connect(&settings, &RemoteServiceSettings::fireTrustedRemoteInfosChanged, this, &DiagnosisModel::onRemoteInfosChanged);
 	connect(mContext.data(), &DiagnosisContext::readerInfosChanged, this, &DiagnosisModel::onReaderInfosChanged);
 
@@ -139,7 +135,7 @@ void DiagnosisModel::disconnectSignals()
 	disconnect(mContext.data(), &DiagnosisContext::fireNetworkInfoChanged, this, &DiagnosisModel::onNetworkInfoChanged);
 	disconnect(&mConnectionTest, &DiagnosisConnectionTest::fireConnectionTestDone, this, &DiagnosisModel::onConnectionTestDone);
 	disconnect(mContext.data(), &DiagnosisContext::pcscInfoChanged, this, &DiagnosisModel::onPcscInfoChanged);
-	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	disconnect(&settings, &RemoteServiceSettings::fireTrustedRemoteInfosChanged, this, &DiagnosisModel::onRemoteInfosChanged);
 	disconnect(mContext.data(), &DiagnosisContext::readerInfosChanged, this, &DiagnosisModel::onReaderInfosChanged);
 
@@ -212,7 +208,7 @@ QString DiagnosisModel::getAsPlaintext() const
 #ifdef Q_OS_WIN
 	static const QString endl = QStringLiteral("\r\n");
 #else
-	static const QString endl = QStringLiteral("\n");
+	static const QString endl(QLatin1Char('\n'));
 #endif
 
 	QStringList modelPlaintext;
@@ -227,7 +223,7 @@ QString DiagnosisModel::getAsPlaintext() const
 }
 
 
-QString DiagnosisModel::boolToString(bool pBoolean)
+QString DiagnosisModel::boolToString(bool pBoolean) const
 {
 	return pBoolean ? tr("Yes") : tr("No");
 }
@@ -252,7 +248,7 @@ void DiagnosisModel::onTimestampChanged()
 		mTimestampItem->mContent = timestamp;
 	}
 
-	emitDataChangedForSection(mTimestampItem);
+	mSections.at(0).second->emitDataChangedForItem(mTimestampItem);
 }
 
 
@@ -292,7 +288,7 @@ void DiagnosisModel::onNetworkInfoChanged()
 			}
 		}
 
-		mNetworkInterfaceSection->addItem(iface.humanReadableName(), interfaceInfos.join(QStringLiteral("\n")));
+		mNetworkInterfaceSection->addItem(iface.humanReadableName(), interfaceInfos.join(QLatin1Char('\n')));
 	}
 
 	mCombinedNetworkSection->replaceWithSections({mNetworkConnectionSection, mNetworkInterfaceSection});
@@ -343,7 +339,7 @@ void DiagnosisModel::onConnectionTestDone()
 		proxyInfo << tr("Connection test without proxy: Failed");
 	}
 
-	mNetworkConnectionSection->addItem(tr("Proxy information"), proxyInfo.join(QStringLiteral("\n")));
+	mNetworkConnectionSection->addItem(tr("Proxy information"), proxyInfo.join(QLatin1Char('\n')));
 	mCombinedNetworkSection->replaceWithSections({mNetworkConnectionSection, mNetworkInterfaceSection});
 }
 
@@ -371,7 +367,7 @@ void DiagnosisModel::onAntivirusInformationChanged()
 			}
 			avInfo << tr("Executable path: %1").arg(info->getExePath());
 			auto antivirusName = info->getDisplayName();
-			mAntivirusSection->addItem(antivirusName, avInfo.join(QStringLiteral("\n")));
+			mAntivirusSection->addItem(antivirusName, avInfo.join(QLatin1Char('\n')));
 		}
 	}
 
@@ -422,7 +418,7 @@ void DiagnosisModel::onFirewallInformationReady()
 			firewallInfos << tr("Enabled: %1").arg(enabled);
 			firewallInfos << tr("Up to date: %1").arg(uptodate);
 		}
-		mFirewallSection->addItem(tr("Firewalls from third party vendors"), firewallInfos.join(QStringLiteral("\n")));
+		mFirewallSection->addItem(tr("Firewalls from third party vendors"), firewallInfos.join(QLatin1Char('\n')));
 	}
 
 	QStringList windowsFirewallSettings;
@@ -438,7 +434,7 @@ void DiagnosisModel::onFirewallInformationReady()
 	windowsFirewallSettings << tr("Exists: %1").arg(secondRuleExists);
 	windowsFirewallSettings << tr("Enabled: %1").arg(secondRuleEnabled);
 
-	mFirewallSection->addItem(tr("Windows firewall rules"), windowsFirewallSettings.join(QStringLiteral("\n")));
+	mFirewallSection->addItem(tr("Windows firewall rules"), windowsFirewallSettings.join(QLatin1Char('\n')));
 
 	QStringList windowsFirewallProfiles;
 	auto firewallProfiles = mFirewallDetection.getFirewallProfiles();
@@ -449,7 +445,7 @@ void DiagnosisModel::onFirewallInformationReady()
 		windowsFirewallProfiles << tr("Enabled: %1").arg(enabled);
 	}
 
-	mFirewallSection->addItem(tr("Windows firewall profiles"), windowsFirewallProfiles.join(QStringLiteral("\n")));
+	mFirewallSection->addItem(tr("Windows firewall profiles"), windowsFirewallProfiles.join(QLatin1Char('\n')));
 
 	mCombinedAntivirusFirewallSection->replaceWithSections({mAntivirusSection, mFirewallSection});
 	Q_EMIT fireRunningChanged();
@@ -482,7 +478,7 @@ void DiagnosisModel::onPcscInfoChanged()
 	}
 	if (!pcscInfo.empty())
 	{
-		mPcscSection->addItem(tr("Components"), pcscInfo.join(QStringLiteral("\n")));
+		mPcscSection->addItem(tr("Components"), pcscInfo.join(QLatin1Char('\n')));
 	}
 
 	pcscInfo.clear();
@@ -495,7 +491,7 @@ void DiagnosisModel::onPcscInfoChanged()
 	}
 	if (!pcscInfo.empty())
 	{
-		mPcscSection->addItem(tr("Driver"), pcscInfo.join(QStringLiteral("\n")));
+		mPcscSection->addItem(tr("Driver"), pcscInfo.join(QLatin1Char('\n')));
 	}
 
 	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
@@ -565,7 +561,7 @@ void DiagnosisModel::onReaderInfosChanged()
 			infoList << tr("Retry counter: %1").arg(info.getRetryCounter());
 		}
 
-		mCardReaderSection->addItem(info.getName(), infoList.join(QStringLiteral("\n")));
+		mCardReaderSection->addItem(info.getName(), infoList.join(QLatin1Char('\n')));
 	}
 
 	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
@@ -605,146 +601,4 @@ void DiagnosisModel::reloadContent()
 	connectSignals();
 
 	endResetModel();
-}
-
-
-SectionModel::SectionModel(QObject* pParent)
-	: QAbstractListModel(pParent)
-{
-
-}
-
-
-QVariant SectionModel::data(const QModelIndex& pIndex, int pRole) const
-{
-	const int row = pIndex.row();
-	if (!pIndex.isValid() || row >= mContentItems.size())
-	{
-		return QVariant();
-	}
-
-	static const QString endl = QStringLiteral("\n");
-
-	QSharedPointer<ContentItem> item = mContentItems.at(row);
-	switch (pRole)
-	{
-		case Qt::DisplayRole:
-			if (item->mTitle.isEmpty())
-			{
-				return item->mContent;
-			}
-			else
-			{
-				return item->mTitle + endl + item->mContent;
-			}
-
-		case TitleRole:
-			return item->mTitle;
-
-		case ContentRole:
-			return item->mContent;
-
-		default:
-			return QVariant();
-	}
-}
-
-
-int SectionModel::rowCount(const QModelIndex& pParent) const
-{
-	Q_UNUSED(pParent)
-	return mContentItems.size();
-}
-
-
-QHash<int, QByteArray> SectionModel::roleNames() const
-{
-	QHash<int, QByteArray> roles;
-	roles.insert(Qt::DisplayRole, QByteArrayLiteral("display"));
-	roles.insert(TitleRole, QByteArrayLiteral("title"));
-	roles.insert(ContentRole, QByteArrayLiteral("content"));
-	return roles;
-}
-
-
-void SectionModel::addItem(const QString& pTitle, const QString& pContent)
-{
-	addItem(QSharedPointer<ContentItem>::create(pTitle, pContent));
-}
-
-
-void SectionModel::addItem(const QSharedPointer<ContentItem>& pContentItem)
-{
-	beginInsertRows(index(0), mContentItems.size(), mContentItems.size());
-	mContentItems.append(pContentItem);
-	pContentItem->mSection = sharedFromThis();
-	endInsertRows();
-}
-
-
-void SectionModel::addItemWithoutTitle(const QString& pContent)
-{
-	addItem(QString(), pContent);
-}
-
-
-void SectionModel::addTitleWithoutContent(const QString& pTitle)
-{
-	addItem(pTitle, QString());
-}
-
-
-void SectionModel::removeAllItems()
-{
-	if (!mContentItems.empty())
-	{
-		beginRemoveRows(index(0), 0, mContentItems.size() - 1);
-		mContentItems.clear();
-		endRemoveRows();
-	}
-}
-
-
-void SectionModel::emitDataChangedForItem(const QSharedPointer<ContentItem>& pItem)
-{
-	QModelIndex itemIndex = index(mContentItems.indexOf(pItem));
-	Q_EMIT dataChanged(itemIndex, itemIndex);
-}
-
-
-void SectionModel::replaceWithSections(QVector<QSharedPointer<SectionModel> > pSections)
-{
-	beginResetModel();
-	removeAllItems();
-
-	for (const auto& section : qAsConst(pSections))
-	{
-		const auto& sectionItems = section->mContentItems;
-		for (const auto& item : sectionItems)
-		{
-			addItem(item);
-		}
-	}
-
-	endResetModel();
-}
-
-
-QStringList SectionModel::getAsPlaintext(const QString& pPrependString) const
-{
-	QStringList sectionPlaintext;
-	for (const auto& item : qAsConst(mContentItems))
-	{
-		if (!item->mTitle.isEmpty())
-		{
-			sectionPlaintext << pPrependString + item->mTitle;
-		}
-
-		if (!item->mContent.isEmpty())
-		{
-			sectionPlaintext << pPrependString + item->mContent;
-		}
-	}
-
-	return sectionPlaintext;
 }

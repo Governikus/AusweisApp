@@ -5,8 +5,8 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppGlobal)
 
-TARGET_LINK_LIBRARIES(AusweisAppGlobal Qt5::Core OpenSSL::Crypto ${OSX_SECURITY})
+target_link_libraries(AusweisAppGlobal ${Qt}::Core OpenSSL::Crypto ${OSX_SECURITY})
 
-IF(ANDROID)
-	TARGET_LINK_LIBRARIES(AusweisAppGlobal Qt5::AndroidExtras)
-ENDIF()
+if(ANDROID)
+	target_link_libraries(AusweisAppGlobal ${Qt}::AndroidExtras)
+endif()

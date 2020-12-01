@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "ConnectRequest.h"
 #include "RemoteConnector.h"
 
 #include <QTimer>
@@ -13,8 +14,6 @@
 
 namespace governikus
 {
-
-class ConnectRequest;
 
 class RemoteConnectorImpl
 	: public RemoteConnector
@@ -33,7 +32,7 @@ class RemoteConnectorImpl
 		void onConnectionTimeout(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor);
 
 	public:
-		RemoteConnectorImpl(int pConnectTimeoutMs = 5000);
+		explicit RemoteConnectorImpl(int pConnectTimeoutMs = 5000);
 		virtual ~RemoteConnectorImpl() override = default;
 
 		virtual void onConnectRequest(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, const QString& pPsk) override;

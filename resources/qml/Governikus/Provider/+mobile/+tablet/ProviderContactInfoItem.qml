@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -14,20 +14,21 @@ Rectangle {
 	property alias imageSource: image.source
 	property alias itemText: text.text
 	property url link
-	property int sizeRecudctor: 0
+	property int sizeReductor: 0
 
 	height: text.height + 20
 
 	Accessible.role: Accessible.Link
 	Accessible.name: ApplicationModel.stripHtmlTags(itemText)
 
-	Image {
+	TintableIcon {
 		id: image
-		width: 25 - baseItem.sizeRecudctor
-		height: width
+
+		width: 25 - baseItem.sizeReductor
 		anchors.left: parent.left
 		anchors.verticalCenter: parent.verticalCenter
-		fillMode: Image.PreserveAspectFit
+
+		tintColor: Style.color.button_text
 	}
 
 	GText {
@@ -40,7 +41,7 @@ Rectangle {
 
 		linkColor: color
 		textStyle: Style.text.normal_inverse
-		font.pixelSize: Style.text.normal_inverse.textSize - baseItem.sizeRecudctor
+		font.pixelSize: Style.text.normal_inverse.textSize - baseItem.sizeReductor
 	}
 
 	MouseArea {

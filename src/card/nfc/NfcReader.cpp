@@ -2,11 +2,15 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-#include "CardConnectionWorker.h"
 #include "NfcReader.h"
+
+#include "CardConnectionWorker.h"
 
 #include <QLoggingCategory>
 
+#if defined(Q_OS_ANDROID)
+#include <QtAndroid>
+#endif
 
 using namespace governikus;
 
@@ -16,9 +20,13 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 
 Reader::CardEvent NfcReader::updateCard()
 {
-	Q_EMIT fireNfcAdapterStateChanged(mNfManager.isAvailable());
-
 	return CardEvent::NONE;
+}
+
+
+void NfcReader::adapterStateChanged(QNearFieldManager::AdapterState pState)
+{
+	Q_EMIT fireNfcAdapterStateChanged(pState == QNearFieldManager::AdapterState::Online);
 }
 
 
@@ -40,14 +48,19 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 	mReaderInfo.setMaxApduLength(length);
 	if (!mReaderInfo.sufficientApduLength())
 	{
-		Q_EMIT fireReaderPropertiesUpdated(getName());
+		Q_EMIT fireReaderPropertiesUpdated(mReaderInfo);
 		qCDebug(card_nfc) << "ExtendedLengthApduSupport missing. MaxTransceiveLength:" << length;
 	}
 
 	mCard.reset(new NfcCard(pTarget));
+	connect(mCard.data(), &NfcCard::fireSetProgressMessage, this, &NfcReader::setProgressMessage);
 	QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
 	CardInfoFactory::create(cardConnection, mReaderInfo);
-	Q_EMIT fireCardInserted(getName());
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+	//: INFO IOS Feedback when a new ID card has been detected
+	mNfManager.setUserInformation(tr("ID card detected. Please do not move the device!"));
+#endif
+	Q_EMIT fireCardInserted(mReaderInfo);
 }
 
 
@@ -58,29 +71,74 @@ void NfcReader::targetLost(QNearFieldTarget* pTarget)
 	{
 		mCard.reset();
 		mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
-		Q_EMIT fireCardRemoved(getName());
+		Q_EMIT fireCardRemoved(mReaderInfo);
 	}
 }
 
 
+void NfcReader::setProgressMessage(const QString& pMessage)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+	mNfManager.setUserInformation(pMessage);
+#else
+	Q_UNUSED(pMessage)
+#endif
+}
+
+
 NfcReader::NfcReader()
-	: Reader(ReaderManagerPlugInType::NFC, QStringLiteral("NFC"))
+	: ConnectableReader(ReaderManagerPlugInType::NFC, QStringLiteral("NFC"))
 	, mNfManager()
 {
 	mReaderInfo.setBasicReader(true);
 	mReaderInfo.setConnected(true);
 
+	connect(&mNfManager, &QNearFieldManager::adapterStateChanged, this, &NfcReader::adapterStateChanged);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+	connect(&mNfManager, &QNearFieldManager::targetDetectionStopped, this, &NfcReader::fireReaderDisconnected);
+#endif
 	connect(&mNfManager, &QNearFieldManager::targetDetected, this, &NfcReader::targetDetected);
 	connect(&mNfManager, &QNearFieldManager::targetLost, this, &NfcReader::targetLost);
-	mNfManager.startTargetDetection();
 
-	mTimerId = startTimer(500);
+#if defined(Q_OS_ANDROID)
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+	mNfManager.startTargetDetection();
+#else
+	mNfManager.startTargetDetection(QNearFieldTarget::TagTypeSpecificAccess);
+#endif
+	auto activity = QtAndroid::androidActivity();
+	// Check if not used as SDK
+	if (activity.isValid())
+	{
+		activity.callMethod<void>("enableNfcReaderMode");
+	}
+#endif
 }
 
 
 NfcReader::~NfcReader()
 {
+#if defined(Q_OS_ANDROID)
+	auto activity = QtAndroid::androidActivity();
+	// Check if not used as SDK
+	if (activity.isValid())
+	{
+		activity.callMethod<void>("disableNfcReaderMode");
+	}
 	mNfManager.stopTargetDetection();
+#endif
+}
+
+
+bool NfcReader::isEnabled() const
+{
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+	return mNfManager.isAvailable();
+
+#else
+	return mNfManager.isEnabled();
+
+#endif
 }
 
 
@@ -92,4 +150,29 @@ Card* NfcReader::getCard() const
 	}
 
 	return nullptr;
+}
+
+
+void NfcReader::connectReader()
+{
+#if defined(Q_OS_IOS) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	//: INFO IOS The ID card may be inserted, the authentication process may be started.
+	mNfManager.setUserInformation(tr("Please place your ID card on the top of the device's back side."));
+	mNfManager.startTargetDetection(QNearFieldTarget::TagTypeSpecificAccess);
+#endif
+}
+
+
+void NfcReader::disconnectReader(const QString& pError)
+{
+#if defined(Q_OS_IOS) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	if (pError.isNull())
+	{
+		//: INFO IOS The current session was stopped without errors.
+		mNfManager.setUserInformation(tr("Scanning process has been finished successfully."));
+	}
+	mNfManager.stopTargetDetection(pError);
+#else
+	Q_UNUSED(pError)
+#endif
 }

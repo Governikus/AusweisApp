@@ -2,17 +2,16 @@
  * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
-import QtQuick.Window 2.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
+import QtQuick.Window 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.SettingsModel 1.0
 
 ConfirmationPopup {
 	//: LABEL ANDROID
-	title: qsTr("Select screen orientation") + SettingsModel.translationTrigger
+	title: qsTr("Select screen orientation")
 
 	style: ConfirmationPopup.PopupStyle.OkButton
 	onConfirmed: {
@@ -35,12 +34,12 @@ ConfirmationPopup {
 			width: parent.width
 
 			//: LABEL ANDROID
-			Accessible.description: qsTr("Set screen orientation to portrait") + SettingsModel.translationTrigger
+			Accessible.description: qsTr("Set screen orientation to portrait")
 
 			checked: Screen.primaryOrientation !== Qt.LandscapeOrientation
 			icon.source: "qrc:///images/android/stay_primary_portrait-24px.svg"
 			//: LABEL ANDROID
-			text: qsTr("Portrait") + (plugin.tablet ? "" : (" (%1)".arg(qsTr("recommended")))) + SettingsModel.translationTrigger
+			text: qsTr("Portrait") + (plugin.tablet ? "" : (" (%1)".arg(qsTr("recommended"))))
 			tintIcon: true
 		}
 
@@ -50,12 +49,12 @@ ConfirmationPopup {
 			width: parent.width
 
 			//: LABEL ANDROID
-			Accessible.description: qsTr("Set screen orientation to landscape") + SettingsModel.translationTrigger
+			Accessible.description: qsTr("Set screen orientation to landscape")
 
 			checked: Screen.primaryOrientation === Qt.LandscapeOrientation
 			icon.source: "qrc:///images/android/stay_primary_landscape-24px.svg"
 			//: LABEL ANDROID
-			text: qsTr("Landscape") + (plugin.tablet ? (" (%1)".arg(qsTr("recommended"))) : "") + SettingsModel.translationTrigger
+			text: qsTr("Landscape") + (plugin.tablet ? (" (%1)".arg(qsTr("recommended"))) : "")
 			tintIcon: true
 		}
 
@@ -64,7 +63,7 @@ ConfirmationPopup {
 			width: parent.width
 
 			//: LABEL ANDROID
-			text: qsTr("Using a screen orientation unfit for your device may result in display errors.") + SettingsModel.translationTrigger
+			text: qsTr("Using a screen orientation unfit for your device may result in display errors.")
 			textStyle: Style.text.normal_warning
 		}
 

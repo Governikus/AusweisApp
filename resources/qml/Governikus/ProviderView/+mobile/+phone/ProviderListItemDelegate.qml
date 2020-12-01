@@ -2,20 +2,18 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtGraphicalEffects 1.0
+import QtQuick 2.12
+import QtGraphicalEffects 1.12
 
 import Governikus.Global 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ProviderCategoryFilterModel 1.0
 
 
 ListItem {
-	property string sectionName
+	readonly property bool isProvider: itemType === "provider"
 
-	Accessible.description: qsTr("Open provider details for") + ' ' + display + SettingsModel.translationTrigger
+	Accessible.description: (isProvider ? qsTr("Open provider details for %1").arg(display) : qsTr("Click to set category filter to %1").arg(text))
 
-	text: display
-
-	onClicked: firePushWithProperties(providerDetailView, {providerModelItem: model})
+	text: (isProvider ? display : Category.displayString(providerCategory))
+	icon: isProvider ? "" : Category.imageSource(providerCategory)
 }

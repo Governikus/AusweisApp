@@ -36,36 +36,11 @@ class ActivationHandler
 {
 	Q_OBJECT
 
-	private:
-		static bool isPlugIn(const QJsonObject& pJson);
-
 	protected:
 		ActivationHandler() = default;
 		virtual ~ActivationHandler() = default;
 
-		/*!
-		 * \brief Get the query items with lower-case keys, so we can support case-insensitive keys.
-		 */
-		static QMap<QString, QString> getQueryParameter(const QUrl& pUrl);
-
 	public:
-		static const QVector<ActivationHandler*>& getInstances();
-
-		template<typename T> static T* getInstance()
-		{
-			for (auto handler : ActivationHandler::getInstances())
-			{
-				if (auto obj = qobject_cast<T*>(handler))
-				{
-					return obj;
-				}
-			}
-
-			qCritical() << "Cannot find requested ActivationHandler";
-			return nullptr;
-		}
-
-
 		virtual bool start() = 0;
 		virtual void stop() = 0;
 

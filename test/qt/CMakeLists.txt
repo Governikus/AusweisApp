@@ -1,107 +1,122 @@
-FUNCTION(GET_CAPITALIZED _out string)
-	STRING(SUBSTRING "${string}" 0 1 _tmp1)
-	STRING(SUBSTRING "${string}" 1 -1 _tmp2)
-	STRING(TOUPPER "${_tmp1}" _tmp1)
-	SET(${_out} ${_tmp1}${_tmp2} PARENT_SCOPE)
-ENDFUNCTION()
+function(GET_CAPITALIZED _out string)
+	string(SUBSTRING "${string}" 0 1 _tmp1)
+	string(SUBSTRING "${string}" 1 -1 _tmp2)
+	string(TOUPPER "${_tmp1}" _tmp1)
+	set(${_out} ${_tmp1}${_tmp2} PARENT_SCOPE)
+endfunction()
 
 
-FUNCTION(GET_SNAKE_TO_CAMEL_CASE _out string)
-	STRING(REPLACE "_" ";" string "${string}")
-	FOREACH(entry ${string})
+function(GET_SNAKE_TO_CAMEL_CASE _out string)
+	string(REPLACE "_" ";" string "${string}")
+	foreach(entry ${string})
 		GET_CAPITALIZED(entry "${entry}")
-		SET(_tmp "${_tmp}${entry}")
-	ENDFOREACH()
+		set(_tmp "${_tmp}${entry}")
+	endforeach()
 
-	SET(${_out} "${_tmp}" PARENT_SCOPE)
-ENDFUNCTION()
+	set(${_out} "${_tmp}" PARENT_SCOPE)
+endfunction()
 
 
-FUNCTION(EXTRACT_MODULES _out_module _out_submodule filename)
-	GET_FILENAME_COMPONENT(dir "${filename}" DIRECTORY)
+function(EXTRACT_MODULES _out_module _out_submodule filename)
+	get_filename_component(dir "${filename}" DIRECTORY)
 
 	# make unit test directory to cmake list
-	STRING(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" dir "${dir}")
-	STRING(REPLACE "/" ";" dir "${dir}")
+	string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" dir "${dir}")
+	string(REPLACE "/" ";" dir "${dir}")
 
 	# extract first subdirectory as module
-	LIST(GET dir 0 MODULE)
+	list(GET dir 0 MODULE)
 	GET_SNAKE_TO_CAMEL_CASE(MODULE "${MODULE}")
 
 	# extract second subdirectory as submodule if it exists
-	LIST(LENGTH dir dir_len)
-	IF(dir_len GREATER 1)
-		LIST(GET dir 1 SUBMODULE)
+	list(LENGTH dir dir_len)
+	if(dir_len GREATER 1)
+		list(GET dir 1 SUBMODULE)
 		GET_CAPITALIZED(SUBMODULE "${SUBMODULE}")
-	ENDIF()
+	endif()
 
 	# return values: module is required, submodule optional
-	SET(${_out_module} ${MODULE} PARENT_SCOPE)
-	SET(${_out_submodule} ${SUBMODULE} PARENT_SCOPE)
-ENDFUNCTION()
+	set(${_out_module} ${MODULE} PARENT_SCOPE)
+	set(${_out_submodule} ${SUBMODULE} PARENT_SCOPE)
+endfunction()
 
 
-FUNCTION(GET_MODULE _out filename)
+function(GET_MODULE _out prefix filename)
 	EXTRACT_MODULES(MODULE SUBMODULE "${filename}")
 
-	IF(TARGET "AusweisApp${MODULE}${SUBMODULE}")
-		SET(${_out} "AusweisApp${MODULE}${SUBMODULE}" PARENT_SCOPE)
-	ELSEIF(TARGET "AusweisApp${MODULE}")
-		SET(${_out} "AusweisApp${MODULE}" PARENT_SCOPE)
-	ELSE()
-		MESSAGE(FATAL_ERROR "Cannot detect module: ${filename}")
-	ENDIF()
-ENDFUNCTION()
+	if(TARGET "${prefix}${MODULE}${SUBMODULE}")
+		set(${_out} "${prefix}${MODULE}${SUBMODULE}" PARENT_SCOPE)
+	elseif(TARGET "${prefix}${MODULE}")
+		set(${_out} "${prefix}${MODULE}" PARENT_SCOPE)
+	endif()
+endfunction()
 
 
-FUNCTION(ADD_TEST_EXECUTABLE testname)
-	IF(ANDROID)
-		ADD_LIBRARY(${testname} SHARED ${ARGN})
-	ELSE()
-		ADD_EXECUTABLE(${testname} ${ARGN})
-	ENDIF()
+function(ADD_TEST_EXECUTABLE testname)
+	if(ANDROID)
+		add_library(${testname} SHARED ${ARGN})
+	else()
+		add_executable(${testname} ${ARGN})
+	endif()
 
-	GET_MODULE(MODULE "${ARGN}")
-	TARGET_LINK_LIBRARIES(${testname} Qt5::Test AusweisAppTestHelper QRC_FIXTURE_OBJ ${MODULE})
-ENDFUNCTION()
+	GET_MODULE(TESTMODULE "AusweisAppTestHelper" "${ARGN}")
+	GET_MODULE(MODULE "AusweisApp" "${ARGN}")
+	if(NOT MODULE)
+		message(FATAL_ERROR "Cannot detect module: ${ARGN}")
+	endif()
 
+	target_link_libraries(${testname} ${Qt}::Test AusweisAppTestHelper QRC_FIXTURE_OBJ ${MODULE} ${TESTMODULE})
 
-FUNCTION(SHOULD_SKIP_TEST _out filename)
-	SET(${_out} FALSE PARENT_SCOPE)
-	STRING(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" test "${sourcefile}")
-
-	IF(INTEGRATED_SDK AND (test MATCHES "ui/qml"
-		OR test MATCHES "ui/widget"))
-		SET(${_out} TRUE PARENT_SCOPE)
-		RETURN()
-	ENDIF()
-
-	IF(IOS OR ANDROID)
-		IF(test MATCHES "ui/widget"
-			OR test MATCHES "card/pcsc")
-			SET(${_out} TRUE PARENT_SCOPE)
-			RETURN()
-		ENDIF()
-	ENDIF()
-ENDFUNCTION()
+	if(INCOMPATIBLE_QT_COMPILER_FLAGS)
+		set_source_files_properties(${ARGN} PROPERTIES COMPILE_OPTIONS ${INCOMPATIBLE_QT_COMPILER_FLAGS})
+	endif()
+endfunction()
 
 
-FUNCTION(ADD_TEST_EXECUTABLE_SUBDIR)
-	FILE(GLOB_RECURSE TEST_FILES "*.cpp")
+function(SHOULD_SKIP_TEST _out filename)
+	set(${_out} FALSE PARENT_SCOPE)
+	string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" test "${sourcefile}")
 
-	FOREACH(sourcefile ${TEST_FILES})
+	if(INTEGRATED_SDK AND (test MATCHES "ui/qml"
+		OR test MATCHES "ui/websocket"
+		OR test MATCHES "init/"
+		OR test MATCHES "remote_device"
+		OR test MATCHES "export"))
+		set(${_out} TRUE PARENT_SCOPE)
+		return()
+	endif()
+
+	if(IOS OR ANDROID)
+		if(test MATCHES "card/pcsc")
+			set(${_out} TRUE PARENT_SCOPE)
+			return()
+		endif()
+	endif()
+endfunction()
+
+
+function(ADD_TEST_EXECUTABLE_SUBDIR)
+	file(GLOB_RECURSE TEST_FILES "*.cpp")
+
+	foreach(sourcefile ${TEST_FILES})
 		SHOULD_SKIP_TEST(SKIP "${sourcefile}")
-		IF(SKIP)
-			CONTINUE()
-		ENDIF()
+		if(SKIP)
+			continue()
+		endif()
 
 		EXTRACT_TESTNAME(TESTNAME ${sourcefile})
 		ADD_TEST_EXECUTABLE(${TESTNAME} ${sourcefile})
 		GET_TEST_CMDLINE(TEST_CMDLINE ${TESTNAME})
-		ADD_TEST(${TESTNAME} ${TESTNAME} ${TEST_CMDLINE})
-		SET_TESTS_PROPERTIES(${TESTNAME} PROPERTIES LABELS "ausweisapp")
-	ENDFOREACH()
-ENDFUNCTION()
+		add_test(${TESTNAME} ${TESTNAME} ${TEST_CMDLINE})
+		set_tests_properties(${TESTNAME} PROPERTIES FAIL_REGULAR_EXPRESSION "nullptr parameter")
+
+		if(TESTNAME MATCHES "UIPlugIn")
+			set_tests_properties(${TESTNAME} PROPERTIES LABELS "ausweisapp" TIMEOUT 300)
+		else()
+			set_tests_properties(${TESTNAME} PROPERTIES LABELS "ausweisapp" TIMEOUT 120)
+		endif()
+	endforeach()
+endfunction()
 
 
 

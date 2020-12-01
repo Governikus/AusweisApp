@@ -2,15 +2,14 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQml.Models 2.10
+import QtQuick 2.12
+import QtQml.Models 2.12
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.NumberModel  1.0
 import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.View 1.0
 
 SectionPage {
@@ -49,7 +48,7 @@ SectionPage {
 		id: titleBarAction
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Card Readers") + SettingsModel.translationTrigger
+		text: qsTr("Card Readers")
 		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "settings")
 		rootEnabled: false
 		customSubAction: CancelAction {
@@ -75,8 +74,8 @@ SectionPage {
 		}
 
 		sectionsModel: [
-			qsTr("Smartphone as card reader") + SettingsModel.translationTrigger,
-			qsTr("USB card reader") + SettingsModel.translationTrigger
+			qsTr("Smartphone as card reader"),
+			qsTr("USB card reader")
 		]
 		contentObjectModel: ObjectModel {
 			Component {
@@ -125,6 +124,8 @@ SectionPage {
 		id: connectSacView
 
 		visible: d.view === TabbedReaderView.SubView.ConnectSacView
+
+		rootEnabled: root.rootEnabled
 
 		onCloseView: {
 			d.view = d.precedingView

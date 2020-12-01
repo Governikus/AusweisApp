@@ -11,15 +11,15 @@ using namespace governikus;
 MsgHandlerAccessRights::MsgHandlerAccessRights(const MsgContext& pContext)
 	: MsgHandler(MsgType::ACCESS_RIGHTS)
 {
-	Q_ASSERT(pContext.getAuthContext());
-	fillAccessRights(pContext.getAuthContext());
+	Q_ASSERT(pContext.getContext<AuthContext>());
+	fillAccessRights(pContext.getContext<AuthContext>());
 }
 
 
 MsgHandlerAccessRights::MsgHandlerAccessRights(const QJsonObject& pObj, MsgContext& pContext)
 	: MsgHandler(MsgType::ACCESS_RIGHTS)
 {
-	auto ctx = pContext.getAuthContext();
+	auto ctx = pContext.getContext<AuthContext>();
 	Q_ASSERT(ctx);
 
 	const auto& jsonRaw = pObj[QLatin1String("chat")];
@@ -46,14 +46,14 @@ void MsgHandlerAccessRights::handleSetChatData(const QJsonArray& pChat, const QS
 
 	QSet<AccessRight> effectiveChat;
 
-	if (!pContext->getOptionalAccessRights().isEmpty())
+	if (!pContext->getAccessRightManager()->getOptionalAccessRights().isEmpty())
 	{
 		for (const auto& entry : pChat)
 		{
 			if (entry.isString())
 			{
-				const auto& func = [&](AccessRight pRight){
-							if (pContext->getOptionalAccessRights().contains(pRight))
+				const auto& func = [this, &pContext, &effectiveChat](AccessRight pRight){
+							if (pContext->getAccessRightManager()->getOptionalAccessRights().contains(pRight))
 							{
 								effectiveChat += pRight;
 							}
@@ -81,7 +81,7 @@ void MsgHandlerAccessRights::handleSetChatData(const QJsonArray& pChat, const QS
 
 	if (!mJsonObject.contains(QLatin1String("error")))
 	{
-		pContext->setEffectiveAccessRights(effectiveChat);
+		*pContext->getAccessRightManager() = effectiveChat;
 	}
 }
 
@@ -110,9 +110,10 @@ void MsgHandlerAccessRights::fillAccessRights(const QSharedPointer<const AuthCon
 	Q_ASSERT(pContext);
 
 	QJsonObject chat;
-	chat[QLatin1String("required")] = getAccessRights(pContext->getRequiredAccessRights());
-	chat[QLatin1String("optional")] = getAccessRights(pContext->getOptionalAccessRights());
-	chat[QLatin1String("effective")] = getAccessRights(pContext->getEffectiveAccessRights());
+	const auto& accessRightManager = pContext->getAccessRightManager();
+	chat[QLatin1String("required")] = getAccessRights(accessRightManager->getRequiredAccessRights());
+	chat[QLatin1String("optional")] = getAccessRights(accessRightManager->getOptionalAccessRights());
+	chat[QLatin1String("effective")] = getAccessRights(accessRightManager->getEffectiveAccessRights());
 
 	mJsonObject[QLatin1String("chat")] = chat;
 	const auto& transactionInfo = pContext->getDidAuthenticateEac1()->getTransactionInfo();
@@ -129,7 +130,7 @@ void MsgHandlerAccessRights::fillAccessRights(const QSharedPointer<const AuthCon
 }
 
 
-QJsonObject MsgHandlerAccessRights::getAuxiliaryData(const QSharedPointer<const AuthContext>& pContext)
+QJsonObject MsgHandlerAccessRights::getAuxiliaryData(const QSharedPointer<const AuthContext>& pContext) const
 {
 	QJsonObject obj;
 

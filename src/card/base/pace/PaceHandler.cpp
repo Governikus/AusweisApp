@@ -42,7 +42,7 @@ QByteArray PaceHandler::getPaceProtocol() const
 }
 
 
-CardReturnCode PaceHandler::establishPaceChannel(PacePasswordId pPasswordId, const QString& pPassword)
+CardReturnCode PaceHandler::establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pPassword)
 {
 	auto efCardAccess = mCardConnectionWorker->getReaderInfo().getCardInfo().getEfCardAccess();
 	if (!initialize(efCardAccess))
@@ -62,7 +62,7 @@ CardReturnCode PaceHandler::establishPaceChannel(PacePasswordId pPasswordId, con
 			return CardReturnCode::RETRY_ALLOWED;
 
 		default:
-		{}
+			break;
 	}
 
 	KeyAgreementStatus keyAgreementStatus = mKeyAgreement->perform(pPassword);
@@ -148,15 +148,13 @@ bool PaceHandler::isSupportedProtocol(const QSharedPointer<const PaceInfo>& pPac
 
 	const auto protocol = pPaceInfo->getProtocol();
 
-	if (protocol == KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128 ||
+	if ((protocol == KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128 ||
 			protocol == KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192 ||
 			protocol == KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256)
+			&& pPaceInfo->isStandardizedDomainParameters())
 	{
-		if (pPaceInfo->isStandardizedDomainParameters())
-		{
-			qCDebug(card) << "Use ECDH with standardized domain parameters:" << pPaceInfo->getProtocol();
-			return true;
-		}
+		qCDebug(card) << "Use ECDH with standardized domain parameters:" << pPaceInfo->getProtocol();
+		return true;
 	}
 
 	qCWarning(card) << "Unsupported domain parameters:" << pPaceInfo->getProtocol();

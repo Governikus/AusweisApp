@@ -10,33 +10,37 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>de_DE</string>
 	<key>CFBundleDisplayName</key>
-	<string>@CPACK_BUNDLE_NAME@</string>
+	<string>@MACOSX_BUNDLE_BUNDLE_NAME@</string>
 	<key>CFBundleExecutable</key>
-	<string>@CPACK_BUNDLE_NAME@</string>
+	<string>@MACOSX_BUNDLE_BUNDLE_NAME@</string>
 	<key>CFBundleIconFile</key>
-	<string>@CPACK_BUNDLE_NAME@.icns</string>
+	<string>@MACOSX_BUNDLE_ICON_FILE@</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.governikus.@CPACK_BUNDLE_NAME@</string>
+	<string>@MACOSX_BUNDLE_GUI_IDENTIFIER@</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>@CPACK_BUNDLE_NAME@</string>
+	<string>@MACOSX_BUNDLE_BUNDLE_NAME@</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleVersion</key>
-	<string>@PROJECT_VERSION@</string>
+	<string>@MACOSX_BUNDLE_BUNDLE_VERSION@</string>
 	<key>CFBundleShortVersionString</key>
-	<string>@PROJECT_VERSION@</string>
+	<string>@MACOSX_BUNDLE_BUNDLE_VERSION@</string>
 	<key>CFBundleSignature</key>
 	<string>aaii</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSHumanReadableCopyright</key>
-	<string>@CPACK_BUNDLE_COPYRIGHT@</string>
+	<string>@MACOSX_BUNDLE_COPYRIGHT@</string>
 	<key>LSBackgroundOnly</key>
 	<string>0</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>@CMAKE_OSX_DEPLOYMENT_TARGET@</string>
 	<key>LSUIElement</key>
 	<string>1</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
 	<key>NSHighResolutionCapable</key>
 	<string>True</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>

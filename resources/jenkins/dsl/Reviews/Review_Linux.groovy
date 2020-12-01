@@ -52,5 +52,9 @@ j.with
 			export ASAN_OPTIONS=detect_leaks=0,new_delete_type_mismatch=0
 			cd build; ctest --output-on-failure ${MAKE_FLAGS}
 			'''.stripIndent().trim())
+
+		shell('''\
+			cd build; DESTDIR=$WORKSPACE/install make ${MAKE_FLAGS} install
+			'''.stripIndent().trim())
 	}
 }

@@ -8,7 +8,6 @@
 
 #include <QByteArray>
 #include <QCryptographicHash>
-#include <QString>
 
 namespace governikus
 {
@@ -18,7 +17,7 @@ class KeyDerivationFunction final
 	private:
 		QCryptographicHash::Algorithm mHashAlgorithm;
 		int mKeySize;
-		QByteArray deriveKey(const QByteArray& pK, const QByteArray& pNonce, quint32 pC);
+		QByteArray deriveKey(const QByteArray& pK, const QByteArray& pNonce, quint32 pC) const;
 
 	public:
 		/*!
@@ -32,7 +31,7 @@ class KeyDerivationFunction final
 		/*!
 		 * Returns true, if initialization succeeded, i.e. the algorithm is known, supported and the key bytes have correct size.
 		 */
-		bool isInitialized();
+		bool isInitialized() const;
 
 		/*!
 		 * \brief Derive the encryption key
@@ -53,7 +52,7 @@ class KeyDerivationFunction final
 		 * \param pSecret the secret to use.
 		 * \return the password key
 		 */
-		QByteArray pi(const QString& pSecret);
+		QByteArray pi(const QByteArray& pSecret);
 
 };
 

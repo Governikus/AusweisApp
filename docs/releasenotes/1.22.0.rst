@@ -1,0 +1,60 @@
+AusweisApp2 1.22.0
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 30. November 2020
+
+
+Anwender
+""""""""
+- Das PIN-Management wurde überarbeitet.
+
+- Die Navigation von iOS und Android wurde angeglichen. Die Seitenleiste auf
+  Android wurde entfernt und durch eine Leiste am unteren Bildschirmrand
+  ersetzt.
+
+- Der "Hilfe"-Bereich wurde auf sämtlichen Plattformen überarbeitet und
+  neu strukturiert. Die Softwarelizenzen können nun innerhalb der Anwendung
+  eingesehen werden.
+
+- Auf Android und iOS ist eine neue Startseite hinzugekommen.
+
+- Auf Android und iOS kann nun über den Eintrag "Gerät und Ausweis prüfen"
+  auf der Startseite ein Funktionstest durchgeführt werden.
+
+- Auf Android und iOS sind Hilfsanimationen hinzugekommen, die mögliche
+  Kartenpositionen verdeutlichen sollen.
+
+- Der einmalige Hinweis auf das notwendige Ändern der Transport-PIN
+  wurde auf Android und iOS ergänzt.
+
+- Optionseintrag und Abfrage für die Berechtigung "lokaler Netzwerkzugriff"
+  auf iOS 14 hinzugefügt. Diese ist für den Betrieb eines Smartphones als
+  Kartenleser notwendig.
+
+- Die AusweisAppp2 kann auf macOS nun über den App Store installiert werden.
+  Zukünftig erscheinende Aktualisierungen können automatisch darüber bezogen
+  werden.
+
+- Der Updatemechanismus auf Windows wurde überarbeitet. Das Herunterladen der
+  Aktualisierung sowie der Start der Installation erfolgen nun automatisch
+  wenn ein Update gestartet wird.
+
+- Unterstützung der Unionsbürgerkarte.
+
+- Unterstützung von macOS Sierra 10.12 wurde eingestellt.
+
+- Unterstützung vom Bluetooth Kartenleser wurde eingestellt.
+
+- Kleinere Fehlerbehebungen.
+
+
+Entwickler
+""""""""""
+- Das SDK unterstützt nun die Änderung der PIN.
+
+- Das SDK unterstützt nun die Anzeige der Rechte
+  "PinManagement" und "CanAllowed".
+
+- Aktualisierung von OpenSSL auf die Version 1.1.1h.
+
+- Aktualisierung von Qt auf die Version 5.15.2.

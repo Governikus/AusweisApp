@@ -71,7 +71,7 @@ PcscReader::~PcscReader()
 }
 
 
-SCARD_READERSTATE PcscReader::getState()
+SCARD_READERSTATE PcscReader::getState() const
 {
 	return mReaderState;
 }
@@ -83,7 +83,7 @@ bool PcscReader::hasFeature(FeatureID pFeatureID) const
 }
 
 
-PCSC_INT PcscReader::getFeatureValue(FeatureID pFeatureID)
+PCSC_INT PcscReader::getFeatureValue(FeatureID pFeatureID) const
 {
 	return mReaderFeatures.getValue(pFeatureID);
 }
@@ -91,7 +91,7 @@ PCSC_INT PcscReader::getFeatureValue(FeatureID pFeatureID)
 
 static QString SCARD_STATE_toString(DWORD i)
 {
-	QStringList sb(QStringLiteral("(%1)").arg(static_cast<ulong>(i)));
+	QStringList sb(QStringLiteral("(%1)").arg(i));
 
 	if (i == SCARD_STATE_UNAWARE)
 	{
@@ -152,7 +152,7 @@ static QString SCARD_STATE_toString(DWORD i)
 /*!
  * Currently not used, but needed when implementing signature PIN handling.
  */
-bool PcscReader::hasPaceCapability(PaceCapabilityId pPaceCapability)
+bool PcscReader::hasPaceCapability(PaceCapabilityId pPaceCapability) const
 {
 	return mPaceCapabilities.contains(pPaceCapability);
 }

@@ -45,17 +45,17 @@ class test_DatagramHandlerImpl
 
 		void startUpShutDown()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
 
 			QVERIFY(socket->isBound());
-			QCOMPARE(spy.count(), 1);
-			auto param = spy.takeFirst();
+			QCOMPARE(logSpy.count(), 1);
+			auto param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Bound on port:"));
 
 			socket.reset();
-			QCOMPARE(spy.count(), 1);
-			param = spy.takeFirst();
+			QCOMPARE(logSpy.count(), 1);
+			param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Shutdown socket"));
 		}
 
@@ -75,12 +75,12 @@ class test_DatagramHandlerImpl
 
 			DatagramHandlerImpl::cPort = 80;
 
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
 
 			QVERIFY(!socket->isBound());
-			QCOMPARE(spy.count(), 1);
-			auto param = spy.takeFirst();
+			QCOMPARE(logSpy.count(), 1);
+			auto param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Cannot bind socket: \"The address is protected\""));
 		}
 
@@ -91,14 +91,14 @@ class test_DatagramHandlerImpl
 			QVERIFY(socket->isBound());
 			QSignalSpy spySocket(socket.data(), &DatagramHandler::fireNewMessage);
 
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QUdpSocket clientSocket;
 			clientSocket.setProxy(QNetworkProxy::NoProxy);
 
 			auto written = clientSocket.writeDatagram("dummy", QHostAddress::LocalHost, socket.staticCast<DatagramHandlerImpl>()->mSocket->localPort());
-			QTRY_COMPARE(spySocket.count(), 1);
+			QTRY_COMPARE(spySocket.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(written, 5);
-			QCOMPARE(spy.count(), 0);
+			QCOMPARE(logSpy.count(), 0);
 			auto param = spySocket.takeFirst();
 			QCOMPARE(param.at(0).toByteArray(), QByteArray("dummy"));
 		}
@@ -133,7 +133,7 @@ class test_DatagramHandlerImpl
 
 			QByteArray data("{\"key\":\"value\"}");
 			auto written = clientSocket.writeDatagram(data, broadcast ? QHostAddress::Broadcast : QHostAddress::LocalHost, socket.staticCast<DatagramHandlerImpl>()->mSocket->localPort());
-			QTRY_COMPARE(spySocket.count(), 1);
+			QTRY_COMPARE(spySocket.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(written, data.size());
 			const auto& msg = spySocket.takeFirst();
 			QCOMPARE(msg.size(), 2);
@@ -161,7 +161,7 @@ class test_DatagramHandlerImpl
 			QSignalSpy spyReceiver(&receiver, &QUdpSocket::readyRead);
 
 			QSharedPointer<DatagramHandlerImpl> datagramHandlerImpl = QSharedPointer<DatagramHandlerImpl>::create(false);
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QJsonObject obj;
 			obj["test"] = "dummy";
@@ -179,8 +179,8 @@ class test_DatagramHandlerImpl
 				QVERIFY(datagramHandlerImpl->sendToAddress(doc.toJson(QJsonDocument::Compact), QHostAddress::LocalHost, receiver.localPort()));
 			}
 
-			QTRY_COMPARE(spyReceiver.count(), 1);
-			QCOMPARE(spy.count(), 0);
+			QTRY_COMPARE(spyReceiver.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(logSpy.count(), 0);
 
 			QVERIFY(receiver.hasPendingDatagrams());
 			QByteArray msg;

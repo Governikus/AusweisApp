@@ -9,13 +9,7 @@
 
 #include <openssl/evp.h>
 #include <QLoggingCategory>
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include <QScopeGuard>
-#else
-#include "ScopeGuard.h"
-#endif
-
 
 using namespace governikus;
 

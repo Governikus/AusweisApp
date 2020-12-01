@@ -62,7 +62,7 @@ class test_CardConnectionWorker
 
 		void test_EstablishPaceChannel()
 		{
-			const QString password("111111");
+			const QByteArray password("111111");
 			const QByteArray chat = QByteArray::fromHex("7F4C12060904007F00070301020253050000000F0F");
 			const QByteArray certDescription = QByteArray::fromHex("30 8202A4"
 																   "        06 0A 04007F00070301030103"
@@ -86,7 +86,7 @@ class test_CardConnectionWorker
 			QTest::ignoreMessage(QtInfoMsg, "Starting PACE for PACE_PIN");
 			QTest::ignoreMessage(QtInfoMsg, "Finished PACE for PACE_PIN with result COMMAND_FAILED");
 			QTest::ignoreMessage(QtWarningMsg, "Establishment of PACE channel not supported");
-			QCOMPARE(mWorker->establishPaceChannel(PacePasswordId::PACE_PIN, QString(), chat, certDescription).getPaceReturnCode(), CardReturnCode::COMMAND_FAILED);
+			QCOMPARE(mWorker->establishPaceChannel(PacePasswordId::PACE_PIN, QByteArray(), chat, certDescription).getPaceReturnCode(), CardReturnCode::COMMAND_FAILED);
 		}
 
 
@@ -112,7 +112,7 @@ class test_CardConnectionWorker
 
 		void test_SetEidPin()
 		{
-			const QString newPin("111111");
+			const QByteArray newPin("111111");
 
 			//no card
 			QCOMPARE(mWorker->setEidPin(newPin, 5), ResponseApduResult({CardReturnCode::CARD_NOT_FOUND}));
@@ -126,7 +126,7 @@ class test_CardConnectionWorker
 			//comfort reader
 			mReader->getReaderInfo().setBasicReader(false);
 			QTest::ignoreMessage(QtWarningMsg, "Setting eID PIN is not supported");
-			QCOMPARE(mWorker->setEidPin(QString(), 5), ResponseApduResult({CardReturnCode::COMMAND_FAILED}));
+			QCOMPARE(mWorker->setEidPin(QByteArray(), 5), ResponseApduResult({CardReturnCode::COMMAND_FAILED}));
 		}
 
 

@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -77,50 +77,61 @@ Item {
 				anchors.left: useNpa.right
 				anchors.right: parent.right
 				//: LABEL ANDROID IOS
-				text: qsTr("You can use your ID card anywhere you see this logo.") + SettingsModel.translationTrigger
+				text: qsTr("You can use your ID card anywhere you see this logo.")
 			}
 		}
 
-		Pane {
+		GPane {
 			id: textPane
-			anchors.leftMargin: Constants.pane_padding
-			anchors.rightMargin: Constants.pane_padding
+
+			anchors {
+				left: parent.left
+				right: parent.right
+				leftMargin: Constants.pane_padding
+				rightMargin: Constants.pane_padding
+			}
 
 			GText {
-				id: info
-
-				property string htmlLink: qsTr("https://www.ausweisapp.bund.de/datenschutz/") + SettingsModel.translationTrigger
-				anchors.left: parent.left
-				anchors.right: parent.right
-
-				Accessible.role: Accessible.Link
-				Accessible.name: ApplicationModel.stripHtmlTags(text)
-				Accessible.description: qsTr("Click to open link to data privacy statement in browser: %1").arg(htmlLink) + SettingsModel.translationTrigger
-				Accessible.onPressAction: Qt.openUrlExternally(htmlLink)
+				width: parent.width
 
 				wrapMode: Text.WordWrap
 				//: LABEL ANDROID IOS
-				text: qsTr("Use the button 'See my personal data' to display the data stored on your ID card."
-							+ " An Internet connection is required to display the data.")
-							+ "<br><br><b>"
-							//: LABEL ANDROID IOS
-							+ qsTr("Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.")
-								.arg('<a href="' + htmlLink + '">' + qsTr("data privacy statement") + '</a>')
-							+ "</b>"
-							+ SettingsModel.translationTrigger
+				text: qsTr("Use the button \"See my personal data\" to start the self-authentication service of the manufacturer of the %1 to display the data stored in the chip of your ID card.")
+					.arg(Qt.application.name)
+			}
+
+			GText {
+				readonly property string privacyStatementUrl: "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
+				//: LABEL ANDROID IOS Text of the html link inside of a sentence
+				readonly property string privacyStatementDescription: qsTr("data privacy statement")
+				readonly property string privacyStatementLink: "<a href=\"%1\">%2</a>".arg(privacyStatementUrl).arg(privacyStatementDescription)
+
+				width: parent.width
+
+				Accessible.role: Accessible.Link
+				Accessible.name: ApplicationModel.stripHtmlTags(text)
+				Accessible.description: qsTr("Click to open link to data privacy statement in browser: %1").arg(privacyStatementUrl)
+				Accessible.onPressAction: Qt.openUrlExternally(privacyStatementUrl)
+
+				wrapMode: Text.WordWrap
+				font.bold: true
+				//: LABEL ANDROID IOS
+				text: qsTr("Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.")
+						.arg(privacyStatementLink)
 			}
 		}
 	}
 
 	GButton {
 		id: selfAuthButton
-		icon.source: "qrc:///images/npa.svg"
+		icon.source: "qrc:///images/identify.svg"
 		anchors.bottom: baseItem.bottom
 		anchors.bottomMargin: Constants.pane_padding
 		anchors.horizontalCenter: parent.horizontalCenter
 		buttonColor: SettingsModel.useSelfauthenticationTestUri ? Style.color.warning_text : Style.color.accent
 		//: LABEL ANDROID IOS
-		text: qsTr("See my personal data") + SettingsModel.translationTrigger
+		text: qsTr("See my personal data")
+		tintIcon: true
 
 		enabled: ApplicationModel.currentWorkflow !== "authentication"
 		onClicked: SelfAuthModel.startWorkflow()

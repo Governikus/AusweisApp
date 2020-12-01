@@ -6,7 +6,7 @@ def j = new Release
 		name: 'Win32_GNU_MSI',
 		libraries: ['Win32_GNU'],
 		label: 'Windows',
-		artifacts: 'build/*.msi'
+		artifacts: 'libs/build/Toolchain_*,build/*.msi'
 	).generate(this)
 
 

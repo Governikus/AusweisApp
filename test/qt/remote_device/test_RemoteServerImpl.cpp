@@ -155,7 +155,7 @@ class test_RemoteServerImpl
 					};
 			Env::setCreator<RemoteReaderAdvertiser*, const QString&, const QString&, quint16&>(creator);
 			std::function<RemoteWebSocketServer* ()> creator2 = [this](){
-						mWebSocketMock = new RemoteWebSocketServerMock;
+						mWebSocketMock = new RemoteWebSocketServerMock();
 						return mWebSocketMock;
 					};
 			Env::setCreator<RemoteWebSocketServer*>(creator2);

@@ -1,21 +1,21 @@
-From 0b9dc418d21a54b748637f4853dbe340c2dbc33e Mon Sep 17 00:00:00 2001
+From d14866e446c2eb41cc4bb2a9016f871d4a25a038 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
 Date: Tue, 16 Oct 2018 17:55:29 +0200
 Subject: [PATCH] disable designer
 
 ---
  src/linguist/linguist.pro | 9 ---------
- src/src.pro               | 7 -------
- 2 files changed, 16 deletions(-)
+ src/src.pro               | 8 --------
+ 2 files changed, 17 deletions(-)
 
 diff --git x/qttools/src/linguist/linguist.pro y/qttools/src/linguist/linguist.pro
-index 3f54c396..61903c08 100644
+index 7638c771..e17e6c99 100644
 --- x/qttools/src/linguist/linguist.pro
 +++ y/qttools/src/linguist/linguist.pro
-@@ -3,16 +3,7 @@ SUBDIRS  = \
-     lrelease \
+@@ -10,16 +10,7 @@ SUBDIRS  = \
+     lrelease-pro \
      lupdate \
-     lconvert
+     lupdate-pro
 -!no-png:qtHaveModule(widgets) {
 -    QT_FOR_CONFIG += widgets
 -    qtConfig(process):qtConfig(pushbutton):qtConfig(toolbutton) {
@@ -30,17 +30,18 @@ index 3f54c396..61903c08 100644
  equals(QMAKE_HOST.os, Windows): CMAKE_BIN_SUFFIX = ".exe"
  
 diff --git x/qttools/src/src.pro y/qttools/src/src.pro
-index 7a1af007..a9d4ac4b 100644
+index 8ed567b9..b48f7d3d 100644
 --- x/qttools/src/src.pro
 +++ y/qttools/src/src.pro
-@@ -5,13 +5,6 @@ qtHaveModule(widgets) {
+@@ -5,14 +5,6 @@ qtHaveModule(widgets) {
          message("Some graphics-related tools are unavailable without PNG support")
      } else {
          QT_FOR_CONFIG += widgets
 -        qtConfig(pushbutton):qtConfig(toolbutton) {
--            SUBDIRS = assistant \
--                      designer \
+-            SUBDIRS = designer \
 -                      pixeltool
+-
+-            !static|contains(QT_PLUGINS, qsqlite): SUBDIRS += assistant
 -
 -            linguist.depends = designer
 -        }
@@ -48,5 +49,5 @@ index 7a1af007..a9d4ac4b 100644
      }
  }
 -- 
-2.19.1
+2.28.0
 

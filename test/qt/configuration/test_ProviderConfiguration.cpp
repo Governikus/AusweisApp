@@ -83,8 +83,6 @@ class test_ProviderConfiguration
 				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 				/* icon */ QString(),
 				/* image */ QString(),
-				/* tcTokenUrl */ QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml"),
-				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
 				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")})
 				);
 
@@ -100,9 +98,45 @@ class test_ProviderConfiguration
 			QCOMPARE(provider.getPostalAddress(), QStringLiteral("Am Fallturm 9\n28359 Bremen"));
 			QVERIFY(provider.getIcon()->lookupPath().endsWith("/CategoryA_button.svg"));
 			QVERIFY(provider.getImage()->lookupPath().endsWith("/CategoryA_bg.svg"));
-			QCOMPARE(provider.getTcTokenUrl(), QUrl(QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml")));
-			QCOMPARE(provider.getClientUrl(), QUrl(QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld")));
 			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}));
+		}
+
+
+		void checkName()
+		{
+			const ProviderConfigurationInfo providerEmptyLongname(
+				/* short name  */ QStringLiteral("Provider 1"),
+				/* long name  */ QString(QLatin1String("")),
+				/* short description */ QStringLiteral("Provider description short"),
+				/* long description */ QStringLiteral("Provider description long"),
+				/* address */ QStringLiteral("https://www.homepage.com/form/"),
+				/* homepage */ QStringLiteral("https://www.homepage.com/"),
+				/* category */ QStringLiteral("CategoryA"),
+				/* phone */ QStringLiteral("0421 123456"),
+				/* email */ QStringLiteral("abc@def.de"),
+				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
+				/* icon */ QString(),
+				/* image */ QString(),
+				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}));
+
+			QCOMPARE(providerEmptyLongname.getLongName().toString(), QString());
+
+			const ProviderConfigurationInfo providerWithoutLongname(
+				/* short name  */ QStringLiteral("Provider 1"),
+				/* long name  */ QString(),
+				/* short description */ QStringLiteral("Provider description short"),
+				/* long description */ QStringLiteral("Provider description long"),
+				/* address */ QStringLiteral("https://www.homepage.com/form/"),
+				/* homepage */ QStringLiteral("https://www.homepage.com/"),
+				/* category */ QStringLiteral("CategoryA"),
+				/* phone */ QStringLiteral("0421 123456"),
+				/* email */ QStringLiteral("abc@def.de"),
+				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
+				/* icon */ QString(),
+				/* image */ QString(),
+				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}));
+
+			QCOMPARE(providerWithoutLongname.getLongName().toString(), QStringLiteral("Provider 1"));
 		}
 
 
@@ -189,20 +223,6 @@ class test_ProviderConfiguration
 			QVERIFY(!homepage.host().isEmpty());
 			QCOMPARE(homepage.scheme(), QString("https"));
 
-			if (!provider.getTcTokenUrl().isEmpty())
-			{
-				const auto& tcTokenUrl = QUrl(provider.getTcTokenUrl());
-				QVERIFY(!tcTokenUrl.host().isEmpty());
-				QCOMPARE(tcTokenUrl.scheme(), QString("https"));
-			}
-
-			if (!provider.getClientUrl().isEmpty())
-			{
-				const auto& clientUrl = QUrl(provider.getClientUrl());
-				QVERIFY(!clientUrl.host().isEmpty());
-				QCOMPARE(clientUrl.scheme(), QString("https"));
-			}
-
 			const auto& subjectUrls = provider.getSubjectUrls();
 			for (const auto& url : subjectUrls)
 			{
@@ -231,8 +251,6 @@ class test_ProviderConfiguration
 				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 				/* icon */ QString(),
 				/* image */ QString(),
-				/* tcTokenUrl */ QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml"),
-				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
 				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")})
 				);
 
@@ -249,8 +267,6 @@ class test_ProviderConfiguration
 				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 				/* icon */ QString(),
 				/* image */ QString(),
-				/* tcTokenUrl */ QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml"),
-				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
 				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")})
 				);
 
@@ -267,8 +283,6 @@ class test_ProviderConfiguration
 				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 				/* icon */ QString(),
 				/* image */ QString(),
-				/* tcTokenUrl */ QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml"),
-				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
 				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")})
 				);
 

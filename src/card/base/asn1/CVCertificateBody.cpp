@@ -104,12 +104,6 @@ IMPLEMENT_ASN1_OBJECT(CVCertificateBody)
 } // namespace governikus
 
 
-QSharedPointer<CVCertificateBody> CVCertificateBody::fromHex(const QString& pHexValue)
-{
-	return decode(QByteArray::fromHex(pHexValue.toLatin1()));
-}
-
-
 QSharedPointer<CVCertificateBody> CVCertificateBody::decode(const QByteArray& pBytes)
 {
 	return decodeObject<CVCertificateBody>(pBytes);
@@ -217,7 +211,7 @@ QMap<QByteArray, QByteArray> CVCertificateBody::getExtensions() const
 	{
 		for (int i = 0; i < sk_CERTIFICATEEXTENSION_num(mExtensions); i++)
 		{
-			CERTIFICATEEXTENSION* extension = sk_CERTIFICATEEXTENSION_value(mExtensions, i);
+			const CERTIFICATEEXTENSION* extension = sk_CERTIFICATEEXTENSION_value(mExtensions, i);
 			ext.insert(Asn1ObjectUtil::convertTo(extension->mOid), Asn1OctetStringUtil::getValue(extension->mObject1));
 		}
 	}

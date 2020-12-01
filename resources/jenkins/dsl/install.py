@@ -15,7 +15,7 @@ import time
 
 
 
-if len(sys.argv) is not 2:
+if len(sys.argv) != 2:
 	print('Please provide address of jenkins server')
 	print('Example: localhost:8090')
 	sys.exit(1)

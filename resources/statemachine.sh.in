@@ -19,10 +19,10 @@ function createImage {
 	rm $2.uml
 }
 
-createImage @PROJECT_SOURCE_DIR@/src/core/states/CompositeStatePace.cpp @PROJECT_BINARY_DIR@/uml_CompositeStatePace
-createImage @PROJECT_SOURCE_DIR@/src/core/states/CompositeStateProcessCvcsAndSetRights.cpp @PROJECT_BINARY_DIR@/uml_CompositeStateProcessCvcsAndSetRights
-createImage @PROJECT_SOURCE_DIR@/src/core/states/CompositeStateTrustedChannel.cpp @PROJECT_BINARY_DIR@/uml_CompositeStateTrustedChannel
-createImage @PROJECT_SOURCE_DIR@/src/core/controller/ChangePinController.cpp @PROJECT_BINARY_DIR@/uml_ChangePinController
-createImage @PROJECT_SOURCE_DIR@/src/core/controller/SelfAuthController.cpp @PROJECT_BINARY_DIR@/uml_SelfAuthController
-createImage @PROJECT_SOURCE_DIR@/src/core/controller/AuthController.cpp @PROJECT_BINARY_DIR@/uml_AuthController
-createImage @PROJECT_SOURCE_DIR@/src/core/controller/RemoteServiceController.cpp @PROJECT_BINARY_DIR@/uml_RemoteServiceController
+createImage @PROJECT_SOURCE_DIR@/src/workflows/base/states/CompositeStatePace.cpp @PROJECT_BINARY_DIR@/uml_CompositeStatePace
+createImage @PROJECT_SOURCE_DIR@/src/workflows/base/states/CompositeStateProcessCvcsAndSetRights.cpp @PROJECT_BINARY_DIR@/uml_CompositeStateProcessCvcsAndSetRights
+createImage @PROJECT_SOURCE_DIR@/src/workflows/base/states/CompositeStateTrustedChannel.cpp @PROJECT_BINARY_DIR@/uml_CompositeStateTrustedChannel
+createImage @PROJECT_SOURCE_DIR@/src/workflows/base/controller/ChangePinController.cpp @PROJECT_BINARY_DIR@/uml_ChangePinController
+createImage @PROJECT_SOURCE_DIR@/src/workflows/base/controller/SelfAuthController.cpp @PROJECT_BINARY_DIR@/uml_SelfAuthController
+createImage @PROJECT_SOURCE_DIR@/src/workflows/base/controller/AuthController.cpp @PROJECT_BINARY_DIR@/uml_AuthController
+createImage @PROJECT_SOURCE_DIR@/src/workflows/remote_device/controller/RemoteServiceController.cpp @PROJECT_BINARY_DIR@/uml_RemoteServiceController

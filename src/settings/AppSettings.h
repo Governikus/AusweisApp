@@ -15,8 +15,6 @@
 
 #include <QObject>
 
-class test_AppSettings;
-
 namespace governikus
 {
 
@@ -31,21 +29,16 @@ class AppSettings
 	friend class Env;
 
 	private:
-		bool mUsedAsSdk;
+		AppSettings();
+		virtual ~AppSettings() override;
+
 		GeneralSettings mGeneralSettings;
 		PreVerificationSettings mPreVerificationSettings;
 		HistorySettings mHistorySettings;
 		RemoteServiceSettings mRemoteReaderSettings;
 
-	protected:
-		AppSettings();
-		virtual ~AppSettings() override;
-		static AppSettings& getInstance();
-
 	public:
 		virtual void save() override;
-		bool isUsedAsSDK() const;
-		void setUsedAsSDK(bool pSdk);
 
 		virtual GeneralSettings& getGeneralSettings();
 		virtual PreVerificationSettings& getPreVerificationSettings();

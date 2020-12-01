@@ -68,10 +68,10 @@ void HistoryModel::updateConnections()
 		const auto& provider = determineProviderFor(historyEntries.at(i));
 		const QModelIndex& modelIndex = createIndex(i, 0);
 
-		mConnections += connect(provider.getIcon().data(), &UpdatableFile::fireUpdated, this, [ = ] {
+		mConnections += connect(provider.getIcon().data(), &UpdatableFile::fireUpdated, this, [this, modelIndex] {
 					Q_EMIT dataChanged(modelIndex, modelIndex, {PROVIDER_ICON});
 				});
-		mConnections += connect(provider.getImage().data(), &UpdatableFile::fireUpdated, this, [ = ] {
+		mConnections += connect(provider.getImage().data(), &UpdatableFile::fireUpdated, this, [this, modelIndex] {
 					Q_EMIT dataChanged(modelIndex, modelIndex, {PROVIDER_IMAGE});
 				});
 	}
@@ -120,102 +120,78 @@ QVariant HistoryModel::data(const QModelIndex& pIndex, int pRole) const
 	{
 		const auto& infos = getHistorySettings().getHistoryInfos();
 		const auto& entry = infos[pIndex.row()];
-		if (pRole == Qt::DisplayRole || pRole == SUBJECT)
+		const auto& provider = determineProviderFor(entry);
+		switch (pRole)
 		{
-			return entry.getSubjectName();
-		}
-		if (pRole == PURPOSE)
-		{
-			return entry.getPurpose();
-		}
-		if (pRole == DATETIME)
-		{
-			return entry.getDateTime();
-		}
-		if (pRole == TERMSOFUSAGE)
-		{
-			auto tos = entry.getTermOfUsage();
-			return tos.remove(QLatin1Char('\r')).replace(QLatin1Char('\t'), QLatin1Char(' '));
-		}
-		if (pRole == REQUESTEDDATA)
-		{
-			return AccessRoleAndRightsUtil::joinFromTechnicalName(entry.getRequestedData());
-		}
-		if (pRole == PROVIDER_CATEGORY)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getCategory();
-		}
-		if (pRole == PROVIDER_SHORTNAME)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getShortName().toString();
-		}
-		if (pRole == PROVIDER_LONGNAME)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getLongName().toString();
-		}
-		if (pRole == PROVIDER_SHORTDESCRIPTION)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getShortDescription().toString();
-		}
-		if (pRole == PROVIDER_LONGDESCRIPTION)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getLongDescription().toString();
-		}
-		if (pRole == PROVIDER_ADDRESS)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getAddress();
-		}
-		if (pRole == PROVIDER_ADDRESS_DOMAIN)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getAddressDomain();
-		}
-		if (pRole == PROVIDER_HOMEPAGE)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getHomepage();
-		}
-		if (pRole == PROVIDER_HOMEPAGE_BASE)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getHomepageBase();
-		}
-		if (pRole == PROVIDER_PHONE)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getPhone();
-		}
-		if (pRole == PROVIDER_PHONE_COST)
-		{
-			const auto& provider = determineProviderFor(entry);
-			const auto& cost = Env::getSingleton<ProviderConfiguration>()->getCallCost(provider);
-			return ProviderModel::createCostString(cost);
-		}
-		if (pRole == PROVIDER_EMAIL)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getEMail();
-		}
-		if (pRole == PROVIDER_POSTALADDRESS)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getPostalAddress();
-		}
-		if (pRole == PROVIDER_ICON)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getIcon()->lookupUrl();
-		}
-		if (pRole == PROVIDER_IMAGE)
-		{
-			auto provider = determineProviderFor(entry);
-			return provider.getImage()->lookupUrl();
+			case Qt::DisplayRole:
+			case SUBJECT:
+				return entry.getSubjectName();
+
+			case PURPOSE:
+				return entry.getPurpose();
+
+			case DATETIME:
+				return entry.getDateTime();
+
+			case TERMSOFUSAGE:
+			{
+				auto tos = entry.getTermOfUsage();
+				return tos.remove(QLatin1Char('\r')).replace(QLatin1Char('\t'), QLatin1Char(' '));
+			}
+
+			case REQUESTEDDATA:
+				return AccessRoleAndRightsUtil::joinFromTechnicalName(entry.getRequestedData(), AccessRoleAndRightsUtil::READ);
+
+			case WRITTENDATA:
+				return AccessRoleAndRightsUtil::joinFromTechnicalName(entry.getRequestedData(), AccessRoleAndRightsUtil::WRITE);
+
+			case PROVIDER_CATEGORY:
+				return provider.getCategory();
+
+			case PROVIDER_SHORTNAME:
+				return provider.getShortName().toString();
+
+			case PROVIDER_LONGNAME:
+				return provider.getLongName().toString();
+
+			case PROVIDER_SHORTDESCRIPTION:
+				return provider.getShortDescription().toString();
+
+			case PROVIDER_LONGDESCRIPTION:
+				return provider.getLongDescription().toString();
+
+			case PROVIDER_ADDRESS:
+				return provider.getAddress();
+
+			case PROVIDER_ADDRESS_DOMAIN:
+				return provider.getAddressDomain();
+
+			case PROVIDER_HOMEPAGE:
+				return provider.getHomepage();
+
+			case PROVIDER_HOMEPAGE_BASE:
+				return provider.getHomepageBase();
+
+			case PROVIDER_PHONE:
+				return provider.getPhone();
+
+			case PROVIDER_PHONE_COST:
+			{
+				const auto& cost = Env::getSingleton<ProviderConfiguration>()->getCallCost(provider);
+				return ProviderModel::createCostString(cost);
+			}
+
+			case PROVIDER_EMAIL:
+				return provider.getEMail();
+
+			case PROVIDER_POSTALADDRESS:
+				return provider.getPostalAddress();
+
+			case PROVIDER_ICON:
+				return provider.getIcon()->lookupUrl();
+
+			case PROVIDER_IMAGE:
+				return provider.getImage()->lookupUrl();
 		}
 	}
 	return QVariant();
@@ -273,6 +249,7 @@ QHash<int, QByteArray> HistoryModel::roleNames() const
 	roles.insert(DATETIME, "dateTime");
 	roles.insert(TERMSOFUSAGE, "termsOfUsage");
 	roles.insert(REQUESTEDDATA, "requestedData");
+	roles.insert(WRITTENDATA, "writtenData");
 	roles.insert(PROVIDER_CATEGORY, "providerCategory");
 	roles.insert(PROVIDER_SHORTNAME, "providerShortName");
 	roles.insert(PROVIDER_LONGNAME, "providerLongName");
@@ -347,7 +324,7 @@ void HistoryModel::createDummyEntry()
 	getHistorySettings().addHistoryInfo(HistoryInfo(
 			QStringLiteral("Dummy Subject"), QStringLiteral("Dummy Subject URL"), QStringLiteral("Dummy Usage"),
 			QDateTime::currentDateTime(), QStringLiteral("Dummy Term Of Usage"),
-			{QStringLiteral("Dummy Data 1"), QStringLiteral("Dummy Data 2")}));
+			{QStringLiteral("GivenNames"), QStringLiteral("Address"), QStringLiteral("WriteAddress")}));
 }
 
 

@@ -2,16 +2,15 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.LogModel 1.0
 
 
@@ -21,14 +20,14 @@ SectionPage
 
 	signal keyPressed(int key)
 
-	Accessible.name: qsTr("Logfile viewer") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This is the logfile viewer of the AusweisApp2.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Log viewer")
+	Accessible.description: qsTr("This is the log viewer of the AusweisApp2.")
 
 	Keys.onPressed: keyPressed(event.key)
 
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
-		text: qsTr("Application log") + SettingsModel.translationTrigger
+		text: qsTr("Logs")
 		helpTopic: "applicationLog"
 	}
 
@@ -62,9 +61,9 @@ SectionPage
 
 					Layout.fillWidth: true
 
-					icon.source: "qrc:///images/icon_save.svg"
+					icon.source: "qrc:///images/desktop/material_save.svg"
 					//: LABEL DESKTOP_QML
-					text: qsTr("Save logfile") + SettingsModel.translationTrigger
+					text: qsTr("Save log")
 					enabled: tabbedPane.sectionsModel.length > 0
 					tintIcon: true
 					onClicked: {
@@ -78,11 +77,11 @@ SectionPage
 
 					Layout.fillWidth: true
 
-					icon.source: "qrc:///images/trash_icon_white.svg"
+					icon.source: "qrc:///images/material_delete.svg"
 					//: LABEL DESKTOP_QML
-					text: qsTr("Delete logfile") + SettingsModel.translationTrigger
+					text: qsTr("Delete log")
 					enableButton: tabbedPane.currentIndex > 0
-					disabledTooltipText: qsTr("The current logfile will be automatically deleted at exit.") + SettingsModel.translationTrigger
+					disabledTooltipText: qsTr("The current log will be automatically deleted at exit.")
 
 					tintIcon: true
 					onClicked: {
@@ -98,8 +97,8 @@ SectionPage
 
 					icon.source: "qrc:///images/trash_icon_all.svg"
 					//: LABEL DESKTOP_QML
-					text: qsTr("Delete old logfiles") + SettingsModel.translationTrigger
-					enabled: tabbedPane.sectionsModel.length > 1
+					text: qsTr("Delete old logs")
+					enableButton: tabbedPane.sectionsModel.length > 1
 					tintIcon: true
 					onClicked: {
 						confirmationPopup.deleteAll = true
@@ -112,8 +111,8 @@ SectionPage
 
 					Layout.fillWidth: true
 
-					icon.source: "qrc:///images/link_external.svg"
-					text: qsTr("Detach log viewer") + SettingsModel.translationTrigger
+					icon.source: "qrc:///images/desktop/material_open_in_browser.svg"
+					text: qsTr("Detach log viewer")
 					tintIcon: true
 
 					onClicked: appWindow.showDetachedLogView()
@@ -178,15 +177,15 @@ SectionPage
 
 		title: (deleteAll ?
 				//: LABEL DESKTOP_QML
-				qsTr("Delete old logfiles") :
+				qsTr("Delete old logs") :
 				//: LABEL DESKTOP_QML
-				qsTr("Delete selected logfile")
-			   ) + SettingsModel.translationTrigger
+				qsTr("Delete selected log")
+			   )
 		//: INFO DESKTOP_QML All logfiles are about to be removed, user confirmation required.
-		text: (deleteAll ? qsTr("All old logfiles will be deleted.")
+		text: (deleteAll ? qsTr("All old logs will be deleted.")
 						 //: INFO DESKTOP_QML The current logfile is about to be removed, user confirmation required.
-						 : qsTr("The logfile will be deleted.")
-			   ) + SettingsModel.translationTrigger
+						 : qsTr("The log will be deleted.")
+			   )
 		onConfirmed: deleteAll ? LogModel.removeOtherLogfiles() : LogModel.removeCurrentLogfile()
 	}
 }

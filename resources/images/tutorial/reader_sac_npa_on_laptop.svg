@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200px" height="150px" viewBox="0 0 200 150">
+  <image x="10" y="18" width="180px" height="114px" xlink:href="laptop.svg"/>
+  <image x="65" y="40" width="70px" height="70px" xlink:href="../npa.svg"/>
+</svg>

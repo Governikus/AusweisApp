@@ -120,7 +120,7 @@ class test_ResponceApdu
 			ResponseApdu apdu1 = ResponseApdu(QByteArray());
 			ResponseApdu apdu2 = ResponseApdu(QByteArray("a"));
 			ResponseApdu apdu3 = ResponseApdu(QByteArray("date"));
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QCOMPARE(apdu1.getSW2(), '\0');
 			QCOMPARE(apdu2.getSW2(), 'a');
@@ -150,7 +150,7 @@ class test_ResponceApdu
 			QFETCH(SW1, sw1);
 			QFETCH(QByteArray, buffer);
 			QFETCH(QString, warning);
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			ResponseApdu apdu = ResponseApdu(buffer);
 			QCOMPARE(apdu.getSW1(), sw1);

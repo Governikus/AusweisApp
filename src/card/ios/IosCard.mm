@@ -5,6 +5,7 @@
 #include "IosCard.h"
 
 #include "IosCardPointer.h"
+#include "VolatileSettings.h"
 
 #include <QLoggingCategory>
 
@@ -23,39 +24,48 @@ IosCard::IosCard(IosCardPointer* const pCard)
 	: Card()
 	, mCard(pCard)
 	, mConnected(false)
-	, mWaitCondition()
-	, mCallbackDone()
 {
 	qCDebug(card_nfc) << "Card created";
-
-	[mCard->mNfcTag retain];
-	mCallbackDone.lock();
 }
 
 
 IosCard::~IosCard()
 {
-	[mCard->mNfcTag release];
 	delete mCard;
+}
+
+
+void IosCard::waitForRequestCompleted(const bool& pCondition) const
+{
+	QElapsedTimer timer;
+	timer.start();
+	do
+	{
+		if (pCondition)
+		{
+			break;
+		}
+
+		QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents, 1);
+	}
+	while (timer.elapsed() <= 500);
 }
 
 
 bool IosCard::isValid() const
 {
-	return mCard->mNfcTag && (!mConnected || mCard->mNfcTag.available);
-}
-
-
-bool IosCard::invalidateTarget()
-{
-	if (isValid())
+	if (@available(iOS 13, *))
 	{
-		[mCard->mNfcTag release];
-		mCard->mNfcTag = nil;
-		return true;
+		return mCard->mNfcTag && (!mConnected || mCard->mNfcTag.available);
 	}
 
 	return false;
+}
+
+
+void IosCard::invalidateTarget()
+{
+	mCard->mNfcTag = nil;
 }
 
 
@@ -73,24 +83,30 @@ CardReturnCode IosCard::connect()
 		return CardReturnCode::OK;
 	}
 
-	NFCTagReaderSession* session = mCard->mNfcTag.session;
-	[session connectToTag: mCard->mNfcTag completionHandler: ^(NSError* error){
-		if (error != nil)
-		{
-			qCDebug(card_nfc) << "Error during connect:" << error;
-		}
-		else
-		{
-			mConnected = true;
-		}
+	if (@available(iOS 13, *))
+	{
+		__block bool callbackDone = false;
 
-		mWaitCondition.wakeOne();
-	}];
+		NFCTagReaderSession* session = mCard->mNfcTag.session;
+		[session connectToTag: mCard->mNfcTag completionHandler: ^(NSError* error){
+			if (error != nil)
+			{
+				invalidateTarget();
+				qCDebug(card_nfc) << "Error during connect:" << error;
+			}
+			else
+			{
+				mConnected = true;
+			}
 
-	mWaitCondition.wait(&mCallbackDone, 500);
+			callbackDone = true;
+		}];
+
+		waitForRequestCompleted(callbackDone);
+	}
+
 	if (!mConnected)
 	{
-		Q_EMIT fireTransmitFailed();
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
@@ -123,10 +139,28 @@ bool IosCard::isConnected()
 }
 
 
-void IosCard::setProgressMessage(const QString& pMessage)
+void IosCard::setProgressMessage(const QString& pMessage, int pProgress)
 {
-	NFCTagReaderSession* session = mCard->mNfcTag.session;
-	session.alertMessage = pMessage.toNSString();
+	if (@available(iOS 13, *))
+	{
+		QString message;
+		if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+		{
+			message = pMessage;
+		}
+
+		if (pProgress != -1)
+		{
+			if (!message.isEmpty())
+			{
+				message += QLatin1Char('\n');
+			}
+			message += QStringLiteral("%1 %").arg(pProgress);
+		}
+
+		NFCTagReaderSession* session = mCard->mNfcTag.session;
+		session.alertMessage = message.toNSString();
+	}
 }
 
 
@@ -143,37 +177,43 @@ ResponseApduResult IosCard::transmit(const CommandApdu& pCmd)
 	const auto resultBuffer = QSharedPointer<QByteArray>::create(); // Don't use this inside of the Block
 	const QWeakPointer<QByteArray> weakBuffer = resultBuffer;
 
-	Q_ASSERT([mCard->mNfcTag conformsToProtocol:@protocol(NFCISO7816Tag)]);
-	const auto tag = static_cast<id<NFCISO7816Tag>>(mCard->mNfcTag);
-	auto* apdu = [[NFCISO7816APDU alloc] initWithData: pCmd.getBuffer().toNSData()];
-	[tag sendCommandAPDU: apdu completionHandler: ^(NSData* responseData, uint8_t sw1, uint8_t sw2, NSError* error){
-	    // By referencing weakBuffer here, it will be copied into the Block. If the handler outlives the caller, resultBuffer won't exist anymore.
-		if (const auto recvBuffer = weakBuffer.lock())
-		{
-			if (error == nil)
+	if (@available(iOS 13, *))
+	{
+		__block bool callbackDone = false;
+
+		Q_ASSERT([mCard->mNfcTag conformsToProtocol:@protocol(NFCISO7816Tag)]);
+		const auto tag = static_cast<id<NFCISO7816Tag>>(mCard->mNfcTag);
+		auto* apdu = [[NFCISO7816APDU alloc] initWithData: pCmd.getBuffer().toNSData()];
+		[tag sendCommandAPDU: apdu completionHandler: ^(NSData* responseData, uint8_t sw1, uint8_t sw2, NSError* error){
+		    // By referencing weakBuffer here, it will be copied into the Block. If the handler outlives the caller, resultBuffer won't exist anymore.
+			if (const auto recvBuffer = weakBuffer.lock())
 			{
-				*recvBuffer = QByteArray::fromNSData(responseData);
-				*recvBuffer += static_cast<char>(sw1);
-				*recvBuffer += static_cast<char>(sw2);
-				qCDebug(card_nfc) << "Transmit response APDU:" << recvBuffer->toHex();
+				if (error == nil)
+				{
+					*recvBuffer = QByteArray::fromNSData(responseData);
+					*recvBuffer += static_cast<char>(sw1);
+					*recvBuffer += static_cast<char>(sw2);
+					qCDebug(card_nfc) << "Transmit response APDU:" << recvBuffer->toHex();
+				}
+				else
+				{
+					invalidateTarget();
+					qCDebug(card_nfc) << "Error during transmit:" << error;
+				}
+
+				callbackDone = true;
 			}
 			else
 			{
-				qCDebug(card_nfc) << "Error during transmit:" << error;
+				qCDebug(card_nfc) << "Caller doesn't exist anymore.";
 			}
+		}];
 
-			mWaitCondition.wakeOne();
-		}
-		else
-		{
-			qCDebug(card_nfc) << "Caller doesn't exist anymore.";
-		}
-	}];
+		waitForRequestCompleted(callbackDone);
+	}
 
-	mWaitCondition.wait(&mCallbackDone, 500);
 	if (resultBuffer->isEmpty())
 	{
-		Q_EMIT fireTransmitFailed();
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 

@@ -20,7 +20,7 @@ class WebserviceActivationContext
 
 	const QSharedPointer<HttpRequest> mRequest;
 
-	void setCommonHeaders(HttpResponse& pResponse);
+	void setCommonHeaders(HttpResponse& pResponse) const;
 
 	public:
 		explicit WebserviceActivationContext(const QSharedPointer<HttpRequest>& pRequest);

@@ -66,6 +66,8 @@ void ReaderScanEnabler::setPlugInType(ReaderManagerPlugInType pPlugInType)
 	{
 		enableScan(true);
 	}
+
+	Q_EMIT firePlugInTypeChanged();
 }
 
 

@@ -4,32 +4,32 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppInit)
 
-TARGET_LINK_LIBRARIES(AusweisAppInit Qt5::Core OpenSSL::Crypto AusweisAppGlobal AusweisAppCore)
+target_link_libraries(AusweisAppInit ${Qt}::Core OpenSSL::Crypto AusweisAppGlobal AusweisAppCore)
 
-IF(NOT INTEGRATED_SDK)
-	TARGET_LINK_LIBRARIES(AusweisAppInit Qt5::Gui) # QGuiApplication
-	IF(DESKTOP)
-		TARGET_LINK_LIBRARIES(AusweisAppInit Qt5::Widgets) # QApplication
-	ENDIF()
-ENDIF()
+if(NOT INTEGRATED_SDK)
+	target_link_libraries(AusweisAppInit ${Qt}::Gui) # QGuiApplication
+	if(DESKTOP)
+		target_link_libraries(AusweisAppInit ${Qt}::Widgets) # QApplication
+	endif()
+endif()
 
 
-FUNCTION(CONFIGURE_CONFIG_H)
-	IF(VENDOR_GOVERNIKUS)
-		SET(VENDOR_DOMAIN governikus.com)
-	ELSE()
-		SET(VENDOR_DOMAIN)
-	ENDIF()
+function(CONFIGURE_CONFIG_H)
+	if(VENDOR_GOVERNIKUS)
+		set(VENDOR_DOMAIN governikus.com)
+	else()
+		set(VENDOR_DOMAIN)
+	endif()
 
-	IF(VERSION_DVCS)
-		SET(VERSION ${VERSION_DVCS})
-	ELSE()
-		SET(VERSION ${PROJECT_VERSION})
-	ENDIF()
+	if(VERSION_DVCS)
+		set(VERSION ${VERSION_DVCS})
+	else()
+		set(VERSION ${PROJECT_VERSION})
+	endif()
 
-	SET(PRODUCT ${PROJECT_NAME})
+	set(PRODUCT ${PROJECT_NAME})
 
-	CONFIGURE_FILE(config.h.in config.h @ONLY)
-ENDFUNCTION()
+	configure_file(config.h.in config.h @ONLY)
+endfunction()
 
 CONFIGURE_CONFIG_H()

@@ -9,6 +9,8 @@
 #include <QPair>
 #include <QString>
 
+#include "Env.h"
+
 namespace governikus
 {
 
@@ -16,6 +18,7 @@ class VersionInformationModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
+	friend class Env;
 
 	private:
 		enum HistoryRoles
@@ -25,11 +28,12 @@ class VersionInformationModel
 		};
 		QVector<QPair<QString, QString>> mData;
 
+		VersionInformationModel();
+		virtual ~VersionInformationModel() override = default;
+
 		void init();
 
 	public:
-		VersionInformationModel(QObject* pParent = nullptr);
-
 		int rowCount(const QModelIndex& = QModelIndex()) const override;
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
 		QHash<int, QByteArray> roleNames() const override;

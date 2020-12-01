@@ -34,7 +34,7 @@ class test_DidAuthenticateEAC1Command
 
 		void test_InternalExecuteOKEmptyChallenge()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 
 			ResponseApdu response(QByteArray::fromHex("9000"));
@@ -44,8 +44,8 @@ class test_DidAuthenticateEAC1Command
 			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
 			QCOMPARE(response.getReturnCode(), StatusCode::SUCCESS);
 			QCOMPARE(command.getChallenge(), QByteArray());
-			QCOMPARE(spy.count(), 1);
-			QVERIFY(spy.takeFirst().at(0).toString().contains("Challenge has wrong size. Expect 8 bytes, got"));
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Challenge has wrong size. Expect 8 bytes, got"));
 		}
 
 
@@ -65,7 +65,7 @@ class test_DidAuthenticateEAC1Command
 
 		void test_InternalExecuteFailed()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 
 			ResponseApdu response1(QByteArray::fromHex("63c0"));
@@ -75,8 +75,8 @@ class test_DidAuthenticateEAC1Command
 			QCOMPARE(command1.getReturnCode(), CardReturnCode::PIN_BLOCKED);
 			QCOMPARE(response1.getReturnCode(), StatusCode::PIN_BLOCKED);
 			QCOMPARE(command1.getChallenge(), QByteArray());
-			QCOMPARE(spy.count(), 1);
-			QVERIFY(spy.takeFirst().at(0).toString().contains("GetChallenge failed"));
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("GetChallenge failed"));
 
 			ResponseApdu response2(QByteArray::fromHex("19191919191919"));
 			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, response2.getBuffer());
@@ -85,8 +85,8 @@ class test_DidAuthenticateEAC1Command
 			QCOMPARE(command2.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
 			QCOMPARE(response2.getReturnCode(), StatusCode::INVALID);
 			QCOMPARE(command2.getChallenge(), QByteArray());
-			QCOMPARE(spy.count(), 1);
-			QVERIFY(spy.takeFirst().at(0).toString().contains("GetChallenge failed"));
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("GetChallenge failed"));
 		}
 
 

@@ -19,7 +19,7 @@ class IfdModifyPin
 
 	public:
 		IfdModifyPin(const QString& pSlotHandle = QString(), const QByteArray& pInputData = QByteArray());
-		IfdModifyPin(const QJsonObject& pMessageObject);
+		explicit IfdModifyPin(const QJsonObject& pMessageObject);
 		virtual ~IfdModifyPin() override = default;
 
 		const QString& getSlotHandle() const;

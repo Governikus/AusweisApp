@@ -4,6 +4,8 @@
 
 #include "UIPlugInJson.h"
 
+#include "context/AuthContext.h"
+#include "context/ChangePinContext.h"
 #include "messages/MsgTypes.h"
 #include "ReaderManager.h"
 
@@ -33,6 +35,7 @@ void UIPlugInJson::setEnabled(bool pEnable)
 		connect(readerManager, &ReaderManager::fireReaderRemoved, this, &UIPlugInJson::onReaderEvent);
 		connect(readerManager, &ReaderManager::fireCardInserted, this, &UIPlugInJson::onReaderEvent);
 		connect(readerManager, &ReaderManager::fireCardRemoved, this, &UIPlugInJson::onReaderEvent);
+		connect(readerManager, &ReaderManager::fireCardRetryCounterChanged, this, &UIPlugInJson::onReaderEvent);
 	}
 	else
 	{
@@ -40,6 +43,7 @@ void UIPlugInJson::setEnabled(bool pEnable)
 		disconnect(readerManager, &ReaderManager::fireReaderRemoved, this, &UIPlugInJson::onReaderEvent);
 		disconnect(readerManager, &ReaderManager::fireCardInserted, this, &UIPlugInJson::onReaderEvent);
 		disconnect(readerManager, &ReaderManager::fireCardRemoved, this, &UIPlugInJson::onReaderEvent);
+		disconnect(readerManager, &ReaderManager::fireCardRetryCounterChanged, this, &UIPlugInJson::onReaderEvent);
 	}
 }
 
@@ -70,7 +74,7 @@ void UIPlugInJson::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 		return;
 	}
 
-	if (pContext.objectCast<AuthContext>())
+	if (pContext.objectCast<AuthContext>() || pContext.objectCast<ChangePinContext>())
 	{
 		connect(pContext.data(), &WorkflowContext::fireStateChanged, this, &UIPlugInJson::onStateChanged);
 	}
@@ -91,9 +95,9 @@ void UIPlugInJson::onWorkflowFinished(QSharedPointer<WorkflowContext>)
 }
 
 
-void UIPlugInJson::onReaderEvent(const QString& pName)
+void UIPlugInJson::onReaderEvent(const ReaderInfo& pInfo)
 {
-	callFireMessage(mMessageDispatcher.createMsgReader(pName));
+	callFireMessage(mMessageDispatcher.createMsgReader(pInfo));
 }
 
 

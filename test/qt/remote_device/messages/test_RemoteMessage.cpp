@@ -20,7 +20,7 @@ class test_RemoteMessage
 	private:
 		void checkMissingContextHandle(RemoteCardMessageType type)
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray input("{\n"
 							 "    \"msg\": \"%1\"\n"
@@ -56,7 +56,7 @@ class test_RemoteMessage
 
 		void checkEmptyContextHandle(RemoteCardMessageType type)
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray input("{\n"
 							 "    \"ContextHandle\": \"\",\n"
@@ -84,7 +84,7 @@ class test_RemoteMessage
 
 		void checkValidContextHandle(RemoteCardMessageType type)
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray input("{\n"
 							 "    \"ContextHandle\": \"TestContext\",\n"
@@ -127,7 +127,7 @@ class test_RemoteMessage
 
 		void invalidJson()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray input("FooBar");
 			const auto& obj = RemoteMessage::parseByteArray(input);
@@ -147,7 +147,7 @@ class test_RemoteMessage
 
 		void missingObject()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray input("[]");
 			const auto& obj = RemoteMessage::parseByteArray(input);
@@ -166,7 +166,7 @@ class test_RemoteMessage
 
 		void emptyObject()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray input("{}");
 			const auto& obj = RemoteMessage::parseByteArray(input);
@@ -185,7 +185,7 @@ class test_RemoteMessage
 
 		void missingMessageType()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray input("{\n"
 							 "    \"ContextHandle\": \"TestContext\"\n"
@@ -220,7 +220,7 @@ class test_RemoteMessage
 		{
 			QFETCH(RemoteCardMessageType, type);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray input("{\n"
 							 "    \"ContextHandle\": \"TestContext\",\n"

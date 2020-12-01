@@ -16,6 +16,8 @@ Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
 using namespace governikus;
 
+Q_DECLARE_METATYPE(ReaderInfo)
+
 class test_MsgHandlerReader
 	: public QObject
 {
@@ -38,12 +40,15 @@ class test_MsgHandlerReader
 
 		void ctor()
 		{
+			QSignalSpy spy(&MockReaderManagerPlugIn::getInstance(), &ReaderManagerPlugIn::fireReaderAdded);
 			MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815");
+			QCOMPARE(spy.count(), 1);
+			ReaderInfo info = qvariant_cast<ReaderInfo>(spy.takeFirst().at(0));
 
-			MsgHandlerReader noReader("MockReader");
+			MsgHandlerReader noReader(ReaderInfo("MockReader"));
 			QCOMPARE(noReader.toJson(), QByteArray("{\"attached\":false,\"msg\":\"READER\",\"name\":\"MockReader\"}"));
 
-			MsgHandlerReader reader("MockReader 0815");
+			MsgHandlerReader reader(info);
 			QCOMPARE(reader.toJson(), QByteArray("{\"attached\":true,\"card\":null,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 		}
 
@@ -97,12 +102,16 @@ class test_MsgHandlerReader
 
 			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMock");
 			reader->setCard(MockCardConfig());
-			reader->getReaderInfo().setCardInfo(CardInfo(CardType::UNKNOWN));
+			ReaderInfo info = reader->getReaderInfo();
+			info.setCardInfo(CardInfo(CardType::UNKNOWN));
+			reader->setReaderInfo(info);
 
 			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMockWithGermanCard");
 			reader->setCard(MockCardConfig());
 			auto cardInfo = CardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
-			reader->getReaderInfo().setCardInfo(cardInfo);
+			info = reader->getReaderInfo();
+			info.setCardInfo(cardInfo);
+			reader->setReaderInfo(info);
 
 			MessageDispatcher dispatcher;
 			QByteArray msg("{\"cmd\": \"GET_READER\", \"name\": \"MockReader 0815\"}");

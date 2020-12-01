@@ -39,6 +39,9 @@ class EcUtil
 
 		static QSharedPointer<ECDSA_SIG> create(ECDSA_SIG* pEcdsaSignature);
 
+		static QSharedPointer<EVP_PKEY> create(EVP_PKEY* pEcGroup);
+
+		static QSharedPointer<EVP_PKEY_CTX> create(EVP_PKEY_CTX* pEcGroup);
 };
 
 inline QByteArray EcUtil::point2oct(const QSharedPointer<const EC_GROUP>& pCurve, const EC_POINT* pPoint)
@@ -97,7 +100,7 @@ inline QSharedPointer<EC_GROUP> EcUtil::create(EC_GROUP* pEcGroup)
 {
 	static auto deleter = [](EC_GROUP* ecCurve)
 			{
-				EC_GROUP_clear_free(ecCurve);
+				EC_GROUP_free(ecCurve);
 			};
 
 	return QSharedPointer<EC_GROUP>(pEcGroup, deleter);
@@ -145,6 +148,28 @@ inline QSharedPointer<ECDSA_SIG> EcUtil::create(ECDSA_SIG* pEcdsaSignature)
 			};
 
 	return QSharedPointer<ECDSA_SIG>(pEcdsaSignature, deleter);
+}
+
+
+inline QSharedPointer<EVP_PKEY> EcUtil::create(EVP_PKEY* pKey)
+{
+	static auto deleter = [](EVP_PKEY* key)
+			{
+				EVP_PKEY_free(key);
+			};
+
+	return QSharedPointer<EVP_PKEY>(pKey, deleter);
+}
+
+
+inline QSharedPointer<EVP_PKEY_CTX> EcUtil::create(EVP_PKEY_CTX* pCtx)
+{
+	static auto deleter = [](EVP_PKEY_CTX* ctx)
+			{
+				EVP_PKEY_CTX_free(ctx);
+			};
+
+	return QSharedPointer<EVP_PKEY_CTX>(pCtx, deleter);
 }
 
 

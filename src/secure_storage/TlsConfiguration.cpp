@@ -12,6 +12,7 @@
 using namespace governikus;
 
 const QLatin1String SETTINGS_NAME_SSL_PROTOCOL_VERSION("protocolVersion");
+const QLatin1String SETTINGS_NAME_SSL_OCSP_STAPLING("ocspStapling");
 const QLatin1String SETTINGS_GROUP_NAME_CIPHERS("ciphers");
 const QLatin1String SETTINGS_GROUP_NAME_ELLIPTIC_CURVES("ellipticCurves");
 const QLatin1String SETTINGS_GROUP_NAME_SIGNATURE_ALGORITHMS("signatureAlgorithms");
@@ -63,25 +64,20 @@ TlsConfiguration::~TlsConfiguration()
 void TlsConfiguration::load(const QJsonObject& pConfig)
 {
 	const auto protocolVersion = readSslProtocol(pConfig, SETTINGS_NAME_SSL_PROTOCOL_VERSION);
+	const auto ocspStapling = readOcspStapling(pConfig, SETTINGS_NAME_SSL_OCSP_STAPLING);
 
 	SslCipherList ciphers;
-	QJsonArray pskCiphers;
-	if (readJsonArray(pskCiphers, pConfig, SETTINGS_GROUP_NAME_CIPHERS))
+	QJsonArray pskCiphers = readJsonArray(pConfig, SETTINGS_GROUP_NAME_CIPHERS);
+	for (const QJsonValue& line : qAsConst(pskCiphers))
 	{
-		for (const QJsonValue& line : qAsConst(pskCiphers))
-		{
-			ciphers += line.toString();
-		}
+		ciphers += line.toString();
 	}
 
 	SslEllipticCurveVector ellipticCurves;
-	QJsonArray allowedEcs;
-	if (pConfig.contains(SETTINGS_GROUP_NAME_ELLIPTIC_CURVES) && readJsonArray(allowedEcs, pConfig, SETTINGS_GROUP_NAME_ELLIPTIC_CURVES))
+	QJsonArray allowedEcs = readJsonArray(pConfig, SETTINGS_GROUP_NAME_ELLIPTIC_CURVES);
+	for (const QJsonValue& line : qAsConst(allowedEcs))
 	{
-		for (const QJsonValue& line : qAsConst(allowedEcs))
-		{
-			ellipticCurves += line.toString();
-		}
+		ellipticCurves += line.toString();
 	}
 
 	const auto& signatureAlgorithms = readSignatureAlgorithms(pConfig, SETTINGS_GROUP_NAME_SIGNATURE_ALGORITHMS);
@@ -90,20 +86,32 @@ void TlsConfiguration::load(const QJsonObject& pConfig)
 	mConfiguration.setSslOption(QSsl::SslOptionDisableSessionPersistence, false); // enable SessionTicket, otherwise "sessionTicket()" returns empty data
 	mConfiguration.setCaCertificates(QList<QSslCertificate>()); // disable fetching of system CA certificates. Set allowRootCertOnDemandLoading to false in Qt
 	mConfiguration.setProtocol(protocolVersion);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+	mConfiguration.setOcspStaplingEnabled(ocspStapling);
+#else
+	Q_UNUSED(ocspStapling)
+#endif
 	mConfiguration.setCiphers(ciphers);
 	mConfiguration.setEllipticCurves(ellipticCurves);
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
 	mConfiguration.setBackendConfigurationOption(QByteArrayLiteral("SignatureAlgorithms"), signatureAlgorithms.join(':'));
-#else
-	Q_UNUSED(signatureAlgorithms)
-#endif
 }
 
 
 QSsl::SslProtocol TlsConfiguration::getProtocolVersion() const
 {
 	return mConfiguration.protocol();
+}
+
+
+bool TlsConfiguration::getOcspStapling() const
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+	return mConfiguration.ocspStaplingEnabled();
+
+#else
+	return false;
+
+#endif
 }
 
 
@@ -121,13 +129,12 @@ QVector<QSslEllipticCurve> TlsConfiguration::getEllipticCurves() const
 
 QByteArrayList TlsConfiguration::getSignatureAlgorithms() const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
 	const auto signatureAlgorithms = mConfiguration.backendConfiguration().value(QByteArrayLiteral("SignatureAlgorithms")).toByteArray();
 	if (!signatureAlgorithms.isEmpty())
 	{
 		return signatureAlgorithms.split(':');
 	}
-#endif
+
 	return QByteArrayList();
 }
 
@@ -138,25 +145,24 @@ const QSslConfiguration& TlsConfiguration::getConfiguration() const
 }
 
 
-bool TlsConfiguration::readJsonArray(QJsonArray& pArray, const QJsonObject& pConfig, const QLatin1String pName)
+QJsonArray TlsConfiguration::readJsonArray(const QJsonObject& pConfig, const QLatin1String pName) const
 {
 	QJsonValue value = pConfig.value(pName);
 	if (value.isUndefined())
 	{
 		qDebug() << pName << "undefined, using default";
-		return false;
+		return QJsonArray();
 	}
 	if (!value.isArray())
 	{
 		qCritical() << "Expecting array for" << pName << "in SecureStorage";
-		return false;
+		return QJsonArray();
 	}
-	pArray = value.toArray();
-	return true;
+	return value.toArray();
 }
 
 
-QSsl::SslProtocol TlsConfiguration::readSslProtocol(const QJsonObject& pConfig, const QLatin1String pName)
+QSsl::SslProtocol TlsConfiguration::readSslProtocol(const QJsonObject& pConfig, const QLatin1String pName) const
 {
 	if (!pConfig.contains(pName))
 	{
@@ -187,7 +193,18 @@ QSsl::SslProtocol TlsConfiguration::readSslProtocol(const QJsonObject& pConfig, 
 }
 
 
-QByteArrayList TlsConfiguration::readSignatureAlgorithms(const QJsonObject& pConfig, const QLatin1String pKey)
+bool TlsConfiguration::readOcspStapling(const QJsonObject& pConfig, const QLatin1String pName) const
+{
+	if (!pConfig.contains(pName))
+	{
+		qDebug() << pName << "undefined, using default";
+	}
+
+	return pConfig.value(pName).toBool();
+}
+
+
+QByteArrayList TlsConfiguration::readSignatureAlgorithms(const QJsonObject& pConfig, const QLatin1String pKey) const
 {
 	const QJsonValue& tmp = pConfig[pKey];
 	if (tmp.isUndefined())

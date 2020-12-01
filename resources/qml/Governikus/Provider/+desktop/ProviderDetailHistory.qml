@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -11,7 +11,6 @@ import Governikus.TitleBar 1.0
 import Governikus.Provider 1.0
 import Governikus.Type.HistoryModel 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.View 1.0
 
 Item {
@@ -19,8 +18,8 @@ Item {
 
 	height: columnLayout.height
 
-	Accessible.name: qsTr("List of your past interactions with this provider") + SettingsModel.translationTrigger
-	Accessible.description: HistoryModel.nameFilter.count === 0 ? qsTr("The list is empty, no recorded interaction with this provider.") + SettingsModel.translationTrigger : ""
+	Accessible.name: qsTr("List of your past interactions with this provider")
+	Accessible.description: HistoryModel.nameFilter.count === 0 ? qsTr("The list is empty, no recorded interaction with this provider.") : ""
 	Accessible.role: Accessible.List
 
 	ColumnLayout {
@@ -68,7 +67,7 @@ Item {
 			activeFocusOnTab: true
 
 			//: INFO DESKTOP_QML No authentication history, placeholder text.
-			text: qsTr("Currently there are no history entries.") + SettingsModel.translationTrigger
+			text: qsTr("Currently there are no history entries.")
 			textStyle: Style.text.normal
 		}
 	}

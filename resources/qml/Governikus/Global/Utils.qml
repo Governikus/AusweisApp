@@ -4,7 +4,7 @@
 
 pragma Singleton
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Type.Random 1.0
 
@@ -43,12 +43,6 @@ QtObject {
 		return one.getFullYear() === another.getFullYear() && one.getMonth() === another.getMonth() && one.getDate() === another.getDate();
 	}
 
-	function providerIconSource(baseName) {
-		var platform = plugin.platformStyle.indexOf("tablet") !== -1 ? "+tablet/" : ""
-
-		return "qrc:///images/provider/" + platform + baseName + ".png"
-	}
-
 	function scrollPageDown(pFlickable) {
 		if (pFlickable.height >= pFlickable.contentHeight) {
 			return
@@ -74,7 +68,7 @@ QtObject {
 	}
 
 	function shuffle(pArray) {
-		for (var i = pArray.length - 1; i > 0; i--) {
+		for (let i = pArray.length - 1; i > 0; i--) {
 			let j = Random.randomInt(0, i);
 			let x = pArray[i];
 			pArray[i] = pArray[j];

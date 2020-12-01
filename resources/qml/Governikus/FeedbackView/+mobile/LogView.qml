@@ -2,15 +2,14 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.LogModel 1.0
 
 
@@ -19,7 +18,7 @@ SectionPage
 	id: root
 	navigationAction: NavigationAction { state: "back"; onClicked: firePop() }
 	//: LABEL ANDROID IOS
-	title: qsTr("Log") + SettingsModel.translationTrigger
+	title: qsTr("Log")
 	rightTitleBarAction: LogTitleBarControls {
 		allowRemove: comboBox.currentIndex > 0
 		allowRemoveAll: comboBox.model.length > 1 // comboBox.count doesn't seem to update reliably
@@ -39,100 +38,60 @@ SectionPage
 
 	sectionPageFlickable: logView
 
-	Item {
+	Rectangle {
 		id: logSelector
-		height: comboBox.height
-		width: parent.width - 2 * Constants.pane_padding
-		anchors.top: parent.top
-		anchors.topMargin: Constants.pane_padding
-		anchors.horizontalCenter: parent.horizontalCenter
 
-		GText {
-			id: comboText
-			anchors.left: parent.left
-			anchors.verticalCenter: parent.verticalCenter
+		height: comboBox.height + Constants.pane_padding
+		width: parent.width
+		z: 1
 
-			//: LABEL ANDROID IOS
-			text: qsTr("Log:") + SettingsModel.translationTrigger
-		}
+		color: Style.color.accent
 
 		GComboBox {
 			id: comboBox
 
-			width: parent.width - comboText.width - Constants.component_spacing
-			anchors.right: parent.right
+			anchors {
+				right: parent.right
+				left: parent.left
+				margins: Constants.text_spacing
+				verticalCenter: parent.verticalCenter
+			}
 
-			Accessible.description: qsTr("Select logfile from list.") + SettingsModel.translationTrigger
+			Accessible.description: qsTr("Select log from list.")
 
 			model: LogModel.logFiles
 			onCurrentIndexChanged: LogModel.setLogfile(currentIndex)
 		}
 	}
 
-	Pane {
-		id: pane
+	GListView {
+		id: logView
+
+		Connections {
+			target: LogModel
+			onFireNewLogMsg: if (logView.atYEnd) logView.positionViewAtEnd()
+		}
 
 		anchors {
 			top: logSelector.bottom
-			bottom: parent.bottom
 			left: parent.left
 			right: parent.right
-			margins: Constants.pane_padding
+			bottom: parent.bottom
 		}
 
-		clip: true
+		model: LogModel
+		delegate: ListItem {
+			readonly property bool isLastItem: index === ListView.view.count - 1
 
-		GListView {
-			id: logView
+			Accessible.onScrollDownAction: ListView.view.scrollPageDown()
+			Accessible.onScrollUpAction: ListView.view.scrollPageUp()
 
-			height: pane.height - 2 * Constants.pane_padding
-			width: pane.width - Constants.pane_padding
-			displayMarginBeginning: Constants.pane_padding
-			displayMarginEnd: Constants.pane_padding
-
-			model: LogModel
-			spacing: Constants.text_spacing
-			delegate: Item {
-				height: layout.height
-				width: logView.width - Constants.pane_padding
-
-				Accessible.role: Accessible.StaticText
-				Accessible.name: display
-				Accessible.onScrollDownAction: logView.scrollPageDown()
-				Accessible.onScrollUpAction: logView.scrollPageUp()
-
-				ColumnLayout {
-					id: layout
-
-					width: parent.width
-
-					spacing: 0
-
-					GText {
-						Layout.fillWidth: true
-
-						Accessible.ignored: true
-
-						text: origin
-						textStyle: Style.text.hint
-						font.bold: true
-					}
-
-					GText {
-						Layout.fillWidth: true
-
-						Accessible.ignored: true
-
-						text: message
-						textStyle: Style.text.hint
-					}
-				}
-			}
-
-			Connections {
-				target: LogModel
-				onFireNewLogMsg: if (logView.atYEnd) logView.positionViewAtEnd()
-			}
+			showLinkIcon: false
+			showSeparator: !isLastItem
+			fixedHeight: false
+			mouseAreaEnabled: false
+			headerText: origin
+			text: message
 		}
 	}
 
@@ -143,17 +102,17 @@ SectionPage
 
 		title: (deleteAll ?
 				//: LABEL ANDROID IOS
-				qsTr("Delete all") :
+				qsTr("Delete all logs") :
 				//: LABEL ANDROID IOS
-				qsTr("Delete")
-			   ) + SettingsModel.translationTrigger
+				qsTr("Delete log")
+			   )
 		//: INFO ANDROID IOS All logfiles are about to be removed, user confirmation required.
-		text: (deleteAll ? qsTr("All old logfiles will be deleted.")
+		text: (deleteAll ? qsTr("All old logs will be deleted.")
 						 //: INFO ANDROID IOS The current logfile is about to be removed, user confirmation required.
-						 : qsTr("The logfile will be deleted.")
-			   ) + SettingsModel.translationTrigger
+						 : qsTr("The log will be deleted.")
+			   )
 		//: LABEL ANDROID IOS
-		okButtonText: qsTr("Delete") + SettingsModel.translationTrigger
+		okButtonText: qsTr("Delete")
 		onConfirmed: deleteAll ? LogModel.removeOtherLogfiles() : LogModel.removeCurrentLogfile()
 	}
 }

@@ -26,7 +26,7 @@ class test_IfdModifyPinResponse
 
 		void invalidJson()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray message("FooBar");
 			const auto& obj = QJsonDocument::fromJson(message).object();
@@ -93,7 +93,7 @@ class test_IfdModifyPinResponse
 
 		void fromJson()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"ContextHandle\": \"TestContext\",\n"
@@ -134,7 +134,7 @@ class test_IfdModifyPinResponse
 		{
 			QFETCH(RemoteCardMessageType, type);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray message("{\n"
 							   "    \"ContextHandle\": \"TestContext\",\n"
@@ -176,7 +176,7 @@ class test_IfdModifyPinResponse
 
 		void wrongTypes()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"ContextHandle\": \"TestContext\",\n"

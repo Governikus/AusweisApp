@@ -6,12 +6,17 @@
 
 #include "context/SelfAuthContext.h"
 #include "PdfExporter.h"
-#include "SingletonHelper.h"
 
 using namespace governikus;
 
 
-defineSingleton(SelfAuthModel)
+SelfAuthModel::SelfAuthModel()
+	: QAbstractListModel()
+	, mContext()
+	, mSelfData()
+{
+	onSelfAuthenticationDataChanged();
+}
 
 
 void SelfAuthModel::onSelfAuthenticationDataChanged()
@@ -41,21 +46,6 @@ void SelfAuthModel::onSelfAuthenticationDataChanged()
 }
 
 
-SelfAuthModel::SelfAuthModel(QObject* pParent)
-	: QAbstractListModel(pParent)
-	, mContext()
-	, mSelfData()
-{
-	onSelfAuthenticationDataChanged();
-}
-
-
-SelfAuthModel& SelfAuthModel::getInstance()
-{
-	return *Instance;
-}
-
-
 void SelfAuthModel::resetContext(const QSharedPointer<SelfAuthContext>& pContext)
 {
 	mContext = pContext;
@@ -82,7 +72,7 @@ void SelfAuthModel::cancelWorkflow()
 }
 
 
-bool SelfAuthModel::isBasicReader()
+bool SelfAuthModel::isBasicReader() const
 {
 	if (mContext)
 	{

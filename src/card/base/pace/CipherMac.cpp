@@ -5,8 +5,8 @@
 #include "pace/CipherMac.h"
 
 #include "asn1/KnownOIDs.h"
+#include "ec/EcUtil.h"
 
-#include <openssl/evp.h>
 #include <QLoggingCategory>
 #include <QVarLengthArray>
 
@@ -17,8 +17,7 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 
 
 CipherMac::CipherMac(const QByteArray& pPaceAlgorithm, const QByteArray& pKeyBytes)
-	: mKeyBytes(pKeyBytes)
-	, mCtx(nullptr)
+	: mKey(nullptr)
 {
 	using namespace governikus::KnownOIDs;
 
@@ -49,31 +48,53 @@ CipherMac::CipherMac(const QByteArray& pPaceAlgorithm, const QByteArray& pKeyByt
 		qCCritical(card) << "Unknown algorithm:" << pPaceAlgorithm;
 		return;
 	}
-	if (mKeyBytes.size() != EVP_CIPHER_key_length(cipher))
+
+
+	if (pKeyBytes.size() != EVP_CIPHER_key_length(cipher))
 	{
-		qCCritical(card) << "Key has wrong size (expected/got):" << EVP_CIPHER_key_length(cipher) << '/' << mKeyBytes.size();
+		qCCritical(card) << "Key has wrong size (expected/got):" << EVP_CIPHER_key_length(cipher) << '/' << pKeyBytes.size();
 		return;
 	}
-	mCtx = CMAC_CTX_new();
-	if (!CMAC_Init(mCtx, mKeyBytes.constData(), static_cast<size_t>(mKeyBytes.size()), cipher, nullptr))
+
+#if OPENSSL_VERSION_NUMBER < 0x10101000L || defined(LIBRESSL_VERSION_NUMBER)
+	const auto ctx = EcUtil::create(EVP_PKEY_CTX_new_id(EVP_PKEY_CMAC, nullptr));
+	if (ctx.isNull() || !EVP_PKEY_keygen_init(ctx.data()))
 	{
-		qCCritical(card) << "Error on CMAC_Init";
+		qCCritical(card) << "Cannot init ctx";
+		return;
 	}
+
+	if (EVP_PKEY_CTX_ctrl(ctx.data(), -1, EVP_PKEY_OP_KEYGEN, EVP_PKEY_CTRL_CIPHER, 0, const_cast<EVP_CIPHER*>(cipher)) <= 0)
+	{
+		qCCritical(card) << "Cannot set cipher";
+		return;
+	}
+
+	if (EVP_PKEY_CTX_ctrl(ctx.data(), -1, EVP_PKEY_OP_KEYGEN, EVP_PKEY_CTRL_SET_MAC_KEY, pKeyBytes.size(), pKeyBytes.data()) <= 0)
+	{
+		qCCritical(card) << "Cannot set key";
+		return;
+	}
+
+	if (!EVP_PKEY_keygen(ctx.data(), &mKey))
+	{
+		qCCritical(card) << "Cannot generate EVP pkey";
+	}
+#else
+	mKey = EVP_PKEY_new_CMAC_key(nullptr, reinterpret_cast<const uchar*>(pKeyBytes.constData()), static_cast<size_t>(pKeyBytes.size()), cipher);
+#endif
 }
 
 
 CipherMac::~CipherMac()
 {
-	if (mCtx)
-	{
-		CMAC_CTX_free(mCtx);
-	}
+	EVP_PKEY_free(mKey);
 }
 
 
-bool CipherMac::isInitialized()
+bool CipherMac::isInitialized() const
 {
-	return mCtx != nullptr;
+	return mKey != nullptr;
 }
 
 
@@ -85,50 +106,32 @@ QByteArray CipherMac::generate(const QByteArray& pMessage)
 		return QByteArray();
 	}
 
-	// reset context to allow for multiple use
-	if (!CMAC_Init(mCtx, nullptr, 0, nullptr, nullptr))
+	QSharedPointer<EVP_MD_CTX> ctx(EVP_MD_CTX_create(), [](EVP_MD_CTX* pCtx)
+			{
+				EVP_MD_CTX_destroy(pCtx);
+			});
+
+	if (ctx.isNull() || !EVP_DigestSignInit(ctx.data(), nullptr, nullptr, nullptr, mKey))
 	{
-		qCCritical(card) << "Error on CMAC_Init";
+		qCCritical(card) << "Cannot init ctx";
 		return QByteArray();
 	}
 
-	if (!CMAC_Update(mCtx, pMessage.constData(), static_cast<size_t>(pMessage.size())))
+	if (!EVP_DigestSignUpdate(ctx.data(), pMessage.constData(), static_cast<size_t>(pMessage.size())))
 	{
-		qCCritical(card) << "Error on CMAC_Update";
+		qCCritical(card) << "Cannot update cmac";
 		return QByteArray();
 	}
 
-	size_t mac_len = 0;
-	if (!CMAC_Final(mCtx, nullptr, &mac_len))
+	QByteArray value(EVP_MAX_MD_SIZE, '\0');
+	size_t ret = static_cast<size_t>(value.size());
+	if (!EVP_DigestSignFinal(ctx.data(), reinterpret_cast<uchar*>(value.data()), &ret))
 	{
-		qCCritical(card) << "Error on CMAC_Final";
+		qCCritical(card) << "Cannot finalize cmac";
 		return QByteArray();
 	}
-
-	if (mac_len > INT_MAX)
-	{
-		qCCritical(card) << "mac_len out of range" << mac_len;
-		Q_ASSERT(mac_len <= INT_MAX);
-		return QByteArray();
-	}
-
-	const int mac_int_len = static_cast<int>(mac_len);
-	if (mac_int_len <= 0)
-	{
-		qCCritical(card) << "Got negative mac_len" << mac_int_len;
-		Q_ASSERT(mac_int_len > 0);
-		return QByteArray();
-	}
-
-	QVarLengthArray<uchar> mac(mac_int_len);
-	if (!CMAC_Final(mCtx, mac.data(), &mac_len))
-	{
-		qCCritical(card) << "Error on CMAC_Final";
-		return QByteArray();
-	}
-
-	QByteArray value(reinterpret_cast<const char*>(mac.data()), mac_int_len);
 
 	// Use only 8 bytes, according to TR 03110 Part 3, A.2.4.2, E.2.2.2
-	return value.left(8);
+	value.resize(8);
+	return value;
 }

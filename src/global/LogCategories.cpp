@@ -8,7 +8,6 @@
 #include <QLoggingCategory>
 
 Q_LOGGING_CATEGORY(card, "card")
-Q_LOGGING_CATEGORY(bluetooth, "bluetooth")
 Q_LOGGING_CATEGORY(card_pcsc, "card_pcsc")
 Q_LOGGING_CATEGORY(card_nfc, "card_nfc")
 Q_LOGGING_CATEGORY(card_remote, "card_remote")

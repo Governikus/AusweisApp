@@ -8,7 +8,6 @@
 #include "NetworkReplyError.h"
 #include "NetworkReplyTimeout.h"
 #include "SecureStorage.h"
-#include "SingletonHelper.h"
 #include "VersionInfo.h"
 
 #include <http_parser.h>
@@ -21,20 +20,18 @@
 
 using namespace governikus;
 
-defineSingleton(NetworkManager)
-
 Q_DECLARE_LOGGING_CATEGORY(network)
 
 bool NetworkManager::mLockProxy = false;
 
 NetworkManager::NetworkManager()
 	: QObject()
+	, mNetAccessManager()
 	, mApplicationExitInProgress(false)
 	, mTrackedConnectionsMutex()
-	, mTrackedConnections()
-	, mNetAccessManager(new QNetworkAccessManager())
+	, mTrackedConnections(0)
 {
-	connect(mNetAccessManager.data(), &QNetworkAccessManager::proxyAuthenticationRequired, this, &NetworkManager::fireProxyAuthenticationRequired);
+	connect(&mNetAccessManager, &QNetworkAccessManager::proxyAuthenticationRequired, this, &NetworkManager::fireProxyAuthenticationRequired);
 
 	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireProxyChanged, this, &NetworkManager::onProxyChanged);
 }
@@ -45,23 +42,17 @@ NetworkManager::~NetworkManager()
 }
 
 
-NetworkManager& NetworkManager::getInstance()
-{
-	return *Instance;
-}
-
-
 int NetworkManager::getOpenConnectionCount()
 {
 	QMutexLocker locker(&mTrackedConnectionsMutex);
 
-	return mTrackedConnections.size();
+	return mTrackedConnections;
 }
 
 
 void NetworkManager::clearConnections()
 {
-	mNetAccessManager->clearConnectionCache();
+	mNetAccessManager.clearConnectionCache();
 }
 
 
@@ -84,13 +75,12 @@ QNetworkReply* NetworkManager::paos(QNetworkRequest& pRequest,
 	pRequest.setRawHeader("Accept", "text/html; application/vnd.paos+xml");
 	pRequest.setRawHeader("PAOS", QByteArray("ver=\"%1\"").replace(QByteArray("%1"), pNamespace));
 
-	QNetworkReply* response;
 	SecureStorage::TlsSuite tlsSuite = pUsePsk ? SecureStorage::TlsSuite::PSK : SecureStorage::TlsSuite::DEFAULT;
 	auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig(tlsSuite).getConfiguration();
 	cfg.setSessionTicket(pSslSession);
 	pRequest.setSslConfiguration(cfg);
-	response = mNetAccessManager->post(pRequest, pData);
 
+	QNetworkReply* response = mNetAccessManager.post(pRequest, pData);
 	trackConnection(response, pTimeoutInMilliSeconds);
 	return response;
 }
@@ -109,7 +99,8 @@ QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest,
 	auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig().getConfiguration();
 	cfg.setSessionTicket(pSslSession);
 	pRequest.setSslConfiguration(cfg);
-	QNetworkReply* response = mNetAccessManager->get(pRequest);
+
+	QNetworkReply* response = mNetAccessManager.get(pRequest);
 	trackConnection(response, pTimeoutInMilliSeconds);
 	return response;
 }
@@ -129,8 +120,8 @@ QNetworkReply* NetworkManager::post(QNetworkRequest& pRequest,
 
 	auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig(SecureStorage::TlsSuite::DEFAULT).getConfiguration();
 	pRequest.setSslConfiguration(cfg);
-	QNetworkReply* response = mNetAccessManager->post(pRequest, pData);
 
+	QNetworkReply* response = mNetAccessManager.post(pRequest, pData);
 	trackConnection(response, pTimeoutInMilliSeconds);
 	return response;
 }
@@ -156,6 +147,8 @@ QString NetworkManager::getUserAgentHeader() const
 void NetworkManager::onShutdown()
 {
 	mApplicationExitInProgress = true;
+	mNetAccessManager.clearAccessCache();
+	mNetAccessManager.clearConnectionCache();
 	Q_EMIT fireShutdown();
 }
 
@@ -254,29 +247,18 @@ void NetworkManager::trackConnection(QNetworkReply* pResponse, const int pTimeou
 {
 	Q_ASSERT(pResponse);
 
-	addTrackedConnection(pResponse);
+	if (pResponse)
+	{
+		const QMutexLocker locker(&mTrackedConnectionsMutex);
+		++mTrackedConnections;
 
-	connect(pResponse, &QObject::destroyed, this, [ = ] {
-				this->removeTrackedConnection(pResponse);
-			});
+		connect(pResponse, &QObject::destroyed, this, [this] {
+					const QMutexLocker lockLambda(&mTrackedConnectionsMutex);
+					--mTrackedConnections;
+				});
 
-	NetworkReplyTimeout::setTimeout(pResponse, pTimeoutInMilliSeconds);
-}
-
-
-void NetworkManager::addTrackedConnection(QNetworkReply* pResponse)
-{
-	QMutexLocker locker(&mTrackedConnectionsMutex);
-
-	mTrackedConnections.insert(pResponse);
-}
-
-
-void NetworkManager::removeTrackedConnection(QNetworkReply* pResponse)
-{
-	QMutexLocker locker(&mTrackedConnectionsMutex);
-
-	mTrackedConnections.remove(pResponse);
+		NetworkReplyTimeout::setTimeout(pResponse, pTimeoutInMilliSeconds);
+	}
 }
 
 

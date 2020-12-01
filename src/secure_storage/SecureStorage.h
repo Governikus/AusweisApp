@@ -27,8 +27,6 @@ class MockSecureStorage;
 namespace governikus
 {
 
-using SignatureAlgorithmPair = QPair<QSsl::KeyAlgorithm, QCryptographicHash::Algorithm>;
-
 class SecureStorage
 {
 	Q_GADGET
@@ -52,15 +50,16 @@ class SecureStorage
 		QMap<QSsl::KeyAlgorithm, int> mMinStaticKeySizes;
 		QMap<QSsl::KeyAlgorithm, int> mMinEphemeralKeySizes;
 
-		bool readJsonArray(QJsonArray& pArray, const QJsonObject& pConfig, const QLatin1String pName);
-		QString readGroup(const QJsonObject& pConfig, const QLatin1String pGroup, const QLatin1String pName);
-		QMap<QSsl::KeyAlgorithm, int> readKeySizes(const QJsonObject& pConfig, const QLatin1String pKey);
-		void readByteArrayList(QByteArrayList& pArray, const QJsonObject& pConfig, const QLatin1String pName);
+		QJsonArray readJsonArray(const QJsonObject& pConfig, const QLatin1String pName) const;
+		QString readGroup(const QJsonObject& pConfig, const QLatin1String pGroup, const QLatin1String pName) const;
+		QMap<QSsl::KeyAlgorithm, int> readKeySizes(const QJsonObject& pConfig, const QLatin1String pKey) const;
+		QByteArrayList readByteArrayList(const QJsonObject& pConfig, const QLatin1String pName) const;
 
+		QJsonObject loadFile(const QStringList& pFiles) const;
 		void load();
 
 		QByteArrayList loadTestCvcsFromAppDir();
-		QByteArray loadTestCvc(const QString& pPath);
+		QByteArray loadTestCvc(const QString& pPath) const;
 
 	protected:
 		SecureStorage();

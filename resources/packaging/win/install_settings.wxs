@@ -1,64 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- The path is no longer necessary with CMake 3.13.0 -->
-<!-- https://gitlab.kitware.com/cmake/cmake/merge_requests/2194 -->
-<?include "$(sys.CURRENTDIR)_CPack_Packages\win32\WIX\cpack_variables.wxi"?>
+<?include "cpack_variables.wxi"?>
 
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:fw="http://schemas.microsoft.com/wix/FirewallExtension">
 	<Fragment>
-		<!-- ########################################################## -->
-		<!-- Add/remove rule for outgoing data to/from Windows Firewall -->
-		<!-- ########################################################## -->
-		<Property Id="SYSTEMSETTINGS" Value="true"/>
+		<!-- ################################################################## -->
+		<!-- Add/remove rule for inbound/outbound data to/from Windows Firewall -->
+		<!-- ################################################################## -->
+		<Property Id="SYSTEMSETTINGS" Secure="yes"/>
+		<Property Id="SYSTEMSETTINGS_FEATURE" Value="true"/>
+		<Property Id="SYSTEMSETTINGS_REGISTRY" Secure="yes">
+			<RegistrySearch Id="SystemSettingsRegistry" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules" Name="AusweisApp2-Firewall-Rule" Type="raw"/>
+		</Property>
+		<SetProperty Before="CostFinalize" Id="SYSTEMSETTINGS_FEATURE" Value="" Sequence="first">
+			(SYSTEMSETTINGS AND (NOT (SYSTEMSETTINGS = "true"))) OR ((NOT SYSTEMSETTINGS) AND WIX_UPGRADE_DETECTED AND (NOT (SYSTEMSETTINGS_REGISTRY)))
+		</SetProperty>
+		<SetProperty After="SetSYSTEMSETTINGS_FEATURE" Id="SYSTEMSETTINGS_GUI" Value="true" Sequence="ui">
+			SYSTEMSETTINGS_FEATURE = "true"
+		</SetProperty>
+
+		<Feature Id="WindowsFirewallRule" Level="1">
+			<Condition Level="2">NOT (SYSTEMSETTINGS_FEATURE = "true") AND NOT REMOVE</Condition>
+			<ComponentRef Id="WindowsFirewallRule"/>
+		</Feature>
 		<DirectoryRef Id="TARGETDIR">
-			<Component Id="OutgoingRuleWindowsFirewall" Guid="*">
-				<Condition>SYSTEMSETTINGS = "true"</Condition>
+			<Component Id="WindowsFirewallRule" Guid="{391CF345-5AA2-45CD-D001-C24861C9AB8D}">
+				<!-- Add/remove outgoing data port to/from Windows Firewall -->
 				<RegistryKey Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules">
 					<RegistryValue Type="string" Name="AusweisApp2-Firewall-Rule" Value="v2.20|Action=Allow|Active=TRUE|Dir=Out|App=[INSTALL_ROOT][ProductName].exe|Name=AusweisApp2|Desc=AusweisApp2 firewall rule|" />
 				</RegistryKey>
+
+				<!-- Add/remove SaC listening port to/from Windows Firewall -->
+				<fw:FirewallException Id="AddListeningPortWindowsFirewallSaC"
+									Program="[INSTALL_ROOT][ProductName].exe"
+									Port="24727"
+									Protocol="udp"
+									Profile="all"
+									Scope="localSubnet"
+									Name="AusweisApp2-SaC"
+									Description="Allow inbound udp connections for Smartphone as card reader." />
 			</Component>
 		</DirectoryRef>
-
-		<!-- ###################################################### -->
-		<!-- Add/remove SaC listening port to/from Windows Firewall -->
-		<!-- ###################################################### -->
-		<Property Id="FirewallSacParams" Value="dir=in action=allow description=&quot;Allow inbound udp connections for Smartphone as card reader.&quot; localip=any remoteip=localsubnet localport=24727 remoteport=any protocol=udp"/>
-		<CustomAction Id="AddListeningPortWindowsFirewallSaC"
-				Directory="TARGETDIR"
-				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall add rule name=AusweisApp2-Firewall-Rule-SaC-In [FirewallSacParams]"
-				Execute="commit"
-				Impersonate="no"
-				Return="ignore" />
-
-		<InstallExecuteSequence>
-			<Custom Action="AddListeningPortWindowsFirewallSaC" Before="InstallFinalize">(SYSTEMSETTINGS = "true") AND NOT Installed</Custom>
-		</InstallExecuteSequence>
-
-		<CustomAction Id="DeleteListeningPortWindowsFirewallSaC"
-				Directory="TARGETDIR"
-				ExeCommand="[SystemFolder]netsh.exe advfirewall firewall delete rule name=AusweisApp2-Firewall-Rule-SaC-In"
-				Execute="commit"
-				Impersonate="no"
-				Return="ignore" />
-
-		<InstallExecuteSequence>
-			<Custom Action="DeleteListeningPortWindowsFirewallSaC" Before="InstallFinalize">REMOVE</Custom>
-		</InstallExecuteSequence>
 
 		<!-- ####################### -->
 		<!-- Create desktop shortcut -->
 		<!-- ####################### -->
-		<Property Id="DESKTOPSHORTCUT" Value="true"/>
+		<!--
+			DESKTOPSHORTCUT: CMDLINE API
+			DESKTOPSHORTCUT_FEATURE: Switches the feature on or off before the GUI.
+									Needs to be separate from DESKTOPSHORTCUT to be able to distinguish
+									between commandline parameter and feature condition (default true).
+			DESKTOPSHORTCUT_REGISTRY: Registry value before the installation
+			DESKTOPSHURTCUT_GUI: GUI checkbox property, needs to be set to show the current state of
+								the feature.
+		-->
+		<Property Id="DESKTOPSHORTCUT" Secure="yes"/>
+		<Property Id="DESKTOPSHORTCUT_FEATURE" Value="true"/>
+		<Property Id="DESKTOPSHORTCUT_REGISTRY" Secure="yes">
+			<RegistrySearch Id="DesktopShortcutRegistry" Root="HKCU" Key="!(wix.CompanyRootKey)" Name="SC_Desktop" Type="raw"/>
+		</Property>
+		<SetProperty Before="CostFinalize" Id="DESKTOPSHORTCUT_FEATURE" Value="" Sequence="first">
+			(DESKTOPSHORTCUT AND (NOT (DESKTOPSHORTCUT = "true"))) OR ((NOT DESKTOPSHORTCUT) AND WIX_UPGRADE_DETECTED AND (NOT (DESKTOPSHORTCUT_REGISTRY = "#1")))
+		</SetProperty>
+		<SetProperty After="SetDESKTOPSHORTCUT_FEATURE" Id="DESKTOPSHORTCUT_GUI" Value="true" Sequence="ui">
+			DESKTOPSHORTCUT_FEATURE = "true"
+		</SetProperty>
+
+		<Feature Id="DesktopShortcut" Level="1">
+			<Condition Level="2">NOT (DESKTOPSHORTCUT_FEATURE = "true") AND NOT REMOVE</Condition>
+			<ComponentRef Id="DesktopShortcut"/>
+		</Feature>
+
 		<DirectoryRef Id="TARGETDIR">
 			<Directory Id="DesktopFolder" Name="Desktop" >
-				<Component Id="DesktopShortcut" Guid="*">
-					<Condition>DESKTOPSHORTCUT = "true"</Condition>
+				<Component Id="DesktopShortcut" Guid="{391CF345-5AA2-45CD-D002-C24861C9AB8D}">
 					<Shortcut Id="DesktopExec"
 						Name="$(var.CPACK_PACKAGE_NAME)"
 						Description="!(loc.ProgramDescription)"
 						Target="[INSTALL_ROOT][ProductName].exe"
 						WorkingDirectory="INSTALL_ROOT" />
-					<RegistryKey Root="HKCU" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)">
+					<RegistryKey Root="HKCU" Key="!(wix.CompanyRootKey)">
 						<RegistryValue Name="SC_Desktop" Type="integer" Value="1" KeyPath="yes" />
 					</RegistryKey>
 				</Component>
@@ -78,11 +99,45 @@
 						Description="!(loc.ProgramDescription)"
 						Target="[INSTALL_ROOT][ProductName].exe"
 						WorkingDirectory="INSTALL_ROOT"/>
-					<RegistryKey Root="HKCU" Key="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)">
+					<RegistryKey Root="HKCU" Key="!(wix.CompanyRootKey)">
 						<RegistryValue Name="SC_Startmenu" Type="integer" Value="1" KeyPath="yes"/>
 					</RegistryKey>
 				</Component>
 			</Directory>
 		</DirectoryRef>
+
+		<!-- ##################### -->
+		<!-- Remember Install Root -->
+		<!-- ##################### -->
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALL_ROOT"/>
+		<Property Id="INSTALLDIR" Secure="yes"/>
+		<Property Id="INSTALLDIR_REGISTRY" Secure="yes">
+			<RegistrySearch Id="InstallRootRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="lastInstallRoot" Type="raw"/>
+		</Property>
+
+		<SetProperty Action="SetINSTALL_ROOT_REGISTRY_OVERWRITE" Before="CostFinalize" Id="INSTALL_ROOT" Value="[INSTALLDIR_REGISTRY]" Sequence="first">
+			INSTALLDIR_REGISTRY
+		</SetProperty>
+		<SetProperty Action="SetINSTALL_ROOT_CMDLINE_OVERWRITE" After="SetINSTALL_ROOT_REGISTRY_OVERWRITE" Id="INSTALL_ROOT" Value="[INSTALLDIR]" Sequence="first">
+			INSTALLDIR
+		</SetProperty>
+
+		<DirectoryRef Id="TARGETDIR">
+			<Component Id="RememberInstallRoot" Guid="*">
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+					<RegistryValue Name="lastInstallRoot" Type="string" Value="[INSTALL_ROOT]" KeyPath="yes"/>
+				</RegistryKey>
+			</Component>
+		</DirectoryRef>
+
+		<!-- ######################################## -->
+		<!-- Launch AusweisApp2 after cmdline install -->
+		<!-- ######################################## -->
+		<Property Id="LAUNCH" Secure="yes"/>
+		<InstallExecuteSequence>
+			<Custom Action='LaunchApplication' After='InstallFinalize'>
+				LAUNCH = "true"
+			</Custom>
+		</InstallExecuteSequence>
 	</Fragment>
 </Wix>

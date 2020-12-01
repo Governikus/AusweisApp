@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -20,7 +20,7 @@ TutorialContent {
 		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 		//: LABEL ANDROID IOS
-		text: qsTr("Where can I use the online ID function?") + SettingsModel.translationTrigger
+		text: qsTr("Where can I use the online ID function?")
 		textStyle: Style.text.tutorial_header
 		font.italic: true
 		horizontalAlignment: Text.AlignHCenter
@@ -32,7 +32,7 @@ TutorialContent {
 
 	Image {
 		anchors.horizontalCenter: parent.horizontalCenter
-		source: "qrc:///images/tutorial/generated/where_overview_question.svg"
+		source: "qrc:///images/tutorial/where_overview_question.svg"
 		width: parent.width * 0.75
 		height: width * (sourceSize.height / sourceSize.width)
 		fillMode: Image.PreserveAspectFit
@@ -50,7 +50,7 @@ TutorialContent {
 		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 		//: LABEL ANDROID IOS
-		text: qsTr("On every website of a provider where you see this icon:") + SettingsModel.translationTrigger
+		text: qsTr("On every website of a provider where you see this icon:")
 		textStyle: Style.text.tutorial_header_secondary
 		horizontalAlignment: Text.AlignHCenter
 	}
@@ -64,7 +64,6 @@ TutorialContent {
 		fillMode: Image.PreserveAspectFit
 	}
 
-
 	GText {
 		width: parent.width * 0.8
 		anchors.horizontalCenter: parent.horizontalCenter
@@ -73,7 +72,7 @@ TutorialContent {
 		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 		//: LABEL ANDROID IOS
-		text: qsTr("By the way, you can find many services directly in the AusweisApp2 <b>provider list</b>.") + SettingsModel.translationTrigger
+		text: qsTr("By the way, you can find many services directly in the AusweisApp2 <b>provider list</b>.")
 		textStyle: Style.text.tutorial_content
 		horizontalAlignment: Text.AlignHCenter
 	}
@@ -82,23 +81,12 @@ TutorialContent {
 		source: "qrc:///images/tutorial/section_seperator_where.svg"
 	}
 
-	Image {
-		//: LABEL ANDROID
-		source: qsTr("qrc:///images/tutorial/generated/where_providerlist_screenshot_android_en.svg") + SettingsModel.translationTrigger
+	TutorialShowMenuPath {
 		width: parent.width
-		height: width * (sourceSize.height / sourceSize.width)
-		visible: Constants.is_layout_android
-		fillMode: Image.PreserveAspectFit
-	}
 
-	Image {
-		anchors.horizontalCenter: parent.horizontalCenter
-		//: LABEL IOS
-		source: qsTr("qrc:///images/tutorial/screenshot_providerlist_ios_en.png") + SettingsModel.translationTrigger
-		width: parent.width * 0.6
-		height: width * (sourceSize.height / sourceSize.width)
-		visible: Constants.is_layout_ios
-		fillMode: Image.PreserveAspectFit
+		newSectionImage: "qrc:///images/tutorial/screenshot_providerlist_%1_%2.png".arg(Constants.layout).arg(SettingsModel.language)
+		newSectionPointerY: Constants.is_layout_android ? 0.83 : 0.91
+		backgroundIcon:"qrc:///images/tutorial/background_icon_where.svg"
 	}
 
 	TutorialSeperator {
@@ -113,7 +101,7 @@ TutorialContent {
 		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 		//: LABEL ANDROID IOS
-		text: qsTr("The <b>integrated self-disclosure</b> is a special service to view the data saved on your ID card.") + SettingsModel.translationTrigger
+		text: qsTr("The <b>integrated self-disclosure</b> is a special service to view the data saved on your ID card.")
 		textStyle: Style.text.tutorial_header
 		horizontalAlignment: Text.AlignHCenter
 	}
@@ -122,26 +110,12 @@ TutorialContent {
 		source: "qrc:///images/tutorial/section_seperator_where.svg"
 	}
 
-	GText {
-		width: parent.width * 0.8
-		anchors.horizontalCenter: parent.horizontalCenter
-
-		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
-		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
-
-		//: LABEL ANDROID IOS
-		text: qsTr("You can access the self-disclosure by clicking \"See my personal data\" on the AusweisApp2 start page, followed by \"Proceed to PIN entry\"") + SettingsModel.translationTrigger
-		textStyle: Style.text.tutorial_header_secondary
-		horizontalAlignment: Text.AlignHCenter
-	}
-
-	Image {
-		anchors.horizontalCenter: parent.horizontalCenter
-		//: LABEL ANDROID IOS
-		source: qsTr("qrc:///images/tutorial/generated/where_identify_now_en.svg") + SettingsModel.translationTrigger
+	TutorialShowMenuPath {
 		width: parent.width
-		height: width * (sourceSize.height / sourceSize.width)
-		fillMode: Image.PreserveAspectFit
+
+		newSectionImage: "qrc:///images/tutorial/screenshot_selfauthentication_%1_%2.png".arg(Constants.layout).arg(SettingsModel.language)
+		newSectionPointerY: Constants.is_layout_android ? 0.66 : 0.7
+		backgroundIcon: "qrc:///images/tutorial/background_icon_where.svg"
 	}
 
 	TutorialSpacer {
@@ -151,7 +125,7 @@ TutorialContent {
 		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 		//: LABEL ANDROID IOS
-		text: qsTr("And this is how it works") + SettingsModel.translationTrigger
+		text: qsTr("And this is how it works")
 		color: Style.color.tutorial_where
 	}
 
@@ -163,15 +137,14 @@ TutorialContent {
 		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 		//: LABEL ANDROID IOS
-		text: qsTr("The AusweisApp2 will always display <b>who</b> wants to access <b>which</b> of your data.") + SettingsModel.translationTrigger
+		text: qsTr("The AusweisApp2 will always display <b>who</b> wants to access <b>which</b> of your data.")
 		textStyle: Style.text.tutorial_header
 		horizontalAlignment: Text.AlignHCenter
 	}
 
 	Image {
 		anchors.horizontalCenter: parent.horizontalCenter
-		//: LABEL ANDROID IOS
-		source: qsTr("qrc:///images/tutorial/generated/where_userdata_example_en.svg") + SettingsModel.translationTrigger
+		source: "qrc:///images/tutorial/where_userdata_example_%1.svg".arg(SettingsModel.language)
 		width: parent.width * 0.8
 		height: width * (sourceSize.height / sourceSize.width)
 		fillMode: Image.PreserveAspectFit
@@ -181,16 +154,33 @@ TutorialContent {
 		source: "qrc:///images/tutorial/section_seperator_where.svg"
 	}
 
+	GText {
+		width: parent.width * 0.8
+		anchors.horizontalCenter: parent.horizontalCenter
+
+		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+		//: LABEL ANDROID IOS
+		text: qsTr("To allow the shown service access to the requested data click \"Proceed to PIN entry\"")
+		textStyle: Style.text.tutorial_header_secondary
+		horizontalAlignment: Text.AlignHCenter
+	}
+
 	Image {
 		anchors.horizontalCenter: parent.horizontalCenter
-		source: "qrc:///images/tutorial/generated/where_lay_down_id.svg"
-		width: parent.width * 0.7
+		source: "qrc:///images/tutorial/where_identify_now_%1.svg".arg(SettingsModel.language)
+		width: parent.width
 		height: width * (sourceSize.height / sourceSize.width)
 		fillMode: Image.PreserveAspectFit
 	}
 
+	TutorialSeperator {
+		source: "qrc:///images/tutorial/section_seperator_where.svg"
+	}
+
 	GText {
-		width: parent.width * 0.8
+		width: parent.width * 0.9
 		anchors.horizontalCenter: parent.horizontalCenter
 
 		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
@@ -200,10 +190,20 @@ TutorialContent {
 			   //: LABEL IOS
 			   qsTr("Now lay down your ID card and hold the top of your iPhone to the ID card.") :
 			   //: LABEL ANDROID
-			   qsTr("Now lay down your ID card and place your device on the ID card.")
-			  ) + SettingsModel.translationTrigger
-		textStyle: Style.text.tutorial_header
+			   qsTr("Now place your ID card on the NFC-interface of your smartphone.") + " " +
+			   //: LABEL ANDROID
+			   qsTr("The correct position is specific for your device. If a position does not work try a different one. The AusweisApp2 shows different common positions. If your device is unable to detect your ID card try to check the device capabilities by clicking on \"Check device and ID card\" on the start page.")
+			  )
+		textStyle: Style.text.tutorial_header_secondary
 		horizontalAlignment: Text.AlignHCenter
+	}
+
+	Image {
+		anchors.horizontalCenter: parent.horizontalCenter
+		source: "qrc:///images/tutorial/where_lay_down_id.svg"
+		width: parent.width * 0.7
+		height: width * (sourceSize.height / sourceSize.width)
+		fillMode: Image.PreserveAspectFit
 	}
 
 	Item {
@@ -228,10 +228,10 @@ TutorialContent {
 
 			text: (Constants.is_layout_ios ?
 				   //: LABEL IOS
-				   qsTr("Don't move your iPhone during the procedure!") :
+				   qsTr("Do not move your iPhone during the procedure!") :
 				   //: LABEL ANDROID
-				   qsTr("Don't move your device during the procedure!")
-				  ) + SettingsModel.translationTrigger
+				   qsTr("Do not move your device during the procedure!")
+				  )
 			textStyle: Style.text.tutorial_content
 			horizontalAlignment: Text.AlignLeft
 
@@ -259,7 +259,7 @@ TutorialContent {
 				   qsTr("Enter") :
 				   //: LABEL ANDROID IOS
 				   qsTr("Now")
-				  ) + SettingsModel.translationTrigger
+				  )
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 
@@ -269,7 +269,7 @@ TutorialContent {
 
 		TutorialImage {
 			id: pin6Image
-			source: "qrc:///images/tutorial/generated/where_pin6.svg"
+			source: "qrc:///images/tutorial/where_pin6.svg"
 			z: 1
 
 			width: parent.width * 0.8
@@ -284,7 +284,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("six digits long PIN") + SettingsModel.translationTrigger
+			text: qsTr("six-digit PIN")
 			textStyle: Style.text.tutorial_header
 			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
@@ -306,7 +306,7 @@ TutorialContent {
 				   qsTr("now!") :
 				   //: LABEL ANDROID IOS
 				   qsTr("enter!")
-				  ) + SettingsModel.translationTrigger
+				  )
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 

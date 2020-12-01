@@ -8,14 +8,8 @@
 #include "context/ChangePinContext.h"
 #include "context/RemoteServiceContext.h"
 #include "ReaderManager.h"
-#include "SingletonHelper.h"
-
 
 using namespace governikus;
-
-
-defineSingleton(NumberModel)
-
 
 NumberModel::NumberModel()
 	: QObject()
@@ -29,12 +23,6 @@ NumberModel::NumberModel()
 	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &NumberModel::onReaderInfoChanged);
 	connect(readerManager, &ReaderManager::fireCardRemoved, this, &NumberModel::onReaderInfoChanged);
 	connect(readerManager, &ReaderManager::fireCardInserted, this, &NumberModel::onReaderInfoChanged);
-}
-
-
-NumberModel& NumberModel::getInstance()
-{
-	return *Instance;
 }
 
 
@@ -236,29 +224,68 @@ QString NumberModel::getInputError() const
 			return QString();
 
 		case CardReturnCode::INVALID_PIN:
-			//: INFO ALL_PLATFORMS The wrong (Transport) PIN was entered on the first attempt.
-			return tr("The given %1 is not correct. You have two attempts to enter the correct %1.").arg(isRequestTransportPin() ? tr("Transport PIN") : tr("PIN"));
+			if (isRequestTransportPin())
+			{
+				return QStringLiteral("%1<br><br>%2")
+				       //: INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt.
+					   .arg(tr("You have entered an incorrect, five-digit Transport PIN. "
+							   "You have two further attempts to enter the correct Transport PIN."))
+				       //: INFO ALL_PLATFORMS
+					   .arg(tr("Please note that you may use the five-digit Transport PIN only once to change to a six-digit PIN. "
+							   "If you already set a six-digit PIN, the five-digit Transport PIN is no longer valid."));
+			}
+			else
+			{
+				//: INFO ALL_PLATFORMS The wrong PIN was entered on the first attempt.
+				return tr("You have entered an incorrect, six-digit PIN. You have two further attempts to enter the correct PIN.");
+			}
 
 		case CardReturnCode::INVALID_PIN_2:
-			//: INFO ALL_PLATFORMS The wrong (Transport) PIN was entered twice, the next attempt requires the CAN for additional verification.
-			return tr("A wrong %1 has been entered twice on your ID card. "
-					  "For a third attempt, please first enter the six-digit Card Access Number (CAN). "
-					  "You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.").arg(isRequestTransportPin() ? tr("Transport PIN") : tr("PIN"));
+			if (isRequestTransportPin())
+			{
+				return QStringLiteral("%1<br><br>%2")
+				       //: INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification.
+					   .arg(tr("You have entered an incorrect, five-digit Transport PIN twice. "
+							   "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
+							   "You can find your Card Access Number (CAN) in the bottom right on the front of your ID card."))
+				       //: INFO ALL_PLATFORMS
+					   .arg(tr("Please note that you may use the five-digit Transport PIN only once to change to a six-digit PIN. "
+							   "If you already set a six-digit PIN, the five-digit Transport PIN is no longer valid."));
+
+			}
+			else
+			{
+				//: INFO ALL_PLATFORMS The wrong PIN was entered twice, the next attempt requires the CAN for additional verification.
+				return tr("You have entered an incorrect, six-digit PIN twice. "
+						  "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
+						  "You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.");
+			}
 
 		case CardReturnCode::INVALID_PIN_3:
-			//: INFO ALL_PLATFORMS The (Transport) PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.
-			return tr("A wrong %1 has been entered three times on your ID card. "
-					  "Your %1 is now blocked. "
-					  "You have to enter the PUK to remove the block.").arg(isRequestTransportPin() ? tr("Transport PIN") : tr("PIN"));
+			if (isRequestTransportPin())
+			{
+				return QStringLiteral("%1<br><br>%2")
+				       //: INFO ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.
+					   .arg(tr("You have entered an incorrect, five-digit Transport PIN thrice, your Transport PIN is now blocked. "
+							   "To remove the block, the ten-digit PUK must be entered first."))
+				       //: INFO ALL_PLATFORMS
+					   .arg(tr("Please note that you may use the five-digit Transport PIN only once to change to a six-digit PIN. "
+							   "If you already set a six-digit PIN, the five-digit Transport PIN is no longer valid."));
+			}
+			else
+			{
+				//: INFO ALL_PLATFORMS The PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.
+				return tr("You have entered an incorrect, six-digit PIN thrice, your PIN is now blocked. "
+						  "To remove the block, the ten-digit PUK must be entered first.");
+			}
 
 		case CardReturnCode::INVALID_CAN:
 			//: INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again.
-			return tr("The entered Card Access Number (CAN) is incorrect. Please try again.");
+			return tr("You have entered an incorrect, six-digit Card Access Number (CAN). Please try again.");
 
 		case CardReturnCode::INVALID_PUK:
 			//: INFO ALL_PLATFORMS The PUK entered wrongfully and needs to be supplied again.
-			return tr("The entered PUK is incorrect. "
-					  "Please try again.");
+			return tr("You have entered an incorrect, ten-digit PUK. Please try again.");
 
 		default:
 			return CardReturnCodeUtil::toGlobalStatus(paceResult).toErrorDescription(true);
@@ -300,7 +327,7 @@ bool NumberModel::isPinDeactivated() const
 }
 
 
-bool NumberModel::isCanAllowedMode()
+bool NumberModel::isCanAllowedMode() const
 {
 	if (mContext)
 	{
@@ -326,9 +353,9 @@ bool NumberModel::isRequestTransportPin() const
 }
 
 
-void NumberModel::onReaderInfoChanged(const QString& pReaderName)
+void NumberModel::onReaderInfoChanged(const ReaderInfo& pInfo)
 {
-	if (mContext && pReaderName == mContext->getReaderName())
+	if (mContext && pInfo.getName() == mContext->getReaderName())
 	{
 		Q_EMIT fireReaderInfoChanged();
 	}

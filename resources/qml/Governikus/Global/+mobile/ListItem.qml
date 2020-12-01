@@ -2,12 +2,11 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.SettingsModel 1.0
 
 Rectangle {
 	id: baseItem
@@ -22,15 +21,16 @@ Rectangle {
 	property real contentMarginRight: Constants.groupbox_spacing
 
 	property bool showLinkIcon: Constants.is_layout_ios
-	property string linkIconSource: "qrc:///images/arrowRight.svg"
+	property string linkIconSource: "qrc:///images/mobile/material_arrow_right.svg"
 	property bool showSeparator: true
+	property bool fixedHeight: true
 	property bool pressed: mouseArea.pressed
 	property alias mouseAreaEnabled: mouseArea.enabled
 
 	signal clicked
 
-	width: parent.width
-	height: Style.dimens.list_item_height
+	width: parent ? parent.width : 0
+	height: fixedHeight ? Style.dimens.list_item_height : (content.implicitHeight + Constants.text_spacing)
 
 	Accessible.role: Accessible.ListItem
 	Accessible.name: headerText + ". " + text + ". " + footerText
@@ -83,7 +83,7 @@ Rectangle {
 
 				elide: Text.ElideRight
 				textStyle: Style.text.hint_accent
-				maximumLineCount: 1
+				maximumLineCount: fixedHeight ? 1 : 8
 			}
 
 			GText {
@@ -95,7 +95,7 @@ Rectangle {
 				Accessible.ignored: true
 
 				elide: Text.ElideRight
-				maximumLineCount: 2
+				maximumLineCount: fixedHeight ? 2 : 64
 			}
 
 			GText {
@@ -108,7 +108,7 @@ Rectangle {
 
 				elide: Text.ElideRight
 				textStyle: Style.text.hint_secondary
-				maximumLineCount: headerText === "" ? 2 : 1
+				maximumLineCount: fixedHeight ? (headerText === "" ? 2 : 1) : 8
 			}
 		}
 

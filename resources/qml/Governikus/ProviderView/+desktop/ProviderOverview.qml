@@ -2,16 +2,15 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Provider 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ProviderCategoryFilterModel 1.0
 import Governikus.Type.ApplicationModel 1.0
 
@@ -20,8 +19,8 @@ SectionPage {
 
 	signal showDetailView(var pModelItem)
 
-	Accessible.name: qsTr("Provider view") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This is the provider view of the AusweisApp2.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Provider view")
+	Accessible.description: qsTr("This is the provider view of the AusweisApp2.")
 
 	Component.onCompleted: {
 		ProviderCategoryFilterModel.setCategorySelection("all")
@@ -38,27 +37,27 @@ SectionPage {
 		sectionsModel: [
 			{
 				//: LABEL DESKTOP_QML
-				categoryName: qsTr("All provider") + SettingsModel.translationTrigger,
+				categoryName: qsTr("All provider"),
 				category: "all"
 			},
 			{
 				//: LABEL DESKTOP_QML
-				categoryName: qsTr("Citizen services") + SettingsModel.translationTrigger,
+				categoryName: qsTr("Citizen services"),
 				category: "citizen"
 			},
 			{
 				//: LABEL DESKTOP_QML
-				categoryName: qsTr("Financials") + SettingsModel.translationTrigger,
+				categoryName: qsTr("Financials"),
 				category: "finance"
 			},
 			{
 				//: LABEL DESKTOP_QML
-				categoryName: qsTr("Insurances") + SettingsModel.translationTrigger,
+				categoryName: qsTr("Insurances"),
 				category: "insurance"
 			},
 			{
 				//: LABEL DESKTOP_QML
-				categoryName: qsTr("Other services") + SettingsModel.translationTrigger,
+				categoryName: qsTr("Other services"),
 				category: "other"
 			}
 		]
@@ -80,94 +79,14 @@ SectionPage {
 		Component {
 			id: content
 
-			Item {
+			ProviderGridView {
 				height: tabbedPane.availableHeight
 				width: parent.width
 
-				GGridView {
-					id: gridView
-
-					property int columns: Math.floor(width / (ApplicationModel.scaleFactor * 400))
-					property bool hasResults: gridView.count > 0 || ProviderCategoryFilterModel.additionalResultCount > 0
-					property real spacing: Constants.component_spacing
-
-					anchors {
-						top: parent.top
-						left: parent.left
-						right: parent.right
-						bottom: additionalResults.top
-						topMargin: Math.floor(spacing / 2)
-						leftMargin: Math.floor(spacing / 2)
-						bottomMargin: Math.floor(spacing / 2)
-					}
-
-					cellWidth: Math.floor((width - spacing / 2) / columns)
-					cellHeight: Math.floor(cellWidth * 0.84) // Set aspect ratio from ProviderCard
-					displayMarginBeginning: spacing
-					displayMarginEnd: additionalResults.height + spacing
-					highlightFollowsCurrentItem: true
-					highlight: null
-					activeFocusOnTab: true
-					scrollBarTopPadding: spacing / 2
-					scrollBarBottomPadding: spacing / 2
-
-					model: ProviderCategoryFilterModel
-
-					delegate: Item {
-						width: gridView.cellWidth
-						height: gridView.cellHeight
-
-						ProviderCard {
-							anchors.fill: parent
-							anchors.margins: Math.floor(gridView.spacing / 2)
-
-							focus: gridView.activeFocus && gridView.currentIndex === index
-							providerModelItem: model
-
-							onShowDetailView: baseItem.showDetailView(pModelItem)
-						}
-					}
-
-					Connections {
-						target: ProviderCategoryFilterModel
-						onFireCriteriaChanged: {
-							gridView.currentIndex = 0
-							gridView.contentY = gridView.originY
-						}
-					}
-				}
-
-				AdditionalResultsItem {
-					id: additionalResults
-
-					visible: ProviderCategoryFilterModel.additionalResultCount > 0 && ProviderCategoryFilterModel.categories.length > 0 && ProviderCategoryFilterModel.categories.indexOf("all") === -1
-					height: visible ? implicitHeight : 0
-					width: gridView.columns * gridView.cellWidth
-					anchors {
-						bottom: parent.bottom
-						left: parent.left
-						right: parent.right
-						leftMargin: Math.floor(gridView.spacing * 2)
-						rightMargin: Math.floor(gridView.spacing * 2)
-						topMargin: visible ? gridView.spacing : 0
-						bottomMargin: visible ? gridView.spacing : 0
-					}
-
-					activeFocusOnTab: true
-
-					onClicked: {
-						ProviderCategoryFilterModel.setCategorySelection("all")
-						tabbedPane.currentIndex = 0
-					}
-				}
-
-				GText {
-					visible: ProviderCategoryFilterModel.rowCount === 0 && !additionalResults.visible
-
-					anchors.centerIn: parent
-					//: LABEL DESKTOP_QML The text entered into the provider search field results in no matches
-					text: qsTr("No results matching your search query found") + SettingsModel.translationTrigger
-					textStyle: Style.text.normal
+				onShowDetails: baseItem.showDetailView(pModelItem)
+				onShowAdditionalResults: {
+					ProviderCategoryFilterModel.setCategorySelection("all")
+					tabbedPane.currentIndex = 0
 				}
 			}
 		}

@@ -26,7 +26,7 @@ const QLatin1Char Sep('/');
 } // namespace
 
 
-const QString& UpdatableFile::getName()
+const QString& UpdatableFile::getName() const
 {
 	return mName;
 }
@@ -35,7 +35,7 @@ const QString& UpdatableFile::getName()
 QDateTime UpdatableFile::cacheTimestamp() const
 {
 	const QString timestampFormat = QStringLiteral("yyyyMMddhhmmss");
-	const int timestampFormatSize = timestampFormat.size();
+	const auto timestampFormatSize = timestampFormat.size();
 	const QString pathInCache = cachePath();
 
 	// The path must contain at least 1 character for the filename,
@@ -77,7 +77,7 @@ QString UpdatableFile::cachePath() const
 }
 
 
-QUrl UpdatableFile::updateUrl(const QString& pSection, const QString& pName)
+QUrl UpdatableFile::updateUrl(const QString& pSection, const QString& pName) const
 {
 	const QUrl updateServerBaseUrl = Env::getSingleton<SecureStorage>()->getUpdateServerBaseUrl();
 
@@ -114,7 +114,7 @@ QString UpdatableFile::sectionCachePath(const QString& pSection) const
 }
 
 
-QString UpdatableFile::makeSectionCachePath(const QString& pSection)
+QString UpdatableFile::makeSectionCachePath(const QString& pSection) const
 {
 	QString sectionFolderPath = sectionCachePath(pSection);
 
@@ -148,7 +148,7 @@ QString UpdatableFile::makeSectionCachePath(const QString& pSection)
 
 void UpdatableFile::cleanupAfterUpdate(const std::function<void()>& pCustomAction)
 {
-	auto* const downloader = Env::getSingleton<Downloader>();
+	const auto* const downloader = Env::getSingleton<Downloader>();
 	disconnect(downloader, &Downloader::fireDownloadSuccess, this, &UpdatableFile::onDownloadSuccess);
 	disconnect(downloader, &Downloader::fireDownloadFailed, this, &UpdatableFile::onDownloadFailed);
 	disconnect(downloader, &Downloader::fireDownloadUnnecessary, this, &UpdatableFile::onDownloadUnnecessary);
@@ -175,7 +175,7 @@ void UpdatableFile::onDownloadSuccess(const QUrl& pUpdateUrl, const QDateTime& p
 			qCCritical(fileprovider) << "Could not write downloaded file" << filePath;
 		}
 
-		cleanupAfterUpdate([&](){
+		cleanupAfterUpdate([this](){
 					clearDirty();
 				});
 	}
@@ -186,7 +186,7 @@ void UpdatableFile::onDownloadFailed(const QUrl& pUpdateUrl, GlobalStatus::Code 
 {
 	if (pUpdateUrl == mUpdateUrl)
 	{
-		cleanupAfterUpdate([ = ](){
+		cleanupAfterUpdate([pErrorCode](){
 					qCCritical(fileprovider) << "Download failed with error code:" << pErrorCode;
 				});
 	}
@@ -199,7 +199,7 @@ void UpdatableFile::onDownloadUnnecessary(const QUrl& pUpdateUrl)
 	{
 		Q_EMIT fireNoUpdateAvailable();
 
-		cleanupAfterUpdate([&](){
+		cleanupAfterUpdate([this](){
 					clearDirty();
 				});
 	}
@@ -221,7 +221,7 @@ bool UpdatableFile::writeDataToFile(const QByteArray& pData, const QString& pFil
 	}
 	if (file.write(pData) != pData.size())
 	{
-		qCCritical(fileprovider) << "Not all data could not be written to file:" << pFilePath;
+		qCCritical(fileprovider) << "Not all data could be written to file:" << pFilePath;
 		file.close();
 		file.remove();
 		return false;
@@ -254,7 +254,7 @@ QUrl UpdatableFile::lookupUrl()
 	QString path = lookupPath();
 	if (path.startsWith(QLatin1String(":/")))
 	{
-		return QStringLiteral("qrc://") + path.midRef(1);
+		return QStringLiteral("qrc://") + path.remove(0, 1);
 	}
 	else
 	{
@@ -288,6 +288,45 @@ QString UpdatableFile::lookupPath()
 	}
 
 	return result;
+}
+
+
+bool UpdatableFile::forEachLookupPath(const std::function<bool(const QString&)>& pValidate)
+{
+	QStringList paths;
+	if (!mDefaultPath.isEmpty())
+	{
+		paths += mDefaultPath;
+	}
+
+	if (!mName.isEmpty())
+	{
+		const QString pathInQrc = qrcPath();
+		if (!pathInQrc.isEmpty())
+		{
+			paths.prepend(pathInQrc);
+		}
+
+		const QString pathInCache = cachePath();
+		if (!pathInCache.isEmpty())
+		{
+			paths.prepend(pathInCache);
+		}
+
+		if (isDirty())
+		{
+			update();
+		}
+	}
+
+	for (const QString& path : qAsConst(paths))
+	{
+		if (pValidate(path))
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 

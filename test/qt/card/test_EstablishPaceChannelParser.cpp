@@ -36,7 +36,8 @@ class test_EstablishPaceChannelParser
 			const auto command = builder.createCommandDataCcid();
 			const auto buffer = command.getBuffer();
 
-			EstablishPaceChannelParser parser = EstablishPaceChannelParser::fromCcid(buffer);
+			EstablishPaceChannelParser parser;
+			parser.fromCcid(buffer);
 
 			QCOMPARE(pinId, parser.getPasswordId());
 			QCOMPARE(chat, parser.getChat());

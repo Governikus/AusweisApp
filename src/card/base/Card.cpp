@@ -16,9 +16,10 @@ Card::Card()
 }
 
 
-void Card::setProgressMessage(const QString& pMessage)
+void Card::setProgressMessage(const QString& pMessage, int pProgress)
 {
-	Q_UNUSED(pMessage);
+	Q_UNUSED(pMessage)
+	Q_UNUSED(pProgress)
 }
 
 
@@ -29,7 +30,7 @@ EstablishPaceChannelOutput Card::establishPaceChannel(PacePasswordId pPasswordId
 	Q_UNUSED(pCertificateDescription)
 	Q_UNUSED(pTimeoutSeconds)
 	qCWarning(card) << "Establishment of PACE channel not supported";
-	return CardReturnCode::COMMAND_FAILED;
+	return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
 }
 
 

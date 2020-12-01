@@ -15,7 +15,7 @@
 namespace governikus
 {
 
-defineEnumType(ReaderManagerPlugInType, UNKNOWN, PCSC, BLUETOOTH, NFC, REMOTE)
+defineEnumType(ReaderManagerPlugInType, UNKNOWN, PCSC, NFC, REMOTE)
 
 
 class ReaderManagerPlugInInfo
@@ -37,7 +37,7 @@ class ReaderManagerPlugInInfo
 		}
 
 
-		bool hasValue(Key pKey)
+		bool hasValue(Key pKey) const
 		{
 			return mValues.contains(pKey);
 		}
@@ -84,24 +84,11 @@ class ReaderManagerPlugInInfo
 			mAvailable = pAvailable;
 		}
 
-
-		bool isResponding() const
-		{
-			return mResponding;
-		}
-
-
-		void setResponding(bool pResponding)
-		{
-			mResponding = pResponding;
-		}
-
 	private:
 		ReaderManagerPlugInType mType;
 		QMap<Key, QVariant> mValues;
 		bool mEnabled;
 		bool mAvailable;
-		bool mResponding;
 };
 
 } // namespace governikus

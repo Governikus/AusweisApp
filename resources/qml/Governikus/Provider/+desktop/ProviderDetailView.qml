@@ -2,15 +2,14 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.0
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
 
 SectionPage {
 	id: baseItem
@@ -20,8 +19,8 @@ SectionPage {
 	property alias historyModelItem: provider.modelItem
 	property alias providerModelItem: provider.modelItem
 
-	Accessible.name: qsTr("Provider detail view") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This view shows a detailed description of a provider.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Provider detail view")
+	Accessible.description: qsTr("This view shows a detailed description of a provider.")
 
 	titleBarAction: TitleBarAction {
 		text: provider.shortName
@@ -78,11 +77,6 @@ SectionPage {
 
 					contactModel: provider.contactModel
 				}
-
-				FocusFrame {
-					framee: providerContactInfo
-					scope: providerContactInfo
-				}
 			}
 		}
 
@@ -120,8 +114,10 @@ SectionPage {
 
 					anchors.fill: parent
 
+					activeFocusOnTab: true
+
 					//: LABEL DESKTOP_QML
-					title: qsTr("Description") + SettingsModel.translationTrigger
+					title: qsTr("Description")
 
 					onVisibleChanged: scrollYPositionIntoView(0)
 
@@ -130,21 +126,16 @@ SectionPage {
 
 						width: parent.width
 
-						Accessible.name: qsTr("Description of the provider.") + SettingsModel.translationTrigger
-						Accessible.description: text
-						Accessible.role: Accessible.StaticText
 						activeFocusOnTab: true
 
 						//: LABEL DESKTOP_QML
-						text: !!provider.longDescription ? provider.longDescription : qsTr("The provider did not provide a description.") + SettingsModel.translationTrigger
+						text: !!provider.longDescription ? provider.longDescription : qsTr("The provider did not provide a description.")
 						textStyle: Style.text.normal
-					}
-				}
 
-				FocusFrame {
-					marginFactor: 2
-					framee: leftPane
-					scope: leftColumn
+						FocusFrame {
+							borderColor: Style.color.focus_indicator
+						}
+					}
 				}
 			}
 
@@ -158,8 +149,10 @@ SectionPage {
 
 					anchors.fill: parent
 
+					activeFocusOnTab: true
+
 					//: LABEL DESKTOP_QML
-					title: qsTr("History") + SettingsModel.translationTrigger
+					title: qsTr("History")
 
 					onVisibleChanged: scrollYPositionIntoView(0)
 
@@ -167,15 +160,7 @@ SectionPage {
 						id: rightColumn
 
 						width: parent.width
-
-						activeFocusOnTab: true
 					}
-				}
-
-				FocusFrame {
-					marginFactor: 2
-					framee: rightPane
-					scope: rightColumn
 				}
 			}
 		}

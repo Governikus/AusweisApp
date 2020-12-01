@@ -17,6 +17,7 @@ class VersionNumber
 		QVersionNumber mVersionNumber;
 		QString mSuffix;
 
+		auto getInfoFromSuffix(QLatin1Char pStart, QLatin1Char pEnd = QLatin1Char('-')) const;
 		friend bool operator==(const VersionNumber& pLeft, const VersionNumber& pRight);
 
 	public:

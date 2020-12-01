@@ -4,12 +4,12 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppUiCommon)
 
-TARGET_LINK_LIBRARIES(AusweisAppUiCommon Qt5::Core Qt5::Gui AusweisAppGlobal AusweisAppCard AusweisAppRemoteDevice)
+target_link_libraries(AusweisAppUiCommon ${Qt}::Core ${Qt}::Gui AusweisAppGlobal AusweisAppCard AusweisAppRemoteDevice)
 
-IF(DESKTOP)
-	TARGET_LINK_LIBRARIES(AusweisAppUiCommon Qt5::Widgets)
-ENDIF()
+if(DESKTOP)
+	target_link_libraries(AusweisAppUiCommon ${Qt}::Widgets)
+endif()
 
-IF(MAC)
-	TARGET_LINK_LIBRARIES(AusweisAppUiCommon ${OSX_APPKIT})
-ENDIF()
+if(MAC)
+	target_link_libraries(AusweisAppUiCommon ${OSX_APPKIT})
+endif()

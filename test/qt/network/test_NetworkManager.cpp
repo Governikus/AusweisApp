@@ -50,7 +50,7 @@ class test_NetworkManager
 			QCOMPARE(reply->request(), request);
 			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 6);
 			QVERIFY(request.sslConfiguration().ellipticCurves().contains(QSslEllipticCurve::fromLongName("prime256v1")));
-			const int cipherCount = Env::getSingleton<SecureStorage>()->getTlsConfig().getCiphers().size();
+			const auto cipherCount = Env::getSingleton<SecureStorage>()->getTlsConfig().getCiphers().size();
 			QCOMPARE(request.sslConfiguration().ciphers().size(), cipherCount);
 			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("ECDHE-RSA-AES256-GCM-SHA384")));
 		}
@@ -64,7 +64,7 @@ class test_NetworkManager
 			QCOMPARE(request.rawHeader("PAOS"), QByteArray("ver=\"paosNamespace\""));
 			QCOMPARE(reply->request(), request);
 			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 0);
-			const int cipherCount = Env::getSingleton<SecureStorage>()->getTlsConfig(SecureStorage::TlsSuite::PSK).getCiphers().size();
+			const auto cipherCount = Env::getSingleton<SecureStorage>()->getTlsConfig(SecureStorage::TlsSuite::PSK).getCiphers().size();
 			QCOMPARE(request.sslConfiguration().ciphers().size(), cipherCount);
 			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES128-CBC-SHA256")));
 			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES128-GCM-SHA256")));
@@ -120,7 +120,7 @@ class test_NetworkManager
 						networkManager.fireFinished();
 					}, Qt::QueuedConnection);
 
-			auto reply = new MockNetworkReply;
+			auto reply = new MockNetworkReply();
 			reply->setNetworkError(QNetworkReply::ServiceUnavailableError, "dummy");
 			networkManager.setNextReply(reply);
 
@@ -134,7 +134,7 @@ class test_NetworkManager
 
 			controller.run();
 
-			QTRY_COMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(context->getStatus(), GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}));
 		}
 

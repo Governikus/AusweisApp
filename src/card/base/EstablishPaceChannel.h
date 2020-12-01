@@ -54,12 +54,12 @@ class EstablishPaceChannel
 		/**
 		 * Defined in pcsc10_v2.02.08_amd1.1
 		 */
-		QByteArray createCommandData();
+		QByteArray createCommandData() const;
 
 		/**
 		 * Defined in BSI-TR-03119_V1_pdf
 		 */
-		CommandApdu createCommandDataCcid();
+		CommandApdu createCommandDataCcid() const;
 
 		void setCertificateDescription(const QByteArray& pCertificateDescription);
 		void setChat(const QByteArray& pChat);

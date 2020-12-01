@@ -8,11 +8,9 @@
 
 using namespace governikus;
 
-
-static Initializer::Entry E([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<RemoteDeviceDescriptor>("RemoteDeviceDescriptor");
-		});
-
+		})
 
 namespace
 {

@@ -149,32 +149,32 @@ class test_CVCertificate
 
 		void debugStream()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QLatin1String output(R"(CVC(type=CVCA, car="DETESTeID00001", chr="DETESTeID00001", valid=["2010-08-13","2013-08-13"])");
 			QSharedPointer<const CVCertificate> cvca = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
 
 			qDebug() << cvca;
-			QCOMPARE(spy.count(), 1);
-			auto param = spy.takeFirst();
+			QCOMPARE(logSpy.count(), 1);
+			auto param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains(output));
 
 			QSharedPointer<CVCertificate> cvcsNonConst = qSharedPointerConstCast<CVCertificate>(cvca);
 			qDebug() << cvcsNonConst;
-			QCOMPARE(spy.count(), 1);
-			param = spy.takeFirst();
+			QCOMPARE(logSpy.count(), 1);
+			param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains(output));
 
 			QVector<QSharedPointer<const CVCertificate> > cvcsVector({cvca});
 			qDebug() << cvcsVector;
-			QCOMPARE(spy.count(), 1);
-			param = spy.takeFirst();
+			QCOMPARE(logSpy.count(), 1);
+			param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains(output));
 
 			QVector<QSharedPointer<const CVCertificate> > cvcsVectorConst({cvca});
 			qDebug() << cvcsVectorConst;
-			QCOMPARE(spy.count(), 1);
-			param = spy.takeFirst();
+			QCOMPARE(logSpy.count(), 1);
+			param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains(output));
 		}
 

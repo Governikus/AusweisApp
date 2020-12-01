@@ -67,7 +67,7 @@ class ReaderConfigurationInfo
 
 	public:
 		ReaderConfigurationInfo();
-		ReaderConfigurationInfo(const QString& pReaderName);
+		explicit ReaderConfigurationInfo(const QString& pReaderName);
 		ReaderConfigurationInfo(uint pVendorId, uint pProductId,
 				const QString& pName, const QString& pUrl, const QString& pPattern,
 				const QString& pIcon, const QString& pIconWithNPA);
@@ -87,7 +87,7 @@ class ReaderConfigurationInfo
 };
 
 
-inline uint qHash(const ReaderConfigurationInfo& info)
+inline auto qHash(const ReaderConfigurationInfo& info)
 {
 	return qHash(info.getName());
 }

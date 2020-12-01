@@ -17,11 +17,11 @@ MsgHandlerEnterCan::MsgHandlerEnterCan(const MsgContext& pContext)
 MsgHandlerEnterCan::MsgHandlerEnterCan(const QJsonObject& pObj, MsgContext& pContext)
 	: MsgHandlerEnterCan(pContext)
 {
-	parseValue(pObj, pContext, [&](const QString& pNumber)
+	parseValue(pObj, pContext, [this, &pContext](const QString& pNumber)
 			{
-				auto ctx = pContext.getWorkflowContext();
+				auto ctx = pContext.getContext();
 				ctx->setCan(pNumber);
 				ctx->setStateApproved();
 				setVoid();
-			});
+			}, 6);
 }

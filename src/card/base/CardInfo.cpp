@@ -91,6 +91,12 @@ int CardInfo::getRetryCounter() const
 }
 
 
+void CardInfo::setRetryCounter(int pRetryCounter)
+{
+	mRetryCounter = pRetryCounter;
+}
+
+
 bool CardInfo::isRetryCounterDetermined() const
 {
 	return mRetryCounter != UNDEFINED_RETRY_COUNTER;
@@ -133,9 +139,13 @@ bool CardInfoFactory::create(const QSharedPointer<CardConnectionWorker>& pCardCo
 		qCWarning(card) << "EFCardAccess not found or is invalid";
 		return false;
 	}
-
 	pReaderInfo.setCardInfo(CardInfo(type, efCardAccess));
-	pCardConnectionWorker->updateRetryCounter();
+
+	if (pCardConnectionWorker->updateRetryCounter() != CardReturnCode::OK)
+	{
+		qCWarning(card) << "Update of the retry counter failed";
+	}
+
 	return true;
 }
 

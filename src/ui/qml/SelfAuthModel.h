@@ -25,15 +25,14 @@ class SelfAuthModel
 	Q_OBJECT
 	friend class Env;
 
-	QSharedPointer<SelfAuthContext> mContext;
-	SelfAuthenticationData::OrderedSelfData mSelfData;
+	private:
+		SelfAuthModel();
+
+		QSharedPointer<SelfAuthContext> mContext;
+		SelfAuthenticationData::OrderedSelfData mSelfData;
 
 	private Q_SLOTS:
 		void onSelfAuthenticationDataChanged();
-
-	protected:
-		SelfAuthModel(QObject* pParent = nullptr);
-		static SelfAuthModel& getInstance();
 
 	public:
 		enum DataRoles
@@ -46,7 +45,7 @@ class SelfAuthModel
 
 		Q_INVOKABLE void startWorkflow();
 		Q_INVOKABLE void cancelWorkflow();
-		Q_INVOKABLE bool isBasicReader();
+		Q_INVOKABLE bool isBasicReader() const;
 		Q_INVOKABLE void exportData(const QUrl& pFilename) const;
 
 		int rowCount(const QModelIndex& = QModelIndex()) const override;
@@ -57,7 +56,6 @@ class SelfAuthModel
 
 	Q_SIGNALS:
 		void fireStartWorkflow();
-
 };
 
 

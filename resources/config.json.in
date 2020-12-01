@@ -48,6 +48,7 @@
 
 	"tlsSettings": {
 		"protocolVersion": "TlsV1_2",
+		"ocspStapling": true,
 		"_comment_1": "ciphers are ordered by preference",
 		"ciphers": [
 			"ECDHE-ECDSA-AES256-GCM-SHA384",
@@ -90,6 +91,7 @@
 
 	"tlsSettingsPsk": {
 		"protocolVersion": "TlsV1_2",
+		"ocspStapling": true,
 		"_comment_1": "ciphers are ordered by preference",
 		"ciphers": [
 			"RSA-PSK-AES256-GCM-SHA384",
@@ -110,6 +112,7 @@
 	"tlsSettingsRemoteReader": {
 		"protocolVersion": "TlsV1_2",
 		"_comment_1": "ciphers are ordered by preference",
+		"ocspStapling": false,
 		"ciphers": [
 			"ECDHE-RSA-AES256-GCM-SHA384",
 			"DHE-RSA-AES256-GCM-SHA384",
@@ -137,6 +140,7 @@
 	"tlsSettingsRemoteReaderPairing": {
 		"protocolVersion": "TlsV1_2",
 		"_comment_1": "ciphers are ordered by preference",
+		"ocspStapling": false,
 		"ciphers": [
 			"RSA-PSK-AES256-GCM-SHA384",
 			"RSA-PSK-AES256-CBC-SHA384",

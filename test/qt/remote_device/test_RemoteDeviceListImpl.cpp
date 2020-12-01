@@ -67,7 +67,7 @@ class test_RemoteDeviceListImpl
 				QCOMPARE(spy.count(), 0);
 			}
 
-			QTRY_COMPARE(spyVanished.count(), 2);
+			QTRY_COMPARE(spyVanished.count(), 2); // clazy:exclude=qstring-allocations
 		}
 
 

@@ -43,7 +43,7 @@ class ChipAuthenticationInfo
 
 	const QSharedPointer<const chipauthenticationinfo_st> mDelegate;
 
-	ChipAuthenticationInfo(const QSharedPointer<const chipauthenticationinfo_st>& pDelegate);
+	explicit ChipAuthenticationInfo(const QSharedPointer<const chipauthenticationinfo_st>& pDelegate);
 	ASN1_OBJECT* getProtocolObjectIdentifier() const override;
 	static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
 

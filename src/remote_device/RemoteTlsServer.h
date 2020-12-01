@@ -34,6 +34,7 @@ class RemoteTlsServer
 
 	public:
 		RemoteTlsServer();
+		~RemoteTlsServer() override;
 		bool listen();
 		void setPairing(bool pEnable = true);
 		QSslCertificate getCurrentCertificate() const;

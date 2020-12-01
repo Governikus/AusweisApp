@@ -30,7 +30,7 @@ class test_DiagnosisAntivirusDetection
 	private Q_SLOTS:
 		void init()
 		{
-			mAntivirusDetection.reset(new DiagnosisAntivirusDetection);
+			mAntivirusDetection.reset(new DiagnosisAntivirusDetection());
 		}
 
 

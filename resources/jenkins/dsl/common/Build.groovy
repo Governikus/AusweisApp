@@ -48,7 +48,12 @@ class Build
 
 	String getJobName()
 	{
-		return buildName(getNamePrefix(), getName())
+		return getSourceJobName(getName())
+	}
+
+	String getSourceJobName(String artifactJob)
+	{
+		return buildName(getNamePrefix(), artifactJob)
 	}
 
 	String getLibName(String partialLibName)
@@ -97,6 +102,7 @@ class Build
 				env('TEMP', '$WORKSPACE/tmp')
 				env('TMP', '$WORKSPACE/tmp')
 				env('TMPDIR', '$WORKSPACE/tmp')
+				env('QML_DISABLE_DISK_CACHE', '1')
 			}
 
 			wrappers

@@ -24,8 +24,8 @@ using namespace governikus;
 
 
 DidAuthenticateEAC2Command::DidAuthenticateEAC2Command(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
-		const CVCertificateChain& pCvcChain, const QString& pEphemeralPublicKeyAsHex,
-		const QString& pSignatureAsHex, const QByteArray& pAuthenticatedAuxiliaryDataAsBinary)
+		const CVCertificateChain& pCvcChain, const QByteArray& pEphemeralPublicKeyAsHex,
+		const QByteArray& pSignatureAsHex, const QByteArray& pAuthenticatedAuxiliaryDataAsBinary)
 	: BaseCardCommand(pCardConnectionWorker)
 	, mCvcChain(pCvcChain)
 	, mEphemeralPublicKeyAsHex(pEphemeralPublicKeyAsHex)
@@ -49,7 +49,7 @@ void DidAuthenticateEAC2Command::internalExecute()
 	QByteArray taProtocol = mCvcChain.getTerminalCvc()->getBody().getPublicKey().getPublicKeyOidValueBytes();
 	QByteArray chr = mCvcChain.getTerminalCvc()->getBody().getCertificateHolderReference();
 
-	QByteArray ephemeralPublicKey = QByteArray::fromHex(mEphemeralPublicKeyAsHex.toLatin1());
+	QByteArray ephemeralPublicKey = QByteArray::fromHex(mEphemeralPublicKeyAsHex);
 	if (ephemeralPublicKey.size() % 2 == 0)
 	{
 		/*
@@ -63,7 +63,7 @@ void DidAuthenticateEAC2Command::internalExecute()
 	}
 	QByteArray compressedEphemeralPublicKey = ephemeralPublicKey.mid(1, (ephemeralPublicKey.size() - 1) / 2);
 
-	QByteArray signature = QByteArray::fromHex(mSignatureAsHex.toLatin1());
+	QByteArray signature = QByteArray::fromHex(mSignatureAsHex);
 	mReturnCode = performTerminalAuthentication(taProtocol,
 			chr,
 			mAuthenticatedAuxiliaryDataAsBinary,

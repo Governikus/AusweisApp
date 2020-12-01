@@ -60,7 +60,7 @@ class test_UIPlugInWebSocket
 			QCOMPARE(mApp2->state(), QProcess::Running);
 
 			QFile portInfoFile(PortFile::getPortFilename(QString(), mApp2->processId(), QStringLiteral("AusweisApp2")));
-			QTRY_COMPARE_WITH_TIMEOUT(portInfoFile.exists(), true, PROCESS_TIMEOUT);
+			QTRY_COMPARE_WITH_TIMEOUT(portInfoFile.exists(), true, PROCESS_TIMEOUT); // clazy:exclude=qstring-allocations
 			QVERIFY(portInfoFile.open(QIODevice::ReadOnly));
 
 			quint16 webSocketPort = 0;
@@ -92,7 +92,7 @@ class test_UIPlugInWebSocket
 			{
 				mApp2->kill();
 			}
-			QTRY_COMPARE_WITH_TIMEOUT(mApp2->state(), QProcess::NotRunning, PROCESS_TIMEOUT);
+			QTRY_COMPARE_WITH_TIMEOUT(mApp2->state(), QProcess::NotRunning, PROCESS_TIMEOUT); // clazy:exclude=qstring-allocations
 
 		#ifndef Q_OS_WIN
 			// There will never be a clean shutdown on Windows.

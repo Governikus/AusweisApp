@@ -1,42 +1,34 @@
 /*!
- * \brief Implementation of \ref IosReaderDelegate for iOS.
- *
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include "IosCard.h"
+#include <QString>
 
-#include <QObject>
-
+#import <CoreNFC/NFCReaderSession.h>
+#import <CoreNFC/NFCTagReaderSession.h>
+#import <Foundation/Foundation.h>
 
 namespace governikus
 {
-
-class IosReaderDelegate
-	: public QObject
-{
-	Q_OBJECT
-	class Private;
-
-	IosReaderDelegate::Private* mPrivate;
-
-	public:
-		IosReaderDelegate();
-		virtual ~IosReaderDelegate() override;
-
-		void startSession();
-		void stopSession(const QString& pMessage, bool pIsError = false);
-
-		void onTagDiscovered(IosCard* pCard);
-		void onDidInvalidateWithError(const QString& pError, bool pDoRestart);
-
-	Q_SIGNALS:
-		void fireDiscoveredTag(IosCard* pCard);
-		void fireDidInvalidateWithError(const QString& pError, bool pDoRestart);
-
-
-};
-
+class IosReader;
 } // namespace governikus
+
+API_AVAILABLE(ios(13.0))
+@interface IosReaderDelegate
+	: NSObject<NFCTagReaderSessionDelegate>
+
+@property governikus::IosReader* mListener;
+@property bool mSessionStoppedByApplication;
+@property (nonatomic, strong) NSString* mMessage;
+@property (nonatomic, strong) NFCTagReaderSession* mSession;
+
+- (instancetype)initWithListener:(governikus::IosReader*)pListener;
+
+- (void)startSession;
+- (void)stopSession:(QString)pMessage;
+
+- (void)alertMessage:(QString)pMessage;
+
+@end

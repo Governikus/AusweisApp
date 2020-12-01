@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header>
+      <sb:Correlation xmlns:sb="http://urn:liberty:sb:2003-08" messageID="Id521" refToMessageID="86ad52c0-7c06-4b8d-be72-7a559e62aee7"/>
+   </soap:Header>
+   <soap:Body>
+   <Transmit xmlns="urn:iso:std:iso-iec:24727:tech:schema">
+   <!-- SLOTHANDLE -->
+<InputAPDUInfo>
+   <!-- INPUTAPDU -->
+</InputAPDUInfo>
+</Transmit>
+</soap:Body>
+</soap:Envelope>

@@ -14,6 +14,8 @@
 namespace governikus
 {
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+
 /*
  * Usage example: map<Reader, QString>([](const Reader& r){ return r.getName(); }, readers)
  *
@@ -22,7 +24,7 @@ namespace governikus
 template<typename S, typename T>
 typename std::enable_if<!std::is_void<T>::value, QVector<T>>::type map(const std::function<T(const S&)>& pFunc, const QVector<S>& pItems)
 {
-	const int sz = pItems.size();
+	const auto sz = pItems.size();
 	QVector<T> result(sz);
 	for (int index = 0; index < sz; ++index)
 	{
@@ -33,6 +35,9 @@ typename std::enable_if<!std::is_void<T>::value, QVector<T>>::type map(const std
 }
 
 
+#endif
+
+
 /*
  * Usage example: map<Reader, QString>([](const Reader& r){ return r.getName(); }, readers)
  *
@@ -41,7 +46,7 @@ typename std::enable_if<!std::is_void<T>::value, QVector<T>>::type map(const std
 template<typename S, typename T>
 typename std::enable_if<!std::is_void<T>::value, QList<T>>::type map(const std::function<T(const S&)>& pFunc, const QList<S>& pItems)
 {
-	const int sz = pItems.size();
+	const auto sz = pItems.size();
 	QList<T> result;
 	for (int index = 0; index < sz; ++index)
 	{

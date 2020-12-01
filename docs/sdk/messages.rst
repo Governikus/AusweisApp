@@ -51,6 +51,7 @@ the whole workflow.
 
   - **transactionInfo**: Optional transaction information.
 
+
 .. code-block:: json
 
  {
@@ -69,7 +70,8 @@ the whole workflow.
           "optional": ["GivenNames", "AgeVerification"],
           "required": ["Address", "FamilyName"]
          },
-   "transactionInfo": "this is an example"
+   "transactionInfo": "this is an example",
+   "canAllowed": false
  }
 
 
@@ -88,6 +90,12 @@ the whole workflow.
 
 Values
 """"""
+.. versionadded:: 1.22.0
+   The following access right is possible now:
+    - CanAllowed
+    - PinManagement
+
+
 .. versionadded:: 1.20.0
    The following write access rights are possible now:
 
@@ -121,6 +129,8 @@ The following access rights are possible:
   - WriteCommunityID
   - WriteResidencePermitI
   - WriteResidencePermitII
+  - CanAllowed
+  - PinManagement
 
 
 .. seealso::
@@ -334,6 +344,36 @@ Provides information about the used certificate.
 
 
 
+.. _change_pin:
+
+CHANGE_PIN
+^^^^^^^^^^
+This message will be send by AusweisApp2 if a change PIN workflow
+is initially started.
+
+If you receive a :ref:`change_pin` message with a parameter **sucess**
+the workflow is finished. This could happen after a :ref:`set_pin`
+command if the connection to the card failed. Also the parameter
+**success** is false after a :ref:`cancel` command.
+
+
+.. versionadded:: 1.22.0
+   Support of CHANGE_PIN message.
+
+
+  - **success**: Indicates with true that the PIN was successfully
+                 changed, otherwise false.
+
+.. code-block:: json
+
+  {
+    "msg": "CHANGE_PIN",
+    "success": true
+  }
+
+
+
+
 .. _enter_can:
 
 ENTER_CAN
@@ -449,6 +489,50 @@ AusweisApp2 will send an :ref:`enter_pin` again with a retryCounter of **3**.
                      }
              }
   }
+
+
+
+
+
+.. _enter_new_pin:
+
+ENTER_NEW_PIN
+^^^^^^^^^^^^^
+Indicates that a new PIN is required to continue the workflow.
+
+If the AusweisApp2 sends this message, you will have to
+provide the new PIN of the inserted card with :ref:`set_new_pin`.
+
+
+.. versionadded:: 1.22.0
+   Support of ENTER_NEW_PIN message.
+
+
+  - **error**: Optional error message if your command :ref:`set_new_pin`
+    was invalid.
+
+  - **reader**: Information about the used card and card reader.
+    Please see message :ref:`reader` for details.
+
+.. code-block:: json
+
+  {
+    "msg": "ENTER_NEW_PIN",
+    "error": "You must provide 6 digits",
+    "reader":
+             {
+              "name": "NFC",
+              "attached": true,
+              "keypad": false,
+              "card":
+                     {
+                      "inoperative": false,
+                      "deactivated": false,
+                      "retryCounter": 3
+                     }
+             }
+  }
+
 
 
 

@@ -2,15 +2,14 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
 
 
 Item {
@@ -19,7 +18,7 @@ Item {
 
 	height: columnLayout.height
 
-	Accessible.name: qsTr("Details for history entry") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Details for history entry")
 
 	ColumnLayout {
 		id: columnLayout
@@ -31,7 +30,7 @@ Item {
 		spacing: Constants.pane_spacing
 
 		GText {
-			text: qsTr("Provider Information") + SettingsModel.translationTrigger
+			text: qsTr("Provider Information")
 			textStyle: Style.text.header_accent
 		}
 
@@ -40,10 +39,8 @@ Item {
 
 			Layout.fillWidth: true
 
-			activeFocusOnTab: true
-
 			//: LABEL DESKTOP_QML
-			label: qsTr("Provider name") + SettingsModel.translationTrigger
+			label: qsTr("Provider name")
 			text: historyModelItem ? historyModelItem.subject : ""
 		}
 
@@ -53,10 +50,8 @@ Item {
 			visible: text !== ""
 			Layout.fillWidth: true
 
-			activeFocusOnTab: true
-
 			//: LABEL DESKTOP_QML
-			label: qsTr("Purpose") + SettingsModel.translationTrigger
+			label: qsTr("Purpose")
 			text: historyModelItem ? historyModelItem.purpose : ""
 		}
 
@@ -65,17 +60,26 @@ Item {
 
 			Layout.fillWidth: true
 
-			activeFocusOnTab: true
-
 			//: LABEL DESKTOP_QML
-			label: qsTr("Date") + SettingsModel.translationTrigger
+			label: qsTr("Date")
 			text:{
 				if (!historyModelItem) {
 					return "";
 				}
-				return historyModelItem.dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy")) + SettingsModel.translationTrigger
+				return historyModelItem.dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy"))
 			}
 			textUppercase: Font.AllUppercase
+		}
+
+		LabeledText {
+			id: writtenData
+
+			visible: text !== ""
+			Layout.fillWidth: true
+
+			//: LABEL DESKTOP_QML
+			label: qsTr("Write access (update)")
+			text: historyModelItem ? historyModelItem.writtenData : ""
 		}
 
 		LabeledText {
@@ -83,10 +87,8 @@ Item {
 
 			Layout.fillWidth: true
 
-			activeFocusOnTab: true
-
 			//: LABEL DESKTOP_QML
-			label: qsTr("Submitted data") + SettingsModel.translationTrigger
+			label: qsTr("Read access")
 			text: historyModelItem ? historyModelItem.requestedData : ""
 		}
 
@@ -95,10 +97,8 @@ Item {
 
 			Layout.fillWidth: true
 
-			activeFocusOnTab: true
-
 			//: LABEL DESKTOP_QML
-			label: qsTr("Terms of usage") + SettingsModel.translationTrigger
+			label: qsTr("Terms of usage")
 			text: historyModelItem ? historyModelItem.termsOfUsage : ""
 		}
 	}

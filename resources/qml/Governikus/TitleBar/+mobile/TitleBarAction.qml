@@ -2,12 +2,11 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtGraphicalEffects 1.0
+import QtQuick 2.12
+import QtGraphicalEffects 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.SettingsModel 1.0
 
 Item {
 	id: baseItem
@@ -26,46 +25,18 @@ Item {
 	Accessible.name: text
 	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked()
 
-	Image {
+	TintableIcon {
 		id: imageItem
 
-		sourceSize.width: source ? 18 : 0
+		sourceSize.width: source ? Style.dimens.small_icon_size : 0
 		anchors {
 			left: parent.left
 			verticalCenter: parent.verticalCenter
 		}
 
-		fillMode: Image.PreserveAspectFit
 		source: icon
-
-		Behavior on source {
-			SequentialAnimation {
-				PropertyAnimation {
-					target: imageItem
-					property: "opacity"
-					to: 0
-					duration: Constants.animation_duration
-					easing.type: Easing.InCubic
-				}
-				PropertyAction {
-					target: imageItem
-					property: "source"
-				}
-				PropertyAnimation {
-					target: imageItem
-					property: "opacity"
-					to: 1
-					duration: Constants.animation_duration
-					easing.type: Easing.OutCubic
-				}
-			}
-		}
-
-		ColorOverlay {
-			anchors.fill: imageItem
-			source: imageItem
-			color: Style.color.primary_text_inverse
-		}
+		tintColor: Style.color.primary_text_inverse
+		playAnimation: true
 	}
 
 	GText {

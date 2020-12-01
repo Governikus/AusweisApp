@@ -26,9 +26,9 @@ VALUE_NAME(CONTEXT_HANDLE, "ContextHandle")
 } // namespace
 
 
-static Initializer::Entry E([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<QSharedPointer<const RemoteMessage> >("QSharedPointer<const RemoteMessage>");
-		});
+		})
 
 
 QJsonObject RemoteMessage::createMessageBody(const QString& pContextHandle) const
@@ -104,7 +104,7 @@ bool RemoteMessage::getBoolValue(const QJsonObject& pJsonObject, const QLatin1St
 }
 
 
-int RemoteMessage::getIntValue(const QJsonObject& pJsonObject, const QLatin1String& pName)
+int RemoteMessage::getIntValue(const QJsonObject& pJsonObject, const QLatin1String& pName, int pDefault)
 {
 	if (pJsonObject.contains(pName))
 	{
@@ -115,11 +115,11 @@ int RemoteMessage::getIntValue(const QJsonObject& pJsonObject, const QLatin1Stri
 		}
 
 		invalidType(pName, QLatin1String("number"));
-		return 0;
+		return pDefault;
 	}
 
 	missingValue(pName);
-	return 0;
+	return pDefault;
 }
 
 

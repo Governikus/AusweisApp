@@ -7,7 +7,6 @@
 #pragma once
 
 #include <QByteArrayList>
-#include <QCryptographicHash>
 #include <QJsonObject>
 #include <QList>
 #include <QSslCipher>
@@ -54,14 +53,16 @@ class TlsConfiguration final
 		TlsConfiguration();
 		~TlsConfiguration();
 
-		bool readJsonArray(QJsonArray& pArray, const QJsonObject& pConfig, const QLatin1String pName);
-		QSsl::SslProtocol readSslProtocol(const QJsonObject& pConfig, const QLatin1String pName);
-		QByteArrayList readSignatureAlgorithms(const QJsonObject& pConfig, const QLatin1String pKey);
+		QJsonArray readJsonArray(const QJsonObject& pConfig, const QLatin1String pName) const;
+		QSsl::SslProtocol readSslProtocol(const QJsonObject& pConfig, const QLatin1String pName) const;
+		bool readOcspStapling(const QJsonObject& pConfig, const QLatin1String pName) const;
+		QByteArrayList readSignatureAlgorithms(const QJsonObject& pConfig, const QLatin1String pKey) const;
 
 	public:
 		void load(const QJsonObject& pConfig);
 
 		QSsl::SslProtocol getProtocolVersion() const;
+		bool getOcspStapling() const;
 		QList<QSslCipher> getCiphers() const;
 		QVector<QSslEllipticCurve> getEllipticCurves() const;
 		QByteArrayList getSignatureAlgorithms() const;

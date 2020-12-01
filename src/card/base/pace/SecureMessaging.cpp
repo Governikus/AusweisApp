@@ -44,7 +44,7 @@ SecureMessaging::SecureMessaging(const QByteArray& pPaceAlgorithm, const QByteAr
 }
 
 
-bool SecureMessaging::isInitialized()
+bool SecureMessaging::isInitialized() const
 {
 	return mCipher.isInitialized() && mCipherMac.isInitialized();
 }
@@ -54,8 +54,8 @@ QByteArray SecureMessaging::padToCipherBlockSize(const QByteArray& pData) const
 {
 	Q_ASSERT(!pData.isEmpty());
 
-	int remainder = pData.size() % mCipher.getBlockSize();
-	int paddingSize = (remainder == 0) ? mCipher.getBlockSize() : mCipher.getBlockSize() - remainder;
+	const auto remainder = pData.size() % mCipher.getBlockSize();
+	const auto paddingSize = (remainder == 0) ? mCipher.getBlockSize() : mCipher.getBlockSize() - remainder;
 
 	QByteArray paddedData;
 	paddedData += pData;
@@ -75,7 +75,7 @@ QByteArray SecureMessaging::unpadFromCipherBlockSize(const QByteArray& pData) co
 		return QByteArray();
 	}
 
-	int position = pData.lastIndexOf(ISO_LEADING_PAD_BYTE);
+	const auto position = pData.lastIndexOf(ISO_LEADING_PAD_BYTE);
 	if (position == -1)
 	{
 		qCCritical(card) << "Cannot find padding delimiter! Message seems to be broken";
@@ -137,7 +137,7 @@ QByteArray SecureMessaging::createSecuredHeader(const CommandApdu& pCommandApdu)
 }
 
 
-QByteArray SecureMessaging::createSecuredLe(int pLe)
+QByteArray SecureMessaging::createSecuredLe(int pLe) const
 {
 	QByteArray buffer;
 	if (pLe > CommandApdu::NO_LE)

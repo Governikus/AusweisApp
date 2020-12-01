@@ -4,15 +4,16 @@
  * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
  */
 
-#include <QCoreApplication>
-#include <QFile>
-#include <QSignalSpy>
-#include <QtTest>
-
 #include "GeneralSettings.h"
 
 #include "AppSettings.h"
 #include "Env.h"
+#include "VolatileSettings.h"
+
+#include <QCoreApplication>
+#include <QFile>
+#include <QSignalSpy>
+#include <QtTest>
 
 using namespace governikus;
 
@@ -37,6 +38,15 @@ class test_GeneralSettings
 		}
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			// init ctor of Singleton, otherwise the testcases are not
+			// stable. There could be differences between a run of a
+			// single testcase and the whole testsuite.
+			Env::getSingleton<AppSettings>()->getGeneralSettings();
+		}
+
+
 		void init()
 		{
 			AbstractSettings::mTestDir.clear();
@@ -74,22 +84,53 @@ class test_GeneralSettings
 		}
 
 
+		void testAutoStart_data()
+		{
+			QTest::addColumn<bool>("useSdkMode");
+			QTest::newRow("SdkModeEnabled") << true;
+			QTest::newRow("SdkModeDisabled") << false;
+		}
+
+
 		void testAutoStart()
 		{
-			#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
-			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-			bool initial = settings.isAutoStart();
+			QFETCH(bool, useSdkMode);
 
+			SDK_MODE(useSdkMode);
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+			QCOMPARE(settings.isAutoStartAvailable(), !useSdkMode);
+
+			bool initial = settings.isAutoStart();
+			if (useSdkMode)
+			{
+				QTest::ignoreMessage(QtDebugMsg, "AutoStart is not available");
+			}
 			settings.setAutoStart(!initial);
-			QCOMPARE(settings.isAutoStart(), !initial);
+
+			if (useSdkMode)
+			{
+				QCOMPARE(settings.isAutoStart(), initial);
+			}
+			else
+			{
+				QCOMPARE(settings.isAutoStart(), !initial);
+			}
+
 			settings.save();
 
+			if (useSdkMode)
+			{
+				QTest::ignoreMessage(QtDebugMsg, "AutoStart is not available");
+			}
 			settings.setAutoStart(initial);
 			QCOMPARE(settings.isAutoStart(), initial);
 			settings.save();
 
 			#else
-			QSKIP("Autostart currently only on windows and mac os");
+			Q_UNUSED(useSdkMode)
+			QCOMPARE(settings.isAutoStartAvailable(), false);
 			#endif
 		}
 
@@ -168,6 +209,7 @@ class test_GeneralSettings
 
 		void testDefaultValues()
 		{
+			SDK_MODE(false);
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
@@ -176,8 +218,16 @@ class test_GeneralSettings
 			QCOMPARE(settings.isAutoUpdateCheck(), false);
 #endif
 
+			if (settings.isAutoStartAvailable())
+			{
+				QCOMPARE(settings.isAutoStart(), GENERAL_SETTINGS_DEFAULT_AUTOSTART);
+			}
+			else
+			{
+				QCOMPARE(settings.isAutoStart(), false);
+			}
+
 			QCOMPARE(settings.isAutoCloseWindowAfterAuthentication(), true);
-			QCOMPARE(settings.isAutoStart(), GENERAL_SETTINGS_DEFAULT_AUTOSTART);
 			QCOMPARE(settings.isDeveloperOptions(), false);
 			QCOMPARE(settings.isDeveloperMode(), false);
 			QCOMPARE(settings.useSelfAuthTestUri(), false);
@@ -185,11 +235,11 @@ class test_GeneralSettings
 			QCOMPARE(settings.isEnableCanAllowed(), false);
 			QCOMPARE(settings.isSkipRightsOnCanAllowed(), false);
 			QCOMPARE(settings.isShowSetupAssistant(), true);
-			QCOMPARE(settings.isShowNewUiHint(), true);
 			QCOMPARE(settings.isShowInAppNotifications(), getNotificationsOsDefault());
 			QCOMPARE(settings.isRemindUserToClose(), true);
 			QCOMPARE(settings.isTransportPinReminder(), true);
 			QCOMPARE(settings.getPersistentSettingsVersion(), QString());
+			QCOMPARE(settings.isNewAppVersion(), false);
 			QCOMPARE(settings.getLastReaderPluginType(), QString());
 		}
 
@@ -207,23 +257,6 @@ class test_GeneralSettings
 
 			settings.setShowSetupAssistant(initial);
 			QCOMPARE(settings.isShowSetupAssistant(), initial);
-			settings.save();
-		}
-
-
-		void testShowNewUiHint()
-		{
-			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-
-			bool initial = settings.isShowNewUiHint();
-			bool newValue = !initial;
-
-			settings.setShowNewUiHint(newValue);
-			QCOMPARE(settings.isShowNewUiHint(), newValue);
-			settings.save();
-
-			settings.setShowNewUiHint(initial);
-			QCOMPARE(settings.isShowNewUiHint(), initial);
 			settings.save();
 		}
 
@@ -247,6 +280,7 @@ class test_GeneralSettings
 
 		void testEnableDeveloperMode()
 		{
+			SDK_MODE(false);
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 
 			bool initial = settings.isDeveloperMode();
@@ -307,6 +341,7 @@ class test_GeneralSettings
 
 		void testEnableNotificationsOnDeveloperMode()
 		{
+			SDK_MODE(false);
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 			settings.setDeveloperOptions(true);
 			settings.setDeveloperMode(false);
@@ -360,6 +395,23 @@ class test_GeneralSettings
 
 			settings.save();
 			QCOMPARE(settings.getPersistentSettingsVersion(), QCoreApplication::applicationVersion());
+		}
+
+
+		void testIsNewAppVersion()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			QCOMPARE(settings.isNewAppVersion(), false);
+
+			QCoreApplication::setApplicationVersion(QStringLiteral("X.Y.Z"));
+			settings.save();
+
+			QCoreApplication::setApplicationVersion(QStringLiteral("Z.Y.X"));
+
+			GeneralSettings generalSettings(settings.mStoreGeneral, settings.mStoreCommon);
+
+			QCOMPARE(generalSettings.isNewAppVersion(), true);
 		}
 
 
@@ -423,13 +475,7 @@ class test_GeneralSettings
 		void testStoreFeedbackRequested()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-
-#if defined(Q_OS_IOS)
 			QCOMPARE(settings.isRequestStoreFeedback(), false);
-#else
-			QCOMPARE(settings.isRequestStoreFeedback(), false);
-#endif
-
 			settings.setRequestStoreFeedback(true);
 			settings.save();
 			QCOMPARE(settings.isRequestStoreFeedback(), true);

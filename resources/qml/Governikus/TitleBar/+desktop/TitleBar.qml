@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtGraphicalEffects 1.0
+import QtQuick 2.12
+import QtGraphicalEffects 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -17,8 +17,8 @@ Item {
 	height: actionRow.height + 2 * Style.dimens.titlebar_padding
 
 	Accessible.role: Accessible.Grouping
-	Accessible.name: qsTr("Titlebar") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This bar represents the navigation tree of the AusweisApp2.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Titlebar")
+	Accessible.description: qsTr("This bar represents the navigation tree of the AusweisApp2.")
 	activeFocusOnTab: true
 
 	property var contentRoot
@@ -92,7 +92,7 @@ Item {
 
 					showArrow: false
 					//: LABEL DESKTOP_QML
-					text: qsTr("Start") + SettingsModel.translationTrigger
+					text: qsTr("Start")
 					enabled: rightMostAction.rootEnabled
 					helpTopic: "applicationOverview"
 
@@ -136,11 +136,11 @@ Item {
 				id: settingsButton
 
 				height: rightTitleBarActions.height
-				source: "qrc:///images/settings_icon.svg"
+				source: "qrc:///images/material_settings.svg"
 				visible: rightMostAction.showSettings
 
-				text: qsTr("Settings") + SettingsModel.translationTrigger
-				Accessible.description: qsTr("Open settings view of %1").arg(Qt.application.name) + SettingsModel.translationTrigger
+				text: qsTr("Settings")
+				Accessible.description: qsTr("Open settings view of %1").arg(Qt.application.name)
 
 				onClicked: rightMostAction.settingsHandler()
 			}
@@ -149,11 +149,11 @@ Item {
 				id: helpButton
 
 				height: rightTitleBarActions.height
-				source: "qrc:///images/desktop/info_manual.svg"
+				source: "qrc:///images/desktop/material_menu_book.svg"
 				visible: rightMostAction.showHelp
 
-				text: qsTr("Help") + SettingsModel.translationTrigger
-				Accessible.description: qsTr("Open the online help of %1").arg(Qt.application.name) + SettingsModel.translationTrigger
+				text: qsTr("Open online help in browser")
+				Accessible.description: qsTr("Open online help of %1 in browser").arg(Qt.application.name)
 
 				onClicked: ApplicationModel.openOnlineHelp(rightMostAction.helpTopic)
 			}
@@ -162,12 +162,12 @@ Item {
 				id: notifyButton
 
 				height: rightTitleBarActions.height
-				source: "qrc:///images/desktop/bell.svg"
+				source: "qrc:///images/desktop/material_notifications.svg"
 				iconColor: notifications.iconColor
 				visible: SettingsModel.showInAppNotifications
 
-				text: qsTr("Notifications") + SettingsModel.translationTrigger
-				Accessible.description: qsTr("Show the in-app notifications of %1").arg(Qt.application.name) + SettingsModel.translationTrigger
+				text: qsTr("Notifications")
+				Accessible.description: qsTr("Show in-app notifications of %1").arg(Qt.application.name)
 
 				onClicked: notifications.toggle()
 			}

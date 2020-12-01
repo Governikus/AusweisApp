@@ -4,7 +4,7 @@
 
 #include "SignalHandler.h"
 
-#include "SingletonHelper.h"
+#include "Env.h"
 
 #include <QCoreApplication>
 #include <QLoggingCategory>
@@ -23,7 +23,7 @@ BOOL WINAPI SignalHandler::ctrlHandler(DWORD pCtrlType)
 	switch (pCtrlType)
 	{
 		case CTRL_C_EVENT:
-			getInstance().quit();
+			Env::getSingleton<SignalHandler>()->quit();
 			return true;
 
 		default:

@@ -6,9 +6,6 @@
 
 #pragma once
 
-#include "CertificateDescriptionModel.h"
-#include "ChatModel.h"
-#include "ConnectivityManager.h"
 #include "GlobalStatus.h"
 #include "HistoryModel.h"
 #include "NumberModel.h"
@@ -16,7 +13,6 @@
 #include "SettingsModel.h"
 #include "TrayIcon.h"
 #include "UIPlugIn.h"
-#include "VersionInformationModel.h"
 
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
@@ -34,7 +30,7 @@ class UIPlugInQml
 	Q_OBJECT
 	Q_PLUGIN_METADATA(IID "governikus.UIPlugIn" FILE "metadata.json")
 	Q_INTERFACES(governikus::UIPlugIn)
-	Q_PROPERTY(QString platformStyle READ getPlatformStyle CONSTANT)
+	Q_PROPERTY(QString platformStyle READ getPlatformStyle CONSTANT FINAL)
 	Q_PROPERTY(bool debugBuild READ isDebugBuild CONSTANT)
 	Q_PROPERTY(bool developerVersion READ isDeveloperVersion CONSTANT)
 	Q_PROPERTY(QString dominator READ getDominator NOTIFY fireDominatorChanged)
@@ -47,11 +43,7 @@ class UIPlugInQml
 	private:
 		QScopedPointer<QQmlApplicationEngine> mEngine;
 		int mQmlEngineWarningCount;
-		VersionInformationModel mVersionInformationModel;
-		CertificateDescriptionModel mCertificateDescriptionModel;
-		ChatModel mChatModel;
 		QString mExplicitPlatformStyle;
-		ConnectivityManager mConnectivityManager;
 		bool mUpdateInformationPending;
 		TrayIcon mTrayIcon;
 		QString mDominator;
@@ -86,7 +78,6 @@ class UIPlugInQml
 		Q_INVOKABLE void applyPlatformStyle(const QString& pPlatformStyle);
 		Q_INVOKABLE void init();
 		Q_INVOKABLE void hideFromTaskbar();
-		Q_INVOKABLE void switchUi();
 
 	Q_SIGNALS:
 		void fireShowRequest(UiModule pModule);
@@ -101,9 +92,11 @@ class UIPlugInQml
 		virtual void doShutdown() override;
 		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
 		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		virtual void onApplicationInitialized() override;
 		virtual void onApplicationStarted() override;
 		virtual void onShowUi(UiModule pModule) override;
 		virtual void onHideUi() override;
+		virtual void onTranslationChanged() override;
 		virtual void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator) override;
 		virtual void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted) override;
 		virtual void onUiDominationReleased() override;

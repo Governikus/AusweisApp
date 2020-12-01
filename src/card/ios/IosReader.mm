@@ -2,12 +2,18 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-#include "CardConnectionWorker.h"
 #include "IosReader.h"
+
+#include "CardConnectionWorker.h"
+#include "IosCardPointer.h"
+#include "IosReaderDelegate.h"
+#include "VolatileSettings.h"
 
 #include <QDateTime>
 #include <QLoggingCategory>
 #include <QTimer>
+
+#import <CoreNFC/NFCISO7816Tag.h>
 
 
 using namespace governikus;
@@ -20,9 +26,7 @@ Reader::CardEvent IosReader::updateCard()
 {
 	if (mCard && !mCard->isValid())
 	{
-		removeCard();
-		mDelegate.startSession();
-		return CardEvent::CARD_REMOVED;
+		onDidInvalidateWithError(true);
 	}
 
 	return CardEvent::NONE;
@@ -31,16 +35,20 @@ Reader::CardEvent IosReader::updateCard()
 
 IosReader::IosReader()
 	: ConnectableReader(ReaderManagerPlugInType::NFC, QStringLiteral("NFC"))
-	, mDelegate()
 	, mCard()
 	, mConnected(false)
-	, mLastRestart(0)
+	, mIsRestarting(false)
 {
 	mReaderInfo.setBasicReader(true);
 	mReaderInfo.setConnected(true);
 
-	connect(&mDelegate, &IosReaderDelegate::fireDiscoveredTag, this, &IosReader::onDiscoveredTag);
-	connect(&mDelegate, &IosReaderDelegate::fireDidInvalidateWithError, this, &IosReader::onDidInvalidateWithError);
+	if (@available(iOS 13, *))
+	{
+		mDelegate = [[IosReaderDelegate alloc] initWithListener:this];
+	}
+
+	connect(this, &IosReader::fireTagDiscovered, this, &IosReader::onTagDiscovered, Qt::QueuedConnection);
+	connect(this, &IosReader::fireDidInvalidateWithError, this, &IosReader::onDidInvalidateWithError, Qt::QueuedConnection);
 
 	mTimerId = startTimer(500);
 }
@@ -55,24 +63,47 @@ void IosReader::removeCard()
 }
 
 
+void IosReader::startSession()
+{
+	if (@available(iOS 13, *))
+	{
+		if (mConnected)
+		{
+			[mDelegate alertMessage: Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
+			//: INFO IOS The ID card may be inserted, the authentication process may be started.
+			? QString() : tr("Please place your ID card on the top of the device's back side.")];
+			[mDelegate startSession];
+		}
+	}
+}
+
+
 void IosReader::stopSession(const QString& pError)
 {
-	qCDebug(card_nfc) << pError;
-
-	if (pError.isEmpty())
+	if (!pError.isNull())
 	{
-		//: INFO IOS The current session was stopped without errors.
-		mDelegate.stopSession(tr("Scanning process has been finished successfully."));
-	}
-	else
-	{
-		mDelegate.stopSession(pError, true);
+		qCDebug(card_nfc) << "stopSession with error:" << pError;
 	}
 
 	if (mCard)
 	{
 		removeCard();
-		Q_EMIT fireCardRemoved(getName());
+		Q_EMIT fireCardRemoved(mReaderInfo);
+	}
+
+	if (@available(iOS 13, *))
+	{
+		const bool isSdk = Env::getSingleton<VolatileSettings>()->isUsedAsSDK();
+		if (pError.isNull())
+		{
+			//: INFO IOS The current session was stopped without errors.
+			[mDelegate alertMessage: isSdk ? QString() : tr("Scanning process has been finished successfully.")];
+			[mDelegate stopSession: QString()];
+		}
+		else
+		{
+			[mDelegate stopSession: isSdk ? QStringLiteral("") : pError];
+		}
 	}
 }
 
@@ -96,7 +127,7 @@ Card* IosReader::getCard() const
 void IosReader::connectReader()
 {
 	mConnected = true;
-	mDelegate.startSession();
+	startSession();
 }
 
 
@@ -107,55 +138,59 @@ void IosReader::disconnectReader(const QString& pError)
 }
 
 
-void IosReader::onDiscoveredTag(IosCard* pCard)
+void IosReader::onTagDiscovered(IosCardPointer* pCard)
 {
-	mCard.reset(pCard);
-	connect(pCard, &IosCard::fireTransmitFailed, this, &IosReader::onTransmitFailed);
+	if (@available(iOS 13, *))
+	{
+		id<NFCISO7816Tag> iso7816Tag = pCard->mNfcTag.asNFCISO7816Tag;
+		if (iso7816Tag)
+		{
+			if (iso7816Tag.historicalBytes != nil && iso7816Tag.applicationData == nil)
+			{
+				qCDebug(card_nfc) << "targetDetected, type: QNearFieldTarget::NfcTagType4A";
+			}
+
+			if (iso7816Tag.historicalBytes == nil && iso7816Tag.applicationData != nil)
+			{
+				qCDebug(card_nfc) << "targetDetected, type: QNearFieldTarget::NfcTagType4B";
+			}
+		}
+	}
+
+	mCard.reset(new IosCard(pCard));
 	QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
-	CardInfoFactory::create(cardConnection, mReaderInfo);
-	Q_EMIT fireCardInserted(getName());
+	if (CardInfoFactory::create(cardConnection, mReaderInfo) && mCard)
+	{
+		//: INFO IOS Feedback when a new ID card has been detected
+		mCard->setProgressMessage(tr("ID card detected. Please do not move the device!"));
+	}
+	Q_EMIT fireCardInserted(mReaderInfo);
 }
 
 
-void IosReader::onDidInvalidateWithError(const QString& pError, bool pDoRestart)
+void IosReader::onDidInvalidateWithError(bool pDoRestart)
 {
-	stopSession(pError);
-
-	if (pDoRestart && mConnected)
+	if (mCard)
 	{
-		const qint64 now = QDateTime::currentSecsSinceEpoch();
-		if (now - mLastRestart <= 1) // Don't restart more than once per second to avoid spamming the log
+		removeCard();
+		Q_EMIT fireCardRemoved(mReaderInfo);
+	}
+
+	if (mConnected && pDoRestart)
+	{
+		if (!mIsRestarting)
 		{
+			mIsRestarting = true;
+
 			using namespace std::chrono_literals;
-			QTimer::singleShot(1s, this, [this](){
-						if (mConnected)
-						{
-							mDelegate.startSession();
-						}
+			QTimer::singleShot(2s, this, [this](){
+						mIsRestarting = false;
+						startSession();
 					});
 		}
-		else
-		{
-			mDelegate.startSession();
-		}
-		mLastRestart = now;
 		return;
 	}
 
 	mConnected = false;
 	Q_EMIT fireReaderDisconnected();
-}
-
-
-void IosReader::onConnectFailed()
-{
-	//: ERROR IOS The connection to the card could not be established.
-	onDidInvalidateWithError(tr("The connection could not be established. The process was aborted."), true);
-}
-
-
-void IosReader::onTransmitFailed()
-{
-	//: ERROR IOS The card was removed during the communication.
-	onDidInvalidateWithError(tr("The connection to the ID card has been lost. The process was aborted."), true);
 }

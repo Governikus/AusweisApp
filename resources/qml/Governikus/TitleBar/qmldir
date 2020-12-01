@@ -1,7 +1,7 @@
 module TitleBar
 
 internal BaseTitleBar BaseTitleBar.qml
-internal Hamburger Hamburger.qml
+internal BackCloseAction BackCloseAction.qml
 internal TitleBarText TitleBarText.qml
 internal TitleBarNavigation TitleBarNavigation.qml
 

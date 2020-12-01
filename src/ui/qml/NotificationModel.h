@@ -44,14 +44,12 @@ class NotificationModel
 	private:
 		QContiguousCache<NotificationEntry> mNotificationEntries;
 
+		NotificationModel();
+		virtual ~NotificationModel() override = default;
 		QString getLastType() const;
 
 	private Q_SLOTS:
 		void onNewLogMsg(const QString& pMsg, const QString& pCategoryName);
-
-	protected:
-		NotificationModel();
-		static NotificationModel& getInstance();
 
 	public:
 		int rowCount(const QModelIndex& pIndex) const override;

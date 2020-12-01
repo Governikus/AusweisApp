@@ -4,8 +4,6 @@
 
 #include "SignalHandler.h"
 
-#include "SingletonHelper.h"
-
 #include <QCoreApplication>
 #include <QLoggingCategory>
 #include <sys/socket.h>
@@ -71,7 +69,7 @@ void SignalHandler::onSignalSocketActivated()
 		case SIGTERM:
 		case SIGHUP:
 		case SIGQUIT:
-			getInstance().quit();
+			quit();
 			break;
 
 		default:

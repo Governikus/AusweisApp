@@ -36,13 +36,13 @@ class test_EnumHelper
 	private:
 		void testBadConverion(const int pValue, const QString& pExpectedOutput)
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			auto badEnumValue = static_cast<TestEnum1>(pValue);
 			QCOMPARE(Enum<TestEnum1>::getName(badEnumValue), QLatin1String());
 
-			QCOMPARE(spy.count(), 1);
-			auto result = spy.takeFirst();
+			QCOMPARE(logSpy.count(), 1);
+			auto result = logSpy.takeFirst();
 			QVERIFY(result.at(0).toString().endsWith(pExpectedOutput));
 		}
 
@@ -83,11 +83,11 @@ class test_EnumHelper
 
 		void operatorDebug()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << TestEnum1::FIRST;
 
-			QCOMPARE(spy.count(), 1);
-			auto result = spy.takeFirst();
+			QCOMPARE(logSpy.count(), 1);
+			auto result = logSpy.takeFirst();
 			QVERIFY(result.at(0).toString().endsWith(QStringLiteral("FIRST") + lineBreak));
 		}
 
@@ -163,6 +163,49 @@ class test_EnumHelper
 
 			QString value = "FIRST";
 			QVERIFY(Enum<TestEnum1>::fromString(value, TestEnum1::THIRD) != TestEnum1::THIRD);
+		}
+
+
+		void checkQHash()
+		{
+			QMap<TestEnum1, QByteArray> dummy;
+			dummy.insert(TestEnum1::FIRST, QByteArray("value 1"));
+			dummy.insert(TestEnum1::SECOND, QByteArray("value 2"));
+			dummy.insert(TestEnum1::THIRD, QByteArray("value 3"));
+
+			QCOMPARE(dummy.size(), 3);
+			QCOMPARE(dummy.value(TestEnum1::FIRST), QByteArray("value 1"));
+			QCOMPARE(dummy.value(TestEnum1::SECOND), QByteArray("value 2"));
+			QCOMPARE(dummy.value(TestEnum1::THIRD), QByteArray("value 3"));
+			QVERIFY(dummy.contains(TestEnum1::FIRST));
+			QVERIFY(dummy.contains(TestEnum1::SECOND));
+			QVERIFY(dummy.contains(TestEnum1::THIRD));
+			dummy.remove(TestEnum1::SECOND);
+			QVERIFY(dummy.contains(TestEnum1::FIRST));
+			QVERIFY(!dummy.contains(TestEnum1::SECOND));
+			QVERIFY(dummy.contains(TestEnum1::THIRD));
+
+			QSet<TestEnum2> dummySet;
+
+			dummySet << TestEnum2::FIRST;
+			QVERIFY(dummySet.contains(TestEnum2::FIRST));
+			QVERIFY(!dummySet.contains(TestEnum2::SECOND));
+			QVERIFY(!dummySet.contains(TestEnum2::THIRD));
+
+			dummySet << TestEnum2::SECOND;
+			QVERIFY(dummySet.contains(TestEnum2::FIRST));
+			QVERIFY(dummySet.contains(TestEnum2::SECOND));
+			QVERIFY(!dummySet.contains(TestEnum2::THIRD));
+
+			dummySet << TestEnum2::THIRD;
+			QVERIFY(dummySet.contains(TestEnum2::FIRST));
+			QVERIFY(dummySet.contains(TestEnum2::SECOND));
+			QVERIFY(dummySet.contains(TestEnum2::THIRD));
+
+			dummySet.remove(TestEnum2::SECOND);
+			QVERIFY(dummySet.contains(TestEnum2::FIRST));
+			QVERIFY(!dummySet.contains(TestEnum2::SECOND));
+			QVERIFY(dummySet.contains(TestEnum2::THIRD));
 		}
 
 

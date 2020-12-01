@@ -1,0 +1,53 @@
+{
+   FICLONE: https://bugs.kde.org/show_bug.cgi?id=397605
+   Memcheck:Param
+   ioctl(generic)
+   fun:ioctl
+   obj:/*/libQt5Core.so.*
+   fun:_ZN5QFile4copyERK7QString
+   fun:_ZN5QFile4copyERK7QStringS2_
+}
+
+{
+   Platform plugin libqoffscreen
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   obj:/*/plugins/platforms/libqoffscreen.so
+}
+
+{
+   https://bugreports.qt.io/browse/QTBUG-85180
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   obj:/*/lib/libQt5WebSockets.so.*
+   fun:_ZN17QTcpServerPrivate16readNotificationEv
+   obj:/*/lib/libQt5Network.so.*
+   fun:_ZN16QCoreApplication15notifyInternal2EP7QObjectP6QEvent
+   obj:/*/lib/libQt5Core.so.*
+   fun:g_main_context_dispatch
+}
+
+{
+   Internal of QProcess
+   Memcheck:Param
+   waitid(infop)
+   fun:syscall
+   obj:/*/libQt5Core.so.*
+}
+
+{
+   Invalid read of size 16
+   Memcheck:Addr16
+   obj:*
+   obj:*
+}
+
+{
+   fontconfig and XML_ParseBuffer (expat)
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:/*/libfontconfig.so.*
+}

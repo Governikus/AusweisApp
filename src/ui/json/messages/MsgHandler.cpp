@@ -5,6 +5,7 @@
 #include "MsgHandler.h"
 
 #include "states/StateEditAccessRights.h"
+#include "states/StateEnterNewPacePin.h"
 #include "states/StateEnterPacePassword.h"
 #include "states/StateSelectReader.h"
 
@@ -33,6 +34,10 @@ MsgType MsgHandler::getStateMsgType(const QString& pState, PacePasswordId pPassw
 		{
 			return MsgType::ENTER_PUK;
 		}
+	}
+	else if (AbstractState::isState<StateEnterNewPacePin>(pState))
+	{
+		return MsgType::ENTER_NEW_PIN;
 	}
 	else if (AbstractState::isState<StateEditAccessRights>(pState))
 	{

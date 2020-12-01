@@ -103,14 +103,14 @@ class test_LogHandler
 
 		void fireLog()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			qDebug() << "hallo";
 			qDebug() << "test nachricht";
 
-			QCOMPARE(spy.count(), 2);
-			auto param1 = spy.takeFirst();
-			auto param2 = spy.takeLast();
+			QCOMPARE(logSpy.count(), 2);
+			auto param1 = logSpy.takeFirst();
+			auto param2 = logSpy.takeLast();
 
 #ifdef Q_OS_WIN
 			const QLatin1String lineBreak("\r\n");
@@ -128,7 +128,7 @@ class test_LogHandler
 			Env::getSingleton<LogHandler>()->setLogfile(true);
 
 			auto list = Env::getSingleton<LogHandler>()->getOtherLogfiles();
-			QVERIFY(!list.contains(Env::getSingleton<LogHandler>()->mLogFile));
+			QVERIFY(!list.contains(QFileInfo(*Env::getSingleton<LogHandler>()->mLogFile)));
 
 			Env::getSingleton<LogHandler>()->setLogfile(false);
 			auto nextList = Env::getSingleton<LogHandler>()->getOtherLogfiles();
@@ -138,12 +138,12 @@ class test_LogHandler
 
 		void debugStream()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << *Env::getSingleton<LogHandler>();
 
-			QCOMPARE(spy.count(), 1);
-			auto param = spy.takeFirst();
-			QVERIFY(param.at(0).toString().contains(Env::getSingleton<LogHandler>()->mLogFile.fileName()));
+			QCOMPARE(logSpy.count(), 1);
+			auto param = logSpy.takeFirst();
+			QVERIFY(param.at(0).toString().contains(Env::getSingleton<LogHandler>()->mLogFile->fileName()));
 		}
 
 
@@ -199,25 +199,25 @@ class test_LogHandler
 
 		void initReset()
 		{
-			QVERIFY(Env::getSingleton<LogHandler>()->isInitialized());
+			QVERIFY(Env::getSingleton<LogHandler>()->isInstalled());
 
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << "dummy";
-			QCOMPARE(spy.count(), 1);
+			QCOMPARE(logSpy.count(), 1);
 			const auto& backlog = Env::getSingleton<LogHandler>()->getBacklog();
 			QVERIFY(!backlog.isEmpty());
-			spy.clear();
+			logSpy.clear();
 
 			Env::getSingleton<LogHandler>()->reset();
-			QVERIFY(!Env::getSingleton<LogHandler>()->isInitialized());
+			QVERIFY(!Env::getSingleton<LogHandler>()->isInstalled());
 			qDebug() << "dummy";
-			QCOMPARE(spy.count(), 0);
+			QCOMPARE(logSpy.count(), 0);
 			QCOMPARE(Env::getSingleton<LogHandler>()->getBacklog(), backlog);
 
 			Env::getSingleton<LogHandler>()->init();
-			QVERIFY(Env::getSingleton<LogHandler>()->isInitialized());
+			QVERIFY(Env::getSingleton<LogHandler>()->isInstalled());
 			qDebug() << "dummy";
-			QCOMPARE(spy.count(), 1);
+			QCOMPARE(logSpy.count(), 1);
 			QVERIFY(Env::getSingleton<LogHandler>()->getBacklog().size() > backlog.size());
 		}
 
@@ -292,7 +292,7 @@ class test_LogHandler
 
 		void handleMessage()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			const auto& logger = Env::getSingleton<LogHandler>();
 
 			QMessageLogContext logContext1("/src/ui/qml/ApplicationModel.cpp", 411, "bool ApplicationModel::isScreenReaderRunning()", "ui");
@@ -331,7 +331,7 @@ class test_LogHandler
 			fakeLastModifiedAndLastAccessTime(tmp1.fileName());
 			fakeLastModifiedAndLastAccessTime(tmp2.fileName());
 			logger->init();
-			QTRY_COMPARE(logger->getOtherLogfiles().size(), initialFiles.size());
+			QTRY_COMPARE(logger->getOtherLogfiles().size(), initialFiles.size()); // clazy:exclude=qstring-allocations
 			QVERIFY(!tmp1.exists());
 			QVERIFY(!tmp2.exists());
 		}

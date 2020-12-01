@@ -53,9 +53,9 @@ class test_pcscReaderPaceCapability
 		{
 			PcscReaderPaceCapability paceCapa(nullptr);
 
-			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << paceCapa;
-			QVERIFY(TestFileHelper::containsLog(spyLog, QLatin1String("()")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("()")));
 
 			QCOMPARE(getCapabilityCount(paceCapa), 0);
 		}
@@ -66,9 +66,9 @@ class test_pcscReaderPaceCapability
 			QByteArray capabilitiesTLV = QByteArray::fromHex("00000000010060");
 			PcscReaderPaceCapability paceCapa(capabilitiesTLV.constData(), static_cast<PCSC_INT>(capabilitiesTLV.length()));
 
-			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << paceCapa;
-			QVERIFY(TestFileHelper::containsLog(spyLog, QLatin1String("(EID, GENERIC)")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("(EID, GENERIC)")));
 
 			QCOMPARE(getCapabilityCount(paceCapa), 2);
 			QVERIFY(paceCapa.contains(PaceCapabilityId::EID));
@@ -81,9 +81,9 @@ class test_pcscReaderPaceCapability
 			QByteArray capabilitiesTLV = QByteArray::fromHex("00000000010070");
 			PcscReaderPaceCapability paceCapa(capabilitiesTLV.constData(), static_cast<PCSC_INT>(capabilitiesTLV.length()));
 
-			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << paceCapa;
-			QVERIFY(TestFileHelper::containsLog(spyLog, QLatin1String("(ESIGN, EID, GENERIC)")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("(ESIGN, EID, GENERIC)")));
 
 			QCOMPARE(getCapabilityCount(paceCapa), 3);
 			QVERIFY(paceCapa.contains(PaceCapabilityId::EID));

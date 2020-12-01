@@ -78,13 +78,10 @@ class Reader
 		CardReturnCode updateRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
 	Q_SIGNALS:
-		void fireCardInserted(const QString& pReaderName);
-		void fireCardRemoved(const QString& pReaderName);
-		void fireCardRetryCounterChanged(const QString& pReaderName);
-		void fireReaderPropertiesUpdated(const QString& pReaderName);
-		void fireReaderDeviceError(GlobalStatus::Code pErrorCode);
-
-
+		void fireCardInserted(const ReaderInfo& pInfo);
+		void fireCardRemoved(const ReaderInfo& pInfo);
+		void fireCardRetryCounterChanged(const ReaderInfo& pInfo);
+		void fireReaderPropertiesUpdated(const ReaderInfo& pInfo);
 };
 
 

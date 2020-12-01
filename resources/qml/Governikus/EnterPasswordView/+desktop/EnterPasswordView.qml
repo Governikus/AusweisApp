@@ -2,17 +2,17 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.AuthModel 1.0
+import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.Type.SettingsModel 1.0
 
 
 SectionPage
@@ -20,19 +20,19 @@ SectionPage
 	id: baseItem
 
 	signal passwordEntered(bool pWasNewPin)
-	signal changePinLength()
 	signal requestPasswordInfo()
 
+	property alias enableTransportPinLink: transportPinLink.visible
 	property alias statusIcon: statusIcon.source
 	property int passwordType: NumberModel.passwordType
 
 	//: LABEL DESKTOP_QML %1 is the title, e.g. "PIN entry"
-	Accessible.name: qsTr("%1. You can start to enter the number.").arg(mainText.text) + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This is the enter password view of the AusweisApp2.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("%1. You can start to enter the number.").arg(mainText.text)
+	Accessible.description: qsTr("This is the enter password view of the AusweisApp2.")
 	Keys.onPressed: event.accepted = numberField.handleKeyEvent(event.key, event.modifiers)
 
 	onPasswordTypeChanged: numberField.inputConfirmation = ""
-	onVisibleChanged: if (!visible) numberField.text = ""
+	onVisibleChanged: if (!visible) numberField.number = ""
 
 	QtObject {
 		id: d
@@ -44,28 +44,28 @@ SectionPage
 
 			let wasNewPin = false;
 			if (passwordType === NumberModel.PASSWORD_PIN) {
-				NumberModel.pin = numberField.text
+				NumberModel.pin = numberField.number
 			}
 			else if (passwordType === NumberModel.PASSWORD_CAN) {
-				NumberModel.can = numberField.text
+				NumberModel.can = numberField.number
 			}
 			else if (passwordType === NumberModel.PASSWORD_PUK) {
-				NumberModel.puk = numberField.text
+				NumberModel.puk = numberField.number
 			}
 			else if (passwordType === NumberModel.PASSWORD_NEW_PIN) {
 				if (numberField.inputConfirmation === "") {
-					numberField.inputConfirmation = numberField.text
+					numberField.inputConfirmation = numberField.number
 				} else {
-					NumberModel.newPin = numberField.text
+					NumberModel.newPin = numberField.number
 					numberField.inputConfirmation = ""
 					wasNewPin = true
 				}
 			}
 			else if (passwordType === NumberModel.PASSWORD_REMOTE_PIN) {
-				RemoteServiceModel.connectToRememberedServer(numberField.text)
+				RemoteServiceModel.connectToRememberedServer(numberField.number)
 			}
 
-			numberField.text = ""
+			numberField.number = ""
 			if (numberField.inputConfirmation === "") {
 				baseItem.passwordEntered(wasNewPin)
 			}
@@ -79,7 +79,7 @@ SectionPage
 		anchors.bottomMargin: Constants.component_spacing
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Attempts") + SettingsModel.translationTrigger
+		text: qsTr("Attempts")
 	}
 
 	StatusIcon {
@@ -94,7 +94,7 @@ SectionPage
 		activeFocusOnTab: true
 		Accessible.role: Accessible.StaticText
 		//: LABEL DESKTOP_QML
-		Accessible.name: qsTr("Remaining attempts: %1").arg(NumberModel.retryCounter) + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Remaining attempts: %1").arg(NumberModel.retryCounter)
 
 		text: NumberModel.retryCounter
 
@@ -126,7 +126,7 @@ SectionPage
 		Accessible.name: mainText.text
 
 		//: LABEL DESKTOP_QML
-		text: (passwordType === NumberModel.PASSWORD_CAN ? qsTr("Enter CAN")
+		text: passwordType === NumberModel.PASSWORD_CAN ? qsTr("Enter CAN")
 			 //: LABEL DESKTOP_QML
 			 : passwordType === NumberModel.PASSWORD_PUK ? qsTr("Enter PUK")
 			 //: LABEL DESKTOP_QML
@@ -138,7 +138,7 @@ SectionPage
 			 //: LABEL DESKTOP_QML
 			 : NumberModel.requestTransportPin ? qsTr("Enter Transport PIN")
 			 //: LABEL DESKTOP_QML
-			 : qsTr("Enter PIN")) + SettingsModel.translationTrigger
+			 : qsTr("Enter PIN")
 		textStyle: Style.text.header_inverse
 		horizontalAlignment: Text.AlignHCenter
 
@@ -160,15 +160,13 @@ SectionPage
 		textFormat: Text.StyledText
 		linkColor: Style.text.header_inverse.textColor
 		text: {
-			SettingsModel.translationTrigger
-
 			if (!numberField.confirmedInput) {
 				//: INFO DESKTOP_QML The changed PIN was entered wrongfully during the confirmation process.
 				return qsTr("The new PIN and the confirmation do not match. Please correct your input.")
 			}
 			if (passwordType === NumberModel.PASSWORD_PIN) {
 				if (NumberModel.requestTransportPin) {
-					return ("%1<br><a href=\"#\">%2</a>").arg(
+					return ("%1<br><br><a href=\"#\">%2</a>").arg(
 							   //: INFO DESKTOP_QML The AA2 expects the Transport PIN with five digits.
 							   qsTr("Please enter the five-digit Transport PIN.")
 						   ).arg(
@@ -176,7 +174,7 @@ SectionPage
 							   qsTr("More information")
 						   )
 				} else {
-					return ("%1<br><a href=\"#\">%2</a>").arg(
+					return ("%1<br><br><a href=\"#\">%2</a>").arg(
 							   ApplicationModel.currentWorkflow === "changepin"
 							   //: INFO DESKTOP_QML The AA2 expects the current PIN with six digits in a PIN change.
 							   ? qsTr("Please enter your current six-digit PIN.")
@@ -189,7 +187,7 @@ SectionPage
 				}
 			}
 			if (passwordType === NumberModel.PASSWORD_CAN) {
-				return ("%1<br><a href=\"#\">%2</a>").arg(
+				return ("%1<br><br><a href=\"#\">%2</a>").arg(
 							//: INFO DESKTOP_QML The user is required to enter the six-digit CAN in CAN-allowed authentication.
 							qsTr("Please enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of the ID card.")
 						).arg(
@@ -198,7 +196,7 @@ SectionPage
 						)
 			}
 			if (passwordType === NumberModel.PASSWORD_PUK) {
-				return ("%1<br><a href=\"#\">%2</a>").arg(
+				return ("%1<br><br><a href=\"#\">%2</a>").arg(
 						   //: INFO DESKTOP_QML The PUK is required to unlock the ID card.
 						   qsTr("The PIN of your ID card is blocked after three incorrect attempts. Please enter the Personal Unblocking Key (PUK) to lift the block. You can find the key in your PIN letter.")
 					   ).arg(
@@ -216,7 +214,7 @@ SectionPage
 				}
 			}
 			if (passwordType === NumberModel.PASSWORD_REMOTE_PIN) {
-				return ("%1<br><a href=\"#\">%2</a>").arg(
+				return ("%1<br><br><a href=\"#\">%2</a>").arg(
 						   //: INFO DESKTOP_QML The pairing code needs to be supplied.
 						   qsTr("Start the pairing on your smartphone and enter the pairing code shown there in order to use your smartphone as a card reader (SaC).")
 					   ).arg(
@@ -254,7 +252,6 @@ SectionPage
 						  : passwordType === NumberModel.PASSWORD_REMOTE_PIN ? 4
 						  : 6
 
-			onPasswordLengthChanged: numberField.text = ""
 			onVisibleChanged: if (visible) forceActiveFocus()
 
 			Keys.onPressed: {
@@ -265,7 +262,9 @@ SectionPage
 		}
 
 		GText {
-			visible: passwordType === NumberModel.PASSWORD_PIN
+			id: transportPinLink
+
+			visible: false
 			anchors {
 				horizontalCenter: parent.horizontalCenter
 				top: numberField.bottom
@@ -278,14 +277,15 @@ SectionPage
 
 			textStyle: Style.text.hint_inverse
 			textFormat: Text.StyledText
-			text: "<a href=\"#\">" + (NumberModel.requestTransportPin ?
-									  //: LABEL DESKTOP_QML Button to switch to a six-digit PIN.
-									  qsTr("Does your PIN have six digits?") :
-									  //: LABEL DESKTOP_QML Button to switch to a Transport PIN or start a change of the Transport PIN.
-									  qsTr("Does your PIN have five digits?")
-									 ) + "</a>" + SettingsModel.translationTrigger
+			//: LABEL DESKTOP_QML Button to switch to start a change of the Transport PIN.
+			text: "<a href=\"#\">%1</a>".arg(qsTr("Do you have a five-digit Transport PIN?"))
 			linkColor: textStyle.textColor
-			onLinkActivated: baseItem.changePinLength()
+			onLinkActivated: {
+				NumberModel.requestTransportPin = true
+				AuthModel.setSkipRedirect(true)
+				ChangePinModel.startWorkflow()
+				AuthModel.cancelWorkflowToChangePin()
+			}
 
 			FocusFrame {}
 		}
@@ -296,11 +296,11 @@ SectionPage
 		anchors.bottom: parent.bottom
 
 		submitEnabled: numberField.validInput
-		deleteEnabled: numberField.text.length > 0
+		deleteEnabled: numberField.number.length > 0
 		onDigitPressed: numberField.append(digit)
 		onDeletePressed: {
 			numberField.removeLast()
-			if (numberField.text.length === 0)
+			if (numberField.number.length === 0)
 				numberField.forceActiveFocus()
 		}
 		onSubmitPressed: d.setPassword()

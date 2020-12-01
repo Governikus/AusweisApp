@@ -74,7 +74,7 @@ class test_CommandApdu
 
 		void test_LcExtendedLength()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray array = QByteArray::fromHex("010101010001");
 			CommandApdu apdu = CommandApdu(array);
@@ -200,7 +200,7 @@ class test_CommandApdu
 
 		void test_InvalidCommandApdu()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			CommandApdu apdu1 = CommandApdu('a', 'i', 'c', 'd', QByteArray(65536, 'w'), 1);
 			QCOMPARE(logSpy.count(), 1);

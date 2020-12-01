@@ -20,7 +20,7 @@ class IfdEstablishContextResponse
 
 	public:
 		IfdEstablishContextResponse(const QString& pIfdName, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
-		IfdEstablishContextResponse(const QJsonObject& pMessageObject);
+		explicit IfdEstablishContextResponse(const QJsonObject& pMessageObject);
 		virtual ~IfdEstablishContextResponse() override = default;
 
 		const QString& getIfdName() const;

@@ -10,17 +10,25 @@ using namespace governikus;
 
 defineSingleton(Env)
 
+namespace
+{
+static void initialize()
+{
+	Env::init();
+}
+
+
+} // namespace
+
+
+Q_COREAPP_STARTUP_FUNCTION(initialize)
+
+
 Env::Env()
 #ifndef QT_NO_DEBUG
 	: mLock(QReadWriteLock::Recursive)
 #endif
 {
-}
-
-
-Env& Env::getInstance()
-{
-	return *Instance;
 }
 
 

@@ -2,9 +2,10 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
+import Governikus.TechnologyInfo 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Workflow 1.0
 import Governikus.View 1.0
@@ -20,32 +21,42 @@ SectionPage {
 
 	navigationAction: NavigationAction {
 		enabled: baseItem.waitingFor !== Workflow.WaitingFor.Password
-		state: enabled ? "cancel" : "hidden"
-		onClicked: if (enabled) workflowModel.cancelWorkflow()
+		state: enabled ? "cancel" : ""
+		onClicked: workflowModel.cancelWorkflow()
 	}
 	title: workflowTitle
 
 	NfcWorkflow {
 		visible: workflowModel.readerPlugInType == ReaderPlugIn.NFC
-		anchors.fill: parent
-
-		onRequestPluginType: workflowModel.readerPlugInType = pReaderPlugInType;
+		anchors {
+			left: parent.left
+			right: parent.right
+			top: parent.top
+			bottom: technologySwitch.top
+		}
+		onStartScanIfNecessary: workflowModel.startScanIfNecessary()
 	}
 
 	RemoteWorkflow {
 		visible: workflowModel.readerPlugInType == ReaderPlugIn.REMOTE || workflowModel.readerPlugInType == ReaderPlugIn.PCSC
-		anchors.fill: parent
-
-		onRequestPluginType: workflowModel.readerPlugInType = pReaderPlugInType;
+		anchors {
+			left: parent.left
+			right: parent.right
+			top: parent.top
+			bottom: technologySwitch.top
+		}
 	}
 
-	BluetoothWorkflow {
-		visible: workflowModel.readerPlugInType == ReaderPlugIn.BLUETOOTH
-		anchors.fill: parent
+	TechnologySwitch {
+		id: technologySwitch
 
-		waitingFor: baseItem.waitingFor
-		onLocationPermissionInfoConfirmedChanged: controller.locationPermissionConfirmed = locationPermissionInfoConfirmed
-		onContinueWorkflow: workflowModel.continueWorkflow()
+		anchors {
+			left: parent.left
+			right: parent.right
+			bottom: parent.bottom
+		}
+
+		selectedTechnology: workflowModel.readerPlugInType
 		onRequestPluginType: workflowModel.readerPlugInType = pReaderPlugInType;
 	}
 }

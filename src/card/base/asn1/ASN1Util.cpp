@@ -9,6 +9,7 @@
 #include <openssl/x509v3.h>
 #include <QDate>
 #include <QLoggingCategory>
+#include <QScopeGuard>
 
 Q_DECLARE_LOGGING_CATEGORY(card)
 
@@ -87,17 +88,18 @@ QString Asn1StringUtil::getValue(ASN1_STRING* pString)
 		return QString();
 	}
 
-	unsigned char* buf;
-	int buf_len = ASN1_STRING_to_UTF8(&buf, pString);
+	unsigned char* buffer = nullptr;
+	const int length = ASN1_STRING_to_UTF8(&buffer, pString);
+	const auto guard = qScopeGuard([buffer] {
+				OPENSSL_free(buffer);
+			});
 
-	QString result;
-	if (buf_len > 0)
+	if (length < 0)
 	{
-		result = QString::fromUtf8(reinterpret_cast<char*>(buf), buf_len);
-		OPENSSL_free(buf);
+		return QString();
 	}
 
-	return result;
+	return QString::fromUtf8(reinterpret_cast<char*>(buffer), length);
 }
 
 
@@ -108,17 +110,18 @@ QByteArray Asn1TypeUtil::encode(ASN1_TYPE* pAny)
 		return QByteArray();
 	}
 
-	unsigned char* buf = nullptr;
-	int buf_len = i2d_ASN1_TYPE(pAny, &buf);
+	unsigned char* buffer = nullptr;
+	const int length = i2d_ASN1_TYPE(pAny, &buffer);
+	const auto guard = qScopeGuard([buffer] {
+				OPENSSL_free(buffer);
+			});
 
-	QByteArray result;
-	if (buf_len > 0)
+	if (length < 0)
 	{
-		result = QByteArray(reinterpret_cast<char*>(buf), buf_len);
-		OPENSSL_free(buf);
+		return QByteArray();
 	}
 
-	return result;
+	return QByteArray(reinterpret_cast<char*>(buffer), length);
 }
 
 

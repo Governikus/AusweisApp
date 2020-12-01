@@ -26,7 +26,7 @@ class test_RemoteMessageResponse
 
 		void invalidJson()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray message("FooBar");
 			const auto& obj = QJsonDocument::fromJson(message).object();
@@ -119,7 +119,7 @@ class test_RemoteMessageResponse
 			QFETCH(ECardApiResult::Minor, resultMinor);
 			QFETCH(int, spyCount);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
 			const RemoteMessageResponse remoteMessageResponse(obj);

@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -26,6 +26,7 @@ Item {
 
 	property var color
 	property int titleAlignment: BaseTitleBar.TitleAlignment.Center
+	property bool enableTitleMoveAnimation: true
 	property var topSafeAreaMargin: plugin.safeAreaMargins.top
 
 	height: contentLayout.height + topSafeAreaMargin
@@ -34,7 +35,7 @@ Item {
 
 	function updateLeftAction() {
 		if (leftActionStack.activeActionItem && typeof leftActionStack.activeActionItem.iconOnly !== "undefined") {
-			leftActionStack.activeActionItem.iconOnly = titleText.implicitWidth > titleText.implicitAvailableWidth
+			leftActionStack.activeActionItem.iconOnly = leftActionStack.activeActionItem.icon && titleText.implicitWidth > titleText.implicitAvailableWidth
 		}
 	}
 
@@ -153,6 +154,8 @@ Item {
 				onTextChanged: updateLeftAction()
 
 				Behavior on text {
+					enabled: appWindow.ready
+
 					SequentialAnimation {
 						PropertyAnimation {
 							target: titleText
@@ -176,6 +179,7 @@ Item {
 				}
 
 				Behavior on x {
+					enabled: enableTitleMoveAnimation && appWindow.ready
 					NumberAnimation {
 						from: parent.width * 0.75
 						duration: Constants.animation_duration

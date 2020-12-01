@@ -6,7 +6,6 @@ internal GeneralSettings GeneralSettings.qml
 internal DeveloperSettings DeveloperSettings.qml
 internal DebugSettings DebugSettings.qml
 internal SecurityAndPrivacySettings SecurityAndPrivacySettings.qml
-internal SettingsEntry SettingsEntry.qml
 internal LanguageSelectionPopup LanguageSelectionPopup.qml
 internal ScreenOrientationSelectionPopup ScreenOrientationSelectionPopup.qml
 internal ConnectSacView ConnectSacView.qml

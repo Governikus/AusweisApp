@@ -193,14 +193,8 @@ void CHAT::setAccessRights(const QSet<AccessRight>& pAccessRights)
 {
 	for (auto accessRight : pAccessRights)
 	{
-		setAccessRight(accessRight);
+		setTemplateBit(static_cast<uint>(accessRight), true);
 	}
-}
-
-
-void CHAT::setAccessRight(AccessRight pAccessRight)
-{
-	setTemplateBit(static_cast<uint>(pAccessRight), true);
 }
 
 

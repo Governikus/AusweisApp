@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <openssl/cmac.h>
+#include <openssl/evp.h>
 #include <QByteArray>
 
 namespace governikus
@@ -15,8 +15,7 @@ namespace governikus
 class CipherMac final
 {
 	private:
-		QByteArray mKeyBytes;
-		CMAC_CTX* mCtx;
+		EVP_PKEY* mKey;
 
 		Q_DISABLE_COPY(CipherMac)
 
@@ -33,7 +32,7 @@ class CipherMac final
 		/*!
 		 * Returns true, if initialization succeeded, i.e. the algorithm is known, supported and the key bytes have correct size.
 		 */
-		bool isInitialized();
+		bool isInitialized() const;
 
 		/*!
 		 * \brief Generates the MAC of a message.

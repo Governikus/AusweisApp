@@ -62,8 +62,8 @@ class IfdStatus
 				bool pCardAvailable = false);
 
 	public:
-		IfdStatus(const ReaderInfo& pReaderInfo);
-		IfdStatus(const QJsonObject& pMessageObject);
+		explicit IfdStatus(const ReaderInfo& pReaderInfo);
+		explicit IfdStatus(const QJsonObject& pMessageObject);
 		virtual ~IfdStatus() override = default;
 
 		const QString& getSlotName() const;

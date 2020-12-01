@@ -2,79 +2,120 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
 import Governikus.Type.NumberModel 1.0
 
 
-SectionPage
-{
+SectionPage {
 	id: baseItem
+
 	property alias enableTransportPinLink: transportPinLink.enableTransportPinLink
 	signal passwordEntered(bool pWasNewPin)
 	signal changePinLength()
 
 	onVisibleChanged: {
-		pinField.text = ""
+		pinField.number = ""
 		if (state !== "PIN_NEW_AGAIN") {
 			pinField.inputConfirmation = ""
 		}
 	}
 
-	ColumnLayout
-	{
-		anchors.fill: parent
-		anchors.margins: 0
+	Item {
+		id: container
 
-		spacing: 0
+		height: parent.height // Avoid binding loop when no parent is set e.g. while pushing it to a StackView as `Component { EnterPasswordView {} }`.
+		anchors {
+			fill: parent
+			margins: Constants.pane_padding
+		}
 
-		RowLayout {
-			Layout.fillWidth: true
-			Layout.margins: Constants.pane_padding
+		readonly property real minIconHeight: Style.dimens.icon_size
+		readonly property real iconHeight: Math.min(container.height - layout.implicitHeight, Style.dimens.header_icon_size)
+		readonly property real elementHeight: layout.implicitHeight + minIconHeight
+		readonly property bool elementsFitOnScreen: elementHeight <= container.height
+
+		StatusIcon {
+			id: statusIcon
+
+			visible: container.elementsFitOnScreen
+			height: visible ? container.iconHeight : 0
+			width: height
+			anchors {
+				top: parent.top
+				horizontalCenter: parent.horizontalCenter
+			}
+
+			busy: visible
+			source: baseItem.state === "REMOTE_PIN" ? "qrc:///images/icon_remote_inactive.svg" : "qrc:///images/mobile/phone_nfc_with_card.svg"
+			borderEnabled: false
+		}
+
+		ColumnLayout {
+			id: layout
+
+			anchors {
+				left: parent.left
+				right: parent.right
+				top: statusIcon.bottom
+				bottom: parent.bottom
+			}
 
 			spacing: 0
 
-			Item {/*spacer*/ Layout.fillWidth: true; }
+			GText {
+				id: mainText
 
-			Image {
-				Layout.alignment: Qt.AlignVCenter
-				Layout.preferredHeight: 58
-				Layout.preferredWidth: 58
-				Layout.rightMargin: Constants.component_spacing
+				Layout.fillWidth: true
+				Layout.alignment: Qt.AlignHCenter
+				Layout.maximumWidth: Style.dimens.max_text_width
+				Layout.topMargin: Constants.component_spacing
 
-				source: baseItem.state === "REMOTE_PIN" ? "qrc:///images/icon_remote.svg" : "qrc:///images/NFCPhoneCard.png"
-				fillMode: Image.PreserveAspectFit
+				//: LABEL ANDROID IOS
+				text: baseItem.state === "CAN" ? qsTr("Enter CAN")
+					 //: LABEL ANDROID IOS
+					 : baseItem.state === "PUK" ? qsTr("Enter PUK")
+					 //: LABEL ANDROID IOS
+					 : baseItem.state === "REMOTE_PIN" ? qsTr("Enter pairing code")
+					 //: LABEL ANDROID IOS
+					 : baseItem.state === "PIN_NEW" ? qsTr("Enter new PIN")
+					 //: LABEL ANDROID IOS
+					 : baseItem.state === "PIN_NEW_AGAIN" ? qsTr("Confirm new PIN")
+					 //: LABEL ANDROID IOS
+					 : baseItem.state === "PIN" && NumberModel.requestTransportPin ? qsTr("Enter Transport PIN")
+					 //: LABEL ANDROID IOS
+					 : qsTr("Enter PIN")
+				textStyle: Style.text.header_accent
+				horizontalAlignment: Text.AlignHCenter
 			}
 
 			GText {
 				id: infoText
 
-				Layout.alignment: Qt.AlignVCenter
 				Layout.fillWidth: true
-				Layout.maximumWidth: Math.ceil(implicitWidth)
 				Layout.fillHeight: true
+				Layout.alignment: Qt.AlignHCenter
+				Layout.maximumWidth: Style.dimens.max_text_width
+				Layout.topMargin: Constants.text_spacing
 
 				elide: Text.ElideRight
-				verticalAlignment: Text.AlignVCenter
+				horizontalAlignment: Text.AlignHCenter
 
 				textStyle: {
 					if (!pinField.confirmedInput || !!NumberModel.inputError || baseItem.state === "CAN" || baseItem.state === "PUK") {
-						Style.text.normal_warning
+						return Style.text.normal_warning
 					} else {
-						Style.text.normal_accent
+						return Style.text.normal_secondary
 					}
 				}
 				text: {
-					SettingsModel.translationTrigger
-
 					if (!pinField.confirmedInput) {
 						//: INFO ANDROID IOS The changed PIN was entered wrongfully during confirmation.
 						return qsTr("The new PIN and the confirmation do not match. Please correct your input.")
@@ -104,17 +145,18 @@ SectionPage
 					}
 					if (baseItem.state === "PIN" && NumberModel.requestTransportPin) {
 						//: INFO ANDROID IOS The Transport PIN is required by AA2, it needs to be change to an actual PIN.
-						return qsTr("Please enter the Transport PIN from your PIN letter.")
+						return qsTr("Please enter the five-digit Transport PIN.")
 					}
 					if (baseItem.state === "REMOTE_PIN") {
 						//: INFO ANDROID IOS The pairing code for the smartphone is required.
 						return qsTr("Enter the pairing code shown on the device you want to pair.")
 					}
+
 					return ApplicationModel.currentWorkflow === "changepin"
-						   //: LABEL ANDROID IOS
-						   ? qsTr("Please enter your current PIN.")
-						   //: LABEL ANDROID IOS
-						   : qsTr("Please enter your PIN.")
+						//: INFO ANDROID IOS The AA2 expects the current PIN with six digits in a PIN change.
+						? qsTr("Please enter your current six-digit PIN.")
+						//: INFO ANDROID IOS The AA2 expects a PIN with six digits in an authentication.
+						: qsTr("Please enter your six-digit PIN.")
 				}
 
 				MouseArea {
@@ -127,108 +169,106 @@ SectionPage
 				}
 			}
 
-			Item {/*spacer*/ Layout.fillWidth: true; }
-		}
+			GText {
+				id: transportPinLink
 
-		Rectangle {
-			Layout.alignment: Qt.AlignHCenter
-			Layout.preferredHeight: pinField.height + Constants.component_spacing
-			Layout.preferredWidth: pinField.width + Constants.component_spacing
+				property bool enableTransportPinLink: false
 
-			radius: Style.dimens.button_radius
-			border.color: Style.color.border
-			border.width: Style.dimens.separator_size
+				visible: baseItem.state === "PIN" && enableTransportPinLink
+				Layout.fillWidth: true
+				Layout.topMargin: Constants.text_spacing
 
-			NumberField {
-				id: pinField
+				Accessible.role: Accessible.Button
+				Accessible.onPressAction: if (Qt.platform.os === "ios") myMouse.clicked(null)
 
-				anchors.centerIn: parent
+				text: (NumberModel.requestTransportPin ?
+					   //: LABEL ANDROID IOS Button to switch to a six-digit PIN.
+					   qsTr("Do you have a six-digit PIN?") :
+					   //: LABEL ANDROID IOS Button to start a change of the Transport PIN.
+					   qsTr("Do you have a five-digit Transport PIN?")
+					  )
+				textStyle: Style.text.normal_accent
+				font.underline: true
+				horizontalAlignment: Text.AlignHCenter
 
-				passwordLength: baseItem.state === "REMOTE_PIN" ? 4
-							  : baseItem.state === "PIN" && NumberModel.requestTransportPin ? 5
-							  : baseItem.state === "PUK" ? 10
-							  : 6
+				MouseArea {
+					id: myMouse
 
-				onPasswordLengthChanged: pinField.text = ""
+					anchors.fill: parent
+					anchors.margins: -12
+
+					enabled: transportPinLink.enableTransportPinLink
+
+					onClicked: baseItem.changePinLength()
+				}
 			}
-		}
 
-		GText {
-			id: transportPinLink
+			Rectangle {
+				Layout.alignment: Qt.AlignHCenter
+				Layout.preferredHeight: pinField.height + Constants.component_spacing
+				Layout.preferredWidth: pinField.width + Constants.component_spacing
+				Layout.topMargin: Constants.component_spacing
 
-			property alias enableTransportPinLink: myMouse.enabled
+				radius: Style.dimens.button_radius
+				border.color: Style.color.border
+				border.width: Style.dimens.separator_size
 
-			visible: baseItem.state === "PIN" && enableTransportPinLink
-			Layout.alignment: Qt.AlignHCenter
-			Layout.topMargin: Constants.text_spacing
-			Layout.margins: Constants.pane_padding
+				NumberField {
+					id: pinField
 
-			Accessible.role: Accessible.Button
-			Accessible.onPressAction: if (Qt.platform.os === "ios") myMouse.clicked(null)
+					anchors.centerIn: parent
 
-			text: (NumberModel.requestTransportPin ?
-				   //: LABEL ANDROID IOS Button to switch to a six-digit PIN.
-				   qsTr("Does your PIN have six digits?") :
-				   //: LABEL ANDROID IOS Button to switch to a Transport PIN or start a change of the Transport PIN.
-				   qsTr("Does your PIN have five digits?")
-				  ) + SettingsModel.translationTrigger
-			textStyle: Style.text.hint_accent
-			font.underline: true
-
-			MouseArea {
-				id: myMouse
-
-				anchors.fill: parent
-				anchors.margins: -12
-
-				enabled: true
-
-				onClicked: baseItem.changePinLength()
+					passwordLength: baseItem.state === "REMOTE_PIN" ? 4
+								  : baseItem.state === "PIN" && NumberModel.requestTransportPin ? 5
+								  : baseItem.state === "PUK" ? 10
+								  : 6
+				}
 			}
-		}
 
-		NumberPad {
-			state: baseItem.state
+			NumberPad {
+				state: baseItem.state
 
-			Layout.alignment: Qt.AlignHCenter
-			Layout.preferredWidth: width
-			Layout.preferredHeight: height
+				Layout.alignment: Qt.AlignHCenter
+				Layout.preferredWidth: width
+				Layout.preferredHeight: height
+				Layout.topMargin: Constants.component_spacing
 
-			submitEnabled: pinField.validInput
-			deleteEnabled: pinField.text.length > 0
-			onDigitPressed: pinField.append(digit)
-			onDeletePressed: {
-				pinField.removeLast()
-				if (pinField.text.length === 0)
-					pinField.forceActiveFocus()
-			}
-			onSubmitPressed: {
-				switch(baseItem.state) {
-					case "PIN":
-						NumberModel.pin = pinField.text
-						baseItem.passwordEntered(false)
-						break
-					case "PIN_NEW":
-						pinField.inputConfirmation = pinField.text
-						pinField.text = ""
-						baseItem.state = "PIN_NEW_AGAIN"
-						break
-					case "PIN_NEW_AGAIN":
-						NumberModel.newPin = pinField.text
-						baseItem.passwordEntered(true)
-						break
-					case "CAN":
-						NumberModel.can = pinField.text
-						baseItem.passwordEntered(false)
-						break
-					case "PUK":
-						NumberModel.puk = pinField.text
-						baseItem.passwordEntered(false)
-						break
-					case "REMOTE_PIN":
-						RemoteServiceModel.connectToRememberedServer(pinField.text)
-						baseItem.passwordEntered(false)
-						break
+				submitEnabled: pinField.validInput
+				deleteEnabled: pinField.number.length > 0
+				onDigitPressed: pinField.append(digit)
+				onDeletePressed: {
+					pinField.removeLast()
+					if (pinField.number.length === 0)
+						pinField.forceActiveFocus()
+				}
+				onSubmitPressed: {
+					switch(baseItem.state) {
+						case "PIN":
+							NumberModel.pin = pinField.number
+							baseItem.passwordEntered(false)
+							break
+						case "PIN_NEW":
+							pinField.inputConfirmation = pinField.number
+							pinField.number = ""
+							baseItem.state = "PIN_NEW_AGAIN"
+							break
+						case "PIN_NEW_AGAIN":
+							NumberModel.newPin = pinField.number
+							baseItem.passwordEntered(true)
+							break
+						case "CAN":
+							NumberModel.can = pinField.number
+							baseItem.passwordEntered(false)
+							break
+						case "PUK":
+							NumberModel.puk = pinField.number
+							baseItem.passwordEntered(false)
+							break
+						case "REMOTE_PIN":
+							RemoteServiceModel.connectToRememberedServer(pinField.number)
+							baseItem.passwordEntered(false)
+							break
+					}
 				}
 			}
 		}

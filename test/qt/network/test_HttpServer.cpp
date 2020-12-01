@@ -47,20 +47,20 @@ class test_HttpServer
 
 		void startUpShutDown()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			auto server = Env::getShared<HttpServer>();
 
 			QVERIFY(server->isListening());
-			QCOMPARE(spy.count(), 2);
+			QCOMPARE(logSpy.count(), 2);
 
-			auto param = spy.takeFirst();
+			auto param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Spawn shared instance: governikus::HttpServer"));
-			param = spy.takeFirst();
+			param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Listening on port:"));
 
 			server.reset();
-			QCOMPARE(spy.count(), 1);
-			param = spy.takeFirst();
+			QCOMPARE(logSpy.count(), 1);
+			param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Shutdown server"));
 		}
 
@@ -73,12 +73,12 @@ class test_HttpServer
 
 			HttpServer::cPort = 80;
 
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			HttpServer server;
 
 			QVERIFY(!server.isListening());
-			QCOMPARE(spy.count(), 1);
-			auto param = spy.takeFirst();
+			QCOMPARE(logSpy.count(), 1);
+			auto param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Cannot start server: \"The address is protected\""));
 		}
 
@@ -93,7 +93,7 @@ class test_HttpServer
 			auto reply = mAccessManager.get(QNetworkRequest(url));
 			QSignalSpy spyClient(reply, &QNetworkReply::finished);
 
-			QTRY_COMPARE(spyServer.count(), 1);
+			QTRY_COMPARE(spyServer.count(), 1); // clazy:exclude=qstring-allocations
 			auto param = spyServer.takeFirst();
 			auto httpRequest = qvariant_cast<QSharedPointer<HttpRequest> >(param.at(0));
 			QCOMPARE(httpRequest->getMethod(), QByteArray("GET"));
@@ -101,7 +101,7 @@ class test_HttpServer
 
 			QVERIFY(httpRequest->send(HTTP_STATUS_NOT_FOUND));
 
-			QTRY_COMPARE(spyClient.count(), 1);
+			QTRY_COMPARE(spyClient.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(reply->error(), QNetworkReply::ContentNotFoundError);
 			QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), 404);
 		}
@@ -118,8 +118,8 @@ class test_HttpServer
 			request.setRawHeader("connection", "upgrade");
 			mAccessManager.get(request);
 
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
-			QTRY_COMPARE(spyServer.count(), 1);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+			QTRY_COMPARE(spyServer.count(), 1); // clazy:exclude=qstring-allocations
 			auto param = spyServer.takeFirst();
 			auto socket = qvariant_cast<QSharedPointer<HttpRequest> >(param.at(0))->take();
 			QVERIFY(socket->bytesAvailable() > 0); // check rollbackTransaction
@@ -129,7 +129,7 @@ class test_HttpServer
 			QVERIFY(requestData.contains("upgrade: websocket"));
 			QVERIFY(requestData.contains("\r\n\r\n"));
 
-			param = spy.takeLast();
+			param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Upgrade to websocket requested"));
 		}
 
@@ -145,12 +145,12 @@ class test_HttpServer
 			auto reply = mAccessManager.get(request);
 			QSignalSpy spyClient(reply, &QNetworkReply::finished);
 
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
-			QTRY_COMPARE(spyClient.count(), 1);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+			QTRY_COMPARE(spyClient.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(reply->error(), QNetworkReply::ContentNotFoundError);
 			QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), 404);
 
-			auto param = spy.takeLast();
+			auto param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Unknown upgrade requested"));
 		}
 
@@ -182,13 +182,13 @@ class test_HttpServer
 			auto reply = mAccessManager.get(request);
 
 			QSignalSpy spyClient(reply, &QNetworkReply::finished);
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
-			QTRY_COMPARE(spyClient.count(), 1);
+			QTRY_COMPARE(spyClient.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), 503);
 
 			auto noSignalFound = QStringLiteral("No registration found: \"%1\"").arg(signal);
-			QVERIFY(spy.takeLast().at(0).toString().contains(noSignalFound));
+			QVERIFY(logSpy.takeLast().at(0).toString().contains(noSignalFound));
 		}
 
 

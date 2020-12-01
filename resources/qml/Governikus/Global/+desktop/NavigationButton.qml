@@ -2,13 +2,12 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Style 1.0
 import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ApplicationModel 1.0
 
 
@@ -22,32 +21,36 @@ Button {
 		Cancel
 	}
 
-	property int buttonType
+	property int buttonType: NavigationButton.Type.Forward
 	property string subText
+	property string iconSource
+	property string iconText
 
-	width: column.width
-	height: column.height
+	implicitWidth: column.implicitWidth
+	implicitHeight: column.implicitHeight
 
 	Accessible.role: Accessible.Button
-	text: subText !== "" ? subText : ((buttonType === NavigationButton.Type.Check   ? qsTr("Yes") :
+	text: subText !== "" ? subText : (buttonType === NavigationButton.Type.Check   ? qsTr("Yes") :
 									   buttonType === NavigationButton.Type.Cancel  ? qsTr("No") :
 									   buttonType === NavigationButton.Type.Forward ? qsTr("Continue") :
-									   qsTr("Back")) + SettingsModel.translationTrigger)
+									   qsTr("Back"))
 
 	background: Item {}
 	contentItem: Item {}
 
-	Column {
+	ColumnLayout {
 		id: column
+
+		anchors.fill: parent
 
 		spacing: Constants.component_spacing
 
 		Rectangle {
 			id: icon
 
-			width: ApplicationModel.scaleFactor * 160
-			height: width
-			anchors.horizontalCenter: parent.horizontalCenter
+			Layout.preferredWidth: ApplicationModel.scaleFactor * 160
+			Layout.preferredHeight: Layout.preferredWidth
+			Layout.alignment: Qt.AlignHCenter
 
 			radius: height / 2
 			border.width: height / 40;
@@ -57,13 +60,32 @@ Button {
 			TintableIcon {
 				anchors.centerIn: parent
 
-				source: buttonType == NavigationButton.Type.Check  ? "qrc:///images/check.svg" :
-						buttonType == NavigationButton.Type.Cancel ? "qrc:///images/cancel.svg" :
-																	 "qrc:///images/desktop/continue_arrow.svg"
+				source: {
+					if (iconSource !== "") {
+						return iconSource
+					}
+
+					if (iconText !== "") {
+						return ""
+					}
+
+					return buttonType === NavigationButton.Type.Check  ? "qrc:///images/material_check.svg" :
+						   buttonType === NavigationButton.Type.Cancel ? "qrc:///images/material_clear.svg" :
+						   "qrc:///images/desktop/material_arrow_forward.svg"
+				}
 				sourceSize.height: Style.dimens.large_icon_size
 				transformOrigin: Item.Center
-				rotation: buttonType == NavigationButton.Type.Back ? 180 : 0
+				rotation: iconSource === "" && buttonType === NavigationButton.Type.Back ? 180 : 0
 				tintColor: Style.color.button_text
+			}
+
+			GText {
+				visible: iconText !== ""
+
+				anchors.centerIn: parent
+
+				text: iconText
+				textStyle: Style.text.title_inverse
 			}
 		}
 
@@ -71,10 +93,11 @@ Button {
 			id: buttonText
 
 			visible: control.subText !== ""
-			anchors.horizontalCenter: parent.horizontalCenter
+			Layout.fillWidth: true
 
 			text: control.subText
 			textStyle: Style.text.header_inverse
+			horizontalAlignment: Text.AlignHCenter
 		}
 	}
 

@@ -2,21 +2,20 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 Column {
 	id: root
 
 	readonly property alias count: repeater.count
 	property alias title: dataTitle.text
+	property alias titleStyle: dataTitle.textStyle
 	property alias columns: grid.columns
 	property alias chat: repeater.model
 
@@ -36,31 +35,6 @@ Column {
 		}
 	}
 
-	Item {
-		visible: count < 1
-		width: parent.width
-		height: noDataText * 1.5
-
-		GText {
-			id: noDataText
-
-			width: parent.width
-			anchors.verticalCenter: parent.verticalCenter
-
-			activeFocusOnTab: true
-			Accessible.name: noDataText.text
-
-			//: LABEL DESKTOP_QML
-			text: qsTr("No data requested") + SettingsModel.translationTrigger
-			textStyle: Style.text.normal
-		}
-
-		GSeparator {
-			width: parent.width
-			anchors.bottom: parent.bottom
-		}
-	}
-
 	Grid {
 		id: grid
 
@@ -68,6 +42,7 @@ Column {
 
 		columnSpacing: Constants.pane_spacing
 		verticalItemAlignment: Grid.AlignBottom
+		flow: Grid.TopToBottom
 
 		Repeater {
 			id: repeater
@@ -88,7 +63,7 @@ Column {
 										 selected ?
 										 qsTr("selected") :
 										 qsTr("not selected")
-								 ) : "") + SettingsModel.translationTrigger
+								 ) : "")
 
 				Keys.onSpacePressed: if (optional) selected = !selected
 
@@ -113,6 +88,7 @@ Column {
 				GSeparator {
 					width: parent.width
 					anchors.bottom: parent.bottom
+					visible: !(index === repeater.count - 1 || ((index + 1) % Math.ceil(repeater.count / grid.columns)) === 0)
 				}
 
 				GCheckBox {

@@ -6,10 +6,9 @@
 
 #pragma once
 
-#include "Reader.h"
+#include "NfcReader.h"
 #include "ReaderManagerPlugIn.h"
 
-#include <QNearFieldManager>
 #include <QScopedPointer>
 
 
@@ -28,15 +27,19 @@ class NfcReaderManagerPlugIn
 
 	private Q_SLOTS:
 		void onNfcAdapterStateChanged(bool pEnabled);
+		void onReaderDisconnected();
 
 	public:
 		NfcReaderManagerPlugIn();
-		virtual ~NfcReaderManagerPlugIn() override;
+		~NfcReaderManagerPlugIn() override;
 
-		virtual QList<Reader*> getReaders() const override;
+		QList<Reader*> getReaders() const override;
 
-		virtual void init() override;
-		virtual void shutdown() override;
+		void init() override;
+		void shutdown() override;
+
+		void startScan(bool pAutoConnect) override;
+		void stopScan(const QString& pError = QString()) override;
 };
 
 } // namespace governikus

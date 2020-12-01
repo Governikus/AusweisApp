@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick.Layouts 1.3
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
@@ -18,14 +18,14 @@ ColumnLayout {
 
 	GText {
 		//: LABEL DESKTOP_QML
-		text: qsTr("Create dummy entries") + SettingsModel.translationTrigger
+		text: qsTr("Create dummy entries")
 		textStyle: Style.text.header_accent
 	}
 
 	RowLayout {
 		GButton {
 			//: LABEL DESKTOP_QML
-			text: qsTr("Logfile") + SettingsModel.translationTrigger
+			text: qsTr("Logfile")
 			onClicked: {
 				LogModel.saveDummyLogfile()
 				ApplicationModel.showFeedback("Created new logfile.")
@@ -33,7 +33,7 @@ ColumnLayout {
 		}
 		GButton {
 			//: LABEL DESKTOP_QML
-			text: qsTr("History") + SettingsModel.translationTrigger
+			text: qsTr("History")
 			onClicked: {
 				HistoryModel.createDummyEntry()
 				ApplicationModel.showFeedback("Created new history entry.")
@@ -43,21 +43,21 @@ ColumnLayout {
 
 	ToggleableOption {
 		//: LABEL DESKTOP_QML
-		text: qsTr("Show beta testing image") + SettingsModel.translationTrigger
+		text: qsTr("Show beta testing image")
 		checked: SettingsModel.showBetaTesting
 		onCheckedChanged: SettingsModel.showBetaTesting = checked
 	}
 
 	ToggleableOption {
 		//: LABEL DESKTOP_QML
-		text: qsTr("Support CAN allowed mode") + SettingsModel.translationTrigger
+		text: qsTr("Support CAN allowed mode")
 		checked: SettingsModel.enableCanAllowed
 		onCheckedChanged: SettingsModel.enableCanAllowed = checked
 	}
 
 	ToggleableOption {
 		//: LABEL DESKTOP_QML
-		text: qsTr("Skip rights page in CAN allowed mode") + SettingsModel.translationTrigger
+		text: qsTr("Skip rights page in CAN allowed mode")
 		enabled: SettingsModel.enableCanAllowed
 		checked: SettingsModel.skipRightsOnCanAllowed
 		onCheckedChanged: SettingsModel.skipRightsOnCanAllowed = checked

@@ -12,7 +12,12 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLoggingCategory>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#include <QMutableListIterator>
+#else
 #include <QMutableVectorIterator>
+#endif
 
 using namespace governikus;
 
@@ -61,7 +66,7 @@ void RemoteServiceSettings::save()
 }
 
 
-QString RemoteServiceSettings::getDefaultServerName()
+QString RemoteServiceSettings::getDefaultServerName() const
 {
 	QString name = DeviceInfo::getName();
 	if (name.isEmpty())
@@ -133,7 +138,8 @@ void RemoteServiceSettings::setUniqueTrustedCertificates(const QSet<QSslCertific
 	int i = 0;
 	for (const auto& cert : pCertificates)
 	{
-		mStore->setArrayIndex(i++);
+		mStore->setArrayIndex(i);
+		++i;
 		mStore->setValue(SETTINGS_NAME_TRUSTED_CERTIFICATE_ITEM(), cert.toPem());
 	}
 	mStore->endArray();
@@ -327,7 +333,7 @@ bool RemoteServiceSettings::updateRemoteInfo(const RemoteInfo& pInfo)
 	}
 
 	auto infos = getRemoteInfos();
-	QMutableVectorIterator<RemoteInfo> iter(infos);
+	QMutableVectorIterator<RemoteServiceSettings::RemoteInfo> iter(infos);
 	while (iter.hasNext())
 	{
 		iter.next();

@@ -6,4 +6,4 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppWhitelistClient)
 
-TARGET_LINK_LIBRARIES(AusweisAppWhitelistClient Qt5::Core AusweisAppSettings AusweisAppNetwork)
+target_link_libraries(AusweisAppWhitelistClient ${Qt}::Core AusweisAppSettings AusweisAppNetwork)

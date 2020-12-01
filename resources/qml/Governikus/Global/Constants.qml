@@ -4,7 +4,7 @@
 
 pragma Singleton
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 PlatformConstants {
 	readonly property color blue: "#4d7aa4"
@@ -20,6 +20,7 @@ PlatformConstants {
 	readonly property var flickDeceleration: Constants.is_desktop ? 7500.0 : 1500.0
 
 	readonly property int animation_duration: 250
+	readonly property int toolTipDelay: 500
 
 	readonly property real highlightDarkerFactor: 1.3
 

@@ -29,9 +29,9 @@ template<> RemoteDispatcherClient* createNewObject<RemoteDispatcherClient*, IfdV
 using namespace governikus;
 
 
-static Initializer::Entry E([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<QSharedPointer<RemoteDispatcherClient> >("QSharedPointer<RemoteDispatcherClient>");
-		});
+		})
 
 
 RemoteDispatcherClient::RemoteDispatcherClient(IfdVersion::Version pVersion, const QSharedPointer<DataChannel>& pDataChannel)
@@ -66,7 +66,7 @@ void RemoteDispatcherClient::sendEstablishContext()
 {
 	qCDebug(remote_device) << "Try to establish context with version" << mVersion;
 
-	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	const QSharedPointer<const IfdEstablishContext>& establishContext = QSharedPointer<IfdEstablishContext>::create(mVersion, settings.getServerName());
 	send(establishContext);
 }

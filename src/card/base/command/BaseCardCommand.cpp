@@ -16,9 +16,9 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 
 using namespace governikus;
 
-static Initializer::Entry X([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<QSharedPointer<BaseCardCommand> >("QSharedPointer<BaseCardCommand>");
-		});
+		})
 
 
 BaseCardCommand::BaseCardCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)

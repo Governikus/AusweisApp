@@ -25,21 +25,21 @@ class MockProviderModel
 
 		int rowCount(const QModelIndex& parent) const override
 		{
-			Q_UNUSED(parent);
+			Q_UNUSED(parent)
 			return 1;
 		}
 
 
 		QVariant data(const QModelIndex& index, int role) const override
 		{
-			Q_UNUSED(index);
+			Q_UNUSED(index)
 			return mData.value(role);
 		}
 
 
 		QModelIndex index(int row, int column, const QModelIndex& parent) const override
 		{
-			Q_UNUSED(parent);
+			Q_UNUSED(parent)
 			QModelIndex index = createIndex(row, column);
 			return index;
 		}
@@ -53,7 +53,7 @@ class MockProviderModel
 
 		int columnCount(const QModelIndex& parent) const override
 		{
-			Q_UNUSED(parent);
+			Q_UNUSED(parent)
 			return 1;
 		}
 
@@ -162,7 +162,7 @@ class test_ProviderCategoryFilterModel
 
 		void test_ResultCountForFilter()
 		{
-			const QSet<QString> categories({"citizen"});
+			const QStringList categories({"citizen"});
 			const QString selected("other");
 			const QString searchString("provider1");
 
@@ -176,7 +176,7 @@ class test_ProviderCategoryFilterModel
 			mModel->setSourceModel(&model);
 			QCOMPARE(mModel->resultCountForFilter(categories, searchString), 1);
 
-			const QSet<QString> unknownCategories({"test category"});
+			const QStringList unknownCategories({"test category"});
 			QCOMPARE(mModel->resultCountForFilter(unknownCategories, searchString), 0);
 		}
 

@@ -13,6 +13,19 @@
 
 namespace governikus
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#define defineQHash(enumName)\
+	inline size_t qHash(enumName pKey, size_t pSeed)\
+	{\
+		return ::qHash(static_cast<std::underlying_type<enumName>::type>(pKey), pSeed);\
+	}
+#else
+#define defineQHash(enumName)\
+	inline uint qHash(enumName pKey, uint pSeed)\
+	{\
+		return ::qHash(static_cast<std::underlying_type<enumName>::type>(pKey), pSeed);\
+	}
+#endif
 
 #define defineEnumOperators(enumName)\
 	inline QDebug operator<<(QDebug pDbg, enumName pType)\
@@ -45,11 +58,7 @@ namespace governikus
 	{\
 		return !(pType == pName);\
 	}\
-\
-	inline uint qHash(enumName pKey, uint pSeed)\
-	{\
-		return ::qHash(static_cast<std::underlying_type<enumName>::type>(pKey), pSeed);\
-	}
+	defineQHash(enumName)
 
 
 #define defineTypedEnumType(enumName, enumType, ...)\

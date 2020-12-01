@@ -74,6 +74,13 @@ class test_UpdatableFile
 			QCOMPARE(updatableFile.lookupPath(), updatableFile.getSectionCachePath() + mSep + filenameInCache);
 			QCOMPARE(updatableFile.cacheTimestamp(), timestamp);
 
+			QStringList paths;
+			QVERIFY(updatableFile.forEachLookupPath([&](const QString& pPath) -> bool {
+						paths += pPath;
+						return true;
+					}));
+			QCOMPARE(paths, QStringList({updatableFile.getSectionCachePath() + mSep + filenameInCache}));
+
 			removeFileFromCache(filenameInCache, updatableFile);
 		}
 
@@ -81,11 +88,12 @@ class test_UpdatableFile
 		void testFileOnlyInBundle()
 		{
 			const QString filename("img_ACS_ACR1252U.png");
+			const QString expectedPath = ":/updatable-files/reader/" + filename;
 			UpdatableFile updatableFile(mSection, filename);
 
 			verifySectionCacheFolder(updatableFile);
 			QCOMPARE(updatableFile.getName(), filename);
-			QCOMPARE(updatableFile.lookupPath(), QStringLiteral(":/updatable-files/reader/img_ACS_ACR1252U.png"));
+			QCOMPARE(updatableFile.lookupPath(), expectedPath);
 			QVERIFY(!updatableFile.cacheTimestamp().isValid());
 		}
 
@@ -93,12 +101,20 @@ class test_UpdatableFile
 		void testFileInCacheAndInBundle()
 		{
 			const QString filename("img_ACS_ACR1252U.png");
+			const QString expectedPath = ":/updatable-files/reader/" + filename;
 			const QString filenameInCache = filename + QStringLiteral("_20170601102132");
 			UpdatableFile updatableFile(mSection, filename);
 			touchFileInCache(filenameInCache, updatableFile);
 
 			QCOMPARE(updatableFile.getName(), filename);
 			QCOMPARE(updatableFile.lookupPath(), updatableFile.getSectionCachePath() + mSep + filenameInCache);
+
+			QStringList paths;
+			QVERIFY(!updatableFile.forEachLookupPath([&](const QString& pPath) -> bool {
+						paths += pPath;
+						return false;
+					}));
+			QCOMPARE(paths, QStringList({updatableFile.getSectionCachePath() + mSep + filenameInCache, expectedPath}));
 
 			removeFileFromCache(filenameInCache, updatableFile);
 		}

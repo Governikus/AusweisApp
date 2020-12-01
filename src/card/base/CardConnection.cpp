@@ -48,10 +48,10 @@ bool CardConnection::getPacePinSuccessful() const
 }
 
 
-void CardConnection::setProgressMessage(const QString& pMessage)
+void CardConnection::setProgressMessage(const QString& pMessage, int pProgress)
 {
-	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [ = ] {
-				mCardConnectionWorker->setProgressMessage(pMessage);
+	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [this, pMessage, pProgress] {
+				mCardConnectionWorker->setProgressMessage(pMessage, pProgress);
 			}, Qt::BlockingQueuedConnection);
 }
 
@@ -70,19 +70,19 @@ UpdateRetryCounterCommand* CardConnection::createUpdateRetryCounterCommand()
 }
 
 
-UnblockPinCommand* CardConnection::createUnblockPinCommand(const QString& pPuk)
+UnblockPinCommand* CardConnection::createUnblockPinCommand(const QByteArray& pPuk)
 {
 	return new UnblockPinCommand(mCardConnectionWorker, pPuk);
 }
 
 
-EstablishPaceChannelCommand* CardConnection::createEstablishPaceChannelCommand(PacePasswordId pPacePasswordId, const QString& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription)
+EstablishPaceChannelCommand* CardConnection::createEstablishPaceChannelCommand(PacePasswordId pPacePasswordId, const QByteArray& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription)
 {
 	return new EstablishPaceChannelCommand(mCardConnectionWorker, pPacePasswordId, pPacePassword, pEffectiveChat, pCertificateDescription);
 }
 
 
-SetEidPinCommand* CardConnection::createSetEidPinCommand(const QString& pNewPin, quint8 pTimeoutSeconds)
+SetEidPinCommand* CardConnection::createSetEidPinCommand(const QByteArray& pNewPin, quint8 pTimeoutSeconds)
 {
 	return new SetEidPinCommand(mCardConnectionWorker, pNewPin, pTimeoutSeconds);
 }
@@ -101,8 +101,8 @@ DidAuthenticateEAC1Command* CardConnection::createDidAuthenticateEAC1Command()
 
 
 DidAuthenticateEAC2Command* CardConnection::createDidAuthenticateEAC2Command(
-		const CVCertificateChain& pCvcChain, const QString& pEphemeralPublicKeyAsHex,
-		const QString& pSignatureAsHex, const QByteArray& pAuthenticatedAuxiliaryDataAsBinary)
+		const CVCertificateChain& pCvcChain, const QByteArray& pEphemeralPublicKeyAsHex,
+		const QByteArray& pSignatureAsHex, const QByteArray& pAuthenticatedAuxiliaryDataAsBinary)
 {
 	return new DidAuthenticateEAC2Command(mCardConnectionWorker, pCvcChain,
 			pEphemeralPublicKeyAsHex, pSignatureAsHex, pAuthenticatedAuxiliaryDataAsBinary);

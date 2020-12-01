@@ -16,6 +16,9 @@ PlatformColors {
 	readonly property color accent_text: accent
 	readonly property color accent_text_inverse: "#cde1f3"
 	readonly property color warning_text: "#cc0000"
+	readonly property color info_text: "#d27840"
+
+	readonly property color success: "#a3cb7f"
 
 	readonly property color accent: "#4d7aa4"
 	readonly property color accent_disabled: "#d0d0d0"

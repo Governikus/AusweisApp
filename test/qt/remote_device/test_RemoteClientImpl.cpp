@@ -120,7 +120,7 @@ class test_RemoteClient
 		void init()
 		{
 			Env::setCreator<DatagramHandler*>(std::function<DatagramHandler* ()>([&] {
-						mDatagramHandlerMock = new DatagramHandlerMock;
+						mDatagramHandlerMock = new DatagramHandlerMock();
 						return mDatagramHandlerMock;
 					}));
 
@@ -130,7 +130,7 @@ class test_RemoteClient
 					}));
 
 			Env::setCreator<RemoteConnector*>(std::function<RemoteConnector* ()>([&] {
-						mRemoteConnectorMock = new RemoteConnectorMock;
+						mRemoteConnectorMock = new RemoteConnectorMock();
 						return mRemoteConnectorMock;
 					}));
 		}
@@ -168,37 +168,9 @@ class test_RemoteClient
 		}
 
 
-		void testReceiveIPv6LinkLocal()
-		{
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)) || defined(GOVERNIKUS_QT)
-			QSKIP("QTBUG-25550 is fixed in the used Qt version.");
-#endif
-
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
-
-			const QByteArray offerJson("{\n"
-									   "    \"IFDName\": \"Sony Xperia Z5 compact\",\n"
-									   "    \"IFDID\": \"0123456789ABCDEF\",\n"
-									   "    \"encrypted\": true,\n"
-									   "    \"msg\": \"REMOTE_IFD\",\n"
-									   "    \"port\": 24728,\n"
-									   "    \"SupportedAPI\": [\"IFDInterface_WebSocket_v0\", \"IFDInterface_WebSocket_v2\"]\n"
-									   "}");
-
-			RemoteClientImpl client;
-			QSignalSpy spyAppeared(&client, &RemoteClient::fireDeviceAppeared);
-			client.startDetection();
-			Q_EMIT mDatagramHandlerMock->fireNewMessage(offerJson, QHostAddress("fe80::5a38:a519:8ff4:1f1f%enp0s31f6"));
-
-			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("Dropping message from unparsable address:"));
-			QVERIFY(spyAppeared.isEmpty());
-		}
-
-
 		void testReceiveUnparsable()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray unparsableJson("{\n"
 											"    \"device___Name\": \"Sony Xperia Z5 compact\",\n"
@@ -219,7 +191,7 @@ class test_RemoteClient
 
 		void testReceiveUnexpected()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			RemoteClientImpl client;
 			client.startDetection();
@@ -239,9 +211,7 @@ class test_RemoteClient
 
 			QTest::newRow("IPv4") << "192.168.1.88";
 			QTest::newRow("IPv6 link-global") << "2001:0db8:85a3:08d3:1319:8a2e:0370:7344";
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)) || defined(GOVERNIKUS_QT)
 			QTest::newRow("IPv6 link-local") << "fe80::5a38:a519:8ff4:1f1f%enp0s31f6";
-#endif
 		}
 
 
@@ -279,7 +249,7 @@ class test_RemoteClient
 
 		void testRemoteConnectorThread()
 		{
-			QScopedPointer<RemoteClient> client(new RemoteClientImpl);
+			QScopedPointer<RemoteClient> client(new RemoteClientImpl());
 			QCOMPARE(Env::getCounter<RemoteConnector*>(), 1);
 			QVERIFY(!mRemoteConnectorMock.isNull());
 			QVERIFY(client->thread() != mRemoteConnectorMock->thread());
@@ -310,7 +280,7 @@ class test_RemoteClient
 			QSharedPointer<RemoteDeviceListEntry> emptyEntry(new RemoteDeviceListEntry(descr));
 			client.establishConnection(emptyEntry, QString("password1"));
 
-			QTRY_COMPARE(spyConnectionRequest.count(), 1);
+			QTRY_COMPARE(spyConnectionRequest.count(), 1); // clazy:exclude=qstring-allocations
 
 			QSignalSpy spyConnectionDone(&client, &RemoteClient::fireEstablishConnectionDone);
 			Q_EMIT mRemoteConnectorMock->fireRemoteDispatcherError(emptyEntry->getRemoteDeviceDescriptor(), RemoteErrorCode::CONNECTION_ERROR);

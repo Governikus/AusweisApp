@@ -34,7 +34,7 @@ class SymmetricCipher final
 		/*!
 		 * Returns true, if initialization succeeded, i.e. the algorithm is known, supported and the key bytes have correct size.
 		 */
-		bool isInitialized();
+		bool isInitialized() const;
 
 		/*!
 		 * \brief Encrypts the message.

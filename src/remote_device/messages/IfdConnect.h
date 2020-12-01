@@ -18,7 +18,7 @@ class IfdConnect
 
 	public:
 		IfdConnect(const QString& pSlotName, bool pExclusive = true);
-		IfdConnect(const QJsonObject& pMessageObject);
+		explicit IfdConnect(const QJsonObject& pMessageObject);
 		virtual ~IfdConnect() override = default;
 
 		const QString& getSlotName() const;

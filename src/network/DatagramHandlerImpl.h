@@ -37,6 +37,11 @@ class DatagramHandlerImpl
 		bool sendToAddress(const QByteArray& pData, const QHostAddress& pAddress, quint16 pPort = 0);
 		bool sendToAllAddressEntries(const QByteArray& pData, quint16 pPort);
 
+#if defined(Q_OS_IOS)
+
+		void checkNetworkPermission();
+#endif
+
 	public:
 		static quint16 cPort;
 

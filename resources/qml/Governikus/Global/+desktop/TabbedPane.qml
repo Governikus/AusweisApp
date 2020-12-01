@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -28,8 +28,9 @@ Item {
 	readonly property var currentItemModel: sectionNameList.currentItem ? sectionNameList.currentItem.itemModel : null
 	readonly property var currentContentItem: contentLoader.item
 	readonly property real relativeListViewWidth: 0.3
-	readonly property int availableHeight: height - 2 * contentPadding - 2 * Style.dimens.high_contrast_item_border
-	property var contentPadding: Constants.pane_padding
+	readonly property int availableHeight: height - 2 * contentItemPadding - 2 * Style.dimens.high_contrast_item_border
+	property int contentPadding: Constants.pane_padding
+	readonly property int contentItemPadding: currentContentItem && currentContentItem.contentPadding !== undefined ? currentContentItem.contentPadding : contentPadding
 
 	function scrollYPositionIntoView(pYposition) {
 		var dy = pYposition - flickable.contentY - flickable.height
@@ -114,11 +115,11 @@ Item {
 
 					anchors {
 						fill: parent
-						bottomMargin: contentPadding
-						topMargin: contentPadding
+						bottomMargin: contentItemPadding
+						topMargin: contentItemPadding
 					}
 
-					contentHeight: contentLoader.item.height
+					contentHeight: contentLoader.height
 
 					Loader {
 						id: contentLoader
@@ -127,8 +128,8 @@ Item {
 							top: parent.top
 							left: parent.left
 							right: parent.right
-							leftMargin: contentPadding
-							rightMargin: contentPadding
+							leftMargin: contentItemPadding
+							rightMargin: contentItemPadding
 						}
 
 						sourceComponent: {

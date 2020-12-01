@@ -6,7 +6,6 @@
 
 #include "AppSettings.h"
 #include "GeneralSettings.h"
-#include "SingletonHelper.h"
 
 #include <QFile>
 #include <QQmlEngine>
@@ -15,23 +14,21 @@
 
 using namespace governikus;
 
-defineSingleton(SelfDiagnosisModel)
 
-
-bool SelfDiagnosisModel::isRunning() const
-{
-	return mDiagnosisModel.isRunning();
-}
-
-
-SelfDiagnosisModel::SelfDiagnosisModel(QObject* pParent)
-	: QObject(pParent)
-	, mDiagnosisContext(new DiagnosisContext)
+SelfDiagnosisModel::SelfDiagnosisModel()
+	: QObject()
+	, mDiagnosisContext(new DiagnosisContext())
 	, mDiagnosisModel(mDiagnosisContext)
 {
 	const GeneralSettings& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	connect(&generalSettings, &GeneralSettings::fireLanguageChanged, this, &SelfDiagnosisModel::fireSectionContentModelChanged);
 	connect(&mDiagnosisModel, &DiagnosisModel::fireRunningChanged, this, &SelfDiagnosisModel::fireRunningChanged);
+}
+
+
+bool SelfDiagnosisModel::isRunning() const
+{
+	return mDiagnosisModel.isRunning();
 }
 
 
@@ -49,12 +46,6 @@ void SelfDiagnosisModel::saveToFile(const QUrl& pFilename) const
 QString SelfDiagnosisModel::getCreationTimeString() const
 {
 	return mDiagnosisModel.getCreationTimeString();
-}
-
-
-SelfDiagnosisModel& SelfDiagnosisModel::getInstance()
-{
-	return *Instance;
 }
 
 

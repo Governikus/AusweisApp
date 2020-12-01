@@ -13,6 +13,7 @@
 #include <QSortFilterProxyModel>
 
 #include "context/AuthContext.h"
+#include "Env.h"
 
 class test_ChatModel;
 
@@ -25,14 +26,20 @@ class ChatModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
+	friend class Env;
+	friend class ::test_ChatModel;
+
 	Q_PROPERTY(QSortFilterProxyModel * optional READ getFilterOptionalModel CONSTANT)
 	Q_PROPERTY(QSortFilterProxyModel * required READ getFilterRequiredModel CONSTANT)
+	Q_PROPERTY(QSortFilterProxyModel * write READ getFilterWriteModel CONSTANT)
 
 	QSharedPointer<AuthContext> mAuthContext;
 	QList<AccessRight> mAllRights;
 	QSet<AccessRight> mOptionalRights, mSelectedRights;
 	QSortFilterProxyModel mFilterOptionalModel;
 	QSortFilterProxyModel mFilterRequiredModel;
+	QSortFilterProxyModel mFilterReadModel;
+	QSortFilterProxyModel mFilterWriteModel;
 
 	enum ChatRoles
 	{
@@ -43,16 +50,16 @@ class ChatModel
 	};
 
 	private:
-		friend class ::test_ChatModel;
-		void initFilterModel(QSortFilterProxyModel& pModel, const QString& pFilter);
+		ChatModel();
+		virtual ~ChatModel() override = default;
+
+		void initFilterModel(QSortFilterProxyModel& pModel, QAbstractItemModel* pSourceModel, int pFilterRole, const QString& pFilter);
 		void setOrderedAllRights(const QSet<AccessRight>& pAllRights);
 
 	private Q_SLOTS:
-		void onAuthenticationDataChanged();
+		void onAuthenticationDataChanged(QSharedPointer<AccessRightManager> pAccessRightManager);
 
 	public:
-		ChatModel(QObject* pParent = nullptr);
-
 		void resetContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());
 
 		int rowCount(const QModelIndex& = QModelIndex()) const override;
@@ -63,6 +70,7 @@ class ChatModel
 		Q_INVOKABLE void transferAccessRights();
 		Q_INVOKABLE QSortFilterProxyModel* getFilterOptionalModel();
 		Q_INVOKABLE QSortFilterProxyModel* getFilterRequiredModel();
+		Q_INVOKABLE QSortFilterProxyModel* getFilterWriteModel();
 };
 
 

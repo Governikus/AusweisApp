@@ -2,13 +2,12 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.View 1.0
 
 
@@ -69,7 +68,7 @@ Item {
 				Layout.fillWidth: true
 
 				activeFocusOnTab: true
-				Accessible.description: qsTr("Press space to open the link in your browser") + SettingsModel.translationTrigger
+				Accessible.description: qsTr("Press space to open the link in your browser")
 
 				textStyle: Style.text.normal
 				text: readerHTMLDescription

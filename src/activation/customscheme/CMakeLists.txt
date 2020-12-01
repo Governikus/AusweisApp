@@ -4,5 +4,5 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppActivationCustomScheme)
 
-TARGET_LINK_LIBRARIES(AusweisAppActivationCustomScheme Qt5::Core Qt5::Gui AusweisAppGlobal AusweisAppActivation)
-TARGET_COMPILE_DEFINITIONS(AusweisAppActivationCustomScheme PRIVATE QT_STATICPLUGIN)
+target_link_libraries(AusweisAppActivationCustomScheme ${Qt}::Core ${Qt}::Gui AusweisAppGlobal AusweisAppActivation)
+target_compile_definitions(AusweisAppActivationCustomScheme PRIVATE QT_STATICPLUGIN)

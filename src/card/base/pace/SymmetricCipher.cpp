@@ -69,20 +69,17 @@ SymmetricCipher::SymmetricCipher(const QByteArray& pPaceAlgorithm, const QByteAr
 
 SymmetricCipher::~SymmetricCipher()
 {
-	// also frees the memory
-	if (mCtx != nullptr &&
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-			!EVP_CIPHER_CTX_cleanup(mCtx))
+	EVP_CIPHER_CTX_cleanup(mCtx);
 #else
-			!EVP_CIPHER_CTX_reset(mCtx))
+	EVP_CIPHER_CTX_reset(mCtx);
 #endif
-	{
-		qCCritical(card) << "Cannot free EVP_CIPHER_CTX";
-	}
+
+	EVP_CIPHER_CTX_free(mCtx);
 }
 
 
-bool SymmetricCipher::isInitialized()
+bool SymmetricCipher::isInitialized() const
 {
 	return mCtx != nullptr && mCipher != nullptr;
 }

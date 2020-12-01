@@ -29,15 +29,14 @@ class NetworkManager
 	friend class Env;
 
 	private:
+		static bool mLockProxy;
+
+		QNetworkAccessManager mNetAccessManager;
 		bool mApplicationExitInProgress;
 		QMutex mTrackedConnectionsMutex;
-		QSet<QNetworkReply*> mTrackedConnections;
-		void trackConnection(QNetworkReply* pResponse, const int pTimeoutInMilliSeconds);
-		void addTrackedConnection(QNetworkReply* pResponse);
-		void removeTrackedConnection(QNetworkReply* pResponse);
+		int mTrackedConnections;
 
-		static bool mLockProxy;
-		QScopedPointer<QNetworkAccessManager, QScopedPointerDeleteLater> mNetAccessManager;
+		void trackConnection(QNetworkReply* pResponse, const int pTimeoutInMilliSeconds);
 
 		QString getUserAgentHeader() const;
 
@@ -48,7 +47,6 @@ class NetworkManager
 	protected:
 		NetworkManager();
 		virtual ~NetworkManager();
-		static NetworkManager& getInstance();
 
 	public:
 		enum class NetworkError

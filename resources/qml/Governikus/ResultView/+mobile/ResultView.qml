@@ -2,18 +2,19 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.LogModel 1.0
 
 
 SectionPage {
 	id: baseItem
+
 	navigationAction: NavigationAction { state: "cancel"; onClicked: baseItem.clicked() }
 
 	enum Type {
@@ -24,68 +25,106 @@ SectionPage {
 
 	property alias text: resultText.text
 	property alias buttonText: buttonLeft.text
+	property alias buttonLeft: buttonLeft
 	property alias showMailButton: buttonRight.visible
-	property int resultType: Type.IsSuccess
+	property int resultType: ResultView.Type.IsSuccess
+	property alias customContent: customContentContainer.data
 	signal clicked
 
-	Rectangle {
-		anchors.fill: parent
-		color: Style.color.background
-	}
+	content: Item {
+		readonly property real elementHeight: layout.implicitHeight - resultIcon.Layout.maximumHeight + resultIcon.Layout.minimumHeight + 2 * Constants.component_spacing
+		readonly property bool elementsFitOnScreen: elementHeight <= baseItem.height
 
-	StatusIcon {
-		id: resultIcon
-		height: 100
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: parent.top
-		anchors.topMargin: 60
-		source: {
-			switch (resultType) {
-				case ResultView.Type.IsSuccess:
-					return "qrc:///images/status_ok.svg"
-				case ResultView.Type.IsInfo:
-					return "qrc:///images/status_info.svg"
-				case ResultView.Type.IsError:
-					return "qrc:///images/status_error.svg"
+		anchors {
+			left: parent.left
+			right: parent.right
+			top: parent.top
+		}
+		height: elementsFitOnScreen ? baseItem.height : elementHeight
+
+		ColumnLayout {
+			id: layout
+
+			anchors.fill: parent
+			anchors.margins: Constants.component_spacing
+
+			spacing: Constants.component_spacing
+
+			StatusIcon {
+				id: resultIcon
+
+				implicitWidth : height
+				Layout.alignment: Qt.AlignHCenter
+				Layout.fillHeight: true
+				Layout.minimumHeight: Style.dimens.large_icon_size
+				Layout.maximumHeight: Style.dimens.header_icon_size
+				Layout.preferredHeight: Style.dimens.header_icon_size
+
+				source: {
+					switch (resultType) {
+						case ResultView.Type.IsSuccess:
+							return "qrc:///images/status_ok.svg"
+						case ResultView.Type.IsInfo:
+							return "qrc:///images/status_info.svg"
+						case ResultView.Type.IsError:
+							return "qrc:///images/status_error.svg"
+					}
+				}
 			}
-		}
-	}
 
-	GText {
-		id: resultText
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: resultIcon.bottom
-		anchors.bottom: buttonRow.top
-		width: parent.width - (2 * Constants.pane_padding)
+			GPane {
+				visible: resultText.text !== ""
+				Layout.alignment: Qt.AlignCenter
+				Layout.fillWidth: true
+				Layout.maximumWidth: Style.dimens.max_text_width
 
-		horizontalAlignment: Text.AlignHCenter
-		verticalAlignment: Text.AlignVCenter
-		textStyle: resultType !== ResultView.Type.IsError ? Style.text.header_accent : Style.text.header_warning
-	}
+				GText {
+					id: resultText
 
-	Row {
-		id: buttonRow
+					anchors {
+						left: parent.left
+						right: parent.right
+					}
 
-		anchors.bottom: parent.bottom
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.bottomMargin: 30
-		spacing: Constants.component_spacing
+					textStyle: resultType !== ResultView.Type.IsError ? Style.text.normal : Style.text.normal_warning
+					wrapMode: Text.WordWrap
+				}
+			}
 
-		GButton {
-			id: buttonLeft
+			Item {
+				id: customContentContainer
 
-			//: LABEL ANDROID IOS
-			text: qsTr("OK") + SettingsModel.translationTrigger
-			onClicked: baseItem.clicked()
-		}
+				Layout.fillWidth: true
+				Layout.fillHeight: true
+				Layout.minimumHeight: childrenRect.height
+			}
 
-		GButton {
-			id: buttonRight
-			visible: false
+			RowLayout {
+				id: buttonRow
 
-			//: LABEL ANDROID IOS
-			text: qsTr("Send logfile") + SettingsModel.translationTrigger
-			onClicked: LogModel.mailLog()
+				Layout.alignment: Qt.AlignHCenter
+				Layout.topMargin: Constants.component_spacing
+
+				spacing: Constants.component_spacing
+
+				GButton {
+					id: buttonLeft
+					visible: buttonLeft.text !== ""
+
+					//: LABEL ANDROID IOS
+					text: qsTr("OK")
+					onClicked: baseItem.clicked()
+				}
+
+				GButton {
+					id: buttonRight
+					visible: false
+
+					//: LABEL ANDROID IOS
+					text: qsTr("Send log")
+					onClicked: LogModel.mailLog()
+				}
+			}
 		}
 	}
 }

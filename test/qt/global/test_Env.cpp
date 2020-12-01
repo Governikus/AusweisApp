@@ -7,6 +7,7 @@
 #include "Env.h"
 
 #include "LogHandler.h"
+#include "NetworkManager.h"
 
 #include <QScopedPointer>
 #include <QtConcurrent/QtConcurrentRun>
@@ -57,6 +58,35 @@ class AbstractTestInstanceImpl
 
 
 };
+
+class TestAbstractQObjectSingleton
+	: public QObject
+{
+	Q_OBJECT
+
+	public:
+		virtual ~TestAbstractQObjectSingleton()
+		{
+		}
+
+
+		virtual QString dummy() = 0;
+};
+
+class TestAbstractQObjectSingletonImpl
+	: public TestAbstractQObjectSingleton
+{
+	Q_OBJECT
+
+	public:
+		virtual QString dummy() override
+		{
+			return QStringLiteral("impl");
+		}
+
+
+};
+
 
 class MockedAbstractTestInstance
 	: public AbstractTestInstance
@@ -226,6 +256,12 @@ Q_DECLARE_METATYPE(std::function<TestEmptyTmp()>)
 namespace governikus
 {
 
+template<> TestAbstractQObjectSingleton* createNewObject<TestAbstractQObjectSingleton*>()
+{
+	return new TestAbstractQObjectSingletonImpl();
+}
+
+
 template<> TestAbstractUnmanagedInstance* singleton<TestAbstractUnmanagedInstance>()
 {
 	static TestUnmanagedInstance instance;
@@ -242,7 +278,7 @@ template<> AbstractTestInstance* singleton<AbstractTestInstance>()
 
 template<> AbstractTestInstance* createNewObject<AbstractTestInstance*>()
 {
-	return new AbstractTestInstanceImpl;
+	return new AbstractTestInstanceImpl();
 }
 
 
@@ -387,6 +423,13 @@ class test_Env
 		}
 
 
+		void testAbstractQObjectSingletonIsTheSamePointer()
+		{
+			TestAbstractQObjectSingleton* ptr = Env::getSingleton<TestAbstractQObjectSingleton>();
+			QCOMPARE(Env::getSingleton<TestAbstractQObjectSingleton>(), ptr);
+		}
+
+
 		void getUnmanagedSingleton()
 		{
 			auto first = Env::getSingleton<TestAbstractUnmanagedInstance>();
@@ -417,7 +460,7 @@ class test_Env
 
 						};
 
-						return new tmp;
+						return new tmp();
 					};
 
 			Env::setCreator<AbstractTestInstance*>(func);
@@ -687,58 +730,59 @@ class test_Env
 		void checkLogForSameThreadsGadget()
 		{
 			QThread::currentThread()->setObjectName("Main");
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			Env::getSingleton<TestAbstractUnmanagedInstance>();
-			QCOMPARE(spy.count(), 0);
+			QCOMPARE(logSpy.count(), 0);
 
 			Env::getSingleton<TestAbstractUnmanagedInstance>();
-			QCOMPARE(spy.count(), 0);
+			QCOMPARE(logSpy.count(), 0);
 		}
 
 
 		void checkLogForDifferentThreadsGadget()
 		{
 			QThread::currentThread()->setObjectName("Main");
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			Env::getSingleton<TestAbstractUnmanagedInstance>();
-			QCOMPARE(spy.count(), 0);
+			QCOMPARE(logSpy.count(), 0);
 
 			QThreadPool pool; // do not use global one, otherwise the main thread is allowed, too
 			QtConcurrent::run(&pool, [] {
 						Env::getSingleton<TestAbstractUnmanagedInstance>();
 					}).waitForFinished();
 
-			QCOMPARE(spy.count(), 0);
+			QCOMPARE(logSpy.count(), 0);
 		}
 
 
 		void checkLogForSameThreadsQObject()
 		{
 			QThread::currentThread()->setObjectName("Main");
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			Env::getSingleton<LogHandler>();
-			QCOMPARE(spy.count(), 0);
+			QCOMPARE(logSpy.count(), 0);
 		}
 
 
 		void checkLogForDifferentThreadsQObject()
 		{
 			QThread::currentThread()->setObjectName("Main");
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
-			Env::getSingleton<LogHandler>();
-			QCOMPARE(spy.count(), 0);
+			Env::getSingleton<NetworkManager>();
+			QCOMPARE(logSpy.count(), 2); // Create singleton NetworkManager / AppSettings
+			logSpy.clear();
 
 			QThreadPool pool; // do not use global one, otherwise the main thead is allowed, too
 			QtConcurrent::run(&pool, [] {
-						Env::getSingleton<LogHandler>();
+						Env::getSingleton<NetworkManager>();
 					}).waitForFinished();
 
-			QCOMPARE(spy.count(), 1);
-			QVERIFY(spy.takeLast().at(0).toString().contains(QLatin1String("governikus::LogHandler was created in \"Main\" but is requested by \"Thread (pooled)\"")));
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.takeLast().at(0).toString().contains(QLatin1String("governikus::NetworkManager was created in \"Main\" but is requested by \"Thread (pooled)\"")));
 		}
 
 

@@ -144,8 +144,14 @@ void DiagnosisController::getPcscInfo(QVector<DiagnosisContext::ComponentInfo>& 
 	getDriverInfos(driverInfos, driverDirectory);
 	getDriverInfos(driverInfos, driverDirectoryLocal);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+	const auto split = Qt::SkipEmptyParts;
+#else
+	const auto split = QString::SkipEmptyParts;
+#endif
+
 	QString output = runProcessAndReadAllOutput(QStringLiteral("pkgutil"), QStringList({QStringLiteral("--pkgs")}));
-	const QStringList packageIds = output.split(QLatin1Char('\n'), QString::SkipEmptyParts);
+	const QStringList packageIds = output.split(QLatin1Char('\n'), split);
 	for (const QString& packageId : packageIds)
 	{
 		// skip Apple packages
@@ -164,7 +170,7 @@ void DiagnosisController::getPcscInfo(QVector<DiagnosisContext::ComponentInfo>& 
 
 		// get normalized location
 		QString location = packageInfo.mVolume + QLatin1Char('/') + packageInfo.mLocation;
-		location = QLatin1Char('/') + location.split(QLatin1Char('/'), QString::SkipEmptyParts).join(QLatin1Char('/'));
+		location = QLatin1Char('/') + location.split(QLatin1Char('/'), split).join(QLatin1Char('/'));
 
 		// skip packages that are definitely installed elsewhere
 		if (!driverDirectory.startsWith(location) && !location.startsWith(driverDirectory))
@@ -174,7 +180,7 @@ void DiagnosisController::getPcscInfo(QVector<DiagnosisContext::ComponentInfo>& 
 
 		// Get the file list for the package and check whether it contains any of the driver plist files.
 		output = runProcessAndReadAllOutput(QStringLiteral("pkgutil"), QStringList({QStringLiteral("--files"), packageId}));
-		const QStringList files = output.split(QLatin1Char('\n'), QString::SkipEmptyParts);
+		const QStringList files = output.split(QLatin1Char('\n'), split);
 		for (const QString& file : files)
 		{
 			if (!file.endsWith(QLatin1String("Info.plist")))

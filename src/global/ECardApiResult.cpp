@@ -11,13 +11,13 @@
 
 using namespace governikus;
 
-#define RESULTMAJOR "http://www.bsi.bund.de/ecard/api/1.1/resultmajor"
-#define RESULTMINOR "http://www.bsi.bund.de/ecard/api/1.1/resultminor"
+constexpr const char* RESULTMAJOR = "http://www.bsi.bund.de/ecard/api/1.1/resultmajor";
+constexpr const char* RESULTMINOR = "http://www.bsi.bund.de/ecard/api/1.1/resultminor";
 
 const QMap<ECardApiResult::Major, QString> ECardApiResult::cMajorResults = {
-	{ECardApiResult::Major::Ok, QString::fromLatin1(RESULTMAJOR "#ok")},
-	{ECardApiResult::Major::Warning, QString::fromLatin1(RESULTMAJOR "#warning")},
-	{ECardApiResult::Major::Error, QString::fromLatin1(RESULTMAJOR "#error")}
+	{ECardApiResult::Major::Ok, QLatin1String(RESULTMAJOR) + QLatin1String("#ok")},
+	{ECardApiResult::Major::Warning, QLatin1String(RESULTMAJOR) + QLatin1String("#warning")},
+	{ECardApiResult::Major::Error, QLatin1String(RESULTMAJOR) + QLatin1String("#error")}
 };
 
 // See TR-03112, section 4.2 for details about the codes
@@ -28,39 +28,39 @@ const QMap<ECardApiResult::Major, QString> ECardApiResult::cMajorResults = {
 //      KEY
 //      SAL -> Service Access Layer
 const QMap<ECardApiResult::Minor, QString> ECardApiResult::cMinorResults = {
-	{ECardApiResult::Minor::AL_Unknown_Error, QString::fromLatin1(RESULTMINOR "/al/common#unknownError")},
-	{ECardApiResult::Minor::AL_No_Permission, QString::fromLatin1(RESULTMINOR "/al/common#noPermission")},
-	{ECardApiResult::Minor::AL_Internal_Error, QString::fromLatin1(RESULTMINOR "/al/common#internalError")},
-	{ECardApiResult::Minor::AL_Parameter_Error, QString::fromLatin1(RESULTMINOR "/al/common#parameterError")},
-	{ECardApiResult::Minor::AL_Unkown_API_Function, QString::fromLatin1(RESULTMINOR "/al/common#unknownAPIFunction")},
-	{ECardApiResult::Minor::AL_Not_Initialized, QString::fromLatin1(RESULTMINOR "/al/common#notInitialized")},
-	{ECardApiResult::Minor::AL_Warning_Connection_Disconnected, QString::fromLatin1(RESULTMINOR "/al/common#warningConnectionDisconnected")},
-	{ECardApiResult::Minor::AL_Session_Terminated_Warning, QString::fromLatin1(RESULTMINOR "/al/common#SessionTerminatedWarning")},
-	{ECardApiResult::Minor::AL_Communication_Error, QString::fromLatin1(RESULTMINOR "/al/common#communicationError")},
-	{ECardApiResult::Minor::DP_Timeout_Error, QString::fromLatin1(RESULTMINOR "/dp#timeout")},
-	{ECardApiResult::Minor::DP_Unknown_Channel_Handle, QString::fromLatin1(RESULTMINOR "/dp#unknownChannelHandle")},
-	{ECardApiResult::Minor::DP_Communication_Error, QString::fromLatin1(RESULTMINOR "/dp#communicationError")},
-	{ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed, QString::fromLatin1(RESULTMINOR "/dp#trustedChannelEstablishmentFailed")},
-	{ECardApiResult::Minor::DP_Unknown_Protocol, QString::fromLatin1(RESULTMINOR "/dp#unknownProtocol")},
-	{ECardApiResult::Minor::DP_Unknown_Cipher_Suite, QString::fromLatin1(RESULTMINOR "/dp#unknownCipherSuite")},
-	{ECardApiResult::Minor::DP_Unknown_Webservice_Binding, QString::fromLatin1(RESULTMINOR "/dp#unknownWebserviceBinding")},
-	{ECardApiResult::Minor::DP_Node_Not_Reachable, QString::fromLatin1(RESULTMINOR "/dp#nodeNotReachable")},
-	{ECardApiResult::Minor::IFDL_Timeout_Error, QString::fromLatin1(RESULTMINOR "/ifdl/common#timeoutError")},
-	{ECardApiResult::Minor::IFDL_UnknownSlot, QString::fromLatin1(RESULTMINOR "/ifdl/terminal#unknownSlot")},
-	{ECardApiResult::Minor::IFDL_InvalidSlotHandle, QString::fromLatin1(RESULTMINOR "/ifdl/common#invalidSlotHandle")},
-	{ECardApiResult::Minor::IFDL_CancellationByUser, QString::fromLatin1(RESULTMINOR "/ifdl#cancellationByUser")},
-	{ECardApiResult::Minor::IFDL_IFD_SharingViolation, QString::fromLatin1(RESULTMINOR "ifdl/terminal#IFDSharingViolation")},
-	{ECardApiResult::Minor::IFDL_Terminal_NoCard, QString::fromLatin1(RESULTMINOR "/ifdl/terminal#noCard")},
-	{ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch, QString::fromLatin1(RESULTMINOR "/ifdl/IO#repeatedDataMismatch")},
-	{ECardApiResult::Minor::IFDL_IO_UnknownPINFormat, QString::fromLatin1(RESULTMINOR "/ifdl/IO#unknownPINFormat")},
-	{ECardApiResult::Minor::IL_Signature_InvalidCertificatePath, QString::fromLatin1(RESULTMINOR "/il/signature#invalidCertificatePath")},
-	{ECardApiResult::Minor::KEY_KeyGenerationNotPossible, QString::fromLatin1(RESULTMINOR "/il/key#keyGenerationNotPossible")},
-	{ECardApiResult::Minor::SAL_Cancellation_by_User, QString::fromLatin1(RESULTMINOR "/sal#cancellationByUser")},
-	{ECardApiResult::Minor::SAL_Invalid_Key, QString::fromLatin1(RESULTMINOR "/sal#invalidKey")},
-	{ECardApiResult::Minor::SAL_SecurityConditionNotSatisfied, QString::fromLatin1(RESULTMINOR "/sal#securityConditionNotSatisfied")},
-	{ECardApiResult::Minor::SAL_MEAC_AgeVerificationFailedWarning, QString::fromLatin1(RESULTMINOR "/sal/mEAC#AgeVerificationFailedWarning")},
-	{ECardApiResult::Minor::SAL_MEAC_CommunityVerificationFailedWarning, QString::fromLatin1(RESULTMINOR "/sal/mEAC#CommunityVerificationFailedWarning")},
-	{ECardApiResult::Minor::SAL_MEAC_DocumentValidityVerificationFailed, QString::fromLatin1(RESULTMINOR "/sal/mEAC#DocumentValidityVerificationFailed")},
+	{ECardApiResult::Minor::AL_Unknown_Error, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#unknownError")},
+	{ECardApiResult::Minor::AL_No_Permission, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#noPermission")},
+	{ECardApiResult::Minor::AL_Internal_Error, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#internalError")},
+	{ECardApiResult::Minor::AL_Parameter_Error, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#parameterError")},
+	{ECardApiResult::Minor::AL_Unkown_API_Function, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#unknownAPIFunction")},
+	{ECardApiResult::Minor::AL_Not_Initialized, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#notInitialized")},
+	{ECardApiResult::Minor::AL_Warning_Connection_Disconnected, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#warningConnectionDisconnected")},
+	{ECardApiResult::Minor::AL_Session_Terminated_Warning, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#SessionTerminatedWarning")},
+	{ECardApiResult::Minor::AL_Communication_Error, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#communicationError")},
+	{ECardApiResult::Minor::DP_Timeout_Error, QLatin1String(RESULTMINOR) + QLatin1String("/dp#timeout")},
+	{ECardApiResult::Minor::DP_Unknown_Channel_Handle, QLatin1String(RESULTMINOR) + QLatin1String("/dp#unknownChannelHandle")},
+	{ECardApiResult::Minor::DP_Communication_Error, QLatin1String(RESULTMINOR) + QLatin1String("/dp#communicationError")},
+	{ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed, QLatin1String(RESULTMINOR) + QLatin1String("/dp#trustedChannelEstablishmentFailed")},
+	{ECardApiResult::Minor::DP_Unknown_Protocol, QLatin1String(RESULTMINOR) + QLatin1String("/dp#unknownProtocol")},
+	{ECardApiResult::Minor::DP_Unknown_Cipher_Suite, QLatin1String(RESULTMINOR) + QLatin1String("/dp#unknownCipherSuite")},
+	{ECardApiResult::Minor::DP_Unknown_Webservice_Binding, QLatin1String(RESULTMINOR) + QLatin1String("/dp#unknownWebserviceBinding")},
+	{ECardApiResult::Minor::DP_Node_Not_Reachable, QLatin1String(RESULTMINOR) + QLatin1String("/dp#nodeNotReachable")},
+	{ECardApiResult::Minor::IFDL_Timeout_Error, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl/common#timeoutError")},
+	{ECardApiResult::Minor::IFDL_UnknownSlot, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl/terminal#unknownSlot")},
+	{ECardApiResult::Minor::IFDL_InvalidSlotHandle, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl/common#invalidSlotHandle")},
+	{ECardApiResult::Minor::IFDL_CancellationByUser, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl#cancellationByUser")},
+	{ECardApiResult::Minor::IFDL_IFD_SharingViolation, QLatin1String(RESULTMINOR) + QLatin1String("ifdl/terminal#IFDSharingViolation")},
+	{ECardApiResult::Minor::IFDL_Terminal_NoCard, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl/terminal#noCard")},
+	{ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl/IO#repeatedDataMismatch")},
+	{ECardApiResult::Minor::IFDL_IO_UnknownPINFormat, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl/IO#unknownPINFormat")},
+	{ECardApiResult::Minor::IL_Signature_InvalidCertificatePath, QLatin1String(RESULTMINOR) + QLatin1String("/il/signature#invalidCertificatePath")},
+	{ECardApiResult::Minor::KEY_KeyGenerationNotPossible, QLatin1String(RESULTMINOR) + QLatin1String("/il/key#keyGenerationNotPossible")},
+	{ECardApiResult::Minor::SAL_Cancellation_by_User, QLatin1String(RESULTMINOR) + QLatin1String("/sal#cancellationByUser")},
+	{ECardApiResult::Minor::SAL_Invalid_Key, QLatin1String(RESULTMINOR) + QLatin1String("/sal#invalidKey")},
+	{ECardApiResult::Minor::SAL_SecurityConditionNotSatisfied, QLatin1String(RESULTMINOR) + QLatin1String("/sal#securityConditionNotSatisfied")},
+	{ECardApiResult::Minor::SAL_MEAC_AgeVerificationFailedWarning, QLatin1String(RESULTMINOR) + QLatin1String("/sal/mEAC#AgeVerificationFailedWarning")},
+	{ECardApiResult::Minor::SAL_MEAC_CommunityVerificationFailedWarning, QLatin1String(RESULTMINOR) + QLatin1String("/sal/mEAC#CommunityVerificationFailedWarning")},
+	{ECardApiResult::Minor::SAL_MEAC_DocumentValidityVerificationFailed, QLatin1String(RESULTMINOR) + QLatin1String("/sal/mEAC#DocumentValidityVerificationFailed")},
 };
 
 QMap<GlobalStatus::Code, ECardApiResult::Minor> ECardApiResult::cConversionMap1 = {};
@@ -75,7 +75,7 @@ ECardApiResult ECardApiResult::fromStatus(const GlobalStatus& pStatus)
 	}
 
 	const QString& message = pStatus.toErrorDescription();
-	const Minor minor = fromStatus((pStatus.getStatusCode()));
+	const Minor minor = fromStatus(pStatus.getStatusCode());
 	const Origin status = fromStatus(pStatus.getOrigin());
 
 	return ECardApiResult(Major::Error, minor, message, status);
@@ -139,8 +139,6 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Workflow_Redirect_Transmission_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Processing_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Reader_Became_Inaccessible, Minor::AL_Communication_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Bluetooth_Reader_Connection_Error, Minor::AL_Communication_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Reader_Device_Scan_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Network_Ssl_Establishment_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, Minor::AL_Communication_Error);
@@ -202,7 +200,6 @@ void ECardApiResult::initConversionMaps()
 
 	addConversionElement(GlobalStatus::Code::Paos_Error_SAL_Invalid_Key, Minor::SAL_Invalid_Key);
 
-	addConversionElement(GlobalStatus::Code::Downloader_Data_Corrupted, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::RemoteConnector_InvalidRequest, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::RemoteConnector_NoSupportedApiLevel, Minor::AL_Unknown_Error);
@@ -211,6 +208,10 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::RemoteConnector_RemoteHostRefusedConnection, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Downloader_File_Not_Found, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Downloader_Cannot_Save_File, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Downloader_Data_Corrupted, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Downloader_Missing_Platform, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Downloader_Aborted, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Update_Execution_Failed, Minor::AL_Unknown_Error);
 }
 
 
@@ -239,7 +240,7 @@ GlobalStatus::Code ECardApiResult::toStatus(const Minor pMinor)
 		return GlobalStatus::Code::Unknown_Error;
 	}
 
-	return cConversionMap2[pMinor];
+	return cConversionMap2.value(pMinor);
 }
 
 
@@ -254,7 +255,7 @@ ECardApiResult::Minor ECardApiResult::fromStatus(const GlobalStatus::Code pCode)
 		return Minor::AL_Unknown_Error;
 	}
 
-	return cConversionMap1[pCode];
+	return cConversionMap1.value(pCode);
 }
 
 
@@ -466,7 +467,7 @@ ECardApiResult::ResultData::ResultData(Major pMajor, Minor pMinor, const QString
 	, mMajor(pMajor)
 	, mMinor(pMinor)
 	, mMessage(pMessage)
-	, mMessageLang(LanguageLoader::getInstance().getUsedLocale().bcp47Name().left(2))
+	, mMessageLang(LanguageLoader::getLocalCode())
 	, mOrigin(pOrigin)
 {
 }

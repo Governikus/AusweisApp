@@ -6,7 +6,9 @@
 
 #include "asn1/ASN1Util.h"
 
-#include <QtCore>
+#include <QByteArray>
+#include <QObject>
+#include <QScopeGuard>
 #include <QtTest>
 
 #include <openssl/objects.h>
@@ -33,6 +35,9 @@ class test_Asn1OctetStringUtil
 		{
 			QByteArray bytes = QByteArray::fromHex("0102030405060708090a0b0c0d0e0f");
 			ASN1_OCTET_STRING* asn1OctetString = ASN1_OCTET_STRING_new();
+			const auto guard = qScopeGuard([asn1OctetString] {
+						ASN1_STRING_free(asn1OctetString);
+					});
 			ASN1_OCTET_STRING_set(asn1OctetString, reinterpret_cast<unsigned char*>(bytes.data()), bytes.length());
 
 			QCOMPARE(Asn1OctetStringUtil::getValue(asn1OctetString), bytes);
@@ -43,6 +48,9 @@ class test_Asn1OctetStringUtil
 		{
 			QByteArray bytes = QByteArray::fromHex("0102030405060708090a0b0c0d0e0f");
 			ASN1_OCTET_STRING* asn1OctetString = ASN1_OCTET_STRING_new();
+			const auto guard = qScopeGuard([asn1OctetString] {
+						ASN1_STRING_free(asn1OctetString);
+					});
 			Asn1OctetStringUtil::setValue(bytes, asn1OctetString);
 
 			QCOMPARE(asn1OctetString->length, 15);

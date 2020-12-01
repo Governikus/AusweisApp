@@ -56,19 +56,21 @@ class test_GlobalStatus
 			QTest::newRow("certificateNoDescription") << GlobalStatus::Code::Workflow_Certificate_No_Description << tr("No certificate description available.");
 			QTest::newRow("certificateNoUrl") << GlobalStatus::Code::Workflow_Certificate_No_Url_In_Description << tr("No subject url available in certificate description.");
 			QTest::newRow("hashError") << GlobalStatus::Code::Workflow_Certificate_Hash_Error << tr("The certificate description does not match the certificate.");
-			QTest::newRow("certificateSop") << GlobalStatus::Code::Workflow_Certificate_Sop_Error << tr("The subject URL in the certificate description and the TCToken URL don't satisfy the same origin policy.");
+			QTest::newRow("certificateSop") << GlobalStatus::Code::Workflow_Certificate_Sop_Error << tr("The subject URL in the certificate description and the TCToken URL do not satisfy the same origin policy.");
 			QTest::newRow("wrongParameter") << GlobalStatus::Code::Workflow_Wrong_Parameter_Invocation << tr("Application was invoked with wrong parameters.");
 			QTest::newRow("incompleteInformation") << GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided << tr("The server provided no or incomplete information. Your personal data could not be read out.");
-			QTest::newRow("deviceConnection") << GlobalStatus::Code::Workflow_Bluetooth_Reader_Connection_Error << tr("An error occurred while connecting to a bluetooth card reader.");
-			QTest::newRow("deviceScan") << GlobalStatus::Code::Workflow_Reader_Device_Scan_Error << tr("An error occurred while scanning for a bluetooth card reader.");
 			QTest::newRow("abnormalClose") << GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose << tr("The smartphone as card reader (SaC) connection was aborted.");
 			QTest::newRow("invalidRequest") << GlobalStatus::Code::RemoteConnector_InvalidRequest << tr("Smartphone as card reader (SaC) connection request was invalid.");
 			QTest::newRow("noSupportedApiLevel") << GlobalStatus::Code::RemoteConnector_NoSupportedApiLevel << tr("Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest AusweisApp2 version on both your smartphone and your computer.");
 			QTest::newRow("connectionTimeout") << GlobalStatus::Code::RemoteConnector_ConnectionTimeout << tr("A timeout occurred while trying to establish a connection to the smartphone as card reader (SaC).");
 			QTest::newRow("connectionError") << GlobalStatus::Code::RemoteConnector_ConnectionError << tr("An error occurred while trying to establish a connection to the smartphone as card reader (SaC).");
 			QTest::newRow("hostRefused") << GlobalStatus::Code::RemoteConnector_RemoteHostRefusedConnection << tr("The smartphone to be paired has rejected the connection. Please check the pairing code. If no pairing code is shown activate the pairing mode.");
+			QTest::newRow("fileNotFound") << GlobalStatus::Code::Downloader_File_Not_Found << tr("File not found.");
 			QTest::newRow("cannotSaveFile") << GlobalStatus::Code::Downloader_Cannot_Save_File << tr("Cannot save file.");
 			QTest::newRow("dataCorrupted") << GlobalStatus::Code::Downloader_Data_Corrupted << tr("Received data were corrupted.");
+			QTest::newRow("missingPlatform") << GlobalStatus::Code::Downloader_Missing_Platform << tr("Received data does not contain data for the current platform.");
+			QTest::newRow("downloadAborted") << GlobalStatus::Code::Downloader_Aborted << tr("Download aborted.");
+			QTest::newRow("updateFailed") << GlobalStatus::Code::Update_Execution_Failed << tr("A new process to start the update could not be launched.");
 		}
 
 

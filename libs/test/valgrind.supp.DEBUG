@@ -1,0 +1,32 @@
+{
+   FICLONE: https://bugs.kde.org/show_bug.cgi?id=397605
+   Memcheck:Param
+   ioctl(generic)
+   fun:ioctl
+   fun:_ZN17QFileSystemEngine9cloneFileEiiRK19QFileSystemMetaData
+   fun:_ZN13QFSFileEngine7cloneToEP19QAbstractFileEngine
+   fun:_ZN5QFile4copyERK7QString
+   fun:_ZN5QFile4copyERK7QStringS2_
+}
+
+{
+   Platform plugin libqoffscreen
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   obj:/*/plugins/platforms/libqoffscreen.so
+}
+
+{
+   Internal of QProcess
+   Memcheck:Param
+   waitid(infop)
+   fun:syscall
+   fun:_ZL10sys_waitidiiP9siginfo_tiP6rusage
+   fun:_ZL26detect_clone_pidfd_supportv
+   fun:_ZL13system_forkfdiPiS_
+   fun:forkfd
+   fun:_ZN15QProcessPrivate12startProcessEv
+   fun:_ZN15QProcessPrivate5startE6QFlagsIN9QIODevice12OpenModeFlagEE
+   fun:_ZN8QProcess5startE6QFlagsIN9QIODevice12OpenModeFlagEE
+}

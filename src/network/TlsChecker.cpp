@@ -145,6 +145,7 @@ QString TlsChecker::toString(QSsl::SslProtocol pProtocol)
 		case QSsl::SslProtocol::SecureProtocols:
 			return QStringLiteral("SecureProtocols");
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0)) || QT_DEPRECATED_SINCE(5, 15) && (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 		case QSsl::SslProtocol::SslV2:
 			return QStringLiteral("SslV2");
 
@@ -153,6 +154,8 @@ QString TlsChecker::toString(QSsl::SslProtocol pProtocol)
 
 		case QSsl::SslProtocol::TlsV1SslV3:
 			return QStringLiteral("TlsV1SslV3");
+
+#endif
 
 		case QSsl::SslProtocol::TlsV1_0:
 			return QStringLiteral("TlsV1_0");
@@ -172,7 +175,6 @@ QString TlsChecker::toString(QSsl::SslProtocol pProtocol)
 		case QSsl::SslProtocol::TlsV1_2OrLater:
 			return QStringLiteral("TlsV1_2OrLater");
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 		case QSsl::SslProtocol::TlsV1_3:
 			return QStringLiteral("TlsV1_3");
 
@@ -191,7 +193,6 @@ QString TlsChecker::toString(QSsl::SslProtocol pProtocol)
 		case QSsl::SslProtocol::DtlsV1_2OrLater:
 			return QStringLiteral("DtlsV1_2OrLater");
 
-#endif
 		case QSsl::SslProtocol::UnknownProtocol:
 			return QStringLiteral("UnknownProtocol");
 	}

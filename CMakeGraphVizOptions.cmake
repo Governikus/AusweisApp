@@ -4,9 +4,9 @@
 # cmake --build . --target architecture
 ########################################
 
-SET(GRAPHVIZ_IGNORE_TARGETS AusweisAppGlobal;AusweisAppExternal;cvc;fuzz;OpenSsl;tlscheck;Test;Script;testbedtool;tsParserFU)
-SET(GRAPHVIZ_EXTERNAL_LIBS OFF)
-SET(GRAPHVIZ_EXECUTABLES ON)
-SET(GRAPHVIZ_GENERATE_PER_TARGET OFF)
-SET(GRAPHVIZ_GENERATE_DEPENDERS OFF)
-SET(GRAPHVIZ_GRAPH_NAME AusweisApp2)
+set(GRAPHVIZ_IGNORE_TARGETS AusweisAppGlobal;AusweisAppExternal;cvc;fuzz;OpenSsl;tlscheck;Test;Script;testbedtool;tsParserFU)
+set(GRAPHVIZ_EXTERNAL_LIBS OFF)
+set(GRAPHVIZ_EXECUTABLES ON)
+set(GRAPHVIZ_GENERATE_PER_TARGET OFF)
+set(GRAPHVIZ_GENERATE_DEPENDERS OFF)
+set(GRAPHVIZ_GRAPH_NAME AusweisApp2)

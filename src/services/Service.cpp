@@ -7,7 +7,6 @@
 #include "AppSettings.h"
 #include "AppUpdateData.h"
 #include "ProviderConfiguration.h"
-#include "SingletonHelper.h"
 
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
 #include "ReaderConfiguration.h"
@@ -15,18 +14,14 @@
 
 #include <QMetaObject>
 
-
 using namespace governikus;
-
-
-defineSingleton(Service)
 
 
 void Service::doAppUpdate(UpdateType pType, bool pForceUpdate)
 {
 	switch (pType)
 	{
-		case UpdateType::APP:
+		case UpdateType::APPCAST:
 			mExplicitSuccessMessage = pForceUpdate;
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
 			mTimer.start(mOneDayInMs);
@@ -64,14 +59,14 @@ void Service::onProviderUpdateFinished()
 }
 
 
-void Service::onAppUpdateFinished(bool pUpdateAvailable, const GlobalStatus& pError)
+void Service::onAppcastFinished(bool pUpdateAvailable, const GlobalStatus& pError)
 {
 	if (pUpdateAvailable || pError.isError() || mExplicitSuccessMessage)
 	{
-		Q_EMIT fireAppUpdateFinished(pUpdateAvailable, pError);
+		Q_EMIT fireAppcastFinished(pUpdateAvailable, pError);
 	}
 
-	if (pError.isNoError())
+	if (pError.isNoError() || pError.getStatusCode() == GlobalStatus::Code::Downloader_Missing_Platform)
 	{
 		doAppUpdate(UpdateType::PROVIDER);
 	}
@@ -86,26 +81,20 @@ Service::Service()
 	connect(&mTimer, &QTimer::timeout, this, &Service::onTimedUpdateTriggered);
 	connect(Env::getSingleton<ProviderConfiguration>(), &ProviderConfiguration::fireUpdated, this, &Service::onProviderUpdateFinished);
 	connect(Env::getSingleton<ProviderConfiguration>(), &ProviderConfiguration::fireNoUpdateAvailable, this, &Service::onProviderUpdateFinished);
-	connect(Env::getSingleton<AppUpdater>(), &AppUpdater::fireAppUpdateCheckFinished, this, &Service::onAppUpdateFinished);
+	connect(Env::getSingleton<AppUpdater>(), &AppUpdater::fireAppcastCheckFinished, this, &Service::onAppcastFinished);
 
 	mTimer.setSingleShot(true);
 	mTimer.start(mOneDayInMs);
 }
 
 
-Service& Service::getInstance()
+void Service::updateAppcast()
 {
-	return *Instance;
+	doAppUpdate(UpdateType::APPCAST, true);
 }
 
 
-void Service::updateApp()
-{
-	doAppUpdate(UpdateType::APP, true);
-}
-
-
-bool Service::isUpdateScheduled()
+bool Service::isUpdateScheduled() const
 {
 	return mUpdateScheduled;
 }
@@ -117,7 +106,7 @@ void Service::runUpdateIfNeeded()
 	{
 		mUpdateScheduled = false;
 		QMetaObject::invokeMethod(this, [this] {
-					doAppUpdate(UpdateType::APP);
+					doAppUpdate(UpdateType::APPCAST);
 				}, Qt::QueuedConnection);
 	}
 }

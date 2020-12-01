@@ -7,37 +7,87 @@
 #include "AppSettings.h"
 #include "VersionNumber.h"
 
+#include <QDir>
+#include <QFile>
 #include <QJsonArray>
 #include <QJsonParseError>
 #include <QLoggingCategory>
+#include <QOperatingSystemVersion>
 
 using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(appupdate)
 
-AppUpdateData::AppUpdateData()
-	: mDate()
+AppUpdateData::AppUpdateData(const GlobalStatus& pParsingResult)
+	: mMinOsVersion()
+	, mDate()
 	, mVersion()
 	, mUrl()
 	, mSize(-1)
 	, mChecksumUrl()
 	, mNotesUrl()
 	, mNotes()
-	, mParsingResult(GlobalStatus::Code::No_Error)
+	, mChecksumAlgorithm(QCryptographicHash::Sha256)
+	, mChecksum()
+	, mChecksumValid(false)
+	, mUpdatePackagePath()
+	, mParsingResult(pParsingResult)
 {
 }
 
 
-AppUpdateData::AppUpdateData(const GlobalStatus& pParsingResult)
-	: mDate()
-	, mVersion()
-	, mUrl()
-	, mSize(-1)
-	, mChecksumUrl()
-	, mNotesUrl()
-	, mNotes()
-	, mParsingResult(pParsingResult)
+AppUpdateData::AppUpdateData(const QByteArray& pData)
+	: AppUpdateData(GlobalStatus::Code::No_Error)
 {
+	QJsonParseError jsonError;
+
+	const auto& json = QJsonDocument::fromJson(pData, &jsonError);
+	if (jsonError.error != QJsonParseError::NoError)
+	{
+		qCWarning(appupdate) << "Cannot parse json data:" << jsonError.errorString();
+		mParsingResult = GlobalStatus::Code::Downloader_Data_Corrupted;
+		return;
+	}
+
+	const auto& obj = json.object();
+	const QJsonValue& items = obj[QLatin1String("items")];
+
+	if (!items.isArray())
+	{
+		qCWarning(appupdate) << "Field 'items' cannot be parsed";
+		mParsingResult = GlobalStatus::Code::Downloader_Data_Corrupted;
+		return;
+	}
+
+	const auto& itemArray = items.toArray();
+	const auto& end = itemArray.constEnd();
+	for (auto iter = itemArray.constBegin(); iter != end; ++iter)
+	{
+		if (iter->isObject())
+		{
+			auto jsonObject = iter->toObject();
+			if (checkPlatformObject(jsonObject))
+			{
+				mMinOsVersion = QVersionNumber::fromString(jsonObject[QLatin1String("minimum_platform")].toString());
+				mVersion = jsonObject[QLatin1String("version")].toString();
+				mUrl = QUrl(jsonObject[QLatin1String("url")].toString());
+				mNotesUrl = QUrl(jsonObject[QLatin1String("notes")].toString());
+				mDate = QDateTime::fromString(jsonObject[QLatin1String("date")].toString(), Qt::ISODate);
+				mChecksumUrl = QUrl(jsonObject[QLatin1String("checksum")].toString());
+				mSize = qMax(-1, jsonObject[QLatin1String("size")].toInt(-1));
+				return;
+			}
+		}
+		else
+		{
+			qCWarning(appupdate) << "Object of field 'items' cannot be parsed";
+			mParsingResult = GlobalStatus::Code::Downloader_Data_Corrupted;
+			return;
+		}
+	}
+
+	mParsingResult = GlobalStatus::Code::Downloader_Missing_Platform;
+	qCWarning(appupdate) << "No matching platform found in update json";
 }
 
 
@@ -46,13 +96,30 @@ bool AppUpdateData::isValid() const
 	// Valid means = required data!
 	return !mVersion.isEmpty() &&
 		   mUrl.isValid() &&
+		   !mUrl.fileName().isEmpty() &&
+		   mChecksumUrl.isValid() &&
+		   !mChecksumUrl.fileName().isEmpty() &&
 		   mNotesUrl.isValid();
 }
 
 
-void AppUpdateData::setDate(const QDateTime& pDate)
+const GlobalStatus& AppUpdateData::getParsingResult() const
 {
-	mDate = pDate;
+	return mParsingResult;
+}
+
+
+bool AppUpdateData::isCompatible() const
+{
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+	const auto osv = QOperatingSystemVersion::current();
+	const auto currentVersion = QVersionNumber(osv.majorVersion(), osv.minorVersion(), osv.microVersion());
+	return currentVersion >= mMinOsVersion;
+
+#else
+	return true;
+
+#endif
 }
 
 
@@ -62,21 +129,9 @@ const QDateTime& AppUpdateData::getDate() const
 }
 
 
-void AppUpdateData::setVersion(const QString& pVersion)
-{
-	mVersion = pVersion;
-}
-
-
 const QString& AppUpdateData::getVersion() const
 {
 	return mVersion;
-}
-
-
-void AppUpdateData::setUrl(const QUrl& pUrl)
-{
-	mUrl = pUrl;
 }
 
 
@@ -92,34 +147,9 @@ int AppUpdateData::getSize() const
 }
 
 
-void AppUpdateData::setSize(int pSize)
-{
-	if (pSize < 0)
-	{
-		mSize = -1;
-	}
-	else
-	{
-		mSize = pSize;
-	}
-}
-
-
-void AppUpdateData::setChecksumUrl(const QUrl& pChecksumUrl)
-{
-	mChecksumUrl = pChecksumUrl;
-}
-
-
 const QUrl& AppUpdateData::getChecksumUrl() const
 {
 	return mChecksumUrl;
-}
-
-
-void AppUpdateData::setNotesUrl(const QUrl& pNotesUrl)
-{
-	mNotesUrl = pNotesUrl;
 }
 
 
@@ -141,60 +171,71 @@ const QString& AppUpdateData::getNotes() const
 }
 
 
-const GlobalStatus& AppUpdateData::getParsingResult() const
+void AppUpdateData::setChecksum(const QByteArray& pChecksum, QCryptographicHash::Algorithm pAlgorithm)
 {
-	return mParsingResult;
+	if (mChecksum == pChecksum && mChecksumAlgorithm == pAlgorithm)
+	{
+		return;
+	}
+
+	mChecksumAlgorithm = pAlgorithm;
+
+	if (pChecksum.isEmpty())
+	{
+		mChecksum.clear();
+		mChecksumValid = false;
+		return;
+	}
+
+	mChecksum = pChecksum.split(' ').first();
+	verifyChecksum();
 }
 
 
-AppUpdateData AppUpdateData::parse(const QByteArray& pData)
+const QByteArray& AppUpdateData::getChecksum() const
 {
-	QJsonParseError jsonError;
+	return mChecksum;
+}
 
-	const auto& json = QJsonDocument::fromJson(pData, &jsonError);
-	if (jsonError.error != QJsonParseError::NoError)
+
+void AppUpdateData::verifyChecksum()
+{
+	if (mUpdatePackagePath.isEmpty()
+			|| mChecksum.isEmpty()
+			|| !QFile::exists(mUpdatePackagePath))
 	{
-		qCWarning(appupdate) << "Cannot parse json data:" << jsonError.errorString();
-		return AppUpdateData(GlobalStatus::Code::Downloader_Data_Corrupted);
+		mChecksumValid = false;
+		return;
 	}
 
-	const auto& obj = json.object();
-	const QJsonValue& items = obj[QLatin1String("items")];
+	qCDebug(appupdate) << "Verify checksum with algorithm:" << mChecksumAlgorithm;
 
-	if (!items.isArray())
-	{
-		qCWarning(appupdate) << "Field 'items' cannot be parsed";
-		return AppUpdateData(GlobalStatus::Code::Downloader_Data_Corrupted);
-	}
+	QFile file(mUpdatePackagePath);
+	file.open(QFile::ReadOnly);
+	QCryptographicHash hasher(mChecksumAlgorithm);
+	hasher.addData(&file);
+	file.close();
 
-	const auto& itemArray = items.toArray();
-	const auto& end = itemArray.constEnd();
-	for (auto iter = itemArray.constBegin(); iter != end; ++iter)
-	{
-		if (iter->isObject())
-		{
-			auto jsonObject = iter->toObject();
-			if (checkPlatformObject(jsonObject))
-			{
-				AppUpdateData newData;
-				newData.setVersion(jsonObject[QLatin1String("version")].toString());
-				newData.setUrl(QUrl(jsonObject[QLatin1String("url")].toString()));
-				newData.setNotesUrl(QUrl(jsonObject[QLatin1String("notes")].toString()));
-				newData.setDate(QDateTime::fromString(jsonObject[QLatin1String("date")].toString(), Qt::ISODate));
-				newData.setChecksumUrl(QUrl(jsonObject[QLatin1String("checksum")].toString()));
-				newData.setSize(jsonObject[QLatin1String("size")].toInt(-1));
-				return newData;
-			}
-		}
-		else
-		{
-			qCWarning(appupdate) << "Object of field 'items' cannot be parsed";
-			return AppUpdateData(GlobalStatus::Code::Downloader_Data_Corrupted);
-		}
-	}
+	mChecksumValid = hasher.result().toHex() == mChecksum;
+}
 
-	qCWarning(appupdate()) << "No matching platform found in update json";
-	return AppUpdateData(GlobalStatus::Code::No_Error);
+
+bool AppUpdateData::isChecksumValid() const
+{
+	return mChecksumValid;
+}
+
+
+void AppUpdateData::setUpdatePackagePath(const QString& pFile)
+{
+	mUpdatePackagePath = pFile;
+	verifyChecksum();
+}
+
+
+QString AppUpdateData::getUpdatePackagePath() const
+{
+	return QDir::toNativeSeparators(mUpdatePackagePath);
 }
 
 

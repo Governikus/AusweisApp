@@ -20,35 +20,35 @@ class test_CertificateDescriptionModel
 	: public QObject
 {
 	Q_OBJECT
-	QSharedPointer<CertificateDescriptionModel> mModel;
+	CertificateDescriptionModel * mModel;
 	QSharedPointer<AuthContext> mContext;
 
 	private Q_SLOTS:
 		void init()
 		{
 			mContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
-			mModel.reset(new CertificateDescriptionModel());
+			mModel = Env::getSingleton<CertificateDescriptionModel>();
 		}
 
 
 		void cleanup()
 		{
-			mModel.clear();
+			mModel->resetContext();
 			mContext.clear();
 		}
 
 
 		void test_ResetContext()
 		{
-			QSignalSpy spy(mModel.data(), &CertificateDescriptionModel::fireChanged);
+			QSignalSpy spy(mModel, &CertificateDescriptionModel::fireChanged);
 			mModel->resetContext(mContext);
 			QCOMPARE(mModel->rowCount(), 4);
 
-			const QString termsOfUsage = QStringLiteral("Anschrift:\nbremen online services GmbH & Co. KG\nAm Fallturm 9\n28359 Bremen\n\nE-Mail-Adresse:\nhb@bos-bremen.de\n\nZweck des Auslesevorgangs:\nDemonstration des eID-Service\n\nZust\u00E4ndige Datenschutzaufsicht:\nDie Landesbeauftragte f\u00FCr Datenschutz und Informationsfreiheit der Freien Hansestadt Bremen\nArndtstra\u00DFe 1\n27570 Bremerhaven");
+			const QString termsOfUsage = QStringLiteral("Name, Anschrift und E-Mail-Adresse des Diensteanbieters:\nGovernikus GmbH & Co. KG\nHochschulring 4\n28359 Bremen\nE-Mail: kontakt@governikus.de ");
 			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::LABEL), QString("Provider"));
-			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("bos KG\nhttps://dev-demo.governikus-eid.de:8443"));
+			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("Governikus GmbH & Co. KG\nhttps://test.governikus-eid.de"));
 			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::LABEL), QString("Certificate issuer"));
-			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("Deutsche Post Com, Gesch\u00E4ftsfeld Signtrust\nhttp://www.signtrust.de"));
+			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("Governikus Test DVCA\nhttp://www.governikus.de"));
 			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::LABEL), QString("Provider information"));
 			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::TEXT), termsOfUsage);
 			QCOMPARE(mModel->data(mModel->index(3), CertificateDescriptionModel::UserRoles::LABEL), QString("Validity"));
@@ -68,7 +68,7 @@ class test_CertificateDescriptionModel
 			const auto& validModel = mModel->index(1, 0);
 
 			QCOMPARE(mModel->data(validModel, CertificateDescriptionModel::UserRoles::LABEL), QString("Certificate issuer"));
-			QCOMPARE(mModel->data(validModel, CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("Deutsche Post Com, Gesch\u00E4ftsfeld Signtrust\nhttp://www.signtrust.de"));
+			QCOMPARE(mModel->data(validModel, CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("Governikus Test DVCA\nhttp://www.governikus.de"));
 			QCOMPARE(mModel->data(validModel, 0), QVariant());
 		}
 

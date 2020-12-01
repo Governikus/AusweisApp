@@ -60,12 +60,18 @@
         <file>tctoken/broken.xml</file>
         <file>tctoken/withoutCommunicationErrorAddress.xml</file>
         <file>paos/DIDAuthenticateEAC1.xml</file>
+        <file>paos/DIDAuthenticateEAC1_template.xml</file>
+        <file>paos/DIDAuthenticateEAC1_template2.xml</file>
         <file>paos/DIDAuthenticateEAC1_2.xml</file>
         <file>paos/DIDAuthenticateEAC1_3.xml</file>
         <file>paos/DIDAuthenticateEAC1_TS_TA_2.1.1.xml</file>
         <file>paos/DIDAuthenticateEAC2.xml</file>
+        <file>paos/DIDAuthenticateEAC2_template.xml</file>
+        <file>paos/DIDAuthenticateEAC2_template2.xml</file>
         <file>paos/DIDAuthenticateEACAdditionalInput_manySignature.xml</file>
         <file>paos/DIDAuthenticateEACAdditionalInput_noSignature.xml</file>
+        <file>paos/DIDAuthenticateEACAdditionalInput_template.xml</file>
+        <file>paos/DIDAuthenticateEACAdditionalInput_template2.xml</file>
         <file>paos/DIDAuthenticateEACAdditionalInput.xml</file>
         <file>paos/DIDList.xml</file>
         <file>paos/Disconnect.xml</file>
@@ -74,6 +80,7 @@
         <file>paos/StartPAOSResponse1.xml</file>
         <file>paos/StartPAOSResponse2.xml</file>
         <file>paos/StartPAOSResponse3.xml</file>
+        <file>paos/Transmit_template.xml</file>
         <file>paos/Transmit.xml</file>
         <file>paos/Transmit2.xml</file>
         <file>self/SelfAuthenticationData.json</file>
@@ -87,5 +94,9 @@
         <file>logfiles/empty.txt</file>
         <file>logfiles/size1.txt</file>
         <file>logfiles/size42.txt</file>
-        </qresource>
+
+        <!-- Data samples copied from the Testbed log (1.20.0) -->
+        <file>testbed/DIDAuthenticateEAC1_C2_01.xml</file>
+        <file>testbed/DIDAuthenticateEAC1_C2_02.xml</file>
+    </qresource>
 </RCC>

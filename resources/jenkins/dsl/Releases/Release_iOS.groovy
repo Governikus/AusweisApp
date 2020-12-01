@@ -6,7 +6,7 @@ def j = new Release
 		name: 'iOS_IPA',
 		libraries: ['iOS'],
 		label: 'iOS',
-		artifacts: 'build/*.ipa,build/*.zip,build/*.bcsymbolmap,*.tar.zstd'
+		artifacts: 'libs/build/Toolchain_*,build/*.ipa,build/*.zip,build/*.bcsymbolmap,*.tar.zstd'
 	).generate(this)
 
 
@@ -49,7 +49,7 @@ j.with
 			{
 				shell('cd build; xcrun altool -t ios --validate-app --verbose -u "ausweisapp@governikus.com" -p @env:PASSWORD -f *.ipa')
 
-				shell('cd build; xcrun altool -t ios --upload-app --verbose -u "ausweisapp@governikus.com" -p @env:PASSWORD -f *.ipa')
+				shell('cd build; xcrun altool -t ios --upload-app -u "ausweisapp@governikus.com" -p @env:PASSWORD -f *.ipa')
 			}
 		}
 	}

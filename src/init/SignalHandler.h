@@ -24,6 +24,7 @@ class SignalHandler
 	: public QObject
 {
 	Q_OBJECT
+	friend class Env;
 
 	private:
 		Q_DISABLE_COPY(SignalHandler)
@@ -32,6 +33,8 @@ class SignalHandler
 		QPointer<AppController> mAppController;
 		bool mQuit;
 
+		SignalHandler();
+		virtual ~SignalHandler() override;
 		void quit();
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
@@ -51,12 +54,7 @@ class SignalHandler
 	private Q_SLOTS:
 		void onSignalSocketActivated();
 
-	protected:
-		SignalHandler();
-		virtual ~SignalHandler();
-
 	public:
-		static SignalHandler& getInstance();
 		void init();
 		void setController(AppController& pAppController);
 		bool shouldQuit() const;

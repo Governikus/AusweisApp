@@ -19,6 +19,10 @@ class test_Template
 {
 	Q_OBJECT
 
+	const QString KEY_1 = QStringLiteral("KEY_1");
+	const QString KEY_2 = QStringLiteral("KEY_2");
+	const QString KEY_3 = QStringLiteral("KEY_3");
+
 	private Q_SLOTS:
 		void initTestCase()
 		{
@@ -37,9 +41,9 @@ class test_Template
 		{
 			Template tplt(QStringLiteral("${KEY_1}${KEY_2}${KEY_3}${KEY_1}${KEY_2}${KEY_3}"));
 			QCOMPARE(tplt.getContextKeys().size(), 3);
-			QVERIFY(tplt.getContextKeys().contains(QLatin1String("KEY_1")));
-			QVERIFY(tplt.getContextKeys().contains(QLatin1String("KEY_2")));
-			QVERIFY(tplt.getContextKeys().contains(QLatin1String("KEY_3")));
+			QVERIFY(tplt.getContextKeys().contains(KEY_1));
+			QVERIFY(tplt.getContextKeys().contains(KEY_2));
+			QVERIFY(tplt.getContextKeys().contains(KEY_3));
 		}
 
 
@@ -47,7 +51,7 @@ class test_Template
 		{
 			Template tplt(QStringLiteral("${KEY_1}${KEY_2}${KEY_3}${KEY_1}${KEY_2}${KEY_3}"));
 
-			QVERIFY(tplt.setContextParameter(QStringLiteral("KEY_3"), QStringLiteral("VALUE_1")));
+			QVERIFY(tplt.setContextParameter(KEY_3, QStringLiteral("VALUE_1")));
 		}
 
 
@@ -63,8 +67,8 @@ class test_Template
 		{
 			Template tplt(QStringLiteral("${KEY_1}"));
 
-			tplt.setContextParameter(QStringLiteral("KEY_1"), QStringLiteral("la"));
-			tplt.setContextParameter(QStringLiteral("KEY_1"), QStringLiteral("le"));
+			tplt.setContextParameter(KEY_1, QStringLiteral("la"));
+			tplt.setContextParameter(KEY_1, QStringLiteral("le"));
 			QCOMPARE(tplt.render(), QLatin1String("le"));
 		}
 
@@ -73,9 +77,9 @@ class test_Template
 		{
 			Template tplt(QStringLiteral("${KEY_1}${KEY_2}${KEY_3} ${KEY_1}${KEY_2}${KEY_3}"));
 
-			tplt.setContextParameter(QStringLiteral("KEY_1"), QStringLiteral("la"));
-			tplt.setContextParameter(QStringLiteral("KEY_2"), QStringLiteral("le"));
-			tplt.setContextParameter(QStringLiteral("KEY_3"), QStringLiteral("lu"));
+			tplt.setContextParameter(KEY_1, QStringLiteral("la"));
+			tplt.setContextParameter(KEY_2, QStringLiteral("le"));
+			tplt.setContextParameter(KEY_3, QStringLiteral("lu"));
 			QCOMPARE(tplt.render(), QLatin1String("lalelu lalelu"));
 		}
 

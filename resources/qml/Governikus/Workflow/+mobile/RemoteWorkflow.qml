@@ -2,14 +2,13 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.RemoteServiceView 1.0
 import Governikus.TechnologyInfo 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
 import Governikus.Type.ReaderPlugIn 1.0
 import Governikus.Type.NumberModel 1.0
@@ -17,7 +16,6 @@ import Governikus.Type.NumberModel 1.0
 
 Item {
 	id: baseItem
-	signal requestPluginType(int pReaderPlugInType)
 
 	property bool settingsPushed: remoteServiceSettings.visible
 	property bool wifiEnabled: ApplicationModel.wifiEnabled
@@ -43,24 +41,27 @@ Item {
 		anchors.top: parent.top
 		anchors.right: parent.right
 		height: parent.height / 2
-		imageIconSource: "qrc:///images/icon_remote.svg"
-		imagePhoneSource: "qrc:///images/phone_remote.svg"
+		imageIconSource: "qrc:///images/mobile/icon_remote.svg"
+		imagePhoneSource: "qrc:///images/mobile/phone_remote.svg"
 		state: foundSelectedReader ? "two" : "off"
 	}
 
 	TechnologyInfo {
 		id: techInfo
-		anchors.left: parent.left
-		anchors.leftMargin: 5
-		anchors.right: parent.right
-		anchors.rightMargin: anchors.leftMargin
-		anchors.top: progressIndicator.bottom
-		anchors.bottom: switchToNfcAction.top
+
+		anchors {
+			left: parent.left
+			right: parent.right
+			top: progressIndicator.bottom
+			bottom: parent.bottom
+			leftMargin: Constants.component_spacing
+			rightMargin: Constants.component_spacing
+		}
+
+		onEnableLinkActivated: ApplicationModel.showSettings(ApplicationModel.SETTING_APP)
 
 		enableButtonVisible: !wifiEnabled || !foundSelectedReader
 		enableButtonText: {
-			SettingsModel.translationTrigger
-
 			if (!wifiEnabled) {
 				//: LABEL ANDROID IOS
 				return qsTr("Enable WiFi");
@@ -81,14 +82,22 @@ Item {
 			}
 		}
 		enableText: {
-			SettingsModel.translationTrigger
-
 			if (!wifiEnabled) {
 				//: INFO ANDROID IOS The WiFi module needs to be enabled in the system settings to use the remote service.
 				return qsTr("To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.");
 			} else if (!foundSelectedReader) {
 				//: INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.
-				return qsTr("No paired smartphone as card reader (SaC) with activated \"remote service\" available.");
+				var text = qsTr("No paired smartphone as card reader (SaC) with activated \"remote service\" available.")
+
+				if (RemoteServiceModel.requiresLocalNetworkPermission) {
+					text += "<br><br>%1<br><br><a href=\"#\">%2</a><br>"
+						//: INFO IOS Let user know to check the application settings for local network permission
+						.arg(qsTr("To be able to use your smartphone as card reader (SaC), please make sure that access to the local network is allowed for %1.").arg(Qt.application.name))
+						//: INFO IOS Link to application settings
+						.arg(qsTr("Go to application settings"))
+				}
+
+				return text;
 			} else {
 				return "";
 			}
@@ -99,11 +108,9 @@ Item {
 			qsTr("Determine card") :
 			//: LABEL ANDROID IOS
 			qsTr("Establish connection")
-		) + SettingsModel.translationTrigger
+		)
 
 		subTitleText: {
-			SettingsModel.translationTrigger
-
 			if (!visible) {
 				return "";
 			} else if (!!NumberModel.inputError) {
@@ -119,15 +126,6 @@ Item {
 				return qsTr("Connected to %1. Please place the NFC interface of the smartphone on your ID card.").arg(RemoteServiceModel.connectedServerDeviceNames);
 			}
 		}
-	}
-
-	TechnologySwitch {
-		id: switchToNfcAction
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.bottom: parent.bottom
-		selectedTechnology: ReaderPlugIn.REMOTE
-		onRequestPluginType: parent.requestPluginType(pReaderPlugInType)
 	}
 
 	RemoteServiceSettings {

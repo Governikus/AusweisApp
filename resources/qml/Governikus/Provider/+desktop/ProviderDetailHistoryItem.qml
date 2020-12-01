@@ -2,14 +2,12 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 Item {
 	id: baseItem
@@ -40,7 +38,7 @@ Item {
 				  Utils.isYesterday(dateTime) ? qsTr("yesterday") :
 				  Utils.isThisWeek(dateTime) ? dateTime.toLocaleString(Qt.locale(), qsTr("dddd")) :
 				  dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy"))
-				  ) + SettingsModel.translationTrigger
+				  )
 		}
 
 		GridLayout {
@@ -52,7 +50,7 @@ Item {
 			GText {
 				textStyle: Style.text.normal
 				//: LABEL DESKTOP_QML
-				text: qsTr("Service:") + SettingsModel.translationTrigger
+				text: qsTr("Service:")
 				font.weight: Font.Bold
 				maximumLineCount: 1
 			}
@@ -69,7 +67,7 @@ Item {
 			GText {
 				textStyle: Style.text.normal
 				//: LABEL DESKTOP_QML
-				text: qsTr("Provider:") + SettingsModel.translationTrigger
+				text: qsTr("Provider:")
 				font.weight: Font.Bold
 				maximumLineCount: 1
 			}

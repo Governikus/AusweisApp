@@ -11,8 +11,8 @@ using namespace governikus;
 MsgHandlerInsertCard::MsgHandlerInsertCard(MsgContext& pContext)
 	: MsgHandler(MsgType::INSERT_CARD)
 {
-	Q_ASSERT(pContext.getWorkflowContext());
-	pContext.getWorkflowContext()->setStateApproved();
+	Q_ASSERT(pContext.getContext());
+	pContext.getContext()->setStateApproved();
 
 	const auto& infos = Env::getSingleton<ReaderManager>()->getReaderInfos();
 	for (const auto& entry : infos)

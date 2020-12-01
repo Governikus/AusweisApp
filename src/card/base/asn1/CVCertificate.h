@@ -12,7 +12,6 @@
 
 #include <QByteArrayList>
 #include <QDebug>
-#include <QString>
 
 #include <openssl/ecdsa.h>
 
@@ -57,6 +56,7 @@ using CVCertificate = struct cvcertificate_st
 	QByteArray getRawBody() const;
 	const ECDSA_SIG* getEcdsaSignature() const;
 	QByteArray getRawSignature() const;
+	QByteArray getDerSignature() const;
 
 	bool isValidOn(const QDateTime& pValidationDate) const;
 	bool isIssuedBy(const cvcertificate_st& pIssuer) const;

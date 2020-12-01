@@ -24,8 +24,8 @@ class DidAuthenticateEAC2Command
 		friend class ::test_CardConnection;
 		friend class ::test_DidAuthenticateEAC2Command;
 		CVCertificateChain mCvcChain;
-		QString mEphemeralPublicKeyAsHex;
-		QString mSignatureAsHex;
+		QByteArray mEphemeralPublicKeyAsHex;
+		QByteArray mSignatureAsHex;
 		QByteArray mAuthenticatedAuxiliaryDataAsBinary;
 		QByteArray mEfCardSecurityAsHex;
 		QByteArray mNonceAsHex;
@@ -46,8 +46,8 @@ class DidAuthenticateEAC2Command
 
 	public:
 		explicit DidAuthenticateEAC2Command(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
-				const CVCertificateChain& pCvcChain, const QString& pEphemeralPublicKeyAsHex,
-				const QString& pSignatureAsHex, const QByteArray& pAuthenticatedAuxiliaryDataAsBinary);
+				const CVCertificateChain& pCvcChain, const QByteArray& pEphemeralPublicKeyAsHex,
+				const QByteArray& pSignatureAsHex, const QByteArray& pAuthenticatedAuxiliaryDataAsBinary);
 
 
 		const QByteArray& getEfCardSecurityAsHex() const

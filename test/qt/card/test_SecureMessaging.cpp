@@ -60,7 +60,7 @@ class test_SecureMessaging
 				auto iv = mCipher->encrypt(ssc);
 				mCipher->setIv(iv);
 
-				int padLen = mCipher->getBlockSize() - (pData.size() % mCipher->getBlockSize());
+				const auto padLen = mCipher->getBlockSize() - (pData.size() % mCipher->getBlockSize());
 				pData = concat({pData, QByteArray::fromHex("80"), QByteArray(padLen - 1, 0x00)});
 				QByteArray encryptedData = mCipher->encrypt(pData).prepend(0x01);
 				result[0] = QByteArray().append(char(0x87)).append(ByteArrayUtil::fromValue(encryptedData.size())).append(encryptedData);
@@ -69,7 +69,7 @@ class test_SecureMessaging
 			result[1] = QByteArray().append(char(0x99)).append(ByteArrayUtil::fromValue(pSw.size())).append(pSw);
 			{
 				QByteArray dataToMac = concat({ssc, result[0], result[1]});
-				int padLen = mCipher->getBlockSize() - (dataToMac.size() % mCipher->getBlockSize());
+				const auto padLen = mCipher->getBlockSize() - (dataToMac.size() % mCipher->getBlockSize());
 				dataToMac.append(char(0x80)).append(QByteArray(padLen - 1, 0x00));
 				QByteArray mac = mCipherMac->generate(dataToMac);
 				result[2] = QByteArray().append(char(0x8E)).append(ByteArrayUtil::fromValue(mac.size())).append(mac);

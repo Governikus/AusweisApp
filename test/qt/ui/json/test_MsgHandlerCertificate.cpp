@@ -21,7 +21,8 @@ class test_MsgHandlerCertificate
 
 	QSharedPointer<AuthContext> getContext()
 	{
-		QSharedPointer<TestAuthContext> context(new TestAuthContext(new InternalActivationContext(QUrl("http://dummy")), ":/paos/DIDAuthenticateEAC1.xml"));
+		QSharedPointer<ActivationContext> activationContext(new InternalActivationContext(QUrl("http://dummy")));
+		QSharedPointer<TestAuthContext> context(new TestAuthContext(activationContext, ":/paos/DIDAuthenticateEAC1.xml"));
 		context->setRequiredAccessRights({AccessRight::READ_DG01});
 		context->setOptionalAccessRights({AccessRight::AGE_VERIFICATION});
 		return context;
@@ -49,7 +50,7 @@ class test_MsgHandlerCertificate
 
 			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
 			QByteArray msg = "{\"cmd\": \"GET_CERTIFICATE\"}";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"description\":{\"issuerName\":\"Deutsche Post Com, Gesch\xC3\xA4" "ftsfeld Signtrust\",\"issuerUrl\":\"http://www.signtrust.de\",\"purpose\":\"Demonstration des eID-Service\",\"subjectName\":\"bos KG\",\"subjectUrl\":\"https://dev-demo.governikus-eid.de:8443\",\"termsOfUsage\":\"Anschrift:\\r\\nbremen online services GmbH & Co. KG\\r\\nAm Fallturm 9\\r\\n28359 Bremen\\r\\n\\r\\nE-Mail-Adresse:\\r\\nhb@bos-bremen.de\\r\\n\\r\\nZweck des Auslesevorgangs:\\r\\nDemonstration des eID-Service\\r\\n\\r\\nZust\xC3\xA4ndige Datenschutzaufsicht:\\r\\nDie Landesbeauftragte f\xC3\xBCr Datenschutz und Informationsfreiheit der Freien Hansestadt Bremen\\r\\nArndtstra\xC3\x9F" "e 1\\r\\n27570 Bremerhaven\"},\"msg\":\"CERTIFICATE\",\"validity\":{\"effectiveDate\":\"2013-11-27\",\"expirationDate\":\"2013-12-26\"}}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"description\":{\"issuerName\":\"Governikus Test DVCA\",\"issuerUrl\":\"http://www.governikus.de\",\"purpose\":\"\",\"subjectName\":\"Governikus GmbH & Co. KG\",\"subjectUrl\":\"https://test.governikus-eid.de\",\"termsOfUsage\":\"Name, Anschrift und E-Mail-Adresse des Diensteanbieters:\\r\\nGovernikus GmbH & Co. KG\\r\\nHochschulring 4\\r\\n28359 Bremen\\r\\nE-Mail: kontakt@governikus.de\\t\"},\"msg\":\"CERTIFICATE\",\"validity\":{\"effectiveDate\":\"2020-05-21\",\"expirationDate\":\"2020-06-20\"}}"));
 		}
 
 

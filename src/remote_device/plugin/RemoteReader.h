@@ -35,7 +35,7 @@ class RemoteReader
 
 		virtual Card* getCard() const override;
 
-		void update(const IfdStatus& pIfdStatus);
+		void updateStatus(const IfdStatus& pIfdStatus);
 };
 
 } // namespace governikus

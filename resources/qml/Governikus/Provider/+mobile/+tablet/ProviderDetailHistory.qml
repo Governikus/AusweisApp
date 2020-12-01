@@ -2,14 +2,12 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Provider 1.0
 import Governikus.Type.HistoryModel 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 Column {
 	id: baseItem
@@ -28,7 +26,7 @@ Column {
 		Accessible.name: text
 
 		//: LABEL ANDROID_TABLET IOS_TABLET
-		text: qsTr("History") + SettingsModel.translationTrigger
+		text: qsTr("History")
 		textStyle: Style.text.header_accent
 	}
 
@@ -47,7 +45,7 @@ Column {
 			providerPostalAddress: providerPostalAddress
 			dateTime: model.dateTime
 			//: LABEL ANDROID_TABLET IOS_TABLET
-			infoText: qsTr("Purpose for reading out requested data") + SettingsModel.translationTrigger
+			infoText: qsTr("Purpose for reading out requested data")
 			purposeText: purpose
 			requestedDataText: requestedData
 			termsOfUsageText: termsOfUsage
@@ -63,6 +61,6 @@ Column {
 		activeFocusOnTab: true
 
 		//: INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.
-		text: qsTr("Currently there are no history entries.") + SettingsModel.translationTrigger
+		text: qsTr("Currently there are no history entries.")
 	}
 }

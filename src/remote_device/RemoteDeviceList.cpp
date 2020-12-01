@@ -12,10 +12,10 @@
 using namespace governikus;
 
 
-static Initializer::Entry E([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<QSharedPointer<RemoteDeviceListEntry> >("QSharedPointer<RemoteDeviceListEntry>");
 			qRegisterMetaType<QVector<QSharedPointer<RemoteDeviceListEntry> > >("QVector<QSharedPointer<RemoteDeviceListEntry>>");
-		});
+		})
 
 
 namespace governikus
@@ -23,7 +23,7 @@ namespace governikus
 
 template<> RemoteDeviceList* createNewObject<RemoteDeviceList*>()
 {
-	return new RemoteDeviceListImpl;
+	return new RemoteDeviceListImpl();
 }
 
 
@@ -179,7 +179,7 @@ void RemoteDeviceListImpl::clear()
 {
 	decltype(mResponsiveList) removedDevices;
 	mResponsiveList.swap(removedDevices);
-	for (const auto& entry : removedDevices)
+	for (const auto& entry : qAsConst(removedDevices))
 	{
 		Q_EMIT fireDeviceVanished(entry);
 	}

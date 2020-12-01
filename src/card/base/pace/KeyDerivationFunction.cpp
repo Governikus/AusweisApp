@@ -51,7 +51,7 @@ KeyDerivationFunction::KeyDerivationFunction(const QByteArray& pPaceAlgorithm)
 }
 
 
-bool KeyDerivationFunction::isInitialized()
+bool KeyDerivationFunction::isInitialized() const
 {
 	return mKeySize != 0;
 }
@@ -69,13 +69,13 @@ QByteArray KeyDerivationFunction::mac(const QByteArray& pSecret)
 }
 
 
-QByteArray KeyDerivationFunction::pi(const QString& pSecret)
+QByteArray KeyDerivationFunction::pi(const QByteArray& pSecret)
 {
-	return deriveKey(pSecret.toLatin1(), QByteArray(), 3);
+	return deriveKey(pSecret, QByteArray(), 3);
 }
 
 
-QByteArray KeyDerivationFunction::deriveKey(const QByteArray& pK, const QByteArray& pNonce, quint32 pC)
+QByteArray KeyDerivationFunction::deriveKey(const QByteArray& pK, const QByteArray& pNonce, quint32 pC) const
 {
 	if (!isInitialized())
 	{

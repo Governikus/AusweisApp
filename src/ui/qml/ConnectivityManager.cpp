@@ -8,15 +8,13 @@
 #include <QNetworkInterface>
 #include <QTimerEvent>
 
-
 using namespace governikus;
-
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
 
-ConnectivityManager::ConnectivityManager(QObject* pParent)
-	: QObject(pParent)
+ConnectivityManager::ConnectivityManager()
+	: QObject()
 	, mTimerId(0)
 	, mActive(false)
 {
@@ -60,7 +58,6 @@ void ConnectivityManager::updateConnectivity()
 				&& !iface.flags().testFlag(QNetworkInterface::IsLoopBack)
 				&& !iface.addressEntries().isEmpty())
 		{
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
 			bool hasNonLocalAddress = false;
 			const auto& entries = iface.addressEntries();
 			for (const auto& entry : entries)
@@ -78,7 +75,6 @@ void ConnectivityManager::updateConnectivity()
 			{
 				continue;
 			}
-#endif
 
 			setActive(true, iface.name());
 			return;

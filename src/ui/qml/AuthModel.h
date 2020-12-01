@@ -35,17 +35,15 @@ class AuthModel
 		QSharedPointer<AuthContext> mContext;
 		QString mTransactionInfo;
 
-	protected:
 		AuthModel();
-		~AuthModel() override = default;
-		static AuthModel& getInstance();
+		virtual ~AuthModel() override = default;
 
 	public:
-		void resetContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());
+		void resetAuthContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());
 
 		const QString& getTransactionInfo() const;
 		int getProgressValue() const;
-		const QString getProgressMessage() const;
+		QString getProgressMessage() const;
 		QString getErrorHeader() const;
 		QString getErrorText() const;
 		QString getStatusCode() const;

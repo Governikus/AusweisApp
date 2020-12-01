@@ -76,7 +76,7 @@ void TrayIcon::create()
 #endif
 
 	//: LABEL DESKTOP
-	const auto quitAction = new QAction(tr("Exit AusweisApp2"), trayIconMenu);
+	const auto quitAction = new QAction(tr("Quit AusweisApp2"), trayIconMenu);
 	connect(quitAction, &QAction::triggered, this, &TrayIcon::fireQuit);
 	trayIconMenu->addAction(quitAction);
 
@@ -99,7 +99,7 @@ void TrayIcon::shutdown()
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 	if (mTrayIcon != nullptr)
 	{
-		QMenu* menu = mTrayIcon->contextMenu();
+		const QMenu* menu = mTrayIcon->contextMenu();
 		if (menu != nullptr)
 		{
 			qDeleteAll(menu->actions());
@@ -132,7 +132,7 @@ void TrayIcon::showMessage(const QString& pTitle, const QString& pMessage)
 		mTrayIcon->showMessage(pTitle, pMessage, mIcon, 3000);
 	}
 #else
-	Q_UNUSED(pTitle);
-	Q_UNUSED(pMessage);
+	Q_UNUSED(pTitle)
+	Q_UNUSED(pMessage)
 #endif
 }

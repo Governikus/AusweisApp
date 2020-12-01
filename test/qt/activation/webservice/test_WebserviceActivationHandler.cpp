@@ -203,7 +203,7 @@ class test_WebserviceActivationHandler
 
 		void currentHigherThanCallerUserAgent()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QCoreApplication::setApplicationVersion("1.0.0");
 			mRequest->mUrl = QByteArray("http://localhost:24727/eID-Client?ShowUI");
 			mRequest->mHeader.insert("user-agent", QCoreApplication::applicationName().toUtf8() + "/0.0.0 (TR-03124-1/1.2)");
@@ -215,15 +215,15 @@ class test_WebserviceActivationHandler
 			QCOMPARE(mShowUserInfoSpy->count(), 1);
 			QVERIFY(mShowUserInfoSpy->takeFirst().at(0).toString().contains("You tried to start an older version"));
 
-			QVERIFY(spy.count() > 0);
-			auto param = spy.takeLast();
+			QVERIFY(logSpy.count() > 0);
+			auto param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Current version is higher than caller version"));
 		}
 
 
 		void currentLowerThanCallerUserAgent()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QCoreApplication::setApplicationVersion("1.0.0");
 			mRequest->mUrl = QByteArray("http://localhost:24727/eID-Client?ShowUI");
 			mRequest->mHeader.insert("user-agent", QCoreApplication::applicationName().toUtf8() + "/2.0.0 (TR-03124-1/1.2)");
@@ -235,8 +235,8 @@ class test_WebserviceActivationHandler
 			QCOMPARE(mShowUserInfoSpy->count(), 1);
 			QVERIFY(mShowUserInfoSpy->takeFirst().at(0).toString().contains("You tried to start a newer version"));
 
-			QVERIFY(spy.count() > 0);
-			auto param = spy.takeLast();
+			QVERIFY(logSpy.count() > 0);
+			auto param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Current version is lower than caller version"));
 		}
 

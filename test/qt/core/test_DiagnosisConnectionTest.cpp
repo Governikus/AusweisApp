@@ -120,6 +120,8 @@ class test_DiagnosisConnectionTest
 
 		void test_StartConnectionTest_NoProxy()
 		{
+			QSignalSpy spy(mTest.data(), &DiagnosisConnectionTest::fireConnectionTestDone);
+
 			QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
 			mTest->startConnectionTest();
 			QVERIFY(mTest->mProxyPingDone);
@@ -128,24 +130,38 @@ class test_DiagnosisConnectionTest
 			QVERIFY(!mTest->mIsProxySet);
 			QCOMPARE(mTest->mTcpSocketWithoutProxy.proxy(), QNetworkProxy::NoProxy);
 			QCOMPARE(mTest->mTcpSocketWithoutProxy.state(), QAbstractSocket::SocketState::HostLookupState);
+
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QVERIFY(mTest->mConnectionTestWithoutProxyDone);
+			QCOMPARE(mTest->mTcpSocketWithoutProxy.state(), QAbstractSocket::SocketState::UnconnectedState);
 		}
 
 
 		void test_StartConnectionTest()
 		{
-			QNetworkProxy testProxy(QNetworkProxy::ProxyType::HttpProxy, QString("localhost"), 25000);
+#if defined(Q_OS_FREEBSD)
+			QSKIP("TCPSockets with proxies don't emit error signals when connecting to fake hosts.");
+#endif
+			QSignalSpy spy(mTest.data(), &DiagnosisConnectionTest::fireConnectionTestDone);
+
+			QNetworkProxy testProxy(QNetworkProxy::ProxyType::HttpProxy);
 			QNetworkProxy::setApplicationProxy(testProxy);
 
 			mTest->startConnectionTest();
 			QVERIFY(mTest->mIsProxySet);
-			QCOMPARE(mTest->mProxyHostName, QString("localhost"));
-			QCOMPARE(mTest->mProxyPort, QString("25000"));
+			QCOMPARE(mTest->mProxyHostName, QString());
+			QCOMPARE(mTest->mProxyPort, QString("0"));
 			QCOMPARE(mTest->mProxyType, QString("HttpProxy"));
 			QCOMPARE(mTest->mProxyType, QString("HttpProxy"));
 			QCOMPARE(mTest->mPingSocketToProxy.proxy(), QNetworkProxy::NoProxy);
 			QCOMPARE(mTest->mPingSocketToProxy.state(), QAbstractSocket::SocketState::HostLookupState);
 			QCOMPARE(mTest->mTcpSocketWithProxy.proxy(), testProxy);
 			QCOMPARE(mTest->mTcpSocketWithProxy.state(), QAbstractSocket::SocketState::ConnectingState);
+
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QVERIFY(mTest->mProxyPingDone);
+			QVERIFY(mTest->mConnectionTestWithProxyDone);
+			QCOMPARE(mTest->mTcpSocketWithProxy.state(), QAbstractSocket::SocketState::UnconnectedState);
 		}
 
 

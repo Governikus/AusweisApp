@@ -321,7 +321,7 @@
 			[
 				{
 					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
-					"URL": "http://www.scm-pc-card.de/index.php?lang=en&page=download&function=show_downloads&product_id=832"
+					"URL": "https://www.scm-pc-card.de/index.php?lang=en&page=download&function=show_downloads&product_id=832"
 				}
 			],
 			"Information":
@@ -350,7 +350,7 @@
 			[
 				{
 					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
-					"URL": "http://www.scm-pc-card.de/index.php?page=download&function=show_downloads&lang=de&product_id=921"
+					"URL": "https://www.scm-pc-card.de/index.php?page=download&function=show_downloads&lang=de&product_id=921"
 				}
 			],
 			"Information":
@@ -379,7 +379,7 @@
 			[
 				{
 					"Platforms": [{"os": "win"}, {"os": "mac"}],
-					"URL": "http://www.acs.com.hk/en/driver/151/acr1281u-npa-contactless-reader/"
+					"URL": "https://www.acs.com.hk/en/driver/151/acr1281u-npa-contactless-reader/"
 				}
 			],
 			"Information":
@@ -408,7 +408,7 @@
 			[
 				{
 					"Platforms": [{"os": "win"}, {"os": "mac"}],
-					"URL": "http://www.acs.com.hk/en/products/342/acr1252u-usb-nfc-reader-iii-nfc-forum-certified-reader/#tab_downloads"
+					"URL": "https://www.acs.com.hk/en/products/342/acr1252u-usb-nfc-reader-iii-nfc-forum-certified-reader/#tab_downloads"
 				}
 			],
 			"Information":

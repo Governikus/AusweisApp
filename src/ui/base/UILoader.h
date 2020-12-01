@@ -16,33 +16,34 @@
 namespace governikus
 {
 
-defineEnumType(UIPlugInName, UIPlugInQml, UIPlugInWidgets, UIPlugInJson, UIPlugInWebSocket, UIPlugInAidl)
+defineEnumType(UIPlugInName, UIPlugInQml, UIPlugInJson, UIPlugInWebSocket, UIPlugInAidl, UIPlugInFunctional)
 
 class UILoader
 	: public QObject
 {
 	Q_OBJECT
+	friend class Env;
 
 	private:
+		static QVector<UIPlugInName> cDefault;
 		QMap<UIPlugInName, UIPlugIn*> mLoadedPlugIns;
-		QVector<UIPlugInName> mDefault;
 
-		inline QString getName(UIPlugInName pPlugin) const;
-		inline bool isPlugIn(const QJsonObject& pJson);
-		inline bool hasName(const QJsonObject& pJson, const QString& pName);
+		static QVector<UIPlugInName> getInitialDefault();
+		static QString getName(UIPlugInName pPlugin);
 
-	protected:
 		UILoader();
 		virtual ~UILoader();
+		inline bool isPlugIn(const QJsonObject& pJson) const;
+		inline bool hasName(const QJsonObject& pJson, const QString& pName) const;
 
 	public:
-		static UILoader& getInstance();
+		// do not make this non-static as the CommandLineParser spawns
+		// this object on startup. Since this is a QObject this shoud be avoided.
+		static QStringList getDefault();
+		static void setDefault(const QStringList& pDefault);
 
 		bool load();
 		bool load(UIPlugInName pName);
-
-		const QStringList getDefault() const;
-		void setDefault(const QStringList& pDefault);
 
 		UIPlugIn* getLoaded(UIPlugInName pName) const;
 

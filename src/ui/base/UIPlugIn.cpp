@@ -16,6 +16,11 @@ UIPlugIn::~UIPlugIn()
 }
 
 
+void UIPlugIn::onApplicationInitialized()
+{
+}
+
+
 void UIPlugIn::onApplicationStarted()
 {
 }
@@ -33,6 +38,11 @@ void UIPlugIn::onHideUi()
 
 
 void UIPlugIn::onShowReaderSettings()
+{
+}
+
+
+void UIPlugIn::onTranslationChanged()
 {
 }
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  The size is based on 96 dpi (inkscape default).
+  This leads to a display size of 7,6mm on all Android devices after
+  the conversion to the png format. See Tools.cmake for more details.
+-->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="28.8" height="28.8" viewBox="0 0 37 37">
+  <image xlink:href="npa.svg" width="37" height="37" />
+</svg>

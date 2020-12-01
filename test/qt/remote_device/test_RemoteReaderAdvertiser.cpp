@@ -51,7 +51,7 @@ class test_RemoteReaderAdvertiser
 	private Q_SLOTS:
 		void init()
 		{
-			mMock = new DatagramHandlerMock;
+			mMock = new DatagramHandlerMock();
 			std::function<DatagramHandler* (bool pListen)> creator = [this](bool){
 						return mMock.data();
 					};
@@ -74,7 +74,7 @@ class test_RemoteReaderAdvertiser
 
 			QSignalSpy spy(mMock.data(), &DatagramHandlerMock::fireSend);
 			QScopedPointer<RemoteReaderAdvertiser> advertiser(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port, pTimerInterval));
-			QTRY_COMPARE(spy.count(), 5);
+			QTRY_COMPARE(spy.count(), 5); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -87,7 +87,7 @@ class test_RemoteReaderAdvertiser
 
 			QSignalSpy spy(mMock.data(), &DatagramHandlerMock::fireSend);
 			QScopedPointer<RemoteReaderAdvertiser> advertiser(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port, pTimerInterval));
-			QTRY_COMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			advertiser.reset();
 
 			const auto& byteArray = spy.at(0).at(0).toByteArray();

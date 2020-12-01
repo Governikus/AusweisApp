@@ -59,7 +59,22 @@ class test_UIPlugInQml
 			const QString logData = getLogData();
 
 			bool initContainedAndSuccess = logData.contains(QLatin1String("QML engine initialization finished with 0 warnings."));
-			bool noQmlWarning = !logData.contains(QRegularExpression(" W .*\\.qml:"));
+			bool noQmlWarning = true;
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 1))
+			auto iterator = QRegularExpression(QStringLiteral("\n.* W .*\\.qml:.*\n")).globalMatch(logData);
+			while (iterator.hasNext())
+			{
+				const QRegularExpressionMatch match = iterator.next();
+				if (!match.captured(0).contains(QLatin1String("QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead:")))
+				{
+					noQmlWarning = false;
+					break;
+				}
+			}
+#else
+			noQmlWarning = !logData.contains(QRegularExpression(" W .*\\.qml:"));
+#endif
 
 			bool success = initContainedAndSuccess && noQmlWarning;
 			if (!success)
@@ -123,13 +138,14 @@ class test_UIPlugInQml
 
 			QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 			env.insert("OVERRIDE_PLATFORM_SELECTOR", platformSelector);
+			env.insert("QT_QPA_OFFSCREEN_NO_GLX", QStringLiteral("1"));
 			mApp2->setProcessEnvironment(env);
 
 			mApp2->start();
 			QVERIFY(mApp2->waitForStarted(PROCESS_TIMEOUT));
 
 			QFile portInfoFile(PortFile::getPortFilename(QString(), mApp2->processId(), QStringLiteral("AusweisApp2")));
-			QTRY_COMPARE_WITH_TIMEOUT(portInfoFile.exists(), true, PROCESS_TIMEOUT);
+			QTRY_COMPARE_WITH_TIMEOUT(portInfoFile.exists(), true, PROCESS_TIMEOUT); // clazy:exclude=qstring-allocations
 			QVERIFY(portInfoFile.open(QIODevice::ReadOnly));
 
 			quint16 applicationPort = 0;
@@ -137,10 +153,10 @@ class test_UIPlugInQml
 			QVERIFY(applicationPort > 0);
 
 			mHelper.reset(new WebSocketHelper(applicationPort));
-			QTRY_VERIFY_WITH_TIMEOUT(mHelper->isConnected(), PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(mHelper->isConnected(), PROCESS_TIMEOUT); // clazy:exclude=qstring-allocations
 
-			QTRY_VERIFY_WITH_TIMEOUT(!getLogData().isEmpty(), PROCESS_TIMEOUT);
-			QTRY_VERIFY_WITH_TIMEOUT(isQmlEngineInitDone(), PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(!getLogData().isEmpty(), PROCESS_TIMEOUT); // clazy:exclude=qstring-allocations
+			QTRY_VERIFY_WITH_TIMEOUT(isQmlEngineInitDone(), PROCESS_TIMEOUT); // clazy:exclude=qstring-allocations
 			QVERIFY(isQmlEngineInitSuccess());
 
 			const QString showUiUri = QStringLiteral("http://localhost:%1/eID-Client?showui=%2").arg(applicationPort);
@@ -195,7 +211,9 @@ class test_UIPlugInQml
 			QTRY_COMPARE_WITH_TIMEOUT(mApp2->state(), QProcess::NotRunning, PROCESS_TIMEOUT);
 			if (mApp2->exitStatus() != QProcess::NormalExit)
 			{
-				QWARN(mApp2->readAllStandardError().constData());
+				const QByteArray stdError = mApp2->readAllStandardError();
+				QWARN(stdError.constData());
+				QVERIFY(!stdError.contains("ASSERT:"));
 			}
 
 #ifdef Q_OS_WIN

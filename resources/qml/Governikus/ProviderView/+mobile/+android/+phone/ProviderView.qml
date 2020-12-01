@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -11,13 +11,22 @@ import Governikus.Type.ProviderCategoryFilterModel 1.0
 import Governikus.Provider 1.0
 
 BaseProviderView {
-	rightTitleBarAction: SearchBar {
+	id: baseItem
+
+	titleBarOpacity: headerItem.titleBarOpacity
+	contentBehindTitlebar: true
+	rightTitleBarAction: searchBar
+	searchBar: SearchBar {
 		availableWidth: baseItem.width - Style.dimens.menubar_width
-		onSearchTextChanged: ProviderCategoryFilterModel.searchString = searchText
 	}
 
-	header: ProviderHeader {
-		width: baseItem.width
-		selectedCategory: category
+	headerComponent: Component {
+		ProviderHeader {
+			width: baseItem.width
+
+			selectedCategory: baseItem.category
+
+			onCategorySelected: ProviderCategoryFilterModel.setCategorySelection(category)
+		}
 	}
 }

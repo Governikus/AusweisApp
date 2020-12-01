@@ -8,5 +8,9 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppUiJson)
 
-TARGET_LINK_LIBRARIES(AusweisAppUiJson Qt5::Core AusweisAppCore AusweisAppGlobal AusweisAppActivationInternal)
-TARGET_COMPILE_DEFINITIONS(AusweisAppUiJson PRIVATE QT_STATICPLUGIN)
+target_link_libraries(AusweisAppUiJson PUBLIC ${Qt}::Core AusweisAppCore AusweisAppGlobal)
+target_compile_definitions(AusweisAppUiJson PRIVATE QT_STATICPLUGIN)
+
+if(TARGET ${Qt}::Test)
+	target_link_libraries(AusweisAppUiJson PRIVATE debug ${Qt}::Test)
+endif()

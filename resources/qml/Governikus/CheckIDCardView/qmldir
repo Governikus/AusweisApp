@@ -1,0 +1,8 @@
+module CheckIDCardView
+
+internal CheckIDCardResultEntry CheckIDCardResultEntry.qml
+internal CheckIDCardResultView CheckIDCardResultView.qml
+internal CheckIDCardSuggestionView CheckIDCardSuggestionView.qml
+internal CheckIDCardWorkflow CheckIDCardWorkflow.qml
+
+CheckIDCardView 1.0 CheckIDCardView.qml

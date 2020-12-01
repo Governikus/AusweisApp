@@ -8,9 +8,9 @@
 
 using namespace governikus;
 
-static Initializer::Entry X([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<QHostAddress>("QHostAddress");
-		});
+		})
 
 DatagramHandler::DatagramHandler(bool)
 {

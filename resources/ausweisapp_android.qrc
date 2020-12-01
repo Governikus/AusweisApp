@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="images/mobile/material_specific_phone.svg">images/android/material_phone_android.svg</file>
+    </qresource>
+</RCC>

@@ -137,6 +137,16 @@ QByteArray CVCertificate::getRawSignature() const
 }
 
 
+QByteArray CVCertificate::getDerSignature() const
+{
+	uchar* signature = nullptr;
+	const int size = i2d_ECDSA_SIG(mEcdsaSignature, &signature);
+	const QByteArray result(reinterpret_cast<char*>(signature), size);
+	OPENSSL_free(signature);
+	return result;
+}
+
+
 bool CVCertificate::isValidOn(const QDateTime& pValidationDate) const
 {
 	QDate validationDateGMT = pValidationDate.toUTC().date();

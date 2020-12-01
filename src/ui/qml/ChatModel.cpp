@@ -11,23 +11,25 @@
 #include "AppSettings.h"
 #include "context/SelfAuthContext.h"
 
-
 using namespace governikus;
 
-
-ChatModel::ChatModel(QObject* pParent)
-	: QAbstractListModel(pParent)
+ChatModel::ChatModel()
+	: QAbstractListModel()
 	, mAuthContext()
 	, mAllRights()
 	, mOptionalRights()
 	, mSelectedRights()
 	, mFilterOptionalModel()
 	, mFilterRequiredModel()
+	, mFilterReadModel()
+	, mFilterWriteModel()
 {
 	resetContext(QSharedPointer<AuthContext>());
 
-	initFilterModel(mFilterOptionalModel, QStringLiteral("true"));
-	initFilterModel(mFilterRequiredModel, QStringLiteral("false"));
+	initFilterModel(mFilterReadModel, this, ChatRoles::WRITE_RIGHT, QStringLiteral("false"));
+	initFilterModel(mFilterWriteModel, this, ChatRoles::WRITE_RIGHT, QStringLiteral("true"));
+	initFilterModel(mFilterOptionalModel, &mFilterReadModel, ChatRoles::OPTIONAL_ROLE, QStringLiteral("true"));
+	initFilterModel(mFilterRequiredModel, &mFilterReadModel, ChatRoles::OPTIONAL_ROLE, QStringLiteral("false"));
 
 	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, [this]()
 			{
@@ -37,11 +39,11 @@ ChatModel::ChatModel(QObject* pParent)
 }
 
 
-void ChatModel::initFilterModel(QSortFilterProxyModel& pModel, const QString& pFilter)
+void ChatModel::initFilterModel(QSortFilterProxyModel& pModel, QAbstractItemModel* pSourceModel, int pFilterRole, const QString& pFilter)
 {
-	pModel.setSourceModel(this);
-	pModel.setFilterRole(ChatRoles::OPTIONAL_ROLE);
-	pModel.setFilterRegExp(pFilter);
+	pModel.setSourceModel(pSourceModel);
+	pModel.setFilterRole(pFilterRole);
+	pModel.setFilterRegularExpression(pFilter);
 }
 
 
@@ -59,12 +61,12 @@ void ChatModel::resetContext(const QSharedPointer<AuthContext>& pContext)
 
 	if (!pContext.isNull())
 	{
-		connect(pContext.data(), &AuthContext::fireAuthenticationDataChanged, this, &ChatModel::onAuthenticationDataChanged);
+		connect(pContext.data(), &AuthContext::fireAccessRightManagerCreated, this, &ChatModel::onAuthenticationDataChanged);
 	}
 }
 
 
-void ChatModel::onAuthenticationDataChanged()
+void ChatModel::onAuthenticationDataChanged(QSharedPointer<AccessRightManager> pAccessRightManager)
 {
 	beginResetModel();
 
@@ -72,17 +74,17 @@ void ChatModel::onAuthenticationDataChanged()
 	mOptionalRights.clear();
 	mSelectedRights.clear();
 
-	if (!mAuthContext->getRequiredAccessRights().isEmpty())
+	if (!pAccessRightManager->getRequiredAccessRights().isEmpty())
 	{
-		setOrderedAllRights(mAuthContext->getRequiredAccessRights());
-		mSelectedRights += mAuthContext->getRequiredAccessRights();
+		setOrderedAllRights(pAccessRightManager->getRequiredAccessRights());
+		mSelectedRights += pAccessRightManager->getRequiredAccessRights();
 	}
 
-	if (!mAuthContext->getOptionalAccessRights().isEmpty())
+	if (!pAccessRightManager->getOptionalAccessRights().isEmpty())
 	{
-		mOptionalRights += mAuthContext->getOptionalAccessRights();
-		setOrderedAllRights(mAuthContext->getOptionalAccessRights());
-		mSelectedRights += mAuthContext->getOptionalAccessRights();
+		mOptionalRights += pAccessRightManager->getOptionalAccessRights();
+		setOrderedAllRights(pAccessRightManager->getOptionalAccessRights());
+		mSelectedRights += pAccessRightManager->getOptionalAccessRights();
 	}
 
 	endResetModel();
@@ -117,7 +119,7 @@ QVariant ChatModel::data(const QModelIndex& pIndex, int pRole) const
 			QString displayText = AccessRoleAndRightsUtil::toDisplayText(right);
 			if (right == AccessRight::AGE_VERIFICATION)
 			{
-				displayText += QStringLiteral(" (%1)").arg(mAuthContext->getRequiredAge());
+				displayText += QStringLiteral(" (%1)").arg(mAuthContext->getDidAuthenticateEac1()->getAuthenticatedAuxiliaryData()->getRequiredAge());
 			}
 			return displayText;
 		}
@@ -181,9 +183,9 @@ bool ChatModel::setData(const QModelIndex& pIndex, const QVariant& pValue, int p
 
 void ChatModel::transferAccessRights()
 {
-	Q_ASSERT(mAuthContext);
+	Q_ASSERT(mAuthContext->getAccessRightManager());
 
-	mAuthContext->setEffectiveAccessRights(mSelectedRights);
+	*mAuthContext->getAccessRightManager() = mSelectedRights;
 }
 
 
@@ -196,4 +198,10 @@ QSortFilterProxyModel* ChatModel::getFilterOptionalModel()
 QSortFilterProxyModel* ChatModel::getFilterRequiredModel()
 {
 	return &mFilterRequiredModel;
+}
+
+
+QSortFilterProxyModel* ChatModel::getFilterWriteModel()
+{
+	return &mFilterWriteModel;
 }

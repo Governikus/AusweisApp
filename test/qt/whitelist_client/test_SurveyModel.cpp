@@ -19,12 +19,12 @@ class test_SurveyModel
 	Q_OBJECT
 
 	private:
-		QPointer<MockNetworkManager> mNetworkManager;
+		QSharedPointer<MockNetworkManager> mNetworkManager;
 
 	private Q_SLOTS:
 		void init()
 		{
-			mNetworkManager = new MockNetworkManager();
+			mNetworkManager.reset(new MockNetworkManager());
 			Env::set(NetworkManager::staticMetaObject, mNetworkManager.data());
 		}
 

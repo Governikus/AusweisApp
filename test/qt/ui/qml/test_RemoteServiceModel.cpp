@@ -60,7 +60,7 @@ class test_RemoteServiceModel
 
 		void cleanup()
 		{
-			mModel->resetContext();
+			mModel->resetRemoteServiceContext();
 			mContext.clear();
 		}
 
@@ -73,7 +73,7 @@ class test_RemoteServiceModel
 			mModel->setReaderPlugInType(input1);
 			QCOMPARE(mModel->getReaderPlugInType(), ReaderManagerPlugInType::UNKNOWN);
 
-			mModel->resetContext(mContext);
+			mModel->resetRemoteServiceContext(mContext);
 			mModel->setReaderPlugInType(input1);
 			QCOMPARE(mModel->getReaderPlugInType(), input1);
 
@@ -89,7 +89,7 @@ class test_RemoteServiceModel
 			mModel->cancelPasswordRequest();
 			QCOMPARE(spy.count(), 0);
 
-			mModel->resetContext(mContext);
+			mModel->resetRemoteServiceContext(mContext);
 			mModel->cancelPasswordRequest();
 			QCOMPARE(spy.count(), 1);
 		}
@@ -103,7 +103,7 @@ class test_RemoteServiceModel
 
 			QVERIFY(!mModel->isRunning());
 
-			mModel->resetContext(mContext);
+			mModel->resetRemoteServiceContext(mContext);
 			QVERIFY(!mModel->isRunning());
 
 			mContext->getRemoteServer()->start(QString());
@@ -127,7 +127,7 @@ class test_RemoteServiceModel
 			QSignalSpy spyPskChanged(mModel, &RemoteServiceModel::firePskChanged);
 			QSignalSpy spyConnectedClientDeviceNameChanged(mModel, &RemoteServiceModel::fireConnectionInfoChanged);
 
-			mModel->resetContext(mContext);
+			mModel->resetRemoteServiceContext(mContext);
 			QCOMPARE(spyCurrentStateChanged.count(), 1);
 			QCOMPARE(spyConnectedChanged.count(), 1);
 
@@ -145,7 +145,7 @@ class test_RemoteServiceModel
 
 		void test_SetPairing()
 		{
-			mModel->resetContext(mContext);
+			mModel->resetRemoteServiceContext(mContext);
 			const QSharedPointer<MockRemoteServer> server = qSharedPointerCast<MockRemoteServer>(mContext->getRemoteServer());
 
 			mModel->setPairing(true);
@@ -182,7 +182,7 @@ class test_RemoteServiceModel
 			auto data = createDataToParse(password);
 			QSharedPointer<const IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel(QString(), data));
 			mContext->setEstablishPaceChannelMessage(message);
-			mModel->resetContext(mContext);
+			mModel->resetRemoteServiceContext(mContext);
 			QCOMPARE(mModel->getPasswordType(), output);
 		}
 

@@ -4,6 +4,7 @@
 
 #include "WebserviceActivationContext.h"
 
+#include "LanguageLoader.h"
 #include "Template.h"
 #include "UrlUtil.h"
 
@@ -16,7 +17,7 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(activation)
 
-void WebserviceActivationContext::setCommonHeaders(HttpResponse& pResponse)
+void WebserviceActivationContext::setCommonHeaders(HttpResponse& pResponse) const
 {
 	pResponse.setHeader(QByteArrayLiteral("Connection"), QByteArrayLiteral("close"));
 	pResponse.setHeader(QByteArrayLiteral("Cache-Control"), QByteArrayLiteral("no-cache, no-store"));
@@ -116,8 +117,7 @@ bool WebserviceActivationContext::sendErrorPage(http_status pStatusCode, const G
 	htmlTemplate.setContextParameter(QStringLiteral("ERROR_MESSAGE"), pStatus.toErrorDescription(true));
 	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_HEADER"), tr("Would you like to report this error?"));
-	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
-	htmlTemplate.setContextParameter(QStringLiteral("REPORT_LINK"), tr("https://www.ausweisapp.bund.de/en/qa/report-an-error/"));
+	htmlTemplate.setContextParameter(QStringLiteral("REPORT_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1/aa2/report").arg(LanguageLoader::getLocalCode()));
 	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_BUTTON"), tr("Report now"));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();

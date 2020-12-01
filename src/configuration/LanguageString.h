@@ -24,8 +24,8 @@ class LanguageString
 		QString toString(const QLocale& pLocale) const;
 
 	public:
-		LanguageString(const QJsonValue& pJson);
-		LanguageString(const QMap<QString, QString>& pInput);
+		explicit LanguageString(const QJsonValue& pJson);
+		explicit LanguageString(const QMap<QString, QString>& pInput);
 		LanguageString(const QString& pString, const QLocale& pLocale = LanguageLoader::getInstance().getUsedLocale());
 
 

@@ -7,15 +7,19 @@
 #pragma once
 
 #include "IosCard.h"
-#include "IosReaderDelegate.h"
 #include "Reader.h"
 
 #include <QObject>
 #include <QScopedPointer>
 
+#include <os/availability.h>
+
+Q_FORWARD_DECLARE_OBJC_CLASS(IosReaderDelegate);
 
 namespace governikus
 {
+
+struct IosCardPointer;
 
 class IosReader
 	: public ConnectableReader
@@ -23,14 +27,15 @@ class IosReader
 	Q_OBJECT
 
 	private:
-		IosReaderDelegate mDelegate;
+		IosReaderDelegate* mDelegate API_AVAILABLE(ios(13.0)) = nullptr;
 		QScopedPointer<IosCard, QScopedPointerDeleteLater> mCard;
 		bool mConnected;
-		qint64 mLastRestart;
+		bool mIsRestarting;
 
 		virtual CardEvent updateCard() override;
 
 		void removeCard();
+		void startSession();
 		void stopSession(const QString& pError);
 
 	public:
@@ -42,11 +47,13 @@ class IosReader
 		virtual void connectReader() override;
 		virtual void disconnectReader(const QString& pError = QString()) override;
 
+	Q_SIGNALS:
+		void fireTagDiscovered(IosCardPointer* tag);
+		void fireDidInvalidateWithError(bool doRestart);
+
 	private Q_SLOTS:
-		void onDiscoveredTag(IosCard* pCard);
-		void onDidInvalidateWithError(const QString& pError, bool pDoRestart);
-		void onConnectFailed();
-		void onTransmitFailed();
+		void onTagDiscovered(IosCardPointer* pCard);
+		void onDidInvalidateWithError(bool pDoRestart);
 };
 
 } // namespace governikus

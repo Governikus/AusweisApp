@@ -38,12 +38,12 @@ class PcscReader
 		virtual Reader::CardEvent updateCard() override;
 
 	public:
-		PcscReader(const QString& pReaderName);
+		explicit PcscReader(const QString& pReaderName);
 		virtual ~PcscReader() override;
 
 		Card* getCard() const override;
 
-		SCARD_READERSTATE getState();
+		SCARD_READERSTATE getState() const;
 
 		bool hasFeature(FeatureID pFeatureID) const;
 
@@ -51,9 +51,9 @@ class PcscReader
 		 * Check with hasFeature first for existence of the feature,
 		 * otherwise this will cause an exception.
 		 */
-		PCSC_INT getFeatureValue(FeatureID pFeatureID);
+		PCSC_INT getFeatureValue(FeatureID pFeatureID) const;
 
-		bool hasPaceCapability(PaceCapabilityId pPaceCapability);
+		bool hasPaceCapability(PaceCapabilityId pPaceCapability) const;
 
 };
 

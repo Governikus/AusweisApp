@@ -1,2 +1,0 @@
-ADD_QML_TEST_FILES(SELECTORS "desktop;win")
-ADD_QML_TEST_FILES(SELECTORS "desktop;mac")

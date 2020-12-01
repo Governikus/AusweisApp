@@ -110,7 +110,6 @@ The AusweisApp2 will send a :ref:`reader_list` message as an answer.
 
 
 
-
 .. _run_auth:
 
 RUN_AUTH
@@ -133,8 +132,33 @@ The AusweisApp2 will send an :ref:`auth` message when the authentication is star
 
 .. note::
   This command is allowed only if the AusweisApp2 has no running
-  authentication. Otherwise you will get a :ref:`bad_state`
-  message as an answer.
+  authentication or other workflow. Otherwise you will get
+  a :ref:`bad_state` message as an answer.
+
+
+
+
+.. _run_change_pin:
+
+RUN_CHANGE_PIN
+^^^^^^^^^^^^^^
+Starts a change PIN workflow.
+
+The AusweisApp2 will send a :ref:`change_pin` message when the workflow is started.
+
+
+.. versionadded:: 1.22.0
+   Support of RUN_CHANGE_PIN command.
+
+
+.. code-block:: json
+
+  {"cmd": "RUN_CHANGE_PIN"}
+
+.. note::
+  This command is allowed only if the AusweisApp2 has no running
+  authentication or other workflow. Otherwise you will get
+  a :ref:`bad_state` message as an answer.
 
 
 
@@ -238,7 +262,8 @@ to abort it.
   {"cmd": "CANCEL"}
 
 .. note::
-  This command is allowed only if the AusweisApp2 started an authentication.
+  This command is allowed only if the AusweisApp2 started an authentication or
+  the :ref:`change_pin` workflow.
   Otherwise you will get a :ref:`bad_state` message as an answer.
 
 
@@ -300,8 +325,10 @@ is decreased to **0**.
 
 
 - **value**: The Personal Identification Number (PIN) of the card.
-  This must be 6 digits if the :ref:`reader` has no keypad, otherwise
-  this parameter must be omitted.
+  This must be 6 digits in an :ref:`auth` workflow. If a
+  :ref:`change_pin` workflow is in progress the value must
+  be 5 or 6 digits because of a possible transport PIN.
+  If the :ref:`reader` has a keypad this parameter must be omitted.
 
 .. code-block:: json
 
@@ -313,6 +340,38 @@ is decreased to **0**.
 .. note::
   This command is allowed only if the AusweisApp2 sends an initial
   :ref:`enter_pin` message. Otherwise you will get a :ref:`bad_state`
+  message as an answer.
+
+
+
+
+.. _set_new_pin:
+
+SET_NEW_PIN
+^^^^^^^^^^^
+Set new PIN of inserted card.
+
+If the AusweisApp2 sends message :ref:`enter_new_pin` you need
+to send this command to set the new PIN of the card.
+
+.. versionadded:: 1.22.0
+   Support of SET_NEW_PIN command.
+
+
+- **value**: The new personal identification number (PIN) of the card.
+  This must be 6 digits if the :ref:`reader` has no keypad, otherwise
+  this parameter must be omitted.
+
+.. code-block:: json
+
+  {
+    "cmd": "SET_NEW_PIN",
+    "value": "123456"
+  }
+
+.. note::
+  This command is allowed only if the AusweisApp2 sends an initial
+  :ref:`enter_new_pin` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
 
 

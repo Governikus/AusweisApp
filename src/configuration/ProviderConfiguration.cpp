@@ -6,37 +6,28 @@
 
 #include "FileProvider.h"
 #include "ProviderConfigurationParser.h"
-#include "SingletonHelper.h"
 
 #include <QFile>
 #include <QLoggingCategory>
 #include <QRegularExpression>
 
-#include <algorithm>
-
-
 using namespace governikus;
-
 
 Q_DECLARE_LOGGING_CATEGORY(configuration)
 
 
-defineSingleton(ProviderConfiguration)
-
-
-bool ProviderConfiguration::parseProviderConfiguration()
+bool ProviderConfiguration::parseProviderConfiguration(const QString& pPath)
 {
-	const QString& path = mUpdatableFile->lookupPath();
-	if (!QFile::exists(path))
+	if (!QFile::exists(pPath))
 	{
-		qCCritical(configuration) << "ProviderConfiguration file not found";
+		qCCritical(configuration) << "ProviderConfiguration file not found:" << pPath;
 		return false;
 	}
 
-	QFile configFile(path);
+	QFile configFile(pPath);
 	if (!configFile.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		qCCritical(configuration) << "Wasn't able to open ProviderConfiguration file";
+		qCCritical(configuration) << "Wasn't able to open ProviderConfiguration file:" << pPath;
 		return false;
 	}
 	QByteArray configFileContent = configFile.readAll();
@@ -44,27 +35,26 @@ bool ProviderConfiguration::parseProviderConfiguration()
 	const auto& callCosts = ProviderConfigurationParser::parseCallCosts(configFileContent);
 	if (callCosts.isEmpty())
 	{
-		qCCritical(configuration) << "Parse error while reading ProviderConfiguration";
+		qCCritical(configuration) << "Parse error while reading ProviderConfiguration:" << pPath;
 		return false;
 	}
 
 	const auto& providerConfigurationInfos = ProviderConfigurationParser::parseProvider(configFileContent);
 	if (providerConfigurationInfos.isEmpty())
 	{
-		qCCritical(configuration) << "Parse error while reading ProviderConfiguration";
+		qCCritical(configuration) << "Parse error while reading ProviderConfiguration:" << pPath;
 		return false;
 	}
 
 	mCallCosts = callCosts;
 	mProviderConfigurationInfos = providerConfigurationInfos;
-	std::sort(mProviderConfigurationInfos.begin(), mProviderConfigurationInfos.end());
 	return true;
 }
 
 
 void ProviderConfiguration::onFileUpdated()
 {
-	if (parseProviderConfiguration())
+	if (mUpdatableFile->forEachLookupPath([this](const QString& pPath){return parseProviderConfiguration(pPath);}))
 	{
 		for (const ProviderConfigurationInfo& info : qAsConst(mProviderConfigurationInfos))
 		{
@@ -84,13 +74,7 @@ ProviderConfiguration::ProviderConfiguration()
 {
 	connect(mUpdatableFile.data(), &UpdatableFile::fireUpdated, this, &ProviderConfiguration::onFileUpdated);
 	connect(mUpdatableFile.data(), &UpdatableFile::fireNoUpdateAvailable, this, &ProviderConfiguration::fireNoUpdateAvailable);
-	parseProviderConfiguration();
-}
-
-
-ProviderConfiguration& ProviderConfiguration::getInstance()
-{
-	return *Instance;
+	mUpdatableFile->forEachLookupPath([this](const QString& pPath){return parseProviderConfiguration(pPath);});
 }
 
 

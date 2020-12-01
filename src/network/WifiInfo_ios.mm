@@ -19,19 +19,22 @@ WifiInfo::WifiInfo()
 	: QObject()
 	, mWifiEnabled(false)
 {
-	mMonitor = nw_path_monitor_create();
-	nw_path_monitor_update_handler_t handler = ^(nw_path_t path){
-		mWifiEnabled = nw_path_uses_interface_type(path, nw_interface_type_wifi);
+	if (@available(iOS 12, *))
+	{
+		mMonitor = nw_path_monitor_create();
+		nw_path_monitor_update_handler_t handler = ^(nw_path_t path){
+			mWifiEnabled = nw_path_uses_interface_type(path, nw_interface_type_wifi);
 
-		qCDebug(network) << "WiFi status changed to:" << mWifiEnabled;
+			qCDebug(network) << "WiFi status changed to:" << mWifiEnabled;
 
-		Q_EMIT fireWifiEnabledChanged(mWifiEnabled);
-	};
+			Q_EMIT fireWifiEnabledChanged(mWifiEnabled);
+		};
 
-	nw_path_monitor_set_queue(mMonitor, dispatch_get_main_queue());
+		nw_path_monitor_set_queue(mMonitor, dispatch_get_main_queue());
 
-	nw_path_monitor_set_update_handler(mMonitor, handler);
-	nw_path_monitor_start(mMonitor);
+		nw_path_monitor_set_update_handler(mMonitor, handler);
+		nw_path_monitor_start(mMonitor);
+	}
 }
 
 
@@ -43,7 +46,10 @@ bool WifiInfo::getCurrentWifiEnabled()
 
 WifiInfo::~WifiInfo()
 {
-	nw_path_monitor_cancel(mMonitor);
+	if (@available(iOS 12, *))
+	{
+		nw_path_monitor_cancel(mMonitor);
+	}
 }
 
 

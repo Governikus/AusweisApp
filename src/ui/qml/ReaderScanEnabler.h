@@ -16,7 +16,7 @@ class ReaderScanEnabler
 {
 	Q_OBJECT
 
-	Q_PROPERTY(ReaderManagerPlugInType plugInType READ getPlugInType WRITE setPlugInType)
+	Q_PROPERTY(ReaderManagerPlugInType plugInType READ getPlugInType WRITE setPlugInType NOTIFY firePlugInTypeChanged)
 
 	private:
 		ReaderManagerPlugInType mPlugInType;
@@ -31,6 +31,9 @@ class ReaderScanEnabler
 		ReaderManagerPlugInType getPlugInType() const;
 		void setPlugInType(ReaderManagerPlugInType pPlugInType);
 		void itemChange(QQuickItem::ItemChange pChange, const QQuickItem::ItemChangeData& pValue) override;
+
+	Q_SIGNALS:
+		void firePlugInTypeChanged();
 };
 
 

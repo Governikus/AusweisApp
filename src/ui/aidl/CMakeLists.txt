@@ -6,5 +6,5 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppUiAidl)
 
-TARGET_LINK_LIBRARIES(AusweisAppUiAidl Qt5::Core AusweisAppUiJson AusweisAppGlobal)
-TARGET_COMPILE_DEFINITIONS(AusweisAppUiAidl PRIVATE QT_STATICPLUGIN)
+target_link_libraries(AusweisAppUiAidl ${Qt}::Core AusweisAppUiJson AusweisAppGlobal)
+target_compile_definitions(AusweisAppUiAidl PRIVATE QT_STATICPLUGIN)

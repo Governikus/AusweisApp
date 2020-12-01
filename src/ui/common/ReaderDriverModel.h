@@ -24,7 +24,7 @@ class ReaderDriverModel
 	Q_OBJECT
 
 	Q_PROPERTY(QString noReaderFoundIconPath READ getNoReaderFoundIconPath CONSTANT)
-	Q_PROPERTY(QString emptyListDescriptionString READ getEmptyListDescriptionStringQml NOTIFY fireLanguageChanged)
+	Q_PROPERTY(QString emptyListDescriptionString READ getEmptyListDescriptionString NOTIFY fireLanguageChanged)
 	Q_PROPERTY(QString lastUpdatedInformation READ getLastUpdatedInformation NOTIFY fireModelChanged)
 
 	private:
@@ -56,7 +56,7 @@ class ReaderDriverModel
 			READER_DRIVER_URL,
 			READER_INSTALLED_AND_SUPPORTED
 		};
-		ReaderDriverModel(QObject* pParent = nullptr);
+		explicit ReaderDriverModel(QObject* pParent = nullptr);
 
 		virtual QVariant headerData(int pSection, Qt::Orientation pOrientation, int pRole) const override;
 		virtual int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
@@ -67,8 +67,7 @@ class ReaderDriverModel
 		QString getReaderImagePath(const QModelIndex& pIndex) const;
 		QString getNoReaderFoundIconPath() const;
 		QString getHTMLDescription(const QModelIndex& pIndex) const;
-		QString getEmptyListDescriptionStringQml() const;
-		QString getEmptyListDescriptionString(bool pWidgetUiHelp = true) const;
+		QString getEmptyListDescriptionString() const;
 		bool isInstalledSupportedReader(const QModelIndex& pIndex) const;
 		QString getLastUpdatedInformation() const;
 

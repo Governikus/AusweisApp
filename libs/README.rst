@@ -15,11 +15,11 @@ Unterstützte C++17 Compiler:
 
 Notwendige Bibliotheken:
 
-- Qt >= 5.10
+- Qt >= 5.12
 
   - http://www.qt.io/download/
 
-- OpenSSL >= 1.0.2
+- OpenSSL >= 1.1.0
 
   - https://www.openssl.org/source/
 
@@ -108,7 +108,7 @@ MSYS2
 
 - https://sourceforge.net/projects/msys2/files/Base/x86_64/
 
-  - Getestet: msys2-base-x86_64-20180531.tar.xz
+  - Getestet: msys2-base-x86_64-20190524.tar.xz
 
 
 Windows SDK
@@ -116,7 +116,7 @@ Windows SDK
 
 - https://developer.microsoft.com/de-de/windows/downloads/windows-10-sdk
 
-  - Getestet: 10.0.14393.795 und 10.0.16299.0
+  - Getestet: 10.0.18362.0
 
 
 Python 2
@@ -124,7 +124,7 @@ Python 2
 
 - https://www.python.org/downloads/
 
-  - Getestet: python-2.7.15.amd64.msi
+  - Getestet: python-2.7.17.amd64.msi
 
 
 Vorbereitung
@@ -145,7 +145,7 @@ Vorbereitung
 
 ::
 
-   Für das Windows SDK 10.0.15063.0 und neuer (getestet: 10.0.17763.0):
+   Für das Windows SDK 10.0.15063.0 und neuer (getestet: 10.0.18362.0):
        WindowsSdkVerBinPath = C:\Program Files (x86)\Windows Kits\10\bin\%VERSION%
    Für alle älteren Versionen:
        WindowsSdkDir = C:\Program Files (x86)\Windows Kits\10

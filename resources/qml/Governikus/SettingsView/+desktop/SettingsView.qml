@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQml.Models 2.3
+import QtQuick 2.12
+import QtQml.Models 2.12
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
@@ -24,8 +24,8 @@ SectionPage {
 		AppUpdateView
 	}
 
-	Accessible.name: qsTr("Settings view") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This is the settings panel of the AusweisApp2.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Settings view")
+	Accessible.description: qsTr("This is the settings panel of the AusweisApp2.")
 	Keys.onEscapePressed: {
 		if (d.view === SettingsView.SubView.None) {
 			event.accepted = false
@@ -36,8 +36,10 @@ SectionPage {
 	}
 
 	titleBarAction: TitleBarAction {
+		id: titleBarAction
+
 		//: LABEL DESKTOP_QML
-		text: qsTr("Settings") + SettingsModel.translationTrigger
+		text: qsTr("Settings")
 		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "settings")
 
 		onClicked: {
@@ -73,26 +75,26 @@ SectionPage {
 		sectionsModel: {
 			var model = [
 				//: LABEL DESKTOP_QML
-				qsTr("General") + SettingsModel.translationTrigger,
+				qsTr("General"),
 				//: LABEL DESKTOP_QML
-				qsTr("Smartphone as card reader") + SettingsModel.translationTrigger,
+				qsTr("Smartphone as card reader"),
 				//: LABEL DESKTOP_QML
-				qsTr("USB card reader") + SettingsModel.translationTrigger,
+				qsTr("USB card reader"),
 				//: LABEL DESKTOP_QML
-				qsTr("Security and privacy") + SettingsModel.translationTrigger
+				qsTr("Security and privacy")
 			]
 
 			if (plugin.debugBuild) {
 				model.push(
 					//: LABEL DESKTOP_QML
-					qsTr("Debug options") + SettingsModel.translationTrigger
+					qsTr("Debug options")
 				)
 			}
 
 			if (SettingsModel.developerOptions) {
 				model.push(
 					//: LABEL DESKTOP_QML
-					qsTr("Developer options") + SettingsModel.translationTrigger
+					qsTr("Developer options")
 				)
 			}
 
@@ -164,6 +166,8 @@ SectionPage {
 		id: connectSacView
 
 		visible: d.view === SettingsView.SubView.ConnectSacView
+
+		rootEnabled: titleBarAction.rootEnabled
 
 		onCloseView: d.view = SettingsView.SubView.None
 	}

@@ -29,9 +29,9 @@ VALUE_NAME(SUPPORTED_API, "SupportedAPI")
 } // namespace
 
 
-static Initializer::Entry E([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<QSharedPointer<const Discovery> >("QSharedPointer<const Discovery>");
-		});
+		})
 
 
 Discovery::Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis)
@@ -67,7 +67,7 @@ Discovery::Discovery(const QJsonObject& pMessageObject)
 			mIfdId = RemoteServiceSettings::generateFingerprint(ifdCertificate);
 		}
 	}
-	mPort = static_cast<quint16>(getIntValue(pMessageObject, PORT()));
+	mPort = static_cast<quint16>(getIntValue(pMessageObject, PORT(), 0));
 
 	if (!pMessageObject.contains(SUPPORTED_API()))
 	{

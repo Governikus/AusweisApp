@@ -2,14 +2,13 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Provider 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ProviderCategoryFilterModel 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.HistoryModel 1.0
@@ -35,7 +34,7 @@ SectionPage {
 
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
-		text: qsTr("Provider") + SettingsModel.translationTrigger
+		text: qsTr("Provider")
 		helpTopic: "provider"
 
 		onClicked: {
@@ -48,7 +47,7 @@ SectionPage {
 			onDisplayTextChanged: ProviderCategoryFilterModel.searchString = displayText
 
 			//: LABEL DESKTOP_QML
-			placeholderText: qsTr("Search providers") + SettingsModel.translationTrigger
+			placeholderText: qsTr("Search providers")
 		}
 	}
 

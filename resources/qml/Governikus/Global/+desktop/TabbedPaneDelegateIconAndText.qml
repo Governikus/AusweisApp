@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
@@ -19,8 +19,8 @@ Row {
 		id: sectionIcon
 
 		visible: source !== ""
-		sourceSize.height: ApplicationModel.scaleFactor * 60
-		sourceSize.width: ApplicationModel.scaleFactor * 60
+		sourceSize.height: Style.dimens.medium_icon_size
+		sourceSize.width: Style.dimens.medium_icon_size
 
 		source: iconPath
 		fillMode: Image.PreserveAspectFit

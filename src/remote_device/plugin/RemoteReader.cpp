@@ -20,7 +20,7 @@ RemoteReader::RemoteReader(const QString& pReaderName, const QSharedPointer<Remo
 	mReaderInfo.setBasicReader(!pIfdStatus.getPaceCapabilities().getPace());
 	mReaderInfo.setConnected(true);
 
-	update(pIfdStatus);
+	updateStatus(pIfdStatus);
 }
 
 
@@ -47,12 +47,12 @@ Reader::CardEvent RemoteReader::updateCard()
 }
 
 
-void RemoteReader::update(const IfdStatus& pIfdStatus)
+void RemoteReader::updateStatus(const IfdStatus& pIfdStatus)
 {
 	if (mReaderInfo.getMaxApduLength() != pIfdStatus.getMaxApduLength())
 	{
 		mReaderInfo.setMaxApduLength(pIfdStatus.getMaxApduLength());
-		Q_EMIT fireReaderPropertiesUpdated(getName());
+		Q_EMIT fireReaderPropertiesUpdated(mReaderInfo);
 
 		if (!mReaderInfo.sufficientApduLength())
 		{
@@ -67,7 +67,7 @@ void RemoteReader::update(const IfdStatus& pIfdStatus)
 			qCDebug(card_remote) << "Card removed";
 			mCard.reset();
 			mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
-			Q_EMIT fireCardRemoved(getName());
+			Q_EMIT fireCardRemoved(mReaderInfo);
 		}
 		return;
 	}
@@ -78,6 +78,6 @@ void RemoteReader::update(const IfdStatus& pIfdStatus)
 		mCard.reset(new RemoteCard(mRemoteDispatcher, getName()));
 		QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
 		CardInfoFactory::create(cardConnection, mReaderInfo);
-		Q_EMIT fireCardInserted(getName());
+		Q_EMIT fireCardInserted(mReaderInfo);
 	}
 }

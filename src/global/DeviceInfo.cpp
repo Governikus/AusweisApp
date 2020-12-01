@@ -6,6 +6,8 @@
 
 #ifdef Q_OS_ANDROID
 #include <QtAndroidExtras/QAndroidJniObject>
+#elif defined(Q_OS_IOS)
+#include <sys/utsname.h>
 #endif
 
 #include <QDebug>
@@ -44,20 +46,21 @@ QString DeviceInfo::getPrettyInfo()
 }
 
 
-#ifndef Q_OS_IOS
 QString DeviceInfo::getName()
 {
 #ifdef Q_OS_ANDROID
 	return getField("MODEL");
+
+#elif defined(Q_OS_IOS)
+	struct utsname systemInfo;
+	uname(&systemInfo);
+	return QString::fromUtf8(systemInfo.machine);
 
 #else
 	return QSysInfo::machineHostName();
 
 #endif
 }
-
-
-#endif
 
 
 QString DeviceInfo::getFingerprint()

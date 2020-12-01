@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -31,7 +31,7 @@ ColumnLayout {
 			activeFocusOnTab: true
 
 			//: LABEL DESKTOP_QML Information about the available, new version number.
-			text: qsTr("New version:") + SettingsModel.translationTrigger
+			text: qsTr("New version:")
 			textStyle: Style.text.normal
 
 			FocusFrame {
@@ -55,7 +55,7 @@ ColumnLayout {
 			activeFocusOnTab: true
 
 			//: LABEL DESKTOP_QML Date when the available update was released.
-			text: qsTr("Release date:") + SettingsModel.translationTrigger
+			text: qsTr("Release date:")
 			textStyle: Style.text.normal
 
 			FocusFrame {
@@ -78,7 +78,7 @@ ColumnLayout {
 			activeFocusOnTab: true
 
 			//: LABEL DESKTOP_QML Download size of the available update in megabyte.
-			text: qsTr("Download size:") + SettingsModel.translationTrigger
+			text: qsTr("Download size:")
 			textStyle: Style.text.normal
 
 			FocusFrame {
@@ -89,7 +89,7 @@ ColumnLayout {
 		GText {
 			activeFocusOnTab: true
 
-			text: (downloadSize / 1e6).toFixed(3) + " MB"
+			text: "%1 MiB".arg((downloadSize / 1024576).toLocaleString(Qt.locale(SettingsModel.language), "f", 1))
 			textStyle: Style.text.normal
 
 			FocusFrame {
@@ -103,7 +103,7 @@ ColumnLayout {
 			activeFocusOnTab: true
 
 			//: LABEL DESKTOP_QML Plaintext link to the update download.
-			text: qsTr("Download link:") + SettingsModel.translationTrigger
+			text: qsTr("Download link:")
 			textStyle: Style.text.normal
 
 			FocusFrame {
@@ -130,7 +130,7 @@ ColumnLayout {
 			activeFocusOnTab: true
 
 			//: LABEL DESKTOP_QML Link to download checksum to verify the downloaded update file.
-			text: qsTr("Checksum link:") + SettingsModel.translationTrigger
+			text: qsTr("Checksum link:")
 			textStyle: Style.text.normal
 
 			FocusFrame {

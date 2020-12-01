@@ -18,9 +18,14 @@ class Constants
 
 	// Helper functions for Multijob-Trigger!
 
+	static String escapeEnv(String name)
+	{
+		return name.replaceAll('-', '_').replaceAll('\\.', '_').toUpperCase()
+	}
+
 	static String getEnvVariable(String jobName, String suffix)
 	{
-		return '${' + jobName.toUpperCase() + '_' + suffix + '}'
+		return '${' + escapeEnv(jobName) + '_' + suffix + '}'
 	}
 
 	static String getEnvResult(String name)
@@ -36,9 +41,7 @@ class Constants
 	static String genMsgName(String name, nameGenerator)
 	{
 		def jobName = nameGenerator(name)
-		def envJobName = jobName.replaceAll('-', '_').replaceAll('\\.', '_').toUpperCase()
-
-		return name + ': [' + getEnvResult(envJobName) + '](${JENKINS_URL}job/' + jobName + '/' + getEnvNumber(envJobName) + '/)'
+		return name + ': [' + getEnvResult(jobName) + '](${JENKINS_URL}job/' + jobName + '/' + getEnvNumber(jobName) + '/)'
 	}
 
 	static Map createEnvMap(jobs, nameGenerator)
@@ -48,7 +51,7 @@ class Constants
 		jobs.each
 		{
 			String name = nameGenerator("${it}")
-			name = name.replaceAll('-', '_').replaceAll('\\.', '_').toUpperCase()
+			name = escapeEnv(name)
 			map << [(name + '_BUILD_RESULT'):'']
 			map << [(name + '_BUILD_NUMBER'):'']
 		}

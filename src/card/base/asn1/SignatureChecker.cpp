@@ -9,13 +9,8 @@
 
 #include <openssl/ecdsa.h>
 #include <openssl/err.h>
+#include <openssl/evp.h>
 #include <QLoggingCategory>
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-#include <QScopeGuard>
-#else
-#include "ScopeGuard.h"
-#endif
 
 using namespace governikus;
 
@@ -29,7 +24,7 @@ SignatureChecker::SignatureChecker(const QVector<QSharedPointer<const CVCertific
 }
 
 
-bool SignatureChecker::check()
+bool SignatureChecker::check() const
 {
 	if (mCertificateChain.isEmpty())
 	{
@@ -64,7 +59,7 @@ bool SignatureChecker::check()
 }
 
 
-bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>& pCert, const QSharedPointer<const CVCertificate>& pSigningCert, const EC_KEY* pKey)
+bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>& pCert, const QSharedPointer<const CVCertificate>& pSigningCert, const EC_KEY* pKey) const
 {
 	ERR_clear_error();
 
@@ -86,12 +81,34 @@ bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>&
 		qCCritical(card) << "Cannot decode uncompressed public point";
 		return false;
 	}
-	EC_KEY_set_public_key(signingKey.data(), publicPoint);
 
-	const QByteArray bodyHash = QCryptographicHash::hash(pCert->getRawBody(), pSigningCert->getBody().getHashAlgorithm());
-	const auto* const dgst = reinterpret_cast<const unsigned char*>(bodyHash.constData());
-	const int dgstlen = bodyHash.size();
-	const int result = ECDSA_do_verify(dgst, dgstlen, pCert->getEcdsaSignature(), signingKey.data());
+	if (!EC_KEY_set_public_key(signingKey.data(), publicPoint))
+	{
+		qCCritical(card) << "Cannot set public point";
+		return false;
+	}
+
+	const QSharedPointer<EVP_PKEY> evpPkey = EcUtil::create(EVP_PKEY_new());
+	if (!EVP_PKEY_set1_EC_KEY(evpPkey.data(), signingKey.data()))
+	{
+		qCCritical(card) << "Cannot set key";
+		return false;
+	}
+
+	const QSharedPointer<EVP_PKEY_CTX> ctx = EcUtil::create(EVP_PKEY_CTX_new(evpPkey.data(), nullptr));
+	if (!EVP_PKEY_verify_init(ctx.data()))
+	{
+		qCCritical(card) << "Cannot init verify ctx";
+		return false;
+	}
+
+	const QByteArray hash = QCryptographicHash::hash(pCert->getRawBody(), pSigningCert->getBody().getHashAlgorithm());
+	const QByteArray signature = pCert->getDerSignature();
+	const int result = EVP_PKEY_verify(ctx.data(),
+			reinterpret_cast<const uchar*>(signature.data()),
+			static_cast<size_t>(signature.size()),
+			reinterpret_cast<const uchar*>(hash.data()),
+			static_cast<size_t>(hash.size()));
 
 	if (result == -1)
 	{

@@ -33,7 +33,7 @@ class test_AuthModel
 			QSignalSpy spyCurrentStateChanged(model, &WorkflowModel::fireCurrentStateChanged);
 			QSignalSpy spyTransactionInfoChanged(model, &AuthModel::fireTransactionInfoChanged);
 
-			model->resetContext(context);
+			model->resetAuthContext(context);
 			QCOMPARE(spyCurrentStateChanged.count(), 1);
 			QCOMPARE(spyTransactionInfoChanged.count(), 0);
 
@@ -41,7 +41,7 @@ class test_AuthModel
 			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
 			context->setDidAuthenticateEac1(eac1);
 			QCOMPARE(model->getTransactionInfo(), QString("this is a test for TransactionInfo"));
-			model->resetContext(context);
+			model->resetAuthContext(context);
 			QVERIFY(model->getTransactionInfo().isEmpty());
 			Q_EMIT context->fireDidAuthenticateEac1Changed();
 			QCOMPARE(model->getTransactionInfo(), QString("this is a test for TransactionInfo"));

@@ -5,10 +5,11 @@
 #pragma once
 
 #include "context/DiagnosisContext.h"
+#include "ContentItem.h"
 #include "DiagnosisAntivirusDetection.h"
 #include "DiagnosisConnectionTest.h"
 #include "DiagnosisFirewallDetection.h"
-#include "DiagnosisItem.h"
+#include "SectionModel.h"
 
 #include <QAbstractListModel>
 #include <QPair>
@@ -19,56 +20,6 @@ class test_DiagnosisModel;
 
 namespace governikus
 {
-
-class SectionModel;
-struct ContentItem
-{
-	ContentItem(const QString& pTitle, const QString& pContent)
-		: mTitle(pTitle)
-		, mContent(pContent)
-	{
-	}
-
-
-	QString mTitle;
-	QString mContent;
-	QSharedPointer<SectionModel> mSection;
-};
-
-
-class SectionModel
-	: public QAbstractListModel
-	, public QEnableSharedFromThis<SectionModel>
-{
-	Q_OBJECT
-
-	enum ContentRoles
-	{
-		TitleRole = Qt::UserRole + 1,
-		ContentRole
-	};
-
-	private:
-		friend class ::test_DiagnosisModel;
-		QVector<QSharedPointer<ContentItem>> mContentItems;
-
-	public:
-		explicit SectionModel(QObject* pParent = nullptr);
-
-		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
-		int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
-		QHash<int, QByteArray> roleNames() const override;
-
-		void addItem(const QString& pTitle, const QString& pContent);
-		void addItem(const QSharedPointer<ContentItem>& pContentItem);
-		void addItemWithoutTitle(const QString& pContent);
-		void addTitleWithoutContent(const QString& pTitle);
-		void removeAllItems();
-		void emitDataChangedForItem(const QSharedPointer<ContentItem>& pItem);
-		void replaceWithSections(QVector<QSharedPointer<SectionModel>> pSections);
-		QStringList getAsPlaintext(const QString& pPrependString = QString()) const;
-};
-
 
 class DiagnosisModel
 	: public QAbstractListModel
@@ -103,7 +54,6 @@ class DiagnosisModel
 		void createNetworkSection();
 		void createCardReaderSection();
 		void createAntiVirusAndFirewallSection();
-		void emitDataChangedForSection(const QSharedPointer<ContentItem>& pItem) const;
 		void connectSignals();
 		void disconnectSignals();
 
@@ -119,7 +69,7 @@ class DiagnosisModel
 		QDateTime getCreationTime() const;
 		Q_INVOKABLE QString getCreationTimeString() const;
 		QString getAsPlaintext() const;
-		QString boolToString(bool pBoolean);
+		QString boolToString(bool pBoolean) const;
 		bool isRunning() const;
 
 	Q_SIGNALS:

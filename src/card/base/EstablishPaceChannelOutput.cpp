@@ -7,6 +7,7 @@
 #include "ResponseApdu.h"
 
 #include <QDataStream>
+#include <QIODevice>
 #include <QLoggingCategory>
 #include <QRegularExpression>
 #include <QtEndian>
@@ -194,10 +195,10 @@ QByteArray EstablishPaceChannelOutput::toCcid() const
 
 	QByteArray paceReturnCodeBytes;
 	QDataStream(&paceReturnCodeBytes, QIODevice::WriteOnly) << Enum<EstablishPaceChannelErrorCode>::getValue(generateReturnCode(mPaceReturnCode));
-	establishPaceChannelOutput->mErrorCode = ASN1_OCTET_STRING_new();
+	Q_ASSERT(establishPaceChannelOutput->mErrorCode);
 	Asn1OctetStringUtil::setValue(paceReturnCodeBytes, establishPaceChannelOutput->mErrorCode);
 
-	establishPaceChannelOutput->mStatusMSESetAt = ASN1_OCTET_STRING_new();
+	Q_ASSERT(establishPaceChannelOutput->mStatusMSESetAt);
 	if (mStatusMseSetAt.isEmpty())
 	{
 		qCWarning(card) << "mStatusMseSetAt is empty! Using 0000 as dummy...";

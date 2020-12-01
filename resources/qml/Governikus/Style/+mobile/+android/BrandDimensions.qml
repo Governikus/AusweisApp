@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 import Governikus.Global 1.0
 
 QtObject {
@@ -14,4 +14,5 @@ QtObject {
 	readonly property int header_font_size: 20
 	readonly property int normal_font_size: 16
 	readonly property int hint_font_size: 14
+	readonly property int navigation_font_size: 12
 }

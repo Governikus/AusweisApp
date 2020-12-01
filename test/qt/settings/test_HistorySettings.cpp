@@ -11,6 +11,7 @@
 
 #include "AppSettings.h"
 #include "Env.h"
+#include "VolatileSettings.h"
 
 #include "TestFileHelper.h"
 
@@ -48,6 +49,7 @@ class test_HistorySettings
 
 		void testHistoryEntries()
 		{
+			SDK_MODE(false);
 			auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
 			QVector<HistoryInfo> initial = settings.getHistoryInfos();
 			HistoryInfo info("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", {"pRequestedData"});
@@ -61,6 +63,7 @@ class test_HistorySettings
 
 		void testDeleteHistory()
 		{
+			SDK_MODE(false);
 			auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
 			HistoryInfo info("pSubjectName", "pSubjectUrl", "pUsage", QDateTime(), "pTermOfUsage", {"pRequestedData"});
 			settings.addHistoryInfo(info);
@@ -75,6 +78,7 @@ class test_HistorySettings
 
 		void testDeleteHistoryFromFile()
 		{
+			SDK_MODE(false);
 			auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
 			const auto file = AbstractSettings::mTestDir->path() + QStringLiteral("/dummy/Test_settings_HistorySettings.ini");
 

@@ -15,6 +15,7 @@
 #include <QLoggingCategory>
 #include <QMessageLogContext>
 #include <QMutex>
+#include <QPointer>
 #include <QStringList>
 #include <QTemporaryFile>
 
@@ -27,10 +28,30 @@ class test_LogModel;
 namespace governikus
 {
 
-class LogHandler
+class LogEventHandler
 	: public QObject
 {
 	Q_OBJECT
+
+	friend class LogHandler;
+
+	private:
+		LogEventHandler() = default;
+		~LogEventHandler() = default;
+
+	Q_SIGNALS:
+		/**
+		 * \brief Every log will be fired by this signal. Be aware that you NEVER use a qDebug()
+		 * or something like that function in your slot or you will get a deadlock!
+		 */
+		void fireLog(const QString& pMsg);
+		void fireRawLog(const QString& pMsg, const QString& pCategoryName);
+};
+
+class LogHandler
+{
+	Q_GADGET
+
 	friend class Env;
 	friend class ::test_LogHandler;
 	friend class ::test_LogModel;
@@ -44,6 +65,7 @@ class LogHandler
 	private:
 		static QString getLogFileTemplate();
 
+		QPointer<LogEventHandler> mEventHandler;
 		const bool mEnvPattern;
 		const int mFunctionFilenameSize;
 		qint64 mBacklogPosition;
@@ -51,19 +73,23 @@ class LogHandler
 		QContiguousCache<LogWindowEntry> mCriticalLogWindow;
 		QStringList mCriticalLogIgnore;
 		const QString mMessagePattern, mDefaultMessagePattern;
-		QTemporaryFile mLogFile;
+		QPointer<QTemporaryFile> mLogFile;
 		QtMessageHandler mHandler;
 		bool mUseHandler;
 		const QByteArray mFilePrefix;
 		QMutex mMutex;
 
-		inline void copyMessageLogContext(const QMessageLogContext& pSource, QMessageLogContext& pDestination, const QByteArray& pFilename = QByteArray(), const QByteArray& pFunction = QByteArray(), const QByteArray& pCategory = QByteArray());
+		inline void copyMessageLogContext(const QMessageLogContext& pSource,
+				QMessageLogContext& pDestination,
+				const QByteArray& pFilename = QByteArray(),
+				const QByteArray& pFunction = QByteArray(),
+				const QByteArray& pCategory = QByteArray()) const;
 		inline void logToFile(const QString& pOutput);
 		inline QByteArray formatFunction(const char* const pFunction, const QByteArray& pFilename, int pLine) const;
 		inline QByteArray formatFilename(const char* const pFilename) const;
 		inline QByteArray formatCategory(const QByteArray& pCategory) const;
 
-		QString getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg);
+		QString getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg) const;
 		void handleMessage(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg);
 		void handleLogWindow(QtMsgType pType, const char* pCategory, const QString& pMsg);
 		void removeOldLogfiles();
@@ -82,12 +108,13 @@ class LogHandler
 	public:
 #endif
 		void reset();
-		bool isInitialized() const;
+		bool isInstalled() const;
 
 	public:
 		void init();
+		const LogEventHandler* getEventHandler() const;
 
-		void setAutoRemove(bool pRemove);
+		bool setAutoRemove(bool pRemove);
 		bool copy(const QString& pDest);
 		bool copyOther(const QString& pSource, const QString& pDest) const;
 		void resetBacklog();
@@ -105,20 +132,14 @@ class LogHandler
 		bool useLogfile() const;
 		void setUseHandler(bool pEnable);
 		bool useHandler() const;
-
-	Q_SIGNALS:
-		/**
-		 * \brief Every log will be fired by this signal. Be aware that you NEVER use a qDebug()
-		 * or something like that function in your slot or you will get a deadlock!
-		 */
-		void fireLog(const QString& pMsg);
-		void fireRawLog(const QString& pMsg, const QString& pCategoryName);
 };
 
 inline QDebug operator<<(QDebug pDbg, const governikus::LogHandler& pHandler)
 {
+	Q_ASSERT(pHandler.mLogFile);
+
 	QDebugStateSaver saver(pDbg);
-	pDbg.nospace() << pHandler.mLogFile.fileName();
+	pDbg.nospace() << pHandler.mLogFile->fileName();
 	return pDbg.space();
 }
 

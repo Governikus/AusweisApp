@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
-<manifest package="@ANDROID_PACKAGE_NAME@" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="@ANDROID_VERSION_NAME@" android:versionCode="@ANDROID_VERSION_CODE@" android:installLocation="auto">
-    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="29" />
+<manifest package="@BUNDLE_IDENTIFIER@"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:versionName="@ANDROID_VERSION_NAME@"
+    android:versionCode="@ANDROID_VERSION_CODE@"
+    android:installLocation="auto">
 
     <!-- Normal Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -8,29 +12,25 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.NFC"/>
-    <!-- Dangerous Permissions -->
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!-- The following comment will be replaced upon deployment with default features based on the dependencies of the application.
          Remove the comment if you do not require these default features. -->
     <!-- %%INSERT_FEATURES -->
 
-    <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
     <uses-feature android:name="android.hardware.nfc" android:required="false" />
 
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 
     <application android:hardwareAccelerated="true"
-				 android:name="org.qtproject.qt5.android.bindings.QtApplication"
-				 android:label="@string/app_name"
-				 android:icon="@mipmap/npa"
-				 android:theme="@style/AppTheme"
-				 android:allowBackup="true"
-				 android:fullBackupContent="@xml/backup_rules">
+                android:name="org.qtproject.qt5.android.bindings.QtApplication"
+                android:label="@string/app_name"
+                android:icon="@mipmap/npa"
+                android:theme="@style/AppTheme.Launcher"
+                android:allowBackup="true"
+                android:fullBackupContent="@xml/backup_rules"
+                android:extractNativeLibs="true"
+                tools:targetApi="23">
         <meta-data android:name="android.max_aspect" android:value="2.4" />
 
         <receiver android:name="com.governikus.ausweisapp2.UpdateReceiver" >
@@ -47,11 +47,12 @@
                        android:resource="@xml/fileprovider"/>
         </provider>
 
-        <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation"
+        <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
                   android:name="com.governikus.ausweisapp2.MainActivity"
                   android:label="@string/app_name"
                   android:launchMode="singleTask"
-                  android:resizeableActivity="false">
+                  android:resizeableActivity="false"
+                  tools:targetApi="24">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -61,23 +62,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="eid" android:host="127.0.0.1" android:port="24727" android:path="/eID-Client"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="eid" android:host="localhost" android:port="24727" android:path="/eID-Client"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="127.0.0.1" android:port="24727" android:path="/eID-Client" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="http" android:host="localhost" android:port="24727" android:path="/eID-Client" />
             </intent-filter>
 
@@ -92,12 +76,10 @@
             <meta-data android:name="android.app.bundled_libs_resource_id" android:resource="@array/bundled_libs"/>
             <!-- Deploy Qt libs as part of package -->
             <meta-data android:name="android.app.bundle_local_qt_libs" android:value="-- %%BUNDLE_LOCAL_QT_LIBS%% --"/>
-            <meta-data android:name="android.app.bundled_in_lib_resource_id" android:resource="@array/bundled_in_lib"/>
-            <meta-data android:name="android.app.bundled_in_assets_resource_id" android:resource="@array/bundled_in_assets"/>
             <!-- Run with local libs -->
             <meta-data android:name="android.app.use_local_qt_libs" android:value="-- %%USE_LOCAL_QT_LIBS%% --"/>
             <meta-data android:name="android.app.libs_prefix" android:value="/data/local/tmp/qt/"/>
-            <meta-data android:name="android.app.load_local_libs" android:value="-- %%INSERT_LOCAL_LIBS%% --"/>
+            <meta-data android:name="android.app.load_local_libs_resource_id" android:resource="@array/load_local_libs"/>
             <meta-data android:name="android.app.load_local_jars" android:value="-- %%INSERT_LOCAL_JARS%% --"/>
             <meta-data android:name="android.app.static_init_classes" android:value="-- %%INSERT_INIT_CLASSES%% --"/>
             <!--  Messages maps -->
@@ -108,8 +90,8 @@
             <!--  Messages maps -->
 
             <!-- Splash screen -->
-            <meta-data android:name="android.app.splash_screen_drawable" android:resource="@color/background_color"/>
-            <!-- meta-data android:name="android.app.splash_screen_sticky" android:value="true"/ -->
+            <meta-data android:name="android.app.splash_screen_drawable" android:resource="@drawable/bg_splash_screen"/>
+            <meta-data android:name="android.app.splash_screen_sticky" android:value="true"/>
             <!-- Splash screen -->
 
             <!-- Background running -->
@@ -162,12 +144,10 @@
             <meta-data android:name="android.app.bundled_libs_resource_id" android:resource="@array/bundled_libs"/>
             <!-- Deploy Qt libs as part of package -->
             <meta-data android:name="android.app.bundle_local_qt_libs" android:value="-- %%BUNDLE_LOCAL_QT_LIBS%% --"/>
-            <meta-data android:name="android.app.bundled_in_lib_resource_id" android:resource="@array/bundled_in_lib"/>
-            <meta-data android:name="android.app.bundled_in_assets_resource_id" android:resource="@array/bundled_in_assets"/>
             <!-- Run with local libs -->
             <meta-data android:name="android.app.use_local_qt_libs" android:value="-- %%USE_LOCAL_QT_LIBS%% --"/>
             <meta-data android:name="android.app.libs_prefix" android:value="/data/local/tmp/qt/"/>
-            <meta-data android:name="android.app.load_local_libs" android:value="-- %%INSERT_LOCAL_LIBS%% --"/>
+            <meta-data android:name="android.app.load_local_libs_resource_id" android:resource="@array/load_local_libs"/>
             <meta-data android:name="android.app.load_local_jars" android:value="-- %%INSERT_LOCAL_JARS%% --"/>
             <meta-data android:name="android.app.static_init_classes" android:value="-- %%INSERT_INIT_CLASSES%% --"/>
             <!--  Messages maps -->

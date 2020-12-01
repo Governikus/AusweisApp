@@ -2,15 +2,14 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.AuthModel 1.0
 import Governikus.Type.SurveyModel 1.0
 
@@ -22,7 +21,7 @@ SectionPage {
 
 	navigationAction: NavigationAction { state: "cancel"; onClicked: root.done(false) }
 	//: LABEL ANDROID IOS
-	title: qsTr("Feedback") + SettingsModel.translationTrigger
+	title: qsTr("Feedback")
 
 	QtObject {
 		id: d
@@ -36,32 +35,37 @@ SectionPage {
 		padding: Constants.pane_padding
 		spacing: Constants.pane_spacing
 
-		Pane {
+		GPane {
 			id: whitePane
 
-			anchors.margins: Constants.pane_padding
+			anchors {
+				left: parent.left
+				right: parent.right
+				margins: Constants.pane_padding
+			}
+
 			//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Header
-			title: qsTr("Send device data?") + SettingsModel.translationTrigger
+			title: qsTr("Send device data?")
 
 			GText {
 				anchors.left: parent.left
 				anchors.right: parent.right
 				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text
-				text: qsTr("Would you like to help us to improve the AusweisApp2?") + SettingsModel.translationTrigger
+				text: qsTr("Would you like to help us to improve the AusweisApp2?")
 			}
 
 			GText {
 				anchors.left: parent.left
 				anchors.right: parent.right
 				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text
-				text: qsTr("Supplying your device characteristics helps us to gather reliable information about the compatibility of your device.") + SettingsModel.translationTrigger
+				text: qsTr("Supplying your device characteristics helps us to gather reliable information about the compatibility of your device.")
 			}
 
 			GText {
 				anchors.left: parent.left
 				anchors.right: parent.right
 				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text
-				text: qsTr("The transmission is anonymous. No personal data is collected or transmitted!") + SettingsModel.translationTrigger
+				text: qsTr("The transmission is anonymous. No personal data is collected or transmitted!")
 			}
 
 			Column {
@@ -160,7 +164,7 @@ SectionPage {
 								anchors.bottomMargin: showDataText.height / 8
 
 								rightPadding: Constants.groupbox_spacing
-								text: qsTr("Collected data") + SettingsModel.translationTrigger
+								text: qsTr("Collected data")
 							}
 						}
 
@@ -209,7 +213,7 @@ SectionPage {
 				anchors.left: parent.left
 				anchors.right: parent.right
 				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Thank you message
-				text: qsTr("Thank you for your assistance!") + SettingsModel.translationTrigger
+				text: qsTr("Thank you for your assistance!")
 			}
 		}
 
@@ -222,13 +226,13 @@ SectionPage {
 
 			GButton {
 				//: LABEL ANDROID IOS
-				text: qsTr("Do not send") + SettingsModel.translationTrigger
+				text: qsTr("Do not send")
 				onClicked: root.done(false)
 			}
 
 			GButton {
 				//: LABEL ANDROID IOS
-				text: qsTr("Send") + SettingsModel.translationTrigger
+				text: qsTr("Send")
 				onClicked: root.done(true)
 			}
 		}

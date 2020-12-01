@@ -4,8 +4,8 @@
 
 #include "HistorySettings.h"
 
-#include "AppSettings.h"
 #include "Env.h"
+#include "VolatileSettings.h"
 
 #include <QLoggingCategory>
 
@@ -121,7 +121,7 @@ void HistorySettings::setHistoryInfos(const QVector<HistoryInfo>& pHistoryInfos)
 
 void HistorySettings::addHistoryInfo(const HistoryInfo& pHistoryInfo)
 {
-	if (Env::getSingleton<AppSettings>()->isUsedAsSDK())
+	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 	{
 		qCDebug(settings) << "Running as SDK. Ignoring save request for history.";
 		return;

@@ -71,7 +71,7 @@ class RemoteServiceSettings
 		QSharedPointer<QSettings> mStore;
 
 		RemoteServiceSettings();
-		QString getDefaultServerName();
+		QString getDefaultServerName() const;
 		void setTrustedCertificates(const QList<QSslCertificate>& pCertificates);
 		void setUniqueTrustedCertificates(const QSet<QSslCertificate>& pCertificates);
 

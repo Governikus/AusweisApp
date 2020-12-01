@@ -70,7 +70,7 @@ void EstablishPaceChannel::setPasswordId(PacePasswordId pPasswordId)
 }
 
 
-QByteArray EstablishPaceChannel::createCommandData()
+QByteArray EstablishPaceChannel::createCommandData() const
 {
 	// Command data according to PC/SC Part 10 amendment 1.1
 	static const char INDEX_ESTABLISH_PACE_CHANNEL = 0x02;
@@ -115,7 +115,7 @@ QByteArray EstablishPaceChannel::createCommandData()
 }
 
 
-CommandApdu EstablishPaceChannel::createCommandDataCcid()
+CommandApdu EstablishPaceChannel::createCommandDataCcid() const
 {
 	auto channelInput = newObject<ESTABLISHPACECHANNELINPUT>();
 

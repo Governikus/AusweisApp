@@ -9,7 +9,7 @@ using namespace governikus;
 
 EstablishPaceChannelCommand::EstablishPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
 		PacePasswordId pPacePasswordId,
-		const QString& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription)
+		const QByteArray& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription)
 	: BaseCardCommand(pCardConnectionWorker)
 	, mPacePasswordId(pPacePasswordId)
 	, mPacePassword(pPacePassword)

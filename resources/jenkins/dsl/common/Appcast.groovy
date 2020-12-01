@@ -14,16 +14,6 @@ class Appcast extends Build
 	List oldBuilds = [-1, 5]
 	boolean sendMail = false
 
-	String getSourceJobName(String artifactJob)
-	{
-		def prefixSource = ''
-
-		if(getReleaseJob())
-			prefixSource = 'Release_'
-
-		return buildName(prefixSource, artifactJob)
-	}
-
 	Job generate(DslFactory dslFactory)
 	{
 		def j = super.generate(dslFactory)
@@ -34,7 +24,7 @@ class Appcast extends Build
 			{
 				triggers
 				{
-					upstream(getSourceJobName('Win32_GNU_MSI') + ',' + getSourceJobName('MacOS_DMG') + ',' + getSourceJobName('Source') + ',' + getSourceJobName('Docs'))
+					upstream(getSourceJobName('Win32_GNU_MSI') + ',' + getSourceJobName('MacOS_DMG_PKG') + ',' + getSourceJobName('Source') + ',' + getSourceJobName('Docs'))
 				}
 			}
 
@@ -48,7 +38,7 @@ class Appcast extends Build
 					}
 				}
 
-				copyArtifacts(getSourceJobName('MacOS_DMG'))
+				copyArtifacts(getSourceJobName('MacOS_DMG_PKG'))
 				{
 					buildSelector
 					{

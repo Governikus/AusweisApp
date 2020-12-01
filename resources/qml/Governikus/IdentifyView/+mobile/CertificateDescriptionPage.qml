@@ -2,12 +2,12 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.CertificateDescriptionModel 1.0
 
 
 SectionPage
@@ -28,14 +28,19 @@ SectionPage
 			anchors.fill: parent
 			anchors.margins: Constants.component_spacing
 
-			Pane {
+			GPane {
 				id: pane
 				//: LABEL ANDROID IOS
-				title: qsTr("Provider Information") + SettingsModel.translationTrigger
+				title: qsTr("Provider Information")
+
+				anchors {
+					left: parent.left
+					right: parent.right
+				}
 
 				Repeater {
 					id: listView
-					model: certificateDescriptionModel
+					model: CertificateDescriptionModel
 
 					LabeledText {
 						id: delegate

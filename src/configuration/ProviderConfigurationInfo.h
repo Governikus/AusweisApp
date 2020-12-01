@@ -38,8 +38,6 @@ class ProviderConfigurationInfo
 				const QString mPostalAddress;
 				const QString mIcon;
 				const QString mImage;
-				const QString mTcTokenUrl;
-				const QString mClientUrl;
 				const QStringList mSubjectUrls;
 				const QString mSubjectUrlInfo;
 
@@ -55,8 +53,6 @@ class ProviderConfigurationInfo
 						const QString& pPostalAddress,
 						const QString& pIcon,
 						const QString& pImage,
-						const QString& pTcTokenUrl,
-						const QString& pClientUrl,
 						const QStringList& pSubjectUrls,
 						const QString& pSubjectUrlInfo)
 					: mShortName(pShortName)
@@ -71,8 +67,6 @@ class ProviderConfigurationInfo
 					, mPostalAddress(pPostalAddress)
 					, mIcon(pIcon)
 					, mImage(pImage)
-					, mTcTokenUrl(pTcTokenUrl)
-					, mClientUrl(pClientUrl)
 					, mSubjectUrls(pSubjectUrls)
 					, mSubjectUrlInfo(pSubjectUrlInfo)
 				{
@@ -93,8 +87,6 @@ class ProviderConfigurationInfo
 						   mPostalAddress == pOther.mPostalAddress &&
 						   mIcon == pOther.mIcon &&
 						   mImage == pOther.mImage &&
-						   mTcTokenUrl == pOther.mTcTokenUrl &&
-						   mClientUrl == pOther.mClientUrl &&
 						   mSubjectUrls == pOther.mSubjectUrls &&
 						   mSubjectUrlInfo == pOther.mSubjectUrlInfo;
 				}
@@ -119,16 +111,11 @@ class ProviderConfigurationInfo
 				const QString& pPostalAddress = QString(),
 				const QString& pIcon = QString(),
 				const QString& pImage = QString(),
-				const QString& pTcTokenUrl = QString(),
-				const QString& pClientUrl = QString(),
 				const QStringList& pSubjectUrls = QStringList(),
 				const QString& pSubjectUrlInfo = QString());
 		virtual ~ProviderConfigurationInfo();
 
-		void setTcTokenUrl(const QString& pTcTokenUrl);
-
 		bool operator ==(const ProviderConfigurationInfo& pOther) const;
-		bool operator <(const ProviderConfigurationInfo& pOther) const;
 		bool matchWithSubjectUrl(const QString& pSubjectUrl) const;
 
 		const LanguageString& getShortName() const;
@@ -145,8 +132,6 @@ class ProviderConfigurationInfo
 		const QString& getPostalAddress() const;
 		QSharedPointer<UpdatableFile> getIcon() const;
 		QSharedPointer<UpdatableFile> getImage() const;
-		QUrl getTcTokenUrl() const;
-		QUrl getClientUrl() const;
 		const QStringList& getSubjectUrls() const;
 		const QString& getSubjectUrlInfo() const;
 };

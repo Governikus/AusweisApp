@@ -19,8 +19,8 @@ class ProxyCredentials
 
 	Q_PROPERTY(QString proposedUser READ getProposedUser CONSTANT)
 	Q_PROPERTY(QString url READ getUrl CONSTANT)
-	Q_PROPERTY(QString user READ getUser WRITE setUser)
-	Q_PROPERTY(QString password READ getPassword WRITE setPassword)
+	Q_PROPERTY(QString user READ getUser WRITE setUser NOTIFY fireProxyCredentialsChanged)
+	Q_PROPERTY(QString password READ getPassword WRITE setPassword NOTIFY fireProxyCredentialsChanged)
 
 	private:
 		QEventLoop mLoop;
@@ -28,7 +28,7 @@ class ProxyCredentials
 		const QString mProposedUser;
 		const QString mUrl;
 
-		QString createUrl(const QNetworkProxy& pProxy);
+		QString createUrl(const QNetworkProxy& pProxy) const;
 
 	public:
 		ProxyCredentials(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
@@ -44,6 +44,9 @@ class ProxyCredentials
 
 		Q_INVOKABLE void confirmInput();
 		void waitForConfirmation();
+
+	Q_SIGNALS:
+		void fireProxyCredentialsChanged();
 };
 
 

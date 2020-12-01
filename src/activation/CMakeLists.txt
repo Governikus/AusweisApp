@@ -4,9 +4,11 @@
 # for the specific platform.
 #####################################################################
 
-ADD_SUBDIRECTORY(base)
+add_subdirectory(base)
 
-ADD_SUBDIRECTORY(customscheme)
-ADD_SUBDIRECTORY(intent)
-ADD_SUBDIRECTORY(webservice)
-ADD_SUBDIRECTORY(internal)
+add_subdirectory(webservice)
+
+if(TARGET ${Qt}::Gui)
+	add_subdirectory(customscheme)
+	add_subdirectory(intent)
+endif()

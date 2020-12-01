@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.View 1.0
 import Governikus.Style 1.0
@@ -20,8 +20,11 @@ ComboBox {
 	spacing: Constants.groupbox_spacing
 	font.pixelSize: textStyle.fontSize
 
+	popup.topMargin: plugin.safeAreaMargins.top
+	popup.bottomMargin: plugin.safeAreaMargins.bottom
+
 	indicator: TintableIcon {
-		visible: control.model.length > 1 || control.model.count > 1
+		visible: control.count > 1
 
 		width: height
 		height: Math.round(control.height / 4)

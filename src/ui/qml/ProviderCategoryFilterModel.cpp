@@ -27,7 +27,7 @@ void ProviderCategoryFilterModel::updateSearchString(const QString& pSearchStrin
 
 QStringList ProviderCategoryFilterModel::getSelectedCategories() const
 {
-	return mSelectedCategories.values();
+	return mSelectedCategories;
 }
 
 
@@ -38,7 +38,7 @@ int ProviderCategoryFilterModel::getAdditionalResultCount() const
 		return 0;
 	}
 
-	auto excludedCategories = ProviderModel::getProviderCategories() - mSelectedCategories;
+	const auto excludedCategories = getFilteredProviderCategories();
 	if (excludedCategories.isEmpty())
 	{
 		return 0;
@@ -48,16 +48,28 @@ int ProviderCategoryFilterModel::getAdditionalResultCount() const
 }
 
 
-int ProviderCategoryFilterModel::resultCountForFilter(const QSet<QString>& pCategories, const QString& pSearchString) const
+QStringList ProviderCategoryFilterModel::getFilteredProviderCategories() const
 {
-	QAbstractItemModel* const model = sourceModel();
+	auto filteredCats = ProviderModel::getProviderCategories();
+	filteredCats.removeOne(QStringLiteral("all"));
+	for (const auto& cat : qAsConst(mSelectedCategories))
+	{
+		filteredCats.removeOne(cat);
+	}
+	return filteredCats;
+}
+
+
+int ProviderCategoryFilterModel::resultCountForFilter(const QStringList& pCategories, const QString& pSearchString) const
+{
+	const QAbstractItemModel* const model = sourceModel();
 	Q_ASSERT(model != nullptr);
 	const int rowCount = model->rowCount();
 
 	int matchCount = 0;
 	for (int sourceRow = 0; sourceRow < rowCount; ++sourceRow)
 	{
-		if (rowMatchesFilter(sourceRow, QModelIndex(), pCategories, pSearchString))
+		if (rowMatchesFilter(sourceRow, QModelIndex(), pCategories, pSearchString, false))
 		{
 			matchCount++;
 		}
@@ -69,27 +81,45 @@ int ProviderCategoryFilterModel::resultCountForFilter(const QSet<QString>& pCate
 
 bool ProviderCategoryFilterModel::filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const
 {
-	return rowMatchesFilter(pSourceRow, pSourceParent, mSelectedCategories, mSearchString);
+	return rowMatchesFilter(pSourceRow, pSourceParent, mSelectedCategories, mSearchString, mProviderModel.getIncludeCategories());
 }
 
 
-bool ProviderCategoryFilterModel::rowMatchesFilter(int pSourceRow, const QModelIndex& pSourceParent, const QSet<QString>& pSelectedCategories, const QString& pSearchString) const
+bool ProviderCategoryFilterModel::rowMatchesFilter(int pSourceRow, const QModelIndex& pSourceParent, const QStringList& pSelectedCategories, const QString& pSearchString, bool pMatchCategoryType) const
 {
-	QAbstractItemModel* const model = sourceModel();
+	const QAbstractItemModel* const model = sourceModel();
 	Q_ASSERT(model != nullptr);
 	const QModelIndex idx = model->index(pSourceRow, 0, pSourceParent);
 
+	const QString providerCategory = model->data(idx, ProviderModel::CATEGORY).toString().toLower();
 	bool isRowInSelectedCategory = pSelectedCategories.isEmpty() ||
 			pSelectedCategories.contains(QLatin1String("all")) ||
-			pSelectedCategories.contains(model->data(idx, ProviderModel::CATEGORY).toString().toLower());
+			pSelectedCategories.contains(providerCategory);
 
 	if (!isRowInSelectedCategory)
 	{
 		return false;
 	}
-	else if (pSearchString.isEmpty())
+
+	const QString type = model->data(idx, ProviderModel::TYPE).toString();
+	if (type == QLatin1String("category"))
 	{
-		return true;
+		if (!pMatchCategoryType)
+		{
+			return false;
+		}
+
+		if (!pSearchString.isEmpty() && providerCategory == QLatin1String("all"))
+		{
+			return false;
+		}
+
+		return resultCountForFilter({providerCategory}, pSearchString) > 0;
+	}
+
+	if (pSearchString.isEmpty())
+	{
+		return !pMatchCategoryType;
 	}
 
 	const QString display = model->data(idx, Qt::DisplayRole).toString();
@@ -126,6 +156,12 @@ ProviderCategoryFilterModel::~ProviderCategoryFilterModel()
 }
 
 
+void ProviderCategoryFilterModel::setIncludeCategoriesInModel(bool pIncludeCategories)
+{
+	mProviderModel.setIncludeCategories(pIncludeCategories);
+}
+
+
 void ProviderCategoryFilterModel::sortByCategoryFirst(bool pEnabled)
 {
 	setSortRole(pEnabled ? ProviderModel::SORT_ROLE : ProviderModel::SHORTNAME);
@@ -138,7 +174,7 @@ void ProviderCategoryFilterModel::setCategorySelection(const QString& pCategory)
 
 	if (!pCategory.isEmpty())
 	{
-		mSelectedCategories.insert(pCategory.toLower());
+		mSelectedCategories += pCategory.toLower();
 	}
 	invalidateFilter();
 	Q_EMIT fireCriteriaChanged();
@@ -147,16 +183,17 @@ void ProviderCategoryFilterModel::setCategorySelection(const QString& pCategory)
 
 void ProviderCategoryFilterModel::updateCategorySelection(const QString& pCategory, bool pSelected)
 {
-	const int categoryCount = mSelectedCategories.count();
+	const auto categoryCount = mSelectedCategories.count();
 	if (pSelected)
 	{
-		mSelectedCategories.insert(pCategory.toLower());
+		mSelectedCategories += pCategory.toLower();
 	}
 	else
 	{
-		mSelectedCategories.remove(pCategory.toLower());
+		mSelectedCategories.removeAll(pCategory.toLower());
 	}
 
+	mSelectedCategories.removeDuplicates();
 	if (mSelectedCategories.count() != categoryCount)
 	{
 		invalidateFilter();
@@ -168,10 +205,10 @@ void ProviderCategoryFilterModel::updateCategorySelection(const QString& pCatego
 void ProviderCategoryFilterModel::addAdditionalResultCategories()
 {
 	bool filterChanged = false;
-	const auto excludedCategories = ProviderModel::getProviderCategories() - mSelectedCategories;
+	const auto excludedCategories = getFilteredProviderCategories();
 	for (const QString& category : excludedCategories)
 	{
-		if (resultCountForFilter(QSet<QString>({category}), mSearchString) > 0)
+		if (resultCountForFilter({category}, mSearchString) > 0)
 		{
 			filterChanged = true;
 			mSelectedCategories += category;

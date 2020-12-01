@@ -2,13 +2,15 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.AuthModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.ChatModel 1.0
+import Governikus.Type.ConnectivityManager 1.0
 
 Controller {
 	enum WorkflowStates {
@@ -36,14 +38,14 @@ Controller {
 		},
 		State {
 			// "State when" seems weired with Qt 5.14, so add !SettingsModel.transportPinReminder
-			when: AuthModel.currentState === "StateGetTcToken" && !connectivityManager.networkInterfaceActive && !SettingsModel.transportPinReminder
+			when: AuthModel.currentState === "StateGetTcToken" && !ConnectivityManager.networkInterfaceActive && !SettingsModel.transportPinReminder
 			StateChangeScript {
 				script: controller.nextView(IdentifyView.SubViews.Connectivity)
 			}
 		},
 		State {
 			// "State when" seems weired with Qt 5.14, so add !SettingsModel.transportPinReminder
-			when: AuthModel.currentState === "StateGetTcToken" && connectivityManager.networkInterfaceActive && !SettingsModel.transportPinReminder
+			when: AuthModel.currentState === "StateGetTcToken" && ConnectivityManager.networkInterfaceActive && !SettingsModel.transportPinReminder
 			StateChangeScript {
 				script: {
 					controller.nextView(IdentifyView.SubViews.Progress)
@@ -84,7 +86,7 @@ Controller {
 				break
 			case "StateEditAccessRights":
 				if (NumberModel.isCanAllowedMode && SettingsModel.skipRightsOnCanAllowed) {
-					chatModel.transferAccessRights()
+					ChatModel.transferAccessRights()
 					AuthModel.continueWorkflow()
 				} else {
 					controller.nextView(IdentifyView.SubViews.AccessRights)

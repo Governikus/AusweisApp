@@ -11,7 +11,10 @@ OPTIMIZE_OUTPUT_C      = YES
 QT_AUTOBRIEF           = YES
 BUILTIN_STL_SUPPORT    = YES
 GENERATE_TREEVIEW      = YES
+FULL_PATH_NAMES        = YES
 STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@
+EXCLUDE_PATTERNS       = @PROJECT_BINARY_DIR@/* \
+                         */CMake* */libs/* */test/*
 
 SEARCHENGINE           = YES
 COLS_IN_ALPHA_INDEX    = 10

@@ -2,13 +2,12 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.View 1.0
 
 
@@ -19,8 +18,8 @@ Item {
 
 	height: columnLayout.height
 
-	Accessible.name: qsTr("Provider contact information") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("Contact information of the selected provider.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Provider contact information")
+	Accessible.description: qsTr("Contact information of the selected provider.")
 	Accessible.role: Accessible.Grouping
 
 	ColumnLayout {
@@ -33,11 +32,15 @@ Item {
 		spacing: Constants.text_spacing
 
 		GText {
-			bottomPadding: Constants.groupbox_spacing
+			Layout.bottomMargin: Constants.groupbox_spacing
 
 			//: LABEL DESKTOP_QML
-			text: qsTr("Contact") + SettingsModel.translationTrigger
+			text: qsTr("Contact")
 			textStyle: Style.text.title_inverse
+
+			FocusFrame {
+				scope: baseItem
+			}
 		}
 
 		Repeater {
@@ -60,9 +63,9 @@ Item {
 
 					imageSource: Qt.resolvedUrl(model.iconSource)
 					//: LABEL DESKTOP_QML
-					itemText: (!!model.text ? model.text : qsTr("Unknown")) + SettingsModel.translationTrigger
+					itemText: (!!model.text ? model.text : qsTr("Unknown"))
 					//: LABEL DESKTOP_QML
-					accessibleText: (!!model.accessibleText ? model.accessibleText : qsTr("Unknown")) + SettingsModel.translationTrigger
+					accessibleText: (!!model.accessibleText ? model.accessibleText : qsTr("Unknown"))
 					label: model.label
 					link: model.link
 				}

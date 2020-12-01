@@ -46,6 +46,6 @@ void NetworkReplyTimeout::onShutdown()
 void NetworkReplyTimeout::setTimeout(QNetworkReply* pReply, const int pTimeout)
 {
 	// since the QNetworkReply is set as parent, we don't need to care about destruction
-	auto* timeout = new NetworkReplyTimeout(pReply, pTimeout);
+	const auto* timeout = new NetworkReplyTimeout(pReply, pTimeout);
 	connect(Env::getSingleton<NetworkManager>(), &NetworkManager::fireShutdown, timeout, &NetworkReplyTimeout::onShutdown);
 }

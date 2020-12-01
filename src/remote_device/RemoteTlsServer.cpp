@@ -22,10 +22,20 @@ using namespace governikus;
 
 RemoteTlsServer::RemoteTlsServer()
 	: QTcpServer()
+	, mSocket()
 	, mPsk()
 {
 	//listening with proxy leads to socket error QNativeSocketEnginePrivate::InvalidProxyTypeString
 	setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
+}
+
+
+RemoteTlsServer::~RemoteTlsServer()
+{
+	if (mSocket)
+	{
+		mSocket->deleteLater();
+	}
 }
 
 

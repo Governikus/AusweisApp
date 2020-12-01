@@ -34,15 +34,12 @@ class ReaderConfiguration
 		const QSharedPointer<UpdatableFile> mUpdatableFile;
 		QVector<ReaderConfigurationInfo> mReaderConfigurationInfos;
 
-		bool parseReaderConfiguration();
+		ReaderConfiguration();
+		virtual ~ReaderConfiguration() = default;
+		bool parseReaderConfiguration(const QString& pPath);
 
 	private Q_SLOTS:
 		void onFileUpdated();
-
-	protected:
-		ReaderConfiguration();
-		virtual ~ReaderConfiguration() = default;
-		static ReaderConfiguration& getInstance();
 
 	public:
 		static QString getNoReaderFoundIconPath();

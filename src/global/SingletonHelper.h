@@ -8,8 +8,9 @@
 #pragma once
 
 #include <QGlobalStatic>
+#include <QObject>
 
-#define defineSingletonInstance(className, instanceName)\
+#define defineSingleton(className)\
 	namespace\
 	{\
 	class Singleton##className final\
@@ -20,18 +21,11 @@
 	};\
 	}\
 \
-	Q_GLOBAL_STATIC(Singleton##className, instanceName)
-
-#define defineSingletonInstanceImpl(className, instanceName, impl)\
-	defineSingletonInstance(impl, instanceName)\
-	namespace governikus\
+	Q_GLOBAL_STATIC(Singleton##className, Instance)\
+\
+	className & className::getInstance()\
 	{\
-	template<> className * singleton<className>()\
-	{\
-		return Instance;\
+		return *Instance;\
 	}\
-	}
-
-#define defineSingleton(className) defineSingletonInstance(className, Instance)
-
-#define defineSingletonImpl(className, impl) defineSingletonInstanceImpl(className, Instance, impl)
+\
+	static_assert(!std::is_base_of<QObject, className>::value, "QObject cannot be Q_GLOBAL_STATIC");

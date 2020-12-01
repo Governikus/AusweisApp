@@ -2,12 +2,11 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.SettingsModel 1.0
-
 
 TutorialContent {
 	id: baseItem
@@ -39,14 +38,6 @@ TutorialContent {
 				onQuitTutorialClicked:  baseItem.quitTutorialClicked()
 			}
 		}
-
-		Component {
-			id: readerMethodBluetooth
-
-			TutorialReaderMethodBluetooth {
-				onQuitTutorialClicked:  baseItem.quitTutorialClicked()
-			}
-		}
 	}
 
 
@@ -60,7 +51,6 @@ TutorialContent {
 		//: INFO ANDROID IOS
 		text: (Constants.is_layout_ios ? qsTr("How can I use the AusweisApp2 on my iPhone?")
 										: qsTr("How can I use the AusweisApp2 on my smartphone?"))
-										+ SettingsModel.translationTrigger
 		textStyle: Style.text.tutorial_header
 		font.italic: true
 		horizontalAlignment: Text.AlignHCenter
@@ -72,7 +62,7 @@ TutorialContent {
 
 	Image {
 		anchors.horizontalCenter: parent.horizontalCenter
-		source: "qrc:///images/tutorial/generated/how_questions_everywhere.svg"
+		source: "qrc:///images/tutorial/how_questions_everywhere.svg"
 		width: parent.width * 0.9
 		height: width * (sourceSize.height / sourceSize.width)
 		fillMode: Image.PreserveAspectFit
@@ -109,7 +99,6 @@ TutorialContent {
 				//: INFO ANDROID IOS
 				text: (Constants.is_layout_ios ? qsTr("Many iPhones (iPhone 7 and newer) can access the ID card via the built-in NFC interface.")
 												: qsTr("Many Android devices can access the ID card via the built-in NFC interface."))
-												+ SettingsModel.translationTrigger
 				textStyle: Style.text.tutorial_content
 				font.bold: true
 				horizontalAlignment: Text.AlignLeft
@@ -122,9 +111,25 @@ TutorialContent {
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
-			visible: Constants.is_layout_android
 			//: LABEL ANDROID IOS
-			text: qsTr("You can find a list of compatible NFC-capable smartphones here:") + SettingsModel.translationTrigger
+			text: qsTr("You can test the capabilities of your device and your card by choosing \"Check device and ID card\" on the start page:")
+			textStyle: Style.text.tutorial_header_secondary
+			horizontalAlignment: Text.AlignHCenter
+		}
+
+		TutorialShowMenuPath {
+			width: parent.width
+
+			newSectionImage: "qrc:///images/tutorial/screenshot_check_id_card_%1_%2.png".arg(Constants.layout).arg(SettingsModel.language)
+			newSectionPointerY: Constants.is_layout_android ? 0.3 : 0.29
+			backgroundIcon: "qrc:///images/tutorial/background_icon_how.svg"
+		}
+
+		GText {
+			anchors.horizontalCenter: parent.horizontalCenter
+			width: parent.width * 0.9
+			//: LABEL ANDROID IOS
+			text: qsTr("You can also find a list of compatible NFC-capable smartphones here:")
 			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -132,15 +137,13 @@ TutorialContent {
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
-			visible: Constants.is_layout_android
-			//: LABEL ANDROID IOS
-			text: "<a href=\"%1\">%1</a>".arg(qsTr("https://www.ausweisapp.bund.de/en/compatible-devices/mobile-phones-and-tablets/")) + SettingsModel.translationTrigger
+			text: "<a href=\"%1\">%1</a>".arg("https://www.ausweisapp.bund.de/%1/aa2/mobile-devices".arg(SettingsModel.language))
 			textStyle: Style.text.tutorial_content
 			horizontalAlignment: Text.AlignHCenter
 		}
 
 		Image {
-			source: "qrc:///images/tutorial/generated/how_device_lineup.svg"
+			source: "qrc:///images/tutorial/how_device_lineup.svg"
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width
 			height: width * (sourceSize.height / sourceSize.width)
@@ -155,7 +158,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("The AusweisApp2 offers the following options to access your ID card:") + SettingsModel.translationTrigger
+			text: qsTr("The AusweisApp2 offers the following options to access your ID card:")
 			textStyle: Style.text.tutorial_header
 			font.italic: true
 			horizontalAlignment: Text.AlignHCenter
@@ -179,7 +182,7 @@ TutorialContent {
 			onClicked: firePush(readerMethodNfc)
 
 			//: LABEL ANDROID IOS
-			Accessible.name: qsTr("Direct connection via NFC chip tutorial") + SettingsModel.translationTrigger
+			Accessible.name: qsTr("Direct connection via NFC chip tutorial")
 			Accessible.role: Accessible.Button
 		}
 
@@ -197,7 +200,7 @@ TutorialContent {
 				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 				//: LABEL ANDROID IOS
-				text: qsTr("Direct connection via NFC chip") + SettingsModel.translationTrigger
+				text: qsTr("Direct connection via NFC chip")
 				textStyle: Style.text.tutorial_header_secondary
 				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
@@ -226,7 +229,7 @@ TutorialContent {
 			}
 
 			Image {
-				source: "qrc:///images/tutorial/generated/how_method_nfc.svg"
+				source: "qrc:///images/tutorial/how_method_nfc.svg"
 				anchors.horizontalCenter: parent.horizontalCenter
 				width: parent.width * 0.8
 				height: width * (sourceSize.height / sourceSize.width)
@@ -243,7 +246,6 @@ TutorialContent {
 				//: LABEL ANDROID IOS
 				text: (Constants.is_layout_ios ? qsTr("App on iPhone <b>with</b> NFC chip as card reader")
 												: qsTr("App on Android smartphone <b>with</b> NFC chip as card reader"))
-												+ SettingsModel.translationTrigger
 				textStyle: Style.text.tutorial_content
 				horizontalAlignment: Text.AlignHCenter
 			}
@@ -275,7 +277,7 @@ TutorialContent {
 			onClicked: firePush(readerMethodSacDesktop)
 
 			//: LABEL ANDROID IOS
-			Accessible.name: qsTr("Smartphone as card reader tutorial") + SettingsModel.translationTrigger
+			Accessible.name: qsTr("Smartphone as card reader tutorial")
 			Accessible.role: Accessible.Button
 		}
 
@@ -293,7 +295,7 @@ TutorialContent {
 				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 				//: LABEL ANDROID IOS
-				text: qsTr("Smartphone as card reader") + SettingsModel.translationTrigger
+				text: qsTr("Smartphone as card reader")
 				textStyle: Style.text.tutorial_header_secondary
 				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
@@ -347,7 +349,7 @@ TutorialContent {
 
 				TutorialImage {
 					id: sacStationaryImage
-					source: "qrc:///images/tutorial/generated/how_method_sac_desktop.svg"
+					source: "qrc:///images/tutorial/how_method_sac_desktop.svg"
 					width: parent.width
 
 					centerX: 0.5
@@ -361,7 +363,7 @@ TutorialContent {
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID IOS
-					text: qsTr("App on computer <b>without</b> NFC chip") + SettingsModel.translationTrigger
+					text: qsTr("App on computer <b>without</b> NFC chip")
 					textStyle: Style.text.tutorial_content
 					horizontalAlignment: Text.AlignHCenter
 
@@ -376,7 +378,7 @@ TutorialContent {
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID IOS
-					text: qsTr("Smartphone <b>with</b> NFC chip as card reader") + SettingsModel.translationTrigger
+					text: qsTr("Smartphone <b>with</b> NFC chip as card reader")
 					textStyle: Style.text.tutorial_content
 					horizontalAlignment: Text.AlignHCenter
 
@@ -412,7 +414,7 @@ TutorialContent {
 			onClicked: firePush(readerMethodSacMobile)
 
 			//: LABEL ANDROID IOS
-			Accessible.name: qsTr("Smartphone as card reader mobile tutorial") + SettingsModel.translationTrigger
+			Accessible.name: qsTr("Smartphone as card reader mobile tutorial")
 			Accessible.role: Accessible.Button
 		}
 
@@ -470,7 +472,7 @@ TutorialContent {
 
 				TutorialImage {
 					id: sacMobileImage
-					source: "qrc:///images/tutorial/generated/how_method_sac_mobile.svg"
+					source: "qrc:///images/tutorial/how_method_sac_mobile.svg"
 					width: parent.width
 
 					centerX: 0.5
@@ -484,7 +486,7 @@ TutorialContent {
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID IOS
-					text: qsTr("App on tablet or smartphone <b>without</b> NFC chip") + SettingsModel.translationTrigger
+					text: qsTr("App on tablet or smartphone <b>without</b> NFC chip")
 					textStyle: Style.text.tutorial_content
 					horizontalAlignment: Text.AlignHCenter
 
@@ -499,7 +501,7 @@ TutorialContent {
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID IOS
-					text: qsTr("Smartphone <b>with</b> NFC chip as card reader") + SettingsModel.translationTrigger
+					text: qsTr("Smartphone <b>with</b> NFC chip as card reader")
 					textStyle: Style.text.tutorial_content
 					horizontalAlignment: Text.AlignHCenter
 
@@ -523,139 +525,6 @@ TutorialContent {
 	}
 
 	Rectangle {
-		anchors.horizontalCenter: parent.horizontalCenter
-		width: parent.width * 0.95
-		height: methodBluetoothSection.height
-		color: Constants.white
-		border.width: 3
-		border.color: Style.color.tutorial_how
-
-		MouseArea {
-			anchors.fill: parent
-			onClicked: firePush(readerMethodBluetooth)
-
-			//: LABEL ANDROID IOS
-			Accessible.name: qsTr("Using a bluetooth card reader tutorial") + SettingsModel.translationTrigger
-			Accessible.role: Accessible.Button
-		}
-
-		Column {
-			id: methodBluetoothSection
-			width: parent.width
-			spacing: Constants.component_spacing
-			padding: 10
-
-			GText {
-				anchors.horizontalCenter: parent.horizontalCenter
-				width: parent.width * 0.9
-
-				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
-				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
-
-				//: LABEL ANDROID IOS
-				text: qsTr("Using a bluetooth card reader") + SettingsModel.translationTrigger
-				textStyle: Style.text.tutorial_header_secondary
-				font.bold: true
-				horizontalAlignment: Text.AlignHCenter
-			}
-
-			Rectangle {
-				anchors.horizontalCenter: parent.horizontalCenter
-				height: radius * 2
-				width: radius * 2
-				radius: numberFour.height
-				border.width: 3
-				border.color: Style.color.tutorial_how
-
-				GText {
-					id: numberFour
-					anchors.centerIn: parent
-
-					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
-					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
-
-					text: "4"
-					textStyle: Style.text.tutorial_header_secondary
-					font.bold: true
-					horizontalAlignment: Text.AlignHCenter
-				}
-			}
-
-			Item {
-				width: parent.width
-				height: bluetoothImage.height
-
-				Rectangle {
-					anchors.horizontalCenter: parent.horizontalCenter
-					height: radius * 2
-					width: radius * 2
-					radius: parent.width * 0.06
-					border.width: 3
-					border.color: Style.color.tutorial_how
-
-					y: (parent.height * 0.4) - (height / 2)
-					x: (parent.width * 0.5) - (width / 2)
-
-					TutorialImage {
-						source: "qrc:///images/tutorial/bluetooth.svg"
-						width: parent.width * 0.8
-
-						centerX: 0.5
-						centerY: 0.5
-					}
-				}
-
-				TutorialImage {
-					id: bluetoothImage
-					source: "qrc:///images/tutorial/generated/how_method_bluetooth.svg"
-					width: parent.width
-
-					centerX: 0.5
-					centerY: 0.5
-				}
-
-				GText {
-					width: parent.width * 0.4
-
-					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
-					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
-
-					//: LABEL ANDROID IOS
-					text: qsTr("App on smartphone or tablet") + SettingsModel.translationTrigger
-					textStyle: Style.text.tutorial_content
-					horizontalAlignment: Text.AlignHCenter
-
-					x: (parent.width * 0.25) - (width / 2)
-					y: (parent.height * 0.95) - (height / 2)
-				}
-
-				GText {
-					width: parent.width * 0.4
-
-					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
-					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
-
-					//: LABEL ANDROID IOS
-					text: qsTr("Bluetooth card reader") + SettingsModel.translationTrigger
-					textStyle: Style.text.tutorial_content
-					horizontalAlignment: Text.AlignHCenter
-
-					x: (parent.width * 0.75) - (width / 2)
-					y: (parent.height * 0.95) - (height / 2)
-				}
-			}
-
-			Image {
-				source: "qrc:///images/tutorial/arrow_blue.svg"
-				anchors.horizontalCenter: parent.horizontalCenter
-				width: parent.width * 0.2
-				height: width * (sourceSize.height / sourceSize.width)
-				fillMode: Image.PreserveAspectFit
-			}
-		}
-	}
-
-	Rectangle {
 		property alias text: textContent.text
 		height: textContent.height + 2 * Constants.component_spacing
 		width: parent.width
@@ -673,7 +542,7 @@ TutorialContent {
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 			//: LABEL ANDROID IOS
-			text: qsTr("Another tip") + SettingsModel.translationTrigger
+			text: qsTr("Another tip")
 		}
 	}
 
@@ -690,7 +559,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("For lenghty forms, e.g. a BAf\u00F6G application, we recommend you to use the AusweisApp2 on a computer...") + SettingsModel.translationTrigger
+			text: qsTr("For lenghty forms, e.g. a BAf\u00F6G application, we recommend you to use the AusweisApp2 on a computer...")
 			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -701,7 +570,7 @@ TutorialContent {
 
 			TutorialImage {
 				id: formImage
-				source: "qrc:///images/tutorial/generated/how_form_no_fun.svg"
+				source: "qrc:///images/tutorial/how_form_no_fun.svg"
 				width: parent.width * 0.6
 
 				centerX: 0.4
@@ -716,7 +585,7 @@ TutorialContent {
 				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 				//: LABEL ANDROID IOS
-				text: qsTr("Filling long forms is no fun on a smartphone!") + SettingsModel.translationTrigger
+				text: qsTr("Filling long forms is no fun on a smartphone!")
 				textStyle: Style.text.tutorial_content
 				horizontalAlignment: Text.AlignLeft
 				color: Style.color.accent
@@ -734,7 +603,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("... and to use a smartphone to communicate with your ID card. A USB reader is of course also an alternative.") + SettingsModel.translationTrigger
+			text: qsTr("... and to use a smartphone to communicate with your ID card. A USB reader is of course also an alternative.")
 			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -742,7 +611,7 @@ TutorialContent {
 
 	Image {
 		anchors.horizontalCenter: parent.horizontalCenter
-		source: "qrc:///images/tutorial/generated/how_desktop.svg"
+		source: "qrc:///images/tutorial/how_desktop.svg"
 		width: parent.width
 		height: width * (sourceSize.height / sourceSize.width)
 		fillMode: Image.PreserveAspectFit

@@ -11,6 +11,7 @@
 #include <QNetworkDatagram>
 #include <QNetworkInterface>
 #include <QNetworkProxy>
+#include <QOperatingSystemVersion>
 #include <QWeakPointer>
 
 using namespace governikus;
@@ -23,7 +24,7 @@ namespace governikus
 
 template<> DatagramHandler* createNewObject<DatagramHandler*>()
 {
-	return new DatagramHandlerImpl;
+	return new DatagramHandlerImpl();
 }
 
 
@@ -46,12 +47,25 @@ DatagramHandlerImpl::DatagramHandlerImpl(bool pEnableListening, quint16 pPort)
 	, mEnableListening(pEnableListening)
 {
 	resetSocket();
+
+#if defined(Q_OS_IOS)
+	if (pEnableListening)
+	{
+		checkNetworkPermission();
+	}
+#endif
+
 }
 
 
 void DatagramHandlerImpl::resetSocket()
 {
-	mSocket.reset(new QUdpSocket);
+	if (isBound())
+	{
+		mSocket->close();
+	}
+
+	mSocket.reset(new QUdpSocket());
 	mSocket->setProxy(QNetworkProxy::NoProxy);
 
 	connect(mSocket.data(), &QUdpSocket::readyRead, this, &DatagramHandlerImpl::onReadyRead);
@@ -70,7 +84,7 @@ void DatagramHandlerImpl::resetSocket()
 	}
 	else if (mSocket->bind(mUsedPort))
 	{
-		mMulticastLock.reset(new MulticastLock);
+		mMulticastLock.reset(new MulticastLock());
 		mUsedPort = mSocket->localPort(); // if user provides 0, we need to overwrite it with real value
 		mPortFile.handlePort(mUsedPort);
 		qCDebug(network) << "Bound on port:" << mUsedPort;
@@ -94,7 +108,7 @@ DatagramHandlerImpl::~DatagramHandlerImpl()
 
 bool DatagramHandlerImpl::isBound() const
 {
-	return mSocket->state() == QAbstractSocket::BoundState;
+	return mSocket && mSocket->state() == QAbstractSocket::BoundState;
 }
 
 
@@ -142,11 +156,7 @@ bool DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint
 				case QAbstractSocket::NetworkLayerProtocol::IPv4Protocol:
 				{
 					const QHostAddress& broadcastAddr = addressEntry.broadcast();
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
 					if (broadcastAddr.isNull() || !ipAddr.isGlobal())
-#else
-					if (broadcastAddr.isNull())
-#endif
 					{
 						continue;
 					}
@@ -163,11 +173,7 @@ bool DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint
 					}
 
 					const QString& scopeId = ipAddr.scopeId();
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
 					if (scopeId.isEmpty() || !(ipAddr.isLinkLocal() || ipAddr.isUniqueLocalUnicast()))
-#else
-					if (scopeId.isEmpty())
-#endif
 					{
 						continue;
 					}
@@ -222,6 +228,31 @@ bool DatagramHandlerImpl::sendToAddress(const QByteArray& pData, const QHostAddr
 
 	return true;
 }
+
+
+#if defined(Q_OS_IOS)
+void DatagramHandlerImpl::checkNetworkPermission()
+{
+	if (QOperatingSystemVersion::current() < QOperatingSystemVersion(QOperatingSystemVersion::IOS, 14))
+	{
+		return;
+	}
+
+	// iOS 14 doesn't have an API to ask for local network permissions,
+	// furthermore the permission prompt is only triggered when sending data.
+	// So send a dummy packet, as that will hopefully trigger the prompt.
+	// Use port 9 as all traffic send to it is discarded (RFC863).
+
+	quint16 discardServicePort = 9;
+	if (!sendToAllAddressEntries(QByteArrayLiteral("!"), discardServicePort))
+	{
+		qCDebug(network) << "Probably no permission to access the local network, resetting broadcasting socket.";
+		resetSocket();
+	}
+}
+
+
+#endif
 
 
 void DatagramHandlerImpl::onReadyRead()

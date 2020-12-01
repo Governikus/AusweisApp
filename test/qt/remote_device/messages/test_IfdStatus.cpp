@@ -55,7 +55,7 @@ class test_IfdStatus
 
 		void invalidJson()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray message("FooBar");
 			const auto& obj = QJsonDocument::fromJson(message).object();
@@ -149,7 +149,7 @@ class test_IfdStatus
 
 		void fromJson()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"CardAvailable\": false,\n"
@@ -202,7 +202,7 @@ class test_IfdStatus
 		{
 			QFETCH(RemoteCardMessageType, type);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray message("{\n"
 							   "    \"CardAvailable\": false,\n"
@@ -252,7 +252,7 @@ class test_IfdStatus
 
 		void wrongTypes()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"CardAvailable\": 1,\n"
@@ -276,7 +276,7 @@ class test_IfdStatus
 			QVERIFY(!ifdStatus.getPaceCapabilities().getEId());
 			QVERIFY(!ifdStatus.getPaceCapabilities().getESign());
 			QVERIFY(!ifdStatus.getPaceCapabilities().getDestroy());
-			QCOMPARE(ifdStatus.getMaxApduLength(), 0);
+			QCOMPARE(ifdStatus.getMaxApduLength(), -1);
 			QVERIFY(!ifdStatus.getConnectedReader());
 			QVERIFY(!ifdStatus.getCardAvailable());
 
@@ -291,7 +291,7 @@ class test_IfdStatus
 
 		void wrongPINCapabilityTypes()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"CardAvailable\": false,\n"

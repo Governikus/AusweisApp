@@ -2,14 +2,13 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.AuthModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.ReaderPlugIn 1.0
@@ -24,8 +23,8 @@ SectionPage
 	property bool isPinChange: false
 	signal settingsRequested()
 
-	Accessible.name: qsTr("General workflow view") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This is the general workflow view of the AusweisApp2.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("General workflow view")
+	Accessible.description: qsTr("This is the general workflow view of the AusweisApp2.")
 
 	QtObject {
 		id: d
@@ -34,6 +33,8 @@ SectionPage
 		readonly property bool foundPCSCReader: ApplicationModel.availableReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderPlugIn.PCSC)
 		readonly property bool foundRemoteReader: ApplicationModel.availableReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderPlugIn.REMOTE)
 	}
+
+
 
 	Connections {
 		target: ApplicationModel
@@ -51,7 +52,7 @@ SectionPage
 
 		font.bold: true
 		//: LABEL DESKTOP_QML
-		text: qsTr("Attempts") + SettingsModel.translationTrigger
+		text: qsTr("Attempts")
 	}
 
 	StatusIcon {
@@ -64,7 +65,7 @@ SectionPage
 		anchors.margins: height
 
 		activeFocusOnTab: true
-		Accessible.name: qsTr("Remaining attempts:") + " " + NumberModel.retryCounter + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Remaining attempts:") + " " + NumberModel.retryCounter
 
 		text: NumberModel.retryCounter
 
@@ -90,7 +91,7 @@ SectionPage
 
 		activeFocusOnTab: true
 		Accessible.role: Accessible.ProgressBar
-		Accessible.name: qsTr("Step %1 of 3").arg(state) + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Step %1 of 3").arg(state)
 
 		state: switch (waitingFor) {
 					case Workflow.WaitingFor.Reader:
@@ -119,8 +120,6 @@ SectionPage
 		Accessible.name: mainText.text
 
 		text: {
-			SettingsModel.translationTrigger
-
 			switch (waitingFor) {
 				case Workflow.WaitingFor.Reader:
 					if (ApplicationModel.extendedLengthApdusUnsupported) {
@@ -178,8 +177,6 @@ SectionPage
 		Accessible.name: subText.text
 
 		text: {
-			SettingsModel.translationTrigger
-
 			switch (waitingFor) {
 				case Workflow.WaitingFor.Reader:
 					//: INFO DESKTOP_QML AA2 is waiting for the card reader or the ID card.

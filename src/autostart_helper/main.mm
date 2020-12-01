@@ -19,7 +19,7 @@
 	NSArray* runningApplications = [[NSWorkspace sharedWorkspace] runningApplications];
 	for (NSRunningApplication* application in runningApplications)
 	{
-		if ([[application bundleIdentifier] isEqualToString:@"com.governikus.AusweisApp2"])
+		if ([[application bundleIdentifier] isCaseInsensitiveLike:@"com.governikus.ausweisapp2"])
 		{
 			NSLog(@"Application is already running.");
 			alreadyRunning = true;

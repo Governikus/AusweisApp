@@ -42,7 +42,7 @@ QString getField(const QString& pData, const QStringList& pSearchItems)
 
 	for (const auto& item : pSearchItems)
 	{
-		const int pos = pData.indexOf(item);
+		const auto pos = pData.indexOf(item);
 		if (pos != -1)
 		{
 			const QString rest = pData.mid(pos + item.length());
@@ -197,11 +197,11 @@ QString CertificateDescription::getTermsOfUsage() const
 	QString string;
 	if (mTermsOfUsage->type == V_ASN1_UTF8STRING)
 	{
-		string = Asn1StringUtil::getValue(reinterpret_cast<ASN1_STRING*>(mTermsOfUsage->value.utf8string));
+		string = Asn1StringUtil::getValue(mTermsOfUsage->value.utf8string);
 	}
 	else if (mTermsOfUsage->type == V_ASN1_IA5STRING)
 	{
-		string = Asn1StringUtil::getValue(reinterpret_cast<ASN1_STRING*>(mTermsOfUsage->value.ia5string));
+		string = Asn1StringUtil::getValue(mTermsOfUsage->value.ia5string);
 	}
 	else if (mTermsOfUsage->type == V_ASN1_OCTET_STRING && mTermsOfUsage->value.octet_string != nullptr)
 	{
@@ -237,7 +237,7 @@ QSet<QString> CertificateDescription::getCommCertificates() const
 		commCerts.reserve(size);
 		for (int i = 0; i < size; i++)
 		{
-			ASN1_OCTET_STRING* octetString = sk_ASN1_OCTET_STRING_value(mCommCertificates, i);
+			const ASN1_OCTET_STRING* octetString = sk_ASN1_OCTET_STRING_value(mCommCertificates, i);
 			QByteArray byteBuf(reinterpret_cast<char*>(octetString->data), octetString->length);
 			commCerts += QString::fromLatin1(byteBuf.toHex().toUpper());
 		}

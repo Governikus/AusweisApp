@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="510px" height="210px" viewBox="0 0 510 210">
+  <style>
+    .header { font: bold 18px sans-serif; }
+    .category { font: 14px sans-serif; }
+  </style>
+  <defs>
+    <g id="descline">
+      <path fill="none" stroke="#000" stroke-width="1" d="M 0 50 L 50 0 185 0"/>
+    </g>
+  </defs>
+  <use x="315" y="60" xlink:href="#descline"/>
+  <use x="315" y="85" xlink:href="#descline"/>
+  <use x="315" y="110" xlink:href="#descline"/>
+  <image x="165" y="90" width="155px" height="108px" xlink:href="../ausweis.svg"/>
+  <image x="20" y="5" width="141px" height="108px" xlink:href="identify.svg"/>
+  <text x="380" y="20" class="header">Zum Beispiel</text>
+  <text x="380" y="55" class="category">Name?</text>
+  <text x="380" y="80" class="category">Vorname?</text>
+  <text x="380" y="105" class="category">Geburtsdatum?</text>
+  <text x="380" y="130" class="category">Adresse?</text>
+</svg>

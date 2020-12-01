@@ -2,67 +2,31 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 
 
-Item {
+GCheckBox {
 	id: root
 
-	property alias text: optionText.text
-	property alias checked: optionState.checked
-
-	property TextStyle textStyle: enabled ? Style.text.normal : Style.text.normal_secondary
-
-	implicitHeight: layout.implicitHeight
-	implicitWidth: layout.implicitWidth
-
 	activeFocusOnTab: true
-
-	Accessible.name: root.text
+	Accessible.name: text
 	Accessible.role: Accessible.CheckBox
 
-	Keys.onSpacePressed: optionState.toggle()
-
-	RowLayout {
-		id: layout
-
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.top: parent.top
-
-		spacing: Constants.groupbox_spacing
-
-		GCheckBox {
-			id: optionState
-
-			activeFocusOnTab: false
-		}
-
-		GText {
-			id: optionText
-
-			Layout.fillWidth: true
-			activeFocusOnTab: false
-
-			textStyle: root.textStyle
-		}
-	}
+	textStyle: enabled ? Style.text.normal : Style.text.normal_secondary
 
 	FocusFrame {
-		border.color: optionText.color
+		border.color: root.textStyle.textColor
 	}
 
 	MouseArea {
 		anchors.fill: parent
-		onClicked: optionState.toggle()
+		onClicked: root.toggle()
 		cursorShape: Qt.PointingHandCursor
 	}
 }

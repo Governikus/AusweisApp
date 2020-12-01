@@ -17,7 +17,7 @@ diff --git x/qtdeclarative/tools/tools.pro y/qtdeclarative/tools/tools.pro
 index d3ec38071..d431ee835 100644
 --- x/qtdeclarative/tools/tools.pro
 +++ y/qtdeclarative/tools/tools.pro
-@@ -20,8 +20,7 @@ qtConfig(thread):!android|android_app {
+@@ -21,8 +21,7 @@ qtConfig(thread):!android|android_app:!wasm:!rtems {
      qtHaveModule(quick) {
          !static: {
              SUBDIRS += \

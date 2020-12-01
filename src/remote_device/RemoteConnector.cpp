@@ -11,12 +11,12 @@
 using namespace governikus;
 
 
-static Initializer::Entry E([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<QHostAddress>("QHostAddress");
 			qRegisterMetaType<RemoteErrorCode>("RemoteErrorCode");
 			qRegisterMetaType<QSharedPointer<QWebSocket> >("QSharedPointer<QWebSocket>");
 			qRegisterMetaType<QAbstractSocket::SocketState>("QAbstractSocket::SocketState");
-		});
+		})
 
 
 RemoteConnector::RemoteConnector()

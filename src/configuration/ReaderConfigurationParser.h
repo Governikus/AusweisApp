@@ -34,7 +34,7 @@ class ReaderConfigurationParser
 				ReaderConfigurationInfo fail(const QString& logMessage) const;
 
 			public:
-				EntryParser(const QJsonValue& pJsonValue);
+				explicit EntryParser(const QJsonValue& pJsonValue);
 				virtual ~EntryParser();
 
 				ReaderConfigurationInfo parse() const;

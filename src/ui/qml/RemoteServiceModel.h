@@ -10,7 +10,6 @@
 #include "Env.h"
 #include "ReaderManager.h"
 #include "RemoteDeviceModel.h"
-#include "WifiInfo.h"
 #include "WorkflowModel.h"
 
 #include <QObject>
@@ -38,10 +37,11 @@ class RemoteServiceModel
 	Q_PROPERTY(RemoteDeviceModel * combinedDevices READ getCombinedDevices CONSTANT)
 	Q_PROPERTY(bool detectRemoteDevices READ detectRemoteDevices WRITE setDetectRemoteDevices NOTIFY fireDetectionChanged)
 	Q_PROPERTY(bool isSaCPinChangeWorkflow READ isSaCPinChangeWorkflow NOTIFY fireEstablishPaceChannelMessageUpdated)
+	Q_PROPERTY(bool remoteReaderVisible READ getRemoteReaderVisible NOTIFY fireRemoteReaderVisibleChanged)
+	Q_PROPERTY(bool requiresLocalNetworkPermission MEMBER mRequiresLocalNetworkPermission CONSTANT)
 
 	private:
 		QSharedPointer<RemoteServiceContext> mContext;
-		WifiInfo mWifiInfo;
 		bool mRunnable;
 		bool mCanEnableNfc;
 		QString mErrorMessage;
@@ -53,6 +53,10 @@ class RemoteServiceModel
 		QString mConnectedServerDeviceNames;
 		bool mIsSaCPinChangeWorkflow;
 		QSharedPointer<RemoteDeviceListEntry> mRememberedServerEntry;
+		const bool mRequiresLocalNetworkPermission;
+
+		RemoteServiceModel();
+		~RemoteServiceModel() override = default;
 
 		void onEnvironmentChanged();
 		QString getErrorMessage(bool pNfcPluginAvailable, bool pNfcPluginEnabled, bool pWifiEnabled) const;
@@ -64,11 +68,6 @@ class RemoteServiceModel
 		void onConnectedDevicesChanged();
 		void onEstablishPaceChannelMessageUpdated(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage);
 
-	protected:
-		RemoteServiceModel();
-		~RemoteServiceModel() override = default;
-		static RemoteServiceModel& getInstance();
-
 	public:
 		bool isRunning() const;
 		void setRunning(bool pState);
@@ -77,11 +76,11 @@ class RemoteServiceModel
 		RemoteDeviceModel* getKnownDevices();
 		RemoteDeviceModel* getCombinedDevices();
 		void setDetectRemoteDevices(bool pNewStatus);
-		bool detectRemoteDevices();
+		bool detectRemoteDevices() const;
 		Q_INVOKABLE bool rememberServer(const QString& pDeviceId);
 		Q_INVOKABLE void connectToRememberedServer(const QString& pServerPsk);
 
-		void resetContext(const QSharedPointer<RemoteServiceContext>& pContext = QSharedPointer<RemoteServiceContext>());
+		void resetRemoteServiceContext(const QSharedPointer<RemoteServiceContext>& pContext = QSharedPointer<RemoteServiceContext>());
 		Q_INVOKABLE void setPairing(bool pEnabled = true);
 		bool isConnectedToPairedDevice() const;
 		bool isSaCPinChangeWorkflow() const;
@@ -91,8 +90,9 @@ class RemoteServiceModel
 		QByteArray getPsk() const;
 		QString getConnectionInfo() const;
 		QString getConnectedServerDeviceNames() const;
+		bool getRemoteReaderVisible() const;
 
-		Q_INVOKABLE bool pinPadModeOn();
+		Q_INVOKABLE bool pinPadModeOn() const;
 		Q_INVOKABLE QString getPasswordType() const;
 		Q_INVOKABLE void forgetDevice(const QString& pId);
 		Q_INVOKABLE void cancelPasswordRequest();
@@ -104,10 +104,11 @@ class RemoteServiceModel
 		void fireConnectedChanged();
 		void fireServerPskChanged();
 		void fireDetectionChanged();
-		void firePairingFailed(QString pDeviceName, QString pErrorMessage);
-		void firePairingSuccess(QString pDeviceName);
+		void firePairingFailed(const QString& pDeviceName, const QString& pErrorMessage);
+		void firePairingSuccess(const QString& pDeviceName);
 		void fireConnectionInfoChanged();
 		void fireConnectedServerDeviceNamesChanged();
+		void fireRemoteReaderVisibleChanged();
 		void fireEstablishPaceChannelMessageUpdated();
 };
 

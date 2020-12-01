@@ -1,0 +1,45 @@
+From 317d32e9d7374442a83115387559bcb909fa64bb Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
+Date: Wed, 25 Nov 2020 12:51:06 +0100
+Subject: [PATCH] Fix exception with Android 5.x
+
+ConnectivityManager#getDefaultProxy() is available in API Level 23.
+
+No pending exception expected: java.lang.NoSuchMethodError: No virtual method getDefaultProxy()Landroid/net/ProxyInfo; in class Landroid/net/ConnectivityManager; or its super classes (declaration of 'android.net.ConnectivityManager' appears in /system/framework/framework.jar)
+  at android.net.ProxyInfo org.qtproject.qt5.android.network.QtNetwork.getProxyInfo(android.content.Context) (QtNetwork.java:98)
+  at void org.qtproject.qt5.android.QtNative.startQtApplication() (QtNative.java:-2)
+  at void org.qtproject.qt5.android.QtNative$7.run() (QtNative.java:620)
+  at void org.qtproject.qt5.android.QtThread$1.run() (QtThread.java:61)
+  at void java.lang.Thread.run() (Thread.java:831)
+
+Pick-to: 5.15
+Task-number: QTBUG-78812
+Change-Id: I68c4cc97eea63eae53dfc2ee50bff658e5cd4a93
+---
+ .../jar/src/org/qtproject/qt5/android/network/QtNetwork.java   | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git x/qtbase/src/network/android/jar/src/org/qtproject/qt5/android/network/QtNetwork.java y/qtbase/src/network/android/jar/src/org/qtproject/qt5/android/network/QtNetwork.java
+index 249ffe61a5..af6c20463c 100644
+--- x/qtbase/src/network/android/jar/src/org/qtproject/qt5/android/network/QtNetwork.java
++++ y/qtbase/src/network/android/jar/src/org/qtproject/qt5/android/network/QtNetwork.java
+@@ -43,6 +43,7 @@ import android.content.BroadcastReceiver;
+ import android.content.Context;
+ import android.content.Intent;
+ import android.content.IntentFilter;
++import android.os.Build;
+ import android.util.Log;
+ import android.net.ConnectivityManager;
+ import android.net.Proxy;
+@@ -94,7 +95,7 @@ public class QtNetwork
+ 
+     public static ProxyInfo getProxyInfo(final Context context)
+     {
+-        if (m_proxyInfo == null)
++        if (m_proxyInfo == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+             m_proxyInfo = (ProxyInfo)getConnectivityManager(context).getDefaultProxy();
+         return m_proxyInfo;
+     }
+-- 
+2.29.2
+
