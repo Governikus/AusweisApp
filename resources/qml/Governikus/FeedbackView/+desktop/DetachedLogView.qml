@@ -2,15 +2,14 @@
  * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.LogModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.View 1.0
 
 
@@ -31,7 +30,7 @@ Item {
 			spacing: Constants.groupbox_spacing
 
 			GText {
-				text: qsTr("Select logfile:") + SettingsModel.translationTrigger
+				text: qsTr("Select log:")
 				textStyle: Style.text.normal
 			}
 
@@ -44,7 +43,7 @@ Item {
 			}
 
 			GText {
-				text: qsTr("Font size:") + SettingsModel.translationTrigger
+				text: qsTr("Font size:")
 				textStyle: Style.text.normal
 			}
 
@@ -61,9 +60,9 @@ Item {
 			}
 
 			GButton {
-				icon.source: "qrc:///images/icon_save.svg"
+				icon.source: "qrc:///images/desktop/material_save.svg"
 				//: LABEL DESKTOP_QML
-				text: qsTr("Save logfile") + SettingsModel.translationTrigger
+				text: qsTr("Save log")
 				tintIcon: true
 
 				onClicked: {

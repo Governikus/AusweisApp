@@ -11,13 +11,8 @@
 
 #include <QByteArray>
 #include <QLoggingCategory>
-#include <QSharedPointer>
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include <QScopeGuard>
-#else
-#include "ScopeGuard.h"
-#endif
+#include <QSharedPointer>
 
 Q_DECLARE_LOGGING_CATEGORY(card)
 

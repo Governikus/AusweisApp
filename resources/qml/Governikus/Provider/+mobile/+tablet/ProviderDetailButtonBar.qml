@@ -2,12 +2,10 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 Item {
 	id: baseItem
@@ -55,9 +53,9 @@ Item {
 		anchors.bottom: iconContainer.bottom
 
 		//: LABEL ANDROID_TABLET IOS_TABLET
-		text: qsTr("To provider") + SettingsModel.translationTrigger
+		text: qsTr("To provider")
 		tintIcon: true
-		icon.source: "qrc:///images/link_external.svg"
+		icon.source: "qrc:///images/material_open_in_new.svg"
 		buttonColor: baseItem.titleBarColor
 		enabled: baseItem.address !== ""
 

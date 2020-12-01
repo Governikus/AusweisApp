@@ -7,6 +7,7 @@
 #include "BuildHelper.h"
 #include "controller/AppController.h"
 #include "CommandLineParser.h"
+#include "Env.h"
 #include "LogHandler.h"
 #include "SignalHandler.h"
 
@@ -83,8 +84,8 @@ static inline QCoreApplication* initQt(int& argc, char** argv)
 {
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 	QCoreApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
-#endif
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
 
 	QCoreApplication::setOrganizationName(QStringLiteral(VENDOR));
 	QCoreApplication::setOrganizationDomain(QStringLiteral(VENDOR_DOMAIN));
@@ -107,6 +108,20 @@ static inline QCoreApplication* initQt(int& argc, char** argv)
 #endif
 
 	return new QAPP(argc, argv);
+}
+
+
+static inline int exec(const QScopedPointer<QCoreApplication>& pApp)
+{
+#if defined(Q_OS_ANDROID) && !defined(INTEGRATED_SDK)
+	if (QLatin1String(pApp->metaObject()->className()) == QLatin1String("QAndroidService"))
+	{
+		return QAndroidService::exec();
+	}
+#else
+	Q_UNUSED(pApp)
+#endif
+	return QAPP::exec();
 }
 
 
@@ -144,7 +159,7 @@ int governikus::initApp(int& argc, char** argv)
 
 	CommandLineParser::getInstance().parse();
 	Env::getSingleton<LogHandler>()->init();
-	SignalHandler::getInstance().init();
+	Env::getSingleton<SignalHandler>()->init();
 	printInfo();
 
 	AppController controller;
@@ -154,18 +169,18 @@ int governikus::initApp(int& argc, char** argv)
 		return EXIT_FAILURE;
 	}
 
-	SignalHandler::getInstance().setController(controller);
-	if (SignalHandler::getInstance().shouldQuit())
+	Env::getSingleton<SignalHandler>()->setController(controller);
+	if (Env::getSingleton<SignalHandler>()->shouldQuit())
 	{
 		return EXIT_SUCCESS;
 	}
 
-	const int returnCode = app->exec();
+	const int returnCode = exec(app);
 
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
 	if (controller.shouldApplicationRestart())
 	{
-		restartApp(app->applicationFilePath(), app->arguments(), argc);
+		restartApp(QCoreApplication::applicationFilePath(), QCoreApplication::arguments(), argc);
 	}
 #endif
 

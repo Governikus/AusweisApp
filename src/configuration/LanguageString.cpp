@@ -41,13 +41,13 @@ LanguageString::LanguageString(const QString& pString, const QLocale& pLocale)
 QString LanguageString::toString() const
 {
 	QString result = toString(LanguageLoader::getInstance().getUsedLocale());
-	if (!result.isEmpty())
+	if (!result.isNull())
 	{
 		return result;
 	}
 
 	result = toString(LanguageLoader::getInstance().getFallbackLanguage());
-	if (!result.isEmpty())
+	if (!result.isNull())
 	{
 		return result;
 	}
@@ -59,13 +59,13 @@ QString LanguageString::toString() const
 QString LanguageString::toString(const QLocale& pLocale) const
 {
 	QString result = mStrings[pLocale.name()];
-	if (!result.isEmpty())
+	if (!result.isNull())
 	{
 		return result;
 	}
 
-	result = mStrings[pLocale.bcp47Name()];
-	if (!result.isEmpty())
+	result = mStrings[LanguageLoader::getLocalCode(pLocale)];
+	if (!result.isNull())
 	{
 		return result;
 	}

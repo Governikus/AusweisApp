@@ -9,22 +9,18 @@
 # reader, cards and commands to the identity card.
 #####################################################################
 
-ADD_SUBDIRECTORY(base)
+add_subdirectory(base)
 
-IF(DESKTOP)
-	ADD_SUBDIRECTORY(pcsc)
-ENDIF()
+if(DESKTOP)
+	add_subdirectory(pcsc)
+endif()
 
-IF(TARGET Qt5::Nfc)
-	ADD_SUBDIRECTORY(nfc)
-ENDIF()
+if(TARGET ${Qt}::Nfc)
+	add_subdirectory(nfc)
+endif()
 
-IF(IOS)
-        ADD_SUBDIRECTORY(ios)
-ENDIF()
+if(IOS)
+	add_subdirectory(ios)
+endif()
 
-IF(TARGET Qt5::Bluetooth)
-	ADD_SUBDIRECTORY(bluetooth)
-ENDIF()
-
-ADD_SUBDIRECTORY(drivers)
+add_subdirectory(drivers)

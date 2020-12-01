@@ -24,7 +24,7 @@ class MsgHandlerAccessRights
 		void handleSetChatData(const QJsonArray& pChat, const QSharedPointer<AuthContext>& pContext);
 		QJsonArray getAccessRights(const QSet<AccessRight>& pRights) const;
 		void fillAccessRights(const QSharedPointer<const AuthContext>& pContext);
-		QJsonObject getAuxiliaryData(const QSharedPointer<const AuthContext>& pContext);
+		QJsonObject getAuxiliaryData(const QSharedPointer<const AuthContext>& pContext) const;
 
 	public:
 		explicit MsgHandlerAccessRights(const MsgContext& pContext);

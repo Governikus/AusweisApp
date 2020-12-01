@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
-<manifest package="@ANDROID_PACKAGE_NAME@"
+<manifest package="@BUNDLE_IDENTIFIER@"
           xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           android:installLocation="auto">
-    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="29" />
 
     <!-- Normal Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,13 +17,9 @@
 
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 
-    <application android:hardwareAccelerated="true"
-                 android:name="org.qtproject.qt5.android.bindings.QtApplication"
-                 android:label="@string/app_name"
-                 android:allowBackup="true"
-                 android:fullBackupContent="@xml/backup_rules"
-                 android:extractNativeLibs="true"
-                 tools:targetApi="23">
+    <application
+        android:extractNativeLibs="true"
+        tools:targetApi="23">
 
         <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
 
@@ -54,12 +49,10 @@
             <meta-data android:name="android.app.bundled_libs_resource_id" android:resource="@array/bundled_libs"/>
             <!-- Deploy Qt libs as part of package -->
             <meta-data android:name="android.app.bundle_local_qt_libs" android:value="-- %%BUNDLE_LOCAL_QT_LIBS%% --"/>
-            <meta-data android:name="android.app.bundled_in_lib_resource_id" android:resource="@array/bundled_in_lib"/>
-            <meta-data android:name="android.app.bundled_in_assets_resource_id" android:resource="@array/bundled_in_assets"/>
             <!-- Run with local libs -->
             <meta-data android:name="android.app.use_local_qt_libs" android:value="-- %%USE_LOCAL_QT_LIBS%% --"/>
             <meta-data android:name="android.app.libs_prefix" android:value="/data/local/tmp/qt/"/>
-            <meta-data android:name="android.app.load_local_libs" android:value="-- %%INSERT_LOCAL_LIBS%% --"/>
+            <meta-data android:name="android.app.load_local_libs_resource_id" android:resource="@array/load_local_libs"/>
             <meta-data android:name="android.app.load_local_jars" android:value="-- %%INSERT_LOCAL_JARS%% --"/>
             <meta-data android:name="android.app.static_init_classes" android:value="-- %%INSERT_INIT_CLASSES%% --"/>
             <!--  Messages maps -->

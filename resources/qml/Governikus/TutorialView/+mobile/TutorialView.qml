@@ -2,11 +2,11 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import QtQml.Models 2.10
-import QtQml 2.10
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
+import QtQml.Models 2.12
+import QtQml 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -22,18 +22,17 @@ SectionPage {
 	property var lastVisibleItem
 	property int contentWidth: Math.min(Style.dimens.max_text_width, root.width)
 
+	signal leave()
+
 	titleBarVisible: false
 	automaticSafeAreaMarginHandling: false
 	navigationAction: NavigationAction {
-		state: (topLevelPage && root.state === "")
-			? "" // this way the user can then exit the app with the back button when the Tutorial is shown on the first run.
-			: "hidden" // otherwise there would be a useless animation of the Hamburger on Android when leaving the Tutorial
 		onClicked: root.state !== ""
 			? root.state = "" // collapse sections
 			: leaveView()
 	}
 	//: LABEL ANDROID IOS
-	title: qsTr("Tutorial") + SettingsModel.translationTrigger
+	title: qsTr("Tutorial")
 
 	onVisibleChanged: {
 		if (visible) {
@@ -126,14 +125,7 @@ SectionPage {
 		flickable.contentY = 0
 		state = ""
 		collapseAllAnimation.start()
-		navBar.lockedAndHidden = false
-		SettingsModel.showSetupAssistantOnStart = false
-		if (navBar.state === "more" || navBar.state === "feedback") {
-			firePop()
-		} else {
-			navBar.state = "identify"
-			navBar.currentIndex = 0
-		}
+		root.leave()
 	}
 
 	SequentialAnimation {
@@ -208,7 +200,7 @@ SectionPage {
 					headerImageSource: "qrc:///images/tutorial/main_menu_what_caret.svg"
 					categoryAbove: false
 					//: LABEL ANDROID IOS
-					titleText: qsTr("What?") + SettingsModel.translationTrigger
+					titleText: qsTr("What?")
 					initY: 0
 					z: 40
 
@@ -252,7 +244,7 @@ SectionPage {
 
 					headerImageSource: "qrc:///images/tutorial/main_menu_where_caret.svg"
 					//: LABEL ANDROID IOS
-					titleText: qsTr("Where?") + SettingsModel.translationTrigger
+					titleText: qsTr("Where?")
 					initY: whatHeader.height
 					z: 30
 
@@ -296,7 +288,7 @@ SectionPage {
 
 					headerImageSource: "qrc:///images/tutorial/main_menu_how_caret.svg"
 					//: LABEL ANDROID IOS
-					titleText: qsTr("How?") + SettingsModel.translationTrigger
+					titleText: qsTr("How?")
 					initY: whatHeader.height + whereHeader.height
 					z: 20
 
@@ -346,7 +338,7 @@ SectionPage {
 					overlapping: false
 					headerImageSource: "qrc:///images/tutorial/main_menu_important_caret.svg"
 					//: LABEL ANDROID IOS
-					titleText: qsTr("Important!") + SettingsModel.translationTrigger
+					titleText: qsTr("Important!")
 					initY: whatHeader.height + whereHeader.height + howHeader.height
 					z: 10
 

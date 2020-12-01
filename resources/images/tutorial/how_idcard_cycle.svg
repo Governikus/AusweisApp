@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600px" height="310px" viewBox="0 0 600 310">
+  <rect fill="#f2f2f2" x="160" y="10" width="280" height="280"/>
+  <image x="115" y="80" width="140px" height="140px" xlink:href="../npa.svg"/>
+  <image x="315" y="80" width="200px" height="140px" xlink:href="../ausweis.svg"/>
+</svg>

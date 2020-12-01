@@ -7,6 +7,8 @@
 #pragma once
 
 
+#include "Env.h"
+
 #include <QObject>
 
 class test_ConnectivityManager;
@@ -18,22 +20,23 @@ class ConnectivityManager
 	: public QObject
 {
 	Q_OBJECT
+	friend class Env;
+	friend class ::test_ConnectivityManager;
+
 	Q_PROPERTY(bool networkInterfaceActive READ isNetworkInterfaceActive NOTIFY fireNetworkInterfaceActiveChanged)
 
 	private:
-		friend class ::test_ConnectivityManager;
 		int mTimerId;
 		bool mActive;
+
+		ConnectivityManager();
+		virtual ~ConnectivityManager() override;
+
 		void setActive(bool pActive, const QString& pInterfaceName = QString());
 		void updateConnectivity();
-
-	protected:
 		void timerEvent(QTimerEvent* pEvent) override;
 
 	public:
-		ConnectivityManager(QObject* pParent = nullptr);
-		virtual ~ConnectivityManager() override;
-
 		bool isNetworkInterfaceActive() const;
 		void startWatching();
 		void stopWatching();

@@ -2,13 +2,12 @@
  * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 
 
 ConfirmationPopup {
@@ -19,9 +18,9 @@ ConfirmationPopup {
 	width: formGrid.width + 2 * Constants.pane_padding
 
 	//: LABEL DESKTOP Title of the proxy credentials popup.
-	title: qsTr("Sign in") + SettingsModel.translationTrigger
+	title: qsTr("Sign in")
 	//: LABEL DESKTOP Text of the button in the proxy credentials popup.
-	okButtonText: qsTr("Sign in") + SettingsModel.translationTrigger
+	okButtonText: qsTr("Sign in")
 
 	onCredentialsChanged: {
 		//: LABEL DESKTOP Text of the proxy credentials popup. An example for %1 is http://proxy.example.com:1337.
@@ -38,12 +37,12 @@ ConfirmationPopup {
 		verticalItemAlignment: Text.AlignVCenter
 
 		GText {
-			//: LABEL DESKTOP Accessible name.
-			Accessible.name: qsTr("Proxy credential username") + SettingsModel.translationTrigger
-
 			activeFocusOnTab: true
+			//: LABEL DESKTOP Accessible name.
+			Accessible.name: qsTr("Proxy credential username")
+
 			//: LABEL DESKTOP Label of the textfield for the username.
-			text: qsTr("Username") + SettingsModel.translationTrigger
+			text: qsTr("Username")
 
 			FocusFrame {}
 		}
@@ -57,12 +56,12 @@ ConfirmationPopup {
 		}
 
 		GText {
-			//: LABEL DESKTOP Accessible name.
-			Accessible.name: qsTr("Proxy credential password") + SettingsModel.translationTrigger
-
 			activeFocusOnTab: true
+			//: LABEL DESKTOP Accessible name.
+			Accessible.name: qsTr("Proxy credential password")
+
 			//: LABEL DESKTOP Label of the textfield for the password.
-			text: qsTr("Password") + SettingsModel.translationTrigger
+			text: qsTr("Password")
 
 			FocusFrame {}
 		}

@@ -53,14 +53,14 @@ class RemoteMessage
 		void missingValue(const QLatin1String& pName);
 		void invalidType(const QLatin1String& pName, const QLatin1String& pExpectedType);
 		bool getBoolValue(const QJsonObject& pJsonObject, const QLatin1String& pName);
-		int getIntValue(const QJsonObject& pJsonObject, const QLatin1String& pName);
+		int getIntValue(const QJsonObject& pJsonObject, const QLatin1String& pName, int pDefault);
 		QString getStringValue(const QJsonObject& pJsonObject, const QLatin1String& pName);
 
 	public:
 		static QJsonObject parseByteArray(const QByteArray& pMessage);
 
-		RemoteMessage(RemoteCardMessageType pType);
-		RemoteMessage(const QJsonObject& pMessageObject);
+		explicit RemoteMessage(RemoteCardMessageType pType);
+		explicit RemoteMessage(const QJsonObject& pMessageObject);
 		virtual ~RemoteMessage() = default;
 
 		bool isIncomplete() const;

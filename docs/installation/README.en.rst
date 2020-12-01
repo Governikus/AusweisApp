@@ -12,9 +12,9 @@ contains all supported arguments, which are explained below.
 
 .. code-block:: winbatch
 
-  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALL_ROOT="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true HISTORY=false ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true
+  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALLDIR="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true HISTORY=false ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true LAUNCH=true
 
-INSTALL_ROOT
+INSTALLDIR
   States the installation directory. If not specified, the folder
   "C:\\Program Files (x86)\\AusweisApp2" is used.
 
@@ -108,6 +108,9 @@ ENABLECANALLOWED
 SKIPRIGHTSONCANALLOWED
   Skips the page with the authorization certificate in the CAN allowed mode and asks directly for
   the CAN.
+
+LAUNCH
+  Starts the AusweisApp2 after the installation has finished.
 
 Alternatively, Orca [#orca]_ can be used to create an MST file that defines the
 above arguments. The arguments are available in the "Directory" and "Property"
@@ -284,7 +287,7 @@ TLS termination proxy.
    :align: left
 
    "AusweisApp2-Firewall-Rule", TCP, \*, "outgoing", "eID2, eID3, SaC2, Update"
-   "AusweisApp2-Firewall-Rule-SaC-In", UDP, 24727, "incoming", "SaC1"
+   "AusweisApp2-SaC", UDP, 24727, "incoming", "SaC1"
 
 .. raw:: latex
 

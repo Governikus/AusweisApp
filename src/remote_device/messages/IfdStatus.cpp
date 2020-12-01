@@ -133,7 +133,13 @@ IfdStatus::IfdStatus(const QJsonObject& pMessageObject)
 		missingValue(PIN_CAPABILITIES());
 	}
 
-	mMaxApduLength = getIntValue(pMessageObject, MAX_APDU_LENGTH());
+	mMaxApduLength = getIntValue(pMessageObject, MAX_APDU_LENGTH(), -1);
+	// Support SaC with AusweisApp2 < 1.22.0 - Remove with 1.24.0 or IfdVersion::v2
+	if (mMaxApduLength == 0)
+	{
+		mMaxApduLength = -1;
+	}
+
 	mConnectedReader = getBoolValue(pMessageObject, CONNECTED_READER());
 	mCardAvailable = getBoolValue(pMessageObject, CARD_AVAILABLE());
 

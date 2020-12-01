@@ -30,7 +30,7 @@ class RemoteClientImpl
 
 	private:
 		friend ::test_RemoteClient;
-		friend RemoteClient* singleton<RemoteClient>();
+		friend RemoteClient* createNewObject<RemoteClient*>();
 
 		QSharedPointer<DatagramHandler> mDatagramHandler;
 		QScopedPointer<RemoteDeviceList> mRemoteDeviceList;
@@ -41,13 +41,12 @@ class RemoteClientImpl
 		QVector<QSharedPointer<RemoteDeviceListEntry>> mRemoteConnectorPending;
 		QStringList mConnectedDeviceIds;
 
+		RemoteClientImpl();
+		virtual ~RemoteClientImpl() override;
+
 		void bootstrapRemoteConnectorThread();
 		void shutdownRemoteConnectorThread();
 		QSharedPointer<RemoteDeviceListEntry> mapToAndTakeRemoteConnectorPending(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor);
-
-	protected:
-		RemoteClientImpl();
-		virtual ~RemoteClientImpl() override;
 
 	private Q_SLOTS:
 		void onNewMessage(const QByteArray& pData, const QHostAddress& pAddress);

@@ -26,7 +26,7 @@ class test_IfdConnect
 
 		void invalidJson()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray message("FooBar");
 			const auto& obj = QJsonDocument::fromJson(message).object();
@@ -85,7 +85,7 @@ class test_IfdConnect
 
 		void fromJson()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"ContextHandle\": \"TestContext\",\n"
@@ -122,7 +122,7 @@ class test_IfdConnect
 		{
 			QFETCH(RemoteCardMessageType, type);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray message("{\n"
 							   "    \"ContextHandle\": \"TestContext\",\n"
@@ -162,7 +162,7 @@ class test_IfdConnect
 
 		void wrongTypes()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"ContextHandle\": \"TestContext\",\n"

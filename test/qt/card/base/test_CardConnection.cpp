@@ -37,8 +37,8 @@ class test_CardConnection
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			CardConnection connection(worker);
-			UpdateRetryCounterCommand* command;
-			command = connection.createUpdateRetryCounterCommand();
+			UpdateRetryCounterCommand* command = connection.createUpdateRetryCounterCommand();
+			command->deleteLater();
 			QCOMPARE(command->mCardConnectionWorker, worker);
 		}
 
@@ -48,8 +48,8 @@ class test_CardConnection
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			CardConnection connection(worker);
-			DestroyPaceChannelCommand* command;
-			command = connection.createDestroyPaceChannelCommand();
+			DestroyPaceChannelCommand* command = connection.createDestroyPaceChannelCommand();
+			command->deleteLater();
 			QCOMPARE(command->mCardConnectionWorker, worker);
 		}
 
@@ -59,8 +59,8 @@ class test_CardConnection
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			CardConnection connection(worker);
-			DidAuthenticateEAC1Command* command;
-			command = connection.createDidAuthenticateEAC1Command();
+			DidAuthenticateEAC1Command* command = connection.createDidAuthenticateEAC1Command();
+			command->deleteLater();
 			QCOMPARE(command->mCardConnectionWorker, worker);
 		}
 
@@ -71,11 +71,11 @@ class test_CardConnection
 			worker->moveToThread(&workerThread);
 			CardConnection connection(worker);
 			const CVCertificateChain chain;
-			const QString publicKey = QStringLiteral("0000");
-			const QString signature = QStringLiteral("0000");
+			const QByteArray publicKey("0000");
+			const QByteArray signature("0000");
 			const QByteArray authenticatedAuxiliaryData("0000");
-			DidAuthenticateEAC2Command* command;
-			command = connection.createDidAuthenticateEAC2Command(chain, publicKey, signature, authenticatedAuxiliaryData);
+			DidAuthenticateEAC2Command* command = connection.createDidAuthenticateEAC2Command(chain, publicKey, signature, authenticatedAuxiliaryData);
+			command->deleteLater();
 			QCOMPARE(command->mCardConnectionWorker, worker);
 			QCOMPARE(command->mCvcChain, chain);
 			QCOMPARE(command->mEphemeralPublicKeyAsHex, publicKey);
@@ -91,8 +91,8 @@ class test_CardConnection
 			CardConnection connection(worker);
 			const QVector<InputAPDUInfo> apduInfos;
 			const QString slotHandle = QStringLiteral("slot handle");
-			TransmitCommand* command;
-			command = connection.createTransmitCommand(apduInfos, slotHandle);
+			TransmitCommand* command = connection.createTransmitCommand(apduInfos, slotHandle);
+			command->deleteLater();
 			QCOMPARE(command->mCardConnectionWorker, worker);
 			QCOMPARE(command->mSlotHandle, slotHandle);
 		}

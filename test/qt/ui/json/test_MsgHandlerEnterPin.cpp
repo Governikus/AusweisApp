@@ -8,6 +8,7 @@
 
 #include "MsgHandlerEnterPassword.h"
 
+#include "context/ChangePinContext.h"
 #include "MessageDispatcher.h"
 #include "ReaderManager.h"
 
@@ -110,6 +111,20 @@ class test_MsgHandlerEnterPin
 		}
 
 
+		void badInputChangePin()
+		{
+			MessageDispatcher dispatcher;
+			setValidState(dispatcher, true, true, PacePasswordId::PACE_PIN, QLatin1String("StateEnterPacePassword"), QSharedPointer<ChangePinContext>::create());
+
+			QByteArray msg(R"({"cmd": "SET_PIN", "value": "1234"})");
+			const QByteArray expected(addReaderData(R"({"error":"You must provide 5 - 6 digits","msg":"ENTER_PIN"})"));
+			QCOMPARE(dispatcher.processCommand(msg), expected);
+
+			msg = R"({"cmd": "SET_PIN", "value": "1234567"})";
+			QCOMPARE(dispatcher.processCommand(msg), expected);
+		}
+
+
 		void badState()
 		{
 			MessageDispatcher dispatcher;
@@ -129,6 +144,19 @@ class test_MsgHandlerEnterPin
 			setValidPinState(dispatcher);
 
 			const QByteArray msg(R"({"cmd": "SET_PIN", "value": "123456"})");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
+		}
+
+
+		void noDirectResponseIfPinLooksValidChangePin()
+		{
+			MessageDispatcher dispatcher;
+			setValidState(dispatcher, true, true, PacePasswordId::PACE_PIN, QLatin1String("StateEnterPacePassword"), QSharedPointer<ChangePinContext>::create());
+
+			QByteArray msg(R"({"cmd": "SET_PIN", "value": "12345"})");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
+
+			msg = R"({"cmd": "SET_PIN", "value": "123456"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
 		}
 

@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -24,7 +24,7 @@ TutorialContent {
 			   qsTr("Please exchange your") :
 			   //: LABEL ANDROID IOS
 			   qsTr("Before you use the online ID function please change the")
-			  ) + SettingsModel.translationTrigger
+			  )
 		textStyle: Style.text.tutorial_header
 		horizontalAlignment: Text.AlignHCenter
 	}
@@ -41,7 +41,7 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("five digits long") + SettingsModel.translationTrigger
+			text: qsTr("five-digit")
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -50,7 +50,7 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("Transport PIN") + SettingsModel.translationTrigger
+			text: qsTr("Transport PIN")
 			textStyle: Style.text.tutorial_header
 			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
@@ -58,7 +58,7 @@ TutorialContent {
 
 		TutorialImage {
 			width: parent.width * 0.8
-			source: "qrc:///images/tutorial/generated/important_pin5.svg"
+			source: "qrc:///images/tutorial/important_pin5.svg"
 		}
 	}
 
@@ -74,7 +74,7 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("with a personal") + SettingsModel.translationTrigger
+			text: qsTr("with a")
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -83,7 +83,7 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("six digits long PIN") + SettingsModel.translationTrigger
+			text: qsTr("six-digit PIN")
 			textStyle: Style.text.tutorial_header
 			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
@@ -91,7 +91,7 @@ TutorialContent {
 
 		TutorialImage {
 			width: parent.width * 0.8
-			source: "qrc:///images/tutorial/generated/important_pin6.svg"
+			source: "qrc:///images/tutorial/important_pin6.svg"
 		}
 
 		GText {
@@ -102,7 +102,7 @@ TutorialContent {
 				   qsTr("before you use the online ID function!") :
 				   //: LABEL ANDROID IOS
 				   qsTr("change!")
-				  ) + SettingsModel.translationTrigger
+				  )
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -111,7 +111,7 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("The Transport PIN is sent to you by the Bundesdruckerei via mail.") + SettingsModel.translationTrigger
+			text: qsTr("The Transport PIN is sent to you by the Bundesdruckerei via mail.")
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -129,67 +129,24 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("Choose for this purpose the menu entry PIN management") + SettingsModel.translationTrigger
+			text: qsTr("Select for this purpose the menu item \"Change my (Transport) PIN\" from the start page. Later you can also change your six-digit PIN here.")
 			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
 		}
 
-		Item {
-			height: parent.width * 0.6
+		TutorialShowMenuPath {
 			width: parent.width
 
-			GText {
-				width: parent.width * 0.35
-				//: LABEL ANDROID IOS
-				text: qsTr("Later you can also change your personal PIN here") + SettingsModel.translationTrigger
-				textStyle: Style.text.tutorial_content
-				horizontalAlignment: Text.AlignLeft
-
-				x: (parent.width * 0.2) - (width / 2)
-				y: (parent.height * 0.5) - (height / 2)
-			}
-
-			TutorialImage {
-				id: screenshot
-				//: LABEL ANDROID IOS
-				source: qsTr("qrc:///images/tutorial/screenshot_pin_management_menu_%1_en.png").arg(Constants.layout) + SettingsModel.translationTrigger
-				z: 3
-
-				readonly property real rightX: x + width
-
-				width: parent.height * 0.6
-				centerX: 0.6
-				centerY: 0.5
-			}
-
-			Image {
-				source: "qrc:///images/tutorial/zoom_triangle.svg"
-				z: 4
-
-				width: small_smartphone.centerXValue - screenshot.rightX
-				height: screenshot.height
-				x: screenshot.rightX
-				y: (parent.height * 0.5) - (height / 2)
-			}
-
-			TutorialImage {
-				id: small_smartphone
-				source: "qrc:///images/tutorial/phone.svg"
-				z: 1
-
-				readonly property real centerXValue: x + (width / 2)
-
-				width: parent.height * 0.2
-				centerY: 0.5
-				centerX: 0.9
-			}
+			newSectionImage: "qrc:///images/tutorial/screenshot_pin_management_menu_%1_%2.png".arg(Constants.layout).arg(SettingsModel.language)
+			newSectionPointerY: Constants.is_layout_android ? 0.47 : 0.5
+			backgroundIcon: "qrc:///images/tutorial/background_icon_important.svg"
 		}
 
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("... or click this button to change your PIN right now:") + SettingsModel.translationTrigger
+			text: qsTr("... or click this button to change your PIN right now:")
 			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -198,10 +155,11 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			anchors.margins: Constants.component_spacing
 			//: LABEL ANDROID IOS
-			text: qsTr("Change PIN") + SettingsModel.translationTrigger
+			text: qsTr("Change my (Transport) PIN")
 			onClicked: {
-				NumberModel.requestTransportPin = true
-				ChangePinModel.startWorkflow()
+				SettingsModel.transportPinReminder = false
+				SettingsModel.showSetupAssistantOnStart = false
+				navBar.showPin()
 			}
 		}
 	}
@@ -211,7 +169,7 @@ TutorialContent {
 		anchors.horizontalCenter: parent.horizontalCenter
 
 		//: LABEL ANDROID IOS
-		text: qsTr("Please note: The Transport PIN can only be used for your first PIN change. If you have already set your personal PIN (e.g. while picking up your ID card) only the set PIN is valid.") + SettingsModel.translationTrigger
+		text: qsTr("Please note: The Transport PIN can only be used for your first PIN change. If you have already set your six-digit PIN (e.g. while picking up your ID card) only the set PIN is valid.")
 		textStyle: Style.text.tutorial_header_secondary
 		horizontalAlignment: Text.AlignHCenter
 	}
@@ -221,7 +179,7 @@ TutorialContent {
 		anchors.horizontalCenter: parent.horizontalCenter
 
 		//: LABEL ANDROID IOS
-		text: qsTr("You can always set a new PIN at the issuing authority if the (Transport) PIN is not known.") + SettingsModel.translationTrigger
+		text: qsTr("You can always set a new PIN at the issuing authority if the (Transport) PIN is not known.")
 		textStyle: Style.text.tutorial_header_secondary
 		horizontalAlignment: Text.AlignHCenter
 	}
@@ -246,7 +204,7 @@ TutorialContent {
 				anchors.fill: parent
 
 				//: LABEL ANDROID IOS
-				Accessible.name: qsTr("Open YouTube video") + SettingsModel.translationTrigger
+				Accessible.name: qsTr("Open YouTube video")
 				Accessible.role: Accessible.Button
 				Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
 
@@ -260,7 +218,7 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 
 			//: LABEL ANDROID IOS
-			text: qsTr("Learn more about this in the YouTube video") + SettingsModel.translationTrigger
+			text: qsTr("Learn more about this in the YouTube video")
 			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -277,7 +235,7 @@ TutorialContent {
 			TutorialImage {
 				id: letsGoImage
 				width: parent.width
-				source: "qrc:///images/tutorial/generated/important_lets_go.svg"
+				source: "qrc:///images/tutorial/important_lets_go.svg"
 
 				centerX: 0.5
 				centerY: 0.5
@@ -286,7 +244,7 @@ TutorialContent {
 			GText {
 				width: parent.width
 				//: LABEL ANDROID IOS
-				text: qsTr("Let's go") + SettingsModel.translationTrigger
+				text: qsTr("Let's go")
 				horizontalAlignment: Text.AlignHCenter
 				textStyle: Style.text.tutorial_header
 				color: Constants.white
@@ -301,13 +259,13 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("Do you still have questions?") + SettingsModel.translationTrigger
+			text: qsTr("Do you still have questions?")
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 		}
 
 		Image {
-			source: "qrc:///images/tutorial/generated/important_space_questionmark.svg"
+			source: "qrc:///images/tutorial/important_space_questionmark.svg"
 			anchors.horizontalCenter: parent.horizontalCenter
 
 			width: parent.width * 0.4
@@ -319,7 +277,7 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("You can read our <b>FAQs</b> or <b>write</b> to us...") + SettingsModel.translationTrigger
+			text: qsTr("You can read our <b>FAQs</b> or <b>write</b> to us...")
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -329,14 +287,13 @@ TutorialContent {
 			width: parent.width * 0.9
 			text: "<a href=\"https://%1\">%1</a><br>%2<br><a href=\"https://%3\">%3</a>".arg(
 					  //: LABEL ANDROID IOS
-					  qsTr("www.ausweisapp.bund.de")
+					  qsTr("www.ausweisapp.bund.de/en")
 				  ).arg(
 					  //: LABEL ANDROID IOS
 					  qsTr("or")
 				  ).arg(
-					  //: LABEL ANDROID IOS
-					  qsTr("www.personalausweisportal.de")
-				  ) + SettingsModel.translationTrigger
+					  "www.personalausweisportal.de"
+				  )
 			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -349,12 +306,8 @@ TutorialContent {
 	GText {
 		anchors.horizontalCenter: parent.horizontalCenter
 		width: parent.width * 0.9
-		text: (Constants.is_layout_ios ?
-			   //: LABEL IOS
-			   qsTr("You can always access this tutorial again from the \"More\" section in the menu bar.") :
-			   //: LABEL ANDROID
-			   qsTr("You can always access this tutorial again from the \"Help & Feedback\" section in the side bar.")
-			  ) + SettingsModel.translationTrigger
+		//: LABEL ANDROID IOS
+		text: qsTr("You can always access this tutorial again from the \"Help\" section in the menu bar.")
 		textStyle: Style.text.tutorial_header
 		horizontalAlignment: Text.AlignHCenter
 	}

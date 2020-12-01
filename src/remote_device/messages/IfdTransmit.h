@@ -22,7 +22,7 @@ class IfdTransmit
 
 	public:
 		IfdTransmit(const QString& pSlotHandle, const QByteArray& pInputApdu);
-		IfdTransmit(const QJsonObject& pMessageObject);
+		explicit IfdTransmit(const QJsonObject& pMessageObject);
 		virtual ~IfdTransmit() override = default;
 
 		const QString& getSlotHandle() const;

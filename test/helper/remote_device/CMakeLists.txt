@@ -1,0 +1,3 @@
+ADD_PLATFORM_LIBRARY(AusweisAppTestHelperRemoteDevice)
+
+target_link_libraries(AusweisAppTestHelperRemoteDevice ${Qt}::Test AusweisAppRemoteDevice)

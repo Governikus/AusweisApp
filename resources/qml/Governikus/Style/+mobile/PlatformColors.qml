@@ -9,8 +9,7 @@ BrandColors {
 	readonly property color background_popup: "#ffffff"
 	readonly property color background_pane: "#ffffff"
 	readonly property color background_pane_active: "#d5d5dc"
-
-	readonly property color warning_text: "#cc0000"
+	readonly property color background_item_pressed: "#bacdde"
 
 	readonly property color tutorial_what: "#f9a501"
 	readonly property color tutorial_where: "#73d7b3"

@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 import QtQml 2.2
-import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -18,32 +18,29 @@ Item {
 
 	state: parent.running ? "running" : "notrunning"
 	states: [
-		State{ name: "running" },
-		State{ name: "notrunning" }
-	]
-
-	transitions: [
-		Transition { from: "notrunning"; to: "running"
-			SequentialAnimation {
-				PropertyAnimation { target: timer; property: "running"; to: true }
-				PropertyAction { target: busyIndicator; property: "rotation"; value: 0 }
-				PropertyAction { target: green; property: "rotation"; value: 0 }
-				PropertyAction { target: blue; property: "rotation"; value: 0 }
-				PropertyAnimation { target: rect; property: "opacity"; to: 1 }
-			}
+		State {
+			name: "running"
+			PropertyChanges { target: timer; running: true }
+			PropertyChanges { target: busyIndicator; rotation: 0 }
+			PropertyChanges { target: green; rotation: 0 }
+			PropertyChanges { target: blue; rotation: 0 }
+			PropertyChanges { target: rect; opacity: 1 }
 		},
-		Transition { from: "running"; to: "notrunning"
-			SequentialAnimation {
-				PropertyAction { target: timer; property: "running"; value: false }
-				PropertyAction { target: rect; property: "opacity"; value: 0 }
-			}
+		State {
+			name: "notrunning"
+			PropertyChanges { target: timer; running: false }
+			PropertyChanges { target: rect; opacity: 0 }
 		}
 	]
 
+	transitions: Transition {
+		NumberAnimation { properties: "opacity"}
+	}
 
 	Behavior on rotation {
 		NumberAnimation { duration: timer.interval; easing.type: Easing.Linear }
 	}
+
 	Rectangle {
 		id: rect
 		anchors.centerIn: parent

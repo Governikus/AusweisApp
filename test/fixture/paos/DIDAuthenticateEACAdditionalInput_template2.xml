@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:paos="urn:liberty:paos:2006-08" xmlns:wsa="http://www.w3.org/2005/03/addressing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <S:Header>
+    <paos:PAOS S:actor="http://schemas.xmlsoap.org/soap/actor/next" S:mustUnderstand="1">
+      <paos:Version>urn:liberty:2006-08</paos:Version>
+      <paos:EndpointReference>
+        <paos:Address>http://www.projectliberty.org/2006/01/role/paos</paos:Address>
+      </paos:EndpointReference>
+    </paos:PAOS>
+    <wsa:MessageID>urn:uuid:922a6cfd-1cea-4757-b69e-cac833a9de5c</wsa:MessageID>
+    <wsa:Action>http://www.bsi.bund.de/ecard/api/1.0/PAOS/GetNextCommand</wsa:Action>
+  </S:Header>
+  <S:Body>
+    <ns3:DIDAuthenticate xmlns="urn:oasis:names:tc:dss:1.0:core:schema" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="urn:iso:std:iso-iec:24727:tech:schema" xmlns:ns4="http://www.w3.org/2001/04/xmldsig-more#" xmlns:ns5="urn:oasis:names:tc:SAML:1.0:assertion" xmlns:ns6="urn:oasis:names:tc:SAML:1.0:protocol">
+      <ns3:ConnectionHandle>
+         <!-- CONTEXTHANDLE -->
+         <!-- IFDNAME -->
+         <!-- SLOTINDEX -->
+         <!-- CARDAPPLICATION -->
+         <!-- SLOTHANDLE -->
+      </ns3:ConnectionHandle>
+      <ns3:DIDName>PIN</ns3:DIDName>
+      <ns3:AuthenticationProtocolData Protocol="urn:oid:1.3.162.15480.3.0.14" xsi:type="ns3:EACAdditionalInputType">
+        <ns3:Signature>86E24ACCE25E2B4623A3558EED7AA65658FEE70CC7B46CB9D34BD50B2F27E1E2221473D5B871497563693E0F28BE9C8896062A9C02CE3959AD4BD58DEA0E984B</ns3:Signature>
+      </ns3:AuthenticationProtocolData>
+    </ns3:DIDAuthenticate>
+  </S:Body>
+</S:Envelope>

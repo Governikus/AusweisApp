@@ -6,8 +6,9 @@
 
 #include "NotificationModel.h"
 
+#include "LogHandler.h"
 
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QtTest>
 
 using namespace governikus;
@@ -17,39 +18,52 @@ class test_NotificationModel
 {
 
 	Q_OBJECT
-	QSharedPointer<NotificationModel> mModel;
+
+	private:
+		NotificationModel* mModel;
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			Env::getSingleton<LogHandler>()->init();
+		}
+
+
 		void init()
 		{
-			mModel.reset(new NotificationModel());
+			mModel = new NotificationModel();
 		}
 
 
 		void cleanup()
 		{
-			mModel.clear();
+			delete mModel;
+			mModel = nullptr;
 		}
 
 
 		void test_OnNewLogMsg()
 		{
-			QSignalSpy spy(mModel.data(), &NotificationModel::fireLastTypeChanged);
+			QSignalSpy spy(mModel, &NotificationModel::fireLastTypeChanged);
 
 			const QString msg("message");
-			const QString developermode("developermode");
+			const QLoggingCategory develMode("developermode");
+
 			for (int i = 0; i < 20; i++)
 			{
-				mModel->onNewLogMsg(msg, developermode);
+				qCDebug(develMode).noquote() << msg;
+				QTRY_VERIFY(mModel->mNotificationEntries.size() > i);
 				QCOMPARE(mModel->mNotificationEntries.at(i).mText, msg);
-				QCOMPARE(mModel->mNotificationEntries.at(i).mType, developermode);
+				QCOMPARE(mModel->mNotificationEntries.at(i).mType, QLatin1String(develMode.categoryName()));
 			}
+
 			const QString newMsg("new message");
-			const QString feedback("feedback");
-			mModel->onNewLogMsg(newMsg, feedback);
+			const QLoggingCategory feedback("feedback");
+			qCDebug(feedback).noquote() << newMsg;
+
+			QTRY_VERIFY(spy.count() > 20);
 			QCOMPARE(mModel->mNotificationEntries.at(20).mText, newMsg);
-			QCOMPARE(mModel->mNotificationEntries.at(20).mType, feedback);
-			QCOMPARE(spy.count(), 21);
+			QCOMPARE(mModel->mNotificationEntries.at(20).mType, QLatin1String(feedback.categoryName()));
 		}
 
 
@@ -78,13 +92,18 @@ class test_NotificationModel
 			QFETCH(int, role);
 			QFETCH(QVariant, output);
 
+			QSignalSpy spy(mModel, &NotificationModel::fireLastTypeChanged);
 			QModelIndex index = mModel->createIndex(row, 0);
+
 			const QString msg("message");
-			const QString developermode("developermode");
+			const QLoggingCategory category("developermode");
 			for (int i = 0; i < size; i++)
 			{
-				mModel->onNewLogMsg(msg, developermode);
+				const auto oldCount = spy.count();
+				qCDebug(category).noquote() << msg;
+				QTRY_VERIFY(spy.count() > oldCount);
 			}
+
 			QCOMPARE(mModel->data(index, role), output);
 		}
 

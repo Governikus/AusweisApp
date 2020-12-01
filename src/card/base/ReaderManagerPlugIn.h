@@ -8,6 +8,7 @@
 #pragma once
 
 #include "GlobalStatus.h"
+#include "ReaderInfo.h"
 #include "ReaderManagerPlugInInfo.h"
 
 #include <QObject>
@@ -41,16 +42,6 @@ class ReaderManagerPlugIn
 		void setPlugInAvailable(bool pAvailable)
 		{
 			mInfo.setAvailable(pAvailable);
-		}
-
-
-		void setPlugInResponding(bool pResponding)
-		{
-			if (mInfo.isResponding() != pResponding)
-			{
-				mInfo.setResponding(pResponding);
-				Q_EMIT fireStatusChanged(mInfo);
-			}
 		}
 
 
@@ -96,13 +87,12 @@ class ReaderManagerPlugIn
 
 	Q_SIGNALS:
 		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
-		void fireReaderAdded(const QString& pReaderName);
-		void fireReaderRemoved(const QString& pReaderName);
-		void fireReaderDeviceError(GlobalStatus::Code pError);
-		void fireCardInserted(const QString& pReaderName);
-		void fireCardRemoved(const QString& pReaderName);
-		void fireCardRetryCounterChanged(const QString& pReaderName);
-		void fireReaderPropertiesUpdated(const QString& pReaderName);
+		void fireReaderAdded(const ReaderInfo& pInfo);
+		void fireReaderRemoved(const ReaderInfo& pInfo);
+		void fireCardInserted(const ReaderInfo& pInfo);
+		void fireCardRemoved(const ReaderInfo& pInfo);
+		void fireCardRetryCounterChanged(const ReaderInfo& pInfo);
+		void fireReaderPropertiesUpdated(const ReaderInfo& pInfo);
 };
 
 } // namespace governikus

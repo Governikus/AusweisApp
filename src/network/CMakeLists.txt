@@ -5,4 +5,4 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppNetwork)
 
-TARGET_LINK_LIBRARIES(AusweisAppNetwork Qt5::Core Qt5::Network AusweisAppExternal::HttpParser AusweisAppGlobal AusweisAppSecureStorage AusweisAppSettings)
+target_link_libraries(AusweisAppNetwork ${Qt}::Core ${Qt}::Network AusweisAppExternal::HttpParser AusweisAppGlobal AusweisAppSecureStorage AusweisAppSettings)

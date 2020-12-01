@@ -132,37 +132,25 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 			return tr("Optional data");
 
 		case AccessRight::READ_DG20:
+		case AccessRight::WRITE_DG20:
 			//: LABEL ALL_PLATFORMS
 			return tr("Residence permit II");
 
-		case AccessRight::WRITE_DG20:
-			//: LABEL ALL_PLATFORMS
-			return tr("Write residence permit II");
-
 		case AccessRight::READ_DG19:
+		case AccessRight::WRITE_DG19:
 			// "Auxiliary conditions" are replaced with "Residence permit I" in agreement with the BMI
 			//: LABEL ALL_PLATFORMS
 			return tr("Residence permit I");
 
-		case AccessRight::WRITE_DG19:
-			//: LABEL ALL_PLATFORMS
-			return tr("Write residence permit I");
-
 		case AccessRight::READ_DG18:
+		case AccessRight::WRITE_DG18:
 			//: LABEL ALL_PLATFORMS
 			return tr("Community-ID");
 
-		case AccessRight::WRITE_DG18:
-			//: LABEL ALL_PLATFORMS
-			return tr("Write community-ID");
-
 		case AccessRight::READ_DG17:
-			//: LABEL ALL_PLATFORMS
-			return tr("Address");
-
 		case AccessRight::WRITE_DG17:
 			//: LABEL ALL_PLATFORMS
-			return tr("Write address");
+			return tr("Address");
 
 		case AccessRight::READ_DG16:
 			//: LABEL ALL_PLATFORMS
@@ -284,21 +272,35 @@ QLatin1String AccessRoleAndRightsUtil::toTechnicalName(AccessRight pRight)
 }
 
 
-QString AccessRoleAndRightsUtil::joinFromTechnicalName(const QStringList& pStr, const QString& pJoin)
+QString AccessRoleAndRightsUtil::joinFromTechnicalName(const QStringList& pStr, JoinRights pJoinRight, const QString& pJoin)
 {
-	return fromTechnicalName(pStr).join(pJoin);
+	return fromTechnicalName(pStr, pJoinRight).join(pJoin);
 }
 
 
-QStringList AccessRoleAndRightsUtil::fromTechnicalName(const QStringList& pStr)
+QStringList AccessRoleAndRightsUtil::fromTechnicalName(const QStringList& pStr, JoinRights pJoinRight)
 {
 	QStringList result;
 	for (auto entry : pStr)
 	{
-		fromTechnicalName(entry, [&entry](AccessRight pRight){
-					entry = AccessRoleAndRightsUtil::toDisplayText(pRight);
+		const bool isValidTechnicalName = fromTechnicalName(entry, [&entry, pJoinRight](AccessRight pRight){
+					if (pJoinRight.testFlag(JoinRight::READWRITE)
+					|| (pJoinRight.testFlag(JoinRight::WRITE) && AccessRoleAndRightsUtil::isWriteAccessRight(pRight))
+					|| (pJoinRight.testFlag(JoinRight::READ) && !AccessRoleAndRightsUtil::isWriteAccessRight(pRight))
+					)
+					{
+						entry = AccessRoleAndRightsUtil::toDisplayText(pRight);
+					}
+					else
+					{
+						entry.clear();
+					}
 				});
-		result << entry;
+
+		if ((isValidTechnicalName && !entry.isNull()) || (!isValidTechnicalName && pJoinRight.testFlag(JoinRight::READ)))
+		{
+			result << entry;
+		}
 	}
 	return result;
 }

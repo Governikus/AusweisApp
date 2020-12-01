@@ -14,8 +14,8 @@ using namespace governikus;
 MsgHandlerEnterNumber::MsgHandlerEnterNumber(MsgType pType, const MsgContext& pContext)
 	: MsgHandler(pType)
 {
-	Q_ASSERT(pContext.getWorkflowContext());
-	setReader(pContext.getWorkflowContext());
+	Q_ASSERT(pContext.getContext());
+	setReader(pContext.getContext());
 }
 
 
@@ -27,23 +27,19 @@ void MsgHandlerEnterNumber::setError(const QString& pError)
 
 void MsgHandlerEnterNumber::setReader(const QSharedPointer<const WorkflowContext>& pContext)
 {
-	const auto& reader = pContext->getReaderName();
-	if (!reader.isEmpty())
+	const auto& info = pContext->getExpectedReader();
+	if (!info.getName().isEmpty() && info.isConnected())
 	{
-		const auto& info = Env::getSingleton<ReaderManager>()->getReaderInfo(reader);
-		if (info.isConnected())
-		{
-			mJsonObject[QLatin1String("reader")] = MsgHandlerReader::createReaderInfo(info);
-		}
+		mJsonObject[QLatin1String("reader")] = MsgHandlerReader::createReaderInfo(info);
 	}
 }
 
 
 void MsgHandlerEnterNumber::parseValue(const QJsonObject& pObj,
 		const MsgContext& pContext,
-		const std::function<void(const QString& pNumber)>& pFunc, ushort pCount)
+		const std::function<void(const QString& pNumber)>& pFunc, std::pair<ushort, ushort> pCount)
 {
-	const auto& reader = pContext.getWorkflowContext()->getReaderName();
+	const auto& reader = pContext.getContext()->getReaderName();
 	if (reader.isEmpty())
 	{
 		setError(QStringLiteral("No card inserted"));
@@ -66,7 +62,7 @@ void MsgHandlerEnterNumber::parseValue(const QJsonObject& pObj,
 			return;
 		}
 
-		const auto& regex = QStringLiteral("^[0-9]{%1}$").arg(pCount);
+		const auto& regex = QStringLiteral("^[0-9]{%1,%2}$").arg(pCount.first).arg(pCount.second);
 		const auto& number = value.toString();
 		if (QRegularExpression(regex).match(number).hasMatch())
 		{
@@ -74,7 +70,14 @@ void MsgHandlerEnterNumber::parseValue(const QJsonObject& pObj,
 		}
 		else
 		{
-			setError(QStringLiteral("You must provide %1 digits").arg(pCount));
+			if (pCount.first == pCount.second)
+			{
+				setError(QStringLiteral("You must provide %1 digits").arg(pCount.first));
+			}
+			else
+			{
+				setError(QStringLiteral("You must provide %1 - %2 digits").arg(pCount.first).arg(pCount.second));
+			}
 		}
 	}
 	else

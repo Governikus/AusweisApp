@@ -17,9 +17,9 @@ MsgHandlerEnterPuk::MsgHandlerEnterPuk(const MsgContext& pContext)
 MsgHandlerEnterPuk::MsgHandlerEnterPuk(const QJsonObject& pObj, MsgContext& pContext)
 	: MsgHandlerEnterPuk(pContext)
 {
-	parseValue(pObj, pContext, [&](const QString& pNumber)
+	parseValue(pObj, pContext, [this, &pContext](const QString& pNumber)
 			{
-				auto ctx = pContext.getWorkflowContext();
+				auto ctx = pContext.getContext();
 				ctx->setPuk(pNumber);
 				ctx->setStateApproved();
 				setVoid();

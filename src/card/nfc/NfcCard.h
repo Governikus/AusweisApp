@@ -9,6 +9,7 @@
 #include "Card.h"
 
 #include <QNearFieldTarget>
+#include <QScopedPointer>
 
 
 namespace governikus
@@ -21,23 +22,24 @@ class NfcCard
 	private:
 		bool mConnected;
 		bool mIsValid;
-		QNearFieldTarget* mNearFieldTarget;
-
-	private Q_SLOTS:
-		void onError(QNearFieldTarget::Error pError, const QNearFieldTarget::RequestId& pId);
+		QScopedPointer<QNearFieldTarget> mNearFieldTarget;
 
 	public:
 		explicit NfcCard(QNearFieldTarget* pNearFieldTarget);
-		virtual ~NfcCard() override;
 
 		bool isValid() const;
 		bool invalidateTarget(QNearFieldTarget* pNearFieldTarget);
 
-		virtual CardReturnCode connect() override;
-		virtual CardReturnCode disconnect() override;
-		virtual bool isConnected() override;
+		CardReturnCode connect() override;
+		CardReturnCode disconnect() override;
+		bool isConnected() override;
+		void setProgressMessage(const QString& pMessage, int pProgress = -1) override;
 
-		virtual ResponseApduResult transmit(const CommandApdu& pCmd) override;
+		ResponseApduResult transmit(const CommandApdu& pCmd) override;
+
+	Q_SIGNALS:
+		void fireTargetError(QNearFieldTarget::Error pError);
+		void fireSetProgressMessage(const QString& pMessage);
 };
 
 } // namespace governikus

@@ -38,16 +38,16 @@ class UpdatableFile
 		const QUrl mUpdateUrl;
 		bool mUpdateRunning;
 
-		const QString& getName();
+		const QString& getName() const;
 		QDateTime cacheTimestamp() const;
 		const QString& getSectionCachePath() const;
 
 		QString qrcPath() const;
 		QString cachePath() const;
-		QUrl updateUrl(const QString& pSection, const QString& pName);
+		QUrl updateUrl(const QString& pSection, const QString& pName) const;
 		QString dirtyFilePath() const;
 		QString sectionCachePath(const QString& pSection) const;
-		QString makeSectionCachePath(const QString& pSection);
+		QString makeSectionCachePath(const QString& pSection) const;
 		void cleanupAfterUpdate(const std::function<void()>& pCustomAction);
 		bool writeDataToFile(const QByteArray& pData, const QString& pFilePath, bool pOverwrite = false);
 
@@ -62,6 +62,8 @@ class UpdatableFile
 
 		QUrl lookupUrl();
 		QString lookupPath();
+		bool forEachLookupPath(const std::function<bool(const QString&)>& pValidate);
+
 		void setDefaultPath(const QString& pPath);
 		const QString& getDefaultPath() const;
 

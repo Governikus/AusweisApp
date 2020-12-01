@@ -6,6 +6,7 @@
 
 #include <QCoreApplication>
 #include <QGlobalStatic>
+#include <QStringView>
 
 using namespace governikus;
 
@@ -43,14 +44,46 @@ bool VersionNumber::isDeveloperVersion() const
 }
 
 
+auto VersionNumber::getInfoFromSuffix(QLatin1Char pStart, QLatin1Char pEnd) const
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+	QStringView view;
+#else
+	QStringRef view;
+#endif
+
+	const auto indexStart = mSuffix.indexOf(pStart) + 1;
+	if (indexStart > 0)
+	{
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+		view = QStringView(mSuffix).sliced(indexStart);
+#else
+		view = mSuffix.midRef(indexStart);
+#endif
+
+		const auto indexEnd = view.indexOf(pEnd);
+		if (indexEnd > 0)
+		{
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+			view = view.sliced(0, indexEnd);
+#else
+			view = view.mid(0, indexEnd);
+#endif
+		}
+	}
+
+	return view;
+}
+
+
 int VersionNumber::getDistance() const
 {
-	const int indexStart = mSuffix.indexOf(QLatin1Char('+')) + 1;
-	const int indexEnd = mSuffix.indexOf(QLatin1Char('-'), indexStart);
-	if (indexStart != 0 && indexEnd != 0)
+	const auto view = getInfoFromSuffix(QLatin1Char('+'));
+
+	if (!view.isEmpty())
 	{
 		bool ok;
-		int value = mSuffix.mid(indexStart, indexEnd - indexStart).toInt(&ok);
+		int value = view.toInt(&ok);
 		if (ok)
 		{
 			return value;
@@ -63,14 +96,7 @@ int VersionNumber::getDistance() const
 
 QString VersionNumber::getBranch() const
 {
-	const int indexStart = mSuffix.indexOf(QLatin1Char('-')) + 1;
-	const int indexEnd = mSuffix.indexOf(QLatin1Char('-'), indexStart);
-	if (indexStart != 0 && indexEnd != 0)
-	{
-		return mSuffix.mid(indexStart, indexEnd - indexStart);
-	}
-
-	return QString();
+	return getInfoFromSuffix(QLatin1Char('-')).toString();
 }
 
 
@@ -78,8 +104,8 @@ QString VersionNumber::getRevision() const
 {
 	if (mSuffix.count(QLatin1Char('-')) > 1)
 	{
-		const int index = mSuffix.lastIndexOf(QLatin1Char('-')) + 1;
-		if (index != 0)
+		const auto index = mSuffix.lastIndexOf(QLatin1Char('-')) + 1;
+		if (index > 0)
 		{
 			return mSuffix.mid(index);
 		}

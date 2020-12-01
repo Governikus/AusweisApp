@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 
 /*
@@ -39,7 +39,7 @@ Item {
 		readonly property string phoneDisplayString: {
 			var s = ""
 			if (!!phone) {
-				s = '<a href="<tel:' + phone + '>">' + phone + "</a>"
+				s = '<a href="tel:' + phone + '">' + phone + "</a>"
 				if (!!phoneCost) {
 					s += "<br/>" + phoneCost
 				}
@@ -77,7 +77,7 @@ Item {
 		}
 
 		ListElement {
-			iconSource: "qrc:///images/provider/url.svg"
+			iconSource: "qrc:///images/material_open_in_new.svg"
 			label: QT_TR_NOOP("Homepage")
 			text: ""
 			accessibleText: ""
@@ -85,7 +85,7 @@ Item {
 		}
 
 		ListElement {
-			iconSource: "qrc:///images/provider/mail.svg"
+			iconSource: "qrc:///images/material_mail.svg"
 			label: QT_TR_NOOP("E-Mail")
 			text: ""
 			accessibleTest: ""
@@ -93,7 +93,7 @@ Item {
 		}
 
 		ListElement {
-			iconSource: "qrc:///images/provider/telefon.svg"
+			iconSource: "qrc:///images/material_phone.svg"
 			label: QT_TR_NOOP("Phone")
 			text: ""
 			accessibleText: ""
@@ -101,7 +101,7 @@ Item {
 		}
 
 		ListElement {
-			iconSource: "qrc:///images/provider/adresse.svg"
+			iconSource: "qrc:///images/material_location.svg"
 			label: QT_TR_NOOP("Contact")
 			text: ""
 			accessibleText: ""

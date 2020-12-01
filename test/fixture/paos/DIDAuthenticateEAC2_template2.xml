@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header>
+      <sb:Correlation xmlns:sb="http://urn:liberty:sb:2003-08" messageID="Id520" refToMessageID="86ad52c0-7c06-4b8d-be72-7a559e62aee7"/>
+   </soap:Header>
+   <soap:Body>
+   <DIDAuthenticate xmlns="urn:iso:std:iso-iec:24727:tech:schema">
+<ConnectionHandle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ConnectionHandle">
+   <!-- CONTEXTHANDLE -->
+   <!-- IFDNAME -->
+   <!-- SLOTINDEX -->
+   <!-- CARDAPPLICATION -->
+   <!-- SLOTHANDLE -->
+</ConnectionHandle>
+<DIDName>PIN</DIDName>
+<AuthenticationProtocolData Protocol="urn:oid:1.3.162.15480.3.0.14.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="EAC2InputType">
+<Certificates xmlns="unknownNamespace"/>
+<EphemeralPublicKey>046E35D82A4F370F9B4C7B6415B7FF936B2FE2DAFD8E008037E8B0464918FDACD33AE730BABAE05C45E9567F010A4A40CA3CF04409C2EEBAC0E38B9E36975E2AE1</EphemeralPublicKey>
+<Signature>2DE1E928C7E6C40F3389BF1973214EAB082F816EB42B6A3C3B36EF4BDD61A2594C7814DDBF7D5A32ADE60188BFCA12BBF7C2FB8DF93A4FE042121015F1FAC7EA</Signature>
+</AuthenticationProtocolData>
+</DIDAuthenticate>
+</soap:Body>
+</soap:Envelope>

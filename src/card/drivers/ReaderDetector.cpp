@@ -5,7 +5,6 @@
 #include "ReaderDetector.h"
 
 #include "ReaderConfiguration.h"
-#include "SingletonHelper.h"
 
 #include <QFile>
 #include <QLoggingCategory>
@@ -13,8 +12,6 @@
 #include <QScopedPointer>
 
 using namespace governikus;
-
-defineSingleton(ReaderDetector)
 
 Q_DECLARE_LOGGING_CATEGORY(card_drivers)
 
@@ -31,12 +28,6 @@ ReaderDetector::ReaderDetector()
 ReaderDetector::~ReaderDetector()
 {
 	qCDebug(card_drivers) << "terminateNativeEvents() =" << terminateNativeEvents();
-}
-
-
-ReaderDetector& ReaderDetector::getInstance()
-{
-	return *Instance;
 }
 
 
@@ -58,7 +49,7 @@ QVector<ReaderConfigurationInfo> ReaderDetector::getAttachedSupportedDevices() c
 }
 
 
-ReaderConfigurationInfo ReaderDetector::getReaderConfigurationInfo(const QString& pReaderName)
+ReaderConfigurationInfo ReaderDetector::getReaderConfigurationInfo(const QString& pReaderName) const
 {
 	QVector<ReaderConfigurationInfo> attachedSupportedDevices = getAttachedSupportedDevices();
 	attachedSupportedDevices += Env::getSingleton<ReaderConfiguration>()->getVirtualReaderConfigurationInfos();

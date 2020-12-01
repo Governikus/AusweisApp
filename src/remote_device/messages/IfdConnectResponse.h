@@ -18,7 +18,7 @@ class IfdConnectResponse
 
 	public:
 		IfdConnectResponse(const QString& pSlotHandle, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
-		IfdConnectResponse(const QJsonObject& pMessageObject);
+		explicit IfdConnectResponse(const QJsonObject& pMessageObject);
 		virtual ~IfdConnectResponse() override = default;
 
 		const QString& getSlotHandle() const;

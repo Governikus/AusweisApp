@@ -4,7 +4,8 @@
 
 #include "MsgHandlerAuth.h"
 
-#include "InternalActivationHandler.h"
+#include "UILoader.h"
+#include "UIPlugInJson.h"
 
 #include <QSharedPointer>
 #include <QUrlQuery>
@@ -90,9 +91,8 @@ QUrl MsgHandlerAuth::createUrl(const QString& pUrl)
 
 void MsgHandlerAuth::initAuth(const QUrl& pTcTokenUrl)
 {
-	auto handler = ActivationHandler::getInstance<InternalActivationHandler>();
-	Q_ASSERT(handler);
-	handler->runAuthentication(QSharedPointer<InternalActivationContext>::create(pTcTokenUrl));
+	auto mJson = Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson);
+	Q_EMIT mJson->fireAuthenticationRequest(pTcTokenUrl);
 }
 
 

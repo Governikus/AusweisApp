@@ -17,7 +17,7 @@ class IfdError
 
 	public:
 		IfdError(const QString& pSlotHandle, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
-		IfdError(const QJsonObject& pMessageObject);
+		explicit IfdError(const QJsonObject& pMessageObject);
 		virtual ~IfdError() override = default;
 
 		const QString& getSlotHandle() const;

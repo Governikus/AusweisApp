@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -11,9 +11,10 @@ import Governikus.Provider 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.AuthModel 1.0
 import Governikus.Type.NumberModel 1.0
+import Governikus.Type.CertificateDescriptionModel 1.0
+import Governikus.Type.ChatModel 1.0
 
 
 SectionPage {
@@ -27,8 +28,8 @@ SectionPage {
 		ApplicationWindow.menuBar.updateActions()
 	}
 
-	Accessible.name: qsTr("Edit rights view") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This is the edit rights view of the AusweisApp2.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Edit rights view")
+	Accessible.description: qsTr("This is the edit rights view of the AusweisApp2.")
 	Keys.onReturnPressed: d.onKeyboardConfirmPressed(event)
 	Keys.onEnterPressed: d.onKeyboardConfirmPressed(event)
 	Keys.onEscapePressed: {
@@ -110,8 +111,8 @@ SectionPage {
 
 						image: "qrc:///images/provider/information.svg"
 						//: LABEL DESKTOP_QML
-						title: qsTr("You are about to identify yourself towards the following provider") + SettingsModel.translationTrigger
-						name: certificateDescriptionModel.subjectName
+						title: qsTr("You are about to identify yourself towards the following provider")
+						name: CertificateDescriptionModel.subjectName
 					}
 
 					GButton {
@@ -121,10 +122,10 @@ SectionPage {
 						anchors.top: parent.top
 
 						activeFocusOnTab: true
-						Accessible.description: qsTr("Show more information about the service provider") + SettingsModel.translationTrigger
+						Accessible.description: qsTr("Show more information about the service provider")
 
 						//: LABEL DESKTOP_QML
-						text: qsTr("more...") + SettingsModel.translationTrigger
+						text: qsTr("more...")
 						onClicked: showProviderInformation(true)
 					}
 				}
@@ -144,8 +145,8 @@ SectionPage {
 
 						image: "qrc:///images/provider/purpose.svg"
 						//: LABEL DESKTOP_QML
-						title: qsTr("Purpose for reading out requested data") + SettingsModel.translationTrigger
-						name: certificateDescriptionModel.purpose
+						title: qsTr("Purpose for reading out requested data")
+						name: CertificateDescriptionModel.purpose
 					}
 
 					GButton {
@@ -157,7 +158,8 @@ SectionPage {
 						activeFocusOnTab: true
 						Accessible.name: confirmButton.text
 
-						icon.source: "qrc:///images/npa.svg"
+						icon.source: "qrc:///images/identify.svg"
+						tintIcon: true
 						//: LABEL DESKTOP_QML %1 can be "CAN" or "PIN"
 						text: qsTr("Proceed to %1 entry").arg(
 																NumberModel.isCanAllowedMode ?
@@ -165,9 +167,9 @@ SectionPage {
 																qsTr("CAN") :
 																//: LABEL DESKTOP_QML Inserted into "Proceed to %1 entry"
 																qsTr("PIN")
-															) + SettingsModel.translationTrigger
+															)
 						onClicked: {
-							chatModel.transferAccessRights()
+							ChatModel.transferAccessRights()
 							AuthModel.continueWorkflow()
 						}
 					}
@@ -187,24 +189,25 @@ SectionPage {
 
 			text: NumberModel.isCanAllowedMode
 				  //: LABEL DESKTOP_QML
-				  ? qsTr("The following data of the ID card will be transferred to the provider when you enter the CAN:")
+				  ? qsTr("By entering the CAN, access to the following data of the ID card will be allowed to the mentioned provider:")
 				  //: LABEL DESKTOP_QML
-				  : qsTr("The following data of your ID card will be transferred to the provider when you enter the PIN:")
-				  + SettingsModel.translationTrigger
+				  : qsTr("By entering your PIN, access to the following data of your ID card will be allowed to the mentioned provider:")
 			textStyle: Style.text.normal_inverse
 
 			FocusFrame {}
 		}
 
-		Pane {
-			anchors.margins: Constants.pane_padding
-			anchors.left: parent.left
-			anchors.right: parent.right
+		GPane {
+			visible: !!transactionText.text
+			anchors {
+				left: parent.left
+				right: parent.right
+				margins: Constants.pane_padding
+			}
 
 			Column {
 				id: transactionInfo
 
-				visible: !!transactionText.text
 				width: parent.width
 
 				spacing: Constants.pane_spacing
@@ -218,7 +221,7 @@ SectionPage {
 					Accessible.name: transactionHeading.text
 
 					//: LABEL DESKTOP_QML
-					text: qsTr("Transactional information") + SettingsModel.translationTrigger
+					text: qsTr("Transactional information")
 					textStyle: Style.text.header_accent
 
 					FocusFrame {
@@ -243,33 +246,86 @@ SectionPage {
 				}
 			}
 
-			Row {
-				spacing: Constants.pane_spacing
+			GText {
+				visible: !writeData.visible && !requiredData.visible && !optionalData.visible
+				anchors.horizontalCenter: parent.horizontalCenter
 
-				readonly property int columnWidth: (parent.width - 2 * Constants.pane_spacing) / 3
+				activeFocusOnTab: true
+
+				//: LABEL DESKTOP_QML
+				text: qsTr("No data requested")
+				textStyle: Style.text.normal
+			}
+		}
+
+		Row {
+			id: requestedDataRow
+
+			readonly property int maxColumns: 3
+			readonly property int columnWidth: (width - spacing) / maxColumns
+
+			anchors {
+				left: parent.left
+				right: parent.right
+				margins: Constants.pane_padding
+			}
+			height: Math.max(writeDataPane.implicitHeight, readDataPane.implicitHeight)
+
+			spacing: Constants.pane_spacing
+
+			GPane {
+				id: writeDataPane
+
+				visible: writeData.count > 0
+				width: readDataPane.visible ? requestedDataRow.columnWidth : parent.width
+				height: parent.height
 
 				DataGroup {
-					id: requiredData
+					id: writeData
 
-					width: columns * parent.columnWidth + ((columns - 1) * Constants.pane_spacing)
+					width: parent.width
 
 					//: LABEL DESKTOP_QML
-					title: qsTr("Required Data") + SettingsModel.translationTrigger
-					columns: !optionalData.visible ? 3
-						   : count > optionalData.count ? 2
-						   : 1
-					chat: chatModel.required
+					title: qsTr("Write access (update)")
+					titleStyle: Style.text.header_warning
+					columns: readDataPane.visible ? 1 : requestedDataRow.maxColumns
+					chat: ChatModel.write
 				}
+			}
 
-				DataGroup {
-					id: optionalData
+			GPane {
+				id: readDataPane
 
-					width: columns * parent.columnWidth + ((columns - 1) * Constants.pane_spacing)
+				visible: requiredData.count > 0 || optionalData.count > 0
+				width: writeDataPane.visible ? requestedDataRow.columnWidth * 2 : parent.width
+				height: parent.height
 
-					//: LABEL DESKTOP_QML
-					title: qsTr("Optional Data") + SettingsModel.translationTrigger
-					columns: 3 - (requiredData.visible ? requiredData.columns : 0)
-					chat: chatModel.optional
+				Row {
+					width: parent.width
+
+					spacing: Constants.pane_spacing
+
+					DataGroup {
+						id: requiredData
+
+						width: optionalData.visible ? parent.width / 2 : parent.width
+
+						//: LABEL DESKTOP_QML
+						title: qsTr("Read access")
+						columns: Math.max(1, requestedDataRow.maxColumns - (writeData.visible ? writeData.columns : 0) - (optionalData.visible ? 1 : 0) - (count > optionalData.count ? 0 : 1))
+						chat: ChatModel.required
+					}
+
+					DataGroup {
+						id: optionalData
+
+						width: requiredData.visible ? parent.width / 2 : parent.width
+
+						//: LABEL DESKTOP_QML
+						title: qsTr("Read access (optional)")
+						columns: Math.max(1, requestedDataRow.maxColumns - (writeData.visible ? writeData.columns : 0) - (requiredData.visible ? requiredData.columns : 0))
+						chat: ChatModel.optional
+					}
 				}
 			}
 		}

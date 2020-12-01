@@ -1,90 +1,67 @@
 <RCC>
     <qresource prefix="/">
+        <file>images/mydata.svg</file>
+        <file>images/material_visibility.svg</file>
+        <file>images/material_visibility_off.svg</file>
+        <file>images/material_settings.svg</file>
+        <file>images/material_help.svg</file>
+        <file>images/material_lock.svg</file>
+        <file>images/material_delete.svg</file>
+        <file>images/material_open_in_new.svg</file>
+        <file>images/material_search.svg</file>
+        <file>images/material_location.svg</file>
+        <file>images/material_mail.svg</file>
+        <file>images/material_phone.svg</file>
+        <file>images/material_close.svg</file>
+        <file>images/material_clear.svg</file>
+        <file>images/material_check.svg</file>
+        <file>images/checkbox_indicator.svg</file>
         <file>images/npa.svg</file>
-        <file>images/beta.svg</file>
-        <file>images/bg_da.png</file>
-        <file>images/bt_1.svg</file>
-        <file>images/bt_1b.svg</file>
-        <file>images/bt_2.svg</file>
-        <file>images/bt_2b.svg</file>
-        <file>images/bt_3.svg</file>
-        <file>images/bt_3b.svg</file>
-        <file>images/bt_4.svg</file>
-        <file>images/bt_4b.svg</file>
-        <file>images/canHint.png</file>
-        <file>images/icon_attention.svg</file>
-        <file>images/icon_ok.png</file>
-        <file>images/icon_cancelled.png</file>
-        <file>images/Icon_Checked.svg</file>
-        <file>images/cancel.svg</file>
-        <file>images/check.svg</file>
-        <file>images/icon_Pin.svg</file>
+        <file>images/id_card.png</file>
+        <file>images/pin_letter_pinpuk_different_page.svg</file>
+        <file>images/pin_letter_pinpuk_same_page.svg</file>
+        <file>images/logo_beta_background.svg</file>
+        <file>images/logo_beta_testing.svg</file>
         <file>images/status_error.svg</file>
         <file>images/status_info.svg</file>
         <file>images/status_ok.svg</file>
-        <file>images/iOS/CheckedCheckbox.png</file>
-        <file>images/delete.svg</file>
-        <file>images/NFCPhoneCard.png</file>
-        <file>images/submit.svg</file>
         <file>images/ausweis.svg</file>
-        <file>images/visibility.svg</file>
-        <file>images/visibility_off.svg</file>
-        <file>images/settings_icon.svg</file>
-        <file>images/main_pin.svg</file>
-        <file>images/main_provider.svg</file>
+        <file>images/ausweis_outline.svg</file>
+        <file>images/provider.svg</file>
+        <file>images/identify.svg</file>
+        <file>images/info.svg</file>
+        <file>images/history.svg</file>
         <file>images/provider/information.svg</file>
         <file>images/provider/purpose.svg</file>
-        <file>images/provider/adresse.svg</file>
-        <file>images/provider/mail.svg</file>
-        <file>images/provider/telefon.svg</file>
-        <file>images/provider/url.svg</file>
-        <file>images/provider/categoryIcons/general.svg</file>
-        <file>images/provider/categoryIcons/citizen.svg</file>
-        <file>images/provider/categoryIcons/finance.svg</file>
-        <file>images/provider/categoryIcons/insurance.svg</file>
-        <file>images/provider/categoryIcons/other.svg</file>
-        <file alias="images/provider/categoryIcons/default_bg.svg">images/provider/categoryIcons/+android/default_bg.svg</file>
-        <file alias="images/provider/categoryIcons/general_bg.svg">images/provider/categoryIcons/+android/general_bg.svg</file>
-        <file>images/provider/categoryIcons/+android/general.svg</file>
-        <file>images/provider/categoryIcons/+android/citizen.svg</file>
-        <file>images/provider/categoryIcons/+android/finance.svg</file>
-        <file>images/provider/categoryIcons/+android/insurance.svg</file>
-        <file>images/provider/categoryIcons/+android/other.svg</file>
-        <file>images/provider/categoryIcons/+android/default_bg.svg</file>
-        <file>images/provider/categoryIcons/+android/general_bg.svg</file>
-        <file>images/provider/categoryIcons/+android/general_button.svg</file>
-        <file>images/provider/categoryIcons/+android/citizen_bg.svg</file>
-        <file>images/provider/categoryIcons/+android/citizen_button.svg</file>
-        <file>images/provider/categoryIcons/+android/finance_bg.svg</file>
-        <file>images/provider/categoryIcons/+android/finance_button.svg</file>
-        <file>images/provider/categoryIcons/+android/insurance_bg.svg</file>
-        <file>images/provider/categoryIcons/+android/insurance_button.svg</file>
-        <file>images/provider/categoryIcons/+android/other_bg.svg</file>
-        <file>images/provider/categoryIcons/+android/other_button.svg</file>
+        <file>images/provider/general.svg</file>
+        <file>images/provider/citizen.svg</file>
+        <file>images/provider/finance.svg</file>
+        <file>images/provider/insurance.svg</file>
+        <file>images/provider/other.svg</file>
+        <file>images/provider/default_bg.svg</file>
+        <file>images/provider/general_bg.svg</file>
+        <file>images/provider/general_button.svg</file>
+        <file>images/provider/citizen_bg.svg</file>
+        <file>images/provider/citizen_button.svg</file>
+        <file>images/provider/finance_bg.svg</file>
+        <file>images/provider/finance_button.svg</file>
+        <file>images/provider/insurance_bg.svg</file>
+        <file>images/provider/insurance_button.svg</file>
+        <file>images/provider/other_bg.svg</file>
+        <file>images/provider/other_button.svg</file>
         <file>updatable-files/supported-providers.json</file>
-        <file>images/icon_nfc.svg</file>
-        <file>images/icon_remote.svg</file>
         <file>images/icon_remote_inactive.svg</file>
         <file>images/icon_remote_0.svg</file>
         <file>images/icon_remote_25.svg</file>
         <file>images/icon_remote_50.svg</file>
         <file>images/icon_remote_75.svg</file>
         <file>images/icon_remote_100.svg</file>
-        <file>images/icon_bluetooth.svg</file>
         <file>images/phone_to_pc.svg</file>
-        <file>images/phone_nfc.svg</file>
-        <file>images/phone_remote.svg</file>
-        <file>images/phone_bluetooth.svg</file>
         <file>images/location_flag_de.svg</file>
         <file>images/location_flag_en.svg</file>
-        <file>images/link_external.svg</file>
         <file>images/siteWithLogo.png</file>
+        <file>images/sandglass.svg</file>
         <file>images/trash_icon_all.svg</file>
-        <file>images/trash_icon_white.svg</file>
-        <file>images/trash_icon.svg</file>
-        <file>images/icon_save.svg</file>
-        <file>images/info.svg</file>
-        <file>images/info_filled.svg</file>
         <file>images/triangle.svg</file>
     </qresource>
 </RCC>

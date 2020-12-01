@@ -5,21 +5,21 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>de_DE</string>
 	<key>CFBundleDisplayName</key>
-	<string>@PROJECT_NAME@@AUTOSTART_HELPER_NAME@</string>
+	<string>@AUTOSTART_HELPER_FULL_NAME@</string>
 	<key>CFBundleExecutable</key>
-	<string>@PROJECT_NAME@@AUTOSTART_HELPER_NAME@</string>
+	<string>@AUTOSTART_HELPER_FULL_NAME@</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.governikus.@PROJECT_NAME@.@AUTOSTART_HELPER_NAME@</string>
+	<string>@AUTOSTART_HELPER_BUNDLE_ID@</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>@PROJECT_NAME@@AUTOSTART_HELPER_NAME@</string>
+	<string>@AUTOSTART_HELPER_FULL_NAME@</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleVersion</key>
-	<string>@VERSION@</string>
+	<string>@PROJECT_VERSION@</string>
 	<key>CFBundleShortVersionString</key>
-	<string>@VERSION@</string>
+	<string>@PROJECT_VERSION@</string>
 	<key>CFBundleSignature</key>
 	<string>aaii</string>
 	<key>NSHumanReadableCopyright</key>

@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -18,7 +18,7 @@ ColumnLayout {
 		activeFocusOnTab: true
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Language selection") + SettingsModel.translationTrigger
+		text: qsTr("Language selection")
 		textStyle: Style.text.header_accent
 
 		FocusFrame {
@@ -30,8 +30,8 @@ ColumnLayout {
 		spacing: Constants.component_spacing
 
 		LocationButton {
-			Accessible.name: qsTr("German") + SettingsModel.translationTrigger
-			Accessible.description: qsTr("Set language to german") + SettingsModel.translationTrigger
+			Accessible.name: qsTr("German")
+			Accessible.description: qsTr("Set language to german")
 
 			language: "de"
 			text: "Deutsch"
@@ -39,8 +39,8 @@ ColumnLayout {
 		}
 
 		LocationButton {
-			Accessible.name: qsTr("English") + SettingsModel.translationTrigger
-			Accessible.description: qsTr("Set language to english") + SettingsModel.translationTrigger
+			Accessible.name: qsTr("English")
+			Accessible.description: qsTr("Set language to english")
 
 			language: "en"
 			text: "English"
@@ -57,47 +57,7 @@ ColumnLayout {
 		activeFocusOnTab: true
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("UI settings") + SettingsModel.translationTrigger
-		textStyle: Style.text.header_accent
-
-		FocusFrame {
-			borderColor: Style.color.focus_indicator
-		}
-	}
-
-	RowLayout {
-		Layout.fillWidth: true
-		spacing: Constants.component_spacing
-
-		GButton {
-			//: LABEL DESKTOP_QML
-			text: qsTr("Switch back to old UI") + SettingsModel.translationTrigger
-			onClicked: plugin.switchUi()
-		}
-
-		GText {
-			Layout.fillWidth: true
-
-			activeFocusOnTab: true
-
-			text: qsTr("Please note that the old UI will be removed in the next version of %1!").arg(Qt.application.name) + SettingsModel.translationTrigger
-			textStyle: Style.text.normal_warning
-
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
-		}
-	}
-
-	GSeparator {
-		Layout.fillWidth: true
-	}
-
-	GText {
-		activeFocusOnTab: true
-
-		//: LABEL DESKTOP_QML
-		text: qsTr("Behavior") + SettingsModel.translationTrigger
+		text: qsTr("Behavior")
 		textStyle: Style.text.header_accent
 
 		FocusFrame {
@@ -109,7 +69,7 @@ ColumnLayout {
 		activeFocusOnTab: true
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Auto start AusweisApp2 after boot") + SettingsModel.translationTrigger
+		text: qsTr("Auto start AusweisApp2 after boot")
 		checked: SettingsModel.autoStartApp
 		enabled: !SettingsModel.autoStartSetByAdmin && SettingsModel.autoStartAvailable
 		onCheckedChanged: SettingsModel.autoStartApp = checked
@@ -119,7 +79,7 @@ ColumnLayout {
 		activeFocusOnTab: true
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Close after authentication") + SettingsModel.translationTrigger
+		text: qsTr("Close after authentication")
 		checked: SettingsModel.autoCloseWindowAfterAuthentication
 		onCheckedChanged: SettingsModel.autoCloseWindowAfterAuthentication = checked
 	}
@@ -128,7 +88,7 @@ ColumnLayout {
 		activeFocusOnTab: true
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Use internal notifications") + SettingsModel.translationTrigger
+		text: qsTr("Use internal notifications")
 		checked: SettingsModel.showInAppNotifications
 		enabled: !SettingsModel.developerMode
 		onCheckedChanged: SettingsModel.showInAppNotifications = checked
@@ -141,7 +101,7 @@ ColumnLayout {
 		activeFocusOnTab: true
 
 		//: LABEL DESKTOP_QML Only visible when the user activates the developer mode in the settings.
-		text: qsTr("Using the developer mode forces the notifications to be enabled.") + SettingsModel.translationTrigger
+		text: qsTr("Using the developer mode forces the notifications to be enabled.")
 		textStyle: Style.text.hint_warning
 
 		FocusFrame {
@@ -161,7 +121,7 @@ ColumnLayout {
 		activeFocusOnTab: true
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Network") + SettingsModel.translationTrigger
+		text: qsTr("Network")
 		textStyle: Style.text.header_accent
 
 		FocusFrame {
@@ -177,7 +137,7 @@ ColumnLayout {
 		activeFocusOnTab: true
 
 		//: LABEL DESKTOP_QML
-		text: qsTr("Use the proxy (%1) specified during the installation.").arg(SettingsModel.customProxyUrl) + SettingsModel.translationTrigger
+		text: qsTr("Use the proxy (%1) specified during the installation.").arg(SettingsModel.customProxyUrl)
 		checked: SettingsModel.useCustomProxy
 		onCheckedChanged: SettingsModel.useCustomProxy = checked
 	}

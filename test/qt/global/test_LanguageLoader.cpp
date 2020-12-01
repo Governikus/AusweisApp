@@ -49,15 +49,15 @@ class test_LanguageLoader
 
 		void loadTwice()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QVERIFY(!LanguageLoader::getInstance().isLoaded());
 			LanguageLoader::getInstance().load(QLocale::German);
 			QVERIFY(LanguageLoader::getInstance().isLoaded());
 
 			LanguageLoader::getInstance().load(QLocale::German);
-			QVERIFY(spy.count() > 0);
-			auto param = spy.takeLast();
+			QVERIFY(logSpy.count() > 0);
+			auto param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Loader is already in use. You need to unload before you load again..."));
 		}
 
@@ -132,11 +132,11 @@ class test_LanguageLoader
 			QLocale::Language lang = LanguageLoader::getInstance().getFallbackLanguage();
 			QCOMPARE(lang, QLocale::English);
 
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			LanguageLoader::getInstance().load(QLocale::English);
-			QVERIFY(spy.count() > 0);
-			auto param = spy.takeAt(2);
+			QVERIFY(logSpy.count() > 0);
+			auto param = logSpy.takeAt(2);
 			QVERIFY(param.at(0).toString().contains("Using fallback language: "));
 		}
 

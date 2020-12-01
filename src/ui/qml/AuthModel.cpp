@@ -5,12 +5,8 @@
 #include "AuthModel.h"
 
 #include "ReaderManagerPlugInInfo.h"
-#include "SingletonHelper.h"
 
 using namespace governikus;
-
-defineSingleton(AuthModel)
-
 
 AuthModel::AuthModel()
 	: WorkflowModel()
@@ -20,10 +16,10 @@ AuthModel::AuthModel()
 }
 
 
-void AuthModel::resetContext(const QSharedPointer<AuthContext>& pContext)
+void AuthModel::resetAuthContext(const QSharedPointer<AuthContext>& pContext)
 {
 	mContext = pContext;
-	WorkflowModel::resetContext(pContext);
+	WorkflowModel::resetWorkflowContext(pContext);
 
 	if (mContext)
 	{
@@ -59,7 +55,7 @@ int AuthModel::getProgressValue() const
 }
 
 
-const QString AuthModel::getProgressMessage() const
+QString AuthModel::getProgressMessage() const
 {
 	if (mContext)
 	{
@@ -105,12 +101,6 @@ QString AuthModel::getStatusCode() const
 {
 	const auto statusCode = mContext ? mContext->getStatus().getStatusCode() : GlobalStatus::Code::Unknown_Error;
 	return getEnumName(statusCode);
-}
-
-
-AuthModel& AuthModel::getInstance()
-{
-	return *Instance;
 }
 
 

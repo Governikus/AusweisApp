@@ -17,7 +17,7 @@ class IfdDisconnectResponse
 
 	public:
 		IfdDisconnectResponse(const QString& pSlotHandle, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
-		IfdDisconnectResponse(const QJsonObject& pMessageObject);
+		explicit IfdDisconnectResponse(const QJsonObject& pMessageObject);
 		virtual ~IfdDisconnectResponse() override = default;
 
 		const QString& getSlotHandle() const;

@@ -23,7 +23,7 @@ class test_EstablishPaceChannelCommand
 		void test_GetPaceOutput()
 		{
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			const QString passwort = QStringLiteral("passwort");
+			const QByteArray passwort = QByteArrayLiteral("passwort");
 			QByteArray chat("chat");
 			QByteArray description("description");
 			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PIN,
@@ -49,7 +49,7 @@ class test_EstablishPaceChannelCommand
 
 		void test_InternalExecute()
 		{
-			const QString passwort = QStringLiteral("passwort");
+			const QByteArray passwort = QByteArrayLiteral("passwort");
 			QByteArray chat("chat");
 			QByteArray description("description");
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());

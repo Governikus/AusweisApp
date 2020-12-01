@@ -27,7 +27,6 @@ class Downloader
 	friend class Env;
 
 	private:
-		QSharedPointer<QNetworkRequest> mCurrentRequest;
 		QSharedPointer<QNetworkReply> mCurrentReply;
 		QQueue<QSharedPointer<QNetworkRequest>> mPendingRequests;
 
@@ -37,20 +36,21 @@ class Downloader
 	protected:
 		Downloader();
 		virtual ~Downloader();
-		static Downloader& getInstance();
 
 	private Q_SLOTS:
 		void onSslErrors(const QList<QSslError>& pErrors);
 		void onSslHandshakeDone();
 		void onMetadataChanged();
 		void onNetworkReplyFinished();
+		void onNetworkReplyProgress(qint64 pBytesReceived, qint64 pBytesTotal);
 
 	public:
-		Q_INVOKABLE virtual void download(const QUrl& pUpdateUrl);
-		Q_INVOKABLE virtual void downloadIfNew(const QUrl& pUpdateUrl,
-				const QDateTime& pCurrentTimestamp);
+		bool abort(const QUrl& pUpdateUrl);
+		virtual void download(const QUrl& pUpdateUrl);
+		virtual void downloadIfNew(const QUrl& pUpdateUrl, const QDateTime& pCurrentTimestamp);
 
 	Q_SIGNALS:
+		void fireDownloadProgress(const QUrl& pUpdateUrl, qint64 pBytesReceived, qint64 pBytesTotal);
 		void fireDownloadSuccess(const QUrl& pUpdateUrl, const QDateTime& pNewTimestamp, const QByteArray& pData);
 		void fireDownloadFailed(const QUrl& pUpdateUrl, GlobalStatus::Code pErrorCode);
 		void fireDownloadUnnecessary(const QUrl& pUpdateUrl);

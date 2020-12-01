@@ -285,7 +285,7 @@ void RemoteDeviceModel::updatePairedReaders()
 void RemoteDeviceModel::updateUnpairedReaders()
 {
 	const auto availableReaders = presentReaders();
-	for (auto modelEntry : availableReaders)
+	for (const auto& modelEntry : availableReaders)
 	{
 		if (mPairedReaders.contains(modelEntry.getId()))
 		{
@@ -302,7 +302,7 @@ void RemoteDeviceModel::removeVanishedReaders()
 	const auto availableReaders = presentReaders();
 	for (int i = mAllRemoteReaders.size() - 1; i >= 0; --i)
 	{
-		const auto& reader = mAllRemoteReaders[i];
+		const auto& reader = mAllRemoteReaders.value(i);
 		const bool readerIsPaired = mPairedReaders.contains(reader.getId());
 		if (mShowPairedReaders && readerIsPaired)
 		{
@@ -352,7 +352,7 @@ bool RemoteDeviceModel::addOrUpdateReader(const RemoteDeviceModelEntry& pModelEn
 	const int readerIndex = mAllRemoteReaders.indexOf(pModelEntry);
 	mAllRemoteReaders[readerIndex] = pModelEntry;
 	const auto modelIndex = index(readerIndex, 0);
-	dataChanged(modelIndex, modelIndex);
+	Q_EMIT dataChanged(modelIndex, modelIndex);
 	return false;
 }
 
@@ -521,7 +521,7 @@ void RemoteDeviceModel::onKnownRemoteReadersChanged()
 {
 	mPairedReaders.clear();
 
-	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	auto pairedReaders = settings.getRemoteInfos();
 	for (const auto& reader : pairedReaders)
 	{
@@ -572,16 +572,10 @@ void RemoteDeviceModel::forgetDevice(const QString& pDeviceId)
 }
 
 
-QString RemoteDeviceModel::getEmptyListDescriptionStringQml() const
+QString RemoteDeviceModel::getEmptyListDescriptionString() const
 {
-	return getEmptyListDescriptionString(false);
-}
-
-
-QString RemoteDeviceModel::getEmptyListDescriptionString(bool pWidgetUiHelp) const
-{
-	const QString& onlineHelpSection = pWidgetUiHelp ? QStringLiteral("readerDeviceTab") : QStringLiteral("settingsRemoteReader");
-	const QString& url = HelpAction::getOnlineUrl(onlineHelpSection, pWidgetUiHelp);
+	const QString& onlineHelpSection = QStringLiteral("settingsRemoteReader");
+	const QString& url = HelpAction::getOnlineUrl(onlineHelpSection);
 	//: Is embedded in a sentence.
 	const QString& hyperlink = QStringLiteral("<a href=\"%1\">%2</a>").arg(url, tr("online help"));
 	//: INFO ALL_PLATFORMS No smartphone with enabled remote service was found on the same network.

@@ -2,48 +2,72 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
+import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
-
 
 RowLayout {
 	id: root
 
-	property alias downloadTooltip: downloadButton.enabledTooltipText
+	property alias progressText: bar.text
+	property alias progressValue: bar.value
+	property bool downloadInProgress: false
 
 	signal skipUpdate()
 	signal remindLater()
-	signal downloadUpdate()
+	signal toggleUpdate()
+
+	spacing: Constants.component_spacing
+
+	GProgressBar {
+		id: bar
+
+		visible: downloadInProgress
+
+		Layout.fillWidth: true
+		Layout.preferredHeight: ApplicationModel.scaleFactor * 40
+
+		activeFocusOnTab: true
+	}
 
 	GButton {
+		visible: !downloadInProgress
+
 		//: LABEL DESKTOP_QML User choice to skip this update, the automatic update check will *not* inform about this update again.
-		text: qsTr("Skip update") + SettingsModel.translationTrigger
+		text: qsTr("Skip update")
 
 		onClicked: root.skipUpdate()
 	}
 
-	Item {
-		id: stretchSpacer
+	GSpacer {
+		visible: !downloadInProgress
 
 		Layout.fillWidth: true
 	}
 
 	GButton {
+		visible: !downloadInProgress
+
 		//: LABEL DESKTOP_QML The available update is shown again after next automatic update check.
-		text: qsTr("Remind me later") + SettingsModel.translationTrigger
+		text: qsTr("Remind me later")
 
 		onClicked: root.remindLater()
 	}
 
 	GButton {
-		id: downloadButton
+		text: Qt.platform.os === "osx"
+			  //: LABEL DESKTOP_QML Open the Mac App Store on macOS
+			  ? qsTr("Open App Store")
+			  : downloadInProgress
+			  //: LABEL DESKTOP_QML Cancel the download of the update on Windows
+			  ? qsTr("Cancel update")
+			  //: LABEL DESKTOP_QML Start to download the update and execute it on Windows
+			  : qsTr("Start update")
+		enabledTooltipText: SettingsModel.appUpdateData.url
 
-		//: LABEL DESKTOP_QML Download the update, opens the download link in the user's default browser.
-		text: qsTr("Download update") + SettingsModel.translationTrigger
-
-		onClicked: root.downloadUpdate()
+		onClicked: root.toggleUpdate()
 	}
 }

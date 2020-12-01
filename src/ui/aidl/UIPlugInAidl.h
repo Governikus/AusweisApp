@@ -35,7 +35,7 @@ class UIPlugInAidl
 		virtual ~UIPlugInAidl() override;
 
 		static UIPlugInAidl* getInstance(bool pBlock = true);
-		bool isSuccessfullInitialized();
+		bool isSuccessfullInitialized() const;
 		Q_INVOKABLE void onReceived(const QByteArray& pMessage);
 		bool waitForWorkflowToFinish();
 

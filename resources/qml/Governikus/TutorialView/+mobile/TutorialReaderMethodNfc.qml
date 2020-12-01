@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -18,7 +18,7 @@ SectionPage {
 	automaticSafeAreaMarginHandling: false
 	navigationAction: NavigationAction { state: "back"; onClicked: firePop() }
 	//: LABEL ANDROID IOS
-	title: qsTr("Tutorial: NFC") + SettingsModel.translationTrigger
+	title: qsTr("Tutorial: NFC")
 
 	signal quitTutorialClicked()
 
@@ -39,8 +39,7 @@ SectionPage {
 			height: content.contentHeight
 			anchors.horizontalCenter: parent.horizontalCenter
 
-			Item {
-				id: statusBarSpacer
+			GSpacer {
 				width: parent.width
 				height: statusBar.height
 			}
@@ -57,7 +56,7 @@ SectionPage {
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID IOS
-					text: qsTr("Direct connection via NFC chip") + SettingsModel.translationTrigger
+					text: qsTr("Direct connection via NFC chip")
 					textStyle: Style.text.tutorial_header_secondary
 					font.bold: true
 					horizontalAlignment: Text.AlignHCenter
@@ -86,7 +85,7 @@ SectionPage {
 				}
 
 				Image {
-					source: "qrc:///images/tutorial/generated/how_method_nfc.svg"
+					source: "qrc:///images/tutorial/how_method_nfc.svg"
 					anchors.horizontalCenter: parent.horizontalCenter
 					width: parent.width * 0.8
 					height: width * (sourceSize.height / sourceSize.width)
@@ -104,7 +103,6 @@ SectionPage {
 					text: (Constants.is_layout_ios ? qsTr("App on iPhone <b>with</b> NFC chip as card reader")
 												//: LABEL ANDROID
 												: qsTr("App on Android smartphone <b>with</b> NFC chip as card reader"))
-												+ SettingsModel.translationTrigger
 					textStyle: Style.text.tutorial_content
 					horizontalAlignment: Text.AlignHCenter
 				}
@@ -125,7 +123,7 @@ SectionPage {
 
 				TutorialImage {
 					id: providerOnSmartphone
-					source: "qrc:///images/tutorial/generated/reader_nfc_provider_on_smartphone.svg"
+					source: "qrc:///images/tutorial/reader_nfc_provider_on_smartphone.svg"
 					width: parent.width
 				}
 
@@ -136,7 +134,7 @@ SectionPage {
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID IOS
-					text: qsTr("Click link on the website of the provider.") + SettingsModel.translationTrigger
+					text: qsTr("Click link on the website of the provider.")
 					horizontalAlignment: Text.AlignHCenter
 					textStyle: Style.text.tutorial_header_secondary
 
@@ -154,7 +152,7 @@ SectionPage {
 				height: userdataExample.height + textAccessWhoWhat.height + textOpenAutomatic.height + 3 * Constants.component_spacing
 
 				TutorialImage {
-					source: "qrc:///images/tutorial/generated/reader_nfc_npa_on_smartphone.svg"
+					source: "qrc:///images/tutorial/reader_nfc_npa_on_smartphone.svg"
 					width: parent.width * 0.3
 
 					centerX: 0.2
@@ -163,7 +161,7 @@ SectionPage {
 
 				TutorialImage {
 					id: userdataExample
-					source: qsTr("qrc:///images/tutorial/generated/reader_nfc_userdata_example_en.svg") + SettingsModel.translationTrigger
+					source: "qrc:///images/tutorial/reader_nfc_userdata_example_%1.svg".arg(SettingsModel.language)
 					width: parent.width * 0.8
 
 					centerX: 0.5
@@ -179,7 +177,7 @@ SectionPage {
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID IOS
-					text: qsTr("The App opens automatically.") + SettingsModel.translationTrigger
+					text: qsTr("The App opens automatically.")
 					horizontalAlignment: Text.AlignHCenter
 					textStyle: Style.text.tutorial_content
 
@@ -196,7 +194,7 @@ SectionPage {
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID IOS
-					text: qsTr("The AusweisApp2 will display who wants to access which data.") + SettingsModel.translationTrigger
+					text: qsTr("The AusweisApp2 will display who wants to access which data.")
 					horizontalAlignment: Text.AlignHCenter
 					textStyle: Style.text.tutorial_header_secondary
 
@@ -222,7 +220,7 @@ SectionPage {
 
 					textStyle: Style.text.tutorial_header_secondary
 					//: LABEL ANDROID IOS
-					text: qsTr("Start the process with a click on:") + SettingsModel.translationTrigger
+					text: qsTr("Start the process with a click on:")
 				}
 
 				Row {
@@ -240,13 +238,14 @@ SectionPage {
 
 					GButton {
 						id: identifyButton
-						icon.source: "qrc:///images/npa.svg"
 
 						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 						//: LABEL ANDROID IOS
-						text: qsTr("Proceed to PIN entry") + SettingsModel.translationTrigger;
+						text: qsTr("Proceed to PIN entry");
+						icon.source: "qrc:///images/identify.svg"
+						tintIcon: true
 						animationsDisabled: true
 					}
 				}
@@ -263,7 +262,7 @@ SectionPage {
 
 				Image {
 					anchors.horizontalCenter: parent.horizontalCenter
-					source: "qrc:///images/tutorial/generated/where_lay_down_id.svg"
+					source: "qrc:///images/tutorial/where_lay_down_id.svg"
 					width: parent.width * 0.8
 					height: width * (sourceSize.height / sourceSize.width)
 					fillMode: Image.PreserveAspectFit
@@ -280,7 +279,6 @@ SectionPage {
 					text: (Constants.is_layout_ios ? qsTr("... and place the top of the iPhone onto the ID card.")
 													//: LABEL ANDROID
 													: qsTr("... and place the ID card flat onto the NFC interface."))
-													+ SettingsModel.translationTrigger
 					horizontalAlignment: Text.AlignHCenter
 					textStyle: Style.text.tutorial_header_secondary
 				}
@@ -305,7 +303,7 @@ SectionPage {
 						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 						//: LABEL ANDROID IOS
-						text: qsTr("Do not move device or ID card!") + SettingsModel.translationTrigger
+						text: qsTr("Do not move device or ID card!")
 						textStyle: Style.text.tutorial_content
 						font.bold: true
 						horizontalAlignment: Text.AlignLeft
@@ -328,7 +326,7 @@ SectionPage {
 
 				TutorialImage {
 					id: nfcPosition
-					source: "qrc:///images/tutorial/generated/reader_nfc_smartphone_nfc_position.svg"
+					source: "qrc:///images/tutorial/reader_nfc_smartphone_nfc_position.svg"
 
 					width: parent.width * 0.7
 					centerY: 0.5
@@ -342,38 +340,31 @@ SectionPage {
 					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
-					//: LABEL ANDROID IOS
-					text: qsTr("The correct position is specific for your device...") + SettingsModel.translationTrigger
+					//: LABEL ANDROID
+					text: qsTr("The correct position is specific for your device. If a position does not work try a different one. The AusweisApp2 shows different common positions. If your device is unable to detect your ID card try to check the device capabilities by clicking on \"Check device and ID card\" on the start page.")
 					textStyle: Style.text.tutorial_content
 					font.bold: true
 					horizontalAlignment: Text.AlignLeft
 
 					x: (parent.width * 0.75) - (width / 2)
-					y: (parent.height * 0.4) - (height / 2)
+					y: (parent.height * 0.5) - (height / 2)
 				}
+			}
 
-				GText {
-					width: parent.width * 0.5
-					rightPadding: Constants.component_spacing
+			GText {
+				width: parent.width * 0.9
+				visible: Constants.is_layout_android
+				anchors.horizontalCenter: parent.horizontalCenter
 
-					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
-					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
-					text: "<a href=\"%1\">%2</a>".arg(
-							  //: LABEL ANDROID IOS
-							  qsTr("https://www.ausweisapp.bund.de/en/compatible-devices/mobile-phones-and-tablets/")
-						  ).arg(
-							  //: LABEL ANDROID IOS
-							  qsTr("To mobile devices")
-						  ) + SettingsModel.translationTrigger
-					textStyle: Style.text.tutorial_header_secondary
-					font.bold: true
-					font.underline: true
-					horizontalAlignment: Text.AlignLeft
-
-					x: (parent.width * 0.75) - (width / 2)
-					y: (parent.height * 0.7) - (height / 2)
-				}
+				//: LABEL ANDROID IOS
+				text: qsTr("You can find more information on compatible devices on our %1mobile device list%2.").arg(
+							"<a href=\"https://www.ausweisapp.bund.de/%1/aa2/mobile-devices\">".arg(SettingsModel.language)
+						).arg("</a>")
+				horizontalAlignment: Text.AlignHCenter
+				textStyle: Style.text.tutorial_header_secondary
 			}
 
 			TutorialSeperator {
@@ -399,7 +390,7 @@ SectionPage {
 							   qsTr("Enter") :
 							   //: LABEL ANDROID IOS
 							   qsTr("Now")
-							  ) + SettingsModel.translationTrigger
+							  )
 						textStyle: Style.text.tutorial_header
 						horizontalAlignment: Text.AlignHCenter
 
@@ -409,7 +400,7 @@ SectionPage {
 
 					TutorialImage {
 						id: pin6Image
-						source: "qrc:///images/tutorial/generated/reader_nfc_pin6.svg"
+						source: "qrc:///images/tutorial/reader_nfc_pin6.svg"
 						z: 1
 
 						width: parent.width * 0.8
@@ -424,7 +415,7 @@ SectionPage {
 						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 						//: LABEL ANDROID IOS
-						text: qsTr("six digits long PIN") + SettingsModel.translationTrigger
+						text: qsTr("six-digit PIN")
 						textStyle: Style.text.tutorial_header
 						font.bold: true
 						horizontalAlignment: Text.AlignHCenter
@@ -446,7 +437,7 @@ SectionPage {
 							   qsTr("now!") :
 							   //: LABEL ANDROID IOS
 							   qsTr("enter!")
-							  ) + SettingsModel.translationTrigger
+							  )
 						textStyle: Style.text.tutorial_header
 						horizontalAlignment: Text.AlignHCenter
 
@@ -476,7 +467,7 @@ SectionPage {
 						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 						//: LABEL ANDROID IOS
-						text: qsTr("This is only possible if you have exchanged the five digits long Transport PIN with a six digits long personal PIN beforehand.") + SettingsModel.translationTrigger
+						text: qsTr("This is only possible if you have exchanged the five-digit Transport PIN with a six-digit PIN beforehand.")
 						textStyle: Style.text.tutorial_content
 						font.bold: true
 						horizontalAlignment: Text.AlignLeft
@@ -503,7 +494,7 @@ SectionPage {
 					anchors.fill: parent
 
 					//: LABEL ANDROID IOS
-					Accessible.name: qsTr("Open YouTube video") + SettingsModel.translationTrigger
+					Accessible.name: qsTr("Open YouTube video")
 					Accessible.role: Accessible.Button
 					Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
 
@@ -520,7 +511,7 @@ SectionPage {
 				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 				//: LABEL ANDROID IOS
-				text: qsTr("You can also watch this YouTube video explaining the process.") + SettingsModel.translationTrigger
+				text: qsTr("You can also watch this YouTube video explaining the process.")
 				textStyle: Style.text.tutorial_header_secondary
 				horizontalAlignment: Text.AlignHCenter
 			}
@@ -540,15 +531,14 @@ SectionPage {
 
 					anchors.horizontalCenter: parent.horizontalCenter
 
-					source: "qrc:///images/tutorial/generated/reader_nfc_finished.svg"
+					source: "qrc:///images/tutorial/reader_nfc_finished.svg"
 					fillMode: Image.PreserveAspectFit
 				}
 
 				onClicked: firePop()
 			}
 
-			Item {
-				id: footerSpacer
+			GSpacer {
 				width: parent.width
 				height: footer.height
 			}

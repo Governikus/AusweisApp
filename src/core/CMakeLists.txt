@@ -6,12 +6,14 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppCore)
 
-TARGET_LINK_LIBRARIES(AusweisAppCore Qt5::Network AusweisAppCard AusweisAppGlobal AusweisAppUi AusweisAppActivation AusweisAppSettings AusweisAppNetwork AusweisAppRemoteDevice AusweisAppServices AusweisAppWhitelistClient)
+target_link_libraries(AusweisAppCore ${Qt}::Network AusweisAppCard AusweisAppGlobal AusweisAppUi AusweisAppActivation AusweisAppSettings AusweisAppNetwork AusweisAppWorkflows AusweisAppServices)
 
-IF(WIN32)
-	TARGET_LINK_LIBRARIES(AusweisAppCore ${WIN_DEFAULT_LIBS})
-ENDIF()
+if(TARGET ${Qt}::WebSockets)
+	target_link_libraries(AusweisAppCore AusweisAppWorkflowsRemoteDevice AusweisAppRemoteDevice)
+endif()
 
-IF(DESKTOP)
-	TARGET_LINK_LIBRARIES(AusweisAppCore AusweisAppCardDrivers)
-ENDIF()
+if(NOT INTEGRATED_SDK)
+	if(DESKTOP)
+		target_link_libraries(AusweisAppCore AusweisAppCardDrivers)
+	endif()
+endif()

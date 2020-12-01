@@ -23,7 +23,7 @@ class Discovery
 
 	public:
 		Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis);
-		Discovery(const QJsonObject& pMessageObject);
+		explicit Discovery(const QJsonObject& pMessageObject);
 		virtual ~Discovery() override;
 
 		const QString& getIfdName() const;

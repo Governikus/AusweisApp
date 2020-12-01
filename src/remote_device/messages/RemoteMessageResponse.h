@@ -22,7 +22,7 @@ class RemoteMessageResponse
 
 	public:
 		RemoteMessageResponse(RemoteCardMessageType pType, ECardApiResult::Minor pResultMinor);
-		RemoteMessageResponse(const QJsonObject& pMessageObject);
+		explicit RemoteMessageResponse(const QJsonObject& pMessageObject);
 		virtual ~RemoteMessageResponse() override = default;
 
 		bool resultHasError() const;

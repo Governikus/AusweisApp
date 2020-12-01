@@ -33,15 +33,12 @@ class ProviderConfiguration
 		QVector<ProviderConfigurationInfo> mProviderConfigurationInfos;
 		QMap<QString, CallCost> mCallCosts;
 
-		bool parseProviderConfiguration();
+		ProviderConfiguration();
+		virtual ~ProviderConfiguration() = default;
+		bool parseProviderConfiguration(const QString& pPath);
 
 	private Q_SLOTS:
 		void onFileUpdated();
-
-	protected:
-		ProviderConfiguration();
-		virtual ~ProviderConfiguration() = default;
-		static ProviderConfiguration& getInstance();
 
 	public:
 		void update();

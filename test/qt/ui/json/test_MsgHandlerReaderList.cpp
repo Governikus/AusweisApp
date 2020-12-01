@@ -74,12 +74,16 @@ class test_MsgHandlerReaderList
 
 			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMock");
 			reader->setCard(MockCardConfig());
-			reader->getReaderInfo().setCardInfo(CardInfo(CardType::UNKNOWN));
+			ReaderInfo info = reader->getReaderInfo();
+			info.setCardInfo(CardInfo(CardType::UNKNOWN));
+			reader->setReaderInfo(info);
 
 			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMockWithGermanCard");
 			reader->setCard(MockCardConfig());
 			auto cardInfo = CardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
-			reader->getReaderInfo().setCardInfo(cardInfo);
+			info = reader->getReaderInfo();
+			info.setCardInfo(cardInfo);
+			reader->setReaderInfo(info);
 
 			MessageDispatcher dispatcher;
 			QByteArray msg("{\"cmd\": \"GET_READER_LIST\"}");

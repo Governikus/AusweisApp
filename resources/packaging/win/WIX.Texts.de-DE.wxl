@@ -35,7 +35,7 @@
 	<String Id="CancelDlgText" Overridable="yes">Möchten Sie die Installation der [ProductName] wirklich abbrechen?</String>
 
 	<String Id="LANG" Overridable="yes">1031</String><!-- see http://wix.tramontana.co.hu/tutorial/user-interface/do-you-speak-english -->
-	<String Id="PackageKeywords" Overridable="yes">Personalausweis, Authentisierung</String>
+	<String Id="PackageKeywords" Overridable="yes">Ausweis, Authentisierung</String>
 	<String Id="PackageComments" Overridable="yes">Installationspaket für die AusweisApp2</String>
 	<String Id="ArpComment" Overridable="yes">Offizieller eID-Client des Bundes</String>
 	<String Id="ArpHelp" Overridable="yes">https://www.ausweisapp.bund.de/fragen-und-antworten/support</String>

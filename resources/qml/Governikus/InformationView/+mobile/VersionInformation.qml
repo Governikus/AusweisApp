@@ -2,13 +2,14 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.VersionInformationModel 1.0
 
 
 SectionPage
@@ -16,7 +17,7 @@ SectionPage
 	id: root
 	navigationAction: NavigationAction { state: "back"; onClicked: firePop() }
 	//: LABEL ANDROID IOS
-	title: qsTr("Version Information") + SettingsModel.translationTrigger
+	title: qsTr("Version Information")
 
 	content: Item
 	{
@@ -30,11 +31,16 @@ SectionPage
 			anchors.fill: parent
 			anchors.margins: Constants.component_spacing
 
-			Pane {
+			GPane {
 				id: pane
 
+				anchors {
+					left: parent.left
+					right: parent.right
+				}
+
 				Repeater {
-					model: versionInformationModel
+					model: VersionInformationModel
 
 					LabeledText {
 						id: delegate

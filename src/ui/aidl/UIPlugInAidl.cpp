@@ -4,6 +4,7 @@
 
 #include "UIPlugInAidl.h"
 
+#include "Env.h"
 #include "UILoader.h"
 #ifdef Q_OS_ANDROID
 #include "PskManager.h"
@@ -36,9 +37,9 @@ UIPlugInAidl::UIPlugInAidl()
 	, mWorkflowIsActive()
 	, mInitializationSuccessfull(false)
 {
-	if (UILoader::getInstance().load(UIPlugInName::UIPlugInJson))
+	if (Env::getSingleton<UILoader>()->load(UIPlugInName::UIPlugInJson))
 	{
-		mJson = qobject_cast<UIPlugInJson*>(UILoader::getInstance().getLoaded(UIPlugInName::UIPlugInJson));
+		mJson = qobject_cast<UIPlugInJson*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson));
 		Q_ASSERT(mJson);
 		connect(mJson, &UIPlugInJson::fireMessage, this, &UIPlugInAidl::onToSend, Qt::QueuedConnection);
 
@@ -85,7 +86,7 @@ UIPlugInAidl* UIPlugInAidl::getInstance(bool pBlock)
 }
 
 
-bool UIPlugInAidl::isSuccessfullInitialized()
+bool UIPlugInAidl::isSuccessfullInitialized() const
 {
 	return mInitializationSuccessfull;
 }

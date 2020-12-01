@@ -23,7 +23,7 @@ class SetEidPinCommand
 		friend class ::test_SetEidPinCommand;
 		friend class ::MockSetEidPinCommand;
 
-		QString mNewPin;
+		QByteArray mNewPin;
 		quint8 mTimeoutSeconds;
 		ResponseApdu mResponseApdu;
 
@@ -33,7 +33,7 @@ class SetEidPinCommand
 
 	public:
 		explicit SetEidPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
-				const QString& pNewPin, quint8 pTimeoutSeconds);
+				const QByteArray& pNewPin, quint8 pTimeoutSeconds);
 
 		const ResponseApdu& getResponseApdu() const;
 };

@@ -4,10 +4,11 @@ Abkündigungen
 Mit der Version 1.24.0 der AusweisApp2 wird die Unterstützung
 folgender Systeme eingestellt.
 
-  - Windows 7
+- Windows 7
+- Android 5.x
 
 
-Mit der Version 1.22.0 der AusweisApp2 wird die Unterstützung
+Mit der Version 1.22.0 der AusweisApp2 wurde die Unterstützung
 folgender Systeme und Funktionen eingestellt.
 
 - macOS Sierra 10.12

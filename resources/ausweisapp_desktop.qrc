@@ -2,56 +2,26 @@
     <qresource prefix="/">
         <file>html_templates/alreadyactive.html</file>
         <file>html_templates/error.html</file>
-        <file>stylesheets/desktop.qss</file>
-        <file>images/MenuSelected.png</file>
-        <file>images/MenuUnselected.png</file>
-        <file>images/MenuUnselectedDisabled.png</file>
-        <file>images/npa.ico</file>
-        <file>images/Logo_Governikus.png</file>
-        <file>images/Logo_AusweisApp2.png</file>
-        <file>images/start_nPA_eAT.png</file>
-        <file>images/busy_animation.gif</file>
-        <file>images/html_message_section.jpg</file>
-        <file>images/search_icon.svg</file>
-        <file>images/search_cancel.svg</file>
+        <file alias="images/html_templates/Logo_AusweisApp2.png">../docs/sdk/Logo_AusweisApp2.png</file>
+        <file>images/html_templates/icon_attention.svg</file>
+        <file>images/html_templates/html_message_section.jpg</file>
         <file>images/macos/appIcon.svg</file>
-        <file>images/desktop/bell.svg</file>
-        <file>images/desktop/id_card.png</file>
-        <file>images/desktop/pin_letter_pinpuk_different_page.svg</file>
-        <file>images/desktop/pin_letter_pinpuk_same_page.svg</file>
-        <file>images/desktop/help_icon.svg</file>
-        <file>images/desktop/main_history.svg</file>
-        <file>images/desktop/main_identify.svg</file>
-        <file>images/desktop/main_info.svg</file>
-        <file>images/desktop/sandglass.svg</file>
+        <file>images/desktop/npa.ico</file>
         <file>images/desktop/titlebar_arrow.svg</file>
-        <file>images/desktop/continue_arrow.svg</file>
-        <file>images/desktop/info_questions.svg</file>
-        <file>images/desktop/info_application_log.svg</file>
-        <file>images/desktop/info_diagnosis.svg</file>
-        <file>images/desktop/info_license.svg</file>
-        <file>images/desktop/info_manual.svg</file>
-        <file>images/desktop/info_rate_application.svg</file>
-        <file>images/desktop/info_report_error.svg</file>
-        <file>images/desktop/info_setup.svg</file>
-        <file>images/desktop/info_version.svg</file>
-        <file>images/randompin/btn_normal_0.png</file>
-        <file>images/randompin/btn_normal_1.png</file>
-        <file>images/randompin/btn_normal_2.png</file>
-        <file>images/randompin/btn_normal_3.png</file>
-        <file>images/randompin/btn_normal_4.png</file>
-        <file>images/randompin/btn_normal_5.png</file>
-        <file>images/randompin/btn_normal_6.png</file>
-        <file>images/randompin/btn_normal_7.png</file>
-        <file>images/randompin/btn_normal_8.png</file>
-        <file>images/randompin/btn_normal_9.png</file>
-        <file>images/randompin/screen_keyboard.png</file>
-        <file>images/randompin/btn_ok.png</file>
-        <file>images/randompin/btn_cancel.png</file>
-        <file>images/randompin/btn_clear.png</file>
-        <file>images/reader/default_card_position.png</file>
+        <file>images/desktop/material_assistant.svg</file>
+        <file>images/desktop/material_bug_report.svg</file>
+        <file>images/desktop/material_live_help.svg</file>
+        <file>images/desktop/material_new_releases.svg</file>
+        <file>images/desktop/material_rate_review.svg</file>
+        <file>images/desktop/material_save.svg</file>
+        <file>images/desktop/material_view_list.svg</file>
+        <file>images/desktop/material_notifications.svg</file>
+        <file>images/desktop/material_arrow_forward.svg</file>
+        <file>images/desktop/material_question_answer.svg</file>
+        <file>images/desktop/material_highlight.svg</file>
+        <file>images/desktop/material_menu_book.svg</file>
+        <file>images/desktop/material_open_in_browser.svg</file>
         <file>images/reader/default_more_reader.png</file>
-        <file>images/reader/default_no_card.png</file>
         <file>images/reader/default_no_reader.png</file>
         <file>images/reader/default_reader.png</file>
         <file>images/reader/default_reader_mit_ausweis.png</file>

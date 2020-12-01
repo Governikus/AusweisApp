@@ -5,7 +5,9 @@
 # to provide a wrapper of a card reader.
 #####################################################################
 
-ADD_PLATFORM_LIBRARY(AusweisAppRemoteDevice)
+if(TARGET ${Qt}::WebSockets)
+	ADD_PLATFORM_LIBRARY(AusweisAppRemoteDevice)
 
-TARGET_LINK_LIBRARIES(AusweisAppRemoteDevice Qt5::Core Qt5::WebSockets AusweisAppCard AusweisAppGlobal AusweisAppSecureStorage AusweisAppNetwork AusweisAppSettings)
-TARGET_COMPILE_DEFINITIONS(AusweisAppRemoteDevice PRIVATE QT_STATICPLUGIN)
+	target_link_libraries(AusweisAppRemoteDevice ${Qt}::Core ${Qt}::WebSockets AusweisAppCard AusweisAppGlobal AusweisAppSecureStorage AusweisAppNetwork AusweisAppSettings)
+	target_compile_definitions(AusweisAppRemoteDevice PRIVATE QT_STATICPLUGIN)
+endif()

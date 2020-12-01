@@ -2,13 +2,11 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 Rectangle {
 	id: baseItem
@@ -21,15 +19,15 @@ Rectangle {
 		id: info
 		width: parent.width
 
-		property int sizeRecudctor: 0
+		property int sizeReductor: 0
 		function resetSize() {
 			if (childrenRect.height < baseItem.height) {
-				sizeRecudctor = 0
+				sizeReductor = 0
 			}
 		}
 		function approximateSize() {
 			if (childrenRect.height > baseItem.height) {
-				sizeRecudctor = sizeRecudctor +1
+				sizeReductor = sizeReductor +1
 			}
 		}
 
@@ -40,7 +38,7 @@ Rectangle {
 
 		GText {
 			//: LABEL ANDROID_TABLET IOS_TABLET
-			text: qsTr("Contact") + SettingsModel.translationTrigger
+			text: qsTr("Contact")
 			textStyle: Style.text.header_inverse
 			padding: Constants.component_spacing
 		}
@@ -64,9 +62,9 @@ Rectangle {
 					color: baseItem.color
 					imageSource: Qt.resolvedUrl(model.iconSource)
 					//: LABEL ANDROID_TABLET IOS_TABLET
-					itemText: (!!model.text ? model.text : qsTr("Unknown")) + SettingsModel.translationTrigger
+					itemText: (!!model.text ? model.text : qsTr("Unknown"))
 					link: model.link
-					sizeRecudctor: info.sizeRecudctor
+					sizeReductor: info.sizeReductor
 				}
 			}
 		}

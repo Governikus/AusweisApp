@@ -5,15 +5,17 @@
 #include "NotificationModel.h"
 
 #include "LogHandler.h"
-#include "SingletonHelper.h"
 
 #include <QTime>
 
-
 using namespace governikus;
 
-
-defineSingleton(NotificationModel)
+NotificationModel::NotificationModel()
+	: QAbstractListModel()
+	, mNotificationEntries(20)
+{
+	connect(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireRawLog, this, &NotificationModel::onNewLogMsg, Qt::QueuedConnection);
+}
 
 
 QString NotificationModel::getLastType() const
@@ -45,20 +47,6 @@ void NotificationModel::onNewLogMsg(const QString& pMsg, const QString& pCategor
 
 		Q_EMIT fireLastTypeChanged();
 	}
-}
-
-
-NotificationModel::NotificationModel()
-	: QAbstractListModel()
-	, mNotificationEntries(20)
-{
-	connect(Env::getSingleton<LogHandler>(), &LogHandler::fireRawLog, this, &NotificationModel::onNewLogMsg, Qt::QueuedConnection);
-}
-
-
-NotificationModel& NotificationModel::getInstance()
-{
-	return *Instance;
 }
 
 

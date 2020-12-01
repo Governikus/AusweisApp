@@ -22,16 +22,16 @@ MsgHandlerReader::MsgHandlerReader(const QJsonObject& pObj)
 	}
 	else
 	{
-		setReaderInfo(jsonName.toString());
+		setReaderInfo(Env::getSingleton<ReaderManager>()->getReaderInfo(jsonName.toString()));
 	}
 }
 
 
-MsgHandlerReader::MsgHandlerReader(const QString& pName)
+MsgHandlerReader::MsgHandlerReader(const ReaderInfo& pInfo)
 	: MsgHandler(MsgType::READER)
 {
-	Q_ASSERT(!pName.isEmpty());
-	setReaderInfo(pName);
+	Q_ASSERT(!pInfo.getName().isEmpty());
+	setReaderInfo(pInfo);
 }
 
 
@@ -41,9 +41,9 @@ void MsgHandlerReader::setError(const QLatin1String pError)
 }
 
 
-void MsgHandlerReader::setReaderInfo(const QString& pName)
+void MsgHandlerReader::setReaderInfo(const ReaderInfo& pInfo)
 {
-	setReaderInfo(mJsonObject, Env::getSingleton<ReaderManager>()->getReaderInfo(pName));
+	setReaderInfo(mJsonObject, pInfo);
 }
 
 

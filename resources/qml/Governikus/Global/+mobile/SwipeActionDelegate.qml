@@ -2,8 +2,10 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+
+import Governikus.Global 1.0
 
 Rectangle {
 	id: baseItem
@@ -12,6 +14,7 @@ Rectangle {
 	property alias pressed: mouseArea.downOnContent
 	property alias actionColor: baseItem.color
 	property alias actionIcon: actionImage.source
+	property alias actionIconTintColor: actionImage.tintColor
 	property string actionAccessibleName
 
 	signal clicked
@@ -20,21 +23,20 @@ Rectangle {
 	height: content.childrenRect.height
 	width: content.childrenRect.width
 
-	Image {
+	TintableIcon {
 		id: actionImage
+
+		Accessible.role: Accessible.Button
+		Accessible.name: actionAccessibleName
+		Accessible.onPressAction: baseItem.actionClicked()
 
 		anchors {
 			top: parent.top
 			bottom: parent.bottom
 			right: parent.right
-			margins: 20
+			margins: Constants.component_spacing
 		}
-
 		width: Math.abs(mouseArea.actionOpenOffset) - anchors.margins * 2
-		Accessible.role: Accessible.Button
-		Accessible.name: actionAccessibleName
-		Accessible.onPressAction: baseItem.actionClicked()
-		fillMode: Image.PreserveAspectFit
 	}
 
 	Item {

@@ -2,14 +2,14 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
+import Governikus.RemoteServiceView 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.View 1.0
 
 Item {
@@ -25,8 +25,6 @@ Item {
 	activeFocusOnTab: true
 	Accessible.role: Accessible.Button
 	Accessible.name: {
-		SettingsModel.translationTrigger
-
 		var msg = qsTr("Smartphone named \"%1\"").arg(remoteDeviceName) + subtext.text
 		if (isPaired) {
 			return msg + qsTr("Press space to unpair the smartphone \"%1\".").arg(remoteDeviceName)
@@ -66,7 +64,7 @@ Item {
 				textStyle: Style.text.normal
 				text: {
 					if (!isPaired) {
-						return qsTr("Click to pair") + SettingsModel.translationTrigger
+						return qsTr("Click to pair")
 					}
 
 					return remoteDeviceStatus
@@ -79,39 +77,21 @@ Item {
 
 			spacing: Constants.component_spacing
 
-			Image {
-				source: {
-					if (!isNetworkVisible && isPaired) {
-						return "qrc:///images/icon_remote_inactive.svg"
-					}
-
-					if (linkQualityInPercent < 25) {
-						return "qrc:///images/icon_remote_0.svg"
-					}
-					if (linkQualityInPercent < 50) {
-						return "qrc:///images/icon_remote_25.svg"
-					}
-					if (linkQualityInPercent < 75) {
-						return "qrc:///images/icon_remote_50.svg"
-					}
-					if (linkQualityInPercent < 100) {
-						return "qrc:///images/icon_remote_75.svg"
-					}
-
-					return "qrc:///images/icon_remote_100.svg"
-				}
-
+			LinkQuality {
 				sourceSize.height: iconHeight
-				fillMode: Image.PreserveAspectFit
+
+				inactive: !isNetworkVisible && isPaired
+				percent: linkQualityInPercent
 			}
 
-			Image {
+			TintableIcon {
 				id: removeIcon
 
 				visible: isPaired
 
-				source: "qrc:///images/trash_icon.svg"
+				source: "qrc:///images/material_delete.svg"
 				sourceSize.height: iconHeight
+				tintColor: Style.color.accent
 				fillMode: Image.PreserveAspectFit
 
 				MouseArea {
@@ -123,15 +103,13 @@ Item {
 					cursorShape: Qt.PointingHandCursor
 					onClicked: unpairDevice(deviceId)
 
-					ToolTip.delay: 500
+					ToolTip.delay: Constants.toolTipDelay
 					ToolTip.visible: trashMouse.containsMouse
-					ToolTip.text: qsTr("Remove remote device") + SettingsModel.translationTrigger
+					ToolTip.text: qsTr("Remove remote device")
 				}
 			}
 
-			Item {
-				id: spacer
-
+			GSpacer {
 				visible: !removeIcon.visible
 
 				height: removeIcon.height

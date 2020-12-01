@@ -3,12 +3,14 @@
  *
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
+
 #include "ProviderNameFilterModel.h"
 
 #include "AppSettings.h"
 #include "HistoryModel.h"
 #include "ProviderConfiguration.h"
 #include "ResourceLoader.h"
+#include "VolatileSettings.h"
 
 #include <QtTest>
 
@@ -43,6 +45,7 @@ class test_ProviderNameFilterModel
 
 		void test_FilterAcceptsRow()
 		{
+			SDK_MODE(false);
 			QVERIFY(!mModel->filterAcceptsRow(0, QModelIndex()));
 
 			HistoryModel model;

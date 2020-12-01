@@ -11,7 +11,7 @@
 #include <QQmlEngine>
 #include <QSet>
 #include <QSortFilterProxyModel>
-#include <QString>
+#include <QStringList>
 
 class test_ProviderCategoryFilterModel;
 
@@ -30,7 +30,7 @@ class ProviderCategoryFilterModel
 	private:
 		friend class ::test_ProviderCategoryFilterModel;
 		QString mSearchString;
-		QSet<QString> mSelectedCategories;
+		QStringList mSelectedCategories;
 
 		ProviderModel mProviderModel;
 
@@ -38,8 +38,9 @@ class ProviderCategoryFilterModel
 		void updateSearchString(const QString& pSearchString);
 		QStringList getSelectedCategories() const;
 		int getAdditionalResultCount() const;
-		int resultCountForFilter(const QSet<QString>& pCategories, const QString& pSearchString) const;
-		bool rowMatchesFilter(int pSourceRow, const QModelIndex& pSourceParent, const QSet<QString>& pSelectedCategories, const QString& pSearchString) const;
+		QStringList getFilteredProviderCategories() const;
+		int resultCountForFilter(const QStringList& pCategories, const QString& pSearchString) const;
+		bool rowMatchesFilter(int pSourceRow, const QModelIndex& pSourceParent, const QStringList& pSelectedCategories, const QString& pSearchString, bool pMatchCategoryType) const;
 
 	protected:
 		bool filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const override;
@@ -48,6 +49,7 @@ class ProviderCategoryFilterModel
 		ProviderCategoryFilterModel();
 		virtual ~ProviderCategoryFilterModel() override;
 
+		Q_INVOKABLE void setIncludeCategoriesInModel(bool pIncludeCategories);
 		Q_INVOKABLE void sortByCategoryFirst(bool pEnabled);
 		Q_INVOKABLE void setCategorySelection(const QString& pCategory);
 		Q_INVOKABLE void updateCategorySelection(const QString& pCategory, bool pSelected);

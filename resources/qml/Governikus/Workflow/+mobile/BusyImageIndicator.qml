@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Style 1.0
 

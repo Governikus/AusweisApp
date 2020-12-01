@@ -31,7 +31,7 @@ class test_ConnectivityManager
 		{
 			ConnectivityManager manager;
 			const QString name = QStringLiteral("name");
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy signalSpy(&manager, &ConnectivityManager::fireNetworkInterfaceActiveChanged);
 
 			QVERIFY(!manager.isNetworkInterfaceActive());
@@ -53,7 +53,7 @@ class test_ConnectivityManager
 		void test_Watching()
 		{
 			ConnectivityManager manager;
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			manager.startWatching();
 			QVERIFY(manager.mTimerId != 0);

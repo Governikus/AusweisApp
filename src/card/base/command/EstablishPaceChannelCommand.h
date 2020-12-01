@@ -24,7 +24,7 @@ class EstablishPaceChannelCommand
 		friend class ::MockEstablishPaceChannelCommand;
 
 		const PacePasswordId mPacePasswordId;
-		const QString mPacePassword;
+		const QByteArray mPacePassword;
 		const QByteArray mEffectiveChat;
 		const QByteArray mCertificateDescription;
 		EstablishPaceChannelOutput mPaceOutput;
@@ -35,7 +35,7 @@ class EstablishPaceChannelCommand
 
 	public:
 		explicit EstablishPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
-				PacePasswordId pPacePasswordId, const QString& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription);
+				PacePasswordId pPacePasswordId, const QByteArray& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription);
 
 		const EstablishPaceChannelOutput& getPaceOutput() const;
 };

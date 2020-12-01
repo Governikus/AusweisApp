@@ -2,19 +2,25 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.SettingsModel 1.0
 
 Row {
 	id: root
 
 	property int availableWidth: 0
-	readonly property int contentWidth: root.implicitWidth
 	readonly property alias searchText: searchField.displayText
+	readonly property int contentWidth: root.implicitWidth
+	function reset() {
+		searchField.clear()
+		if (searchField.visible) {
+			searchField.visible = false
+			Qt.inputMethod.hide()
+		}
+	}
 
 	anchors.top: parent ? parent.top : undefined
 	anchors.topMargin: Style.dimens.titlebar_padding
@@ -34,7 +40,7 @@ Row {
 
 		Accessible.role: Accessible.EditableText
 		//: LABEL ANDROID
-		Accessible.name: qsTr("Type provider to search for") + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Type provider to search for")
 
 		onAccepted: {
 			iconItem.forceActiveFocus(Qt.MouseFocusReason)
@@ -47,21 +53,22 @@ Row {
 		}
 	}
 
-	Image {
+	TintableIcon {
 		id: iconItem
 
-		height: parent.height
-		width: height
-		fillMode: Image.PreserveAspectFit
-		source: "qrc:///images/android/search_icon.svg"
+		sourceSize.height: parent.height
+		tintColor: Style.color.button_text
+		source: searchField.visible ? "qrc:///images/material_close.svg" : "qrc:///images/material_search.svg"
 
 		Accessible.role: Accessible.Button
 		//: LABEL ANDROID
-		Accessible.name: qsTr("Search") + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Search")
 		//: LABEL ANDROID
-		Accessible.description: qsTr("Search provider list") + SettingsModel.translationTrigger
+		Accessible.description: qsTr("Search provider list")
 
 		MouseArea {
+			id: button
+
 			anchors.fill: parent
 
 			Accessible.ignored: true
@@ -72,11 +79,9 @@ Row {
 				var searchFieldVisible = !searchField.visible
 
 				if (searchFieldVisible) {
-					iconItem.source = "qrc:///images/cancel.svg"
 					searchField.forceActiveFocus(Qt.MouseFocusReason)
 					Qt.inputMethod.show()
 				} else {
-					iconItem.source = "qrc:///images/android/search_icon.svg"
 					iconItem.forceActiveFocus(Qt.MouseFocusReason)
 					searchField.text = ""
 					Qt.inputMethod.hide()

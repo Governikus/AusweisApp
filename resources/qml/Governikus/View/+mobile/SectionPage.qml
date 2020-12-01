@@ -2,18 +2,39 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 
 Item {
-	signal firePush(var pSectionPage)
-	signal firePushWithProperties(var pSectionPage, var pProperties)
-	signal fireReplace(var pSectionPage)
-	signal firePop()
-	signal firePopAll()
+	signal reset
+
+	function firePush(pSectionPage) {
+		StackView.view.push(pSectionPage)
+	}
+
+	function firePushWithProperties(pSectionPage, pProperties) {
+		StackView.view.push(pSectionPage, pProperties)
+	}
+
+	function fireReplace(pSectionPage) {
+		if (StackView.view.depth <= 1) {
+			StackView.view.push(pSectionPage)
+			return
+		}
+		StackView.view.replace(pSectionPage)
+	}
+
+	function firePop() {
+		StackView.view.pop()
+	}
+
+	function firePopAll() {
+		StackView.view.pop(null)
+	}
 
 	function scrollPageDown() {
 		sectionPageFlickable.scrollPageDown()
@@ -29,9 +50,7 @@ Item {
 
 	property var onActivated: highlightScrollbar
 
-	property bool pushed: false
-
-	property bool topLevelPage: false
+	readonly property bool topLevelPage: StackView.index === 0
 
 	property var navigationAction: null
 	property string title: ""
@@ -40,10 +59,8 @@ Item {
 
 	property bool titleBarVisible: true
 	property color titleBarColor: Style.color.accent
-	/* if the header component has a property named titleBarOpacity, use it, otherwise use default value*/
-	readonly property real titleBarOpacity: header !== null && typeof(header.titleBarOpacity) != "undefined" ? header.titleBarOpacity : 1
-	// If a header is set, it is shown as background of the TitleBar, so we need to expand the height
-	property bool contentBehindTitlebar: header !== null && typeof(header.titleBarOpacity) != "undefined"
+	property real titleBarOpacity: 1
+	property bool contentBehindTitlebar: false
 
 	// Main flickable of this view
 	property var sectionPageFlickable: flickable
@@ -51,9 +68,7 @@ Item {
 	// When enabled the section page will automatically add a safeAreaMargin to the bottom of the page
 	property bool automaticSafeAreaMarginHandling: true
 
-	// Default header/content of flickable
-	property QtObject header
-	property QtObject content
+	property alias content: flickableContent.data
 
 	Accessible.onScrollDownAction: flickable.scrollPageDown()
 	Accessible.onScrollUpAction: flickable.scrollPageUp()
@@ -70,10 +85,10 @@ Item {
 		contentWidth: flickableContent.width
 		contentHeight: flickableContent.height
 
-		Column {
+		Item {
 			id: flickableContent
-
-			children: [header, content]
+			width: flickable.width
+			height: childrenRect.height
 		}
 	}
 }

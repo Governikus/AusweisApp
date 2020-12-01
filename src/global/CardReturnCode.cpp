@@ -10,9 +10,9 @@
 using namespace governikus;
 
 
-static Initializer::Entry X([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<CardReturnCode>("CardReturnCode");
-		});
+		})
 
 
 GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)

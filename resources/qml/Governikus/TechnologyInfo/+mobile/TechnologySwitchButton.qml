@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtGraphicalEffects 1.0
+import QtQuick 2.12
+import QtGraphicalEffects 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -15,24 +15,21 @@ MouseArea {
 	property alias text: infoText.text
 	property bool buttonActive
 
-	height: img.height + infoText.height + 2 * img.anchors.topMargin + infoText.anchors.topMargin
-	width: img.width + 2 * 10
+	height: img.height + infoText.height + img.anchors.topMargin + infoText.anchors.topMargin + infoText.anchors.bottomMargin
+	width: Math.max(img.width, infoText.width)
 
 	Accessible.role: Accessible.Button
 	Accessible.name: text
 	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
 
-	GSeparator {
-		width: parent.width * 1.5
-		anchors.horizontalCenter: parent.horizontalCenter
-	}
-
 	Image {
 		id: img
+
 		anchors.top: parent.top
-		anchors.topMargin: 20
+		anchors.topMargin: Constants.component_spacing
 		anchors.horizontalCenter: parent.horizontalCenter
-		sourceSize.height: 50
+
+		sourceSize.height: Style.dimens.icon_size
 		fillMode: Image.PreserveAspectFit
 		smooth: true
 	}
@@ -41,7 +38,8 @@ MouseArea {
 		id: infoText
 
 		anchors.top: img.bottom
-		anchors.topMargin: 10
+		anchors.topMargin: Constants.text_spacing
+		anchors.bottomMargin: anchors.topMargin
 		anchors.horizontalCenter: img.horizontalCenter
 
 		Accessible.ignored: true
@@ -51,12 +49,14 @@ MouseArea {
 
 	Colorize {
 		id: grayLevel
-		source: img
+
+		visible: !parent.enabled || buttonActive
 		anchors.fill: img
+
+		source: img
 		saturation: 0
 		hue: 0
 		lightness: 0.0
 		cached: true
-		visible: !parent.enabled || buttonActive
 	}
 }

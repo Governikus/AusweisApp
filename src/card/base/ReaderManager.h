@@ -7,6 +7,7 @@
 #include "command/CreateCardConnectionCommand.h"
 #include "Env.h"
 #include "Reader.h"
+#include "ReaderFilter.h"
 #include "ReaderManagerWorker.h"
 
 #include <QMutex>
@@ -27,11 +28,11 @@ class ReaderManager
 		mutable QMutex mMutex;
 		QThread mThread;
 		QPointer<ReaderManagerWorker> mWorker;
+		QMap<QString, ReaderInfo> mReaderInfoCache;
 
 	protected:
 		ReaderManager();
 		~ReaderManager();
-		static ReaderManager& getInstance();
 
 	public:
 		/*!
@@ -53,7 +54,7 @@ class ReaderManager
 		/*!
 		 * Stops scan for all device types.
 		 */
-		void stopScanAll();
+		void stopScanAll(const QString& pError = QString());
 
 		/*!
 		 * Queries if any plugin is currently scanning
@@ -73,7 +74,6 @@ class ReaderManager
 		void stopScan(ReaderManagerPlugInType pType, const QString& pError = QString());
 
 		QVector<ReaderManagerPlugInInfo> getPlugInInfos() const;
-		QVector<ReaderInfo> getReaderInfos(ReaderManagerPlugInType pType) const;
 		virtual QVector<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const;
 		ReaderInfo getReaderInfo(const QString& pReaderName) const;
 		void updateReaderInfo(const QString& pReaderName);
@@ -108,15 +108,19 @@ class ReaderManager
 	Q_SIGNALS:
 		void firePluginAdded(const ReaderManagerPlugInInfo& pInfo);
 		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
-		void fireReaderAdded(const QString& pReaderName);
-		void fireReaderRemoved(const QString& pReaderName);
-		void fireReaderDeviceError(GlobalStatus::Code pError);
-		void fireReaderPropertiesUpdated(const QString& pReaderName);
-		void fireCardInserted(const QString& pReaderName);
-		void fireCardRemoved(const QString& pReaderName);
-		void fireCardRetryCounterChanged(const QString& pReaderName);
+		void fireReaderAdded(const ReaderInfo& pInfo);
+		void fireReaderRemoved(const ReaderInfo& pInfo);
+		void fireReaderPropertiesUpdated(const ReaderInfo& pInfo);
+		void fireCardInserted(const ReaderInfo& pInfo);
+		void fireCardRemoved(const ReaderInfo& pInfo);
+		void fireCardRetryCounterChanged(const ReaderInfo& pInfo);
 		void fireReaderEvent();
 		void fireInitialized();
+
+	private Q_SLOTS:
+		void doUpdateCacheEntry(const ReaderInfo& pInfo);
+		void doRemoveCacheEntry(const ReaderInfo& pInfo);
+		void doFullUpdateCache(const ReaderManagerPlugInInfo& pInfo);
 
 	public Q_SLOTS:
 		/*!

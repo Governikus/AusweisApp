@@ -19,23 +19,9 @@
 
 using namespace governikus;
 
-defineSingleton(HelpAction)
+defineSingleton(HelpAction) // clazy:exclude=wrong-qglobalstatic
 
 Q_DECLARE_LOGGING_CATEGORY(gui)
-
-//Mapping object name to help file, \see AppQtMainWidget::onContentActionClicked()
-const QMap<QString, QString> HelpAction::mWidgetHelpMapping = {
-	{QStringLiteral("setupAssistant"), QStringLiteral("wizard-info.html")},
-	{QStringLiteral("setupAssistantSetupCompleted"), QString()},
-	{QStringLiteral("identifyPage"), QStringLiteral("identify.html")},
-	{QStringLiteral("providerPage"), QStringLiteral("provider.html")},
-	{QStringLiteral("historyPage"), QStringLiteral("history.html")},
-	{QStringLiteral("generalTab"), QStringLiteral("settings-general.html")},
-	{QStringLiteral("pinTab"), QStringLiteral("settings-pin-management.html")},
-	{QStringLiteral("readerDeviceTab"), QStringLiteral("settings-reader-detection.html")},
-	{QStringLiteral("stepChooseCardGui"), QStringLiteral("settings-reader-detection.html")},
-	{QStringLiteral("index"), QStringLiteral("index.html")}
-};
 
 const QMap<QString, QString> HelpAction::mQmlHelpMapping = {
 	{QStringLiteral("applicationOverview"), QStringLiteral("index.html")},
@@ -55,20 +41,17 @@ const QMap<QString, QString> HelpAction::mQmlHelpMapping = {
 	{QStringLiteral("diagnosis"), QStringLiteral("help-section-diagnosis.html")},
 	{QStringLiteral("applicationLog"), QStringLiteral("help-section-application-log.html")},
 	{QStringLiteral("helpVersioninformation"), QStringLiteral("help-section-versioninformation.html")},
-	{QStringLiteral("setupAssistant"), QStringLiteral("setup-assistant.html")}
+	{QStringLiteral("helpLicenseinformation"), QStringLiteral("help-section-software-license.html")},
+	{QStringLiteral("setupAssistant"), QStringLiteral("setup-assistant.html")},
+	{QStringLiteral("applicationUpdate"), QStringLiteral("updates.html")}
 };
 
 const QString HelpAction::mBaseUrl = QStringLiteral("https://www.ausweisapp.bund.de/ausweisapp2/");
 
-HelpAction& HelpAction::getInstance()
-{
-	return *Instance;
-}
-
 
 QString HelpAction::getHelpPath(QLocale::Language pLang) const
 {
-	const QString langDir = QCoreApplication::applicationDirPath() % QStringLiteral("/help/") % QLocale(pLang).bcp47Name().mid(0, 2) % QLatin1Char('/');
+	const QString langDir = QCoreApplication::applicationDirPath() % QStringLiteral("/help/") % LanguageLoader::getLocalCode(QLocale(pLang)) % QLatin1Char('/');
 
 	if (QDir(langDir).exists())
 	{
@@ -97,12 +80,11 @@ QLocale::Language HelpAction::getExistingHelpLanguage() const
 }
 
 
-QString HelpAction::getContextMapping(const QString& pObjectName, bool pWidgetUiHelp) const
+QString HelpAction::getContextMapping(const QString& pObjectName) const
 {
-	const auto& mapping = pWidgetUiHelp ? mWidgetHelpMapping : mQmlHelpMapping;
-	if (mapping.contains(pObjectName))
+	if (mQmlHelpMapping.contains(pObjectName))
 	{
-		return mapping.value(pObjectName);
+		return mQmlHelpMapping.value(pObjectName);
 	}
 	else
 	{
@@ -113,19 +95,19 @@ QString HelpAction::getContextMapping(const QString& pObjectName, bool pWidgetUi
 }
 
 
-QString HelpAction::getHelpUrl(const QString& pObjectName, bool pWidgetUiHelp) const
+QString HelpAction::getHelpUrl(const QString& pObjectName) const
 {
 	QLocale::Language lang = getExistingHelpLanguage();
 	if (lang == QLocale::AnyLanguage)
 	{
-		return getOnlineUrl(QString(), pWidgetUiHelp);
+		return getOnlineUrl(QString());
 	}
 
-	return QUrl::fromLocalFile(getHelpPath(lang)).toString() + getContextMapping(pObjectName, pWidgetUiHelp);
+	return QUrl::fromLocalFile(getHelpPath(lang)).toString() + getContextMapping(pObjectName);
 }
 
 
-QString HelpAction::getOnlineUrl(const QString& pObjectName, bool pWidgetUiHelp)
+QString HelpAction::getOnlineUrl(const QString& pObjectName)
 {
 #ifdef Q_OS_MACOS
 	const QLatin1String osPath("macOS");
@@ -134,17 +116,16 @@ QString HelpAction::getOnlineUrl(const QString& pObjectName, bool pWidgetUiHelp)
 #endif
 
 	const auto& appVersion = VersionNumber::getApplicationVersion().getVersionNumber();
-	const QString ver = pWidgetUiHelp ? QStringLiteral("1.16") : QString::number(appVersion.majorVersion()) % QLatin1Char('.') % QString::number(appVersion.minorVersion());
-	const QString locale = QLocale(LanguageLoader::getInstance().getUsedLocale().language()).bcp47Name().mid(0, 2);
-	const QString mapping = getInstance().getContextMapping(pObjectName, pWidgetUiHelp);
-	const QString directory = pWidgetUiHelp ? QStringLiteral("handbuch") : QStringLiteral("help");
-	return mBaseUrl % directory % QLatin1Char('/') % ver % QLatin1Char('/') % locale % QLatin1Char('/') % osPath % QLatin1Char('/') % mapping;
+	const QString ver = QString::number(appVersion.majorVersion()) % QLatin1Char('.') % QString::number(appVersion.minorVersion());
+	const QString locale = LanguageLoader::getLocalCode();
+	const QString mapping = getInstance().getContextMapping(pObjectName);
+	return mBaseUrl % QStringLiteral("help") % QLatin1Char('/') % ver % QLatin1Char('/') % locale % QLatin1Char('/') % osPath % QLatin1Char('/') % mapping;
 }
 
 
-void HelpAction::openContextHelp(const QString& pObjectName, bool pWidgetUiHelp)
+void HelpAction::openContextHelp(const QString& pObjectName)
 {
-	const auto& url = QUrl(getOnlineUrl(pObjectName, pWidgetUiHelp));
+	const auto& url = QUrl(getOnlineUrl(pObjectName));
 	qCDebug(gui) << "Open online help:" << pObjectName << '|' << url;
 	QDesktopServices::openUrl(url);
 }

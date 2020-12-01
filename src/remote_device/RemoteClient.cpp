@@ -29,3 +29,9 @@ QStringList RemoteClient::getConnectedDeviceIDs() const
 {
 	return QStringList();
 }
+
+
+bool RemoteClient::hasAnnouncingRemoteDevices() const
+{
+	return !getAnnouncingRemoteDevices().isEmpty();
+}

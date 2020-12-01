@@ -7,7 +7,6 @@
 #include "AppSettings.h"
 #include "messages/Discovery.h"
 #include "RemoteConnectorImpl.h"
-#include "SingletonHelper.h"
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -17,7 +16,16 @@ Q_DECLARE_LOGGING_CATEGORY(remote_device)
 
 using namespace governikus;
 
-defineSingletonImpl(RemoteClient, RemoteClientImpl)
+namespace governikus
+{
+template<> RemoteClient* createNewObject<RemoteClient*>()
+{
+	return new RemoteClientImpl();
+}
+
+
+} // namespace governikus
+
 
 RemoteClientImpl::RemoteClientImpl()
 	: mDatagramHandler()
@@ -148,8 +156,9 @@ void RemoteClientImpl::onRemoteDispatcherError(const RemoteDeviceDescriptor& pRe
 
 	if (pErrorCode == RemoteErrorCode::REMOTE_HOST_REFUSED_CONNECTION || pErrorCode == RemoteErrorCode::NO_SUPPORTED_API_LEVEL)
 	{
-		mErrorCounter[pRemoteDeviceDescriptor.getIfdId()] += 1;
-		if (mErrorCounter[pRemoteDeviceDescriptor.getIfdId()] >= 7)
+		const auto ifd = pRemoteDeviceDescriptor.getIfdId();
+		mErrorCounter[ifd] += 1;
+		if (mErrorCounter.value(ifd) >= 7)
 		{
 			qCCritical(remote_device) << "Remote device refused connection seven times, removing certificate with fingerprint:" << pRemoteDeviceDescriptor.getIfdId();
 			RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
@@ -252,7 +261,7 @@ QStringList RemoteClientImpl::getConnectedDeviceIDs() const
 
 QVector<RemoteServiceSettings::RemoteInfo> RemoteClientImpl::getConnectedDeviceInfos()
 {
-	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	auto remoteInfos = settings.getRemoteInfos();
 	QVector<RemoteServiceSettings::RemoteInfo> result;
 	for (const auto& info : remoteInfos)

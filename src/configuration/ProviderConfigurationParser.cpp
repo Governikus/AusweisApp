@@ -103,8 +103,6 @@ QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(co
 				postalAddressCamel.isEmpty() ? postalAddressLower : postalAddressCamel, // Accept old format
 				prov[QLatin1String("icon")].toString(),
 				prov[QLatin1String("image")].toString(),
-				prov[QLatin1String("tcTokenUrl")].toString(),
-				prov[QLatin1String("clientUrl")].toString(),
 				prov[QLatin1String("subjectUrls")].toVariant().toStringList(),
 				prov[QLatin1String("subjectUrlInfo")].toString());
 	}

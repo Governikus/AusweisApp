@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="LICENSE.txt">@LICENSE_FILE@</file>
+    </qresource>
+</RCC>

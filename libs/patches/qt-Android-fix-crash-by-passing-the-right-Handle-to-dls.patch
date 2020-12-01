@@ -1,0 +1,39 @@
+From 40da124d9bbbadd454221ec7532f59ae4038567d Mon Sep 17 00:00:00 2001
+From: Assam Boudjelthia <assam.boudjelthia@qt.io>
+Date: Wed, 28 Oct 2020 13:04:53 +0200
+Subject: [PATCH] Android: fix crash by passing the right Handle to dlsym()
+
+dlsym() should be taking a Handle that is created by dlopen() instead of
+pHnd.
+
+* https://linux.die.net/man/3/dlsym
+
+Fixes: QTBUG-84849
+Change-Id: Ic192736268ef9cbfdb86cf66d20082b14070ba00
+Reviewed-by: Ville Voutilainen <ville.voutilainen@qt.io>
+(cherry picked from commit a95ddcf97bcb3c5a6727fcaf6b3b74c05051ac4f)
+Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
+---
+ src/corelib/plugin/qlibrary_unix.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/corelib/plugin/qlibrary_unix.cpp y/qtbase/src/corelib/plugin/qlibrary_unix.cpp
+index a5c72f81d9..5cd21b67a4 100644
+--- x/qtbase/src/corelib/plugin/qlibrary_unix.cpp
++++ y/qtbase/src/corelib/plugin/qlibrary_unix.cpp
+@@ -243,10 +243,10 @@ bool QLibraryPrivate::load_sys()
+             }
+             if (hnd) {
+                 using JniOnLoadPtr = jint (*)(JavaVM *vm, void *reserved);
+-                JniOnLoadPtr jniOnLoad = reinterpret_cast<JniOnLoadPtr>(dlsym(pHnd, "JNI_OnLoad"));
++                JniOnLoadPtr jniOnLoad = reinterpret_cast<JniOnLoadPtr>(dlsym(hnd, "JNI_OnLoad"));
+                 if (jniOnLoad && jniOnLoad(QtAndroidPrivate::javaVM(), nullptr) == JNI_ERR) {
+                     dlclose(hnd);
+-                    pHnd = nullptr;
++                    hnd = nullptr;
+                 }
+             }
+ #endif
+-- 
+2.29.2
+

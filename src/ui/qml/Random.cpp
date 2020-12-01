@@ -6,19 +6,10 @@
 #include "Random.h"
 
 #include "Randomizer.h"
-#include "SingletonHelper.h"
 
 #include <random>
 
 using namespace governikus;
-
-defineSingleton(Random)
-
-Random & Random::getInstance()
-{
-	return *Instance;
-}
-
 
 int Random::randomInt(int pLowerBound, int pUpperBound) const
 {

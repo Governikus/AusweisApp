@@ -2,15 +2,14 @@
  * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.10
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Type.RemoteServiceModel 1.0
 import Governikus.EnterPasswordView 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.ReaderPlugIn 1.0
 import Governikus.Type.NumberModel 1.0
-import Governikus.Type.ApplicationModel 1.0
 
 Item {
 	id: controller
@@ -57,7 +56,6 @@ Item {
 		setWorkflowState(pState)
 		if (RemoteServiceModel.isBasicReader && RemoteServiceModel.pinPadModeOn()) {
 			firePushWithProperties(enterPinView, {state: pEnterPinState})
-			ApplicationModel.nfcRunning = false
 		} else {
 			RemoteServiceModel.continueWorkflow()
 		}
@@ -82,7 +80,6 @@ Item {
 			onPasswordEntered: {
 				firePop()
 				RemoteServiceModel.continueWorkflow()
-				ApplicationModel.nfcRunning = true
 			}
 
 			onChangePinLength: NumberModel.requestTransportPin = !NumberModel.requestTransportPin

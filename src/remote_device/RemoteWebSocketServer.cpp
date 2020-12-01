@@ -22,7 +22,7 @@ namespace governikus
 {
 template<> RemoteWebSocketServer* createNewObject<RemoteWebSocketServer*>()
 {
-	return new RemoteWebSocketServerImpl;
+	return new RemoteWebSocketServerImpl();
 }
 
 
@@ -69,14 +69,14 @@ void RemoteWebSocketServerImpl::onConnectionClosed()
 }
 
 
-void RemoteWebSocketServerImpl::onServerError(QWebSocketProtocol::CloseCode pCloseCode)
+void RemoteWebSocketServerImpl::onServerError(QWebSocketProtocol::CloseCode pCloseCode) const
 {
 	qCCritical(remote_device) << pCloseCode;
 }
 
 
 RemoteWebSocketServerImpl::RemoteWebSocketServerImpl()
-	: mTlsServer(new RemoteTlsServer)
+	: mTlsServer(new RemoteTlsServer())
 	, mServer(QString(), QWebSocketServer::NonSecureMode)
 	, mServerMessageHandler()
 	, mPairingConnection(false)

@@ -2,16 +2,15 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.NumberModel 1.0
 
 
@@ -21,14 +20,17 @@ SectionPage {
 	signal close()
 
 	property int passwordType: NumberModel.passwordType
+	property alias rootEnabled: titleBarAction.rootEnabled
 
-	Accessible.name: qsTr("Password information") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This is the password information section of the AusweisApp2.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Password information")
+	Accessible.description: qsTr("This is the password information section of the AusweisApp2.")
 	Keys.onReturnPressed: close()
 	Keys.onEnterPressed: close()
 	Keys.onEscapePressed: close()
 
 	titleBarAction: TitleBarAction {
+		id: titleBarAction
+
 		rootEnabled: ApplicationModel.currentWorkflow === ""
 		showSettings: false
 		text: headline.text
@@ -48,31 +50,26 @@ SectionPage {
 
 		wrapMode: Text.WordWrap
 		//: LABEL DESKTOP_QML
-		text: (passwordType === NumberModel.PASSWORD_CAN ? qsTr("CAN information")
+		text: passwordType === NumberModel.PASSWORD_CAN ? qsTr("CAN information")
 			 //: LABEL DESKTOP_QML
 		     : passwordType === NumberModel.PASSWORD_PUK ? qsTr("PUK information")
 			 //: LABEL DESKTOP_QML
 		     : passwordType === NumberModel.PASSWORD_REMOTE_PIN ? qsTr("Smartphone as card reader information")
 			 //: LABEL DESKTOP_QML
-			 : qsTr("PIN information")) + SettingsModel.translationTrigger
+			 : qsTr("PIN information")
 		textStyle: Style.text.header_inverse
 		FocusFrame {}
 	}
 
 	GText {
-		id: infoText
-
 		anchors.top: headline.bottom
 		anchors.left: parent.left
 		anchors.right: infoImage.left
 		anchors.margins: Constants.pane_padding
 
 		activeFocusOnTab: true
-		Accessible.name: infoText.text
 
 		text: {
-			SettingsModel.translationTrigger
-
 			if (passwordType === NumberModel.PASSWORD_CAN && NumberModel.isCanAllowedMode) {
 				//: INFO DESKTOP_QML Description text of CAN-allowed authentication
 				return qsTr("The Card Access Number (CAN) allows to access the imprinted data of the ID card. In order to allow on-site reading of the personal data the service provider needs to acquire governmental authorization to do so. On-site reading is usually employed to automatically fill forms and prevent spelling mistakes when transfering the personal data.")
@@ -99,95 +96,17 @@ SectionPage {
 		FocusFrame {}
 	}
 
-	Image {
+	PasswordInfoImage {
 		id: infoImage
 
-		sourceSize.width: (passwordType === NumberModel.PASSWORD_CAN ? 800 : 560) * ApplicationModel.scaleFactor
 		anchors.top: headline.bottom
 		anchors.right: parent.right
 		anchors.margins: Constants.pane_padding
 
-		verticalAlignment: Image.AlignTop
-		fillMode: Image.PreserveAspectFit
-		source: passwordType === NumberModel.PASSWORD_CAN ? "qrc:///images/desktop/id_card.png"
-				: passwordType === NumberModel.PASSWORD_REMOTE_PIN ? "qrc:///images/phone_to_pc.svg"
-				: "qrc:///images/desktop/pin_letter_pinpuk_same_page.svg"
-
-		Rectangle {
-			visible: passwordType === NumberModel.PASSWORD_CAN
-			height: 50 * ApplicationModel.scaleFactor
-			width: 160 * ApplicationModel.scaleFactor
-			anchors.top: parent.top
-			anchors.topMargin: 333 * ApplicationModel.scaleFactor
-			anchors.left: parent.left
-			anchors.leftMargin: 598 * ApplicationModel.scaleFactor
-
-			color: Style.color.transparent
-			border.color: Constants.red
-			border.width: Math.max(1, 6 * ApplicationModel.scaleFactor)
-		}
-
-		GText {
-			visible: passwordType === NumberModel.PASSWORD_PIN || passwordType === NumberModel.PASSWORD_PUK
-
-			anchors.top: parent.bottom
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.topMargin: Constants.component_spacing
-
-			textStyle: Style.text.normal_inverse
-			text: (imageChangeTimer.alternativeLetter ?
-				   //: LABEL DESKTOP_QML
-				   qsTr("PIN/PUK on different pages") :
-				   //: LABEL DESKTOP_QML
-				   qsTr("PIN/PUK on the same page")
-				  ) + SettingsModel.translationTrigger
-		}
-	}
-
-	states: State {
-		name: "alternativePinLetter"
-		when: imageChangeTimer.alternativeLetter
-
-		PropertyChanges {
-			target: pinPukVariantB
-			opacity: 1
-		}
-	}
-
-	Timer {
-		id: imageChangeTimer
-
-		property bool alternativeLetter: true
-
-		interval: 6000
-		running: passwordType === NumberModel.PASSWORD_PIN || passwordType === NumberModel.PASSWORD_PUK
-		repeat: true
-		onTriggered: alternativeLetter = !alternativeLetter
-	}
-
-	transitions: Transition {
-		NumberAnimation {
-			properties: "opacity"
-			easing.type: Easing.InOutQuad
-			duration: Constants.animation_duration
-		}
-	}
-
-	Image {
-		id: pinPukVariantB
-
-		visible: passwordType === NumberModel.PASSWORD_PIN || passwordType === NumberModel.PASSWORD_PUK
-
-		opacity: 0.0
-		sourceSize.width: (passwordType === NumberModel.PASSWORD_CAN ? 800 : 560) * ApplicationModel.scaleFactor
-		anchors.top: headline.bottom
-		anchors.right: parent.right
-		anchors.margins: Constants.pane_padding
-
-		verticalAlignment: Image.AlignTop
-		fillMode: Image.PreserveAspectFit
-
-		source: "qrc:///images/desktop/pin_letter_pinpuk_different_page.svg"
+		passwordType: root.passwordType
+		scaleFactorGeneral: 2.75 * ApplicationModel.scaleFactor
+		scaleFactorCan: 2 * ApplicationModel.scaleFactor
+		textStyle: Style.text.normal_inverse
 	}
 
 	NavigationButton {

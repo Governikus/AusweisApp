@@ -2,14 +2,14 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.SelfAuthModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 
@@ -19,150 +19,125 @@ SectionPage {
 	Accessible.name: qsTr("Main view")
 	Accessible.description: qsTr("This is the main view of the AusweisApp2.")
 
-	Item {
-		id: view
+	GridLayout {
 		anchors.fill: parent
+		anchors.margins: Constants.component_spacing * 2
 
-		readonly property int separatorLineWidth: Math.max(1, ApplicationModel.scaleFactor * 4)
-		readonly property int horizontalItemSpace: (width -  2 * separatorLineWidth) / 3
-		readonly property int verticalItemSpace: (height - separatorLineWidth) / 2
+		columns: 5
+		rows: 3
+		columnSpacing: Constants.component_spacing
+		rowSpacing: Constants.component_spacing * 2
 
-		Row {
-			height: parent.verticalItemSpace
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.top: parent.top
+		Tile {
+			Layout.fillWidth: true
+			Layout.fillHeight: true
 
-			Tile {
-				id: tileIdentify
+			activeFocusOnTab: true
 
-				height: parent.height
-				width: view.horizontalItemSpace
+			//: LABEL DESKTOP_QML
+			title: qsTr("See my<br>personal data")
+			image: "qrc:/images/mydata.svg"
 
-				//: LABEL DESKTOP_QML
-				title: qsTr("See my personal data") + SettingsModel.translationTrigger
-				image: "qrc:/images/desktop/main_identify.svg"
-
-				onClicked: sectionPage.nextView(SectionPage.Views.SelfAuthentication)
-
-				activeFocusOnTab: true
-			}
-
-			Rectangle {
-				height: view.verticalItemSpace * 2/3
-				width: view.separatorLineWidth
-				anchors.verticalCenter: parent.verticalCenter
-				color: Style.color.border
-			}
-
-			Tile {
-				id: tileProvider
-
-				height: view.verticalItemSpace
-				width: view.horizontalItemSpace
-
-				//: LABEL DESKTOP_QML
-				title: qsTr("Provider") + SettingsModel.translationTrigger
-				image: "qrc:/images/main_provider.svg"
-
-				onClicked: sectionPage.nextView(SectionPage.Views.Provider)
-
-				activeFocusOnTab: true
-			}
-
-			Rectangle {
-				height: view.verticalItemSpace * 2/3
-				width: view.separatorLineWidth
-				anchors.verticalCenter: parent.verticalCenter
-				color: Style.color.border
-			}
-
-			Tile {
-				id: tileHistory
-
-				height: view.verticalItemSpace
-				width: view.horizontalItemSpace
-
-				//: LABEL DESKTOP_QML
-				title: qsTr("History") + SettingsModel.translationTrigger
-				image: "qrc:/images/desktop/main_history.svg"
-
-				onClicked: sectionPage.nextView(SectionPage.Views.History)
-
-				activeFocusOnTab: true
-			}
+			onClicked: sectionPage.nextView(SectionPage.Views.SelfAuthentication)
 		}
 
-		Rectangle {
-			height: view.separatorLineWidth
-			width: parent.width - view.horizontalItemSpace / 3
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.verticalCenter: parent.verticalCenter
-			color: Style.color.border
+		GSeparator {
+			Layout.fillHeight: true
+			Layout.preferredWidth: Style.dimens.separator_size_large
+
+			orientation: Qt.Vertical
 		}
 
-		Row {
-			height: parent.verticalItemSpace
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.bottom: parent.bottom
+		Tile {
+			Layout.fillWidth: true
+			Layout.fillHeight: true
 
-			Tile {
-				id: tileSettings
+			activeFocusOnTab: true
 
-				height: view.verticalItemSpace
-				width: view.horizontalItemSpace
+			//: LABEL DESKTOP_QML
+			title: qsTr("Provider")
+			image: "qrc:/images/provider.svg"
 
-				//: LABEL DESKTOP_QML
-				title: qsTr("Settings") + SettingsModel.translationTrigger
-				image: "qrc:/images/settings_icon.svg"
+			onClicked: sectionPage.nextView(SectionPage.Views.Provider)
+		}
 
-				onClicked: sectionPage.nextView(SectionPage.Views.Settings)
+		GSeparator {
+			Layout.fillHeight: true
+			Layout.preferredWidth: Style.dimens.separator_size_large
 
-				activeFocusOnTab: true
-			}
+			orientation: Qt.Vertical
+		}
 
-			Rectangle {
-				height: view.verticalItemSpace * 2/3
-				width: view.separatorLineWidth
-				anchors.verticalCenter: parent.verticalCenter
-				color: Style.color.border
-			}
+		Tile {
+			Layout.fillWidth: true
+			Layout.fillHeight: true
 
-			Tile {
-				id: tilePin
+			activeFocusOnTab: true
 
-				height: view.verticalItemSpace
-				width: view.horizontalItemSpace
+			//: LABEL DESKTOP_QML
+			title: qsTr("History")
+			image: "qrc:/images/history.svg"
 
-				//: LABEL DESKTOP_QML
-				title: qsTr("Change PIN") + SettingsModel.translationTrigger
-				image: "qrc:/images/main_pin.svg"
+			onClicked: sectionPage.nextView(SectionPage.Views.History)
+		}
 
-				onClicked: ChangePinModel.startWorkflow()
+		GSeparator {
+			Layout.fillWidth: true
+			Layout.preferredHeight: Style.dimens.separator_size_large
+			Layout.columnSpan: 5
+		}
 
-				activeFocusOnTab: true
-			}
+		Tile {
+			Layout.fillWidth: true
+			Layout.fillHeight: true
 
-			Rectangle {
-				height: view.verticalItemSpace * 2/3
-				width: view.separatorLineWidth
-				anchors.verticalCenter: parent.verticalCenter
-				color: Style.color.border
-			}
+			activeFocusOnTab: true
 
-			Tile {
-				id: tileHelp
+			//: LABEL DESKTOP_QML
+			title: qsTr("Settings")
+			image: "qrc:/images/material_settings.svg"
 
-				height: view.verticalItemSpace
-				width: view.horizontalItemSpace
+			onClicked: sectionPage.nextView(SectionPage.Views.Settings)
+		}
 
-				//: LABEL DESKTOP_QML
-				title: qsTr("Help") + SettingsModel.translationTrigger
-				image: "qrc:/images/desktop/help_icon.svg"
+		GSeparator {
+			Layout.fillHeight: true
+			Layout.preferredWidth: Style.dimens.separator_size_large
 
-				activeFocusOnTab: true
+			orientation: Qt.Vertical
+		}
 
-				onClicked: sectionPage.nextView(SectionPage.Views.MoreView)
-			}
+		Tile {
+			Layout.fillWidth: true
+			Layout.fillHeight: true
+
+			activeFocusOnTab: true
+
+			//: LABEL DESKTOP_QML
+			title: qsTr("Change my<br>(Transport) PIN")
+			image: "qrc:/images/material_lock.svg"
+
+			onClicked: sectionPage.nextView(SectionPage.Views.ChangePin)
+		}
+
+		GSeparator {
+			Layout.fillHeight: true
+			Layout.preferredWidth: Style.dimens.separator_size_large
+
+			orientation: Qt.Vertical
+		}
+
+		Tile {
+			Layout.fillWidth: true
+			Layout.fillHeight: true
+
+			activeFocusOnTab: true
+
+			//: LABEL DESKTOP_QML
+			title: qsTr("Help")
+			image: "qrc:/images/material_help.svg"
+
+			onClicked: sectionPage.nextView(SectionPage.Views.MoreView)
 		}
 	}
 }

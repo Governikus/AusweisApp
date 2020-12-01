@@ -1,0 +1,4 @@
+module AusweisApp2 {
+	header "Headers/AusweisApp2.h"
+	export *
+}

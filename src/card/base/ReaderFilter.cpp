@@ -7,6 +7,12 @@
 #include "ReaderConfiguration.h"
 #include "ReaderManagerPlugIn.h"
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#include <QMutableListIterator>
+#else
+#include <QMutableVectorIterator>
+#endif
+
 using namespace governikus;
 
 ReaderFilter::ReaderFilter()
@@ -30,44 +36,41 @@ ReaderFilter::ReaderFilter(const ReaderFilter::FilterType pFilterType)
 }
 
 
-QVector<ReaderManagerPlugIn*> ReaderFilter::apply(const QVector<ReaderManagerPlugIn*>& pPluginType) const
-{
-	if (mFilterType & PluginTypeFilter)
-	{
-		QVector<ReaderManagerPlugIn*> filtered;
-		for (const auto& pluginType : pPluginType)
-		{
-			if (mPluginTypes.contains(pluginType->getInfo().getPlugInType()))
-			{
-				filtered += pluginType;
-			}
-		}
-		return filtered;
-	}
-
-	return pPluginType;
-}
-
-
 QVector<ReaderInfo> ReaderFilter::apply(const QVector<ReaderInfo>& pInputList) const
 {
-	if (mFilterType & UniqueReaderTypes)
-	{
-		QVector<ReaderInfo> filtered;
-		QVector<ReaderConfigurationInfo> alreadyContained;
-		for (const auto& readerInfo : pInputList)
-		{
-			const ReaderConfigurationInfo configurationInfo = readerInfo.getReaderConfigurationInfo();
-			if (alreadyContained.contains(configurationInfo))
-			{
-				continue;
-			}
+	QVector<ReaderInfo> filtered = pInputList;
 
-			filtered += readerInfo;
-			alreadyContained += configurationInfo;
+	if (mFilterType & PluginTypeFilter)
+	{
+		QMutableVectorIterator<ReaderInfo> iter(filtered);
+		while (iter.hasNext())
+		{
+			const ReaderInfo entry = iter.next();
+			if (!mPluginTypes.contains(entry.getPlugInType()))
+			{
+				iter.remove();
+			}
 		}
-		return filtered;
 	}
 
-	return pInputList;
+	if (mFilterType & UniqueReaderTypes)
+	{
+		QVector<ReaderConfigurationInfo> alreadyContained;
+
+		QMutableVectorIterator<ReaderInfo> iter(filtered);
+		while (iter.hasNext())
+		{
+			const ReaderConfigurationInfo configurationInfo = iter.next().getReaderConfigurationInfo();
+			if (alreadyContained.contains(configurationInfo))
+			{
+				iter.remove();
+			}
+			else
+			{
+				alreadyContained += configurationInfo;
+			}
+		}
+	}
+
+	return filtered;
 }

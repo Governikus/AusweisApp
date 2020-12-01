@@ -6,31 +6,81 @@
 
 #include "AppUpdater.h"
 #include "Env.h"
-#include "SingletonHelper.h"
+
+#include <QDir>
+#include <QLoggingCategory>
+#include <QProcess>
+
 
 using namespace governikus;
 
-defineSingleton(AppUpdateDataModel)
+
+Q_DECLARE_LOGGING_CATEGORY(update)
+
 
 AppUpdateDataModel::AppUpdateDataModel()
 	: QObject()
 	, mUpdateAvailable(false)
+	, mMissingPlatform(false)
+	, mDownloadProgress(0)
+	, mDownloadTotal(0)
 {
-	connect(Env::getSingleton<AppUpdater>(), &AppUpdater::fireAppUpdateCheckFinished, this, &AppUpdateDataModel::onAppUpdateCheckFinished);
+	connect(Env::getSingleton<AppUpdater>(), &AppUpdater::fireAppcastCheckFinished, this, &AppUpdateDataModel::onAppcastFinished);
+	connect(Env::getSingleton<AppUpdater>(), &AppUpdater::fireAppDownloadProgress, this, &AppUpdateDataModel::onAppDownloadProgress);
+	connect(Env::getSingleton<AppUpdater>(), &AppUpdater::fireAppDownloadFinished, this, &AppUpdateDataModel::onAppDownloadFinished);
 }
 
 
-AppUpdateDataModel& AppUpdateDataModel::getInstance()
+void AppUpdateDataModel::onAppcastFinished(bool pUpdateAvailable, const GlobalStatus& pStatus)
 {
-	return *Instance;
-}
-
-
-void AppUpdateDataModel::onAppUpdateCheckFinished(bool pUpdateAvailable, const GlobalStatus& pStatus)
-{
-	Q_UNUSED(pStatus)
 	mUpdateAvailable = pUpdateAvailable;
+	mMissingPlatform = pStatus.getStatusCode() == GlobalStatus::Code::Downloader_Missing_Platform;
 	Q_EMIT fireAppUpdateDataChanged();
+}
+
+
+void AppUpdateDataModel::onAppDownloadProgress(qint64 pBytesReceived, qint64 pBytesTotal)
+{
+	mDownloadProgress = static_cast<int>(pBytesReceived / 1024);
+	mDownloadTotal = static_cast<int>(pBytesTotal / 1024);
+	Q_EMIT fireDownloadProgressChanged();
+}
+
+
+void AppUpdateDataModel::onAppDownloadFinished(const GlobalStatus& pError)
+{
+	mDownloadTotal = getSize() / 1024;
+	if (pError.isError())
+	{
+		mDownloadProgress = 0;
+		Q_EMIT fireDownloadProgressChanged();
+		Q_EMIT fireAppUpdateFailed(pError.getStatusCode());
+		return;
+	}
+
+	mDownloadProgress = mDownloadTotal;
+	Q_EMIT fireDownloadProgressChanged();
+
+#if defined(Q_OS_WIN)
+	const QString installer = Env::getSingleton<AppUpdater>()->getUpdateData().getUpdatePackagePath();
+	qCInfo(update) << "Attempting to start update:" << installer;
+
+	auto arguments = QStringList();
+	arguments << QStringLiteral("/passive");
+	arguments << QStringLiteral("/i") << installer;
+	arguments << QStringLiteral("LAUNCH=true");
+
+	if (QProcess::startDetached(QStringLiteral("msiexec.exe"), arguments))
+	{
+		qCInfo(update) << "New process successfully launched.";
+		Q_EMIT fireAppDownloadFinished();
+		return;
+	}
+
+	qCCritical(update) << "Could not launch new process.";
+#endif
+
+	Q_EMIT fireAppUpdateFailed(GlobalStatus::Code::Update_Execution_Failed);
 }
 
 
@@ -40,9 +90,41 @@ bool AppUpdateDataModel::isUpdateAvailable() const
 }
 
 
+bool AppUpdateDataModel::isMissingPlatform() const
+{
+	return mMissingPlatform;
+}
+
+
 bool AppUpdateDataModel::isValid() const
 {
 	return Env::getSingleton<AppUpdater>()->getUpdateData().isValid();
+}
+
+
+bool AppUpdateDataModel::isCompatible() const
+{
+	return Env::getSingleton<AppUpdater>()->getUpdateData().isCompatible();
+}
+
+
+int AppUpdateDataModel::getDownloadProgress() const
+{
+	return mDownloadProgress;
+}
+
+
+int AppUpdateDataModel::getDownloadTotal() const
+{
+	return mDownloadTotal;
+}
+
+
+QString AppUpdateDataModel::getDownloadFolder() const
+{
+	const QString updateFile = Env::getSingleton<AppUpdater>()->getUpdateData().getUpdatePackagePath();
+	QUrl updateFolderUrl = QUrl::fromLocalFile(updateFile);
+	return QDir::toNativeSeparators(updateFolderUrl.adjusted(QUrl::RemoveFilename).toString());
 }
 
 
@@ -94,4 +176,20 @@ void AppUpdateDataModel::skipUpdate() const
 	{
 		Env::getSingleton<AppUpdater>()->skipVersion(getVersion());
 	}
+}
+
+
+void AppUpdateDataModel::download()
+{
+	mDownloadProgress = 0;
+	Env::getSingleton<AppUpdater>()->downloadUpdate();
+	Q_EMIT fireDownloadProgressChanged();
+}
+
+
+void AppUpdateDataModel::abortDownload()
+{
+	mDownloadProgress = 0;
+	Env::getSingleton<AppUpdater>()->abortDownload();
+	Q_EMIT fireDownloadProgressChanged();
 }

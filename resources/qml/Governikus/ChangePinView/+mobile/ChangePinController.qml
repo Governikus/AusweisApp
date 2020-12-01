@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.ChangePinModel 1.0
@@ -30,37 +30,16 @@ Item {
 
 	id: controller
 	readonly property string currentState: ChangePinModel.currentState
-	readonly property bool bluetoothEnabled: ApplicationModel.bluetoothEnabled
 
 	property bool showRemoveCardFeedback: false
 	property int workflowState: 0
-
-	function sufficientBluetoothRights() {
-		return ApplicationModel.bluetoothEnabled && (!ApplicationModel.locationPermissionRequired || locationPermissionConfirmed)
-	}
-
-	property bool locationPermissionConfirmed: false
-	onLocationPermissionConfirmedChanged: {
-		// If the user has given location permission: continue Bluetooth workflow.
-		if (d.readerPlugInType === ReaderPlugIn.BLUETOOTH && sufficientBluetoothRights()) {
-			ChangePinModel.continueWorkflow()
-		}
-	}
-
-	onBluetoothEnabledChanged: {
-		if (d.readerPlugInType === ReaderPlugIn.BLUETOOTH && sufficientBluetoothRights()) {
-			ChangePinModel.continueWorkflow()
-		}
-	}
 
 	Connections {
 		target: ChangePinModel
 
 		onFireNewContextSet: {
 			pinProgressView.wasNewPin = false
-			navBar.lockedAndHidden = true
-			navBar.state = "pin"
-			navBar.currentIndex = 3
+			navBar.showPin(true)
 			enterPinView.state = "INITIAL"
 			controller.workflowState = ChangePinController.WorkflowStates.Initial
 			ChangePinModel.setInitialPluginType()
@@ -77,13 +56,7 @@ Item {
 				break
 			case "StateSelectReader":
 				fireReplace(pinWorkflow)
-				if (d.readerPlugInType === ReaderPlugIn.BLUETOOTH && !sufficientBluetoothRights()) {
-					// Stop the workflow here until the user has enabled bluetooth and confirmed the location permission.
-					controller.workflowState = ChangePinController.WorkflowStates.Reader
-				}
-				else {
-					setPinWorkflowStateAndContinue(ChangePinController.WorkflowStates.Reader)
-				}
+				setPinWorkflowStateAndContinue(ChangePinController.WorkflowStates.Reader)
 				break
 			case "StateConnectCard":
 				setPinWorkflowStateAndContinue(ChangePinController.WorkflowStates.Card)
@@ -104,8 +77,6 @@ Item {
 				}
 				break
 			case "StateUnfortunateCardPosition":
-				//: INFO IOS The NFC signal is weak or unstable. The scan is stopped with this information in the iOS dialog.
-				ApplicationModel.stopNfcScanWithError(qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable"))
 				baseItem.firePush(cardPositionView)
 				break
 			case "StateEnterNewPacePin":
@@ -145,7 +116,6 @@ Item {
 		if (ChangePinModel.isBasicReader) {
 			enterPinView.state = pInput
 			baseItem.firePush(enterPinView)
-			ApplicationModel.nfcRunning = false
 		} else {
 			ChangePinModel.continueWorkflow()
 		}

@@ -64,7 +64,7 @@ class test_FuncUtils
 		void initTestCase()
 		{
 			mReaders = QVector<Reader>({Reader(QStringLiteral("NFC Reader"), true),
-										Reader(QStringLiteral("Bluetooth Reader"), false),
+										Reader(QStringLiteral("Remote Reader"), false),
 										Reader(QStringLiteral("PCSC Reader"), true)});
 		}
 
@@ -77,7 +77,7 @@ class test_FuncUtils
 
 			QCOMPARE(readerNamesVector.size(), 3);
 			QCOMPARE(readerNamesVector.at(0), QStringLiteral("NFC Reader"));
-			QCOMPARE(readerNamesVector.at(1), QStringLiteral("Bluetooth Reader"));
+			QCOMPARE(readerNamesVector.at(1), QStringLiteral("Remote Reader"));
 			QCOMPARE(readerNamesVector.at(2), QStringLiteral("PCSC Reader"));
 
 			const QList<QString> readerNamesList = map<Reader, QString>([](const Reader& r){
@@ -86,7 +86,7 @@ class test_FuncUtils
 
 			QCOMPARE(readerNamesList.size(), 3);
 			QCOMPARE(readerNamesList.at(0), QStringLiteral("NFC Reader"));
-			QCOMPARE(readerNamesList.at(1), QStringLiteral("Bluetooth Reader"));
+			QCOMPARE(readerNamesList.at(1), QStringLiteral("Remote Reader"));
 			QCOMPARE(readerNamesList.at(2), QStringLiteral("PCSC Reader"));
 		}
 

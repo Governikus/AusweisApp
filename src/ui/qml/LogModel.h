@@ -25,6 +25,7 @@ class LogModel
 {
 	Q_OBJECT
 	friend class Env;
+	friend class ::test_LogModel;
 
 	enum LogModelRoles
 	{
@@ -35,20 +36,19 @@ class LogModel
 	Q_PROPERTY(QStringList logFiles READ getLogfiles NOTIFY fireLogFilesChanged)
 
 	private:
-		friend class ::test_LogModel;
 		QStringList mLogFiles;
 		int mSelectedLogFile;
 		QStringList mLogEntries;
 
+		LogModel();
+		virtual ~LogModel() override = default;
+
+		void reset();
 		void addLogEntry(const QString& pEntry);
 		void setLogEntries(QTextStream& pTextStream);
 
 	private Q_SLOTS:
 		void onNewLogMsg(const QString& pMsg);
-
-	protected:
-		LogModel();
-		static LogModel& getInstance();
 
 	public:
 		QStringList getLogfiles() const;

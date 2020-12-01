@@ -39,12 +39,6 @@ LanguageLoader::~LanguageLoader()
 }
 
 
-LanguageLoader& LanguageLoader::getInstance()
-{
-	return *Instance;
-}
-
-
 const QLocale& LanguageLoader::getDefaultLanguage()
 {
 	return mDefaultLanguage;
@@ -57,8 +51,14 @@ void LanguageLoader::setDefaultLanguage(const QLocale& pLocale)
 }
 
 
+QString LanguageLoader::getLocalCode(const QLocale& pLocale)
+{
+	return pLocale.bcp47Name().left(2);
+}
+
+
 #ifndef QT_NO_DEBUG
-const QString& LanguageLoader::getPath()
+const QString& LanguageLoader::getPath() const
 {
 	return mPath;
 }

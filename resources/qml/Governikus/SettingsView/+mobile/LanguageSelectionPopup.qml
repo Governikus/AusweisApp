@@ -2,18 +2,17 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.SettingsModel 1.0
 
 ConfirmationPopup {
 	id: baseItem
 
 	//: LABEL ANDROID IOS
-	title: qsTr("Select language") + SettingsModel.translationTrigger
+	title: qsTr("Select language")
 
 	style: ConfirmationPopup.PopupStyle.CancelButton
 
@@ -21,8 +20,8 @@ ConfirmationPopup {
 		spacing: Constants.component_spacing
 
 		LocationButton {
-			Accessible.name: qsTr("German") + SettingsModel.translationTrigger
-			Accessible.description: qsTr("Set language to german") + SettingsModel.translationTrigger
+			Accessible.name: qsTr("German")
+			Accessible.description: qsTr("Set language to german")
 
 			language: "de"
 			text: "Deutsch"
@@ -32,8 +31,8 @@ ConfirmationPopup {
 		}
 
 		LocationButton {
-			Accessible.name: qsTr("English") + SettingsModel.translationTrigger
-			Accessible.description: qsTr("Set language to english") + SettingsModel.translationTrigger
+			Accessible.name: qsTr("English")
+			Accessible.description: qsTr("Set language to english")
 
 			language: "en"
 			text: "English"

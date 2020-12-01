@@ -26,7 +26,7 @@ class test_IfdEstablishPaceChannel
 
 		void invalidJson()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray message("FooBar");
 			const auto& obj = QJsonDocument::fromJson(message).object();
@@ -87,7 +87,7 @@ class test_IfdEstablishPaceChannel
 
 		void fromJson()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"ContextHandle\": \"TestContext\",\n"
@@ -124,7 +124,7 @@ class test_IfdEstablishPaceChannel
 		{
 			QFETCH(RemoteCardMessageType, type);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray message("{\n"
 							   "    \"ContextHandle\": \"TestContext\",\n"
@@ -164,7 +164,7 @@ class test_IfdEstablishPaceChannel
 
 		void wrongTypes()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"ContextHandle\": \"TestContext\",\n"

@@ -43,8 +43,6 @@ class test_HistoryModel
 				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 				/* icon */ QString(),
 				/* image */ QString(),
-				/* tcTokenUrl */ QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml"),
-				/* clientUrl */ QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld"),
 				/* subjectUrls */ subjectUrls);
 	}
 
@@ -103,7 +101,8 @@ class test_HistoryModel
 			QFETCH(int, size);
 
 			HistoryInfo info("SubjectName", "SubjectUrl", "Usage", QDateTime::currentDateTime(), "TermOfUsage", {"RequestedData"});
-			QVector<HistoryInfo> entries(entriesSize, info);
+			QVector<HistoryInfo> entries(entriesSize);
+			entries.fill(info);
 
 			Env::getSingleton<AppSettings>()->getHistorySettings().setHistoryInfos(entries);
 
@@ -155,7 +154,8 @@ class test_HistoryModel
 			QTest::newRow("subject") << HistoryModel::HistoryRoles::SUBJECT << "SubjectName";
 			QTest::newRow("purpose") << HistoryModel::HistoryRoles::PURPOSE << "Usage";
 			QTest::newRow("termOfUsage") << HistoryModel::HistoryRoles::TERMSOFUSAGE << "TermOfUsage";
-			QTest::newRow("requestedData") << HistoryModel::HistoryRoles::REQUESTEDDATA << "RequestedData";
+			QTest::newRow("requestedData") << HistoryModel::HistoryRoles::REQUESTEDDATA << "Doctoral degree";
+			QTest::newRow("writtenData") << HistoryModel::HistoryRoles::WRITTENDATA << "Address";
 			QTest::newRow("providerCategory") << HistoryModel::HistoryRoles::PROVIDER_CATEGORY << "CategoryA";
 			QTest::newRow("providerShortname") << HistoryModel::HistoryRoles::PROVIDER_SHORTNAME << "Provider 1";
 			QTest::newRow("providerLongname") << HistoryModel::HistoryRoles::PROVIDER_LONGNAME << "Provider 1 - long name";
@@ -176,7 +176,7 @@ class test_HistoryModel
 			QFETCH(HistoryModel::HistoryRoles, role);
 			QFETCH(QString, result);
 
-			HistoryInfo historyInfo("SubjectName", "https://test.test/", "Usage", QDateTime::currentDateTime(), "TermOfUsage", {"RequestedData"});
+			HistoryInfo historyInfo("SubjectName", "https://test.test/", "Usage", QDateTime::currentDateTime(), "TermOfUsage", {"DoctoralDegree", "WriteAddress"});
 			QVector<HistoryInfo> infos = {historyInfo};
 
 			setTestProviders(1);
@@ -184,7 +184,7 @@ class test_HistoryModel
 			Env::getSingleton<AppSettings>()->getHistorySettings().setHistoryInfos(infos);
 			QModelIndex index = mModel->createIndex(0, 0);
 
-			QCOMPARE(mModel->data(index, role), result);
+			QCOMPARE(mModel->data(index, role).toString(), result);
 		}
 
 
@@ -209,7 +209,8 @@ class test_HistoryModel
 			QFETCH(int, newSize);
 
 			HistoryInfo historyInfo("SubjectName", "https://www.autentapp.de/bla1", "Usage", QDateTime::currentDateTime(), "TermOfUsage", {"RequestedData"});
-			QVector<HistoryInfo> infos(oldSize, historyInfo);
+			QVector<HistoryInfo> infos(oldSize);
+			infos.fill(historyInfo);
 
 			QSignalSpy spyRemove(mModel.data(), &HistoryModel::rowsAboutToBeRemoved);
 

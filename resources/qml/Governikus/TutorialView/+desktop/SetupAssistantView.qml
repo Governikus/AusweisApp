@@ -2,9 +2,10 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
+import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.ResultView 1.0
@@ -24,6 +25,7 @@ SectionPage {
 		HistorySetting,
 		CardReader,
 		TransportPin,
+		PasswordInfo,
 		Finished
 	}
 
@@ -32,7 +34,7 @@ SectionPage {
 	onVisibleChanged: if (visible) d.reset()
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
-		text: qsTr("Setup Assistant") + SettingsModel.translationTrigger
+		text: qsTr("Setup Assistant")
 		rootEnabled: d.allowNavigation
 		showSettings: false
 		helpTopic: "setupAssistant"
@@ -55,31 +57,30 @@ SectionPage {
 
 		Component.onCompleted: setActive()
 
-		Accessible.name: qsTr("Setup assistant view") + SettingsModel.translationTrigger
-		Accessible.description: qsTr("This is the setup assistant view which will guide you through the basic setup of %1").arg(Qt.application.name) + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Setup assistant view")
+		Accessible.description: qsTr("This is the setup assistant view which will guide you through the basic setup of %1").arg(Qt.application.name)
 
 		resultType: ResultView.Type.IsInfo
 		//: INFO DESKTOP_QML Welcome message when starting the setup assistant.
-		text: qsTr("Welcome to the AusweisApp2. Please take a few moments to setup the environment to your needs. Every decision you make can later be changed in the settings menu.") + SettingsModel.translationTrigger
+		text: qsTr("Welcome to the AusweisApp2. Please take a few moments to setup the environment to your needs. Every decision you make can later be changed in the settings menu.")
 
 		onNextView: d.activeView = SetupAssistantView.SubViews.HistorySetting
 	}
 
-	BinaryDecisionView {
+	DecisionView {
 		visible: d.activeView === SetupAssistantView.SubViews.HistorySetting
 
-		Accessible.name: qsTr("History setup step") + SettingsModel.translationTrigger
+		Accessible.name: qsTr("History setup step")
 
-		mainIconSource: "qrc:///images/desktop/main_history.svg"
-		addRingAroundIcon: false
+		mainIconSource: "qrc:///images/history.svg"
 		//: INFO DESKTOP_QML Question if the authentication history shall be stored.
-		questionText: qsTr("Do you want to save a history of performed authentications on your device?") + SettingsModel.translationTrigger
+		questionText: qsTr("Do you want to save a history of performed authentications on your device?")
 		//: INFO DESKTOP_QML Information text which data is stored in the history record.
-		questionSubText: qsTr("The history is only saved locally. You can use it to see on what date you transmitted which data to which party. After enabling the history you can view and delete the entries anytime.") + SettingsModel.translationTrigger
+		questionSubText: qsTr("The history is only saved locally. You can use it to see on what date you transmitted which data to which party. After enabling the history you can view and delete the entries anytime.")
 
 		titleBarAction: TitleBarAction {
 			//: LABEL DESKTOP_QML
-			text: qsTr("History Setting") + SettingsModel.translationTrigger
+			text: qsTr("History Setting")
 			rootEnabled: d.allowNavigation
 			showSettings: false
 			helpTopic: "setupAssistant"
@@ -101,7 +102,7 @@ SectionPage {
 
 		visible: d.activeView === SetupAssistantView.SubViews.CardReader
 
-		Accessible.name: qsTr("Card reader setup step") + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Card reader setup step")
 
 		rootEnabled: d.allowNavigation
 
@@ -125,29 +126,15 @@ SectionPage {
 		}
 	}
 
-	BinaryDecisionView {
+	TransportPinAssistantView {
 		visible: d.activeView === SetupAssistantView.SubViews.TransportPin
 
-		Accessible.name: qsTr("Change Transport PIN setup step") + SettingsModel.translationTrigger
-
-		mainIconSource: "qrc:///images/reader/default_reader.png"
-		//: INFO DESKTOP_QML Inquiry message if the five-digit Transport PIN should be changed to an ordinary PIN (now).
-		questionText: qsTr("Do you want to set your PIN now?") + SettingsModel.translationTrigger
-		//: INFO DESKTOP_QML Hint that this change may be carried out form the main menu as well and that it is required to use the online authentication feature of the ID card.
-		questionSubText: qsTr("If you have not already done so you have to change the five-digit Transport PIN to a six-digit PIN before you can use the online-ID function.") + SettingsModel.translationTrigger
-
-		titleBarAction: TitleBarAction {
-			//: LABEL DESKTOP_QML
-			text: qsTr("Transport PIN") + SettingsModel.translationTrigger
-			rootEnabled: d.allowNavigation
-			showSettings: false
-			helpTopic: "setupAssistant"
-		}
+		rootEnabled: d.allowNavigation
 
 		onAgree: {
 			SettingsModel.showSetupAssistantOnStart = false // We don't wan't to show the setup assistant again, as the only subview left is "Setup assistant done"
-			NumberModel.requestTransportPin = true
-			ChangePinModel.startWorkflow()
+			SettingsModel.transportPinReminder = false
+			baseItem.nextView(SectionPage.Views.ChangePin)
 		}
 		onDisagree: {
 			SettingsModel.showSetupAssistantOnStart = false
@@ -158,11 +145,11 @@ SectionPage {
 	ResultView {
 		visible: d.activeView === SetupAssistantView.SubViews.Finished
 
-		Accessible.name: qsTr("Setup assistant done") + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Setup assistant done")
 
 		resultType: ResultView.Type.IsSuccess
 		//: INFO DESKTOP_QML Success message after completing the setup assistant.
-		text: qsTr("You have completed the setup of the AusweisApp2 successfully.") + SettingsModel.translationTrigger
+		text: qsTr("You have completed the setup of the AusweisApp2 successfully.")
 		onNextView: baseItem.nextView(pName)
 	}
 

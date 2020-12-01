@@ -50,6 +50,7 @@ class CardInfo
 		QSharedPointer<const EFCardAccess> getEfCardAccess() const;
 
 		int getRetryCounter() const;
+		void setRetryCounter(int pRetryCounter);
 
 		bool isRetryCounterDetermined() const;
 

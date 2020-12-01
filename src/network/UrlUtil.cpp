@@ -73,30 +73,31 @@ QUrl UrlUtil::addMajorMinor(const QUrl& pOriginUrl, const GlobalStatus& pStatus)
 	if (pStatus.isError())
 	{
 		QString minor;
-		if (pStatus.isOriginServer())
+
+		switch (pStatus.getStatusCode())
 		{
-			minor = QStringLiteral("serverError");
-		}
-		else
-		{
-			switch (pStatus.getStatusCode())
-			{
-				case GlobalStatus::Code::Paos_Error_AL_Communication_Error:
-					minor = getSuffix(ECardApiResult::Minor::AL_Communication_Error);
-					break;
+			case GlobalStatus::Code::Paos_Error_AL_Communication_Error:
+				minor = getSuffix(ECardApiResult::Minor::AL_Communication_Error);
+				break;
 
-				case GlobalStatus::Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed:
-					minor = getSuffix(ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed);
-					break;
+			case GlobalStatus::Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed:
+				minor = getSuffix(ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed);
+				break;
 
-				case GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User:
-					minor = getSuffix(ECardApiResult::Minor::SAL_Cancellation_by_User);
-					break;
+			case GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User:
+				minor = getSuffix(ECardApiResult::Minor::SAL_Cancellation_by_User);
+				break;
 
-				default:
+			default:
+				if (pStatus.isOriginServer())
+				{
+					minor = QStringLiteral("serverError");
+				}
+				else
+				{
 					minor = QStringLiteral("clientError");
-					break;
-			}
+				}
+				break;
 		}
 		q.addQueryItem(QStringLiteral("ResultMinor"), minor);
 	}

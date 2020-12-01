@@ -19,7 +19,7 @@ class IfdEstablishPaceChannel
 
 	public:
 		IfdEstablishPaceChannel(const QString& pSlotHandle = QString(), const QByteArray& pInputData = QByteArray());
-		IfdEstablishPaceChannel(const QJsonObject& pMessageObject);
+		explicit IfdEstablishPaceChannel(const QJsonObject& pMessageObject);
 		virtual ~IfdEstablishPaceChannel() override = default;
 
 		const QString& getSlotHandle() const;

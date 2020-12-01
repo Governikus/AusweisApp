@@ -33,6 +33,7 @@ class test_TlsConfiguration
 			mTlsConfiguration.load(QJsonDocument::fromJson(config).object());
 
 			QCOMPARE(mTlsConfiguration.getProtocolVersion(), QSsl::SecureProtocols);
+			QCOMPARE(mTlsConfiguration.getOcspStapling(), false);
 			QCOMPARE(mTlsConfiguration.getCiphers().size(), 0);
 			QCOMPARE(mTlsConfiguration.getEllipticCurves().size(), 0);
 			QCOMPARE(mTlsConfiguration.getSignatureAlgorithms().size(), 0);
@@ -48,6 +49,21 @@ class test_TlsConfiguration
 			mTlsConfiguration.load(QJsonDocument::fromJson(config).object());
 
 			QCOMPARE(mTlsConfiguration.getProtocolVersion(), QSsl::TlsV1_0OrLater);
+		}
+
+
+		void testLoadOcspStapling()
+		{
+			QByteArray config("{"
+							  "  \"ocspStapling\": true"
+							  "}");
+
+			mTlsConfiguration.load(QJsonDocument::fromJson(config).object());
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+			QCOMPARE(mTlsConfiguration.getOcspStapling(), true);
+#else
+			QCOMPARE(mTlsConfiguration.getOcspStapling(), false);
+#endif
 		}
 
 
@@ -81,10 +97,6 @@ class test_TlsConfiguration
 
 		void testLoadSignatureAlgorithms()
 		{
-			#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
-			QSKIP("SignatureAlgorithms not supported");
-			#endif
-
 			QByteArray config("{"
 							  "  \"signatureAlgorithms\":  [\"RSA+SHA512\", \"DSA+SHA384\", \"ECDSA+SHA256\"]"
 							  "}");
@@ -121,9 +133,7 @@ class test_TlsConfiguration
 									"  \"protocolVersion\": \"TlsV1_0OrLater\","
 									"  \"ciphers\": [\"ECDHE-ECDSA-AES256-GCM-SHA384\",\"DHE-RSA-AES256-SHA256\"],"
 									"  \"ellipticCurves\":  [\"brainpoolP512r1\", \"brainpoolP384r1\"],"
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
 									"  \"signatureAlgorithms\":  [\"Rsa+Sha512\", \"Dsa+Sha384\", \"Ec+Sha256\"]"
-#endif
 									"}"});
 
 			for (int i = 0; i < configs.size(); ++i)

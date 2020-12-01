@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 96 96">
-  <image xlink:href="../npa_circle.svg" x="16" y="16" width="64" height="64" />
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64.8" height="64.8" viewBox="0 0 96 96">
+  <g transform="translate(16,16) scale(1.73,1.73)">
+    <use xlink:href="../npa.svg#circle" width="37" height="37" />
+  </g>
 </svg>

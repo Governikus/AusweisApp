@@ -41,19 +41,23 @@ class UIPlugIn
 		virtual void doShutdown() = 0;
 		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) = 0;
 		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) = 0;
+		virtual void onApplicationInitialized();
 		virtual void onApplicationStarted();
 		virtual void onShowUi(UiModule pModule);
 		virtual void onHideUi();
 		virtual void onShowReaderSettings();
+		virtual void onTranslationChanged();
 		virtual void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
 		virtual void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted);
 		virtual void onUiDominationReleased();
 
 	Q_SIGNALS:
 		void fireChangePinRequested();
+		void fireAuthenticationRequest(const QUrl& pUrl);
 		void fireSelfAuthenticationRequested();
 		void fireRemoteServiceRequested();
 		void fireQuitApplicationRequest();
+		void fireQuitApplicationRequest(int pExitCode);
 		void fireCloseReminderFinished(bool pDontRemindAgain);
 		void fireApplicationActivated();
 

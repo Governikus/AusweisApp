@@ -2,13 +2,13 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
 
 ColumnLayout {
 
@@ -18,16 +18,15 @@ ColumnLayout {
 		Layout.fillWidth: true
 
 		//: LABEL DESKTOP_QML
-		title: qsTr("FAQ") + SettingsModel.translationTrigger
+		title: qsTr("FAQ")
 		//: LABEL DESKTOP_QML
-		description: qsTr("Do you have questions how to use %1?").arg(Qt.application.name) + SettingsModel.translationTrigger
-		iconSource: "qrc:/images/desktop/info_questions.svg"
+		description: qsTr("Do you have further questions about %1?").arg(Qt.application.name)
+		iconSource: "qrc:/images/desktop/material_live_help.svg"
 		//: LABEL DESKTOP_QML
-		buttonText: qsTr("Open website") + SettingsModel.translationTrigger
-		//: LABEL DESKTOP_QML
-		buttonTooltip: qsTr("https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/") + SettingsModel.translationTrigger
-		buttonIconSource: "qrc:///images/link_external.svg"
-		onClicked: Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/qa/frequently-asked-questions/")) + SettingsModel.translationTrigger
+		buttonText: qsTr("Open website")
+		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/faq".arg(SettingsModel.language)
+		buttonIconSource: "qrc:///images/material_open_in_new.svg"
+		onClicked: Qt.openUrlExternally(buttonTooltip)
 	}
 
 	GSeparator {
@@ -38,16 +37,15 @@ ColumnLayout {
 		Layout.fillWidth: true
 
 		//: LABEL DESKTOP_QML
-		title: qsTr("Support") + SettingsModel.translationTrigger
+		title: qsTr("Support")
 		//: LABEL DESKTOP_QML
-		description: qsTr("Do you need further help?") + SettingsModel.translationTrigger
-		iconSource: "qrc:/images/desktop/help_icon.svg"
+		description: qsTr("Do you need further support?")
+		iconSource: "qrc:/images/material_help.svg"
 		//: LABEL DESKTOP_QML
-		buttonText: qsTr("Open website") + SettingsModel.translationTrigger
-		//: LABEL DESKTOP_QML
-		buttonTooltip: qsTr("https://www.ausweisapp.bund.de/en/qa/support/") + SettingsModel.translationTrigger
-		buttonIconSource: "qrc:///images/link_external.svg"
-		onClicked: Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/qa/support/")) + SettingsModel.translationTrigger
+		buttonText: qsTr("Open website")
+		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/support".arg(SettingsModel.language)
+		buttonIconSource: "qrc:///images/material_open_in_new.svg"
+		onClicked: Qt.openUrlExternally(buttonTooltip)
 	}
 
 	GSeparator {
@@ -58,54 +56,14 @@ ColumnLayout {
 		Layout.fillWidth: true
 
 		//: LABEL DESKTOP_QML
-		title: qsTr("Report error") + SettingsModel.translationTrigger
+		title: qsTr("Online help")
 		//: LABEL DESKTOP_QML
-		description: qsTr("Did you find a bug? Please tell us, so we can fix it.") + SettingsModel.translationTrigger
-		iconSource: "qrc:/images/desktop/info_report_error.svg"
+		description: qsTr("Do you need further help?")
+		iconSource: "qrc:/images/desktop/material_menu_book.svg"
 		//: LABEL DESKTOP_QML
-		buttonText: qsTr("Open website") + SettingsModel.translationTrigger
-		//: LABEL DESKTOP_QML
-		buttonTooltip: qsTr("https://www.ausweisapp.bund.de/en/qa/report-an-error/") + SettingsModel.translationTrigger
-		buttonIconSource: "qrc:///images/link_external.svg"
-		onClicked: Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/qa/report-an-error/")) + SettingsModel.translationTrigger
-	}
-
-	GSeparator {
-		Layout.fillWidth: true
-	}
-
-	MoreViewMenuItem {
-		Layout.fillWidth: true
-
-		//: LABEL DESKTOP_QML
-		title: qsTr("Rate %1").arg(Qt.application.name) + SettingsModel.translationTrigger
-		//: LABEL DESKTOP_QML
-		description: qsTr("Do you want to rate the %1?").arg(Qt.application.name) + SettingsModel.translationTrigger
-		iconSource: "qrc:/images/desktop/info_rate_application.svg"
-		//: LABEL DESKTOP_QML
-		buttonText: qsTr("Open website") + SettingsModel.translationTrigger
-		//: LABEL DESKTOP_QML
-		buttonTooltip: qsTr("https://www.ausweisapp.bund.de/en/qa/evaluate-us/") + SettingsModel.translationTrigger
-		buttonIconSource: "qrc:///images/link_external.svg"
-		onClicked: Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/qa/evaluate-us/")) + SettingsModel.translationTrigger
-	}
-
-	GSeparator {
-		Layout.fillWidth: true
-	}
-
-	MoreViewMenuItem {
-		Layout.fillWidth: true
-
-		//: LABEL DESKTOP_QML
-		title: qsTr("Online help") + SettingsModel.translationTrigger
-		//: LABEL DESKTOP_QML
-		description: qsTr("Do you need further help?") + SettingsModel.translationTrigger
-		iconSource: "qrc:/images/desktop/info_manual.svg"
-		//: LABEL DESKTOP_QML
-		buttonText: qsTr("Open website") + SettingsModel.translationTrigger
+		buttonText: qsTr("Open website")
 		buttonTooltip: ApplicationModel.onlineHelpUrl("index")
-		buttonIconSource: "qrc:///images/link_external.svg"
+		buttonIconSource: "qrc:///images/material_open_in_new.svg"
 		onClicked: ApplicationModel.openOnlineHelp("index")
 	}
 
@@ -117,34 +75,14 @@ ColumnLayout {
 		Layout.fillWidth: true
 
 		//: LABEL DESKTOP_QML
-		title: qsTr("Software licenses") + SettingsModel.translationTrigger
+		title: qsTr("Release notes")
 		//: LABEL DESKTOP_QML
-		description: qsTr("Do you want to read about the software licenses?") + SettingsModel.translationTrigger
-		iconSource: "qrc:/images/desktop/info_license.svg"
+		description: qsTr("Do you want to view the release notes of %1?").arg(Qt.application.name)
+		iconSource: "qrc:/images/desktop/material_new_releases.svg"
 		//: LABEL DESKTOP_QML
-		buttonText: qsTr("Open website") + SettingsModel.translationTrigger
-		//: LABEL DESKTOP_QML
-		buttonTooltip: qsTr("https://www.ausweisapp.bund.de/en/download/windows-and-mac/") + SettingsModel.translationTrigger
-		buttonIconSource: "qrc:///images/link_external.svg"
-		onClicked: Qt.openUrlExternally(qsTr("https://www.ausweisapp.bund.de/en/download/windows-and-mac/")) + SettingsModel.translationTrigger
-	}
-
-	GSeparator {
-		Layout.fillWidth: true
-	}
-
-	MoreViewMenuItem {
-		Layout.fillWidth: true
-
-		//: LABEL DESKTOP_QML
-		title: qsTr("Release notes") + SettingsModel.translationTrigger
-		//: LABEL DESKTOP_QML
-		description: qsTr("Do you want to read the release notes?") + SettingsModel.translationTrigger
-		iconSource: "qrc:/images/desktop/main_info.svg"
-		//: LABEL DESKTOP_QML
-		buttonText: qsTr("Open website") + SettingsModel.translationTrigger
+		buttonText: qsTr("Open website")
 		buttonTooltip: ApplicationModel.releaseNotesUrl
-		buttonIconSource: "qrc:///images/link_external.svg"
+		buttonIconSource: "qrc:///images/material_open_in_new.svg"
 		onClicked: Qt.openUrlExternally(ApplicationModel.releaseNotesUrl)
 	}
 
@@ -156,12 +94,12 @@ ColumnLayout {
 		Layout.fillWidth: true
 
 		//: LABEL DESKTOP_QML
-		title: qsTr("Setup assistant") + SettingsModel.translationTrigger
+		title: qsTr("Setup assistant")
 		//: LABEL DESKTOP_QML
-		description: qsTr("Do you want to run the setup assistant again?") + SettingsModel.translationTrigger
-		iconSource: "qrc:/images/desktop/info_setup.svg"
+		description: qsTr("Do you want to run the setup assistant again?")
+		iconSource: "qrc:/images/desktop/material_assistant.svg"
 		//: LABEL DESKTOP_QML
-		buttonText: qsTr("Start setup assistant") + SettingsModel.translationTrigger
+		buttonText: qsTr("Start setup assistant")
 		onClicked: sectionPage.nextView(SectionPage.Views.SetupAssistant)
 	}
 }

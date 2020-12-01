@@ -33,7 +33,7 @@ PinModify::PinModify(const QByteArray& pRemoteInputData)
 }
 
 
-QByteArray PinModify::createPinModificationDataStructure(ProtocolType pType) const
+QByteArray PinModify::createCcid() const
 {
 	// The documentation is available in:
 	//     PC/SC, Part 10 "IFDs with Secure PIN Entry Capabilities", 2.5.3 "PIN_MODIFY"
@@ -42,11 +42,8 @@ QByteArray PinModify::createPinModificationDataStructure(ProtocolType pType) con
 	QByteArray abPINDataStructure;
 	// bTimeOut (timeout in seconds)
 	abPINDataStructure += static_cast<char>(mTimeoutSeconds);
-	if (pType == ProtocolType::PCSC)
-	{
-		// bTimeOut2 (timeout in seconds)
-		abPINDataStructure += static_cast<char>(mTimeoutSeconds);
-	}
+	// bTimeOut2 (timeout in seconds)
+	abPINDataStructure += static_cast<char>(mTimeoutSeconds);
 	// bmFormatString (PIN format): system unit is bytes (0x80), ASCII format (0x02)
 	abPINDataStructure += char(0x82);
 	// bmPINBlockString (PIN block size and length info): PIN not in APDU command
@@ -84,12 +81,9 @@ QByteArray PinModify::createPinModificationDataStructure(ProtocolType pType) con
 
 	// According to ISO-7816-4, 7.5.10 RESET RETRY COUNTER command
 	const QByteArray abData = QByteArray::fromHex(QByteArrayLiteral("002C0203"));
-	if (pType == ProtocolType::PCSC)
-	{
-		char buffer[4];
-		qToLittleEndian<quint32>(static_cast<quint32>(abData.size()), buffer);
-		abPINDataStructure += QByteArray(buffer, 4);
-	}
+	char buffer[4];
+	qToLittleEndian<quint32>(static_cast<quint32>(abData.size()), buffer);
+	abPINDataStructure += QByteArray(buffer, 4);
 	// PCSC: abData / CCID: abPINApdu
 	abPINDataStructure += abData;
 
@@ -100,31 +94,4 @@ QByteArray PinModify::createPinModificationDataStructure(ProtocolType pType) con
 quint8 PinModify::getTimeoutSeconds() const
 {
 	return mTimeoutSeconds;
-}
-
-
-QByteArray PinModify::createCcidForPcsc() const
-{
-	return createPinModificationDataStructure(ProtocolType::PCSC);
-}
-
-
-QByteArray PinModify::createCcidForRemote() const
-{
-	return createCcidForPcsc();
-}
-
-
-CommandApdu PinModify::createCcidForBluetooth() const
-{
-	// According to TR-03119 the command data has to be the full PC_to_RDR_Secure structure
-	// According to Reiner SCT the firmware is implemented in such a way, that the command
-	// data is expected as abPINOperationDataStucture (DWG_Smart-Card_CCID_Rev110.pdf).
-
-	QByteArray abPINOperationDataStucture;
-	abPINOperationDataStucture += char(0x01); //bPINOperation
-	abPINOperationDataStucture += createPinModificationDataStructure(ProtocolType::BLUETOOTH);
-
-	// Boxing command according to TR-03119
-	return CommandApdu(char(0xFF), char(0x9A), 0x04, 0x10, abPINOperationDataStucture);
 }

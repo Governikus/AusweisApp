@@ -44,7 +44,11 @@ class test_DiagnosisModel
 		bool verifyOrder(const QVector<QSharedPointer<ContentItem> >& pSection,
 			const QVector<QVector<QSharedPointer<ContentItem> > >& pOrder)
 		{
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+			qsizetype offset = 0;
+#else
 			int offset = 0;
+#endif
 			for (const auto& subsection : pOrder)
 			{
 				const auto& slice = pSection.mid(offset, subsection.size());
@@ -116,7 +120,7 @@ class test_DiagnosisModel
 
 			ReaderInfo defaultInfo;
 			ReaderInfo infoEidCard(QString("testInfo"), ReaderManagerPlugInType::PCSC, CardInfo(CardType::EID_CARD));
-			ReaderInfo comfortReaderInfo(QString("name"), ReaderManagerPlugInType::BLUETOOTH, CardInfo(CardType::UNKNOWN));
+			ReaderInfo comfortReaderInfo(QString("name"), ReaderManagerPlugInType::REMOTE, CardInfo(CardType::UNKNOWN));
 			comfortReaderInfo.setBasicReader(false);
 			const QVector<ReaderInfo> readerInfos = {defaultInfo, infoEidCard, comfortReaderInfo};
 			mContext->setReaderInfos(readerInfos);

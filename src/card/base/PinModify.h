@@ -15,25 +15,14 @@ namespace governikus
 class PinModify
 {
 	private:
-		enum class ProtocolType
-		{
-			PCSC,
-			BLUETOOTH
-		};
-
 		quint8 mTimeoutSeconds;
-
-		QByteArray createPinModificationDataStructure(ProtocolType pType) const;
 
 	public:
 		explicit PinModify(quint8 pTimeoutSeconds);
 		explicit PinModify(const QByteArray& pRemoteInputData);
 
 		quint8 getTimeoutSeconds() const;
-
-		QByteArray createCcidForPcsc() const;
-		QByteArray createCcidForRemote() const;
-		CommandApdu createCcidForBluetooth() const;
+		QByteArray createCcid() const;
 };
 
 } // namespace governikus

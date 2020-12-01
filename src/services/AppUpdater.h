@@ -11,7 +11,7 @@
 #include <QDateTime>
 #include <QUrl>
 
-class test_AppUpdater;
+class test_AppUpdatr;
 
 namespace governikus
 {
@@ -22,30 +22,45 @@ class AppUpdater
 
 	private:
 		friend class Env;
-		friend class ::test_AppUpdater;
+		friend class ::test_AppUpdatr;
+
 		bool mForceUpdate;
 		QUrl mAppUpdateJsonUrl;
 		AppUpdateData mAppUpdateData;
+		QString mDownloadPath;
+		bool mDownloadInProgress;
 
-		void clearDownloaderConnection();
+		static QCryptographicHash::Algorithm getHashAlgo(const QByteArray& pAlgo);
 
-	protected:
 		AppUpdater();
 		virtual ~AppUpdater() = default;
-		static AppUpdater& getInstance();
+
+		void clearDownloaderConnection();
+		bool download(const QUrl& pUrl);
+		QString save(const QByteArray& pData, const QString& pFilename);
 
 	public:
-		void checkAppUpdate(bool pForceUpdate = false);
+		bool abortDownload();
+		bool downloadUpdate();
+		bool checkAppUpdate(bool pForceUpdate = false);
 		const AppUpdateData& getUpdateData() const;
 		void skipVersion(const QString& pVersion);
 
+#ifndef QT_NO_DEBUG
+		QString getDownloadPath() const;
+		void setDownloadPath(const QString& pPath);
+#endif
+
 	private Q_SLOTS:
-		void onUpdateDownloadFinished(const QUrl& pUpdateUrl, const QDateTime& pNewTimestamp, const QByteArray& pData);
-		void onUpdateDownloadFailed(const QUrl& pUpdateUrl, GlobalStatus::Code pErrorCode);
-		void onUpdateDownloadUnnecessary(const QUrl& pUpdateUrl);
+		void onDownloadFinished(const QUrl& pUpdateUrl, const QDateTime& pNewTimestamp, const QByteArray& pData);
+		void onDownloadFailed(const QUrl& pUpdateUrl, GlobalStatus::Code pErrorCode);
+		void onDownloadUnnecessary(const QUrl& pUpdateUrl);
+		void onDownloadProgress(const QUrl& pUpdateUrl, qint64 pBytesReceived, qint64 pBytesTotal);
 
 	Q_SIGNALS:
-		void fireAppUpdateCheckFinished(bool pUpdateAvailable, const GlobalStatus& pError);
+		void fireAppcastCheckFinished(bool pUpdateAvailable, const GlobalStatus& pError);
+		void fireAppDownloadFinished(const GlobalStatus& pError);
+		void fireAppDownloadProgress(qint64 pBytesReceived, qint64 pBytesTotal);
 };
 
 } // namespace governikus

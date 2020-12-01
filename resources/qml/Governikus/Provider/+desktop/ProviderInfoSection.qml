@@ -2,14 +2,12 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 Item {
 	id: baseItem
@@ -37,11 +35,14 @@ Item {
 
 		LabeledText {
 			id: text
+
 			width: baseItem.width - icon.width - Constants.groupbox_spacing
+
 			//: LABEL DESKTOP_QML
-			text: name.length > 0 ? name : qsTr("See details under \"more...\"") + SettingsModel.translationTrigger
+			text: name.length > 0 ? name : qsTr("See details under \"more...\"")
 			maximumBodyLineCount: 1
 			bodyElide: Text.ElideRight
+			activeFocusOnTab: false
 		}
 	}
 

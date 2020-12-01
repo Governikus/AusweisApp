@@ -49,18 +49,6 @@ class test_CHAT
 		}
 
 
-		void setAccessRight()
-		{
-			auto chat = newObject<CHAT>();
-			chat->setAccessRole(AccessRole::AT);
-			chat->setType("0.4.0.127.0.1.2.3.4.5");
-
-			chat->setAccessRight(AccessRight::AGE_VERIFICATION);
-			QCOMPARE(chat->getTemplate().toHex().toUpper(), QByteArray("0000000001"));
-			QVERIFY(chat->encode().toHex().toUpper().endsWith(QByteArray("0000000001")));
-		}
-
-
 		void setAccessRights()
 		{
 			auto chat = newObject<CHAT>();

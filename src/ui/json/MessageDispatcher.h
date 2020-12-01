@@ -33,8 +33,8 @@ class MessageDispatcher
 
 		MsgHandler cancel();
 		MsgHandler accept();
-		MsgHandler handleCurrentState(MsgCmdType pCmdType, MsgType pMsgType, const std::function<MsgHandler()>& pFunc);
-		MsgHandler handleInternalOnly(MsgCmdType pCmdType, const std::function<MsgHandler()>& pFunc);
+		MsgHandler handleCurrentState(MsgCmdType pCmdType, MsgType pMsgType, const std::function<MsgHandler()>& pFunc) const;
+		MsgHandler handleInternalOnly(MsgCmdType pCmdType, const std::function<MsgHandler()>& pFunc) const;
 
 	public:
 		class Msg final
@@ -58,7 +58,9 @@ class MessageDispatcher
 		Msg processCommand(const QByteArray& pMsg);
 		QByteArray processStateChange(const QString& pState);
 
-		QByteArray createMsgReader(const QString& pName) const;
+		QByteArray createMsgReader(const ReaderInfo& pInfo) const;
 };
+
+char* toString(const MessageDispatcher::Msg& pMsg);
 
 } // namespace governikus

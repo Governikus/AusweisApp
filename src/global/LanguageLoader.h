@@ -45,9 +45,10 @@ class LanguageLoader
 		static const QLocale& getDefaultLanguage();
 		static void setDefaultLanguage(const QLocale& pLocale);
 		static LanguageLoader& getInstance();
+		static QString getLocalCode(const QLocale& pLocale = getInstance().getUsedLocale());
 
 #ifndef QT_NO_DEBUG
-		const QString& getPath();
+		const QString& getPath() const;
 		void setPath(const QString& pPath);
 #endif
 

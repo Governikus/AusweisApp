@@ -26,7 +26,7 @@ class test_IfdTransmitResponse
 
 		void invalidJson()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray message("FooBar");
 			const auto& obj = QJsonDocument::fromJson(message).object();
@@ -99,7 +99,7 @@ class test_IfdTransmitResponse
 
 		void fromJson()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"ContextHandle\": \"TestContext\",\n"
@@ -142,7 +142,7 @@ class test_IfdTransmitResponse
 		{
 			QFETCH(RemoteCardMessageType, type);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray message("{\n"
 							   "    \"ContextHandle\": \"TestContext\",\n"
@@ -186,7 +186,7 @@ class test_IfdTransmitResponse
 
 		void wrongTypes()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"ContextHandle\": \"TestContext\",\n"
@@ -215,7 +215,7 @@ class test_IfdTransmitResponse
 
 		void wrongResponseApdusType()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"ContextHandle\": \"TestContext\",\n"
@@ -245,7 +245,7 @@ class test_IfdTransmitResponse
 
 		void multipleApdus()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray message("{\n"
 									 "    \"ContextHandle\": \"TestContext\",\n"

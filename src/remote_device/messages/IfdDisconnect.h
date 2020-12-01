@@ -16,8 +16,8 @@ class IfdDisconnect
 		QString mSlotHandle;
 
 	public:
-		IfdDisconnect(const QString& pReaderName);
-		IfdDisconnect(const QJsonObject& pMessageObject);
+		explicit IfdDisconnect(const QString& pReaderName);
+		explicit IfdDisconnect(const QJsonObject& pMessageObject);
 		virtual ~IfdDisconnect() override = default;
 
 		const QString& getSlotHandle() const;

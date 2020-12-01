@@ -63,7 +63,7 @@ class RemoteWebSocketServerImpl
 	private Q_SLOTS:
 		void onWebsocketConnection();
 		void onConnectionClosed();
-		void onServerError(QWebSocketProtocol::CloseCode pCloseCode);
+		void onServerError(QWebSocketProtocol::CloseCode pCloseCode) const;
 
 	public:
 		RemoteWebSocketServerImpl();

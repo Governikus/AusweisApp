@@ -4,15 +4,10 @@
 
 #include "SignalHandler.h"
 
-#include "SingletonHelper.h"
-
 #include <QCoreApplication>
 #include <QLoggingCategory>
 
-
 using namespace governikus;
-
-defineSingleton(SignalHandler)
 
 Q_DECLARE_LOGGING_CATEGORY(system)
 
@@ -27,12 +22,9 @@ SignalHandler::SignalHandler()
 
 SignalHandler::~SignalHandler()
 {
-}
-
-
-SignalHandler& SignalHandler::getInstance()
-{
-	return *Instance;
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINRT)
+	SetConsoleCtrlHandler(nullptr, false);
+#endif
 }
 
 
@@ -63,7 +55,7 @@ void SignalHandler::quit()
 
 	if (mAppController)
 	{
-		QMetaObject::invokeMethod(mAppController.data(), &AppController::doShutdown, Qt::QueuedConnection);
+		QMetaObject::invokeMethod(mAppController.data(), qOverload<>(&AppController::doShutdown), Qt::QueuedConnection);
 	}
 	else
 	{

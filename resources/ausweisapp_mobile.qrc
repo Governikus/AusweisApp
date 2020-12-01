@@ -1,37 +1,47 @@
 <RCC>
     <qresource prefix="/">
         <file>qtquickcontrols2.conf</file>
-        <file>images/arrowLeft.svg</file>
-        <file>images/arrowRight.svg</file>
-        <file>images/share.svg</file>
-        <file>images/android/navigation/ausweisen.svg</file>
-        <file>images/android/navigation/balloon.svg</file>
-        <file>images/android/navigation/remoteleser.svg</file>
-        <file>images/android/navigation/verlauf.svg</file>
-        <file>images/android/navigation/faq.svg</file>
-        <file>images/android/navigation/support.svg</file>
-        <file>images/android/navigation/bewerten.svg</file>
-        <file>images/android/navigation/tutorial.svg</file>
-        <file>images/android/search_icon.svg</file>
+        <file>images/mobile/device.svg</file>
+        <file>images/mobile/icon_nfc.svg</file>
+        <file>images/mobile/icon_remote.svg</file>
+        <file>images/mobile/material_arrow_right.svg</file>
+        <file>images/mobile/material_arrow_back.svg</file>
+        <file>images/mobile/material_backspace.svg</file>
+        <file>images/mobile/material_share.svg</file>
+        <file>images/mobile/material_view_headline.svg</file>
+        <file>images/mobile/material_history.svg</file>
+        <file>images/mobile/material_home.svg</file>
+        <file>images/mobile/phone_nfc.svg</file>
+        <file>images/mobile/phone_nfc_with_card.svg</file>
+        <file>images/mobile/phone_remote.svg</file>
         <file>images/android/stay_primary_landscape-24px.svg</file>
         <file>images/android/stay_primary_portrait-24px.svg</file>
-        <file>images/iOS/search_icon.svg</file>
-        <file>images/iOS/search_cancel.svg</file>
-        <file>images/iOS/more/icon_mehr_settings.svg</file>
-        <file>images/iOS/more/icon_mehr_npa.svg</file>
-        <file>images/iOS/more/icon_mehr_favorit.svg</file>
-        <file>images/iOS/more/icon_mehr_fragen.svg</file>
-        <file>images/iOS/more/icon_mehr_info.svg</file>
-        <file>images/iOS/more/icon_mehr_license.svg</file>
-        <file>images/iOS/more/icon_mehr_verlauf.svg</file>
-        <file>images/iOS/more/icon_mehr_upload.svg</file>
-        <file>images/iOS/more/icon_mehr_log.svg</file>
-        <file>images/iOS/more/icon_mehr_tutorial.svg</file>
-        <file>images/iOS/more/icon_mehr_report.svg</file>
+        <file>images/ios/material_arrow_left.svg</file>
+        <file>images/ios/material_cancel.svg</file>
+        <file>images/ios/material_more_horiz.svg</file>
+        <file>images/provider/ios/general.svg</file>
+        <file>images/provider/ios/citizen.svg</file>
+        <file>images/provider/ios/finance.svg</file>
+        <file>images/provider/ios/insurance.svg</file>
+        <file>images/provider/ios/other.svg</file>
+        <file alias="images/provider/ios/default_bg.svg">images/provider/default_bg.svg</file>
+        <file alias="images/provider/ios/citizen_button.svg">images/provider/citizen_button.svg</file>
+        <file alias="images/provider/ios/finance_button.svg">images/provider/finance_button.svg</file>
+        <file alias="images/provider/ios/general_button.svg">images/provider/general_button.svg</file>
+        <file alias="images/provider/ios/insurance_button.svg">images/provider/insurance_button.svg</file>
+        <file alias="images/provider/ios/other_button.svg">images/provider/other_button.svg</file>
+        <file alias="images/provider/ios/citizen_bg.svg">images/provider/citizen_bg.svg</file>
+        <file alias="images/provider/ios/finance_bg.svg">images/provider/finance_bg.svg</file>
+        <file alias="images/provider/ios/general_bg.svg">images/provider/general_bg.svg</file>
+        <file alias="images/provider/ios/insurance_bg.svg">images/provider/insurance_bg.svg</file>
+        <file alias="images/provider/ios/other_bg.svg">images/provider/other_bg.svg</file>
         <file>images/tutorial/main_menu_what_caret.svg</file>
         <file>images/tutorial/main_menu_where_caret.svg</file>
         <file>images/tutorial/main_menu_how_caret.svg</file>
         <file>images/tutorial/main_menu_important_caret.svg</file>
+        <file>images/tutorial/background_icon_how.svg</file>
+        <file>images/tutorial/background_icon_where.svg</file>
+        <file>images/tutorial/background_icon_important.svg</file>
         <file>images/tutorial/icon_box.svg</file>
         <file>images/tutorial/icon_circle.svg</file>
         <file>images/tutorial/icon_diamond.svg</file>
@@ -52,7 +62,6 @@
         <file>images/tutorial/bva.svg</file>
         <file>images/tutorial/provider_home.svg</file>
         <file>images/tutorial/rectangles.svg</file>
-        <file>images/tutorial/zoom_triangle.svg</file>
         <file>images/tutorial/laptop.svg</file>
         <file>images/tutorial/tablet.svg</file>
         <file>images/tutorial/tablet-nfc.svg</file>
@@ -65,7 +74,6 @@
         <file>images/tutorial/nfc.svg</file>
         <file>images/tutorial/no-nfc.svg</file>
         <file>images/tutorial/wifi.svg</file>
-        <file>images/tutorial/bluetooth.svg</file>
         <file>images/tutorial/letters.svg</file>
         <file>images/tutorial/usb.svg</file>
         <file>images/tutorial/circle-1.svg</file>
@@ -82,6 +90,10 @@
         <file>images/tutorial/user-tine@3x.png</file>
         <file>images/tutorial/providericons.png</file>
         <file>images/tutorial/play_movie.png</file>
+        <file>images/tutorial/screenshot_check_id_card_android_de.png</file>
+        <file>images/tutorial/screenshot_check_id_card_android_en.png</file>
+        <file>images/tutorial/screenshot_check_id_card_ios_de.png</file>
+        <file>images/tutorial/screenshot_check_id_card_ios_en.png</file>
         <file>images/tutorial/screenshot_cert_android_de.png</file>
         <file>images/tutorial/screenshot_cert_android_en.png</file>
         <file>images/tutorial/screenshot_cert_ios_de.png</file>
@@ -90,14 +102,12 @@
         <file>images/tutorial/screenshot_providerlist_android_en.png</file>
         <file>images/tutorial/screenshot_providerlist_ios_de.png</file>
         <file>images/tutorial/screenshot_providerlist_ios_en.png</file>
+        <file>images/tutorial/screenshot_remoteservice_android_de.png</file>
+        <file>images/tutorial/screenshot_remoteservice_android_en.png</file>
         <file>images/tutorial/screenshot_remoteservice_ios_en.png</file>
         <file>images/tutorial/screenshot_remoteservice_ios_de.png</file>
-        <file>images/tutorial/screenshot_menu_providerlist_android_de.png</file>
-        <file>images/tutorial/screenshot_menu_providerlist_android_en.png</file>
         <file>images/tutorial/screenshot_pairing_de.png</file>
         <file>images/tutorial/screenshot_pairing_en.png</file>
-        <file>images/tutorial/screenshot_sac_menu_android_de.png</file>
-        <file>images/tutorial/screenshot_sac_menu_android_en.png</file>
         <file>images/tutorial/screenshot_choose_reader_android_de.png</file>
         <file>images/tutorial/screenshot_choose_reader_android_en.png</file>
         <file>images/tutorial/screenshot_choose_reader_ios_de.png</file>
@@ -106,61 +116,51 @@
         <file>images/tutorial/screenshot_pin_management_menu_android_de.png</file>
         <file>images/tutorial/screenshot_pin_management_menu_ios_en.png</file>
         <file>images/tutorial/screenshot_pin_management_menu_ios_de.png</file>
+        <file>images/tutorial/screenshot_start_android_en.png</file>
+        <file>images/tutorial/screenshot_start_android_de.png</file>
+        <file>images/tutorial/screenshot_start_ios_en.png</file>
+        <file>images/tutorial/screenshot_start_ios_de.png</file>
+        <file>images/tutorial/screenshot_selfauthentication_android_de.png</file>
+        <file>images/tutorial/screenshot_selfauthentication_android_en.png</file>
+        <file>images/tutorial/screenshot_selfauthentication_ios_de.png</file>
+        <file>images/tutorial/screenshot_selfauthentication_ios_en.png</file>
         <file>images/tutorial/section_seperator_what.svg</file>
         <file>images/tutorial/section_seperator_where.svg</file>
         <file>images/tutorial/section_seperator_how.svg</file>
         <file>images/tutorial/section_seperator_important.svg</file>
-        <file>images/tutorial/generated/where_overview_question.svg</file>
-        <file>images/tutorial/generated/where_providerlist_screenshot_android_de.svg</file>
-        <file>images/tutorial/generated/where_providerlist_screenshot_android_en.svg</file>
-        <file>images/tutorial/generated/where_identify_now_de.svg</file>
-        <file>images/tutorial/generated/where_identify_now_en.svg</file>
-        <file>images/tutorial/generated/where_userdata_example_de.svg</file>
-        <file>images/tutorial/generated/where_userdata_example_en.svg</file>
-        <file>images/tutorial/generated/where_lay_down_id.svg</file>
-        <file>images/tutorial/generated/where_pin6.svg</file>
-        <file>images/tutorial/generated/how_questions_everywhere.svg</file>
-        <file>images/tutorial/generated/how_device_lineup.svg</file>
-        <file>images/tutorial/generated/how_method_nfc.svg</file>
-        <file>images/tutorial/generated/how_method_sac_desktop.svg</file>
-        <file>images/tutorial/generated/how_method_sac_mobile.svg</file>
-        <file>images/tutorial/generated/how_method_bluetooth.svg</file>
-        <file>images/tutorial/generated/how_form_no_fun.svg</file>
-        <file>images/tutorial/generated/how_desktop.svg</file>
-        <file>images/tutorial/generated/important_pin5.svg</file>
-        <file>images/tutorial/generated/important_pin6.svg</file>
-        <file>images/tutorial/generated/important_lets_go.svg</file>
-        <file>images/tutorial/generated/important_space_questionmark.svg</file>
-        <file>images/tutorial/generated/reader_nfc_provider_on_smartphone.svg</file>
-        <file>images/tutorial/generated/reader_nfc_npa_on_smartphone.svg</file>
-        <file>images/tutorial/generated/reader_nfc_smartphone_nfc_position.svg</file>
-        <file>images/tutorial/generated/reader_nfc_finished.svg</file>
-        <file>images/tutorial/generated/reader_nfc_pin6.svg</file>
-        <file>images/tutorial/generated/reader_nfc_userdata_example_de.svg</file>
-        <file>images/tutorial/generated/reader_nfc_userdata_example_en.svg</file>
-        <file>images/tutorial/generated/reader_sac_provider_on_laptop.svg</file>
-        <file>images/tutorial/generated/reader_sac_npa_on_laptop.svg</file>
-        <file>images/tutorial/generated/reader_sac_aa2_ok.svg</file>
-        <file>images/tutorial/generated/reader_sac_menu_android_de.svg</file>
-        <file>images/tutorial/generated/reader_sac_menu_android_en.svg</file>
-        <file>images/tutorial/generated/reader_sac_menu_ios_de.svg</file>
-        <file>images/tutorial/generated/reader_sac_menu_ios_en.svg</file>
-        <file>images/tutorial/generated/reader_sac_no_nfc_devices.svg</file>
-        <file>images/tutorial/generated/reader_sac_no_nfc_provider.svg</file>
-        <file>images/tutorial/generated/reader_bluetooth_card_inserted.svg</file>
-        <file>images/tutorial/generated/reader_bluetooth_connection.svg</file>
-        <file alias="images/provider/categoryIcons/general_button.svg">images/provider/categoryIcons/+android/general_button.svg</file>
-        <file alias="images/provider/categoryIcons/citizen_bg.svg">images/provider/categoryIcons/+android/citizen_bg.svg</file>
-        <file alias="images/provider/categoryIcons/citizen_button.svg">images/provider/categoryIcons/+android/citizen_button.svg</file>
-        <file alias="images/provider/categoryIcons/finance_bg.svg">images/provider/categoryIcons/+android/finance_bg.svg</file>
-        <file alias="images/provider/categoryIcons/finance_button.svg">images/provider/categoryIcons/+android/finance_button.svg</file>
-        <file alias="images/provider/categoryIcons/insurance_bg.svg">images/provider/categoryIcons/+android/insurance_bg.svg</file>
-        <file alias="images/provider/categoryIcons/insurance_button.svg">images/provider/categoryIcons/+android/insurance_button.svg</file>
-        <file alias="images/provider/categoryIcons/other_bg.svg">images/provider/categoryIcons/+android/other_bg.svg</file>
-        <file alias="images/provider/categoryIcons/other_button.svg">images/provider/categoryIcons/+android/other_button.svg</file>
-        <file>images/android/navigation/remotesettings.svg</file>
-        <file>images/iOS/tabBar/ausweisen.svg</file>
-        <file>images/iOS/tabBar/more.svg</file>
-        <file>images/iOS/tabBar/remoteleser.svg</file>
+        <file>images/tutorial/where_overview_question.svg</file>
+        <file>images/tutorial/where_identify_now_de.svg</file>
+        <file>images/tutorial/where_identify_now_en.svg</file>
+        <file>images/tutorial/where_userdata_example_de.svg</file>
+        <file>images/tutorial/where_userdata_example_en.svg</file>
+        <file>images/tutorial/where_lay_down_id.svg</file>
+        <file>images/tutorial/where_pin6.svg</file>
+        <file>images/tutorial/how_questions_everywhere.svg</file>
+        <file>images/tutorial/how_device_lineup.svg</file>
+        <file>images/tutorial/how_method_nfc.svg</file>
+        <file>images/tutorial/how_method_sac_desktop.svg</file>
+        <file>images/tutorial/how_method_sac_mobile.svg</file>
+        <file>images/tutorial/how_form_no_fun.svg</file>
+        <file>images/tutorial/how_desktop.svg</file>
+        <file>images/tutorial/important_pin5.svg</file>
+        <file>images/tutorial/important_pin6.svg</file>
+        <file>images/tutorial/important_lets_go.svg</file>
+        <file>images/tutorial/important_space_questionmark.svg</file>
+        <file>images/tutorial/reader_nfc_provider_on_smartphone.svg</file>
+        <file>images/tutorial/reader_nfc_npa_on_smartphone.svg</file>
+        <file>images/tutorial/reader_nfc_smartphone_nfc_position.svg</file>
+        <file>images/tutorial/reader_nfc_finished.svg</file>
+        <file>images/tutorial/reader_nfc_pin6.svg</file>
+        <file>images/tutorial/reader_nfc_userdata_example_de.svg</file>
+        <file>images/tutorial/reader_nfc_userdata_example_en.svg</file>
+        <file>images/tutorial/reader_sac_provider_on_laptop.svg</file>
+        <file>images/tutorial/reader_sac_npa_on_laptop.svg</file>
+        <file>images/tutorial/reader_sac_aa2_ok.svg</file>
+        <file>images/tutorial/reader_sac_menu_android_de.svg</file>
+        <file>images/tutorial/reader_sac_menu_android_en.svg</file>
+        <file>images/tutorial/reader_sac_menu_ios_de.svg</file>
+        <file>images/tutorial/reader_sac_menu_ios_en.svg</file>
+        <file>images/tutorial/reader_sac_no_nfc_devices.svg</file>
+        <file>images/tutorial/reader_sac_no_nfc_provider.svg</file>
     </qresource>
 </RCC>

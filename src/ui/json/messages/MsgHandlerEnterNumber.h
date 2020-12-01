@@ -11,6 +11,7 @@
 #include "MsgHandler.h"
 
 #include <functional>
+#include <tuple>
 
 namespace governikus
 {
@@ -26,9 +27,18 @@ class MsgHandlerEnterNumber
 		explicit MsgHandlerEnterNumber(MsgType pType, const MsgContext& pContext);
 
 		void parseValue(const QJsonObject& pObj,
+			const MsgContext& pContext,
+			const std::function<void(const QString& pNumber)>& pFunc,
+			ushort pCount)
+		{
+			parseValue(pObj, pContext, pFunc, {pCount, pCount});
+		}
+
+
+		void parseValue(const QJsonObject& pObj,
 				const MsgContext& pContext,
 				const std::function<void(const QString& pNumber)>& pFunc,
-				ushort pCount = 6);
+				std::pair<ushort, ushort> pCount);
 };
 
 

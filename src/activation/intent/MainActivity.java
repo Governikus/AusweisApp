@@ -4,16 +4,15 @@
 
 package com.governikus.ausweisapp2;
 
+import java.util.Arrays;
 import java.util.List;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -28,10 +27,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import org.qtproject.qt5.android.bindings.QtActivity;
+import org.qtproject.qt5.android.QtNative;
 
-import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 
 public class MainActivity extends QtActivity
@@ -45,22 +43,18 @@ public class MainActivity extends QtActivity
 	private final MarginLayoutParams windowInsets = new MarginLayoutParams(0, 0);
 
 	private NfcForegroundDispatcher mNfcForegroundDispatcher;
+	private NfcReaderMode mNfcReaderMode;
+	private boolean mReaderModeRequested;
+	private boolean mIsResumed;
 
-	private static class NfcForegroundDispatcher
+	private class NfcForegroundDispatcher
 	{
-		private final Activity mActivity;
-		private final NfcAdapter mAdapter;
-		private final PendingIntent mPendingIntent;
 		private final IntentFilter[] mFilters;
 		private final String[][] mTechLists;
+		private final PendingIntent mPendingIntent;
 
-		NfcForegroundDispatcher(Activity pActivity)
+		NfcForegroundDispatcher()
 		{
-			mActivity = pActivity;
-			mAdapter = NfcAdapter.getDefaultAdapter(mActivity);
-			mPendingIntent = PendingIntent.getActivity(
-					mActivity, 0, new Intent(mActivity, mActivity.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-
 			mFilters = new IntentFilter[] {
 				new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED)
 			};
@@ -69,24 +63,74 @@ public class MainActivity extends QtActivity
 					IsoDep.class.getName()
 				}
 			};
+			mPendingIntent = PendingIntent.getActivity(MainActivity.this, 0, new Intent(), 0);
 		}
 
 
 		void enable()
 		{
-			if (mAdapter != null && mActivity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC))
+			NfcAdapter adapter = NfcAdapter.getDefaultAdapter(MainActivity.this);
+			if (adapter != null)
 			{
-				mAdapter.enableForegroundDispatch(mActivity, mPendingIntent, mFilters, mTechLists);
+				adapter.enableForegroundDispatch(MainActivity.this, mPendingIntent, mFilters, mTechLists);
 			}
 		}
 
 
 		void disable()
 		{
-			if (mAdapter != null && mActivity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC))
+			NfcAdapter adapter = NfcAdapter.getDefaultAdapter(MainActivity.this);
+			if (adapter != null)
 			{
-				mAdapter.disableForegroundDispatch(mActivity);
+				adapter.disableForegroundDispatch(MainActivity.this);
 			}
+		}
+
+
+	}
+
+
+	private class NfcReaderMode
+	{
+		private final int mFlags;
+		private final NfcAdapter.ReaderCallback mCallback;
+		private boolean mEnabled;
+
+		NfcReaderMode()
+		{
+			mFlags = NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_NFC_B | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
+			mCallback = pTag ->
+			{
+				if (Arrays.asList(pTag.getTechList()).contains(IsoDep.class.getName()))
+				{
+					Intent nfcIntent = new Intent();
+					nfcIntent.putExtra(NfcAdapter.EXTRA_TAG, pTag);
+					QtNative.onNewIntent(nfcIntent);
+				}
+			};
+		}
+
+
+		void enable()
+		{
+			NfcAdapter adapter = NfcAdapter.getDefaultAdapter(MainActivity.this);
+			if (adapter != null && !mEnabled)
+			{
+				mEnabled = true;
+				adapter.enableReaderMode(MainActivity.this, mCallback, mFlags, null);
+			}
+
+		}
+
+
+		void disable()
+		{
+			NfcAdapter adapter = NfcAdapter.getDefaultAdapter(MainActivity.this);
+			if (adapter != null && mEnabled)
+			{
+				adapter.disableReaderMode(MainActivity.this);
+			}
+			mEnabled = false;
 		}
 
 
@@ -144,19 +188,15 @@ public class MainActivity extends QtActivity
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+		setTheme(R.style.AppTheme);
+
 		Log.d(LOG_TAG, "onCreate: " + getIntent());
 		super.onCreate(savedInstanceState);
 
 		onNewIntent(getIntent());
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) // API 22
-		{
-			cReferrer = getReferrer();
-		}
 
-		// register the broadcast receiver after loading the C++ library in super.onCreate()
-		AndroidBluetoothReceiver.register(this);
-
-		mNfcForegroundDispatcher = new NfcForegroundDispatcher(this);
+		mNfcForegroundDispatcher = new NfcForegroundDispatcher();
+		mNfcReaderMode = new NfcReaderMode();
 
 		// Set statusBar/navigationBar color and handle systemWindowInsets
 		Window window = getWindow();
@@ -171,16 +211,13 @@ public class MainActivity extends QtActivity
 			rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 		}
 		window.setStatusBarColor(Color.TRANSPARENT);
-		ViewCompat.setOnApplyWindowInsetsListener(rootView, new OnApplyWindowInsetsListener()
+		ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) ->
 				{
-					public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets)
-					{
-						windowInsets.topMargin = insets.getSystemWindowInsetTop();
-						windowInsets.leftMargin = insets.getSystemWindowInsetLeft();
-						windowInsets.rightMargin = insets.getSystemWindowInsetRight();
-						windowInsets.bottomMargin = insets.getSystemWindowInsetBottom();
-						return insets;
-					}
+					windowInsets.topMargin = insets.getSystemWindowInsetTop();
+					windowInsets.leftMargin = insets.getSystemWindowInsetLeft();
+					windowInsets.rightMargin = insets.getSystemWindowInsetRight();
+					windowInsets.bottomMargin = insets.getSystemWindowInsetBottom();
+					return insets;
 				});
 	}
 
@@ -202,15 +239,23 @@ public class MainActivity extends QtActivity
 	@Override
 	public void onResume()
 	{
-		mNfcForegroundDispatcher.enable();
 		super.onResume();
+		mIsResumed = true;
+
+		mNfcForegroundDispatcher.enable();
+		if (mReaderModeRequested)
+		{
+			mNfcReaderMode.enable();
+		}
 	}
 
 
 	@Override
 	public void onPause()
 	{
+		mNfcReaderMode.disable();
 		mNfcForegroundDispatcher.disable();
+		mIsResumed = false;
 		super.onPause();
 	}
 
@@ -219,11 +264,26 @@ public class MainActivity extends QtActivity
 	protected void onDestroy()
 	{
 		Log.d(LOG_TAG, "onDestroy");
-
-		// unregister the broadcast receiver before unloading the C++ library in super.onDestroy()
-		AndroidBluetoothReceiver.unregister(this);
-
 		super.onDestroy();
+	}
+
+
+	// used by NfcReader
+	public void enableNfcReaderMode()
+	{
+		mReaderModeRequested = true;
+		if (mIsResumed)
+		{
+			mNfcReaderMode.enable();
+		}
+	}
+
+
+	// used by NfcReader
+	public void disableNfcReaderMode()
+	{
+		mReaderModeRequested = false;
+		mNfcReaderMode.disable();
 	}
 
 

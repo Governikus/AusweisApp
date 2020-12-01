@@ -4,5 +4,5 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppActivationWebservice)
 
-TARGET_LINK_LIBRARIES(AusweisAppActivationWebservice Qt5::Core AusweisAppGlobal AusweisAppNetwork AusweisAppActivation)
-TARGET_COMPILE_DEFINITIONS(AusweisAppActivationWebservice PRIVATE QT_STATICPLUGIN)
+target_link_libraries(AusweisAppActivationWebservice ${Qt}::Core AusweisAppGlobal AusweisAppNetwork AusweisAppActivation)
+target_compile_definitions(AusweisAppActivationWebservice PRIVATE QT_STATICPLUGIN)

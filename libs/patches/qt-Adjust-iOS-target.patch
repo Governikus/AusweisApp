@@ -1,26 +1,26 @@
-From 86b0caf2e167953ef1e50f32edb96e1e64eeba7e Mon Sep 17 00:00:00 2001
-From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
-Date: Fri, 19 Jul 2019 15:19:08 +0200
-Subject: Adjust iOS target
+From 47863827b973e1b241095b8fbf8a6337d8c1e063 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
+Date: Wed, 15 Jul 2020 14:26:13 +0200
+Subject: [PATCH] Adjust iOS target
 
-Change-Id: I6c7f0616d52b0d118ffd8c031f3f51212b8ed821
+Change-Id: Ie3fd390f5164f031bc3a32e4e0870613f7fa28eb
 ---
  mkspecs/macx-ios-clang/qmake.conf | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git x/qtbase/mkspecs/macx-ios-clang/qmake.conf y/qtbase/mkspecs/macx-ios-clang/qmake.conf
-index 88e96ef32e..b3372a8232 100644
+index b164d44d9f..88e96ef32e 100644
 --- x/qtbase/mkspecs/macx-ios-clang/qmake.conf
 +++ y/qtbase/mkspecs/macx-ios-clang/qmake.conf
 @@ -2,7 +2,7 @@
  # qmake configuration for macx-ios-clang
  #
  
--QMAKE_IOS_DEPLOYMENT_TARGET = 11.0
-+QMAKE_IOS_DEPLOYMENT_TARGET = 13.0
+-QMAKE_IOS_DEPLOYMENT_TARGET = 12.0
++QMAKE_IOS_DEPLOYMENT_TARGET = 11.0
  
  # Universal target (iPhone and iPad)
  QMAKE_APPLE_TARGETED_DEVICE_FAMILY = 1,2
 -- 
-2.22.0
+2.27.0
 

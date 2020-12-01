@@ -124,7 +124,7 @@ MappingType PaceInfo::getMappingType() const
 {
 	const auto& protocol = getProtocol();
 	if (protocol.startsWith(toByteArray(KnownOIDs::id_PACE::DH::GM))
-			|| protocol.startsWith(toByteArray((KnownOIDs::id_PACE::ECDH::GM))))
+			|| protocol.startsWith(toByteArray(KnownOIDs::id_PACE::ECDH::GM)))
 	{
 		return MappingType::GM;
 	}

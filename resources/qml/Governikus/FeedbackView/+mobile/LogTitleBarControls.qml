@@ -2,12 +2,11 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.SettingsModel 1.0
 
 Row {
 	id: logControls
@@ -23,16 +22,17 @@ Row {
 	spacing: 18
 	anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
-	Image {
+	TintableIcon {
 		height: Style.dimens.small_icon_size
 		width: height
 
 		Accessible.role: Accessible.Button
-		Accessible.name: qsTr("Share logfile") + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Share log")
 		Accessible.onPressAction: if (Qt.platform.os === "ios") mouseAreaShare.clicked(null)
 
-		fillMode: Image.PreserveAspectFit
-		source: "qrc:///images/share.svg"
+		tintColor: Style.color.button_text
+		sourceSize.height: height
+		source: "qrc:///images/mobile/material_share.svg"
 
 		MouseArea {
 			id: mouseAreaShare
@@ -44,18 +44,18 @@ Row {
 		}
 	}
 
-	Image {
+	TintableIcon {
 		id: removeButton
 
 		height: Style.dimens.small_icon_size
-		width: height
 
 		Accessible.role: Accessible.Button
-		Accessible.name: qsTr("Delete logfile") + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Delete log")
 		Accessible.onPressAction: if (Qt.platform.os === "ios") mouseAreaRemove.clicked(null)
 
-		fillMode: Image.PreserveAspectFit
-		source: "qrc:///images/trash_icon_white.svg"
+		tintColor: Style.color.button_text
+		sourceSize.height: height
+		source: "qrc:///images/material_delete.svg"
 
 		MouseArea {
 			id: mouseAreaRemove
@@ -74,7 +74,7 @@ Row {
 		width: height
 
 		Accessible.role: Accessible.Button
-		Accessible.name: qsTr("Delete all logfiles") + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Delete all logs")
 		Accessible.onPressAction: if (Qt.platform.os === "ios") mouseAreaRemove.clicked(null)
 
 		fillMode: Image.PreserveAspectFit

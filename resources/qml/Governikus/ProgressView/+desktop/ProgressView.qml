@@ -2,16 +2,14 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 SectionPage
 {
@@ -24,8 +22,8 @@ SectionPage
 	property int progressValue
 	property alias progressBarVisible: progressBar.visible
 
-	Accessible.name: qsTr("Progress view") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This is the progress view of the AusweisApp2.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Progress view")
+	Accessible.description: qsTr("This is the progress view of the AusweisApp2.")
 
 	StatusIcon {
 		id: circle
@@ -36,7 +34,7 @@ SectionPage
 		anchors.verticalCenterOffset: baseItem.height / 4
 
 		busy: true
-		source: "qrc:///images/desktop/sandglass.svg"
+		source: "qrc:///images/sandglass.svg"
 	}
 
 	GText {
@@ -80,7 +78,7 @@ SectionPage
 		visible: progressText.text !== ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 		anchors.bottom: progressBar.top
-		anchors.bottomMargin: ApplicationModel.scaleFactor * 20
+		anchors.bottomMargin: Constants.component_spacing
 		anchors.horizontalCenter: parent.horizontalCenter
 
 		activeFocusOnTab: true
@@ -91,38 +89,20 @@ SectionPage
 		FocusFrame {}
 	}
 
-	ProgressBar {
+	GProgressBar {
 		id: progressBar
 
 		visible: false
 		height: ApplicationModel.scaleFactor * 40
-		anchors.bottom: parent.bottom
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.margins: ApplicationModel.scaleFactor * 80
+		anchors {
+			bottom: parent.bottom
+			left: parent.left
+			right: parent.right
+			margins: ApplicationModel.scaleFactor * 80
+		}
 
-		Accessible.role: Accessible.ProgressBar
 		activeFocusOnTab: true
-		Accessible.name: qsTr("%1 percent done").arg(value) + SettingsModel.translationTrigger
 
-		from: 0
-		to: 100
 		value: progressValue
-
-		background: Rectangle {
-			radius: ApplicationModel.scaleFactor * 8
-			color: Constants.lightgrey
-		}
-
-		contentItem: Item {
-			Rectangle {
-				width: progressBar.visualPosition * parent.width
-				height: parent.height
-				radius: ApplicationModel.scaleFactor * 8
-				color: Constants.green
-			}
-		}
-
-		FocusFrame {}
 	}
 }

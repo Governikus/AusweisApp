@@ -8,7 +8,7 @@
 using namespace governikus;
 
 
-QByteArray DestroyPaceChannelBuilder::createCommandData()
+QByteArray DestroyPaceChannelBuilder::createCommandData() const
 {
 	// Command data according to PC/SC Part 10 amendment 1.1
 	static const char INDEX_DESTROY_PACE_CHANNEL = 0x03;
@@ -21,7 +21,7 @@ QByteArray DestroyPaceChannelBuilder::createCommandData()
 }
 
 
-CommandApdu DestroyPaceChannelBuilder::createCommandDataCcid()
+CommandApdu DestroyPaceChannelBuilder::createCommandDataCcid() const
 {
 	// boxing command according to TR-03119
 	return CommandApdu(char(0xFF), char(0x9A), 0x04, 0x03);

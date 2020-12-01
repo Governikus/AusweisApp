@@ -1,4 +1,4 @@
-From 8d7319cf4bdc8a2b39c4869fb4267f0388f50cde Mon Sep 17 00:00:00 2001
+From 80dda456abdc9202fef387798b59e8fee2e7167e Mon Sep 17 00:00:00 2001
 From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
 Date: Thu, 11 Jun 2020 09:06:18 +0200
 Subject: Add NfcTagType4A and NfcTagType4B to QNearFieldTarget::Type
@@ -17,7 +17,7 @@ Reviewed-by: Alex Blasche <alexander.blasche@qt.io>
  3 files changed, 8 insertions(+), 3 deletions(-)
 
 diff --git x/qtconnectivity/src/nfc/qnearfieldtarget.cpp y/qtconnectivity/src/nfc/qnearfieldtarget.cpp
-index e9a6fa11..476e7bfc 100644
+index 850408fe..3d0edbe7 100644
 --- x/qtconnectivity/src/nfc/qnearfieldtarget.cpp
 +++ y/qtconnectivity/src/nfc/qnearfieldtarget.cpp
 @@ -91,7 +91,10 @@ QT_BEGIN_NAMESPACE

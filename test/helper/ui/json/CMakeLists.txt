@@ -1,0 +1,3 @@
+ADD_PLATFORM_LIBRARY(AusweisAppTestHelperUiJson)
+
+target_link_libraries(AusweisAppTestHelperUiJson AusweisAppTestHelperCommon AusweisAppUiJson)

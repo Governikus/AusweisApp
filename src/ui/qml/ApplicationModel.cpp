@@ -12,27 +12,23 @@
 #include "BuildHelper.h"
 #include "Env.h"
 #include "HelpAction.h"
+#include "LanguageLoader.h"
 #include "ReaderInfo.h"
 #include "ReaderManager.h"
 #include "RemoteClient.h"
 #include "SecureStorage.h"
-#include "SingletonHelper.h"
 #include "VersionNumber.h"
 
 #if !defined(Q_OS_WINRT) && !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 #include "PdfExporter.h"
 #endif
 
+#include <QFile>
 #include <QRegularExpression>
-
-#if (defined(Q_OS_LINUX) && !defined(QT_NO_DEBUG)) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-#include <QBluetoothLocalDevice>
-#endif
 
 #ifdef Q_OS_ANDROID
 #include <QAndroidJniEnvironment>
 #include <QAndroidJniObject>
-#include <QOperatingSystemVersion>
 #include <QtAndroid>
 #endif
 
@@ -42,17 +38,9 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(qml)
 Q_DECLARE_LOGGING_CATEGORY(feedback)
 
-defineSingleton(ApplicationModel)
-
-
 void ApplicationModel::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
 {
-	if (pInfo.getPlugInType() == ReaderManagerPlugInType::BLUETOOTH)
-	{
-		Q_EMIT fireBluetoothEnabledChanged();
-		Q_EMIT fireBluetoothRespondingChanged();
-	}
-	else if (pInfo.getPlugInType() == ReaderManagerPlugInType::NFC)
+	if (pInfo.getPlugInType() == ReaderManagerPlugInType::NFC)
 	{
 		Q_EMIT fireNfcEnabledChanged();
 		Q_EMIT fireNfcRunningChanged();
@@ -65,27 +53,26 @@ ApplicationModel::ApplicationModel()
 	, mScaleFactor(DEFAULT_SCALE_FACTOR)
 	, mWifiInfo()
 	, mWifiEnabled(false)
-	, mBluetoothResponding(true)
 	, mFeedback()
 	, mFeedbackTimer()
 	, mFeedbackDisplayLength(3500)
 #ifdef Q_OS_IOS
-	, mPrivate(new Private)
+	, mPrivate(new Private())
 #endif
 {
+	const auto generalSettings = &Env::getSingleton<AppSettings>()->getGeneralSettings();
+	connect(generalSettings, &GeneralSettings::fireLanguageChanged, this, &ApplicationModel::fireStoreUrlChanged);
+
 	const auto readerManager = Env::getSingleton<ReaderManager>();
-	connect(readerManager, &ReaderManager::fireReaderAdded, this, &ApplicationModel::fireBluetoothReaderChanged);
-	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &ApplicationModel::fireBluetoothReaderChanged);
 	connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &ApplicationModel::fireReaderPropertiesUpdated);
 	connect(readerManager, &ReaderManager::fireStatusChanged, this, &ApplicationModel::onStatusChanged);
-	connect(readerManager, &ReaderManager::fireStatusChanged, this, &ApplicationModel::fireBluetoothReaderChanged);
 	connect(readerManager, &ReaderManager::fireReaderAdded, this, &ApplicationModel::fireAvailableReaderChanged);
 	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &ApplicationModel::fireAvailableReaderChanged);
 	connect(&mWifiInfo, &WifiInfo::fireWifiEnabledChanged, this, &ApplicationModel::onWifiEnabledChanged);
 
 	onWifiEnabledChanged();
 
-	auto* const remoteClient = Env::getSingleton<RemoteClient>();
+	const auto* const remoteClient = Env::getSingleton<RemoteClient>();
 	connect(remoteClient, &RemoteClient::fireCertificateRemoved, this, &ApplicationModel::fireCertificateRemoved);
 
 	mFeedbackTimer.setSingleShot(true);
@@ -111,10 +98,19 @@ void ApplicationModel::resetContext(const QSharedPointer<WorkflowContext>& pCont
 }
 
 
-QString ApplicationModel::getPackageName() const
+QString ApplicationModel::getStoreUrl() const
 {
-#ifdef Q_OS_ANDROID
-	return BuildHelper::getPackageName();
+	QString languageCode = LanguageLoader::getLocalCode();
+	languageCode.replace(QLatin1String("en"), QLatin1String("us"));
+
+#if defined(Q_OS_MACOS)
+	return QStringLiteral("https://apps.apple.com/%1/app/ausweisapp2/id948660805").arg(languageCode);
+
+#elif defined(Q_OS_ANDROID)
+	return QStringLiteral("market://details?id=%1").arg(BuildHelper::getPackageName());
+
+#elif defined(Q_OS_IOS)
+	return QStringLiteral("itms-apps:itunes.apple.com/%1/app/ausweisapp2/id948660805?mt=8&action=write-review").arg(languageCode);
 
 #else
 	return QString();
@@ -175,23 +171,6 @@ bool ApplicationModel::isNfcRunning() const
 }
 
 
-void ApplicationModel::setNfcRunning(bool pRunning)
-{
-#if defined(Q_OS_IOS)
-	const auto& readerManager = Env::getSingleton<ReaderManager>();
-	if (pRunning)
-	{
-		readerManager->startScan(ReaderManagerPlugInType::NFC);
-		return;
-	}
-
-	readerManager->stopScan(ReaderManagerPlugInType::NFC);
-#else
-	Q_UNUSED(pRunning);
-#endif
-}
-
-
 bool ApplicationModel::isExtendedLengthApdusUnsupported() const
 {
 
@@ -208,64 +187,6 @@ bool ApplicationModel::isExtendedLengthApdusUnsupported() const
 		}
 	}
 	return false;
-}
-
-
-void ApplicationModel::stopNfcScanWithError(const QString& pError) const
-{
-	const auto readerManager = Env::getSingleton<ReaderManager>();
-	readerManager->stopScan(ReaderManagerPlugInType::NFC, pError);
-}
-
-
-bool ApplicationModel::isBluetoothAvailable() const
-{
-	return getFirstPlugInInfo(ReaderManagerPlugInType::BLUETOOTH).isAvailable();
-}
-
-
-bool ApplicationModel::isBluetoothResponding() const
-{
-	return getFirstPlugInInfo(ReaderManagerPlugInType::BLUETOOTH).isResponding();
-}
-
-
-bool ApplicationModel::isBluetoothEnabled() const
-{
-	return getFirstPlugInInfo(ReaderManagerPlugInType::BLUETOOTH).isEnabled();
-}
-
-
-void ApplicationModel::setBluetoothEnabled(bool pEnabled)
-{
-#if (defined(Q_OS_LINUX) && !defined(QT_NO_DEBUG)) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-	if (pEnabled)
-	{
-		QBluetoothLocalDevice localDevice;
-		localDevice.powerOn();
-		qDebug() << "Bluetooth enabled";
-	}
-	else
-	{
-		qWarning() << "Cannot disable Bluetooth: not supported";
-	}
-#else
-	qWarning() << (pEnabled ? "Enabling" : "Disabling") << "Bluetooth not supported on this platform";
-#endif
-}
-
-
-bool ApplicationModel::locationPermissionRequired() const
-{
-#ifdef Q_OS_ANDROID
-	const auto& result = QtAndroid::checkPermission(QStringLiteral("android.permission.ACCESS_COARSE_LOCATION"));
-
-	return (result != QtAndroid::PermissionResult::Granted) && Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderManagerPlugInType::BLUETOOTH).isEmpty();
-
-#else
-	return false;
-
-#endif
 }
 
 
@@ -335,85 +256,6 @@ bool ApplicationModel::isReaderTypeAvailable(ReaderManagerPlugInType pPlugInType
 	}
 
 	return !Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({pPlugInType})).isEmpty();
-}
-
-
-void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction)
-{
-#ifdef Q_OS_ANDROID
-	const auto& androidQ = QOperatingSystemVersion(QOperatingSystemVersion::Android, 10);
-
-	switch (pAction)
-	{
-		case Settings::SETTING_WIFI:
-			if (QOperatingSystemVersion::current() >= androidQ)
-			{
-				showSettings(QStringLiteral("android.settings.panel.action.WIFI"));
-			}
-			else
-			{
-				showSettings(QStringLiteral("android.settings.WIFI_SETTINGS"));
-			}
-			break;
-
-		case Settings::SETTING_NETWORK:
-			if (QOperatingSystemVersion::current() >= androidQ)
-			{
-				showSettings(QStringLiteral("android.settings.panel.action.INTERNET_CONNECTIVITY"));
-			}
-			else
-			{
-				showSettings(QStringLiteral("android.settings.WIFI_SETTINGS"));
-			}
-			break;
-
-		case Settings::SETTING_NFC:
-			if (QOperatingSystemVersion::current() >= androidQ)
-			{
-				showSettings(QStringLiteral("android.settings.panel.action.NFC"));
-			}
-			else
-			{
-				showSettings(QStringLiteral("android.settings.NFC_SETTINGS"));
-			}
-
-			break;
-
-		case Settings::SETTING_BLUETOOTH:
-			showSettings(QStringLiteral("android.settings.BLUETOOTH_SETTINGS"));
-			break;
-	}
-#else
-	qCWarning(qml) << "NOT IMPLEMENTED:" << pAction;
-#endif
-}
-
-
-void ApplicationModel::showSettings(const QString& pAction)
-{
-#ifdef Q_OS_ANDROID
-	QAndroidJniEnvironment env;
-
-	const QAndroidJniObject& jAction = QAndroidJniObject::fromString(pAction);
-	QAndroidJniObject intent("android/content/Intent", "(Ljava/lang/String;)V", jAction.object<jstring>());
-	const jint flag = QAndroidJniObject::getStaticField<jint>("android/content/Intent", "FLAG_ACTIVITY_NEW_TASK");
-	intent.callObjectMethod("setFlags", "(I)V", flag);
-
-	if (intent.isValid())
-	{
-		qCCritical(qml) << "Call action:" << pAction;
-		QtAndroid::startActivity(intent, 0);
-	}
-
-	if (env->ExceptionCheck())
-	{
-		qCCritical(qml) << "Cannot call an action as activity:" << pAction;
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
-#else
-	qCWarning(qml) << "NOT IMPLEMENTED:" << pAction;
-#endif
 }
 
 
@@ -527,17 +369,42 @@ void ApplicationModel::keepScreenOn(bool pActive)
 
 #endif
 
+QStringList ApplicationModel::getLicenseText() const
+{
+	QStringList lines;
+
+	QFile licenseFile(QStringLiteral(":/LICENSE.txt"));
+	if (!licenseFile.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		qCWarning(qml) << "Could not load LICENSE.txt";
+		lines << tr("Could not load license text.");
+		return lines;
+	}
+
+	QTextStream in(&licenseFile);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	in.setCodec("UTF-8");
+#endif
+	while (!in.atEnd())
+	{
+		lines << in.readLine();
+	}
+	licenseFile.close();
+
+	return lines;
+}
+
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 QString ApplicationModel::onlineHelpUrl(const QString& pHelpSectionName)
 {
-	return HelpAction::getOnlineUrl(pHelpSectionName, false);
+	return HelpAction::getOnlineUrl(pHelpSectionName);
 }
 
 
 void ApplicationModel::openOnlineHelp(const QString& pHelpSectionName)
 {
-	HelpAction::openContextHelp(pHelpSectionName, false);
+	HelpAction::openContextHelp(pHelpSectionName);
 }
 
 
@@ -558,12 +425,6 @@ void ApplicationModel::enableWifi()
 #elif defined(Q_OS_ANDROID)
 	showSettings(Settings::SETTING_WIFI);
 #endif
-}
-
-
-ApplicationModel& ApplicationModel::getInstance()
-{
-	return *Instance;
 }
 
 

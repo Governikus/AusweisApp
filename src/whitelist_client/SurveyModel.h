@@ -12,12 +12,17 @@
 #include <QPair>
 #include <QString>
 
+class test_SurveyModel;
+
 namespace governikus
 {
+
 class SurveyModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
+	friend class Env;
+	friend class ::test_SurveyModel;
 
 	private:
 		const QString mBuildNumber;
@@ -37,18 +42,16 @@ class SurveyModel
 			VALUE
 		};
 
+		SurveyModel();
+		virtual ~SurveyModel() override = default;
 
 		void buildDataObject();
 		QByteArray toJsonByteArray() const;
 
 	public:
-		explicit SurveyModel(QObject* pParent = nullptr);
-
 		int rowCount(const QModelIndex& = QModelIndex()) const override;
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
 		QHash<int, QByteArray> roleNames() const override;
-
-		static SurveyModel& getInstance();
 
 		void setMaximumNfcPacketLength(int pMaximumNfcPacketLength);
 

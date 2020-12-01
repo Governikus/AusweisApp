@@ -18,12 +18,26 @@ class test_LogModel
 	: public QObject
 {
 	Q_OBJECT
-	QSharedPointer<LogModel> mModel;
+
+	private:
+		LogModel* mModel;
+
+		void resetModel(LogModel* pModel = nullptr)
+		{
+			delete mModel;
+			mModel = pModel;
+		}
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			LogHandler::getInstance().init();
+		}
+
+
 		void init()
 		{
-			mModel.reset(new LogModel());
+			mModel = new LogModel();
 			// The test only covers the LogModel functionality, LogHandler will return an
 			// error message to the LogModel if not properly initialised; discard that.
 			mModel->mLogEntries.clear();
@@ -32,7 +46,7 @@ class test_LogModel
 
 		void cleanup()
 		{
-			mModel.clear();
+			resetModel();
 		}
 
 
@@ -124,11 +138,11 @@ class test_LogModel
 			file.open(QIODevice::ReadOnly);
 			QTextStream stream(&file);
 			mModel->setLogEntries(stream);
-			int oldSize = mModel->mLogEntries.size();
+			const auto oldSize = mModel->mLogEntries.size();
 			mModel->mSelectedLogFile = selectedFile;
-			QSignalSpy spyNewLogMsg(mModel.data(), &LogModel::fireNewLogMsg);
+			QSignalSpy spyNewLogMsg(mModel, &LogModel::fireNewLogMsg);
 
-			mModel->onNewLogMsg(msg);
+			qDebug() << msg;
 			QCOMPARE(spyNewLogMsg.count(), newLogMsgCounter);
 			QCOMPARE(mModel->mLogEntries.size(), oldSize + logEntriesSizeChange);
 		}
@@ -145,7 +159,7 @@ class test_LogModel
 
 			// We need to reset() the model since the list of "old" logfiles
 			// is only populated in the ctor of LogModel.
-			mModel.reset(new LogModel());
+			resetModel(new LogModel());
 
 			QCOMPARE(mModel->getLogfiles().size(), 2);
 			mModel->removeCurrentLogfile();

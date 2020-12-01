@@ -18,7 +18,7 @@ class IfdEstablishPaceChannelResponse
 
 	public:
 		IfdEstablishPaceChannelResponse(const QString& pSlotHandle, const QByteArray& pOutputData, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
-		IfdEstablishPaceChannelResponse(const QJsonObject& pMessageObject);
+		explicit IfdEstablishPaceChannelResponse(const QJsonObject& pMessageObject);
 		virtual ~IfdEstablishPaceChannelResponse() override = default;
 
 		const QString& getSlotHandle() const;

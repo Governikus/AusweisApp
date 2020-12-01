@@ -20,7 +20,7 @@ namespace governikus
  * According to TR-03110-3 chapter D
  * elliptic curve public keys are defined as follows:
  *
- * EcdsaPubilcKey ::= [APPLICATION 0x49] IMPLICIT SEQUENCE {
+ * EcdsaPublicKey ::= [APPLICATION 0x49] IMPLICIT SEQUENCE {
  *         ObjectIdentifier     OBJECT IDENTIFIER,
  *         PrimeModulus         [0x01] IMPLICIT UnsignedInteger OPTIONAL
  *         FirstCoefficient     [0x02] IMPLICIT UnsignedInteger OPTIONAL

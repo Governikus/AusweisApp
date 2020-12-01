@@ -2,13 +2,15 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.AuthModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.ReaderPlugIn 1.0
+import Governikus.Type.ChatModel 1.0
+import Governikus.Type.ConnectivityManager 1.0
 
 
 Item {
@@ -30,40 +32,26 @@ Item {
 
 	id: controller
 	readonly property string currentState: AuthModel.currentState
-	readonly property bool bluetoothEnabled: ApplicationModel.bluetoothEnabled
 
 	property bool connectedToCard: false
 	property int workflowState: 0
 	property bool workflowProgressVisible: false
 
-	function sufficientBluetoothRights() {
-		return ApplicationModel.bluetoothEnabled && (!ApplicationModel.locationPermissionRequired || locationPermissionConfirmed)
-	}
-
-	property bool locationPermissionConfirmed: false
-	onLocationPermissionConfirmedChanged: {
-		// If the user has given location permission: continue Bluetooth workflow.
-		if (d.readerPlugInType === ReaderPlugIn.BLUETOOTH && sufficientBluetoothRights()) {
-			AuthModel.continueWorkflow()
-		}
-	}
-
-	onBluetoothEnabledChanged: {
-		// If the user has activated bluetooth and no location permission is needed: continue Bluetooth workflow.
-		if (d.readerPlugInType === ReaderPlugIn.BLUETOOTH && sufficientBluetoothRights()) {
-			AuthModel.continueWorkflow()
-		}
-	}
-
 	states: [
 		State {
-			when: AuthModel.currentState === "StateGetTcToken" && !connectivityManager.networkInterfaceActive
+			when: AuthModel.currentState === "StateGetTcToken" && SettingsModel.transportPinReminder
+			StateChangeScript {
+				script: firePush(transportPinReminder)
+			}
+		},
+		State {
+			when: AuthModel.currentState === "StateGetTcToken" && !ConnectivityManager.networkInterfaceActive && !SettingsModel.transportPinReminder
 			StateChangeScript {
 				script: firePush(checkConnectivityView)
 			}
 		},
 		State {
-			when: AuthModel.currentState === "StateGetTcToken" && connectivityManager.networkInterfaceActive
+			when: AuthModel.currentState === "StateGetTcToken" && ConnectivityManager.networkInterfaceActive && !SettingsModel.transportPinReminder
 			StateChangeScript {
 				script: {
 					firePush(identifyProgressView)
@@ -104,13 +92,11 @@ Item {
 			case "StateGetTcToken":
 				enterPinView.state = "INITIAL"
 				controller.workflowState = IdentifyController.WorkflowStates.Initial
-				navBar.lockedAndHidden = true
-				navBar.state = "identify"
-				navBar.currentIndex = 0
+				navBar.showIdentify(true)
 				break
 			case "StateEditAccessRights":
 				if (NumberModel.isCanAllowedMode && SettingsModel.skipRightsOnCanAllowed) {
-					chatModel.transferAccessRights()
+					ChatModel.transferAccessRights()
 					AuthModel.continueWorkflow()
 				} else {
 					fireReplace(editRights)
@@ -119,14 +105,7 @@ Item {
 				break
 			case "StateSelectReader":
 				fireReplace(identifyWorkflow)
-				if (d.readerPlugInType === ReaderPlugIn.BLUETOOTH && !sufficientBluetoothRights()) {
-					// Stop the workflow here until the user has enabled bluetooth and confirmed the location permission.
-					controller.workflowState = IdentifyController.WorkflowStates.Reader
-				}
-				else
-				{
-					setIdentifyWorkflowStateAndContinue(IdentifyController.WorkflowStates.Reader)
-				}
+				setIdentifyWorkflowStateAndContinue(IdentifyController.WorkflowStates.Reader)
 				break
 			case "StateConnectCard":
 				setIdentifyWorkflowStateAndContinue(IdentifyController.WorkflowStates.Card)
@@ -147,8 +126,6 @@ Item {
 				}
 				break
 			case "StateUnfortunateCardPosition":
-				//: INFO IOS The NFC signal is weak or unstable. The scan is stopped with this information in the iOS dialog.
-				ApplicationModel.stopNfcScanWithError(qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable") + SettingsModel.translationTrigger)
 				firePush(cardPositionView)
 				break
 			case "StateDidAuthenticateEac1":
@@ -190,6 +167,9 @@ Item {
 				} else {
 					AuthModel.continueWorkflow()
 					firePopAll()
+					if (ApplicationModel.currentWorkflow === "authentication") {
+						appWindow.close()
+					}
 					navBar.lockedAndHidden = false
 				}
 				controller.workflowProgressVisible = false
@@ -209,7 +189,6 @@ Item {
 		if (AuthModel.isBasicReader) {
 			enterPinView.state = pInput
 			firePush(enterPinView)
-			ApplicationModel.nfcRunning = false
 		} else {
 			AuthModel.continueWorkflow()
 		}

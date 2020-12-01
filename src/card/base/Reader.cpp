@@ -87,7 +87,7 @@ CardReturnCode Reader::updateRetryCounter(QSharedPointer<CardConnectionWorker> p
 		if (emitSignal)
 		{
 			qCDebug(card) << "fireCardRetryCounterChanged";
-			Q_EMIT fireCardRetryCounterChanged(mReaderInfo.getName());
+			Q_EMIT fireCardRetryCounterChanged(mReaderInfo);
 		}
 	}
 	return returnCode;
@@ -141,12 +141,12 @@ void Reader::fireUpdateSignal(CardEvent pCardEvent)
 
 		case CardEvent::CARD_INSERTED:
 			qCInfo(support) << "Card inserted:" << mReaderInfo.getCardInfo();
-			Q_EMIT fireCardInserted(mReaderInfo.getName());
+			Q_EMIT fireCardInserted(mReaderInfo);
 			break;
 
 		case CardEvent::CARD_REMOVED:
 			qCInfo(support) << "Card removed";
-			Q_EMIT fireCardRemoved(mReaderInfo.getName());
+			Q_EMIT fireCardRemoved(mReaderInfo);
 			break;
 	}
 }

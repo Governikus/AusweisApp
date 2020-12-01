@@ -5,15 +5,16 @@
 #include "GlobalStatus.h"
 
 #include "Initializer.h"
+#include "LanguageLoader.h"
 
 #include <QDebug>
 
 using namespace governikus;
 
-static Initializer::Entry E([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<GlobalStatus::Code>("GlobalStatus::Code");
 			qRegisterMetaType<GlobalStatus>("GlobalStatus");
-		});
+		})
 
 
 QString GlobalStatus::getExternalInfo(ExternalInformation pType) const
@@ -91,17 +92,10 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 {
 	if (pSimplifiedVersion && isMessageMasked())
 	{
-		//: LABEL ALL_PLATFORMS
-		const QString supportUrl = tr("https://www.ausweisapp.bund.de/en/qa/support/");
-		const QString hyperlink = QStringLiteral("<a href=\"%1\">").arg(supportUrl);
+		const QString hyperlink = QStringLiteral("<a href=\"https://www.ausweisapp.bund.de/%1/aa2/support\">").arg(LanguageLoader::getLocalCode());
+		//: ERROR ALL_PLATFORMS Error message which is used for "masked" errors. Generic message with link to support section of the homepage.
+		QString message = tr("An unknown network error has occurred during the connection to the provider. Check the network connection and try restarting the app. If this does not help, contact our %1support%2.").arg(hyperlink, QStringLiteral("</a>"));
 
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-		//: ERROR ANDROID IOS Error message which is used for "masked" errors. Generic message with link to support section of the homepage.
-		QString message = tr("An unknown network error has occurred during the connection to the provider. Check the network connection and try restarting the app. If this does not help contact our %1support%2.").arg(hyperlink, QStringLiteral("</a>"));
-#else
-		//: ERROR DESKTOP Error message which is used for "masked" errors. Generic message with link to support section of the homepage.
-		QString message = tr("An unknown network error has occurred during the connection to the provider. Check the network connection and try restarting the app. If this does not help contact our %1support%2 or send us an email.").arg(hyperlink, QStringLiteral("</a>"));
-#endif
 		return message;
 	}
 	return toErrorDescriptionInternal();
@@ -177,7 +171,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Workflow_Certificate_Sop_Error:
 			//: ERROR_MASKED ALL_PLATFORMS
-			return tr("The subject URL in the certificate description and the TCToken URL don't satisfy the same origin policy.");
+			return tr("The subject URL in the certificate description and the TCToken URL do not satisfy the same origin policy.");
 
 		case Code::Workflow_Error_Page_Transmission_Error:
 		case Code::Workflow_Processing_Error:
@@ -296,10 +290,9 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Card_Protocol_Error:
 		case Code::Card_Unexpected_Transmit_Status:
 			//: ERROR ALL_PLATFORMS Communication with the card failed due to the specification of the TR (Technische Richtlinie). The protocol was faulty or invalid values were requested/received,
-			return QStringLiteral("%1 <a href=\"%2\">%3</a>.").arg(
-					tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at"),
-					tr("https://www.ausweisapp.bund.de/en/qa/support/"),
-					tr("AusweisApp2 Support"));
+			return tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at %1AusweisApp2 Support%2.").arg(
+					QStringLiteral("<a href=\"https://www.ausweisapp.bund.de/%1/aa2/support\">").arg(LanguageLoader::getLocalCode()),
+					QStringLiteral("</a>"));
 
 		case Code::Card_Invalid_Pin:
 			//: ERROR ALL_PLATFORMS The ID card declined the PIN.
@@ -332,14 +325,6 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Card_NewPin_Invalid_Length:
 			//: ERROR ALL_PLATFORMS The card reader declined the new PIN since its length was invalid.
 			return tr("The length of the new PIN is not valid.");
-
-		case Code::Workflow_Bluetooth_Reader_Connection_Error:
-			//: ERROR ALL_PLATFORMS Error while connecting to a bluetooth card reader.
-			return tr("An error occurred while connecting to a bluetooth card reader.");
-
-		case Code::Workflow_Reader_Device_Scan_Error:
-			//: ERROR ALL_PLATFORMS Error while searching for bluetooth card reader.
-			return tr("An error occurred while scanning for a bluetooth card reader.");
 
 		case Code::RemoteReader_CloseCode_AbnormalClose:
 			//: ERROR ALL_PLATFORMS The connection to the smartphone card reader (SaK) was lost.
@@ -376,6 +361,18 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Downloader_Data_Corrupted:
 			//: ERROR ALL_PLATFORMS The downloaded file contained unsupported/invalid data.
 			return tr("Received data were corrupted.");
+
+		case Code::Downloader_Missing_Platform:
+			//: ERROR ALL_PLATFORMS The downloaded file does not contain data for the current platform.
+			return tr("Received data does not contain data for the current platform.");
+
+		case Code::Downloader_Aborted:
+			//: ERROR ALL_PLATFORMS The download is aborted.
+			return tr("Download aborted.");
+
+		case Code::Update_Execution_Failed:
+			//: ERROR ALL_PLATFORMS Starting the update failed.
+			return tr("A new process to start the update could not be launched.");
 	}
 
 	Q_UNREACHABLE();

@@ -10,7 +10,6 @@
 #include "NetworkManager.h"
 #include "PlatformHelper.h"
 #include "Service.h"
-#include "SingletonHelper.h"
 
 
 #ifdef Q_OS_ANDROID
@@ -18,9 +17,6 @@
 #endif
 
 using namespace governikus;
-
-
-defineSingleton(SettingsModel)
 
 
 SettingsModel::SettingsModel()
@@ -38,6 +34,7 @@ SettingsModel::SettingsModel()
 
 	connect(&generalSettings, &GeneralSettings::fireShowInAppNotificationsChanged, this, &SettingsModel::fireShowInAppNotificationsChanged);
 	connect(&generalSettings, &GeneralSettings::fireDeveloperOptionsChanged, this, &SettingsModel::fireDeveloperOptionsChanged);
+	connect(&generalSettings, &GeneralSettings::fireProxyChanged, this, &SettingsModel::fireUseCustomProxyChanged);
 
 #ifdef Q_OS_ANDROID
 	mIsStartedByAuth = QAndroidJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
@@ -45,21 +42,9 @@ SettingsModel::SettingsModel()
 }
 
 
-SettingsModel& SettingsModel::getInstance()
-{
-	return *Instance;
-}
-
-
-QString SettingsModel::getEmptyString()
-{
-	return QString();
-}
-
-
 QString SettingsModel::getLanguage() const
 {
-	return LanguageLoader::getInstance().getUsedLocale().bcp47Name();
+	return LanguageLoader::getLocalCode();
 }
 
 
@@ -302,7 +287,7 @@ void SettingsModel::setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed)
 
 bool SettingsModel::isShowSetupAssistantOnStart() const
 {
-	auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	return generalSettings.isShowSetupAssistant() && !mIsStartedByAuth;
 }
 
@@ -487,26 +472,9 @@ void SettingsModel::setShowInAppNotifications(bool pShowInAppNotifications)
 }
 
 
-bool SettingsModel::isShowNewUiHint() const
+void SettingsModel::updateAppcast()
 {
-	return Env::getSingleton<AppSettings>()->getGeneralSettings().isShowNewUiHint();
-}
-
-
-void SettingsModel::setShowNewUiHint(bool pShowNewUiHint)
-{
-	if (pShowNewUiHint != isShowNewUiHint())
-	{
-		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-		settings.setShowNewUiHint(pShowNewUiHint);
-		Q_EMIT fireShowNewUiHintChanged();
-	}
-}
-
-
-void SettingsModel::updateApp()
-{
-	Env::getSingleton<Service>()->updateApp();
+	Env::getSingleton<Service>()->updateAppcast();
 }
 
 
@@ -519,20 +487,20 @@ AppUpdateDataModel* SettingsModel::getAppUpdateData() const
 
 QUrl SettingsModel::getCustomProxyUrl() const
 {
-	auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	const auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	QUrl url;
 	switch (settings.getCustomProxyType())
 	{
 		case QNetworkProxy::Socks5Proxy:
-			url.setScheme(QLatin1String("socks5"));
+			url.setScheme(QStringLiteral("socks5"));
 			break;
 
 		case QNetworkProxy::HttpProxy:
-			url.setScheme(QLatin1String("http"));
+			url.setScheme(QStringLiteral("http"));
 			break;
 
 		default:
-			url.setScheme(QLatin1String("unknown"));
+			url.setScheme(QStringLiteral("unknown"));
 			break;
 	}
 	url.setHost(settings.getCustomProxyHost());
@@ -547,7 +515,7 @@ bool SettingsModel::isCustomProxyAttributesPresent() const
 }
 
 
-bool SettingsModel::isUseCustomProxy()
+bool SettingsModel::isUseCustomProxy() const
 {
 	return Env::getSingleton<AppSettings>()->getGeneralSettings().useCustomProxy();
 }

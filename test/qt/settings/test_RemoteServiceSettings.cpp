@@ -42,22 +42,22 @@ class test_RemoteServiceSettings
 			settings.save();
 			QCOMPARE(settings.getServerName(), DeviceInfo::getName());
 
-			settings.setServerName(QLatin1String("   "));
+			settings.setServerName(QStringLiteral("   "));
 			QCOMPARE(settings.getServerName(), DeviceInfo::getName());
 
-			settings.setServerName(QLatin1String("  \n "));
+			settings.setServerName(QStringLiteral("  \n "));
 			QCOMPARE(settings.getServerName(), DeviceInfo::getName());
 
-			settings.setServerName(QLatin1String("Google Pixel"));
+			settings.setServerName(QStringLiteral("Google Pixel"));
 			QCOMPARE(settings.getServerName(), QLatin1String("Google Pixel"));
 
-			settings.setServerName(QLatin1String("   Google Pixel"));
+			settings.setServerName(QStringLiteral("   Google Pixel"));
 			QCOMPARE(settings.getServerName(), QLatin1String("Google Pixel"));
 
-			settings.setServerName(QLatin1String("Google Pixel   "));
+			settings.setServerName(QStringLiteral("Google Pixel   "));
 			QCOMPARE(settings.getServerName(), QLatin1String("Google Pixel"));
 
-			settings.setServerName(QLatin1String("Google Pixel  \n "));
+			settings.setServerName(QStringLiteral("Google Pixel  \n "));
 			QCOMPARE(settings.getServerName(), QLatin1String("Google Pixel"));
 		}
 

@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 PlatformTextStyles {
 
@@ -86,6 +86,10 @@ PlatformTextStyles {
 		textColor: Style.color.warning_text
 	}
 
+	readonly property var normal_info: TextStyle {
+		textColor: Style.color.info_text
+	}
+
 	readonly property var hint: TextStyle {
 		textSize: Style.dimens.hint_font_size
 	}
@@ -115,6 +119,10 @@ PlatformTextStyles {
 	readonly property var hint_warning: TextStyle {
 		textSize: Style.dimens.hint_font_size
 		textColor: Style.color.warning_text
+	}
+
+	readonly property var navigation: TextStyle {
+		textSize: Style.dimens.navigation_font_size
 	}
 
 	readonly property var button: TextStyle {

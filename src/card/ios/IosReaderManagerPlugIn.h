@@ -26,7 +26,7 @@ class IosReaderManagerPlugIn
 		QScopedPointer<IosReader> mIosReader;
 
 	private Q_SLOTS:
-		void onReaderDisconncted();
+		void onReaderDisconnected();
 
 	public:
 		IosReaderManagerPlugIn();

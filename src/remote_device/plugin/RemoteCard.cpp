@@ -210,7 +210,7 @@ EstablishPaceChannelOutput RemoteCard::establishPaceChannel(PacePasswordId pPass
 		{
 			if (response.getResultMinor() == ECardApiResult::Minor::IFDL_Terminal_NoCard)
 			{
-				return CardReturnCode::CARD_NOT_FOUND;
+				return EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND);
 			}
 
 			if (!response.resultHasError())
@@ -222,17 +222,17 @@ EstablishPaceChannelOutput RemoteCard::establishPaceChannel(PacePasswordId pPass
 			qCWarning(card_remote) << response.getResultMinor();
 		}
 
-		return CardReturnCode::COMMAND_FAILED;
+		return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
 	}
 
-	return CardReturnCode::INPUT_TIME_OUT;
+	return EstablishPaceChannelOutput(CardReturnCode::INPUT_TIME_OUT);
 }
 
 
 ResponseApduResult RemoteCard::setEidPin(quint8 pTimeoutSeconds)
 {
 	PinModify pinModify(pTimeoutSeconds);
-	const QByteArray inputData = pinModify.createCcidForRemote();
+	const QByteArray inputData = pinModify.createCcid();
 
 	const QSharedPointer<const IfdModifyPin>& message = QSharedPointer<IfdModifyPin>::create(mSlotHandle, inputData);
 	if (sendMessage(message, RemoteCardMessageType::IFDModifyPINResponse, pTimeoutSeconds * 1000))

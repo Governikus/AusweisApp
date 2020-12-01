@@ -83,13 +83,15 @@ defineTypedEnumType(AccessRightNames, std::underlying_type<AccessRight>::type,
 		ValidUntil = TYPE(AccessRight::READ_DG03),
 		IssuingCountry = TYPE(AccessRight::READ_DG02),
 		DocumentType = TYPE(AccessRight::READ_DG01),
+		CanAllowed = TYPE(AccessRight::CAN_ALLOWED),
 		Pseudonym = TYPE(AccessRight::RESTRICTED_IDENTIFICATION),
 		AddressVerification = TYPE(AccessRight::COMMUNITY_ID_VERIFICATION),
 		AgeVerification = TYPE(AccessRight::AGE_VERIFICATION),
 		WriteAddress = TYPE(AccessRight::WRITE_DG17),
 		WriteCommunityID = TYPE(AccessRight::WRITE_DG18),
 		WriteResidencePermitI = TYPE(AccessRight::WRITE_DG19),
-		WriteResidencePermitII = TYPE(AccessRight::WRITE_DG20)
+		WriteResidencePermitII = TYPE(AccessRight::WRITE_DG20),
+		PinManagement = TYPE(AccessRight::PIN_MANAGEMENT)
 		)
 #undef TYPE
 
@@ -108,12 +110,21 @@ class AccessRoleAndRightsUtil
 {
 	Q_DECLARE_TR_FUNCTIONS(governikus::AccessRoleAndRightsUtil)
 
+	public:
+		enum JoinRight
+		{
+			READ = 0x1,
+			WRITE = 0x2,
+			READWRITE = 0x3
+		};
+		Q_DECLARE_FLAGS(JoinRights, JoinRight)
+
 	private:
 		static QList<AccessRight> mAllRights;
 		static QList<AccessRight> mAllDisplayedOrderedRights;
 		AccessRoleAndRightsUtil() = delete;
 		static bool fromTechnicalName(const char* const pStr, const std::function<void(AccessRight)>& pFunc);
-		static QStringList fromTechnicalName(const QStringList& pStr);
+		static QStringList fromTechnicalName(const QStringList& pStr, JoinRights pJoinRight);
 
 	public:
 		static const QList<AccessRight>& allDisplayedOrderedRights();
@@ -122,8 +133,12 @@ class AccessRoleAndRightsUtil
 		static QString toDisplayText(AccessRight pRight);
 		static QLatin1String toTechnicalName(AccessRight pRight);
 		static bool fromTechnicalName(const QString& pStr, const std::function<void(AccessRight)>& pFunc);
-		static QString joinFromTechnicalName(const QStringList& pStr, const QString& pJoin = QStringLiteral(", "));
+		static QString joinFromTechnicalName(const QStringList& pStr,
+				JoinRights pJoinRight = JoinRight::READWRITE,
+				const QString& pJoin = QStringLiteral(", "));
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(AccessRoleAndRightsUtil::JoinRights)
 
 } // namespace governikus
 

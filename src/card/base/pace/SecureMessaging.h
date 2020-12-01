@@ -42,7 +42,7 @@ class SecureMessaging final
 		QByteArray getSendSequenceCounter() const;
 		QByteArray getEncryptedIv();
 
-		QByteArray createSecuredLe(int pLe);
+		QByteArray createSecuredLe(int pLe) const;
 
 	public:
 		SecureMessaging(const QByteArray& pPaceAlgorithm, const QByteArray& pEncKey, const QByteArray& pMacKey);
@@ -51,7 +51,7 @@ class SecureMessaging final
 		/*!
 		 * Returns true, if initialization succeeded, i.e. the algorithm is known, supported and the keys have correct size.
 		 */
-		bool isInitialized();
+		bool isInitialized() const;
 
 		CommandApdu encrypt(const CommandApdu& pCommandApdu);
 

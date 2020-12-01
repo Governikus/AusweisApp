@@ -9,7 +9,7 @@
 #include "CallCost.h"
 
 #include <QAbstractListModel>
-#include <QSet>
+#include <QStringList>
 #include <QVector>
 
 
@@ -27,6 +27,7 @@ class ProviderModel
 
 	private:
 		QVector<QMetaObject::Connection> mConnections;
+		bool mIncludeCategories;
 
 		void updateConnections();
 
@@ -51,17 +52,21 @@ class ProviderModel
 			POSTALADDRESS,
 			ICON,
 			IMAGE,
-			SORT_ROLE
+			SORT_ROLE,
+			TYPE
 		};
 
-		ProviderModel(QObject* pParent = nullptr);
+		explicit ProviderModel(QObject* pParent = nullptr);
 		virtual ~ProviderModel() override;
 
 		int rowCount(const QModelIndex&) const override;
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
 		QHash<int, QByteArray> roleNames() const override;
 
-		static const QSet<QString>& getProviderCategories();
+		void setIncludeCategories(bool pIncludeCategories);
+		bool getIncludeCategories() const;
+
+		static const QStringList& getProviderCategories();
 
 		static QString createCostString(const CallCost& pCosts);
 };

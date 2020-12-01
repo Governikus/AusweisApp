@@ -2,10 +2,10 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import QtQuick.Window 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
+import QtQuick.Window 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -23,29 +23,29 @@ SectionPage {
 
 	navigationAction: NavigationAction { state: topLevelPage ? "" : "back"; onClicked: firePop() }
 	//: LABEL ANDROID IOS
-	title: qsTr("Settings") + SettingsModel.translationTrigger
+	title: qsTr("Settings")
+
+	function platformId(pName) {
+		return "mobile," + pName.replace(" ", "").toLowerCase()
+	}
 
 	content: Column {
 		id: mainColumn
 
-		readonly property int usableWidth: width - 2 * padding
-
 		width: baseItem.width
-		padding: Constants.pane_padding
-		spacing: Constants.component_spacing
-
+		spacing: 0
 
 		TitledSeparator {
-			width: parent.usableWidth
-			topPadding: 0
+			width: parent.width
+			contentMarginTop: Constants.component_spacing
 			//: LABEL ANDROID IOS
-			title: qsTr("General") + SettingsModel.translationTrigger
+			title: qsTr("General")
 		}
 
-		SettingsEntry {
-			width: parent.usableWidth
+		MenuItem {
+			width: parent.width
 			//: LABEL ANDROID IOS
-			title: qsTr("Change language") + SettingsModel.translationTrigger
+			title: qsTr("Change language")
 			icon: "qrc:///images/location_flag_%1.svg".arg(SettingsModel.language)
 			tintIcon: false
 			description: {
@@ -64,17 +64,17 @@ SectionPage {
 			}
 		}
 
-		SettingsEntry {
+		MenuItem {
 			visible: Constants.is_layout_android
-			width: parent.usableWidth
+			width: parent.width
 			//: LABEL ANDROID
-			title: qsTr("Screen orientation") + SettingsModel.translationTrigger
+			title: qsTr("Screen orientation")
 			description: (Screen.primaryOrientation === Qt.LandscapeOrientation
 				//: LABEL ANDROID
 				? qsTr("Landscape")
 				//: LABEL ANDROID
 				: qsTr("Portrait")
-			) + SettingsModel.translationTrigger
+			)
 			icon: Screen.primaryOrientation === Qt.LandscapeOrientation ? "qrc:///images/android/stay_primary_landscape-24px.svg" : "qrc:///images/android/stay_primary_portrait-24px.svg"
 			tintIcon: true
 
@@ -86,24 +86,26 @@ SectionPage {
 		}
 
 		TitledSeparator {
-			width: parent.usableWidth
+			width: parent.width
 			//: LABEL ANDROID IOS
-			title: qsTr("Smartphone as card reader") + SettingsModel.translationTrigger
+			title: qsTr("Smartphone as card reader")
 		}
 
-		Item {
+		ColumnLayout {
 			id: serverNameBase
 
-			height: serverNameText.height + serverName.height
-			width: parent.usableWidth
+			width: parent.width
 
 			GText {
 				id: serverNameText
 
-				width: parent.width
+				Layout.fillWidth: true
+				Layout.leftMargin: Constants.component_spacing
+				Layout.rightMargin: Constants.component_spacing
+				Layout.topMargin: Constants.component_spacing / 2
 
 				//: LABEL ANDROID IOS
-				text: qsTr("Device name") + SettingsModel.translationTrigger
+				text: qsTr("Device name")
 				textStyle: Style.text.normal_accent
 			}
 
@@ -116,9 +118,10 @@ SectionPage {
 					text = SettingsModel.serverName
 				}
 
-				width: parent.width
-				anchors.top: serverNameText.bottom
-				anchors.topMargin: 2
+				Layout.fillWidth: true
+				Layout.leftMargin: Constants.component_spacing
+				Layout.rightMargin: Constants.component_spacing
+				Layout.bottomMargin: Constants.component_spacing / 2
 
 				Component.onCompleted: text = SettingsModel.serverName
 
@@ -130,23 +133,23 @@ SectionPage {
 		}
 
 		LabeledSwitch {
-			width: parent.usableWidth
+			width: parent.width
 
 			//: LABEL ANDROID IOS
-			title: qsTr("PIN pad mode") + SettingsModel.translationTrigger
+			title: qsTr("PIN pad mode")
 			//: LABEL ANDROID IOS
-			description: qsTr("Enter PIN on this device") + SettingsModel.translationTrigger
+			description: qsTr("Enter PIN on this device")
 			checked: SettingsModel.pinPadMode
 			onCheckedChanged: SettingsModel.pinPadMode = checked
 		}
 
-		SettingsEntry {
-			width: parent.usableWidth
+		MenuItem {
+			width: parent.width
 
 			//: LABEL ANDROID IOS
-			title: qsTr("Remote card reader") + SettingsModel.translationTrigger
+			title: qsTr("Remote card reader")
 			//: LABEL ANDROID IOS
-			description: qsTr("Configure remote service for another device") + SettingsModel.translationTrigger
+			description: qsTr("Configure remote service for another device")
 			onClicked: baseItem.firePush(remoteServiceSettings)
 
 			Component {
@@ -159,49 +162,49 @@ SectionPage {
 		}
 
 		TitledSeparator {
-			width: parent.usableWidth
+			width: parent.width
 
 			//: LABEL ANDROID IOS
-			title: qsTr("Security and privacy") + SettingsModel.translationTrigger
+			title: qsTr("Security and privacy")
 		}
 
 		LabeledSwitch {
-			width: parent.usableWidth
+			width: parent.width
 
 			//: LABEL ANDROID IOS
-			title: qsTr("History") + SettingsModel.translationTrigger
+			title: qsTr("History")
 			//: LABEL ANDROID IOS
-			description: qsTr("Save authentication history") + SettingsModel.translationTrigger
+			description: qsTr("Save authentication history")
 			checked: SettingsModel.historyEnabled
 			onCheckedChanged: SettingsModel.historyEnabled = checked
 		}
 
 		LabeledSwitch {
-			width: parent.usableWidth
+			width: parent.width
 
 			//: LABEL ANDROID IOS
-			title: qsTr("Shuffle keypad buttons") + SettingsModel.translationTrigger
+			title: qsTr("Shuffle keypad buttons")
 			//: LABEL ANDROID IOS
-			description: qsTr("Randomize the order of the on screen keypad buttons") + SettingsModel.translationTrigger
+			description: qsTr("Randomize the order of the on screen keypad buttons")
 
 			checked: SettingsModel.shuffleScreenKeyboard
 			onCheckedChanged: SettingsModel.shuffleScreenKeyboard = checked
 		}
 
 		LabeledSwitch {
-			width: parent.usableWidth
+			width: parent.width
 
 			//: LABEL ANDROID IOS
-			title: qsTr("Keypad animations") + SettingsModel.translationTrigger
+			title: qsTr("Keypad animations")
 			//: LABEL ANDROID IOS
-			description: qsTr("Visual feedback when pressing keypad buttons") + SettingsModel.translationTrigger
+			description: qsTr("Visual feedback when pressing keypad buttons")
 			checked: !SettingsModel.visualPrivacy
 			onCheckedChanged: SettingsModel.visualPrivacy = !checked
 		}
 
 		Column {
 			visible: SettingsModel.advancedSettings
-			width: parent.usableWidth
+			width: parent.width
 
 			spacing: parent.spacing
 
@@ -209,16 +212,16 @@ SectionPage {
 				width: parent.width
 
 				//: LABEL ANDROID IOS
-				title: qsTr("CAN allowed mode") + SettingsModel.translationTrigger
+				title: qsTr("CAN allowed mode")
 			}
 
 			LabeledSwitch {
 				width: parent.width
 
 				//: LABEL ANDROID IOS
-				title: qsTr("Support CAN allowed mode") + SettingsModel.translationTrigger
+				title: qsTr("Support CAN allowed mode")
 				//: LABEL ANDROID IOS
-				description: qsTr("Allow the id card to be used with only the CAN") + SettingsModel.translationTrigger
+				description: qsTr("Allow the id card to be used with only the CAN")
 				checked: SettingsModel.enableCanAllowed
 				onCheckedChanged: SettingsModel.enableCanAllowed = checked
 			}
@@ -227,9 +230,9 @@ SectionPage {
 				width: parent.width
 
 				//: LABEL ANDROID IOS
-				title: qsTr("Skip rights page") + SettingsModel.translationTrigger
+				title: qsTr("Skip rights page")
 				//: LABEL ANDROID IOS
-				description: qsTr("Do not show the rights page, when in can allowed mode") + SettingsModel.translationTrigger
+				description: qsTr("Do not show the rights page, when in can allowed mode")
 				enabled: SettingsModel.enableCanAllowed
 				checked: SettingsModel.skipRightsOnCanAllowed
 				onCheckedChanged: SettingsModel.skipRightsOnCanAllowed = checked
@@ -238,7 +241,7 @@ SectionPage {
 
 		Column {
 			visible: plugin.debugBuild
-			width: parent.usableWidth
+			width: parent.width
 
 			spacing: parent.spacing
 
@@ -246,16 +249,18 @@ SectionPage {
 				width: parent.width
 
 				//: LABEL ANDROID IOS
-				title: qsTr("Developer Options") + SettingsModel.translationTrigger
+				title: qsTr("Developer Options")
 			}
 
 			LabeledSwitch {
+				id: testUriSwitch
+
 				width: parent.width
 
 				//: LABEL ANDROID IOS
-				title: qsTr("Testmode for the self-authentication") + SettingsModel.translationTrigger
+				title: qsTr("Testmode for the self-authentication")
 				//: LABEL ANDROID IOS
-				description: qsTr("Use the test environment during a self-authentication") + SettingsModel.translationTrigger
+				description: qsTr("Use the test environment during a self-authentication")
 
 				checked: SettingsModel.useSelfauthenticationTestUri
 				onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
@@ -265,9 +270,9 @@ SectionPage {
 				width: parent.width
 
 				//: LABEL ANDROID IOS
-				title: qsTr("Developer Mode") + SettingsModel.translationTrigger
+				title: qsTr("Developer Mode")
 				//: LABEL ANDROID IOS
-				description: qsTr("Use a more tolerant mode") + SettingsModel.translationTrigger
+				description: qsTr("Use a more tolerant mode")
 				checked: SettingsModel.developerMode
 				onCheckedChanged: SettingsModel.developerMode = checked
 			}
@@ -276,52 +281,77 @@ SectionPage {
 				width: parent.width
 
 				//: LABEL ANDROID IOS
-				title: qsTr("Layout style") + SettingsModel.translationTrigger
+				title: qsTr("Layout style")
 			}
 
-			GRadioButton {
-				//: LABEL ALL_PLATFORMS
-				text: qsTr("iOS") + SettingsModel.translationTrigger
-				checked: plugin.platformStyle === text.toLowerCase()
-				onCheckedChanged: if (checked) { plugin.applyPlatformStyle(text.toLowerCase()) }
-			}
+			Column {
+				width: parent.width
+				leftPadding: Constants.component_spacing
+				rightPadding: Constants.component_spacing
+				topPadding: Constants.component_spacing / 2
+				bottomPadding: Constants.component_spacing / 2
 
-			GRadioButton {
-				//: LABEL ALL_PLATFORMS
-				text: qsTr("Android") + SettingsModel.translationTrigger
-				checked: plugin.platformStyle === text.toLowerCase()
-				onCheckedChanged: if (checked) { plugin.applyPlatformStyle(text.toLowerCase()) }
-			}
+				GRadioButton {
+					text: "Phone, iOS"
+					checked: plugin.platformStyle === baseItem.platformId(text)
+					onCheckedChanged: if (checked) { plugin.applyPlatformStyle(baseItem.platformId(text)) }
+				}
 
-			GRadioButton {
-				//: LABEL ALL_PLATFORMS
-				text: qsTr("Tablet, Android") + SettingsModel.translationTrigger
-				checked: plugin.platformStyle === text.toLowerCase()
-				onCheckedChanged: if (checked) { plugin.applyPlatformStyle(text.toLowerCase()) }
+				GRadioButton {
+					text: "Phone, Android"
+					checked: plugin.platformStyle === baseItem.platformId(text)
+					onCheckedChanged: if (checked) { plugin.applyPlatformStyle(baseItem.platformId(text)) }
+				}
+
+				GRadioButton {
+					text: "Tablet, iOS"
+					checked: plugin.platformStyle === baseItem.platformId(text)
+					onCheckedChanged: if (checked) { plugin.applyPlatformStyle(baseItem.platformId(text)) }
+				}
+
+				GRadioButton {
+					text: "Tablet, Android"
+					checked: plugin.platformStyle === baseItem.platformId(text)
+					onCheckedChanged: if (checked) { plugin.applyPlatformStyle(baseItem.platformId(text)) }
+				}
 			}
 
 			TitledSeparator {
 				width: parent.width
 
 				//: LABEL ANDROID IOS
-				title: qsTr("Create dummy entries") + SettingsModel.translationTrigger
+				title: qsTr("Create dummy entries")
 			}
 
-			GButton {
-				//: LABEL ALL_PLATFORMS
-				text: qsTr("Logfile") + SettingsModel.translationTrigger
-				onClicked: {
-					LogModel.saveDummyLogfile()
-					ApplicationModel.showFeedback("Created new logfile.")
+			ColumnLayout {
+				width: parent.width
+
+				spacing: 0
+
+				GButton {
+					Layout.fillWidth: true
+					Layout.margins: Constants.component_spacing
+					Layout.topMargin: Constants.component_spacing / 2
+
+					//: LABEL ALL_PLATFORMS
+					text: qsTr("Logfile")
+					onClicked: {
+						LogModel.saveDummyLogfile()
+						ApplicationModel.showFeedback("Created new logfile.")
+					}
 				}
-			}
 
-			GButton {
-				//: LABEL ALL_PLATFORMS
-				text: qsTr("History") + SettingsModel.translationTrigger
-				onClicked: {
-					HistoryModel.createDummyEntry()
-					ApplicationModel.showFeedback("Created new history entry.")
+				GButton {
+					Layout.fillWidth: true
+					Layout.margins: Constants.component_spacing
+					Layout.topMargin: 0
+
+					//: LABEL ALL_PLATFORMS
+					text: qsTr("History")
+					onClicked: {
+						HistoryModel.createDummyEntry()
+						ApplicationModel.showFeedback("Created new history entry.")
+					}
 				}
 			}
 		}

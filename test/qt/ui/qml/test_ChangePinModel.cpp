@@ -26,14 +26,14 @@ class test_ChangePinModel
 			QSignalSpy resultChanged(model, &ChangePinModel::fireResultChanged);
 			QSignalSpy newContextSet(model, &ChangePinModel::fireNewContextSet);
 
-			model->resetContext();
+			model->resetChangePinContext();
 			QCOMPARE(resultChanged.count(), 1);
 			QCOMPARE(newContextSet.count(), 0);
 
 			Q_EMIT context->fireSuccessMessageChanged();
 			QCOMPARE(resultChanged.count(), 1);
 
-			model->resetContext(context);
+			model->resetChangePinContext(context);
 			QCOMPARE(resultChanged.count(), 2);
 			QCOMPARE(newContextSet.count(), 1);
 
@@ -51,7 +51,7 @@ class test_ChangePinModel
 
 			context->setStatus(GlobalStatus::Code::No_Error);
 			context->setSuccessMessage(QStringLiteral("success"));
-			model->resetContext(context);
+			model->resetChangePinContext(context);
 			QCOMPARE(model->getResultString(), QStringLiteral("success"));
 		}
 

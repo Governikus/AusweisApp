@@ -2,16 +2,15 @@
  * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
 
 
@@ -31,7 +30,7 @@ SectionPage {
 	}
 
 	//: LABEL ANDROID IOS
-	title: qsTr("Remote service") + SettingsModel.translationTrigger
+	title: qsTr("Remote service")
 
 	Connections {
 		target: RemoteServiceModel
@@ -68,7 +67,7 @@ SectionPage {
 				spacing: Constants.text_spacing
 
 				TintableIcon {
-					source: "qrc:/images/info_filled.svg"
+					source: "qrc:/images/info.svg"
 					sourceSize.width: Style.dimens.small_icon_size
 					tintColor: Style.text.normal_secondary.textColor
 				}
@@ -77,7 +76,7 @@ SectionPage {
 					Layout.fillWidth: true
 
 					//: INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.
-					text: qsTr("Both of your devices have to be connected to the same WiFi.") + SettingsModel.translationTrigger
+					text: qsTr("Both of your devices have to be connected to the same WiFi.")
 					textStyle: Style.text.normal_secondary
 				}
 			}
@@ -95,8 +94,6 @@ SectionPage {
 				buttonColor: wifiEnabled ? (running ? Constants.red : Constants.darkgreen) : Style.color.button
 				enabled: (canEnableNfc || RemoteServiceModel.runnable || running || !wifiEnabled) && !serviceIsStarting
 				text: {
-					SettingsModel.translationTrigger; // Bind this evaluation to the trigger.
-
 					if (!wifiEnabled) {
 						//: LABEL ANDROID IOS
 						return qsTr("Enable WiFi");
@@ -119,8 +116,6 @@ SectionPage {
 					} else {
 						if (!running) {
 							serviceIsStarting = true
-						} else {
-							RemoteServiceModel.setPairing(false)
 						}
 						RemoteServiceModel.running = !running
 					}
@@ -144,7 +139,7 @@ SectionPage {
 					   qsTr("Stop pairing") :
 					   //: LABEL ANDROID IOS
 					   qsTr("Start pairing")
-					  ) + SettingsModel.translationTrigger
+					  )
 				onClicked: RemoteServiceModel.setPairing(!isPairing)
 			}
 
@@ -155,15 +150,15 @@ SectionPage {
 				Layout.fillWidth: true
 
 				//: LABEL ANDROID IOS
-				Accessible.name: qsTr("Pairing code: %1").arg(currentPin.split("").join(" ")) + SettingsModel.translationTrigger;
+				Accessible.name: qsTr("Pairing code: %1").arg(currentPin.split("").join(" "));
 
 				//: LABEL ANDROID IOS
-				text:  qsTr("Pairing code: <b>%1</b>").arg(currentPin) + SettingsModel.translationTrigger
+				text:  qsTr("Pairing code: <b>%1</b>").arg(currentPin)
 				textStyle: Style.text.header_accent
 				horizontalAlignment: Text.AlignHCenter
 			}
 
-			Item {/*spacer*/ Layout.fillHeight: true }
+			GSpacer { Layout.fillHeight: true }
 
 			GText {
 				visible: !RemoteServiceModel.runnable
@@ -186,7 +181,7 @@ SectionPage {
 				 //: INFO ANDROID IOS
 				: RemoteServiceModel.running ? qsTr("Waiting for connection from a paired device...")
 				 //: INFO ANDROID IOS
-				: qsTr("Start the remote access, in order to make this smartphone visible and to use it as a card reader (SaC)") + SettingsModel.translationTrigger
+				: qsTr("Start the remote access, in order to make this smartphone visible and to use it as a card reader (SaC)")
 				textStyle: Style.text.normal_secondary
 				horizontalAlignment: Text.AlignHCenter
 			}
@@ -199,7 +194,7 @@ SectionPage {
 
 				opacity: 0
 				//: LABEL ANDROID IOS
-				text: qsTr("Card access in progress") + SettingsModel.translationTrigger;
+				text: qsTr("Card access in progress");
 				textStyle: Style.text.header_accent
 				horizontalAlignment: Text.AlignHCenter
 			}
@@ -216,22 +211,40 @@ SectionPage {
 				horizontalAlignment: Text.AlignHCenter
 			}
 
+			GText {
+				id: networkPermissionText
+
+				visible: RemoteServiceModel.requiresLocalNetworkPermission && RemoteServiceModel.running && opacity > 0
+				Layout.fillWidth: true
+
+				text: "%1<br><a href=\"#\"><center>%2</center></a>"
+					//: INFO IOS Let user know to check the application settings for local network permission
+					.arg(qsTr("To be able to use your smartphone as card reader (SaC), please make sure that access to the local network is allowed for %1.").arg(Qt.application.name))
+					//: INFO IOS Link to application settings
+					.arg(qsTr("Go to application settings"))
+				textStyle: Style.text.normal_secondary
+				textFormat: Text.RichText
+				horizontalAlignment: Text.AlignHCenter
+
+				onLinkActivated: ApplicationModel.showSettings(ApplicationModel.SETTING_APP)
+			}
+
 			states: [
 				State { name: "UNCONNECTED"; when: RemoteServiceModel.running && !RemoteServiceModel.connectedToPairedDevice
 					PropertyChanges { target: pairingButton; opacity: 1 }
 					PropertyChanges { target: pairingCode; opacity: 1 }
 					PropertyChanges { target: infoMessage; opacity: 1 }
+					PropertyChanges { target: networkPermissionText; opacity: 1 }
 					PropertyChanges { target: headText; opacity: 0 }
 					PropertyChanges { target: subText; opacity: 0 }
-					PropertyChanges { target: ApplicationModel; nfcRunning: false; restoreEntryValues: false }
 				},
 				State { name: "CONNECTED"; when: RemoteServiceModel.running && RemoteServiceModel.connectedToPairedDevice
 					PropertyChanges { target: pairingButton; opacity: 0 }
 					PropertyChanges { target: pairingCode; opacity: 0 }
 					PropertyChanges { target: infoMessage; opacity: 0 }
+					PropertyChanges { target: networkPermissionText; opacity: 0 }
 					PropertyChanges { target: headText; opacity: 1 }
 					PropertyChanges { target: subText; opacity: 1 }
-					PropertyChanges { target: ApplicationModel; nfcRunning: true; restoreEntryValues: false }
 				}
 			]
 			transitions: [

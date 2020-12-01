@@ -48,10 +48,10 @@ void ProviderModel::updateConnections()
 		const auto& provider = providerConfigurationInfos.at(i);
 		const QModelIndex& modelIndex = createIndex(i, 0);
 
-		mConnections += connect(provider.getIcon().data(), &UpdatableFile::fireUpdated, this, [ = ] {
+		mConnections += connect(provider.getIcon().data(), &UpdatableFile::fireUpdated, this, [this, modelIndex] {
 					Q_EMIT dataChanged(modelIndex, modelIndex, {ProviderRoles::ICON});
 				});
-		mConnections += connect(provider.getImage().data(), &UpdatableFile::fireUpdated, this, [ = ] {
+		mConnections += connect(provider.getImage().data(), &UpdatableFile::fireUpdated, this, [this, modelIndex] {
 					Q_EMIT dataChanged(modelIndex, modelIndex, {ProviderRoles::IMAGE});
 				});
 	}
@@ -68,6 +68,7 @@ void ProviderModel::onProvidersChanged()
 
 ProviderModel::ProviderModel(QObject* pParent)
 	: QAbstractListModel(pParent)
+	, mIncludeCategories(false)
 {
 	updateConnections();
 	connect(Env::getSingleton<ProviderConfiguration>(), &ProviderConfiguration::fireUpdated, this, &ProviderModel::onProvidersChanged);
@@ -81,91 +82,114 @@ ProviderModel::~ProviderModel()
 
 int ProviderModel::rowCount(const QModelIndex&) const
 {
-	return Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos().size();
+	return Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos().size() + (mIncludeCategories ? getProviderCategories().size() : 0);
 }
 
 
 QVariant ProviderModel::data(const QModelIndex& pIndex, int pRole) const
 {
-	const auto& providerConfiguration = Env::getSingleton<ProviderConfiguration>();
-
-	if (pIndex.isValid())
+	if (!pIndex.isValid())
 	{
-		auto provider = providerConfiguration->getProviderConfigurationInfos().at(pIndex.row());
+		return {};
+	}
 
-		if (pRole == Qt::DisplayRole)
-		{
-			auto longName = provider.getLongName();
-			return longName.isEmpty() ? provider.getShortName().toString() : longName.toString();
-		}
+	const auto& providerConfiguration = Env::getSingleton<ProviderConfiguration>();
+	const auto& providerConfigurationInfos = providerConfiguration->getProviderConfigurationInfos();
 
-		if (pRole == CATEGORY)
-		{
-			return provider.getCategory();
-		}
-		if (pRole == SHORTNAME)
-		{
-			return provider.getShortName().toString();
-		}
-		if (pRole == LONGNAME)
-		{
-			return provider.getLongName().toString();
-		}
-		if (pRole == SHORTDESCRIPTION)
-		{
-			return provider.getShortDescription().toString();
-		}
-		if (pRole == LONGDESCRIPTION)
-		{
-			return provider.getLongDescription().toString();
-		}
-		if (pRole == ADDRESS)
-		{
-			return provider.getAddress();
-		}
-		if (pRole == ADDRESS_DOMAIN)
-		{
-			return provider.getAddressDomain();
-		}
-		if (pRole == HOMEPAGE)
-		{
-			return provider.getHomepage();
-		}
-		if (pRole == HOMEPAGE_BASE)
-		{
-			return provider.getHomepageBase();
-		}
-		if (pRole == PHONE)
-		{
-			return provider.getPhone();
-		}
-		if (pRole == PHONE_COST)
-		{
-			const auto& cost = providerConfiguration->getCallCost(provider);
-			return createCostString(cost);
-		}
-		if (pRole == EMAIL)
-		{
-			return provider.getEMail();
-		}
-		if (pRole == POSTALADDRESS)
-		{
-			return provider.getPostalAddress();
-		}
-		if (pRole == ICON)
-		{
-			return provider.getIcon()->lookupUrl();
-		}
-		if (pRole == IMAGE)
-		{
-			return provider.getImage()->lookupUrl();
-		}
-		if (pRole == SORT_ROLE)
-		{
-			auto value = provider.getLongName();
+	if (pIndex.row() >= providerConfigurationInfos.size())
+	{
+		const auto categoryRow = pIndex.row() - providerConfigurationInfos.size();
+		const auto category = getProviderCategories().at(categoryRow);
 
-			return provider.getCategory() + (value.isEmpty() ? provider.getShortName() : value);
+		switch (pRole)
+		{
+			case TYPE:
+				return QStringLiteral("category");
+
+			case CATEGORY:
+			case SORT_ROLE:
+				return category;
+
+			default:
+				return QVariant();
 		}
+	}
+
+	const auto& provider = providerConfigurationInfos.at(pIndex.row());
+
+	if (pRole == TYPE)
+	{
+		return QStringLiteral("provider");
+	}
+	if (pRole == Qt::DisplayRole)
+	{
+		return provider.getLongName().toString();
+	}
+	if (pRole == CATEGORY)
+	{
+		return provider.getCategory();
+	}
+	if (pRole == SHORTNAME)
+	{
+		return provider.getShortName().toString();
+	}
+	if (pRole == LONGNAME)
+	{
+		return provider.getLongName().toString();
+	}
+	if (pRole == SHORTDESCRIPTION)
+	{
+		return provider.getShortDescription().toString();
+	}
+	if (pRole == LONGDESCRIPTION)
+	{
+		return provider.getLongDescription().toString();
+	}
+	if (pRole == ADDRESS)
+	{
+		return provider.getAddress();
+	}
+	if (pRole == ADDRESS_DOMAIN)
+	{
+		return provider.getAddressDomain();
+	}
+	if (pRole == HOMEPAGE)
+	{
+		return provider.getHomepage();
+	}
+	if (pRole == HOMEPAGE_BASE)
+	{
+		return provider.getHomepageBase();
+	}
+	if (pRole == PHONE)
+	{
+		return provider.getPhone();
+	}
+	if (pRole == PHONE_COST)
+	{
+		const auto& cost = providerConfiguration->getCallCost(provider);
+		return createCostString(cost);
+	}
+	if (pRole == EMAIL)
+	{
+		return provider.getEMail();
+	}
+	if (pRole == POSTALADDRESS)
+	{
+		return provider.getPostalAddress();
+	}
+	if (pRole == ICON)
+	{
+		return provider.getIcon()->lookupUrl();
+	}
+	if (pRole == IMAGE)
+	{
+		return provider.getImage()->lookupUrl();
+	}
+	if (pRole == SORT_ROLE)
+	{
+		const auto& value = provider.getLongName();
+		return provider.getCategory() + (value.isEmpty() ? provider.getShortName() : value);
 	}
 
 	return QVariant();
@@ -190,14 +214,29 @@ QHash<int, QByteArray> ProviderModel::roleNames() const
 	roles.insert(POSTALADDRESS, "providerPostalAddress");
 	roles.insert(ICON, "providerIcon");
 	roles.insert(IMAGE, "providerImage");
+	roles.insert(TYPE, "itemType");
 
 	return roles;
 }
 
 
-const QSet<QString>& ProviderModel::getProviderCategories()
+void ProviderModel::setIncludeCategories(bool pIncludeCategories)
 {
-	static QSet<QString> cats({QStringLiteral("citizen"), QStringLiteral("insurance"), QStringLiteral("finance"), QStringLiteral("other")});
+	beginResetModel();
+	mIncludeCategories = pIncludeCategories;
+	endResetModel();
+}
+
+
+bool ProviderModel::getIncludeCategories() const
+{
+	return mIncludeCategories;
+}
+
+
+const QStringList& ProviderModel::getProviderCategories()
+{
+	static QStringList cats({QStringLiteral("all"), QStringLiteral("citizen"), QStringLiteral("insurance"), QStringLiteral("finance"), QStringLiteral("other")});
 	return cats;
 }
 

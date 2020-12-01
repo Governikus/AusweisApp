@@ -2,15 +2,13 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 SectionPage {
 	id: root
@@ -28,17 +26,22 @@ SectionPage {
 			anchors.fill: parent
 			anchors.margins: Constants.component_spacing
 
-			Pane {
+			GPane {
 				id: pane
 				//: LABEL ANDROID IOS
-				title: qsTr("Provider Information") + SettingsModel.translationTrigger
+				title: qsTr("Provider Information")
+
+				anchors {
+					left: parent.left
+					right: parent.right
+				}
 
 				LabeledText {
 					Accessible.onScrollDownAction: scrollPageDown()
 					Accessible.onScrollUpAction: scrollPageUp()
 
 					//: LABEL ANDROID IOS
-					label: qsTr("Provider name") + SettingsModel.translationTrigger
+					label: qsTr("Provider name")
 					text: historyModelItem ? historyModelItem.subject : ""
 					width: parent.width
 				}
@@ -50,7 +53,7 @@ SectionPage {
 					Accessible.onScrollUpAction: scrollPageUp()
 
 					//: LABEL ANDROID IOS
-					label: qsTr("Purpose") + SettingsModel.translationTrigger
+					label: qsTr("Purpose")
 					text: historyModelItem ? historyModelItem.purpose : ""
 					width: parent.width
 				}
@@ -60,12 +63,12 @@ SectionPage {
 					Accessible.onScrollUpAction: scrollPageUp()
 
 					//: LABEL ANDROID IOS
-					label: qsTr("Date") + SettingsModel.translationTrigger
+					label: qsTr("Date")
 					text:{
 						if (!historyModelItem) {
 							return "";
 						}
-						return historyModelItem.dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy")) + SettingsModel.translationTrigger
+						return historyModelItem.dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy"))
 					}
 					width: parent.width
 				}
@@ -74,8 +77,20 @@ SectionPage {
 					Accessible.onScrollDownAction: scrollPageDown()
 					Accessible.onScrollUpAction: scrollPageUp()
 
+					visible: text !== ""
+
 					//: LABEL ANDROID IOS
-					label: qsTr("Submitted data") + SettingsModel.translationTrigger
+					label: qsTr("Write access (update)")
+					text: historyModelItem ? historyModelItem.writtenData : ""
+					width: parent.width
+				}
+
+				LabeledText {
+					Accessible.onScrollDownAction: scrollPageDown()
+					Accessible.onScrollUpAction: scrollPageUp()
+
+					//: LABEL ANDROID IOS
+					label: qsTr("Read access")
 					text: historyModelItem ? historyModelItem.requestedData : ""
 					width: parent.width
 				}
@@ -85,7 +100,7 @@ SectionPage {
 					Accessible.onScrollUpAction: scrollPageUp()
 
 					//: LABEL ANDROID IOS
-					label: qsTr("Terms of usage") + SettingsModel.translationTrigger
+					label: qsTr("Terms of usage")
 					text: historyModelItem ? historyModelItem.termsOfUsage : ""
 					width: parent.width
 				}

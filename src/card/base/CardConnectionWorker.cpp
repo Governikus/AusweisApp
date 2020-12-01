@@ -23,9 +23,9 @@ CardConnectionWorker::CardConnectionWorker(Reader* pReader)
 	, mReader(pReader)
 	, mSecureMessaging()
 {
-	connect(mReader.data(), &Reader::fireCardInserted, this, &CardConnectionWorker::onReaderInfoChanged);
-	connect(mReader.data(), &Reader::fireCardRemoved, this, &CardConnectionWorker::onReaderInfoChanged);
-	connect(mReader.data(), &Reader::fireCardRetryCounterChanged, this, &CardConnectionWorker::onReaderInfoChanged);
+	connect(mReader.data(), &Reader::fireCardInserted, this, &CardConnectionWorker::fireReaderInfoChanged);
+	connect(mReader.data(), &Reader::fireCardRemoved, this, &CardConnectionWorker::fireReaderInfoChanged);
+	connect(mReader.data(), &Reader::fireCardRetryCounterChanged, this, &CardConnectionWorker::fireReaderInfoChanged);
 }
 
 
@@ -60,13 +60,6 @@ void CardConnectionWorker::setPukInoperative()
 QSharedPointer<const EFCardAccess> CardConnectionWorker::getEfCardAccess() const
 {
 	return getReaderInfo().getCardInfo().getEfCardAccess();
-}
-
-
-void CardConnectionWorker::onReaderInfoChanged(const QString& pReaderName)
-{
-	Q_ASSERT(pReaderName == mReader->getName());
-	Q_EMIT fireReaderInfoChanged(mReader->getReaderInfo());
 }
 
 
@@ -141,12 +134,12 @@ CardReturnCode CardConnectionWorker::readFile(const FileRef& pFileRef, QByteArra
 }
 
 
-void CardConnectionWorker::setProgressMessage(const QString& pMessage)
+void CardConnectionWorker::setProgressMessage(const QString& pMessage, int pProgress)
 {
 	const auto card = mReader ? mReader->getCard() : nullptr;
 	if (card)
 	{
-		card->setProgressMessage(pMessage);
+		card->setProgressMessage(pMessage, pProgress);
 	}
 }
 
@@ -164,21 +157,21 @@ bool CardConnectionWorker::stopSecureMessaging()
 
 
 EstablishPaceChannelOutput CardConnectionWorker::establishPaceChannel(PacePasswordId pPasswordId,
-		const QString& pPasswordValue)
+		const QByteArray& pPasswordValue)
 {
 	return establishPaceChannel(pPasswordId, pPasswordValue, nullptr, nullptr);
 }
 
 
 EstablishPaceChannelOutput CardConnectionWorker::establishPaceChannel(PacePasswordId pPasswordId,
-		const QString& pPasswordValue,
+		const QByteArray& pPasswordValue,
 		const QByteArray& pChat,
 		const QByteArray& pCertificateDescription)
 {
 	const auto card = mReader ? mReader->getCard() : nullptr;
 	if (!card)
 	{
-		return CardReturnCode::CARD_NOT_FOUND;
+		return EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND);
 	}
 
 	EstablishPaceChannelOutput output;
@@ -237,7 +230,7 @@ CardReturnCode CardConnectionWorker::destroyPaceChannel()
 }
 
 
-ResponseApduResult CardConnectionWorker::setEidPin(const QString& pNewPin, quint8 pTimeoutSeconds)
+ResponseApduResult CardConnectionWorker::setEidPin(const QByteArray& pNewPin, quint8 pTimeoutSeconds)
 {
 	const auto card = mReader ? mReader->getCard() : nullptr;
 	if (!card)
@@ -245,23 +238,25 @@ ResponseApduResult CardConnectionWorker::setEidPin(const QString& pNewPin, quint
 		return {CardReturnCode::CARD_NOT_FOUND};
 	}
 
+	ResponseApduResult result;
 	if (mReader->getReaderInfo().isBasicReader())
 	{
 		Q_ASSERT(!pNewPin.isEmpty());
-		ResetRetryCounterBuilder commandBuilder(pNewPin.toUtf8());
-		auto [returnCode, response] = transmit(commandBuilder.build());
-		if (returnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
-		{
-			qCWarning(::card) << "Modify PIN failed";
-			return {CardReturnCode::COMMAND_FAILED};
-		}
-		return {CardReturnCode::OK, response};
+		ResetRetryCounterBuilder commandBuilder(pNewPin);
+		result = transmit(commandBuilder.build());
 	}
 	else
 	{
 		Q_ASSERT(pNewPin.isEmpty());
-		return card->setEidPin(pTimeoutSeconds);
+		result = card->setEidPin(pTimeoutSeconds);
 	}
+
+	if (result.mReturnCode == CardReturnCode::OK && result.mResponseApdu.getReturnCode() != StatusCode::SUCCESS)
+	{
+		qCWarning(::card) << "Modify PIN failed";
+		return {CardReturnCode::COMMAND_FAILED};
+	}
+	return result;
 }
 
 

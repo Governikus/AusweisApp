@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Type.SettingsModel 1.0
@@ -54,8 +54,8 @@ GridLayout {
 	NumberPadButton {
 		enabled: baseItem.deleteEnabled
 
-		text: qsTr("Delete last digit") + SettingsModel.translationTrigger
-		icon.source: "qrc:///images/delete.svg"
+		text: qsTr("Delete last digit")
+		icon.source: "qrc:///images/mobile/material_backspace.svg"
 
 		onClicked: baseItem.deletePressed()
 	}
@@ -73,8 +73,8 @@ GridLayout {
 	NumberPadButton {
 		enabled: baseItem.submitEnabled
 
-		text: qsTr("Submit") + SettingsModel.translationTrigger
-		icon.source: "qrc:///images/submit.svg"
+		text: qsTr("Submit")
+		icon.source: "qrc:///images/material_check.svg"
 
 		onClicked: baseItem.submitPressed()
 	}

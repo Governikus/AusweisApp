@@ -2,11 +2,9 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 Item {
 
@@ -40,6 +38,6 @@ Item {
 
 		label: title
 		//: LABEL ANDROID IOS
-		text: name.length > 0 ? name : qsTr("Touch for more details") + SettingsModel.translationTrigger
+		text: name.length > 0 ? name : qsTr("Touch for more details")
 	}
 }

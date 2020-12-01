@@ -21,7 +21,7 @@ class test_HttpRequest
 	private Q_SLOTS:
 		void parseEmptyBody()
 		{
-			auto* socket = new MockSocket;
+			auto* socket = new MockSocket();
 			socket->mReadBuffer = QByteArray("GET /favicon.ico HTTP/1.1\r\n"
 											 "Host: Dummy.de\r\n"
 											 "\r\n\r\n");
@@ -38,7 +38,7 @@ class test_HttpRequest
 
 		void isUpgrade()
 		{
-			auto* socket = new MockSocket;
+			auto* socket = new MockSocket();
 			socket->mReadBuffer = QByteArray("GET / HTTP/1.1\r\n"
 											 "Host: server.example.com\r\n"
 											 "Upgrade: websocket\r\n"
@@ -63,7 +63,7 @@ class test_HttpRequest
 
 		void tcTokenURL()
 		{
-			auto* socket = new MockSocket;
+			auto* socket = new MockSocket();
 			socket->mReadBuffer = QByteArray("GET /eID-Client?tcTokenURL=https%3A%2F%2Ftest.governikus-eid.de%3A443%2FAutent-DemoApplication%2FRequestServlet%3Fprovider%3Ddemo_epa_20%26redirect%3Dtrue HTTP/1.1\r\n"
 											 "Host: 127.0.0.1:24727\r\n"
 											 "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:49.0) Gecko/20100101 Firefox/49.0\r\n"

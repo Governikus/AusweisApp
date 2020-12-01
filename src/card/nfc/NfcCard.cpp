@@ -4,21 +4,15 @@
 
 #include "NfcCard.h"
 
+#include "VolatileSettings.h"
+
 #include <QLoggingCategory>
-#include <QNdefMessage>
 
 
 using namespace governikus;
 
 
 Q_DECLARE_LOGGING_CATEGORY(card_nfc)
-
-
-void NfcCard::onError(QNearFieldTarget::Error pError, const QNearFieldTarget::RequestId& pId)
-{
-	Q_UNUSED(pId)
-	qCWarning(card_nfc) << "Error:" << pError;
-}
 
 
 NfcCard::NfcCard(QNearFieldTarget* pNearFieldTarget)
@@ -29,16 +23,11 @@ NfcCard::NfcCard(QNearFieldTarget* pNearFieldTarget)
 {
 	qCDebug(card_nfc) << "Card created";
 
-	QObject::connect(pNearFieldTarget, &QNearFieldTarget::error, this, &NfcCard::onError);
+	QObject::connect(pNearFieldTarget, &QNearFieldTarget::error, this, &NfcCard::fireTargetError);
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 	pNearFieldTarget->setKeepConnection(true);
-}
-
-
-NfcCard::~NfcCard()
-{
-	//	Memory is managed by QNearFieldManager
-	//	delete mNearFieldTarget;
+#endif
 }
 
 
@@ -50,7 +39,7 @@ bool NfcCard::isValid() const
 
 bool NfcCard::invalidateTarget(QNearFieldTarget* pNearFieldTarget)
 {
-	if (pNearFieldTarget == mNearFieldTarget)
+	if (pNearFieldTarget == mNearFieldTarget.data())
 	{
 		mIsValid = false;
 		return true;
@@ -99,6 +88,27 @@ bool NfcCard::isConnected()
 }
 
 
+void NfcCard::setProgressMessage(const QString& pMessage, int pProgress)
+{
+	QString message;
+	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+	{
+		message = pMessage;
+	}
+
+	if (pProgress != -1)
+	{
+		if (!message.isEmpty())
+		{
+			message += QLatin1Char('\n');
+		}
+		message += QStringLiteral("%1 %").arg(pProgress);
+	}
+
+	Q_EMIT fireSetProgressMessage(message);
+}
+
+
 ResponseApduResult NfcCard::transmit(const CommandApdu& pCmd)
 {
 	if (!mIsValid || mNearFieldTarget == nullptr)
@@ -119,6 +129,12 @@ ResponseApduResult NfcCard::transmit(const CommandApdu& pCmd)
 	if (!id.isValid())
 	{
 		qCWarning(card_nfc) << "Cannot write messages";
+		return {CardReturnCode::COMMAND_FAILED};
+	}
+
+	if (!mNearFieldTarget->waitForRequestCompleted(id, 1500))
+	{
+		qCWarning(card_nfc) << "Transmit timeout reached";
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 

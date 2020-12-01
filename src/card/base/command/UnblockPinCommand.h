@@ -20,14 +20,14 @@ class UnblockPinCommand
 
 	private:
 		friend class ::test_UnblockPinCommand;
-		QString mPuk;
+		QByteArray mPuk;
 
 	protected:
 		virtual void internalExecute() override;
 		virtual ~UnblockPinCommand() override = default;
 
 	public:
-		explicit UnblockPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, const QString& pPuk);
+		explicit UnblockPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, const QByteArray& pPuk);
 
 };
 

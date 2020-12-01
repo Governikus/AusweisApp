@@ -174,12 +174,12 @@ void PcscReaderManagerPlugIn::updateReaders()
 		connect(reader, &Reader::fireCardRetryCounterChanged, this, &PcscReaderManagerPlugIn::fireCardRetryCounterChanged);
 
 		qCDebug(card_pcsc) << "fireReaderAdded:" << readerName << "(" << mReaders.size() << "reader in total )";
-		Q_EMIT fireReaderAdded(readerName);
+		Q_EMIT fireReaderAdded(reader->getReaderInfo());
 	}
 }
 
 
-QString PcscReaderManagerPlugIn::extractReaderName(PCSC_CHAR_PTR pReaderPointer)
+QString PcscReaderManagerPlugIn::extractReaderName(PCSC_CHAR_PTR pReaderPointer) const
 {
 #if defined(Q_OS_WIN) && defined(UNICODE)
 	return QString::fromWCharArray(pReaderPointer);
@@ -199,10 +199,13 @@ void PcscReaderManagerPlugIn::removeReader(const QString& pReaderName)
 		Q_ASSERT(false);
 	}
 
-	delete mReaders.take(pReaderName);
+	auto* reader = mReaders.take(pReaderName);
+	auto info = reader->getReaderInfo();
+	delete reader;
+	info.setCardInfo(CardInfo(CardType::NONE));
 
 	qCDebug(card_pcsc) << "fireReaderRemoved:" << pReaderName;
-	Q_EMIT fireReaderRemoved(pReaderName);
+	Q_EMIT fireReaderRemoved(info);
 }
 
 
@@ -236,7 +239,7 @@ PCSC_RETURNCODE PcscReaderManagerPlugIn::readReaderNames(QStringList& pReaderNam
 	}
 
 	PCSC_CHAR_PTR pReader = readers.data();
-	PCSC_CHAR_PTR end = pReader + maxReadersSize - 1;
+	const PCSC_CHAR_PTR end = pReader + maxReadersSize - 1;
 	while (pReader < end)
 	{
 		QString readerName = extractReaderName(pReader);

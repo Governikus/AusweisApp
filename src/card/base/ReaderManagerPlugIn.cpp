@@ -28,7 +28,7 @@ void ReaderManagerPlugIn::startScan(bool /*pAutoConnect*/)
 
 void ReaderManagerPlugIn::stopScan(const QString& pError)
 {
-	Q_UNUSED(pError);
+	Q_UNUSED(pError)
 
 	if (mScanRunning)
 	{

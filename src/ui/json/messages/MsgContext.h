@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "context/AuthContext.h"
 #include "context/WorkflowContext.h"
 #include "MsgTypes.h"
 
@@ -32,11 +31,34 @@ class MsgContext
 
 		bool isActiveWorkflow() const;
 
-		QSharedPointer<AuthContext> getAuthContext();
-		QSharedPointer<const AuthContext> getAuthContext() const;
+		template<typename T = WorkflowContext>
+		QSharedPointer<const T> getContext() const
+		{
+			static_assert(std::is_base_of<WorkflowContext, T>::value, "T must derive WorkflowContext");
 
-		QSharedPointer<WorkflowContext> getWorkflowContext();
-		QSharedPointer<const WorkflowContext> getWorkflowContext() const;
+			if (mContext)
+			{
+				return mContext.objectCast<const T>();
+			}
+
+			return QSharedPointer<const T>();
+		}
+
+
+		template<typename T = WorkflowContext>
+		QSharedPointer<T> getContext()
+		{
+			static_assert(std::is_base_of<WorkflowContext, T>::value, "T must derive WorkflowContext");
+
+			if (mContext)
+			{
+				return mContext.objectCast<T>();
+			}
+
+			return QSharedPointer<T>();
+		}
+
+
 };
 
 class MsgDispatcherContext

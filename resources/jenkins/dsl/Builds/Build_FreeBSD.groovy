@@ -28,7 +28,6 @@ j.with
 			-DCMAKE_PREFIX_PATH=${WORKSPACE}/libs/build/dist
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 			-DBUILD_SHARED_LIBS=on
-			-DSANITIZER=on
 			'''))
 
 		shell('''\

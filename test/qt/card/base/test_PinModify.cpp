@@ -26,7 +26,7 @@ class test_PinModify
 		const quint8 mTimeoutSeconds;
 
 	private Q_SLOTS:
-		void createCcidForPcsc()
+		void createCcid()
 		{
 			quint8 timeout = 77;
 			PinModify pinModify(timeout);
@@ -36,35 +36,7 @@ class test_PinModify
 			expected += static_cast<char>(timeout);
 			expected += QByteArray::fromHex("82000000000606010202070400010200000004000000002C0203");
 
-			QCOMPARE(pinModify.createCcidForPcsc(), expected);
-		}
-
-
-		void createCcidForBluetooth()
-		{
-			quint8 timeout = 77;
-			PinModify pinModify(timeout);
-
-			QByteArray expected;
-			expected += QByteArray::fromHex("FF9A04101801");
-			expected += static_cast<char>(timeout);
-			expected += QByteArray::fromHex("820000000006060102020704000102000000002C0203");
-
-			QCOMPARE(pinModify.createCcidForBluetooth().getBuffer(), expected);
-		}
-
-
-		void createCcidForRemote()
-		{
-			quint8 timeout = 77;
-			PinModify pinModify(timeout);
-
-			QByteArray expected;
-			expected += static_cast<char>(timeout);
-			expected += static_cast<char>(timeout);
-			expected += QByteArray::fromHex("82000000000606010202070400010200000004000000002C0203");
-
-			QCOMPARE(pinModify.createCcidForRemote(), expected);
+			QCOMPARE(pinModify.createCcid(), expected);
 		}
 
 
@@ -101,7 +73,7 @@ class test_PinModify
 		void buildAndParse()
 		{
 			PinModify builder(mTimeoutSeconds);
-			const QByteArray data = builder.createCcidForRemote();
+			const QByteArray data = builder.createCcid();
 
 			PinModify parser(data);
 			QCOMPARE(parser.getTimeoutSeconds(), mTimeoutSeconds);

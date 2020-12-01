@@ -60,15 +60,19 @@ class test_UrlUtil
 					URL_PREFIX + "?ResultMajor=ok");
 
 			// General server error
-			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::AL_Communication_Error, QString(), ECardApiResult::Origin::Server))).toString(),
+			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::AL_Unknown_Error, QString(), ECardApiResult::Origin::Server))).toString(),
 					URL_PREFIX + "?ResultMajor=error&ResultMinor=serverError");
 
-			// Minors defined in TR-03112-1
+			// Minors defined in TR-03112-1 and TR-03124-1 2.5.4.2
 			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::AL_Communication_Error))).toString(),
 					URL_PREFIX + "?ResultMajor=error&ResultMinor=communicationError");
 			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed))).toString(),
 					URL_PREFIX + "?ResultMajor=error&ResultMinor=trustedChannelEstablishmentFailed");
 			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::SAL_Cancellation_by_User))).toString(),
+					URL_PREFIX + "?ResultMajor=error&ResultMinor=cancellationByUser");
+
+			// No difference between client and server origin
+			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::SAL_Cancellation_by_User, QString(), ECardApiResult::Origin::Server))).toString(),
 					URL_PREFIX + "?ResultMajor=error&ResultMinor=cancellationByUser");
 
 			// General client error

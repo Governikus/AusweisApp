@@ -47,7 +47,7 @@ class test_DidAuthenticateEAC2Command
 			QByteArray input("0000");
 			mWorker->addResponse(CardReturnCode::COMMAND_FAILED);
 			const CVCertificateChain cvcChain = createCVCertificateChain("cvca-DETESTeID00001.hex");
-			DidAuthenticateEAC2Command command(mWorker, cvcChain, QString(), QString(), input);
+			DidAuthenticateEAC2Command command(mWorker, cvcChain, QByteArray(), QByteArray(), input);
 
 			QByteArray bytes = QByteArray::fromHex("30 12"
 												   "            06 0A 04007F00070202030202"

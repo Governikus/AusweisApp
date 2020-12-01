@@ -2,14 +2,13 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
+import QtGraphicalEffects 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.SettingsModel 1.0
 
 Button {
 	id: numberPadButton
@@ -22,7 +21,7 @@ Button {
 	Layout.fillWidth: true
 
 	Accessible.name: numberPadButton.text
-	Accessible.description: numberPadButton.enabled ? "": qsTr("Disabled") + SettingsModel.translationTrigger
+	Accessible.description: numberPadButton.enabled ? "": qsTr("Disabled")
 	Accessible.ignored: Qt.platform.os === "ios" ? false : !numberPadButton.enabled
 	Accessible.onPressAction: if (Qt.platform.os === "ios" && numberPadButton.enabled) clicked(null)
 
@@ -37,13 +36,11 @@ Button {
 		verticalAlignment: Text.AlignVCenter
 	}
 
-	background: Image {
+	background: TintableIcon {
 		visible: numberPadButton.icon.source != "" && numberPadButton.enabled
 		anchors.centerIn: numberPadButton
 
-		height: parent.implicitHeight
-		width: parent.implicitWidth
-		fillMode: Image.PreserveAspectFit
+		sourceSize.height: numberPadButton.implicitHeight
 		source: numberPadButton.icon.source
 	}
 

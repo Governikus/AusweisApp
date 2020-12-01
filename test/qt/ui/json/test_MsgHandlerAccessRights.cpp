@@ -6,8 +6,10 @@
 
 #include "messages/MsgHandlerAccessRights.h"
 
+#include "AppSettings.h"
 #include "InternalActivationContext.h"
 #include "MessageDispatcher.h"
+#include "VolatileSettings.h"
 
 #include "TestAuthContext.h"
 #include <QtTest>
@@ -27,11 +29,14 @@ class test_MsgHandlerAccessRights
 	}
 
 
-	QSharedPointer<TestAuthContext> getContextWithChat()
+	QSharedPointer<TestAuthContext> getContextWithChat(bool pCanAllowed = false)
 	{
-		QSharedPointer<TestAuthContext> context(new TestAuthContext(new InternalActivationContext(QUrl("http://dummy")), ":/paos/DIDAuthenticateEAC1.xml"));
+		Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(pCanAllowed);
+		QSharedPointer<ActivationContext> activationContext(new InternalActivationContext(QUrl("http://dummy")));
+		QSharedPointer<TestAuthContext> context(new TestAuthContext(activationContext, ":/paos/DIDAuthenticateEAC1.xml"));
 		context->setRequiredAccessRights({AccessRight::READ_DG01, AccessRight::READ_DG04, AccessRight::READ_DG17});
 		context->setOptionalAccessRights({AccessRight::AGE_VERIFICATION, AccessRight::READ_DG05});
+		Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(false);
 		return context;
 	}
 
@@ -53,9 +58,16 @@ class test_MsgHandlerAccessRights
 	}
 
 	private Q_SLOTS:
+		void init()
+		{
+			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
+		}
+
+
 		void nonExistingTransactionInfo()
 		{
-			QSharedPointer<TestAuthContext> context(new TestAuthContext(new InternalActivationContext(QUrl("http://dummy")), ":/paos/DIDAuthenticateEAC1_2.xml"));
+			QSharedPointer<ActivationContext> activationContext(new InternalActivationContext(QUrl("http://dummy")));
+			QSharedPointer<TestAuthContext> context(new TestAuthContext(activationContext, ":/paos/DIDAuthenticateEAC1_2.xml"));
 			MessageDispatcher dispatcher;
 			dispatcher.init(context);
 
@@ -112,6 +124,24 @@ class test_MsgHandlerAccessRights
 			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
 					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+		}
+
+
+		void getAccessRightsCanAllowed()
+		{
+			MessageDispatcher dispatcher;
+			auto context = getContextWithChat(true);
+			dispatcher.init(context);
+
+			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
+			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
+					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","CanAllowed","AgeVerification"],"optional":["FamilyName","CanAllowed","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+
+			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["FamilyName","AgeVerification"]}   )")),
+					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","CanAllowed","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+
+			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["FamilyName","AgeVerification", "CanAllowed"]}   )")),
+					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","CanAllowed","AgeVerification"],"optional":["FamilyName","CanAllowed","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 		}
 
 

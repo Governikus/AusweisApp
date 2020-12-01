@@ -17,9 +17,9 @@ Q_DECLARE_LOGGING_CATEGORY(remote_device)
 using namespace governikus;
 
 
-static Initializer::Entry E([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<RemoteCardMessageType>("RemoteCardMessageType");
-		});
+		})
 
 
 RemoteDispatcher::RemoteDispatcher(IfdVersion::Version pVersion, const QSharedPointer<DataChannel>& pDataChannel)
@@ -28,6 +28,8 @@ RemoteDispatcher::RemoteDispatcher(IfdVersion::Version pVersion, const QSharedPo
 	, mVersion(pVersion)
 	, mContextHandle()
 {
+	Q_ASSERT(mDataChannel);
+
 	connect(mDataChannel.data(), &DataChannel::fireReceived, this, &RemoteDispatcher::onReceived);
 	connect(mDataChannel.data(), &DataChannel::fireClosed, this, &RemoteDispatcher::onClosed);
 }

@@ -34,7 +34,7 @@ class PcscReaderManagerPlugIn
 		PCSC_RETURNCODE readReaderNames(QStringList& pReaderNames);
 		void updateReaders();
 		void initReaderState();
-		inline QString extractReaderName(PCSC_CHAR_PTR pReaderPointer);
+		inline QString extractReaderName(PCSC_CHAR_PTR pReaderPointer) const;
 		void removeReader(const QString& pReaderName);
 		void removeReaders(const QStringList& pReaderNames);
 

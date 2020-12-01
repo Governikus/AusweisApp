@@ -15,9 +15,9 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 
 using namespace governikus;
 
-static Initializer::Entry X([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<QSharedPointer<CardConnectionWorker> >("QSharedPointer<CardConnectionWorker>");
-		});
+		})
 
 
 ReaderManagerWorker::ReaderManagerWorker()
@@ -30,12 +30,23 @@ ReaderManagerWorker::ReaderManagerWorker()
 ReaderManagerWorker::~ReaderManagerWorker()
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
+	qCDebug(card) << "Worker removed";
+}
 
+
+void ReaderManagerWorker::shutdown()
+{
+	qCDebug(card) << "Shutdown ReaderManagerWorker";
 	for (auto& plugin : qAsConst(mPlugIns))
 	{
 		qCDebug(card) << "Shutdown plugin:" << plugin->metaObject()->className();
 		plugin->shutdown();
+
+		// Plugins and therefore their members are not auto destructed due to a bug in Qt.
+		// https://bugreports.qt.io/browse/QTBUG-17458
+		plugin->deleteLater();
 	}
+	mPlugIns.clear();
 }
 
 
@@ -76,7 +87,7 @@ void ReaderManagerWorker::registerPlugIns()
 }
 
 
-bool ReaderManagerWorker::isPlugIn(const QJsonObject& pJson)
+bool ReaderManagerWorker::isPlugIn(const QJsonObject& pJson) const
 {
 	return pJson.value(QStringLiteral("IID")).toString() == QLatin1String("governikus.ReaderManagerPlugIn");
 }
@@ -91,7 +102,6 @@ void ReaderManagerWorker::registerPlugIn(ReaderManagerPlugIn* pPlugIn)
 
 	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderAdded, this, &ReaderManagerWorker::fireReaderAdded);
 	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderRemoved, this, &ReaderManagerWorker::fireReaderRemoved);
-	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderDeviceError, this, &ReaderManagerWorker::fireReaderDeviceError);
 	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderPropertiesUpdated, this, &ReaderManagerWorker::fireReaderPropertiesUpdated);
 	connect(pPlugIn, &ReaderManagerPlugIn::fireStatusChanged, this, &ReaderManagerWorker::fireStatusChanged);
 	connect(pPlugIn, &ReaderManagerPlugIn::fireCardInserted, this, &ReaderManagerWorker::fireCardInserted);
@@ -175,13 +185,12 @@ QVector<ReaderManagerPlugInInfo> ReaderManagerWorker::getPlugInInfos() const
 }
 
 
-QVector<ReaderInfo> ReaderManagerWorker::getReaderInfos(const ReaderFilter& pFilter) const
+QVector<ReaderInfo> ReaderManagerWorker::getReaderInfos() const
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	QVector<ReaderInfo> list;
-	const QVector<ReaderManagerPlugIn*>& plugIns = pFilter.apply(mPlugIns);
-	for (const auto& plugIn : plugIns)
+	for (const auto& plugIn : qAsConst(mPlugIns))
 	{
 		const auto& readerList = plugIn->getReaders();
 		for (const Reader* const reader : readerList)
@@ -190,15 +199,6 @@ QVector<ReaderInfo> ReaderManagerWorker::getReaderInfos(const ReaderFilter& pFil
 		}
 	}
 	return list;
-}
-
-
-ReaderInfo ReaderManagerWorker::getReaderInfo(const QString& pReaderName) const
-{
-	Q_ASSERT(QObject::thread() == QThread::currentThread());
-
-	const Reader* const reader = getReader(pReaderName);
-	return reader ? reader->getReaderInfo() : ReaderInfo(pReaderName);
 }
 
 

@@ -6,6 +6,7 @@
 
 #include "Env.h"
 #include "HttpServerStatusParser.h"
+#include "LanguageLoader.h"
 #include "Template.h"
 #include "VersionInfo.h"
 #include "VersionNumber.h"
@@ -79,28 +80,46 @@ bool WebserviceActivationHandler::start()
 }
 
 
+QMap<QString, QString> WebserviceActivationHandler::getQueryParameter(const QUrl& pUrl)
+{
+	QMap<QString, QString> map;
+
+	const auto queryItems = QUrlQuery(pUrl).queryItems();
+	for (auto& item : queryItems)
+	{
+		map.insert(item.first.toLower(), item.second);
+	}
+
+	return map;
+}
+
+
 void WebserviceActivationHandler::onNewRequest(const QSharedPointer<HttpRequest>& pRequest)
 {
+	static const QString SHOW_UI = QStringLiteral("showui");
+	static const QString STATUS = QStringLiteral("status");
+	static const QString TCTOKEN_URL = QStringLiteral("tctokenurl");
+
 	const auto& url = pRequest->getUrl();
 	if (url.path() == QLatin1String("/eID-Client"))
 	{
 		const auto urlParameter = getQueryParameter(url);
 
-		if (urlParameter.contains(QLatin1String("showui")))
+		if (urlParameter.contains(SHOW_UI))
 		{
 			qCDebug(activation) << "Request type: showui";
-			UiModule module = Enum<UiModule>::fromString(urlParameter.value(QLatin1String("showui")).toUpper(), UiModule::DEFAULT);
+			UiModule module = Enum<UiModule>::fromString(urlParameter.value(SHOW_UI).toUpper(), UiModule::DEFAULT);
 			handleShowUiRequest(module, pRequest);
 			return;
 		}
-		else if (urlParameter.contains(QLatin1String("status")))
+		else if (urlParameter.contains(STATUS))
 		{
 			qCDebug(activation) << "Request type: status";
-			StatusFormat statusFormat = Enum<StatusFormat>::fromString(urlParameter.value(QLatin1String("status")).toUpper(), StatusFormat::PLAIN);
+			StatusFormat statusFormat = Enum<StatusFormat>::fromString(urlParameter.value(STATUS).toUpper(), StatusFormat::PLAIN);
 			handleStatusRequest(statusFormat, pRequest);
 			return;
 		}
-		else if (urlParameter.contains(QLatin1String("tctokenurl")))
+		else if (urlParameter.contains(TCTOKEN_URL))
 		{
 			qCDebug(activation) << "Request type: authentication";
 			Q_EMIT fireAuthenticationRequest(QSharedPointer<WebserviceActivationContext>::create(pRequest));
@@ -109,7 +128,7 @@ void WebserviceActivationHandler::onNewRequest(const QSharedPointer<HttpRequest>
 	}
 	else if (url.path() == QLatin1String("/favicon.ico"))
 	{
-		handleImageRequest(pRequest, QStringLiteral(":/images/npa.ico")); // it MUST be an ICO!
+		handleImageRequest(pRequest, QStringLiteral(":/images/desktop/npa.ico")); // it MUST be an ICO!
 		return;
 	}
 	else if (url.path().startsWith(QLatin1String("/images/")) && !url.path().contains(QLatin1String("../")))
@@ -133,8 +152,7 @@ void WebserviceActivationHandler::onNewRequest(const QSharedPointer<HttpRequest>
 	htmlTemplate.setContextParameter(QStringLiteral("ERROR_MESSAGE"), tr("Unknown request: %1").arg(url.toString()));
 	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_HEADER"), tr("Would you like to report this error?"));
-	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
-	htmlTemplate.setContextParameter(QStringLiteral("REPORT_LINK"), tr("https://www.ausweisapp.bund.de/en/qa/report-an-error/"));
+	htmlTemplate.setContextParameter(QStringLiteral("REPORT_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1/aa2/report").arg(LanguageLoader::getLocalCode()));
 	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_BUTTON"), tr("Report now"));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();
@@ -176,7 +194,7 @@ void WebserviceActivationHandler::handleShowUiRequest(UiModule pUiModule, const 
 }
 
 
-void WebserviceActivationHandler::handleImageRequest(const QSharedPointer<HttpRequest>& pRequest, const QString& pImagePath)
+void WebserviceActivationHandler::handleImageRequest(const QSharedPointer<HttpRequest>& pRequest, const QString& pImagePath) const
 {
 	HttpResponse response;
 
@@ -221,7 +239,7 @@ QByteArray WebserviceActivationHandler::guessImageContentType(const QString& pFi
 }
 
 
-void WebserviceActivationHandler::handleStatusRequest(StatusFormat pStatusFormat, const QSharedPointer<HttpRequest>& pRequest)
+void WebserviceActivationHandler::handleStatusRequest(StatusFormat pStatusFormat, const QSharedPointer<HttpRequest>& pRequest) const
 {
 	qCDebug(activation) << "Create response with status format:" << pStatusFormat;
 

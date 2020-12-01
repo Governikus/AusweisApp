@@ -25,7 +25,7 @@ class RemoteDeviceListEntry
 		QVector<QTime> mLastSeenHistory;
 
 	public:
-		RemoteDeviceListEntry(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor);
+		explicit RemoteDeviceListEntry(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor);
 
 		void setLastSeenToNow();
 		bool cleanUpSeenTimestamps(int pReaderResponsiveTimeout);

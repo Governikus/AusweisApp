@@ -2,12 +2,11 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.HistoryModel 1.0
-import Governikus.Type.SettingsModel 1.0
 
 HistoryListItem {
 	id: listItem
@@ -16,7 +15,7 @@ HistoryListItem {
 
 	contentMarginRight: deleteButton.width + 2 * Constants.groupbox_spacing
 
-	Image {
+	TintableIcon {
 		id: deleteButton
 
 		anchors.right: parent.right
@@ -24,8 +23,8 @@ HistoryListItem {
 		anchors.margins: Constants.groupbox_spacing
 		sourceSize.width: Style.dimens.small_icon_size
 
-		source: "qrc:///images/trash_icon.svg"
-		fillMode: Image.PreserveAspectFit
+		source: "qrc:///images/material_delete.svg"
+		tintColor: Style.color.accent
 	}
 
 	MouseArea {
@@ -36,7 +35,7 @@ HistoryListItem {
 
 
 		//: LABEL ANDROID
-		Accessible.name: qsTr("Delete entry") + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Delete entry")
 		Accessible.role: Accessible.Button
 		onClicked: HistoryModel.removeRows(index, 1)
 	}

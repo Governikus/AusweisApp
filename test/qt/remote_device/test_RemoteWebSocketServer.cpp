@@ -105,7 +105,7 @@ class test_RemoteWebSocketServer
 
 		void init()
 		{
-			mServer.reset(new RemoteWebSocketServerImpl);
+			mServer.reset(new RemoteWebSocketServerImpl());
 		}
 
 
@@ -175,7 +175,7 @@ class test_RemoteWebSocketServer
 
 			client.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
 
-			QTRY_COMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(client.state(), QAbstractSocket::SocketState::ConnectedState);
 			QCOMPARE(mServer->getCurrentCertificate(), client.sslConfiguration().localCertificate());
 		}
@@ -200,7 +200,7 @@ class test_RemoteWebSocketServer
 			PskHandler pskHandler(&client);
 			client.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
 
-			QTRY_COMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(client.state(), QAbstractSocket::SocketState::ConnectedState);
 			QCOMPARE(mServer->getCurrentCertificate(), client.sslConfiguration().localCertificate());
 		}
@@ -245,10 +245,10 @@ class test_RemoteWebSocketServer
 			QSignalSpy spy2(&client2, &QWebSocket::disconnected);
 
 			client1.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
-			QTRY_COMPARE(spy1.count(), 1);
+			QTRY_COMPARE(spy1.count(), 1); // clazy:exclude=qstring-allocations
 
 			client2.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
-			QTRY_COMPARE(spy2.count(), 1);
+			QTRY_COMPARE(spy2.count(), 1); // clazy:exclude=qstring-allocations
 
 			QCOMPARE(client1.state(), QAbstractSocket::SocketState::ConnectedState);
 			QCOMPARE(client2.state(), QAbstractSocket::SocketState::UnconnectedState);
@@ -278,14 +278,14 @@ class test_RemoteWebSocketServer
 			mServer->setPairing();
 			client.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
 
-			QTRY_COMPARE(serverConnectedSpy.count(), 1);
+			QTRY_COMPARE(serverConnectedSpy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(serverConnectedSpy[0][0].toBool());
 			QVERIFY(mServer->isConnected());
 
 			QSignalSpy serverDisconnectedSpy(mServer.data(), &RemoteWebSocketServer::fireConnectedChanged);
 			client.close();
 
-			QTRY_COMPARE(serverDisconnectedSpy.count(), 1);
+			QTRY_COMPARE(serverDisconnectedSpy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(!serverDisconnectedSpy[0][0].toBool());
 			QVERIFY(!mServer->isConnected());
 		}

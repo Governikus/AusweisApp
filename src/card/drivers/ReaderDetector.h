@@ -11,13 +11,12 @@
 #include "ReaderConfiguration.h"
 #include "UsbId.h"
 
-#ifdef Q_OS_MACOS
-#include <IOKit/IOKitLib.h>
+#ifdef Q_OS_LINUX
+#include "DeviceListener.h"
 #endif
 
-#ifdef Q_OS_LINUX
-#include <QThread>
-class DeviceListener;
+#ifdef Q_OS_MACOS
+#include <IOKit/IOKitLib.h>
 #endif
 
 #ifdef Q_OS_WIN
@@ -56,7 +55,6 @@ class ReaderDetector
 	protected:
 		ReaderDetector();
 		~ReaderDetector() override;
-		static ReaderDetector& getInstance();
 
 	public:
 		virtual QVector<UsbId> attachedDevIds() const;
@@ -71,7 +69,7 @@ class ReaderDetector
 		 */
 		QVector<ReaderConfigurationInfo> getAttachedSupportedDevices() const;
 
-		ReaderConfigurationInfo getReaderConfigurationInfo(const QString& pReaderName);
+		ReaderConfigurationInfo getReaderConfigurationInfo(const QString& pReaderName) const;
 
 	Q_SIGNALS:
 		void fireReaderChangeDetected();

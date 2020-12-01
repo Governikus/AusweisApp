@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "ActivationHandler.h"
+#include "ActivationController.h"
 #include "EnumHelper.h"
 
 #include <QAbstractNativeEventFilter>
@@ -47,25 +47,33 @@ class AppController final
 		Action mCurrentAction;
 		QScopedPointer<WorkflowRequest> mWaitingRequest;
 		QScopedPointer<WorkflowController> mActiveController;
+		ActivationController mActivationController;
 		bool mShutdownRunning;
 		const UIPlugIn* mUiDomination;
 		bool mRestartApplication;
+		int mExitCode;
 
-		bool canStartNewAction();
+		bool canStartNewAction() const;
 		void completeShutdown();
 
 	public:
 		AppController();
-		virtual ~AppController() override;
+		~AppController() override;
 
-		virtual bool eventFilter(QObject* pObj, QEvent* pEvent) override;
-		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult) override;
+		bool eventFilter(QObject* pObj, QEvent* pEvent) override;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		virtual bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, qintptr* pResult) override;
+#else
+		virtual bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult) override;
+#endif
 
 		bool start();
 
 		bool shouldApplicationRestart() const;
 
 	Q_SIGNALS:
+		void fireInitialized();
 		void fireStarted();
 		void fireShutdown();
 		void fireWorkflowStarted(QSharedPointer<WorkflowContext> pContext);
@@ -74,6 +82,7 @@ class AppController final
 		void fireHideUi();
 		void fireShowUserInformation(const QString& pInformationMessage);
 		void fireShowReaderSettings();
+		void fireTranslationChanged();
 		void fireProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
 		void fireApplicationActivated();
 		void fireUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted);
@@ -81,12 +90,14 @@ class AppController final
 
 	private Q_SLOTS:
 		void doShutdown();
+		void doShutdown(int pExitCode);
 		void onUiPlugin(UIPlugIn* pPlugin);
 		void onWorkflowFinished();
 		void onCloseReminderFinished(bool pDontRemindAgain);
 		void onChangePinRequested();
 		void onSelfAuthenticationRequested();
-		void onAuthenticationRequest(const QSharedPointer<ActivationContext>& pActivationContext);
+		void onAuthenticationRequest(const QUrl& pUrl);
+		void onAuthenticationContextRequest(const QSharedPointer<ActivationContext>& pActivationContext);
 		void onRemoteServiceRequested();
 		void onLanguageChanged();
 		void onUILoaderShutdownComplete();
@@ -96,6 +107,7 @@ class AppController final
 
 	private:
 		template<typename Controller, typename Context> bool startNewWorkflow(Action pAction, const QSharedPointer<Context>& pContext);
+		static void clearCacheFolders();
 
 };
 

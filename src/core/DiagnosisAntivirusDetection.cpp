@@ -103,7 +103,7 @@ void DiagnosisAntivirusDetection::parseAntivirInfos(const QString& pAntivirInfos
 	QString lastUpdate;
 	QString exePath;
 
-	const auto& lines = pAntivirInfos.split(QStringLiteral("\n"));
+	const auto& lines = pAntivirInfos.split(QLatin1Char('\n'));
 	for (const auto& line : lines)
 	{
 		const QString& trimmedLine = line.trimmed();
@@ -141,6 +141,3 @@ void DiagnosisAntivirusDetection::parseAntivirInfos(const QString& pAntivirInfos
 
 	Q_EMIT fireAntivirusInformationChanged();
 }
-
-
-#include "moc_DiagnosisAntivirusDetection.cpp"

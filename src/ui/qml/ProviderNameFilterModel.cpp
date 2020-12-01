@@ -18,15 +18,19 @@ using namespace governikus;
 
 bool ProviderNameFilterModel::filterAcceptsRow(int pSourceRow, const QModelIndex& /* pSourceParent */) const
 {
-	auto* const dataSourceModel = qobject_cast<HistoryModel*>(sourceModel());
+	const auto* const dataSourceModel = qobject_cast<HistoryModel*>(sourceModel());
 	if (dataSourceModel == nullptr)
 	{
 		return false;
 	}
 
 	const auto& infos = Env::getSingleton<AppSettings>()->getHistorySettings().getHistoryInfos();
-	const auto& entry = infos[pSourceRow];
+	if (pSourceRow >= infos.size())
+	{
+		return false;
+	}
 
+	const auto& entry = infos.at(pSourceRow);
 	return mProvider.matchWithSubjectUrl(entry.getSubjectUrl());
 }
 

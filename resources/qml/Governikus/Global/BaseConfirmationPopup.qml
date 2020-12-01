@@ -2,15 +2,14 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 
 
 Popup {
@@ -28,9 +27,9 @@ Popup {
 	property string text
 	property TextStyle headerTextStyle
 	//: LABEL ALL_PLATFORMS
-	property string okButtonText: qsTr("Ok") + SettingsModel.translationTrigger
+	property string okButtonText: qsTr("OK")
 	//: LABEL ALL_PLATFORMS
-	property string cancelButtonText: qsTr("Cancel") + SettingsModel.translationTrigger
+	property string cancelButtonText: qsTr("Cancel")
 	property int style: ConfirmationPopup.PopupStyle.OkButton | ConfirmationPopup.PopupStyle.CancelButton
 	property var horizontalTextAlignment: Text.AlignLeft
 
@@ -52,8 +51,7 @@ Popup {
 	}
 
 	parent: Overlay.overlay
-	x: Math.round((parent.width - width) / 2)
-	y: Math.round((parent.height - height) / 2)
+	anchors.centerIn: Overlay.overlay
 	contentWidth: Overlay.overlay ? Math.min(0.75 * Overlay.overlay.width, Style.dimens.max_text_width) : 0
 	margins: Constants.pane_padding
 	padding: 0
@@ -85,7 +83,7 @@ Popup {
 		focus: true
 		activeFocusOnTab: true
 		Accessible.role: Accessible.Grouping
-		Accessible.name: qsTr("Dialog") + SettingsModel.translationTrigger
+		Accessible.name: qsTr("Dialog")
 		Keys.onEnterPressed: if (style & ConfirmationPopup.PopupStyle.OkButton) root.accept()
 		Keys.onReturnPressed: if (style & ConfirmationPopup.PopupStyle.OkButton) root.accept()
 
@@ -164,7 +162,7 @@ Popup {
 				id: buttonContainer
 
 				Layout.fillWidth: true
-				height: childrenRect.height
+				Layout.preferredHeight: childrenRect.height
 			}
 		}
 	}

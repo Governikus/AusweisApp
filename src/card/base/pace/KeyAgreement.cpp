@@ -31,7 +31,7 @@ static QString getResponseErrorString(CardReturnCode pReturnCode, StatusCode pRe
 KeyAgreement::CardResult KeyAgreement::createTransmitResult(CardReturnCode pReturnCode,
 		StatusCode pResponseReturnCode,
 		const QByteArray& pResultData,
-		const char* pLogMessage)
+		const char* pLogMessage) const
 {
 	if (pReturnCode == CardReturnCode::OK && pResponseReturnCode == StatusCode::SUCCESS)
 	{
@@ -85,7 +85,7 @@ KeyAgreement::~KeyAgreement()
 }
 
 
-KeyAgreementStatus KeyAgreement::perform(const QString& pPin)
+KeyAgreementStatus KeyAgreement::perform(const QByteArray& pPin)
 {
 	auto [returnCode, nonce] = determineNonce(pPin);
 	switch (returnCode)
@@ -100,7 +100,7 @@ KeyAgreementStatus KeyAgreement::perform(const QString& pPin)
 			return KeyAgreementStatus::RETRY_ALLOWED;
 
 		default:
-		{}
+			break;
 	}
 
 	auto [sharedSecretReturnCode, sharedSecret] = determineSharedSecret(nonce);
@@ -116,7 +116,7 @@ KeyAgreementStatus KeyAgreement::perform(const QString& pPin)
 			return KeyAgreementStatus::RETRY_ALLOWED;
 
 		default:
-		{}
+			break;
 	}
 
 	mEncryptionKey = mKeyDerivationFunction.enc(sharedSecret);
@@ -126,7 +126,7 @@ KeyAgreementStatus KeyAgreement::perform(const QString& pPin)
 }
 
 
-KeyAgreement::CardResult KeyAgreement::determineNonce(const QString& pPin)
+KeyAgreement::CardResult KeyAgreement::determineNonce(const QByteArray& pPin)
 {
 	const auto result = transmitGAEncryptedNonce();
 	if (result.mReturnCode != CardReturnCode::OK)
@@ -134,7 +134,7 @@ KeyAgreement::CardResult KeyAgreement::determineNonce(const QString& pPin)
 		return result;
 	}
 
-	QByteArray symmetricKey = mKeyDerivationFunction.pi(pPin);
+	const auto symmetricKey = mKeyDerivationFunction.pi(pPin);
 	SymmetricCipher nonceDecrypter(mPaceInfo->getProtocol(), symmetricKey);
 
 	return {CardReturnCode::OK, nonceDecrypter.decrypt(result.mData)};
@@ -204,7 +204,7 @@ KeyAgreement::CardResult KeyAgreement::transmitGAEphemeralPublicKey(const QByteA
 }
 
 
-KeyAgreement::CardResult KeyAgreement::transmitGAMappingData(const QByteArray& pMappingData)
+KeyAgreement::CardResult KeyAgreement::transmitGAMappingData(const QByteArray& pMappingData) const
 {
 	// sende den PublicKey (D.3.4.)
 	GABuilder commandBuilder(CommandApdu::CLA_COMMAND_CHAINING);

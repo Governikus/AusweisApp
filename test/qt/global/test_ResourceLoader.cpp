@@ -36,14 +36,14 @@ class test_ResourceLoader
 
 		void initAndLog()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QVERIFY(!ResourceLoader::getInstance().isLoaded());
 			ResourceLoader::getInstance().init();
 			QVERIFY(ResourceLoader::getInstance().isLoaded());
 
-			QVERIFY(spy.count() > 0);
-			auto param = spy.takeLast();
+			QVERIFY(logSpy.count() > 0);
+			auto param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Register resource: "));
 			QVERIFY(param.at(0).toString().contains(" | true"));
 		}
@@ -51,7 +51,7 @@ class test_ResourceLoader
 
 		void initAndShutdown()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QVERIFY(!ResourceLoader::getInstance().isLoaded());
 			ResourceLoader::getInstance().init();
@@ -59,8 +59,8 @@ class test_ResourceLoader
 			ResourceLoader::getInstance().shutdown();
 			QVERIFY(!ResourceLoader::getInstance().isLoaded());
 
-			QVERIFY(spy.count() > 1);
-			auto param = spy.takeLast();
+			QVERIFY(logSpy.count() > 1);
+			auto param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Unregister resource: "));
 			QVERIFY(param.at(0).toString().contains(" | true"));
 		}

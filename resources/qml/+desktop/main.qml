@@ -25,11 +25,11 @@ import Governikus.Type.SelfAuthModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Style 1.0
 
-import QtQml 2.10
-import QtQml.Models 2.10
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtGraphicalEffects 1.0
+import QtQml 2.12
+import QtQml.Models 2.12
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtGraphicalEffects 1.12
 import Qt.labs.platform 1.0 as Labs
 
 
@@ -59,14 +59,7 @@ ApplicationWindow {
 		onRootClicked: d.activeView = SectionPage.Views.Main
 	}
 
-	Component.onCompleted: {
-		if (SettingsModel.showNewUiHint) {
-			useWidgetsPopup.open()
-		}
-		else {
-			menuBar.forceActiveFocus()
-		}
-	}
+	Component.onCompleted: menuBar.forceActiveFocus()
 
 	onWidthChanged: d.setScaleFactor()
 	onHeightChanged: d.setScaleFactor()
@@ -186,14 +179,14 @@ ApplicationWindow {
 		closePolicy: Popup.NoAutoClose
 		style: ConfirmationPopup.PopupStyle.OkButton
 		//: INFO DESKTOP_QML Header of the popup that is shown when the AA2 is closed for the first time.
-		title: qsTr("The user interface of the %1 is closed.").arg(Qt.application.name) + SettingsModel.translationTrigger
+		title: qsTr("The user interface of the %1 is closed.").arg(Qt.application.name)
 		//: INFO DESKTOP_QML Content of the popup that is shown when the AA2 is closed for the first time.
-		text: qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name) + SettingsModel.translationTrigger
+		text: qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name)
 		onConfirmed: d.hideUiAndTaskbarEntry()
 
 		ToggleableOption {
 			//: LABEL DESKTOP_QML
-			text: qsTr("Do not show this dialog again.") + SettingsModel.translationTrigger
+			text: qsTr("Do not show this dialog again.")
 			textStyle: Style.text.normal_inverse
 
 			checked: !SettingsModel.remindUserToClose
@@ -206,13 +199,13 @@ ApplicationWindow {
 		id: abortWorkflowWarning
 
 		//: INFO DESKTOP_QML Content of the popup that is shown when the AA2 is closed and a workflow is still active.
-		readonly property string abortText: qsTr("This will cancel the current operation and hide the UI of %1. You can restart the operation at any time.").arg(Qt.application.name) + SettingsModel.translationTrigger
+		readonly property string abortText: qsTr("This will cancel the current operation and hide the UI of %1. You can restart the operation at any time.").arg(Qt.application.name)
 		//: INFO DESKTOP_QML Content of the popup that is shown when the AA2 is closed and a workflow is still active and the close/minimize info was not disabled.
-		readonly property string hideToTrayText: qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name) + SettingsModel.translationTrigger
+		readonly property string hideToTrayText: qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name)
 
 		closePolicy: Popup.NoAutoClose
 		//: INFO DESKTOP_QML Header of the popup that is shown when the AA2 is closed and a workflow is still active
-		title: qsTr("Abort operation") + SettingsModel.translationTrigger
+		title: qsTr("Abort operation")
 		text: "%1%2".arg(abortText).arg(SettingsModel.remindUserToClose ? "<br/><br/>%1".arg(hideToTrayText) : "")
 
 		onConfirmed: {
@@ -237,10 +230,7 @@ ApplicationWindow {
 					}
 					break
 				case UiModule.PINMANAGEMENT:
-					if (ApplicationModel.currentWorkflow === "") {
-						ChangePinModel.startWorkflow()
-					}
-					if (ApplicationModel.currentWorkflow === "changepin") {
+					if (ApplicationModel.currentWorkflow === "" || ApplicationModel.currentWorkflow === "changepin") {
 						d.activeView = SectionPage.Views.ChangePin
 					}
 					break
@@ -295,7 +285,7 @@ ApplicationWindow {
 		anchors.centerIn: parent
 
 		opacity: 0.2
-		source: "qrc:///images/beta.svg"
+		source: "qrc:///images/logo_beta_testing.svg"
 		fillMode: Image.PreserveAspectFit
 	}
 
@@ -357,14 +347,14 @@ ApplicationWindow {
 			padding: Constants.pane_padding / 2
 			Label {
 				//: LABEL DESKTOP_QML
-				text: qsTr("Developer Mode: Enabled!") + SettingsModel.translationTrigger
+				text: qsTr("Developer Mode: Enabled!")
 				color: Constants.red
 				anchors.verticalCenter: parent.verticalCenter
 				font.pixelSize: Style.dimens.normal_font_size
 			}
 			GButton {
 				//: LABEL DESKTOP_QML Global button to disable developer mode.
-				text: qsTr("Disable") + SettingsModel.translationTrigger
+				text: qsTr("Disable")
 				onClicked: SettingsModel.developerMode = false
 			}
 		}
@@ -383,18 +373,6 @@ ApplicationWindow {
 		rotation: -Math.atan(contentLoader.height / contentLoader.width) * 180 / Math.PI
 		transformOrigin: Item.Left
 		antialiasing: true
-	}
-
-	ConfirmationPopup {
-		id: useWidgetsPopup
-
-		title: qsTr("New user interface released!") + SettingsModel.translationTrigger
-		text: qsTr("This release features a new and modern user interface. For this version of %1 (and this version only!) you may decide to switch back to the previous user interface. To do so click the Button \"%2\". It is highly recommend to use the new user interface as the old one will be removed with the next release of %3.").arg(Qt.application.name).arg(cancelButtonText).arg(Qt.application.name) + SettingsModel.translationTrigger
-		okButtonText: qsTr("Stick with new interface") + SettingsModel.translationTrigger
-		cancelButtonText: qsTr("Use old interface") + SettingsModel.translationTrigger
-
-		onClosed: SettingsModel.showNewUiHint = false
-		onCancelled: plugin.switchUi()
 	}
 
 	Connections {
@@ -419,7 +397,7 @@ ApplicationWindow {
 			minimumHeight: appWindow.minimumHeight
 			minimumWidth: appWindow.minimumWidth
 
-			title: qsTr("%1 - Detached log viewer").arg(appWindow.title) + SettingsModel.translationTrigger
+			title: qsTr("%1 - Detached log viewer").arg(appWindow.title)
 
 			DetachedLogView {
 				anchors.fill: parent

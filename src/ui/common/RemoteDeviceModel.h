@@ -39,7 +39,7 @@ class RemoteDeviceModelEntry
 	public:
 		RemoteDeviceModelEntry(const QString& pDeviceNameEscaped, const QString& mId, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry);
 		RemoteDeviceModelEntry(const QString& pDeviceNameEscaped, const QString& mId, bool pNetworkVisible, bool pConnected, bool pSupported, const QDateTime& pLastConnected, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry);
-		RemoteDeviceModelEntry(const QString& pDeviceNameEscaped = QStringLiteral("UnknownReader"));
+		explicit RemoteDeviceModelEntry(const QString& pDeviceNameEscaped = QStringLiteral("UnknownReader"));
 
 		bool isPaired() const;
 		void setPaired(bool pPaired);
@@ -63,7 +63,7 @@ class RemoteDeviceModel
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QString emptyListDescriptionString READ getEmptyListDescriptionStringQml NOTIFY fireLanguageChanged)
+	Q_PROPERTY(QString emptyListDescriptionString READ getEmptyListDescriptionString NOTIFY fireLanguageChanged)
 
 	private:
 		friend class ::test_RemoteDeviceModel;
@@ -121,8 +121,7 @@ class RemoteDeviceModel
 		void forgetDevice(const QModelIndex& pIndex);
 		void forgetDevice(const QString& pDeviceId);
 
-		QString getEmptyListDescriptionStringQml() const;
-		QString getEmptyListDescriptionString(bool pWidgetUiHelp = true) const;
+		QString getEmptyListDescriptionString() const;
 
 	public Q_SLOTS:
 		void onUiShown();

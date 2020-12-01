@@ -6,7 +6,9 @@
 
 #include "asn1/ASN1Util.h"
 
-#include <QtCore>
+#include <QByteArray>
+#include <QObject>
+#include <QScopeGuard>
 #include <QtTest>
 
 #include <openssl/objects.h>
@@ -25,6 +27,9 @@ class test_Asn1BCDDateUtil
 		{
 			QDate date = QDate(2015, 2, 3);
 			ASN1_OCTET_STRING* strDate = ASN1_OCTET_STRING_new();
+			const auto guard = qScopeGuard([strDate] {
+						ASN1_STRING_free(strDate);
+					});
 			QByteArray array = Asn1BCDDateUtil::convertFromQDateToUnpackedBCD(date);
 			QCOMPARE(array.toHex(), QByteArray("010500020003"));
 
@@ -37,6 +42,9 @@ class test_Asn1BCDDateUtil
 		void convertBCDToQDateInvalidLength()
 		{
 			ASN1_OCTET_STRING* strDate = ASN1_OCTET_STRING_new();
+			const auto guard = qScopeGuard([strDate] {
+						ASN1_STRING_free(strDate);
+					});
 			Asn1OctetStringUtil::setValue(QByteArray("0000000"), strDate);
 
 			QDate date = Asn1BCDDateUtil::convertFromUnpackedBCDToQDate(strDate);

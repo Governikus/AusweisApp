@@ -13,7 +13,6 @@
 #include <QDate>
 #include <QMap>
 #include <QSharedPointer>
-#include <QString>
 
 #include <openssl/ec.h>
 
@@ -52,7 +51,6 @@ using CVCertificateBody = struct certificateprofilebody_st
 	ASN1_OCTET_STRING* mExpirationDate;
 	STACK_OF(CERTIFICATEEXTENSION) * mExtensions;
 
-	static QSharedPointer<certificateprofilebody_st> fromHex(const QString& pHexValue);
 	static QSharedPointer<certificateprofilebody_st> decode(const QByteArray& pBytes);
 	QByteArray encode();
 

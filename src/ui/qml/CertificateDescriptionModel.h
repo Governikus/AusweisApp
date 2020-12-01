@@ -8,6 +8,7 @@
 
 #include "asn1/CertificateDescription.h"
 #include "context/AuthContext.h"
+#include "Env.h"
 
 #include <QAbstractListModel>
 #include <QPair>
@@ -22,15 +23,21 @@ class CertificateDescriptionModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
+	friend class Env;
+
 	Q_PROPERTY(QString subjectName READ getSubjectName NOTIFY fireChanged)
 	Q_PROPERTY(QString purpose READ getPurpose NOTIFY fireChanged)
 
-	QVector<QPair<QString, QString>> mData;
-	QSharedPointer<AuthContext> mContext;
+	private:
+		QVector<QPair<QString, QString>> mData;
+		QSharedPointer<AuthContext> mContext;
 
-	inline QSharedPointer<const CertificateDescription> getCertificateDescription() const;
-	inline QString getValidity() const;
-	void initModelData(const QSharedPointer<const CertificateDescription>& pCertDescription);
+		CertificateDescriptionModel();
+		virtual ~CertificateDescriptionModel()override = default;
+
+		inline QSharedPointer<const CertificateDescription> getCertificateDescription() const;
+		inline QString getValidity() const;
+		void initModelData(const QSharedPointer<const CertificateDescription>& pCertDescription);
 
 	private Q_SLOTS:
 		void onDidAuthenticateEac1Changed();
@@ -41,8 +48,6 @@ class CertificateDescriptionModel
 			LABEL = Qt::UserRole + 1,
 			TEXT
 		};
-
-		CertificateDescriptionModel(QObject* pParent = nullptr);
 
 		void resetContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());
 

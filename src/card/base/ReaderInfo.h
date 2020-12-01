@@ -25,7 +25,7 @@ class ReaderInfo
 	int mMaxApduLength;
 
 	public:
-		ReaderInfo(const QString& pName = QString(),
+		explicit ReaderInfo(const QString& pName = QString(),
 				ReaderManagerPlugInType pPlugInType = ReaderManagerPlugInType::UNKNOWN,
 				const CardInfo& pCardInfo = CardInfo(CardType::NONE));
 
@@ -35,6 +35,12 @@ class ReaderInfo
 		ReaderManagerPlugInType getPlugInType() const
 		{
 			return mPlugInType;
+		}
+
+
+		CardInfo& getCardInfo()
+		{
+			return mCardInfo;
 		}
 
 
@@ -142,11 +148,7 @@ class ReaderInfo
 
 		bool sufficientApduLength() const
 		{
-			if (!hasCard())
-			{
-				return true;
-			}
-			return mMaxApduLength == 0 || mMaxApduLength >= 500;
+			return mMaxApduLength == -1 || mMaxApduLength >= 500;
 		}
 
 

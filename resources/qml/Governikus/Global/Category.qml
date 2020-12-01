@@ -4,7 +4,7 @@
 
 pragma Singleton
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Type.Random 1.0
 
@@ -61,21 +61,21 @@ QtObject {
 
 
 	function getPlatform() {
-		return plugin.platformStyle.indexOf("android") !== -1 ? "+android/" : ""
+		return plugin.platformStyle.indexOf("ios") !== -1 ? "ios/" : ""
 	}
 
 
 	function backgroundImageSource(cat) {
-		return "qrc:///images/provider/categoryIcons/" + getPlatform() + imageName(cat) + "_bg.svg"
+		return "qrc:///images/provider/" + getPlatform() + imageName(cat) + "_bg.svg"
 	}
 
 
 	function buttonImageSource(cat) {
-		return "qrc:///images/provider/categoryIcons/" + getPlatform() + imageName(cat) + "_button.svg"
+		return "qrc:///images/provider/" + getPlatform() + imageName(cat) + "_button.svg"
 	}
 
 
 	function imageSource(cat) {
-		return "qrc:///images/provider/categoryIcons/" + getPlatform() + imageName(cat) + ".svg"
+		return "qrc:///images/provider/" + getPlatform() + imageName(cat) + ".svg"
 	}
 }

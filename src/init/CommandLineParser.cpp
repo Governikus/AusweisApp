@@ -6,6 +6,7 @@
 
 #include "controller/AppController.h"
 #include "DatagramHandlerImpl.h"
+#include "Env.h"
 #include "LogHandler.h"
 #include "NetworkManager.h"
 #include "PortFile.h"
@@ -32,16 +33,10 @@ CommandLineParser::CommandLineParser()
 	, mOptionNoLogHandler(QStringLiteral("no-loghandler"), QStringLiteral("Disable default log handler."))
 	, mOptionShowWindow(QStringLiteral("show"), QStringLiteral("Show window on startup."))
 	, mOptionProxy(QStringLiteral("no-proxy"), QStringLiteral("Ignore proxy settings."))
-	, mOptionUi(QStringLiteral("ui"), QStringLiteral("Use given UI plugin."), UILoader::getInstance().getDefault().join(QLatin1Char(',')))
+	, mOptionUi(QStringLiteral("ui"), QStringLiteral("Use given UI plugin."), UILoader::getDefault().join(QLatin1Char(',')))
 	, mOptionPort(QStringLiteral("port"), QStringLiteral("Use listening port."), QString::number(PortFile::cDefaultPort))
 {
 	addOptions();
-}
-
-
-CommandLineParser& CommandLineParser::getInstance()
-{
-	return *Instance;
 }
 
 
@@ -122,6 +117,6 @@ void CommandLineParser::parseUiPlugin()
 {
 	if (mParser.isSet(mOptionUi))
 	{
-		UILoader::getInstance().setDefault(mParser.values(mOptionUi));
+		UILoader::setDefault(mParser.values(mOptionUi));
 	}
 }

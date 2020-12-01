@@ -56,7 +56,7 @@ class ServerMessageHandlerImpl
 		QMap<QString, QSharedPointer<CardConnection>> mCardConnections;
 
 		QString slotHandleForReaderName(const QString& pReaderName) const;
-		QString convertSlotHandleBackwardsCompatibility(const QString& pReaderName);
+		QString convertSlotHandleBackwardsCompatibility(const QString& pReaderName) const;
 
 		void handleIfdGetStatus(const QJsonObject& pJsonObject);
 		void handleIfdConnect(const QJsonObject& pJsonObject);
@@ -70,11 +70,11 @@ class ServerMessageHandlerImpl
 		void onTransmitCardCommandDone(QSharedPointer<BaseCardCommand> pCommand);
 		void onClosed();
 		void onRemoteMessage(RemoteCardMessageType pMessageType, const QJsonObject& pJsonObject);
-		void onReaderChanged(const QString& pReaderName);
-		void onReaderRemoved(const QString& pReaderName);
+		void onReaderChanged(const ReaderInfo& pInfo);
+		void onReaderRemoved(const ReaderInfo& pInfo);
 
 	public:
-		ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel);
+		explicit ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel);
 
 		virtual void sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pChannelOutput) override;
 		virtual void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) override;

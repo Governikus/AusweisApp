@@ -84,7 +84,7 @@ class test_SecureStorage
 
 			QVector<QSharedPointer<const CVCertificate> > cvcs = CVCertificate::fromHex(secureStorage->getCVRootCertificates(true))
 					+ CVCertificate::fromHex(secureStorage->getCVRootCertificates(false));
-			const int count = cvcs.count();
+			const auto count = cvcs.count();
 			QCOMPARE(count, EXPECTED_CERTIFICATE_COUNT);
 
 			const QStringList comments = loadCommentList("_comment_2") + loadCommentList("_comment_4");
@@ -258,9 +258,6 @@ class test_SecureStorage
 		void testSignatureAlgorithms()
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
-			#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
-			QSKIP("SignatureAlgorithms not supported");
-			#endif
 
 			const auto& tlsSettings = secureStorage->getTlsConfig();
 			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 12);
@@ -272,9 +269,6 @@ class test_SecureStorage
 		void testSignatureAlgorithmsPsk()
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
-			#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
-			QSKIP("SignatureAlgorithms not supported");
-			#endif
 
 			const auto& tlsSettings = secureStorage->getTlsConfig(SecureStorage::TlsSuite::PSK);
 			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 4);
@@ -286,9 +280,6 @@ class test_SecureStorage
 		void testSignatureAlgorithmsRemoteReader()
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
-			#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
-			QSKIP("SignatureAlgorithms not supported");
-			#endif
 
 			const auto& config = secureStorage->getTlsConfigRemote();
 			QCOMPARE(config.getSignatureAlgorithms().size(), 3);

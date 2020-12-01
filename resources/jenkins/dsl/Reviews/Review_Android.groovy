@@ -12,7 +12,7 @@ def j = new Review
 		name: 'Android_APK_' + ARCH,
 		libraries: ['Android_' + ARCH],
 		label: 'Android',
-		artifacts: 'build/dist/**/AusweisApp2-*.apk'
+		artifacts: 'build/dist/**/AusweisApp2-*.apk,build/debug.symbols/libAusweisApp2-*.so'
 	).generate(this)
 
 
@@ -41,7 +41,7 @@ j.with
 		androidLint('build/dist/build/reports/lint-results.xml')
 		{
 			thresholds(
-				unstableTotal: [all: 1]
+				unstableTotal: [all: 0]
 			)
 		}
 	}
@@ -62,7 +62,7 @@ def j = new Review
 		name: 'Android_AAR',
 		libraries: neededLibraries,
 		label: 'Android',
-		artifacts: 'build/**/dist/**/ausweisapp-*.aar'
+		artifacts: 'build/**/dist/**/ausweisapp-*.aar,build/**/dist/**/ausweisapp-*.pom,build/**/dist/**/ausweisapp-*.jar,build/**/debug.symbols/libAusweisApp2-*.so'
 	).generate(this)
 
 j.with

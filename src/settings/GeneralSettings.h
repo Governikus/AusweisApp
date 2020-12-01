@@ -8,7 +8,7 @@
 
 #include "AbstractSettings.h"
 
-#include <QFuture>
+#include <QLocale>
 #include <QNetworkProxy>
 #include <QUuid>
 
@@ -32,17 +32,21 @@ class GeneralSettings
 
 	friend class AppSettings;
 	friend bool operator==(const GeneralSettings& pLeft, const GeneralSettings& pRight);
+	friend class ::test_GeneralSettings;
 
 	private:
-		QFuture<bool> mAutoStart;
+		bool mAutoStart;
 		QSharedPointer<QSettings> mStoreGeneral;
 		QSharedPointer<QSettings> mStoreCommon;
+		bool mIsNewAppVersion;
 
 		GeneralSettings();
+		GeneralSettings(QSharedPointer<QSettings> pStoreGeneral, QSharedPointer<QSettings> pStoreCommon);
 		bool isShowNotificationsOsDefault() const;
+		void setAutoStartInternal(bool pAutoStart);
+		QString getPersistentSettingsVersion() const;
 
 	public:
-		virtual ~GeneralSettings() override;
 		virtual void save() override;
 
 		bool isAutoStartAvailable() const;
@@ -50,19 +54,16 @@ class GeneralSettings
 		bool autoStartIsSetByAdmin() const;
 		void setAutoStart(bool pAutoStart);
 
-		const QString getPersistentSettingsVersion() const;
-
-		QString getSkipVersion();
+		QString getSkipVersion() const;
 		void skipVersion(const QString& pVersion);
+
+		bool isNewAppVersion() const;
 
 		bool isAutoCloseWindowAfterAuthentication() const;
 		void setAutoCloseWindowAfterAuthentication(bool pAutoClose);
 
 		bool isShowSetupAssistant() const;
 		void setShowSetupAssistant(bool pShowSetupAssistant);
-
-		bool isShowNewUiHint() const;
-		void setShowNewUiHint(bool pShowNewUiHint);
 
 		bool isRemindUserToClose() const;
 		void setRemindUserToClose(bool pRemindUser);
@@ -81,9 +82,6 @@ class GeneralSettings
 
 		QLocale::Language getLanguage() const;
 		void setLanguage(const QLocale::Language pLanguage);
-
-		QString getSelectedUi() const;
-		void setSelectedUi(const QString& pSelectedUi);
 
 		QString getScreenOrientation() const;
 		void setScreenOrientation(const QString& pScreenOrientation);

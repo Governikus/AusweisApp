@@ -31,9 +31,9 @@ template<> RemoteDispatcherServer* createNewObject<RemoteDispatcherServer*, cons
 using namespace governikus;
 
 
-static Initializer::Entry E([] {
+INIT_FUNCTION([] {
 			qRegisterMetaType<QSharedPointer<RemoteDispatcherServer> >("QSharedPointer<RemoteDispatcherServer>");
-		});
+		})
 
 
 RemoteDispatcherServer::RemoteDispatcherServer(const QSharedPointer<DataChannel>& pDataChannel)

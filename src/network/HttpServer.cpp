@@ -17,7 +17,7 @@ quint16 HttpServer::cPort = PortFile::cDefaultPort;
 
 HttpServer::HttpServer(quint16 pPort)
 	: QObject()
-	, mServer(new QTcpServer)
+	, mServer(new QTcpServer())
 	, mPortFile()
 {
 	connect(mServer.data(), &QTcpServer::newConnection, this, &HttpServer::onNewConnection);

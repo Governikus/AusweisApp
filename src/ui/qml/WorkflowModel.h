@@ -38,10 +38,10 @@ class WorkflowModel
 		QString mReaderImage;
 
 	public:
-		WorkflowModel(QObject* pParent = nullptr);
+		explicit WorkflowModel(QObject* pParent = nullptr);
 		virtual ~WorkflowModel();
 
-		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
+		void resetWorkflowContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
 		QString getCurrentState() const;
 		virtual QString getResultString() const;
@@ -51,7 +51,7 @@ class WorkflowModel
 		ReaderManagerPlugInType getReaderPlugInType() const;
 		void setReaderPlugInType(ReaderManagerPlugInType pReaderPlugInType);
 
-		bool isBasicReader();
+		bool isBasicReader() const;
 
 		bool getNextWorkflowPending() const;
 
@@ -59,6 +59,7 @@ class WorkflowModel
 
 		Q_INVOKABLE void startWorkflow();
 		Q_INVOKABLE void cancelWorkflow();
+		Q_INVOKABLE void startScanIfNecessary();
 		Q_INVOKABLE void cancelWorkflowToChangePin();
 		Q_INVOKABLE void continueWorkflow();
 		Q_INVOKABLE void setInitialPluginType();

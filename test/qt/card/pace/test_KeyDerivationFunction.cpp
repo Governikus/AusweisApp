@@ -46,12 +46,12 @@ class test_KeyDerivationFunction
 
 		void desKey()
 		{
-			QSignalSpy spyLog(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			KeyDerivationFunction kdf(toByteArray(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC));
 
-			QCOMPARE(spyLog.count(), 1);
-			QVERIFY(TestFileHelper::containsLog(spyLog, QLatin1String("3DES not supported")));
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("3DES not supported")));
 			QVERIFY(!kdf.isInitialized());
 		}
 

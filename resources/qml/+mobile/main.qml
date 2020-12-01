@@ -2,13 +2,12 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Navigation 1.0
-import Governikus.SplashScreen 1.0
 import Governikus.View 1.0
 import Governikus.FeedbackView 1.0
 import Governikus.Type.ApplicationModel 1.0
@@ -19,11 +18,9 @@ import Governikus.Style 1.0
 ApplicationWindow {
 	id: appWindow
 
-	visible: true
+	readonly property alias ready: contentArea.ready
 
-	// This is only relevant when running the mobile UI on the desktop. Use 4:3 in landscape mode for tablets and 16:9 in portrait for phones:
-	width: Constants.is_tablet ? 1024 : 432
-	height: 768
+	visible: true
 
 	// Workaround for qt 5.12 not calculating the highdpi scaling factor correctly. On some devices (like the pixel 3)
 	// this leads to a small light stripe above the dark statusbar. By setting the background to black and filling the
@@ -40,52 +37,45 @@ ApplicationWindow {
 
 		property var currentSectionPage: if (contentArea) contentArea.currentSectionPage
 
-		visible: !splashScreen.visible && (!currentSectionPage || currentSectionPage.titleBarVisible)
+		visible: !currentSectionPage || currentSectionPage.titleBarVisible
 
 		navigationAction: currentSectionPage ? currentSectionPage.navigationAction : null
 		title: currentSectionPage ? currentSectionPage.title : ""
 		rightAction: currentSectionPage ?  currentSectionPage.rightTitleBarAction : null
 		subTitleBarAction: currentSectionPage ?  currentSectionPage.subTitleBarAction : null
 		color: currentSectionPage ? currentSectionPage.titleBarColor : null
-		titleBarOpacity: contentArea.visibleItem && contentArea.visibleItem.stack.currentItem ? contentArea.visibleItem.stack.currentItem.titleBarOpacity : 1
+		titleBarOpacity: currentSectionPage ? currentSectionPage.titleBarOpacity : 1
 	}
 
 	onClosing: { // back button pressed
-		if (contentArea.visibleItem)
-		{
-			var activeStackView = contentArea.visibleItem.stack
-			var navigationAction = activeStackView.currentItem.navigationAction
+		close.accepted = false
+
+		if (contentArea.visibleItem) {
+			if (contentArea.state === "main" || SettingsModel.showSetupAssistantOnStart) {
+				var currentTime = new Date().getTime();
+				if (currentTime - d.lastCloseInvocation < 1000) {
+					plugin.fireQuitApplicationRequest()
+					close.accepted = true
+					return
+				}
+
+				d.lastCloseInvocation = currentTime
+				//: INFO ANDROID IOS Hint that is shown if the users pressed the "back" button on the top-most navigation level for the first time (a second press closes the app).
+				ApplicationModel.showFeedback(qsTr("To close the app, quickly press the back button twice."))
+				return;
+			}
+
+			var activeStackView = contentArea.visibleItem.stackView
+			var navigationAction = contentArea.currentSectionPage.navigationAction
 
 			if (activeStackView.depth <= 1
-				&& (!navigationAction || navigationAction.state === "")) {
-				if (contentArea.state === "identify"
-					|| SettingsModel.showSetupAssistantOnStart) { // Don't go back to "identify" section page when setup tutorial is active
-					var currentTime = new Date().getTime();
-					if( currentTime - d.lastCloseInvocation < 1000 ) {
-						plugin.fireQuitApplicationRequest()
-						return
-					}
-
-					d.lastCloseInvocation = currentTime
-					//: INFO ANDROID IOS Hint that is shown if the users pressed the "back" button on the top-most navigation level for the first time (a second press closes the app).
-					ApplicationModel.showFeedback(qsTr("To close the app, quickly press the back button twice."))
-				} else {
-					navBar.state = "identify"
-					navBar.currentIndex = 0
-					navBar.lockedAndHidden = false
-				}
-			}
-			else if (navigationAction) {
-				if (navBar.isOpen) {
-					navBar.close()
-				}
-				else {
-					navigationAction.clicked(undefined)
-				}
+					&& (!navigationAction || navigationAction.state !== "cancel")
+					&& contentArea.state !== "provider") {
+				navBar.showMain()
+			} else if (navigationAction) {
+				navigationAction.clicked(undefined)
 			}
 		}
-
-		close.accepted = false
 	}
 
 	QtObject {
@@ -110,27 +100,31 @@ ApplicationWindow {
 		onFireApplicationActivated: feedback.showIfNecessary()
 	}
 
-	ContentAreaLoader {
+	ContentArea {
 		id: contentArea
 
+		function reset() {
+			visibleItem.currentSectionPage.firePopAll()
+			visibleItem.currentSectionPage.reset()
+		}
+
 		anchors {
-			left: Constants.leftNavigation ? navBar.right : parent.left
+			left: parent.left
 			top: parent.top
 			right: parent.right
-			bottom: Constants.bottomNavigation ? navBar.top : parent.bottom
+			bottom: navBar.top
 			bottomMargin: (
-				currentSectionPage && currentSectionPage.automaticSafeAreaMarginHandling &&
-				(!Constants.bottomNavigation || navBar.lockedAndHidden)
+				currentSectionPage && currentSectionPage.automaticSafeAreaMarginHandling && navBar.lockedAndHidden
 			) ? plugin.safeAreaMargins.bottom : 0
 
 			Behavior on bottomMargin {
+				enabled: appWindow.ready
 				NumberAnimation {duration: Constants.animation_duration}
 			}
 		}
 
 		state: navBar.state
 		onReadyChanged: {
-			splashScreen.hide()
 			if (!ApplicationModel.currentWorkflow && !SettingsModel.showSetupAssistantOnStart) {
 				navBar.lockedAndHidden = false
 			}
@@ -139,20 +133,14 @@ ApplicationWindow {
 		}
 	}
 
-	SplashScreen {
-		id: splashScreen
-	}
-
 	Navigation {
 		id: navBar
 
-		visible: !splashScreen.visible
 		anchors.left: parent.left
-		anchors.top: Constants.leftNavigation ? parent.top : undefined
-		anchors.right: Constants.bottomNavigation ? parent.right : undefined
+		anchors.right: parent.right
 		anchors.bottom: parent.bottom
 
-		onReselectedState: contentArea.reselectedState()
+		onResetContentArea: contentArea.reset()
 	}
 
 	ConfirmationPopup {

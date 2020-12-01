@@ -12,7 +12,6 @@
 
 #include <QByteArray>
 #include <QSharedPointer>
-#include <QString>
 
 class test_PaceHandler;
 
@@ -63,7 +62,7 @@ class PaceHandler final
 		 * \param pPassword the password value, e.g. "123456"
 		 * \return false on any errors during establishment
 		 */
-		CardReturnCode establishPaceChannel(PacePasswordId pPasswordId, const QString& pPassword);
+		CardReturnCode establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pPassword);
 
 		/*!
 		 * \brief The certificate holder authorization template to be supplied to the card. May be empty

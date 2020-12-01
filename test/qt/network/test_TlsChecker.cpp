@@ -80,11 +80,11 @@ class test_TlsChecker
 			const auto& content = TestFileHelper::readFile(filename);
 			QVERIFY(!content.isEmpty());
 			QSslCertificate invalidCert(content);
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QVERIFY(!TlsChecker::hasValidCertificateKeyLength(invalidCert));
 
-			QVERIFY(spy.count() > 0);
-			auto param = spy.takeLast();
+			QVERIFY(logSpy.count() > 0);
+			auto param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains(output));
 		}
 
@@ -294,17 +294,17 @@ class test_TlsChecker
 
 		void sslConfigLog()
 		{
-			QSignalSpy spy(Env::getSingleton<LogHandler>(), &LogHandler::fireLog);
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSslConfiguration cfg;
 			TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
 
-			QCOMPARE(spy.count(), 6);
-			QVERIFY(spy.at(0).at(0).toString().contains("Used session cipher QSslCipher(name=, bits=0, proto=)"));
-			QVERIFY(spy.at(1).at(0).toString().contains("Used session protocol: \"UnknownProtocol\""));
-			QVERIFY(spy.at(2).at(0).toString().contains("Used ephemeral server key:"));
-			QVERIFY(spy.at(3).at(0).toString().contains("Used peer certificate: QSslCertificate(\"\", \"\", \"1B2M2Y8AsgTpgAmY7PhCfg==\""));
-			QVERIFY(spy.at(4).at(0).toString().contains("Used ssl session: \"\""));
-			QVERIFY(spy.at(5).at(0).toString().contains("Handshake of tls connection done!"));
+			QCOMPARE(logSpy.count(), 6);
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Used session cipher QSslCipher(name=, bits=0, proto=)"));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Used session protocol: \"UnknownProtocol\""));
+			QVERIFY(logSpy.at(2).at(0).toString().contains("Used ephemeral server key:"));
+			QVERIFY(logSpy.at(3).at(0).toString().contains("Used peer certificate: QSslCertificate(\"\", \"\", \"1B2M2Y8AsgTpgAmY7PhCfg==\""));
+			QVERIFY(logSpy.at(4).at(0).toString().contains("Used ssl session: \"\""));
+			QVERIFY(logSpy.at(5).at(0).toString().contains("Handshake of tls connection done!"));
 		}
 
 

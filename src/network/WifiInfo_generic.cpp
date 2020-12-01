@@ -32,6 +32,3 @@ bool WifiInfo::isWifiEnabled()
 {
 	return mWifiEnabled;
 }
-
-
-#include "moc_WifiInfo.cpp"

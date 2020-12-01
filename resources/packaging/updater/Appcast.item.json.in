@@ -1,6 +1,7 @@
 		{
 			"date": "APPCAST_DATE",
 			"platform": "APPCAST_PLATFORM",
+			"minimum_platform": "APPCAST_MINIMUM_PLATFORM",
 			"version": "APPCAST_VERSION",
 			"url": "APPCAST_URL",
 			"size": APPCAST_SIZE,

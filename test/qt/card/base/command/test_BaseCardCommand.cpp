@@ -61,7 +61,7 @@ class test_BaseCardCommand
 			QSignalSpy spy(&command, &BaseCardCommand::commandDone);
 			command.run();
 
-			QTRY_COMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			auto param = spy.takeFirst();
 			QSharedPointer<BaseCardCommand> sharedCommand = param.at(0).value<QSharedPointer<BaseCardCommand> >();
 			QCOMPARE(sharedCommand.data(), &command);

@@ -26,9 +26,6 @@ class AbstractSettings
 {
 	Q_OBJECT
 
-	private:
-		static void createLegacyFileMapping();
-
 	protected:
 		AbstractSettings();
 		virtual ~AbstractSettings();

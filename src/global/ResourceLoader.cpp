@@ -32,12 +32,6 @@ ResourceLoader::~ResourceLoader()
 }
 
 
-ResourceLoader& ResourceLoader::getInstance()
-{
-	return *Instance;
-}
-
-
 void ResourceLoader::init()
 {
 	for (const auto& file : mFilenames)
@@ -73,7 +67,7 @@ void ResourceLoader::shutdown()
 }
 
 
-bool ResourceLoader::isLoaded()
+bool ResourceLoader::isLoaded() const
 {
 	return !mLoadedResources.isEmpty();
 }

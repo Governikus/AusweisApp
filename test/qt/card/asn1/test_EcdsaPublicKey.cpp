@@ -197,7 +197,12 @@ class test_EcdsaPublicKey
 
 			const EC_GROUP* ecGroup = EC_KEY_get0_group(ecdsaPublicKey->getEcKey());
 			BIGNUM* a = BN_new(), * b = BN_new(), * p = BN_new(), * cofactor = BN_new(), * order = BN_new();
+
+			#if OPENSSL_VERSION_NUMBER < 0x10101000L || defined(LIBRESSL_VERSION_NUMBER)
 			EC_GROUP_get_curve_GFp(ecGroup, p, a, b, nullptr);
+			#else
+			EC_GROUP_get_curve(ecGroup, p, a, b, nullptr);
+			#endif
 
 			QCOMPARE(convert(p).toHex().toUpper(), QByteArray("A9FB57DBA1EEA9BC3E660A909D838D726E3BF623D52620282013481D1F6E5377"));
 			BN_clear_free(p);
@@ -250,7 +255,12 @@ class test_EcdsaPublicKey
 
 			const EC_GROUP* ecGroup = EC_KEY_get0_group(ecdsaPublicKey->getEcKey());
 			BIGNUM* a = BN_new(), * b = BN_new(), * p = BN_new(), * cofactor = BN_new(), * order = BN_new();
+
+			#if OPENSSL_VERSION_NUMBER < 0x10101000L || defined(LIBRESSL_VERSION_NUMBER)
 			EC_GROUP_get_curve_GFp(ecGroup, p, a, b, nullptr);
+			#else
+			EC_GROUP_get_curve(ecGroup, p, a, b, nullptr);
+			#endif
 
 			QCOMPARE(convert(p).toHex().toUpper(), QByteArray("A9FB57DBA1EEA9BC3E660A909D838D726E3BF623D52620282013481D1F6E5377"));
 			BN_clear_free(p);

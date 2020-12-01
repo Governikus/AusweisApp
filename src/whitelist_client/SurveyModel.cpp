@@ -8,7 +8,6 @@
 #include "Env.h"
 #include "NetworkManager.h"
 #include "SecureStorage.h"
-#include "SingletonHelper.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -17,10 +16,7 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 
-
 using namespace governikus;
-
-defineSingleton(SurveyModel)
 
 #define VALUE_NAME(_name, _key)\
 	inline QLatin1String _name(){\
@@ -42,8 +38,8 @@ VALUE_NAME(AUSWEISAPP_VERSION_NUMBER, "AusweisAppVersionNumber")
 } // namespace
 
 
-SurveyModel::SurveyModel(QObject* pParent)
-	: QAbstractListModel(pParent)
+SurveyModel::SurveyModel()
+	: QAbstractListModel()
 	, mBuildNumber(DeviceInfo::getOSBuildNumber())
 	, mAndroidVersion(DeviceInfo::getOSVersion())
 	, mKernelVersion(DeviceInfo::getKernelVersion())
@@ -54,12 +50,6 @@ SurveyModel::SurveyModel(QObject* pParent)
 	, mAusweisAppVersionNumber(QCoreApplication::applicationVersion())
 {
 	buildDataObject();
-}
-
-
-SurveyModel& SurveyModel::getInstance()
-{
-	return *Instance;
 }
 
 
@@ -153,7 +143,7 @@ void SurveyModel::transmitSurvey() const
 	request.setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("application/json; charset=UTF-8"));
 
 	const QByteArray jsonData = toJsonByteArray();
-	QNetworkReply* reply = Env::getSingleton<NetworkManager>()->post(request, jsonData);
+	const QNetworkReply* reply = Env::getSingleton<NetworkManager>()->post(request, jsonData);
 	QObject::connect(reply, &QNetworkReply::finished, reply, &QNetworkReply::deleteLater);
 
 	qDebug().noquote() << "Sent survey to whitelist server:" << jsonData;

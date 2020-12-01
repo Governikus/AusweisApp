@@ -1,0 +1,138 @@
+{
+	"$schema": "https://json-schema.org/draft/2019-09/schema",
+	"title": "JSON schema for AusweisApp2's supported-readers.json file",
+	"definitions": {
+		"win_versions": { "type": "string", "enum": ["6.1", "6.2", "6.3", "10.0"] },
+		"mac_versions": { "type": "string", "enum": ["10.12", "10.13", "10.14", "10.15"] },
+		"operating_system": {
+			"oneOf": [
+				{
+					"type": "object",
+					"properties": {
+						"os": { "type": "string", "const": "win" },
+						"min": { "$ref": "#/definitions/win_versions" },
+						"max": { "$ref": "#/definitions/win_versions" }
+					},
+					"required": [ "os" ],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"os": { "type": "string", "const": "mac" },
+						"min": { "$ref": "#/definitions/mac_versions" },
+						"max": { "$ref": "#/definitions/mac_versions" }
+					},
+					"required": [ "os" ],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"os": { "type": "string", "const": "unknown" }
+					},
+					"required": [ "os" ],
+					"additionalProperties": false
+				}
+			]
+		}
+	},
+	"type": "object",
+	"properties": {
+		"$schema": {
+			"type": "string"
+		},
+		"SupportedDevices": {
+			"description": "Name of the devices displayed in the supported devices list for example",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"VendorId":{
+						"type": "string",
+						"pattern": "^0x[0-9A-F]{4}$"
+					},
+					"ProductId":{
+						"type": "string",
+						"pattern": "^0x[0-9A-F]{4}$"
+					},
+					"Name":{
+						"type": "string",
+						"pattern": "[ \\-0-9a-zA-Z]{8,}"
+					},
+					"Pattern":{
+						"type": "string",
+						"format": "regex"
+					},
+					"Icon": {
+						"type": "string",
+						"pattern": "^img_.+\\.(jpg|png|svg)$"
+					},
+					"IconWithNPA": {
+						"type": "string",
+						"pattern":"^img_.+_mit_ausweis\\.(jpg|png|svg)$"
+					},
+					"Drivers":{
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties":{
+								"Platforms":{
+									"type": "array",
+									"items": { "$ref": "#/definitions/operating_system" }
+								},
+								"URL": {
+									"type": "string",
+									"format": "uri",
+									"pattern": "^https://"
+								}
+							},
+							"required": [
+								"Platforms",
+								"URL"
+							],
+							"additionalProperties": false
+						}
+					},
+					"Information": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"Platforms": {
+									"type": "array",
+									"items": { "$ref": "#/definitions/operating_system" }
+								},
+								"DE": {
+									"type": "string",
+									"minLength": 20
+								},
+								"EN": {
+									"type": "string",
+									"minLength": 20
+								}
+							},
+							"required": [
+								"Platforms",
+								"DE",
+								"EN"
+							],
+							"additionalProperties": false
+						}
+					},
+					"Internal information": { "type": "string" }
+				},
+				"required": [
+					"VendorId",
+					"ProductId",
+					"Name",
+					"Pattern",
+					"Icon",
+					"IconWithNPA",
+					"Drivers"
+				],
+				"additionalProperties": false
+			}
+		}
+	}
+}

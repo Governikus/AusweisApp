@@ -9,6 +9,7 @@
 #import <StoreKit/StoreKit.h>
 #import <UIKit/UIKit.h>
 
+Q_DECLARE_LOGGING_CATEGORY(qml)
 Q_DECLARE_LOGGING_CATEGORY(feedback)
 
 using namespace governikus;
@@ -17,16 +18,10 @@ using namespace governikus;
 	: NSObject
 @property BOOL mRunning;
 - (instancetype) init;
-- (void) dealloc;
 - (void) receiveNotification: (NSNotification*) notification;
 @end
 
 @implementation VoiceOverObserver
-
-- (void)dealloc {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[super dealloc];
-}
 
 
 - (instancetype)init {
@@ -66,10 +61,8 @@ ApplicationModel::Private::Private() : mObserver([[VoiceOverObserver alloc] init
 }
 
 
-ApplicationModel::Private::~Private()
-{
-	[mObserver dealloc];
-}
+// It's important that the definition of the destructor is in a .mm file: Otherwise the compiler won't compile it in Objective-C++ mode and ARC won't work.
+ApplicationModel::Private::~Private() = default;
 
 
 bool ApplicationModel::isScreenReaderRunning() const
@@ -95,4 +88,17 @@ void ApplicationModel::showAppStoreRatingDialog()
 {
 	qCDebug(feedback) << "Requesting iOS AppStore review";
 	[SKStoreReviewController requestReview];
+}
+
+
+void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction)
+{
+	if (pAction == Settings::SETTING_APP)
+	{
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString] options:@{} completionHandler:nil];
+	}
+	else
+	{
+		qCWarning(qml) << "NOT IMPLEMENTED:" << pAction;
+	}
 }

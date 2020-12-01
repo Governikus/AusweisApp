@@ -15,12 +15,12 @@ using namespace governikus;
 QString ProviderConfigurationInfo::getDefaultFile(const QString& pSuffix) const
 {
 #ifdef Q_OS_IOS
-	const QString platform;
+	const QString platform = QStringLiteral("ios/");
 #else
-	const QString platform = QStringLiteral("+android/");
+	const QString platform;
 #endif
 	const QString category = d->mCategory.isEmpty() ? QStringLiteral("general") : d->mCategory;
-	return QStringLiteral(":/images/provider/categoryIcons/%1%2%3.svg").arg(platform, category, pSuffix);
+	return QStringLiteral(":/images/provider/%1%2%3.svg").arg(platform, category, pSuffix);
 }
 
 
@@ -36,12 +36,10 @@ ProviderConfigurationInfo::ProviderConfigurationInfo(const LanguageString& pShor
 		const QString& pPostalAddress,
 		const QString& pIcon,
 		const QString& pImage,
-		const QString& pTcTokenUrl,
-		const QString& pClientUrl,
 		const QStringList& pSubjectUrls,
 		const QString& pSubjectUrlInfo)
 	: d(new InternalInfo(pShortName, pLongName, pShortDescription, pLongDescription, pAddress, pHomepage,
-			pCategory, pPhone, pEmail, pPostalAddress, pIcon, pImage, pTcTokenUrl, pClientUrl, pSubjectUrls, pSubjectUrlInfo))
+			pCategory, pPhone, pEmail, pPostalAddress, pIcon, pImage, pSubjectUrls, pSubjectUrlInfo))
 {
 }
 
@@ -51,24 +49,9 @@ ProviderConfigurationInfo::~ProviderConfigurationInfo()
 }
 
 
-void ProviderConfigurationInfo::setTcTokenUrl(const QString& pTcTokenUrl)
-{
-	d = new InternalInfo(d->mShortName, d->mLongName, d->mShortDescription, d->mLongDescription, d->mAddress, d->mHomepage,
-			d->mCategory, d->mPhone, d->mEmail, d->mPostalAddress, d->mIcon, d->mImage, pTcTokenUrl, d->mClientUrl, d->mSubjectUrls, d->mSubjectUrlInfo);
-}
-
-
 bool ProviderConfigurationInfo::operator ==(const ProviderConfigurationInfo& pOther) const
 {
 	return *d == *pOther.d;
-}
-
-
-bool ProviderConfigurationInfo::operator <(const ProviderConfigurationInfo& pOther) const
-{
-	const QString myName = getLongName().isEmpty() ? getShortName() : getLongName();
-	const QString otherName = pOther.getLongName().isEmpty() ? pOther.getShortName() : pOther.getLongName();
-	return myName.compare(otherName, Qt::CaseInsensitive) < 0;
 }
 
 
@@ -107,7 +90,7 @@ const LanguageString& ProviderConfigurationInfo::getShortName() const
 
 const LanguageString& ProviderConfigurationInfo::getLongName() const
 {
-	return d->mLongName;
+	return !d->mLongName.toString().isNull() ? d->mLongName : getShortName();
 }
 
 
@@ -182,18 +165,6 @@ QSharedPointer<UpdatableFile> ProviderConfigurationInfo::getImage() const
 {
 	const QString defaultFile = getDefaultFile(QStringLiteral("_bg"));
 	return Env::getSingleton<FileProvider>()->getFile(QStringLiteral("provider"), d->mImage, defaultFile);
-}
-
-
-QUrl ProviderConfigurationInfo::getTcTokenUrl() const
-{
-	return QUrl::fromUserInput(d->mTcTokenUrl);
-}
-
-
-QUrl ProviderConfigurationInfo::getClientUrl() const
-{
-	return QUrl::fromUserInput(d->mClientUrl);
 }
 
 

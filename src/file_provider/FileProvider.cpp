@@ -23,12 +23,6 @@ FileProvider::FileProvider()
 }
 
 
-FileProvider& FileProvider::getInstance()
-{
-	return *Instance;
-}
-
-
 const QSharedPointer<UpdatableFile> FileProvider::getFile(const QString& pSection, const QString& pName, const QString& pDefaultPath)
 {
 	const QMutexLocker locker(&mGetFileMutex);

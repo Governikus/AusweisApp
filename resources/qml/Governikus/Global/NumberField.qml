@@ -2,23 +2,22 @@
  * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 
 Item {
 	id: root
 
 	readonly property bool validInput: echoField.acceptableInput && confirmedInput
-	readonly property bool confirmedInput: inputConfirmation.length != text.length || inputConfirmation === text
+	readonly property bool confirmedInput: inputConfirmation.length != number.length || inputConfirmation === number
 	readonly property real eyeWidth: eye.width + eye.anchors.leftMargin
-	property alias text: echoField.text
+	property alias number: echoField.text
 	property alias passwordLength: echoField.maximumLength
 	property string inputConfirmation
 
@@ -36,8 +35,7 @@ Item {
 					  //: LABEL DESKTOP_QML Screenreader text for the password field
 					  : qsTr("The password is hidden.")
 					  //: LABEL DESKTOP_QML Screenreader text for the password field
-					  ) + " " + qsTr("You entered %1 of %2 digits.").arg(text.length).arg(passwordLength)
-					  + SettingsModel.translationTrigger
+					  ) + " " + qsTr("You entered %1 of %2 digits.").arg(number.length).arg(passwordLength)
 	Keys.onPressed: event.accepted = root.handleKeyEvent(event.key, event.modifiers)
 
 	function handleKeyEvent(eventKey, eventModifiers = Qt.NoModifier) {
@@ -62,6 +60,8 @@ Item {
 		root.forceActiveFocus()
 		return true
 	}
+
+	onPasswordLengthChanged: root.number = ""
 
 	FontMetrics {
 		id: fontMetrics
@@ -116,7 +116,7 @@ Item {
 
 				verticalAlignment: Text.AlignTop
 				horizontalAlignment: Text.AlignHCenter
-				text: eye.activated ? root.text.substr(index, 1) : ""
+				text: eye.activated ? root.number.substr(index, 1) : ""
 				color: Constants.is_desktop ? Style.color.primary_text_inverse : Style.color.primary_text
 				font: fontMetrics.font
 
@@ -132,7 +132,7 @@ Item {
 				}
 
 				Rectangle {
-					visible: !eye.activated && root.text.charAt(index) !== ""
+					visible: !eye.activated && root.number.charAt(index) !== ""
 					width: fontMetrics.averageCharacterWidth
 					height: width
 					anchors {
@@ -168,12 +168,12 @@ Item {
 			  ? qsTr("Press to hide the password")
 			  //: LABEL DESKTOP_QML Screenreader text for the eye icon to change the password visibility
 			  : qsTr("Press to show the password")
-			  ) + SettingsModel.translationTrigger
+			  )
 
 		contentItem: Item {}
 		background: TintableIcon {
 			tintColor: Constants.is_desktop ? Style.color.secondary_text_inverse : Style.color.secondary_text
-			source: eye.activated ? "qrc:///images/visibility.svg" : "qrc:///images/visibility_off.svg"
+			source: eye.activated ? "qrc:///images/material_visibility.svg" : "qrc:///images/material_visibility_off.svg"
 			sourceSize.height: Constants.is_desktop ? Style.dimens.large_icon_size : Style.dimens.small_icon_size
 			fillMode: Image.Pad
 		}

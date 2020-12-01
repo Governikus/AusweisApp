@@ -42,6 +42,10 @@ j.with
 			cd build; ctest --output-on-failure ${MAKE_FLAGS}
 			'''.stripIndent().trim())
 
+		shell('''\
+			cd build; DESTDIR=$WORKSPACE/install make ${MAKE_FLAGS} install
+			'''.stripIndent().trim())
+
 		shell('cd build; make gcovr')
 
 		shell('cd build; make cloc.report')

@@ -1,3 +1,3 @@
 ADD_PLATFORM_LIBRARY(AusweisAppCard)
 
-TARGET_LINK_LIBRARIES(AusweisAppCard Qt5::Core OpenSSL::Crypto AusweisAppGlobal AusweisAppConfiguration AusweisAppCardDrivers)
+target_link_libraries(AusweisAppCard ${Qt}::Core OpenSSL::Crypto AusweisAppGlobal AusweisAppConfiguration AusweisAppCardDrivers)

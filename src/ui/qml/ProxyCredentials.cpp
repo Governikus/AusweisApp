@@ -8,7 +8,7 @@
 using namespace governikus;
 
 
-QString ProxyCredentials::createUrl(const QNetworkProxy& pProxy)
+QString ProxyCredentials::createUrl(const QNetworkProxy& pProxy) const
 {
 	QUrl url;
 	switch (pProxy.type())
@@ -66,9 +66,10 @@ QString ProxyCredentials::getUser() const
 
 void ProxyCredentials::setUser(const QString& pUser)
 {
-	if (mAuthenticator)
+	if (mAuthenticator && mAuthenticator->user() != pUser)
 	{
 		mAuthenticator->setUser(pUser);
+		Q_EMIT fireProxyCredentialsChanged();
 	}
 }
 
@@ -86,9 +87,10 @@ QString ProxyCredentials::getPassword() const
 
 void ProxyCredentials::setPassword(const QString& pPassword)
 {
-	if (mAuthenticator)
+	if (mAuthenticator && mAuthenticator->password() != pPassword)
 	{
 		mAuthenticator->setPassword(pPassword);
+		Q_EMIT fireProxyCredentialsChanged();
 	}
 }
 

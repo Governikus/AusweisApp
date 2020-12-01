@@ -29,6 +29,7 @@ public class UpdateReceiver extends BroadcastReceiver
 		try
 		{
 			deleteDir(context.getCacheDir());
+			deleteDir(context.getExternalCacheDir());
 		}
 		catch (Exception e)
 		{

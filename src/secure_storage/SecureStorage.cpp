@@ -25,7 +25,7 @@ Q_DECLARE_LOGGING_CATEGORY(securestorage)
 
 namespace
 {
-#define CONFIG_NAME(_name, _key)\
+#define CONFIG_NAME(_name, _key) /* NOLINT */\
 	inline QLatin1String _name(){\
 		return QLatin1String(_key);\
 	}
@@ -82,15 +82,7 @@ SecureStorage::SecureStorage()
 }
 
 
-SecureStorage::~SecureStorage()
-{
-}
-
-
-SecureStorage& SecureStorage::getInstance()
-{
-	return *Instance;
-}
+SecureStorage::~SecureStorage() = default;
 
 
 bool SecureStorage::isLoaded() const
@@ -99,43 +91,57 @@ bool SecureStorage::isLoaded() const
 }
 
 
+QJsonObject SecureStorage::loadFile(const QStringList& pFiles) const
+{
+	for (const auto& path : pFiles)
+	{
+		qCDebug(securestorage) << "Load SecureStorage:" << path;
+
+		QFile configFile(path);
+		if (!configFile.exists())
+		{
+			qCCritical(securestorage) << "SecureStorage not found";
+			continue;
+		}
+
+		if (!configFile.open(QIODevice::ReadOnly | QIODevice::Text))
+		{
+			qCCritical(securestorage) << "Wasn't able to open SecureStorage";
+			continue;
+		}
+
+		QJsonParseError parseError {};
+		const auto& document = QJsonDocument::fromJson(configFile.readAll(), &parseError);
+		if (parseError.error != QJsonParseError::NoError)
+		{
+			qCCritical(securestorage) << "Parse error while reading SecureStorage on position" << parseError.offset << ':' << parseError.errorString();
+			continue;
+		}
+
+		return document.object();
+	}
+
+	return QJsonObject();
+}
+
+
 void SecureStorage::load()
 {
-	const auto& path = FileDestination::getPath(QStringLiteral("config.json"));
-	qCDebug(securestorage) << "Load SecureStorage:" << path;
-
-	QFile configFile(path);
-	if (!configFile.exists())
+	const QStringList files({FileDestination::getPath(QStringLiteral("config.json")), QStringLiteral(":/config.json")});
+	const auto& config = loadFile(files);
+	if (config.isEmpty())
 	{
-		qCCritical(securestorage) << "SecureStorage not found";
 		return;
 	}
-
-	if (!configFile.open(QIODevice::ReadOnly | QIODevice::Text))
-	{
-		qCCritical(securestorage) << "Wasn't able to open SecureStorage";
-		return;
-	}
-
-	QJsonParseError parseError;
-	QJsonDocument document = QJsonDocument::fromJson(configFile.readAll(), &parseError);
-	configFile.close();
-	if (parseError.error != QJsonParseError::NoError)
-	{
-		qCCritical(securestorage) << "Parse error while reading SecureStorage on position" << parseError.offset << ':' << parseError.errorString();
-		return;
-	}
-	QJsonObject config = document.object();
 
 	mCvcas.clear();
-	readByteArrayList(mCvcas, config, CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE());
+	mCvcas = readByteArrayList(config, CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE());
 
 	mCvcasTest.clear();
-	readByteArrayList(mCvcasTest, config, CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE_TEST());
+	mCvcasTest = readByteArrayList(config, CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE_TEST());
 	mCvcasTest = loadTestCvcsFromAppDir() + mCvcasTest;
 
-	QByteArrayList certificates;
-	readByteArrayList(certificates, config, CONFIGURATION_GROUP_NAME_UPDATE_CERTIFICATES());
+	QByteArrayList certificates = readByteArrayList(config, CONFIGURATION_GROUP_NAME_UPDATE_CERTIFICATES());
 	mUpdateCertificates.clear();
 	for (int i = 0; i < certificates.size(); ++i)
 	{
@@ -210,7 +216,7 @@ QByteArrayList SecureStorage::loadTestCvcsFromAppDir()
 }
 
 
-QByteArray SecureStorage::loadTestCvc(const QString& pPath)
+QByteArray SecureStorage::loadTestCvc(const QString& pPath) const
 {
 	QFile cvcFile(pPath);
 	const int TEN_MEGA_BYTE = 10 * 1024 * 1024;
@@ -300,20 +306,19 @@ int SecureStorage::getMinimumEphemeralKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) 
 }
 
 
-bool SecureStorage::readJsonArray(QJsonArray& pArray, const QJsonObject& pConfig, const QLatin1String pName)
+QJsonArray SecureStorage::readJsonArray(const QJsonObject& pConfig, const QLatin1String pName) const
 {
 	QJsonValue value = pConfig.value(pName);
 	if (!value.isArray())
 	{
 		qCCritical(securestorage) << "Expecting array for" << pName << "in SecureStorage";
-		return false;
+		return QJsonArray();
 	}
-	pArray = value.toArray();
-	return true;
+	return value.toArray();
 }
 
 
-QString SecureStorage::readGroup(const QJsonObject& pConfig, const QLatin1String pGroup, const QLatin1String pName)
+QString SecureStorage::readGroup(const QJsonObject& pConfig, const QLatin1String pGroup, const QLatin1String pName) const
 {
 	QJsonValue value = pConfig.value(pGroup);
 	if (!value.isObject())
@@ -334,7 +339,7 @@ QString SecureStorage::readGroup(const QJsonObject& pConfig, const QLatin1String
 }
 
 
-QMap<QSsl::KeyAlgorithm, int> SecureStorage::readKeySizes(const QJsonObject& pConfig, const QLatin1String pKey)
+QMap<QSsl::KeyAlgorithm, int> SecureStorage::readKeySizes(const QJsonObject& pConfig, const QLatin1String pKey) const
 {
 	QMap<QSsl::KeyAlgorithm, int> keySizes;
 	const auto& object = pConfig.value(pKey).toObject();
@@ -372,20 +377,21 @@ QMap<QSsl::KeyAlgorithm, int> SecureStorage::readKeySizes(const QJsonObject& pCo
 }
 
 
-void SecureStorage::readByteArrayList(QByteArrayList& pArray, const QJsonObject& pConfig, const QLatin1String pName)
+QByteArrayList SecureStorage::readByteArrayList(const QJsonObject& pConfig, const QLatin1String pName) const
 {
-	QJsonArray jsonArray;
-	if (readJsonArray(jsonArray, pConfig, pName))
+	QJsonArray jsonArray = readJsonArray(pConfig, pName);
+	QByteArrayList byteArrayList;
+
+	for (int i = 0; i < jsonArray.size(); ++i)
 	{
-		for (int i = 0; i < jsonArray.size(); ++i)
+		QJsonValue certificate = jsonArray[i];
+		if (!certificate.isString())
 		{
-			QJsonValue certificate = jsonArray[i];
-			if (!certificate.isString())
-			{
-				qCCritical(securestorage) << "Expected hexstring in array[" << i << "] " << pName << " in SecureStorage";
-				continue;
-			}
-			pArray += certificate.toString().toLatin1();
+			qCCritical(securestorage) << "Expected hexstring in array[" << i << "] " << pName << " in SecureStorage";
+			continue;
 		}
+		byteArrayList += certificate.toString().toLatin1();
 	}
+
+	return byteArrayList;
 }

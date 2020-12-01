@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
@@ -12,8 +12,6 @@ import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.LogModel 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 SectionPage {
 	id: baseItem
@@ -33,8 +31,8 @@ SectionPage {
 	property alias popupText: detailedResultPopup.text
 	property alias popupTitle: detailedResultPopup.title
 
-	Accessible.name: qsTr("Result view") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This is the result of an authentication.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Result view")
+	Accessible.description: qsTr("This is the result of an authentication.")
 	Keys.onReturnPressed: button.onClicked()
 	Keys.onEnterPressed: button.onClicked()
 	Keys.onEscapePressed: button.onClicked()
@@ -98,17 +96,21 @@ SectionPage {
 			Layout.fillWidth: true
 			Layout.alignment: Qt.AlignHCenter
 
+			spacing: Constants.component_spacing
+
 			GButton {
-				icon.source: "qrc:///images/provider/mail.svg"
+				icon.source: "qrc:///images/material_mail.svg"
 				//: LABEL DESKTOP_QML
-				text: qsTr("Send email") + SettingsModel.translationTrigger
+				text: qsTr("Send email")
+				tintIcon: true
 				onClicked: baseItem.emailButtonPressed()
 			}
 
 			GButton {
-				icon.source: "qrc:/images/desktop/info_application_log.svg"
+				icon.source: "qrc:/images/desktop/material_save.svg"
 				//: LABEL DESKTOP_QML
-				text: qsTr("Save logfile") + SettingsModel.translationTrigger
+				text: qsTr("Save log")
+				tintIcon: true
 				onClicked: {
 					LogModel.setLogfile(0)
 					let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogfileDate())
@@ -119,9 +121,10 @@ SectionPage {
 			GButton {
 				visible: popupTitle !== "" || popupText !== ""
 
-				icon.source: "qrc:/images/desktop/main_info.svg"
+				icon.source: "qrc:/images/info.svg"
 				//: LABEL DESKTOP_QML
-				text: qsTr("See details") + SettingsModel.translationTrigger
+				text: qsTr("See details")
+				tintIcon: true
 				onClicked: detailedResultPopup.open()
 			}
 		}

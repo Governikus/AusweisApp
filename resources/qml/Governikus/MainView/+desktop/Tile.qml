@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -30,31 +30,37 @@ FocusScope {
 	}
 
 	FocusFrame {
-		marginFactor: -2
 		dynamic: true
 	}
 
-	Column {
-		anchors.centerIn: parent
+	TintableIcon {
+		id: image
 
-		spacing: Constants.component_spacing
+		readonly property int imageHeight: Style.dimens.huge_icon_size
 
-		TintableIcon {
-			id: image
-
-			sourceSize.height: ApplicationModel.scaleFactor * 200
-			anchors.horizontalCenter: parent.horizontalCenter
-
-			tintColor: text.textStyle.textColor
+		anchors {
+			bottom: parent.verticalCenter
+			horizontalCenter: parent.horizontalCenter
+			bottomMargin: imageHeight * -(1/4)
 		}
 
-		GText {
-			id: text
+		sourceSize.height: imageHeight
 
-			anchors.horizontalCenter: parent.horizontalCenter
+		tintColor: text.textStyle.textColor
+	}
 
-			textStyle: Style.text.title_inverse
-			font.bold: true
+	GText {
+		id: text
+
+		anchors {
+			left: parent.left
+			right: parent.right
+			top: image.bottom
+			topMargin: Constants.component_spacing
 		}
+
+		textStyle: Style.text.title_inverse
+		font.bold: true
+		horizontalAlignment: Text.AlignHCenter
 	}
 }

@@ -16,8 +16,8 @@ class IfdGetStatus
 		QString mSlotName;
 
 	public:
-		IfdGetStatus(const QString& pSlotName = QString());
-		IfdGetStatus(const QJsonObject& pMessageObject);
+		explicit IfdGetStatus(const QString& pSlotName = QString());
+		explicit IfdGetStatus(const QJsonObject& pMessageObject);
 		virtual ~IfdGetStatus() override = default;
 
 		const QString& getSlotName() const;

@@ -1,9 +1,18 @@
-ADD_PLATFORM_LIBRARY(AusweisAppTestHelper)
+add_library(AusweisAppTestHelper INTERFACE)
 
-TARGET_INCLUDE_DIRECTORIES(AusweisAppTestHelper SYSTEM PUBLIC ${PCSC_INCLUDE_DIRS})
-TARGET_LINK_LIBRARIES(AusweisAppTestHelper Qt5::Network Qt5::Test AusweisAppExternal::HttpParser AusweisAppActivation AusweisAppCard AusweisAppCardDrivers AusweisAppRemoteDevice AusweisAppNetwork AusweisAppCore AusweisAppUiWebsocket AusweisAppUiCommon)
-TARGET_COMPILE_DEFINITIONS(AusweisAppTestHelper PRIVATE QT_STATICPLUGIN)
+add_subdirectory(common)
+target_link_libraries(AusweisAppTestHelper INTERFACE AusweisAppTestHelperCommon)
 
-IF(DESKTOP)
-	TARGET_LINK_LIBRARIES(AusweisAppTestHelper Qt5::Widgets)
-ENDIF()
+if(TARGET AusweisAppRemoteDevice)
+	add_subdirectory(remote_device)
+
+	# TestModule detection misses indirect dependency currently
+	target_link_libraries(AusweisAppTestHelper INTERFACE AusweisAppTestHelperRemoteDevice)
+endif()
+
+add_subdirectory(ui)
+
+# TestModule detection misses indirect dependency currently
+if(TARGET AusweisAppTestHelperUiWebsocket)
+	target_link_libraries(AusweisAppTestHelper INTERFACE AusweisAppTestHelperUiWebsocket)
+endif()

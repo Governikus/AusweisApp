@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -23,7 +23,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("What is the online ID function?") + SettingsModel.translationTrigger
+			text: qsTr("What is the online ID function?")
 			textStyle: Style.text.tutorial_header
 			font.italic: true
 			horizontalAlignment: Text.AlignHCenter
@@ -35,7 +35,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("You can use it to authenticate yourself in the internet") + SettingsModel.translationTrigger
+			text: qsTr("You can use it to authenticate yourself in the internet")
 			textStyle: Style.text.tutorial_header
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -68,7 +68,7 @@ TutorialContent {
 				source: "qrc:///images/ausweis.svg"
 				z: 2
 
-				width: parent.height * 0.6
+				width: parent.height * 0.4
 				centerY: 0.5
 				centerX: 0.8
 				rotation: 12
@@ -103,7 +103,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("and also to deal with administrative paperwork and business matters electronically!") + SettingsModel.translationTrigger
+			text: qsTr("and also to deal with administrative paperwork and business matters electronically!")
 			textStyle: Style.text.tutorial_content
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -116,7 +116,7 @@ TutorialContent {
 		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 		//: LABEL ANDROID IOS
-		text: qsTr("Alright, but is it secure?") + SettingsModel.translationTrigger
+		text: qsTr("Alright, but is it secure?")
 		color: Style.color.tutorial_what
 	}
 
@@ -131,7 +131,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("Of course, because we use a so called") + SettingsModel.translationTrigger
+			text: qsTr("Of course, because we use a so called")
 			textStyle: Style.text.tutorial_content
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -142,7 +142,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("Mutual authentication") + SettingsModel.translationTrigger
+			text: qsTr("Mutual authentication")
 			textStyle: Style.text.tutorial_header
 			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
@@ -224,7 +224,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("... it establishes a secure connection between ID card and provider.") + SettingsModel.translationTrigger
+			text: qsTr("... it establishes a secure connection between ID card and provider.")
 			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -250,7 +250,7 @@ TutorialContent {
 				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 				//: LABEL ANDROID IOS
-				text: qsTr("On every authentication you get displayed <b>who</b> wants to access <b>which</b> data") + SettingsModel.translationTrigger
+				text: qsTr("On every authentication you get displayed <b>who</b> wants to access <b>which</b> data")
 				textStyle: Style.text.tutorial_content
 				horizontalAlignment: Text.AlignLeft
 
@@ -260,8 +260,8 @@ TutorialContent {
 
 			TutorialImage {
 				id: screenshot
-				//: LABEL ANDROID IOS
-				source: qsTr("qrc:///images/tutorial/screenshot_cert_%1_en.png").arg(Constants.layout) + SettingsModel.translationTrigger
+
+				source: "qrc:///images/tutorial/screenshot_cert_%1_%2.png".arg(Constants.layout).arg(SettingsModel.language)
 				z: 3
 
 				readonly property real rightX: x + width
@@ -271,14 +271,13 @@ TutorialContent {
 				centerY: 0.5
 			}
 
-			Image {
-				source: "qrc:///images/tutorial/zoom_triangle.svg"
-				z: 4
-
+			TutorialZoomTriangle {
 				width: small_smartphone.centerXValue - screenshot.rightX
 				height: screenshot.height
+				opacity: 0.3
 				x: screenshot.rightX
 				y: (parent.height * 0.5) - (height / 2)
+				z: 4
 			}
 
 			TutorialImage {
@@ -302,7 +301,7 @@ TutorialContent {
 
 			anchors.horizontalCenter: parent.horizontalCenter
 			//: LABEL ANDROID IOS
-			text: qsTr("and you consent to the request with your personal PIN.") + SettingsModel.translationTrigger
+			text: qsTr("and you consent to the request with your six-digit PIN.")
 			textStyle: Style.text.tutorial_content
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -352,7 +351,7 @@ TutorialContent {
 				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 				//: LABEL ANDROID IOS
-				text: qsTr("... is the provider authorized for this?") + SettingsModel.translationTrigger
+				text: qsTr("... is the provider authorized for this?")
 				textStyle: Style.text.tutorial_header
 				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
@@ -369,7 +368,7 @@ TutorialContent {
 				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 				//: LABEL ANDROID IOS
-				text: qsTr("The provider needs an authorization of the Federal Office of Administration.") + SettingsModel.translationTrigger
+				text: qsTr("The provider needs an authorization of the Federal Office of Administration.")
 				textStyle: Style.text.tutorial_content
 				horizontalAlignment: Text.AlignHCenter
 				z: 2
@@ -390,7 +389,7 @@ TutorialContent {
 				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 				//: LABEL ANDROID IOS
-				text: qsTr("Certificate") + SettingsModel.translationTrigger
+				text: qsTr("Certificate")
 				textStyle: Style.text.tutorial_header
 				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
@@ -477,7 +476,7 @@ TutorialContent {
 
 			anchors.horizontalCenter: parent.horizontalCenter
 			//: LABEL ANDROID IOS
-			text: qsTr("Everytime both participants authenticate each other...") + SettingsModel.translationTrigger
+			text: qsTr("Everytime both participants authenticate each other...")
 			textStyle: Style.text.tutorial_header
 			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
@@ -492,7 +491,7 @@ TutorialContent {
 		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 		//: LABEL ANDROID IOS
-		text: qsTr("... and therefore your data is protected and securely transfered.") + SettingsModel.translationTrigger
+		text: qsTr("... and therefore your data is protected and securely transfered.")
 		color: Style.color.tutorial_what
 	}
 
@@ -508,7 +507,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("You can also watch a video on YouTube on this topic") + SettingsModel.translationTrigger
+			text: qsTr("You can also watch a video on YouTube on this topic")
 			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
 			z: 2
@@ -525,7 +524,7 @@ TutorialContent {
 				anchors.fill: parent
 
 				//: LABEL ANDROID IOS
-				Accessible.name: qsTr("Open YouTube video") + SettingsModel.translationTrigger
+				Accessible.name: qsTr("Open YouTube video")
 				Accessible.role: Accessible.Button
 				Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
 

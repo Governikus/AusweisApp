@@ -9,7 +9,7 @@
 using namespace governikus;
 
 
-UnblockPinCommand::UnblockPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, const QString& pPuk)
+UnblockPinCommand::UnblockPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, const QByteArray& pPuk)
 	: BaseCardCommand(pCardConnectionWorker)
 	, mPuk(pPuk)
 {

@@ -1,25 +1,52 @@
-From f63dce0a614ad26176dfbf4069264a4ec36c11b1 Mon Sep 17 00:00:00 2001
+From 8ef04e24babee5a0564c4c68d71602bdfb560a91 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
 Date: Tue, 20 Nov 2018 16:05:20 +0100
 Subject: [PATCH] android shlib_variant
 
 ---
- Configurations/15-android.conf | 2 ++
- 1 file changed, 2 insertions(+)
+ Configurations/15-android.conf | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git x/Configurations/15-android.conf y/Configurations/15-android.conf
-index 7b496a4529..559e11e27f 100644
+index 7b496a4529..716d58e3c3 100644
 --- x/Configurations/15-android.conf
 +++ y/Configurations/15-android.conf
-@@ -170,6 +170,8 @@ my %targets = (
+@@ -170,6 +170,7 @@ my %targets = (
          bn_ops           => sub { android_ndk()->{bn_ops} },
          bin_cflags       => "-pie",
          enable           => [ ],
-+        shlib_variant    => '-gov',
 +        shared_extension => '.so',
      },
      "android-arm" => {
          ################################################################
+@@ -201,11 +202,13 @@ my %targets = (
+         #
+         inherit_from     => [ "android", asm("armv4_asm") ],
+         bn_ops           => add("RC4_CHAR"),
++        shlib_variant    => '_armeabi-v7a',
+     },
+     "android-arm64" => {
+         inherit_from     => [ "android", asm("aarch64_asm") ],
+         bn_ops           => add("RC4_CHAR"),
+         perlasm_scheme   => "linux64",
++        shlib_variant    => '_arm64-v8a',
+     },
+ 
+     "android-mips" => {
+@@ -233,11 +236,13 @@ my %targets = (
+         CFLAGS           => add(picker(release => "-fomit-frame-pointer")),
+         bn_ops           => add("RC4_INT"),
+         perlasm_scheme   => "android",
++        shlib_variant    => '_x86',
+     },
+     "android-x86_64" => {
+         inherit_from     => [ "android", asm("x86_64_asm") ],
+         bn_ops           => add("RC4_INT"),
+         perlasm_scheme   => "elf",
++        shlib_variant    => '_x86_64',
+     },
+ 
+     ####################################################################
 -- 
-2.20.1
+2.25.0
 

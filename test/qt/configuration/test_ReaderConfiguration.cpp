@@ -9,6 +9,7 @@
 #include "Env.h"
 #include "MockReaderDetector.h"
 #include "ResourceLoader.h"
+#include "TestFileHelper.h"
 
 #include <QSharedPointer>
 #include <QtCore>
@@ -39,6 +40,30 @@ class test_ReaderConfiguration
 
 		QVector<UsbId> mUsbIds;
 		MockReaderDetector mMockReaderDetector;
+
+		void checkPlatformsMinMax(const QJsonObject& pObject, const QLatin1String& pValue)
+		{
+			const QJsonArray& array = pObject[pValue].toArray();
+			for (const auto& entry : array)
+			{
+				QVERIFY(entry.isObject());
+				auto object = entry.toObject();
+				QVERIFY(object.contains(QLatin1String("Platforms")));
+
+				const QJsonArray& platforms = object[QLatin1String("Platforms")].toArray();
+				for (const auto& platform : platforms)
+				{
+					QVERIFY(platform.isObject());
+					auto platformObject = platform.toObject();
+					if (platformObject.contains(QLatin1String("min")) && platformObject.contains(QLatin1String("max")))
+					{
+						auto min = QVersionNumber::fromString(platformObject[QLatin1String("min")].toString());
+						auto max = QVersionNumber::fromString(platformObject[QLatin1String("max")].toString());
+						QVERIFY(min <= max);
+					}
+				}
+			}
+		}
 
 	private Q_SLOTS:
 		void initTestCase()
@@ -281,14 +306,35 @@ class test_ReaderConfiguration
 		}
 
 
-		void forbidEmptyFields()
+		void checkIconNames()
 		{
 			for (const auto& readerSettingsInfo : qAsConst(Env::getSingleton<ReaderConfiguration>()->getReaderConfigurationInfos()))
 			{
-				QVERIFY(!readerSettingsInfo.getName().isEmpty());
-				QVERIFY(!readerSettingsInfo.getPattern().isEmpty());
-				QVERIFY(!readerSettingsInfo.getIcon()->getName().isEmpty());
-				QVERIFY(!readerSettingsInfo.getIconWithNPA()->getName().isEmpty());
+				const auto& iconName = readerSettingsInfo.getIcon()->getName();
+				const auto& iconNameWithNPA = readerSettingsInfo.getIconWithNPA()->getName();
+				QString iconNameWithoutPng = iconName.mid(0, iconName.size() - 4);
+				QVERIFY2(iconNameWithNPA.startsWith(iconNameWithoutPng),
+						qPrintable(QString("%1 does not starts with: %2").arg(iconNameWithNPA, iconNameWithoutPng)));
+			}
+		}
+
+
+		void checkOsVersion()
+		{
+			ResourceLoader::getInstance().init();
+			QByteArray data = TestFileHelper::readFile(QStringLiteral(":/updatable-files/supported-readers.json"));
+			QJsonParseError jsonError;
+			const QJsonDocument& json = QJsonDocument::fromJson(data, &jsonError);
+			QVERIFY(jsonError.error == QJsonParseError::NoError);
+			QJsonObject doc = json.object();
+			const QJsonArray& array = doc[QLatin1String("SupportedDevices")].toArray();
+			for (const auto& entry : array)
+			{
+				QVERIFY(entry.isObject());
+				auto object = entry.toObject();
+
+				checkPlatformsMinMax(object, QLatin1String("Drivers"));
+				checkPlatformsMinMax(object, QLatin1String("Information"));
 			}
 		}
 

@@ -31,11 +31,11 @@ class test_WorkflowModel
 			QSignalSpy spyReaderPlugInTypeChanged(&model, &WorkflowModel::fireReaderPlugInTypeChanged);
 			QSignalSpy spyIsBasicReaderChanged(&model, &WorkflowModel::fireIsBasicReaderChanged);
 
-			model.resetContext();
+			model.resetWorkflowContext();
 			QCOMPARE(spyCurrentStateChanged.count(), 1);
 			QCOMPARE(spyResultChanged.count(), 1);
 
-			model.resetContext(context);
+			model.resetWorkflowContext(context);
 			QCOMPARE(spyCurrentStateChanged.count(), 2);
 			QCOMPARE(spyResultChanged.count(), 2);
 

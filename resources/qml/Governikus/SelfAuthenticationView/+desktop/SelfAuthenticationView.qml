@@ -9,19 +9,19 @@ import Governikus.Type.ApplicationModel 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.SelfAuthModel 1.0
 import Governikus.View 1.0
-import QtQuick 2.10
+import QtQuick 2.12
 
 SectionPage {
 
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
-		text: qsTr("Identify") + SettingsModel.translationTrigger
+		text: qsTr("Identify")
 		helpTopic: "selfauthentication"
 	}
 
 	//: LABEL DESKTOP_QML
-	Accessible.name: qsTr("Self-Authentication.") + SettingsModel.translationTrigger
-	Accessible.description: qsTr("This is the self-authentication view of the AusweisApp2.") + SettingsModel.translationTrigger
+	Accessible.name: qsTr("Self-Authentication.")
+	Accessible.description: qsTr("This is the self-authentication view of the AusweisApp2.")
 	Keys.onReturnPressed: startWorkflowButton.onClicked()
 	Keys.onEnterPressed: startWorkflowButton.onClicked()
 
@@ -57,12 +57,12 @@ SectionPage {
 				textStyle: Style.text.header_inverse
 
 				//: LABEL DESKTOP_QML
-				text: qsTr("You can use your ID card anywhere you see this logo.") + SettingsModel.translationTrigger
+				text: qsTr("You can use your ID card anywhere you see this logo.")
 
 				FocusFrame {}
 			}
 		}
-		Pane {
+		GPane {
 			id: textPane
 
 			anchors {
@@ -71,26 +71,35 @@ SectionPage {
 			}
 
 			GText {
-				id: info
-
 				width: parent.width
 
 				activeFocusOnTab: true
 
 				textStyle: Style.text.normal
 				//: LABEL DESKTOP_QML
-				text: qsTr("Use the button 'See my personal data' to display the data stored on your ID card."
-							+ " An Internet connection is required to display the data.")
-							+ "<br><br><b>"
-							//: LABEL DESKTOP_QML
-							+ qsTr("Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.")
-								.arg('<a href="' +
-								//: LABEL DESKTOP_QML
-								qsTr("https://www.ausweisapp.bund.de/en/privacy/") + '">' +
-								//: LABEL DESKTOP_QML
-								qsTr("data privacy statement") + '</a>')
-							+ "</b>"
-							+ SettingsModel.translationTrigger
+				text: qsTr("Use the button \"See my personal data\" to start the self-authentication service of the manufacturer of the %1 to display the data stored in the chip of your ID card.")
+					.arg(Qt.application.name)
+
+				FocusFrame {
+					borderColor: Style.color.focus_indicator
+				}
+			}
+
+			GText {
+				readonly property string privacyStatementUrl: "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
+				//: LABEL DESKTOP_QML Text of the html link inside of a sentence
+				readonly property string privacyStatementDescription: qsTr("data privacy statement")
+				readonly property string privacyStatementLink: "<a href=\"%1\">%2</a>".arg(privacyStatementUrl).arg(privacyStatementDescription)
+
+				width: parent.width
+
+				activeFocusOnTab: true
+
+				textStyle: Style.text.normal
+				font.bold: true
+				//: LABEL DESKTOP_QML
+				text: qsTr("Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.")
+						.arg(privacyStatementLink)
 
 				FocusFrame {
 					borderColor: Style.color.focus_indicator
@@ -102,10 +111,11 @@ SectionPage {
 
 				anchors.right: parent.right
 
-				icon.source: "qrc:///images/npa.svg"
+				icon.source: "qrc:///images/identify.svg"
+				tintIcon: true
 				buttonColor: SettingsModel.useSelfauthenticationTestUri ? Constants.red : Style.color.button
 				//: LABEL DESKTOP_QML
-				text: qsTr("See my personal data") + SettingsModel.translationTrigger
+				text: qsTr("See my personal data")
 				onClicked: SelfAuthModel.startWorkflow()
 			}
 		}

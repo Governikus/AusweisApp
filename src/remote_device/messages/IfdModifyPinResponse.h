@@ -19,7 +19,7 @@ class IfdModifyPinResponse
 
 	public:
 		IfdModifyPinResponse(const QString& pSlotHandle, const QByteArray& pOutputData, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
-		IfdModifyPinResponse(const QJsonObject& pMessageObject);
+		explicit IfdModifyPinResponse(const QJsonObject& pMessageObject);
 		virtual ~IfdModifyPinResponse() override = default;
 
 		const QString& getSlotHandle() const;

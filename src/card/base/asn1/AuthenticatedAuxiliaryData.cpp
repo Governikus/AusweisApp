@@ -132,7 +132,7 @@ QSharedPointer<AuthenticatedAuxiliaryData> AuthenticatedAuxiliaryData::decode(co
 	QByteArrayList oids;
 	for (int i = 0; i < sk_AuxDataTemplate_num(auxDate.data()); i++)
 	{
-		AuxDataTemplate* auxDataTemplate = sk_AuxDataTemplate_value(auxDate.data(), i);
+		const AuxDataTemplate* auxDataTemplate = sk_AuxDataTemplate_value(auxDate.data(), i);
 		const auto oid = Asn1ObjectUtil::convertTo(auxDataTemplate->mAuxId);
 		if (oids.contains(oid))
 		{

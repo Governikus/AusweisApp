@@ -7,6 +7,7 @@
 #include <QCoreApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QStringView>
 #include <QVector>
 
 
@@ -32,6 +33,11 @@ VERSION_NAME(SPEC_VERSION, "Specification-Version")
 VersionInfo::VersionInfo(const QMap<QString, QString>& pInfo)
 	: mInfo(pInfo)
 {
+	if (!mInfo.isEmpty() && !mInfo.contains(NAME()))
+	{
+		qDebug() << "VersionInfo invalid... clearing";
+		mInfo.clear();
+	}
 }
 
 
@@ -58,7 +64,13 @@ VersionInfo VersionInfo::getInstance()
 VersionInfo VersionInfo::fromText(const QString& pText)
 {
 	QMap<QString, QString> infos;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+	const auto& header = QStringView(pText).split(QLatin1Char('\n'));
+#else
 	const auto& header = pText.splitRef(QLatin1Char('\n'));
+#endif
+
 	for (const auto& line : header)
 	{
 		const auto pair = line.split(QLatin1Char(':'));

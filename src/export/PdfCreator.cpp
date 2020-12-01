@@ -4,6 +4,8 @@
 
 #include "PdfCreator.h"
 
+#include "LanguageLoader.h"
+
 #include <QAbstractTextDocumentLayout>
 #include <QDebug>
 #include <QPagedPaintDevice>
@@ -75,9 +77,9 @@ void PdfCreator::createContent(const QString& pContent)
 
 void PdfCreator::createFooter()
 {
-	const auto& footer = QStringLiteral("<h3>%1</h3>").arg(
-			//: LABEL ALL_PLATFORMS
-			tr("For further information, please see <a href='https://www.ausweisapp.bund.de/'>https://www.ausweisapp.bund.de/</a>"));
+	//: LABEL ALL_PLATFORMS Footer in a generated PDF document. %1 is an URL.
+	const auto& footer = QStringLiteral("<h3>%1</h3>").arg(tr("For further information, please see %1").arg(
+			QStringLiteral("<a href='%1'>%1</a>").arg(QStringLiteral("https://www.ausweisapp.bund.de/%1").arg(LanguageLoader::getLocalCode()))));
 
 	mFooter.setHtml(footer);
 }

@@ -47,7 +47,7 @@ class Card
 		 * Sets the current workflow progress message. This is necessary for platforms like iOS,
 		 * where interacting with a card leads to a dialog where the message needs to be updated.
 		 */
-		virtual void setProgressMessage(const QString& pMessage);
+		virtual void setProgressMessage(const QString& pMessage, int pProgress = -1);
 
 		/*!
 		 * Performs a transmit to the smart card.

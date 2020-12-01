@@ -4,20 +4,23 @@
 # for communication between core and ui.
 #####################################################################
 
-ADD_SUBDIRECTORY(base)
-ADD_SUBDIRECTORY(common)
+add_subdirectory(base)
 
-# Use this if we can use QSvgPlugin without Widgets
-# IF(TARGET Qt5::Widgets)
-# https://bugreports.qt.io/browse/QTBUG-41884
-IF(DESKTOP)
-	ADD_SUBDIRECTORY(widget)
-ENDIF()
+add_subdirectory(json)
+add_subdirectory(aidl)
 
-ADD_SUBDIRECTORY(json)
-ADD_SUBDIRECTORY(aidl)
-ADD_SUBDIRECTORY(websocket)
+if(TARGET ${Qt}::WebSockets)
+	add_subdirectory(websocket)
+endif()
 
-IF(TARGET Qt5::Qml)
-	ADD_SUBDIRECTORY(qml)
-ENDIF()
+if(NOT ANDROID AND INTEGRATED_SDK)
+	add_subdirectory(functional)
+endif()
+
+if(TARGET ${Qt}::Gui)
+	add_subdirectory(common)
+endif()
+
+if(TARGET ${Qt}::Qml)
+	add_subdirectory(qml)
+endif()

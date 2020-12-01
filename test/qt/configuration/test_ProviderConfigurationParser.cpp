@@ -11,9 +11,6 @@
 
 #include <QtTest>
 
-#include <algorithm>
-
-
 using namespace governikus;
 
 
@@ -64,13 +61,25 @@ class test_ProviderConfigurationParser
 										 "         \"email\": \"support@ausweisapp.de\","
 										 "         \"postalAddress\": \"Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesamtes fuer Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen\","
 										 "         \"category\": \"citizen\""
+										 "      },"
+										 "		{"
+										 "         \"shortName\": {\"\" : \"Selbstauskunft\"},"
+										 "         \"longName\": {\"\" : \"\"},"
+										 "         \"shortDescription\": {\"\" : \"Funktion der AusweisApp2\"},"
+										 "         \"longDescription\": {\"\" : \"Die AusweisApp2 verfuegt ueber die Funktion \\\"Meine Daten einsehen\\\"\"},"
+										 "         \"address\": \"https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/\","
+										 "         \"homepage\": \"https://www.ausweisapp.bund.de/\","
+										 "         \"phone\": \"+49 421 - 204 95 995\","
+										 "         \"email\": \"support@ausweisapp.de\","
+										 "         \"postalAddress\": \"Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesamtes fuer Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen\","
+										 "         \"category\": \"citizen\""
 										 "      }"
 										 "   ]"
 										 "}");
 
 			const auto providers = ProviderConfigurationParser::parseProvider(data);
 
-			QCOMPARE(providers.size(), 2);
+			QCOMPARE(providers.size(), 3);
 
 			auto provider = providers[0];
 			QCOMPARE(provider.getShortName().toString(), QStringLiteral(":::(bit)kasten"));
@@ -87,7 +96,7 @@ class test_ProviderConfigurationParser
 			LanguageLoader::getInstance().mUsedLocale = QLocale("fr_FR");
 			QCOMPARE(provider.getShortName().toString(), QStringLiteral(":::(bit)-fr-kasten"));
 
-			QCOMPARE(provider.getLongName().toString(), QString());
+			QCOMPARE(provider.getLongName().toString(), QStringLiteral(":::(bit)-fr-kasten"));
 			QCOMPARE(provider.getShortDescription().toString(), QString());
 			QCOMPARE(provider.getLongDescription().toString(), QString());
 			QCOMPARE(provider.getAddress(), QStringLiteral("https://www.bitkasten.de/"));
@@ -112,6 +121,9 @@ class test_ProviderConfigurationParser
 			QCOMPARE(provider.getCategory(), QStringLiteral("citizen"));
 			QVERIFY(provider.getIcon()->lookupPath().endsWith("/citizen_button.svg"));
 			QVERIFY(provider.getImage()->lookupPath().endsWith("/citizen_bg.svg"));
+
+			provider = providers[2];
+			QCOMPARE(provider.getLongName().toString(), QString());
 		}
 
 
@@ -141,54 +153,6 @@ class test_ProviderConfigurationParser
 			QCOMPARE(provider.getEMail(), QString(""));
 			QCOMPARE(provider.getPostalAddress(), QString(""));
 			QCOMPARE(provider.getCategory(), QString("other"));
-		}
-
-
-		void parseTcTokenUrl()
-		{
-			QByteArray data = QByteArray("{"
-										 "   \"provider\": ["
-										 "      {"
-										 "      },"
-										 "      {"
-										 "         \"tcTokenUrl\": \"https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml\""
-										 "      }"
-										 "   ]"
-										 "}");
-
-			const auto providers = ProviderConfigurationParser::parseProvider(data);
-
-			QCOMPARE(providers.size(), 2);
-
-			auto provider = providers[0];
-			QCOMPARE(provider.getTcTokenUrl(), QUrl());
-
-			provider = providers[1];
-			QCOMPARE(provider.getTcTokenUrl(), QUrl(QStringLiteral("https://www.autentapp.de/AusweisAuskunft/WebServiceRequesterServlet?mode=xml")));
-		}
-
-
-		void parseClientUrl()
-		{
-			QByteArray data = QByteArray("{"
-										 "   \"provider\": ["
-										 "      {"
-										 "      },"
-										 "      {"
-										 "         \"clientUrl\": \"https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld\""
-										 "      }"
-										 "   ]"
-										 "}");
-
-			const auto providers = ProviderConfigurationParser::parseProvider(data);
-
-			QCOMPARE(providers.size(), 2);
-
-			auto provider = providers[0];
-			QCOMPARE(provider.getTcTokenUrl(), QUrl());
-
-			provider = providers[1];
-			QCOMPARE(provider.getClientUrl(), QUrl(QStringLiteral("https://www.bva.bund.de/bafoeg-online/Bafoeg/flow/anmeld")));
 		}
 
 
@@ -252,12 +216,12 @@ class test_ProviderConfigurationParser
 		{
 			QTest::addColumn<int>("count");
 
-			const int desktop = 82;
+			const int desktop = 84;
 			QTest::newRow("win") << desktop;
 			QTest::newRow("mac") << desktop;
 			QTest::newRow("linux") << desktop;
 			QTest::newRow("android") << desktop;
-			QTest::newRow("ios") << 44;
+			QTest::newRow("ios") << 46;
 		}
 
 
@@ -268,10 +232,6 @@ class test_ProviderConfigurationParser
 			QByteArray data = TestFileHelper::readFile(QStringLiteral(":/updatable-files/supported-providers.json"));
 			const auto providers = ProviderConfigurationParser::parseProvider(data, QLatin1String(QTest::currentDataTag()));
 			QCOMPARE(providers.size(), count);
-
-			auto sortedProviders = providers;
-			std::sort(sortedProviders.begin(), sortedProviders.end());
-			QCOMPARE(providers, sortedProviders);
 		}
 
 

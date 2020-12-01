@@ -28,7 +28,7 @@ class WebSocketChannel
 		static QString makeConnectionId(const QSharedPointer<QWebSocket>& pConnection);
 
 	public:
-		WebSocketChannel(const QSharedPointer<QWebSocket>& pConnection);
+		explicit WebSocketChannel(const QSharedPointer<QWebSocket>& pConnection);
 		virtual ~WebSocketChannel() override;
 
 		virtual void send(const QByteArray& pDataBlock) override;

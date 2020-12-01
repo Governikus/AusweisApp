@@ -145,6 +145,48 @@ class test_Downloader
 		}
 
 
+		void abortDownload()
+		{
+			MockNetworkReply* const reply = new MockNetworkReply(QByteArray(), HTTP_STATUS_OK);
+			mMockNetworkManager.setNextReply(reply);
+
+			auto* const downloader = Env::getSingleton<Downloader>();
+			QSignalSpy spy(downloader, &Downloader::fireDownloadFailed);
+
+			const QUrl urlCurrent("http://server/current");
+			const QUrl urlurlNext("http://server/next");
+
+			QTest::ignoreMessage(QtDebugMsg, "Try abort of download: QUrl(\"http://server/current\")");
+			QVERIFY(!downloader->abort(urlCurrent));
+			QCOMPARE(spy.count(), 0);
+
+			QTest::ignoreMessage(QtDebugMsg, "Download: QUrl(\"http://server/current\")");
+			downloader->download(urlCurrent);
+
+			QTest::ignoreMessage(QtDebugMsg, "Try abort of download: QUrl(\"http://server/next\")");
+			QVERIFY(!downloader->abort(urlurlNext));
+			QCOMPARE(spy.count(), 0);
+
+			QTest::ignoreMessage(QtDebugMsg, "Download: QUrl(\"http://server/next\")");
+			QTest::ignoreMessage(QtDebugMsg, "A download is already in progress... delaying.");
+			downloader->download(urlurlNext);
+
+			QTest::ignoreMessage(QtDebugMsg, "Try abort of download: QUrl(\"http://server/next\")");
+			QTest::ignoreMessage(QtDebugMsg, "Remove pending request");
+			QVERIFY(downloader->abort(urlurlNext));
+			verifyFailedReply(spy, urlurlNext, GlobalStatus::Code::Downloader_Aborted);
+
+			spy.clear();
+			QTest::ignoreMessage(QtDebugMsg, "Try abort of download: QUrl(\"http://server/current\")");
+			QTest::ignoreMessage(QtDebugMsg, "Operation aborted"); // from MockNetworkReply
+			QTest::ignoreMessage(QtDebugMsg, "Current download aborted");
+			QVERIFY(downloader->abort(urlCurrent));
+			QCOMPARE(spy.count(), 0);
+			mMockNetworkManager.fireFinished();
+			verifyFailedReply(spy, urlCurrent, GlobalStatus::Code::Downloader_Aborted);
+		}
+
+
 		void conditionalDownloadOfNewerFile()
 		{
 			const QByteArray fileContent("Some icon data");
@@ -164,10 +206,10 @@ class test_Downloader
 
 			verifySuccessReply(spy, url, timestampOnServer, fileContent);
 
-			QNetworkRequest* const lastRequest = mMockNetworkManager.getLastRequest();
-			QVERIFY(lastRequest);
-			QCOMPARE(lastRequest->rawHeader(QByteArray("If-Modified-Since")), QLocale::c().toString(timestampInCache, QStringLiteral("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
-			QCOMPARE(lastRequest->rawHeader(QByteArray("If-Modified-Since")), QByteArray("Thu, 01 Jun 2017 12:00:00 GMT"));
+			const QNetworkRequest lastRequest = mMockNetworkManager.getLastRequest();
+			QCOMPARE(lastRequest.header(QNetworkRequest::IfModifiedSinceHeader).toDateTime(), timestampInCache);
+			QCOMPARE(lastRequest.rawHeader(QByteArray("If-Modified-Since")), QLocale::c().toString(timestampInCache, QStringLiteral("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
+			QCOMPARE(lastRequest.rawHeader(QByteArray("If-Modified-Since")), QByteArray("Thu, 01 Jun 2017 12:00:00 GMT"));
 		}
 
 
@@ -189,10 +231,10 @@ class test_Downloader
 
 			verifyUnnecessaryDownloadReply(spy, url);
 
-			QNetworkRequest* const lastRequest = mMockNetworkManager.getLastRequest();
-			QVERIFY(lastRequest);
-			QCOMPARE(lastRequest->rawHeader(QByteArray("If-Modified-Since")), QLocale::c().toString(timestampInCache, QStringLiteral("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
-			QCOMPARE(lastRequest->rawHeader(QByteArray("If-Modified-Since")), QByteArray("Sat, 01 Jul 2017 12:00:00 GMT"));
+			const QNetworkRequest lastRequest = mMockNetworkManager.getLastRequest();
+			QCOMPARE(lastRequest.header(QNetworkRequest::IfModifiedSinceHeader).toDateTime(), timestampInCache);
+			QCOMPARE(lastRequest.rawHeader(QByteArray("If-Modified-Since")), QLocale::c().toString(timestampInCache, QStringLiteral("ddd, dd MMM yyyy hh:mm:ss 'GMT'")).toLatin1());
+			QCOMPARE(lastRequest.rawHeader(QByteArray("If-Modified-Since")), QByteArray("Sat, 01 Jul 2017 12:00:00 GMT"));
 		}
 
 

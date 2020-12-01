@@ -43,7 +43,7 @@ class KeyAgreement
 		CardResult createTransmitResult(CardReturnCode pReturnCode,
 				StatusCode pResponseReturnCode,
 				const QByteArray& pResultData,
-				const char* pLogMessage);
+				const char* pLogMessage) const;
 
 		/*!
 		 * \brief Determine the card's nonce. The encrypted nonce will be decrypted using the supplied PIN.
@@ -51,7 +51,7 @@ class KeyAgreement
 		 * \param pPin PIN for decryption of the nonce
 		 * \return the decrypted nonce
 		 */
-		CardResult determineNonce(const QString& pPin);
+		CardResult determineNonce(const QByteArray& pPin);
 
 		/*!
 		 * \brief Determines the shared secret by performing the key agreement.
@@ -92,7 +92,7 @@ class KeyAgreement
 		 * \param pMappingData the terminal's mapping data.
 		 * \return the card's mapping data
 		 */
-		CardResult transmitGAMappingData(const QByteArray& pMappingData);
+		CardResult transmitGAMappingData(const QByteArray& pMappingData) const;
 
 		/*!
 		 * \brief Transmit the General Authenticate (Ephemeral Public Key) command to the card.
@@ -138,7 +138,7 @@ class KeyAgreement
 		 * \param pPin the PIN value
 		 * \return the authentication result
 		 */
-		KeyAgreementStatus perform(const QString& pPin);
+		KeyAgreementStatus perform(const QByteArray& pPin);
 
 		/*!
 		 * \brief Subsequent to the key agreement an encryption key is determined. This method returns this key.

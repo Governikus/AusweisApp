@@ -2,15 +2,13 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
+import QtGraphicalEffects 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 Item {
 	id: baseItem
@@ -66,7 +64,7 @@ Item {
 				Accessible.ignored: true
 
 				textFormat: Text.RichText
-				text: !!model.text ? model.text : qsTr("Unknown") + SettingsModel.translationTrigger
+				text: !!model.text ? model.text : qsTr("Unknown")
 				verticalAlignment: Text.AlignVCenter
 			}
 

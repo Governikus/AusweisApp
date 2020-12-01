@@ -8,13 +8,13 @@ der AusweisApp2 unterstützt.
 
 Betriebssysteme
 """""""""""""""
-- macOS 10.12
-
 - macOS 10.13
 
 - macOS 10.14
 
 - macOS 10.15
+
+- macOS 10.16 / 11.0
 
 - Windows 7 SP1 (32bit / 64bit)
 
@@ -33,6 +33,7 @@ Karten
 
   - Elektronischer Aufenthaltstitel
 
+  - Unionsbürgerkarte
 
 
 macOS / Windows
@@ -49,15 +50,15 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-  - Firefox 75
+  - Firefox 84
 
-  - Chrome 81
+  - Chrome 87
 
   - Internet Explorer 11
 
-  - Safari 13.1
+  - Safari 14.0.1
 
-  - Edge 80
+  - Edge 87
 
 
 
@@ -91,7 +92,7 @@ Zusätzlich werden folgende nicht zertifizierte Kartenleser getestet.
 
 
 Aktuelle Informationen zu Kartenlesern finden Sie auf unserer Webseite:
-https://www.ausweisapp.bund.de/fragen-und-antworten/voraussetzungen/
+https://www.ausweisapp.bund.de/de/aa2/cardreader
 
 Alle NFC-fähigen Smartphones bzw. Tablets, die die Onlineausweisfunktionalität
 unterstützen, können als Kartenleser verwendet werden.
@@ -99,7 +100,7 @@ Dabei ist es notwendig die mobile AusweisApp2 auf dem jeweiligen Smartphone
 zu installieren und zu starten.
 
 Details hierzu befinden sich auf der Homepage:
-https://www.ausweisapp.bund.de/mobile-geraete/
+https://www.ausweisapp.bund.de/de/aa2/mobile-devices
 
 
 Android / iOS
@@ -115,24 +116,19 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-  - Chrome 81 (Android)
+  - Chrome 87 (Android)
 
-  - Firefox 68 (Android)
+  - Firefox 83.1 (Android)
 
-  - Safari 13.1 (iOS)
+  - Safari 14.0.1 (iOS)
 
 
 Kartenleser
 ~~~~~~~~~~~
 Alle NFC-fähigen Smartphones bzw. Tablets, die die Onlineausweisfunktionalität
 unterstützen. Details hierzu befinden sich auf der Homepage:
-https://www.ausweisapp.bund.de/mobile-geraete/
+https://www.ausweisapp.bund.de/de/aa2/mobile-devices
 
 Ebenfalls ist es möglich ein weiteres Smartphone als Kartenleser zu verwenden.
 Dabei ist es notwendig die mobile AusweisApp2 auf dem jeweiligen Smartphone zu
 installieren und zu starten.
-
-Darüber hinaus ist die Verwendung eines Bluetooth-Kartenlesers möglich.
-Folgender Bluetooth-Kartenleser wird von der AusweiApp2 unterstützt:
-
-  - cyberJack wave

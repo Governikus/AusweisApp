@@ -10,18 +10,38 @@
 #include "PlatformHelper.h"
 #include "Randomizer.h"
 #include "SettingsModel.h"
-#include "SingletonHelper.h"
 
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QtMath>
 
-
 using namespace governikus;
 
 
-defineSingleton(LogModel)
+LogModel::LogModel()
+	: QAbstractListModel()
+	, mLogFiles()
+	, mSelectedLogFile(-1)
+	, mLogEntries()
+{
+	reset();
+	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireLanguageChanged, this, &LogModel::fireLogFilesChanged); // needed to translate the "Current log" entry on language change
+}
+
+
+void LogModel::reset()
+{
+	mLogFiles.clear();
+	mLogFiles += QString(); // dummy entry for "current logfile"
+	const auto logFiles = Env::getSingleton<LogHandler>()->getOtherLogfiles();
+	for (const auto& entry : logFiles)
+	{
+		mLogFiles += entry.absoluteFilePath();
+	}
+
+	setLogfile(0);
+}
 
 
 void LogModel::addLogEntry(const QString& pEntry)
@@ -57,34 +77,8 @@ void LogModel::onNewLogMsg(const QString& pMsg)
 }
 
 
-LogModel::LogModel()
-	: QAbstractListModel()
-	, mLogFiles()
-	, mSelectedLogFile(-1)
-	, mLogEntries()
-{
-	mLogFiles += QString(); // dummy entry for "current logfile"
-	const auto logHandler = Env::getSingleton<LogHandler>();
-	for (const auto& entry : logHandler->getOtherLogfiles())
-	{
-		mLogFiles += entry.absoluteFilePath();
-	}
-
-	setLogfile(0);
-
-	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireLanguageChanged, this, &LogModel::fireLogFilesChanged); // needed to translate the "Current log" entry on language change
-}
-
-
-LogModel& LogModel::getInstance()
-{
-	return *Instance;
-}
-
-
 QStringList LogModel::getLogfiles() const
 {
-	const auto logHandler = Env::getSingleton<LogHandler>();
 	QStringList logFileNames;
 	//: LABEL ALL_PLATFORMS
 	logFileNames += tr("Current log");
@@ -92,7 +86,7 @@ QStringList LogModel::getLogfiles() const
 	{
 		if (!entry.isEmpty())
 		{
-			logFileNames += LanguageLoader::getInstance().getUsedLocale().toString(logHandler->getFileDate(entry), tr("dd.MM.yyyy hh:mm:ss"));
+			logFileNames += LanguageLoader::getInstance().getUsedLocale().toString(LogHandler::getFileDate(QFileInfo(entry)), tr("dd.MM.yyyy hh:mm:ss"));
 		}
 	}
 
@@ -115,6 +109,7 @@ void LogModel::removeOtherLogfiles()
 {
 	if (Env::getSingleton<LogHandler>()->removeOtherLogfiles())
 	{
+		reset();
 		Q_EMIT fireLogFilesChanged();
 	}
 }
@@ -157,19 +152,23 @@ void LogModel::setLogfile(int pIndex)
 	if (pIndex == 0)
 	{
 		QTextStream in(logHandler->useLogfile() ? logHandler->getBacklog() : tr("The logfile is disabled.").toUtf8());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 		in.setCodec("UTF-8");
+#endif
 
 		setLogEntries(in);
-		connect(logHandler, &LogHandler::fireLog, this, &LogModel::onNewLogMsg);
+		connect(logHandler->getEventHandler(), &LogEventHandler::fireLog, this, &LogModel::onNewLogMsg);
 	}
 	else
 	{
-		disconnect(logHandler, &LogHandler::fireLog, this, &LogModel::onNewLogMsg);
+		disconnect(logHandler->getEventHandler(), &LogEventHandler::fireLog, this, &LogModel::onNewLogMsg);
 		QFile inputFile(mLogFiles[pIndex]);
 		if (inputFile.open(QIODevice::ReadOnly))
 		{
 			QTextStream in(&inputFile);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 			in.setCodec("UTF-8");
+#endif
 			setLogEntries(in);
 			inputFile.close();
 		}

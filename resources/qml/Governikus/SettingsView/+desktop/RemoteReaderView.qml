@@ -2,15 +2,14 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.NumberModel  1.0
 import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ReaderScanEnabler 1.0
 import Governikus.Type.ReaderPlugIn 1.0
 import Governikus.View 1.0
@@ -46,7 +45,7 @@ Item {
 			activeFocusOnTab: true
 
 			textStyle: Style.text.header_accent
-			text: qsTr("Paired remote devices") + SettingsModel.translationTrigger
+			text: qsTr("Paired remote devices")
 
 			FocusFrame {
 				borderColor: Style.color.focus_indicator
@@ -80,7 +79,7 @@ Item {
 			activeFocusOnTab: true
 
 			textStyle: Style.text.header_accent
-			text: qsTr("Available remote devices") + SettingsModel.translationTrigger
+			text: qsTr("Available remote devices")
 
 			FocusFrame {
 				borderColor: Style.color.focus_indicator
@@ -128,7 +127,7 @@ Item {
 			spacing: Constants.text_spacing
 
 			TintableIcon {
-				source: "qrc:/images/info_filled.svg"
+				source: "qrc:/images/info.svg"
 				sourceSize.height: Style.dimens.icon_size
 				tintColor: Style.color.accent
 			}
@@ -144,7 +143,7 @@ Item {
 				wrapMode: Text.WordWrap
 				verticalAlignment: Text.AlignBottom
 				textStyle: Style.text.hint
-				text: qsTr("Only devices that are already paired or are connected to the same WiFi network and have the remote service enabled are shown here.") + SettingsModel.translationTrigger
+				text: qsTr("Only devices that are already paired or are connected to the same WiFi network and have the remote service enabled are shown here.")
 
 				FocusFrame {
 					borderColor: Style.color.focus_indicator
@@ -154,7 +153,7 @@ Item {
 
 		GButton {
 			//: LABEL DESKTOP_QML
-			text: qsTr("More information") + SettingsModel.translationTrigger
+			text: qsTr("More information")
 			onClicked: moreInformation()
 		}
 	}

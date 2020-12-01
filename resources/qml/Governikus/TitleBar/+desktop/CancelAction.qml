@@ -2,30 +2,27 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-
 
 GButton {
 	readonly property color pressColor: Qt.darker(textStyle.textColor, Constants.highlightDarkerFactor)
 
 	visible: ApplicationModel.currentWorkflow !== ""
+	height: if (parent) parent.height
 
-	text: qsTr("Cancel") + SettingsModel.translationTrigger
+	text: qsTr("Cancel")
 	textStyle: Style.text.header_inverse
 	buttonColor: Style.color.transparent
-	icon.source: "qrc:///images/cancel.svg"
+	icon.source: "qrc:///images/material_close.svg"
 	font.bold: true
 	tintIcon: true
-	padding: 0
-	leftPadding: Constants.component_spacing
-	rightPadding: Constants.component_spacing
+	verticalPadding: 0
 	textHighlightColor: pressed ? pressColor : textStyle.textColor
 
 	GSeparator {

@@ -24,7 +24,7 @@ class IfdEstablishContext
 
 	public:
 		IfdEstablishContext(const IfdVersion& pProtocol, const QString& pUdName);
-		IfdEstablishContext(const QJsonObject& pMessageObject);
+		explicit IfdEstablishContext(const QJsonObject& pMessageObject);
 		virtual ~IfdEstablishContext() override = default;
 
 		const IfdVersion& getProtocol() const;

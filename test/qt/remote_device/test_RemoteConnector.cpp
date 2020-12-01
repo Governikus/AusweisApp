@@ -145,7 +145,7 @@ class test_RemoteConnector
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
 			const Discovery discoveryMsg(QString(), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v0});
 			sendRequest(connector, hostAddress, discoveryMsg, QString());
-			QTRY_COMPARE(spyError.count(), 1);
+			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -169,7 +169,7 @@ class test_RemoteConnector
 			// Device information is null.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
 			sendRequest(connector, hostAddress, Discovery(QJsonObject()), QStringLiteral("secret"));
-			QTRY_COMPARE(spyError.count(), 1);
+			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -196,7 +196,7 @@ class test_RemoteConnector
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
 			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), server->getServerPort(), {IfdVersion::Version::v0});
 			sendRequest(connector, hostAddress, discoveryMsg, QString());
-			QTRY_COMPARE(spyError.count(), 1);
+			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -221,7 +221,7 @@ class test_RemoteConnector
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
 			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v_test});
 			sendRequest(connector, hostAddress, discoveryMsg, QStringLiteral("secret"));
-			QTRY_COMPARE(spyError.count(), 1);
+			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -246,7 +246,7 @@ class test_RemoteConnector
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
 			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v0});
 			sendRequest(connector, hostAddress, discoveryMsg, QString("dummy"));
-			QTRY_COMPARE(spyError.count(), 1);
+			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -326,7 +326,7 @@ class test_RemoteConnector
 				const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), serverPort, {IfdVersion::Version::v0});
 				sendRequest(connector, hostAddress, discoveryMsg, psk);
 
-				QTRY_COMPARE(spyConnectorSuccess.count(), 1);
+				QTRY_COMPARE(spyConnectorSuccess.count(), 1); // clazy:exclude=qstring-allocations
 				QCOMPARE(spyConnectorError.count(), 0);
 				verifySuccessSignal(spyConnectorSuccess, serverPort);
 
@@ -339,7 +339,7 @@ class test_RemoteConnector
 			QCOMPARE(spySocketError.count(), 0);
 			QCOMPARE(spySocketSuccess.count(), 1);
 
-			QTRY_COMPARE(remoteDispatcherDestructionSpy->count(), 1);
+			QTRY_COMPARE(remoteDispatcherDestructionSpy->count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(remoteDispatcherDestructionSpy->count(), 1);
 
 			clientThread.exit();
@@ -386,7 +386,7 @@ class test_RemoteConnector
 			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), serverPort, {IfdVersion::Version::v0});
 			sendRequest(connector, hostAddress, discoveryMsg, QStringLiteral("sekret"));
 
-			QTRY_COMPARE(spyConnectorError.count(), 1);
+			QTRY_COMPARE(spyConnectorError.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(spyConnectorSuccess.count(), 0);
 			verifyErrorSignal(spyConnectorError, {RemoteErrorCode::REMOTE_HOST_REFUSED_CONNECTION}, serverPort, QStringLiteral("Smartphone1"));
 

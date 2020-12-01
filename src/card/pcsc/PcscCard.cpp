@@ -303,7 +303,7 @@ EstablishPaceChannelOutput PcscCard::establishPaceChannel(PacePasswordId pPasswo
 	Q_UNUSED(pTimeoutSeconds)
 	if (!mReader->hasFeature(FeatureID::EXECUTE_PACE))
 	{
-		return CardReturnCode::COMMAND_FAILED;
+		return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
 	}
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::EXECUTE_PACE);
 
@@ -316,7 +316,7 @@ EstablishPaceChannelOutput PcscCard::establishPaceChannel(PacePasswordId pPasswo
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Control to establish PACE channel failed";
-		return CardReturnCode::COMMAND_FAILED;
+		return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
 	}
 
 	EstablishPaceChannelOutput output;
@@ -384,7 +384,7 @@ ResponseApduResult PcscCard::setEidPin(quint8 pTimeoutSeconds)
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::MODIFY_PIN_DIRECT);
 
 	PinModify pinModify(pTimeoutSeconds);
-	auto [returnCode, controlRes] = control(cmdID, pinModify.createCcidForPcsc());
+	auto [returnCode, controlRes] = control(cmdID, pinModify.createCcid());
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Modify PIN failed";

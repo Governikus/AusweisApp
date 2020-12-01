@@ -4,10 +4,10 @@
 
 #include "UIPlugInWebSocket.h"
 
-#include "AppSettings.h"
 #include "Env.h"
 #include "ReaderManager.h"
 #include "UILoader.h"
+#include "VolatileSettings.h"
 
 #include <QCoreApplication>
 #include <QFile>
@@ -31,14 +31,15 @@ UIPlugInWebSocket::UIPlugInWebSocket()
 	, mJson(nullptr)
 	, mContext()
 	, mUiDomination(false)
+	, mUiDominationPrevUsedAsSDK(false)
 {
-	if (!UILoader::getInstance().load(UIPlugInName::UIPlugInJson))
+	if (!Env::getSingleton<UILoader>()->load(UIPlugInName::UIPlugInJson))
 	{
 		qCWarning(websocket) << "Cannot start WebSocket because JSON-API is missing";
 		return;
 	}
 
-	mJson = qobject_cast<UIPlugInJson*>(UILoader::getInstance().getLoaded(UIPlugInName::UIPlugInJson));
+	mJson = qobject_cast<UIPlugInJson*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson));
 	Q_ASSERT(mJson);
 
 	mHttpServer = Env::getShared<HttpServer>();
@@ -87,7 +88,8 @@ void UIPlugInWebSocket::onUiDomination(const UIPlugIn* pUi, const QString& pInfo
 	{
 		Q_ASSERT(!mConnection);
 		mUiDomination = true;
-		Env::getSingleton<AppSettings>()->setUsedAsSDK(true);
+		mUiDominationPrevUsedAsSDK = Env::getSingleton<VolatileSettings>()->isUsedAsSDK();
+		Env::getSingleton<VolatileSettings>()->setUsedAsSDK(true);
 		Env::getSingleton<ReaderManager>()->startScanAll();
 		mServer.handleConnection(mRequest->take());
 	}
@@ -101,10 +103,13 @@ void UIPlugInWebSocket::onUiDomination(const UIPlugIn* pUi, const QString& pInfo
 
 void UIPlugInWebSocket::onUiDominationReleased()
 {
-	mUiDomination = false;
-	mJson->setEnabled(false);
-	Env::getSingleton<ReaderManager>()->stopScanAll();
-	Env::getSingleton<AppSettings>()->setUsedAsSDK(false);
+	if (mUiDomination)
+	{
+		mUiDomination = false;
+		mJson->setEnabled(false);
+		Env::getSingleton<ReaderManager>()->stopScanAll();
+		Env::getSingleton<VolatileSettings>()->setUsedAsSDK(mUiDominationPrevUsedAsSDK);
+	}
 }
 
 

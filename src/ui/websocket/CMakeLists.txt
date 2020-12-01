@@ -5,9 +5,7 @@
 # uses the json api.
 #####################################################################
 
-IF(TARGET Qt5::WebSockets)
-	ADD_PLATFORM_LIBRARY(AusweisAppUiWebsocket)
+ADD_PLATFORM_LIBRARY(AusweisAppUiWebsocket)
 
-	TARGET_LINK_LIBRARIES(AusweisAppUiWebsocket Qt5::Core Qt5::WebSockets AusweisAppUi AusweisAppUiJson AusweisAppNetwork AusweisAppGlobal)
-	TARGET_COMPILE_DEFINITIONS(AusweisAppUiWebsocket PRIVATE QT_STATICPLUGIN)
-ENDIF()
+target_link_libraries(AusweisAppUiWebsocket ${Qt}::Core ${Qt}::WebSockets AusweisAppUi AusweisAppUiJson AusweisAppNetwork AusweisAppGlobal)
+target_compile_definitions(AusweisAppUiWebsocket PRIVATE QT_STATICPLUGIN)

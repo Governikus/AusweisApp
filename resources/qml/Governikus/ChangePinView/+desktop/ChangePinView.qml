@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
@@ -13,7 +13,6 @@ import Governikus.ResultView 1.0
 import Governikus.SettingsView 1.0
 import Governikus.View 1.0
 import Governikus.Workflow 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.NumberModel 1.0
 
@@ -22,9 +21,10 @@ SectionPage {
 	id: baseItem
 
 	enum SubViews {
-		Undefined,
+		Start,
 		Workflow,
 		Password,
+		NoPassword,
 		PasswordInfo,
 		Progress,
 		ProgressNewPin,
@@ -37,32 +37,43 @@ SectionPage {
 		ReaderSettings
 	}
 
-	function showSettings() {
+	// Expose private properties, needed for unit tests
+	property alias _d : d
+
+	function showWithPrecedingView(pNextView) {
 		readerView.precedingView = d.activeView
-		d.view = ChangePinView.SubViews.ReaderSettings
+		d.view = pNextView
 		ApplicationWindow.menuBar.updateActions()
+	}
+
+	function showPasswordInfo() {
+		showWithPrecedingView(ChangePinView.SubViews.PasswordInfo)
+	}
+
+	function showSettings() {
+		showWithPrecedingView(ChangePinView.SubViews.ReaderSettings)
 	}
 
 	Keys.onEscapePressed: if (d.cancelAllowed) ChangePinModel.cancelWorkflow()
 
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
-		text: qsTr("Change PIN") + SettingsModel.translationTrigger
-		rootEnabled: false
+		text: qsTr("Change PIN")
+		rootEnabled: d.activeView === ChangePinView.SubViews.Start
 		helpTopic: "pinManagement"
 		showSettings: (changePinController.workflowState === ChangePinController.WorkflowStates.Initial ||
-		               changePinController.workflowState === ChangePinController.WorkflowStates.Reader ||
-		               changePinController.workflowState === ChangePinController.WorkflowStates.Card)
-		              && d.activeView !== ChangePinView.SubViews.Progress && d.activeView !== ChangePinView.SubViews.ProgressNewPin
+						changePinController.workflowState === ChangePinController.WorkflowStates.Reader ||
+						changePinController.workflowState === ChangePinController.WorkflowStates.Card)
+						&& d.activeView !== ChangePinView.SubViews.Progress
+						&& d.activeView !== ChangePinView.SubViews.ProgressNewPin
+						&& d.activeView !== ChangePinView.SubViews.NoPassword
 
 		onClicked: {
-			if (d.activeView === ChangePinView.SubViews.PasswordInfo) {
-				d.view = ChangePinView.SubViews.Password
-				ApplicationWindow.menuBar.updateActions()
-			}
-			else if (d.activeView === ChangePinView.SubViews.ReaderSettings) {
-				d.view = readerView.precedingView
-				ApplicationWindow.menuBar.updateActions()
+			if (d.activeView === ChangePinView.SubViews.PasswordInfo ||
+				d.activeView === ChangePinView.SubViews.NoPassword ||
+				d.activeView === ChangePinView.SubViews.ReaderSettings) {
+					d.view = readerView.precedingView
+					ApplicationWindow.menuBar.updateActions()
 			}
 		}
 
@@ -85,15 +96,15 @@ SectionPage {
 	QtObject {
 		id: d
 
-		property var view: ChangePinView.SubViews.Undefined
+		property var view: ChangePinView.SubViews.Start
 		readonly property int activeView: inputError.visible ? ChangePinView.SubViews.InputError : pinUnlocked.visible ? ChangePinView.SubViews.PinUnlocked : view
-		readonly property bool cancelAllowed: ChangePinModel.isBasicReader || generalWorkflow.waitingFor != Workflow.WaitingFor.Password
+		readonly property bool cancelAllowed: view !== ChangePinView.SubViews.NoPassword && view !== ChangePinView.SubViews.Start && (ChangePinModel.isBasicReader || generalWorkflow.waitingFor != Workflow.WaitingFor.Password)
 	}
 
 	TabbedReaderView {
 		id: readerView
 
-		property int precedingView: ChangePinView.SubViews.Undefined
+		property int precedingView: ChangePinView.SubViews.Start
 
 		visible: d.activeView === ChangePinView.SubViews.ReaderSettings
 		onCloseView: {
@@ -113,6 +124,56 @@ SectionPage {
 
 			d.view = pName
 		}
+	}
+
+	DecisionView {
+		visible: d.activeView === ChangePinView.SubViews.Start
+
+		style: DecisionView.ButtonStyle.AllButtons
+		mainIconSource: "qrc:/images/material_lock.svg"
+		//: LABEL DESKTOP_QML Title of PIN change start page. User is asked which type of PIN they have.
+		questionText: qsTr("What kind of PIN do you have?")
+		questionSubText: "%1<br><br><a href=\"#\">%2</a>"
+			//: LABEL DESKTOP_QML Description of PIN change start page. User has a choice of which PIN to set.
+			.arg(qsTr("Here you have the possibility to set or change the PIN of your identity card."))
+			//: LABEL DESKTOP_QML More information link. Leads to information about pin letter.
+			.arg(qsTr("More information"))
+		agreeButton.iconText: "?"
+		//: LABEL DESKTOP_QML
+		agreeText: qsTr("No PIN")
+		neutralButton.iconText: "5"
+		//: LABEL DESKTOP_QML
+		neutralText: qsTr("Five-digit Transport PIN")
+		disagreeButton.iconText: "6"
+		//: LABEL DESKTOP_QML
+		disagreeText: qsTr("Six-digit PIN")
+
+		onSubTextLinkActivated: baseItem.showPasswordInfo()
+
+		onNeutral: {
+			NumberModel.requestTransportPin = true
+			ChangePinModel.startWorkflow()
+		}
+
+		onDisagree: {
+			NumberModel.requestTransportPin = false
+			ChangePinModel.startWorkflow()
+		}
+
+		onAgree: d.view = ChangePinView.SubViews.NoPassword
+	}
+
+	ResultView {
+		id: noPasswordView
+
+		visible: d.activeView === ChangePinView.SubViews.NoPassword
+
+		resultType: ResultView.Type.IsInfo
+		buttonType: NavigationButton.Type.Check
+		//: LABEL DESKTOP_QML
+		text: qsTr("You cannot find your PIN letter? You have set a PIN when picking up the ID card or later that you cannot recall now?\n\nIf this is the case please turn to the competent authority and set a new PIN there.")
+
+		onNextView: baseItem.nextView(SectionPage.Views.Main)
 	}
 
 	GeneralWorkflow {
@@ -144,14 +205,7 @@ SectionPage {
 			ChangePinModel.continueWorkflow()
 		}
 
-		onChangePinLength: {
-			NumberModel.requestTransportPin = !NumberModel.requestTransportPin
-		}
-
-		onRequestPasswordInfo: {
-			d.view = ChangePinView.SubViews.PasswordInfo
-			ApplicationWindow.menuBar.updateActions()
-		}
+		onRequestPasswordInfo: baseItem.showPasswordInfo()
 	}
 
 	PasswordInfoView {
@@ -160,7 +214,7 @@ SectionPage {
 		visible: d.activeView === ChangePinView.SubViews.PasswordInfo
 
 		onClose: {
-			d.view = ChangePinView.SubViews.Password
+			d.view = readerView.precedingView
 			ApplicationWindow.menuBar.updateActions()
 		}
 	}
@@ -172,11 +226,11 @@ SectionPage {
 
 		text: d.activeView === ChangePinView.SubViews.ProgressNewPin
 			//: LABEL DESKTOP_QML Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.
-			? qsTr("Setting new PIN") + SettingsModel.translationTrigger
+			? qsTr("Setting new PIN")
 			//: LABEL DESKTOP_QML Processing screen label while the card communication is running after the old PIN has been entered during PIN change process.
-			: qsTr("Change PIN") + SettingsModel.translationTrigger
+			: qsTr("Change PIN")
 		//: INFO DESKTOP_QML Processing screen text while the card communication is running after the PIN has been entered during PIN change process.
-		subText: qsTr("Please don't move the ID card.") + SettingsModel.translationTrigger
+		subText: qsTr("Please do not move the ID card.")
 	}
 
 	ResultView {
@@ -205,7 +259,7 @@ SectionPage {
 
 		resultType: ResultView.Type.IsSuccess
 		//: INFO DESKTOP_QML The ID card has just been unblocked and the user can now continue with their PIN change.
-		text: qsTr("Your ID card is unblocked. You now have three more attempts to change your PIN") + SettingsModel.translationTrigger
+		text: qsTr("Your PIN is unblocked. You now have three more attempts to change your PIN.")
 		onNextView: confirmed = true
 
 		Connections {
@@ -221,7 +275,7 @@ SectionPage {
 
 		resultType: ResultView.Type.IsInfo
 		//: INFO DESKTOP_QML The NFC signal is weak or unstable, the user is asked to change the card's position to (hopefully) reduce the distance to the NFC chip.
-		text: qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable") + SettingsModel.translationTrigger
+		text: qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable")
 		onNextView: ChangePinModel.continueWorkflow()
 	}
 

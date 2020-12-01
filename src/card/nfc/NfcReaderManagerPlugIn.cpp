@@ -2,10 +2,10 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-#include "NfcReader.h"
 #include "NfcReaderManagerPlugIn.h"
 
 #include <QLoggingCategory>
+#include <QNearFieldManager>
 
 #ifdef Q_OS_ANDROID
 #include <QAndroidJniObject>
@@ -16,39 +16,6 @@ using namespace governikus;
 
 
 Q_DECLARE_LOGGING_CATEGORY(card_nfc)
-
-
-namespace
-{
-bool isAvailable()
-{
-#ifdef Q_OS_ANDROID
-	#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-	QNearFieldManager manager;
-	return manager.isSupported();
-
-	#else
-
-	QAndroidJniObject context = QtAndroid::androidContext();
-	if (context == nullptr)
-	{
-		qCCritical(card_nfc) << "Cannot get context";
-		return false;
-	}
-
-	return QAndroidJniObject::callStaticObjectMethod("android/nfc/NfcAdapter", "getDefaultAdapter", "(Landroid/content/Context;)Landroid/nfc/NfcAdapter;", context.object()) != nullptr;
-
-	#endif
-
-#else
-	QNearFieldManager manager;
-	return manager.isAvailable();
-
-#endif
-}
-
-
-} // namespace
 
 
 void NfcReaderManagerPlugIn::onNfcAdapterStateChanged(bool pEnabled)
@@ -62,17 +29,29 @@ void NfcReaderManagerPlugIn::onNfcAdapterStateChanged(bool pEnabled)
 	setPlugInEnabled(pEnabled);
 	if (pEnabled)
 	{
-		Q_EMIT fireReaderAdded(mNfcReader->getName());
+		Q_EMIT fireReaderAdded(mNfcReader->getReaderInfo());
 	}
 	else
 	{
-		Q_EMIT fireReaderRemoved(mNfcReader->getName());
+		Q_EMIT fireReaderRemoved(mNfcReader->getReaderInfo());
 	}
 }
 
 
+void NfcReaderManagerPlugIn::onReaderDisconnected()
+{
+	ReaderManagerPlugIn::stopScan();
+}
+
+
 NfcReaderManagerPlugIn::NfcReaderManagerPlugIn()
-	: ReaderManagerPlugIn(ReaderManagerPlugInType::NFC, isAvailable())
+	: ReaderManagerPlugIn(ReaderManagerPlugInType::NFC,
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+			QNearFieldManager().isSupported(QNearFieldTarget::TagTypeSpecificAccess)
+#else
+			QNearFieldManager().isSupported()
+#endif
+			)
 	, mNfcReader(nullptr)
 {
 }
@@ -109,16 +88,28 @@ void NfcReaderManagerPlugIn::init()
 	connect(mNfcReader.data(), &NfcReader::fireCardRetryCounterChanged, this, &NfcReaderManagerPlugIn::fireCardRetryCounterChanged);
 	connect(mNfcReader.data(), &NfcReader::fireReaderPropertiesUpdated, this, &NfcReaderManagerPlugIn::fireReaderPropertiesUpdated);
 	connect(mNfcReader.data(), &NfcReader::fireNfcAdapterStateChanged, this, &NfcReaderManagerPlugIn::onNfcAdapterStateChanged);
+	connect(mNfcReader.data(), &NfcReader::fireReaderDisconnected, this, &NfcReaderManagerPlugIn::onReaderDisconnected);
 	qCDebug(card_nfc) << "Add reader" << mNfcReader->getName();
 
-	if (getInfo().isEnabled())
-	{
-		Q_EMIT fireReaderAdded(mNfcReader->getName());
-	}
+	onNfcAdapterStateChanged(mNfcReader->isEnabled());
 }
 
 
 void NfcReaderManagerPlugIn::shutdown()
 {
 	mNfcReader.reset();
+}
+
+
+void NfcReaderManagerPlugIn::startScan(bool pAutoConnect)
+{
+	mNfcReader->connectReader();
+	ReaderManagerPlugIn::startScan(pAutoConnect);
+}
+
+
+void NfcReaderManagerPlugIn::stopScan(const QString& pError)
+{
+	mNfcReader->disconnectReader(pError);
+	ReaderManagerPlugIn::stopScan(pError);
 }

@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.Style 1.0
 
@@ -12,11 +12,12 @@ Rectangle {
 	property alias busy: busyIndicator.visible
 	property alias source: image.source
 	property alias text: text.text
+	property bool borderEnabled: true
 
 	width: height
 	radius: height / 2
 	border.width: height / 40;
-	border.color: Style.color.primary_text_inverse
+	border.color: borderEnabled ? Style.color.primary_text_inverse : Style.color.transparent
 	color: Style.color.transparent
 
 	BusyIndicator {

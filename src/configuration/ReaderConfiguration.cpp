@@ -7,7 +7,6 @@
 #include "FileProvider.h"
 #include "FuncUtils.h"
 #include "ReaderConfigurationParser.h"
-#include "SingletonHelper.h"
 
 #include <QFile>
 #include <QLoggingCategory>
@@ -15,33 +14,27 @@
 
 using namespace governikus;
 
-
 Q_DECLARE_LOGGING_CATEGORY(configuration)
 
-
-defineSingleton(ReaderConfiguration)
-
-
-bool ReaderConfiguration::parseReaderConfiguration()
+bool ReaderConfiguration::parseReaderConfiguration(const QString& pPath)
 {
-	const QString& path = mUpdatableFile->lookupPath();
-	if (path.isEmpty() || !QFile::exists(path))
+	if (pPath.isEmpty() || !QFile::exists(pPath))
 	{
-		qCCritical(configuration) << "ReaderConfiguration file not found";
+		qCCritical(configuration) << "ReaderConfiguration file not found:" << pPath;
 		return false;
 	}
 
-	QFile configFile(path);
+	QFile configFile(pPath);
 	if (!configFile.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		qCCritical(configuration) << "Wasn't able to open ReaderConfiguration file";
+		qCCritical(configuration) << "Wasn't able to open ReaderConfiguration file:" << pPath;
 		return false;
 	}
 
 	const auto& readerConfigurationInfos = ReaderConfigurationParser::parse(configFile.readAll());
 	if (readerConfigurationInfos.isEmpty())
 	{
-		qCCritical(configuration) << "Parse error while reading ReaderConfiguration";
+		qCCritical(configuration) << "Parse error while reading ReaderConfiguration:" << pPath;
 		return false;
 	}
 
@@ -52,7 +45,7 @@ bool ReaderConfiguration::parseReaderConfiguration()
 
 void ReaderConfiguration::onFileUpdated()
 {
-	if (parseReaderConfiguration())
+	if (mUpdatableFile->forEachLookupPath([this](const QString& pPath){return parseReaderConfiguration(pPath);}))
 	{
 		for (const ReaderConfigurationInfo& info : qAsConst(mReaderConfigurationInfos))
 		{
@@ -70,13 +63,7 @@ ReaderConfiguration::ReaderConfiguration()
 	, mReaderConfigurationInfos()
 {
 	connect(mUpdatableFile.data(), &UpdatableFile::fireUpdated, this, &ReaderConfiguration::onFileUpdated);
-	parseReaderConfiguration();
-}
-
-
-ReaderConfiguration& ReaderConfiguration::getInstance()
-{
-	return *Instance;
+	mUpdatableFile->forEachLookupPath([this](const QString& pPath){return parseReaderConfiguration(pPath);});
 }
 
 

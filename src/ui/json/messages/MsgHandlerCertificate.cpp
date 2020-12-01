@@ -4,12 +4,14 @@
 
 #include "MsgHandlerCertificate.h"
 
+#include "context/AuthContext.h"
+
 using namespace governikus;
 
 MsgHandlerCertificate::MsgHandlerCertificate(const MsgContext& pContext)
 	: MsgHandler(MsgType::CERTIFICATE)
 {
-	auto ctx = pContext.getAuthContext();
+	auto ctx = pContext.getContext<AuthContext>();
 	Q_ASSERT(ctx);
 	Q_ASSERT(ctx->getDidAuthenticateEac1());
 	Q_ASSERT(ctx->getDidAuthenticateEac1()->getCertificateDescription());

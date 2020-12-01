@@ -8,8 +8,23 @@
 #include "LanguageLoader.h"
 #include "SecureStorage.h"
 
-
 using namespace governikus;
+
+
+CertificateDescriptionModel::CertificateDescriptionModel()
+	: QAbstractListModel()
+	, mData()
+	, mContext()
+{
+	resetContext();
+	connect(Env::getSingleton<AppSettings>(), &AppSettings::fireSettingsChanged, this, &CertificateDescriptionModel::onDidAuthenticateEac1Changed);
+	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, [this]()
+			{
+				beginResetModel();
+				onDidAuthenticateEac1Changed();
+				endResetModel();
+			});
+}
 
 
 QSharedPointer<const CertificateDescription> CertificateDescriptionModel::getCertificateDescription() const
@@ -69,22 +84,6 @@ void CertificateDescriptionModel::initModelData(const QSharedPointer<const Certi
 		//: LABEL ALL_PLATFORMS
 		mData += QPair<QString, QString>(tr("Validity"), getValidity());
 	}
-}
-
-
-CertificateDescriptionModel::CertificateDescriptionModel(QObject* pParent)
-	: QAbstractListModel(pParent)
-	, mData()
-	, mContext()
-{
-	resetContext();
-	connect(Env::getSingleton<AppSettings>(), &AppSettings::fireSettingsChanged, this, &CertificateDescriptionModel::onDidAuthenticateEac1Changed);
-	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, [this]()
-			{
-				beginResetModel();
-				onDidAuthenticateEac1Changed();
-				endResetModel();
-			});
 }
 
 

@@ -4,22 +4,22 @@
 
 #include "RemoteServiceModel.h"
 
+#include "ApplicationModel.h"
 #include "AppSettings.h"
 #include "EstablishPaceChannelParser.h"
 #include "NumberModel.h"
 #include "RemoteClientImpl.h"
 #include "RemoteServiceSettings.h"
-#include "SingletonHelper.h"
+
+#ifdef Q_OS_IOS
+#include <QOperatingSystemVersion>
+#endif
 
 using namespace governikus;
-
-defineSingleton(RemoteServiceModel)
-
 
 RemoteServiceModel::RemoteServiceModel()
 	: WorkflowModel()
 	, mContext()
-	, mWifiInfo()
 	, mRunnable(false)
 	, mCanEnableNfc(false)
 	, mErrorMessage()
@@ -31,19 +31,29 @@ RemoteServiceModel::RemoteServiceModel()
 	, mConnectedServerDeviceNames()
 	, mIsSaCPinChangeWorkflow()
 	, mRememberedServerEntry()
+#ifdef Q_OS_IOS
+	// iOS 14 introduced a local network permission, so we need to handle it.
+	, mRequiresLocalNetworkPermission(QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::IOS, 14))
+#else
+	, mRequiresLocalNetworkPermission(false)
+#endif
 {
 	const auto readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::firePluginAdded, this, &RemoteServiceModel::onEnvironmentChanged);
 	connect(readerManager, &ReaderManager::fireStatusChanged, this, &RemoteServiceModel::onEnvironmentChanged);
 	connect(readerManager, &ReaderManager::fireReaderAdded, this, &RemoteServiceModel::onEnvironmentChanged);
 	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &RemoteServiceModel::onEnvironmentChanged);
-	connect(&mWifiInfo, &WifiInfo::fireWifiEnabledChanged, this, &RemoteServiceModel::onEnvironmentChanged);
+	const auto applicationModel = Env::getSingleton<ApplicationModel>();
+	connect(applicationModel, &ApplicationModel::fireWifiEnabledChanged, this, &RemoteServiceModel::onEnvironmentChanged);
 
-	auto* const remoteClient = Env::getSingleton<RemoteClient>();
+	const auto* const remoteClient = Env::getSingleton<RemoteClient>();
 	connect(remoteClient, &RemoteClient::fireDetectionChanged, this, &RemoteServiceModel::fireDetectionChanged);
 	connect(remoteClient, &RemoteClient::fireNewRemoteDispatcher, this, &RemoteServiceModel::onConnectedDevicesChanged);
 	connect(remoteClient, &RemoteClient::fireDispatcherDestroyed, this, &RemoteServiceModel::onConnectedDevicesChanged);
-	onEnvironmentChanged();
+	connect(remoteClient, &RemoteClient::fireDeviceAppeared, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
+	connect(remoteClient, &RemoteClient::fireDeviceVanished, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
+
+	QMetaObject::invokeMethod(this, &RemoteServiceModel::onEnvironmentChanged, Qt::QueuedConnection);
 }
 
 
@@ -56,7 +66,7 @@ void RemoteServiceModel::onEnvironmentChanged()
 	{
 		if (pluginInfo.getPlugInType() != ReaderManagerPlugInType::NFC)
 		{
-			// At this time no bluetooth basic reader available so we can skip
+			// At this time no basic reader available so we can skip
 			continue;
 		}
 
@@ -64,8 +74,8 @@ void RemoteServiceModel::onEnvironmentChanged()
 		nfcPluginEnabled |= pluginInfo.isEnabled();
 	}
 
-	bool readerAvailable = !(Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderManagerPlugInType::NFC).isEmpty());
-	const bool wifiEnabled = mWifiInfo.isWifiEnabled();
+	bool readerAvailable = !(Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({ReaderManagerPlugInType::NFC})).isEmpty());
+	const bool wifiEnabled = Env::getSingleton<ApplicationModel>()->isWifiEnabled();
 
 	const bool runnable = readerAvailable && wifiEnabled;
 	const bool canEnableNfc = nfcPluginAvailable && !nfcPluginEnabled;
@@ -81,7 +91,6 @@ void RemoteServiceModel::onEnvironmentChanged()
 
 	if (!runnable && isRunning())
 	{
-		setPairing(false);
 		setRunning(false);
 	}
 }
@@ -151,7 +160,7 @@ void RemoteServiceModel::setDetectRemoteDevices(bool pNewStatus)
 }
 
 
-bool RemoteServiceModel::detectRemoteDevices()
+bool RemoteServiceModel::detectRemoteDevices() const
 {
 	return Env::getSingleton<RemoteClient>()->isDetecting();
 }
@@ -179,7 +188,7 @@ bool RemoteServiceModel::rememberServer(const QString& pDeviceId)
 
 void RemoteServiceModel::onEstablishConnectionDone(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const GlobalStatus& pStatus)
 {
-	auto* const remoteClient = Env::getSingleton<RemoteClient>();
+	const auto* const remoteClient = Env::getSingleton<RemoteClient>();
 	disconnect(remoteClient, &RemoteClient::fireEstablishConnectionDone, this, &RemoteServiceModel::onEstablishConnectionDone);
 	qDebug() << "Pairing finished:" << pStatus;
 	const auto deviceName = RemoteServiceSettings::escapeDeviceName(pEntry->getRemoteDeviceDescriptor().getIfdName());
@@ -214,10 +223,10 @@ void RemoteServiceModel::onCardConnectionEstablished(const QSharedPointer<CardCo
 }
 
 
-void RemoteServiceModel::resetContext(const QSharedPointer<RemoteServiceContext>& pContext)
+void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<RemoteServiceContext>& pContext)
 {
 	mContext = pContext;
-	WorkflowModel::resetContext(pContext);
+	WorkflowModel::resetWorkflowContext(pContext);
 
 	mPsk.clear();
 	onEstablishPaceChannelMessageUpdated(QSharedPointer<const IfdEstablishPaceChannel>());
@@ -300,7 +309,13 @@ QString RemoteServiceModel::getConnectedServerDeviceNames() const
 }
 
 
-bool RemoteServiceModel::pinPadModeOn()
+bool RemoteServiceModel::getRemoteReaderVisible() const
+{
+	return Env::getSingleton<RemoteClient>()->hasAnnouncingRemoteDevices();
+}
+
+
+bool RemoteServiceModel::pinPadModeOn() const
 {
 	return Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
 }
@@ -313,14 +328,12 @@ QString RemoteServiceModel::getPasswordType() const
 		return QString();
 	}
 
-	const QSharedPointer<const IfdEstablishPaceChannel> establishPaceChannelMessage = mContext->getEstablishPaceChannelMessage();
-	if (establishPaceChannelMessage->isIncomplete())
+	if (!mContext->hasEstablishedPaceChannelRequest())
 	{
 		return QString();
 	}
 
-	const EstablishPaceChannelParser parser = EstablishPaceChannelParser::fromCcid(establishPaceChannelMessage->getInputData());
-	switch (parser.getPasswordId())
+	switch (mContext->getPaceChannelParser().getPasswordId())
 	{
 		case PacePasswordId::PACE_CAN:
 			return QStringLiteral("CAN");
@@ -374,12 +387,6 @@ void RemoteServiceModel::cancelPasswordRequest()
 }
 
 
-RemoteServiceModel& RemoteServiceModel::getInstance()
-{
-	return *Instance;
-}
-
-
 void RemoteServiceModel::onConnectedDevicesChanged()
 {
 	auto* const remoteClient = Env::getSingleton<RemoteClient>();
@@ -404,7 +411,7 @@ void RemoteServiceModel::onEstablishPaceChannelMessageUpdated(const QSharedPoint
 	}
 	else
 	{
-		const EstablishPaceChannelParser parser = EstablishPaceChannelParser::fromCcid(pMessage->getInputData());
+		const EstablishPaceChannelParser& parser = mContext->getPaceChannelParser();
 		mIsSaCPinChangeWorkflow = parser.getCertificateDescription().isEmpty();
 	}
 

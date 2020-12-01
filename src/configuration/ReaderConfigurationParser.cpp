@@ -68,7 +68,7 @@ QString ReaderConfigurationParser::EntryParser::getDriverUrl(const QJsonObject& 
 
 	// No URL for this platform found, but entry is syntactically correct:
 	// return empty non-null string.
-	return QStringLiteral("");
+	return QLatin1String("");
 }
 
 
@@ -89,7 +89,7 @@ bool ReaderConfigurationParser::EntryParser::matchPlatform(const QJsonArray& pPl
 			currentOS = QStringLiteral("unknown");
 	}
 
-	const auto& parseSystemVersion = [&pCurrentVersion](const QString& pVersion) -> QOperatingSystemVersion {
+	const auto& parseSystemVersion = [&pCurrentVersion](const QString& pVersion){
 				if (pVersion.isEmpty())
 				{
 					return pCurrentVersion;

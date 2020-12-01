@@ -98,7 +98,7 @@ void DiagnosisFirewallDetection::onSecondRuleDone(int exitCode, QProcess::ExitSt
 		}
 		if (lineparts[0].startsWith(QLatin1String("Name")) || lineparts[0].startsWith(QLatin1String("DisplayName")))
 		{
-			if (lineparts[1].startsWith(QLatin1String("AusweisApp2-Firewall-Rule-SaC-In")))
+			if (lineparts[1].startsWith(QLatin1String("AusweisApp2-SaC")))
 			{
 				mSecondFirewallRuleExists = true;
 			}
@@ -321,11 +321,11 @@ void DiagnosisFirewallDetection::startDetection()
 	secondRuleParameters << QStringLiteral("-Command");
 	if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows8)
 	{
-		secondRuleParameters << QStringLiteral("(New-object -comObject HNetCfg.FwPolicy2).rules | where-object {$_.name -like \"AusweisApp2-Firewall-Rule-SaC-In\"}");
+		secondRuleParameters << QStringLiteral("(New-object -comObject HNetCfg.FwPolicy2).rules | where-object {$_.name -like \"AusweisApp2-SaC\"}");
 	}
 	else
 	{
-		secondRuleParameters << QStringLiteral("Get-NetFirewallRule -DisplayName \"AusweisApp2-Firewall-Rule-SaC-In\"");
+		secondRuleParameters << QStringLiteral("Get-NetFirewallRule -DisplayName \"AusweisApp2-SaC\"");
 	}
 
 	connect(&mFirewallSecondRuleProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &DiagnosisFirewallDetection::onSecondRuleDone);

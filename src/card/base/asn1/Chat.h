@@ -86,7 +86,6 @@ using CHAT = struct chat_st
 
 	QSet<AccessRight> getAccessRights() const;
 	void setAccessRights(const QSet<AccessRight>& pAccessRights);
-	void setAccessRight(AccessRight pAccessRight);
 	bool hasAccessRight(AccessRight pAccessRight) const;
 	void removeAllAccessRights();
 	void removeAccessRight(AccessRight pAccessRight);

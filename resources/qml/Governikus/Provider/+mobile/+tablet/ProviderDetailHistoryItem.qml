@@ -2,11 +2,10 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.SettingsModel 1.0
 
 ListItem {
 	id: baseItem
@@ -22,18 +21,18 @@ ListItem {
 
 	height: 72
 
-	Accessible.description: qsTr("Click to view details of history entry.") + SettingsModel.translationTrigger
+	Accessible.description: qsTr("Click to view details of history entry.")
 
 	//: LABEL ANDROID IOS
 	headerText: (Utils.isToday(dateTime) ? qsTr("today") :
 				 Utils.isYesterday(dateTime) ? qsTr("yesterday") :
 				 Utils.isThisWeek(dateTime) ? dateTime.toLocaleString(Qt.locale(), qsTr("dddd")) :
 				 dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy"))
-				) + SettingsModel.translationTrigger
+				)
 	//: LABEL ANDROID IOS
-	text: (!!providerName ? providerName : qsTr("Touch for more details")) + SettingsModel.translationTrigger
+	text: (!!providerName ? providerName : qsTr("Touch for more details"))
 	//: LABEL ANDROID IOS
-	footerText: purposeText !== "" ? purposeText : qsTr("Touch for more details") + SettingsModel.translationTrigger
+	footerText: purposeText !== "" ? purposeText : qsTr("Touch for more details")
 	contentMarginLeft: 0
 	contentMarginRight: 0
 

@@ -24,7 +24,7 @@ class test_UnblockPinCommand
 		{
 			MockReader reader(QStringLiteral("reader"));
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
-			const QString puk = QStringLiteral("00000000000");
+			const QByteArray puk("00000000000");
 
 			UnblockPinCommand command(worker, puk);
 			command.internalExecute();
@@ -35,7 +35,7 @@ class test_UnblockPinCommand
 		void test_InternalExecuteNoReader()
 		{
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			const QString puk = QStringLiteral("00000000000");
+			const QByteArray puk("00000000000");
 
 			UnblockPinCommand command(worker, puk);
 			command.internalExecute();
@@ -50,7 +50,7 @@ class test_UnblockPinCommand
 			reader.getReaderInfo().setCardInfo(info);
 
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
-			const QString puk = QStringLiteral("00000000000");
+			const QByteArray puk("00000000000");
 			UnblockPinCommand command(worker, puk);
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::PIN_NOT_BLOCKED);
@@ -65,7 +65,7 @@ class test_UnblockPinCommand
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
 
 			worker->addPaceCode(CardReturnCode::PROTOCOL_ERROR);
-			const QString puk = QStringLiteral("12131415");
+			const QByteArray puk("12131415");
 			UnblockPinCommand command(worker, puk);
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
@@ -81,7 +81,7 @@ class test_UnblockPinCommand
 
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
 			worker->addPaceCode(CardReturnCode::OK);
-			const QString puk = QStringLiteral("00000000000");
+			const QByteArray puk("00000000000");
 			UnblockPinCommand command(worker, puk);
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
@@ -97,7 +97,7 @@ class test_UnblockPinCommand
 
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("6900"));
 			worker->addPaceCode(CardReturnCode::OK);
-			const QString puk = QStringLiteral("00000000000");
+			const QByteArray puk("00000000000");
 			UnblockPinCommand command(worker, puk);
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::PUK_INOPERATIVE);

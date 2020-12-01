@@ -2,40 +2,63 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Provider 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ProviderCategoryFilterModel 1.0
 
 
 SectionPage {
 	id: baseItem
 
-	readonly property var category: ProviderCategoryFilterModel.categories.length === 0 ? "" : ProviderCategoryFilterModel.categories[0]
+	onReset: {
+		ProviderCategoryFilterModel.setCategorySelection("")
+		searchBar.reset()
+	}
 
-	title: Category.displayString(category) + SettingsModel.translationTrigger
-	titleBarColor: Category.displayColor(category)
+	readonly property string category: ProviderCategoryFilterModel.categories.length === 0 ? "" : ProviderCategoryFilterModel.categories[0]
+	readonly property bool showCategories: category === ""
+	readonly property bool additionalResultsItemVisible: ProviderCategoryFilterModel.additionalResultCount > 0 && ProviderCategoryFilterModel.categories.length > 0 && ProviderCategoryFilterModel.categories.indexOf("all") === -1
+	property alias headerItem: providerList.headerItem
+	property var headerComponent: null
+	property var searchBar
 
 	navigationAction: NavigationAction {
-		state: category !== "" ? "back" : ""
+		state: "back"
 		onClicked: {
-			if (state === "back") {
+			if (category !== "") {
 				ProviderCategoryFilterModel.setCategorySelection("")
+			} else {
+				searchBar.reset()
+				navBar.showMain()
 			}
 		}
 	}
 
-	Component.onCompleted: ProviderCategoryFilterModel.sortByCategoryFirst(true)
+	title: Category.displayString(category)
+	titleBarColor: Category.displayColor(category)
+	sectionPageFlickable: providerList
 
-	onCategoryChanged: {
-		ProviderCategoryFilterModel.sortByCategoryFirst(category === "")
-		highlightScrollbar()
+	Connections {
+		target: ProviderCategoryFilterModel
+		onSearchStringChanged: sectionPageFlickable.positionViewAtBeginning()
 	}
+
+	Connections {
+		target: searchBar
+		onSearchTextChanged: ProviderCategoryFilterModel.searchString = searchBar.searchText
+	}
+
+	onShowCategoriesChanged: {
+		ProviderCategoryFilterModel.setIncludeCategoriesInModel(showCategories)
+		ProviderCategoryFilterModel.sortByCategoryFirst(showCategories)
+	}
+
+	onCategoryChanged: highlightScrollbar()
 
 	Component {
 		id: providerDetailView
@@ -43,83 +66,60 @@ SectionPage {
 		ProviderDetailView {}
 	}
 
-	content: Column {
-		width: baseItem.width
+	GText {
+		visible: ProviderCategoryFilterModel.rowCount === 0 && ProviderCategoryFilterModel.additionalResultCount === 0
+		anchors.centerIn: parent
+		//: LABEL IOS_PHONE ANDROID_PHONE The text entered into the provider search field results in no matches
+		text: qsTr("No results matching your search query found")
+	}
 
-		Rectangle {
-			visible: ProviderCategoryFilterModel.rowCount === 0 && !additionalResults.visible
-			height: 200
-			width: parent.width
+	GListView {
+		id: providerList
 
-			color: Style.color.background
+		height: contentBehindTitlebar ? (parent.height + Style.dimens.titlebar_height) : parent.height
+		width: parent.width
+		anchors.bottom: parent.bottom
 
-			GText {
-				anchors.centerIn: parent
-				//: LABEL IOS_PHONE ANDROID_PHONE The text entered into the provider search field results in no matches
-				text: qsTr("No results matching your search query found") + SettingsModel.translationTrigger
-				textStyle: Style.text.normal
-			}
+		Accessible.role: Accessible.List
+
+		model: ProviderCategoryFilterModel
+
+		scrollBarTopPadding: contentBehindTitlebar ? Style.dimens.titlebar_height : 0
+
+		delegate: ProviderListItemDelegate {
+			Accessible.onScrollDownAction: providerList.scrollPageDown()
+			Accessible.onScrollUpAction: providerList.scrollPageUp()
+
+			showSeparator: index < providerList.count - 1  || additionalResultsItemVisible
+
+			onClicked: isProvider ? firePushWithProperties(providerDetailView, {providerModelItem: model}) : ProviderCategoryFilterModel.setCategorySelection(providerCategory)
 		}
 
-		ProviderSectionDelegate {
-			id: allSection
+		header: headerComponent
 
-			visible: ProviderCategoryFilterModel.searchString === "" && ProviderCategoryFilterModel.categories.length === 0
-			height: visible ? Style.dimens.list_item_height : 0
+		footer: Component {
+			Item {
+				width: parent.width
+				height: additionalResults.height + separator.height
 
-			sectionName: "all"
-		}
+				AdditionalResultsItem {
+					id: additionalResults
 
-		GListView {
-			id: providerListMain
+					visible: additionalResultsItemVisible
+					height: visible ? Style.dimens.list_item_height : 0
 
-			visible: category === ""
-			height: childrenRect.height
-			width: baseItem.width
+					totalHits: ProviderCategoryFilterModel.additionalResultCount
 
-			Accessible.role: Accessible.List
+					onClicked: ProviderCategoryFilterModel.setCategorySelection("")
+				}
 
-			scrollBarEnabled: false
-			interactive: false
-			model: ProviderCategoryFilterModel
-			delegate: ProviderListItemDelegate {
-				width: visible ? providerListMain.width : 0
-				height: visible ? Style.dimens.list_item_height : 0
-				visible: ProviderCategoryFilterModel.searchString !== ""
+				GSeparator {
+					id: separator
+
+					anchors.top: additionalResults.bottom
+					width: parent.width
+				}
 			}
-
-			section.property: "providerCategory"
-			section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
-			section.delegate: ProviderSectionDelegate {
-				sectionName: section
-			}
-		}
-
-		GListView {
-			id: providerListSection
-
-			visible: !providerListMain.visible
-			height: childrenRect.height
-			width: baseItem.width
-
-			Accessible.role: Accessible.List
-
-			scrollBarEnabled: false
-			interactive: false
-
-			model: ProviderCategoryFilterModel
-
-			delegate: ProviderListItemDelegate {
-				width: providerListSection.width
-
-				Accessible.onScrollDownAction: baseItem.scrollPageDown()
-				Accessible.onScrollUpAction: baseItem.scrollPageUp()
-			}
-		}
-
-		AdditionalResultsItem {
-			id: additionalResults
-			width: parent.width
 		}
 	}
 }

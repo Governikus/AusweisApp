@@ -2,14 +2,15 @@
  * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
+import QtQuick 2.12
 import Governikus.Style 1.0
+import Governikus.Type.ApplicationModel 1.0
 
 Text {
 	property TextStyle textStyle: Constants.is_desktop ? Style.text.normal_inverse : Style.text.normal
 
 	Accessible.role: Accessible.StaticText
-	Accessible.name: text
+	Accessible.name: ApplicationModel.stripHtmlTags(text)
 
 	color: textStyle.textColor
 	linkColor: textStyle.linkColor

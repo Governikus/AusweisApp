@@ -15,16 +15,16 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 using namespace governikus;
 
 
-EstablishPaceChannelParser::EstablishPaceChannelParser(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, const QByteArray& pCommandData)
-	: mPasswordId(pPasswordId)
-	, mChat(pChat)
-	, mCertificateDescription(pCertificateDescription)
-	, mCommandData(pCommandData)
+EstablishPaceChannelParser::EstablishPaceChannelParser()
+	: mPasswordId(PacePasswordId::PACE_PIN)
+	, mChat()
+	, mCertificateDescription()
+	, mCommandData()
 {
 }
 
 
-EstablishPaceChannelParser EstablishPaceChannelParser::fromCcid(const QByteArray& pInput)
+void EstablishPaceChannelParser::fromCcid(const QByteArray& pInput)
 {
 	CommandApdu command(pInput);
 
@@ -34,7 +34,8 @@ EstablishPaceChannelParser EstablishPaceChannelParser::fromCcid(const QByteArray
 			|| command.getP2() != 0x02)
 	{
 		qCDebug(card) << "Decapsulation of command failed. Unexpected header.";
-		return EstablishPaceChannelParser();
+		reset();
+		return;
 	}
 
 	QByteArray commandData = command.getData();
@@ -44,7 +45,8 @@ EstablishPaceChannelParser EstablishPaceChannelParser::fromCcid(const QByteArray
 	if (!channelInput)
 	{
 		qCDebug(card) << "Decapsulation of command failed. Bad command data.";
-		return EstablishPaceChannelParser();
+		reset();
+		return;
 	}
 
 	PacePasswordId passwordId = PacePasswordId::PACE_PIN;
@@ -92,7 +94,19 @@ EstablishPaceChannelParser EstablishPaceChannelParser::fromCcid(const QByteArray
 		}
 	}
 
-	return EstablishPaceChannelParser(passwordId, chat, certificateDescription, commandData);
+	mPasswordId = passwordId;
+	mChat = chat;
+	mCertificateDescription = certificateDescription;
+	mCommandData = commandData;
+}
+
+
+void EstablishPaceChannelParser::reset()
+{
+	mPasswordId = PacePasswordId::PACE_PIN;
+	mChat.clear();
+	mCertificateDescription.clear();
+	mCommandData.clear();
 }
 
 

@@ -20,19 +20,16 @@ class EstablishPaceChannelParser
 		QByteArray mCertificateDescription;
 		QByteArray mCommandData;
 
-		EstablishPaceChannelParser(PacePasswordId pPasswordId = PacePasswordId::PACE_PIN,
-				const QByteArray& pChat = QByteArray(),
-				const QByteArray& pCertificateDescription = QByteArray(),
-				const QByteArray& pCommandData = QByteArray());
-
 	public:
-		static EstablishPaceChannelParser fromCcid(const QByteArray& pInput);
+		EstablishPaceChannelParser();
 
 		PacePasswordId getPasswordId() const;
 		const QByteArray& getChat() const;
 		const QByteArray& getCertificateDescription() const;
 		const QByteArray& getCommandData() const;
 
+		void fromCcid(const QByteArray& pInput);
+		void reset();
 };
 
 } // namespace governikus

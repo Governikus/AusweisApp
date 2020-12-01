@@ -17,6 +17,7 @@ Q_DECLARE_LOGGING_CATEGORY(activation)
 bool CustomSchemeActivationHandler::start()
 {
 	QDesktopServices::setUrlHandler(QStringLiteral("eid"), this, "onCustomUrl");
+	QDesktopServices::setUrlHandler(QStringLiteral("https"), this, "onCustomUrl");
 	return true;
 }
 
@@ -32,11 +33,18 @@ void CustomSchemeActivationHandler::onCustomUrl(const QUrl& pUrl)
 	qCDebug(activation) << "Got new request";
 	qCDebug(activation) << "Request URL:" << pUrl;
 
-	if (pUrl.port() != 24727 ||
-			(pUrl.host() != QLatin1String("127.0.0.1") && pUrl.host() != QLatin1String("localhost")) ||
-			(pUrl.path() != QLatin1String("/eID-Client")))
+	const bool isLocalhost = (pUrl.host() == QLatin1String("127.0.0.1") || pUrl.host() == QLatin1String("localhost")) && pUrl.port() == 24727;
+	const bool isUniversal = pUrl.host() == QLatin1String("www.ausweisapp.bund.de");
+	if (pUrl.path() != QLatin1String("/eID-Client") || !(isLocalhost || isUniversal))
 	{
-		qCWarning(activation) << "Request type: unknown";
+		if (pUrl.scheme() == QLatin1String("https"))
+		{
+			QDesktopServices::openUrl(pUrl);
+		}
+		else
+		{
+			qCWarning(activation) << "Request type: unknown";
+		}
 		return;
 	}
 

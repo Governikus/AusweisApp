@@ -1,6 +1,6 @@
 .. only:: html
 
-  .. image:: ../../resources/images/Logo_AusweisApp2.png
+  .. image:: Logo_AusweisApp2.png
      :alt: AusweisApp2
      :align: center
      :width: 200pt
@@ -34,6 +34,7 @@ Table of contents
    :caption: Connection
 
    android
+   ios
    desktop
 
 

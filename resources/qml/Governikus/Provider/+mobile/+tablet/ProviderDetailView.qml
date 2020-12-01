@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtGraphicalEffects 1.0
+import QtQuick 2.12
+import QtGraphicalEffects 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -118,10 +118,15 @@ SectionPage {
 					titleBarColor: baseItem.titleBarColor
 				}
 
-				Pane {
+				GPane {
 					id: leftPane
-					anchors.margins: Constants.component_spacing
-					anchors.top: buttonBar.bottom
+
+					anchors {
+						margins: Constants.component_spacing
+						top: buttonBar.bottom
+						left: parent.left
+						right: parent.right
+					}
 					height: lowerRow.height - (buttonBar.height + Constants.pane_padding)
 				}
 
@@ -144,10 +149,14 @@ SectionPage {
 				height: 1
 				width: lowerRow.width / 3 - Constants.component_spacing
 
-				Pane {
+				GPane {
 					id: rightPane
-					anchors.topMargin: Constants.component_spacing
-					anchors.top: parent.top
+					anchors {
+						topMargin: Constants.component_spacing
+						top: parent.top
+						left: parent.left
+						right: parent.right
+					}
 					height: lowerRow.height - Constants.pane_padding
 				}
 

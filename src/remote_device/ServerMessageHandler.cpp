@@ -166,7 +166,7 @@ QString ServerMessageHandlerImpl::slotHandleForReaderName(const QString& pReader
 }
 
 
-QString ServerMessageHandlerImpl::convertSlotHandleBackwardsCompatibility(const QString& pReaderName)
+QString ServerMessageHandlerImpl::convertSlotHandleBackwardsCompatibility(const QString& pReaderName) const
 {
 	if (!mCardConnections.contains(pReaderName))
 	{
@@ -249,7 +249,7 @@ void ServerMessageHandlerImpl::handleIfdEstablishPaceChannel(const QJsonObject& 
 		return;
 	}
 
-	QSharedPointer<CardConnection> cardConnection = mCardConnections[slotHandle];
+	QSharedPointer<CardConnection> cardConnection = mCardConnections.value(slotHandle);
 
 	const bool isBasicReader = cardConnection->getReaderInfo().isBasicReader();
 	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
@@ -439,25 +439,24 @@ void ServerMessageHandlerImpl::onRemoteMessage(RemoteCardMessageType pMessageTyp
 }
 
 
-void ServerMessageHandlerImpl::onReaderChanged(const QString& pReaderName)
+void ServerMessageHandlerImpl::onReaderChanged(const ReaderInfo& pInfo)
 {
-	ReaderInfo info = mReaderManager->getReaderInfo(pReaderName);
-	if (!info.hasEidCard())
+	if (!pInfo.hasEidCard())
 	{
-		const QString& slotHandle = slotHandleForReaderName(pReaderName);
+		const QString& slotHandle = slotHandleForReaderName(pInfo.getName());
 		if (mCardConnections.remove(slotHandle) > 0)
 		{
 			qCInfo(remote_device) << "Removed CardConnection for" << slotHandle;
 		}
 	}
 
-	mRemoteDispatcher->send(QSharedPointer<IfdStatus>::create(info));
+	mRemoteDispatcher->send(QSharedPointer<IfdStatus>::create(pInfo));
 }
 
 
-void ServerMessageHandlerImpl::onReaderRemoved(const QString& pReaderName)
+void ServerMessageHandlerImpl::onReaderRemoved(const ReaderInfo& pInfo)
 {
-	mRemoteDispatcher->send(QSharedPointer<IfdStatus>::create(pReaderName));
+	mRemoteDispatcher->send(QSharedPointer<IfdStatus>::create(pInfo));
 }
 
 

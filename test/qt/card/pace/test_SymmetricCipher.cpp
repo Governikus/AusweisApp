@@ -17,7 +17,7 @@ class test_SymmetricCipher
 	Q_OBJECT
 
 	private:
-		const QString PIN = QStringLiteral("123456");
+		const QByteArray PIN = QByteArrayLiteral("123456");
 		const QByteArray DATA = QByteArray::fromRawData("Moin Moin Anton!", 16);
 
 	private Q_SLOTS:

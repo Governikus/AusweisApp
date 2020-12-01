@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.10
-import QtQuick.Controls 2.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
@@ -16,9 +16,9 @@ import Governikus.View 1.0
 import Governikus.Workflow 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
-import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.AuthModel 1.0
 import Governikus.Type.NumberModel 1.0
+import Governikus.Type.ConnectivityManager 1.0
 
 
 SectionPage
@@ -34,7 +34,6 @@ SectionPage
 		Workflow,
 		Password,
 		PasswordInfo,
-		PasswordLength,
 		CardPosition,
 		InputError,
 		Data,
@@ -55,7 +54,7 @@ SectionPage
 
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP_QML
-		text: qsTr("Identify") + SettingsModel.translationTrigger
+		text: qsTr("Identify")
 		rootEnabled: false
 		helpTopic: "authentication"
 		showSettings: (identifyController.workflowState === IdentifyController.WorkflowStates.Initial ||
@@ -65,8 +64,8 @@ SectionPage
 
 		onClicked: {
 			editRights.showProviderInformation(false)
-			if (d.activeView === IdentifyView.SubViews.PasswordInfo || d.activeView === IdentifyView.SubViews.PasswordLength) {
-				d.view = IdentifyView.SubViews.Password
+			if (d.activeView === IdentifyView.SubViews.PasswordInfo) {
+				d.view = SettingsModel.transportPinReminder ? IdentifyView.SubViews.TransportPinReminder : IdentifyView.SubViews.Password
 				appWindow.menuBar.updateActions()
 			}
 			else if (d.activeView === IdentifyView.SubViews.ReaderSettings) {
@@ -124,18 +123,20 @@ SectionPage
 		}
 	}
 
-	BinaryDecisionView {
+	DecisionView {
 		visible: d.activeView === IdentifyView.SubViews.TransportPinReminder
 
-		questionText: qsTr("Did you change the Transport PIN already?") + SettingsModel.translationTrigger
-		questionSubText: qsTr("Prior to the first use of the online identification function you have to replace the Transport PIN by an individual six-digit PIN. Online identification with Transport PIN is not possible.") + SettingsModel.translationTrigger
-		disagreeText: qsTr("No, change Transport PIN now") + SettingsModel.translationTrigger
+		questionText: qsTr("Do you know your six-digit PIN?")
+		questionSubText: "%1<br><br><a href=\"#\">%2</a>".arg(qsTr("The personal, six-digit PIN is mandatory to use the online identification function.")).arg(qsTr("More information"))
 
+		onSubTextLinkActivated: {
+			d.view = IdentifyView.SubViews.PasswordInfo
+			appWindow.menuBar.updateActions()
+		}
 		onDisagree: {
 			SettingsModel.transportPinReminder = false
-			NumberModel.requestTransportPin = true
-			ChangePinModel.startWorkflow()
 			AuthModel.cancelWorkflowToChangePin()
+			identifyView.nextView(SectionPage.Views.ChangePin)
 		}
 		onAgree: SettingsModel.transportPinReminder = false // causes fall-through to next state in IdentifyController
 	}
@@ -146,9 +147,9 @@ SectionPage
 		visible: d.activeView === IdentifyView.SubViews.Connectivity
 
 		//: INFO DESKTOP_QML Header of the message that no network connection is present during the authentication procedure.
-		text: qsTr("No network connectivity") + SettingsModel.translationTrigger
+		text: qsTr("No network connectivity")
 		//: INFO DESKTOP_QML Content of the message that no network connection is present during the authentication procedure.
-		subText: qsTr("Please establish an internet connection.") + SettingsModel.translationTrigger
+		subText: qsTr("Please establish an internet connection.")
 		subTextColor: Constants.red
 	}
 
@@ -182,14 +183,10 @@ SectionPage
 
 		visible: d.activeView === IdentifyView.SubViews.Password
 
+		enableTransportPinLink: passwordType === NumberModel.PASSWORD_PIN
 		onPasswordEntered: {
 			d.view = IdentifyView.SubViews.Progress
 			AuthModel.continueWorkflow()
-		}
-
-		onChangePinLength: {
-			d.view = IdentifyView.SubViews.PasswordLength
-			appWindow.menuBar.updateActions()
 		}
 
 		onRequestPasswordInfo: {
@@ -204,34 +201,8 @@ SectionPage
 		visible: d.activeView === IdentifyView.SubViews.PasswordInfo
 
 		onClose: {
-			d.view = IdentifyView.SubViews.Password
+			d.view = SettingsModel.transportPinReminder ? IdentifyView.SubViews.TransportPinReminder : IdentifyView.SubViews.Password
 			appWindow.menuBar.updateActions()
-		}
-	}
-
-	ResultView {
-		id: passwordLengthView
-
-		visible: d.activeView === IdentifyView.SubViews.PasswordLength
-
-		titleBarAction: TitleBarAction {
-			//: LABEL DESKTOP_QML
-			text: qsTr("Transport PIN") + SettingsModel.translationTrigger
-			rootEnabled: false
-			helpTopic: "pinEntry"
-			customSubAction: CancelAction {
-				onClicked:  {
-					d.view = IdentifyView.SubViews.Password
-					appWindow.menuBar.updateActions()
-				}
-			}
-		}
-		resultType: ResultView.Type.IsInfo
-		//: INFO DESKTOP_QML The user clicked that the current PIN has five digits (Transport PIN) which needs to be changed to a six-digit PIN. The current process will be aborted and needs to be restarted *manually* by the user.
-		text: qsTr("First you have to change your five-digit Transport PIN you received in your in PIN letter into a six-digit PIN. You are currently leaving the started process and are forwarded to the PIN management. Please restart the desired process after the PIN has been changed.") + SettingsModel.translationTrigger
-		onNextView: {
-			ChangePinModel.startWorkflow()
-			AuthModel.cancelWorkflowToChangePin()
 		}
 	}
 
@@ -259,7 +230,7 @@ SectionPage
 
 		resultType: ResultView.Type.IsInfo
 		//: INFO DESKTOP_QML A weak NFC signal was detected since the card communication was aborted. The card's position needs to be adjusted to hopefully achieve better signal strength.
-		text: qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable") + SettingsModel.translationTrigger
+		text: qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable")
 		onNextView: AuthModel.continueWorkflow()
 	}
 
@@ -267,18 +238,17 @@ SectionPage
 		visible: d.activeView === IdentifyView.SubViews.Aborting
 
 		//: INFO DESKTOP_QML The user aborted the authentication process, according to TR we need to inform the service provider
-		text: qsTr("Aborting process and informing the service provider") + SettingsModel.translationTrigger
+		text: qsTr("Aborting process and informing the service provider")
 		subText: {
-			SettingsModel.translationTrigger
-			if (connectivityManager.networkInterfaceActive) {
+			if (ConnectivityManager.networkInterfaceActive) {
 				//: INFO DESKTOP_QML Information message about cancellation process with present network connectivity
 				return qsTr("Please wait a moment.")
 			}
 			//: INFO DESKTOP_QML Information message about cancellation process without working network connectivity
-			return qsTr("Network problemes detected, trying to reach server within 30 seconds.")
+			return qsTr("Network problems detected, trying to reach server within 30 seconds.")
 		}
 		progressBarVisible: false
-		subTextColor: !connectivityManager.networkInterfaceActive ? Style.color.warning_text : Style.color.secondary_text_inverse
+		subTextColor: !ConnectivityManager.networkInterfaceActive ? Style.color.warning_text : Style.color.secondary_text_inverse
 	}
 
 	ProgressView {
@@ -293,9 +263,8 @@ SectionPage
 			   qsTr("Authentication in progress") :
 			   //: INFO DESKTOP_QML Header of the progress information during the authentication process.
 			   qsTr("Acquiring provider certificate")
-			  ) + SettingsModel.translationTrigger
+			  )
 		subText: {
-			SettingsModel.translationTrigger;
 			if (!visible) {
 				return ""
 			}
@@ -305,7 +274,7 @@ SectionPage
 			}
 			if (AuthModel.isBasicReader) {
 				//: INFO DESKTOP_QML Second line text if a basic card reader is used and data is exchanged with the card/server in the background. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
-				return qsTr("Please don't move the ID card.")
+				return qsTr("Please do not move the ID card.")
 			}
 			if (!!NumberModel.inputError) {
 				return NumberModel.inputError
@@ -342,7 +311,7 @@ SectionPage
 		text: AuthModel.resultString
 		header: AuthModel.errorHeader
 		//: INFO DESKTOP_QML Error code (string) of current GlobalStatus code, shown as header of popup.
-		popupTitle: qsTr("Error code: %1").arg(AuthModel.statusCode) + SettingsModel.translationTrigger
+		popupTitle: qsTr("Error code: %1").arg(AuthModel.statusCode)
 		popupText: AuthModel.errorText
 		supportButtonsVisible: AuthModel.error && !AuthModel.isCancellationByUser()
 

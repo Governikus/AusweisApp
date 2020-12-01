@@ -13,7 +13,7 @@
 #ifdef Q_OS_WIN
 	#include <windows.h>
 #elif defined(Q_OS_UNIX)
-	#if defined(Q_OS_Linux) && !defined(Q_OS_ANDROID)
+	#if defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)
 		#include <syscall.h>
 	#endif
 	#if defined(SYS_getrandom)
@@ -163,12 +163,6 @@ Randomizer::Randomizer()
 
 Randomizer::~Randomizer()
 {
-}
-
-
-Randomizer& Randomizer::getInstance()
-{
-	return *Instance;
 }
 
 

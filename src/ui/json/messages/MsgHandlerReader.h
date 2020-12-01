@@ -19,13 +19,13 @@ class MsgHandlerReader
 		static void setReaderInfo(QJsonObject& pObj, const ReaderInfo& pInfo);
 
 		void setError(const QLatin1String pError);
-		void setReaderInfo(const QString& pName);
+		void setReaderInfo(const ReaderInfo& pInfo);
 
 	public:
 		static QJsonObject createReaderInfo(const ReaderInfo& pInfo);
 
 		explicit MsgHandlerReader(const QJsonObject& pObj);
-		explicit MsgHandlerReader(const QString& pName);
+		explicit MsgHandlerReader(const ReaderInfo& pInfo);
 };
 
 

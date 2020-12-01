@@ -13,9 +13,9 @@ alle unterstützten Parameter, die im Anschluss erläutert werden.
 
 .. code-block:: winbatch
 
-  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALL_ROOT="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true HISTORY=false ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true
+  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALLDIR="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true HISTORY=false ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true LAUNCH=true
 
-INSTALL_ROOT
+INSTALLDIR
   Gibt das Installationsverzeichnis an. Ohne Angabe wird der Ordner
   "C:\\Programme (x86)\\AusweisApp2" genutzt.
 
@@ -117,6 +117,9 @@ ENABLECANALLOWED
 SKIPRIGHTSONCANALLOWED
   Überspringt die Anzeige des Berechtigungszertifikat im CAN-Allowed-Modus und wechselt direkt zur
   CAN-Eingabe.
+
+LAUNCH
+  Startet die AusweisApp2 nach dem Ende der Installation.
 
 Alternativ kann mit Orca [#orca]_ eine MST-Datei erzeugt werden, die die oben
 genannten Parameter definiert. Die Parameter sind in den Tabellen "Directory"
@@ -306,7 +309,7 @@ CA-Zertifikate im Windows-Truststore werden daher ignoriert.
    :align: left
 
    "AusweisApp2-Firewall-Rule", TCP, \*, "ausgehend", "eID2, eID3, SaK2, Update"
-   "AusweisApp2-Firewall-Rule-SaC-In", UDP, 24727, "eingehend", "SaK1"
+   "AusweisApp2-SaC", UDP, 24727, "eingehend", "SaK1"
 
 .. raw:: latex
 

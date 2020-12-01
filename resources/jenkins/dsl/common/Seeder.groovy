@@ -18,7 +18,7 @@ class Seeder
 			{
 				hg(repository)
 				{
-					branch(this.branch)
+					tag(this.branch)
 					modules('resources/jenkins/dsl/')
 				}
 			}

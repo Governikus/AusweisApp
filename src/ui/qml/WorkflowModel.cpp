@@ -22,11 +22,12 @@ WorkflowModel::WorkflowModel(QObject* pParent)
 	: QObject(pParent)
 	, mContext()
 {
-	onReaderManagerSignal();
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardInserted, this, &WorkflowModel::onReaderManagerSignal);
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardRemoved, this, &WorkflowModel::onReaderManagerSignal);
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderAdded, this, &WorkflowModel::onReaderManagerSignal);
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderRemoved, this, &WorkflowModel::onReaderManagerSignal);
+
+	QMetaObject::invokeMethod(this, &WorkflowModel::onReaderManagerSignal, Qt::QueuedConnection);
 }
 
 
@@ -35,7 +36,7 @@ WorkflowModel::~WorkflowModel()
 }
 
 
-void WorkflowModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
+void WorkflowModel::resetWorkflowContext(const QSharedPointer<WorkflowContext>& pContext)
 {
 	mContext = pContext;
 	if (mContext)
@@ -128,6 +129,15 @@ void WorkflowModel::cancelWorkflow()
 }
 
 
+void WorkflowModel::startScanIfNecessary()
+{
+	if (mContext)
+	{
+		Q_EMIT mContext->fireReaderPlugInTypesChanged();
+	}
+}
+
+
 void WorkflowModel::cancelWorkflowToChangePin()
 {
 	if (mContext)
@@ -138,7 +148,7 @@ void WorkflowModel::cancelWorkflowToChangePin()
 }
 
 
-bool WorkflowModel::isBasicReader()
+bool WorkflowModel::isBasicReader() const
 {
 	if (mContext && mContext->getCardConnection())
 	{

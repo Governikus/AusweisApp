@@ -5,18 +5,14 @@
 #include "ChangePinModel.h"
 
 #include "ReaderManager.h"
-#include "SingletonHelper.h"
 
 using namespace governikus;
 
 
-defineSingleton(ChangePinModel)
-
-
-void ChangePinModel::resetContext(const QSharedPointer<ChangePinContext>& pContext)
+void ChangePinModel::resetChangePinContext(const QSharedPointer<ChangePinContext>& pContext)
 {
 	mContext = pContext;
-	WorkflowModel::resetContext(pContext);
+	WorkflowModel::resetWorkflowContext(pContext);
 
 	if (mContext)
 	{
@@ -36,12 +32,6 @@ QString ChangePinModel::getResultString() const
 	}
 
 	return isError() ? WorkflowModel::getResultString() : mContext->getSuccessMessage();
-}
-
-
-ChangePinModel& ChangePinModel::getInstance()
-{
-	return *Instance;
 }
 
 
