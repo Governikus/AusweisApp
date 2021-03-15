@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateMaintainCardConnection.h"
@@ -35,6 +35,7 @@ void StateMaintainCardConnection::run()
 	{
 		case CardReturnCode::CANCELLATION_BY_USER:
 		case CardReturnCode::PUK_INOPERATIVE:
+		case CardReturnCode::NO_ACTIVE_PIN_SET:
 		case CardReturnCode::INPUT_TIME_OUT:
 		case CardReturnCode::UNKNOWN:
 		case CardReturnCode::UNDEFINED:
@@ -51,6 +52,7 @@ void StateMaintainCardConnection::run()
 		}
 
 		case CardReturnCode::INVALID_CAN:
+		case CardReturnCode::INVALID_PASSWORD:
 		case CardReturnCode::INVALID_PIN:
 		case CardReturnCode::INVALID_PIN_2:
 		case CardReturnCode::INVALID_PIN_3:

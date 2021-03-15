@@ -1,7 +1,7 @@
 /*!
  * \brief Base class for all XML element parser.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,7 +24,7 @@ class ElementParser
 		explicit ElementParser(QSharedPointer<QXmlStreamReader> pXmlReader);
 		virtual ~ElementParser();
 
-		bool parserFailed() const;
+		[[nodiscard]] bool parserFailed() const;
 
 	protected:
 		// helper methods

@@ -1,7 +1,7 @@
 /*
  * \brief Implements signal handler for unix and windows.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -34,7 +34,7 @@ class SignalHandler
 		bool mQuit;
 
 		SignalHandler();
-		virtual ~SignalHandler() override;
+		~SignalHandler() override;
 		void quit();
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
@@ -57,7 +57,7 @@ class SignalHandler
 	public:
 		void init();
 		void setController(AppController& pAppController);
-		bool shouldQuit() const;
+		[[nodiscard]] bool shouldQuit() const;
 };
 
 } // namespace governikus

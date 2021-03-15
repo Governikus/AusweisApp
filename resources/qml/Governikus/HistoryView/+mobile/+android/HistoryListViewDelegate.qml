@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -13,7 +13,7 @@ HistoryListItem {
 
 	width: parent.width
 
-	contentMarginRight: deleteButton.width + 2 * Constants.groupbox_spacing
+	contentMarginRight: deleteButton.width + deleteButton.anchors.leftMargin + deleteButton.anchors.rightMargin
 
 	TintableIcon {
 		id: deleteButton
@@ -21,6 +21,7 @@ HistoryListItem {
 		anchors.right: parent.right
 		anchors.verticalCenter: parent.verticalCenter
 		anchors.margins: Constants.groupbox_spacing
+		anchors.rightMargin: Style.dimens.titlebar_padding
 		sourceSize.width: Style.dimens.small_icon_size
 
 		source: "qrc:///images/material_delete.svg"

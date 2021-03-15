@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdEstablishContext.h"
@@ -48,14 +48,14 @@ class test_IfdEstablishContext
 		void values()
 		{
 			const IfdEstablishContext ifdEstablishContext(
-				QStringLiteral("IFDInterface_WebSocket_v0"),
+				IfdVersion::Version::v0,
 				QStringLiteral("MAC-MINI")
 				);
 
 			QVERIFY(!ifdEstablishContext.isIncomplete());
 			QCOMPARE(ifdEstablishContext.getType(), RemoteCardMessageType::IFDEstablishContext);
 			QCOMPARE(ifdEstablishContext.getContextHandle(), QString());
-			QCOMPARE(ifdEstablishContext.getProtocol(), QStringLiteral("IFDInterface_WebSocket_v0"));
+			QCOMPARE(ifdEstablishContext.getProtocol(), IfdVersion::Version::v0);
 			QCOMPARE(ifdEstablishContext.getUdName(), QStringLiteral("MAC-MINI"));
 		}
 
@@ -63,11 +63,11 @@ class test_IfdEstablishContext
 		void toJson()
 		{
 			const IfdEstablishContext ifdEstablishContext(
-				QStringLiteral("IFDInterface_WebSocket_v0"),
+				IfdVersion::Version::v0,
 				QStringLiteral("MAC-MINI")
 				);
 
-			const QByteArray& byteArray = ifdEstablishContext.toByteArray(QStringLiteral("TestContext"));
+			const QByteArray& byteArray = ifdEstablishContext.toByteArray(IfdVersion::Version::v0, QStringLiteral("TestContext"));
 			QCOMPARE(byteArray,
 					QByteArray("{\n"
 							   "    \"Protocol\": \"IFDInterface_WebSocket_v0\",\n"
@@ -96,7 +96,7 @@ class test_IfdEstablishContext
 			QVERIFY(!ifdEstablishContext.isIncomplete());
 			QCOMPARE(ifdEstablishContext.getType(), RemoteCardMessageType::IFDEstablishContext);
 			QCOMPARE(ifdEstablishContext.getContextHandle(), QString());
-			QCOMPARE(ifdEstablishContext.getProtocol(), QStringLiteral("IFDInterface_WebSocket_v0"));
+			QCOMPARE(ifdEstablishContext.getProtocol(), IfdVersion::Version::v0);
 			QCOMPARE(ifdEstablishContext.getUdName(), QStringLiteral("MAC-MINI"));
 		}
 
@@ -190,7 +190,7 @@ class test_IfdEstablishContext
 			const IfdEstablishContext ifdEstablishContext(obj);
 			QVERIFY(ifdEstablishContext.isIncomplete());
 
-			QCOMPARE(ifdEstablishContext.getProtocol(), QString());
+			QCOMPARE(ifdEstablishContext.getProtocol(), IfdVersion::Version::Unknown);
 			QCOMPARE(ifdEstablishContext.getUdName(), QString());
 
 			QCOMPARE(logSpy.count(), 2);

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,9 +19,9 @@ class InternalActivationContext
 
 	public:
 		explicit InternalActivationContext(const QUrl& pUrl);
-		virtual ~InternalActivationContext() override = default;
+		~InternalActivationContext() override = default;
 
-		QUrl getActivationURL() const override;
+		[[nodiscard]] QUrl getActivationURL() const override;
 		bool sendProcessing() override;
 		bool sendOperationAlreadyActive() override;
 		bool sendErrorPage(http_status pStatusCode, const GlobalStatus& pStatus) override;

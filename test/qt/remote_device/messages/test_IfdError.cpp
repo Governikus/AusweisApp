@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdError.h"
@@ -67,7 +67,7 @@ class test_IfdError
 				QStringLiteral("SlotHandle")
 				);
 
-			const QByteArray& byteArray = ifdError.toByteArray(QStringLiteral("TestContext"));
+			const QByteArray& byteArray = ifdError.toByteArray(IfdVersion::Version::v0, QStringLiteral("TestContext"));
 			QCOMPARE(byteArray,
 					QByteArray("{\n"
 							   "    \"ContextHandle\": \"TestContext\",\n"

@@ -1,7 +1,7 @@
 /*!
  * \brief Builder for CVC chains.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,7 +25,7 @@ class CVCertificateChainBuilder
 
 		void removeInvalidChains();
 
-		CVCertificateChain getChainForCertificationAuthority(const QByteArray& pCar) const;
+		[[nodiscard]] CVCertificateChain getChainForCertificationAuthority(const QByteArray& pCar) const;
 
 	public:
 		explicit CVCertificateChainBuilder(bool pProductive = true);
@@ -45,7 +45,7 @@ class CVCertificateChainBuilder
 		 * occurred ( e.g. the last element in the list is no terminal CVC), an invalid chain
 		 * is returned (see CVCertificateChain::isValid()).
 		 */
-		CVCertificateChain getChainStartingWith(const QSharedPointer<const CVCertificate>& pChainRoot) const;
+		[[nodiscard]] CVCertificateChain getChainStartingWith(const QSharedPointer<const CVCertificate>& pChainRoot) const;
 
 
 		/*!
@@ -59,7 +59,7 @@ class CVCertificateChainBuilder
 		 * occurred ( e.g. the last element in the list is no terminal CVC), an invalid chain is
 		 * returned (see CVCertificateChain::isValid()).
 		 */
-		CVCertificateChain getChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const;
+		[[nodiscard]] CVCertificateChain getChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const;
 };
 
 } // namespace governikus

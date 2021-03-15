@@ -1,20 +1,25 @@
 /*!
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SurveyModel.h"
 
 #include "DeviceInfo.h"
 #include "Env.h"
+#include "LogHandler.h"
 #include "NetworkManager.h"
 #include "SecureStorage.h"
+#include "TlsChecker.h"
 
 #include <QCoreApplication>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QLoggingCategory>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+
+Q_DECLARE_LOGGING_CATEGORY(network)
 
 using namespace governikus;
 
@@ -135,7 +140,7 @@ void SurveyModel::setMaximumNfcPacketLength(int pMaximumNfcPacketLength)
 }
 
 
-void SurveyModel::transmitSurvey() const
+void SurveyModel::transmitSurvey()
 {
 	const QUrl whitelistServerBaseUrl = Env::getSingleton<SecureStorage>()->getWhitelistServerBaseUrl();
 	const QUrl postSurveyUrl(whitelistServerBaseUrl.toString() + QStringLiteral("/new"));
@@ -143,8 +148,40 @@ void SurveyModel::transmitSurvey() const
 	request.setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("application/json; charset=UTF-8"));
 
 	const QByteArray jsonData = toJsonByteArray();
-	const QNetworkReply* reply = Env::getSingleton<NetworkManager>()->post(request, jsonData);
-	QObject::connect(reply, &QNetworkReply::finished, reply, &QNetworkReply::deleteLater);
+	mReply.reset(Env::getSingleton<NetworkManager>()->post(request, jsonData), &QNetworkReply::deleteLater);
+
+	connect(mReply.data(), &QNetworkReply::sslErrors, this, &SurveyModel::onSslErrors);
+	connect(mReply.data(), &QNetworkReply::encrypted, this, &SurveyModel::onSslHandshakeDone);
+	connect(mReply.data(), &QNetworkReply::finished, this, &SurveyModel::onNetworkReplyFinished);
 
 	qDebug().noquote() << "Sent survey to whitelist server:" << jsonData;
+}
+
+
+void SurveyModel::onSslErrors(const QList<QSslError>& pErrors)
+{
+	TlsChecker::containsFatalError(mReply, pErrors);
+}
+
+
+void SurveyModel::onSslHandshakeDone()
+{
+	const auto& cfg = mReply->sslConfiguration();
+	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
+
+	if (!Env::getSingleton<NetworkManager>()->checkUpdateServerCertificate(mReply))
+	{
+		qCCritical(network) << "Untrusted certificate of Whitelist server found:" << cfg.peerCertificate();
+		mReply->abort();
+	}
+}
+
+
+void SurveyModel::onNetworkReplyFinished()
+{
+	if (mReply)
+	{
+		mReply->disconnect(this);
+		mReply.reset();
+	}
 }

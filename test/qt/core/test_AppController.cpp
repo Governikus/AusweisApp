@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/AppController.h"
@@ -91,8 +91,8 @@ class test_AppController
 		{
 			QSignalSpy spyWorkflowFinished(mController.data(), &AppController::fireWorkflowFinished);
 
-			mController->onChangePinRequested();
-			mController->onChangePinRequested();
+			mController->onChangePinRequested(false);
+			mController->onChangePinRequested(false);
 			QTest::ignoreMessage(QtDebugMsg, "governikus::ChangePinController done");
 			QTest::ignoreMessage(QtInfoMsg, "Finished workflow PIN");
 			QTest::ignoreMessage(QtDebugMsg, "Running waiting action now.");
@@ -143,7 +143,7 @@ class test_AppController
 		{
 			const QString sendError("send error");
 			const QSharedPointer<MockActivationContext> context(new MockActivationContext(false, false, false, false, sendError));
-			mController->onChangePinRequested();
+			mController->onChangePinRequested(false);
 			QTest::ignoreMessage(QtCriticalMsg, R"(Cannot send "Operation already active" to caller: "send error")");
 			mController->onAuthenticationContextRequest(context);
 		}
@@ -153,8 +153,8 @@ class test_AppController
 		{
 			QSignalSpy spyHideUi(mController.data(), &AppController::fireHideUi);
 
-			mController->onChangePinRequested();
-			mController->onChangePinRequested();
+			mController->onChangePinRequested(false);
+			mController->onChangePinRequested(false);
 			mController->doShutdown();
 			QVERIFY(!mController->mWaitingRequest);
 			QVERIFY(mController->mActiveController->getContext()->isWorkflowKilled());

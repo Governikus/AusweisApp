@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowModel.h"
@@ -114,12 +114,6 @@ void WorkflowModel::continueWorkflow()
 }
 
 
-void WorkflowModel::startWorkflow()
-{
-	Q_EMIT fireStartWorkflow();
-}
-
-
 void WorkflowModel::cancelWorkflow()
 {
 	if (mContext)
@@ -227,14 +221,34 @@ bool WorkflowModel::isCancellationByUser() const
 }
 
 
+QString WorkflowModel::getEmailHeader() const
+{
+	if (!mContext)
+	{
+		return QString();
+	}
+
+	return tr("AusweisApp2 error report - %1").arg(mContext->getStatus().toErrorDescription());
+}
+
+
+QString WorkflowModel::getEmailBody(bool pPercentEncoding, bool pAddLogNotice) const
+{
+	if (!mContext)
+	{
+		return QString();
+	}
+	const auto& authContext = qobject_cast<AuthContext*>(mContext);
+
+	return generateMailBody(mContext->getStatus(), authContext.isNull() ? QUrl() : authContext->getTcTokenUrl(), pPercentEncoding, pAddLogNotice);
+}
+
+
 void WorkflowModel::sendResultMail() const
 {
 	Q_ASSERT(mContext);
-	const auto& status = mContext->getStatus();
-	//: Subject from error report mail
-	QString mailSubject = tr("AusweisApp2 error report - %1").arg(status.toErrorDescription());
-	const auto& authContext = qobject_cast<AuthContext*>(mContext);
-	QString mailBody = generateMailBody(status, authContext.isNull() ? QUrl() : authContext->getTcTokenUrl());
+	QString mailSubject = getEmailHeader();
+	QString mailBody = getEmailBody(true, true);
 	QString url = QStringLiteral("mailto:support@ausweisapp.de?subject=%1&body=%2").arg(mailSubject, mailBody);
 
 	QDesktopServices::openUrl(url);

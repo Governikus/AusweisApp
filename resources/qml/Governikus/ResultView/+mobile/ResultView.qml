@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -10,6 +10,7 @@ import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.LogModel 1.0
+import Governikus.Type.AuthModel 1.0
 
 
 SectionPage {
@@ -23,13 +24,20 @@ SectionPage {
 		IsInfo
 	}
 
+	property alias header: pane.title
 	property alias text: resultText.text
-	property alias buttonText: buttonLeft.text
-	property alias buttonLeft: buttonLeft
-	property alias showMailButton: buttonRight.visible
+	property alias buttonText: buttonContinue.text
+	property alias button: buttonContinue
+	property alias showMailButton: buttonSendMail.visible
+	property string errorCode
+	property alias errorDescription: textErrorDescription.text
+	property bool errorDetailsShown: false
+	readonly property bool hasErrorDetails: errorCode !== "" || errorDescription !== ""
 	property int resultType: ResultView.Type.IsSuccess
 	property alias customContent: customContentContainer.data
 	signal clicked
+
+	onVisibleChanged: errorDetailsShown = false
 
 	content: Item {
 		readonly property real elementHeight: layout.implicitHeight - resultIcon.Layout.maximumHeight + resultIcon.Layout.minimumHeight + 2 * Constants.component_spacing
@@ -73,6 +81,8 @@ SectionPage {
 			}
 
 			GPane {
+				id: pane
+
 				visible: resultText.text !== ""
 				Layout.alignment: Qt.AlignCenter
 				Layout.fillWidth: true
@@ -85,9 +95,64 @@ SectionPage {
 						left: parent.left
 						right: parent.right
 					}
+				}
 
-					textStyle: resultType !== ResultView.Type.IsError ? Style.text.normal : Style.text.normal_warning
-					wrapMode: Text.WordWrap
+				GButton {
+					visible: baseItem.hasErrorDetails
+
+					anchors.horizontalCenter: parent.horizontalCenter
+
+					Accessible.name: qsTr("Show error details")
+
+					buttonColor: Style.color.transparent
+					textStyle: Style.text.normal_accent
+					text: qsTr("Details") + (baseItem.errorDetailsShown ? "▲" : "▼")
+					onClicked: baseItem.errorDetailsShown = !baseItem.errorDetailsShown
+				}
+
+				GSeparator {
+					visible: baseItem.errorDetailsShown
+
+					anchors {
+						left: parent.left
+						right: parent.right
+					}
+				}
+
+				GText {
+					visible: baseItem.errorDetailsShown
+
+					anchors {
+						left: parent.left
+						right: parent.right
+					}
+
+					text: qsTr("Error code: %1").arg(baseItem.errorCode)
+				}
+
+				GText {
+					id: textErrorDescription
+
+					visible: baseItem.errorDetailsShown
+
+					anchors {
+						left: parent.left
+						right: parent.right
+						topMargin: Constants.pane_spacing
+					}
+				}
+
+				GButton {
+					id: buttonSendMail
+
+					visible: false
+					anchors.horizontalCenter: parent.horizontalCenter
+
+					icon.source: "qrc:///images/material_mail.svg"
+					tintIcon: true
+					//: LABEL ANDROID IOS
+					text: qsTr("Send log")
+					onClicked: LogModel.mailLog(qsTr("support@ausweisapp.de"), AuthModel.getEmailHeader(), AuthModel.getEmailBody())
 				}
 			}
 
@@ -99,31 +164,16 @@ SectionPage {
 				Layout.minimumHeight: childrenRect.height
 			}
 
-			RowLayout {
-				id: buttonRow
+			GButton {
+				id: buttonContinue
 
+				visible: buttonContinue.text !== ""
 				Layout.alignment: Qt.AlignHCenter
 				Layout.topMargin: Constants.component_spacing
 
-				spacing: Constants.component_spacing
-
-				GButton {
-					id: buttonLeft
-					visible: buttonLeft.text !== ""
-
-					//: LABEL ANDROID IOS
-					text: qsTr("OK")
-					onClicked: baseItem.clicked()
-				}
-
-				GButton {
-					id: buttonRight
-					visible: false
-
-					//: LABEL ANDROID IOS
-					text: qsTr("Send log")
-					onClicked: LogModel.mailLog()
-				}
+				//: LABEL ANDROID IOS
+				text: qsTr("OK")
+				onClicked: baseItem.clicked()
 			}
 		}
 	}

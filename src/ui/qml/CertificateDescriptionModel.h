@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the CV certificate description.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,7 +33,7 @@ class CertificateDescriptionModel
 		QSharedPointer<AuthContext> mContext;
 
 		CertificateDescriptionModel();
-		virtual ~CertificateDescriptionModel()override = default;
+		~CertificateDescriptionModel()override = default;
 
 		inline QSharedPointer<const CertificateDescription> getCertificateDescription() const;
 		inline QString getValidity() const;

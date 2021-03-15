@@ -1,7 +1,7 @@
 /*!
  * \brief Dispatch Messages of JSON API.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -15,6 +15,7 @@
 #include <QString>
 
 #include <functional>
+#include <initializer_list>
 
 class test_Message;
 
@@ -33,7 +34,8 @@ class MessageDispatcher
 
 		MsgHandler cancel();
 		MsgHandler accept();
-		MsgHandler handleCurrentState(MsgCmdType pCmdType, MsgType pMsgType, const std::function<MsgHandler()>& pFunc) const;
+		MsgHandler interrupt();
+		MsgHandler handleCurrentState(MsgCmdType pCmdType, std::initializer_list<MsgType> pMsgType, const std::function<MsgHandler()>& pFunc) const;
 		MsgHandler handleInternalOnly(MsgCmdType pCmdType, const std::function<MsgHandler()>& pFunc) const;
 
 	public:
@@ -58,7 +60,7 @@ class MessageDispatcher
 		Msg processCommand(const QByteArray& pMsg);
 		QByteArray processStateChange(const QString& pState);
 
-		QByteArray createMsgReader(const ReaderInfo& pInfo) const;
+		[[nodiscard]] QByteArray createMsgReader(const ReaderInfo& pInfo) const;
 };
 
 char* toString(const MessageDispatcher::Msg& pMsg);

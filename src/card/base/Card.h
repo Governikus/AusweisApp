@@ -1,7 +1,7 @@
 /*!
  * \brief Class representing a smart card
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,7 +26,7 @@ class Card
 
 	public:
 		Card();
-		virtual ~Card() = default;
+		~Card() override = default;
 
 		/*!
 		 * Establish a connection to the smart card
@@ -59,7 +59,7 @@ class Card
 		/*!
 		 * Establishes a PACE channel, i.e. the corresponding reader is no basic reader.
 		 */
-		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds = 60);
+		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds = 60);
 
 		/*!
 		 * Destroys an existing  PACE channel, i.e. the corresponding reader is no basic reader.
@@ -71,6 +71,10 @@ class Card
 		 */
 		virtual ResponseApduResult setEidPin(quint8 pTimeoutSeconds);
 
+		/*!
+		 * Combines the message and progressvalue depending on the environment.
+		 */
+		static QString generateProgressMessage(const QString& pMessage, int pProgress = -1);
 };
 
 } // namespace governikus

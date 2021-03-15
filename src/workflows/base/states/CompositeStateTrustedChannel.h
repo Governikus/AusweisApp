@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,7 +22,7 @@ class CompositeStateTrustedChannel
 
 	public:
 		explicit CompositeStateTrustedChannel(const QSharedPointer<WorkflowContext>& pContext);
-		virtual ~CompositeStateTrustedChannel() = default;
+		~CompositeStateTrustedChannel() override = default;
 
 	Q_SIGNALS:
 		void fireContinue();

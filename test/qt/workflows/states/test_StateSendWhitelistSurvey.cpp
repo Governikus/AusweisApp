@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateSendWhitelistSurvey.h"
@@ -32,7 +32,7 @@ class MockSecureStorage
 		}
 
 
-		virtual ~MockSecureStorage() override;
+		~MockSecureStorage() override;
 };
 
 MockSecureStorage::~MockSecureStorage()
@@ -72,7 +72,7 @@ class test_StateSendWhitelistSurvey
 
 			QTest::ignoreMessage(QtDebugMsg, "No survey pending.");
 			mContext->setStateApproved();
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -83,7 +83,7 @@ class test_StateSendWhitelistSurvey
 
 			QTest::ignoreMessage(QtDebugMsg, "Running as SDK. Ignoring whitelist survey.");
 			mContext->setStateApproved();
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -144,8 +144,8 @@ class test_StateSendWhitelistSurvey
 
 			mContext->setStateApproved();
 			QTRY_COMPARE(spy.count(), spyCounter); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(!Env::getSingleton<AppSettings>()->getGeneralSettings().isDeviceSurveyPending());
-			QCOMPARE(spyContinue.count(), 1);
 
 			bool surveySent = false;
 			QString message;

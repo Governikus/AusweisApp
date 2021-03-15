@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the remote device table
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -41,20 +41,20 @@ class RemoteDeviceModelEntry
 		RemoteDeviceModelEntry(const QString& pDeviceNameEscaped, const QString& mId, bool pNetworkVisible, bool pConnected, bool pSupported, const QDateTime& pLastConnected, QSharedPointer<RemoteDeviceListEntry>& pRemoteDeviceListEntry);
 		explicit RemoteDeviceModelEntry(const QString& pDeviceNameEscaped = QStringLiteral("UnknownReader"));
 
-		bool isPaired() const;
+		[[nodiscard]] bool isPaired() const;
 		void setPaired(bool pPaired);
-		const QString& getId() const;
+		[[nodiscard]] const QString& getId() const;
 		void setId(const QString& pId);
-		bool isNetworkVisible() const;
-		int getLinkQuality() const;
-		bool isSupported() const;
+		[[nodiscard]] bool isNetworkVisible() const;
+		[[nodiscard]] int getLinkQuality() const;
+		[[nodiscard]] bool isSupported() const;
 		void setNetworkVisible(bool pNetworkVisible);
-		const QDateTime& getLastConnected() const;
+		[[nodiscard]] const QDateTime& getLastConnected() const;
 		void setLastConnected(const QDateTime& pLastConnected);
 		bool operator==(const RemoteDeviceModelEntry& pOther) const;
 
-		const QSharedPointer<RemoteDeviceListEntry> getRemoteDeviceListEntry() const;
-		QString getDeviceNameEscaped() const;
+		[[nodiscard]] const QSharedPointer<RemoteDeviceListEntry> getRemoteDeviceListEntry() const;
+		[[nodiscard]] QString getDeviceNameEscaped() const;
 
 };
 
@@ -76,12 +76,12 @@ class RemoteDeviceModel
 		const bool mShowUnpairedReaders;
 		QTimer mTimer;
 
-		bool indexIsValid(const QModelIndex& pIndex) const;
-		QString getStatus(const RemoteDeviceModelEntry& pRemoteDeviceModelEntry) const;
+		[[nodiscard]] bool indexIsValid(const QModelIndex& pIndex) const;
+		[[nodiscard]] QString getStatus(const RemoteDeviceModelEntry& pRemoteDeviceModelEntry) const;
 		void updatePairedReaders();
 		void updateUnpairedReaders();
 		void removeVanishedReaders();
-		QVector<RemoteDeviceModelEntry> presentReaders() const;
+		[[nodiscard]] QVector<RemoteDeviceModelEntry> presentReaders() const;
 		bool addOrUpdateReader(const RemoteDeviceModelEntry& pModelEntry);
 
 	private Q_SLOTS:
@@ -108,20 +108,20 @@ class RemoteDeviceModel
 
 		RemoteDeviceModel(QObject* pParent = nullptr, bool pShowPairedReaders = true, bool pShowUnpairedReaders = true);
 
-		virtual QVariant headerData(int pSection, Qt::Orientation pOrientation, int pRole) const override;
-		virtual int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
-		virtual int columnCount(const QModelIndex& pParent = QModelIndex()) const override;
-		virtual QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
-		virtual QHash<int, QByteArray> roleNames() const override;
+		[[nodiscard]] QVariant headerData(int pSection, Qt::Orientation pOrientation, int pRole) const override;
+		[[nodiscard]] int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
+		[[nodiscard]] int columnCount(const QModelIndex& pParent = QModelIndex()) const override;
+		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
+		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-		const QSharedPointer<RemoteDeviceListEntry> getRemoteDeviceListEntry(const QModelIndex& pIndex) const;
-		const QSharedPointer<RemoteDeviceListEntry> getRemoteDeviceListEntry(const QString& pDeviceId) const;
-		bool isPaired(const QModelIndex& pIndex) const;
-		bool isSupported(const QModelIndex& pIndex) const;
+		[[nodiscard]] const QSharedPointer<RemoteDeviceListEntry> getRemoteDeviceListEntry(const QModelIndex& pIndex) const;
+		[[nodiscard]] const QSharedPointer<RemoteDeviceListEntry> getRemoteDeviceListEntry(const QString& pDeviceId) const;
+		[[nodiscard]] bool isPaired(const QModelIndex& pIndex) const;
+		[[nodiscard]] bool isSupported(const QModelIndex& pIndex) const;
 		void forgetDevice(const QModelIndex& pIndex);
 		void forgetDevice(const QString& pDeviceId);
 
-		QString getEmptyListDescriptionString() const;
+		[[nodiscard]] QString getEmptyListDescriptionString() const;
 
 	public Q_SLOTS:
 		void onUiShown();

@@ -1,7 +1,7 @@
 /*!
  * \brief Worker implementation of ReaderManger thread
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,23 +24,23 @@ class ReaderManagerWorker
 		QVector<ReaderManagerPlugIn*> mPlugIns;
 
 		void registerPlugIns();
-		bool isPlugIn(const QJsonObject& pJson) const;
+		[[nodiscard]] bool isPlugIn(const QJsonObject& pJson) const;
 		void registerPlugIn(ReaderManagerPlugIn* pPlugIn);
-		Reader* getReader(const QString& pReaderName) const;
+		[[nodiscard]] Reader* getReader(const QString& pReaderName) const;
 
 	public:
 		ReaderManagerWorker();
-		~ReaderManagerWorker();
+		~ReaderManagerWorker() override;
 
 		Q_INVOKABLE void shutdown();
 
+		Q_INVOKABLE void reset(ReaderManagerPlugInType pType);
 		Q_INVOKABLE void startScan(ReaderManagerPlugInType pType, bool pAutoConnect);
 		Q_INVOKABLE void stopScan(ReaderManagerPlugInType pType, const QString& pError);
-		Q_INVOKABLE bool isScanRunning() const;
-		Q_INVOKABLE bool isScanRunning(ReaderManagerPlugInType pType) const;
+		Q_INVOKABLE [[nodiscard]] bool isScanRunning() const;
+		Q_INVOKABLE [[nodiscard]] bool isScanRunning(ReaderManagerPlugInType pType) const;
 
-		Q_INVOKABLE QVector<ReaderManagerPlugInInfo> getPlugInInfos() const;
-		Q_INVOKABLE QVector<ReaderInfo> getReaderInfos() const;
+		Q_INVOKABLE [[nodiscard]] QVector<ReaderInfo> getReaderInfos() const;
 		Q_INVOKABLE void updateReaderInfo(const QString& pReaderName);
 		Q_INVOKABLE void createCardConnectionWorker(const QString& pReaderName);
 		Q_INVOKABLE void updateRetryCounters();

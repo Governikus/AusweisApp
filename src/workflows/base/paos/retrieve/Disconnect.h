@@ -1,7 +1,7 @@
 /*!
  * \brief Class represents the retrieved PAOS Disconnect.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,13 +21,13 @@ class Disconnect
 
 		void parse();
 		bool handleFoundElementConnectionHandle(const QString& pElementName, const QString& pValue);
-		virtual bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
+		bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
 
 	public:
 		explicit Disconnect(const QByteArray& pXmlData);
-		virtual ~Disconnect() override;
+		~Disconnect() override;
 
-		const QString& getSlotHandle() const;
+		[[nodiscard]] const QString& getSlotHandle() const;
 };
 
 } // namespace governikus

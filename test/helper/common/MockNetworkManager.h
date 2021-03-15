@@ -1,7 +1,7 @@
 /*!
  * \brief Mock \ref NetworkManager for tests
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,21 +28,21 @@ class MockNetworkManager
 
 	public:
 		MockNetworkManager();
-		virtual ~MockNetworkManager() override;
-		virtual QNetworkReply* paos(QNetworkRequest& pRequest,
+		~MockNetworkManager() override;
+		QNetworkReply* paos(QNetworkRequest& pRequest,
 				const QByteArray& pNamespace,
 				const QByteArray& pData,
 				bool pUsePsk = true,
 				const QByteArray& pSslSession = QByteArray(),
 				int pTimeoutInMilliSeconds = 30000) override;
-		virtual QNetworkReply* get(QNetworkRequest& pRequest,
+		QNetworkReply* get(QNetworkRequest& pRequest,
 				const QByteArray& pSslSession = QByteArray(),
 				int pTimeoutInMilliSeconds = 30000) override;
-		virtual QNetworkReply* post(QNetworkRequest& pRequest,
+		QNetworkReply* post(QNetworkRequest& pRequest,
 				const QByteArray& pData,
 				int pTimeoutInMilliSeconds = 30000) override;
 
-		virtual bool checkUpdateServerCertificate(const QSharedPointer<const QNetworkReply>& pReply) override;
+		bool checkUpdateServerCertificate(const QSharedPointer<const QNetworkReply>& pReply) override;
 
 		void setFilename(const QString& pFilename)
 		{
@@ -64,13 +64,13 @@ class MockNetworkManager
 		}
 
 
-		QNetworkRequest getLastRequest() const
+		[[nodiscard]] QNetworkRequest getLastRequest() const
 		{
 			return mLastRequest;
 		}
 
 
-		const QByteArray getLastData() const
+		[[nodiscard]] const QByteArray getLastData() const
 		{
 			return mLastData;
 		}

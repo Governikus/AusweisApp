@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -16,7 +16,7 @@ Item {
 
 	readonly property bool validInput: echoField.acceptableInput && confirmedInput
 	readonly property bool confirmedInput: inputConfirmation.length != number.length || inputConfirmation === number
-	readonly property real eyeWidth: eye.width + eye.anchors.leftMargin
+	readonly property real eyeWidth: eye.width + eye.Layout.leftMargin + eye.Layout.rightMargin
 	property alias number: echoField.text
 	property alias passwordLength: echoField.maximumLength
 	property string inputConfirmation
@@ -24,8 +24,8 @@ Item {
 	function append(number) { echoField.insert(echoField.length, number) }
 	function removeLast() { echoField.remove(echoField.length - 1, echoField.length) }
 
-	height: Math.max(layout.height, eye.height)
-	width: layout.width + eyeWidth
+	implicitHeight: layout.implicitHeight
+	implicitWidth: layout.implicitWidth
 
 	activeFocusOnTab: true
 	Accessible.role: Accessible.EditableText
@@ -103,7 +103,9 @@ Item {
 	RowLayout {
 		id: layout
 
-		spacing: Constants.is_desktop ? Constants.component_spacing : Constants.groupbox_spacing
+		anchors.fill: parent
+
+		spacing: 0
 
 		Repeater {
 			model: root.passwordLength
@@ -111,7 +113,10 @@ Item {
 			Text {
 				readonly property real markerWidth: fontMetrics.averageCharacterWidth * 1.4
 
-				Layout.preferredWidth: markerWidth
+				Layout.fillWidth: true
+				Layout.preferredWidth: markerWidth + (Constants.is_desktop ? Constants.component_spacing : Constants.groupbox_spacing)
+				Layout.maximumWidth: Layout.preferredWidth
+				Layout.minimumWidth: markerWidth
 				Layout.preferredHeight: fontMetrics.height + Constants.text_spacing
 
 				verticalAlignment: Text.AlignTop
@@ -145,49 +150,44 @@ Item {
 				}
 			}
 		}
-	}
 
-	Button {
-		id: eye
+		Button {
+			id: eye
 
-		property bool activated: false
+			property bool activated: false
 
-		height: implicitHeight + (Constants.is_desktop ? 0 : Constants.text_spacing)
-		width: implicitWidth + (Constants.is_desktop ? 0 : Constants.text_spacing)
+			Layout.preferredHeight: implicitHeight + (Constants.is_desktop ? 0 : Constants.text_spacing)
+			Layout.preferredWidth: implicitWidth + (Constants.is_desktop ? 0 : Constants.text_spacing)
+			Layout.leftMargin: Constants.text_spacing
 
-		anchors {
-			verticalCenter: parent.verticalCenter
-			leftMargin: Constants.groupbox_spacing
-			right: parent.right
+			Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
+
+			text: (activated
+				  //: LABEL DESKTOP_QML Screenreader text for the eye icon to change the password visibility
+				  ? qsTr("Press to hide the password")
+				  //: LABEL DESKTOP_QML Screenreader text for the eye icon to change the password visibility
+				  : qsTr("Press to show the password")
+				  )
+
+			contentItem: Item {}
+			background: TintableIcon {
+				tintColor: Constants.is_desktop ? Style.color.secondary_text_inverse : Style.color.secondary_text
+				source: eye.activated ? "qrc:///images/material_visibility.svg" : "qrc:///images/material_visibility_off.svg"
+				sourceSize.height: Constants.is_desktop ? Style.dimens.large_icon_size : Style.dimens.small_icon_size
+				fillMode: Image.Pad
+			}
+
+			onVisibleChanged: if (visible) activated = false
+			onClicked: eye.activated = !eye.activated
+
+			MouseArea {
+				anchors.fill: parent
+
+				cursorShape: Qt.PointingHandCursor
+				acceptedButtons: Qt.NoButton
+			}
+
+			FocusFrame {}
 		}
-
-		Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
-
-		text: (activated
-			  //: LABEL DESKTOP_QML Screenreader text for the eye icon to change the password visibility
-			  ? qsTr("Press to hide the password")
-			  //: LABEL DESKTOP_QML Screenreader text for the eye icon to change the password visibility
-			  : qsTr("Press to show the password")
-			  )
-
-		contentItem: Item {}
-		background: TintableIcon {
-			tintColor: Constants.is_desktop ? Style.color.secondary_text_inverse : Style.color.secondary_text
-			source: eye.activated ? "qrc:///images/material_visibility.svg" : "qrc:///images/material_visibility_off.svg"
-			sourceSize.height: Constants.is_desktop ? Style.dimens.large_icon_size : Style.dimens.small_icon_size
-			fillMode: Image.Pad
-		}
-
-		onVisibleChanged: if (visible) activated = false
-		onClicked: eye.activated = !eye.activated
-
-		MouseArea {
-			anchors.fill: parent
-
-			cursorShape: Qt.PointingHandCursor
-			acceptedButtons: Qt.NoButton
-		}
-
-		FocusFrame {}
 	}
 }

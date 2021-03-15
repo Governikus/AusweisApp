@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -86,74 +86,65 @@ SectionPage {
 			Column {
 				id: providerColumn
 
-				anchors.left: providerImage.right
-				anchors.right: parent.right
-				anchors.margins: Constants.pane_padding
+				anchors {
+					left: providerImage.right
+					right: parent.right
+					margins: Constants.pane_padding
+				}
 
 				topPadding: Constants.pane_padding
 				bottomPadding: Constants.pane_padding
 				spacing: Constants.pane_spacing
 
+				ProviderInfoSection {
+					id: providerInfo
+
+					anchors {
+						right: parent.right
+						rightMargin: Constants.component_spacing
+						left: parent.left
+					}
+
+					activeFocusOnTab: true
+
+					image: "qrc:///images/provider/information.svg"
+					//: LABEL DESKTOP_QML
+					title: qsTr("You are about to identify yourself towards the following provider")
+					name: CertificateDescriptionModel.subjectName
+				}
+
 				Item {
-					height: moreButton.height
-					anchors.left: parent.left
-					anchors.right: parent.right
+					height: Math.max(detailsButton.height, confirmButton.height)
 
-					ProviderInfoSection {
-						id: providerInfo1
-
-						anchors.left: parent.left
-						anchors.right: moreButton.left
-						anchors.rightMargin: Constants.component_spacing
-						anchors.top: parent.top
-
-						activeFocusOnTab: true
-
-						image: "qrc:///images/provider/information.svg"
-						//: LABEL DESKTOP_QML
-						title: qsTr("You are about to identify yourself towards the following provider")
-						name: CertificateDescriptionModel.subjectName
+					anchors {
+						left: parent.left
+						right: parent.right
 					}
 
 					GButton {
-						id: moreButton
+						id: detailsButton
 
-						anchors.right: parent.right
-						anchors.top: parent.top
+						anchors {
+							top: parent.top
+							left: parent.left
+						}
 
 						activeFocusOnTab: true
 						Accessible.description: qsTr("Show more information about the service provider")
 
 						//: LABEL DESKTOP_QML
-						text: qsTr("more...")
+						text: qsTr("Details about the provider")
 						onClicked: showProviderInformation(true)
-					}
-				}
-
-				Item {
-					height: purposeInfo.height
-					anchors.left: parent.left
-					anchors.right: parent.right
-
-					ProviderInfoSection {
-						id: purposeInfo
-
-						anchors.left: parent.left
-						anchors.right: confirmButton.left
-						anchors.rightMargin: Constants.component_spacing
-						activeFocusOnTab: true
-
-						image: "qrc:///images/provider/purpose.svg"
-						//: LABEL DESKTOP_QML
-						title: qsTr("Purpose for reading out requested data")
-						name: CertificateDescriptionModel.purpose
+						icon.source: "qrc:///images/info.svg"
 					}
 
 					GButton {
 						id: confirmButton
 
-						anchors.right: parent.right
-						anchors.bottom: parent.bottom
+						anchors {
+							right: parent.right
+							bottom: parent.bottom
+						}
 
 						activeFocusOnTab: true
 						Accessible.name: confirmButton.text

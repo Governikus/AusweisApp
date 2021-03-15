@@ -1,7 +1,7 @@
 /*!
  * \brief Generate information for DIDAuthenticateResponseEAC1.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,20 +32,20 @@ class DIDAuthenticateResponseEAC1
 		void createDIDAuthenticateResponseEAC1Element();
 		void createAuthenticationProtocolDataElement();
 
-		virtual void createBodyElement() override;
-		virtual ECardApiResult getResult() const;
+		void createBodyElement() override;
+		[[nodiscard]] virtual ECardApiResult getResult() const;
 
 		Q_DISABLE_COPY(DIDAuthenticateResponseEAC1)
 
 	public:
 		DIDAuthenticateResponseEAC1();
-		virtual ~DIDAuthenticateResponseEAC1() override;
+		~DIDAuthenticateResponseEAC1() override;
 
 
-		const QByteArray& getCertificateHolderAuthorizationTemplate() const;
-		const QByteArray& getEFCardAccess() const;
-		const QByteArray& getIDPICC() const;
-		const QByteArray& getChallenge() const;
+		[[nodiscard]] const QByteArray& getCertificateHolderAuthorizationTemplate() const;
+		[[nodiscard]] const QByteArray& getEFCardAccess() const;
+		[[nodiscard]] const QByteArray& getIDPICC() const;
+		[[nodiscard]] const QByteArray& getChallenge() const;
 
 		void setCertificateHolderAuthorizationTemplate(const QByteArray& pValue);
 		void setCertificationAuthorityReference(const EstablishPaceChannelOutput& pPaceChannelOutput);

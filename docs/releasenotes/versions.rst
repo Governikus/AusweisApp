@@ -6,6 +6,7 @@ Versionszweig 1.22
 .. toctree::
    :maxdepth: 1
 
+   1.22.1
    1.22.0
 
 

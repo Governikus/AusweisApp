@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -59,10 +59,15 @@ SectionPage {
 
 					Column {
 						id: providerEntries
-						anchors.top: parent.top
-						anchors.left: parent.left
-						anchors.right: forwardAction.left
-						spacing: Constants.pane_spacing
+
+						anchors {
+							top: parent.top
+							right: forwardAction.left
+							rightMargin: Constants.text_spacing
+							left: parent.left
+						}
+
+						spacing: Constants.groupbox_spacing
 
 						ProviderInfoSection {
 							imageSource: "qrc:///images/provider/information.svg"
@@ -70,11 +75,18 @@ SectionPage {
 							title: qsTr("Provider")
 							name: CertificateDescriptionModel.subjectName
 						}
-						ProviderInfoSection {
-							imageSource: "qrc:///images/provider/purpose.svg"
+
+						GText {
+							anchors {
+								right: parent.right
+								left: parent.left
+								leftMargin: Style.dimens.icon_size + Constants.groupbox_spacing
+							}
+
 							//: LABEL IOS_PHONE ANDROID_PHONE
-							title: qsTr("Purpose for reading out requested data")
-							name: CertificateDescriptionModel.purpose
+							text: qsTr("Touch for more details")
+							textStyle: Style.text.normal_accent
+							wrapMode: Text.WordWrap
 						}
 					}
 

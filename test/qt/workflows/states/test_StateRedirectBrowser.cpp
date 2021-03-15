@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateRedirectBrowser.h"
@@ -29,7 +29,7 @@ class test_StateRedirectBrowser
 		{
 			mAuthContext.reset(new AuthContext(nullptr));
 			mState.reset(StateBuilder::createState<StateRedirectBrowser>(mAuthContext));
-			connect(this, &test_StateRedirectBrowser::fireStateStart, mState.data(), &AbstractState::onEntry, Qt::ConnectionType::DirectConnection);
+			mState->onEntry(nullptr);
 		}
 
 
@@ -46,10 +46,9 @@ class test_StateRedirectBrowser
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
 			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
 		}
 
@@ -60,10 +59,9 @@ class test_StateRedirectBrowser
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, false, true, "send error"));
 			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
 		}
 
@@ -74,10 +72,9 @@ class test_StateRedirectBrowser
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
 			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
 		}
 
@@ -88,10 +85,9 @@ class test_StateRedirectBrowser
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, false, true));
 			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
 		}
 
@@ -103,10 +99,9 @@ class test_StateRedirectBrowser
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
 			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
 		}
 
@@ -118,10 +113,9 @@ class test_StateRedirectBrowser
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, false, true));
 			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
 		}
 
@@ -133,10 +127,9 @@ class test_StateRedirectBrowser
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
 			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
 		}
 
@@ -148,10 +141,9 @@ class test_StateRedirectBrowser
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, false));
 			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
 		}
 
@@ -164,10 +156,9 @@ class test_StateRedirectBrowser
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
 			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
 		}
 
@@ -180,10 +171,9 @@ class test_StateRedirectBrowser
 			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, false));
 			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
 		}
 

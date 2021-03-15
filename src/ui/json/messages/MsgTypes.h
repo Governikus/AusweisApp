@@ -1,7 +1,7 @@
 /*!
  * \brief Enumerations of message types and additional stuff.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -36,6 +36,7 @@ defineEnumType(MsgCmdType,
 		UNDEFINED,
 		ACCEPT,
 		CANCEL,
+		INTERRUPT,
 		GET_LOG,
 		GET_INFO,
 		GET_API_LEVEL,

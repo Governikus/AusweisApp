@@ -136,3 +136,29 @@ We assume that the user did not connect the card reader.
 
   {"msg": "AUTH", "result": {"description":"The process has been cancelled.","language":"en","major":"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error","message":"The process has been cancelled.","minor":"http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser"},"url":"https://test.governikus-eid.de/DEMO/?errID=123456"}
 
+
+
+Minimal successful PIN change
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The following messages and commands are the minimal
+iterations of a successful PIN change.
+
+We assume that the user already inserted a card
+into the connected card reader.
+
+
+.. code-block:: json
+
+  {"cmd": "RUN_CHANGE_PIN"}
+
+  {"msg": "CHANGE_PIN"}
+
+  {"msg": "ENTER_PIN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"retryCounter":3},"keypad":false,"name":"NFC"}}
+
+  {"cmd": "SET_PIN", "value": "123456"}
+
+  {"msg": "ENTER_NEW_PIN", "reader": {"attached":true,"card":{"inoperative":false,"deactivated":false,"retryCounter":3},"keypad":false,"name":"NFC"}}
+
+  {"cmd": "SET_NEW_PIN", "value": "123456"}
+
+  {"msg": "CHANGE_PIN", "success": true}

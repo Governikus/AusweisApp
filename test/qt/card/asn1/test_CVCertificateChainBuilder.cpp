@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref CVCertificateChain
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore>
@@ -396,7 +396,7 @@ class test_CVCertificateChainBuilder
 			CVCertificateChain chain = builder.getChainForCertificationAuthority(output);
 
 			QVERIFY(chain.isValid());
-			QCOMPARE(chain.at(0)->getBody().getCertificationAuthorityReference(), output.getCARcurr());
+			QCOMPARE(chain.at(0)->getBody().getCertificationAuthorityReference(), output.getCarCurr());
 			QCOMPARE(chain.size(), 2);
 		}
 
@@ -419,7 +419,7 @@ class test_CVCertificateChainBuilder
 			CVCertificateChain chain = builder.getChainForCertificationAuthority(output);
 
 			QVERIFY(chain.isValid());
-			QCOMPARE(chain.at(0)->getBody().getCertificationAuthorityReference(), output.getCARprev());
+			QCOMPARE(chain.at(0)->getBody().getCertificationAuthorityReference(), output.getCarPrev());
 			QCOMPARE(chain.size(), 3);
 		}
 

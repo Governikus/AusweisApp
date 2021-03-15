@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MessageDispatcher
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MessageDispatcher.h"
@@ -48,8 +48,8 @@ class test_Message
 			QByteArray msg("{crap}");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"unterminated object (offset: 2)\",\"msg\":\"INVALID\"}"));
 
-			msg = "{\"crap\": \"\"}";
-			QByteArray expected("{\"error\":\"Command cannot be undefined\",\"msg\":\"INVALID\"}");
+			msg = R"({"crap": ""})";
+			QByteArray expected(R"({"error":"Command cannot be undefined","msg":"INVALID"})");
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 
 			msg = "{\"cmd\": false}";
@@ -70,20 +70,20 @@ class test_Message
 		{
 			MessageDispatcher dispatcher;
 
-			QByteArray msg("{\"cmd\": \"UnknownRequestedCommand321\", \"request\": \"abc123\"}");
+			QByteArray msg(R"({"cmd": "UnknownRequestedCommand321", "request": "abc123"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"UnknownRequestedCommand321\",\"msg\":\"UNKNOWN_COMMAND\",\"request\":\"abc123\"}"));
 
-			msg = "{\"cmd\": \"UnknownRequestedCommand321\", \"request\": 987}";
+			msg = R"({"cmd": "UnknownRequestedCommand321", "request": 987})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"UnknownRequestedCommand321\",\"msg\":\"UNKNOWN_COMMAND\",\"request\":987}"));
 
-			msg = "{\"cmd\": \"nothing\", \"request\": {\"blubb\": \"identifier\", \"something\": null}}";
+			msg = R"({"cmd": "nothing", "request": {"blubb": "identifier", "something": null}})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"nothing\",\"msg\":\"UNKNOWN_COMMAND\",\"request\":{\"blubb\":\"identifier\",\"something\":null}}"));
 		}
 
 
 		void noRequestWithUnknowCommand()
 		{
-			QByteArray msg("{\"cmd\": \"UnknownRequestedCommand123\"}");
+			QByteArray msg(R"({"cmd": "UnknownRequestedCommand123"})");
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"UnknownRequestedCommand123\",\"msg\":\"UNKNOWN_COMMAND\"}"));
 		}
@@ -91,7 +91,7 @@ class test_Message
 
 		void info()
 		{
-			QByteArray msg("{\"cmd\": \"GET_INFO\"}");
+			QByteArray msg(R"({"cmd": "GET_INFO"})");
 			MessageDispatcher dispatcher;
 			auto versionInfo = VersionInfo::getInstance().toJson(QJsonDocument::Compact);
 
@@ -147,15 +147,15 @@ class test_Message
 			QVERIFY(context->isStateApproved());
 			context->setStateApproved(false); // reset
 
-			auto msg = QByteArray("{\"cmd\":\"SET_CAN\",\"value\": \"12345\"}");
-			auto expectedBadState = QByteArray("{\"error\":\"SET_CAN\",\"msg\":\"BAD_STATE\"}");
+			auto msg = QByteArray(R"({"cmd":"SET_CAN","value": "12345"})");
+			auto expectedBadState = QByteArray(R"({"error":"SET_CAN","msg":"BAD_STATE"})");
 			QCOMPARE(dispatcher.processCommand(msg), expectedBadState);
 
 			dispatcher.mContext.getContext()->setEstablishPaceChannelType(PacePasswordId::PACE_CAN);
 			QVERIFY(!dispatcher.processStateChange(QStringLiteral("StateEnterPacePassword")).isEmpty());
 			QVERIFY(!context->isStateApproved());
 
-			auto expectedEnterCan = QByteArray("{\"error\":\"You must provide 6 digits\",\"msg\":\"ENTER_CAN\"}");
+			auto expectedEnterCan = QByteArray(R"({"error":"You must provide 6 digits","msg":"ENTER_CAN"})");
 			QCOMPARE(dispatcher.processCommand(msg), expectedEnterCan);
 
 			QVERIFY(!context->isStateApproved());
@@ -192,7 +192,7 @@ class test_Message
 			dispatcher.init(context);
 
 			QVERIFY(!context->isStateApproved());
-			QByteArray msg = "{\"cmd\": \"ACCEPT\"}";
+			QByteArray msg = R"({"cmd": "ACCEPT"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"ACCEPT\",\"msg\":\"BAD_STATE\"}"));
 			QVERIFY(!context->isStateApproved());
 		}
@@ -201,7 +201,7 @@ class test_Message
 		void cancelResultsInBadState()
 		{
 			MessageDispatcher dispatcher;
-			QByteArray msg = "{\"cmd\": \"CANCEL\"}";
+			QByteArray msg = R"({"cmd": "CANCEL"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"CANCEL\",\"msg\":\"BAD_STATE\"}"));
 		}
 
@@ -215,10 +215,15 @@ class test_Message
 			dispatcher.init(context);
 
 			QVERIFY(!context->isStateApproved());
-			QByteArray msg = "{\"cmd\": \"CANCEL\"}";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
-			QVERIFY(!context->isStateApproved());
+			QVERIFY(!context->isWorkflowCancelled());
 
+			QTest::ignoreMessage(QtDebugMsg, "Process type: CANCEL");
+			QTest::ignoreMessage(QtWarningMsg, "Killing the current workflow.");
+			const QByteArray msg = R"({"cmd": "CANCEL"})";
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
+
+			QVERIFY(context->isStateApproved());
+			QVERIFY(context->isWorkflowCancelled());
 			QCOMPARE(spy.count(), 1);
 		}
 

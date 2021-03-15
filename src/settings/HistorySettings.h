@@ -1,7 +1,7 @@
 /*!
  * \brief Represents history settings.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -40,16 +40,16 @@ class HistorySettings
 		QVector<HistoryInfo> mHistoryInfos;
 
 		HistorySettings();
-		QVector<HistoryInfo> getHistoryInfosFromStore() const;
+		[[nodiscard]] QVector<HistoryInfo> getHistoryInfosFromStore() const;
 
 	public:
-		virtual ~HistorySettings() override;
-		virtual void save() override;
+		~HistorySettings() override;
+		void save() override;
 
-		bool isEnabled() const;
+		[[nodiscard]] bool isEnabled() const;
 		void setEnabled(bool pEnabled);
 
-		const QVector<HistoryInfo>& getHistoryInfos() const;
+		[[nodiscard]] const QVector<HistoryInfo>& getHistoryInfos() const;
 		void setHistoryInfos(const QVector<HistoryInfo>& pHistoryInfos);
 		void addHistoryInfo(const HistoryInfo& pHistoryInfo);
 		int deleteSettings(const QDateTime& pLatestToKeep = QDateTime());

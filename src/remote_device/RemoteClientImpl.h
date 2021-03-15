@@ -1,7 +1,7 @@
 /*!
  * \brief Send RemoteReaderDiscoverCmds and maintain a list of responsive peers.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -42,7 +42,7 @@ class RemoteClientImpl
 		QStringList mConnectedDeviceIds;
 
 		RemoteClientImpl();
-		virtual ~RemoteClientImpl() override;
+		~RemoteClientImpl() override;
 
 		void bootstrapRemoteConnectorThread();
 		void shutdownRemoteConnectorThread();
@@ -55,16 +55,16 @@ class RemoteClientImpl
 		void onDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QString& pId);
 
 	public:
-		Q_INVOKABLE virtual void startDetection() override;
-		Q_INVOKABLE virtual void stopDetection() override;
-		Q_INVOKABLE virtual bool isDetecting() override;
+		Q_INVOKABLE void startDetection() override;
+		Q_INVOKABLE void stopDetection() override;
+		Q_INVOKABLE bool isDetecting() override;
 
-		Q_INVOKABLE virtual void establishConnection(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const QString& pPsk) override;
+		Q_INVOKABLE void establishConnection(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const QString& pPsk) override;
 
-		virtual QVector<QSharedPointer<RemoteDeviceListEntry>> getAnnouncingRemoteDevices() const override;
-		Q_INVOKABLE virtual void requestRemoteDevices()  override;
-		virtual QStringList getConnectedDeviceIDs() const override;
-		virtual QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
+		[[nodiscard]] QVector<QSharedPointer<RemoteDeviceListEntry>> getAnnouncingRemoteDevices() const override;
+		Q_INVOKABLE void requestRemoteDevices()  override;
+		[[nodiscard]] QStringList getConnectedDeviceIDs() const override;
+		QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
 };
 
 

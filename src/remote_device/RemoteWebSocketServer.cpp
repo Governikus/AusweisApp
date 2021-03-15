@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteWebSocketServer.h"
@@ -83,6 +83,7 @@ RemoteWebSocketServerImpl::RemoteWebSocketServerImpl()
 {
 	connect(mTlsServer.data(), &RemoteTlsServer::newConnection, &mServer, &QWebSocketServer::handleConnection);
 	connect(mTlsServer.data(), &RemoteTlsServer::firePskChanged, this, &RemoteWebSocketServer::firePskChanged);
+	connect(mTlsServer.data(), &RemoteTlsServer::firePairingCompleted, this, &RemoteWebSocketServer::firePairingCompleted);
 	connect(&mServer, &QWebSocketServer::newConnection, this, &RemoteWebSocketServerImpl::onWebsocketConnection);
 }
 

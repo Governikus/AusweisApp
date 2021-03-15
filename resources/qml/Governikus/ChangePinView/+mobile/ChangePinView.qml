@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -61,20 +61,6 @@ SectionPage {
 		controller: changePinController
 		workflowModel: ChangePinModel
 		workflowTitle: baseItem.title
-
-		waitingFor: switch (changePinController.workflowState) {
-						case ChangePinController.WorkflowStates.Reader:
-							return Workflow.WaitingFor.Reader
-						case ChangePinController.WorkflowStates.Card:
-							return Workflow.WaitingFor.Card
-						case ChangePinController.WorkflowStates.Puk:
-						case ChangePinController.WorkflowStates.Can:
-						case ChangePinController.WorkflowStates.Pin:
-						case ChangePinController.WorkflowStates.NewPin:
-							return Workflow.WaitingFor.Password
-						default:
-							return Workflow.WaitingFor.None
-		}
 	}
 
 	ResultView {

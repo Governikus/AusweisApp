@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref WorkflowModel
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowModel.h"
@@ -50,15 +50,6 @@ class test_WorkflowModel
 
 			Q_EMIT context->fireCardConnectionChanged();
 			QCOMPARE(spyIsBasicReaderChanged.count(), 1);
-		}
-
-
-		void test_StartWorkflow()
-		{
-			WorkflowModel model;
-			QSignalSpy spy(&model, &WorkflowModel::fireStartWorkflow);
-			model.startWorkflow();
-			QCOMPARE(spy.count(), 1);
 		}
 
 

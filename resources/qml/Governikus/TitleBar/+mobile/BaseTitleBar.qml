@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -77,6 +77,8 @@ Item {
 			bottom: parent.bottom
 			right: parent.right
 			left: parent.left
+			leftMargin: plugin.safeAreaMargins.left
+			rightMargin: plugin.safeAreaMargins.right
 		}
 
 		Item {

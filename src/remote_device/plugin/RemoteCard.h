@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref Card for smartphone as card reader (SaC).
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -35,6 +35,7 @@ class RemoteCard
 		QString mReaderName;
 		QString mSlotHandle;
 		bool mConnected;
+		QString mProgressMessage;
 
 		bool sendMessage(const QSharedPointer<const RemoteMessage>& pMessage, RemoteCardMessageType pExpectedAnswer, unsigned long pTimeout);
 
@@ -47,17 +48,18 @@ class RemoteCard
 
 	public:
 		RemoteCard(const QSharedPointer<RemoteDispatcherClient>& pRemoteDispatcher, const QString& pReaderName);
-		virtual ~RemoteCard() override;
+		~RemoteCard() override;
 
-		virtual CardReturnCode connect() override;
-		virtual CardReturnCode disconnect() override;
-		virtual bool isConnected() override;
+		CardReturnCode connect() override;
+		CardReturnCode disconnect() override;
+		bool isConnected() override;
+		void setProgressMessage(const QString& pMessage, int pProgress = -1) override;
 
-		virtual ResponseApduResult transmit(const CommandApdu& pCmd) override;
+		ResponseApduResult transmit(const CommandApdu& pCmd) override;
 
-		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds = 60) override;
+		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds = 60) override;
 
-		virtual ResponseApduResult setEidPin(quint8 pTimeoutSeconds) override;
+		ResponseApduResult setEidPin(quint8 pTimeoutSeconds) override;
 };
 
 } // namespace governikus

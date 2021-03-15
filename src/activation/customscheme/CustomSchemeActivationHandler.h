@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,10 +26,10 @@ class CustomSchemeActivationHandler
 
 	public:
 		CustomSchemeActivationHandler() = default;
-		virtual ~CustomSchemeActivationHandler() override = default;
+		~CustomSchemeActivationHandler() override = default;
 
-		virtual bool start() override;
-		virtual void stop() override;
+		bool start() override;
+		void stop() override;
 };
 
 } // namespace governikus

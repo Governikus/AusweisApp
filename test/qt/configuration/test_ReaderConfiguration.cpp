@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ReaderConfiguration
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfiguration.h"
@@ -80,7 +80,11 @@ class test_ReaderConfiguration
 
 		void checkDefaultReader()
 		{
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+			const ReaderConfigurationInfo readerSettingsInfo = ReaderConfigurationInfo("crap");
+#else
 			const ReaderConfigurationInfo readerSettingsInfo = Env::getSingleton<ReaderDetector>()->getReaderConfigurationInfo("crap");
+#endif
 			QCOMPARE(readerSettingsInfo.getName(), QString("crap"));
 			QCOMPARE(readerSettingsInfo.getIcon()->getName(), QString("default_reader.png"));
 			QCOMPARE(readerSettingsInfo.getIconWithNPA()->getName(), QString("default_reader_mit_ausweis.png"));
@@ -147,7 +151,11 @@ class test_ReaderConfiguration
 			QFETCH(QString, readerPattern);
 
 			mUsbIds += usbId;
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+			const ReaderConfigurationInfo readerSettingsInfo = ReaderConfigurationInfo("crap");
+#else
 			const ReaderConfigurationInfo readerSettingsInfo = Env::getSingleton<ReaderDetector>()->getReaderConfigurationInfo(readerName);
+#endif
 			QCOMPARE(readerSettingsInfo.getName(), readerViewName);
 			QCOMPARE(readerSettingsInfo.getIcon()->getName(), readerIcon + ".png");
 			QCOMPARE(readerSettingsInfo.getIconWithNPA()->getName(), readerIcon + "_mit_ausweis.png");
@@ -290,7 +298,11 @@ class test_ReaderConfiguration
 			QFETCH(QString, readerViewName);
 
 			mUsbIds += usbId;
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+			const ReaderConfigurationInfo readerSettingsInfo = ReaderConfigurationInfo("crap");
+#else
 			const ReaderConfigurationInfo readerSettingsInfo = Env::getSingleton<ReaderDetector>()->getReaderConfigurationInfo(readerName);
+#endif
 			QCOMPARE(readerSettingsInfo.getName(), readerViewName);
 		}
 

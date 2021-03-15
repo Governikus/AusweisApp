@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReaderManagerPlugIn.h"
@@ -282,21 +282,13 @@ void RemoteReaderManagerPlugIn::addRemoteDispatcher(const QSharedPointer<RemoteD
 	connect(pRemoteDispatcher.data(), &RemoteDispatcherClient::fireReceived, this, &RemoteReaderManagerPlugIn::onRemoteMessage);
 	connect(pRemoteDispatcher.data(), &RemoteDispatcherClient::fireClosed, this, &RemoteReaderManagerPlugIn::onDispatcherClosed);
 
-	QMetaObject::invokeMethod(pRemoteDispatcher.data(), [pRemoteDispatcher] {
-				const QSharedPointer<const IfdEstablishContext>& establishContext = QSharedPointer<IfdEstablishContext>::create(QStringLiteral("IFDInterface_WebSocket_v0"), DeviceInfo::getName());
-				pRemoteDispatcher->send(establishContext);
-			}, Qt::QueuedConnection);
+	QMetaObject::invokeMethod(pRemoteDispatcher.data(), &RemoteDispatcherClient::sendEstablishContext, Qt::QueuedConnection);
 }
 
 
 void RemoteReaderManagerPlugIn::startScan(bool pAutoConnect)
 {
 	mConnectToPairedReaders = pAutoConnect;
-	if (!mConnectToPairedReaders)
-	{
-		removeAllDispatchers();
-	}
-
 	const auto remoteClient = Env::getSingleton<RemoteClient>();
 	connect(remoteClient, &RemoteClient::fireDeviceAppeared, this, &RemoteReaderManagerPlugIn::connectToPairedReaders, Qt::UniqueConnection);
 

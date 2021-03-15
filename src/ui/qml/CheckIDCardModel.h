@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for checking the ID card in "playground".
  *
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -39,7 +39,7 @@ class CheckIDCardModel
 		Q_ENUM(CheckIDCardResult)
 
 		explicit CheckIDCardModel(QObject* pParent = nullptr);
-		~CheckIDCardModel();
+		~CheckIDCardModel() override;
 
 		Q_INVOKABLE void startScan();
 		Q_INVOKABLE void startScanIfNecessary();

@@ -1,7 +1,7 @@
 /*!
  * \brief Tests for the PaceHandler
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/PaceHandler.h"
@@ -231,26 +231,9 @@ class test_PaceHandler
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
 
-			worker->addResponse(CardReturnCode::UNKNOWN, QByteArray::fromHex("6A80"));
-
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
 
 			QCOMPARE(status, CardReturnCode::RETRY_ALLOWED);
-		}
-
-
-		void establishPaceChannel_KeyAgreementCommandFailed()
-		{
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
-			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
-
-			worker->addResponse(CardReturnCode::UNKNOWN, QByteArray::fromHex("6A80"));
-			worker->addResponse(CardReturnCode::UNKNOWN, QByteArray::fromHex("9000"));
-
-			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
-
-			QCOMPARE(status, CardReturnCode::COMMAND_FAILED);
 		}
 
 
@@ -266,20 +249,6 @@ class test_PaceHandler
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
 
 			QCOMPARE(status, CardReturnCode::PROTOCOL_ERROR);
-		}
-
-
-		void transmitMSESetAT_ErrorMseSetAT_UNKNOWN()
-		{
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
-			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
-
-			QTest::ignoreMessage(QtCriticalMsg, "Error on MSE:Set AT | UNKNOWN");
-			worker->addResponse(CardReturnCode::UNKNOWN, QByteArray::fromHex("6A80"));
-			CardReturnCode status = paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN);
-
-			QCOMPARE(status, CardReturnCode::UNKNOWN);
 		}
 
 
@@ -317,14 +286,12 @@ class test_PaceHandler
 			auto paceInfo = PaceInfo::decode(bytes);
 			paceHandler->mPaceInfo = paceInfo;
 
-			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("0090"));
 			worker->addResponse(CardReturnCode::CANCELLATION_BY_USER, QByteArray::fromHex("0090"));
 			QTest::ignoreMessage(QtCriticalMsg, "Error on MSE:Set AT");
 			QCOMPARE(paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN), CardReturnCode::PROTOCOL_ERROR);
 			QCOMPARE(paceHandler->getStatusMseSetAt(), QByteArray::fromHex("0090"));
 
-			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("0090"));
-			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("006A80"));
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("006A"));
 			QTest::ignoreMessage(QtCriticalMsg, "Error on MSE:Set AT");
 			QCOMPARE(paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN), CardReturnCode::PROTOCOL_ERROR);
 			QCOMPARE(paceHandler->getStatusMseSetAt(), QByteArray::fromHex("006A"));
@@ -343,7 +310,6 @@ class test_PaceHandler
 			auto paceInfo = PaceInfo::decode(bytes);
 			paceHandler->mPaceInfo = paceInfo;
 
-			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("0090"));
 			worker->addResponse(CardReturnCode::UNDEFINED);
 			QTest::ignoreMessage(QtCriticalMsg, "Error on MSE:Set AT");
 			QCOMPARE(paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN), CardReturnCode::RETRY_ALLOWED);

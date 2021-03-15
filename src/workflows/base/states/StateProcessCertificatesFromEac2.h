@@ -1,7 +1,7 @@
 /*!
  * \brief State to process certificates from EAC2.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,7 +22,7 @@ class StateProcessCertificatesFromEac2
 	friend class StateBuilder;
 
 	explicit StateProcessCertificatesFromEac2(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 };
 
 } // namespace governikus

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -7,63 +7,59 @@ import QtQuick 2.12
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.SettingsModel 1.0
-
+import Governikus.Type.UiModule 1.0
 
 Rectangle {
 	id: baseItem
 
-	property bool lockedAndHidden: true // Start in hidden state so that it doesn't slide out when the tutorial is active
-	property var bottomSafeAreaMargin: plugin.safeAreaMargins.bottom
+	readonly property int activeModule: d.activeModule
+	property bool lockedAndHidden
 
 	signal resetContentArea
 
-	function showHelp(pLockedAndHidden = false) {
+	function show(pModule, pLockedAndHidden = false) {
 		lockedAndHidden = pLockedAndHidden
-		state = "help"
-	}
+		if (d.activeModule !== pModule) {
+			d.activeModule = pModule
 
-	function showCheckIDCard(pLockedAndHidden = false) {
-		lockedAndHidden = pLockedAndHidden
-		state = "checkIDCard"
-	}
-
-	function showIdentify(pLockedAndHidden = false) {
-		lockedAndHidden = pLockedAndHidden
-		state = "identify"
-	}
-
-	function showMain(pLockedAndHidden = false) {
-		lockedAndHidden = pLockedAndHidden
-		state = "main"
-	}
-
-	function showPin(pLockedAndHidden = false) {
-		lockedAndHidden = pLockedAndHidden
-		state = "pin"
-	}
-
-	function showProvider(pLockedAndHidden = false) {
-		lockedAndHidden = pLockedAndHidden
-		state = "provider"
+			if (pModule !== UiModule.TUTORIAL) {
+				SettingsModel.startupModule = pModule === UiModule.REMOTE_SERVICE ? UiModule.REMOTE_SERVICE : UiModule.DEFAULT
+			}
+		}
 	}
 
 	enabled: !lockedAndHidden
-	visible: !lockedAndHidden
-	height: lockedAndHidden ?  0 : (Style.dimens.navigation_bar_height + bottomSafeAreaMargin)
+	visible: height > 0
+	height: lockedAndHidden ? 0 : (Style.dimens.navigation_bar_height + plugin.safeAreaMargins.bottom)
 
 	color: Style.color.background_pane
-
-	Component.onCompleted: state = SettingsModel.showSetupAssistantOnStart ? "tutorial" : "main"
 
 	Behavior on height {
 		enabled: appWindow.ready
 		NumberAnimation {duration: Constants.animation_duration}
 	}
 
+	QtObject {
+		id: d
+
+		property int activeModule
+		readonly property int startupModule: SettingsModel.startupModule
+		readonly property bool initialLockedAndHidden: startupModule === UiModule.TUTORIAL || startupModule === UiModule.IDENTIFY
+
+		Component.onCompleted: show(startupModule, initialLockedAndHidden)
+	}
+
 	NavigationView {
 		id: navigationView
 
-		anchors.top: parent.top
+		anchors {
+			top: parent.top
+			left: parent.left
+			right: parent.right
+			leftMargin: plugin.safeAreaMargins.left
+			rightMargin: plugin.safeAreaMargins.right
+		}
+
 		height: Style.dimens.navigation_bar_height
 
 		Accessible.ignored: lockedAndHidden

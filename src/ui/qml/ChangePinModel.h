@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the PIN action.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,17 +27,19 @@ class ChangePinModel
 	private:
 		QSharedPointer<ChangePinContext> mContext;
 		ChangePinModel() = default;
-		virtual ~ChangePinModel() override = default;
+		~ChangePinModel() override = default;
 
 	public:
 		void resetChangePinContext(const QSharedPointer<ChangePinContext>& pContext = QSharedPointer<ChangePinContext>());
 
-		virtual QString getResultString() const override;
+		Q_INVOKABLE void startWorkflow(bool pRequestTransportPin);
+		QString getResultString() const override;
 
 	private Q_SLOTS:
 		void onPaceResultUpdated();
 
 	Q_SIGNALS:
+		void fireStartWorkflow(bool pRequestTransportPin);
 		void fireNewContextSet();
 		void fireOnPinUnlocked();
 };

@@ -1,7 +1,7 @@
 /*!
  * \brief Generate information for InitializeFrameworkResponse.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,7 +23,7 @@ class InitializeFrameworkResponse
 		void createVersionElement();
 		void createInitializeFrameworkResponse();
 
-		virtual void createBodyElement() override;
+		void createBodyElement() override;
 
 		Q_DISABLE_COPY(InitializeFrameworkResponse)
 

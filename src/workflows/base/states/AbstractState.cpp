@@ -1,10 +1,11 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AbstractState.h"
 
 #include "ReaderManager.h"
+#include "VolatileSettings.h"
 
 #include <QLoggingCategory>
 #include <QStateMachine>
@@ -57,9 +58,9 @@ QString AbstractState::getClassName(const char* const pName)
 }
 
 
-void AbstractState::onStateApprovedChanged()
+void AbstractState::onStateApprovedChanged(bool pApproved)
 {
-	if (mContext->isStateApproved())
+	if (pApproved)
 	{
 		qCDebug(statemachine) << "Running state" << getStateName();
 		run();
@@ -77,10 +78,15 @@ void AbstractState::onEntry(QEvent* pEvent)
 		mConnections += connect(readerManager, &ReaderManager::fireReaderRemoved, this, &AbstractState::onCardRemoved);
 	}
 	mConnections += connect(mContext.data(), &WorkflowContext::fireCancelWorkflow, this, &AbstractState::onUserCancelled);
-	mConnections += connect(mContext.data(), &WorkflowContext::fireStateApprovedChanged, this, &AbstractState::onStateApprovedChanged);
+	mConnections += connect(mContext.data(), &WorkflowContext::fireStateApprovedChanged, this, &AbstractState::onStateApprovedChanged, Qt::QueuedConnection);
 
 	qCDebug(statemachine) << "Next state is" << getStateName();
 	mContext->setCurrentState(getStateName());
+
+	if (mContext->isWorkflowCancelled() && !mContext->isWorkflowCancelledInState())
+	{
+		onUserCancelled();
+	}
 }
 
 
@@ -113,6 +119,7 @@ bool AbstractState::isCancellationByUser()
 void AbstractState::onUserCancelled()
 {
 	qCInfo(support) << "Cancellation by user";
+	mContext->setWorkflowCancelledInState();
 	updateStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
 	Q_EMIT fireAbort();
 }
@@ -168,7 +175,7 @@ void AbstractState::startScanIfNecessary()
 void AbstractState::stopScanIfNecessary(const QString& pError)
 {
 #if defined(Q_OS_IOS)
-	if (isStartStopEnabled())
+	if (isStartStopEnabled() && Env::getSingleton<VolatileSettings>()->handleInterrupt())
 	{
 		Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::NFC, pError);
 	}

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,8 +29,8 @@ class WebSocketHelper
 
 	public:
 		WebSocketHelper(int pPort, int pConnectionTimeout = 15000);
-		bool isConnected() const;
-		QAbstractSocket::SocketState getState() const;
+		[[nodiscard]] bool isConnected() const;
+		[[nodiscard]] QAbstractSocket::SocketState getState() const;
 		bool waitForMessage(const std::function<bool(const QJsonObject&)>& pMessageMatcher);
 		void sendMessage(const QString& pMessage);
 };

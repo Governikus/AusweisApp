@@ -1,7 +1,7 @@
 /*!
  * \brief Extension to QVersionNumber.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -17,19 +17,19 @@ class VersionNumber
 		QVersionNumber mVersionNumber;
 		QString mSuffix;
 
-		auto getInfoFromSuffix(QLatin1Char pStart, QLatin1Char pEnd = QLatin1Char('-')) const;
+		[[nodiscard]] auto getInfoFromSuffix(QLatin1Char pStart, QLatin1Char pEnd = QLatin1Char('-')) const;
 		friend bool operator==(const VersionNumber& pLeft, const VersionNumber& pRight);
 
 	public:
 		static const VersionNumber& getApplicationVersion();
 		explicit VersionNumber(const QString& pVersion);
 
-		const QVersionNumber& getVersionNumber() const;
-		bool isDeveloperVersion() const;
-		int getDistance() const;
-		QString getBranch() const;
-		QString getRevision() const;
-		bool isDraft() const;
+		[[nodiscard]] const QVersionNumber& getVersionNumber() const;
+		[[nodiscard]] bool isDeveloperVersion() const;
+		[[nodiscard]] int getDistance() const;
+		[[nodiscard]] QString getBranch() const;
+		[[nodiscard]] QString getRevision() const;
+		[[nodiscard]] bool isDraft() const;
 };
 
 

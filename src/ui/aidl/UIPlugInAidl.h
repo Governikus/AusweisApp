@@ -1,7 +1,7 @@
 /*!
  * \brief UIPlugIn implementation of the AIDL UI.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,10 +32,10 @@ class UIPlugInAidl
 
 	public:
 		UIPlugInAidl();
-		virtual ~UIPlugInAidl() override;
+		~UIPlugInAidl() override;
 
 		static UIPlugInAidl* getInstance(bool pBlock = true);
-		bool isSuccessfullInitialized() const;
+		[[nodiscard]] bool isSuccessfullInitialized() const;
 		Q_INVOKABLE void onReceived(const QByteArray& pMessage);
 		bool waitForWorkflowToFinish();
 
@@ -43,9 +43,9 @@ class UIPlugInAidl
 		void reset();
 
 	private Q_SLOTS:
-		virtual void doShutdown() override;
-		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
-		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void doShutdown() override;
+		void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
+		void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
 
 		void onToSend(const QByteArray& pMessage);
 };

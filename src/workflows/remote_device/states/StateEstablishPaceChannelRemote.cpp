@@ -1,10 +1,9 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEstablishPaceChannelRemote.h"
 
-#include "EstablishPaceChannelParser.h"
 #include "ServerMessageHandler.h"
 
 #include <QLoggingCategory>
@@ -25,7 +24,7 @@ StateEstablishPaceChannelRemote::StateEstablishPaceChannelRemote(const QSharedPo
 void StateEstablishPaceChannelRemote::run()
 {
 	Q_ASSERT(getContext());
-	Q_ASSERT(getContext()->hasEstablishedPaceChannelRequest());
+	Q_ASSERT(!getContext()->getSlotHandle().isEmpty());
 
 	const QSharedPointer<RemoteServiceContext>& context = getContext();
 	auto cardConnection = context->getCardConnection();
@@ -35,8 +34,8 @@ void StateEstablishPaceChannelRemote::run()
 		return;
 	}
 
-	const EstablishPaceChannelParser& parser = context->getPaceChannelParser();
-	mPasswordId = parser.getPasswordId();
+	const EstablishPaceChannel& paceChannel = context->getEstablishPaceChannel();
+	mPasswordId = paceChannel.getPasswordId();
 	QByteArray pacePassword;
 	switch (mPasswordId)
 	{
@@ -71,8 +70,8 @@ void StateEstablishPaceChannelRemote::run()
 				&StateEstablishPaceChannelRemote::onEstablishConnectionDone,
 				mPasswordId,
 				pacePassword,
-				parser.getChat(),
-				parser.getCertificateDescription());
+				paceChannel.getChat(),
+				paceChannel.getCertificateDescription());
 	}
 }
 

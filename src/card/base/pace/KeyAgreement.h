@@ -1,7 +1,7 @@
 /*!
  * \brief the key agreement protocol use in PACE. For details see TR 03110.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -92,7 +92,7 @@ class KeyAgreement
 		 * \param pMappingData the terminal's mapping data.
 		 * \return the card's mapping data
 		 */
-		CardResult transmitGAMappingData(const QByteArray& pMappingData) const;
+		[[nodiscard]] CardResult transmitGAMappingData(const QByteArray& pMappingData) const;
 
 		/*!
 		 * \brief Transmit the General Authenticate (Ephemeral Public Key) command to the card.
@@ -145,26 +145,26 @@ class KeyAgreement
 		 * I. e. the output of KDF_enc according to TR-03110 Part 3 chapter A.2.3.
 		 * \return the encryption key
 		 */
-		const QByteArray& getEncryptionKey() const;
+		[[nodiscard]] const QByteArray& getEncryptionKey() const;
 
 		/*!
 		 * \brief Subsequent to the key agreement a MAC key is determined. This method returns this key.
 		 * I. e. the output of KDF_mac according to TR-03110 Part 3 chapter A.2.3.
 		 * \return the MAC key
 		 */
-		const QByteArray& getMacKey() const;
+		[[nodiscard]] const QByteArray& getMacKey() const;
 
 		/*!
 		 * \brief Subsequent to the key agreement a certificate authority reference (CAR) may be determined. This method returns this CAR.
 		 * \return the card's CAR number 1
 		 */
-		const QByteArray& getCarCurr() const;
+		[[nodiscard]] const QByteArray& getCarCurr() const;
 
 		/*!
 		 * \brief Subsequent to the key agreement a certificate authority reference (CAR) may be determined. This method returns this CAR.
 		 * \return the card's CAR number 2
 		 */
-		const QByteArray& getCarPrev() const;
+		[[nodiscard]] const QByteArray& getCarPrev() const;
 };
 
 } // namespace governikus

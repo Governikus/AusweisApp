@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDispatcherServer.h"
@@ -53,11 +53,14 @@ void RemoteDispatcherServer::createAndSendContext(const QJsonObject& pMessageObj
 	}
 
 	IfdEstablishContext establishContext(pMessageObject);
-	if (!establishContext.getProtocol().isSupported())
+	const auto& version = establishContext.getProtocol();
+	if (!version.isSupported())
 	{
 		qCWarning(remote_device) << "Unsupported API protocol requested:" << establishContext.getProtocolRaw();
 		fail = ECardApiResult::Minor::AL_Unknown_Error;
 	}
+	mVersion = version.getVersion();
+	qCDebug(remote_device) << "Got request to establish context with version" << mVersion;
 
 	const auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	const QString& serverName = settings.getServerName();

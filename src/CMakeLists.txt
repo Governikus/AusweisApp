@@ -199,6 +199,8 @@ endif()
 if(MAC)
 	target_link_libraries(AusweisApp PRIVATE ${OSX_APPKIT})
 
+	set_target_properties(AusweisApp PROPERTIES XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT "dwarf-with-dsym")
+
 	set(AUTOSTART_HELPER_NAME AutostartHelper)
 	set(AUTOSTART_HELPER_FULL_NAME ${PROJECT_NAME}${AUTOSTART_HELPER_NAME})
 	set(AUTOSTART_HELPER_SOURCES autostart_helper/main.mm)

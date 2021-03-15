@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -15,6 +15,7 @@ import Governikus.Type.AuthModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.UiModule 1.0
 
 SectionPage {
 	id: root
@@ -95,10 +96,9 @@ SectionPage {
 				onClicked: {
 					firePopAll()
 					SettingsModel.transportPinReminder = false
-					NumberModel.requestTransportPin = true
 					AuthModel.cancelWorkflowToChangePin()
 
-					navBar.showPin()
+					navBar.show(UiModule.PINMANAGEMENT)
 				}
 			}
 

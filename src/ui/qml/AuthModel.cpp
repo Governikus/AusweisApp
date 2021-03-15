@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthModel.h"
@@ -104,6 +104,16 @@ QString AuthModel::getStatusCode() const
 }
 
 
+void AuthModel::requestTransportPinChange()
+{
+	if (mContext)
+	{
+		mContext->setPin(QString(5, QLatin1Char(0)));
+		continueWorkflow();
+	}
+}
+
+
 void AuthModel::onDidAuthenticateEac1Changed()
 {
 	if (mContext)
@@ -117,10 +127,4 @@ void AuthModel::onDidAuthenticateEac1Changed()
 			Q_EMIT fireTransactionInfoChanged();
 		}
 	}
-}
-
-
-void AuthModel::setSkipRedirect(bool pSkipRedirect)
-{
-	mContext->setSkipRedirect(pSkipRedirect);
 }

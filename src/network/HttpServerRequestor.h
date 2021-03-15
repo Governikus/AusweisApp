@@ -1,7 +1,7 @@
 /*
  * \brief Sends one time GET requests to server.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,7 +26,7 @@ class HttpServerRequestor
 
 	public:
 		HttpServerRequestor();
-		virtual ~HttpServerRequestor();
+		~HttpServerRequestor() override;
 
 		QSharedPointer<QNetworkReply> request(const QUrl& pUrl, int pTimeOut = 2000);
 		static QUrl createUrl(const QString& pQuery, quint16 pPort, const QHostAddress& pHost = QHostAddress::LocalHost, const QString& pPath = QStringLiteral("/eID-Client"));

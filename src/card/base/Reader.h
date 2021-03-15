@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -46,26 +46,26 @@ class Reader
 
 	public:
 		Reader(ReaderManagerPlugInType pPlugInType, const QString& pReaderName);
-		virtual ~Reader() override = default;
+		~Reader() override = default;
 
 		/*!
 		 * Periodically called to perform an update of the readers and cards state.
 		 */
 		void update();
 
-		const QString& getName() const
+		[[nodiscard]] const QString& getName() const
 		{
 			return mReaderInfo.getName();
 		}
 
 
-		const ReaderInfo& getReaderInfo() const
+		[[nodiscard]] const ReaderInfo& getReaderInfo() const
 		{
 			return mReaderInfo;
 		}
 
 
-		virtual Card* getCard() const = 0;
+		[[nodiscard]] virtual Card* getCard() const = 0;
 
 		void setPukInoperative();
 
@@ -92,7 +92,7 @@ class ConnectableReader
 
 	public:
 		using Reader::Reader;
-		virtual ~ConnectableReader() override = default;
+		~ConnectableReader() override = default;
 
 		virtual void connectReader() = 0;
 		virtual void disconnectReader(const QString& pError = QString()) = 0;

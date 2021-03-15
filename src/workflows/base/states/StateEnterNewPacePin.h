@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,7 +19,7 @@ class StateEnterNewPacePin
 	friend class StateBuilder;
 
 	explicit StateEnterNewPacePin(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 
 	public:
 		void onEntry(QEvent* pEvent) override;

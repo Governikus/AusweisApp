@@ -1,7 +1,7 @@
 /*!
  * \brief Parse information for DidAuthenticateEac2.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,10 +22,10 @@ class DidAuthenticateEac2Parser
 {
 	public:
 		DidAuthenticateEac2Parser();
-		virtual ~DidAuthenticateEac2Parser() override;
+		~DidAuthenticateEac2Parser() override;
 
 	protected:
-		virtual PaosMessage* parseMessage() override;
+		PaosMessage* parseMessage() override;
 
 	private:
 		Eac2InputType parseEac2InputType();

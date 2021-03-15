@@ -1,14 +1,13 @@
 /*!
  * \brief Unit tests for \ref UIPlugInJsonApi
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInJson.h"
 
 #include "LogHandler.h"
 
-#include <QSignalSpy>
 #include <QtTest>
 
 using namespace governikus;

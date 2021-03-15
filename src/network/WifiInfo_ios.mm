@@ -1,61 +1,31 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WifiInfo.h"
-
-#include <QLoggingCategory>
-#include <QTimerEvent>
-
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
-
-Q_DECLARE_LOGGING_CATEGORY(network)
-
 
 using namespace governikus;
 
 WifiInfo::WifiInfo()
 	: QObject()
-	, mWifiEnabled(false)
+	, mWifiEnabled(true)
 {
-	if (@available(iOS 12, *))
-	{
-		mMonitor = nw_path_monitor_create();
-		nw_path_monitor_update_handler_t handler = ^(nw_path_t path){
-			mWifiEnabled = nw_path_uses_interface_type(path, nw_interface_type_wifi);
-
-			qCDebug(network) << "WiFi status changed to:" << mWifiEnabled;
-
-			Q_EMIT fireWifiEnabledChanged(mWifiEnabled);
-		};
-
-		nw_path_monitor_set_queue(mMonitor, dispatch_get_main_queue());
-
-		nw_path_monitor_set_update_handler(mMonitor, handler);
-		nw_path_monitor_start(mMonitor);
-	}
+	// Since iOS doesn't allow us to check the wifi state, but only allows us
+	// to check if we are connected to the internet via wifi, we have some
+	// edge cases where to the user not able to use the SaC. So assume
+	// that SaC/Wifi just works and always set mWifiEnabled to true.
 }
 
 
 bool WifiInfo::getCurrentWifiEnabled()
 {
-	return isWifiEnabled();
-}
-
-
-WifiInfo::~WifiInfo()
-{
-	if (@available(iOS 12, *))
-	{
-		nw_path_monitor_cancel(mMonitor);
-	}
+	return mWifiEnabled;
 }
 
 
 bool WifiInfo::isWifiEnabled()
 {
-	return mWifiEnabled;
+	return getCurrentWifiEnabled();
 }
 
 

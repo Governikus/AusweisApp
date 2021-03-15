@@ -1,7 +1,7 @@
 /*!
  * \brief object represents one paos type
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,7 +31,7 @@ class PaosMessage
 		explicit PaosMessage(PaosType pType);
 		virtual ~PaosMessage();
 
-		const QString& getMessageId() const
+		[[nodiscard]] const QString& getMessageId() const
 		{
 			return mMessageID;
 		}
@@ -43,7 +43,7 @@ class PaosMessage
 		}
 
 
-		const QString& getRelatesTo() const
+		[[nodiscard]] const QString& getRelatesTo() const
 		{
 			return mRelatesTo;
 		}

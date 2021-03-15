@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInQml.h"
@@ -19,6 +19,7 @@
 #include "ConnectivityManager.h"
 #include "Env.h"
 #include "FileDestination.h"
+#include "FormattedTextModel.h"
 #include "Initializer.h"
 #include "LogHandler.h"
 #include "LogModel.h"
@@ -27,6 +28,7 @@
 #include "ProviderCategoryFilterModel.h"
 #include "Random.h"
 #include "ReaderScanEnabler.h"
+#include "ReleaseInformationModel.h"
 #include "RemoteServiceModel.h"
 #include "SelfAuthModel.h"
 #include "SelfDiagnosisModel.h"
@@ -42,6 +44,7 @@
 
 #if defined(Q_OS_ANDROID)
 	#include "DeviceInfo.h"
+	#include "UILoader.h"
 
 	#include <QFont>
 	#include <QtAndroidExtras/QAndroidJniEnvironment>
@@ -194,6 +197,7 @@ void UIPlugInQml::registerQmlTypes()
 	registerQmlType<CardPosition>();
 	registerQmlType<CardPositionModel>();
 	registerQmlType<CheckIDCardModel>();
+	registerQmlType<FormattedTextModel>();
 
 	registerQmlSingletonType<ProviderCategoryFilterModel>(&provideQmlType<ProviderCategoryFilterModel>);
 	registerQmlSingletonType<HistoryModel>(&provideQmlType<HistoryModel>);
@@ -218,6 +222,7 @@ void UIPlugInQml::registerQmlTypes()
 	registerQmlSingletonType<ChatModel>(&provideSingletonQmlType<ChatModel>);
 	registerQmlSingletonType<VersionInformationModel>(&provideSingletonQmlType<VersionInformationModel>);
 	registerQmlSingletonType<ConnectivityManager>(&provideSingletonQmlType<ConnectivityManager>);
+	registerQmlSingletonType<ReleaseInformationModel>(&provideSingletonQmlType<ReleaseInformationModel>);
 }
 
 
@@ -277,6 +282,11 @@ void UIPlugInQml::init()
 		}
 
 #endif
+	}
+
+	if (Env::getSingleton<ReleaseInformationModel>()->requiresInitialUpdate())
+	{
+		Env::getSingleton<ReleaseInformationModel>()->update();
 	}
 
 	onWindowPaletteChanged();
@@ -423,9 +433,9 @@ void UIPlugInQml::onApplicationStarted()
 	mTrayIcon.create();
 
 #if defined(Q_OS_WIN) || (defined(Q_OS_BSD4) && !defined(Q_OS_IOS)) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
-	if (!QSystemTrayIcon::isSystemTrayAvailable()
-			|| Env::getSingleton<AppSettings>()->getGeneralSettings().isShowSetupAssistant()
-			|| Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
+	bool showSetupAssistant = Enum<UiModule>::fromString(Env::getSingleton<AppSettings>()->getGeneralSettings().getStartupModule(), UiModule::TUTORIAL) == UiModule::TUTORIAL;
+	bool developerMode = Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode();
+	if (!QSystemTrayIcon::isSystemTrayAvailable() || showSetupAssistant || developerMode)
 #endif
 	{
 		QMetaObject::invokeMethod(this, &UIPlugInQml::show, Qt::QueuedConnection);
@@ -634,6 +644,13 @@ void UIPlugInQml::onQmlWarnings(const QList<QQmlError>& pWarnings)
 #else
 	mQmlEngineWarningCount += pWarnings.size();
 #endif
+
+#ifndef QT_NO_DEBUG
+	for (auto warning : pWarnings)
+	{
+		Env::getSingleton<ApplicationModel>()->showFeedback(QStringLiteral("Got QML warning: %1").arg(warning.toString()), false);
+	}
+#endif
 }
 
 
@@ -742,6 +759,30 @@ QVariantMap UIPlugInQml::getSafeAreaMargins() const
 	return marginMap;
 }
 
+
+#endif
+
+#ifdef Q_OS_ANDROID
+extern "C"
+{
+
+JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_notifySafeAreaMarginsChanged(JNIEnv* pEnv, jobject pObj)
+{
+	Q_UNUSED(pEnv)
+	Q_UNUSED(pObj)
+
+	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
+				UIPlugIn* uiPlugIn = Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInQml);
+				if (uiPlugIn)
+				{
+					UIPlugInQml* uiPlugInQml = qobject_cast<UIPlugInQml*>(uiPlugIn);
+					Q_EMIT uiPlugInQml->fireSafeAreaMarginsChanged();
+				}
+			}, Qt::QueuedConnection);
+}
+
+
+}
 
 #endif
 

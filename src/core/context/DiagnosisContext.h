@@ -1,7 +1,7 @@
 /*!
  * \brief Contains information collected by the diagnosis functionality.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -36,19 +36,19 @@ class DiagnosisContext
 	public:
 		DiagnosisContext();
 
-		const QString& getPcscVersion() const
+		[[nodiscard]] const QString& getPcscVersion() const
 		{
 			return mPcscVersion;
 		}
 
 
-		const QVector<ComponentInfo>& getPcscComponents() const
+		[[nodiscard]] const QVector<ComponentInfo>& getPcscComponents() const
 		{
 			return mPcscComponents;
 		}
 
 
-		const QVector<ComponentInfo>& getPcscDrivers() const
+		[[nodiscard]] const QVector<ComponentInfo>& getPcscDrivers() const
 		{
 			return mPcscDrivers;
 		}
@@ -56,7 +56,7 @@ class DiagnosisContext
 
 		void setPcscInfo(const QString& pVersion, const QVector<ComponentInfo>& pComponents, const QVector<ComponentInfo>& pDrivers);
 
-		const QVector<ReaderInfo>& getReaderInfos() const
+		[[nodiscard]] const QVector<ReaderInfo>& getReaderInfos() const
 		{
 			return mReaderInfos;
 		}
@@ -64,7 +64,7 @@ class DiagnosisContext
 
 		void setReaderInfos(const QVector<ReaderInfo>& mInfos);
 
-		const QDateTime& getTimestamp() const
+		[[nodiscard]] const QDateTime& getTimestamp() const
 		{
 			return mTimestamp;
 		}
@@ -73,7 +73,7 @@ class DiagnosisContext
 		void setTimestamp(const QDateTime& pTimestamp);
 
 		void setNetworkInterfaces(const QList<QNetworkInterface>& pNetworkInterface);
-		const QList<QNetworkInterface>& getNetworkInterfaces() const;
+		[[nodiscard]] const QList<QNetworkInterface>& getNetworkInterfaces() const;
 
 	Q_SIGNALS:
 		void pcscVersionChanged();
@@ -104,25 +104,25 @@ class DiagnosisContext::ComponentInfo
 		}
 
 
-		const QString& getPath() const
+		[[nodiscard]] const QString& getPath() const
 		{
 			return mPath;
 		}
 
 
-		const QString& getDescription() const
+		[[nodiscard]] const QString& getDescription() const
 		{
 			return mDescription;
 		}
 
 
-		const QString& getVersion() const
+		[[nodiscard]] const QString& getVersion() const
 		{
 			return mVersion;
 		}
 
 
-		const QString& getManufacturer() const
+		[[nodiscard]] const QString& getManufacturer() const
 		{
 			return mManufacturer;
 		}

@@ -1,7 +1,7 @@
 /*!
  * \brief Data object for output of card command EstablishPaceChannel
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -48,46 +48,74 @@ class EstablishPaceChannelOutput
 {
 	private:
 		CardReturnCode mPaceReturnCode;
+		QByteArray mStatusMseSetAt;
 		QByteArray mEfCardAccess;
+		QByteArray mIdIcc;
 		QByteArray mCarCurr;
 		QByteArray mCarPrev;
-		QByteArray mIdIcc;
-		QByteArray mStatusMseSetAt;
+
+		[[nodiscard]] static CardReturnCode parseReturnCode(quint32 pPaceReturnCode);
+		[[nodiscard]] static EstablishPaceChannelErrorCode generateReturnCode(CardReturnCode pReturnCode);
+
+		void initMseStatusSetAt();
+		void initEfCardAccess();
 
 	public:
-		explicit EstablishPaceChannelOutput(CardReturnCode pPaceReturnCode = CardReturnCode::UNKNOWN);
+		explicit EstablishPaceChannelOutput(CardReturnCode pPaceReturnCode = CardReturnCode::COMMAND_FAILED);
 
 		/**
-		 * Defined in pcsc10_v2.02.08_amd1.1
+		 * Defined in pcsc10_v2.02.08_amd1.1 section 2.5.12
 		 */
-		void parse(const QByteArray& pControlOutput, PacePasswordId pPasswordId);
+		[[nodiscard]] bool parse(const QByteArray& pControlOutput);
+		[[nodiscard]] bool parseResultCode(const QByteArray& pPaceOutput);
 
 		/**
-		 * Defined in TR-03119
+		 * Defined in pcsc10_v2.02.08_amd1.1 section 2.6.16
 		 */
-		QByteArray toCcid() const;
-		void parseFromCcid(const QByteArray& pOutput, PacePasswordId pPasswordId);
+		[[nodiscard]] bool parseOutputData(const QByteArray& pOutput);
 
-		CardReturnCode getPaceReturnCode() const;
-		void setPaceReturnCode(CardReturnCode);
+		/**
+		 * Defined in BSI-TR-03119_V1_pdf
+		 */
+		[[nodiscard]] bool parseFromCcid(const QByteArray& pOutput);
 
-		QByteArray getEfCardAccess() const;
-		void setEfCardAccess(const QByteArray&);
+		[[nodiscard]] CardReturnCode getPaceReturnCode() const;
+		void setPaceReturnCode(CardReturnCode pPaceReturnCode);
 
-		QByteArray getIDicc() const;
-		void setIdIcc(const QByteArray&);
-
-		QByteArray getCARcurr() const;
-		void setCarCurr(const QByteArray&);
-
-		QByteArray getCARprev() const;
-		void setCarPrev(const QByteArray&);
-
-		QByteArray getMseStatusSetAt() const;
+		[[nodiscard]] const QByteArray& getStatusMseSetAt() const;
 		void setStatusMseSetAt(const QByteArray& pStatusMseSetAt);
 
-		static CardReturnCode parseReturnCode(quint32 pPaceReturnCode, PacePasswordId pPasswordId);
-		static EstablishPaceChannelErrorCode generateReturnCode(CardReturnCode pReturnCode);
+		[[nodiscard]] const QByteArray& getEfCardAccess() const;
+		void setEfCardAccess(const QByteArray& pEfCardAccess);
+
+		[[nodiscard]] const QByteArray& getIdIcc() const;
+		void setIdIcc(const QByteArray& pIdIcc);
+
+		[[nodiscard]] const QByteArray& getCarCurr() const;
+		void setCarCurr(const QByteArray& pCarCurr);
+
+		[[nodiscard]] const QByteArray& getCarPrev() const;
+		void setCarPrev(const QByteArray& pCarPrev);
+
+		[[nodiscard]] QByteArray toResultCode() const;
+		[[nodiscard]] QByteArray toOutputData() const;
+		[[nodiscard]] QByteArray toCcid() const;
+
+#ifndef QT_NO_DEBUG
+		bool operator==(const EstablishPaceChannelOutput& pOther) const
+		{
+			return !(mPaceReturnCode != pOther.mPaceReturnCode
+				   || mEfCardAccess != pOther.mEfCardAccess
+				   || mCarCurr != pOther.mCarCurr
+				   || mCarPrev != pOther.mCarPrev
+				   || mIdIcc != pOther.mIdIcc
+				   || mStatusMseSetAt != pOther.mStatusMseSetAt);
+		}
+
+
+#endif
+
+
 };
 
 

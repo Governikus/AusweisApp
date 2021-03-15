@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ECardApiResult.h"
@@ -166,6 +166,7 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Card_Pin_Blocked, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Pin_Not_Blocked, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_NewPin_Mismatch, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Card_ValidityVerificationFailed, Minor::SAL_MEAC_DocumentValidityVerificationFailed);
 
 	addConversionElement(GlobalStatus::Code::Paos_Error_AL_Internal_Error, Minor::AL_Internal_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity, Minor::AL_Internal_Error);
@@ -196,7 +197,6 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_SecurityConditionNotSatisfied);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_MEAC_AgeVerificationFailedWarning);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_MEAC_CommunityVerificationFailedWarning);
-	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_MEAC_DocumentValidityVerificationFailed);
 
 	addConversionElement(GlobalStatus::Code::Paos_Error_SAL_Invalid_Key, Minor::SAL_Invalid_Key);
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Controller for retrieving and presenting diagnosis info.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -40,7 +40,7 @@ class DiagnosisController
 
 	public:
 		explicit DiagnosisController(const QSharedPointer<DiagnosisContext>& pContext, QObject* pParent = nullptr);
-		virtual ~DiagnosisController();
+		~DiagnosisController() override;
 
 		void run();
 

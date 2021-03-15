@@ -1,7 +1,7 @@
 /*!
  * \brief Class to provide information about available card readers.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -76,14 +76,14 @@ class ReaderConfigurationInfo
 
 		bool operator ==(const ReaderConfigurationInfo& pOther) const;
 
-		bool isKnownReader() const;
-		uint getVendorId() const;
-		uint getProductId() const;
-		const QString& getName() const;
-		const QString& getUrl() const;
-		const QString& getPattern() const;
-		QSharedPointer<UpdatableFile> getIcon() const;
-		QSharedPointer<UpdatableFile> getIconWithNPA() const;
+		[[nodiscard]] bool isKnownReader() const;
+		[[nodiscard]] uint getVendorId() const;
+		[[nodiscard]] uint getProductId() const;
+		[[nodiscard]] const QString& getName() const;
+		[[nodiscard]] const QString& getUrl() const;
+		[[nodiscard]] const QString& getPattern() const;
+		[[nodiscard]] QSharedPointer<UpdatableFile> getIcon() const;
+		[[nodiscard]] QSharedPointer<UpdatableFile> getIconWithNPA() const;
 };
 
 

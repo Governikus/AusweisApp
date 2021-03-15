@@ -1,7 +1,7 @@
 /*!
  * \brief CardInfo holds smart card information, such as the type and some contained data structure (currently only the EF.CardAccess).
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardInfo.h"
@@ -53,7 +53,7 @@ QString CardInfo::getCardTypeString() const
 
 		case CardType::EID_CARD:
 			//: ERROR ALL_PLATFORMS An ID card is present/inserted. The text is only used in DiagnosisView.
-			return tr("ID card (PA/eAT)");
+			return tr("ID card (PA/eAT/eID)");
 	}
 
 	Q_UNREACHABLE();
@@ -150,64 +150,76 @@ bool CardInfoFactory::create(const QSharedPointer<CardConnectionWorker>& pCardCo
 }
 
 
+bool CardInfoFactory::selectApplication(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const FileRef& pFileRef)
+{
+	qCDebug(card) << "Try to select application:" << pFileRef.path.toHex();
+
+	CommandApdu command = SelectBuilder(pFileRef).build();
+	ResponseApduResult select = pCardConnectionWorker->transmit(command);
+	if (select.mResponseApdu.getReturnCode() != StatusCode::SUCCESS)
+	{
+		qCWarning(card) << "Cannot select application identifier:" << select.mResponseApdu.getReturnCode();
+		return false;
+	}
+
+	return true;
+}
+
+
 CardType CardInfoFactory::detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 {
-	// This is actually not specified in the CIF, but we do it to make the PersoSim work
 	// 0. Select the master file
 	CommandApdu command = SelectBuilder(FileRef::masterFile()).build();
-	auto [masterReturnCode, masterResponse] = pCardConnectionWorker->transmit(command);
-	if (masterReturnCode != CardReturnCode::OK || masterResponse.getReturnCode() != StatusCode::SUCCESS)
+	ResponseApduResult result = pCardConnectionWorker->transmit(command);
+
+	switch (result.mResponseApdu.getReturnCode())
 	{
-		qCWarning(card) << "Cannot select MF";
+		case StatusCode::SUCCESS:
+			break;
 
-		if (masterReturnCode != CardReturnCode::OK)
-		{
-			qCDebug(card) << "CardConnectionWorker return code" << masterReturnCode;
-		}
+		case StatusCode::NO_CURRENT_DIRECTORY_SELECTED:
+			qCWarning(card) << "Cannot select MF:" << StatusCode::NO_CURRENT_DIRECTORY_SELECTED;
+			selectApplication(pCardConnectionWorker, FileRef::appPersosim());
+			break;
 
-		if (masterResponse.getReturnCode() != StatusCode::SUCCESS)
-		{
-			qCDebug(card) << "ResponseApdu return code" << masterResponse.getReturnCode();
-		}
-
-		return CardType::UNKNOWN;
+		default:
+			qCWarning(card) << "Cannot select MF:" << result.mResponseApdu.getReturnCode();
+			return CardType::UNKNOWN;
 	}
 
 	// 1. CL=00, INS=A4=SELECT, P1= 02, P2=0C, Lc=02, Data=2F00 (FI of EF.DIR), Le=absent
 	command = SelectBuilder(FileRef::efDir()).build();
-	auto [efDirReturnCode, efDirResponse] = pCardConnectionWorker->transmit(command);
-	if (efDirReturnCode != CardReturnCode::OK || efDirResponse.getReturnCode() != StatusCode::SUCCESS)
+	result = pCardConnectionWorker->transmit(command);
+	switch (result.mResponseApdu.getReturnCode())
 	{
-		qCWarning(card) << "Cannot select EF.DIR";
+		case StatusCode::SUCCESS:
+			break;
 
-		qCInfo(card) << "Check for passport...";
-		command = SelectBuilder(FileRef::appPassport()).build();
-		auto [passportReturnCode, passportResponse] = pCardConnectionWorker->transmit(command);
-		if (passportReturnCode != CardReturnCode::OK || passportResponse.getReturnCode() != StatusCode::SUCCESS)
-		{
-			qCWarning(card) << "Cannot select application identifier";
+		case StatusCode::FILE_NOT_FOUND:
+			qCWarning(card) << "Cannot select EF.DIR:" << StatusCode::FILE_NOT_FOUND;
+			return selectApplication(pCardConnectionWorker, FileRef::appPassport()) ? CardType::PASSPORT : CardType::UNKNOWN;
+
+		default:
+			qCWarning(card) << "Cannot select EF.DIR:" << result.mResponseApdu.getReturnCode();
 			return CardType::UNKNOWN;
-		}
-
-		return CardType::PASSPORT;
 	}
 
 	// 2. CL=00, INS=B0=Read Binary, P1=00, P2=00 (no offset), Lc=00, Le=5A
 	command = CommandApdu(QByteArray::fromHex("00B000005A"));
-	auto [readReturnCode, readResponse] = pCardConnectionWorker->transmit(command);
-	if (readReturnCode != CardReturnCode::OK || readResponse.getReturnCode() != StatusCode::SUCCESS)
+	result = pCardConnectionWorker->transmit(command);
+	if (result.mResponseApdu.getReturnCode() != StatusCode::SUCCESS)
 	{
-		qCWarning(card) << "Cannot read EF.DIR";
+		qCWarning(card) << "Cannot read EF.DIR:" << result.mResponseApdu.getReturnCode();
 		return CardType::UNKNOWN;
 	}
 
 	// matching value from CIF
 	static const QByteArray matchingValue = QByteArray::fromHex("61324F0FE828BD080FA000000167455349474E500F434941207A752044462E655369676E5100730C4F0AA000000167455349474E61094F07A0000002471001610B4F09E80704007F00070302610C4F0AA000000167455349474E");
-	bool efDirMatches = readResponse.getData().startsWith(matchingValue);
+	bool efDirMatches = result.mResponseApdu.getData().startsWith(matchingValue);
 	if (!efDirMatches)
 	{
 		qCWarning(card) << "expected EF.DIR(00,5A): " << matchingValue.toHex();
-		qCWarning(card) << "actual   EF.DIR(00,5A): " << readResponse.getData().left(90).toHex();
+		qCWarning(card) << "actual   EF.DIR(00,5A): " << result.mResponseApdu.getData().left(90).toHex();
 		return CardType::UNKNOWN;
 	}
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the providers.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -47,7 +47,7 @@ class ProviderCategoryFilterModel
 
 	public:
 		ProviderCategoryFilterModel();
-		virtual ~ProviderCategoryFilterModel() override;
+		~ProviderCategoryFilterModel() override;
 
 		Q_INVOKABLE void setIncludeCategoriesInModel(bool pIncludeCategories);
 		Q_INVOKABLE void sortByCategoryFirst(bool pEnabled);

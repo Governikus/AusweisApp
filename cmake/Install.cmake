@@ -268,7 +268,7 @@ elseif(UNIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BUNDLE_IDENTIFIER}.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications COMPONENT Application)
 	install(FILES ${RESOURCES_DIR}/images/npa.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps COMPONENT Application RENAME AusweisApp2.svg)
 	install(FILES ${RESOURCES_DIR}/images/npa.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/96x96/apps COMPONENT Application RENAME AusweisApp2.png)
-	install(FILES ${DOCS_DIR}/AusweisApp2.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/ COMPONENT Application)
+	install(FILES ${DOCS_DIR}/AusweisApp2.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 COMPONENT Application)
 endif()
 
 

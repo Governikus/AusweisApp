@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of SecurityInfos
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -46,10 +46,10 @@ class SecurityInfos
 		static QSharedPointer<SecurityInfos> fromHex(const QByteArray& pHexString);
 		static QSharedPointer<SecurityInfos> decode(const QByteArray& pBytes);
 
-		const QByteArray& getContentBytes() const;
-		const QVector<QSharedPointer<const SecurityInfo>>& getSecurityInfos() const;
-		const QVector<QSharedPointer<const PaceInfo>>& getPaceInfos() const;
-		const QVector<QSharedPointer<const ChipAuthenticationInfo>>& getChipAuthenticationInfos() const;
+		[[nodiscard]] const QByteArray& getContentBytes() const;
+		[[nodiscard]] const QVector<QSharedPointer<const SecurityInfo>>& getSecurityInfos() const;
+		[[nodiscard]] const QVector<QSharedPointer<const PaceInfo>>& getPaceInfos() const;
+		[[nodiscard]] const QVector<QSharedPointer<const ChipAuthenticationInfo>>& getChipAuthenticationInfos() const;
 };
 
 

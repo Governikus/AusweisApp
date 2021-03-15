@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -46,7 +46,7 @@ class EcdhKeyAgreement
 		static QSharedPointer<EcdhKeyAgreement> create(const QSharedPointer<const PaceInfo>& pPaceInfo,
 				const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
-		virtual ~EcdhKeyAgreement() override = default;
+		~EcdhKeyAgreement() override = default;
 };
 
 } // namespace governikus

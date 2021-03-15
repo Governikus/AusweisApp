@@ -16,6 +16,7 @@ ProxyCredentialsPopup 1.0 ProxyCredentialsPopup.qml
 GButton 1.0 GButton.qml
 GCheckBox 1.0 GCheckBox.qml
 GComboBox 1.0 GComboBox.qml
+GDropShadow 1.0 GDropShadow.qml
 GProgressBar 1.0 GProgressBar.qml
 GRadioButton 1.0 GRadioButton.qml
 GSeparator 1.0 GSeparator.qml
@@ -41,6 +42,7 @@ ScrollablePane 1.0 ScrollablePane.qml
 ScrollGradients 1.0 ScrollGradients.qml
 PaneTitle 1.0 PaneTitle.qml
 SearchBar 1.0 SearchBar.qml
+ShareButton 1.0 ShareButton.qml
 StatusIcon 1.0 StatusIcon.qml
 SwipeActionDelegate 1.0 SwipeActionDelegate.qml
 TabbedPane 1.0 TabbedPane.qml

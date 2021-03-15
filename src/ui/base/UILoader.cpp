@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UILoader.h"
@@ -45,6 +45,12 @@ QVector<UIPlugInName> UILoader::getInitialDefault()
 #endif
 
 	return list;
+}
+
+
+bool UILoader::isLoaded() const
+{
+	return !mLoadedPlugIns.isEmpty();
 }
 
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -61,7 +61,7 @@ const QString& IfdEstablishContext::getUdName() const
 }
 
 
-QByteArray IfdEstablishContext::toByteArray(const QString& pContextHandle) const
+QByteArray IfdEstablishContext::toByteArray(const IfdVersion&, const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 

@@ -6,7 +6,7 @@
  * or otherwise they complain about the qHash() function for AccessRight not being
  * found.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

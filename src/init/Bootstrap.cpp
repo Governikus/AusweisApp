@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Bootstrap.h"
@@ -136,10 +136,7 @@ static void restartApp(const QString& pApplicationFilePath, QStringList pArgumen
 	pArgumentList << QStringLiteral("--show");
 
 	qCInfo(init) << "Attempting to start new process:" << pApplicationFilePath << ", args:" << pArgumentList;
-	qint64 pid = -1;
-	const bool restartSuccessful = QProcess::startDetached(pApplicationFilePath, pArgumentList, QString(), &pid);
-
-	if (restartSuccessful)
+	if (qint64 pid = -1; QProcess::startDetached(pApplicationFilePath, pArgumentList, QString(), &pid))
 	{
 		qCInfo(init) << "New process successfully launched, PID:" << pid;
 	}
@@ -184,5 +181,6 @@ int governikus::initApp(int& argc, char** argv)
 	}
 #endif
 
+	qCDebug(init) << "Leaving application... bye bye!";
 	return returnCode;
 }

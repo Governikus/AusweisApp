@@ -1,7 +1,7 @@
 /*!
  * \brief Base class for all states taken by the state machine.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,7 +25,7 @@ class AbstractState
 		const bool mConnectOnCardRemoved;
 
 		virtual void run() = 0;
-		bool isStartStopEnabled() const;
+		[[nodiscard]] bool isStartStopEnabled() const;
 
 	protected:
 		QVector<QMetaObject::Connection> mConnections;
@@ -53,11 +53,11 @@ class AbstractState
 		}
 
 
-		virtual ~AbstractState() override;
+		~AbstractState() override;
 
 		void onEntry(QEvent* pEvent) override;
 
-		QString getStateName() const;
+		[[nodiscard]] QString getStateName() const;
 		void setStateName(const QString& pName);
 
 	Q_SIGNALS:
@@ -65,7 +65,7 @@ class AbstractState
 		void fireAbort();
 
 	public Q_SLOTS:
-		void onStateApprovedChanged();
+		void onStateApprovedChanged(bool pApproved);
 		virtual void onUserCancelled();
 		void onCardRemoved(const ReaderInfo& pInfo);
 };

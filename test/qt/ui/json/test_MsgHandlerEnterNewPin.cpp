@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerEnterNewPin
  *
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerEnterNewPin.h"
@@ -42,7 +42,7 @@ class test_MsgHandlerEnterNewPin
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
 			readerManager->init();
-			readerManager->getPlugInInfos(); // just to wait until initialization finished
+			readerManager->isScanRunning(); // just to wait until initialization finished
 		}
 
 

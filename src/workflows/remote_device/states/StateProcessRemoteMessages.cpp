@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateProcessRemoteMessages.h"
@@ -114,7 +114,7 @@ void StateProcessRemoteMessages::onEstablishPaceChannel(const QSharedPointer<con
 	Q_ASSERT(pMessage);
 
 	const auto& context = getContext();
-	context->setEstablishPaceChannelMessage(pMessage);
+	context->setEstablishPaceChannel(pMessage);
 	context->setCardConnection(pConnection);
 	context->setReaderName(pConnection->getReaderInfo().getName());
 
@@ -132,6 +132,14 @@ void StateProcessRemoteMessages::onModifyPin(const QSharedPointer<const IfdModif
 	context->setReaderName(pConnection->getReaderInfo().getName());
 
 	Q_EMIT fireModifyPin();
+}
+
+
+void StateProcessRemoteMessages::onEntry(QEvent* pEvent)
+{
+	onConnectedChanged(getContext()->getRemoteServer()->isConnected());
+
+	AbstractState::onEntry(pEvent);
 }
 
 

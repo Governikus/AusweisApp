@@ -1,7 +1,7 @@
 /*!
  * \brief Class to parse http request.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -62,16 +62,16 @@ class HttpRequest
 
 	public:
 		HttpRequest(QTcpSocket* pSocket, QObject* pParent = nullptr);
-		virtual ~HttpRequest();
+		~HttpRequest() override;
 
-		bool isConnected() const;
+		[[nodiscard]] bool isConnected() const;
 
-		QByteArray getMethod() const;
-		bool isUpgrade() const;
-		QByteArray getHeader(const QByteArray& pKey) const;
-		const QMap<QByteArray, QByteArray>& getHeader() const;
-		QUrl getUrl() const;
-		const QByteArray& getBody() const;
+		[[nodiscard]] QByteArray getMethod() const;
+		[[nodiscard]] bool isUpgrade() const;
+		[[nodiscard]] QByteArray getHeader(const QByteArray& pKey) const;
+		[[nodiscard]] const QMap<QByteArray, QByteArray>& getHeader() const;
+		[[nodiscard]] QUrl getUrl() const;
+		[[nodiscard]] const QByteArray& getBody() const;
 
 		bool send(const HttpResponse& pResponse);
 

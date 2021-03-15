@@ -1,7 +1,7 @@
 /*!
  * \brief QTcpServer with necessary TLS handling of remote device configuration.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,7 +24,7 @@ class RemoteTlsServer
 	private:
 		QPointer<QSslSocket> mSocket;
 		QByteArray mPsk;
-		virtual void incomingConnection(qintptr pSocketDescriptor) override;
+		void incomingConnection(qintptr pSocketDescriptor) override;
 
 	private Q_SLOTS:
 		void onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator);
@@ -37,11 +37,12 @@ class RemoteTlsServer
 		~RemoteTlsServer() override;
 		bool listen();
 		void setPairing(bool pEnable = true);
-		QSslCertificate getCurrentCertificate() const;
+		[[nodiscard]] QSslCertificate getCurrentCertificate() const;
 
 	Q_SIGNALS:
 		void newConnection(QTcpSocket* pSocket);
 		void firePskChanged(const QByteArray& pPsk);
+		void firePairingCompleted();
 };
 
 } // namespace governikus

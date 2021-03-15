@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref NetworkManager
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NetworkManager.h"
@@ -135,7 +135,7 @@ class test_NetworkManager
 			controller.run();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(context->getStatus(), GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}));
+			QCOMPARE(context->getStatus(), GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, QString()}));
 		}
 
 

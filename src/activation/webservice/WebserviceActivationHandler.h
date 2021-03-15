@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,7 +32,7 @@ class WebserviceActivationHandler
 		static QMap<QString, QString> getQueryParameter(const QUrl& pUrl);
 
 		void handleImageRequest(const QSharedPointer<HttpRequest>& pRequest, const QString& pImagePath) const;
-		QByteArray guessImageContentType(const QString& pFileName) const;
+		[[nodiscard]] QByteArray guessImageContentType(const QString& pFileName) const;
 		void handleShowUiRequest(UiModule pUiModule, const QSharedPointer<HttpRequest>& pRequest);
 		void handleStatusRequest(StatusFormat pStatusFormat, const QSharedPointer<HttpRequest>& pRequest) const;
 
@@ -41,10 +41,10 @@ class WebserviceActivationHandler
 
 	public:
 		WebserviceActivationHandler();
-		virtual ~WebserviceActivationHandler() override;
+		~WebserviceActivationHandler() override;
 
-		virtual bool start() override;
-		virtual void stop() override;
+		bool start() override;
+		void stop() override;
 };
 
 } // namespace governikus

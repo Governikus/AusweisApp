@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateEstablishPaceChannel.h"
@@ -95,6 +95,7 @@ class test_StateEstablishPaceChannel
 
 		void test_Run_NoConnection()
 		{
+			mAuthContext->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
 			QSignalSpy spyAbort(mState.data(), &StateEstablishPaceChannel::fireAbort);
 
 			QTest::ignoreMessage(QtDebugMsg, "No card connection available.");
@@ -140,7 +141,7 @@ class test_StateEstablishPaceChannel
 
 			mAuthContext->killWorkflow();
 
-			QCOMPARE(spyAbort.count(), 2);
+			QTRY_COMPARE(spyAbort.count(), 2); // clazy:exclude=qstring-allocations
 		}
 
 

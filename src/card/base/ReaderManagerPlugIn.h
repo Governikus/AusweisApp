@@ -2,7 +2,7 @@
  * \brief PlugIn to control different kinds of reader managers that will be used in \ref ReaderManager.
  * If you implement a class of this PlugIn you need to register it in \ref ReaderManager, otherwise it won't be used.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -54,26 +54,33 @@ class ReaderManagerPlugIn
 		ReaderManagerPlugIn(ReaderManagerPlugInType pPlugInType,
 				bool pAvailable = false,
 				bool pPlugInEnabled = false);
-		virtual ~ReaderManagerPlugIn() = default;
+		~ReaderManagerPlugIn() override = default;
 
-		const ReaderManagerPlugInInfo& getInfo() const
+		[[nodiscard]] const ReaderManagerPlugInInfo& getInfo() const
 		{
 			return mInfo;
 		}
 
 
-		bool isScanRunning() const
+		[[nodiscard]] bool isScanRunning() const
 		{
 			return mScanRunning;
 		}
 
 
-		virtual QList<Reader*> getReaders() const = 0;
+		[[nodiscard]] virtual QList<Reader*> getReaders() const = 0;
 
 
 		virtual void init()
 		{
 			Q_ASSERT(QObject::thread() == QThread::currentThread());
+		}
+
+
+		void reset()
+		{
+			shutdown();
+			init();
 		}
 
 

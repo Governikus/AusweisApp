@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -54,22 +54,22 @@ using CVCertificateBody = struct certificateprofilebody_st
 	static QSharedPointer<certificateprofilebody_st> decode(const QByteArray& pBytes);
 	QByteArray encode();
 
-	QByteArray getCertificateProfileIdentifier() const;
-	QByteArray getCertificationAuthorityReference() const;
+	[[nodiscard]] QByteArray getCertificateProfileIdentifier() const;
+	[[nodiscard]] QByteArray getCertificationAuthorityReference() const;
 
-	const EcdsaPublicKey& getPublicKey() const;
-	QByteArray getCertificateHolderReference() const;
+	[[nodiscard]] const EcdsaPublicKey& getPublicKey() const;
+	[[nodiscard]] QByteArray getCertificateHolderReference() const;
 
-	const CHAT& getCHAT() const;
+	[[nodiscard]] const CHAT& getCHAT() const;
 
 	void setCertificateExpirationDate(QDate date);
-	QDate getCertificateExpirationDate() const;
+	[[nodiscard]] QDate getCertificateExpirationDate() const;
 
 	void setCertificateEffectiveDate(QDate date);
-	QDate getCertificateEffectiveDate() const;
+	[[nodiscard]] QDate getCertificateEffectiveDate() const;
 
-	QCryptographicHash::Algorithm getHashAlgorithm() const;
-	QMap<QByteArray, QByteArray> getExtensions() const;
+	[[nodiscard]] QCryptographicHash::Algorithm getHashAlgorithm() const;
+	[[nodiscard]] QMap<QByteArray, QByteArray> getExtensions() const;
 };
 
 DECLARE_ASN1_FUNCTIONS(CVCertificateBody)

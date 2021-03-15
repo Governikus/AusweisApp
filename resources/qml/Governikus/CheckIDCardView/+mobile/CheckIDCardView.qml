@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -12,6 +12,7 @@ import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.CheckIDCardModel 1.0
+import Governikus.Type.UiModule 1.0
 
 SectionPage {
 	id: root
@@ -23,7 +24,7 @@ SectionPage {
 	//: LABEL ANDROID IOS
 	Accessible.description: qsTr("This is the device and ID card check of the AusweisApp2.")
 
-	navigationAction: NavigationAction { state: "back"; onClicked: navBar.showMain() }
+	navigationAction: NavigationAction { state: "back"; onClicked: navBar.show(UiModule.DEFAULT) }
 
 	//: LABEL ANDROID IOS
 	title: qsTr("Check device and ID card")
@@ -96,10 +97,10 @@ SectionPage {
 			icon.source: "qrc:///images/mobile/device.svg"
 
 			onClicked: {
-				if (ApplicationModel.nfcAvailable) {
-					startCheck()
-				} else {
+				if (ApplicationModel.nfcState === ApplicationModel.NFC_UNAVAILABLE) {
 					firePushWithProperties(checkIDCardResultView, { result: CheckIDCardModel.NO_NFC })
+				} else {
+					startCheck()
 				}
 			}
 		}

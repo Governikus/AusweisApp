@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -28,22 +28,16 @@ void StateEstablishPaceChannel::run()
 		return;
 	}
 
-	auto cardConnection = getContext()->getCardConnection();
-	if (!cardConnection)
-	{
-		qCDebug(statemachine) << "No card connection available.";
-		abort();
-		return;
-	}
-
-	QByteArray certificateDescription, effectiveChat;
+	QByteArray effectiveChat;
+	QByteArray certificateDescription;
+	auto authContext = getContext().objectCast<AuthContext>();
 	mPasswordId = getContext()->getEstablishPaceChannelType();
 	Q_ASSERT(mPasswordId != PacePasswordId::UNKNOWN);
 
 	if (mPasswordId == PacePasswordId::PACE_PIN ||
 			(mPasswordId == PacePasswordId::PACE_CAN && getContext()->isCanAllowedMode()))
 	{
-		if (auto authContext = getContext().objectCast<AuthContext>())
+		if (authContext)
 		{
 			// if PACE is performed for authentication purposes,
 			// the chat and certificate description need to be send
@@ -66,6 +60,11 @@ void StateEstablishPaceChannel::run()
 
 		case PacePasswordId::PACE_PIN:
 			password = getContext()->getPin().toLatin1();
+			if (authContext && password.size() == 5)
+			{
+				abortToChangePin();
+				return;
+			}
 			break;
 
 		case PacePasswordId::PACE_PUK:
@@ -76,6 +75,14 @@ void StateEstablishPaceChannel::run()
 		case PacePasswordId::PACE_MRZ:
 			password = QByteArray();
 			break;
+	}
+
+	auto cardConnection = getContext()->getCardConnection();
+	if (!cardConnection)
+	{
+		qCDebug(statemachine) << "No card connection available.";
+		abort();
+		return;
 	}
 
 	if (password.isEmpty() && cardConnection->getReaderInfo().isBasicReader())
@@ -99,6 +106,15 @@ void StateEstablishPaceChannel::run()
 	}
 	else
 	{
+		if (mPasswordId == PacePasswordId::PACE_PIN && !cardConnection->getReaderInfo().isBasicReader())
+		{
+			const auto pinContext = getContext().objectCast<ChangePinContext>();
+			if (pinContext && pinContext->isRequestTransportPin())
+			{
+				password = QByteArray(5, 0);
+			}
+		}
+
 		mConnections += cardConnection->callEstablishPaceChannelCommand(this,
 				&StateEstablishPaceChannel::onEstablishConnectionDone,
 				mPasswordId,
@@ -119,6 +135,18 @@ void StateEstablishPaceChannel::onUserCancelled()
 void StateEstablishPaceChannel::abort()
 {
 	getContext()->resetLastPaceResult();
+	Q_EMIT fireAbort();
+}
+
+
+void StateEstablishPaceChannel::abortToChangePin()
+{
+	if (auto authContext = getContext().objectCast<AuthContext>())
+	{
+		authContext->setSkipRedirect(true);
+		authContext->setLastPaceResult(CardReturnCode::NO_ACTIVE_PIN_SET);
+	}
+	updateStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
 	Q_EMIT fireAbort();
 }
 
@@ -187,6 +215,10 @@ void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCar
 		case CardReturnCode::CANCELLATION_BY_USER:
 			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireAbort();
+			return;
+
+		case CardReturnCode::NO_ACTIVE_PIN_SET:
+			abortToChangePin();
 			return;
 
 		case CardReturnCode::INVALID_PIN:

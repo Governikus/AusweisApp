@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -13,53 +13,43 @@ import Governikus.IdentifyView 1.0
 import Governikus.ProviderView 1.0
 import Governikus.HistoryView 1.0
 import Governikus.SettingsView 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.TutorialView 1.0
 import Governikus.RemoteServiceView 1.0
 import Governikus.View 1.0
+import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.UiModule 1.0
 
 Item {
 	id: baseItem
 
-	property bool ready: SettingsModel.showSetupAssistantOnStart ? tutorialView.status == Loader.Ready : mainView.status == Loader.Ready
+	property int activeModule
 	readonly property var visibleLoader: visibleChildren[0]
 	readonly property var visibleItem: if (visibleLoader) visibleLoader.item
 	readonly property var currentSectionPage: if (visibleItem) visibleItem.currentSectionPage
+	readonly property int startupModule: SettingsModel.startupModule
+	readonly property bool initialViewsReady: identifyView.isLoaded && initialView.isLoaded
+	readonly property bool ready: initialViewsReady && checkIDCardView.isLoaded && providerView.isLoaded && changePinView.isLoaded &&
+								  historyView.isLoaded && settingsView.isLoaded && helpView.isLoaded && remoteView.isLoaded
+	readonly property var initialView:
+		startupModule === UiModule.CHECK_ID_CARD ? checkIDCardView :
+		startupModule === UiModule.IDENTIFY ? identifyView :
+		startupModule === UiModule.PROVIDER ? providerView :
+		startupModule === UiModule.PINMANAGEMENT ? changePinView :
+		startupModule === UiModule.HISTORY ? historyView :
+		startupModule === UiModule.REMOTE_SERVICE ? remoteView :
+		startupModule === UiModule.SETTINGS ? settingsView :
+		startupModule === UiModule.HELP ? helpView :
+		startupModule === UiModule.TUTORIAL ? tutorialView :
+		mainView
 
-	Loader {
-		id: mainView
+	ContentAreaLoader {
+		id: identifyView
 
-		anchors.fill: parent
-		visible: baseItem.state === "main"
+		contentArea: baseItem
+		module: UiModule.IDENTIFY
 
-		active: baseItem.ready || visible
-		asynchronous: true
-		sourceComponent: Component {
-			TabBarView {
-				sourceComponent: MainView {}
-			}
-		}
-	}
-
-	Loader {
-		anchors.fill: parent
-		visible: baseItem.state === "checkIDCard"
-
-		active: baseItem.ready
-		asynchronous: true
-		sourceComponent: Component {
-			TabBarView {
-				sourceComponent: CheckIDCardView {}
-			}
-		}
-	}
-
-	Loader {
-		anchors.fill: parent
-		visible: baseItem.state === "identify"
-
-		active: baseItem.ready
-		asynchronous: true
+		active: true
+		asynchronous: false
 		sourceComponent: Component {
 			TabBarView {
 				sourceComponent: IdentifyView {}
@@ -67,12 +57,38 @@ Item {
 		}
 	}
 
-	Loader {
-		anchors.fill: parent
-		visible: baseItem.state === "provider"
+	ContentAreaLoader {
+		id: mainView
 
-		active: baseItem.ready
-		asynchronous: true
+		contentArea: baseItem
+		module: UiModule.DEFAULT
+
+		sourceComponent: Component {
+			TabBarView {
+				sourceComponent: MainView {}
+			}
+		}
+	}
+
+	ContentAreaLoader {
+		id: checkIDCardView
+
+		contentArea: baseItem
+		module: UiModule.CHECK_ID_CARD
+
+		sourceComponent: Component {
+			TabBarView {
+				sourceComponent: CheckIDCardView {}
+			}
+		}
+	}
+
+	ContentAreaLoader {
+		id: providerView
+
+		contentArea: baseItem
+		module: UiModule.PROVIDER
+
 		sourceComponent: Component {
 			TabBarView {
 				sourceComponent: ProviderView {}
@@ -80,12 +96,12 @@ Item {
 		}
 	}
 
-	Loader {
-		anchors.fill: parent
-		visible: baseItem.state === "pin"
+	ContentAreaLoader {
+		id: changePinView
 
-		active: baseItem.ready
-		asynchronous: true
+		contentArea: baseItem
+		module: UiModule.PINMANAGEMENT
+
 		sourceComponent: Component {
 			TabBarView {
 				sourceComponent: ChangePinView {}
@@ -93,12 +109,12 @@ Item {
 		}
 	}
 
-	Loader {
-		anchors.fill: parent
-		visible: baseItem.state === "history"
+	ContentAreaLoader {
+		id: historyView
 
-		active: baseItem.ready
-		asynchronous: true
+		contentArea: baseItem
+		module: UiModule.HISTORY
+
 		sourceComponent: Component {
 			TabBarView {
 				sourceComponent: HistoryView {}
@@ -106,12 +122,12 @@ Item {
 		}
 	}
 
-	Loader {
-		anchors.fill: parent
-		visible: baseItem.state === "remoteservice"
+	ContentAreaLoader {
+		id: remoteView
 
-		active: baseItem.ready
-		asynchronous: true
+		contentArea: baseItem
+		module: UiModule.REMOTE_SERVICE
+
 		sourceComponent: Component {
 			TabBarView {
 				sourceComponent: RemoteServiceView {}
@@ -119,12 +135,12 @@ Item {
 		}
 	}
 
-	Loader {
-		anchors.fill: parent
-		visible: baseItem.state === "settings"
+	ContentAreaLoader {
+		id: settingsView
 
-		active: baseItem.ready
-		asynchronous: true
+		contentArea: baseItem
+		module: UiModule.SETTINGS
+
 		sourceComponent: Component {
 			TabBarView {
 				sourceComponent: SettingsView {}
@@ -132,12 +148,12 @@ Item {
 		}
 	}
 
-	Loader {
-		anchors.fill: parent
-		visible: baseItem.state === "help"
+	ContentAreaLoader {
+		id: helpView
 
-		active: baseItem.ready
-		asynchronous: true
+		contentArea: baseItem
+		module: UiModule.HELP
+
 		sourceComponent: Component {
 			TabBarView {
 				sourceComponent: MoreView {}
@@ -145,20 +161,19 @@ Item {
 		}
 	}
 
-	Loader {
+	ContentAreaLoader {
 		id: tutorialView
 
-		anchors.fill: parent
-		visible: baseItem.state === "tutorial"
+		contentArea: baseItem
+		module:  UiModule.TUTORIAL
 
-		active: SettingsModel.showSetupAssistantOnStart
-		asynchronous: true
+		active: contentArea.activeModule === module || startupModule === module
 		sourceComponent: Component {
 			TabBarView {
 				sourceComponent: TutorialView {
 					onLeave: {
-						navBar.showMain()
-						SettingsModel.showSetupAssistantOnStart = false
+						navBar.show(UiModule.DEFAULT)
+						SettingsModel.startupModule = UiModule.DEFAULT
 					}
 				}
 			}

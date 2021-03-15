@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteDispatcher
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDispatcherClient.h"
@@ -36,13 +36,13 @@ class RemoteDispatcherSpy
 
 	public:
 		RemoteDispatcherSpy(const QSharedPointer<RemoteDispatcher> pRemoteDispatcher);
-		virtual ~RemoteDispatcherSpy();
+		~RemoteDispatcherSpy() override;
 
-		bool isClosed() const;
-		GlobalStatus::Code getCloseCode() const;
-		const QVector<RemoteCardMessageType>& getReceivedMessageTypes() const;
-		const QVector<QJsonObject>& getReceivedMessages() const;
-		const QVector<QString>& getReceivedSignalSenders() const;
+		[[nodiscard]] bool isClosed() const;
+		[[nodiscard]] GlobalStatus::Code getCloseCode() const;
+		[[nodiscard]] const QVector<RemoteCardMessageType>& getReceivedMessageTypes() const;
+		[[nodiscard]] const QVector<QJsonObject>& getReceivedMessages() const;
+		[[nodiscard]] const QVector<QString>& getReceivedSignalSenders() const;
 
 	private Q_SLOTS:
 		void onClosed(GlobalStatus::Code pCloseCode, const QString& pId);
@@ -149,7 +149,7 @@ class test_RemoteDisp
 		void channelClosedNormallyClient()
 		{
 			const QSharedPointer<MockDataChannel> channel(new MockDataChannel());
-			const QSharedPointer<RemoteDispatcherClient> dispatcher(new RemoteDispatcherClient(IfdVersion::Version::v_test, channel));
+			const QSharedPointer<RemoteDispatcherClient> dispatcher(new RemoteDispatcherClient(IfdVersion::Version::v2, channel));
 			RemoteDispatcherSpy spy(dispatcher);
 
 			channel->close();
@@ -181,7 +181,7 @@ class test_RemoteDisp
 		void channelClosedAbnormallyClient()
 		{
 			const QSharedPointer<MockDataChannel> channel(new MockDataChannel());
-			const QSharedPointer<RemoteDispatcherClient> dispatcher(new RemoteDispatcherClient(IfdVersion::Version::v_test, channel));
+			const QSharedPointer<RemoteDispatcherClient> dispatcher(new RemoteDispatcherClient(IfdVersion::Version::v2, channel));
 			RemoteDispatcherSpy spy(dispatcher);
 
 			channel->closeAbnormal();
@@ -213,7 +213,7 @@ class test_RemoteDisp
 		void messagesAreDelivered()
 		{
 			const QSharedPointer<MockDataChannel> clientChannel(new MockDataChannel());
-			const QSharedPointer<RemoteDispatcherClient> clientDispatcher(new RemoteDispatcherClient(IfdVersion::Version::v0, clientChannel));
+			const QSharedPointer<RemoteDispatcherClient> clientDispatcher(new RemoteDispatcherClient(IfdVersion::Version::v2, clientChannel));
 
 			const QSharedPointer<MockDataChannel> serverChannel(new MockDataChannel());
 			const QSharedPointer<RemoteDispatcherServer> serverDispatcher(new RemoteDispatcherServer(serverChannel));
@@ -223,7 +223,7 @@ class test_RemoteDisp
 
 			RemoteDispatcherSpy spy(serverDispatcher);
 
-			clientDispatcher->send(QSharedPointer<const RemoteMessage>(new IfdEstablishContext(IfdVersion::Version::v0, DeviceInfo::getName())));
+			clientDispatcher->send(QSharedPointer<const RemoteMessage>(new IfdEstablishContext(IfdVersion::Version::v2, DeviceInfo::getName())));
 			clientDispatcher->send(QSharedPointer<const RemoteMessage>(new IfdConnect(QStringLiteral("NFC Reader"))));
 			clientDispatcher->send(QSharedPointer<const RemoteMessage>(new IfdTransmit(QStringLiteral("NFC Reader"), QByteArray::fromHex("00A402022F00"))));
 			clientDispatcher->send(QSharedPointer<const RemoteMessage>(new IfdDisconnect(QStringLiteral("NFC Reader"))));
@@ -260,7 +260,7 @@ class test_RemoteDisp
 		void channelIsClosedWhenRemoteDispatcherIsDestroyed()
 		{
 			const QSharedPointer<MockDataChannel> clientChannel(new MockDataChannel());
-			QSharedPointer<RemoteDispatcherClient> clientDispatcher(new RemoteDispatcherClient(IfdVersion::Version::v0, clientChannel));
+			QSharedPointer<RemoteDispatcherClient> clientDispatcher(new RemoteDispatcherClient(IfdVersion::Version::v2, clientChannel));
 
 			const QSharedPointer<MockDataChannel> serverChannel(new MockDataChannel());
 			const QSharedPointer<RemoteDispatcherServer> serverDispatcher(new RemoteDispatcherServer(serverChannel));
@@ -284,7 +284,7 @@ class test_RemoteDisp
 		void repeatedIfdEstablishContextGenerateCorrectErrorMessage()
 		{
 			const QSharedPointer<MockDataChannel> clientChannel(new MockDataChannel());
-			const QSharedPointer<RemoteDispatcherClient> clientDispatcher(new RemoteDispatcherClient(IfdVersion::Version::v0, clientChannel));
+			const QSharedPointer<RemoteDispatcherClient> clientDispatcher(new RemoteDispatcherClient(IfdVersion::Version::v2, clientChannel));
 
 			const QSharedPointer<MockDataChannel> serverChannel(new MockDataChannel());
 			const QSharedPointer<RemoteDispatcherServer> serverDispatcher(new RemoteDispatcherServer(serverChannel));
@@ -292,8 +292,8 @@ class test_RemoteDisp
 			connect(clientChannel.data(), &MockDataChannel::fireSend, serverChannel.data(), &MockDataChannel::onReceived, Qt::DirectConnection);
 			connect(serverChannel.data(), &MockDataChannel::fireSend, clientChannel.data(), &MockDataChannel::onReceived, Qt::DirectConnection);
 
-			clientDispatcher->send(QSharedPointer<const RemoteMessage>(new IfdEstablishContext(IfdVersion::Version::v0, DeviceInfo::getName())));
-			clientDispatcher->send(QSharedPointer<const RemoteMessage>(new IfdEstablishContext(IfdVersion::Version::v0, DeviceInfo::getName())));
+			clientDispatcher->send(QSharedPointer<const RemoteMessage>(new IfdEstablishContext(IfdVersion::Version::v2, DeviceInfo::getName())));
+			clientDispatcher->send(QSharedPointer<const RemoteMessage>(new IfdEstablishContext(IfdVersion::Version::v2, DeviceInfo::getName())));
 
 			const QVector<QByteArray>& clientReceivedDataBlocks = clientChannel->getReceivedDataBlocks();
 			QCOMPARE(clientReceivedDataBlocks.size(), 2);
@@ -315,7 +315,7 @@ class test_RemoteDisp
 		void ifdEstablishContextWithWrongProtocolGeneratesCorrectErrorMessage()
 		{
 			const QSharedPointer<MockDataChannel> clientChannel(new MockDataChannel());
-			const QSharedPointer<RemoteDispatcherClient> clientDispatcher(new RemoteDispatcherClient(IfdVersion::Version::v_test, clientChannel));
+			const QSharedPointer<RemoteDispatcherClient> clientDispatcher(new RemoteDispatcherClient(IfdVersion::Version::v2, clientChannel));
 
 			const QSharedPointer<MockDataChannel> serverChannel(new MockDataChannel());
 			const QSharedPointer<RemoteDispatcherServer> serverDispatcher(new RemoteDispatcherServer(serverChannel));
@@ -323,7 +323,7 @@ class test_RemoteDisp
 			connect(clientChannel.data(), &MockDataChannel::fireSend, serverChannel.data(), &MockDataChannel::onReceived, Qt::DirectConnection);
 			connect(serverChannel.data(), &MockDataChannel::fireSend, clientChannel.data(), &MockDataChannel::onReceived, Qt::DirectConnection);
 
-			clientDispatcher->send(QSharedPointer<const RemoteMessage>(new IfdEstablishContext(IfdVersion::Version::v_test, DeviceInfo::getName())));
+			clientDispatcher->send(QSharedPointer<const RemoteMessage>(new IfdEstablishContext(IfdVersion::Version::Unknown, DeviceInfo::getName())));
 
 			const QVector<QByteArray>& clientReceivedDataBlocks = clientChannel->getReceivedDataBlocks();
 			QCOMPARE(clientReceivedDataBlocks.size(), 1);

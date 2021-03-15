@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref Reader for smartphone as card reader (SaC).
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,13 +27,13 @@ class RemoteReader
 		QScopedPointer<RemoteCard, QScopedPointerDeleteLater> mCard;
 		const QSharedPointer<RemoteDispatcherClient> mRemoteDispatcher;
 
-		virtual CardEvent updateCard() override;
+		CardEvent updateCard() override;
 
 	public:
 		RemoteReader(const QString& pReaderName, const QSharedPointer<RemoteDispatcherClient>& pRemoteDispatcher, const IfdStatus& pIfdStatus);
-		virtual ~RemoteReader() override;
+		~RemoteReader() override;
 
-		virtual Card* getCard() const override;
+		[[nodiscard]] Card* getCard() const override;
 
 		void updateStatus(const IfdStatus& pIfdStatus);
 };

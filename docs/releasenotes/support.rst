@@ -29,11 +29,11 @@ Betriebssysteme
 
 Karten
 """"""
-  - Personalausweis
+- Personalausweis
 
-  - Elektronischer Aufenthaltstitel
+- Elektronischer Aufenthaltstitel
 
-  - Unionsbürgerkarte
+- eID-Karte für Unionsbürger und Angehörige des Europäischen Wirtschaftsraums
 
 
 macOS / Windows
@@ -50,15 +50,15 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-  - Firefox 84
+- Firefox 86
 
-  - Chrome 87
+- Chrome 88
 
-  - Internet Explorer 11
+- Internet Explorer 11
 
-  - Safari 14.0.1
+- Safari 14.0.3
 
-  - Edge 87
+- Edge 88
 
 
 
@@ -70,25 +70,25 @@ des BSI unter "Nach Technischen Richtlinien zertifizierte Produkte".
 
 Zusätzlich werden folgende nicht zertifizierte Kartenleser getestet.
 
-  - Cherry TC-1200
+- Cherry TC-1200
 
-  - Cherry TC-1300
+- Cherry TC-1300
 
-  - Identiv Cloud 4701 F
+- Identiv Cloud 4701 F
 
-  - Identiv SCL3711
+- Identiv SCL3711
 
-  - Identiv Cloud 3700 F
+- Identiv Cloud 3700 F
 
-  - Identiv CLOUD 4700 F
+- Identiv CLOUD 4700 F
 
-  - ACR1252U
+- ACR1252U
 
-  - OMNIKEY 5021 CL
+- OMNIKEY 5021 CL
 
-  - OMNIKEY 5421
+- OMNIKEY 5421
 
-  - cyberJack wave (via USB)
+- cyberJack wave (via USB)
 
 
 Aktuelle Informationen zu Kartenlesern finden Sie auf unserer Webseite:
@@ -116,11 +116,11 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-  - Chrome 87 (Android)
+- Chrome 88 (iOS/Android)
 
-  - Firefox 83.1 (Android)
+- Firefox 86 (iOS/Android)
 
-  - Safari 14.0.1 (iOS)
+- Safari 14.0.3 (iOS)
 
 
 Kartenleser

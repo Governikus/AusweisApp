@@ -5,8 +5,11 @@ if(DESKTOP)
 endif()
 
 target_link_libraries(AusweisAppTestHelperCommon ${Qt}::Network ${Qt}::Test AusweisAppExternal::HttpParser AusweisAppActivation AusweisAppCard AusweisAppNetwork AusweisAppCore)
-target_link_libraries(AusweisAppTestHelperCommon AusweisAppCardDrivers)
 target_compile_definitions(AusweisAppTestHelperCommon PRIVATE QT_STATICPLUGIN)
+
+if(DESKTOP)
+	target_link_libraries(AusweisAppTestHelperCommon AusweisAppCardDrivers)
+endif()
 
 if(TARGET ${Qt}::Gui)
 	target_link_libraries(AusweisAppTestHelperCommon AusweisAppUiCommon)

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -41,7 +41,7 @@ class LogModel
 		QStringList mLogEntries;
 
 		LogModel();
-		virtual ~LogModel() override = default;
+		~LogModel() override = default;
 
 		void reset();
 		void addLogEntry(const QString& pEntry);
@@ -61,7 +61,7 @@ class LogModel
 		Q_INVOKABLE void saveDummyLogfile() const;
 #endif
 
-		Q_INVOKABLE void mailLog(const QString& pEmail = tr("support.ausweisapp2@governikus.de"),
+		Q_INVOKABLE void mailLog(const QString& pEmail = tr("support@ausweisapp.de"),
 				const QString& pSubject = tr("Mobile logfile"),
 				const QString& pMsg = tr("<Please describe the error>"));
 

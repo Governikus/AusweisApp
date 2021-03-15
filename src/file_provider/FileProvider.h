@@ -1,7 +1,7 @@
 /*!
  * \brief Class that holds a table of the UpdatableFile instances currently in use.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

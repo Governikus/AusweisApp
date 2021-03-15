@@ -1,10 +1,8 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NfcCard.h"
-
-#include "VolatileSettings.h"
 
 #include <QLoggingCategory>
 
@@ -23,6 +21,7 @@ NfcCard::NfcCard(QNearFieldTarget* pNearFieldTarget)
 {
 	qCDebug(card_nfc) << "Card created";
 
+	pNearFieldTarget->setParent(nullptr);
 	QObject::connect(pNearFieldTarget, &QNearFieldTarget::error, this, &NfcCard::fireTargetError);
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
@@ -90,21 +89,7 @@ bool NfcCard::isConnected()
 
 void NfcCard::setProgressMessage(const QString& pMessage, int pProgress)
 {
-	QString message;
-	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
-	{
-		message = pMessage;
-	}
-
-	if (pProgress != -1)
-	{
-		if (!message.isEmpty())
-		{
-			message += QLatin1Char('\n');
-		}
-		message += QStringLiteral("%1 %").arg(pProgress);
-	}
-
+	QString message = generateProgressMessage(pMessage, pProgress);
 	Q_EMIT fireSetProgressMessage(message);
 }
 

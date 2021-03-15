@@ -1,7 +1,7 @@
 /*!
  * \brief Send a redirect to the browser.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,7 +28,7 @@ class StateRedirectBrowser
 	void reportCommunicationError();
 	void sendErrorPage(http_status pStatus);
 	bool sendRedirect(const QUrl& pRedirectAddress, const ECardApiResult& pResult);
-	virtual void run() override;
+	void run() override;
 
 };
 

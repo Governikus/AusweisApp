@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the self authentication workflow.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -52,7 +52,7 @@ class SelfAuthModel
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
 		QHash<int, QByteArray> roleNames() const override;
 
-		virtual bool event(QEvent* pEvent) override;
+		bool event(QEvent* pEvent) override;
 
 	Q_SIGNALS:
 		void fireStartWorkflow();

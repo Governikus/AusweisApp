@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref NumberModel
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -227,7 +227,7 @@ class test_NumberModel
 			QThread connectionThread;
 			connectionThread.start();
 
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
+			QSharedPointer<WorkflowContext> context(new WorkflowContext());
 
 			QCOMPARE(mModel->getInputError(), QString());
 			QVERIFY(!mModel->hasError());
@@ -278,7 +278,9 @@ class test_NumberModel
 					tr("AusweisApp2 Support")));
 			QVERIFY(mModel->hasError());
 
-			mModel->setRequestTransportPin(true);
+			context.reset(new ChangePinContext(true));
+			mModel->resetContext(context);
+			context->setCardConnection(connection);
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, five-digit Transport PIN. "
 												 "You have two further attempts to enter the correct Transport PIN."
@@ -351,21 +353,8 @@ class test_NumberModel
 
 			QVERIFY(!mModel->isRequestTransportPin());
 
-			mModel->setRequestTransportPin(true);
-			QVERIFY(mModel->isRequestTransportPin());
-			mModel->setRequestTransportPin(false);
-			QVERIFY(!mModel->isRequestTransportPin());
-
 			mModel->resetContext(context);
 			QCOMPARE(mModel->isRequestTransportPin(), contextRequestedTransportPin);
-
-			mModel->setRequestTransportPin(true);
-			QVERIFY(mModel->isRequestTransportPin());
-
-			mModel->setRequestTransportPin(false);
-			QVERIFY(!mModel->isRequestTransportPin());
-			mModel->setRequestTransportPin(true);
-			QVERIFY(mModel->isRequestTransportPin());
 
 			mModel->resetContext();
 			QVERIFY(!mModel->isRequestTransportPin());

@@ -1,7 +1,7 @@
 /*!
  * \brief Represents a PAOS response type according to ISOCommon.xsd
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -23,9 +23,9 @@ class ResponseType
 
 	public:
 		explicit ResponseType(PaosType pType);
-		virtual ~ResponseType();
+		~ResponseType() override;
 
-		const ECardApiResult& getResult() const;
+		[[nodiscard]] const ECardApiResult& getResult() const;
 		void setResult(const ECardApiResult& result);
 };
 

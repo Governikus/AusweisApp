@@ -1,7 +1,7 @@
 /*!
  * \brief Controller for an external PersoSim process.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,9 +22,9 @@ class PersoSimController
 
 	public:
 		PersoSimController();
-		~PersoSimController() = default;
+		~PersoSimController() override = default;
 
-		bool isEnabled() const;
+		[[nodiscard]] bool isEnabled() const;
 		bool init();
 		bool write(const QByteArray& pData);
 		bool shutdown();

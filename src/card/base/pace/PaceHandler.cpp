@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/PaceHandler.h"
@@ -9,7 +9,6 @@
 #include "MSEBuilder.h"
 #include "pace/ec/EllipticCurveFactory.h"
 #include "pace/KeyAgreement.h"
-#include "PersoSimWorkaround.h"
 
 #include <QLoggingCategory>
 
@@ -78,23 +77,7 @@ CardReturnCode PaceHandler::establishPaceChannel(PacePasswordId pPasswordId, con
 			return CardReturnCode::COMMAND_FAILED;
 
 		case KeyAgreementStatus::FAILED:
-			switch (pPasswordId)
-			{
-				case PacePasswordId::PACE_MRZ:
-				// No separate error code (yet).
-				case PacePasswordId::PACE_CAN:
-					return CardReturnCode::INVALID_CAN;
-
-				case PacePasswordId::PACE_PIN:
-					return CardReturnCode::INVALID_PIN;
-
-				case PacePasswordId::PACE_PUK:
-					return CardReturnCode::INVALID_PUK;
-
-				case PacePasswordId::UNKNOWN:
-					return CardReturnCode::UNKNOWN;
-			}
-			return CardReturnCode::UNKNOWN;
+			return CardReturnCode::INVALID_PASSWORD;
 
 		case KeyAgreementStatus::SUCCESS:
 			mEncryptionKey = mKeyAgreement->getEncryptionKey();
@@ -164,13 +147,6 @@ bool PaceHandler::isSupportedProtocol(const QSharedPointer<const PaceInfo>& pPac
 
 CardReturnCode PaceHandler::transmitMSESetAT(PacePasswordId pPasswordId)
 {
-	CardReturnCode simCardReturnCode = PersoSimWorkaround::sendingMseSetAt(mCardConnectionWorker);
-	if (simCardReturnCode != CardReturnCode::OK)
-	{
-		qCCritical(card) << "Error on MSE:Set AT |" << simCardReturnCode;
-		return simCardReturnCode;
-	}
-
 	MSEBuilder mseBuilder(MSEBuilder::P1::PERFORM_SECURITY_OPERATION, MSEBuilder::P2::SET_AT);
 	mseBuilder.setOid(mPaceInfo->getProtocolValueBytes());
 	mseBuilder.setPublicKey(pPasswordId);

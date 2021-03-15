@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"
@@ -40,7 +40,10 @@ void StateConnectCard::onCardInserted()
 	if (readerInfo.hasEidCard())
 	{
 #if defined(Q_OS_ANDROID)
-		Env::getSingleton<SurveyModel>()->setMaximumNfcPacketLength(readerInfo.getMaxApduLength());
+		if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+		{
+			Env::getSingleton<SurveyModel>()->setMaximumNfcPacketLength(readerInfo.getMaxApduLength());
+		}
 #endif
 		qCDebug(statemachine) << "Card has been inserted, trying to connect";
 		mConnections += readerManager->callCreateCardConnectionCommand(readerInfo.getName(), this, &StateConnectCard::onCommandDone);

@@ -1,11 +1,10 @@
 /*
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 
-import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.ResultView 1.0
@@ -16,6 +15,7 @@ import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.NumberModel 1.0
+import Governikus.Type.UiModule 1.0
 
 SectionPage {
 	id: baseItem
@@ -45,7 +45,8 @@ SectionPage {
 		id: d
 
 		property int activeView: SetupAssistantView.SubViews.Welcome
-		readonly property bool allowNavigation: !SettingsModel.showSetupAssistantOnStart
+		readonly property int startupModule: SettingsModel.startupModule
+		readonly property bool allowNavigation: startupModule !== UiModule.TUTORIAL
 
 		function reset() {
 			d.activeView = SetupAssistantView.SubViews.Welcome
@@ -132,12 +133,12 @@ SectionPage {
 		rootEnabled: d.allowNavigation
 
 		onAgree: {
-			SettingsModel.showSetupAssistantOnStart = false // We don't wan't to show the setup assistant again, as the only subview left is "Setup assistant done"
+			SettingsModel.startupModule = UiModule.DEFAULT // We don't wan't to show the setup assistant again, as the only subview left is "Setup assistant done"
 			SettingsModel.transportPinReminder = false
-			baseItem.nextView(SectionPage.Views.ChangePin)
+			baseItem.nextView(UiModule.PINMANAGEMENT)
 		}
 		onDisagree: {
-			SettingsModel.showSetupAssistantOnStart = false
+			SettingsModel.startupModule = UiModule.DEFAULT
 			d.activeView = SetupAssistantView.SubViews.Finished
 		}
 	}

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IosReaderDelegate.h"
@@ -91,7 +91,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 
 
 - (void)alertMessage: (QString)message {
-	if (self.mSession)
+	if (self.mSession && !self.mSessionStoppedByApplication)
 	{
 		self.mSession.alertMessage = message.toNSString();
 	}
@@ -155,7 +155,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 		}
 		else
 		{
-			qCWarning(card_nfc) << "Detected a new tag with an unexpected type:" << tags[0].type << "Restarting scan";
+			qCWarning(card_nfc) << "Detected a new tag with an unexpected type:" << tag.type << "Restarting scan";
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,15 +18,15 @@ class RemoteMessageResponse
 		ECardApiResult::Minor mResultMinor;
 
 	protected:
-		virtual QJsonObject createMessageBody(const QString& pContextHandle) const override;
+		[[nodiscard]] QJsonObject createMessageBody(const QString& pContextHandle) const override;
 
 	public:
 		RemoteMessageResponse(RemoteCardMessageType pType, ECardApiResult::Minor pResultMinor);
 		explicit RemoteMessageResponse(const QJsonObject& pMessageObject);
-		virtual ~RemoteMessageResponse() override = default;
+		~RemoteMessageResponse() override = default;
 
-		bool resultHasError() const;
-		ECardApiResult::Minor getResultMinor() const;
+		[[nodiscard]] bool resultHasError() const;
+		[[nodiscard]] ECardApiResult::Minor getResultMinor() const;
 };
 
 

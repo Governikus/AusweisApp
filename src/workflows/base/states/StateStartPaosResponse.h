@@ -1,7 +1,7 @@
 /*!
  * \brief State to process StartPaosResponse from Server.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,7 +21,7 @@ class StateStartPaosResponse
 	friend class StateBuilder;
 
 	explicit StateStartPaosResponse(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 
 };
 

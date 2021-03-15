@@ -1,7 +1,7 @@
 /*!
  * A simple template renderer.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,7 +37,7 @@ class Template
 		 * \brief Get template context keys, i.e. the possible keys
 		 * to add as context parameter.
 		 */
-		const QSet<QString> getContextKeys() const;
+		[[nodiscard]] const QSet<QString> getContextKeys() const;
 
 		/*!
 		 * \brief Set known context key as parameter. Unknown context
@@ -52,7 +52,7 @@ class Template
 		 * keys by context values. If for a contained key no value is specified,
 		 * the key is replaced by the empty string.
 		 */
-		QString render() const;
+		[[nodiscard]] QString render() const;
 };
 
 } // namespace governikus

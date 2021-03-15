@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceList.h"
@@ -87,9 +87,15 @@ int RemoteDeviceListEntry::getPercentSeen(int pCheckInterval, int pTimeFrame) co
 }
 
 
+void RemoteDeviceListEntry::setRemoteDeviceDescriptor(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor)
+{
+	mRemoteDeviceDescriptor = pRemoteDeviceDescriptor;
+}
+
+
 bool RemoteDeviceListEntry::containsEquivalent(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor) const
 {
-	return mRemoteDeviceDescriptor.isEquivalent(pRemoteDeviceDescriptor);
+	return mRemoteDeviceDescriptor.isSameIfd(pRemoteDeviceDescriptor);
 }
 
 
@@ -153,12 +159,10 @@ void RemoteDeviceListImpl::update(const RemoteDeviceDescriptor& pDescriptor)
 	{
 		if (entry->containsEquivalent(pDescriptor))
 		{
-			const int visibilityOld = entry->getPercentSeen();
 			entry->setLastSeenToNow();
-			if (entry->getPercentSeen() != visibilityOld)
-			{
-				Q_EMIT fireDeviceUpdated(entry);
-			}
+			entry->setRemoteDeviceDescriptor(pDescriptor);
+			Q_EMIT fireDeviceUpdated(entry);
+
 			return;
 		}
 	}

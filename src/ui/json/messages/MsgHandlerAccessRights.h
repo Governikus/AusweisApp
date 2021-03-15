@@ -1,7 +1,7 @@
 /*!
  * \brief Message MsgHandlerAccessRights of JSON API.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,9 +22,9 @@ class MsgHandlerAccessRights
 		void setError(const QLatin1String pError);
 
 		void handleSetChatData(const QJsonArray& pChat, const QSharedPointer<AuthContext>& pContext);
-		QJsonArray getAccessRights(const QSet<AccessRight>& pRights) const;
+		[[nodiscard]] QJsonArray getAccessRights(const QSet<AccessRight>& pRights) const;
 		void fillAccessRights(const QSharedPointer<const AuthContext>& pContext);
-		QJsonObject getAuxiliaryData(const QSharedPointer<const AuthContext>& pContext) const;
+		[[nodiscard]] QJsonObject getAuxiliaryData(const QSharedPointer<const AuthContext>& pContext) const;
 
 	public:
 		explicit MsgHandlerAccessRights(const MsgContext& pContext);

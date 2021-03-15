@@ -1,7 +1,7 @@
 /*!
  * \brief ReaderConfigurationFile mock for tests
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,7 +19,7 @@ class MockReaderConfiguration
 
 	public:
 		MockReaderConfiguration() = default;
-		virtual ~MockReaderConfiguration() = default;
+		~MockReaderConfiguration() override = default;
 
 		void clearReaderConfiguration();
 };

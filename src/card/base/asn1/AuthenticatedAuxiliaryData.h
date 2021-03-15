@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of AuthenticatedAuxiliaryData.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -64,24 +64,24 @@ class AuthenticatedAuxiliaryData
 	QSharedPointer<AuthenticatedAuxiliaryDataInternal> mData;
 
 	explicit AuthenticatedAuxiliaryData(const QSharedPointer<AuthenticatedAuxiliaryDataInternal>& pData);
-	AuxDataTemplate* getAuxDataTemplateFor(KnownOIDs::AuxilaryData pData) const;
+	[[nodiscard]] AuxDataTemplate* getAuxDataTemplateFor(KnownOIDs::AuxilaryData pData) const;
 
-	QString getRequiredAge(const QDate& pEffectiveDate) const;
+	[[nodiscard]] QString getRequiredAge(const QDate& pEffectiveDate) const;
 
 	public:
 		static QSharedPointer<AuthenticatedAuxiliaryData> fromHex(const QByteArray& pHexValue);
 		static QSharedPointer<AuthenticatedAuxiliaryData> decode(const QByteArray& pBytes);
-		QByteArray encode() const;
+		[[nodiscard]] QByteArray encode() const;
 
-		bool hasValidityDate() const;
-		QDate getValidityDate() const;
+		[[nodiscard]] bool hasValidityDate() const;
+		[[nodiscard]] QDate getValidityDate() const;
 
-		bool hasAgeVerificationDate() const;
-		QDate getAgeVerificationDate() const;
-		QString getRequiredAge() const;
+		[[nodiscard]] bool hasAgeVerificationDate() const;
+		[[nodiscard]] QDate getAgeVerificationDate() const;
+		[[nodiscard]] QString getRequiredAge() const;
 
-		bool hasCommunityID() const;
-		QByteArray getCommunityID() const;
+		[[nodiscard]] bool hasCommunityID() const;
+		[[nodiscard]] QByteArray getCommunityID() const;
 };
 
 } // namespace governikus

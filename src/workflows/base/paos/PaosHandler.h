@@ -1,7 +1,7 @@
 /*!
  * \brief Generic Handler to detect and parse paos types.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,13 +27,13 @@ class PaosHandler
 		void parse();
 		void setParsedObject(PaosMessage* pParsedObject);
 
-		virtual bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
+		bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
 
 	public:
 		explicit PaosHandler(const QByteArray& pXmlData);
 
-		PaosType getDetectedPaosType() const;
-		QSharedPointer<PaosMessage> getPaosMessage() const;
+		[[nodiscard]] PaosType getDetectedPaosType() const;
+		[[nodiscard]] QSharedPointer<PaosMessage> getPaosMessage() const;
 };
 
 } // namespace governikus

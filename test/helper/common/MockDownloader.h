@@ -1,7 +1,7 @@
 /*!
  * \brief MockDownloader of class Downloader, part of \ref Updater and \ref UpdatableFile tests
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -27,16 +27,14 @@ class MockDownloader
 
 	public:
 		MockDownloader(GlobalStatus::Code pErrorCode = GlobalStatus::Code::No_Error);
-		virtual ~MockDownloader() override = default;
+		~MockDownloader() override = default;
 
 		QDateTime getTimeStamp();
 		QString getTimeStampString();
 		void setTestData(QUrl& pUrl, const QByteArray& pData);
 		QByteArray getTestData(const QUrl& pUrl);
 		void setError(GlobalStatus::Code pErrorCode);
-		void download(const QUrl& pUpdateUrl) override;
-		void downloadIfNew(const QUrl& pUpdateUrl,
-				const QDateTime& pCurrentTimestamp) override;
+		void download(const QUrl& pUpdateUrl, const QDateTime& pCurrentTimestamp = QDateTime()) override;
 };
 
 } // namespace governikus

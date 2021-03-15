@@ -1,7 +1,7 @@
 /*!
  * \brief Self authentication context.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,7 +27,7 @@ class SelfAuthContext
 	public:
 		SelfAuthContext();
 
-		const SelfAuthenticationData& getSelfAuthenticationData() const
+		[[nodiscard]] const SelfAuthenticationData& getSelfAuthenticationData() const
 		{
 			return mSelfAuthenticationData;
 		}

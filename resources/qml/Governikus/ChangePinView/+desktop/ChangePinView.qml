@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -15,6 +15,7 @@ import Governikus.View 1.0
 import Governikus.Workflow 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.NumberModel 1.0
+import Governikus.Type.UiModule 1.0
 
 
 SectionPage {
@@ -61,8 +62,7 @@ SectionPage {
 		text: qsTr("Change PIN")
 		rootEnabled: d.activeView === ChangePinView.SubViews.Start
 		helpTopic: "pinManagement"
-		showSettings: (changePinController.workflowState === ChangePinController.WorkflowStates.Initial ||
-						changePinController.workflowState === ChangePinController.WorkflowStates.Reader ||
+		showSettings: (changePinController.workflowState === ChangePinController.WorkflowStates.Reader ||
 						changePinController.workflowState === ChangePinController.WorkflowStates.Card)
 						&& d.activeView !== ChangePinView.SubViews.Progress
 						&& d.activeView !== ChangePinView.SubViews.ProgressNewPin
@@ -83,7 +83,7 @@ SectionPage {
 			onClicked: {
 				if (pinResult.visible) {
 					ChangePinModel.continueWorkflow()
-					baseItem.nextView(SectionPage.Views.Main)
+					baseItem.nextView(UiModule.DEFAULT)
 				} else {
 					ChangePinModel.cancelWorkflow()
 				}
@@ -118,7 +118,7 @@ SectionPage {
 
 		onNextView: {
 			if (pName === ChangePinView.SubViews.ReturnToMain) {
-				baseItem.nextView(SectionPage.Views.Main)
+				baseItem.nextView(UiModule.DEFAULT)
 				return;
 			}
 
@@ -150,16 +150,8 @@ SectionPage {
 
 		onSubTextLinkActivated: baseItem.showPasswordInfo()
 
-		onNeutral: {
-			NumberModel.requestTransportPin = true
-			ChangePinModel.startWorkflow()
-		}
-
-		onDisagree: {
-			NumberModel.requestTransportPin = false
-			ChangePinModel.startWorkflow()
-		}
-
+		onNeutral: ChangePinModel.startWorkflow(true)
+		onDisagree: ChangePinModel.startWorkflow(false)
 		onAgree: d.view = ChangePinView.SubViews.NoPassword
 	}
 
@@ -173,7 +165,7 @@ SectionPage {
 		//: LABEL DESKTOP_QML
 		text: qsTr("You cannot find your PIN letter? You have set a PIN when picking up the ID card or later that you cannot recall now?\n\nIf this is the case please turn to the competent authority and set a new PIN there.")
 
-		onNextView: baseItem.nextView(SectionPage.Views.Main)
+		onNextView: baseItem.nextView(UiModule.DEFAULT)
 	}
 
 	GeneralWorkflow {

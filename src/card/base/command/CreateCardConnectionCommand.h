@@ -1,7 +1,7 @@
 /*!
  * \brief Command implementation for asynchronous CardConnection creation
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -36,8 +36,8 @@ class CreateCardConnectionCommand
 		explicit CreateCardConnectionCommand(const QString& pReaderName, const QPointer<ReaderManagerWorker>& pReaderManagerWorker);
 
 		void run();
-		QSharedPointer<CardConnection> getCardConnection() const;
-		const QString& getReaderName() const;
+		[[nodiscard]] QSharedPointer<CardConnection> getCardConnection() const;
+		[[nodiscard]] const QString& getReaderName() const;
 
 	private Q_SLOTS:
 		void onCardConnectionWorkerCreated(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);

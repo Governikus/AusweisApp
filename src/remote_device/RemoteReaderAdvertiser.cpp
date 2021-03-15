@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReaderAdvertiser.h"
@@ -45,7 +45,7 @@ void RemoteReaderAdvertiserImpl::timerEvent(QTimerEvent* pEvent)
 {
 	if (pEvent->timerId() == mTimerId)
 	{
-		mHandler->send(mDiscovery);
+		mHandler->send(mDiscovery.toByteArray(IfdVersion::Version::latest));
 	}
 }
 
@@ -60,7 +60,13 @@ RemoteReaderAdvertiserImpl::RemoteReaderAdvertiserImpl(const QString& pIfdName, 
 	: RemoteReaderAdvertiser()
 	, mHandler(Env::create<DatagramHandler*>(false))
 	, mTimerId(startTimer(pTimerInterval))
-	, mDiscovery(Discovery(pIfdName, pIfdId, pPort, {IfdVersion::supported()}).toByteArray())
+	, mDiscovery(Discovery(pIfdName, pIfdId, pPort, {IfdVersion::supported()}))
 {
 	qCDebug(remote_device) << "Start advertising every" << pTimerInterval << "msecs";
+}
+
+
+void RemoteReaderAdvertiserImpl::setPairing(bool pEnabled)
+{
+	mDiscovery.setPairing(pEnabled);
 }

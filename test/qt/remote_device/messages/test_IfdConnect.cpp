@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdConnect.h"
@@ -65,7 +65,7 @@ class test_IfdConnect
 				QStringLiteral("SlotName")
 				);
 
-			const QByteArray& byteArray = ifdConnect.toByteArray(QStringLiteral("TestContext"));
+			const QByteArray& byteArray = ifdConnect.toByteArray(IfdVersion::Version::v0, QStringLiteral("TestContext"));
 			QCOMPARE(byteArray,
 					QByteArray("{\n"
 							   "    \"ContextHandle\": \"TestContext\",\n"

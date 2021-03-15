@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "VersionNumber.h"
@@ -52,8 +52,7 @@ auto VersionNumber::getInfoFromSuffix(QLatin1Char pStart, QLatin1Char pEnd) cons
 	QStringRef view;
 #endif
 
-	const auto indexStart = mSuffix.indexOf(pStart) + 1;
-	if (indexStart > 0)
+	if (const auto indexStart = mSuffix.indexOf(pStart) + 1; indexStart > 0)
 	{
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 		view = QStringView(mSuffix).sliced(indexStart);
@@ -61,8 +60,7 @@ auto VersionNumber::getInfoFromSuffix(QLatin1Char pStart, QLatin1Char pEnd) cons
 		view = mSuffix.midRef(indexStart);
 #endif
 
-		const auto indexEnd = view.indexOf(pEnd);
-		if (indexEnd > 0)
+		if (const auto indexEnd = view.indexOf(pEnd); indexEnd > 0)
 		{
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			view = view.sliced(0, indexEnd);
@@ -78,9 +76,7 @@ auto VersionNumber::getInfoFromSuffix(QLatin1Char pStart, QLatin1Char pEnd) cons
 
 int VersionNumber::getDistance() const
 {
-	const auto view = getInfoFromSuffix(QLatin1Char('+'));
-
-	if (!view.isEmpty())
+	if (const auto view = getInfoFromSuffix(QLatin1Char('+')); !view.isEmpty())
 	{
 		bool ok;
 		int value = view.toInt(&ok);
@@ -104,8 +100,7 @@ QString VersionNumber::getRevision() const
 {
 	if (mSuffix.count(QLatin1Char('-')) > 1)
 	{
-		const auto index = mSuffix.lastIndexOf(QLatin1Char('-')) + 1;
-		if (index > 0)
+		if (const auto index = mSuffix.lastIndexOf(QLatin1Char('-')) + 1; index > 0)
 		{
 			return mSuffix.mid(index);
 		}

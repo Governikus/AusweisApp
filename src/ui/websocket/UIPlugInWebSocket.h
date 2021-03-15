@@ -1,7 +1,7 @@
 /*!
  * \brief UIPlugIn implementation of the Websocket.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -38,11 +38,11 @@ class UIPlugInWebSocket
 		bool mUiDominationPrevUsedAsSDK;
 
 	private Q_SLOTS:
-		virtual void doShutdown() override;
-		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
-		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
-		virtual void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted) override;
-		virtual void onUiDominationReleased() override;
+		void doShutdown() override;
+		void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
+		void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted) override;
+		void onUiDominationReleased() override;
 		void onNewWebSocketRequest(const QSharedPointer<HttpRequest>& pRequest);
 		void onNewConnection();
 		void onClientDisconnected();
@@ -51,7 +51,7 @@ class UIPlugInWebSocket
 
 	public:
 		UIPlugInWebSocket();
-		virtual ~UIPlugInWebSocket() override;
+		~UIPlugInWebSocket() override;
 };
 
 } // namespace governikus

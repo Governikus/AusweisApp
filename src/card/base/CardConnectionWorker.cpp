@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnectionWorker.h"
@@ -198,8 +198,32 @@ EstablishPaceChannelOutput CardConnectionWorker::establishPaceChannel(PacePasswo
 	}
 	else
 	{
-		Q_ASSERT(pPasswordValue.isNull());
-		output = card->establishPaceChannel(pPasswordId, pChat, pCertificateDescription);
+		const bool isTransportPin = (pPasswordValue == QByteArray(5, 0));
+		Q_ASSERT(pPasswordValue.isNull() || isTransportPin);
+		output = card->establishPaceChannel(pPasswordId, isTransportPin ? 5 : 6, pChat, pCertificateDescription);
+	}
+
+	if (output.getPaceReturnCode() == CardReturnCode::INVALID_PASSWORD)
+	{
+		CardReturnCode invalidPasswordId;
+		switch (pPasswordId)
+		{
+			case PacePasswordId::PACE_CAN:
+				invalidPasswordId = CardReturnCode::INVALID_CAN;
+				break;
+
+			case PacePasswordId::PACE_PIN:
+				invalidPasswordId = CardReturnCode::INVALID_PIN;
+				break;
+
+			case PacePasswordId::PACE_PUK:
+				invalidPasswordId = CardReturnCode::INVALID_PUK;
+				break;
+
+			default:
+				invalidPasswordId = CardReturnCode::UNKNOWN;
+		}
+		output.setPaceReturnCode(invalidPasswordId);
 	}
 
 	qCInfo(support) << "Finished PACE for" << pPasswordId << "with result" << output.getPaceReturnCode();

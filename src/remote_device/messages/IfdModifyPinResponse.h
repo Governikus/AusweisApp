@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,13 +20,13 @@ class IfdModifyPinResponse
 	public:
 		IfdModifyPinResponse(const QString& pSlotHandle, const QByteArray& pOutputData, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		explicit IfdModifyPinResponse(const QJsonObject& pMessageObject);
-		virtual ~IfdModifyPinResponse() override = default;
+		~IfdModifyPinResponse() override = default;
 
-		const QString& getSlotHandle() const;
-		const QByteArray& getOutputData() const;
-		CardReturnCode getReturnCode() const;
+		[[nodiscard]] const QString& getSlotHandle() const;
+		[[nodiscard]] const QByteArray& getOutputData() const;
+		[[nodiscard]] CardReturnCode getReturnCode() const;
 
-		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
+		[[nodiscard]] QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const override;
 };
 
 

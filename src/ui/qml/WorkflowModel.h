@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the authentication action.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -39,7 +39,7 @@ class WorkflowModel
 
 	public:
 		explicit WorkflowModel(QObject* pParent = nullptr);
-		virtual ~WorkflowModel();
+		~WorkflowModel() override;
 
 		void resetWorkflowContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
@@ -57,7 +57,6 @@ class WorkflowModel
 
 		QString getReaderImage() const;
 
-		Q_INVOKABLE void startWorkflow();
 		Q_INVOKABLE void cancelWorkflow();
 		Q_INVOKABLE void startScanIfNecessary();
 		Q_INVOKABLE void cancelWorkflowToChangePin();
@@ -66,13 +65,14 @@ class WorkflowModel
 		Q_INVOKABLE bool selectedReaderHasCard() const;
 		Q_INVOKABLE bool shouldSkipResultView() const;
 		Q_INVOKABLE bool isCancellationByUser() const;
+		Q_INVOKABLE QString getEmailHeader() const;
+		Q_INVOKABLE QString getEmailBody(bool pPercentEncoding = false, bool pAddLogNotice = false) const;
 		Q_INVOKABLE void sendResultMail() const;
 
 	public Q_SLOTS:
 		void onReaderManagerSignal();
 
 	Q_SIGNALS:
-		void fireStartWorkflow();
 		void fireCurrentStateChanged(const QString& pState);
 		void fireResultChanged();
 		void fireReaderPlugInTypeChanged();

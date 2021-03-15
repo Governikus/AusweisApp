@@ -1,5 +1,7 @@
 module View
 
+internal ContentAreaLoader ContentAreaLoader.qml
+
 ContentArea 1.0 ContentArea.qml
 Controller 1.0 Controller.qml
 SectionPage 1.0 SectionPage.qml

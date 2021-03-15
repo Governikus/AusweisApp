@@ -2,7 +2,7 @@
  * \brief Implementation of ActivationContext for Intent
  * based activation on Android systems.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,9 +24,9 @@ class IntentActivationContext
 
 	public:
 		explicit IntentActivationContext(const QUrl& pActivationUrl, const QString& pReferrer);
-		virtual ~IntentActivationContext() override;
+		~IntentActivationContext() override;
 
-		QUrl getActivationURL() const override;
+		[[nodiscard]] QUrl getActivationURL() const override;
 
 		bool sendProcessing() override;
 		bool sendOperationAlreadyActive() override;

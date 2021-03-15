@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceContext.h"
@@ -8,6 +8,12 @@
 
 
 using namespace governikus;
+
+
+bool RemoteServiceContext::isPaceRequestingRights() const
+{
+	return !mEstablishPaceChannel.getChat().isEmpty() && !mEstablishPaceChannel.getCertificateDescription().isEmpty();
+}
 
 
 void RemoteServiceContext::onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler)
@@ -20,12 +26,14 @@ void RemoteServiceContext::onMessageHandlerAdded(QSharedPointer<ServerMessageHan
 RemoteServiceContext::RemoteServiceContext()
 	: mRemoteServer(Env::create<RemoteServer*>())
 	, mNewPin()
-	, mEstablishPaceChannelMessage()
+	, mSlotHandle()
+	, mEstablishPaceChannel()
+	, mPreferredPinLength(0)
 	, mEstablishPaceChannelOutput()
 	, mModifyPinMessage()
 	, mModifyPinMessageResponseApdu()
-	, mPaceChannelParser()
 {
+	connect(mRemoteServer.data(), &RemoteServer::fireIsRunningChanged, this, &RemoteServiceContext::fireIsRunningChanged);
 	connect(mRemoteServer.data(), &RemoteServer::fireMessageHandlerAdded, this, &RemoteServiceContext::onMessageHandlerAdded);
 }
 
@@ -67,56 +75,54 @@ void RemoteServiceContext::setNewPin(const QString& pNewPin)
 }
 
 
+bool RemoteServiceContext::isPinChangeWorkflow() const
+{
+	return mEstablishPaceChannel.getPasswordId() == PacePasswordId::PACE_PIN && !isPaceRequestingRights();
+}
+
+
 bool RemoteServiceContext::isCanAllowedMode() const
 {
-	if (mPaceChannelParser.getPasswordId() != PacePasswordId::PACE_CAN)
-	{
-		return false;
-	}
-
-	return !mPaceChannelParser.getChat().isEmpty() && !mPaceChannelParser.getCertificateDescription().isEmpty();
+	return mEstablishPaceChannel.getPasswordId() == PacePasswordId::PACE_CAN && isPaceRequestingRights();
 }
 
 
-void RemoteServiceContext::setEstablishPaceChannelMessage(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage)
+void RemoteServiceContext::setEstablishPaceChannel(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage)
 {
-	mEstablishPaceChannelMessage = pMessage;
+	if (pMessage)
+	{
+		mSlotHandle = pMessage->getSlotHandle();
+		mEstablishPaceChannel = pMessage->getInputData();
+		mPreferredPinLength = pMessage->getPreferredPinLength();
+	}
+	else
+	{
+		mSlotHandle.clear();
+		mEstablishPaceChannel = EstablishPaceChannel();
+		mPreferredPinLength = 0;
+	}
 	mEstablishPaceChannelOutput = EstablishPaceChannelOutput();
 
-	if (!pMessage)
-	{
-		qDebug() << "PaceChannelMessage is empty";
-		mPaceChannelParser.reset();
-		return;
-	}
-
-	mPaceChannelParser.fromCcid(pMessage->getInputData());
-
 	Q_EMIT fireCanAllowedModeChanged();
-	Q_EMIT fireEstablishPaceChannelMessageUpdated(mEstablishPaceChannelMessage);
+	Q_EMIT fireEstablishPaceChannelUpdated();
 }
 
 
-bool RemoteServiceContext::hasEstablishedPaceChannelRequest() const
+const QString& RemoteServiceContext::getSlotHandle() const
 {
-	return mEstablishPaceChannelMessage && !mEstablishPaceChannelMessage->isIncomplete();
+	return mSlotHandle;
 }
 
 
-QString RemoteServiceContext::getEstablishPaceChannelMessageSlotHandle() const
+const EstablishPaceChannel& RemoteServiceContext::getEstablishPaceChannel() const
 {
-	if (!hasEstablishedPaceChannelRequest())
-	{
-		return QString();
-	}
-
-	return mEstablishPaceChannelMessage->getSlotHandle();
+	return mEstablishPaceChannel;
 }
 
 
-const EstablishPaceChannelParser& RemoteServiceContext::getPaceChannelParser() const
+int RemoteServiceContext::getPreferredPinLength() const
 {
-	return mPaceChannelParser;
+	return mPreferredPinLength;
 }
 
 
@@ -169,6 +175,6 @@ void RemoteServiceContext::onResetMessageHandler()
 	resetPacePasswords();
 	resetCardConnection();
 	resetLastPaceResult();
-	setEstablishPaceChannelMessage(QSharedPointer<const IfdEstablishPaceChannel>());
+	setEstablishPaceChannel(QSharedPointer<const IfdEstablishPaceChannel>());
 	mModifyPinMessage = QSharedPointer<const IfdModifyPin>();
 }

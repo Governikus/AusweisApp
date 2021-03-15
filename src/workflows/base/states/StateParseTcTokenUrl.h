@@ -1,7 +1,7 @@
 /*!
  * \brief Implements the parsing of TcTokenUrl in header of browser request.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,7 +22,7 @@ class StateParseTcTokenUrl
 	friend class StateBuilder;
 
 	explicit StateParseTcTokenUrl(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 
 };
 

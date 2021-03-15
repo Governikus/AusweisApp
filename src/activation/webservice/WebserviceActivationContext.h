@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,9 +25,9 @@ class WebserviceActivationContext
 	public:
 		explicit WebserviceActivationContext(const QSharedPointer<HttpRequest>& pRequest);
 
-		virtual ~WebserviceActivationContext() override = default;
+		~WebserviceActivationContext() override = default;
 
-		QUrl getActivationURL() const override;
+		[[nodiscard]] QUrl getActivationURL() const override;
 
 		bool sendProcessing() override;
 

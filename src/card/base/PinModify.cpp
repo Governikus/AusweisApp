@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PinModify.h"
@@ -72,7 +72,7 @@ QByteArray PinModify::createCcid() const
 	abPINDataStructure += char(0x01);
 	// bMsgIndex3 (index (into reader table) of third message to display)
 	// WARNING: bMsgIndex3 should not be present for CCID because bNumberMessage != 3)
-	//          We still need it, because Reiner SCT cyberJack wave is not working without.
+	//          We still need it, because Reiner SCT standard/comfort reader are not working without.
 	abPINDataStructure += char(0x02);
 	// bTeoPrologue (T1 only: I-block prologue field to use): fill with 0
 	abPINDataStructure += '\0';

@@ -1,12 +1,12 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceModel.h"
 
 #include "ApplicationModel.h"
 #include "AppSettings.h"
-#include "EstablishPaceChannelParser.h"
+#include "EstablishPaceChannel.h"
 #include "NumberModel.h"
 #include "RemoteClientImpl.h"
 #include "RemoteServiceSettings.h"
@@ -21,7 +21,10 @@ RemoteServiceModel::RemoteServiceModel()
 	: WorkflowModel()
 	, mContext()
 	, mRunnable(false)
+	, mIsStarting(false)
 	, mCanEnableNfc(false)
+	, mPairingRequested(false)
+	, mRequestTransportPin(false)
 	, mErrorMessage()
 	, mPsk()
 	, mAvailableRemoteDevices(this, false, true)
@@ -29,7 +32,6 @@ RemoteServiceModel::RemoteServiceModel()
 	, mCombinedDevices(this, true, true)
 	, mConnectionInfo()
 	, mConnectedServerDeviceNames()
-	, mIsSaCPinChangeWorkflow()
 	, mRememberedServerEntry()
 #ifdef Q_OS_IOS
 	// iOS 14 introduced a local network permission, so we need to handle it.
@@ -52,6 +54,9 @@ RemoteServiceModel::RemoteServiceModel()
 	connect(remoteClient, &RemoteClient::fireDispatcherDestroyed, this, &RemoteServiceModel::onConnectedDevicesChanged);
 	connect(remoteClient, &RemoteClient::fireDeviceAppeared, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
 	connect(remoteClient, &RemoteClient::fireDeviceVanished, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
+
+	const auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	connect(&settings, &GeneralSettings::fireLanguageChanged, this, &RemoteServiceModel::onEnvironmentChanged);
 
 	QMetaObject::invokeMethod(this, &RemoteServiceModel::onEnvironmentChanged, Qt::QueuedConnection);
 }
@@ -102,8 +107,18 @@ bool RemoteServiceModel::isRunning() const
 }
 
 
-void RemoteServiceModel::setRunning(bool pState)
+void RemoteServiceModel::setRunning(bool pState, bool pEnablePairing)
 {
+	bool enablePairing = pEnablePairing && pState;
+	if (mContext)
+	{
+		setPairing(enablePairing);
+	}
+	else
+	{
+		mPairingRequested = enablePairing;
+	}
+
 	if (isRunning() == pState)
 	{
 		return;
@@ -115,10 +130,22 @@ void RemoteServiceModel::setRunning(bool pState)
 	}
 	else
 	{
+		setStarting(true);
 		Q_EMIT fireStartWorkflow();
 	}
+}
 
-	Q_EMIT fireIsRunningChanged();
+
+void RemoteServiceModel::setStarting(bool pStarting)
+{
+	mIsStarting = pStarting;
+	Q_EMIT fireIsStartingChanged();
+}
+
+
+bool RemoteServiceModel::isStarting() const
+{
+	return mIsStarting;
 }
 
 
@@ -229,20 +256,33 @@ void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<RemoteSe
 	WorkflowModel::resetWorkflowContext(pContext);
 
 	mPsk.clear();
-	onEstablishPaceChannelMessageUpdated(QSharedPointer<const IfdEstablishPaceChannel>());
+	onEstablishPaceChannelUpdated();
 
 	if (mContext)
 	{
-		connect(mContext.data(), &WorkflowContext::fireStateChanged, this, &RemoteServiceModel::fireIsRunningChanged);
+		connect(mContext.data(), &RemoteServiceContext::fireIsRunningChanged, this, [this](){
+					setStarting(false);
+				});
+		connect(mContext.data(), &RemoteServiceContext::fireIsRunningChanged, this, &RemoteServiceModel::fireIsRunningChanged);
 		connect(mContext->getRemoteServer().data(), &RemoteServer::firePskChanged, this, [this](const QByteArray& pPsk){
 					mPsk = pPsk;
 				});
 		connect(mContext->getRemoteServer().data(), &RemoteServer::firePskChanged, this, &RemoteServiceModel::firePskChanged);
 		connect(mContext->getRemoteServer().data(), &RemoteServer::fireConnectedChanged, this, &RemoteServiceModel::onConnectionInfoChanged);
+		connect(mContext->getRemoteServer().data(), &RemoteServer::firePairingCompleted, this, &RemoteServiceModel::firePairingCompleted);
 		connect(mContext.data(), &RemoteServiceContext::fireCardConnectionEstablished, this, &RemoteServiceModel::onCardConnectionEstablished);
-		connect(mContext.data(), &RemoteServiceContext::fireEstablishPaceChannelMessageUpdated, this, &RemoteServiceModel::onEstablishPaceChannelMessageUpdated);
+		connect(mContext.data(), &RemoteServiceContext::fireEstablishPaceChannelUpdated, this, &RemoteServiceModel::onEstablishPaceChannelUpdated);
+
+		setPairing(mPairingRequested);
+	}
+	else
+	{
+		setStarting(false);
 	}
 
+	mPairingRequested = false;
+
+	Q_EMIT fireIsRunningChanged();
 	Q_EMIT fireConnectedChanged();
 }
 
@@ -253,6 +293,17 @@ void RemoteServiceModel::setPairing(bool pEnabled)
 	{
 		mContext->getRemoteServer()->setPairing(pEnabled);
 	}
+}
+
+
+bool RemoteServiceModel::isPairing()
+{
+	if (!mContext)
+	{
+		return false;
+	}
+
+	return !getPsk().isEmpty();
 }
 
 
@@ -267,9 +318,15 @@ bool RemoteServiceModel::isConnectedToPairedDevice() const
 }
 
 
-bool RemoteServiceModel::isSaCPinChangeWorkflow() const
+bool RemoteServiceModel::enableTransportPinLink() const
 {
-	return mIsSaCPinChangeWorkflow;
+	return mContext && mContext->isPinChangeWorkflow() && mContext->getPreferredPinLength() == 0;
+}
+
+
+bool RemoteServiceModel::isRequestTransportPin() const
+{
+	return mRequestTransportPin;
 }
 
 
@@ -323,17 +380,12 @@ bool RemoteServiceModel::pinPadModeOn() const
 
 QString RemoteServiceModel::getPasswordType() const
 {
-	if (mContext.isNull())
+	if (!mContext)
 	{
 		return QString();
 	}
 
-	if (!mContext->hasEstablishedPaceChannelRequest())
-	{
-		return QString();
-	}
-
-	switch (mContext->getPaceChannelParser().getPasswordId())
+	switch (mContext->getEstablishPaceChannel().getPasswordId())
 	{
 		case PacePasswordId::PACE_CAN:
 			return QStringLiteral("CAN");
@@ -387,6 +439,13 @@ void RemoteServiceModel::cancelPasswordRequest()
 }
 
 
+void RemoteServiceModel::changePinLength()
+{
+	mRequestTransportPin = !mRequestTransportPin;
+	Q_EMIT fireEstablishPaceChannelUpdated();
+}
+
+
 void RemoteServiceModel::onConnectedDevicesChanged()
 {
 	auto* const remoteClient = Env::getSingleton<RemoteClient>();
@@ -401,19 +460,8 @@ void RemoteServiceModel::onConnectedDevicesChanged()
 }
 
 
-void RemoteServiceModel::onEstablishPaceChannelMessageUpdated(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage)
+void RemoteServiceModel::onEstablishPaceChannelUpdated()
 {
-	Env::getSingleton<NumberModel>()->setRequestTransportPin(false);
-
-	if (pMessage.isNull() || pMessage->isIncomplete())
-	{
-		mIsSaCPinChangeWorkflow = false;
-	}
-	else
-	{
-		const EstablishPaceChannelParser& parser = mContext->getPaceChannelParser();
-		mIsSaCPinChangeWorkflow = parser.getCertificateDescription().isEmpty();
-	}
-
-	Q_EMIT fireEstablishPaceChannelMessageUpdated();
+	mRequestTransportPin = (mContext && mContext->isPinChangeWorkflow() && mContext->getPreferredPinLength() == 5);
+	Q_EMIT fireEstablishPaceChannelUpdated();
 }

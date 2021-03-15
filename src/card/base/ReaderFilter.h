@@ -1,7 +1,7 @@
 /*!
  * \brief A configured filter used to retrieve readers
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,7 +37,7 @@ class ReaderFilter
 		ReaderFilter(const ReaderFilter::FilterType pFilterType);
 		explicit ReaderFilter(const QVector<ReaderManagerPlugInType>& pPluginTypes);
 
-		QVector<ReaderInfo> apply(const QVector<ReaderInfo>& pInputList) const;
+		[[nodiscard]] QVector<ReaderInfo> apply(const QVector<ReaderInfo>& pInputList) const;
 };
 
 } // namespace governikus

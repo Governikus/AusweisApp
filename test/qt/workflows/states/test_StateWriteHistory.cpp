@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref StateWriteHistory
  *
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateWriteHistory.h"
@@ -50,7 +50,7 @@ class test_StateWriteHistory
 
 			QTest::ignoreMessage(QtDebugMsg, "History disabled");
 			mContext->setStateApproved();
-			QCOMPARE(spyContinue.count(), 1);
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -62,7 +62,7 @@ class test_StateWriteHistory
 
 			QTest::ignoreMessage(QtWarningMsg, "No EAC1 structure or effective CHAT in model.");
 			mContext->setStateApproved();
-			QCOMPARE(spyAbort.count(), 1);
+			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -76,6 +76,7 @@ class test_StateWriteHistory
 
 			mContext->setStatus(GlobalStatus::Code::No_Error);
 			mContext->setStateApproved();
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(historySettings.getHistoryInfos().size() > 0);
 			const auto historyInfo = historySettings.getHistoryInfos().at(0);
 			QCOMPARE(historyInfo.getSubjectName(), mState->getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getSubjectName());

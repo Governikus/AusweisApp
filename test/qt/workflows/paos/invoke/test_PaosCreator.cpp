@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref PaosCreator
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/invoke/PaosCreator.h"
@@ -24,7 +24,7 @@ struct test_PaosCreatorDummy
 	bool mNamespace = false;
 	const QString mTag = QStringLiteral("content");
 
-	virtual void createBodyElement() override
+	void createBodyElement() override
 	{
 		if (mNamespace)
 		{

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQml 2.12
@@ -8,11 +8,13 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
+import Governikus.InformationView 1.0
 import Governikus.ResultView 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.GlobalStatus 1.0
+import Governikus.Type.ReleaseInformationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.View 1.0
 
@@ -99,13 +101,29 @@ SectionPage {
 				Layout.bottomMargin: Layout.topMargin
 			}
 
-			UpdateViewReleaseNotes {
-				id: releaseNotesView
-
+			Item {
 				Layout.fillWidth: true
 				Layout.fillHeight: true
 
-				releaseNotes: root.update.notes
+				clip: true
+
+				ReleaseNotesView {
+					anchors {
+						fill: parent
+						topMargin: Constants.pane_padding
+						bottomMargin: Constants.pane_padding
+					}
+
+					model: ReleaseInformationModel.updateRelease
+				}
+
+				ScrollGradients {
+					anchors.fill: parent
+
+					leftMargin: 0
+					rightMargin: 0
+					color: Style.color.background_pane
+				}
 			}
 
 			GSeparator {
@@ -143,7 +161,7 @@ SectionPage {
 		id: download
 
 		function exec() {
-			if (root.update.compatible)
+			if (root.update.compatible || Qt.platform.os === "osx")
 				load()
 			else
 				open()
@@ -163,11 +181,14 @@ SectionPage {
 		//: INFO DESKTOP_QML Header of the popup that is shown when the requested update is not compatible with the OS.
 		title: qsTr("Warning - Your operating system is no longer supported")
 		//: INFO DESKTOP_QML Text of the popup that is shown when the requested update is not compatible with the OS.
-		text: qsTr("Your operating system is no longer supported with version %1 of the %2. Either your system will prevent the installation or the %2 will not start after the installation.").arg(root.update.version).arg(Qt.application.name)
+		text: qsTr("Your operating system is no longer officially supported with version %1 of the %2.").arg(root.update.version).arg(Qt.application.name)
 		//: LABEL DESKTOP_QML
 		okButtonText: qsTr("Start anyway")
 
-		onConfirmed: load()
+		onConfirmed: {
+			load()
+			close()
+		}
 		onCancelled: close()
 	}
 

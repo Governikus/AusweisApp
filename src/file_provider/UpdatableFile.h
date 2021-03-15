@@ -4,7 +4,7 @@
  * This class also handles the synchronization of the local cache with the content
  * provided by a server.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -38,16 +38,16 @@ class UpdatableFile
 		const QUrl mUpdateUrl;
 		bool mUpdateRunning;
 
-		const QString& getName() const;
-		QDateTime cacheTimestamp() const;
-		const QString& getSectionCachePath() const;
+		[[nodiscard]] const QString& getName() const;
+		[[nodiscard]] QDateTime cacheTimestamp() const;
+		[[nodiscard]] const QString& getSectionCachePath() const;
 
-		QString qrcPath() const;
-		QString cachePath() const;
-		QUrl updateUrl(const QString& pSection, const QString& pName) const;
-		QString dirtyFilePath() const;
-		QString sectionCachePath(const QString& pSection) const;
-		QString makeSectionCachePath(const QString& pSection) const;
+		[[nodiscard]] QString qrcPath() const;
+		[[nodiscard]] QString cachePath() const;
+		[[nodiscard]] QUrl updateUrl(const QString& pSection, const QString& pName) const;
+		[[nodiscard]] QString dirtyFilePath() const;
+		[[nodiscard]] QString sectionCachePath(const QString& pSection) const;
+		[[nodiscard]] QString makeSectionCachePath(const QString& pSection) const;
 		void cleanupAfterUpdate(const std::function<void()>& pCustomAction);
 		bool writeDataToFile(const QByteArray& pData, const QString& pFilePath, bool pOverwrite = false);
 
@@ -58,17 +58,17 @@ class UpdatableFile
 
 	public:
 		UpdatableFile(const QString& pSection, const QString& pName, const QString& pDefaultPath = QString());
-		virtual ~UpdatableFile() = default;
+		~UpdatableFile() override = default;
 
 		QUrl lookupUrl();
 		QString lookupPath();
 		bool forEachLookupPath(const std::function<bool(const QString&)>& pValidate);
 
 		void setDefaultPath(const QString& pPath);
-		const QString& getDefaultPath() const;
+		[[nodiscard]] const QString& getDefaultPath() const;
 
 		void update();
-		bool isDirty() const;
+		[[nodiscard]] bool isDirty() const;
 		void clearDirty() const;
 		void markDirty() const;
 

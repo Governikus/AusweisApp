@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Randomizer.h"
@@ -48,8 +48,7 @@ template<typename T> QList<T> Randomizer::getEntropy()
 	entropy += std::random_device()();
 	entropy += QRandomGenerator::securelySeeded().generate();
 
-	UniversalBuffer<T> buffer;
-	if (RAND_bytes(buffer.data, sizeof(buffer.data)))
+	if (UniversalBuffer<T> buffer; RAND_bytes(buffer.data, sizeof(buffer.data)))
 	{
 		entropy += buffer.number;
 	}
@@ -89,8 +88,7 @@ template<typename T> QList<T> Randomizer::getEntropyUnixoid()
 	QList<T> entropy;
 
 #ifdef SYS_getrandom
-	UniversalBuffer<T> buffer;
-	if (syscall(SYS_getrandom, buffer.data, sizeof(buffer.data), GRND_NONBLOCK))
+	if (UniversalBuffer<T> buffer; syscall(SYS_getrandom, buffer.data, sizeof(buffer.data), GRND_NONBLOCK))
 	{
 		entropy += buffer.number;
 	}
@@ -133,8 +131,7 @@ template<typename T> QList<T> Randomizer::getEntropyApple()
 	QList<T> entropy;
 
 #if defined(Q_OS_IOS) || defined(Q_OS_MACOS)
-	UniversalBuffer<T> buffer;
-	if (SecRandomCopyBytes(kSecRandomDefault, sizeof(buffer.data), buffer.data) == 0)
+	if (UniversalBuffer<T> buffer; SecRandomCopyBytes(kSecRandomDefault, sizeof(buffer.data), buffer.data) == 0)
 	{
 		entropy += buffer.number;
 	}

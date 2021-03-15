@@ -1,11 +1,10 @@
 /*!
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreparePaceRemote.h"
 
 #include "AppSettings.h"
-#include "EstablishPaceChannelParser.h"
 #include "states/StateBuilder.h"
 
 #include <QtTest>
@@ -22,11 +21,8 @@ class test_StatePreparePaceRemote
 
 	static QSharedPointer<const IfdEstablishPaceChannel> createMessage(PacePasswordId pId)
 	{
-		EstablishPaceChannel builder;
-		builder.setPasswordId(pId);
-		const auto command = builder.createCommandDataCcid();
-		const auto& buffer = command.getBuffer();
-		return QSharedPointer<const IfdEstablishPaceChannel>(new IfdEstablishPaceChannel("slot", buffer));
+		EstablishPaceChannel establishPaceChannel(pId);
+		return QSharedPointer<const IfdEstablishPaceChannel>(new IfdEstablishPaceChannel("slot", establishPaceChannel, 6));
 	}
 
 	private Q_SLOTS:
@@ -50,63 +46,66 @@ class test_StatePreparePaceRemote
 		void test_RunPin()
 		{
 			const auto& message = createMessage(PacePasswordId::PACE_PIN);
-			mContext->setEstablishPaceChannelMessage(message);
+			mContext->setEstablishPaceChannel(message);
 			QSignalSpy spyEnterPacePassword(mState.data(), &StatePreparePaceRemote::fireEnterPacePassword);
 			QSignalSpy spyContinue(mState.data(), &StatePreparePaceRemote::fireContinue);
 
 			mContext->setStateApproved();
-			QCOMPARE(spyEnterPacePassword.count(), 1);
+			QTRY_COMPARE(spyEnterPacePassword.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(spyContinue.count(), 0);
 
 			mContext->setPin(QString("111111"));
 			mContext->setStateApproved(false);
 			mContext->setStateApproved();
-			QCOMPARE(spyContinue.count(), 1);
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
 		void test_RunCan()
 		{
 			const auto& message = createMessage(PacePasswordId::PACE_CAN);
-			mContext->setEstablishPaceChannelMessage(message);
+			mContext->setEstablishPaceChannel(message);
 			QSignalSpy spyEnterPacePassword(mState.data(), &StatePreparePaceRemote::fireEnterPacePassword);
 			QSignalSpy spyContinue(mState.data(), &StatePreparePaceRemote::fireContinue);
 
 			mContext->setStateApproved();
-			QCOMPARE(spyEnterPacePassword.count(), 1);
+			QTRY_COMPARE(spyEnterPacePassword.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(spyContinue.count(), 0);
 
 			mContext->setCan(QString("111111"));
 			mContext->setStateApproved(false);
 			mContext->setStateApproved();
-			QCOMPARE(spyContinue.count(), 1);
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
 		void test_RunPuk()
 		{
 			const auto& message = createMessage(PacePasswordId::PACE_PUK);
-			mContext->setEstablishPaceChannelMessage(message);
+			mContext->setEstablishPaceChannel(message);
 			QSignalSpy spyEnterPacePassword(mState.data(), &StatePreparePaceRemote::fireEnterPacePassword);
 			QSignalSpy spyContinue(mState.data(), &StatePreparePaceRemote::fireContinue);
 
 			mContext->setStateApproved();
-			QCOMPARE(spyEnterPacePassword.count(), 1);
+			QTRY_COMPARE(spyEnterPacePassword.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(spyContinue.count(), 0);
 
 			mContext->setPuk(QString("111111"));
 			mContext->setStateApproved(false);
 			mContext->setStateApproved();
-			QCOMPARE(spyContinue.count(), 1);
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
 		void test_RunUnknown()
 		{
 			const auto& message = createMessage(PacePasswordId::UNKNOWN);
-			mContext->setEstablishPaceChannelMessage(message);
-			QSignalSpy spyContinue(mState.data(), &StatePreparePaceRemote::fireContinue);
+			mContext->setEstablishPaceChannel(message);
+			QSignalSpy spyContinue(mState.data(), &StatePreparePaceRemote::fireAbort);
 
 			QTest::ignoreMessage(QtCriticalMsg, "Cannot handle unknown PacePasswordId");
 			mContext->setStateApproved();
-			QCOMPARE(spyContinue.count(), 1);
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -116,7 +115,7 @@ class test_StatePreparePaceRemote
 			QSignalSpy spyContinue(mState.data(), &StatePreparePaceRemote::fireContinue);
 
 			mContext->setStateApproved();
-			QCOMPARE(spyContinue.count(), 1);
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

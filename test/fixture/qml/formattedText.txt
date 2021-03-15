@@ -1,0 +1,29 @@
+This is a header
+***************
+
+First section
+============
+
+Subsection one
+--------------
+
+This
+multiline
+text
+will
+be
+concatenated
+to
+one
+text.
+
+Subsection **two**
+------------------
+
+Some list items:
+
+* First
+
+* Second
+
+* Third

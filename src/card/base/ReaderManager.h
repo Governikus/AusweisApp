@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,10 +29,11 @@ class ReaderManager
 		QThread mThread;
 		QPointer<ReaderManagerWorker> mWorker;
 		QMap<QString, ReaderInfo> mReaderInfoCache;
+		QMap<ReaderManagerPlugInType, ReaderManagerPlugInInfo> mPlugInInfoCache;
 
 	protected:
 		ReaderManager();
-		~ReaderManager();
+		~ReaderManager() override;
 
 	public:
 		/*!
@@ -40,6 +41,11 @@ class ReaderManager
 		 * The thread is started and the plug-ins are initialized, too.
 		 */
 		void init();
+
+		/*!
+		 * Resets the plugins matching the given type.
+		 */
+		void reset(ReaderManagerPlugInType pType);
 
 		/*!
 		 * Starts a scan for all device types.

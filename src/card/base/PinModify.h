@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,8 +21,8 @@ class PinModify
 		explicit PinModify(quint8 pTimeoutSeconds);
 		explicit PinModify(const QByteArray& pRemoteInputData);
 
-		quint8 getTimeoutSeconds() const;
-		QByteArray createCcid() const;
+		[[nodiscard]] quint8 getTimeoutSeconds() const;
+		[[nodiscard]] QByteArray createCcid() const;
 };
 
 } // namespace governikus

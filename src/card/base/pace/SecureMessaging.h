@@ -1,7 +1,7 @@
 /*!
  * \brief Implements TR-03110 v2 part3 --> Secure Messaging.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -34,15 +34,15 @@ class SecureMessaging final
 		CipherMac mCipherMac;
 		quint32 mSendSequenceCounter;
 
-		QByteArray padToCipherBlockSize(const QByteArray& pData) const;
-		QByteArray unpadFromCipherBlockSize(const QByteArray& pData) const;
-		QByteArray createSecuredHeader(const CommandApdu& pCommandApdu) const;
+		[[nodiscard]] QByteArray padToCipherBlockSize(const QByteArray& pData) const;
+		[[nodiscard]] QByteArray unpadFromCipherBlockSize(const QByteArray& pData) const;
+		[[nodiscard]] QByteArray createSecuredHeader(const CommandApdu& pCommandApdu) const;
 		QByteArray createMac(const QByteArray& pSecuredHeader, const QByteArray& pFormattedEncryptedData, const QByteArray& pSecuredLe);
-		int createNewLe(const QByteArray& pSecuredData, int pOldLe) const;
-		QByteArray getSendSequenceCounter() const;
+		[[nodiscard]] int createNewLe(const QByteArray& pSecuredData, int pOldLe) const;
+		[[nodiscard]] QByteArray getSendSequenceCounter() const;
 		QByteArray getEncryptedIv();
 
-		QByteArray createSecuredLe(int pLe) const;
+		[[nodiscard]] QByteArray createSecuredLe(int pLe) const;
 
 	public:
 		SecureMessaging(const QByteArray& pPaceAlgorithm, const QByteArray& pEncKey, const QByteArray& pMacKey);
@@ -51,7 +51,7 @@ class SecureMessaging final
 		/*!
 		 * Returns true, if initialization succeeded, i.e. the algorithm is known, supported and the keys have correct size.
 		 */
-		bool isInitialized() const;
+		[[nodiscard]] bool isInitialized() const;
 
 		CommandApdu encrypt(const CommandApdu& pCommandApdu);
 

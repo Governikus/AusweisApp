@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GlobalStatus.h"
@@ -325,6 +325,10 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Card_NewPin_Invalid_Length:
 			//: ERROR ALL_PLATFORMS The card reader declined the new PIN since its length was invalid.
 			return tr("The length of the new PIN is not valid.");
+
+		case Code::Card_ValidityVerificationFailed:
+			//: ERROR ALL_PLATFORMS The validity verification of the card failed.
+			return tr("The validity verification of the card failed.");
 
 		case Code::RemoteReader_CloseCode_AbnormalClose:
 			//: ERROR ALL_PLATFORMS The connection to the smartphone card reader (SaK) was lost.

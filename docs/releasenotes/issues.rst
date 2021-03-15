@@ -1,6 +1,11 @@
 Bekannte Fehler
 ===============
 
+Folgende Fehler und Einschränkungen sind zum Auslieferungszeitpunkt bekannt:
+
+Alle Plattformen
+""""""""""""""""
+
 - Eine vollständige Barrierearmut ist zum aktuellen Zeitpunkt nicht
   gegeben. Wir arbeiten kontinuierlich an einer Verbesserung.
 
@@ -10,7 +15,7 @@ Bekannte Fehler
 
 
 Windows / macOS
----------------
+"""""""""""""""
 
 .. important::
     Auf Windows wird beim Update einer Version der AusweisApp2 älter
@@ -56,15 +61,12 @@ Windows / macOS
   Version nicht automatisch übernommen.
 
 Android / iOS
--------------
+"""""""""""""
 
 - Zu Nutzungseinschränkungen einzelner Geräte beachten Sie bitte unsere Homepage
   https://www.ausweisapp.bund.de/mobile-geraete/
 
 - Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle
   auf Android und iOS.
-
-- Längere Texte können unter Android u.U. bei kleinen Bildschirmgrößen
-  abgeschnitten sein.
 
 - Unter iOS kann derzeit das Hoch- bzw. Querformat nicht geändert werden.

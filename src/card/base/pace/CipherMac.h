@@ -1,7 +1,7 @@
 /*!
  * \brief CMAC implementation to be used in PACE protocol. See TR 03110.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,7 +32,7 @@ class CipherMac final
 		/*!
 		 * Returns true, if initialization succeeded, i.e. the algorithm is known, supported and the key bytes have correct size.
 		 */
-		bool isInitialized() const;
+		[[nodiscard]] bool isInitialized() const;
 
 		/*!
 		 * \brief Generates the MAC of a message.

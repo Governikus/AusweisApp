@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtTest 1.12

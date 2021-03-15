@@ -1,7 +1,7 @@
 /*!
  * \brief MsgHandlerUnknownCommand of JSON API.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,6 +16,7 @@ class MsgHandlerUnknownCommand
 {
 	public:
 		explicit MsgHandlerUnknownCommand(const QString& pName);
+		explicit MsgHandlerUnknownCommand(const MsgCmdType& pCmdType);
 };
 
 

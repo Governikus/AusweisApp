@@ -1,7 +1,7 @@
 /*!
  * \brief Helper static methods for \ref test_MsgHandlerEnterPin, \ref test_MsgHandlerEnterCan and \ref test_MsgHandlerEnterPuk
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

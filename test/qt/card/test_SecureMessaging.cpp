@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore>
@@ -35,7 +35,7 @@ class test_SecureMessaging
 		QScopedPointer<SymmetricCipher> mCipher;
 
 
-		QByteArray concat(std::initializer_list<QByteArray> pList) const
+		[[nodiscard]] QByteArray concat(std::initializer_list<QByteArray> pList) const
 		{
 			QByteArray result;
 			for (const auto& elem : pList)

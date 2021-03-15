@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscCard.h"
@@ -296,10 +296,12 @@ PcscCard::CardResult PcscCard::transmit(const QByteArray& pSendBuffer,
 
 
 EstablishPaceChannelOutput PcscCard::establishPaceChannel(PacePasswordId pPasswordId,
+		int pPreferredPinLength,
 		const QByteArray& pChat,
 		const QByteArray& pCertificateDescription,
 		quint8 pTimeoutSeconds)
 {
+	Q_UNUSED(pPreferredPinLength)
 	Q_UNUSED(pTimeoutSeconds)
 	if (!mReader->hasFeature(FeatureID::EXECUTE_PACE))
 	{
@@ -307,11 +309,7 @@ EstablishPaceChannelOutput PcscCard::establishPaceChannel(PacePasswordId pPasswo
 	}
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::EXECUTE_PACE);
 
-	EstablishPaceChannel builder;
-	builder.setPasswordId(pPasswordId);
-	builder.setChat(pChat);
-	builder.setCertificateDescription(pCertificateDescription);
-
+	EstablishPaceChannel builder(pPasswordId, pChat, pCertificateDescription);
 	auto [returnCode, controlRes] = control(cmdID, builder.createCommandData());
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
@@ -320,7 +318,10 @@ EstablishPaceChannelOutput PcscCard::establishPaceChannel(PacePasswordId pPasswo
 	}
 
 	EstablishPaceChannelOutput output;
-	output.parse(controlRes, pPasswordId);
+	if (!output.parse(controlRes))
+	{
+		qCWarning(card_pcsc) << "Parsing of EstablishPaceChannelOutput failed";
+	}
 	return output;
 }
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AutoStart.h"
@@ -20,7 +20,7 @@ static NSString* autostartBundleIdentifier = @"com.governikus.AusweisApp2.Autost
 
 bool AutoStart::enabled()
 {
-	auto jobDictionaries = (NSArray*) SMCopyAllJobDictionaries(kSMDomainUserLaunchd);
+	auto jobDictionaries = static_cast<NSArray*>(SMCopyAllJobDictionaries(kSMDomainUserLaunchd));
 	if (jobDictionaries == nullptr)
 	{
 		qCCritical(settings) << "Getting autostart entries failed";
@@ -53,7 +53,7 @@ bool AutoStart::isSetByAdmin()
 
 void AutoStart::set(bool pEnabled)
 {
-	if (SMLoginItemSetEnabled((CFStringRef) autostartBundleIdentifier, pEnabled))
+	if (SMLoginItemSetEnabled(static_cast<CFStringRef>(autostartBundleIdentifier), pEnabled))
 	{
 		qCDebug(settings) << "Setting autostart to" << pEnabled << "succeeded";
 	}

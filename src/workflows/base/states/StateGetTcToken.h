@@ -1,7 +1,7 @@
 /*!
  * \brief State machine state: Get TCToken.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,7 +31,7 @@ class StateGetTcToken
 	void parseTcToken();
 	void sendRequest(const QUrl& pUrl);
 	bool isValidRedirectUrl(const QUrl& pUrl);
-	virtual void run() override;
+	void run() override;
 
 	explicit StateGetTcToken(const QSharedPointer<WorkflowContext>& pContext);
 
@@ -39,6 +39,9 @@ class StateGetTcToken
 		void onNetworkReply();
 		void onSslHandshakeDone();
 		void onSslErrors(const QList<QSslError>& pErrors);
+
+	public:
+		void onExit(QEvent* pEvent) override;
 };
 
 } // namespace governikus

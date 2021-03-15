@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SecureMessagingResponse.h"
@@ -52,13 +52,19 @@ SecureMessagingResponse::SecureMessagingResponse(const QByteArray& pBuffer)
 	ResponseApdu::setBuffer(pBuffer);
 	QByteArray data = getData();
 
+	if (data.isEmpty())
+	{
+		qCCritical(card) << "No data to decrypt";
+		return;
+	}
+
 	if (auto tmp = decodeObject<SM_ENCRYPTED_DATA>(data, false))
 	{
 		mEncryptedData = tmp;
 		QByteArray encryptedDataValue = Asn1OctetStringUtil::getValue(mEncryptedData.data());
 		if (encryptedDataValue.isEmpty() || encryptedDataValue.at(0) != 0x01)
 		{
-			qCCritical(card) << "Error on encoding encrypted data";
+			qCCritical(card) << "Error on decoding encrypted data";
 			return;
 		}
 		data = data.mid(encodeObject(mEncryptedData.data()).length());
@@ -68,7 +74,7 @@ SecureMessagingResponse::SecureMessagingResponse(const QByteArray& pBuffer)
 	mProcessingStatus = decodeObject<SM_PROCESSING_STATUS>(data);
 	if (mProcessingStatus == nullptr || mProcessingStatus->length != 2)
 	{
-		qCCritical(card) << "Error on encoding status";
+		qCCritical(card) << "Error on decoding status";
 		return;
 	}
 	data = data.mid(encodeObject(mProcessingStatus.data()).length());
@@ -77,7 +83,7 @@ SecureMessagingResponse::SecureMessagingResponse(const QByteArray& pBuffer)
 	mChecksum = decodeObject<SM_CHECKSUM>(data);
 	if (mChecksum == nullptr || mChecksum->length != 8)
 	{
-		qCCritical(card) << "Error on encoding mac";
+		qCCritical(card) << "Error on decoding mac";
 		return;
 	}
 	mInvalid = false;

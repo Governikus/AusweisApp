@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref LogModel
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogModel.h"

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -59,7 +59,9 @@ SectionPage {
 			//: LABEL DESKTOP_QML
 			qsTr("Version information"),
 			//: LABEL DESKTOP_QML
-			qsTr("Software license")
+			qsTr("Software license"),
+			//: LABEL DESKTOP_QML
+			qsTr("Release notes")
 		]
 
 		sectionDelegate: TabbedPaneDelegateOneLineText {
@@ -71,6 +73,7 @@ SectionPage {
 			Component { MoreViewDiagnosis {} }
 			Component { VersionInformation {} }
 			Component { LicenseInformation {} }
+			Component { ReleaseNotes {} }
 		}
 	}
 

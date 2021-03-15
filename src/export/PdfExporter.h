@@ -1,7 +1,7 @@
 /*!
  * \brief Tool to export data of history or selfauthentication result.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,7 +26,7 @@ class PdfExporter
 		int mColumnCount;
 		QStringList mContent;
 
-		QString getContent() const;
+		[[nodiscard]] QString getContent() const;
 
 		void checkOpenFile(bool pSuccess);
 		void initTable(int pColumnCount, const QList<int>& pWidth, const QStringList& pValues);

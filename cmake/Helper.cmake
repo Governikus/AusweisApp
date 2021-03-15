@@ -281,7 +281,7 @@ function(DIRLIST_OF_FILES _result _files)
 endfunction()
 
 
-if("${CMAKE_SYSTEM_NAME}" MATCHES "BSD")
+if("${CMAKE_SYSTEM_NAME}" MATCHES "BSD|DragonFly")
 	set(BSD true)
 endif()
 
@@ -342,6 +342,10 @@ function(FETCH_TARGET_LOCATION _destination _target)
 
 	if(NOT tmp)
 		get_target_property(tmp "${_target}" IMPORTED_LOCATION)
+	endif()
+
+	if(NOT tmp AND BUILD_TYPE STREQUAL "DEBUG")
+		get_target_property(tmp "${_target}" IMPORTED_LOCATION_RELEASE)
 	endif()
 
 	if(_PARAM_NAME)

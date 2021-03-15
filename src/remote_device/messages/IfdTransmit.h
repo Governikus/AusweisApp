@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -17,17 +17,19 @@ class IfdTransmit
 	private:
 		QString mSlotHandle;
 		QByteArray mInputApdu;
+		QString mDisplayText;
 
-		void parseCommandApdu(const QJsonValue& pEntry);
+		void parseInputApdu(const QJsonObject& pMessageObject);
 
 	public:
-		IfdTransmit(const QString& pSlotHandle, const QByteArray& pInputApdu);
+		IfdTransmit(const QString& pSlotHandle, const QByteArray& pInputApdu, const QString& pDisplayText = QString());
 		explicit IfdTransmit(const QJsonObject& pMessageObject);
-		virtual ~IfdTransmit() override = default;
+		~IfdTransmit() override = default;
 
-		const QString& getSlotHandle() const;
-		const QByteArray& getInputApdu() const;
-		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
+		[[nodiscard]] const QString& getSlotHandle() const;
+		[[nodiscard]] const QByteArray& getInputApdu() const;
+		[[nodiscard]] const QString& getDisplayText() const;
+		[[nodiscard]] QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const override;
 };
 
 

@@ -5,7 +5,7 @@
  * (The holder is equivalent to the Subject-DN, the authority reference
  * is equivalent to the Issuer-DN.)
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,22 +30,22 @@ class CVCertificateChain
 		/*!
 		 * Return the document verifier certificate.
 		 */
-		QSharedPointer<const CVCertificate> getDvCvc() const;
+		[[nodiscard]] QSharedPointer<const CVCertificate> getDvCvc() const;
 
 		/*!
 		 * Return the terminal certificate.
 		 */
-		QSharedPointer<const CVCertificate> getTerminalCvc() const;
+		[[nodiscard]] QSharedPointer<const CVCertificate> getTerminalCvc() const;
 
 		/*!
 		 * Is this a valid CVC chain, i.e. do DV and terminal CVCs exist?
 		 */
-		bool isValid() const;
+		[[nodiscard]] bool isValid() const;
 
 		/*!
 		 * Is this a CVC chain for productive usage?
 		 */
-		bool isProductive() const;
+		[[nodiscard]] bool isProductive() const;
 };
 
 } // namespace governikus

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDriverModel.h"
@@ -10,8 +10,11 @@
 #include "HelpAction.h"
 #include "LanguageLoader.h"
 #include "ReaderConfiguration.h"
-#include "ReaderDetector.h"
 #include "ReaderManager.h"
+
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+#include "ReaderDetector.h"
+#endif
 
 using namespace governikus;
 
@@ -31,8 +34,12 @@ ReaderDriverModel::ReaderDriverModel(QObject* pParent)
 	connect(readerManager, &ReaderManager::fireReaderAdded, this, &ReaderDriverModel::onUpdateContent);
 	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &ReaderDriverModel::onUpdateContent);
 	connect(Env::getSingleton<ReaderConfiguration>(), &ReaderConfiguration::fireUpdated, this, &ReaderDriverModel::onUpdateContent);
-	connect(Env::getSingleton<ReaderDetector>(), &ReaderDetector::fireReaderChangeDetected, this, &ReaderDriverModel::onUpdateContent);
 	connect(Env::getSingleton<AppSettings>(), &AppSettings::fireSettingsChanged, this, &ReaderDriverModel::onUpdateContent);
+
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+	connect(Env::getSingleton<ReaderDetector>(), &ReaderDetector::fireReaderChangeDetected, this, &ReaderDriverModel::onUpdateContent);
+#endif
+
 	onUpdateContent();
 }
 
@@ -55,6 +62,7 @@ void ReaderDriverModel::collectReaderData()
 		}
 	}
 
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 	QVector<ReaderConfigurationInfo> readersWithoutDriver;
 	const auto& attachedSupportedDevices = Env::getSingleton<ReaderDetector>()->getAttachedSupportedDevices();
 	for (const auto& info : attachedSupportedDevices)
@@ -65,6 +73,7 @@ void ReaderDriverModel::collectReaderData()
 		}
 	}
 	mConnectedReaders += readersWithoutDriver;
+#endif
 }
 
 

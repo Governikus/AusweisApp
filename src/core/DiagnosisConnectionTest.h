@@ -3,7 +3,7 @@
  * to establish a connection to a test server with and without the proxy and providing the
  * results to the DiagnosisModel.
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -63,49 +63,49 @@ class DiagnosisConnectionTest
 		DiagnosisConnectionTest();
 		void startConnectionTest();
 
-		bool getIsProxySet() const
+		[[nodiscard]] bool getIsProxySet() const
 		{
 			return mIsProxySet;
 		}
 
 
-		const QString& getProxyHostName() const
+		[[nodiscard]] const QString& getProxyHostName() const
 		{
 			return mProxyHostName;
 		}
 
 
-		const QString& getProxyPort() const
+		[[nodiscard]] const QString& getProxyPort() const
 		{
 			return mProxyPort;
 		}
 
 
-		const QString& getProxyType() const
+		[[nodiscard]] const QString& getProxyType() const
 		{
 			return mProxyType;
 		}
 
 
-		const QString& getProxyCapabilities() const
+		[[nodiscard]] const QString& getProxyCapabilities() const
 		{
 			return mProxyCapabilities;
 		}
 
 
-		bool getConnectionTestWithProxySuccessful() const
+		[[nodiscard]] bool getConnectionTestWithProxySuccessful() const
 		{
 			return mConnectionTestWithProxySuccessful;
 		}
 
 
-		bool getConnectionTestWithoutProxySuccessful() const
+		[[nodiscard]] bool getConnectionTestWithoutProxySuccessful() const
 		{
 			return mConnectionTestWithoutProxySuccessful;
 		}
 
 
-		bool getPingTestOnProxySuccessful() const
+		[[nodiscard]] bool getPingTestOnProxySuccessful() const
 		{
 			return mPingTestOnProxySuccessful;
 		}

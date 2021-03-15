@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -12,6 +12,7 @@ import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SelfAuthModel 1.0
 import Governikus.Type.ChangePinModel 1.0
+import Governikus.Type.UiModule 1.0
 
 SectionPage {
 	id: sectionPage
@@ -38,7 +39,7 @@ SectionPage {
 			title: qsTr("See my<br>personal data")
 			image: "qrc:/images/mydata.svg"
 
-			onClicked: sectionPage.nextView(SectionPage.Views.SelfAuthentication)
+			onClicked: sectionPage.nextView(UiModule.SELF_AUTHENTICATION)
 		}
 
 		GSeparator {
@@ -58,7 +59,7 @@ SectionPage {
 			title: qsTr("Provider")
 			image: "qrc:/images/provider.svg"
 
-			onClicked: sectionPage.nextView(SectionPage.Views.Provider)
+			onClicked: sectionPage.nextView(UiModule.PROVIDER)
 		}
 
 		GSeparator {
@@ -78,7 +79,7 @@ SectionPage {
 			title: qsTr("History")
 			image: "qrc:/images/history.svg"
 
-			onClicked: sectionPage.nextView(SectionPage.Views.History)
+			onClicked: sectionPage.nextView(UiModule.HISTORY)
 		}
 
 		GSeparator {
@@ -97,7 +98,7 @@ SectionPage {
 			title: qsTr("Settings")
 			image: "qrc:/images/material_settings.svg"
 
-			onClicked: sectionPage.nextView(SectionPage.Views.Settings)
+			onClicked: sectionPage.nextView(UiModule.SETTINGS)
 		}
 
 		GSeparator {
@@ -117,7 +118,7 @@ SectionPage {
 			title: qsTr("Change my<br>(Transport) PIN")
 			image: "qrc:/images/material_lock.svg"
 
-			onClicked: sectionPage.nextView(SectionPage.Views.ChangePin)
+			onClicked: sectionPage.nextView(UiModule.PINMANAGEMENT)
 		}
 
 		GSeparator {
@@ -137,7 +138,7 @@ SectionPage {
 			title: qsTr("Help")
 			image: "qrc:/images/material_help.svg"
 
-			onClicked: sectionPage.nextView(SectionPage.Views.MoreView)
+			onClicked: sectionPage.nextView(UiModule.HELP)
 		}
 	}
 }

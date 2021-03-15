@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,20 +25,20 @@ class VersionInfo
 		static VersionInfo getInstance();
 		static VersionInfo fromText(const QString& pText);
 
-		bool isNull() const;
+		[[nodiscard]] bool isNull() const;
 
-		QString getName() const;
-		QString getImplementationTitle() const;
-		QString getImplementationVendor() const;
-		QString getImplementationVersion() const;
+		[[nodiscard]] QString getName() const;
+		[[nodiscard]] QString getImplementationTitle() const;
+		[[nodiscard]] QString getImplementationVendor() const;
+		[[nodiscard]] QString getImplementationVersion() const;
 
-		QString getSpecificationTitle() const;
-		QString getSpecificationVendor() const;
-		QString getSpecificationVersion() const;
+		[[nodiscard]] QString getSpecificationTitle() const;
+		[[nodiscard]] QString getSpecificationVendor() const;
+		[[nodiscard]] QString getSpecificationVersion() const;
 
-		QJsonObject toJsonObject() const;
-		QByteArray toJson(QJsonDocument::JsonFormat pFormat = QJsonDocument::Indented) const;
-		QString toText() const;
+		[[nodiscard]] QJsonObject toJsonObject() const;
+		[[nodiscard]] QByteArray toJson(QJsonDocument::JsonFormat pFormat = QJsonDocument::Indented) const;
+		[[nodiscard]] QString toText() const;
 };
 
 

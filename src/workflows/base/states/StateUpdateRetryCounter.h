@@ -2,7 +2,7 @@
  * \brief Controller for the step that updates the retry
  *        counter of a card.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,7 +25,7 @@ class StateUpdateRetryCounter
 	friend class ::test_StateUpdateRetryCounter;
 
 	explicit StateUpdateRetryCounter(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 
 	private Q_SLOTS:
 		void onUpdateRetryCounterDone(QSharedPointer<BaseCardCommand> pCommand);

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -115,7 +115,6 @@ SectionPage {
 				function saveInput() {
 					focus = false
 					SettingsModel.serverName = text
-					text = SettingsModel.serverName
 				}
 
 				Layout.fillWidth: true
@@ -123,8 +122,7 @@ SectionPage {
 				Layout.rightMargin: Constants.component_spacing
 				Layout.bottomMargin: Constants.component_spacing / 2
 
-				Component.onCompleted: text = SettingsModel.serverName
-
+				text: SettingsModel.serverName
 				maximumLength: Constants.maximumDeviceNameLength
 				onAccepted: saveInput()
 				onFocusChanged: if (!focus) saveInput()

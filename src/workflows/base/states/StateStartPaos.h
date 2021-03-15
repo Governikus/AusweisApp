@@ -1,7 +1,7 @@
 /*!
  * \brief State machine state: Start PAOS.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,7 +21,7 @@ class StateStartPaos
 	friend class StateBuilder;
 
 	explicit StateStartPaos(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 };
 
 } // namespace governikus

@@ -118,16 +118,51 @@ Starts an authentication.
 
 The AusweisApp2 will send an :ref:`auth` message when the authentication is started.
 
+The system dialog on iOS can be customized by **handleInterrupt** and **messages**.
+This dialog will be stopped by default (true) after an :ref:`enter_pin`, :ref:`enter_can`
+and :ref:`enter_puk`. You can disable that behavior with
+**handleInterrupt**. Command :ref:`interrupt` allows to stop the dialog manually,
+if needed.
+
+
+.. versionadded:: 1.22.1
+   Parameter **handleInterrupt** and **messages** added.
+
+.. deprecated:: 1.22.1
+   Parameter **handleInterrupt** will be removed with :ref:`api_level` v2
+   and defaults to ``false``.
+
 
   - **tcTokenURL**:
     URL to the TcToken. This is equal to the desktop style activation URL.
     *(http://127.0.0.1:24727/eID-Client?tcTokenURL=)*
 
+  - **handleInterrupt**: True to automatically handle system dialog on iOS, otherwise false.
+
+  - **messages**: Optional messages for the system dialog on iOS.
+
+    - **sessionStarted**: Shown if scanning is started.
+
+    - **sessionFailed**: Shown if communication was stopped with an error.
+
+    - **sessionSucceeded**: Shown if communication was stopped successfully.
+
+    - **sessionInProgress**: Shown if communication is in progress. This message
+                             will be appended with current percentage level.
+
 .. code-block:: json
 
   {
     "cmd": "RUN_AUTH",
-    "tcTokenURL": "https://test.governikus-eid.de/Autent-DemoApplication/RequestServlet?provider=demo_epa_20&redirect=true"
+    "tcTokenURL": "https://test.governikus-eid.de/Autent-DemoApplication/RequestServlet?provider=demo_epa_20&redirect=true",
+    "handleInterrupt": true,
+    "messages":
+        {
+         "sessionStarted": "Please place your ID card on the top of the device's back side.",
+         "sessionFailed": "Scanning process failed.",
+         "sessionSucceeded": "Scanning process has been finished successfully.",
+         "sessionInProgress": "Scanning process is in progress."
+        }
   }
 
 .. note::
@@ -146,14 +181,49 @@ Starts a change PIN workflow.
 
 The AusweisApp2 will send a :ref:`change_pin` message when the workflow is started.
 
+The system dialog on iOS can be customized by **handleInterrupt** and **messages**.
+This dialog will be stopped by default (true) after an :ref:`enter_pin`, :ref:`enter_can`,
+:ref:`enter_new_pin` and :ref:`enter_puk`. You can disable that behavior with parameter
+**handleInterrupt**. Command :ref:`interrupt` allows to stop the dialog manually, if needed.
+
 
 .. versionadded:: 1.22.0
    Support of RUN_CHANGE_PIN command.
 
+.. versionadded:: 1.22.1
+   Parameter **handleInterrupt** and **messages** added.
+
+.. deprecated:: 1.22.1
+   Parameter **handleInterrupt** will be removed with :ref:`api_level` v2
+   and defaults to ``false``.
+
+
+  - **handleInterrupt**: True to automatically handle system dialog on iOS, otherwise false.
+
+  - **messages**: Optional messages for the system dialog on iOS.
+
+    - **sessionStarted**: Shown if scanning is started.
+
+    - **sessionFailed**: Shown if communication was stopped with an error.
+
+    - **sessionSucceeded**: Shown if communication was stopped successfully.
+
+    - **sessionInProgress**: Shown if communication is in progress. This message
+                             will be appended with current percentage level.
 
 .. code-block:: json
 
-  {"cmd": "RUN_CHANGE_PIN"}
+  {
+    "cmd": "RUN_CHANGE_PIN",
+    "handleInterrupt": true,
+    "messages":
+        {
+         "sessionStarted": "Please place your ID card on the top of the device's back side.",
+         "sessionFailed": "Scanning process failed.",
+         "sessionSucceeded": "Scanning process has been finished successfully.",
+         "sessionInProgress": "Scanning process is in progress."
+        }
+  }
 
 .. note::
   This command is allowed only if the AusweisApp2 has no running
@@ -295,6 +365,33 @@ only :ref:`access_rights` needs to be accepted.
   This command is allowed only if the AusweisApp2 sends an initial
   :ref:`access_rights` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
+
+
+
+
+.. _interrupt:
+
+INTERRUPT
+^^^^^^^^^
+Interrupts current system dialog on iOS.
+
+If your application provides **false** to parameter **handleInterrupt** in
+:ref:`run_auth` or :ref:`run_change_pin` and you need to request more information
+from the user, you need to interrupt the system dialog manually.
+
+This command will be used later for additional information if your
+application needs to interrupt the workflow. Currently only
+the iOS system dialog can be interrupted.
+
+
+.. code-block:: json
+
+  {"cmd": "INTERRUPT"}
+
+.. note::
+  This command is allowed only if the AusweisApp2 sends a :ref:`enter_pin`,
+  :ref:`enter_can`, :ref:`enter_new_pin` or :ref:`enter_puk` message.
+  Otherwise you will get a :ref:`bad_state` message as an answer.
 
 
 

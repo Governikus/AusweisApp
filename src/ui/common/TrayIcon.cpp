@@ -1,8 +1,10 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TrayIcon.h"
+
+#include "AppSettings.h"
 
 #include <QCoreApplication>
 
@@ -65,7 +67,40 @@ void TrayIcon::create()
 		return;
 	}
 
-	const auto trayIconMenu = new QMenu(nullptr);
+	mTrayIcon = new QSystemTrayIcon(mIcon);
+	connect(mTrayIcon, &QSystemTrayIcon::activated, this, &TrayIcon::onActivated);
+	connect(mTrayIcon, &QSystemTrayIcon::messageClicked, this, &TrayIcon::fireShow);
+
+	const GeneralSettings& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	connect(&generalSettings, &GeneralSettings::fireLanguageChanged, this, &TrayIcon::updateMenu);
+
+	updateMenu();
+
+	mTrayIcon->setToolTip(QCoreApplication::applicationName());
+
+	mTrayIcon->show();
+	//: LABEL DESKTOP
+	showMessage(QCoreApplication::applicationName(), tr("Application was started."));
+#endif
+}
+
+
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+void TrayIcon::updateMenu()
+{
+	if (!mTrayIcon)
+	{
+		return;
+	}
+
+	QMenu* trayIconMenu = mTrayIcon->contextMenu();
+	if (!trayIconMenu)
+	{
+		trayIconMenu = new QMenu(nullptr);
+		mTrayIcon->setContextMenu(trayIconMenu);
+	}
+
+	trayIconMenu->clear();
 
 #if defined(Q_OS_MACOS)
 	//: LABEL DESKTOP
@@ -79,20 +114,10 @@ void TrayIcon::create()
 	const auto quitAction = new QAction(tr("Quit AusweisApp2"), trayIconMenu);
 	connect(quitAction, &QAction::triggered, this, &TrayIcon::fireQuit);
 	trayIconMenu->addAction(quitAction);
-
-	mTrayIcon = new QSystemTrayIcon(mIcon);
-	connect(mTrayIcon, &QSystemTrayIcon::activated, this, &TrayIcon::onActivated);
-	connect(mTrayIcon, &QSystemTrayIcon::messageClicked, this, &TrayIcon::fireShow);
-
-	mTrayIcon->setContextMenu(trayIconMenu);
-	mTrayIcon->setToolTip(QCoreApplication::applicationName());
-
-	mTrayIcon->show();
-	//: LABEL DESKTOP
-	showMessage(QCoreApplication::applicationName(), tr("Application was started."));
-#endif
 }
 
+
+#endif
 
 void TrayIcon::shutdown()
 {

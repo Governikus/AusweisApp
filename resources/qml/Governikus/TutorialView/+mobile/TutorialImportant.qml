@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -9,7 +9,7 @@ import Governikus.Style 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.ChangePinModel 1.0
-
+import Governikus.Type.UiModule 1.0
 
 TutorialContent {
 	id: baseItem
@@ -129,7 +129,7 @@ TutorialContent {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
 			//: LABEL ANDROID IOS
-			text: qsTr("Select for this purpose the menu item \"Change my (Transport) PIN\" from the start page. Later you can also change your six-digit PIN here.")
+			text: qsTr("Select for this purpose the menu item \"Change my (Transport) PIN\" from the start page. Later you can also change your six-digit PIN here")
 			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
 		}
@@ -158,8 +158,8 @@ TutorialContent {
 			text: qsTr("Change my (Transport) PIN")
 			onClicked: {
 				SettingsModel.transportPinReminder = false
-				SettingsModel.showSetupAssistantOnStart = false
-				navBar.showPin()
+				SettingsModel.startupModule = UiModule.DEFAULT
+				navBar.show(UiModule.PINMANAGEMENT)
 			}
 		}
 	}

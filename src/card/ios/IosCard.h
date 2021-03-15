@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref Card for iOS.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,17 +26,17 @@ class IosCard
 
 	public:
 		explicit IosCard(IosCardPointer* pTag);
-		virtual ~IosCard() override;
+		~IosCard() override;
 
-		bool isValid() const;
+		[[nodiscard]] bool isValid() const;
 		void invalidateTarget();
 
-		virtual CardReturnCode connect() override;
-		virtual CardReturnCode disconnect() override;
-		virtual bool isConnected() override;
-		virtual void setProgressMessage(const QString& pMessage, int pProgress = -1) override;
+		CardReturnCode connect() override;
+		CardReturnCode disconnect() override;
+		bool isConnected() override;
+		void setProgressMessage(const QString& pMessage, int pProgress = -1) override;
 
-		virtual ResponseApduResult transmit(const CommandApdu& pCmd) override;
+		ResponseApduResult transmit(const CommandApdu& pCmd) override;
 };
 
 } // namespace governikus

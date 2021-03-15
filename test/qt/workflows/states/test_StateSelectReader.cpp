@@ -1,7 +1,7 @@
 /*!
  * \brief Tests the StateSelectReader
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateSelectReader.h"
@@ -39,6 +39,7 @@ class test_StateSelectReader
 		{
 			mContext.reset(new WorkflowContext());
 			mState.reset(StateBuilder::createState<StateSelectReader>(mContext));
+			mState->onEntry(nullptr);
 		}
 
 
@@ -53,20 +54,17 @@ class test_StateSelectReader
 		{
 			mContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::UNKNOWN, ReaderManagerPlugInType::REMOTE});
 			mContext->setStateApproved();
-			mState->onStateApprovedChanged();
 			const auto readerManager = Env::getSingleton<ReaderManager>();
 
 			QTest::ignoreMessage(QtDebugMsg, "No selectable reader detected");
 			Q_EMIT readerManager->fireReaderAdded(ReaderInfo());
+			QCoreApplication::processEvents();
 		}
 
 
-		void test_OnEntry()
+		void test_fireReaderPlugInTypesChanged()
 		{
 			QSignalSpy spyRetry(mState.data(), &StateSelectReader::fireRetry);
-
-			mState->onEntry(nullptr);
-
 			Q_EMIT mContext->fireReaderPlugInTypesChanged();
 			QCOMPARE(spyRetry.count(), 1);
 		}

@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref ReaderManagerPlugIn for NFC on Android.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,7 +33,7 @@ class NfcReaderManagerPlugIn
 		NfcReaderManagerPlugIn();
 		~NfcReaderManagerPlugIn() override;
 
-		QList<Reader*> getReaders() const override;
+		[[nodiscard]] QList<Reader*> getReaders() const override;
 
 		void init() override;
 		void shutdown() override;

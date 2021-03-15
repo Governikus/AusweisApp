@@ -4,7 +4,7 @@
  * This is not integrated into AppSettings to avoid
  * circular dependency because settings can use this, too.
  *
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -34,8 +34,31 @@ class VolatileSettings
 
 	friend class Env;
 
+	public:
+		class Messages
+		{
+			// See JSON-SDK MsgHandlerAuth and MsgHandlerChangePin
+			QString mSessionStarted;
+			QString mSessionFailed;
+			QString mSessionSucceeded;
+			QString mSessionInProgress;
+
+			public:
+				Messages(const QString& pSessionStarted = QString(), const QString& pSessionFailed = QString(),
+						const QString& mSessionSucceeded = QString(), const QString& pSessionInProgress = QString());
+
+				[[nodiscard]] QString getSessionStarted() const;
+				[[nodiscard]] QString getSessionFailed() const;
+				[[nodiscard]] QString getSessionSucceeded() const;
+				[[nodiscard]] QString getSessionInProgress() const;
+		};
+
 	private:
+		static constexpr bool cHandleInterruptDefault = true;
+
 		bool mUsedAsSdk;
+		bool mHandleInterrupt;
+		Messages mMessages;
 
 	protected:
 		VolatileSettings();
@@ -43,8 +66,14 @@ class VolatileSettings
 		static VolatileSettings& getInstance();
 
 	public:
-		bool isUsedAsSDK() const;
+		[[nodiscard]] bool isUsedAsSDK() const;
 		void setUsedAsSDK(bool pSdk);
+
+		[[nodiscard]] bool handleInterrupt() const;
+		void setHandleInterrupt(bool pScan = cHandleInterruptDefault);
+
+		void setMessages(const Messages& pMessages = Messages());
+		[[nodiscard]] const Messages& getMessages() const;
 };
 
 

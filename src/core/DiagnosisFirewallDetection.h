@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,13 +25,13 @@ class FirewallProfile
 	public:
 		FirewallProfile(const QString& pName, bool pEnabled);
 
-		const QString& getName() const
+		[[nodiscard]] const QString& getName() const
 		{
 			return mName;
 		}
 
 
-		bool getEnabled() const
+		[[nodiscard]] bool getEnabled() const
 		{
 			return mEnabled;
 		}
@@ -49,19 +49,19 @@ class FirewallSoftware
 	public:
 		FirewallSoftware(const QString& pName, bool pEnabled, bool pUpToDate);
 
-		const QString& getName() const
+		[[nodiscard]] const QString& getName() const
 		{
 			return mName;
 		}
 
 
-		bool getEnabled() const
+		[[nodiscard]] bool getEnabled() const
 		{
 			return mEnabled;
 		}
 
 
-		bool getUpToDate() const
+		[[nodiscard]] bool getUpToDate() const
 		{
 			return mUpToDate;
 		}
@@ -110,37 +110,37 @@ class DiagnosisFirewallDetection
 		DiagnosisFirewallDetection();
 		void startDetection();
 
-		bool getFirstRuleExists() const
+		[[nodiscard]] bool getFirstRuleExists() const
 		{
 			return mFirstFirewallRuleExists;
 		}
 
 
-		bool getFirstRuleEnabled() const
+		[[nodiscard]] bool getFirstRuleEnabled() const
 		{
 			return mFirstFirewallRuleEnabled;
 		}
 
 
-		bool getSecondRuleExists() const
+		[[nodiscard]] bool getSecondRuleExists() const
 		{
 			return mSecondFirewallRuleExists;
 		}
 
 
-		bool getSecondRuleEnabled() const
+		[[nodiscard]] bool getSecondRuleEnabled() const
 		{
 			return mSecondFirewallRuleEnabled;
 		}
 
 
-		const QVector<QSharedPointer<FirewallProfile>>& getFirewallProfiles() const
+		[[nodiscard]] const QVector<QSharedPointer<FirewallProfile>>& getFirewallProfiles() const
 		{
 			return mFirewallProfiles;
 		}
 
 
-		const QVector<QSharedPointer<FirewallSoftware>>& getDetectedFirewalls() const
+		[[nodiscard]] const QVector<QSharedPointer<FirewallSoftware>>& getDetectedFirewalls() const
 		{
 			return mDetectedFirewalls;
 		}

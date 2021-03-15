@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AusweisApp2_p.h"
@@ -61,10 +61,16 @@ Q_DECL_EXPORT void ausweisapp2_join_thread_internal()
 		if (cThread.get_id() == std::this_thread::get_id())
 		{
 			// User called ausweisapp2_shutdown() in AusweisApp2Callback
+			std::cout << "Cannot join thread of AusweisApp2 to avoid deadlock. Do not call ausweisapp2_shutdown() inside the callback if blocking is required!" << std::endl;
 			return;
 		}
 
+		std::cout << "Join thread of AusweisApp2..." << std::endl;
 		cThread.join();
+	}
+	else
+	{
+		std::cout << "Thread of AusweisApp2 is not joinable" << std::endl;
 	}
 }
 

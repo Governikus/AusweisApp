@@ -1,7 +1,7 @@
 /*!
  * \brief Provide a HTTP server.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,10 +32,10 @@ class HttpServer
 		static quint16 cPort;
 
 		explicit HttpServer(quint16 pPort = HttpServer::cPort);
-		virtual ~HttpServer();
+		~HttpServer() override;
 
-		bool isListening() const;
-		quint16 getServerPort() const;
+		[[nodiscard]] bool isListening() const;
+		[[nodiscard]] quint16 getServerPort() const;
 
 	private Q_SLOTS:
 		void onNewConnection();

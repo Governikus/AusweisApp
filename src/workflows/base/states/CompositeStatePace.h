@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,7 +22,7 @@ class CompositeStatePace
 
 	public:
 		explicit CompositeStatePace(const QSharedPointer<WorkflowContext>& pContext);
-		virtual ~CompositeStatePace() = default;
+		~CompositeStatePace() override = default;
 
 	Q_SIGNALS:
 		void firePaceChannelEstablished();

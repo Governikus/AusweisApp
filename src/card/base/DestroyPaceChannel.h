@@ -1,7 +1,7 @@
 /*!
  * \brief Data object for creation of card command DestroyPACEChannel
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,12 +20,12 @@ class DestroyPaceChannelBuilder
 		/**
 		 * Defined in pcsc10_v2.02.08_amd1.1
 		 */
-		QByteArray createCommandData() const;
+		[[nodiscard]] QByteArray createCommandData() const;
 
 		/**
 		 * Defined in BSI-TR-03119_V1_pdf
 		 */
-		CommandApdu createCommandDataCcid() const;
+		[[nodiscard]] CommandApdu createCommandDataCcid() const;
 };
 
 

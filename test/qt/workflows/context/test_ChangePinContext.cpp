@@ -1,7 +1,7 @@
 /*!
  * \brief Test for \ref ChangePinContext.
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "context/ChangePinContext.h"
@@ -66,15 +66,15 @@ class test_ChangePinContext
 		{
 			{
 				ChangePinContext context;
-				QVERIFY(!context.requestTransportPin());
+				QVERIFY(!context.isRequestTransportPin());
 			}
 			{
 				ChangePinContext context(false);
-				QVERIFY(!context.requestTransportPin());
+				QVERIFY(!context.isRequestTransportPin());
 			}
 			{
 				ChangePinContext context(true);
-				QVERIFY(context.requestTransportPin());
+				QVERIFY(context.isRequestTransportPin());
 			}
 		}
 

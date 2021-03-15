@@ -1,7 +1,7 @@
 /*!
  * \brief Context of JSON API.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,11 +25,11 @@ class MsgContext
 		MsgContext();
 
 		void setApiLevel(MsgLevel pApiLevel);
-		MsgLevel getApiLevel() const;
+		[[nodiscard]] MsgLevel getApiLevel() const;
 
-		MsgType getLastStateMsg() const;
+		[[nodiscard]] MsgType getLastStateMsg() const;
 
-		bool isActiveWorkflow() const;
+		[[nodiscard]] bool isActiveWorkflow() const;
 
 		template<typename T = WorkflowContext>
 		QSharedPointer<const T> getContext() const

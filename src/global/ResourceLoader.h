@@ -1,7 +1,7 @@
 /*
  * \brief Handler to load and manage resources and resource files.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,7 +27,7 @@ class ResourceLoader
 		static ResourceLoader& getInstance();
 		void init();
 		void shutdown();
-		bool isLoaded() const;
+		[[nodiscard]] bool isLoaded() const;
 };
 
 } // namespace governikus

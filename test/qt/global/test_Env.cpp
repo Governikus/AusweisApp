@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref Env
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -10,7 +10,7 @@
 #include "NetworkManager.h"
 
 #include <QScopedPointer>
-#include <QtConcurrent/QtConcurrentRun>
+#include <QtConcurrent>
 #include <QtTest>
 
 using namespace governikus;
@@ -51,7 +51,7 @@ class AbstractTestInstanceImpl
 	Q_GADGET
 
 	public:
-		virtual QString dummy() override
+		QString dummy() override
 		{
 			return QStringLiteral("impl");
 		}
@@ -65,7 +65,7 @@ class TestAbstractQObjectSingleton
 	Q_OBJECT
 
 	public:
-		virtual ~TestAbstractQObjectSingleton()
+		~TestAbstractQObjectSingleton() override
 		{
 		}
 
@@ -79,7 +79,7 @@ class TestAbstractQObjectSingletonImpl
 	Q_OBJECT
 
 	public:
-		virtual QString dummy() override
+		QString dummy() override
 		{
 			return QStringLiteral("impl");
 		}
@@ -94,7 +94,7 @@ class MockedAbstractTestInstance
 	Q_GADGET
 
 	public:
-		virtual QString dummy() override
+		QString dummy() override
 		{
 			return QStringLiteral("mocked");
 		}
@@ -132,7 +132,7 @@ class TestMockedInstance
 	: public TestInstance
 {
 	public:
-		virtual QString something() override
+		QString something() override
 		{
 			return QStringLiteral("mocked");
 		}
@@ -160,7 +160,7 @@ class TestMockedSharedInstance
 	Q_OBJECT
 
 	public:
-		virtual QString something() override
+		QString something() override
 		{
 			return QStringLiteral("mocked");
 		}
@@ -183,7 +183,7 @@ class TestUnmanagedInstance
 	Q_GADGET
 
 	public:
-		virtual QString something() override
+		QString something() override
 		{
 			return QStringLiteral("TestUnmanagedInstance");
 		}
@@ -295,7 +295,7 @@ template<> AbstractTestInstance* createNewObject<AbstractTestInstance*, QString>
 			{
 			}
 
-			virtual QString dummy() override
+			QString dummy() override
 			{
 				return mDummy;
 			}
@@ -453,7 +453,7 @@ class test_Env
 						class tmp
 							: public AbstractTestInstanceImpl
 						{
-							virtual QString dummy() override
+							QString dummy() override
 							{
 								return QStringLiteral("lambda");
 							}
@@ -495,7 +495,7 @@ class test_Env
 								{
 								}
 
-								virtual QString dummy() override
+								QString dummy() override
 								{
 									return mDummy;
 								}
@@ -510,7 +510,7 @@ class test_Env
 							: public AbstractTestPodInstance
 						{
 							public:
-								virtual QString dummy() override
+								QString dummy() override
 								{
 									return QStringLiteral("default");
 								}

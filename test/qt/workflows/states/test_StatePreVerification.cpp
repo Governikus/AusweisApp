@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref StatePreVerification
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreVerification.h"
@@ -39,7 +39,7 @@ class test_StatePreVerification
 
 			mState.reset(new StatePreVerification(mAuthContext));
 			mState->setStateName("StatePreVerification");
-			connect(this, &test_StatePreVerification::fireStateStart, mState.data(), &AbstractState::onEntry, Qt::ConnectionType::DirectConnection);
+			mState->onEntry(nullptr);
 		}
 
 
@@ -76,11 +76,10 @@ class test_StatePreVerification
 
 			QSignalSpy spyContinue(mState.data(), &StatePreVerification::fireContinue);
 			QSignalSpy spyAbort(mState.data(), &StatePreVerification::fireAbort);
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spyContinue.count(), isValid ? 1 : 0);
-			QCOMPARE(spyAbort.count(), isValid ? 0 : 1);
+			QTRY_COMPARE(spyContinue.count(), isValid ? 1 : 0); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(spyAbort.count(), isValid ? 0 : 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -89,10 +88,9 @@ class test_StatePreVerification
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2020, 06, 22));
 
 			QSignalSpy spy(mState.data(), &StatePreVerification::fireAbort);
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -101,10 +99,9 @@ class test_StatePreVerification
 			const_cast<QVector<QSharedPointer<const CVCertificate> >*>(&mState->mTrustedCvcas)->clear();
 
 			QSignalSpy spy(mState.data(), &StatePreVerification::fireAbort);
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -118,13 +115,12 @@ class test_StatePreVerification
 			const BIGNUM* signaturePart = nullptr;
 			ECDSA_SIG_get0(signature, &signaturePart, nullptr);
 #endif
-			BN_pseudo_rand(const_cast<BIGNUM*>(signaturePart), BN_num_bits(signaturePart), 0, 0);
+			BN_rand(const_cast<BIGNUM*>(signaturePart), BN_num_bits(signaturePart), 0, 0);
 
 			QSignalSpy spy(mState.data(), &StatePreVerification::fireAbort);
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -133,10 +129,9 @@ class test_StatePreVerification
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2020, 04, 25));
 
 			QSignalSpy spy(mState.data(), &StatePreVerification::fireAbort);
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -145,10 +140,9 @@ class test_StatePreVerification
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2020, 05, 25));
 
 			QSignalSpy spy(mState.data(), &StatePreVerification::fireContinue);
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -186,10 +180,9 @@ class test_StatePreVerification
 			QCOMPARE(mState->mTrustedCvcas.size(), expectedCvcaSize - 2);
 
 			QSignalSpy spy(mState.data(), &StatePreVerification::fireContinue);
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(settings.getLinkCertificates().size(), 2);
 		}
 

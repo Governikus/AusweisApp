@@ -92,8 +92,8 @@ endif()
 set(QT 5.15.2)
 set(QT_HASH 3a530d1b243b5dec00bc54937455471aaa3e56849d2593edb8ded07228202240)
 
-set(OPENSSL 1.1.1h)
-set(OPENSSL_HASH 5c9ca8774bd7b03e5784f26ae9e9e6d749c9da2438545077e6b3d755a06595d9)
+set(OPENSSL 1.1.1j)
+set(OPENSSL_HASH aaf2fcb575cdf6491b98ab4829abf78a3dec8402b8b81efc8f23c00d443981bf)
 
 ################################## Files
 set(QT_FILE qt-everywhere-src-${QT}.tar.xz)
@@ -110,7 +110,8 @@ string(REPLACE "." ";" QT_VERSION_LIST ${QT})
 list(GET QT_VERSION_LIST 0 QT_MAJOR_VERSION)
 list(GET QT_VERSION_LIST 1 QT_MINOR_VERSION)
 set(QT_SUBVERSION ${QT_MAJOR_VERSION}.${QT_MINOR_VERSION})
-set(QT_URL https://download.qt.io/${QT_DEST_DIR}/qt/${QT_SUBVERSION}/${QT}/single/${QT_FILE})
+list(APPEND QT_URLS https://download.qt.io/${QT_DEST_DIR}/qt/${QT_SUBVERSION}/${QT}/single/${QT_FILE})
+list(APPEND QT_URLS https://ftp.fau.de/qtproject/${QT_DEST_DIR}/qt/${QT_SUBVERSION}/${QT}/single/${QT_FILE})
 
 set(OPENSSL_SOURCE https://www.openssl.org/source)
 if("${OPENSSL}" MATCHES "SNAP")
@@ -159,7 +160,11 @@ elseif(APPLE)
 	set(OPENSSL_ARCH darwin64-x86_64-cc)
 	set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mmacosx-version-min=10.13)
 elseif(MINGW)
-	set(OPENSSL_ARCH mingw)
+	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+		set(OPENSSL_ARCH mingw64)
+	else()
+		set(OPENSSL_ARCH mingw)
+	endif()
 
 	if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 		set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} --cross-compile-prefix=${CROSS_PREFIX})
@@ -369,7 +374,7 @@ endif()
 
 ExternalProject_Add(qt
 	DEPENDS openssl
-	URL ${QT_URL}
+	URL ${QT_URLS}
 	URL_HASH SHA256=${QT_HASH}
 	DOWNLOAD_DIR ${PACKAGES_DIR}
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,9 +18,9 @@ class Apdu
 		~Apdu() = default;
 
 	public:
-		const QByteArray& getBuffer() const;
-		int length() const;
-		bool isEmpty() const;
+		[[nodiscard]] const QByteArray& getBuffer() const;
+		[[nodiscard]] int length() const;
+		[[nodiscard]] bool isEmpty() const;
 };
 
 

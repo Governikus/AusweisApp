@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/CipherMac.h"
@@ -70,7 +70,7 @@ CipherMac::CipherMac(const QByteArray& pPaceAlgorithm, const QByteArray& pKeyByt
 		return;
 	}
 
-	if (EVP_PKEY_CTX_ctrl(ctx.data(), -1, EVP_PKEY_OP_KEYGEN, EVP_PKEY_CTRL_SET_MAC_KEY, pKeyBytes.size(), pKeyBytes.data()) <= 0)
+	if (EVP_PKEY_CTX_ctrl(ctx.data(), -1, EVP_PKEY_OP_KEYGEN, EVP_PKEY_CTRL_SET_MAC_KEY, pKeyBytes.size(), const_cast<char*>(pKeyBytes.data())) <= 0)
 	{
 		qCCritical(card) << "Cannot set key";
 		return;

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \transmit
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/retrieve/Transmit.h"

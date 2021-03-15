@@ -16,24 +16,40 @@ try:
             super(PatchHelper, self).__init__()
             parser = self.create_arg_parser([])
             self.options = parser.parse_args([])
-            self.root = None
+            self._api_root = None
             if self.options.server is None:
                 self.options.server = os.environ.get('REVIEWBOARD_SERVER')
+
+            # RBTools >= 2.0
+            self.v1 = not hasattr(self, 'get_patches')
 
         def download(self, request_id, diff_rev=None):
             if request_id is None:
                 print('ID of review request cannot be undefined')
                 return None
 
-            if self.root is None:
+            if self._api_root is None:
                 if self.options.server is None:
                     print('Cannot find Review Board! Provide .reviewboardrc?')
                     return None
-                _, self.root = self.get_api(self.options.server)
+                _, self._api_root = self.get_api(self.options.server)
+
+                if not self.v1:
+                    _, self._tool = self.initialize_scm_tool(
+                        require_repository_info=False
+                    )
+                    self.setup_tool(self._tool, api_root=self._api_root)
 
             print('Download patch revision {} '
                   'of review request {}'.format(diff_rev, request_id))
-            diff, _, _ = self.get_patch(request_id, self.root, diff_rev)
+
+            if self.v1:
+                diff, _, _ = self.get_patch(request_id, self._api_root,
+                                            diff_rev)
+            else:
+                self._review_request_id = request_id
+                diff = self.get_patches(diff_rev, squashed=True)[0]['diff']
+
             return diff
 
         def save(self, file, request_id=None, diff_rev=None):
@@ -56,10 +72,6 @@ except Exception:
 
 
 def main():
-    if 'BUILD_URL' not in os.environ:
-        print('Warning: This script should be called on jenkins only')
-        return -1
-
     if len(sys.argv) > 2:
         print('Unknown parameter: {}'.format(sys.argv))
         return -1
@@ -73,6 +85,10 @@ def main():
         if not os.path.isfile(patch):
             print('Patch file "{}" does not exists'.format(patch))
             return -1
+
+    if 'BUILD_URL' not in os.environ:
+        print('Warning: This script should be called on jenkins only')
+        return -1
 
     cfg = ['extensions.hgext.purge=',
            'extensions.hgext.strip=',

@@ -1,8 +1,10 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Card.h"
+
+#include "VolatileSettings.h"
 
 #include <QLoggingCategory>
 
@@ -23,9 +25,10 @@ void Card::setProgressMessage(const QString& pMessage, int pProgress)
 }
 
 
-EstablishPaceChannelOutput Card::establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds)
+EstablishPaceChannelOutput Card::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds)
 {
 	Q_UNUSED(pPasswordId)
+	Q_UNUSED(pPreferredPinLength)
 	Q_UNUSED(pChat)
 	Q_UNUSED(pCertificateDescription)
 	Q_UNUSED(pTimeoutSeconds)
@@ -47,4 +50,25 @@ ResponseApduResult Card::setEidPin(quint8 pTimeoutSeconds)
 	qCWarning(card) << "Setting eID PIN is not supported";
 
 	return {CardReturnCode::COMMAND_FAILED};
+}
+
+
+QString Card::generateProgressMessage(const QString& pMessage, int pProgress)
+{
+	const bool usedAsSdk = Env::getSingleton<VolatileSettings>()->isUsedAsSDK();
+
+	QString message = usedAsSdk
+			? Env::getSingleton<VolatileSettings>()->getMessages().getSessionInProgress()
+			: pMessage;
+
+	if (pProgress != -1 || usedAsSdk)
+	{
+		if (!message.isEmpty())
+		{
+			message += QLatin1Char('\n');
+		}
+		message += QStringLiteral("%1 %").arg(pProgress > 0 ? pProgress : 0);
+	}
+
+	return message;
 }

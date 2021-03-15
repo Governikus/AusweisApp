@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -52,14 +52,14 @@ using EcdsaPublicKey = struct ecdsapublickey_st
 	static QSharedPointer<ecdsapublickey_st> decode(const QByteArray& pBytes);
 	QByteArray encode();
 
-	QByteArray getPublicKeyOid() const;
+	[[nodiscard]] QByteArray getPublicKeyOid() const;
 
 	/**
 	 * Returns the raw bytes of the OID value, i.e. not the tag and not the length structure, but the value bytes.
 	 */
-	QByteArray getPublicKeyOidValueBytes() const;
-	QByteArray getUncompressedPublicPoint() const;
-	const EC_KEY* getEcKey() const;
+	[[nodiscard]] QByteArray getPublicKeyOidValueBytes() const;
+	[[nodiscard]] QByteArray getUncompressedPublicPoint() const;
+	[[nodiscard]] const EC_KEY* getEcKey() const;
 
 	private:
 		void initEcKey();

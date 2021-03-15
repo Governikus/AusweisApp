@@ -13,6 +13,7 @@ add_subdirectory(base)
 
 if(DESKTOP)
 	add_subdirectory(pcsc)
+	add_subdirectory(drivers)
 endif()
 
 if(TARGET ${Qt}::Nfc)
@@ -22,5 +23,3 @@ endif()
 if(IOS)
 	add_subdirectory(ios)
 endif()
-
-add_subdirectory(drivers)

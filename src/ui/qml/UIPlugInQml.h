@@ -1,7 +1,7 @@
 /*!
  * \brief UIPlugIn implementation of QML.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -62,7 +62,7 @@ class UIPlugInQml
 
 	public:
 		UIPlugInQml();
-		virtual ~UIPlugInQml() override = default;
+		~UIPlugInQml() override = default;
 
 		static void registerQmlTypes();
 
@@ -89,17 +89,17 @@ class UIPlugInQml
 
 	private Q_SLOTS:
 		void show();
-		virtual void doShutdown() override;
-		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
-		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
-		virtual void onApplicationInitialized() override;
-		virtual void onApplicationStarted() override;
-		virtual void onShowUi(UiModule pModule) override;
-		virtual void onHideUi() override;
-		virtual void onTranslationChanged() override;
-		virtual void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator) override;
-		virtual void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted) override;
-		virtual void onUiDominationReleased() override;
+		void doShutdown() override;
+		void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
+		void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void onApplicationInitialized() override;
+		void onApplicationStarted() override;
+		void onShowUi(UiModule pModule) override;
+		void onHideUi() override;
+		void onTranslationChanged() override;
+		void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator) override;
+		void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted) override;
+		void onUiDominationReleased() override;
 		void onShowUserInformation(const QString& pMessage);
 		void onUpdateScheduled();
 		void onUpdateAvailable(bool pUpdateAvailable, const GlobalStatus& pStatus);

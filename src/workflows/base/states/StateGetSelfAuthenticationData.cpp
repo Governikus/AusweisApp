@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetSelfAuthenticationData.h"
@@ -56,6 +56,17 @@ void StateGetSelfAuthenticationData::onSslHandshakeDone()
 	{
 		// checkAndSaveCertificate already set the error
 		mReply->abort();
+	}
+}
+
+
+void StateGetSelfAuthenticationData::onExit(QEvent* pEvent)
+{
+	AbstractState::onExit(pEvent);
+
+	if (!mReply.isNull())
+	{
+		mReply.reset();
 	}
 }
 
@@ -120,7 +131,9 @@ void StateGetSelfAuthenticationData::onSslErrors(const QList<QSslError>& pErrors
 
 void StateGetSelfAuthenticationData::onNetworkReply()
 {
+	qCDebug(network) << "Received SelfAuthData";
 	const auto statusCode = NetworkManager::getLoggedStatusCode(mReply, spawnMessageLogger(network));
+
 	if (statusCode == HTTP_STATUS_OK)
 	{
 		const SelfAuthenticationData data(mReply->readAll());

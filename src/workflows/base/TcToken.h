@@ -1,7 +1,7 @@
 /*!
  * \brief Parses TCTokens from XML data and provides its content.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,15 +29,15 @@ class TcToken
 
 		Q_DISABLE_COPY(TcToken)
 		void parse(const QByteArray& pData);
-		bool valuesAreSchemaConform(const QString& pBinding,
+		[[nodiscard]] bool valuesAreSchemaConform(const QString& pBinding,
 				const QString& pPathSecurityProtocol,
 				const QByteArray& pPsk,
 				const QByteArray& pSessionIdentifier,
 				const QString& pServerAddress,
 				const QString& pCommunicationErrorAddress,
 				const QString& pRefreshAddress) const;
-		bool isAnyUri(const QString& pCandidate) const;
-		bool isHexBinary(const QString& pCandidate) const;
+		[[nodiscard]] bool isAnyUri(const QString& pCandidate) const;
+		[[nodiscard]] bool isHexBinary(const QString& pCandidate) const;
 		QString readElementValue(QXmlStreamReader& pReader);
 
 	public:
@@ -47,17 +47,17 @@ class TcToken
 		/**
 		 * Check if parsing of given data was successful.
 		 */
-		bool isValid() const;
+		[[nodiscard]] bool isValid() const;
 
-		const QString& getBinding() const;
-		const QByteArray& getSessionIdentifier() const;
-		const QUrl& getServerAddress() const;
-		const QUrl& getRefreshAddress() const;
-		const QUrl& getCommunicationErrorAddress() const;
-		bool usePsk() const;
-		const QByteArray& getPsk() const;
+		[[nodiscard]] const QString& getBinding() const;
+		[[nodiscard]] const QByteArray& getSessionIdentifier() const;
+		[[nodiscard]] const QUrl& getServerAddress() const;
+		[[nodiscard]] const QUrl& getRefreshAddress() const;
+		[[nodiscard]] const QUrl& getCommunicationErrorAddress() const;
+		[[nodiscard]] bool usePsk() const;
+		[[nodiscard]] const QByteArray& getPsk() const;
 
-		bool isSchemaConform() const
+		[[nodiscard]] bool isSchemaConform() const
 		{
 			return mSchemaConform;
 		}

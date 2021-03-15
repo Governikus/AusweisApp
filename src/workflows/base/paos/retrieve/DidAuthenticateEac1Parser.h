@@ -1,7 +1,7 @@
 /*!
  * \brief Parser for the PAOS DidAuthenticateEac1 element.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,7 +21,7 @@ class DidAuthenticateEac1Parser
 		DidAuthenticateEac1Parser();
 
 	protected:
-		virtual PaosMessage* parseMessage() override;
+		PaosMessage* parseMessage() override;
 
 	private:
 		Eac1InputType parseEac1InputType();

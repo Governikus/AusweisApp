@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,11 +25,11 @@ class DeviceListener
 		int mFileDescriptor;
 #endif
 
-		virtual void run() override;
+		void run() override;
 
 	public:
 		DeviceListener();
-		virtual ~DeviceListener() override;
+		~DeviceListener() override;
 
 	Q_SIGNALS:
 		void fireDeviceChangeDetected();

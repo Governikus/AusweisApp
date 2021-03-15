@@ -1,9 +1,10 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
+#include "EstablishPaceChannel.h"
 #include "RemoteMessage.h"
 
 
@@ -15,16 +16,20 @@ class IfdEstablishPaceChannel
 {
 	private:
 		QString mSlotHandle;
-		QByteArray mInputData;
+		EstablishPaceChannel mInputData;
+		int mPreferredPinLength;
+
+		void parseInputData(const QJsonObject& pMessageObject);
 
 	public:
-		IfdEstablishPaceChannel(const QString& pSlotHandle = QString(), const QByteArray& pInputData = QByteArray());
+		IfdEstablishPaceChannel(const QString& pSlotHandle, const EstablishPaceChannel& pInputData, int pPreferredPinLength);
 		explicit IfdEstablishPaceChannel(const QJsonObject& pMessageObject);
-		virtual ~IfdEstablishPaceChannel() override = default;
+		~IfdEstablishPaceChannel() override = default;
 
-		const QString& getSlotHandle() const;
-		const QByteArray& getInputData() const;
-		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
+		[[nodiscard]] const QString& getSlotHandle() const;
+		[[nodiscard]] const EstablishPaceChannel& getInputData() const;
+		[[nodiscard]] int getPreferredPinLength() const;
+		[[nodiscard]] QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const override;
 };
 
 

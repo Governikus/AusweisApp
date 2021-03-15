@@ -1,7 +1,7 @@
 /*!
  * \brief Base class for PAOS message parsers.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -17,7 +17,7 @@ class PaosParser
 {
 	public:
 		explicit PaosParser(const QString& pMessageName);
-		virtual ~PaosParser();
+		~PaosParser() override;
 
 		PaosMessage* parse(const QByteArray& pXmlData);
 

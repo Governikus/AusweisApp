@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,10 +21,10 @@ class IfdEstablishContextResponse
 	public:
 		IfdEstablishContextResponse(const QString& pIfdName, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		explicit IfdEstablishContextResponse(const QJsonObject& pMessageObject);
-		virtual ~IfdEstablishContextResponse() override = default;
+		~IfdEstablishContextResponse() override = default;
 
-		const QString& getIfdName() const;
-		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
+		[[nodiscard]] const QString& getIfdName() const;
+		[[nodiscard]] QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const override;
 };
 
 

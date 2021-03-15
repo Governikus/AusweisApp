@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -19,6 +19,8 @@ import android.nfc.NfcAdapter;
 import android.nfc.tech.IsoDep;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.accessibility.AccessibilityManager;
 import android.view.View;
@@ -46,6 +48,9 @@ public class MainActivity extends QtActivity
 	private NfcReaderMode mNfcReaderMode;
 	private boolean mReaderModeRequested;
 	private boolean mIsResumed;
+
+	// Native method provided by UIPlugInQml
+	public static native void notifySafeAreaMarginsChanged();
 
 	private class NfcForegroundDispatcher
 	{
@@ -98,11 +103,16 @@ public class MainActivity extends QtActivity
 
 		NfcReaderMode()
 		{
-			mFlags = NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_NFC_B | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
+			mFlags = NfcAdapter.FLAG_READER_NFC_A
+					| NfcAdapter.FLAG_READER_NFC_B
+					| NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK
+					| NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS;
 			mCallback = pTag ->
 			{
 				if (Arrays.asList(pTag.getTechList()).contains(IsoDep.class.getName()))
 				{
+					vibrate();
+
 					Intent nfcIntent = new Intent();
 					nfcIntent.putExtra(NfcAdapter.EXTRA_TAG, pTag);
 					QtNative.onNewIntent(nfcIntent);
@@ -134,6 +144,20 @@ public class MainActivity extends QtActivity
 		}
 
 
+		void vibrate()
+		{
+			Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) // API 26, Android 8.0
+			{
+				v.vibrate(VibrationEffect.createOneShot(250, VibrationEffect.DEFAULT_AMPLITUDE));
+				return;
+			}
+
+			v.vibrate(250);
+		}
+
+
 	}
 
 
@@ -157,7 +181,7 @@ public class MainActivity extends QtActivity
 	{
 		if (cReferrer == null)
 		{
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) // API 22
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) // API 22, Android 5.1
 			{
 				Log.e(LOG_TAG, "No stored referrer available, returning null");
 			}
@@ -201,7 +225,7 @@ public class MainActivity extends QtActivity
 		// Set statusBar/navigationBar color and handle systemWindowInsets
 		Window window = getWindow();
 		View rootView = window.getDecorView().findViewById(android.R.id.content);
-		if (Build.VERSION.SDK_INT >= 29) // Android 10
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) // API 29, Android 10
 		{
 			rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
 			window.setNavigationBarColor(Color.TRANSPARENT);
@@ -217,6 +241,9 @@ public class MainActivity extends QtActivity
 					windowInsets.leftMargin = insets.getSystemWindowInsetLeft();
 					windowInsets.rightMargin = insets.getSystemWindowInsetRight();
 					windowInsets.bottomMargin = insets.getSystemWindowInsetBottom();
+
+					notifySafeAreaMarginsChanged();
+
 					return insets;
 				});
 	}
@@ -229,7 +256,7 @@ public class MainActivity extends QtActivity
 		super.onNewIntent(newIntent);
 		cIntent = newIntent;
 		cStartedByAuth = "android.intent.action.VIEW".equals(cIntent.getAction());
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) // API 22
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) // API 22, Android 5.1
 		{
 			cReferrer = getReferrer();
 		}

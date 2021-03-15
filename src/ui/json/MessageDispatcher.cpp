@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MessageDispatcher.h"
@@ -22,11 +22,15 @@
 #include "messages/MsgHandlerReader.h"
 #include "messages/MsgHandlerReaderList.h"
 #include "messages/MsgHandlerUnknownCommand.h"
+#include "VolatileSettings.h"
 
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
+#include "ReaderManager.h"
 
 #include <QLoggingCategory>
+
+#include <algorithm>
 
 Q_DECLARE_LOGGING_CATEGORY(json)
 
@@ -57,7 +61,7 @@ QByteArray MessageDispatcher::init(const QSharedPointer<WorkflowContext>& pWorkf
 {
 	Q_ASSERT(!mContext.isActiveWorkflow());
 
-	reset();
+	mContext.clear();
 	mContext.setWorkflowContext(pWorkflowContext);
 
 	if (mContext.getContext<AuthContext>())
@@ -76,6 +80,8 @@ QByteArray MessageDispatcher::init(const QSharedPointer<WorkflowContext>& pWorkf
 void MessageDispatcher::reset()
 {
 	mContext.clear();
+	Env::getSingleton<VolatileSettings>()->setMessages();
+	Env::getSingleton<VolatileSettings>()->setHandleInterrupt();
 }
 
 
@@ -120,6 +126,12 @@ QByteArray MessageDispatcher::processStateChange(const QString& pState)
 
 MsgHandler MessageDispatcher::createForStateChange(MsgType pStateType)
 {
+	if (mContext.getContext()->isWorkflowCancelled())
+	{
+		mContext.getContext()->setStateApproved();
+		return MsgHandler::Void;
+	}
+
 	switch (pStateType)
 	{
 		case MsgType::ENTER_PIN:
@@ -184,6 +196,9 @@ MsgHandler MessageDispatcher::createForCommand(const QJsonObject& pObj)
 		case MsgCmdType::ACCEPT:
 			return accept();
 
+		case MsgCmdType::INTERRUPT:
+			return interrupt();
+
 		case MsgCmdType::GET_API_LEVEL:
 			return MsgHandlerApiLevel(mContext);
 
@@ -209,25 +224,25 @@ MsgHandler MessageDispatcher::createForCommand(const QJsonObject& pObj)
 			return mContext.isActiveWorkflow() ? MsgHandler(MsgHandlerBadState(requestType)) : MsgHandler(MsgHandlerChangePin(pObj));
 
 		case MsgCmdType::GET_CERTIFICATE:
-			return HANDLE_CURRENT_STATE(MsgType::ACCESS_RIGHTS, MsgHandlerCertificate(mContext));
+			return HANDLE_CURRENT_STATE({MsgType::ACCESS_RIGHTS}, MsgHandlerCertificate(mContext));
 
 		case MsgCmdType::SET_PIN:
-			return HANDLE_CURRENT_STATE(MsgType::ENTER_PIN, MsgHandlerEnterPin(pObj, mContext));
+			return HANDLE_CURRENT_STATE({MsgType::ENTER_PIN}, MsgHandlerEnterPin(pObj, mContext));
 
 		case MsgCmdType::SET_NEW_PIN:
-			return HANDLE_CURRENT_STATE(MsgType::ENTER_NEW_PIN, MsgHandlerEnterNewPin(pObj, mContext));
+			return HANDLE_CURRENT_STATE({MsgType::ENTER_NEW_PIN}, MsgHandlerEnterNewPin(pObj, mContext));
 
 		case MsgCmdType::SET_CAN:
-			return HANDLE_CURRENT_STATE(MsgType::ENTER_CAN, MsgHandlerEnterCan(pObj, mContext));
+			return HANDLE_CURRENT_STATE({MsgType::ENTER_CAN}, MsgHandlerEnterCan(pObj, mContext));
 
 		case MsgCmdType::SET_PUK:
-			return HANDLE_CURRENT_STATE(MsgType::ENTER_PUK, MsgHandlerEnterPuk(pObj, mContext));
+			return HANDLE_CURRENT_STATE({MsgType::ENTER_PUK}, MsgHandlerEnterPuk(pObj, mContext));
 
 		case MsgCmdType::GET_ACCESS_RIGHTS:
-			return HANDLE_CURRENT_STATE(MsgType::ACCESS_RIGHTS, MsgHandlerAccessRights(mContext));
+			return HANDLE_CURRENT_STATE({MsgType::ACCESS_RIGHTS}, MsgHandlerAccessRights(mContext));
 
 		case MsgCmdType::SET_ACCESS_RIGHTS:
-			return HANDLE_CURRENT_STATE(MsgType::ACCESS_RIGHTS, MsgHandlerAccessRights(pObj, mContext));
+			return HANDLE_CURRENT_STATE({MsgType::ACCESS_RIGHTS}, MsgHandlerAccessRights(pObj, mContext));
 	}
 
 	return MsgHandlerInternalError(QLatin1String("Cannot process request"));
@@ -238,7 +253,7 @@ MsgHandler MessageDispatcher::handleInternalOnly(MsgCmdType pCmdType, const std:
 {
 #ifdef QT_NO_DEBUG
 	Q_UNUSED(pFunc)
-	return MsgHandlerUnknownCommand(getEnumName(pCmdType));
+	return MsgHandlerUnknownCommand(pCmdType);
 
 #else
 	Q_UNUSED(pCmdType)
@@ -248,9 +263,12 @@ MsgHandler MessageDispatcher::handleInternalOnly(MsgCmdType pCmdType, const std:
 }
 
 
-MsgHandler MessageDispatcher::handleCurrentState(MsgCmdType pCmdType, MsgType pMsgType, const std::function<MsgHandler()>& pFunc) const
+MsgHandler MessageDispatcher::handleCurrentState(MsgCmdType pCmdType, std::initializer_list<MsgType> pMsgType, const std::function<MsgHandler()>& pFunc) const
 {
-	if (mContext.getLastStateMsg() == pMsgType)
+	if (std::any_of(pMsgType.begin(), pMsgType.end(), [this](const MsgType pCurrentType)
+			{
+				return mContext.getLastStateMsg() == pCurrentType;
+			}))
 	{
 		return pFunc();
 	}
@@ -263,7 +281,7 @@ MsgHandler MessageDispatcher::cancel()
 {
 	if (mContext.isActiveWorkflow())
 	{
-		Q_EMIT mContext.getContext()->fireCancelWorkflow();
+		mContext.getContext()->killWorkflow();
 		return MsgHandler::Void;
 	}
 
@@ -280,6 +298,24 @@ MsgHandler MessageDispatcher::accept()
 	}
 
 	return MsgHandlerBadState(MsgCmdType::ACCEPT);
+}
+
+
+MsgHandler MessageDispatcher::interrupt()
+{
+	const auto cmdType = MsgCmdType::INTERRUPT;
+#ifdef Q_OS_IOS
+	{
+		const auto allowedStates = {MsgType::ENTER_PIN, MsgType::ENTER_CAN, MsgType::ENTER_PUK, MsgType::ENTER_NEW_PIN};
+		return handleCurrentState(cmdType, allowedStates, [] {
+					Env::getSingleton<ReaderManager>()->stopScanAll();
+					return MsgHandler::Void;
+				});
+	}
+#else
+	return MsgHandlerUnknownCommand(cmdType);
+
+#endif
 }
 
 

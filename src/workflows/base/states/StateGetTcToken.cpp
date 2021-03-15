@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetTcToken.h"
@@ -99,6 +99,17 @@ void StateGetTcToken::onSslErrors(const QList<QSslError>& pErrors)
 }
 
 
+void StateGetTcToken::onExit(QEvent* pEvent)
+{
+	AbstractState::onExit(pEvent);
+
+	if (!mReply.isNull())
+	{
+		mReply.reset();
+	}
+}
+
+
 void StateGetTcToken::onSslHandshakeDone()
 {
 	const auto& cfg = mReply->sslConfiguration();
@@ -133,6 +144,7 @@ void StateGetTcToken::onSslHandshakeDone()
 
 void StateGetTcToken::onNetworkReply()
 {
+	qCDebug(network) << "Received TCToken from eID-Service";
 	const auto statusCode = NetworkManager::getLoggedStatusCode(mReply, spawnMessageLogger(network));
 
 	if (mReply->error() != QNetworkReply::NoError)

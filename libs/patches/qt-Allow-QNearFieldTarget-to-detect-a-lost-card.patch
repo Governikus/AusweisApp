@@ -1,0 +1,30 @@
+From 5fe50dfdabe3d1055a5669807b82ab33fc19f830 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <lars.schmertmann@governikus.de>
+Date: Tue, 26 Jan 2021 08:51:25 +0100
+Subject: [PATCH] Allow QNearFieldTarget to detect a lost card
+
+Some devices (Samsung, Huawei) throw an exception when the card is lost:
+"android.nfc.TagLostException: Tag was lost". But there seems to be a bug that
+isConnected still reports true. So we need to invalidate the target to allow
+checkIsTargetLost to recognize this missing card.
+
+Change-Id: I3916403c17bc0923b3ca3f599398a709966b6364
+---
+ src/nfc/qnearfieldtarget_android.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git x/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp y/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
+index c6b120e7..402ede8a 100644
+--- x/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
++++ y/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
+@@ -253,6 +253,7 @@ QNearFieldTarget::RequestId NearFieldTarget::sendCommand(const QByteArray &comma
+     // Writing
+     QAndroidJniObject myNewVal = m_tagTech.callObjectMethod("transceive", "([B)[B", jba);
+     if (catchJavaExceptions()) {
++        m_intent = QAndroidJniObject();
+         reportError(QNearFieldTarget::CommandError, requestId);
+         return requestId;
+     }
+--
+2.28.0
+

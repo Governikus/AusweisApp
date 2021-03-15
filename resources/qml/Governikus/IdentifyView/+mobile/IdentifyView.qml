@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -75,18 +75,6 @@ SectionPage
 		workflowModel: AuthModel
 		//: LABEL ANDROID IOS
 		workflowTitle: qsTr("Identify")
-
-		waitingFor: switch (identifyController.workflowState) {
-						case IdentifyController.WorkflowStates.Reader:
-							return Workflow.WaitingFor.Reader
-						case IdentifyController.WorkflowStates.Card:
-							return Workflow.WaitingFor.Card
-						case IdentifyController.WorkflowStates.Can:
-						case IdentifyController.WorkflowStates.Pin:
-							return Workflow.WaitingFor.Password
-						default:
-							return Workflow.WaitingFor.None
-		}
 	}
 
 	Component {
@@ -103,7 +91,7 @@ SectionPage
 		navigationAction: NavigationAction { state: "cancel"; onClicked: { firePop(); AuthModel.cancelWorkflow() } }
 		//: LABEL ANDROID IOS
 		title: qsTr("Identify")
-		enableTransportPinLink: NumberModel.passwordType === NumberModel.PASSWORD_PIN
+		enableTransportPinLink: state === "PIN"
 
 		onPasswordEntered: {
 			firePop()
@@ -111,10 +99,8 @@ SectionPage
 		}
 
 		onChangePinLength: {
-			NumberModel.requestTransportPin = true
-			AuthModel.setSkipRedirect(true)
-			ChangePinModel.startWorkflow()
-			AuthModel.cancelWorkflowToChangePin()
+			firePop()
+			AuthModel.requestTransportPinChange()
 		}
 	}
 
@@ -232,6 +218,9 @@ SectionPage
 		title: qsTr("Identify")
 		resultType: AuthModel.resultString ? ResultView.Type.IsError : ResultView.Type.IsSuccess
 		showMailButton: AuthModel.errorIsMasked
+		header: AuthModel.errorHeader
+		errorCode: AuthModel.statusCode
+		errorDescription: AuthModel.errorText
 		text: AuthModel.resultString
 		onClicked: {
 			AuthModel.continueWorkflow()

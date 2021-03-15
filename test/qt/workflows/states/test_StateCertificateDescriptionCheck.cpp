@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCertificateDescriptionCheck.h"
@@ -26,9 +26,6 @@ class test_StateCertificateDescriptionCheck
 	QScopedPointer<StateCertificateDescriptionCheck> mState;
 	QSharedPointer<AuthContext> mAuthContext;
 
-	Q_SIGNALS:
-		void fireStateStart(QEvent* pEvent);
-
 	private Q_SLOTS:
 		void init()
 		{
@@ -38,7 +35,7 @@ class test_StateCertificateDescriptionCheck
 			mState.reset(StateBuilder::createState<StateCertificateDescriptionCheck>(mAuthContext));
 			mState->setStateName("StateCertificateDescriptionCheck");
 
-			connect(this, &test_StateCertificateDescriptionCheck::fireStateStart, mState.data(), &AbstractState::onEntry, Qt::ConnectionType::DirectConnection);
+			mState->onEntry(nullptr);
 		}
 
 
@@ -55,12 +52,10 @@ class test_StateCertificateDescriptionCheck
 			mAuthContext->setDidAuthenticateEac1(eac1);
 			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireAbort);
 
-			Q_EMIT fireStateStart(nullptr);
-
 			QTest::ignoreMessage(QtCriticalMsg, "No certificate description available");
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -70,12 +65,11 @@ class test_StateCertificateDescriptionCheck
 			desc->setSubjectUrl(QString());
 
 			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireAbort);
-			Q_EMIT fireStateStart(nullptr);
 
 			QTest::ignoreMessage(QtCriticalMsg, "No subject url available in certificate description");
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -86,24 +80,22 @@ class test_StateCertificateDescriptionCheck
 			mAuthContext->initAccessRightManager(cert);
 
 			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireAbort);
-			Q_EMIT fireStateStart(nullptr);
 
 			QTest::ignoreMessage(QtCriticalMsg, "\"The certificate description does not match the certificate.\"");
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
 		void matchingDescription()
 		{
 			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireContinue);
-			Q_EMIT fireStateStart(nullptr);
 
 			QTest::ignoreMessage(QtDebugMsg, "SOP-Check succeeded.");
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -112,12 +104,11 @@ class test_StateCertificateDescriptionCheck
 			mAuthContext->setTcTokenUrl(QUrl("https://dev-demo.governikus-eid.de:8442/Autent-DemoApplication/RequestServlet;jsessionid=14w5aKuENyd2D4ZsMmuaeX2g"));
 
 			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireAbort);
-			Q_EMIT fireStateStart(nullptr);
 
 			QTest::ignoreMessage(QtDebugMsg, "SOP-Check failed.");
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

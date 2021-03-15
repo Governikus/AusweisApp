@@ -1,7 +1,7 @@
 /*!
  * \brief Manager for AccessRights
  *
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,25 +31,25 @@ class AccessRightManager
 		explicit AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDAuthenticateEAC1, QSharedPointer<const CVCertificate> pTerminalCvc);
 
 
-		const QSharedPointer<const CVCertificate>& getTerminalCvc() const
+		[[nodiscard]] const QSharedPointer<const CVCertificate>& getTerminalCvc() const
 		{
 			return mTerminalCvc;
 		}
 
 
-		const QSet<AccessRight>& getOptionalAccessRights() const
+		[[nodiscard]] const QSet<AccessRight>& getOptionalAccessRights() const
 		{
 			return mOptionalAccessRights;
 		}
 
 
-		const QSet<AccessRight>& getRequiredAccessRights() const
+		[[nodiscard]] const QSet<AccessRight>& getRequiredAccessRights() const
 		{
 			return mRequiredAccessRights;
 		}
 
 
-		const QSet<AccessRight>& getEffectiveAccessRights() const
+		[[nodiscard]] const QSet<AccessRight>& getEffectiveAccessRights() const
 		{
 			return mEffectiveAccessRights;
 		}

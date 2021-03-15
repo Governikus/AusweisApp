@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,9 +24,9 @@ class ActivationContext
 
 	public:
 		ActivationContext();
-		virtual ~ActivationContext() = default;
+		~ActivationContext() override = default;
 
-		virtual QUrl getActivationURL() const = 0;
+		[[nodiscard]] virtual QUrl getActivationURL() const = 0;
 
 		/*!
 		 * Sends a processing status response to the caller.
@@ -59,7 +59,7 @@ class ActivationContext
 		/*!
 		 * Returns the last error that occurred during a send operation.
 		 */
-		const QString& getSendError() const
+		[[nodiscard]] const QString& getSendError() const
 		{
 			return mSendError;
 		}

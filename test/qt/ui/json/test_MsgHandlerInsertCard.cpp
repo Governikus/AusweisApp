@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerInsertCard
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerInsertCard.h"
@@ -33,7 +33,7 @@ class test_MsgHandlerInsertCard
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
 			readerManager->init();
-			readerManager->getPlugInInfos(); // just to wait until initialization finished
+			readerManager->isScanRunning(); // just to wait until initialization finished
 		}
 
 

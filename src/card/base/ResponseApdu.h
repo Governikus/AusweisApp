@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -93,14 +93,14 @@ class ResponseApdu
 		explicit ResponseApdu(const QByteArray& pBuffer = QByteArray());
 		virtual ~ResponseApdu() = default;
 
-		QByteArray getData() const;
-		int getDataLength() const;
-		StatusCode getReturnCode() const;
-		QByteArray getReturnCodeAsHex() const;
-		int getRetryCounter() const;
-		SW1 getSW1() const;
-		char getSW2() const;
-		CardReturnCode getCardReturnCode() const;
+		[[nodiscard]] QByteArray getData() const;
+		[[nodiscard]] int getDataLength() const;
+		[[nodiscard]] StatusCode getReturnCode() const;
+		[[nodiscard]] QByteArray getReturnCodeAsHex() const;
+		[[nodiscard]] int getRetryCounter() const;
+		[[nodiscard]] SW1 getSW1() const;
+		[[nodiscard]] char getSW2() const;
+		[[nodiscard]] CardReturnCode getCardReturnCode() const;
 };
 
 struct ResponseApduResult

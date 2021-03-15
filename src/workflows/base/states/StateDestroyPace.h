@@ -1,7 +1,7 @@
 /*!
  * \brief Controller for the step that tries to destroy an existing PACE connection.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,7 +24,7 @@ class StateDestroyPace
 	friend class ::test_StateDestroyPace;
 
 	explicit StateDestroyPace(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 
 	private Q_SLOTS:
 		void onDestroyPaceDone(QSharedPointer<BaseCardCommand> pCommand);

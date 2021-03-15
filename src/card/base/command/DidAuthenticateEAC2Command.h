@@ -1,7 +1,7 @@
 /*!
  * \brief Command to perform the DID Authenticate EAC2 process.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -41,8 +41,8 @@ class DidAuthenticateEAC2Command
 				const QByteArray& ephemeralPublicKey);
 
 	protected:
-		virtual void internalExecute() override;
-		virtual ~DidAuthenticateEAC2Command() override = default;
+		void internalExecute() override;
+		~DidAuthenticateEAC2Command() override = default;
 
 	public:
 		explicit DidAuthenticateEAC2Command(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
@@ -50,19 +50,19 @@ class DidAuthenticateEAC2Command
 				const QByteArray& pSignatureAsHex, const QByteArray& pAuthenticatedAuxiliaryDataAsBinary);
 
 
-		const QByteArray& getEfCardSecurityAsHex() const
+		[[nodiscard]] const QByteArray& getEfCardSecurityAsHex() const
 		{
 			return mEfCardSecurityAsHex;
 		}
 
 
-		const QByteArray& getNonceAsHex() const
+		[[nodiscard]] const QByteArray& getNonceAsHex() const
 		{
 			return mNonceAsHex;
 		}
 
 
-		const QByteArray& getAuthTokenAsHex() const
+		[[nodiscard]] const QByteArray& getAuthTokenAsHex() const
 		{
 			return mAuthTokenAsHex;
 		}

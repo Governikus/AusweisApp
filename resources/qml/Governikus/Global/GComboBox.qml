@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -20,6 +20,8 @@ ComboBox {
 	spacing: Constants.groupbox_spacing
 	font.pixelSize: textStyle.fontSize
 
+	popup.leftMargin: plugin.safeAreaMargins.left
+	popup.rightMargin: plugin.safeAreaMargins.right
 	popup.topMargin: plugin.safeAreaMargins.top
 	popup.bottomMargin: plugin.safeAreaMargins.bottom
 

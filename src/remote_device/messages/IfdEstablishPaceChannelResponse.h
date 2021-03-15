@@ -1,9 +1,10 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
+#include "EstablishPaceChannelOutput.h"
 #include "RemoteMessageResponse.h"
 
 
@@ -14,16 +15,18 @@ class IfdEstablishPaceChannelResponse
 {
 	private:
 		QString mSlotHandle;
-		QByteArray mOutputData;
+		EstablishPaceChannelOutput mOutputData;
+
+		void parseOutputData(const QJsonObject& pMessageObject);
 
 	public:
-		IfdEstablishPaceChannelResponse(const QString& pSlotHandle, const QByteArray& pOutputData, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
+		IfdEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pOutputData, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		explicit IfdEstablishPaceChannelResponse(const QJsonObject& pMessageObject);
-		virtual ~IfdEstablishPaceChannelResponse() override = default;
+		~IfdEstablishPaceChannelResponse() override = default;
 
-		const QString& getSlotHandle() const;
-		const QByteArray& getOutputData() const;
-		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
+		[[nodiscard]] const QString& getSlotHandle() const;
+		[[nodiscard]] const EstablishPaceChannelOutput& getOutputData() const;
+		[[nodiscard]] QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const override;
 };
 
 

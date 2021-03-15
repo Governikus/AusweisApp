@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DidAuthenticateResponseEac1.h"
@@ -72,10 +72,10 @@ void DIDAuthenticateResponseEAC1::setIDPICC(const QByteArray& pValue)
 
 void DIDAuthenticateResponseEAC1::setCertificationAuthorityReference(const EstablishPaceChannelOutput& pPaceChannelOutput)
 {
-	mCertificationAuthorityReferences += pPaceChannelOutput.getCARcurr();
-	if (!pPaceChannelOutput.getCARprev().isEmpty())
+	mCertificationAuthorityReferences += pPaceChannelOutput.getCarCurr();
+	if (!pPaceChannelOutput.getCarPrev().isEmpty())
 	{
-		mCertificationAuthorityReferences += pPaceChannelOutput.getCARprev();
+		mCertificationAuthorityReferences += pPaceChannelOutput.getCarPrev();
 	}
 }
 

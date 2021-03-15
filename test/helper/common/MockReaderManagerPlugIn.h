@@ -1,7 +1,7 @@
 /*!
  * \brief Mock implementation of ReaderManagerPlugIn
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,11 +29,11 @@ class MockReaderManagerPlugIn
 
 	public:
 		MockReaderManagerPlugIn();
-		virtual ~MockReaderManagerPlugIn() override = default;
+		~MockReaderManagerPlugIn() override = default;
 
 		static MockReaderManagerPlugIn& getInstance();
 
-		virtual QList<Reader*> getReaders() const override;
+		[[nodiscard]] QList<Reader*> getReaders() const override;
 		MockReader* addReader(const QString& pReaderName);
 		void removeReader(const QString& pReaderName);
 		void removeAllReader();

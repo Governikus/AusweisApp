@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -22,26 +22,10 @@ Row {
 	spacing: 18
 	anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
-	TintableIcon {
-		height: Style.dimens.small_icon_size
-		width: height
-
-		Accessible.role: Accessible.Button
+	ShareButton {
 		Accessible.name: qsTr("Share log")
-		Accessible.onPressAction: if (Qt.platform.os === "ios") mouseAreaShare.clicked(null)
 
-		tintColor: Style.color.button_text
-		sourceSize.height: height
-		source: "qrc:///images/mobile/material_share.svg"
-
-		MouseArea {
-			id: mouseAreaShare
-
-			anchors.fill: parent
-			anchors.margins: -8
-
-			onClicked: logControls.share(mapToGlobal(width / 2, height))
-		}
+		onClicked: logControls.share(mapToGlobal(width / 2, height))
 	}
 
 	TintableIcon {

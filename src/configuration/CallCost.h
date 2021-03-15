@@ -1,7 +1,7 @@
 /*!
  * \brief Phone call cost representation
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,12 +28,12 @@ class CallCost
 		void load();
 		void save();
 
-		bool isNull() const;
-		int getFreeSeconds() const;
-		double getLandlineCentsPerMinute() const;
-		double getLandlineCentsPerCall() const;
-		double getMobileCentsPerMinute() const;
-		double getMobileCentsPerCall() const;
+		[[nodiscard]] bool isNull() const;
+		[[nodiscard]] int getFreeSeconds() const;
+		[[nodiscard]] double getLandlineCentsPerMinute() const;
+		[[nodiscard]] double getLandlineCentsPerCall() const;
+		[[nodiscard]] double getMobileCentsPerMinute() const;
+		[[nodiscard]] double getMobileCentsPerCall() const;
 };
 
 

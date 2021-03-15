@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceDescriptor.h"
@@ -54,16 +54,16 @@ RemoteDeviceDescriptor::RemoteDeviceDescriptorData::~RemoteDeviceDescriptorData(
 
 bool RemoteDeviceDescriptor::RemoteDeviceDescriptorData::operator==(const RemoteDeviceDescriptorData& pOther) const
 {
-	return isEquivalent(pOther) &&
+	return mIfdName == pOther.mIfdName &&
+		   mIfdId == pOther.mIfdId &&
+		   mApiVersions == pOther.mApiVersions &&
 		   mUrl == pOther.mUrl;
 }
 
 
-bool RemoteDeviceDescriptor::RemoteDeviceDescriptorData::isEquivalent(const RemoteDeviceDescriptorData& pOther) const
+bool RemoteDeviceDescriptor::RemoteDeviceDescriptorData::isSameIfd(const RemoteDeviceDescriptorData& pOther) const
 {
-	return mIfdName == pOther.mIfdName &&
-		   mIfdId == pOther.mIfdId &&
-		   mApiVersions == pOther.mApiVersions;
+	return mIfdId == pOther.mIfdId;
 }
 
 
@@ -142,9 +142,9 @@ bool RemoteDeviceDescriptor::operator==(const RemoteDeviceDescriptor& pOther) co
 }
 
 
-bool RemoteDeviceDescriptor::isEquivalent(const RemoteDeviceDescriptor& pOther) const
+bool RemoteDeviceDescriptor::isSameIfd(const RemoteDeviceDescriptor& pOther) const
 {
 	return this == &pOther ||
 		   (d.data() == nullptr && pOther.d.data() == nullptr) ||
-		   (d.data() != nullptr && pOther.d.data() != nullptr && d->isEquivalent(*(pOther.d)));
+		   (d.data() != nullptr && pOther.d.data() != nullptr && d->isSameIfd(*(pOther.d)));
 }

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,7 +28,7 @@ class AbstractSettings
 
 	protected:
 		AbstractSettings();
-		virtual ~AbstractSettings();
+		~AbstractSettings() override;
 
 	public:
 #ifndef QT_NO_DEBUG

@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of ASN.1 type CertificateDescription with OpenSSL
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -58,48 +58,48 @@ struct CertificateDescription
 	QByteArray encode();
 
 	void setDescriptionType(const QByteArray& pOidAsText);
-	QByteArray getDescriptionType() const;
+	[[nodiscard]] QByteArray getDescriptionType() const;
 
 	void setIssuerName(const QString& pIssuerName);
-	QString getIssuerName() const;
+	[[nodiscard]] QString getIssuerName() const;
 
 	void setIssuerUrl(const QString& pIssuerUrl);
-	QString getIssuerUrl() const;
+	[[nodiscard]] QString getIssuerUrl() const;
 
 	void setSubjectName(const QString& pSubjectName);
-	QString getSubjectName() const;
+	[[nodiscard]] QString getSubjectName() const;
 
 	void setSubjectUrl(const QString& pSubjectUrl);
-	QString getSubjectUrl() const;
+	[[nodiscard]] QString getSubjectUrl() const;
 
-	TermsOfUsageType getTermsOfUsageType() const;
-	QString getTermsOfUsage() const;
+	[[nodiscard]] TermsOfUsageType getTermsOfUsageType() const;
+	[[nodiscard]] QString getTermsOfUsage() const;
 
 	void setRedirectUrl(const QString& pRedirectUrl);
-	QString getRedirectUrl() const;
+	[[nodiscard]] QString getRedirectUrl() const;
 
-	QSet<QString> getCommCertificates() const;
+	[[nodiscard]] QSet<QString> getCommCertificates() const;
 
 	/*!
 	 * \brief Returns the address of provider.
 	 *
 	 * \return The address.
 	 */
-	QString getServiceProviderAddress() const;
+	[[nodiscard]] QString getServiceProviderAddress() const;
 
 	/*!
 	 * \brief Returns the purpose of the certificate description.
 	 *
 	 * \return The purpose.
 	 */
-	QString getPurpose() const;
+	[[nodiscard]] QString getPurpose() const;
 
 	/*!
 	 * \brief Returns the data security officer of the certificate description.
 	 *
 	 * \return The data security officer.
 	 */
-	QString getDataSecurityOfficer() const;
+	[[nodiscard]] QString getDataSecurityOfficer() const;
 };
 
 DECLARE_ASN1_FUNCTIONS(CertificateDescription)

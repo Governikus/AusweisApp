@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SurveyModel.h"
@@ -34,6 +34,7 @@ class test_SurveyModel
 			SurveyModel model;
 
 			model.transmitSurvey();
+			mNetworkManager->fireFinished();
 			const QByteArray json = mNetworkManager->getLastData();
 			auto result = QJsonDocument::fromJson(json);
 
@@ -64,6 +65,7 @@ class test_SurveyModel
 			SurveyModel model;
 
 			model.transmitSurvey();
+			mNetworkManager->fireFinished();
 			QByteArray json = mNetworkManager->getLastData();
 			auto result = QJsonDocument::fromJson(json);
 			auto rom = result["Rom"].toObject();
@@ -71,6 +73,7 @@ class test_SurveyModel
 
 			model.setMaximumNfcPacketLength(9999);
 			model.transmitSurvey();
+			mNetworkManager->fireFinished();
 			json = mNetworkManager->getLastData();
 			result = QJsonDocument::fromJson(json);
 			rom = result["Rom"].toObject();

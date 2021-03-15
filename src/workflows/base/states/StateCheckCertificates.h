@@ -3,7 +3,7 @@
  * (i.e. those stored in the AuthContext) are in the CertificateDescription
  * extension of the eService certificate.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,7 +23,7 @@ class StateCheckCertificates
 	friend class StateBuilder;
 
 	explicit StateCheckCertificates(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 };
 
 } // namespace governikus

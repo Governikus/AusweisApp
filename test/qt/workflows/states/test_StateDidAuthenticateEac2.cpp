@@ -1,7 +1,7 @@
 /*!
  * \brief Unit test for \ref StateDidAuthenticateEac2
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateDidAuthenticateEac2.h"
@@ -115,7 +115,7 @@ class test_StateDidAuthenticateEac2
 			mState->onCardCommandDone(command);
 			QCOMPARE(mAuthContext->getStatus(), status);
 			QCOMPARE(spyAbort.count(), abort);
-			QCOMPARE(spyContinue.count(), 1);
+			QCOMPARE(spyContinue.count(), 1 - abort);
 		}
 
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref CertificateDescriptionModel
  *
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CertificateDescriptionModel.h"

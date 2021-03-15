@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref StatePreparePace
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreparePace.h"
@@ -50,13 +50,15 @@ class test_StatePreparePace
 
 			QTest::ignoreMessage(QtDebugMsg, "Card connection lost.");
 			mContext->setStateApproved();
-			QCOMPARE(spyAbort.count(), 1);
+			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(mContext->getEstablishPaceChannelType(), PacePasswordId::UNKNOWN);
 		}
 
 
 		void test_Run_CanAllowed()
 		{
+			QSignalSpy spy(mState.data(), &StatePreparePace::fireEnterPacePassword);
+
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
@@ -64,6 +66,7 @@ class test_StatePreparePace
 			mContext->setCanAllowedMode(true);
 			QTest::ignoreMessage(QtDebugMsg, "CAN allowed required");
 			mContext->setStateApproved();
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(mContext->getEstablishPaceChannelType(), PacePasswordId::PACE_CAN);
 		}
 
@@ -82,7 +85,7 @@ class test_StatePreparePace
 
 			QTest::ignoreMessage(QtDebugMsg, "PUK required");
 			mContext->setStateApproved();
-			QCOMPARE(spyEnterPacePassword.count(), 1);
+			QTRY_COMPARE(spyEnterPacePassword.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(mContext->getEstablishPaceChannelType(), PacePasswordId::PACE_PUK);
 
 			mContext->setStateApproved(false);
@@ -90,7 +93,7 @@ class test_StatePreparePace
 			const QString puk("0987654321");
 			mContext->setPuk(puk);
 			mContext->setStateApproved();
-			QCOMPARE(spyEstablishPaceChannel.count(), 1);
+			QTRY_COMPARE(spyEstablishPaceChannel.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -109,6 +112,7 @@ class test_StatePreparePace
 			QTest::ignoreMessage(QtDebugMsg, "CAN required");
 			QTest::ignoreMessage(QtDebugMsg, "PACE_CAN done: false");
 			mContext->setStateApproved();
+			QTRY_COMPARE(spyEnterPacePassword.count(), 1); // clazy:exclude=qstring-allocations
 
 			mContext->setStateApproved(false);
 
@@ -117,7 +121,7 @@ class test_StatePreparePace
 			QTest::ignoreMessage(QtDebugMsg, "CAN required");
 			QTest::ignoreMessage(QtDebugMsg, "PACE_CAN done: false");
 			mContext->setStateApproved();
-			QCOMPARE(spyEstablishPaceChannel.count(), 1);
+			QTRY_COMPARE(spyEstablishPaceChannel.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -136,7 +140,7 @@ class test_StatePreparePace
 			QTest::ignoreMessage(QtDebugMsg, "PIN allowed");
 			QTest::ignoreMessage(QtDebugMsg, "PACE_PIN done: false");
 			mContext->setStateApproved();
-			QCOMPARE(spyEnterPacePassword.count(), 1);
+			QTRY_COMPARE(spyEnterPacePassword.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(spyEstablishPaceChannel.count(), 0);
 			QCOMPARE(mContext->getEstablishPaceChannelType(), PacePasswordId::PACE_PIN);
 
@@ -146,7 +150,7 @@ class test_StatePreparePace
 			mContext->setPin(pin);
 			mContext->setStateApproved();
 			QCOMPARE(spyEnterPacePassword.count(), 1);
-			QCOMPARE(spyEstablishPaceChannel.count(), 1);
+			QTRY_COMPARE(spyEstablishPaceChannel.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

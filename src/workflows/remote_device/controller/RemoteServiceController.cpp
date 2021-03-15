@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceController.h"
@@ -66,7 +66,7 @@ RemoteServiceController::RemoteServiceController(QSharedPointer<RemoteServiceCon
 
 	sPreparePaceRemote->addTransition(sPreparePaceRemote, &StatePreparePaceRemote::fireContinue, sEstablishPaceChannelRemote);
 	sPreparePaceRemote->addTransition(sPreparePaceRemote, &StatePreparePaceRemote::fireEnterPacePassword, sEnterPacePasswordRemote);
-	sPreparePaceRemote->addTransition(sPreparePaceRemote, &StatePreparePaceRemote::fireAbort, sEstablishPaceChannelRemote);
+	sPreparePaceRemote->addTransition(sPreparePaceRemote, &StatePreparePaceRemote::fireAbort, sEstablishPaceChannelResponse);
 
 	sEnterPacePasswordRemote->addTransition(sEnterPacePasswordRemote, &AbstractState::fireContinue, sEstablishPaceChannelRemote);
 	sEnterPacePasswordRemote->addTransition(sEnterPacePasswordRemote, &AbstractState::fireAbort, sEstablishPaceChannelResponse);

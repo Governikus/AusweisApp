@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ProviderCategoryFilterModel
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderCategoryFilterModel.h"
@@ -23,21 +23,21 @@ class MockProviderModel
 		}
 
 
-		int rowCount(const QModelIndex& parent) const override
+		[[nodiscard]] int rowCount(const QModelIndex& parent) const override
 		{
 			Q_UNUSED(parent)
 			return 1;
 		}
 
 
-		QVariant data(const QModelIndex& index, int role) const override
+		[[nodiscard]] QVariant data(const QModelIndex& index, int role) const override
 		{
 			Q_UNUSED(index)
 			return mData.value(role);
 		}
 
 
-		QModelIndex index(int row, int column, const QModelIndex& parent) const override
+		[[nodiscard]] QModelIndex index(int row, int column, const QModelIndex& parent) const override
 		{
 			Q_UNUSED(parent)
 			QModelIndex index = createIndex(row, column);
@@ -45,13 +45,13 @@ class MockProviderModel
 		}
 
 
-		QModelIndex parent(const QModelIndex& pIndex) const override
+		[[nodiscard]] QModelIndex parent(const QModelIndex& pIndex) const override
 		{
 			return pIndex.parent();
 		}
 
 
-		int columnCount(const QModelIndex& parent) const override
+		[[nodiscard]] int columnCount(const QModelIndex& parent) const override
 		{
 			Q_UNUSED(parent)
 			return 1;

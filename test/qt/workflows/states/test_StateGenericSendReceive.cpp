@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -41,7 +41,14 @@ class test_StateGenericSendReceive
 
 			mState.reset(StateBuilder::createState<StateSendInitializeFrameworkResponse>(mAuthContext));
 			mState->setStateName("StateSendInitializeFrameworkResponse");
-			connect(this, &test_StateGenericSendReceive::fireStateStart, mState.data(), &AbstractState::onEntry, Qt::ConnectionType::DirectConnection);
+			mState->onEntry(nullptr);
+		}
+
+
+		void cleanup()
+		{
+			mState.clear();
+			mAuthContext.clear();
 		}
 
 
@@ -171,16 +178,17 @@ class test_StateGenericSendReceive
 
 		void connectionError()
 		{
-			MockNetworkReply reply;
-			reply.setNetworkError(QNetworkReply::ConnectionRefusedError, "forced connection refused");
-			mNetworkManager->setNextReply(&reply);
+			MockNetworkReply* reply = new MockNetworkReply();
+			reply->setNetworkError(QNetworkReply::ConnectionRefusedError, "forced connection refused");
+			mNetworkManager->setNextReply(reply);
 			QSharedPointer<InitializeFrameworkResponse> initializeFrameworkResponse(new InitializeFrameworkResponse());
 			mAuthContext->setInitializeFrameworkResponse(initializeFrameworkResponse);
 
 			QSignalSpy spy(mState.data(), &StateGenericSendReceive::fireAbort);
+			QSignalSpy spyMock(mNetworkManager.data(), &MockNetworkManager::fireReply);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
+			QTRY_COMPARE(spyMock.count(), 1); // clazy:exclude=qstring-allocations
 			mNetworkManager->fireFinished();
 
 			QCOMPARE(spy.count(), 1);
@@ -194,9 +202,10 @@ class test_StateGenericSendReceive
 			mAuthContext->setInitializeFrameworkResponse(initializeFrameworkResponse);
 
 			QSignalSpy spy(mState.data(), &StateGenericSendReceive::fireContinue);
+			QSignalSpy spyMock(mNetworkManager.data(), &MockNetworkManager::fireReply);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
+			QTRY_COMPARE(spyMock.count(), 1); // clazy:exclude=qstring-allocations
 			mNetworkManager->fireFinished();
 
 			QCOMPARE(spy.count(), 1);
@@ -210,9 +219,10 @@ class test_StateGenericSendReceive
 			mAuthContext->setInitializeFrameworkResponse(initializeFrameworkResponse);
 
 			QSignalSpy spy(mState.data(), &StateSendInitializeFrameworkResponse::fireReceivedExtractCvcsFromEac1InputType);
+			QSignalSpy spyMock(mNetworkManager.data(), &MockNetworkManager::fireReply);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
+			QTRY_COMPARE(spyMock.count(), 1); // clazy:exclude=qstring-allocations
 			mNetworkManager->fireFinished();
 
 			QCOMPARE(spy.count(), 1);
@@ -226,9 +236,10 @@ class test_StateGenericSendReceive
 			mAuthContext->setInitializeFrameworkResponse(initializeFrameworkResponse);
 
 			QSignalSpy spy(mState.data(), &StateGenericSendReceive::fireAbort);
+			QSignalSpy spyMock(mNetworkManager.data(), &MockNetworkManager::fireReply);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
+			QTRY_COMPARE(spyMock.count(), 1); // clazy:exclude=qstring-allocations
 			mNetworkManager->fireFinished();
 
 			QCOMPARE(spy.count(), 1);

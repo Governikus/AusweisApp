@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref Card for NFC.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,7 +27,7 @@ class NfcCard
 	public:
 		explicit NfcCard(QNearFieldTarget* pNearFieldTarget);
 
-		bool isValid() const;
+		[[nodiscard]] bool isValid() const;
 		bool invalidateTarget(QNearFieldTarget* pNearFieldTarget);
 
 		CardReturnCode connect() override;

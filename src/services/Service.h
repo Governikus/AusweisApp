@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,7 +29,7 @@ class Service
 		const int mOneDayInMs = 1000 * 60 * 60 * 24;
 
 		Service();
-		virtual ~Service() = default;
+		~Service() override = default;
 		void doAppUpdate(UpdateType pType, bool pForceUpdate = false);
 
 	private Q_SLOTS:
@@ -39,9 +39,9 @@ class Service
 
 	public:
 		void updateAppcast();
-		bool isUpdateScheduled() const;
+		[[nodiscard]] bool isUpdateScheduled() const;
 		Q_INVOKABLE void runUpdateIfNeeded();
-		const AppUpdateData& getUpdateData() const;
+		[[nodiscard]] const AppUpdateData& getUpdateData() const;
 
 	Q_SIGNALS:
 		void fireAppcastFinished(bool pUpdateAvailable, const GlobalStatus& pError);

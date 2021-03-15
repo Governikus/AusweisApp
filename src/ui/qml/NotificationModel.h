@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -45,7 +45,7 @@ class NotificationModel
 		QContiguousCache<NotificationEntry> mNotificationEntries;
 
 		NotificationModel();
-		virtual ~NotificationModel() override = default;
+		~NotificationModel() override = default;
 		QString getLastType() const;
 
 	private Q_SLOTS:

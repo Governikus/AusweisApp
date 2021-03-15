@@ -1,7 +1,7 @@
 /*!
  * \brief Command to destroy a Pace channel.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,8 +22,8 @@ class DestroyPaceChannelCommand
 		friend class ::test_DestroyPaceChannelCommand;
 
 	protected:
-		virtual void internalExecute() override;
-		virtual ~DestroyPaceChannelCommand() override = default;
+		void internalExecute() override;
+		~DestroyPaceChannelCommand() override = default;
 
 	public:
 		explicit DestroyPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);

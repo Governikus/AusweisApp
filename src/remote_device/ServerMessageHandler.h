@@ -1,7 +1,7 @@
 /*!
  * \brief Handler for messages on the server side of a smartphone as card reader (SaC) scenario.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,7 +31,7 @@ class ServerMessageHandler
 		ServerMessageHandler() = default;
 
 	public:
-		virtual ~ServerMessageHandler();
+		~ServerMessageHandler() override;
 
 		virtual void sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput&) = 0;
 		virtual void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) = 0;
@@ -55,8 +55,7 @@ class ServerMessageHandlerImpl
 		const QSharedPointer<RemoteDispatcherServer> mRemoteDispatcher;
 		QMap<QString, QSharedPointer<CardConnection>> mCardConnections;
 
-		QString slotHandleForReaderName(const QString& pReaderName) const;
-		QString convertSlotHandleBackwardsCompatibility(const QString& pReaderName) const;
+		[[nodiscard]] QString slotHandleForReaderName(const QString& pReaderName) const;
 
 		void handleIfdGetStatus(const QJsonObject& pJsonObject);
 		void handleIfdConnect(const QJsonObject& pJsonObject);
@@ -76,8 +75,8 @@ class ServerMessageHandlerImpl
 	public:
 		explicit ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel);
 
-		virtual void sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pChannelOutput) override;
-		virtual void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) override;
+		void sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pChannelOutput) override;
+		void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) override;
 };
 
 

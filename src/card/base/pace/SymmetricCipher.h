@@ -1,7 +1,7 @@
 /*!
  * \brief Symmetric decryption method used for PACE.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -34,7 +34,7 @@ class SymmetricCipher final
 		/*!
 		 * Returns true, if initialization succeeded, i.e. the algorithm is known, supported and the key bytes have correct size.
 		 */
-		bool isInitialized() const;
+		[[nodiscard]] bool isInitialized() const;
 
 		/*!
 		 * \brief Encrypts the message.
@@ -57,7 +57,7 @@ class SymmetricCipher final
 		 */
 		bool setIv(const QByteArray& pIv);
 
-		int getBlockSize() const;
+		[[nodiscard]] int getBlockSize() const;
 };
 
 } // namespace governikus

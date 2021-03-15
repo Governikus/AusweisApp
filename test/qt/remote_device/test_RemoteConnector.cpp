@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteConnector
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteConnectorImpl.h"
@@ -32,6 +32,39 @@ class test_RemoteConnector
 	Q_OBJECT
 
 	private:
+		Discovery getDiscovery(const QString& pIfdName, quint16 pPort)
+		{
+			QString ifdId("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+			IfdVersion::Version version = IfdVersion::Version::latest;
+
+			if (IfdVersion::supported().contains(IfdVersion::Version::v2))
+			{
+				ifdId = R"(
+							-----BEGIN CERTIFICATE-----
+							MIIC4zCCAcsCBEQvMpowDQYJKoZIhvcNAQELBQAwNDEUMBIGA1UEAwwLQXVzd2Vp
+							c0FwcDIxHDAaBgNVBAUTEzY0MTgwMjY3MTE5MTA5MjY2MzQwIhgPMTk3MDAxMDEw
+							MDAwMDBaGA85OTk5MTIzMTIzNTk1OVowNDEUMBIGA1UEAwwLQXVzd2Vpc0FwcDIx
+							HDAaBgNVBAUTEzY0MTgwMjY3MTE5MTA5MjY2MzQwggEiMA0GCSqGSIb3DQEBAQUA
+							A4IBDwAwggEKAoIBAQDGJ9C76Cb8iHuaZJxcFY0NpNllcAK5JKcrigKBki7EvF9z
+							5Q/MNek2pxwTMp5SilUDJOkwgcTdm7liC/Zx+lPX8MZjhWxV73DGt9DDyJh91ypl
+							6B8vZbpJlL83Vo4C4BLBG6ZaElPpyTitWWKQ4BFUoH0h2utsNFV7FHz+1oZcvhv0
+							gQuzd7gQaVV6mzCePRn+4qgxYSXSJ8Ix21udgT3LoHDOBrOWSIt0g/Q1mkzJcnaC
+							EnS2s6Ib0xPY5PsL1YN/dZn88/gs9Za4rZSBGIIDrpCt5WCkYbkg45LwXLmaPUrg
+							uuFIFIR0HH4pxgajLHpMgYaszxkg4SkdxwJ8vIytAgMBAAEwDQYJKoZIhvcNAQEL
+							BQADggEBAB4grwHZ8NMrs3vRInJQc3ftYDCAjDPjjTg/G4BVz07DmlQZpFyPfInb
+							UaKfpMlaEd1EoRuNIxC796+rZhy+j97DoLkT1qnPP30GLwlZaVZeOCKIIQ+tGjUU
+							cWhhIC6kRCPIQAKxKDNGIUwBAkwludieGa7Ytl7qmnnJDMNe+Ox7Sf+UOa12bJKH
+							d27MYoWMfecJdTmF8xXQ7EEYjMwWHd5t5tJG9AVgzhO8zC+iJTqc9I34sIa8+9WE
+							oQu+/VZgDkJaSdDJ4LqVFIvUy3CFGh6ahDVsHGC5kTDm5EQWh3puWR0AkIjUWMPi
+							xU/nr0Jsab99VgX4/nnCW92v/DIRc1c=
+							-----END CERTIFICATE-----
+						)";
+				version = IfdVersion::Version::v2;
+			}
+			return Discovery(pIfdName, ifdId, pPort, {version});
+		}
+
+
 		void sendRequest(const QSharedPointer<RemoteConnectorImpl>& pConnector,
 			const QHostAddress& pHostAddress,
 			const Discovery& pDiscovery,
@@ -143,7 +176,7 @@ class test_RemoteConnector
 
 			// No device name.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const Discovery discoveryMsg(QString(), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v0});
+			const Discovery discoveryMsg(QString(), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::latest});
 			sendRequest(connector, hostAddress, discoveryMsg, QString());
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
@@ -194,7 +227,7 @@ class test_RemoteConnector
 
 			// Password is empty.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), server->getServerPort(), {IfdVersion::Version::v0});
+			const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), server->getServerPort());
 			sendRequest(connector, hostAddress, discoveryMsg, QString());
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
@@ -219,7 +252,7 @@ class test_RemoteConnector
 
 			// Currently, only API level 1 is supported.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v_test});
+			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::Unknown});
 			sendRequest(connector, hostAddress, discoveryMsg, QStringLiteral("secret"));
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
@@ -244,7 +277,7 @@ class test_RemoteConnector
 
 			// Correct request but no server is running.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::v0});
+			const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), 2020);
 			sendRequest(connector, hostAddress, discoveryMsg, QString("dummy"));
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
@@ -323,7 +356,7 @@ class test_RemoteConnector
 
 				// Send valid encrypted connect request.
 				const QHostAddress hostAddress(QHostAddress::LocalHost);
-				const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), serverPort, {IfdVersion::Version::v0});
+				const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), serverPort);
 				sendRequest(connector, hostAddress, discoveryMsg, psk);
 
 				QTRY_COMPARE(spyConnectorSuccess.count(), 1); // clazy:exclude=qstring-allocations
@@ -383,7 +416,7 @@ class test_RemoteConnector
 
 			// Send encrypted connect request with wrong psk.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), serverPort, {IfdVersion::Version::v0});
+			const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), serverPort);
 			sendRequest(connector, hostAddress, discoveryMsg, QStringLiteral("sekret"));
 
 			QTRY_COMPARE(spyConnectorError.count(), 1); // clazy:exclude=qstring-allocations

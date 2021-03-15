@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -43,13 +43,13 @@ class PcscReaderFeature
 	public:
 		PcscReaderFeature(const char* const pFeaturesTLV, PCSC_INT pLength = 0);
 
-		bool contains(FeatureID pFeatureID) const;
+		[[nodiscard]] bool contains(FeatureID pFeatureID) const;
 
 		/*!
 		 * Check with contains first for existence of the
 		 * feature, otherwise this will cause an exception.
 		 */
-		PCSC_INT getValue(FeatureID pFeatureID) const;
+		[[nodiscard]] PCSC_INT getValue(FeatureID pFeatureID) const;
 };
 
 

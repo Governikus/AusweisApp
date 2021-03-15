@@ -16,11 +16,11 @@ j.with
 
 		shell('cd build; make notes')
 		shell('cd build; make notes.latex.pdf')
-		shell('cd build/docs/notes/html; cmake -E tar cfJ ../AusweisApp2_ReleaseNotes.tar.xz .')
+		shell('cd build/docs/notes; cmake -E tar cfJ ../AusweisApp2_ReleaseNotes.tar.xz .')
 
 		shell('cd build; make sdk')
 		shell('cd build; make sdk.latex.pdf')
-		shell('cd build/docs/sdk/html; cmake -E tar cfJ ../AusweisApp2_SDK.tar.xz .')
+		shell('cd build/docs/sdk/html; cmake -E tar cfJ ../../AusweisApp2_SDK.tar.xz .')
 
 		shell('cd build; make inst.latex.pdf')
 

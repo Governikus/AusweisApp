@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the application.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -34,9 +34,7 @@ class ApplicationModel
 	Q_PROPERTY(QString storeUrl READ getStoreUrl NOTIFY fireStoreUrlChanged)
 	Q_PROPERTY(QUrl releaseNotesUrl READ getReleaseNotesUrl CONSTANT)
 
-	Q_PROPERTY(bool nfcEnabled READ isNfcEnabled NOTIFY fireNfcEnabledChanged)
-	Q_PROPERTY(bool nfcAvailable READ isNfcAvailable CONSTANT)
-	Q_PROPERTY(bool nfcRunning READ isNfcRunning NOTIFY fireNfcRunningChanged)
+	Q_PROPERTY(QmlNfcState nfcState READ getNfcState NOTIFY fireNfcStateChanged)
 	Q_PROPERTY(bool extendedLengthApdusUnsupported READ isExtendedLengthApdusUnsupported NOTIFY fireReaderPropertiesUpdated)
 
 	Q_PROPERTY(qreal scaleFactor READ getScaleFactor WRITE setScaleFactor NOTIFY fireScaleFactorChanged)
@@ -50,7 +48,7 @@ class ApplicationModel
 	QSharedPointer<WorkflowContext> mContext;
 
 	ApplicationModel();
-	virtual ~ApplicationModel() override = default;
+	~ApplicationModel() override = default;
 	void onStatusChanged(const ReaderManagerPlugInInfo& pInfo);
 	ReaderManagerPlugInInfo getFirstPlugInInfo(ReaderManagerPlugInType pType) const;
 
@@ -85,14 +83,21 @@ class ApplicationModel
 		};
 		Q_ENUM(Settings)
 
+		enum class QmlNfcState
+		{
+			NFC_UNAVAILABLE,
+			NFC_DISABLED,
+			NFC_INACTIVE,
+			NFC_READY
+		};
+		Q_ENUM(QmlNfcState)
+
 		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
 		QString getStoreUrl() const;
 		QUrl getReleaseNotesUrl() const;
 
-		bool isNfcAvailable() const;
-		bool isNfcEnabled() const;
-		bool isNfcRunning() const;
+		QmlNfcState getNfcState() const;
 		bool isExtendedLengthApdusUnsupported() const;
 
 		bool isWifiEnabled() const;
@@ -129,8 +134,7 @@ class ApplicationModel
 	Q_SIGNALS:
 		void fireStoreUrlChanged();
 
-		void fireNfcEnabledChanged();
-		void fireNfcRunningChanged();
+		void fireNfcStateChanged();
 		void fireReaderPropertiesUpdated();
 
 		void fireCurrentWorkflowChanged();

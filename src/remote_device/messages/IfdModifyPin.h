@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,11 +20,11 @@ class IfdModifyPin
 	public:
 		IfdModifyPin(const QString& pSlotHandle = QString(), const QByteArray& pInputData = QByteArray());
 		explicit IfdModifyPin(const QJsonObject& pMessageObject);
-		virtual ~IfdModifyPin() override = default;
+		~IfdModifyPin() override = default;
 
-		const QString& getSlotHandle() const;
-		const QByteArray& getInputData() const;
-		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
+		[[nodiscard]] const QString& getSlotHandle() const;
+		[[nodiscard]] const QByteArray& getInputData() const;
+		[[nodiscard]] QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const override;
 };
 
 

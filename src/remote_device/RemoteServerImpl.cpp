@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServerImpl.h"
@@ -21,23 +21,33 @@ template<> RemoteServer* createNewObject<RemoteServer*>()
 
 } // namespace governikus
 
+
+void RemoteServerImpl::onPskChanged(const QByteArray& pPsk)
+{
+	if (mRemoteReaderAdvertiser)
+	{
+		mRemoteReaderAdvertiser->setPairing(!pPsk.isEmpty());
+	}
+	Q_EMIT firePskChanged(pPsk);
+}
+
+
 void RemoteServerImpl::onConnectedChanged(bool pConnected)
 {
 	if (pConnected)
 	{
 		mRemoteReaderAdvertiser.reset();
-		return;
 	}
-
-	if (isRunning() && !pConnected)
+	else if (isRunning())
 	{
 		const auto& ifdName = mWebSocketServer->getServerName();
 		const auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-		const auto& ifdId = RemoteServiceSettings::generateFingerprint(remoteServiceSettings.getCertificate());
+		const auto& ifdId = QString::fromLatin1(remoteServiceSettings.getCertificate().toPem());
 		quint16 port = mWebSocketServer->getServerPort();
 		mRemoteReaderAdvertiser.reset(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port));
-		return;
 	}
+
+	Q_EMIT fireConnectedChanged(pConnected);
 }
 
 
@@ -46,10 +56,10 @@ RemoteServerImpl::RemoteServerImpl()
 	, mRemoteReaderAdvertiser()
 	, mWebSocketServer(Env::create<RemoteWebSocketServer*>())
 {
+	connect(mWebSocketServer.data(), &RemoteWebSocketServer::firePskChanged, this, &RemoteServerImpl::onPskChanged);
 	connect(mWebSocketServer.data(), &RemoteWebSocketServer::fireConnectedChanged, this, &RemoteServerImpl::onConnectedChanged);
-	connect(mWebSocketServer.data(), &RemoteWebSocketServer::fireConnectedChanged, this, &RemoteServerImpl::fireConnectedChanged);
 	connect(mWebSocketServer.data(), &RemoteWebSocketServer::fireMessageHandlerAdded, this, &RemoteServer::fireMessageHandlerAdded);
-	connect(mWebSocketServer.data(), &RemoteWebSocketServer::firePskChanged, this, &RemoteServer::firePskChanged);
+	connect(mWebSocketServer.data(), &RemoteWebSocketServer::firePairingCompleted, this, &RemoteServer::firePairingCompleted);
 }
 
 
@@ -66,6 +76,7 @@ bool RemoteServerImpl::start(const QString& pServerName)
 	{
 		onConnectedChanged(false);
 	}
+	Q_EMIT fireIsRunningChanged();
 	return success;
 }
 
@@ -74,6 +85,7 @@ void RemoteServerImpl::stop()
 {
 	mRemoteReaderAdvertiser.reset();
 	mWebSocketServer->close();
+	Q_EMIT fireIsRunningChanged();
 }
 
 

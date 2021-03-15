@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,10 +18,10 @@ class IfdGetStatus
 	public:
 		explicit IfdGetStatus(const QString& pSlotName = QString());
 		explicit IfdGetStatus(const QJsonObject& pMessageObject);
-		virtual ~IfdGetStatus() override = default;
+		~IfdGetStatus() override = default;
 
-		const QString& getSlotName() const;
-		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
+		[[nodiscard]] const QString& getSlotName() const;
+		[[nodiscard]] QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const override;
 };
 
 

@@ -351,7 +351,7 @@ CHANGE_PIN
 This message will be send by AusweisApp2 if a change PIN workflow
 is initially started.
 
-If you receive a :ref:`change_pin` message with a parameter **sucess**
+If you receive a :ref:`change_pin` message with a parameter **success**
 the workflow is finished. This could happen after a :ref:`set_pin`
 command if the connection to the card failed. Also the parameter
 **success** is false after a :ref:`cancel` command.
@@ -362,7 +362,7 @@ command if the connection to the card failed. Also the parameter
 
 
   - **success**: Indicates with true that the PIN was successfully
-                 changed, otherwise false.
+    changed, otherwise false.
 
 .. code-block:: json
 

@@ -1,7 +1,7 @@
 /*!
  * \brief This state executes the remote message PACE channel establish.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,7 +23,7 @@ class StateEstablishPaceChannelResponse
 
 	private:
 		explicit StateEstablishPaceChannelResponse(const QSharedPointer<WorkflowContext>& pContext);
-		virtual void run() override;
+		void run() override;
 
 	Q_SIGNALS:
 		void fireWrongPacePassword();

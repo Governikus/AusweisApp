@@ -1,7 +1,7 @@
 /*!
  * \brief Generate information for DIDListResponse.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -17,7 +17,7 @@ class DIDListResponse
 	, public ResponseType
 {
 	private:
-		virtual void createBodyElement() override;
+		void createBodyElement() override;
 
 		Q_DISABLE_COPY(DIDListResponse)
 

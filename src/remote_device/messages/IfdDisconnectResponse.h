@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,10 +18,10 @@ class IfdDisconnectResponse
 	public:
 		IfdDisconnectResponse(const QString& pSlotHandle, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		explicit IfdDisconnectResponse(const QJsonObject& pMessageObject);
-		virtual ~IfdDisconnectResponse() override = default;
+		~IfdDisconnectResponse() override = default;
 
-		const QString& getSlotHandle() const;
-		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
+		[[nodiscard]] const QString& getSlotHandle() const;
+		[[nodiscard]] QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const override;
 };
 
 

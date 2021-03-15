@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCleanUpReaderManager.h"
@@ -29,7 +29,9 @@ void StateCleanUpReaderManager::run()
 	const auto readerManager = Env::getSingleton<ReaderManager>();
 	readerManager->stopScanAll(status.isError() ? status.toErrorDescription(true) : QString());
 
-#ifndef Q_OS_IOS
+#ifdef Q_OS_IOS
+	readerManager->reset(ReaderManagerPlugInType::NFC);
+#else
 	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 	{
 		readerManager->startScanAll();

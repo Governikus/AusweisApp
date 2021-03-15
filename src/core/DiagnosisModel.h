@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -61,16 +61,16 @@ class DiagnosisModel
 		explicit DiagnosisModel(const QSharedPointer<DiagnosisContext>& pContext);
 		~DiagnosisModel() override;
 
-		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
-		int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
+		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
+		[[nodiscard]] int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
 
-		QString getFirstSectionName() const;
+		[[nodiscard]] QString getFirstSectionName() const;
 		QAbstractListModel* getSectionContent(const QString& pSection);
-		QDateTime getCreationTime() const;
-		Q_INVOKABLE QString getCreationTimeString() const;
-		QString getAsPlaintext() const;
-		QString boolToString(bool pBoolean) const;
-		bool isRunning() const;
+		[[nodiscard]] QDateTime getCreationTime() const;
+		Q_INVOKABLE [[nodiscard]] QString getCreationTimeString() const;
+		[[nodiscard]] QString getAsPlaintext() const;
+		[[nodiscard]] QString boolToString(bool pBoolean) const;
+		[[nodiscard]] bool isRunning() const;
 
 	Q_SIGNALS:
 		void fireRunningChanged();

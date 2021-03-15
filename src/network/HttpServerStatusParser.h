@@ -1,7 +1,7 @@
 /*!
  * \brief Sends a status request to given url:port and tries to detect details and server header.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,11 +33,11 @@ class HttpServerStatusParser
 
 	public:
 		HttpServerStatusParser(quint16 pPort, const QHostAddress& pHost = QHostAddress::LocalHost);
-		virtual ~HttpServerStatusParser();
+		~HttpServerStatusParser() override;
 
 		bool request();
-		const QString& getServerHeader() const;
-		const VersionInfo& getVersionInfo() const;
+		[[nodiscard]] const QString& getServerHeader() const;
+		[[nodiscard]] const VersionInfo& getVersionInfo() const;
 };
 
 } // namespace governikus

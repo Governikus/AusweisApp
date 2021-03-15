@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateStartRemoteService.h"
@@ -37,7 +37,7 @@ class test_StateStartRemoteService
 
 			state->onEntry(nullptr);
 			context->setStateApproved();
-			QCOMPARE(spyContinue.count(), 1);
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 
 			const auto& server = context->getRemoteServer();
 			const QSharedPointer<ServerMessageHandler> handler(new ServerMessageHandlerImpl(QSharedPointer<MockDataChannel>::create()));
@@ -49,7 +49,7 @@ class test_StateStartRemoteService
 			QCOMPARE(context->getPuk(), QString());
 			QCOMPARE(context->getCardConnection(), QSharedPointer<CardConnection>());
 			QCOMPARE(context->getLastPaceResult(), CardReturnCode::OK);
-			QVERIFY(!context->hasEstablishedPaceChannelRequest());
+			QVERIFY(context->getSlotHandle().isEmpty());
 			QCOMPARE(context->getModifyPinMessage(), QSharedPointer<const IfdModifyPin>());
 		}
 

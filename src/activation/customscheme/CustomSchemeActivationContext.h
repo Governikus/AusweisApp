@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,9 +20,9 @@ class CustomSchemeActivationContext
 
 	public:
 		explicit CustomSchemeActivationContext(const QUrl& pActivationUrl);
-		virtual ~CustomSchemeActivationContext() override;
+		~CustomSchemeActivationContext() override;
 
-		QUrl getActivationURL() const override;
+		[[nodiscard]] QUrl getActivationURL() const override;
 
 		bool sendProcessing() override;
 		bool sendOperationAlreadyActive() override;

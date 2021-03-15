@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of EFCardSecurity
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -97,7 +97,7 @@ class EFCardSecurity
 		static QSharedPointer<EFCardSecurity> fromHex(const QByteArray& pHexString);
 		static QSharedPointer<EFCardSecurity> decode(const QByteArray& pBytes);
 
-		const QSharedPointer<const SecurityInfos>& getSecurityInfos() const;
+		[[nodiscard]] const QSharedPointer<const SecurityInfos>& getSecurityInfos() const;
 };
 
 #ifndef OPENSSL_NO_CMS

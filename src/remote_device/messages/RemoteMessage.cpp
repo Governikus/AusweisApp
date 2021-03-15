@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -208,11 +208,11 @@ const QString& RemoteMessage::getContextHandle() const
 }
 
 
-QByteArray RemoteMessage::toByteArray(const QString& pContextHandle) const
+QByteArray RemoteMessage::toByteArray(const IfdVersion&, const QString&) const
 {
 	Q_ASSERT(false);
 
-	qCCritical(remote_device) << "Unable to convert an untyped RemoteMessage to json:" << pContextHandle;
+	qCCritical(remote_device) << "Unable to convert an untyped RemoteMessage to json";
 	return QByteArray();
 }
 

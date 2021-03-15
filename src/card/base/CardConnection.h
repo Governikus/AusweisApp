@@ -1,7 +1,7 @@
 /*!
  * \brief Contains a card connection object
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -99,7 +99,7 @@ class CardConnection
 		/*!
 		 * Destroys the CardConnection and disconnects from the card.
 		 */
-		virtual ~CardConnection() = default;
+		~CardConnection() override = default;
 
 		/*!
 		 * This method returns a stored copy of the reader info object. So calling this method any
@@ -109,8 +109,8 @@ class CardConnection
 		 */
 		virtual const ReaderInfo& getReaderInfo();
 
-		bool getPaceCanSuccessful() const;
-		bool getPacePinSuccessful() const;
+		[[nodiscard]] bool getPaceCanSuccessful() const;
+		[[nodiscard]] bool getPacePinSuccessful() const;
 
 		void setProgressMessage(const QString& pMessage, int pProgress = -1);
 		bool stopSecureMessaging();
