@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,14 +18,16 @@ class IfdTransmitResponse
 		QString mSlotHandle;
 		QByteArray mResponseApdu;
 
+		void parseResponseApdu(const QJsonObject& pMessageObject);
+
 	public:
 		IfdTransmitResponse(const QString& pSlotHandle, const QByteArray& pResponseApdu = QByteArray(), ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
 		explicit IfdTransmitResponse(const QJsonObject& pMessageObject);
-		virtual ~IfdTransmitResponse() override = default;
+		~IfdTransmitResponse() override = default;
 
-		const QString& getSlotHandle() const;
-		const QByteArray& getResponseApdu() const;
-		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
+		[[nodiscard]] const QString& getSlotHandle() const;
+		[[nodiscard]] const QByteArray& getResponseApdu() const;
+		[[nodiscard]] QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const override;
 };
 
 

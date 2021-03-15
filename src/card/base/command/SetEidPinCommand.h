@@ -1,7 +1,7 @@
 /*!
  * \brief Command to set the Eid PIN of a card.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,14 +28,14 @@ class SetEidPinCommand
 		ResponseApdu mResponseApdu;
 
 	protected:
-		virtual void internalExecute() override;
-		virtual ~SetEidPinCommand() override = default;
+		void internalExecute() override;
+		~SetEidPinCommand() override = default;
 
 	public:
 		explicit SetEidPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
 				const QByteArray& pNewPin, quint8 pTimeoutSeconds);
 
-		const ResponseApdu& getResponseApdu() const;
+		[[nodiscard]] const ResponseApdu& getResponseApdu() const;
 };
 
 } // namespace governikus

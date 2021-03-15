@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -134,6 +134,7 @@ Item {
 	Image {
 		id: card
 
+		visible: !grayLevel.visible
 		anchors.centerIn: phone
 		sourceSize.height: phone.height * 0.5
 		transformOrigin: Item.Center
@@ -155,6 +156,7 @@ Item {
 		fillMode: Image.PreserveAspectFit
 
 		Image {
+			visible: !grayLevel.visible
 			x: card.x - phone.x
 			y: card.y - phone.y
 			z: 1

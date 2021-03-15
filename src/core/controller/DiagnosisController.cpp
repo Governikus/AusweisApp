@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisController.h"
@@ -9,7 +9,7 @@
 #include <QLoggingCategory>
 #include <QNetworkInterface>
 #include <QSysInfo>
-#include <QtConcurrent/QtConcurrent>
+#include <QtConcurrent>
 
 using namespace governikus;
 
@@ -32,9 +32,12 @@ DiagnosisController::~DiagnosisController()
 {
 	if (mScanHasToBeStopped)
 	{
-		qCDebug(diagnosis) << "Stopping scans.";
 		const auto& readerManager = Env::getSingleton<ReaderManager>();
-		readerManager->stopScanAll();
+		if (readerManager->isScanRunning())
+		{
+			qCDebug(diagnosis) << "Stopping scans.";
+			readerManager->stopScanAll();
+		}
 		mScanHasToBeStopped = false;
 	}
 }

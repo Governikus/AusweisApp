@@ -1,7 +1,7 @@
 /*!
  * \brief Holds some basic card control commands
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,12 +32,12 @@ class BaseCardCommand
 		explicit BaseCardCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
 		virtual void internalExecute() = 0;
-		virtual ~BaseCardCommand();
+		~BaseCardCommand() override;
 
 	public:
 		void run();
 
-		CardReturnCode getReturnCode() const
+		[[nodiscard]] CardReturnCode getReturnCode() const
 		{
 			return mReturnCode;
 		}

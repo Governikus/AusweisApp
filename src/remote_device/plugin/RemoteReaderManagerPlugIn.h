@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref ReaderManagerPlugIn for smartphone as card reader (SaC).
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -50,13 +50,13 @@ class RemoteReaderManagerPlugIn
 
 	public:
 		RemoteReaderManagerPlugIn();
-		virtual ~RemoteReaderManagerPlugIn() override;
+		~RemoteReaderManagerPlugIn() override;
 
 		void init() override;
-		virtual QList<Reader*> getReaders() const override;
+		[[nodiscard]] QList<Reader*> getReaders() const override;
 
-		virtual void startScan(bool pAutoConnect) override;
-		virtual void stopScan(const QString& pError = QString()) override;
+		void startScan(bool pAutoConnect) override;
+		void stopScan(const QString& pError = QString()) override;
 
 };
 

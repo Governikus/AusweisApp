@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -14,7 +14,6 @@ using namespace governikus;
 NumberModel::NumberModel()
 	: QObject()
 	, mContext()
-	, mRequestTransportPin(false)
 	, mRequestNewPin(false)
 {
 	const auto readerManager = Env::getSingleton<ReaderManager>();
@@ -33,6 +32,7 @@ void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 	{
 		connect(mContext.data(), &WorkflowContext::fireCanChanged, this, &NumberModel::fireCanChanged);
 		connect(mContext.data(), &WorkflowContext::firePinChanged, this, &NumberModel::firePinChanged);
+		connect(mContext.data(), &WorkflowContext::firePukChanged, this, &NumberModel::firePukChanged);
 		connect(mContext.data(), &WorkflowContext::fireCanAllowedModeChanged, this, &NumberModel::fireCanAllowedModeChanged);
 		connect(mContext.data(), &WorkflowContext::firePasswordTypeChanged, this, &NumberModel::firePasswordTypeChanged);
 
@@ -40,27 +40,12 @@ void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 		if (changePinContext)
 		{
 			connect(changePinContext.data(), &ChangePinContext::fireNewPinChanged, this, &NumberModel::fireNewPinChanged);
-			connect(changePinContext.data(), &ChangePinContext::firePukChanged, this, &NumberModel::firePukChanged);
 		}
 
 		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &NumberModel::onCardConnectionChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &NumberModel::fireReaderInfoChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &NumberModel::fireInputErrorChanged);
 		connect(mContext.data(), &WorkflowContext::firePaceResultUpdated, this, &NumberModel::fireInputErrorChanged);
-
-		// The length of the pin doesn't matter for the core. Requesting
-		// a five- or six-digit PIN is only part of the gui. Therefore we handle
-		// this state in the NumberModel. The only case where the core need
-		// to know if the Transport PIN should be requested is, when we
-		// are in an authentication workflow and want to start a pin change.
-		// Therefore we enqueue a ChangePinContext with the Transport PIN
-		// request and consider it in this function.
-		const QSharedPointer<ChangePinContext> context = mContext.objectCast<ChangePinContext>();
-		mRequestTransportPin |= (context && context->requestTransportPin());
-	}
-	else
-	{
-		mRequestTransportPin = false;
 	}
 	mRequestNewPin = false;
 
@@ -337,19 +322,15 @@ bool NumberModel::isCanAllowedMode() const
 }
 
 
-void NumberModel::setRequestTransportPin(bool pEnabled)
-{
-	if (mRequestTransportPin != pEnabled)
-	{
-		mRequestTransportPin = pEnabled;
-		Q_EMIT fireRequestTransportPinChanged();
-	}
-}
-
-
 bool NumberModel::isRequestTransportPin() const
 {
-	return mRequestTransportPin;
+	const QSharedPointer<ChangePinContext> pinContext = mContext.objectCast<ChangePinContext>();
+	if (pinContext)
+	{
+		return pinContext->isRequestTransportPin();
+	}
+
+	return false;
 }
 
 

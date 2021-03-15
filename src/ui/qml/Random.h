@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -17,7 +17,7 @@ class Random
 
 	private:
 		Random() = default;
-		virtual ~Random() override = default;
+		~Random() override = default;
 
 	public:
 		/// A discrete random distribution on the range [pLowerBound, pUpperBound] with equal probability throughout the range.

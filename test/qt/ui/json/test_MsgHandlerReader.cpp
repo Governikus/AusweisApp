@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerReader
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerReader.h"
@@ -28,7 +28,7 @@ class test_MsgHandlerReader
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
 			readerManager->init();
-			readerManager->getPlugInInfos(); // just to wait until initialization finished
+			readerManager->isScanRunning(); // just to wait until initialization finished
 		}
 
 
@@ -56,10 +56,10 @@ class test_MsgHandlerReader
 		void error()
 		{
 			MessageDispatcher dispatcher;
-			QByteArray msg("{\"cmd\": \"GET_READER\"}");
+			QByteArray msg(R"({"cmd": "GET_READER"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Name cannot be undefined\",\"msg\":\"READER\"}"));
 
-			msg = "{\"cmd\": \"GET_READER\", \"name\": 5}";
+			msg = R"({"cmd": "GET_READER", "name": 5})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"Invalid name\",\"msg\":\"READER\"}"));
 		}
 
@@ -69,14 +69,14 @@ class test_MsgHandlerReader
 			MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815");
 
 			MessageDispatcher dispatcher;
-			QByteArray msg("{\"cmd\": \"GET_READER\", \"name\": \"MockReader 081\"}");
+			QByteArray msg(R"({"cmd": "GET_READER", "name": "MockReader 081"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":false,\"msg\":\"READER\",\"name\":\"MockReader 081\"}"));
 
-			msg = "{\"cmd\": \"GET_READER\", \"name\": \"MockReader 0815\"}";
+			msg = R"({"cmd": "GET_READER", "name": "MockReader 0815"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 
 			MockReaderManagerPlugIn::getInstance().removeReader("MockReader 0815");
-			msg = "{\"cmd\": \"GET_READER\", \"name\": \"MockReader 0815\"}";
+			msg = R"({"cmd": "GET_READER", "name": "MockReader 0815"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 		}
 
@@ -87,7 +87,7 @@ class test_MsgHandlerReader
 			reader->setCard(MockCardConfig());
 
 			MessageDispatcher dispatcher;
-			QByteArray msg("{\"cmd\": \"GET_READER\", \"name\": \"MockReader 0815\"}");
+			QByteArray msg(R"({"cmd": "GET_READER", "name": "MockReader 0815"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 		}
 
@@ -114,19 +114,19 @@ class test_MsgHandlerReader
 			reader->setReaderInfo(info);
 
 			MessageDispatcher dispatcher;
-			QByteArray msg("{\"cmd\": \"GET_READER\", \"name\": \"MockReader 0815\"}");
+			QByteArray msg(R"({"cmd": "GET_READER", "name": "MockReader 0815"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 
-			msg = "{\"cmd\": \"GET_READER\", \"name\": \"ReaderMock\"}";
+			msg = R"({"cmd": "GET_READER", "name": "ReaderMock"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"keypad\":false,\"msg\":\"READER\",\"name\":\"ReaderMock\"}"));
 
-			msg = "{\"cmd\": \"GET_READER\", \"name\": \"ReaderMockXYZ\"}";
+			msg = R"({"cmd": "GET_READER", "name": "ReaderMockXYZ"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"keypad\":false,\"msg\":\"READER\",\"name\":\"ReaderMockXYZ\"}"));
 
-			msg = "{\"cmd\": \"GET_READER\", \"name\": \"SpecialMock\"}";
+			msg = R"({"cmd": "GET_READER", "name": "SpecialMock"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"keypad\":false,\"msg\":\"READER\",\"name\":\"SpecialMock\"}"));
 
-			msg = "{\"cmd\": \"GET_READER\", \"name\": \"SpecialMockWithGermanCard\"}";
+			msg = R"({"cmd": "GET_READER", "name": "SpecialMockWithGermanCard"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":true,\"inoperative\":false,\"retryCounter\":3},\"keypad\":false,\"msg\":\"READER\",\"name\":\"SpecialMockWithGermanCard\"}"));
 		}
 

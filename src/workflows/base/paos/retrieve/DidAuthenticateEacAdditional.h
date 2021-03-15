@@ -1,7 +1,7 @@
 /*!
  * \brief Class to hold information of DIDAuthenticateEACAdditional.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,10 +30,10 @@ class DIDAuthenticateEACAdditional
 
 	public:
 		DIDAuthenticateEACAdditional();
-		virtual ~DIDAuthenticateEACAdditional();
+		~DIDAuthenticateEACAdditional() override;
 
-		const QString& getDidName() const;
-		const QString& getSignature() const;
+		[[nodiscard]] const QString& getDidName() const;
+		[[nodiscard]] const QString& getSignature() const;
 };
 
 } // namespace governikus

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Downloader.h"
@@ -95,6 +95,7 @@ void Downloader::onNetworkReplyFinished()
 	qCDebug(fileprovider) << "Downloader finished:" << mCurrentReply->request().url().fileName();
 
 	const auto guard = qScopeGuard([this] {
+				mCurrentReply->disconnect(this);
 				mCurrentReply.reset();
 				startDownloadIfPending();
 			});
@@ -219,19 +220,15 @@ bool Downloader::abort(const QUrl& pUpdateUrl)
 }
 
 
-void Downloader::download(const QUrl& pUpdateUrl)
+void Downloader::download(const QUrl& pUpdateUrl, const QDateTime& pCurrentTimestamp)
 {
-	qCDebug(fileprovider) << "Download:" << pUpdateUrl;
-	auto request = QSharedPointer<QNetworkRequest>::create(pUpdateUrl);
-	scheduleDownload(request);
-}
-
-
-void Downloader::downloadIfNew(const QUrl& pUpdateUrl,
-		const QDateTime& pCurrentTimestamp)
-{
-	qCDebug(fileprovider) << "Download:" << pUpdateUrl;
-	auto request = QSharedPointer<QNetworkRequest>::create(pUpdateUrl);
-	request->setHeader(QNetworkRequest::IfModifiedSinceHeader, pCurrentTimestamp);
-	scheduleDownload(request);
+	QMetaObject::invokeMethod(this, [this, pUpdateUrl, pCurrentTimestamp] {
+				qCDebug(fileprovider) << "Download:" << pUpdateUrl;
+				auto request = QSharedPointer<QNetworkRequest>::create(pUpdateUrl);
+				if (pCurrentTimestamp.isValid())
+				{
+					request->setHeader(QNetworkRequest::IfModifiedSinceHeader, pCurrentTimestamp);
+				}
+				scheduleDownload(request);
+			});
 }

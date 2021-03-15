@@ -2,7 +2,7 @@
  * \brief Allows the user to send a survey after a successful authentication
  * on Android.
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,7 +23,7 @@ class StateSendWhitelistSurvey
 	friend class StateBuilder;
 
 	explicit StateSendWhitelistSurvey(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 };
 
 } // namespace governikus

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -10,68 +10,34 @@
 #include <QJsonObject>
 
 
-class test_RemoteReaderManagerPlugIn;
-class test_ServerMessageHandler;
-class test_IfdStatus;
-
-
 namespace governikus
 {
 class MockRemoteDispatcher;
-
-
-class PaceCapabilities
-{
-	// PACECapabilities according to TR-03119, sec. D.1.1.
-
-	private:
-		bool mPace;
-		bool mEId;
-		bool mESign;
-		bool mDestroy;
-
-	public:
-		PaceCapabilities(bool pPace = false, bool pEId = false, bool pESign = false, bool pDestroy = false);
-
-		bool getPace() const;
-		bool getEId() const;
-		bool getESign() const;
-		bool getDestroy() const;
-
-		QJsonValue toJson() const;
-};
-
 
 class IfdStatus
 	: public RemoteMessage
 {
 	private:
-		friend MockRemoteDispatcher;
-		friend ::test_IfdStatus;
-
 		QString mSlotName;
-		PaceCapabilities mPaceCapabilities;
+		bool mHasPinPad;
 		int mMaxApduLength;
 		bool mConnectedReader;
 		bool mCardAvailable;
 
-		IfdStatus(const QString& pSlotName,
-				const PaceCapabilities& pPaceCapabilities,
-				int pMaxApduLength,
-				bool pConnected,
-				bool pCardAvailable = false);
+		[[nodiscard]] QJsonValue createPaceCapabilities() const;
+		void parsePinPad(const QJsonObject& pMessageObject);
 
 	public:
 		explicit IfdStatus(const ReaderInfo& pReaderInfo);
 		explicit IfdStatus(const QJsonObject& pMessageObject);
-		virtual ~IfdStatus() override = default;
+		~IfdStatus() override = default;
 
-		const QString& getSlotName() const;
-		const PaceCapabilities& getPaceCapabilities() const;
-		int getMaxApduLength() const;
-		bool getConnectedReader() const;
-		bool getCardAvailable() const;
-		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
+		[[nodiscard]] const QString& getSlotName() const;
+		[[nodiscard]] bool hasPinPad() const;
+		[[nodiscard]] int getMaxApduLength() const;
+		[[nodiscard]] bool getConnectedReader() const;
+		[[nodiscard]] bool getCardAvailable() const;
+		[[nodiscard]] QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const override;
 };
 
 

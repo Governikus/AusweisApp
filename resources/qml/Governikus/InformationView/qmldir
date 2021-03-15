@@ -2,4 +2,6 @@ module InformationView
 
 DiagnosisView 1.0 DiagnosisView.qml
 LicenseInformation 1.0 LicenseInformation.qml
+ReleaseNotes 1.0 ReleaseNotes.qml
+ReleaseNotesView 1.0 ReleaseNotesView.qml
 VersionInformation 1.0 VersionInformation.qml

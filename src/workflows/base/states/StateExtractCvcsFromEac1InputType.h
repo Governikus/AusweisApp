@@ -1,7 +1,7 @@
 /*!
  * \brief State to process InputType of EAC1. Extract certificates and set it to context.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,7 +22,7 @@ class StateExtractCvcsFromEac1InputType
 	friend class StateBuilder;
 
 	explicit StateExtractCvcsFromEac1InputType(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 };
 
 } // namespace governikus

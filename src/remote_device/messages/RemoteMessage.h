@@ -1,10 +1,11 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "EnumHelper.h"
+#include "IfdVersion.h"
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -46,7 +47,7 @@ class RemoteMessage
 		QString mContextHandle;
 
 	protected:
-		virtual QJsonObject createMessageBody(const QString& pContextHandle) const;
+		[[nodiscard]] virtual QJsonObject createMessageBody(const QString& pContextHandle) const;
 		static QByteArray toByteArray(const QJsonObject& pJsonObject);
 
 		void markIncomplete(const QString& pLogMessage);
@@ -63,11 +64,11 @@ class RemoteMessage
 		explicit RemoteMessage(const QJsonObject& pMessageObject);
 		virtual ~RemoteMessage() = default;
 
-		bool isIncomplete() const;
-		RemoteCardMessageType getType() const;
-		const QString& getContextHandle() const;
+		[[nodiscard]] bool isIncomplete() const;
+		[[nodiscard]] RemoteCardMessageType getType() const;
+		[[nodiscard]] const QString& getContextHandle() const;
 
-		virtual QByteArray toByteArray(const QString& pContextHandle = QString()) const;
+		[[nodiscard]] virtual QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle = QString()) const;
 };
 
 

@@ -52,7 +52,7 @@ if(UNIX AND NOT IOS)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13 CACHE STRING "Required macOS version")
 endif()
 
-project(AusweisApp2 VERSION 1.22.0 LANGUAGES ${LANGUAGES})
+project(AusweisApp2 VERSION 1.22.1 LANGUAGES ${LANGUAGES})
 
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it
@@ -132,7 +132,7 @@ set(TEST_DIR ${PROJECT_SOURCE_DIR}/test)
 set(DOCS_DIR ${PROJECT_SOURCE_DIR}/docs)
 set(RESOURCES_DIR ${PROJECT_SOURCE_DIR}/resources)
 set(PACKAGING_DIR ${RESOURCES_DIR}/packaging)
-set(COPYRIGHT_TEXT "2014-2020 ${VENDOR}")
+set(COPYRIGHT_TEXT "2014-2021 ${VENDOR}")
 if(APPLE)
 	string(REPLACE " \& " " \&amp; " COPYRIGHT_TEXT ${COPYRIGHT_TEXT})
 endif()

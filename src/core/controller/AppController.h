@@ -1,7 +1,7 @@
 /*!
  * \brief Controller of the whole program.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -53,7 +53,7 @@ class AppController final
 		bool mRestartApplication;
 		int mExitCode;
 
-		bool canStartNewAction() const;
+		[[nodiscard]] bool canStartNewAction() const;
 		void completeShutdown();
 
 	public:
@@ -63,14 +63,14 @@ class AppController final
 		bool eventFilter(QObject* pObj, QEvent* pEvent) override;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-		virtual bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, qintptr* pResult) override;
+		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, qintptr* pResult) override;
 #else
-		virtual bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult) override;
+		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult) override;
 #endif
 
 		bool start();
 
-		bool shouldApplicationRestart() const;
+		[[nodiscard]] bool shouldApplicationRestart() const;
 
 	Q_SIGNALS:
 		void fireInitialized();
@@ -94,7 +94,7 @@ class AppController final
 		void onUiPlugin(UIPlugIn* pPlugin);
 		void onWorkflowFinished();
 		void onCloseReminderFinished(bool pDontRemindAgain);
-		void onChangePinRequested();
+		void onChangePinRequested(bool pRequestTransportPin);
 		void onSelfAuthenticationRequested();
 		void onAuthenticationRequest(const QUrl& pUrl);
 		void onAuthenticationContextRequest(const QSharedPointer<ActivationContext>& pActivationContext);

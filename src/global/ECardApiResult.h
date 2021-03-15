@@ -1,7 +1,7 @@
 /*!
  * \brief Status representation according to TR-03112-6 "eCard-API-Framework"
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -147,23 +147,23 @@ class ECardApiResult
 		static bool isMinor(const QString& pMinor);
 		static QString getMessage(Minor pMinor);
 
-		Major getMajor() const;
-		Minor getMinor() const;
-		QString getMessage() const;
-		const QString& getMessageLang() const;
+		[[nodiscard]] Major getMajor() const;
+		[[nodiscard]] Minor getMinor() const;
+		[[nodiscard]] QString getMessage() const;
+		[[nodiscard]] const QString& getMessageLang() const;
 
 		static QString getMajorString(Major pMajor);
 		static QString getMinorString(Minor pMinor);
 
-		QString getMajorString() const;
-		QString getMinorString() const;
+		[[nodiscard]] QString getMajorString() const;
+		[[nodiscard]] QString getMinorString() const;
 
-		bool isValid() const;
-		bool isOk() const;
-		bool isOriginServer() const;
-		QJsonObject toJson() const;
+		[[nodiscard]] bool isValid() const;
+		[[nodiscard]] bool isOk() const;
+		[[nodiscard]] bool isOriginServer() const;
+		[[nodiscard]] QJsonObject toJson() const;
 
-		GlobalStatus toStatus() const;
+		[[nodiscard]] GlobalStatus toStatus() const;
 		explicit operator GlobalStatus() const;
 };
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -42,8 +42,7 @@ void ApplicationModel::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
 {
 	if (pInfo.getPlugInType() == ReaderManagerPlugInType::NFC)
 	{
-		Q_EMIT fireNfcEnabledChanged();
-		Q_EMIT fireNfcRunningChanged();
+		Q_EMIT fireNfcStateChanged();
 	}
 }
 
@@ -141,33 +140,32 @@ ReaderManagerPlugInInfo ApplicationModel::getFirstPlugInInfo(ReaderManagerPlugIn
 }
 
 
-bool ApplicationModel::isNfcAvailable() const
+ApplicationModel::QmlNfcState ApplicationModel::getNfcState() const
 {
 #if !defined(QT_NO_DEBUG) && !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID) && !defined(Q_OS_WINRT)
-	return getFirstPlugInInfo(ReaderManagerPlugInType::PCSC).isAvailable();
-
+	const ReaderManagerPlugInType type = ReaderManagerPlugInType::PCSC;
 #else
-	return getFirstPlugInInfo(ReaderManagerPlugInType::NFC).isAvailable();
-
+	const ReaderManagerPlugInType type = ReaderManagerPlugInType::NFC;
 #endif
-}
 
+	const auto& pluginInfo = getFirstPlugInInfo(type);
 
-bool ApplicationModel::isNfcEnabled() const
-{
-#if !defined(QT_NO_DEBUG) && !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID) && !defined(Q_OS_WINRT)
-	return getFirstPlugInInfo(ReaderManagerPlugInType::PCSC).isEnabled();
+	if (!pluginInfo.isAvailable())
+	{
+		return QmlNfcState::NFC_UNAVAILABLE;
+	}
 
-#else
-	return getFirstPlugInInfo(ReaderManagerPlugInType::NFC).isEnabled();
+	if (!pluginInfo.isEnabled())
+	{
+		return QmlNfcState::NFC_DISABLED;
+	}
 
-#endif
-}
+	if (!Env::getSingleton<ReaderManager>()->isScanRunning(type))
+	{
+		return QmlNfcState::NFC_INACTIVE;
+	}
 
-
-bool ApplicationModel::isNfcRunning() const
-{
-	return Env::getSingleton<ReaderManager>()->isScanRunning(ReaderManagerPlugInType::NFC);
+	return QmlNfcState::NFC_READY;
 }
 
 
@@ -420,9 +418,7 @@ void ApplicationModel::onWifiEnabledChanged()
 
 void ApplicationModel::enableWifi()
 {
-#ifdef Q_OS_IOS
-	showFeedback(tr("Please enable Wi-Fi in your system settings."));
-#elif defined(Q_OS_ANDROID)
+#ifdef Q_OS_ANDROID
 	showSettings(Settings::SETTING_WIFI);
 #endif
 }

@@ -1,7 +1,7 @@
 /*!
  * \brief A global mapping for errors
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -106,6 +106,7 @@ class GlobalStatus
 			Card_Puk_Blocked,
 			Card_NewPin_Mismatch,
 			Card_NewPin_Invalid_Length,
+			Card_ValidityVerificationFailed,
 
 			RemoteReader_CloseCode_AbnormalClose,
 
@@ -176,9 +177,9 @@ class GlobalStatus
 		};
 
 		QSharedDataPointer<InternalStatus> d;
-		QString getExternalInfo(ExternalInformation pType) const;
+		[[nodiscard]] QString getExternalInfo(ExternalInformation pType) const;
 
-		QString toErrorDescriptionInternal() const;
+		[[nodiscard]] QString toErrorDescriptionInternal() const;
 
 	public:
 		GlobalStatus(Code pStatusCode, const ExternalInfoMap& pExternalInformation, const Origin pOrigin = Origin::Client)
@@ -200,20 +201,20 @@ class GlobalStatus
 
 
 		bool operator ==(const GlobalStatus& pOther) const;
-		bool is(const Code pStatusCode) const;
+		[[nodiscard]] bool is(const Code pStatusCode) const;
 
-		Code getStatusCode() const;
+		[[nodiscard]] Code getStatusCode() const;
 
-		QString toErrorDescription(const bool pSimplifiedVersion = false) const;
-		QString getExternalInfo(const QString& pToken = QStringLiteral("; ")) const;
+		[[nodiscard]] QString toErrorDescription(const bool pSimplifiedVersion = false) const;
+		[[nodiscard]] QString getExternalInfo(const QString& pToken = QStringLiteral("; ")) const;
 
-		Origin getOrigin() const;
-		bool isOriginServer() const;
+		[[nodiscard]] Origin getOrigin() const;
+		[[nodiscard]] bool isOriginServer() const;
 
-		bool isNoError() const;
-		bool isError() const;
-		bool isCancellationByUser() const;
-		bool isMessageMasked() const;
+		[[nodiscard]] bool isNoError() const;
+		[[nodiscard]] bool isError() const;
+		[[nodiscard]] bool isCancellationByUser() const;
+		[[nodiscard]] bool isMessageMasked() const;
 };
 
 using Origin = GlobalStatus::Origin;

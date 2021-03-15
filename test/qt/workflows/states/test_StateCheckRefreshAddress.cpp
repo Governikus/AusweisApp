@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCheckRefreshAddress.h"
@@ -26,9 +26,6 @@ class test_StateCheckRefreshAddress
 	QScopedPointer<StateCheckRefreshAddress> mState;
 	QScopedPointer<MockNetworkManager> mMockNetworkManager;
 	QSharedPointer<AuthContext> mAuthContext;
-
-	Q_SIGNALS:
-		void fireStateStart(QEvent* pEvent);
 
 	private:
 		static QSharedPointer<TcToken> createTcToken(const QByteArray& redirectUrl)
@@ -57,7 +54,7 @@ class test_StateCheckRefreshAddress
 
 			mAuthContext.reset(new AuthContext(nullptr));
 			mState.reset(StateBuilder::createState<StateCheckRefreshAddress>(mAuthContext));
-			connect(this, &test_StateCheckRefreshAddress::fireStateStart, mState.data(), &AbstractState::onEntry, Qt::ConnectionType::DirectConnection);
+			mState->onEntry(nullptr);
 		}
 
 
@@ -86,14 +83,14 @@ class test_StateCheckRefreshAddress
 			QTest::addColumn<QStringList>("messages");
 
 			const QStringList msg1(QString("Invalid RefreshAddress: test"));
-			const QStringList msg2(QString("Invalid RefreshAddress: http://service.example.de/loggedin?7eb39f62"));
-			const QStringList msg3 = {QString("Subject URL from AT CVC (eService certificate) description: \"https://service.example.de\""), QString("Current redirect URL: \"https://service.example.de/loggedin?7eb39f62\""), QString("SOP-Check succeeded, abort process.")};
-			const QStringList msg4 = {QString("Subject URL from AT CVC (eService certificate) description: \"https://test.de\""), QString("Current redirect URL: \"https://service.example.de/loggedin?7eb39f62\""), QString("SOP-Check failed, start process.")};
+			const QStringList msg2(QString("Invalid RefreshAddress: http://service.governikus.de/loggedin?7eb39f62"));
+			const QStringList msg3 = {QString("Subject URL from AT CVC (eService certificate) description: \"https://service.governikus.de\""), QString("Current redirect URL: \"https://service.governikus.de/loggedin?7eb39f62\""), QString("SOP-Check succeeded, abort process.")};
+			const QStringList msg4 = {QString("Subject URL from AT CVC (eService certificate) description: \"https://governikus.de\""), QString("Current redirect URL: \"https://service.governikus.de/loggedin?7eb39f62\""), QString("SOP-Check failed, start process.")};
 
 			QTest::newRow("urlInvalid") << QByteArray("test") << QString() << msg1;
-			QTest::newRow("notHttps") << QByteArray("http://service.example.de/loggedin?7eb39f62") << QString("http://service.example.de") << msg2;
-			QTest::newRow("matchingSameOriginPolicy") << QByteArray("https://service.example.de/loggedin?7eb39f62") << QString("https://service.example.de") << msg3;
-			QTest::newRow("notMatchingSameOriginPolicy") << QByteArray("https://service.example.de/loggedin?7eb39f62") << QString("https://test.de") << msg4;
+			QTest::newRow("notHttps") << QByteArray("http://service.governikus.de/loggedin?7eb39f62") << QString("http://service.governikus.de") << msg2;
+			QTest::newRow("matchingSameOriginPolicy") << QByteArray("https://service.governikus.de/loggedin?7eb39f62") << QString("https://service.governikus.de") << msg3;
+			QTest::newRow("notMatchingSameOriginPolicy") << QByteArray("https://service.governikus.de/loggedin?7eb39f62") << QString("https://governikus.de") << msg4;
 		}
 
 
@@ -166,25 +163,23 @@ class test_StateCheckRefreshAddress
 		void abortIfNotTcToken()
 		{
 			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireContinue);
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(mAuthContext->getRefreshUrl().isEmpty());
 		}
 
 
 		void abortIfRefreshAddressIsNotHttps()
 		{
-			const QByteArray& redirectAddress("http://service.example.de/loggedin?7eb39f62");
+			const QByteArray& redirectAddress("http://service.governikus.de/loggedin?7eb39f62");
 			const auto& tcToken = createTcToken(redirectAddress);
 			mAuthContext->setTcToken(tcToken);
 
 			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireContinue);
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(mAuthContext->getRefreshUrl().isEmpty());
 		}
 
@@ -198,7 +193,7 @@ class test_StateCheckRefreshAddress
 			QVERIFY(!mState->isMatchingSameOriginPolicyInDevMode());
 
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(true);
-			const QUrl pUrlHttps("https://test/");
+			const QUrl pUrlHttps("https://invalidhost/");
 			const QUrl pUrlHttp("http://localhost:12345/test_StateCheckRefreshAddress/");
 			const QUrl pSubjectUrl("http://localhost:12345/test_StateCheckRefreshAddress/");
 
@@ -216,7 +211,7 @@ class test_StateCheckRefreshAddress
 
 		void determinateSubjectUrl()
 		{
-			const QUrl tcTokenUrl("http://test/");
+			const QUrl tcTokenUrl("http://invalidhost/");
 			mAuthContext->setTcTokenUrl(tcTokenUrl);
 
 			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml");
@@ -261,16 +256,16 @@ class test_StateCheckRefreshAddress
 			QTest::addColumn<QUrl>("redirectUrl");
 			QTest::addColumn<bool>("developerMode");
 
-			QTest::newRow("service unavailable") << QNetworkReply::NetworkError::ServiceUnavailableError << GlobalStatus::Code::Network_ServiceUnavailable << 1 << QUrl("http://test.com/") << false;
+			QTest::newRow("service unavailable") << QNetworkReply::NetworkError::ServiceUnavailableError << GlobalStatus::Code::Network_ServiceUnavailable << 1 << QUrl("http://governikus.com/") << false;
 			QTest::newRow("timeout") << QNetworkReply::NetworkError::TimeoutError << GlobalStatus::Code::Network_TimeOut << 2 << QUrl() << false;
 			QTest::newRow("proxy error") << QNetworkReply::NetworkError::ProxyNotFoundError << GlobalStatus::Code::Network_Proxy_Error << 0 << QUrl("test") << false;
-			QTest::newRow("ssl error") << QNetworkReply::NetworkError::SslHandshakeFailedError << GlobalStatus::Code::Network_Ssl_Establishment_Error << 1 << QUrl("https://test.com/") << false;
-			QTest::newRow("other error") << QNetworkReply::NetworkError::OperationCanceledError << GlobalStatus::Code::Network_Other_Error << 2 << QUrl("https://test.com/") << false;
-			QTest::newRow("no error unexpected status") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Expected_Redirect << 2 << QUrl("https://test.com/") << false;
+			QTest::newRow("ssl error") << QNetworkReply::NetworkError::SslHandshakeFailedError << GlobalStatus::Code::Network_Ssl_Establishment_Error << 1 << QUrl("https://governikus.com/") << false;
+			QTest::newRow("other error") << QNetworkReply::NetworkError::OperationCanceledError << GlobalStatus::Code::Network_Other_Error << 2 << QUrl("https://governikus.com/") << false;
+			QTest::newRow("no error unexpected status") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Expected_Redirect << 2 << QUrl("https://governikus.com/") << false;
 			QTest::newRow("no error empty url") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url << 302 << QUrl() << false;
 			QTest::newRow("no error invalid url") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url << 302 << QUrl("://://") << false;
-			QTest::newRow("no error http") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Invalid_Scheme << 302 << QUrl("http://test.com/") << false;
-			QTest::newRow("no error http developer mode") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::No_Error << 302 << QUrl("http://test.com/") << true;
+			QTest::newRow("no error http") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Invalid_Scheme << 302 << QUrl("http://governikus.com/") << false;
+			QTest::newRow("no error http developer mode") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::No_Error << 302 << QUrl("http://governikus.com/") << true;
 		}
 
 
@@ -308,7 +303,7 @@ class test_StateCheckRefreshAddress
 		{
 			SDK_MODE(false);
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(true);
-			const QUrl url("http://test.de/");
+			const QUrl url("http://governikus.de/");
 			mState->mUrl = url;
 			QTest::ignoreMessage(QtWarningMsg, "Refresh URL is http only. Certificate check skipped.");
 			mState->fetchServerCertificate();
@@ -318,10 +313,10 @@ class test_StateCheckRefreshAddress
 		void fetchServerCertificate_AlreadyVerified()
 		{
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(false);
-			const QUrl url("https://test.de/");
+			const QUrl url("https://governikus.de/");
 			mState->mUrl = url;
 			mState->mVerifiedRefreshUrlHosts.insert(0, url);
-			QTest::ignoreMessage(QtDebugMsg, "SSL certificate already collected for QUrl(\"https://test.de/\")");
+			QTest::ignoreMessage(QtDebugMsg, "SSL certificate already collected for QUrl(\"https://governikus.de/\")");
 			mState->fetchServerCertificate();
 		}
 
@@ -329,20 +324,20 @@ class test_StateCheckRefreshAddress
 		void fetchServerCertificate()
 		{
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeveloperMode(false);
-			const QUrl url("https://test.de/");
+			const QUrl url("https://governikus.de/");
 			mState->mUrl = url;
+			QTest::ignoreMessage(QtDebugMsg, "Fetch TLS certificate for URL QUrl(\"https://governikus.de/\")");
 			mState->fetchServerCertificate();
-			QCOMPARE(mState->mConnections.size(), 3);
 		}
 
 
 		void doneSuccess()
 		{
-			const QUrl url("https://test.de/");
+			const QUrl url("https://governikus.de/");
 			mState->mUrl = url;
 			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireContinue);
 
-			QTest::ignoreMessage(QtDebugMsg, "Determined RefreshUrl: QUrl(\"https://test.de/\")");
+			QTest::ignoreMessage(QtDebugMsg, "Determined RefreshUrl: QUrl(\"https://governikus.de/\")");
 			mState->doneSuccess();
 			QCOMPARE(mAuthContext->getRefreshUrl(), url);
 		}

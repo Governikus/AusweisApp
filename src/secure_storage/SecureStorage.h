@@ -2,7 +2,7 @@
  * \brief Utility class that provides access to the "secure storage" of the application, which contains
  * the certificates for preverification and update checks.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -50,16 +50,16 @@ class SecureStorage
 		QMap<QSsl::KeyAlgorithm, int> mMinStaticKeySizes;
 		QMap<QSsl::KeyAlgorithm, int> mMinEphemeralKeySizes;
 
-		QJsonArray readJsonArray(const QJsonObject& pConfig, const QLatin1String pName) const;
-		QString readGroup(const QJsonObject& pConfig, const QLatin1String pGroup, const QLatin1String pName) const;
-		QMap<QSsl::KeyAlgorithm, int> readKeySizes(const QJsonObject& pConfig, const QLatin1String pKey) const;
-		QByteArrayList readByteArrayList(const QJsonObject& pConfig, const QLatin1String pName) const;
+		[[nodiscard]] QJsonArray readJsonArray(const QJsonObject& pConfig, const QLatin1String pName) const;
+		[[nodiscard]] QString readGroup(const QJsonObject& pConfig, const QLatin1String pGroup, const QLatin1String pName) const;
+		[[nodiscard]] QMap<QSsl::KeyAlgorithm, int> readKeySizes(const QJsonObject& pConfig, const QLatin1String pKey) const;
+		[[nodiscard]] QByteArrayList readByteArrayList(const QJsonObject& pConfig, const QLatin1String pName) const;
 
-		QJsonObject loadFile(const QStringList& pFiles) const;
+		[[nodiscard]] QJsonObject loadFile(const QStringList& pFiles) const;
 		void load();
 
 		QByteArrayList loadTestCvcsFromAppDir();
-		QByteArray loadTestCvc(const QString& pPath) const;
+		[[nodiscard]] QByteArray loadTestCvc(const QString& pPath) const;
 
 	protected:
 		SecureStorage();
@@ -72,18 +72,18 @@ class SecureStorage
 			DEFAULT, PSK,
 		};
 
-		const QByteArrayList& getCVRootCertificates(bool pProductive) const;
-		const QVector<QSslCertificate>& getUpdateCertificates() const;
-		const QUrl& getSelfAuthenticationUrl(bool pTest = false) const;
-		const QUrl& getUpdateServerBaseUrl() const;
-		const QUrl& getWhitelistServerBaseUrl() const;
-		const QUrl& getAppcastUpdateUrl() const;
-		const QUrl& getAppcastBetaUpdateUrl() const;
-		const TlsConfiguration& getTlsConfig(TlsSuite pTlsSuite = TlsSuite::DEFAULT) const;
-		const TlsConfiguration& getTlsConfigRemote(TlsSuite pTlsSuite = TlsSuite::DEFAULT) const;
-		int getMinimumStaticKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
-		int getMinimumEphemeralKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
-		bool isLoaded() const;
+		[[nodiscard]] const QByteArrayList& getCVRootCertificates(bool pProductive) const;
+		[[nodiscard]] const QVector<QSslCertificate>& getUpdateCertificates() const;
+		[[nodiscard]] const QUrl& getSelfAuthenticationUrl(bool pTest = false) const;
+		[[nodiscard]] const QUrl& getUpdateServerBaseUrl() const;
+		[[nodiscard]] const QUrl& getWhitelistServerBaseUrl() const;
+		[[nodiscard]] const QUrl& getAppcastUpdateUrl() const;
+		[[nodiscard]] const QUrl& getAppcastBetaUpdateUrl() const;
+		[[nodiscard]] const TlsConfiguration& getTlsConfig(TlsSuite pTlsSuite = TlsSuite::DEFAULT) const;
+		[[nodiscard]] const TlsConfiguration& getTlsConfigRemote(TlsSuite pTlsSuite = TlsSuite::DEFAULT) const;
+		[[nodiscard]] int getMinimumStaticKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
+		[[nodiscard]] int getMinimumEphemeralKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
+		[[nodiscard]] bool isLoaded() const;
 };
 
 

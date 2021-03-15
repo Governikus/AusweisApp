@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -7,6 +7,22 @@
 
 
 using namespace governikus;
+
+
+IfdVersion::Version IfdVersion::fromString(const QString& pVersionString)
+{
+	if (pVersionString == IfdVersion(Version::v0).toString())
+	{
+		return Version::v0;
+	}
+
+	if (pVersionString == IfdVersion(Version::v2).toString())
+	{
+		return Version::v2;
+	}
+
+	return Version::Unknown;
+}
 
 
 IfdVersion::IfdVersion(IfdVersion::Version pVersion)
@@ -43,11 +59,8 @@ QString IfdVersion::toString() const
 		case IfdVersion::Version::v0:
 			return QStringLiteral("IFDInterface_WebSocket_v0");
 
-#ifndef QT_NO_DEBUG
-		case IfdVersion::Version::v_test:
-			return QStringLiteral("IFDInterface_WebSocket_v_test");
-
-#endif
+		case IfdVersion::Version::v2:
+			return QStringLiteral("IFDInterface_WebSocket_v2");
 	}
 
 	Q_UNREACHABLE();
@@ -55,61 +68,32 @@ QString IfdVersion::toString() const
 }
 
 
-IfdVersion::Version IfdVersion::fromString(const QString& pVersionString)
-{
-	const IfdVersion& v0 = Version::v0;
-	if (pVersionString == v0.toString())
-	{
-		return Version::v0;
-	}
-
-#ifndef QT_NO_DEBUG
-	if (pVersionString == IfdVersion(Version::v_test).toString())
-	{
-		return Version::v_test;
-	}
-#endif
-
-	return Version::Unknown;
-}
-
-
 QVector<IfdVersion::Version> IfdVersion::supported()
 {
-	return QVector<IfdVersion::Version>({Version::v0});
+	return QVector<IfdVersion::Version>({Version::v0, Version::v2});
 }
 
 
 IfdVersion::Version IfdVersion::selectLatestSupported(const QVector<IfdVersion::Version>& pVersions)
 {
-	QVector<IfdVersion::Version> supported;
-	supported += IfdVersion::Version::Unknown;
+	QVector<IfdVersion::Version> sorted(pVersions);
+	std::sort(sorted.rbegin(), sorted.rend());
 
-	for (const IfdVersion version : pVersions)
+	for (const IfdVersion version : sorted)
 	{
 		if (version.isSupported())
 		{
-			supported += version.getVersion();
+			return version.getVersion();
 		}
 	}
 
-	Q_ASSERT(!supported.isEmpty());
-	return supported.last();
+	return Version::Unknown;
 }
 
 
 bool IfdVersion::isSupported() const
 {
-	const QVector<Version>& supportedVersions = supported();
-	for (const auto& supportedVersion : supportedVersions)
-	{
-		if (mVersion == supportedVersion)
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return supported().contains(mVersion);
 }
 
 

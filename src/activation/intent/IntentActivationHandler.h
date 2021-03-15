@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,9 +27,9 @@ class IntentActivationHandler
 	public:
 		IntentActivationHandler() = default;
 
-		virtual bool start() override;
-		virtual void stop() override;
-		virtual void onApplicationActivated() override;
+		bool start() override;
+		void stop() override;
+		void onApplicationActivated() override;
 };
 
 } // namespace governikus

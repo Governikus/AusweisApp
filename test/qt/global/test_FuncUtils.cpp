@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref FuncUtils
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "FuncUtils.h"
@@ -21,8 +21,8 @@ class Reader
 		Reader(const QString& pName, bool pConnected);
 		~Reader() = default;
 
-		const QString& getName() const;
-		bool isConnected() const;
+		[[nodiscard]] const QString& getName() const;
+		[[nodiscard]] bool isConnected() const;
 };
 
 

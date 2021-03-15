@@ -1,11 +1,12 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerAuth.h"
 
 #include "UILoader.h"
 #include "UIPlugInJson.h"
+#include "VolatileSettings.h"
 
 #include <QSharedPointer>
 #include <QUrlQuery>
@@ -36,6 +37,8 @@ MsgHandlerAuth::MsgHandlerAuth(const QJsonObject& pObj)
 		const auto& url = createUrl(jsonTcTokenUrl.toString());
 		if (url.isValid())
 		{
+			initMessages(pObj[QLatin1String("messages")].toObject());
+			initHandleInterrupt(pObj[QLatin1String("handleInterrupt")]);
 			initAuth(url);
 			setVoid();
 			return;
@@ -86,6 +89,29 @@ QUrl MsgHandlerAuth::createUrl(const QString& pUrl)
 
 	setError(QLatin1String("Validation of tcTokenURL failed"));
 	return QUrl();
+}
+
+
+void MsgHandlerAuth::initMessages(const QJsonObject& pUi)
+{
+	if (!pUi.isEmpty())
+	{
+		const VolatileSettings::Messages messages(pUi[QLatin1String("sessionStarted")].toString(),
+				pUi[QLatin1String("sessionFailed")].toString(),
+				pUi[QLatin1String("sessionSucceeded")].toString(),
+				pUi[QLatin1String("sessionInProgress")].toString());
+
+		Env::getSingleton<VolatileSettings>()->setMessages(messages);
+	}
+}
+
+
+void MsgHandlerAuth::initHandleInterrupt(const QJsonValue& pValue)
+{
+	if (pValue.isBool())
+	{
+		Env::getSingleton<VolatileSettings>()->setHandleInterrupt(pValue.toBool());
+	}
 }
 
 

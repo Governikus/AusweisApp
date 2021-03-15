@@ -1,7 +1,7 @@
 /*!
  * \brief Class represents the retrieved PAOS EAC2InputType.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,14 +31,14 @@ class DIDAuthenticateEAC2
 
 	public:
 		DIDAuthenticateEAC2();
-		virtual ~DIDAuthenticateEAC2();
+		~DIDAuthenticateEAC2() override;
 
-		const ConnectionHandle& getConnectionHandle() const;
-		const QString& getDidName() const;
-		const QString& getSignature() const;
-		const QString& getEphemeralPublicKey() const;
-		const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
-		const QByteArrayList& getCvCertificatesAsBinary() const;
+		[[nodiscard]] const ConnectionHandle& getConnectionHandle() const;
+		[[nodiscard]] const QString& getDidName() const;
+		[[nodiscard]] const QString& getSignature() const;
+		[[nodiscard]] const QString& getEphemeralPublicKey() const;
+		[[nodiscard]] const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
+		[[nodiscard]] const QByteArrayList& getCvCertificatesAsBinary() const;
 };
 
 } // namespace governikus

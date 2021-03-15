@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the chat.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -51,7 +51,7 @@ class ChatModel
 
 	private:
 		ChatModel();
-		virtual ~ChatModel() override = default;
+		~ChatModel() override = default;
 
 		void initFilterModel(QSortFilterProxyModel& pModel, QAbstractItemModel* pSourceModel, int pFilterRole, const QString& pFilter);
 		void setOrderedAllRights(const QSet<AccessRight>& pAllRights);

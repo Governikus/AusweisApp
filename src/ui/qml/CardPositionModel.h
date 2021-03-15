@@ -1,7 +1,7 @@
 /*!
  * \brief Model for card positioning animations.
  *
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -12,6 +12,8 @@
 #include <QTimer>
 #include <QVector>
 
+class test_CardPositionModel;
+
 namespace governikus
 {
 
@@ -19,6 +21,7 @@ class CardPositionModel
 	: public QObject
 {
 	Q_OBJECT
+	friend class ::test_CardPositionModel;
 
 	Q_PROPERTY(int count READ getCardPositionCount CONSTANT)
 	Q_PROPERTY(int cyclingClock READ getCyclingClock WRITE setCyclingClock NOTIFY fireCyclingClockChanged)

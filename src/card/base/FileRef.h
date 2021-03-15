@@ -1,7 +1,7 @@
 /*!
  * \brief Reference information for files on smart cards.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,6 +25,7 @@ struct FileRef
 	static FileRef appESign();
 	static FileRef appEId();
 	static FileRef appPassport();
+	static FileRef appPersosim();
 };
 
 

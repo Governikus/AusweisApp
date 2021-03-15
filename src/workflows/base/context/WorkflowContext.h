@@ -1,7 +1,7 @@
 /*!
  * \brief Workflow context.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -46,6 +46,7 @@ class WorkflowContext
 		bool mPaceResultReportedToUser;
 		bool mWorkflowFinished;
 		bool mWorkflowCancelled;
+		bool mWorkflowCancelledInState;
 		bool mNextWorkflowPending;
 		bool mCurrentReaderHasEidCardButInsufficientApduLength;
 
@@ -53,7 +54,7 @@ class WorkflowContext
 		void onWorkflowCancelled();
 
 	Q_SIGNALS:
-		void fireStateApprovedChanged();
+		void fireStateApprovedChanged(bool pApproved);
 		void fireStateChanged(const QString& pNewState);
 		void fireReaderPlugInTypesChanged();
 		void fireReaderInfoChanged();
@@ -73,83 +74,85 @@ class WorkflowContext
 
 	public:
 		WorkflowContext();
-		virtual ~WorkflowContext();
+		~WorkflowContext() override;
 
-		bool isErrorReportedToUser() const;
+		[[nodiscard]] bool isErrorReportedToUser() const;
 		void setErrorReportedToUser(bool pErrorReportedToUser = true);
 
-		bool isPaceResultReportedToUser() const;
+		[[nodiscard]] bool isPaceResultReportedToUser() const;
 		void setPaceResultReportedToUser(bool pReported = true);
 
 		void setStateApproved(bool pApproved = true);
-		bool isStateApproved() const;
+		[[nodiscard]] bool isStateApproved() const;
 
 		void killWorkflow();
-		bool isWorkflowKilled() const;
+		[[nodiscard]] bool isWorkflowKilled() const;
 
-		const QString& getCurrentState() const;
+		[[nodiscard]] const QString& getCurrentState() const;
 		void setCurrentState(const QString& pNewState);
 
-		const QVector<ReaderManagerPlugInType>& getReaderPlugInTypes() const;
+		[[nodiscard]] const QVector<ReaderManagerPlugInType>& getReaderPlugInTypes() const;
 		void setReaderPlugInTypes(const QVector<ReaderManagerPlugInType>& pReaderPlugInTypes);
 
-		const QString& getReaderName() const;
+		[[nodiscard]] const QString& getReaderName() const;
 		void setReaderName(const QString& pReaderName);
 
-		const QSharedPointer<CardConnection>& getCardConnection() const;
+		[[nodiscard]] const QSharedPointer<CardConnection>& getCardConnection() const;
 		void setCardConnection(const QSharedPointer<CardConnection>& pCardConnection);
 		void resetCardConnection();
 
-		bool isNpaRepositioningRequired() const;
+		[[nodiscard]] bool isNpaRepositioningRequired() const;
 		void setNpaPositionVerified();
 		void handleWrongNpaPosition();
 
-		const QString& getPuk() const;
+		[[nodiscard]] const QString& getPuk() const;
 		void setPuk(const QString& pPuk);
 
-		const QString& getCan() const;
+		[[nodiscard]] const QString& getCan() const;
 		void setCan(const QString& pCan);
 
-		const QString& getPin() const;
+		[[nodiscard]] const QString& getPin() const;
 		void setPin(const QString& pPin);
 
-		PacePasswordId getEstablishPaceChannelType() const;
+		[[nodiscard]] PacePasswordId getEstablishPaceChannelType() const;
 		void setEstablishPaceChannelType(PacePasswordId pType);
 
 		virtual void resetPacePasswords();
 
-		EstablishPaceChannelOutput* getPaceOutputData() const;
+		[[nodiscard]] EstablishPaceChannelOutput* getPaceOutputData() const;
 		void setPaceOutputData(const EstablishPaceChannelOutput& pPaceOutputData);
 
 		bool isPinBlocked();
-		CardReturnCode getLastPaceResult() const;
+		[[nodiscard]] CardReturnCode getLastPaceResult() const;
 		void setLastPaceResult(CardReturnCode pLastPaceResult);
 		void resetLastPaceResult();
 
 		void rememberReader();
-		bool isExpectedReader() const;
-		const ReaderInfo& getExpectedReader() const;
+		[[nodiscard]] bool isExpectedReader() const;
+		[[nodiscard]] const ReaderInfo& getExpectedReader() const;
 
-		int getExpectedRetryCounter() const;
+		[[nodiscard]] int getExpectedRetryCounter() const;
 		void setExpectedRetryCounter(int pExpectedRetryCounter);
 
-		const GlobalStatus& getStatus() const;
+		[[nodiscard]] const GlobalStatus& getStatus() const;
 		void setStatus(const GlobalStatus& pResult);
 
-		const ECardApiResult getStartPaosResult() const;
+		[[nodiscard]] const ECardApiResult getStartPaosResult() const;
 		void setStartPaosResult(const ECardApiResult& pStartPaosResult);
 
-		bool isWorkflowFinished() const;
+		[[nodiscard]] bool isWorkflowFinished() const;
 		void setWorkflowFinished(bool pWorkflowFinished);
 
-		bool isWorkflowCancelled() const;
+		[[nodiscard]] bool isWorkflowCancelled() const;
+		[[nodiscard]] bool isWorkflowCancelledInState() const;
+		void setWorkflowCancelledInState();
 
-		virtual bool isCanAllowedMode() const;
+		[[nodiscard]] virtual bool isCanAllowedMode() const;
 
-		bool hasNextWorkflowPending() const;
+		[[nodiscard]] bool hasNextWorkflowPending() const;
 		void setNextWorkflowPending(bool pNextWorkflowPending);
 
-		bool currentReaderHasEidCardButInsufficientApduLength() const;
+		[[nodiscard]] bool currentReaderHasEidCardButInsufficientApduLength() const;
 		void setCurrentReaderHasEidCardButInsufficientApduLength(bool pState);
 };
 

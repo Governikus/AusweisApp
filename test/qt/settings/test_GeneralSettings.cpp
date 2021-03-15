@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref GeneralSettings
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GeneralSettings.h"
@@ -234,7 +234,7 @@ class test_GeneralSettings
 			QCOMPARE(settings.isUseScreenKeyboard(), false);
 			QCOMPARE(settings.isEnableCanAllowed(), false);
 			QCOMPARE(settings.isSkipRightsOnCanAllowed(), false);
-			QCOMPARE(settings.isShowSetupAssistant(), true);
+			QCOMPARE(settings.getStartupModule(), "");
 			QCOMPARE(settings.isShowInAppNotifications(), getNotificationsOsDefault());
 			QCOMPARE(settings.isRemindUserToClose(), true);
 			QCOMPARE(settings.isTransportPinReminder(), true);
@@ -244,19 +244,19 @@ class test_GeneralSettings
 		}
 
 
-		void testRemindStartupWizard()
+		void testStartupModule()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 
-			bool initial = settings.isShowSetupAssistant();
-			bool newValue = !initial;
+			QString initial = settings.getStartupModule();
+			QString newValue = QStringLiteral("TUTORIAL");
 
-			settings.setShowSetupAssistant(newValue);
-			QCOMPARE(settings.isShowSetupAssistant(), newValue);
+			settings.setStartupModule(newValue);
+			QCOMPARE(settings.getStartupModule(), newValue);
 			settings.save();
 
-			settings.setShowSetupAssistant(initial);
-			QCOMPARE(settings.isShowSetupAssistant(), initial);
+			settings.setStartupModule(initial);
+			QCOMPARE(settings.getStartupModule(), initial);
 			settings.save();
 		}
 

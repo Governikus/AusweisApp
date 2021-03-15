@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,10 +26,10 @@ class ActivationController
 		ActivationController(ActivationController&&) = delete;
 		ActivationController& operator=(ActivationController&&) = delete;
 
-		bool isPlugIn(const QJsonObject& pJson) const;
+		[[nodiscard]] bool isPlugIn(const QJsonObject& pJson) const;
 
 	public:
-		const QVector<ActivationHandler*>& getHandler() const;
+		[[nodiscard]] const QVector<ActivationHandler*>& getHandler() const;
 		void shutdown();
 };
 

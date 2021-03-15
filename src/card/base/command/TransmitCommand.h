@@ -1,7 +1,7 @@
 /*!
  * \brief Command to transmit data to/from the card.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,8 +31,8 @@ class TransmitCommand
 		static bool isAcceptable(const InputAPDUInfo& pInputApduInfo, const ResponseApdu& pResponse);
 
 	protected:
-		virtual void internalExecute() override;
-		virtual ~TransmitCommand() override = default;
+		void internalExecute() override;
+		~TransmitCommand() override = default;
 
 	public:
 		explicit TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,

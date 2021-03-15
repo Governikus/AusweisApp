@@ -1,7 +1,7 @@
 /*!
  * \brief Generate information for DisconnectResponse.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,7 +23,7 @@ class DisconnectResponse
 
 		void createDisconnectResponse();
 
-		virtual void createBodyElement() override;
+		void createBodyElement() override;
 
 	public:
 		DisconnectResponse();

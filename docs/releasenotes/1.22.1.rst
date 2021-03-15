@@ -1,0 +1,56 @@
+AusweisApp2 1.22.1
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 15. März 2021
+
+
+Anwender
+""""""""
+- Die Release Notes werden nun in der App angezeigt.
+
+- Es wurden in der mobilen App Verbesserungen bei
+  Anzeige und Reporting von Fehlermeldungen vorgenommen.
+
+- Eventuelles Einfrieren der App beim Prüfen des Ausweises
+  behoben.
+
+- Die Kopplung eines Smartphones kann nun direkt gestartet
+  werden.
+
+- Die mobile App startet nun mit der SaK Ansicht, wenn dies
+  die zuletzt benutzte Einstellung war.
+
+- Unter iOS ist die Funktion Smartphone als Kartenleser nun
+  immer aktivierbar.
+
+- Animationen unter iOS verbessert.
+
+- Kleinere Fehlerbehebungen.
+
+
+Entwickler
+""""""""""
+- Im SDK für iOS wurde der Parameter *handleInterrupt* bei
+  *RUN_AUTH* und *RUN_CHANGE_PIN* hinzugefügt. So wie der
+  dazugehörige Befehl *INTERRUPT*.
+
+- Im SDK für iOS wurden Parameter bei *RUN_AUTH* und
+  *RUN_CHANGE_PIN* hinzugefügt, die es ermöglichen,
+  Meldungen im System-Scan-Dialog anzuzeigen.
+
+- Im SDK wird nun bei einem abgelaufenen Ausweis folgender
+  Fehler zurückgegeben: DocumentValidityVerificationFailed
+
+- Unterstützung der neuen Protokollversion für Smartphone als
+  Kartenleser gemäß der Ergänzung zu BSI TR-03112 Teil 6.
+
+- Ein Absturz unter Windows bei der Kopplung von PersoSim
+  wurde behoben.
+
+- Support von PersoSim für Android mit Host Card Emulation
+  hinzugefügt.
+
+- Eine mögliche Endlosschleife im SDK für Android wurde
+  behoben.
+
+- Aktualisierung von OpenSSL auf die Version 1.1.1j.

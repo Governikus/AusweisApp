@@ -1,7 +1,7 @@
 /*!
  * \brief UIPlugIn implementation of the Json API.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,15 +28,15 @@ class UIPlugInJson
 
 	public:
 		UIPlugInJson();
-		virtual ~UIPlugInJson() override = default;
+		~UIPlugInJson() override = default;
 
 		void setEnabled(bool pEnable = true);
-		bool isEnabled() const;
+		[[nodiscard]] bool isEnabled() const;
 
 	private Q_SLOTS:
-		virtual void doShutdown() override;
-		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
-		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void doShutdown() override;
+		void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
+		void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
 		void onReaderEvent(const ReaderInfo& pInfo);
 		void onStateChanged(const QString& pNewState);
 

@@ -2,7 +2,7 @@
  * \brief Model for accessing PIN, CAN, PUK, according to the
  * currently active workflow.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,11 +33,10 @@ class NumberModel
 	Q_PROPERTY(int retryCounter READ getRetryCounter NOTIFY fireReaderInfoChanged)
 	Q_PROPERTY(bool pinDeactivated READ isPinDeactivated NOTIFY fireReaderInfoChanged)
 	Q_PROPERTY(bool isCanAllowedMode READ isCanAllowedMode NOTIFY fireCanAllowedModeChanged)
-	Q_PROPERTY(bool requestTransportPin READ isRequestTransportPin WRITE setRequestTransportPin NOTIFY fireRequestTransportPinChanged)
+	Q_PROPERTY(bool requestTransportPin READ isRequestTransportPin NOTIFY fireRequestTransportPinChanged)
 
 	private:
 		QSharedPointer<WorkflowContext> mContext;
-		bool mRequestTransportPin;
 		bool mRequestNewPin;
 
 		NumberModel();
@@ -81,7 +80,6 @@ class NumberModel
 		bool isCanAllowedMode() const;
 
 		bool isRequestTransportPin() const;
-		void setRequestTransportPin(bool pEnabled);
 
 	private Q_SLOTS:
 		void onReaderInfoChanged(const ReaderInfo& pInfo);

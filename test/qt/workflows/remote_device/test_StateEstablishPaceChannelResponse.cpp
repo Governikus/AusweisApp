@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateEstablishPaceChannelResponse.h"
@@ -27,14 +27,14 @@ class MockServerMsgHandler
 		}
 
 
-		virtual void sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pChannelOutput) override
+		void sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pChannelOutput) override
 		{
 			Q_UNUSED(pChannelOutput)
 			mResponse = pSlotHandle;
 		}
 
 
-		virtual void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) override
+		void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) override
 		{
 			Q_UNUSED(pSlotHandle)
 			Q_UNUSED(pResponseApdu)
@@ -69,6 +69,7 @@ class test_StateEstablishPaceChannelResponse
 		{
 			mContext.reset(new RemoteServiceContext());
 			mState.reset(StateBuilder::createState<StateEstablishPaceChannelResponse>(mContext));
+			mState->onEntry(nullptr);
 		}
 
 
@@ -114,19 +115,18 @@ class test_StateEstablishPaceChannelResponse
 			QSignalSpy spyContinue(mState.data(), &StateEstablishPaceChannelResponse::fireContinue);
 
 			const QString slotHandle("slot handle");
-			const QSharedPointer<const IfdEstablishPaceChannel> msg(new IfdEstablishPaceChannel(slotHandle));
-			mContext->setEstablishPaceChannelMessage(msg);
+			const QSharedPointer<const IfdEstablishPaceChannel> msg(new IfdEstablishPaceChannel(slotHandle, EstablishPaceChannel(), 6));
+			mContext->setEstablishPaceChannel(msg);
 			EstablishPaceChannelOutput channelOutput;
-			channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes), PacePasswordId::PACE_PIN);
+			QVERIFY(channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes)));
 			mContext->setEstablishPaceChannelOutput(channelOutput);
 			const QSharedPointer<MockServerMsgHandler> msgHandler(new MockServerMsgHandler());
 			auto server = mContext->getRemoteServer().staticCast<MockRemoteServer>();
 			server->setMessageHandler(msgHandler);
 
 			mContext->setStateApproved();
-			mState->onStateApprovedChanged();
-			QCOMPARE(spyWrongPacePassword.count(), wrongPacePasswordCounter);
-			QCOMPARE(spyContinue.count(), continueCounter);
+			QTRY_COMPARE(spyWrongPacePassword.count(), wrongPacePasswordCounter);
+			QTRY_COMPARE(spyContinue.count(), continueCounter);
 			QCOMPARE(msgHandler->getResponse(), slotHandle);
 		}
 

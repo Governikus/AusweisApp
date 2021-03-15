@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,7 +22,7 @@ class StatePreparePaceRemote
 
 	private:
 		explicit StatePreparePaceRemote(const QSharedPointer<WorkflowContext>& pContext);
-		virtual void run() override;
+		void run() override;
 
 	Q_SIGNALS:
 		void fireEnterPacePassword();

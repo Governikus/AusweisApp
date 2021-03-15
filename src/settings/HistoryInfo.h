@@ -1,7 +1,7 @@
 /*!
  * \brief Represents history settings.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -74,12 +74,12 @@ class HistoryInfo
 		}
 
 
-		const QString& getSubjectName() const;
-		const QString& getSubjectUrl() const;
-		const QString& getPurpose() const;
-		const QDateTime& getDateTime() const;
-		const QString& getTermOfUsage() const;
-		const QStringList& getRequestedData() const;
+		[[nodiscard]] const QString& getSubjectName() const;
+		[[nodiscard]] const QString& getSubjectUrl() const;
+		[[nodiscard]] const QString& getPurpose() const;
+		[[nodiscard]] const QDateTime& getDateTime() const;
+		[[nodiscard]] const QString& getTermOfUsage() const;
+		[[nodiscard]] const QStringList& getRequestedData() const;
 };
 
 

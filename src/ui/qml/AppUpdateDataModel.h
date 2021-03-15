@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -42,7 +42,7 @@ class AppUpdateDataModel
 		int mDownloadTotal;
 
 		AppUpdateDataModel();
-		virtual ~AppUpdateDataModel() override = default;
+		~AppUpdateDataModel() override = default;
 
 	private Q_SLOTS:
 		void onAppcastFinished(bool pUpdateAvailable, const GlobalStatus& pStatus);

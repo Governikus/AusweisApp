@@ -2,7 +2,7 @@
  * \brief Helper state to decide whether an error has been occurred that should
  * be reported to the user.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,7 +22,7 @@ class StateCheckError
 	friend class StateBuilder;
 
 	explicit StateCheckError(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 };
 
 } // namespace governikus

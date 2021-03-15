@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInAidl.h"
@@ -133,7 +133,7 @@ void UIPlugInAidl::reset()
 	if (mContext)
 	{
 		mJson->blockSignals(true);
-		Q_EMIT mContext->fireCancelWorkflow();
+		mContext->killWorkflow();
 	}
 }
 

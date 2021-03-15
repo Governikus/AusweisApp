@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref StatePreVerification
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateProcessCertificatesFromEac2.h"
@@ -37,13 +37,21 @@ class test_StateProcessCertificatesFromEac2
 			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
 			QSharedPointer<DIDAuthenticateEAC2> didAuthEac2(static_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"))));
 			mAuthContext->setDidAuthenticateEac2(didAuthEac2);
+
+			QByteArray hexBytes = QByteArray("00000000"
+											 "fa00"
+											 "9000"
+											 "c400 3181c1300d060804007f00070202020201023012060a04007f000702020302020201020201413012060a04007f0007020204020202010202010d301c060904007f000702020302300c060704007f0007010202010d020141302a060804007f0007020206161e687474703a2f2f6273692e62756e642e64652f6369662f6e70612e786d6c303e060804007f000702020831323012060a04007f00070202030202020102020145301c060904007f000702020302300c060704007f0007010202010d020145"
+											 "0e 4445544553546549443030303034"
+											 "00"
+											 "2000 5fdd96ef104815b7e5859b2bbdd64160146fe1ad1fc3152f7534ec339629ddde");
 			EstablishPaceChannelOutput paceOutput;
-			paceOutput.parse(QByteArray::fromHex(TestFileHelper::readFile(":/card/EstablishPaceChannelOutput.hex")), PacePasswordId::PACE_PIN);
+			QVERIFY(paceOutput.parse(QByteArray::fromHex(hexBytes)));
 			mAuthContext->setPaceOutputData(paceOutput);
 
 			mState.reset(StateBuilder::createState<StateProcessCertificatesFromEac2>(mAuthContext));
 			mState->setStateName("StateProcessCertificatesFromEac2");
-			connect(this, &test_StateProcessCertificatesFromEac2::fireStateStart, mState.data(), &AbstractState::onEntry);
+			mState->onEntry(nullptr);
 		}
 
 
@@ -59,10 +67,9 @@ class test_StateProcessCertificatesFromEac2
 			mAuthContext->initCvcChainBuilder();
 
 			QSignalSpy spy(mState.data(), &StateProcessCertificatesFromEac2::fireContinue);
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(mState->getContext()->hasChainForCertificationAuthority(*mState->getContext()->getPaceOutputData()));
 		}
 
@@ -75,10 +82,9 @@ class test_StateProcessCertificatesFromEac2
 			mAuthContext->initCvcChainBuilder();
 
 			QSignalSpy spy(mState.data(), &StateProcessCertificatesFromEac2::fireAbort);
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(!mState->getContext()->hasChainForCertificationAuthority(*mState->getContext()->getPaceOutputData()));
 		}
 
@@ -93,10 +99,9 @@ class test_StateProcessCertificatesFromEac2
 			mAuthContext->initCvcChainBuilder();
 
 			QSignalSpy spy(mState.data(), &StateProcessCertificatesFromEac2::fireContinue);
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(mState->getContext()->hasChainForCertificationAuthority(*mState->getContext()->getPaceOutputData()));
 		}
 

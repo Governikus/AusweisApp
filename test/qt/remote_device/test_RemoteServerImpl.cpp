@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteServerImpl
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 #include "RemoteServerImpl.h"
 
@@ -28,19 +28,19 @@ class RemoteWebSocketServerMock
 		bool mListening = false, mConnected = false;
 		QSharedPointer<ServerMessageHandler> mEmptyHandler;
 
-		bool isListening() const override
+		[[nodiscard]] bool isListening() const override
 		{
 			return mListening;
 		}
 
 
-		bool isConnected() const override
+		[[nodiscard]] bool isConnected() const override
 		{
 			return mConnected;
 		}
 
 
-		bool isPairingConnection() const override
+		[[nodiscard]] bool isPairingConnection() const override
 		{
 			return false;
 		}
@@ -76,13 +76,13 @@ class RemoteWebSocketServerMock
 		}
 
 
-		QString getServerName() const override
+		[[nodiscard]] QString getServerName() const override
 		{
 			return mServerName;
 		}
 
 
-		quint16 getServerPort() const override
+		[[nodiscard]] quint16 getServerPort() const override
 		{
 			return 1;
 		}
@@ -94,13 +94,13 @@ class RemoteWebSocketServerMock
 		}
 
 
-		QSslCertificate getCurrentCertificate() const override
+		[[nodiscard]] QSslCertificate getCurrentCertificate() const override
 		{
 			return QSslCertificate();
 		}
 
 
-		const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override
+		[[nodiscard]] const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override
 		{
 			return mEmptyHandler;
 		}
@@ -128,7 +128,7 @@ class RemoteReaderAdvertiserMock
 		}
 
 
-		virtual ~RemoteReaderAdvertiserMock();
+		~RemoteReaderAdvertiserMock() override;
 };
 
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -12,6 +12,6 @@ namespace governikus
 
 class GlobalStatus;
 
-QString generateMailBody(const GlobalStatus& pStatus, const QUrl& pServiceUrl = {});
+QString generateMailBody(const GlobalStatus& pStatus, const QUrl& pServiceUrl = {}, bool pPercentEncoding = false, bool pAddLogNotice = false);
 
 } // namespace governikus

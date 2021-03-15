@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref StateVerifyRetryCounter
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateVerifyRetryCounter.h"
@@ -57,7 +57,7 @@ class test_StateVerifyRetryCounter
 
 			QTest::ignoreMessage(QtDebugMsg, "Retry counter | actual: 3 / expected: 3");
 			mContext->setStateApproved();
-			QCOMPARE(spyContinue.count(), 1);
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -67,7 +67,7 @@ class test_StateVerifyRetryCounter
 
 			QTest::ignoreMessage(QtDebugMsg, "Card connection lost.");
 			mContext->setStateApproved();
-			QCOMPARE(spyAbort.count(), 1);
+			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -91,12 +91,12 @@ class test_StateVerifyRetryCounter
 			QTest::ignoreMessage(QtDebugMsg, "Retry counter | actual: 2 / expected: 2");
 			QTest::ignoreMessage(QtDebugMsg, "The reader changed or the connected card has an unexpected retry counter. Clearing PACE passwords.");
 			mContext->setStateApproved();
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(mContext->getPin(), QString());
 			QCOMPARE(mContext->getCan(), QString());
 			QCOMPARE(mContext->getPuk(), QString());
 			QVERIFY(mContext->isExpectedReader());
 			QCOMPARE(mContext->getExpectedRetryCounter(), 2);
-			QCOMPARE(spyContinue.count(), 1);
 		}
 
 
@@ -118,12 +118,12 @@ class test_StateVerifyRetryCounter
 			QTest::ignoreMessage(QtDebugMsg, "Retry counter | actual: 2 / expected: -1");
 			QTest::ignoreMessage(QtDebugMsg, "The reader changed or the connected card has an unexpected retry counter. Clearing PACE passwords.");
 			mContext->setStateApproved();
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(mContext->getPin(), QString());
 			QCOMPARE(mContext->getCan(), QString());
 			QCOMPARE(mContext->getPuk(), QString());
 			QVERIFY(mContext->isExpectedReader());
 			QCOMPARE(mContext->getExpectedRetryCounter(), 2);
-			QCOMPARE(spyContinue.count(), 1);
 		}
 
 

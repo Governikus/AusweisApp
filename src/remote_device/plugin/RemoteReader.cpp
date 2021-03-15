@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReader.h"
@@ -17,7 +17,7 @@ RemoteReader::RemoteReader(const QString& pReaderName, const QSharedPointer<Remo
 	: Reader(ReaderManagerPlugInType::REMOTE, pReaderName)
 	, mRemoteDispatcher(pRemoteDispatcher)
 {
-	mReaderInfo.setBasicReader(!pIfdStatus.getPaceCapabilities().getPace());
+	mReaderInfo.setBasicReader(!pIfdStatus.hasPinPad());
 	mReaderInfo.setConnected(true);
 
 	updateStatus(pIfdStatus);

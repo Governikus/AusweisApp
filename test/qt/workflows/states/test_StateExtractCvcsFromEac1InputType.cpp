@@ -1,7 +1,7 @@
 /*!
  * \brief Tests the StateExtractCvcsFromEac1InputType
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateExtractCvcsFromEac1InputType.h"
@@ -50,7 +50,7 @@ class test_StateExtractCvcsFromEac1InputType
 			mState->setStateName("StateExtractCvcsFromEac1InputType");
 
 			mAuthContext->clearCvCertificates();
-			connect(this, &test_StateExtractCvcsFromEac1InputType::fireStateStart, mState.data(), &AbstractState::onEntry, Qt::ConnectionType::DirectConnection);
+			mState->onEntry(nullptr);
 		}
 
 
@@ -66,10 +66,9 @@ class test_StateExtractCvcsFromEac1InputType
 			mAuthContext->addCvCertificate(mTerminalCvcs.at(0));
 			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireAbort);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -80,10 +79,9 @@ class test_StateExtractCvcsFromEac1InputType
 			mAuthContext->addCvCertificate(mDvCvcs.at(1));
 			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireAbort);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -92,10 +90,9 @@ class test_StateExtractCvcsFromEac1InputType
 			mAuthContext->addCvCertificate(mDvCvcs.at(0));
 			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireAbort);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -106,10 +103,9 @@ class test_StateExtractCvcsFromEac1InputType
 			mAuthContext->addCvCertificate(mTerminalCvcs.at(1));
 			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireAbort);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -119,10 +115,9 @@ class test_StateExtractCvcsFromEac1InputType
 			mAuthContext->addCvCertificate(mTerminalCvcs.at(0));
 			QSignalSpy spy(mState.data(), &StateExtractCvcsFromEac1InputType::fireContinue);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(mAuthContext->getAccessRightManager()->getTerminalCvc(), mTerminalCvcs.at(0));
 			QCOMPARE(mAuthContext->getDvCvc(), mDvCvcs.at(0));
 		}

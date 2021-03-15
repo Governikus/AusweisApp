@@ -1,12 +1,12 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IosCard.h"
 
 #include "IosCardPointer.h"
-#include "VolatileSettings.h"
 
+#include <QElapsedTimer>
 #include <QLoggingCategory>
 
 #import <CoreNFC/NFCISO7816Tag.h>
@@ -143,21 +143,7 @@ void IosCard::setProgressMessage(const QString& pMessage, int pProgress)
 {
 	if (@available(iOS 13, *))
 	{
-		QString message;
-		if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
-		{
-			message = pMessage;
-		}
-
-		if (pProgress != -1)
-		{
-			if (!message.isEmpty())
-			{
-				message += QLatin1Char('\n');
-			}
-			message += QStringLiteral("%1 %").arg(pProgress);
-		}
-
+		QString message = generateProgressMessage(pMessage, pProgress);
 		NFCTagReaderSession* session = mCard->mNfcTag.session;
 		session.alertMessage = message.toNSString();
 	}

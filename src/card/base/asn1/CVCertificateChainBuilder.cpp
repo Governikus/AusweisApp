@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CVCertificateChainBuilder.h"
@@ -65,11 +65,11 @@ void CVCertificateChainBuilder::removeInvalidChains()
 
 CVCertificateChain CVCertificateChainBuilder::getChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const
 {
-	CVCertificateChain chain = getChainForCertificationAuthority(pPaceOutput.getCARcurr());
+	CVCertificateChain chain = getChainForCertificationAuthority(pPaceOutput.getCarCurr());
 	if (!chain.isValid())
 	{
 		qCWarning(card) << "Cannot get CVC chain for CAR current, try CAR previous";
-		chain = getChainForCertificationAuthority(pPaceOutput.getCARprev());
+		chain = getChainForCertificationAuthority(pPaceOutput.getCarPrev());
 	}
 	if (!chain.isValid())
 	{

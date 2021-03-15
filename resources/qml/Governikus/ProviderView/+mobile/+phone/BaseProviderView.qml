@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -10,7 +10,7 @@ import Governikus.Provider 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.ProviderCategoryFilterModel 1.0
-
+import Governikus.Type.UiModule 1.0
 
 SectionPage {
 	id: baseItem
@@ -26,6 +26,7 @@ SectionPage {
 	property alias headerItem: providerList.headerItem
 	property var headerComponent: null
 	property var searchBar
+	property real additionalProviderListTopPadding: 0
 
 	navigationAction: NavigationAction {
 		state: "back"
@@ -34,7 +35,7 @@ SectionPage {
 				ProviderCategoryFilterModel.setCategorySelection("")
 			} else {
 				searchBar.reset()
-				navBar.showMain()
+				navBar.show(UiModule.DEFAULT)
 			}
 		}
 	}
@@ -76,7 +77,7 @@ SectionPage {
 	GListView {
 		id: providerList
 
-		height: contentBehindTitlebar ? (parent.height + Style.dimens.titlebar_height) : parent.height
+		height: contentBehindTitlebar ? (parent.height + Style.dimens.titlebar_height) : (parent.height - additionalProviderListTopPadding)
 		width: parent.width
 		anchors.bottom: parent.bottom
 

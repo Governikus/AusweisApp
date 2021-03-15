@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -9,6 +9,7 @@ import Governikus.Global 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.UiModule 1.0
 
 ColumnLayout {
 
@@ -75,31 +76,12 @@ ColumnLayout {
 		Layout.fillWidth: true
 
 		//: LABEL DESKTOP_QML
-		title: qsTr("Release notes")
-		//: LABEL DESKTOP_QML
-		description: qsTr("Do you want to view the release notes of %1?").arg(Qt.application.name)
-		iconSource: "qrc:/images/desktop/material_new_releases.svg"
-		//: LABEL DESKTOP_QML
-		buttonText: qsTr("Open website")
-		buttonTooltip: ApplicationModel.releaseNotesUrl
-		buttonIconSource: "qrc:///images/material_open_in_new.svg"
-		onClicked: Qt.openUrlExternally(ApplicationModel.releaseNotesUrl)
-	}
-
-	GSeparator {
-		Layout.fillWidth: true
-	}
-
-	MoreViewMenuItem {
-		Layout.fillWidth: true
-
-		//: LABEL DESKTOP_QML
 		title: qsTr("Setup assistant")
 		//: LABEL DESKTOP_QML
 		description: qsTr("Do you want to run the setup assistant again?")
 		iconSource: "qrc:/images/desktop/material_assistant.svg"
 		//: LABEL DESKTOP_QML
 		buttonText: qsTr("Start setup assistant")
-		onClicked: sectionPage.nextView(SectionPage.Views.SetupAssistant)
+		onClicked: sectionPage.nextView(UiModule.TUTORIAL)
 	}
 }

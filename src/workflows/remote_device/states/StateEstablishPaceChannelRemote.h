@@ -1,7 +1,7 @@
 /*!
  * \brief This state executes the remote message PACE channel establish.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,7 +28,7 @@ class StateEstablishPaceChannelRemote
 		PacePasswordId mPasswordId;
 
 		explicit StateEstablishPaceChannelRemote(const QSharedPointer<WorkflowContext>& pContext);
-		virtual void run() override;
+		void run() override;
 
 	private Q_SLOTS:
 		void onReaderInfoChanged(const ReaderInfo& pReaderInfo);

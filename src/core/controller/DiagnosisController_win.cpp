@@ -1,7 +1,7 @@
 /*!
  * \brief Windows specific implementation of the controller for retrieving and presenting diagnosis info.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -11,6 +11,7 @@
 #include <setupapi.h>
 #include <windows.h>
 
+#include <QScopeGuard>
 
 using namespace governikus;
 
@@ -18,14 +19,23 @@ using namespace governikus;
 #ifndef Q_OS_WINRT
 static QString getWindowsDirectoryPath()
 {
-	const auto length = static_cast<int>(GetSystemWindowsDirectory(nullptr, 0));
+	const auto length = GetSystemWindowsDirectory(nullptr, 0);
 	if (length > 0)
 	{
-		QVector<wchar_t> path(length + 1);
-		if (GetSystemWindowsDirectory(path.data(), path.size()) > 0)
+		auto path = reinterpret_cast<LPWSTR>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, length * sizeof(TCHAR)));
+		if (path)
 		{
-			return QString::fromWCharArray(path.data());
+			const auto guard = qScopeGuard([path] {
+						HeapFree(GetProcessHeap(), 0, path);
+					});
+			if (GetSystemWindowsDirectory(path, length) > 0)
+			{
+				auto result = QString::fromWCharArray(path);
+				return result;
+			}
+
 		}
+
 	}
 
 	return QStringLiteral("C:\\Windows");
@@ -49,7 +59,7 @@ static QString toAbsoluteWindowsDirectoryPath(const QString& pPath)
 }
 
 
-static QString getWindowsFileVersionString(QByteArray& pVersionData, const char* const pInfoName, int pLanguage, int pCodePage)
+static QString getWindowsFileVersionString(LPVOID pVersionData, const char* const pInfoName, int pLanguage, int pCodePage)
 {
 	const auto key = QStringLiteral("\\StringFileInfo\\%1%2\\%3")
 			.arg(pLanguage, 4, 16, QLatin1Char('0'))
@@ -58,7 +68,7 @@ static QString getWindowsFileVersionString(QByteArray& pVersionData, const char*
 
 	LPVOID version;
 	UINT versionLength;
-	if (!VerQueryValue(pVersionData.data(), key.toStdWString().c_str(), &version, &versionLength))
+	if (!VerQueryValue(pVersionData, key.toStdWString().c_str(), &version, &versionLength))
 	{
 		return QString();
 	}
@@ -71,14 +81,21 @@ static void addWindowsComponentInfo(QVector<DiagnosisContext::ComponentInfo>& pC
 {
 	std::wstring fileName = pFileName.toStdWString();
 
-	const auto infoSize = static_cast<int>(GetFileVersionInfoSize(fileName.data(), nullptr));
+	const auto infoSize = GetFileVersionInfoSize(fileName.data(), nullptr);
 	if (infoSize == 0)
 	{
 		return;
 	}
 
-	QByteArray versionData(infoSize, 0);
-	if (!GetFileVersionInfo(fileName.data(), 0, versionData.size(), versionData.data()))
+	LPVOID versionData = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, infoSize);
+	if (versionData == nullptr)
+	{
+		return;
+	}
+	const auto guard = qScopeGuard([versionData] {
+				HeapFree(GetProcessHeap(), 0, versionData);
+			});
+	if (!GetFileVersionInfo(fileName.data(), 0, infoSize, versionData))
 	{
 		return;
 	}
@@ -91,7 +108,7 @@ static void addWindowsComponentInfo(QVector<DiagnosisContext::ComponentInfo>& pC
 	* translateInfo;
 	UINT translateInfoLength;
 
-	if (!VerQueryValue(versionData.data(), L"\\VarFileInfo\\Translation", reinterpret_cast<void**>(&translateInfo), &translateInfoLength))
+	if (!VerQueryValue(versionData, L"\\VarFileInfo\\Translation", reinterpret_cast<void**>(&translateInfo), &translateInfoLength))
 	{
 		return;
 	}
@@ -160,11 +177,15 @@ static QSet<QString> getWindowsSmartCardDriverModuleNames()
 				SetupDiGetDeviceRegistryProperty(deviceInfoSet, &deviceInfoData, SPDRP_SERVICE, nullptr, nullptr, 0, &propertySize);
 				if (propertySize > 0)
 				{
-					QVector<wchar_t> serviceName((propertySize + 1) / 2);
-					if (SetupDiGetDeviceRegistryProperty(deviceInfoSet, &deviceInfoData, SPDRP_SERVICE, nullptr,
-							PBYTE(serviceName.data()), propertySize, &propertySize))
+					auto serviceName = reinterpret_cast<LPWSTR>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, propertySize));
+					if (serviceName)
 					{
-						moduleNames.insert(QString::fromWCharArray(serviceName.data()));
+						if (SetupDiGetDeviceRegistryProperty(deviceInfoSet, &deviceInfoData, SPDRP_SERVICE, nullptr,
+								PBYTE(serviceName), propertySize, &propertySize))
+						{
+							moduleNames.insert(QString::fromWCharArray(serviceName));
+						}
+						HeapFree(GetProcessHeap(), 0, serviceName);
 					}
 				}
 			}
@@ -196,11 +217,15 @@ static QString getWindowsServiceDriverFileName(const QString& pServiceName)
 		QueryServiceConfig(service, nullptr, 0, &configSize);
 		if (configSize > 0)
 		{
-			QByteArray serviceConfigBuffer(static_cast<int>(configSize), 0);
-			QUERY_SERVICE_CONFIG* serviceConfig = reinterpret_cast<QUERY_SERVICE_CONFIG*>(serviceConfigBuffer.data());
-			if (QueryServiceConfig(service, serviceConfig, configSize, &configSize))
+			QUERY_SERVICE_CONFIG* serviceConfig = reinterpret_cast<QUERY_SERVICE_CONFIG*>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, configSize));
+			if (serviceConfig)
 			{
-				path = toAbsoluteWindowsDirectoryPath(QString::fromWCharArray(serviceConfig->lpBinaryPathName));
+				if (QueryServiceConfig(service, serviceConfig, configSize, &configSize))
+				{
+					path = toAbsoluteWindowsDirectoryPath(QString::fromWCharArray(serviceConfig->lpBinaryPathName));
+				}
+
+				HeapFree(GetProcessHeap(), 0, serviceConfig);
 			}
 		}
 

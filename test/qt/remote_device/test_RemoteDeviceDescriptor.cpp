@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceDescriptor.h"
@@ -29,7 +29,7 @@ class test_RemoteDeviceDescriptor
 
 		void testValidDescriptorIsEqualToItself()
 		{
-			const Discovery validMsg(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::v0});
+			const Discovery validMsg(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
 			const QHostAddress address(QHostAddress::LocalHost);
 			const RemoteDeviceDescriptor valid(validMsg, address);
 
@@ -51,7 +51,7 @@ class test_RemoteDeviceDescriptor
 
 		void testValidDescriptorIsDifferentFromInvalid()
 		{
-			const Discovery validMsg(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::v0});
+			const Discovery validMsg(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
 			const Discovery invalidMsg("", "", 0, {});
 			const QHostAddress address(QHostAddress::LocalHost);
 
@@ -64,8 +64,8 @@ class test_RemoteDeviceDescriptor
 
 		void testDistinctValidDescriptorsWithDifferentDataAreDifferent()
 		{
-			const Discovery validMsg1(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::v0});
-			const Discovery validMsg2(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::v0, IfdVersion::Version::v_test});
+			const Discovery validMsg1(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
+			const Discovery validMsg2(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest, IfdVersion::Version::v2});
 			const QHostAddress address(QHostAddress::LocalHost);
 
 			const RemoteDeviceDescriptor valid1(validMsg1, address);
@@ -77,8 +77,8 @@ class test_RemoteDeviceDescriptor
 
 		void testDistinctValidDescriptorsWithTheSameDataAreEqual()
 		{
-			const Discovery validMsg1(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::v0});
-			const Discovery validMsg2(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::v0});
+			const Discovery validMsg1(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
+			const Discovery validMsg2(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
 			const QHostAddress address(QHostAddress::LocalHost);
 
 			const RemoteDeviceDescriptor valid1(validMsg1, address);

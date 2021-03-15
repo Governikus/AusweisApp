@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardReturnCode.h"
@@ -46,9 +46,11 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 		case CardReturnCode::INPUT_TIME_OUT:
 			return GlobalStatus::Code::Card_Input_TimeOut;
 
+		case CardReturnCode::INVALID_PASSWORD:
 		case CardReturnCode::INVALID_PIN:
 		case CardReturnCode::INVALID_PIN_2:
 		case CardReturnCode::INVALID_PIN_3:
+		case CardReturnCode::NO_ACTIVE_PIN_SET:
 			return GlobalStatus::Code::Card_Invalid_Pin;
 
 		case CardReturnCode::INVALID_CAN:
@@ -83,6 +85,7 @@ bool CardReturnCodeUtil::equalsWrongPacePassword(CardReturnCode pCode)
 	switch (pCode)
 	{
 		case CardReturnCode::INVALID_CAN:
+		case CardReturnCode::INVALID_PASSWORD:
 		case CardReturnCode::INVALID_PIN:
 		case CardReturnCode::INVALID_PIN_2:
 		case CardReturnCode::INVALID_PIN_3:
@@ -104,6 +107,7 @@ bool CardReturnCodeUtil::equalsWrongPacePassword(CardReturnCode pCode)
 		case CardReturnCode::OK_PUK:
 		case CardReturnCode::CANCELLATION_BY_USER:
 		case CardReturnCode::PUK_INOPERATIVE:
+		case CardReturnCode::NO_ACTIVE_PIN_SET:
 		case CardReturnCode::INPUT_TIME_OUT:
 			return false;
 	}

@@ -1,7 +1,7 @@
 /*!
  * \brief Class for retrieving informations about installed antivirus software on windows.
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,19 +27,19 @@ class AntivirInfo
 	public:
 		AntivirInfo(const QString& pDisplayName, const QString& pLastUpdate, const QString& pExePath);
 
-		const QString& getDisplayName() const
+		[[nodiscard]] const QString& getDisplayName() const
 		{
 			return mDisplayName;
 		}
 
 
-		const QString& getLastUpdate() const
+		[[nodiscard]] const QString& getLastUpdate() const
 		{
 			return mLastUpdate;
 		}
 
 
-		const QString& getExePath() const
+		[[nodiscard]] const QString& getExePath() const
 		{
 			return mExePath;
 		}
@@ -76,7 +76,7 @@ class DiagnosisAntivirusDetection
 	public:
 		DiagnosisAntivirusDetection();
 		void startInformationProcess();
-		const QVector<QSharedPointer<AntivirInfo>>& getAntivirusInformations() const;
+		[[nodiscard]] const QVector<QSharedPointer<AntivirInfo>>& getAntivirusInformations() const;
 };
 
 } // namespace governikus

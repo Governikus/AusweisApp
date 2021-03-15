@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/CVCertificateChainBuilder.h"
@@ -49,7 +49,7 @@ void StateDidAuthenticateEac1::onCardCommandDone(QSharedPointer<BaseCardCommand>
 
 		auto paceOutput = getContext()->getPaceOutputData();
 		eac1Response->setEFCardAccess(paceOutput->getEfCardAccess().toHex());
-		eac1Response->setIDPICC(paceOutput->getIDicc().toHex());
+		eac1Response->setIDPICC(paceOutput->getIdIcc().toHex());
 		if (!getContext()->hasChainForCertificationAuthority(*paceOutput))
 		{
 			qDebug() << "No cvc chain determined, request new cvc list";

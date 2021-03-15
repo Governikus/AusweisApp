@@ -1,7 +1,7 @@
 /*!
  * \brief Class to parse InitializeFramework from server.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,7 +18,7 @@ class InitializeFramework
 {
 	private:
 		void parse();
-		virtual bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
+		bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
 
 	public:
 		explicit InitializeFramework(const QByteArray& pXmlData);

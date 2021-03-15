@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -21,45 +21,34 @@ namespace
 VALUE_NAME(SLOT_HANDLE, "SlotHandle")
 VALUE_NAME(COMMAND_APDUS, "CommandAPDUs")
 VALUE_NAME(INPUT_APDU, "InputAPDU")
+VALUE_NAME(DISPLAY_TEXT, "DisplayText")
 VALUE_NAME(ACCEPTABLE_STATUS_CODES, "AcceptableStatusCodes")
 } // namespace
 
 
-void IfdTransmit::parseCommandApdu(const QJsonValue& pEntry)
+void IfdTransmit::parseInputApdu(const QJsonObject& pMessageObject)
 {
-	if (!pEntry.isObject())
+	const bool v0Supported = IfdVersion(IfdVersion::Version::v0).isSupported();
+
+	bool inputApduFound = false;
+	if (v0Supported && pMessageObject.contains(COMMAND_APDUS()))
 	{
-		invalidType(COMMAND_APDUS(), QLatin1String("object array"));
-		return;
-	}
-
-	const QJsonObject& commandApdu = pEntry.toObject();
-	const QString& inputApdu = getStringValue(commandApdu, INPUT_APDU());
-	mInputApdu = QByteArray::fromHex(inputApdu.toUtf8());
-}
-
-
-IfdTransmit::IfdTransmit(const QString& pSlotHandle, const QByteArray& pInputApdu)
-	: RemoteMessage(RemoteCardMessageType::IFDTransmit)
-	, mSlotHandle(pSlotHandle)
-	, mInputApdu(pInputApdu)
-{
-}
-
-
-IfdTransmit::IfdTransmit(const QJsonObject& pMessageObject)
-	: RemoteMessage(pMessageObject)
-	, mSlotHandle()
-	, mInputApdu()
-{
-	mSlotHandle = getStringValue(pMessageObject, SLOT_HANDLE());
-
-	if (pMessageObject.contains(COMMAND_APDUS()))
-	{
+		inputApduFound = true;
 		const auto& value = pMessageObject.value(COMMAND_APDUS());
 		if (value.isArray())
 		{
-			parseCommandApdu(value.toArray().at(0));
+			const auto& entry = value.toArray().at(0);
+			if (entry.isObject())
+			{
+				const QJsonObject& commandApdu = entry.toObject();
+				const QString& inputApdu = getStringValue(commandApdu, INPUT_APDU());
+				mInputApdu = QByteArray::fromHex(inputApdu.toUtf8());
+			}
+			else
+			{
+				invalidType(COMMAND_APDUS(), QLatin1String("object array"));
+			}
+
 			if (value.toArray().size() > 1)
 			{
 				qCDebug(remote_device) << "Only using the first CommandAPDU. Command chaining ist not supported yet";
@@ -70,9 +59,44 @@ IfdTransmit::IfdTransmit(const QJsonObject& pMessageObject)
 			invalidType(COMMAND_APDUS(), QLatin1String("array"));
 		}
 	}
-	else
+
+	if (!v0Supported || pMessageObject.contains(INPUT_APDU()))
+	{
+		inputApduFound = true;
+		const QString& inputApdu = getStringValue(pMessageObject, INPUT_APDU());
+		mInputApdu = QByteArray::fromHex(inputApdu.toUtf8());
+	}
+
+	if (!inputApduFound)
 	{
 		missingValue(COMMAND_APDUS());
+		missingValue(INPUT_APDU());
+	}
+}
+
+
+IfdTransmit::IfdTransmit(const QString& pSlotHandle, const QByteArray& pInputApdu, const QString& pDisplayText)
+	: RemoteMessage(RemoteCardMessageType::IFDTransmit)
+	, mSlotHandle(pSlotHandle)
+	, mInputApdu(pInputApdu)
+	, mDisplayText(pDisplayText)
+{
+}
+
+
+IfdTransmit::IfdTransmit(const QJsonObject& pMessageObject)
+	: RemoteMessage(pMessageObject)
+	, mSlotHandle()
+	, mInputApdu()
+	, mDisplayText()
+{
+	mSlotHandle = getStringValue(pMessageObject, SLOT_HANDLE());
+
+	parseInputApdu(pMessageObject);
+
+	if (pMessageObject.contains(DISPLAY_TEXT()))
+	{
+		mDisplayText = getStringValue(pMessageObject, DISPLAY_TEXT());
 	}
 
 	if (getType() != RemoteCardMessageType::IFDTransmit)
@@ -94,18 +118,35 @@ const QByteArray& IfdTransmit::getInputApdu() const
 }
 
 
-QByteArray IfdTransmit::toByteArray(const QString& pContextHandle) const
+const QString& IfdTransmit::getDisplayText() const
+{
+	return mDisplayText;
+}
+
+
+QByteArray IfdTransmit::toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 
 	result[SLOT_HANDLE()] = mSlotHandle;
 
-	QJsonArray commandApdus;
-	QJsonObject commandApdu;
-	commandApdu[INPUT_APDU()] = QString::fromLatin1(mInputApdu.toHex());
-	commandApdu[ACCEPTABLE_STATUS_CODES()] = QJsonValue();
-	commandApdus += commandApdu;
-	result[COMMAND_APDUS()] = commandApdus;
+	if (pIfdVersion.getVersion() >= IfdVersion::Version::v2)
+	{
+		result[INPUT_APDU()] = QString::fromLatin1(mInputApdu.toHex());
+		if (!mDisplayText.isNull())
+		{
+			result[DISPLAY_TEXT()] = mDisplayText;
+		}
+	}
+	else
+	{
+		QJsonArray commandApdus;
+		QJsonObject commandApdu;
+		commandApdu[INPUT_APDU()] = QString::fromLatin1(mInputApdu.toHex());
+		commandApdu[ACCEPTABLE_STATUS_CODES()] = QJsonValue();
+		commandApdus += commandApdu;
+		result[COMMAND_APDUS()] = commandApdus;
+	}
 
 	return RemoteMessage::toByteArray(result);
 }

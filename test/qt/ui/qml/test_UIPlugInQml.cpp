@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -174,6 +174,30 @@ class test_UIPlugInQml
 			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("UPDATEINFORMATION"))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 3, PROCESS_TIMEOUT);
 			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("UPDATEINFORMATION")), PROCESS_TIMEOUT);
+
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("PINMANAGEMENT"))));
+			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 4, PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("PINMANAGEMENT")), PROCESS_TIMEOUT);
+
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("TUTORIAL"))));
+			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 5, PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("TUTORIAL")), PROCESS_TIMEOUT);
+
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("HISTORY"))));
+			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 6, PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("HISTORY")), PROCESS_TIMEOUT);
+
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("HELP"))));
+			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 7, PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("HELP")), PROCESS_TIMEOUT);
+
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("PROVIDER"))));
+			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 8, PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("PROVIDER")), PROCESS_TIMEOUT);
+
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("SELF_AUTHENTICATION"))));
+			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 9, PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("SELF_AUTHENTICATION")), PROCESS_TIMEOUT);
 
 			QVERIFY(isQmlEngineInitSuccess());
 		}

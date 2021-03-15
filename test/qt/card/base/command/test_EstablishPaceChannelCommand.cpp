@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/EstablishPaceChannelCommand.h"
@@ -39,11 +39,11 @@ class test_EstablishPaceChannelCommand
 			command.mPaceOutput = output;
 
 			QCOMPARE(command.getPaceOutput().getPaceReturnCode(), CardReturnCode::OK);
-			QCOMPARE(command.getPaceOutput().getCARcurr(), QByteArray("carCurr"));
-			QCOMPARE(command.getPaceOutput().getCARprev(), QByteArray("carPrev"));
+			QCOMPARE(command.getPaceOutput().getCarCurr(), QByteArray("carCurr"));
+			QCOMPARE(command.getPaceOutput().getCarPrev(), QByteArray("carPrev"));
 			QCOMPARE(command.getPaceOutput().getEfCardAccess(), QByteArray("cardAccess"));
-			QCOMPARE(command.getPaceOutput().getIDicc(), QByteArray("IdIcc"));
-			QCOMPARE(command.getPaceOutput().getMseStatusSetAt(), QByteArray("status"));
+			QCOMPARE(command.getPaceOutput().getIdIcc(), QByteArray("IdIcc"));
+			QCOMPARE(command.getPaceOutput().getStatusMseSetAt(), QByteArray("status"));
 		}
 
 

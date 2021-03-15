@@ -1,12 +1,14 @@
 /*!
  * \brief Tests for SecureMessagingResponse
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
+#include <QSignalSpy>
 #include <QtCore>
 #include <QtTest>
 
+#include "LogHandler.h"
 #include "SecureMessagingResponse.h"
 
 
@@ -19,12 +21,49 @@ class test_SecureMessagingResponse
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			Env::getSingleton<LogHandler>()->init();
+		}
+
+
 		void noData()
 		{
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+
 			QByteArray bytes = QByteArray::fromHex("");
 
 			SecureMessagingResponse response(bytes);
 			QVERIFY(response.isInvalid());
+			QCOMPARE(response.getEncryptedData(), QByteArray());
+			QCOMPARE(response.getEncryptedDataObjectEncoded(), QByteArray());
+			QCOMPARE(response.getMac(), QByteArray());
+			QCOMPARE(response.getSecuredStatusCode(), StatusCode::INVALID_SM_OBJECTS);
+			QCOMPARE(response.getSecuredStatusCodeBytes(), QByteArray());
+			QCOMPARE(response.getSecuredStatusCodeObjectEncoded(), QByteArray());
+
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"));
+		}
+
+
+		void secureMessagingDataObjectsAreIncorrect()
+		{
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+
+			QByteArray bytes = QByteArray::fromHex("6988");
+
+			SecureMessagingResponse response(bytes);
+			QVERIFY(response.isInvalid());
+			QCOMPARE(response.getEncryptedData(), QByteArray());
+			QCOMPARE(response.getEncryptedDataObjectEncoded(), QByteArray());
+			QCOMPARE(response.getMac(), QByteArray());
+			QCOMPARE(response.getSecuredStatusCode(), StatusCode::INVALID_SM_OBJECTS);
+			QCOMPARE(response.getSecuredStatusCodeBytes(), QByteArray());
+			QCOMPARE(response.getSecuredStatusCodeObjectEncoded(), QByteArray());
+
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"));
 		}
 
 

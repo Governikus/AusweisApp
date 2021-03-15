@@ -1,7 +1,7 @@
 /*!
  * \brief Contains the method definitions of the GeneralSettings class.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GeneralSettings.h"
@@ -14,7 +14,6 @@
 #include <QCoreApplication>
 #include <QLoggingCategory>
 #include <QOperatingSystemVersion>
-#include <QtConcurrent/QtConcurrentRun>
 #include <utility>
 
 
@@ -28,6 +27,7 @@ SETTINGS_NAME(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION, "persistentSettingsVers
 SETTINGS_NAME(SETTINGS_NAME_SKIP_VERSION, "skipVersion")
 SETTINGS_NAME(SETTINGS_NAME_AUTO_CLOSE_WINDOW, "autoCloseWindow")
 SETTINGS_NAME(SETTINGS_NAME_SHOW_SETUP_ASSISTANT, "showSetupAssistant")
+SETTINGS_NAME(SETTINGS_NAME_UI_STARTUP_MODULE, "uiStartupModule")
 SETTINGS_NAME(SETTINGS_NAME_REMIND_USER_TO_CLOSE, "remindToClose")
 SETTINGS_NAME(SETTINGS_NAME_TRANSPORT_PIN_REMINDER, "transportPinReminder")
 SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_OPTIONS, "developerOptions")
@@ -65,6 +65,16 @@ GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStoreGeneral, QShare
 	, mIsNewAppVersion(false)
 {
 	{
+		// With 1.22.1 the showSetupAssistant was replaced with a general startupModule, so migrate the settings.
+		if (!mStoreGeneral->contains(SETTINGS_NAME_UI_STARTUP_MODULE()))
+		{
+			if (!mStoreGeneral->value(SETTINGS_NAME_SHOW_SETUP_ASSISTANT(), true).toBool())
+			{
+				setStartupModule(QStringLiteral("DEFAULT"));
+			}
+			mStoreGeneral->remove(SETTINGS_NAME_SHOW_SETUP_ASSISTANT());
+		}
+
 		// With 1.22.0 the old widgets was removed, no need for UI selector
 		mStoreGeneral->remove(QStringLiteral("selectedUi"));
 		mStoreGeneral->remove(QStringLiteral("showNewUiHint"));
@@ -229,17 +239,17 @@ void GeneralSettings::setAutoCloseWindowAfterAuthentication(bool pAutoClose)
 }
 
 
-bool GeneralSettings::isShowSetupAssistant() const
+QString GeneralSettings::getStartupModule() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_SHOW_SETUP_ASSISTANT(), true).toBool();
+	return mStoreGeneral->value(SETTINGS_NAME_UI_STARTUP_MODULE(), QString()).toString();
 }
 
 
-void GeneralSettings::setShowSetupAssistant(bool pShowSetupAssistant)
+void GeneralSettings::setStartupModule(const QString& pModule)
 {
-	if (pShowSetupAssistant != isShowSetupAssistant())
+	if (getStartupModule() != pModule)
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_SHOW_SETUP_ASSISTANT(), pShowSetupAssistant);
+		mStoreGeneral->setValue(SETTINGS_NAME_UI_STARTUP_MODULE(), pModule);
 		Q_EMIT fireSettingsChanged();
 	}
 }

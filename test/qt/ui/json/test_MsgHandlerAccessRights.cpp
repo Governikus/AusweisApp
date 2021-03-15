@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerAccessRights
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerAccessRights.h"
@@ -41,7 +41,7 @@ class test_MsgHandlerAccessRights
 	}
 
 
-	QByteArray getAux() const
+	[[nodiscard]] QByteArray getAux() const
 	{
 		const QDate today = QDateTime::currentDateTimeUtc().date();
 		const QDate ageVerificationDate = QDate(1992, 12, 6);

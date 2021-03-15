@@ -1,7 +1,7 @@
 /*!
  * \brief Base class for controllers controlling a workflow (using a state machine).
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,11 +26,11 @@ class WorkflowController
 
 	public:
 		explicit WorkflowController(const QSharedPointer<WorkflowContext>& pContext);
-		virtual ~WorkflowController();
+		~WorkflowController() override;
 
 		void run();
 
-		QSharedPointer<WorkflowContext> getContext() const
+		[[nodiscard]] QSharedPointer<WorkflowContext> getContext() const
 		{
 			return mContext;
 		}

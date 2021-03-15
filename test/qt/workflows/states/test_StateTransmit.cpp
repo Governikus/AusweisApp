@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref StateTransmit
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateTransmit.h"
@@ -26,8 +26,8 @@ class MockTransmitCommand
 		}
 
 
-		virtual void internalExecute() override;
-		virtual ~MockTransmitCommand() override = default;
+		void internalExecute() override;
+		~MockTransmitCommand() override = default;
 
 		void setReturnCode(CardReturnCode code)
 		{

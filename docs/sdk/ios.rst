@@ -66,7 +66,13 @@ that command will be ignored.
 Once the SDK is ready to go you can send :doc:`commands` by ``ausweisapp2_send``.
 Your callback will receive the :doc:`messages`.
 
-If you call ``ausweisapp2_shutdown`` the AusweisApp2 SDK will be terminated.
+If you call ``ausweisapp2_shutdown`` the AusweisApp2 SDK will be terminated. This
+function joins the thread of the AusweisApp2 and blocks until the AusweisApp2 is
+finished. You should not call this function in your callback as it is called
+by the AusweisApp2 thread. In that case ``ausweisapp2_shutdown`` cannot be a
+blocking call to avoid a deadlock.
+If you call this function while a workflow is running the workflow will be
+canceled automatically before the shutdown.
 
 
 .. important::

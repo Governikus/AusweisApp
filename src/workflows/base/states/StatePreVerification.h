@@ -1,7 +1,7 @@
 /*
  * \brief Performs the pre-verification of cvcs. If the pre-verification succeeds the cvc chain is set to the authentication model.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,7 +28,7 @@ class StatePreVerification
 	const QDateTime mValidationDateTime;
 
 	explicit StatePreVerification(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 
 	bool isValid(const QVector<QSharedPointer<const CVCertificate>>& pCertificates);
 	void saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate>>& pCertificates);

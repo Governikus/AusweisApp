@@ -1,7 +1,7 @@
 /*!
  * \brief Global error code definitions
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,6 +21,7 @@ defineEnumType(CardReturnCode,
 		UNKNOWN,
 		INPUT_TIME_OUT,
 		INVALID_CAN,
+		INVALID_PASSWORD,
 		INVALID_PIN,
 		INVALID_PIN_2,
 		INVALID_PIN_3,
@@ -32,6 +33,7 @@ defineEnumType(CardReturnCode,
 		PIN_BLOCKED,
 		PIN_NOT_BLOCKED,
 		PUK_INOPERATIVE,
+		NO_ACTIVE_PIN_SET,
 		PROTOCOL_ERROR,
 		UNEXPECTED_TRANSMIT_STATUS)
 

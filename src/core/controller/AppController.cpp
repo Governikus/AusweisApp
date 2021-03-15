@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppController.h"
@@ -53,8 +53,8 @@ class WorkflowRequest final
 		WorkflowRequest(Action pAction, const QSharedPointer<WorkflowContext>& pContext);
 		~WorkflowRequest() = default;
 
-		inline Action getAction() const;
-		inline QSharedPointer<WorkflowContext> getContext() const;
+		[[nodiscard]] inline Action getAction() const;
+		[[nodiscard]] inline QSharedPointer<WorkflowContext> getContext() const;
 };
 
 } // namespace governikus
@@ -123,6 +123,7 @@ AppController::AppController()
 
 AppController::~AppController()
 {
+	LanguageLoader::getInstance().unload();
 }
 
 
@@ -234,6 +235,15 @@ void AppController::onWorkflowFinished()
 	qDebug() << mActiveController->metaObject()->className() << "done";
 	disconnect(mActiveController.data(), &WorkflowController::fireComplete, this, &AppController::onWorkflowFinished);
 
+	const auto authContext = mActiveController->getContext().objectCast<AuthContext>();
+	if (authContext)
+	{
+		if (authContext->getLastPaceResult() == CardReturnCode::NO_ACTIVE_PIN_SET)
+		{
+			onChangePinRequested(true);
+		}
+	}
+
 	Q_EMIT fireWorkflowFinished(mActiveController->getContext());
 
 	mActiveController.reset();
@@ -292,12 +302,12 @@ void AppController::onCloseReminderFinished(bool pDontRemindAgain)
 }
 
 
-void AppController::onChangePinRequested()
+void AppController::onChangePinRequested(bool pRequestTransportPin)
 {
 	if (canStartNewAction())
 	{
 		qDebug() << "PIN change requested";
-		const auto& context = QSharedPointer<ChangePinContext>::create();
+		const auto& context = QSharedPointer<ChangePinContext>::create(pRequestTransportPin);
 		startNewWorkflow<ChangePinController>(Action::PIN, context);
 
 		return;
@@ -307,7 +317,7 @@ void AppController::onChangePinRequested()
 	{
 		qDebug() << "PIN change enqueued";
 		mActiveController->getContext()->setNextWorkflowPending(true);
-		const auto& context = QSharedPointer<ChangePinContext>::create(true);
+		const auto& context = QSharedPointer<ChangePinContext>::create(pRequestTransportPin);
 		mWaitingRequest.reset(new WorkflowRequest(Action::PIN, context));
 
 		return;

@@ -1,7 +1,7 @@
 /*!
  * \brief Loader to initialize UIPlugIns.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,9 +32,9 @@ class UILoader
 		static QString getName(UIPlugInName pPlugin);
 
 		UILoader();
-		virtual ~UILoader();
-		inline bool isPlugIn(const QJsonObject& pJson) const;
-		inline bool hasName(const QJsonObject& pJson, const QString& pName) const;
+		~UILoader() override;
+		[[nodiscard]] inline bool isPlugIn(const QJsonObject& pJson) const;
+		[[nodiscard]] inline bool hasName(const QJsonObject& pJson, const QString& pName) const;
 
 	public:
 		// do not make this non-static as the CommandLineParser spawns
@@ -42,10 +42,11 @@ class UILoader
 		static QStringList getDefault();
 		static void setDefault(const QStringList& pDefault);
 
+		[[nodiscard]] bool isLoaded() const;
 		bool load();
 		bool load(UIPlugInName pName);
 
-		UIPlugIn* getLoaded(UIPlugInName pName) const;
+		[[nodiscard]] UIPlugIn* getLoaded(UIPlugInName pName) const;
 
 		Q_INVOKABLE void shutdown();
 

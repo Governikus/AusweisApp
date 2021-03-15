@@ -1,7 +1,7 @@
 /*
  * \brief Wrapper around QNetworkAccessManager
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -13,7 +13,6 @@
 #include <QAuthenticator>
 #include <QDebug>
 #include <QMessageLogger>
-#include <QMutex>
 #include <QNetworkAccessManager>
 #include <QNetworkProxy>
 #include <QNetworkReply>
@@ -33,12 +32,11 @@ class NetworkManager
 
 		QNetworkAccessManager mNetAccessManager;
 		bool mApplicationExitInProgress;
-		QMutex mTrackedConnectionsMutex;
-		int mTrackedConnections;
+		QAtomicInt mOpenConnectionCount;
 
 		void trackConnection(QNetworkReply* pResponse, const int pTimeoutInMilliSeconds);
 
-		QString getUserAgentHeader() const;
+		[[nodiscard]] QString getUserAgentHeader() const;
 
 	public Q_SLOTS:
 		void onShutdown();
@@ -46,7 +44,7 @@ class NetworkManager
 
 	protected:
 		NetworkManager();
-		virtual ~NetworkManager();
+		~NetworkManager() override;
 
 	public:
 		enum class NetworkError

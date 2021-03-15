@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "FileRef.h"
@@ -53,6 +53,12 @@ FileRef FileRef::appEId()
 FileRef FileRef::appPassport()
 {
 	return FileRef(static_cast<char>(SelectBuilder::P1::APPLICATION_ID), QByteArray::fromHex("a0000002471001"));
+}
+
+
+FileRef FileRef::appPersosim()
+{
+	return FileRef(static_cast<char>(SelectBuilder::P1::APPLICATION_ID), QByteArray::fromHex("f04e66e75c02d8"));
 }
 
 

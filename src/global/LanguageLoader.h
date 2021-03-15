@@ -1,7 +1,7 @@
 /*
  * \brief Loads translation files for different languages.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -48,16 +48,16 @@ class LanguageLoader
 		static QString getLocalCode(const QLocale& pLocale = getInstance().getUsedLocale());
 
 #ifndef QT_NO_DEBUG
-		const QString& getPath() const;
+		[[nodiscard]] const QString& getPath() const;
 		void setPath(const QString& pPath);
 #endif
 
 		void load(const QLocale& pLocale = getDefaultLanguage());
 		void unload();
-		bool isLoaded() const;
-		const QLocale& getUsedLocale() const;
-		QLocale::Language getFallbackLanguage() const;
-		QList<QLocale> getAvailableLocales() const;
+		[[nodiscard]] bool isLoaded() const;
+		[[nodiscard]] const QLocale& getUsedLocale() const;
+		[[nodiscard]] QLocale::Language getFallbackLanguage() const;
+		[[nodiscard]] QList<QLocale> getAvailableLocales() const;
 };
 
 } // namespace governikus

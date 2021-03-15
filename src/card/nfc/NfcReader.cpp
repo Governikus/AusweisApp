@@ -1,10 +1,11 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NfcReader.h"
 
 #include "CardConnectionWorker.h"
+#include "VolatileSettings.h"
 
 #include <QLoggingCategory>
 
@@ -58,7 +59,11 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 	CardInfoFactory::create(cardConnection, mReaderInfo);
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 	//: INFO IOS Feedback when a new ID card has been detected
-	mNfManager.setUserInformation(tr("ID card detected. Please do not move the device!"));
+	const auto& info = Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
+			 ? Env::getSingleton<VolatileSettings>()->getMessages().getSessionInProgress()
+			 : tr("ID card detected. Please do not move the device!");
+
+	mNfManager.setUserInformation(info);
 #endif
 	Q_EMIT fireCardInserted(mReaderInfo);
 }
@@ -79,7 +84,11 @@ void NfcReader::targetLost(QNearFieldTarget* pTarget)
 void NfcReader::setProgressMessage(const QString& pMessage)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	mNfManager.setUserInformation(pMessage);
+	const auto& info = Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
+			 ? Env::getSingleton<VolatileSettings>()->getMessages().getSessionInProgress()
+			 : pMessage;
+
+	mNfManager.setUserInformation(info);
 #else
 	Q_UNUSED(pMessage)
 #endif
@@ -157,7 +166,10 @@ void NfcReader::connectReader()
 {
 #if defined(Q_OS_IOS) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 	//: INFO IOS The ID card may be inserted, the authentication process may be started.
-	mNfManager.setUserInformation(tr("Please place your ID card on the top of the device's back side."));
+	const auto& info = Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
+			 ? Env::getSingleton<VolatileSettings>()->getMessages().getSessionStarted()
+			 : tr("Please place your ID card on the top of the device's back side.");
+	mNfManager.setUserInformation(info);
 	mNfManager.startTargetDetection(QNearFieldTarget::TagTypeSpecificAccess);
 #endif
 }
@@ -169,7 +181,10 @@ void NfcReader::disconnectReader(const QString& pError)
 	if (pError.isNull())
 	{
 		//: INFO IOS The current session was stopped without errors.
-		mNfManager.setUserInformation(tr("Scanning process has been finished successfully."));
+		const auto& info = Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
+				 ? Env::getSingleton<VolatileSettings>()->getMessages().getSessionSucceeded()
+				 : tr("Scanning process has been finished successfully.");
+		mNfManager.setUserInformation(info);
 	}
 	mNfManager.stopTargetDetection(pError);
 #else

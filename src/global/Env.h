@@ -1,7 +1,7 @@
 /*
  * \brief Runtime environment to create (mockable) objects.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -57,7 +57,7 @@ class Env
 				int mCounter = 0;
 
 			public:
-				inline int getCounter() const
+				[[nodiscard]] inline int getCounter() const
 				{
 					return mCounter;
 				}

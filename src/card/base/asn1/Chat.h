@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of Certificate Holder Authorization Template, CHAT.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -69,24 +69,24 @@ using CHAT = struct chat_st
 
 	static QSharedPointer<chat_st> fromHex(const QByteArray& pHexValue);
 	static QSharedPointer<chat_st> decode(const QByteArray& pBytes);
-	QByteArray encode() const;
+	[[nodiscard]] QByteArray encode() const;
 
 	chat_st(const chat_st& pCopy);
 	chat_st& operator=(const chat_st&) = delete;
 	~chat_st();
 
 	void setType(const QByteArray& pOidAsText);
-	QByteArray getType() const;
+	[[nodiscard]] QByteArray getType() const;
 
 	void setTemplate(const QByteArray& pValue);
-	QByteArray getTemplate() const;
+	[[nodiscard]] QByteArray getTemplate() const;
 
 	void setAccessRole(AccessRole pRole);
-	AccessRole getAccessRole() const;
+	[[nodiscard]] AccessRole getAccessRole() const;
 
-	QSet<AccessRight> getAccessRights() const;
+	[[nodiscard]] QSet<AccessRight> getAccessRights() const;
 	void setAccessRights(const QSet<AccessRight>& pAccessRights);
-	bool hasAccessRight(AccessRight pAccessRight) const;
+	[[nodiscard]] bool hasAccessRight(AccessRight pAccessRight) const;
 	void removeAllAccessRights();
 	void removeAccessRight(AccessRight pAccessRight);
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Settings to handle PreVerification and the corresponding linked certificates.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,12 +31,12 @@ class PreVerificationSettings
 		void updateLinkCertificates(const QByteArrayList& pLinkCertificates);
 
 	public:
-		virtual ~PreVerificationSettings() override;
-		virtual void save() override;
+		~PreVerificationSettings() override;
+		void save() override;
 
-		bool isEnabled() const;
+		[[nodiscard]] bool isEnabled() const;
 		void setEnabled(bool pEnabled);
-		QByteArrayList getLinkCertificates() const;
+		[[nodiscard]] QByteArrayList getLinkCertificates() const;
 		void removeLinkCertificate(const QByteArray& pCert);
 		void addLinkCertificate(const QByteArray& pCert);
 };

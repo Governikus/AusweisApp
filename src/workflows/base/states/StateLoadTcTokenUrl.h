@@ -1,7 +1,7 @@
 /*!
  * \brief Loads the tcTokenUrl for triggering the self authentication from secure storage
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,7 +21,7 @@ class StateLoadTcTokenUrl
 	friend class StateBuilder;
 
 	explicit StateLoadTcTokenUrl(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 };
 
 } // namespace governikus

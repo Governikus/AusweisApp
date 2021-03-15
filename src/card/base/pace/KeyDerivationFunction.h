@@ -1,7 +1,7 @@
 /*!
  * \brief Creates key according to TR 03110 Part 3 chapters A.2.3 ff.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -17,7 +17,7 @@ class KeyDerivationFunction final
 	private:
 		QCryptographicHash::Algorithm mHashAlgorithm;
 		int mKeySize;
-		QByteArray deriveKey(const QByteArray& pK, const QByteArray& pNonce, quint32 pC) const;
+		[[nodiscard]] QByteArray deriveKey(const QByteArray& pK, const QByteArray& pNonce, quint32 pC) const;
 
 	public:
 		/*!
@@ -31,7 +31,7 @@ class KeyDerivationFunction final
 		/*!
 		 * Returns true, if initialization succeeded, i.e. the algorithm is known, supported and the key bytes have correct size.
 		 */
-		bool isInitialized() const;
+		[[nodiscard]] bool isInitialized() const;
 
 		/*!
 		 * \brief Derive the encryption key

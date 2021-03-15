@@ -1,7 +1,7 @@
 /*!
  * \brief Tests for \ref CardInfo.
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardInfo.h"
@@ -24,7 +24,7 @@ class test_CardInfo
 
 			QTest::newRow("none") << CardType::NONE << QString("not inserted");
 			QTest::newRow("unknown") << CardType::UNKNOWN << QString("unknown type");
-			QTest::newRow("eid") << CardType::EID_CARD << QString("ID card (PA/eAT)");
+			QTest::newRow("eid") << CardType::EID_CARD << QString("ID card (PA/eAT/eID)");
 		}
 
 

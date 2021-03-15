@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for return codes.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardReturnCode.h"

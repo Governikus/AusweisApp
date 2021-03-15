@@ -1,7 +1,7 @@
 /*!
  * \brief Parses self authentication data from JSON data and provides its content.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -92,10 +92,10 @@ class SelfAuthenticationData
 		/**
 		 * Check if parsing of given data was successful.
 		 */
-		bool isValid() const;
-		QString getValue(SelfAuthData pData) const;
-		const QDateTime& getDateTime() const;
-		OrderedSelfData getOrderedSelfData() const;
+		[[nodiscard]] bool isValid() const;
+		[[nodiscard]] QString getValue(SelfAuthData pData) const;
+		[[nodiscard]] const QDateTime& getDateTime() const;
+		[[nodiscard]] OrderedSelfData getOrderedSelfData() const;
 };
 
 } // namespace governikus

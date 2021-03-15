@@ -1,7 +1,7 @@
 /*!
  * \brief Parser for reader configuration files
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,15 +29,15 @@ class ReaderConfigurationParser
 				friend class ::test_ReaderConfigurationEntryParser;
 				const QJsonValue mJsonValue;
 
-				QString getDriverUrl(const QJsonObject& pObject) const;
-				bool matchPlatform(const QJsonArray& pPlatforms, const QOperatingSystemVersion& pCurrentVersion = QOperatingSystemVersion::current()) const;
-				ReaderConfigurationInfo fail(const QString& logMessage) const;
+				[[nodiscard]] QString getDriverUrl(const QJsonObject& pObject) const;
+				[[nodiscard]] bool matchPlatform(const QJsonArray& pPlatforms, const QOperatingSystemVersion& pCurrentVersion = QOperatingSystemVersion::current()) const;
+				[[nodiscard]] ReaderConfigurationInfo fail(const QString& logMessage) const;
 
 			public:
 				explicit EntryParser(const QJsonValue& pJsonValue);
 				virtual ~EntryParser();
 
-				ReaderConfigurationInfo parse() const;
+				[[nodiscard]] ReaderConfigurationInfo parse() const;
 		};
 
 		static QVector<ReaderConfigurationInfo> fail(const QString& logMessage);

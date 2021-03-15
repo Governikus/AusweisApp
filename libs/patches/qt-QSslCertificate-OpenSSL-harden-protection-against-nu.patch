@@ -1,0 +1,116 @@
+From 77cf1e2d4ebccb5bf753b46da6f192769a7611e8 Mon Sep 17 00:00:00 2001
+From: Timur Pocheptsov <timur.pocheptsov@qt.io>
+Date: Mon, 21 Dec 2020 14:19:36 +0100
+Subject: [PATCH] QSslCertificate(OpenSSL) - harden protection against
+ nullpointers
+
+An invalid (as input data) certificate may have non-zero number of invalid (nullptr)
+extensions (if OpenSSL failed to parse them, for example).
+
+Fixes: QTBUG-89547
+Pick-to: 6.0 5.15 5.12
+Change-Id: I4b93ac9f482f850f02d01b0aea10560dc11b688d
+---
+ src/network/ssl/qsslcertificate_openssl.cpp | 27 +++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/network/ssl/qsslcertificate_openssl.cpp y/qtbase/src/network/ssl/qsslcertificate_openssl.cpp
+index ca9d61ccb1..e2a076cc2a 100644
+--- x/qtbase/src/network/ssl/qsslcertificate_openssl.cpp
++++ y/qtbase/src/network/ssl/qsslcertificate_openssl.cpp
+@@ -327,9 +327,12 @@ static QVariant x509UnknownExtensionToValue(X509_EXTENSION *ext)
+     // we cast away the const-ness here because some versions of openssl
+     // don't use const for the parameters in the functions pointers stored
+     // in the object.
++    Q_ASSERT(ext);
++
+     X509V3_EXT_METHOD *meth = const_cast<X509V3_EXT_METHOD *>(q_X509V3_EXT_get(ext));
+     if (!meth) {
+         ASN1_OCTET_STRING *value = q_X509_EXTENSION_get_data(ext);
++        Q_ASSERT(value);
+         QByteArray result( reinterpret_cast<const char *>(q_ASN1_STRING_get0_data(value)),
+                            q_ASN1_STRING_length(value));
+         return result;
+@@ -363,7 +366,6 @@ static QVariant x509UnknownExtensionToValue(X509_EXTENSION *ext)
+         else
+             return list;
+     } else if (meth->i2s && ext_internal) {
+-        //qCDebug(lcSsl) << meth->i2s(meth, ext_internal);
+         QVariant result(QString::fromUtf8(meth->i2s(meth, ext_internal)));
+         return result;
+     } else if (meth->i2r && ext_internal) {
+@@ -400,6 +402,8 @@ static QVariant x509ExtensionToValue(X509_EXTENSION *ext)
+     case NID_basic_constraints:
+         {
+             BASIC_CONSTRAINTS *basic = reinterpret_cast<BASIC_CONSTRAINTS *>(q_X509V3_EXT_d2i(ext));
++            if (!basic)
++                return QVariant();
+ 
+             QVariantMap result;
+             result[QLatin1String("ca")] = basic->ca ? true : false;
+@@ -413,6 +417,8 @@ static QVariant x509ExtensionToValue(X509_EXTENSION *ext)
+     case NID_info_access:
+         {
+             AUTHORITY_INFO_ACCESS *info = reinterpret_cast<AUTHORITY_INFO_ACCESS *>(q_X509V3_EXT_d2i(ext));
++            if (!info)
++                return QVariant();
+ 
+             QVariantMap result;
+             for (int i=0; i < q_SKM_sk_num(ACCESS_DESCRIPTION, info); i++) {
+@@ -442,7 +448,8 @@ static QVariant x509ExtensionToValue(X509_EXTENSION *ext)
+     case NID_subject_key_identifier:
+         {
+             void *ext_internal = q_X509V3_EXT_d2i(ext);
+-
++            if (!ext_internal)
++                return QVariant();
+             // we cast away the const-ness here because some versions of openssl
+             // don't use const for the parameters in the functions pointers stored
+             // in the object.
+@@ -454,6 +461,8 @@ static QVariant x509ExtensionToValue(X509_EXTENSION *ext)
+     case NID_authority_key_identifier:
+         {
+             AUTHORITY_KEYID *auth_key = reinterpret_cast<AUTHORITY_KEYID *>(q_X509V3_EXT_d2i(ext));
++            if (!auth_key)
++                return QVariant();
+ 
+             QVariantMap result;
+ 
+@@ -482,9 +491,16 @@ static QVariant x509ExtensionToValue(X509_EXTENSION *ext)
+ 
+ QSslCertificateExtension QSslCertificatePrivate::convertExtension(X509_EXTENSION *ext)
+ {
++    Q_ASSERT(ext);
++
+     QSslCertificateExtension result;
+ 
+     ASN1_OBJECT *obj = q_X509_EXTENSION_get_object(ext);
++    if (!obj) {
++        qCWarning(lcSsl, "Invalid (nullptr) ASN1_OBJECT");
++        return result;
++    }
++
+     QByteArray oid = QSslCertificatePrivate::asn1ObjectId(obj);
+     QByteArray name = QSslCertificatePrivate::asn1ObjectName(obj);
+ 
+@@ -521,10 +537,17 @@ QList<QSslCertificateExtension> QSslCertificate::extensions() const
+         return result;
+ 
+     int count = q_X509_get_ext_count(d->x509);
++    if (count <= 0)
++        return result;
++
+     result.reserve(count);
+ 
+     for (int i = 0; i < count; i++) {
+         X509_EXTENSION *ext = q_X509_get_ext(d->x509, i);
++        if (!ext) {
++            qCWarning(lcSsl) << "Invalid (nullptr) extension at index" << i;
++            continue;
++        }
+         result << QSslCertificatePrivate::convertExtension(ext);
+     }
+ 
+-- 
+2.29.2
+

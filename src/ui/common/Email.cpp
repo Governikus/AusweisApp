@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Email.h"
@@ -11,12 +11,12 @@
 namespace governikus
 {
 
-QString generateMailBody(const GlobalStatus& pStatus, const QUrl& pServiceUrl)
+QString generateMailBody(const GlobalStatus& pStatus, const QUrl& pServiceUrl, bool pPercentEncoding, bool pAddLogNotice)
 {
 	const auto& logHandler = Env::getSingleton<LogHandler>();
 	QStringList mailBody(QObject::tr("Please describe the error that occurred."));
 
-	if (logHandler->useLogfile())
+	if (logHandler->useLogfile() && pAddLogNotice)
 	{
 		mailBody << QObject::tr("You may want to attach the logfile which can be saved from the error dialog.");
 	}
@@ -27,8 +27,14 @@ QString generateMailBody(const GlobalStatus& pStatus, const QUrl& pServiceUrl)
 	const auto& systemInfo = BuildHelper::getInformationHeader();
 	for (const auto& info : systemInfo)
 	{
-		const auto first = QString::fromUtf8(QUrl::toPercentEncoding(info.first));
-		const auto second = QString::fromUtf8(QUrl::toPercentEncoding(info.second));
+		QString first = info.first;
+		QString second = info.second;
+		if (pPercentEncoding)
+		{
+			first = QString::fromUtf8(QUrl::toPercentEncoding(first));
+			second = QString::fromUtf8(QUrl::toPercentEncoding(second));
+
+		}
 		mailBody << first + QStringLiteral(": ") + second;
 	}
 
@@ -49,9 +55,14 @@ QString generateMailBody(const GlobalStatus& pStatus, const QUrl& pServiceUrl)
 		mailBody << newLine + QObject::tr("Critical errors:") + newLine + criticalMessages;
 	}
 
-	// We need to replace the ambersand char since it will signal the end of the predefined mail body
-	// and everything beyond that ambersand will be missing from the mail.
-	return mailBody.join(newLine).replace(QStringLiteral("&"), QStringLiteral("%26"));
+	auto result = mailBody.join(newLine);
+	if (pPercentEncoding)
+	{
+		// We need to replace the ambersand char since it will signal the end of the predefined mail body
+		// and everything beyond that ambersand will be missing from the mail.
+		result = result.replace(QStringLiteral("&"), QStringLiteral("%26"));
+	}
+	return result;
 }
 
 

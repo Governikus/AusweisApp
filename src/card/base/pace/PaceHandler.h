@@ -1,7 +1,7 @@
 /*!
  * \brief Handler for the PACE protocol. See TR-03110.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -35,7 +35,7 @@ class PaceHandler final
 		/*!
 		 * \brief checks for implementation support
 		 */
-		bool isSupportedProtocol(const QSharedPointer<const PaceInfo>& pPaceInfo) const;
+		[[nodiscard]] bool isSupportedProtocol(const QSharedPointer<const PaceInfo>& pPaceInfo) const;
 
 		/*!
 		 * \brief Perform initialization of the handler. During initialization the PACE protocol parameters to be used are determined.
@@ -74,42 +74,42 @@ class PaceHandler final
 		 * I. e. the output of KDF_enc according to TR-03110 Part 3 chapter A.2.3.
 		 * \return the encryption key
 		 */
-		const QByteArray& getEncryptionKey() const;
+		[[nodiscard]] const QByteArray& getEncryptionKey() const;
 
 		/*!
 		 * \brief During PACE protocol a MAC key is determined. This method returns this key.
 		 * I. e. the output of KDF_mac according to TR-03110 Part 3 chapter A.2.3.
 		 * \return the MAC key
 		 */
-		const QByteArray& getMacKey() const;
+		[[nodiscard]] const QByteArray& getMacKey() const;
 
 		/*!
 		 * \brief During PACE protocol a certificate authority reference (CAR) may be determined. This method returns this CAR.
 		 * The CAR is determined, if a CHAT was supplied, \see setChat
 		 * \return the card's CAR number 1
 		 */
-		const QByteArray& getCarCurr() const;
+		[[nodiscard]] const QByteArray& getCarCurr() const;
 
 		/*!
 		 * \brief During PACE protocol a certificate authority reference (CAR) may be determined. This method returns this CAR.
 		 * The CAR is determined, if a CHAT was supplied, \see setChat
 		 * \return the card's CAR number 2
 		 */
-		const QByteArray& getCarPrev() const;
+		[[nodiscard]] const QByteArray& getCarPrev() const;
 
 		/*!
 		 * \brief The IDicc is the card's compressed ephemeral public key.
 		 * \return the card's compressed ephemeral public key
 		 */
-		const QByteArray& getIdIcc() const;
+		[[nodiscard]] const QByteArray& getIdIcc() const;
 
-		const QByteArray& getStatusMseSetAt() const;
+		[[nodiscard]] const QByteArray& getStatusMseSetAt() const;
 
 		/*!
 		 * The used PACE protocol.
 		 * \return the PACE protocol OID as string.
 		 */
-		QByteArray getPaceProtocol() const;
+		[[nodiscard]] QByteArray getPaceProtocol() const;
 };
 
 } // namespace governikus

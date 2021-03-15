@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdModifyPin.h"
@@ -67,7 +67,7 @@ class test_IfdModifyPin
 				QByteArray::fromHex("abcd1234")
 				);
 
-			const QByteArray& byteArray = ifdModifyPin.toByteArray(QStringLiteral("TestContext"));
+			const QByteArray& byteArray = ifdModifyPin.toByteArray(IfdVersion::Version::v0, QStringLiteral("TestContext"));
 			QCOMPARE(byteArray,
 					QByteArray("{\n"
 							   "    \"ContextHandle\": \"TestContext\",\n"

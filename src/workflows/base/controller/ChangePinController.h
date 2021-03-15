@@ -1,7 +1,7 @@
 /*!
  * \brief Controller for the PIN changing process.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,7 +21,7 @@ class ChangePinController
 
 	public:
 		explicit ChangePinController(QSharedPointer<ChangePinContext> pContext);
-		virtual ~ChangePinController();
+		~ChangePinController() override;
 };
 
 } // namespace governikus

@@ -1,10 +1,9 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
-import QtGraphicalEffects 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -31,12 +30,7 @@ Item {
 		anchors.fill: parent
 
 		layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
-		layer.effect: DropShadow {
-			radius: 4
-			samples: 8
-			source: background
-			color: Style.color.shadow
-		}
+		layer.effect: GDropShadow { source: background }
 	}
 
 	Rectangle {

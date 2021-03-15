@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -13,6 +13,7 @@ import Governikus.View 1.0
 import Governikus.ResultView 1.0
 import Governikus.Type.CheckIDCardModel 1.0
 import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.UiModule 1.0
 
 ResultView {
 	id: root
@@ -56,9 +57,9 @@ ResultView {
 	title: suggestionData.title
 	resultType: ResultView.Type.IsInfo
 	text: suggestionData.text
-	buttonLeft.text: suggestionData.buttonTitle !== undefined ? suggestionData.buttonTitle : qsTr("Open website")
-	buttonLeft.icon.source: suggestionData.buttonIcon !== undefined ? suggestionData.buttonIcon : "qrc:///images/material_open_in_new.svg"
-	buttonLeft.tintIcon: true
+	button.text: suggestionData.buttonTitle !== undefined ? suggestionData.buttonTitle : qsTr("Open website")
+	button.icon.source: suggestionData.buttonIcon !== undefined ? suggestionData.buttonIcon : "qrc:///images/material_open_in_new.svg"
+	button.tintIcon: true
 
 	onClicked: suggestionData.onButtonClicked !== undefined ? suggestionData.onButtonClicked() : Qt.openUrlExternally(suggestionData.suggestionUrl)
 
@@ -66,7 +67,7 @@ ResultView {
 		// We need to keep a reference to the navbar since after calling firePopAll() 'navBar' becomes undefined
 		let navigation = navBar
 		firePopAll()
-		navigation.showIdentify()
+		navigation.show(UiModule.IDENTIFY)
 	}
 
 	QtObject {
@@ -76,7 +77,7 @@ ResultView {
 		readonly property string title: qsTr("No NFC")
 
 		//: LABEL ANDROID IOS
-		readonly property string text: qsTr("Your mobile device has no NFC interface. This is required to read the ID card.<br><br>You can find smartphones compatible with the %1 on our website.")
+		readonly property string text: qsTr("Your mobile device has no NFC interface. This is required to read the ID card. However, you can use a separate smartphone as card reader to utilize the online identification function.<br><br>You can find smartphones compatible with the %1 on our website.")
 			.arg(Qt.application.name)
 
 		readonly property string suggestionUrl: "https://www.ausweisapp.bund.de/%1/aa2/mobile-devices".arg(SettingsModel.language)
@@ -89,7 +90,7 @@ ResultView {
 		readonly property string title: qsTr("No supported card detected")
 
 		//: LABEL ANDROID IOS
-		readonly property string text: qsTr("No supported ID card was detected. The %1 supports:<p><ul><li>German ID cards</li><li>Electronic residence permit (eAT)</li><li>Union citizen cards</li></ul></p>If you have used one of the above documents and this error message still appears, please restart the check.<br><br>Tip: Try a different card position, make sure that you do not move the ID card during the check and that there are no other NFC cards (e.g. credit cards) near the device.")
+		readonly property string text: qsTr("No supported ID card was detected. The %1 supports:<p><ul><li>German ID cards</li><li>Electronic residence permits (eAT)</li><li>eID Cards</li></ul></p>If you have used one of the above documents and this error message still appears, please restart the check.<br><br>Tip: Try a different card position, make sure that you do not move the ID card during the check and that there are no other NFC cards (e.g. credit cards) near the device.")
 			.arg(Qt.application.name)
 
 		//: LABEL ANDROID IOS

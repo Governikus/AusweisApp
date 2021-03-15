@@ -1,7 +1,7 @@
 /*!
  * \brief A final state which blocks the state machine before termination.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,7 +19,7 @@ class FinalState
 	Q_OBJECT
 
 	private:
-		virtual void run() override;
+		void run() override;
 
 	protected:
 		void onEntry(QEvent* pEvent) override

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCheckRefreshAddress.h"
@@ -429,4 +429,15 @@ void StateCheckRefreshAddress::onEntry(QEvent* pEvent)
 	//: INFO ALL_PLATFORMS Status message after the communication between card and server is completed, the result is being forwarded to the provider.
 	getContext()->setProgress(80, tr("Sending data to provider"));
 	AbstractState::onEntry(pEvent);
+}
+
+
+void StateCheckRefreshAddress::onExit(QEvent* pEvent)
+{
+	AbstractState::onExit(pEvent);
+
+	if (mReply)
+	{
+		mReply.reset();
+	}
 }

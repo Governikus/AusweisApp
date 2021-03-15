@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -48,7 +48,7 @@ const QString& IfdConnectResponse::getSlotHandle() const
 }
 
 
-QByteArray IfdConnectResponse::toByteArray(const QString& pContextHandle) const
+QByteArray IfdConnectResponse::toByteArray(const IfdVersion&, const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 

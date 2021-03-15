@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,7 +20,7 @@ class StateSelectReader
 
 	private:
 		explicit StateSelectReader(const QSharedPointer<WorkflowContext>& pContext);
-		virtual void run() override;
+		void run() override;
 
 		static bool requiresCard(ReaderManagerPlugInType pPlugInType);
 

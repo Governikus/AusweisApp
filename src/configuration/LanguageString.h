@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,7 +21,7 @@ class LanguageString
 	private:
 		QMap<QString, QString> mStrings;
 
-		QString toString(const QLocale& pLocale) const;
+		[[nodiscard]] QString toString(const QLocale& pLocale) const;
 
 	public:
 		explicit LanguageString(const QJsonValue& pJson);
@@ -29,12 +29,12 @@ class LanguageString
 		LanguageString(const QString& pString, const QLocale& pLocale = LanguageLoader::getInstance().getUsedLocale());
 
 
-		bool isEmpty() const;
-		QString toString() const;
+		[[nodiscard]] bool isEmpty() const;
+		[[nodiscard]] QString toString() const;
 		operator QString() const;
 
-		QMap<QString, QString>::const_iterator begin() const;
-		QMap<QString, QString>::const_iterator end() const;
+		[[nodiscard]] QMap<QString, QString>::const_iterator begin() const;
+		[[nodiscard]] QMap<QString, QString>::const_iterator end() const;
 };
 
 inline bool operator==(const LanguageString& pLeft, const LanguageString& pRight)

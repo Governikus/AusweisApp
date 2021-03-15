@@ -1,7 +1,7 @@
 /*!
  * \brief Sends a HTTP-Processing to the browser.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,7 +21,7 @@ class StateProcessing
 	friend class StateBuilder;
 
 	explicit StateProcessing(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 };
 
 } // namespace governikus

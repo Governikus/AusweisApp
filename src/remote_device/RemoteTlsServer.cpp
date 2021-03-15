@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteTlsServer.h"
@@ -173,6 +173,7 @@ void RemoteTlsServer::onEncrypted()
 		settings.addTrustedCertificate(cfg.peerCertificate());
 		settings.save();
 		setPairing(false);
+		Q_EMIT firePairingCompleted();
 	}
 	else
 	{

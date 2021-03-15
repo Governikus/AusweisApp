@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the authentication action.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -36,7 +36,7 @@ class AuthModel
 		QString mTransactionInfo;
 
 		AuthModel();
-		virtual ~AuthModel() override = default;
+		~AuthModel() override = default;
 
 	public:
 		void resetAuthContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());
@@ -48,7 +48,7 @@ class AuthModel
 		QString getErrorText() const;
 		QString getStatusCode() const;
 
-		Q_INVOKABLE void setSkipRedirect(bool pSkipRedirect);
+		Q_INVOKABLE void requestTransportPinChange();
 
 	private Q_SLOTS:
 		void onDidAuthenticateEac1Changed();

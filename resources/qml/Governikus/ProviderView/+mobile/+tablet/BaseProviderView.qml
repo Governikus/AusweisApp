@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -12,6 +12,7 @@ import Governikus.View 1.0
 import Governikus.Type.HistoryModel 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.ProviderCategoryFilterModel 1.0
+import Governikus.Type.UiModule 1.0
 
 SectionPage {
 	id: baseItem
@@ -30,7 +31,7 @@ SectionPage {
 		state: "back"
 		onClicked: {
 			baseItem.reset()
-			navBar.showMain()
+			navBar.show(UiModule.DEFAULT)
 		}
 	}
 
@@ -40,6 +41,7 @@ SectionPage {
 
 	readonly property int headerHeight: 54
 	readonly property int separatorHeight: 2
+	property real additionalProviderListTopPadding: 0
 
 	function pushProviderDetails(pModel) {
 		HistoryModel.nameFilter.setProviderAddress(pModel.providerAddress)
@@ -55,7 +57,10 @@ SectionPage {
 	Column {
 		id: content
 
-		width: parent.width
+		anchors {
+			fill: parent
+			topMargin: additionalProviderListTopPadding
+		}
 
 		Rectangle {
 
@@ -122,7 +127,7 @@ SectionPage {
 		}
 
 		ProviderGridView {
-			height: baseItem.height - (baseItem.headerHeight + baseItem.separatorHeight)
+			height: baseItem.height - (baseItem.headerHeight + baseItem.separatorHeight) - additionalProviderListTopPadding
 			width: parent.width
 			anchors.horizontalCenter: parent.horizontalCenter
 

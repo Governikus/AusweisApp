@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of PACEInfo
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -65,7 +65,7 @@ class PaceInfo
 	const QSharedPointer<const paceinfo_st> mDelegate;
 
 	explicit PaceInfo(const QSharedPointer<const paceinfo_st>& pDelegate);
-	ASN1_OBJECT* getProtocolObjectIdentifier() const override;
+	[[nodiscard]] ASN1_OBJECT* getProtocolObjectIdentifier() const override;
 	static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
 
 	public:
@@ -82,12 +82,12 @@ class PaceInfo
 		}
 
 
-		QByteArray getParameterId() const;
-		int getParameterIdAsInt() const;
-		int getVersion() const;
-		KeyAgreementType getKeyAgreementType() const;
-		MappingType getMappingType() const;
-		bool isStandardizedDomainParameters() const;
+		[[nodiscard]] QByteArray getParameterId() const;
+		[[nodiscard]] int getParameterIdAsInt() const;
+		[[nodiscard]] int getVersion() const;
+		[[nodiscard]] KeyAgreementType getKeyAgreementType() const;
+		[[nodiscard]] MappingType getMappingType() const;
+		[[nodiscard]] bool isStandardizedDomainParameters() const;
 };
 
 

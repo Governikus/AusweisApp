@@ -1,7 +1,7 @@
 /*!
  * \brief Holds the data of an InputAPDUInfo element.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,13 +19,13 @@ class InputAPDUInfo
 		explicit InputAPDUInfo(const QByteArray& pInputApdu = QByteArray());
 
 
-		bool isValid() const
+		[[nodiscard]] bool isValid() const
 		{
 			return !mInputApdu.isEmpty();
 		}
 
 
-		const CommandApdu getInputApdu() const
+		[[nodiscard]] const CommandApdu getInputApdu() const
 		{
 			return CommandApdu(mInputApdu);
 		}
@@ -37,7 +37,7 @@ class InputAPDUInfo
 		}
 
 
-		const QByteArrayList& getAcceptableStatusCodes() const
+		[[nodiscard]] const QByteArrayList& getAcceptableStatusCodes() const
 		{
 			return mAcceptableStatusCodes;
 		}

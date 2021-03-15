@@ -2,7 +2,7 @@
  * \brief Information needed to display a remote device in the GUI and to open
  * a websocket connection to it.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,13 +37,13 @@ class RemoteDeviceDescriptor
 				const QVector<IfdVersion::Version> mApiVersions;
 				const QUrl mUrl;
 				bool operator==(const RemoteDeviceDescriptorData& pOther) const;
-				bool isEquivalent(const RemoteDeviceDescriptorData& pOther) const;
+				bool isSameIfd(const RemoteDeviceDescriptorData& pOther) const;
 		};
 
 		static RemoteDeviceDescriptorData* createRemoteDeviceDescriptorData(const Discovery& pDiscovery,
 				const QHostAddress& pHostAddress);
 
-		const QSharedDataPointer<RemoteDeviceDescriptorData> d;
+		QSharedDataPointer<RemoteDeviceDescriptorData> d;
 
 	public:
 		RemoteDeviceDescriptor() = default;
@@ -51,15 +51,15 @@ class RemoteDeviceDescriptor
 
 		~RemoteDeviceDescriptor() = default;
 
-		const QString& getIfdName() const;
-		const QString& getIfdId() const;
-		const QVector<IfdVersion::Version>& getApiVersions() const;
-		bool isSupported() const;
-		const QUrl& getUrl() const;
-		bool isNull() const;
+		[[nodiscard]] const QString& getIfdName() const;
+		[[nodiscard]] const QString& getIfdId() const;
+		[[nodiscard]] const QVector<IfdVersion::Version>& getApiVersions() const;
+		[[nodiscard]] bool isSupported() const;
+		[[nodiscard]] const QUrl& getUrl() const;
+		[[nodiscard]] bool isNull() const;
 
 		bool operator==(const RemoteDeviceDescriptor& pOther) const;
-		bool isEquivalent(const RemoteDeviceDescriptor& pOther) const;
+		[[nodiscard]] bool isSameIfd(const RemoteDeviceDescriptor& pOther) const;
 
 };
 

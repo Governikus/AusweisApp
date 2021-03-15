@@ -1,7 +1,7 @@
 /*!
  * \brief  Transmit objects hold a transmit request and provide access to the transmitted data via member functions.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,9 +23,9 @@ class Transmit
 	public:
 		Transmit();
 		explicit Transmit(const QByteArray& pXmlData);
-		virtual ~Transmit();
+		~Transmit() override;
 
-		const QString& getSlotHandle() const
+		[[nodiscard]] const QString& getSlotHandle() const
 		{
 			return mSlotHandle;
 		}
@@ -37,7 +37,7 @@ class Transmit
 		}
 
 
-		const QVector<InputAPDUInfo>& getInputApduInfos() const
+		[[nodiscard]] const QVector<InputAPDUInfo>& getInputApduInfos() const
 		{
 			return mInputApduInfos;
 		}

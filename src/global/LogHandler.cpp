@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogHandler.h"
@@ -217,8 +217,7 @@ void LogHandler::setCriticalLogCapacity(int pSize)
 
 QDateTime LogHandler::getFileDate(const QFileInfo& pInfo)
 {
-	const auto& dateTime = pInfo.birthTime();
-	if (dateTime.isValid())
+	if (const auto& dateTime = pInfo.birthTime(); dateTime.isValid())
 	{
 		return dateTime;
 	}

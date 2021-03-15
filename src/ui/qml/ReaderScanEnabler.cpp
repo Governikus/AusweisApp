@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderScanEnabler.h"
@@ -47,6 +47,12 @@ void ReaderScanEnabler::enableScan(const bool pEnable)
 }
 
 
+void ReaderScanEnabler::enableScanIfVisible()
+{
+	enableScan(isVisible());
+}
+
+
 ReaderManagerPlugInType ReaderScanEnabler::getPlugInType() const
 {
 	return mPlugInType;
@@ -62,10 +68,7 @@ void ReaderScanEnabler::setPlugInType(ReaderManagerPlugInType pPlugInType)
 
 	enableScan(false);
 	mPlugInType = pPlugInType;
-	if (isVisible())
-	{
-		enableScan(true);
-	}
+	QMetaObject::invokeMethod(this, &ReaderScanEnabler::enableScanIfVisible, Qt::QueuedConnection);
 
 	Q_EMIT firePlugInTypeChanged();
 }
@@ -75,7 +78,7 @@ void ReaderScanEnabler::itemChange(QQuickItem::ItemChange pChange, const QQuickI
 {
 	if (pChange == QQuickItem::ItemVisibleHasChanged)
 	{
-		enableScan(pValue.boolValue);
+		QMetaObject::invokeMethod(this, &ReaderScanEnabler::enableScanIfVisible, Qt::QueuedConnection);
 	}
 
 	QQuickItem::itemChange(pChange, pValue);

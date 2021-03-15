@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,28 +16,28 @@ class IfdVersion
 		enum class Version : int
 		{
 			Unknown = -1,
-			v0
-#ifndef QT_NO_DEBUG
-			, v_test
-#endif
+			v0,
+			v2,
+			latest = v2
 		};
 
 	private:
 		const Version mVersion;
 
-	public:
-		IfdVersion(Version pVersion);
-		IfdVersion(const QString& pVersionString);
+		static Version fromString(const QString& pVersionString);
 
-		Version getVersion() const;
-		bool isValid() const;
-		bool isSupported() const;
+	public:
+		IfdVersion(Version pVersion = Version::Unknown);
+		explicit IfdVersion(const QString& pVersionString);
+
+		[[nodiscard]] Version getVersion() const;
+		[[nodiscard]] bool isValid() const;
+		[[nodiscard]] bool isSupported() const;
 
 		bool operator==(const IfdVersion& pOther) const;
 		bool operator!=(const IfdVersion& pOther) const;
 
-		QString toString() const;
-		static Version fromString(const QString& pVersionString);
+		[[nodiscard]] QString toString() const;
 
 		static QVector<Version> supported();
 		static Version selectLatestSupported(const QVector<Version>& pVersions);

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowContext.h"
@@ -40,6 +40,7 @@ WorkflowContext::WorkflowContext()
 	, mPaceResultReportedToUser(false)
 	, mWorkflowFinished(false)
 	, mWorkflowCancelled(false)
+	, mWorkflowCancelledInState(false)
 	, mNextWorkflowPending(false)
 	, mCurrentReaderHasEidCardButInsufficientApduLength(false)
 {
@@ -89,7 +90,7 @@ void WorkflowContext::setStateApproved(bool pApproved)
 	if (mStateApproved != pApproved)
 	{
 		mStateApproved = pApproved;
-		Q_EMIT fireStateApprovedChanged();
+		Q_EMIT fireStateApprovedChanged(mStateApproved);
 	}
 }
 
@@ -417,6 +418,18 @@ void WorkflowContext::setWorkflowFinished(bool pWorkflowFinished)
 bool WorkflowContext::isWorkflowCancelled() const
 {
 	return mWorkflowCancelled;
+}
+
+
+bool WorkflowContext::isWorkflowCancelledInState() const
+{
+	return mWorkflowCancelledInState;
+}
+
+
+void WorkflowContext::setWorkflowCancelledInState()
+{
+	mWorkflowCancelledInState = true;
 }
 
 

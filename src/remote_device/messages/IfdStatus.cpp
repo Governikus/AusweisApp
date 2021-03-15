@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -24,6 +24,7 @@ VALUE_NAME(PIN_CAP_PACE, "PACE")
 VALUE_NAME(PIN_CAP_EID, "eID")
 VALUE_NAME(PIN_CAP_ESIGN, "eSign")
 VALUE_NAME(PIN_CAP_DESTROY, "Destroy")
+VALUE_NAME(PIN_PAD, "PINPad")
 VALUE_NAME(MAX_APDU_LENGTH, "MaxAPDULength")
 VALUE_NAME(CONNECTED_READER, "ConnectedReader")
 VALUE_NAME(CARD_AVAILABLE, "CardAvailable")
@@ -32,71 +33,61 @@ VALUE_NAME(EF_DIR, "EFDIR")
 } // namespace
 
 
-PaceCapabilities::PaceCapabilities(bool pPace, bool pEId, bool pESign, bool pDestroy)
-	: mPace(pPace)
-	, mEId(pEId)
-	, mESign(pESign)
-	, mDestroy(pDestroy)
-{
-}
-
-
-bool PaceCapabilities::getPace() const
-{
-	return mPace;
-}
-
-
-bool PaceCapabilities::getEId() const
-{
-	return mEId;
-}
-
-
-bool PaceCapabilities::getESign() const
-{
-	return mESign;
-}
-
-
-bool PaceCapabilities::getDestroy() const
-{
-	return mDestroy;
-}
-
-
-QJsonValue PaceCapabilities::toJson() const
+QJsonValue IfdStatus::createPaceCapabilities() const
 {
 	QJsonObject result;
-	result[PIN_CAP_PACE()] = mPace;
-	result[PIN_CAP_EID()] = mEId;
-	result[PIN_CAP_ESIGN()] = mESign;
-	result[PIN_CAP_DESTROY()] = mDestroy;
+	result[PIN_CAP_PACE()] = mHasPinPad;
+	result[PIN_CAP_EID()] = false;
+	result[PIN_CAP_ESIGN()] = false;
+	result[PIN_CAP_DESTROY()] = false;
 	return result;
 }
 
 
-IfdStatus::IfdStatus(const QString& pSlotName,
-		const PaceCapabilities& pPaceCapabilities,
-		int pMaxApduLength,
-		bool pConnected,
-		bool pCardAvailable)
-	: RemoteMessage(RemoteCardMessageType::IFDStatus)
-	, mSlotName(pSlotName)
-	, mPaceCapabilities(pPaceCapabilities)
-	, mMaxApduLength(pMaxApduLength)
-	, mConnectedReader(pConnected)
-	, mCardAvailable(pCardAvailable)
+void IfdStatus::parsePinPad(const QJsonObject& pMessageObject)
 {
+	const bool v0Supported = IfdVersion(IfdVersion::Version::v0).isSupported();
+
+	bool pinPadFound = false;
+	if (v0Supported && pMessageObject.contains(PIN_CAPABILITIES()))
+	{
+		pinPadFound = true;
+		QJsonValue value = pMessageObject.value(PIN_CAPABILITIES());
+		if (value.isObject())
+		{
+			QJsonObject object = value.toObject();
+			mHasPinPad = getBoolValue(object, PIN_CAP_PACE());
+			Q_UNUSED(getBoolValue(object, PIN_CAP_EID()))
+			Q_UNUSED(getBoolValue(object, PIN_CAP_ESIGN()))
+			Q_UNUSED(getBoolValue(object, PIN_CAP_DESTROY()))
+		}
+		else
+		{
+			invalidType(PIN_CAPABILITIES(), QLatin1String("object"));
+		}
+	}
+
+	if (!v0Supported || pMessageObject.contains(PIN_PAD()))
+	{
+		pinPadFound = true;
+		mHasPinPad = getBoolValue(pMessageObject, PIN_PAD());
+	}
+
+	if (!pinPadFound)
+	{
+		missingValue(PIN_CAPABILITIES());
+		missingValue(PIN_PAD());
+	}
 }
 
 
 IfdStatus::IfdStatus(const ReaderInfo& pReaderInfo)
-	: IfdStatus(pReaderInfo.getName()
-			, pReaderInfo.isBasicReader() ? Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode() : true
-			, pReaderInfo.getMaxApduLength()
-			, pReaderInfo.isConnected()
-			, pReaderInfo.hasCard())
+	: RemoteMessage(RemoteCardMessageType::IFDStatus)
+	, mSlotName(pReaderInfo.getName())
+	, mHasPinPad(pReaderInfo.isBasicReader() ? Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode() : true)
+	, mMaxApduLength(pReaderInfo.getMaxApduLength())
+	, mConnectedReader(pReaderInfo.isConnected())
+	, mCardAvailable(pReaderInfo.hasCard())
 {
 }
 
@@ -104,38 +95,17 @@ IfdStatus::IfdStatus(const ReaderInfo& pReaderInfo)
 IfdStatus::IfdStatus(const QJsonObject& pMessageObject)
 	: RemoteMessage(pMessageObject)
 	, mSlotName()
-	, mPaceCapabilities()
+	, mHasPinPad(false)
 	, mMaxApduLength(0)
 	, mConnectedReader(false)
 	, mCardAvailable(false)
 {
 	mSlotName = getStringValue(pMessageObject, SLOT_NAME());
-
-	if (pMessageObject.contains(PIN_CAPABILITIES()))
-	{
-		QJsonValue value = pMessageObject.value(PIN_CAPABILITIES());
-		if (value.isObject())
-		{
-			QJsonObject object = value.toObject();
-			bool pace = getBoolValue(object, PIN_CAP_PACE());
-			bool eId = getBoolValue(object, PIN_CAP_EID());
-			bool eSign = getBoolValue(object, PIN_CAP_ESIGN());
-			bool destroy = getBoolValue(object, PIN_CAP_DESTROY());
-			mPaceCapabilities = PaceCapabilities(pace, eId, eSign, destroy);
-		}
-		else
-		{
-			invalidType(PIN_CAPABILITIES(), QLatin1String("object"));
-		}
-	}
-	else
-	{
-		missingValue(PIN_CAPABILITIES());
-	}
+	parsePinPad(pMessageObject);
 
 	mMaxApduLength = getIntValue(pMessageObject, MAX_APDU_LENGTH(), -1);
-	// Support SaC with AusweisApp2 < 1.22.0 - Remove with 1.24.0 or IfdVersion::v2
-	if (mMaxApduLength == 0)
+	// Support SaC with AusweisApp2 < 1.22.0
+	if (IfdVersion(IfdVersion::Version::v0).isSupported() && mMaxApduLength == 0)
 	{
 		mMaxApduLength = -1;
 	}
@@ -156,9 +126,9 @@ const QString& IfdStatus::getSlotName() const
 }
 
 
-const PaceCapabilities& IfdStatus::getPaceCapabilities() const
+bool IfdStatus::hasPinPad() const
 {
-	return mPaceCapabilities;
+	return mHasPinPad;
 }
 
 
@@ -180,12 +150,19 @@ bool IfdStatus::getCardAvailable() const
 }
 
 
-QByteArray IfdStatus::toByteArray(const QString& pContextHandle) const
+QByteArray IfdStatus::toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 
 	result[SLOT_NAME()] = mSlotName;
-	result[PIN_CAPABILITIES()] = mPaceCapabilities.toJson();
+	if (pIfdVersion.getVersion() >= IfdVersion::Version::v2)
+	{
+		result[PIN_PAD()] = mHasPinPad;
+	}
+	else
+	{
+		result[PIN_CAPABILITIES()] = createPaceCapabilities();
+	}
 	result[MAX_APDU_LENGTH()] = mMaxApduLength;
 	result[CONNECTED_READER()] = mConnectedReader;
 	result[CARD_AVAILABLE()] = mCardAvailable;

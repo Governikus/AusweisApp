@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IosReader.h"
@@ -71,7 +71,7 @@ void IosReader::startSession()
 		{
 			[mDelegate alertMessage: Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
 			//: INFO IOS The ID card may be inserted, the authentication process may be started.
-			? QString() : tr("Please place your ID card on the top of the device's back side.")];
+			? Env::getSingleton<VolatileSettings>()->getMessages().getSessionStarted() : tr("Please place your ID card on the top of the device's back side.")];
 			[mDelegate startSession];
 		}
 	}
@@ -97,12 +97,12 @@ void IosReader::stopSession(const QString& pError)
 		if (pError.isNull())
 		{
 			//: INFO IOS The current session was stopped without errors.
-			[mDelegate alertMessage: isSdk ? QString() : tr("Scanning process has been finished successfully.")];
+			[mDelegate alertMessage: isSdk ? Env::getSingleton<VolatileSettings>()->getMessages().getSessionSucceeded() : tr("Scanning process has been finished successfully.")];
 			[mDelegate stopSession: QString()];
 		}
 		else
 		{
-			[mDelegate stopSession: isSdk ? QStringLiteral("") : pError];
+			[mDelegate stopSession: isSdk ? Env::getSingleton<VolatileSettings>()->getMessages().getSessionFailed() : pError];
 		}
 	}
 }

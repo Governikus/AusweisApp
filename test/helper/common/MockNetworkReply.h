@@ -1,7 +1,7 @@
 /*!
  * \brief Mock a QNetworkReply for tests.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,8 +29,8 @@ class MockNetworkReply
 
 	public:
 		MockNetworkReply(const QByteArray& pData = QByteArray(), http_status pStatusCode = HTTP_STATUS_OK, QObject* pParent = nullptr);
-		virtual ~MockNetworkReply() override;
-		virtual void abort() override
+		~MockNetworkReply() override;
+		void abort() override
 		{
 			qDebug() << "Operation aborted";
 		}
@@ -42,7 +42,7 @@ class MockNetworkReply
 		}
 
 
-		virtual qint64 readData(char* pDst, qint64 pMaxSize) override;
+		qint64 readData(char* pDst, qint64 pMaxSize) override;
 
 		void fireFinished()
 		{

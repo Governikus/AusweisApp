@@ -1,7 +1,7 @@
 /*!
  * \brief Authentication context.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -97,7 +97,7 @@ class AuthContext
 	public:
 		explicit AuthContext(const QSharedPointer<ActivationContext>& pActivationContext);
 
-		bool isErrorReportedToServer() const
+		[[nodiscard]] bool isErrorReportedToServer() const
 		{
 			return mErrorReportedToServer;
 		}
@@ -109,13 +109,13 @@ class AuthContext
 		}
 
 
-		int getProgressValue() const
+		[[nodiscard]] int getProgressValue() const
 		{
 			return mProgressValue;
 		}
 
 
-		const QString getProgressMessage() const
+		[[nodiscard]] const QString getProgressMessage() const
 		{
 			return mProgressMessage;
 		}
@@ -124,7 +124,7 @@ class AuthContext
 		void setProgress(int pValue, const QString& pMessage);
 
 
-		bool isTcTokenNotFound() const
+		[[nodiscard]] bool isTcTokenNotFound() const
 		{
 			return mTcTokenNotFound;
 		}
@@ -136,7 +136,7 @@ class AuthContext
 		}
 
 
-		bool isSkipRedirect() const
+		[[nodiscard]] bool isSkipRedirect() const
 		{
 			return mSkipRedirect;
 		}
@@ -148,13 +148,13 @@ class AuthContext
 		}
 
 
-		QList<QSslCertificate> getCertificateList() const
+		[[nodiscard]] QList<QSslCertificate> getCertificateList() const
 		{
 			return mCertificates.values();
 		}
 
 
-		bool containsCertificateFor(const QUrl& pUrl) const
+		[[nodiscard]] bool containsCertificateFor(const QUrl& pUrl) const
 		{
 			return mCertificates.contains(UrlUtil::getUrlOrigin(pUrl));
 		}
@@ -168,13 +168,13 @@ class AuthContext
 		}
 
 
-		ActivationContext* getActivationContext() const
+		[[nodiscard]] ActivationContext* getActivationContext() const
 		{
 			return mActivationContext.data();
 		}
 
 
-		const QUrl& getTcTokenUrl() const
+		[[nodiscard]] const QUrl& getTcTokenUrl() const
 		{
 			return mTcTokenUrl;
 		}
@@ -186,7 +186,7 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<const TcToken>& getTcToken() const
+		[[nodiscard]] const QSharedPointer<const TcToken>& getTcToken() const
 		{
 			return mTcToken;
 		}
@@ -198,7 +198,7 @@ class AuthContext
 		}
 
 
-		const QString& getReceivedMessageId() const
+		[[nodiscard]] const QString& getReceivedMessageId() const
 		{
 			return mReceivedMessageId;
 		}
@@ -210,7 +210,7 @@ class AuthContext
 		}
 
 
-		const QUrl& getRefreshUrl() const
+		[[nodiscard]] const QUrl& getRefreshUrl() const
 		{
 			return mRefreshUrl;
 		}
@@ -222,7 +222,7 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<DIDAuthenticateEAC1>& getDidAuthenticateEac1() const
+		[[nodiscard]] const QSharedPointer<DIDAuthenticateEAC1>& getDidAuthenticateEac1() const
 		{
 			return mDIDAuthenticateEAC1;
 		}
@@ -235,7 +235,7 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<DIDAuthenticateEAC2>& getDidAuthenticateEac2() const
+		[[nodiscard]] const QSharedPointer<DIDAuthenticateEAC2>& getDidAuthenticateEac2() const
 		{
 			return mDIDAuthenticateEAC2;
 		}
@@ -247,7 +247,7 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<DIDAuthenticateResponseEAC1>& getDidAuthenticateResponseEac1() const
+		[[nodiscard]] const QSharedPointer<DIDAuthenticateResponseEAC1>& getDidAuthenticateResponseEac1() const
 		{
 			return mDIDAuthenticateResponseEAC1;
 		}
@@ -259,7 +259,7 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<DIDAuthenticateResponseEAC2>& getDidAuthenticateResponseEacAdditionalInputType() const
+		[[nodiscard]] const QSharedPointer<DIDAuthenticateResponseEAC2>& getDidAuthenticateResponseEacAdditionalInputType() const
 		{
 			return mDIDAuthenticateResponseEACAdditionalInputType;
 		}
@@ -271,7 +271,7 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<DIDAuthenticateEACAdditional>& getDidAuthenticateEacAdditional() const
+		[[nodiscard]] const QSharedPointer<DIDAuthenticateEACAdditional>& getDidAuthenticateEacAdditional() const
 		{
 			return mDIDAuthenticateEACAdditionalInputType;
 		}
@@ -283,7 +283,7 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<DIDAuthenticateResponseEAC2>& getDidAuthenticateResponseEac2() const
+		[[nodiscard]] const QSharedPointer<DIDAuthenticateResponseEAC2>& getDidAuthenticateResponseEac2() const
 		{
 			return mDIDAuthenticateResponseEAC2;
 		}
@@ -295,7 +295,7 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<DIDList>& getDidList() const
+		[[nodiscard]] const QSharedPointer<DIDList>& getDidList() const
 		{
 			return mDIDList;
 		}
@@ -319,7 +319,7 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<InitializeFramework>& getInitializeFramework() const
+		[[nodiscard]] const QSharedPointer<InitializeFramework>& getInitializeFramework() const
 		{
 			return mInitializeFramework;
 		}
@@ -331,7 +331,7 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<InitializeFrameworkResponse>& getInitializeFrameworkResponse() const
+		[[nodiscard]] const QSharedPointer<InitializeFrameworkResponse>& getInitializeFrameworkResponse() const
 		{
 			return mInitializeFrameworkResponse;
 		}
@@ -343,7 +343,7 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<Disconnect>& getDisconnect() const
+		[[nodiscard]] const QSharedPointer<Disconnect>& getDisconnect() const
 		{
 			return mDisconnect;
 		}
@@ -367,7 +367,7 @@ class AuthContext
 		}
 
 
-		const QSharedPointer<StartPaosResponse>& getStartPaosResponse() const
+		[[nodiscard]] const QSharedPointer<StartPaosResponse>& getStartPaosResponse() const
 		{
 			return mStartPaosResponse;
 		}
@@ -405,7 +405,7 @@ class AuthContext
 		}
 
 
-		QSharedPointer<AccessRightManager> getAccessRightManager() const
+		[[nodiscard]] QSharedPointer<AccessRightManager> getAccessRightManager() const
 		{
 			return mAccessRightManager;
 		}
@@ -414,7 +414,7 @@ class AuthContext
 		QByteArray encodeEffectiveChat();
 
 
-		const QSharedPointer<StartPaos>& getStartPaos() const
+		[[nodiscard]] const QSharedPointer<StartPaos>& getStartPaos() const
 		{
 			return mStartPaos;
 		}
@@ -426,19 +426,19 @@ class AuthContext
 		}
 
 
-		CVCertificateChain getChainStartingWith(const QSharedPointer<const CVCertificate>& pChainRoot) const;
+		[[nodiscard]] CVCertificateChain getChainStartingWith(const QSharedPointer<const CVCertificate>& pChainRoot) const;
 
 
-		bool hasChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const;
+		[[nodiscard]] bool hasChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const;
 
 
-		CVCertificateChain getChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const;
+		[[nodiscard]] CVCertificateChain getChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const;
 
 
 		void initCvcChainBuilder(const QVector<QSharedPointer<const CVCertificate>>& pAdditionalCertificates = QVector<QSharedPointer<const CVCertificate>>());
 
 
-		const QSharedPointer<const CVCertificate>& getDvCvc() const
+		[[nodiscard]] const QSharedPointer<const CVCertificate>& getDvCvc() const
 		{
 			return mDvCvc;
 		}
@@ -451,9 +451,9 @@ class AuthContext
 
 
 		void initAccessRightManager(const QSharedPointer<const CVCertificate>& pTerminalCvc);
-		bool isCanAllowedMode() const override;
+		[[nodiscard]] bool isCanAllowedMode() const override;
 
-		const QByteArray& getSslSession() const;
+		[[nodiscard]] const QByteArray& getSslSession() const;
 		void setSslSession(const QByteArray& pSession);
 };
 

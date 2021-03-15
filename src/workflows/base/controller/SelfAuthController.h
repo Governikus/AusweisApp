@@ -1,7 +1,7 @@
 /*!
  * \brief Controller for the self authentication process.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,7 +20,7 @@ class SelfAuthController
 
 	public:
 		explicit SelfAuthController(QSharedPointer<SelfAuthContext> pContext);
-		virtual ~SelfAuthController() = default;
+		~SelfAuthController() override = default;
 };
 
 } // namespace governikus

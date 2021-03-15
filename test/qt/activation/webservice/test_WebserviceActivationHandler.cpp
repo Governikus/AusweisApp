@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref WebserviceActivationHandler
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WebserviceActivationHandler.h"
@@ -111,6 +111,71 @@ class test_WebserviceActivationHandler
 			QCOMPARE(mShowUserInfoSpy->count(), 0);
 			QCOMPARE(mShowUiSpy->count(), 1);
 			QCOMPARE(mShowUiSpy->takeFirst().at(0).toInt(), static_cast<int>(UiModule::SETTINGS));
+		}
+
+
+		void showUI_moduleTutorial()
+		{
+			mRequest->mUrl = QByteArray("http://localhost:24727/eID-Client?ShowUI=TUTORIAL");
+
+			mHandler.onNewRequest(mRequest);
+
+			QCOMPARE(mAuthenticationSpy->count(), 0);
+			QCOMPARE(mShowUserInfoSpy->count(), 0);
+			QCOMPARE(mShowUiSpy->count(), 1);
+			QCOMPARE(mShowUiSpy->takeFirst().at(0).toInt(), static_cast<int>(UiModule::TUTORIAL));
+		}
+
+
+		void showUI_moduleHistory()
+		{
+			mRequest->mUrl = QByteArray("http://localhost:24727/eID-Client?ShowUI=HISTORY");
+
+			mHandler.onNewRequest(mRequest);
+
+			QCOMPARE(mAuthenticationSpy->count(), 0);
+			QCOMPARE(mShowUserInfoSpy->count(), 0);
+			QCOMPARE(mShowUiSpy->count(), 1);
+			QCOMPARE(mShowUiSpy->takeFirst().at(0).toInt(), static_cast<int>(UiModule::HISTORY));
+		}
+
+
+		void showUI_moduleHelp()
+		{
+			mRequest->mUrl = QByteArray("http://localhost:24727/eID-Client?ShowUI=HELP");
+
+			mHandler.onNewRequest(mRequest);
+
+			QCOMPARE(mAuthenticationSpy->count(), 0);
+			QCOMPARE(mShowUserInfoSpy->count(), 0);
+			QCOMPARE(mShowUiSpy->count(), 1);
+			QCOMPARE(mShowUiSpy->takeFirst().at(0).toInt(), static_cast<int>(UiModule::HELP));
+		}
+
+
+		void showUI_moduleProvider()
+		{
+			mRequest->mUrl = QByteArray("http://localhost:24727/eID-Client?ShowUI=PROVIDER");
+
+			mHandler.onNewRequest(mRequest);
+
+			QCOMPARE(mAuthenticationSpy->count(), 0);
+			QCOMPARE(mShowUserInfoSpy->count(), 0);
+			QCOMPARE(mShowUiSpy->count(), 1);
+			QCOMPARE(mShowUiSpy->takeFirst().at(0).toInt(), static_cast<int>(UiModule::PROVIDER));
+		}
+
+
+		void showUI_moduleSelfAuthentication()
+		{
+			mRequest->mUrl = QByteArray("http://localhost:24727/eID-Client?ShowUI=SELF_AUTHENTICATION");
+
+			mHandler.onNewRequest(mRequest);
+
+			QCOMPARE(mAuthenticationSpy->count(), 0);
+			QCOMPARE(mShowUserInfoSpy->count(), 0);
+			QCOMPARE(mShowUiSpy->count(), 1);
+			QCOMPARE(mShowUiSpy->takeFirst().at(0).toInt(), static_cast<int>(UiModule::SELF_AUTHENTICATION));
 		}
 
 

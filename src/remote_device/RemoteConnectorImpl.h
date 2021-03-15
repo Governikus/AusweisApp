@@ -1,7 +1,7 @@
 /*!
  * \brief Module that creates and manages connections from a remote client to a remote server.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,9 +33,9 @@ class RemoteConnectorImpl
 
 	public:
 		explicit RemoteConnectorImpl(int pConnectTimeoutMs = 5000);
-		virtual ~RemoteConnectorImpl() override = default;
+		~RemoteConnectorImpl() override = default;
 
-		virtual void onConnectRequest(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, const QString& pPsk) override;
+		void onConnectRequest(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor, const QString& pPsk) override;
 
 };
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore>
@@ -28,7 +28,7 @@ class test_StateStartPaosResponse
 		{
 			mAuthContext.reset(new AuthContext(nullptr));
 			mState.reset(StateBuilder::createState<StateStartPaosResponse>(mAuthContext));
-			connect(this, &test_StateStartPaosResponse::fireStateStart, mState.data(), &AbstractState::onEntry);
+			mState->onEntry(nullptr);
 		}
 
 
@@ -47,8 +47,8 @@ class test_StateStartPaosResponse
 
 			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireAbort);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 
 			const GlobalStatus& status = mState->getContext()->getStatus();
 			QCOMPARE(status.getStatusCode(), GlobalStatus::Code::Card_Cancellation_By_User);
@@ -66,10 +66,9 @@ class test_StateStartPaosResponse
 
 			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireAbort);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -80,10 +79,9 @@ class test_StateStartPaosResponse
 
 			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireContinue);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

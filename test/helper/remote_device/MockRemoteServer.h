@@ -1,7 +1,7 @@
 /*!
  * \brief Provide a RemoteServer for tests
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,16 +27,16 @@ class MockRemoteServer
 	public:
 		MockRemoteServer();
 
-		virtual bool isRunning() const override;
-		virtual bool start(const QString& pServerName) override;
-		virtual void stop() override;
-		virtual void setPairing(bool pEnable) override;
+		[[nodiscard]] bool isRunning() const override;
+		bool start(const QString& pServerName) override;
+		void stop() override;
+		void setPairing(bool pEnable) override;
 		bool getPairing();
-		virtual bool isConnected() const override;
-		virtual bool isPairingConnection() const override;
+		[[nodiscard]] bool isConnected() const override;
+		[[nodiscard]] bool isPairingConnection() const override;
 		void setConnected(bool pConnected);
-		virtual QSslCertificate getCurrentCertificate() const override;
-		virtual const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;
+		[[nodiscard]] QSslCertificate getCurrentCertificate() const override;
+		[[nodiscard]] const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;
 		void setMessageHandler(const QSharedPointer<ServerMessageHandler>& pHandler);
 };
 

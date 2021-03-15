@@ -1,7 +1,7 @@
 /*
  * \brief Logging handler of QtMessageHandler
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -37,7 +37,7 @@ class LogEventHandler
 
 	private:
 		LogEventHandler() = default;
-		~LogEventHandler() = default;
+		~LogEventHandler() override = default;
 
 	Q_SIGNALS:
 		/**
@@ -87,9 +87,9 @@ class LogHandler
 		inline void logToFile(const QString& pOutput);
 		inline QByteArray formatFunction(const char* const pFunction, const QByteArray& pFilename, int pLine) const;
 		inline QByteArray formatFilename(const char* const pFilename) const;
-		inline QByteArray formatCategory(const QByteArray& pCategory) const;
+		[[nodiscard]] inline QByteArray formatCategory(const QByteArray& pCategory) const;
 
-		QString getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg) const;
+		[[nodiscard]] QString getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg) const;
 		void handleMessage(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg);
 		void handleLogWindow(QtMsgType pType, const char* pCategory, const QString& pMsg);
 		void removeOldLogfiles();
@@ -108,30 +108,30 @@ class LogHandler
 	public:
 #endif
 		void reset();
-		bool isInstalled() const;
+		[[nodiscard]] bool isInstalled() const;
 
 	public:
 		void init();
-		const LogEventHandler* getEventHandler() const;
+		[[nodiscard]] const LogEventHandler* getEventHandler() const;
 
 		bool setAutoRemove(bool pRemove);
 		bool copy(const QString& pDest);
-		bool copyOther(const QString& pSource, const QString& pDest) const;
+		[[nodiscard]] bool copyOther(const QString& pSource, const QString& pDest) const;
 		void resetBacklog();
 		QByteArray getBacklog(bool pAll = false);
 		QByteArray getCriticalLogWindow();
-		bool hasCriticalLog() const;
-		int getCriticalLogCapacity() const;
+		[[nodiscard]] bool hasCriticalLog() const;
+		[[nodiscard]] int getCriticalLogCapacity() const;
 		void setCriticalLogCapacity(int pSize);
 
 		static QDateTime getFileDate(const QFileInfo& pInfo);
-		QDateTime getCurrentLogfileDate() const;
-		QFileInfoList getOtherLogfiles() const;
+		[[nodiscard]] QDateTime getCurrentLogfileDate() const;
+		[[nodiscard]] QFileInfoList getOtherLogfiles() const;
 		bool removeOtherLogfiles();
 		void setLogfile(bool pEnable);
-		bool useLogfile() const;
+		[[nodiscard]] bool useLogfile() const;
 		void setUseHandler(bool pEnable);
-		bool useHandler() const;
+		[[nodiscard]] bool useHandler() const;
 };
 
 inline QDebug operator<<(QDebug pDbg, const governikus::LogHandler& pHandler)

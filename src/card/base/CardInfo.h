@@ -1,12 +1,13 @@
 /*!
  * \brief Contains the CardInfo and the CardInfoFactory
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "asn1/SecurityInfos.h"
+#include "FileRef.h"
 #include "SmartCardDefinitions.h"
 
 #include <QCoreApplication>
@@ -42,27 +43,27 @@ class CardInfo
 		CardInfo(CardType pCardType, const QSharedPointer<const EFCardAccess>& = QSharedPointer<const EFCardAccess>(),
 				int pRetryCounter = UNDEFINED_RETRY_COUNTER, bool pPinDeactivated = false, bool pPukInoperative = false);
 
-		QString getCardTypeString() const;
-		bool isAvailable() const;
-		bool isEid() const;
-		bool isPassport() const;
+		[[nodiscard]] QString getCardTypeString() const;
+		[[nodiscard]] bool isAvailable() const;
+		[[nodiscard]] bool isEid() const;
+		[[nodiscard]] bool isPassport() const;
 
-		QSharedPointer<const EFCardAccess> getEfCardAccess() const;
+		[[nodiscard]] QSharedPointer<const EFCardAccess> getEfCardAccess() const;
 
-		int getRetryCounter() const;
+		[[nodiscard]] int getRetryCounter() const;
 		void setRetryCounter(int pRetryCounter);
 
-		bool isRetryCounterDetermined() const;
+		[[nodiscard]] bool isRetryCounterDetermined() const;
 
 		/*!
 		 * The online identification function has not been activated by the competent authority.
 		 */
-		bool isPinDeactivated() const;
+		[[nodiscard]] bool isPinDeactivated() const;
 
 		/*!
 		 * The PUK is inoperative. User is not able to unblock the PIN anymore.
 		 */
-		bool isPukInoperative() const;
+		[[nodiscard]] bool isPukInoperative() const;
 
 		friend class Reader;
 };
@@ -81,6 +82,8 @@ class CardInfoFactory
 		static bool create(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, ReaderInfo& pReaderInfo);
 
 	private:
+		static bool selectApplication(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const FileRef& pFileRef);
+
 		/*!
 		 * Checks, if the smart card is a german eID card (i.e. a NPA or an EAT) or a passport.
 		 */

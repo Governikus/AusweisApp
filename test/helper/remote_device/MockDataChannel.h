@@ -1,7 +1,7 @@
 /*!
  * \brief Data channel mock for tests.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,14 +25,14 @@ class MockDataChannel
 
 	public:
 		MockDataChannel();
-		virtual ~MockDataChannel() override;
+		~MockDataChannel() override;
 
-		virtual void send(const QByteArray& pDataBlock) override;
-		virtual void close() override;
-		virtual const QString& getId() const override;
+		void send(const QByteArray& pDataBlock) override;
+		void close() override;
+		[[nodiscard]] const QString& getId() const override;
 		void closeAbnormal();
 
-		const QVector<QByteArray>& getReceivedDataBlocks() const;
+		[[nodiscard]] const QVector<QByteArray>& getReceivedDataBlocks() const;
 
 	public Q_SLOTS:
 		void onReceived(const QByteArray& pDataBlock);

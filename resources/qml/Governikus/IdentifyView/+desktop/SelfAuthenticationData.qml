@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -13,7 +13,7 @@ import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.AuthModel 1.0
 import Governikus.Type.SelfAuthModel 1.0
-
+import Governikus.Type.UiModule 1.0
 
 SectionPage
 {
@@ -128,7 +128,7 @@ SectionPage
 
 						//: LABEL DESKTOP_QML
 						text: qsTr("OK")
-						onClicked: baseItem.nextView(SectionPage.Views.Main)
+						onClicked: baseItem.nextView(UiModule.DEFAULT)
 					}
 
 				}

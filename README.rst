@@ -6,7 +6,7 @@ Kontakt
 | Governikus GmbH & Co. KG
 | Hochschulring 4
 | 28359 Bremen
-| ausweisapp2@governikus.de
+| support@ausweisapp.de
 
 
 Lizenz

@@ -3,12 +3,13 @@
  * functionality on the server side. According to the concept this
  * is done by sending the message REMOTE_READER_OFFER as a UDP broadcast.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "DatagramHandler.h"
+#include "messages/Discovery.h"
 
 #include <QObject>
 #include <QScopedPointer>
@@ -26,7 +27,13 @@ class RemoteReaderAdvertiser
 		RemoteReaderAdvertiser() = default;
 
 	public:
-		virtual ~RemoteReaderAdvertiser();
+		~RemoteReaderAdvertiser() override;
+
+		virtual void setPairing(bool)
+		{
+		}
+
+
 };
 
 class RemoteReaderAdvertiserImpl
@@ -36,13 +43,15 @@ class RemoteReaderAdvertiserImpl
 
 	const QScopedPointer<DatagramHandler> mHandler;
 	const int mTimerId;
-	const QByteArray mDiscovery;
+	Discovery mDiscovery;
 
 	void timerEvent(QTimerEvent* pEvent) override;
 
 	public:
-		virtual ~RemoteReaderAdvertiserImpl() override;
+		~RemoteReaderAdvertiserImpl() override;
 		RemoteReaderAdvertiserImpl(const QString& pIfdName, const QString& pIfdId, quint16 pPort, int pTimerInterval = 1000);
+
+		void setPairing(bool pEnabled) override;
 };
 
 

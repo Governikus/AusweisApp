@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,11 +19,11 @@ class IfdConnect
 	public:
 		IfdConnect(const QString& pSlotName, bool pExclusive = true);
 		explicit IfdConnect(const QJsonObject& pMessageObject);
-		virtual ~IfdConnect() override = default;
+		~IfdConnect() override = default;
 
-		const QString& getSlotName() const;
-		bool isExclusive() const;
-		virtual QByteArray toByteArray(const QString& pContextHandle) const override;
+		[[nodiscard]] const QString& getSlotName() const;
+		[[nodiscard]] bool isExclusive() const;
+		[[nodiscard]] QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle) const override;
 };
 
 

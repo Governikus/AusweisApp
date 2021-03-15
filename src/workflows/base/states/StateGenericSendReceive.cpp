@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGenericSendReceive.h"
@@ -182,6 +182,17 @@ void StateGenericSendReceive::onPreSharedKeyAuthenticationRequired(QSslPreShared
 }
 
 
+void StateGenericSendReceive::onExit(QEvent* pEvent)
+{
+	AbstractState::onExit(pEvent);
+
+	if (!mReply.isNull())
+	{
+		mReply.reset();
+	}
+}
+
+
 GlobalStatus::Code StateGenericSendReceive::checkAndSaveCertificate(const QSslCertificate& pCertificate)
 {
 	const QSharedPointer<AuthContext> c = getContext();
@@ -261,11 +272,6 @@ void StateGenericSendReceive::run()
 void StateGenericSendReceive::onReplyFinished()
 {
 	qCDebug(network) << "Received message from eID-Server";
-
-	const auto guard = qScopeGuard([this] {
-				mReply.reset();
-			});
-
 	const auto statusCode = NetworkManager::getLoggedStatusCode(mReply, spawnMessageLogger(network));
 
 	if (mReply->error() != QNetworkReply::NoError)

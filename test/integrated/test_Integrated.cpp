@@ -1,7 +1,7 @@
 /*!
  * \brief Integration tests for integrated SDK.
  *
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AusweisApp2_p.h"

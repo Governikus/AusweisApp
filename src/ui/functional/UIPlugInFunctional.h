@@ -1,7 +1,7 @@
 /*!
  * \brief UIPlugIn implementation of the integrated SDK (C-API).
  *
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,10 +24,10 @@ class UIPlugInFunctional
 		QSharedPointer<WorkflowContext> mContext;
 
 	private Q_SLOTS:
-		virtual void onApplicationStarted() override;
-		virtual void doShutdown() override;
-		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
-		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void onApplicationStarted() override;
+		void doShutdown() override;
+		void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
+		void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
 		void onJsonMessage(const QByteArray& pMessage);
 
 	public Q_SLOTS:
@@ -36,7 +36,7 @@ class UIPlugInFunctional
 
 	public:
 		UIPlugInFunctional();
-		virtual ~UIPlugInFunctional() override = default;
+		~UIPlugInFunctional() override = default;
 };
 
 } // namespace governikus

@@ -1,11 +1,11 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StatePreparePaceRemote.h"
 
 #include "AppSettings.h"
-#include "EstablishPaceChannelParser.h"
+#include "EstablishPaceChannel.h"
 
 #include <QLoggingCategory>
 
@@ -27,7 +27,7 @@ void StatePreparePaceRemote::run()
 	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
 	if (pinPadMode)
 	{
-		switch (getContext()->getPaceChannelParser().getPasswordId())
+		switch (getContext()->getEstablishPaceChannel().getPasswordId())
 		{
 			case PacePasswordId::PACE_CAN:
 				if (getContext()->getCan().isEmpty())
@@ -56,7 +56,8 @@ void StatePreparePaceRemote::run()
 			case PacePasswordId::PACE_MRZ:
 			case PacePasswordId::UNKNOWN:
 				qCritical() << "Cannot handle unknown PacePasswordId";
-				break;
+				Q_EMIT fireAbort();
+				return;
 		}
 	}
 

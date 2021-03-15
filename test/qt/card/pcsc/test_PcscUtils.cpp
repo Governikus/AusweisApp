@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref PcscUtils
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscUtils.h"
@@ -45,6 +45,23 @@ class test_PcscUtils
 			QFETCH(PCSC_RETURNCODE, code);
 
 			QCOMPARE(PcscUtils::toString(code), QString::fromLatin1(QTest::currentDataTag()));
+		}
+
+
+		void checkLength()
+		{
+			using uPCSC_RETURNCODE = std::make_unsigned<PCSC_RETURNCODE>::type;
+
+			const auto& getString = [](PcscUtils::PcscReturnCode pCode){
+						return QByteArray::fromStdString(std::to_string(static_cast<uPCSC_RETURNCODE>(pCode)));
+					};
+
+			const auto& str = QByteArray::fromStdString(std::to_string(static_cast<uPCSC_RETURNCODE>(SCARD_F_INTERNAL_ERROR)));
+			QCOMPARE(getString(PcscUtils::Scard_F_Internal_Error), str);
+			QCOMPARE(getString(PcscUtils::Scard_F_Internal_Error), QByteArray("2148532225")); // 80100001
+			QCOMPARE(getString(PcscUtils::Scard_E_Timeout), QByteArray("2148532234")); // 8010000a
+			QCOMPARE(getString(PcscUtils::Scard_S_Success), QByteArray("0"));
+			QCOMPARE(sizeof(PcscUtils::PcscReturnCode), sizeof(SCARD_F_INTERNAL_ERROR));
 		}
 
 

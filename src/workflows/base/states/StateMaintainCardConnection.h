@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,7 +20,7 @@ class StateMaintainCardConnection
 
 	public:
 		explicit StateMaintainCardConnection(const QSharedPointer<WorkflowContext>& pContext);
-		virtual void run() override;
+		void run() override;
 
 	Q_SIGNALS:
 		void fireNoCardConnection();

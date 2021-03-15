@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,18 +20,26 @@ class Discovery
 		QString mIfdId;
 		quint16 mPort;
 		QVector<IfdVersion::Version> mSupportedApis;
+		bool mPairing;
+
+		void parseSupportedApi(const QJsonObject& pMessageObject);
+		void parseIfdId(const QJsonObject& pMessageObject);
+		void parsePairing(const QJsonObject& pMessageObject);
 
 	public:
 		Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis);
 		explicit Discovery(const QJsonObject& pMessageObject);
-		virtual ~Discovery() override;
+		~Discovery() override;
 
-		const QString& getIfdName() const;
-		const QString& getIfdId() const;
-		quint16 getPort() const;
-		const QVector<IfdVersion::Version>& getSupportedApis() const;
+		[[nodiscard]] const QString& getIfdName() const;
+		[[nodiscard]] const QString& getIfdId() const;
+		[[nodiscard]] quint16 getPort() const;
+		[[nodiscard]] const QVector<IfdVersion::Version>& getSupportedApis() const;
 
-		virtual QByteArray toByteArray(const QString& pContextHandle = QString()) const override;
+		void setPairing(bool pEnabled);
+		[[nodiscard]] bool getPairing() const;
+
+		[[nodiscard]] QByteArray toByteArray(const IfdVersion& pIfdVersion, const QString& pContextHandle = QString()) const override;
 };
 
 

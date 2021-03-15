@@ -1,15 +1,13 @@
 /*!
  * \brief Data object for output of card command EstablishPaceChannel
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "asn1/ASN1TemplateUtil.h"
 #include "asn1/CertificateDescription.h"
-#include "asn1/SecurityInfos.h"
-#include "CommandApdu.h"
 #include "SmartCardDefinitions.h"
 
 #include <QByteArray>
@@ -49,21 +47,44 @@ class EstablishPaceChannel
 		QByteArray mCertificateDescription;
 
 	public:
-		EstablishPaceChannel();
+		EstablishPaceChannel(
+			PacePasswordId pPasswordId = PacePasswordId::UNKNOWN,
+			const QByteArray& pChat = QByteArray(),
+			const QByteArray& pCertificateDescription = QByteArray());
+
+		static bool isCcid(const QByteArray& pInput);
+		bool fromCcid(const QByteArray& pInput);
+		bool fromInputData(const QByteArray& pInput);
+
+		[[nodiscard]] PacePasswordId getPasswordId() const;
+		[[nodiscard]] const QByteArray& getChat() const;
+		[[nodiscard]] const QByteArray& getCertificateDescription() const;
 
 		/**
-		 * Defined in pcsc10_v2.02.08_amd1.1
+		 * Defined in pcsc10_v2.02.08_amd1.1 section 2.6.16
 		 */
-		QByteArray createCommandData() const;
+		[[nodiscard]] QByteArray createInputData() const;
+
+		/**
+		 * Defined in pcsc10_v2.02.08_amd1.1 section 2.5.12
+		 */
+		[[nodiscard]] QByteArray createCommandData() const;
 
 		/**
 		 * Defined in BSI-TR-03119_V1_pdf
 		 */
-		CommandApdu createCommandDataCcid() const;
+		[[nodiscard]] QByteArray createCommandDataCcid() const;
 
-		void setCertificateDescription(const QByteArray& pCertificateDescription);
-		void setChat(const QByteArray& pChat);
-		void setPasswordId(PacePasswordId pPasswordId);
+#ifndef QT_NO_DEBUG
+		bool operator==(const EstablishPaceChannel& pOther) const
+		{
+			return mPasswordId == pOther.mPasswordId
+				   && mChat == pOther.mChat
+				   && mCertificateDescription == pOther.mCertificateDescription;
+		}
+
+
+#endif
 };
 
 }  // namespace governikus

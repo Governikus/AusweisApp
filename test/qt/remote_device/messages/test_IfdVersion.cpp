@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdVersion.h"
@@ -17,9 +17,10 @@ class test_IfdVersion
 	private Q_SLOTS:
 		void stringParsing()
 		{
-			QCOMPARE(IfdVersion::fromString("IFDInterface_WebSocket_v0"), IfdVersion::Version::v0);
-
-			QCOMPARE(IfdVersion::fromString("IFDInterface_WebSocket_v9001"), IfdVersion::Version::Unknown);
+			QCOMPARE(IfdVersion("IFDInterface_WebSocket_Unknown"), IfdVersion::Version::Unknown);
+			QCOMPARE(IfdVersion("IFDInterface_WebSocket_v0"), IfdVersion::Version::v0);
+			QCOMPARE(IfdVersion("IFDInterface_WebSocket_v2"), IfdVersion::Version::v2);
+			QCOMPARE(IfdVersion("IFDInterface_WebSocket_v9001"), IfdVersion::Version::Unknown);
 		}
 
 
@@ -27,6 +28,7 @@ class test_IfdVersion
 		{
 			QCOMPARE(IfdVersion(IfdVersion::Version::Unknown).isValid(), false);
 			QCOMPARE(IfdVersion(IfdVersion::Version::v0).isValid(), true);
+			QCOMPARE(IfdVersion(IfdVersion::Version::v2).isValid(), true);
 		}
 
 
@@ -34,21 +36,45 @@ class test_IfdVersion
 		{
 			QCOMPARE(IfdVersion(IfdVersion::Version::Unknown).isSupported(), false);
 			QCOMPARE(IfdVersion(IfdVersion::Version::v0).isSupported(), true);
+			QCOMPARE(IfdVersion(IfdVersion::Version::v2).isSupported(), true);
 		}
 
 
 		void supportedVersions()
 		{
-			QCOMPARE(IfdVersion::supported(), {IfdVersion::Version::v0});
+			QVector<IfdVersion::Version> versions({IfdVersion::Version::v2});
+			if (IfdVersion(IfdVersion::Version::v0).isSupported())
+			{
+				versions.prepend(IfdVersion::Version::v0);
+			}
+			QCOMPARE(IfdVersion::supported(), versions);
 		}
 
 
 		void selectSupportedVersions()
 		{
+			const bool v0Supported = IfdVersion(IfdVersion::Version::v0).isSupported();
+			const IfdVersion::Version expected = v0Supported ? IfdVersion::Version::v0 : IfdVersion::Version::Unknown;
+
 			QCOMPARE(IfdVersion::selectLatestSupported({}), IfdVersion::Version::Unknown);
-			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v_test}), IfdVersion::Version::Unknown);
-			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v0}), IfdVersion::Version::v0);
-			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v0, IfdVersion::Version::v_test}), IfdVersion::Version::v0);
+
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::Unknown}), IfdVersion::Version::Unknown);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v0}), expected);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v2}), IfdVersion::Version::v2);
+
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::Unknown, IfdVersion::Version::v0}), expected);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v0, IfdVersion::Version::Unknown}), expected);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::Unknown, IfdVersion::Version::v2}), IfdVersion::Version::v2);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v2, IfdVersion::Version::Unknown}), IfdVersion::Version::v2);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v0, IfdVersion::Version::v2}), IfdVersion::Version::v2);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v2, IfdVersion::Version::v0}), IfdVersion::Version::v2);
+
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::Unknown, IfdVersion::Version::v0, IfdVersion::Version::v2}), IfdVersion::Version::v2);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::Unknown, IfdVersion::Version::v2, IfdVersion::Version::v0}), IfdVersion::Version::v2);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v0, IfdVersion::Version::Unknown, IfdVersion::Version::v2}), IfdVersion::Version::v2);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v0, IfdVersion::Version::v2, IfdVersion::Version::Unknown}), IfdVersion::Version::v2);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v2, IfdVersion::Version::Unknown, IfdVersion::Version::v0}), IfdVersion::Version::v2);
+			QCOMPARE(IfdVersion::selectLatestSupported({IfdVersion::Version::v2, IfdVersion::Version::v0, IfdVersion::Version::Unknown}), IfdVersion::Version::v2);
 		}
 
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Class represents the retrieved PAOS StartPaosResponse
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,7 +27,7 @@ class StartPaosResponse
 
 	private:
 		void parse();
-		virtual bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
+		bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
 };
 
 } // namespace governikus

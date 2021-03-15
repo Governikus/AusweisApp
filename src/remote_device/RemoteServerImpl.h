@@ -2,7 +2,7 @@
  * \brief Remote server service to offer smartphones as card readers (SaCs).
  * This class controls the advertising over UDP as well as the Websocket connection management.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,19 +23,20 @@ class RemoteServerImpl
 		QScopedPointer<RemoteWebSocketServer> mWebSocketServer;
 
 	private Q_SLOTS:
+		void onPskChanged(const QByteArray& pPsk);
 		void onConnectedChanged(bool pConnected);
 
 	public:
 		RemoteServerImpl();
 
-		virtual bool isRunning() const override;
-		virtual bool start(const QString& pServerName) override;
-		virtual void stop() override;
-		virtual void setPairing(bool pEnable = true) override;
-		virtual bool isConnected() const override;
-		virtual bool isPairingConnection() const override;
-		virtual QSslCertificate getCurrentCertificate() const override;
-		virtual const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;
+		[[nodiscard]] bool isRunning() const override;
+		bool start(const QString& pServerName) override;
+		void stop() override;
+		void setPairing(bool pEnable = true) override;
+		[[nodiscard]] bool isConnected() const override;
+		[[nodiscard]] bool isPairingConnection() const override;
+		[[nodiscard]] QSslCertificate getCurrentCertificate() const override;
+		[[nodiscard]] const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;
 };
 
 } // namespace governikus

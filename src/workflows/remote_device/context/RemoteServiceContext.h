@@ -1,14 +1,14 @@
 /*!
  * \brief Remote service context.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "context/WorkflowContext.h"
+#include "EstablishPaceChannel.h"
 #include "EstablishPaceChannelOutput.h"
-#include "EstablishPaceChannelParser.h"
 #include "messages/IfdEstablishPaceChannel.h"
 #include "messages/IfdModifyPin.h"
 #include "RemoteServer.h"
@@ -28,11 +28,16 @@ class RemoteServiceContext
 		const QSharedPointer<RemoteServer> mRemoteServer;
 
 		QString mNewPin;
-		QSharedPointer<const IfdEstablishPaceChannel> mEstablishPaceChannelMessage;
+
+		QString mSlotHandle;
+		EstablishPaceChannel mEstablishPaceChannel;
+		int mPreferredPinLength;
 		EstablishPaceChannelOutput mEstablishPaceChannelOutput;
+
 		QSharedPointer<const IfdModifyPin> mModifyPinMessage;
 		ResponseApdu mModifyPinMessageResponseApdu;
-		EstablishPaceChannelParser mPaceChannelParser;
+
+		[[nodiscard]] bool isPaceRequestingRights() const;
 
 	public Q_SLOTS:
 		void onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler);
@@ -40,33 +45,35 @@ class RemoteServiceContext
 	Q_SIGNALS:
 		void fireCardConnectionEstablished(const QSharedPointer<CardConnection>& pConnection);
 		void fireCancelPasswordRequest();
-		void fireEstablishPaceChannelMessageUpdated(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage);
+		void fireEstablishPaceChannelUpdated();
+		void fireIsRunningChanged();
 
 	public:
 		RemoteServiceContext();
-		virtual ~RemoteServiceContext() override;
+		~RemoteServiceContext() override;
 
-		const QSharedPointer<RemoteServer>& getRemoteServer() const;
-		bool isRunning() const;
+		[[nodiscard]] const QSharedPointer<RemoteServer>& getRemoteServer() const;
+		[[nodiscard]] bool isRunning() const;
 
-		const QString& getNewPin() const;
+		[[nodiscard]] const QString& getNewPin() const;
 		void setNewPin(const QString& pNewPin);
 
-		bool isCanAllowedMode() const override;
+		[[nodiscard]] bool isPinChangeWorkflow() const;
+		[[nodiscard]] bool isCanAllowedMode() const override;
 
-		void setEstablishPaceChannelMessage(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage);
-		bool hasEstablishedPaceChannelRequest() const;
-		QString getEstablishPaceChannelMessageSlotHandle() const;
-		const EstablishPaceChannelParser& getPaceChannelParser() const;
+		void setEstablishPaceChannel(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage);
+		[[nodiscard]] const QString& getSlotHandle() const;
+		[[nodiscard]] const EstablishPaceChannel& getEstablishPaceChannel() const;
+		[[nodiscard]] int getPreferredPinLength() const;
 
 		void setEstablishPaceChannelOutput(const EstablishPaceChannelOutput& pEstablishPaceChannelOutput);
-		const EstablishPaceChannelOutput& getEstablishPaceChannelOutput() const;
+		[[nodiscard]] const EstablishPaceChannelOutput& getEstablishPaceChannelOutput() const;
 
 		void setModifyPinMessage(const QSharedPointer<const IfdModifyPin>& pMessage);
-		const QSharedPointer<const IfdModifyPin>& getModifyPinMessage() const;
+		[[nodiscard]] const QSharedPointer<const IfdModifyPin>& getModifyPinMessage() const;
 
 		void setModifyPinMessageResponseApdu(const ResponseApdu& pModifyPinMessageResponseApdu);
-		const ResponseApdu& getModifyPinMessageResponseApdu() const;
+		[[nodiscard]] const ResponseApdu& getModifyPinMessageResponseApdu() const;
 
 		void resetPacePasswords() override;
 

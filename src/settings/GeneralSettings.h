@@ -1,7 +1,7 @@
 /*!
  * \brief Contains the definition of the GeneralSettings class.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -42,95 +42,95 @@ class GeneralSettings
 
 		GeneralSettings();
 		GeneralSettings(QSharedPointer<QSettings> pStoreGeneral, QSharedPointer<QSettings> pStoreCommon);
-		bool isShowNotificationsOsDefault() const;
+		[[nodiscard]] bool isShowNotificationsOsDefault() const;
 		void setAutoStartInternal(bool pAutoStart);
-		QString getPersistentSettingsVersion() const;
+		[[nodiscard]] QString getPersistentSettingsVersion() const;
 
 	public:
-		virtual void save() override;
+		void save() override;
 
-		bool isAutoStartAvailable() const;
-		bool isAutoStart() const;
-		bool autoStartIsSetByAdmin() const;
+		[[nodiscard]] bool isAutoStartAvailable() const;
+		[[nodiscard]] bool isAutoStart() const;
+		[[nodiscard]] bool autoStartIsSetByAdmin() const;
 		void setAutoStart(bool pAutoStart);
 
-		QString getSkipVersion() const;
+		[[nodiscard]] QString getSkipVersion() const;
 		void skipVersion(const QString& pVersion);
 
-		bool isNewAppVersion() const;
+		[[nodiscard]] bool isNewAppVersion() const;
 
-		bool isAutoCloseWindowAfterAuthentication() const;
+		[[nodiscard]] bool isAutoCloseWindowAfterAuthentication() const;
 		void setAutoCloseWindowAfterAuthentication(bool pAutoClose);
 
-		bool isShowSetupAssistant() const;
-		void setShowSetupAssistant(bool pShowSetupAssistant);
+		[[nodiscard]] QString getStartupModule() const;
+		void setStartupModule(const QString& pModule);
 
-		bool isRemindUserToClose() const;
+		[[nodiscard]] bool isRemindUserToClose() const;
 		void setRemindUserToClose(bool pRemindUser);
 
-		bool isTransportPinReminder() const;
+		[[nodiscard]] bool isTransportPinReminder() const;
 		void setTransportPinReminder(bool pTransportPinReminder);
 
-		bool isDeveloperOptions() const;
+		[[nodiscard]] bool isDeveloperOptions() const;
 		void setDeveloperOptions(bool pEnabled);
 
-		bool isDeveloperMode() const;
+		[[nodiscard]] bool isDeveloperMode() const;
 		void setDeveloperMode(bool pEnabled);
 
-		bool useSelfAuthTestUri() const;
+		[[nodiscard]] bool useSelfAuthTestUri() const;
 		void setUseSelfauthenticationTestUri(bool pUse);
 
-		QLocale::Language getLanguage() const;
+		[[nodiscard]] QLocale::Language getLanguage() const;
 		void setLanguage(const QLocale::Language pLanguage);
 
-		QString getScreenOrientation() const;
+		[[nodiscard]] QString getScreenOrientation() const;
 		void setScreenOrientation(const QString& pScreenOrientation);
 
-		bool askForDeviceSurvey() const;
-		bool isDeviceSurveyPending() const;
+		[[nodiscard]] bool askForDeviceSurvey() const;
+		[[nodiscard]] bool isDeviceSurveyPending() const;
 		void setDeviceSurveyPending(bool pDeviceSurveyPending);
 
-		bool askForStoreFeedback() const;
-		bool isRequestStoreFeedback() const;
+		[[nodiscard]] bool askForStoreFeedback() const;
+		[[nodiscard]] bool isRequestStoreFeedback() const;
 		void setRequestStoreFeedback(bool pRequest);
 
-		QString getLastReaderPluginType() const;
+		[[nodiscard]] QString getLastReaderPluginType() const;
 		void setLastReaderPluginType(const QString& pLastReaderPluginType);
 
-		bool isAutoUpdateAvailable() const;
-		bool isAutoUpdateCheck() const;
-		bool autoUpdateCheckIsSetByAdmin() const;
+		[[nodiscard]] bool isAutoUpdateAvailable() const;
+		[[nodiscard]] bool isAutoUpdateCheck() const;
+		[[nodiscard]] bool autoUpdateCheckIsSetByAdmin() const;
 		void setAutoUpdateCheck(bool pAutoUpdateCheck);
 
-		bool isUseScreenKeyboard() const;
+		[[nodiscard]] bool isUseScreenKeyboard() const;
 		void setUseScreenKeyboard(bool pUseScreenKeyboard);
 
-		bool isVisualPrivacy() const;
+		[[nodiscard]] bool isVisualPrivacy() const;
 		void setVisualPrivacy(bool pVisualPrivacy);
 
-		bool isShuffleScreenKeyboard() const;
+		[[nodiscard]] bool isShuffleScreenKeyboard() const;
 		void setShuffleScreenKeyboard(bool pShuffleScreenKeyboard);
 
-		bool isEnableCanAllowed() const;
+		[[nodiscard]] bool isEnableCanAllowed() const;
 		void setEnableCanAllowed(bool pEnableCanAllowed);
 
-		bool isSkipRightsOnCanAllowed() const;
+		[[nodiscard]] bool isSkipRightsOnCanAllowed() const;
 		void setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed);
 
-		bool isShowInAppNotifications() const;
+		[[nodiscard]] bool isShowInAppNotifications() const;
 		void setShowInAppNotifications(bool pShowInAppNotifications);
 
-		bool isCustomProxyType() const;
-		QNetworkProxy::ProxyType getCustomProxyType() const;
+		[[nodiscard]] bool isCustomProxyType() const;
+		[[nodiscard]] QNetworkProxy::ProxyType getCustomProxyType() const;
 
-		bool isCustomProxyHost() const;
-		QString getCustomProxyHost() const;
+		[[nodiscard]] bool isCustomProxyHost() const;
+		[[nodiscard]] QString getCustomProxyHost() const;
 
-		bool isCustomProxyPort() const;
-		quint16 getCustomProxyPort() const;
+		[[nodiscard]] bool isCustomProxyPort() const;
+		[[nodiscard]] quint16 getCustomProxyPort() const;
 
-		bool customProxyAttributesPresent() const;
-		bool useCustomProxy() const;
+		[[nodiscard]] bool customProxyAttributesPresent() const;
+		[[nodiscard]] bool useCustomProxy() const;
 		void setUseCustomProxy(bool pUseCustomProxy);
 
 	Q_SIGNALS:

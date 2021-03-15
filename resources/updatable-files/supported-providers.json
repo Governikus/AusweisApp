@@ -381,8 +381,8 @@
 		{
 			"shortName": {"" : "Bürgerdienste der Stadt Münster"},
 			"longDescription": {"": "Die Stadt Münster bietet auf ihrer Webseite eine Reihe von Online-Diensten an. Dort können Sie mit der Online-Ausweisfunktion unter anderem:<br/>- eine Personenstandsurkunde bestellen,<br/>- Ihr Wunschkennzeichen beantragen,<br/>- geografische Karten bestellen,<br/>- Elektroschrott zur Abholung anmelden,<br/>- eine Erklärung zum Elterneinkommen für die Festsetzung des Elternbeitrags für die Kindertagesbetreuung abgeben,<br/>- eine Sondernutzungserlaubnis für private Baumaßnahmen an öffentlichen Straßen beantragen,<br/>- eine Großanlage mit zentraler Trinkwassererwärmung anzeigen,<br/>- einen Fahrradfund melden,<br/>- ein Reitkennzeichen beantragen,<br/>- Mietspiegel-Broschüren bestellen."},
-			"address": "https://www.stadt-muenster.de/rathaus/online-dienste.html",
-			"homepage": "https://www.muenster.de",
+			"address": "https://www.stadt-muenster.de/online-dienste",
+			"homepage": "https://www.stadt-muenster.de",
 			"phone": "+49 251 4 92 0",
 			"email": "stadtverwaltung@stadt-muenster.de",
 			"postalAddress": "Stadt Münster<br/>48127 Münster",
@@ -462,7 +462,6 @@
 			"subjectUrlInfo": "Using service from Bürgerservice-Portal Krz (https://www.buergerserviceportal.nrw)."
 		},
 		{
-			"exclude": ["ios"],
 			"shortName": {"" : "Bürgerservice-Portal Saarbrücken"},
 			"longDescription": {"": "Im Rahmen des Bürgerservice-Portals haben Sie die Möglichkeit, Anträge zu erfassen und diese direkt an die Landeshauptstadt Saarbrücken zur weiteren Bearbeitung weiterzuleiten."},
 			"address": "https://sl.buergerserviceportal.de/saarland/saarbruecken",
@@ -540,7 +539,7 @@
 		{
 			"shortName": {"" : "Deutsche Rentenversicherung"},
 			"longDescription": {"": "Mit der Online-Ausweisfunktion im neuen Personalausweis können Sie ...<br/>- auf Informationen Ihres Rentenkontos im Kundenbereich ,eService' sicher zugreifen (z. B. Versicherungsverlauf und Beitragsrechnung),<br/>- Ihre Rentenauskunft online abrufen,<br/>- schnell und einfach Ihre persönlichen Daten ändern (z. B. Ihre Adresse und Bankverbindung)."},
-			"address": "https://www.eservice-drv.de/OnlineDiensteWeb/init.do?npa=true",
+			"address": "https://www.eservice-drv.de/OnlineDiensteWeb/init.do?npa=true&src=ausweisapp",
 			"homepage": "https://www.deutsche-rentenversicherung.de",
 			"phone": "+49 800 100 048070",
 			"email": "Online-Dienste@deutsche-rentenversicherung.de",
@@ -676,6 +675,19 @@
 			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
+			"shortName": {"" : "Kreis Kleve"},
+			"longDescription": {"": "Stellen Sie hier Ihre Anträge an die Kreisverwaltung.<br/>Das Angebot wird laufend erweitert."},
+			"address": "https://www.kreis-kleve.de/de/fachbereich1/online-dienste",
+			"homepage": "https://www.kreis-kleve.de",
+			"phone": "+49 2821 85 0",
+			"email": "info@kreis-kleve.de",
+			"postalAddress": "Kreisverwaltung Kleve<br/>Nassauerallee 15-23<br/>D-47533 Kleve",
+			"image": "KreisKleve_image.jpg",
+			"icon": "KreisKleve_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+		},
+		{
 			"shortName": {"" : "Kreis Lippe Portal"},
 			"longName": {"" :"Kreis Lippe Portal"},
 			"longDescription": {"": "Mit der Online-Ausweisfunktion können Sie sich am Bürgerportal des Kreises Lippe registrieren, anmelden und den Online-Service 'Elternbeiträge' nutzen. Als Eltern können Sie nach der einmaligen Registrierung<br/><br/> - Ihre Selbsteinschätzung für den Elternbeitrag online einreichen,<br/> - den Bearbeitungsstand nachverfolgen,<br/> - Bescheide elektronisch im Dokumentenbereich empfangen."},
@@ -729,17 +741,6 @@
 			"phone": "+49 3921 949 0",
 			"email": "post@lkjl.de",
 			"postalAddress": "Landkreis Jerichower Land<br/>Bahnhofstraße 9<br/>39288 Burg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Serviceportal Sachsen-Anhalt (https://st.buergerserviceportal.de)."
-		},
-		{
-			"exclude": ["ios"],
-			"shortName": {"" : "Landkreis Mansfeld-Südharz"},
-			"longDescription": {"": "Im elektronischen Straßenverkehrsamt haben Sie die Möglichkeit, die Abmeldung und die Wiederzulassung Ihres Fahrzeuges online zu realisieren. Darüber hinaus können Sie im elektronischen Straßenverkehrsamt auch ein Bürgerkonto einrichten, welches zukünftig für weitere Dienstleistungen der Kreisverwaltung nutzbar sein wird."},
-			"address": "https://st.buergerserviceportal.de/sachsenanhalt/lkrmansfeldsuedharz",
-			"homepage": "https://st.buergerserviceportal.de/sachsenanhalt/lkrmansfeldsuedharz",
-			"email": "landkreis@lkmsh.de",
-			"postalAddress": "Landkreis Mansfeld-Südharz<br/>Rudolf-Breitscheid-Str. 20/22<br/>06526 Sangerhausen",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Serviceportal Sachsen-Anhalt (https://st.buergerserviceportal.de)."
 		},
@@ -937,12 +938,24 @@
 		{
 			"shortName": {"" : "Service-Portal Berlin"},
 			"address": "https://service.berlin.de/onlineverfahren-onlinedienstleistungen",
-			"homepage": "https://www.berlin.de/labo",
+			"homepage": "https://service.berlin.de",
 			"phone": "+49 30 90269 0",
 			"email": "kundenservice@berlin.de",
 			"postalAddress": "BerlinOnline Stadtportal GmbH & Co. KG<br/>Alte Jakobstraße 105<br/>10969 Berlin",
 			"category": "citizen",
 			"subjectUrls": ["https://eid-prod.connect.verwalt-berlin.de"]
+		},
+		{
+			"shortName": {"" : "Serviceportal Duisburg"},
+			"shortDescription": {"": "Bereitstellung von online Services für die Stadt Duisburg."},
+			"longDescription": {"": "Die Stadt Duisburg bietet auf ihrer Webseite eine Reihe von Online-Diensten an.<br/>Dort können Sie mit der Online-Ausweisfunktion unter anderem:<br/>- eine Personenstandsurkunde bestellen,<br/>- Ihr Wunschkennzeichen beantragen."},
+			"address": "https://service.duisburg.de",
+			"homepage": "https://www.duisburg.de",
+			"phone": "+49 203 94000",
+			"email": "serviceportal@stadt-duisburg.de",
+			"postalAddress": "Stadt Duisburg<br/>Burgplatz 19<br/>D-47051 Duisburg",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
 			"shortName": {"" : "Servicekonto Nordrhein-Westfalen"},
@@ -995,6 +1008,8 @@
 			"phone": "+49 431 988 0",
 			"email": "dataportdigitaleplattformens-hsupport@dataport.de",
 			"postalAddress": "Ministerium für Energiewende, Landwirtschaft, Umwelt, Natur und Digitalisierung des Landes Schleswig-Holstein<br/>Digitalisierung und Zentrales IT-Management der Landesregierung<br/>Niemannsweg 220<br/>24106 Kiel",
+			"image": "ServiceportalSchleswigHolstein_image.jpg",
+			"icon": "ServiceportalSchleswigHolstein_icon.png",
 			"category": "citizen",
 			"subjectUrls": ["https://idp.serviceportal.schleswig-holstein.de"]
 		},

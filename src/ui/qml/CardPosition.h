@@ -1,7 +1,7 @@
 /*!
  * \brief Description of recommended card position
  *
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,6 +24,7 @@ class CardPosition
 	public:
 		CardPosition(double pXPosition = 0.0, double pYPosition = 0.0, int pZPosition = 1, double pRotation = 0.0);
 		CardPosition(const CardPosition& pOther);
+		~CardPosition() override = default;
 		CardPosition& operator=(const CardPosition& pOther);
 
 		double mXPosition;

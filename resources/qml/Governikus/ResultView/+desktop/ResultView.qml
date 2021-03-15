@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -12,6 +12,7 @@ import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.LogModel 1.0
+import Governikus.Type.UiModule 1.0
 
 SectionPage {
 	id: baseItem
@@ -140,7 +141,7 @@ SectionPage {
 			activeFocusOnTab: true
 
 			buttonType: NavigationButton.Type.Forward
-			onClicked: baseItem.nextView(SectionPage.Views.Main)
+			onClicked: baseItem.nextView(UiModule.DEFAULT)
 		}
 	}
 

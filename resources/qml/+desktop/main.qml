@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import Governikus.Global 1.0
@@ -56,7 +56,7 @@ ApplicationWindow {
 	menuBar: TitleBar {
 		id: titleBar
 		contentRoot: contentLoader
-		onRootClicked: d.activeView = SectionPage.Views.Main
+		onRootClicked: d.activeView = UiModule.DEFAULT
 	}
 
 	Component.onCompleted: menuBar.forceActiveFocus()
@@ -92,7 +92,7 @@ ApplicationWindow {
 	QtObject {
 		id: d
 
-		property int activeView: SectionPage.Views.Main
+		property int activeView: UiModule.DEFAULT
 		property int lastVisibility: ApplicationWindow.Windowed
 		readonly property int initialWidth: 960
 		readonly property int initialHeight: 720
@@ -223,35 +223,30 @@ ApplicationWindow {
 			switch (pModule) {
 				case UiModule.IDENTIFY:
 					if (ApplicationModel.currentWorkflow === "") {
-						d.activeView = SectionPage.Views.SelfAuthentication
+						d.activeView = UiModule.SELF_AUTHENTICATION
 					}
 					if (ApplicationModel.currentWorkflow === "authentication" || ApplicationModel.currentWorkflow === "selfauthentication") {
-						d.activeView = SectionPage.Views.Identify
+						d.activeView = UiModule.IDENTIFY
 					}
 					break
 				case UiModule.PINMANAGEMENT:
 					if (ApplicationModel.currentWorkflow === "" || ApplicationModel.currentWorkflow === "changepin") {
-						d.activeView = SectionPage.Views.ChangePin
-					}
-					break
-				case UiModule.DEFAULT:
-					if (ApplicationModel.currentWorkflow === "") {
-						d.activeView = SectionPage.Views.Main
-					}
-					break
-				case UiModule.SETTINGS:
-					if (ApplicationModel.currentWorkflow === "") {
-						d.activeView = SectionPage.Views.Settings
+						d.activeView = UiModule.PINMANAGEMENT
 					}
 					break
 				case UiModule.CURRENT:
-					if (SettingsModel.showSetupAssistantOnStart) {
-						d.activeView = SectionPage.Views.SetupAssistant
+					if (SettingsModel.startupModule === UiModule.TUTORIAL) {
+						d.activeView = UiModule.TUTORIAL
 					}
 					break
 				case UiModule.UPDATEINFORMATION:
-					if (ApplicationModel.currentWorkflow === "" && d.activeView === SectionPage.Views.Main) {
-						d.activeView = SectionPage.Views.AppUpdateInfo
+					if (ApplicationModel.currentWorkflow === "" && d.activeView === UiModule.DEFAULT) {
+						d.activeView = UiModule.UPDATEINFORMATION
+					}
+					break
+				default:
+					if (ApplicationModel.currentWorkflow === "") {
+						d.activeView = pModule
 					}
 					break
 			}
@@ -292,23 +287,20 @@ ApplicationWindow {
 	Loader {
 		id: contentLoader
 
-		// Keep in sync with the order/length of the SectionPage.Views enum
-		property var sectionPages: ObjectModel {
-			Component {MainView {}}
-			Component {SelfAuthenticationView {}}
-			Component {IdentifyView {}}
-			Component {ChangePinView {}}
-			Component {ProviderView {}}
-			Component {MoreView {}}
-			Component {SettingsView {}}
-			Component {HistoryView {}}
-			Component {SetupAssistantView {}}
-			Component {UpdateView { onLeaveView: d.activeView = SectionPage.Views.Main }}
-		}
+		Component {id: main; MainView {}}
+		Component {id: selfauthentication; SelfAuthenticationView {}}
+		Component {id: identify; IdentifyView {}}
+		Component {id: pinmanagement; ChangePinView {}}
+		Component {id: provider; ProviderView {}}
+		Component {id: help; MoreView {}}
+		Component {id: settings; SettingsView {}}
+		Component {id: history; HistoryView {}}
+		Component {id: tutorial; SetupAssistantView {}}
+		Component {id: updateinformation; UpdateView { onLeaveView: d.activeView = UiModule.DEFAULT }}
 
 		Keys.onEscapePressed: {
-			if (d.activeView !== SectionPage.Views.Main) {
-				d.activeView = SectionPage.Views.Main
+			if (d.activeView !== UiModule.DEFAULT) {
+				d.activeView = UiModule.DEFAULT
 			}
 		}
 
@@ -324,11 +316,22 @@ ApplicationWindow {
 			titleBar.updateActions()
 			item.setActive()
 		}
-		sourceComponent: sectionPages.get(d.activeView)
+		sourceComponent: switch(d.activeView) {
+			case UiModule.SELF_AUTHENTICATION: return selfauthentication
+			case UiModule.IDENTIFY: return identify
+			case UiModule.PINMANAGEMENT: return pinmanagement
+			case UiModule.PROVIDER: return provider
+			case UiModule.HELP: return help
+			case UiModule.SETTINGS: return settings
+			case UiModule.HISTORY: return history
+			case UiModule.TUTORIAL: return tutorial
+			case UiModule.UPDATEINFORMATION: return updateinformation
+			default: return main
+		}
 	}
 
 	Rectangle {
-		visible: SettingsModel.developerMode && d.activeView !== SectionPage.Views.Settings
+		visible: SettingsModel.developerMode && d.activeView !== UiModule.SETTINGS
 		height: childrenRect.height
 		width: childrenRect.width
 		anchors {
@@ -363,7 +366,7 @@ ApplicationWindow {
 	Rectangle {
 		id: developerWarning
 
-		visible: SettingsModel.developerMode && d.activeView !== SectionPage.Views.Settings
+		visible: SettingsModel.developerMode && d.activeView !== UiModule.SETTINGS
 		height: ApplicationModel.scaleFactor * 50
 		width: Math.sqrt(contentLoader.width * contentLoader.width + contentLoader.height * contentLoader.height)
 		anchors.verticalCenter: parent.bottom

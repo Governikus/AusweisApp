@@ -1,7 +1,7 @@
 /*!
  * \brief Composite state for selecting a card.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,7 +24,7 @@ class CompositeStateProcessCvcsAndSetRights
 
 	public:
 		explicit CompositeStateProcessCvcsAndSetRights(const QSharedPointer<WorkflowContext>& pContext);
-		virtual ~CompositeStateProcessCvcsAndSetRights();
+		~CompositeStateProcessCvcsAndSetRights() override;
 
 	Q_SIGNALS:
 		void fireContinue();

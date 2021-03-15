@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref DiagnosisModel
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisModel.h"
@@ -135,7 +135,7 @@ class test_DiagnosisModel
 
 			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(0)->mContent, QString());
 			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(1)->mContent, QString("Type: Basic card reader\nCard: not inserted"));
-			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(2)->mContent, QString("Type: Basic card reader\nCard: ID card (PA/eAT)\nRetry counter: -1"));
+			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(2)->mContent, QString("Type: Basic card reader\nCard: ID card (PA/eAT/eID)\nRetry counter: -1"));
 			QCOMPARE(mModel->mCardReaderSection->mContentItems.at(3)->mContent, QString("Type: Standard / comfort card reader\nCard: unknown type"));
 
 			QCOMPARE(true, verifyOrder(mModel->mCombinedReaderSection->mContentItems, {

@@ -2,7 +2,7 @@
  * \brief Interface modelling a component that can send and receive data blocks in the form
  * of QByteArray objects.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,11 +21,11 @@ class DataChannel
 
 	public:
 		DataChannel();
-		virtual ~DataChannel();
+		~DataChannel() override;
 
 		Q_INVOKABLE virtual void send(const QByteArray& pDataBlock) = 0;
 		Q_INVOKABLE virtual void close() = 0;
-		virtual const QString& getId() const = 0;
+		[[nodiscard]] virtual const QString& getId() const = 0;
 
 	Q_SIGNALS:
 		void fireReceived(const QByteArray& pDataBlock);

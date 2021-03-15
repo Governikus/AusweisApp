@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEnterNewPacePinRemote.h"
@@ -43,12 +43,4 @@ void StateEnterNewPacePinRemote::onEntry(QEvent* pEvent)
 
 	mConnections += connect(getContext().data(), &RemoteServiceContext::fireCancelPasswordRequest, this, &StateEnterNewPacePinRemote::onCancelChangePin);
 	AbstractState::onEntry(pEvent);
-}
-
-
-void StateEnterNewPacePinRemote::onExit(QEvent* pEvent)
-{
-	startScanIfNecessary();
-
-	AbstractState::onExit(pEvent);
 }

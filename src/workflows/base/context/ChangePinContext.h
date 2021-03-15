@@ -1,7 +1,7 @@
 /*!
  * \brief Context for changing the Pin.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,17 +22,17 @@ class ChangePinContext
 
 	public:
 		explicit ChangePinContext(bool pRequestTransportPin = false);
-		virtual ~ChangePinContext() override;
+		~ChangePinContext() override;
 
-		const QString& getNewPin() const;
+		[[nodiscard]] const QString& getNewPin() const;
 		void setNewPin(const QString& pNewPin);
 
 		void resetPacePasswords() override;
 
-		const QString& getSuccessMessage() const;
+		[[nodiscard]] const QString& getSuccessMessage() const;
 		void setSuccessMessage(const QString& pSuccessMessage);
 
-		bool requestTransportPin() const;
+		[[nodiscard]] bool isRequestTransportPin() const;
 
 	Q_SIGNALS:
 		void fireNewPinChanged();

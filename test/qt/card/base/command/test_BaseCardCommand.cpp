@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref BaseCardCommand
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/BaseCardCommand.h"
@@ -26,7 +26,7 @@ class BaseCardCommandDummy
 		}
 
 
-		virtual void internalExecute() override
+		void internalExecute() override
 		{
 			mReturnCode = CardReturnCode::OK;
 		}

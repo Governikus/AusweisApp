@@ -2,7 +2,7 @@
  * \brief Generic class that allows to download files from a server to the
  *        local application cache.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -35,7 +35,7 @@ class Downloader
 
 	protected:
 		Downloader();
-		virtual ~Downloader();
+		~Downloader() override;
 
 	private Q_SLOTS:
 		void onSslErrors(const QList<QSslError>& pErrors);
@@ -46,8 +46,7 @@ class Downloader
 
 	public:
 		bool abort(const QUrl& pUpdateUrl);
-		virtual void download(const QUrl& pUpdateUrl);
-		virtual void downloadIfNew(const QUrl& pUpdateUrl, const QDateTime& pCurrentTimestamp);
+		virtual void download(const QUrl& pUpdateUrl, const QDateTime& pCurrentTimestamp = QDateTime());
 
 	Q_SIGNALS:
 		void fireDownloadProgress(const QUrl& pUpdateUrl, qint64 pBytesReceived, qint64 pBytesTotal);

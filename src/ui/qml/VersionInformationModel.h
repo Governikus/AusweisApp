@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,7 +29,7 @@ class VersionInformationModel
 		QVector<QPair<QString, QString>> mData;
 
 		VersionInformationModel();
-		virtual ~VersionInformationModel() override = default;
+		~VersionInformationModel() override = default;
 
 		void init();
 

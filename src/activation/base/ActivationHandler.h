@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -38,7 +38,7 @@ class ActivationHandler
 
 	protected:
 		ActivationHandler() = default;
-		virtual ~ActivationHandler() = default;
+		~ActivationHandler() override = default;
 
 	public:
 		virtual bool start() = 0;

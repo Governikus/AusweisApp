@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -7,12 +7,10 @@ import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
+import Governikus.Type.UiModule 1.0
 
 Item {
 	id: content
-
-	height: parent.height
-	width: parent.width
 
 	ListModel {
 		id: navModel
@@ -20,31 +18,31 @@ Item {
 		ListElement {
 			image: "qrc:///images/mobile/material_home.svg"
 			desc: QT_TR_NOOP("Start")
-			condition: "main"
+			module: UiModule.DEFAULT
 		}
 
 		ListElement {
 			image: "qrc:///images/history.svg"
 			desc: QT_TR_NOOP("History")
-			condition: "history"
+			module: UiModule.HISTORY
 		}
 
 		ListElement {
-			image: "qrc:///images/mobile/material_specific_phone.svg"
+			image: "qrc:///images/mobile/platform_specific_phone.svg"
 			desc: QT_TR_NOOP("Remote")
-			condition: "remoteservice"
+			module: UiModule.REMOTE_SERVICE
 		}
 
 		ListElement {
 			image: "qrc:///images/material_settings.svg"
 			desc: QT_TR_NOOP("Settings")
-			condition: "settings"
+			module: UiModule.SETTINGS
 		}
 
 		ListElement {
 			image: "qrc:///images/material_help.svg"
 			desc: QT_TR_NOOP("Help")
-			condition: "help"
+			module: UiModule.HELP
 		}
 	}
 
@@ -78,13 +76,16 @@ Item {
 
 				source: image
 				text: qsTr(desc)
-				selected: baseItem.state === condition ||
-						  (baseItem.state === "identify" || baseItem.state === "pin" || baseItem.state === "provider" || baseItem.state === "checkIDCard") && condition === "main"
+				selected: baseItem.activeModule === module ||
+							module === UiModule.DEFAULT && (
+								baseItem.activeModule === UiModule.IDENTIFY ||
+								baseItem.activeModule === UiModule.PINMANAGEMENT ||
+								baseItem.activeModule === UiModule.PROVIDER ||
+								baseItem.activeModule === UiModule.CHECK_ID_CARD
+							)
 				onClicked: {
 					baseItem.resetContentArea()
-					if (baseItem.state !== condition) {
-						baseItem.state = condition
-					}
+					baseItem.show(module)
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -15,7 +15,7 @@ class CommandApdu final
 	: public Apdu
 {
 	private:
-		inline bool isExtendedLength() const;
+		[[nodiscard]] inline bool isExtendedLength() const;
 
 	public:
 		static const int NO_LE = 0;
@@ -31,13 +31,13 @@ class CommandApdu final
 		explicit CommandApdu(const QByteArray& pHeader, const QByteArray& pData, int pLe);
 		explicit CommandApdu(char pCla, char pIns, char pP1, char pP2, const QByteArray& pData = QByteArray(), int pLe = NO_LE);
 
-		char getCLA() const;
-		char getINS() const;
-		char getP1() const;
-		char getP2() const;
-		int getLc() const;
-		int getLe() const;
-		QByteArray getData() const;
+		[[nodiscard]] char getCLA() const;
+		[[nodiscard]] char getINS() const;
+		[[nodiscard]] char getP1() const;
+		[[nodiscard]] char getP2() const;
+		[[nodiscard]] int getLc() const;
+		[[nodiscard]] int getLe() const;
+		[[nodiscard]] QByteArray getData() const;
 
 		static bool isExtendedLength(const QByteArray& pData, int pLe);
 		static bool isSecureMessaging(const QByteArray& pCommandBuffer);

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -11,7 +11,7 @@ import Governikus.Type.NumberModel 1.0
 import Governikus.Type.ReaderPlugIn 1.0
 import Governikus.Type.ChatModel 1.0
 import Governikus.Type.ConnectivityManager 1.0
-
+import Governikus.Type.UiModule 1.0
 
 Item {
 	enum WorkflowStates {
@@ -92,7 +92,7 @@ Item {
 			case "StateGetTcToken":
 				enterPinView.state = "INITIAL"
 				controller.workflowState = IdentifyController.WorkflowStates.Initial
-				navBar.showIdentify(true)
+				navBar.show(UiModule.IDENTIFY, true)
 				break
 			case "StateEditAccessRights":
 				if (NumberModel.isCanAllowedMode && SettingsModel.skipRightsOnCanAllowed) {

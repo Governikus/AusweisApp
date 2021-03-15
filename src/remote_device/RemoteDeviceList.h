@@ -1,7 +1,7 @@
 /*!
  * \brief Interface for RemoteDeviceList
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,7 +20,7 @@ class RemoteDeviceListEntry
 	Q_DISABLE_COPY(RemoteDeviceListEntry)
 
 	private:
-		const RemoteDeviceDescriptor mRemoteDeviceDescriptor;
+		RemoteDeviceDescriptor mRemoteDeviceDescriptor;
 		QTime mLastSeen;
 		QVector<QTime> mLastSeenHistory;
 
@@ -29,13 +29,15 @@ class RemoteDeviceListEntry
 
 		void setLastSeenToNow();
 		bool cleanUpSeenTimestamps(int pReaderResponsiveTimeout);
-		int getPercentSeen(int pCheckInterval = 1000, int pTimeFrame = 5000) const;
+		[[nodiscard]] int getPercentSeen(int pCheckInterval = 1000, int pTimeFrame = 5000) const;
 
-		bool containsEquivalent(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor) const;
+		void setRemoteDeviceDescriptor(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor);
+
+		[[nodiscard]] bool containsEquivalent(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor) const;
 		bool isEqual(const RemoteDeviceListEntry* const pOther) const;
 
-		const QTime& getLastSeen() const;
-		const RemoteDeviceDescriptor& getRemoteDeviceDescriptor() const;
+		[[nodiscard]] const QTime& getLastSeen() const;
+		[[nodiscard]] const RemoteDeviceDescriptor& getRemoteDeviceDescriptor() const;
 
 };
 
@@ -52,11 +54,11 @@ class RemoteDeviceList
 
 	public:
 		RemoteDeviceList(int pCheckInterval, int pTimeout);
-		virtual ~RemoteDeviceList();
+		~RemoteDeviceList() override;
 
 		virtual void update(const RemoteDeviceDescriptor& pDescriptor) = 0;
 		virtual void clear() = 0;
-		virtual QVector<QSharedPointer<RemoteDeviceListEntry>> getRemoteDevices() const;
+		[[nodiscard]] virtual QVector<QSharedPointer<RemoteDeviceListEntry>> getRemoteDevices() const;
 };
 
 
@@ -75,11 +77,11 @@ class RemoteDeviceListImpl
 
 	public:
 		RemoteDeviceListImpl(int pCheckInterval = 1000, int pReaderResponsiveTimeout = 5000);
-		virtual ~RemoteDeviceListImpl() override;
+		~RemoteDeviceListImpl() override;
 
-		virtual void update(const RemoteDeviceDescriptor& pDescriptor) override;
-		virtual void clear() override;
-		virtual QVector<QSharedPointer<RemoteDeviceListEntry>> getRemoteDevices() const override;
+		void update(const RemoteDeviceDescriptor& pDescriptor) override;
+		void clear() override;
+		[[nodiscard]] QVector<QSharedPointer<RemoteDeviceListEntry>> getRemoteDevices() const override;
 };
 
 

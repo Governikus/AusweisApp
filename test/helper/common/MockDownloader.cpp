@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockDownloader.h"
@@ -35,8 +35,10 @@ QByteArray MockDownloader::getTestData(const QUrl& pUrl)
 }
 
 
-void MockDownloader::download(const QUrl& pUpdateUrl)
+void MockDownloader::download(const QUrl& pUpdateUrl, const QDateTime& pCurrentTimestamp)
 {
+	Q_UNUSED(pCurrentTimestamp)
+
 	if (mErrorCode != GlobalStatus::Code::No_Error)
 	{
 		Q_EMIT fireDownloadFailed(pUpdateUrl, mErrorCode);
@@ -49,14 +51,6 @@ void MockDownloader::download(const QUrl& pUpdateUrl)
 	{
 		Q_EMIT fireDownloadSuccess(pUpdateUrl, getTimeStamp(), getTestData(pUpdateUrl));
 	}
-}
-
-
-void MockDownloader::downloadIfNew(const QUrl& pUpdateUrl,
-		const QDateTime& pCurrentTimestamp)
-{
-	Q_UNUSED(pCurrentTimestamp)
-	download(pUpdateUrl);
 }
 
 

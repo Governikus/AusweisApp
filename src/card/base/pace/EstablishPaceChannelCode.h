@@ -1,7 +1,7 @@
 /*!
  * \brief EstablishPaceChannel error code definitions
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -94,7 +94,9 @@ defineTypedEnumType(EstablishPaceChannelErrorCode, quint32,
 		Abort
 			= 0xF0200001,
 		Timeout
-			= 0xF0200002
+			= 0xF0200002,
+		NoActivePinSet
+			= 0xF0200003
 			)
 
 

@@ -1,7 +1,7 @@
 /*!
  * \brief XML element for "SupportedAPI". See TR-03112-7.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -14,9 +14,9 @@ namespace governikus
 class SupportedAPI
 {
 	public:
-		QString getMajor() const;
-		QString getMinor() const;
-		QString getSubminor() const;
+		[[nodiscard]] QString getMajor() const;
+		[[nodiscard]] QString getMinor() const;
+		[[nodiscard]] QString getSubminor() const;
 };
 
 } // namespace governikus

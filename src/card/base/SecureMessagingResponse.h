@@ -1,7 +1,7 @@
 /*!
  * \brief Response APDU for SecureMessaging
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -56,42 +56,42 @@ class SecureMessagingResponse
 
 	public:
 		explicit SecureMessagingResponse(const QByteArray& pBuffer);
-		virtual ~SecureMessagingResponse();
+		~SecureMessagingResponse() override;
 
 		/*!
 		 * Returns the encrypted data without padding-content indicator.
 		 */
-		QByteArray getEncryptedData() const;
+		[[nodiscard]] QByteArray getEncryptedData() const;
 
 		/*!
 		 * Returns the encoded ASN.1 object containing the encrypted data.
 		 */
-		QByteArray getEncryptedDataObjectEncoded() const;
+		[[nodiscard]] QByteArray getEncryptedDataObjectEncoded() const;
 
 		/*!
 		 * Returns the cryptographic checsum.
 		 */
-		QByteArray getMac() const;
+		[[nodiscard]] QByteArray getMac() const;
 
 		/*!
 		 * Returns the processing status.
 		 */
-		StatusCode getSecuredStatusCode() const;
+		[[nodiscard]] StatusCode getSecuredStatusCode() const;
 
 		/*!
 		 * Returns the processing status bytes.
 		 */
-		QByteArray getSecuredStatusCodeBytes() const;
+		[[nodiscard]] QByteArray getSecuredStatusCodeBytes() const;
 
 		/*!
 		 * Returns the encoded ASN.1 object containing the processing status.
 		 */
-		QByteArray getSecuredStatusCodeObjectEncoded() const;
+		[[nodiscard]] QByteArray getSecuredStatusCodeObjectEncoded() const;
 
 		/*!
 		 * Is the message structure invalid, i.e. is the message syntactically invalid?
 		 */
-		bool isInvalid() const;
+		[[nodiscard]] bool isInvalid() const;
 };
 
 

@@ -1,16 +1,17 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 
 Item {
 
-	property string imageSource;
-	property string title;
-	property string name;
+	property string imageSource
+	property string title
+	property string name
 
 	width: parent.width
 	height: Math.max(image.height, providerTitle.height)
@@ -22,8 +23,8 @@ Item {
 		anchors.left: parent.left
 		anchors.verticalCenter: parent.verticalCenter
 
-		height: 40
-		width: 40
+		height: Style.dimens.icon_size
+		width: Style.dimens.icon_size
 
 		source: imageSource
 		fillMode: Image.PreserveAspectFit
@@ -33,11 +34,10 @@ Item {
 		id: providerTitle
 		anchors.verticalCenter: image.verticalCenter
 		anchors.left: image.right
-		anchors.leftMargin: 10
+		anchors.leftMargin: Constants.groupbox_spacing
 		anchors.right: parent.right
 
 		label: title
-		//: LABEL ANDROID IOS
-		text: name.length > 0 ? name : qsTr("Touch for more details")
+		text: name
 	}
 }

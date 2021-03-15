@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceList.h"
@@ -22,8 +22,8 @@ class test_RemoteDeviceListImpl
 			RemoteDeviceListImpl deviceList(10, 1);
 			QSignalSpy spyVanished(&deviceList, &RemoteDeviceListImpl::fireDeviceVanished);
 
-			const Discovery offerMsg1 = Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {IfdVersion::Version::v0});
-			const Discovery offerMsg2 = Discovery("Dev1", QStringLiteral("0123456789ABCDFF"), 1234, {IfdVersion::Version::v0});
+			const Discovery offerMsg1 = Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {IfdVersion::Version::latest});
+			const Discovery offerMsg2 = Discovery("Dev1", QStringLiteral("0123456789ABCDFF"), 1234, {IfdVersion::Version::latest});
 			const QHostAddress addr1 = QHostAddress(QString("5.6.7.8"));
 			const QHostAddress addr2 = QHostAddress(QString("5.6.7.9"));
 

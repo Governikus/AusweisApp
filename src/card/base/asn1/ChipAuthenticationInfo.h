@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of ChipAuthenticationInfo
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -44,7 +44,7 @@ class ChipAuthenticationInfo
 	const QSharedPointer<const chipauthenticationinfo_st> mDelegate;
 
 	explicit ChipAuthenticationInfo(const QSharedPointer<const chipauthenticationinfo_st>& pDelegate);
-	ASN1_OBJECT* getProtocolObjectIdentifier() const override;
+	[[nodiscard]] ASN1_OBJECT* getProtocolObjectIdentifier() const override;
 	static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
 
 	public:
@@ -61,8 +61,8 @@ class ChipAuthenticationInfo
 		}
 
 
-		QByteArray getVersion() const;
-		QByteArray getKeyId() const;
+		[[nodiscard]] QByteArray getVersion() const;
+		[[nodiscard]] QByteArray getKeyId() const;
 };
 
 

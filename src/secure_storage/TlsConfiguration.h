@@ -1,7 +1,7 @@
 /*!
  * \brief Configuration options for TLS channels
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -53,20 +53,20 @@ class TlsConfiguration final
 		TlsConfiguration();
 		~TlsConfiguration();
 
-		QJsonArray readJsonArray(const QJsonObject& pConfig, const QLatin1String pName) const;
-		QSsl::SslProtocol readSslProtocol(const QJsonObject& pConfig, const QLatin1String pName) const;
-		bool readOcspStapling(const QJsonObject& pConfig, const QLatin1String pName) const;
-		QByteArrayList readSignatureAlgorithms(const QJsonObject& pConfig, const QLatin1String pKey) const;
+		[[nodiscard]] QJsonArray readJsonArray(const QJsonObject& pConfig, const QLatin1String pName) const;
+		[[nodiscard]] QSsl::SslProtocol readSslProtocol(const QJsonObject& pConfig, const QLatin1String pName) const;
+		[[nodiscard]] bool readOcspStapling(const QJsonObject& pConfig, const QLatin1String pName) const;
+		[[nodiscard]] QByteArrayList readSignatureAlgorithms(const QJsonObject& pConfig, const QLatin1String pKey) const;
 
 	public:
 		void load(const QJsonObject& pConfig);
 
-		QSsl::SslProtocol getProtocolVersion() const;
-		bool getOcspStapling() const;
-		QList<QSslCipher> getCiphers() const;
-		QVector<QSslEllipticCurve> getEllipticCurves() const;
-		QByteArrayList getSignatureAlgorithms() const;
-		const QSslConfiguration& getConfiguration() const;
+		[[nodiscard]] QSsl::SslProtocol getProtocolVersion() const;
+		[[nodiscard]] bool getOcspStapling() const;
+		[[nodiscard]] QList<QSslCipher> getCiphers() const;
+		[[nodiscard]] QVector<QSslEllipticCurve> getEllipticCurves() const;
+		[[nodiscard]] QByteArrayList getSignatureAlgorithms() const;
+		[[nodiscard]] const QSslConfiguration& getConfiguration() const;
 };
 
 

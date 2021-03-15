@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChangePinContext.h"
@@ -66,7 +66,7 @@ void ChangePinContext::setSuccessMessage(const QString& pSuccessMessage)
 }
 
 
-bool ChangePinContext::requestTransportPin() const
+bool ChangePinContext::isRequestTransportPin() const
 {
 	return mRequestTransportPin;
 }

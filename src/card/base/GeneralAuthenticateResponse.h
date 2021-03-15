@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of GeneralAuthenticate response APDUs.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,11 +18,11 @@ class GAResponseApdu
 	protected:
 		ResponseApdu mResponseApdu;
 
-		bool isValid() const;
+		[[nodiscard]] bool isValid() const;
 
 	public:
 		explicit GAResponseApdu(const ResponseApdu& pResponseApdu);
-		StatusCode getReturnCode() const;
+		[[nodiscard]] StatusCode getReturnCode() const;
 };
 
 
@@ -48,7 +48,7 @@ class GAEncryptedNonceResponse
 
 	public:
 		explicit GAEncryptedNonceResponse(const ResponseApdu& pResponseApdu);
-		const QByteArray& getEncryptedNonce() const;
+		[[nodiscard]] const QByteArray& getEncryptedNonce() const;
 };
 
 
@@ -74,7 +74,7 @@ class GAMapNonceResponse
 
 	public:
 		explicit GAMapNonceResponse(const ResponseApdu& pResponseApdu);
-		const QByteArray& getMappingData() const;
+		[[nodiscard]] const QByteArray& getMappingData() const;
 };
 
 
@@ -100,7 +100,7 @@ class GAPerformKeyAgreementResponse
 
 	public:
 		explicit GAPerformKeyAgreementResponse(const ResponseApdu& pResponseApdu);
-		const QByteArray& getEphemeralPublicKey() const;
+		[[nodiscard]] const QByteArray& getEphemeralPublicKey() const;
 };
 
 
@@ -130,9 +130,9 @@ class GAMutualAuthenticationResponse
 
 	public:
 		explicit GAMutualAuthenticationResponse(const ResponseApdu& pResponseApdu);
-		const QByteArray& getAuthenticationToken() const;
-		const QByteArray& getCarCurr() const;
-		const QByteArray& getCarPrev() const;
+		[[nodiscard]] const QByteArray& getAuthenticationToken() const;
+		[[nodiscard]] const QByteArray& getCarCurr() const;
+		[[nodiscard]] const QByteArray& getCarPrev() const;
 };
 
 
@@ -160,8 +160,8 @@ class GAChipAuthenticationResponse
 
 	public:
 		explicit GAChipAuthenticationResponse(const ResponseApdu& pResponseApdu);
-		const QByteArray& getNonce() const;
-		const QByteArray& getAuthenticationToken() const;
+		[[nodiscard]] const QByteArray& getNonce() const;
+		[[nodiscard]] const QByteArray& getAuthenticationToken() const;
 };
 
 

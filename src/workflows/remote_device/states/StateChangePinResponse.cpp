@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateChangePinResponse.h"
@@ -19,17 +19,22 @@ StateChangePinResponse::StateChangePinResponse(const QSharedPointer<WorkflowCont
 
 void StateChangePinResponse::run()
 {
-	Q_ASSERT(getContext()->getRemoteServer());
-	Q_ASSERT(getContext()->getModifyPinMessage());
-
 	const QSharedPointer<RemoteServiceContext>& context = getContext();
 	const auto& responseApdu = context->getModifyPinMessageResponseApdu();
-	if (context->getRemoteServer() && context->getRemoteServer()->getMessageHandler())
+
+	const auto& remoteServer = context->getRemoteServer();
+	if (remoteServer)
 	{
-		context->getRemoteServer()->getMessageHandler()->sendModifyPinResponse(
-				context->getModifyPinMessage()->getSlotHandle(),
-				responseApdu
-				);
+		const auto& messageHandler = remoteServer->getMessageHandler();
+		if (messageHandler)
+		{
+			Q_ASSERT(!context->getModifyPinMessage()->getSlotHandle().isEmpty());
+
+			messageHandler->sendModifyPinResponse(
+					context->getModifyPinMessage()->getSlotHandle(),
+					responseApdu
+					);
+		}
 	}
 
 	if (responseApdu.getCardReturnCode() == CardReturnCode::OK)

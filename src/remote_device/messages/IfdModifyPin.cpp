@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdModifyPin.h"
@@ -58,7 +58,7 @@ const QByteArray& IfdModifyPin::getInputData() const
 }
 
 
-QByteArray IfdModifyPin::toByteArray(const QString& pContextHandle) const
+QByteArray IfdModifyPin::toByteArray(const IfdVersion&, const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 

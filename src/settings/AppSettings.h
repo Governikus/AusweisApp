@@ -1,7 +1,7 @@
 /*!
  * \brief Contains the definition of the AppSettings class.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,7 +30,7 @@ class AppSettings
 
 	private:
 		AppSettings();
-		virtual ~AppSettings() override;
+		~AppSettings() override;
 
 		GeneralSettings mGeneralSettings;
 		PreVerificationSettings mPreVerificationSettings;
@@ -38,7 +38,7 @@ class AppSettings
 		RemoteServiceSettings mRemoteReaderSettings;
 
 	public:
-		virtual void save() override;
+		void save() override;
 
 		virtual GeneralSettings& getGeneralSettings();
 		virtual PreVerificationSettings& getPreVerificationSettings();

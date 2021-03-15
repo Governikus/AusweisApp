@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -34,9 +34,9 @@ class ConnectRequest
 		ConnectRequest(const RemoteDeviceDescriptor& pRemoteDeviceDescriptor,
 				const QByteArray& pPsk,
 				int pTimeoutMs);
-		virtual ~ConnectRequest() = default;
+		~ConnectRequest() override = default;
 
-		const RemoteDeviceDescriptor& getRemoteDeviceDescriptor() const;
+		[[nodiscard]] const RemoteDeviceDescriptor& getRemoteDeviceDescriptor() const;
 
 		void start();
 

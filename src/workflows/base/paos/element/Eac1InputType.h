@@ -1,7 +1,7 @@
 /*!
  * \brief Store information of Eac1InputType.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -86,49 +86,49 @@ class Eac1InputType
 		Eac1InputType();
 		~Eac1InputType();
 
-		const QSharedPointer<const AuthenticatedAuxiliaryData>& getAuthenticatedAuxiliaryData() const
+		[[nodiscard]] const QSharedPointer<const AuthenticatedAuxiliaryData>& getAuthenticatedAuxiliaryData() const
 		{
 			return mAuthenticatedAuxiliaryData;
 		}
 
 
-		const QByteArray& getAuthenticatedAuxiliaryDataAsBinary() const
+		[[nodiscard]] const QByteArray& getAuthenticatedAuxiliaryDataAsBinary() const
 		{
 			return mAuthenticatedAuxiliaryDataAsBinary;
 		}
 
 
-		const QSharedPointer<const CertificateDescription>& getCertificateDescription() const
+		[[nodiscard]] const QSharedPointer<const CertificateDescription>& getCertificateDescription() const
 		{
 			return mCertificateDescription;
 		}
 
 
-		const QByteArray& getCertificateDescriptionAsBinary() const
+		[[nodiscard]] const QByteArray& getCertificateDescriptionAsBinary() const
 		{
 			return mCertificateDescriptionAsBinary;
 		}
 
 
-		const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const
+		[[nodiscard]] const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const
 		{
 			return mCvCertificates;
 		}
 
 
-		const QSharedPointer<const CHAT>& getOptionalChat() const
+		[[nodiscard]] const QSharedPointer<const CHAT>& getOptionalChat() const
 		{
 			return mOptionalChat;
 		}
 
 
-		const QSharedPointer<const CHAT>& getRequiredChat() const
+		[[nodiscard]] const QSharedPointer<const CHAT>& getRequiredChat() const
 		{
 			return mRequiredChat;
 		}
 
 
-		const QString& getTransactionInfo() const
+		[[nodiscard]] const QString& getTransactionInfo() const
 		{
 			return mTransactionInfo;
 		}

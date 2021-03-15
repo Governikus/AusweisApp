@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -29,7 +29,7 @@ Item {
 
 		Image {
 			id: icon
-			sourceSize.height: ApplicationModel.scaleFactor * 40
+			sourceSize.height: Style.dimens.icon_size
 			anchors.verticalCenter: text.verticalCenter
 		}
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ActivationController.h"
@@ -22,8 +22,7 @@ ActivationController::ActivationController()
 		if (isPlugIn(plugin.metaData()))
 		{
 			qCDebug(activation) << "Load plugin:" << plugin.metaData();
-			ActivationHandler* pluginInstance = qobject_cast<ActivationHandler*>(plugin.instance());
-			if (pluginInstance == nullptr)
+			if (ActivationHandler* pluginInstance = qobject_cast<ActivationHandler*>(plugin.instance()); pluginInstance == nullptr)
 			{
 				qCWarning(activation) << "Cannot cast to plugin instance:" << plugin.instance();
 			}

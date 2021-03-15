@@ -2,7 +2,7 @@
  * \brief Calls the RefreshAddress of TcToken and checks the certificates.
  * After that it will set RedirectAddress in WorkflowContext.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -39,8 +39,8 @@ class StateCheckRefreshAddress
 
 		explicit StateCheckRefreshAddress(const QSharedPointer<WorkflowContext>& pContext);
 
-		bool isMatchingSameOriginPolicyInDevMode() const;
-		virtual void run() override;
+		[[nodiscard]] bool isMatchingSameOriginPolicyInDevMode() const;
+		void run() override;
 
 		QUrl determineSubjectUrl();
 
@@ -59,6 +59,7 @@ class StateCheckRefreshAddress
 
 	public:
 		void onEntry(QEvent* pEvent) override;
+		void onExit(QEvent* pEvent) override;
 };
 
 } // namespace governikus

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManagerWorker.h"
@@ -39,6 +39,8 @@ void ReaderManagerWorker::shutdown()
 	qCDebug(card) << "Shutdown ReaderManagerWorker";
 	for (auto& plugin : qAsConst(mPlugIns))
 	{
+		plugin->stopScan();
+
 		qCDebug(card) << "Shutdown plugin:" << plugin->metaObject()->className();
 		plugin->shutdown();
 
@@ -110,6 +112,21 @@ void ReaderManagerWorker::registerPlugIn(ReaderManagerPlugIn* pPlugIn)
 }
 
 
+void ReaderManagerWorker::reset(ReaderManagerPlugInType pType)
+{
+	Q_ASSERT(QObject::thread() == QThread::currentThread());
+
+	for (auto& plugin : qAsConst(mPlugIns))
+	{
+		if (plugin->getInfo().getPlugInType() == pType)
+		{
+			qCDebug(card) << "Reset plugin:" << plugin->metaObject()->className();
+			plugin->reset();
+		}
+	}
+}
+
+
 void ReaderManagerWorker::startScan(ReaderManagerPlugInType pType, bool pAutoConnect)
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
@@ -167,21 +184,6 @@ bool ReaderManagerWorker::isScanRunning(ReaderManagerPlugInType pType) const
 		}
 	}
 	return false;
-}
-
-
-QVector<ReaderManagerPlugInInfo> ReaderManagerWorker::getPlugInInfos() const
-{
-	Q_ASSERT(QObject::thread() == QThread::currentThread());
-
-	QVector<ReaderManagerPlugInInfo> infos;
-	infos.reserve(mPlugIns.size());
-	for (const ReaderManagerPlugIn* const plugIn : qAsConst(mPlugIns))
-	{
-		infos += plugIn->getInfo();
-	}
-
-	return infos;
 }
 
 

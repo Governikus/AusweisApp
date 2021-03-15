@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdModifyPinResponse.h"
@@ -94,7 +94,7 @@ CardReturnCode IfdModifyPinResponse::getReturnCode() const
 }
 
 
-QByteArray IfdModifyPinResponse::toByteArray(const QString& pContextHandle) const
+QByteArray IfdModifyPinResponse::toByteArray(const IfdVersion&, const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);
 

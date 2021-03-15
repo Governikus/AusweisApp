@@ -2,7 +2,7 @@
  * \brief An interface for RemoteClientImpl, meant to omit the
  * dependency between card_base and remote_device.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -39,7 +39,7 @@ class RemoteClient
 
 	public:
 		RemoteClient() = default;
-		virtual ~RemoteClient();
+		~RemoteClient() override;
 
 		Q_INVOKABLE virtual void startDetection() = 0;
 		Q_INVOKABLE virtual void stopDetection() = 0;
@@ -47,10 +47,10 @@ class RemoteClient
 
 		Q_INVOKABLE virtual void establishConnection(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const QString& pPsk) = 0;
 
-		virtual QVector<QSharedPointer<RemoteDeviceListEntry>> getAnnouncingRemoteDevices() const;
-		bool hasAnnouncingRemoteDevices() const;
+		[[nodiscard]] virtual QVector<QSharedPointer<RemoteDeviceListEntry>> getAnnouncingRemoteDevices() const;
+		[[nodiscard]] bool hasAnnouncingRemoteDevices() const;
 		Q_INVOKABLE virtual void requestRemoteDevices();
-		virtual QStringList getConnectedDeviceIDs() const;
+		[[nodiscard]] virtual QStringList getConnectedDeviceIDs() const;
 		virtual QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() = 0;
 };
 

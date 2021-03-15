@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/CVCertificate.h"
@@ -55,6 +55,7 @@ void StateDidAuthenticateEac2::onCardCommandDone(QSharedPointer<BaseCardCommand>
 	{
 		updateStatus(returnCode == CardReturnCode::COMMAND_FAILED ? GlobalStatus::Code::Workflow_Card_Removed : GlobalStatus::Code::Workflow_No_Permission_Error);
 		Q_EMIT fireAbort();
+		return;
 	}
 
 	auto eac2Command = pCommand.staticCast<DidAuthenticateEAC2Command>();

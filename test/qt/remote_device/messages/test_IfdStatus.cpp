@@ -1,16 +1,21 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdStatus.h"
 
 #include "AppSettings.h"
 #include "LogHandler.h"
+#include "TestFileHelper.h"
+
 
 #include <QtTest>
 
 
 using namespace governikus;
+
+
+Q_DECLARE_METATYPE(IfdVersion::Version)
 
 
 class test_IfdStatus
@@ -25,36 +30,9 @@ class test_IfdStatus
 		}
 
 
-		void paceCapabilities_data()
-		{
-			QTest::addColumn<bool>("pace");
-			QTest::addColumn<bool>("eid");
-			QTest::addColumn<bool>("esign");
-			QTest::addColumn<bool>("destroy");
-
-			QTest::newRow("false") << false << false << false << false;
-			QTest::newRow("true") << true << true << true << true;
-		}
-
-
-		void paceCapabilities()
-		{
-			QFETCH(bool, pace);
-			QFETCH(bool, eid);
-			QFETCH(bool, esign);
-			QFETCH(bool, destroy);
-
-			PaceCapabilities capabilities(pace, eid, esign, destroy);
-
-			QCOMPARE(capabilities.getPace(), pace);
-			QCOMPARE(capabilities.getEId(), eid);
-			QCOMPARE(capabilities.getESign(), esign);
-			QCOMPARE(capabilities.getDestroy(), destroy);
-		}
-
-
 		void invalidJson()
 		{
+			const bool v0Supported = IfdVersion(IfdVersion::Version::v0).isSupported();
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QByteArray message("FooBar");
@@ -64,54 +42,85 @@ class test_IfdStatus
 			IfdStatus msg(obj);
 			QVERIFY(msg.isIncomplete());
 
-			QCOMPARE(logSpy.count(), 9);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""));
-			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""));
-			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"SlotName\""));
-			QVERIFY(logSpy.at(4).at(0).toString().contains("Missing value \"PINCapabilities\""));
-			QVERIFY(logSpy.at(5).at(0).toString().contains("Missing value \"MaxAPDULength\""));
-			QVERIFY(logSpy.at(6).at(0).toString().contains("Missing value \"ConnectedReader\""));
-			QVERIFY(logSpy.at(7).at(0).toString().contains("Missing value \"CardAvailable\""));
-			QVERIFY(logSpy.at(8).at(0).toString().contains("The value of msg should be IFDStatus"));
+			QCOMPARE(logSpy.count(), v0Supported ? 10 : 9);
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"msg\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid messageType received: \"\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"ContextHandle\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"SlotName\"")));
+			if (v0Supported)
+			{
+				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"PINCapabilities\"")));
+			}
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"PINPad\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"MaxAPDULength\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"ConnectedReader\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Missing value \"CardAvailable\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of msg should be IFDStatus")));
 		}
 
 
 		void values()
 		{
-			const IfdStatus ifdStatus(
-				QStringLiteral("SlotName"),
-				PaceCapabilities(true, false, true, false),
-				500,
-				false,
-				false
-				);
+			ReaderInfo info(QStringLiteral("SlotName"), ReaderManagerPlugInType::PCSC, CardInfo(CardType::NONE));
+			info.setBasicReader(false);
+			const IfdStatus ifdStatus(info);
 
 			QVERIFY(!ifdStatus.isIncomplete());
 			QCOMPARE(ifdStatus.getType(), RemoteCardMessageType::IFDStatus);
 			QCOMPARE(ifdStatus.getContextHandle(), QString());
 			QCOMPARE(ifdStatus.getSlotName(), QStringLiteral("SlotName"));
-			QVERIFY(ifdStatus.getPaceCapabilities().getPace());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getEId());
-			QVERIFY(ifdStatus.getPaceCapabilities().getESign());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getDestroy());
+			QVERIFY(ifdStatus.hasPinPad());
 			QCOMPARE(ifdStatus.getMaxApduLength(), 500);
 			QVERIFY(!ifdStatus.getConnectedReader());
 			QVERIFY(!ifdStatus.getCardAvailable());
 		}
 
 
+		void toJson_data()
+		{
+			QTest::addColumn<IfdVersion::Version>("version");
+			QTest::addColumn<bool>("pinpad");
+			QTest::addColumn<QByteArray>("json");
+			QTest::newRow("Unknown - Pinpad enabled") << IfdVersion::Version::Unknown << true << QByteArray("    \"PINCapabilities\": {\n"
+																											"        \"Destroy\": false,\n"
+																											"        \"PACE\": true,\n"
+																											"        \"eID\": false,\n"
+																											"        \"eSign\": false\n"
+																											"    },\n");
+			QTest::newRow("Unknown - Pinpad disabled") << IfdVersion::Version::Unknown << false << QByteArray("    \"PINCapabilities\": {\n"
+																											  "        \"Destroy\": false,\n"
+																											  "        \"PACE\": false,\n"
+																											  "        \"eID\": false,\n"
+																											  "        \"eSign\": false\n"
+																											  "    },\n");
+			QTest::newRow("v0 - Pinpad enabled") << IfdVersion::Version::v0 << true << QByteArray("    \"PINCapabilities\": {\n"
+																								  "        \"Destroy\": false,\n"
+																								  "        \"PACE\": true,\n"
+																								  "        \"eID\": false,\n"
+																								  "        \"eSign\": false\n"
+																								  "    },\n");
+			QTest::newRow("v0 - Pinpad disabled") << IfdVersion::Version::v0 << false << QByteArray("    \"PINCapabilities\": {\n"
+																									"        \"Destroy\": false,\n"
+																									"        \"PACE\": false,\n"
+																									"        \"eID\": false,\n"
+																									"        \"eSign\": false\n"
+																									"    },\n");
+			QTest::newRow("v2 - Pinpad enabled") << IfdVersion::Version::v2 << true << QByteArray("    \"PINPad\": true,\n");
+			QTest::newRow("v2 - Pinpad disabled") << IfdVersion::Version::v2 << false << QByteArray("    \"PINPad\": false,\n");
+		}
+
+
 		void toJson()
 		{
-			const IfdStatus ifdStatus(
-				QStringLiteral("SlotName"),
-				PaceCapabilities(true, false, true, false),
-				500,
-				false,
-				false
-				);
+			QFETCH(IfdVersion::Version, version);
+			QFETCH(bool, pinpad);
+			QFETCH(QByteArray, json);
 
-			const QByteArray& byteArray = ifdStatus.toByteArray(QStringLiteral("TestContext"));
+			ReaderInfo info(QStringLiteral("SlotName"), ReaderManagerPlugInType::PCSC, CardInfo(CardType::NONE));
+			info.setBasicReader(!pinpad);
+			const IfdStatus ifdStatus(info);
+
+			const QByteArray& byteArray = ifdStatus.toByteArray(version, QStringLiteral("TestContext"));
 			QCOMPARE(byteArray,
 					QByteArray("{\n"
 							   "    \"CardAvailable\": false,\n"
@@ -120,69 +129,90 @@ class test_IfdStatus
 							   "    \"EFATR\": null,\n"
 							   "    \"EFDIR\": null,\n"
 							   "    \"MaxAPDULength\": 500,\n"
-							   "    \"PINCapabilities\": {\n"
-							   "        \"Destroy\": false,\n"
-							   "        \"PACE\": true,\n"
-							   "        \"eID\": false,\n"
-							   "        \"eSign\": true\n"
-							   "    },\n"
+							   "[PINPAD]"
 							   "    \"SlotName\": \"SlotName\",\n"
 							   "    \"msg\": \"IFDStatus\"\n"
-							   "}\n"));
+							   "}\n").replace("[PINPAD]", json));
 
 			const QJsonObject obj = QJsonDocument::fromJson(byteArray).object();
 			QCOMPARE(obj.size(), 9);
 			QCOMPARE(obj.value(QLatin1String("msg")).toString(), QStringLiteral("IFDStatus"));
 			QCOMPARE(obj.value(QLatin1String("ContextHandle")).toString(), QStringLiteral("TestContext"));
 			QCOMPARE(obj.value(QLatin1String("SlotName")).toString(), QStringLiteral("SlotName"));
-			const QJsonObject cap = obj.value(QLatin1String("PINCapabilities")).toObject();
-			QCOMPARE(cap.size(), 4);
-			QVERIFY(cap.value(QLatin1String("PACE")).toBool());
-			QVERIFY(!cap.value(QLatin1String("eID")).toBool());
-			QVERIFY(cap.value(QLatin1String("eSign")).toBool());
-			QVERIFY(!cap.value(QLatin1String("Destroy")).toBool());
+			if (version >= IfdVersion::Version::v2)
+			{
+				QCOMPARE(obj.value(QLatin1String("PINPad")).toBool(), pinpad);
+			}
+			else
+			{
+				const QJsonObject cap = obj.value(QLatin1String("PINCapabilities")).toObject();
+				QCOMPARE(cap.size(), 4);
+				QCOMPARE(cap.value(QLatin1String("PACE")).toBool(), pinpad);
+				QVERIFY(!cap.value(QLatin1String("eID")).toBool());
+				QVERIFY(!cap.value(QLatin1String("eSign")).toBool());
+				QVERIFY(!cap.value(QLatin1String("Destroy")).toBool());
+			}
 			QCOMPARE(obj.value(QLatin1String("MaxAPDULength")).toInt(), 500);
 			QVERIFY(!obj.value(QLatin1String("ConnectedReader")).toBool());
 			QVERIFY(!obj.value(QLatin1String("CardAvailable")).toBool());
 		}
 
 
+		void fromJson_data()
+		{
+			const bool v0Supported = IfdVersion(IfdVersion::Version::v0).isSupported();
+
+			QTest::addColumn<QByteArray>("json");
+			QTest::addColumn<bool>("pinpad");
+			QTest::addColumn<bool>("incomplete");
+			QTest::newRow("Enabled - Cap") << QByteArray(R"("PINCapabilities": { "Destroy": false, "PACE": true, "eID": false,  "eSign": false },)") << v0Supported << !v0Supported;
+			QTest::newRow("Enabled - Pad") << QByteArray(R"("PINPad": true,)") << true << false;
+			QTest::newRow("Disabled - Cap") << QByteArray(R"("PINCapabilities": { "Destroy": false, "PACE": false, "eID": false, "eSign": false },)") << false << !v0Supported;
+			QTest::newRow("Disabled - Pad") << QByteArray(R"("PINPad": false,)") << false << false;
+			QTest::newRow("Enabled - Both") << QByteArray(R"("PINCapabilities": { "Destroy": false, "PACE": true, "eID": false, "eSign": false }, "PINPad": true,)") << true << false;
+			QTest::newRow("Disabled - Both") << QByteArray(R"("PINCapabilities": { "Destroy": false, "PACE": false, "eID": false, "eSign": false }, "PINPad": false,)") << false << false;
+			QTest::newRow("En/Dis - Both") << QByteArray(R"("PINCapabilities": { "Destroy": false, "PACE": true, "eID": false, "eSign": false }, "PINPad": false,)") << false << false;
+			QTest::newRow("Dis/En - Both") << QByteArray(R"("PINCapabilities": { "Destroy": false, "PACE": false, "eID": false, "eSign": false }, "PINPad": true,)") << true << false;
+		}
+
+
 		void fromJson()
 		{
+			QFETCH(QByteArray, json);
+			QFETCH(bool, pinpad);
+			QFETCH(bool, incomplete);
+
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
-			const QByteArray message("{\n"
-									 "    \"CardAvailable\": false,\n"
-									 "    \"ConnectedReader\": false,\n"
-									 "    \"ContextHandle\": \"TestContext\",\n"
-									 "    \"EFATR\": null,\n"
-									 "    \"EFDIR\": null,\n"
-									 "    \"MaxAPDULength\": 500,\n"
-									 "    \"PINCapabilities\": {\n"
-									 "        \"Destroy\": false,\n"
-									 "        \"PACE\": true,\n"
-									 "        \"eID\": false,\n"
-									 "        \"eSign\": true\n"
-									 "    },\n"
-									 "    \"SlotName\": \"SlotName\",\n"
-									 "    \"msg\": \"IFDStatus\"\n"
-									 "}\n");
+			QByteArray message(R"({
+									"CardAvailable": false,
+									"ConnectedReader": false,
+									"ContextHandle": "TestContext",
+									"EFATR": null,
+									"EFDIR": null,
+									"MaxAPDULength": 500,
+									[PINPAD]
+									"SlotName": "SlotName",
+									"msg": "IFDStatus"
+							   })");
+			message.replace("[PINPAD]", json);
 
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
 			const IfdStatus ifdStatus(obj);
-			QVERIFY(!ifdStatus.isIncomplete());
+			QCOMPARE(ifdStatus.isIncomplete(), incomplete);
 			QCOMPARE(ifdStatus.getType(), RemoteCardMessageType::IFDStatus);
 			QCOMPARE(ifdStatus.getContextHandle(), QStringLiteral("TestContext"));
 			QCOMPARE(ifdStatus.getSlotName(), QStringLiteral("SlotName"));
-			QVERIFY(ifdStatus.getPaceCapabilities().getPace());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getEId());
-			QVERIFY(ifdStatus.getPaceCapabilities().getESign());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getDestroy());
+			QCOMPARE(ifdStatus.hasPinPad(), pinpad);
 			QCOMPARE(ifdStatus.getMaxApduLength(), 500);
 			QVERIFY(!ifdStatus.getConnectedReader());
 			QVERIFY(!ifdStatus.getCardAvailable());
 
-			QCOMPARE(logSpy.count(), 0);
+			QCOMPARE(logSpy.count(), incomplete ? 1 : 0);
+			if (incomplete)
+			{
+				QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"PINPad\""));
+			}
 		}
 
 
@@ -204,22 +234,23 @@ class test_IfdStatus
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
-			QByteArray message("{\n"
-							   "    \"CardAvailable\": false,\n"
-							   "    \"ConnectedReader\": false,\n"
-							   "    \"ContextHandle\": \"TestContext\",\n"
-							   "    \"EFATR\": null,\n"
-							   "    \"EFDIR\": null,\n"
-							   "    \"MaxAPDULength\": 500,\n"
-							   "    \"PINCapabilities\": {\n"
-							   "        \"Destroy\": false,\n"
-							   "        \"PACE\": true,\n"
-							   "        \"eID\": false,\n"
-							   "        \"eSign\": true\n"
-							   "    },\n"
-							   "    \"SlotName\": \"SlotName\",\n"
-							   "    \"msg\": \"%1\"\n"
-							   "}\n");
+			QByteArray message(R"({
+									"CardAvailable": false,
+									"ConnectedReader": false,
+									"ContextHandle": "TestContext",
+									"EFATR": null,
+									"EFDIR": null,
+									"MaxAPDULength": 500,
+									"PINCapabilities": {
+										"Destroy": false,
+										"PACE": true,
+										"eID": false,
+										"eSign": true
+									},
+									"PINPad": true,
+									"SlotName": "SlotName",
+									"msg": "%1"
+							   })");
 			const QJsonObject& obj = QJsonDocument::fromJson(message.replace("%1", QTest::currentDataTag())).object();
 			const IfdStatus ifdStatus(obj);
 
@@ -252,19 +283,21 @@ class test_IfdStatus
 
 		void wrongTypes()
 		{
+			const bool v0Supported = IfdVersion(IfdVersion::Version::v0).isSupported();
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
-			const QByteArray message("{\n"
-									 "    \"CardAvailable\": 1,\n"
-									 "    \"ConnectedReader\": 2,\n"
-									 "    \"ContextHandle\": \"TestContext\",\n"
-									 "    \"EFATR\": null,\n"
-									 "    \"EFDIR\": null,\n"
-									 "    \"MaxAPDULength\": \"3\",\n"
-									 "    \"PINCapabilities\": 4,\n"
-									 "    \"SlotName\": 5,\n"
-									 "    \"msg\": \"IFDStatus\"\n"
-									 "}\n");
+			const QByteArray message(R"({
+										"CardAvailable": 1,
+										"ConnectedReader": 2,
+										"ContextHandle": "TestContext",
+										"EFATR": null,
+										"EFDIR": null,
+										"MaxAPDULength": "3",
+										"PINCapabilities": 4,
+										"PINPad": 5,
+										"SlotName": 6,
+										"msg": "IFDStatus"
+									 })");
 
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
 			const IfdStatus ifdStatus(obj);
@@ -272,43 +305,49 @@ class test_IfdStatus
 			QCOMPARE(ifdStatus.getType(), RemoteCardMessageType::IFDStatus);
 			QCOMPARE(ifdStatus.getContextHandle(), QStringLiteral("TestContext"));
 			QCOMPARE(ifdStatus.getSlotName(), QString());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getPace());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getEId());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getESign());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getDestroy());
+			QVERIFY(!ifdStatus.hasPinPad());
 			QCOMPARE(ifdStatus.getMaxApduLength(), -1);
 			QVERIFY(!ifdStatus.getConnectedReader());
 			QVERIFY(!ifdStatus.getCardAvailable());
 
-			QCOMPARE(logSpy.count(), 5);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"SlotName\" should be of type \"string\""));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of \"PINCapabilities\" should be of type \"object\""));
-			QVERIFY(logSpy.at(2).at(0).toString().contains("The value of \"MaxAPDULength\" should be of type \"number\""));
-			QVERIFY(logSpy.at(3).at(0).toString().contains("The value of \"ConnectedReader\" should be of type \"boolean\""));
-			QVERIFY(logSpy.at(4).at(0).toString().contains("The value of \"CardAvailable\" should be of type \"boolean\""));
+			QCOMPARE(logSpy.count(), v0Supported ? 6 : 5);
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"SlotName\" should be of type \"string\"")));
+			if (v0Supported)
+			{
+				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"PINCapabilities\" should be of type \"object\"")));
+			}
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"PINPad\" should be of type \"boolean\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"MaxAPDULength\" should be of type \"number\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"ConnectedReader\" should be of type \"boolean\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"CardAvailable\" should be of type \"boolean\"")));
 		}
 
 
 		void wrongPINCapabilityTypes()
 		{
+			if (!IfdVersion(IfdVersion::Version::v0).isSupported())
+			{
+				QSKIP("PINCapabilities was only supported with IFDInterface_WebSocket_v0");
+			}
+
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
-			const QByteArray message("{\n"
-									 "    \"CardAvailable\": false,\n"
-									 "    \"ConnectedReader\": false,\n"
-									 "    \"ContextHandle\": \"TestContext\",\n"
-									 "    \"EFATR\": null,\n"
-									 "    \"EFDIR\": null,\n"
-									 "    \"MaxAPDULength\": 500,\n"
-									 "    \"PINCapabilities\": {\n"
-									 "        \"Destroy\": \"1\",\n"
-									 "        \"PACE\": \"2\",\n"
-									 "        \"eID\": \"3\",\n"
-									 "        \"eSign\": \"4\"\n"
-									 "    },\n"
-									 "    \"SlotName\": \"SlotName\",\n"
-									 "    \"msg\": \"IFDStatus\"\n"
-									 "}\n");
+			const QByteArray message(R"({
+										"CardAvailable": false,
+										"ConnectedReader": false,
+										"ContextHandle": "TestContext",
+										"EFATR": null,
+										"EFDIR": null,
+										"MaxAPDULength": 500,
+										"PINCapabilities": {
+											"Destroy": "1",
+											"PACE": "2",
+											"eID": "3",
+											"eSign": "4"
+										},
+										"SlotName": "SlotName",
+										"msg": "IFDStatus"
+									 })");
 
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
 			const IfdStatus ifdStatus(obj);
@@ -316,19 +355,16 @@ class test_IfdStatus
 			QCOMPARE(ifdStatus.getType(), RemoteCardMessageType::IFDStatus);
 			QCOMPARE(ifdStatus.getContextHandle(), QStringLiteral("TestContext"));
 			QCOMPARE(ifdStatus.getSlotName(), QStringLiteral("SlotName"));
-			QVERIFY(!ifdStatus.getPaceCapabilities().getPace());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getEId());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getESign());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getDestroy());
+			QVERIFY(!ifdStatus.hasPinPad());
 			QCOMPARE(ifdStatus.getMaxApduLength(), 500);
 			QVERIFY(!ifdStatus.getConnectedReader());
 			QVERIFY(!ifdStatus.getCardAvailable());
 
 			QCOMPARE(logSpy.count(), 4);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"PACE\" should be of type \"boolean\""));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of \"eID\" should be of type \"boolean\""));
-			QVERIFY(logSpy.at(2).at(0).toString().contains("The value of \"eSign\" should be of type \"boolean\""));
-			QVERIFY(logSpy.at(3).at(0).toString().contains("The value of \"Destroy\" should be of type \"boolean\""));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"PACE\" should be of type \"boolean\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"eID\" should be of type \"boolean\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"eSign\" should be of type \"boolean\"")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"Destroy\" should be of type \"boolean\"")));
 		}
 
 
@@ -374,10 +410,7 @@ class test_IfdStatus
 			QCOMPARE(ifdStatus.getType(), RemoteCardMessageType::IFDStatus);
 			QCOMPARE(ifdStatus.getContextHandle(), QString());
 			QCOMPARE(ifdStatus.getSlotName(), slotName);
-			QCOMPARE(ifdStatus.getPaceCapabilities().getPace(), !isBasicReader || pinPadMode);
-			QVERIFY(!ifdStatus.getPaceCapabilities().getEId());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getESign());
-			QVERIFY(!ifdStatus.getPaceCapabilities().getDestroy());
+			QCOMPARE(ifdStatus.hasPinPad(), !isBasicReader || pinPadMode);
 			QCOMPARE(ifdStatus.getMaxApduLength(), maxApduLength);
 			QCOMPARE(ifdStatus.getConnectedReader(), connected);
 			QCOMPARE(ifdStatus.getCardAvailable(), cardAvailable);

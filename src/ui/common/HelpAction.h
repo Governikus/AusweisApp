@@ -1,7 +1,7 @@
 /*!
  * \brief Helper class for mapping object name to help file.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,10 +25,10 @@ class HelpAction
 
 		Q_DISABLE_COPY(HelpAction)
 
-		QLocale::Language getExistingHelpLanguage() const;
-		QString getContextMapping(const QString& pObjectName) const;
-		QString getHelpPath(QLocale::Language pLang) const;
-		QString getHelpUrl(const QString& pObjectName) const;
+		[[nodiscard]] QLocale::Language getExistingHelpLanguage() const;
+		[[nodiscard]] QString getContextMapping(const QString& pObjectName) const;
+		[[nodiscard]] QString getHelpPath(QLocale::Language pLang) const;
+		[[nodiscard]] QString getHelpUrl(const QString& pObjectName) const;
 
 	protected:
 		static HelpAction& getInstance();

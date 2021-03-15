@@ -1,7 +1,7 @@
 /*!
  * \brief Helper to use AuthContext in an easy way.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,7 +20,7 @@ class TestAuthContext
 
 	public:
 		explicit TestAuthContext(const QSharedPointer<ActivationContext>& pActivationContext, const QString& pFileName = QString());
-		virtual ~TestAuthContext();
+		~TestAuthContext() override;
 
 		void setRequiredAccessRights(const QSet<AccessRight>& pAccessRights);
 		void setOptionalAccessRights(const QSet<AccessRight>& pAccessRights);

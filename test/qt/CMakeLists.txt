@@ -87,7 +87,8 @@ function(SHOULD_SKIP_TEST _out filename)
 	endif()
 
 	if(IOS OR ANDROID)
-		if(test MATCHES "card/pcsc")
+		if(test MATCHES "card/pcsc"
+			OR test MATCHES "card/drivers")
 			set(${_out} TRUE PARENT_SCOPE)
 			return()
 		endif()
@@ -109,6 +110,7 @@ function(ADD_TEST_EXECUTABLE_SUBDIR)
 		GET_TEST_CMDLINE(TEST_CMDLINE ${TESTNAME})
 		add_test(${TESTNAME} ${TESTNAME} ${TEST_CMDLINE})
 		set_tests_properties(${TESTNAME} PROPERTIES FAIL_REGULAR_EXPRESSION "nullptr parameter")
+		set_tests_properties(${TESTNAME} PROPERTIES ENVIRONMENT "QT_ENABLE_REGEXP_JIT=0")
 
 		if(TESTNAME MATCHES "UIPlugIn")
 			set_tests_properties(${TESTNAME} PROPERTIES LABELS "ausweisapp" TIMEOUT 300)

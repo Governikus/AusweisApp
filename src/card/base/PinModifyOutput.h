@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,14 +24,14 @@ class PinModifyOutput
 		PinModifyOutput();
 		explicit PinModifyOutput(const ResponseApdu& pResponseApdu);
 
-		CardReturnCode getReturnCode() const;
-		const ResponseApdu& getResponseApdu() const;
+		[[nodiscard]] CardReturnCode getReturnCode() const;
+		[[nodiscard]] const ResponseApdu& getResponseApdu() const;
 
 		/**
 		 * Defined in TR-03119 Section D.3 and DWG_Smart-Card_CCID_Rev110
 		 * Section 6.2.1
 		 */
-		QByteArray toCcid() const;
+		[[nodiscard]] QByteArray toCcid() const;
 
 };
 

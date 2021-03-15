@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEstablishPaceChannelResponse.h"
@@ -18,21 +18,26 @@ StateEstablishPaceChannelResponse::StateEstablishPaceChannelResponse(const QShar
 
 void StateEstablishPaceChannelResponse::run()
 {
-	Q_ASSERT(getContext()->getRemoteServer());
-	Q_ASSERT(getContext()->hasEstablishedPaceChannelRequest());
-
 	const QSharedPointer<RemoteServiceContext>& context = getContext();
 	const auto& establishPaceChannelOutput = context->getEstablishPaceChannelOutput();
-	if (context->getRemoteServer() && context->getRemoteServer()->getMessageHandler())
+
+	const auto& remoteServer = context->getRemoteServer();
+	if (remoteServer)
 	{
-		context->getRemoteServer()->getMessageHandler()->sendEstablishPaceChannelResponse(
-				context->getEstablishPaceChannelMessageSlotHandle(),
-				establishPaceChannelOutput
-				);
+		const auto& messageHandler = remoteServer->getMessageHandler();
+		if (messageHandler)
+		{
+			Q_ASSERT(!context->getSlotHandle().isEmpty());
+
+			messageHandler->sendEstablishPaceChannelResponse(
+					context->getSlotHandle(),
+					establishPaceChannelOutput
+					);
+		}
 	}
 
 	const bool isWrongPacePassword = CardReturnCodeUtil::equalsWrongPacePassword(establishPaceChannelOutput.getPaceReturnCode());
-	context->setEstablishPaceChannelMessage(nullptr);
+	context->setEstablishPaceChannel(nullptr);
 
 	if (isWrongPacePassword)
 	{

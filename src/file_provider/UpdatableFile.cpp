@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UpdatableFile.h"
@@ -357,15 +357,7 @@ void UpdatableFile::update()
 		connect(downloader, &Downloader::fireDownloadFailed, this, &UpdatableFile::onDownloadFailed);
 		connect(downloader, &Downloader::fireDownloadUnnecessary, this, &UpdatableFile::onDownloadUnnecessary);
 
-		const QDateTime timestamp = cacheTimestamp();
-		if (timestamp.isValid())
-		{
-			downloader->downloadIfNew(mUpdateUrl, timestamp);
-		}
-		else
-		{
-			downloader->download(mUpdateUrl);
-		}
+		downloader->download(mUpdateUrl, cacheTimestamp());
 	}
 }
 

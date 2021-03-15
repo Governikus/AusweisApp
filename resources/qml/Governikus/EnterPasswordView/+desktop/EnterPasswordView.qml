@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -10,7 +10,6 @@ import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.AuthModel 1.0
-import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
 
@@ -21,10 +20,12 @@ SectionPage
 
 	signal passwordEntered(bool pWasNewPin)
 	signal requestPasswordInfo()
+	signal changePinLength()
 
 	property alias enableTransportPinLink: transportPinLink.visible
 	property alias statusIcon: statusIcon.source
 	property int passwordType: NumberModel.passwordType
+	property bool requestTransportPin: NumberModel.requestTransportPin
 
 	//: LABEL DESKTOP_QML %1 is the title, e.g. "PIN entry"
 	Accessible.name: qsTr("%1. You can start to enter the number.").arg(mainText.text)
@@ -136,7 +137,7 @@ SectionPage
 			 //: LABEL DESKTOP_QML
 			 : passwordType === NumberModel.PASSWORD_NEW_PIN ? qsTr("Confirm new PIN")
 			 //: LABEL DESKTOP_QML
-			 : NumberModel.requestTransportPin ? qsTr("Enter Transport PIN")
+			 : baseItem.requestTransportPin ? qsTr("Enter Transport PIN")
 			 //: LABEL DESKTOP_QML
 			 : qsTr("Enter PIN")
 		textStyle: Style.text.header_inverse
@@ -165,7 +166,7 @@ SectionPage
 				return qsTr("The new PIN and the confirmation do not match. Please correct your input.")
 			}
 			if (passwordType === NumberModel.PASSWORD_PIN) {
-				if (NumberModel.requestTransportPin) {
+				if (baseItem.requestTransportPin) {
 					return ("%1<br><br><a href=\"#\">%2</a>").arg(
 							   //: INFO DESKTOP_QML The AA2 expects the Transport PIN with five digits.
 							   qsTr("Please enter the five-digit Transport PIN.")
@@ -247,7 +248,7 @@ SectionPage
 				horizontalCenterOffset: eyeWidth / 2
 			}
 
-			passwordLength: passwordType === NumberModel.PASSWORD_PIN && NumberModel.requestTransportPin ? 5
+			passwordLength: passwordType === NumberModel.PASSWORD_PIN && baseItem.requestTransportPin ? 5
 						  : passwordType === NumberModel.PASSWORD_PUK ? 10
 						  : passwordType === NumberModel.PASSWORD_REMOTE_PIN ? 4
 						  : 6
@@ -280,12 +281,7 @@ SectionPage
 			//: LABEL DESKTOP_QML Button to switch to start a change of the Transport PIN.
 			text: "<a href=\"#\">%1</a>".arg(qsTr("Do you have a five-digit Transport PIN?"))
 			linkColor: textStyle.textColor
-			onLinkActivated: {
-				NumberModel.requestTransportPin = true
-				AuthModel.setSkipRedirect(true)
-				ChangePinModel.startWorkflow()
-				AuthModel.cancelWorkflowToChangePin()
-			}
+			onLinkActivated: baseItem.changePinLength()
 
 			FocusFrame {}
 		}

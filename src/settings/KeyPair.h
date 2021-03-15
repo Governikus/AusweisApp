@@ -1,7 +1,7 @@
 /*
  * \brief Generates a new private/public key with an X509 certificate.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,9 +33,9 @@ class KeyPair
 	public:
 		static KeyPair generate();
 
-		const QSslKey& getKey() const;
-		const QSslCertificate& getCertificate() const;
-		bool isValid() const;
+		[[nodiscard]] const QSslKey& getKey() const;
+		[[nodiscard]] const QSslCertificate& getCertificate() const;
+		[[nodiscard]] bool isValid() const;
 };
 
 

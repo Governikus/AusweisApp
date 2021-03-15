@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDriverModel.h"
@@ -10,7 +10,6 @@
 #include "ReaderManager.h"
 #include "ResourceLoader.h"
 
-#include <QSignalSpy>
 #include <QtTest>
 
 

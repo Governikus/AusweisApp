@@ -1,7 +1,7 @@
 /*!
  * \brief Provides an UDP socket to send and receive datagrams.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -46,10 +46,10 @@ class DatagramHandlerImpl
 		static quint16 cPort;
 
 		DatagramHandlerImpl(bool pEnableListening = true, quint16 pPort = DatagramHandlerImpl::cPort);
-		virtual ~DatagramHandlerImpl() override;
+		~DatagramHandlerImpl() override;
 
-		virtual bool isBound() const override;
-		virtual bool send(const QByteArray& pData) override;
+		[[nodiscard]] bool isBound() const override;
+		bool send(const QByteArray& pData) override;
 
 	private Q_SLOTS:
 		void onReadyRead();

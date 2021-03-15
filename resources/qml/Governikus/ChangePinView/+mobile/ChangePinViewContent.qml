@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -109,10 +109,7 @@ Item {
 
 				//: LABEL ANDROID_TABLET IOS_TABLET
 				text: qsTr("Six-digit PIN")
-				onClicked: {
-					NumberModel.requestTransportPin = false
-					ChangePinModel.startWorkflow()
-				}
+				onClicked: ChangePinModel.startWorkflow(false)
 			}
 
 			GButton {
@@ -122,10 +119,7 @@ Item {
 
 				//: LABEL ANDROID_TABLET IOS_TABLET
 				text: qsTr("Five-digit Transport PIN")
-				onClicked: {
-					NumberModel.requestTransportPin = true
-					ChangePinModel.startWorkflow()
-				}
+				onClicked: ChangePinModel.startWorkflow(true)
 			}
 
 			GButton {

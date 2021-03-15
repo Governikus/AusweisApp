@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the settings.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -11,6 +11,7 @@
 
 #include <QObject>
 #include <QUrl>
+#include <UIPlugIn.h>
 
 namespace governikus
 {
@@ -35,7 +36,7 @@ class SettingsModel
 	Q_PROPERTY(bool shuffleScreenKeyboard READ isShuffleScreenKeyboard WRITE setShuffleScreenKeyboard NOTIFY fireScreenKeyboardChanged)
 	Q_PROPERTY(bool enableCanAllowed READ isEnableCanAllowed WRITE setEnableCanAllowed NOTIFY fireCanAllowedChanged)
 	Q_PROPERTY(bool skipRightsOnCanAllowed READ isSkipRightsOnCanAllowed WRITE setSkipRightsOnCanAllowed NOTIFY fireCanAllowedChanged)
-	Q_PROPERTY(bool showSetupAssistantOnStart READ isShowSetupAssistantOnStart WRITE setShowSetupAssistantOnStart NOTIFY fireShowSetupAssistantOnStartChanged)
+	Q_PROPERTY(UiModule startupModule READ getStartupModule WRITE setStartupModule NOTIFY fireStartupModuleChanged)
 	Q_PROPERTY(bool autoStartAvailable READ isAutoStartAvailable CONSTANT)
 	Q_PROPERTY(bool autoStartApp READ isAutoStart WRITE setAutoStart NOTIFY fireAutoStartChanged)
 	Q_PROPERTY(bool autoStartSetByAdmin READ autoStartIsSetByAdmin CONSTANT)
@@ -103,8 +104,8 @@ class SettingsModel
 		bool isSkipRightsOnCanAllowed() const;
 		void setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed);
 
-		bool isShowSetupAssistantOnStart() const;
-		void setShowSetupAssistantOnStart(bool pShowSetupAssistantOnStart);
+		UiModule getStartupModule() const;
+		void setStartupModule(UiModule pModule);
 
 		bool isAutoStartAvailable() const;
 		bool isAutoStart() const;
@@ -152,7 +153,7 @@ class SettingsModel
 		void fireHistoryEnabledChanged();
 		void fireScreenKeyboardChanged();
 		void fireCanAllowedChanged();
-		void fireShowSetupAssistantOnStartChanged();
+		void fireStartupModuleChanged();
 		void fireAutoStartChanged();
 		void fireAutoCloseWindowAfterAuthenticationChanged();
 		void fireAutoUpdateCheckChanged();

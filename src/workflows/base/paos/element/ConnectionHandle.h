@@ -1,7 +1,7 @@
 /*!
  * \brief Object hold the paos connection handle.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,11 +30,11 @@ class ConnectionHandle
 		void setContextHandle(const QString& pContextHandle);
 
 	public:
-		const QString& getSlotHandle() const;
-		const QString& getCardApplication() const;
-		const QString& getSlotIndex() const;
-		const QString& getIfdName() const;
-		const QString& getContextHandle() const;
+		[[nodiscard]] const QString& getSlotHandle() const;
+		[[nodiscard]] const QString& getCardApplication() const;
+		[[nodiscard]] const QString& getSlotIndex() const;
+		[[nodiscard]] const QString& getIfdName() const;
+		[[nodiscard]] const QString& getContextHandle() const;
 };
 
 } // namespace governikus

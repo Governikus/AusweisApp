@@ -3,7 +3,7 @@
  * \brief An interface for RemoteHandleImpl, meant to omit the
  * dependency between card_base and remote_device.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -35,15 +35,15 @@ class RemoteDispatcher
 		void onClosed(GlobalStatus::Code pCloseCode);
 
 	protected:
-		const IfdVersion::Version mVersion;
+		IfdVersion::Version mVersion;
 		QString mContextHandle;
 
 	public:
 		explicit RemoteDispatcher(IfdVersion::Version pVersion, const QSharedPointer<DataChannel>& pDataChannel);
-		~RemoteDispatcher();
+		~RemoteDispatcher() override;
 
-		virtual QString getId() const;
-		virtual const QString& getContextHandle() const;
+		[[nodiscard]] virtual QString getId() const;
+		[[nodiscard]] virtual const QString& getContextHandle() const;
 		void saveRemoteNameInSettings(const QString& pName);
 
 		void close();

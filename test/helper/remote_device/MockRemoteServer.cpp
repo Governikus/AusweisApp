@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockRemoteServer.h"
@@ -28,6 +28,7 @@ bool MockRemoteServer::start(const QString& pServerName)
 {
 	Q_UNUSED(pServerName)
 	mRunning = true;
+	Q_EMIT fireIsRunningChanged();
 	return true;
 }
 
@@ -35,6 +36,7 @@ bool MockRemoteServer::start(const QString& pServerName)
 void MockRemoteServer::stop()
 {
 	mRunning = false;
+	Q_EMIT fireIsRunningChanged();
 }
 
 

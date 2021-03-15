@@ -2,7 +2,7 @@
  * \brief Controller for the step that tries to establish a PACE
  *        connection using the card's Pin.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,10 +29,11 @@ class StateEstablishPaceChannel
 
 		PacePasswordId mPasswordId;
 
-		virtual void run() override;
-		virtual void onUserCancelled() override;
+		void run() override;
+		void onUserCancelled() override;
 
 		void abort();
+		void abortToChangePin();
 		void handleNpaPosition(CardReturnCode pReturnCode);
 
 	private Q_SLOTS:

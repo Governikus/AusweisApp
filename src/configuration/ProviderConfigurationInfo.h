@@ -1,7 +1,7 @@
 /*!
  * \brief Class to provide information about providers.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -96,7 +96,7 @@ class ProviderConfigurationInfo
 
 		QSharedDataPointer<InternalInfo> d;
 
-		QString getDefaultFile(const QString& pSuffix) const;
+		[[nodiscard]] QString getDefaultFile(const QString& pSuffix) const;
 
 	public:
 		ProviderConfigurationInfo(const LanguageString& pShortName = QString(),
@@ -116,24 +116,24 @@ class ProviderConfigurationInfo
 		virtual ~ProviderConfigurationInfo();
 
 		bool operator ==(const ProviderConfigurationInfo& pOther) const;
-		bool matchWithSubjectUrl(const QString& pSubjectUrl) const;
+		[[nodiscard]] bool matchWithSubjectUrl(const QString& pSubjectUrl) const;
 
-		const LanguageString& getShortName() const;
-		const LanguageString& getLongName() const;
-		const LanguageString& getShortDescription() const;
-		const LanguageString& getLongDescription() const;
-		const QString& getAddress() const;
-		QString getAddressDomain() const;
-		const QString& getHomepage() const;
-		QString getHomepageBase() const;
-		const QString& getCategory() const;
-		const QString& getPhone() const;
-		const QString& getEMail() const;
-		const QString& getPostalAddress() const;
-		QSharedPointer<UpdatableFile> getIcon() const;
-		QSharedPointer<UpdatableFile> getImage() const;
-		const QStringList& getSubjectUrls() const;
-		const QString& getSubjectUrlInfo() const;
+		[[nodiscard]] const LanguageString& getShortName() const;
+		[[nodiscard]] const LanguageString& getLongName() const;
+		[[nodiscard]] const LanguageString& getShortDescription() const;
+		[[nodiscard]] const LanguageString& getLongDescription() const;
+		[[nodiscard]] const QString& getAddress() const;
+		[[nodiscard]] QString getAddressDomain() const;
+		[[nodiscard]] const QString& getHomepage() const;
+		[[nodiscard]] QString getHomepageBase() const;
+		[[nodiscard]] const QString& getCategory() const;
+		[[nodiscard]] const QString& getPhone() const;
+		[[nodiscard]] const QString& getEMail() const;
+		[[nodiscard]] const QString& getPostalAddress() const;
+		[[nodiscard]] QSharedPointer<UpdatableFile> getIcon() const;
+		[[nodiscard]] QSharedPointer<UpdatableFile> getImage() const;
+		[[nodiscard]] const QStringList& getSubjectUrls() const;
+		[[nodiscard]] const QString& getSubjectUrlInfo() const;
 };
 
 

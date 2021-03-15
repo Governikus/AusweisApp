@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,8 +19,8 @@ class UsbId
 	public:
 		UsbId(unsigned int pVendorId = 0x0, unsigned int pProductId = 0x0);
 
-		unsigned int getVendorId() const;
-		unsigned int getProductId() const;
+		[[nodiscard]] unsigned int getVendorId() const;
+		[[nodiscard]] unsigned int getProductId() const;
 
 		bool operator==(const UsbId& pOther) const;
 };

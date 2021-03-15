@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,6 +23,7 @@ class ReaderScanEnabler
 		bool mObligedToStopScan;
 
 		void enableScan(const bool pEnable);
+		void enableScanIfVisible();
 
 	public:
 		explicit ReaderScanEnabler(QQuickItem* pParent = nullptr);

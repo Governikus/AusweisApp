@@ -1,15 +1,14 @@
 /*
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 
-RowLayout {
+Row {
 	id: baseItem
 
 	property alias showDeleteAll: deleteEntriesButtonImage.visible
@@ -25,10 +24,11 @@ RowLayout {
 	TintableIcon {
 		id: deleteEntriesButtonImage
 
-		sourceSize.height: Style.dimens.small_icon_size
-		sourceSize.width: Style.dimens.small_icon_size
+		anchors.verticalCenter: parent.verticalCenter
+		height: Style.dimens.small_icon_size
 
 		source: "qrc:///images/material_delete.svg"
+		sourceSize.height: height
 		tintColor: Style.color.button_text
 
 		MouseArea {

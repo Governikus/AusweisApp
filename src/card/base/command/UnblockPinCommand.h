@@ -1,7 +1,7 @@
 /*!
  * \brief Command to unblock the PIN of a card.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,8 +23,8 @@ class UnblockPinCommand
 		QByteArray mPuk;
 
 	protected:
-		virtual void internalExecute() override;
-		virtual ~UnblockPinCommand() override = default;
+		void internalExecute() override;
+		~UnblockPinCommand() override = default;
 
 	public:
 		explicit UnblockPinCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, const QByteArray& pPuk);

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SettingsModel.h"
@@ -138,6 +138,7 @@ void SettingsModel::setServerName(const QString& name)
 	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	settings.setServerName(name);
 	settings.save();
+	Q_EMIT fireDeviceNameChanged();
 }
 
 
@@ -285,21 +286,26 @@ void SettingsModel::setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed)
 }
 
 
-bool SettingsModel::isShowSetupAssistantOnStart() const
+UiModule SettingsModel::getStartupModule() const
 {
+	if (mIsStartedByAuth)
+	{
+		return UiModule::IDENTIFY;
+	}
+
 	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	return generalSettings.isShowSetupAssistant() && !mIsStartedByAuth;
+	return Enum<UiModule>::fromString(generalSettings.getStartupModule(), UiModule::TUTORIAL);
 }
 
 
-void SettingsModel::setShowSetupAssistantOnStart(bool pShowSetupAssistantOnStart)
+void SettingsModel::setStartupModule(UiModule pModule)
 {
-	if (isShowSetupAssistantOnStart() != pShowSetupAssistantOnStart)
+	if (getStartupModule() != pModule)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-		settings.setShowSetupAssistant(pShowSetupAssistantOnStart);
+		settings.setStartupModule(Enum<UiModule>::getName(pModule));
 		settings.save();
-		Q_EMIT fireShowSetupAssistantOnStartChanged();
+		Q_EMIT fireStartupModuleChanged();
 	}
 }
 

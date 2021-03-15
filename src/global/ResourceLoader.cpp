@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ResourceLoader.h"
@@ -39,8 +39,8 @@ void ResourceLoader::init()
 		QString path = FileDestination::getPath(file);
 
 #ifndef QT_NO_DEBUG
-		const auto& filePathFromTestDir = QCoreApplication::applicationDirPath() + QStringLiteral("/../../src/") + file;
-		if (!QFile::exists(path) && QFile::exists(filePathFromTestDir))
+		if (const auto& filePathFromTestDir = QCoreApplication::applicationDirPath() + QStringLiteral("/../../src/") + file;
+				!QFile::exists(path) && QFile::exists(filePathFromTestDir))
 		{
 			path = filePathFromTestDir;
 		}

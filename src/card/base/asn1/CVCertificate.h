@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of Card Verifiable Certificate, CVC.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -50,16 +50,16 @@ using CVCertificate = struct cvcertificate_st
 
 	static QVector<QSharedPointer<const cvcertificate_st>> fromHex(const QByteArrayList& pHexByteList);
 	static QSharedPointer<const cvcertificate_st> fromHex(const QByteArray& pHexBytes);
-	QByteArray encode() const;
+	[[nodiscard]] QByteArray encode() const;
 
-	const CVCertificateBody& getBody() const;
-	QByteArray getRawBody() const;
-	const ECDSA_SIG* getEcdsaSignature() const;
-	QByteArray getRawSignature() const;
-	QByteArray getDerSignature() const;
+	[[nodiscard]] const CVCertificateBody& getBody() const;
+	[[nodiscard]] QByteArray getRawBody() const;
+	[[nodiscard]] const ECDSA_SIG* getEcdsaSignature() const;
+	[[nodiscard]] QByteArray getRawSignature() const;
+	[[nodiscard]] QByteArray getDerSignature() const;
 
-	bool isValidOn(const QDateTime& pValidationDate) const;
-	bool isIssuedBy(const cvcertificate_st& pIssuer) const;
+	[[nodiscard]] bool isValidOn(const QDateTime& pValidationDate) const;
+	[[nodiscard]] bool isIssuedBy(const cvcertificate_st& pIssuer) const;
 
 	static int decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt, void* pExarg);
 };

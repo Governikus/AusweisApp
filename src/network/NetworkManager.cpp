@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NetworkManager.h"
@@ -14,7 +14,6 @@
 #include <QCoreApplication>
 #include <QLoggingCategory>
 #include <QNetworkProxyFactory>
-#include <QRegularExpression>
 #include <QStringBuilder>
 
 
@@ -28,8 +27,7 @@ NetworkManager::NetworkManager()
 	: QObject()
 	, mNetAccessManager()
 	, mApplicationExitInProgress(false)
-	, mTrackedConnectionsMutex()
-	, mTrackedConnections(0)
+	, mOpenConnectionCount(0)
 {
 	connect(&mNetAccessManager, &QNetworkAccessManager::proxyAuthenticationRequired, this, &NetworkManager::fireProxyAuthenticationRequired);
 
@@ -44,9 +42,7 @@ NetworkManager::~NetworkManager()
 
 int NetworkManager::getOpenConnectionCount()
 {
-	QMutexLocker locker(&mTrackedConnectionsMutex);
-
-	return mTrackedConnections;
+	return mOpenConnectionCount;
 }
 
 
@@ -249,12 +245,10 @@ void NetworkManager::trackConnection(QNetworkReply* pResponse, const int pTimeou
 
 	if (pResponse)
 	{
-		const QMutexLocker locker(&mTrackedConnectionsMutex);
-		++mTrackedConnections;
+		++mOpenConnectionCount;
 
 		connect(pResponse, &QObject::destroyed, this, [this] {
-					const QMutexLocker lockLambda(&mTrackedConnectionsMutex);
-					--mTrackedConnections;
+					--mOpenConnectionCount;
 				});
 
 		NetworkReplyTimeout::setTimeout(pResponse, pTimeoutInMilliSeconds);
@@ -306,7 +300,7 @@ class NoProxyFactory
 		}
 
 
-		virtual QList<QNetworkProxy> queryProxy(const QNetworkProxyQuery& pInputQuery = QNetworkProxyQuery()) override
+		QList<QNetworkProxy> queryProxy(const QNetworkProxyQuery& pInputQuery = QNetworkProxyQuery()) override
 		{
 			qCDebug(network) << pInputQuery;
 			qCDebug(network) << "Found proxies" << mProxies;
@@ -327,7 +321,7 @@ class SystemProxyFactory
 		}
 
 
-		virtual QList<QNetworkProxy> queryProxy(const QNetworkProxyQuery& pInputQuery = QNetworkProxyQuery()) override
+		QList<QNetworkProxy> queryProxy(const QNetworkProxyQuery& pInputQuery = QNetworkProxyQuery()) override
 		{
 			qCDebug(network) << pInputQuery;
 			QList<QNetworkProxy> proxies = systemProxyForQuery(pInputQuery);
@@ -348,7 +342,7 @@ class CustomProxyFactory
 		}
 
 
-		virtual QList<QNetworkProxy> queryProxy(const QNetworkProxyQuery& pInputQuery = QNetworkProxyQuery()) override
+		QList<QNetworkProxy> queryProxy(const QNetworkProxyQuery& pInputQuery = QNetworkProxyQuery()) override
 		{
 			qCDebug(network) << pInputQuery;
 			const auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();

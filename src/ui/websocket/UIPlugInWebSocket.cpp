@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInWebSocket.h"
@@ -163,7 +163,7 @@ void UIPlugInWebSocket::onClientDisconnected()
 	if (mContext && mUiDomination)
 	{
 		const QSignalBlocker blocker(mJson);
-		Q_EMIT mContext->fireCancelWorkflow();
+		mContext->killWorkflow();
 	}
 
 	mConnection.reset();

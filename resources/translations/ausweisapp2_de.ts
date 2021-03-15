@@ -510,9 +510,9 @@ Wenden Sie sich in diesem Fall bitte an die zuständige Behörde und legen Sie d
         <translation>Kein NFC</translation>
     </message>
     <message>
-        <source>Your mobile device has no NFC interface. This is required to read the ID card.&lt;br&gt;&lt;br&gt;You can find smartphones compatible with the %1 on our website.</source>
+        <source>Your mobile device has no NFC interface. This is required to read the ID card. However, you can use a separate smartphone as card reader to utilize the online identification function.&lt;br&gt;&lt;br&gt;You can find smartphones compatible with the %1 on our website.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ihr Mobilgerät besitzt keine NFC-Schnittstelle. Diese wird zum Auslesen des Ausweises benötigt.&lt;br&gt;&lt;br&gt;Mit der %1 kompatible Smartphones finden Sie auf unserer Website.</translation>
+        <translation>Ihr Mobilgerät besitzt keine NFC-Schnittstelle. Diese wird zum Auslesen des Ausweises benötigt. Sie können die Online-Ausweisfunktion aber mit einem anderen Smartphone als Kartenleser nutzen.&lt;br&gt;&lt;br&gt;Mit der %1 kompatible Smartphones finden Sie auf unserer Website.</translation>
     </message>
     <message>
         <source>No supported card detected</source>
@@ -574,9 +574,9 @@ Wenden Sie sich in diesem Fall bitte an die zuständige Behörde und legen Sie d
         <translation>Öffne Webseite</translation>
     </message>
     <message>
-        <source>No supported ID card was detected. The %1 supports:&lt;p&gt;&lt;ul&gt;&lt;li&gt;German ID cards&lt;/li&gt;&lt;li&gt;Electronic residence permit (eAT)&lt;/li&gt;&lt;li&gt;Union citizen cards&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;If you have used one of the above documents and this error message still appears, please restart the check.&lt;br&gt;&lt;br&gt;Tip: Try a different card position, make sure that you do not move the ID card during the check and that there are no other NFC cards (e.g. credit cards) near the device.</source>
+        <source>No supported ID card was detected. The %1 supports:&lt;p&gt;&lt;ul&gt;&lt;li&gt;German ID cards&lt;/li&gt;&lt;li&gt;Electronic residence permits (eAT)&lt;/li&gt;&lt;li&gt;eID Cards&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;If you have used one of the above documents and this error message still appears, please restart the check.&lt;br&gt;&lt;br&gt;Tip: Try a different card position, make sure that you do not move the ID card during the check and that there are no other NFC cards (e.g. credit cards) near the device.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Es wurde kein unterstützter Ausweis erkannt. Die %1 unterstützt:&lt;p&gt;&lt;ul&gt;&lt;li&gt;deutsche Personalausweise&lt;/li&gt;&lt;li&gt;elektronische Aufenthaltstitel (eAT)&lt;/li&gt;&lt;li&gt;Unionsbürgerkarten&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;Haben Sie eines der genannten Dokumente verwendet und diese Fehlermeldung erscheint dennoch, starten Sie bitte die Prüfung erneut.&lt;br&gt;&lt;br&gt;Tipp: Versuchen Sie eine andere Kartenposition, stellen Sie sicher, dass Sie den Ausweis während der Prüfung nicht bewegen und, dass sich keine anderen NFC-Karten (bspw. Kreditkarten) in der Nähe des Geräts befinden.</translation>
+        <translation>Es wurde kein unterstützter Ausweis erkannt. Die %1 unterstützt:&lt;p&gt;&lt;ul&gt;&lt;li&gt;deutsche Personalausweise&lt;/li&gt;&lt;li&gt;elektronische Aufenthaltstitel (eAT)&lt;/li&gt;&lt;li&gt;eID-Karten&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;Haben Sie eines der genannten Dokumente verwendet und diese Fehlermeldung erscheint dennoch, starten Sie bitte die Prüfung erneut.&lt;br&gt;&lt;br&gt;Tipp: Versuchen Sie eine andere Kartenposition, stellen Sie sicher, dass Sie den Ausweis während der Prüfung nicht bewegen und, dass sich keine anderen NFC-Karten (bspw. Kreditkarten) in der Nähe des Geräts befinden.</translation>
     </message>
     <message>
         <source>Retry</source>
@@ -821,25 +821,11 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
         <translation>Sie möchten sich bei folgendem Anbieter ausweisen:</translation>
     </message>
     <message>
-        <source>Purpose for reading out requested data</source>
-        <extracomment>LABEL DESKTOP_QML
-----------
-LABEL IOS_PHONE ANDROID_PHONE
-----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Zweck des Auslesevorgangs</translation>
-    </message>
-    <message>
         <source>Provider</source>
         <extracomment>LABEL IOS_PHONE ANDROID_PHONE
 ----------
 LABEL ANDROID_TABLET IOS_TABLET</extracomment>
         <translation>Anbieter</translation>
-    </message>
-    <message>
-        <source>more...</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>mehr...</translation>
     </message>
     <message>
         <source>Transactional information</source>
@@ -956,6 +942,18 @@ LABEL IOS_PHONE ANDROID_PHONE
 ----------
 LABEL ANDROID_TABLET IOS_TABLET</extracomment>
         <translation>Lesezugriff (optional)</translation>
+    </message>
+    <message>
+        <source>Details about the provider</source>
+        <extracomment>LABEL DESKTOP_QML
+----------
+LABEL ANDROID_TABLET IOS_TABLET</extracomment>
+        <translation>Details zum Anbieter</translation>
+    </message>
+    <message>
+        <source>Touch for more details</source>
+        <extracomment>LABEL IOS_PHONE ANDROID_PHONE</extracomment>
+        <translation>Tippen Sie hier für mehr Details</translation>
     </message>
 </context>
 <context>
@@ -1920,7 +1918,9 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Release notes</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP_QML
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Release Notes</translation>
     </message>
     <message>
@@ -2084,11 +2084,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Möchten Sie den Einrichtungsassistenten erneut durchführen?</translation>
     </message>
     <message>
-        <source>Release notes</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Release Notes</translation>
-    </message>
-    <message>
         <source>Do you have further questions about %1?</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Haben Sie weitere Fragen zur %1?</translation>
@@ -2097,11 +2092,6 @@ LABEL ANDROID IOS</extracomment>
         <source>Do you need further support?</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Benötigen Sie weitergehende Unterstützung?</translation>
-    </message>
-    <message>
-        <source>Do you want to view the release notes of %1?</source>
-        <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Möchten Sie die Release Notes der %1 ansehen?</translation>
     </message>
 </context>
 <context>
@@ -2154,11 +2144,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Diese Funktion steht auf Ihrem Gerät leider nicht zur Verfügung.</translation>
     </message>
     <message>
-        <source>However, you can use a separate &apos;smartphone as card reader&apos; to utilize the online identification function.</source>
-        <extracomment>INFO ANDROID IOS AA2 can&apos;t use NFC on this device, suggest to use SaK instead.</extracomment>
-        <translation>Sie können die Online-Ausweisfunktion aber mit einem anderen Smartphone als Kartenleser nutzen.</translation>
-    </message>
-    <message>
         <source>NFC is switched off.</source>
         <extracomment>INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.</extracomment>
         <translation>NFC ist nicht aktiv.</translation>
@@ -2176,11 +2161,6 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Establish connection</source>
         <translation>Verbindung wird hergestellt</translation>
-    </message>
-    <message>
-        <source>Your device does not meet the technical requirements (Extended Length not supported). However you can use a separate &apos;smartphone as card reader&apos; to utilize the online identification function.</source>
-        <extracomment>INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a different smartphone is suggested.</extracomment>
-        <translation>Ihr Gerät erfüllt leider nicht die technischen Voraussetzungen (Extended Length). Sie können die Online-Ausweisfunktion aber mit einem anderen Smartphone als Kartenleser nutzen.</translation>
     </message>
     <message>
         <source>Start NFC scan</source>
@@ -2211,6 +2191,16 @@ LABEL ANDROID IOS</extracomment>
         <source>Please place your ID card on the device, the exact position is device dependent. The animations depict possible positions. Keep one position for several seconds before trying another one and do not move the ID card after contact was established.</source>
         <extracomment>INFO ANDROID The ID card may be inserted, the authentication process may be started.</extracomment>
         <translation>Bitte platzieren Sie Ihren Ausweis am Gerät, die genaue Position ist modellabhängig. Die Animationen zeigen Ihnen mögliche Positionen. Halten Sie jede Position einige Sekunden, bevor Sie eine andere ausprobieren und bewegen Sie den Ausweis nicht mehr, sobald der Kontakt hergestellt wurde.</translation>
+    </message>
+    <message>
+        <source>However, you can use a separate smartphone as card reader to utilize the online identification function.</source>
+        <extracomment>INFO ANDROID IOS AA2 can&apos;t use NFC on this device, suggest to use SaK instead.</extracomment>
+        <translation>Sie können die Online-Ausweisfunktion aber mit einem anderen Smartphone als Kartenleser nutzen.</translation>
+    </message>
+    <message>
+        <source>Your device does not meet the technical requirements (Extended Length not supported). However you can use a separate smartphone as card reader to utilize the online identification function.</source>
+        <extracomment>INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a different smartphone is suggested.</extracomment>
+        <translation>Ihr Gerät erfüllt leider nicht die technischen Voraussetzungen (Extended Length). Sie können die Online-Ausweisfunktion aber mit einem anderen Smartphone als Kartenleser nutzen.</translation>
     </message>
 </context>
 <context>
@@ -2570,11 +2560,6 @@ INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.</ext
 <context>
     <name>ProviderInfoSection</name>
     <message>
-        <source>Touch for more details</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Berühren Sie hier für mehr Details</translation>
-    </message>
-    <message>
         <source>See details under &quot;more...&quot;</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
         <translation>Weitere Details unter &quot;mehr...&quot;</translation>
@@ -2740,6 +2725,21 @@ LABEL DESKTOP Text of the button in the proxy credentials popup.</extracomment>
     </message>
 </context>
 <context>
+    <name>ReleaseNotes</name>
+    <message>
+        <source>Retry</source>
+        <extracomment>LABEL DESKTOP_QML
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation>Erneut versuchen</translation>
+    </message>
+    <message>
+        <source>Release notes</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Release Notes</translation>
+    </message>
+</context>
+<context>
     <name>RemoteReaderDelegate</name>
     <message>
         <source>Click to pair</source>
@@ -2876,6 +2876,31 @@ LABEL DESKTOP Text of the button in the proxy credentials popup.</extracomment>
         <source>Go to application settings</source>
         <extracomment>INFO IOS Link to application settings</extracomment>
         <translation>Zu den Anwendungseinstellungen</translation>
+    </message>
+    <message>
+        <source>Remote service not available</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Fernzugriff nicht verfügbar</translation>
+    </message>
+    <message>
+        <source>Waiting for connection</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Warte auf Verbindung</translation>
+    </message>
+    <message>
+        <source>Remote service ready</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Fernzugriff startbereit</translation>
+    </message>
+    <message>
+        <source>WiFi needed</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>WLAN benötigt</translation>
+    </message>
+    <message>
+        <source>NFC needed</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>NFC benötigt</translation>
     </message>
 </context>
 <context>
@@ -3056,7 +3081,23 @@ LABEL DESKTOP Text of the button in the proxy credentials popup.</extracomment>
     <message>
         <source>Send log</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Protokoll versenden</translation>
+        <translation>Protokoll senden</translation>
+    </message>
+    <message>
+        <source>support@ausweisapp.de</source>
+        <translation>support@ausweisapp.de</translation>
+    </message>
+    <message>
+        <source>Show error details</source>
+        <translation>Fehlerdetails anzeigen</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Details</translation>
+    </message>
+    <message>
+        <source>Error code: %1</source>
+        <translation>Fehlercode: %1</translation>
     </message>
 </context>
 <context>
@@ -3611,6 +3652,13 @@ LABEL ALL_PLATFORMS</extracomment>
     </message>
 </context>
 <context>
+    <name>ShareButton</name>
+    <message>
+        <source>Share content</source>
+        <translation>Inhalt teilen</translation>
+    </message>
+</context>
+<context>
     <name>StoreFeedbackPopup</name>
     <message>
         <source>Are you satisfied with AusweisApp2?</source>
@@ -4005,9 +4053,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>sechsstelligen PIN</translation>
     </message>
     <message>
-        <source>Select for this purpose the menu item &quot;Change my (Transport) PIN&quot; from the start page. Later you can also change your six-digit PIN here.</source>
+        <source>Select for this purpose the menu item &quot;Change my (Transport) PIN&quot; from the start page. Later you can also change your six-digit PIN here</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Wählen Sie zu diesem Zweck den Menüeintrag &quot;Meine (Transport-)PIN ändern&quot; auf der Startseite. Später können Sie an dieser Stelle auch Ihre sechsstellige PIN ändern.</translation>
+        <translation>Wählen Sie zu diesem Zweck den Menüeintrag &quot;Meine (Transport-)PIN ändern&quot; auf der Startseite. Später können Sie an dieser Stelle auch Ihre sechsstellige PIN ändern</translation>
     </message>
     <message>
         <source>Please note: The Transport PIN can only be used for your first PIN change. If you have already set your six-digit PIN (e.g. while picking up your ID card) only the set PIN is valid.</source>
@@ -4716,9 +4764,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Warnung - Ihr Betriebssystem wird nicht mehr unterstützt</translation>
     </message>
     <message>
-        <source>Your operating system is no longer supported with version %1 of the %2. Either your system will prevent the installation or the %2 will not start after the installation.</source>
+        <source>Your operating system is no longer officially supported with version %1 of the %2.</source>
         <extracomment>INFO DESKTOP_QML Text of the popup that is shown when the requested update is not compatible with the OS.</extracomment>
-        <translation>Die Unterstützung für Ihr Betriebssystem ist mit der Version %1 der %2 nicht mehr gegeben. Entweder wird Ihr System die Installation verhindern oder die %2 wird nach der Installation nicht mehr starten.</translation>
+        <translation>Die offizielle Unterstützung für Ihr Betriebssystem ist mit der Version %1 der %2 nicht mehr gegeben.</translation>
     </message>
     <message>
         <source>Start anyway</source>
@@ -5043,10 +5091,6 @@ LABEL ALL_PLATFORMS</extracomment>
 <context>
     <name>governikus::ApplicationModel</name>
     <message>
-        <source>Please enable Wi-Fi in your system settings.</source>
-        <translation>Bitte aktivieren Sie WLAN in Ihren Systemeinstellungen.</translation>
-    </message>
-    <message>
         <source>Could not load license text.</source>
         <translation>Konnte Lizenztext nicht laden.</translation>
     </message>
@@ -5066,9 +5110,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>unbekannter Typ</translation>
     </message>
     <message>
-        <source>ID card (PA/eAT)</source>
+        <source>ID card (PA/eAT/eID)</source>
         <extracomment>ERROR ALL_PLATFORMS An ID card is present/inserted. The text is only used in DiagnosisView.</extracomment>
-        <translation>Ausweis (PA/eAT)</translation>
+        <translation>Ausweis (PA/eAT/eID)</translation>
     </message>
     <message>
         <source>Passport</source>
@@ -5831,6 +5875,11 @@ LABEL ALL_PLATFORMS</extracomment>
         <extracomment>ERROR_MASKED ALL_PLATFORMS</extracomment>
         <translation>Die URL in der Zertifikatsbeschreibung und die TCToken-URL erfüllen die Same-Origin-Policy nicht.</translation>
     </message>
+    <message>
+        <source>The validity verification of the card failed.</source>
+        <extracomment>ERROR ALL_PLATFORMS The validity verification of the card failed.</extracomment>
+        <translation>Die Gültigkeitsprüfung der Karte ist fehlgeschlagen.</translation>
+    </message>
 </context>
 <context>
     <name>governikus::HistoryModelSearchFilter</name>
@@ -5879,8 +5928,8 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Anwendungsprotokoll teilen...</translation>
     </message>
     <message>
-        <source>support.ausweisapp2@governikus.de</source>
-        <translation>support.ausweisapp2@governikus.de</translation>
+        <source>support@ausweisapp.de</source>
+        <translation>support@ausweisapp.de</translation>
     </message>
     <message>
         <source>&lt;Please describe the error&gt;</source>
@@ -6167,6 +6216,13 @@ LABEL ALL_PLATFORMS</extracomment>
         <source>The list of card readers was last updated at %1.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Die Liste der Kartenleser wurde zuletzt um %1 aktualisiert.</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::ReleaseInformationModel</name>
+    <message>
+        <source>No release information present, make sure you are connected to the internet.</source>
+        <translation>Es wurden keine Release-Informationen gefunden, bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind.</translation>
     </message>
 </context>
 <context>
@@ -6595,7 +6651,6 @@ LABEL ALL_PLATFORMS</extracomment>
     <name>governikus::WorkflowModel</name>
     <message>
         <source>AusweisApp2 error report - %1</source>
-        <extracomment>Subject from error report mail</extracomment>
         <translation>AusweisApp2 Fehlerbericht - %1</translation>
     </message>
 </context>

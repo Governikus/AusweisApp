@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManager.h"
@@ -84,6 +84,23 @@ void ReaderManager::init()
 }
 
 
+void ReaderManager::reset(ReaderManagerPlugInType pType)
+{
+	const QMutexLocker mutexLocker(&mMutex);
+
+	if (!mThread.isRunning())
+	{
+		qCWarning(card) << "Cannot reset a plugin if ReaderManager-Thread is not active";
+		return;
+	}
+
+	Q_ASSERT(mWorker);
+	QMetaObject::invokeMethod(mWorker.data(), [this, pType] {
+				mWorker->reset(pType);
+			}, Qt::QueuedConnection);
+}
+
+
 void ReaderManager::shutdown()
 {
 	const QMutexLocker mutexLocker(&mMutex);
@@ -99,6 +116,7 @@ void ReaderManager::shutdown()
 		mThread.quit();
 		mThread.wait(5000);
 		mReaderInfoCache.clear();
+		mPlugInInfoCache.clear();
 		qCDebug(card).noquote() << mThread.objectName() << "stopped:" << !mThread.isRunning();
 	}
 }
@@ -123,10 +141,9 @@ void ReaderManager::startScan(ReaderManagerPlugInType pType, bool pAutoConnect)
 
 void ReaderManager::startScanAll(bool pAutoConnect)
 {
-	const auto list = Enum<ReaderManagerPlugInType>::getList();
-	for (const auto& plugInType : list)
+	for (const auto& entry : qAsConst(mPlugInInfoCache))
 	{
-		startScan(plugInType, pAutoConnect);
+		startScan(entry.getPlugInType(), pAutoConnect);
 	}
 }
 
@@ -150,10 +167,9 @@ void ReaderManager::stopScan(ReaderManagerPlugInType pType, const QString& pErro
 
 void ReaderManager::stopScanAll(const QString& pError)
 {
-	const auto list = Enum<ReaderManagerPlugInType>::getList();
-	for (const auto& plugInType : list)
+	for (const auto& entry : qAsConst(mPlugInInfoCache))
 	{
-		stopScan(plugInType, pError);
+		stopScan(entry.getPlugInType(), pError);
 	}
 }
 
@@ -191,8 +207,12 @@ QVector<ReaderManagerPlugInInfo> ReaderManager::getPlugInInfos() const
 	Q_ASSERT(mThread.isRunning() || mThread.isFinished());
 	const QMutexLocker mutexLocker(&mMutex);
 
-	QVector<ReaderManagerPlugInInfo> list;
-	QMetaObject::invokeMethod(mWorker.data(), &ReaderManagerWorker::getPlugInInfos, Qt::BlockingQueuedConnection, &list);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+	const auto& list = mPlugInInfoCache.values();
+#else
+	const auto& list = mPlugInInfoCache.values().toVector(); // clazy:exclude=container-anti-pattern
+#endif
+
 	return list;
 }
 
@@ -222,6 +242,8 @@ void ReaderManager::doFullUpdateCache(const ReaderManagerPlugInInfo& pInfo)
 
 	if (mWorker)
 	{
+		mPlugInInfoCache.insert(pInfo.getPlugInType(), pInfo);
+
 		QVector<ReaderInfo> list;
 		QMetaObject::invokeMethod(mWorker.data(), [this] {
 					return mWorker->getReaderInfos();
@@ -232,6 +254,10 @@ void ReaderManager::doFullUpdateCache(const ReaderManagerPlugInInfo& pInfo)
 			qCDebug(card) << "Update cache entry:" << info.getName();
 			mReaderInfoCache.insert(info.getName(), info);
 		}
+	}
+	else
+	{
+		mPlugInInfoCache.clear();
 	}
 }
 

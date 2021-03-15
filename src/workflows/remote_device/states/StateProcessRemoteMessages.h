@@ -2,7 +2,7 @@
  * \brief This state allows the processing of ordenary remote messages in the
  * background and handles special PACE messages.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,7 +30,7 @@ class StateProcessRemoteMessages
 		QVector<QMetaObject::Connection> mMessageConnections;
 
 		explicit StateProcessRemoteMessages(const QSharedPointer<WorkflowContext>& pContext);
-		virtual void run() override;
+		void run() override;
 
 	private Q_SLOTS:
 		void onMessageHandlerAdded(const QSharedPointer<ServerMessageHandler>& pHandler);
@@ -41,10 +41,11 @@ class StateProcessRemoteMessages
 		void onEstablishPaceChannel(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage, const QSharedPointer<CardConnection>& pConnection);
 
 	protected:
+		void onEntry(QEvent* pEvent) override;
 		void onExit(QEvent* pEvent) override;
 
 	public:
-		virtual ~StateProcessRemoteMessages() override;
+		~StateProcessRemoteMessages() override;
 
 	Q_SIGNALS:
 		void fireEstablishPaceChannel();

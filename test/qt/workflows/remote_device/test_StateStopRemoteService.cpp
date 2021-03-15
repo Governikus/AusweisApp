@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateStopRemoteService.h"
@@ -50,7 +50,7 @@ class test_StateStopRemoteService
 			QSignalSpy spyContinue(mState.data(), &StateStopRemoteService::fireContinue);
 			mState->onEntry(nullptr);
 			mContext->setStateApproved();
-			QCOMPARE(spyContinue.count(), 1);
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

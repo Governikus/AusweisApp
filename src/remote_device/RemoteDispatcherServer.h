@@ -1,7 +1,7 @@
 /*!
  * \brief Class that dispatches incoming and outgoing remote messages.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,7 +18,7 @@ class RemoteDispatcherServer
 
 	private:
 		void createAndSendContext(const QJsonObject& pMessageObject);
-		virtual bool processContext(RemoteCardMessageType pMsgType, const QJsonObject& pMsgObject) override;
+		bool processContext(RemoteCardMessageType pMsgType, const QJsonObject& pMsgObject) override;
 
 	public:
 		explicit RemoteDispatcherServer(const QSharedPointer<DataChannel>& pDataChannel);

@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of card object for PC/SC
  *  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -46,19 +46,19 @@ class PcscCard
 
 	public:
 		explicit PcscCard(PcscReader* pPcscReader);
-		virtual ~PcscCard() override;
+		~PcscCard() override;
 
-		virtual CardReturnCode connect() override;
-		virtual CardReturnCode disconnect() override;
-		virtual bool isConnected() override;
+		CardReturnCode connect() override;
+		CardReturnCode disconnect() override;
+		bool isConnected() override;
 
-		virtual ResponseApduResult transmit(const CommandApdu& pCmd) override;
+		ResponseApduResult transmit(const CommandApdu& pCmd) override;
 
-		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds) override;
+		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds) override;
 
-		virtual CardReturnCode destroyPaceChannel() override;
+		CardReturnCode destroyPaceChannel() override;
 
-		virtual ResponseApduResult setEidPin(quint8 pTimeoutSeconds) override;
+		ResponseApduResult setEidPin(quint8 pTimeoutSeconds) override;
 };
 
 } // namespace governikus

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerCertificate
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerCertificate.h"
@@ -33,7 +33,7 @@ class test_MsgHandlerCertificate
 		{
 			MessageDispatcher dispatcher;
 
-			QByteArray msg = QByteArray("{\"cmd\": \"GET_CERTIFICATE\"}");
+			QByteArray msg = QByteArray(R"({"cmd": "GET_CERTIFICATE"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"GET_CERTIFICATE\",\"msg\":\"BAD_STATE\"}"));
 
 			dispatcher.init(getContext());
@@ -49,7 +49,7 @@ class test_MsgHandlerCertificate
 			dispatcher.init(context);
 
 			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
-			QByteArray msg = "{\"cmd\": \"GET_CERTIFICATE\"}";
+			QByteArray msg = R"({"cmd": "GET_CERTIFICATE"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"description\":{\"issuerName\":\"Governikus Test DVCA\",\"issuerUrl\":\"http://www.governikus.de\",\"purpose\":\"\",\"subjectName\":\"Governikus GmbH & Co. KG\",\"subjectUrl\":\"https://test.governikus-eid.de\",\"termsOfUsage\":\"Name, Anschrift und E-Mail-Adresse des Diensteanbieters:\\r\\nGovernikus GmbH & Co. KG\\r\\nHochschulring 4\\r\\n28359 Bremen\\r\\nE-Mail: kontakt@governikus.de\\t\"},\"msg\":\"CERTIFICATE\",\"validity\":{\"effectiveDate\":\"2020-05-21\",\"expirationDate\":\"2020-06-20\"}}"));
 		}
 

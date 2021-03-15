@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,7 +33,7 @@ class AppUpdater
 		static QCryptographicHash::Algorithm getHashAlgo(const QByteArray& pAlgo);
 
 		AppUpdater();
-		virtual ~AppUpdater() = default;
+		~AppUpdater() override = default;
 
 		void clearDownloaderConnection();
 		bool download(const QUrl& pUrl);
@@ -43,11 +43,11 @@ class AppUpdater
 		bool abortDownload();
 		bool downloadUpdate();
 		bool checkAppUpdate(bool pForceUpdate = false);
-		const AppUpdateData& getUpdateData() const;
+		[[nodiscard]] const AppUpdateData& getUpdateData() const;
 		void skipVersion(const QString& pVersion);
 
 #ifndef QT_NO_DEBUG
-		QString getDownloadPath() const;
+		[[nodiscard]] QString getDownloadPath() const;
 		void setDownloadPath(const QString& pPath);
 #endif
 

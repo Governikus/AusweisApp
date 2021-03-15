@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDispatcher.h"
@@ -7,6 +7,7 @@
 #include "AppSettings.h"
 #include "Initializer.h"
 #include "messages/IfdError.h"
+#include "messages/IfdVersion.h"
 
 #include <QLoggingCategory>
 
@@ -119,7 +120,7 @@ void RemoteDispatcher::send(const QSharedPointer<const RemoteMessage>& pMessage)
 			|| messageType == RemoteCardMessageType::IFDEstablishContext
 			|| messageType == RemoteCardMessageType::IFDEstablishContextResponse);
 
-	mDataChannel->send(pMessage->toByteArray(mContextHandle));
+	mDataChannel->send(pMessage->toByteArray(mVersion, mContextHandle));
 }
 
 

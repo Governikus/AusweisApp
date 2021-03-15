@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteReaderManagerPlugIn
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "plugin/RemoteReaderManagerPlugIn.h"
@@ -41,13 +41,13 @@ class MockRemoteClient
 
 	public:
 		MockRemoteClient() = default;
-		virtual ~MockRemoteClient() override = default;
+		~MockRemoteClient() override = default;
 
-		virtual void startDetection() override;
-		virtual void stopDetection() override;
-		virtual bool isDetecting() override;
-		virtual void establishConnection(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const QString& pPsk) override;
-		virtual QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
+		void startDetection() override;
+		void stopDetection() override;
+		bool isDetecting() override;
+		void establishConnection(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const QString& pPsk) override;
+		QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
 };
 
 
@@ -492,12 +492,12 @@ class test_RemoteReaderManagerPlugIn
 			spySend.clear();
 
 			const QVector<QSharedPointer<const RemoteMessage> > clientMessages({
-						QSharedPointer<const RemoteMessage>(new IfdEstablishContext(IfdVersion::Version::v0, "MAC-MINI")),
+						QSharedPointer<const RemoteMessage>(new IfdEstablishContext(IfdVersion::Version::latest, "MAC-MINI")),
 						QSharedPointer<const RemoteMessage>(new IfdGetStatus("Remote Reader")),
 						QSharedPointer<const RemoteMessage>(new IfdConnect("NFC Reader")),
 						QSharedPointer<const RemoteMessage>(new IfdDisconnect("NFC Reader")),
 						QSharedPointer<const RemoteMessage>(new IfdTransmit("NFC Reader", "00A402022F00")),
-						QSharedPointer<const RemoteMessage>(new IfdEstablishPaceChannel("NFC Reader", "abcd1234"))
+						QSharedPointer<const RemoteMessage>(new IfdEstablishPaceChannel("SlotHandle", EstablishPaceChannel(), 6))
 					}
 					);
 			for (const auto& clientMessage : clientMessages)

@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the providers.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -57,7 +57,7 @@ class ProviderModel
 		};
 
 		explicit ProviderModel(QObject* pParent = nullptr);
-		virtual ~ProviderModel() override;
+		~ProviderModel() override;
 
 		int rowCount(const QModelIndex&) const override;
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;

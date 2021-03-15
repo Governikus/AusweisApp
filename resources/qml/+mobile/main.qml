@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -13,6 +13,7 @@ import Governikus.FeedbackView 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
 import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.UiModule 1.0
 import Governikus.Style 1.0
 
 ApplicationWindow {
@@ -51,7 +52,7 @@ ApplicationWindow {
 		close.accepted = false
 
 		if (contentArea.visibleItem) {
-			if (contentArea.state === "main" || SettingsModel.showSetupAssistantOnStart) {
+			if (contentArea.activeModule === UiModule.DEFAULT || SettingsModel.startupModule === UiModule.TUTORIAL) {
 				var currentTime = new Date().getTime();
 				if (currentTime - d.lastCloseInvocation < 1000) {
 					plugin.fireQuitApplicationRequest()
@@ -70,8 +71,8 @@ ApplicationWindow {
 
 			if (activeStackView.depth <= 1
 					&& (!navigationAction || navigationAction.state !== "cancel")
-					&& contentArea.state !== "provider") {
-				navBar.showMain()
+					&& contentArea.activeModule !== UiModule.PROVIDER) {
+				navBar.show(UiModule.DEFAULT)
 			} else if (navigationAction) {
 				navigationAction.clicked(undefined)
 			}
@@ -113,6 +114,8 @@ ApplicationWindow {
 			top: parent.top
 			right: parent.right
 			bottom: navBar.top
+			leftMargin: plugin.safeAreaMargins.left
+			rightMargin: plugin.safeAreaMargins.right
 			bottomMargin: (
 				currentSectionPage && currentSectionPage.automaticSafeAreaMarginHandling && navBar.lockedAndHidden
 			) ? plugin.safeAreaMargins.bottom : 0
@@ -123,14 +126,8 @@ ApplicationWindow {
 			}
 		}
 
-		state: navBar.state
-		onReadyChanged: {
-			if (!ApplicationModel.currentWorkflow && !SettingsModel.showSetupAssistantOnStart) {
-				navBar.lockedAndHidden = false
-			}
-
-			feedback.showIfNecessary()
-		}
+		activeModule: navBar.activeModule
+		onReadyChanged: feedback.showIfNecessary()
 	}
 
 	Navigation {

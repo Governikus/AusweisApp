@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -17,11 +17,9 @@ SectionPage {
 	property var controller
 	property var workflowModel
 	property string workflowTitle
-	property int waitingFor: 0
 
 	navigationAction: NavigationAction {
-		enabled: baseItem.waitingFor !== Workflow.WaitingFor.Password
-		state: enabled ? "cancel" : ""
+		state: "cancel"
 		onClicked: workflowModel.cancelWorkflow()
 	}
 	title: workflowTitle

@@ -2,12 +2,13 @@
  * \brief Class holding information about an Android device to be sent to
  * the whitelist server.
  *
- * \copyright Copyright (c) 2019-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include <QAbstractListModel>
+#include <QNetworkReply>
 #include <QObject>
 #include <QPair>
 #include <QString>
@@ -35,6 +36,7 @@ class SurveyModel
 		const QString mAusweisAppVersionNumber;
 
 		QVector<QPair<QString, QString>> mData;
+		QSharedPointer<QNetworkReply> mReply;
 
 		enum UserRoles
 		{
@@ -43,19 +45,24 @@ class SurveyModel
 		};
 
 		SurveyModel();
-		virtual ~SurveyModel() override = default;
+		~SurveyModel() override = default;
 
 		void buildDataObject();
-		QByteArray toJsonByteArray() const;
+		[[nodiscard]] QByteArray toJsonByteArray() const;
+
+	private Q_SLOTS:
+		void onSslErrors(const QList<QSslError>& pErrors);
+		void onSslHandshakeDone();
+		void onNetworkReplyFinished();
 
 	public:
-		int rowCount(const QModelIndex& = QModelIndex()) const override;
-		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
-		QHash<int, QByteArray> roleNames() const override;
+		[[nodiscard]] int rowCount(const QModelIndex& = QModelIndex()) const override;
+		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
+		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
 		void setMaximumNfcPacketLength(int pMaximumNfcPacketLength);
 
-		void transmitSurvey() const;
+		void transmitSurvey();
 };
 
 } // namespace governikus

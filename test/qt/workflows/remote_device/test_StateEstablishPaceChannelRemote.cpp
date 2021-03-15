@@ -1,11 +1,10 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateEstablishPaceChannelRemote.h"
 
 #include "context/AuthContext.h"
-#include "EstablishPaceChannelParser.h"
 
 #include "MockCardConnectionWorker.h"
 #include "MockRemoteServer.h"
@@ -95,8 +94,8 @@ class test_StateEstablishPaceChannelRemote
 
 		void test_RunNoCardConnection()
 		{
-			const QSharedPointer<IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel("NFC Reader", "abc"));
-			mContext->setEstablishPaceChannelMessage(message);
+			const QSharedPointer<IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel("SlotHandle", EstablishPaceChannel(), 6));
+			mContext->setEstablishPaceChannel(message);
 			QSignalSpy spy(mState.data(), &StateEstablishPaceChannelRemote::fireContinue);
 
 			mState->run();
@@ -106,8 +105,9 @@ class test_StateEstablishPaceChannelRemote
 
 		void test_Run()
 		{
-			const QSharedPointer<IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel("NFC Reader", "input"));
-			mContext->setEstablishPaceChannelMessage(message);
+			EstablishPaceChannel establishPaceChannel(PacePasswordId::PACE_PIN);
+			const QSharedPointer<IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel("SlotHandle", establishPaceChannel, 6));
+			mContext->setEstablishPaceChannel(message);
 			mWorker->moveToThread(&mThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(mWorker));
 			mContext->setCardConnection(connection);

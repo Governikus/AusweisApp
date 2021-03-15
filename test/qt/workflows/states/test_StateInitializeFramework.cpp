@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateBuilder.h"
@@ -34,7 +34,7 @@ class test_StateInitializeFramework
 			mAuthContext->setInitializeFramework(QSharedPointer<InitializeFramework>(new InitializeFramework(fileContent)));
 
 			mState.reset(StateBuilder::createState<StateInitializeFramework>(mAuthContext));
-			connect(this, &test_StateInitializeFramework::fireStateStart, mState.data(), &AbstractState::onEntry);
+			mState->onEntry(nullptr);
 		}
 
 
@@ -42,10 +42,9 @@ class test_StateInitializeFramework
 		{
 			QSignalSpy spy(mState.data(), &StateInitializeFramework::fireContinue);
 
-			Q_EMIT fireStateStart(nullptr);
 			mAuthContext->setStateApproved();
 
-			QCOMPARE(spy.count(), 1);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

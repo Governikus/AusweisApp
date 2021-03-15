@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -11,6 +11,7 @@ import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.AuthModel 1.0
+import Governikus.Type.UiModule 1.0
 
 SectionPage {
 	id: sectionPage
@@ -40,7 +41,7 @@ SectionPage {
 			title: qsTr("Check device and ID card")
 			image: "qrc:///images/mobile/device.svg"
 
-			onClicked: navBar.showCheckIDCard()
+			onClicked: navBar.show(UiModule.CHECK_ID_CARD)
 		}
 
 		Tile {
@@ -52,7 +53,7 @@ SectionPage {
 			title: qsTr("Change my (Transport) PIN")
 			image: "qrc:///images/material_lock.svg"
 
-			onClicked: navBar.showPin()
+			onClicked: navBar.show(UiModule.PINMANAGEMENT)
 		}
 
 		Tile {
@@ -64,7 +65,7 @@ SectionPage {
 			title: qsTr("See my personal data")
 			image: "qrc:///images/mydata.svg"
 
-			onClicked: navBar.showIdentify()
+			onClicked: navBar.show(UiModule.IDENTIFY)
 		}
 
 		Tile {
@@ -76,7 +77,7 @@ SectionPage {
 			title: qsTr("Provider")
 			image: "qrc:///images/provider.svg"
 
-			onClicked: navBar.showProvider()
+			onClicked: navBar.show(UiModule.PROVIDER)
 		}
 	}
 }

@@ -3,7 +3,8 @@ Allgemeines
 
 Die AusweisApp2 ist eine Software, die Sie auf Ihrem Computer installieren, um sich
 mit Ihrem Personalausweis bzw. Ihrem elektronischen Aufenthaltstitel oder Ihrer
-Unionsbürgerkarte online auszuweisen.
+eID-Karte für Unionsbürger und Angehörige des Europäischen Wirtschaftsraums
+(nachfolgend eID-Karte genannt) online auszuweisen.
 
 Für die Nutzung der Online-Ausweisfunktion benötigen die Nutzerinnen und Nutzer eine
 Software, mit deren Hilfe eine sichere Verbindung zwischen Kartenleser oder Smartphone,

@@ -1,7 +1,7 @@
 /*!
  * \brief CardConnectionWorker mock for tests
  *
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,19 +30,19 @@ class MockCardConnectionWorker
 
 	public:
 		explicit MockCardConnectionWorker(Reader* pReader = new MockReader());
-		virtual ~MockCardConnectionWorker() override;
+		~MockCardConnectionWorker() override;
 
 		void addResponse(CardReturnCode pCode, const QByteArray& pData = QByteArray());
 		void addPaceCode(CardReturnCode pCode);
 
-		virtual ResponseApduResult transmit(const CommandApdu& pCommandApdu) override;
-		virtual CardReturnCode updateRetryCounter() override;
-		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId,
+		ResponseApduResult transmit(const CommandApdu& pCommandApdu) override;
+		CardReturnCode updateRetryCounter() override;
+		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId,
 				const QByteArray& pPasswordValue,
 				const QByteArray& pChat,
 				const QByteArray& pCertificateDescription) override;
-		virtual CardReturnCode destroyPaceChannel() override;
-		virtual ResponseApduResult setEidPin(const QByteArray& pNewPin, quint8 pTimeoutSeconds) override;
+		CardReturnCode destroyPaceChannel() override;
+		ResponseApduResult setEidPin(const QByteArray& pNewPin, quint8 pTimeoutSeconds) override;
 };
 
 } // namespace governikus

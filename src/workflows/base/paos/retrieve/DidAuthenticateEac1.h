@@ -1,7 +1,7 @@
 /*!
  * \brief Class represents the retrieved PAOS EAC1InputType.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -38,18 +38,18 @@ class DIDAuthenticateEAC1
 
 	public:
 		DIDAuthenticateEAC1();
-		virtual ~DIDAuthenticateEAC1();
+		~DIDAuthenticateEAC1() override;
 
-		const QSharedPointer<const AuthenticatedAuxiliaryData>& getAuthenticatedAuxiliaryData() const;
-		const QByteArray& getAuthenticatedAuxiliaryDataAsBinary() const;
-		const QSharedPointer<const CertificateDescription>& getCertificateDescription() const;
-		const QByteArray& getCertificateDescriptionAsBinary() const;
-		const ConnectionHandle& getConnectionHandle() const;
-		const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
-		const QString& getDidName() const;
-		const QSharedPointer<const CHAT>& getOptionalChat() const;
-		const QSharedPointer<const CHAT>& getRequiredChat() const;
-		const QString& getTransactionInfo() const;
+		[[nodiscard]] const QSharedPointer<const AuthenticatedAuxiliaryData>& getAuthenticatedAuxiliaryData() const;
+		[[nodiscard]] const QByteArray& getAuthenticatedAuxiliaryDataAsBinary() const;
+		[[nodiscard]] const QSharedPointer<const CertificateDescription>& getCertificateDescription() const;
+		[[nodiscard]] const QByteArray& getCertificateDescriptionAsBinary() const;
+		[[nodiscard]] const ConnectionHandle& getConnectionHandle() const;
+		[[nodiscard]] const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
+		[[nodiscard]] const QString& getDidName() const;
+		[[nodiscard]] const QSharedPointer<const CHAT>& getOptionalChat() const;
+		[[nodiscard]] const QSharedPointer<const CHAT>& getRequiredChat() const;
+		[[nodiscard]] const QString& getTransactionInfo() const;
 };
 
 } // namespace governikus

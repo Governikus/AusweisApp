@@ -1,7 +1,7 @@
 /*!
  * \brief Process received transmits. Send it to the card and create a response.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,7 +24,7 @@ class StateTransmit
 	friend class StateBuilder;
 
 	explicit StateTransmit(const QSharedPointer<WorkflowContext>& pContext);
-	virtual void run() override;
+	void run() override;
 
 	private Q_SLOTS:
 		friend class ::test_StateTransmit;

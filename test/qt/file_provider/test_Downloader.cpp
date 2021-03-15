@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for class \ref Downloader
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Downloader.h"
@@ -200,7 +200,7 @@ class test_Downloader
 
 			const QUrl url("http://server/reader/icons/icon.png");
 			const QDateTime timestampInCache(QDate(2017, 6, 1), QTime(12, 00, 0, 0));
-			downloader->downloadIfNew(url, timestampInCache);
+			downloader->download(url, timestampInCache);
 
 			mMockNetworkManager.fireFinished();
 
@@ -225,7 +225,7 @@ class test_Downloader
 
 			const QUrl url("http://server/reader/icons/icon.png");
 			const QDateTime timestampInCache(QDate(2017, 7, 1), QTime(12, 00, 0, 0));
-			downloader->downloadIfNew(url, timestampInCache);
+			downloader->download(url, timestampInCache);
 
 			mMockNetworkManager.fireFinished();
 

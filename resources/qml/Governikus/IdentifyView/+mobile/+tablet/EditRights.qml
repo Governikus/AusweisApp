@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -46,61 +46,41 @@ SectionPage {
 					right: parent.right
 				}
 
-				color: mouseArea.pressed ? Style.color.background_pane_active : Style.color.background_pane
+				ProviderInfoSection {
+					imageSource: "qrc:///images/provider/information.svg"
+					//: LABEL ANDROID_TABLET IOS_TABLET
+					title: qsTr("Provider")
+					name: CertificateDescriptionModel.subjectName
+				}
 
 				Item {
 					width: parent.width
-					height: providerEntries.height
+					height: Math.max(detailsButton.height, confirmButton.height)
 
-					Accessible.description: qsTr("Click for more information about the provider")
-					Accessible.onPressAction: mouseArea.clicked(null)
+					GButton {
+						id: detailsButton
 
-					Column {
-						id: providerEntries
-						anchors.top: parent.top
-						anchors.left: parent.left
-						anchors.right: confirmButton.left
-						spacing: Constants.pane_spacing
-
-						ProviderInfoSection {
-							imageSource: "qrc:///images/provider/information.svg"
-							//: LABEL ANDROID_TABLET IOS_TABLET
-							title: qsTr("Provider")
-							name: CertificateDescriptionModel.subjectName
+						anchors {
+							left: parent.left
+							verticalCenter: parent.verticalCenter
 						}
-						ProviderInfoSection {
-							imageSource: "qrc:///images/provider/purpose.svg"
-							//: LABEL ANDROID_TABLET IOS_TABLET
-							title: qsTr("Purpose for reading out requested data")
-							name: CertificateDescriptionModel.purpose
-						}
-					}
 
-					TintableIcon {
-						id: forwardAction
+						activeFocusOnTab: true
+						Accessible.description: qsTr("Show more information about the service provider")
 
-						anchors.right: parent.right
-						anchors.verticalCenter: parent.verticalCenter
-
-						sourceSize.height: Style.dimens.small_icon_size
-						source: "qrc:///images/mobile/material_arrow_right.svg"
-						tintColor: Style.color.secondary_text
-					}
-
-					MouseArea {
-						id: mouseArea
-
-						anchors.fill: parent
-
+						//: LABEL ANDROID_TABLET IOS_TABLET
+						text: qsTr("Details about the provider")
 						onClicked: firePush(certificateDescriptionPage)
+						icon.source: "qrc:///images/info.svg"
 					}
 
 					GButton {
 						id: confirmButton
 
-						anchors.right: forwardAction.left
-						anchors.verticalCenter: parent.verticalCenter
-						anchors.margins: Constants.component_spacing
+						anchors {
+							right: parent.right
+							verticalCenter: parent.verticalCenter
+						}
 
 						//: LABEL ANDROID_TABLET IOS_TABLET %1 can be "CAN" or "PIN"
 						text: qsTr("Proceed to %1 entry").arg(

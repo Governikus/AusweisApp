@@ -4,7 +4,7 @@
  *        We cannot parameterize the super class AbstractState because Qt does not
  *        support template classes.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,10 +29,10 @@ class ReaderInfo
 				ReaderManagerPlugInType pPlugInType = ReaderManagerPlugInType::UNKNOWN,
 				const CardInfo& pCardInfo = CardInfo(CardType::NONE));
 
-		ReaderConfigurationInfo getReaderConfigurationInfo() const;
+		[[nodiscard]] ReaderConfigurationInfo getReaderConfigurationInfo() const;
 
 
-		ReaderManagerPlugInType getPlugInType() const
+		[[nodiscard]] ReaderManagerPlugInType getPlugInType() const
 		{
 			return mPlugInType;
 		}
@@ -44,55 +44,55 @@ class ReaderInfo
 		}
 
 
-		const CardInfo& getCardInfo() const
+		[[nodiscard]] const CardInfo& getCardInfo() const
 		{
 			return mCardInfo;
 		}
 
 
-		QString getCardTypeString() const
+		[[nodiscard]] QString getCardTypeString() const
 		{
 			return mCardInfo.getCardTypeString();
 		}
 
 
-		bool hasCard() const
+		[[nodiscard]] bool hasCard() const
 		{
 			return mCardInfo.isAvailable();
 		}
 
 
-		bool hasEidCard() const
+		[[nodiscard]] bool hasEidCard() const
 		{
 			return mCardInfo.isEid();
 		}
 
 
-		bool hasPassport() const
+		[[nodiscard]] bool hasPassport() const
 		{
 			return mCardInfo.isPassport();
 		}
 
 
-		int getRetryCounter() const
+		[[nodiscard]] int getRetryCounter() const
 		{
 			return mCardInfo.getRetryCounter();
 		}
 
 
-		bool isRetryCounterDetermined() const
+		[[nodiscard]] bool isRetryCounterDetermined() const
 		{
 			return mCardInfo.isRetryCounterDetermined();
 		}
 
 
-		bool isPinDeactivated() const
+		[[nodiscard]] bool isPinDeactivated() const
 		{
 			return mCardInfo.isPinDeactivated();
 		}
 
 
-		bool isPukInoperative() const
+		[[nodiscard]] bool isPukInoperative() const
 		{
 			return mCardInfo.isPukInoperative();
 		}
@@ -104,7 +104,7 @@ class ReaderInfo
 		}
 
 
-		const QString& getName() const
+		[[nodiscard]] const QString& getName() const
 		{
 			return mName;
 		}
@@ -116,13 +116,13 @@ class ReaderInfo
 		}
 
 
-		bool isBasicReader() const
+		[[nodiscard]] bool isBasicReader() const
 		{
 			return mBasicReader;
 		}
 
 
-		bool isConnected() const
+		[[nodiscard]] bool isConnected() const
 		{
 			return mConnected;
 		}
@@ -140,13 +140,13 @@ class ReaderInfo
 		}
 
 
-		int getMaxApduLength() const
+		[[nodiscard]] int getMaxApduLength() const
 		{
 			return mMaxApduLength;
 		}
 
 
-		bool sufficientApduLength() const
+		[[nodiscard]] bool sufficientApduLength() const
 		{
 			return mMaxApduLength == -1 || mMaxApduLength >= 500;
 		}

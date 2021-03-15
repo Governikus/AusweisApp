@@ -1,7 +1,7 @@
 /*!
  * \brief Worker for \ref CardConnection that will do the job in \ref ReaderManagerWorker
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -53,7 +53,7 @@ class CardConnectionWorker
 		/*!
 		 * Destroys the CardConnection and disconnects from the card.
 		 */
-		virtual ~CardConnectionWorker();
+		~CardConnectionWorker() override;
 
 	public:
 		static QSharedPointer<CardConnectionWorker> create(Reader* pReader);

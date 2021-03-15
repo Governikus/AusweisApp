@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -17,9 +17,10 @@ import Governikus.Workflow 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.AuthModel 1.0
+import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.ConnectivityManager 1.0
-
+import Governikus.Type.UiModule 1.0
 
 SectionPage
 {
@@ -57,8 +58,7 @@ SectionPage
 		text: qsTr("Identify")
 		rootEnabled: false
 		helpTopic: "authentication"
-		showSettings: (identifyController.workflowState === IdentifyController.WorkflowStates.Initial ||
-		               identifyController.workflowState === IdentifyController.WorkflowStates.Reader ||
+		showSettings: (identifyController.workflowState === IdentifyController.WorkflowStates.Reader ||
 		               identifyController.workflowState === IdentifyController.WorkflowStates.Card)
 		              && d.activeView !== IdentifyView.SubViews.Progress
 
@@ -80,7 +80,7 @@ SectionPage
 			onClicked: {
 				if (identifyResult.visible) {
 					AuthModel.continueWorkflow()
-					identifyView.nextView(SectionPage.Views.Main)
+					identifyView.nextView(UiModule.DEFAULT)
 				} else {
 					AuthModel.cancelWorkflow()
 				}
@@ -115,7 +115,7 @@ SectionPage
 
 		onNextView: {
 			if (pName === IdentifyView.SubViews.ReturnToMain) {
-				identifyView.nextView(SectionPage.Views.Main)
+				identifyView.nextView(UiModule.DEFAULT)
 				return;
 			}
 
@@ -136,7 +136,7 @@ SectionPage
 		onDisagree: {
 			SettingsModel.transportPinReminder = false
 			AuthModel.cancelWorkflowToChangePin()
-			identifyView.nextView(SectionPage.Views.ChangePin)
+			identifyView.nextView(UiModule.PINMANAGEMENT)
 		}
 		onAgree: SettingsModel.transportPinReminder = false // causes fall-through to next state in IdentifyController
 	}
@@ -193,6 +193,8 @@ SectionPage
 			d.view = IdentifyView.SubViews.PasswordInfo
 			appWindow.menuBar.updateActions()
 		}
+
+		onChangePinLength: AuthModel.requestTransportPinChange()
 	}
 
 	PasswordInfoView {

@@ -1,15 +1,17 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerAuth
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerAuth.h"
 
+#include "controller/AppController.h"
 #include "InternalActivationContext.h"
 #include "MessageDispatcher.h"
 #include "UILoader.h"
 #include "UIPlugInJson.h"
+#include "VolatileSettings.h"
 
 #include <QSignalSpy>
 #include <QtTest>
@@ -24,9 +26,21 @@ class test_MsgHandlerAuth
 	Q_OBJECT
 
 	private Q_SLOTS:
-		void init()
+		void initTestCase()
 		{
-			Env::getSingleton<UILoader>()->load(UIPlugInName::UIPlugInJson);
+			qRegisterMetaType<QSharedPointer<WorkflowContext> >("QSharedPointer<WorkflowContext>");
+		}
+
+
+		void cleanup()
+		{
+			auto* uiLoader = Env::getSingleton<UILoader>();
+			if (uiLoader->isLoaded())
+			{
+				QSignalSpy spyUi(uiLoader, &UILoader::fireShutdownComplete);
+				uiLoader->shutdown();
+				QTRY_COMPARE(spyUi.count(), 1); // clazy:exclude=qstring-allocations
+			}
 		}
 
 
@@ -78,6 +92,7 @@ class test_MsgHandlerAuth
 
 		void runAuthCmd()
 		{
+			Env::getSingleton<UILoader>()->load(UIPlugInName::UIPlugInJson);
 			auto jsonUi = Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson);
 			QVERIFY(jsonUi);
 			QSignalSpy spy(jsonUi, &UIPlugIn::fireAuthenticationRequest);
@@ -107,6 +122,7 @@ class test_MsgHandlerAuth
 
 		void runEncoded()
 		{
+			Env::getSingleton<UILoader>()->load(UIPlugInName::UIPlugInJson);
 			auto jsonUi = Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson);
 			QVERIFY(jsonUi);
 			QSignalSpy spy(jsonUi, &UIPlugIn::fireAuthenticationRequest);
@@ -177,6 +193,120 @@ class test_MsgHandlerAuth
 											  "\"message\":\"The selected card reader cannot be accessed anymore.\","
 											  "\"minor\":\"http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#communicationError\"},"
 											  "\"url\":\"https://service.example.de/ComError?7eb39f62\"}"));
+		}
+
+
+		void iosScanDialogMessages()
+		{
+			UILoader::setDefault({QStringLiteral("json")});
+			AppController controller;
+			QVERIFY(controller.start());
+
+			const auto& initialMessages = Env::getSingleton<VolatileSettings>()->getMessages();
+			QVERIFY(initialMessages.getSessionStarted().isNull());
+			QVERIFY(initialMessages.getSessionInProgress().isNull());
+			QVERIFY(initialMessages.getSessionSucceeded().isNull());
+			QVERIFY(initialMessages.getSessionFailed().isEmpty());
+			QVERIFY(!initialMessages.getSessionFailed().isNull());
+
+			auto ui = qobject_cast<UIPlugInJson*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson));
+			QVERIFY(ui);
+			ui->setEnabled(true);
+			QSignalSpy spyUi(ui, &UIPlugIn::fireAuthenticationRequest);
+			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
+			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
+
+			MessageDispatcher dispatcher;
+
+			const QByteArray msg("{"
+								 "\"cmd\": \"RUN_AUTH\","
+								 "\"tcTokenURL\": \"https://localhost/token?session=123abc\","
+								 "\"messages\": {"
+								 "  \"sessionStarted\": \"start\","
+								 "  \"sessionFailed\": \"stop failed\","
+								 "  \"sessionSucceeded\": \"stop success\","
+								 "  \"sessionInProgress\": \"progress\""
+								 "  }"
+								 "}");
+
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
+
+			QCOMPARE(spyUi.count(), 1);
+			auto param = spyUi.takeFirst();
+			auto url = param.at(0).value<QUrl>();
+			QCOMPARE(url, QUrl("http://localhost/?tcTokenURL=https%3A%2F%2Flocalhost%2Ftoken%3Fsession%3D123abc"));
+			QTRY_COMPARE(spyStarted.count(), 1); // clazy:exclude=qstring-allocations
+
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), true); // default
+			auto messages = Env::getSingleton<VolatileSettings>()->getMessages();
+			QCOMPARE(messages.getSessionStarted(), QLatin1String("start"));
+			QCOMPARE(messages.getSessionInProgress(), QLatin1String("progress"));
+			QCOMPARE(messages.getSessionSucceeded(), QLatin1String("stop success"));
+			QCOMPARE(messages.getSessionFailed(), QLatin1String("stop failed"));
+
+			const QByteArray msgCancel(R"({"cmd": "CANCEL"})");
+			ui->doMessageProcessing(msgCancel);
+			QTRY_COMPARE(spyFinished.count(), 1); // clazy:exclude=qstring-allocations
+
+			messages = Env::getSingleton<VolatileSettings>()->getMessages();
+			QVERIFY(messages.getSessionStarted().isNull());
+			QVERIFY(messages.getSessionInProgress().isNull());
+			QVERIFY(messages.getSessionSucceeded().isNull());
+			QVERIFY(messages.getSessionFailed().isEmpty());
+			QVERIFY(!messages.getSessionFailed().isNull());
+		}
+
+
+		void handleInterrupt_data()
+		{
+			QTest::addColumn<QVariant>("handleInterrupt");
+
+			QTest::newRow("shouldStop") << QVariant(true);
+			QTest::newRow("shouldNotStop") << QVariant(false);
+		}
+
+
+		void handleInterrupt()
+		{
+			QFETCH(QVariant, handleInterrupt);
+
+			UILoader::setDefault({QStringLiteral("json")});
+			AppController controller;
+			QVERIFY(controller.start());
+
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), true); // default
+
+			auto ui = qobject_cast<UIPlugInJson*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson));
+			QVERIFY(ui);
+			ui->setEnabled(true);
+			QSignalSpy spyUi(ui, &UIPlugIn::fireAuthenticationRequest);
+			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
+			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
+
+			MessageDispatcher dispatcher;
+
+			QByteArray msg("{"
+						   "\"cmd\": \"RUN_AUTH\","
+						   "\"tcTokenURL\": \"https://localhost/token?session=123abc\","
+						   "\"handleInterrupt\": %REPLACE%"
+						   "}");
+			msg.replace("%REPLACE%", handleInterrupt.toByteArray());
+
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
+
+			QCOMPARE(spyUi.count(), 1);
+			auto param = spyUi.takeFirst();
+			auto url = param.at(0).value<QUrl>();
+			QCOMPARE(url, QUrl("http://localhost/?tcTokenURL=https%3A%2F%2Flocalhost%2Ftoken%3Fsession%3D123abc"));
+			QTRY_COMPARE(spyStarted.count(), 1); // clazy:exclude=qstring-allocations
+
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), handleInterrupt.toBool());
+
+			const QByteArray msgCancel(R"({"cmd": "CANCEL"})");
+			ui->doMessageProcessing(msgCancel);
+			QTRY_COMPARE(spyFinished.count(), 1); // clazy:exclude=qstring-allocations
+
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), true); // default
 		}
 
 

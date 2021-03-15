@@ -1,7 +1,7 @@
 /*!
  * \brief Data object providing information about a reader manager plug-in.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,19 +31,19 @@ class ReaderManagerPlugInInfo
 				bool pEnabled = false,
 				bool pAvailable = false);
 
-		const ReaderManagerPlugInType& getPlugInType() const
+		[[nodiscard]] const ReaderManagerPlugInType& getPlugInType() const
 		{
 			return mType;
 		}
 
 
-		bool hasValue(Key pKey) const
+		[[nodiscard]] bool hasValue(Key pKey) const
 		{
 			return mValues.contains(pKey);
 		}
 
 
-		QVariant getValue(Key pKey) const
+		[[nodiscard]] QVariant getValue(Key pKey) const
 		{
 			return mValues.value(pKey);
 		}
@@ -58,7 +58,7 @@ class ReaderManagerPlugInInfo
 		/*!
 		 * Is the interface / daemon process etc. enabled?
 		 */
-		bool isEnabled() const
+		[[nodiscard]] bool isEnabled() const
 		{
 			return mEnabled;
 		}
@@ -73,7 +73,7 @@ class ReaderManagerPlugInInfo
 		/*!
 		 * Is there a device/interface?
 		 */
-		bool isAvailable() const
+		[[nodiscard]] bool isAvailable() const
 		{
 			return mAvailable;
 		}

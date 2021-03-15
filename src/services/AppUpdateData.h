@@ -1,7 +1,7 @@
 /*!
  * \brief Update data implementation for application version.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -43,26 +43,26 @@ class AppUpdateData
 		explicit AppUpdateData(const GlobalStatus& pParsingResult = GlobalStatus::Code::No_Error);
 		explicit AppUpdateData(const QByteArray& pData);
 
-		bool isValid() const;
-		const GlobalStatus& getParsingResult() const;
+		[[nodiscard]] bool isValid() const;
+		[[nodiscard]] const GlobalStatus& getParsingResult() const;
 
-		bool isCompatible() const;
-		const QDateTime& getDate() const;
-		const QString& getVersion() const;
-		const QUrl& getUrl() const;
-		int getSize() const;
-		const QUrl& getChecksumUrl() const;
-		const QUrl& getNotesUrl() const;
+		[[nodiscard]] bool isCompatible() const;
+		[[nodiscard]] const QDateTime& getDate() const;
+		[[nodiscard]] const QString& getVersion() const;
+		[[nodiscard]] const QUrl& getUrl() const;
+		[[nodiscard]] int getSize() const;
+		[[nodiscard]] const QUrl& getChecksumUrl() const;
+		[[nodiscard]] const QUrl& getNotesUrl() const;
 
 		void setNotes(const QString& pNotes);
-		const QString& getNotes() const;
+		[[nodiscard]] const QString& getNotes() const;
 
 		void setChecksum(const QByteArray& pChecksum, QCryptographicHash::Algorithm pAlgorithm);
-		const QByteArray& getChecksum() const;
-		bool isChecksumValid() const;
+		[[nodiscard]] const QByteArray& getChecksum() const;
+		[[nodiscard]] bool isChecksumValid() const;
 
 		void setUpdatePackagePath(const QString& pFile);
-		QString getUpdatePackagePath() const;
+		[[nodiscard]] QString getUpdatePackagePath() const;
 };
 
 

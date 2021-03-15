@@ -1,12 +1,12 @@
 /*!
  * \brief Model implementation for the reader driver table
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include "ReaderDetector.h"
+#include "ReaderConfigurationInfo.h"
 
 #include <QAbstractTableModel>
 #include <QHash>
@@ -34,12 +34,12 @@ class ReaderDriverModel
 		QVector<ReaderConfigurationInfo> mConnectedReaders;
 		QTime mConnectedReadersUpdateTime;
 
-		QString getStatus(const ReaderConfigurationInfo& pReaderConfigurationInfo) const;
+		[[nodiscard]] QString getStatus(const ReaderConfigurationInfo& pReaderConfigurationInfo) const;
 		void collectReaderData();
 
-		bool indexIsValid(const QModelIndex& pIndex) const;
+		[[nodiscard]] bool indexIsValid(const QModelIndex& pIndex) const;
 
-		QUrl getReaderImageUrl(const QModelIndex& pIndex) const;
+		[[nodiscard]] QUrl getReaderImageUrl(const QModelIndex& pIndex) const;
 
 	public:
 		enum ColumnId : int
@@ -58,18 +58,18 @@ class ReaderDriverModel
 		};
 		explicit ReaderDriverModel(QObject* pParent = nullptr);
 
-		virtual QVariant headerData(int pSection, Qt::Orientation pOrientation, int pRole) const override;
-		virtual int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
-		virtual int columnCount(const QModelIndex& pParent = QModelIndex()) const override;
-		virtual QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
-		QHash<int, QByteArray> roleNames() const override;
+		[[nodiscard]] QVariant headerData(int pSection, Qt::Orientation pOrientation, int pRole) const override;
+		[[nodiscard]] int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
+		[[nodiscard]] int columnCount(const QModelIndex& pParent = QModelIndex()) const override;
+		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
+		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-		QString getReaderImagePath(const QModelIndex& pIndex) const;
-		QString getNoReaderFoundIconPath() const;
-		QString getHTMLDescription(const QModelIndex& pIndex) const;
-		QString getEmptyListDescriptionString() const;
-		bool isInstalledSupportedReader(const QModelIndex& pIndex) const;
-		QString getLastUpdatedInformation() const;
+		[[nodiscard]] QString getReaderImagePath(const QModelIndex& pIndex) const;
+		[[nodiscard]] QString getNoReaderFoundIconPath() const;
+		[[nodiscard]] QString getHTMLDescription(const QModelIndex& pIndex) const;
+		[[nodiscard]] QString getEmptyListDescriptionString() const;
+		[[nodiscard]] bool isInstalledSupportedReader(const QModelIndex& pIndex) const;
+		[[nodiscard]] QString getLastUpdatedInformation() const;
 
 	public Q_SLOTS:
 		void onUpdateContent();

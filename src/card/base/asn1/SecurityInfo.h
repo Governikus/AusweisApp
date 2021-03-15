@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of SecurityInfo
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -55,7 +55,7 @@ class SecurityInfo
 	 * Sub classes must override this method to allow the base class to access
 	 * the protocol's ASN1_OBJECT pointer.
 	 */
-	virtual ASN1_OBJECT* getProtocolObjectIdentifier() const;
+	[[nodiscard]] virtual ASN1_OBJECT* getProtocolObjectIdentifier() const;
 
 	protected:
 		SecurityInfo();
@@ -76,12 +76,12 @@ class SecurityInfo
 		/**
 		 * Returns the raw bytes of the protocol OID value, i.e. not the tag and not the length structure, but the value bytes.
 		 */
-		QByteArray getProtocolValueBytes() const;
+		[[nodiscard]] QByteArray getProtocolValueBytes() const;
 
 		/**
 		 * Returns the protocol OID in string representation, e.g. 0.4.0.127.0.7.2.2.4.2.2
 		 */
-		QByteArray getProtocol() const;
+		[[nodiscard]] QByteArray getProtocol() const;
 };
 
 

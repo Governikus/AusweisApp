@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEnterPacePasswordRemote.h"
@@ -46,12 +46,4 @@ void StateEnterPacePasswordRemote::onEntry(QEvent* pEvent)
 
 	mConnections += connect(getContext().data(), &RemoteServiceContext::fireCancelPasswordRequest, this, &StateEnterPacePasswordRemote::onCancelEstablishPaceChannel);
 	AbstractState::onEntry(pEvent);
-}
-
-
-void StateEnterPacePasswordRemote::onExit(QEvent* pEvent)
-{
-	startScanIfNecessary();
-
-	AbstractState::onExit(pEvent);
 }

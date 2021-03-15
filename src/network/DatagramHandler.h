@@ -1,7 +1,7 @@
 /*!
  * \brief Provides an interface to send and receive datagrams over UDP.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,8 +20,8 @@ class DatagramHandler
 
 	public:
 		explicit DatagramHandler(bool pEnableListening = true);
-		virtual ~DatagramHandler();
-		virtual bool isBound() const = 0;
+		~DatagramHandler() override;
+		[[nodiscard]] virtual bool isBound() const = 0;
 		virtual bool send(const QByteArray& pData) = 0;
 
 	Q_SIGNALS:

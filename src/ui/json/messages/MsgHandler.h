@@ -1,7 +1,7 @@
 /*!
  * \brief Base of all messages of JSON API.
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -40,10 +40,10 @@ class MsgHandler
 		static const MsgLevel DEFAULT_MSG_LEVEL;
 		static MsgType getStateMsgType(const QString& pState, PacePasswordId pPasswordId);
 
-		QByteArray toJson() const;
-		QByteArray getOutput() const;
-		bool isVoid() const;
-		MsgType getType() const;
+		[[nodiscard]] QByteArray toJson() const;
+		[[nodiscard]] QByteArray getOutput() const;
+		[[nodiscard]] bool isVoid() const;
+		[[nodiscard]] MsgType getType() const;
 
 		void setRequest(const QJsonObject& pRequest);
 };

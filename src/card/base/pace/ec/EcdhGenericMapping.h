@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,7 +29,7 @@ class EcdhGenericMapping
 
 	public:
 		explicit EcdhGenericMapping(const QSharedPointer<EC_GROUP>& pCurve);
-		virtual ~EcdhGenericMapping() override = default;
+		~EcdhGenericMapping() override = default;
 
 		QByteArray generateTerminalMappingData() override;
 

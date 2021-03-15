@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref DatagramHandlerImpl
  *
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandlerImpl.h"
@@ -131,7 +131,7 @@ class test_DatagramHandlerImpl
 			QUdpSocket clientSocket;
 			clientSocket.setProxy(QNetworkProxy::NoProxy);
 
-			QByteArray data("{\"key\":\"value\"}");
+			QByteArray data(R"({"key":"value"})");
 			auto written = clientSocket.writeDatagram(data, broadcast ? QHostAddress::Broadcast : QHostAddress::LocalHost, socket.staticCast<DatagramHandlerImpl>()->mSocket->localPort());
 			QTRY_COMPARE(spySocket.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(written, data.size());

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteReaderAdvertiserImpl
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReaderAdvertiser.h"
@@ -22,9 +22,9 @@ class DatagramHandlerMock
 	Q_OBJECT
 
 	public:
-		virtual bool isBound() const override;
+		[[nodiscard]] bool isBound() const override;
 
-		virtual bool send(const QByteArray& pData) override
+		bool send(const QByteArray& pData) override
 		{
 			Q_EMIT fireSend(pData);
 			return true;
@@ -78,8 +78,18 @@ class test_RemoteReaderAdvertiser
 		}
 
 
+		void checkBroadcast_data()
+		{
+			QTest::addColumn<bool>("pairing");
+			QTest::newRow("Pairing enabled") << true;
+			QTest::newRow("Pairing disabled") << false;
+		}
+
+
 		void checkBroadcast()
 		{
+			QFETCH(bool, pairing);
+
 			const QString ifdName("ServerName");
 			const QString ifdId("0123456789ABCDEF");
 			quint16 port = 12345;
@@ -87,6 +97,7 @@ class test_RemoteReaderAdvertiser
 
 			QSignalSpy spy(mMock.data(), &DatagramHandlerMock::fireSend);
 			QScopedPointer<RemoteReaderAdvertiser> advertiser(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port, pTimerInterval));
+			advertiser->setPairing(pairing);
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			advertiser.reset();
 
@@ -96,7 +107,8 @@ class test_RemoteReaderAdvertiser
 			QCOMPARE(offerMsg.getIfdName(), ifdName);
 			QCOMPARE(offerMsg.getIfdId(), ifdId);
 			QCOMPARE(offerMsg.getPort(), port);
-			QCOMPARE(offerMsg.getSupportedApis(), {IfdVersion::Version::v0});
+			QCOMPARE(offerMsg.getSupportedApis(), IfdVersion::supported());
+			QCOMPARE(offerMsg.getPairing(), pairing);
 		}
 
 

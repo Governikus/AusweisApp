@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -11,6 +11,7 @@ import Governikus.TitleBar 1.0
 import Governikus.ResultView 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.CheckIDCardModel 1.0
+import Governikus.Type.UiModule 1.0
 
 ResultView {
 	id: root
@@ -53,8 +54,8 @@ ResultView {
 		}
 	}
 
-	buttonLeft.tintIcon: true
-	buttonLeft.icon.source: result === CheckIDCardModel.SUCCESS ?
+	button.tintIcon: true
+	button.icon.source: result === CheckIDCardModel.SUCCESS ?
 		"qrc:///images/identify.svg" :
 		"qrc:///images/material_help.svg"
 
@@ -63,7 +64,7 @@ ResultView {
 			// We need to keep a reference to the navbar since after calling firePopAll() 'navBar' becomes undefined
 			let navigation = navBar
 			firePopAll()
-			navigation.showIdentify()
+			navigation.show(UiModule.IDENTIFY)
 		} else {
 			firePushWithProperties(checkIDCardSuggestionView, { result: root.result } )
 		}

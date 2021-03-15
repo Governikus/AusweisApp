@@ -1,7 +1,7 @@
 /*!
  * \brief Abstract layer to UI implementations.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,7 +25,18 @@ defineEnumType(UiModule,
 		IDENTIFY,
 		SETTINGS,
 		PINMANAGEMENT,
-		UPDATEINFORMATION
+		TUTORIAL,
+		HISTORY,
+		HELP,
+		PROVIDER,
+		SELF_AUTHENTICATION,
+
+		// Desktop only
+		UPDATEINFORMATION,
+
+		// Mobile only
+		REMOTE_SERVICE,
+		CHECK_ID_CARD
 		)
 
 class UIPlugIn
@@ -35,7 +46,7 @@ class UIPlugIn
 
 	public:
 		UIPlugIn();
-		virtual ~UIPlugIn();
+		~UIPlugIn() override;
 
 	public Q_SLOTS:
 		virtual void doShutdown() = 0;
@@ -52,7 +63,7 @@ class UIPlugIn
 		virtual void onUiDominationReleased();
 
 	Q_SIGNALS:
-		void fireChangePinRequested();
+		void fireChangePinRequested(bool pRequestTransportPin);
 		void fireAuthenticationRequest(const QUrl& pUrl);
 		void fireSelfAuthenticationRequested();
 		void fireRemoteServiceRequested();

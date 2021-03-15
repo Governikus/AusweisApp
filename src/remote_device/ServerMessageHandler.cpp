@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ServerMessageHandler.h"
@@ -166,25 +166,10 @@ QString ServerMessageHandlerImpl::slotHandleForReaderName(const QString& pReader
 }
 
 
-QString ServerMessageHandlerImpl::convertSlotHandleBackwardsCompatibility(const QString& pReaderName) const
-{
-	if (!mCardConnections.contains(pReaderName))
-	{
-		const QString& slotHandle = slotHandleForReaderName(pReaderName);
-		if (!slotHandle.isEmpty())
-		{
-			return slotHandle;
-		}
-	}
-	return pReaderName;
-}
-
-
 void ServerMessageHandlerImpl::handleIfdDisconnect(const QJsonObject& pJsonObject)
 {
 	const IfdDisconnect ifdDisconnect(pJsonObject);
-	QString slotHandle = ifdDisconnect.getSlotHandle();
-	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
+	const QString& slotHandle = ifdDisconnect.getSlotHandle();
 
 	if (!mCardConnections.contains(slotHandle))
 	{
@@ -204,8 +189,7 @@ void ServerMessageHandlerImpl::handleIfdDisconnect(const QJsonObject& pJsonObjec
 void ServerMessageHandlerImpl::handleIfdTransmit(const QJsonObject& pJsonObject)
 {
 	const IfdTransmit ifdTransmit(pJsonObject);
-	QString slotHandle = ifdTransmit.getSlotHandle();
-	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
+	const QString& slotHandle = ifdTransmit.getSlotHandle();
 
 	if (!mCardConnections.contains(slotHandle))
 	{
@@ -216,6 +200,13 @@ void ServerMessageHandlerImpl::handleIfdTransmit(const QJsonObject& pJsonObject)
 	}
 
 	const QSharedPointer<CardConnection>& cardConnection = mCardConnections.value(slotHandle);
+
+	const QString& progressMessage = ifdTransmit.getDisplayText();
+	if (!progressMessage.isNull())
+	{
+		cardConnection->setProgressMessage(progressMessage);
+	}
+
 	const auto& commandApdu = ifdTransmit.getInputApdu();
 
 	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
@@ -238,13 +229,12 @@ void ServerMessageHandlerImpl::handleIfdTransmit(const QJsonObject& pJsonObject)
 void ServerMessageHandlerImpl::handleIfdEstablishPaceChannel(const QJsonObject& pJsonObject)
 {
 	const auto& ifdEstablishPaceChannel = QSharedPointer<IfdEstablishPaceChannel>::create(pJsonObject);
-	QString slotHandle = ifdEstablishPaceChannel->getSlotHandle();
-	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
+	const QString& slotHandle = ifdEstablishPaceChannel->getSlotHandle();
 
 	if (!mCardConnections.contains(slotHandle))
 	{
 		qCWarning(remote_device) << "Card is not connected" << slotHandle;
-		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(slotHandle, QByteArray(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
+		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(slotHandle, EstablishPaceChannelOutput(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
 		mRemoteDispatcher->send(response);
 		return;
 	}
@@ -256,7 +246,7 @@ void ServerMessageHandlerImpl::handleIfdEstablishPaceChannel(const QJsonObject& 
 	if (isBasicReader && !pinPadMode)
 	{
 		qCWarning(remote_device) << "EstablishPaceChannel is only available in pin pad mode.";
-		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(slotHandle, QByteArray(), ECardApiResult::Minor::AL_Unknown_Error);
+		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(slotHandle, EstablishPaceChannelOutput(), ECardApiResult::Minor::AL_Unknown_Error);
 		mRemoteDispatcher->send(response);
 		return;
 	}
@@ -267,22 +257,21 @@ void ServerMessageHandlerImpl::handleIfdEstablishPaceChannel(const QJsonObject& 
 
 void ServerMessageHandlerImpl::sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pChannelOutput)
 {
-	const QByteArray& ccid = pChannelOutput.toCcid();
 	if (pChannelOutput.getPaceReturnCode() == CardReturnCode::UNKNOWN)
 	{
-		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, ccid, ECardApiResult::Minor::AL_Unknown_Error);
+		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, pChannelOutput, ECardApiResult::Minor::AL_Unknown_Error);
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
 	if (pChannelOutput.getPaceReturnCode() == CardReturnCode::CARD_NOT_FOUND)
 	{
-		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, ccid, ECardApiResult::Minor::IFDL_Terminal_NoCard);
+		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, pChannelOutput, ECardApiResult::Minor::IFDL_Terminal_NoCard);
 		mRemoteDispatcher->send(response);
 		return;
 	}
 
-	const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, ccid);
+	const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, pChannelOutput);
 	mRemoteDispatcher->send(response);
 }
 
@@ -355,8 +344,7 @@ void ServerMessageHandlerImpl::sendModifyPinResponse(const QString& pSlotHandle,
 void ServerMessageHandlerImpl::onTransmitCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 {
 	auto transmitCommand = pCommand.staticCast<TransmitCommand>();
-	QString slotHandle = transmitCommand->getSlotHandle();
-	slotHandle = convertSlotHandleBackwardsCompatibility(slotHandle);
+	const QString& slotHandle = transmitCommand->getSlotHandle();
 
 	if (transmitCommand->getReturnCode() != CardReturnCode::OK)
 	{

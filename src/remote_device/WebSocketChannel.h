@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of DataChannel base on web sockets.
  *
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,11 +29,11 @@ class WebSocketChannel
 
 	public:
 		explicit WebSocketChannel(const QSharedPointer<QWebSocket>& pConnection);
-		virtual ~WebSocketChannel() override;
+		~WebSocketChannel() override;
 
-		virtual void send(const QByteArray& pDataBlock) override;
-		virtual void close() override;
-		virtual const QString& getId() const override;
+		void send(const QByteArray& pDataBlock) override;
+		void close() override;
+		[[nodiscard]] const QString& getId() const override;
 
 	private Q_SLOTS:
 		void onReceived(const QString& pMessage);

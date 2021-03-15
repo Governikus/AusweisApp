@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -26,6 +26,7 @@ VALUE_NAME(IFD_NAME, "IFDName")
 VALUE_NAME(IFD_ID, "IFDID")
 VALUE_NAME(PORT, "port")
 VALUE_NAME(SUPPORTED_API, "SupportedAPI")
+VALUE_NAME(PAIRING, "pairing")
 } // namespace
 
 
@@ -34,41 +35,8 @@ INIT_FUNCTION([] {
 		})
 
 
-Discovery::Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis)
-	: RemoteMessage(RemoteCardMessageType::UNDEFINED)
-	, mIfdName(pIfdName)
-	, mIfdId(pIfdId)
-	, mPort(pPort)
-	, mSupportedApis(pSupportedApis)
+void Discovery::parseSupportedApi(const QJsonObject& pMessageObject)
 {
-}
-
-
-Discovery::Discovery(const QJsonObject& pMessageObject)
-	: RemoteMessage(RemoteCardMessageType::UNDEFINED)
-	, mIfdName()
-	, mIfdId()
-	, mPort()
-	, mSupportedApis()
-{
-	if (getStringValue(pMessageObject, MSG_TYPE()) != QLatin1String("REMOTE_IFD"))
-	{
-		markIncomplete(QStringLiteral("The value of msg should be REMOTE_IFD"));
-	}
-
-	mIfdName = getStringValue(pMessageObject, IFD_NAME());
-	mIfdId = getStringValue(pMessageObject, IFD_ID());
-	if (!mIfdId.isEmpty() && mIfdId.size() != 64)
-	{
-		const QSslCertificate ifdCertificate(mIfdId.toLatin1());
-		qCDebug(remote_device) << "Received ifdId is not a fingerprint. Interpretion as a certificate to create our own fingerprint" << (ifdCertificate.isNull() ? "failed" : "succeeded");
-		if (!ifdCertificate.isNull())
-		{
-			mIfdId = RemoteServiceSettings::generateFingerprint(ifdCertificate);
-		}
-	}
-	mPort = static_cast<quint16>(getIntValue(pMessageObject, PORT(), 0));
-
 	if (!pMessageObject.contains(SUPPORTED_API()))
 	{
 		missingValue(SUPPORTED_API());
@@ -93,6 +61,102 @@ Discovery::Discovery(const QJsonObject& pMessageObject)
 
 		invalidType(SUPPORTED_API(), QLatin1String("string array"));
 	}
+}
+
+
+void Discovery::parseIfdId(const QJsonObject& pMessageObject)
+{
+	mIfdId = getStringValue(pMessageObject, IFD_ID());
+	if (isIncomplete())
+	{
+		return;
+	}
+
+	QVector<IfdVersion::Version> sorted(mSupportedApis);
+	std::sort(sorted.rbegin(), sorted.rend());
+	const bool expectCertificate = !sorted.isEmpty() && sorted.first() >= IfdVersion::Version::v2;
+
+	const bool isFingerprint = mIfdId.size() == 64;
+	if (isFingerprint)
+	{
+		if (expectCertificate)
+		{
+			invalidType(IFD_ID(), QLatin1String("X.509 certificate (PEM)"));
+		}
+		return;
+	}
+
+	const QSslCertificate ifdCertificate(mIfdId.toLatin1());
+	if (!ifdCertificate.isNull())
+	{
+		if (!expectCertificate)
+		{
+			invalidType(IFD_ID(), QLatin1String("certificate fingerprint (SHA256)"));
+		}
+		mIfdId = RemoteServiceSettings::generateFingerprint(ifdCertificate);
+		return;
+	}
+
+	if (expectCertificate)
+	{
+		invalidType(IFD_ID(), QLatin1String("X.509 certificate (PEM)"));
+	}
+	else
+	{
+		invalidType(IFD_ID(), QLatin1String("certificate fingerprint (SHA256)"));
+	}
+}
+
+
+void Discovery::parsePairing(const QJsonObject& pMessageObject)
+{
+	QVector<IfdVersion::Version> sorted(mSupportedApis);
+	std::sort(sorted.rbegin(), sorted.rend());
+
+	if (sorted.isEmpty() || sorted.first() < IfdVersion::Version::v2)
+	{
+		const auto& pairing = pMessageObject.value(PAIRING());
+		if (pMessageObject.contains(PAIRING()) && !pairing.isBool())
+		{
+			invalidType(PAIRING(), QLatin1String("boolean"));
+		}
+		mPairing = pairing.toBool();
+		return;
+	}
+
+	mPairing = getBoolValue(pMessageObject, PAIRING());
+}
+
+
+Discovery::Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis)
+	: RemoteMessage(RemoteCardMessageType::UNDEFINED)
+	, mIfdName(pIfdName)
+	, mIfdId(pIfdId)
+	, mPort(pPort)
+	, mSupportedApis(pSupportedApis)
+	, mPairing(false)
+{
+}
+
+
+Discovery::Discovery(const QJsonObject& pMessageObject)
+	: RemoteMessage(RemoteCardMessageType::UNDEFINED)
+	, mIfdName()
+	, mIfdId()
+	, mPort()
+	, mSupportedApis()
+	, mPairing()
+{
+	if (getStringValue(pMessageObject, MSG_TYPE()) != QLatin1String("REMOTE_IFD"))
+	{
+		markIncomplete(QStringLiteral("The value of msg should be REMOTE_IFD"));
+	}
+
+	parseSupportedApi(pMessageObject);
+	mIfdName = getStringValue(pMessageObject, IFD_NAME());
+	parseIfdId(pMessageObject);
+	mPort = static_cast<quint16>(getIntValue(pMessageObject, PORT(), 0));
+	parsePairing(pMessageObject);
 }
 
 
@@ -125,13 +189,25 @@ const QVector<IfdVersion::Version>& Discovery::getSupportedApis() const
 }
 
 
-QByteArray Discovery::toByteArray(const QString&) const
+void Discovery::setPairing(bool pEnabled)
+{
+	mPairing = pEnabled;
+}
+
+
+bool Discovery::getPairing() const
+{
+	return mPairing;
+}
+
+
+QByteArray Discovery::toByteArray(const IfdVersion& pIfdVersion, const QString&) const
 {
 	QJsonObject result;
 
+	result[MSG_TYPE()] = QStringLiteral("REMOTE_IFD");
 	result[IFD_NAME()] = mIfdName;
 	result[IFD_ID()] = mIfdId;
-	result[MSG_TYPE()] = QStringLiteral("REMOTE_IFD");
 	result[PORT()] = mPort;
 
 	QJsonArray levels;
@@ -140,6 +216,11 @@ QByteArray Discovery::toByteArray(const QString&) const
 		levels += IfdVersion(level).toString();
 	}
 	result[SUPPORTED_API()] = levels;
+
+	if (pIfdVersion.getVersion() >= IfdVersion::Version::v2)
+	{
+		result[PAIRING()] = mPairing;
+	}
 
 	return RemoteMessage::toByteArray(result);
 }

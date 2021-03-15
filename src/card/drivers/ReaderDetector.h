@@ -2,7 +2,7 @@
  * \brief Interface specifying classes that can detect the attached card reader
  * devices on a specific platform.
  *
- * \copyright Copyright (c) 2015-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -57,7 +57,7 @@ class ReaderDetector
 		~ReaderDetector() override;
 
 	public:
-		virtual QVector<UsbId> attachedDevIds() const;
+		[[nodiscard]] virtual QVector<UsbId> attachedDevIds() const;
 
 	#ifdef Q_OS_WIN
 		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult) override;
@@ -67,9 +67,9 @@ class ReaderDetector
 		 * \brief getAttachedDevices produce a list of supported devices that are
 		 *        attached to the system
 		 */
-		QVector<ReaderConfigurationInfo> getAttachedSupportedDevices() const;
+		[[nodiscard]] QVector<ReaderConfigurationInfo> getAttachedSupportedDevices() const;
 
-		ReaderConfigurationInfo getReaderConfigurationInfo(const QString& pReaderName) const;
+		[[nodiscard]] ReaderConfigurationInfo getReaderConfigurationInfo(const QString& pReaderName) const;
 
 	Q_SIGNALS:
 		void fireReaderChangeDetected();

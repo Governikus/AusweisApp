@@ -1,7 +1,7 @@
 /*!
  * \brief Class represents the retrieved PAOS DIDList.
  *
- * \copyright Copyright (c) 2014-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,7 +26,7 @@ class DIDList
 
 	public:
 		explicit DIDList(const QByteArray& pXmlData);
-		const ConnectionHandle& getConnectionHandle() const;
+		[[nodiscard]] const ConnectionHandle& getConnectionHandle() const;
 };
 
 } // namespace governikus

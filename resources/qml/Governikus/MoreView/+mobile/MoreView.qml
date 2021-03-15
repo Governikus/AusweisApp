@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2020 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -18,7 +18,7 @@ import Governikus.Type.LogModel 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.SettingsView 1.0
 import Governikus.HistoryView 1.0
-
+import Governikus.Type.UiModule 1.0
 
 SectionPage {
 	id: baseItem
@@ -51,7 +51,7 @@ SectionPage {
 				TutorialView {
 					onLeave: {
 						firePop()
-						navBar.showHelp()
+						navBar.show(UiModule.HELP)
 					}
 				}
 			}
@@ -159,8 +159,12 @@ SectionPage {
 			title: qsTr("Release notes")
 			//: LABEL ANDROID IOS
 			description: qsTr("Do you want to view the release notes of %1?").arg(Qt.application.name)
-			icon: "qrc:///images/material_open_in_new.svg"
-			onClicked: Qt.openUrlExternally(ApplicationModel.releaseNotesUrl)
+			onClicked: firePush(releaseNotes)
+
+			Component {
+				id: releaseNotes
+				ReleaseNotes {}
+			}
 		}
 	}
 }
