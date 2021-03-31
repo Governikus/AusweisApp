@@ -1,0 +1,29 @@
+AusweisApp2 1.22.2
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 31. März 2021
+
+
+Anwender
+""""""""
+- Der cyberJack Basisleser funktioniert nun auch wieder
+  unter Windows.
+
+- Der automatische Start des Einrichtungsassistenten
+  beim Erststart der AusweisApp2 auf Desktop-Systemen
+  funktioniert nun wieder.
+
+- Ein Fehler am Ende der Selbstauskunft, der auch zu einem
+  Absturz führen konnte, wurde behoben.
+
+- Einige Abstürze wurden behoben.
+
+
+Entwickler
+""""""""""
+- Das Android SDK wird nun auch auf Maven Central
+  zur Verfügung gestellt, da das JCenter abgekündigt wurde.
+
+- Unterstützung von Berechtigungszertifikaten mit PIN-Management.
+
+- Aktualisierung von OpenSSL auf die Version 1.1.1k.

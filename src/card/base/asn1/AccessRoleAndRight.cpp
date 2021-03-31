@@ -36,13 +36,16 @@ const QList<AccessRight>& AccessRoleAndRightsUtil::allDisplayedOrderedRights()
 		mAllDisplayedOrderedRights += AccessRight::AGE_VERIFICATION;
 		mAllDisplayedOrderedRights += AccessRight::COMMUNITY_ID_VERIFICATION;
 		mAllDisplayedOrderedRights += AccessRight::READ_DG02;
+		mAllDisplayedOrderedRights += AccessRight::READ_DG18;
 		mAllDisplayedOrderedRights += AccessRight::READ_DG19;
+		mAllDisplayedOrderedRights += AccessRight::READ_DG20;
 		mAllDisplayedOrderedRights += AccessRight::INSTALL_QUAL_CERT;
 		mAllDisplayedOrderedRights += AccessRight::INSTALL_CERT;
 		mAllDisplayedOrderedRights += AccessRight::WRITE_DG17;
 		mAllDisplayedOrderedRights += AccessRight::WRITE_DG18;
 		mAllDisplayedOrderedRights += AccessRight::WRITE_DG19;
 		mAllDisplayedOrderedRights += AccessRight::WRITE_DG20;
+		mAllDisplayedOrderedRights += AccessRight::PIN_MANAGEMENT;
 	}
 	return mAllDisplayedOrderedRights;
 }
@@ -109,6 +112,7 @@ bool AccessRoleAndRightsUtil::isWriteAccessRight(AccessRight pRight)
 		case AccessRight::WRITE_DG19:
 		case AccessRight::WRITE_DG20:
 		case AccessRight::WRITE_DG21:
+		case AccessRight::PIN_MANAGEMENT:
 			return true;
 
 		default:
@@ -122,12 +126,8 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 {
 	switch (pRight)
 	{
-		case AccessRight::WRITE_DG21:
-			//: LABEL ALL_PLATFORMS
-			return tr("WRITE_DG21");
-
-		/* 32-29: reserved for future use */
 		case AccessRight::READ_DG21:
+		case AccessRight::WRITE_DG21:
 			//: LABEL ALL_PLATFORMS
 			return tr("Optional data");
 
@@ -248,6 +248,7 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 			//: LABEL ALL_PLATFORMS
 			return tr("Age verification");
 
+		/* 32-29: reserved for future use */
 		case AccessRight::RFU_29:
 		case AccessRight::RFU_30:
 		case AccessRight::RFU_31:
@@ -263,12 +264,13 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 
 QLatin1String AccessRoleAndRightsUtil::toTechnicalName(AccessRight pRight)
 {
-	const auto name = getEnumName(static_cast<AccessRightNames>(pRight));
-	if (name.isEmpty())
+	if (Enum<AccessRightNames>::isValue(static_cast<int>(pRight)))
 	{
-		qCCritical(card) << "Requested AccessRight without mapping:" << pRight;
+		return getEnumName(static_cast<AccessRightNames>(pRight));
 	}
-	return name;
+
+	qCCritical(card) << "Requested AccessRight without mapping:" << pRight;
+	return QLatin1String();
 }
 
 

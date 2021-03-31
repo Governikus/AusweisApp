@@ -120,6 +120,7 @@ void StateGetTcToken::onSslHandshakeDone()
 	// At this point we can only check the certificate key's length.
 	if (!TlsChecker::hasValidCertificateKeyLength(cfg.peerCertificate()))
 	{
+		clearConnections();
 		mReply->abort();
 		qCritical() << "Error while connecting to the provider. The server's SSL certificate uses an unsupported key algorithm or length.";
 		updateStatus(status);
@@ -129,6 +130,7 @@ void StateGetTcToken::onSslHandshakeDone()
 
 	if (!TlsChecker::hasValidEphemeralKeyLength(cfg.ephemeralServerKey()))
 	{
+		clearConnections();
 		mReply->abort();
 		qCritical() << "Error while connecting to the provider. The SSL connection uses an unsupported key algorithm or length.";
 		updateStatus(status);

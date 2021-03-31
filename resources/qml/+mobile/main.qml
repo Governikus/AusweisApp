@@ -52,7 +52,7 @@ ApplicationWindow {
 		close.accepted = false
 
 		if (contentArea.visibleItem) {
-			if (contentArea.activeModule === UiModule.DEFAULT || SettingsModel.startupModule === UiModule.TUTORIAL) {
+			if (contentArea.activeModule === UiModule.DEFAULT || SettingsModel.startupModule == UiModule.TUTORIAL) {
 				var currentTime = new Date().getTime();
 				if (currentTime - d.lastCloseInvocation < 1000) {
 					plugin.fireQuitApplicationRequest()

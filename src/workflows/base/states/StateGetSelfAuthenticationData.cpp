@@ -27,6 +27,7 @@ StateGetSelfAuthenticationData::StateGetSelfAuthenticationData(const QSharedPoin
 
 void StateGetSelfAuthenticationData::run()
 {
+	Env::getSingleton<NetworkManager>()->clearConnections();
 	QUrl address = getContext()->getRefreshUrl();
 	qDebug() << address;
 
@@ -42,36 +43,14 @@ void StateGetSelfAuthenticationData::reportCommunicationError(const GlobalStatus
 {
 	qCritical() << pStatus;
 	updateStatus(pStatus);
+
+	clearConnections();
 	mReply->abort();
 	Q_EMIT fireAbort();
 }
 
 
-void StateGetSelfAuthenticationData::onSslHandshakeDone()
-{
-	const auto& cfg = mReply->sslConfiguration();
-	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
-
-	if (!checkSslConnectionAndSaveCertificate(cfg))
-	{
-		// checkAndSaveCertificate already set the error
-		mReply->abort();
-	}
-}
-
-
-void StateGetSelfAuthenticationData::onExit(QEvent* pEvent)
-{
-	AbstractState::onExit(pEvent);
-
-	if (!mReply.isNull())
-	{
-		mReply.reset();
-	}
-}
-
-
-bool StateGetSelfAuthenticationData::checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration)
+void StateGetSelfAuthenticationData::checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration)
 {
 	const QSharedPointer<AuthContext>& context = getContext();
 	Q_ASSERT(!context.isNull());
@@ -97,20 +76,17 @@ bool StateGetSelfAuthenticationData::checkSslConnectionAndSaveCertificate(const 
 
 		case CertificateChecker::CertificateStatus::Unsupported_Algorithm_Or_Length:
 			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length, infoMap));
-			return false;
+			return;
 
 		case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
 			reportCommunicationError(GlobalStatus(GlobalStatus::Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description, infoMap));
-			return false;
+			return;
 	}
 
 	if (!TlsChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
 		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, infoMap});
-		return false;
 	}
-
-	return true;
 }
 
 
@@ -126,6 +102,14 @@ void StateGetSelfAuthenticationData::onSslErrors(const QList<QSslError>& pErrors
 
 		reportCommunicationError({GlobalStatus::Code::Network_Ssl_Establishment_Error, infoMap});
 	}
+}
+
+
+void StateGetSelfAuthenticationData::onSslHandshakeDone()
+{
+	const auto& cfg = mReply->sslConfiguration();
+	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
+	checkSslConnectionAndSaveCertificate(cfg);
 }
 
 
@@ -154,5 +138,16 @@ void StateGetSelfAuthenticationData::onNetworkReply()
 		qDebug() << "Could not read data for self-authentication.";
 		updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
 		Q_EMIT fireAbort();
+	}
+}
+
+
+void StateGetSelfAuthenticationData::onExit(QEvent* pEvent)
+{
+	AbstractState::onExit(pEvent);
+
+	if (!mReply.isNull())
+	{
+		mReply.reset();
 	}
 }

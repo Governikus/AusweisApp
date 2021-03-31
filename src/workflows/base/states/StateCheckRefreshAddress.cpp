@@ -182,6 +182,9 @@ void StateCheckRefreshAddress::reportCommunicationError(const GlobalStatus& pSta
 {
 	qCritical() << pStatus;
 	updateStatus(pStatus);
+
+	clearConnections();
+	mReply->abort();
 	Q_EMIT fireAbort();
 }
 
@@ -190,12 +193,7 @@ void StateCheckRefreshAddress::onSslHandshakeDone()
 {
 	const auto& cfg = mReply->sslConfiguration();
 	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
-
-	if (!checkSslConnectionAndSaveCertificate(cfg))
-	{
-		// checkAndSaveCertificate already set the error
-		mReply->abort();
-	}
+	checkSslConnectionAndSaveCertificate(cfg);
 }
 
 

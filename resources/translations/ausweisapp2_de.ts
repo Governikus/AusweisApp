@@ -4764,14 +4764,14 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Warnung - Ihr Betriebssystem wird nicht mehr unterstützt</translation>
     </message>
     <message>
-        <source>Your operating system is no longer officially supported with version %1 of the %2.</source>
+        <source>Troubleshooting and user support for the %1 is no longer available for your current operating system. Version %2 has not been tested with your current operating system, use is at your own risk.</source>
         <extracomment>INFO DESKTOP_QML Text of the popup that is shown when the requested update is not compatible with the OS.</extracomment>
-        <translation>Die offizielle Unterstützung für Ihr Betriebssystem ist mit der Version %1 der %2 nicht mehr gegeben.</translation>
+        <translation>Für das verwendete Betriebssystem ist keine Fehlerbehebung und kein Nutzersupport für die %1 mehr erhältlich. Die Version %2 wurde mit dem verwendeten Betriebssystem nicht getestet, eine Nutzung erfolgt auf eigene Gefahr.</translation>
     </message>
     <message>
-        <source>Start anyway</source>
+        <source>Update anyway</source>
         <extracomment>LABEL DESKTOP_QML</extracomment>
-        <translation>Trotzdem starten</translation>
+        <translation>Trotzdem updaten</translation>
     </message>
     <message>
         <source>Warning - Update failed</source>
@@ -4942,11 +4942,6 @@ LABEL ALL_PLATFORMS</extracomment>
 </context>
 <context>
     <name>governikus::AccessRoleAndRightsUtil</name>
-    <message>
-        <source>WRITE_DG21</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>WRITE_DG21</translation>
-    </message>
     <message>
         <source>Optional data</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>

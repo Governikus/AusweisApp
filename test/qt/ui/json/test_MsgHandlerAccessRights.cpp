@@ -72,7 +72,7 @@ class test_MsgHandlerAccessRights
 			dispatcher.init(context);
 
 			QCOMPARE(dispatcher.processStateChange("StateEditAccessRights"),
-					QByteArray(R"({"chat":{"effective":["WriteAddress","WriteCommunityID","WriteResidencePermitI","WriteResidencePermitII","ResidencePermitI","Address","BirthName","Nationality","PlaceOfBirth","DateOfBirth","DoctoralDegree","ArtisticName","FamilyName","GivenNames","ValidUntil","IssuingCountry","DocumentType","Pseudonym"],"optional":["WriteAddress","WriteCommunityID","WriteResidencePermitI","WriteResidencePermitII","ResidencePermitI","Address","BirthName","Nationality","PlaceOfBirth","DateOfBirth","DoctoralDegree","ArtisticName","FamilyName","GivenNames","ValidUntil","IssuingCountry","DocumentType","Pseudonym"],"required":[]},"msg":"ACCESS_RIGHTS"})"));
+					QByteArray(R"({"chat":{"effective":["WriteAddress","WriteCommunityID","WriteResidencePermitI","WriteResidencePermitII","ResidencePermitII","ResidencePermitI","CommunityID","Address","BirthName","Nationality","PlaceOfBirth","DateOfBirth","DoctoralDegree","ArtisticName","FamilyName","GivenNames","ValidUntil","IssuingCountry","DocumentType","PinManagement","CanAllowed","Pseudonym"],"optional":["WriteAddress","WriteCommunityID","WriteResidencePermitI","WriteResidencePermitII","ResidencePermitII","ResidencePermitI","CommunityID","Address","BirthName","Nationality","PlaceOfBirth","DateOfBirth","DoctoralDegree","ArtisticName","FamilyName","GivenNames","ValidUntil","IssuingCountry","DocumentType","PinManagement","CanAllowed","Pseudonym"],"required":[]},"msg":"ACCESS_RIGHTS"})"));
 		}
 
 

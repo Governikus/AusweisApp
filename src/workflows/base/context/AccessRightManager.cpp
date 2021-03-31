@@ -45,10 +45,11 @@ AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDA
 		removeForbiddenAccessRights(mOptionalAccessRights);
 	}
 
-	mRequiredAccessRights.remove(AccessRight::CAN_ALLOWED);
+	mRequiredAccessRights -= AccessRight::CAN_ALLOWED;
 	const bool canAllowed = mTerminalCvc->getBody().getCHAT().getAccessRights().contains(AccessRight::CAN_ALLOWED);
+	const bool pinManagement = mTerminalCvc->getBody().getCHAT().getAccessRights().contains(AccessRight::PIN_MANAGEMENT);
 	const bool canAllowedEnabled = Env::getSingleton<VolatileSettings>()->isUsedAsSDK() || Env::getSingleton<AppSettings>()->getGeneralSettings().isEnableCanAllowed();
-	if (canAllowed && canAllowedEnabled)
+	if (canAllowed && (canAllowedEnabled || pinManagement))
 	{
 		mOptionalAccessRights += AccessRight::CAN_ALLOWED;
 	}

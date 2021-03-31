@@ -96,6 +96,9 @@ void StateGenericSendReceive::onSslErrors(const QList<QSslError>& pErrors)
 		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error);
 		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 				});
+
+		clearConnections();
+		mReply->abort();
 		Q_EMIT fireAbort();
 	}
 }
@@ -159,8 +162,6 @@ void StateGenericSendReceive::onSslHandshakeDone()
 
 	if (abort)
 	{
-		// Stop listening to signals from QNetworkReply to stay in
-		// this state until the following timer fires the signal.
 		clearConnections();
 		mReply->abort();
 		Q_EMIT fireAbort();
@@ -321,15 +322,14 @@ void StateGenericSendReceive::onReplyFinished()
 			qCCritical(network) << "The program received an unknown message from the server.";
 			updateStatus({GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 					});
-			Q_EMIT fireAbort();
 		}
 		else
 		{
 			qCCritical(network) << "The program received an unexpected message from the server.";
 			updateStatus({GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 					});
-			Q_EMIT fireAbort();
 		}
+		Q_EMIT fireAbort();
 		return;
 	}
 
