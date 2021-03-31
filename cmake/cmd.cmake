@@ -67,6 +67,11 @@ function(DEPLOY_NEXUS)
 		message(FATAL_ERROR "Please provide environment variable NEXUS_USERNAME and NEXUS_PSW")
 	endif()
 
+	set(GNUPG_KEY 699BF3055B0A49224EFDE7C72D7479A531451088)
+	if(DEFINED ENV${GNUPG_KEY})
+		set(GNUPG_KEY ENV${GNUPG_KEY})
+	endif()
+
 	find_program(MVN_BIN mvn)
 	if(NOT MVN_BIN)
 		message(FATAL_ERROR "Cannot find mvn")
@@ -79,18 +84,50 @@ function(DEPLOY_NEXUS)
 				</server></servers></settings>")
 	file(WRITE settings.xml "${SETTINGS_XML}")
 
-	file(GLOB FILE_AAR RELATIVE ${CMAKE_BINARY_DIR} *.aar)
-	file(GLOB FILE_POM RELATIVE ${CMAKE_BINARY_DIR} *.pom)
-	file(GLOB FILE_JAR RELATIVE ${CMAKE_BINARY_DIR} *-sources.jar)
+	function(get_file _suffix _out_var)
+		file(GLOB file RELATIVE ${CMAKE_BINARY_DIR} ${_suffix})
+
+		list(LENGTH file list_length)
+		if(list_length GREATER 1)
+			message(FATAL_ERROR "Found more than one entry: ${file}")
+		elseif(asc_length EQUAL 0)
+			message(FATAL_ERROR "File ${file} not found. Maybe signature is missing?: gpg -a -u ${GNUPG_KEY} --detach-sig")
+		endif()
+
+		set(${_out_var} ${file} PARENT_SCOPE)
+	endfunction()
+
+	get_file("*.aar" FILE_AAR)
+	get_file("*.pom" FILE_POM)
+	get_file("*-sources.jar" FILE_JAR)
 
 	file(STRINGS "${FILE_POM}" is_snapshot REGEX "<version>.+-SNAPSHOT</version>")
 	if(is_snapshot)
 		set(NEXUS_URL https://repo.govkg.de/repository/ausweisapp-snapshots)
 	else()
-		set(NEXUS_URL https://repo.govkg.de/repository/ausweisapp-releases)
+		if(PUBLIC)
+			set(NEXUS_URL https://s01.oss.sonatype.org/service/local/staging/deploy/maven2)
+		else()
+			set(NEXUS_URL https://repo.govkg.de/repository/ausweisapp-releases)
+		endif()
 	endif()
 
 	execute_process(COMMAND ${MVN_BIN} deploy:deploy-file -Dfile=${FILE_AAR} -DpomFile=${FILE_POM} -Dsources=${FILE_JAR} -DrepositoryId=nexus -Durl=${NEXUS_URL} --settings settings.xml)
+
+	if(PUBLIC)
+		get_file("*.aar.asc" FILE_AAR_ASC)
+		get_file("*.pom.asc" FILE_POM_ASC)
+		get_file("*-sources.jar.asc" FILE_SOURCES_ASC)
+
+		function(mvn_upload _file _packaging _classifier)
+			execute_process(COMMAND ${MVN_BIN} deploy:deploy-file -Dfile=${_file} -Dpackaging=${_packaging} -Dclassifier=${_classifier} -DpomFile=${FILE_POM} -DrepositoryId=nexus -Durl=${NEXUS_URL} --settings settings.xml)
+		endfunction()
+
+		mvn_upload("${FILE_AAR_ASC}" "aar.asc" "")
+		mvn_upload("${FILE_POM_ASC}" "pom.asc" "")
+		mvn_upload("${FILE_SOURCES_ASC}" "jar.asc" "sources")
+	endif()
+
 	file(REMOVE settings.xml)
 endfunction()
 

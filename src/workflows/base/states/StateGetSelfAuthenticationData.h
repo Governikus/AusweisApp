@@ -31,12 +31,12 @@ class StateGetSelfAuthenticationData
 		explicit StateGetSelfAuthenticationData(const QSharedPointer<WorkflowContext>& pContext);
 		void run() override;
 		void reportCommunicationError(const GlobalStatus& pStatus);
-		bool checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
+		void checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
 
 	private Q_SLOTS:
-		void onNetworkReply();
 		void onSslErrors(const QList<QSslError>& pErrors);
 		void onSslHandshakeDone();
+		void onNetworkReply();
 
 	public:
 		void onExit(QEvent* pEvent) override;

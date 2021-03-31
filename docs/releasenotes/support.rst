@@ -50,15 +50,15 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Firefox 86
+- Firefox 87
 
-- Chrome 88
+- Chrome 89
 
 - Internet Explorer 11
 
 - Safari 14.0.3
 
-- Edge 88
+- Edge 89
 
 
 
@@ -116,9 +116,9 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 88 (iOS/Android)
+- Chrome 89 (iOS/Android)
 
-- Firefox 86 (iOS/Android)
+- Firefox 87 (iOS/Android)
 
 - Safari 14.0.3 (iOS)
 

@@ -232,6 +232,7 @@ class test_StateCheckRefreshAddress
 
 		void reportCommunicationError()
 		{
+			mState->mReply = QSharedPointer<MockNetworkReply>::create();
 			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireAbort);
 
 			QTest::ignoreMessage(QtCriticalMsg, "Card_Communication_Error | \"An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.\"");

@@ -102,10 +102,12 @@ void RemoteTlsServer::incomingConnection(qintptr pSocketDescriptor)
 					this, &RemoteTlsServer::onPreSharedKeyAuthenticationRequired);
 			connect(mSocket.data(), &QSslSocket::encrypted, this, &RemoteTlsServer::onEncrypted);
 
+			qCDebug(remote_device).noquote() << "Starting encryption for incoming connection from" << mSocket->peerAddress().toString();
 			mSocket->startServerEncryption();
 		}
 		else
 		{
+			qCDebug(remote_device) << "Failed to set the socket descriptor";
 			delete mSocket.data();
 		}
 	}
@@ -113,8 +115,8 @@ void RemoteTlsServer::incomingConnection(qintptr pSocketDescriptor)
 	{
 		QTcpSocket socket;
 		socket.setSocketDescriptor(pSocketDescriptor);
+		qCDebug(remote_device).noquote() << "Socket already connected. Incoming connection from" << socket.peerAddress().toString() << "refused";
 		socket.abort();
-		qCDebug(remote_device) << "Socket already connected...";
 	}
 }
 

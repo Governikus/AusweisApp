@@ -17,7 +17,7 @@ has manually installed the AusweisApp2 like any other app to connect to the
 external variant.
 
 .. important::
-   The integrated variant is available in jcenter for free.
+   The integrated variant is available in maven central for free.
    If you need enterprise support feel free to contact us.
 
 .. important::
@@ -36,13 +36,13 @@ Integrated
 The integrated SDK is distributed as an AAR package that contains
 native **arm64-v8a** libraries only.
 The AAR package is available in the default repository of Android.
-The following listing shows the required **jcenter** in **build.gradle**.
+The following listing shows the required **mavenCentral** in **build.gradle**.
 
 .. code-block:: groovy
 
   buildscript {
       repositories {
-          jcenter()
+          mavenCentral()
       }
   }
 
@@ -58,6 +58,10 @@ It is recommended to always use the latest version (|version|) of AusweisApp2.
   }
 
 
+
+.. note::
+  All artifacts are signed with the following key (available on all public
+  key servers): 0x699BF3055B0A49224EFDE7C72D7479A531451088
 
 .. seealso::
   The AAR package provides an **AndroidManifest.xml** to register required

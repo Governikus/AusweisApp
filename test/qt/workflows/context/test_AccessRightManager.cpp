@@ -202,7 +202,7 @@ class test_AccessRightManager
 		{
 			TestAuthContext context(nullptr, ":/testbed/DIDAuthenticateEAC1_C2_01.xml");
 			*context.getAccessRightManager() -= AccessRight::CAN_ALLOWED;
-			QVERIFY(context.encodeEffectiveChat().toHex().endsWith("3c0513ffc4"));
+			QVERIFY(context.encodeEffectiveChat().toHex().endsWith("3c0f13ffe4"));
 		}
 
 

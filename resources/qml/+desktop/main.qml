@@ -235,7 +235,7 @@ ApplicationWindow {
 					}
 					break
 				case UiModule.CURRENT:
-					if (SettingsModel.startupModule === UiModule.TUTORIAL) {
+					if (SettingsModel.startupModule == UiModule.TUTORIAL) {
 						d.activeView = UiModule.TUTORIAL
 					}
 					break

@@ -174,7 +174,7 @@ class test_AccessRoleAndRight
 			QTest::newRow("writeDG18") << AccessRight::WRITE_DG18 << QString("Community-ID");
 			QTest::newRow("writeDG19") << AccessRight::WRITE_DG19 << QString("Residence permit I");
 			QTest::newRow("writeDG20") << AccessRight::WRITE_DG20 << QString("Residence permit II");
-			QTest::newRow("writeDG21") << AccessRight::WRITE_DG21 << QString("WRITE_DG21");
+			QTest::newRow("writeDG21") << AccessRight::WRITE_DG21 << QString("Optional data");
 			QTest::newRow("readDG21") << AccessRight::READ_DG21 << QString("Optional data");
 			QTest::newRow("readDG20") << AccessRight::READ_DG20 << QString("Residence permit II");
 			QTest::newRow("readDG19") << AccessRight::READ_DG19 << QString("Residence permit I");

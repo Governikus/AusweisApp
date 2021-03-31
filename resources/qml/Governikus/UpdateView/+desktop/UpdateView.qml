@@ -181,9 +181,9 @@ SectionPage {
 		//: INFO DESKTOP_QML Header of the popup that is shown when the requested update is not compatible with the OS.
 		title: qsTr("Warning - Your operating system is no longer supported")
 		//: INFO DESKTOP_QML Text of the popup that is shown when the requested update is not compatible with the OS.
-		text: qsTr("Your operating system is no longer officially supported with version %1 of the %2.").arg(root.update.version).arg(Qt.application.name)
+		text: qsTr("Troubleshooting and user support for the %1 is no longer available for your current operating system. Version %2 has not been tested with your current operating system, use is at your own risk.").arg(Qt.application.name).arg(root.update.version)
 		//: LABEL DESKTOP_QML
-		okButtonText: qsTr("Start anyway")
+		okButtonText: qsTr("Update anyway")
 
 		onConfirmed: {
 			load()

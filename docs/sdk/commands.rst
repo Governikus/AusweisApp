@@ -148,7 +148,7 @@ if needed.
     - **sessionSucceeded**: Shown if communication was stopped successfully.
 
     - **sessionInProgress**: Shown if communication is in progress. This message
-                             will be appended with current percentage level.
+      will be appended with current percentage level.
 
 .. code-block:: json
 
@@ -209,7 +209,7 @@ This dialog will be stopped by default (true) after an :ref:`enter_pin`, :ref:`e
     - **sessionSucceeded**: Shown if communication was stopped successfully.
 
     - **sessionInProgress**: Shown if communication is in progress. This message
-                             will be appended with current percentage level.
+      will be appended with current percentage level.
 
 .. code-block:: json
 

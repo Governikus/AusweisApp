@@ -203,7 +203,7 @@ Reader::CardEvent PcscReader::updateCard()
 					break;
 				}
 
-				qCDebug(card_pcsc) << "Unknown card detected, retrying.";
+				qCDebug(card_pcsc) << "Unknown card detected, retrying";
 			}
 
 			return CardEvent::CARD_INSERTED;
@@ -265,8 +265,10 @@ PCSC_RETURNCODE PcscReader::readReaderFeatures()
 	qCDebug(card_pcsc) << "SCardControl for" << readerName << ':' << PcscUtils::toString(returnCode);
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
-		return returnCode;
+		qCCritical(card_pcsc) << "Determining the reader features failed. Assuming this is a basic reader";
+		return PcscUtils::Scard_S_Success;
 	}
+
 	if (sizeof(buffer) < clen)
 	{
 		qCCritical(card_pcsc) << "Buffer size smaller than read length";
