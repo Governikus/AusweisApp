@@ -88,11 +88,14 @@ else()
 	ADD_FLAG(-Wdate-time)
 	ADD_FLAG(-Wunused)
 	ADD_FLAG(-Wunused-template)
-	ADD_FLAG(-Wuseless-cast)
 	ADD_FLAG(-Wextra-semi)
-	ADD_FLAG(-Wextra-semi-stmt)
 	ADD_FLAG(-Wempty-init-stmt)
 	ADD_FLAG(-Wno-gnu-zero-variadic-macro-arguments) # Qt (qDebug) is not compatible
+
+	if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14")
+		ADD_FLAG(-Wextra-semi-stmt)
+		ADD_FLAG(-Wuseless-cast)
+	endif()
 
 	if(ANDROID OR INTEGRATED_SDK)
 		set(CMAKE_CXX_VISIBILITY_PRESET hidden)
