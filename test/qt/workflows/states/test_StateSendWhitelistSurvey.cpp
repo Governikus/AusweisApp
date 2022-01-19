@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateSendWhitelistSurvey.h"
@@ -32,12 +32,7 @@ class MockSecureStorage
 		}
 
 
-		~MockSecureStorage() override;
 };
-
-MockSecureStorage::~MockSecureStorage()
-{
-}
 
 
 class test_StateSendWhitelistSurvey

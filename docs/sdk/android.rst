@@ -109,10 +109,58 @@ previous instance crashed.
 The AusweisApp2 deletes any log files that are older than 14 days.
 
 
+Initialization of the Android Application
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The integrated SDK creates a fork of the Android "main" Application if started.
+Due to this, the Application is instantiated a second time. Thus, it must
+ensure that any initialization (e.g. Firebase connections) is only carried out
+once. To do so the following snippet may prove useful:
+
+.. code-block:: java
+
+  public class MyAwesomeApp extends Application
+  {
+      private static final String AA2_PROCESS = "ausweisapp2_service";
+
+      @Override
+      public void onCreate()
+      {
+          super.onCreate();
+          if (isAA2Process())
+              return;
+
+          // Perform one-time initialization of YOUR app, e.g. Firebase connection
+      }
+
+      private boolean isAA2Process()
+      {
+          if (Build.VERSION.SDK_INT >= 28)
+          {
+              return Application.getProcessName().endsWith(AA2_PROCESS);
+          }
+
+          final int pid = android.os.Process.myPid();
+          ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+          for (ActivityManager.RunningAppProcessInfo appProcess : manager.getRunningAppProcesses())
+          {
+              if (appProcess.pid == pid)
+              {
+                  return appProcess.processName.endsWith(AA2_PROCESS);
+              }
+          }
+          return false;
+      }
+  }
+
+
 External
 --------
 The APK is available in Google's PlayStore and needs to be installed by
 the user. The external SDK is distributed as 32-bit and 64-bit.
+
+.. important::
+   Please note that the external SDK will no longer be available with AusweisApp2 1.24.0.
+   Only the integrated SDK will still be available.
 
 
 Security
@@ -201,6 +249,29 @@ hash value of a signed application on Android can be verified.
       return FINGERPRINT.equalsIgnoreCase(computed);
     }
   }
+
+
+
+Visibility in AndroidManifest.xml
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The client application needs to set the queries element as shown in the
+listing below in order to access the AusweisApp2 since Android 11.
+
+.. code-block:: xml
+
+  <queries>
+    <package android:name="com.governikus.ausweisapp2" />
+  </queries>
+
+
+.. seealso::
+
+  https://developer.android.com/guide/topics/manifest/queries-element
+
+.. note::
+  The integrated variant already provides an **AndroidManifest.xml** with
+  prepared queries.
+
 
 
 .. _android_import_aidl:

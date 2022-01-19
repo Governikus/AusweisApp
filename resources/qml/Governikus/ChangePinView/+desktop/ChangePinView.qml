@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -13,6 +13,7 @@ import Governikus.ResultView 1.0
 import Governikus.SettingsView 1.0
 import Governikus.View 1.0
 import Governikus.Workflow 1.0
+import Governikus.Type.PinResetInformationModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.UiModule 1.0
@@ -42,7 +43,7 @@ SectionPage {
 	property alias _d : d
 
 	function showWithPrecedingView(pNextView) {
-		readerView.precedingView = d.activeView
+		d.precedingView = d.activeView
 		d.view = pNextView
 		ApplicationWindow.menuBar.updateActions()
 	}
@@ -58,9 +59,9 @@ SectionPage {
 	Keys.onEscapePressed: if (d.cancelAllowed) ChangePinModel.cancelWorkflow()
 
 	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Change PIN")
-		rootEnabled: d.activeView === ChangePinView.SubViews.Start
+		rootEnabled: d.activeView === ChangePinView.SubViews.Start || d.activeView === ChangePinView.SubViews.NoPassword
 		helpTopic: "pinManagement"
 		showSettings: (changePinController.workflowState === ChangePinController.WorkflowStates.Reader ||
 						changePinController.workflowState === ChangePinController.WorkflowStates.Card)
@@ -72,7 +73,7 @@ SectionPage {
 			if (d.activeView === ChangePinView.SubViews.PasswordInfo ||
 				d.activeView === ChangePinView.SubViews.NoPassword ||
 				d.activeView === ChangePinView.SubViews.ReaderSettings) {
-					d.view = readerView.precedingView
+					d.view = d.precedingView
 					ApplicationWindow.menuBar.updateActions()
 			}
 		}
@@ -97,18 +98,15 @@ SectionPage {
 		id: d
 
 		property var view: ChangePinView.SubViews.Start
+		property int precedingView: ChangePinView.SubViews.Start
 		readonly property int activeView: inputError.visible ? ChangePinView.SubViews.InputError : pinUnlocked.visible ? ChangePinView.SubViews.PinUnlocked : view
 		readonly property bool cancelAllowed: view !== ChangePinView.SubViews.NoPassword && view !== ChangePinView.SubViews.Start && (ChangePinModel.isBasicReader || generalWorkflow.waitingFor != Workflow.WaitingFor.Password)
 	}
 
 	TabbedReaderView {
-		id: readerView
-
-		property int precedingView: ChangePinView.SubViews.Start
-
 		visible: d.activeView === ChangePinView.SubViews.ReaderSettings
 		onCloseView: {
-			d.view = precedingView
+			d.view = d.precedingView
 			ApplicationWindow.menuBar.updateActions()
 		}
 	}
@@ -131,21 +129,21 @@ SectionPage {
 
 		style: DecisionView.ButtonStyle.AllButtons
 		mainIconSource: "qrc:/images/material_lock.svg"
-		//: LABEL DESKTOP_QML Title of PIN change start page. User is asked which type of PIN they have.
+		//: LABEL DESKTOP Title of PIN change start page. User is asked which type of PIN they have.
 		questionText: qsTr("What kind of PIN do you have?")
 		questionSubText: "%1<br><br><a href=\"#\">%2</a>"
-			//: LABEL DESKTOP_QML Description of PIN change start page. User has a choice of which PIN to set.
-			.arg(qsTr("Here you have the possibility to set or change the PIN of your identity card."))
-			//: LABEL DESKTOP_QML More information link. Leads to information about pin letter.
+			//: LABEL DESKTOP Description of PIN change start page. User has a choice of which PIN to set.
+			.arg(qsTr("Please make a choice to set or change your PIN."))
+			//: LABEL DESKTOP More information link. Leads to information about pin letter.
 			.arg(qsTr("More information"))
 		agreeButton.iconText: "?"
-		//: LABEL DESKTOP_QML
-		agreeText: qsTr("No PIN")
+		//: LABEL DESKTOP
+		agreeText: qsTr("PIN unknown")
 		neutralButton.iconText: "5"
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		neutralText: qsTr("Five-digit Transport PIN")
 		disagreeButton.iconText: "6"
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		disagreeText: qsTr("Six-digit PIN")
 
 		onSubTextLinkActivated: baseItem.showPasswordInfo()
@@ -162,9 +160,12 @@ SectionPage {
 
 		resultType: ResultView.Type.IsInfo
 		buttonType: NavigationButton.Type.Check
-		//: LABEL DESKTOP_QML
-		text: qsTr("You cannot find your PIN letter? You have set a PIN when picking up the ID card or later that you cannot recall now?\n\nIf this is the case please turn to the competent authority and set a new PIN there.")
+		text: PinResetInformationModel.pinUnknownText
 
+		hintText: PinResetInformationModel.pinUnknownHint
+		hintButtonText: PinResetInformationModel.pinResetActionText
+
+		onHintClicked: Qt.openUrlExternally(PinResetInformationModel.pinResetUrl)
 		onNextView: baseItem.nextView(UiModule.DEFAULT)
 	}
 
@@ -184,7 +185,9 @@ SectionPage {
 						default:
 							return Workflow.WaitingFor.None
 		}
+
 		onSettingsRequested: baseItem.showSettings()
+		onRequestPasswordInfo: baseItem.showPasswordInfo()
 	}
 
 	EnterPasswordView {
@@ -205,8 +208,10 @@ SectionPage {
 
 		visible: d.activeView === ChangePinView.SubViews.PasswordInfo
 
+		changePinInfo: changePinController.workflowState === ChangePinController.WorkflowStates.Initial
+
 		onClose: {
-			d.view = readerView.precedingView
+			d.view = d.precedingView
 			ApplicationWindow.menuBar.updateActions()
 		}
 	}
@@ -217,11 +222,11 @@ SectionPage {
 		visible: d.activeView === ChangePinView.SubViews.Progress || d.activeView === ChangePinView.SubViews.ProgressNewPin
 
 		text: d.activeView === ChangePinView.SubViews.ProgressNewPin
-			//: LABEL DESKTOP_QML Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.
+			//: LABEL DESKTOP Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.
 			? qsTr("Setting new PIN")
-			//: LABEL DESKTOP_QML Processing screen label while the card communication is running after the old PIN has been entered during PIN change process.
+			//: LABEL DESKTOP Processing screen label while the card communication is running after the old PIN has been entered during PIN change process.
 			: qsTr("Change PIN")
-		//: INFO DESKTOP_QML Processing screen text while the card communication is running after the PIN has been entered during PIN change process.
+		//: INFO DESKTOP Processing screen text while the card communication is running after the PIN has been entered during PIN change process.
 		subText: qsTr("Please do not move the ID card.")
 	}
 
@@ -250,7 +255,7 @@ SectionPage {
 		visible: !confirmed && (d.view === ChangePinView.SubViews.Password || generalWorkflow.waitingFor === Workflow.WaitingFor.Password)
 
 		resultType: ResultView.Type.IsSuccess
-		//: INFO DESKTOP_QML The ID card has just been unblocked and the user can now continue with their PIN change.
+		//: INFO DESKTOP The ID card has just been unblocked and the user can now continue with their PIN change.
 		text: qsTr("Your PIN is unblocked. You now have three more attempts to change your PIN.")
 		onNextView: confirmed = true
 
@@ -266,7 +271,7 @@ SectionPage {
 		visible: d.activeView === ChangePinView.SubViews.CardPosition
 
 		resultType: ResultView.Type.IsInfo
-		//: INFO DESKTOP_QML The NFC signal is weak or unstable, the user is asked to change the card's position to (hopefully) reduce the distance to the NFC chip.
+		//: INFO DESKTOP The NFC signal is weak or unstable, the user is asked to change the card's position to (hopefully) reduce the distance to the NFC chip.
 		text: qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable")
 		onNextView: ChangePinModel.continueWorkflow()
 	}
@@ -278,11 +283,15 @@ SectionPage {
 
 		resultType: ChangePinModel.error ? ResultView.Type.IsError : ResultView.Type.IsSuccess
 		text: ChangePinModel.resultString
+		supportButtonsVisible: ChangePinModel.errorIsMasked
+		hintText: ChangePinModel.statusHintText
+		hintButtonText: ChangePinModel.statusHintActionText
+
+		onHintClicked: ChangePinModel.invokeStatusHintAction()
+		onEmailButtonPressed: ChangePinModel.sendResultMail()
 		onNextView: {
 			ChangePinModel.continueWorkflow()
 			baseItem.nextView(pName)
 		}
-		supportButtonsVisible: ChangePinModel.error && !ChangePinModel.isCancellationByUser()
-		onEmailButtonPressed: ChangePinModel.sendResultMail()
 	}
 }

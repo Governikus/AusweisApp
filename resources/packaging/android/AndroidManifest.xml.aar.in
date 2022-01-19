@@ -17,6 +17,10 @@
 
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 
+    <queries>
+        <package android:name="com.governikus.ausweisapp2" />
+    </queries>
+
     <application
         android:extractNativeLibs="true"
         tools:targetApi="23">

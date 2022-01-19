@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -68,10 +68,10 @@ Controller {
 		if (controller.connectedToCard) {
 			controller.connectedToCard = false
 			if (success) {
-				//: INFO DESKTOP_QML The authentication process finished successfully, the ID card may be removed from the card reader.
+				//: INFO DESKTOP The authentication process finished successfully, the ID card may be removed from the card reader.
 				ApplicationModel.showFeedback(qsTr("Process finished successfully. You may now remove your ID card from the device."))
 			} else {
-				//: INFO DESKTOP_QML The authentication process is completed, the ID card may be removed from the card reader.
+				//: INFO DESKTOP The authentication process is completed, the ID card may be removed from the card reader.
 				ApplicationModel.showFeedback(qsTr("You may now remove your ID card from the device."))
 			}
 		}

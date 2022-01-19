@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceDescriptor.h"
@@ -18,7 +18,7 @@ class test_RemoteDeviceDescriptor
 	Q_OBJECT
 
 	private:
-		quint16 mPort;
+		quint16 mPort = 0;
 
 	private Q_SLOTS:
 		void initTestCase()

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -528,8 +528,7 @@ TutorialContent {
 				Accessible.role: Accessible.Button
 				Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
 
-				//: LABEL ANDROID IOS
-				onClicked: Qt.openUrlExternally(qsTr("https://www.youtube.com/watch?v=fzbUZmHaZp4&index=5&list=PLLB5ERhVkn25qQXgMHQr-1KgyZsJKoSAm"))
+				onClicked: Qt.openUrlExternally("https://www.ausweisapp.bund.de/%1/aa2/video-authentication-example".arg(SettingsModel.language))
 			}
 		}
 	}

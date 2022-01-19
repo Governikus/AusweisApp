@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for version information.
  *
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "VersionInformationModel.h"
@@ -27,11 +27,11 @@ VersionInformationModel::VersionInformationModel()
 	init();
 
 	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, [this]()
-			{
-				beginResetModel();
-				init();
-				endResetModel();
-			});
+		{
+			beginResetModel();
+			init();
+			endResetModel();
+		});
 }
 
 
@@ -40,8 +40,8 @@ void VersionInformationModel::init()
 	mData.clear();
 
 	BuildHelper::processInformationHeader([this](const QString& pKey, const QString& pValue){
-				mData += qMakePair(pKey, pValue);
-			});
+			mData += qMakePair(pKey, pValue);
+		});
 }
 
 

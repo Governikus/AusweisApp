@@ -92,8 +92,8 @@ endif()
 set(QT 5.15.2)
 set(QT_HASH 3a530d1b243b5dec00bc54937455471aaa3e56849d2593edb8ded07228202240)
 
-set(OPENSSL 1.1.1k)
-set(OPENSSL_HASH 892a0875b9872acd04a9fde79b1f943075d5ea162415de3047c327df33fbaee5)
+set(OPENSSL 1.1.1m)
+set(OPENSSL_HASH f89199be8b23ca45fc7cb9f1d8d3ee67312318286ad030f5316aca6462db6c96)
 
 ################################## Files
 set(QT_FILE qt-everywhere-src-${QT}.tar.xz)
@@ -146,6 +146,12 @@ else()
 endif()
 
 ADD_FLAG(-fstack-protector-strong -fstack-protector NOQUOTES VAR OPENSSL_COMPILER_FLAGS)
+
+if(WIN32)
+	ADD_FLAG(-Wl,--dynamicbase VAR OPENSSL_COMPILER_FLAGS USE_SAME_FOR_LINKER)
+	ADD_FLAG(-Wl,--nxcompat VAR OPENSSL_COMPILER_FLAGS USE_SAME_FOR_LINKER)
+	ADD_FLAG(-Wl,--high-entropy-va VAR OPENSSL_COMPILER_FLAGS USE_SAME_FOR_LINKER)
+endif()
 
 if(IOS)
 	if(CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include  "AppUpdateDataModel.h"
@@ -179,17 +179,19 @@ void AppUpdateDataModel::skipUpdate() const
 }
 
 
-void AppUpdateDataModel::download()
+bool AppUpdateDataModel::download()
 {
 	mDownloadProgress = 0;
-	Env::getSingleton<AppUpdater>()->downloadUpdate();
+	const auto success = Env::getSingleton<AppUpdater>()->downloadUpdate();
 	Q_EMIT fireDownloadProgressChanged();
+	return success;
 }
 
 
-void AppUpdateDataModel::abortDownload()
+bool AppUpdateDataModel::abortDownload()
 {
 	mDownloadProgress = 0;
-	Env::getSingleton<AppUpdater>()->abortDownload();
+	const auto success = Env::getSingleton<AppUpdater>()->abortDownload();
 	Q_EMIT fireDownloadProgressChanged();
+	return success;
 }

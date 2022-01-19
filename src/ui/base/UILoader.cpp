@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UILoader.h"
@@ -152,13 +152,13 @@ void UILoader::shutdown()
 		UIPlugIn* const plugin = mLoadedPlugIns.value(key);
 
 		connect(plugin, &QObject::destroyed, this, [this, key] {
-					qCDebug(gui) << "Shutdown UI:" << key;
-					mLoadedPlugIns.remove(key);
-					if (mLoadedPlugIns.isEmpty())
-					{
-						Q_EMIT fireShutdownComplete();
-					}
-				}, Qt::QueuedConnection);
+				qCDebug(gui) << "Shutdown UI:" << key;
+				mLoadedPlugIns.remove(key);
+				if (mLoadedPlugIns.isEmpty())
+				{
+					Q_EMIT fireShutdownComplete();
+				}
+			}, Qt::QueuedConnection);
 
 		// Plugins and therefore their members are not auto destructed due to a bug in Qt.
 		// https://bugreports.qt.io/browse/QTBUG-17458

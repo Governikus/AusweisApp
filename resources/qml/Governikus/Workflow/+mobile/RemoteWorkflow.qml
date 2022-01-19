@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -118,9 +118,6 @@ Item {
 			} else if (ApplicationModel.extendedLengthApdusUnsupported) {
 				//: INFO ANDROID IOS The device does not support Extended Length and can not be used as card reader.
 				qsTr("The connected smartphone as card reader (SaC) unfortunately does not meet the technical requirements (Extended Length not supported).");
-			} else if (NumberModel.pinDeactivated) {
-				//: INFO ANDROID IOS The online authentication is disabled and needs to be enabled by the authorities.
-				return qsTr("The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.");
 			} else {
 				//: INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.
 				return qsTr("Connected to %1. Please place the NFC interface of the smartphone on your ID card.").arg(RemoteServiceModel.connectedServerDeviceNames);

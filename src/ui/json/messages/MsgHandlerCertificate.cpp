@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerCertificate.h"
@@ -15,7 +15,8 @@ MsgHandlerCertificate::MsgHandlerCertificate(const MsgContext& pContext)
 	Q_ASSERT(ctx);
 	Q_ASSERT(ctx->getDidAuthenticateEac1());
 	Q_ASSERT(ctx->getDidAuthenticateEac1()->getCertificateDescription());
-	Q_ASSERT(!ctx->getDidAuthenticateEac1()->getCvCertificates().isEmpty());
+	Q_ASSERT(ctx->getAccessRightManager());
+	Q_ASSERT(ctx->getAccessRightManager()->getTerminalCvc());
 
 	const auto& eac1 = ctx->getDidAuthenticateEac1();
 	const auto& certificateDescription = eac1->getCertificateDescription();
@@ -28,7 +29,7 @@ MsgHandlerCertificate::MsgHandlerCertificate(const MsgContext& pContext)
 	desc[QLatin1String("termsOfUsage")] = certificateDescription->getTermsOfUsage();
 	desc[QLatin1String("purpose")] = certificateDescription->getPurpose();
 
-	CVCertificateBody body = eac1->getCvCertificates().at(0)->getBody();
+	CVCertificateBody body = ctx->getAccessRightManager()->getTerminalCvc()->getBody();
 	QJsonObject validity;
 	validity[QLatin1String("effectiveDate")] = body.getCertificateEffectiveDate().toString(Qt::ISODate);
 	validity[QLatin1String("expirationDate")] = body.getCertificateExpirationDate().toString(Qt::ISODate);

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ProviderConfiguration
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfiguration.h"
@@ -310,7 +310,7 @@ class test_ProviderConfiguration
 				}
 			}
 
-			QCOMPARE(attachedEidCounter, 18);
+			QCOMPARE(attachedEidCounter, 20);
 		}
 
 
@@ -355,8 +355,50 @@ class test_ProviderConfiguration
 			{
 				QVERIFY(QUrl(provider.getAddress()).isValid());
 				QVERIFY(!provider.getAddress().endsWith('/'));
+				QVERIFY(!provider.getAddress().endsWith('#'));
 				QVERIFY(QUrl(provider.getHomepage()).isValid());
 				QVERIFY(!provider.getHomepage().endsWith('/'));
+				QVERIFY(!provider.getHomepage().endsWith('#'));
+			}
+		}
+
+
+		void testInternalIds()
+		{
+			const QStringList internalIds = {};
+			const auto& providerConfiguration = Env::getSingleton<ProviderConfiguration>();
+
+			const ProviderConfigurationInfo empty;
+			QVERIFY(providerConfiguration->getProviderInfo(QStringLiteral("nonExistentId")) == empty);
+			for (const auto& id : internalIds)
+			{
+				QVERIFY2(providerConfiguration->getProviderInfo(id) != empty, qPrintable(QString("Internal ID %1 is not present").arg(id)));
+			}
+
+			for (const auto& info : providerConfiguration->getProviderConfigurationInfos())
+			{
+				const auto& id = info.getInternalId();
+				if (!id.isEmpty())
+				{
+					QVERIFY2(internalIds.contains(id), qPrintable(QString("Internal ID %1 is not known to test").arg(id)));
+				}
+			}
+		}
+
+
+		void testInternalIdsUniqueness()
+		{
+			const auto& providers = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
+			QStringList internalIds;
+
+			for (const auto& info : providers)
+			{
+				const auto& id = info.getInternalId();
+				if (!id.isEmpty())
+				{
+					QVERIFY2(!internalIds.contains(id), qPrintable(QString("Internal IDs must be unique, %1 already present").arg(id)));
+					internalIds << id;
+				}
 			}
 		}
 

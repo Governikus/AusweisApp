@@ -1,7 +1,7 @@
 /*!
  * \brief Parses self authentication data from JSON data and provides its content.
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

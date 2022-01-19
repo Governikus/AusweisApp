@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"
@@ -72,7 +72,17 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 	}
 	else if (readerInfo.isPinDeactivated() && !getContext()->isCanAllowedMode())
 	{
-		getContext()->getCardConnection()->setProgressMessage(tr("The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function."));
+		qCDebug(statemachine) << "The online identification function of the ID card is not activated.";
+		const GlobalStatus status = GlobalStatus::Code::Card_Pin_Deactivated;
+		if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+		{
+			getContext()->getCardConnection()->setProgressMessage(status.toErrorDescription());
+		}
+		else
+		{
+			updateStatus(status);
+			Q_EMIT fireAbort();
+		}
 	}
 }
 

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -102,6 +102,7 @@ Item {
 				contentMarginRight: 0
 				contentMarginLeft: 0
 				contentMarginBottom: 0
+
 				//: LABEL ANDROID IOS
 				title: qsTr("Available devices")
 			}
@@ -110,9 +111,23 @@ Item {
 				width: parent.width
 				visible: !searchDeviceList.visible
 
-				//: INFO ANDROID IOS No SaC was found on the network, both devices need to be connected to the same WiFi network.
-				text: qsTr("No unpaired smartphone as card reader (SaC) available. Please make sure that the smartphone as card reader (SaC) functionality in AusweisApp2 on your other device is activated and that both devices are connected to the same WiFi.")
-				textStyle: Style.text.normal_secondary
+				text: ApplicationModel.wifiEnabled
+					//: INFO ANDROID IOS No SaC was found on the network, both devices need to be connected to the same WiFi network.
+					? qsTr("No unpaired smartphone as card reader (SaC) available. Please make sure that the smartphone as card reader (SaC) functionality in AusweisApp2 on your other device is activated and that both devices are connected to the same WiFi.")
+					//: INFO ANDROID IOS Wifi is not enabled and no new devices can be paired.
+					: qsTr("Please connect your WiFi to use another smartphone as card reader (SaC).")
+				textStyle: ApplicationModel.wifiEnabled ? Style.text.normal_secondary : Style.text.normal_warning
+			}
+
+			GButton {
+				visible: !ApplicationModel.wifiEnabled
+
+				anchors.horizontalCenter: parent.horizontalCenter
+
+				//: LABEL ANDROID IOS
+				text: qsTr("Enable WiFi")
+
+				onClicked: ApplicationModel.enableWifi()
 			}
 
 			GText {
@@ -133,10 +148,14 @@ Item {
 
 			ListView {
 				id: searchDeviceList
+
+				visible: ApplicationModel.wifiEnabled && count > 0
 				width: parent.width
 				height: childrenRect.height
+
 				model: RemoteServiceModel.availableRemoteDevices
 				spacing: Constants.component_spacing
+				interactive: false
 				delegate: DevicesListDelegate {
 					width: searchDeviceList.width
 
@@ -151,8 +170,6 @@ Item {
 						}
 					}
 				}
-				visible: count > 0
-				interactive: false
 			}
 		}
 	}

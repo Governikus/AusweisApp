@@ -1,7 +1,7 @@
 /*
  * \brief Logging handler of QtMessageHandler
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -76,6 +76,8 @@ class LogHandler
 		QPointer<QTemporaryFile> mLogFile;
 		QtMessageHandler mHandler;
 		bool mUseHandler;
+		bool mAutoRemove;
+		bool mUseLogFile;
 		const QByteArray mFilePrefix;
 		QMutex mMutex;
 
@@ -92,8 +94,9 @@ class LogHandler
 		[[nodiscard]] QString getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg) const;
 		void handleMessage(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg);
 		void handleLogWindow(QtMsgType pType, const char* pCategory, const QString& pMsg);
-		void removeOldLogfiles();
+		void removeOldLogFiles();
 		QByteArray readLogFile(qint64 pStart, qint64 pLength = -1);
+		void setLogFileInternal(bool pEnable);
 
 		static void messageHandler(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg);
 		friend QDebug operator<<(QDebug, const LogHandler&);
@@ -114,7 +117,7 @@ class LogHandler
 		void init();
 		[[nodiscard]] const LogEventHandler* getEventHandler() const;
 
-		bool setAutoRemove(bool pRemove);
+		void setAutoRemove(bool pRemove);
 		bool copy(const QString& pDest);
 		[[nodiscard]] bool copyOther(const QString& pSource, const QString& pDest) const;
 		void resetBacklog();
@@ -125,11 +128,11 @@ class LogHandler
 		void setCriticalLogCapacity(int pSize);
 
 		static QDateTime getFileDate(const QFileInfo& pInfo);
-		[[nodiscard]] QDateTime getCurrentLogfileDate() const;
-		[[nodiscard]] QFileInfoList getOtherLogfiles() const;
-		bool removeOtherLogfiles();
-		void setLogfile(bool pEnable);
-		[[nodiscard]] bool useLogfile() const;
+		[[nodiscard]] QDateTime getCurrentLogFileDate() const;
+		[[nodiscard]] QFileInfoList getOtherLogFiles() const;
+		bool removeOtherLogFiles();
+		void setLogFile(bool pEnable);
+		[[nodiscard]] bool useLogFile() const;
 		void setUseHandler(bool pEnable);
 		[[nodiscard]] bool useHandler() const;
 };

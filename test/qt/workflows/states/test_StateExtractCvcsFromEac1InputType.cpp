@@ -1,7 +1,7 @@
 /*!
  * \brief Tests the StateExtractCvcsFromEac1InputType
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateExtractCvcsFromEac1InputType.h"

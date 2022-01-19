@@ -37,6 +37,8 @@ function(ADD_FLAG)
 		endif()
 		string(REPLACE "-" "_" flagname ${flagname})
 		string(REPLACE " " "_" flagname ${flagname})
+		string(REPLACE "," "_" flagname ${flagname})
+		string(REPLACE ":" "_" flagname ${flagname})
 
 		# GCC will ignore unknown warning options when used in the -Wno- form. It will complain
 		# about it though, if something else goes wrong. To check if this is a warning which can be
@@ -237,6 +239,9 @@ function(ADD_PLATFORM_LIBRARY _name)
 	endif()
 
 	if(INCOMPATIBLE_QT_COMPILER_FLAGS)
+		if(CMAKE_VERSION VERSION_LESS "3.14")
+			message(WARNING "Compiler flags for mocs with 3.13.x and earlier leads to linker errors")
+		endif()
 		set_source_files_properties("${_name}_autogen/mocs_compilation.cpp" PROPERTIES COMPILE_OPTIONS ${INCOMPATIBLE_QT_COMPILER_FLAGS})
 	endif()
 endfunction()

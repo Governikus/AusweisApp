@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -21,7 +21,7 @@ SectionPage {
 	Accessible.description: qsTr("This is the diagnosis view of the AusweisApp2.")
 
 	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Diagnosis")
 		helpTopic: "diagnosis"
 	}
@@ -87,13 +87,13 @@ SectionPage {
 				Accessible.description: qsTr("Save diagnosis to textfile")
 
 				icon.source: "qrc:///images/desktop/material_save.svg"
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				text: qsTr("Save to file")
 				tintIcon: true
 				enableButton: !SelfDiagnosisModel.running || !timeout.running
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				disabledTooltipText: qsTr("Diagnosis is still running")
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				enabledTooltipText: SelfDiagnosisModel.running ? qsTr("Diagnosis may be incomplete") : ""
 				onClicked: {
 					var filenameSuggestion = "%1.%2.%3.txt".arg(Qt.application.name).arg(qsTr("Diagnosis")).arg(SelfDiagnosisModel.getCreationTimeString())

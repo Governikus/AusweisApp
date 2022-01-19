@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReaderManagerPlugIn.h"
@@ -90,18 +90,23 @@ void RemoteReaderManagerPlugIn::handleIFDStatus(const QJsonObject& pJsonObject, 
 	{
 		if (ifdStatus.getConnectedReader())
 		{
-			static_cast<RemoteReader*>(mReaderList.value(readerName))->updateStatus(ifdStatus);
+			if (auto* reader = mReaderList.value(readerName); reader)
+			{
+				static_cast<RemoteReader*>(reader)->updateStatus(ifdStatus);
+			}
 		}
 		else
 		{
 			qCDebug(card_remote) << "Removed reader" << readerName;
 
-			auto* reader = mReaderList.take(readerName);
-			auto info = reader->getReaderInfo();
-			info.setCardInfo(CardInfo(CardType::NONE));
-			Q_EMIT fireReaderRemoved(info);
-			delete reader;
-			mReadersForDispatcher.remove(pId, readerName);
+			if (auto* reader = mReaderList.take(readerName); reader)
+			{
+				auto info = reader->getReaderInfo();
+				info.setCardInfo(CardInfo(CardType::NONE));
+				Q_EMIT fireReaderRemoved(info);
+				delete reader;
+				mReadersForDispatcher.remove(pId, readerName);
+			}
 		}
 		return;
 	}
@@ -153,8 +158,8 @@ void RemoteReaderManagerPlugIn::continueConnectToPairedReaders(const QVector<QSh
 		if (remoteInfo.getFingerprint() == ifdId)
 		{
 			QMetaObject::invokeMethod(remoteClient, [remoteClient, remoteDevice] {
-						remoteClient->establishConnection(remoteDevice, QString());
-					}, Qt::QueuedConnection);
+					remoteClient->establishConnection(remoteDevice, QString());
+				}, Qt::QueuedConnection);
 		}
 	}
 	mConnectionCheckInProgress = false;
@@ -181,9 +186,9 @@ void RemoteReaderManagerPlugIn::onContextEstablished(const QString& pIfdName, co
 	else
 	{
 		QMetaObject::invokeMethod(remoteDispatcher.data(), [remoteDispatcher] {
-					const QSharedPointer<const IfdGetStatus>& ifdGetStatus = QSharedPointer<IfdGetStatus>::create();
-					remoteDispatcher->send(ifdGetStatus);
-				}, Qt::QueuedConnection);
+				const QSharedPointer<const IfdGetStatus>& ifdGetStatus = QSharedPointer<IfdGetStatus>::create();
+				remoteDispatcher->send(ifdGetStatus);
+			}, Qt::QueuedConnection);
 	}
 }
 
@@ -213,9 +218,9 @@ void RemoteReaderManagerPlugIn::onRemoteMessage(RemoteCardMessageType pMessageTy
 			qCWarning(card_remote) << "Received an unexpected message of type:" << pMessageType;
 			const auto& dispatcher = mDispatcherList.value(pId);
 			QMetaObject::invokeMethod(dispatcher.data(), [dispatcher] {
-						const QSharedPointer<const IfdError>& errorMessage = QSharedPointer<IfdError>::create(QString(), ECardApiResult::Minor::AL_Unkown_API_Function);
-						dispatcher->send(errorMessage);
-					}, Qt::QueuedConnection);
+					const QSharedPointer<const IfdError>& errorMessage = QSharedPointer<IfdError>::create(QString(), ECardApiResult::Minor::AL_Unkown_API_Function);
+					dispatcher->send(errorMessage);
+				}, Qt::QueuedConnection);
 			break;
 		}
 

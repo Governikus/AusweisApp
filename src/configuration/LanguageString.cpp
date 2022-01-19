@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LanguageString.h"
@@ -64,7 +64,7 @@ QString LanguageString::toString(const QLocale& pLocale) const
 		return result;
 	}
 
-	result = mStrings[LanguageLoader::getLocalCode(pLocale)];
+	result = mStrings[LanguageLoader::getLocaleCode(pLocale)];
 	if (!result.isNull())
 	{
 		return result;

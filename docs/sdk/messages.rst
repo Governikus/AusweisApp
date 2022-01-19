@@ -12,7 +12,7 @@ your :doc:`commands`.
 
 ACCESS_RIGHTS
 ^^^^^^^^^^^^^
-This message will be send by AusweisApp2 once the authentication is started
+This message will be sent by AusweisApp2 once the authentication is started
 by :ref:`run_auth` and the AusweisApp2 got the certificate from the service.
 
 If your application receives this message you can call :ref:`set_access_rights`
@@ -66,12 +66,11 @@ the whole workflow.
         },
    "chat":
          {
-          "effective": ["Address", "FamilyName", "GivenNames", "AgeVerification"],
-          "optional": ["GivenNames", "AgeVerification"],
+          "effective": ["Address", "FamilyName", "GivenNames", "AgeVerification", "CanAllowed"],
+          "optional": ["GivenNames", "AgeVerification", "CanAllowed"],
           "required": ["Address", "FamilyName"]
          },
    "transactionInfo": "this is an example",
-   "canAllowed": false
  }
 
 
@@ -91,7 +90,8 @@ the whole workflow.
 Values
 """"""
 .. versionadded:: 1.22.0
-   The following access right is possible now:
+   The following access rights are possible now:
+
     - CanAllowed
     - PinManagement
 
@@ -149,7 +149,7 @@ The following access rights are possible:
 
 API_LEVEL
 ^^^^^^^^^
-This message will be send if :ref:`get_api_level` or :ref:`set_api_level` is called.
+This message will be sent if :ref:`get_api_level` or :ref:`set_api_level` is called.
 
 It lists all **available** API levels that can be used and set by :ref:`set_api_level`.
 Also it indicates the **current** selected API level.
@@ -198,7 +198,7 @@ This documentation will mark every API change with a flag like the following:
 
 AUTH
 ^^^^
-This message will be send by AusweisApp2 if an authentication
+This message will be sent by AusweisApp2 if an authentication
 is initially started. The next message should be :ref:`access_rights`
 or :ref:`auth` again if the authentication immediately results
 in an error.
@@ -229,8 +229,8 @@ a result and an url parameter to indicate the end of an authentication.
 
     - **minor**: Minor error code.
 
-    - **language**: Language of description and message. AusweisApp2 will
-      use "de" for German system locale or "en" as the fall back.
+    - **language**: Language of description and message. Language "en"
+      is supported only at the moment.
 
     - **description**: Description of the error message.
 
@@ -348,7 +348,7 @@ Provides information about the used certificate.
 
 CHANGE_PIN
 ^^^^^^^^^^
-This message will be send by AusweisApp2 if a change PIN workflow
+This message will be sent by AusweisApp2 if a change PIN workflow
 is initially started.
 
 If you receive a :ref:`change_pin` message with a parameter **success**
@@ -664,7 +664,7 @@ INSERT_CARD
 Indicates that the AusweisApp2 requires a card to continue.
 
 If the AusweisApp2 needs a card to continue the workflow
-this message will be send as a notification.
+this message will be sent as a notification.
 If your application receives this message it should
 show a hint to the user.
 
@@ -675,7 +675,7 @@ certificate contains the CAN allowed right.
 In this case, the workflow will be paused until another card is inserted.
 If the user already inserted a card this message will not be sent at all.
 
-This message will also be send if there is no connected card reader.
+This message will also be sent if there is no connected card reader.
 
 
 .. code-block:: json
@@ -736,7 +736,7 @@ READER
 ^^^^^^
 Provides information about a connected or disconnected card reader.
 
-This message will be send by the AusweisApp2 if a card reader was added
+This message will be sent by the AusweisApp2 if a card reader was added
 or removed to the operating system. Also if a card was inserted into a
 card reader or removed from a card reader.
 

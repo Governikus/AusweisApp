@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ProviderConfigurationParser
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfigurationParser.h"
@@ -15,6 +15,7 @@ using namespace governikus;
 
 
 Q_DECLARE_METATYPE(QLatin1String)
+Q_DECLARE_METATYPE(QOperatingSystemVersion::OSType)
 
 
 class test_ProviderConfigurationParser
@@ -72,7 +73,8 @@ class test_ProviderConfigurationParser
 										 "         \"phone\": \"+49 421 - 204 95 995\","
 										 "         \"email\": \"support@ausweisapp.de\","
 										 "         \"postalAddress\": \"Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesamtes fuer Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen\","
-										 "         \"category\": \"citizen\""
+										 "         \"category\": \"citizen\","
+										 "         \"internalId\": \"myId\""
 										 "      }"
 										 "   ]"
 										 "}");
@@ -121,9 +123,11 @@ class test_ProviderConfigurationParser
 			QCOMPARE(provider.getCategory(), QStringLiteral("citizen"));
 			QVERIFY(provider.getIcon()->lookupPath().endsWith("/citizen_button.svg"));
 			QVERIFY(provider.getImage()->lookupPath().endsWith("/citizen_bg.svg"));
+			QVERIFY(provider.getInternalId().isEmpty());
 
 			provider = providers[2];
 			QCOMPARE(provider.getLongName().toString(), QString());
+			QCOMPARE(provider.getInternalId(), QStringLiteral("myId"));
 		}
 
 
@@ -214,89 +218,31 @@ class test_ProviderConfigurationParser
 
 		void platformCount_data()
 		{
+			QTest::addColumn<QOperatingSystemVersion::OSType>("osType");
+			QTest::addColumn<int>("majorVersion");
 			QTest::addColumn<int>("count");
 
-			const int desktop = 87;
-			QTest::newRow("win") << desktop;
-			QTest::newRow("mac") << desktop;
-			QTest::newRow("linux") << desktop;
-			QTest::newRow("android") << desktop;
-			QTest::newRow("ios") << 51;
+			const int all = 92;
+			const int withEidSupport = 68;
+			QTest::newRow("win") << QOperatingSystemVersion::Windows << -1 << all;
+			QTest::newRow("mac") << QOperatingSystemVersion::MacOS << -1 << all;
+			QTest::newRow("linux") << QOperatingSystemVersion::Unknown << -1 << all;
+			QTest::newRow("android") << QOperatingSystemVersion::Android << -1 << withEidSupport;
+			QTest::newRow("android-11") << QOperatingSystemVersion::Android << 11 << all;
+			QTest::newRow("android-12") << QOperatingSystemVersion::Android << 12 << withEidSupport;
+			QTest::newRow("ios") << QOperatingSystemVersion::IOS << -1 << withEidSupport;
 		}
 
 
 		void platformCount()
 		{
+			QFETCH(QOperatingSystemVersion::OSType, osType);
+			QFETCH(int, majorVersion);
 			QFETCH(int, count);
 
 			QByteArray data = TestFileHelper::readFile(QStringLiteral(":/updatable-files/supported-providers.json"));
-			const auto providers = ProviderConfigurationParser::parseProvider(data, QLatin1String(QTest::currentDataTag()));
+			const auto providers = ProviderConfigurationParser::parseProvider(data, QOperatingSystemVersion(osType, majorVersion));
 			QCOMPARE(providers.size(), count);
-		}
-
-
-		void checkExcludedPlatform_data()
-		{
-			QTest::addColumn<QByteArray>("content");
-			QTest::addColumn<QLatin1String>("currentOS");
-			QTest::addColumn<bool>("excluded");
-
-			QTest::newRow("mobile")
-				<< QByteArray(R"(   ["mobile"]   )") << QLatin1String("android") << true;
-
-			QTest::newRow("android")
-				<< QByteArray(R"(   ["mac", "android"]   )") << QLatin1String("android") << true;
-
-			QTest::newRow("desktop_excluded_mac")
-				<< QByteArray(R"(   ["android", "desktop"]   )") << QLatin1String("mac") << true;
-
-			QTest::newRow("ios")
-				<< QByteArray(R"(   ["android", "desktop"]   )") << QLatin1String("ios") << false;
-
-			QTest::newRow("ios")
-				<< QByteArray(R"(   ["android", "win"]   )") << QLatin1String("ios") << false;
-
-			QTest::newRow("mobile_excluded")
-				<< QByteArray(R"(   ["win", "mobile"]   )") << QLatin1String("android") << true;
-
-			QTest::newRow("mobile_excluded")
-				<< QByteArray(R"(   ["mobile", "win"]   )") << QLatin1String("ios") << true;
-
-			QTest::newRow("win_excluded")
-				<< QByteArray(R"(   ["win"]   )") << QLatin1String("win") << true;
-
-			QTest::newRow("desktop_excluded_single")
-				<< QByteArray(R"(   ["desktop"]   )") << QLatin1String("win") << true;
-
-			QTest::newRow("win")
-				<< QByteArray(R"(   ["mac", "bla", "bsd", "linux", "mobile", "ios", "android"]   )") << QLatin1String("win") << false;
-
-			QTest::newRow("desktop_excluded_multi")
-				<< QByteArray(R"(   ["mac", "bla", "bsd", "linux", "desktop", "ios", "android"]   )") << QLatin1String("win") << true;
-
-			QTest::newRow("win_excluded")
-				<< QByteArray(R"(   ["mac", "bla", "dummy", "win"]   )") << QLatin1String("win") << true;
-
-			QTest::newRow("nothing")
-				<< QByteArray(R"(   []   )") << QLatin1String("win") << false;
-		}
-
-
-		void checkExcludedPlatform()
-		{
-			QFETCH(QByteArray, content);
-			QFETCH(QLatin1String, currentOS);
-			QFETCH(bool, excluded);
-
-			const auto& doc = QJsonDocument::fromJson(content);
-			QVERIFY(!doc.isNull());
-			QCOMPARE(ProviderConfigurationParser::isExcludedPlatform(doc.array(), currentOS), excluded);
-		}
-
-
-		void checkExcludedPlatformEmpty()
-		{
-			QCOMPARE(ProviderConfigurationParser::isExcludedPlatform(QJsonArray(), QLatin1String("ios")), false);
 		}
 
 

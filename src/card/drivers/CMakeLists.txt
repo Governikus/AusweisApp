@@ -17,6 +17,6 @@ if(MAC)
 	target_link_libraries(AusweisAppCardDrivers ${IOKIT})
 endif()
 
-if(LIBUDEV)
-	target_link_libraries(AusweisAppCardDrivers ${LIBUDEV})
+if(TARGET PkgConfig::UDEV)
+	target_link_libraries(AusweisAppCardDrivers PkgConfig::UDEV)
 endif()

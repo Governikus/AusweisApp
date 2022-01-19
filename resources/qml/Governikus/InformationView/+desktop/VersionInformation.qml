@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -55,9 +55,9 @@ Item {
 				SettingsModel.developerOptions = !SettingsModel.developerOptions
 				ApplicationModel.showFeedback(
 					SettingsModel.developerOptions ?
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					qsTr("Developer options activated.") :
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					qsTr("Developer options deactivated.")
 				)
 				counter = 0

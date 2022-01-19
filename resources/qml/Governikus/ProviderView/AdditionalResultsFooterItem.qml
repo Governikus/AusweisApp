@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -69,7 +69,7 @@ Item {
 			verticalAlignment: Text.AlignVCenter
 			Layout.fillWidth: true
 
-			//: LABEL DESKTOP_QML IOS_TABLET ANDROID_TABLET
+			//: LABEL DESKTOP IOS_TABLET ANDROID_TABLET
 			text: qsTr("Additional results in other categories:") + " " + baseItem.totalHits
 			textStyle: Style.text.normal_inverse
 		}

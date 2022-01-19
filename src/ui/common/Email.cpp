@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Email.h"
@@ -16,7 +16,7 @@ QString generateMailBody(const GlobalStatus& pStatus, const QUrl& pServiceUrl, b
 	const auto& logHandler = Env::getSingleton<LogHandler>();
 	QStringList mailBody(QObject::tr("Please describe the error that occurred."));
 
-	if (logHandler->useLogfile() && pAddLogNotice)
+	if (logHandler->useLogFile() && pAddLogNotice)
 	{
 		mailBody << QObject::tr("You may want to attach the logfile which can be saved from the error dialog.");
 	}

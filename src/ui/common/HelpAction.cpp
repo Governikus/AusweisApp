@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HelpAction.h"
@@ -51,7 +51,7 @@ const QString HelpAction::mBaseUrl = QStringLiteral("https://www.ausweisapp.bund
 
 QString HelpAction::getHelpPath(QLocale::Language pLang) const
 {
-	const QString langDir = QCoreApplication::applicationDirPath() % QStringLiteral("/help/") % LanguageLoader::getLocalCode(QLocale(pLang)) % QLatin1Char('/');
+	const QString langDir = QCoreApplication::applicationDirPath() % QStringLiteral("/help/") % LanguageLoader::getLocaleCode(QLocale(pLang)) % QLatin1Char('/');
 
 	if (QDir(langDir).exists())
 	{
@@ -117,7 +117,7 @@ QString HelpAction::getOnlineUrl(const QString& pObjectName)
 
 	const auto& appVersion = VersionNumber::getApplicationVersion().getVersionNumber();
 	const QString ver = QString::number(appVersion.majorVersion()) % QLatin1Char('.') % QString::number(appVersion.minorVersion());
-	const QString locale = LanguageLoader::getLocalCode();
+	const QString locale = LanguageLoader::getLocaleCode();
 	const QString mapping = getInstance().getContextMapping(pObjectName);
 	return mBaseUrl % QStringLiteral("help") % QLatin1Char('/') % ver % QLatin1Char('/') % locale % QLatin1Char('/') % osPath % QLatin1Char('/') % mapping;
 }

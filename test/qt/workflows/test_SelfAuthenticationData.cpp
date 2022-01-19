@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref SelfAuthenticationData
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfAuthenticationData.h"
@@ -11,6 +11,15 @@
 #include <QtTest>
 
 using namespace governikus;
+
+char* toString(const SelfAuthenticationData::OrderedSelfData& pData)
+{
+	QString msg;
+	QDebug dbg(&msg);
+	dbg.noquote() << pData;
+	return QTest::toString(msg);
+}
+
 
 class test_SelfAuthenticationData
 	: public QObject
@@ -28,6 +37,46 @@ class test_SelfAuthenticationData
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::GivenNames), QString());
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::Nationality), QString());
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::IssuingState), QString());
+		}
+
+
+		void dateFormat()
+		{
+			SelfAuthenticationData::OrderedSelfData expected;
+			expected << qMakePair(QString("Date of birth:"), QString("xx.xx.1946"));
+			expected << qMakePair(QString("Date of expiry:"), QString("xx.11.2029"));
+
+			const auto& data = TestFileHelper::readFile(":/self/SelfAuthenticationDataDateFormat.json");
+			const SelfAuthenticationData selfAuthenticationData(data);
+			QVERIFY(selfAuthenticationData.isValid());
+			QVERIFY(selfAuthenticationData.getDateTime().isValid());
+			QCOMPARE(selfAuthenticationData.getOrderedSelfData(), expected);
+		}
+
+
+		void orderedSelfData()
+		{
+			SelfAuthenticationData::OrderedSelfData expected;
+			expected << qMakePair(QString("Family name:"), QStringLiteral("von Drebenbusch-Dalgo\u00DFen"));
+			expected << qMakePair(QString("Birth name:"), QStringLiteral("Wei\u00dF"));
+			expected << qMakePair(QString("Given name(s):"), QStringLiteral("Hans-G\u00FCnther"));
+			expected << qMakePair(QString("Doctoral degree:"), QString("Dr.eh.Dr."));
+			expected << qMakePair(QString("Date of birth:"), QString("25.01.1946"));
+			expected << qMakePair(QString("Place of birth:"), QString("BREMERHAVEN"));
+			expected << qMakePair(QString("Address:"), QString("WEG NR.12 8E"));
+			expected << qMakePair(QString(), QString("22043 HAMBURG"));
+			expected << qMakePair(QString(), QString("D"));
+			expected << qMakePair(QString("Document type:"), QString("ID"));
+			expected << qMakePair(QString("Nationality:"), QString("D"));
+			expected << qMakePair(QString("Religious / artistic name:"), QStringLiteral("Freiherr zu M\u00F6ckern-Windensberg"));
+			expected << qMakePair(QString("Issuing country:"), QString("D"));
+			expected << qMakePair(QString("Date of expiry:"), QString("30.11.2029"));
+
+			const auto& data = TestFileHelper::readFile(":/self/SelfAuthenticationDataID.json");
+			SelfAuthenticationData selfAuthenticationData(data);
+			QVERIFY(selfAuthenticationData.isValid());
+			QVERIFY(selfAuthenticationData.getDateTime().isValid());
+			QCOMPARE(selfAuthenticationData.getOrderedSelfData(), expected);
 		}
 
 

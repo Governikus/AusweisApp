@@ -1,7 +1,7 @@
 /*!
  * \brief Model for card positioning animations.
  *
- * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

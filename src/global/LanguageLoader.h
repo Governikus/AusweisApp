@@ -1,7 +1,7 @@
 /*
  * \brief Loads translation files for different languages.
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -45,7 +45,7 @@ class LanguageLoader
 		static const QLocale& getDefaultLanguage();
 		static void setDefaultLanguage(const QLocale& pLocale);
 		static LanguageLoader& getInstance();
-		static QString getLocalCode(const QLocale& pLocale = getInstance().getUsedLocale());
+		static QString getLocaleCode(const QLocale& pLocale = getInstance().getUsedLocale());
 
 #ifndef QT_NO_DEBUG
 		[[nodiscard]] const QString& getPath() const;

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "VolatileSettings.h"
@@ -49,6 +49,7 @@ QString VolatileSettings::Messages::getSessionInProgress() const
 
 VolatileSettings::VolatileSettings()
 	: mUsedAsSdk(true)
+	, mDeveloperMode(false)
 	, mHandleInterrupt(cHandleInterruptDefault)
 	, mMessages()
 {
@@ -64,6 +65,18 @@ bool VolatileSettings::isUsedAsSDK() const
 void VolatileSettings::setUsedAsSDK(bool pSdk)
 {
 	mUsedAsSdk = pSdk;
+}
+
+
+bool VolatileSettings::isDeveloperMode() const
+{
+	return mDeveloperMode;
+}
+
+
+void VolatileSettings::setDeveloperMode(bool pMode)
+{
+	mDeveloperMode = pMode;
 }
 
 

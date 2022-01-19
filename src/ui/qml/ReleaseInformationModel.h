@@ -1,7 +1,7 @@
 /*!
  * \brief Provides information about the App release to QML
  *
- * \copyright Copyright (c) 2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,8 +32,6 @@ class ReleaseInformationModel
 	Q_PROPERTY(bool allowRetry READ allowRetry NOTIFY fireCurrentInformationChanged)
 
 	private:
-		QScopedPointer<ReleaseInformation> mReleaseInformationCurrent;
-		QScopedPointer<ReleaseInformation> mReleaseInformationUpdate;
 		QSharedPointer<FormattedTextModel> mFallbackModel;
 		QSharedPointer<FormattedTextModel> mModelCurrent;
 		QSharedPointer<FormattedTextModel> mModelUpdate;
@@ -42,19 +40,18 @@ class ReleaseInformationModel
 		QSharedPointer<FormattedTextModel> createModel(const ReleaseInformation& pInformation) const;
 
 	private Q_SLOTS:
-		void onLanguageChanged();
 		void onCurrentChanged();
 		void onUpdateChanged();
-		void onAppcastCheckFinished(bool pUpdateAvailable, const GlobalStatus& pStatus);
 
 	public:
 		~ReleaseInformationModel() override = default;
 		QSharedPointer<FormattedTextModel> getCurrentRelease() const;
 		QSharedPointer<FormattedTextModel> getUpdateRelease() const;
 		Q_INVOKABLE void update();
-		bool requiresInitialUpdate() const;
-		void setUpdateVersion(const VersionNumber& pVersion);
 		bool allowRetry() const;
+
+	public Q_SLOTS:
+		void onTranslationChanged();
 
 	Q_SIGNALS:
 		void fireCurrentInformationChanged();

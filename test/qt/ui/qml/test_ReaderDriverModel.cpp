@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDriverModel.h"
@@ -171,7 +171,7 @@ class test_ReaderDriverModel
 			mReaderInfos += ReaderInfo("Governikus Special Reader", ReaderManagerPlugInType::PCSC);
 
 			ReaderDriverModel readerDriverModel;
-			QCOMPARE(readerDriverModel.rowCount(), 0);
+			QCOMPARE(readerDriverModel.rowCount(), 1);
 		}
 
 

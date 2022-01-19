@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockNetworkManager.h"
@@ -61,10 +61,12 @@ MockNetworkReply* MockNetworkManager::getReply(const QNetworkRequest& pRequest)
 
 
 QNetworkReply* MockNetworkManager::get(QNetworkRequest& pRequest,
+		const QList<QSslCertificate>& pCaCerts,
 		const QByteArray& pSslSession,
 		int pTimeoutInMilliSeconds)
 {
 	Q_UNUSED(pRequest)
+	Q_UNUSED(pCaCerts)
 	Q_UNUSED(pSslSession)
 	Q_UNUSED(pTimeoutInMilliSeconds)
 
@@ -74,8 +76,12 @@ QNetworkReply* MockNetworkManager::get(QNetworkRequest& pRequest,
 }
 
 
-QNetworkReply* MockNetworkManager::post(QNetworkRequest& pRequest, const QByteArray& pData, int pTimeoutInMilliSeconds)
+QNetworkReply* MockNetworkManager::post(QNetworkRequest& pRequest,
+		const QByteArray& pData,
+		const QList<QSslCertificate>& pCaCerts,
+		int pTimeoutInMilliSeconds)
 {
+	Q_UNUSED(pCaCerts)
 	Q_UNUSED(pTimeoutInMilliSeconds)
 
 	mLastRequest = pRequest;

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -56,9 +56,7 @@ defineTypedEnumType(StatusCode, quint16,
 		PIN_RETRY_COUNT_2 = 0x63c2, // retries left: 2
 		)
 
-/*
- * As defined in ISO-7816-4 Table-5
- */
+// According to ISO-7816-4, 5.6 Status bytes, Table 6
 defineTypedEnumType(SW1, quint8,
 		INVALID = 0x00,
 		MORE_DATA_AVAILABLE = 0x61,

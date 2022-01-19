@@ -1,11 +1,12 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerAuth
  *
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerAuth.h"
 
+#include "AppSettings.h"
 #include "controller/AppController.h"
 #include "InternalActivationContext.h"
 #include "MessageDispatcher.h"
@@ -307,6 +308,64 @@ class test_MsgHandlerAuth
 			QTRY_COMPARE(spyFinished.count(), 1); // clazy:exclude=qstring-allocations
 
 			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), true); // default
+		}
+
+
+		void handleDeveloperMode_data()
+		{
+			QTest::addColumn<QVariant>("developerMode");
+
+			QTest::newRow("enable") << QVariant(true);
+			QTest::newRow("disable") << QVariant(false);
+		}
+
+
+		void handleDeveloperMode()
+		{
+			QFETCH(QVariant, developerMode);
+
+			UILoader::setDefault({QStringLiteral("json")});
+			AppController controller;
+			QVERIFY(controller.start());
+
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->isDeveloperMode(), false); // default
+			QCOMPARE(Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode(), false);
+
+			auto ui = qobject_cast<UIPlugInJson*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson));
+			QVERIFY(ui);
+			ui->setEnabled(true);
+			QSignalSpy spyUi(ui, &UIPlugIn::fireAuthenticationRequest);
+			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
+			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
+
+			MessageDispatcher dispatcher;
+
+			QByteArray msg("{"
+						   "\"cmd\": \"RUN_AUTH\","
+						   "\"tcTokenURL\": \"https://localhost/token?session=123abc\","
+						   "\"developerMode\": %REPLACE%"
+						   "}");
+			msg.replace("%REPLACE%", developerMode.toByteArray());
+
+			const QRegularExpression logRegex(QStringLiteral("Using Developer Mode on SDK: ") + developerMode.toString());
+			QTest::ignoreMessage(QtDebugMsg, logRegex);
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray());
+
+			QCOMPARE(spyUi.count(), 1);
+			auto param = spyUi.takeFirst();
+			auto url = param.at(0).value<QUrl>();
+			QCOMPARE(url, QUrl("http://localhost/?tcTokenURL=https%3A%2F%2Flocalhost%2Ftoken%3Fsession%3D123abc"));
+			QTRY_COMPARE(spyStarted.count(), 1); // clazy:exclude=qstring-allocations
+
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->isDeveloperMode(), developerMode.toBool());
+			QCOMPARE(Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode(), developerMode.toBool());
+
+			const QByteArray msgCancel(R"({"cmd": "CANCEL"})");
+			ui->doMessageProcessing(msgCancel);
+			QTRY_COMPARE(spyFinished.count(), 1); // clazy:exclude=qstring-allocations
+
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->isDeveloperMode(), false); // default
+			QCOMPARE(Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode(), false);
 		}
 
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Class to provide information about providers.
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -40,6 +40,7 @@ class ProviderConfigurationInfo
 				const QString mImage;
 				const QStringList mSubjectUrls;
 				const QString mSubjectUrlInfo;
+				const QString mInternalId;
 
 				InternalInfo(const LanguageString& pShortName,
 						const LanguageString& pLongName,
@@ -54,7 +55,8 @@ class ProviderConfigurationInfo
 						const QString& pIcon,
 						const QString& pImage,
 						const QStringList& pSubjectUrls,
-						const QString& pSubjectUrlInfo)
+						const QString& pSubjectUrlInfo,
+						const QString& pInternalId)
 					: mShortName(pShortName)
 					, mLongName(pLongName)
 					, mShortDescription(pShortDescription)
@@ -69,6 +71,7 @@ class ProviderConfigurationInfo
 					, mImage(pImage)
 					, mSubjectUrls(pSubjectUrls)
 					, mSubjectUrlInfo(pSubjectUrlInfo)
+					, mInternalId(pInternalId)
 				{
 				}
 
@@ -88,7 +91,8 @@ class ProviderConfigurationInfo
 						   mIcon == pOther.mIcon &&
 						   mImage == pOther.mImage &&
 						   mSubjectUrls == pOther.mSubjectUrls &&
-						   mSubjectUrlInfo == pOther.mSubjectUrlInfo;
+						   mSubjectUrlInfo == pOther.mSubjectUrlInfo &&
+						   mInternalId == pOther.mInternalId;
 				}
 
 
@@ -112,10 +116,12 @@ class ProviderConfigurationInfo
 				const QString& pIcon = QString(),
 				const QString& pImage = QString(),
 				const QStringList& pSubjectUrls = QStringList(),
-				const QString& pSubjectUrlInfo = QString());
+				const QString& pSubjectUrlInfo = QString(),
+				const QString& pInternalId = QString());
 		virtual ~ProviderConfigurationInfo();
 
 		bool operator ==(const ProviderConfigurationInfo& pOther) const;
+		bool operator !=(const ProviderConfigurationInfo& pOther) const;
 		[[nodiscard]] bool matchWithSubjectUrl(const QString& pSubjectUrl) const;
 
 		[[nodiscard]] const LanguageString& getShortName() const;
@@ -134,6 +140,7 @@ class ProviderConfigurationInfo
 		[[nodiscard]] QSharedPointer<UpdatableFile> getImage() const;
 		[[nodiscard]] const QStringList& getSubjectUrls() const;
 		[[nodiscard]] const QString& getSubjectUrlInfo() const;
+		[[nodiscard]] const QString& getInternalId() const;
 };
 
 

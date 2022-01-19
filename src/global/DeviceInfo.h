@@ -2,7 +2,7 @@
  * \brief Implements a wrapper for different APIs to get
  * device information like android device name.
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

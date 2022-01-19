@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AutoStart.h"
@@ -28,8 +28,8 @@ bool AutoStart::enabled()
 	}
 
 	const auto dictFree = qScopeGuard([jobDictionaries] {
-				CFRelease(jobDictionaries);
-			});
+			CFRelease(jobDictionaries);
+		});
 
 	for (NSDictionary* job in jobDictionaries)
 	{

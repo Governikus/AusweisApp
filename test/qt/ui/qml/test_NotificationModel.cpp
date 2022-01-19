@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref NotificationModel
  *
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NotificationModel.h"
@@ -20,7 +20,7 @@ class test_NotificationModel
 	Q_OBJECT
 
 	private:
-		NotificationModel* mModel;
+		NotificationModel* mModel = nullptr;
 
 	private Q_SLOTS:
 		void initTestCase()

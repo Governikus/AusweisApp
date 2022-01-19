@@ -1,0 +1,59 @@
+From 3b3e17ea290e35607de527dbfc4f79ff7b83d394 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Thu, 18 Feb 2021 08:04:19 +0100
+Subject: Android: replace stacktrace with debug message in search for
+ setService
+
+Don't print stacktrace when setService is not found but only print a
+debug message, QtServiceDelegate will continue to look for setContext
+which might actually be a problem if not implemented.
+
+950e628fd842f22ac741b18440fcc99213820587
+did this change for QtActivityDelegate.
+
+Fixes: QTBUG-86733
+Pick-to: 5.15 6.0 6.1
+Change-Id: I8f2c6494da9133a3e9dedaabbe5fc931732d0d72
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+---
+ .../src/org/qtproject/qt5/android/QtServiceDelegate.java  | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtServiceDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtServiceDelegate.java
+index 1da377c2ba..e5945c4ce9 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtServiceDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtServiceDelegate.java
+@@ -84,6 +84,7 @@ import java.lang.reflect.Method;
+ import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.Iterator;
++import java.util.Objects;
+ 
+ public class QtServiceDelegate
+ {
+@@ -118,7 +119,8 @@ public class QtServiceDelegate
+         QtNative.setApplicationDisplayMetrics(10, 10, 10, 10, 120, 120, 1.0, 1.0);
+ 
+         if (loaderParams.containsKey(STATIC_INIT_CLASSES_KEY)) {
+-            for (String className: loaderParams.getStringArray(STATIC_INIT_CLASSES_KEY)) {
++            for (String className :
++                 Objects.requireNonNull(loaderParams.getStringArray(STATIC_INIT_CLASSES_KEY))) {
+                 if (className.length() == 0)
+                     continue;
+                 try {
+@@ -128,9 +130,11 @@ public class QtServiceDelegate
+                       Method m = initClass.getMethod("setService", Service.class, Object.class);
+                       m.invoke(staticInitDataObject, m_service, this);
+                   } catch (Exception e) {
+-                      e.printStackTrace();
++                      Log.d(QtNative.QtTAG,
++                            "Class " + className + " does not implement setService method");
+                   }
+ 
++                  // For modules that don't need/have setService
+                   try {
+                       Method m = initClass.getMethod("setContext", Context.class);
+                       m.invoke(staticInitDataObject, (Context)m_service);
+-- 
+2.33.0
+

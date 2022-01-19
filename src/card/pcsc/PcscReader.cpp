@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscCard.h"
@@ -190,6 +190,8 @@ Reader::CardEvent PcscReader::updateCard()
 	{
 		if (!mPcscCard && !newExclusive)
 		{
+			qCDebug(card_pcsc) << "ATR:" << QByteArray(reinterpret_cast<char*>(mReaderState.rgbAtr), static_cast<int>(mReaderState.cbAtr)).toHex(' ');
+
 			static const int MAX_TRY_COUNT = 5;
 			for (int tryCount = 0; tryCount < MAX_TRY_COUNT; ++tryCount)
 			{
@@ -244,9 +246,9 @@ PCSC_RETURNCODE PcscReader::readReaderFeatures()
 	}
 
 	const auto guard = qScopeGuard([cardHandle, readerName] {
-				PCSC_RETURNCODE disconnectCode = SCardDisconnect(cardHandle, SCARD_LEAVE_CARD);
-				qCDebug(card_pcsc) << "SCardDisconnect for" << readerName << ':' << PcscUtils::toString(disconnectCode);
-			});
+			PCSC_RETURNCODE disconnectCode = SCardDisconnect(cardHandle, SCARD_LEAVE_CARD);
+			qCDebug(card_pcsc) << "SCardDisconnect for" << readerName << ':' << PcscUtils::toString(disconnectCode);
+		});
 
 	// control (get features)
 #if defined(PCSCLITE_VERSION_NUMBER)

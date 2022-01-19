@@ -31,7 +31,8 @@
                 android:allowBackup="true"
                 android:fullBackupContent="@xml/backup_rules"
                 android:extractNativeLibs="true"
-                tools:targetApi="23">
+                android:allowNativeHeapPointerTagging="false"
+                tools:targetApi="30">
         <meta-data android:name="android.max_aspect" android:value="2.4" />
 
         <receiver android:name="com.governikus.ausweisapp2.UpdateReceiver" >

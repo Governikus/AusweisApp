@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -21,7 +21,7 @@ class test_UIPlugInQml
 	Q_OBJECT
 
 	private:
-		static const int PROCESS_TIMEOUT = 15000;
+		static const int PROCESS_TIMEOUT = 30000;
 
 		QScopedPointer<QProcess> mApp2;
 		QScopedPointer<WebSocketHelper> mHelper;
@@ -30,7 +30,7 @@ class test_UIPlugInQml
 		{
 			QString logData;
 			mHelper->sendMessage(QStringLiteral("{\"cmd\": \"GET_LOG\"}"));
-			mHelper->waitForMessage([&logData](const QJsonObject& pMessage){
+			if (!mHelper->waitForMessage([&logData](const QJsonObject& pMessage){
 						if (pMessage["msg"] != "LOG")
 						{
 							return false;
@@ -43,7 +43,11 @@ class test_UIPlugInQml
 						}
 
 						return true;
-					});
+					}))
+			{
+				QWARN("Cannot fetch message");
+			}
+
 			return logData;
 		}
 

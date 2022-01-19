@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQml 2.12
@@ -30,7 +30,7 @@ SectionPage {
 	Accessible.description: qsTr("This is the application update panel of the AusweisApp2.")
 
 	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Application update")
 		helpTopic: "applicationUpdate"
 	}
@@ -48,9 +48,9 @@ SectionPage {
 		buttonType: NavigationButton.Type.Back
 		resultType: ResultView.Type.IsError
 		text: root.update.missingPlatform
-			  //: LABEL DESKTOP_QML Resulttext if no update information is availalbe for the current platform.
+			  //: LABEL DESKTOP Resulttext if no update information is availalbe for the current platform.
 			  ? qsTr("An update information for your platform is not available.")
-			  //: LABEL DESKTOP_QML Resulttext if the update information are invalid, might be caused by network issues.
+			  //: LABEL DESKTOP Resulttext if the update information are invalid, might be caused by network issues.
 			  : qsTr("The update information could not be retrieved. Please check your network connection.")
 
 		onNextView: leaveView()
@@ -61,7 +61,7 @@ SectionPage {
 
 		buttonType: NavigationButton.Type.Back
 		resultType: ResultView.Type.IsSuccess
-		//: LABEL DESKTOP_QML The currently installed version is the most recent one, no action is required.
+		//: LABEL DESKTOP The currently installed version is the most recent one, no action is required.
 		text: qsTr("Your version %1 of %2 is up to date!").arg(Qt.application.version).arg(Qt.application.name)
 
 		onNextView: leaveView()
@@ -178,11 +178,11 @@ SectionPage {
 		}
 
 		closePolicy: Popup.NoAutoClose
-		//: INFO DESKTOP_QML Header of the popup that is shown when the requested update is not compatible with the OS.
+		//: INFO DESKTOP Header of the popup that is shown when the requested update is not compatible with the OS.
 		title: qsTr("Warning - Your operating system is no longer supported")
-		//: INFO DESKTOP_QML Text of the popup that is shown when the requested update is not compatible with the OS.
+		//: INFO DESKTOP Text of the popup that is shown when the requested update is not compatible with the OS.
 		text: qsTr("Troubleshooting and user support for the %1 is no longer available for your current operating system. Version %2 has not been tested with your current operating system, use is at your own risk.").arg(Qt.application.name).arg(root.update.version)
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		okButtonText: qsTr("Update anyway")
 
 		onConfirmed: {
@@ -206,19 +206,19 @@ SectionPage {
 		}
 
 		style: ConfirmationPopup.PopupStyle.OkButton
-		//: INFO DESKTOP_QML Header of the popup that is shown when the app download failed.
+		//: INFO DESKTOP Header of the popup that is shown when the app download failed.
 		title: qsTr("Warning - Update failed")
 		text: switch (error) {
 			case GlobalStatus.Downloader_Data_Corrupted:
-				//: INFO DESKTOP_QML Text of the popup that is shown when the app download failed because of a wrong checksum.
+				//: INFO DESKTOP Text of the popup that is shown when the app download failed because of a wrong checksum.
 				return qsTr("The received data is broken. Check your network connection and try to restart the update.")
 			case GlobalStatus.Update_Execution_Failed:
-				//: INFO DESKTOP_QML Text of the popup that is shown when the execution of the update failed (1/2).
+				//: INFO DESKTOP Text of the popup that is shown when the execution of the update failed (1/2).
 				return qsTr("The update could not be started automatically after a successful download. Please try to do a manual update. You can find the downloaded file %1here%2.").arg(
 								"<a href=\"%1\">".arg(SettingsModel.appUpdateData.downloadFolder)
 							).arg("</a>")
 			default:
-				//: INFO DESKTOP_QML Generic text of the popup that is shown when the app download failed.
+				//: INFO DESKTOP Generic text of the popup that is shown when the app download failed.
 				return qsTr("An unknown network error occurred. Check your network connection and try to restart the update.")
 		}
 
@@ -228,7 +228,7 @@ SectionPage {
 
 			activeFocusOnTab: true
 
-			//: INFO DESKTOP_QML Text of the popup that is shown when the execution of the update failed (2/2).
+			//: INFO DESKTOP Text of the popup that is shown when the execution of the update failed (2/2).
 			text: qsTr("If this does not help, contact our %1support%2.").arg(
 					  "<a href=\"%1\">".arg("https://www.ausweisapp.bund.de/%1/aa2/support".arg(SettingsModel.language))
 				  ).arg("</a>")

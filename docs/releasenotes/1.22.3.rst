@@ -1,0 +1,40 @@
+AusweisApp2 1.22.3
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 19. Januar 2022
+
+
+Anwender
+""""""""
+- Integration des Verweises auf den PIN-Rücksetzbrief an
+  geeigneten Stellen.
+
+- Das Gültigkeitsdatum wird nun in der Selbstauskunft angezeigt.
+
+- Links zu Youtube wurden korrigiert.
+
+- Unnötige Zugriffe von Qt auf die Zwischenablage wurden
+  unter Android entfernt.
+
+- Einige Dialoge haben unter macOS die Systemsprache anstatt
+  der eingestellten Sprache verwendet. Dies wurde behoben.
+
+- Abstürze und Fehlverhalten wurden unter Android 11 behoben.
+
+- Mehr Informationen zum abgefragten Passwort werden jetzt auch
+  bei Nutzung eines Komfortlesers angeboten.
+
+- Unterstützung von macOS 12.
+
+- Kleinere Fehlerbehebungen und Verbesserung der Barrierearmut.
+
+
+Entwickler
+""""""""""
+- Im SDK wurde der Parameter "developerMode" in RUN_AUTH hinzugefügt.
+
+- Ein Absturz bei --no-logfile und --keep korrigiert.
+
+- Der Parameter ShowUI wird nun auf mobilen Geräten unterstützt.
+
+- Aktualisierung von OpenSSL auf die Version 1.1.1m.

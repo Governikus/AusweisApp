@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -49,7 +49,7 @@ Item {
 
 			GText {
 				textStyle: Style.text.normal
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				text: qsTr("Service:")
 				font.weight: Font.Bold
 				maximumLineCount: 1
@@ -66,7 +66,7 @@ Item {
 
 			GText {
 				textStyle: Style.text.normal
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				text: qsTr("Provider:")
 				font.weight: Font.Bold
 				maximumLineCount: 1

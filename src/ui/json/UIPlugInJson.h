@@ -1,7 +1,7 @@
 /*!
  * \brief UIPlugIn implementation of the Json API.
  *
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

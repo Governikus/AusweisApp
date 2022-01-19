@@ -1,7 +1,7 @@
 /*!
  * \brief Provides information of provider json.
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -44,6 +44,7 @@ class ProviderConfiguration
 		void update();
 		[[nodiscard]] const QVector<ProviderConfigurationInfo>& getProviderConfigurationInfos() const;
 		[[nodiscard]] const CallCost getCallCost(const ProviderConfigurationInfo& pProvider) const;
+		[[nodiscard]] ProviderConfigurationInfo getProviderInfo(const QString& pInternalId) const;
 
 	Q_SIGNALS:
 		void fireUpdated();

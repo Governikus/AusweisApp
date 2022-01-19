@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -96,6 +96,9 @@ SectionPage {
 
 			width: parent.width
 
+			Accessible.role: Accessible.Grouping
+			Accessible.name: serverNameText.text
+
 			GText {
 				id: serverNameText
 
@@ -103,6 +106,8 @@ SectionPage {
 				Layout.leftMargin: Constants.component_spacing
 				Layout.rightMargin: Constants.component_spacing
 				Layout.topMargin: Constants.component_spacing / 2
+
+				Accessible.ignored: true
 
 				//: LABEL ANDROID IOS
 				text: qsTr("Device name")
@@ -334,7 +339,7 @@ SectionPage {
 					//: LABEL ALL_PLATFORMS
 					text: qsTr("Logfile")
 					onClicked: {
-						LogModel.saveDummyLogfile()
+						LogModel.saveDummyLogFile()
 						ApplicationModel.showFeedback("Created new logfile.")
 					}
 				}

@@ -2,7 +2,7 @@
  * \brief Model for accessing PIN, CAN, PUK, according to the
  * currently active workflow.
  *
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,7 +31,6 @@ class NumberModel
 	Q_PROPERTY(bool hasPasswordError READ hasPasswordError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(QString inputError READ getInputError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(int retryCounter READ getRetryCounter NOTIFY fireReaderInfoChanged)
-	Q_PROPERTY(bool pinDeactivated READ isPinDeactivated NOTIFY fireReaderInfoChanged)
 	Q_PROPERTY(bool isCanAllowedMode READ isCanAllowedMode NOTIFY fireCanAllowedModeChanged)
 	Q_PROPERTY(bool requestTransportPin READ isRequestTransportPin NOTIFY fireRequestTransportPinChanged)
 
@@ -76,7 +75,6 @@ class NumberModel
 		QString getInputError() const;
 
 		int getRetryCounter() const;
-		bool isPinDeactivated() const;
 		bool isCanAllowedMode() const;
 
 		bool isRequestTransportPin() const;

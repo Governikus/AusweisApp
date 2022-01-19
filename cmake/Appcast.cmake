@@ -65,7 +65,7 @@ if(MAC OR LINUX OR WIN32)
 
 		if(APPCAST_ITEMS)
 			string(REGEX REPLACE ",$" "" APPCAST_ITEMS "${APPCAST_ITEMS}")
-			configure_file(${PACKAGING_DIR}/updater/Appcast.json.in ${PROJECT_BINARY_DIR}/Appcast.json @ONLY)
+			configure_file(${PACKAGING_DIR}/updater/Appcast.json.in ${PROJECT_BINARY_DIR}/AppcastInfo.json @ONLY)
 		endif()
 	endif()
 

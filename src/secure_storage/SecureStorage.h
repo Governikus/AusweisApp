@@ -2,7 +2,7 @@
  * \brief Utility class that provides access to the "secure storage" of the application, which contains
  * the certificates for preverification and update checks.
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -63,7 +63,7 @@ class SecureStorage
 
 	protected:
 		SecureStorage();
-		virtual ~SecureStorage();
+		~SecureStorage() = default;
 		static SecureStorage& getInstance();
 
 	public:

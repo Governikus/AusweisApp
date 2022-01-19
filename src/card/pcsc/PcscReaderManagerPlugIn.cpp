@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscReaderManagerPlugIn.h"
@@ -18,7 +18,6 @@ Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
 PcscReaderManagerPlugIn::PcscReaderManagerPlugIn()
 	: ReaderManagerPlugIn(ReaderManagerPlugInType::PCSC, true)
 	, mContextHandle(0)
-	, mReaderState()
 	, mTimerId(0)
 	, mReaders()
 {
@@ -27,8 +26,6 @@ PcscReaderManagerPlugIn::PcscReaderManagerPlugIn()
 #ifdef PCSCLITE_VERSION_NUMBER
 	setPlugInValue(ReaderManagerPlugInInfo::Key::PCSC_LITE_VERSION, QStringLiteral(PCSCLITE_VERSION_NUMBER));
 #endif
-
-	initReaderState();
 }
 
 
@@ -98,17 +95,6 @@ void PcscReaderManagerPlugIn::timerEvent(QTimerEvent* pEvent)
 	{
 		updateReaders();
 	}
-}
-
-
-void PcscReaderManagerPlugIn::initReaderState()
-{
-	memset(&mReaderState, 0, sizeof(SCARD_READERSTATE));
-#if defined(Q_OS_WIN) && defined(UNICODE)
-	mReaderState.szReader = L"\\\\?PnP?\\Notification";
-#else
-	mReaderState.szReader = "\\\\?PnP?\\Notification";
-#endif
 }
 
 

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PdfCreator.h"
@@ -79,7 +79,7 @@ void PdfCreator::createFooter()
 {
 	//: LABEL ALL_PLATFORMS Footer in a generated PDF document. %1 is an URL.
 	const auto& footer = QStringLiteral("<h3>%1</h3>").arg(tr("For further information, please see %1").arg(
-			QStringLiteral("<a href='%1'>%1</a>").arg(QStringLiteral("https://www.ausweisapp.bund.de/%1").arg(LanguageLoader::getLocalCode()))));
+			QStringLiteral("<a href='%1'>%1</a>").arg(QStringLiteral("https://www.ausweisapp.bund.de/%1").arg(LanguageLoader::getLocaleCode()))));
 
 	mFooter.setHtml(footer);
 }

@@ -1,7 +1,7 @@
 /*!
  * \brief Helper for some file functions.
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,6 +19,7 @@ class TestFileHelper
 		static QByteArray readFile(const QString& pFileName);
 		static void createTranslations(const QString& pTranslationDir);
 		static bool containsLog(const QSignalSpy& pSpy, const QLatin1String pStr);
+		static int getUnprivilegedPortStart();
 };
 
 } // namespace governikus

@@ -125,6 +125,9 @@ and :ref:`enter_puk`. You can disable that behavior with
 if needed.
 
 
+.. versionadded:: 1.22.3
+   Parameter **developerMode** added.
+
 .. versionadded:: 1.22.1
    Parameter **handleInterrupt** and **messages** added.
 
@@ -136,6 +139,9 @@ if needed.
   - **tcTokenURL**:
     URL to the TcToken. This is equal to the desktop style activation URL.
     *(http://127.0.0.1:24727/eID-Client?tcTokenURL=)*
+
+  - **developerMode**: True to enable "Developer Mode" for test cards according to BSI TR-03124-1,
+    otherwise false.
 
   - **handleInterrupt**: True to automatically handle system dialog on iOS, otherwise false.
 
@@ -155,6 +161,7 @@ if needed.
   {
     "cmd": "RUN_AUTH",
     "tcTokenURL": "https://test.governikus-eid.de/Autent-DemoApplication/RequestServlet?provider=demo_epa_20&redirect=true",
+    "developerMode": false,
     "handleInterrupt": true,
     "messages":
         {
@@ -382,6 +389,9 @@ from the user, you need to interrupt the system dialog manually.
 This command will be used later for additional information if your
 application needs to interrupt the workflow. Currently only
 the iOS system dialog can be interrupted.
+
+.. versionadded:: 1.22.1
+   Support of INTERRUPT command.
 
 
 .. code-block:: json

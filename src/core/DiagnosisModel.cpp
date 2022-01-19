@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisModel.h"
@@ -40,8 +40,8 @@ QSharedPointer<SectionModel> DiagnosisModel::createAusweisApp2Section()
 	QSharedPointer<SectionModel> aa2Section(new SectionModel());
 
 	BuildHelper::processInformationHeader([aa2Section](const QString& pKey, const QString& pValue){
-				aa2Section->addItem(pKey, pValue);
-			});
+			aa2Section->addItem(pKey, pValue);
+		});
 
 	mTimestampItem = QSharedPointer<ContentItem>::create(tr("Time of diagnosis"), tr("Initial diagnosis running, please wait."));
 	aa2Section->addItem(mTimestampItem);

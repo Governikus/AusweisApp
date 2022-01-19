@@ -2,7 +2,7 @@
  * \brief toString method for PCSC_RETURNCODE and platform dependent
  * typedefs for PCSC types.
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -66,7 +66,7 @@ Item {
 
 			activeFocusOnTab: true
 
-			//: INFO DESKTOP_QML No authentication history, placeholder text.
+			//: INFO DESKTOP No authentication history, placeholder text.
 			text: qsTr("Currently there are no history entries.")
 			textStyle: Style.text.normal
 		}

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ProxyCredentials
  *
- * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProxyCredentials.h"
@@ -83,8 +83,8 @@ class test_ProxyCredentials
 			timer.start();
 
 			QTimer::singleShot(waitFor, this, [&proxyCredentials] {
-						proxyCredentials.confirmInput();
-					});
+					proxyCredentials.confirmInput();
+				});
 
 			proxyCredentials.waitForConfirmation();
 			QVERIFY(timer.elapsed() >= waitFor - tolerance);

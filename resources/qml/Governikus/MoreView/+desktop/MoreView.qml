@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -24,9 +24,9 @@ SectionPage {
 
 	property int activeSubView
 
-	//: LABEL DESKTOP_QML
+	//: LABEL DESKTOP
 	Accessible.name: qsTr("Help section")
-	//: LABEL DESKTOP_QML
+	//: LABEL DESKTOP
 	Accessible.description: qsTr("This is the help section of the AusweisApp2.")
 	Keys.onEscapePressed: {
 		if (activeSubView === MoreView.SubViews.None) {
@@ -38,7 +38,7 @@ SectionPage {
 	}
 
 	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Help")
 		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "helpSection")
 		onClicked: activeSubView = MoreView.SubViews.None
@@ -52,15 +52,15 @@ SectionPage {
 		anchors.margins: Constants.pane_spacing
 
 		sectionsModel: [
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			qsTr("General"),
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			qsTr("Diagnosis and logs"),
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			qsTr("Version information"),
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			qsTr("Software license"),
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			qsTr("Release notes")
 		]
 

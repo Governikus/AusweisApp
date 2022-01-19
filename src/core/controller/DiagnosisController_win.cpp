@@ -1,7 +1,7 @@
 /*!
  * \brief Windows specific implementation of the controller for retrieving and presenting diagnosis info.
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -26,8 +26,8 @@ static QString getWindowsDirectoryPath()
 		if (path)
 		{
 			const auto guard = qScopeGuard([path] {
-						HeapFree(GetProcessHeap(), 0, path);
-					});
+					HeapFree(GetProcessHeap(), 0, path);
+				});
 			if (GetSystemWindowsDirectory(path, length) > 0)
 			{
 				auto result = QString::fromWCharArray(path);
@@ -93,8 +93,8 @@ static void addWindowsComponentInfo(QVector<DiagnosisContext::ComponentInfo>& pC
 		return;
 	}
 	const auto guard = qScopeGuard([versionData] {
-				HeapFree(GetProcessHeap(), 0, versionData);
-			});
+			HeapFree(GetProcessHeap(), 0, versionData);
+		});
 	if (!GetFileVersionInfo(fileName.data(), 0, infoSize, versionData))
 	{
 		return;

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -18,7 +18,7 @@ FocusScope {
 	signal clicked()
 
 	Accessible.role: Accessible.Button
-	Accessible.name: title
+	Accessible.name: ApplicationModel.stripHtmlTags(title)
 
 	Keys.onSpacePressed: tile.clicked()
 

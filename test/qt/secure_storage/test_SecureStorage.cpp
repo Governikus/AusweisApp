@@ -1,11 +1,12 @@
 /*!
  * \brief Unit tests for \ref SecureStorage
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QCoreApplication>
 #include <QFile>
+#include <QSslCertificateExtension>
 #include <QSslKey>
 #include <QtTest>
 
@@ -42,7 +43,7 @@ class test_SecureStorage
 				return QStringList();
 			}
 
-			QJsonParseError parseError;
+			QJsonParseError parseError {};
 			QJsonDocument document = QJsonDocument::fromJson(configFile.readAll(), &parseError);
 			configFile.close();
 			if (parseError.error != QJsonParseError::NoError)
@@ -80,7 +81,7 @@ class test_SecureStorage
 		void testGetCVRootCertificatesUnique()
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
-			static const int EXPECTED_CERTIFICATE_COUNT = 13;
+			static const int EXPECTED_CERTIFICATE_COUNT = 15;
 
 			QVector<QSharedPointer<const CVCertificate> > cvcs = CVCertificate::fromHex(secureStorage->getCVRootCertificates(true))
 					+ CVCertificate::fromHex(secureStorage->getCVRootCertificates(false));
@@ -120,8 +121,8 @@ class test_SecureStorage
 			QTest::addColumn<bool>("isProductive");
 			QTest::addColumn<QString>("commentName");
 
-			QTest::newRow("production") << 4 << true << "_comment_2";
-			QTest::newRow("test") << 9 << false << "_comment_4";
+			QTest::newRow("production") << 5 << true << "_comment_2";
+			QTest::newRow("test") << 10 << false << "_comment_4";
 		}
 
 
@@ -167,13 +168,49 @@ class test_SecureStorage
 			QTest::addColumn<int>("index");
 			QTest::addColumn<QString>("subjectInfo");
 			QTest::addColumn<QString>("issuerInfo");
+			QTest::addColumn<QString>("effectiveDate");
 			QTest::addColumn<QString>("expiryDate");
 			QTest::addColumn<int>("length");
 			QTest::addColumn<QSsl::KeyAlgorithm>("algorithm");
+			QTest::addColumn<QString>("ocsp");
 
-			QTest::newRow("production") << 0 << "appl.governikus-asp.de" << "TeleSec ServerPass Class 2 CA" << "2020-12-06T23:59:59Z" << 4096 << QSsl::Rsa;
-			QTest::newRow("production_next") << 1 << "appl.governikus-asp.de" << "TeleSec ServerPass Class 2 CA" << "2022-06-22T23:59:59Z" << 4096 << QSsl::Rsa;
-			QTest::newRow("ci") << 2 << "*.govkg.de" << "TeleSec ServerPass Class 2 CA" << "2021-03-12T23:59:59Z" << 4096 << QSsl::Rsa;
+			int index = 0;
+
+			QTest::newRow("production_2027") << index++
+											 << "updates.autentapp.de"
+											 << "Governikus CA 9:PN"
+											 << "2021-12-06T10:18:22Z"
+											 << "2027-12-31T23:59:00Z"
+											 << 384
+											 << QSsl::Ec
+											 << "http://pki.governikus.com/ejbca/publicweb/status/ocsp";
+
+			QTest::newRow("production_2031") << index++
+											 << "updates.autentapp.de"
+											 << "Governikus CA 9:PN"
+											 << "2027-01-01T00:00:00Z"
+											 << "2031-12-31T23:59:00Z"
+											 << 384
+											 << QSsl::Ec
+											 << "http://pki.governikus.com/ejbca/publicweb/status/ocsp";
+
+			QTest::newRow("production_ca") << index++
+										   << "Governikus CA 9:PN"
+										   << "Governikus Root CA 4:PN"
+										   << "2019-09-19T14:13:51Z"
+										   << "2034-09-15T14:13:51Z"
+										   << 4096
+										   << QSsl::Rsa
+										   << "http://pki.governikus.com/publicweb/status/ocsp";
+
+			QTest::newRow("production_ca_root") << index++
+												<< "Governikus Root CA 4:PN"
+												<< "Governikus Root CA 4:PN"
+												<< "2019-09-16T09:45:19Z"
+												<< "2039-09-11T09:45:19Z"
+												<< 4096
+												<< QSsl::Rsa
+												<< "";
 		}
 
 
@@ -181,23 +218,35 @@ class test_SecureStorage
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 			const auto& certificates = secureStorage->getUpdateCertificates();
-			QCOMPARE(certificates.count(), 3);
+			QCOMPARE(certificates.count(), 4);
 
 			QFETCH(int, index);
 			QFETCH(QString, subjectInfo);
 			QFETCH(QString, issuerInfo);
+			QFETCH(QString, effectiveDate);
 			QFETCH(QString, expiryDate);
 			QFETCH(int, length);
 			QFETCH(QSsl::KeyAlgorithm, algorithm);
+			QFETCH(QString, ocsp);
 
 			QVERIFY(certificates.count() - index > 0);
 
 			const auto& cert = certificates.at(index);
 			QCOMPARE(cert.subjectInfo(QSslCertificate::CommonName).at(0), subjectInfo);
 			QCOMPARE(cert.issuerInfo(QSslCertificate::CommonName).at(0), issuerInfo);
+			QCOMPARE(cert.effectiveDate(), QDateTime::fromString(effectiveDate, Qt::ISODate));
 			QCOMPARE(cert.expiryDate(), QDateTime::fromString(expiryDate, Qt::ISODate));
 			QCOMPARE(cert.publicKey().length(), length);
 			QCOMPARE(cert.publicKey().algorithm(), algorithm);
+			QCOMPARE(cert.publicKey().type(), QSsl::PublicKey);
+
+			const auto& ext = cert.extensions();
+
+			const bool foundOcspResponder = std::any_of(ext.cbegin(), ext.cend(), [&ocsp](const auto& entry){
+					return entry.name() == QLatin1String("authorityInfoAccess") &&
+						   entry.value().toMap().value(QStringLiteral("OCSP")).toString() == ocsp;
+				});
+			QCOMPARE(foundOcspResponder, !ocsp.isEmpty());
 		}
 
 
@@ -226,8 +275,8 @@ class test_SecureStorage
 		void testAppcast()
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
-			QCOMPARE(secureStorage->getAppcastUpdateUrl(), QUrl("https://appl.governikus-asp.de/ausweisapp2/Appcast.json"));
-			QCOMPARE(secureStorage->getAppcastBetaUpdateUrl(), QUrl("https://appl.governikus-asp.de/ausweisapp2/beta/Appcast.json"));
+			QCOMPARE(secureStorage->getAppcastUpdateUrl(), QUrl("https://updates.autentapp.de/AppcastInfo.json"));
+			QCOMPARE(secureStorage->getAppcastBetaUpdateUrl(), QUrl("https://updates.autentapp.de/beta/AppcastInfo.json"));
 		}
 
 

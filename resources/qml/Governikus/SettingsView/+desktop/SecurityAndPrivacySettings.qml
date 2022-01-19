@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -21,7 +21,7 @@ ColumnLayout {
 	GText {
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("History")
 		textStyle: Style.text.header_accent
 
@@ -33,14 +33,14 @@ ColumnLayout {
 	ToggleableOption {
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Save authentication history")
 		checked: SettingsModel.historyEnabled
 		onCheckedChanged: SettingsModel.historyEnabled = checked
 	}
 
 	GButton {
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Clear entire history")
 		onClicked: confirmationPopup.open()
 		enableButton: !HistoryModel.empty
@@ -54,7 +54,7 @@ ColumnLayout {
 	GText {
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Onscreen keypad")
 		textStyle: Style.text.header_accent
 
@@ -66,7 +66,7 @@ ColumnLayout {
 	ToggleableOption {
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Use on screen keypad for PIN entry")
 		checked: SettingsModel.useScreenKeyboard
 		onCheckedChanged: SettingsModel.useScreenKeyboard = checked
@@ -75,7 +75,7 @@ ColumnLayout {
 	ToggleableOption {
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Shuffle keypad buttons")
 		checked: SettingsModel.shuffleScreenKeyboard
 		enabled: SettingsModel.useScreenKeyboard
@@ -85,7 +85,7 @@ ColumnLayout {
 	ToggleableOption {
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Visual feedback when pressing keypad buttons")
 		checked: !SettingsModel.visualPrivacy
 		enabled: SettingsModel.useScreenKeyboard
@@ -99,7 +99,7 @@ ColumnLayout {
 	GText {
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Software updates")
 		textStyle: Style.text.header_accent
 
@@ -111,7 +111,7 @@ ColumnLayout {
 	ToggleableOption {
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Check at program start")
 		checked: SettingsModel.autoUpdateCheck
 		enabled: !SettingsModel.autoUpdateCheckSetByAdmin && SettingsModel.autoUpdateAvailable
@@ -127,9 +127,9 @@ ColumnLayout {
 
 		GButton {
 			text: (parent.updateAvailable ?
-				   //: LABEL DESKTOP_QML
+				   //: LABEL DESKTOP
 				   qsTr("Show update") :
-				   //: LABEL DESKTOP_QML
+				   //: LABEL DESKTOP
 				   qsTr("Check now")
 				   )
 			enabled: SettingsModel.autoUpdateAvailable
@@ -143,19 +143,19 @@ ColumnLayout {
 
 			text: {
 				if (parent.updateAvailable && parent.updateValid) {
-					//: LABEL DESKTOP_QML An update is available, the new version is supplied to the user.
+					//: LABEL DESKTOP An update is available, the new version is supplied to the user.
 					return qsTr("An update is available (version %1)!").arg(SettingsModel.appUpdateData.version)
 				}
 				else if (parent.updateAvailable && !parent.updateValid) {
-					//: LABEL DESKTOP_QML The updater found an update but not all required update information are valid, this should be a very rare case.
+					//: LABEL DESKTOP The updater found an update but not all required update information are valid, this should be a very rare case.
 					return qsTr("An update is available but retrieving the information failed.")
 				}
 				else if (!parent.updateAvailable && parent.updateValid) {
-					//: LABEL DESKTOP_QML The current version is up to date, no user action is required.
+					//: LABEL DESKTOP The current version is up to date, no user action is required.
 					return qsTr("Your version %1 of %2 is up to date.").arg(Qt.application.version).arg(Qt.application.name)
 				}
 				else {
-					//: LABEL DESKTOP_QML The automatic update check is disabled (or no network connection was present during app start), a manual check for update is required.
+					//: LABEL DESKTOP The automatic update check is disabled (or no network connection was present during app start), a manual check for update is required.
 					return qsTr("No update information available, please check for update manually.")
 				}
 			}
@@ -170,13 +170,13 @@ ColumnLayout {
 	ConfirmationPopup {
 		id: confirmationPopup
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		title: qsTr("Delete history")
-		//: INFO DESKTOP_QML The current history is about to be removed, user confirmation required.
+		//: INFO DESKTOP The current history is about to be removed, user confirmation required.
 		text: qsTr("All history entries will be deleted.")
 		onConfirmed: {
 			let removedItemCount = SettingsModel.removeEntireHistory()
-			//: INFO DESKTOP_QML Feedback how many history entries were removed.
+			//: INFO DESKTOP Feedback how many history entries were removed.
 			ApplicationModel.showFeedback(qsTr("Deleted %1 entries from the history.").arg(removedItemCount))
 		}
 	}

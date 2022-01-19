@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -38,7 +38,7 @@ ColumnLayout {
 
 		icon.source: "qrc:///images/material_refresh.svg"
 		tintIcon: true
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Retry")
 
 		onClicked: ReleaseInformationModel.update()

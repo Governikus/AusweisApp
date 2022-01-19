@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref UIPlugInWebSocket
  *
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInWebSocket.h"
@@ -23,7 +23,7 @@ class test_UIPlugInWebSocket
 	Q_OBJECT
 
 	private:
-		static const int PROCESS_TIMEOUT = 15000;
+		static const int PROCESS_TIMEOUT = 30000;
 
 		QScopedPointer<QProcess> mApp2;
 		QScopedPointer<WebSocketHelper> mHelper;
@@ -119,15 +119,15 @@ class test_UIPlugInWebSocket
 		{
 			mHelper->sendMessage("{\"cmd\": \"GET_INFO\"}");
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
-						return pMessage["msg"] == "INFO" &&
-						pMessage["VersionInfo"].toObject()["Name"] == "AusweisApp2";
-					}));
+					return pMessage["msg"] == "INFO" &&
+						   pMessage["VersionInfo"].toObject()["Name"] == "AusweisApp2";
+				}));
 
 			mHelper->sendMessage("{\"cmd\": \"GET_API_LEVEL\"}");
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
-						return pMessage["msg"] == "API_LEVEL" &&
-						pMessage["available"].toArray().size() >= 1;
-					}));
+					return pMessage["msg"] == "API_LEVEL" &&
+						   pMessage["available"].toArray().size() >= 1;
+				}));
 		}
 
 
@@ -139,12 +139,12 @@ class test_UIPlugInWebSocket
 
 			mHelper->sendMessage("{\"cmd\": \"RUN_AUTH\", \"tcTokenURL\" : \"https://localhost/\"}");
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
-						return pMessage["msg"] == "AUTH";
-					}));
+					return pMessage["msg"] == "AUTH";
+				}));
 
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
-						return pMessage["result"].toObject()["major"].toString().endsWith("#error");
-					}));
+					return pMessage["result"].toObject()["major"].toString().endsWith("#error");
+				}));
 		}
 
 

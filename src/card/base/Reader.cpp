@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Reader.h"
@@ -29,6 +29,7 @@ Reader::Reader(ReaderManagerPlugInType pPlugInType, const QString& pReaderName)
 void Reader::setPukInoperative()
 {
 	mReaderInfo.mCardInfo.mPukInoperative = true;
+	Q_EMIT fireCardRetryCounterChanged(mReaderInfo);
 }
 
 
@@ -90,6 +91,7 @@ CardReturnCode Reader::updateRetryCounter(QSharedPointer<CardConnectionWorker> p
 			Q_EMIT fireCardRetryCounterChanged(mReaderInfo);
 		}
 	}
+
 	return returnCode;
 }
 
@@ -121,12 +123,13 @@ Reader::RetryCounterResult Reader::getRetryCounter(QSharedPointer<CardConnection
 
 	const StatusCode statusCode = mseSetAtResponse.getReturnCode();
 	qCDebug(card) << "StatusCode:" << statusCode;
-	if (statusCode == StatusCode::INVALID)
+
+	const int retryCounter = mseSetAtResponse.getRetryCounter();
+	if (retryCounter == -1)
 	{
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	const int retryCounter = mseSetAtResponse.getRetryCounter();
 	const bool pinDeactivated = statusCode == StatusCode::PIN_DEACTIVATED;
 	return {CardReturnCode::OK, retryCounter, pinDeactivated};
 }

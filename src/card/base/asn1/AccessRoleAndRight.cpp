@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AccessRoleAndRight.h"
@@ -286,18 +286,18 @@ QStringList AccessRoleAndRightsUtil::fromTechnicalName(const QStringList& pStr, 
 	for (auto entry : pStr)
 	{
 		const bool isValidTechnicalName = fromTechnicalName(entry, [&entry, pJoinRight](AccessRight pRight){
-					if (pJoinRight.testFlag(JoinRight::READWRITE)
-					|| (pJoinRight.testFlag(JoinRight::WRITE) && AccessRoleAndRightsUtil::isWriteAccessRight(pRight))
-					|| (pJoinRight.testFlag(JoinRight::READ) && !AccessRoleAndRightsUtil::isWriteAccessRight(pRight))
-					)
-					{
-						entry = AccessRoleAndRightsUtil::toDisplayText(pRight);
-					}
-					else
-					{
-						entry.clear();
-					}
-				});
+				if (pJoinRight.testFlag(JoinRight::READWRITE)
+				|| (pJoinRight.testFlag(JoinRight::WRITE) && AccessRoleAndRightsUtil::isWriteAccessRight(pRight))
+				|| (pJoinRight.testFlag(JoinRight::READ) && !AccessRoleAndRightsUtil::isWriteAccessRight(pRight))
+				)
+				{
+					entry = AccessRoleAndRightsUtil::toDisplayText(pRight);
+				}
+				else
+				{
+					entry.clear();
+				}
+			});
 
 		if ((isValidTechnicalName && !entry.isNull()) || (!isValidTechnicalName && pJoinRight.testFlag(JoinRight::READ)))
 		{

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -152,7 +152,7 @@ Item {
 		}
 
 		GButton {
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			text: qsTr("More information")
 			onClicked: moreInformation()
 		}

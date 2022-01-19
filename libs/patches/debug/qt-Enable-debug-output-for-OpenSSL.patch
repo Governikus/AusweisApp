@@ -1,8 +1,9 @@
-From fc591411928c982f763c2fee060c0665a5b6b8b8 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
-Date: Tue, 10 Oct 2017 13:44:48 +0200
-Subject: [PATCH] Enable debug output for OpenSSL
+From 9905adbec2dbff00d77514302c3254d31ee0def6 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Thu, 6 May 2021 14:44:02 +0200
+Subject: Enable debug output for OpenSSL
 
+Change-Id: I731118aac405078811ee1217b5afab012d74ac09
 ---
  src/network/ssl/qsslsocket.cpp            | 2 +-
  src/network/ssl/qsslsocket_mac.cpp        | 1 +
@@ -11,7 +12,7 @@ Subject: [PATCH] Enable debug output for OpenSSL
  4 files changed, 5 insertions(+), 4 deletions(-)
 
 diff --git x/qtbase/src/network/ssl/qsslsocket.cpp y/qtbase/src/network/ssl/qsslsocket.cpp
-index 5c9ebac283..b843191e89 100644
+index 27ce8e08d5..2995afccd5 100644
 --- x/qtbase/src/network/ssl/qsslsocket.cpp
 +++ y/qtbase/src/network/ssl/qsslsocket.cpp
 @@ -39,7 +39,7 @@
@@ -24,7 +25,7 @@ index 5c9ebac283..b843191e89 100644
  /*!
      \class QSslSocket
 diff --git x/qtbase/src/network/ssl/qsslsocket_mac.cpp y/qtbase/src/network/ssl/qsslsocket_mac.cpp
-index 68c8ccff89..15d887c1f9 100644
+index 77e847e972..0cfdd024c8 100644
 --- x/qtbase/src/network/ssl/qsslsocket_mac.cpp
 +++ y/qtbase/src/network/ssl/qsslsocket_mac.cpp
 @@ -37,6 +37,7 @@
@@ -36,7 +37,7 @@ index 68c8ccff89..15d887c1f9 100644
  
  #include "qssl_p.h"
 diff --git x/qtbase/src/network/ssl/qsslsocket_mac_shared.cpp y/qtbase/src/network/ssl/qsslsocket_mac_shared.cpp
-index d239fe23dd..59436ca276 100644
+index 0bc4647e8b..48d94724c6 100644
 --- x/qtbase/src/network/ssl/qsslsocket_mac_shared.cpp
 +++ y/qtbase/src/network/ssl/qsslsocket_mac_shared.cpp
 @@ -38,8 +38,8 @@
@@ -51,7 +52,7 @@ index d239fe23dd..59436ca276 100644
  #include "qssl_p.h"
  #include "qsslsocket.h"
 diff --git x/qtbase/src/network/ssl/qsslsocket_openssl.cpp y/qtbase/src/network/ssl/qsslsocket_openssl.cpp
-index 2d771b5637..beb361d744 100644
+index af47dbf9ac..df4cadaa23 100644
 --- x/qtbase/src/network/ssl/qsslsocket_openssl.cpp
 +++ y/qtbase/src/network/ssl/qsslsocket_openssl.cpp
 @@ -53,7 +53,7 @@
@@ -64,5 +65,5 @@ index 2d771b5637..beb361d744 100644
  #include "qssl_p.h"
  #include "qsslsocket_openssl_p.h"
 -- 
-2.14.2
+2.32.0
 

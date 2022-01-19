@@ -1,19 +1,21 @@
 /*
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtTest 1.12
 import QtQuick 2.12
+import QtQuick.Controls 2.12;
 
 TestCase {
-	id: appWindow
-
 	name: "test_IdentifyView"
-	visible: true
 	when: windowShown
 
-	property var menuBar: Item {
-		function updateActions() {
+	ApplicationWindow {
+		id: appWindow
+
+		menuBar: Item {
+			function updateActions() {
+			}
 		}
 	}
 

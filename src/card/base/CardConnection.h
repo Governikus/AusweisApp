@@ -1,7 +1,7 @@
 /*!
  * \brief Contains a card connection object
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -153,18 +153,18 @@ class CardConnection
 			if (pPacePasswordId == PacePasswordId::PACE_CAN)
 			{
 				connect(command, &BaseCardCommand::commandDone, this, [this](QSharedPointer<BaseCardCommand> pCommand){
-							mPaceCanSuccessful = pCommand->getReturnCode() == CardReturnCode::OK;
-						});
+						mPaceCanSuccessful = pCommand->getReturnCode() == CardReturnCode::OK;
+					});
 			}
 			else if (pPacePasswordId == PacePasswordId::PACE_PIN)
 			{
 				connect(command, &BaseCardCommand::commandDone, this, [this](QSharedPointer<BaseCardCommand> pCommand){
-							mPacePinSuccessful = pCommand->getReturnCode() == CardReturnCode::OK;
-							if (!mPacePinSuccessful)
-							{
-								mPaceCanSuccessful = false;
-							}
-						});
+						mPacePinSuccessful = pCommand->getReturnCode() == CardReturnCode::OK;
+						if (!mPacePinSuccessful)
+						{
+							mPaceCanSuccessful = false;
+						}
+					});
 			}
 
 			return call(command, pReceiver, pFunc);

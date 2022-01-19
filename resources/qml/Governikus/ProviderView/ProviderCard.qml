@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -24,10 +24,7 @@ Item {
 
 	Keys.onSpacePressed: mouseArea.clicked(undefined)
 	Accessible.role: Accessible.Button
-	Accessible.name: qsTr("Provider:") + " " + (!!providerModelItem ? provider.shortName :
-					 qsTr("Unknown error"))
-	Accessible.description: qsTr("Provider description:") + " " + (!!providerModelItem ? provider.shortDescription :
-							qsTr("Unknown error"))
+	Accessible.name: !!providerModelItem ? provider.shortName : qsTr("Unknown error")
 
 	ProviderModelItem {
 		id: provider

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linux
+  namespace: ausweisapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: deployment-ausweisapp-linux
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+      - env:
+        - name: CCACHE_DIR
+          value: /ccache
+        - name: CCACHE_MAXSIZE
+          value: 10G
+        - name: MAKE_FLAGS
+          value: -j5
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: PASSWORD
+              name: android-passwords
+              optional: false
+        image: dev-docker.governikus.de/ausweisapp2/alpine:linux
+        imagePullPolicy: Always
+        name: linux
+        resources:
+          limits:
+            cpu: "5"
+            memory: 8Gi
+          requests:
+            cpu: 500m
+            memory: 2Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - NET_BIND_SERVICE
+          privileged: false
+          readOnlyRootFilesystem: false
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 1000
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /ccache
+          name: ccache
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: ccache
+        persistentVolumeClaim:
+          claimName: ccache-linux

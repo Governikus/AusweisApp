@@ -1,11 +1,13 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
+import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.PinResetInformationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.ChangePinModel 1.0
@@ -178,10 +180,19 @@ TutorialContent {
 		width: parent.width * 0.9
 		anchors.horizontalCenter: parent.horizontalCenter
 
-		//: LABEL ANDROID IOS
-		text: qsTr("You can always set a new PIN at the issuing authority if the (Transport) PIN is not known.")
+		text: PinResetInformationModel.pinForgottenTutorialHint
 		textStyle: Style.text.tutorial_header_secondary
 		horizontalAlignment: Text.AlignHCenter
+	}
+
+	GButton {
+		anchors.horizontalCenter: parent.horizontalCenter
+
+		visible: text !== ""
+
+		text: PinResetInformationModel.pinResetActionText
+
+		onClicked: Qt.openUrlExternally(PinResetInformationModel.pinResetUrl)
 	}
 
 	TutorialSeperator {
@@ -208,8 +219,7 @@ TutorialContent {
 				Accessible.role: Accessible.Button
 				Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
 
-				//: LABEL ANDROID IOS
-				onClicked: Qt.openUrlExternally(qsTr("https://www.youtube.com/watch?v=wZglRda5Y60&index=4&list=PLLB5ERhVkn25qQXgMHQr-1KgyZsJKoSAm"))
+				onClicked: Qt.openUrlExternally("https://www.ausweisapp.bund.de/%1/aa2/video-passwords".arg(SettingsModel.language))
 			}
 		}
 

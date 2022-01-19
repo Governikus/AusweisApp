@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestFileHelper.h"
@@ -73,4 +73,22 @@ bool TestFileHelper::containsLog(const QSignalSpy& pSpy, const QLatin1String pSt
 		}
 	}
 	return false;
+}
+
+
+int TestFileHelper::getUnprivilegedPortStart()
+{
+	int result = -1;
+
+#ifdef Q_OS_LINUX
+	const auto data = TestFileHelper::readFile(QStringLiteral("/proc/sys/net/ipv4/ip_unprivileged_port_start")).trimmed();
+	bool ok = false;
+	const int converted = data.toInt(&ok); // toInt returns 0 if "ok=false"
+	if (ok)
+	{
+		result = converted;
+	}
+#endif
+
+	return result;
 }

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -36,7 +36,7 @@ RowLayout {
 	GButton {
 		visible: !downloadInProgress
 
-		//: LABEL DESKTOP_QML User choice to skip this update, the automatic update check will *not* inform about this update again.
+		//: LABEL DESKTOP User choice to skip this update, the automatic update check will *not* inform about this update again.
 		text: qsTr("Skip update")
 
 		onClicked: root.skipUpdate()
@@ -51,7 +51,7 @@ RowLayout {
 	GButton {
 		visible: !downloadInProgress
 
-		//: LABEL DESKTOP_QML The available update is shown again after next automatic update check.
+		//: LABEL DESKTOP The available update is shown again after next automatic update check.
 		text: qsTr("Remind me later")
 
 		onClicked: root.remindLater()
@@ -59,12 +59,12 @@ RowLayout {
 
 	GButton {
 		text: Qt.platform.os === "osx"
-			  //: LABEL DESKTOP_QML Open the Mac App Store on macOS
+			  //: LABEL DESKTOP Open the Mac App Store on macOS
 			  ? qsTr("Open App Store")
 			  : downloadInProgress
-			  //: LABEL DESKTOP_QML Cancel the download of the update on Windows
+			  //: LABEL DESKTOP Cancel the download of the update on Windows
 			  ? qsTr("Cancel update")
-			  //: LABEL DESKTOP_QML Start to download the update and execute it on Windows
+			  //: LABEL DESKTOP Start to download the update and execute it on Windows
 			  : qsTr("Start update")
 		enabledTooltipText: SettingsModel.appUpdateData.url
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SurveyModel.h"
@@ -148,7 +148,8 @@ void SurveyModel::transmitSurvey()
 	request.setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("application/json; charset=UTF-8"));
 
 	const QByteArray jsonData = toJsonByteArray();
-	mReply.reset(Env::getSingleton<NetworkManager>()->post(request, jsonData), &QNetworkReply::deleteLater);
+	const auto& caCerts = Env::getSingleton<SecureStorage>()->getUpdateCertificates().toList();
+	mReply.reset(Env::getSingleton<NetworkManager>()->post(request, jsonData, caCerts), &QNetworkReply::deleteLater);
 
 	connect(mReply.data(), &QNetworkReply::sslErrors, this, &SurveyModel::onSslErrors);
 	connect(mReply.data(), &QNetworkReply::encrypted, this, &SurveyModel::onSslHandshakeDone);

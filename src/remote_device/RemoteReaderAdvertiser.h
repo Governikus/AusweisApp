@@ -3,7 +3,7 @@
  * functionality on the server side. According to the concept this
  * is done by sending the message REMOTE_READER_OFFER as a UDP broadcast.
  *
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

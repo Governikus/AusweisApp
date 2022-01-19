@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -11,8 +11,19 @@ import Governikus.Style 1.0
 TitleBarAction {
 	id: baseItem
 
-	Accessible.role: Accessible.Button
-	Accessible.name: text
+	readonly property string rawText: {
+		switch (baseItem.state) {
+			//: LABEL ANDROID IOS
+			case "cancel": return qsTr("Cancel")
+			//: LABEL ANDROID IOS
+			case "edit": return qsTr("Edit")
+			//: LABEL ANDROID IOS
+			case "back": return qsTr("Back")
+			default: return ""
+		}
+	}
+
+	Accessible.name: rawText
 
 	icon: {
 		if (Constants.is_layout_ios) {
@@ -30,14 +41,6 @@ TitleBarAction {
 			return ""
 		}
 
-		switch(baseItem.state) {
-			//: LABEL ANDROID IOS
-			case "cancel": return qsTr("Cancel")
-			//: LABEL ANDROID IOS
-			case "edit": return qsTr("Edit")
-			//: LABEL ANDROID IOS
-			case "back": return qsTr("Back")
-			default: return ""
-		}
+		return rawText
 	}
 }

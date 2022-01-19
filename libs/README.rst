@@ -30,7 +30,7 @@ Notwendige Bibliotheken:
 
 Notwendige Tools:
 
-- CMake >= 3.8.0 (3.14.0 >= für iOS)
+- CMake >= 3.13.0 (3.14.0 >= für iOS)
 
   - http://www.cmake.org
 
@@ -100,8 +100,8 @@ MinGW
 - http://sourceforge.net/projects/mingw-w64/
 
   - Dabei wurde das folgende Paket getestet:
-    32 Bit: https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-posix/dwarf/i686-7.3.0-release-posix-dwarf-rt_v5-rev0.7z/download
-    64 Bit: https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/7.3.0/threads-posix/seh/x86_64-7.3.0-release-posix-seh-rt_v5-rev0.7z/download
+    32 Bit: https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/threads-posix/dwarf/i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z/download
+    64 Bit: https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-posix/seh/x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z/download
 
 
 MSYS2
@@ -109,7 +109,7 @@ MSYS2
 
 - https://sourceforge.net/projects/msys2/files/Base/x86_64/
 
-  - Getestet: msys2-base-x86_64-20190524.tar.xz
+  - Getestet: msys2-base-x86_64-20210228.tar.xz
 
 
 Windows SDK
@@ -117,15 +117,15 @@ Windows SDK
 
 - https://developer.microsoft.com/de-de/windows/downloads/windows-10-sdk
 
-  - Getestet: 10.0.18362.0
+  - Getestet: 10.0.19041.0
 
 
-Python 2
-""""""""
+Python
+""""""
 
 - https://www.python.org/downloads/
 
-  - Getestet: python-2.7.17.amd64.msi
+  - Getestet: 3.9.4
 
 
 Vorbereitung
@@ -146,7 +146,7 @@ Vorbereitung
 
 ::
 
-   Für das Windows SDK 10.0.15063.0 und neuer (getestet: 10.0.18362.0):
+   Für das Windows SDK 10.0.15063.0 und neuer:
        WindowsSdkVerBinPath = C:\Program Files (x86)\Windows Kits\10\bin\%VERSION%
    Für alle älteren Versionen:
        WindowsSdkDir = C:\Program Files (x86)\Windows Kits\10
@@ -236,19 +236,19 @@ Komponenten vorhanden sein:
 
   - https://developer.android.com/tools/sdk/ndk/index.html
 
-  - Getestet: r21d (https://wiki.qt.io/Qt_for_Android_known_issues)
+  - Getestet: r21e (https://wiki.qt.io/Qt_for_Android_known_issues)
 
 - Android SDK (cmdline) mit gesetztem ANDROID_SDK_ROOT
 
   - https://developer.android.com/studio#cmdline-tools
 
-  - Getestet: 26.1.1 / 2.1
+  - Getestet: 26.1.1 / 3.0
 
 - SDK build tools
 
   - https://developer.android.com/studio/releases/build-tools
 
-  - Getestet: 29.0.3
+  - Getestet: 30.0.3
 
 - SDK platform tools
 

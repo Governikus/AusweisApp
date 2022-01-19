@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -176,7 +176,7 @@ void NumberModel::setPuk(const QString& pPuk)
 
 bool NumberModel::hasError() const
 {
-	return getInputErrorCode() != CardReturnCode::OK || Env::getSingleton<ApplicationModel>()->isExtendedLengthApdusUnsupported() || isPinDeactivated();
+	return getInputErrorCode() != CardReturnCode::OK || Env::getSingleton<ApplicationModel>()->isExtendedLengthApdusUnsupported();
 }
 
 
@@ -232,7 +232,7 @@ QString NumberModel::getInputError() const
 				       //: INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification.
 					   .arg(tr("You have entered an incorrect, five-digit Transport PIN twice. "
 							   "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
-							   "You can find your Card Access Number (CAN) in the bottom right on the front of your ID card."))
+							   "You can find your CAN in the bottom right on the front of your ID card."))
 				       //: INFO ALL_PLATFORMS
 					   .arg(tr("Please note that you may use the five-digit Transport PIN only once to change to a six-digit PIN. "
 							   "If you already set a six-digit PIN, the five-digit Transport PIN is no longer valid."));
@@ -243,7 +243,7 @@ QString NumberModel::getInputError() const
 				//: INFO ALL_PLATFORMS The wrong PIN was entered twice, the next attempt requires the CAN for additional verification.
 				return tr("You have entered an incorrect, six-digit PIN twice. "
 						  "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
-						  "You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.");
+						  "You can find your CAN in the bottom right on the front of your ID card.");
 			}
 
 		case CardReturnCode::INVALID_PIN_3:
@@ -299,16 +299,6 @@ int NumberModel::getRetryCounter() const
 	{
 		return mContext->getCardConnection()->getReaderInfo().getRetryCounter();
 	}
-}
-
-
-bool NumberModel::isPinDeactivated() const
-{
-	if (mContext && !mContext->getReaderName().isEmpty())
-	{
-		return Env::getSingleton<ReaderManager>()->getReaderInfo(mContext->getReaderName()).isPinDeactivated();
-	}
-	return false;
 }
 
 

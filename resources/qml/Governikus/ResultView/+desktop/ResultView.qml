@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -23,14 +23,17 @@ SectionPage {
 		IsInfo
 	}
 
-	signal emailButtonPressed()
 	property alias supportButtonsVisible: supportButtonsLayout.visible
 	property alias text: resultText.text
 	property alias header: resultHeader.text
-	property int resultType: ResultView.Type.IsSuccess
 	property alias buttonType: button.buttonType
 	property alias popupText: detailedResultPopup.text
 	property alias popupTitle: detailedResultPopup.title
+	property alias hintText: hintItem.text
+	property alias hintButtonText: hintItem.buttonText
+	property int resultType: ResultView.Type.IsSuccess
+	signal emailButtonPressed()
+	signal hintClicked()
 
 	Accessible.name: qsTr("Result view")
 	Accessible.description: qsTr("This is the result of an authentication.")
@@ -40,6 +43,9 @@ SectionPage {
 
 	ColumnLayout {
 		anchors.fill: parent
+		anchors.margins: Constants.pane_padding
+
+		spacing: Constants.pane_spacing
 
 		StatusIcon {
 			Layout.alignment: Qt.AlignHCenter
@@ -57,6 +63,8 @@ SectionPage {
 				}
 			}
 		}
+
+		GSpacer { Layout.fillHeight: true }
 
 		GText {
 			id: resultHeader
@@ -101,7 +109,7 @@ SectionPage {
 
 			GButton {
 				icon.source: "qrc:///images/material_mail.svg"
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				text: qsTr("Send email")
 				tintIcon: true
 				onClicked: baseItem.emailButtonPressed()
@@ -109,13 +117,13 @@ SectionPage {
 
 			GButton {
 				icon.source: "qrc:/images/desktop/material_save.svg"
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				text: qsTr("Save log")
 				tintIcon: true
 				onClicked: {
-					LogModel.setLogfile(0)
-					let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogfileDate())
-					appWindow.openSaveFileDialog(LogModel.saveCurrentLogfile, filenameSuggestion, qsTr("Logfiles"), "log")
+					LogModel.setLogFile(0)
+					let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogFileDate())
+					appWindow.openSaveFileDialog(LogModel.saveCurrentLogFile, filenameSuggestion, qsTr("Logfiles"), "log")
 				}
 			}
 
@@ -123,13 +131,26 @@ SectionPage {
 				visible: popupTitle !== "" || popupText !== ""
 
 				icon.source: "qrc:/images/info.svg"
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				text: qsTr("See details")
 				tintIcon: true
 				onClicked: detailedResultPopup.open()
 			}
 		}
 
+		GSpacer { Layout.fillHeight: true }
+
+		Hint {
+			id: hintItem
+
+			visible: text !== ""
+
+			Layout.alignment: Qt.AlignHCenter
+			Layout.fillWidth: true
+			Layout.maximumWidth: Style.dimens.max_text_width
+
+			onClicked: baseItem.hintClicked()
+		}
 
 		NavigationButton {
 			id: button

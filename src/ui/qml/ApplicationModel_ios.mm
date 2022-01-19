@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -62,7 +62,9 @@ ApplicationModel::Private::Private() : mObserver([[VoiceOverObserver alloc] init
 
 
 // It's important that the definition of the destructor is in a .mm file: Otherwise the compiler won't compile it in Objective-C++ mode and ARC won't work.
-ApplicationModel::Private::~Private() = default;
+ApplicationModel::Private::~Private()
+{
+}
 
 
 bool ApplicationModel::isScreenReaderRunning() const

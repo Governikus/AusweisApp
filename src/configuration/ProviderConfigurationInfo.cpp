@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfigurationInfo.h"
@@ -37,9 +37,10 @@ ProviderConfigurationInfo::ProviderConfigurationInfo(const LanguageString& pShor
 		const QString& pIcon,
 		const QString& pImage,
 		const QStringList& pSubjectUrls,
-		const QString& pSubjectUrlInfo)
+		const QString& pSubjectUrlInfo,
+		const QString& pInternalId)
 	: d(new InternalInfo(pShortName, pLongName, pShortDescription, pLongDescription, pAddress, pHomepage,
-			pCategory, pPhone, pEmail, pPostalAddress, pIcon, pImage, pSubjectUrls, pSubjectUrlInfo))
+			pCategory, pPhone, pEmail, pPostalAddress, pIcon, pImage, pSubjectUrls, pSubjectUrlInfo, pInternalId))
 {
 }
 
@@ -52,6 +53,12 @@ ProviderConfigurationInfo::~ProviderConfigurationInfo()
 bool ProviderConfigurationInfo::operator ==(const ProviderConfigurationInfo& pOther) const
 {
 	return *d == *pOther.d;
+}
+
+
+bool ProviderConfigurationInfo::operator !=(const ProviderConfigurationInfo& pOther) const
+{
+	return !(*d == *pOther.d);
 }
 
 
@@ -177,4 +184,10 @@ const QStringList& ProviderConfigurationInfo::getSubjectUrls() const
 const QString& ProviderConfigurationInfo::getSubjectUrlInfo() const
 {
 	return d->mSubjectUrlInfo;
+}
+
+
+const QString& ProviderConfigurationInfo::getInternalId() const
+{
+	return d->mInternalId;
 }

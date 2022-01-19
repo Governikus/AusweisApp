@@ -14,7 +14,9 @@ Betriebssysteme
 
 - macOS 10.15
 
-- macOS 10.16 / 11.0
+- macOS 11.0
+
+- macOS 12.0
 
 - Windows 7 SP1 (32bit / 64bit)
 
@@ -50,15 +52,15 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Firefox 87
+- Chrome 97
 
-- Chrome 89
+- Firefox 96
 
 - Internet Explorer 11
 
-- Safari 14.0.3
+- Safari 15.2
 
-- Edge 89
+- Edge 97
 
 
 
@@ -116,11 +118,11 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 89 (iOS/Android)
+- Chrome 97 (iOS/Android)
 
-- Firefox 87 (iOS/Android)
+- Firefox 96 (iOS/Android)
 
-- Safari 14.0.3 (iOS)
+- Safari 15.2 (iOS)
 
 
 Kartenleser

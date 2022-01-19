@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref TlsConfiguration
  *
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TlsConfiguration.h"
@@ -20,12 +20,6 @@ class test_TlsConfiguration
 	TlsConfiguration mTlsConfiguration;
 
 	private Q_SLOTS:
-		void initTestCase()
-		{
-			mTlsConfiguration = TlsConfiguration();
-		}
-
-
 		void testDefaults()
 		{
 			QByteArray config("{}");

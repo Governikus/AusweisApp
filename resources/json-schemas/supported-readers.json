@@ -1,9 +1,9 @@
 {
-	"$schema": "https://json-schema.org/draft/2019-09/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "JSON schema for AusweisApp2's supported-readers.json file",
 	"definitions": {
 		"win_versions": { "type": "string", "enum": ["6.1", "6.2", "6.3", "10.0"] },
-		"mac_versions": { "type": "string", "enum": ["10.12", "10.13", "10.14", "10.15"] },
+		"mac_versions": { "type": "string", "enum": ["10.12", "10.13", "10.14", "10.15", "11.0"] },
 		"operating_system": {
 			"oneOf": [
 				{

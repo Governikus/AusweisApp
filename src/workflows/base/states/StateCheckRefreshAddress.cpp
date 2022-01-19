@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCheckRefreshAddress.h"
@@ -203,7 +203,7 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 	Q_ASSERT(!context.isNull());
 
 	std::function<void(const QUrl&, const QSslCertificate&)> saveCertificateFunc = [this, context]
-				(const QUrl& pUrl, const QSslCertificate& pCertificate)
+			(const QUrl& pUrl, const QSslCertificate& pCertificate)
 			{
 				mVerifiedRefreshUrlHosts += pUrl;
 				context->addCertificateData(pUrl, pCertificate);

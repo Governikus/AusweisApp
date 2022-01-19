@@ -9,6 +9,11 @@
 	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>de_DE</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>de</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>@MACOSX_BUNDLE_BUNDLE_NAME@</string>
 	<key>CFBundleExecutable</key>

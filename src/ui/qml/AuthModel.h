@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the authentication action.
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -29,7 +29,7 @@ class AuthModel
 	Q_PROPERTY(QString progressMessage READ getProgressMessage NOTIFY fireProgressChanged)
 	Q_PROPERTY(QString errorHeader READ getErrorHeader NOTIFY fireResultChanged)
 	Q_PROPERTY(QString errorText READ getErrorText NOTIFY fireResultChanged)
-	Q_PROPERTY(QString statusCode READ getStatusCode NOTIFY fireResultChanged)
+	Q_PROPERTY(QString statusCodeString READ getStatusCodeString NOTIFY fireResultChanged)
 
 	private:
 		QSharedPointer<AuthContext> mContext;
@@ -46,7 +46,7 @@ class AuthModel
 		QString getProgressMessage() const;
 		QString getErrorHeader() const;
 		QString getErrorText() const;
-		QString getStatusCode() const;
+		QString getStatusCodeString() const;
 
 		Q_INVOKABLE void requestTransportPinChange();
 

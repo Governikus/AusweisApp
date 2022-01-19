@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -144,7 +144,7 @@ QString RemoteMessage::getStringValue(const QJsonObject& pJsonObject, const QLat
 
 QJsonObject RemoteMessage::parseByteArray(const QByteArray& pMessage)
 {
-	QJsonParseError error;
+	QJsonParseError error {};
 	const QJsonDocument& doc = QJsonDocument::fromJson(pMessage, &error);
 	if (error.error != QJsonParseError::NoError)
 	{

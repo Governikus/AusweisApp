@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdTransmitResponse.h"
@@ -143,19 +143,17 @@ class test_IfdTransmitResponse
 		void fromJson_data()
 		{
 			QTest::addColumn<QByteArray>("json");
-			QTest::addColumn<QByteArray>("apdu");
 			QTest::addColumn<bool>("incomplete");
-			QTest::newRow("ResponseAPDUs") << QByteArray(R"("ResponseAPDUs": [ "9000" ],)") << QByteArray("9000") << !IfdVersion(IfdVersion::Version::v0).isSupported();
-			QTest::newRow("ResponseAPDU") << QByteArray(R"("ResponseAPDU": "9000",)") << QByteArray("9000") << false;
-			QTest::newRow("Equal - Both") << QByteArray(R"("ResponseAPDUs": [ "9000" ], "ResponseAPDU": "9000",)") << QByteArray("9000") << false;
-			QTest::newRow("Not Equal - Both") << QByteArray(R"("ResponseAPDUs": [ "9001" ], "ResponseAPDU": "9000",)") << QByteArray("9000") << false;
+			QTest::newRow("ResponseAPDUs") << QByteArray(R"("ResponseAPDUs": [ "9000" ],)") << !IfdVersion(IfdVersion::Version::v0).isSupported();
+			QTest::newRow("ResponseAPDU") << QByteArray(R"("ResponseAPDU": "9000",)") << false;
+			QTest::newRow("Equal - Both") << QByteArray(R"("ResponseAPDUs": [ "9000" ], "ResponseAPDU": "9000",)") << false;
+			QTest::newRow("Not Equal - Both") << QByteArray(R"("ResponseAPDUs": [ "9001" ], "ResponseAPDU": "9000",)") << false;
 		}
 
 
 		void fromJson()
 		{
 			QFETCH(QByteArray, json);
-			QFETCH(QByteArray, apdu);
 			QFETCH(bool, incomplete);
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);

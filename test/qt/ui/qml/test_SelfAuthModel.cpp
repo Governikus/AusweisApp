@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref SelfAuthModel
  *
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfAuthModel.h"
@@ -20,8 +20,10 @@ class test_SelfAuthModel
 	: public QObject
 {
 	Q_OBJECT
-	QSharedPointer<SelfAuthContext> mContext;
-	SelfAuthModel* mModel;
+
+	private:
+		SelfAuthModel* mModel = nullptr;
+		QSharedPointer<SelfAuthContext> mContext;
 
 	private Q_SLOTS:
 		void init()

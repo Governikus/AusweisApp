@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerAuth.h"
@@ -38,6 +38,7 @@ MsgHandlerAuth::MsgHandlerAuth(const QJsonObject& pObj)
 		if (url.isValid())
 		{
 			initMessages(pObj[QLatin1String("messages")].toObject());
+			initDeveloperMode(pObj[QLatin1String("developerMode")]);
 			initHandleInterrupt(pObj[QLatin1String("handleInterrupt")]);
 			initAuth(url);
 			setVoid();
@@ -111,6 +112,16 @@ void MsgHandlerAuth::initHandleInterrupt(const QJsonValue& pValue)
 	if (pValue.isBool())
 	{
 		Env::getSingleton<VolatileSettings>()->setHandleInterrupt(pValue.toBool());
+	}
+}
+
+
+void MsgHandlerAuth::initDeveloperMode(const QJsonValue& pValue)
+{
+	if (pValue.isBool())
+	{
+		Env::getSingleton<VolatileSettings>()->setDeveloperMode(pValue.toBool());
+		qDebug() << "Using Developer Mode on SDK:" << Env::getSingleton<VolatileSettings>()->isDeveloperMode();
 	}
 }
 

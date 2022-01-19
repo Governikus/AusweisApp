@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NfcReader.h"
@@ -22,6 +22,14 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 Reader::CardEvent NfcReader::updateCard()
 {
 	return CardEvent::NONE;
+}
+
+
+void NfcReader::resetCard()
+{
+	mCard.reset();
+	mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
+	Q_EMIT fireCardRemoved(mReaderInfo);
 }
 
 
@@ -65,7 +73,10 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 
 	mNfManager.setUserInformation(info);
 #endif
-	Q_EMIT fireCardInserted(mReaderInfo);
+	if (getCard())
+	{
+		Q_EMIT fireCardInserted(mReaderInfo);
+	}
 }
 
 
@@ -74,9 +85,7 @@ void NfcReader::targetLost(QNearFieldTarget* pTarget)
 	qCDebug(card_nfc) << "targetLost";
 	if (pTarget != nullptr && mCard && mCard->invalidateTarget(pTarget))
 	{
-		mCard.reset();
-		mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
-		Q_EMIT fireCardRemoved(mReaderInfo);
+		resetCard();
 	}
 }
 
@@ -190,4 +199,5 @@ void NfcReader::disconnectReader(const QString& pError)
 #else
 	Q_UNUSED(pError)
 #endif
+	resetCard();
 }

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -35,7 +35,7 @@ SectionPage {
 
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			title: qsTr("See my<br>personal data")
 			image: "qrc:/images/mydata.svg"
 
@@ -55,7 +55,7 @@ SectionPage {
 
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			title: qsTr("Provider")
 			image: "qrc:/images/provider.svg"
 
@@ -75,9 +75,9 @@ SectionPage {
 
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			title: qsTr("History")
-			image: "qrc:/images/history.svg"
+			image: "qrc:/images/material_history.svg"
 
 			onClicked: sectionPage.nextView(UiModule.HISTORY)
 		}
@@ -94,7 +94,7 @@ SectionPage {
 
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			title: qsTr("Settings")
 			image: "qrc:/images/material_settings.svg"
 
@@ -114,7 +114,7 @@ SectionPage {
 
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			title: qsTr("Change my<br>(Transport) PIN")
 			image: "qrc:/images/material_lock.svg"
 
@@ -134,7 +134,7 @@ SectionPage {
 
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			title: qsTr("Help")
 			image: "qrc:/images/material_help.svg"
 

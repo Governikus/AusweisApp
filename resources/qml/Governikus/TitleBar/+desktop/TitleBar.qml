@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -91,7 +91,7 @@ Item {
 					activeFocusOnTab: true
 
 					showArrow: false
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					text: qsTr("Start")
 					enabled: rightMostAction.rootEnabled
 					helpTopic: "applicationOverview"

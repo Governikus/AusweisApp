@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CommandLineParser.h"
@@ -70,32 +70,16 @@ void CommandLineParser::parse(QCoreApplication* pApp)
 	parseUiPlugin();
 
 	const auto& logHandler = Env::getSingleton<LogHandler>();
-	if (mParser.isSet(mOptionKeepLog))
-	{
-		logHandler->setAutoRemove(false);
-	}
 
-	if (mParser.isSet(mOptionNoLogFile))
-	{
-		logHandler->setLogfile(false);
-	}
-
-	if (mParser.isSet(mOptionNoLogHandler))
-	{
-		logHandler->setUseHandler(false);
-	}
+	logHandler->setAutoRemove(!mParser.isSet(mOptionKeepLog));
+	logHandler->setLogFile(!mParser.isSet(mOptionNoLogFile));
+	logHandler->setUseHandler(!mParser.isSet(mOptionNoLogHandler));
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
-	if (mParser.isSet(mOptionShowWindow))
-	{
-		AppController::cShowUi = true;
-	}
+	AppController::cShowUi = mParser.isSet(mOptionShowWindow);
 #endif
 
-	if (mParser.isSet(mOptionProxy))
-	{
-		NetworkManager::lockProxy(true);
-	}
+	NetworkManager::lockProxy(mParser.isSet(mOptionProxy));
 
 	if (mParser.isSet(mOptionPort))
 	{

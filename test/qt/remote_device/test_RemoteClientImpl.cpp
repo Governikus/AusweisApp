@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteClientImpl.h"
@@ -120,19 +120,19 @@ class test_RemoteClient
 		void init()
 		{
 			Env::setCreator<DatagramHandler*>(std::function<DatagramHandler* ()>([&] {
-						mDatagramHandlerMock = new DatagramHandlerMock();
-						return mDatagramHandlerMock;
-					}));
+					mDatagramHandlerMock = new DatagramHandlerMock();
+					return mDatagramHandlerMock;
+				}));
 
 			Env::setCreator<RemoteDeviceList*>(std::function<RemoteDeviceList* ()>([&] {
-						mRemoteDeviceListMock = new RemoteDeviceListMock(0, 0);
-						return mRemoteDeviceListMock;
-					}));
+					mRemoteDeviceListMock = new RemoteDeviceListMock(0, 0);
+					return mRemoteDeviceListMock;
+				}));
 
 			Env::setCreator<RemoteConnector*>(std::function<RemoteConnector* ()>([&] {
-						mRemoteConnectorMock = new RemoteConnectorMock();
-						return mRemoteConnectorMock;
-					}));
+					mRemoteConnectorMock = new RemoteConnectorMock();
+					return mRemoteConnectorMock;
+				}));
 		}
 
 

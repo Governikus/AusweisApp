@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -38,7 +38,7 @@ SectionPage {
 	titleBarAction: TitleBarAction {
 		id: titleBarAction
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Settings")
 		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "settings")
 
@@ -74,26 +74,26 @@ SectionPage {
 
 		sectionsModel: {
 			var model = [
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				qsTr("General"),
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				qsTr("Smartphone as card reader"),
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				qsTr("USB card reader"),
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				qsTr("Security and privacy")
 			]
 
 			if (plugin.debugBuild) {
 				model.push(
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					qsTr("Debug options")
 				)
 			}
 
 			if (SettingsModel.developerOptions) {
 				model.push(
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					qsTr("Developer options")
 				)
 			}

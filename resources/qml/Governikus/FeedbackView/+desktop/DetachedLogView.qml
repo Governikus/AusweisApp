@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -39,7 +39,7 @@ Item {
 
 				model: LogModel.logFiles
 
-				onCurrentIndexChanged: LogModel.setLogfile(currentIndex)
+				onCurrentIndexChanged: LogModel.setLogFile(currentIndex)
 			}
 
 			GText {
@@ -61,13 +61,13 @@ Item {
 
 			GButton {
 				icon.source: "qrc:///images/desktop/material_save.svg"
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				text: qsTr("Save log")
 				tintIcon: true
 
 				onClicked: {
-					let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogfileDate())
-					appWindow.openSaveFileDialog(LogModel.saveCurrentLogfile, filenameSuggestion, qsTr("Logfiles"), "log")
+					let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogFileDate())
+					appWindow.openSaveFileDialog(LogModel.saveCurrentLogFile, filenameSuggestion, qsTr("Logfiles"), "log")
 				}
 			}
 		}

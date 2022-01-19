@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref LogModel
  *
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogModel.h"
@@ -20,7 +20,7 @@ class test_LogModel
 	Q_OBJECT
 
 	private:
-		LogModel* mModel;
+		LogModel* mModel = nullptr;
 
 		void resetModel(LogModel* pModel = nullptr)
 		{
@@ -102,7 +102,7 @@ class test_LogModel
 			QFETCH(int, logEntriesSize);
 
 			QFile file(fileName);
-			file.open(QIODevice::ReadOnly);
+			QVERIFY(file.open(QIODevice::ReadOnly));
 			QTextStream stream(&file);
 
 			mModel->setLogEntries(stream);
@@ -135,7 +135,7 @@ class test_LogModel
 			QFETCH(int, logEntriesSizeChange);
 
 			QFile file(fileName);
-			file.open(QIODevice::ReadOnly);
+			QVERIFY(file.open(QIODevice::ReadOnly));
 			QTextStream stream(&file);
 			mModel->setLogEntries(stream);
 			const auto oldSize = mModel->mLogEntries.size();
@@ -161,12 +161,12 @@ class test_LogModel
 			// is only populated in the ctor of LogModel.
 			resetModel(new LogModel());
 
-			QCOMPARE(mModel->getLogfiles().size(), 2);
-			mModel->removeCurrentLogfile();
-			QCOMPARE(mModel->getLogfiles().size(), 2);
-			mModel->setLogfile(1);
-			mModel->removeCurrentLogfile();
-			QCOMPARE(mModel->getLogfiles().size(), 1);
+			QCOMPARE(mModel->getLogFiles().size(), 2);
+			mModel->removeCurrentLogFile();
+			QCOMPARE(mModel->getLogFiles().size(), 2);
+			mModel->setLogFile(1);
+			mModel->removeCurrentLogFile();
+			QCOMPARE(mModel->getLogFiles().size(), 1);
 		}
 
 

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogModel.h"
@@ -34,13 +34,13 @@ void LogModel::reset()
 {
 	mLogFiles.clear();
 	mLogFiles += QString(); // dummy entry for "current logfile"
-	const auto logFiles = Env::getSingleton<LogHandler>()->getOtherLogfiles();
+	const auto logFiles = Env::getSingleton<LogHandler>()->getOtherLogFiles();
 	for (const auto& entry : logFiles)
 	{
 		mLogFiles += entry.absoluteFilePath();
 	}
 
-	setLogfile(0);
+	setLogFile(0);
 }
 
 
@@ -77,7 +77,7 @@ void LogModel::onNewLogMsg(const QString& pMsg)
 }
 
 
-QStringList LogModel::getLogfiles() const
+QStringList LogModel::getLogFiles() const
 {
 	QStringList logFileNames;
 	//: LABEL ALL_PLATFORMS
@@ -94,20 +94,20 @@ QStringList LogModel::getLogfiles() const
 }
 
 
-QDateTime LogModel::getCurrentLogfileDate() const
+QDateTime LogModel::getCurrentLogFileDate() const
 {
 	if (mSelectedLogFile == 0)
 	{
-		return Env::getSingleton<LogHandler>()->getCurrentLogfileDate();
+		return Env::getSingleton<LogHandler>()->getCurrentLogFileDate();
 	}
 
 	return LogHandler::getFileDate(QFileInfo(mLogFiles.at(mSelectedLogFile)));
 }
 
 
-void LogModel::removeOtherLogfiles()
+void LogModel::removeOtherLogFiles()
 {
-	if (Env::getSingleton<LogHandler>()->removeOtherLogfiles())
+	if (Env::getSingleton<LogHandler>()->removeOtherLogFiles())
 	{
 		reset();
 		Q_EMIT fireLogFilesChanged();
@@ -115,7 +115,7 @@ void LogModel::removeOtherLogfiles()
 }
 
 
-void LogModel::removeCurrentLogfile()
+void LogModel::removeCurrentLogFile()
 {
 	if (mSelectedLogFile == 0)
 	{
@@ -133,7 +133,7 @@ void LogModel::removeCurrentLogfile()
 }
 
 
-void LogModel::setLogfile(int pIndex)
+void LogModel::setLogFile(int pIndex)
 {
 	if (pIndex < 0 || pIndex >= mLogFiles.size())
 	{
@@ -151,7 +151,7 @@ void LogModel::setLogfile(int pIndex)
 
 	if (pIndex == 0)
 	{
-		QTextStream in(logHandler->useLogfile() ? logHandler->getBacklog() : tr("The logfile is disabled.").toUtf8());
+		QTextStream in(logHandler->useLogFile() ? logHandler->getBacklog() : tr("The logfile is disabled.").toUtf8());
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 		in.setCodec("UTF-8");
 #endif
@@ -176,7 +176,7 @@ void LogModel::setLogfile(int pIndex)
 }
 
 
-void LogModel::saveCurrentLogfile(const QUrl& pFilename) const
+void LogModel::saveCurrentLogFile(const QUrl& pFilename) const
 {
 	bool success = false;
 	const auto logHandler = Env::getSingleton<LogHandler>();
@@ -197,7 +197,7 @@ void LogModel::saveCurrentLogfile(const QUrl& pFilename) const
 
 
 #ifndef QT_NO_DEBUG
-void LogModel::saveDummyLogfile() const
+void LogModel::saveDummyLogFile() const
 {
 	auto& generator = Randomizer::getInstance().getGenerator();
 	std::uniform_int_distribution<uint32_t> dist;

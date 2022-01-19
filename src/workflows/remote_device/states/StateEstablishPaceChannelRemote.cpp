@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEstablishPaceChannelRemote.h"
@@ -17,6 +17,7 @@ using namespace governikus;
 StateEstablishPaceChannelRemote::StateEstablishPaceChannelRemote(const QSharedPointer<WorkflowContext>& pContext)
 	: AbstractState(pContext, false)
 	, GenericContextContainer(pContext)
+	, mPasswordId(PacePasswordId::UNKNOWN)
 {
 }
 

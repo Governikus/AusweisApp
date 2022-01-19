@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardReturnCode.h"
@@ -304,7 +304,7 @@ class test_ECardApiResult
 			QTest::newRow("keyGenerationNotPossible") << ECardApiResult::Minor::KEY_KeyGenerationNotPossible << tr("Signature certificate key generation is not possible.");
 			QTest::newRow("cancellationByUser") << ECardApiResult::Minor::SAL_Cancellation_by_User << tr("The process has been cancelled.");
 			QTest::newRow("invalidCertificatePath") << ECardApiResult::Minor::IL_Signature_InvalidCertificatePath << tr("One or more certificate checks failed. The operation will be aborted due to security reasons.");
-			QTest::newRow("invalidKey") << ECardApiResult::Minor::SAL_Invalid_Key << tr("This action cannot be performed. The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.");
+			QTest::newRow("invalidKey") << ECardApiResult::Minor::SAL_Invalid_Key << tr("This action cannot be performed. The online identification function of your ID card is not activated.");
 			QTest::newRow("securityConditionNotSatisfied") << ECardApiResult::Minor::SAL_SecurityConditionNotSatisfied << tr("The authenticity of your ID card could not be verified. Please make sure that you are using a genuine ID card. Please note that test applications require the use of a test ID card.");
 			QTest::newRow("ageVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_AgeVerificationFailedWarning << tr("The age verification failed.");
 			QTest::newRow("comunityVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_CommunityVerificationFailedWarning << tr("The community verification failed.");

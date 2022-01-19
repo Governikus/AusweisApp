@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfigurationParser.h"
@@ -174,7 +174,7 @@ ReaderConfigurationInfo ReaderConfigurationParser::EntryParser::fail(const QStri
 
 QVector<ReaderConfigurationInfo> ReaderConfigurationParser::parse(const QByteArray& pData)
 {
-	QJsonParseError error;
+	QJsonParseError error {};
 	QJsonDocument doc = QJsonDocument::fromJson(pData, &error);
 	if (error.error != QJsonParseError::NoError)
 	{

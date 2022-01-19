@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -68,9 +68,9 @@ SectionPage {
 				Layout.topMargin: Constants.component_spacing
 
 				//: LABEL ANDROID IOS
-				text: !ApplicationModel.wifiEnabled ? qsTr("WiFi needed")
+				text: !ApplicationModel.wifiEnabled ? qsTr("WiFi not active")
 					//: LABEL ANDROID IOS
-					: RemoteServiceModel.canEnableNfc ? qsTr("NFC needed")
+					: RemoteServiceModel.canEnableNfc ? qsTr("NFC not active")
 					//: LABEL ANDROID IOS
 					: !RemoteServiceModel.runnable ? qsTr("Remote service not available")
 					//: LABEL ANDROID IOS
@@ -90,11 +90,11 @@ SectionPage {
 				text: !RemoteServiceModel.runnable ? RemoteServiceModel.errorMessage
 					: RemoteServiceModel.running && RemoteServiceModel.connectedToPairedDevice ? RemoteServiceModel.connectionInfo
 					//: INFO ANDROID IOS
-					: RemoteServiceModel.isPairing ? qsTr("Enter this code on your other device to use your smartphone as a card reader (SaC)")
+					: RemoteServiceModel.isPairing ? qsTr("Enter this code in the %1 on your other device to use your smartphone as a card reader (SaC).").arg(Qt.application.name)
 					 //: INFO ANDROID IOS
 					: RemoteServiceModel.running ? qsTr("Waiting for connection from a paired device...")
 					 //: INFO ANDROID IOS
-					: qsTr("Start the remote access, in order to make this smartphone visible and to use it as a card reader (SaC)")
+					: qsTr("Start the remote access in order to make this smartphone visible and use it as a card reader (SaC).\n\nIf you have not already paired a device, start the pairing now to set up this smartphone as a card reader.")
 				textStyle: RemoteServiceModel.runnable ? Style.text.normal_secondary : Style.text.normal_warning
 				horizontalAlignment: Text.AlignHCenter
 			}

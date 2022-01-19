@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -13,6 +13,8 @@ import Governikus.Type.ApplicationModel 1.0
 
 Item {
 	id: root
+
+	signal accepted()
 
 	readonly property bool validInput: echoField.acceptableInput && confirmedInput
 	readonly property bool confirmedInput: inputConfirmation.length != number.length || inputConfirmation === number
@@ -30,11 +32,11 @@ Item {
 	activeFocusOnTab: true
 	Accessible.role: Accessible.EditableText
 	Accessible.name: (eye.activated
-					  //: LABEL DESKTOP_QML Screenreader text for the password field
+					  //: LABEL DESKTOP Screenreader text for the password field
 					  ? qsTr("The password is visible.")
-					  //: LABEL DESKTOP_QML Screenreader text for the password field
+					  //: LABEL DESKTOP Screenreader text for the password field
 					  : qsTr("The password is hidden.")
-					  //: LABEL DESKTOP_QML Screenreader text for the password field
+					  //: LABEL DESKTOP Screenreader text for the password field
 					  ) + " " + qsTr("You entered %1 of %2 digits.").arg(number.length).arg(passwordLength)
 	Keys.onPressed: event.accepted = root.handleKeyEvent(event.key, event.modifiers)
 
@@ -50,6 +52,9 @@ Item {
 		}
 		else if (eventKey === Qt.Key_Paste || (eventKey === Qt.Key_V) && (eventModifiers & Qt.ControlModifier)) {
 			echoField.paste()
+		}
+		else if (eventKey === Qt.Key_Enter || eventKey === Qt.Key_Return) {
+			root.accepted()
 		}
 		else {
 			return false
@@ -163,9 +168,9 @@ Item {
 			Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
 
 			text: (activated
-				  //: LABEL DESKTOP_QML Screenreader text for the eye icon to change the password visibility
+				  //: LABEL DESKTOP Screenreader text for the eye icon to change the password visibility
 				  ? qsTr("Press to hide the password")
-				  //: LABEL DESKTOP_QML Screenreader text for the eye icon to change the password visibility
+				  //: LABEL DESKTOP Screenreader text for the eye icon to change the password visibility
 				  : qsTr("Press to show the password")
 				  )
 

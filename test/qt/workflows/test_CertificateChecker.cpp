@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref CertificateChecker
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CertificateChecker.h"
@@ -34,7 +34,7 @@ class test_CertificateChecker
 		{
 			const QSharedPointer<AuthContext> model(new AuthContext(QSharedPointer<MockActivationContext>::create()));
 			std::function<void(const QUrl&, const QSslCertificate&)> saveCertificateFunc = [&model]
-						(const QUrl& pUrl, const QSslCertificate& pCert)
+					(const QUrl& pUrl, const QSslCertificate& pCert)
 					{
 						model->addCertificateData(pUrl, pCert);
 					};

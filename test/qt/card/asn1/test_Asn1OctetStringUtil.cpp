@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref Asn1OctetStringUtil
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -36,8 +36,8 @@ class test_Asn1OctetStringUtil
 			QByteArray bytes = QByteArray::fromHex("0102030405060708090a0b0c0d0e0f");
 			ASN1_OCTET_STRING* asn1OctetString = ASN1_OCTET_STRING_new();
 			const auto guard = qScopeGuard([asn1OctetString] {
-						ASN1_STRING_free(asn1OctetString);
-					});
+					ASN1_STRING_free(asn1OctetString);
+				});
 			ASN1_OCTET_STRING_set(asn1OctetString, reinterpret_cast<unsigned char*>(bytes.data()), bytes.length());
 
 			QCOMPARE(Asn1OctetStringUtil::getValue(asn1OctetString), bytes);
@@ -49,8 +49,8 @@ class test_Asn1OctetStringUtil
 			QByteArray bytes = QByteArray::fromHex("0102030405060708090a0b0c0d0e0f");
 			ASN1_OCTET_STRING* asn1OctetString = ASN1_OCTET_STRING_new();
 			const auto guard = qScopeGuard([asn1OctetString] {
-						ASN1_STRING_free(asn1OctetString);
-					});
+					ASN1_STRING_free(asn1OctetString);
+				});
 			Asn1OctetStringUtil::setValue(bytes, asn1OctetString);
 
 			QCOMPARE(asn1OctetString->length, 15);

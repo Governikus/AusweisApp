@@ -1,7 +1,7 @@
 /*!
  * \brief MockReleaseInformation for Unittest
  *
- * \copyright Copyright (c) 2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -21,6 +21,9 @@ class MockReleaseInformation
 
 	private:
 		bool mWasUpdated;
+		const VersionNumber mVersion;
+		int mCallcountUpdate;
+
 		QSharedPointer<QTemporaryFile> mAnnounce;
 		QSharedPointer<QTemporaryFile> mIssues;
 		QVector<QSharedPointer<QTemporaryFile>> mNotes;
@@ -36,5 +39,8 @@ class MockReleaseInformation
 		[[nodiscard]] QString pathAnnouncements() const override;
 		[[nodiscard]] QString pathIssues() const override;
 		[[nodiscard]] VersionNumber versionNumber() const override;
+
+		int callcountUpdate() const;
+
 };
 } // namespace governikus

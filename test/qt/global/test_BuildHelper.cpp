@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref BuildHelper
  *
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BuildHelper.h"
@@ -28,8 +28,8 @@ class test_BuildHelper
 		{
 			QStringList list;
 			BuildHelper::processInformationHeader([&list](const QString& pKey, const QString&){
-						list << pKey;
-					});
+					list << pKey;
+				});
 			QCOMPARE(list.size(), mExpectedSize);
 		}
 

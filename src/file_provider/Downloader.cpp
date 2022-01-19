@@ -1,10 +1,11 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Downloader.h"
 
 #include "LogHandler.h"
+#include "SecureStorage.h"
 #include "TlsChecker.h"
 
 #include <http_parser.h>
@@ -44,7 +45,8 @@ void Downloader::startDownloadIfPending()
 		return;
 	}
 
-	mCurrentReply.reset(Env::getSingleton<NetworkManager>()->get(*mPendingRequests.dequeue()), &QObject::deleteLater);
+	const auto& caCerts = Env::getSingleton<SecureStorage>()->getUpdateCertificates().toList();
+	mCurrentReply.reset(Env::getSingleton<NetworkManager>()->get(*mPendingRequests.dequeue(), caCerts), &QObject::deleteLater);
 
 	connect(mCurrentReply.data(), &QNetworkReply::sslErrors, this, &Downloader::onSslErrors);
 	connect(mCurrentReply.data(), &QNetworkReply::encrypted, this, &Downloader::onSslHandshakeDone);
@@ -95,10 +97,10 @@ void Downloader::onNetworkReplyFinished()
 	qCDebug(fileprovider) << "Downloader finished:" << mCurrentReply->request().url().fileName();
 
 	const auto guard = qScopeGuard([this] {
-				mCurrentReply->disconnect(this);
-				mCurrentReply.reset();
-				startDownloadIfPending();
-			});
+			mCurrentReply->disconnect(this);
+			mCurrentReply.reset();
+			startDownloadIfPending();
+		});
 
 	const QUrl url = mCurrentReply->request().url();
 	const QString& textForLog = url.fileName();
@@ -223,12 +225,12 @@ bool Downloader::abort(const QUrl& pUpdateUrl)
 void Downloader::download(const QUrl& pUpdateUrl, const QDateTime& pCurrentTimestamp)
 {
 	QMetaObject::invokeMethod(this, [this, pUpdateUrl, pCurrentTimestamp] {
-				qCDebug(fileprovider) << "Download:" << pUpdateUrl;
-				auto request = QSharedPointer<QNetworkRequest>::create(pUpdateUrl);
-				if (pCurrentTimestamp.isValid())
-				{
-					request->setHeader(QNetworkRequest::IfModifiedSinceHeader, pCurrentTimestamp);
-				}
-				scheduleDownload(request);
-			});
+			qCDebug(fileprovider) << "Download:" << pUpdateUrl;
+			auto request = QSharedPointer<QNetworkRequest>::create(pUpdateUrl);
+			if (pCurrentTimestamp.isValid())
+			{
+				request->setHeader(QNetworkRequest::IfModifiedSinceHeader, pCurrentTimestamp);
+			}
+			scheduleDownload(request);
+		});
 }

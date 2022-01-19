@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref UIPlugInJsonApi
  *
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInJson.h"
@@ -20,7 +20,7 @@ class test_UIPlugInJson
 	private:
 		QJsonObject getJsonObject(const QByteArray& pData)
 		{
-			QJsonParseError jsonError;
+			QJsonParseError jsonError {};
 			const auto& json = QJsonDocument::fromJson(pData, &jsonError);
 			if (jsonError.error == QJsonParseError::NoError)
 			{

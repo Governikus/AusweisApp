@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -44,17 +44,25 @@ SectionPage
 		Aborting
 	}
 
+	function showWithPrecedingView(pNextView) {
+		d.precedingView = d.activeView
+		d.view = pNextView
+		ApplicationWindow.menuBar.updateActions()
+	}
+
+	function showPasswordInfo() {
+		showWithPrecedingView(IdentifyView.SubViews.PasswordInfo)
+	}
+
 	function showSettings() {
-		readerView.precedingView = d.activeView
-		d.view = IdentifyView.SubViews.ReaderSettings
-		appWindow.menuBar.updateActions()
+		showWithPrecedingView(IdentifyView.SubViews.ReaderSettings)
 	}
 
 	activeFocusOnTab: true
 	Keys.onEscapePressed: if (d.cancelAllowed) AuthModel.cancelWorkflow()
 
 	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Identify")
 		rootEnabled: false
 		helpTopic: "authentication"
@@ -66,11 +74,11 @@ SectionPage
 			editRights.showProviderInformation(false)
 			if (d.activeView === IdentifyView.SubViews.PasswordInfo) {
 				d.view = SettingsModel.transportPinReminder ? IdentifyView.SubViews.TransportPinReminder : IdentifyView.SubViews.Password
-				appWindow.menuBar.updateActions()
+				ApplicationWindow.menuBar.updateActions()
 			}
 			else if (d.activeView === IdentifyView.SubViews.ReaderSettings) {
-				d.view = readerView.precedingView
-				appWindow.menuBar.updateActions()
+				d.view = d.precedingView
+				ApplicationWindow.menuBar.updateActions()
 			}
 		}
 
@@ -94,19 +102,16 @@ SectionPage
 		id: d
 
 		property int view: IdentifyView.SubViews.Undefined
+		property int precedingView: IdentifyView.SubViews.Undefined
 		readonly property int activeView: inputError.visible ? IdentifyView.SubViews.InputError : view
 		readonly property bool cancelAllowed: AuthModel.isBasicReader || generalWorkflow.waitingFor != Workflow.WaitingFor.Password
 	}
 
 	TabbedReaderView {
-		id: readerView
-
-		property int precedingView: IdentifyView.SubViews.Undefined
-
 		visible: d.activeView === IdentifyView.SubViews.ReaderSettings
 		onCloseView: {
-			d.view = precedingView
-			appWindow.menuBar.updateActions()
+			d.view = d.precedingView
+			ApplicationWindow.menuBar.updateActions()
 		}
 	}
 
@@ -129,10 +134,7 @@ SectionPage
 		questionText: qsTr("Do you know your six-digit PIN?")
 		questionSubText: "%1<br><br><a href=\"#\">%2</a>".arg(qsTr("The personal, six-digit PIN is mandatory to use the online identification function.")).arg(qsTr("More information"))
 
-		onSubTextLinkActivated: {
-			d.view = IdentifyView.SubViews.PasswordInfo
-			appWindow.menuBar.updateActions()
-		}
+		onSubTextLinkActivated: showPasswordInfo()
 		onDisagree: {
 			SettingsModel.transportPinReminder = false
 			AuthModel.cancelWorkflowToChangePin()
@@ -146,9 +148,9 @@ SectionPage
 
 		visible: d.activeView === IdentifyView.SubViews.Connectivity
 
-		//: INFO DESKTOP_QML Header of the message that no network connection is present during the authentication procedure.
+		//: INFO DESKTOP Header of the message that no network connection is present during the authentication procedure.
 		text: qsTr("No network connectivity")
-		//: INFO DESKTOP_QML Content of the message that no network connection is present during the authentication procedure.
+		//: INFO DESKTOP Content of the message that no network connection is present during the authentication procedure.
 		subText: qsTr("Please establish an internet connection.")
 		subTextColor: Constants.red
 	}
@@ -175,7 +177,9 @@ SectionPage
 						default:
 							return Workflow.WaitingFor.None
 		}
+
 		onSettingsRequested: identifyView.showSettings()
+		onRequestPasswordInfo: identifyView.showPasswordInfo()
 	}
 
 	EnterPasswordView {
@@ -188,12 +192,7 @@ SectionPage
 			d.view = IdentifyView.SubViews.Progress
 			AuthModel.continueWorkflow()
 		}
-
-		onRequestPasswordInfo: {
-			d.view = IdentifyView.SubViews.PasswordInfo
-			appWindow.menuBar.updateActions()
-		}
-
+		onRequestPasswordInfo: identifyView.showPasswordInfo()
 		onChangePinLength: AuthModel.requestTransportPinChange()
 	}
 
@@ -203,8 +202,8 @@ SectionPage
 		visible: d.activeView === IdentifyView.SubViews.PasswordInfo
 
 		onClose: {
-			d.view = SettingsModel.transportPinReminder ? IdentifyView.SubViews.TransportPinReminder : IdentifyView.SubViews.Password
-			appWindow.menuBar.updateActions()
+			d.view = d.precedingView
+			ApplicationWindow.menuBar.updateActions()
 		}
 	}
 
@@ -231,7 +230,7 @@ SectionPage
 		visible: d.activeView === IdentifyView.SubViews.CardPosition
 
 		resultType: ResultView.Type.IsInfo
-		//: INFO DESKTOP_QML A weak NFC signal was detected since the card communication was aborted. The card's position needs to be adjusted to hopefully achieve better signal strength.
+		//: INFO DESKTOP A weak NFC signal was detected since the card communication was aborted. The card's position needs to be adjusted to hopefully achieve better signal strength.
 		text: qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable")
 		onNextView: AuthModel.continueWorkflow()
 	}
@@ -239,14 +238,14 @@ SectionPage
 	ProgressView {
 		visible: d.activeView === IdentifyView.SubViews.Aborting
 
-		//: INFO DESKTOP_QML The user aborted the authentication process, according to TR we need to inform the service provider
+		//: INFO DESKTOP The user aborted the authentication process, according to TR we need to inform the service provider
 		text: qsTr("Aborting process and informing the service provider")
 		subText: {
 			if (ConnectivityManager.networkInterfaceActive) {
-				//: INFO DESKTOP_QML Information message about cancellation process with present network connectivity
+				//: INFO DESKTOP Information message about cancellation process with present network connectivity
 				return qsTr("Please wait a moment.")
 			}
-			//: INFO DESKTOP_QML Information message about cancellation process without working network connectivity
+			//: INFO DESKTOP Information message about cancellation process without working network connectivity
 			return qsTr("Network problems detected, trying to reach server within 30 seconds.")
 		}
 		progressBarVisible: false
@@ -261,9 +260,9 @@ SectionPage
 		visible: d.activeView === IdentifyView.SubViews.Progress
 
 		text: (inProgress ?
-			   //: INFO DESKTOP_QML Header of the progress information during the authentication process.
+			   //: INFO DESKTOP Header of the progress information during the authentication process.
 			   qsTr("Authentication in progress") :
-			   //: INFO DESKTOP_QML Header of the progress information during the authentication process.
+			   //: INFO DESKTOP Header of the progress information during the authentication process.
 			   qsTr("Acquiring provider certificate")
 			  )
 		subText: {
@@ -271,24 +270,20 @@ SectionPage
 				return ""
 			}
 			if (!inProgress || AuthModel.error) {
-				//: INFO DESKTOP_QML Generic progress status message while no card communication is active.
+				//: INFO DESKTOP Generic progress status message while no card communication is active.
 				return qsTr("Please wait a moment.")
 			}
 			if (AuthModel.isBasicReader) {
-				//: INFO DESKTOP_QML Second line text if a basic card reader is used and data is exchanged with the card/server in the background. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
+				//: INFO DESKTOP Second line text if a basic card reader is used and data is exchanged with the card/server in the background. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
 				return qsTr("Please do not move the ID card.")
 			}
 			if (!!NumberModel.inputError) {
 				return NumberModel.inputError
 			}
-			if (NumberModel.pinDeactivated) {
-				//: INFO DESKTOP_QML The online authentication feature of the ID card is deactivated and needs to be activated by the local authorities.
-				return qsTr("The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.")
-			}
-			//: INFO DESKTOP_QML Generic progress status message during authentication.
+			//: INFO DESKTOP Generic progress status message during authentication.
 			return qsTr("Please wait a moment.")
 		}
-		subTextColor: !AuthModel.isBasicReader && (NumberModel.inputError || NumberModel.pinDeactivated) ? Style.color.warning_text : Style.color.secondary_text_inverse
+		subTextColor: !AuthModel.isBasicReader && NumberModel.inputError ? Style.color.warning_text : Style.color.secondary_text_inverse
 		progressValue: AuthModel.progressValue
 		progressText: AuthModel.progressMessage
 		progressBarVisible: identifyController.workflowProgressVisible
@@ -297,7 +292,7 @@ SectionPage
 	SelfAuthenticationData {
 		visible: d.activeView === IdentifyView.SubViews.Data
 
-		onVisibleChanged: appWindow.menuBar.updateActions()
+		onVisibleChanged: ApplicationWindow.menuBar.updateActions()
 		onNextView: {
 			identifyView.nextView(pName)
 			AuthModel.continueWorkflow()
@@ -312,15 +307,18 @@ SectionPage
 		resultType: AuthModel.resultString ? ResultView.Type.IsError : ResultView.Type.IsSuccess
 		text: AuthModel.resultString
 		header: AuthModel.errorHeader
-		//: INFO DESKTOP_QML Error code (string) of current GlobalStatus code, shown as header of popup.
-		popupTitle: qsTr("Error code: %1").arg(AuthModel.statusCode)
+		hintText: AuthModel.statusHintText
+		hintButtonText: AuthModel.statusHintActionText
+		//: INFO DESKTOP Error code (string) of current GlobalStatus code, shown as header of popup.
+		popupTitle: qsTr("Error code: %1").arg(AuthModel.statusCodeString)
 		popupText: AuthModel.errorText
-		supportButtonsVisible: AuthModel.error && !AuthModel.isCancellationByUser()
+		supportButtonsVisible: AuthModel.errorIsMasked
 
 		onNextView: {
 			identifyView.nextView(pName)
 			AuthModel.continueWorkflow()
 		}
 		onEmailButtonPressed: AuthModel.sendResultMail()
+		onHintClicked: AuthModel.invokeStatusHintAction()
 	}
 }

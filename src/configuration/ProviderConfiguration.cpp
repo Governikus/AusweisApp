@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfiguration.h"
@@ -108,4 +108,18 @@ const CallCost ProviderConfiguration::getCallCost(const ProviderConfigurationInf
 		}
 	}
 	return CallCost();
+}
+
+
+ProviderConfigurationInfo ProviderConfiguration::getProviderInfo(const QString& pInternalId) const
+{
+	for (const auto& info : qAsConst(mProviderConfigurationInfos))
+	{
+		if (info.getInternalId() == pInternalId)
+		{
+			return info;
+		}
+	}
+
+	return ProviderConfigurationInfo();
 }

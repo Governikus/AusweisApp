@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref FormattedTextModel
  *
- * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "FormattedTextModel.h"
@@ -127,21 +127,21 @@ class test_FormattedTextModel
 			PairList modelContent;
 
 			modelContent << qMakePair(QStringLiteral("This is a header"), FormattedTextModel::HEADER);
-			modelContent << qMakePair(QStringLiteral(""), FormattedTextModel::EMPTY);
+			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
 			modelContent << qMakePair(QStringLiteral("First section"), FormattedTextModel::SECTION);
-			modelContent << qMakePair(QStringLiteral(""), FormattedTextModel::EMPTY);
+			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
 			modelContent << qMakePair(QStringLiteral("Subsection one"), FormattedTextModel::SUBSECTION);
-			modelContent << qMakePair(QStringLiteral(""), FormattedTextModel::EMPTY);
+			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
 			modelContent << qMakePair(QStringLiteral("This multiline text will be concatenated to one text."), FormattedTextModel::REGULARTEXT);
-			modelContent << qMakePair(QStringLiteral(""), FormattedTextModel::EMPTY);
+			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
 			modelContent << qMakePair(QStringLiteral("Subsection <b>two</b>"), FormattedTextModel::SUBSECTION);
-			modelContent << qMakePair(QStringLiteral(""), FormattedTextModel::EMPTY);
+			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
 			modelContent << qMakePair(QStringLiteral("Some list items:"), FormattedTextModel::REGULARTEXT);
-			modelContent << qMakePair(QStringLiteral(""), FormattedTextModel::EMPTY);
+			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
 			modelContent << qMakePair(QStringLiteral("First"), FormattedTextModel::LISTITEM);
-			modelContent << qMakePair(QStringLiteral(""), FormattedTextModel::EMPTY);
+			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
 			modelContent << qMakePair(QStringLiteral("Second"), FormattedTextModel::LISTITEM);
-			modelContent << qMakePair(QStringLiteral(""), FormattedTextModel::EMPTY);
+			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
 			modelContent << qMakePair(QStringLiteral("Third"), FormattedTextModel::LISTITEM);
 
 			QTest::addRow("formattedText.txt") << ":/qml/formattedText.txt" << 17 << modelContent;

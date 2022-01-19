@@ -1,4 +1,22 @@
-Lizenzbedingungen
+Nutzungsbedingungen
+
+Bitte lesen Sie zunächst die Lizenzbestimmungen und deren Ergänzungen für die Überlassung und Nutzung der AusweisApp2 durch. Nachdem Sie diesen zugestimmt haben, können Sie die Installation fortsetzen. Datenschutzrechtliche Hinweise sind unter https://www.ausweisapp.bund.de/datenschutz/ abrufbar.
+
+
+ÜBERSICHT
+
+ A. Lizenzbedingungen
+      EUPL Lizenztext
+      Anlage: Kompatible Lizenzen
+ B. Anhang Lizenztexte verwendeter OpenSource Bibliotheken
+      OpenSSL license & SSLeay license
+      LGPL v3
+      MIT License
+      Apache License v2
+
+
+
+A. LIZENZBEDINGUNGEN
 
 Der Quellcode der AusweisApp2 wird unter der EUPL v1.2 bereitgestellt, mit Ausnahme der Bibliothek OpenSSL, die unter der OpenSSL License / SSLeay License lizensiert ist.
 
@@ -294,7 +312,7 @@ Anlage
 
 
 
-Anhang
+B. ANHANG DER LIZENTEXTE VERWENDETER OPENSOURCE BIBLIOTHEKEN
 
 Ergänzende Lizenzhinweise
 
@@ -302,7 +320,7 @@ Die verwendeten Open-Source-Bibliotheken unterliegen den folgenden Nutzungsbedin
 
 OpenSSL
   Lizenz: OpenSSL license & SSLeay license
-  Version: 1.1.1k
+  Version: 1.1.1l
   Adresse: https://www.openssl.org/
 
 Qt
@@ -321,11 +339,12 @@ AndroidX Support Library
   Adresse: https://developer.android.com/jetpack/androidx
 
 
-Die Lizenztexte lauten in ihrer originalen Fassung wie folgt:
+
+Die oben genannten Lizenztexte lauten in ihrer originalen Fassung wie folgt:
 
 
 
-
+OpenSSL license & SSLeay license
 
 Copyright (c) 1998-2017 The OpenSSL Project.  All rights reserved.
 
@@ -621,6 +640,8 @@ permanent authorization for you to choose that version for the Library.
 
 
 
+MIT License
+
 Copyright Joyent, Inc. and other Node contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -822,3 +843,4 @@ http://www.apache.org/licenses/
       of your accepting any such warranty or additional liability.
 
    END OF TERMS AND CONDITIONS
+

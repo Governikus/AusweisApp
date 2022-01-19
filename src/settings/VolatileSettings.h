@@ -4,7 +4,7 @@
  * This is not integrated into AppSettings to avoid
  * circular dependency because settings can use this, too.
  *
- * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -57,6 +57,7 @@ class VolatileSettings
 		static constexpr bool cHandleInterruptDefault = true;
 
 		bool mUsedAsSdk;
+		bool mDeveloperMode;
 		bool mHandleInterrupt;
 		Messages mMessages;
 
@@ -68,6 +69,9 @@ class VolatileSettings
 	public:
 		[[nodiscard]] bool isUsedAsSDK() const;
 		void setUsedAsSDK(bool pSdk);
+
+		[[nodiscard]] bool isDeveloperMode() const;
+		void setDeveloperMode(bool pMode = false);
 
 		[[nodiscard]] bool handleInterrupt() const;
 		void setHandleInterrupt(bool pScan = cHandleInterruptDefault);

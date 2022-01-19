@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "QtHooks.h"
@@ -43,12 +43,12 @@ extern "C" Q_DECL_EXPORT void aa2_addObject(QObject* pObj)
 		{
 			const QPointer<QObject> ptr = pObj;
 			QMetaObject::invokeMethod(QCoreApplication::instance(), [ptr] {
-						if (ptr)
-						{
-							const std::lock_guard lock(cMutex);
-							QtHooks::print(ptr, " ~ ");
-						}
-					}, Qt::QueuedConnection);
+					if (ptr)
+					{
+						const std::lock_guard lock(cMutex);
+						QtHooks::print(ptr, " ~ ");
+					}
+				}, Qt::QueuedConnection);
 		}
 	}
 

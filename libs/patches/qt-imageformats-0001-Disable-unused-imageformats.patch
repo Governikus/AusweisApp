@@ -1,0 +1,43 @@
+From fa952deecf17117e9e2a76bf95955800f1449310 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Fri, 12 Feb 2021 11:35:37 +0100
+Subject: Disable unused imageformats
+
+Change-Id: I1161011cd4dada8db9538ac65b0327c6fbd7d21b
+---
+ src/plugins/imageformats/imageformats.pro | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
+diff --git x/qtimageformats/src/plugins/imageformats/imageformats.pro y/qtimageformats/src/plugins/imageformats/imageformats.pro
+index 4116591..964c6dc 100644
+--- x/qtimageformats/src/plugins/imageformats/imageformats.pro
++++ y/qtimageformats/src/plugins/imageformats/imageformats.pro
+@@ -1,23 +1,17 @@
+ TEMPLATE = subdirs
+-SUBDIRS = \
+-#    dds \
+-    tga \
+-    wbmp
++SUBDIRS = 
+ 
+ include($$OUT_PWD/../../imageformats/qtimageformats-config.pri)
+ QT_FOR_CONFIG += imageformats-private
+ 
+-qtConfig(tiff): SUBDIRS += tiff
+-qtConfig(webp): SUBDIRS += webp
+ 
+ darwin: SUBDIRS += macheif
+ 
+ qtConfig(regularexpression): \
+     SUBDIRS += icns
+ 
+-qtConfig(mng): SUBDIRS += mng
+ qtConfig(jasper) {
+-    SUBDIRS += jp2
++    # SUBDIRS += jp2
+ } else:darwin: {
+     SUBDIRS += macjp2
+ }
+-- 
+2.33.0
+

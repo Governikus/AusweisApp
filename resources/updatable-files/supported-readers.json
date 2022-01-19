@@ -42,6 +42,22 @@
 		},
 
 		{
+			"VendorId": "0x0000",
+			"ProductId": "0x0002",
+			"Name": "Simulator",
+			"Pattern": "^Simulator$",
+			"Icon": "img_Simulator.png",
+			"IconWithNPA": "img_Simulator_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
+					"URL": "https://www.ausweisapp.bund.de"
+				}
+			]
+		},
+
+		{
 			"VendorId": "0x0C4B",
 			"ProductId": "0x0501",
 			"Name": "REINER SCT cyberJack RFID komfort",
@@ -69,6 +85,34 @@
 					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x0C4B",
+			"ProductId": "0x2007",
+			"Name": "REINER SCT cyberJack RFID komfort FON",
+			"Pattern": "^REINER SCT cyberJack RFID komfort FON",
+			"Icon": "img_Reiner_SCT_cyberjack_RFID_komfort.png",
+			"IconWithNPA": "img_Reiner_SCT_cyberjack_RFID_komfort_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?product=83976380&productGroup=77304735#choice3"
+				},
+				{
+					"Platforms": [{"os": "mac"}],
+					"URL": "https://www.reiner-sct.com/support/support-anfrage/?product=83976380&productGroup=77304735#choice3"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Bitte den Personalausweis in den Einschub für kontaktlose Karten benutzen.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. Please use the ID-Card in the slot for contactless cards."
 				}
 			]
 		},
@@ -178,13 +222,13 @@
 			"VendorId": "0x0D46",
 			"ProductId": "0x301D",
 			"Name": "KOBIL IDToken",
-			"Pattern": "KOBIL (Systems )?IDToken",
+			"Pattern": "^KOBIL (Systems )?IDToken( 0)?$",
 			"Icon": "img_KOBIL_ID_Token.png",
 			"IconWithNPA": "img_KOBIL_ID_Token_mit_ausweis.png",
 			"Drivers":
 			[
 				{
-					"Platforms": [{"os": "win"}, {"os": "mac", "max": "10.14"}, {"os": "unknown"}],
+					"Platforms": [{"os": "win"}, {"os": "mac", "max": "10.14"}, {"os":"mac", "min": "11.0"}, {"os": "unknown"}],
 					"URL": "https://security.kobil.de/idtoken/"
 				}
 			],
@@ -196,7 +240,7 @@
 					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
 				},
 				{
-					"Platforms":[{"os": "mac", "max": "10.14"}],
+					"Platforms":[{"os": "mac", "max": "10.14"}, {"os":"mac", "min": "11.0"}],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
 					"EN": "The card reader is compatible with the installed system driver."
 				}
@@ -207,7 +251,7 @@
 			"VendorId": "0x04E6",
 			"ProductId": "0x512B",
 			"Name": "SDI011 Contactless Reader",
-			"Pattern": "(SCM Microsystems Inc. SDI011G (Contactless| Smart Card) Reader 0)|(SDI011 (USB Smart Card|Contactless) Reader(\\(1\\)|\\(2\\))?)",
+			"Pattern": "^(SCM Microsystems Inc. )?SDI011G? ((Contactless Reader( 0)?)|((USB Smart Card|Contactless) Reader\\([12]\\)))$",
 			"Icon": "img_Identive_SDI011.png",
 			"IconWithNPA": "img_Identive_SDI011_mit_ausweis.png",
 			"Drivers":
@@ -236,7 +280,7 @@
 			"VendorId": "0x04E6",
 			"ProductId": "0x5292",
 			"Name": "SCL01x Contactless Reader",
-			"Pattern": "^(SCM Microsystems Inc. )?SCL011 Contactless Reader( 0)?$",
+			"Pattern": "^(SCM Microsystems Inc. )?SCL011G? Contactless Reader( 0)?$",
 			"Icon": "img_Identive_SCL011.png",
 			"IconWithNPA": "img_Identive_SCL011_mit_ausweis.png",
 			"Drivers":
@@ -249,9 +293,14 @@
 			"Information":
 			[
 				{
-					"Platforms": [{"os": "win"}],
+					"Platforms": [{"os": "win", "max": "6.3"}],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber",
 					"EN": "The card reader operates with the driver automatically installed by the system."
+				},
+				{
+					"Platforms": [{"os": "win", "min": "10.0"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			],
 			"Internal information": "Unter macOS funktioniert der Kartenleser nicht mehr. Leider ist kein Treiber vom Hersteller verfügbar."
@@ -260,10 +309,10 @@
 		{
 			"VendorId": "0x04E6",
 			"ProductId": "0x5790",
-			"Name": "Identiv Cloud 3700 F",
-			"Pattern": "(Identiv CLOUD 3700 F Contactless Reader 0|Identiv uTrust 3700 F CL Reader)",
-			"Icon": "img_Identive_Cloud_3700_F.png",
-			"IconWithNPA": "img_Identive_Cloud_3700_F_mit_ausweis.png",
+			"Name": "Identiv 3700 F",
+			"Pattern": "^Identiv (uTrust|cloud|CLOUD) 3700 F (Contactless|CL) Reader( 0)?$",
+			"Icon": "img_Identive_XXXX_F.png",
+			"IconWithNPA": "img_Identive_XXXX_F_mit_ausweis.png",
 			"Drivers":
 			[
 				{
@@ -277,6 +326,64 @@
 					"Platforms": [{"os": "win"}, {"os": "mac"}],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
 					"EN": "The card reader operates with the driver automatically installed by the system."
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x04E6",
+			"ProductId": "0x5612",
+			"Name": "Identiv 3720 F",
+			"Pattern": "^Identiv (uTrust|cloud|CLOUD) 3720 (Contactless|CL) Reader( 0|\\(1\\))$",
+			"Icon": "img_Identive_XXXX_F.png",
+			"IconWithNPA": "img_Identive_XXXX_F_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
+					"URL": "https://support.identiv.com/utrust-3720-f-multi-technology-multi-frequency-smart-card-reader/"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win", "max":"6.3"}, {"os": "mac"}],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
+					"EN": "The card reader operates with the driver automatically installed by the system."
+				},
+				{
+					"Platforms": [{"os": "win", "min":"10.0"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				}
+			]
+		},
+
+		{
+			"VendorId": "0x04E6",
+			"ProductId": "0x5613",
+			"Name": "Identiv 3721 F",
+			"Pattern": "^Identiv (uTrust|cloud|CLOUD) 3721 (Contactless|CL) Reader( 0|\\(1\\))$",
+			"Icon": "img_Identive_XXXX_F.png",
+			"IconWithNPA": "img_Identive_XXXX_F_mit_ausweis.png",
+			"Drivers":
+			[
+				{
+					"Platforms": [{"os": "win"}, {"os": "mac"}, {"os": "unknown"}],
+					"URL": "https://support.identiv.com/utrust-3721-f-multi-technology-multi-frequency-smart-card-reader-with-keyboard-emulation/"
+				}
+			],
+			"Information":
+			[
+				{
+					"Platforms": [{"os": "win", "max":"6.3"}, {"os": "mac"}],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
+					"EN": "The card reader operates with the driver automatically installed by the system."
+				},
+				{
+					"Platforms": [{"os": "win", "min":"10.0"}],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link fÃ¼r Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -342,10 +449,10 @@
 		{
 			"VendorId": "0x04E6",
 			"ProductId": "0x5724",
-			"Name": "Identiv Cloud 4701 F",
-			"Pattern": "(Identiv CLOUD 4701 F Contactless Reader( 0| 1)|Identiv uTrust 4701 F Dual Interface Reader)",
-			"Icon": "img_Identive_Cloud_4701_F.png",
-			"IconWithNPA": "img_Identive_Cloud_4701_F_mit_ausweis.png",
+			"Name": "Identiv 4701 F",
+			"Pattern": "^Identiv (uTrust|cloud|CLOUD) 4701 F (Contactless|CL|Dual Interface) Reader( 0| 1|\\(1\\)|\\(2\\))?$",
+			"Icon": "img_Identive_4701_F.png",
+			"IconWithNPA": "img_Identive_4701_F_mit_ausweis.png",
 			"Drivers":
 			[
 				{
@@ -401,7 +508,7 @@
 			"VendorId": "0x072F",
 			"ProductId": "0x223B",
 			"Name": "ACS ACR1252U",
-			"Pattern": "ACS ACR1252 (1S CL|Dual)? Reader PICC 0|ACS ACR1252 Dual Reader\\(2\\)",
+			"Pattern": "^ACS ACR1252 (1S CL|Dual)? Reader(( PICC 0)|\\(1\\))?$",
 			"Icon": "img_ACS_ACR1252U.png",
 			"IconWithNPA": "img_ACS_ACR1252U_mit_ausweis.png",
 			"Drivers":
@@ -607,9 +714,14 @@
 			"Information":
 			[
 				{
-					"Platforms":[{"os": "win"}, {"os":"mac"}],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
-					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
+					"Platforms": [{"os": "win"}, {"os": "mac", "max": "10.15"}],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Es ist kein Treiber vom Hersteller vorhanden.",
+					"EN": "The card reader operates with the driver automatically installed by the system. There is no driver from the manufacturer."
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "11.0"}],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber, ein Neustart ist erforderlich. Es ist kein Treiber vom Hersteller vorhanden.",
+					"EN": "The card reader operates with the driver automatically installed by the system, a reboot is required. There is no driver from the manufacturer."
 				}
 			]
 		},
@@ -639,9 +751,14 @@
 			"Information":
 			[
 				{
-					"Platforms": [{"os": "win"}, {"os": "mac"}],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
-					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
+					"Platforms": [{"os": "win"}, {"os": "mac", "max": "10.15"}],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Es ist kein Treiber vom Hersteller vorhanden.",
+					"EN": "The card reader operates with the driver automatically installed by the system. There is no driver from the manufacturer."
+				},
+				{
+					"Platforms": [{"os": "mac", "min": "11.0"}],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber, ein Neustart ist erforderlich. Es ist kein Treiber vom Hersteller vorhanden.",
+					"EN": "The card reader operates with the driver automatically installed by the system, a reboot is required. There is no driver from the manufacturer."
 				}
 			]
 		},
@@ -669,8 +786,8 @@
 				},
 				{
 					"Platforms": [{"os": "mac"}],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Der Treiber für macOS 10.13 funktioniert für macOS 10.14 und macOS 10.15.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. The driver for macOS 10.13 works for macOS 10.14 and macOS 10.15."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Der Treiber für macOS 10.13 funktioniert für macOS 10.14, macOS 10.15 und macOS 11.0.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. The driver for macOS 10.13 works for macOS 10.14, macOS 10.15 and macOS 11.0."
 				}
 			]
 		},
@@ -698,8 +815,8 @@
 				},
 				{
 					"Platforms": [{"os": "mac"}],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Der Treiber für macOS 10.13 funktioniert für macOS 10.14 und macOS 10.15.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. The driver for macOS 10.13 works for macOS 10.14 and macOS 10.15."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Der Treiber für macOS 10.13 funktioniert für macOS 10.14, macOS 10.15 und macOS 11.0.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. The driver for macOS 10.13 works for macOS 10.14, macOS 10.15 and macOS 11.0."
 				}
 			]
 		},

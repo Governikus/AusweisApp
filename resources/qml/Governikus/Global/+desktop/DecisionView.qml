@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -118,7 +118,7 @@ SectionPage {
 
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			subText: qsTr("No")
 			buttonType: NavigationButton.Type.Cancel
 			onClicked: baseItem.disagree()
@@ -133,7 +133,7 @@ SectionPage {
 
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			subText: qsTr("Maybe")
 			buttonType: NavigationButton.Type.Check
 			onClicked: baseItem.neutral()
@@ -148,7 +148,7 @@ SectionPage {
 
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			subText: qsTr("Yes")
 			buttonType: NavigationButton.Type.Check
 			onClicked: baseItem.agree()

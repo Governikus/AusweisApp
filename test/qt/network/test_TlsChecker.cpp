@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref CertificateChecker
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TlsChecker.h"
@@ -92,7 +92,7 @@ class test_TlsChecker
 		void checkCertificateHash()
 		{
 			QVERIFY(!TlsChecker::checkCertificate(certs.at(0), QCryptographicHash::Algorithm::Sha256, QSet<QString>() << "dummy" << "bla bla"));
-			const QString hash = QStringLiteral("25:1C:0F:A5:FA:C2:25:39:A5:DF:32:BB:1C:F8:3E:DD:82:E8:5E:A3:85:2E:67:FF:A9:63:E7:20:77:BE:0C:9D").remove(QLatin1Char(':'));
+			const QString hash = QStringLiteral("9B:87:54:6D:28:D9:A5:CF:49:C8:B1:AB:3F:C6:0D:EA:63:4B:77:64:44:3A:A8:B1:87:9B:51:44:7E:97:D2:CA").remove(QLatin1Char(':'));
 			QVERIFY(TlsChecker::checkCertificate(certs.at(0), QCryptographicHash::Algorithm::Sha256, QSet<QString>() << "dummy" << hash << "bla bla"));
 		}
 

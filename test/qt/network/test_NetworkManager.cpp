@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref NetworkManager
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NetworkManager.h"
@@ -117,8 +117,8 @@ class test_NetworkManager
 			MockNetworkManager networkManager;
 			Env::set(NetworkManager::staticMetaObject, &networkManager);
 			connect(&networkManager, &MockNetworkManager::fireReply, this, [&] {
-						networkManager.fireFinished();
-					}, Qt::QueuedConnection);
+					networkManager.fireFinished();
+				}, Qt::QueuedConnection);
 
 			auto reply = new MockNetworkReply();
 			reply->setNetworkError(QNetworkReply::ServiceUnavailableError, "dummy");
@@ -126,8 +126,8 @@ class test_NetworkManager
 
 			auto context = QSharedPointer<SelfAuthContext>::create();
 			connect(context.data(), &AuthContext::fireStateChanged, this, [&] {
-						context->setStateApproved();
-					});
+					context->setStateApproved();
+				});
 
 			SelfAuthController controller(context);
 			QSignalSpy spy(&controller, &WorkflowController::fireComplete);

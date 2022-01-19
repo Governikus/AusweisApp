@@ -1,0 +1,50 @@
+From 50706696843da83960cd6748c3c6a45d80e4dfa2 Mon Sep 17 00:00:00 2001
+From: Bartlomiej Moskal <bartlomiej.moskal@siili.com>
+Date: Fri, 13 Nov 2020 11:31:37 +0100
+Subject: Android: Treat ACTION_CANCEL as TouchPointReleased
+
+If TouchPointPressed was previously send and there is no
+TouchPointReleased, we are exposed to uncorrectly handled touches
+by application.
+
+Some Android devices can recognize hand gestures. In some case the
+gesture may be handled by Android System. In this situation
+ACTION_CANCEL MotionEvent is delivered
+
+ACTION_CANCEL - from Android specification:
+-"Occurs when the parent takes possession of the motion, for example
+when the user has dragged enough across a list view that it will start
+scrolling instead of letting you press the buttons inside of it"
+-"The current gesture has been aborted. You will not receive any more
+points in it. You should treat this as an up event, but not perform
+any action that you normally would"
+
+If ACTION_CANCEL appears it means that ACTION_UP will not be delivered
+to application. That is why ACTION_CANCEL need to be treat as
+TouchPointReleased event.
+
+Fixes: QTBUG-72110
+Pick-to: 5.15
+Change-Id: I8f32930cdb424b7530adc87b8334ac48a3bb9d57
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit 64d62c53c1e92a1cc07449a0ea3c71501592c1e7)
+---
+ src/android/jar/src/org/qtproject/qt5/android/QtNative.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtNative.java y/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtNative.java
+index 70c7092cc7..fd4b239f82 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtNative.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtNative.java
+@@ -710,7 +710,7 @@ public class QtNative
+         }
+         if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN && index == event.getActionIndex()) {
+             return 0;
+-        } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP && index == event.getActionIndex()) {
++        } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_POINTER_UP && index == event.getActionIndex()) {
+             return 3;
+         }
+         return 2;
+-- 
+2.33.0
+

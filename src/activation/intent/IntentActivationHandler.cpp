@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IntentActivationHandler.h"
@@ -20,11 +20,38 @@ Q_DECLARE_LOGGING_CATEGORY(activation)
 
 void IntentActivationHandler::onIntent(const QUrl& pUrl, const QString& pReferrer)
 {
-	qCDebug(activation) << "Got new authentication request by:" << pReferrer;
+	qCDebug(activation) << "Got new request by:" << pReferrer;
 	qCDebug(activation) << "Request URL:" << pUrl;
-	const auto& context = QSharedPointer<IntentActivationContext>::create(pUrl, pReferrer);
-	connect(context.data(), &IntentActivationContext::fireShowUserInformation, this, &ActivationHandler::fireShowUserInformation);
-	Q_EMIT fireAuthenticationRequest(context);
+
+	if (pUrl.path() != QLatin1String("/eID-Client"))
+	{
+		qCWarning(activation) << "Request type: unknown";
+		return;
+	}
+
+	const auto& [type, value] = getRequest(pUrl);
+	switch (type)
+	{
+		case ActivationType::SHOWUI:
+		{
+			qCDebug(activation) << "Request type: showui";
+			const UiModule module = Enum<UiModule>::fromString(value.toUpper(), UiModule::DEFAULT);
+			Q_EMIT fireShowUiRequest(module);
+			return;
+		}
+
+		case ActivationType::TCTOKENURL:
+		{
+			qCDebug(activation) << "Request type: authentication";
+			const auto& context = QSharedPointer<IntentActivationContext>::create(pUrl, pReferrer);
+			connect(context.data(), &IntentActivationContext::fireShowUserInformation, this, &ActivationHandler::fireShowUserInformation);
+			Q_EMIT fireAuthenticationRequest(context);
+			return;
+		}
+
+		default:
+			qCWarning(activation) << "Unknown query type:" << pUrl;
+	}
 }
 
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UpdatableFile.h"
@@ -176,8 +176,8 @@ void UpdatableFile::onDownloadSuccess(const QUrl& pUpdateUrl, const QDateTime& p
 		}
 
 		cleanupAfterUpdate([this](){
-					clearDirty();
-				});
+				clearDirty();
+			});
 	}
 }
 
@@ -187,8 +187,8 @@ void UpdatableFile::onDownloadFailed(const QUrl& pUpdateUrl, GlobalStatus::Code 
 	if (pUpdateUrl == mUpdateUrl)
 	{
 		cleanupAfterUpdate([pErrorCode](){
-					qCCritical(fileprovider) << "Download failed with error code:" << pErrorCode;
-				});
+				qCCritical(fileprovider) << "Download failed with error code:" << pErrorCode;
+			});
 	}
 }
 
@@ -200,8 +200,8 @@ void UpdatableFile::onDownloadUnnecessary(const QUrl& pUpdateUrl)
 		Q_EMIT fireNoUpdateAvailable();
 
 		cleanupAfterUpdate([this](){
-					clearDirty();
-				});
+				clearDirty();
+			});
 	}
 }
 

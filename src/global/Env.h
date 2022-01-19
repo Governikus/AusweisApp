@@ -1,7 +1,7 @@
 /*
  * \brief Runtime environment to create (mockable) objects.
  *
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -38,7 +38,7 @@ namespace governikus
 {
 
 template<typename T> T* singleton();
-template<typename T, typename ... Args> T createNewObject(Args&& ... pArgs);
+template<typename T, typename ... Args> T createNewObject(Args && ... pArgs);
 
 class Env
 {
@@ -133,8 +133,8 @@ class Env
 			}
 
 			QObject::connect(ptr, &QObject::destroyed, ptr, [] {
-						qDebug() << "Destroy singleton:" << T::staticMetaObject.className();
-					});
+					qDebug() << "Destroy singleton:" << T::staticMetaObject.className();
+				});
 			mSingletonHandler->add(ptr);
 			mSingletonCreator << std::bind(&Env::getOrCreateSingleton<T>, this, std::placeholders::_1);
 

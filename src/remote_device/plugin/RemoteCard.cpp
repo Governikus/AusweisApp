@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteCard.h"
@@ -40,8 +40,8 @@ bool RemoteCard::sendMessage(const QSharedPointer<const RemoteMessage>& pMessage
 	const auto& connectionDC = QObject::connect(mRemoteDispatcher.data(), &RemoteDispatcherClient::fireClosed, this, &RemoteCard::onDispatcherClosed, Qt::DirectConnection);
 	const auto& localCopy = mRemoteDispatcher;
 	QMetaObject::invokeMethod(localCopy.data(), [localCopy, pMessage] {
-				localCopy->send(pMessage);
-			}, Qt::QueuedConnection);
+			localCopy->send(pMessage);
+		}, Qt::QueuedConnection);
 
 	mWaitCondition.wait(&mResponseAvailable, pTimeout);
 	QObject::disconnect(connectionMR);
@@ -181,6 +181,8 @@ void RemoteCard::setProgressMessage(const QString& pMessage, int pProgress)
 
 ResponseApduResult RemoteCard::transmit(const CommandApdu& pCommand)
 {
+	qCDebug(card_remote) << "Transmit command APDU:" << pCommand.getBuffer().toHex();
+
 	const QSharedPointer<const IfdTransmit>& transmitCmd = QSharedPointer<IfdTransmit>::create(mSlotHandle, pCommand.getBuffer(), mProgressMessage);
 	if (sendMessage(transmitCmd, RemoteCardMessageType::IFDTransmitResponse, 5000))
 	{
@@ -191,6 +193,7 @@ ResponseApduResult RemoteCard::transmit(const CommandApdu& pCommand)
 		{
 			if (!response.resultHasError())
 			{
+				qCDebug(card_remote) << "Transmit response APDU:" << response.getResponseApdu().toHex();
 				return {CardReturnCode::OK, ResponseApdu(response.getResponseApdu())};
 			}
 			qCWarning(card_remote) << response.getResultMinor();

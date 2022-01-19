@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -14,6 +14,13 @@ namespace governikus
 {
 
 class ActivationContext;
+
+defineEnumType(ActivationType,
+		UNKNOWN,
+		SHOWUI,
+		STATUS,
+		TCTOKENURL
+		)
 
 /*!
  * Format types for status responses
@@ -37,8 +44,16 @@ class ActivationHandler
 	Q_OBJECT
 
 	protected:
+		struct ActivationRequest
+		{
+			ActivationType mType = ActivationType::UNKNOWN;
+			QString mValue = QString();
+		};
+
 		ActivationHandler() = default;
 		~ActivationHandler() override = default;
+
+		static ActivationRequest getRequest(const QUrl& pUrl);
 
 	public:
 		virtual bool start() = 0;

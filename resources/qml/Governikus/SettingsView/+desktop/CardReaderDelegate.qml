@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -31,14 +31,61 @@ Item {
 
 		spacing: 0
 
-		Image {
-			id: readerIcon
+		states: [
+			State {
+				name: "OK"
+				PropertyChanges {target: statusIcon; source: "qrc:///images/status_ok.svg"}
+				PropertyChanges {target: statusIcon; tintColor: Style.color.success}
+				PropertyChanges {target: textDescription; font.bold: false}
+			},
+			State {
+				name: "WARNING"
+				PropertyChanges {target: statusIcon; source: "qrc:///images/material_alert.svg"}
+				PropertyChanges {target: statusIcon; tintColor: "#e68a00"}
+				PropertyChanges {target: textDescription; font.bold: true}
+			},
+			State {
+				name: "ERROR"
+				PropertyChanges {target: statusIcon; source: "qrc:///images/status_error.svg"}
+				PropertyChanges {target: statusIcon; tintColor: Style.color.warning_text}
+				PropertyChanges {target: textDescription; font.bold: false}
+			}
+		]
 
-			sourceSize.height: iconHeight
+		state: {
+			if (readerInstalled) {
+				if (readerSupported) {
+					return "OK"
+				}
+				return "WARNING"
+			}
+			return "ERROR"
+		}
 
-			asynchronous: true
-			source: readerImagePath
-			fillMode: Image.PreserveAspectFit
+		Rectangle {
+			Layout.preferredWidth: iconHeight
+			Layout.preferredHeight: iconHeight
+
+			border {
+				color: Style.color.border
+				width: Style.dimens.separator_size
+			}
+
+			Image {
+				id: readerIcon
+
+				anchors.fill: parent
+				anchors.margins: iconHeight * 0.05
+
+				asynchronous: true
+				source: readerImagePath
+				fillMode: Image.PreserveAspectFit
+			}
+		}
+
+		GSpacer {
+			width: Constants.component_spacing
+			height: Constants.component_spacing
 		}
 
 		ColumnLayout {
@@ -56,6 +103,10 @@ Item {
 			}
 
 			GText {
+				id: textStatus
+
+				visible: readerSupported
+
 				Layout.fillWidth: true
 
 				textStyle: Style.text.normal
@@ -63,7 +114,9 @@ Item {
 			}
 
 			GText {
-				visible: !readerInstalledAndSupported
+				id: textDescription
+
+				visible: !(readerInstalled && readerSupported)
 
 				Layout.fillWidth: true
 
@@ -79,14 +132,10 @@ Item {
 			}
 		}
 
-		Image {
+		TintableIcon {
 			id: statusIcon
 
 			sourceSize.height: iconHeight * 0.33
-
-			fillMode: Image.PreserveAspectFit
-			asynchronous: true
-			source: readerInstalledAndSupported ? "qrc:/images/status_ok.svg" : "qrc:/images/status_error.svg"
 		}
 	}
 }

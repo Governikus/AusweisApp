@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfigurationParser.h"
@@ -16,66 +16,22 @@ Q_DECLARE_LOGGING_CATEGORY(update)
 
 using namespace governikus;
 
-namespace
+
+QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(const QByteArray& pData, const QOperatingSystemVersion& pCurrentOS)
 {
-
-inline QLatin1String getCurrentOS()
-{
-#if defined(Q_OS_WIN)
-	return QLatin1String("win");
-
-#elif defined(Q_OS_MACOS)
-	return QLatin1String("mac");
-
-#elif defined(Q_OS_IOS)
-	return QLatin1String("ios");
-
-#elif defined(Q_OS_ANDROID)
-	return QLatin1String("android");
-
-#elif defined(Q_OS_LINUX)
-	return QLatin1String("linux");
-
-#elif defined(Q_OS_BSD4)
-	return QLatin1String("bsd");
-
-#else
-#error OS not implemented
-#endif
-}
-
-
-} // namespace
-
-bool ProviderConfigurationParser::isExcludedPlatform(const QJsonArray& pExcludedArray, QLatin1String pCurrentOS)
-{
-	const QLatin1String osType = pCurrentOS == QLatin1String("ios") || pCurrentOS == QLatin1String("android")
-			? QLatin1String("mobile")
-			: QLatin1String("desktop");
-
-	for (const auto& entry : pExcludedArray)
-	{
-		const QString& value = entry.toString().toLower();
-		if (value == pCurrentOS || value == osType)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-
-QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(const QByteArray& pData, QLatin1String pCurrentOS)
-{
-	QJsonParseError jsonError;
+	QJsonParseError jsonError {};
 	const auto& json = QJsonDocument::fromJson(pData, &jsonError);
 	if (jsonError.error != QJsonParseError::NoError)
 	{
 		qCCritical(update) << "Cannot parse providers:" << jsonError.errorString();
 		return QVector<ProviderConfigurationInfo>();
 	}
-	QJsonObject doc = json.object();
 
+	const bool eidIsRequired =
+			pCurrentOS.type() == QOperatingSystemVersion::IOS
+			|| pCurrentOS >= QOperatingSystemVersion(QOperatingSystemVersion::Android, 12);
+
+	const QJsonObject doc = json.object();
 	const QJsonArray& array = doc[QLatin1String("provider")].toArray();
 	QVector<ProviderConfigurationInfo> providers;
 	providers.reserve(array.size());
@@ -83,7 +39,7 @@ QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(co
 	{
 		const QJsonObject prov = entry.toObject();
 
-		if (isExcludedPlatform(prov[QLatin1String("exclude")].toArray(), pCurrentOS))
+		if (eidIsRequired && !prov[QLatin1String("eidSupport")].toBool(true))
 		{
 			continue;
 		}
@@ -104,7 +60,8 @@ QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(co
 				prov[QLatin1String("icon")].toString(),
 				prov[QLatin1String("image")].toString(),
 				prov[QLatin1String("subjectUrls")].toVariant().toStringList(),
-				prov[QLatin1String("subjectUrlInfo")].toString());
+				prov[QLatin1String("subjectUrlInfo")].toString(),
+				prov[QLatin1String("internalId")].toString());
 	}
 
 	return providers;
@@ -113,7 +70,7 @@ QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(co
 
 QMap<QString, CallCost> ProviderConfigurationParser::parseCallCosts(const QByteArray& pData)
 {
-	QJsonParseError jsonError;
+	QJsonParseError jsonError {};
 	const auto& json = QJsonDocument::fromJson(pData, &jsonError);
 	if (jsonError.error != QJsonParseError::NoError)
 	{
@@ -141,5 +98,5 @@ QMap<QString, CallCost> ProviderConfigurationParser::parseCallCosts(const QByteA
 
 QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(const QByteArray& pData)
 {
-	return parseProvider(pData, getCurrentOS());
+	return parseProvider(pData, QOperatingSystemVersion::current());
 }

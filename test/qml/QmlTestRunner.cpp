@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -58,6 +58,7 @@ class QmlTestRunner
 	public Q_SLOTS:
 		void applicationAvailable()
 		{
+			QCoreApplication::setApplicationName("TestQmlRunner");
 			QThread::currentThread()->setObjectName(QStringLiteral("MainThread"));
 			ResourceLoader::getInstance().init();
 			Env::getSingleton<ReaderManager>()->init();
@@ -77,23 +78,23 @@ class QmlTestRunner
 			pEngine->rootContext()->setContextProperty(QStringLiteral("plugin"), this);
 
 			connect(pEngine, &QQmlEngine::warnings, [](const QList<QQmlError>& pWarnings){
-						bool fail = false;
-						for (auto& warning : pWarnings)
-						{
-							QWARN(warning.toString().toLatin1().constData());
+					bool fail = false;
+					for (auto& warning : pWarnings)
+					{
+						QWARN(warning.toString().toLatin1().constData());
 #if (QT_VERSION < QT_VERSION_CHECK(5, 15, 1))
-							fail |= !warning.description().contains("QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead:");
+						fail |= !warning.description().contains("QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead:");
 #else
-							fail = true;
+						fail = true;
 #endif
-						}
+					}
 
-						if (fail)
-						{
-							QCoreApplication::quit();
-							QFAIL("QQmlEngine has errors");
-						}
-					});
+					if (fail)
+					{
+						QCoreApplication::quit();
+						QFAIL("QQmlEngine has errors");
+					}
+				});
 
 			const QStringList selectors = QQmlFileSelector::get(pEngine)->selector()->extraSelectors();
 			mPlatformStyle = selectors.join(QLatin1String(","));

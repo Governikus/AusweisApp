@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -60,6 +60,16 @@ SectionPage {
 		MenuItem {
 			width: parent.width
 			//: LABEL ANDROID IOS
+			title: qsTr("Video tutorials")
+			//: LABEL ANDROID IOS
+			description: qsTr("Do you want to see the video tutorials?")
+			icon: "qrc:///images/material_open_in_new.svg"
+			onClicked: Qt.openUrlExternally("https://www.ausweisapp.bund.de/%1/aa2/videotutorials".arg(SettingsModel.language))
+		}
+
+		MenuItem {
+			width: parent.width
+			//: LABEL ANDROID IOS
 			title: qsTr("FAQ")
 			//: LABEL ANDROID IOS
 			description: qsTr("Do you have further questions about %1?").arg(Qt.application.name)
@@ -75,6 +85,16 @@ SectionPage {
 			description: qsTr("Do you need further support?")
 			icon: "qrc:///images/material_open_in_new.svg"
 			onClicked: Qt.openUrlExternally("https://www.ausweisapp.bund.de/%1/aa2/support".arg(SettingsModel.language))
+		}
+
+		MenuItem {
+			width: parent.width
+			//: LABEL ANDROID IOS
+			title: qsTr("Accessibility statement")
+			//: LABEL ANDROID IOS
+			description: qsTr("Do you want to read the accessibility statement?")
+			icon: "qrc:///images/material_open_in_new.svg"
+			onClicked: Qt.openUrlExternally("https://www.ausweisapp.bund.de/%1/aa2/a11y".arg(SettingsModel.language))
 		}
 
 		MenuItem {

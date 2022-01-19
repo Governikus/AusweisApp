@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManager.h"
@@ -96,8 +96,8 @@ void ReaderManager::reset(ReaderManagerPlugInType pType)
 
 	Q_ASSERT(mWorker);
 	QMetaObject::invokeMethod(mWorker.data(), [this, pType] {
-				mWorker->reset(pType);
-			}, Qt::QueuedConnection);
+			mWorker->reset(pType);
+		}, Qt::QueuedConnection);
 }
 
 
@@ -134,8 +134,8 @@ void ReaderManager::startScan(ReaderManagerPlugInType pType, bool pAutoConnect)
 
 	Q_ASSERT(mWorker);
 	QMetaObject::invokeMethod(mWorker.data(), [this, pType, pAutoConnect] {
-				mWorker->startScan(pType, pAutoConnect);
-			}, Qt::QueuedConnection);
+			mWorker->startScan(pType, pAutoConnect);
+		}, Qt::QueuedConnection);
 }
 
 
@@ -160,8 +160,8 @@ void ReaderManager::stopScan(ReaderManagerPlugInType pType, const QString& pErro
 
 	Q_ASSERT(mWorker);
 	QMetaObject::invokeMethod(mWorker.data(), [this, pType, pError] {
-				mWorker->stopScan(pType, pError);
-			}, Qt::QueuedConnection);
+			mWorker->stopScan(pType, pError);
+		}, Qt::QueuedConnection);
 }
 
 
@@ -195,8 +195,8 @@ bool ReaderManager::isScanRunning(ReaderManagerPlugInType pType) const
 	if (mWorker)
 	{
 		QMetaObject::invokeMethod(mWorker.data(), [this, pType] {
-					return mWorker->isScanRunning(pType);
-				}, Qt::BlockingQueuedConnection, &running);
+				return mWorker->isScanRunning(pType);
+			}, Qt::BlockingQueuedConnection, &running);
 	}
 	return running;
 }
@@ -246,8 +246,8 @@ void ReaderManager::doFullUpdateCache(const ReaderManagerPlugInInfo& pInfo)
 
 		QVector<ReaderInfo> list;
 		QMetaObject::invokeMethod(mWorker.data(), [this] {
-					return mWorker->getReaderInfos();
-				}, Qt::BlockingQueuedConnection, &list);
+				return mWorker->getReaderInfos();
+			}, Qt::BlockingQueuedConnection, &list);
 
 		for (const auto& info : qAsConst(list))
 		{
@@ -291,8 +291,8 @@ void ReaderManager::updateReaderInfo(const QString& pReaderName)
 {
 	Q_ASSERT(mWorker);
 	QMetaObject::invokeMethod(mWorker.data(), [this, pReaderName] {
-				mWorker->updateReaderInfo(pReaderName);
-			}, Qt::BlockingQueuedConnection); // needed to force the ReaderInfo update, else StateMachine loops based on stale state can occur
+			mWorker->updateReaderInfo(pReaderName);
+		}, Qt::BlockingQueuedConnection); // needed to force the ReaderInfo update, else StateMachine loops based on stale state can occur
 }
 
 

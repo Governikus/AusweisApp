@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: android
+  namespace: ausweisapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: deployment-ausweisapp-android
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+      - env:
+        - name: APK_SIGN_KEYSTORE
+          value: /home/governikus/release.keystore
+        - name: APK_SIGN_KEYSTORE_ALIAS
+          value: autentapp
+        - name: APK_SIGN_KEYSTORE_ALIAS_DEV
+          value: androiddebugkey
+        - name: APK_SIGN_KEYSTORE_DEV
+          value: /home/governikus/.android/debug.keystore
+        - name: APK_SIGN_KEYSTORE_PSW_DEV
+          value: android
+        - name: CCACHE_DIR
+          value: /ccache
+        - name: EXECUTOR
+          value: "2"
+        - name: MAKE_FLAGS
+          value: -j5
+        - name: APK_SIGN_KEYSTORE_PSW
+          valueFrom:
+            secretKeyRef:
+              key: APK_SIGN_KEYSTORE_PSW
+              name: android-passwords
+              optional: false
+        - name: NEXUS_PSW
+          valueFrom:
+            secretKeyRef:
+              key: NEXUS_PSW
+              name: android-passwords
+              optional: false
+        - name: NEXUS_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: NEXUS_USERNAME
+              name: android-passwords
+              optional: false
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: PASSWORD
+              name: android-passwords
+              optional: false
+        - name: SONARQUBE_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: sonarqube
+              name: dependency-check-credentials
+              optional: false
+        image: dev-docker.governikus.de/ausweisapp2/ubuntu:android
+        imagePullPolicy: Always
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - base64 -d /secrets/debug.keystore > /home/governikus/.android/debug.keystore
+                && base64 -d /secrets/release.keystore > /home/governikus/release.keystore
+        name: android
+        resources:
+          limits:
+            cpu: "10"
+            memory: 8Gi
+          requests:
+            cpu: "10"
+            memory: 4Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - NET_BIND_SERVICE
+          privileged: false
+          readOnlyRootFilesystem: false
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 1000
+        stdin: true
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        tty: true
+        volumeMounts:
+        - mountPath: /secrets
+          name: keystores
+        - mountPath: /ccache
+          name: ccache
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: keystores
+        secret:
+          defaultMode: 511
+          items:
+          - key: ausweisapp.apk.developer.keystore.jks
+            mode: 292
+            path: debug.keystore
+          - key: autentapp2.apk.keystore.jks
+            mode: 292
+            path: release.keystore
+          optional: false
+          secretName: ausweisapp2-apk-keystores
+      - name: ccache
+        persistentVolumeClaim:
+          claimName: ccache-android

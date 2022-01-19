@@ -1,11 +1,11 @@
 /*!
- * \copyright Copyright (c) 2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReleaseInformationModel.h"
 
 #include "AppSettings.h"
-#include "AppUpdater.h"
+#include "ReleaseInformationConfiguration.h"
 
 #include <QLoggingCategory>
 
@@ -15,13 +15,14 @@ using namespace governikus;
 
 ReleaseInformationModel::ReleaseInformationModel()
 	: QObject()
-	, mReleaseInformationCurrent(Env::create<ReleaseInformation*>())
 	, mFallbackModel(new FormattedTextModel(QStringList(tr("No release information present, make sure you are connected to the internet."))))
 {
-	connect(mReleaseInformationCurrent.data(), &ReleaseInformation::fireInformationChanged, this, &ReleaseInformationModel::onCurrentChanged);
-	connect(Env::getSingleton<AppUpdater>(), &AppUpdater::fireAppcastCheckFinished, this, &ReleaseInformationModel::onAppcastCheckFinished);
+	const auto& releaseInformationConfig = Env::getSingleton<ReleaseInformationConfiguration>();
+	connect(releaseInformationConfig, &ReleaseInformationConfiguration::fireCurrentInformationChanged, this, &ReleaseInformationModel::onCurrentChanged);
+	connect(releaseInformationConfig, &ReleaseInformationConfiguration::fireUpdateInformationChanged, this, &ReleaseInformationModel::onUpdateChanged);
+
 	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	connect(&generalSettings, &GeneralSettings::fireLanguageChanged, this, &ReleaseInformationModel::onLanguageChanged);
+	connect(&generalSettings, &GeneralSettings::fireLanguageChanged, this, &ReleaseInformationModel::onTranslationChanged);
 
 	onCurrentChanged();
 }
@@ -58,51 +59,31 @@ QSharedPointer<FormattedTextModel> ReleaseInformationModel::createModel(const Re
 }
 
 
-void ReleaseInformationModel::onLanguageChanged()
-{
-	mReleaseInformationCurrent.reset(new ReleaseInformation());
-	if (mReleaseInformationCurrent->requiresInitialUpdate())
-	{
-		mReleaseInformationCurrent->update();
-	}
-	else
-	{
-		onCurrentChanged();
-	}
-
-	if (mReleaseInformationUpdate)
-	{
-		setUpdateVersion(mReleaseInformationUpdate->versionNumber());
-	}
-}
-
-
 void ReleaseInformationModel::onCurrentChanged()
 {
-	mModelCurrent = createModel(*mReleaseInformationCurrent);
-	Q_EMIT fireCurrentInformationChanged();
+	const auto& currentInformation = Env::getSingleton<ReleaseInformationConfiguration>()->getCurrentInformation();
+	if (currentInformation)
+	{
+		mModelCurrent = createModel(*currentInformation);
+		Q_EMIT fireCurrentInformationChanged();
+	}
 }
 
 
 void ReleaseInformationModel::onUpdateChanged()
 {
-	if (mReleaseInformationUpdate)
+	const auto& updateInformation = Env::getSingleton<ReleaseInformationConfiguration>()->getUpdateInformation();
+	if (updateInformation)
 	{
-		mModelUpdate = createModel(*mReleaseInformationUpdate);
+		mModelUpdate = createModel(*updateInformation);
 		Q_EMIT fireUpdateInformationChanged();
 	}
 }
 
 
-void ReleaseInformationModel::onAppcastCheckFinished(bool pUpdateAvailable, const GlobalStatus& pStatus)
+void ReleaseInformationModel::onTranslationChanged()
 {
-	if (!pUpdateAvailable || pStatus.isError())
-	{
-		return;
-	}
-
-	const auto& updateData = Env::getSingleton<AppUpdater>()->getUpdateData();
-	setUpdateVersion(VersionNumber(updateData.getVersion()));
+	Env::getSingleton<ReleaseInformationConfiguration>()->reload();
 }
 
 
@@ -120,40 +101,7 @@ QSharedPointer<FormattedTextModel> ReleaseInformationModel::getUpdateRelease() c
 
 void ReleaseInformationModel::update()
 {
-	mReleaseInformationCurrent->update();
-	if (mReleaseInformationUpdate)
-	{
-		mReleaseInformationUpdate->update();
-	}
-}
-
-
-bool ReleaseInformationModel::requiresInitialUpdate() const
-{
-	return mReleaseInformationCurrent->requiresInitialUpdate();
-}
-
-
-void ReleaseInformationModel::setUpdateVersion(const VersionNumber& pVersion)
-{
-	qCInfo(qml) << "Loading update release information for" << pVersion.getVersionNumber();
-
-	if (mReleaseInformationUpdate)
-	{
-		mReleaseInformationUpdate->disconnect(this);
-	}
-
-	mReleaseInformationUpdate.reset(Env::create<ReleaseInformation*>(pVersion, true));
-	connect(mReleaseInformationUpdate.data(), &ReleaseInformation::fireInformationChanged, this, &ReleaseInformationModel::onUpdateChanged);
-
-	if (mReleaseInformationUpdate->requiresInitialUpdate())
-	{
-		mReleaseInformationUpdate->update();
-	}
-	else
-	{
-		onUpdateChanged();
-	}
+	Env::getSingleton<ReleaseInformationConfiguration>()->update();
 }
 
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of \ref Reader for NFC.
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,6 +25,7 @@ class NfcReader
 		QScopedPointer<NfcCard, QScopedPointerDeleteLater> mCard;
 
 		CardEvent updateCard() override;
+		void resetCard();
 
 	Q_SIGNALS:
 		void fireNfcAdapterStateChanged(bool pEnabled);

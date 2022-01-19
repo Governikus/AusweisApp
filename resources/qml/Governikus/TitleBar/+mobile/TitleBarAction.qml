@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -11,30 +11,42 @@ import Governikus.Style 1.0
 Item {
 	id: baseItem
 
-	property string icon
-	property string text
-	property bool iconOnly: false
+	property alias icon: imageItem.source
+	property alias text: textItem.text
+	readonly property real minimumWidth: d.isEmpty ? 0 : Math.max(implicitHeight, d.textWidth)
 	signal clicked
-	signal textUpdated
 
-	height: Style.dimens.titlebar_height
-	implicitWidth: imageItem.implicitWidth + textItem.implicitWidth
-	width: imageItem.implicitWidth + (iconOnly ? 0 : textItem.implicitWidth)
+	height: implicitHeight
+	width: implicitWidth
+	implicitHeight: Style.dimens.titlebar_height
+	implicitWidth: d.isEmpty ? 0 : Math.max(implicitHeight, d.imageWidth + d.textWidth)
 
 	Accessible.role: Accessible.Button
 	Accessible.name: text
+	Accessible.ignored: d.isEmpty
 	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked()
+
+	QtObject {
+		id: d
+
+		readonly property int imageWidth: imageItem.visible ? imageItem.x + imageItem.width : 0
+		readonly property int textWidth: textItem.anchors.leftMargin + textItem.implicitWidth
+		readonly property bool isEmpty: imageItem.source == "" && textItem.text === ""
+	}
 
 	TintableIcon {
 		id: imageItem
 
-		sourceSize.width: source ? Style.dimens.small_icon_size : 0
+		visible: imageItem.source != ""
+		width: Style.dimens.small_icon_size
+		height: width
+		sourceSize.width: width
 		anchors {
-			left: parent.left
+			horizontalCenter: baseItem.left
+			horizontalCenterOffset: baseItem.implicitHeight / 2
 			verticalCenter: parent.verticalCenter
 		}
 
-		source: icon
 		tintColor: Style.color.primary_text_inverse
 		playAnimation: true
 	}
@@ -42,9 +54,10 @@ Item {
 	GText {
 		id: textItem
 
-		visible: !iconOnly
+		visible: !imageItem.visible || baseItem.width >= baseItem.implicitWidth
 		anchors {
-			left: imageItem.right
+			left: imageItem.visible ? imageItem.right : parent.left
+			leftMargin: imageItem.visible || text === "" ? 0 : Style.dimens.titlebar_padding
 			verticalCenter: parent.verticalCenter
 		}
 
@@ -55,9 +68,6 @@ Item {
 		elide: Text.ElideRight
 		wrapMode: Text.NoWrap
 		textStyle: Style.text.normal_inverse
-		text: baseItem.text
-
-		onTextChanged: baseItem.textUpdated()
 
 		onVisibleChanged: {
 			if (visible) {

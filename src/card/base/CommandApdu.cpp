@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CommandApdu.h"
@@ -64,9 +64,7 @@ CommandApdu::CommandApdu(char pCla, char pIns, char pP1, char pP2, const QByteAr
 	mBuffer += pP1;
 	mBuffer += pP2;
 
-	//
-	// according to ISO 7816 Part 4, chapter 5.1
-	//
+	// According to ISO-7816-4, 5.2 Syntax
 	if (pData.size() > 0)  // withPayload
 	{
 		if (CommandApdu::isExtendedLength(pData, pLe))

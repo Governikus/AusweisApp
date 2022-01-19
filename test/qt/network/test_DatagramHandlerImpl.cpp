@@ -1,13 +1,15 @@
 /*!
  * \brief Unit tests for \ref DatagramHandlerImpl
  *
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandlerImpl.h"
 
 #include "Env.h"
 #include "LogHandler.h"
+
+#include "TestFileHelper.h"
 
 #include <QNetworkProxy>
 #include <QSharedPointer>
@@ -62,8 +64,17 @@ class test_DatagramHandlerImpl
 
 		void cannotStart()
 		{
+			DatagramHandlerImpl::cPort = 80;
+
 			#ifdef Q_OS_WIN
 			QSKIP("Windows does not block privileged ports");
+			#elif defined(Q_OS_LINUX)
+			const auto portStart = TestFileHelper::getUnprivilegedPortStart();
+			QVERIFY(portStart != -1);
+			if (portStart <= DatagramHandlerImpl::cPort)
+			{
+				QSKIP("Cannot check privileged port");
+			}
 			#endif
 
 			#ifdef Q_OS_MACOS
@@ -72,8 +83,6 @@ class test_DatagramHandlerImpl
 				QSKIP("macOS >= 10.14 does not block privileged ports - https://news.ycombinator.com/item?id=18302380");
 			}
 			#endif
-
-			DatagramHandlerImpl::cPort = 80;
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());

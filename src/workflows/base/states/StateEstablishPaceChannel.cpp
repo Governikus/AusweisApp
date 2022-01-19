@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -40,7 +40,7 @@ void StateEstablishPaceChannel::run()
 		if (authContext)
 		{
 			// if PACE is performed for authentication purposes,
-			// the chat and certificate description need to be send
+			// the chat and certificate description need to be sent
 			//
 			// in other scenarios, e.g. for changing the PIN, the data
 			// is not needed

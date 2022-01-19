@@ -1,4 +1,4 @@
-set(REMOTE_CONFIG_URL_PROD https://appl.governikus-asp.de/ausweisapp2)
+set(REMOTE_CONFIG_URL_PROD https://updates.autentapp.de)
 if(JENKINS_APPCAST)
 	set(REMOTE_CONFIG_URL https://ausweisapp-ci.govkg.de/job/${JENKINS_APPCAST}/lastSuccessfulBuild/artifact CACHE STRING "Remote config download URL" FORCE)
 else()

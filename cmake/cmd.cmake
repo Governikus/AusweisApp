@@ -58,7 +58,10 @@ function(IMPORT_PATCH)
 		find_package(Python REQUIRED)
 	endif()
 
-	execute_process(COMMAND ${Python_EXECUTABLE} "${CMAKE_BINARY_DIR}/resources/jenkins/import.py")
+	execute_process(COMMAND ${Python_EXECUTABLE} "${CMAKE_BINARY_DIR}/resources/jenkins/import.py" RESULT_VARIABLE _result)
+	if(NOT ${_result} EQUAL 0)
+		message(FATAL_ERROR "Cannot apply patch")
+	endif()
 endfunction()
 
 

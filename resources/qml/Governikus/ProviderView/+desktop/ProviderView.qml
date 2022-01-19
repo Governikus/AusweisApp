@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -33,7 +33,7 @@ SectionPage {
 	isAbstract: true
 
 	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Provider")
 		helpTopic: "provider"
 
@@ -46,7 +46,7 @@ SectionPage {
 
 			onDisplayTextChanged: ProviderCategoryFilterModel.searchString = displayText
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			placeholderText: qsTr("Search providers")
 		}
 	}

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IosReader.h"
@@ -184,9 +184,9 @@ void IosReader::onDidInvalidateWithError(bool pDoRestart)
 
 			using namespace std::chrono_literals;
 			QTimer::singleShot(2s, this, [this](){
-						mIsRestarting = false;
-						startSession();
-					});
+					mIsRestarting = false;
+					startSession();
+				});
 		}
 		return;
 	}

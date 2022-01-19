@@ -40,6 +40,10 @@ if(POLICY CMP0076)
 	cmake_policy(SET CMP0076 NEW)
 endif()
 
+if(POLICY CMP0092)
+	cmake_policy(SET CMP0092 NEW)
+endif()
+
 # "tools.only" can be defined to disable the normal build and enable
 # cmdline "tools" only. For example: "make format" or "make package_source"
 if(tools.only)
@@ -52,7 +56,7 @@ if(UNIX AND NOT IOS)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13 CACHE STRING "Required macOS version")
 endif()
 
-project(AusweisApp2 VERSION 1.22.2 LANGUAGES ${LANGUAGES})
+project(AusweisApp2 VERSION 1.22.3 LANGUAGES ${LANGUAGES})
 
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it
@@ -132,7 +136,7 @@ set(TEST_DIR ${PROJECT_SOURCE_DIR}/test)
 set(DOCS_DIR ${PROJECT_SOURCE_DIR}/docs)
 set(RESOURCES_DIR ${PROJECT_SOURCE_DIR}/resources)
 set(PACKAGING_DIR ${RESOURCES_DIR}/packaging)
-set(COPYRIGHT_TEXT "2014-2021 ${VENDOR}")
+set(COPYRIGHT_TEXT "2014-2022 ${VENDOR}")
 if(APPLE)
 	string(REPLACE " \& " " \&amp; " COPYRIGHT_TEXT ${COPYRIGHT_TEXT})
 endif()

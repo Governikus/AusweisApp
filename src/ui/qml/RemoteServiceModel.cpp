@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceModel.h"
@@ -261,12 +261,12 @@ void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<RemoteSe
 	if (mContext)
 	{
 		connect(mContext.data(), &RemoteServiceContext::fireIsRunningChanged, this, [this](){
-					setStarting(false);
-				});
+				setStarting(false);
+			});
 		connect(mContext.data(), &RemoteServiceContext::fireIsRunningChanged, this, &RemoteServiceModel::fireIsRunningChanged);
 		connect(mContext->getRemoteServer().data(), &RemoteServer::firePskChanged, this, [this](const QByteArray& pPsk){
-					mPsk = pPsk;
-				});
+				mPsk = pPsk;
+			});
 		connect(mContext->getRemoteServer().data(), &RemoteServer::firePskChanged, this, &RemoteServiceModel::firePskChanged);
 		connect(mContext->getRemoteServer().data(), &RemoteServer::fireConnectedChanged, this, &RemoteServiceModel::onConnectionInfoChanged);
 		connect(mContext->getRemoteServer().data(), &RemoteServer::firePairingCompleted, this, &RemoteServiceModel::firePairingCompleted);
@@ -404,20 +404,20 @@ QString RemoteServiceModel::getPasswordType() const
 
 QString RemoteServiceModel::getErrorMessage(bool pNfcPluginAvailable, bool pNfcPluginEnabled, bool pWifiEnabled) const
 {
+	if (!pWifiEnabled)
+	{
+		//: INFO ALL_PLATFORMS The WiFi feature is not enabled but required to use the smartphone as a card reader (SaK).
+		return tr("Please connect your WiFi to use your smartphone as a card reader (SaC).");
+	}
 	if (!pNfcPluginAvailable)
 	{
 		//: INFO ALL_PLATFORMS The device does not offer NFC.
-		return tr("NFC is not available on your device.");
+		return tr("The NFC radio standard is required for communication with the ID card.\n\nUnfortunately NFC is not available on your device.");
 	}
 	if (!pNfcPluginEnabled)
 	{
 		//: INFO ALL_PLATFORMS NFC is available but not active.
-		return tr("Please enable NFC to use the remote service.");
-	}
-	if (!pWifiEnabled)
-	{
-		//: INFO ALL_PLATFORMS The WiFi feature is not enabled but required to use the smartphone as a card reader (SaK).
-		return tr("Please connect your WiFi to use the remote service.");
+		return tr("The NFC radio standard is required for communication with the ID card.\n\nPlease enable NFC to use your smartphone as a card reader (SaC).");
 	}
 
 	return QString();

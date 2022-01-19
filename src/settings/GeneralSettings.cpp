@@ -1,7 +1,7 @@
 /*!
  * \brief Contains the method definitions of the GeneralSettings class.
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GeneralSettings.h"
@@ -305,11 +305,9 @@ void GeneralSettings::setDeveloperOptions(bool pEnabled)
 
 bool GeneralSettings::isDeveloperMode() const
 {
-	const bool developerMode = mStoreGeneral->value(SETTINGS_NAME_DEVELOPER_MODE(), false).toBool();
-	if (developerMode && Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 	{
-		qCDebug(settings) << "Running as SDK. Developer mode is disallowed.";
-		return false;
+		return Env::getSingleton<VolatileSettings>()->isDeveloperMode();
 	}
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
@@ -319,7 +317,7 @@ bool GeneralSettings::isDeveloperMode() const
 	}
 #endif
 
-	return developerMode;
+	return mStoreGeneral->value(SETTINGS_NAME_DEVELOPER_MODE(), false).toBool();
 }
 
 
@@ -373,7 +371,7 @@ void GeneralSettings::setLanguage(const QLocale::Language pLanguage)
 {
 	if (pLanguage != getLanguage())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_LANGUAGE(), pLanguage == QLocale::C ? QString() : LanguageLoader::getLocalCode(QLocale(pLanguage)));
+		mStoreGeneral->setValue(SETTINGS_NAME_LANGUAGE(), pLanguage == QLocale::C ? QString() : LanguageLoader::getLocaleCode(QLocale(pLanguage)));
 		Q_EMIT fireLanguageChanged();
 		Q_EMIT fireSettingsChanged();
 	}

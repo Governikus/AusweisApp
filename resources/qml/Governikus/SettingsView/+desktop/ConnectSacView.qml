@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -55,7 +55,7 @@ SectionPage {
 		id: mainTitleBarAction
 
 		visible: d.view !== ConnectSacView.SubView.PairingInfo || !d.externalMoreInformation
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Pairing")
 		helpTopic: "readerDeviceTab"
 		rootEnabled: false
@@ -105,7 +105,7 @@ SectionPage {
 	ProgressView {
 		visible: d.view === ConnectSacView.SubView.WaitForPairing
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Pairing the device ...")
 
 		Connections {
@@ -133,7 +133,7 @@ SectionPage {
 
 		visible: d.view === ConnectSacView.SubView.PairingFailed
 
-		//: ERROR DESKTOP_QML An error occurred while pairing the device.
+		//: ERROR DESKTOP An error occurred while pairing the device.
 		text: qsTr("Pairing to \"%1\" failed:").arg(deviceName) + "<br/>\"%2\"".arg(errorMessage)
 		resultType: ResultView.Type.IsError
 		onNextView: root.closeView()

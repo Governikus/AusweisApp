@@ -1,10 +1,9 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCertificateDescriptionCheck.h"
 
-#include "asn1/CVCertificateChainBuilder.h"
 #include "asn1/KnownOIDs.h"
 #include "AppSettings.h"
 #include "UrlUtil.h"

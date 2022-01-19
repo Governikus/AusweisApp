@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -63,6 +63,9 @@ Rectangle {
 					imageSource: Qt.resolvedUrl(model.iconSource)
 					//: LABEL ANDROID_TABLET IOS_TABLET
 					itemText: (!!model.text ? model.text : qsTr("Unknown"))
+					//: LABEL ANDROID_TABLET IOS_TABLET
+					accessibleText: (!!model.accessibleText ? model.accessibleText : qsTr("Unknown"))
+					label: qsTranslate("ProviderModelItem", model.label)
 					link: model.link
 					sizeReductor: info.sizeReductor
 				}

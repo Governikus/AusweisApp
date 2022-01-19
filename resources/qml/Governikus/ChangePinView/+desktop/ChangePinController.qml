@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -68,7 +68,7 @@ Controller {
 			case "FinalState":
 				if (d.showRemoveCardFeedback) {
 					d.showRemoveCardFeedback = false
-					//: INFO DESKTOP_QML Changing the PIN was successful; hint that the ID card may now be removed from the card reader.
+					//: INFO DESKTOP Changing the PIN was successful; hint that the ID card may now be removed from the card reader.
 					ApplicationModel.showFeedback(qsTr("You may now remove your ID card from the device."))
 				}
 				if (ChangePinModel.shouldSkipResultView()) {

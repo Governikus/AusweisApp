@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref NumberModel
  *
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -23,7 +23,9 @@ class test_NumberModel
 	: public QObject
 {
 	Q_OBJECT
-	NumberModel * mModel;
+
+	private:
+		NumberModel* mModel = nullptr;
 
 	private Q_SLOTS:
 		void init()
@@ -212,16 +214,6 @@ class test_NumberModel
 		}
 
 
-		void test_PinDeactivatedFalse()
-		{
-			QVERIFY(!mModel->isPinDeactivated());
-
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
-			mModel->resetContext(context);
-			QVERIFY(!mModel->isPinDeactivated());
-		}
-
-
 		void test_Error()
 		{
 			QThread connectionThread;
@@ -253,7 +245,7 @@ class test_NumberModel
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, six-digit PIN twice. "
 												 "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
-												 "You can find your Card Access Number (CAN) in the bottom right on the front of your ID card."));
+												 "You can find your CAN in the bottom right on the front of your ID card."));
 			QVERIFY(mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
@@ -274,7 +266,7 @@ class test_NumberModel
 			context->setLastPaceResult(CardReturnCode::UNEXPECTED_TRANSMIT_STATUS);
 			QCOMPARE(mModel->getInputError(), QStringLiteral("%1 <a href=\"https://www.ausweisapp.bund.de/%2/aa2/support\">%3</a>.").arg(
 					tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at"),
-					LanguageLoader::getLocalCode(),
+					LanguageLoader::getLocaleCode(),
 					tr("AusweisApp2 Support")));
 			QVERIFY(mModel->hasError());
 
@@ -290,7 +282,7 @@ class test_NumberModel
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, five-digit Transport PIN twice. "
 												 "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
-												 "You can find your Card Access Number (CAN) in the bottom right on the front of your ID card."
+												 "You can find your CAN in the bottom right on the front of your ID card."
 												 "<br><br>"
 												 "Please note that you may use the five-digit Transport PIN only once to change to a six-digit PIN. "
 												 "If you already set a six-digit PIN, the five-digit Transport PIN is no longer valid."));

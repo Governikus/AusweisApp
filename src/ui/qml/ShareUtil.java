@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -16,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.util.Log;
+
 import androidx.core.content.FileProvider;
 
 
@@ -56,7 +57,7 @@ public final class ShareUtil
 
 			PackageManager packageManager = activity.getPackageManager();
 			List<ResolveInfo> emailApps = packageManager.queryIntentActivities(emailIntent, PackageManager.MATCH_DEFAULT_ONLY);
-			List<LabeledIntent> launcherIntents = new ArrayList<LabeledIntent>();
+			List<LabeledIntent> launcherIntents = new ArrayList<>();
 			for (ResolveInfo resolveInfo : emailApps)
 			{
 				String packageName = resolveInfo.activityInfo.packageName;
