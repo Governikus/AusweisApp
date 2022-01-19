@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteTlsServer.h"
@@ -130,7 +130,7 @@ void RemoteTlsServer::onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthe
 
 void RemoteTlsServer::onError(QAbstractSocket::SocketError pSocketError)
 {
-	qCDebug(remote_device) << "Socket error:" << pSocketError;
+	qCDebug(remote_device) << "Socket error:" << pSocketError << mSocket->errorString();
 	mSocket->deleteLater();
 }
 

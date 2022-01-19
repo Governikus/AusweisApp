@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -34,7 +34,9 @@ Column {
 		Accessible.onScrollUpAction: baseItem.scrollDescriptionUp()
 
 		horizontalAlignment: Text.AlignLeft
-		text: baseItem.description
+		//: LABEL ANDROID_TABLET IOS_TABLET
+		text: (!!baseItem.description ? baseItem.description : qsTr("The provider did not provide a description."))
 		textStyle: Style.text.normal_secondary
+		textFormat: Text.RichText
 	}
 }

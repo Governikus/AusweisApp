@@ -1,5 +1,5 @@
 FROM alpine:swarm
-MAINTAINER Governikus KG <ausweisapp2@governikus.com>
+MAINTAINER Governikus KG <support@ausweisapp.de>
 
 ENV NAME=Trigger LABELS="Trigger Seeder"
 

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteReaderManagerPlugIn
  *
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "plugin/RemoteReaderManagerPlugIn.h"
@@ -422,12 +422,15 @@ class test_RemoteReaderManagerPlugIn
 			mDispatcher1->setState(MockRemoteDispatcher::DispatcherState::ReaderWithCard);
 			Q_EMIT mRemoteClient->fireNewRemoteDispatcher(mDispatcher1);
 
-			QTRY_COMPARE(spySend.count(), 4); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(spySend.count(), 8); // clazy:exclude=qstring-allocations
 			spySend.takeFirst();
 			result = qvariant_cast<QSharedPointer<const RemoteMessage> >(spySend.takeFirst().at(0));
 			QCOMPARE(result->getType(), RemoteCardMessageType::IFDConnect);
-			result = qvariant_cast<QSharedPointer<const RemoteMessage> >(spySend.takeFirst().at(0));
-			QCOMPARE(result->getType(), RemoteCardMessageType::IFDTransmit);
+			for (int i = 0; i < 5; ++i) // CardInfo detection
+			{
+				result = qvariant_cast<QSharedPointer<const RemoteMessage> >(spySend.takeFirst().at(0));
+				QCOMPARE(result->getType(), RemoteCardMessageType::IFDTransmit);
+			}
 			result = qvariant_cast<QSharedPointer<const RemoteMessage> >(spySend.takeFirst().at(0));
 			QCOMPARE(result->getType(), RemoteCardMessageType::IFDDisconnect);
 
@@ -503,8 +506,8 @@ class test_RemoteReaderManagerPlugIn
 			for (const auto& clientMessage : clientMessages)
 			{
 				QMetaObject::invokeMethod(mDispatcher1.data(), [this, clientMessage] {
-							mDispatcher1->onReceived(clientMessage);
-						}, Qt::QueuedConnection);
+						mDispatcher1->onReceived(clientMessage);
+					}, Qt::QueuedConnection);
 				QTRY_COMPARE(spySend.count(), 1); // clazy:exclude=qstring-allocations
 				const QList<QVariant>& arguments = spySend.last();
 

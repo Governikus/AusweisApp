@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/AppController.h"
@@ -178,8 +178,8 @@ class test_AppController
 				auto testDirFile = QFile(testDir.filePath(testFileName));
 
 				cacheDir.mkpath(testDir.absolutePath());
-				testFile.open(QIODevice::WriteOnly);
-				testDirFile.open(QIODevice::WriteOnly);
+				QVERIFY(testFile.open(QIODevice::WriteOnly));
+				QVERIFY(testDirFile.open(QIODevice::WriteOnly));
 				cacheDir.refresh();
 
 				QVERIFY(cacheDir.exists());

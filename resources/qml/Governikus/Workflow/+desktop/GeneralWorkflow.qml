@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -22,6 +22,7 @@ SectionPage
 	property int waitingFor: 0
 	property bool isPinChange: false
 	signal settingsRequested()
+	signal requestPasswordInfo()
 
 	Accessible.name: qsTr("General workflow view")
 	Accessible.description: qsTr("This is the general workflow view of the AusweisApp2.")
@@ -39,7 +40,7 @@ SectionPage
 	Connections {
 		target: ApplicationModel
 		onFireCertificateRemoved: {
-			//: INFO DESKTOP_QML The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
+			//: INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
 			ApplicationModel.showFeedback(qsTr("The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(pDeviceName))
 		}
 	}
@@ -51,7 +52,7 @@ SectionPage
 		anchors.bottomMargin: Constants.component_spacing
 
 		font.bold: true
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Attempts")
 	}
 
@@ -123,23 +124,19 @@ SectionPage
 			switch (waitingFor) {
 				case Workflow.WaitingFor.Reader:
 					if (ApplicationModel.extendedLengthApdusUnsupported) {
-						//: ERROR DESKTOP_QML
+						//: ERROR DESKTOP
 						return qsTr("The used card reader does not meet the technical requirements (Extended Length not supported).")
 					}
 					return d.foundSelectedReader
-						   //: LABEL DESKTOP_QML
+						   //: LABEL DESKTOP
 						   ? qsTr("Place ID card")
-						   //: LABEL DESKTOP_QML
+						   //: LABEL DESKTOP
 						   : qsTr("Connect USB card reader or smartphone")
 				case Workflow.WaitingFor.Card:
-					if (NumberModel.pinDeactivated) {
-						//: LABEL DESKTOP_QML
-						return qsTr("Information")
-					}
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					return qsTr("Place ID card")
 				case Workflow.WaitingFor.Password:
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					return qsTr("Information")
 				default:
 					return ""
@@ -156,14 +153,14 @@ SectionPage
 
 		readonly property string requestCardText: {
 			if (d.foundPCSCReader && !d.foundRemoteReader) {
-				//: INFO DESKTOP_QML The AA2 is waiting for an ID card to be inserted into the card reader.
+				//: INFO DESKTOP The AA2 is waiting for an ID card to be inserted into the card reader.
 				return qsTr("No ID card detected. Please ensure that your ID card is placed on the card reader.")
 			} else if (!d.foundPCSCReader && d.foundRemoteReader) {
-				//: INFO DESKTOP_QML The AA2 is waiting for the smartphone to be placed on the id.
+				//: INFO DESKTOP The AA2 is waiting for the smartphone to be placed on the id.
 				return qsTr("No ID card detected. Please make sure that the NFC interface of the smartphone (connected to %1) is correctly placed on your ID card.").arg(RemoteServiceModel.connectedServerDeviceNames)
 			}
 
-			//: INFO DESKTOP_QML The AA2 is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).
+			//: INFO DESKTOP The AA2 is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).
 			return qsTr("Please place the smartphone (connected to %1) on your ID card or put the ID card on the card reader.").arg(RemoteServiceModel.connectedServerDeviceNames)
 		}
 
@@ -174,31 +171,32 @@ SectionPage
 		anchors.topMargin: Constants.text_spacing
 
 		activeFocusOnTab: true
-		Accessible.name: subText.text
 
+		textFormat: Text.StyledText
+		linkColor: Style.text.header_inverse.textColor
 		text: {
 			switch (waitingFor) {
 				case Workflow.WaitingFor.Reader:
-					//: INFO DESKTOP_QML AA2 is waiting for the card reader or the ID card.
+					//: INFO DESKTOP AA2 is waiting for the card reader or the ID card.
 					return d.foundSelectedReader ? requestCardText : qsTr("No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and available. Open the %1reader settings%2 to configure readers and get more information about supported readers.").arg("<a href=\"#\">").arg("</a>")
 				case Workflow.WaitingFor.Card:
-					if (NumberModel.pinDeactivated) {
-						//: INFO DESKTOP_QML The online authentication feature of the card is disabled and needs to be activated by the authorities.
-						return qsTr("The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.")
-					}
 					return requestCardText
 				case Workflow.WaitingFor.Password:
-					//: INFO DESKTOP_QML The card reader is a comfort reader with its own display, the user is requested to pay attention to that display (instead of the AA2).
-					return qsTr("Please observe the display of your card reader.")
+					return ("%1<br><br><a href=\"#\">%2</a>").arg(
+							   //: INFO DESKTOP The card reader is a comfort reader with its own display, the user is requested to pay attention to that display (instead of the AA2).
+							   qsTr("Please observe the display of your card reader.")
+						   ).arg(
+							   //: INFO DESKTOP Link text
+							   qsTr("More information")
+						   )
 				default:
 					return ""
 			}
 		}
 		textStyle: Style.text.header_secondary_inverse
-
 		horizontalAlignment: Text.AlignHCenter
 
-		onLinkActivated: root.settingsRequested()
+		onLinkActivated: waitingFor === Workflow.WaitingFor.Reader ? root.settingsRequested() : root.requestPasswordInfo()
 
 		FocusFrame {}
 	}

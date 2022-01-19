@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WebserviceActivationContext.h"
@@ -117,7 +117,7 @@ bool WebserviceActivationContext::sendErrorPage(http_status pStatusCode, const G
 	htmlTemplate.setContextParameter(QStringLiteral("ERROR_MESSAGE"), pStatus.toErrorDescription(true));
 	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_HEADER"), tr("Would you like to report this error?"));
-	htmlTemplate.setContextParameter(QStringLiteral("REPORT_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1/aa2/report").arg(LanguageLoader::getLocalCode()));
+	htmlTemplate.setContextParameter(QStringLiteral("REPORT_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1/aa2/report").arg(LanguageLoader::getLocaleCode()));
 	//: ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_BUTTON"), tr("Report now"));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();

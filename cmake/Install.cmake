@@ -197,7 +197,7 @@ elseif(ANDROID)
 
 	if(INTEGRATED_SDK)
 		set(ANDROID_MANIFEST AndroidManifest.xml.aar.in)
-		foreach(entry network/WifiInfo ui/aidl/AidlBinder activation/intent/AusweisApp2Service)
+		foreach(entry network/WifiInfo ui/aidl/AidlBinder android/AusweisApp2Service)
 			set(_java_file "${SRC_DIR}/${entry}.java")
 			if(NOT EXISTS "${_java_file}")
 				message(FATAL_ERROR "Cannot find file: ${_java_file}")

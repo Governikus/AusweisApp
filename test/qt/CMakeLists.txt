@@ -35,6 +35,8 @@ function(EXTRACT_MODULES _out_module _out_submodule filename)
 		GET_CAPITALIZED(SUBMODULE "${SUBMODULE}")
 	endif()
 
+	GET_SNAKE_TO_CAMEL_CASE(SUBMODULE "${SUBMODULE}")
+
 	# return values: module is required, submodule optional
 	set(${_out_module} ${MODULE} PARENT_SCOPE)
 	set(${_out_submodule} ${SUBMODULE} PARENT_SCOPE)
@@ -79,6 +81,7 @@ function(SHOULD_SKIP_TEST _out filename)
 
 	if(INTEGRATED_SDK AND (test MATCHES "ui/qml"
 		OR test MATCHES "ui/websocket"
+		OR test MATCHES "activation/custom_scheme"
 		OR test MATCHES "init/"
 		OR test MATCHES "remote_device"
 		OR test MATCHES "export"))

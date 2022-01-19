@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore>
@@ -41,11 +41,12 @@ class test_VersionInfo
 
 		void toJson()
 		{
-			auto json = VersionInfo::getInstance().toJson();
-			QSharedPointer<QJsonParseError> parseError(new QJsonParseError());
-			auto obj = QJsonDocument::fromJson(json, parseError.data()).object();
+			const auto data = VersionInfo::getInstance().toJson();
+			QJsonParseError jsonError {};
+			const auto json = QJsonDocument::fromJson(data, &jsonError);
+			QCOMPARE(jsonError.error, QJsonParseError::NoError);
 
-			QCOMPARE(parseError->error, QJsonParseError::ParseError::NoError);
+			const auto obj = json.object();
 			QCOMPARE(obj["Name"].toString(), QLatin1String("Test_global_VersionInfo"));
 			QCOMPARE(obj["Specification-Title"].toString(), QLatin1String("TR-03124"));
 			QCOMPARE(obj["Specification-Version"].toString(), QLatin1String("1.3"));

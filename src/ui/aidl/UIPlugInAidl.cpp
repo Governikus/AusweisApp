@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInAidl.h"
@@ -216,8 +216,8 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AidlBinder_aidlSend(JNIEn
 	}
 
 	QMetaObject::invokeMethod(plugin, [ = ] {
-				plugin->onReceived(json.toUtf8());
-			}, Qt::QueuedConnection);
+			plugin->onReceived(json.toUtf8());
+		}, Qt::QueuedConnection);
 }
 
 

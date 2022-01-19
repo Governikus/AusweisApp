@@ -1,0 +1,10 @@
+{
+   "PersonalData":{
+      "DateOfExpiry":"2029-11",
+      "DateOfBirth":"1946"
+   },
+   "OperationsAllowedByUser": {
+     "DateOfExpiry": "ALLOWED",
+     "DateOfBirth": "ALLOWED"
+   }
+}

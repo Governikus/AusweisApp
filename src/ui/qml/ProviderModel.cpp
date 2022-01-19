@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderModel.h"
@@ -49,11 +49,11 @@ void ProviderModel::updateConnections()
 		const QModelIndex& modelIndex = createIndex(i, 0);
 
 		mConnections += connect(provider.getIcon().data(), &UpdatableFile::fireUpdated, this, [this, modelIndex] {
-					Q_EMIT dataChanged(modelIndex, modelIndex, {ProviderRoles::ICON});
-				});
+				Q_EMIT dataChanged(modelIndex, modelIndex, {ProviderRoles::ICON});
+			});
 		mConnections += connect(provider.getImage().data(), &UpdatableFile::fireUpdated, this, [this, modelIndex] {
-					Q_EMIT dataChanged(modelIndex, modelIndex, {ProviderRoles::IMAGE});
-				});
+				Q_EMIT dataChanged(modelIndex, modelIndex, {ProviderRoles::IMAGE});
+			});
 	}
 }
 

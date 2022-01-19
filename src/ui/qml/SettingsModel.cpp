@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SettingsModel.h"
@@ -44,7 +44,7 @@ SettingsModel::SettingsModel()
 
 QString SettingsModel::getLanguage() const
 {
-	return LanguageLoader::getLocalCode();
+	return LanguageLoader::getLocaleCode();
 }
 
 

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -147,59 +147,68 @@ SectionPage {
 				source: "qrc:///images/tutorial/section_seperator_how.svg"
 			}
 
-			Item{
+			Item {
 				width: parent.width
-				height: userdataExample.height + textAccessWhoWhat.height + textOpenAutomatic.height + 3 * Constants.component_spacing
+				height: userdataExample.height + textAccessWhoWhat.height + textOpenAutomatic.height + 2 * Constants.component_spacing
 
 				TutorialImage {
-					source: "qrc:///images/tutorial/reader_nfc_npa_on_smartphone.svg"
+					centerX: 0.2
+					centerY: (textAccessWhoWhat.y + textAccessWhoWhat.height) / (2 * parent.height)
 					width: parent.width * 0.3
 
-					centerX: 0.2
-					centerY: 0.2
-				}
-
-				TutorialImage {
-					id: userdataExample
-					source: "qrc:///images/tutorial/reader_nfc_userdata_example_%1.svg".arg(SettingsModel.language)
-					width: parent.width * 0.8
-
-					centerX: 0.5
-					centerY: 0.75
+					source: "qrc:///images/tutorial/reader_nfc_npa_on_smartphone.svg"
 				}
 
 				GText {
 					id: textOpenAutomatic
+
 					width: parent.width * 0.6
-					rightPadding: Constants.component_spacing
+					anchors {
+						top: parent.top
+						right: parent.right
+					}
 
 					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID IOS
 					text: qsTr("The App opens automatically.")
+					rightPadding: Constants.component_spacing
 					horizontalAlignment: Text.AlignHCenter
 					textStyle: Style.text.tutorial_content
-
-					x: (parent.width * 0.7) - (width / 2)
-					y: (parent.height * 0) - (height / 2)
 				}
 
 				GText {
 					id: textAccessWhoWhat
+
 					width: parent.width * 0.6
-					rightPadding: Constants.component_spacing
+					anchors {
+						top: textOpenAutomatic.bottom
+						topMargin: Constants.component_spacing
+						right: parent.right
+					}
 
 					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID IOS
 					text: qsTr("The AusweisApp2 will display who wants to access which data.")
+					rightPadding: Constants.component_spacing
 					horizontalAlignment: Text.AlignHCenter
 					textStyle: Style.text.tutorial_header_secondary
+				}
 
-					x: (parent.width * 0.7) - (width / 2)
-					y: (parent.height * 0.2) - (height / 2)
+				TutorialImage {
+					id: userdataExample
+
+					width: parent.width * 0.8
+					anchors {
+						top: textAccessWhoWhat.bottom
+						topMargin: Constants.component_spacing
+						horizontalCenter: parent.horizontalCenter
+					}
+
+					source: "qrc:///images/tutorial/reader_nfc_userdata_example_%1.svg".arg(SettingsModel.language)
 				}
 			}
 
@@ -320,35 +329,55 @@ SectionPage {
 			}
 
 			Item {
-				width: parent.width
-				height: nfcPosition.height + 2 * Constants.component_spacing
 				visible: Constants.is_layout_android
+				width: parent.width * 0.9
+				height: Math.max(nfcPosition.height, nfcText.height)
 
 				TutorialImage {
 					id: nfcPosition
-					source: "qrc:///images/tutorial/reader_nfc_smartphone_nfc_position.svg"
 
-					width: parent.width * 0.7
-					centerY: 0.5
-					centerX: 0.35
+					width: parent.width * 0.75
+					anchors {
+						left: parent.left
+						verticalCenter: parent.verticalCenter
+					}
+
+					source: "qrc:///images/tutorial/reader_nfc_smartphone_nfc_position.svg"
 				}
 
 				GText {
-					width: parent.width * 0.5
-					rightPadding: Constants.component_spacing
+					id: nfcText
+
+					width: parent.width * 0.55
+					anchors {
+						right: parent.right
+						verticalCenter: parent.verticalCenter
+					}
 
 					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 					//: LABEL ANDROID
-					text: qsTr("The correct position is specific for your device. If a position does not work try a different one. The AusweisApp2 shows different common positions. If your device is unable to detect your ID card try to check the device capabilities by clicking on \"Check device and ID card\" on the start page.")
+					text: qsTr("The correct position is specific for your device. If a position does not work try a different one. The AusweisApp2 shows different common positions.")
 					textStyle: Style.text.tutorial_content
 					font.bold: true
 					horizontalAlignment: Text.AlignLeft
-
-					x: (parent.width * 0.75) - (width / 2)
-					y: (parent.height * 0.5) - (height / 2)
 				}
+			}
+
+			GText {
+				width: parent.width * 0.9
+				anchors.horizontalCenter: parent.horizontalCenter
+				visible: Constants.is_layout_android
+
+				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
+				Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
+
+				//: LABEL ANDROID
+				text: qsTr("If your device is unable to detect your ID card try to check the device capabilities by clicking on \"Check device and ID card\" on the start page.")
+				textStyle: Style.text.tutorial_content
+				font.bold: true
+				horizontalAlignment: Text.AlignHCenter
 			}
 
 			GText {
@@ -498,8 +527,7 @@ SectionPage {
 					Accessible.role: Accessible.Button
 					Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
 
-					onClicked: Constants.is_layout_ios ? Qt.openUrlExternally("https://www.youtube.com/watch?v=qArkIGs0cFM&list=PLLB5ERhVkn25qQXgMHQr-1KgyZsJKoSAm&index=1")
-														: Qt.openUrlExternally("https://www.youtube.com/watch?v=OtduiptNKQI&list=PLLB5ERhVkn25qQXgMHQr-1KgyZsJKoSAm&index=2")
+					onClicked: Qt.openUrlExternally("https://www.ausweisapp.bund.de/%1/aa2/video-nfc-%2".arg(SettingsModel.language).arg(Constants.layout))
 				}
 			}
 

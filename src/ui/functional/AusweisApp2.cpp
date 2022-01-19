@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AusweisApp2_p.h"
@@ -115,12 +115,12 @@ Q_DECL_EXPORT void ausweisapp2_shutdown(void)
 			std::cout << "Send shutdown request" << std::endl;
 
 			QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-						auto* j = qobject_cast<UIPlugInFunctional*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInFunctional));
-						if (j)
-						{
-							j->doQuitApplicationRequest();
-						}
-					}, Qt::QueuedConnection);
+					auto* j = qobject_cast<UIPlugInFunctional*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInFunctional));
+					if (j)
+					{
+						j->doQuitApplicationRequest();
+					}
+				}, Qt::QueuedConnection);
 
 		}
 
@@ -147,10 +147,10 @@ Q_DECL_EXPORT void ausweisapp2_send(const char* pCmd)
 
 	const auto cmd = QByteArray(pCmd);
 	QMetaObject::invokeMethod(QCoreApplication::instance(), [cmd] {
-				const auto j = qobject_cast<UIPlugInFunctional*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInFunctional));
-				if (j)
-				{
-					j->doMessageProcessing(cmd);
-				}
-			}, Qt::QueuedConnection);
+			const auto j = qobject_cast<UIPlugInFunctional*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInFunctional));
+			if (j)
+			{
+				j->doMessageProcessing(cmd);
+			}
+		}, Qt::QueuedConnection);
 }

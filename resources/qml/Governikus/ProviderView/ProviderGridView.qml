@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -98,7 +98,7 @@ Item {
 		visible: ProviderCategoryFilterModel.rowCount === 0 && !additionalResults.visible
 
 		anchors.centerIn: parent
-		//: LABEL DESKTOP_QML IOS_TABLET ANDROID_TABLET The text entered into the provider search field results in no matches
+		//: LABEL DESKTOP IOS_TABLET ANDROID_TABLET The text entered into the provider search field results in no matches
 		text: qsTr("No results matching your search query found")
 		textStyle: Style.text.normal
 	}

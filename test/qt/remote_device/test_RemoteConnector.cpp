@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref RemoteConnector
  *
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteConnectorImpl.h"
@@ -72,8 +72,8 @@ class test_RemoteConnector
 		{
 			const RemoteDeviceDescriptor descr(pDiscovery, pHostAddress);
 			QMetaObject::invokeMethod(pConnector.data(), [ = ] {
-						pConnector->onConnectRequest(descr, pPassword);
-					}, Qt::QueuedConnection);
+					pConnector->onConnectRequest(descr, pPassword);
+				}, Qt::QueuedConnection);
 		}
 
 
@@ -327,8 +327,8 @@ class test_RemoteConnector
 
 			QWebSocketServer webSocketServer(QStringLiteral("Smartphone1"), QWebSocketServer::SecureMode);
 			connect(&webSocketServer, &QWebSocketServer::preSharedKeyAuthenticationRequired, this, [&](QSslPreSharedKeyAuthenticator* pAuthenticator){
-						pAuthenticator->setPreSharedKey(psk.toLatin1());
-					});
+					pAuthenticator->setPreSharedKey(psk.toLatin1());
+				});
 			QSignalSpy spySocketError(&webSocketServer, &QWebSocketServer::serverError);
 			QSignalSpy spySocketSuccess(&webSocketServer, &QWebSocketServer::newConnection);
 
@@ -388,8 +388,8 @@ class test_RemoteConnector
 		{
 			QWebSocketServer webSocketServer(QStringLiteral("Smartphone1"), QWebSocketServer::SecureMode);
 			QObject::connect(&webSocketServer, &QWebSocketServer::preSharedKeyAuthenticationRequired, [](QSslPreSharedKeyAuthenticator* pAuthenticator){
-						pAuthenticator->setPreSharedKey(QByteArray("secret"));
-					});
+					pAuthenticator->setPreSharedKey(QByteArray("secret"));
+				});
 			QSignalSpy spySocketError(&webSocketServer, &QWebSocketServer::serverError);
 			QSignalSpy spySocketSuccess(&webSocketServer, &QWebSocketServer::newConnection);
 

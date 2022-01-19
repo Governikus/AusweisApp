@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -151,8 +151,7 @@ SectionPage {
 			}
 
 			GPane {
-				id: transactionInfo
-
+				visible: !!AuthModel.transactionInfo || (!writeData.visible && !readData.visible)
 				anchors {
 					left: parent.left
 					right: parent.right
@@ -160,30 +159,25 @@ SectionPage {
 
 				//: LABEL IOS_PHONE ANDROID_PHONE
 				title: qsTr("Transactional information")
-				visible: !!transactionInfoText.text
 
 				GText {
-					id: transactionInfoText
-
+					visible: !!text
 					width: parent.width
+
+					activeFocusOnTab: true
 
 					text: AuthModel.transactionInfo
 					textStyle: Style.text.normal_secondary
 				}
-			}
-
-			GPane {
-				visible: !writeData.visible && !requiredData.visible && !optionalData.visible
-				anchors {
-					left: parent.left
-					right: parent.right
-				}
 
 				GText {
+					visible: !writeData.visible && !readData.visible
+					width: parent.width
+
 					activeFocusOnTab: true
 
-					//: LABEL DESKTOP_QML
-					text: qsTr("No data requested")
+					//: LABEL IOS_PHONE ANDROID_PHONE
+					text: qsTr("The provider mentioned above does not require any data stored on your ID card, only confirmation of you possessing a valid ID card.")
 					textStyle: Style.text.normal
 				}
 			}
@@ -211,6 +205,9 @@ SectionPage {
 			}
 
 			GPane {
+				id: readData
+
+				visible: requiredData.count > 0 || optionalData.count > 0
 				anchors {
 					left: parent.left
 					right: parent.right

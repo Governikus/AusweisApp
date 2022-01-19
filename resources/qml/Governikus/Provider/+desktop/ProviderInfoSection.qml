@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -38,7 +38,7 @@ Item {
 
 			width: baseItem.width - icon.width - Constants.groupbox_spacing
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			text: name.length > 0 ? name : qsTr("See details under \"more...\"")
 			maximumBodyLineCount: 1
 			bodyElide: Text.ElideRight

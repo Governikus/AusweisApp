@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -77,6 +77,7 @@ Rectangle {
 			anchors.fill: parent
 			anchors.margins: iconContainer.radius / 2
 
+			sourceSize.height: height
 			source: baseItem.providerIcon
 			asynchronous: true
 			fillMode: Image.PreserveAspectFit
@@ -110,7 +111,7 @@ Rectangle {
 		anchors.verticalCenter: parent.verticalCenter
 		anchors.rightMargin: Constants.pane_padding
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("To provider")
 		tintIcon: true
 		icon.source: "qrc:///images/material_open_in_new.svg"

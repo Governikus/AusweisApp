@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthModel.h"
@@ -97,10 +97,9 @@ QString AuthModel::getErrorText() const
 }
 
 
-QString AuthModel::getStatusCode() const
+QString AuthModel::getStatusCodeString() const
 {
-	const auto statusCode = mContext ? mContext->getStatus().getStatusCode() : GlobalStatus::Code::Unknown_Error;
-	return getEnumName(statusCode);
+	return getEnumName(getStatusCode());
 }
 
 

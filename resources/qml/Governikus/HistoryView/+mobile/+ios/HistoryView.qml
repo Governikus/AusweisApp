@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -14,24 +14,8 @@ BaseHistoryView {
 	id: baseItem
 
 	rightTitleBarAction: TitleBarAction {
-		id: rightAction
-
-		states: [
-			State {
-				name: "none"
-				when: baseItem.historyItemCount === 0
-				PropertyChanges { target: rightAction; text: "" }
-			},
-			State {
-				name: "deleteAll"
-				when: baseItem.historyItemCount !== 0
-				PropertyChanges {
-					target: rightAction
-					//: LABEL IOS
-					text: qsTr("Delete all entries")
-				}
-			}
-		]
+		//: LABEL IOS
+		text: baseItem.historyItemCount > 0 ? qsTr("Delete all entries") : ""
 
 		onClicked: deleteHistoryConfirmationPopup.open()
 	}

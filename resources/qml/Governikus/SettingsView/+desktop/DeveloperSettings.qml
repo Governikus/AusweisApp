@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick.Layouts 1.12
@@ -20,7 +20,7 @@ ColumnLayout {
 	GText {
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Developer options")
 		textStyle: Style.text.header_accent
 
@@ -32,7 +32,7 @@ ColumnLayout {
 	ToggleableOption {
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Testmode for the self-authentication")
 		checked: SettingsModel.useSelfauthenticationTestUri
 		onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
@@ -41,7 +41,7 @@ ColumnLayout {
 	ToggleableOption {
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Developer mode")
 		checked: SettingsModel.developerMode
 		onCheckedChanged: SettingsModel.developerMode = checked
@@ -52,7 +52,7 @@ ColumnLayout {
 
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("The developer mode is aimed at integrators / developers for new service applications. For this reason, the developer mode works only in the test PKI. By activating the developer mode, some safety tests are deactivated. This means that the authentication process continues although the AusweisApp2 would usually abort the process with an error message when used in normal operation mode. Information on the disregarded error in the developer mode is displayed in the attached window below the AusweisApp2.")
 		textStyle: Style.text.hint_warning
 

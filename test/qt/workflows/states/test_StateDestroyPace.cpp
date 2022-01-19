@@ -1,9 +1,10 @@
 /*!
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateDestroyPace.h"
 
+#include "context/ChangePinContext.h"
 #include "MockCardConnectionWorker.h"
 
 #include <QtTest>

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -60,7 +60,7 @@ SectionPage
 			Accessible.description: qsTr("Select log from list.")
 
 			model: LogModel.logFiles
-			onCurrentIndexChanged: LogModel.setLogfile(currentIndex)
+			onCurrentIndexChanged: LogModel.setLogFile(currentIndex)
 		}
 	}
 
@@ -113,6 +113,6 @@ SectionPage
 			   )
 		//: LABEL ANDROID IOS
 		okButtonText: qsTr("Delete")
-		onConfirmed: deleteAll ? LogModel.removeOtherLogfiles() : LogModel.removeCurrentLogfile()
+		onConfirmed: deleteAll ? LogModel.removeOtherLogFiles() : LogModel.removeCurrentLogFile()
 	}
 }

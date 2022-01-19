@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the authentication action.
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,6 +30,8 @@ class WorkflowModel
 	Q_PROPERTY(bool isBasicReader READ isBasicReader NOTIFY fireIsBasicReaderChanged)
 	Q_PROPERTY(QString readerImage READ getReaderImage NOTIFY fireReaderImageChanged)
 	Q_PROPERTY(bool hasNextWorkflowPending READ getNextWorkflowPending NOTIFY fireNextWorkflowPendingChanged)
+	Q_PROPERTY(QString statusHintText READ getStatusHintText NOTIFY fireResultChanged)
+	Q_PROPERTY(QString statusHintActionText READ getStatusHintActionText NOTIFY fireResultChanged)
 
 	private:
 		friend class ::test_WorkflowModel;
@@ -55,7 +57,12 @@ class WorkflowModel
 
 		bool getNextWorkflowPending() const;
 
+		GlobalStatus::Code getStatusCode() const;
 		QString getReaderImage() const;
+
+		QString getStatusHintText() const;
+		QString getStatusHintActionText() const;
+		Q_INVOKABLE bool invokeStatusHintAction();
 
 		Q_INVOKABLE void cancelWorkflow();
 		Q_INVOKABLE void startScanIfNecessary();

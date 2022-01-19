@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -23,6 +23,7 @@ SectionPage {
 	enum SubViews {
 		Welcome = 0,
 		HistorySetting,
+		CardReaderInfo,
 		CardReader,
 		TransportPin,
 		PasswordInfo,
@@ -33,7 +34,7 @@ SectionPage {
 
 	onVisibleChanged: if (visible) d.reset()
 	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Setup Assistant")
 		rootEnabled: d.allowNavigation
 		showSettings: false
@@ -53,7 +54,7 @@ SectionPage {
 		}
 	}
 
-	ResultView {
+	DecisionView {
 		visible: d.activeView === SetupAssistantView.SubViews.Welcome
 
 		Component.onCompleted: setActive()
@@ -61,11 +62,14 @@ SectionPage {
 		Accessible.name: qsTr("Setup assistant view")
 		Accessible.description: qsTr("This is the setup assistant view which will guide you through the basic setup of %1").arg(Qt.application.name)
 
-		resultType: ResultView.Type.IsInfo
-		//: INFO DESKTOP_QML Welcome message when starting the setup assistant.
-		text: qsTr("Welcome to the AusweisApp2. Please take a few moments to setup the environment to your needs. Every decision you make can later be changed in the settings menu.")
+		mainIconSource: "qrc:///images/status_info.svg"
+		//: INFO DESKTOP Welcome message when starting the setup assistant.
+		questionText: qsTr("Welcome to the AusweisApp2. Please take a few moments to set up the environment to your needs. Every decision you make can later be changed in the settings menu.")
+		style: DecisionView.ButtonStyle.AgreeButton
+		agreeText: ""
+		agreeButton.iconSource: "qrc:///images/desktop/material_arrow_forward.svg"
 
-		onNextView: d.activeView = SetupAssistantView.SubViews.HistorySetting
+		onAgree: d.activeView = SetupAssistantView.SubViews.HistorySetting
 	}
 
 	DecisionView {
@@ -73,14 +77,14 @@ SectionPage {
 
 		Accessible.name: qsTr("History setup step")
 
-		mainIconSource: "qrc:///images/history.svg"
-		//: INFO DESKTOP_QML Question if the authentication history shall be stored.
+		mainIconSource: "qrc:///images/material_history.svg"
+		//: INFO DESKTOP Question if the authentication history shall be stored.
 		questionText: qsTr("Do you want to save a history of performed authentications on your device?")
-		//: INFO DESKTOP_QML Information text which data is stored in the history record.
+		//: INFO DESKTOP Information text which data is stored in the history record.
 		questionSubText: qsTr("The history is only saved locally. You can use it to see on what date you transmitted which data to which party. After enabling the history you can view and delete the entries anytime.")
 
 		titleBarAction: TitleBarAction {
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			text: qsTr("History Setting")
 			rootEnabled: d.allowNavigation
 			showSettings: false
@@ -89,13 +93,38 @@ SectionPage {
 
 		onAgree: {
 			SettingsModel.historyEnabled = true
-			d.activeView = SetupAssistantView.SubViews.CardReader
+			d.activeView = SetupAssistantView.SubViews.CardReaderInfo
 		}
 
 		onDisagree: {
 			SettingsModel.historyEnabled = false
-			d.activeView = SetupAssistantView.SubViews.CardReader
+			d.activeView = SetupAssistantView.SubViews.CardReaderInfo
 		}
+	}
+
+	DecisionView {
+		visible: d.activeView === SetupAssistantView.SubViews.CardReaderInfo
+
+		Accessible.name: qsTr("Card reader setup information step")
+
+		tintEnabled: false
+		mainIconSource: "qrc:///images/reader/default_reader.png"
+		//: INFO DESKTOP Question if the the user wants to setup any card readers now.
+		questionText: qsTr("Do you want to set up a card reader <u>now</u>?")
+		//: INFO DESKTOP Information text why a card reader is required to use the online
+		questionSubText: qsTr("In order to use the online identification feature on the computer, you need to set up a suitable smartphone or card reader before the first authentication process.")
+
+		titleBarAction: TitleBarAction {
+			//: LABEL DESKTOP
+			text: qsTr("Card Readers")
+			rootEnabled: d.allowNavigation
+			showSettings: false
+			helpTopic: "setupAssistant"
+		}
+
+		onAgree: d.activeView = SetupAssistantView.SubViews.CardReader
+
+		onDisagree: d.activeView = SetupAssistantView.SubViews.TransportPin
 	}
 
 	TabbedReaderView {
@@ -107,7 +136,7 @@ SectionPage {
 
 		rootEnabled: d.allowNavigation
 
-		onCloseView: d.activeView = SetupAssistantView.SubViews.HistorySetting
+		onCloseView: d.activeView = SetupAssistantView.SubViews.CardReaderInfo
 
 		paneAnchors.bottom: forwardButton.top
 
@@ -149,7 +178,7 @@ SectionPage {
 		Accessible.name: qsTr("Setup assistant done")
 
 		resultType: ResultView.Type.IsSuccess
-		//: INFO DESKTOP_QML Success message after completing the setup assistant.
+		//: INFO DESKTOP Success message after completing the setup assistant.
 		text: qsTr("You have completed the setup of the AusweisApp2 successfully.")
 		onNextView: baseItem.nextView(pName)
 	}

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -9,8 +9,6 @@ import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
-import Governikus.Type.LogModel 1.0
-import Governikus.Type.AuthModel 1.0
 
 
 SectionPage {
@@ -28,14 +26,19 @@ SectionPage {
 	property alias text: resultText.text
 	property alias buttonText: buttonContinue.text
 	property alias button: buttonContinue
-	property alias showMailButton: buttonSendMail.visible
+	property alias contentButton: buttonContent
 	property string errorCode
 	property alias errorDescription: textErrorDescription.text
 	property bool errorDetailsShown: false
 	readonly property bool hasErrorDetails: errorCode !== "" || errorDescription !== ""
 	property int resultType: ResultView.Type.IsSuccess
 	property alias customContent: customContentContainer.data
+	property alias hintText: hintItem.text
+	property alias hintButtonText: hintItem.buttonText
+
 	signal clicked
+	signal hintClicked
+	signal contentButtonClicked
 
 	onVisibleChanged: errorDetailsShown = false
 
@@ -143,16 +146,14 @@ SectionPage {
 				}
 
 				GButton {
-					id: buttonSendMail
+					id: buttonContent
 
-					visible: false
+					visible: buttonContent.text !== ""
 					anchors.horizontalCenter: parent.horizontalCenter
 
-					icon.source: "qrc:///images/material_mail.svg"
 					tintIcon: true
-					//: LABEL ANDROID IOS
-					text: qsTr("Send log")
-					onClicked: LogModel.mailLog(qsTr("support@ausweisapp.de"), AuthModel.getEmailHeader(), AuthModel.getEmailBody())
+
+					onClicked: baseItem.contentButtonClicked()
 				}
 			}
 
@@ -162,6 +163,18 @@ SectionPage {
 				Layout.fillWidth: true
 				Layout.fillHeight: true
 				Layout.minimumHeight: childrenRect.height
+			}
+
+			Hint {
+				id: hintItem
+
+				visible: text !== ""
+
+				Layout.fillWidth: true
+				Layout.maximumWidth: Style.dimens.max_text_width
+				Layout.alignment: Qt.AlignCenter
+
+				onClicked: baseItem.hintClicked()
 			}
 
 			GButton {

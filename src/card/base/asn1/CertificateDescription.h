@@ -1,7 +1,7 @@
 /*!
  * \brief Implementation of ASN.1 type CertificateDescription with OpenSSL
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

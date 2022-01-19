@@ -1,9 +1,9 @@
 FROM ubuntu:swarm
-MAINTAINER Governikus KG <ausweisapp2@governikus.com>
+MAINTAINER Governikus KG <support@ausweisapp.de>
 
-ARG ANDROID_CMDLINE_TOOLS=6609375
-ARG ANDROID_NDK_VERSION=21.3.6528147
-ARG CMAKE=3.17.3
+ARG ANDROID_CMDLINE_TOOLS=7583922
+ARG ANDROID_NDK_VERSION=21.4.7075529
+ARG CMAKE=3.22.1
 ENV NAME=Android LABELS="Android" PACKAGES_DIR=/home/governikus/packages
 
 ENV ANDROID_SDK_ROOT /opt/android-sdk
@@ -13,8 +13,7 @@ ENV ANDROID_NDK_ROOT $ANDROID_SDK_ROOT/ndk/$ANDROID_NDK_VERSION
 ENV ANDROID_NDK $ANDROID_NDK_ROOT
 
 RUN apt-get update && \
-    apt-get -y install g++ make ccache ninja-build perl unzip gradle maven patch openjdk-8-jdk-headless && \
-    ln -s /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/java-8-openjdk && \
+    apt-get -y install g++ make ccache ninja-build perl unzip gradle maven patch openjdk-11-jdk-headless && \
     rm -rf /var/lib/apt/lists/*
 
 # CMake 3.16 is required for NDK r19+
@@ -23,11 +22,11 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE/cmake-$CMAKE
 
 RUN mkdir -p /tmp/dl && cd /tmp/dl && wget -O sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_CMDLINE_TOOLS}_latest.zip && \
     unzip sdk.zip && \
-    yes | /tmp/dl/tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "cmdline-tools;2.1" "build-tools;29.0.3" "platform-tools" "platforms;android-29" "ndk;${ANDROID_NDK_VERSION}" && \
+    yes | /tmp/dl/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "cmdline-tools;5.0" "build-tools;30.0.3" "platforms;android-30" "ndk;${ANDROID_NDK_VERSION}" && \
     rm -rf /tmp/dl
 
 USER governikus
-RUN mkdir -p /home/governikus/.ccache && mkdir -p /home/governikus/workspace && mkdir -p /home/governikus/packages
+RUN mkdir -p /home/governikus/.ccache && mkdir -p /home/governikus/workspace && mkdir -p /home/governikus/packages && mkdir -p /home/governikus/.android
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD /swarm.sh

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -39,7 +39,7 @@ Item {
 
 			Layout.fillWidth: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			label: qsTr("Provider name")
 			text: historyModelItem ? historyModelItem.subject : ""
 		}
@@ -50,7 +50,7 @@ Item {
 			visible: text !== ""
 			Layout.fillWidth: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			label: qsTr("Purpose")
 			text: historyModelItem ? historyModelItem.purpose : ""
 		}
@@ -60,7 +60,7 @@ Item {
 
 			Layout.fillWidth: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			label: qsTr("Date")
 			text:{
 				if (!historyModelItem) {
@@ -77,7 +77,7 @@ Item {
 			visible: text !== ""
 			Layout.fillWidth: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			label: qsTr("Write access (update)")
 			text: historyModelItem ? historyModelItem.writtenData : ""
 		}
@@ -87,7 +87,7 @@ Item {
 
 			Layout.fillWidth: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			label: qsTr("Read access")
 			text: historyModelItem ? historyModelItem.requestedData : ""
 		}
@@ -97,7 +97,7 @@ Item {
 
 			Layout.fillWidth: true
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			label: qsTr("Terms of usage")
 			text: historyModelItem ? historyModelItem.termsOfUsage : ""
 		}

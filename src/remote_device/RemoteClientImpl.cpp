@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteClientImpl.h"
@@ -236,8 +236,8 @@ void RemoteClientImpl::establishConnection(const QSharedPointer<RemoteDeviceList
 	qCDebug(remote_device) << "Establishing connection to remote device.";
 	const auto& localCopy = mRemoteConnector;
 	QMetaObject::invokeMethod(localCopy.data(), [localCopy, pEntry, pPsk] {
-				localCopy->onConnectRequest(pEntry->getRemoteDeviceDescriptor(), pPsk);
-			}, Qt::QueuedConnection);
+			localCopy->onConnectRequest(pEntry->getRemoteDeviceDescriptor(), pPsk);
+		}, Qt::QueuedConnection);
 }
 
 

@@ -1,0 +1,74 @@
+From e944eadd6c7222321655041a8394735789751d30 Mon Sep 17 00:00:00 2001
+From: Mike Achtelik <mike.achtelik@gmail.com>
+Date: Thu, 24 Jun 2021 13:48:38 +0200
+Subject: Android: Fix unnecessary clipboard data access
+
+Android 12 introduced a notification which is shown to the user each
+time the app accesses the clipboard via getPrimaryClip.
+Currently this notification is triggered, even if we just want to check,
+if some clipboard data exists.
+So lets not get the actual data and instead use getPrimaryClipDescription
+to check for the existence of the correct mime type in the clipboard.
+
+Pick-to: 6.2 6.1 5.15 5.12
+Change-Id: I4800f5545ab46b7f6cade0ce9d78c04b50ae96cf
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit 5a7f4c1f4964a4bf6595002478fbcd474cedd8a6)
+---
+ .../org/qtproject/qt5/android/QtNative.java   | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtNative.java y/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtNative.java
+index 563fc7bce6..70c7092cc7 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtNative.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtNative.java
+@@ -64,6 +64,7 @@ import android.os.Looper;
+ import android.content.ClipboardManager;
+ import android.content.ClipboardManager.OnPrimaryClipChangedListener;
+ import android.content.ClipData;
++import android.content.ClipDescription;
+ import android.os.ParcelFileDescriptor;
+ import android.util.Log;
+ import android.view.ContextMenu;
+@@ -974,10 +975,8 @@ public class QtNative
+     {
+         try {
+             if (m_clipboardManager != null && m_clipboardManager.hasPrimaryClip()) {
+-                ClipData primaryClip = m_clipboardManager.getPrimaryClip();
+-                for (int i = 0; i < primaryClip.getItemCount(); ++i)
+-                    if (primaryClip.getItemAt(i).getText() != null)
+-                        return true;
++                ClipDescription primaryClipDescription = m_clipboardManager.getPrimaryClipDescription();
++                return primaryClipDescription.hasMimeType("text/*");
+             }
+         } catch (Exception e) {
+             Log.e(QtTAG, "Failed to get clipboard data", e);
+@@ -1048,10 +1047,8 @@ public class QtNative
+     {
+         try {
+             if (m_clipboardManager != null && m_clipboardManager.hasPrimaryClip()) {
+-                ClipData primaryClip = m_clipboardManager.getPrimaryClip();
+-                for (int i = 0; i < primaryClip.getItemCount(); ++i)
+-                    if (primaryClip.getItemAt(i).getHtmlText() != null)
+-                        return true;
++                ClipDescription primaryClipDescription = m_clipboardManager.getPrimaryClipDescription();
++                return primaryClipDescription.hasMimeType("text/html");
+             }
+         } catch (Exception e) {
+             Log.e(QtTAG, "Failed to get clipboard data", e);
+@@ -1087,10 +1084,8 @@ public class QtNative
+     {
+         try {
+             if (m_clipboardManager != null && m_clipboardManager.hasPrimaryClip()) {
+-                ClipData primaryClip = m_clipboardManager.getPrimaryClip();
+-                for (int i = 0; i < primaryClip.getItemCount(); ++i)
+-                    if (primaryClip.getItemAt(i).getUri() != null)
+-                        return true;
++                ClipDescription primaryClipDescription = m_clipboardManager.getPrimaryClipDescription();
++                return primaryClipDescription.hasMimeType("text/uri-list");
+             }
+         } catch (Exception e) {
+             Log.e(QtTAG, "Failed to get clipboard data", e);
+-- 
+2.33.0
+

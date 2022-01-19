@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ActivationController.h"
@@ -29,8 +29,8 @@ ActivationController::ActivationController()
 			else
 			{
 				QObject::connect(pluginInstance, &QObject::destroyed, pluginInstance, [plugin] {
-							qCDebug(activation) << "Destroy ActivationHandler:" << plugin.metaData();
-						});
+						qCDebug(activation) << "Destroy ActivationHandler:" << plugin.metaData();
+					});
 				mInstances << pluginInstance;
 			}
 		}

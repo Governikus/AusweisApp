@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UpdatableFile.h"
@@ -76,9 +76,9 @@ class test_UpdatableFile
 
 			QStringList paths;
 			QVERIFY(updatableFile.forEachLookupPath([&](const QString& pPath) -> bool {
-						paths += pPath;
-						return true;
-					}));
+					paths += pPath;
+					return true;
+				}));
 			QCOMPARE(paths, QStringList({updatableFile.getSectionCachePath() + mSep + filenameInCache}));
 
 			removeFileFromCache(filenameInCache, updatableFile);
@@ -111,9 +111,9 @@ class test_UpdatableFile
 
 			QStringList paths;
 			QVERIFY(!updatableFile.forEachLookupPath([&](const QString& pPath) -> bool {
-						paths += pPath;
-						return false;
-					}));
+					paths += pPath;
+					return false;
+				}));
 			QCOMPARE(paths, QStringList({updatableFile.getSectionCachePath() + mSep + filenameInCache, expectedPath}));
 
 			removeFileFromCache(filenameInCache, updatableFile);

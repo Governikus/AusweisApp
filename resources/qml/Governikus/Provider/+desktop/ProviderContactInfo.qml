@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -34,7 +34,7 @@ Item {
 		GText {
 			Layout.bottomMargin: Constants.groupbox_spacing
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			text: qsTr("Contact")
 			textStyle: Style.text.title_inverse
 
@@ -62,11 +62,11 @@ Item {
 					Layout.fillWidth: true
 
 					imageSource: Qt.resolvedUrl(model.iconSource)
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					itemText: (!!model.text ? model.text : qsTr("Unknown"))
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					accessibleText: (!!model.accessibleText ? model.accessibleText : qsTr("Unknown"))
-					label: model.label
+					label: qsTranslate("ProviderModelItem", model.label)
 					link: model.link
 				}
 			}

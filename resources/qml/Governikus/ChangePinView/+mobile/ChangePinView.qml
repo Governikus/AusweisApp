@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -13,6 +13,7 @@ import Governikus.ResultView 1.0
 import Governikus.View 1.0
 import Governikus.Workflow 1.0
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.PinResetInformationModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.NumberModel 1.0
 
@@ -49,7 +50,7 @@ SectionPage {
 		width: baseItem.width
 		onNoPinAvailable: {
 			navBar.lockedAndHidden = true
-			firePush(noPinAvailableView)
+			firePush(pinUnknownView)
 		}
 		onMoreInformationRequested: firePush(passwordInfoView)
 	}
@@ -64,7 +65,7 @@ SectionPage {
 	}
 
 	ResultView {
-		id: noPinAvailableView
+		id: pinUnknownView
 
 		navigationAction: NavigationAction {
 			state: "cancel"
@@ -76,11 +77,15 @@ SectionPage {
 
 		visible: false
 
-		title: qsTr("No PIN available")
+		//: LABEL ANDROID IOS
+		title: qsTr("No PIN known")
 		resultType: ResultView.Type.IsInfo
 		buttonText: ""
-		//: LABEL ANDROID IOS
-		text: qsTr("You cannot find your PIN letter? You have set a PIN when picking up the ID card or later that you cannot recall now?\n\nIf this is the case please turn to the competent authority and set a new PIN there.")
+		text: PinResetInformationModel.pinUnknownText + "\n\n" + PinResetInformationModel.pinUnknownHint
+		contentButton.text: PinResetInformationModel.pinResetActionText
+		contentButton.icon.source: "qrc:///images/material_open_in_new.svg"
+
+		onContentButtonClicked: Qt.openUrlExternally(PinResetInformationModel.pinResetUrl)
 	}
 
 	PasswordInfoView {
@@ -89,6 +94,7 @@ SectionPage {
 		visible: false
 
 		navigationAction: NavigationAction { state: "back"; onClicked: firePop() }
+		changePinInfo: true
 	}
 
 	ResultView {
@@ -112,6 +118,9 @@ SectionPage {
 		title: baseItem.title
 		resultType: ChangePinModel.error ? ResultView.Type.IsError : ResultView.Type.IsSuccess
 		text: ChangePinModel.resultString
+		hintText: ChangePinModel.statusHintText
+		hintButtonText: ChangePinModel.statusHintActionText
+		onHintClicked: ChangePinModel.invokeStatusHintAction()
 		onClicked: {
 			ChangePinModel.continueWorkflow()
 			firePopAll()
@@ -154,20 +163,17 @@ SectionPage {
 				 //: INFO ANDROID IOS Loading screen during PIN change process, data communcation is currently ongoing. Message is usually not visible since the password handling with basic reader is handled by EnterPasswordView.
 			   : ChangePinModel.isBasicReader ? qsTr("Please do not move the ID card.")
 			   : !!NumberModel.inputError ? NumberModel.inputError
-				 //: INFO ANDROID IOS The card communcation was aborted, the online identification functionality is deactivated and needs to be actived by the authorities.
-			   : NumberModel.pinDeactivated ? qsTr("The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.")
 			   : changePinController.workflowState === ChangePinController.WorkflowStates.Update
 				 || changePinController.workflowState === ChangePinController.WorkflowStates.Pin
 				 //: INFO ANDROID IOS Either an comfort card reader or smartphone-as-card-reader is used, the user needs to react to request on that device.
 				 || changePinController.workflowState === ChangePinController.WorkflowStates.NewPin ? qsTr("Please observe the display of your card reader.")
 				 //: INFO ANDROID IOS The wrong PIN was entered twice, the next attempt requires additional verifcation via CAN.
-			   : changePinController.workflowState === ChangePinController.WorkflowStates.Can ? qsTr("A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.")
+			   : changePinController.workflowState === ChangePinController.WorkflowStates.Can ? qsTr("A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.")
 				 //: INFO ANDROID IOS The PIN (including the CAN) was entered wrongfully three times, the PUK is required to unlock the ID card.
 			   : changePinController.workflowState === ChangePinController.WorkflowStates.Puk ? qsTr("A wrong PIN has been entered three times on your ID card. Your PIN is now blocked. To unblock your PIN you have to enter the PUK.")
 				 //: INFO ANDROID IOS Generic progress message during PIN change process.
 			   : qsTr("Please do not move the ID card."))
 		subTextColor: !ChangePinModel.isBasicReader && (NumberModel.inputError
-														|| NumberModel.pinDeactivated
 														|| changePinController.workflowState === ChangePinController.WorkflowStates.Can
 														|| changePinController.workflowState === ChangePinController.WorkflowStates.Puk) ? Constants.red : Style.color.secondary_text
 	}

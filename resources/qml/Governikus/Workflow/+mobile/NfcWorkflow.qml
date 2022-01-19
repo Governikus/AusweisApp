@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -76,8 +76,6 @@ Item {
 		subTitleText: (!visible ? "" :
 					  //: INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a different smartphone is suggested.
 					  ApplicationModel.extendedLengthApdusUnsupported ? qsTr("Your device does not meet the technical requirements (Extended Length not supported). However you can use a separate smartphone as card reader to utilize the online identification function.") :
-					  //: INFO ANDROID IOS The online authentication feature is disabled and needs to be activated by the authorities.
-					  NumberModel.pinDeactivated ? qsTr("The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.") :
 					  Constants.is_layout_ios ?
 					  //: INFO IOS The ID card may be inserted, the authentication process may be started.
 					  qsTr("Please place your ID card on the top of the device's back side.") :

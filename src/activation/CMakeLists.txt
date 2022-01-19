@@ -9,6 +9,6 @@ add_subdirectory(base)
 add_subdirectory(webservice)
 
 if(TARGET ${Qt}::Gui)
-	add_subdirectory(customscheme)
+	add_subdirectory(custom_scheme)
 	add_subdirectory(intent)
 endif()

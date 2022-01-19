@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerEnterCan.h"
@@ -18,10 +18,10 @@ MsgHandlerEnterCan::MsgHandlerEnterCan(const QJsonObject& pObj, MsgContext& pCon
 	: MsgHandlerEnterCan(pContext)
 {
 	parseValue(pObj, pContext, [this, &pContext](const QString& pNumber)
-			{
-				auto ctx = pContext.getContext();
-				ctx->setCan(pNumber);
-				ctx->setStateApproved();
-				setVoid();
-			}, 6);
+		{
+			auto ctx = pContext.getContext();
+			ctx->setCan(pNumber);
+			ctx->setStateApproved();
+			setVoid();
+		}, 6);
 }

@@ -18,7 +18,7 @@ AusweisApp2
 [--show]
 [--no-proxy]
 [--ui { Qml|WebSocket }]
-[-p \fI\,PORT\/\fR]
+[--port \fI\,PORT\/\fR]
 
 .SH DESCRIPTION
 AusweisApp2 allows you to authenticate yourself against websites via your German
@@ -26,7 +26,7 @@ ID card and residence permits.
 
 You will need:
 .br
-* an ID card that is enabled for online authentication
+* an ID card that is enabled for online identification
 .br
 * A compatible NFC device (most NFC readers should work, NFC-enabled phones can
 * also be used)
@@ -85,6 +85,7 @@ Disable system proxy.
 Use given UI plugin. "Qml" will start the program with a visible UI, "WebSocket"
 will let it start in the background as an SDK. This is only useful when integrating
 AusweisApp2 into other programs. Default is "Qml,Websocket".
+This option allows multiple values.
 
 .TP
 .B --port \fI\,PORT\/\fR

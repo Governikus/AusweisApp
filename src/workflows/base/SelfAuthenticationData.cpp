@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfAuthenticationData.h"
@@ -62,7 +62,7 @@ SelfAuthenticationData::SelfData::SelfData(const QByteArray& pData)
 
 bool SelfAuthenticationData::SelfData::parse(const QByteArray& pData)
 {
-	QJsonParseError jsonError;
+	QJsonParseError jsonError {};
 	const auto& json = QJsonDocument::fromJson(pData, &jsonError);
 	if (jsonError.error != QJsonParseError::NoError)
 	{
@@ -201,8 +201,22 @@ SelfAuthenticationData::OrderedSelfData SelfAuthenticationData::SelfData::getOrd
 	}
 
 	const auto& formatDate = [](const QString& pIn){
-				QDateTime dateTime = QDateTime::fromString(pIn, QStringLiteral("yyyy-MM-dd+hh:mm"));
-				return LanguageLoader::getInstance().getUsedLocale().toString(dateTime, tr("dd.MM.yyyy"));
+				static const QVector<QPair<QString, QLatin1String> > formattingPattern({
+							qMakePair(QStringLiteral("yyyy-MM-dd+hh:mm"), QLatin1String(QT_TR_NOOP("dd.MM.yyyy"))),
+							qMakePair(QStringLiteral("yyyy-MM"), QLatin1String(QT_TR_NOOP("xx.MM.yyyy"))),
+							qMakePair(QStringLiteral("yyyy"), QLatin1String(QT_TR_NOOP("xx.xx.yyyy"))),
+						});
+
+				for (const auto& entry : formattingPattern)
+				{
+					const QDateTime dateTime = QDateTime::fromString(pIn, entry.first);
+					if (dateTime.isValid())
+					{
+						return LanguageLoader::getInstance().getUsedLocale().toString(dateTime, tr(entry.second.data()));
+					}
+				}
+
+				return QString();
 			};
 
 	const auto& add = [&](const QString& pKey, const QString& pValue){
@@ -302,6 +316,12 @@ SelfAuthenticationData::OrderedSelfData SelfAuthenticationData::SelfData::getOrd
 	{
 		//: LABEL ALL_PLATFORMS
 		add(tr("Residence permit I"), getValue(SelfAuthData::ResidencePermitI));
+	}
+
+	if (!getValue(SelfAuthData::DateOfExpiry).isNull())
+	{
+		//: LABEL ALL_PLATFORMS
+		add(tr("Date of expiry"), formatDate(getValue(SelfAuthData::DateOfExpiry)));
 	}
 
 	return orderedSelfData;

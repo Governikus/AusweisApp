@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -26,7 +26,7 @@ SectionPage
 	Keys.onPressed: keyPressed(event.key)
 
 	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Logs")
 		helpTopic: "applicationLog"
 	}
@@ -38,7 +38,7 @@ SectionPage
 		anchors.margins: Constants.pane_padding
 
 		sectionsModel: LogModel.logFiles
-		onCurrentIndexChanged: LogModel.setLogfile(currentIndex)
+		onCurrentIndexChanged: LogModel.setLogFile(currentIndex)
 
 		contentDelegate: logSectionDelegate
 		contentPadding: 0
@@ -62,13 +62,13 @@ SectionPage
 					Layout.fillWidth: true
 
 					icon.source: "qrc:///images/desktop/material_save.svg"
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					text: qsTr("Save log")
 					enabled: tabbedPane.sectionsModel.length > 0
 					tintIcon: true
 					onClicked: {
-						let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogfileDate())
-						appWindow.openSaveFileDialog(LogModel.saveCurrentLogfile, filenameSuggestion, qsTr("Logfiles"), "log")
+						let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogFileDate())
+						appWindow.openSaveFileDialog(LogModel.saveCurrentLogFile, filenameSuggestion, qsTr("Logfiles"), "log")
 					}
 				}
 
@@ -78,7 +78,7 @@ SectionPage
 					Layout.fillWidth: true
 
 					icon.source: "qrc:///images/material_delete.svg"
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					text: qsTr("Delete log")
 					enableButton: tabbedPane.currentIndex > 0
 					disabledTooltipText: qsTr("The current log will be automatically deleted at exit.")
@@ -96,7 +96,7 @@ SectionPage
 					Layout.fillWidth: true
 
 					icon.source: "qrc:///images/trash_icon_all.svg"
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					text: qsTr("Delete old logs")
 					enableButton: tabbedPane.sectionsModel.length > 1
 					tintIcon: true
@@ -176,16 +176,16 @@ SectionPage
 		width: ApplicationModel.scaleFactor * 600
 
 		title: (deleteAll ?
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				qsTr("Delete old logs") :
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				qsTr("Delete selected log")
 			   )
-		//: INFO DESKTOP_QML All logfiles are about to be removed, user confirmation required.
+		//: INFO DESKTOP All logfiles are about to be removed, user confirmation required.
 		text: (deleteAll ? qsTr("All old logs will be deleted.")
-						 //: INFO DESKTOP_QML The current logfile is about to be removed, user confirmation required.
+						 //: INFO DESKTOP The current logfile is about to be removed, user confirmation required.
 						 : qsTr("The log will be deleted.")
 			   )
-		onConfirmed: deleteAll ? LogModel.removeOtherLogfiles() : LogModel.removeCurrentLogfile()
+		onConfirmed: deleteAll ? LogModel.removeOtherLogFiles() : LogModel.removeCurrentLogFile()
 	}
 }

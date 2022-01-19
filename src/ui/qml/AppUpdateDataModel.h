@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -65,8 +65,8 @@ class AppUpdateDataModel
 		const QUrl& getNotesUrl() const;
 		const QString& getNotes() const;
 		Q_INVOKABLE void skipUpdate() const;
-		Q_INVOKABLE void download();
-		Q_INVOKABLE void abortDownload();
+		Q_INVOKABLE bool download();
+		Q_INVOKABLE bool abortDownload();
 
 	Q_SIGNALS:
 		void fireAppUpdateDataChanged();

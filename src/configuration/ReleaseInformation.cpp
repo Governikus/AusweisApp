@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReleaseInformation.h"
@@ -35,7 +35,7 @@ ReleaseInformation::ReleaseInformation(const VersionNumber& pVersion, bool pCons
 
 QSharedPointer<UpdatableFile> ReleaseInformation::getFile(const QString& pFile)
 {
-	const auto locale = LanguageLoader::getLocalCode();
+	const auto locale = LanguageLoader::getLocaleCode();
 	return Env::getSingleton<FileProvider>()->getFile(QStringLiteral("releasenotes/%1").arg(locale), pFile);
 }
 

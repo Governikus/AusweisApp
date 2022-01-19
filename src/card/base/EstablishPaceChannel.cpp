@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EstablishPaceChannel.h"
@@ -25,7 +25,7 @@ namespace governikus
  * so we define it.
  */
 ASN1_ITEM_TEMPLATE(NUMERICSTRING) =
-			ASN1_EX_TEMPLATE_TYPE(ASN1_TFLG_IMPTAG, 0x12, NUMERICSTRING, ASN1_OCTET_STRING)
+			ASN1_EX_TEMPLATE_TYPE(ASN1_TFLG_IMPTAG | ASN1_TFLG_OPTIONAL, 0x12, NUMERICSTRING, ASN1_OCTET_STRING)
 ASN1_ITEM_TEMPLATE_END(NUMERICSTRING)
 
 ASN1_SEQUENCE(ESTABLISHPACECHANNELINPUT) = {
@@ -49,7 +49,14 @@ EstablishPaceChannel::EstablishPaceChannel(PacePasswordId pPasswordId, const QBy
 	: mPasswordId(pPasswordId)
 	, mChat(pChat)
 	, mCertificateDescription(pCertificateDescription)
+	, mPassword()
 {
+}
+
+
+void EstablishPaceChannel::setPassword(const QByteArray& pPassword)
+{
+	mPassword = pPassword;
 }
 
 
@@ -217,7 +224,8 @@ QByteArray EstablishPaceChannel::createInputData() const
 	inputData += static_cast<char>(mChat.size());
 	inputData += mChat;
 
-	inputData += '\0'; // length of PIN
+	inputData += static_cast<char>(mPassword.size());
+	inputData += mPassword;
 
 	if (mCertificateDescription.size() > 0xFFFF)
 	{
@@ -261,6 +269,13 @@ QByteArray EstablishPaceChannel::createCommandDataCcid() const
 	auto channelInput = newObject<ESTABLISHPACECHANNELINPUT>();
 
 	ASN1_INTEGER_set(channelInput->mPasswordID, static_cast<long>(mPasswordId));
+
+	if (!mPassword.isNull())
+	{
+		channelInput->mTransmittedPassword = ASN1_OCTET_STRING_new();
+		Asn1OctetStringUtil::setValue(mPassword, channelInput->mTransmittedPassword);
+	}
+
 	if (!mChat.isNull())
 	{
 		channelInput->mCHAT = ASN1_OCTET_STRING_new();

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NetworkManager.h"
@@ -40,7 +40,7 @@ NetworkManager::~NetworkManager()
 }
 
 
-int NetworkManager::getOpenConnectionCount()
+int NetworkManager::getOpenConnectionCount() const
 {
 	return mOpenConnectionCount;
 }
@@ -83,6 +83,7 @@ QNetworkReply* NetworkManager::paos(QNetworkRequest& pRequest,
 
 
 QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest,
+		const QList<QSslCertificate>& pCaCerts,
 		const QByteArray& pSslSession,
 		int pTimeoutInMilliSeconds)
 {
@@ -94,6 +95,7 @@ QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest,
 	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
 	auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig().getConfiguration();
 	cfg.setSessionTicket(pSslSession);
+	cfg.setCaCertificates(pCaCerts);
 	pRequest.setSslConfiguration(cfg);
 
 	QNetworkReply* response = mNetAccessManager.get(pRequest);
@@ -104,6 +106,7 @@ QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest,
 
 QNetworkReply* NetworkManager::post(QNetworkRequest& pRequest,
 		const QByteArray& pData,
+		const QList<QSslCertificate>& pCaCerts,
 		int pTimeoutInMilliSeconds)
 {
 	if (mApplicationExitInProgress)
@@ -115,6 +118,7 @@ QNetworkReply* NetworkManager::post(QNetworkRequest& pRequest,
 	pRequest.setHeader(QNetworkRequest::ContentLengthHeader, QString::number(pData.size()));
 
 	auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig(SecureStorage::TlsSuite::DEFAULT).getConfiguration();
+	cfg.setCaCertificates(pCaCerts);
 	pRequest.setSslConfiguration(cfg);
 
 	QNetworkReply* response = mNetAccessManager.post(pRequest, pData);
@@ -248,8 +252,8 @@ void NetworkManager::trackConnection(QNetworkReply* pResponse, const int pTimeou
 		++mOpenConnectionCount;
 
 		connect(pResponse, &QObject::destroyed, this, [this] {
-					--mOpenConnectionCount;
-				});
+				--mOpenConnectionCount;
+			});
 
 		NetworkReplyTimeout::setTimeout(pResponse, pTimeoutInMilliSeconds);
 	}
@@ -261,9 +265,9 @@ QByteArray NetworkManager::getStatusMessage(int pStatus)
 	switch (pStatus)
 	{
 	#define XX(num, name, string) case num:\
-		return QByteArrayLiteral(#string);
+			return QByteArrayLiteral(#string);
 
-		HTTP_STATUS_MAP(XX)
+	HTTP_STATUS_MAP(XX)
 	#undef XX
 	}
 

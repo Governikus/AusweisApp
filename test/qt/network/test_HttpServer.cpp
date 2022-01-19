@@ -1,13 +1,15 @@
 /*!
  * \brief Unit tests for \ref HttpResponse
  *
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpServer.h"
 
 #include "Env.h"
 #include "LogHandler.h"
+
+#include "TestFileHelper.h"
 
 #include <QMetaType>
 #include <QNetworkAccessManager>
@@ -67,11 +69,18 @@ class test_HttpServer
 
 		void cannotStart()
 		{
+			HttpServer::cPort = 80;
+
 			#ifdef Q_OS_WIN
 			QSKIP("Windows does not block privileged ports");
+			#elif defined(Q_OS_LINUX)
+			const auto portStart = TestFileHelper::getUnprivilegedPortStart();
+			QVERIFY(portStart != -1);
+			if (portStart <= HttpServer::cPort)
+			{
+				QSKIP("Cannot check privileged port");
+			}
 			#endif
-
-			HttpServer::cPort = 80;
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			HttpServer server;

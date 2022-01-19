@@ -84,7 +84,7 @@ if(UNCRUSTIFY)
 	string(REPLACE "uncrustify " "" UNCRUSTIFY_VERSION ${UNCRUSTIFY_VERSION})
 	string(REPLACE "Uncrustify-" "" UNCRUSTIFY_VERSION ${UNCRUSTIFY_VERSION})
 
-	set(UNCRUSTIFY_NEEDED_VERSION "0.71.0")
+	set(UNCRUSTIFY_NEEDED_VERSION "0.74.0")
 	if("${UNCRUSTIFY_VERSION}" STRLESS "${UNCRUSTIFY_NEEDED_VERSION}")
 		message(WARNING "Uncrustify seems to be too old. Use at least ${UNCRUSTIFY_NEEDED_VERSION}... you are using: ${UNCRUSTIFY_VERSION}")
 	else()
@@ -308,6 +308,8 @@ if(INKSCAPE)
 		COMMAND ${INKSCAPE} img_RemoteReader_mit_ausweis.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_RemoteReader_mit_ausweis.png
 		COMMAND ${INKSCAPE} img_PersoSim.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_PersoSim.png
 		COMMAND ${INKSCAPE} img_PersoSim_mit_ausweis.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_PersoSim_mit_ausweis.png
+		COMMAND ${INKSCAPE} img_Simulator.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_Simulator.png
+		COMMAND ${INKSCAPE} img_Simulator_mit_ausweis.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_Simulator_mit_ausweis.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/reader/src)
 endif()
 
@@ -479,6 +481,8 @@ if(PNGQUANT)
 		COMMAND ${PNGQUANT_CMD} img_RemoteReader_mit_ausweis.png -- img_RemoteReader_mit_ausweis.png
 		COMMAND ${PNGQUANT_CMD} img_PersoSim.png -- img_PersoSim.png
 		COMMAND ${PNGQUANT_CMD} img_PersoSim_mit_ausweis.png -- img_PersoSim_mit_ausweis.png
+		COMMAND ${PNGQUANT_CMD} img_Simulator.png -- img_Simulator.png
+		COMMAND ${PNGQUANT_CMD} img_Simulator_mit_ausweis.png -- img_Simulator_mit_ausweis.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/updatable-files/reader)
 endif()
 

@@ -2,7 +2,7 @@
  * \brief PlugIn to control different kinds of reader managers that will be used in \ref ReaderManager.
  * If you implement a class of this PlugIn you need to register it in \ref ReaderManager, otherwise it won't be used.
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

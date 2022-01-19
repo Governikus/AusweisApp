@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/SignatureChecker.h"
@@ -72,8 +72,8 @@ bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>&
 
 	EC_POINT* publicPoint = EC_POINT_new(EC_KEY_get0_group(signingKey.data()));
 	const auto guard = qScopeGuard([publicPoint] {
-				EC_POINT_free(publicPoint);
-			});
+			EC_POINT_free(publicPoint);
+		});
 
 	const EC_GROUP* ecGroup = EC_KEY_get0_group(signingKey.data());
 	if (!EC_POINT_oct2point(ecGroup, publicPoint, uncompPublicPointData, uncompPublicPointLen, nullptr))

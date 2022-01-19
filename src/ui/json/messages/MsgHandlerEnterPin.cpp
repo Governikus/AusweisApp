@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerEnterPin.h"
@@ -19,10 +19,10 @@ MsgHandlerEnterPin::MsgHandlerEnterPin(const QJsonObject& pObj, MsgContext& pCon
 {
 	const ushort minPinLength = pContext.getContext<const ChangePinContext>() ? 5 : 6;
 	parseValue(pObj, pContext, [this, &pContext](const QString& pNumber)
-			{
-				auto ctx = pContext.getContext();
-				ctx->setPin(pNumber);
-				ctx->setStateApproved();
-				setVoid();
-			}, {minPinLength, 6});
+		{
+			auto ctx = pContext.getContext();
+			ctx->setPin(pNumber);
+			ctx->setStateApproved();
+			setVoid();
+		}, {minPinLength, 6});
 }

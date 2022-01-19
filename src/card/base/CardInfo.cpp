@@ -1,7 +1,7 @@
 /*!
  * \brief CardInfo holds smart card information, such as the type and some contained data structure (currently only the EF.CardAccess).
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardInfo.h"
@@ -144,6 +144,8 @@ bool CardInfoFactory::create(const QSharedPointer<CardConnectionWorker>& pCardCo
 	if (pCardConnectionWorker->updateRetryCounter() != CardReturnCode::OK)
 	{
 		qCWarning(card) << "Update of the retry counter failed";
+		pReaderInfo.setCardInfo(CardInfo(CardType::UNKNOWN));
+		return false;
 	}
 
 	return true;
@@ -166,51 +168,36 @@ bool CardInfoFactory::selectApplication(const QSharedPointer<CardConnectionWorke
 }
 
 
-CardType CardInfoFactory::detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
+bool CardInfoFactory::detectEid(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const FileRef& pRef)
 {
-	// 0. Select the master file
+	// 1. Select the application id
+	selectApplication(pCardConnectionWorker, pRef);
+
+	// 2. Select the master file
 	CommandApdu command = SelectBuilder(FileRef::masterFile()).build();
 	ResponseApduResult result = pCardConnectionWorker->transmit(command);
-
-	switch (result.mResponseApdu.getReturnCode())
+	if (result.mResponseApdu.getReturnCode() != StatusCode::SUCCESS)
 	{
-		case StatusCode::SUCCESS:
-			break;
-
-		case StatusCode::NO_CURRENT_DIRECTORY_SELECTED:
-			qCWarning(card) << "Cannot select MF:" << StatusCode::NO_CURRENT_DIRECTORY_SELECTED;
-			selectApplication(pCardConnectionWorker, FileRef::appPersosim());
-			break;
-
-		default:
-			qCWarning(card) << "Cannot select MF:" << result.mResponseApdu.getReturnCode();
-			return CardType::UNKNOWN;
+		qCWarning(card) << "Cannot select MF:" << result.mResponseApdu.getReturnCode();
+		return false;
 	}
 
-	// 1. CL=00, INS=A4=SELECT, P1= 02, P2=0C, Lc=02, Data=2F00 (FI of EF.DIR), Le=absent
+	// 3. CL=00, INS=A4=SELECT, P1= 02, P2=0C, Lc=02, Data=2F00 (FI of EF.DIR), Le=absent
 	command = SelectBuilder(FileRef::efDir()).build();
 	result = pCardConnectionWorker->transmit(command);
-	switch (result.mResponseApdu.getReturnCode())
+	if (result.mResponseApdu.getReturnCode() != StatusCode::SUCCESS)
 	{
-		case StatusCode::SUCCESS:
-			break;
-
-		case StatusCode::FILE_NOT_FOUND:
-			qCWarning(card) << "Cannot select EF.DIR:" << StatusCode::FILE_NOT_FOUND;
-			return selectApplication(pCardConnectionWorker, FileRef::appPassport()) ? CardType::PASSPORT : CardType::UNKNOWN;
-
-		default:
-			qCWarning(card) << "Cannot select EF.DIR:" << result.mResponseApdu.getReturnCode();
-			return CardType::UNKNOWN;
+		qCWarning(card) << "Cannot select EF.DIR:" << result.mResponseApdu.getReturnCode();
+		return false;
 	}
 
-	// 2. CL=00, INS=B0=Read Binary, P1=00, P2=00 (no offset), Lc=00, Le=5A
+	// 4. CL=00, INS=B0=Read Binary, P1=00, P2=00 (no offset), Lc=00, Le=5A
 	command = CommandApdu(QByteArray::fromHex("00B000005A"));
 	result = pCardConnectionWorker->transmit(command);
 	if (result.mResponseApdu.getReturnCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "Cannot read EF.DIR:" << result.mResponseApdu.getReturnCode();
-		return CardType::UNKNOWN;
+		return false;
 	}
 
 	// matching value from CIF
@@ -220,10 +207,29 @@ CardType CardInfoFactory::detectCard(const QSharedPointer<CardConnectionWorker>&
 	{
 		qCWarning(card) << "expected EF.DIR(00,5A): " << matchingValue.toHex();
 		qCWarning(card) << "actual   EF.DIR(00,5A): " << result.mResponseApdu.getData().left(90).toHex();
-		return CardType::UNKNOWN;
+		return false;
 	}
 
-	return CardType::EID_CARD;
+	return true;
+}
+
+
+CardType CardInfoFactory::detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
+{
+	for (const auto& appId : {FileRef::appEId(), FileRef::appPersosim()})
+	{
+		if (detectEid(pCardConnectionWorker, appId))
+		{
+			return CardType::EID_CARD;
+		}
+	}
+
+	if (selectApplication(pCardConnectionWorker, FileRef::appPassport()))
+	{
+		return CardType::PASSPORT;
+	}
+
+	return CardType::UNKNOWN;
 }
 
 

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
 */
 
 import QtQml 2.12
@@ -26,16 +26,16 @@ SectionPage {
 
 		width: ApplicationModel.scaleFactor * 600
 
-		//: INFO DESKTOP_QML Header of the confirmation dialog to clear the entire authentication history.
+		//: INFO DESKTOP Header of the confirmation dialog to clear the entire authentication history.
 		title: qsTr("Delete history?")
-		//: INFO DESKTOP_QML Content of the confirmation dialog to clear the entire authentication history.
+		//: INFO DESKTOP Content of the confirmation dialog to clear the entire authentication history.
 		text: qsTr("All history entries will be deleted.")
 
 		onConfirmed: {
 			var timePeriod = removalPeriod.period
 			var removedItemCount = SettingsModel.removeHistory(timePeriod)
 			tabbedPane.currentIndex = tabbedPane.sectionCount > 0 ? 0 : -1
-			//: INFO DESKTOP_QML Feedback how many history entries were removed.
+			//: INFO DESKTOP Feedback how many history entries were removed.
 			ApplicationModel.showFeedback(qsTr("Deleted %1 entries from the history.").arg(removedItemCount))
 		}
 
@@ -47,7 +47,7 @@ SectionPage {
 	}
 
 	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("History")
 		helpTopic: "history"
 		customSubAction: SearchBar {
@@ -59,7 +59,7 @@ SectionPage {
 
 			onDisplayTextChanged: HistoryModel.searchFilter.setFilterString(displayText)
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			placeholderText: qsTr("Search in history")
 		}
 	}
@@ -107,7 +107,7 @@ SectionPage {
 					Layout.fillWidth: true
 
 					icon.source: "qrc:///images/material_delete.svg"
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					text: qsTr("Clear history")
 					tintIcon: true
 					onClicked: deleteHistoryConfirmationPopup.open()
@@ -119,7 +119,7 @@ SectionPage {
 					Layout.fillWidth: true
 
 					icon.source: "qrc:///images/desktop/material_save.svg"
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					text: qsTr("Save as PDF...")
 					tintIcon: true
 					onClicked: {
@@ -139,9 +139,9 @@ SectionPage {
 		activeFocusOnTab: true
 
 		text: HistoryModel.rowCount() === 0
-			   //: INFO DESKTOP_QML No authentication history, placeholder text.
+			   //: INFO DESKTOP No authentication history, placeholder text.
 			   ? qsTr("Currently there are no history entries.")
-			   //: INFO DESKTOP_QML No authentication history entries match the search, placeholder text.
+			   //: INFO DESKTOP No authentication history entries match the search, placeholder text.
 			   : qsTr("No history entries match your search term.")
 		textStyle: Style.text.header_inverse
 	}

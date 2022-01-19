@@ -16,6 +16,8 @@
         <file>images/material_clear.svg</file>
         <file>images/material_check.svg</file>
         <file>images/material_refresh.svg</file>
+        <file>images/material_history.svg</file>
+        <file>images/material_alert.svg</file>
         <file>images/checkbox_indicator.svg</file>
         <file>images/npa.svg</file>
         <file>images/id_card.png</file>
@@ -31,7 +33,6 @@
         <file>images/provider.svg</file>
         <file>images/identify.svg</file>
         <file>images/info.svg</file>
-        <file>images/history.svg</file>
         <file>images/provider/information.svg</file>
         <file>images/provider/purpose.svg</file>
         <file>images/provider/general.svg</file>

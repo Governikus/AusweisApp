@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref AppUpdater
  *
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppUpdater.h"
@@ -272,7 +272,7 @@ class test_AppUpdatr
 
 			// invalidate downloaded package
 			QFile expectedFile(expectedDest);
-			expectedFile.open(QIODevice::Append);
+			QVERIFY(expectedFile.open(QIODevice::Append));
 			expectedFile.write("break");
 			expectedFile.close();
 

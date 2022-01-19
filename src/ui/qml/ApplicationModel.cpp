@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -7,6 +7,7 @@
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
 #include "context/SelfAuthContext.h"
+#include "ProviderConfiguration.h"
 
 #include "AppSettings.h"
 #include "BuildHelper.h"
@@ -99,7 +100,7 @@ void ApplicationModel::resetContext(const QSharedPointer<WorkflowContext>& pCont
 
 QString ApplicationModel::getStoreUrl() const
 {
-	QString languageCode = LanguageLoader::getLocalCode();
+	QString languageCode = LanguageLoader::getLocaleCode();
 	languageCode.replace(QLatin1String("en"), QLatin1String("us"));
 
 #if defined(Q_OS_MACOS)
@@ -301,28 +302,28 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 	// Wait for toast activation synchronously so that the app can not be deactivated
 	// in the meantime and all used Java objects are still alive when accessed.
 	QtAndroid::runOnAndroidThreadSync([pMessage](){
-				QAndroidJniEnvironment env;
+			QAndroidJniEnvironment env;
 
-				const QAndroidJniObject& jMessage = QAndroidJniObject::fromString(pMessage);
-				const QAndroidJniObject& toast = QAndroidJniObject::callStaticObjectMethod(
-						"android/widget/Toast",
-						"makeText",
-						"(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;",
-						QtAndroid::androidActivity().object(),
-						jMessage.object(),
-						jint(1));
-				toast.callMethod<void>("show");
+			const QAndroidJniObject& jMessage = QAndroidJniObject::fromString(pMessage);
+			const QAndroidJniObject& toast = QAndroidJniObject::callStaticObjectMethod(
+					"android/widget/Toast",
+					"makeText",
+					"(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;",
+					QtAndroid::androidActivity().object(),
+					jMessage.object(),
+					jint(1));
+			toast.callMethod<void>("show");
 
-				if (env->ExceptionCheck())
-				{
-					qCCritical(qml) << "Suppressing an unexpected exception.";
-					env->ExceptionDescribe();
-					env->ExceptionClear();
-					// The toast was probably not displayed (e.g. DeadObjectException). We halt on error
-					// since it is used to display information to the user as required by the TR.
-					Q_ASSERT(false);
-				}
-			});
+			if (env->ExceptionCheck())
+			{
+				qCCritical(qml) << "Suppressing an unexpected exception.";
+				env->ExceptionDescribe();
+				env->ExceptionClear();
+				// The toast was probably not displayed (e.g. DeadObjectException). We halt on error
+				// since it is used to display information to the user as required by the TR.
+				Q_ASSERT(false);
+			}
+		});
 #else
 	if (pReplaceExisting)
 	{
@@ -349,15 +350,15 @@ void ApplicationModel::keepScreenOn(bool pActive)
 {
 #if defined(Q_OS_ANDROID)
 	QtAndroid::runOnAndroidThread([pActive](){
-				QtAndroid::androidActivity().callMethod<void>("keepScreenOn", "(Z)V", pActive);
-				QAndroidJniEnvironment env;
-				if (env->ExceptionCheck())
-				{
-					qCCritical(qml) << "Exception calling java native function.";
-					env->ExceptionDescribe();
-					env->ExceptionClear();
-				}
-			});
+			QtAndroid::androidActivity().callMethod<void>("keepScreenOn", "(Z)V", pActive);
+			QAndroidJniEnvironment env;
+			if (env->ExceptionCheck())
+			{
+				qCCritical(qml) << "Exception calling java native function.";
+				env->ExceptionDescribe();
+				env->ExceptionClear();
+			}
+		});
 
 #else
 	qCWarning(qml) << "NOT IMPLEMENTED:" << pActive;

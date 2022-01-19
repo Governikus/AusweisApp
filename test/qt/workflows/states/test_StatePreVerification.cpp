@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref StatePreVerification
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreVerification.h"
@@ -169,7 +169,7 @@ class test_StatePreVerification
 			}
 			settings.save();
 
-			const int expectedCvcaSize = 13;
+			const int expectedCvcaSize = 15;
 			QCOMPARE(mState->mTrustedCvcas.size(), expectedCvcaSize);
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2020, 05, 25));
 			auto& trustedCvcas = const_cast<QVector<QSharedPointer<const CVCertificate> >&>(mState->mTrustedCvcas);

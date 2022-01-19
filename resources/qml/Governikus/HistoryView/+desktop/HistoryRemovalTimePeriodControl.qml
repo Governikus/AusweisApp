@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
 */
 
 import QtQuick 2.12
@@ -28,7 +28,7 @@ RowLayout {
 
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Time period")
 		textStyle: Style.text.normal_inverse
 
@@ -45,15 +45,15 @@ RowLayout {
 		model: ListModel {
 			id: timePeriods
 
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			ListElement { modelData: qsTr("Past hour"); value: "PAST_HOUR" }
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			ListElement { modelData: qsTr("Past day"); value: "PAST_DAY" }
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			ListElement { modelData: qsTr("Past week"); value: "PAST_WEEK" }
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			ListElement { modelData: qsTr("Last four weeks"); value: "LAST_FOUR_WEEKS" }
-			//: LABEL DESKTOP_QML
+			//: LABEL DESKTOP
 			ListElement { modelData: qsTr("All history"); value: "ALL_HISTORY" }
 		}
 

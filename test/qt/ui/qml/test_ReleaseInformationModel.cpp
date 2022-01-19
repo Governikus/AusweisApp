@@ -1,12 +1,13 @@
 /*!
  * \brief Unit tests for \ref ReleaseInformationModel
  *
- * \copyright Copyright (c) 2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReleaseInformationModel.h"
 
 #include "MockReleaseInformation.h"
+#include "ReleaseInformationConfiguration.h"
 
 #include <QSharedPointer>
 #include <QtTest>
@@ -19,31 +20,41 @@ class test_ReleaseInformationModel
 	Q_OBJECT
 
 	QScopedPointer<ReleaseInformationModel> mModel;
+	QScopedPointer<QSignalSpy> mSpyCurrentInformationChanged;
+	QScopedPointer<QSignalSpy> mSpyUpdateInformationChanged;
+	QScopedPointer<ReleaseInformationConfiguration> mReleaseInfoConfig;
 
 	private Q_SLOTS:
-		void init()
+		void initTestCase()
 		{
 			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* ()>([] {
-						auto* mock = new MockReleaseInformation(VersionNumber("1.2.3."), false);
-						return mock;
-					}));
+					return new MockReleaseInformation(VersionNumber("1.2.3"), false);
+				}));
 			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* (const VersionNumber&, bool)>([&](const VersionNumber& pVersion, bool pConsiderOnlyThisVersion){
-						auto* mock = new MockReleaseInformation(pVersion, pConsiderOnlyThisVersion);
-						return mock;
-					}));
-			mModel.reset(new ReleaseInformationModel());
+					return new MockReleaseInformation(pVersion, pConsiderOnlyThisVersion);
+				}));
 		}
 
 
-		void test_requiresInitialUpdate()
+		void init()
 		{
-			QCOMPARE(mModel->requiresInitialUpdate(), true);
-			mModel->update();
-			QCOMPARE(mModel->requiresInitialUpdate(), false);
+			mReleaseInfoConfig.reset(new ReleaseInformationConfiguration());
+			Env::set(ReleaseInformationConfiguration::staticMetaObject, mReleaseInfoConfig.get());
+
+			mModel.reset(new ReleaseInformationModel());
+
+			mSpyCurrentInformationChanged.reset(new QSignalSpy(mModel.data(), &ReleaseInformationModel::fireCurrentInformationChanged));
+			mSpyUpdateInformationChanged.reset(new QSignalSpy(mModel.data(), &ReleaseInformationModel::fireUpdateInformationChanged));
 		}
 
 
-		void test_allowRetry()
+		void cleanupTestCase()
+		{
+			Env::clear();
+		}
+
+
+		void allowRetry()
 		{
 			QCOMPARE(mModel->allowRetry(), true);
 			mModel->update();
@@ -51,33 +62,54 @@ class test_ReleaseInformationModel
 		}
 
 
-		void test_currentModel()
+		void checkInitialState()
 		{
-			connect(mModel.data(), &ReleaseInformationModel::fireCurrentInformationChanged, this, [this](){
-						const auto textModel = mModel->getCurrentRelease();
-						QCOMPARE(textModel->rowCount(), 11);
-					});
-
-			QSignalSpy spyInformationChanged(mModel.data(), &ReleaseInformationModel::fireCurrentInformationChanged);
-			const auto textModel = mModel->getCurrentRelease();
-			QCOMPARE(textModel->rowCount(), 1);
-			mModel->update();
-			QVERIFY(spyInformationChanged.count() == 1);
+			QCOMPARE(mModel->allowRetry(), true);
+			QCOMPARE(mSpyCurrentInformationChanged->count(), 0);
+			QCOMPARE(mSpyUpdateInformationChanged->count(), 0);
+			QCOMPARE(mModel->getCurrentRelease()->rowCount(), 1);
+			QCOMPARE(mModel->getUpdateRelease()->rowCount(), 1);
 		}
 
 
-		void test_updateModel()
+		void ensureChangedSignalOnCurrentReleaseInfoChanged()
 		{
-			connect(mModel.data(), &ReleaseInformationModel::fireUpdateInformationChanged, this, [this](){
-						const auto textModel = mModel->getUpdateRelease();
-						QCOMPARE(textModel->rowCount(), 11);
-					});
+			QCOMPARE(mModel->getCurrentRelease()->rowCount(), 1);
 
-			QSignalSpy spyInformationChanged(mModel.data(), &ReleaseInformationModel::fireUpdateInformationChanged);
-			const auto textModel = mModel->getUpdateRelease();
-			QCOMPARE(textModel->rowCount(), 1);
-			mModel->setUpdateVersion(VersionNumber("1.2.4"));
-			QVERIFY(spyInformationChanged.count() == 1);
+			mModel->update();
+
+			QCOMPARE(mSpyCurrentInformationChanged->count(), 1);
+			QCOMPARE(mSpyUpdateInformationChanged->count(), 0);
+			QCOMPARE(mModel->getCurrentRelease()->rowCount(), 11);
+			QCOMPARE(mModel->getUpdateRelease()->rowCount(), 1);
+		}
+
+
+		void ensureSignalOnUpdateReleaseInfoChanged()
+		{
+			QCOMPARE(mModel->getUpdateRelease()->rowCount(), 1);
+
+			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.2.4"));
+
+			QCOMPARE(mSpyUpdateInformationChanged->count(), 1);
+			QCOMPARE(mModel->getUpdateRelease()->rowCount(), 11);
+		}
+
+
+		void ensureSignalOnTranslationChanged()
+		{
+			mModel->onTranslationChanged();
+
+			QCOMPARE(mSpyCurrentInformationChanged->count(), 1);
+
+			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.2.4"));
+
+			QCOMPARE(mSpyUpdateInformationChanged->count(), 1);
+
+			mModel->onTranslationChanged();
+
+			QCOMPARE(mSpyUpdateInformationChanged->count(), 2);
+			QCOMPARE(mSpyCurrentInformationChanged->count(), 2);
 		}
 
 

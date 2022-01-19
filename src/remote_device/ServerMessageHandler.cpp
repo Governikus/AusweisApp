@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ServerMessageHandler.h"
@@ -54,14 +54,14 @@ ServerMessageHandlerImpl::ServerMessageHandlerImpl(const QSharedPointer<DataChan
 	connect(mRemoteDispatcher.data(), &RemoteDispatcherServer::fireClosed, this, &ServerMessageHandlerImpl::onClosed);
 
 	connect(mRemoteDispatcher.data(), &RemoteDispatcherServer::fireContextEstablished, this, [this] {
-				const auto readerManager = Env::getSingleton<ReaderManager>();
-				connect(readerManager, &ReaderManager::fireReaderAdded, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
-				connect(readerManager, &ReaderManager::fireReaderRemoved, this, &ServerMessageHandlerImpl::onReaderRemoved, Qt::UniqueConnection);
-				connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
-				connect(readerManager, &ReaderManager::fireCardInserted, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
-				connect(readerManager, &ReaderManager::fireCardRemoved, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
-				connect(readerManager, &ReaderManager::fireCardRetryCounterChanged, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
-			});
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			connect(readerManager, &ReaderManager::fireReaderAdded, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
+			connect(readerManager, &ReaderManager::fireReaderRemoved, this, &ServerMessageHandlerImpl::onReaderRemoved, Qt::UniqueConnection);
+			connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
+			connect(readerManager, &ReaderManager::fireCardInserted, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
+			connect(readerManager, &ReaderManager::fireCardRemoved, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
+			connect(readerManager, &ReaderManager::fireCardRetryCounterChanged, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
+		});
 }
 
 
@@ -72,9 +72,16 @@ void ServerMessageHandlerImpl::handleIfdGetStatus(const QJsonObject& pJsonObject
 	if (!ifdGetStatus.getSlotName().isEmpty())
 	{
 		const auto& readerInfo = mReaderManager->getReaderInfo(ifdGetStatus.getSlotName());
+		if (!readerInfo.isConnected())
+		{
+			qCWarning(remote_device) << "Unknown reader" << ifdGetStatus.getSlotName();
+			const auto& response = QSharedPointer<IfdConnectResponse>::create(ifdGetStatus.getSlotName(), ECardApiResult::Minor::IFDL_UnknownSlot);
+			mRemoteDispatcher->send(response);
+			return;
+		}
+
 		const auto& ifdStatusMsg = QSharedPointer<IfdStatus>::create(readerInfo);
 		mRemoteDispatcher->send(ifdStatusMsg);
-
 		return;
 	}
 
@@ -115,8 +122,8 @@ void ServerMessageHandlerImpl::handleIfdConnect(const QJsonObject& pJsonObject)
 
 	const auto& connections = mCardConnections.values();
 	const auto& slotNames = map<QSharedPointer<CardConnection>, QString>([](const QSharedPointer<CardConnection>& c){
-				return c ? c->getReaderInfo().getName() : QString();
-			}, connections);
+			return c ? c->getReaderInfo().getName() : QString();
+		}, connections);
 	if (slotNames.contains(ifdConnect.getSlotName()))
 	{
 		qCWarning(remote_device) << "Card is already connected" << ifdConnect.getSlotName();
@@ -394,9 +401,9 @@ void ServerMessageHandlerImpl::onRemoteMessage(RemoteCardMessageType pMessageTyp
 			qCWarning(remote_device) << "Received an unexpected message of type:" << pMessageType;
 			const auto& localCopy = mRemoteDispatcher;
 			QMetaObject::invokeMethod(localCopy.data(), [localCopy] {
-						const QSharedPointer<const IfdError>& errorMessage = QSharedPointer<IfdError>::create(QString(), ECardApiResult::Minor::AL_Unkown_API_Function);
-						localCopy->send(errorMessage);
-					}, Qt::QueuedConnection);
+					const QSharedPointer<const IfdError>& errorMessage = QSharedPointer<IfdError>::create(QString(), ECardApiResult::Minor::AL_Unkown_API_Function);
+					localCopy->send(errorMessage);
+				}, Qt::QueuedConnection);
 			break;
 		}
 

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -94,7 +94,8 @@ SectionPage {
 
 						padding: Constants.component_spacing
 						//: LABEL ANDROID_PHONE IOS_PHONE
-						text: (!!provider.longDescription ? provider.longDescription : qsTr("Description not available"))
+						text: (!!provider.longDescription ? provider.longDescription : qsTr("The provider did not provide a description."))
+						textFormat: Text.RichText
 						horizontalAlignment: Text.AlignLeft
 					}
 

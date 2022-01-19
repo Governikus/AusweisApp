@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref Asn1BCDDateUtil
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -28,8 +28,8 @@ class test_Asn1BCDDateUtil
 			QDate date = QDate(2015, 2, 3);
 			ASN1_OCTET_STRING* strDate = ASN1_OCTET_STRING_new();
 			const auto guard = qScopeGuard([strDate] {
-						ASN1_STRING_free(strDate);
-					});
+					ASN1_STRING_free(strDate);
+				});
 			QByteArray array = Asn1BCDDateUtil::convertFromQDateToUnpackedBCD(date);
 			QCOMPARE(array.toHex(), QByteArray("010500020003"));
 
@@ -43,8 +43,8 @@ class test_Asn1BCDDateUtil
 		{
 			ASN1_OCTET_STRING* strDate = ASN1_OCTET_STRING_new();
 			const auto guard = qScopeGuard([strDate] {
-						ASN1_STRING_free(strDate);
-					});
+					ASN1_STRING_free(strDate);
+				});
 			Asn1OctetStringUtil::setValue(QByteArray("0000000"), strDate);
 
 			QDate date = Asn1BCDDateUtil::convertFromUnpackedBCDToQDate(strDate);

@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref CertificateDescriptionModel
  *
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CertificateDescriptionModel.h"
@@ -20,8 +20,10 @@ class test_CertificateDescriptionModel
 	: public QObject
 {
 	Q_OBJECT
-	CertificateDescriptionModel * mModel;
-	QSharedPointer<AuthContext> mContext;
+
+	private:
+		CertificateDescriptionModel* mModel = nullptr;
+		QSharedPointer<AuthContext> mContext;
 
 	private Q_SLOTS:
 		void init()
@@ -70,6 +72,19 @@ class test_CertificateDescriptionModel
 			QCOMPARE(mModel->data(validModel, CertificateDescriptionModel::UserRoles::LABEL), QString("Certificate issuer"));
 			QCOMPARE(mModel->data(validModel, CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("Governikus Test DVCA\nhttp://www.governikus.de"));
 			QCOMPARE(mModel->data(validModel, 0), QVariant());
+			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::LABEL), QString("Validity"));
+			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::TEXT), QString("5/21/20 - 6/20/20"));
+		}
+
+
+		void test_Validity()
+		{
+			mContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1_ordered_certificates.xml"));
+			mContext->initAccessRightManager(mContext->getDidAuthenticateEac1()->getCvCertificates().last());
+			mModel->resetContext(mContext);
+
+			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::LABEL), QString("Validity"));
+			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::TEXT), QString("5/21/20 - 6/20/20"));
 		}
 
 

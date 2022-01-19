@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppUpdateData.h"
@@ -39,7 +39,7 @@ AppUpdateData::AppUpdateData(const GlobalStatus& pParsingResult)
 AppUpdateData::AppUpdateData(const QByteArray& pData)
 	: AppUpdateData(GlobalStatus::Code::No_Error)
 {
-	QJsonParseError jsonError;
+	QJsonParseError jsonError {};
 
 	const auto& json = QJsonDocument::fromJson(pData, &jsonError);
 	if (jsonError.error != QJsonParseError::NoError)
@@ -210,13 +210,14 @@ void AppUpdateData::verifyChecksum()
 
 	qCDebug(appupdate) << "Verify checksum with algorithm:" << mChecksumAlgorithm;
 
-	QFile file(mUpdatePackagePath);
-	file.open(QFile::ReadOnly);
-	QCryptographicHash hasher(mChecksumAlgorithm);
-	hasher.addData(&file);
-	file.close();
+	if (QFile file(mUpdatePackagePath); file.open(QFile::ReadOnly))
+	{
+		QCryptographicHash hasher(mChecksumAlgorithm);
+		hasher.addData(&file);
+		file.close();
 
-	mChecksumValid = hasher.result().toHex() == mChecksum;
+		mChecksumValid = hasher.result().toHex() == mChecksum;
+	}
 }
 
 

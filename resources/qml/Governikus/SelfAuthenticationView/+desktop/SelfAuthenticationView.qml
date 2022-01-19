@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import Governikus.Global 1.0
@@ -14,12 +14,12 @@ import QtQuick 2.12
 SectionPage {
 
 	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Identify")
 		helpTopic: "selfauthentication"
 	}
 
-	//: LABEL DESKTOP_QML
+	//: LABEL DESKTOP
 	Accessible.name: qsTr("Self-Authentication.")
 	Accessible.description: qsTr("This is the self-authentication view of the AusweisApp2.")
 	Keys.onReturnPressed: startWorkflowButton.onClicked()
@@ -56,7 +56,7 @@ SectionPage {
 
 				textStyle: Style.text.header_inverse
 
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				text: qsTr("You can use your ID card anywhere you see this logo.")
 
 				FocusFrame {}
@@ -76,7 +76,7 @@ SectionPage {
 				activeFocusOnTab: true
 
 				textStyle: Style.text.normal
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				text: qsTr("Use the button \"See my personal data\" to start the self-authentication service of the manufacturer of the %1 to display the data stored in the chip of your ID card.")
 					.arg(Qt.application.name)
 
@@ -87,7 +87,7 @@ SectionPage {
 
 			GText {
 				readonly property string privacyStatementUrl: "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
-				//: LABEL DESKTOP_QML Text of the html link inside of a sentence
+				//: LABEL DESKTOP Text of the html link inside of a sentence
 				readonly property string privacyStatementDescription: qsTr("data privacy statement")
 				readonly property string privacyStatementLink: "<a href=\"%1\">%2</a>".arg(privacyStatementUrl).arg(privacyStatementDescription)
 
@@ -97,7 +97,7 @@ SectionPage {
 
 				textStyle: Style.text.normal
 				font.bold: true
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				text: qsTr("Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.")
 						.arg(privacyStatementLink)
 
@@ -114,7 +114,7 @@ SectionPage {
 				icon.source: "qrc:///images/identify.svg"
 				tintIcon: true
 				buttonColor: SettingsModel.useSelfauthenticationTestUri ? Constants.red : Style.color.button
-				//: LABEL DESKTOP_QML
+				//: LABEL DESKTOP
 				text: qsTr("See my personal data")
 				onClicked: SelfAuthModel.startWorkflow()
 			}

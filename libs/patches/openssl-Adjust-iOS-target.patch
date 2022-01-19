@@ -1,14 +1,14 @@
-From 0628b87d65feb0209303e91bf7529628c4dd80f4 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
-Date: Fri, 1 Feb 2019 13:27:04 +0100
-Subject: [PATCH] Adjust iOS target
+From 547c69c81af05bd010ef968217dd2bf5be2062ae Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Fri, 12 Feb 2021 13:15:00 +0100
+Subject: Adjust iOS target
 
 ---
  Configurations/15-ios.conf | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git x/Configurations/15-ios.conf y/Configurations/15-ios.conf
-index 1bb9f48d06..fb0ece9aff 100644
+index f404077fda..b6eaa562d1 100644
 --- x/Configurations/15-ios.conf
 +++ y/Configurations/15-ios.conf
 @@ -24,7 +24,7 @@ my %targets = (
@@ -20,6 +20,6 @@ index 1bb9f48d06..fb0ece9aff 100644
          bn_ops           => "SIXTY_FOUR_BIT_LONG RC4_CHAR",
          perlasm_scheme   => "ios64",
      },
---
-2.20.1
+-- 
+2.32.0
 

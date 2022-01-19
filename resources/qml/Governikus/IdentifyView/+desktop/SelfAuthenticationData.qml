@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -26,7 +26,7 @@ SectionPage
 	Keys.onEscapePressed: okButton.onClicked()
 
 	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML Title of the self authentication result data view
+		//: LABEL DESKTOP Title of the self authentication result data view
 		text: qsTr("Read self-authentication data")
 		rootEnabled: false
 		showHelp: false
@@ -59,7 +59,7 @@ SectionPage
 				activeFocusOnTab: true
 				Accessible.name: successText.text
 
-				//: INFO DESKTOP_QML Status message that the self authentication successfully completed.
+				//: INFO DESKTOP Status message that the self authentication successfully completed.
 				text: qsTr("Successfully read data")
 				textStyle: Style.text.header_inverse
 
@@ -79,7 +79,7 @@ SectionPage
 
 				activeFocusOnTab: true
 
-				//: LABEL DESKTOP_QML Title of the self authentication result data view
+				//: LABEL DESKTOP Title of the self authentication result data view
 				title: qsTr("Read data")
 
 				Grid {
@@ -113,7 +113,7 @@ SectionPage
 						id: saveDataToPdfButton
 
 						icon.source: "qrc:///images/desktop/material_save.svg"
-						//: LABEL DESKTOP_QML
+						//: LABEL DESKTOP
 						text: qsTr("Save as PDF...")
 						tintIcon: true
 						onClicked: {
@@ -126,7 +126,7 @@ SectionPage
 					GButton {
 						id: okButton
 
-						//: LABEL DESKTOP_QML
+						//: LABEL DESKTOP
 						text: qsTr("OK")
 						onClicked: baseItem.nextView(UiModule.DEFAULT)
 					}

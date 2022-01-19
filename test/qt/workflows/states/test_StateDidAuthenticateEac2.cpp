@@ -1,7 +1,7 @@
 /*!
  * \brief Unit test for \ref StateDidAuthenticateEac2
  *
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateDidAuthenticateEac2.h"

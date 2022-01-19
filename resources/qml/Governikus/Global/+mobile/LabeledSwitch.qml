@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -22,6 +22,14 @@ Rectangle {
 
 	color: mouseArea.pressed ? Style.color.background_item_pressed : Style.color.transparent
 
+	Accessible.role: Accessible.CheckBox
+	Accessible.checkable: true
+	Accessible.checked: checked
+	Accessible.name: title
+	Accessible.description: description
+	Accessible.onToggleAction: entrySwitch.toggle()
+	Accessible.onPressAction: if (Qt.platform.os === "ios") entrySwitch.toggle()
+
 	Item {
 		id: textContainer
 
@@ -38,6 +46,8 @@ Rectangle {
 			anchors.left: parent.left
 			anchors.right: parent.right
 
+			Accessible.ignored: true
+
 			textStyle: Style.text.normal_accent
 		}
 
@@ -48,6 +58,8 @@ Rectangle {
 			anchors.right: parent.right
 			anchors.top: titleText.bottom
 			anchors.topMargin: 2
+
+			Accessible.ignored: true
 
 			textStyle: Style.text.normal_secondary
 		}
@@ -67,6 +79,8 @@ Rectangle {
 		anchors.right: parent.right
 		anchors.verticalCenter: parent.verticalCenter
 		anchors.rightMargin: contentMarginRight
+
+		Accessible.ignored: true
 
 		text: titleText.text
 	}

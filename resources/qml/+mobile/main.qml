@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -99,6 +99,28 @@ ApplicationWindow {
 		target: plugin
 		enabled: contentArea.ready
 		onFireApplicationActivated: feedback.showIfNecessary()
+	}
+
+	Connections {
+		target: plugin
+		onFireShowRequest: {
+			switch (pModule) {
+				case UiModule.CURRENT:
+					break
+
+				case UiModule.UPDATEINFORMATION:
+					navBar.show(UiModule.DEFAULT)
+					break
+
+				case UiModule.SELF_AUTHENTICATION:
+					navBar.show(UiModule.IDENTIFY)
+					break
+
+				default:
+					navBar.show(pModule)
+					break;
+			}
+		}
 	}
 
 	ContentArea {

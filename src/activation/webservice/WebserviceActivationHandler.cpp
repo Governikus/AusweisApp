@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WebserviceActivationHandler.h"
@@ -15,11 +15,13 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <QLoggingCategory>
-#include <QUrlQuery>
+
 
 using namespace governikus;
 
+
 Q_DECLARE_LOGGING_CATEGORY(activation)
+
 
 WebserviceActivationHandler::WebserviceActivationHandler()
 	: ActivationHandler()
@@ -80,50 +82,37 @@ bool WebserviceActivationHandler::start()
 }
 
 
-QMap<QString, QString> WebserviceActivationHandler::getQueryParameter(const QUrl& pUrl)
-{
-	QMap<QString, QString> map;
-
-	const auto queryItems = QUrlQuery(pUrl).queryItems();
-	for (auto& item : queryItems)
-	{
-		map.insert(item.first.toLower(), item.second);
-	}
-
-	return map;
-}
-
-
 void WebserviceActivationHandler::onNewRequest(const QSharedPointer<HttpRequest>& pRequest)
 {
-	static const QString SHOW_UI = QStringLiteral("showui");
-	static const QString STATUS = QStringLiteral("status");
-	static const QString TCTOKEN_URL = QStringLiteral("tctokenurl");
-
 	const auto& url = pRequest->getUrl();
 	if (url.path() == QLatin1String("/eID-Client"))
 	{
-		const auto urlParameter = getQueryParameter(url);
+		const auto [type, value] = getRequest(url);
+		switch (type)
+		{
+			case ActivationType::SHOWUI:
+			{
+				qCDebug(activation) << "Request type: showui";
+				UiModule showModule = Enum<UiModule>::fromString(value.toUpper(), UiModule::DEFAULT);
+				handleShowUiRequest(showModule, pRequest);
+				return;
+			}
 
-		if (urlParameter.contains(SHOW_UI))
-		{
-			qCDebug(activation) << "Request type: showui";
-			UiModule module = Enum<UiModule>::fromString(urlParameter.value(SHOW_UI).toUpper(), UiModule::DEFAULT);
-			handleShowUiRequest(module, pRequest);
-			return;
-		}
-		else if (urlParameter.contains(STATUS))
-		{
-			qCDebug(activation) << "Request type: status";
-			StatusFormat statusFormat = Enum<StatusFormat>::fromString(urlParameter.value(STATUS).toUpper(), StatusFormat::PLAIN);
-			handleStatusRequest(statusFormat, pRequest);
-			return;
-		}
-		else if (urlParameter.contains(TCTOKEN_URL))
-		{
-			qCDebug(activation) << "Request type: authentication";
-			Q_EMIT fireAuthenticationRequest(QSharedPointer<WebserviceActivationContext>::create(pRequest));
-			return;
+			case ActivationType::STATUS:
+			{
+				qCDebug(activation) << "Request type: status";
+				StatusFormat statusFormat = Enum<StatusFormat>::fromString(value.toUpper(), StatusFormat::PLAIN);
+				handleStatusRequest(statusFormat, pRequest);
+				return;
+			}
+
+			case ActivationType::TCTOKENURL:
+				qCDebug(activation) << "Request type: authentication";
+				Q_EMIT fireAuthenticationRequest(QSharedPointer<WebserviceActivationContext>::create(pRequest));
+				return;
+
+			default:
+				qCWarning(activation) << "Unknown request type:" << url;
 		}
 	}
 	else if (url.path() == QLatin1String("/favicon.ico"))
@@ -152,7 +141,7 @@ void WebserviceActivationHandler::onNewRequest(const QSharedPointer<HttpRequest>
 	htmlTemplate.setContextParameter(QStringLiteral("ERROR_MESSAGE"), tr("Unknown request: %1").arg(url.toString()));
 	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_HEADER"), tr("Would you like to report this error?"));
-	htmlTemplate.setContextParameter(QStringLiteral("REPORT_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1/aa2/report").arg(LanguageLoader::getLocalCode()));
+	htmlTemplate.setContextParameter(QStringLiteral("REPORT_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1/aa2/report").arg(LanguageLoader::getLocaleCode()));
 	//: ERROR ALL_PLATFORMS The broweser sent an unknown or faulty request, part of an HTML error page.
 	htmlTemplate.setContextParameter(QStringLiteral("REPORT_BUTTON"), tr("Report now"));
 	QByteArray htmlPage = htmlTemplate.render().toUtf8();

@@ -1,0 +1,140 @@
+From 9fe4b3e22305fb1330523c45cff2bdeac1291fee Mon Sep 17 00:00:00 2001
+From: Mike Achtelik <mike.achtelik@gmail.com>
+Date: Wed, 4 Aug 2021 14:30:34 +0200
+Subject: Android: Treat ACTION_CANCEL as TouchCancelEvent
+
+Change 64d62c53c1e92a1cc07449a0ea3c71501592c1e7 started treating an
+ACTION_CANCEL as a TouchPointReleased. This leads to unintentional
+presses, if e.g. an edge swipe for the android back gesture starts on a
+MouseArea.
+
+When Android takes possession of the motion, an ACTION_CANCEL is
+delivered, which needs to be handled as such. It should not be treated
+as a normal up event that triggers a press. Otherwise, we get the
+above-mentioned issue, where an unintentional action is performed.
+So let's use QWindowSystemInterface::handleTouchCancelEvent to treat it
+as a canceled touch in Qt.
+
+Task-number: QTBUG-72110
+Pick-to: 6.2 5.15
+Change-Id: I68650a180130501568e5a1e9a7f20ea469461e97
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+Reviewed-by: Shawn Rutledge <shawn.rutledge@qt.io>
+(cherry picked from commit d6da61f3b9e7e57e85d1e16f2756a8e39e571f77)
+---
+ .../org/qtproject/qt5/android/QtNative.java   | 11 +++++-
+ .../platforms/android/androidjniinput.cpp     | 38 +++++++++++++++----
+ 2 files changed, 40 insertions(+), 9 deletions(-)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtNative.java y/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtNative.java
+index fd4b239f82..0544dcb251 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtNative.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt5/android/QtNative.java
+@@ -708,9 +708,11 @@ public class QtNative
+             }
+             return 1;
+         }
+-        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN && index == event.getActionIndex()) {
++        if (action == MotionEvent.ACTION_DOWN
++            || action == MotionEvent.ACTION_POINTER_DOWN && index == event.getActionIndex()) {
+             return 0;
+-        } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_POINTER_UP && index == event.getActionIndex()) {
++        } else if (action == MotionEvent.ACTION_UP
++            || action == MotionEvent.ACTION_POINTER_UP && index == event.getActionIndex()) {
+             return 3;
+         }
+         return 2;
+@@ -762,6 +764,10 @@ public class QtNative
+                     touchEnd(id, 2);
+                     break;
+
++                case MotionEvent.ACTION_CANCEL:
++                    touchCancel(id);
++                    break;
++
+                 default:
+                     touchEnd(id, 1);
+             }
+@@ -1312,6 +1318,7 @@ public class QtNative
+     public static native void touchBegin(int winId);
+     public static native void touchAdd(int winId, int pointerId, int action, boolean primary, int x, int y, float major, float minor, float rotation, float pressure);
+     public static native void touchEnd(int winId, int action);
++    public static native void touchCancel(int winId);
+     public static native void longPress(int winId, int x, int y);
+     // pointer methods
+
+diff --git x/qtbase/src/plugins/platforms/android/androidjniinput.cpp y/qtbase/src/plugins/platforms/android/androidjniinput.cpp
+index 1a8c8216d5..6bd5c87954 100644
+--- x/qtbase/src/plugins/platforms/android/androidjniinput.cpp
++++ y/qtbase/src/plugins/platforms/android/androidjniinput.cpp
+@@ -265,18 +265,14 @@ namespace QtAndroidInput
+         }
+     }
+
+-    static void touchEnd(JNIEnv */*env*/, jobject /*thiz*/, jint /*winId*/, jint /*action*/)
++    static QTouchDevice *getTouchDevice()
+     {
+-        if (m_touchPoints.isEmpty())
+-            return;
+-
+-        QMutexLocker lock(QtAndroid::platformInterfaceMutex());
+         QAndroidPlatformIntegration *platformIntegration = QtAndroid::androidPlatformIntegration();
+         if (!platformIntegration)
+-            return;
++            return nullptr;
+
+         QTouchDevice *touchDevice = platformIntegration->touchDevice();
+-        if (touchDevice == 0) {
++        if (!touchDevice) {
+             touchDevice = new QTouchDevice;
+             touchDevice->setType(QTouchDevice::TouchScreen);
+             touchDevice->setCapabilities(QTouchDevice::Position
+@@ -287,10 +283,37 @@ namespace QtAndroidInput
+             platformIntegration->setTouchDevice(touchDevice);
+         }
+
++        return touchDevice;
++    }
++
++    static void touchEnd(JNIEnv * /*env*/, jobject /*thiz*/, jint /*winId*/, jint /*action*/)
++    {
++        if (m_touchPoints.isEmpty())
++            return;
++
++        QMutexLocker lock(QtAndroid::platformInterfaceMutex());
++        QTouchDevice *touchDevice = getTouchDevice();
++        if (!touchDevice)
++            return;
++
+         QWindow *window = QtAndroid::topLevelWindowAt(m_touchPoints.at(0).area.center().toPoint());
+         QWindowSystemInterface::handleTouchEvent(window, touchDevice, m_touchPoints);
+     }
+
++    static void touchCancel(JNIEnv * /*env*/, jobject /*thiz*/, jint /*winId*/)
++    {
++        if (m_touchPoints.isEmpty())
++            return;
++
++        QMutexLocker lock(QtAndroid::platformInterfaceMutex());
++        QTouchDevice *touchDevice = getTouchDevice();
++        if (!touchDevice)
++            return;
++
++        QWindow *window = QtAndroid::topLevelWindowAt(m_touchPoints.at(0).area.center().toPoint());
++        QWindowSystemInterface::handleTouchCancelEvent(window, touchDevice);
++    }
++
+     static bool isTabletEventSupported(JNIEnv */*env*/, jobject /*thiz*/)
+     {
+ #if QT_CONFIG(tabletevent)
+@@ -843,6 +866,7 @@ namespace QtAndroidInput
+         {"touchBegin","(I)V",(void*)touchBegin},
+         {"touchAdd","(IIIZIIFFFF)V",(void*)touchAdd},
+         {"touchEnd","(II)V",(void*)touchEnd},
++        {"touchCancel", "(I)V", (void *)touchCancel},
+         {"mouseDown", "(III)V", (void *)mouseDown},
+         {"mouseUp", "(III)V", (void *)mouseUp},
+         {"mouseMove", "(III)V", (void *)mouseMove},
+-- 
+2.30.1 (Apple Git-130)
+

@@ -52,3 +52,4 @@ TabbedPaneDelegateOneLineText 1.0 TabbedPaneDelegateOneLineText.qml
 TitledSeparator 1.0 TitledSeparator.qml
 TintableIcon 1.0 TintableIcon.qml
 ToggleableOption 1.0 ToggleableOption.qml
+Hint 1.0 Hint.qml

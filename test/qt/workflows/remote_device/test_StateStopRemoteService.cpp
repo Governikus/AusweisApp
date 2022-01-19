@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateStopRemoteService.h"
@@ -26,8 +26,8 @@ class test_StateStopRemoteService
 		void initTestCase()
 		{
 			Env::setCreator<RemoteServer*>(std::function<RemoteServer* ()>([&] {
-						return new MockRemoteServer();
-					}));
+					return new MockRemoteServer();
+				}));
 		}
 
 

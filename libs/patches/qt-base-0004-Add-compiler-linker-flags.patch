@@ -1,0 +1,26 @@
+From 41f56cadcd01377f688aa250ca4f14ac52d4f2a1 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Thu, 29 Apr 2021 07:14:01 +0200
+Subject: Add compiler/linker flags
+
+Change-Id: I83bc9e7247f82025efd87734295c4e02a62fc24f
+---
+ mkspecs/common/g++-win32.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtbase/mkspecs/common/g++-win32.conf y/qtbase/mkspecs/common/g++-win32.conf
+index c3a1f3a373..59f3ba61dd 100644
+--- x/qtbase/mkspecs/common/g++-win32.conf
++++ y/qtbase/mkspecs/common/g++-win32.conf
+@@ -41,7 +41,7 @@ QMAKE_RUN_CXX           = $(CXX) -c $(CXXFLAGS) $(INCPATH) -o $obj $src
+ QMAKE_RUN_CXX_IMP       = $(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
+ 
+ QMAKE_LFLAGS_EXCEPTIONS_ON = -mthreads
+-QMAKE_LFLAGS_RELEASE    = -Wl,-s
++QMAKE_LFLAGS_RELEASE    = -Wl,-s,--dynamicbase,--nxcompat
+ QMAKE_LFLAGS_CONSOLE    = -Wl,-subsystem,console
+ QMAKE_LFLAGS_WINDOWS    = -Wl,-subsystem,windows
+ QMAKE_LFLAGS_DLL        = -shared
+-- 
+2.33.0
+

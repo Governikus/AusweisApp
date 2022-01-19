@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -30,7 +30,7 @@ ColumnLayout {
 		GText {
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML Information about the available, new version number.
+			//: LABEL DESKTOP Information about the available, new version number.
 			text: qsTr("New version:")
 			textStyle: Style.text.normal
 
@@ -54,7 +54,7 @@ ColumnLayout {
 		GText {
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML Date when the available update was released.
+			//: LABEL DESKTOP Date when the available update was released.
 			text: qsTr("Release date:")
 			textStyle: Style.text.normal
 
@@ -77,7 +77,7 @@ ColumnLayout {
 		GText {
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML Download size of the available update in megabyte.
+			//: LABEL DESKTOP Download size of the available update in megabyte.
 			text: qsTr("Download size:")
 			textStyle: Style.text.normal
 
@@ -102,7 +102,7 @@ ColumnLayout {
 
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML Plaintext link to the update download.
+			//: LABEL DESKTOP Plaintext link to the update download.
 			text: qsTr("Download link:")
 			textStyle: Style.text.normal
 
@@ -129,7 +129,7 @@ ColumnLayout {
 
 			activeFocusOnTab: true
 
-			//: LABEL DESKTOP_QML Link to download checksum to verify the downloaded update file.
+			//: LABEL DESKTOP Link to download checksum to verify the downloaded update file.
 			text: qsTr("Checksum link:")
 			textStyle: Style.text.normal
 

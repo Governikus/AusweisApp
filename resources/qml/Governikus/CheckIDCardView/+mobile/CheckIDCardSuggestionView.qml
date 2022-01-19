@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -11,6 +11,7 @@ import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.ResultView 1.0
+import Governikus.Type.PinResetInformationModel 1.0
 import Governikus.Type.CheckIDCardModel 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.UiModule 1.0
@@ -60,8 +61,14 @@ ResultView {
 	button.text: suggestionData.buttonTitle !== undefined ? suggestionData.buttonTitle : qsTr("Open website")
 	button.icon.source: suggestionData.buttonIcon !== undefined ? suggestionData.buttonIcon : "qrc:///images/material_open_in_new.svg"
 	button.tintIcon: true
+	hintText: suggestionData.hintText !== undefined ? suggestionData.hintText : ""
+	hintButtonText: suggestionData.hintButtonText !== undefined ? suggestionData.hintButtonText : ""
+	contentButton.text: suggestionData.contentButtonTitle !== undefined ? suggestionData.contentButtonTitle : ""
+	contentButton.icon.source: suggestionData.contentButtonIcon !== undefined ? suggestionData.contentButtonIcon : ""
 
 	onClicked: suggestionData.onButtonClicked !== undefined ? suggestionData.onButtonClicked() : Qt.openUrlExternally(suggestionData.suggestionUrl)
+	onHintClicked: suggestionData.onHintButtonClicked !== undefined ? suggestionData.onHintButtonClicked() : Qt.openUrlExternally(suggestionData.hintUrl)
+	onContentButtonClicked: suggestionData.onContentButtonClicked !== undefined ? suggestionData.onContentButtonClicked() : Qt.openUrlExternally(suggestionData.contentUrl)
 
 	function startIdentify() {
 		// We need to keep a reference to the navbar since after calling firePopAll() 'navBar' becomes undefined
@@ -144,10 +151,19 @@ ResultView {
 		//: LABEL ANDROID IOS
 		readonly property string title: qsTr("Online identification feature disabled")
 
-		//: LABEL ANDROID IOS
-		readonly property string text: qsTr("According to your request when picking up your ID card, the online identification function is not activated.<br><br>Please contact the relevant authorities to activate the online identification function.<br><br>For further information, please visit the ID card portal.")
+		readonly property string text: PinResetInformationModel.activateOnlineFunctionDescriptionAndHint
 
-		readonly property string suggestionUrl: "https://www.personalausweisportal.de"
+		//: LABEL ANDROID IOS
+		readonly property string buttonTitle: qsTr("OK")
+		readonly property string buttonIcon: ""
+
+		function onButtonClicked() {
+			navigationAction.clicked()
+		}
+
+		readonly property string contentButtonTitle: PinResetInformationModel.pinResetActionText
+		readonly property string contentButtonIcon: "qrc:///images/material_open_in_new.svg"
+		readonly property string contentUrl: PinResetInformationModel.pinResetUrl
 	}
 
 	QtObject {
@@ -157,7 +173,7 @@ ResultView {
 		readonly property string title: qsTr("PIN suspended")
 
 		//: LABEL ANDROID IOS
-		readonly property string text: qsTr("The PIN has been entered incorrectly twice in a row. Before the third attempt, the six-digit Card Access Number (CAN) must be entered. You can find it at the bottom right of the front of your ID card.<br><br>You may now try the function: \"See my personal data\". There you can also use the CAN to resume the PIN.")
+		readonly property string text: qsTr("The PIN has been entered incorrectly twice in a row. This is why you must first enter the six-digit Card Access Number (CAN) for the next identification process. You can find it at the bottom right of the front of your ID card.<br><br>You may now try the function: \"See my personal data\". There you can also use the CAN to unblock the PIN.")
 
 		//: LABEL ANDROID IOS
 		readonly property string buttonTitle: qsTr("Continue")
@@ -175,11 +191,15 @@ ResultView {
 		readonly property string title: qsTr("PIN blocked")
 
 		//: LABEL ANDROID IOS
-		readonly property string text: qsTr("The PIN has been entered incorrectly thrice. Before the next attempt, the ten-digit Personal Unblocking Key (PUK) must be entered. You can find it in the PIN letter you received after applying for your ID card.<br><br>You may now try the function: \"See my personal data\". There you can also use the PUK to unblock the PIN again.<br><br>Please note: The PUK can only be used ten times to unblock the PIN. After that, please contact the responsible authority to unblock your PIN again.")
+		readonly property string text: qsTr("The PIN has been entered incorrectly thrice. Therefore, you must first enter the ten-digit PUK during the next authentication process. You can find it in the PIN letter you received after applying for your ID card.<br><br>You may now try the function: \"See my personal data\". Have your PUK ready to unlock the PIN.")
 
 		//: LABEL ANDROID IOS
 		readonly property string buttonTitle: qsTr("Continue")
 		readonly property string buttonIcon: "qrc:///images/identify.svg"
+
+		readonly property string hintText: PinResetInformationModel.noPinAndNoPukHint
+		readonly property string hintButtonText: PinResetInformationModel.pinResetActionText
+		readonly property string hintUrl: PinResetInformationModel.pinResetUrl
 
 		function onButtonClicked() {
 			startIdentify()

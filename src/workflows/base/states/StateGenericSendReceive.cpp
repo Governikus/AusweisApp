@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGenericSendReceive.h"
@@ -200,7 +200,7 @@ GlobalStatus::Code StateGenericSendReceive::checkAndSaveCertificate(const QSslCe
 	Q_ASSERT(!c.isNull());
 
 	std::function<void(const QUrl&, const QSslCertificate&)> saveCertificateFunc = [&c]
-				(const QUrl& pUrl, const QSslCertificate& pCert)
+			(const QUrl& pUrl, const QSslCertificate& pCert)
 			{
 				c->addCertificateData(pUrl, pCert);
 			};

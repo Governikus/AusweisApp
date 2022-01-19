@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -22,7 +22,7 @@ Item {
 		}
 
 		ListElement {
-			image: "qrc:///images/history.svg"
+			image: "qrc:///images/material_history.svg"
 			desc: QT_TR_NOOP("History")
 			module: UiModule.HISTORY
 		}

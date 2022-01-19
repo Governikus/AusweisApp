@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateEstablishPaceChannelResponse.h"
@@ -60,8 +60,8 @@ class test_StateEstablishPaceChannelResponse
 		void initTestCase()
 		{
 			Env::setCreator<RemoteServer*>(std::function<RemoteServer* ()>([&] {
-						return new MockRemoteServer();
-					}));
+					return new MockRemoteServer();
+				}));
 		}
 
 

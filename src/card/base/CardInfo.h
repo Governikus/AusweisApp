@@ -1,7 +1,7 @@
 /*!
  * \brief Contains the CardInfo and the CardInfoFactory
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -88,6 +88,7 @@ class CardInfoFactory
 		 * Checks, if the smart card is a german eID card (i.e. a NPA or an EAT) or a passport.
 		 */
 		static CardType detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
+		static bool detectEid(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const FileRef& pRef);
 
 		/*!
 		 * Reads the EF.CardAccess

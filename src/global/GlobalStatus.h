@@ -1,7 +1,7 @@
 /*!
  * \brief A global mapping for errors
  *
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -98,6 +98,7 @@ class GlobalStatus
 			Card_Unexpected_Transmit_Status,
 			Card_Cancellation_By_User,
 			Card_Input_TimeOut,
+			Card_Pin_Deactivated,
 			Card_Invalid_Pin,
 			Card_Invalid_Can,
 			Card_Invalid_Puk,

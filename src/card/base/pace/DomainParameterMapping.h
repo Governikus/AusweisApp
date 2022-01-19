@@ -1,7 +1,7 @@
 /*!
  * \brief Mapping protocol for PACE domain parameters. For details see TR 03110.
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -19,7 +19,7 @@ class DomainParameterMapping
 		virtual ~DomainParameterMapping() = default;
 
 		/*!
-		 * \brief Generates the terminal's mapping data, that will  be send to the card.
+		 * \brief Generates the terminal's mapping data, that will be sent to the card.
 		 * \return the terminal's mapping data
 		 */
 		virtual QByteArray generateTerminalMappingData() = 0;

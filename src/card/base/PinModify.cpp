@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PinModify.h"
@@ -79,7 +79,7 @@ QByteArray PinModify::createCcid() const
 	abPINDataStructure += '\0';
 	abPINDataStructure += '\0';
 
-	// According to ISO-7816-4, 7.5.10 RESET RETRY COUNTER command
+	// According to ISO-7816-4, 11.6.10 RESET RETRY COUNTER command
 	const QByteArray abData = QByteArray::fromHex(QByteArrayLiteral("002C0203"));
 	char buffer[4];
 	qToLittleEndian<quint32>(static_cast<quint32>(abData.size()), buffer);

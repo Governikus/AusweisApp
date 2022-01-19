@@ -1,0 +1,49 @@
+{
+   "PersonalData":{
+      "DocumentType":"ID",
+      "IssuingState":"D",
+      "DateOfExpiry":"2029-11-30+01:00",
+      "GivenNames":"Hans-Günther",
+      "FamilyNames":"von Drebenbusch-Dalgoßen",
+      "ArtisticName":"Freiherr zu Möckern-Windensberg",
+      "AcademicTitle":"Dr.eh.Dr.",
+      "PlaceOfBirth":{
+         "FreetextPlace":"BREMERHAVEN"
+      },
+      "BirthName":"Weiß",
+      "PlaceOfResidence":{
+         "StructuredPlace":{
+            "Street":"WEG NR.12 8E",
+            "City":"HAMBURG",
+            "Country":"D",
+            "ZipCode":"22043"
+         }
+      },
+      "DateOfBirth":"1946-01-25+01:00"
+   },
+   "OperationsAllowedByUser":{
+      "DocumentType":"ALLOWED",
+      "IssuingState":"ALLOWED",
+      "DateOfExpiry":"ALLOWED",
+      "GivenNames":"ALLOWED",
+      "FamilyNames":"ALLOWED",
+      "ArtisticName":"ALLOWED",
+      "AcademicTitle":"ALLOWED",
+      "DateOfBirth":"ALLOWED",
+      "PlaceOfBirth":"ALLOWED",
+      "Nationality":"NOTONCHIP",
+      "BirthName":"ALLOWED",
+      "PlaceOfResidence":"ALLOWED",
+      "ResidencePermitI":"NOTONCHIP",
+      "RestrictedID":"PROHIBITED",
+      "AgeVerification":"PROHIBITED",
+      "PlaceVerification":"PROHIBITED"
+   },
+   "Result":{
+      "ResultMajor":"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok",
+      "ResultMessage":{
+         "Value":"",
+         "Lang":"en"
+      }
+   }
+}

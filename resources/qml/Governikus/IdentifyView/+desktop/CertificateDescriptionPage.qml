@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -19,7 +19,7 @@ SectionPage
 	Accessible.description: qsTr("This is the self-authentication data view of the AusweisApp2.")
 
 	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Provider Information")
 		rootEnabled: false
 		showHelp: false
@@ -33,7 +33,7 @@ SectionPage
 
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		title: qsTr("Provider Information")
 
 		Repeater {
@@ -58,7 +58,7 @@ SectionPage
 		anchors.bottom: pane.bottom
 		anchors.margins: Constants.pane_padding
 
-		//: LABEL DESKTOP_QML
+		//: LABEL DESKTOP
 		text: qsTr("Close")
 		onClicked: parent.exit()
 	}

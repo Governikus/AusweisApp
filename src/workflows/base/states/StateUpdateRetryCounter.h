@@ -2,13 +2,12 @@
  * \brief Controller for the step that updates the retry
  *        counter of a card.
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "AbstractState.h"
-#include "context/ChangePinContext.h"
 #include "GenericContextContainer.h"
 
 class test_StateUpdateRetryCounter;

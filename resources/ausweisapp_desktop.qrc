@@ -21,6 +21,8 @@
         <file>images/desktop/material_highlight.svg</file>
         <file>images/desktop/material_menu_book.svg</file>
         <file>images/desktop/material_open_in_browser.svg</file>
+        <file>images/desktop/material_a11y.svg</file>
+        <file>images/desktop/material_video.svg</file>
         <file>images/reader/default_more_reader.png</file>
         <file>images/reader/default_no_reader.png</file>
         <file>images/reader/default_reader.png</file>
@@ -52,12 +54,12 @@
         <file>updatable-files/reader/img_HID_Omnikey_Mobile_Reader_502X_CL_mit_ausweis.png</file>
         <file>updatable-files/reader/img_HID_Omnikey_Mobile_Reader_4121_CL.png</file>
         <file>updatable-files/reader/img_HID_Omnikey_Mobile_Reader_4121_CL_mit_ausweis.png</file>
-        <file>updatable-files/reader/img_Identive_Cloud_3700_F.png</file>
-        <file>updatable-files/reader/img_Identive_Cloud_3700_F_mit_ausweis.png</file>
+        <file>updatable-files/reader/img_Identive_XXXX_F.png</file>
+        <file>updatable-files/reader/img_Identive_XXXX_F_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Identive_Cloud_4700_F.png</file>
         <file>updatable-files/reader/img_Identive_Cloud_4700_F_mit_ausweis.png</file>
-        <file>updatable-files/reader/img_Identive_Cloud_4701_F.png</file>
-        <file>updatable-files/reader/img_Identive_Cloud_4701_F_mit_ausweis.png</file>
+        <file>updatable-files/reader/img_Identive_4701_F.png</file>
+        <file>updatable-files/reader/img_Identive_4701_F_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Identive_SCL011.png</file>
         <file>updatable-files/reader/img_Identive_SCL011_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Identive_SCL3711.png</file>
@@ -70,6 +72,8 @@
         <file>updatable-files/reader/img_KOBIL_ID_Token_mit_ausweis.png</file>
         <file>updatable-files/reader/img_PersoSim.png</file>
         <file>updatable-files/reader/img_PersoSim_mit_ausweis.png</file>
+        <file>updatable-files/reader/img_Simulator.png</file>
+        <file>updatable-files/reader/img_Simulator_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Reiner_SCT_cyberjack_RFID_basis.png</file>
         <file>updatable-files/reader/img_Reiner_SCT_cyberjack_RFID_basis_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Reiner_SCT_cyberjack_RFID_komfort.png</file>

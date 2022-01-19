@@ -3,7 +3,7 @@
  * to establish a connection to a test server with and without the proxy and providing the
  * results to the DiagnosisModel.
  *
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

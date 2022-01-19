@@ -1,0 +1,48 @@
+From 6ebc802b08cc44ec6c3915240a8e81a27bb9367d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?M=C3=A5rten=20Nordheim?= <marten.nordheim@qt.io>
+Date: Fri, 4 Dec 2020 12:01:03 +0100
+Subject: QSslSocket: Don't call 'transmit' in unencrypted mode
+
+At the same time I'll add a generic protection against being called in
+unprotected mode in the schannel backend (openssl already has it in a
+different form).
+
+Change-Id: I97c1be6239c27e306de0af7ad568fbcfde09da71
+Reviewed-by: Timur Pocheptsov <timur.pocheptsov@qt.io>
+(cherry picked from commit f8badeda72813ee4d32e7672c4a98373cb7b5d60)
+Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
+---
+ src/network/ssl/qsslsocket.cpp          | 2 +-
+ src/network/ssl/qsslsocket_schannel.cpp | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git x/qtbase/src/network/ssl/qsslsocket.cpp y/qtbase/src/network/ssl/qsslsocket.cpp
+index fbeb9de18b..27ce8e08d5 100644
+--- x/qtbase/src/network/ssl/qsslsocket.cpp
++++ y/qtbase/src/network/ssl/qsslsocket.cpp
+@@ -2709,7 +2709,7 @@ void QSslSocketPrivate::_q_errorSlot(QAbstractSocket::SocketError error)
+     qCDebug(lcSsl) << "\terrorString =" << q->errorString();
+ #endif
+     // this moves encrypted bytes from plain socket into our buffer
+-    if (plainSocket->bytesAvailable()) {
++    if (plainSocket->bytesAvailable() && mode != QSslSocket::UnencryptedMode) {
+         qint64 tmpReadBufferMaxSize = readBufferMaxSize;
+         readBufferMaxSize = 0; // reset temporarily so the plain sockets completely drained drained
+         transmit();
+diff --git x/qtbase/src/network/ssl/qsslsocket_schannel.cpp y/qtbase/src/network/ssl/qsslsocket_schannel.cpp
+index f91709690a..c956ce3c2b 100644
+--- x/qtbase/src/network/ssl/qsslsocket_schannel.cpp
++++ y/qtbase/src/network/ssl/qsslsocket_schannel.cpp
+@@ -1253,6 +1253,9 @@ void QSslSocketBackendPrivate::transmit()
+ {
+     Q_Q(QSslSocket);
+ 
++    if (mode == QSslSocket::UnencryptedMode)
++        return; // This function should not have been called
++
+     // Can happen if called through QSslSocket::abort->QSslSocket::close->QSslSocket::flush->here
+     if (plainSocket->state() == QAbstractSocket::SocketState::UnconnectedState)
+         return;
+-- 
+2.33.0
+

@@ -1,7 +1,7 @@
 /*!
  * \brief Utility template functions for encoding and decoding of ASN.1 types
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -63,12 +63,17 @@ int encodeAsn1Object(T*, unsigned char**)
 template<typename T>
 QByteArray encodeObject(T* pObject)
 {
+	if (!pObject)
+	{
+		return QByteArray();
+	}
+
 	ERR_clear_error();
 	unsigned char* encoded = nullptr;
 	const int length = encodeAsn1Object(pObject, &encoded);
 	const auto guard = qScopeGuard([encoded] {
-				OPENSSL_free(encoded);
-			});
+			OPENSSL_free(encoded);
+		});
 	if (length < 0)
 	{
 		qCWarning(card) << "Cannot encode ASN.1 object:" << getOpenSslError();

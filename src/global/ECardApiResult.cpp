@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ECardApiResult.h"
@@ -49,7 +49,7 @@ const QMap<ECardApiResult::Minor, QString> ECardApiResult::cMinorResults = {
 	{ECardApiResult::Minor::IFDL_UnknownSlot, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl/terminal#unknownSlot")},
 	{ECardApiResult::Minor::IFDL_InvalidSlotHandle, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl/common#invalidSlotHandle")},
 	{ECardApiResult::Minor::IFDL_CancellationByUser, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl#cancellationByUser")},
-	{ECardApiResult::Minor::IFDL_IFD_SharingViolation, QLatin1String(RESULTMINOR) + QLatin1String("ifdl/terminal#IFDSharingViolation")},
+	{ECardApiResult::Minor::IFDL_IFD_SharingViolation, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl/terminal#IFDSharingViolation")},
 	{ECardApiResult::Minor::IFDL_Terminal_NoCard, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl/terminal#noCard")},
 	{ECardApiResult::Minor::IFDL_IO_RepeatedDataMismatch, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl/IO#repeatedDataMismatch")},
 	{ECardApiResult::Minor::IFDL_IO_UnknownPINFormat, QLatin1String(RESULTMINOR) + QLatin1String("/ifdl/IO#unknownPINFormat")},
@@ -163,6 +163,7 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Card_Not_Found, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Communication_Error, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Input_TimeOut, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Card_Pin_Deactivated, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Pin_Blocked, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Pin_Not_Blocked, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_NewPin_Mismatch, Minor::AL_Unknown_Error);
@@ -437,7 +438,7 @@ QString ECardApiResult::getMessage(Minor pMinor)
 
 		case Minor::SAL_Invalid_Key:
 			//: LABEL ALL_PLATFORMS
-			return tr("This action cannot be performed. The online identification function of your ID card is not activated. Please contact the authority responsible for issuing your identification card to activate the online identification function.");
+			return tr("This action cannot be performed. The online identification function of your ID card is not activated.");
 
 		case Minor::SAL_SecurityConditionNotSatisfied:
 			//: LABEL ALL_PLATFORMS
@@ -467,7 +468,7 @@ ECardApiResult::ResultData::ResultData(Major pMajor, Minor pMinor, const QString
 	, mMajor(pMajor)
 	, mMinor(pMinor)
 	, mMessage(pMessage)
-	, mMessageLang(LanguageLoader::getLocalCode())
+	, mMessageLang(LanguageLoader::getLocaleCode())
 	, mOrigin(pOrigin)
 {
 }

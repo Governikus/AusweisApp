@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppController.h"
@@ -194,11 +194,11 @@ bool AppController::start()
 
 		if (!handler->start())
 		{
-			qCritical() << "Cannot start activation handler:" << handler;
+			qCritical() << "Cannot start activation handler:" << handler->metaObject()->className();
 			doShutdown();
 			return false;
 		}
-		qDebug() << "Successfully started activation handler:" << handler;
+		qDebug() << "Successfully started activation handler:" << handler->metaObject()->className();
 	}
 
 	// Start the ReaderManager *after* initializing the ActivationHandlers. Otherwise the TrayIcon
@@ -207,11 +207,11 @@ bool AppController::start()
 	connect(this, &AppController::fireShutdown, readerManager, &ReaderManager::shutdown, Qt::QueuedConnection);
 	connect(readerManager, &ReaderManager::fireInitialized, this, &AppController::fireStarted, Qt::QueuedConnection);
 	connect(this, &AppController::fireStarted, this, [this] {
-				if (cShowUi)
-				{
-					Q_EMIT fireShowUi(UiModule::CURRENT);
-				}
-			}, Qt::QueuedConnection);
+			if (cShowUi)
+			{
+				Q_EMIT fireShowUi(UiModule::CURRENT);
+			}
+		}, Qt::QueuedConnection);
 
 	readerManager->init();
 	QCoreApplication::instance()->installEventFilter(this);
@@ -473,26 +473,26 @@ void AppController::completeShutdown()
 	static const int TIMER_INTERVAL = 50;
 	timer->setInterval(TIMER_INTERVAL);
 	connect(timer, &QTimer::timeout, this, [this, timer](){
-				const int openConnectionCount = Env::getSingleton<NetworkManager>()->getOpenConnectionCount();
-				if (openConnectionCount > 0)
+			const int openConnectionCount = Env::getSingleton<NetworkManager>()->getOpenConnectionCount();
+			if (openConnectionCount > 0)
+			{
+				static int timesInvoked = 0;
+				const int THREE_SECONDS = 3000;
+				if (++timesInvoked < THREE_SECONDS / TIMER_INTERVAL)
 				{
-					static int timesInvoked = 0;
-					const int THREE_SECONDS = 3000;
-					if (++timesInvoked < THREE_SECONDS / TIMER_INTERVAL)
-					{
-						return;
-					}
-
-					qWarning() << "Closing with" << openConnectionCount << "pending network connections.";
-					Q_ASSERT(false);
+					return;
 				}
 
-				timer->deleteLater();
+				qWarning() << "Closing with" << openConnectionCount << "pending network connections.";
+				Q_ASSERT(false);
+			}
 
-				auto* uiLoader = Env::getSingleton<UILoader>();
-				connect(uiLoader, &UILoader::fireShutdownComplete, this, &AppController::onUILoaderShutdownComplete, Qt::QueuedConnection);
-				QMetaObject::invokeMethod(uiLoader, &UILoader::shutdown, Qt::QueuedConnection);
-			});
+			timer->deleteLater();
+
+			auto* uiLoader = Env::getSingleton<UILoader>();
+			connect(uiLoader, &UILoader::fireShutdownComplete, this, &AppController::onUILoaderShutdownComplete, Qt::QueuedConnection);
+			QMetaObject::invokeMethod(uiLoader, &UILoader::shutdown, Qt::QueuedConnection);
+		});
 
 	timer->start();
 }

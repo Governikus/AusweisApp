@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -62,7 +62,7 @@ Item {
 			Layout.topMargin: Constants.text_spacing
 
 			//: LABEL ANDROID IOS
-			text: qsTr("Here you have the opportunity to set or change the PIN of your ID card.")
+			text: qsTr("Please make a choice to set or change your PIN.")
 			textStyle: Style.text.normal_secondary
 			horizontalAlignment: Text.AlignHCenter
 			wrapMode: Text.WordWrap
@@ -128,7 +128,7 @@ Item {
 				Layout.minimumWidth: buttonLayout.buttonWidth
 
 				//: LABEL ANDROID_TABLET IOS_TABLET
-				text: qsTr("No PIN")
+				text: qsTr("PIN unknown")
 				onClicked: root.noPinAvailable()
 			}
 		}

@@ -39,9 +39,6 @@ Windows / macOS
   oder eine PIN-Änderung mit Komfort-Kartenleser durchgeführt wird, kann es
   unter Windows und macOS zu einem Absturz kommen.
 
-- Unter macOS wird der Hinweis bei falscher PIN-Bestätigung während der
-  PIN-Änderung nur sehr kurz angezeigt.
-
 - Unter Windows wird der "Datei speichern unter"-Dialog nicht automatisch
   bei Beginn einer Authentisierung geschlossen.
 

@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -108,7 +108,7 @@ SectionPage {
 					activeFocusOnTab: true
 
 					image: "qrc:///images/provider/information.svg"
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					title: qsTr("You are about to identify yourself towards the following provider")
 					name: CertificateDescriptionModel.subjectName
 				}
@@ -132,7 +132,7 @@ SectionPage {
 						activeFocusOnTab: true
 						Accessible.description: qsTr("Show more information about the service provider")
 
-						//: LABEL DESKTOP_QML
+						//: LABEL DESKTOP
 						text: qsTr("Details about the provider")
 						onClicked: showProviderInformation(true)
 						icon.source: "qrc:///images/info.svg"
@@ -151,12 +151,12 @@ SectionPage {
 
 						icon.source: "qrc:///images/identify.svg"
 						tintIcon: true
-						//: LABEL DESKTOP_QML %1 can be "CAN" or "PIN"
+						//: LABEL DESKTOP %1 can be "CAN" or "PIN"
 						text: qsTr("Proceed to %1 entry").arg(
 																NumberModel.isCanAllowedMode ?
-																//: LABEL DESKTOP_QML Inserted into "Proceed to %1 entry"
+																//: LABEL DESKTOP Inserted into "Proceed to %1 entry"
 																qsTr("CAN") :
-																//: LABEL DESKTOP_QML Inserted into "Proceed to %1 entry"
+																//: LABEL DESKTOP Inserted into "Proceed to %1 entry"
 																qsTr("PIN")
 															)
 						onClicked: {
@@ -179,9 +179,9 @@ SectionPage {
 			Accessible.name: dataIntroduction.text
 
 			text: NumberModel.isCanAllowedMode
-				  //: LABEL DESKTOP_QML
+				  //: LABEL DESKTOP
 				  ? qsTr("By entering the CAN, access to the following data of the ID card will be allowed to the mentioned provider:")
-				  //: LABEL DESKTOP_QML
+				  //: LABEL DESKTOP
 				  : qsTr("By entering your PIN, access to the following data of your ID card will be allowed to the mentioned provider:")
 			textStyle: Style.text.normal_inverse
 
@@ -189,63 +189,51 @@ SectionPage {
 		}
 
 		GPane {
-			visible: !!transactionText.text
+			visible: !!AuthModel.transactionInfo || (!writeDataPane.visible && !readDataPane.visible)
 			anchors {
 				left: parent.left
 				right: parent.right
 				margins: Constants.pane_padding
 			}
 
-			Column {
-				id: transactionInfo
+			activeFocusOnTab: true
 
+			//: LABEL DESKTOP
+			title: qsTr("Transactional information")
+
+			GText {
+				id: transactionText
+
+				visible: !!text
 				width: parent.width
 
-				spacing: Constants.pane_spacing
+				activeFocusOnTab: true
+				Accessible.name: transactionText.text
 
-				GText {
-					id: transactionHeading
+				text: AuthModel.transactionInfo
+				textStyle: Style.text.normal
 
-					width: parent.width
-
-					activeFocusOnTab: true
-					Accessible.name: transactionHeading.text
-
-					//: LABEL DESKTOP_QML
-					text: qsTr("Transactional information")
-					textStyle: Style.text.header_accent
-
-					FocusFrame {
-						borderColor: Style.color.focus_indicator
-					}
-				}
-
-				GText {
-					id: transactionText
-
-					width: parent.width
-
-					activeFocusOnTab: true
-					Accessible.name: transactionText.text
-
-					text: AuthModel.transactionInfo
-					textStyle: Style.text.normal
-
-					FocusFrame {
-						borderColor: Style.color.focus_indicator
-					}
+				FocusFrame {
+					borderColor: Style.color.focus_indicator
 				}
 			}
 
 			GText {
-				visible: !writeData.visible && !requiredData.visible && !optionalData.visible
-				anchors.horizontalCenter: parent.horizontalCenter
+				id: noAccessRightsText
+
+				visible: !writeDataPane.visible && !readDataPane.visible
+				width: parent.width
 
 				activeFocusOnTab: true
+				Accessible.name: noAccessRightsText.text
 
-				//: LABEL DESKTOP_QML
-				text: qsTr("No data requested")
+				//: LABEL DESKTOP
+				text: qsTr("The provider mentioned above does not require any data stored on your ID card, only confirmation of you possessing a valid ID card.")
 				textStyle: Style.text.normal
+
+				FocusFrame {
+					borderColor: Style.color.focus_indicator
+				}
 			}
 		}
 
@@ -276,7 +264,7 @@ SectionPage {
 
 					width: parent.width
 
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					title: qsTr("Write access (update)")
 					titleStyle: Style.text.header_warning
 					columns: readDataPane.visible ? 1 : requestedDataRow.maxColumns
@@ -301,7 +289,7 @@ SectionPage {
 
 						width: optionalData.visible ? parent.width / 2 : parent.width
 
-						//: LABEL DESKTOP_QML
+						//: LABEL DESKTOP
 						title: qsTr("Read access")
 						columns: Math.max(1, requestedDataRow.maxColumns - (writeData.visible ? writeData.columns : 0) - (optionalData.visible ? 1 : 0) - (count > optionalData.count ? 0 : 1))
 						chat: ChatModel.required
@@ -312,7 +300,7 @@ SectionPage {
 
 						width: requiredData.visible ? parent.width / 2 : parent.width
 
-						//: LABEL DESKTOP_QML
+						//: LABEL DESKTOP
 						title: qsTr("Read access (optional)")
 						columns: Math.max(1, requestedDataRow.maxColumns - (writeData.visible ? writeData.columns : 0) - (requiredData.visible ? requiredData.columns : 0))
 						chat: ChatModel.optional

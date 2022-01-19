@@ -1,6 +1,18 @@
 {
-	"$schema": "https://json-schema.org/draft/2019-09/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "JSON schema for AusweisApp2's supported-providers.json file",
+	"definitions": {
+		"languageString": {
+			"type": "object",
+			"properties": {
+				"": { "type": "string", "pattern": "^[\\säÄöÖüÜßẞ\\w\\_\\'\\/\\-\\+\\*\\&\\<\\>\\(\\)\\,\\:\\.\\?\\!]+$" }
+			},
+			"required": [
+				""
+			],
+			"additionalProperties": false
+		}
+	},
 	"type": "object",
 	"properties": {
 		"$schema": {
@@ -61,53 +73,17 @@
 				"properties": {
 					"shortName": {
 						"description": "Name of the provider displayed in the provider list for example",
-						"type": "object",
-						"properties": {
-							"": {
-								"type": "string"
-							}
-						},
-						"required": [
-							""
-						],
-						"additionalProperties": false
+						"$ref": "#/definitions/languageString"
 					},
 					"longName": {
 						"description": "Complete name of the provider",
-						"type": "object",
-						"properties": {
-							"": {
-								"type": "string"
-							}
-						},
-						"required": [
-							""
-						],
-						"additionalProperties": false
+						"$ref": "#/definitions/languageString"
 					},
 					"shortDescription": {
-						"type": "object",
-						"properties": {
-							"": {
-								"type": "string"
-							}
-						},
-						"required": [
-							""
-						],
-						"additionalProperties": false
+						"$ref": "#/definitions/languageString"
 					},
 					"longDescription": {
-						"type": "object",
-						"properties": {
-							"": {
-								"type": "string"
-							}
-						},
-						"required": [
-							""
-						],
-						"additionalProperties": false
+						"$ref": "#/definitions/languageString"
 					},
 					"subjectUrls": {
 						"description": "Foo",
@@ -137,7 +113,8 @@
 					},
 					"email": {
 						"type": "string",
-						"format": "email"
+						"format": "email",
+						"pattern": "^[\\w\\.\\+\\-]+\\@[\\w\\.\\+\\-]+\\.[a-z]{2,3}$"
 					},
 					"postalAddress": {
 						"type": "string",
@@ -169,9 +146,21 @@
 						"items": {
 							"type": "string",
 							"enum": [
-								"ios"
+								"android",
+								"bsd",
+								"ios",
+								"linux",
+								"mac",
+								"win"
 							]
 						}
+					},
+					"eidSupport": {
+						"type": "boolean"
+					},
+					"internalId": {
+						"type": "string",
+						"minLength": 1
 					}
 				},
 				"required": [

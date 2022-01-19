@@ -1,7 +1,7 @@
 /*!
  * \brief Mock \ref NetworkManager for tests
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -36,10 +36,12 @@ class MockNetworkManager
 				const QByteArray& pSslSession = QByteArray(),
 				int pTimeoutInMilliSeconds = 30000) override;
 		QNetworkReply* get(QNetworkRequest& pRequest,
+				const QList<QSslCertificate>& pCaCerts = QList<QSslCertificate>(),
 				const QByteArray& pSslSession = QByteArray(),
 				int pTimeoutInMilliSeconds = 30000) override;
 		QNetworkReply* post(QNetworkRequest& pRequest,
 				const QByteArray& pData,
+				const QList<QSslCertificate>& pCaCerts = QList<QSslCertificate>(),
 				int pTimeoutInMilliSeconds = 30000) override;
 
 		bool checkUpdateServerCertificate(const QSharedPointer<const QNetworkReply>& pReply) override;

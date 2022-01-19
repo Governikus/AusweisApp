@@ -1,7 +1,7 @@
 /*!
  * \brief Tests for card EstablishPaceChannelBuilder
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore>
@@ -51,6 +51,36 @@ class test_EstablishPaceChannel
 			EstablishPaceChannel builder(PacePasswordId::PACE_PIN);
 
 			QCOMPARE(builder.createCommandDataCcid(), QByteArray::fromHex(hexBytes));
+		}
+
+
+		void setPassword()
+		{
+			QByteArray hexBytes("02 0B 00"
+								"03"
+								"00"
+								"06 31 32 33 34 35 36"
+								"00 00");
+
+			EstablishPaceChannel builder(PacePasswordId::PACE_PIN);
+			builder.setPassword(QByteArray("123456"));
+
+			QCOMPARE(builder.createCommandData(), QByteArray::fromHex(hexBytes));
+		}
+
+
+		void setPasswordCcid()
+		{
+			QByteArray hexBytes("FF 9A 04 02 11"
+								"30 0F"
+								"        A1 03 02 01 03"
+								"        A2 08 12 06 31 32 33 34 35 36"
+								"00");
+
+			EstablishPaceChannel builder(PacePasswordId::PACE_PIN);
+			builder.setPassword(QByteArray("123456"));
+
+			QCOMPARE(builder.createCommandDataCcid().toHex(), QByteArray::fromHex(hexBytes).toHex());
 		}
 
 

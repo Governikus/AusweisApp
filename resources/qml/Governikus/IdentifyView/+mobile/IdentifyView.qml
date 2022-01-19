@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -15,11 +15,12 @@ import Governikus.WhiteListClient 1.0
 import Governikus.View 1.0
 import Governikus.Workflow 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.AuthModel 1.0
-import Governikus.Type.NumberModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.ConnectivityManager 1.0
+import Governikus.Type.LogModel 1.0
+import Governikus.Type.NumberModel 1.0
+import Governikus.Type.SettingsModel 1.0
 
 
 SectionPage
@@ -110,14 +111,14 @@ SectionPage
 		visible: false
 
 		navigationAction: NavigationAction { state: "cancel"; onClicked: AuthModel.cancelWorkflow() }
-		//: INFO DESKTOP_QML The user aborted the authentication process, according to TR we need to inform the service provider
+		//: INFO DESKTOP The user aborted the authentication process, according to TR we need to inform the service provider
 		text: qsTr("Aborting process and informing the service provider")
 		subText: {
 			if (ConnectivityManager.networkInterfaceActive) {
-				//: INFO DESKTOP_QML Information message about cancellation process with present network connectivity
+				//: INFO DESKTOP Information message about cancellation process with present network connectivity
 				return qsTr("Please wait a moment.")
 			}
-			//: INFO DESKTOP_QML Information message about cancellation process without working network connectivity
+			//: INFO DESKTOP Information message about cancellation process without working network connectivity
 			return qsTr("Network problems detected, trying to reach server within 30 seconds.")
 		}
 		progressBarVisible: false
@@ -146,7 +147,7 @@ SectionPage
 			if (!visible) {
 				return ""
 			}
-			//: INFO DESKTOP_QML Generic progress status message while no card communication is active.
+			//: INFO DESKTOP Generic progress status message while no card communication is active.
 			if (!inProgress || AuthModel.error) {
 				return qsTr("Please wait a moment.")
 			}
@@ -157,24 +158,19 @@ SectionPage
 			if (!!NumberModel.inputError) {
 				return NumberModel.inputError
 			}
-			if (NumberModel.pinDeactivated) {
-				//: INFO ANDROID IOS The online authentication feature of the ID card is disabled and needs to be actived the be authorities.
-				return qsTr("The online identification function of your ID card is not activated. Please contact your responsible authority to activate the online identification function.")
-			}
 			if (identifyController.workflowState === IdentifyController.WorkflowStates.Update || identifyController.workflowState === IdentifyController.WorkflowStates.Pin) {
 				//: INFO ANDROID IOS The card reader requests the user's attention.
 				return qsTr("Please observe the display of your card reader.")
 			}
 			if (identifyController.workflowState === IdentifyController.WorkflowStates.Can) {
 				//: INFO ANDROID IOS The PIN was entered wrongfully two times, the third attempts requires additional CAN verification, hint where the CAN is found.
-				return qsTr("A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.")
+				return qsTr("A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.")
 			}
 
 			//: INFO ANDROID IOS Generic status message during the authentication process.
 			return qsTr("Please wait a moment.")
 		}
 		subTextColor: !AuthModel.isBasicReader && (NumberModel.inputError
-												   || NumberModel.pinDeactivated
 												   || identifyController.workflowState === IdentifyController.WorkflowStates.Can)
 					  ? Style.color.warning_text : Style.color.secondary_text
 		progressValue: AuthModel.progressValue
@@ -217,11 +213,17 @@ SectionPage
 		//: LABEL ANDROID IOS
 		title: qsTr("Identify")
 		resultType: AuthModel.resultString ? ResultView.Type.IsError : ResultView.Type.IsSuccess
-		showMailButton: AuthModel.errorIsMasked
 		header: AuthModel.errorHeader
-		errorCode: AuthModel.statusCode
+		errorCode: AuthModel.statusCodeString
 		errorDescription: AuthModel.errorText
 		text: AuthModel.resultString
+		hintText: AuthModel.statusHintText
+		hintButtonText: AuthModel.statusHintActionText
+		//: LABEL ANDROID IOS
+		contentButton.text: AuthModel.errorIsMasked ? qsTr("Send log") : ""
+		contentButton.icon.source: "qrc:///images/material_mail.svg"
+		onContentButtonClicked: LogModel.mailLog(qsTr("support@ausweisapp.de"), AuthModel.getEmailHeader(), AuthModel.getEmailBody())
+		onHintClicked: AuthModel.invokeStatusHintAction()
 		onClicked: {
 			AuthModel.continueWorkflow()
 			firePopAll()

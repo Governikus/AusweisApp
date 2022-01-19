@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -22,10 +22,58 @@ SectionPage {
 	signal passwordEntered(bool pWasNewPin)
 	signal changePinLength()
 
+	Accessible.name: mainText.text
+	//: LABEL ANDROID IOS
+	Accessible.description: qsTr("This is the enter password view of the AusweisApp2.")
+	Keys.onPressed: event.accepted = pinField.handleKeyEvent(event.key, event.modifiers)
+
 	onVisibleChanged: {
 		pinField.number = ""
 		if (state !== "PIN_NEW_AGAIN") {
 			pinField.inputConfirmation = ""
+		}
+	}
+
+	QtObject {
+		id: d
+
+		function setPassword() {
+			if (!pinField.validInput) {
+				return
+			}
+
+			switch(baseItem.state) {
+				case "PIN":
+					NumberModel.pin = pinField.number
+					baseItem.passwordEntered(false)
+					break
+				case "PIN_NEW":
+					pinField.inputConfirmation = pinField.number
+					pinField.number = ""
+					baseItem.state = "PIN_NEW_AGAIN"
+					break
+				case "PIN_NEW_AGAIN":
+					NumberModel.newPin = pinField.number
+					baseItem.passwordEntered(true)
+					break
+				case "CAN":
+					NumberModel.can = pinField.number
+					baseItem.passwordEntered(false)
+					break
+				case "PUK":
+					NumberModel.puk = pinField.number
+					baseItem.passwordEntered(false)
+					break
+				case "REMOTE_PIN":
+					RemoteServiceModel.connectToRememberedServer(pinField.number)
+					baseItem.passwordEntered(false)
+					break
+			}
+
+			pinField.number = ""
+			if (state !== "PIN_NEW_AGAIN") {
+				pinField.inputConfirmation = ""
+			}
 		}
 	}
 
@@ -102,7 +150,7 @@ SectionPage {
 			horizontalAlignment: Text.AlignHCenter
 
 			textStyle: {
-				if (!pinField.confirmedInput || !!NumberModel.inputError || baseItem.state === "CAN" || baseItem.state === "PUK") {
+				if (!pinField.confirmedInput || !!NumberModel.inputError || (baseItem.state === "CAN" && !NumberModel.isCanAllowedMode) || baseItem.state === "PUK") {
 					return Style.text.normal_warning
 				} else {
 					return Style.text.normal_secondary
@@ -122,7 +170,7 @@ SectionPage {
 						return qsTr("Please enter the six-digit Card Access Number (CAN). You can find it in the bottom right on the front of the ID card.")
 					}
 					//: INFO ANDROID IOS The wrong PIN was entered twice, the third attempt requires the CAN for additional verification, hint where the CAN is found.
-					return qsTr("A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your Card Access Number (CAN) in the bottom right on the front of your ID card.")
+					return qsTr("A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.")
 				}
 				if (baseItem.state === "PUK") {
 					//: INFO ANDROID IOS The PUK is required to unlock the ID card since the wrong PIN entered three times.
@@ -225,6 +273,8 @@ SectionPage {
 					margins: Constants.text_spacing
 				}
 
+				onAccepted: d.setPassword()
+
 				passwordLength: baseItem.state === "REMOTE_PIN" ? 4
 							  : baseItem.state === "PIN" && baseItem.requestTransportPin ? 5
 							  : baseItem.state === "PUK" ? 10
@@ -248,35 +298,7 @@ SectionPage {
 				if (pinField.number.length === 0)
 					pinField.forceActiveFocus()
 			}
-			onSubmitPressed: {
-				switch(baseItem.state) {
-					case "PIN":
-						NumberModel.pin = pinField.number
-						baseItem.passwordEntered(false)
-						break
-					case "PIN_NEW":
-						pinField.inputConfirmation = pinField.number
-						pinField.number = ""
-						baseItem.state = "PIN_NEW_AGAIN"
-						break
-					case "PIN_NEW_AGAIN":
-						NumberModel.newPin = pinField.number
-						baseItem.passwordEntered(true)
-						break
-					case "CAN":
-						NumberModel.can = pinField.number
-						baseItem.passwordEntered(false)
-						break
-					case "PUK":
-						NumberModel.puk = pinField.number
-						baseItem.passwordEntered(false)
-						break
-					case "REMOTE_PIN":
-						RemoteServiceModel.connectToRememberedServer(pinField.number)
-						baseItem.passwordEntered(false)
-						break
-				}
-			}
+			onSubmitPressed: d.setPassword()
 		}
 	}
 

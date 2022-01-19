@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -121,53 +121,34 @@ SectionPage {
 			}
 
 			GPane {
-				visible: transactionInfoText.text !== "" || noDataRequestedPlaceholder.text !== ""
+				visible: !!AuthModel.transactionInfo || (!writeDataPane.visible && !readDataPane.visible)
 				anchors {
 					left: parent.left
 					right: parent.right
 				}
 
-				Column {
+				//: LABEL ANDROID_TABLET IOS_TABLET
+				title: qsTr("Transactional information")
+
+				GText {
+					visible: !!text
 					width: parent.width
 
-					spacing: Constants.pane_spacing
+					activeFocusOnTab: true
 
-					Column {
-						id: transactionInfo
+					text: AuthModel.transactionInfo
+					textStyle: Style.text.normal_secondary
+				}
 
-						width: parent.width
-						visible: transactionInfoText.text !== ""
+				GText {
+					visible: !writeDataPane.visible && !readDataPane.visible
+					width: parent.width
 
-						PaneTitle {
-							height: implicitHeight * 1.5
-							verticalAlignment: Text.AlignTop
-							//: LABEL ANDROID_TABLET IOS_TABLET
-							text: qsTr("Transactional information")
-						}
+					activeFocusOnTab: true
 
-						GText {
-							id: transactionInfoText
-
-							width: parent.width
-
-							text: AuthModel.transactionInfo
-							textStyle: Style.text.normal_secondary
-						}
-					}
-
-					GText {
-						id: noDataRequestedPlaceholder
-
-						readonly property bool noDataRequested: !writeData.visible && !requiredData.visible && !optionalData.visible
-
-						anchors.horizontalCenter: parent.horizontalCenter
-
-						activeFocusOnTab: true
-
-						//: LABEL ANDROID_TABLET IOS_TABLET
-						text: noDataRequested ? qsTr("No data requested") : ""
-						textStyle: Style.text.normal
-					}
+					//: LABEL ANDROID_TABLET IOS_TABLET
+					text: qsTr("The provider mentioned above does not require any data stored on your ID card, only confirmation of you possessing a valid ID card.")
+					textStyle: Style.text.normal
 				}
 			}
 

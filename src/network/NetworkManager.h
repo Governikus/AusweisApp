@@ -1,7 +1,7 @@
 /*
  * \brief Wrapper around QNetworkAccessManager
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -79,16 +79,18 @@ class NetworkManager
 				const QByteArray& pSslSession = QByteArray(),
 				int pTimeoutInMilliSeconds = 30000);
 		virtual QNetworkReply* get(QNetworkRequest& pRequest,
+				const QList<QSslCertificate>& pCaCerts = QList<QSslCertificate>(),
 				const QByteArray& pSslSession = QByteArray(),
 				int pTimeoutInMilliSeconds = 30000);
 
 		virtual QNetworkReply* post(QNetworkRequest& pRequest,
 				const QByteArray& pData,
+				const QList<QSslCertificate>& pCaCerts = QList<QSslCertificate>(),
 				int pTimeoutInMilliSeconds = 30000);
 
 		virtual bool checkUpdateServerCertificate(const QSharedPointer<const QNetworkReply>& pReply);
 
-		int getOpenConnectionCount();
+		int getOpenConnectionCount() const;
 
 	Q_SIGNALS:
 		void fireProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);

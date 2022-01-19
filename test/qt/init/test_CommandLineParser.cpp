@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref CommandLineParser
  *
- * \copyright Copyright (c) 2020-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CommandLineParser.h"
@@ -17,7 +17,7 @@ class test_CommandLineParser
 	Q_OBJECT
 
 	private:
-		static const int PROCESS_TIMEOUT = 5000;
+		static const int PROCESS_TIMEOUT = 30000;
 
 	private Q_SLOTS:
 		void checkHelp()

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,11 +25,6 @@ class WebserviceActivationHandler
 	private:
 		friend class ::test_WebserviceActivationHandler;
 		QSharedPointer<HttpServer> mServer;
-
-		/*!
-		 * \brief Get the query items with lower-case keys, so we can support case-insensitive keys.
-		 */
-		static QMap<QString, QString> getQueryParameter(const QUrl& pUrl);
 
 		void handleImageRequest(const QSharedPointer<HttpRequest>& pRequest, const QString& pImagePath) const;
 		[[nodiscard]] QByteArray guessImageContentType(const QString& pFileName) const;

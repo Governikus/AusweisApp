@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref LogHandler
  *
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogHandler.h"
@@ -66,7 +66,7 @@ class test_LogHandler
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
 			Env::getSingleton<LogHandler>()->setUseHandler(true);
-			Env::getSingleton<LogHandler>()->setLogfile(true);
+			Env::getSingleton<LogHandler>()->setLogFile(true);
 		}
 
 
@@ -125,13 +125,13 @@ class test_LogHandler
 
 		void otherLogFilesWithoutCurrent()
 		{
-			Env::getSingleton<LogHandler>()->setLogfile(true);
+			Env::getSingleton<LogHandler>()->setLogFile(true);
 
-			auto list = Env::getSingleton<LogHandler>()->getOtherLogfiles();
+			auto list = Env::getSingleton<LogHandler>()->getOtherLogFiles();
 			QVERIFY(!list.contains(QFileInfo(*Env::getSingleton<LogHandler>()->mLogFile)));
 
-			Env::getSingleton<LogHandler>()->setLogfile(false);
-			auto nextList = Env::getSingleton<LogHandler>()->getOtherLogfiles();
+			Env::getSingleton<LogHandler>()->setLogFile(false);
+			auto nextList = Env::getSingleton<LogHandler>()->getOtherLogFiles();
 			QCOMPARE(list, nextList);
 		}
 
@@ -164,7 +164,7 @@ class test_LogHandler
 			QVERIFY(Env::getSingleton<LogHandler>()->copy(fileName));
 			QVERIFY(QFile::exists(fileName));
 
-			Env::getSingleton<LogHandler>()->setLogfile(false);
+			Env::getSingleton<LogHandler>()->setLogFile(false);
 			QVERIFY(!Env::getSingleton<LogHandler>()->copy(fileName));
 			QVERIFY(QFile::exists(fileName));
 		}
@@ -183,7 +183,7 @@ class test_LogHandler
 		{
 			QFETCH(bool, withLogFile);
 
-			Env::getSingleton<LogHandler>()->setLogfile(withLogFile);
+			Env::getSingleton<LogHandler>()->setLogFile(withLogFile);
 
 			const QString logFileName = randomLogFileName(false);
 			QVERIFY(QFile::exists(logFileName));
@@ -222,45 +222,45 @@ class test_LogHandler
 		}
 
 
-		void useLogfile()
+		void useLogFile()
 		{
 			const auto& logger = Env::getSingleton<LogHandler>();
 			logger->resetBacklog();
 			logger->setUseHandler(false);
 			QVERIFY(!logger->useHandler());
-			QVERIFY(logger->useLogfile());
+			QVERIFY(logger->useLogFile());
 
 			// will backlog
 			qDebug() << "dummy";
 			QVERIFY(logger->getBacklog().contains(QByteArrayLiteral("dummy")));
 
 			// enable already enabled one
-			logger->setLogfile(true);
-			QVERIFY(logger->useLogfile());
+			logger->setLogFile(true);
+			QVERIFY(logger->useLogFile());
 			QVERIFY(logger->getBacklog().contains(QByteArrayLiteral("dummy")));
 
 			// disable it
-			logger->setLogfile(false);
+			logger->setLogFile(false);
 			qDebug() << "another dummy";
-			QVERIFY(!logger->useLogfile());
+			QVERIFY(!logger->useLogFile());
 			QVERIFY(logger->getBacklog().isNull());
-			QVERIFY(!logger->getCurrentLogfileDate().isValid());
+			QVERIFY(!logger->getCurrentLogFileDate().isValid());
 			logger->resetBacklog();
 			QVERIFY(logger->getBacklog().isNull());
 
 			// disable already disabled one
-			logger->setLogfile(false);
-			QVERIFY(!logger->useLogfile());
+			logger->setLogFile(false);
+			QVERIFY(!logger->useLogFile());
 			QVERIFY(logger->getBacklog().isNull());
-			QVERIFY(!logger->getCurrentLogfileDate().isValid());
+			QVERIFY(!logger->getCurrentLogFileDate().isValid());
 
 			// enable again
-			logger->setLogfile(true);
+			logger->setLogFile(true);
 			QVERIFY(logger->getBacklog().isEmpty());
 			qDebug() << "another yummy";
-			QVERIFY(logger->useLogfile());
+			QVERIFY(logger->useLogFile());
 			QVERIFY(logger->getBacklog().contains(QByteArrayLiteral("another yummy")));
-			QVERIFY(logger->getCurrentLogfileDate().isValid());
+			QVERIFY(logger->getCurrentLogFileDate().isValid());
 		}
 
 
@@ -272,20 +272,20 @@ class test_LogHandler
 
 			const auto& logger = Env::getSingleton<LogHandler>();
 
-			const auto& initialFiles = logger->getOtherLogfiles();
+			const auto& initialFiles = logger->getOtherLogFiles();
 			QTemporaryFile tmp(LogHandler::getLogFileTemplate());
 			QVERIFY(tmp.open());
 			tmp.fileName(); // touch it
-			const auto& filesWithMock = logger->getOtherLogfiles();
+			const auto& filesWithMock = logger->getOtherLogFiles();
 			QVERIFY(filesWithMock.size() > initialFiles.size());
 
-			logger->removeOldLogfiles();
+			logger->removeOldLogFiles();
 			QVERIFY(tmp.exists());
-			QCOMPARE(filesWithMock.size(), logger->getOtherLogfiles().size());
+			QCOMPARE(filesWithMock.size(), logger->getOtherLogFiles().size());
 
 			fakeLastModifiedAndLastAccessTime(tmp.fileName());
-			logger->removeOldLogfiles();
-			QCOMPARE(logger->getOtherLogfiles().size(), initialFiles.size());
+			logger->removeOldLogFiles();
+			QCOMPARE(logger->getOtherLogFiles().size(), initialFiles.size());
 			QVERIFY(!tmp.exists());
 		}
 
@@ -316,7 +316,7 @@ class test_LogHandler
 			const auto& logger = Env::getSingleton<LogHandler>();
 			logger->reset();
 
-			const auto& initialFiles = logger->getOtherLogfiles();
+			const auto& initialFiles = logger->getOtherLogFiles();
 			QTemporaryFile tmp1(LogHandler::getLogFileTemplate());
 			QVERIFY(tmp1.open());
 			tmp1.fileName(); // touch it
@@ -325,13 +325,13 @@ class test_LogHandler
 			QVERIFY(tmp2.open());
 			tmp2.fileName(); // touch it
 
-			const auto& filesWithMock = logger->getOtherLogfiles();
+			const auto& filesWithMock = logger->getOtherLogFiles();
 			QVERIFY(filesWithMock.size() > initialFiles.size());
 
 			fakeLastModifiedAndLastAccessTime(tmp1.fileName());
 			fakeLastModifiedAndLastAccessTime(tmp2.fileName());
 			logger->init();
-			QTRY_COMPARE(logger->getOtherLogfiles().size(), initialFiles.size()); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(logger->getOtherLogFiles().size(), initialFiles.size()); // clazy:exclude=qstring-allocations
 			QVERIFY(!tmp1.exists());
 			QVERIFY(!tmp2.exists());
 		}
@@ -410,7 +410,7 @@ class test_LogHandler
 			const auto& logger = Env::getSingleton<LogHandler>();
 			logger->setCriticalLogCapacity(10);
 			QCOMPARE(logger->getCriticalLogCapacity(), 10);
-			logger->setLogfile(false);
+			logger->setLogFile(false);
 
 			QCOMPARE(logger->getCriticalLogWindow(), QByteArray());
 			QVERIFY(!logger->hasCriticalLog());
@@ -419,13 +419,13 @@ class test_LogHandler
 			QCOMPARE(logger->getCriticalLogWindow(), QByteArray());
 			QVERIFY(!logger->hasCriticalLog());
 
-			logger->setLogfile(true);
+			logger->setLogFile(true);
 			qCritical() << "critical dummy";
 			QVERIFY(logger->getCriticalLogWindow().contains("critical dummy"));
 			QVERIFY(logger->hasCriticalLog());
 
-			logger->setLogfile(false);
-			logger->setLogfile(true);
+			logger->setLogFile(false);
+			logger->setLogFile(true);
 			QCOMPARE(logger->getCriticalLogWindow(), QByteArray());
 			QVERIFY(!logger->hasCriticalLog());
 		}

@@ -2,7 +2,7 @@
  * \brief Interface specifying classes that can detect the attached card reader
  * devices on a specific platform.
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

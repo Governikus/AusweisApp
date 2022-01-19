@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CertificateDescriptionModel.h"
@@ -19,11 +19,11 @@ CertificateDescriptionModel::CertificateDescriptionModel()
 	resetContext();
 	connect(Env::getSingleton<AppSettings>(), &AppSettings::fireSettingsChanged, this, &CertificateDescriptionModel::onDidAuthenticateEac1Changed);
 	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, [this]()
-			{
-				beginResetModel();
-				onDidAuthenticateEac1Changed();
-				endResetModel();
-			});
+		{
+			beginResetModel();
+			onDidAuthenticateEac1Changed();
+			endResetModel();
+		});
 }
 
 
@@ -93,6 +93,7 @@ void CertificateDescriptionModel::resetContext(const QSharedPointer<AuthContext>
 	if (mContext)
 	{
 		connect(mContext.data(), &AuthContext::fireDidAuthenticateEac1Changed, this, &CertificateDescriptionModel::onDidAuthenticateEac1Changed);
+		connect(mContext.data(), &AuthContext::fireAccessRightManagerCreated, this, &CertificateDescriptionModel::onDidAuthenticateEac1Changed);
 	}
 
 	onDidAuthenticateEac1Changed();
@@ -122,9 +123,9 @@ QString CertificateDescriptionModel::getPurpose() const
 
 QString CertificateDescriptionModel::getValidity() const
 {
-	if (mContext && mContext->getDidAuthenticateEac1() && !mContext->getDidAuthenticateEac1()->getCvCertificates().isEmpty())
+	if (mContext && mContext->getAccessRightManager() && mContext->getAccessRightManager()->getTerminalCvc())
 	{
-		const CVCertificateBody body = mContext->getDidAuthenticateEac1()->getCvCertificates().at(0)->getBody();
+		const CVCertificateBody body = mContext->getAccessRightManager()->getTerminalCvc()->getBody();
 		const auto locale = LanguageLoader::getInstance().getUsedLocale();
 		const auto effectiveDate = locale.toString(body.getCertificateEffectiveDate(), QLocale::ShortFormat);
 		const auto expirationDate = locale.toString(body.getCertificateExpirationDate(), QLocale::ShortFormat);

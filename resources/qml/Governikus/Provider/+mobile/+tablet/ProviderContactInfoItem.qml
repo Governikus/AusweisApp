@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -13,13 +13,16 @@ Rectangle {
 	id: baseItem
 	property alias imageSource: image.source
 	property alias itemText: text.text
+	property string accessibleText
 	property url link
+	property string label
 	property int sizeReductor: 0
 
 	height: text.height + 20
 
-	Accessible.role: Accessible.Link
-	Accessible.name: ApplicationModel.stripHtmlTags(itemText)
+	Accessible.name: label
+	Accessible.description: accessibleText
+	Accessible.role: Accessible.ListItem
 
 	TintableIcon {
 		id: image
@@ -38,6 +41,8 @@ Rectangle {
 		anchors.leftMargin: 10
 		anchors.right: parent.right
 		anchors.verticalCenter: parent.verticalCenter
+
+		Accessible.ignored: true
 
 		linkColor: color
 		textStyle: Style.text.normal_inverse

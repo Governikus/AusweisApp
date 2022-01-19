@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfiguration.h"
@@ -62,6 +62,7 @@ ReaderConfiguration::ReaderConfiguration()
 	, mReaderConfigurationInfos()
 {
 	connect(mUpdatableFile.data(), &UpdatableFile::fireUpdated, this, &ReaderConfiguration::onFileUpdated);
+	connect(mUpdatableFile.data(), &UpdatableFile::fireNoUpdateAvailable, this, &ReaderConfiguration::fireNoUpdateAvailable);
 	mUpdatableFile->forEachLookupPath([this](const QString& pPath){return parseReaderConfiguration(pPath);});
 }
 
@@ -93,16 +94,16 @@ const QVector<ReaderConfigurationInfo>& ReaderConfiguration::getReaderConfigurat
 QVector<ReaderConfigurationInfo> ReaderConfiguration::getSupportedReaderConfigurationInfos() const
 {
 	return filter<ReaderConfigurationInfo>([](const ReaderConfigurationInfo& i){
-				return !i.getUrl().isEmpty();
-			}, qAsConst(mReaderConfigurationInfos));
+			return !i.getUrl().isEmpty();
+		}, qAsConst(mReaderConfigurationInfos));
 }
 
 
 QVector<ReaderConfigurationInfo> ReaderConfiguration::getVirtualReaderConfigurationInfos() const
 {
 	return filter<ReaderConfigurationInfo>([](const ReaderConfigurationInfo& i){
-				return i.getVendorId() == 0x0;
-			}, qAsConst(mReaderConfigurationInfos));
+			return i.getVendorId() == 0x0;
+		}, qAsConst(mReaderConfigurationInfos));
 }
 
 

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GlobalStatus.h"
@@ -92,7 +92,7 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 {
 	if (pSimplifiedVersion && isMessageMasked())
 	{
-		const QString hyperlink = QStringLiteral("<a href=\"https://www.ausweisapp.bund.de/%1/aa2/support\">").arg(LanguageLoader::getLocalCode());
+		const QString hyperlink = QStringLiteral("<a href=\"https://www.ausweisapp.bund.de/%1/aa2/support\">").arg(LanguageLoader::getLocaleCode());
 		//: ERROR ALL_PLATFORMS Error message which is used for "masked" errors. Generic message with link to support section of the homepage.
 		QString message = tr("An unknown network error has occurred during the connection to the provider. Check the network connection and try restarting the app. If this does not help, contact our %1support%2.").arg(hyperlink, QStringLiteral("</a>"));
 
@@ -283,6 +283,10 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			//: ERROR ALL_PLATFORMS Internal error, either PCSC, SaK or card reader could not find the ID card.
 			return tr("Card does not exist");
 
+		case Code::Card_Pin_Deactivated:
+			//: ERROR ALL_PLATFORMS The eID functionality of the ID card is not active.
+			return tr("The online identification function of your ID card is not yet activated.");
+
 		case Code::Card_Communication_Error:
 			//: ERROR ALL_PLATFORMS Communication with the card failed due to the specification of the TR (Technische Richtlinie),
 			return tr("An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.");
@@ -291,7 +295,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Card_Unexpected_Transmit_Status:
 			//: ERROR ALL_PLATFORMS Communication with the card failed due to the specification of the TR (Technische Richtlinie). The protocol was faulty or invalid values were requested/received,
 			return tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at %1AusweisApp2 Support%2.").arg(
-					QStringLiteral("<a href=\"https://www.ausweisapp.bund.de/%1/aa2/support\">").arg(LanguageLoader::getLocalCode()),
+					QStringLiteral("<a href=\"https://www.ausweisapp.bund.de/%1/aa2/support\">").arg(LanguageLoader::getLocaleCode()),
 					QStringLiteral("</a>"));
 
 		case Code::Card_Invalid_Pin:
@@ -315,8 +319,8 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			return tr("The PIN is not blocked.");
 
 		case Code::Card_Puk_Blocked:
-			//: ERROR ALL_PLATFORMS The card declined the PUK since it was entered wrongfully 10 times, the local authorities have to be contacted to unlock the ID card.
-			return tr("The PUK was used ten times and can not be used anymore to unblock the PIN. Please contact the competent authority that issued your ID card to unblock the PIN.");
+			//: ERROR ALL_PLATFORMS The card declined the PUK since it was entered wrongfully 10 times.
+			return tr("The entered PUK has already been used ten times and can no longer be used to unblock the PIN.");
 
 		case Code::Card_NewPin_Mismatch:
 			//: ERROR ALL_PLATFORMS The card reader signalled that the new PIN was not confirmed correctly.

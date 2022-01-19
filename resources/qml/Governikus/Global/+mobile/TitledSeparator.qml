@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -17,6 +17,8 @@ RowLayout {
 	property real contentMarginLeft: Constants.component_spacing
 	property real contentMarginRight: Constants.component_spacing
 
+	Accessible.role: Accessible.Heading
+	Accessible.name: title
 
 	spacing: Constants.component_spacing
 
@@ -27,6 +29,8 @@ RowLayout {
 		Layout.bottomMargin: baseItem.contentMarginBottom
 		Layout.leftMargin: baseItem.contentMarginLeft
 		Layout.preferredWidth: titleText.implicitWidth
+
+		Accessible.ignored: true
 
 		textStyle: Style.text.title
 	}

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerEnterNewPin.h"
@@ -18,11 +18,11 @@ MsgHandlerEnterNewPin::MsgHandlerEnterNewPin(const QJsonObject& pObj, MsgContext
 	: MsgHandlerEnterNewPin(pContext)
 {
 	parseValue(pObj, pContext, [this, &pContext](const QString& pNumber)
-			{
-				auto ctx = pContext.getContext<ChangePinContext>();
-				Q_ASSERT(ctx);
-				ctx->setNewPin(pNumber);
-				ctx->setStateApproved();
-				setVoid();
-			}, 6);
+		{
+			auto ctx = pContext.getContext<ChangePinContext>();
+			Q_ASSERT(ctx);
+			ctx->setNewPin(pNumber);
+			ctx->setStateApproved();
+			setVoid();
+		}, 6);
 }

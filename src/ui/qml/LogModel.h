@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -33,7 +33,7 @@ class LogModel
 		MessageRole
 	};
 
-	Q_PROPERTY(QStringList logFiles READ getLogfiles NOTIFY fireLogFilesChanged)
+	Q_PROPERTY(QStringList logFiles READ getLogFiles NOTIFY fireLogFilesChanged)
 
 	private:
 		QStringList mLogFiles;
@@ -51,14 +51,14 @@ class LogModel
 		void onNewLogMsg(const QString& pMsg);
 
 	public:
-		QStringList getLogfiles() const;
-		Q_INVOKABLE QDateTime getCurrentLogfileDate() const;
-		Q_INVOKABLE void removeOtherLogfiles();
-		Q_INVOKABLE void removeCurrentLogfile();
-		Q_INVOKABLE void setLogfile(int pIndex);
-		Q_INVOKABLE void saveCurrentLogfile(const QUrl& pFilename) const;
+		QStringList getLogFiles() const;
+		Q_INVOKABLE QDateTime getCurrentLogFileDate() const;
+		Q_INVOKABLE void removeOtherLogFiles();
+		Q_INVOKABLE void removeCurrentLogFile();
+		Q_INVOKABLE void setLogFile(int pIndex);
+		Q_INVOKABLE void saveCurrentLogFile(const QUrl& pFilename) const;
 #ifndef QT_NO_DEBUG
-		Q_INVOKABLE void saveDummyLogfile() const;
+		Q_INVOKABLE void saveDummyLogFile() const;
 #endif
 
 		Q_INVOKABLE void mailLog(const QString& pEmail = tr("support@ausweisapp.de"),

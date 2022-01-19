@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2018-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -116,7 +116,7 @@ SectionPage {
 
 					activeFocusOnTab: true
 
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					title: qsTr("Description")
 
 					onVisibleChanged: scrollYPositionIntoView(0)
@@ -128,9 +128,10 @@ SectionPage {
 
 						activeFocusOnTab: true
 
-						//: LABEL DESKTOP_QML
+						//: LABEL DESKTOP
 						text: !!provider.longDescription ? provider.longDescription : qsTr("The provider did not provide a description.")
 						textStyle: Style.text.normal
+						textFormat: Text.RichText
 
 						FocusFrame {
 							borderColor: Style.color.focus_indicator
@@ -151,7 +152,7 @@ SectionPage {
 
 					activeFocusOnTab: true
 
-					//: LABEL DESKTOP_QML
+					//: LABEL DESKTOP
 					title: qsTr("History")
 
 					onVisibleChanged: scrollYPositionIntoView(0)

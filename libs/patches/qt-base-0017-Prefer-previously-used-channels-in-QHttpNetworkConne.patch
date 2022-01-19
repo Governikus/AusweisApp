@@ -1,0 +1,105 @@
+From 0dc53a9254cb2d3b34e2e7b446752d09fd8c592c Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Thu, 14 Sep 2017 12:47:11 +0200
+Subject: Prefer previously used channels in QHttpNetworkConnection
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When IPv4 and IPv6 are supported by a server, QHttpNetworkConnection
+will start up two connections and pick the network layer of the one
+that finish first. In this case the channel with index 1 is used for
+IPv6. When IPv6 wins, there is no channel at index 0. This situation
+needs to be respected and we should try to use existing channels first
+when there is a next request.
+
+This is especially important when TLS session resumption is used.
+Creating a new channel will cause to lose the ephemeralServerKey
+used in the first connection.
+
+Fixes: QTBUG-93295
+Pick-to: 5.15 6.1
+Change-Id: Ic9dc6a24ef793a29c2652ad37bc11120e2e6ceef
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+(cherry picked from commit a120d11cb5506ef0a5535e790f23d49595fb8857)
+---
+ src/network/access/qhttpnetworkconnection.cpp | 57 ++++++++++++-------
+ 1 file changed, 38 insertions(+), 19 deletions(-)
+
+diff --git x/qtbase/src/network/access/qhttpnetworkconnection.cpp y/qtbase/src/network/access/qhttpnetworkconnection.cpp
+index b0116319b0..f0d1753999 100644
+--- x/qtbase/src/network/access/qhttpnetworkconnection.cpp
++++ y/qtbase/src/network/access/qhttpnetworkconnection.cpp
+@@ -1118,31 +1118,50 @@ void QHttpNetworkConnectionPrivate::_q_startNextRequest()
+         int normalRequests = queuedRequests - preConnectRequests;
+         neededOpenChannels = qMax(normalRequests, preConnectRequests);
+     }
++
++    if (neededOpenChannels <= 0)
++        return;
++
++    QQueue<int> channelsToConnect;
++
++    // use previously used channels first
+     for (int i = 0; i < activeChannelCount && neededOpenChannels > 0; ++i) {
+-        bool connectChannel = false;
+-        if (channels[i].socket) {
+-            if ((channels[i].socket->state() == QAbstractSocket::ConnectingState)
+-                    || (channels[i].socket->state() == QAbstractSocket::HostLookupState)
+-                    || channels[i].pendingEncrypt) // pendingEncrypt == "EncryptingState"
+-                neededOpenChannels--;
+-
+-            if (neededOpenChannels <= 0)
+-                break;
+-            if (!channels[i].reply && !channels[i].isSocketBusy() && (channels[i].socket->state() == QAbstractSocket::UnconnectedState))
+-                connectChannel = true;
+-        } else { // not previously used channel
+-            connectChannel = true;
++        if (!channels[i].socket)
++            continue;
++
++        if ((channels[i].socket->state() == QAbstractSocket::ConnectingState)
++            || (channels[i].socket->state() == QAbstractSocket::HostLookupState)
++            || channels[i].pendingEncrypt) { // pendingEncrypt == "EncryptingState"
++            neededOpenChannels--;
++            continue;
+         }
+ 
+-        if (connectChannel) {
+-            if (networkLayerState == IPv4)
+-                channels[i].networkLayerPreference = QAbstractSocket::IPv4Protocol;
+-            else if (networkLayerState == IPv6)
+-                channels[i].networkLayerPreference = QAbstractSocket::IPv6Protocol;
+-            channels[i].ensureConnection();
++        if (!channels[i].reply && !channels[i].isSocketBusy()
++            && (channels[i].socket->state() == QAbstractSocket::UnconnectedState)) {
++            channelsToConnect.enqueue(i);
+             neededOpenChannels--;
+         }
+     }
++
++    // use other channels
++    for (int i = 0; i < activeChannelCount && neededOpenChannels > 0; ++i) {
++        if (channels[i].socket)
++            continue;
++
++        channelsToConnect.enqueue(i);
++        neededOpenChannels--;
++    }
++
++    while (!channelsToConnect.isEmpty()) {
++        const int channel = channelsToConnect.dequeue();
++
++        if (networkLayerState == IPv4)
++            channels[channel].networkLayerPreference = QAbstractSocket::IPv4Protocol;
++        else if (networkLayerState == IPv6)
++            channels[channel].networkLayerPreference = QAbstractSocket::IPv6Protocol;
++
++        channels[channel].ensureConnection();
++    }
+ }
+ 
+ 
+-- 
+2.33.0
+

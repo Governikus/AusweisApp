@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CreateCardConnectionCommand.h"
@@ -44,8 +44,8 @@ void CreateCardConnectionCommand::execute()
 		const auto& localCopy = mReaderManagerWorker;
 		const auto& name = mReaderName;
 		QMetaObject::invokeMethod(localCopy.data(), [localCopy, name] {
-					localCopy->createCardConnectionWorker(name);
-				}, Qt::QueuedConnection);
+				localCopy->createCardConnectionWorker(name);
+			}, Qt::QueuedConnection);
 	}
 	else
 	{

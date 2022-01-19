@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogHandler.h"
@@ -40,6 +40,8 @@ LogHandler::LogHandler()
 	, mLogFile()
 	, mHandler(nullptr)
 	, mUseHandler(true)
+	, mAutoRemove(true)
+	, mUseLogFile(true)
 	, mFilePrefix("/src/")
 	, mMutex()
 {
@@ -54,7 +56,7 @@ LogHandler::~LogHandler()
 
 QString LogHandler::getLogFileTemplate()
 {
-	// if you change value you need to adjust getOtherLogfiles()
+	// if you change value you need to adjust getOtherLogFiles()
 	return QDir::tempPath() % QLatin1Char('/') % QCoreApplication::applicationName() % QStringLiteral(".XXXXXX.log");
 }
 
@@ -90,24 +92,22 @@ void LogHandler::init()
 		mEventHandler = new LogEventHandler();
 		QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, mEventHandler.data(), &QObject::deleteLater);
 		QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, mEventHandler.data(), [this] {
-					mEventHandler.clear(); // clear immediately, otherwise logging in &QObject::destroyed is dangerous!
-				});
+				mEventHandler.clear(); // clear immediately, otherwise logging in &QObject::destroyed is dangerous!
+			});
 	}
 
 	if (mLogFile.isNull())
 	{
 		mLogFile = new QTemporaryFile(getLogFileTemplate());
 		QObject::connect(QCoreApplication::instance(), &QCoreApplication::destroyed, mLogFile.data(), [this] {
-					delete this->mLogFile.data();
-				});
+				delete this->mLogFile.data();
+			});
 
-		if (useLogfile())
-		{
-			mLogFile->open();
-		}
+		setAutoRemove(mAutoRemove);
+		setLogFileInternal(mUseLogFile);
 
 		// Avoid deadlock with subsequent logging of this call.
-		QMetaObject::invokeMethod(mLogFile.data(), [this] {removeOldLogfiles();}, Qt::QueuedConnection);
+		QMetaObject::invokeMethod(mLogFile.data(), [this] {removeOldLogFiles();}, Qt::QueuedConnection);
 	}
 
 	if (!isInstalled())
@@ -129,15 +129,13 @@ bool LogHandler::isInstalled() const
 }
 
 
-bool LogHandler::setAutoRemove(bool pRemove)
+void LogHandler::setAutoRemove(bool pRemove)
 {
+	mAutoRemove = pRemove;
 	if (mLogFile)
 	{
-		mLogFile->setAutoRemove(pRemove);
-		return true;
+		mLogFile->setAutoRemove(mAutoRemove);
 	}
-
-	return false;
 }
 
 
@@ -157,14 +155,14 @@ QByteArray LogHandler::readLogFile(qint64 pStart, qint64 pLength)
 	{
 		const auto currentPos = mLogFile->pos();
 		const auto resetPosition = qScopeGuard([this, currentPos] {
-					mLogFile->seek(currentPos);
-				});
+				mLogFile->seek(currentPos);
+			});
 
 		mLogFile->seek(pStart);
 		return pLength > 0 ? mLogFile->read(pLength) : mLogFile->readAll();
 	}
 
-	if (useLogfile())
+	if (useLogFile())
 	{
 		//: LABEL ALL_PLATFORMS
 		return QObject::tr("An error occurred in log handling: %1").arg(mLogFile->errorString()).toUtf8();
@@ -226,9 +224,9 @@ QDateTime LogHandler::getFileDate(const QFileInfo& pInfo)
 }
 
 
-QDateTime LogHandler::getCurrentLogfileDate() const
+QDateTime LogHandler::getCurrentLogFileDate() const
 {
-	return useLogfile() ? getFileDate(QFileInfo(*mLogFile)) : QDateTime();
+	return useLogFile() ? getFileDate(QFileInfo(*mLogFile)) : QDateTime();
 }
 
 
@@ -236,7 +234,7 @@ void LogHandler::resetBacklog()
 {
 	const QMutexLocker mutexLocker(&mMutex);
 
-	if (useLogfile())
+	if (useLogFile())
 	{
 		mBacklogPosition = mLogFile->pos();
 		mCriticalLog = false;
@@ -389,7 +387,7 @@ void LogHandler::handleMessage(QtMsgType pType, const QMessageLogContext& pConte
 
 void LogHandler::handleLogWindow(QtMsgType pType, const char* pCategory, const QString& pMsg)
 {
-	if (!useLogfile())
+	if (!useLogFile())
 	{
 		return;
 	}
@@ -411,7 +409,7 @@ bool LogHandler::copy(const QString& pDest)
 {
 	const QMutexLocker mutexLocker(&mMutex);
 
-	if (useLogfile())
+	if (useLogFile())
 	{
 		return copyOther(mLogFile->fileName(), pDest);
 	}
@@ -427,8 +425,7 @@ bool LogHandler::copyOther(const QString& pSource, const QString& pDest) const
 		return false;
 	}
 
-	Q_ASSERT(mLogFile);
-	if (pSource != mLogFile->fileName() && !getOtherLogfiles().contains(QFileInfo(pSource)))
+	if (mLogFile && pSource != mLogFile->fileName() && !getOtherLogFiles().contains(QFileInfo(pSource)))
 	{
 		return false;
 	}
@@ -442,7 +439,7 @@ bool LogHandler::copyOther(const QString& pSource, const QString& pDest) const
 }
 
 
-QFileInfoList LogHandler::getOtherLogfiles() const
+QFileInfoList LogHandler::getOtherLogFiles() const
 {
 	QDir tmpPath = QDir::temp();
 	tmpPath.setSorting(QDir::Time);
@@ -451,7 +448,7 @@ QFileInfoList LogHandler::getOtherLogfiles() const
 
 	QFileInfoList list = tmpPath.entryInfoList();
 
-	if (useLogfile())
+	if (useLogFile())
 	{
 		list.removeAll(QFileInfo(*mLogFile));
 	}
@@ -460,10 +457,10 @@ QFileInfoList LogHandler::getOtherLogfiles() const
 }
 
 
-void LogHandler::removeOldLogfiles()
+void LogHandler::removeOldLogFiles()
 {
 	const auto& threshold = QDateTime::currentDateTime().addDays(-14);
-	const QFileInfoList& logfileInfos = getOtherLogfiles();
+	const QFileInfoList& logfileInfos = getOtherLogFiles();
 	for (const QFileInfo& entry : logfileInfos)
 	{
 		if (entry.fileTime(QFileDevice::FileModificationTime) < threshold)
@@ -475,9 +472,9 @@ void LogHandler::removeOldLogfiles()
 }
 
 
-bool LogHandler::removeOtherLogfiles()
+bool LogHandler::removeOtherLogFiles()
 {
-	const auto otherLogFiles = getOtherLogfiles();
+	const auto otherLogFiles = getOtherLogFiles();
 	for (const auto& entry : otherLogFiles)
 	{
 		const auto result = QFile::remove(entry.absoluteFilePath());
@@ -488,12 +485,23 @@ bool LogHandler::removeOtherLogfiles()
 }
 
 
-void LogHandler::setLogfile(bool pEnable)
+void LogHandler::setLogFile(bool pEnable)
 {
 	const QMutexLocker mutexLocker(&mMutex);
-	Q_ASSERT(mLogFile);
+	setLogFileInternal(pEnable);
+}
 
-	if (pEnable)
+
+void LogHandler::setLogFileInternal(bool pEnable)
+{
+	mUseLogFile = pEnable;
+
+	if (!mLogFile)
+	{
+		return;
+	}
+
+	if (mUseLogFile)
 	{
 		if (!mLogFile->isOpen())
 		{
@@ -516,9 +524,9 @@ void LogHandler::setLogfile(bool pEnable)
 }
 
 
-bool LogHandler::useLogfile() const
+bool LogHandler::useLogFile() const
 {
-	return mLogFile && !mLogFile->fileTemplate().isNull();
+	return mLogFile && mUseLogFile && !mLogFile->fileTemplate().isNull();
 }
 
 

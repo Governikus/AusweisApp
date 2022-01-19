@@ -1,10 +1,8 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
-
-import org.qtproject.qt5.android.QtNative;
 
 import android.content.Intent;
 import android.nfc.NfcAdapter;
@@ -13,6 +11,7 @@ import android.os.DeadObjectException;
 import android.os.IBinder;
 import android.util.Log;
 
+import org.qtproject.qt5.android.QtNative;
 
 class AidlBinder extends IAusweisApp2Sdk.Stub
 {

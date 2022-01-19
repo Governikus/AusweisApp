@@ -1,7 +1,7 @@
 /*!
  * \brief Data object for output of card command EstablishPaceChannel
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -45,12 +45,15 @@ class EstablishPaceChannel
 		PacePasswordId mPasswordId;
 		QByteArray mChat;
 		QByteArray mCertificateDescription;
+		QByteArray mPassword;
 
 	public:
 		EstablishPaceChannel(
 			PacePasswordId pPasswordId = PacePasswordId::UNKNOWN,
 			const QByteArray& pChat = QByteArray(),
 			const QByteArray& pCertificateDescription = QByteArray());
+
+		void setPassword(const QByteArray& pPassword);
 
 		static bool isCcid(const QByteArray& pInput);
 		bool fromCcid(const QByteArray& pInput);

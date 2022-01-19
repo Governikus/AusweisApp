@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetSelfAuthenticationData.h"
@@ -27,7 +27,10 @@ StateGetSelfAuthenticationData::StateGetSelfAuthenticationData(const QSharedPoin
 
 void StateGetSelfAuthenticationData::run()
 {
+#if !defined(GOVERNIKUS_QT) || QT_VERSION < QT_VERSION_CHECK(6, 2, 0)
 	Env::getSingleton<NetworkManager>()->clearConnections();
+#endif
+
 	QUrl address = getContext()->getRefreshUrl();
 	qDebug() << address;
 
@@ -56,7 +59,7 @@ void StateGetSelfAuthenticationData::checkSslConnectionAndSaveCertificate(const 
 	Q_ASSERT(!context.isNull());
 
 	const auto& saveCertificateFunc = [&]
-				(const QUrl& pUrl, const QSslCertificate& pCertificate)
+			(const QUrl& pUrl, const QSslCertificate& pCertificate)
 			{
 				context->addCertificateData(pUrl, pCertificate);
 			};

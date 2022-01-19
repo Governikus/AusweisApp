@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ASN1TemplateUtil.h"
@@ -195,8 +195,8 @@ void EcdsaPublicKey::initEcKey()
 
 	EC_KEY* ecKey = EC_KEY_new();
 	auto guard = qScopeGuard([ecKey] {
-				EC_KEY_free(ecKey);
-			});
+			EC_KEY_free(ecKey);
+		});
 
 	if (!EC_KEY_set_group(ecKey, group.data()))
 	{

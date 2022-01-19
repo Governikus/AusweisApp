@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MessageDispatcher.h"
@@ -82,6 +82,7 @@ void MessageDispatcher::reset()
 	mContext.clear();
 	Env::getSingleton<VolatileSettings>()->setMessages();
 	Env::getSingleton<VolatileSettings>()->setHandleInterrupt();
+	Env::getSingleton<VolatileSettings>()->setDeveloperMode();
 }
 
 
@@ -161,7 +162,7 @@ MsgHandler MessageDispatcher::createForStateChange(MsgType pStateType)
 
 MessageDispatcher::Msg MessageDispatcher::processCommand(const QByteArray& pMsg)
 {
-	QJsonParseError jsonError;
+	QJsonParseError jsonError {};
 	const auto& json = QJsonDocument::fromJson(pMsg, &jsonError);
 	if (jsonError.error != QJsonParseError::NoError)
 	{
@@ -308,9 +309,9 @@ MsgHandler MessageDispatcher::interrupt()
 	{
 		const auto allowedStates = {MsgType::ENTER_PIN, MsgType::ENTER_CAN, MsgType::ENTER_PUK, MsgType::ENTER_NEW_PIN};
 		return handleCurrentState(cmdType, allowedStates, [] {
-					Env::getSingleton<ReaderManager>()->stopScanAll();
-					return MsgHandler::Void;
-				});
+				Env::getSingleton<ReaderManager>()->stopScanAll();
+				return MsgHandler::Void;
+			});
 	}
 #else
 	return MsgHandlerUnknownCommand(cmdType);

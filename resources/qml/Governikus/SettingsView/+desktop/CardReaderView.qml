@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2019-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick 2.12
@@ -31,7 +31,7 @@ Column {
 		activeFocusOnTab: true
 
 		textStyle: Style.text.header_accent
-		text: qsTr("Connected USB card reader")
+		text: qsTr("Connected USB card readers")
 
 		FocusFrame {
 			borderColor: Style.color.focus_indicator
@@ -40,18 +40,18 @@ Column {
 
 	Column {
 		visible: readerRepeater.count > 0
-
 		width: parent.width
+
+		spacing: Constants.component_spacing
 
 		Repeater {
 			id: readerRepeater
 
-			model: ReaderDriverModel
+			model: ReaderDriverModel.sortedModel
 			delegate: CardReaderDelegate {
 				width: parent.width
 
 				GSeparator {
-					visible: index < readerRepeater.count - 1
 					width: parent.width
 					anchors.bottom: parent.bottom
 				}
@@ -78,6 +78,7 @@ Column {
 	}
 
 	GSeparator {
+		visible: readerRepeater.count === 0
 		width: parent.width
 	}
 
@@ -104,7 +105,7 @@ Column {
 
 			verticalAlignment: Text.AlignBottom
 			textStyle: Style.text.hint
-			text: qsTr("After connecting a new card reader it may take a few seconds to recognize the driver. It may be necessary to restart your system after installing the driver. Only supported and connected card reader are shown here. %1").arg(ReaderDriverModel.lastUpdatedInformation)
+			text: qsTr("After connecting a new card reader it may take a few seconds to recognize the driver. It may be necessary to restart your system after installing the driver. Only connected card readers are shown here. %1").arg(ReaderDriverModel.lastUpdatedInformation)
 
 			FocusFrame {
 				borderColor: Style.color.focus_indicator

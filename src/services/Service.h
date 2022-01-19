@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2017-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,7 +20,7 @@ class Service
 	private:
 		enum class UpdateType
 		{
-			APPCAST, PROVIDER, READER
+			APPCAST, PROVIDER, READER, RELEASEINFORMATION
 		};
 
 		QTimer mTimer;
@@ -35,6 +35,7 @@ class Service
 	private Q_SLOTS:
 		void onTimedUpdateTriggered();
 		void onProviderUpdateFinished();
+		void onReaderUpdateFinished();
 		void onAppcastFinished(bool pUpdateAvailable, const GlobalStatus& pError);
 
 	public:

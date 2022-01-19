@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockReleaseInformation.h"
@@ -27,14 +27,16 @@ QSharedPointer<QTemporaryFile> MockReleaseInformation::createDummyContent(const 
 
 MockReleaseInformation::MockReleaseInformation(const VersionNumber& pVersion, bool pConsiderOnlyThisVersion)
 	: mWasUpdated(false)
+	, mVersion(pVersion)
+	, mCallcountUpdate(0)
 {
-	Q_UNUSED(pVersion)
 	Q_UNUSED(pConsiderOnlyThisVersion)
 }
 
 
 void MockReleaseInformation::update()
 {
+	mCallcountUpdate++;
 	if (!mWasUpdated)
 	{
 		mAnnounce = createDummyContent({"Dummy announcements"});
@@ -86,5 +88,11 @@ QString MockReleaseInformation::pathIssues() const
 
 VersionNumber MockReleaseInformation::versionNumber() const
 {
-	return VersionNumber(QStringLiteral("1.2.3"));
+	return mVersion;
+}
+
+
+int MockReleaseInformation::callcountUpdate() const
+{
+	return mCallcountUpdate;
 }

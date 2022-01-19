@@ -55,6 +55,7 @@
         <file>tctoken/broken.xml</file>
         <file>tctoken/withoutCommunicationErrorAddress.xml</file>
         <file>paos/DIDAuthenticateEAC1.xml</file>
+        <file>paos/DIDAuthenticateEAC1_ordered_certificates.xml</file>
         <file>paos/DIDAuthenticateEAC1_template.xml</file>
         <file>paos/DIDAuthenticateEAC1_template2.xml</file>
         <file>paos/DIDAuthenticateEAC1_2.xml</file>
@@ -79,6 +80,8 @@
         <file>paos/Transmit.xml</file>
         <file>paos/Transmit2.xml</file>
         <file>self/SelfAuthenticationData.json</file>
+        <file>self/SelfAuthenticationDataDateFormat.json</file>
+        <file>self/SelfAuthenticationDataID.json</file>
         <file>self/SelfAuthenticationDataNoAddress.json</file>
         <file>self/SelfAuthenticationDataNoStreet.json</file>
         <file>paos/Transmit3.xml</file>

@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/CipherMac.h"
@@ -107,9 +107,9 @@ QByteArray CipherMac::generate(const QByteArray& pMessage)
 	}
 
 	QSharedPointer<EVP_MD_CTX> ctx(EVP_MD_CTX_create(), [](EVP_MD_CTX* pCtx)
-			{
-				EVP_MD_CTX_destroy(pCtx);
-			});
+		{
+			EVP_MD_CTX_destroy(pCtx);
+		});
 
 	if (ctx.isNull() || !EVP_DigestSignInit(ctx.data(), nullptr, nullptr, nullptr, mKey))
 	{

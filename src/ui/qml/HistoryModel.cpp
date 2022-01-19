@@ -1,7 +1,7 @@
 /*!
  * \brief Model implementation for the history entries.
  *
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HistoryModel.h"
@@ -69,11 +69,11 @@ void HistoryModel::updateConnections()
 		const QModelIndex& modelIndex = createIndex(i, 0);
 
 		mConnections += connect(provider.getIcon().data(), &UpdatableFile::fireUpdated, this, [this, modelIndex] {
-					Q_EMIT dataChanged(modelIndex, modelIndex, {PROVIDER_ICON});
-				});
+				Q_EMIT dataChanged(modelIndex, modelIndex, {PROVIDER_ICON});
+			});
 		mConnections += connect(provider.getImage().data(), &UpdatableFile::fireUpdated, this, [this, modelIndex] {
-					Q_EMIT dataChanged(modelIndex, modelIndex, {PROVIDER_IMAGE});
-				});
+				Q_EMIT dataChanged(modelIndex, modelIndex, {PROVIDER_IMAGE});
+			});
 	}
 }
 

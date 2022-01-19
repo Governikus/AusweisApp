@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2015-2021 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInQml.h"
@@ -24,6 +24,7 @@
 #include "LogHandler.h"
 #include "LogModel.h"
 #include "NotificationModel.h"
+#include "PinResetInformationModel.h"
 #include "PlatformTools.h"
 #include "ProviderCategoryFilterModel.h"
 #include "Random.h"
@@ -223,6 +224,7 @@ void UIPlugInQml::registerQmlTypes()
 	registerQmlSingletonType<VersionInformationModel>(&provideSingletonQmlType<VersionInformationModel>);
 	registerQmlSingletonType<ConnectivityManager>(&provideSingletonQmlType<ConnectivityManager>);
 	registerQmlSingletonType<ReleaseInformationModel>(&provideSingletonQmlType<ReleaseInformationModel>);
+	registerQmlSingletonType<PinResetInformationModel>(&provideSingletonQmlType<PinResetInformationModel>);
 }
 
 
@@ -282,11 +284,6 @@ void UIPlugInQml::init()
 		}
 
 #endif
-	}
-
-	if (Env::getSingleton<ReleaseInformationModel>()->requiresInitialUpdate())
-	{
-		Env::getSingleton<ReleaseInformationModel>()->update();
 	}
 
 	onWindowPaletteChanged();
@@ -772,13 +769,13 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_notifySafeAr
 	Q_UNUSED(pObj)
 
 	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-				UIPlugIn* uiPlugIn = Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInQml);
-				if (uiPlugIn)
-				{
-					UIPlugInQml* uiPlugInQml = qobject_cast<UIPlugInQml*>(uiPlugIn);
-					Q_EMIT uiPlugInQml->fireSafeAreaMarginsChanged();
-				}
-			}, Qt::QueuedConnection);
+			UIPlugIn* uiPlugIn = Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInQml);
+			if (uiPlugIn)
+			{
+				UIPlugInQml* uiPlugInQml = qobject_cast<UIPlugInQml*>(uiPlugIn);
+				Q_EMIT uiPlugInQml->fireSafeAreaMarginsChanged();
+			}
+		}, Qt::QueuedConnection);
 }
 
 
