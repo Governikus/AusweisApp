@@ -14,6 +14,7 @@ j.with
 		environmentVariables
 		{
 			env('MSYS2_PATH_TYPE', 'inherit')
+			env('PATH', '${COMPILER_${MERCURIAL_REVISION_BRANCH}};$PATH')
 		}
 	}
 

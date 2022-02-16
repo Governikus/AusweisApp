@@ -134,16 +134,6 @@ void WorkflowModel::startScanIfNecessary()
 }
 
 
-void WorkflowModel::cancelWorkflowToChangePin()
-{
-	if (mContext)
-	{
-		mContext->setStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
-		Q_EMIT mContext->fireCancelWorkflow();
-	}
-}
-
-
 bool WorkflowModel::isBasicReader() const
 {
 	if (mContext && mContext->getCardConnection())

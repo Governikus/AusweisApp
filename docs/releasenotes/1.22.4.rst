@@ -1,0 +1,33 @@
+AusweisApp2 1.22.4
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 16. Februar 2022
+
+
+Anwender
+""""""""
+- Ein seltener Absturz beim Start unter Windows wurde behoben.
+
+- Die Erinnerung zum Ändern der Transport-PIN wird nun beim
+  PIN-Rücksetzdienst bzw. Vor-Ort-Auslesen nicht mehr angezeigt.
+
+- Die Funktion "Melden Sie einen Fehler" wurde für Android 12
+  korrigiert.
+
+- Es wurde ein Problem behoben, bei dem der NFC-Dialog von iOS
+  länger als notwendig angezeigt wurde.
+
+- Es war unter bestimmten Voraussetzungen möglich, dass
+  ein Workflow nicht gestartet werden konnte, da ein
+  vorheriger Workflow nicht beendet wurde.
+
+- Kleinere Fehlerbehebungen und Optimierungen.
+
+
+Entwickler
+""""""""""
+- Wenn die AusweisApp2 nur als SDK unter Windows gestartet wurde,
+  wurde trotzdem der Pfad des AutoStart-Eintrags in der Registry
+  umgeschrieben. Dies wurde behoben.
+
+- Die Bibliotheken können nun mit MSVC 2022 gebaut werden.

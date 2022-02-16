@@ -21,6 +21,7 @@ import Governikus.Type.ConnectivityManager 1.0
 import Governikus.Type.LogModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.UiModule 1.0
 
 
 SectionPage
@@ -81,7 +82,22 @@ SectionPage
 	Component {
 		id: transportPinReminder
 
-		TransportPinReminderView {}
+		TransportPinReminderView {
+			onCancel: {
+				firePop()
+				AuthModel.cancelWorkflow()
+			}
+
+			onPinUnknown: {
+				firePop()
+				AuthModel.cancelWorkflowToChangePin()
+			}
+
+			onPinKnown: {
+				firePop()
+				AuthModel.continueWorkflow()
+			}
+		}
 	}
 
 	EnterPasswordView {

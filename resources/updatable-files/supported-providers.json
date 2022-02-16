@@ -553,17 +553,6 @@
 			"icon": "hamburg_serviceportal_icon.png"
 		},
 		{
-			"shortName": {"" : "Identitätsprüfungen nach der eIDAS und dem Geldwäschegesetz"},
-			"longDescription": {"": "Die identity Trust Management AG bietet Unternehmen die Möglichkeit, ihre Kunden schnell und sicher mit der Online-Ausweisfunktion zu identifizieren. <br/>Kunden der Kooperationspartner der identity Trust Management AG können die Identitätsprüfung nach dem Signaturgesetz und dem Geldwäschegesetz auch direkt über die Internetseite der identity Trust Management AG vornehmen."},
-			"address": "https://www.identity.tm",
-			"homepage": "https://www.identity.tm",
-			"phone": "+49 211 68 77 3 0",
-			"email": "kontakt@identity.tm",
-			"postalAddress": "identity Trust Management AG<br/>Lierenfelder Straße 51<br/>40231 Düsseldorf",
-			"category": "other",
-			"subjectUrlInfo": "Generic service provider. Order number required to start authentication."
-		},
-		{
 			"shortName": {"" : "Landesportal Brandenburg"},
 			"homepage": "https://www.brandenburg.de",
 			"address": "https://www.brandenburg.de",
@@ -786,17 +775,6 @@
 			"subjectUrls": ["https://mv.buergerserviceportal.de"]
 		},
 		{
-			"shortName": {"" : "LVM Versicherung - Kundenportal Meine LVM"},
-			"longDescription": {"": "Mit der Online-Ausweisfunktion im Personalausweis können Sie sich nach der Registrierung durch Ihre LVM-Agentur sicher am Kundenportal ,Meine LVM' anmelden. Ihre Versicherung können Sie nun selbst verwalten und beispielsweise sämtliche Vertragsdaten online einsehen. Darüber hinaus ist es möglich über das Portal Versicherungsbescheinigungen anzufordern sowie schnell und einfach Ihre persönlichen Daten wie Adresse oder Bankverbindung zu ändern."},
-			"address": "https://www.lvm.de/personalausweis",
-			"homepage": "https://www.lvm.de",
-			"phone": "+49 251 702 0",
-			"email": "info@lvm.de",
-			"postalAddress": "LVM Versicherung<br/>48126 Münster",
-			"category": "insurance",
-			"subjectUrls": ["https://www.lvm.de"]
-		},
-		{
 			"shortName": {"" : "DATEV"},
 			"longName": {"": "DATEV - Arbeitnehmer online"},
 			"shortDescription": {"": "Arbeitnehmer online ist ein Angebot Ihres Arbeitgebers, um mit Ihnen digital zusammenzuarbeiten. Im Portal stellt er Ihnen persönliche Daten bereit, wie zum Beispiel Ihre Lohn- und Gehaltsdokumente."},
@@ -919,9 +897,11 @@
 			"subjectUrls": ["https://pgp.governikus-eid.de"]
 		},
 		{
-			"shortName": {"" : "Selbstauskunft - 'Meine Daten einsehen'"},
-			"longDescription": {"": "Die AusweisApp2 verfügt über die Funktion 'Meine Daten einsehen'. Mit dieser Funktion können die auf dem Personalausweis bzw. dem elektronischen Aufenthaltstitel gespeicherten Daten ausgelesen und angezeigt werden. Hierbei sprechen wir auch von einer sogenannten Selbstauskunft.<br/><br/>Sobald Sie die AusweisApp2 gestartet und ein geeigneter Kartenleser installiert bzw. ein Android-Smartphone verbunden haben, können Sie diese Funktion unter dem Menüpunkt 'Ausweisen' aufrufen. (Auf Mobilgeräten finden Sie die Ausweis-Auskunft übrigens auch direkt auf der Startseite sowie im Menüeintrag 'Ausweisen'.)<br/><br/>Nach Ihrer PIN-Eingabe und erfolgreicher Datenübertragung werden die Daten in der AusweisApp2 dargestellt.<br/><br/>Bei der Selbstauskunft handelt es sich um einen reinen Demonstrationsdienst. Die ausgelesenen Daten werden lediglich zur Anzeige gebracht und nicht weitergegeben.<br/><br/>Bitte beachten Sie, dass Sie auch für diesen Vorgang eine Internetverbindung benötigen. Dies hat folgenden Hintergrund: Der Zugriff auf die Daten des Personalausweises bzw. des elektronischen Aufenthaltstitels ist nur möglich, wenn derjenige, der auf die Daten zugreifen möchte sich selbst zunächst eindeutig identifiziert. Dies geschieht über das sog. Berechtigungszertifikat. Es wird Ihnen immer angezeigt, wer auf Ihre Daten zugreifen möchte. Die Erlaubnis, ein Berechtigungszertifikat zu erhalten, wird einen Anbieter auf Antrag und nach Prüfung bei der Vergabestelle für Berechtigungszertifikate beim Bundesverwaltungsamt erteilt. Um das technische Berechtigungszertifikat anzuzeigen und darüber hinaus eine Gültigkeitsprüfung des Ausweisdokuments durchführen zu können, ist eine Internetverbindung zwingend erforderlich. Aus diesem Grund spricht man auch von der Online-Ausweisfunktion."},
-			"address": "https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen",
+			"shortName": {"" : "Selbstauskunft"},
+			"longName": {"" : "Selbstauskunft/ 'Meine Daten einsehen'"},
+			"shortDescription": {"": "Selbstauskunft/ 'Meine Daten einsehen'"},
+			"longDescription": {"": "Die AusweisApp2 verfügt über die Funktion 'Meine Daten einsehen'. Mit dieser Funktion können Sie eine Test-Authentisierung durchführen und die auf dem Personalausweis, elektronischen Aufenthaltstitel oder der eID-Karte gespeicherten Daten auslesen. Sie können also eine Selbstauskunft durchführen.<br/><br/>Der App-Hersteller, die Governikus GmbH & Co. KG, bietet diesen Dienst an und erscheint daher als Anbieter, bei dem Sie sich ausweisen möchten. Nach Eingabe Ihrer PIN und erfolgreicher Datenübertragung werden Ihnen Ihre persönlichen Ausweis-Daten in der AusweisApp2 angezeigt. Hierbei handelt es sich um einen reinen Demonstrationsdienst, d.h. die ausgelesenen Daten werden lediglich zur Anzeige gebracht und weder gespeichert noch weitergegeben."},
+			"address": "https://www.ausweisapp.bund.de/download",
 			"homepage": "https://www.ausweisapp.bund.de",
 			"phone": "+49 421 204 95 995",
 			"email": "support@ausweisapp.de",
@@ -972,6 +952,20 @@
 			"icon": "MecklenburgVorpommern_icon.png",
 			"category": "citizen",
 			"subjectUrls": ["https://fms.mv-regierung.de"]
+		},
+		{
+			"shortName": {"" : "nEHS-Register"},
+			"longName": {"" : "Register des nationalen Brennstoffemissionshandels (BEHG)"},
+			"longDescription": {"": "Im nEHS-Register können sich natürliche Personen mit der Online-Ausweisfunktion ihres Personalausweises authentisieren und müssen dadurch keine weiteren Nachweisedokumente zu ihrer Identität vorlegen."},
+			"address": "https://nehs-register.dehst.de",
+			"homepage": "https://www.dehst.de",
+			"phone": "+49 30 8903 5080",
+			"email": "nationaler-emissionshandel@dehst.de",
+			"postalAddress": "Deutsche Emissionshandelsstelle (DEHSt) im Umweltbundesamt (UBA) City Campus - Haus 3, Eingang 3A<br/>Buchholzweg 8<br/>13627 Berlin",
+			"image": "nEHS-Register_image.jpg",
+			"icon": "nEHS-Register_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from ELSTER (https://www.elster.de)."
 		},
 		{
 			"shortName": {"" : "Service-Portal Berlin"},

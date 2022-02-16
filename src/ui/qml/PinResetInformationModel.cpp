@@ -20,16 +20,26 @@ PinResetInformationModel::PinResetInformationModel()
 }
 
 
-bool PinResetInformationModel::hasPinResetUrl() const
+bool PinResetInformationModel::hasPinResetService() const
 {
-	return !getPinResetUrl().isEmpty();
+	const auto& config = Env::getSingleton<ProviderConfiguration>();
+	const auto& info = config->getProviderInfo(QStringLiteral("pinResetService"));
+	return !info.getHomepage().isEmpty();
 }
 
 
 QUrl PinResetInformationModel::getPinResetUrl() const
 {
-	const auto& info = Env::getSingleton<ProviderConfiguration>()->getProviderInfo(QStringLiteral("pinResetService"));
-	return info.getHomepage();
+	const auto& config = Env::getSingleton<ProviderConfiguration>();
+	const auto& info = config->getProviderInfo(QStringLiteral("pinResetService"));
+	const auto& homepage = info.getHomepage();
+
+	if (homepage.isEmpty())
+	{
+		return tr("https://www.personalausweisportal.de/EN");
+	}
+
+	return homepage;
 }
 
 
@@ -42,89 +52,87 @@ QString PinResetInformationModel::getPinUnknownText() const
 
 QString PinResetInformationModel::getPinUnknownHint() const
 {
-	return hasPinResetUrl()
+	return hasPinResetService() ?
 	       //: LABEL ALL_PLATFORMS Text in Hint to PRS if the (Transport) PIN is unknown to the user on the Change PIN startpage
-			? tr("By using the PIN Reset Service you may request a new PIN.")
+		   tr("By using the PIN Reset Service you may request a new PIN.") :
 	       //: LABEL ALL_PLATFORMS Text in Hint when PRS is not available and the (Transport) PIN is unknown to the user on the Change PIN startpage
-			: tr("If this is the case please turn to the competent authority and set a new PIN there.");
+		   tr("If this is the case please turn to the competent authority and set a new PIN there.<br/><br/>For further information, please visit the ID card portal.");
 }
 
 
 QString PinResetInformationModel::getNoPinAndNoPukHint() const
 {
-	return hasPinResetUrl()
+	return hasPinResetService() ?
 	       //: LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.
-			? tr("If you forgot your PIN or do not have access to the PUK, you may request a new PIN here.")
-			: QString();
+		   tr("If you have forgotten your PIN or do not have access to the PUK, you may request a new PIN here.") :
+	       //: LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.
+		   tr("If you have forgotten your PIN or do not have access to the PUK, you may turn to the competent authority and set a new PIN there.<br/><br/>For further information, please visit the ID card portal.");
 }
 
 
 QString PinResetInformationModel::getNoPinAndNoTransportPinHint() const
 {
-	return hasPinResetUrl()
+	return hasPinResetService() ?
 	       //: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.
-			? tr("If you know neither your Transport PIN nor your PIN, you may request a new PIN here.")
-			: QString();
+		   tr("If you know neither your Transport PIN nor your PIN, you may request a new PIN here.") :
+	       //: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.
+		   tr("If you know neither your Transport PIN nor your PIN, you may turn to the competent authority and set a new PIN there.<br/><br/>For further information, please visit the ID card portal.");
 }
 
 
 QString PinResetInformationModel::getPinForgottenHint() const
 {
-	return hasPinResetUrl()
+	return hasPinResetService() ?
 	       //: LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.
-			? tr("If you cannot recall your PIN, you may request a new PIN here.")
-			: QString();
+		   tr("If you cannot recall your PIN, you may request a new PIN here.") :
+	       //: LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.
+		   tr("If you cannot recall your PIN, you may turn to the competent authority and set a new PIN there.<br/><br/>For further information, please visit the ID card portal.");
 }
 
 
 QString PinResetInformationModel::getPinForgottenTutorialHint() const
 {
-	return hasPinResetUrl()
+	return hasPinResetService() ?
 	       //: LABEL ANDROID IOS
-			? tr("If you cannot recall your six-digit PIN or cannot find your PIN letter, may request a new PIN using the PIN Reset Service.")
+		   tr("If you cannot recall your six-digit PIN or cannot find your PIN letter, you may request a new PIN using the PIN Reset Service.") :
 	       //: LABEL ANDROID IOS
-			: tr("You can always set a new PIN at the issuing authority if the (Transport) PIN is not known.");
+		   tr("You can always set a new PIN at the competent authority if the (Transport) PIN is not known.<br/><br/>For further information, please visit the ID card portal.");
 }
 
 
 QString PinResetInformationModel::getRequestNewPinHint() const
 {
-	return hasPinResetUrl()
+	return hasPinResetService() ?
 	       //: LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK
-			? tr("You may request a new PIN here.")
-			: QString();
+		   tr("You may request a new PIN here.") :
+	       //: LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK
+		   tr("You may turn to the competent authority and set a new PIN there.<br/><br/>For further information, please visit the ID card portal.");
 }
 
 
 QString PinResetInformationModel::getActivateOnlineFunctionHint() const
 {
-	return hasPinResetUrl()
+	return hasPinResetService() ?
 	       //: LABEL ALL_PLATFORMS Hint when a workflow failed because the online identification funtion was not activated
-			? tr("You can request activation of the online identification function here.")
-			: QString();
+		   tr("You can request activation of the online identification function here.") :
+	       //: LABEL ALL_PLATFORMS Hint when a workflow failed because the online identification funtion was not activated
+		   tr("Please contact the competent authority to activate the online identification function.<br/><br/>For further information, please visit the ID card portal.");
 }
 
 
-QString PinResetInformationModel::getActivateOnlineFunctionDescriptionAndHint() const
+QString PinResetInformationModel::getActivateOnlineFunctionDescription() const
 {
-	//: LABEL ANDROID IOS
-	const auto& description = tr("The online identification function of your ID card is not yet activated.");
-
-	if (!hasPinResetUrl())
-	{
-		return description;
-	}
-
-	return description + QStringLiteral("<br><br>") + getActivateOnlineFunctionHint();
+	return GlobalStatus(GlobalStatus::Code::Card_Pin_Deactivated).toErrorDescription();
 }
 
 
 QString PinResetInformationModel::getPinResetActionText() const
 {
-	return hasPinResetUrl()
+	return hasPinResetService() ?
 	       //: LABEL ALL_PLATFORMS
-			? tr("To provider")
-			: QString();
+		   tr("To provider") :
+	       //: LABEL ALL_PLATFORMS
+		   tr("Open website");
 }
 
 

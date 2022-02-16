@@ -15,7 +15,7 @@ SectionPage
 {
 	signal exit()
 
-	Accessible.name: qsTr("Self-Authentication data view")
+	Accessible.name: qsTr("Self-authentication data view")
 	Accessible.description: qsTr("This is the self-authentication data view of the AusweisApp2.")
 
 	titleBarAction: TitleBarAction {

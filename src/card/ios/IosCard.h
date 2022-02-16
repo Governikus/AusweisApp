@@ -22,7 +22,7 @@ class IosCard
 		IosCardPointer* const mCard;
 		bool mConnected;
 
-		void waitForRequestCompleted(const bool& pCondition) const;
+		void waitForRequestCompleted(const bool& pCondition);
 
 	public:
 		explicit IosCard(IosCardPointer* pTag);

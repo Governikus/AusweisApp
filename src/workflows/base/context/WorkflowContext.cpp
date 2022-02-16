@@ -99,7 +99,7 @@ void WorkflowContext::killWorkflow()
 {
 	qWarning() << "Killing the current workflow.";
 	mWorkflowKilled = true;
-	mStatus = GlobalStatus::Code::Card_Cancellation_By_User;
+	mStatus = GlobalStatus::Code::Workflow_Cancellation_By_User;
 	if (!mStateApproved)
 	{
 		setStateApproved(true);

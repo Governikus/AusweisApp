@@ -31,21 +31,13 @@ Controller {
 
 	states: [
 		State {
-			when: AuthModel.currentState === "StateGetTcToken" && SettingsModel.transportPinReminder
-			StateChangeScript {
-				script: controller.nextView(IdentifyView.SubViews.TransportPinReminder)
-			}
-		},
-		State {
-			// "State when" seems weired with Qt 5.14, so add !SettingsModel.transportPinReminder
-			when: AuthModel.currentState === "StateGetTcToken" && !ConnectivityManager.networkInterfaceActive && !SettingsModel.transportPinReminder
+			when: AuthModel.currentState === "StateGetTcToken" && !ConnectivityManager.networkInterfaceActive
 			StateChangeScript {
 				script: controller.nextView(IdentifyView.SubViews.Connectivity)
 			}
 		},
 		State {
-			// "State when" seems weired with Qt 5.14, so add !SettingsModel.transportPinReminder
-			when: AuthModel.currentState === "StateGetTcToken" && ConnectivityManager.networkInterfaceActive && !SettingsModel.transportPinReminder
+			when: AuthModel.currentState === "StateGetTcToken" && ConnectivityManager.networkInterfaceActive
 			StateChangeScript {
 				script: {
 					controller.nextView(IdentifyView.SubViews.Progress)
@@ -80,9 +72,17 @@ Controller {
 	function processStateChange() {
 		switch (AuthModel.currentState) {
 			case "Initial":
-				break;
+				break
 			case "StateGetTcToken":
 				controller.workflowState = IdentifyController.WorkflowStates.Initial
+				break
+			case "StatePreVerification":
+				if (!NumberModel.isCanAllowedMode && SettingsModel.transportPinReminder) {
+					SettingsModel.transportPinReminder = false
+					controller.nextView(IdentifyView.SubViews.TransportPinReminder)
+				} else {
+					AuthModel.continueWorkflow()
+				}
 				break
 			case "StateEditAccessRights":
 				if (NumberModel.isCanAllowedMode && SettingsModel.skipRightsOnCanAllowed) {

@@ -160,7 +160,6 @@ TutorialContent {
 			text: qsTr("Change my (Transport) PIN")
 			onClicked: {
 				SettingsModel.transportPinReminder = false
-				SettingsModel.startupModule = UiModule.DEFAULT
 				navBar.show(UiModule.PINMANAGEMENT)
 			}
 		}

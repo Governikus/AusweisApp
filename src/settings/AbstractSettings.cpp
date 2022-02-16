@@ -24,7 +24,7 @@ AbstractSettings::~AbstractSettings()
 }
 
 
-QSharedPointer<QSettings> AbstractSettings::getStore()
+QSharedPointer<QSettings> AbstractSettings::getStore(const QString& pFilename, QSettings::Format pFormat)
 {
 #ifndef QT_NO_DEBUG
 	if (QCoreApplication::applicationName().startsWith(QLatin1String("Test")))
@@ -38,5 +38,7 @@ QSharedPointer<QSettings> AbstractSettings::getStore()
 		return QSharedPointer<QSettings>::create(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::organizationName(), QCoreApplication::applicationName());
 	}
 #endif
-	return QSharedPointer<QSettings>::create();
+
+	Q_ASSERT(pFilename.isEmpty() == (pFormat == QSettings::InvalidFormat));
+	return pFilename.isEmpty() ? QSharedPointer<QSettings>::create() : QSharedPointer<QSettings>::create(pFilename, pFormat);
 }

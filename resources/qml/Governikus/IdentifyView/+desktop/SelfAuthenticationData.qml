@@ -19,7 +19,7 @@ SectionPage
 {
 	id: baseItem
 
-	Accessible.name: qsTr("Self-Authentication result data view")
+	Accessible.name: qsTr("Self-authentication result data view")
 	Accessible.description: qsTr("This is the self-authentication result data view of the AusweisApp2.")
 	Keys.onReturnPressed: okButton.onClicked()
 	Keys.onEnterPressed: okButton.onClicked()

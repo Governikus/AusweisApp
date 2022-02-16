@@ -380,7 +380,7 @@ void UIPlugInQml::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 		Env::getSingleton<ChangePinModel>()->resetChangePinContext();
 	}
 
-	if (pContext.objectCast<AuthContext>())
+	if (const auto& context = pContext.objectCast<AuthContext>())
 	{
 		Env::getSingleton<ConnectivityManager>()->stopWatching();
 		Env::getSingleton<AuthModel>()->resetAuthContext();
@@ -392,7 +392,7 @@ void UIPlugInQml::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 		// Only hide the UI if we don't need to show the update information view. This behaviour ensures that
 		// the user is (aggressively) notified about a pending update if the AA2 is only shown for authentication
 		// workflows and never manually brought to foreground in between.
-		if (!pContext.objectCast<SelfAuthContext>() && !pContext->hasNextWorkflowPending() && generalSettings.isAutoCloseWindowAfterAuthentication() && !showUpdateInformationIfPending())
+		if (!pContext.objectCast<SelfAuthContext>() && !pContext->hasNextWorkflowPending() && generalSettings.isAutoCloseWindowAfterAuthentication() && !showUpdateInformationIfPending() && !context->showChangePinView())
 		{
 			onHideUi();
 		}

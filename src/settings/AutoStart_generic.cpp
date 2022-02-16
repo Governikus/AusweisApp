@@ -23,10 +23,12 @@ bool AutoStart::isSetByAdmin()
 }
 
 
-void AutoStart::set(bool pEnabled)
+bool AutoStart::setInternal(bool pEnabled)
 {
 	if (pEnabled)
 	{
 		qCDebug(settings) << "Autostart not supported on this system";
 	}
+
+	return false;
 }

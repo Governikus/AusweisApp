@@ -57,6 +57,13 @@ Windows / macOS
   einer Version der AusweisApp2 älter als Version 1.22.0 auf eine aktuelle
   Version nicht automatisch übernommen.
 
+- Vereinzelt kann es bei Problemen mit dem Grafikkartentreiber, insbesondere
+  bei der Verwendung einer virtuellen Maschine, zu Darstellungsfehlern in
+  der Anwendung kommen. Unter Umständen wird kein Fensterinhalt dargestellt.
+  Dies kann durch das Setzen einer Umgebungsvariablen umgangen werden.
+  Hierfür muss QT_QUICK_BACKEND=software gesetzt und die AusweisApp2
+  neugestartet werden.
+
 Android / iOS
 """""""""""""
 

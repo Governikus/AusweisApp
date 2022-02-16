@@ -35,7 +35,7 @@ class AbstractSettings
 		static QSharedPointer<QTemporaryDir> mTestDir;
 #endif
 
-		static QSharedPointer<QSettings> getStore();
+		static QSharedPointer<QSettings> getStore(const QString& pFilename = QString(), QSettings::Format pFormat = QSettings::InvalidFormat);
 
 		virtual void save() = 0;
 

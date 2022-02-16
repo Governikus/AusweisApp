@@ -294,7 +294,13 @@ UiModule SettingsModel::getStartupModule() const
 	}
 
 	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+	return Enum<UiModule>::fromString(generalSettings.getStartupModule(), UiModule::DEFAULT);
+
+#else
 	return Enum<UiModule>::fromString(generalSettings.getStartupModule(), UiModule::TUTORIAL);
+
+#endif
 }
 
 

@@ -23,6 +23,7 @@ void AuthModel::resetAuthContext(const QSharedPointer<AuthContext>& pContext)
 
 	if (mContext)
 	{
+		connect(mContext.data(), &AuthContext::fireShowChangePinViewChanged, this, &AuthModel::fireShowChangePinViewChanged);
 		connect(mContext.data(), &AuthContext::fireDidAuthenticateEac1Changed, this, &AuthModel::onDidAuthenticateEac1Changed);
 		connect(mContext.data(), &AuthContext::fireProgressChanged, this, &AuthModel::fireProgressChanged);
 	}
@@ -34,6 +35,7 @@ void AuthModel::resetAuthContext(const QSharedPointer<AuthContext>& pContext)
 		Q_EMIT fireTransactionInfoChanged();
 	}
 
+	Q_EMIT fireShowChangePinViewChanged();
 	Q_EMIT fireProgressChanged();
 }
 
@@ -63,6 +65,17 @@ QString AuthModel::getProgressMessage() const
 	}
 
 	return QString();
+}
+
+
+bool AuthModel::getShowChangePinView() const
+{
+	if (mContext)
+	{
+		return mContext->showChangePinView();
+	}
+
+	return false;
 }
 
 
@@ -100,6 +113,17 @@ QString AuthModel::getErrorText() const
 QString AuthModel::getStatusCodeString() const
 {
 	return getEnumName(getStatusCode());
+}
+
+
+void AuthModel::cancelWorkflowToChangePin()
+{
+	if (mContext)
+	{
+		mContext->requestChangePinView();
+		mContext->setStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
+		Q_EMIT mContext->fireCancelWorkflow();
+	}
 }
 
 
