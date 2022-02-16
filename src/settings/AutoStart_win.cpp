@@ -4,16 +4,16 @@
 
 #include "AutoStart.h"
 
+#include "AbstractSettings.h"
+#include "Env.h"
+#include "VolatileSettings.h"
+
 #include <QCoreApplication>
-#include <QSettings>
-#include <QString>
 
 using namespace governikus;
 
-namespace
-{
 
-static QString appPath()
+QString AutoStart::appPath()
 {
 	QString applicationFilePath = QCoreApplication::applicationFilePath();
 	applicationFilePath.replace(QLatin1Char('/'), QLatin1Char('\\'));
@@ -22,13 +22,11 @@ static QString appPath()
 }
 
 
-static QString registryPath()
+QSharedPointer<QSettings> AutoStart::getRegistryStore()
 {
-	return QStringLiteral("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run");
+	return AbstractSettings::getStore(QStringLiteral("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"), QSettings::NativeFormat);
 }
 
-
-} // namespace
 
 bool AutoStart::enabled()
 {
@@ -37,40 +35,32 @@ bool AutoStart::enabled()
 		return true;
 	}
 
-	QSettings windowsBootUpSettings(registryPath(), QSettings::NativeFormat);
-	if (!windowsBootUpSettings.contains(QCoreApplication::applicationName()))
-	{
-		return false;
-	}
-
-	if (windowsBootUpSettings.value(QCoreApplication::applicationName(), QString()).toString() != appPath())
-	{
-		// Update entries from previous versions, e.g.
-		// C:\Program Files (x86)\AusweisApp2 1.13.0 -> C:\Program Files (x86)\AusweisApp2 1.14.0
-		set(true);
-	}
-
-	return true;
+	const auto& windowsBootUpSettings = getRegistryStore();
+	return windowsBootUpSettings->contains(QCoreApplication::applicationName())
+		   && windowsBootUpSettings->value(QCoreApplication::applicationName(), QString()).toString() == appPath();
 }
 
 
 bool AutoStart::isSetByAdmin()
 {
 	QSettings settings(QStringLiteral("HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"), QSettings::NativeFormat);
+
 	return settings.contains(QCoreApplication::applicationName());
 }
 
 
-void AutoStart::set(bool pEnabled)
+bool AutoStart::setInternal(bool pEnabled)
 {
-	QSettings windowsBootUpSettings(registryPath(), QSettings::NativeFormat);
+	const auto& windowsBootUpSettings = getRegistryStore();
 
 	if (isSetByAdmin() || !pEnabled)
 	{
-		windowsBootUpSettings.remove(QCoreApplication::applicationName());
+		windowsBootUpSettings->remove(QCoreApplication::applicationName());
 	}
 	else
 	{
-		windowsBootUpSettings.setValue(QCoreApplication::applicationName(), appPath());
+		windowsBootUpSettings->setValue(QCoreApplication::applicationName(), appPath());
 	}
+
+	return true;
 }

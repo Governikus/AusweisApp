@@ -23,11 +23,11 @@ class PinResetInformationModel
 	Q_PROPERTY(QString pinForgottenTutorialHint READ getPinForgottenTutorialHint NOTIFY fireUpdated)
 	Q_PROPERTY(QString requestNewPinHint READ getRequestNewPinHint NOTIFY fireUpdated)
 	Q_PROPERTY(QString activateOnlineFunctionHint READ getActivateOnlineFunctionHint NOTIFY fireUpdated)
-	Q_PROPERTY(QString activateOnlineFunctionDescriptionAndHint READ getActivateOnlineFunctionDescriptionAndHint NOTIFY fireUpdated)
+	Q_PROPERTY(QString activateOnlineFunctionDescription READ getActivateOnlineFunctionDescription NOTIFY fireUpdated)
 	Q_PROPERTY(QString pinResetActionText READ getPinResetActionText NOTIFY fireUpdated)
 
 	private:
-		bool hasPinResetUrl() const;
+		bool hasPinResetService() const;
 
 	public:
 		PinResetInformationModel();
@@ -41,7 +41,7 @@ class PinResetInformationModel
 		QString getPinForgottenTutorialHint() const;
 		QString getRequestNewPinHint() const;
 		QString getActivateOnlineFunctionHint() const;
-		QString getActivateOnlineFunctionDescriptionAndHint() const;
+		QString getActivateOnlineFunctionDescription() const;
 		QString getPinResetActionText() const;
 
 	public Q_SLOTS:

@@ -27,6 +27,21 @@
         <ignore path="build.gradle" />
     </issue>
 
+    <!-- Obsolete custom lint check
+
+        Lint can be extended with custom checks: additional checks implemented by developers and libraries to for example
+        enforce specific API usages required by a library or a company coding style guideline.
+        The Lint APIs are not yet stable, so these checks may either cause a performance degradation, or stop working,
+        or provide wrong results.
+        This warning flags custom lint checks that are found to be using obsolete APIs and will need to be updated
+        to run in the current lint environment.
+        It may also flag issues found to be using a **newer** version of the API, meaning that you need to use a newer
+        version of lint (or Android Studio or Gradle plugin etc) to work with these checks.
+    -->
+    <issue id="ObsoleteLintCustomCheck">
+        <ignore path="**/appcompat-1.**/**/lint.jar" />
+    </issue>
+
     <!-- Unused resources.
 
         Unused resources make applications larger and slow down builds.

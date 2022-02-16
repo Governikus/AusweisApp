@@ -209,7 +209,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>Schließen</translation>
     </message>
     <message>
-        <source>Self-Authentication data view</source>
+        <source>Self-authentication data view</source>
         <translation>Datenansicht der Selbstauskunft</translation>
     </message>
     <message>
@@ -3375,7 +3375,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>Ausgelesene Daten</translation>
     </message>
     <message>
-        <source>Self-Authentication result data view</source>
+        <source>Self-authentication result data view</source>
         <translation>Darstellung der Ergebnisse der Selbstauskunft</translation>
     </message>
     <message>
@@ -3432,7 +3432,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>Dies ist die Darstellung der Selbstauskunft der AusweisApp2.</translation>
     </message>
     <message>
-        <source>Self-Authentication.</source>
+        <source>Self-authentication.</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Selbstauskunft.</translation>
     </message>
@@ -4710,7 +4710,7 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Übrigens, viele Dienste finden Sie direkt in der &lt;b&gt;Anbieterliste&lt;/b&gt; der AusweisApp2.</translation>
     </message>
     <message>
-        <source>The &lt;b&gt;integrated self-disclosure&lt;/b&gt; is a special service to view the data saved on your ID card.</source>
+        <source>The &lt;b&gt;integrated self-authentication&lt;/b&gt; is a special service to view the data saved on your ID card.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Die &lt;b&gt;integrierte Selbstauskunft&lt;/b&gt; ist ein spezieller Dienst, um Daten einzusehen, die auf Ihrem Ausweis gespeichert sind.</translation>
     </message>
@@ -6189,11 +6189,12 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Mithilfe des PIN-Rücksetzdienstes können Sie eine neue PIN anfordern.</translation>
     </message>
     <message>
-        <source>If this is the case please turn to the competent authority and set a new PIN there.</source>
-        <translation>Wenden Sie sich in diesem Fall bitte an die zuständige Behörde und legen Sie dort eine neue PIN fest.</translation>
+        <source>If this is the case please turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Text in Hint when PRS is not available and the (Transport) PIN is unknown to the user on the Change PIN startpage</extracomment>
+        <translation>Wenden Sie sich in diesem Fall bitte an die zuständige Behörde und legen Sie dort eine neue PIN fest.&lt;br/&gt;&lt;br/&gt;Weitere Informationen erhalten Sie auf dem Personalausweisportal.</translation>
     </message>
     <message>
-        <source>If you forgot your PIN or do not have access to the PUK, you may request a new PIN here.</source>
+        <source>If you have forgotten your PIN or do not have access to the PUK, you may request a new PIN here.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.</extracomment>
         <translation>Sollten Sie Ihre PIN vergessen haben oder Ihnen die PUK nicht vorliegen, können Sie hier eine neue PIN anfordern.</translation>
     </message>
@@ -6208,13 +6209,14 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Wenn Sie Ihre PIN vergessen haben, können Sie hier eine neue PIN anfordern.</translation>
     </message>
     <message>
-        <source>If you cannot recall your six-digit PIN or cannot find your PIN letter, may request a new PIN using the PIN Reset Service.</source>
+        <source>If you cannot recall your six-digit PIN or cannot find your PIN letter, you may request a new PIN using the PIN Reset Service.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Falls Sie sich nicht an Ihre sechsstellige PIN erinnern oder den PIN-Brief nicht finden können, können Sie eine neue PIN mithilfe des PIN-Rücksetzdienstes beantragen.</translation>
     </message>
     <message>
-        <source>You can always set a new PIN at the issuing authority if the (Transport) PIN is not known.</source>
-        <translation>Ist Ihnen die (Transport-)PIN nicht bekannt, können Sie in der zuständigen Behörde jederzeit eine neue PIN setzen.</translation>
+        <source>You can always set a new PIN at the competent authority if the (Transport) PIN is not known.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Ist Ihnen die (Transport-)PIN nicht bekannt, können Sie in der zuständigen Behörde jederzeit eine neue PIN setzen.&lt;br/&gt;&lt;br/&gt;Weitere Informationen erhalten Sie auf dem Personalausweisportal.</translation>
     </message>
     <message>
         <source>You may request a new PIN here.</source>
@@ -6232,9 +6234,38 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Zum Anbieter</translation>
     </message>
     <message>
-        <source>The online identification function of your ID card is not yet activated.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Die Online-Ausweisfunktion Ihres Ausweises ist noch nicht aktiviert.</translation>
+        <source>Please contact the competent authority to activate the online identification function.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the online identification funtion was not activated</extracomment>
+        <translation>Bitte wenden Sie sich an die zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.&lt;br/&gt;&lt;br/&gt;Weitere Informationen erhalten Sie auf dem Personalausweisportal.</translation>
+    </message>
+    <message>
+        <source>If you have forgotten your PIN or do not have access to the PUK, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.</extracomment>
+        <translation>Sollten Sie Ihre PIN vergessen haben oder Ihnen die PUK nicht vorliegen, können Sie sich an die zuständige Behörde wenden und dort eine neue PIN festlegen.&lt;br/&gt;&lt;br/&gt;Weitere Informationen erhalten Sie auf dem Personalausweisportal.</translation>
+    </message>
+    <message>
+        <source>https://www.personalausweisportal.de/EN</source>
+        <translation>https://www.personalausweisportal.de/DE</translation>
+    </message>
+    <message>
+        <source>Open website</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Öffne Webseite</translation>
+    </message>
+    <message>
+        <source>If you know neither your Transport PIN nor your PIN, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.</extracomment>
+        <translation>Ist Ihnen weder Ihre Transport-PIN noch Ihre PIN bekannt, können Sie sich an die zuständige Behörde wenden und dort eine neue PIN festlegen.&lt;br/&gt;&lt;br/&gt;Weitere Informationen erhalten Sie auf dem Personalausweisportal.</translation>
+    </message>
+    <message>
+        <source>If you cannot recall your PIN, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
+        <translation>Wenn Sie Ihre PIN vergessen haben, können Sie sich an die zuständige Behörde wenden und dort eine neue PIN festlegen.&lt;br/&gt;&lt;br/&gt;Weitere Informationen erhalten Sie auf dem Personalausweisportal.</translation>
+    </message>
+    <message>
+        <source>You may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK</extracomment>
+        <translation>Sie können sich an die zuständige Behörde wenden und dort eine neue PIN festlegen.&lt;br/&gt;&lt;br/&gt;Weitere Informationen erhalten Sie auf dem Personalausweisportal.</translation>
     </message>
 </context>
 <context>

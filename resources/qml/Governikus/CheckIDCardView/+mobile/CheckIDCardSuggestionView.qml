@@ -151,7 +151,7 @@ ResultView {
 		//: LABEL ANDROID IOS
 		readonly property string title: qsTr("Online identification feature disabled")
 
-		readonly property string text: PinResetInformationModel.activateOnlineFunctionDescriptionAndHint
+		readonly property string text: PinResetInformationModel.activateOnlineFunctionDescription
 
 		//: LABEL ANDROID IOS
 		readonly property string buttonTitle: qsTr("OK")
@@ -161,9 +161,9 @@ ResultView {
 			navigationAction.clicked()
 		}
 
-		readonly property string contentButtonTitle: PinResetInformationModel.pinResetActionText
-		readonly property string contentButtonIcon: "qrc:///images/material_open_in_new.svg"
-		readonly property string contentUrl: PinResetInformationModel.pinResetUrl
+		readonly property string hintText: PinResetInformationModel.activateOnlineFunctionHint
+		readonly property string hintButtonText: PinResetInformationModel.pinResetActionText
+		readonly property string hintUrl: PinResetInformationModel.pinResetUrl
 	}
 
 	QtObject {

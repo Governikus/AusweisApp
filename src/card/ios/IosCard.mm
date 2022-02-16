@@ -35,7 +35,7 @@ IosCard::~IosCard()
 }
 
 
-void IosCard::waitForRequestCompleted(const bool& pCondition) const
+void IosCard::waitForRequestCompleted(const bool& pCondition)
 {
 	QElapsedTimer timer;
 	timer.start();
@@ -43,12 +43,14 @@ void IosCard::waitForRequestCompleted(const bool& pCondition) const
 	{
 		if (pCondition)
 		{
-			break;
+			return;
 		}
 
 		QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents, 1);
 	}
 	while (timer.elapsed() <= 500);
+
+	invalidateTarget();
 }
 
 
@@ -56,7 +58,7 @@ bool IosCard::isValid() const
 {
 	if (@available(iOS 13, *))
 	{
-		return mCard->mNfcTag && (!mConnected || mCard->mNfcTag.available);
+		return mCard->mNfcTag;
 	}
 
 	return false;

@@ -52,7 +52,7 @@ if(NOT ANDROID_BUILD_TOOLS_REVISION)
 endif()
 
 READ_REVISION(ANDROID_NDK_REVISION ".*Revision = ([0-9|\\.]+)" "${CMAKE_ANDROID_NDK}/source.properties")
-READ_REVISION(ANDROID_SDK_REVISION ".*Revision=([0-9|\\.]+)" "${ANDROID_SDK}/tools/source.properties;${ANDROID_SDK}/cmdline-tools/latest/source.properties")
+READ_REVISION(ANDROID_SDK_REVISION ".*Revision=([0-9|\\.]+)" "${ANDROID_SDK}/cmdline-tools/latest/source.properties;${ANDROID_SDK}/tools/source.properties")
 
 set(CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION clang)
 set(CMAKE_SYSTEM_NAME Android)

@@ -23,7 +23,7 @@ class test_PinResetInformationModel
 	private Q_SLOTS:
 		void test_PinResetUrl()
 		{
-			QVERIFY(Env::getSingleton<PinResetInformationModel>()->getPinResetUrl().isEmpty());
+			QVERIFY(!Env::getSingleton<PinResetInformationModel>()->getPinResetUrl().isEmpty());
 		}
 
 

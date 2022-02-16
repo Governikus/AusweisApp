@@ -25,14 +25,6 @@ Reader::CardEvent NfcReader::updateCard()
 }
 
 
-void NfcReader::resetCard()
-{
-	mCard.reset();
-	mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
-	Q_EMIT fireCardRemoved(mReaderInfo);
-}
-
-
 void NfcReader::adapterStateChanged(QNearFieldManager::AdapterState pState)
 {
 	Q_EMIT fireNfcAdapterStateChanged(pState == QNearFieldManager::AdapterState::Online);
@@ -77,6 +69,10 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 	{
 		Q_EMIT fireCardInserted(mReaderInfo);
 	}
+	else
+	{
+		mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
+	}
 }
 
 
@@ -85,7 +81,9 @@ void NfcReader::targetLost(QNearFieldTarget* pTarget)
 	qCDebug(card_nfc) << "targetLost";
 	if (pTarget != nullptr && mCard && mCard->invalidateTarget(pTarget))
 	{
-		resetCard();
+		mCard.reset();
+		mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
+		Q_EMIT fireCardRemoved(mReaderInfo);
 	}
 }
 
@@ -199,5 +197,4 @@ void NfcReader::disconnectReader(const QString& pError)
 #else
 	Q_UNUSED(pError)
 #endif
-	resetCard();
 }

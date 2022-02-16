@@ -109,7 +109,7 @@ MSYS2
 
 - https://sourceforge.net/projects/msys2/files/Base/x86_64/
 
-  - Getestet: msys2-base-x86_64-20210228.tar.xz
+  - Getestet: msys2-base-x86_64-20220118.tar.xz
 
 
 Windows SDK

@@ -66,7 +66,6 @@ class WorkflowModel
 
 		Q_INVOKABLE void cancelWorkflow();
 		Q_INVOKABLE void startScanIfNecessary();
-		Q_INVOKABLE void cancelWorkflowToChangePin();
 		Q_INVOKABLE void continueWorkflow();
 		Q_INVOKABLE void setInitialPluginType();
 		Q_INVOKABLE bool selectedReaderHasCard() const;

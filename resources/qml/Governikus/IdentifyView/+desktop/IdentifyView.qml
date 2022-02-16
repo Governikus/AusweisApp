@@ -120,7 +120,11 @@ SectionPage
 
 		onNextView: {
 			if (pName === IdentifyView.SubViews.ReturnToMain) {
-				identifyView.nextView(UiModule.DEFAULT)
+				if (AuthModel.showChangePinView) {
+					identifyView.nextView(UiModule.PINMANAGEMENT)
+				} else {
+					identifyView.nextView(UiModule.DEFAULT)
+				}
 				return;
 			}
 
@@ -135,12 +139,11 @@ SectionPage
 		questionSubText: "%1<br><br><a href=\"#\">%2</a>".arg(qsTr("The personal, six-digit PIN is mandatory to use the online identification function.")).arg(qsTr("More information"))
 
 		onSubTextLinkActivated: showPasswordInfo()
-		onDisagree: {
-			SettingsModel.transportPinReminder = false
-			AuthModel.cancelWorkflowToChangePin()
-			identifyView.nextView(UiModule.PINMANAGEMENT)
+		onDisagree: AuthModel.cancelWorkflowToChangePin()
+		onAgree: {
+			d.view = IdentifyView.SubViews.Progress
+			AuthModel.continueWorkflow()
 		}
-		onAgree: SettingsModel.transportPinReminder = false // causes fall-through to next state in IdentifyController
 	}
 
 	ProgressView {

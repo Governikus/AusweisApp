@@ -22,9 +22,7 @@ Rectangle {
 		if (d.activeModule !== pModule) {
 			d.activeModule = pModule
 
-			if (pModule !== UiModule.TUTORIAL) {
-				SettingsModel.startupModule = pModule === UiModule.REMOTE_SERVICE ? UiModule.REMOTE_SERVICE : UiModule.DEFAULT
-			}
+			SettingsModel.startupModule = pModule === UiModule.REMOTE_SERVICE ? UiModule.REMOTE_SERVICE : UiModule.DEFAULT
 		}
 	}
 
@@ -44,7 +42,7 @@ Rectangle {
 
 		property int activeModule
 		readonly property int startupModule: SettingsModel.startupModule
-		readonly property bool initialLockedAndHidden: startupModule === UiModule.TUTORIAL || startupModule === UiModule.IDENTIFY
+		readonly property bool initialLockedAndHidden: startupModule === UiModule.IDENTIFY
 
 		Component.onCompleted: show(startupModule, initialLockedAndHidden)
 	}

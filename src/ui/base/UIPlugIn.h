@@ -25,13 +25,13 @@ defineEnumType(UiModule,
 		IDENTIFY,
 		SETTINGS,
 		PINMANAGEMENT,
-		TUTORIAL,
 		HISTORY,
 		HELP,
 		PROVIDER,
 		SELF_AUTHENTICATION,
 
 		// Desktop only
+		TUTORIAL,
 		UPDATEINFORMATION,
 
 		// Mobile only

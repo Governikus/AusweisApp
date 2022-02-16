@@ -7,20 +7,18 @@ import QtQuick.Layouts 1.12
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.View 1.0
 import Governikus.TitleBar 1.0
+import Governikus.View 1.0
 
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.AuthModel 1.0
-import Governikus.Type.ChangePinModel 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.Type.UiModule 1.0
 
 SectionPage {
 	id: root
 
-	navigationAction: NavigationAction { state: "cancel"; onClicked: { firePop(); AuthModel.cancelWorkflow() } }
+	signal cancel()
+	signal pinUnknown()
+	signal pinKnown()
+
+	navigationAction: NavigationAction { state: "cancel"; onClicked: cancel() }
 
 	//: LABEL ANDROID IOS
 	title: qsTr("Identify")
@@ -93,13 +91,7 @@ SectionPage {
 				//: LABEL ANDROID IOS
 				text: qsTr("No")
 
-				onClicked: {
-					firePopAll()
-					SettingsModel.transportPinReminder = false
-					AuthModel.cancelWorkflowToChangePin()
-
-					navBar.show(UiModule.PINMANAGEMENT)
-				}
+				onClicked: pinUnknown()
 			}
 
 			GButton {
@@ -111,10 +103,7 @@ SectionPage {
 				//: LABEL ANDROID IOS
 				text: qsTr("Yes")
 
-				onClicked: {
-					firePop()
-					SettingsModel.transportPinReminder = false // causes fall-through to next state in IdentifyController
-				}
+				onClicked: pinKnown()
 			}
 		}
 	}

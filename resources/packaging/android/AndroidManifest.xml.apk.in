@@ -15,6 +15,13 @@
     <uses-permission android:name="android.permission.NFC"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="text/plain" />
+        </intent>
+    </queries>
+
     <!-- The following comment will be replaced upon deployment with default features based on the dependencies of the application.
          Remove the comment if you do not require these default features. -->
     <!-- %%INSERT_FEATURES -->

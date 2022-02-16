@@ -101,7 +101,7 @@ TutorialContent {
 		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 		//: LABEL ANDROID IOS
-		text: qsTr("The <b>integrated self-disclosure</b> is a special service to view the data saved on your ID card.")
+		text: qsTr("The <b>integrated self-authentication</b> is a special service to view the data saved on your ID card.")
 		textStyle: Style.text.tutorial_header
 		horizontalAlignment: Text.AlignHCenter
 	}

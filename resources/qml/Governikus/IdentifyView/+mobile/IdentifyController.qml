@@ -39,19 +39,13 @@ Item {
 
 	states: [
 		State {
-			when: AuthModel.currentState === "StateGetTcToken" && SettingsModel.transportPinReminder
-			StateChangeScript {
-				script: firePush(transportPinReminder)
-			}
-		},
-		State {
-			when: AuthModel.currentState === "StateGetTcToken" && !ConnectivityManager.networkInterfaceActive && !SettingsModel.transportPinReminder
+			when: AuthModel.currentState === "StateGetTcToken" && !ConnectivityManager.networkInterfaceActive
 			StateChangeScript {
 				script: firePush(checkConnectivityView)
 			}
 		},
 		State {
-			when: AuthModel.currentState === "StateGetTcToken" && ConnectivityManager.networkInterfaceActive && !SettingsModel.transportPinReminder
+			when: AuthModel.currentState === "StateGetTcToken" && ConnectivityManager.networkInterfaceActive
 			StateChangeScript {
 				script: {
 					firePush(identifyProgressView)
@@ -88,11 +82,19 @@ Item {
 		switch (AuthModel.currentState) {
 			case "Initial":
 				firePopAll()
-				break;
+				break
 			case "StateGetTcToken":
 				enterPinView.state = "INITIAL"
 				controller.workflowState = IdentifyController.WorkflowStates.Initial
 				navBar.show(UiModule.IDENTIFY, true)
+				break
+			case "StatePreVerification":
+				if (!NumberModel.isCanAllowedMode && SettingsModel.transportPinReminder) {
+					SettingsModel.transportPinReminder = false
+					firePush(transportPinReminder)
+				} else {
+					AuthModel.continueWorkflow()
+				}
 				break
 			case "StateEditAccessRights":
 				if (NumberModel.isCanAllowedMode && SettingsModel.skipRightsOnCanAllowed) {
@@ -161,7 +163,11 @@ Item {
 				break
 			case "FinalState":
 				navBar.lockedAndHidden = true
-				if (AuthModel.error && !AuthModel.hasNextWorkflowPending && !AuthModel.shouldSkipResultView()) {
+				if (AuthModel.showChangePinView) {
+					AuthModel.continueWorkflow()
+					firePopAll()
+					navBar.show(UiModule.PINMANAGEMENT, false)
+				} else if (AuthModel.error && !AuthModel.hasNextWorkflowPending && !AuthModel.shouldSkipResultView()) {
 					showRemoveCardFeedback()
 					firePush(identifyResult)
 				} else {

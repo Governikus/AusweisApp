@@ -81,11 +81,10 @@ SectionPage {
 		title: qsTr("No PIN known")
 		resultType: ResultView.Type.IsInfo
 		buttonText: ""
-		text: PinResetInformationModel.pinUnknownText + "\n\n" + PinResetInformationModel.pinUnknownHint
-		contentButton.text: PinResetInformationModel.pinResetActionText
-		contentButton.icon.source: "qrc:///images/material_open_in_new.svg"
-
-		onContentButtonClicked: Qt.openUrlExternally(PinResetInformationModel.pinResetUrl)
+		text: PinResetInformationModel.pinUnknownText
+		hintText: PinResetInformationModel.pinUnknownHint
+		hintButtonText: PinResetInformationModel.pinResetActionText
+		onHintClicked: Qt.openUrlExternally(PinResetInformationModel.pinResetUrl)
 	}
 
 	PasswordInfoView {

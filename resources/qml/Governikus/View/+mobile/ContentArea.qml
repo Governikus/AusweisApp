@@ -39,7 +39,6 @@ Item {
 		startupModule === UiModule.REMOTE_SERVICE ? remoteView :
 		startupModule === UiModule.SETTINGS ? settingsView :
 		startupModule === UiModule.HELP ? helpView :
-		startupModule === UiModule.TUTORIAL ? tutorialView :
 		mainView
 
 	ContentAreaLoader {
@@ -157,25 +156,6 @@ Item {
 		sourceComponent: Component {
 			TabBarView {
 				sourceComponent: MoreView {}
-			}
-		}
-	}
-
-	ContentAreaLoader {
-		id: tutorialView
-
-		contentArea: baseItem
-		module:  UiModule.TUTORIAL
-
-		active: contentArea.activeModule === module || startupModule === module
-		sourceComponent: Component {
-			TabBarView {
-				sourceComponent: TutorialView {
-					onLeave: {
-						navBar.show(UiModule.DEFAULT)
-						SettingsModel.startupModule = UiModule.DEFAULT
-					}
-				}
 			}
 		}
 	}

@@ -20,7 +20,7 @@ SectionPage {
 	}
 
 	//: LABEL DESKTOP
-	Accessible.name: qsTr("Self-Authentication.")
+	Accessible.name: qsTr("Self-authentication.")
 	Accessible.description: qsTr("This is the self-authentication view of the AusweisApp2.")
 	Keys.onReturnPressed: startWorkflowButton.onClicked()
 	Keys.onEnterPressed: startWorkflowButton.onClicked()

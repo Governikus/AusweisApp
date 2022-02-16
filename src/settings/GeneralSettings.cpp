@@ -179,10 +179,12 @@ void GeneralSettings::setAutoStartInternal(bool pAutoStart)
 	if (pAutoStart != mAutoStart)
 	{
 #ifdef QT_NO_DEBUG
-		AutoStart::set(pAutoStart);
+		if (AutoStart::set(pAutoStart))
 #endif
-		mAutoStart = pAutoStart;
-		Q_EMIT fireSettingsChanged();
+		{
+			mAutoStart = pAutoStart;
+			Q_EMIT fireSettingsChanged();
+		}
 	}
 }
 
