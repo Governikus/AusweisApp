@@ -16,6 +16,7 @@ class MsgHandlerInsertCard
 	: public MsgHandler
 {
 	public:
+		MsgHandlerInsertCard();
 		explicit MsgHandlerInsertCard(MsgContext& pContext);
 };
 

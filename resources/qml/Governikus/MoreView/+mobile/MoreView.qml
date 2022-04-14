@@ -90,6 +90,16 @@ SectionPage {
 		MenuItem {
 			width: parent.width
 			//: LABEL ANDROID IOS
+			title: qsTr("Privacy statement")
+			//: LABEL ANDROID IOS
+			description: qsTr("Do you want to read the privacy statement?")
+			icon: "qrc:///images/material_open_in_new.svg"
+			onClicked: Qt.openUrlExternally("https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language))
+		}
+
+		MenuItem {
+			width: parent.width
+			//: LABEL ANDROID IOS
 			title: qsTr("Accessibility statement")
 			//: LABEL ANDROID IOS
 			description: qsTr("Do you want to read the accessibility statement?")

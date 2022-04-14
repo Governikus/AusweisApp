@@ -13,6 +13,7 @@
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQmlFileSelector>
+#include <QStandardPaths>
 #include <QtQuickTest>
 
 
@@ -58,6 +59,7 @@ class QmlTestRunner
 	public Q_SLOTS:
 		void applicationAvailable()
 		{
+			QStandardPaths::setTestModeEnabled(true);
 			QCoreApplication::setApplicationName("TestQmlRunner");
 			QThread::currentThread()->setObjectName(QStringLiteral("MainThread"));
 			ResourceLoader::getInstance().init();

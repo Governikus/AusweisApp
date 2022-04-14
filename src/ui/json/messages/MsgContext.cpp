@@ -37,11 +37,11 @@ MsgLevel MsgContext::getApiLevel() const
 }
 
 
-MsgType MsgContext::getLastStateMsg() const
+Msg MsgContext::getLastStateMsg() const
 {
 	if (mStateMessages.isEmpty())
 	{
-		return MsgType::INTERNAL_ERROR;
+		return Msg();
 	}
 
 	return mStateMessages.last();
@@ -54,9 +54,9 @@ void MsgDispatcherContext::setWorkflowContext(const QSharedPointer<WorkflowConte
 }
 
 
-void MsgDispatcherContext::addStateMsg(MsgType pMsgType)
+void MsgDispatcherContext::addStateMsg(const Msg& pMsg)
 {
-	mStateMessages += pMsgType;
+	mStateMessages += pMsg;
 }
 
 

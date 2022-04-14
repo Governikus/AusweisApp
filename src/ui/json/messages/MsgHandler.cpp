@@ -159,3 +159,9 @@ void MsgHandler::setValue(const QLatin1String pKey, const QString& pValue)
 		mJsonObject[pKey] = pValue;
 	}
 }
+
+
+MsgHandler::operator Msg() const
+{
+	return Msg(getType(), getOutput());
+}

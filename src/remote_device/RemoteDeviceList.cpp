@@ -202,7 +202,7 @@ void RemoteDeviceListImpl::onProcessUnresponsiveRemoteReaders()
 	QMutableVectorIterator<QSharedPointer<RemoteDeviceListEntry> > i(mResponsiveList);
 	while (i.hasNext())
 	{
-		const QSharedPointer<RemoteDeviceListEntry>& entry = i.next();
+		const QSharedPointer<RemoteDeviceListEntry> entry = i.next();
 		if (entry->getLastSeen() < threshold)
 		{
 			i.remove();

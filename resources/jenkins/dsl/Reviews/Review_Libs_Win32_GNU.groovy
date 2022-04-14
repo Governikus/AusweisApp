@@ -3,7 +3,8 @@ import common.LibraryReview
 def j = new LibraryReview
 	(
 		name: 'Win32_GNU',
-		label: 'Windows'
+		label: 'Windows',
+		weight: 3
 	).generate(this)
 
 

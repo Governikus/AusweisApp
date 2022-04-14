@@ -125,6 +125,11 @@ acceleration, the system variable "QT_QUICK_BACKEND" can be set to the value
 "software". In this case, the AusweisApp2 does not attempt to use graphics
 acceleration and starts directly with the alternative software renderer.
 
+When installing an AusweisApp2 update new commandline parameters cannot be added
+to the system-wide default settings. If new commandline parameters are needed
+the AusweisApp2 has to be deinstalled and then reinstalled with the new
+parameters.
+
 macOS
 -----
 

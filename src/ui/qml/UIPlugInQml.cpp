@@ -268,21 +268,11 @@ void UIPlugInQml::init()
 		connect(rootWindow, &QQuickWindow::sceneGraphError, this, &UIPlugInQml::onSceneGraphError);
 		qCDebug(qml) << "Using renderer interface:" << rootWindow->rendererInterface()->graphicsApi();
 
-#if !defined(QT_NO_DEBUG) && !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-		// This is only relevant when debugging the mobile UI on the desktop.
-		const QString platform = getPlatformSelectors();
-		bool isTablet = platform.contains(QLatin1String("tablet"));
-		bool isPhone = platform.contains(QLatin1String("phone"));
-
-		if (isTablet || isPhone)
-		{
-			// Use 4:3 in landscape for tablets and 16:9 in portrait for phones.
-			const QSize newSize(isTablet ? 1024 : 432, 768);
-			const auto screenGeometry = rootWindow->screen()->availableGeometry();
-			const auto newWindowGeometry = QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, newSize, screenGeometry);
-			rootWindow->setGeometry(newWindowGeometry);
-		}
-
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+		const auto& newSize = getInitialWindowSize();
+		const auto screenGeometry = rootWindow->screen()->availableGeometry();
+		const auto newWindowGeometry = QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, newSize, screenGeometry);
+		rootWindow->setGeometry(newWindowGeometry);
 #endif
 	}
 
@@ -804,6 +794,22 @@ bool UIPlugInQml::isHighContrastEnabled() const
 QString UIPlugInQml::getFixedFontFamily() const
 {
 	return QFontDatabase::systemFont(QFontDatabase::FixedFont).family();
+}
+
+
+QSize UIPlugInQml::getInitialWindowSize() const
+{
+	const QString platform = getPlatformSelectors();
+	bool isTablet = platform.contains(QLatin1String("tablet"));
+	bool isPhone = platform.contains(QLatin1String("phone"));
+
+	if (isTablet || isPhone)
+	{
+		// Use 4:3 in landscape for tablets and 16:9 in portrait for phones.
+		return QSize(isTablet ? 1024 : 432, 768);
+	}
+
+	return QSize(960, 720);
 }
 
 

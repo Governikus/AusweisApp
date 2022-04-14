@@ -3,7 +3,8 @@ import common.Library
 def j = new Library
 	(
 		name: 'Win32_GNU',
-		label: 'Windows'
+		label: 'Windows',
+		weight: 3
 	).generate(this)
 
 

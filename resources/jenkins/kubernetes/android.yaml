@@ -30,6 +30,8 @@ spec:
           value: "2"
         - name: MAKE_FLAGS
           value: -j5
+        - name: PROCESSOR_COUNT
+          value: 5
         - name: APK_SIGN_KEYSTORE_PSW
           valueFrom:
             secretKeyRef:

@@ -8,6 +8,7 @@
 
 #include "context/AuthContext.h"
 #include "context/WorkflowContext.h"
+#include "messages/Msg.h"
 #include "messages/MsgContext.h"
 #include "messages/MsgHandler.h"
 
@@ -29,7 +30,7 @@ class MessageDispatcher
 
 		MsgDispatcherContext mContext;
 
-		MsgHandler createForStateChange(MsgType pStateType);
+		Msg createForStateChange(MsgType pStateType);
 		MsgHandler createForCommand(const QJsonObject& pObj);
 
 		MsgHandler cancel();
@@ -39,19 +40,6 @@ class MessageDispatcher
 		MsgHandler handleInternalOnly(MsgCmdType pCmdType, const std::function<MsgHandler()>& pFunc) const;
 
 	public:
-		class Msg final
-		{
-			friend class MessageDispatcher;
-			const MsgType mType;
-			const QByteArray mData;
-
-			Msg(const MsgHandler& pHandler);
-
-			public:
-				operator QByteArray() const;
-				operator MsgType() const;
-		};
-
 		MessageDispatcher();
 
 		QByteArray init(const QSharedPointer<WorkflowContext>& pWorkflowContext);
@@ -60,9 +48,7 @@ class MessageDispatcher
 		Msg processCommand(const QByteArray& pMsg);
 		QByteArray processStateChange(const QString& pState);
 
-		[[nodiscard]] QByteArray createMsgReader(const ReaderInfo& pInfo) const;
+		[[nodiscard]] QByteArrayList processReaderChange(const ReaderInfo& pInfo);
 };
-
-char* toString(const MessageDispatcher::Msg& pMsg);
 
 } // namespace governikus

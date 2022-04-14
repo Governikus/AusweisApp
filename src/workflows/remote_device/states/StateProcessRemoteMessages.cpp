@@ -150,5 +150,7 @@ void StateProcessRemoteMessages::onExit(QEvent* pEvent)
 		disconnect(connection);
 	}
 
+	stopScanIfNecessary();
+
 	AbstractState::onExit(pEvent);
 }

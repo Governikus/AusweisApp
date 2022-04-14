@@ -6,7 +6,8 @@ def j = new Review
 		name: 'Win32_GNU_MSI',
 		libraries: ['Win32_GNU'],
 		label: 'Windows',
-		artifacts: 'build/*.msi'
+		artifacts: 'build/*.msi',
+		weight: 2
 	).generate(this)
 
 

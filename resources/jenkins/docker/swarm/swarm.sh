@@ -7,7 +7,7 @@ labels=${LABELS:-undefined}
 mode=${MODE:-exclusive}
 master=${MASTER:-https://ausweisapp-ci.govkg.de/}
 user=${USER:-jenkins-swarm}
-fingerprints=${FINGERPRINTS:-63:42:C6:90:7F:7A:99:8E:B7:6B:2D:1D:FC:B4:31:2B:11:83:6D:87:8E:4A:8F:F6:0D:0C:07:6D:77:2E:A0:E6}
+fingerprints=${FINGERPRINTS:-40:DD:0E:F9:8D:A1:DA:39:D4:B9:B6:31:C3:F8:E5:8B:45:76:C5:BB:68:61:4A:F3:DD:14:16:85:D9:03:C2:02}
 
 /usr/bin/java                                          \
     -jar /swarm-client.jar                             \

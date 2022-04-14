@@ -45,8 +45,6 @@ ApplicationWindow {
 	}
 
 	visible: false
-	width: d.initialWidth
-	height: d.initialHeight
 
 	minimumWidth: 480
 	minimumHeight: 360
@@ -94,8 +92,6 @@ ApplicationWindow {
 
 		property int activeView: UiModule.DEFAULT
 		property int lastVisibility: ApplicationWindow.Windowed
-		readonly property int initialWidth: 960
-		readonly property int initialHeight: 720
 		property ApplicationWindow detachedLogView: null
 
 		function abortCurrentWorkflow() {
@@ -144,7 +140,8 @@ ApplicationWindow {
 		}
 
 		function setScaleFactor() {
-			ApplicationModel.scaleFactor = Math.min(width / initialWidth, height / initialHeight)
+			let initialSize = plugin.initialWindowSize
+			ApplicationModel.scaleFactor = Math.min(width / initialSize.width, height / initialSize.height)
 		}
 
 	}
@@ -395,8 +392,8 @@ ApplicationWindow {
 
 		ApplicationWindow {
 			visible: true
-			width: d.initialWidth
-			height: d.initialHeight
+			width: plugin.initialWindowSize.width
+			height: plugin.initialWindowSize.height
 			minimumHeight: appWindow.minimumHeight
 			minimumWidth: appWindow.minimumWidth
 

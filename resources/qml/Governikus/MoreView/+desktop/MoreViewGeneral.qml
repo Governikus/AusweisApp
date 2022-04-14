@@ -95,6 +95,25 @@ ColumnLayout {
 		Layout.fillWidth: true
 
 		//: LABEL DESKTOP
+		title: qsTr("Privacy statement")
+		//: LABEL DESKTOP
+		description: qsTr("Do you want to read the privacy statement?")
+		iconSource: "qrc:/images/desktop/material_privacy.svg"
+		//: LABEL DESKTOP
+		buttonText: qsTr("Open website")
+		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
+		buttonIconSource: "qrc:///images/material_open_in_new.svg"
+		onClicked: Qt.openUrlExternally(buttonTooltip)
+	}
+
+	GSeparator {
+		Layout.fillWidth: true
+	}
+
+	MoreViewMenuItem {
+		Layout.fillWidth: true
+
+		//: LABEL DESKTOP
 		title: qsTr("Accessibility statement")
 		//: LABEL DESKTOP
 		description: qsTr("Do you want to read the accessibility statement?")
