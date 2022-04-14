@@ -1,0 +1,94 @@
+From c606b2ab1a020922545b809c69ace8498a5c4cc8 Mon Sep 17 00:00:00 2001
+From: Thiago Macieira <thiago.macieira@intel.com>
+Date: Mon, 31 Jan 2022 11:00:19 -0800
+Subject: QProcess/Unix: ensure we don't accidentally execute something from
+ CWD
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Unless "." (or the empty string) is in $PATH, we're not supposed to find
+executables in the current directory. This is how the Unix shells behave
+and we match their behavior. It's also the behavior Qt had prior to 5.9
+(commit 28666d167aa8e602c0bea25ebc4d51b55005db13). On Windows, searching
+the current directory is the norm, so we keep that behavior.
+
+This commit does not add an explicit check for an empty return from
+QStandardPaths::findExecutable(). Instead, we allow that empty string to
+go all the way to execve(2), which will fail with ENOENT. We could catch
+it early, before fork(2), but why add code for the error case?
+
+See https://kde.org/info/security/advisory-20220131-1.txt
+
+[ChangeLog][Important Behavior Changes] When passed a simple program
+name with no slashes, QProcess on Unix systems will now only search the
+current directory if "." is one of the entries in the PATH environment
+variable. This bug fix restores the behavior QProcess had before Qt 5.9.
+If launching an executable in the directory set by setWorkingDirectory()
+or inherited from the parent is intended, pass a program name starting
+with "./". For more information and best practices about finding an
+executable, see QProcess' documentation.
+
+Change-Id: I54f205f6b7314351b078fffd16cf7013c97ee9fb
+Reviewed-by: Qt CI Bot <qt_ci_bot@qt-project.org>
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+(cherry picked from commit 29fceed2ffb41954a63001414bd042611f2d4980)
+Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
+(cherry picked from commit ab6915f0efb12cfe48d1f126f4a828212f853ce5)
+---
+ src/corelib/io/qprocess_unix.cpp | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
+
+diff --git x/qtbase/src/corelib/io/qprocess_unix.cpp y/qtbase/src/corelib/io/qprocess_unix.cpp
+index 50390e57f5..7beaa33f30 100644
+--- x/qtbase/src/corelib/io/qprocess_unix.cpp
++++ y/qtbase/src/corelib/io/qprocess_unix.cpp
+@@ -422,14 +422,15 @@ void QProcessPrivate::startProcess()
+     // Add the program name to the argument list.
+     argv[0] = nullptr;
+     if (!program.contains(QLatin1Char('/'))) {
++        // findExecutable() returns its argument if it's an absolute path,
++        // otherwise it searches $PATH; returns empty if not found (we handle
++        // that case much later)
+         const QString &exeFilePath = QStandardPaths::findExecutable(program);
+-        if (!exeFilePath.isEmpty()) {
+-            const QByteArray &tmp = QFile::encodeName(exeFilePath);
+-            argv[0] = ::strdup(tmp.constData());
+-        }
+-    }
+-    if (!argv[0])
++        const QByteArray &tmp = QFile::encodeName(exeFilePath);
++        argv[0] = ::strdup(tmp.constData());
++    } else {
+         argv[0] = ::strdup(encodedProgramName.constData());
++    }
+ 
+     // Add every argument to the list
+     for (int i = 0; i < arguments.count(); ++i)
+@@ -983,15 +984,16 @@ bool QProcessPrivate::startDetached(qint64 *pid)
+                 envp = _q_dupEnvironment(environment.d.constData()->vars, &envc);
+             }
+ 
+-            QByteArray tmp;
+             if (!program.contains(QLatin1Char('/'))) {
++                // findExecutable() returns its argument if it's an absolute path,
++                // otherwise it searches $PATH; returns empty if not found (we handle
++                // that case much later)
+                 const QString &exeFilePath = QStandardPaths::findExecutable(program);
+-                if (!exeFilePath.isEmpty())
+-                    tmp = QFile::encodeName(exeFilePath);
++                const QByteArray &tmp = QFile::encodeName(exeFilePath);
++                argv[0] = ::strdup(tmp.constData());
++            } else {
++                argv[0] = ::strdup(QFile::encodeName(program));
+             }
+-            if (tmp.isEmpty())
+-                tmp = QFile::encodeName(program);
+-            argv[0] = tmp.data();
+ 
+             if (envp)
+                 qt_safe_execve(argv[0], argv, envp);
+-- 
+2.35.1
+

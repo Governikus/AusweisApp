@@ -1,0 +1,22 @@
+AusweisApp2 1.22.5
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 14. April 2022
+
+
+Anwender
+""""""""
+- Aktualisierung der Release Notes wurde korrigiert.
+
+- Unter Windows 10 wird die Fenstergröße nach einer
+  Sprachumstellung nicht mehr geändert.
+
+- Kleinere Fehlerbehebungen und Optimierungen.
+
+
+Entwickler
+""""""""""
+- Unter bestimmten Umständen war es möglich, dass
+  das SDK kein INSERT_CARD gesendet hat.
+
+- Aktualisierung von OpenSSL auf die Version 1.1.1n.

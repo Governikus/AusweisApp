@@ -2009,6 +2009,16 @@ LABEL ANDROID IOS</extracomment>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Möchten Sie die Videotutorials ansehen?</translation>
     </message>
+    <message>
+        <source>Privacy statement</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Datenschutzerklärung</translation>
+    </message>
+    <message>
+        <source>Do you want to read the privacy statement?</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Möchten Sie die Datenschutzerklärung einsehen?</translation>
+    </message>
 </context>
 <context>
     <name>MoreViewDiagnosis</name>
@@ -2129,6 +2139,16 @@ LABEL ANDROID IOS</extracomment>
         <source>Do you want to read the accessibility statement?</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Möchten Sie die Barrierefreiheitserklärung einsehen?</translation>
+    </message>
+    <message>
+        <source>Privacy statement</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Datenschutzerklärung</translation>
+    </message>
+    <message>
+        <source>Do you want to read the privacy statement?</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Möchten Sie die Datenschutzerklärung einsehen?</translation>
     </message>
 </context>
 <context>

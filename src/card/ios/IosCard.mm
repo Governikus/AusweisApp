@@ -48,7 +48,7 @@ void IosCard::waitForRequestCompleted(const bool& pCondition)
 
 		QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents, 1);
 	}
-	while (timer.elapsed() <= 500);
+	while (timer.elapsed() <= 2000);
 
 	invalidateTarget();
 }

@@ -20,6 +20,8 @@ spec:
           value: 10G
         - name: MAKE_FLAGS
           value: -j5
+        - name: PROCESSOR_COUNT
+          value: 5
         - name: PASSWORD
           valueFrom:
             secretKeyRef:

@@ -5,7 +5,10 @@
 		"languageString": {
 			"type": "object",
 			"properties": {
-				"": { "type": "string", "pattern": "^[\\säÄöÖüÜßẞ\\w\\_\\'\\/\\-\\+\\*\\&\\<\\>\\(\\)\\,\\:\\.\\?\\!]+$" }
+				"": {
+					"type": "string",
+					"pattern": "^[\\säÄöÖüÜßẞ\\w\\_\\'\\/\\-\\+\\*\\&\\<\\>\\(\\)\\,\\:\\.\\?\\!]+$"
+				}
 			},
 			"required": [
 				""
@@ -165,6 +168,7 @@
 				},
 				"required": [
 					"shortName",
+					"longName",
 					"address",
 					"homepage",
 					"category"

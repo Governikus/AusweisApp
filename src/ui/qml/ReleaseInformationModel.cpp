@@ -25,6 +25,7 @@ ReleaseInformationModel::ReleaseInformationModel()
 	connect(&generalSettings, &GeneralSettings::fireLanguageChanged, this, &ReleaseInformationModel::onTranslationChanged);
 
 	onCurrentChanged();
+	onUpdateChanged();
 }
 
 

@@ -136,6 +136,11 @@ zu optimieren, kann die Systemvariable "QT_QUICK_BACKEND" auf den Wert
 Versuch die Grafikbeschleunigung zu nutzen und startet direkt mit dem
 alternativen Softwarerenderer.
 
+Bei Durchführung eines Updates der AusweisApp2 können keine systemweiten
+Standardeinstellungen durch neue Kommandozeilenparameter ergänzt werden.
+Werden neue Parameter benötigt, so muss die AusweisApp2 deinstalliert und mit
+den neuen Kommandozeilenparametern neuinstalliert werden.
+
 macOS
 -----
 

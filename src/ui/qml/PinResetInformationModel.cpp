@@ -24,7 +24,7 @@ bool PinResetInformationModel::hasPinResetService() const
 {
 	const auto& config = Env::getSingleton<ProviderConfiguration>();
 	const auto& info = config->getProviderInfo(QStringLiteral("pinResetService"));
-	return !info.getHomepage().isEmpty();
+	return !info.getAddress().isEmpty();
 }
 
 
@@ -32,7 +32,7 @@ QUrl PinResetInformationModel::getPinResetUrl() const
 {
 	const auto& config = Env::getSingleton<ProviderConfiguration>();
 	const auto& info = config->getProviderInfo(QStringLiteral("pinResetService"));
-	const auto& homepage = info.getHomepage();
+	const auto& homepage = info.getAddress();
 
 	if (homepage.isEmpty())
 	{

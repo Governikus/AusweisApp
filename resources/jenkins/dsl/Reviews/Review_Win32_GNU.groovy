@@ -8,7 +8,8 @@ def j = new Review
 		label: 'Windows',
 		artifacts: 'tmp/*.log',
 		allowEmptyArtifacts: true,
-		xunit: true
+		xunit: true,
+		weight: 2
 	).generate(this)
 
 

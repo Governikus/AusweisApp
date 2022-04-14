@@ -37,6 +37,10 @@ else()
 endif()
 
 if(NOT DEFINED PROCESSOR_COUNT)
+	set(PROCESSOR_COUNT $ENV{PROCESSOR_COUNT})
+endif()
+
+if(NOT DEFINED PROCESSOR_COUNT)
 	include(ProcessorCount)
 	ProcessorCount(PROCESSOR_COUNT)
 endif()
@@ -92,8 +96,8 @@ endif()
 set(QT 5.15.2)
 set(QT_HASH 3a530d1b243b5dec00bc54937455471aaa3e56849d2593edb8ded07228202240)
 
-set(OPENSSL 1.1.1m)
-set(OPENSSL_HASH f89199be8b23ca45fc7cb9f1d8d3ee67312318286ad030f5316aca6462db6c96)
+set(OPENSSL 1.1.1n)
+set(OPENSSL_HASH 40dceb51a4f6a5275bde0e6bf20ef4b91bfc32ed57c0552e2e8e15463372b17a)
 
 ################################## Files
 set(QT_FILE qt-everywhere-src-${QT}.tar.xz)
@@ -201,7 +205,9 @@ elseif(ANDROID)
 	set(OPENSSL_ENV export PATH=${toolchain_bin}/:$ENV{PATH} &&)
 	set(OPENSSL_ENV ${OPENSSL_ENV} export CC=clang && export CXX=clang++ &&)
 
-	set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -D__ANDROID_API__=${CMAKE_SYSTEM_VERSION})
+	if(ANDROID_NDK_REVISION VERSION_LESS "23")
+		set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -D__ANDROID_API__=${CMAKE_SYSTEM_VERSION})
+	endif()
 elseif(BSD)
 	set(OPENSSL_ARCH BSD-x86_64)
 elseif(LINUX)

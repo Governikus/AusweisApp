@@ -7,8 +7,11 @@
 #include "messages/MsgContext.h"
 
 #include "context/AuthContext.h"
+#include "context/WorkflowContext.h"
 #include "InternalActivationContext.h"
-#include "messages/MsgHandler.h"
+#include "messages/MsgHandlerEnterPin.h"
+#include "messages/MsgHandlerInsertCard.h"
+#include "ReaderManager.h"
 
 #include <QtTest>
 
@@ -20,6 +23,20 @@ class test_MsgContext
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			readerManager->init();
+			readerManager->isScanRunning(); // just to wait until initialization finished
+		}
+
+
+		void cleanupTestCase()
+		{
+			Env::getSingleton<ReaderManager>()->shutdown();
+		}
+
+
 		void apiLevel()
 		{
 			MsgDispatcherContext ctx;
@@ -34,15 +51,20 @@ class test_MsgContext
 		void stateMsg()
 		{
 			MsgDispatcherContext ctx;
+			ctx.setWorkflowContext(QSharedPointer<WorkflowContext>::create());
 			const MsgContext& readOnly = ctx;
 
 			QCOMPARE(readOnly.getLastStateMsg(), MsgType::INTERNAL_ERROR);
-			ctx.addStateMsg(MsgType::INSERT_CARD);
+			QVERIFY(!readOnly.getLastStateMsg());
+			ctx.addStateMsg(MsgHandlerInsertCard());
 			QCOMPARE(readOnly.getLastStateMsg(), MsgType::INSERT_CARD);
-			ctx.addStateMsg(MsgType::ENTER_PIN);
+			QVERIFY(readOnly.getLastStateMsg());
+			ctx.addStateMsg(MsgHandlerEnterPin(ctx));
 			QCOMPARE(readOnly.getLastStateMsg(), MsgType::ENTER_PIN);
+			QVERIFY(readOnly.getLastStateMsg());
 			ctx.clear();
 			QCOMPARE(readOnly.getLastStateMsg(), MsgType::INTERNAL_ERROR);
+			QVERIFY(!readOnly.getLastStateMsg());
 		}
 
 

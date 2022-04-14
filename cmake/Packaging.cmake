@@ -237,6 +237,13 @@ elseif(ANDROID)
 		if(apksigner)
 			add_custom_target(verify.signature COMMAND ${apksigner} verify --verbose --print-certs -Werr ${DESTINATION_ANDROID_FILE})
 		endif()
+
+		find_program(aapt NAMES aapt2 aapt HINTS ${ANDROID_SDK}/build-tools/${ANDROID_BUILD_TOOLS_REVISION} CMAKE_FIND_ROOT_PATH_BOTH)
+		if(aapt)
+			set(ANDROID_DUMP ${DESTINATION_ANDROID_FILE}.dump)
+			add_custom_command(OUTPUT ${ANDROID_DUMP} COMMAND ${aapt} dump badging ${DESTINATION_ANDROID_FILE} > ${ANDROID_DUMP})
+			add_custom_target(dump.apk DEPENDS ${ANDROID_DUMP})
+		endif()
 	endif()
 
 elseif(UNIX)

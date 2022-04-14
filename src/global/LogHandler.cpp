@@ -344,6 +344,13 @@ QString LogHandler::getPaddedLogMsg(const QMessageLogContext& pContext, const QS
 
 void LogHandler::handleMessage(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg)
 {
+#ifdef QT_NO_DEBUG
+	if (pMsg.contains(QLatin1String("stale focus object")))
+	{
+		return;
+	}
+#endif
+
 	const QMutexLocker mutexLocker(&mMutex);
 
 	const QByteArray& filename = formatFilename(pContext.file);

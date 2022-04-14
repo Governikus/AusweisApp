@@ -107,8 +107,9 @@ class test_Message
 		void createMsgHandlerReader()
 		{
 			MessageDispatcher dispatcher;
-			const auto& msg = dispatcher.createMsgReader(ReaderInfo("dummy reader"));
-			QCOMPARE(msg, QByteArray("{\"attached\":false,\"msg\":\"READER\",\"name\":\"dummy reader\"}"));
+			const auto& msg = dispatcher.processReaderChange(ReaderInfo("dummy reader"));
+			QCOMPARE(msg.size(), 1);
+			QCOMPARE(msg.first(), QByteArray(R"({"attached":false,"msg":"READER","name":"dummy reader"})"));
 		}
 
 

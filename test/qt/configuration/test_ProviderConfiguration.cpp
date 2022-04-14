@@ -310,7 +310,7 @@ class test_ProviderConfiguration
 				}
 			}
 
-			QCOMPARE(attachedEidCounter, 19);
+			QCOMPARE(attachedEidCounter, 20);
 		}
 
 
@@ -365,7 +365,7 @@ class test_ProviderConfiguration
 
 		void testInternalIds()
 		{
-			const QStringList internalIds = {};
+			const QStringList internalIds = {"pinResetService"};
 			const auto& providerConfiguration = Env::getSingleton<ProviderConfiguration>();
 
 			const ProviderConfigurationInfo empty;

@@ -78,6 +78,8 @@ if(CLOC_BIN)
 	add_custom_target(cloc.report DEPENDS ${CLOC_FILE})
 endif()
 
+add_custom_target(format)
+
 find_program(UNCRUSTIFY uncrustify CMAKE_FIND_ROOT_PATH_BOTH)
 if(UNCRUSTIFY)
 	execute_process(COMMAND ${UNCRUSTIFY} --version OUTPUT_VARIABLE UNCRUSTIFY_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -108,8 +110,24 @@ if(UNCRUSTIFY)
 
 		set(UNCRUSTIFY_CFG ${PROJECT_SOURCE_DIR}/uncrustify.cfg)
 		set(UNCRUSTIFY_CMD ${UNCRUSTIFY} -c ${UNCRUSTIFY_CFG} --replace --no-backup -q -F ${FORMATTING_FILE})
-		add_custom_target(format COMMAND ${UNCRUSTIFY_CMD} SOURCES ${UNCRUSTIFY_CFG} ${FILES})
+		add_custom_target(format.uncrustify COMMAND ${UNCRUSTIFY_CMD} SOURCES ${UNCRUSTIFY_CFG} ${FILES})
+		add_dependencies(format format.uncrustify)
 	endif()
+endif()
+
+find_program(PYTHON python CMAKE_FIND_ROOT_PATH_BOTH)
+if(PYTHON)
+	list(APPEND GLOB_JSON ${RESOURCES_DIR}/updatable-files/*.json)
+	list(APPEND GLOB_JSON ${RESOURCES_DIR}/json-schemas/*.json)
+	file(GLOB_RECURSE JSON_FILES ${GLOB_JSON})
+
+	foreach(JSON_FILE ${JSON_FILES})
+		list(APPEND commands
+			COMMAND ${PYTHON} -m json.tool --no-ensure-ascii --tab ${JSON_FILE} ${JSON_FILE})
+	endforeach()
+
+	add_custom_target(format.json ${commands})
+	add_dependencies(format format.json)
 endif()
 
 find_program(QMLLINT_BIN qmllint CMAKE_FIND_ROOT_PATH_BOTH)
