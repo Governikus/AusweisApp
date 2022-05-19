@@ -32,6 +32,7 @@ const QMap<QString, QString> HelpAction::mQmlHelpMapping = {
 	{QStringLiteral("providerDetails"), QStringLiteral("provider-list.html#provider-details")},
 	{QStringLiteral("history"), QStringLiteral("history.html")},
 	{QStringLiteral("settings"), QStringLiteral("settings.html")},
+	{QStringLiteral("settingsGeneral"), QStringLiteral("settings-general.html")},
 	{QStringLiteral("settingsRemoteReader"), QStringLiteral("settings-remote-reader.html")},
 	{QStringLiteral("settingsPcscReader"), QStringLiteral("settings-pcsc-reader.html")},
 	{QStringLiteral("settingsSecurityPrivacy"), QStringLiteral("settings-security-privacy.html")},

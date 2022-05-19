@@ -33,16 +33,17 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 
 
 - (void)startSession {
-	if (self.mSessionStoppedByApplication)
+	if (self.mSession && !self.mSessionStoppedByApplication)
 	{
-		Q_EMIT self.mListener->fireDidInvalidateWithError(true);
-		return;
+		qCDebug(card_nfc) << "Invalidate session" << self.mSession;
+		[self.mSession invalidateSession];
+		self.mSessionStoppedByApplication = true;
 	}
 
-	if (self.mSession)
+	if (self.mSessionStoppedByApplication)
 	{
-		qCDebug(card_nfc) << "Restart session" << self.mSession;
-		[self.mSession restartPolling];
+		qCDebug(card_nfc) << "Waiting for session to invalidate";
+		Q_EMIT self.mListener->fireDidInvalidateWithError(true);
 		return;
 	}
 
@@ -68,24 +69,18 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 - (void)stopSession: (QString)message {
 	qCDebug(card_nfc) << "Stop session" << self.mSession;
 
-	if (self.mSession)
+	if (self.mSession && !self.mSessionStoppedByApplication)
 	{
-		if (self.mSession.ready)
+		if (message.isNull())
 		{
-			if (message.isNull())
-			{
-				[self.mSession invalidateSession];
-			}
-			else
-			{
-				[self.mSession invalidateSessionWithErrorMessage:message.toNSString()];
-			}
-			self.mSessionStoppedByApplication = true;
+			[self.mSession invalidateSession];
 		}
 		else
 		{
-			self.mSession = nil;
+			[self.mSession invalidateSessionWithErrorMessage:message.toNSString()];
 		}
+		qCDebug(card_nfc) << "Invalidate session" << self.mSession;
+		self.mSessionStoppedByApplication = true;
 	}
 }
 
@@ -107,7 +102,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 
 	if (session != self.mSession)
 	{
-		qCWarning(card_nfc) << "An unexpected session became active; mSession" << self.mSession;
+		qCWarning(card_nfc) << "An unexpected session became active. Invalidate session" << session << "mSession" << self.mSession;
 		[session invalidateSession];
 		return;
 	}

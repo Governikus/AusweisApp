@@ -11,5 +11,5 @@ if(DESKTOP)
 endif()
 
 if(MAC)
-	target_link_libraries(AusweisAppUiCommon ${OSX_APPKIT})
+	target_link_libraries(AusweisAppUiCommon ${OSX_APPKIT} ${OSX_USERNOTIFICATIONS})
 endif()

@@ -395,7 +395,7 @@
 		{
 			"VendorId": "0x04E6",
 			"ProductId": "0x512B",
-			"Name": "SDI011 Contactless Reader",
+			"Name": "Identiv SDI011 Dual Interface Smart Card Reader",
 			"Pattern": "^(SCM Microsystems Inc. )?SDI011G? ((Contactless Reader( 0)?)|((USB Smart Card|Contactless) Reader\\([12]\\)))$",
 			"Icon": "img_Identive_SDI011.png",
 			"IconWithNPA": "img_Identive_SDI011_mit_ausweis.png",
@@ -444,7 +444,7 @@
 		{
 			"VendorId": "0x04E6",
 			"ProductId": "0x5292",
-			"Name": "SCL01x Contactless Reader",
+			"Name": "Identiv SCL01x Contactless Smart Card Reader",
 			"Pattern": "^(SCM Microsystems Inc. )?SCL011G? Contactless Reader( 0)?$",
 			"Icon": "img_Identive_SCL011.png",
 			"IconWithNPA": "img_Identive_SCL011_mit_ausweis.png",
@@ -838,7 +838,7 @@
 		{
 			"VendorId": "0x076B",
 			"ProductId": "0x5340",
-			"Name": "OMNIKEY 5021-CL",
+			"Name": "HID OMNIKEY 5021-CL",
 			"Pattern": "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5340\\) 5021 CL",
 			"Icon": "img_HID_Omnikey_Mobile_Reader_502X_CL.png",
 			"IconWithNPA": "img_HID_Omnikey_Mobile_Reader_502X_CL_mit_ausweis.png",
@@ -882,7 +882,7 @@
 		{
 			"VendorId": "0x076B",
 			"ProductId": "0x5022",
-			"Name": "OMNIKEY 5022-CL",
+			"Name": "HID OMNIKEY 5022-CL",
 			"Pattern": "HID Global OMNIKEY 5022 Smart Card Reader( 0)?$",
 			"Icon": "img_HID_Omnikey_Mobile_Reader_502X_CL.png",
 			"IconWithNPA": "img_HID_Omnikey_Mobile_Reader_502X_CL_mit_ausweis.png",
@@ -923,7 +923,7 @@
 		{
 			"VendorId": "0x076B",
 			"ProductId": "0x5321",
-			"Name": "OMNIKEY 5321 v2",
+			"Name": "HID OMNIKEY 5321 v2",
 			"Pattern": "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5321\\) 5321(\\(1\\)|\\(2\\))",
 			"Icon": "img_HID_Global_OMNIKEY_5321_V2.png",
 			"IconWithNPA": "img_HID_Global_OMNIKEY_5321_V2_mit_ausweis.png",
@@ -958,7 +958,7 @@
 		{
 			"VendorId": "0x076B",
 			"ProductId": "0x5421",
-			"Name": "OMNIKEY 5421",
+			"Name": "HID OMNIKEY 5421",
 			"Pattern": "OMNIKEY CardMan 5x21-CL 0|OMNIKEY Smart Card Reader USB 0|OMNIKEY CardMan \\(076B:5421\\) 5421(\\(1\\)|\\(2\\))",
 			"Icon": "img_HID_Omnikey_542x.png",
 			"IconWithNPA": "img_HID_Omnikey_542x_mit_ausweis.png",
@@ -1002,7 +1002,7 @@
 		{
 			"VendorId": "0x076B",
 			"ProductId": "0x5422",
-			"Name": "OMNIKEY 5422",
+			"Name": "HID OMNIKEY 5422",
 			"Pattern": "HID Global OMNIKEY 5422CL Smartcard Reader 0|HID Global OMNIKEY Smartcard Reader (\\(1\\)|\\(2\\))",
 			"Icon": "img_HID_Omnikey_542x.png",
 			"IconWithNPA": "img_HID_Omnikey_542x_mit_ausweis.png",
@@ -1131,7 +1131,7 @@
 		{
 			"VendorId": "0x08E6",
 			"ProductId": "0x5503",
-			"Name": "Prox-DU HID",
+			"Name": "Gemalto Prox-DU HID",
 			"Pattern": "Gemalto .*Prox(-DU| Dual)( Contactless_| USB PC Link(Reader| Reader)(\\(2\\)|\\(1\\)))",
 			"Icon": "img_Gemalto_Prox_DU.png",
 			"IconWithNPA": "img_Gemalto_Prox_DU_mit_ausweis.png",

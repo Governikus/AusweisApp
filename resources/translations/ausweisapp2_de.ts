@@ -1157,11 +1157,6 @@ LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
         <translation>Verhalten</translation>
     </message>
     <message>
-        <source>Auto start AusweisApp2 after boot</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>AusweisApp2 automatisch beim Hochfahren starten</translation>
-    </message>
-    <message>
         <source>Close after authentication</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Nach Authentisierung schließen</translation>
@@ -1185,6 +1180,16 @@ LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
         <source>Use the proxy (%1) specified during the installation.</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Benutze den bei der Installation angegebenen Proxy (%1).</translation>
+    </message>
+    <message>
+        <source>Auto-start %1 after boot and add to menu bar</source>
+        <extracomment>LABEL MACOS Text for auto-start option</extracomment>
+        <translation>%1 automatisch beim Hochfahren starten und als Eintrag der Menüleiste hinzufügen</translation>
+    </message>
+    <message>
+        <source>Auto-start %1 after boot</source>
+        <extracomment>LABEL WINDOWS Text for auto-start option</extracomment>
+        <translation>%1 automatisch beim Hochfahren starten</translation>
     </message>
 </context>
 <context>
@@ -3745,6 +3750,30 @@ LABEL ALL_PLATFORMS</extracomment>
         <source>Card Readers</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Kartenleser</translation>
+    </message>
+    <message>
+        <source>Do you want to automatically start the %1 after boot?</source>
+        <extracomment>INFO DESKTOP Question if the App shall be started automatically after boot</extracomment>
+        <translation>Wollen Sie die %1 automatisch nach dem Hochfahren starten?</translation>
+    </message>
+    <message>
+        <source>Auto-start Setting</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Autostart-Einstellung</translation>
+    </message>
+    <message>
+        <source>Auto-start setup step</source>
+        <translation>Einrichtungsschritt zum Autostart</translation>
+    </message>
+    <message>
+        <source>In order to successfully use the online identification function, %1 has to be running. It is therefore advisable to activate the auto-start after system startup.</source>
+        <extracomment>INFO DESKTOP Information text why autostart of the App is advisable</extracomment>
+        <translation>Um die Online-Ausweisfunktion erfolgreich nutzen zu können, muss die %1 gestartet sein. Daher ist es ratsam, dies beim Systemstart zuzulassen.</translation>
+    </message>
+    <message>
+        <source>The launch will add an icon to the menu bar.</source>
+        <extracomment>INFO MACOS Additional information that macOS auto-start add a symbol to the menu bar</extracomment>
+        <translation>Der Start erfolgt hierbei als Eintrag in der Menüleiste.</translation>
     </message>
 </context>
 <context>

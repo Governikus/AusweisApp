@@ -16,3 +16,10 @@ void PlatformTools::hideFromTaskbar()
 void PlatformTools::restoreToTaskbar()
 {
 }
+
+
+void PlatformTools::postNotification(const QString& pTitle, const QString& pMessage)
+{
+	Q_UNUSED(pTitle)
+	Q_UNUSED(pMessage)
+}

@@ -18,7 +18,7 @@ class test_GeneralSettings;
 namespace governikus
 {
 
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+#if defined(Q_OS_WIN)
 	#define GENERAL_SETTINGS_DEFAULT_AUTOSTART true
 #else
 	#define GENERAL_SETTINGS_DEFAULT_AUTOSTART false

@@ -78,7 +78,12 @@ void TrayIcon::create()
 
 	mTrayIcon->setToolTip(QCoreApplication::applicationName());
 
-	mTrayIcon->show();
+#ifdef Q_OS_MACOS
+	if (Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoStart())
+#endif
+	{
+		mTrayIcon->show();
+	}
 	//: LABEL DESKTOP
 	showMessage(QCoreApplication::applicationName(), tr("Application was started."));
 #endif
@@ -138,14 +143,28 @@ void TrayIcon::shutdown()
 }
 
 
-void TrayIcon::hide()
+void TrayIcon::setVisible(bool pVisible)
 {
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 	if (mTrayIcon)
 	{
-		mTrayIcon->hide();
+		mTrayIcon->setVisible(pVisible);
+	}
+#else
+	Q_UNUSED(pVisible)
+#endif
+}
+
+
+bool TrayIcon::isVisible() const
+{
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+	if (mTrayIcon)
+	{
+		mTrayIcon->isVisible();
 	}
 #endif
+	return false;
 }
 
 

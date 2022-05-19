@@ -22,6 +22,7 @@ SectionPage {
 
 	enum SubViews {
 		Welcome = 0,
+		AutoStartSetting,
 		HistorySetting,
 		CardReaderInfo,
 		CardReader,
@@ -69,7 +70,44 @@ SectionPage {
 		agreeText: ""
 		agreeButton.iconSource: "qrc:///images/desktop/material_arrow_forward.svg"
 
-		onAgree: d.activeView = SetupAssistantView.SubViews.HistorySetting
+		onAgree: d.activeView = SettingsModel.autoStartAvailable ? SetupAssistantView.SubViews.AutoStartSetting : SetupAssistantView.SubViews.HistorySetting
+	}
+
+	DecisionView {
+		visible: d.activeView === SetupAssistantView.SubViews.AutoStartSetting
+
+		Accessible.name: qsTr("Auto-start setup step")
+
+		mainIconSource: "qrc:///images/status_info.svg"
+		//: INFO DESKTOP Question if the App shall be started automatically after boot
+		questionText: qsTr("Do you want to automatically start the %1 after boot?").arg(Qt.application.name)
+		//: INFO DESKTOP Information text why autostart of the App is advisable
+		questionSubText: {
+			let subText = qsTr("In order to successfully use the online identification function, %1 has to be running. It is therefore advisable to activate the auto-start after system startup.").arg(Qt.application.name)
+			if (Qt.platform.os === "osx") {
+				//: INFO MACOS Additional information that macOS auto-start add a symbol to the menu bar
+				subText += " " + qsTr("The launch will add an icon to the menu bar.")
+			}
+			return subText
+		}
+
+		titleBarAction: TitleBarAction {
+			//: LABEL DESKTOP
+			text: qsTr("Auto-start Setting")
+			rootEnabled: d.allowNavigation
+			showSettings: false
+			helpTopic: "setupAssistant"
+		}
+
+		onAgree: {
+			SettingsModel.autoStartApp = true
+			d.activeView = SetupAssistantView.SubViews.HistorySetting
+		}
+
+		onDisagree: {
+			SettingsModel.autoStartApp = false
+			d.activeView = SetupAssistantView.SubViews.HistorySetting
+		}
 	}
 
 	DecisionView {

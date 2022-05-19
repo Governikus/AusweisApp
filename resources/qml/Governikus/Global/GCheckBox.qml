@@ -14,6 +14,7 @@ CheckBox {
 	id: control
 
 	property alias textStyle: description.textStyle
+	property alias maximumLineCount: description.maximumLineCount
 
 	padding: 0
 

@@ -9,3 +9,4 @@ Categories=System;Security;
 GenericName=Authentication App
 Keywords=nPA,eID,eAT,Personalausweis,Aufenthaltstitel,Identity,Card
 Name=AusweisApp2
+StartupWMClass=AusweisApp2

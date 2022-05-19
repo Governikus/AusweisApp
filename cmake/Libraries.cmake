@@ -116,6 +116,7 @@ elseif(MAC)
 	find_path(PCSC_INCLUDE_DIRS WinSCard.h)
 	find_library(PCSC_LIBRARIES NAMES PCSC WinSCard)
 
+	find_library(OSX_USERNOTIFICATIONS UserNotifications)
 	find_library(OSX_APPKIT AppKit)
 	find_library(IOKIT NAMES IOKit)
 	find_library(OSX_SECURITY Security)
