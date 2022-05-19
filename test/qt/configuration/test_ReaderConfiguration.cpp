@@ -115,21 +115,21 @@ class test_ReaderConfiguration
 
 			QTest::newRow("KOBIL IDToken") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken" << "KOBIL IDToken" << "img_KOBIL_ID_Token" << "^KOBIL (Systems )?IDToken( 0)?$";
 
-			QTest::newRow("SCM SDI011") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader" << "SDI011 Contactless Reader" << "img_Identive_SDI011" << "^(SCM Microsystems Inc. )?SDI011G? ((Contactless Reader( 0)?)|((USB Smart Card|Contactless) Reader\\([12]\\)))$";
-			QTest::newRow("SCM SCL011") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL011 Contactless Reader" << "SCL01x Contactless Reader" << "img_Identive_SCL011" << "^(SCM Microsystems Inc. )?SCL011G? Contactless Reader( 0)?$";
+			QTest::newRow("Identiv SDI011") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader" << "Identiv SDI011 Dual Interface Smart Card Reader" << "img_Identive_SDI011" << "^(SCM Microsystems Inc. )?SDI011G? ((Contactless Reader( 0)?)|((USB Smart Card|Contactless) Reader\\([12]\\)))$";
+			QTest::newRow("Identiv SCL011") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL011 Contactless Reader" << "Identiv SCL01x Contactless Smart Card Reader" << "img_Identive_SCL011" << "^(SCM Microsystems Inc. )?SCL011G? Contactless Reader( 0)?$";
 
 			QTest::newRow("ACS-ACR1281U") << UsbId(0x072F, 0x0901) << "ACS ACR1281 PICC Reader" << "ACS ACR1281U" << "img_ACS_ACR1281U" << "ACS ACR1281 PICC Reader( 0)?";
 			QTest::newRow("ACS-ACR1252U") << UsbId(0x072F, 0x223B) << "ACS ACR1252 1S CL Reader PICC 0" << "ACS ACR1252U" << "img_ACS_ACR1252U" << "^ACS ACR1252 (1S CL|Dual)? Reader(( PICC 0)|\\(1\\))?$";
 
-			QTest::newRow("OMNIKEY 5021") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan 5x21-CL 0" << "OMNIKEY 5021-CL" << "img_HID_Omnikey_Mobile_Reader_502X_CL" << "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5340\\) 5021 CL";
-			QTest::newRow("OMNIKEY 5022") << UsbId(0x076B, 0x5022) << "HID Global OMNIKEY 5022 Smart Card Reader 0" << "OMNIKEY 5022-CL" << "img_HID_Omnikey_Mobile_Reader_502X_CL" << "HID Global OMNIKEY 5022 Smart Card Reader( 0)?$";
-			QTest::newRow("OMNIKEY 5321 v2") << UsbId(0x076B, 0x5321) << "OOMNIKEY CardMan 5x21-CL 0" << "OMNIKEY 5321 v2" << "img_HID_Global_OMNIKEY_5321_V2" << R"(OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \(076B:5321\) 5321(\(1\)|\(2\)))";
-			QTest::newRow("OMNIKEY 5421") << UsbId(0x076B, 0x5421) << "OMNIKEY CardMan 5x21-CL 0" << "OMNIKEY 5421" << "img_HID_Omnikey_542x" << R"(OMNIKEY CardMan 5x21-CL 0|OMNIKEY Smart Card Reader USB 0|OMNIKEY CardMan \(076B:5421\) 5421(\(1\)|\(2\)))";
-			QTest::newRow("OMNIKEY 5422") << UsbId(0x076B, 0x5422) << "HID Global OMNIKEY 5422CL Smartcard Reader 0" << "OMNIKEY 5422" << "img_HID_Omnikey_542x" << R"(HID Global OMNIKEY 5422CL Smartcard Reader 0|HID Global OMNIKEY Smartcard Reader (\(1\)|\(2\)))";
+			QTest::newRow("HID OMNIKEY 5021") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan 5x21-CL 0" << "HID OMNIKEY 5021-CL" << "img_HID_Omnikey_Mobile_Reader_502X_CL" << "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5340\\) 5021 CL";
+			QTest::newRow("HID OMNIKEY 5022") << UsbId(0x076B, 0x5022) << "HID Global OMNIKEY 5022 Smart Card Reader 0" << "HID OMNIKEY 5022-CL" << "img_HID_Omnikey_Mobile_Reader_502X_CL" << "HID Global OMNIKEY 5022 Smart Card Reader( 0)?$";
+			QTest::newRow("HID OMNIKEY 5321 v2") << UsbId(0x076B, 0x5321) << "OOMNIKEY CardMan 5x21-CL 0" << "HID OMNIKEY 5321 v2" << "img_HID_Global_OMNIKEY_5321_V2" << R"(OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \(076B:5321\) 5321(\(1\)|\(2\)))";
+			QTest::newRow("HID OMNIKEY 5421") << UsbId(0x076B, 0x5421) << "OMNIKEY CardMan 5x21-CL 0" << "HID OMNIKEY 5421" << "img_HID_Omnikey_542x" << R"(OMNIKEY CardMan 5x21-CL 0|OMNIKEY Smart Card Reader USB 0|OMNIKEY CardMan \(076B:5421\) 5421(\(1\)|\(2\)))";
+			QTest::newRow("HID OMNIKEY 5422") << UsbId(0x076B, 0x5422) << "HID Global OMNIKEY 5422CL Smartcard Reader 0" << "HID OMNIKEY 5422" << "img_HID_Omnikey_542x" << R"(HID Global OMNIKEY 5422CL Smartcard Reader 0|HID Global OMNIKEY Smartcard Reader (\(1\)|\(2\)))";
 
 			QTest::newRow("FEIG OBID myAXXESS RFID-Reader") << UsbId(0x0AB1, 0x0003) << "FEIG ELECTRONIC GmbH OBID myAXXESS basic Slot:CL 358334430" << "OBID RFID-Reader" << "img_FEIG_myAXXES_basic" << "FEIG ELECTRONIC GmbH OBID myAXXESS basic Slot:CL 358334430";
 
-			QTest::newRow("Gemalto-Prox-DU") << UsbId(0x08E6, 0x5503) << "Gemalto Prox-DU Contactless_" << "Prox-DU HID" << "img_Gemalto_Prox_DU" << R"(Gemalto .*Prox(-DU| Dual)( Contactless_| USB PC Link(Reader| Reader)(\(2\)|\(1\))))";
+			QTest::newRow("Gemalto-Prox-DU") << UsbId(0x08E6, 0x5503) << "Gemalto Prox-DU Contactless_" << "Gemalto Prox-DU HID" << "img_Gemalto_Prox_DU" << R"(Gemalto .*Prox(-DU| Dual)( Contactless_| USB PC Link(Reader| Reader)(\(2\)|\(1\))))";
 			QTest::newRow("Gemalto-Prox-SU") << UsbId(0x08E6, 0x5504) << "Gemalto Prox-SU Contactless_" << "Gemalto Prox-SU Contactless" << "img_Gemalto_Prox_SU" << R"(Gemalto Prox( |-)SU( Contactless_| USB PC LinkReader(\(1\)|\(2\))))";
 
 			QTest::newRow("Identiv-SCL-3711") << UsbId(0x04E6, 0x5591) << "SCM Microsystems SCL3711 reader & NFC device 0" << "Identiv SCL3711" << "img_Identive_SCL3711" << "(SCM Microsystems SCL3711 reader & NFC device 0|SCL3711 Reader and NFC device)";
@@ -204,22 +204,22 @@ class test_ReaderConfiguration
 			QTest::newRow("KOBIL IDToken-windows-7-10") << UsbId(0x0D46, 0x301D) << "KOBIL IDToken 0" << "KOBIL IDToken";
 			QTest::newRow("KOBIL IDToken-macosx-10.13-11.0") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken" << "KOBIL IDToken";
 
-			QTest::newRow("SCM SDI011-windows-7-10-1") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader 0" << "SDI011 Contactless Reader";
-			QTest::newRow("SCM SDI011-windows-7-10-2") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Smart Card Reader 0" << "SCM Microsystems Inc. SDI011 Smart Card Reader 0";
-			QTest::newRow("SCM SDI011-windows-7-10-3") << UsbId(0x04E6, 0x512B) << "SDI011 Contactless Reader" << "SDI011 Contactless Reader";
-			QTest::newRow("SCM SDI011-windows-7-10-4") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011G Contactless Reader 0" << "SDI011 Contactless Reader";
-			QTest::newRow("SCM SDI011-windows-7-10-5") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011G Smart Card Reader 0" << "SCM Microsystems Inc. SDI011G Smart Card Reader 0";
-			QTest::newRow("SCM SDI011-macosx-10.13-11.0") << UsbId(0x04E6, 0x512B) << "SDI011 USB Smart Card Reader(1)" << "SDI011 Contactless Reader";
-			QTest::newRow("SCM SDI011-macosx-10.13-11.0") << UsbId(0x04E6, 0x512B) << "SDI011 USB Smart Card Reader(2)" << "SDI011 Contactless Reader";
-			QTest::newRow("SCM SDI011-macosx-10.13-10.15-1") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader(1)" << "SDI011 Contactless Reader";
-			QTest::newRow("SCM SDI011-macosx-10.13-10.15-2") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader(2)" << "SDI011 Contactless Reader";
+			QTest::newRow("Identiv SDI011-windows-7-10-1") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader 0" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011-windows-7-10-2") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Smart Card Reader 0" << "SCM Microsystems Inc. SDI011 Smart Card Reader 0";
+			QTest::newRow("Identiv SDI011-windows-7-10-3") << UsbId(0x04E6, 0x512B) << "SDI011 Contactless Reader" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011-windows-7-10-4") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011G Contactless Reader 0" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011-windows-7-10-5") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011G Smart Card Reader 0" << "SCM Microsystems Inc. SDI011G Smart Card Reader 0";
+			QTest::newRow("Identiv SDI011-macosx-10.13-11.0") << UsbId(0x04E6, 0x512B) << "SDI011 USB Smart Card Reader(1)" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011-macosx-10.13-11.0") << UsbId(0x04E6, 0x512B) << "SDI011 USB Smart Card Reader(2)" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011-macosx-10.13-10.15-1") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader(1)" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011-macosx-10.13-10.15-2") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader(2)" << "Identiv SDI011 Dual Interface Smart Card Reader";
 
-			QTest::newRow("SCM SCL011-windows-7-10-1") << UsbId(0x04E6, 0x5292) << "SCL011 Contactless Reader" << "SCL01x Contactless Reader";
-			QTest::newRow("SCM SCL011-windows-7-10-1") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL010 Contactless Reader" << "SCM Microsystems Inc. SCL010 Contactless Reader";
-			QTest::newRow("SCM SCL011-windows-7-10-2") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL011 Contactless Reader 0" << "SCL01x Contactless Reader";
-			QTest::newRow("SCM SCL011-windows-7-10-3") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL011G Contactless Reader 0" << "SCL01x Contactless Reader";
-			QTest::newRow("SCM SCL011-macosx-10.13-11.0-1") << UsbId(0x04E6, 0x5292) << "SCL011 Contactless Reader" << "SCL01x Contactless Reader";
-			QTest::newRow("SCM SCL011-macosx-10.13-11.0-2") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL011 Contactless Reader" << "SCL01x Contactless Reader";
+			QTest::newRow("Identiv SCL011-windows-7-10-1") << UsbId(0x04E6, 0x5292) << "SCL011 Contactless Reader" << "Identiv SCL01x Contactless Smart Card Reader";
+			QTest::newRow("Identiv SCL011-windows-7-10-2") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL010 Contactless Reader" << "SCM Microsystems Inc. SCL010 Contactless Reader";
+			QTest::newRow("Identiv SCL011-windows-7-10-3") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL011 Contactless Reader 0" << "Identiv SCL01x Contactless Smart Card Reader";
+			QTest::newRow("Identiv SCL011-windows-7-10-4") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL011G Contactless Reader 0" << "Identiv SCL01x Contactless Smart Card Reader";
+			QTest::newRow("Identiv SCL011-macosx-10.13-11.0-1") << UsbId(0x04E6, 0x5292) << "SCL011 Contactless Reader" << "Identiv SCL01x Contactless Smart Card Reader";
+			QTest::newRow("Identiv SCL011-macosx-10.13-11.0-2") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL011 Contactless Reader" << "Identiv SCL01x Contactless Smart Card Reader";
 
 			QTest::newRow("ACS-ACR1281U-windows-7-10") << UsbId(0x072F, 0x0901) << "ACS ACR1281 PICC Reader 0" << "ACS ACR1281U";
 			QTest::newRow("ACS-ACR1281U-macosx-10.13-11.0") << UsbId(0x072F, 0x0901) << "ACS ACR1281 PICC Reader" << "ACS ACR1281U";
@@ -234,34 +234,34 @@ class test_ReaderConfiguration
 			QTest::newRow("ACS-ACR1252U-macosx-10.13-11.0-4") << UsbId(0x072F, 0x223B) << "ACS ACR1252 1S CL Reader(2)" << "ACS ACR1252 1S CL Reader(2)";
 			QTest::newRow("ACS-ACR1252U-macosx-10.13-11.0-5") << UsbId(0x072F, 0x223B) << "ACS ACR1252 Dual Reader" << "ACS ACR1252U";
 
-			QTest::newRow("OMNIKEY 5021-windows-7-10") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan 5x21-CL 0" << "OMNIKEY 5021-CL";
-			QTest::newRow("OMNIKEY 5021-macosx-10.13-11.0") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan (076B:5340) 5021 CL" << "OMNIKEY 5021-CL";
+			QTest::newRow("HID OMNIKEY 5021-windows-7-10") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan 5x21-CL 0" << "HID OMNIKEY 5021-CL";
+			QTest::newRow("HID OMNIKEY 5021-macosx-10.13-11.0") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan (076B:5340) 5021 CL" << "HID OMNIKEY 5021-CL";
 
-			QTest::newRow("OMNIKEY 5022-windows-7-10") << UsbId(0x076B, 0x5022) << "HID Global OMNIKEY 5022 Smart Card Reader 0" << "OMNIKEY 5022-CL";
-			QTest::newRow("OMNIKEY 5022-macosx-10.13-11.0") << UsbId(0x076B, 0x5022) << "HID Global OMNIKEY 5022 Smart Card Reader" << "OMNIKEY 5022-CL";
+			QTest::newRow("HID OMNIKEY 5022-windows-7-10") << UsbId(0x076B, 0x5022) << "HID Global OMNIKEY 5022 Smart Card Reader 0" << "HID OMNIKEY 5022-CL";
+			QTest::newRow("HID OMNIKEY 5022-macosx-10.13-11.0") << UsbId(0x076B, 0x5022) << "HID Global OMNIKEY 5022 Smart Card Reader" << "HID OMNIKEY 5022-CL";
 
-			QTest::newRow("OMNIKEY 5321 v2-windows-7-10-1") << UsbId(0x076B, 0x5321) << "OMNIKEY CardMan 5x21 0" << "OMNIKEY CardMan 5x21 0";
-			QTest::newRow("OMNIKEY 5321 v2-windows-7-10-2") << UsbId(0x076B, 0x5321) << "OMNIKEY CardMan 5x21-CL 0" << "OMNIKEY 5321 v2";
-			QTest::newRow("OMNIKEY 5321 v2-macosx-10.13-11.0-1") << UsbId(0x076B, 0x5321) << "OMNIKEY CardMan (076B:5321) 5321(1)" << "OMNIKEY 5321 v2";
-			QTest::newRow("OMNIKEY 5321 v2-macosx-10.13-11.0-2") << UsbId(0x076B, 0x5321) << "OMNIKEY CardMan (076B:5321) 5321(2)" << "OMNIKEY 5321 v2";
+			QTest::newRow("HID OMNIKEY 5321 v2-windows-7-10-1") << UsbId(0x076B, 0x5321) << "OMNIKEY CardMan 5x21 0" << "OMNIKEY CardMan 5x21 0";
+			QTest::newRow("HID OMNIKEY 5321 v2-windows-7-10-2") << UsbId(0x076B, 0x5321) << "OMNIKEY CardMan 5x21-CL 0" << "HID OMNIKEY 5321 v2";
+			QTest::newRow("HID OMNIKEY 5321 v2-macosx-10.13-11.0-1") << UsbId(0x076B, 0x5321) << "OMNIKEY CardMan (076B:5321) 5321(1)" << "HID OMNIKEY 5321 v2";
+			QTest::newRow("HID OMNIKEY 5321 v2-macosx-10.13-11.0-2") << UsbId(0x076B, 0x5321) << "OMNIKEY CardMan (076B:5321) 5321(2)" << "HID OMNIKEY 5321 v2";
 
-			QTest::newRow("OMNIKEY 5421-windows-7-10-1") << UsbId(0x076B, 0x5421) << "OMNIKEY CardMan 5x21 0" << "OMNIKEY CardMan 5x21 0";
-			QTest::newRow("OMNIKEY 5421-windows-7-10-2") << UsbId(0x076B, 0x5421) << "OMNIKEY CardMan 5x21-CL 0" << "OMNIKEY 5421";
-			QTest::newRow("OMNIKEY 5421-windows-7-10-3") << UsbId(0x076B, 0x5421) << "OMNIKEY Smart Card Reader USB 0" << "OMNIKEY 5421";
-			QTest::newRow("OMNIKEY 5421-macosx-10.13-11.0-1") << UsbId(0x076B, 0x5421) << "OMNIKEY CardMan (076B:5421) 5421(1)" << "OMNIKEY 5421";
-			QTest::newRow("OMNIKEY 5421-macosx-10.13-11.0-2") << UsbId(0x076B, 0x5421) << "OMNIKEY CardMan (076B:5421) 5421(2)" << "OMNIKEY 5421";
+			QTest::newRow("HID OMNIKEY 5421-windows-7-10-1") << UsbId(0x076B, 0x5421) << "OMNIKEY CardMan 5x21 0" << "OMNIKEY CardMan 5x21 0";
+			QTest::newRow("HID OMNIKEY 5421-windows-7-10-2") << UsbId(0x076B, 0x5421) << "OMNIKEY CardMan 5x21-CL 0" << "HID OMNIKEY 5421";
+			QTest::newRow("HID OMNIKEY 5421-windows-7-10-3") << UsbId(0x076B, 0x5421) << "OMNIKEY Smart Card Reader USB 0" << "HID OMNIKEY 5421";
+			QTest::newRow("HID OMNIKEY 5421-macosx-10.13-11.0-1") << UsbId(0x076B, 0x5421) << "OMNIKEY CardMan (076B:5421) 5421(1)" << "HID OMNIKEY 5421";
+			QTest::newRow("HID OMNIKEY 5421-macosx-10.13-11.0-2") << UsbId(0x076B, 0x5421) << "OMNIKEY CardMan (076B:5421) 5421(2)" << "HID OMNIKEY 5421";
 
-			QTest::newRow("OMNIKEY 5422-windows-7-10-1") << UsbId(0x076B, 0x5422) << "HID Global OMNIKEY 5422 Smartcard Reader 0" << "HID Global OMNIKEY 5422 Smartcard Reader 0";
-			QTest::newRow("OMNIKEY 5422-windows-7-10-2") << UsbId(0x076B, 0x5422) << "HID Global OMNIKEY 5422CL Smartcard Reader 0" << "OMNIKEY 5422";
-			QTest::newRow("OMNIKEY 5422-macosx-10.13-11.0-1") << UsbId(0x076B, 0x5422) << "HID Global OMNIKEY Smartcard Reader (1)" << "OMNIKEY 5422";
-			QTest::newRow("OMNIKEY 5422-macosx-10.13-11.0-2") << UsbId(0x076B, 0x5422) << "HID Global OMNIKEY Smartcard Reader (2)" << "OMNIKEY 5422";
+			QTest::newRow("HID OMNIKEY 5422-windows-7-10-1") << UsbId(0x076B, 0x5422) << "HID Global OMNIKEY 5422 Smartcard Reader 0" << "HID Global OMNIKEY 5422 Smartcard Reader 0";
+			QTest::newRow("HID OMNIKEY 5422-windows-7-10-2") << UsbId(0x076B, 0x5422) << "HID Global OMNIKEY 5422CL Smartcard Reader 0" << "HID OMNIKEY 5422";
+			QTest::newRow("HID OMNIKEY 5422-macosx-10.13-11.0-1") << UsbId(0x076B, 0x5422) << "HID Global OMNIKEY Smartcard Reader (1)" << "HID OMNIKEY 5422";
+			QTest::newRow("HID OMNIKEY 5422-macosx-10.13-11.0-2") << UsbId(0x076B, 0x5422) << "HID Global OMNIKEY Smartcard Reader (2)" << "HID OMNIKEY 5422";
 
 			QTest::newRow("FEIG OBID myAXXESS RFID-Reader-windows-7-10") << UsbId(0x0AB1, 0x0003) << "FEIG ELECTRONIC GmbH OBID myAXXESS basic Slot:CL 358334430" << "OBID RFID-Reader";
 
-			QTest::newRow("Gemalto-Prox-DU-windows-7-10-1") << UsbId(0x08E6, 0x5503) << "Gemalto Prox-DU Contactless_10900383 0" << "Prox-DU HID";
+			QTest::newRow("Gemalto-Prox-DU-windows-7-10-1") << UsbId(0x08E6, 0x5503) << "Gemalto Prox-DU Contactless_10900383 0" << "Gemalto Prox-DU HID";
 			QTest::newRow("Gemalto-Prox-DU-windows-7-10-2") << UsbId(0x08E6, 0x5503) << "Gemalto Prox-DU Contact_10900383 0" << "Gemalto Prox-DU Contact_10900383 0";
-			QTest::newRow("Gemalto-Prox-DU-windows-macosx-10.13-11.0-1") << UsbId(0x08E6, 0x5503) << "Gemalto Prox Dual USB PC Link Reader(1)" << "Prox-DU HID";
-			QTest::newRow("Gemalto-Prox-DU-windows-macosx-10.13-11.0-2") << UsbId(0x08E6, 0x5503) << "Gemalto Prox Dual USB PC Link Reader(2)" << "Prox-DU HID";
+			QTest::newRow("Gemalto-Prox-DU-windows-macosx-10.13-11.0-1") << UsbId(0x08E6, 0x5503) << "Gemalto Prox Dual USB PC Link Reader(1)" << "Gemalto Prox-DU HID";
+			QTest::newRow("Gemalto-Prox-DU-windows-macosx-10.13-11.0-2") << UsbId(0x08E6, 0x5503) << "Gemalto Prox Dual USB PC Link Reader(2)" << "Gemalto Prox-DU HID";
 
 			QTest::newRow("Gemalto-Prox-SU-windows-7-10-1") << UsbId(0x08E6, 0x5504) << "Gemalto Prox-SU Contactless_10800004 0" << "Gemalto Prox-SU Contactless";
 			QTest::newRow("Gemalto-Prox-SU-windows-7-10-2") << UsbId(0x08E6, 0x5504) << "Gemalto Prox-SU Contact_10800004 0" << "Gemalto Prox-SU Contact_10800004 0";

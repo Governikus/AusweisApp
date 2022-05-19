@@ -113,6 +113,7 @@ class UIPlugInQml
 		void onRawLog(const QString& pMessage, const QString& pCategoryName);
 
 		void onWindowPaletteChanged();
+		void onAutoStartChanged();
 
 	public Q_SLOTS:
 		void doRefresh();

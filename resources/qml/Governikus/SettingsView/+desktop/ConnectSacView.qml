@@ -57,7 +57,7 @@ SectionPage {
 		visible: d.view !== ConnectSacView.SubView.PairingInfo || !d.externalMoreInformation
 		//: LABEL DESKTOP
 		text: qsTr("Pairing")
-		helpTopic: "readerDeviceTab"
+		helpTopic: "settingsRemoteReader"
 		rootEnabled: false
 		customSubAction: CancelAction {
 			visible: true

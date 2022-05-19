@@ -78,11 +78,11 @@ App Bundle
 The integrated AusweisApp2 uses native libraries which need to be extracted when
 used in an App Bundle, otherwise the SDK will not work correctly.
 
-Add the following statement to your app's gradle.properties file:
+Add the following statement to your app's build.gradle file:
 
 .. code-block:: groovy
 
-    android.bundle.enableUncompressedNativeLibs=false
+    android { packagingOptions { jniLibs { useLegacyPackaging = true } } }
 
 
 Logging

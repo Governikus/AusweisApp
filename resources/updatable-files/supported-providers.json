@@ -681,10 +681,6 @@
 			}
 		},
 		{
-			"exclude": [
-				"ios"
-			],
-			"eidSupport": false,
 			"shortName": {
 				"": "Bürgerservice-Portal Wiesbaden"
 			},
@@ -1396,6 +1392,26 @@
 			"postalAddress": "Kreisstadt Siegburg<br/>Nogenter Platz 10<br/>53721 Siegburg",
 			"image": "Siegburg_image.png",
 			"icon": "Siegburg_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+		},
+		{
+			"shortName": {
+				"": "Online Services der Stadt Bad Oeynhausen"
+			},
+			"longName": {
+				"": "Online Services der Stadt Bad Oeynhausen"
+			},
+			"longDescription": {
+				"": "Wir stellen Online-Dienstleistungen aus Bad Oeynhausen, dem Kreis Minden-Lübbecke, dem Land NRW und den Bundesbehörden zur Verfügung.<br/><br/>Sie können unseren Service ohne Anmeldung oder mit einer Anmeldung über das Servicekonto.NRW nutzen. Für die Nutzung von ePayment ist eine Anmeldung mit dem Servicekonto Voraussetzung."
+			},
+			"address": "https://portal.kommunale.it/bad-oeynhausen/login",
+			"homepage": "https://portal.kommunale.it/bad-oeynhausen/services",
+			"phone": "+49 5731 14 0",
+			"email": "egov@badoeynhausen.de",
+			"postalAddress": "Stadt Bad Oeynhausen<br/>Der Bürgermeister<br/>Ostkorso 8<br/>32545 Bad Oeynhausen",
+			"image": "StadtBadOeynhausen_image.jpg",
+			"icon": "StadtBadOeynhausen_icon.png",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},

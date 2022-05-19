@@ -320,7 +320,7 @@ Die verwendeten Open-Source-Bibliotheken unterliegen den folgenden Nutzungsbedin
 
 OpenSSL
   Lizenz: OpenSSL license & SSLeay license
-  Version: 1.1.1n
+  Version: 1.1.1o
   Adresse: https://www.openssl.org/
 
 Qt

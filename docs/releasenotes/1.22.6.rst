@@ -1,0 +1,31 @@
+AusweisApp2 1.22.6
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 19. Mai 2022
+
+
+Anwender
+""""""""
+- Probleme mit der Kartenkommunikation bei der Funktion
+  "Smartphone als Kartenleser" im Komfortmodus wurden
+  behoben.
+
+- Ab macOS 10.14 werden nun die Systembenachrichtigungen
+  verwendet.
+
+- Unter macOS ist das Tray-Icon jetzt standardmäßig
+  deaktiviert. Dies kann in den Einstellungen wieder
+  aktiviert werden.
+
+- Unter iOS war unter bestimmten Umständen ein
+  neuer NFC-Scan nicht möglich. Dies wurde behoben.
+
+- Beim Abbrechen einer Authentisierung kam es unter
+  iOS teilweise zum Absturz. Dies wurde behoben.
+
+- Kleinere Fehlerbehebungen und Optimierungen.
+
+
+Entwickler
+""""""""""
+- Aktualisierung von OpenSSL auf die Version 1.1.1o.

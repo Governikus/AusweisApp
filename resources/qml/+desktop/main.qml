@@ -69,6 +69,11 @@ ApplicationWindow {
 			return
 		}
 
+		if (Qt.platform.os === "osx" && !SettingsModel.autoStartApp) {
+			close.accepted = true
+			return
+		}
+
 		if (SettingsModel.remindUserToClose) {
 			closeWarning.open()
 			close.accepted = false
@@ -218,6 +223,8 @@ ApplicationWindow {
 			d.showMainWindow()
 			d.closeOpenDialogs()
 			switch (pModule) {
+				case UiModule.CURRENT:
+					break
 				case UiModule.IDENTIFY:
 					if (ApplicationModel.currentWorkflow === "") {
 						d.activeView = UiModule.SELF_AUTHENTICATION
@@ -229,11 +236,6 @@ ApplicationWindow {
 				case UiModule.PINMANAGEMENT:
 					if (ApplicationModel.currentWorkflow === "" || ApplicationModel.currentWorkflow === "changepin") {
 						d.activeView = UiModule.PINMANAGEMENT
-					}
-					break
-				case UiModule.CURRENT:
-					if (SettingsModel.startupModule == UiModule.TUTORIAL) {
-						d.activeView = UiModule.TUTORIAL
 					}
 					break
 				case UiModule.UPDATEINFORMATION:

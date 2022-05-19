@@ -406,6 +406,7 @@ void UIPlugInQml::onApplicationInitialized()
 	connect(Env::getSingleton<SelfAuthModel>(), &SelfAuthModel::fireStartWorkflow, this, &UIPlugIn::fireSelfAuthenticationRequested);
 	connect(Env::getSingleton<RemoteServiceModel>(), &RemoteServiceModel::fireStartWorkflow, this, &UIPlugIn::fireRemoteServiceRequested);
 	connect(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireRawLog, this, &UIPlugInQml::onRawLog, Qt::QueuedConnection);
+	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireAutoStartChanged, this, &UIPlugInQml::onAutoStartChanged);
 
 	const auto* service = Env::getSingleton<Service>();
 	connect(service, &Service::fireAppcastFinished, this, &UIPlugInQml::onUpdateAvailable);
@@ -420,9 +421,14 @@ void UIPlugInQml::onApplicationStarted()
 	mTrayIcon.create();
 
 #if defined(Q_OS_WIN) || (defined(Q_OS_BSD4) && !defined(Q_OS_IOS)) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
-	bool showSetupAssistant = Enum<UiModule>::fromString(Env::getSingleton<AppSettings>()->getGeneralSettings().getStartupModule(), UiModule::TUTORIAL) == UiModule::TUTORIAL;
-	bool developerMode = Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode();
-	if (!QSystemTrayIcon::isSystemTrayAvailable() || showSetupAssistant || developerMode)
+	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	const bool showSetupAssistant = Enum<UiModule>::fromString(generalSettings.getStartupModule(), UiModule::TUTORIAL) == UiModule::TUTORIAL;
+	const bool developerMode = generalSettings.isDeveloperMode();
+	bool missingTrayIcon = !QSystemTrayIcon::isSystemTrayAvailable();
+#ifdef Q_OS_MACOS
+	missingTrayIcon |= !Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoStart();
+#endif
+	if (missingTrayIcon || showSetupAssistant || developerMode)
 #endif
 	{
 		QMetaObject::invokeMethod(this, &UIPlugInQml::show, Qt::QueuedConnection);
@@ -437,6 +443,13 @@ void UIPlugInQml::onApplicationStarted()
 void UIPlugInQml::onShowUi(UiModule pModule)
 {
 	PlatformTools::restoreToTaskbar();
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+	const auto& startupModule = Enum<UiModule>::fromString(Env::getSingleton<AppSettings>()->getGeneralSettings().getStartupModule(), UiModule::TUTORIAL);
+	if (pModule == UiModule::CURRENT && startupModule == UiModule::TUTORIAL)
+	{
+		pModule = UiModule::TUTORIAL;
+	}
+#endif
 	if (isDominated())
 	{
 		pModule = UiModule::CURRENT;
@@ -674,6 +687,14 @@ void UIPlugInQml::onRawLog(const QString& pMessage, const QString& pCategoryName
 {
 	if (pCategoryName == QLatin1String("developermode") || pCategoryName == QLatin1String("feedback"))
 	{
+#ifdef Q_OS_MACOS
+		if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::MacOSMojave)
+		{
+			PlatformTools::postNotification(QCoreApplication::applicationName(), pMessage);
+			return;
+		}
+
+#endif
 		mTrayIcon.showMessage(QCoreApplication::applicationName(), pMessage);
 	}
 }
@@ -821,6 +842,14 @@ void UIPlugInQml::onWindowPaletteChanged()
 		mHighContrastEnabled = highContrast;
 		Q_EMIT fireHighContrastEnabledChanged();
 	}
+}
+
+
+void UIPlugInQml::onAutoStartChanged()
+{
+#ifdef Q_OS_MACOS
+	mTrayIcon.setVisible(Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoStart());
+#endif
 }
 
 

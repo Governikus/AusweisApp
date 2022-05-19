@@ -96,8 +96,8 @@ endif()
 set(QT 5.15.2)
 set(QT_HASH 3a530d1b243b5dec00bc54937455471aaa3e56849d2593edb8ded07228202240)
 
-set(OPENSSL 1.1.1n)
-set(OPENSSL_HASH 40dceb51a4f6a5275bde0e6bf20ef4b91bfc32ed57c0552e2e8e15463372b17a)
+set(OPENSSL 1.1.1o)
+set(OPENSSL_HASH 9384a2b0570dd80358841464677115df785edb941c71211f75076d72fe6b438f)
 
 ################################## Files
 set(QT_FILE qt-everywhere-src-${QT}.tar.xz)

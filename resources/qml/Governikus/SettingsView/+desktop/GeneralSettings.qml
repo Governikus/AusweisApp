@@ -11,6 +11,7 @@ import Governikus.View 1.0
 import Governikus.Type.SettingsModel 1.0
 
 ColumnLayout {
+	readonly property string helpTopic: "settingsGeneral"
 
 	spacing: Constants.component_spacing
 
@@ -66,10 +67,16 @@ ColumnLayout {
 	}
 
 	ToggleableOption {
+		Layout.fillWidth: true
+
 		activeFocusOnTab: true
 
-		//: LABEL DESKTOP
-		text: qsTr("Auto start AusweisApp2 after boot")
+		text: Qt.platform.os === "osx"
+			  //: LABEL MACOS Text for auto-start option
+			  ? qsTr("Auto-start %1 after boot and add to menu bar").arg(Qt.application.name)
+			  //: LABEL WINDOWS Text for auto-start option
+			  : qsTr("Auto-start %1 after boot").arg(Qt.application.name)
+		maximumLineCount: 2
 		checked: SettingsModel.autoStartApp
 		enabled: !SettingsModel.autoStartSetByAdmin && SettingsModel.autoStartAvailable
 		onCheckedChanged: SettingsModel.autoStartApp = checked
