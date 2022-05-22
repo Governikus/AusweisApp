@@ -13,7 +13,7 @@ Lizenz
 ------
 Der vorliegende Quellcode wird unter der EUPL v1.2 bereitgestellt, mit
 Ausnahme der Bibliothek OpenSSL, die unter der OpenSSL License / SSLeay License
-lizensiert ist. Die Datei ``LICENSE.officially.txt`` gilt ausschließlich für
+lizenziert ist. Die Datei ``LICENSE.officially.txt`` gilt ausschließlich für
 die offizielle Version der AusweisApp2, welche von der Governikus GmbH & Co. KG
 im Auftrag des Bundes unter https://www.ausweisapp.bund.de bereitgestellt wird.
 
@@ -23,7 +23,7 @@ Toolchain / Bibliotheken
 Die Einrichtung der Toolchain wird im Unterordner ``./libs``
 bzw. in der darin enthaltenen README erläutert.
 
-Die separate README und das Skript unter "libs" dienen dem Aufzusetzen
+Die separate README und das Skript unter "libs" dienen dem Aufsetzen
 der notwendigen Build-Umgebung und dem automatisierten Bauen der
 notwendigen Bibliotheken mit den entsprechenden Patches.
 
@@ -31,13 +31,13 @@ notwendigen Bibliotheken mit den entsprechenden Patches.
 
 Build
 -----
-Um die AusweisApp2 zu bauen ist es notwendig ein Makefile mittels CMake zu
+Um die AusweisApp2 zu bauen, ist es notwendig, ein Makefile mittels CMake zu
 generieren. Dazu kann CMake auf der Kommandozeile oder mit der von CMake
 mitgelieferten CMake-GUI ausgeführt werden.
 
 CMake erkennt während der Konfigurationszeit automatisch die Abhängigkeiten.
-Dazu kann die Variable *CMAKE_PREFIX_PATH* verwendet werden um die Toolchain CMake
-bekannt zu machen. Alternativ zu %PATH% bzw. $PATH können alle Ordner, die dort
+Dazu kann die Variable *CMAKE_PREFIX_PATH* verwendet werden, um die Toolchain CMake
+bekannt zu machen. Alternativ zu `%PATH%` bzw. `$PATH` können alle Ordner, die dort
 für den Build eingetragen wurden, über diesen Mechanismus an CMake übergeben werden.
 
 Als Generator für Makefiles sollte unter Windows eine Variante von "MinGW Makefiles"
@@ -45,7 +45,7 @@ gewählt werden.
 
 Beim Generieren des Makefiles ist zu beachten, dass die AusweisApp2 nur sogenannte
 "out of source tree"-Builds erlaubt. Daher ist die empfohlene Variante von CMake
-zwingend einzuhalten und der Build-Ordner darf sich nicht im Source-Ordner
+zwingend einzuhalten, und der Build-Ordner darf sich nicht im Source-Ordner
 befinden.
 
 Beispiel über die CLI:
@@ -81,7 +81,7 @@ Beispiel über die CLI:
    -- Build files have been written to: C:/build
 
 
-Um die mobile Variante der AusweisApp2 zu bauen benötigt man je nach Plattform zusätzliche
+Um die mobile Variante der AusweisApp2 zu bauen, benötigt man je nach Plattform zusätzliche
 externe Komponenten, die in der README in ``./libs`` im Abschnitt Android / iOS beschrieben
 sind.
 
@@ -122,8 +122,8 @@ eingebettet werden kann. Zu beachten ist vor allem, dass in der Umgebungsvariabl
 *PROVISIONING_PROFILE* das jeweilige Profil verwendet wird, welches unter XCode
 eingerichtet ist. Im Ordner "~/Library/MobileDevice/Provisioning Profiles"
 sind diese ebenfalls einsehbar.
-Unter Umständen kann es zu Berechtigungsproblemen mit XCode und den Zugriff auf
-die Keys kommen. Dabei ist es oft hilfreich die Keys im macOS-Schlüsselbund
+Unter Umständen kann es zu Berechtigungsproblemen mit XCode und dem Zugriff auf
+die Keys kommen. Dabei ist es oft hilfreich, die Keys im macOS-Schlüsselbund
 freizuschalten bzw. den Schlüsselbund freizugeben.
 
 security unlock-keychain -pPASSWORD ${HOME}/Library/Keychains/login.keychain
@@ -154,7 +154,7 @@ Nachdem die Build-Umgebung eingerichtet ist, kann je nach System ein Package ers
 - Unter macOS wird mittels "make package" die AusweisApp2 gebaut und ein DMG bereitgestellt.
 
 - Um ein APK für Android zu bauen, sind zwei Schritte notwendig, da CMake das Format bisher
-  nicht unterstützt. Daher sind nach der Konfiguration des Projektes folgende Befehle notwendig
+  nicht unterstützt. Daher sind nach der Konfiguration des Projektes folgende Befehle notwendig,
   um ein endgültiges APK zu erhalten:
 
   ::
@@ -166,7 +166,7 @@ Nachdem die Build-Umgebung eingerichtet ist, kann je nach System ein Package ers
 
 Reproduzierbarer Build
 ----------------------
-Wir sind stets bemüht den Build des offiziellen Binaries der AusweisApp2 nachvollziehbar zu gestalten.
+Wir sind stets bemüht, den Build des offiziellen Binaries der AusweisApp2 nachvollziehbar zu gestalten.
 Daher haben wir unter anderem eine README in dem Unterordner ``./libs`` hinterlegt, die den Aufbau
 der Buildumgebung und den Build der externen Bibliotheken beschreibt.
 Anhand dieser Anleitung können Sie nachvollziehen, wie unser internes Buildsystem aufgebaut ist und
