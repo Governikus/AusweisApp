@@ -1,0 +1,14 @@
+AusweisApp2 1.22.7
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 20. Mai 2022
+
+
+Anwender
+""""""""
+- Ein Absturz bei den neuen Systembenachrichtigungen ab
+  macOS 10.14 wurde behoben.
+
+
+Entwickler
+""""""""""
