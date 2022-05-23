@@ -52,13 +52,13 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 100
+- Chrome 101
 
-- Firefox 99
+- Firefox 100
 
 - Internet Explorer 11
 
-- Safari 15.3
+- Safari 15.4
 
 - Edge 98
 
@@ -118,9 +118,9 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 100 (iOS/Android)
+- Chrome 101 (iOS/Android)
 
-- Firefox 99 (iOS/Android)
+- Firefox 100 (iOS/Android)
 
 - Safari 15.3 (iOS)
 

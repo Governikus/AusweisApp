@@ -36,7 +36,7 @@ void PlatformTools::restoreToTaskbar()
 }
 
 
-void ensureNotificationPermission(const std::function<void()>& pCallback)
+void ensureNotificationPermission(std::function<void()> pCallback)
 {
 #ifdef QT_NO_DEBUG
 	if (@available(macOS 10.14, *))
